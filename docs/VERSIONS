@@ -1372,3 +1372,10 @@ Mesa Version History
 	- wglGetProcAddress() didn't handle wgl-functions
 	- fixed glxext.h cross-compile issue (Colin Harrison)
 	- assorted DRI driver fixes
+
+
+6.4  month, day, 2005
+    New:
+    Change:
+    Bug fixes:
+	- GLX_X_RENDERABLE token wasn't accepted by glXChooseFBConfig
