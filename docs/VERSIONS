@@ -1376,6 +1376,8 @@ Mesa Version History
 
 6.4  month, day, 2005
     New:
-    Change:
+    Changes:
     Bug fixes:
 	- GLX_X_RENDERABLE token wasn't accepted by glXChooseFBConfig
+	- Some files were present multiple times in the 6.3.2 tarballs
+
