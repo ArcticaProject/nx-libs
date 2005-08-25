@@ -54,6 +54,13 @@
 #    define INTERNAL
 #  endif
 
+#  if defined(__CYGWIN__) || defined(__MINGW32__)
+#    undef FASTCALL
+#    define FASTCALL
+#    undef INTERNAL
+#    define INTERNAL
+#  endif
+
 extern INTERNAL PURE FASTCALL GLint __glCallLists_size(GLenum);
 extern INTERNAL PURE FASTCALL GLint __glFogfv_size(GLenum);
 extern INTERNAL PURE FASTCALL GLint __glFogiv_size(GLenum);
