@@ -1383,3 +1383,4 @@ Mesa Version History
 	- r200_vtxtmp_x86.S file was missing from 6.3.2 tarball (bug 4207)
 	- glxgears_fbconfig demo didn't work (bug 4237)
 	- fixed bug when bilinear sampling 2d textures with borders
+	- glXCreatePbuffer() could segfault instead of returning 0 (bug 4235)
