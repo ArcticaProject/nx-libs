@@ -1380,4 +1380,4 @@ Mesa Version History
     Bug fixes:
 	- GLX_X_RENDERABLE token wasn't accepted by glXChooseFBConfig
 	- Some files were present multiple times in the 6.3.2 tarballs
-
+	- fixed bug when bilinear sampling 2d textures with borders
