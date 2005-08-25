@@ -1380,4 +1380,6 @@ Mesa Version History
     Bug fixes:
 	- GLX_X_RENDERABLE token wasn't accepted by glXChooseFBConfig
 	- Some files were present multiple times in the 6.3.2 tarballs
+	- r200_vtxtmp_x86.S file was missing from 6.3.2 tarball (bug 4207)
+	- glxgears_fbconfig demo didn't work (bug 4237)
 	- fixed bug when bilinear sampling 2d textures with borders
