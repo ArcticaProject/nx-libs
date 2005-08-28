@@ -1384,3 +1384,5 @@ Mesa Version History
 	- glxgears_fbconfig demo didn't work (bug 4237)
 	- fixed bug when bilinear sampling 2d textures with borders
 	- glXCreatePbuffer() could segfault instead of returning 0 (bug 4235)
+	- fixed undefined frexp and rand in X.org libGLcore.a (bug 4242)
+	- fixed a few problems with proxy color tables (bug 4270)
