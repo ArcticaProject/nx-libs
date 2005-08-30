@@ -24,7 +24,7 @@ typedef struct {
     int priv2;
     int fbOffset;
     int fbSize;
-    char drixinerama;
+    Bool drixinerama;
     int backOffset;
     int depthOffset;
     int textureOffset;
