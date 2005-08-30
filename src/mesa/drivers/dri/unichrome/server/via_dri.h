@@ -13,6 +13,8 @@ typedef struct {
     drmSize size;
 } viaRegion, *viaRegionPtr;
 
+typedef int Bool;
+
 typedef struct {
     viaRegion regs, agp;
     int deviceID;
