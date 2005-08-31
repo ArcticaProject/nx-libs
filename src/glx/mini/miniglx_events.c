@@ -38,7 +38,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-/* $Id: miniglx_events.c,v 1.4.8.1 2005/08/24 05:03:03 airlied Exp $ */
+/* $Id: miniglx_events.c,v 1.4.8.2 2005/08/31 01:25:24 airlied Exp $ */
 
 
 #include <assert.h>
@@ -296,7 +296,9 @@ static int welcome_message( Display *dpy, int i )
 			      dpy->driverContext.driverClientMsgSize );
    if (!size)
       return False;
-   dpy->driverContext.driverClientMsgSize = size;
+   if (dpy->IsClient) {
+      dpy->driverContext.driverClientMsgSize = size;
+   }
    return True;
 }
 
