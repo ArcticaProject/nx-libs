@@ -1386,3 +1386,5 @@ Mesa Version History
 	- glXCreatePbuffer() could segfault instead of returning 0 (bug 4235)
 	- fixed undefined frexp and rand in X.org libGLcore.a (bug 4242)
 	- fixed a few problems with proxy color tables (bug 4270)
+	- fixed precision problem in Z clearing (bug 4395)
+	- glBitmap, glDraw/CopyPixels mistakenly generated selection hits
