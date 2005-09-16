@@ -1390,3 +1390,5 @@ Mesa Version History
 	- fixed a few problems with proxy color tables (bug 4270)
 	- fixed precision problem in Z clearing (bug 4395)
 	- glBitmap, glDraw/CopyPixels mistakenly generated selection hits
+	- fixed potential segfault caused by reading pixels outside
+	  of renderbuffer bounds
