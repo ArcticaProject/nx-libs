@@ -1392,3 +1392,4 @@ Mesa Version History
 	- glBitmap, glDraw/CopyPixels mistakenly generated selection hits
 	- fixed potential segfault caused by reading pixels outside
 	  of renderbuffer bounds
+	- glGetTexLevelParameter didn't accept GL_TEXTURE_DEPTH_SIZE_ARB
