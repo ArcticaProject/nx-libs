@@ -1394,3 +1394,4 @@ Mesa Version History
 	  of renderbuffer bounds
 	- glGetTexLevelParameter didn't accept GL_TEXTURE_DEPTH_SIZE_ARB
 	- fixed memory corruption bug involving software alpha buffers
+	- glReadPixels clipped by window bounds was sometimes broken
