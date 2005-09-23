@@ -2056,6 +2056,9 @@ struct gl_renderbuffer
    GLubyte ComponentSizes[4];  /* bits per component or channel */
    GLvoid *Data;
 
+   /* Used to wrap one renderbuffer around another: */
+   struct gl_renderbuffer *Wrapped;
+
    /* Delete this renderbuffer */
    void (*Delete)(struct gl_renderbuffer *rb);
 
