@@ -1,8 +1,8 @@
 /*
  * Mesa 3-D graphics library
- * Version:  6.3
+ * Version:  6.4
  *
- * Copyright (C) 1999-2004  Brian Paul   All Rights Reserved.
+ * Copyright (C) 1999-2005  Brian Paul   All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -523,6 +523,9 @@ _swrast_ReadPixels( GLcontext *ctx,
 
    /* Do all needed clipping here, so that we can forget about it later */
    clippedPacking = *packing;
+   if (clippedPacking.RowLength == 0) {
+      clippedPacking.RowLength = width;
+   }
    if (!_mesa_clip_readpixels(ctx, &x, &y, &width, &height,
                               &clippedPacking.SkipPixels,
                               &clippedPacking.SkipRows)) {
