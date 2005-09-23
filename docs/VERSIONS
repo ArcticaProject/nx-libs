@@ -1376,7 +1376,7 @@ Mesa Version History
 
 6.4  month, day, 2005
     New:
-	- no new features
+	- Added a fast XOR line drawing function in Xlib driver
     Changes:
 	- Mesa now packaged in three parts: Library, Demos and GLUT
     Bug fixes:
