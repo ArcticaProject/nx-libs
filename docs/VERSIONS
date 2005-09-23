@@ -1393,3 +1393,4 @@ Mesa Version History
 	- fixed potential segfault caused by reading pixels outside
 	  of renderbuffer bounds
 	- glGetTexLevelParameter didn't accept GL_TEXTURE_DEPTH_SIZE_ARB
+	- fixed memory corruption bug involving software alpha buffers
