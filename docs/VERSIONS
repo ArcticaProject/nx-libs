@@ -1397,3 +1397,4 @@ Mesa Version History
 	- glGetTexLevelParameter didn't accept GL_TEXTURE_DEPTH_SIZE_ARB
 	- fixed memory corruption bug involving software alpha buffers
 	- glReadPixels clipped by window bounds was sometimes broken
+	- glDraw/CopyPixels of stencil data ignored the stencil write mask
