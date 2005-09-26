@@ -1,6 +1,6 @@
 /*
  * Mesa 3-D graphics library
- * Version:  6.3
+ * Version:  6.4
  *
  * Copyright (C) 1999-2005  Brian Paul   All Rights Reserved.
  *
@@ -1095,6 +1095,8 @@ _swrast_write_stencil_span(GLcontext *ctx, GLint n, GLint x, GLint y,
 {
    struct gl_framebuffer *fb = ctx->DrawBuffer;
    struct gl_renderbuffer *rb = fb->Attachment[BUFFER_STENCIL].Renderbuffer;
+   const GLuint stencilMax = (1 << fb->Visual.stencilBits) - 1;
+   const GLuint stencilMask = ctx->Stencil.WriteMask[0];
 
    if (y < 0 || y >= rb->Height || x + n <= 0 || x >= rb->Width) {
       /* span is completely outside framebuffer */
@@ -1114,7 +1116,20 @@ _swrast_write_stencil_span(GLcontext *ctx, GLint n, GLint x, GLint y,
       return;
    }
 
-   rb->PutRow(ctx, rb, n, x, y, stencil, NULL);
+   if ((stencilMask & stencilMax) != stencilMax) {
+      /* need to apply writemask */
+      GLstencil destVals[MAX_WIDTH], newVals[MAX_WIDTH];
+      GLint i;
+      rb->GetRow(ctx, rb, n, x, y, destVals);
+      for (i = 0; i < n; i++) {
+         newVals[i]
+            = (stencil[i] & stencilMask) | (destVals[i] & ~stencilMask);
+      }
+      rb->PutRow(ctx, rb, n, x, y, newVals, NULL);
+   }
+   else {
+      rb->PutRow(ctx, rb, n, x, y, stencil, NULL);
+   }
 }
 
 

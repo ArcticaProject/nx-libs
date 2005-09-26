@@ -1,6 +1,6 @@
 /*
  * Mesa 3-D graphics library
- * Version:  6.3
+ * Version:  6.4
  *
  * Copyright (C) 1999-2005  Brian Paul   All Rights Reserved.
  *
@@ -565,8 +565,7 @@ draw_stencil_pixels( GLcontext *ctx, GLint x, GLint y,
                                             spanX, spanY, values, desty, 0);
          }
          else {
-            _swrast_write_stencil_span(ctx, (GLuint) spanWidth,
-                                     spanX, spanY, values);
+            _swrast_write_stencil_span(ctx, spanWidth, spanX, spanY, values);
          }
       }
       skipPixels += spanWidth;
