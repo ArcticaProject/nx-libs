@@ -1377,6 +1377,8 @@ Mesa Version History
 6.4  month, day, 2005
     New:
 	- Added a fast XOR line drawing function in Xlib driver
+	- Added support for GL_ARB_texture_mirrored_repeat to savage
+	  driver (supported only on Savage4 hardware).
     Changes:
 	- Mesa now packaged in three parts: Library, Demos and GLUT
     Bug fixes:
