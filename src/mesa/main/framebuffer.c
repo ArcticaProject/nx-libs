@@ -1,6 +1,6 @@
 /*
  * Mesa 3-D graphics library
- * Version:  6.3
+ * Version:  6.4
  *
  * Copyright (C) 1999-2005  Brian Paul   All Rights Reserved.
  *
@@ -144,6 +144,7 @@ _mesa_initialize_framebuffer(struct gl_framebuffer *fb, const GLvisual *visual)
    }
 
    fb->Delete = _mesa_destroy_framebuffer;
+   fb->_Status = GL_FRAMEBUFFER_COMPLETE_EXT;
 
    compute_depth_max(fb);
 }
