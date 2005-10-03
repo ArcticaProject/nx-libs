@@ -1398,3 +1398,4 @@ Mesa Version History
 	- fixed memory corruption bug involving software alpha buffers
 	- glReadPixels clipped by window bounds was sometimes broken
 	- glDraw/CopyPixels of stencil data ignored the stencil write mask
+	- glReadPixels from a texture bound to a framebuffer object didn't work
