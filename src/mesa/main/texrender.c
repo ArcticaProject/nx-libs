@@ -27,14 +27,29 @@ static void
 texture_get_row(GLcontext *ctx, struct gl_renderbuffer *rb, GLuint count,
                 GLint x, GLint y, void *values)
 {
-   /* XXX unfinished */
+   const struct texture_renderbuffer *trb
+      = (const struct texture_renderbuffer *) rb;
+   const GLint z = trb->Zoffset;
+   GLchan *rgbaOut = (GLchan *) values;
+   GLuint i;
+   for (i = 0; i < count; i++) {
+      trb->TexImage->FetchTexelc(trb->TexImage, x + i, y, z, rgbaOut + 4 * i);
+   }
 }
 
 static void
 texture_get_values(GLcontext *ctx, struct gl_renderbuffer *rb, GLuint count,
                    const GLint x[], const GLint y[], void *values)
 {
-   /* XXX unfinished */
+   const struct texture_renderbuffer *trb
+      = (const struct texture_renderbuffer *) rb;
+   const GLint z = trb->Zoffset;
+   GLchan *rgbaOut = (GLchan *) values;
+   GLuint i;
+   for (i = 0; i < count; i++) {
+      trb->TexImage->FetchTexelc(trb->TexImage, x[i], y[i], z,
+                                 rgbaOut + 4 * i);
+   }
 }
 
 static void
@@ -169,6 +184,17 @@ wrap_texture(GLcontext *ctx, struct gl_renderbuffer_attachment *att)
 
    trb->Base.Delete = delete_texture_wrapper;
    trb->Base.AllocStorage = NULL; /* illegal! */
+
+   /* XXX fix these */
+   if (trb->Base._BaseFormat == GL_DEPTH_COMPONENT) {
+      trb->Base.ComponentSizes[3] = trb->TexImage->TexFormat->DepthBits;
+   }
+   else {
+      trb->Base.ComponentSizes[0] = trb->TexImage->TexFormat->RedBits;
+      trb->Base.ComponentSizes[1] = trb->TexImage->TexFormat->GreenBits;
+      trb->Base.ComponentSizes[2] = trb->TexImage->TexFormat->BlueBits;
+      trb->Base.ComponentSizes[3] = trb->TexImage->TexFormat->AlphaBits;
+   }
 
    att->Renderbuffer = &(trb->Base);
 }
