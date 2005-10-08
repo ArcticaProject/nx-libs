@@ -406,23 +406,31 @@ _mesa_update_draw_buffer_bounds(GLcontext *ctx)
 void
 _mesa_update_framebuffer_visual(struct gl_framebuffer *fb)
 {
+   GLuint i;
+
    assert(fb->Name != 0);
 
    _mesa_bzero(&fb->Visual, sizeof(fb->Visual));
    fb->Visual.rgbMode = GL_TRUE;
 
-   if (fb->Attachment[BUFFER_FRONT_LEFT].Renderbuffer) {
-      fb->Visual.redBits
-         = fb->Attachment[BUFFER_FRONT_LEFT].Renderbuffer->ComponentSizes[0];
-      fb->Visual.greenBits
-         = fb->Attachment[BUFFER_FRONT_LEFT].Renderbuffer->ComponentSizes[1];
-      fb->Visual.blueBits
-         = fb->Attachment[BUFFER_FRONT_LEFT].Renderbuffer->ComponentSizes[2];
-      fb->Visual.alphaBits
-         = fb->Attachment[BUFFER_FRONT_LEFT].Renderbuffer->ComponentSizes[3];
-      fb->Visual.rgbBits
-         = fb->Visual.redBits + fb->Visual.greenBits + fb->Visual.blueBits;
-      fb->Visual.floatMode = GL_FALSE;
+   /* find first RGB or CI renderbuffer */
+   for (i = 0; i < BUFFER_COUNT; i++) {
+      if (fb->Attachment[i].Renderbuffer) {
+         const struct gl_renderbuffer *rb = fb->Attachment[i].Renderbuffer;
+         if (rb->_BaseFormat == GL_RGBA || rb->_BaseFormat == GL_RGB) {
+            fb->Visual.redBits = rb->ComponentSizes[0];
+            fb->Visual.greenBits = rb->ComponentSizes[1];
+            fb->Visual.blueBits = rb->ComponentSizes[2];
+            fb->Visual.alphaBits = rb->ComponentSizes[3];
+            fb->Visual.floatMode = GL_FALSE;
+            break;
+         }
+         else if (rb->_BaseFormat == GL_COLOR_INDEX) {
+            fb->Visual.indexBits = rb->ComponentSizes[0];
+            fb->Visual.rgbMode = GL_FALSE;
+            break;
+         }
+      }
    }
 
    if (fb->Attachment[BUFFER_DEPTH].Renderbuffer) {
@@ -470,8 +478,10 @@ _mesa_update_framebuffer(GLcontext *ctx)
    GLuint output;
 
    /* Completeness only matters for user-created framebuffers */
-   if (fb->Name != 0)
+   if (fb->Name != 0) {
       _mesa_test_framebuffer_completeness(ctx, fb);
+      _mesa_update_framebuffer_visual(fb);
+   }
 
    /*
     * Update the list of drawing renderbuffer pointers.
