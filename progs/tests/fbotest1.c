@@ -71,7 +71,9 @@ Display( void )
 static void
 Reshape( int width, int height )
 {
+#if 0
    float ar = (float) width / (float) height;
+#endif
    glViewport( 0, 0, width, height );
    glMatrixMode( GL_PROJECTION );
    glLoadIdentity();
@@ -117,14 +119,14 @@ Init( void )
 
    glGenFramebuffersEXT(1, &MyFB);
    assert(MyFB);
-   assert(glIsFramebufferEXT(MyFB));
+   assert(!glIsFramebufferEXT(MyFB));
    glDeleteFramebuffersEXT(1, &MyFB);
    assert(!glIsFramebufferEXT(MyFB));
    /* Note, continue to use MyFB below */
 
    glGenRenderbuffersEXT(1, &rb);
    assert(rb);
-   assert(glIsRenderbufferEXT(rb));
+   assert(!glIsRenderbufferEXT(rb));
    glDeleteRenderbuffersEXT(1, &rb);
    assert(!glIsRenderbufferEXT(rb));
    rb = 42; /* an arbitrary ID */
@@ -156,6 +158,12 @@ Init( void )
       glGetRenderbufferParameterivEXT(GL_RENDERBUFFER_EXT,
                                       GL_RENDERBUFFER_ALPHA_SIZE_EXT, &a);
       printf("renderbuffer RGBA sizes = %d %d %d %d\n", r, g, b, a);
+
+      glGetIntegerv(GL_RED_BITS, &r);
+      glGetIntegerv(GL_GREEN_BITS, &g);
+      glGetIntegerv(GL_BLUE_BITS, &b);
+      glGetIntegerv(GL_ALPHA_BITS, &a);
+      printf("Visual RGBA sizes = %d %d %d %d\n", r, g, b, a);
    }
 
    CheckError(__LINE__);
