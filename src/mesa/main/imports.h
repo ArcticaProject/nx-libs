@@ -1,8 +1,8 @@
 /*
  * Mesa 3-D graphics library
- * Version:  6.2
+ * Version:  6.4
  *
- * Copyright (C) 1999-2004  Brian Paul   All Rights Reserved.
+ * Copyright (C) 1999-2005  Brian Paul   All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -332,6 +332,7 @@ static INLINE int GET_FLOAT_BITS( float x )
  *** CEILF: ceiling of float
  *** FLOORF: floor of float
  *** FABSF: absolute value of float
+ *** EXPF: raise e to the value
  *** LDEXPF: multiply value by an integral power of two
  *** FREXPF: extract mantissa and exponent from value
  ***/
@@ -339,6 +340,7 @@ static INLINE int GET_FLOAT_BITS( float x )
 #define CEILF(x)   ((GLfloat) xf86ceil(x))
 #define FLOORF(x)  ((GLfloat) xf86floor(x))
 #define FABSF(x)   ((GLfloat) xf86fabs(x))
+#define EXPF(x)    ((GLfloat) xf86exp(x))
 #define LDEXPF(x,y)   ((GLfloat) xf86ldexp(x,y))
 #define FREXPF(x,y)   ((GLfloat) xf86frexp(x,y))
 #elif defined(__gnu_linux__)
@@ -346,12 +348,14 @@ static INLINE int GET_FLOAT_BITS( float x )
 #define CEILF(x)   ceilf(x)
 #define FLOORF(x)  floorf(x)
 #define FABSF(x)   fabsf(x)
+#define EXPF(x)    expf(x)
 #define LDEXPF(x,y)  ldexpf(x,y)
 #define FREXPF(x,y)  frexpf(x,y)
 #else
 #define CEILF(x)   ((GLfloat) ceil(x))
 #define FLOORF(x)  ((GLfloat) floor(x))
 #define FABSF(x)   ((GLfloat) fabs(x))
+#define EXPF(x)    ((GLfloat) exp(x))
 #define LDEXPF(x,y)  ((GLfloat) ldexp(x,y))
 #define FREXPF(x,y)  ((GLfloat) frexp(x,y))
 #endif
