@@ -1401,3 +1401,4 @@ Mesa Version History
 	- glReadPixels from a texture bound to a framebuffer object didn't work
 	- glIsRender/FramebufferEXT weren't totally correct
 	- fixed a number of point size attenuation/fade bugs
+	- fixed glFogCoord bug 4729
