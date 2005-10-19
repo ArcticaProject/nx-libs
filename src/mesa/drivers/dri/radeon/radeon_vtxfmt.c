@@ -1046,8 +1046,8 @@ static void free_funcs( struct dynfn *l )
    struct dynfn *f, *tmp;
    foreach_s (f, tmp, l) {
       remove_from_list( f );
-      ALIGN_FREE( f->code );
-      FREE( f );
+      _mesa_exec_free( f->code );
+      _mesa_free( f );
    }
 }
 

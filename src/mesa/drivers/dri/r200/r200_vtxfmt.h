@@ -57,10 +57,10 @@ do {							\
    char *start = (char *)&FUNC;				\
    char *end = (char *)&FUNC##_end;			\
    insert_at_head( &CACHE, dfn );			\
-   dfn->key[0] = key[0];					\
-   dfn->key[1] = key[1];					\
-   dfn->code = ALIGN_MALLOC( end - start, 16 );		\
-   memcpy (dfn->code, start, end - start);		\
+   dfn->key[0] = key[0];				\
+   dfn->key[1] = key[1];				\
+   dfn->code = _mesa_exec_malloc( end - start, 16 );	\
+   _mesa_memcpy(dfn->code, start, end - start);		\
 }							\
 while ( 0 )
 

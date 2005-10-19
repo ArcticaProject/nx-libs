@@ -22,6 +22,7 @@ MAIN_SOURCES = \
 	main/enable.c \
 	main/enums.c \
 	main/eval.c \
+	main/execmem.c \
 	main/extensions.c \
 	main/fbobject.c \
 	main/feedback.c \
@@ -37,6 +38,7 @@ MAIN_SOURCES = \
 	main/light.c \
 	main/lines.c \
 	main/matrix.c \
+	main/mm.c \
 	main/occlude.c \
 	main/pixel.c \
 	main/points.c \
