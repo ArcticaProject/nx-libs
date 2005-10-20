@@ -572,8 +572,7 @@ static swrast_line_func get_line_func( GLcontext *ctx )
    XMesaContext xmesa = XMESA_CONTEXT(ctx);
    SWcontext *swrast = SWRAST_CONTEXT(ctx);
    int depth = GET_VISUAL_DEPTH(xmesa->xm_visual);
-   struct xmesa_renderbuffer *xrb = (struct xmesa_renderbuffer *)
-      ctx->DrawBuffer->_ColorDrawBuffers[0][0];
+   GET_XRB(xrb);
 
    if ((ctx->DrawBuffer->_ColorDrawBufferMask[0]
         & (BUFFER_BIT_FRONT_LEFT | BUFFER_BIT_BACK_LEFT)) == 0)
