@@ -59,7 +59,7 @@ do {							\
    insert_at_head( &CACHE, dfn );			\
    dfn->key[0] = key[0];				\
    dfn->key[1] = key[1];				\
-   dfn->code = _mesa_exec_malloc( end - start, 16 );	\
+   dfn->code = _mesa_exec_malloc(end - start);		\
    _mesa_memcpy(dfn->code, start, end - start);		\
 }							\
 while ( 0 )
