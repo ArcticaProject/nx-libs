@@ -1,8 +1,8 @@
 /*
  * Mesa 3-D graphics library
- * Version:  6.1
+ * Version:  6.4
  *
- * Copyright (C) 1999-2004  Brian Paul   All Rights Reserved.
+ * Copyright (C) 1999-2005  Brian Paul   All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -1238,7 +1238,7 @@ Parse_PrintInstruction(struct parse_state *parseState,
    }
    else {
       /* File = 0 indicates no register to print */
-      inst->SrcReg[0].File = -1;
+      inst->SrcReg[0].File = PROGRAM_UNDEFINED;
    }
 
    inst->SrcReg[0].Swizzle = SWIZZLE_NOOP;
@@ -1260,10 +1260,10 @@ Parse_InstructionSequence(struct parse_state *parseState,
       GLubyte token[100];
 
       /* Initialize the instruction */
-      inst->SrcReg[0].File = (enum register_file) -1;
-      inst->SrcReg[1].File = (enum register_file) -1;
-      inst->SrcReg[2].File = (enum register_file) -1;
-      inst->DstReg.File = (enum register_file) -1;
+      inst->SrcReg[0].File = PROGRAM_UNDEFINED;
+      inst->SrcReg[1].File = PROGRAM_UNDEFINED;
+      inst->SrcReg[2].File = PROGRAM_UNDEFINED;
+      inst->DstReg.File = PROGRAM_UNDEFINED;
       inst->DstReg.CondSwizzle = SWIZZLE_NOOP;
       inst->Data = NULL;
 
@@ -1589,7 +1589,7 @@ PrintSrcReg(const struct fragment_program *program,
    }
    if (src->File == PROGRAM_NAMED_PARAM) {
       if (program->Parameters->Parameters[src->Index].Type == CONSTANT) {
-         printf("{%g, %g, %g, %g}",
+         _mesa_printf("{%g, %g, %g, %g}",
                 program->Parameters->ParameterValues[src->Index][0],
                 program->Parameters->ParameterValues[src->Index][1],
                 program->Parameters->ParameterValues[src->Index][2],
@@ -1598,7 +1598,7 @@ PrintSrcReg(const struct fragment_program *program,
       else {
          ASSERT(program->Parameters->Parameters[src->Index].Type
                 == NAMED_PARAMETER);
-         printf("%s", program->Parameters->Parameters[src->Index].Name);
+         _mesa_printf("%s", program->Parameters->Parameters[src->Index].Name);
       }
    }
    else if (src->File == PROGRAM_OUTPUT) {
