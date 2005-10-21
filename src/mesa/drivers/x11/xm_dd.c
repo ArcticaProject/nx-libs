@@ -564,6 +564,8 @@ xmesa_resize_buffers(GLcontext *ctx, GLframebuffer *buffer,
    xmesa_alloc_back_buffer(xmBuffer, width, height);
 
    _mesa_resize_framebuffer(ctx, buffer, width, height);
+
+   ctx->NewState |= _NEW_BUFFERS;  /* to update scissor / window bounds */
 }
 
 
@@ -1111,18 +1113,10 @@ xmesa_viewport(GLcontext *ctx, GLint x, GLint y, GLsizei w, GLsizei h)
    struct gl_framebuffer *fb = ctx->WinSysDrawBuffer;
    GLuint newWidth, newHeight;
 
-   /*
-   printf("%s before %d x %d\n", __FUNCTION__, fb->Width, fb->Height);
-   */
-
    get_buffer_size(fb, &newWidth, &newHeight);
    if (newWidth != fb->Width || newHeight != fb->Height) {
       xmesa_resize_buffers(ctx, fb, newWidth, newHeight);
-      ctx->NewState |= _NEW_BUFFERS;  /* to update scissor / window bounds */
    }
-   /*
-   printf("%s after %d x %d\n", __FUNCTION__, fb->Width, fb->Height);
-   */
 #else
    /* This also works: */
    _mesa_ResizeBuffersMESA();

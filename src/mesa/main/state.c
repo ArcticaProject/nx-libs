@@ -1,6 +1,6 @@
 /*
  * Mesa 3-D graphics library
- * Version:  6.3
+ * Version:  6.4
  *
  * Copyright (C) 1999-2005  Brian Paul   All Rights Reserved.
  *
@@ -984,7 +984,7 @@ _mesa_update_state( GLcontext *ctx )
    if (new_state & (_NEW_BUFFERS | _NEW_COLOR | _NEW_PIXEL))
       _mesa_update_framebuffer(ctx);
 
-   if (new_state & (_NEW_SCISSOR|_NEW_BUFFERS))
+   if (new_state & (_NEW_SCISSOR | _NEW_BUFFERS | _NEW_VIEWPORT))
       _mesa_update_draw_buffer_bounds( ctx );
 
    if (new_state & _NEW_POINT)
