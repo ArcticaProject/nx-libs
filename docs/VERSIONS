@@ -1403,3 +1403,4 @@ Mesa Version History
 	- fixed a number of point size attenuation/fade bugs
 	- fixed glFogCoord bug 4729
 	- GLX encoding for transpose matrix functions was broken
+	- fixed broken fragment program KIL and SWZ instructions
