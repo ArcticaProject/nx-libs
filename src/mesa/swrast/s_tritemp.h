@@ -1,8 +1,8 @@
 /*
  * Mesa 3-D graphics library
- * Version:  6.1
+ * Version:  6.4
  *
- * Copyright (C) 1999-2004  Brian Paul   All Rights Reserved.
+ * Copyright (C) 1999-2005  Brian Paul   All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -1178,7 +1178,10 @@ static void NAME(GLcontext *ctx, const SWvertex *v0,
                } /* span.end > 1 */
 
                /* This is where we actually generate fragments */
-               if (span.end > 0) {
+               /* XXX the test for span.y > 0 _shouldn't_ be needed but
+                * it fixes a problem on 64-bit Opterons (bug 4842).
+                */
+               if (span.end > 0 && span.y >= 0) {
                   RENDER_SPAN( span );
                }
 
