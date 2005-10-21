@@ -36,7 +36,7 @@
 
 
 
-#ifdef __linux__
+#if defined(__linux__) && !defined(XFree86Server)
 
 /*
  * Allocate a large block of memory which can hold code then dole it out
