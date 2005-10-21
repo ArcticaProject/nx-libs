@@ -11,6 +11,49 @@
 <H1>News</H1>
 
 
+<h2>October 21, 2005</h2>
+<p>
+Mesa 6.4 has been released.  This is stable, bug-fix release.
+</p>
+<pre>
+    New:
+	- Added a fast XOR line drawing function in Xlib driver
+	- Added support for GL_ARB_texture_mirrored_repeat to savage
+	  driver (supported only on Savage4 hardware).
+    Changes:
+	- Mesa now packaged in three parts: Library, Demos and GLUT
+    Bug fixes:
+	- GLX_X_RENDERABLE token wasn't accepted by glXChooseFBConfig
+	- Some files were present multiple times in the 6.3.2 tarballs
+	- r200_vtxtmp_x86.S file was missing from 6.3.2 tarball (bug 4207)
+	- glxgears_fbconfig demo didn't work (bug 4237)
+	- fixed bug when bilinear sampling 2d textures with borders
+	- glXCreatePbuffer() could segfault instead of returning 0 (bug 4235)
+	- fixed undefined frexp and rand in X.org libGLcore.a (bug 4242)
+	- fixed a few problems with proxy color tables (bug 4270)
+	- fixed precision problem in Z clearing (bug 4395)
+	- glBitmap, glDraw/CopyPixels mistakenly generated selection hits
+	- fixed potential segfault caused by reading pixels outside
+	  of renderbuffer bounds
+	- glGetTexLevelParameter didn't accept GL_TEXTURE_DEPTH_SIZE_ARB
+	- fixed memory corruption bug involving software alpha buffers
+	- glReadPixels clipped by window bounds was sometimes broken
+	- glDraw/CopyPixels of stencil data ignored the stencil write mask
+	- glReadPixels from a texture bound to a framebuffer object didn't work
+	- glIsRender/FramebufferEXT weren't totally correct
+	- fixed a number of point size attenuation/fade bugs
+	- fixed glFogCoord bug 4729
+	- GLX encoding for transpose matrix functions was broken
+	- fixed broken fragment program KIL and SWZ instructions
+</pre>
+<p>
+The MD5 checksums are:
+</p>
+<pre>
+TBD
+</pre>
+
+
 <h2>August 19, 2005</h2>
 <p>
 Mesa 6.3.2 has been released.
@@ -1051,6 +1094,6 @@ source code</a>.</p>
 
 
 <hr>
-$Id: news.html,v 3.24 2005/08/19 23:42:29 brianp Exp $
+$Id: news.html,v 3.24.2.1 2005/10/21 20:35:47 brianp Exp $
 </body>
 </html>
