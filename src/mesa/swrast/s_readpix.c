@@ -113,13 +113,8 @@ read_depth_pixels( GLcontext *ctx,
    GLint readWidth;
    GLboolean bias_or_scale;
 
-   if (!rb) {
-      /* no readbuffer - OK */
-      return;
-   }
-
    /* Error checking */
-   if (ctx->Visual.depthBits <= 0) {
+   if (ctx->Visual.depthBits <= 0 || !rb) {
       /* No depth buffer */
       _mesa_error( ctx, GL_INVALID_OPERATION, "glReadPixels" );
       return;
@@ -198,11 +193,6 @@ read_stencil_pixels( GLcontext *ctx,
       = ctx->ReadBuffer->Attachment[BUFFER_STENCIL].Renderbuffer;
    GLint j, readWidth;
 
-   if (!rb) {
-      /* no readbuffer - OK */
-      return;
-   }
-
    if (type != GL_BYTE &&
        type != GL_UNSIGNED_BYTE &&
        type != GL_SHORT &&
@@ -215,7 +205,7 @@ read_stencil_pixels( GLcontext *ctx,
       return;
    }
 
-   if (ctx->Visual.stencilBits <= 0) {
+   if (ctx->Visual.stencilBits <= 0 || !rb) {
       /* No stencil buffer */
       _mesa_error( ctx, GL_INVALID_OPERATION, "glReadPixels" );
       return;
@@ -328,9 +318,6 @@ read_rgba_pixels( GLcontext *ctx,
                   const struct gl_pixelstore_attrib *packing )
 {
    struct gl_renderbuffer *rb = ctx->ReadBuffer->_ColorReadBuffer;
-   /*
-   SWcontext *swrast = SWRAST_CONTEXT(ctx);
-   */
    GLint readWidth;
 
    if (!rb) {
