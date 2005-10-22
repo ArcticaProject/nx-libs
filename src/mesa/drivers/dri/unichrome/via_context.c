@@ -587,7 +587,7 @@ viaDestroyContext(__DRIcontextPrivate *driContextPriv)
     }
 
     if (vmesa) {
-        viaWaitIdle(vmesa);
+        viaWaitIdle(vmesa, GL_FALSE);
 	if (vmesa->doPageFlip) {
 	   LOCK_HARDWARE(vmesa);
 	   if (vmesa->pfCurrentOffset != 0) {
