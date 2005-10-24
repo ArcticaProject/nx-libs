@@ -1374,7 +1374,7 @@ Mesa Version History
 	- assorted DRI driver fixes
 
 
-6.4  October 21, 2005
+6.4  October 24, 2005
     New:
 	- Added a fast XOR line drawing function in Xlib driver
 	- Added support for GL_ARB_texture_mirrored_repeat to savage
@@ -1404,3 +1404,4 @@ Mesa Version History
 	- fixed glFogCoord bug 4729
 	- GLX encoding for transpose matrix functions was broken
 	- fixed broken fragment program KIL and SWZ instructions
+	- fragment programs that wrote result.depth.z didn't work
