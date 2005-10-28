@@ -45,6 +45,7 @@
 
 #include "driverfuncs.h"
 #include "swrast/swrast.h"
+#include "tnl/tnl.h"
 
 
 
@@ -222,6 +223,7 @@ _mesa_init_driver_functions(struct dd_function_table *driver)
    driver->NotifySaveBegin = NULL;
    driver->LightingSpaceChange = NULL;
    driver->MakeCurrent = NULL;
+   driver->ProgramStringNotify = _tnl_program_string;
 
    /* display list */
    driver->NewList = NULL;
