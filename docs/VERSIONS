@@ -1414,3 +1414,5 @@ Mesa Version History
 	- 
     Bug fixes:
 	- redefining a vertex program string didn't take effect in TNL module
+	- fixed occasional segfault upon vertex/fragment parsing error
+	- vertex program LIT instruction didn't handle 0^0=1 correctly
