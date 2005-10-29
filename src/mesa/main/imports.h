@@ -1,6 +1,6 @@
 /*
  * Mesa 3-D graphics library
- * Version:  6.4
+ * Version:  6.4.1
  *
  * Copyright (C) 1999-2005  Brian Paul   All Rights Reserved.
  *
@@ -332,6 +332,7 @@ static INLINE int GET_FLOAT_BITS( float x )
  *** CEILF: ceiling of float
  *** FLOORF: floor of float
  *** FABSF: absolute value of float
+ *** LOGF: the natural logarithm (base e) of the value
  *** EXPF: raise e to the value
  *** LDEXPF: multiply value by an integral power of two
  *** FREXPF: extract mantissa and exponent from value
@@ -340,6 +341,7 @@ static INLINE int GET_FLOAT_BITS( float x )
 #define CEILF(x)   ((GLfloat) xf86ceil(x))
 #define FLOORF(x)  ((GLfloat) xf86floor(x))
 #define FABSF(x)   ((GLfloat) xf86fabs(x))
+#define LOGF(x)    ((GLfloat) xf86log(x))
 #define EXPF(x)    ((GLfloat) xf86exp(x))
 #define LDEXPF(x,y)   ((GLfloat) xf86ldexp(x,y))
 #define FREXPF(x,y)   ((GLfloat) xf86frexp(x,y))
@@ -348,6 +350,7 @@ static INLINE int GET_FLOAT_BITS( float x )
 #define CEILF(x)   ceilf(x)
 #define FLOORF(x)  floorf(x)
 #define FABSF(x)   fabsf(x)
+#define LOGF(x)    logf(x)
 #define EXPF(x)    expf(x)
 #define LDEXPF(x,y)  ldexpf(x,y)
 #define FREXPF(x,y)  frexpf(x,y)
@@ -355,6 +358,7 @@ static INLINE int GET_FLOAT_BITS( float x )
 #define CEILF(x)   ((GLfloat) ceil(x))
 #define FLOORF(x)  ((GLfloat) floor(x))
 #define FABSF(x)   ((GLfloat) fabs(x))
+#define LOGF(x)    ((GLfloat) log(x))
 #define EXPF(x)    ((GLfloat) exp(x))
 #define LDEXPF(x,y)  ((GLfloat) ldexp(x,y))
 #define FREXPF(x,y)  ((GLfloat) frexp(x,y))
