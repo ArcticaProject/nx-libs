@@ -51,8 +51,8 @@ fast_draw_pixels(GLcontext *ctx, GLint x, GLint y,
                  const struct gl_pixelstore_attrib *unpack,
                  const GLvoid *pixels)
 {
-   struct gl_renderbuffer *rb = ctx->DrawBuffer->_ColorDrawBuffers[0][0];
    SWcontext *swrast = SWRAST_CONTEXT(ctx);
+   struct gl_renderbuffer *rb = ctx->DrawBuffer->_ColorDrawBuffers[0][0];
    struct sw_span span;
 
    INIT_SPAN(span, GL_BITMAP, 0, 0, SPAN_RGBA);
@@ -66,7 +66,7 @@ fast_draw_pixels(GLcontext *ctx, GLint x, GLint y,
 
    if (ctx->Depth.Test)
       _swrast_span_default_z(ctx, &span);
-   if (ctx->Fog.Enabled)
+   if (swrast->_FogEnabled)
       _swrast_span_default_fog(ctx, &span);
    if (ctx->Texture._EnabledCoordUnits)
       _swrast_span_default_texcoords(ctx, &span);
@@ -457,6 +457,7 @@ draw_index_pixels( GLcontext *ctx, GLint x, GLint y,
                    const struct gl_pixelstore_attrib *unpack,
                    const GLvoid *pixels )
 {
+   SWcontext *swrast = SWRAST_CONTEXT(ctx);
    const GLboolean zoom = ctx->Pixel.ZoomX!=1.0 || ctx->Pixel.ZoomY!=1.0;
    GLint row, skipPixels;
    struct sw_span span;
@@ -465,7 +466,7 @@ draw_index_pixels( GLcontext *ctx, GLint x, GLint y,
 
    if (ctx->Depth.Test)
       _swrast_span_default_z(ctx, &span);
-   if (ctx->Fog.Enabled)
+   if (swrast->_FogEnabled)
       _swrast_span_default_fog(ctx, &span);
 
    /*
@@ -583,6 +584,7 @@ draw_depth_pixels( GLcontext *ctx, GLint x, GLint y,
                    const struct gl_pixelstore_attrib *unpack,
                    const GLvoid *pixels )
 {
+   SWcontext *swrast = SWRAST_CONTEXT(ctx);
    const GLboolean bias_or_scale = ctx->Pixel.DepthBias!=0.0 || ctx->Pixel.DepthScale!=1.0;
    const GLboolean zoom = ctx->Pixel.ZoomX != 1.0 || ctx->Pixel.ZoomY != 1.0;
    const GLint desty = y;
@@ -603,7 +605,7 @@ draw_depth_pixels( GLcontext *ctx, GLint x, GLint y,
 
    _swrast_span_default_color(ctx, &span);
 
-   if (ctx->Fog.Enabled)
+   if (swrast->_FogEnabled)
       _swrast_span_default_fog(ctx, &span);
    if (ctx->Texture._EnabledCoordUnits)
       _swrast_span_default_texcoords(ctx, &span);
@@ -718,6 +720,7 @@ draw_rgba_pixels( GLcontext *ctx, GLint x, GLint y,
                   const struct gl_pixelstore_attrib *unpack,
                   const GLvoid *pixels )
 {
+   SWcontext *swrast = SWRAST_CONTEXT(ctx);
    struct gl_renderbuffer *rb = NULL; /* only used for quickDraw path */
    const GLboolean zoom = ctx->Pixel.ZoomX!=1.0 || ctx->Pixel.ZoomY!=1.0;
    const GLint desty = y;
@@ -739,7 +742,7 @@ draw_rgba_pixels( GLcontext *ctx, GLint x, GLint y,
 
    if (ctx->Depth.Test)
       _swrast_span_default_z(ctx, &span);
-   if (ctx->Fog.Enabled)
+   if (swrast->_FogEnabled)
       _swrast_span_default_fog(ctx, &span);
    if (ctx->Texture._EnabledCoordUnits)
       _swrast_span_default_texcoords(ctx, &span);
