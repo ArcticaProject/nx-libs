@@ -206,6 +206,7 @@ sisCreateBuffer( __DRIscreenPrivate *driScrnPriv,
                  GLboolean isPixmap )
 {
    sisScreenPtr screen = (sisScreenPtr) driScrnPriv->private;
+   struct gl_framebuffer *fb;
 
    if (isPixmap)
       return GL_FALSE; /* not implemented */
@@ -218,7 +219,7 @@ sisCreateBuffer( __DRIscreenPrivate *driScrnPriv,
 				 mesaVis->accumRedBits > 0,
 				 mesaVis->alphaBits > 0 ); /* XXX */
 #else
-      struct gl_framebuffer *fb = _mesa_create_framebuffer(mesaVis);
+      fb = _mesa_create_framebuffer(mesaVis);
 
       /* XXX double-check the Offset/Pitch parameters! */
       {
