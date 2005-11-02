@@ -1417,3 +1417,5 @@ Mesa Version History
 	- fixed occasional segfault upon vertex/fragment parsing error
 	- vertex program LIT instruction didn't handle 0^0=1 correctly
 	- fragment program fog option didn't work with glDrawPixels, glBitmap
+	- USE_MGL_NAMESPACE didn't work for x86-64
+	- OSMesa demos were missing from previous release tarballs
