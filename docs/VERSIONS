@@ -1419,3 +1419,4 @@ Mesa Version History
 	- fragment program fog option didn't work with glDrawPixels, glBitmap
 	- USE_MGL_NAMESPACE didn't work for x86-64
 	- OSMesa demos were missing from previous release tarballs
+	- fixed problem with float->ushort conversion in glClear (bug 4992)
