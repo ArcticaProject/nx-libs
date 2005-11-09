@@ -1420,3 +1420,4 @@ Mesa Version History
 	- USE_MGL_NAMESPACE didn't work for x86-64
 	- OSMesa demos were missing from previous release tarballs
 	- fixed problem with float->ushort conversion in glClear (bug 4992)
+	- popping of GL_EYE_PLANE texgen state was broken (bug 4996)
