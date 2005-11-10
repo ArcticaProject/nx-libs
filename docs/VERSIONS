@@ -1421,3 +1421,4 @@ Mesa Version History
 	- OSMesa demos were missing from previous release tarballs
 	- fixed problem with float->ushort conversion in glClear (bug 4992)
 	- popping of GL_EYE_PLANE texgen state was broken (bug 4996)
+	- popping of GL_SPOT_DIRECTION light state was broken (bug 5005)
