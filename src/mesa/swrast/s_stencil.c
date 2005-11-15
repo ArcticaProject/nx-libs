@@ -1,6 +1,6 @@
 /*
  * Mesa 3-D graphics library
- * Version:  6.4
+ * Version:  6.4.1
  *
  * Copyright (C) 1999-2005  Brian Paul   All Rights Reserved.
  *
@@ -440,6 +440,10 @@ stencil_and_ztest_span(GLcontext *ctx, struct sw_span *span, GLuint face)
    if (do_stencil_test( ctx, face, n, stencil, mask ) == GL_FALSE) {
       /* all fragments failed the stencil test, we're done. */
       span->writeAll = GL_FALSE;
+      if (!rb->GetPointer(ctx, rb, 0, 0)) {
+         /* put updated stencil values into buffer */
+         rb->PutRow(ctx, rb, n, x, y, stencil, NULL);
+      }
       return GL_FALSE;
    }
 
@@ -497,7 +501,7 @@ stencil_and_ztest_span(GLcontext *ctx, struct sw_span *span, GLuint face)
     * Write updated stencil values back into hardware stencil buffer.
     */
    if (!rb->GetPointer(ctx, rb, 0, 0)) {
-      rb->PutRow(ctx, rb, n, x, y, stencil, mask);
+      rb->PutRow(ctx, rb, n, x, y, stencil, NULL);
    }
    
    span->writeAll = GL_FALSE;
