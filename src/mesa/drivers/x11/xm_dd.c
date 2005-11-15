@@ -565,7 +565,8 @@ xmesa_resize_buffers(GLcontext *ctx, GLframebuffer *buffer,
 
    _mesa_resize_framebuffer(ctx, buffer, width, height);
 
-   ctx->NewState |= _NEW_BUFFERS;  /* to update scissor / window bounds */
+   if (ctx)
+      ctx->NewState |= _NEW_BUFFERS;  /* to update scissor / window bounds */
 }
 
 
