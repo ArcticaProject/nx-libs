@@ -1,6 +1,6 @@
 /*
  * Mesa 3-D graphics library
- * Version:  6.4
+ * Version:  6.4.1
  *
  * Copyright (C) 1999-2005  Brian Paul   All Rights Reserved.
  *
@@ -114,7 +114,7 @@ read_depth_pixels( GLcontext *ctx,
    GLboolean bias_or_scale;
 
    /* Error checking */
-   if (ctx->Visual.depthBits <= 0 || !rb) {
+   if (ctx->ReadBuffer->Visual.depthBits <= 0 || !rb) {
       /* No depth buffer */
       _mesa_error( ctx, GL_INVALID_OPERATION, "glReadPixels" );
       return;
@@ -136,7 +136,7 @@ read_depth_pixels( GLcontext *ctx,
 
    bias_or_scale = ctx->Pixel.DepthBias!=0.0 || ctx->Pixel.DepthScale!=1.0;
 
-   if (type==GL_UNSIGNED_SHORT && ctx->Visual.depthBits == 16
+   if (type==GL_UNSIGNED_SHORT && ctx->ReadBuffer->Visual.depthBits == 16
        && !bias_or_scale && !packing->SwapBytes) {
       /* Special case: directly read 16-bit unsigned depth values. */
       GLint j;
@@ -150,7 +150,7 @@ read_depth_pixels( GLcontext *ctx,
             dst[i] = depth[i];
       }
    }
-   else if (type==GL_UNSIGNED_INT && ctx->Visual.depthBits == 32
+   else if (type==GL_UNSIGNED_INT && ctx->ReadBuffer->Visual.depthBits == 32
             && !bias_or_scale && !packing->SwapBytes) {
       /* Special case: directly read 32-bit unsigned depth values. */
       GLint j;
@@ -205,7 +205,7 @@ read_stencil_pixels( GLcontext *ctx,
       return;
    }
 
-   if (ctx->Visual.stencilBits <= 0 || !rb) {
+   if (ctx->ReadBuffer->Visual.stencilBits <= 0 || !rb) {
       /* No stencil buffer */
       _mesa_error( ctx, GL_INVALID_OPERATION, "glReadPixels" );
       return;
