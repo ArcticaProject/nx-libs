@@ -32,7 +32,7 @@
 
 /*
  * Mesa 3-D graphics library
- * Version:  6.3
+ * Version:  6.4.1
  *
  * Copyright (C) 1999-2005  Brian Paul   All Rights Reserved.
  *
@@ -984,6 +984,9 @@ _mesa_error( GLcontext *ctx, GLenum error, const char *fmtString, ... )
 	    break;
          case GL_TABLE_TOO_LARGE:
             errstr = "GL_TABLE_TOO_LARGE";
+            break;
+         case GL_INVALID_FRAMEBUFFER_OPERATION_EXT:
+            errstr = "GL_INVALID_FRAMEBUFFER_OPERATION";
             break;
 	 default:
 	    errstr = "unknown";
