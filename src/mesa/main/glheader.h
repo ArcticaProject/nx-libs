@@ -20,7 +20,7 @@
 
 /*
  * Mesa 3-D graphics library
- * Version:  6.3
+ * Version:  6.4.1
  *
  * Copyright (C) 1999-2005  Brian Paul   All Rights Reserved.
  *
@@ -69,18 +69,16 @@
 #include <float.h>
 #include <stdarg.h>
 
-
 /* Get typedefs for uintptr_t and friends */
-#if defined(_WIN32) && !defined(__MINGW32__)
-#include <BaseTsd.h>
-#if _MSC_VER == 1200
-typedef UINT_PTR uintptr_t;
-#endif 
-#if defined(__MINGW32__)
-#include <stdint.h>
-#endif
+#if defined(__MINGW32__) || defined(__NetBSD__)
+#  include <stdint.h>
+#elif defined(_WIN32)
+#  include <BaseTsd.h>
+#  if _MSC_VER == 1200
+     typedef UINT_PTR uintptr_t;
+#  endif 
 #else
-#include <inttypes.h>
+#  include <inttypes.h>
 #endif
 
 #if defined(_WIN32) && !defined(__WIN32__) && !defined(__CYGWIN__) && !defined(BUILD_FOR_SNAP)
