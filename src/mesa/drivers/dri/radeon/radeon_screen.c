@@ -375,13 +375,20 @@ radeonScreenPtr radeonCreateScreen( __DRIscreenPrivate *sPriv )
    screen->depthHasSurface = ((sPriv->ddxMajor > 4) &&
       (screen->chipset & RADEON_CHIPSET_TCL));
 
-   screen->texOffset[RADEON_LOCAL_TEX_HEAP] = dri_priv->textureOffset
-				       + screen->fbLocation;
-   screen->texSize[RADEON_LOCAL_TEX_HEAP] = dri_priv->textureSize;
-   screen->logTexGranularity[RADEON_LOCAL_TEX_HEAP] =
-      dri_priv->log2TexGran;
+   if ( dri_priv->textureSize == 0 ) {
+      screen->texOffset[RADEON_LOCAL_TEX_HEAP] = screen->gart_texture_offset;
+      screen->texSize[RADEON_LOCAL_TEX_HEAP] = dri_priv->gartTexMapSize;
+      screen->logTexGranularity[RADEON_LOCAL_TEX_HEAP] =
+	 dri_priv->log2GARTTexGran;
+   } else {
+      screen->texOffset[RADEON_LOCAL_TEX_HEAP] = dri_priv->textureOffset
+				               + screen->fbLocation;
+      screen->texSize[RADEON_LOCAL_TEX_HEAP] = dri_priv->textureSize;
+      screen->logTexGranularity[RADEON_LOCAL_TEX_HEAP] =
+	 dri_priv->log2TexGran;
+   }
 
-   if ( !screen->gartTextures.map
+   if ( !screen->gartTextures.map || dri_priv->textureSize == 0
 	|| getenv( "RADEON_GARTTEXTURING_FORCE_DISABLE" ) ) {
       screen->numTexHeaps = RADEON_NR_TEX_HEAPS - 1;
       screen->texOffset[RADEON_GART_TEX_HEAP] = 0;

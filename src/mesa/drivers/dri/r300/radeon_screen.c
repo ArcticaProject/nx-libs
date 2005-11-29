@@ -562,13 +562,20 @@ static radeonScreenPtr radeonCreateScreen(__DRIscreenPrivate * sPriv)
 	screen->depthOffset = dri_priv->depthOffset;
 	screen->depthPitch = dri_priv->depthPitch;
 
-	screen->texOffset[RADEON_LOCAL_TEX_HEAP] = dri_priv->textureOffset
-	    + screen->fbLocation;
-	screen->texSize[RADEON_LOCAL_TEX_HEAP] = dri_priv->textureSize;
-	screen->logTexGranularity[RADEON_LOCAL_TEX_HEAP] =
-	    dri_priv->log2TexGran;
+	if ( dri_priv->textureSize == 0 ) {
+	    screen->texOffset[RADEON_LOCAL_TEX_HEAP] = screen->gart_texture_offset;
+	    screen->texSize[RADEON_GART_TEX_HEAP] = dri_priv->gartTexMapSize;
+	    screen->logTexGranularity[RADEON_GART_TEX_HEAP] =
+		dri_priv->log2GARTTexGran;
+	} else {
+	    screen->texOffset[RADEON_LOCAL_TEX_HEAP] = dri_priv->textureOffset
+		+ screen->fbLocation;
+	    screen->texSize[RADEON_LOCAL_TEX_HEAP] = dri_priv->textureSize;
+	    screen->logTexGranularity[RADEON_LOCAL_TEX_HEAP] =
+		dri_priv->log2TexGran;
+	}
 
-	if (!screen->gartTextures.map) {
+	if (!screen->gartTextures.map || dri_priv->textureSize == 0) {
 		screen->numTexHeaps = RADEON_NR_TEX_HEAPS - 1;
 		screen->texOffset[RADEON_GART_TEX_HEAP] = 0;
 		screen->texSize[RADEON_GART_TEX_HEAP] = 0;
