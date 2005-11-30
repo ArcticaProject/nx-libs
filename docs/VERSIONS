@@ -1407,11 +1407,7 @@ Mesa Version History
 	- fragment programs that wrote result.depth.z didn't work
 
 
-6.4.1
-    New:
-	- 
-    Changes:
-	- 
+6.4.1  November 30, 2005
     Bug fixes:
 	- redefining a vertex program string didn't take effect in TNL module
 	- fixed occasional segfault upon vertex/fragment parsing error

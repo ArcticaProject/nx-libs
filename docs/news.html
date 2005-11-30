@@ -11,6 +11,35 @@
 <H1>News</H1>
 
 
+<h2>November 29, 2005</h2>
+<p>
+Mesa 6.4.1 has been released.  This is a stable, bug-fix release.
+</p>
+<pre>
+    Bug fixes:
+	- redefining a vertex program string didn't take effect in TNL module
+	- fixed occasional segfault upon vertex/fragment parsing error
+	- vertex program LIT instruction didn't handle 0^0=1 correctly
+	- fragment program fog option didn't work with glDrawPixels, glBitmap
+	- USE_MGL_NAMESPACE didn't work for x86-64
+	- OSMesa demos were missing from previous release tarballs
+	- fixed problem with float->ushort conversion in glClear (bug 4992)
+	- popping of GL_EYE_PLANE texgen state was broken (bug 4996)
+	- popping of GL_SPOT_DIRECTION light state was broken (bug 5005)
+	- fixed occasional triangle color interpolation problem on VMS
+	- work around invalid free() call (bug 5131)
+	- fixed BSD X server compilation problem by including stdint.h
+</pre>
+<p>
+The MD5 checksums are:
+</p>
+<pre>
+TBD
+</pre>
+
+
+
+
 <h2>October 24, 2005</h2>
 <p>
 Mesa 6.4 has been released.  This is a stable, bug-fix release.
@@ -1102,6 +1131,6 @@ source code</a>.</p>
 
 
 <hr>
-$Id: news.html,v 3.24.2.3 2005/10/28 14:35:40 brianp Exp $
+$Id: news.html,v 3.24.2.4 2005/11/30 01:15:50 brianp Exp $
 </body>
 </html>
