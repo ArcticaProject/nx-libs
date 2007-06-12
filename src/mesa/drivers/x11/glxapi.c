@@ -141,7 +141,7 @@ static void
 SetCurrentContext(GLXContext c)
 {
 #if defined(GLX_USE_TLS)
-   CurrentContext = context;
+   CurrentContext = c;
 #elif defined(THREADS)
    _glthread_SetTSD(&ContextTSD, c);
 #else
