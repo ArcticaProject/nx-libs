@@ -104,6 +104,10 @@ do
 	    # this is a special case (see bugzilla 10876)
 	    DEPS="$DEPS $1"
 	    ;;
+	'-pthread')
+	    # for FreeBSD
+	    DEPS="$DEPS -pthread"
+	    ;;
 	'-cplusplus')
 	    CPLUSPLUS=1
 	    ;;
