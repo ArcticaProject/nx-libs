@@ -498,31 +498,13 @@
 				RelativePath="..\..\..\..\src\mesa\main\stencil.c">
 			</File>
 			<File
-				RelativePath="..\..\..\..\src\mesa\tnl\t_array_api.c">
-			</File>
-			<File
-				RelativePath="..\..\..\..\src\mesa\tnl\t_array_import.c">
+				RelativePath="..\..\..\..\src\mesa\tnl\t_draw.c">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\mesa\tnl\t_context.c">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\mesa\tnl\t_pipeline.c">
-			</File>
-			<File
-				RelativePath="..\..\..\..\src\mesa\tnl\t_save_api.c">
-			</File>
-			<File
-				RelativePath="..\..\..\..\src\mesa\tnl\t_save_loopback.c">
-			</File>
-			<File
-				RelativePath="..\..\..\..\src\mesa\tnl\t_save_playback.c">
-			</File>
-			<File
-				RelativePath="..\..\..\..\src\mesa\tnl\t_vb_arbprogram.c">
-			</File>
-			<File
-				RelativePath="..\..\..\..\src\mesa\tnl\t_vb_arbshader.c">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\mesa\tnl\t_vb_cull.c">
@@ -562,18 +544,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\mesa\tnl\t_vp_build.c">
-			</File>
-			<File
-				RelativePath="..\..\..\..\src\mesa\tnl\t_vtx_api.c">
-			</File>
-			<File
-				RelativePath="..\..\..\..\src\mesa\tnl\t_vtx_eval.c">
-			</File>
-			<File
-				RelativePath="..\..\..\..\src\mesa\tnl\t_vtx_exec.c">
-			</File>
-			<File
-				RelativePath="..\..\..\..\src\mesa\tnl\t_vtx_generic.c">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\mesa\main\texcompress.c">
