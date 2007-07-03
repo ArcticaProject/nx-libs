@@ -39,8 +39,11 @@ Mesa 7.0.1 is a stable release with bug fixes since version 7.0.
 </ul>
 
 
-<h2>Internal code changes</h2>
+<h2>Change</h2>
 <ul>
+<li>The libOSMesa library version has been reverted to 6.5.3 (soname=6)
+in order to avoid application linking issues.  Otherwise, applications
+previously linked with libOSMesa.so.6 would no longer link with libOSMesa.so.7
 </ul>
 
 

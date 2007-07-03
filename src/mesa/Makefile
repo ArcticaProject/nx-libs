@@ -117,17 +117,16 @@ $(TOP)/$(LIB_DIR)/$(GL_LIB_NAME): $(STAND_ALONE_OBJECTS)
 		$(MKLIB_OPTIONS) $(GL_LIB_DEPS) $(STAND_ALONE_OBJECTS)
 
 # Make the OSMesa library
+# Note: version is kept at 6.5.3 to simplify app/linking issues
 $(TOP)/$(LIB_DIR)/$(OSMESA_LIB_NAME): $(OSMESA_DRIVER_OBJECTS) $(OSMESA16_OBJECTS)
 	@ if [ "${DRIVER_DIRS}" = "osmesa" ] ; then \
 		$(TOP)/bin/mklib -o $(OSMESA_LIB) -linker '$(CC)' \
-			-major $(MESA_MAJOR) \
-			-minor $(MESA_MINOR) -patch $(MESA_TINY) \
+			-major 6 -minor 5 -patch 3 \
 			-install $(TOP)/$(LIB_DIR) $(MKLIB_OPTIONS) \
 			$(OSMESA_LIB_DEPS) $(OSMESA16_OBJECTS) ; \
 	else \
 		$(TOP)/bin/mklib -o $(OSMESA_LIB) -linker '$(CC)' \
-			-major $(MESA_MAJOR) \
-			-minor $(MESA_MINOR) -patch $(GL_TINY) \
+			-major 6 -minor 5 -patch 3 \
 			-install $(TOP)/$(LIB_DIR) $(MKLIB_OPTIONS) \
 			$(OSMESA_LIB_DEPS) $(OSMESA_DRIVER_OBJECTS) ; \
 	fi
