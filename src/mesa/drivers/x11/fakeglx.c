@@ -1,8 +1,8 @@
 /*
  * Mesa 3-D graphics library
- * Version:  6.5.2
+ * Version:  7.0.1
  *
- * Copyright (C) 1999-2006  Brian Paul   All Rights Reserved.
+ * Copyright (C) 1999-2007  Brian Paul   All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -293,6 +293,11 @@ save_glx_visual( Display *dpy, XVisualInfo *vinfo,
             _mesa_warning(NULL, "Mesa: invalid value for MESA_BACK_BUFFER environment variable, using an XImage.");
          }
       }
+   }
+
+   if (stereoFlag) {
+      /* stereo not supported */
+      return NULL;
    }
 
    /* Comparing IDs uses less memory but sometimes fails. */
@@ -1078,7 +1083,7 @@ choose_visual( Display *dpy, int screen, const int *list, GLboolean fbConfig )
             else {
                stereo_flag = GL_TRUE;
             }
-            return NULL; /* stereo not supported */
+            break;
 	 case GLX_AUX_BUFFERS:
 	    parselist++;
             numAux = *parselist++;

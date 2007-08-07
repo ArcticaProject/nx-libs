@@ -1,5 +1,7 @@
 # Top-level Mesa makefile
 
+SHELL = /bin/bash
+
 TOP = .
 
 SUBDIRS = src progs
@@ -67,6 +69,7 @@ aix-64-static \
 aix-gcc \
 aix-static \
 beos \
+bluegene-osmesa \
 darwin \
 darwin-static \
 darwin-static-x86ppc \
@@ -151,6 +154,7 @@ sunos5-v8 \
 sunos5-v8-static \
 sunos5-v9 \
 sunos5-v9-static \
+sunos5-v9-cc-g++ \
 ultrix-gcc:
 	@ if [ -e configs/current ] ; then \
 		echo "Please run 'make realclean' before changing configs" ; \
@@ -288,17 +292,6 @@ MAIN_FILES = \
 	$(DIRECTORY)/vms/analyze_map.com				\
 	$(DIRECTORY)/vms/xlib.opt					\
 	$(DIRECTORY)/vms/xlib_share.opt					\
-	$(DIRECTORY)/windows/VC6/mesa/gdi/gdi.dsp			\
-	$(DIRECTORY)/windows/VC6/mesa/glu/*.txt				\
-	$(DIRECTORY)/windows/VC6/mesa/glu/glu.dsp			\
-	$(DIRECTORY)/windows/VC6/mesa/mesa.dsw				\
-	$(DIRECTORY)/windows/VC6/mesa/mesa/mesa.dsp			\
-	$(DIRECTORY)/windows/VC6/mesa/osmesa/osmesa.dsp			\
-	$(DIRECTORY)/windows/VC7/mesa/gdi/gdi.vcproj			\
-	$(DIRECTORY)/windows/VC7/mesa/glu/glu.vcproj			\
-	$(DIRECTORY)/windows/VC7/mesa/mesa.sln				\
-	$(DIRECTORY)/windows/VC7/mesa/mesa/mesa.vcproj			\
-	$(DIRECTORY)/windows/VC7/mesa/osmesa/osmesa.vcproj		\
 	$(DIRECTORY)/windows/VC8/mesa/mesa.sln				\
 	$(DIRECTORY)/windows/VC8/mesa/gdi/gdi.vcproj			\
 	$(DIRECTORY)/windows/VC8/mesa/glu/glu.vcproj			\
@@ -328,6 +321,7 @@ SGI_GLU_FILES = \
 	$(DIRECTORY)/src/glu/Makefile					\
 	$(DIRECTORY)/src/glu/descrip.mms				\
 	$(DIRECTORY)/src/glu/sgi/Makefile				\
+	$(DIRECTORY)/src/glu/sgi/Makefile.mgw				\
 	$(DIRECTORY)/src/glu/sgi/Makefile.win				\
 	$(DIRECTORY)/src/glu/sgi/Makefile.DJ				\
 	$(DIRECTORY)/src/glu/sgi/glu.def				\

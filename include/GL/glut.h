@@ -10,6 +10,10 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
+#if defined(__MINGW32__)
+#include <GL/mesa_wgl.h>
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -130,8 +134,9 @@ extern _CRTIMP void __cdecl exit(int);
 #		pragma message( "----: being multiply defined you should include WINDOWS.H priot to gl/glut.h" )
 #	endif
 #	define CALLBACK __stdcall
-typedef int (GLUTAPIENTRY *PROC)();
+
 #if !defined(__MINGW32__)
+	typedef int (GLUTAPIENTRY *PROC)();
 	typedef void *HGLRC;
 	typedef void *HDC;
 #endif
