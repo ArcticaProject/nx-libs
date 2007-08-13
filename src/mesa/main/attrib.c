@@ -349,6 +349,7 @@ _mesa_PushAttrib(GLbitfield mask)
 	 ctx->Texture.Unit[u].CurrentCubeMap->RefCount++;
 	 ctx->Texture.Unit[u].CurrentRect->RefCount++;
       }
+
       attr = MALLOC_STRUCT( gl_texture_attrib );
       MEMCPY( attr, &ctx->Texture, sizeof(struct gl_texture_attrib) );
       /* copy state of the currently bound texture objects */
