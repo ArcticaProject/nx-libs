@@ -154,7 +154,7 @@ _mesa_remove_attachment(GLcontext *ctx, struct gl_renderbuffer_attachment *att)
          /* tell driver we're done rendering to this texobj */
          ctx->Driver.FinishRenderTexture(ctx, att);
       }
-      _mesa_reference_texobj(&att->Texture, NULL); /* unbind */
+      MESA_REF_TEXOBJ(&att->Texture, NULL); /* unbind */
       ASSERT(!att->Texture);
    }
    if (att->Type == GL_TEXTURE || att->Type == GL_RENDERBUFFER_EXT) {
@@ -188,7 +188,7 @@ _mesa_set_texture_attachment(GLcontext *ctx,
       _mesa_remove_attachment(ctx, att);
       att->Type = GL_TEXTURE;
       assert(!att->Texture);
-      _mesa_reference_texobj(&att->Texture, texObj);
+      MESA_REF_TEXOBJ(&att->Texture, texObj);
    }
 
    /* always update these fields */

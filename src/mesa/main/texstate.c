@@ -119,15 +119,15 @@ _mesa_copy_texture_state( const GLcontext *src, GLcontext *dst )
       /* copy texture object bindings, not contents of texture objects */
       _mesa_lock_context_textures(dst);
 
-      _mesa_reference_texobj(&dst->Texture.Unit[i].Current1D,
+      MESA_REF_TEXOBJ(&dst->Texture.Unit[i].Current1D,
                              src->Texture.Unit[i].Current1D);
-      _mesa_reference_texobj(&dst->Texture.Unit[i].Current2D,
+      MESA_REF_TEXOBJ(&dst->Texture.Unit[i].Current2D,
                              src->Texture.Unit[i].Current2D);
-      _mesa_reference_texobj(&dst->Texture.Unit[i].Current3D,
+      MESA_REF_TEXOBJ(&dst->Texture.Unit[i].Current3D,
                              src->Texture.Unit[i].Current3D);
-      _mesa_reference_texobj(&dst->Texture.Unit[i].CurrentCubeMap,
+      MESA_REF_TEXOBJ(&dst->Texture.Unit[i].CurrentCubeMap,
                              src->Texture.Unit[i].CurrentCubeMap);
-      _mesa_reference_texobj(&dst->Texture.Unit[i].CurrentRect,
+      MESA_REF_TEXOBJ(&dst->Texture.Unit[i].CurrentRect,
                              src->Texture.Unit[i].CurrentRect);
 
       _mesa_unlock_context_textures(dst);
@@ -3065,11 +3065,11 @@ init_texture_unit( GLcontext *ctx, GLuint unit )
    ASSIGN_4V( texUnit->EyePlaneQ, 0.0, 0.0, 0.0, 0.0 );
 
    /* initialize current texture object ptrs to the shared default objects */
-   _mesa_reference_texobj(&texUnit->Current1D, ctx->Shared->Default1D);
-   _mesa_reference_texobj(&texUnit->Current2D, ctx->Shared->Default2D);
-   _mesa_reference_texobj(&texUnit->Current3D, ctx->Shared->Default3D);
-   _mesa_reference_texobj(&texUnit->CurrentCubeMap, ctx->Shared->DefaultCubeMap);
-   _mesa_reference_texobj(&texUnit->CurrentRect, ctx->Shared->DefaultRect);
+   MESA_REF_TEXOBJ(&texUnit->Current1D, ctx->Shared->Default1D);
+   MESA_REF_TEXOBJ(&texUnit->Current2D, ctx->Shared->Default2D);
+   MESA_REF_TEXOBJ(&texUnit->Current3D, ctx->Shared->Default3D);
+   MESA_REF_TEXOBJ(&texUnit->CurrentCubeMap, ctx->Shared->DefaultCubeMap);
+   MESA_REF_TEXOBJ(&texUnit->CurrentRect, ctx->Shared->DefaultRect);
 }
 
 

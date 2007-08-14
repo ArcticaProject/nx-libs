@@ -57,9 +57,13 @@ extern void
 _mesa_copy_texture_object( struct gl_texture_object *dest,
                            const struct gl_texture_object *src );
 
+#define MESA_REF_TEXOBJ(PTR, TEX) \
+   _mesa_reference_texobj(PTR, TEX, __FUNCTION__)
+
 extern void
 _mesa_reference_texobj(struct gl_texture_object **ptr,
-                       struct gl_texture_object *tex);
+                       struct gl_texture_object *tex,
+                       const char *where);
 
 extern void
 _mesa_test_texobj_completeness( const GLcontext *ctx,

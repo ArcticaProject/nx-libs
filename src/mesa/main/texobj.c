@@ -154,10 +154,9 @@ _mesa_delete_texture_object( GLcontext *ctx, struct gl_texture_object *texObj )
 {
    GLuint i, face;
 
-   /*
-   printf("TEX DELETE %p (%u)\n", (void*) texObj, texObj->Name);
-   */
-
+#ifdef DEBUG
+   printf("MESA TEX DELETE %p (%u)\n", (void*) texObj, texObj->Name);
+#endif
    (void) ctx;
 
    /* Set Target to an invalid value.  With some assertions elsewhere
@@ -260,7 +259,8 @@ valid_texture_object(const struct gl_texture_object *tex)
  */
 void
 _mesa_reference_texobj(struct gl_texture_object **ptr,
-                       struct gl_texture_object *tex)
+                       struct gl_texture_object *tex,
+                       const char *where)
 {
    assert(ptr);
    if (*ptr == tex) {
@@ -278,10 +278,12 @@ _mesa_reference_texobj(struct gl_texture_object **ptr,
       _glthread_LOCK_MUTEX(oldTex->Mutex);
       ASSERT(oldTex->RefCount > 0);
       oldTex->RefCount--;
-      /*
-      printf("TEX DECR %p (%u) to %d\n",
-             (void*) oldTex, oldTex->Name, oldTex->RefCount);
-      */
+
+#ifdef DEBUG
+      printf("MESA TEX REF DECR %p (%u) to %d from %s\n",
+             (void*) oldTex, oldTex->Name, oldTex->RefCount, where);
+#endif
+
       deleteFlag = (oldTex->RefCount == 0);
       _glthread_UNLOCK_MUTEX(oldTex->Mutex);
 
@@ -309,10 +311,12 @@ _mesa_reference_texobj(struct gl_texture_object **ptr,
       }
       else {
          tex->RefCount++;
-         /*
-           printf("TEX INCR %p (%u) to %d\n",
-           (void*) tex, tex->Name, tex->RefCount);
-         */
+
+#ifdef DEBUG
+         printf("MESA TEX REF INCR %p (%u) to %d from %s\n",
+                (void*) tex, tex->Name, tex->RefCount, where);
+#endif
+
          *ptr = tex;
       }
       _glthread_UNLOCK_MUTEX(tex->Mutex);
@@ -732,19 +736,19 @@ unbind_texobj_from_texunits(GLcontext *ctx, struct gl_texture_object *texObj)
    for (u = 0; u < MAX_TEXTURE_IMAGE_UNITS; u++) {
       struct gl_texture_unit *unit = &ctx->Texture.Unit[u];
       if (texObj == unit->Current1D) {
-         _mesa_reference_texobj(&unit->Current1D, ctx->Shared->Default1D);
+         MESA_REF_TEXOBJ(&unit->Current1D, ctx->Shared->Default1D);
       }
       else if (texObj == unit->Current2D) {
-         _mesa_reference_texobj(&unit->Current2D, ctx->Shared->Default2D);
+         MESA_REF_TEXOBJ(&unit->Current2D, ctx->Shared->Default2D);
       }
       else if (texObj == unit->Current3D) {
-         _mesa_reference_texobj(&unit->Current3D, ctx->Shared->Default3D);
+         MESA_REF_TEXOBJ(&unit->Current3D, ctx->Shared->Default3D);
       }
       else if (texObj == unit->CurrentCubeMap) {
-         _mesa_reference_texobj(&unit->CurrentCubeMap, ctx->Shared->DefaultCubeMap);
+         MESA_REF_TEXOBJ(&unit->CurrentCubeMap, ctx->Shared->DefaultCubeMap);
       }
       else if (texObj == unit->CurrentRect) {
-         _mesa_reference_texobj(&unit->CurrentRect, ctx->Shared->DefaultRect);
+         MESA_REF_TEXOBJ(&unit->CurrentRect, ctx->Shared->DefaultRect);
       }
    }
 }
@@ -804,10 +808,10 @@ _mesa_DeleteTextures( GLsizei n, const GLuint *textures)
             _mesa_HashRemove(ctx->Shared->TexObjects, delObj->Name);
             _glthread_UNLOCK_MUTEX(ctx->Shared->Mutex);
 
-            /* Unrefernce the texobj.  If refcount hits zero, the texture
+            /* Unreference the texobj.  If refcount hits zero, the texture
              * will be deleted.
              */
-            _mesa_reference_texobj(&delObj, NULL);
+            MESA_REF_TEXOBJ(&delObj, NULL);
          }
       }
    }
@@ -921,19 +925,19 @@ _mesa_BindTexture( GLenum target, GLuint texName )
     */
    switch (target) {
       case GL_TEXTURE_1D:
-         _mesa_reference_texobj(&texUnit->Current1D, newTexObj);
+         MESA_REF_TEXOBJ(&texUnit->Current1D, newTexObj);
          break;
       case GL_TEXTURE_2D:
-         _mesa_reference_texobj(&texUnit->Current2D, newTexObj);
+         MESA_REF_TEXOBJ(&texUnit->Current2D, newTexObj);
          break;
       case GL_TEXTURE_3D:
-         _mesa_reference_texobj(&texUnit->Current3D, newTexObj);
+         MESA_REF_TEXOBJ(&texUnit->Current3D, newTexObj);
          break;
       case GL_TEXTURE_CUBE_MAP_ARB:
-         _mesa_reference_texobj(&texUnit->CurrentCubeMap, newTexObj);
+         MESA_REF_TEXOBJ(&texUnit->CurrentCubeMap, newTexObj);
          break;
       case GL_TEXTURE_RECTANGLE_NV:
-         _mesa_reference_texobj(&texUnit->CurrentRect, newTexObj);
+         MESA_REF_TEXOBJ(&texUnit->CurrentRect, newTexObj);
          break;
       default:
          _mesa_problem(ctx, "bad target in BindTexture");

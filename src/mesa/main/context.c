@@ -561,6 +561,9 @@ delete_texture_cb(GLuint id, void *data, void *userData)
 {
    struct gl_texture_object *texObj = (struct gl_texture_object *) data;
    GLcontext *ctx = (GLcontext *) userData;
+#ifdef DEBUG
+   printf("MESA TEX DELETE %p (%u) from DestroyContext\n", texObj, texObj->Name);
+#endif
    ctx->Driver.DeleteTexture(ctx, texObj);
 }
 
