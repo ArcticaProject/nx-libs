@@ -165,6 +165,10 @@ void
 _mesa_destroy_framebuffer(struct gl_framebuffer *fb)
 {
    if (fb) {
+#ifdef DEBUG
+      printf("%lu: MESA DESTROY FRAMEBUFFER %u\n",
+             _glthread_GetID(), fb->Name);
+#endif
       _mesa_free_framebuffer_data(fb);
       _mesa_free(fb);
    }

@@ -185,10 +185,13 @@ _mesa_set_texture_attachment(GLcontext *ctx,
    }
    else {
       /* new attachment */
+      char s[100];
       _mesa_remove_attachment(ctx, att);
       att->Type = GL_TEXTURE;
       assert(!att->Texture);
-      MESA_REF_TEXOBJ(&att->Texture, texObj);
+      sprintf(s, "_mesa_set_texture_attachment(fb=%u tex=%u)\n",
+              fb->Name, texObj->Name);
+      _mesa_reference_texobj(&att->Texture, texObj, s);
    }
 
    /* always update these fields */
@@ -979,6 +982,7 @@ _mesa_BindFramebufferEXT(GLenum target, GLuint framebuffer)
 	    return;
 	 }
          _mesa_HashInsert(ctx->Shared->FrameBuffers, framebuffer, newFb);
+         ASSERT(newFb->RefCount == 1);
       }
    }
    else {
@@ -987,6 +991,10 @@ _mesa_BindFramebufferEXT(GLenum target, GLuint framebuffer)
        */
       newFb = ctx->WinSysDrawBuffer;
    }
+
+#ifdef DEBUG
+   printf("MESA BIND FRAMEBUFFER %u\n", newFb->Name);
+#endif
 
    ASSERT(newFb);
    ASSERT(newFb != &DummyFramebuffer);
@@ -1002,8 +1010,10 @@ _mesa_BindFramebufferEXT(GLenum target, GLuint framebuffer)
    if (bindDrawBuf) {
       /* check if old FB had any texture attachments */
       check_end_texture_render(ctx, ctx->DrawBuffer);
-      /* check if time to delete this framebuffer */
+
+      /* bind new drawing buffer */
       _mesa_reference_framebuffer(&ctx->DrawBuffer, newFb);
+
       if (newFb->Name != 0) {
          /* check if newly bound framebuffer has any texture attachments */
          check_begin_texture_render(ctx, newFb);
@@ -1035,6 +1045,10 @@ _mesa_DeleteFramebuffersEXT(GLsizei n, const GLuint *framebuffers)
 	 struct gl_framebuffer *fb;
 	 fb = _mesa_lookup_framebuffer(ctx, framebuffers[i]);
 	 if (fb) {
+#ifdef DEBUG
+            printf("%lu: MESA DELETE FRAMEBUFFER %u refcount = %d\n",
+                   _glthread_GetID(), fb->Name, fb->RefCount);
+#endif
             ASSERT(fb == &DummyFramebuffer || fb->Name == framebuffers[i]);
 
             /* check if deleting currently bound framebuffer object */
