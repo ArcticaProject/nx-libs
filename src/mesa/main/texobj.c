@@ -198,6 +198,7 @@ void
 _mesa_copy_texture_object( struct gl_texture_object *dest,
                            const struct gl_texture_object *src )
 {
+   dest->Target = src->Target;
    dest->Name = src->Name;
    dest->Priority = src->Priority;
    dest->BorderColor[0] = src->BorderColor[0];
