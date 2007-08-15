@@ -3109,12 +3109,22 @@ _mesa_init_texture(GLcontext *ctx)
 
 
 /**
- * Free dynamically-allocted texture data attached to the given context.
+ * Free dynamically-allocated texture data attached to the given context.
  */
 void
 _mesa_free_texture_data(GLcontext *ctx)
 {
-   GLuint i;
+   GLuint u;
+
+   /* unreference current textures */
+   for (u = 0; u < MAX_TEXTURE_IMAGE_UNITS; u++) {
+      struct gl_texture_unit *unit = ctx->Texture.Unit + u;
+      MESA_REF_TEXOBJ(&unit->Current1D, NULL);
+      MESA_REF_TEXOBJ(&unit->Current2D, NULL);
+      MESA_REF_TEXOBJ(&unit->Current3D, NULL);
+      MESA_REF_TEXOBJ(&unit->CurrentCubeMap, NULL);
+      MESA_REF_TEXOBJ(&unit->CurrentRect, NULL);
+   }
 
    /* Free proxy texture objects */
    (ctx->Driver.DeleteTexture)(ctx,  ctx->Texture.Proxy1D );
@@ -3123,8 +3133,8 @@ _mesa_free_texture_data(GLcontext *ctx)
    (ctx->Driver.DeleteTexture)(ctx,  ctx->Texture.ProxyCubeMap );
    (ctx->Driver.DeleteTexture)(ctx,  ctx->Texture.ProxyRect );
 
-   for (i = 0; i < MAX_TEXTURE_IMAGE_UNITS; i++)
-      _mesa_free_colortable_data( &ctx->Texture.Unit[i].ColorTable );
+   for (u = 0; u < MAX_TEXTURE_IMAGE_UNITS; u++)
+      _mesa_free_colortable_data( &ctx->Texture.Unit[u].ColorTable );
 
    _mesa_TexEnvProgramCacheDestroy( ctx );
 }

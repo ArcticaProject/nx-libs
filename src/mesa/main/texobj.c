@@ -155,7 +155,9 @@ _mesa_delete_texture_object( GLcontext *ctx, struct gl_texture_object *texObj )
    GLuint i, face;
 
 #ifdef DEBUG
-   printf("MESA TEX DELETE %p (%u)\n", (void*) texObj, texObj->Name);
+   printf("%lu: MESA TEX DELETE %p (%u) REF COUNT = %d\n",
+          _glthread_GetID(),
+          (void*) texObj, texObj->Name, texObj->RefCount);
 #endif
    (void) ctx;
 
@@ -280,7 +282,8 @@ _mesa_reference_texobj(struct gl_texture_object **ptr,
       oldTex->RefCount--;
 
 #ifdef DEBUG
-      printf("MESA TEX REF DECR %p (%u) to %d from %s\n",
+      printf("%lu: MESA TEX REF DECR %p (%u) to %d from %s\n",
+             _glthread_GetID(),
              (void*) oldTex, oldTex->Name, oldTex->RefCount, where);
 #endif
 
@@ -313,7 +316,8 @@ _mesa_reference_texobj(struct gl_texture_object **ptr,
          tex->RefCount++;
 
 #ifdef DEBUG
-         printf("MESA TEX REF INCR %p (%u) to %d from %s\n",
+         printf("%lu: MESA TEX REF INCR %p (%u) to %d from %s\n",
+                _glthread_GetID(),
                 (void*) tex, tex->Name, tex->RefCount, where);
 #endif
 

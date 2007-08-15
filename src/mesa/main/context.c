@@ -1194,7 +1194,8 @@ _mesa_free_context_data( GLcontext *ctx )
 
    if (ctx->AttribStackDepth > 0) {
 #ifdef DEBUG
-      printf("MESA: DESTROY CONTEXT WITH NON-EMPTRY ATTRIB STACK!\n");
+      printf("%lu: MESA: DESTROY CONTEXT WITH NON-EMPTRY ATTRIB STACK!\n",
+             _glthread_GetID());
 #endif
    }
 
@@ -1204,6 +1205,7 @@ _mesa_free_context_data( GLcontext *ctx )
    _mesa_unreference_framebuffer(&ctx->DrawBuffer);
    _mesa_unreference_framebuffer(&ctx->ReadBuffer);
 
+   _mesa_free_attrib_data(ctx);
    _mesa_free_lighting_data( ctx );
    _mesa_free_eval_data( ctx );
    _mesa_free_texture_data( ctx );

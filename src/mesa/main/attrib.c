@@ -343,7 +343,9 @@ _mesa_PushAttrib(GLbitfield mask)
        * inadvertantly get deleted.
        */
 #ifdef DEBUG
-      printf("MESA PUSH TEX ATTRIB, INCR REF COUNT BY %d\n", ctx->Const.MaxTextureUnits);
+      printf("%lu: MESA PUSH TEX ATTRIB, INCR REF COUNT BY %d\n",
+             _glthread_GetID(),
+             ctx->Const.MaxTextureUnits);
 #endif
 
       for (u = 0; u < ctx->Const.MaxTextureUnits; u++) {
@@ -798,7 +800,9 @@ pop_texture_group(GLcontext *ctx, const struct gl_texture_attrib *texAttrib)
     * inside the attribute state stack.
     */
 #ifdef DEBUG
-   printf("MESA POP TEX ATTRIB, DECR REF COUNT BY %d\n", ctx->Const.MaxTextureUnits);
+   printf("%lu: MESA POP TEX ATTRIB, DECR REF COUNT BY %d\n",
+          _glthread_GetID(),
+          ctx->Const.MaxTextureUnits);
 #endif
    for (u = 0; u < ctx->Const.MaxTextureUnits; u++) {
       ctx->Texture.Unit[u].Current1D->RefCount--;
@@ -1406,6 +1410,84 @@ _mesa_PopClientAttrib(void)
       FREE( attr );
       attr = next;
    }
+}
+
+
+static struct gl_texture_object *
+get_texobj(GLcontext *ctx, GLenum target, GLuint name)
+{
+   struct gl_texture_object *texObj;
+   if (name) {
+      texObj = _mesa_lookup_texture(ctx, name);
+   }
+   else {
+      switch (target) {
+      case GL_TEXTURE_1D:
+         texObj = ctx->Shared->Default1D;
+         break;
+      case GL_TEXTURE_2D:
+         texObj = ctx->Shared->Default2D;
+         break;
+      case GL_TEXTURE_3D:
+         texObj = ctx->Shared->Default3D;
+         break;
+      case GL_TEXTURE_CUBE_MAP_ARB:
+         texObj = ctx->Shared->DefaultCubeMap;
+         break;
+      case GL_TEXTURE_RECTANGLE_NV:
+         texObj = ctx->Shared->DefaultRect;
+         break;
+      default:
+         abort();
+      }
+   }
+   return texObj;
+}
+
+
+void
+_mesa_free_attrib_data(GLcontext *ctx)
+{
+#ifdef DEBUG
+   printf("%lu: MESA FREEING ATTRIB STACK DATA\n",
+          _glthread_GetID());
+#endif
+   while (ctx->AttribStackDepth > 0) {
+      struct gl_attrib_node *attr, *next;
+
+      ctx->AttribStackDepth--;
+      attr = ctx->AttribStack[ctx->AttribStackDepth];
+
+      while (attr) {
+         struct gl_texture_attrib *texAttrib
+            = (struct gl_texture_attrib *) attr->data;
+         GLuint u;
+
+         for (u = 0; u < ctx->Const.MaxTextureUnits; u++) {
+            struct gl_texture_unit *unit = &texAttrib->Unit[u];
+            struct gl_texture_object *texObj;
+            texObj = get_texobj(ctx, GL_TEXTURE_1D, unit->Saved1D.Name);
+            MESA_REF_TEXOBJ(&texObj, NULL);
+            texObj = get_texobj(ctx, GL_TEXTURE_2D, unit->Saved2D.Name);
+            MESA_REF_TEXOBJ(&texObj, NULL);
+            texObj = get_texobj(ctx, GL_TEXTURE_3D, unit->Saved3D.Name);
+            MESA_REF_TEXOBJ(&texObj, NULL);
+            texObj = get_texobj(ctx, GL_TEXTURE_CUBE_MAP, unit->SavedCubeMap.Name);
+            MESA_REF_TEXOBJ(&texObj, NULL);
+            texObj = get_texobj(ctx, GL_TEXTURE_RECTANGLE_NV, unit->SavedRect.Name);
+            MESA_REF_TEXOBJ(&texObj, NULL);
+         }
+
+         next = attr->next;
+         _mesa_free(attr->data);
+         _mesa_free(attr);
+         attr = next;
+      }
+   }
+#ifdef DEBUG
+   printf("%lu: MESA DONE FREEING ATTRIB STACK DATA\n",
+          _glthread_GetID());
+#endif
 }
 
 
