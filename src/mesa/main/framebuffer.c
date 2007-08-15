@@ -191,7 +191,9 @@ _mesa_free_framebuffer_data(struct gl_framebuffer *fb)
          _mesa_reference_renderbuffer(&att->Renderbuffer, NULL);
       }
       if (att->Texture) {
-         MESA_REF_TEXOBJ(&att->Texture, NULL);
+         char s[100];
+         sprintf(s, "_mesa_free_framebuffer_data (fb=%d)", fb->Name);
+         _mesa_reference_texobj(&att->Texture, NULL, s);
       }
       ASSERT(!att->Renderbuffer);
       ASSERT(!att->Texture);

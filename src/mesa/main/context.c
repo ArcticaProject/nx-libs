@@ -1192,6 +1192,10 @@ _mesa_free_context_data( GLcontext *ctx )
       _mesa_make_current(ctx, NULL, NULL);
    }
 
+#if DEBUG
+   printf("%lu: MESA: BEGIN DESTROY CONTEXT %p\n",
+          _glthread_GetID(), (void*) ctx);
+#endif
    if (ctx->AttribStackDepth > 0) {
 #ifdef DEBUG
       printf("%lu: MESA: DESTROY CONTEXT WITH NON-EMPTRY ATTRIB STACK!\n",
@@ -1242,6 +1246,11 @@ _mesa_free_context_data( GLcontext *ctx )
    if (ctx == _mesa_get_current_context()) {
       _mesa_make_current(NULL, NULL, NULL);
    }
+
+#if DEBUG
+   printf("%lu: MESA: END DESTROY CONTEXT %p\n",
+          _glthread_GetID(), (void*) ctx);
+#endif
 }
 
 
