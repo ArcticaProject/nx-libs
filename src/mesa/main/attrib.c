@@ -342,6 +342,10 @@ _mesa_PushAttrib(GLbitfield mask)
       /* Bump the texture object reference counts so that they don't
        * inadvertantly get deleted.
        */
+#ifdef DEBUG
+      printf("MESA PUSH TEX ATTRIB, INCR REF COUNT BY %d\n", ctx->Const.MaxTextureUnits);
+#endif
+
       for (u = 0; u < ctx->Const.MaxTextureUnits; u++) {
 	 ctx->Texture.Unit[u].Current1D->RefCount++;
 	 ctx->Texture.Unit[u].Current2D->RefCount++;
@@ -793,6 +797,9 @@ pop_texture_group(GLcontext *ctx, const struct gl_texture_attrib *texAttrib)
     * wouldn't inadvertantly get deleted while they were still referenced
     * inside the attribute state stack.
     */
+#ifdef DEBUG
+   printf("MESA POP TEX ATTRIB, DECR REF COUNT BY %d\n", ctx->Const.MaxTextureUnits);
+#endif
    for (u = 0; u < ctx->Const.MaxTextureUnits; u++) {
       ctx->Texture.Unit[u].Current1D->RefCount--;
       ctx->Texture.Unit[u].Current2D->RefCount--;
