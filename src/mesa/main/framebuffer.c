@@ -165,10 +165,6 @@ void
 _mesa_destroy_framebuffer(struct gl_framebuffer *fb)
 {
    if (fb) {
-#ifdef DEBUG
-      printf("%lu: MESA DESTROY FRAMEBUFFER %u\n",
-             _glthread_GetID(), fb->Name);
-#endif
       _mesa_free_framebuffer_data(fb);
       _mesa_free(fb);
    }
@@ -195,9 +191,7 @@ _mesa_free_framebuffer_data(struct gl_framebuffer *fb)
          _mesa_reference_renderbuffer(&att->Renderbuffer, NULL);
       }
       if (att->Texture) {
-         char s[100];
-         sprintf(s, "_mesa_free_framebuffer_data (fb=%d)", fb->Name);
-         _mesa_reference_texobj(&att->Texture, NULL, s);
+         _mesa_reference_texobj(&att->Texture, NULL);
       }
       ASSERT(!att->Renderbuffer);
       ASSERT(!att->Texture);

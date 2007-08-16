@@ -154,11 +154,6 @@ _mesa_delete_texture_object( GLcontext *ctx, struct gl_texture_object *texObj )
 {
    GLuint i, face;
 
-#ifdef DEBUG
-   printf("%lu: MESA TEX DELETE %p (%u) REF COUNT = %d\n",
-          _glthread_GetID(),
-          (void*) texObj, texObj->Name, texObj->RefCount);
-#endif
    (void) ctx;
 
    /* Set Target to an invalid value.  With some assertions elsewhere
@@ -262,8 +257,7 @@ valid_texture_object(const struct gl_texture_object *tex)
  */
 void
 _mesa_reference_texobj(struct gl_texture_object **ptr,
-                       struct gl_texture_object *tex,
-                       const char *where)
+                       struct gl_texture_object *tex)
 {
    assert(ptr);
    if (*ptr == tex) {
@@ -281,12 +275,6 @@ _mesa_reference_texobj(struct gl_texture_object **ptr,
       _glthread_LOCK_MUTEX(oldTex->Mutex);
       ASSERT(oldTex->RefCount > 0);
       oldTex->RefCount--;
-
-#ifdef DEBUG
-      printf("%lu: MESA TEX REF DECR %p (%u) to %d from %s\n",
-             _glthread_GetID(),
-             (void*) oldTex, oldTex->Name, oldTex->RefCount, where);
-#endif
 
       deleteFlag = (oldTex->RefCount == 0);
       _glthread_UNLOCK_MUTEX(oldTex->Mutex);
@@ -315,13 +303,6 @@ _mesa_reference_texobj(struct gl_texture_object **ptr,
       }
       else {
          tex->RefCount++;
-
-#ifdef DEBUG
-         printf("%lu: MESA TEX REF INCR %p (%u) to %d from %s\n",
-                _glthread_GetID(),
-                (void*) tex, tex->Name, tex->RefCount, where);
-#endif
-
          *ptr = tex;
       }
       _glthread_UNLOCK_MUTEX(tex->Mutex);
@@ -741,19 +722,19 @@ unbind_texobj_from_texunits(GLcontext *ctx, struct gl_texture_object *texObj)
    for (u = 0; u < MAX_TEXTURE_IMAGE_UNITS; u++) {
       struct gl_texture_unit *unit = &ctx->Texture.Unit[u];
       if (texObj == unit->Current1D) {
-         MESA_REF_TEXOBJ(&unit->Current1D, ctx->Shared->Default1D);
+         _mesa_reference_texobj(&unit->Current1D, ctx->Shared->Default1D);
       }
       else if (texObj == unit->Current2D) {
-         MESA_REF_TEXOBJ(&unit->Current2D, ctx->Shared->Default2D);
+         _mesa_reference_texobj(&unit->Current2D, ctx->Shared->Default2D);
       }
       else if (texObj == unit->Current3D) {
-         MESA_REF_TEXOBJ(&unit->Current3D, ctx->Shared->Default3D);
+         _mesa_reference_texobj(&unit->Current3D, ctx->Shared->Default3D);
       }
       else if (texObj == unit->CurrentCubeMap) {
-         MESA_REF_TEXOBJ(&unit->CurrentCubeMap, ctx->Shared->DefaultCubeMap);
+         _mesa_reference_texobj(&unit->CurrentCubeMap, ctx->Shared->DefaultCubeMap);
       }
       else if (texObj == unit->CurrentRect) {
-         MESA_REF_TEXOBJ(&unit->CurrentRect, ctx->Shared->DefaultRect);
+         _mesa_reference_texobj(&unit->CurrentRect, ctx->Shared->DefaultRect);
       }
    }
 }
@@ -816,7 +797,7 @@ _mesa_DeleteTextures( GLsizei n, const GLuint *textures)
             /* Unreference the texobj.  If refcount hits zero, the texture
              * will be deleted.
              */
-            MESA_REF_TEXOBJ(&delObj, NULL);
+            _mesa_reference_texobj(&delObj, NULL);
          }
       }
    }
@@ -930,19 +911,19 @@ _mesa_BindTexture( GLenum target, GLuint texName )
     */
    switch (target) {
       case GL_TEXTURE_1D:
-         MESA_REF_TEXOBJ(&texUnit->Current1D, newTexObj);
+         _mesa_reference_texobj(&texUnit->Current1D, newTexObj);
          break;
       case GL_TEXTURE_2D:
-         MESA_REF_TEXOBJ(&texUnit->Current2D, newTexObj);
+         _mesa_reference_texobj(&texUnit->Current2D, newTexObj);
          break;
       case GL_TEXTURE_3D:
-         MESA_REF_TEXOBJ(&texUnit->Current3D, newTexObj);
+         _mesa_reference_texobj(&texUnit->Current3D, newTexObj);
          break;
       case GL_TEXTURE_CUBE_MAP_ARB:
-         MESA_REF_TEXOBJ(&texUnit->CurrentCubeMap, newTexObj);
+         _mesa_reference_texobj(&texUnit->CurrentCubeMap, newTexObj);
          break;
       case GL_TEXTURE_RECTANGLE_NV:
-         MESA_REF_TEXOBJ(&texUnit->CurrentRect, newTexObj);
+         _mesa_reference_texobj(&texUnit->CurrentRect, newTexObj);
          break;
       default:
          _mesa_problem(ctx, "bad target in BindTexture");

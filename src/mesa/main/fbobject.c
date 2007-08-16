@@ -154,7 +154,7 @@ _mesa_remove_attachment(GLcontext *ctx, struct gl_renderbuffer_attachment *att)
          /* tell driver we're done rendering to this texobj */
          ctx->Driver.FinishRenderTexture(ctx, att);
       }
-      MESA_REF_TEXOBJ(&att->Texture, NULL); /* unbind */
+      _mesa_reference_texobj(&att->Texture, NULL); /* unbind */
       ASSERT(!att->Texture);
    }
    if (att->Type == GL_TEXTURE || att->Type == GL_RENDERBUFFER_EXT) {
@@ -185,13 +185,10 @@ _mesa_set_texture_attachment(GLcontext *ctx,
    }
    else {
       /* new attachment */
-      char s[100];
       _mesa_remove_attachment(ctx, att);
       att->Type = GL_TEXTURE;
       assert(!att->Texture);
-      sprintf(s, "_mesa_set_texture_attachment(fb=%u tex=%u)\n",
-              fb->Name, texObj->Name);
-      _mesa_reference_texobj(&att->Texture, texObj, s);
+      _mesa_reference_texobj(&att->Texture, texObj);
    }
 
    /* always update these fields */
@@ -992,10 +989,6 @@ _mesa_BindFramebufferEXT(GLenum target, GLuint framebuffer)
       newFb = ctx->WinSysDrawBuffer;
    }
 
-#ifdef DEBUG
-   printf("MESA BIND FRAMEBUFFER %u\n", newFb->Name);
-#endif
-
    ASSERT(newFb);
    ASSERT(newFb != &DummyFramebuffer);
 
@@ -1045,10 +1038,6 @@ _mesa_DeleteFramebuffersEXT(GLsizei n, const GLuint *framebuffers)
 	 struct gl_framebuffer *fb;
 	 fb = _mesa_lookup_framebuffer(ctx, framebuffers[i]);
 	 if (fb) {
-#ifdef DEBUG
-            printf("%lu: MESA DELETE FRAMEBUFFER %u refcount = %d\n",
-                   _glthread_GetID(), fb->Name, fb->RefCount);
-#endif
             ASSERT(fb == &DummyFramebuffer || fb->Name == framebuffers[i]);
 
             /* check if deleting currently bound framebuffer object */

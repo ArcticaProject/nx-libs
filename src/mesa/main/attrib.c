@@ -369,11 +369,6 @@ _mesa_PushAttrib(GLbitfield mask)
          goto end;
       }
 
-#ifdef DEBUG
-      printf("%lu: MESA BEGIN PUSH TEX ATTRIB\n",
-             _glthread_GetID());
-#endif
-
       _mesa_lock_context_textures(ctx);
 
       /* copy/save the bulk of texture state here */
@@ -383,11 +378,11 @@ _mesa_PushAttrib(GLbitfield mask)
        * accidentally get deleted while referenced in the attribute stack.
        */
       for (u = 0; u < ctx->Const.MaxTextureUnits; u++) {
-         MESA_REF_TEXOBJ(&texstate->SavedRef1D[u], ctx->Texture.Unit[u].Current1D);
-         MESA_REF_TEXOBJ(&texstate->SavedRef2D[u], ctx->Texture.Unit[u].Current2D);
-         MESA_REF_TEXOBJ(&texstate->SavedRef3D[u], ctx->Texture.Unit[u].Current3D);
-         MESA_REF_TEXOBJ(&texstate->SavedRefCube[u], ctx->Texture.Unit[u].CurrentCubeMap);
-         MESA_REF_TEXOBJ(&texstate->SavedRefRect[u], ctx->Texture.Unit[u].CurrentRect);
+         _mesa_reference_texobj(&texstate->SavedRef1D[u], ctx->Texture.Unit[u].Current1D);
+         _mesa_reference_texobj(&texstate->SavedRef2D[u], ctx->Texture.Unit[u].Current2D);
+         _mesa_reference_texobj(&texstate->SavedRef3D[u], ctx->Texture.Unit[u].Current3D);
+         _mesa_reference_texobj(&texstate->SavedRefCube[u], ctx->Texture.Unit[u].CurrentCubeMap);
+         _mesa_reference_texobj(&texstate->SavedRefRect[u], ctx->Texture.Unit[u].CurrentRect);
       }
 
       /* copy state/contents of the currently bound texture objects */
@@ -406,10 +401,6 @@ _mesa_PushAttrib(GLbitfield mask)
 
       _mesa_unlock_context_textures(ctx);
 
-#ifdef DEBUG
-      printf("%lu: MESA END PUSH TEX ATTRIB\n",
-             _glthread_GetID());
-#endif
       newnode = new_attrib_node( GL_TEXTURE_BIT );
       newnode->data = texstate;
       newnode->next = head;
@@ -665,11 +656,6 @@ pop_texture_group(GLcontext *ctx, struct texture_state *texstate)
 {
    GLuint u;
 
-#ifdef DEBUG
-   printf("%lu: MESA BEGIN POP TEX ATTRIB\n",
-          _glthread_GetID());
-#endif
-
    _mesa_lock_context_textures(ctx);
 
    for (u = 0; u < ctx->Const.MaxTextureUnits; u++) {
@@ -842,21 +828,16 @@ pop_texture_group(GLcontext *ctx, struct texture_state *texstate)
       }
 
       /* remove saved references to the texture objects */
-      MESA_REF_TEXOBJ(&texstate->SavedRef1D[u], NULL);
-      MESA_REF_TEXOBJ(&texstate->SavedRef2D[u], NULL);
-      MESA_REF_TEXOBJ(&texstate->SavedRef3D[u], NULL);
-      MESA_REF_TEXOBJ(&texstate->SavedRefCube[u], NULL);
-      MESA_REF_TEXOBJ(&texstate->SavedRefRect[u], NULL);
+      _mesa_reference_texobj(&texstate->SavedRef1D[u], NULL);
+      _mesa_reference_texobj(&texstate->SavedRef2D[u], NULL);
+      _mesa_reference_texobj(&texstate->SavedRef3D[u], NULL);
+      _mesa_reference_texobj(&texstate->SavedRefCube[u], NULL);
+      _mesa_reference_texobj(&texstate->SavedRefRect[u], NULL);
    }
 
    _mesa_ActiveTextureARB(GL_TEXTURE0_ARB + texstate->Texture.CurrentUnit);
 
    _mesa_unlock_context_textures(ctx);
-
-#ifdef DEBUG
-   printf("%lu: MESA END POP TEX ATTRIB\n",
-          _glthread_GetID());
-#endif
 }
 
 
@@ -1462,10 +1443,6 @@ _mesa_PopClientAttrib(void)
 void
 _mesa_free_attrib_data(GLcontext *ctx)
 {
-#ifdef DEBUG
-   printf("%lu: MESA FREEING ATTRIB STACK DATA\n",
-          _glthread_GetID());
-#endif
    while (ctx->AttribStackDepth > 0) {
       struct gl_attrib_node *attr, *next;
 
@@ -1478,11 +1455,11 @@ _mesa_free_attrib_data(GLcontext *ctx)
             GLuint u;
             /* clear references to the saved texture objects */
             for (u = 0; u < ctx->Const.MaxTextureUnits; u++) {
-               MESA_REF_TEXOBJ(&texstate->SavedRef1D[u], NULL);
-               MESA_REF_TEXOBJ(&texstate->SavedRef2D[u], NULL);
-               MESA_REF_TEXOBJ(&texstate->SavedRef3D[u], NULL);
-               MESA_REF_TEXOBJ(&texstate->SavedRefCube[u], NULL);
-               MESA_REF_TEXOBJ(&texstate->SavedRefRect[u], NULL);
+               _mesa_reference_texobj(&texstate->SavedRef1D[u], NULL);
+               _mesa_reference_texobj(&texstate->SavedRef2D[u], NULL);
+               _mesa_reference_texobj(&texstate->SavedRef3D[u], NULL);
+               _mesa_reference_texobj(&texstate->SavedRefCube[u], NULL);
+               _mesa_reference_texobj(&texstate->SavedRefRect[u], NULL);
             }
          }
          else {
@@ -1495,10 +1472,6 @@ _mesa_free_attrib_data(GLcontext *ctx)
          attr = next;
       }
    }
-#ifdef DEBUG
-   printf("%lu: MESA DONE FREEING ATTRIB STACK DATA\n",
-          _glthread_GetID());
-#endif
 }
 
 
