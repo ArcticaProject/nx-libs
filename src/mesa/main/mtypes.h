@@ -2842,7 +2842,6 @@ struct mesa_display_list
  */
 struct gl_dlist_state
 {
-   struct mesa_display_list *CallStack[MAX_LIST_NESTING];
    GLuint CallDepth;		/**< Current recursion calling depth */
 
    struct mesa_display_list *CurrentList;
