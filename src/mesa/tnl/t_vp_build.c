@@ -1,8 +1,8 @@
 /*
  * Mesa 3-D graphics library
- * Version:  6.5
+ * Version:  7.1
  *
- * Copyright (C) 2006  Tungsten Graphics   All Rights Reserved.
+ * Copyright (C) 2007  Tungsten Graphics   All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -33,11 +33,11 @@
 #include "glheader.h"
 #include "macros.h"
 #include "enums.h"
-#include "program.h"
-#include "prog_instruction.h"
-#include "prog_parameter.h"
-#include "prog_print.h"
-#include "prog_statevars.h"
+#include "shader/program.h"
+#include "shader/prog_instruction.h"
+#include "shader/prog_parameter.h"
+#include "shader/prog_print.h"
+#include "shader/prog_statevars.h"
 #include "t_context.h" /* NOTE: very light dependency on this */
 #include "t_vp_build.h"
 
@@ -457,9 +457,13 @@ static void register_matrix_param5( struct tnl_program *p,
 }
 
 
+/**
+ * Convert a ureg source register to a prog_src_register.
+ */
 static void emit_arg( struct prog_src_register *src,
 		      struct ureg reg )
 {
+   assert(reg.file != PROGRAM_OUTPUT);
    src->File = reg.file;
    src->Index = reg.idx;
    src->Swizzle = reg.swz;
@@ -469,9 +473,18 @@ static void emit_arg( struct prog_src_register *src,
    src->RelAddr = 0;
 }
 
+/**
+ * Convert a ureg dest register to a prog_dst_register.
+ */
 static void emit_dst( struct prog_dst_register *dst,
 		      struct ureg reg, GLuint mask )
 {
+   /* Check for legal output register type.  UNDEFINED will occur in
+    * instruction that don't produce a result (like END).
+    */
+   assert(reg.file == PROGRAM_TEMPORARY ||
+          reg.file == PROGRAM_OUTPUT ||
+          reg.file == PROGRAM_UNDEFINED);
    dst->File = reg.file;
    dst->Index = reg.idx;
    /* allow zero as a shorthand for xyzw */
@@ -956,13 +969,19 @@ static void build_lighting( struct tnl_program *p )
 					       STATE_POSITION); 
 	    struct ureg V = get_eye_position(p);
 	    struct ureg dist = get_temp(p);
+	    struct ureg tmpPpli = get_temp(p);
 
 	    VPpli = get_temp(p); 
 	    half = get_temp(p);
  
-	    /* Calulate VPpli vector
+            /* In homogeneous object coordinates
+             */
+            emit_op1(p, OPCODE_RCP, dist, 0, swizzle1(Ppli, W));
+            emit_op2(p, OPCODE_MUL, tmpPpli, 0, Ppli, dist);
+
+	    /* Calculate VPpli vector
 	     */
-	    emit_op2(p, OPCODE_SUB, VPpli, 0, Ppli, V); 
+	    emit_op2(p, OPCODE_SUB, VPpli, 0, tmpPpli, V); 
 
 	    /* Normalize VPpli.  The dist value also used in
 	     * attenuation below.
@@ -994,6 +1013,7 @@ static void build_lighting( struct tnl_program *p )
 	    emit_normalize_vec3(p, half, half);
 
 	    release_temp(p, dist);
+	    release_temp(p, tmpPpli);
 	 }
 
 	 /* Calculate dot products:
@@ -1103,7 +1123,9 @@ static void build_fog( struct tnl_program *p )
 {
    struct ureg fog = register_output(p, VERT_RESULT_FOGC);
    struct ureg input;
-   
+   GLuint useabs = p->state->fog_source_is_depth && p->state->fog_mode &&
+		   (p->state->fog_mode != FOG_EXP2);
+
    if (p->state->fog_source_is_depth) {
       input = swizzle1(get_eye_position(p), Z);
    }
@@ -1111,31 +1133,36 @@ static void build_fog( struct tnl_program *p )
       input = swizzle1(register_input(p, VERT_ATTRIB_FOG), X);
    }
 
-   if (p->state->tnl_do_vertex_fog) {
+   if (p->state->fog_mode && p->state->tnl_do_vertex_fog) {
       struct ureg params = register_param2(p, STATE_INTERNAL,
 					   STATE_FOG_PARAMS_OPTIMIZED);
       struct ureg tmp = get_temp(p);
 
+      if (useabs) {
+	 emit_op1(p, OPCODE_ABS, tmp, 0, input);
+      }
+
       switch (p->state->fog_mode) {
       case FOG_LINEAR: {
 	 struct ureg id = get_identity_param(p);
-	 emit_op3(p, OPCODE_MAD, tmp, 0, input, swizzle1(params,X), swizzle1(params,Y));
+	 emit_op3(p, OPCODE_MAD, tmp, 0, useabs ? tmp : input,
+			swizzle1(params,X), swizzle1(params,Y));
 	 emit_op2(p, OPCODE_MAX, tmp, 0, tmp, swizzle1(id,X)); /* saturate */
 	 emit_op2(p, OPCODE_MIN, fog, WRITEMASK_X, tmp, swizzle1(id,W));
 	 break;
       }
       case FOG_EXP:
-	 emit_op1(p, OPCODE_ABS, tmp, 0, input); 
-	 emit_op2(p, OPCODE_MUL, tmp, 0, tmp, swizzle1(params,Z));
+	 emit_op2(p, OPCODE_MUL, tmp, 0, useabs ? tmp : input,
+			swizzle1(params,Z));
 	 emit_op1(p, OPCODE_EX2, fog, WRITEMASK_X, negate(tmp));
 	 break;
       case FOG_EXP2:
 	 emit_op2(p, OPCODE_MUL, tmp, 0, input, swizzle1(params,W));
-	 emit_op2(p, OPCODE_MUL, tmp, 0, tmp, tmp); 
+	 emit_op2(p, OPCODE_MUL, tmp, 0, tmp, tmp);
 	 emit_op1(p, OPCODE_EX2, fog, WRITEMASK_X, negate(tmp));
 	 break;
       }
-      
+
       release_temp(p, tmp);
    }
    else {
@@ -1143,7 +1170,7 @@ static void build_fog( struct tnl_program *p )
        *
        * KW:  Is it really necessary to do anything in this case?
        */
-      emit_op1(p, OPCODE_MOV, fog, WRITEMASK_X, input);
+      emit_op1(p, useabs ? OPCODE_ABS : OPCODE_MOV, fog, WRITEMASK_X, input);
    }
 }
  
