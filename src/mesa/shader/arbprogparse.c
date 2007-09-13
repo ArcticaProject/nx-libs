@@ -624,6 +624,41 @@ program_error(GLcontext *ctx, GLint position, const char *descrip)
 }
 
 
+/**
+ * As above, but with an extra string parameter for more info.
+ */
+static void
+program_error2(GLcontext *ctx, GLint position, const char *descrip,
+               const char *var)
+{
+   if (descrip) {
+      const char *prefix = "glProgramString(", *suffix = ")";
+      char *str = (char *) _mesa_malloc(_mesa_strlen(descrip) +
+                                        _mesa_strlen(": ") +
+                                        _mesa_strlen(var) +
+                                        _mesa_strlen(prefix) +
+                                        _mesa_strlen(suffix) + 1);
+      if (str) {
+         _mesa_sprintf(str, "%s%s: %s%s", prefix, descrip, var, suffix);
+         _mesa_error(ctx, GL_INVALID_OPERATION, str);
+         _mesa_free(str);
+      }
+   }
+   {
+      char *str = (char *) _mesa_malloc(_mesa_strlen(descrip) +
+                                        _mesa_strlen(": ") +
+                                        _mesa_strlen(var) + 1);
+      if (str) {
+         _mesa_sprintf(str, "%s: %s", descrip, var);
+      }
+      _mesa_set_program_error(ctx, position, str);
+      if (str) {
+         _mesa_free(str);
+      }
+   }
+}
+
+
 
 /**
  * constructs an integer from 4 GLubytes in LE format
@@ -1684,18 +1719,14 @@ parse_attrib (GLcontext * ctx, const GLubyte ** inst, struct var_cache **vc_head
               struct arb_program *Program)
 {
    GLuint found;
-   char *error_msg;
    struct var_cache *attrib_var;
 
    attrib_var = parse_string (inst, vc_head, Program, &found);
    Program->Position = parse_position (inst);
    if (found) {
-      error_msg = (char *)
-         _mesa_malloc (_mesa_strlen ((char *) attrib_var->name) + 40);
-      _mesa_sprintf (error_msg, "Duplicate Varible Declaration: %s",
-                     attrib_var->name);
-      program_error(ctx, Program->Position, error_msg);
-      _mesa_free (error_msg);
+      program_error2(ctx, Program->Position,
+                     "Duplicate variable declaration",
+                     (char *) attrib_var->name);
       return 1;
    }
 
@@ -1873,12 +1904,9 @@ parse_param (GLcontext * ctx, const GLubyte ** inst, struct var_cache **vc_head,
    Program->Position = parse_position (inst);
 
    if (found) {
-      char *error_msg = (char *)
-         _mesa_malloc (_mesa_strlen ((char *) param_var->name) + 40);
-      _mesa_sprintf (error_msg, "Duplicate Varible Declaration: %s",
-                     param_var->name);
-      program_error (ctx, Program->Position, error_msg);
-      _mesa_free (error_msg);
+      program_error2(ctx, Program->Position,
+                     "Duplicate variable declaration",
+                     (char *) param_var->name);
       return 1;
    }
 
@@ -1973,12 +2001,9 @@ parse_temp (GLcontext * ctx, const GLubyte ** inst, struct var_cache **vc_head,
       temp_var = parse_string (inst, vc_head, Program, &found);
       Program->Position = parse_position (inst);
       if (found) {
-         char *error_msg = (char *)
-            _mesa_malloc (_mesa_strlen ((char *) temp_var->name) + 40);
-         _mesa_sprintf (error_msg, "Duplicate Varible Declaration: %s",
-                        temp_var->name);
-         program_error(ctx, Program->Position, error_msg);
-         _mesa_free (error_msg);
+         program_error2(ctx, Program->Position,
+                        "Duplicate variable declaration",
+                        (char *) temp_var->name);
          return 1;
       }
 
@@ -2019,12 +2044,9 @@ parse_output (GLcontext * ctx, const GLubyte ** inst, struct var_cache **vc_head
    output_var = parse_string (inst, vc_head, Program, &found);
    Program->Position = parse_position (inst);
    if (found) {
-      char *error_msg = (char *)
-         _mesa_malloc (_mesa_strlen ((char *) output_var->name) + 40);
-      _mesa_sprintf (error_msg, "Duplicate Varible Declaration: %s",
-                     output_var->name);
-      program_error (ctx, Program->Position, error_msg);
-      _mesa_free (error_msg);
+      program_error2(ctx, Program->Position,
+                     "Duplicate variable declaration",
+                     (char *) output_var->name);
       return 1;
    }
 
@@ -2050,12 +2072,9 @@ parse_alias (GLcontext * ctx, const GLubyte ** inst, struct var_cache **vc_head,
    Program->Position = parse_position (inst);
 
    if (found) {
-      char *error_msg = (char *)
-         _mesa_malloc (_mesa_strlen ((char *) temp_var->name) + 40);
-      _mesa_sprintf (error_msg, "Duplicate Varible Declaration: %s",
-                     temp_var->name);
-      program_error(ctx, Program->Position, error_msg);
-      _mesa_free (error_msg);
+      program_error2(ctx, Program->Position,
+                    "Duplicate variable declaration",
+                     (char *) temp_var->name);
       return 1;
    }
 
@@ -2065,12 +2084,9 @@ parse_alias (GLcontext * ctx, const GLubyte ** inst, struct var_cache **vc_head,
 
    if (!found)
    {
-      char *error_msg = (char *)
-         _mesa_malloc (_mesa_strlen ((char *) temp_var->name) + 40);
-      _mesa_sprintf (error_msg, "Alias value %s is not defined",
-                     temp_var->alias_binding->name);
-      program_error (ctx, Program->Position, error_msg);
-      _mesa_free (error_msg);
+      program_error2(ctx, Program->Position,
+                     "Undefined alias value",
+                     (char *) temp_var->alias_binding->name);
       return 1;
    }
 
@@ -2093,12 +2109,9 @@ parse_address (GLcontext * ctx, const GLubyte ** inst, struct var_cache **vc_hea
       temp_var = parse_string (inst, vc_head, Program, &found);
       Program->Position = parse_position (inst);
       if (found) {
-         char *error_msg = (char *)
-            _mesa_malloc (_mesa_strlen ((char *) temp_var->name) + 40);
-         _mesa_sprintf (error_msg, "Duplicate Varible Declaration: %s",
-                        temp_var->name);
-         program_error (ctx, Program->Position, error_msg);
-         _mesa_free (error_msg);
+         program_error2(ctx, Program->Position,
+                        "Duplicate variable declaration",
+                        (char *) temp_var->name);
          return 1;
       }
 
@@ -2451,9 +2464,9 @@ parse_src_reg (GLcontext * ctx, const GLubyte ** inst,
                Program->Position = parse_position (inst);
 
                if (!found) {
-                  char s[1000];
-                  sprintf(s, "Undefined variable: %s", src->name);
-                  program_error(ctx, Program->Position, s);
+                  program_error2(ctx, Program->Position,
+                                 "Undefined variable",
+                                 (char *) src->name);
                   return 1;
                }
 
