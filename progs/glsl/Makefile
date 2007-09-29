@@ -25,7 +25,7 @@ PROGS = \
 
 # make executable from .c file:
 .c: $(LIB_DEP)
-	$(CC) -I$(INCDIR) $(CFLAGS) $< $(APP_LIB_DEPS) -o $@
+	$(CC) -I$(INCDIR) $(CFLAGS) $(LDFLAGS) $< $(APP_LIB_DEPS) -o $@
 
 
 ##### TARGETS #####
@@ -57,7 +57,7 @@ mandelbrot.c: extfuncs.h
 toyball.c: extfuncs.h
 
 texdemo1: texdemo1.o readtex.o
-	$(CC) -I$(INCDIR) $(CFLAGS) texdemo1.o readtex.o $(APP_LIB_DEPS) -o $@
+	$(CC) -I$(INCDIR) $(CFLAGS) $(LDFLAGS) texdemo1.o readtex.o $(APP_LIB_DEPS) -o $@
 
 texdemo1.o: texdemo1.c readtex.h extfuncs.h
 	$(CC) -c -I$(INCDIR) $(CFLAGS) texdemo1.c
