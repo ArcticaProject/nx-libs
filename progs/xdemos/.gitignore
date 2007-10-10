@@ -3,13 +3,15 @@ glxdemo
 glxgears
 glxheads
 glxinfo
-glxpixmap
 glxpbdemo
+glxpixmap
 glxswapcontrol
 manywin
 offset
 pbinfo
+overlay
 pbdemo
+pbinfo
 wincopy
 xdemo
 xfont

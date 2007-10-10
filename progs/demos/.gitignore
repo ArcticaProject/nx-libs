@@ -33,7 +33,9 @@ renormal
 shadowtex
 showbuffer.c
 showbuffer.h
+singlebuffer
 spectex
+spriteblast
 stex3d
 teapot
 terrain
