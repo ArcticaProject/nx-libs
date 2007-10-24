@@ -69,6 +69,7 @@ aix-static \
 beos \
 bluegene-osmesa \
 bluegene-xlc-osmesa \
+catamount-osmesa-pgi \
 darwin \
 darwin-static \
 darwin-static-x86ppc \
