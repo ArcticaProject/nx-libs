@@ -812,6 +812,10 @@ _mesa_init_exec_table(struct _glapi_table *exec)
    SET_ProgramEnvParameters4fvEXT(exec, _mesa_ProgramEnvParameters4fvEXT);
    SET_ProgramLocalParameters4fvEXT(exec, _mesa_ProgramLocalParameters4fvEXT);
 #endif
+
+   /* GL_ATI_separate_stencil */
+   SET_StencilFuncSeparateATI(exec, _mesa_StencilFuncSeparateATI);
+   SET_StencilOpSeparateATI(exec, _mesa_StencilOpSeparateATI);
 }
 
 
