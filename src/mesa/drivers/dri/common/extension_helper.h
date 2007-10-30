@@ -1098,10 +1098,11 @@ static const char IsRenderbufferEXT_names[] =
     "";
 #endif
 
-#if defined(need_GL_VERSION_2_0)
+#if defined(need_GL_VERSION_2_0) || defined(need_GL_ATI_separate_stencil)
 static const char StencilOpSeparate_names[] = 
     "iiii\0" /* Parameter signature */
     "glStencilOpSeparate\0"
+    "glStencilOpSeparateATI\0"
     "";
 #endif
 
@@ -3832,13 +3833,6 @@ static const char Binormal3svEXT_names[] =
     "";
 #endif
 
-#if defined(need_GL_ATI_separate_stencil)
-static const char StencilOpSeparateATI_names[] = 
-    "iiii\0" /* Parameter signature */
-    "glStencilOpSeparateATI\0"
-    "";
-#endif
-
 #if defined(need_GL_EXT_light_texture)
 static const char ApplyTextureEXT_names[] = 
     "i\0" /* Parameter signature */
@@ -5191,7 +5185,7 @@ static const struct dri_extension_function GL_ATI_fragment_shader_functions[] = 
 
 #if defined(need_GL_ATI_separate_stencil)
 static const struct dri_extension_function GL_ATI_separate_stencil_functions[] = {
-    { StencilOpSeparateATI_names, StencilOpSeparateATI_remap_index, -1 },
+    { StencilOpSeparate_names, StencilOpSeparate_remap_index, -1 },
     { StencilFuncSeparateATI_names, StencilFuncSeparateATI_remap_index, -1 },
     { NULL, 0, 0 }
 };
