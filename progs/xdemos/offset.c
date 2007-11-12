@@ -47,7 +47,6 @@ PERFORMANCE OF THIS SOFTWARE.
 
 
 #include <GL/glx.h>
-#include <GL/glu.h>
 #include <X11/keysym.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -134,7 +133,7 @@ int main(int argc, char** argv) {
 
     /* set up viewing parameters */
     glMatrixMode(GL_PROJECTION);
-    gluPerspective(20, 1, 0.1, 20);
+    glFrustum(-1, 1, -1, 1, 6, 20);
     glMatrixMode(GL_MODELVIEW);
     glTranslatef(0, 0, -15);
 
