@@ -198,7 +198,7 @@ i915_emit_invarient_state(struct intel_context *intel)
 
    /* Need to initialize this to zero.
     */
-   OUT_BATCH(_3DSTATE_LOAD_STATE_IMMEDIATE_1 | I1_LOAD_S(3) | (1));
+   OUT_BATCH(_3DSTATE_LOAD_STATE_IMMEDIATE_1 | I1_LOAD_S(3) | (0));
    OUT_BATCH(0);
 
    /* XXX: Use this */
@@ -216,6 +216,7 @@ i915_emit_invarient_state(struct intel_context *intel)
 
    /* Don't support twosided stencil yet */
    OUT_BATCH(_3DSTATE_BACKFACE_STENCIL_OPS | BFO_ENABLE_STENCIL_TWO_SIDE | 0);
+   OUT_BATCH(0);
 
    ADVANCE_BATCH();
 }
@@ -246,6 +247,9 @@ get_state_size(struct i915_hw_state *state)
    GLuint dirty = get_dirty(state);
    GLuint i;
    GLuint sz = 0;
+
+   if (dirty & I915_UPLOAD_INVARIENT)
+      sz += 30 * 4;
 
    if (dirty & I915_UPLOAD_CTX)
       sz += sizeof(state->Ctx);
