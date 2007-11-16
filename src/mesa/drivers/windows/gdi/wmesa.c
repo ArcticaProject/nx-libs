@@ -1533,5 +1533,6 @@ void gl_dispatch_stub_749(void){}
 void gl_dispatch_stub_769(void){}
 void gl_dispatch_stub_770(void){}
 void gl_dispatch_stub_771(void){}
+void gl_dispatch_stub_772(void){}
 
 #endif
