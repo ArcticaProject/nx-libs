@@ -7,7 +7,7 @@
 
 /*
  * Mesa 3-D graphics library
- * Version:  6.5.3
+ * Version:  7.0.3
  *
  * Copyright (C) 1999-2007  Brian Paul   All Rights Reserved.
  *
@@ -1063,7 +1063,7 @@ struct gl_point_attrib
 {
    GLboolean SmoothFlag;	/**< True if GL_POINT_SMOOTH is enabled */
    GLfloat Size;		/**< User-specified point size */
-   GLfloat _Size;		/**< Size clamped to Const.Min/MaxPointSize */
+   GLfloat _Size;		/**< Size clamped to user limits */
    GLfloat Params[3];		/**< GL_EXT_point_parameters */
    GLfloat MinSize, MaxSize;	/**< GL_EXT_point_parameters */
    GLfloat Threshold;		/**< GL_EXT_point_parameters */
