@@ -248,6 +248,50 @@ init_machine(GLcontext *ctx, struct gl_program_machine *machine)
 
 
 /**
+ * Map the texture images which the vertex program will access (if any).
+ */
+static void
+map_textures(GLcontext *ctx, const struct gl_vertex_program *vp)
+{
+   GLuint u;
+
+   if (!ctx->Driver.MapTexture)
+      return;
+
+   for (u = 0; u < ctx->Const.MaxVertexTextureImageUnits; u++) {
+      if (vp->Base.TexturesUsed[u]) {
+         /* Note: _Current *should* correspond to the target indicated
+          * in TexturesUsed[u].
+          */
+         ctx->Driver.MapTexture(ctx, ctx->Texture.Unit[u]._Current);
+      }
+   }
+}
+
+
+/**
+ * Unmap the texture images which were used by the vertex program (if any).
+ */
+static void
+unmap_textures(GLcontext *ctx, const struct gl_vertex_program *vp)
+{
+   GLuint u;
+
+   if (!ctx->Driver.MapTexture)
+      return;
+
+   for (u = 0; u < ctx->Const.MaxVertexTextureImageUnits; u++) {
+      if (vp->Base.TexturesUsed[u]) {
+         /* Note: _Current *should* correspond to the target indicated
+          * in TexturesUsed[u].
+          */
+         ctx->Driver.UnmapTexture(ctx, ctx->Texture.Unit[u]._Current);
+      }
+   }
+}
+
+
+/**
  * This function executes vertex programs
  */
 static GLboolean
@@ -279,6 +323,8 @@ run_vp( GLcontext *ctx, struct tnl_pipeline_stage *stage )
          outputs[numOutputs++] = i;
       }
    }
+
+   map_textures(ctx, program);
 
    for (i = 0; i < VB->Count; i++) {
       GLuint attr;
@@ -330,6 +376,8 @@ run_vp( GLcontext *ctx, struct tnl_pipeline_stage *stage )
              machine.Outputs[0][3]);
 #endif
    }
+
+   unmap_textures(ctx, program);
 
    /* Fixup fog and point size results if needed */
    if (program->IsNVProgram) {
