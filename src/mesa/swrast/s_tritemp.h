@@ -172,7 +172,7 @@ static void NAME(GLcontext *ctx, const SWvertex *v0,
    EdgeT eMaj, eTop, eBot;
    GLfloat oneOverArea;
    const SWvertex *vMin, *vMid, *vMax;  /* Y(vMin)<=Y(vMid)<=Y(vMax) */
-   GLfloat bf = SWRAST_CONTEXT(ctx)->_BackfaceSign;
+   GLfloat bf = SWRAST_CONTEXT(ctx)->_BackfaceCullSign;
 #if !TRIANGLE_WALK_DOUBLE
    const GLint snapMask = ~((FIXED_ONE / (1 << SUB_PIXEL_BITS)) - 1); /* for x/y coord snapping */
 #endif
@@ -293,6 +293,7 @@ static void NAME(GLcontext *ctx, const SWvertex *v0,
       const GLfloat area = eMaj.dx * eBot.dy - eBot.dx * eMaj.dy;
 #endif
       /* Do backface culling */
+
       if (area * bf < 0.0)
          return;
 
@@ -300,10 +301,10 @@ static void NAME(GLcontext *ctx, const SWvertex *v0,
          return;
 
       oneOverArea = 1.0F / area;
+
+      /* 0 = front, 1 = back */
+      span.facing = oneOverArea * swrast->_BackfaceSign > 0.0F;
    }
-
-
-   span.facing = ctx->_Facing; /* for 2-sided stencil test */
 
    /* Edge setup.  For a triangle strip these could be reused... */
    {
