@@ -1,6 +1,6 @@
 /*
  * Mesa 3-D graphics library
- * Version:  6.5.3
+ * Version:  7.0.3
  *
  * Copyright (C) 1999-2007  Brian Paul   All Rights Reserved.
  *
@@ -128,21 +128,17 @@ _swrast_update_polygon( GLcontext *ctx )
    GLfloat backface_sign;
 
    if (ctx->Polygon.CullFlag) {
-      backface_sign = 1.0;
       switch (ctx->Polygon.CullFaceMode) {
       case GL_BACK:
-	 if (ctx->Polygon.FrontFace == GL_CCW)
-	    backface_sign = -1.0;
+         backface_sign = -1.0;
 	 break;
       case GL_FRONT:
-	 if (ctx->Polygon.FrontFace != GL_CCW)
-	    backface_sign = -1.0;
+         backface_sign = 1.0;
 	 break;
       case GL_FRONT_AND_BACK:
          /* fallthrough */
       default:
 	 backface_sign = 0.0;
-	 break;
       }
    }
    else {
