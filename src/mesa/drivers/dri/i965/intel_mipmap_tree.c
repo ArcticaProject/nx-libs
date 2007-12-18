@@ -91,7 +91,7 @@ struct intel_mipmap_tree *intel_miptree_create( struct intel_context *intel,
    default:
       if (INTEL_DEBUG & DEBUG_TEXTURE)
 	 _mesa_printf("assuming BRW texture layouts\n");
-      ok = brw_miptree_layout( mt );
+      ok = brw_miptree_layout( intel, mt );
       break;
    }
 
