@@ -42,6 +42,7 @@ readtex.c
 readtex.h
 seccolor
 sharedtex
+shader_api
 stencil_wrap
 stencilwrap
 tex1d

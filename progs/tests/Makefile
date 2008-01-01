@@ -56,6 +56,7 @@ SOURCES = \
 	projtex.c \
 	readrate.c \
 	seccolor.c \
+	shader_api.c \
 	sharedtex.c \
 	stencilwrap.c \
 	stencil_wrap.c \
