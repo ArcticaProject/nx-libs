@@ -115,6 +115,10 @@ struct intel_mipmap_tree *intel_miptree_create( struct intel_context *intel,
 						GLuint cpp,
 						GLboolean compressed);
 
+int intel_miptree_pitch_align (struct intel_context *intel,
+			       struct intel_mipmap_tree *mt,
+			       int pitch);
+
 void intel_miptree_destroy( struct intel_context *intel,
 			    struct intel_mipmap_tree *mt );
 

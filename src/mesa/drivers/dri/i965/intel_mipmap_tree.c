@@ -110,6 +110,29 @@ struct intel_mipmap_tree *intel_miptree_create( struct intel_context *intel,
 }
 
 
+/**
+ * intel_miptree_pitch_align:
+ *
+ * @intel: intel context pointer
+ *
+ * @mt: the miptree to compute pitch alignment for
+ *
+ * @pitch: the natural pitch value
+ *
+ * Given @pitch, compute a larger value which accounts for
+ * any necessary alignment required by the device
+ */
+
+int intel_miptree_pitch_align (struct intel_context *intel,
+			       struct intel_mipmap_tree *mt,
+			       int pitch)
+{
+   if (!mt->compressed)
+      pitch = (pitch * mt->cpp + 3) & ~3;
+
+   return pitch;
+}
+
 
 void intel_miptree_destroy( struct intel_context *intel,
 			    struct intel_mipmap_tree *mt )
