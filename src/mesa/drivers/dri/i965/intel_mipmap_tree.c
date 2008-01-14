@@ -128,7 +128,7 @@ int intel_miptree_pitch_align (struct intel_context *intel,
 			       int pitch)
 {
    if (!mt->compressed)
-      pitch = (pitch * mt->cpp + 3) & ~3;
+      pitch = ((pitch * mt->cpp + 3) & ~3) / mt->cpp;
 
    return pitch;
 }
