@@ -2,7 +2,7 @@
  * Mesa 3-D graphics library
  * Version:  7.0.3
  *
- * Copyright (C) 1999-2007  Brian Paul   All Rights Reserved.
+ * Copyright (C) 1999-2008  Brian Paul   All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -31,7 +31,7 @@
 #define MESA_MAJOR 7
 #define MESA_MINOR 0
 #define MESA_PATCH 3
-#define MESA_VERSION_STRING "7.0.3"
+#define MESA_VERSION_STRING "7.0.3-rc1"
 
 /* To make version comparison easy */
 #define MESA_VERSION(a,b,c) (((a) << 16) + ((b) << 8) + (c))
