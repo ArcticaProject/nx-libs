@@ -6,11 +6,12 @@ include $(TOP)/configs/current
 
 INCDIR = $(TOP)/include
 
-LIB_DEP = $(TOP)/$(LIB_DIR)/$(GL_LIB_NAME) $(TOP)/$(LIB_DIR)/$(GLU_LIB_NAME)
+LIB_DEP = $(TOP)/$(LIB_DIR)/$(GL_LIB_NAME)
 
-LIBS = -L$(TOP)/$(LIB_DIR) -l$(GLU_LIB) -l$(GL_LIB) $(APP_LIB_DEPS)
+LIBS = -L$(TOP)/$(LIB_DIR) -l$(GL_LIB) $(APP_LIB_DEPS)
 
-PROGS = glthreads \
+PROGS = \
+	glthreads \
 	glxdemo \
 	glxgears \
 	glxgears_fbconfig \
@@ -27,10 +28,14 @@ PROGS = glthreads \
 	pbdemo \
 	wincopy \
 	xfont \
-	xrotfontdemo \
-	yuvrect_client
+	xrotfontdemo
 
-# omit this XMesa API demo:	xdemo
+# Don't build these by default because of extra library dependencies
+EXTRA_PROGS = \
+	shape \
+	yuvrect_client \
+	xdemo
+
 
 
 ##### RULES #####
@@ -47,8 +52,11 @@ PROGS = glthreads \
 default: $(PROGS)
 
 
+extra: $(EXTRA_PROGS)
+
+
 clean:
-	-rm -f $(PROGS)
+	-rm -f $(PROGS) $(EXTRA_PROGS)
 	-rm -f *.o *~
 
 
@@ -82,4 +90,7 @@ xuserotfont.o: xuserotfont.c xuserotfont.h
 
 xrotfontdemo.o: xrotfontdemo.c xuserotfont.h
 	$(CC) -c -I. -I$(INCDIR) $(X11_INCLUDES) $(CFLAGS) xrotfontdemo.c
+
+yuvrect_client: yuvrect_client.c
+	$(CC) -I$(INCDIR) $(X11_INCLUDES) $(CFLAGS) $< $(LDFLAGS) $(LIBS) -l$(GLU_LIB) -o $@
 
