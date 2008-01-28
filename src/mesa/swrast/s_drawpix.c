@@ -860,7 +860,8 @@ _swrast_DrawPixels( GLcontext *ctx,
                                      format, type, pixels)) {
          _mesa_error(ctx, GL_INVALID_OPERATION,
                      "glDrawPixels(invalid PBO access)");
-         goto end;
+         RENDER_FINISH(swrast,ctx);
+	 return;
       }
       buf = (GLubyte *) ctx->Driver.MapBuffer(ctx, GL_PIXEL_UNPACK_BUFFER_EXT,
                                               GL_READ_ONLY_ARB,
