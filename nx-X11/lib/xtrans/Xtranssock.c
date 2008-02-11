@@ -133,11 +133,11 @@ from the copyright holders.
 #include <sys/filio.h>
 #endif
 
-#if (defined(i386) && defined(SYSV)) && !defined(SCO325) && !defined(sun)
+#if (defined(__i386__) && defined(SYSV)) && !defined(SCO325) && !defined(sun)
 #include <net/errno.h>
 #endif
 
-#if (defined(i386) && defined(SYSV)) && (!defined(ISC) || !defined(I_NREAD) || defined(SCO325)) || defined(_SEQUENT_)
+#if (defined(__i386__) && defined(SYSV)) && (!defined(ISC) || !defined(I_NREAD) || defined(SCO325)) || defined(_SEQUENT_)
 #include <sys/stropts.h>
 #endif
 
@@ -2812,11 +2812,11 @@ TRANS(SocketBytesReadable) (XtransConnInfo ciptr, BytesReadable_t *pend)
 	return ret;
     }
 #else
-#if (defined(i386) && defined(SYSV) && !defined(SCO325)) || (defined(_SEQUENT_) && _SOCKET_VERSION == 1)
+#if (defined(__i386__) && defined(SYSV) && !defined(SCO325)) || (defined(_SEQUENT_) && _SOCKET_VERSION == 1)
     return ioctl (ciptr->fd, I_NREAD, (char *) pend);
 #else
     return ioctl (ciptr->fd, FIONREAD, (char *) pend);
-#endif /* i386 && SYSV || _SEQUENT_ && _SOCKET_VERSION == 1 */
+#endif /* __i386__ && SYSV || _SEQUENT_ && _SOCKET_VERSION == 1 */
 #endif /* WIN32 */
 }
 
