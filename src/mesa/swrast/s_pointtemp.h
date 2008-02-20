@@ -1,8 +1,8 @@
 /*
  * Mesa 3-D graphics library
- * Version:  6.5.3
+ * Version:  7.0.3
  *
- * Copyright (C) 1999-2007  Brian Paul   All Rights Reserved.
+ * Copyright (C) 1999-2008  Brian Paul   All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -218,9 +218,9 @@ NAME ( GLcontext *ctx, const SWvertex *vert )
       }
       else {
          /* even size */
-         xmin = (GLint) vert->win[0] - iRadius;
+         xmin = (GLint) (vert->win[0] + 0.5) - iRadius;
          xmax = xmin + iSize - 1;
-         ymin = (GLint) vert->win[1] - iRadius;
+         ymin = (GLint) (vert->win[1] + 0.5) - iRadius;
          ymax = ymin + iSize - 1;
       }
 #endif /*SMOOTH*/
