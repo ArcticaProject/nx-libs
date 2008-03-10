@@ -71,9 +71,10 @@ bluegene-osmesa \
 bluegene-xlc-osmesa \
 catamount-osmesa-pgi \
 darwin \
+darwin-fat-32bit \
+darwin-fat-all \
 darwin-static \
 darwin-static-x86ppc \
-darwin-x86ppc \
 freebsd \
 freebsd-dri \
 freebsd-dri-amd64 \
