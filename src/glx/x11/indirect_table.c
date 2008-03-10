@@ -644,7 +644,7 @@ static const void *Render_function_table[400][2] = {
     /* [ 301] =  4181 */ {__glXDisp_ExecuteProgramNV, __glXDispSwap_ExecuteProgramNV},
     /* [ 302] =  4182 */ {__glXDisp_RequestResidentProgramsNV, __glXDispSwap_RequestResidentProgramsNV},
     /* [ 303] =  4183 */ {__glXDisp_LoadProgramNV, __glXDispSwap_LoadProgramNV},
-    /* [ 304] =  4184 */ {__glXDisp_ProgramEnvParameter4fvARB, __glXDispSwap_ProgramEnvParameter4fvARB},
+    /* [ 304] =  4184 */ {__glXDisp_ProgramParameter4fvNV, __glXDispSwap_ProgramParameter4fvNV},
     /* [ 305] =  4185 */ {__glXDisp_ProgramEnvParameter4dvARB, __glXDispSwap_ProgramEnvParameter4dvARB},
     /* [ 306] =  4186 */ {__glXDisp_ProgramParameters4fvNV, __glXDispSwap_ProgramParameters4fvNV},
     /* [ 307] =  4187 */ {__glXDisp_ProgramParameters4dvNV, __glXDispSwap_ProgramParameters4dvNV},
@@ -1231,8 +1231,8 @@ const struct __glXDispatchInfo Render_dispatch_info = {
 };
 
 /*****************************************************************/
-/* tree depth = 12 */
-static const int_fast16_t VendorPriv_dispatch_tree[152] = {
+/* tree depth = 13 */
+static const int_fast16_t VendorPriv_dispatch_tree[155] = {
     /* [0] -> opcode range [0, 131072], node depth 1 */
     2,
     5,
@@ -1474,12 +1474,17 @@ static const int_fast16_t VendorPriv_dispatch_tree[152] = {
 
     /* [149] -> opcode range [65536, 65568], node depth 12 */
     1,
+    152,
+    EMPTY_LEAF,
+
+    /* [152] -> opcode range [65536, 65552], node depth 13 */
+    1,
     LEAF(88),
     EMPTY_LEAF,
 
 };
 
-static const void *VendorPriv_function_table[104][2] = {
+static const void *VendorPriv_function_table[96][2] = {
     /* [  0] =     0 */ {NULL, NULL},
     /* [  1] =     1 */ {__glXDisp_GetConvolutionFilterEXT, __glXDispSwap_GetConvolutionFilterEXT},
     /* [  2] =     2 */ {__glXDisp_GetConvolutionParameterfvEXT, __glXDispSwap_GetConvolutionParameterfvEXT},
@@ -1575,15 +1580,7 @@ static const void *VendorPriv_function_table[104][2] = {
     /* [ 92] = 65540 */ {__glXDisp_GetFBConfigsSGIX, __glXDispSwap_GetFBConfigsSGIX},
     /* [ 93] = 65541 */ {__glXDisp_CreateContextWithConfigSGIX, __glXDispSwap_CreateContextWithConfigSGIX},
     /* [ 94] = 65542 */ {__glXDisp_CreateGLXPixmapWithConfigSGIX, __glXDispSwap_CreateGLXPixmapWithConfigSGIX},
-    /* [ 95] = 65543 */ {__glXDisp_CreateGLXPbufferSGIX, __glXDispSwap_CreateGLXPbufferSGIX},
-    /* [ 96] = 65544 */ {__glXDisp_DestroyGLXPbufferSGIX, __glXDispSwap_DestroyGLXPbufferSGIX},
-    /* [ 97] = 65545 */ {__glXDisp_ChangeDrawableAttributesSGIX, __glXDispSwap_ChangeDrawableAttributesSGIX},
-    /* [ 98] = 65546 */ {__glXDisp_GetDrawableAttributesSGIX, __glXDispSwap_GetDrawableAttributesSGIX},
-    /* [ 99] = 65547 */ {NULL, NULL},
-    /* [ 100] = 65548 */ {NULL, NULL},
-    /* [ 101] = 65549 */ {NULL, NULL},
-    /* [ 102] = 65550 */ {NULL, NULL},
-    /* [ 103] = 65551 */ {NULL, NULL},
+    /* [ 95] = 65543 */ {NULL, NULL},
 };
 
 const struct __glXDispatchInfo VendorPriv_dispatch_info = {
