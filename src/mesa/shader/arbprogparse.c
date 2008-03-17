@@ -1609,8 +1609,6 @@ parse_attrib_binding(GLcontext * ctx, const GLubyte ** inst,
       program_error(ctx, Program->Position, "Bad attribute binding");
    }
 
-   Program->Base.InputsRead |= (1 << *inputReg);
-
    return err;
 }
 
@@ -2564,6 +2562,11 @@ parse_src_reg (GLcontext * ctx, const GLubyte ** inst,
                        "Unknown token in parse_src_reg");
          return 1;
    }
+
+   /* Add attributes to InputsRead only if they are used the program.
+    * This avoids the handling of unused ATTRIB declarations in the drivers. */
+   if (*File == PROGRAM_INPUT)
+      Program->Base.InputsRead |= (1 << *Index);
 
    return 0;
 }
