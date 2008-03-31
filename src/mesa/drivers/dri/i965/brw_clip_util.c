@@ -343,7 +343,7 @@ void brw_clip_init_clipmask( struct brw_clip_compile *c )
       release_tmp(c, tmp);
    }
 
-   if (BRW_IS_IGD(p->brw)) {
+   if (!BRW_IS_IGD(p->brw)) {
        /* Test for -ve rhw workaround 
         */
        brw_set_conditionalmod(p, BRW_CONDITIONAL_NZ);
