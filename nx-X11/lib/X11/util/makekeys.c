@@ -36,7 +36,7 @@ from The Open Group.
 
 typedef unsigned long Signature;
 
-#define KTNUM 3000
+#define KTNUM 4000
 
 static struct info {
     char	*name;
