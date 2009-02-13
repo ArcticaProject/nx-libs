@@ -332,6 +332,7 @@ ProcQueryExtension(ClientPtr client)
 
     REQUEST_FIXED_SIZE(xQueryExtensionReq, stuff->nbytes);
     
+    memset(&reply, 0, sizeof(xQueryExtensionReply));
     reply.type = X_Reply;
     reply.length = 0;
     reply.major_opcode = 0;
@@ -378,6 +379,7 @@ ProcListExtensions(ClientPtr client)
 
     REQUEST_SIZE_MATCH(xReq);
 
+    memset(&reply, 0, sizeof(xListExtensionsReply));
     reply.type = X_Reply;
     reply.nExtensions = 0;
     reply.length = 0;

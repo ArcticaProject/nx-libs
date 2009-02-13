@@ -1214,6 +1214,7 @@ void nxagentNotifyKeyboardChanges(int oldMinKeycode, int oldMaxKeycode)
     dev = inputInfo.keyboard;
     xkb = dev -> key -> xkbInfo -> desc;
 
+    memset(&nkn, 0, sizeof(xkbNewKeyboardNotify));
     nkn.deviceID = nkn.oldDeviceID = dev -> id;
     nkn.minKeyCode = 8;
     nkn.maxKeyCode = 255;
@@ -1233,6 +1234,7 @@ void nxagentNotifyKeyboardChanges(int oldMinKeycode, int oldMaxKeycode)
     int i;
     xEvent event;
 
+    memset(&event, 0, sizeof(xEvent));
     event.u.u.type = MappingNotify;
     event.u.mappingNotify.request = MappingKeyboard;
     event.u.mappingNotify.firstKeyCode = inputInfo.keyboard -> key -> curKeySyms.minKeyCode;

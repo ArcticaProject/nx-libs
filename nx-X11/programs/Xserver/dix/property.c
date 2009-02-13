@@ -531,6 +531,7 @@ ProcGetProperty(ClientPtr client)
 	pProp = pProp->next;
     }
 
+    memset(&reply, 0, sizeof(xGetPropertyReply));
     reply.type = X_Reply;
     reply.sequenceNumber = client->sequence;
     if (!pProp) 

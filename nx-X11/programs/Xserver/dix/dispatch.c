@@ -579,6 +579,7 @@ ProcGetWindowAttributes(register ClientPtr client)
 					   SecurityReadAccess);
     if (!pWin)
         return(BadWindow);
+    memset(&wa, 0, sizeof(xGetWindowAttributesReply));
     GetWindowAttributes(pWin, client, &wa);
     WriteReplyToClient(client, sizeof(xGetWindowAttributesReply), &wa);
     return(client->noClientException);
@@ -834,6 +835,7 @@ ProcGetGeometry(register ClientPtr client)
     xGetGeometryReply rep;
     int status;
 
+    memset(&rep, 0, sizeof(xGetGeometryReply));
     if ((status = GetGeometry(client, &rep)) != Success)
 	return status;
 
@@ -856,6 +858,7 @@ ProcQueryTree(register ClientPtr client)
 					   SecurityReadAccess);
     if (!pWin)
         return(BadWindow);
+    memset(&reply, 0, sizeof(xQueryTreeReply));
     reply.type = X_Reply;
     reply.root = WindowTable[pWin->drawable.pScreen->myNum]->drawable.id;
     reply.sequenceNumber = client->sequence;
@@ -909,6 +912,7 @@ ProcInternAtom(register ClientPtr client)
     if (atom != BAD_RESOURCE)
     {
 	xInternAtomReply reply;
+	memset(&reply, 0, sizeof(xInternAtomReply));
 	reply.type = X_Reply;
 	reply.length = 0;
 	reply.sequenceNumber = client->sequence;
@@ -932,6 +936,7 @@ ProcGetAtomName(register ClientPtr client)
     if ( (str = NameForAtom(stuff->id)) )
     {
 	len = strlen(str);
+	memset(&reply, 0, sizeof(xGetAtomNameReply));
 	reply.type = X_Reply;
 	reply.length = (len + 3) >> 2;
 	reply.sequenceNumber = client->sequence;
@@ -1061,6 +1066,7 @@ ProcGetSelectionOwner(register ClientPtr client)
 	i = 0;
         while ((i < NumCurrentSelections) && 
 	       CurrentSelections[i].selection != stuff->id) i++;
+	memset(&reply, 0, sizeof(xGetSelectionOwnerReply));
         reply.type = X_Reply;
 	reply.length = 0;
 	reply.sequenceNumber = client->sequence;
@@ -1112,6 +1118,7 @@ ProcConvertSelection(register ClientPtr client)
 #endif
 	    )
 	{        
+	    memset(&event, 0, sizeof(xEvent));
 	    event.u.u.type = SelectionRequest;
 	    event.u.selectionRequest.time = stuff->time;
 	    event.u.selectionRequest.owner = 
@@ -1125,6 +1132,7 @@ ProcConvertSelection(register ClientPtr client)
 		NoEventMask /* CantBeFiltered */, NullGrab))
 		return (client->noClientException);
 	}
+	memset(&event, 0, sizeof(xEvent));
 	event.u.u.type = SelectionNotify;
 	event.u.selectionNotify.time = stuff->time;
 	event.u.selectionNotify.requestor = stuff->requestor;
@@ -1221,6 +1229,7 @@ ProcTranslateCoords(register ClientPtr client)
 					   SecurityReadAccess);
     if (!pDst)
         return(BadWindow);
+    memset(&rep, 0, sizeof(xTranslateCoordsReply));
     rep.type = X_Reply;
     rep.length = 0;
     rep.sequenceNumber = client->sequence;
@@ -1370,6 +1379,7 @@ ProcQueryFont(register ClientPtr client)
 	    return(BadAlloc);
 	}
 
+	memset(reply, 0, rlength);
 	reply->type = X_Reply;
 	reply->length = (rlength - sizeof(xGenericReply)) >> 2;
 	reply->sequenceNumber = client->sequence;
@@ -2112,6 +2122,8 @@ DoGetImage(register ClientPtr client, int format, Drawable drawable,
         return(BadValue);
     }
     SECURITY_VERIFY_DRAWABLE(pDraw, drawable, client, SecurityReadAccess);
+
+    memset(&xgi, 0, sizeof(xGetImageReply));
     if(pDraw->type == DRAWABLE_WINDOW)
     {
       if( /* check for being viewable */
@@ -2165,7 +2177,7 @@ DoGetImage(register ClientPtr client, int format, Drawable drawable,
     xgi.length = length;
 
     if (im_return) {
-	pBuf = (char *)xalloc(sz_xGetImageReply + length);
+	pBuf = (char *)xcalloc(1, sz_xGetImageReply + length);
 	if (!pBuf)
 	    return (BadAlloc);
 	if (widthBytesLine == 0)
@@ -2205,6 +2217,7 @@ DoGetImage(register ClientPtr client, int format, Drawable drawable,
 	}
 	if(!(pBuf = (char *) ALLOCATE_LOCAL(length)))
 	    return (BadAlloc);
+	memset(pBuf, 0, length);
 	WriteReplyToClient(client, sizeof (xGetImageReply), &xgi);
     }
 
@@ -2973,6 +2986,7 @@ ProcQueryColors(register ClientPtr client)
 	prgbs = (xrgb *)ALLOCATE_LOCAL(count * sizeof(xrgb));
 	if(!prgbs && count)
             return(BadAlloc);
+	memset(prgbs, 0, count * sizeof(xrgb));
 	if( (retval = QueryColors(pcmp, count, (Pixel *)&stuff[1], prgbs)) )
 	{
    	    if (prgbs) DEALLOCATE_LOCAL(prgbs);
@@ -2984,6 +2998,8 @@ ProcQueryColors(register ClientPtr client)
 	        return (retval);
 	    }
 	}
+
+	memset(&qcr, 0, sizeof(xQueryColorsReply));
 	qcr.type = X_Reply;
 	qcr.length = (count * sizeof(xrgb)) >> 2;
 	qcr.sequenceNumber = client->sequence;
@@ -3201,6 +3217,7 @@ ProcQueryBestSize (register ClientPtr client)
     pScreen = pDraw->pScreen;
     (* pScreen->QueryBestSize)(stuff->class, &stuff->width,
 			       &stuff->height, pScreen);
+    memset(&reply, 0, sizeof(xQueryBestSizeReply));
     reply.type = X_Reply;
     reply.length = 0;
     reply.sequenceNumber = client->sequence;
@@ -3976,6 +3993,7 @@ SendErrorToClient(ClientPtr client, unsigned majorCode, unsigned minorCode,
 {
     xError rep;
 
+    memset(&rep, 0, sizeof(xError));
     rep.type = X_Error;
     rep.sequenceNumber = client->sequence;
     rep.errorCode = errorCode;
