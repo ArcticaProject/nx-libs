@@ -838,10 +838,8 @@ ProcRRSetCrtcConfig (ClientPtr client)
 	rep.status = RRSetConfigFailed;
 	goto sendReply;
     }
-    #ifdef NXAGENT_SERVER /* Bug 21987 */
-    pScrPriv->lastSetTime = time;
-    #endif
     rep.status = RRSetConfigSuccess;
+    pScrPriv->lastSetTime = time;
     
 sendReply:
     if (outputs)
@@ -851,11 +849,7 @@ sendReply:
     /* rep.status has already been filled in */
     rep.length = 0;
     rep.sequenceNumber = client->sequence;
-    #ifndef NXAGENT_SERVER /* Bug 21987 */
-    rep.newTimestamp = pScrPriv->lastConfigTime.milliseconds;
-    #else
     rep.newTimestamp = pScrPriv->lastSetTime.milliseconds;
-    #endif
 
     if (client->swapped) 
     {

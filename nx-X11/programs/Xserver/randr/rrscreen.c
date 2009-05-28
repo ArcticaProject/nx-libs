@@ -977,15 +977,10 @@ ProcRRSetScreenConfig (ClientPtr client)
 
     if (!RRCrtcSet (crtc, mode, 0, 0, stuff->rotation, 1, &output))
 	rep.status = RRSetConfigFailed;
-    #ifndef NXAGENT_SERVER /* Bug 21987 */
-    else
-	rep.status = RRSetConfigSuccess;
-    #else
     else {
-	rep.status = RRSetConfigSuccess;
 	pScrPriv->lastSetTime = time;
+	rep.status = RRSetConfigSuccess;
     }
-    #endif
 
     /*
      * XXX Configure other crtcs to mirror as much as possible
