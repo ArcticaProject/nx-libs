@@ -1176,8 +1176,6 @@ extern	int _XkbStrCaseCmp(
 
 _XFUNCPROTOEND
 
-#define	XkbAtomGetString(d,s)	NameForAtom(s)
-
 #endif /* _XKBSRV_H_ */
 
 

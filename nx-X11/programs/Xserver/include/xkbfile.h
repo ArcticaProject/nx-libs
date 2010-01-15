@@ -236,11 +236,6 @@ extern	Bool	XkbLookupGroupAndLevel(
 
 /***====================================================================***/
 
-extern	char *	XkbAtomGetString(
-    Display *	/* dpy */,
-    Atom 	/* atm */
-);
-
 extern	Atom	XkbInternAtom(
     Display *	/* dpy */,
     char *	/* name */,
