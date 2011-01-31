@@ -2673,6 +2673,7 @@ XAddConnectionWatch(
 	    UnlockDisplay(dpy);
 	    return 0;
 	}
+	info_list->watch_data = wd_array;
 	wd_array[dpy->watcher_count] = NULL;	/* for cleanliness */
     }
 
