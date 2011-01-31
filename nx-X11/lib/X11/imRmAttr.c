@@ -960,6 +960,7 @@ _XimEncodePreeditValue(
 				&count, (Atom)p->value)))
 	    return False;
 
+	XFree(colormap_ret);
     } else if (res->xrm_name == XrmStringToQuark(XNFontSet)) {
 	int		  list_ret;
 	XFontStruct	**struct_list;
@@ -1003,7 +1004,7 @@ _XimEncodeStatusValue(
     XIMArg		*p)
 {
     if (res->xrm_name == XrmStringToQuark(XNStdColormap)) {
-	XStandardColormap	*colormap_ret;
+	XStandardColormap	*colormap_ret = NULL;
 	int			 count;
 
 	if (!(XGetRGBColormaps(ic->core.im->core.display,
@@ -1011,6 +1012,7 @@ _XimEncodeStatusValue(
 				&count, (Atom)p->value)))
 	    return False;
 
+	XFree(colormap_ret);
     } else if (res->xrm_name == XrmStringToQuark(XNFontSet)) {
 	int		  list_ret;
 	XFontStruct	**struct_list;
