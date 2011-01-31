@@ -2808,6 +2808,8 @@ _XimEncodeLocalPreeditValue(
 				ic->core.focus_window, &colormap_ret,
 				&count, (Atom)p->value)))
 	    return False;
+
+	Xfree(colormap_ret);
     }
     return True;
 }
@@ -2828,6 +2830,8 @@ _XimEncodeLocalStatusValue(
 				ic->core.focus_window, &colormap_ret,
 				&count, (Atom)p->value)))
 	    return False;
+
+	Xfree(colormap_ret);
     }
     return True;
 }
