@@ -316,7 +316,7 @@ _XimAttributeToValue(
 	    INT16	 len = data[0];
 	    char	*base_name;
 	    XFontSet	 rep = (XFontSet)NULL;
-	    char	**missing_list;
+	    char	**missing_list = NULL;
 	    int		 missing_count;
 	    char	*def_string;
 
@@ -350,6 +350,7 @@ _XimAttributeToValue(
 	    }
 
 	    Xfree(base_name);
+	    Xfree(missing_list);
 	    *((XFontSet *)value) = rep;
 	    break;
 	}
