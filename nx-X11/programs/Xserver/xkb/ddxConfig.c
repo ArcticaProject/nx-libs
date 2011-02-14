@@ -187,7 +187,7 @@ XkbConfigRtrnPtr	rtrn;
 	}
 	if (rtrn->symbols!=NULL) {
 	    if (rtrn->phys_symbols==NULL)
-		rtrn->phys_symbols= _XkbDupString(names->symbols);
+		rtrn->phys_symbols= Xstrdup(names->symbols);
 	    if (names->symbols) _XkbFree(names->symbols);
 	    names->symbols= rtrn->symbols;
 	    rtrn->symbols= NULL;

@@ -985,10 +985,6 @@ extern XkbGeometryPtr XkbLookupNamedGeometry(
 	Bool *			/* shouldFree */
 );
 
-extern char *	_XkbDupString(
-	char *			/* str */
-);
-
 extern void	XkbConvertCase(
 	KeySym 			/* sym */,
 	KeySym *		/* lower */,
