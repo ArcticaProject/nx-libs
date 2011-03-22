@@ -352,6 +352,8 @@ XF86Blue             	:1008FFA6
 XF86Suspend		:1008FFA7
 XF86Hibernate		:1008FFA8
 XF86TouchpadToggle	:1008FFA9
+XF86TouchpadOn		:1008FFB0
+XF86TouchpadOff	:1008FFB1
 
 ! XFree86 special action keys
 XF86_Switch_VT_1	:1008FE01
