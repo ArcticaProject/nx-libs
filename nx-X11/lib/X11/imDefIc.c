@@ -1431,7 +1431,7 @@ _XimProtoCreateIC(
     num = im->core.ic_num_resources;
     len = sizeof(XIMResource) * num;
     if (!(res = (XIMResourceList)Xmalloc(len)))
-	return (XIC)NULL;
+	goto ErrorOnCreatingIC;
     (void)memcpy((char *)res, (char *)im->core.ic_resources, len);
     ic->private.proto.ic_resources     = res;
     ic->private.proto.ic_num_resources = num;
@@ -1459,7 +1459,7 @@ _XimProtoCreateIC(
     num = im->private.proto.ic_num_inner_resources;
     len = sizeof(XIMResource) * num;
     if (!(res = (XIMResourceList)Xmalloc(len)))
-	 return (XIC)NULL;
+	goto ErrorOnCreatingIC;
     (void)memcpy((char *)res,
 			 (char *)im->private.proto.ic_inner_resources, len);
     ic->private.proto.ic_inner_resources     = res;
