@@ -572,7 +572,7 @@ get_rotate_fontname(
     }
 
     if(field_num < CHARSET_ENCODING_FIELD)
-	return NULL;
+	goto free_pattern;
 
     /* Pixel Size field : fields[6] */
     for(ptr = fields[PIXEL_SIZE_FIELD - 1] ; ptr && *ptr; ptr++) {
@@ -581,9 +581,7 @@ get_rotate_fontname(
 	        strcpy(pattern, font_name);
 		return(pattern);
 	    }
-	    if(pattern)
-		Xfree(pattern);
-	    return NULL;
+	    goto free_pattern;
 	}
     }
     pixel_size = atoi(fields[PIXEL_SIZE_FIELD - 1]);
@@ -602,11 +600,11 @@ get_rotate_fontname(
 
     /* Max XLFD length is 255 */
     if (len > XLFD_MAX_LEN)
-	return NULL;
+	goto free_pattern;
 
     rotate_font_ptr = (char *)Xmalloc(len + 1);
     if(!rotate_font_ptr)
-	return NULL;
+	goto free_pattern;
 
     rotate_font_ptr[0] = '\0';
 
@@ -616,8 +614,8 @@ get_rotate_fontname(
 	strcat(rotate_font_ptr, fields[field_num]);
     }
 
-    if(pattern)
-	Xfree(pattern);
+free_pattern:
+    Xfree(pattern);
 
     return rotate_font_ptr;
 }
