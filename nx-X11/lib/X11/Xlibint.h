@@ -558,6 +558,7 @@ extern void *_XGetRequest(Display *dpy, CARD8 type, size_t len);
  * Do not use SetReqLen if "req" does not already have data after the
  * xReq header. req->length must already be >= 2.
  */
+#ifndef __clang_analyzer__
 #define SetReqLen(req,n,badlen) \
     if ((req->length + n) > (unsigned)65535) { \
 	if (dpy->bigreq_size) { \
@@ -568,6 +569,10 @@ extern void *_XGetRequest(Display *dpy, CARD8 type, size_t len);
 	} \
     } else \
 	req->length += n
+#else
+#define SetReqLen(req,n,badlen) \
+    req->length += n
+#endif
 
 #define SyncHandle() \
 	if (dpy->synchandler) (*dpy->synchandler)(dpy)
