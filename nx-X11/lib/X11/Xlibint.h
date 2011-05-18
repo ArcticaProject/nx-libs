@@ -760,7 +760,7 @@ typedef int (*FreeModmapType) (
  */
 typedef struct _XFreeFuncs {
     FreeFuncType atoms;		/* _XFreeAtomTable */
-    FreeModmapType modifiermap;	/* XFreeModifierMap */
+    FreeModmapType modifiermap;	/* XFreeModifiermap */
     FreeFuncType key_bindings;	/* _XFreeKeyBindings */
     FreeFuncType context_db;	/* _XFreeContextDB */
     FreeFuncType defaultCCCs;	/* _XcmsFreeDefaultCCCs */
