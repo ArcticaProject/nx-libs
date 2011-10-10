@@ -1847,12 +1847,19 @@ Popen(char *command, char *type)
     if (OsVendorStartRedirectErrorFProc != NULL) {
         OsVendorStartRedirectErrorFProc();
     }
+    OsBlockSignals ();
 #endif
     switch (pid = fork()) {
     case -1: 	/* error */
 	close(pdes[0]);
 	close(pdes[1]);
 	xfree(cur);
+#ifdef NX_TRANS_EXIT
+	if (OsVendorEndRedirectErrorFProc != NULL) {
+	    OsVendorEndRedirectErrorFProc();
+	}
+	OsReleaseSignals ();
+#endif
 	return NULL;
     case 0:	/* child */
 	if (setgid(getgid()) == -1)
@@ -1917,12 +1924,18 @@ Popen(char *command, char *type)
 
         #endif
 
+        #ifdef NX_TRANS_EXIT
+	OsReleaseSignals ();
+        #endif
+
 	execl("/bin/sh", "sh", "-c", command, (char *)NULL);
 	_exit(127);
     }
 
+#ifndef NX_TRANS_EXIT
     /* Avoid EINTR during stdio calls */
     OsBlockSignals ();
+#endif
     
     /* parent */
     if (*type == 'r') {

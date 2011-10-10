@@ -1,5 +1,13 @@
 ChangeLog:
 
+nx-X11-3.3.0-5
+
+- Fixed TR01G02163. Signals need to be blocked before the call to
+  fork() in the Popen() utility.
+ 
+- Fixed TR01G02164. Trapezoid data need to be validated before use.
+  This issue was the same of CVE-2007-2437.
+
 nx-X11-3.3.0-4
 
 - Enabled the code resetting the Xlib buffer if an IO error occured.
