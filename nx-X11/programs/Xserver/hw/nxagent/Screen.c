@@ -2120,8 +2120,8 @@ static void nxagentSetRootClip (ScreenPtr pScreen, Bool enable)
         if (anyMarked)
             (*pScreen->ValidateTree)(pWin, NullWindow, VTOther);
     }
-    
-    if (pWin->backStorage &&
+
+    if (pWin->backStorage && pOldClip &&
         ((pWin->backingStore == Always) || WasViewable))
     {
         if (!WasViewable)
@@ -2264,6 +2264,52 @@ FIXME: We should try to restore the previously
 
   nxagentChangeOption(ViewportXSpan, nxagentOption(Width) - nxagentOption(RootWidth));
   nxagentChangeOption(ViewportYSpan, nxagentOption(Height) - nxagentOption(RootHeight));
+
+  /*
+   * Change agent window size and size hints.
+   */
+
+  if ((nxagentOption(Fullscreen) == 0 && nxagentOption(AllScreens) == 0))
+  {
+    sizeHints.flags = PPosition | PMinSize | PMaxSize;
+    sizeHints.x = nxagentOption(X);
+    sizeHints.y = nxagentOption(Y);
+
+    sizeHints.min_width = MIN_NXAGENT_WIDTH;
+    sizeHints.min_height = MIN_NXAGENT_HEIGHT;
+    sizeHints.width = width;
+    sizeHints.height = height;
+
+    if (nxagentOption(DesktopResize) == 1)
+    {
+      sizeHints.max_width = WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
+      sizeHints.max_height = HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
+    }
+    else
+    {
+      sizeHints.max_width = nxagentOption(RootWidth);
+      sizeHints.max_height = nxagentOption(RootHeight);
+    }
+
+    if (nxagentUserGeometry.flag & XValue || nxagentUserGeometry.flag & YValue)
+    {
+      sizeHints.flags |= USPosition;
+    }
+
+    if (nxagentUserGeometry.flag & WidthValue || nxagentUserGeometry.flag & HeightValue)
+    {
+      sizeHints.flags |= USSize;
+    }
+
+    XSetWMNormalHints(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], &sizeHints);
+
+    XResizeWindow(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], width, height);
+
+    if (nxagentOption(Rootless) == 0)
+    {
+      XResizeWindow(nxagentDisplay, nxagentInputWindows[pScreen -> myNum], width, height);
+    }
+  }
 
   /*
    * Set properties for the agent root window.
@@ -2654,9 +2700,12 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
 
   nxagentShadowCreateMainWindow(pScreen, pWin, nxagentShadowWidth, nxagentShadowHeight);
 
-  nxagentShadowSetWindowsSize();
+  if (nxagentRemoteMajor <= 3)
+  {
+    nxagentShadowSetWindowsSize();
 
-  nxagentSetWMNormalHints(0);
+    nxagentSetWMNormalHints(0);
+  }
 
   XMapWindow(nxagentDisplay, nxagentDefaultWindows[0]);
 
@@ -3453,118 +3502,123 @@ Bool nxagentReconnectScreen(void *p0)
   return True;  
 }
 
-int nxagentRRSetScreenConfig(ScreenPtr pScreen, int width, int height)
+RRModePtr    nxagentRRCustomMode = NULL;
+
+int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, int mmHeight)
 {
-    rrScrPrivPtr pScrPriv;
-    RRScreenSizePtr pSize;
-    Rotation rotation;
-    int rate;
-    short oldWidth, oldHeight;
-    int  mmWidth, mmHeight;
-    int oldSize;
-    RRScreenSizePtr oldSizes;
+  ScreenPtr    pScreen;
+  rrScrPrivPtr pScrPriv;
+  RROutputPtr  output;
+  RRCrtcPtr    crtc;
+  RRModePtr    mode;
+  xRRModeInfo  modeInfo;
+  char         name[100];
+  int          r, c, m;
+  int          refresh = 60;
+  int          doNotify = 1;
 
-    pScrPriv = rrGetScrPriv(pScreen);
+  if (WindowTable[screen] == NULL)
+  {
+    return 0;
+  }
 
-    oldWidth = pScreen->width;
-    oldHeight = pScreen->height;
+  UpdateCurrentTime();
 
-    if (!pScrPriv)
-    {
-      return 1;
-    }
-
-    if (!RRGetInfo (pScreen))
-    {
-      return 1;
-    }
-
-    rotation = RR_Rotate_0;
-
-    rate = 0;
-
-    mmWidth  = (width * 254 + monitorResolution * 5) / (monitorResolution * 10);
-
-    if (mmWidth < 1)
-    {
-      mmWidth = 1;
-    }
-
-    mmHeight = (height * 254 + monitorResolution * 5) / (monitorResolution * 10);
-
-    if (mmHeight < 1)
-    {
-      mmHeight = 1;
-    }
-
-    pSize = xalloc(sizeof(RRScreenSize));
-
-    pSize -> width = width;
-    pSize -> height = height;
-    pSize -> mmWidth = mmWidth;
-    pSize -> mmHeight = mmHeight;
-
+  if (nxagentGrabServerInfo.grabstate == SERVER_GRABBED)
+  {
     /*
-     * call out to ddx routine to effect the change
+     * If any client grabbed the server it won't expect that screen
+     * configuration changes until it releases the grab. That could
+     * get an X error because available modes are chanded meanwhile.
      */
 
-    if (!(*pScrPriv->rrSetConfig) (pScreen, rotation, rate,
-                                       pSize))
-    {
-      /*
-       * unknown DDX failure.
-       */
-
-      xfree(pSize);
-
-      return 1;
-    }
-
-    /*
-     * TellChanged uses this privates.
-     */
-
-    oldSize = pScrPriv->size;
-    oldSizes = pScrPriv->pSizes;
-
-    pScrPriv->size = 0;
-    pScrPriv->pSizes = pSize;
-
-    /*
-     * Deliver ScreenChangeNotify events whenever
-     * the configuration is updated
-     */
-
-    WalkTree (pScreen, TellChanged, (pointer) pScreen);
-
-    /*
-     * Deliver ConfigureNotify events when root changes
-     * pixel size
-     */
-
-    if (oldWidth != pScreen->width || oldHeight != pScreen->height)
-    {
-      RRSendConfigNotify (pScreen);
-    }
-
-    RREditConnectionInfo (pScreen);
-
-    /*
-     * Fix pointer bounds and location
-     */
-
-    ScreenRestructured (pScreen);
-
-    /*
-     * Restore old privates.
-     */
-
-    pScrPriv->pSizes = oldSizes;
-    pScrPriv->size = oldSize;
-
-    xfree(pSize);
+    #ifdef TEST
+    fprintf(stderr, "nxagentChangeScreenConfig: Cancel with grabbed server.\n");
+    #endif
 
     return 0;
+  }
+
+  pScreen = WindowTable[screen] -> drawable.pScreen;
+
+  #ifdef TEST
+  fprintf(stderr, "nxagentChangeScreenConfig: Changing config to %dx%d.\n", width, height);
+  #endif
+
+  r = nxagentResizeScreen(pScreen, width, height, mmWidth, mmHeight);
+
+  if (r != 0)
+  {
+    pScrPriv = rrGetScrPriv(pScreen);
+
+    if (pScrPriv)
+    {
+      output = RRFirstOutput(pScreen);
+
+      if (output && output -> crtc)
+      {
+        crtc = output -> crtc;
+
+        for (c = 0; c < pScrPriv -> numCrtcs; c++)
+        {
+          RRCrtcSet(pScrPriv -> crtcs[c], NULL, 0, 0, RR_Rotate_0, 0, NULL);
+        }
+
+        memset(&modeInfo, '\0', sizeof(modeInfo));
+        sprintf(name, "%dx%d", width, height);
+
+        modeInfo.width  = width;
+        modeInfo.height = height;
+        modeInfo.hTotal = width;
+        modeInfo.vTotal = height;
+        modeInfo.dotClock = ((CARD32) width * (CARD32) height *
+                                (CARD32) refresh);
+        modeInfo.nameLength = strlen(name);
+
+        if (nxagentRRCustomMode != NULL)
+        {
+          RROutputDeleteUserMode(output, nxagentRRCustomMode);
+          FreeResource(nxagentRRCustomMode -> mode.id, 0);
+
+          if (crtc != NULL && crtc -> mode == nxagentRRCustomMode)
+          {
+            RRCrtcSet(crtc, NULL, 0, 0, RR_Rotate_0, 0, NULL);
+          }
+
+          #ifdef TEST
+          fprintf(stderr, "nxagentChangeScreenConfig: "
+                      "Going to destroy mode %p with refcnt %d.\n",
+                          nxagentRRCustomMode, nxagentRRCustomMode->refcnt);
+          #endif
+
+          RRModeDestroy(nxagentRRCustomMode);
+        }
+
+        nxagentRRCustomMode = RRModeGet(&modeInfo, name);
+
+        RROutputAddUserMode(output, nxagentRRCustomMode);
+
+        RRCrtcSet(crtc, nxagentRRCustomMode, 0, 0, RR_Rotate_0, 1, &output);
+
+        RROutputChanged(output, 1);
+
+        doNotify = 0;
+      }
+
+      pScrPriv -> lastSetTime = currentTime;
+
+      pScrPriv->changed = 1;
+      pScrPriv->configChanged = 1;
+    }
+
+    if (doNotify
+)
+    {
+      RRScreenSizeNotify(pScreen);
+    }
+  }
+
+  return r;
 }
 
 void nxagentSaveAreas(PixmapPtr pPixmap, RegionPtr prgnSave, int xorg, int yorg, WindowPtr pWin)

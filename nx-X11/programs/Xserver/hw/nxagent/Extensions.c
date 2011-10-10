@@ -22,10 +22,18 @@
 #include "Agent.h"
 #include "Display.h"
 #include "Screen.h"
+#include "Options.h"
 #include "Extensions.h"
+#include "Windows.h"
 
 void GlxExtensionInit(void);
 void GlxWrapInitVisuals(void *procPtr);
+
+static int nxagentRandRScreenSetSize(ScreenPtr pScreen, CARD16 width,
+                                         CARD16 height, CARD32 mmWidth,
+                                             CARD32 mmHeight);
+
+static int nxagentRandRInitSizes(ScreenPtr pScreen);
 
 #ifdef __DARWIN__
 
@@ -75,6 +83,8 @@ void nxagentInitRandRExtension(ScreenPtr pScreen)
     fprintf(stderr, "Warning: Failed to initialize the RandR extension.\n");
   }
 
+  nxagentRandRInitSizes(pScreen);
+
   /*
    * RRScreenInit sets these pointers to NULL,
    * so requiring the server to set up its own
@@ -84,12 +94,31 @@ void nxagentInitRandRExtension(ScreenPtr pScreen)
   pRandRScrPriv = rrGetScrPriv(pScreen);
 
   pRandRScrPriv -> rrGetInfo   = nxagentRandRGetInfo;
+
+  #if RANDR_12_INTERFACE
+  pRandRScrPriv -> rrScreenSetSize = nxagentRandRScreenSetSize;
+  #endif
+
+  #if RANDR_10_INTERFACE
   pRandRScrPriv -> rrSetConfig = nxagentRandRSetConfig;
+  #endif
 }
 
 int nxagentRandRGetInfo(ScreenPtr pScreen, Rotation *pRotations)
 {
+  /*
+   * Rotation is not supported.
+   */
+
+  *pRotations = RR_Rotate_0;
+
+  return 1;
+}
+
+static int nxagentRandRInitSizes(ScreenPtr pScreen)
+{
   RRScreenSizePtr pSize;
+  rrScrPrivPtr pRandRScrPriv = rrGetScrPriv(pScreen);
 
   int width;
   int height;
@@ -97,20 +126,22 @@ int nxagentRandRGetInfo(ScreenPtr pScreen, Rotation *pRotations)
   int maxWidth;
   int maxHeight;
 
-  int w[] = {0, 160, 320, 640, 800, 1024, 0, 0};
-  int h[] = {0, 120, 240, 480, 600,  768, 0, 0};
+/*
+  int w[] = {0, 160, 320, 640, 800, 1024, 1152, 1280, 1280, 1280, 1280, 1280,
+                 1280, 1360, 1440, 1600, 1600, 1680, 1920, 1920, 0, 0};
+  int h[] = {0, 120, 240, 480, 600,  768,  864,  600,  720,  800,  854,  960,
+                 1024,  768,  900,  900, 1200, 1050, 1080, 1200, 0, 0};
+*/
+  int w[] = {0, 320, 640, 640, 800, 800, 1024, 1024, 1152, 1280, 1280, 1280, 1360,
+                 1440, 1600, 1600, 1680, 1920, 1920, 0, 0};
+  int h[] = {0, 240, 360, 480, 480, 600,  600,  768,  864,  720,  800, 1024,  768,
+                  900,  900, 1200, 1050, 1080, 1200, 0, 0};
 
   int i;
   int nSizes;
 
   int mmWidth;
   int mmHeight;
-
-  /*
-   * Rotation is not supported.
-   */
-
-  *pRotations = RR_Rotate_0;
 
   /*
    * Register all the supported sizes. The third
@@ -185,13 +216,106 @@ int nxagentRandRGetInfo(ScreenPtr pScreen, Rotation *pRotations)
   return 1;
 }
 
+#if RANDR_10_INTERFACE
+
 int nxagentRandRSetConfig(ScreenPtr pScreen, Rotation rotation,
                               int rate, RRScreenSizePtr pSize)
 {
+  int r;
+  rrScrPrivPtr pRandRScrPriv;
+
+  UpdateCurrentTime();
+
   /*
    * Whatever size is OK for us.
    */
 
-  return nxagentResizeScreen(pScreen, pSize -> width, pSize -> height,
+  r = nxagentResizeScreen(pScreen, pSize -> width, pSize -> height,
                                  pSize -> mmWidth, pSize -> mmHeight);
+
+  nxagentMoveViewport(pScreen, 0, 0);
+
+  return r;
 }
+
+#endif
+
+#if RANDR_12_INTERFACE
+
+void nxagentRandRSetWindowsSize(int width, int height)
+{
+  if (width == 0)
+  {
+    if (nxagentOption(Fullscreen) == 1)
+    {
+      width = WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
+    }
+    else
+    {
+      width = nxagentOption(Width);
+    }
+  }
+
+  if (height == 0)
+  {
+    if (nxagentOption(Fullscreen) == 1)
+    {
+      height = HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
+    }
+    else
+    {
+      height = nxagentOption(Height);
+    }
+  }
+
+  XResizeWindow(nxagentDisplay, nxagentDefaultWindows[0], width, height);
+
+  if (nxagentOption(Rootless) == 0)
+  {
+    XMoveResizeWindow(nxagentDisplay, nxagentInputWindows[0], 0, 0, width,
+                          height);
+  }
+}
+
+int nxagentRandRScreenSetSize(ScreenPtr pScreen, CARD16 width, CARD16 height,
+                                   CARD32 mmWidth, CARD32 mmHeight)
+{
+  int result;
+  rrScrPrivPtr pRandRScrPriv;
+
+  UpdateCurrentTime();
+
+  if (nxagentOption(DesktopResize) == 1 &&
+          (nxagentOption(Fullscreen) == 1 ||
+               width > WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay)) ||
+                   height > HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay))))
+  {
+    if (nxagentOption(ClientOs) != ClientOsWinnt
+            /*&& nxagentOption(ClientOs) != ClientNXPlayer*/)
+    {
+      nxagentChangeOption(DesktopResize, 0);
+    }
+  }
+
+  if (nxagentOption(DesktopResize) == 1 && nxagentOption(Fullscreen) == 0 &&
+          nxagentOption(AllScreens) == 0)
+  {
+    nxagentChangeOption(Width, width);
+    nxagentChangeOption(Height, height);
+  }
+
+  result = nxagentResizeScreen(pScreen, width, height, mmWidth, mmHeight);
+
+  if (result == 1 && nxagentOption(DesktopResize) == 1 &&
+          nxagentOption(Fullscreen) == 0 && nxagentOption(AllScreens) == 0)
+  {
+    nxagentRandRSetWindowsSize(width, height);
+    nxagentSetWMNormalHints(pScreen -> myNum);
+  }
+
+  nxagentMoveViewport(pScreen, 0, 0);
+
+  return result;
+}
+
+#endif

@@ -293,31 +293,7 @@ void nxagentRecolorCursor(ScreenPtr pScreen, CursorPtr pCursor,
 Bool nxagentSetCursorPosition(ScreenPtr pScreen, int x, int y,
                                   Bool generateEvent)
 {
-  /*
-   * Don't warp the cursor if the requesting client
-   * is the server client itself or a shadow agent.
-   */
-
-  if (requestingClient != NULL &&
-          requestingClient != serverClient &&
-              nxagentClientHint(requestingClient) != NXAGENT_SHADOW)
-  {
-    int i;
-
-    #ifdef TEST
-    fprintf(stderr, "nxagentSetCursorPosition: Moving the cursor at position [%d,%d].\n",
-                x, y);
-    #endif
-
-    for (i = 0; i < nxagentNumScreens; i++)
-    {
-      XWarpPointer(nxagentDisplay, nxagentDefaultWindows[i],
-                   nxagentDefaultWindows[pScreen->myNum],
-                   0, 0, 0, 0, x, y);
-    }
-  }
-
-  return True;
+  return 1;
 }
 
 void nxagentReconnectCursor(pointer p0, XID x1, pointer p2)

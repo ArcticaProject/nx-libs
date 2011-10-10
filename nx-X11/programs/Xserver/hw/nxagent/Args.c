@@ -135,6 +135,8 @@ char *nxagentKeyboard = NULL;
 
 Bool nxagentOnce = True;
 
+int nxagentRemoteMajor = -1;
+
 static void nxagentParseOptionString(char*);
 
 /*
@@ -1577,6 +1579,8 @@ N/A
       {
         nxagentAlphaCompat = 0;
       }
+
+      nxagentRemoteMajor = remoteMajor;
 
       if (nxagentPackMethod == -1)
       {

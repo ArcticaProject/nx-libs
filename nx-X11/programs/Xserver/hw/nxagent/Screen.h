@@ -100,7 +100,7 @@ Bool nxagentMagicPixelZone(int x, int y);
 Bool nxagentResizeScreen(ScreenPtr pScreen, int width, int height,
                              int mmWidth, int mmHeight);
 
-int nxagentRRSetScreenConfig(ScreenPtr pScreen, int width, int height);
+int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, int mmHeight);
 
 extern Bool nxagentReconnectScreen(void *p0);
 

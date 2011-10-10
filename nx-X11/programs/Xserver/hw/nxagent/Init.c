@@ -128,6 +128,10 @@ void OsVendorEndRedirectErrorFFunction();
  * new X server tree.
  */
 
+
+static void nxagentGrabServerCallback(CallbackListPtr *callbacks, pointer data,
+                                   pointer args);
+
 #ifdef NXAGENT_UPGRADE
 
 void ddxInitGlobals(void)
@@ -208,6 +212,11 @@ void InitOutput(ScreenInfo *screenInfo, int argc, char *argv[])
    */
 
   NXUnsetLibraryPath(1);
+
+  if (serverGeneration == 1)
+  {
+    AddCallback(&ServerGrabCallback, nxagentGrabServerCallback, NULL);
+  }
 
   if (nxagentUserDefinedFontPath == 0)
   {
@@ -478,6 +487,17 @@ void OsVendorEndRedirectErrorFFunction()
 #ifdef AIXV3
 int SelectWaitTime = 10000; /* usec */
 #endif
+
+ServerGrabInfoRec nxagentGrabServerInfo;
+
+static void nxagentGrabServerCallback(CallbackListPtr *callbacks, pointer data,
+                                   pointer args)
+{
+    ServerGrabInfoRec *grab = (ServerGrabInfoRec*)args;
+
+    nxagentGrabServerInfo.client = grab->client;
+    nxagentGrabServerInfo.grabstate = grab->grabstate;
+}
 
 #ifdef DPMSExtension
 

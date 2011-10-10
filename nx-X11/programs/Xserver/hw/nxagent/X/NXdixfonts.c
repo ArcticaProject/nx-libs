@@ -148,7 +148,8 @@ static const char *_NXGetFontPath(const char *path)
 
 _NXGetFontPathError:
 
-    strcpy(_NXFontPath, path);
+    strncpy(_NXFontPath, path, 1023);
+    _NXFontPath[1023] = '\0';
 
 #ifdef NX_TRANS_TEST
     fprintf(stderr, "_NXGetFontPath: Using default font path [%s].\n", _NXFontPath);

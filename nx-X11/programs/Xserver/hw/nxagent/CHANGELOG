@@ -1,5 +1,24 @@
 ChangeLog:
 
+nxagent-3.5.0-5
+
+- The NX agent failed to resize its own window to fit the desktop size
+  in shadow sessions. TR07I02561 is now fixed also in shadow mode.
+
+nxagent-3.5.0-4
+
+- Fixed TR07I02530. Solved a buffer overflow occurring when the '-fp'
+  option value exceeds 1024 characters.
+
+- Extended list of the available screen geometries.
+
+nxagent-3.5.0-3
+
+- Fixed TR08I02572. Upgraded RandR extension to version 1.2.
+
+- Fixed TR07I02561. The NX agent failed to resize its own window to
+  fit the desktop size.
+
 nxagent-3.5.0-2
 
 - Fixed TR0502449. Initialized font server path even if font server

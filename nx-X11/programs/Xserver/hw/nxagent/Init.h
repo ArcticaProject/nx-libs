@@ -37,4 +37,6 @@ extern int nxagentDoFullGeneration;
 extern int nxagentBackingStore;
 extern int nxagentSaveUnder;
 
+extern ServerGrabInfoRec nxagentGrabServerInfo;
+
 #endif /* __Init_H__ */

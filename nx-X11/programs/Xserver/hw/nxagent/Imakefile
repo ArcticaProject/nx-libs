@@ -7,8 +7,7 @@ SRCS1 = os2Stub.c
 OBJS1 = os2Stub.o
 #endif
 
-SRCS =  NXrandr.c \
-        NXwindow.c \
+SRCS =  NXwindow.c \
 	NXevents.c \
 	NXproperty.c \
 	NXdixfonts.c \
@@ -70,8 +69,7 @@ SRCS =  NXrandr.c \
 	miinitext.c \
 	$(SRCS1)
 
-OBJS =  NXrandr.o \
-        NXwindow.o \
+OBJS =  NXwindow.o \
 	NXevents.o \
 	NXproperty.o \
 	NXdixfonts.o \
@@ -206,6 +204,8 @@ DEFINES = -g $(OS_DEFINES) $(EXT_DEFINES) $(UPG_DEFINES) \
           -DNXAGENT_SPLASH \
           -DNXAGENT_ARTSD \
           -UNX_DEBUG_INPUT \
+	  -DRANDR_10_INTERFACE \
+	  -DRANDR_12_INTERFACE \
           -UPANORAMIX \
           -UDEBUG_TREE
 

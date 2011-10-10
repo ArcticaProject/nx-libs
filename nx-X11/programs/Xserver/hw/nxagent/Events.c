@@ -591,8 +591,8 @@ void nxagentSwitchResizeMode(ScreenPtr pScreen)
 
     nxagentLaunchDialog(DIALOG_ENABLE_DESKTOP_RESIZE_MODE);
 
-    nxagentRRSetScreenConfig(pScreen, nxagentOption(Width),
-                                 nxagentOption(Height));
+    nxagentChangeScreenConfig(0, nxagentOption(Width), nxagentOption(Height),
+                                  0, 0);
 
     if (nxagentOption(ClientOs) == ClientOsWinnt)
     {
@@ -3461,8 +3461,8 @@ int nxagentHandleConfigureNotify(XEvent* X)
                       nxagentOption(Width), nxagentOption(Height));
           #endif
 
-          nxagentRRSetScreenConfig(screenInfo.screens[DefaultScreen(nxagentDisplay)],
-                                     nxagentOption(Width), nxagentOption(Height));
+          nxagentChangeScreenConfig(0, nxagentOption(Width),
+                                        nxagentOption(Height), 0, 0);
         }
       }
 

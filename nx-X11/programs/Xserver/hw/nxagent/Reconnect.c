@@ -598,7 +598,8 @@ Bool nxagentReconnectSession(void)
 
   if (nxagentResizeDesktopAtStartup || nxagentOption(Rootless) == True)
   {
-    nxagentRRSetScreenConfig(nxagentDefaultScreen, nxagentOption(RootWidth), nxagentOption(RootHeight));
+    nxagentChangeScreenConfig(0, nxagentOption(RootWidth),
+                                  nxagentOption(RootHeight), 0, 0);
 
     nxagentResizeDesktopAtStartup = False;
   }

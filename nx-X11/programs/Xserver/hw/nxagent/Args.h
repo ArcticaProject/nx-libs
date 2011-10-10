@@ -81,4 +81,6 @@ void nxagentSetCoalescence(void);
 
 extern int nxagentUserDefinedFontPath;
 
+extern int nxagentRemoteMajor;
+
 #endif /* __Args_H__ */

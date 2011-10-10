@@ -899,8 +899,8 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
       {
         if (nxagentOption(Shadow) == 0)
         {
-          nxagentRRSetScreenConfig(pScreen, WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay)),
-                                       HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay)));
+          nxagentChangeScreenConfig(0, WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay)),
+                                        HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay)), 0, 0);
         }
         else
         {
@@ -953,7 +953,8 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
 
       if (nxagentOption(Shadow) == 0)
       {
-        nxagentRRSetScreenConfig(pScreen, nxagentOption(RootWidth), nxagentOption(RootHeight));
+        nxagentChangeScreenConfig(0, nxagentOption(RootWidth),
+                                      nxagentOption(RootHeight), 0, 0);
       }
     }
 
