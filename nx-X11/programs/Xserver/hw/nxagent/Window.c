@@ -908,6 +908,8 @@ void nxagentSwitchFullscreen(ScreenPtr pScreen, Bool switchOn)
 
   XMoveResizeWindow(nxagentDisplay, nxagentInputWindows[0], 0, 0,
                         nxagentOption(Width), nxagentOption(Height));
+
+  nxagentSetPrintGeometry(pScreen -> myNum);
 }
 
 #ifdef VIEWPORT_FRAME

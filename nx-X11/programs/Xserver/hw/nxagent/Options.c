@@ -39,6 +39,11 @@ AgentOptionsRec nxagentOptionsBackup;
 AgentOptionsPtr nxagentOptionsPtr = &nxagentOptions;
 
 /*
+ * If this is set, print the geometry in the block handler.
+ */
+
+unsigned int nxagentPrintGeometryFlags = 0;
+/*
  * This must be called at startup to initialize
  * the options repository to the default values.
  */

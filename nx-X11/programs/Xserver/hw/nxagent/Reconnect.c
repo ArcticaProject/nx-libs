@@ -257,7 +257,11 @@ TODO: This should be reset only when
 
       if ((dispatchException & DE_TERMINATE) == 0)
       {
+        #ifdef NX_DEBUG_INPUT
+        fprintf(stderr, "Session: Session suspended at '%s' timestamp [%lu].\n", GetTimeAsString(), GetTimeInMillis());
+        #else
         fprintf(stderr, "Session: Session suspended at '%s'.\n", GetTimeAsString());
+        #endif
       }
 
       nxagentResetDisplayHandlers();
@@ -609,7 +613,11 @@ Bool nxagentReconnectSession(void)
     goto nxagentReconnectError;
   }
 
+  #ifdef NX_DEBUG_INPUT
+  fprintf(stderr, "Session: Session resumed at '%s' timestamp [%lu].\n", GetTimeAsString(), GetTimeInMillis());
+  #else
   fprintf(stderr, "Session: Session resumed at '%s'.\n", GetTimeAsString());
+  #endif
 
   nxagentRemoveSplashWindow(NULL);
 

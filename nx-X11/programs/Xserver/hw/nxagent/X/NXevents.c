@@ -191,6 +191,7 @@ xEvent *xeviexE;
 
 #ifdef NX_DEBUG_INPUT
 extern int nxagentDebugInput;
+extern int nxagentDebugInputDevices;
 #endif
  
 extern Display *nxagentDisplay;
@@ -1865,6 +1866,12 @@ DeliverEventsToWindow(register WindowPtr pWin, xEvent *pEvents, int count,
 	tempGrab.pointerMode = GrabModeAsync;
 	tempGrab.confineTo = NullWindow;
 	tempGrab.cursor = NullCursor;
+        #ifdef NX_DEBUG_INPUT
+        if (nxagentDebugInputDevices == 1)
+        {
+          fprintf(stderr, "DeliverEventsToWindow: Activating passive grab on pointer.\n");
+        }
+        #endif
 	(*inputInfo.pointer->ActivateGrab)(inputInfo.pointer, &tempGrab,
 					   currentTime, TRUE);
     }
@@ -2735,6 +2742,13 @@ CheckPassiveGrabsOnWindow(
 				tempGrab.modifiersDetail.exact&(~0x1f00);
 	    }
 #endif
+            #ifdef NX_DEBUG_INPUT
+            if (nxagentDebugInputDevices == 1)
+            {
+              fprintf(stderr, "CheckPassiveGrabsOnWindow: Activating passive grab on %s.\n",
+                          device == inputInfo.keyboard ? "keyboard" : "pointer");
+            }
+            #endif
 	    (*device->ActivateGrab)(device, grab, currentTime, TRUE);
  
 	    FixUpEventFromWindow(xE, grab->window, None, TRUE);
@@ -3093,7 +3107,17 @@ drawable.id:0;
     else
 	DeliverFocusedEvent(keybd, xE, sprite.win, count);
     if (deactivateGrab)
+    #ifdef NX_DEBUG_INPUT
+    {
+      if (nxagentDebugInputDevices == 1)
+      {
+        fprintf(stderr, "ProcessKeyboardEvent: Deactivating grab on keyboard.\n");
+      }
+    #endif
         (*keybd->DeactivateGrab)(keybd);
+    #ifdef NX_DEBUG_INPUT
+    }
+    #endif
 }
 
 #ifdef XKB
@@ -3320,7 +3344,17 @@ ProcessPointerEvent (register xEvent *xE, register DeviceIntPtr mouse, int count
 			    mouse, count);
     #endif
     if (deactivateGrab)
+    #ifdef NX_DEBUG_INPUT
+    {
+      if (nxagentDebugInputDevices == 1)
+      {
+        fprintf(stderr, "ProcessPointerEvent: Deactivating grab on pointer.\n");
+      }
+    #endif
         (*mouse->DeactivateGrab)(mouse);
+    #ifdef NX_DEBUG_INPUT
+    }
+    #endif
 }
 
 #define AtMostOneClient \
@@ -4041,6 +4075,12 @@ ProcGrabPointer(ClientPtr client)
     pWin = SecurityLookupWindow(stuff->grabWindow, client, SecurityReadAccess);
     if (!pWin)
 	return BadWindow;
+    #ifdef NX_DEBUG_INPUT
+    if (nxagentDebugInputDevices == 1)
+    {
+      fprintf(stderr, "ProcGrabPointer: pWin [%p] client [%d].\n", pWin, client -> index);
+    }
+    #endif
     if (stuff->confineTo == None)
 	confineTo = NullWindow;
     else 
@@ -4100,6 +4140,12 @@ ProcGrabPointer(ClientPtr client)
 	tempGrab.keyboardMode = stuff->keyboardMode;
 	tempGrab.pointerMode = stuff->pointerMode;
 	tempGrab.device = device;
+        #ifdef NX_DEBUG_INPUT
+        if (nxagentDebugInputDevices == 1)
+        {
+          fprintf(stderr, "ProcGrabPointer: Activating active grab on pointer.\n");
+        }
+        #endif
 	(*device->ActivateGrab)(device, &tempGrab, time, FALSE);
 	if (oldCursor)
 	    FreeCursor (oldCursor, (Cursor)0);
@@ -4163,6 +4209,12 @@ ProcUngrabPointer(ClientPtr client)
     TimeStamp time;
     REQUEST(xResourceReq);
 
+    #ifdef NX_DEBUG_INPUT
+    if (nxagentDebugInputDevices == 1)
+    {
+      fprintf(stderr, "ProcUngrabPointer: client [%d].\n", client -> index);
+    }
+    #endif
     REQUEST_SIZE_MATCH(xResourceReq);
     UpdateCurrentTime();
     grab = device->grab;
@@ -4170,7 +4222,25 @@ ProcUngrabPointer(ClientPtr client)
     if ((CompareTimeStamps(time, currentTime) != LATER) &&
 	    (CompareTimeStamps(time, device->grabTime) != EARLIER) &&
 	    (grab) && SameClient(grab, client))
+    #ifdef NX_DEBUG_INPUT
+    {
+      if (nxagentDebugInputDevices == 1)
+      {
+        fprintf(stderr, "ProcUngrabPointer: Deactivating grab on pointer.\n");
+      }
+    #endif
 	(*device->DeactivateGrab)(device);
+    #ifdef NX_DEBUG_INPUT
+    }
+    else
+    {
+      if (nxagentDebugInputDevices == 1)
+      {
+        fprintf(stderr, "ProcUngrabPointer: current time [%lu] request time [%lu] grab time [%lu].\n",
+                    currentTime.milliseconds, time.milliseconds, device->grabTime.milliseconds);
+      }
+    }
+    #endif
     return Success;
 }
 
@@ -4225,6 +4295,12 @@ GrabDevice(register ClientPtr client, register DeviceIntPtr dev,
 	tempGrab.pointerMode = other_mode;
 	tempGrab.eventMask = mask;
 	tempGrab.device = dev;
+        #ifdef NX_DEBUG_INPUT
+        if (nxagentDebugInputDevices == 1)
+        {
+          fprintf(stderr, "GrabDevice: Activating active grab on keyboard.\n");
+        }
+        #endif
 	(*dev->ActivateGrab)(dev, &tempGrab, time, FALSE);
 	*status = GrabSuccess;
     }
@@ -4238,6 +4314,12 @@ ProcGrabKeyboard(ClientPtr client)
     REQUEST(xGrabKeyboardReq);
     int result;
 
+    #ifdef NX_DEBUG_INPUT
+    if (nxagentDebugInputDevices == 1)
+    {
+      fprintf(stderr, "ProcGrabKeyboard: client [%d].\n", client -> index);
+    }
+    #endif
     REQUEST_SIZE_MATCH(xGrabKeyboardReq);
 #ifdef XCSECURITY
     if (!SecurityCheckDeviceAccess(client, inputInfo.keyboard, TRUE))
@@ -4268,6 +4350,12 @@ ProcUngrabKeyboard(ClientPtr client)
     TimeStamp time;
     REQUEST(xResourceReq);
 
+    #ifdef NX_DEBUG_INPUT
+    if (nxagentDebugInputDevices == 1)
+    {
+      fprintf(stderr, "ProcUngrabKeyboard: client [%d].\n", client -> index);
+    }
+    #endif
     REQUEST_SIZE_MATCH(xResourceReq);
     UpdateCurrentTime();
     grab = device->grab;
@@ -4275,7 +4363,25 @@ ProcUngrabKeyboard(ClientPtr client)
     if ((CompareTimeStamps(time, currentTime) != LATER) &&
 	(CompareTimeStamps(time, device->grabTime) != EARLIER) &&
 	(grab) && SameClient(grab, client))
+    #ifdef NX_DEBUG_INPUT
+    {
+      if (nxagentDebugInputDevices == 1)
+      {
+        fprintf(stderr, "ProcUngrabKeyboard: Deactivating grab on keyboard.\n");
+      }
+    #endif
 	(*device->DeactivateGrab)(device);
+    #ifdef NX_DEBUG_INPUT
+    }
+    else
+    {
+      if (nxagentDebugInputDevices == 1)
+      {
+        fprintf(stderr, "ProcUngrabKeyboard: current time [%lu] request time [%lu] grab time [%lu].\n",
+                    currentTime.milliseconds, time.milliseconds, device->grabTime.milliseconds);
+      }
+    }
+    #endif
     return Success;
 }
 

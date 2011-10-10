@@ -515,7 +515,11 @@ Dispatch(void)
 
     if (serverGeneration > nxagentMaxAllowedResets)
     {
+      #ifdef NX_DEBUG_INPUT
+      fprintf(stderr, "Session: Session started at '%s' timestamp [%lu].\n", GetTimeAsString(), GetTimeInMillis());
+      #else
       fprintf(stderr, "Session: Session started at '%s'.\n", GetTimeAsString());
+      #endif
 
       nxagentSessionState = SESSION_UP;
     }

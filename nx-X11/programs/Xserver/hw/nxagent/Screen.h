@@ -36,6 +36,9 @@ is" without express or implied warranty.
 #define MIN_NXAGENT_HEIGHT 60
 #define NXAGENT_FRAME_WIDTH 2000
 
+#define nxagentSetPrintGeometry(screen) \
+    nxagentPrintGeometryFlags = (1 << (screen));
+    
 extern int nxagentClients;
 
 extern int nxagentAutoDisconnectTimeout;

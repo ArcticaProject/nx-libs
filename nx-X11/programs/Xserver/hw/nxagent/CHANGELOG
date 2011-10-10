@@ -1,5 +1,29 @@
 ChangeLog:
 
+nxagent-3.3.0-13
+
+- Handle the window unmap immediately. Don't add it to the configure
+  queue.
+
+nxagent-3.3.0-12
+
+- Fixed TR03G02200. Timestamps could be in the future in KeyRelease
+  events sent to the X clients.
+
+- Added debug logging of input devices state  Logging can be enabled
+  or disabled via the Ctrl+Alt+x shortcut. State info is dumped every
+  5 seconds.
+
+- Added Ctrl+Alt+y shortcut used to deactivate input devices grab for
+  debug purposes.
+
+nxagent-3.3.0-11
+
+- Changed the message logging the screen size changes, in order to
+  show the fullscreen state.
+
+- Handle the window unmapping in the nxagentConfigureWindow queue.
+
 nxagent-3.3.0-10
 
 - Fixed TR12F02146. Compare the drawable and the bitmap data before

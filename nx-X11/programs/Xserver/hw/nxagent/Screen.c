@@ -2373,8 +2373,7 @@ FIXME: We should try to restore the previously
   nxagentPrintAgentGeometry("After Resize Screen", "nxagentResizeScreen:");
   #endif
 
-  fprintf(stderr, "Info: Screen [%d] resized to geometry [%dx%d].\n",
-              pScreen -> myNum, width, height);
+  nxagentSetPrintGeometry(pScreen -> myNum);
 
   return 1;
 
@@ -3901,6 +3900,24 @@ void nxagentShadowAdaptToRatio(void)
   nxagentMarkCorruptedRegion((DrawablePtr)nxagentShadowPixmapPtr, &region);
 
   REGION_UNINIT(pScreen, &region);
+}
+
+void nxagentPrintGeometry()
+{
+  int i;
+
+  for (i = 0; i < screenInfo.numScreens; i++)
+  {
+    if (nxagentPrintGeometryFlags && (1 << i))
+    {
+      fprintf(stderr, "Info: Screen [%d] resized to geometry [%dx%d] "
+                  "fullscreen [%d].\n", i, screenInfo.screens[i] -> width,
+                      screenInfo.screens[i] -> height,
+                          nxagentOption(Fullscreen));
+    }
+  }
+
+  nxagentPrintGeometryFlags = 0;
 }
 
 #ifdef DUMP

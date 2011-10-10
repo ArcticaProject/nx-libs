@@ -29,6 +29,8 @@
 #define UNDEFINED -1
 #define COPY_UNLIMITED -1
 
+extern unsigned int nxagentPrintGeometryFlags;
+
 typedef enum _BackingStoreMode
 {
   BackingStoreUndefined = -1,

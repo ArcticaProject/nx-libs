@@ -105,6 +105,13 @@
 
 #define MINIMUM_DISPLAY_BUFFER   512
 
+#ifdef NX_DEBUG_INPUT
+extern int nxagentDebugInputDevices;
+extern unsigned long nxagentLastInputDevicesDumpTime;
+
+extern void nxagentDumpInputDevicesState(void);
+#endif
+
 /*
  * Used in the handling of the X desktop
  * manager protocol.
@@ -185,6 +192,18 @@ void nxagentBlockHandler(pointer data, struct timeval **timeout, pointer mask)
   #endif
 
   now = GetTimeInMillis();
+
+  #ifdef NX_DEBUG_INPUT
+
+  if (nxagentDebugInputDevices == 1 &&
+        now - nxagentLastInputDevicesDumpTime > 5000)
+  {
+    nxagentLastInputDevicesDumpTime = now;
+
+    nxagentDumpInputDevicesState();
+  }
+
+  #endif
 
   if (nxagentNeedConnectionChange() == 1)
   {
@@ -540,6 +559,8 @@ void nxagentBlockHandler(pointer data, struct timeval **timeout, pointer mask)
 
   #endif
 
+  nxagentPrintGeometry();
+
   #ifdef BLOCKS
   fprintf(stderr, "[End block]\n");
   #endif
@@ -819,6 +840,8 @@ FIXME: Must queue multiple writes and handle
   }
 
   #endif
+
+  nxagentPrintGeometry();
 
   #ifdef BLOCKS
   fprintf(stderr, "[End block]\n");
