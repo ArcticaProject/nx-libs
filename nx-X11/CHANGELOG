@@ -1,5 +1,12 @@
 ChangeLog:
 
+nx-X11-3.2.0-2
+
+- Imported patch fixing issues from  X.Org security advisory, June
+  11th, 2008: Multiple vulnerabilities in X server extensions. CVE
+  IDs: CVE-2008-1377, CVE-2008-1379, CVE-2008-2360, CVE-2008-2361,
+  CVE-2008-2362.
+
 nx-X11-3.2.0-1
 
 - Opened the 3.2.0 branch based on nx-X11-3.1.0-6.

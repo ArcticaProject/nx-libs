@@ -2720,7 +2720,7 @@ SProcRecordQueryVersion(client)
 } /* SProcRecordQueryVersion */
 
 
-static void
+static int
 SwapCreateRegister(xRecordRegisterClientsReq *stuff)
 {
     register char n;
@@ -2731,11 +2731,17 @@ SwapCreateRegister(xRecordRegisterClientsReq *stuff)
     swapl(&stuff->nClients, n);
     swapl(&stuff->nRanges, n);
     pClientID = (XID *)&stuff[1];
+    if (stuff->nClients > stuff->length - (sz_xRecordRegisterClientsReq >> 2))
+	return BadLength;
     for (i = 0; i < stuff->nClients; i++, pClientID++)
     {
 	swapl(pClientID, n);
     }
+    if (stuff->nRanges > stuff->length - (sz_xRecordRegisterClientsReq >> 2)
+	- stuff->nClients)
+	return BadLength;
     RecordSwapRanges((xRecordRange *)pClientID, stuff->nRanges);
+    return Success;
 } /* SwapCreateRegister */
 
 
@@ -2744,11 +2750,13 @@ SProcRecordCreateContext(client)
     ClientPtr client;
 {
     REQUEST(xRecordCreateContextReq);
+    int			status;
     register char 	n;
 
     swaps(&stuff->length, n);
     REQUEST_AT_LEAST_SIZE(xRecordCreateContextReq);
-    SwapCreateRegister((pointer)stuff);
+    if ((status = SwapCreateRegister((pointer)stuff)) != Success)
+	return status;
     return ProcRecordCreateContext(client);
 } /* SProcRecordCreateContext */
 
@@ -2758,11 +2766,13 @@ SProcRecordRegisterClients(client)
     ClientPtr client;
 {
     REQUEST(xRecordRegisterClientsReq);
+    int			status;
     register char 	n;
 
     swaps(&stuff->length, n);
     REQUEST_AT_LEAST_SIZE(xRecordRegisterClientsReq);
-    SwapCreateRegister((pointer)stuff);
+    if ((status = SwapCreateRegister((pointer)stuff)) != Success)
+	return status;
     return ProcRecordRegisterClients(client);
 } /* SProcRecordRegisterClients */
 
