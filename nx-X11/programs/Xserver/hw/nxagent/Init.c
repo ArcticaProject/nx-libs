@@ -74,7 +74,7 @@ is" without express or implied warranty.
 #undef  DEBUG
 #undef  DUMP
 
-#define NXAGENT_VERSION  "3.2.0"
+#define NXAGENT_VERSION  "3.3.0"
 
 /*
  * ProcVector array defined in tables.c.

@@ -65,26 +65,34 @@ is" without express or implied warranty.
 #define NXAGENT_ALTERNATE_FONT_DIR    "/usr/share/X11/fonts"
 #define NXAGENT_ALTERNATE_FONT_DIR_2  "/usr/share/fonts/X11"
 #define NXAGENT_ALTERNATE_FONT_DIR_3  "/usr/share/fonts"
+#define NXAGENT_ALTERNATE_FONT_DIR_4  "/usr/NX/share/fonts"
 
 #define NXAGENT_DEFAULT_FONT_PATH  \
 "/usr/X11R6/lib/X11/fonts/misc/,/usr/X11R6/lib/X11/fonts/Speedo/,\
 /usr/X11R6/lib/X11/fonts/Type1/,/usr/X11R6/lib/X11/fonts/75dpi/,\
-/usr/X11R6/lib/X11/fonts/100dpi/,/usr/X11R6/lib/X11/fonts/TTF/"
+/usr/X11R6/lib/X11/fonts/100dpi/,/usr/X11R6/lib/X11/fonts/TTF/,\
+/usr/NX/share/fonts/base"
 
 #define NXAGENT_ALTERNATE_FONT_PATH  \
 "/usr/share/X11/fonts/misc/,/usr/share/X11/fonts/Speedo/,\
 /usr/share/X11/fonts/Type1/,/usr/share/X11/fonts/75dpi/,\
-/usr/share/X11/fonts/100dpi/,/usr/share/X11/fonts/TTF/"
+/usr/share/X11/fonts/100dpi/,/usr/share/X11/fonts/TTF/,\
+/usr/NX/share/fonts/base"
 
 #define NXAGENT_ALTERNATE_FONT_PATH_2  \
 "/usr/share/fonts/X11/misc/,/usr/share/fonts/X11/Speedo/,\
 /usr/share/fonts/X11/Type1/,/usr/share/fonts/X11/75dpi/,\
-/usr/share/fonts/X11/100dpi/,/usr/share/fonts/X11/TTF/"
+/usr/share/fonts/X11/100dpi/,/usr/share/fonts/X11/TTF/,\
+/usr/NX/share/fonts/base"
 
 #define NXAGENT_ALTERNATE_FONT_PATH_3  \
 "/usr/share/fonts/misc/,/usr/share/fonts/Speedo/,\
 /usr/share/fonts/Type1/,/usr/share/fonts/75dpi/,\
-/usr/share/fonts/100dpi/,/usr/share/fonts/TTF/"
+/usr/share/fonts/100dpi/,/usr/share/fonts/TTF/,\
+/usr/NX/share/fonts/base"
+
+#define NXAGENT_ALTERNATE_FONT_PATH_4  \
+"/usr/NX/share/fonts/base"
 
 #undef NXAGENT_FONTCACHE_DEBUG
 #undef NXAGENT_RECONNECT_FONT_DEBUG
@@ -100,6 +108,8 @@ static XFontStruct *nxagentLoadBestQueryFont(Display* dpy, char *fontName, FontP
 static XFontStruct *nxagentLoadQueryFont(register Display *dpy , char *fontName , FontPtr pFont);
 int nxagentFreeFont(XFontStruct *fs);
 static Bool nxagentGetFontServerPath(char * fontServerPath);
+
+static char * nxagentMakeScalableFontName(const char *fontName, int scalableResolution);
 
 RESTYPE RT_NX_FONT;
 
@@ -419,13 +429,59 @@ Bool nxagentFontFind(const char *name, int *pos)
 Bool nxagentFontLookUp(const char *name)
 {
   int i;
-  if (name)
-    if (!strlen(name))
-       return 0;
-  if (nxagentFontFind(name, &i))
-    return (nxagentRemoteFontList.list[i]->status > 0);
-  else
+  int result;
+
+  char *scalable;
+
+  if (name != NULL && strlen(name) == 0)
+  {
     return 0;
+  }
+
+  result = nxagentFontFind(name, &i);
+
+  scalable = NULL;
+
+  /*
+   * Let's try with the scalable font description.
+   */
+
+  if (result == 0)
+  {
+    scalable = nxagentMakeScalableFontName(name, 0); 
+
+    if (scalable != NULL)
+    {
+      result = nxagentFontFind(scalable, &i);
+
+      free(scalable);
+    }
+  }
+
+  /*
+   * Let's try again after replacing zero to xdpi and ydpi in the pattern.
+   */
+
+  if (result == 0)
+  {
+    scalable = nxagentMakeScalableFontName(name, 1); 
+
+    if (scalable != NULL)
+    {
+      result = nxagentFontFind(scalable, &i);
+
+      free(scalable);
+    }
+  }
+
+  if (result == 0)
+  {
+    return 0;
+  }
+  else
+  {
+    return (nxagentRemoteFontList.list[i]->status > 0);
+  }
 }
 
 Bool nxagentRealizeFont(ScreenPtr pScreen, FontPtr pFont)
@@ -700,7 +756,7 @@ static XFontStruct *nxagentLoadBestQueryFont(Display* dpy, char *fontName, FontP
   substFontBuf = (char *) xalloc(sizeof(char) * 512);
 
 
-  numFontFields = nxagentSplitString(fontName, fontNameFields, FIELDS, "-");
+  numFontFields = nxagentSplitString(fontName, fontNameFields, FIELDS + 1, "-");
 
   memcpy(substFontBuf, "fixed\0", strlen("fixed") + 1);
 
@@ -1505,6 +1561,31 @@ void nxagentVerifyDefaultFontPath(void)
     strcat(fontPath, NXAGENT_ALTERNATE_FONT_PATH_3);
   }
 
+  if (stat(NXAGENT_ALTERNATE_FONT_DIR_4, &dirStat) == 0 &&
+          S_ISDIR(dirStat.st_mode) != 0)
+  {
+    /*
+     * Let's use the "/usr/NX/share/fonts" path.
+     */
+
+    #ifdef TEST
+    fprintf(stderr, "nxagentVerifyDefaultFontPath: Assuming fonts in directory [%s].\n",
+                validateString(NXAGENT_ALTERNATE_FONT_DIR_4));
+    #endif
+
+    if (*fontPath != '\0')
+    {
+      fontPath = realloc(fontPath, strlen(fontPath) + strlen(NXAGENT_ALTERNATE_FONT_PATH_4) + 2);
+      strcat(fontPath, ",");
+    }
+    else
+    {
+      fontPath = realloc(fontPath, strlen(fontPath) + strlen(NXAGENT_ALTERNATE_FONT_PATH_4) + 1);
+    }
+
+    strcat(fontPath, NXAGENT_ALTERNATE_FONT_PATH_4);
+  }
+
   if (*fontPath == '\0') 
   {
     #ifdef WARNING
@@ -1698,3 +1779,88 @@ int nxagentSplitString(char *string, char *fields[], int nfields, char *sep)
   return i;
 }
 
+char *nxagentMakeScalableFontName(const char *fontName, int scalableResolution)
+{
+  char *scalableFontName;
+  const char *s;
+  int len;
+  int field;
+
+  len = strlen(fontName) + 1;
+
+  scalableFontName = malloc(len);
+
+  if (scalableFontName == NULL)
+  {
+    #ifdef PANIC
+    fprintf(stderr, "nxagentMakeScalableFontName: PANIC! malloc() failed.\n");
+    #endif
+
+    return NULL;
+  }
+
+  scalableFontName[0] = 0;
+
+  if (*fontName != '-')
+  {
+    goto MakeScalableFontNameError;
+  }
+
+  s = fontName;
+
+  field = 0;
+
+  while (s != NULL)
+  {
+    s = strchr(s + 1, '-');
+
+    if (s != NULL)
+    {
+      if (field == 6 || field == 7 || field == 11)
+      {
+        /*
+         * PIXEL_SIZE || POINT_SIZE || AVERAGE_WIDTH
+         */
+
+        strcat(scalableFontName, "-0");
+      }
+      else if (scalableResolution == 1 && (field == 8 || field == 9))
+      {
+        /*
+         * RESOLUTION_X || RESOLUTION_Y
+         */
+
+        strcat(scalableFontName, "-0");
+      }
+      else
+      {
+        strncat(scalableFontName, fontName, s - fontName);
+      }
+
+      fontName = s;
+    }
+    else
+    {
+      strcat(scalableFontName, fontName);
+    }
+
+    field++;
+  }
+
+  if (field != 14)
+  {
+    goto MakeScalableFontNameError;
+  }
+
+  return scalableFontName;
+
+MakeScalableFontNameError:
+
+  free(scalableFontName);
+
+  #ifdef DEBUG
+  fprintf(stderr, "nxagentMakeScalableFontName: Invalid font name.\n");
+  #endif
+
+  return NULL;
+}

@@ -32,6 +32,7 @@
 #include "Handlers.h"
 #include "Pixels.h"
 #include "Reconnect.h"
+#include "GCOps.h"
 
 #include "NXlib.h"
 
@@ -371,6 +372,7 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
   int nBox;
   int x, y;
   int w, h;
+  int extentWidth, extentHeight;
   int tileWidth, tileHeight;
   int length, format, leftPad;
   int i;
@@ -417,13 +419,14 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
   if (useStoredBitmap != 0)
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentSynchronizeRegion: Drawable [%s] at [%p] has a synchronization bitmap "
+    fprintf(stderr, "nxagentSynchronizeRegion: Drawable [%s] at [%p] has a synchronization bitmap at [%p] "
                 "[%d,%d,%d,%d] with [%ld] rects.\n", nxagentDrawableType(pDrawable),
-                    (void *) pDrawable, nxagentCorruptedRegion((DrawablePtr) nxagentDrawableBitmap(pDrawable)) -> extents.x1,
-                        nxagentCorruptedRegion((DrawablePtr) nxagentDrawableBitmap(pDrawable)) -> extents.y1,
-                            nxagentCorruptedRegion((DrawablePtr) nxagentDrawableBitmap(pDrawable)) -> extents.x2,
-                                nxagentCorruptedRegion((DrawablePtr) nxagentDrawableBitmap(pDrawable)) -> extents.y2,
-                                    REGION_NUM_RECTS(nxagentCorruptedRegion((DrawablePtr) nxagentDrawableBitmap(pDrawable))));
+                    (void *) pDrawable, (void *) nxagentDrawableBitmap(pDrawable),
+                        nxagentCorruptedRegion((DrawablePtr) nxagentDrawableBitmap(pDrawable)) -> extents.x1,
+                            nxagentCorruptedRegion((DrawablePtr) nxagentDrawableBitmap(pDrawable)) -> extents.y1,
+                                nxagentCorruptedRegion((DrawablePtr) nxagentDrawableBitmap(pDrawable)) -> extents.x2,
+                                    nxagentCorruptedRegion((DrawablePtr) nxagentDrawableBitmap(pDrawable)) -> extents.y2,
+                                        REGION_NUM_RECTS(nxagentCorruptedRegion((DrawablePtr) nxagentDrawableBitmap(pDrawable))));
     #endif
 
     clipRegion = nxagentCreateRegion(pDrawable, NULL, 0, 0, pDrawable -> width, pDrawable -> height);
@@ -580,8 +583,7 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
 
   #ifdef TEST
   fprintf(stderr, "nxagentSynchronizeRegion: Going to synchronize [%ld] rects of [%s] at [%p].\n",
-              REGION_NUM_RECTS(clipRegion), (pDrawable -> type == DRAWABLE_PIXMAP ? "Pixmap" : "Window"),
-                  (void *) pDrawable);
+              REGION_NUM_RECTS(clipRegion), nxagentDrawableType(pDrawable), (void *) pDrawable);
 
   fprintf(stderr, "nxagentSynchronizeRegion: Extents geometry [%d,%d,%d,%d].\n",
           clipRegion -> extents.x1, clipRegion -> extents.y1, clipRegion -> extents.x2, clipRegion -> extents.y2);
@@ -590,8 +592,20 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
               pDrawable -> x, pDrawable -> y, pDrawable -> width, pDrawable -> height);
   #endif
 
-  w = tileWidth  = (nxagentOption(TileWidth)  > pDrawable -> width  ? pDrawable -> width  : nxagentOption(TileWidth));
-  h = tileHeight = (nxagentOption(TileHeight) > pDrawable -> height ? pDrawable -> height : nxagentOption(TileHeight));
+  /*
+   * We are going to synchronize the corrupted
+   * area, so we use the corrupted extents as
+   * maximum size of the image data. It's im-
+   * portant to avoid using the drawable size,
+   * because in case of a huge window it had to
+   * result in a failed data memory allocation.
+   */
+
+  extentWidth  = clipRegion -> extents.x2 - clipRegion -> extents.x1;
+  extentHeight = clipRegion -> extents.y2 - clipRegion -> extents.y1;
+
+  w = tileWidth  = (nxagentOption(TileWidth)  > extentWidth  ? extentWidth  : nxagentOption(TileWidth));
+  h = tileHeight = (nxagentOption(TileHeight) > extentHeight ? extentHeight : nxagentOption(TileHeight));
 
   #ifdef DEBUG
   fprintf(stderr, "nxagentSynchronizeRegion: Using tiles of size [%dx%d].\n", tileWidth, tileHeight);
@@ -602,7 +616,22 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
   if (data == NULL)
   {
     #ifdef WARNING
+
     fprintf(stderr, "nxagentSynchronizeRegion: WARNING! Failed to allocate memory for synchronization.\n");
+
+    /*
+     * Print detailed informations if the
+     * image length is zero.
+     */
+
+    if (length == 0)
+    {
+      fprintf(stderr, "nxagentSynchronizeRegion: Drawable [%s] at [%p] with region geometry [%ld][%d,%d,%d,%d].\n",
+                  nxagentDrawableType(pDrawable), (void *) pDrawable, REGION_NUM_RECTS(clipRegion),
+                      clipRegion -> extents.x1, clipRegion -> extents.y1,
+                          clipRegion -> extents.x2, clipRegion -> extents.y2);
+    }
+
     #endif
 
     goto nxagentSynchronizeRegionFree;
@@ -657,10 +686,14 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
         if (nxagentDrawableStatus(pDrawable) == Synchronized)
         {
           #ifdef WARNING
+
           if (pDrawable -> type == DRAWABLE_WINDOW && pSrcDrawable != pDrawable)
+          {
             fprintf(stderr, "nxagentSynchronizeRegion: WARNING! Trying to synchronize "
                         "the clean drawable type [%d] at [%p] with source at [%p].\n",
                             pDrawable -> type, (void *) pDrawable, (void *) pSrcDrawable);
+          }
+
           #endif
 
           goto nxagentSynchronizeRegionStop;
@@ -735,9 +768,6 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
 
         nxagentGetImage(pSrcDrawable, x, y, w, h, format, AllPlanes, data);
 
-        nxagentRealizeImage(pDrawable, pGC, pDrawable -> depth,
-                                x, y, w, h, leftPad, format, data);
-
         /*
          * Going to unmark the synchronized
          * region.
@@ -792,6 +822,13 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
 
                 nxagentUnmarkCorruptedRegion(pDrawable, &tileRegion);
               }
+              #ifdef TEST
+              else
+              {
+                fprintf(stderr, "nxagentSynchronizeRegion: Tile [%d,%d,%d,%d] on drawable [%p] doesn't match.\n",
+                            x, y, x + w, y + h, (void *) pDrawable);
+              }
+              #endif
             }
             else
             {
@@ -821,6 +858,14 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
                                 nxagentPixmapCorruptedRegion(nxagentDrawableBitmap(pDrawable)), &tileRegion);
           }
         }
+
+        /*
+         * Realize the image after comparing the
+         * source data with the bitmap data.
+         */
+
+        nxagentRealizeImage(pDrawable, pGC, pDrawable -> depth,
+                                x, y, w, h, leftPad, format, data);
 
         REGION_UNINIT(pDrawable -> pScreen, &tileRegion);
 
@@ -2542,16 +2587,13 @@ void nxagentCreateDrawableBitmap(DrawablePtr pDrawable)
   GCPtr pGC = NULL;
   RegionPtr pClipRegion = NullRegion;
 
-  char *data = NULL;
-
   int x, y;
   int w, h;
-  int length, format;
   int saveTrap;
 
   #ifdef TEST
-  fprintf(stderr, "nxagentCreateDrawableBitmap: Creating synchronization bitmap for drawable at [%p].\n",
-              (void *) pDrawable);
+  fprintf(stderr, "nxagentCreateDrawableBitmap: Creating synchronization bitmap for [%s] at [%p].\n",
+              nxagentDrawableType(pDrawable), (void *) pDrawable);
   #endif
 
   /*
@@ -2613,7 +2655,10 @@ void nxagentCreateDrawableBitmap(DrawablePtr pDrawable)
    * FIXME: A better way it would be create the bitmap
    * with the same extents of the clipRegion. This
    * requires to save the offset with respect to the
-   * drawable origin like in the backing store.
+   * drawable origin like in the backing store. This
+   * becomes particularly important when the drawable
+   * is a huge window, because the pixmap creation
+   * would fail.
    */
 
   pBitmap = nxagentCreatePixmap(pDrawable -> pScreen, pDrawable -> width, pDrawable -> height, pDrawable -> depth);
@@ -2636,24 +2681,8 @@ void nxagentCreateDrawableBitmap(DrawablePtr pDrawable)
   w = pClipRegion -> extents.x2 - pClipRegion -> extents.x1;
   h = pClipRegion -> extents.y2 - pClipRegion -> extents.y1;
 
-  data = nxagentAllocateImageData(w, h, pDrawable -> depth, &length, &format);
+  nxagentCopyArea(pDrawable, (DrawablePtr) pBitmap, pGC, x, y, w, h, x, y);
 
-  if (data == NULL)
-  {
-    #ifdef WARNING
-    fprintf(stderr, "nxagentCreateDrawableBitmap: Cannot allocate memory for the bitmap data.\n");
-    #endif
-
-    nxagentDestroyPixmap(pBitmap);
-
-    goto nxagentCreateDrawableBitmapEnd;
-  }
-
-  nxagentGetImage(pDrawable, x, y, w, h, format, AllPlanes, data);
-
-  nxagentPutImage((DrawablePtr) pBitmap, pGC, pBitmap -> drawable.depth, x, y, w, h,
-                      0, format, data);
- 
   REGION_UNION(pDrawable -> pScreen, nxagentCorruptedRegion((DrawablePtr) pBitmap),
                    nxagentCorruptedRegion((DrawablePtr) pBitmap), pClipRegion);
 
@@ -2693,11 +2722,6 @@ nxagentCreateDrawableBitmapEnd:
   if (pClipRegion != NullRegion)
   {
     nxagentFreeRegion(pDrawable, pClipRegion);
-  }
-
-  if (data != NULL)
-  {
-    xfree(data);
   }
 
   if (pGC != NULL)
@@ -3074,6 +3098,16 @@ void nxagentSendBackgroundExpose(WindowPtr pWin, PixmapPtr pBackground, RegionPt
   }
 
   REGION_INTERSECT(pWin -> pScreen, &expose, &expose, &pWin -> clipList);
+
+  /*
+   * Reduce the overall region to expose.
+   */
+  
+  REGION_TRANSLATE(pWin -> pScreen, &expose, -pWin -> drawable.x, -pWin -> drawable.y);
+  
+  REGION_SUBTRACT(pWin -> pScreen, pExpose, pExpose, &expose);
+  
+  REGION_TRANSLATE(pWin -> pScreen, &expose, pWin -> drawable.x, pWin -> drawable.y);
 
   miWindowExposures(pWin, &expose, &expose);
 

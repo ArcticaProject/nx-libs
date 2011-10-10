@@ -109,6 +109,10 @@ void nxagentEnableXkbExtension(void);
 
 void nxagentTuneXkbWrapper(void);
 
+void nxagentResetKeycodeConversion(void);
+
 #endif
+
+CARD8 nxagentConvertKeycode(CARD8 k);
 
 #endif /* __Keyboard_H__ */

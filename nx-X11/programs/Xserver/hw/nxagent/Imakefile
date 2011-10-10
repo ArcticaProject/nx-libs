@@ -205,6 +205,7 @@ DEFINES = -g $(OS_DEFINES) $(EXT_DEFINES) $(UPG_DEFINES) \
           -DNXAGENT_ONSTART \
           -DNXAGENT_SPLASH \
           -DNXAGENT_ARTSD \
+          -UNX_DEBUG_INPUT \
           -UPANORAMIX
 
 all:: $(OBJS)

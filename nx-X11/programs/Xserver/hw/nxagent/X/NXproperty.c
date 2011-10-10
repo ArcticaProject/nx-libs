@@ -336,6 +336,10 @@ ProcChangeProperty(ClientPtr client)
 
       nxagentGuessShadowHint(client, stuff->property);
 
+      #ifdef NX_DEBUG_INPUT
+      nxagentGuessDumpInputInfo(client, stuff->property, (char *) &stuff[1]);
+      #endif
+
       return client->noClientException;
     }
 }

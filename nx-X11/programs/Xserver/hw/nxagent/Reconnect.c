@@ -547,27 +547,28 @@ Bool nxagentReconnectSession(void)
     goto nxagentReconnectError;
   }
 
-  if (nxagentOption(ResetKeyboardAtResume))
+  if (nxagentOption(ResetKeyboardAtResume) == 1 &&
+         (nxagentKeyboard  == NULL || nxagentOldKeyboard == NULL ||
+             strcmp(nxagentKeyboard, nxagentOldKeyboard) != 0 ||
+                 strcmp(nxagentKeyboard, "query") == 0))
   {
-    if (nxagentKeyboard  == NULL || nxagentOldKeyboard == NULL ||
-           strcmp(nxagentKeyboard, nxagentOldKeyboard) != 0 ||
-               strcmp(nxagentKeyboard, "query") == 0)
+    if (nxagentResetKeyboard() == 0)
     {
-
-      if (nxagentResetKeyboard() == 0)
+      #ifdef WARNING
+      if (nxagentVerbose == 1)
       {
-        #ifdef WARNING
-        if (nxagentVerbose == 1)
-        {
-          fprintf(stderr, "nxagentReconnect: Failed to reset keyboard device.\n");
-        }
-        #endif
-
-        failedStep = WINDOW_STEP;
-
-        goto nxagentReconnectError;
+        fprintf(stderr, "nxagentReconnect: Failed to reset keyboard device.\n");
       }
+      #endif
+
+      failedStep = WINDOW_STEP;
+
+      goto nxagentReconnectError;
     }
+  }
+  else
+  {
+    nxagentResetKeycodeConversion();
   }
 
   nxagentXkbState.Initialized = 0;

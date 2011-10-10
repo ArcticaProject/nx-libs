@@ -55,11 +55,27 @@ is" without express or implied warranty.
 
 #include "NXlib.h"
 
+#include "Shadow.h"
+
 #ifdef XKB
 
+#include "globals.h"
+#include "property.h"
+
 #include <X11/extensions/XKB.h>
+
+#define XKBSRV_NEED_FILE_FUNCS
 #include <X11/extensions/XKBsrv.h>
 #include <X11/extensions/XKBconfig.h>
+
+#include "X11/extensions/XKBrules.h"
+
+#include "Xatom.h"
+
+static int nxagentXkbGetNames(char **rules, char **model, char **layout,
+                                  char **variant, char **options);
+
+static void nxagentKeycodeConversionSetup(void);
 
 #endif /* XKB */
 
@@ -174,6 +190,281 @@ static char *nxagentXkbGetRules(void);
 unsigned int nxagentAltMetaMask;
 
 void nxagentCheckAltMetaKeys(CARD8, int);
+
+static CARD8 nxagentConvertedKeycodes[] =
+{
+  /* evdev  pc105*/
+  /*   0 */   0,
+  /*   1 */   1,
+  /*   2 */   2,
+  /*   3 */   3,
+  /*   4 */   4,
+  /*   5 */   5,
+  /*   6 */   6,
+  /*   7 */   7,
+  /*   8 */   8,
+  /*   9 */   9,
+  /*  10 */   10,
+  /*  11 */   11,
+  /*  12 */   12,
+  /*  13 */   13,
+  /*  14 */   14,
+  /*  15 */   15,
+  /*  16 */   16,
+  /*  17 */   17,
+  /*  18 */   18,
+  /*  19 */   19,
+  /*  20 */   20,
+  /*  21 */   21,
+  /*  22 */   22,
+  /*  23 */   23,
+  /*  24 */   24,
+  /*  25 */   25,
+  /*  26 */   26,
+  /*  27 */   27,
+  /*  28 */   28,
+  /*  29 */   29,
+  /*  30 */   30,
+  /*  31 */   31,
+  /*  32 */   32,
+  /*  33 */   33,
+  /*  34 */   34,
+  /*  35 */   35,
+  /*  36 */   36,
+  /*  37 */   37,
+  /*  38 */   38,
+  /*  39 */   39,
+  /*  40 */   40,
+  /*  41 */   41,
+  /*  42 */   42,
+  /*  43 */   43,
+  /*  44 */   44,
+  /*  45 */   45,
+  /*  46 */   46,
+  /*  47 */   47,
+  /*  48 */   48,
+  /*  49 */   49,
+  /*  50 */   50,
+  /*  51 */   51,
+  /*  52 */   52,
+  /*  53 */   53,
+  /*  54 */   54,
+  /*  55 */   55,
+  /*  56 */   56,
+  /*  57 */   57,
+  /*  58 */   58,
+  /*  59 */   59,
+  /*  60 */   60,
+  /*  61 */   61,
+  /*  62 */   62,
+  /*  63 */   63,
+  /*  64 */   64,
+  /*  65 */   65,
+  /*  66 */   66,
+  /*  67 */   67,
+  /*  68 */   68,
+  /*  69 */   69,
+  /*  70 */   70,
+  /*  71 */   71,
+  /*  72 */   72,
+  /*  73 */   73,
+  /*  74 */   74,
+  /*  75 */   75,
+  /*  76 */   76,
+  /*  77 */   77,
+  /*  78 */   78,
+  /*  79 */   79,
+  /*  80 */   80,
+  /*  81 */   81,
+  /*  82 */   82,
+  /*  83 */   83,
+  /*  84 */   84,
+  /*  85 */   85,
+  /*  86 */   86,
+  /*  87 */   87,
+  /*  88 */   88,
+  /*  89 */   89,
+  /*  90 */   90,
+  /*  91 */   91,
+  /*  92 */  124,
+  /*  93 */   93,
+  /*  94 */   94,
+  /*  95 */   95,
+  /*  96 */   96,
+  /*  97 */  211,
+  /*  98 */   98,
+  /*  99 */   99,
+  /* 100 */  100,
+  /* 101 */  208,
+  /* 102 */  102,
+  /* 103 */  103,
+  /* 104 */  108,
+  /* 105 */  109,
+  /* 106 */  112,
+  /* 107 */  111,
+  /* 108 */  113,
+  /* 109 */  109,
+  /* 110 */   97,
+  /* 111 */   98,
+  /* 112 */   99,
+  /* 113 */  100,
+  /* 114 */  102,
+  /* 115 */  103,
+  /* 116 */  104,
+  /* 117 */  105,
+  /* 118 */  106,
+  /* 119 */  107,
+  /* 120 */  120,
+  /* 121 */  121,
+  /* 122 */  122,
+  /* 123 */  123,
+  /* 124 */  124,
+  /* 125 */  126,
+  /* 126 */  126,
+  /* 127 */  110,
+  /* 128 */  128,
+  /* 129 */  129,
+  /* 130 */  130,
+  /* 131 */  131,
+  /* 132 */  133,
+  /* 133 */  115,
+  /* 134 */  116,
+  /* 135 */  117,
+  /* 136 */  136,
+  /* 137 */  137,
+  /* 138 */  138,
+  /* 139 */  139,
+  /* 140 */  140,
+  /* 141 */  141,
+  /* 142 */  142,
+  /* 143 */  143,
+  /* 144 */  144,
+  /* 145 */  145,
+  /* 146 */  146,
+  /* 147 */  147,
+  /* 148 */  148,
+  /* 149 */  149,
+  /* 150 */  150,
+  /* 151 */  151,
+  /* 152 */  152,
+  /* 153 */  153,
+  /* 154 */  154,
+  /* 155 */  155,
+  /* 156 */  156,
+  /* 157 */  157,
+  /* 158 */  158,
+  /* 159 */  159,
+  /* 160 */  160,
+  /* 161 */  161,
+  /* 162 */  162,
+  /* 163 */  163,
+  /* 164 */  164,
+  /* 165 */  165,
+  /* 166 */  166,
+  /* 167 */  167,
+  /* 168 */  168,
+  /* 169 */  169,
+  /* 170 */  170,
+  /* 171 */  171,
+  /* 172 */  172,
+  /* 173 */  173,
+  /* 174 */  174,
+  /* 175 */  175,
+  /* 176 */  176,
+  /* 177 */  177,
+  /* 178 */  178,
+  /* 179 */  179,
+  /* 180 */  180,
+  /* 181 */  181,
+  /* 182 */  182,
+  /* 183 */  183,
+  /* 184 */  184,
+  /* 185 */  185,
+  /* 186 */  186,
+  /* 187 */  187,
+  /* 188 */  188,
+  /* 189 */  189,
+  /* 190 */  190,
+  /* 191 */  118,
+  /* 192 */  119,
+  /* 193 */  120,
+  /* 194 */  121,
+  /* 195 */  122,
+  /* 196 */  196,
+  /* 197 */  197,
+  /* 198 */  198,
+  /* 199 */  199,
+  /* 200 */  200,
+  /* 201 */  201,
+  /* 202 */  202,
+  /* 203 */   93,
+  /* 204 */  125,
+  /* 205 */  156,
+  /* 206 */  127,
+  /* 207 */  128,
+  /* 208 */  208,
+  /* 209 */  209,
+  /* 210 */  210,
+  /* 211 */  211,
+  /* 212 */  212,
+  /* 213 */  213,
+  /* 214 */  214,
+  /* 215 */  215,
+  /* 216 */  216,
+  /* 217 */  217,
+  /* 218 */  218,
+  /* 219 */  219,
+  /* 220 */  220,
+  /* 221 */  221,
+  /* 222 */  222,
+  /* 223 */  223,
+  /* 224 */  224,
+  /* 225 */  225,
+  /* 226 */  226,
+  /* 227 */  227,
+  /* 228 */  228,
+  /* 229 */  229,
+  /* 230 */  230,
+  /* 231 */  231,
+  /* 232 */  232,
+  /* 233 */  233,
+  /* 234 */  234,
+  /* 235 */  235,
+  /* 236 */  236,
+  /* 237 */  237,
+  /* 238 */  238,
+  /* 239 */  239,
+  /* 240 */  240,
+  /* 241 */  241,
+  /* 242 */  242,
+  /* 243 */  243,
+  /* 244 */  244,
+  /* 245 */  245,
+  /* 246 */  246,
+  /* 247 */  247,
+  /* 248 */  248,
+  /* 249 */  249,
+  /* 250 */  250,
+  /* 251 */  251,
+  /* 252 */  252,
+  /* 253 */  253,
+  /* 254 */  254,
+  /* 255 */  255
+};
+
+static int nxagentKeycodeConversion = 0;
+
+CARD8 nxagentConvertKeycode(CARD8 k)
+{
+ if (nxagentKeycodeConversion != 0)
+ {
+   return nxagentConvertedKeycodes[k];
+ }
+ else
+ {
+   return k;
+ }
+}
 
 static int nxagentSaveKeyboardDeviceData(DeviceIntPtr dev, DeviceIntPtr devBackup);
 
@@ -655,14 +946,21 @@ XkbError:
 
         xkb = XkbGetKeyboard(nxagentDisplay, XkbGBN_AllComponentsMask, XkbUseCoreKbd);
 
+        nxagentKeycodeConversionSetup();
+
         if (xkb == NULL || xkb->geom == NULL)
         {
           #ifdef TEST
           fprintf(stderr, "nxagentKeyboardProc: No current keyboard.\n");
-          #endif
-
-          #ifdef TEST
-          fprintf(stderr, "nxagentKeyboardProc: No keyboard, going to set rules and init device.\n");
+          if (xkb == NULL)
+          {
+            fprintf(stderr, "nxagentKeyboardProc: xkb is null.\n");
+          }
+          else
+          {
+            fprintf(stderr, "nxagentKeyboardProc: xkb->geom is null.\n");
+          }
+          fprintf(stderr, "nxagentKeyboardProc: Going to set rules and init device.\n");
           #endif
 
           XkbSetRulesDflts(rules, model, layout, variants, options);
@@ -777,6 +1075,12 @@ XkbError:
         XkbDDXChangeControls((pointer)pDev, xkb->ctrls, xkb->ctrls);
 
 XkbEnd:
+
+        if (nxagentOption(Shadow) == 1 && pDev && pDev->key)
+        {
+          NXShadowInitKeymap(&(pDev->key->curKeySyms));
+        }
+
         if (free_model) 
         {
           free_model = 0;
@@ -790,7 +1094,6 @@ XkbEnd:
         }
 
         XkbFreeKeyboard(xkb, XkbAllComponentsMask, True);
-
         xkb = NULL;
       }
 #endif
@@ -1355,6 +1658,156 @@ void nxagentTuneXkbWrapper(void)
   else
   {
     nxagentEnableXkbExtension();
+  }
+}
+
+static int nxagentXkbGetNames(char **rules, char **model, char **layout,
+                                  char **variant, char **options)
+{
+  Atom atom;
+  #ifdef _XSERVER64
+  Atom64 type;
+  #else
+  Atom type;
+  #endif
+  int format;
+  unsigned long n;
+  unsigned long after;
+  char *data;
+  char *name;
+  Status result;
+
+  data = name = NULL;
+
+  *rules = NULL;
+  *model = NULL;
+  *layout = NULL;
+  *variant = NULL;
+  *options = NULL;
+
+  atom = XInternAtom(nxagentDisplay, "_XKB_RULES_NAMES", 1);
+
+  if (atom == 0)
+  {
+    return 0; 
+  }
+
+  result = XGetWindowProperty(nxagentDisplay, DefaultRootWindow(nxagentDisplay),
+                                  atom, 0, 256, 0, XA_STRING, &type, &format,
+                                      &n, &after, (unsigned char **)&data);
+
+  if (result !=Success || data == NULL)
+  {
+    return 0;
+  }
+
+  if ((after > 0) || (type != XA_STRING) || (format != 8))
+  {
+    if (data != NULL)
+    {
+      XFree(data);
+      return 0;
+    }
+  }
+
+  name = data;
+
+  if (name < data + n)
+  {
+    *rules =  name;
+    name += strlen(name) + 1;
+  }
+
+  if (name < data + n)
+  {
+    *model = name;
+    name += strlen(name) + 1;
+  }
+
+  if (name < data + n)
+  {
+    *layout = name;
+    name += strlen(name) + 1;
+  }
+
+  if (name < data + n)
+  {
+    *variant = name;
+    name += strlen(name) + 1;
+  }
+
+  if (name < data + n)
+  {
+    *options = name;
+    name += strlen(name) + 1;
+  }
+
+  return n;
+}
+
+void nxagentKeycodeConversionSetup(void)
+{
+  char *drules = 0;
+  char *dmodel = 0;
+  char *dlayout = 0;
+  char *dvariant = 0;
+  char *doptions = 0;
+  unsigned int drulesLen;
+
+  nxagentKeycodeConversion = 0;
+
+  drulesLen = nxagentXkbGetNames(&drules, &dmodel, &dlayout,
+                                     &dvariant, &doptions);
+
+  #ifdef DEBUG
+  if (drulesLen != 0 && drules != NULL && dmodel != NULL)
+  {
+    fprintf(stderr, "nxagentKeycodeConversionSetup: "
+                "Remote: [%s,%s,%s,%s,%s].\n", drules, dmodel, dlayout,
+                    dvariant, doptions);
+  }
+  else
+  {
+    fprintf(stderr, "nxagentKeycodeConversionSetup: "
+                "Failed to retrieve remote rules.\n");
+  }
+  #endif
+
+  if (nxagentOption(ClientOs) == ClientOsLinux &&
+            drules != NULL && dmodel != NULL &&
+                (strcmp(drules, "evdev") == 0 ||
+                    strcmp(dmodel, "evdev") == 0))
+  {
+    nxagentKeycodeConversion = 1;
+  }
+
+  if (drules != NULL)
+  {
+    XFree(drules);
+  }
+}
+
+void nxagentResetKeycodeConversion(void)
+{
+  int result;
+  XkbAgentInfoRec info;
+
+  result = XkbQueryExtension(nxagentDisplay, &info.Opcode, &info.EventBase,
+                                 &info.ErrorBase, &info.MajorVersion,
+                                     &info.MinorVersion);
+
+  if (result != 0)
+  {
+    nxagentKeycodeConversionSetup();
+  }
+  else
+  {
+    #ifdef WARNING
+    fprintf(stderr, "nxagentResetKeycodeConversion: "
+                "WARNING! Failed to query XKB extension.\n");
+    #endif
+
+    nxagentKeycodeConversion = 0;
   }
 }
 

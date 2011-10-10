@@ -63,7 +63,13 @@
 #include "NXproto.h"
 
 #include "xfixesproto.h"
+#define Window     XlibWindow
+#define Atom   XlibAtom
+#define Time XlibXID
 #include <X11/extensions/Xfixes.h>
+#undef Window
+#undef Atom
+#undef Time
 
 #ifdef NXAGENT_FIXKEYS
 #include "inputstr.h"
@@ -112,6 +118,10 @@ extern WindowPtr nxagentRootTileWindow;
 extern int nxagentSplashCount;
 
 extern int nxagentLastClipboardClient;
+
+#ifdef NX_DEBUG_INPUT
+int nxagentDebugInput = 0;
+#endif
 
 #ifdef DEBUG
 extern Bool nxagentRootlessTreesMatch(void);
@@ -171,6 +181,8 @@ static Cursor viewportCursor;
  */
 
 static Mask defaultEventMask;
+
+static int lastEventSerial = 0;
 
 #define MAX_INC 200
 #define INC_STEP 5
@@ -252,6 +264,13 @@ void nxagentRemoveDuplicatedKeys(XEvent *X);
 
 void ProcessInputEvents()
 {
+  #ifdef NX_DEBUG_INPUT
+  if (nxagentDebugInput == 1)
+  {
+    fprintf(stderr, "ProcessInputEvents: Processing input.\n");
+  }
+  #endif
+
   mieqProcessInputEvents();
 }
 
@@ -281,6 +300,11 @@ void nxagentSwitchResizeMode(ScreenPtr pScreen)
     nxagentLaunchDialog(DIALOG_ENABLE_DESKTOP_RESIZE_MODE);
 
     nxagentRRSetScreenConfig(pScreen, nxagentOption(Width), nxagentOption(Height));
+
+    if (nxagentOption(ClientOs) == ClientOsWinnt)
+    {
+      NXSetExposeParameters(nxagentDisplay, 0, 0, 0);
+    }
 
     sizeHints.max_width = WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
     sizeHints.max_height = HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
@@ -771,8 +795,9 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
         }
 
         x.u.u.type = KeyRelease;
-        x.u.u.detail = X.xkey.keycode;
-        x.u.keyButtonPointer.time = nxagentLastKeyPressTime + (X.xkey.time - nxagentLastServerTime);
+        x.u.u.detail = nxagentConvertKeycode(X.xkey.keycode);
+        x.u.keyButtonPointer.time = nxagentLastKeyPressTime +
+            (X.xkey.time - nxagentLastServerTime);
 
         nxagentLastServerTime = X.xkey.time;
 
@@ -794,8 +819,11 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
       }
       case ButtonPress:
       {
-        #ifdef TEST
-        fprintf(stderr, "nxagentDispatchEvents: Going to handle new ButtonPress event.\n");
+        #ifdef NX_DEBUG_INPUT
+        if (nxagentDebugInput == 1)
+        {
+          fprintf(stderr, "nxagentDispatchEvents: Going to handle new ButtonPress event.\n");
+        }
         #endif
 
         nxagentInputEvent = 1;
@@ -860,6 +888,13 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
             x.u.keyButtonPointer.rootY = X.xmotion.y - nxagentOption(RootY);
           }
 
+          #ifdef NX_DEBUG_INPUT
+          if (nxagentDebugInput == 1)
+          {
+            fprintf(stderr, "nxagentDispatchEvents: Adding ButtonPress event.\n");
+          }
+          #endif
+
           mieqEnqueue(&x);
 
           CriticalOutputPending = 1;
@@ -887,8 +922,11 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
       }
       case ButtonRelease:
       {
-        #ifdef TEST
-        fprintf(stderr, "nxagentDispatchEvents: Going to handle new ButtonRelease event.\n");
+        #ifdef NX_DEBUG_INPUT
+        if (nxagentDebugInput == 1)
+        {
+          fprintf(stderr, "nxagentDispatchEvents: Going to handle new ButtonRelease event.\n");
+        }
         #endif
 
         nxagentInputEvent = 1;
@@ -923,6 +961,13 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
             x.u.keyButtonPointer.rootY = X.xmotion.y - nxagentOption(RootY);
           }
 
+          #ifdef NX_DEBUG_INPUT
+          if (nxagentDebugInput == 1)
+          {
+            fprintf(stderr, "nxagentDispatchEvents: Adding ButtonRelease event.\n");
+          }
+          #endif
+
           mieqEnqueue(&x);
 
           CriticalOutputPending = 1;
@@ -956,12 +1001,15 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
         fprintf(stderr, "nxagentDispatchEvents: Going to handle new MotionNotify event.\n");
         #endif
 
-        #ifdef TEST
-        fprintf(stderr, "nxagentDispatchEvents: Handling motion notify window [%ld] root [%ld] child [%ld].\n",
+        #ifdef NX_DEBUG_INPUT
+        if (nxagentDebugInput == 1)
+        {
+          fprintf(stderr, "nxagentDispatchEvents: Handling motion notify window [%ld] root [%ld] child [%ld].\n",
                     X.xmotion.window, X.xmotion.root, X.xmotion.subwindow);
 
-        fprintf(stderr, "nxagentDispatchEvents: Pointer at [%d][%d] relative root [%d][%d].\n",
+          fprintf(stderr, "nxagentDispatchEvents: Pointer at [%d][%d] relative root [%d][%d].\n",
                     X.xmotion.x, X.xmotion.y, X.xmotion.x_root, X.xmotion.y_root);
+        }
         #endif
 
         x.u.u.type = MotionNotify;
@@ -975,18 +1023,17 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
             nxagentLastEnteredWindow = pWin;
           }
 
-          if (nxagentPulldownDialogPid == 0 && (X.xmotion.y_root <
-                  nxagentLastEnteredTopLevelWindow -> drawable.y + 4))
+          if (nxagentPulldownDialogPid == 0 && nxagentLastEnteredTopLevelWindow &&
+                  (X.xmotion.y_root < nxagentLastEnteredTopLevelWindow -> drawable.y + 4))
           {
-            if (pWin && nxagentLastEnteredTopLevelWindow &&
-                    nxagentClientIsDialog(wClient(pWin)) == 0 &&
-                        nxagentLastEnteredTopLevelWindow -> parent == WindowTable[0] &&
-                            nxagentLastEnteredTopLevelWindow -> overrideRedirect == False &&
-                                X.xmotion.x_root > (nxagentLastEnteredTopLevelWindow -> drawable.x +
-                                    (nxagentLastEnteredTopLevelWindow -> drawable.width >> 1) - 50) &&
-                                        X.xmotion.x_root < (nxagentLastEnteredTopLevelWindow -> drawable.x +
-                                            (nxagentLastEnteredTopLevelWindow -> drawable.width >> 1) + 50) &&
-                                                nxagentOption(Menu) == 1)
+            if (pWin && nxagentClientIsDialog(wClient(pWin)) == 0 &&
+                    nxagentLastEnteredTopLevelWindow -> parent == WindowTable[0] &&
+                        nxagentLastEnteredTopLevelWindow -> overrideRedirect == False &&
+                            X.xmotion.x_root > (nxagentLastEnteredTopLevelWindow -> drawable.x +
+                                (nxagentLastEnteredTopLevelWindow -> drawable.width >> 1) - 50) &&
+                                    X.xmotion.x_root < (nxagentLastEnteredTopLevelWindow -> drawable.x +
+                                        (nxagentLastEnteredTopLevelWindow -> drawable.width >> 1) + 50) &&
+                                            nxagentOption(Menu) == 1)
             {
               nxagentPulldownDialog(nxagentLastEnteredTopLevelWindow -> drawable.id);
             }
@@ -1008,6 +1055,14 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
                     X.xmotion.window == nxagentDefaultWindows[pScreen -> myNum]
                         && X.xmotion.subwindow == None))
         {
+          #ifdef NX_DEBUG_INPUT
+          if (nxagentDebugInput == 1)
+          {
+            fprintf(stderr, "nxagentDispatchEvents: Adding motion event [%d, %d] to the queue.\n",
+                        x.u.keyButtonPointer.rootX, x.u.keyButtonPointer.rootY);
+          }
+          #endif
+
           mieqEnqueue(&x);
         }
 
@@ -1644,6 +1699,21 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
 
     } /* End of switch (X.type) */
 
+    if (X.xany.serial < lastEventSerial)
+    {
+      /*
+       * Start over.
+       */
+
+      nxagentDeleteStaticResizedWindow(0);
+    }
+    else
+    {
+      nxagentDeleteStaticResizedWindow(X.xany.serial - 1);
+    }
+
+    lastEventSerial = X.xany.serial;
+
   } /* End of while (...) */
 
   /*
@@ -1848,8 +1918,9 @@ int nxagentHandleKeyPress(XEvent *X, enum HandleEventResult *result)
 
   nxagentLastEventTime = nxagentLastKeyPressTime = GetTimeInMillis();
 
+  
   x.u.u.type = KeyPress;
-  x.u.u.detail = X -> xkey.keycode;
+  x.u.u.detail = nxagentConvertKeycode(X -> xkey.keycode);
   x.u.keyButtonPointer.time = nxagentLastKeyPressTime;
 
   nxagentLastServerTime = X -> xkey.time;
@@ -1914,6 +1985,8 @@ int nxagentHandleExposeEvent(XEvent *X)
   int index = 0;
   int overlap = 0;
 
+  StaticResizedWindowStruct *resizedWinPtr = NULL;
+
   #ifdef DEBUG
   fprintf(stderr, "nxagentHandleExposeEvent: Checking remote expose events.\n");
   #endif
@@ -1943,6 +2016,19 @@ FIXME: This can be maybe optimized by consuming the
 
       box.x1 = pWin -> drawable.x + wBorderWidth(pWin) + X -> xexpose.x;
       box.y1 = pWin -> drawable.y + wBorderWidth(pWin) + X -> xexpose.y;
+
+      resizedWinPtr = nxagentFindStaticResizedWindow(X -> xany.serial);
+
+      while (resizedWinPtr)
+      {
+        if (resizedWinPtr -> pWin == pWin)
+        {
+          box.x1 += resizedWinPtr -> offX;
+          box.y1 += resizedWinPtr -> offY;
+        }
+
+        resizedWinPtr = resizedWinPtr -> prev;
+      }
 
       box.x2 = box.x1 + X -> xexpose.width;
       box.y2 = box.y1 + X -> xexpose.height;
@@ -3913,3 +3999,27 @@ int nxagentWaitEvents(Display *dpy, struct timeval *tm)
 
   return 1;
 }
+
+#ifdef NX_DEBUG_INPUT
+
+void nxagentDumpInputInfo(void)
+{
+  fprintf(stderr, "Dumping input info ON.\n");
+}
+
+void nxagentGuessDumpInputInfo(ClientPtr client, Atom property, char *data)
+{
+  if (strcmp(validateString(NameForAtom(property)), "NX_DEBUG_INPUT") == 0)
+  {
+    if (*data != 0)
+    {
+      nxagentDebugInput = 1;
+    }
+    else
+    {
+      nxagentDebugInput = 0;
+    }
+  }
+}
+
+#endif

@@ -958,7 +958,8 @@ Bool nxagentOpenScreen(int index, ScreenPtr pScreen,
 
     nxagentChangeOption(Fullscreen, True);
 
-    if (nxagentOption(ClientOs) == ClientOsWinnt)
+    if (nxagentOption(ClientOs) == ClientOsWinnt &&
+            (nxagentReconnectTrap == False || nxagentResizeDesktopAtStartup))
     {
       NXSetExposeParameters(nxagentDisplay, 0, 0, 0);
     }

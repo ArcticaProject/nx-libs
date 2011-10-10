@@ -1,5 +1,98 @@
 ChangeLog:
 
+nxagent-3.3.0-10
+
+- Fixed TR12F02146. Compare the drawable and the bitmap data before
+  realizing the image update, in order to delay the data clean up that
+  caused the memcmp() failure.
+
+- Fixed TR01G02156. Reduce the exposing area by subtracting the ex-
+  posed region.
+
+- Fixed a compile warning in Drawable.c.
+
+- Added detailed logs in the nxagentSynchronizeRegion() function if
+  the data memory allocation fails.
+
+nxagent-3.3.0-9
+
+- Added /usr/NX/share/base to alternate font paths. This would fix
+  TR11F02130 if fonts fixed and cursor are installed there.
+
+- Changed Keyboard initialization and reset. This change should fix
+  TR11F02129, TR11F02131, TR11F02132.
+
+nxagent-3.3.0-8
+
+- Fixed TR12F02144. Image bits of render glyphs are copied before they
+  are cleaned. This will avoid a memory corruption.
+
+- Fixed TR12F02145. When dispatching a MotionNotify event, check if a
+  top-level window has been entered before trying to show the pulldown
+  dialog.
+
+nxagent-3.3.0-7
+
+- Added debug code for pointer input.
+
+nxagent-3.3.0-6
+
+- Fixed compile warnings.
+
+nxagent-3.3.0-5
+
+- Disabled verbose logging in Rootless.c.
+
+nxagent-3.3.0-4
+
+- Fix the XKB map load in the case of 64 bit server.
+
+nxagent-3.3.0-3
+
+- Fixed TR10F02119. If the remote X display is using evdev keyboard
+  then copy maps from remote.
+
+- Upgraded VERSION to 3.3.0.
+
+nxagent-3.3.0-2
+
+- Fixed TR10F02115. Painting errors occurred when screen areas beyond
+  the current viewport became viewable in the NX Client for Windows.
+
+- Using a new struct type nxagentWMHints to avoid type mismatch on
+  64 bit platforms.
+
+- Added debug utilities for pointer input.
+
+nxagent-3.3.0-1
+
+- Opened the 3.3.0 branch based on nxagent-3.2.0-12.
+
+nxagent-3.2.0-12
+
+- Ignore 'resize' option at reconnection if viewport mode is on.
+
+- Fixed TR08E01814. Added shadow keymap initialization in order to
+  enable nxcompshad to translate keycodes across different layouts. 
+
+nxagent-3.2.0-11
+
+- Fixed TR08F02098. Function splitting font names has to be instruct-
+  ed to handle the right number of fields.
+
+nxagent-3.2.0-10
+
+- Extended fix for TR07F02091 to include font names having zero in
+  fields RESOLUTION_X and RESOLUTION_Y.
+
+nxagent-3.2.0-9
+
+- Fixed TR07F02091. Scalable fonts were not correctly listed among
+  available fonts.
+
+- Fixed TR06F02080. Use the corrupted area extents as maximum size of
+  the image data.
+
 nxagent-3.2.0-8
 
 - Fixed TR07F02082. The agent server could be unable to init core

@@ -46,6 +46,20 @@
  * initialized.
  */
 
+typedef struct
+{
+  CARD32 flags;
+  CARD32 input;
+  CARD32 initial_state;
+  CARD32 icon_pixmap;
+  CARD32 icon_window;
+  INT32  icon_x;
+  INT32  icon_y;
+  CARD32 icon_mask;
+  CARD32 window_group;
+}
+nxagentWMHints;
+
 WindowPtr nxagentRootlessWindow = NULL;
 
 #define TOP_LEVEL_TABLE_UNIT 100
@@ -414,7 +428,7 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
   char *propertyS, *typeS;
   Atom propertyX, typeX;
   char *output = NULL;
-  XWMHints wmHints;
+  nxagentWMHints wmHints;
   Bool export = False;
   Bool freeMem = False;
 
@@ -470,7 +484,7 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
   else if (strcmp(typeS, "WM_HINTS") == 0)
   {
     ClientPtr pClient = wClient(pWin);
-    wmHints = *(XWMHints*)value;
+    wmHints = *(nxagentWMHints*)value;
 
     wmHints.flags |= InputHint;
     wmHints.input = True;
@@ -497,9 +511,10 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
         wmHints.flags &= ~IconPixmapHint;
 
         #ifdef WARNING
-        fprintf(stderr, "nxagentExportProperty: WARNING! Failed to look up icon pixmap %lx from hint "
+        fprintf(stderr, "nxagentExportProperty: WARNING! Failed to look up icon pixmap %x from hint "
                     "exporting property %s type %s on window %p.\n",
-                        wmHints.icon_pixmap, propertyS, typeS, (void*)pWin);
+                        (unsigned int) wmHints.icon_pixmap, propertyS, typeS,
+                            (void*)pWin);
         #endif
       }
     }
@@ -518,9 +533,10 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
         wmHints.flags &= ~IconWindowHint;
 
         #ifdef WARNING
-        fprintf(stderr, "nxagentExportProperty: WARNING! Failed to look up icon window %lx from hint "
+        fprintf(stderr, "nxagentExportProperty: WARNING! Failed to look up icon window %x from hint "
                     "exporting property %s type %s on window %p.\n",
-                        wmHints.icon_window, propertyS, typeS, (void*)pWin);
+                        (unsigned int) wmHints.icon_window, propertyS, typeS,
+                            (void*)pWin);
         #endif
       }
     }
@@ -539,9 +555,10 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
         wmHints.flags &= ~IconMaskHint;
 
         #ifdef WARNING
-        fprintf(stderr, "nxagentExportProperty: WARNING! Failed to look up icon mask %lx from hint "
+        fprintf(stderr, "nxagentExportProperty: WARNING! Failed to look up icon mask %x from hint "
                     "exporting property %s type %s on window %p.\n",
-                        wmHints.icon_mask, propertyS, typeS, (void*)pWin);
+                        (unsigned int) wmHints.icon_mask, propertyS, typeS,
+                            (void*)pWin);
         #endif
       }
     }
@@ -560,9 +577,10 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
         wmHints.flags &= ~WindowGroupHint;
 
         #ifdef WARNING
-        fprintf(stderr, "nxagentExportProperty: WARNING! Failed to look up window group %lx from hint "
+        fprintf(stderr, "nxagentExportProperty: WARNING! Failed to look up window group %x from hint "
                     "exporting property %s type %s on window %p.\n",
-                        wmHints.window_group, propertyS, typeS, (void*)pWin);
+                        (unsigned int) wmHints.window_group, propertyS, typeS,
+                            (void*)pWin);
         #endif
       }
     }
@@ -654,7 +672,7 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
   {
     #ifdef TEST
     fprintf(stderr, "nxagentExportProperty: WARNING! Ignored ChangeProperty "
-                "on %swindow %lx property %s type %s nUnits %ld format %d\n",
+                "on %swindow %x property %s type %s nUnits %ld format %d\n",
                     nxagentWindowTopLevel(pWin) ? "toplevel " : "",
                         nxagentWindow(pWin), validateString(propertyS), validateString(typeS),
                             nUnits, format);
@@ -683,7 +701,7 @@ void nxagentImportProperty(Window window,
   WindowPtr pWin;
   Bool import = False;
   Bool freeMem = False;
-  XWMHints wmHints;
+  nxagentWMHints wmHints;
 
   typedef struct {
       CARD32 state;
@@ -797,7 +815,7 @@ void nxagentImportProperty(Window window,
   }
   else if (strcmp(typeS, "WM_HINTS") == 0)
   {
-    wmHints = *(XWMHints*)buffer;
+    wmHints = *(nxagentWMHints*)buffer;
     output = (char*) &wmHints;
     import = True;
 
@@ -815,8 +833,9 @@ void nxagentImportProperty(Window window,
 
         #ifdef WARNING
         fprintf(stderr, "nxagentImportProperty: WARNING! Failed to look up remote icon "
-                    "pixmap %ld from hint importing property [%ld] type %s on window %p.\n",
-                        wmHints.icon_pixmap, (long int) property, typeS, (void *) pWin);
+                    "pixmap %d from hint importing property [%ld] type %s on window %p.\n",
+                        (unsigned int) wmHints.icon_pixmap, (long int) property,
+                            typeS, (void *) pWin);
         #endif
       }
     }
@@ -835,8 +854,9 @@ void nxagentImportProperty(Window window,
 
         #ifdef WARNING
         fprintf(stderr, "nxagenImportProperty: WARNING! Failed to look up remote icon "
-                    "window %lx from hint importing property [%ld] type %s on window %p.\n",
-                         wmHints.icon_window, (long int) property, typeS, (void *) pWin);
+                    "window %x from hint importing property [%ld] type %s on window %p.\n",
+                         (unsigned int) wmHints.icon_window,
+                             (long int) property, typeS, (void *) pWin);
         #endif
       }
     }
@@ -855,8 +875,8 @@ void nxagentImportProperty(Window window,
 
         #ifdef WARNING
         fprintf(stderr, "nxagentImportProperty: WARNING! Failed to look up remote icon "
-                    "mask %lx from hint importing property [%ld] type %s on window %p.\n",
-                          wmHints.icon_mask, (long int) property, typeS, (void *) pWin);
+                    "mask %x from hint importing property [%ld] type %s on window %p.\n",
+                          (unsigned int) wmHints.icon_mask, (long int) property, typeS, (void *) pWin);
         #endif
       }
     }
@@ -875,8 +895,9 @@ void nxagentImportProperty(Window window,
 
         #ifdef WARNING
         fprintf(stderr, "nxagentImportProperty: WARNING! Failed to look up remote window "
-                    "group %lx from hint importing property [%ld] type %s on window %p.\n",
-                          wmHints.window_group, (long int) property, typeS, (void *) pWin);
+                    "group %x from hint importing property [%ld] type %s on window %p.\n",
+                          (unsigned int) wmHints.window_group,
+                              (long int) property, typeS, (void *) pWin);
         #endif
       }
     }

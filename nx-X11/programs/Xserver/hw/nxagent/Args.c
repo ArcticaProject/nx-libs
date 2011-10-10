@@ -1140,13 +1140,13 @@ static void nxagentParseOptions(char *name, char *value)
   }
   else if (!strcmp(name, "resize"))
   {
-    if (!strcmp(value, "1"))
+    if (nxagentOption(DesktopResize) == 0 || strcmp(value, "0") == 0)
     {
-      nxagentResizeDesktopAtStartup = True;
+      nxagentResizeDesktopAtStartup = 0;
     }
-    else if (!strcmp(value, "0"))
+    else if (strcmp(value, "1") == 0)
     {
-      nxagentResizeDesktopAtStartup = False;
+      nxagentResizeDesktopAtStartup = 1;
     }
     else
     {
@@ -2080,8 +2080,8 @@ void nxagentSetDeferLevel()
 
       deferTimeout = 200;
 
-      tileWidth  = 65536;
-      tileHeight = 65536;
+      tileWidth  = 4096;
+      tileHeight = 4096;
 
       break;
     }
@@ -2091,8 +2091,8 @@ void nxagentSetDeferLevel()
 
       deferTimeout = 200;
 
-      tileWidth  = 65536;
-      tileHeight = 65536;
+      tileWidth  = 4096;
+      tileHeight = 4096;
 
       break;
     }
@@ -2103,8 +2103,8 @@ void nxagentSetDeferLevel()
 
       deferTimeout = 200;
 
-      tileWidth  = 65536;
-      tileHeight = 65536;
+      tileWidth  = 4096;
+      tileHeight = 4096;
 
       break;
     }

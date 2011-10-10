@@ -287,6 +287,18 @@ typedef struct _ConfiguredWindow
 
 ConfiguredWindowStruct *nxagentConfiguredWindowList;
 
+typedef struct _StaticResizedWindow
+{
+  WindowPtr pWin;
+  struct _StaticResizedWindow *next;
+  struct _StaticResizedWindow *prev;
+  unsigned long sequence;
+  int offX;
+  int offY;
+} StaticResizedWindowStruct;
+
+StaticResizedWindowStruct *nxagentStaticResizedWindowList;
+
 void nxagentPostValidateTree(WindowPtr pParent, WindowPtr pChild, VTKind kind);
 
 void nxagentFlushConfigureWindow(void);
@@ -294,6 +306,12 @@ void nxagentFlushConfigureWindow(void);
 void nxagentAddConfiguredWindow(WindowPtr pWin, unsigned int valuemask);
 
 void nxagentDeleteConfiguredWindow(WindowPtr pWin);
+
+void nxagentAddStaticResizedWindow(WindowPtr pWin, unsigned long sequence, int offX, int offY);
+
+void nxagentDeleteStaticResizedWindow(unsigned long sequence);
+
+StaticResizedWindowStruct *nxagentFindStaticResizedWindow(unsigned long sequence);
 
 void nxagentEmptyAllBackingStoreRegions(void);
 

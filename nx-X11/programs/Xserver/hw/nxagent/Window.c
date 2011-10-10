@@ -1136,6 +1136,11 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
 {
   unsigned int valuemask;
   XWindowChanges values;
+  int offX, offY;
+  int i, j;
+
+  offX = nxagentWindowPriv(pWin)->x - pWin->origin.x;
+  offY = nxagentWindowPriv(pWin)->y - pWin->origin.y;
 
   if (nxagentScreenTrap == 1)
   {
@@ -1220,6 +1225,29 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
     fprintf(stderr, "nxagentConfigureWindow: Going to configure window [%p][%ld] with mask [%x].\n",
                 (void *) pWin, nxagentWindow(pWin), valuemask);
     #endif
+
+    if (pWin->bitGravity == StaticGravity &&
+            ((mask & CWX) || (mask & CWY)) &&
+                ((mask & CWWidth) || (mask & CWHeight)))
+    {
+      #ifdef TEST
+      fprintf(stderr, "nxagentConfigureWindow: Window has StaticGravity. Going to translate Expose events by offset [%d, %d].\n",
+                  offX, offY);
+      #endif
+
+      nxagentAddStaticResizedWindow(pWin, XNextRequest(nxagentDisplay), offX, offY);
+
+      for (j = 0; j < nxagentExposeQueue.length; j++)
+      {
+        i = (nxagentExposeQueue.start + j) % EXPOSED_SIZE;
+
+        if (nxagentExposeQueue.exposures[i].pWindow == pWin &&
+                nxagentExposeQueue.exposures[i].remoteRegion != NullRegion)
+        {
+          REGION_TRANSLATE(pWin -> drawable.pScreen, nxagentExposeQueue.exposures[i].remoteRegion, offX, offY);
+        }
+      }
+    }
 
     XConfigureWindow(nxagentDisplay, nxagentWindow(pWin), valuemask, &values);
 
@@ -3422,6 +3450,105 @@ void nxagentDeleteConfiguredWindow(WindowPtr pWin)
   }
 
   return;
+}
+
+void nxagentAddStaticResizedWindow(WindowPtr pWin, unsigned long sequence, int offX, int offY)
+{
+  if (nxagentStaticResizedWindowList == NULL)
+  {
+    nxagentStaticResizedWindowList = malloc(sizeof(StaticResizedWindowStruct));
+    nxagentStaticResizedWindowList -> next = NULL;
+    nxagentStaticResizedWindowList -> prev = NULL;
+  }
+  else
+  {
+    StaticResizedWindowStruct *tmp;
+
+    tmp = malloc(sizeof(StaticResizedWindowStruct));
+
+    tmp -> next = nxagentStaticResizedWindowList;
+    nxagentStaticResizedWindowList -> prev = tmp;
+    tmp -> prev = NULL;
+    nxagentStaticResizedWindowList = tmp;
+  }
+
+  nxagentStaticResizedWindowList -> pWin = pWin;
+  nxagentStaticResizedWindowList -> sequence = sequence;
+  nxagentStaticResizedWindowList -> offX = offX;
+  nxagentStaticResizedWindowList -> offY = offY;
+}
+
+void nxagentDeleteStaticResizedWindow(unsigned long sequence)
+{
+  StaticResizedWindowStruct *index, *previous, *tmp;
+
+  index = nxagentStaticResizedWindowList;
+
+  while (index)
+  {
+    if (index -> sequence <= sequence)
+    {
+      if (index -> prev == NULL && index -> next == NULL)
+      {
+        free(nxagentStaticResizedWindowList);
+        nxagentStaticResizedWindowList = NULL;
+
+        return;
+      }
+      else if (index -> prev == NULL)
+      {
+        tmp = nxagentStaticResizedWindowList;
+        index = nxagentStaticResizedWindowList = tmp -> next;
+        free(tmp);
+        nxagentStaticResizedWindowList -> prev = NULL;
+
+        continue;
+      }
+      else if (index -> next == NULL)
+      {
+        tmp = index;
+        index = index -> prev;
+        free(tmp);
+        index -> next = NULL;
+
+        return;
+      }
+
+      previous = index -> prev;
+      tmp = index;
+      index = index -> next;
+      previous -> next = index;
+      index -> prev = previous;
+      free(tmp);
+
+      continue;
+    }
+
+    index = index -> next;
+  }
+
+  return;
+}
+
+StaticResizedWindowStruct *nxagentFindStaticResizedWindow(unsigned long sequence)
+{
+  StaticResizedWindowStruct *index;
+  StaticResizedWindowStruct *ret = NULL;
+
+  if (nxagentStaticResizedWindowList == NULL)
+  {
+    return NULL;
+  }
+
+  index = nxagentStaticResizedWindowList;
+
+  while (index && index -> sequence > sequence)
+  {
+    ret = index;
+    index = index -> next;
+  }
+
+  return ret;
 }
 
 void nxagentEmptyBackingStoreRegion(pointer param0, XID param1, pointer data_buffer)
