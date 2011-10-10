@@ -1,0 +1,222 @@
+# XCOMM $Xorg: Imakefile,v 1.3 2000/08/17 19:53:28 cpqbld Exp $
+
+#include <Server.tmpl>
+
+#ifdef OS2Architecture
+SRCS1 = os2Stub.c
+OBJS1 = os2Stub.o
+#endif
+
+SRCS =  NXwindow.c \
+	NXevents.c \
+	NXproperty.c \
+	NXdixfonts.c \
+	NXglyphcurs.c \
+	NXdispatch.c \
+	NXrender.c \
+	NXglyph.c \
+	NXpicture.c \
+	NXextension.c \
+	NXshm.c \
+        NXglxext.c \
+        NXxvdisp.c \
+        NXmiglyph.c \
+        NXmiexpose.c \
+        NXresource.c \
+        NXmiwindow.c \
+	NXxrandr.c \
+	NXdamage.c \
+	NXmitrap.c \
+	Args.c \
+	Binder.c \
+	Colormap.c \
+	Cursor.c \
+	Dialog.c \
+	Display.c \
+	Events.c \
+	Font.c \
+	GC.c \
+	GCOps.c \
+	Millis.c \
+	Handlers.c \
+	Init.c \
+	Keyboard.c \
+	Keystroke.c \
+	Pointer.c \
+	Screen.c \
+	TestExt.c \
+	Visual.c \
+	Drawable.c \
+	Window.c \
+	Pixmap.c \
+	Render.c \
+	Client.c \
+	Rootless.c \
+	Extensions.c \
+	Options.c \
+	Clipboard.c \
+	Splash.c \
+	Split.c \
+	Holder.c \
+        Reconnect.c \
+	Error.c \
+	Atoms.c \
+	Trap.c \
+	Image.c \
+	Composite.c \
+	Pixels.c \
+	stubs.c \
+	miinitext.c \
+	$(SRCS1)
+
+OBJS =  NXwindow.o \
+	NXevents.o \
+	NXproperty.o \
+	NXdixfonts.o \
+	NXglyphcurs.o \
+	NXdispatch.o \
+	NXrender.o \
+	NXglyph.o \
+	NXpicture.o \
+	NXextension.o \
+	NXshm.o \
+        NXglxext.o \
+        NXxvdisp.o \
+        NXmiglyph.o \
+        NXmiexpose.o \
+        NXresource.o \
+        NXmiwindow.o \
+        NXxrandr.o \
+	NXdamage.o \
+	NXmitrap.o \
+	Args.o \
+	Binder.o \
+	Colormap.o \
+	Cursor.o \
+	Dialog.o \
+	Display.o \
+	Events.o \
+	Font.o \
+	GC.o \
+	GCOps.o \
+	Millis.o \
+	Handlers.o \
+	Init.o \
+	Keyboard.o \
+	Keystroke.o \
+	Pointer.o \
+	Screen.o \
+	TestExt.o \
+	Visual.o \
+	Drawable.o \
+	Window.o \
+	Pixmap.o \
+	Render.o \
+	Client.o \
+	Rootless.o \
+	Extensions.o \
+	Options.o \
+	Clipboard.o \
+	Splash.o \
+	Split.o \
+	Holder.o \
+	Reconnect.o \
+	Error.o \
+	Atoms.o \
+	Trap.o \
+	Image.o \
+	Composite.o \
+	Pixels.o \
+	stubs.o \
+	miinitext.o \
+	$(OBJS1)
+
+VFBINCLUDES = -I../../fb -I../../mfb -I../../render
+NXFONTINCLUDES = -I../../../../lib/font/include
+LIBXRANDRINCLUDES= -I../../../../lib/Xrandr
+
+INCLUDES = -I. -I../../../../../nxcomp -I../../../../../nxcompext -I../../../../../nxcompshad \
+           -I../../../../extras/Mesa/include \
+	   -I$(XBUILDINCDIR) -I$(FONTINCSRC) \
+	   -I../../mi -I../../include -I../../os \
+           -I../../miext/damage -I../../miext/cw \
+	   -I../../GL/glx -I../../GL/include -I../../../../lib/GL/include -I../../Xext \
+           -I$(EXTINCSRC) -I$(XINCLUDESRC) \
+	   $(VFBINCLUDES) $(NXFONTINCLUDES) $(LIBXRANDRINCLUDES)
+#ifdef SunArchitecture
+INCLUDES = -I. -I../../../../../nxcomp -I../../../../../nxcompext -I../../../../../nxcompshad \
+           -I../../../../extras/Mesa/include \
+	   -I$(XBUILDINCDIR) -I$(FONTINCSRC) \
+	   -I/usr/sfw/include \
+	   -I../../mi -I../../include -I../../os \
+	   -I../../GL/glx -I../../GL/include -I../../../../lib/GL/include -I../../Xext \
+           -I../../miext/damage -I../../miext/cw \
+           -I$(EXTINCSRC) -I$(XINCLUDESRC) \
+	   $(VFBINCLUDES) $(NXFONTINCLUDES) $(LIBXRANDRINCLUDES)
+#else
+#ifdef cygwinArchitecture
+INCLUDES = -I. -I$(XBUILDINCDIR) -I$(FONTINCSRC) \
+	   -I../../mi -I../../include -I../../os \
+	   -I../../GL/glx -I../../GL/include -I../../../../lib/GL/include -I../../Xext \
+           -I../../miext/damage -I../../miext/cw \
+           -I../../../../../nxcomp -I../../../../../nxcompext -I../../../../../nxcompshad \
+           -I../../../../extras/Mesa/include \
+           -I$(EXTINCSRC) -I$(XINCLUDESRC) \
+	   $(VFBINCLUDES) $(NXFONTINCLUDES) $(LIBXRANDRINCLUDES)
+#endif
+#endif
+
+### NXAGENT Defines:
+#
+# NXAGENT_FONTCACHE_SIZE           Number of cache slots
+# NXAGENT_SHAPE	                   Old shape code
+# NXAGENT_GLYPHCACHE
+# NXAGENT_GLYPHCACHE_SIZE          Slots for glyph cache
+# NXAGENT_SHAPE2 	           New shape code
+# NXAGENT_FIXKEYS     	           Force the release of pressed key when loosing focus
+# NXAGENT_EXPOSURES                Manage expose events
+# NXAGENT_CLIPBOARD                Enables clipboard cut and paste function between X servers.
+# NXAGENT_FONTEXCLUDE              Exclude some specific font names (only "-ult1mo" at this moment).
+# NXAGENT FULLSCREEN               Fullscreen mode
+#
+
+#if NXUpgradeAgentServer
+UPG_DEFINES=-DNXAGENT_UPGRADE
+#else
+UPG_DEFINES=
+#endif
+
+DEFINES = -g $(OS_DEFINES) $(EXT_DEFINES) $(UPG_DEFINES) \
+          -UXF86VIDMODE -UXFreeXDGA -UXF86MISC -UXF86DRI -UXFree86LOADER \
+          -DNXAGENT_SERVER \
+          -DNXAGENT_CONSTRAINCURSOR \
+          -DNXAGENT_FONTCACHE_SIZE=50 \
+          -DNXAGENT_GLYPHCACHE -DNXAGENT_GLYPHCACHE_SIZE=50 \
+          -DNXAGENT_SHAPE2 \
+          -DNXAGENT_FIXKEYS \
+          -DNXAGENT_CLIPBOARD \
+          -DNXAGENT_EXPOSURES \
+          -DNXAGENT_FONTEXCLUDE \
+          -DNXAGENT_PACKEDIMAGES \
+          -DNXAGENT_VISIBILITY \
+          -DNXAGENT_WAKEUP=1000 \
+          -DNXAGENT_ONSTART \
+          -DNXAGENT_SPLASH \
+          -DNXAGENT_ARTSD \
+          -UNX_DEBUG_INPUT \
+	  -DRANDR_10_INTERFACE \
+	  -DRANDR_12_INTERFACE \
+          -UPANORAMIX \
+          -UDEBUG_TREE
+
+all:: $(OBJS)
+
+LinkSourceFile(stubs.c,$(SERVERSRC)/Xi)
+SpecialCObjectRule(Init,$(ICONFIGFILES),$(_NOOP_))
+LinkSourceFile(miinitext.c,$(SERVERSRC)/mi)
+SpecialCObjectRule(miinitext,$(ICONFIGFILES), $(_NOOP_))
+
+NormalLibraryObjectRule()
+NormalLibraryTarget(nxagent,$(OBJS))
+
+DependTarget()
