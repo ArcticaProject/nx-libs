@@ -1,0 +1,108 @@
+ChangeLog:
+
+nxauth-3.5.0-1
+
+- Opened the 3.5.0 branch based on nxauth-3.4.0-3.
+
+- Updated copyright to year 2011.
+
+nxauth-3.4.0-3
+
+- Updated the launchd socket detection to support OSX versions relea-
+  sed so far.
+
+nxauth-3.4.0-2
+
+- Updated copyright to year 2010.
+
+nxauth-3.4.0-1
+
+- Opened the 3.4.0 branch based on nxauth-3.3.0-1.
+
+- Updated copyright to year 2009.
+
+nxauth-3.3.0-1
+
+- Opened the 3.3.0 branch based on nxauth-3.2.0-1.
+
+nxauth-3.2.0-1
+
+- Opened the 3.2.0 branch based on nxauth-3.1.0-2.
+
+nxauth-3.1.0-2
+
+- Added support for launchd socket.
+
+nxauth-3.1.0-1
+
+- Opened the 3.1.0 branch based on nxauth-3.0.0-6.
+
+nxauth-3.0.0-6
+
+- Updated the NoMachine copyright notice.
+
+nxauth-3.0.0-5
+
+- Changed the copyright attribution from Medialogic to NoMachine.
+
+nxauth-3.0.0-4
+
+- Changed the LICENSE file to state that the software is only made
+  available under the version 2 of the GPL.
+
+- Added file COPYING.
+
+nxauth-3.0.0-3
+
+- Updated copyright notices to year 2007.
+
+nxauth-3.0.0-2
+
+- Imported changes up to nxauth-2.1.0-1.
+
+- Ignoring lock on '.Xauthority' file.
+
+- Using '__CYGWIN__' definition in process.c. 'WIN32' is not defined
+  during compilation under nx-X11 and wrong code block is used to 
+  rename xauth temporary file.
+
+nxauth-3.0.0-1
+
+- Opened the 3.0.0 branch based on nxauth-2.0.0-2.
+
+nxauth-2.0.0-2
+
+- Updated the NoMachine copyright notices.
+
+nxauth-2.0.0-1
+
+- Opened the 2.0.0 branch based on the 1.6.0-1.
+
+nxauth-1.6.0-1
+
+- Opened the 1.6.0 branch based on nxauth-1.5.0-1.
+
+nxauth-1.5.0-1
+
+- Opened the 1.5.0 branch.
+
+nxauth-1.4.1-1
+
+- Opened the 1.4.1 branch.
+
+nxauth-1.4.0-2
+
+- Removed debug message 'host name is'.
+
+nxauth-1.4.0-1
+
+- Opened the 1.4.0 branch based on nxauth-1.3.2-1.
+
+nxauth-1.3.2-1
+
+- Opened the 1.3.2 branch.
+
+nxauth-1.3.1-2
+
+- Fixed problem with compilation on systems without 
+  X11 includes instaled.
