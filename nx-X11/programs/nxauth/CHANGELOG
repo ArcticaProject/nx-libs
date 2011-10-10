@@ -1,5 +1,10 @@
 ChangeLog:
 
+nxauth-3.4.0-3
+
+- Updated the launchd socket detection to support OSX versions relea-
+  sed so far.
+
 nxauth-3.4.0-2
 
 - Updated copyright to year 2010.

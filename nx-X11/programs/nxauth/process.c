@@ -513,7 +513,7 @@ get_displayname_auth(char *displayname, Xauth *auth)
      */
 
     if (strncmp (displayname, "/tmp/launch", 11) == 0)
-      displayname = strrchr(displayname, '/') + 1;
+      displayname = strrchr(displayname, ':');
 
     #endif
 
