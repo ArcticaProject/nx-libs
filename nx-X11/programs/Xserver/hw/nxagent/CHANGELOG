@@ -1,5 +1,12 @@
 ChangeLog:
 
+nxagent-3.2.0-7
+
+- Imported patch fixing issues from  X.Org security advisory, June
+  11th, 2008: Multiple vulnerabilities in X server extensions. CVE
+  IDs: CVE-2008-1377, CVE-2008-1379, CVE-2008-2360, CVE-2008-2361,
+  CVE-2008-2362.
+
 nxagent-3.2.0-6
 
 - Fixed TR05F02063. Ignore ReparentNotify events for non-rootless

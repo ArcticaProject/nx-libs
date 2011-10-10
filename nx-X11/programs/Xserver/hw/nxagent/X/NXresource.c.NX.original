@@ -194,15 +194,15 @@ static DeleteType *DeleteFuncs = (DeleteType *)NULL;
 
 Atom * ResourceNames = NULL;
 
-#ifdef NXAGENT_SERVER
-static int nxagentResChangedFlag = 0;
-#endif
-
 void RegisterResourceName (RESTYPE type, char *name)
 {
     ResourceNames[type & TypeMask] =  MakeAtom(name, strlen(name), TRUE);
 }
 
+#endif
+
+#ifdef NXAGENT_SERVER
+static int nxagentResChangedFlag = 0;
 #endif
 
 RESTYPE
