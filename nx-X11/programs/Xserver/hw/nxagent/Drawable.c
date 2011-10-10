@@ -650,6 +650,22 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
       {
         w = MIN(box.x2 - x, tileWidth);
 
+        /*
+         * FIXME: This should not occur.
+         */
+
+        if (nxagentDrawableStatus(pDrawable) == Synchronized)
+        {
+          #ifdef WARNING
+          if (pDrawable -> type == DRAWABLE_WINDOW && pSrcDrawable != pDrawable)
+            fprintf(stderr, "nxagentSynchronizeRegion: WARNING! Trying to synchronize "
+                        "the clean drawable type [%d] at [%p] with source at [%p].\n",
+                            pDrawable -> type, (void *) pDrawable, (void *) pSrcDrawable);
+          #endif
+
+          goto nxagentSynchronizeRegionStop;
+        }
+
         if (canBreakOnTimeout(breakMask))
         {
           /*

@@ -1215,6 +1215,12 @@ static void nxagentParseOptions(char *name, char *value)
 
     return;
   }
+  else if  (strcmp(name, "copysize") == 0)
+  {
+    nxagentChangeOption(CopyBufferSize, atoi(value));
+
+    return;
+  }
   else
   {
     #ifdef DEBUG

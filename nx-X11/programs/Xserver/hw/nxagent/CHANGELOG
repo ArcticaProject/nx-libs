@@ -1,5 +1,36 @@
 ChangeLog:
 
+nxagent-3.1.0-6
+
+- Fixed a compile warning in Args.c.
+
+- The synchronization loop breaks if the drawable is clean when it's
+  not supposed to be.
+
+- Fixed TR12E01966. Emacs tooltips were not displayed properly. Added
+  a check on the event mask before calling miWindowExposures().
+
+- Fixed TR01F01982. ConfigureNotify warning is printed in verbose mode
+  only.
+
+nxagent-3.1.0-5
+
+- Moved some variable definitions placed in ProcGetProperty().
+
+nxagent-3.1.0-4
+
+- Fixed TR06D01397. The problem was: drag & drop operations between
+  windows of Java applications didn't work in NX Client for Windows.
+
+- Implemented FR12E01957. Added a limit to the amount of data that can
+  be pasted from an NX session into an external application. The new
+  option - named 'copysize' - can be read from the 'options' file.
+
+nxagent-3.1.0-3
+
+- Fixed TR12E01963. The window tree is revalidated explicitly after
+  recomputing the root window clip regions.
+
 nxagent-3.1.0-2
 
 - Fixed TR11E01946. Forcing exposures on regions saved in the backing

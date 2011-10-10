@@ -55,6 +55,7 @@
 #include "Drawable.h"
 #include "Handlers.h"
 #include "Utils.h"
+#include "Error.h"
 
 #include "NX.h"
 #include "NXvars.h"
@@ -1478,7 +1479,10 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
           if (nxagentExposeQueue.exposures[nxagentExposeQueue.start].serial != X.xconfigure.x)
           {
             #ifdef WARNING
-            fprintf(stderr, "nxagentDispatchEvents: Requested ConfigureNotify changes didn't take place.\n");
+            if (nxagentVerbose == 1)
+            {
+              fprintf(stderr, "nxagentDispatchEvents: Requested ConfigureNotify changes didn't take place.\n");
+            }
             #endif
           }
 
@@ -3358,7 +3362,8 @@ void nxagentSynchronizeExpose(void)
                           (nxagentExposeQueueHead.remoteRegion),
                               (nxagentExposeQueueHead.localRegion));
 
-      if (REGION_NIL(nxagentExposeQueueHead.remoteRegion) == 0)
+      if (REGION_NIL(nxagentExposeQueueHead.remoteRegion) == 0 &&
+             ((pWin -> eventMask|wOtherEventMasks(pWin)) & ExposureMask))
       {
         #ifdef TEST
         fprintf(stderr, "nxagentSynchronizeExpose: Going to call miWindowExposures"

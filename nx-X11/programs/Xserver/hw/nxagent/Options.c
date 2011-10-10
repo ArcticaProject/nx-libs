@@ -139,6 +139,8 @@ void nxagentInitOptions()
   nxagentOptions.ClientOs = UNDEFINED;
 
   nxagentOptions.InhibitXkb = 1;
+
+  nxagentOptions.CopyBufferSize = COPY_UNLIMITED;
 }
 
 /*

@@ -46,6 +46,7 @@ is" without express or implied warranty.
 #include "../../fb/fb.h"
 #include "../../randr/randrstr.h"
 #include "inputstr.h"
+#include "mivalidate.h"
 
 #include "Agent.h"
 #include "Display.h"
@@ -1989,6 +1990,144 @@ Bool nxagentCloseScreen(int index, ScreenPtr pScreen)
   return True;
 }
 
+/*
+ * This function comes from the xfree86 Xserver.
+ */
+
+static void nxagentSetRootClip (ScreenPtr pScreen, Bool enable)
+{
+    WindowPtr   pWin = WindowTable[pScreen->myNum];
+    WindowPtr   pChild;
+    Bool        WasViewable = (Bool)(pWin->viewable);
+    Bool        anyMarked = FALSE;
+    RegionPtr   pOldClip = NULL, bsExposed;
+#ifdef DO_SAVE_UNDERS
+    Bool        dosave = FALSE;
+#endif
+    WindowPtr   pLayerWin;
+    BoxRec      box;
+
+    if (WasViewable)
+    {
+        for (pChild = pWin->firstChild; pChild; pChild = pChild->nextSib)
+        {
+            (void) (*pScreen->MarkOverlappedWindows)(pChild,
+                                                     pChild,
+                                                     &pLayerWin);
+        }
+        (*pScreen->MarkWindow) (pWin);
+        anyMarked = TRUE;
+        if (pWin->valdata)
+        {
+            if (HasBorder (pWin))
+            {
+                RegionPtr       borderVisible;
+
+                borderVisible = REGION_CREATE(pScreen, NullBox, 1);
+                REGION_SUBTRACT(pScreen, borderVisible,
+                                &pWin->borderClip, &pWin->winSize);
+                pWin->valdata->before.borderVisible = borderVisible;
+            }
+            pWin->valdata->before.resized = TRUE;
+        }
+    }
+
+    /*
+     * Use REGION_BREAK to avoid optimizations in ValidateTree
+     * that assume the root borderClip can't change well, normally
+     * it doesn't...)
+     */
+    if (enable)
+    {
+        box.x1 = 0;
+        box.y1 = 0;
+        box.x2 = pScreen->width;
+        box.y2 = pScreen->height;
+        REGION_INIT (pScreen, &pWin->winSize, &box, 1);
+        REGION_INIT (pScreen, &pWin->borderSize, &box, 1);
+        if (WasViewable)
+            REGION_RESET(pScreen, &pWin->borderClip, &box);
+        pWin->drawable.width = pScreen->width;
+        pWin->drawable.height = pScreen->height;
+        REGION_BREAK (pWin->drawable.pScreen, &pWin->clipList);
+    }
+    else
+    {
+        REGION_EMPTY(pScreen, &pWin->borderClip);
+        REGION_BREAK (pWin->drawable.pScreen, &pWin->clipList);
+    }
+
+    ResizeChildrenWinSize (pWin, 0, 0, 0, 0);
+
+    if (WasViewable)
+    {
+        if (pWin->backStorage)
+        {
+            pOldClip = REGION_CREATE(pScreen, NullBox, 1);
+            REGION_COPY(pScreen, pOldClip, &pWin->clipList);
+        }
+
+        if (pWin->firstChild)
+        {
+            anyMarked |= (*pScreen->MarkOverlappedWindows)(pWin->firstChild,
+                                                           pWin->firstChild,
+                                                           (WindowPtr *)NULL);
+        }
+        else
+        {
+            (*pScreen->MarkWindow) (pWin);
+            anyMarked = TRUE;
+        }
+
+#ifdef DO_SAVE_UNDERS
+        if (DO_SAVE_UNDERS(pWin))
+        {
+            dosave = (*pScreen->ChangeSaveUnder)(pLayerWin, pLayerWin);
+        }
+#endif /* DO_SAVE_UNDERS */
+
+        if (anyMarked)
+            (*pScreen->ValidateTree)(pWin, NullWindow, VTOther);
+    }
+    
+    if (pWin->backStorage &&
+        ((pWin->backingStore == Always) || WasViewable))
+    {
+        if (!WasViewable)
+            pOldClip = &pWin->clipList; /* a convenient empty region */
+        bsExposed = (*pScreen->TranslateBackingStore)
+                             (pWin, 0, 0, pOldClip,
+                              pWin->drawable.x, pWin->drawable.y);
+        if (WasViewable)
+            REGION_DESTROY(pScreen, pOldClip);
+        if (bsExposed)
+        {
+            RegionPtr   valExposed = NullRegion;
+
+            if (pWin->valdata)
+                valExposed = &pWin->valdata->after.exposed;
+            (*pScreen->WindowExposures) (pWin, valExposed, bsExposed);
+            if (valExposed)
+                REGION_EMPTY(pScreen, valExposed);
+            REGION_DESTROY(pScreen, bsExposed);
+        }
+    }
+    if (WasViewable)
+    {
+        if (anyMarked)
+            (*pScreen->HandleExposures)(pWin);
+#ifdef DO_SAVE_UNDERS
+        if (dosave)
+            (*pScreen->PostChangeSaveUnder)(pLayerWin, pLayerWin);
+#endif /* DO_SAVE_UNDERS */
+        if (anyMarked && pScreen->PostValidateTree)
+            (*pScreen->PostValidateTree)(pWin, NullWindow, VTOther);
+    }
+    if (pWin->realized)
+        WindowsRestructured ();
+    FlushAllOutput ();
+}   
+
 Bool nxagentResizeScreen(ScreenPtr pScreen, int width, int height,
                              int mmWidth, int mmHeight)
 {
@@ -2002,7 +2141,6 @@ Bool nxagentResizeScreen(ScreenPtr pScreen, int width, int height,
   int oldMmWidth;
   int oldMmHeight;
 
-  WindowPtr pWin;
   RegionPtr pRootWinSize;
 
   #ifdef TEST
@@ -2180,25 +2318,7 @@ FIXME: We should try to restore the previously
 
   pRootWinSize = &WindowTable[pScreen -> myNum] -> winSize;
 
-  /*
-   * Force a fictitious resize of all the top
-   * level windows, in order to trigger the
-   * window tree validation.
-   */
-
-  if (nxagentOption(Rootless) == 0)
-  {
-    for (pWin = WindowTable[pScreen -> myNum] -> firstChild; pWin != NULL; pWin = pWin -> nextSib)
-    {
-
-      (*pWin -> drawable.pScreen -> ResizeWindow)(pWin, pWin -> drawable.x,
-                                                      pWin -> drawable.y,
-                                                          pWin -> drawable.width,
-                                                              pWin -> drawable.height,
-                                                                  pWin -> nextSib);
-
-    }
-  }
+  nxagentSetRootClip(pScreen, 1);
 
   XMoveWindow(nxagentDisplay, nxagentWindow(WindowTable[0]),
                   nxagentOption(RootX), nxagentOption(RootY));

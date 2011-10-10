@@ -27,6 +27,7 @@
 #endif
 
 #define UNDEFINED -1
+#define COPY_UNLIMITED -1
 
 typedef enum _BackingStoreMode
 {
@@ -348,6 +349,13 @@ typedef struct _AgentOptions
    */
 
   int InhibitXkb;
+
+  /*
+   * Maximum number of bytes that can be pasted from
+   * an NX session into an external application.
+   */
+
+  int CopyBufferSize;
 
 } AgentOptionsRec;
 

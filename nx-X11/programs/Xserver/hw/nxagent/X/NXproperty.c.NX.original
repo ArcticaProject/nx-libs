@@ -89,6 +89,7 @@ SOFTWARE.
 #include "Options.h"
 #include "Rootless.h"
 #include "Client.h"
+#include "Windows.h"
 
 #if defined(LBX) || defined(LBX_COMPAT)
 #if 0 /* no header in X11 environment, not used in X11 environment */
@@ -97,6 +98,17 @@ int fWriteToClient(ClientPtr client, int len, char *buf)
     return WriteToClient(client, len, buf);
 }
 #endif
+#endif
+
+extern Atom clientCutProperty;
+
+#ifdef NXAGENT_SERVER
+typedef struct
+{
+  CARD32 state;
+  Window icon;
+}
+nxagentWMStateRec;
 #endif
 
 /*****************************************************************
@@ -343,9 +355,22 @@ ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format,
     int sizeInBytes;
     int totalSize;
     pointer data;
+    int copySize;
 
     sizeInBytes = format>>3;
     totalSize = len * sizeInBytes;
+
+    copySize = nxagentOption(CopyBufferSize);
+
+    if (copySize != COPY_UNLIMITED && property == clientCutProperty)
+    {
+      if (totalSize > copySize)
+      {
+        totalSize = copySize;
+        totalSize = totalSize - (totalSize % sizeInBytes);
+        len = totalSize / sizeInBytes;
+      }
+    }
 
     /* first see if property already exists */
 
@@ -545,6 +570,11 @@ NullPropertyReply(
 int
 ProcGetProperty(ClientPtr client)
 {
+    #ifdef NXAGENT_SERVER
+    nxagentWMStateRec wmState;
+    nxagentWMStateRec *wmsP = &wmState;
+    #endif
+
     PropertyPtr pProp, prevProp;
     unsigned long n, len, ind;
     WindowPtr pWin;
@@ -552,6 +582,7 @@ ProcGetProperty(ClientPtr client)
     REQUEST(xGetPropertyReq);
 
     REQUEST_SIZE_MATCH(xGetPropertyReq);
+
     if (stuff->delete)
 	UpdateCurrentTime();
     pWin = (WindowPtr)SecurityLookupWindow(stuff->window, client,
@@ -587,6 +618,59 @@ ProcGetProperty(ClientPtr client)
 
     reply.type = X_Reply;
     reply.sequenceNumber = client->sequence;
+
+    #ifdef NXAGENT_SERVER
+
+    /*
+     * Creating a reply for WM_STATE property if it doesn't exist.
+     * This is intended to allow drag & drop work in JAva 1.6 when
+     * the agent is connected to NXWin in multiwindow mode.
+     */
+
+    if (nxagentOption(Rootless) &&
+            nxagentWindowTopLevel(pWin) &&
+                (!pProp) &&
+                    strcmp(NameForAtom(stuff->property), "WM_STATE") == 0)
+    {
+      wmState.state = 1;
+      wmState.icon = None;
+
+      if (ChangeWindowProperty(pWin, stuff->property, stuff->property, 32, 0, 2, &wmState, 1) == Success)
+      {
+        nxagentExportProperty(pWin, stuff->property, stuff->property, 32, 0, 2, &wmState);
+      }
+
+      n = 8;
+      ind = stuff->longOffset << 2;        
+
+      if (n < ind)
+      {
+        client->errorValue = stuff->longOffset;
+        return BadValue;
+      }
+
+      len = min(n - ind, 4 * stuff->longLength);
+
+      reply.bytesAfter = n - (ind + len);
+      reply.length = (len + 3) >> 2;
+
+      reply.format = 32;
+      reply.nItems = len / 4;
+      reply.propertyType = stuff->property;
+
+      WriteReplyToClient(client, sizeof(xGenericReply), &reply);
+
+      if (len)
+      {
+        client->pSwapReplyFunc = (ReplySwapPtr)CopySwap32Write;
+
+        WriteSwappedDataToClient(client, len, (char *)wmsP + ind);
+      }
+
+      return(client->noClientException);
+    }
+    #endif
+
     if (!pProp) 
 	return NullPropertyReply(client, None, 0, &reply);
 

@@ -59,7 +59,7 @@ static int agentClipboardStatus;
 static int clientAccum;
 
 Atom serverCutProperty;
-static Atom clientCutProperty;
+Atom clientCutProperty;
 static Window serverWindow;
 
 static const int nxagentPrimarySelection = 0;
