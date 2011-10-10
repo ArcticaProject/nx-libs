@@ -1,5 +1,93 @@
 ChangeLog:
 
+nxagent-3.5.0-2
+
+- Fixed TR0502449. Initialized font server path even if font server
+  connection fails.
+
+nxagent-3.5.0-1
+
+- Opened the 3.5.0 branch based on nxagent-3.4.0-16.
+
+- Updated copyright to year 2009.
+
+- Fixed TR0302438. Added a check in function exporting property in
+  order to handle the case looking up an atom name returns a null
+  pointer.
+
+nxagent-3.4.0-16
+
+- Updated copyright to year 2011.
+
+nxagent-3.4.0-15
+
+- Added reference to fixed TR11H02405.
+
+nxagent-3.4.0-14
+
+- Reverted fix for TR03H02335 implemented in nxagent-3.4.0-6. The
+  emulation of right click by Control key + left click introduces
+  issues for some applications changing the reaction to the left click
+  depending on the state of Control key. Issue reported in TR03H02335
+  affects Apple laptop touchpads having a single button acting as
+  left button: on those devices the right button can be emulated by
+  a double-fingered tap (using two fingertips simultaneously).
+
+nxagent-3.4.0-13
+
+- Fixed TR12H02414. Exported property must be split if ChangeProperty
+  request exceeds 262140 bytes.
+
+- Reset AllScreens option at reconnection time if full screen mode
+  have to be automatically turned off.
+
+nxagent-3.4.0-12
+
+- If one of the two full screen modes is active ('one screen' or 'all
+  screens') both keystrokes Ctrl-Alt-F and Ctrl-Alt-Shift-F change the
+  mode back to 'windowed'.
+
+- Fixed TR11H02405. XRenderFreePicture is called only for pictures
+  that were actually created on the X server side.
+
+- Ctrl+Alt+f switch fullscreen to all monitors, while Ctrl+Alt+Shift+f
+  does it to one monitor only.
+
+- If the fullscreen option is enabled at the startup, session starts
+  in the fullscreen mode on all monitors.
+
+- Added a call to XReparentWindow in the nxagentSwitchAllScreens().
+
+- Corrected focus and grab when switching to fullscreen on
+  all monitors.
+
+- Removed a compile warning e deleted some unused variables.
+
+- Removed nxagentPointerAndKeyboardGrabbed variable. 
+
+- Use the override redirect attribute to switch to fullscreen to all
+  monitors instead of send _NET_WM_FULLSCREEN_MONITORS hint to the WM.
+
+- Added nxagentMinimizeFromFullScreen(), nxagentMaximizeToFullScreen()
+  and nxagentCreateIconWindow().
+
+- Removed check on EnterNotify to grab the keyboard in fullscreen
+  mode not only if mode is 'NotifyNormal'.
+
+nxagent-3.4.0-11
+
+- Corrected switching between viewport mode and resize mode.
+
+- Fixed TR04H02340. Keycode is correctly translated in shadow sessions
+  also if the remote X display is using evdev.
+
+nxagent-3.4.0-10
+
+- Handled XGrabKeyboard() return value.
+
+- Fixed TR10D01512. NumLock and CapsLock keys are now synchronized
+  between local and remote.
+
 nxagent-3.4.0-9
 
 - Fixed TR06H02362. No icon was swown in the task bar.

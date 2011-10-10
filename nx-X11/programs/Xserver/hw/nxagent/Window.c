@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -693,7 +693,6 @@ void nxagentRestackWindow(WindowPtr pWin, WindowPtr pOldNextSib)
 void nxagentSwitchFullscreen(ScreenPtr pScreen, Bool switchOn)
 {
   XEvent e;
-  XSizeHints sizeHints;
 
   if (nxagentOption(Rootless) == 1)
   {
@@ -731,27 +730,6 @@ void nxagentSwitchFullscreen(ScreenPtr pScreen, Bool switchOn)
 
   nxagentChangeOption(Fullscreen, switchOn);
 
-  if (nxagentOption(DesktopResize) == 1)
-  {
-    sizeHints.flags = PSize;
-
-    if (switchOn == 1)
-    {
-      sizeHints.width =
-          WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
-      sizeHints.height =
-          HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
-    }
-    else
-    {
-      sizeHints.width = nxagentOption(RootWidth);
-      sizeHints.height = nxagentOption(RootHeight);
-    }
-
-    XSetWMNormalHints(nxagentDisplay, nxagentDefaultWindows[pScreen -> myNum],
-                         &sizeHints);
-  }
-
   memset(&e, 0, sizeof(e));
 
   e.xclient.type = ClientMessage;
@@ -777,6 +755,245 @@ void nxagentSwitchFullscreen(ScreenPtr pScreen, Bool switchOn)
 
     nxagentUngrabPointerAndKeyboard(NULL);
   } 
+}
+
+void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
+{
+  Window w;
+  XSetWindowAttributes attributes;
+  unsigned long valuemask;
+
+  if (nxagentOption(Rootless))
+  {
+    return;
+  }
+
+  if (!switchOn)
+  {
+    nxagentWMDetect();
+
+    if (!nxagentWMIsRunning)
+    {
+      #ifdef WARNING
+      fprintf(stderr, "Warning: Can't switch to window mode, no window manager has been detected.\n");
+      #endif
+
+      return;
+    }
+  }
+
+  w = nxagentDefaultWindows[pScreen -> myNum];
+  attributes.override_redirect = switchOn;
+  valuemask = CWOverrideRedirect;
+  XUnmapWindow(nxagentDisplay, w);
+  XChangeWindowAttributes(nxagentDisplay, w, valuemask, &attributes);
+
+  XReparentWindow(nxagentDisplay, w, DefaultRootWindow(nxagentDisplay), 0, 0);
+
+  if (switchOn)
+  {
+    /*
+     * Change to fullscreen mode.
+     */
+
+    struct timeval timeout;
+    int i;
+    XEvent e;
+
+    /*
+     * Wait for window manager reparenting the default window.
+     */
+
+    for (i = 0; i < 100 && nxagentWMIsRunning; i++)
+    {
+      #ifdef TEST
+      fprintf(stderr, "nxagentSwitchAllScreens: WARNING! Going to wait for the ReparentNotify event.\n");
+      #endif
+
+      if (XCheckTypedWindowEvent(nxagentDisplay, w, ReparentNotify, &e))
+      {
+        break;
+      }
+
+      /*
+       * This should also flush
+       * the NX link for us.
+       */
+
+      XSync(nxagentDisplay, 0);
+
+      timeout.tv_sec  = 0;
+      timeout.tv_usec = 50 * 1000;
+
+      nxagentWaitEvents(nxagentDisplay, &timeout);
+    }
+
+    if (i < 100)
+    {
+      /*
+       * The window manager has done with the reparent
+       * operation. We can resize and map the window.
+       */
+
+      nxagentChangeOption(Fullscreen, True);
+      nxagentChangeOption(AllScreens, True);
+      
+
+      /*
+       * Save the window-mode configuration.
+       */
+
+      nxagentChangeOption(SavedX, nxagentOption(X));
+      nxagentChangeOption(SavedY, nxagentOption(Y));
+      nxagentChangeOption(SavedWidth, nxagentOption(Width));
+      nxagentChangeOption(SavedHeight, nxagentOption(Height));
+      nxagentChangeOption(SavedRootWidth, nxagentOption(RootWidth));
+      nxagentChangeOption(SavedRootHeight, nxagentOption(RootHeight));
+
+      /*
+       * Reconf the Default window.
+       */
+
+      nxagentChangeOption(X, 0);
+      nxagentChangeOption(Y, 0);
+      nxagentChangeOption(Width, WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay)));
+      nxagentChangeOption(Height, HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay)));
+
+      /*
+       * Move the root window.
+       */
+
+      nxagentChangeOption(RootX, (nxagentOption(Width) - nxagentOption(RootWidth)) / 2);
+      nxagentChangeOption(RootY, (nxagentOption(Height) - nxagentOption(RootHeight)) / 2);
+      nxagentChangeOption(ViewportXSpan, nxagentOption(Width) - nxagentOption(RootWidth));
+      nxagentChangeOption(ViewportYSpan, nxagentOption(Height) - nxagentOption(RootHeight));
+
+      XMoveResizeWindow(nxagentDisplay, w, nxagentOption(X), nxagentOption(Y),
+                            nxagentOption(Width), nxagentOption(Height));
+
+      nxagentUpdateViewportFrame(0, 0, nxagentOption(RootWidth), nxagentOption(RootHeight));
+
+      XMoveWindow(nxagentDisplay, nxagentWindow(WindowTable[pScreen -> myNum]),
+                      nxagentOption(RootX), nxagentOption(RootY));
+
+      /*
+       * We disable the screensaver when changing
+       * mode to fullscreen. Is it really needed?
+       */
+
+      XSetScreenSaver(nxagentDisplay, 0, 0, DefaultExposures, DefaultBlanking);
+
+      if (nxagentIconWindow == None)
+      {
+        nxagentIconWindow = nxagentCreateIconWindow();
+
+        XMapWindow(nxagentDisplay, nxagentIconWindow);
+      }
+
+      XMapRaised(nxagentDisplay, w);
+      XSetInputFocus(nxagentDisplay, w, RevertToParent, CurrentTime);
+      XCheckTypedWindowEvent(nxagentDisplay, w, LeaveNotify, &e);
+      nxagentFullscreenWindow = w;
+
+      if (nxagentOption(DesktopResize) == 1)
+      {
+        if (nxagentOption(Shadow) == 0)
+        {
+          nxagentRRSetScreenConfig(pScreen, WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay)),
+                                       HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay)));
+        }
+        else
+        {
+          nxagentShadowAdaptToRatio();
+        }
+      }
+    }
+    else
+    {
+      /*
+       * We have waited for a reparent event unsuccessfully.
+       * Something happened to the window manager.
+       */
+
+      #ifdef WARNING
+      fprintf(stderr, "nxagentSwitchAllScreens: WARNING! Expected ReparentNotify event missing.\n");
+      #endif
+ 
+      nxagentWMIsRunning = False;
+      attributes.override_redirect = False;
+      XChangeWindowAttributes(nxagentDisplay, w, valuemask, &attributes);
+      XMapWindow(nxagentDisplay, w);
+    }
+  }
+  else
+  {
+    /*
+     * FIXME:
+     * It could be necessary:
+     * - To restore screensaver.
+     * - To set or reset nxagentForceBackingStore flag.
+     * - To propagate device settings to the X server if no WM is running.
+     */
+
+    /*
+     * Change to windowed mode.
+     */
+
+    nxagentChangeOption(Fullscreen, False);
+    nxagentChangeOption(AllScreens, False);
+
+    XDestroyWindow(nxagentDisplay, nxagentIconWindow);
+
+    nxagentIconWindow = nxagentFullscreenWindow = None;
+
+    if (nxagentOption(DesktopResize) == 1)
+    {
+      nxagentChangeOption(RootWidth, nxagentOption(SavedRootWidth));
+      nxagentChangeOption(RootHeight, nxagentOption(SavedRootHeight));
+
+      if (nxagentOption(Shadow) == 0)
+      {
+        nxagentRRSetScreenConfig(pScreen, nxagentOption(RootWidth), nxagentOption(RootHeight));
+      }
+    }
+
+    if (nxagentOption(WMBorderWidth) > 0 && nxagentOption(WMTitleHeight) > 0)
+    {
+      nxagentChangeOption(X, nxagentOption(SavedX) -
+                              nxagentOption(WMBorderWidth));
+      nxagentChangeOption(Y, nxagentOption(SavedY) -
+                              nxagentOption(WMTitleHeight));
+    }
+    else
+    {
+      nxagentChangeOption(X, nxagentOption(SavedX));
+      nxagentChangeOption(Y, nxagentOption(SavedY));
+    }
+
+    nxagentChangeOption(Width, nxagentOption(SavedWidth));
+    nxagentChangeOption(Height, nxagentOption(SavedHeight));
+
+    if (nxagentOption(Shadow) == 1 && nxagentOption(DesktopResize) == 1)
+    {
+      nxagentShadowAdaptToRatio();
+    }
+
+    XMoveResizeWindow(nxagentDisplay, w, nxagentOption(X), nxagentOption(Y),
+                          nxagentOption(Width), nxagentOption(Height));
+
+    nxagentUpdateViewportFrame(0, 0, nxagentOption(Width), nxagentOption(Height));
+
+    XMoveWindow(nxagentDisplay, nxagentWindow(WindowTable[pScreen -> myNum]), 0, 0);
+    XMapWindow(nxagentDisplay, w);
+
+    nxagentChangeOption(RootX, 0);
+    nxagentChangeOption(RootY, 0);
+  }
+
+  XMoveResizeWindow(nxagentDisplay, nxagentInputWindows[0], 0, 0,
+                        nxagentOption(Width), nxagentOption(Height));
+
+  nxagentSetPrintGeometry(pScreen -> myNum); 
 }
 
 #ifdef VIEWPORT_FRAME
@@ -2281,7 +2498,7 @@ void nxagentMapDefaultWindows()
 
         if (nxagentOption(Fullscreen) == 1 && nxagentWMIsRunning == 1)
         {
-          nxagentSwitchFullscreen(pScreen, 1);
+          nxagentMaximizeToFullScreen(pScreen);
         }
       }
 
@@ -2310,6 +2527,26 @@ void nxagentMapDefaultWindows()
 
     XSetSelectionOwner(nxagentDisplay, serverCutProperty,
                            nxagentDefaultWindows[i], CurrentTime);
+  }
+
+  /*
+   * Map the icon window.
+   */
+
+  if (nxagentIconWindow != 0)
+  {
+    #ifdef TEST
+    fprintf(stderr, "nxagentMapDefaultWindows: Mapping icon window id [%ld].\n",
+                nxagentIconWindow);
+    #endif
+
+    XMapWindow(nxagentDisplay, nxagentIconWindow);
+
+    if (nxagentIpaq != 0)
+    {
+      XIconifyWindow(nxagentDisplay, nxagentIconWindow,
+                         DefaultScreen(nxagentDisplay));
+    }
   }
 
   /*

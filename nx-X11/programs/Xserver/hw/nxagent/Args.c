@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -562,10 +562,14 @@ int ddxProcessArgument(int argc, char *argv[], int i)
       if (!strcmp(argv[i],"fullscreen"))
       {
         nxagentChangeOption(Fullscreen, True);
+
+        nxagentChangeOption(AllScreens, True);
       }
       else if (!strcmp(argv[i],"ipaq"))
       {
         nxagentChangeOption(Fullscreen, True);
+
+        nxagentChangeOption(AllScreens, True);
 
         nxagentIpaq = True;
       }
@@ -1071,10 +1075,14 @@ static void nxagentParseOptions(char *name, char *value)
     else if (!strcmp(value, "1"))
     {
       nxagentChangeOption(Fullscreen, True);
+
+      nxagentChangeOption(AllScreens, True);
     }
     else if (!strcmp(value, "0"))
     {
       nxagentChangeOption(Fullscreen, False);
+
+      nxagentChangeOption(AllScreens, False);
     }
     else
     {
@@ -1678,6 +1686,11 @@ N/A
     if (nxagentOption(Fullscreen) == UNDEFINED)
     {
       nxagentChangeOption(Fullscreen, False);
+    }
+
+    if (nxagentOption(AllScreens) == UNDEFINED)
+    {
+      nxagentChangeOption(AllScreens, False);
     }
 
     if (nxagentOption(Binder) == UNDEFINED)

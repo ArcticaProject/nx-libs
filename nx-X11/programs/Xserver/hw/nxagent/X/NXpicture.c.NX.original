@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -873,6 +873,9 @@ AllocatePicture (ScreenPtr  pScreen)
 	else
 	    ppriv->ptr = (pointer)NULL;
     }
+
+    nxagentPicturePriv(pPicture) -> picture = 0;
+
     return pPicture;
 }
 
@@ -1103,6 +1106,8 @@ static PicturePtr createSourcePicture(void)
       ppriv[nxagentPicturePrivateIndex].ptr = (pointer) privPictureRecAddr;
 
       pPicture -> devPrivates = ppriv;
+
+      nxagentPicturePriv(pPicture) -> picture = 0;
     }
 
     pPicture->pDrawable = 0;

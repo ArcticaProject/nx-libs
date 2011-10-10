@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -625,6 +625,7 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
   {
     XlibAtom *atoms = malloc(nUnits * sizeof(*atoms));
     Atom *input = value;
+    char *atomName = NULL;
     int i;
     int j = 0;
 
@@ -644,7 +645,8 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
        * instead of just getting rid of the property.
        */
 
-      if (strcmp(NameForAtom(input[i]), "_NET_WM_PING") != 0)
+      if ((atomName = NameForAtom(input[i])) != NULL &&
+              strcmp(atomName, "_NET_WM_PING") != 0)
       {
         atoms[j] = nxagentLocalToRemoteAtom(input[i]);
 
@@ -652,7 +654,7 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
         {
           #ifdef WARNING
           fprintf(stderr, "nxagentExportProperty: WARNING! Failed to convert local atom %ld [%s].\n",
-                      (long int) input[i], validateString(NameForAtom(input[i])));
+                      (long int) input[i], validateString(atomName));
           #endif
         }
 
@@ -725,7 +727,57 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
     }
     else
     {
-      XChangeProperty(nxagentDisplay, nxagentWindow(pWin), propertyX, typeX, format, mode, (void*)output, nUnits);
+      #ifdef TEST
+      fprintf(stderr, "nxagentExportProperty: Property [%lu] format [%i] "
+                  "units [%lu].\n", propertyX, format, nUnits);
+      #endif
+
+      if ((format >> 3) * nUnits + sizeof(xChangePropertyReq) <
+              (MAX_REQUEST_SIZE << 2))
+      {
+        XChangeProperty(nxagentDisplay, nxagentWindow(pWin), propertyX, typeX,
+                            format, mode, (void*)output, nUnits);
+      }
+      else if (mode == PropModeReplace)
+      {
+        int n;
+        char *data;
+
+        XDeleteProperty(nxagentDisplay, nxagentWindow(pWin), propertyX);
+
+        data = (char *) output;
+
+        while (nUnits > 0)
+        {
+          if ((format >> 3) * nUnits + sizeof(xChangePropertyReq) <
+                  (MAX_REQUEST_SIZE << 2))
+          {
+            n = nUnits;
+          }
+          else
+          {
+            n = ((MAX_REQUEST_SIZE << 2) - sizeof(xChangePropertyReq)) /
+                    (format >> 3);
+          }
+
+          XChangeProperty(nxagentDisplay, nxagentWindow(pWin), propertyX,
+                              typeX, format, PropModeAppend, (void*) data, n);
+
+          nUnits -= n;
+
+          data = (char *) data + n * (format >> 3);
+        }
+      }
+      else
+      {
+        #ifdef WARNING
+        fprintf(stderr, "nxagentExportProperty: WARNING! "
+                    "Property [%lu] too long.\n", propertyX);
+        #endif
+
+        goto nxagentExportPropertyError;
+      }
+
       nxagentAddPropertyToList(propertyX, pWin);
     }
   }
@@ -739,6 +791,8 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
                             nUnits, format);
     #endif
   }
+
+  nxagentExportPropertyError:
 
   if (freeMem)
   {
