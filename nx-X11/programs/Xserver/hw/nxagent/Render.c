@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -584,15 +584,15 @@ XRenderPictFormat *nxagentMatchingFormats(PictFormatPtr pFormat)
 
 void nxagentDestroyPicture(PicturePtr pPicture)
 {
+  if (pPicture == NULL || nxagentPicturePriv(pPicture) -> picture == 0)
+  {
+    return;
+  }
+
   #ifdef TEST
   fprintf(stderr, "nxagentDestroyPicture: Going to destroy picture at [%p].\n",
               (void *) pPicture);
   #endif
-
-  if (pPicture == NULL)
-  {
-    return;
-  }
 
   XRenderFreePicture(nxagentDisplay,
                      nxagentPicturePriv(pPicture) -> picture);

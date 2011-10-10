@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -160,6 +160,7 @@ void nxagentPropagateArtsdProperties(ScreenPtr pScreen, char *port);
 
 #endif
 
+Window nxagentIconWindow = None;
 Window nxagentFullscreenWindow = None;
 
 #ifdef VIEWPORT_FRAME
@@ -285,6 +286,166 @@ void nxagentSetPixmapFormats(ScreenInfo *screenInfo)
                         screenInfo -> formats[i].scanlinePad);
     #endif
   }
+}
+
+void nxagentMinimizeFromFullScreen(ScreenPtr pScreen)
+{
+  XUnmapWindow(nxagentDisplay, nxagentFullscreenWindow);
+
+  if (nxagentIpaq)
+  {
+    XMapWindow(nxagentDisplay, nxagentIconWindow);
+    XIconifyWindow(nxagentDisplay, nxagentIconWindow,
+                       DefaultScreen(nxagentDisplay));
+  }
+  else
+  {
+    XIconifyWindow(nxagentDisplay, nxagentIconWindow,
+                       DefaultScreen(nxagentDisplay));
+  }
+}
+
+void nxagentMaximizeToFullScreen(ScreenPtr pScreen)
+{
+  if (nxagentIpaq)
+  {
+    XUnmapWindow(nxagentDisplay, nxagentIconWindow);
+
+    XMapWindow(nxagentDisplay, nxagentFullscreenWindow);
+  }
+  else
+  {
+/*
+    XUnmapWindow(nxagentDisplay, nxagentIconWindow);
+*/
+/*
+FIXME: We'll chech for ReparentNotify and LeaveNotify events after XReparentWindow()
+       in order to avoid the session window is iconified.
+       We could avoid the sesssion window is iconified when a LeaveNotify event is received,
+       so this check would be unnecessary.
+*/
+    struct timeval timeout;
+    int i;
+    XEvent e;
+
+    XReparentWindow(nxagentDisplay, nxagentFullscreenWindow,
+                        RootWindow(nxagentDisplay, DefaultScreen(nxagentDisplay)), 0, 0);
+
+    for (i = 0; i < 100 && nxagentWMIsRunning; i++)
+    {
+      #ifdef TEST
+      fprintf(stderr, "nxagentMaximizeToFullscreen: WARNING! Going to wait for the ReparentNotify event.\n");
+      #endif
+
+      if (XCheckTypedWindowEvent(nxagentDisplay, nxagentFullscreenWindow, ReparentNotify, &e))
+      {
+        break;
+      }
+
+      XSync(nxagentDisplay, 0);
+
+      timeout.tv_sec = 0;
+      timeout.tv_usec = 50 * 1000;
+
+      nxagentWaitEvents(nxagentDisplay, &timeout);
+    }
+
+    XMapRaised(nxagentDisplay, nxagentFullscreenWindow);
+
+    XIconifyWindow(nxagentDisplay, nxagentIconWindow,
+                       DefaultScreen(nxagentDisplay));
+
+    while (XCheckTypedWindowEvent(nxagentDisplay, nxagentFullscreenWindow, LeaveNotify, &e));
+/*
+    XMapWindow(nxagentDisplay, nxagentIconWindow);
+*/
+  }
+}
+
+Window nxagentCreateIconWindow()
+{
+  XSetWindowAttributes attributes;
+  unsigned long valuemask;
+  char* window_name;
+  XTextProperty windowName;
+  XSizeHints sizeHints;
+  XWMHints wmHints;
+  Window w;
+  Mask mask;
+
+  /*
+   * Create icon window.
+   */
+
+  attributes.override_redirect = False;
+  attributes.colormap = DefaultColormap(nxagentDisplay, DefaultScreen(nxagentDisplay));
+  attributes.background_pixmap = nxagentScreenSaverPixmap;
+  valuemask = CWOverrideRedirect | CWBackPixmap | CWColormap;
+
+  #ifdef TEST
+  fprintf(stderr, "nxagentCreateIconWindow: Going to create new icon window.\n");
+  #endif
+
+  w = XCreateWindow(nxagentDisplay, DefaultRootWindow(nxagentDisplay),
+                        0, 0, 1, 1, 0,
+                            DefaultDepth(nxagentDisplay, DefaultScreen(nxagentDisplay)),
+                                InputOutput,
+                                    DefaultVisual(nxagentDisplay, DefaultScreen(nxagentDisplay)),
+                                        valuemask, &attributes);
+
+  #ifdef TEST
+  fprintf(stderr, "nxagentCreateIconWindow: Created new icon window with id [%ld].\n",
+              nxagentIconWindow);
+  #endif
+
+  /*
+   *  Set hints to the window manager for the icon window.
+   */
+
+  window_name = nxagentWindowName;
+  XStringListToTextProperty(&window_name, 1, &windowName);
+  sizeHints.flags = PMinSize | PMaxSize;
+  sizeHints.min_width = sizeHints.max_width = 1;
+  sizeHints.min_height = sizeHints.max_height = 1;
+  wmHints.flags = IconPixmapHint | IconMaskHint;
+  wmHints.initial_state = IconicState;
+  wmHints.icon_pixmap = nxagentIconPixmap;
+
+  if (useXpmIcon)
+  {
+    wmHints.icon_mask = nxagentIconShape;
+    wmHints.flags = IconPixmapHint | IconMaskHint;
+  }
+  else
+  {
+    wmHints.flags = StateHint | IconPixmapHint;
+  }
+
+  XSetWMProperties(nxagentDisplay, w,
+                      &windowName, &windowName,
+                          NULL , 0 , &sizeHints, &wmHints, NULL);
+
+  /*
+   * Enable events from the icon window.
+   */
+
+  nxagentGetDefaultEventMask(&mask);
+
+  XSelectInput(nxagentDisplay, w, (mask & ~(KeyPressMask |
+                   KeyReleaseMask)) | StructureNotifyMask);
+
+  /*
+   * Notify to client if user closes icon window.
+   */
+
+  if (nxagentWMIsRunning && !nxagentOption(Rootless))
+  {
+    XlibAtom deleteWMAtom = nxagentAtoms[2]; /* WM_DELETE_WINDOW */
+
+    XSetWMProtocols(nxagentDisplay, w, &deleteWMAtom, 1);
+  }
+
+  return w;
 }
 
 Bool nxagentMagicPixelZone(int x, int y)
@@ -816,6 +977,8 @@ Bool nxagentOpenScreen(int index, ScreenPtr pScreen,
 
     nxagentChangeOption(Fullscreen, False);
 
+    nxagentChangeOption(AllScreens, False);
+
     nxagentFullscreenWindow = 0;
 
     resetAgentPosition = True;
@@ -1221,6 +1384,11 @@ N/A
       nxagentChangeOption(Height, gattributes.height);
     }
 
+    if (nxagentOption(AllScreens))
+    {
+      attributes.override_redirect = True; 
+    }
+
     if (nxagentOption(Fullscreen))
     {
       /*
@@ -1448,13 +1616,19 @@ N/A
   if (nxagentDoFullGeneration == 1 ||
           nxagentReconnectTrap == 1)
   {
-    valuemask = CWBackPixel | CWEventMask | CWColormap;
+    valuemask = CWBackPixel | CWEventMask | CWColormap |
+                    (nxagentOption(AllScreens) == 1 ? CWOverrideRedirect : 0);
 
     attributes.background_pixel = nxagentBlackPixel;
 
     nxagentGetDefaultEventMask((Mask*)&attributes.event_mask);
 
     attributes.colormap = nxagentDefaultVisualColormap(nxagentDefaultVisual(pScreen));
+
+    if (nxagentOption(AllScreens) == 1)
+    {
+      attributes.override_redirect = True;
+    }
 
     if (nxagentOption(Fullscreen) == 1)
     {
@@ -1634,6 +1808,21 @@ N/A
      */
 
     XClearWindow(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum]);
+
+    if (nxagentOption(AllScreens))
+    {
+      if (nxagentReconnectTrap)
+      {
+        XGrabKeyboard(nxagentDisplay, nxagentFullscreenWindow, True, GrabModeAsync,
+                      GrabModeAsync, CurrentTime);
+      }
+
+      nxagentIconWindow = nxagentCreateIconWindow();
+    }
+    else
+    {
+      nxagentIconWindow = 0;
+    }
 
     /*
      * When we don't have window manager we grab keyboard
@@ -1982,8 +2171,6 @@ Bool nxagentResizeScreen(ScreenPtr pScreen, int width, int height,
   int oldHeight;
   int oldMmWidth;
   int oldMmHeight;
-
-  RegionPtr pRootWinSize;
 
   #ifdef TEST
   nxagentPrintAgentGeometry("Before Resize Screen", "nxagentResizeScreen:");

@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -101,6 +101,13 @@ typedef struct _AgentOptions
    */
 
   int Fullscreen;
+
+  /*
+   * True if the fullscreen NX session will
+   * extend on all available screens.
+   */
+
+  int AllScreens;
 
   /*
    * Set to the auto-disconnect timeout, if

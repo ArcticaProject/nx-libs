@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -116,7 +116,7 @@ int nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
       {
         if (nxagentOption(Rootless) == False)
         {
-          *result = doSwitchFullscreen;
+          *result = doSwitchAllScreens;
         }
 
         break;
@@ -282,6 +282,16 @@ int nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
   {
     switch (sym)
     {
+      case XK_f:
+      case XK_F:
+      {
+        if (nxagentOption(Rootless) == 0)
+        {
+          *result = doSwitchFullscreen;
+        }
+
+        break;
+      }
       case XK_Left:
       case XK_KP_Left:
       {
