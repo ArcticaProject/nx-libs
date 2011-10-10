@@ -1,5 +1,11 @@
 ChangeLog:
 
+nx-X11-3.5.0-2
+
+- Fixed TR0202420. XKB utility functions wrote out of bounds.
+
+- Upgraded RandR server extension to version 1.2.
+
 nx-X11-3.5.0-1
 
 - Opened the 3.5.0 branch based on nx-X11-3.4.0-4.
