@@ -719,7 +719,12 @@ char tmpname[PATH_MAX];
     }
     
     #ifdef TEST
-    fprintf(stderr, "XkbDDXCompileKeymapByNames: Executing command [%s].\n", buf);
+    if (buf != NULL)
+        fprintf(stderr, "XkbDDXCompileKeymapByNames: "
+                    "Executing command [%s].\n", buf);
+    else
+        fprintf(stderr, "XkbDDXCompileKeymapByNames: "
+                    "Callin Popen() with null command.\n");
     #endif
 
 #ifndef WIN32

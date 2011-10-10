@@ -43,63 +43,6 @@
 # endif
 #endif
     
-#ifdef NXAGENT_SERVER
-
-#define PANIC
-#define WARNING
-#undef  TEST
-#undef  DEBUG
-
-#define START_SIZE  256
-#define END_SIZE   2048
-
-char *
-Xvprintf(const char *format, va_list va)
-{
-    char *ret;
-    char *newret;
-    int size;
-    int r;
-
-    size = 0;
-
-    for (;;)
-    {
-      if (size == 0)
-      {
-        ret = (char *)malloc(START_SIZE);
-        if (ret == NULL)
-          return NULL;
-        size = START_SIZE;
-      }
-      else if (size < END_SIZE &&
-                   (newret = (char *) realloc(ret, 2 * size)) != NULL)
-      {
-        ret = newret;
-        size = 2 * size;
-      }
-      else
-      {
-        free(ret);
-        return NULL;
-      }
-
-      r = vsnprintf(ret, size, format, va);
-
-      if (r == -1 || r == size || r > size || r == size - 1)
-      {
-        continue;
-      }
-      else
-      {
-        ret[r] = 0;
-        return ret;
-      }
-    }
-}
-
-#else
-
 char *
 Xvprintf(const char *format, va_list va)
 {
@@ -119,8 +62,6 @@ Xvprintf(const char *format, va_list va)
     ret[size] = 0;
     return ret;
 }
-
-#endif
 
 char *Xprintf(const char *format, ...)
 {

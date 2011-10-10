@@ -877,6 +877,19 @@ int _XSeqSyncFunction(
     xGetInputFocusReply rep;
     register xReq *req;
 
+#ifdef NX_TRANS_SOCKET
+#ifdef NX_TRANS_DEBUG
+    fprintf(stderr, "_XSeqSyncFunction: Going to synchronize the display.\n");
+#endif
+    if (dpy->flags & XlibDisplayIOError)
+    {
+#ifdef NX_TRANS_DEBUG
+        fprintf(stderr, "_XSeqSyncFunction: Returning 0 with I/O error detected.\n");
+#endif
+        return 0;
+    }
+#endif
+
     LockDisplay(dpy);
     if ((dpy->request - dpy->last_request_read) >= (BUFSIZE / SIZEOF(xReq))) {
 	GetEmptyReq(GetInputFocus, req);
@@ -930,6 +943,10 @@ static void _XFlushInt(
         int congestion;
 #endif
 
+#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
+        fprintf(stderr, "_XFlushInt: Entering flush with [%d] bytes to write.\n",
+                    (dpy->bufptr - dpy->buffer));
+#endif
 	/* This fix resets the bufptr to the front of the buffer so
 	 * additional appends to the bufptr will not corrupt memory. Since
 	 * the server is down, these appends are no-op's anyway but 
@@ -937,6 +954,9 @@ static void _XFlushInt(
 	 */
 	if (dpy->flags & XlibDisplayIOError)
 	{
+#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
+        fprintf(stderr, "_XFlushInt: Returning with I/O error detected.\n");
+#endif
 	    dpy->bufptr = dpy->buffer;
 	    dpy->last_req = (char *)&_dummy_request;
 	    return;
@@ -1404,6 +1424,15 @@ void _XReadEvents(
 	    dpy->flags |= XlibDisplayReadEvents;
 	    i = _XRead (dpy, read_buf, (long) len);
 	    dpy->flags &= ~XlibDisplayReadEvents;
+#ifdef NX_TRANS_SOCKET
+            if (dpy->flags & XlibDisplayIOError)
+            {
+#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
+                fprintf(stderr, "_XReadEvents: Returning with I/O error detected.\n");
+#endif
+                return;
+            }
+#endif
 	    if (i == -2) {
 		/* special flag from _XRead to say that internal connection has
 		   done XPutBackEvent.  Which we can use so we're done. */
@@ -1841,10 +1870,17 @@ _XSend (
 #endif
 
 #ifdef NX_TRANS_SOCKET
+#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
+    fprintf(stderr, "_XSend: Sending data with [%d] bytes to write.\n",
+                (dpy->bufptr - dpy->buffer));
+#endif
         if (!size || (dpy->flags & XlibDisplayIOError))
         {
             if (dpy->flags & XlibDisplayIOError)
             {
+#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
+                fprintf(stderr, "_XSend: Returning with I/O error detected.\n");
+#endif
 	        dpy->bufptr = dpy->buffer;
 	        dpy->last_req = (char *)&_dummy_request;
             }
@@ -2222,8 +2258,18 @@ _XReply (
     fprintf(stderr, "_XReply: Going to wait for an X reply.\n");
 #endif
 
+#ifdef NX_TRANS_SOCKET
+    if (dpy->flags & XlibDisplayIOError)
+    {
+#ifdef NX_TRANS_DEBUG
+        fprintf(stderr, "_XReply: Returning 0 with I/O error detected.\n");
+#endif
+        return 0;
+    }
+#else
     if (dpy->flags & XlibDisplayIOError)
 	return 0;
+#endif
 
 #ifdef XTHREADS
     /* create our condition variable and append to list */
@@ -2239,6 +2285,9 @@ _XReply (
 	   XThread_Self(), cvl);
 #endif
 
+#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
+    fprintf(stderr, "_XReply: Going to flush the display buffer.\n");
+#endif
     _XFlushInt(dpy, cvl ? cvl->cv : NULL);
     /* if it is not our turn to read a reply off the wire,
      * wait til we're at head of list.  if there is an event waiter,
@@ -3583,11 +3632,21 @@ _XIOError (
      */
 
 #ifdef NX_TRANS_TEST
-    fprintf(stderr, "_XIOError: Resetting the display buffers.\n");
+    fprintf(stderr, "_XIOError: Resetting the display buffer.\n");
 #endif
 
     dpy->bufptr = dpy->buffer;
     dpy->last_req = (char *) &_dummy_request;
+
+#ifdef NX_TRANS_TEST
+    fprintf(stderr, "_XIOError: Resetting the display flags.\n");
+#endif
+
+    dpy->flags &= ~XlibDisplayProcConni;
+    dpy->flags &= ~XlibDisplayPrivSync;
+    dpy->flags &= ~XlibDisplayReadEvents;
+    dpy->flags &= ~XlibDisplayWriting;
+    dpy->flags &= ~XlibDisplayReply;
 #else
     exit (1);
 #endif

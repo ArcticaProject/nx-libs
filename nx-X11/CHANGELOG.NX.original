@@ -1,5 +1,13 @@
 ChangeLog:
 
+nx-X11-3.3.0-6
+
+- Fixed TR03G02198. Reimplemented Xvprintf() in Xserver/os to handle
+  the case in which vsnprintf returned -1.
+
+- Returning from _XSeqSyncFunction() and _XReply() if an I/O error is
+  detected.
+
 nx-X11-3.3.0-5
 
 - Fixed TR01G02163. Signals need to be blocked before the call to
