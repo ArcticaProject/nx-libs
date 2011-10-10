@@ -1,5 +1,26 @@
 ChangeLog:
 
+nxagent-3.3.0-9
+
+- Added /usr/NX/share/base to alternate font paths. This would fix
+  TR11F02130 if fonts fixed and cursor are installed there.
+
+- Changed Keyboard initialization and reset. This change should fix
+  TR11F02129, TR11F02131, TR11F02132.
+
+nxagent-3.3.0-8
+
+- Fixed TR12F02144. Image bits of render glyphs are copied before they
+  are cleaned. This will avoid a memory corruption.
+
+- Fixed TR12F02145. When dispatching a MotionNotify event, check if a
+  top-level window has been entered before trying to show the pulldown
+  dialog.
+
+nxagent-3.3.0-7
+
+- Added debug code for pointer input.
+
 nxagent-3.3.0-6
 
 - Fixed compile warnings.

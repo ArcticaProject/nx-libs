@@ -189,6 +189,10 @@ xEvent *xeviexE;
 #include "Windows.h"
 #include "Args.h"
 
+#ifdef NX_DEBUG_INPUT
+extern int nxagentDebugInput;
+#endif
+ 
 extern Display *nxagentDisplay;
 
 extern WindowPtr nxagentLastEnteredWindow;
@@ -1682,10 +1686,27 @@ TryClientEvents (ClientPtr client, xEvent *pEvents, int count, Mask mask,
     int i;
     int type;
 
-#ifdef DEBUG
+#ifdef NX_DEBUG_INPUT
+    if (grab && nxagentDebugInput && grab->window)
+    {
+	fprintf(stderr, "TryClientEvents: Grab window is [0x%x].\n",
+		(unsigned int)grab->window->drawable.id);
+	if (!SameClient(grab, client))
+		fprintf(stderr, "TryClientEvents: Events are going to be "
+			    "discarded.\n");
+    }
+#endif
+#if defined(DEBUG) || defined(NX_DEBUG_INPUT)
+#ifdef NX_DEBUG_INPUT
+    if (nxagentDebugInput == 1)
+	fprintf(stderr, "Event([%d, %d], mask=0x%x), client=%d",
+	pEvents->u.u.type, pEvents->u.u.detail, (unsigned int)mask,
+	client->index);
+#else
     if (debug_events) ErrorF(
 	"Event([%d, %d], mask=0x%x), client=%d",
 	pEvents->u.u.type, pEvents->u.u.detail, mask, client->index);
+#endif
 #endif
     if ((client) && (client != serverClient) && (!client->clientGone) &&
 	((filter == CantBeFiltered) || (mask & filter)))
@@ -1700,9 +1721,16 @@ TryClientEvents (ClientPtr client, xEvent *pEvents, int count, Mask mask,
 		if (WID(inputInfo.pointer->valuator->motionHintWindow) ==
 		    pEvents->u.keyButtonPointer.event)
 		{
-#ifdef DEBUG
+#if defined(DEBUG) || defined(NX_DEBUG_INPUT)
+#ifdef NX_DEBUG_INPUT
+    if (nxagentDebugInput == 1)
+    {
+	fprintf(stderr,"\nmotionHintWindow == keyButtonPointer.event\n");
+    }
+#else
 		    if (debug_events) ErrorF("\n");
 	    fprintf(stderr,"motionHintWindow == keyButtonPointer.event\n");
+#endif
 #endif
 		    return 1; /* don't send, but pretend we did */
 		}
@@ -1740,15 +1768,25 @@ TryClientEvents (ClientPtr client, xEvent *pEvents, int count, Mask mask,
 	}
 
 	WriteEventsToClient(client, count, pEvents);
-#ifdef DEBUG
+#if defined(DEBUG) || defined(NX_DEBUG_INPUT)
+#ifdef NX_DEBUG_INPUT
+    if (nxagentDebugInput == 1)
+	fprintf(stderr, " delivered\n");
+#else
 	if (debug_events) ErrorF(  " delivered\n");
+#endif
 #endif
 	return 1;
     }
     else
     {
-#ifdef DEBUG
+#if defined(DEBUG) || defined(NX_DEBUG_INPUT)
+#ifdef NX_DEBUG_INPUT
+    if (nxagentDebugInput == 1)
+	fprintf(stderr, "\n");
+#else
 	if (debug_events) ErrorF("\n");
+#endif
 #endif
 	return 0;
     }
@@ -3116,6 +3154,12 @@ ProcessPointerEvent (register xEvent *xE, register DeviceIntPtr mouse, int count
         xevieEventSent = 0;
       else {
         xeviemouse = mouse;
+        #ifdef NX_DEBUG_INPUT
+        if (nxagentDebugInput == 1)
+        {
+          fprintf(stderr, "ProcessPointerEvent: Going to send XEVIE event.\n");
+        }
+        #endif
         WriteToClient(clients[xevieClientIndex], sizeof(xEvent), (char *)xE);
         return;
       }
@@ -3170,14 +3214,38 @@ ProcessPointerEvent (register xEvent *xE, register DeviceIntPtr mouse, int count
 #if !defined(XFree86Server) || !defined(XINPUT)
 	    xE->u.u.detail = butc->map[key];
 #endif
+	    #ifdef NX_DEBUG_INPUT
+	    if (xE->u.u.detail == 0)
+	    {
+		if (nxagentDebugInput == 1)
+		{
+		    fprintf(stderr, "ProcessPointerEvent: WARNING! detail == 0"
+			    " for ButtonPress.\n");
+		}
+		return;
+	    }
+	    #else
 	    if (xE->u.u.detail == 0)
 		return;
+	    #endif
 	    if (xE->u.u.detail <= 5)
 		butc->state |= (Button1Mask >> 1) << xE->u.u.detail;
 	    filters[MotionNotify] = Motion_Filter(butc);
 	    if (!grab)
+	    #ifdef NX_DEBUG_INPUT
+		if (CheckDeviceGrabs(mouse, xE, 0, count))
+		{
+		    if (nxagentDebugInput == 1)
+		    {
+			fprintf(stderr, "ProcessPointerEvent: CheckDeviceGrabs"
+				" returned True for ButtonPress.\n");
+		    }
+		    return;
+		}
+	    #else
 		if (CheckDeviceGrabs(mouse, xE, 0, count))
 		    return;
+	    #endif
 	    break;
 	case ButtonRelease: 
 	    mouse->valuator->motionHintWindow = NullWindow;
@@ -3189,8 +3257,20 @@ ProcessPointerEvent (register xEvent *xE, register DeviceIntPtr mouse, int count
 #if !defined(XFree86Server) || !defined(XINPUT)
 	    xE->u.u.detail = butc->map[key];
 #endif
+	    #ifdef NX_DEBUG_INPUT
+	    if (xE->u.u.detail == 0)
+	    {
+		if (nxagentDebugInput == 1)
+		{
+		    fprintf(stderr, "ProcessPointerEvent: WARNING! detail == 0"
+			    " for ButtonRelease.\n");
+		}
+		return;
+	    }
+	    #else
 	    if (xE->u.u.detail == 0)
 		return;
+	    #endif
 	    if (xE->u.u.detail <= 5)
 		butc->state &= ~((Button1Mask >> 1) << xE->u.u.detail);
 	    filters[MotionNotify] = Motion_Filter(butc);
@@ -3201,6 +3281,36 @@ ProcessPointerEvent (register xEvent *xE, register DeviceIntPtr mouse, int count
 	    FatalError("bogus pointer event from ddx");
 	}
     }
+    #ifdef NX_DEBUG_INPUT
+    else if (!CheckMotion(xE))
+    {
+	if (nxagentDebugInput == 1)
+	{
+	    fprintf(stderr, "ProcessPointerEvent: CheckMotion returned False"
+		    " for MotionNotify.\n");
+	}
+	return;
+    }
+    if (grab)
+    {
+	if (nxagentDebugInput == 1)
+	{
+	    fprintf(stderr, "ProcessPointerEvent: Going to deliver grabbed "
+		    "events (count = %d).\n", count);
+	}
+	DeliverGrabbedEvent(xE, mouse, deactivateGrab, count);
+    }
+    else
+    {
+	if (nxagentDebugInput == 1)
+	{
+	    fprintf(stderr, "ProcessPointerEvent: Going to deliver device "
+		    "events (count = %d).\n", count);
+	}
+	DeliverDeviceEvents(sprite.win, xE, NullGrab, NullWindow,
+			    mouse, count);
+    }
+    #else
     else if (!CheckMotion(xE))
 	return;
     if (grab)
@@ -3208,6 +3318,7 @@ ProcessPointerEvent (register xEvent *xE, register DeviceIntPtr mouse, int count
     else
 	DeliverDeviceEvents(sprite.win, xE, NullGrab, NullWindow,
 			    mouse, count);
+    #endif
     if (deactivateGrab)
         (*mouse->DeactivateGrab)(mouse);
 }

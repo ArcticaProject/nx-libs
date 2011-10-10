@@ -63,7 +63,13 @@
 #include "NXproto.h"
 
 #include "xfixesproto.h"
+#define Window     XlibWindow
+#define Atom   XlibAtom
+#define Time XlibXID
 #include <X11/extensions/Xfixes.h>
+#undef Window
+#undef Atom
+#undef Time
 
 #ifdef NXAGENT_FIXKEYS
 #include "inputstr.h"
@@ -789,8 +795,9 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
         }
 
         x.u.u.type = KeyRelease;
-        x.u.u.detail = X.xkey.keycode;
-        x.u.keyButtonPointer.time = nxagentLastKeyPressTime + (X.xkey.time - nxagentLastServerTime);
+        x.u.u.detail = nxagentConvertKeycode(X.xkey.keycode);
+        x.u.keyButtonPointer.time = nxagentLastKeyPressTime +
+            (X.xkey.time - nxagentLastServerTime);
 
         nxagentLastServerTime = X.xkey.time;
 
@@ -918,7 +925,7 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
         #ifdef NX_DEBUG_INPUT
         if (nxagentDebugInput == 1)
         {
-          fprintf(stderr, "nxagentDispatchEvents: Going to handle new ButtonPress event.\n");
+          fprintf(stderr, "nxagentDispatchEvents: Going to handle new ButtonRelease event.\n");
         }
         #endif
 
@@ -1016,18 +1023,17 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
             nxagentLastEnteredWindow = pWin;
           }
 
-          if (nxagentPulldownDialogPid == 0 && (X.xmotion.y_root <
-                  nxagentLastEnteredTopLevelWindow -> drawable.y + 4))
+          if (nxagentPulldownDialogPid == 0 && nxagentLastEnteredTopLevelWindow &&
+                  (X.xmotion.y_root < nxagentLastEnteredTopLevelWindow -> drawable.y + 4))
           {
-            if (pWin && nxagentLastEnteredTopLevelWindow &&
-                    nxagentClientIsDialog(wClient(pWin)) == 0 &&
-                        nxagentLastEnteredTopLevelWindow -> parent == WindowTable[0] &&
-                            nxagentLastEnteredTopLevelWindow -> overrideRedirect == False &&
-                                X.xmotion.x_root > (nxagentLastEnteredTopLevelWindow -> drawable.x +
-                                    (nxagentLastEnteredTopLevelWindow -> drawable.width >> 1) - 50) &&
-                                        X.xmotion.x_root < (nxagentLastEnteredTopLevelWindow -> drawable.x +
-                                            (nxagentLastEnteredTopLevelWindow -> drawable.width >> 1) + 50) &&
-                                                nxagentOption(Menu) == 1)
+            if (pWin && nxagentClientIsDialog(wClient(pWin)) == 0 &&
+                    nxagentLastEnteredTopLevelWindow -> parent == WindowTable[0] &&
+                        nxagentLastEnteredTopLevelWindow -> overrideRedirect == False &&
+                            X.xmotion.x_root > (nxagentLastEnteredTopLevelWindow -> drawable.x +
+                                (nxagentLastEnteredTopLevelWindow -> drawable.width >> 1) - 50) &&
+                                    X.xmotion.x_root < (nxagentLastEnteredTopLevelWindow -> drawable.x +
+                                        (nxagentLastEnteredTopLevelWindow -> drawable.width >> 1) + 50) &&
+                                            nxagentOption(Menu) == 1)
             {
               nxagentPulldownDialog(nxagentLastEnteredTopLevelWindow -> drawable.id);
             }
@@ -1052,7 +1058,8 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
           #ifdef NX_DEBUG_INPUT
           if (nxagentDebugInput == 1)
           {
-            fprintf(stderr, "nxagentDispatchEvents: Adding motion event [%d, %d] to the queue.\n", x.u.keyButtonPointer.rootX, x.u.keyButtonPointer.rootY);
+            fprintf(stderr, "nxagentDispatchEvents: Adding motion event [%d, %d] to the queue.\n",
+                        x.u.keyButtonPointer.rootX, x.u.keyButtonPointer.rootY);
           }
           #endif
 
@@ -1911,8 +1918,9 @@ int nxagentHandleKeyPress(XEvent *X, enum HandleEventResult *result)
 
   nxagentLastEventTime = nxagentLastKeyPressTime = GetTimeInMillis();
 
+  
   x.u.u.type = KeyPress;
-  x.u.u.detail = X -> xkey.keycode;
+  x.u.u.detail = nxagentConvertKeycode(X -> xkey.keycode);
   x.u.keyButtonPointer.time = nxagentLastKeyPressTime;
 
   nxagentLastServerTime = X -> xkey.time;

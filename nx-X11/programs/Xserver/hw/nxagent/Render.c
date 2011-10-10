@@ -2270,8 +2270,7 @@ void nxagentAddGlyphs(GlyphSetPtr glyphSet, Glyph *gids, xGlyphInfo *gi,
 
   normalizedImages = NULL;
 
-  if (glyphDepths[glyphSet -> fdepth] == 1 &&
-          nxagentServerOrder() != BitmapBitOrder(nxagentDisplay))
+  if (sizeImages > 0)
   {
     normalizedImages = xalloc(sizeImages);
 
@@ -2279,7 +2278,11 @@ void nxagentAddGlyphs(GlyphSetPtr glyphSet, Glyph *gids, xGlyphInfo *gi,
     {
       memcpy(normalizedImages, images, sizeImages);
 
-      BitOrderInvert ((unsigned char *) normalizedImages, sizeImages);
+      if (glyphDepths[glyphSet -> fdepth] == 1 &&
+              nxagentServerOrder() != BitmapBitOrder(nxagentDisplay))
+      {
+        BitOrderInvert ((unsigned char *) normalizedImages, sizeImages);
+      }
     }
     else
     {
