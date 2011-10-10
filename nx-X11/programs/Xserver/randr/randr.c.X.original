@@ -25,23 +25,6 @@
  *	    Keith Packard, Intel Corporation
  */
 
-/**************************************************************************/
-/*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
-/*                                                                        */
-/* NX-X11, NX protocol compression and NX extensions to this software     */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
-/*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
-/*                                                                        */
-/* All rights reserved.                                                   */
-/*                                                                        */
-/**************************************************************************/
-
 #define NEED_REPLIES
 #define NEED_EVENTS
 #ifdef HAVE_DIX_CONFIG_H
@@ -73,14 +56,9 @@ static int SProcRRDispatch (ClientPtr pClient);
 int	RREventBase;
 int	RRErrorBase;
 RESTYPE RRClientType, RREventType; /* resource types for event masks */
-
-#ifndef NXAGENT_SERVER
 DevPrivateKey RRClientPrivateKey = &RRClientPrivateKey;
+
 DevPrivateKey rrPrivKey = &rrPrivKey;
-#else
-int	RRClientPrivateIndex;
-int	rrPrivIndex = -1;
-#endif
 
 static void
 RRClientCallback (CallbackListPtr	*list,
@@ -225,10 +203,6 @@ Bool RRInit (void)
 {
     if (RRGeneration != serverGeneration)
     {
-        #ifdef NXAGENT_SERVER
-	if ((rrPrivIndex = AllocateScreenPrivateIndex()) < 0)
-	    return FALSE;
-        #endif
 	if (!RRModeInit ())
 	    return FALSE;
 	if (!RRCrtcInit ())
@@ -350,18 +324,10 @@ RRExtensionInit (void)
 
     if (RRNScreens == 0) return;
 
-    #ifndef NXAGENT_SERVER
     if (!dixRequestPrivate(RRClientPrivateKey,
 				sizeof (RRClientRec) +
 				screenInfo.numScreens * sizeof (RRTimesRec)))
 	return;
-    #else
-    RRClientPrivateIndex = AllocateClientPrivateIndex ();
-    if (!AllocateClientPrivate (RRClientPrivateIndex,
-				sizeof (RRClientRec) +
-				screenInfo.numScreens * sizeof (RRTimesRec)))
-	return;
-    #endif
     if (!AddCallback (&ClientStateCallback, RRClientCallback, 0))
 	return;
 

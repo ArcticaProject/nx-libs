@@ -738,13 +738,8 @@ int	tmp;
 		    _XkbFree(prev_key_sym_map);
 		    return BadAlloc;
 		}
-#ifdef NXAGENT_SERVER
-                bzero((char *)&xkb->map->key_sym_map[xkb->max_key_code+1],
-                                        tmp*sizeof(XkbSymMapRec));
-#else
 		bzero((char *)&xkb->map->key_sym_map[xkb->max_key_code],
 					tmp*sizeof(XkbSymMapRec));
-#endif
 		if (changes) {
 		    changes->map.changed= _ExtendRange(changes->map.changed,
 		    				XkbKeySymsMask,maxKC,
@@ -761,11 +756,7 @@ int	tmp;
 		    _XkbFree(prev_modmap);
 		    return BadAlloc;
 		}
-#ifdef NXAGENT_SERVER
-                bzero((char *)&xkb->map->modmap[xkb->max_key_code+1],tmp);
-#else
 		bzero((char *)&xkb->map->modmap[xkb->max_key_code],tmp);
-#endif
 		if (changes) {
 		    changes->map.changed= _ExtendRange(changes->map.changed,
 		    				XkbModifierMapMask,maxKC,
@@ -784,13 +775,8 @@ int	tmp;
 		    _XkbFree(prev_behaviors);
 		    return BadAlloc;
 		}
-#ifdef NXAGENT_SERVER
-                bzero((char *)&xkb->server->behaviors[xkb->max_key_code+1],
-                                                tmp*sizeof(XkbBehavior));
-#else
 		bzero((char *)&xkb->server->behaviors[xkb->max_key_code],
 						tmp*sizeof(XkbBehavior));
-#endif
 		if (changes) {
 		    changes->map.changed= _ExtendRange(changes->map.changed,
 		    			XkbKeyBehaviorsMask,maxKC,
@@ -807,13 +793,8 @@ int	tmp;
 		    _XkbFree(prev_key_acts);
 		    return BadAlloc;
 		}
-#ifdef NXAGENT_SERVER
-                bzero((char *)&xkb->server->key_acts[xkb->max_key_code+1],
-                                                tmp*sizeof(unsigned short));
-#else
 		bzero((char *)&xkb->server->key_acts[xkb->max_key_code],
 						tmp*sizeof(unsigned short));
-#endif
 		if (changes) {
 		    changes->map.changed= _ExtendRange(changes->map.changed,
 		    			XkbKeyActionsMask,maxKC,
@@ -830,13 +811,8 @@ int	tmp;
 		    _XkbFree(prev_vmodmap);
 		    return BadAlloc;
 		}
-#ifdef NXAGENT_SERVER
-                bzero((char *)&xkb->server->vmodmap[xkb->max_key_code+1],
-                                                tmp*sizeof(unsigned short));
-#else
 		bzero((char *)&xkb->server->vmodmap[xkb->max_key_code],
 						tmp*sizeof(unsigned short));
-#endif
 		if (changes) {
 		    changes->map.changed= _ExtendRange(changes->map.changed,
 		    			XkbVirtualModMapMask,maxKC,
@@ -854,13 +830,8 @@ int	tmp;
 		_XkbFree(prev_keys);
 		return BadAlloc;
 	    }
-#ifdef NXAGENT_SERVER
-            bzero((char *)&xkb->names->keys[xkb->max_key_code+1],
-                                                tmp*sizeof(XkbKeyNameRec));
-#else
 	    bzero((char *)&xkb->names->keys[xkb->max_key_code],
 	    					tmp*sizeof(XkbKeyNameRec));
-#endif
 	    if (changes) {
 		changes->names.changed= _ExtendRange(changes->names.changed,
 					XkbKeyNamesMask,maxKC,
