@@ -1,0 +1,46 @@
+XCOMM $XFree86$
+
+#include <Server.tmpl>
+#include <lnxdoc.rules>
+
+#ifdef __linux__
+RAWSRCS = lnx-keyboard.c lnx-ms.c lnx-ps2.c
+RAWOBJS = lnx-keyboard.o lnx-ms.o lnx-ps2.o
+#endif
+
+#ifdef __linux__
+USBSRCS = usb-keyboard.c usb-mouse.c usb-other.c usb-common.c
+USBOBJS = usb-keyboard.o usb-mouse.o usb-other.o usb-common.o
+#endif
+
+DRVSRCS = dmxdummy.c dmxbackend.c dmxconsole.c dmxcommon.c
+DRVOBJS = dmxdummy.o dmxbackend.o dmxconsole.o dmxcommon.o
+
+DMXSRCS = dmxinputinit.c dmxarg.c dmxsigio.c dmxevents.c \
+	  dmxxinput.c dmxmotion.c dmxeq.c dmxmap.c
+DMXOBJS = dmxinputinit.o dmxarg.o dmxsigio.o dmxevents.o \
+	  dmxxinput.o dmxmotion.o dmxeq.o dmxmap.o
+
+LIBSRCS = ChkNotMaskEv.c
+LIBOBJS = ChkNotMaskEv.o
+
+SRCS = $(RAWSRCS) $(USBSRCS) $(DRVSRCS) $(DMXSRCS) $(LIBSRCS)
+OBJS = $(RAWOBJS) $(USBOBJS) $(DRVOBJS) $(DMXOBJS) $(LIBOBJS)
+
+#include <dmx.cf>
+
+INCLUDES = -I. -I.. -I$(XBUILDINCDIR) -I$(FONTINCSRC) -I../../../mi \
+	-I../../../include -I../../../render -I$(EXTINCSRC) \
+	-I$(SERVERSRC)/Xext -I$(SERVERSRC)/Xi
+
+DEFINES = $(OS_DEFINES) $(EXT_DEFINES) $(DMX_DEFINES)
+
+all:: $(OBJS)
+
+LinkSourceFile(atKeynames.h,$(XF86COMSRC))
+LinkSourceFile(xf86Keymap.h,$(XF86COMSRC))
+
+NormalLibraryObjectRule()
+NormalLibraryTarget(dmxinput,$(OBJS))
+
+DependTarget()

@@ -1,0 +1,34 @@
+XCOMM $XFree86: xc/lib/XRes/Imakefile,v 1.3 2003/10/13 21:19:28 herrb Exp $
+
+#define DoNormalLib NormalLibXRes
+#define DoSharedLib SharedLibXRes
+#define DoDebugLib DebugLibXRes
+#define DoProfileLib ProfileLibXRes
+#define LibName XRes
+#define SoRev SOXRESREV
+#define LibHeaders NO
+
+#include <Threads.tmpl>
+
+#ifdef SharedXResReqs
+REQUIREDLIBS = SharedXResReqs
+#endif
+
+#if Malloc0ReturnsNull
+ALLOC_DEFINES = -DMALLOC_0_RETURNS_NULL
+#endif
+
+      DEFINES = $(ALLOC_DEFINES)
+         SRCS = XRes.c
+         OBJS = XRes.o
+     LINTLIBS = $(LINTXLIB)
+
+#include <Library.tmpl>
+
+MANSUFFIX=$(LIBMANSUFFIX)
+InstallManPage(LibName,$(LIBMANDIR))
+#if ExpandManNames
+InstallManPageAliases(LibName,$(LIBMANDIR),XResQueryExtension XResQueryVersion XResQueryClients XResQueryClientResources XResQueryClientPixmapBytes)
+#endif
+
+DependTarget()

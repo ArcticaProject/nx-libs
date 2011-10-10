@@ -1,0 +1,10 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: Xcomposite
+Description: X Composite Library
+Version: @VERSION@
+Cflags: -I${includedir} @XCOMPOSITE_CFLAGS@ @X_CFLAGS@
+Libs: -L${libdir} -lXcomposite @XCOMPOSITE_LIBS@ @X_LIBS@

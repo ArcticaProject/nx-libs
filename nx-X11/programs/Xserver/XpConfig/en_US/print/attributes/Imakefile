@@ -1,0 +1,18 @@
+XCOMM $Xorg: Imakefile,v 1.1 2002/11/23 05:42:52 gisburn Exp $
+
+XPATTRIBUTEDIR = $(XPRINTDIR)/en_US/print/attributes
+
+# Install the "en_US"-specific "document" attribute resources...
+InstallNonExecFile(document,$(XPATTRIBUTEDIR))
+
+# ... and reuse "job" and "printer" pools from the C locale
+install::
+	( \
+	  cd $(DESTDIR)$(XPATTRIBUTEDIR) ; \
+	  for i in job printer \
+	  ; do \
+	    $(RM) $$i ; \
+	    $(LN) ../../../C/print/attributes/$$i $$i ; \
+	  done \
+	)
+

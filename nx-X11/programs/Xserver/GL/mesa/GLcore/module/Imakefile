@@ -1,0 +1,53 @@
+XCOMM $XFree86: xc/programs/Xserver/GL/mesa/GLcore/Imakefile,v 1.2 2002/02/25 18:00:38 dawes Exp $
+
+#define IHaveModules
+#include <Server.tmpl>
+
+#define NeedAllMesaSrc
+#define MesaInXServer
+#define MesaBuildDir ../../main/module/
+#define MesaACBuildDir ../../array_cache/module/
+#define MesaMathBuildDir ../../math/module/
+#define MesaSwrastBuildDir ../../swrast/module/
+#define MesaSwrastSetupBuildDir ../../swrast_setup/module/
+#define MesaTnlBuildDir ../../tnl/module/
+#define MesaXBuildDir ../../X/module/
+
+#include "../../../../../../lib/GL/mesa/array_cache/Imakefile.inc"
+#include "../../../../../../lib/GL/mesa/swrast/Imakefile.inc"
+#include "../../../../../../lib/GL/mesa/swrast_setup/Imakefile.inc"
+#include "../../../../../../lib/GL/mesa/tnl/Imakefile.inc"
+#include "../../../../../../lib/GL/mesa/math/Imakefile.inc"
+#include "../../../../../../lib/GL/mesa/drivers/x11/Imakefile.inc"
+#include "../../../../../../lib/GL/mesa/Imakefile.inc"
+
+#if DoLoadableServer
+        MSRCS = GLcoremodule.c
+        MOBJS = GLcoremodule.o
+#endif
+
+        XOBJS = ../../X/module/?*.o
+
+         OBJS = $(COREMESAOBJS) $(MOBJS)
+
+        DONES = ../../module/DONE ../../X/module/DONE \
+		../../array_cache/module/DONE ../../math/module/DONE \
+		../../swrast/module/DONE \
+		../../swrast_setup/module/DONE ../../tnl/module/DONE
+
+     INCLUDES = -I$(INCLUDESRC) -I$(XINCLUDESRC) -I$(EXTINCSRC) \
+		-I$(MESASRCDIR)/include -I$(GLXLIBSRC)/include \
+		-I$(MESASRCDIR)/src/mesa \
+		-I$(SERVERSRC)/include
+
+      DEFINES = $(GLX_DEFINES)
+
+ModuleObjectRule()
+
+DepLibraryModuleTarget(GLcore, $(DONES) $(OBJS),$(OBJS) $(XOBJS))
+InstallLibraryModule(GLcore,$(MODULEDIR),extensions)
+
+InstallDriverSDKLibraryModule(GLcore,$(DRIVERSDKMODULEDIR),extensions)
+
+LinkSourceFile(GLcoremodule.c,..)
+

@@ -1,0 +1,52 @@
+XCOMM $XFree86: xc/programs/Xserver/GL/glx/Imakefile,v 1.9 2001/04/28 13:55:36 dawes Exp $
+
+#define IHaveModules
+#include <Server.tmpl>
+
+#include <dmx.cf>
+
+#if HasGcc3 && HasGnuMake
+XCOMM This makes the glxProxy subdirectory much less noisy, with respect
+XCOMM to warngings.  The code is automatically generated, so we just want
+XCOMM to shut the compiler up at this point.  However, some of the suppressed 
+XCOMM warnings may point to real errors, so they should be investigated at
+XCOMM some time in the future.
+CFLAGS += -Wno-unused -Wno-implicit -Wno-uninitialized \
+	  -Wno-redundant-decls -Wno-sign-compare -Wno-strict-prototypes \
+	  -Wno-float-equal -Wno-missing-declarations -Wno-missing-prototypes
+#endif
+
+         SRCS = g_disptab.c glxcmds.c glxext.c glxutil.c g_renderswap.c \
+                render2swap.c renderpixswap.c global.c glxcmdsswap.c \
+		compsize.c glxscreens.c glxvisuals.c \
+                glxsingle.c glxvendor.c glxfbconfig.c glxswap.c $(MSRCS)
+
+         OBJS = g_disptab.o glxcmds.o glxext.o glxutil.o g_renderswap.o \
+                render2swap.o renderpixswap.o global.o glxcmdsswap.o \
+		compsize.o glxscreens.o glxvisuals.o \
+                glxsingle.o glxvendor.o glxfbconfig.o glxswap.o $(MOBJS)
+
+     INCLUDES = -I. -I$(SERVERSRC)/include -I$(INCLUDESRC) \
+                -I$(XINCLUDESRC) -I$(SERVERSRC)/mi \
+                -I$(EXTINCSRC) -I$(FONTINCSRC) -I$(MESASRCDIR)/include \
+                -I$(XF86SRC) -I$(XF86OSSRC) -I$(SERVERSRC)/GL/include \
+                -I$(SERVERSRC)/hw/dmx -I$(SERVERSRC)/Xext \
+                -I$(SERVERSRC)/render
+
+XCOMM If you add "-DDEBUG" in DEFINES, then make sure you also
+XCOMM add DEBUG to the define in ../mesa/src/X/xf86glx.c
+      DEFINES = $(GLX_DEFINES) $(DMX_DEFINES)
+
+
+#if DoLoadableServer
+ModuleObjectRule()
+#else
+NormalLibraryObjectRule()
+#endif
+SubdirLibraryRule($(OBJS))
+LibraryModuleTarget(glxProxy,$(OBJS))
+
+LintLibraryTarget(glxProxy,$(SRCS))
+NormalLintTarget($(SRCS))
+
+DependTarget()

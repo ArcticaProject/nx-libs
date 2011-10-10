@@ -1,0 +1,100 @@
+XCOMM $XdotOrg: xc/lib/Xcursor/Imakefile,v 1.5 2005/10/09 21:52:42 alanc Exp $
+XCOMM $XFree86: xc/lib/Xcursor/Imakefile,v 1.3 2002/09/26 07:52:01 alanh Exp $
+
+#ifndef NormalLibXcursor
+#define NormalLibXcursor YES
+SOXCURSORREV=1.0.2
+#endif
+
+#ifndef SharedLibXcursor
+#define SharedLibXcursor YES
+#endif
+
+#define DoNormalLib NormalLibXcursor
+#define DoSharedLib SharedLibXcursor
+#define DoDebugLib DebugLibXcursor
+#define DoProfileLib ProfileLibXcursor
+
+#define LibName Xcursor
+#define SoRev SOXCURSORREV
+#define IncSubdir X11
+#define IncSubSubdir Xcursor
+
+#include <Threads.tmpl>
+
+#ifdef SharedXcursorReqs
+REQUIREDLIBS = SharedXcursorReqs
+#else
+REQUIREDLIBS = $(LDPRELIB) $(XRENDERLIB)
+#endif
+
+XCURSOR_VERSION=1.1.4
+
+XRENDER_LIBS=$(XRENDERLIB)
+XRENDER_CFLAGS=$(XRENDERINCLUDES)
+
+X_LIBS=-L$(SHLIBDIR) $(XONLYLIB)
+X_CFLAGS=-I$(INCROOT) $(THREADS_DEFINES)
+
+#if BuildRenderLibrary
+XRENDER_LIBS=-L$(USRLIBDIR) $(XRENDERLIB)
+XRENDER_CFLAGS=-I$(INCROOT)
+#endif
+
+#if BuildXfixesLibrary
+XFIXES_DEFINES = -DHAVE_XFIXES
+REQUIREDLIBS += $(XFIXESLIB)
+#endif
+
+RPATH_CFLAG = HardCodeLibdirFlag
+
+ICONDIR=$(LIBDIR)/icons
+
+DEFINES=-DICONDIR=\"$(ICONDIR)\" $(XFIXES_DEFINES)
+
+SRCS =	cursor.c display.c file.c library.c xlib.c
+
+OBJS =	cursor.o display.o file.o library.o xlib.o
+
+HEADERS = Xcursor.h
+
+SUBSTVARS=prefix="$(PROJECTROOT)" \
+	  exec_prefix="$(BINDIR)" \
+	  libdir="$(USRLIBDIR)" \
+	  hardcode_libdir_flag_spec="$(RPATH_CFLAG)" \
+	  includedir="$(INCROOT)" \
+	  XRENDER_LIBS="$(XRENDER_LIBS)"\
+	  XRENDER_CFLAGS="$(XRENDER_CFLAGS)"\
+	  X_LIBS="$(X_LIBS)" \
+	  X_CFLAGS="$(X_CFLAGS)" \
+	  VERSION="$(XCURSOR_VERSION)"
+
+#include <Library.tmpl>
+
+MANSUFFIX=$(LIBMANSUFFIX)
+InstallManPage(Xcursor,$(LIBMANDIR))
+
+DependTarget()
+
+all:: xcursor-config.script
+
+xcursor-config.script: xcursor-config.in
+	RemoveFile($@)
+	sh config-subst $(SUBSTVARS) < xcursor-config.in > $@
+
+InstallScript(xcursor-config,$(BINDIR))
+
+clean::
+	RemoveFile(xcursor-config.script)
+
+all:: xcursor.pc
+
+xcursor.pc: xcursor.pc.in
+	RemoveFile($@)
+	sh config-subst $(SUBSTVARS) < xcursor.pc.in > $@
+
+InstallNonExecFile(xcursor.pc,$(USRLIBDIR)/pkgconfig)
+
+clean::
+	RemoveFile(xcursor.pc)
+

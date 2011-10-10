@@ -1,0 +1,56 @@
+XCOMM $XFree86$
+
+#include <Server.tmpl>
+
+SRCS = xdmx.c xinput.c dmxwininfo.c xtest.c evi.c res.c dmxreconfig.c xled.c \
+	xbell.c dmxresize.c
+OBJS = xdmx.o xinput.o dmxwininfo.o xtest.o evi.o res.o dmxreconfig.o xled.o \
+	xbell.o dmxresize.o
+INCLUDES  = -I$(EXTINCSRC)
+
+all:: $(OBJS)
+
+NormalProgramTarget(xdmx,xdmx.o,NullParameter,$(DMXLIB) $(XLIB),NullParameter)
+AllTarget(ProgramTargetName(xdmx))
+
+NormalProgramTarget(xtest,xtest.o,NullParameter,$(XTESTLIB) $(XLIB),NullParameter)
+AllTarget(ProgramTargetName(xtest))
+
+NormalProgramTarget(evi,evi.o,NullParameter,$(XLIB),NullParameter)
+AllTarget(ProgramTargetName(evi))
+
+NormalProgramTarget(xled,xled.o,NullParameter,$(XLIB),NullParameter)
+AllTarget(ProgramTargetName(xled))
+
+NormalProgramTarget(xbell,xbell.o,NullParameter,$(XLIB),NullParameter)
+AllTarget(ProgramTargetName(xbell))
+
+#if BuildXResLibrary
+NormalProgramTarget(res,res.o,NullParameter,$(XRESLIB) $(XLIB),NullParameter)
+AllTarget(ProgramTargetName(res))
+#endif
+
+NormalProgramTarget(dmxwininfo,dmxwininfo.o,NullParameter,$(DMXLIB) $(XMULIB) $(XLIB),NullParameter)
+AllTarget(ProgramTargetName(dmxwininfo))
+
+XILIBS=$(XILIB) $(XLIB)
+NormalProgramTarget(xinput,xinput.o,NullParameter,$(DMXLIB) $(XILIBS),NullParameter)
+AllTarget(ProgramTargetName(xinput))
+
+NormalProgramTarget(dmxreconfig,dmxreconfig.o,NullParameter,$(DMXLIB) $(XLIB),NullParameter)
+AllTarget(ProgramTargetName(dmxreconfig))
+
+NormalProgramTarget(dmxresize,dmxresize.o,NullParameter,$(DMXLIB) $(XLIB),NullParameter)
+AllTarget(ProgramTargetName(dmxresize))
+
+NormalProgramTarget(dmxaddscreen,dmxaddscreen.o,NullParameter,$(DMXLIB) $(XLIB),NullParameter)
+AllTarget(ProgramTargetName(dmxaddscreen))
+
+NormalProgramTarget(dmxrmscreen,dmxrmscreen.o,NullParameter,$(DMXLIB) $(XLIB),NullParameter)
+AllTarget(ProgramTargetName(dmxrmscreen))
+
+NormalProgramTarget(dmxaddinput,dmxaddinput.o,NullParameter,$(DMXLIB) $(XLIB),NullParameter)
+AllTarget(ProgramTargetName(dmxaddinput))
+
+NormalProgramTarget(dmxrminput,dmxrminput.o,NullParameter,$(DMXLIB) $(XLIB),NullParameter)
+AllTarget(ProgramTargetName(dmxrminput))

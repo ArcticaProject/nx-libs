@@ -1,0 +1,13 @@
+Tue May 17 12:59:47 2005  Søren Sandmann  <sandmann@redhat.com>
+
+	* Xdamage.c: Conditionally include config.h
+
+2004-02-03  Jim Gettys  <jg@freedesktop.org>
+
+	* AUTHORS: Add authors.
+
+2004-01-15  Daniel Stone  <daniel@fooishbar.org>
+	* Tag release 1.0.1 for first freedesktop.org clientside lib release.
+
+2004-01-15  Harold L Hunt II <huntharo@msu.edu>
+	* Makefile.am: Pass -no-undefined to libtool via LDFLAGS.

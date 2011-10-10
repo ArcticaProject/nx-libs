@@ -1,0 +1,13 @@
+XCOMM $XFree86$
+
+#include "../../Xi18nLib.conf"
+
+ EXTRA_INCLUDES = -I../../..
+      XI18NLIBNAME = xlibi18n
+           SRCS = lcUTF8Load.c
+           OBJS = ${SRCS:.c=.o}
+   REQUIREDLIBS = SharedXlibi18nReqs
+
+LinkSourceFile(lcUTF8Load.c, ../../..)
+
+Xi18nLibraryTarget(xlcUTF8Load)

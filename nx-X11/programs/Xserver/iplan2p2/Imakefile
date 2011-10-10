@@ -1,0 +1,6 @@
+XCOMM $XFree86$
+XCOMM $XConsortium: Imakefile,v 1.1 91/12/28 13:32:27 rws Exp $
+#define IPlanes	2
+#define LinkDirectory ../iplan2p4
+
+#include "../iplan2p4/Imakefile"

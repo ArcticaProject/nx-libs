@@ -1,0 +1,34 @@
+XCOMM $XFree86: xc/programs/Xserver/hw/darwin/bundle/English.lproj/Imakefile,v 1.1 2001/05/21 01:42:17 torrey Exp $
+
+#include <Server.tmpl>
+
+INCLUDES = -I$(SERVERSRC)/include
+
+#if defined (XorgVersionString)
+VERS = XorgVersionString
+PRE = XORG_VERSION_SNAP
+NAME = "X Version 11"
+LINK = '<a HREF="http://wiki.x.org/">X.Org Foundation</a>'
+#elif defined XFree86VersionString
+VERS = XFree86VersionString
+PRE = XF86_VERSION_SNAP
+NAME = "XFree86"
+LINK = '<a HREF="http://www.XFree86.Org/">XFree86 Project, Inc.</a>'
+#endif
+DATE = XFree86DateString
+X_DEFS = $(INCLUDES) -DX_VERSION=$(VERS) -DX_PRE_RELEASE=$(PRE) \
+         -DX_REL_DATE=$(DATE) -DX_VENDOR_NAME=$(NAME) -DX_VENDOR_LINK=$(LINK)
+
+AllTarget(XDarwinHelp.html)
+CppFileTarget(XDarwinHelp.html,XDarwinHelp.html.cpp,$(X_DEFS), \
+	NullParameter)
+
+AllTarget(InfoPlist.strings)
+InfoPlist.strings: InfoPlist.strings.cpp
+	RemoveFile($@)
+	ClearmakeOSName \
+	$(CPP) CppNoLineInfoOption $(X_DEFS) <InfoPlist.strings.cpp | \
+	CppSedMagic | sed 's/__quote__/"/g' >$@
+
+clean::
+	RemoveFiles(InfoPlist.strings)

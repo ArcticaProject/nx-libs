@@ -1,0 +1,49 @@
+XCOMM $XFree86: xc/programs/Xserver/GL/apple/Imakefile,v 1.2 2003/09/16 00:36:11 torrey Exp $
+
+#include <Server.tmpl>
+
+       XPRDIR = $(SERVERSRC)/hw/darwin/quartz/xpr
+
+LinkSourceFile(x-list.c,$(XPRDIR))
+LinkSourceFile(x-list.h,$(XPRDIR))
+LinkSourceFile(x-hash.c,$(XPRDIR))
+LinkSourceFile(x-hash.h,$(XPRDIR))
+LinkSourceFile(compsize.c,$(MESASRCDIR)/src/glx/x11)
+
+    BASE_SRCS = compsize.c
+    BASE_OBJS = compsize.o
+
+     AGL_SRCS = aglGlx.c
+     AGL_OBJS = aglGlx.o
+
+#if HasXplugin
+      GL_SRCS = indirect.c x-hash.c x-list.c
+      GL_OBJS = indirect.o x-hash.o x-list.o
+
+           AS = /System/Library/Frameworks/ApplicationServices.framework
+
+  GL_INCLUDES = -I$(LIBSRC)/GL/apple -I$(XPRDIR) -I$(XPINCDIR) \
+                -F$(AS)/Frameworks
+#endif
+
+         SRCS = $(BASE_SRCS) $(AGL_SRCS) $(GL_SRCS)
+         OBJS = $(BASE_OBJS) $(AGL_OBJS) $(GL_OBJS)
+
+     INCLUDES = -I. -I$(INCLUDESRC) -I$(XINCLUDESRC) -I$(EXTINCSRC) \
+                -I$(LIBSRC)/GL/glx -I$(LIBSRC)/GL/include \
+                -I$(SERVERSRC)/mi -I$(SERVERSRC)/include -I$(FONTINCSRC) \
+                -I$(SERVERSRC)/render -I$(SERVERSRC)/GL/include \
+                -I$(SERVERSRC)/GL/glx -I$(SERVERSRC)/hw/darwin/quartz/cr \
+                -I$(SERVERSRC)/hw/darwin/quartz $(GL_INCLUDES) \
+                -I$(MESASRCDIR)/include -I$(MESASRCDIR)/src/mesa/glapi \
+                -I$(XF86OSSRC)
+
+      DEFINES = $(GLX_DEFINES)
+
+NormalLibraryTarget(AGLcore,$(AGL_OBJS) $(BASE_OBJS))
+#if HasXplugin
+NormalLibraryTarget(CGLcore,$(GL_OBJS) $(BASE_OBJS))
+#endif
+NormalLibraryObjectRule()
+
+DependTarget()

@@ -1,0 +1,7 @@
+
+
+Kdrive has been removed from this tree as it was outdated.
+Builds of kdrive are no longer supported in the monolithic 
+tree. Please turn to 
+    http://www.freedesktop.org/Software/xserver
+for more information where to get the sources.

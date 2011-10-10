@@ -1,0 +1,15 @@
+XCOMM $XFree86$
+
+#include "../../Xi18nLib.conf"
+
+ EXTRA_INCLUDES = -I../../..
+      XI18NLIBNAME = xlocale
+           SRCS = lcEuc.c lcSjis.c lcJis.c
+           OBJS = ${SRCS:.c=.o}
+   REQUIREDLIBS = SharedXlibi18nReqs
+
+LinkSourceFile(lcEuc.c, ../../..)
+LinkSourceFile(lcSjis.c, ../../..)
+LinkSourceFile(lcJis.c, ../../..)
+
+Xi18nLibraryTarget(xlocale)

@@ -1,0 +1,10 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: Xdamage
+Description: X Damage Library
+Version: @VERSION@
+Cflags: -I${includedir} @XDAMAGE_CFLAGS@ @X_CFLAGS@
+Libs: -L${libdir} -lXdamage @XDAMAGE_LIBS@ @X_LIBS@

@@ -1,0 +1,66 @@
+XCOMM $XdotOrg: xc/lib/GL/mesa/main/Imakefile,v 1.3 2005/12/20 22:30:49 alanc Exp $
+XCOMM $XFree86: xc/lib/GL/mesa/src/Imakefile,v 1.30tsi Exp $
+
+#include <Threads.tmpl>
+
+/*
+ * Need both shared and unshared Mesa objects in the following cases:
+ *   GlxDriverUsesMesa
+ *   GlxBuiltInXMesa
+ *   BuildOSMesaLib
+ *
+ * In other cases, only the shared version is needed to link in to loadable
+ * driver modules.
+ */
+
+#if BuildOSMesaLib || (BuildXF86DRI && (GlxDriverUsesMesa || GlxBuiltInXMesa))
+#define DoNormalLib (NormalLibGlx || SharedLibGlxWithoutPIC)
+#define DoSharedLib (SharedLibGlx && !SharedLibGlxWithoutPIC)
+#define DoExtraLib SharedLibGlx
+#define DoDebugLib DebugLibGlx
+#define DoProfileLib ProfileLibGlx
+#else
+#define DoNormalLib SharedLibGlxWithoutPIC
+#define DoSharedLib !SharedLibGlxWithoutPIC
+#define DoExtraLib NO
+#define DoDebugLib NO
+#define DoProfileLib NO
+#endif
+
+/* Large PIC tables needed for Solaris/SPARC builds */
+#if defined(SunArchitecture) && defined(SparcArchitecture) && defined(LargePositionIndependentCFlags)
+# define LargePICTable YES
+#endif
+
+#if Malloc0ReturnsNull
+ALLOC_DEFINES = -DMALLOC_0_RETURNS_NULL
+#endif
+
+#define MesaBuildDir /**/
+#define NeedToLinkMesaSrc
+#include "Imakefile.inc"
+
+#ifdef UseCompaqMathLibrary
+ MATH_DEFINES = -DCCPML
+#endif
+
+      DEFINES = $(ALLOC_DEFINES) GlxDefines -DIN_DRI_DRIVER \
+		$(MESA_ASM_DEFINES) $(MATH_DEFINES)
+     INCLUDES = /*-I$(INCLUDESRC) -I$(EXTINCSRC) */ -I$(XINCLUDESRC) \
+		-I$(MESASRCDIR)/src/mesa/glapi \
+		-I$(MESASRCDIR)/src/mesa/math \
+		-I$(MESASRCDIR)/src/mesa/shader \
+		-I$(MESASRCDIR)/src/mesa/main \
+		-I$(MESASRCDIR)/src/mesa -I$(GLXLIBSRC)/dri \
+		-I$(MESASRCDIR)/include -I$(GLXLIBSRC)/include
+         SRCS = $(COREMESABASESRCS)
+         OBJS = $(COREMESABASEOBJS)
+
+#include <Library.tmpl>
+
+LibraryObjectRule()
+
+SubdirLibraryRule($(OBJS))
+NormalLintTarget($(SRCS))
+
+DependTarget()

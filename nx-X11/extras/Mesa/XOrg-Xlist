@@ -1,0 +1,15 @@
+include/GLView.h
+src/egl
+src/glu
+src/glut
+src/glw/boilerplate.c
+src/mesa/drivers/allegro
+src/mesa/drivers/beos
+src/mesa/drivers/d3d
+src/mesa/drivers/directfb
+src/mesa/drivers/dos
+src/mesa/drivers/ggi
+src/mesa/drivers/svga
+src/mesa/drivers/windows
+progs
+doxygen

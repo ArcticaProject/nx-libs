@@ -1,0 +1,63 @@
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/os-support/bsd/drm/Imakefile,v 1.14 2003/05/08 21:49:01 herrb Exp $
+XCOMM $PI: xc/programs/Xserver/hw/xfree86/os-support/linux/drm/Imakefile,v 1.7 1999/09/14 19:55:15 faith Exp $
+
+#define IHaveModules
+#include <Server.tmpl>
+
+#if DoLoadableServer
+MSRC = drmmodule.c
+MOBJ = drmmodule.o
+#endif
+
+#if BuildXF86DRI
+#if HasMTRRSupport
+MTRR_DEFINES = -DHAS_MTRR_SUPPORT
+#endif
+
+#if defined(KFreeBSDArchitecture)
+OS_SUBDIR = freebsd
+#elif defined(NetBSDArchitecture)
+OS_SUBDIR = netbsd
+#elif defined(OpenBSDArchitecture)
+OS_SUBDIR = openbsd
+#else
+OS_SUBDIR = extensions
+#endif
+
+ SRCS = xf86drm.c \
+	xf86drmHash.c \
+	xf86drmRandom.c \
+	xf86drmSL.c \
+	$(MSRC)
+
+ OBJS = xf86drm.o \
+	xf86drmHash.o \
+	xf86drmRandom.o \
+	xf86drmSL.o \
+	$(MOBJ)
+
+INCLUDES = -I$(XF86COMSRC) -I$(XF86OSSRC) -I. -I$(SERVERSRC)/include \
+           -I$(XINCLUDESRC) -I$(EXTINCSRC) -I../.. -I$(DRMSRCDIR)/bsd-core \
+	   -I$(DRMSRCDIR)/shared-core
+
+DEFINES = $(MTRR_DEFINES) $(GLX_DEFINES)
+
+ModuleObjectRule()
+LibraryModuleTarget(drm,$(OBJS))
+NormalLintTarget($(SRCS))
+
+InstallLibraryModule(drm,$(MODULEDIR),$(OS_SUBDIR))
+#endif
+
+DependTarget()
+
+LIBDRM_DIR = ../../../../../../../extras/drm/libdrm
+#if DoLoadableServer
+LinkSourceFile(drmmodule.c,$(XF86OSSRC)/linux/drm)
+#endif
+LinkSourceFile(xf86drm.c,$(LIBDRM_DIR))
+LinkSourceFile(xf86drmHash.c,$(LIBDRM_DIR))
+LinkSourceFile(xf86drmRandom.c,$(LIBDRM_DIR))
+LinkSourceFile(xf86drmSL.c,$(LIBDRM_DIR))
+
+InstallDriverSDKLibraryModule(drm,$(DRIVERSDKMODULEDIR),$(OS_SUBDIR))

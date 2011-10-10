@@ -1,0 +1,13 @@
+XCOMM $XFree86$
+
+#include "../../Xi18nLib.conf"
+
+ EXTRA_INCLUDES = -I../../..
+      XI18NLIBNAME = xlcDef
+           SRCS = lcDefConv.c
+           OBJS = ${SRCS:.c=.o}
+   REQUIREDLIBS = SharedXlibi18nReqs
+
+LinkSourceFile(lcDefConv.c, ../../..)
+
+Xi18nLibraryTarget(xlcDef)

@@ -1,0 +1,336 @@
+XCOMM $Xorg$
+#define DoNormalLib NormalLibXaw7
+#define DoSharedLib SharedLibXaw7
+#define DoExtraLib SharedLibXaw7
+#define DoDebugLib DebugLibXaw7
+#define DoProfileLib ProfileLibXaw7
+#define HasSharedData YES
+#define LibName Xaw
+#define SoRev SOXAW7REV
+
+#if BuildXaw
+# define LibHeaders NO
+# define NoSoSymlink
+#else /* !BuildXaw */
+# define IncSubdir X11
+# define IncSubSubdir Xaw
+
+HEADERS = \
+	AllWidgets.h \
+	AsciiSink.h \
+	AsciiSinkP.h \
+	AsciiSrc.h \
+	AsciiSrcP.h \
+	AsciiText.h \
+	AsciiTextP.h \
+	Box.h \
+	BoxP.h \
+	Cardinals.h \
+	Command.h \
+	CommandP.h \
+	Dialog.h \
+	DialogP.h \
+	Form.h \
+	FormP.h \
+	Grip.h \
+	GripP.h \
+	Label.h \
+	LabelP.h \
+	List.h \
+	ListP.h \
+	MenuButton.h \
+	MenuButtoP.h \
+	MultiSrc.h \
+	MultiSrcP.h \
+	MultiSink.h \
+	MultiSinkP.h \
+	Paned.h \
+	PanedP.h \
+	Panner.h \
+	PannerP.h \
+	Porthole.h \
+	PortholeP.h \
+	Repeater.h \
+	RepeaterP.h \
+	Reports.h \
+	Scrollbar.h \
+	ScrollbarP.h \
+	Simple.h \
+	SimpleP.h \
+	SimpleMenu.h \
+	SimpleMenP.h \
+	Sme.h \
+	SmeP.h \
+	SmeBSB.h \
+	SmeBSBP.h \
+	SmeLine.h \
+	SmeLineP.h \
+	StripChart.h \
+	StripCharP.h \
+	Template.c \
+	Template.h \
+	TemplateP.h \
+	Text.h \
+	TextP.h \
+	TextSink.h \
+	TextSinkP.h \
+	TextSrc.h \
+	TextSrcP.h \
+	Tip.h \
+	TipP.h \
+	Toggle.h \
+	ToggleP.h \
+	Tree.h \
+	TreeP.h \
+	VendorEP.h \
+	Viewport.h \
+	ViewportP.h \
+	XawImP.h \
+	XawInit.h
+#endif /* !BuildXaw */
+
+#ifdef SharedXaw7Reqs
+REQUIREDLIBS = SharedXaw7Reqs
+#endif
+
+DEFINES = XawI18nDefines -DXAW7 -DPROJECT_ROOT=\"$(PROJECTROOT)\" $(VENDOR_DEFINES)
+
+       LINTLIBS = $(LINTXLIB) $(LINTXTOOL)
+
+SRCS = \
+	Actions.c \
+	AllWidgets.c \
+	AsciiSink.c \
+	AsciiSrc.c \
+	AsciiText.c \
+	Box.c \
+	Command.c \
+	Converters.c \
+	Dialog.c \
+	DisplayList.c \
+	Form.c \
+	Grip.c \
+	Label.c \
+	List.c \
+	MenuButton.c \
+	MultiSrc.c \
+	MultiSink.c \
+	OS.c \
+	Paned.c \
+	Panner.c \
+	Pixmap.c \
+	Porthole.c \
+	Repeater.c \
+	Scrollbar.c \
+	Simple.c \
+	SimpleMenu.c \
+	Sme.c \
+	SmeBSB.c \
+	SmeLine.c \
+	StripChart.c \
+	Text.c \
+	TextSink.c \
+	TextSrc.c \
+	TextAction.c \
+	TextPop.c \
+	TextTr.c \
+	Tip.c \
+	Toggle.c \
+	Tree.c \
+	Vendor.c \
+	Viewport.c \
+	XawIm.c \
+	XawInit.c \
+	XawI18n.c \
+	sharedlib.c
+
+#if SharedDataSeparation
+UNSHAREDOBJS = AllWidgets.o sharedlib.o
+#endif
+
+OBJS = \
+	Actions.o \
+	AllWidgets.o \
+	AsciiSink.o \
+	AsciiSrc.o \
+	AsciiText.o \
+	Box.o \
+	Command.o \
+	Converters.o \
+	Dialog.o \
+	DisplayList.o \
+	Form.o \
+	Grip.o \
+	Label.o \
+	List.o \
+	MenuButton.o \
+	MultiSrc.o \
+	MultiSink.o \
+	OS.o \
+	Paned.o \
+	Panner.o \
+	Pixmap.o \
+	Porthole.o \
+	Repeater.o \
+	Scrollbar.o \
+	Simple.o \
+	SimpleMenu.o \
+	Sme.o \
+	SmeBSB.o \
+	SmeLine.o \
+	StripChart.o \
+	Text.o \
+	TextSink.o \
+	TextSrc.o \
+	TextAction.o \
+	TextPop.o \
+	TextTr.o \
+	Tip.o \
+	Toggle.o \
+	Tree.o \
+	Vendor.o \
+	Viewport.o \
+	XawIm.o \
+	XawI18n.o \
+	XawInit.o
+
+#include <Library.tmpl>
+
+#if DoSharedLib && SharedDataSeparation
+SpecialCObjectRule(sharedlib,NullParameter,$(SHLIBDEF))
+#endif
+
+#if !BuildXaw
+MANSUFFIX = $(LIBMANSUFFIX)
+InstallManPage(Xaw,$(LIBMANDIR))
+#endif
+
+#if SharedDataSeparation
+UNSHAREDOBJS = AllWidgets.o sharedlib.o
+#endif
+
+LinkSourceFile(Actions.c,$(AWIDGETSRC))
+LinkSourceFile(AllWidgets.c,$(AWIDGETSRC))
+LinkSourceFile(AsciiSink.c,$(AWIDGETSRC))
+LinkSourceFile(AsciiSrc.c,$(AWIDGETSRC))
+LinkSourceFile(AsciiText.c,$(AWIDGETSRC))
+LinkSourceFile(Box.c,$(AWIDGETSRC))
+LinkSourceFile(Command.c,$(AWIDGETSRC))
+LinkSourceFile(Converters.c,$(AWIDGETSRC))
+LinkSourceFile(Dialog.c,$(AWIDGETSRC))
+LinkSourceFile(DisplayList.c,$(AWIDGETSRC))
+LinkSourceFile(Form.c,$(AWIDGETSRC))
+LinkSourceFile(Grip.c,$(AWIDGETSRC))
+LinkSourceFile(Label.c,$(AWIDGETSRC))
+LinkSourceFile(List.c,$(AWIDGETSRC))
+LinkSourceFile(MenuButton.c,$(AWIDGETSRC))
+LinkSourceFile(MultiSrc.c,$(AWIDGETSRC))
+LinkSourceFile(MultiSink.c,$(AWIDGETSRC))
+LinkSourceFile(OS.c,$(AWIDGETSRC))
+LinkSourceFile(Paned.c,$(AWIDGETSRC))
+LinkSourceFile(Panner.c,$(AWIDGETSRC))
+LinkSourceFile(Pixmap.c,$(AWIDGETSRC))
+LinkSourceFile(Porthole.c,$(AWIDGETSRC))
+LinkSourceFile(Repeater.c,$(AWIDGETSRC))
+LinkSourceFile(Scrollbar.c,$(AWIDGETSRC))
+LinkSourceFile(Simple.c,$(AWIDGETSRC))
+LinkSourceFile(SimpleMenu.c,$(AWIDGETSRC))
+LinkSourceFile(Sme.c,$(AWIDGETSRC))
+LinkSourceFile(SmeBSB.c,$(AWIDGETSRC))
+LinkSourceFile(SmeLine.c,$(AWIDGETSRC))
+LinkSourceFile(StripChart.c,$(AWIDGETSRC))
+LinkSourceFile(Text.c,$(AWIDGETSRC))
+LinkSourceFile(TextSink.c,$(AWIDGETSRC))
+LinkSourceFile(TextSrc.c,$(AWIDGETSRC))
+LinkSourceFile(TextAction.c,$(AWIDGETSRC))
+LinkSourceFile(TextPop.c,$(AWIDGETSRC))
+LinkSourceFile(TextTr.c,$(AWIDGETSRC))
+LinkSourceFile(Tip.c,$(AWIDGETSRC))
+LinkSourceFile(Toggle.c,$(AWIDGETSRC))
+LinkSourceFile(Tree.c,$(AWIDGETSRC))
+LinkSourceFile(Vendor.c,$(AWIDGETSRC))
+LinkSourceFile(Viewport.c,$(AWIDGETSRC))
+LinkSourceFile(XawIm.c,$(AWIDGETSRC))
+LinkSourceFile(XawInit.c,$(AWIDGETSRC))
+LinkSourceFile(XawI18n.c,$(AWIDGETSRC))
+LinkSourceFile(sharedlib.c,$(AWIDGETSRC))
+
+LinkSourceFile(AllWidgets.h,$(AWIDGETSRC))
+LinkSourceFile(AsciiSink.h,$(AWIDGETSRC))
+LinkSourceFile(AsciiSinkP.h,$(AWIDGETSRC))
+LinkSourceFile(AsciiSrc.h,$(AWIDGETSRC))
+LinkSourceFile(AsciiSrcP.h,$(AWIDGETSRC))
+LinkSourceFile(AsciiText.h,$(AWIDGETSRC))
+LinkSourceFile(AsciiTextP.h,$(AWIDGETSRC))
+LinkSourceFile(Box.h,$(AWIDGETSRC))
+LinkSourceFile(BoxP.h,$(AWIDGETSRC))
+LinkSourceFile(Cardinals.h,$(AWIDGETSRC))
+LinkSourceFile(Command.h,$(AWIDGETSRC))
+LinkSourceFile(CommandP.h,$(AWIDGETSRC))
+LinkSourceFile(Dialog.h,$(AWIDGETSRC))
+LinkSourceFile(DialogP.h,$(AWIDGETSRC))
+LinkSourceFile(Form.h,$(AWIDGETSRC))
+LinkSourceFile(FormP.h,$(AWIDGETSRC))
+LinkSourceFile(Grip.h,$(AWIDGETSRC))
+LinkSourceFile(GripP.h,$(AWIDGETSRC))
+LinkSourceFile(Label.h,$(AWIDGETSRC))
+LinkSourceFile(LabelP.h,$(AWIDGETSRC))
+LinkSourceFile(List.h,$(AWIDGETSRC))
+LinkSourceFile(ListP.h,$(AWIDGETSRC))
+LinkSourceFile(MenuButton.h,$(AWIDGETSRC))
+LinkSourceFile(MenuButtoP.h,$(AWIDGETSRC))
+LinkSourceFile(MultiSrc.h,$(AWIDGETSRC))
+LinkSourceFile(MultiSrcP.h,$(AWIDGETSRC))
+LinkSourceFile(MultiSink.h,$(AWIDGETSRC))
+LinkSourceFile(MultiSinkP.h,$(AWIDGETSRC))
+LinkSourceFile(Paned.h,$(AWIDGETSRC))
+LinkSourceFile(PanedP.h,$(AWIDGETSRC))
+LinkSourceFile(Panner.h,$(AWIDGETSRC))
+LinkSourceFile(PannerP.h,$(AWIDGETSRC))
+LinkSourceFile(Porthole.h,$(AWIDGETSRC))
+LinkSourceFile(PortholeP.h,$(AWIDGETSRC))
+LinkSourceFile(Private.h,$(AWIDGETSRC))
+LinkSourceFile(Repeater.h,$(AWIDGETSRC))
+LinkSourceFile(RepeaterP.h,$(AWIDGETSRC))
+LinkSourceFile(Reports.h,$(AWIDGETSRC))
+LinkSourceFile(Scrollbar.h,$(AWIDGETSRC))
+LinkSourceFile(ScrollbarP.h,$(AWIDGETSRC))
+LinkSourceFile(Simple.h,$(AWIDGETSRC))
+LinkSourceFile(SimpleP.h,$(AWIDGETSRC))
+LinkSourceFile(SimpleMenu.h,$(AWIDGETSRC))
+LinkSourceFile(SimpleMenP.h,$(AWIDGETSRC))
+LinkSourceFile(Sme.h,$(AWIDGETSRC))
+LinkSourceFile(SmeP.h,$(AWIDGETSRC))
+LinkSourceFile(SmeBSB.h,$(AWIDGETSRC))
+LinkSourceFile(SmeBSBP.h,$(AWIDGETSRC))
+LinkSourceFile(SmeLine.h,$(AWIDGETSRC))
+LinkSourceFile(SmeLineP.h,$(AWIDGETSRC))
+LinkSourceFile(StripChart.h,$(AWIDGETSRC))
+LinkSourceFile(StripCharP.h,$(AWIDGETSRC))
+LinkSourceFile(Template.c,$(AWIDGETSRC))
+LinkSourceFile(Template.h,$(AWIDGETSRC))
+LinkSourceFile(TemplateP.h,$(AWIDGETSRC))
+LinkSourceFile(Text.h,$(AWIDGETSRC))
+LinkSourceFile(TextP.h,$(AWIDGETSRC))
+LinkSourceFile(TextSink.h,$(AWIDGETSRC))
+LinkSourceFile(TextSinkP.h,$(AWIDGETSRC))
+LinkSourceFile(TextSrc.h,$(AWIDGETSRC))
+LinkSourceFile(TextSrcP.h,$(AWIDGETSRC))
+LinkSourceFile(Tip.h,$(AWIDGETSRC))
+LinkSourceFile(TipP.h,$(AWIDGETSRC))
+LinkSourceFile(Toggle.h,$(AWIDGETSRC))
+LinkSourceFile(ToggleP.h,$(AWIDGETSRC))
+LinkSourceFile(Tree.h,$(AWIDGETSRC))
+LinkSourceFile(TreeP.h,$(AWIDGETSRC))
+LinkSourceFile(VendorEP.h,$(AWIDGETSRC))
+LinkSourceFile(Viewport.h,$(AWIDGETSRC))
+LinkSourceFile(ViewportP.h,$(AWIDGETSRC))
+LinkSourceFile(XawI18n.h,$(AWIDGETSRC))
+LinkSourceFile(XawImP.h,$(AWIDGETSRC))
+LinkSourceFile(XawInit.h,$(AWIDGETSRC))
+
+#if !BuildXaw
+LinkSourceFile(Xaw.man,$(AWIDGETSRC))
+#endif
+
+DependTarget()

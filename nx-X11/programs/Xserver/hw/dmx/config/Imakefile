@@ -1,0 +1,101 @@
+XCOMM $XFree86$
+
+#include <Server.tmpl>
+#include <lnxdoc.rules>
+
+YFLAGS = -d
+
+LIBSRCS = parser.c scanner.c dmxparse.c dmxprint.c dmxcompat.c dmxconfig.c
+LIBOBJS = parser.o scanner.o dmxparse.o dmxprint.o dmxcompat.o dmxconfig.o
+
+#if !BuildServersOnly
+CONFIGSRCS = xdmxconfig.c dmxlog.c Canvas.c
+CONFIGOBJS = xdmxconfig.o dmxlog.o Canvas.o
+
+COMPATSRCS = vdltodmx.c
+COMPATOBJS = vdltodmx.o
+
+TESTSRCS = dmxtodmx.c
+TESTOBJS = dmxtodmx.o
+#endif
+
+SRCS = $(LIBSRCS) $(CONFIGSRCS) $(COMPATSRCS) $(TESTSRCS)
+OBJS = $(LIBOBJS) $(CONFIGOBJS) $(COMPATOBJS) $(TESTOBJS)
+
+#if !BuildServersOnly
+EXES = xdmxconfig vdltodmx dmxtodmx
+#endif
+
+LOCAL_LIBRARIES = -L. -ldmxconfig
+
+#include <dmx.cf>
+
+INCLUDES = -I. -I.. -I$(XBUILDINCDIR) -I$(FONTINCSRC) -I../../../mi \
+	-I../../../include -I../../../render -I$(EXTINCSRC)
+
+DEFINES = $(OS_DEFINES) $(EXT_DEFINES) -DDMX_LOG_STANDALONE $(DMX_DEFINES)
+
+all::
+
+LexFile(scanner)
+YaccFile(parser,$(YFLAGS))
+
+#if HasGcc3
+XCOMM These rules remove some of the default warnings and, therefore, the
+XCOMM clutter from the compiler output.  Only do this for GCC 3, since the
+XCOMM undef warning was added in 2.8.  (The warnings are harmless, so be
+XCOMM conservative in their removal.)
+SpecialCObjectRule(parser,parser.h,-Wno-undef)
+SpecialCObjectRule(scanner,parser.h,-Wno-undef -Wno-unused-function -Wno-unused-label -Wno-unused-variable)
+#endif
+
+NormalLibraryObjectRule()
+NormalLibraryTarget(dmxconfig,$(LIBOBJS))
+
+#if !BuildServersOnly
+NormalProgramTarget(xdmxconfig,$(CONFIGOBJS),\
+	 	    libdmxconfig.a XawClientDepLibs $(DEPXTOOLLIB),\
+	            $(LOCAL_LIBRARIES) XawClientLibs $(XTOOLLIB),NullParameter)
+AllTarget(ProgramTargetName(xdmxconfig))
+
+NormalProgramTarget(vdltodmx,$(COMPATOBJS),libdmxconfig.a,\
+                    $(LOCAL_LIBRARIES),NullParameter)
+AllTarget(ProgramTargetName(vdltodmx))
+
+NormalProgramTarget(dmxtodmx,$(TESTOBJS),libdmxconfig.a,\
+                    $(LOCAL_LIBRARIES),NullParameter)
+AllTarget(ProgramTargetName(dmxtodmx))
+
+LinkSourceFile(dmxlog.c,..)
+
+InstallProgram(dmxtodmx,$(BINDIR))
+InstallProgram(vdltodmx,$(BINDIR))
+InstallProgram(xdmxconfig,$(BINDIR))
+
+InstallManPage(dmxtodmx,$(MANDIR))
+InstallManPage(vdltodmx,$(MANDIR))
+InstallManPage(xdmxconfig,$(MANDIR))
+#endif
+
+DependTarget()
+
+#if !BuildServersOnly
+test: $(EXES)
+	@for i in test-*.in; do \
+		b=`echo $$i | sed 's,.in$$,,'` \
+		export b; \
+		(./dmxtodmx < $$i > $$b.tmp 2>&1; exit 0); \
+		if cmp -s ./$$b.out ./$$b.tmp; \
+			then echo PASSED $$b; rm -f $$b.tmp; \
+			else echo "FAILED $$b **********"; \
+		fi \
+	done
+
+test-update:
+	@for i in test-*.in; do \
+		b=`echo $$i | sed 's,.in$$,,'` \
+		export b; \
+		echo Writing $$b.out; \
+		(./dmxtodmx < $$i > $$b.out 2>&1; exit 0) \
+	done
+#endif

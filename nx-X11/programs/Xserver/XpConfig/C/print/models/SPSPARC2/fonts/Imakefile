@@ -1,0 +1,28 @@
+XCOMM $Xorg: Imakefile,v 1.1 2003/10/22 02:42:52 gisburn Exp $
+
+XPFONTS = \
+	Courier-Bold.pmf \
+	Courier-BoldOblique.pmf \
+	Courier-Oblique.pmf \
+	Courier.pmf \
+	Helvetica-Bold.pmf \
+	Helvetica-BoldOblique.pmf \
+	Helvetica-Oblique.pmf \
+	Helvetica.pmf \
+	Symbol.pmf \
+	Times-Bold.pmf \
+	Times-BoldItalic.pmf \
+	Times-Italic.pmf \
+	Times-Roman.pmf
+
+XPMODELNAME = SPSPARC2
+
+MODELDIR = $(XPRINTDIR)/C/print/models/$(XPMODELNAME)
+MODELFONTDIR = $(MODELDIR)/fonts
+
+# We reuse some of the PSdefault fonts
+PARENTMODELFONTDIR=../../PSdefault/fonts
+
+InstallXpMultiplePMFLinks($(XPFONTS),$(PARENTMODELFONTDIR),$(MODELFONTDIR))
+InstallXpPMFFontsDir($(MODELFONTDIR))
+

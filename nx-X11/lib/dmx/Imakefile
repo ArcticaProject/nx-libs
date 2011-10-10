@@ -1,0 +1,26 @@
+XCOMM $XFree86$
+
+#define DoNormalLib NormalLibDmx
+#define DoSharedLib SharedLibDmx
+#define DoDebugLib DebugLibDmx
+#define DoProfileLib ProfileLibDmx
+
+#define LibName dmx
+#define SoRev SODMXREV
+#define LibHeaders NO
+
+#include <Threads.tmpl>
+
+#if Malloc0ReturnsNull
+ALLOC_DEFINES = -DMALLOC_0_RETURNS_NULL
+#endif
+
+      DEFINES = $(ALLOC_DEFINES)
+     INCLUDES = -I$(XLIBSRC) -I$(EXTINCSRC)
+         SRCS = dmx.c
+         OBJS = dmx.o
+     LINTLIBS = $(LINTXLIB)
+
+#include <Library.tmpl>
+
+DependTarget()

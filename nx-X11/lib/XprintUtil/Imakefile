@@ -1,0 +1,21 @@
+#define DoNormalLib   YES
+# XprintUtil is not a stable interface yet, therefore avoid shipping it
+# as shared lib for now
+#define DoSharedLib   NO
+#define DoDebugLib    NO
+#define DoProfileLib  NO
+#define HasSharedData NO
+#define LibName       XprintUtil
+#define SoRev         SOZLIBREV
+#define IncSubdir     X11
+#define IncSubSubdir  XprintUtil
+
+
+HEADERS = xprintutil.h
+
+SRCS = xprintutil.c xprintutil_printtofile.c
+OBJS = xprintutil.o xprintutil_printtofile.o
+
+#include <Library.tmpl>
+
+DependTarget()

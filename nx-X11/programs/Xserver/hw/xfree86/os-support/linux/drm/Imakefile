@@ -1,0 +1,64 @@
+XCOMM $XFree86: Imakefile,v 1.13 2002/10/30 12:52:32 alanh Exp $
+
+#define IHaveModules
+#include <Server.tmpl>
+
+#if DoLoadableServer
+MSRC = drmmodule.c
+MOBJ = drmmodule.o
+#endif
+
+#if BuildXF86DRI
+#if HasMTRRSupport
+MTRR_DEFINES = -DHAS_MTRR_SUPPORT
+#endif
+
+ SRCS = xf86drm.c \
+	xf86drmHash.c \
+	xf86drmRandom.c \
+	xf86drmSL.c \
+	$(MSRC)
+
+ OBJS = xf86drm.o \
+	xf86drmHash.o \
+	xf86drmRandom.o \
+	xf86drmSL.o \
+	$(MOBJ)
+
+INCLUDES = -I$(XF86COMSRC) -I$(XF86OSSRC) -I. -I$(SERVERSRC)/include \
+           -I$(XINCLUDESRC) -I$(EXTINCSRC) -I../.. -I$(DRMSRCDIR)/linux-core \
+	   -I$(DRMSRCDIR)/shared-core
+
+DEFINES = $(MTRR_DEFINES) $(GLX_DEFINES)
+
+LIBDRM_DIR = ../../../../../../../extras/drm/libdrm
+
+LinkSourceFile(xf86drm.c,$(LIBDRM_DIR))
+LinkSourceFile(xf86drmHash.c,$(LIBDRM_DIR))
+LinkSourceFile(xf86drmRandom.c,$(LIBDRM_DIR))
+LinkSourceFile(xf86drmSL.c,$(LIBDRM_DIR))
+
+#if DoLoadableServer
+
+ModuleObjectRule()
+LibraryModuleTarget(drm,$(OBJS))
+NormalLintTarget($(SRCS))
+
+#ifdef LinuxArchitecture
+InstallLibraryModule(drm,$(MODULEDIR),linux)
+#endif
+
+#else
+
+SubdirLibraryRule($(OBJS))
+NormalLibraryObjectRule()
+
+#endif
+
+
+DependTarget()
+#endif
+
+
+
+InstallDriverSDKLibraryModule(drm,$(DRIVERSDKMODULEDIR),linux)

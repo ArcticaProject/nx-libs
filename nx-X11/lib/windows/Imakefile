@@ -1,0 +1,34 @@
+#define DoNormalLib NormalLibWindowsWM
+#define DoSharedLib SharedLibWindowsWM
+#define DoDebugLib DebugLibWindowsWM
+#define DoProfileLib ProfileLibWindowsWM
+#define LibName WindowsWM
+#define SoRev SOWINDOWSWMREV
+#define IncSubdir X11
+#define IncSubSubdir extensions
+
+#include <Threads.tmpl>
+
+#ifdef SharedWindowsWMReqs
+REQUIREDLIBS = SharedWindowsWMReqs
+#endif
+
+#if Malloc0ReturnsNull
+ALLOC_DEFINES = -DMALLOC_0_RETURNS_NULL
+#endif
+
+      DEFINES = $(ALLOC_DEFINES)
+     INCLUDES = -I$(XLIBSRC) -I$(EXTINCSRC)
+         SRCS = windowswm.c
+         OBJS = windowswm.o
+     LINTLIBS = $(LINTXLIB)
+
+HEADERS = windowswm.h windowswmstr.h
+
+#include <Library.tmpl>
+
+MANSUFFIX = $(LIBMANSUFFIX)
+
+InstallManPage(WindowsWM,$(LIBMANDIR))
+
+DependTarget()

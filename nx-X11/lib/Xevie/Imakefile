@@ -1,0 +1,76 @@
+XCOMM $XdotOrg: xc/lib/Xevie/Imakefile,v 1.4 2005/10/24 23:30:21 alanc Exp $
+
+#ifndef NormalLibXevie
+#define NormalLibXevie YES
+SOXEVIEREV=1.0.0
+#endif
+
+#ifndef SharedLibXevie
+#define SharedLibXevie YES
+#endif
+
+#define DoNormalLib NormalLibXevie
+#define DoSharedLib SharedLibXevie
+#define DoDebugLib DebugLibXevie
+#define DoProfileLib ProfileLibXevie
+
+#define LibName Xevie
+#define SoRev SOXEVIEREV
+#define IncSubdir X11
+#define IncSubSubdir extensions
+
+#ifdef SharedXevieReqs
+REQUIREDLIBS = SharedXevieReqs
+#endif
+
+#if Malloc0ReturnsNull
+ALLOC_DEFINES = -DMALLOC_0_RETURNS_NULL
+#endif
+
+XEVIE_VERSION=1.0.0
+
+X_LIBS=-L$(SHLIBDIR) $(XONLYLIB)
+X_CFLAGS=-I$(INCROOT) $(THREADS_DEFINES)
+
+RPATH_CFLAG = HardCodeLibdirFlag
+
+      DEFINES = $(ALLOC_DEFINES)
+     INCLUDES = -I. -I$(XLIBSRC) -I$(EXTINCSRC)
+         SRCS = Xevie.c
+         OBJS = Xevie.o
+     LINTLIBS = $(LINTXLIB)
+
+HEADERS= xevieplaceholder.h
+
+SUBSTVARS=prefix="$(PROJECTROOT)" \
+	  exec_prefix="$(BINDIR)" \
+	  libdir="$(USRLIBDIR)" \
+	  hardcode_libdir_flag_spec="$(RPATH_CFLAG)" \
+	  includedir="$(INCROOT)" \
+	  X_LIBS="$(X_LIBS)" \
+	  X_CFLAGS="$(X_CFLAGS)" \
+	  VERSION="$(XEVIE_VERSION)"
+
+#include <Library.tmpl>
+
+MANSUFFIX = $(LIBMANSUFFIX)
+
+#define PreprocessManPages
+InstallManPage(Xevie,$(LIBMANDIR))
+
+DependTarget()
+
+all:: xevie.pc
+
+xevie.pc: xevie.pc.in
+	RemoveFile($@)
+	sh ../Xcursor/config-subst $(SUBSTVARS) < xevie.pc.in > $@
+
+InstallNonExecFile(xevie.pc,$(USRLIBDIR)/pkgconfig)
+
+clean::
+	RemoveFile(xevie.pc)
+
+#if ExpandManNames
+InstallManPageAliases(Xevie,$(LIBMANDIR),XevieQueryVersion XevieStart XevieSelectInput XevieSendEvent XevieEnd)
+#endif

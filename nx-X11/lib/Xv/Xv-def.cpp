@@ -1,0 +1,27 @@
+LIBRARY Xv
+VERSION LIBRARY_VERSION
+EXPORTS
+XvCreateImage
+XvFreeAdaptorInfo
+XvFreeEncodingInfo
+XvGetPortAttribute
+XvGetStill
+XvGetVideo
+XvGrabPort
+XvListImageFormats
+XvPutImage
+XvPutStill
+XvPutVideo
+XvQueryAdaptors
+XvQueryBestSize
+XvQueryEncodings
+XvQueryExtension
+XvQueryPortAttributes
+XvSelectPortNotify
+XvSelectVideoNotify
+XvSetPortAttribute
+XvShmCreateImage
+XvShmPutImage
+XvStopVideo
+XvUngrabPort
+/* $XFree86$ */

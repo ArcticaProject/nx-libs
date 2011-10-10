@@ -1,0 +1,13 @@
+LIBRARY windows
+VERSION LIBRARY_VERSION
+EXPORTS
+XWindowsWMQueryExtension
+XWindowsWMQueryVersion
+XWindowsWMDisableUpdate
+XWindowsWMReenableUpdate
+XWindowsWMSelectInput
+XWindowsWMSetFrontProcess
+XWindowsWMFrameGetRect
+XWindowsWMFrameHitTest
+XWindowsWMFrameDraw
+XWindowsWMFrameSetTitle

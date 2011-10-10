@@ -1,0 +1,35 @@
+XCOMM $XFree86: xc/programs/Xserver/GL/dri/Imakefile,v 1.6 2001/04/28 13:55:36 dawes Exp $
+
+#define IHaveModules
+#include <Server.tmpl>
+
+#if DoLoadableServer
+MSRC = drimodule.c
+MOBJ = drimodule.o
+#endif
+
+         SRCS = xf86dri.c dri.c $(MSRC)
+         OBJS = xf86dri.o dri.o $(MOBJ)
+
+     INCLUDES = -I$(SERVERSRC)/include -I$(INCLUDESRC) -I$(XINCLUDESRC) \
+		-I$(EXTINCSRC) -I$(MESASRCDIR)/include \
+		-I$(XF86OSSRC) -I$(XF86COMSRC) \
+		-I../include -I../glx -I$(LIBSRC)/GL/include \
+		-I$(DRMSRCDIR)/shared-core \
+		-I$(SERVERSRC)/mi -I$(FONTINCSRC)
+      DEFINES = $(GLX_DEFINES)
+
+LinkSourceFile(xf86dri.h,$(MESASRCDIR)/src/glx/x11)
+LinkSourceFile(xf86dristr.h,$(MESASRCDIR)/src/glx/x11)
+
+ModuleObjectRule()
+LibraryModuleTarget(dri,$(OBJS))
+InstallLibraryModule(dri,$(MODULEDIR),extensions)
+
+DependTarget()
+
+InstallDriverSDKLibraryModule(dri,$(DRIVERSDKMODULEDIR),extensions)
+
+InstallDriverSDKNonExecFile(dri.h,$(DRIVERSDKINCLUDEDIR))
+InstallDriverSDKNonExecFile(sarea.h,$(DRIVERSDKINCLUDEDIR))
+InstallDriverSDKNonExecFile(xf86dri.h,$(DRIVERSDKINCLUDEDIR))
