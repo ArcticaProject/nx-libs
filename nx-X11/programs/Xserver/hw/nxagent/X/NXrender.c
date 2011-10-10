@@ -26,7 +26,7 @@
 
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2009 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -116,6 +116,7 @@ int  nxagentCursorSaveRenderInfo(ScreenPtr, CursorPtr);
 void nxagentCursorPostSaveRenderInfo(CursorPtr, ScreenPtr, PicturePtr, int, int);
 int  nxagentRenderRealizeCursor(ScreenPtr, CursorPtr);
 int  nxagentCreatePicture(PicturePtr, Mask);
+void nxagentDestroyPicture(PicturePtr pPicture);
 void nxagentChangePicture(PicturePtr, Mask);
 int  nxagentChangePictureClip(PicturePtr, int, int, xRectangle *, int, int);
 void nxagentComposite(CARD8, PicturePtr, PicturePtr, PicturePtr, INT16, INT16,
@@ -130,28 +131,6 @@ void nxagentSetPictureFilter(PicturePtr pPicture, char *filter, int name_size,
                                  pointer params, int nparams);
 void nxagentTrapezoids(CARD8 op, PicturePtr pSrc, PicturePtr pDst, PictFormatPtr maskFormat,
                            INT16 xSrc, INT16 ySrc, int ntrap, xTrapezoid *traps);
-
-void nxagentRenderCreateSolidFill(PicturePtr pPicture, xRenderColor *color);
-
-void nxagentRenderCreateLinearGradient(PicturePtr pPicture, xPointFixed *p1,
-                                           xPointFixed *p2, int nStops,
-                                               xFixed *stops,
-                                                   xRenderColor *colors);
-
-void nxagentRenderCreateRadialGradient(PicturePtr pPicture, xPointFixed *inner,
-                                           xPointFixed *outer,
-                                               xFixed innerRadius,
-                                                   xFixed outerRadius,
-                                                       int nStops,
-                                                           xFixed *stops,
-                                                               xRenderColor *colors);
-
-void nxagentRenderCreateConicalGradient(PicturePtr pPicture,
-                                            xPointFixed *center,
-                                                xFixed angle, int nStops, 
-                                                    xFixed *stops, 
-                                                        xRenderColor *colors);
-
 
 /*
  * The void pointer is actually a XGlyphElt8.
@@ -844,6 +823,8 @@ ProcRenderFreePicture (ClientPtr client)
     VERIFY_PICTURE (pPicture, stuff->picture, client, SecurityDestroyAccess,
 		    RenderErrBase + BadPicture);
 
+    nxagentDestroyPicture(pPicture);
+
     FreeResource (stuff->picture, RT_NONE);
     return(client->noClientException);
 }
@@ -945,15 +926,8 @@ ProcRenderComposite (ClientPtr client)
 		    RenderErrBase + BadPicture);
     VERIFY_ALPHA (pMask, stuff->mask, client, SecurityReadAccess, 
 		  RenderErrBase + BadPicture);
-/*
-FIXME: Imported change from newest version of Xorg. Changed pSrc to pDst.
-
     if ((pSrc->pDrawable && pSrc->pDrawable->pScreen != pDst->pDrawable->pScreen) ||
 	(pMask && pMask->pDrawable && pSrc->pDrawable->pScreen != pMask->pDrawable->pScreen))
-	return BadMatch;
-*/
-    if ((pSrc->pDrawable && pSrc->pDrawable->pScreen != pDst->pDrawable->pScreen) ||
-	(pMask && pMask->pDrawable && pDst->pDrawable->pScreen != pMask->pDrawable->pScreen))
 	return BadMatch;
 
     ValidatePicture (pSrc);
@@ -2362,11 +2336,6 @@ static int ProcRenderCreateSolidFill(ClientPtr client)
     pPicture = CreateSolidPicture(stuff->pid, &stuff->color, &error);
     if (!pPicture)
 	return error;
-    /* AGENT SERVER */
-
-    nxagentRenderCreateSolidFill(pPicture, &stuff -> color);
-
-    /* AGENT SERVER */
     if (!AddResource (stuff->pid, PictureType, (pointer)pPicture))
 	return BadAlloc;
     return Success;
@@ -2398,12 +2367,6 @@ static int ProcRenderCreateLinearGradient (ClientPtr client)
                                             stuff->nStops, stops, colors, &error);
     if (!pPicture)
 	return error;
-    /* AGENT SERVER */
-
-    nxagentRenderCreateLinearGradient(pPicture, &stuff->p1, &stuff->p2,
-                                          stuff->nStops, stops, colors);
-
-    /* AGENT SERVER */
     if (!AddResource (stuff->pid, PictureType, (pointer)pPicture))
 	return BadAlloc;
     return Success;
@@ -2434,14 +2397,6 @@ static int ProcRenderCreateRadialGradient (ClientPtr client)
                                             stuff->nStops, stops, colors, &error);
     if (!pPicture)
 	return error;
-    /* AGENT SERVER */
-
-    nxagentRenderCreateRadialGradient(pPicture, &stuff->inner, &stuff->outer,
-                                          stuff->inner_radius,
-                                              stuff->outer_radius, 
-                                                  stuff->nStops, stops, colors);
-
-    /* AGENT SERVER */
     if (!AddResource (stuff->pid, PictureType, (pointer)pPicture))
 	return BadAlloc;
     return Success;
@@ -2471,13 +2426,6 @@ static int ProcRenderCreateConicalGradient (ClientPtr client)
                                              stuff->nStops, stops, colors, &error);
     if (!pPicture)
 	return error;
-    /* AGENT SERVER */
-
-    nxagentRenderCreateConicalGradient(pPicture, &stuff->center,
-                                           stuff->angle, stuff->nStops, stops,
-                                               colors);
-
-    /* AGENT SERVER */
     if (!AddResource (stuff->pid, PictureType, (pointer)pPicture))
 	return BadAlloc;
     return Success;

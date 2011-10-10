@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2009 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -104,7 +104,5 @@ void nxagentReconnectPicture(pointer p0, XID x1, void *p2);
 void nxagentDisconnectPicture(pointer p0, XID x1, void* p2);
 
 void nxagentReconnectGlyphSet(void* p0, XID x1, void *p2);
-
-void nxagentDestroyPicture(PicturePtr pPicture);
 
 #endif /* __Render_H__ */

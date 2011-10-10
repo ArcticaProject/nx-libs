@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2009 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -29,15 +29,9 @@ enum HandleEventResult
 {
   doNothing = 0,
   doMinimize,
-  doDebugTree,
   doCloseSession,
   doStartKbd,
   doSwitchFullscreen,
-  doSwitchAllScreens,
-  doViewportMoveUp,
-  doViewportMoveLeft,
-  doViewportMoveRight,
-  doViewportMoveDown,
   doViewportLeft,
   doViewportUp,
   doViewportRight,

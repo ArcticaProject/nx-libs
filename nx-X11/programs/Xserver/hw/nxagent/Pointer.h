@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2009 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -38,17 +38,8 @@ is" without express or implied warranty.
   (ButtonPressMask | ButtonReleaseMask | PointerMotionMask | \
        EnterWindowMask | LeaveWindowMask)
 
-/*
- * The nxagentReversePointerMap array is used to
- * memorize remote display pointer map.
- */
-
-extern unsigned char nxagentReversePointerMap[MAXBUTTONS];
-
 void nxagentChangePointerControl(DeviceIntPtr pDev, PtrCtrl *ctrl);
 
 int nxagentPointerProc(DeviceIntPtr pDev, int onoff);
-
-void nxagentInitPointerMap(void);
 
 #endif /* __Pointer_H__ */

@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2009 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -48,7 +48,6 @@ extern ScreenPtr nxagentDefaultScreen;
 extern Pixmap nxagentPixmapLogo;
 
 extern Window nxagentIconWindow;
-
 extern Window nxagentFullscreenWindow;
 
 extern RegionRec nxagentShadowUpdateRegion;
@@ -61,8 +60,6 @@ extern short nxagentShadowUid;
 
 void nxagentSetScreenInfo(ScreenInfo *screenInfo);
 void nxagentSetPixmapFormats(ScreenInfo *screenInfo);
-
-void nxagentPrintGeometry();
 
 extern Window nxagentDefaultWindows[MAXSCREENS];
 extern Window nxagentInputWindows[MAXSCREENS];
@@ -90,7 +87,6 @@ extern int nxagentBitsPerPixel(int depth);
 void nxagentSetScreenSaverTime(void);
 
 void nxagentMinimizeFromFullScreen(ScreenPtr pScreen);
-
 void nxagentMaximizeToFullScreen(ScreenPtr pScreen);
 
 Window nxagentCreateIconWindow(void);

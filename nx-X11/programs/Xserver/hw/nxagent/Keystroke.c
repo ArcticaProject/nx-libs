@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2009 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -92,18 +92,6 @@ int nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
   {
     switch (sym)
     {
-      #ifdef DEBUG_TREE
-
-      case XK_q:
-      case XK_Q:
-      {
-        *result = doDebugTree;
-
-        break;
-      }
-
-      #endif /* DEBUG_TREE */
-
       case XK_t:
       case XK_T:
       {
@@ -116,7 +104,7 @@ int nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
       {
         if (nxagentOption(Rootless) == False)
         {
-          *result = doSwitchAllScreens;
+          *result = doSwitchFullscreen;
         }
 
         break;
@@ -274,68 +262,6 @@ int nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
       }
 
       #endif
-    }
-  }
-  else if ((X -> state & nxagentAltMetaMask) &&
-               ((X -> state & (ControlMask | ShiftMask)) == (ControlMask |
-                   ShiftMask)))
-  {
-    switch (sym)
-    {
-      case XK_f:
-      case XK_F:
-      {
-        if (nxagentOption(Rootless) == 0)
-        {
-          *result = doSwitchFullscreen;
-        }
-
-        break;
-      }
-      case XK_Left:
-      case XK_KP_Left:
-      {
-        if (nxagentOption(Rootless) == 0 &&
-                nxagentOption(DesktopResize) == 0)
-        {
-          *result = doViewportMoveLeft;
-        }
-
-        break;
-      }
-      case XK_Up:
-      case XK_KP_Up:
-      {
-        if (nxagentOption(Rootless) == 0 &&
-                nxagentOption(DesktopResize) == 0)
-        {
-          *result = doViewportMoveUp;
-        }
-
-        break;
-      }
-      case XK_Right:
-      case XK_KP_Right:
-      {
-        if (nxagentOption(Rootless) == 0 &&
-                nxagentOption(DesktopResize) == 0)
-        {
-          *result = doViewportMoveRight;
-        }
-
-        break;
-      }
-      case XK_Down:
-      case XK_KP_Down:
-      {
-        if (nxagentOption(Rootless) == 0 &&
-                nxagentOption(DesktopResize) == 0)
-        {
-          *result = doViewportMoveDown;
-        }
-
-        break;
-      }
     }
   }
 

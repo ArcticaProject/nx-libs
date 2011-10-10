@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2009 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -562,14 +562,10 @@ int ddxProcessArgument(int argc, char *argv[], int i)
       if (!strcmp(argv[i],"fullscreen"))
       {
         nxagentChangeOption(Fullscreen, True);
-
-        nxagentChangeOption(AllScreens, True);
       }
       else if (!strcmp(argv[i],"ipaq"))
       {
         nxagentChangeOption(Fullscreen, True);
-
-        nxagentChangeOption(AllScreens, True);
 
         nxagentIpaq = True;
       }
@@ -1075,14 +1071,10 @@ static void nxagentParseOptions(char *name, char *value)
     else if (!strcmp(value, "1"))
     {
       nxagentChangeOption(Fullscreen, True);
-
-      nxagentChangeOption(AllScreens, True);
     }
     else if (!strcmp(value, "0"))
     {
       nxagentChangeOption(Fullscreen, False);
-
-      nxagentChangeOption(AllScreens, False);
     }
     else
     {
@@ -1216,7 +1208,7 @@ static void nxagentParseOptions(char *name, char *value)
     {
       nxagentChangeOption(ClientOs, ClientOsSolaris);
     }
-    else if (strcmp(value, "macosx") == 0)
+    else if (strcmp(value, "mac") == 0)
     {
       nxagentChangeOption(ClientOs, ClientOsMac);
     }
@@ -1520,7 +1512,7 @@ N/A
       int splitMode = 0;
       int splitSize = 0;
 
-      unsigned int packMethod = PACK_NONE;
+      unsigned int packMethod  = PACK_NONE;
       unsigned int packQuality = 9;
 
       int dataLevel   = 0;
@@ -1686,11 +1678,6 @@ N/A
     if (nxagentOption(Fullscreen) == UNDEFINED)
     {
       nxagentChangeOption(Fullscreen, False);
-    }
-
-    if (nxagentOption(AllScreens) == UNDEFINED)
-    {
-      nxagentChangeOption(AllScreens, False);
     }
 
     if (nxagentOption(Binder) == UNDEFINED)

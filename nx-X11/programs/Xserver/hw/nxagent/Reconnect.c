@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2009 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -80,8 +80,6 @@ extern Bool nxagentInstallFontServerPath(void);
 extern Bool nxagentUninstallFontServerPath(void);
 
 extern void nxagentRemoveXConnection(void);
-
-extern void nxagentInitPointerMap(void);
 
 static char *nxagentGetReconnectError(void);
 
@@ -585,8 +583,6 @@ Bool nxagentReconnectSession(void)
 
     nxagentOldKeyboard = NULL;
   }
-
-  nxagentInitPointerMap();
 
   nxagentDeactivatePointerGrab();
 

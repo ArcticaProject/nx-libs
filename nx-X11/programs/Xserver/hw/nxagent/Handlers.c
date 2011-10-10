@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2009 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -527,8 +527,7 @@ void nxagentBlockHandler(pointer data, struct timeval **timeout, pointer mask)
                 synchronize, nxagentReady);
     #endif
 
-    if (NXDisplayError(nxagentDisplay) == 0 &&
-            nxagentQueuedEvents(nxagentDisplay) > 0)
+    if (nxagentQueuedEvents(nxagentDisplay) > 0)
     {
       #ifdef WARNING
       fprintf(stderr, "nxagentBlockHandler: WARNING! Forcing a null timeout with events queued.\n");

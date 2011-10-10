@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2009 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -626,7 +626,6 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
     XlibAtom *atoms = malloc(nUnits * sizeof(*atoms));
     Atom *input = value;
     int i;
-    int j = 0;
 
     freeMem = True;
     export = True;
@@ -634,40 +633,16 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
 
     for (i = 0; i < nUnits; i++)
     {
-      /*
-       * Exporting the _NET_WM_PING property could
-       * result in rootless windows being grayed out
-       * when the compiz window manager is running.
-       *
-       * Better solution would probably be to handle
-       * the communication with the window manager
-       * instead of just getting rid of the property.
-       */
+       atoms[i] = nxagentLocalToRemoteAtom(input[i]);
 
-      if (strcmp(NameForAtom(input[i]), "_NET_WM_PING") != 0)
-      {
-        atoms[j] = nxagentLocalToRemoteAtom(input[i]);
-
-        if (atoms[j] == None)
-        {
-          #ifdef WARNING
-          fprintf(stderr, "nxagentExportProperty: WARNING! Failed to convert local atom %ld [%s].\n",
-                      (long int) input[i], validateString(NameForAtom(input[i])));
-          #endif
-        }
-
-        j++;
-      }
-      #ifdef TEST
-      else
-      {
-        fprintf(stderr, "nxagentExportProperty: WARNING! "
-                    "Not exporting the _NET_WM_PING property.\n");
-      }
-      #endif
+       if (atoms[i] == None)
+       {
+         #ifdef WARNING
+         fprintf(stderr, "nxagentExportProperty: WARNING! Failed to convert local atom %ld [%s].\n",
+                     (long int) input[i], validateString(NameForAtom(input[i])));
+         #endif
+       }
     }
-
-    nUnits = j;
   }
   else if (strcmp(typeS, "WINDOW") == 0)
   {
@@ -725,57 +700,7 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
     }
     else
     {
-      #ifdef TEST
-      fprintf(stderr, "nxagentExportProperty: Property [%lu] format [%i] "
-                  "units [%lu].\n", propertyX, format, nUnits);
-      #endif
-
-      if ((format >> 3) * nUnits + sizeof(xChangePropertyReq) <
-              (MAX_REQUEST_SIZE << 2))
-      {
-        XChangeProperty(nxagentDisplay, nxagentWindow(pWin), propertyX, typeX,
-                            format, mode, (void*)output, nUnits);
-      }
-      else if (mode == PropModeReplace)
-      {
-        int n;
-        char *data;
-
-        XDeleteProperty(nxagentDisplay, nxagentWindow(pWin), propertyX);
-
-        data = (char *) output;
-
-        while (nUnits > 0)
-        {
-          if ((format >> 3) * nUnits + sizeof(xChangePropertyReq) <
-                  (MAX_REQUEST_SIZE << 2))
-          {
-            n = nUnits;
-          }
-          else
-          {
-            n = ((MAX_REQUEST_SIZE << 2) - sizeof(xChangePropertyReq)) /
-                    (format >> 3);
-          }
-
-          XChangeProperty(nxagentDisplay, nxagentWindow(pWin), propertyX,
-                              typeX, format, PropModeAppend, (void*) data, n);
-
-          nUnits -= n;
-
-          data = (char *) data + n * (format >> 3);
-        }
-      }
-      else
-      {
-        #ifdef WARNING
-        fprintf(stderr, "nxagentExportProperty: WARNING! "
-                    "Property [%lu] too long.\n", propertyX);
-        #endif
-
-        goto nxagentExportPropertyError;
-      }
-
+      XChangeProperty(nxagentDisplay, nxagentWindow(pWin), propertyX, typeX, format, mode, (void*)output, nUnits);
       nxagentAddPropertyToList(propertyX, pWin);
     }
   }
@@ -789,8 +714,6 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
                             nUnits, format);
     #endif
   }
-
-  nxagentExportPropertyError:
 
   if (freeMem)
   {

@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2009 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -146,6 +146,8 @@ void nxagentCursorPostSaveRenderInfo(CursorPtr pCursor, ScreenPtr pScreen,
                                          PicturePtr pPicture, int x, int y);
 
 int nxagentCreatePicture(PicturePtr pPicture, Mask mask);
+
+void nxagentDestroyPicture(PicturePtr pPicture);
 
 int nxagentChangePictureClip(PicturePtr pPicture, int clipType, int nRects,
                                  xRectangle *rects, int xOrigin, int yOrigin);
@@ -584,15 +586,15 @@ XRenderPictFormat *nxagentMatchingFormats(PictFormatPtr pFormat)
 
 void nxagentDestroyPicture(PicturePtr pPicture)
 {
-  if (pPicture == NULL || nxagentPicturePriv(pPicture) -> picture == 0)
-  {
-    return;
-  }
-
   #ifdef TEST
   fprintf(stderr, "nxagentDestroyPicture: Going to destroy picture at [%p].\n",
               (void *) pPicture);
   #endif
+
+  if (pPicture == NULL)
+  {
+    return;
+  }
 
   XRenderFreePicture(nxagentDisplay,
                      nxagentPicturePriv(pPicture) -> picture);
@@ -1008,15 +1010,12 @@ void nxagentComposite(CARD8 op, PicturePtr pSrc, PicturePtr pMask, PicturePtr pD
 
   #ifdef DEBUG
 
-  if (pSrc -> pDrawable != NULL)
-  {
-    fprintf(stderr, "nxagentComposite: Source Picture [%lu][%p] with drawable [%s%s][%p].\n",
-                nxagentPicturePriv(pSrc) -> picture, (void *) pSrc,
-                (pSrc -> pDrawable -> type == DRAWABLE_PIXMAP &&
-                     nxagentIsShmPixmap((PixmapPtr) pSrc -> pDrawable)) ? "Shared " : "",
-                         pSrc -> pDrawable -> type == DRAWABLE_PIXMAP ? "Pixmap" : "Window",
-                             (void *) pSrc -> pDrawable);
-  }
+  fprintf(stderr, "nxagentComposite: Source Picture [%lu][%p] with drawable [%s%s][%p].\n",
+              nxagentPicturePriv(pSrc) -> picture, (void *) pSrc,
+              (pSrc -> pDrawable -> type == DRAWABLE_PIXMAP &&
+                   nxagentIsShmPixmap((PixmapPtr) pSrc -> pDrawable)) ? "Shared " : "",
+                       pSrc -> pDrawable -> type == DRAWABLE_PIXMAP ? "Pixmap" : "Window",
+                           (void *) pSrc -> pDrawable);
 
   fprintf(stderr, "nxagentComposite: Destination Picture [%lu][%p] with drawable [%s%s][%p].\n",
               nxagentPicturePriv(pDst) -> picture, (void *) pDst,
@@ -1065,19 +1064,16 @@ void nxagentComposite(CARD8 op, PicturePtr pSrc, PicturePtr pMask, PicturePtr pD
    * the wrong data.
    */
 
-  if (pSrc -> pDrawable != NULL)
+  nxagentSynchronizeShmPixmap(pSrc -> pDrawable, xSrc, ySrc, width, height);
+
+  if (nxagentDrawableStatus(pSrc -> pDrawable) == NotSynchronized)
   {
-    nxagentSynchronizeShmPixmap(pSrc -> pDrawable, xSrc, ySrc, width, height);
+    #ifdef TEST
+    fprintf(stderr, "nxagentComposite: Synchronizing the source drawable [%p].\n",
+                (void *) pSrc -> pDrawable);
+    #endif
 
-    if (nxagentDrawableStatus(pSrc -> pDrawable) == NotSynchronized)
-    {
-      #ifdef TEST
-      fprintf(stderr, "nxagentComposite: Synchronizing the source drawable [%p].\n",
-                  (void *) pSrc -> pDrawable);
-      #endif
-
-      nxagentSynchronizeDrawable(pSrc -> pDrawable, DO_WAIT, NEVER_BREAK, NULL);
-    }
+    nxagentSynchronizeDrawable(pSrc -> pDrawable, DO_WAIT, NEVER_BREAK, NULL);
   }
 
   if (pDst -> pDrawable != pSrc -> pDrawable)
@@ -2813,250 +2809,5 @@ Bool nxagentDisconnectAllPicture()
   }
 
   return True;
-}
-
-void nxagentRenderCreateSolidFill(PicturePtr pPicture, xRenderColor *color)
-{
-  Picture id;
-
-  if (nxagentRenderEnable == False)
-  {
-    return;
-  }
-
-  #ifdef DEBUG
-
-  fprintf(stderr, "nxagentRenderCreateSolidFill: Got called.\n");
-
-  if (pPicture == NULL)
-  {
-    fprintf(stderr, "nxagentRenderCreateSolidFill: WARNING! pPicture pointer is NULL.\n");
-  }
-
-  if (color == NULL)
-  {
-    fprintf(stderr, "nxagentRenderCreateSolidFill: WARNING! color pointer is NULL.\n");
-  }
-
-  #endif /* #ifdef DEBUG */
-
-  memset(&(nxagentPicturePriv(pPicture) -> lastServerValues), 0,
-             sizeof(XRenderPictureAttributes_));
-
-  id = XRenderCreateSolidFill(nxagentDisplay, (XRenderColor *) color);
-
-  #ifdef DEBUG
-  XSync(nxagentDisplay, 0);
-  #endif
-
-  #ifdef TEST
-  fprintf(stderr, "nxagentRenderCreateSolidFill: Created solid fill xid [%lu].\n", id);
-  #endif
-
-  nxagentPicturePriv(pPicture) -> picture = id;
-}
-
-void nxagentRenderCreateLinearGradient(PicturePtr pPicture, xPointFixed *p1,
-                                           xPointFixed *p2, int nStops,
-                                               xFixed *stops,
-                                                   xRenderColor *colors)
-{
-  Picture id;
-
-  XLinearGradient linearGradient;
-
-  if (nxagentRenderEnable == False)
-  {
-    return;
-  }
-
-  #ifdef DEBUG
-
-  fprintf(stderr, "nxagentRenderCreateLinearGradient: Got called.\n");
-
-  if (pPicture == NULL)
-  {
-    fprintf(stderr, "nxagentRenderCreateLinearGradient: WARNING! pPicture pointer is NULL.\n");
-  }
-
-  if (p1 == NULL)
-  {
-    fprintf(stderr, "nxagentRenderCreateLinearGradient: WARNING! p1 pointer is NULL.\n");
-  }
-
-  if (p2 == NULL)
-  {
-    fprintf(stderr, "nxagentRenderCreateLinearGradient: WARNING! p2 pointer is NULL.\n");
-  }
-
-  if (stops == NULL)
-  {
-    fprintf(stderr, "nxagentRenderCreateLinearGradient: WARNING! stops pointer is NULL.\n");
-  }
-
-  if (colors == NULL)
-  {
-    fprintf(stderr, "nxagentRenderCreateLinearGradient: WARNING! colors pointer is NULL.\n");
-  }
-
-  #endif /* #ifdef DEBUG */
-
-  memset(&(nxagentPicturePriv(pPicture) -> lastServerValues), 0,
-             sizeof(XRenderPictureAttributes_));
-
-  linearGradient.p1.x = (XFixed) p1 -> x;
-  linearGradient.p1.y = (XFixed) p1 -> y;
-  linearGradient.p2.x = (XFixed) p2 -> x;
-  linearGradient.p2.y = (XFixed) p2 -> y;
-
-  id = XRenderCreateLinearGradient(nxagentDisplay, &linearGradient,
-                                      (XFixed *) stops,
-                                          (XRenderColor *) colors, nStops);
-
-  #ifdef DEBUG
-  XSync(nxagentDisplay, 0);
-  #endif
-
-  #ifdef TEST
-  fprintf(stderr, "nxagentRenderCreateLinearGradient: Created linear gradient xid [%lu].\n", id);
-  #endif
-
-  nxagentPicturePriv(pPicture) -> picture = id;
-}
-
-void nxagentRenderCreateRadialGradient(PicturePtr pPicture, xPointFixed *inner,
-                                           xPointFixed *outer,
-                                               xFixed innerRadius,
-                                                   xFixed outerRadius,
-                                                       int nStops,
-                                                           xFixed *stops,
-                                                               xRenderColor *colors)
-{
-  Picture id;
-
-  XRadialGradient radialGradient;
-
-  if (nxagentRenderEnable == False)
-  {
-    return;
-  }
-
-  #ifdef DEBUG
-
-  fprintf(stderr, "nxagentRenderCreateRadialGradient: Got called.\n");
-
-  if (pPicture == NULL)
-  {
-    fprintf(stderr, "nxagentRenderCreateRadialGradient: WARNING! pPicture pointer is NULL.\n");
-  }
-
-  if (inner == NULL)
-  {
-    fprintf(stderr, "nxagentRenderCreateRadialGradient: WARNING! inner pointer is NULL.\n");
-  }
-
-  if (outer == NULL)
-  {
-    fprintf(stderr, "nxagentRenderCreateRadialGradient: WARNING! outer pointer is NULL.\n");
-  }
-
-  if (stops == NULL)
-  {
-    fprintf(stderr, "nxagentRenderCreateRadialGradient: WARNING! stops pointer is NULL.\n");
-  }
-
-  if (colors == NULL)
-  {
-    fprintf(stderr, "nxagentRenderCreateRadialGradient: WARNING! colors pointer is NULL.\n");
-  }
-
-  #endif /* #ifdef DEBUG */
-
-  memset(&(nxagentPicturePriv(pPicture) -> lastServerValues), 0,
-               sizeof(XRenderPictureAttributes_));
-
-  radialGradient.inner.x = (XFixed) inner -> x;
-  radialGradient.inner.y = (XFixed) inner -> y;
-  radialGradient.inner.radius = (XFixed) innerRadius;
-  radialGradient.outer.x = (XFixed) outer -> x;
-  radialGradient.outer.y = (XFixed) outer -> y;
-  radialGradient.outer.radius = (XFixed) outerRadius;
-
-  id = XRenderCreateRadialGradient(nxagentDisplay, &radialGradient,
-                                       (XFixed *) stops,
-                                           (XRenderColor *) colors, nStops);
-
-  #ifdef DEBUG
-  XSync(nxagentDisplay, 0);
-  #endif
-
-  #ifdef TEST
-  fprintf(stderr, "nxagentRenderCreateRadialGradient: Created radial gradient xid [%lu].\n", id);
-  #endif
-
-  nxagentPicturePriv(pPicture) -> picture = id;
-}
-
-void nxagentRenderCreateConicalGradient(PicturePtr pPicture,
-                                            xPointFixed *center,
-                                                xFixed angle, int nStops, 
-                                                    xFixed *stops, 
-                                                        xRenderColor *colors)
-{
-  Picture id;
-
-  XConicalGradient conicalGradient;
-
-  if (nxagentRenderEnable == False)
-  {
-    return;
-  }
-
-  #ifdef DEBUG
-
-  fprintf(stderr, "nxagentRenderCreateConicalGradient: Got called.\n");
-
-  if (pPicture == NULL)
-  {
-    fprintf(stderr, "nxagentRenderCreateConicalGradient: WARNING! pPicture pointer is NULL.\n");
-  }
-
-  if (center == NULL)
-  {
-    fprintf(stderr, "nxagentRenderCreateConicalGradient: WARNING! center pointer is NULL.\n");
-  }
-
-  if (stops == NULL)
-  {
-    fprintf(stderr, "nxagentRenderCreateConicalGradient: WARNING! stops pointer is NULL.\n");
-  }
-
-  if (colors == NULL)
-  {
-    fprintf(stderr, "nxagentRenderCreateConicalGradient: WARNING! colors pointer is NULL.\n");
-  }
-
-  #endif /* #ifdef DEBUG */
-
-  memset(&(nxagentPicturePriv(pPicture) -> lastServerValues), 0,
-             sizeof(XRenderPictureAttributes_));
-
-  conicalGradient.center.x = (XFixed) center -> x;
-  conicalGradient.center.y = (XFixed) center -> y;
-  conicalGradient.angle = (XFixed) angle;
-
-  id = XRenderCreateConicalGradient(nxagentDisplay, &conicalGradient,
-                                        (XFixed *) stops,
-                                            (XRenderColor *) colors, nStops);
-
-  #ifdef DEBUG
-  XSync(nxagentDisplay, 0);
-  #endif
-
-  #ifdef TEST
-  fprintf(stderr, "nxagentRenderCreateConicalGradient: Created conical gradient xid [%lu].\n", id);
-  #endif
-
-  nxagentPicturePriv(pPicture) -> picture = id;
 }
 

@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2009 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -692,73 +692,6 @@ void nxagentRestackWindow(WindowPtr pWin, WindowPtr pOldNextSib)
 
 void nxagentSwitchFullscreen(ScreenPtr pScreen, Bool switchOn)
 {
-  XEvent e;
-
-  if (nxagentOption(Rootless) == 1)
-  {
-    return;
-  }
-
-  if (switchOn == 0)
-  {
-    nxagentWMDetect();
-
-    /*
-     * The smart scheduler could be stopped while
-     * waiting for the reply. In this case we need
-     * to yield explicitly to avoid to be stuck in
-     * the dispatch loop forever.
-     */
-
-    isItTimeToYield = 1;
-
-    if (nxagentWMIsRunning == 0)
-    {
-      #ifdef WARNING
-      fprintf(stderr, "Warning: Can't switch to window mode, no window manager "
-                  "has been detected.\n");
-      #endif
-
-      return;
-    }
-  }
-
-  #ifdef TEST
-  fprintf(stderr, "nxagentSwitchFullscreen: Switching to %s mode.\n",
-              switchOn ? "fullscreen" : "windowed");
-  #endif
-
-  nxagentChangeOption(Fullscreen, switchOn);
-
-  memset(&e, 0, sizeof(e));
-
-  e.xclient.type = ClientMessage;
-  e.xclient.message_type = nxagentAtoms[13]; /* _NET_WM_STATE */
-  e.xclient.display = nxagentDisplay;
-  e.xclient.window = nxagentDefaultWindows[pScreen -> myNum];
-  e.xclient.format = 32;
-  e.xclient.data.l[0] = nxagentOption(Fullscreen) ? 1 : 0;
-  e.xclient.data.l[1] = nxagentAtoms[14]; /* _NET_WM_STATE_FULLSCREEN */
-
-  XSendEvent(nxagentDisplay, DefaultRootWindow(nxagentDisplay), False,
-                 SubstructureRedirectMask, &e);
-
-  if (switchOn == 1)
-  {
-    nxagentFullscreenWindow = nxagentDefaultWindows[pScreen -> myNum];
-
-    nxagentGrabPointerAndKeyboard(NULL);
-  }
-  else
-  {
-    nxagentFullscreenWindow = None;
-
-    nxagentUngrabPointerAndKeyboard(NULL);
-  } 
-}
-
-void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
-{
   Window w;
   XSetWindowAttributes attributes;
   unsigned long valuemask;
@@ -788,8 +721,6 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
   XUnmapWindow(nxagentDisplay, w);
   XChangeWindowAttributes(nxagentDisplay, w, valuemask, &attributes);
 
-  XReparentWindow(nxagentDisplay, w, DefaultRootWindow(nxagentDisplay), 0, 0);
-
   if (switchOn)
   {
     /*
@@ -807,7 +738,7 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
     for (i = 0; i < 100 && nxagentWMIsRunning; i++)
     {
       #ifdef TEST
-      fprintf(stderr, "nxagentSwitchAllScreens: WARNING! Going to wait for the ReparentNotify event.\n");
+      fprintf(stderr, "nxagentSwitchFullscreen: WARNING! Going to wait for the ReparentNotify event.\n");
       #endif
 
       if (XCheckTypedWindowEvent(nxagentDisplay, w, ReparentNotify, &e))
@@ -836,8 +767,6 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
        */
 
       nxagentChangeOption(Fullscreen, True);
-      nxagentChangeOption(AllScreens, True);
-      
 
       /*
        * Save the window-mode configuration.
@@ -916,9 +845,9 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
        */
 
       #ifdef WARNING
-      fprintf(stderr, "nxagentSwitchAllScreens: WARNING! Expected ReparentNotify event missing.\n");
+      fprintf(stderr, "nxagentSwitchFullscreen: WARNING! Expected ReparentNotify event missing.\n");
       #endif
- 
+
       nxagentWMIsRunning = False;
       attributes.override_redirect = False;
       XChangeWindowAttributes(nxagentDisplay, w, valuemask, &attributes);
@@ -932,6 +861,7 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
      * It could be necessary:
      * - To restore screensaver.
      * - To set or reset nxagentForceBackingStore flag.
+     * - To grab keyboard.
      * - To propagate device settings to the X server if no WM is running.
      */
 
@@ -940,10 +870,7 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
      */
 
     nxagentChangeOption(Fullscreen, False);
-    nxagentChangeOption(AllScreens, False);
-
     XDestroyWindow(nxagentDisplay, nxagentIconWindow);
-
     nxagentIconWindow = nxagentFullscreenWindow = None;
 
     if (nxagentOption(DesktopResize) == 1)
@@ -957,19 +884,8 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
       }
     }
 
-    if (nxagentOption(WMBorderWidth) > 0 && nxagentOption(WMTitleHeight) > 0)
-    {
-      nxagentChangeOption(X, nxagentOption(SavedX) -
-                              nxagentOption(WMBorderWidth));
-      nxagentChangeOption(Y, nxagentOption(SavedY) -
-                              nxagentOption(WMTitleHeight));
-    }
-    else
-    {
-      nxagentChangeOption(X, nxagentOption(SavedX));
-      nxagentChangeOption(Y, nxagentOption(SavedY));
-    }
-
+    nxagentChangeOption(X, nxagentOption(SavedX));
+    nxagentChangeOption(Y, nxagentOption(SavedY));
     nxagentChangeOption(Width, nxagentOption(SavedWidth));
     nxagentChangeOption(Height, nxagentOption(SavedHeight));
 
@@ -993,7 +909,7 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
   XMoveResizeWindow(nxagentDisplay, nxagentInputWindows[0], 0, 0,
                         nxagentOption(Width), nxagentOption(Height));
 
-  nxagentSetPrintGeometry(pScreen -> myNum); 
+  nxagentSetPrintGeometry(pScreen -> myNum);
 }
 
 #ifdef VIEWPORT_FRAME
@@ -2495,11 +2411,6 @@ void nxagentMapDefaultWindows()
         #endif
 
         XMapWindow(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum]);
-
-        if (nxagentOption(Fullscreen) == 1 && nxagentWMIsRunning == 1)
-        {
-          nxagentMaximizeToFullScreen(pScreen);
-        }
       }
 
       /*
@@ -2986,13 +2897,6 @@ FIXME: Do we need to set save unders attribute here?
       XSizeHints *props, hints;
       unsigned char *data = NULL;
 
-      #ifdef _XSERVER64
-
-      unsigned char *data64 = NULL;
-      unsigned int i;
-
-      #endif
-
       hints.flags = 0;
 
       ret = GetWindowProperty(pWin,
@@ -3001,13 +2905,10 @@ FIXME: Do we need to set save unders attribute here?
                                           False, XA_WM_SIZE_HINTS,
                                               &type, &format, &nItems, &bytesLeft, &data);
 
-      /*
-       * 72 is the number of bytes returned by
-       * sizeof(XSizeHints) on 32 bit platforms.
-       */
+      props = (XSizeHints*) data;
 
       if (ret == Success &&
-              ((format >> 3) * nItems) == 72 &&
+              ((format >> 3) * nItems) == sizeof(XSizeHints) &&
                   bytesLeft == 0 &&
                       type == XA_WM_SIZE_HINTS)
       {
@@ -3015,30 +2916,6 @@ FIXME: Do we need to set save unders attribute here?
         fprintf(stderr, "nxagentReconnectWindow: setting WMSizeHints on window %p [%lx - %lx].\n",
                     (void*)pWin, pWin -> drawable.id, nxagentWindow(pWin));
         #endif
-
-        #ifdef _XSERVER64
-
-        data64 = (unsigned char *) malloc(sizeof(XSizeHints) + 4);
-
-        for (i = 0; i < 4; i++)
-        {
-          *(data64 + i) = *(data + i);
-        }
-
-        *(((int *) data64) + 1) = 0;
-
-        for (i = 8; i < sizeof(XSizeHints) + 4; i++)
-        {
-          *(data64 + i) = *(data + i - 4);
-        }
-
-        props = (XSizeHints *) data64;
-
-        #else
-
-        props = (XSizeHints *) data;
-
-        #endif   /* _XSERVER64 */
 
         hints = *props;
       }
@@ -3058,15 +2935,6 @@ FIXME: Do we need to set save unders attribute here?
       XSetWMNormalHints(nxagentDisplay,
                            nxagentWindow(pWin),
                               &hints);
-
-      #ifdef _XSERVER64
-
-      if (data64 != NULL)
-      {
-        free(data64);
-      }
-
-      #endif
     }
   }
 

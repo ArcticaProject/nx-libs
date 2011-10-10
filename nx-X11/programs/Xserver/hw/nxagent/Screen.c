@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2009 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -292,7 +292,7 @@ void nxagentMinimizeFromFullScreen(ScreenPtr pScreen)
 {
   XUnmapWindow(nxagentDisplay, nxagentFullscreenWindow);
 
-  if (nxagentIpaq)
+  if(nxagentIpaq)
   {
     XMapWindow(nxagentDisplay, nxagentIconWindow);
     XIconifyWindow(nxagentDisplay, nxagentIconWindow,
@@ -307,7 +307,7 @@ void nxagentMinimizeFromFullScreen(ScreenPtr pScreen)
 
 void nxagentMaximizeToFullScreen(ScreenPtr pScreen)
 {
-  if (nxagentIpaq)
+  if(nxagentIpaq)
   {
     XUnmapWindow(nxagentDisplay, nxagentIconWindow);
 
@@ -334,7 +334,7 @@ FIXME: We'll chech for ReparentNotify and LeaveNotify events after XReparentWind
     for (i = 0; i < 100 && nxagentWMIsRunning; i++)
     {
       #ifdef TEST
-      fprintf(stderr, "nxagentMaximizeToFullscreen: WARNING! Going to wait for the ReparentNotify event.\n");
+      fprintf(stderr, "nxagentSwitchFullscreen: WARNING! Going to wait for the ReparentNotify event.\n");
       #endif
 
       if (XCheckTypedWindowEvent(nxagentDisplay, nxagentFullscreenWindow, ReparentNotify, &e))
@@ -977,10 +977,6 @@ Bool nxagentOpenScreen(int index, ScreenPtr pScreen,
 
     nxagentChangeOption(Fullscreen, False);
 
-    nxagentChangeOption(AllScreens, False);
-
-    nxagentFullscreenWindow = 0;
-
     resetAgentPosition = True;
   }
 
@@ -1384,13 +1380,10 @@ N/A
       nxagentChangeOption(Height, gattributes.height);
     }
 
-    if (nxagentOption(AllScreens))
-    {
-      attributes.override_redirect = True; 
-    }
-
     if (nxagentOption(Fullscreen))
     {
+      attributes.override_redirect = True;
+
       /*
        * We need to disable the host's screensaver or
        * it will otherwise grab the screen even if it
@@ -1617,7 +1610,7 @@ N/A
           nxagentReconnectTrap == 1)
   {
     valuemask = CWBackPixel | CWEventMask | CWColormap |
-                    (nxagentOption(AllScreens) == 1 ? CWOverrideRedirect : 0);
+                    (nxagentOption(Fullscreen) == 1 ? CWOverrideRedirect : 0);
 
     attributes.background_pixel = nxagentBlackPixel;
 
@@ -1625,13 +1618,10 @@ N/A
 
     attributes.colormap = nxagentDefaultVisualColormap(nxagentDefaultVisual(pScreen));
 
-    if (nxagentOption(AllScreens) == 1)
-    {
-      attributes.override_redirect = True;
-    }
-
     if (nxagentOption(Fullscreen) == 1)
     {
+      attributes.override_redirect = True;
+
       if (nxagentReconnectTrap)
       {
         /*
@@ -1764,7 +1754,7 @@ N/A
     sizeHints.width = nxagentOption(RootWidth);
     sizeHints.height = nxagentOption(RootHeight);
 
-    if (nxagentOption(DesktopResize) == 1 || nxagentOption(Fullscreen) == 1)
+    if (nxagentOption(DesktopResize) == 1)
     {
       sizeHints.max_width = WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
       sizeHints.max_height = HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
@@ -1809,14 +1799,30 @@ N/A
 
     XClearWindow(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum]);
 
-    if (nxagentOption(AllScreens))
+    if (nxagentOption(Fullscreen))
     {
+      valuemask = CWBackPixmap | CWColormap | CWOverrideRedirect;
+    }
+    else
+    {
+      valuemask = CWBackPixmap | CWColormap;
+    }
+
+    attributes.background_pixmap = nxagentScreenSaverPixmap;
+    attributes.colormap = DefaultColormap(nxagentDisplay, DefaultScreen(nxagentDisplay));
+
+    if (nxagentOption(Fullscreen))
+    {
+      attributes.override_redirect = False;
       if (nxagentReconnectTrap)
       {
         XGrabKeyboard(nxagentDisplay, nxagentFullscreenWindow, True, GrabModeAsync,
                       GrabModeAsync, CurrentTime);
       }
+    }
 
+    if (nxagentOption(Fullscreen))
+    {
       nxagentIconWindow = nxagentCreateIconWindow();
     }
     else
@@ -1874,6 +1880,13 @@ N/A
        */
 
       XSetWMProtocols(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], &deleteWMatom, 1);
+
+      /*
+      if (nxagentOption(Fullscreen))
+      {
+        XSetWMProtocols(nxagentDisplay, nxagentIconWindow, &deleteWMatom, 1);
+      }
+      */
     }
     else
     {
@@ -2172,6 +2185,8 @@ Bool nxagentResizeScreen(ScreenPtr pScreen, int width, int height,
   int oldMmWidth;
   int oldMmHeight;
 
+  RegionPtr pRootWinSize;
+
   #ifdef TEST
   nxagentPrintAgentGeometry("Before Resize Screen", "nxagentResizeScreen:");
   #endif
@@ -2251,10 +2266,13 @@ FIXME: We should try to restore the previously
 
   if (nxagentOption(Fullscreen))
   {
-    nxagentChangeOption(RootX, (nxagentOption(Width) -
-                            nxagentOption(RootWidth)) / 2);
-    nxagentChangeOption(RootY, (nxagentOption(Height) -
-                            nxagentOption(RootHeight)) / 2);
+    nxagentChangeOption(Width, WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay)));
+    nxagentChangeOption(Height, HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay)));
+
+    nxagentChangeOption(RootX, (WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay))
+                            - nxagentOption(RootWidth)) / 2);
+    nxagentChangeOption(RootY,  (HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay))
+                            - nxagentOption(RootHeight)) / 2);
   }
   else
   {
@@ -2264,6 +2282,62 @@ FIXME: We should try to restore the previously
 
   nxagentChangeOption(ViewportXSpan, nxagentOption(Width) - nxagentOption(RootWidth));
   nxagentChangeOption(ViewportYSpan, nxagentOption(Height) - nxagentOption(RootHeight));
+
+  /*
+   * Change agent window size and size hints.
+   */
+
+  sizeHints.flags = PPosition | PMinSize | PMaxSize;
+  sizeHints.x = nxagentOption(X);
+  sizeHints.y = nxagentOption(Y);
+
+  sizeHints.min_width = MIN_NXAGENT_WIDTH;
+  sizeHints.min_height = MIN_NXAGENT_HEIGHT;
+  sizeHints.width = width;
+  sizeHints.height = height;
+
+  if (nxagentOption(DesktopResize) == 1)
+  {
+    sizeHints.max_width = WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
+    sizeHints.max_height = HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
+  }
+  else
+  {
+    sizeHints.max_width = nxagentOption(RootWidth);
+    sizeHints.max_height = nxagentOption(RootHeight);
+  }
+
+  if (nxagentUserGeometry.flag & XValue || nxagentUserGeometry.flag & YValue)
+  {
+    sizeHints.flags |= USPosition;
+  }
+
+  if (nxagentUserGeometry.flag & WidthValue || nxagentUserGeometry.flag & HeightValue)
+  {
+    sizeHints.flags |= USSize;
+  }
+
+  XSetWMNormalHints(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], &sizeHints);
+
+  if (nxagentOption(Fullscreen))
+  {
+    XResizeWindow(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum],
+                      WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay)),
+                          HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay)));
+
+    XResizeWindow(nxagentDisplay, nxagentInputWindows[pScreen -> myNum],
+                      WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay)),
+                          HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay)));
+  }
+  else
+  {
+    XResizeWindow(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], width, height);
+
+    if (nxagentOption(Rootless) == 0)
+    {
+      XResizeWindow(nxagentDisplay, nxagentInputWindows[pScreen -> myNum], width, height);
+    }
+  }
 
   /*
    * Set properties for the agent root window.
@@ -2286,18 +2360,14 @@ FIXME: We should try to restore the previously
 
   (*pScreen -> PositionWindow)(WindowTable[pScreen -> myNum], 0, 0);
 
+  pRootWinSize = &WindowTable[pScreen -> myNum] -> winSize;
+
   nxagentSetRootClip(pScreen, 1);
 
   XMoveWindow(nxagentDisplay, nxagentWindow(WindowTable[0]),
                   nxagentOption(RootX), nxagentOption(RootY));
 
   nxagentMoveViewport(pScreen, 0, 0);
-
-  /*
-   * Update pointer bounds.
-   */
-
-  ScreenRestructured(pScreen);
 
   #ifdef TEST
   nxagentPrintAgentGeometry("After Resize Screen", "nxagentResizeScreen:");

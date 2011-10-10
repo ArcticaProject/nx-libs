@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2009 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -193,7 +193,7 @@ void InitOutput(ScreenInfo *screenInfo, int argc, char *argv[])
   if (serverGeneration <= 1)
   {
     fprintf(stderr, "\nNXAGENT - Version " NXAGENT_VERSION "\n\n");
-    fprintf(stderr, "Copyright (C) 2001, 2010 NoMachine.\n");
+    fprintf(stderr, "Copyright (C) 2001, 2007 NoMachine.\n");
     fprintf(stderr, "See http://www.nomachine.com/ for more information.\n\n");
 
     fprintf(stderr, "Info: Agent running with pid '%d'.\n", getpid());
