@@ -1,5 +1,9 @@
 ChangeLog:
 
+nx-X11-3.3.0-4
+
+- Enabled the code resetting the Xlib buffer if an IO error occured.
+
 nx-X11-3.3.0-3
 
 - Fixed the search path for the XKB base directory.

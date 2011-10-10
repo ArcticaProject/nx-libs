@@ -1840,7 +1840,7 @@ _XSend (
         int congestion;
 #endif
 
-#ifdef AGENT_SERVER
+#ifdef NX_TRANS_SOCKET
         if (!size || (dpy->flags & XlibDisplayIOError))
         {
             if (dpy->flags & XlibDisplayIOError)
