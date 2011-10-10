@@ -43,7 +43,7 @@
 # endif
 #endif
     
-#ifdef NXAGENT_SERVER
+#ifdef NX_TRANS_SOCKET
 
 #define PANIC
 #define WARNING

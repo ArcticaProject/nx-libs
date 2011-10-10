@@ -1,5 +1,16 @@
 ChangeLog:
 
+nx-X11-3.3.0-7
+
+- Fixed TR08G02257. The maximum client condition was reached because
+  available fd exhausted. This bug was caused by a function in font
+  library not closing the file before a return on error breaking the
+  flow of normal execution.
+
+- Fixed TR06G02225. The implementation of Xvprintf() has been reviewed
+  to work on more platforms. Previous implementation caused a failure
+  in the build of keyboard map on some platform like Solaris 8 and 9.
+
 nx-X11-3.3.0-6
 
 - Fixed TR03G02198. Reimplemented Xvprintf() in Xserver/os to handle
