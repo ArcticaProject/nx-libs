@@ -1,5 +1,13 @@
 ChangeLog:
 
+nxauth-3.2.0-1
+
+- Opened the 3.2.0 branch based on nxauth-3.1.0-2.
+
+nxauth-3.1.0-2
+
+- Added support for launchd socket.
+
 nxauth-3.1.0-1
 
 - Opened the 3.1.0 branch based on nxauth-3.0.0-6.
