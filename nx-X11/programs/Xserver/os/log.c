@@ -80,7 +80,7 @@ OR PERFORMANCE OF THIS SOFTWARE.
 
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NX-X11, NX protocol compression and NX extensions to this software     */
 /* are copyright of NoMachine. Redistribution and use of the present      */

@@ -1,5 +1,11 @@
 ChangeLog:
 
+nx-X11-3.5.0-1
+
+- Opened the 3.5.0 branch based on nx-X11-3.4.0-4.
+
+- Updated copyright to year 2011.
+
 nx-X11-3.4.0-4
 
 - Fixed TR06H02359. Removed compiler warnings.

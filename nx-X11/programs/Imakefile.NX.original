@@ -5,7 +5,7 @@ XCOMM $Xorg: Imakefile,v 1.4 2000/08/17 19:47:01 cpqbld Exp $
 XCOMM $XFree86: xc/programs/Imakefile,v 3.54 2003/04/14 20:37:16 herrb Exp $
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NX-X11, NX protocol compression and NX extensions to this software     */
 /* are copyright of NoMachine. Redistribution and use of the present      */

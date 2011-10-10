@@ -2,7 +2,7 @@ XCOMM $XdotOrg: xc/programs/Xserver/Imakefile,v 1.37 2005/11/18 18:15:23 ajax Ex
 XCOMM $Xorg: Imakefile,v 1.4 2001/03/14 18:42:02 pookie Exp $
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NX-X11, NX protocol compression and NX extensions to this software     */
 /* are copyright of NoMachine. Redistribution and use of the present      */
