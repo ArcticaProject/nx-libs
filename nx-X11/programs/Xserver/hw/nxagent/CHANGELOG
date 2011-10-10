@@ -1,5 +1,14 @@
 ChangeLog:
 
+nxagent-3.2.0-6
+
+- Fixed TR05F02063. Ignore ReparentNotify events for non-rootless
+  sessions.
+
+- Fixed TR06F02068. Try to pack images only if format is ZPixmap.
+
+- Don't require reparent on close of NX window.
+
 nxagent-3.2.0-5
 
 - Fixed TR04F02044. Restored the original MakeRootTile() function in

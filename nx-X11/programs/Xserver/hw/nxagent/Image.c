@@ -1176,7 +1176,7 @@ FIXME: Should use an unpack resource here.
    */
 
   pack = (nxagentOption(LinkType) != LINK_TYPE_NONE &&
-              packMethod != PACK_NONE && depth > 8);
+              packMethod != PACK_NONE && depth > 8 && format == ZPixmap);
 
   lossless = (packMethod == nxagentPackLossless);
 
