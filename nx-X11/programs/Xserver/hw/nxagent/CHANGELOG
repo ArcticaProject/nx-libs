@@ -1,5 +1,15 @@
 ChangeLog:
 
+nxagent-3.1.0-7
+
+- Imported patch fixing issues from  X.Org security advisory, January
+  17th, 2008: Multiple vulnerabilities in the X server.  CVE IDs:
+  CVE-2007-5760    CVE-2007-5958    CVE-2007-6427   CVE-2007-6428
+  CVE-2007-6429    CVE-2008-0006.
+
+- Handled the case if nxagentCreateDrawableBitmap() fails to create
+  the pixmap intended to store the bitmap data.
+
 nxagent-3.1.0-6
 
 - Fixed a compile warning in Args.c.

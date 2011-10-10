@@ -2609,7 +2609,23 @@ void nxagentCreateDrawableBitmap(DrawablePtr pDrawable)
     goto nxagentCreateDrawableBitmapEnd;
   }
 
+  /*
+   * FIXME: A better way it would be create the bitmap
+   * with the same extents of the clipRegion. This
+   * requires to save the offset with respect to the
+   * drawable origin like in the backing store.
+   */
+
   pBitmap = nxagentCreatePixmap(pDrawable -> pScreen, pDrawable -> width, pDrawable -> height, pDrawable -> depth);
+
+  if (pBitmap == NULL)
+  {
+    #ifdef WARNING
+    fprintf(stderr, "nxagentCreateDrawableBitmap: Cannot create pixmap for the bitmap data.\n");
+    #endif
+
+    goto nxagentCreateDrawableBitmapEnd;
+  }
 
   pGC = GetScratchGC(pBitmap -> drawable.depth, pBitmap -> drawable.pScreen);
 
