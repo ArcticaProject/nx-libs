@@ -1,5 +1,15 @@
 ChangeLog:
 
+nx-X11-3.1.0-3
+
+- Moved a variable definition placed in _mesa_make_current().
+
+nx-X11-3.1.0-2
+
+- Fixed TR10E01924. A crash could occur in _mesa_make_current().
+
+- Initialized after_ret variable in _XcmsGetProperty().
+
 nx-X11-3.1.0-1
 
 - Opened the 3.1.0 branch based on nx-X11-3.0.0-37.

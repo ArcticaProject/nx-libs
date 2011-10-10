@@ -39,7 +39,7 @@ SUBDIRS = module
                 -I$(LIBSRC)/GL/include \
                 -I$(XF86SRC) -I$(INCLUDESRC)
 
-      DEFINES = $(GLX_DEFINES) -DNXAGENT_SERVER /*-DUSE_X86_ASM*/ /*-DUSE_SPARC_ASM*/
+      DEFINES = $(GLX_DEFINES) /*-DUSE_X86_ASM*/ /*-DUSE_SPARC_ASM*/
 
 #ifdef IHaveModules
 ModuleObjectRule()

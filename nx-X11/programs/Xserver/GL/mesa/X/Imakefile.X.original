@@ -57,7 +57,7 @@ GLXSRV_DEFINES = -DXFree86Server
 		-I$(XF86OSSRC) \
 		-I$(DRMSRCDIR)/shared-core
 
-      DEFINES = $(GLX_DEFINES) $(GLXSRV_DEFINES) -DNXAGENT_SERVER /*-DUSE_X86_ASM*/ /*-DUSE_SPARC_ASM*/
+      DEFINES = $(GLX_DEFINES) $(GLXSRV_DEFINES) /*-DUSE_X86_ASM*/ /*-DUSE_SPARC_ASM*/
 
 #ifdef IHaveModules
 ModuleObjectRule()

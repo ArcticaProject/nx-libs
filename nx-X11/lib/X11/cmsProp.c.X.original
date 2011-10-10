@@ -121,11 +121,7 @@ _XcmsGetProperty(
     char *prop_ret;
     int format_ret;
     long len = 6516;
-    #ifdef NXAGENT_SERVER
-    unsigned long nitems_ret, after_ret = 0;
-    #else
     unsigned long nitems_ret, after_ret;
-    #endif
     Atom atom_ret;
     
     while (XGetWindowProperty (pDpy, w, property, 0, len, False, 
