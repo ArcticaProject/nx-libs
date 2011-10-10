@@ -29,6 +29,7 @@ enum HandleEventResult
 {
   doNothing = 0,
   doMinimize,
+  doDebugTree,
   doCloseSession,
   doStartKbd,
   doSwitchFullscreen,

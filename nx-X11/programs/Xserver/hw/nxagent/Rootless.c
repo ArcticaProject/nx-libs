@@ -626,6 +626,7 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
     XlibAtom *atoms = malloc(nUnits * sizeof(*atoms));
     Atom *input = value;
     int i;
+    int j = 0;
 
     freeMem = True;
     export = True;
@@ -633,16 +634,40 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
 
     for (i = 0; i < nUnits; i++)
     {
-       atoms[i] = nxagentLocalToRemoteAtom(input[i]);
+      /*
+       * Exporting the _NET_WM_PING property could
+       * result in rootless windows being grayed out
+       * when the compiz window manager is running.
+       *
+       * Better solution would probably be to handle
+       * the communication with the window manager
+       * instead of just getting rid of the property.
+       */
 
-       if (atoms[i] == None)
-       {
-         #ifdef WARNING
-         fprintf(stderr, "nxagentExportProperty: WARNING! Failed to convert local atom %ld [%s].\n",
-                     (long int) input[i], validateString(NameForAtom(input[i])));
-         #endif
-       }
+      if (strcmp(NameForAtom(input[i]), "_NET_WM_PING") != 0)
+      {
+        atoms[j] = nxagentLocalToRemoteAtom(input[i]);
+
+        if (atoms[j] == None)
+        {
+          #ifdef WARNING
+          fprintf(stderr, "nxagentExportProperty: WARNING! Failed to convert local atom %ld [%s].\n",
+                      (long int) input[i], validateString(NameForAtom(input[i])));
+          #endif
+        }
+
+        j++;
+      }
+      #ifdef TEST
+      else
+      {
+        fprintf(stderr, "nxagentExportProperty: WARNING! "
+                    "Not exporting the _NET_WM_PING property.\n");
+      }
+      #endif
     }
+
+    nUnits = j;
   }
   else if (strcmp(typeS, "WINDOW") == 0)
   {

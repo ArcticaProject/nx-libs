@@ -57,6 +57,13 @@ is" without express or implied warranty.
 #undef  TEST
 #undef  DEBUG
 
+/*
+ * The nxagentReversePointerMap array is used to
+ * memorize remote display pointer map.
+ */
+
+unsigned char nxagentReversePointerMap[MAXBUTTONS];
+
 void nxagentChangePointerControl(DeviceIntPtr pDev, PtrCtrl *ctrl)
 {
   /*
@@ -125,6 +132,8 @@ int nxagentPointerProc(DeviceIntPtr pDev, int onoff)
         return Success;
       }
 
+      nxagentInitPointerMap();
+
       nxagentEnablePointerEvents();
 
       break;
@@ -154,4 +163,29 @@ int nxagentPointerProc(DeviceIntPtr pDev, int onoff)
     }
 
   return Success;
+}
+
+void nxagentInitPointerMap(void)
+{
+  int numButtons;
+
+  int i;
+
+  unsigned char pointerMap[MAXBUTTONS];
+
+  #ifdef DEBUG
+  fprintf(stderr, "nxagentInitPointerMap: Going to retrieve the "
+              "pointer map from remote display.\n");
+  #endif
+
+  numButtons = XGetPointerMapping(nxagentDisplay, pointerMap, MAXBUTTONS);
+
+  /*
+   * Computing revers pointer map.
+   */
+
+  for (i = 1; i <= numButtons; i++)
+  {
+    nxagentReversePointerMap[pointerMap[i - 1] - 1] = i;
+  }
 }

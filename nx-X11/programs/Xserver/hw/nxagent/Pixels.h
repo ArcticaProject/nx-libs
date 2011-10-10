@@ -108,6 +108,12 @@ FIXME: The condition checking for the render
        avoid problems with the render composi-
        te on XFree86 remote server.
 */
+/*
+FIXME: Changed macro: NXAGENT_SHOULD_DEFER_COMPOSITE
+       to handle situation, when pSrc -> pDrawable
+       is NULL. This case happens with gradients
+       and solid fill.
+
 #define NXAGENT_SHOULD_DEFER_COMPOSITE(pSrc, pMask, pDst)                 \
     ((nxagentRenderVersionMajor == 0 &&                                   \
      nxagentRenderVersionMinor == 8 &&                                \
@@ -118,6 +124,18 @@ FIXME: The condition checking for the render
           nxagentOption(DeferLevel) == 1) ||               \
              (nxagentOption(DeferLevel) >= 2 &&           \
               nxagentOption(LinkType) < LINK_TYPE_ADSL))
+*/
+#define NXAGENT_SHOULD_DEFER_COMPOSITE(pSrc, pMask, pDst)                                                \
+    ((nxagentRenderVersionMajor == 0 &&                                                                  \
+      nxagentRenderVersionMinor == 8 &&                                                                  \
+      (pDst) -> pDrawable -> type == DRAWABLE_PIXMAP) ||                                                 \
+         (nxagentOption(DeferLevel) >= 2 &&                                                              \
+          nxagentOption(LinkType) < LINK_TYPE_ADSL) ||                                                   \
+             (nxagentOption(DeferLevel) == 1 &&                                                          \
+              (pDst) -> pDrawable -> type == DRAWABLE_PIXMAP &&                                          \
+              (((pSrc) -> pDrawable && nxagentDrawableStatus((pSrc) -> pDrawable) == NotSynchronized) || \
+              ((pMask) && nxagentDrawableStatus((pMask) -> pDrawable) == NotSynchronized))))
+
 
 #define NXAGENT_SHOULD_DEFER_PUTIMAGE(pDrawable) \
     (nxagentSplitTrap == 0 &&                    \

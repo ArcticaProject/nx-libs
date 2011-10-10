@@ -38,8 +38,17 @@ is" without express or implied warranty.
   (ButtonPressMask | ButtonReleaseMask | PointerMotionMask | \
        EnterWindowMask | LeaveWindowMask)
 
+/*
+ * The nxagentReversePointerMap array is used to
+ * memorize remote display pointer map.
+ */
+
+extern unsigned char nxagentReversePointerMap[MAXBUTTONS];
+
 void nxagentChangePointerControl(DeviceIntPtr pDev, PtrCtrl *ctrl);
 
 int nxagentPointerProc(DeviceIntPtr pDev, int onoff);
+
+void nxagentInitPointerMap(void);
 
 #endif /* __Pointer_H__ */

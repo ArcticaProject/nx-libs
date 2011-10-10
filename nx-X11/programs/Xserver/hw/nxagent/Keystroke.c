@@ -92,6 +92,18 @@ int nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
   {
     switch (sym)
     {
+      #ifdef DEBUG_TREE
+
+      case XK_q:
+      case XK_Q:
+      {
+        *result = doDebugTree;
+
+        break;
+      }
+
+      #endif /* DEBUG_TREE */
+
       case XK_t:
       case XK_T:
       {

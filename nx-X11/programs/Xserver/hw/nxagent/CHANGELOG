@@ -1,5 +1,61 @@
 ChangeLog:
 
+nxagent-3.4.0-8
+
+- Grab the keyboard in fullscreen mode on EnterNotify only if mode is
+  'NotifyNormal'.
+
+- Yield control in the dispatch loop in case we stop the smart sche-
+  duler timer while waiting for a reply from the remote display.
+
+nxagent-3.4.0-7
+
+- Fixed TR08D01478. The communication with the compiz window manager
+  by means of the _NET_WM_PING property was not handled properly.
+
+- Fixed a type mismatch in XKB events on 64 bit platforms.
+
+- Moved grab/ungrab keyboard from focus in/out event to enter/leave
+  notify event.
+
+- Removed nxagentIconWindow because it's not longer used.
+
+nxagent-3.4.0-6
+
+- Fixed TR09F02102. Problem was with pointer buttons map.
+
+- Fixed TR02H02327. Some KeyRelease events was discarded.
+
+- Fixed up Num and Caps locks.
+
+- Fixed TR03H02335. Emulated right mouse button for Mac clients.
+
+- Added utilities to print info about internal and remote windows.
+
+- Fixed TR01F01995. Solved a picture resource leak by destroying remo-
+  te pictures only when their reference counter returns to zero.
+
+- Fixed TR04H02337. Errors occurred because pictures with no drawable
+  were handled badly.
+
+- Implemented handling nxagent's private for gradient pictures and so-
+  lid fill picture.
+
+- Fixed BadMatch condition check in function ProcRenderComposite.
+
+- Fixed nxagentComposite() to handle situations with source picture
+  drawable pointing to NULL.
+
+- Implemented render acceleration for requests:  CreateSolidFill,
+  CreateLinearGradient, CreateRadialGradient, CreateConicalGradient.
+
+- Fixed TR03G02196. Dialogs are shown to the fore when the NX session
+  is in fullscreen mode.
+
+- Changed mechanism to switch to fullscreen mode. Now the override
+  redirect attribute is no longer used and _NET_WM_STATE_FULLSCREEN
+  hint is sent to the WM.
+
 nxagent-3.4.0-5
 
 - Updated copyright to year 2010.

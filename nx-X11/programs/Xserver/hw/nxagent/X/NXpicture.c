@@ -62,6 +62,7 @@
 #include "Screen.h"
 #include "Pixmaps.h"
 #include "Drawable.h"
+#include "Render.h"
 
 #define PANIC
 #define WARNING
@@ -1063,7 +1064,47 @@ static void initGradient(SourcePictPtr pGradient, int stopCount,
 static PicturePtr createSourcePicture(void)
 {
     PicturePtr pPicture;
-    pPicture = (PicturePtr) xalloc(sizeof(PictureRec));
+
+    extern int nxagentPicturePrivateIndex;
+
+    unsigned int totalPictureSize;
+
+    DevUnion *ppriv;
+
+    char *privPictureRecAddr;
+
+    int i;
+
+    /*
+     * Compute size of entire PictureRect, plus privates.
+     */
+
+    totalPictureSize = sizeof(PictureRec) +
+                           picturePrivateCount * sizeof(DevUnion) +
+                               sizeof(nxagentPrivPictureRec);
+
+    pPicture = (PicturePtr) xalloc(totalPictureSize);
+
+    if (pPicture != NULL)
+    {
+      ppriv = (DevUnion *) (pPicture + 1);
+
+      for (i = 0; i < picturePrivateCount; ++i)
+      {
+        /*
+         * Other privates are inaccessible.
+         */
+
+        ppriv[i].ptr = NULL;
+      }
+
+      privPictureRecAddr = (char *) &ppriv[picturePrivateCount];
+
+      ppriv[nxagentPicturePrivateIndex].ptr = (pointer) privPictureRecAddr;
+
+      pPicture -> devPrivates = ppriv;
+    }
+
     pPicture->pDrawable = 0;
     pPicture->pFormat = 0;
     pPicture->pNext = 0;
@@ -1697,6 +1738,10 @@ FreePicture (pointer	value,
 
     if (--pPicture->refcnt == 0)
     {
+#ifdef NXAGENT_SERVER
+        nxagentDestroyPicture(pPicture);
+#endif
+
 	if (pPicture->transform)
 	    xfree (pPicture->transform);
         if (!pPicture->pDrawable) {

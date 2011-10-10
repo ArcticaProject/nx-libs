@@ -47,7 +47,6 @@ extern ScreenPtr nxagentDefaultScreen;
 
 extern Pixmap nxagentPixmapLogo;
 
-extern Window nxagentIconWindow;
 extern Window nxagentFullscreenWindow;
 
 extern RegionRec nxagentShadowUpdateRegion;
@@ -88,8 +87,6 @@ void nxagentSetScreenSaverTime(void);
 
 void nxagentMinimizeFromFullScreen(ScreenPtr pScreen);
 void nxagentMaximizeToFullScreen(ScreenPtr pScreen);
-
-Window nxagentCreateIconWindow(void);
 
 Bool nxagentMagicPixelZone(int x, int y);
 

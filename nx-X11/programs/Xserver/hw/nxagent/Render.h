@@ -105,4 +105,6 @@ void nxagentDisconnectPicture(pointer p0, XID x1, void* p2);
 
 void nxagentReconnectGlyphSet(void* p0, XID x1, void *p2);
 
+void nxagentDestroyPicture(PicturePtr pPicture);
+
 #endif /* __Render_H__ */

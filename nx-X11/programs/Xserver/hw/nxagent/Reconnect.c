@@ -81,6 +81,8 @@ extern Bool nxagentUninstallFontServerPath(void);
 
 extern void nxagentRemoveXConnection(void);
 
+extern void nxagentInitPointerMap(void);
+
 static char *nxagentGetReconnectError(void);
 
 void nxagentInitializeRecLossyLevel(void);
@@ -583,6 +585,8 @@ Bool nxagentReconnectSession(void)
 
     nxagentOldKeyboard = NULL;
   }
+
+  nxagentInitPointerMap();
 
   nxagentDeactivatePointerGrab();
 
