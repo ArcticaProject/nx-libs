@@ -1,5 +1,14 @@
 ChangeLog:
 
+nx-X11-3.1.0-6
+
+- Modified Xserver Imakefile to link the Xfixes library.
+
+nx-X11-3.1.0-5
+
+- Disabled the terminate action, just in case the TerminateServer
+  symbol is binded to a non default key sequence.
+
 nx-X11-3.1.0-4
 
 - Imported patch fixing issues from  X.Org security advisory, January

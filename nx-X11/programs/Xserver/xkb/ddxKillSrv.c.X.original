@@ -52,18 +52,10 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 int
 XkbDDXTerminateServer(DeviceIntPtr dev,KeyCode key,XkbAction *act)
 {
-#ifdef NXAGENT_SERVER
-
-    return 0;
-
-#else
-
 #ifdef XF86DDXACTIONS
     xf86ProcessActionEvent(ACTION_TERMINATE, NULL);
 #else
     GiveUp(1);
 #endif
     return 0;
-
-#endif /* NXAGENT_SERVER */
 }
