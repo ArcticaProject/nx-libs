@@ -1,39 +1,5 @@
 ChangeLog:
 
-nxagent-3.2.0-10
-
-- Extended fix for TR07F02091 to include font names having zero in
-  fields RESOLUTION_X and RESOLUTION_Y.
-
-nxagent-3.2.0-9
-
-- Fixed TR07F02091. Scalable fonts were not correctly listed among
-  available fonts.
-
-- Fixed TR06F02080. Use the corrupted area extents as maximum size of
-  the image data.
-
-nxagent-3.2.0-8
-
-- Fixed TR07F02082. The agent server could be unable to init core
-  keyboard on 64 bit systems.
-
-nxagent-3.2.0-7
-
-- Imported patch fixing issues from  X.Org security advisory, June
-  11th, 2008: Multiple vulnerabilities in X server extensions. CVE
-  IDs: CVE-2008-1377, CVE-2008-1379, CVE-2008-2360, CVE-2008-2361,
-  CVE-2008-2362.
-
-nxagent-3.2.0-6
-
-- Fixed TR05F02063. Ignore ReparentNotify events for non-rootless
-  sessions.
-
-- Fixed TR06F02068. Try to pack images only if format is ZPixmap.
-
-- Don't require reparent on close of NX window.
-
 nxagent-3.2.0-5
 
 - Fixed TR04F02044. Restored the original MakeRootTile() function in

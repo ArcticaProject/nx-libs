@@ -2261,11 +2261,7 @@ int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
         {
           pScreen = nxagentScreen(X -> xmap.window);
 
-          XMapRaised(nxagentDisplay, nxagentFullscreenWindow);
-
-          XIconifyWindow(nxagentDisplay, nxagentIconWindow,
-                             DefaultScreen(nxagentDisplay));
-
+          nxagentMaximizeToFullScreen(pScreen);
         }
 
         if (X -> xclient.window == (nxagentOption(Fullscreen) ?
@@ -3061,6 +3057,56 @@ int nxagentHandleReparentNotify(XEvent* X)
     }
 
     return 1;
+  }
+  else
+  {
+    /*
+     * This code is supposed to detect if a window manager
+     * is running but in some cases it may be unreliable.
+     * Each window manager behaves differently so the check
+     * can fail for some less common WMs.
+     */
+
+    if (!nxagentWMIsRunning && nxagentOption(Fullscreen) &&
+            X -> xreparent.window == nxagentDefaultWindows[pScreen -> myNum])
+    {
+      #ifdef WARNING
+      fprintf(stderr, "Warning: The agent window was reparented. Is a "
+                  "window manager running?\n");
+      #endif
+
+      /*
+       * If no window manager is running and we are supposed to
+       * be in fullscreen mode then don't wait for the reparent
+       * event. We can assume that there is an undetected window
+       * manager and, as switching to fullscreen could have fail-
+       * ed, we try it again.
+       */
+
+      nxagentSwitchFullscreen(pScreen, True);
+
+      nxagentWMIsRunning = True;
+    }
+    else if (nxagentWMIsRunning && X -> xreparent.window ==
+                 nxagentDefaultWindows[pScreen -> myNum] && X -> xreparent.parent ==
+                     RootWindow(nxagentDisplay, (pScreen -> myNum)))
+    {
+      #ifdef WARNING
+
+      fprintf(stderr, "Warning: The agent window has been reparented to the root.\n");
+
+      fprintf(stderr, "Warning: No window manager seems to be running.\n");
+
+      #endif
+
+      /*
+       * The agent window was unexpectedly reparented
+       * to the root window. We assume that the window
+       * manager was terminated.
+       */
+
+      nxagentWMIsRunning = False;
+    }
   }
 
   return 1;

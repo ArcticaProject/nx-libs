@@ -2080,8 +2080,8 @@ void nxagentSetDeferLevel()
 
       deferTimeout = 200;
 
-      tileWidth  = 4096;
-      tileHeight = 4096;
+      tileWidth  = 65536;
+      tileHeight = 65536;
 
       break;
     }
@@ -2091,8 +2091,8 @@ void nxagentSetDeferLevel()
 
       deferTimeout = 200;
 
-      tileWidth  = 4096;
-      tileHeight = 4096;
+      tileWidth  = 65536;
+      tileHeight = 65536;
 
       break;
     }
@@ -2103,8 +2103,8 @@ void nxagentSetDeferLevel()
 
       deferTimeout = 200;
 
-      tileWidth  = 4096;
-      tileHeight = 4096;
+      tileWidth  = 65536;
+      tileHeight = 65536;
 
       break;
     }

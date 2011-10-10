@@ -371,7 +371,6 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
   int nBox;
   int x, y;
   int w, h;
-  int extentWidth, extentHeight;
   int tileWidth, tileHeight;
   int length, format, leftPad;
   int i;
@@ -591,20 +590,8 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
               pDrawable -> x, pDrawable -> y, pDrawable -> width, pDrawable -> height);
   #endif
 
-  /*
-   * We are going to synchronize the corrupted
-   * area, so we use the corrupted extents as
-   * maximum size of the image data. It's im-
-   * portant to avoid using the drawable size,
-   * because in case of a huge window it had to
-   * result in a failed data memory allocation.
-   */
-
-  extentWidth  = clipRegion -> extents.x2 - clipRegion -> extents.x1;
-  extentHeight = clipRegion -> extents.y2 - clipRegion -> extents.y1;
-
-  w = tileWidth  = (nxagentOption(TileWidth)  > extentWidth  ? extentWidth  : nxagentOption(TileWidth));
-  h = tileHeight = (nxagentOption(TileHeight) > extentHeight ? extentHeight : nxagentOption(TileHeight));
+  w = tileWidth  = (nxagentOption(TileWidth)  > pDrawable -> width  ? pDrawable -> width  : nxagentOption(TileWidth));
+  h = tileHeight = (nxagentOption(TileHeight) > pDrawable -> height ? pDrawable -> height : nxagentOption(TileHeight));
 
   #ifdef DEBUG
   fprintf(stderr, "nxagentSynchronizeRegion: Using tiles of size [%dx%d].\n", tileWidth, tileHeight);
@@ -2626,10 +2613,7 @@ void nxagentCreateDrawableBitmap(DrawablePtr pDrawable)
    * FIXME: A better way it would be create the bitmap
    * with the same extents of the clipRegion. This
    * requires to save the offset with respect to the
-   * drawable origin like in the backing store. This
-   * becomes particularly important when the drawable
-   * is a huge window, because the pixmap creation
-   * would fail.
+   * drawable origin like in the backing store.
    */
 
   pBitmap = nxagentCreatePixmap(pDrawable -> pScreen, pDrawable -> width, pDrawable -> height, pDrawable -> depth);
