@@ -60,6 +60,8 @@ extern short nxagentShadowUid;
 void nxagentSetScreenInfo(ScreenInfo *screenInfo);
 void nxagentSetPixmapFormats(ScreenInfo *screenInfo);
 
+void nxagentPrintGeometry();
+
 extern Window nxagentDefaultWindows[MAXSCREENS];
 extern Window nxagentInputWindows[MAXSCREENS];
 extern Window nxagentScreenSaverWindows[MAXSCREENS];
@@ -84,9 +86,6 @@ Bool nxagentCloseScreen(int index, ScreenPtr pScreen);
 extern int nxagentBitsPerPixel(int depth);
 
 void nxagentSetScreenSaverTime(void);
-
-void nxagentMinimizeFromFullScreen(ScreenPtr pScreen);
-void nxagentMaximizeToFullScreen(ScreenPtr pScreen);
 
 Bool nxagentMagicPixelZone(int x, int y);
 

@@ -1,5 +1,13 @@
 ChangeLog:
 
+nxagent-3.4.0-9
+
+- Fixed TR06H02362. No icon was swown in the task bar.
+
+- Fixed keyboard grab in fullscreen mode.
+
+- Fixed compiler warnings.
+
 nxagent-3.4.0-8
 
 - Grab the keyboard in fullscreen mode on EnterNotify only if mode is

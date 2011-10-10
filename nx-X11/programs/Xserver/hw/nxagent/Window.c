@@ -768,10 +768,14 @@ void nxagentSwitchFullscreen(ScreenPtr pScreen, Bool switchOn)
   if (switchOn == 1)
   {
     nxagentFullscreenWindow = nxagentDefaultWindows[pScreen -> myNum];
+
+    nxagentGrabPointerAndKeyboard(NULL);
   }
   else
   {
     nxagentFullscreenWindow = None;
+
+    nxagentUngrabPointerAndKeyboard(NULL);
   } 
 }
 

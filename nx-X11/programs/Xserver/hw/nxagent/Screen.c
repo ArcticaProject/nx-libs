@@ -287,57 +287,6 @@ void nxagentSetPixmapFormats(ScreenInfo *screenInfo)
   }
 }
 
-void nxagentMinimizeFromFullScreen(ScreenPtr pScreen)
-{
-  XUnmapWindow(nxagentDisplay, nxagentFullscreenWindow);
-}
-
-void nxagentMaximizeToFullScreen(ScreenPtr pScreen)
-{
-  if(nxagentIpaq)
-  {
-    XMapWindow(nxagentDisplay, nxagentFullscreenWindow);
-  }
-  else
-  {
-/*
-FIXME: We'll chech for ReparentNotify and LeaveNotify events after XReparentWindow()
-       in order to avoid the session window is iconified.
-       We could avoid the sesssion window is iconified when a LeaveNotify event is received,
-       so this check would be unnecessary.
-*/
-    struct timeval timeout;
-    int i;
-    XEvent e;
-
-    XReparentWindow(nxagentDisplay, nxagentFullscreenWindow,
-                        RootWindow(nxagentDisplay, DefaultScreen(nxagentDisplay)), 0, 0);
-
-    for (i = 0; i < 100 && nxagentWMIsRunning; i++)
-    {
-      #ifdef TEST
-      fprintf(stderr, "nxagentSwitchFullscreen: WARNING! Going to wait for the ReparentNotify event.\n");
-      #endif
-
-      if (XCheckTypedWindowEvent(nxagentDisplay, nxagentFullscreenWindow, ReparentNotify, &e))
-      {
-        break;
-      }
-
-      XSync(nxagentDisplay, 0);
-
-      timeout.tv_sec = 0;
-      timeout.tv_usec = 50 * 1000;
-
-      nxagentWaitEvents(nxagentDisplay, &timeout);
-    }
-
-    XMapRaised(nxagentDisplay, nxagentFullscreenWindow);
-
-    while (XCheckTypedWindowEvent(nxagentDisplay, nxagentFullscreenWindow, LeaveNotify, &e));
-  }
-}
-
 Bool nxagentMagicPixelZone(int x, int y)
 {
   return (x >= nxagentOption(Width) - 1 && y < 1);

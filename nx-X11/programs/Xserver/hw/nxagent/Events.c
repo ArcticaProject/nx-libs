@@ -1728,14 +1728,11 @@ FIXME: Don't enqueue the KeyRelease event if the key was
           nxagentLastEnteredWindow = NULL;
         }
 
-        if (nxagentPointerAndKeyboardGrabbed == 1)
+        if (X.xcrossing.window == nxagentDefaultWindows[0] &&
+                X.xcrossing.detail != NotifyInferior &&
+                    X.xcrossing.mode == NotifyNormal)
         {
-          if (X.xcrossing.window == nxagentDefaultWindows[0] &&
-                  X.xcrossing.detail != NotifyInferior &&
-                      X.xcrossing.mode == NotifyNormal)
-          {
-            nxagentUngrabPointerAndKeyboard(&X);
-          }
+          nxagentUngrabPointerAndKeyboard(&X);
         }
 
         if (X.xcrossing.detail != NotifyInferior)
@@ -2123,14 +2120,8 @@ FIXME: Don't enqueue the KeyRelease event if the key was
 
     if (nxagentWMIsRunning)
     {
-      if (nxagentOption(Fullscreen))
-      {
-        nxagentMinimizeFromFullScreen(pScreen);
-      }
-      else
-      {
-        XIconifyWindow(nxagentDisplay, nxagentDefaultWindows[0], DefaultScreen(nxagentDisplay));
-      }
+      XIconifyWindow(nxagentDisplay, nxagentDefaultWindows[0],
+                         DefaultScreen(nxagentDisplay));
     }
   }
 
@@ -3791,6 +3782,11 @@ void nxagentGrabPointerAndKeyboard(XEvent *X)
 
   int resource;
 
+  if (nxagentPointerAndKeyboardGrabbed == 1)
+  {
+    return;
+  }
+
   #ifdef TEST
   fprintf(stderr, "nxagentGrabPointerAndKeyboard: Grabbing pointer and keyboard with event at [%p].\n",
               (void *) X);
@@ -3855,6 +3851,11 @@ void nxagentGrabPointerAndKeyboard(XEvent *X)
 void nxagentUngrabPointerAndKeyboard(XEvent *X)
 {
   unsigned long now;
+
+  if (nxagentPointerAndKeyboardGrabbed == 0)
+  {
+    return;
+  }
 
   #ifdef TEST
   fprintf(stderr, "nxagentUngrabPointerAndKeyboard: Ungrabbing pointer and keyboard with event at [%p].\n",
