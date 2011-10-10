@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2009 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -1208,7 +1208,7 @@ static void nxagentParseOptions(char *name, char *value)
     {
       nxagentChangeOption(ClientOs, ClientOsSolaris);
     }
-    else if (strcmp(value, "mac") == 0)
+    else if (strcmp(value, "macosx") == 0)
     {
       nxagentChangeOption(ClientOs, ClientOsMac);
     }
@@ -1512,7 +1512,7 @@ N/A
       int splitMode = 0;
       int splitSize = 0;
 
-      unsigned int packMethod  = PACK_NONE;
+      unsigned int packMethod = PACK_NONE;
       unsigned int packQuality = 9;
 
       int dataLevel   = 0;

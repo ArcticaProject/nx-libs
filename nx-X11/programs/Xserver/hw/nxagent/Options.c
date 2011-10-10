@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2009 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -62,6 +62,9 @@ void nxagentInitOptions()
   nxagentOptions.Width       = 0;
   nxagentOptions.Height      = 0;
   nxagentOptions.BorderWidth = 0;
+
+  nxagentOptions.WMBorderWidth = -1;
+  nxagentOptions.WMTitleHeight = -1;
 
   nxagentOptions.SavedX      = 0;
   nxagentOptions.SavedY      = 0;
@@ -168,6 +171,9 @@ void nxagentResetOptions()
 
   nxagentOptions.TileWidth  = UNDEFINED;
   nxagentOptions.TileHeight = UNDEFINED;
+
+  nxagentOptions.WMBorderWidth = -1;
+  nxagentOptions.WMTitleHeight = -1;
 }
 
 void nxagentSaveOptions()

@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2009 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -679,6 +679,30 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
 
             break;
           }
+          case doViewportMoveUp:
+          {
+            nxagentMoveViewport(pScreen, 0, -nxagentOption(Height));
+
+            break;
+          }
+          case doViewportMoveDown:
+          {
+            nxagentMoveViewport(pScreen, 0, nxagentOption(Height));
+
+            break;
+          }
+          case doViewportMoveLeft:
+          {
+            nxagentMoveViewport(pScreen, -nxagentOption(Width), 0);
+
+            break;
+          }
+          case doViewportMoveRight:
+          {
+            nxagentMoveViewport(pScreen, nxagentOption(Width), 0);
+
+            break;
+          }
           case doViewportUp:
           {
             nxagentMoveViewport(pScreen, 0, -nextinc(viewportInc));
@@ -763,6 +787,20 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
       case KeyRelease:
       {
         enum HandleEventResult result;
+        int sendKey = 0;
+
+/*
+FIXME: Don't enqueue the KeyRelease event if the key was
+       not already pressed. This workaround avoids a fake
+       KeyPress is enqueued by the XKEYBOARD extension.
+       Another solution would be to let the events are
+       enqueued and to remove the KeyPress afterwards.
+*/
+
+        if (inputInfo.keyboard -> key -> down[X.xkey.keycode >> 3] & (1 << (X.xkey.keycode & 7)))
+        {
+          sendKey = 1;
+        }
 
         #ifdef TEST
         fprintf(stderr, "nxagentDispatchEvents: Going to handle new KeyRelease event.\n");
@@ -808,7 +846,7 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
           x.u.keyButtonPointer.time = nxagentLastEventTime;
         }
 
-        if (!(nxagentCheckSpecialKeystroke(&X.xkey, &result)))
+        if (!(nxagentCheckSpecialKeystroke(&X.xkey, &result)) && sendKey == 1)
         {
           mieqEnqueue(&x);
 
@@ -3101,6 +3139,8 @@ int nxagentHandleReparentNotify(XEvent* X)
           #ifdef WARNING
           fprintf(stderr, "nxagentHandleReparentNotify: WARNING! Failed QueryTree request.\n");
           #endif
+
+          break;
         }
 
         if (result && children_return)
@@ -3152,6 +3192,96 @@ int nxagentHandleReparentNotify(XEvent* X)
     }
 
     return 1;
+  }
+  else if (nxagentWMIsRunning == 1 && nxagentOption(Fullscreen) == 0 &&
+               nxagentOption(WMBorderWidth) == -1)
+  {
+    XlibWindow w;
+    XlibWindow rootReturn = 0;
+    XlibWindow parentReturn = 0;
+    XlibWindow junk;
+    XlibWindow *childrenReturn = NULL;
+    unsigned int nchildrenReturn = 0;
+    Status result;
+    XSizeHints hints;
+    XWindowAttributes attributes;
+    int x, y;
+    int xParent, yParent;
+
+    /*
+     * Calculate the absolute upper-left X e Y 
+     */
+
+    if ((XGetWindowAttributes(nxagentDisplay, X -> xreparent.window,
+                                  &attributes) == 0))
+    {
+      #ifdef WARNING
+      fprintf(stderr, "nxagentHandleReparentNotify: WARNING! "
+                  "XGetWindowAttributes failed.\n");
+      #endif
+
+      return 1;
+    }
+
+    x = attributes.x;
+    y = attributes.y;
+
+    XTranslateCoordinates(nxagentDisplay, X -> xreparent.window,
+                              attributes.root, -attributes.border_width,
+                                  -attributes.border_width, &x, &y, &junk);
+
+   /*
+    * Calculate the parent X and parent Y.
+    */
+
+    w = X -> xreparent.parent;
+
+    if (w != DefaultRootWindow(nxagentDisplay))
+    {
+      do
+      {
+        result = XQueryTree(nxagentDisplay, w, &rootReturn, &parentReturn,
+                                &childrenReturn, &nchildrenReturn);
+    
+        if (parentReturn == rootReturn || parentReturn == 0 || result == 0)
+        {
+          break;
+        }
+
+        if (result == 1 && childrenReturn != NULL)
+        {
+          XFree(childrenReturn);
+        }
+    
+        w = parentReturn;
+      }
+      while (True);
+
+      /*
+       * WM reparented. Find edge of the frame.
+       */
+
+      if (XGetWindowAttributes(nxagentDisplay, w, &attributes) == 0)
+      {
+        #ifdef WARNING
+        fprintf(stderr, "nxagentHandleReparentNotify: WARNING! "
+                    "XGetWindowAttributes failed for parent window.\n");
+        #endif
+
+        return 1;
+      }
+
+      xParent = attributes.x;
+      yParent = attributes.y;
+
+      /*
+       * Difference between Absolute X and Parent X gives thickness of side frame.
+       * Difference between Absolute Y and Parent Y gives thickness of title bar. 
+       */
+
+      nxagentChangeOption(WMBorderWidth, (x - xParent));
+      nxagentChangeOption(WMTitleHeight, (y - yParent));
+    }
   }
 
   return 1;

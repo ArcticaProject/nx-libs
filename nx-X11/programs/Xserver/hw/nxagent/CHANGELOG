@@ -1,5 +1,33 @@
 ChangeLog:
 
+nxagent-3.4.0-5
+
+- Updated copyright to year 2010.
+
+nxagent-3.4.0-4
+
+- Fixed TR07F02090. Now XDMCP sessions start without problems.
+
+- Fixed TR08G02259. Corrected window border granularity of rootless
+  session at reconnection on 64 bit platforms.
+
+- Fixed TR11G02290. Forcing null timeout with queued events only if
+  display connection is up. This prevents the flood of session log.
+
+- Fixed TR10G02287. Now QueryTree's loop is aborted in case of failure
+  and session log isn't filled anymore with repeated warning messages.
+
+- Fixed TR01G02154. Corrected window placement when switching between
+  fullscreen and windowed mode.
+
+- Fixed TR09G02276. Now the agent does not receive unwanted characters
+  while interacting with the local window manager.
+
+- Implemented FR02G02174. Added ability to do large screen pans in
+  viewport mode through key combination Ctrl+Alt+Shift+Arrow.
+
+- Corrected parsing of the 'client' option when the client OS is Mac.
+
 nxagent-3.4.0-3
 
 - Fixed TR09G02271. The array containing the font name fields was not

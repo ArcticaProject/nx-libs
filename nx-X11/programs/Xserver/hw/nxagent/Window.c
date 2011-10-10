@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2009 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -884,8 +884,19 @@ void nxagentSwitchFullscreen(ScreenPtr pScreen, Bool switchOn)
       }
     }
 
-    nxagentChangeOption(X, nxagentOption(SavedX));
-    nxagentChangeOption(Y, nxagentOption(SavedY));
+    if (nxagentOption(WMBorderWidth) > 0 && nxagentOption(WMTitleHeight) > 0)
+    {
+      nxagentChangeOption(X, nxagentOption(SavedX) -
+                              nxagentOption(WMBorderWidth));
+      nxagentChangeOption(Y, nxagentOption(SavedY) -
+                              nxagentOption(WMTitleHeight));
+    }
+    else
+    {
+      nxagentChangeOption(X, nxagentOption(SavedX));
+      nxagentChangeOption(Y, nxagentOption(SavedY));
+    }
+
     nxagentChangeOption(Width, nxagentOption(SavedWidth));
     nxagentChangeOption(Height, nxagentOption(SavedHeight));
 
@@ -2897,6 +2908,13 @@ FIXME: Do we need to set save unders attribute here?
       XSizeHints *props, hints;
       unsigned char *data = NULL;
 
+      #ifdef _XSERVER64
+
+      unsigned char *data64 = NULL;
+      unsigned int i;
+
+      #endif
+
       hints.flags = 0;
 
       ret = GetWindowProperty(pWin,
@@ -2905,10 +2923,13 @@ FIXME: Do we need to set save unders attribute here?
                                           False, XA_WM_SIZE_HINTS,
                                               &type, &format, &nItems, &bytesLeft, &data);
 
-      props = (XSizeHints*) data;
+      /*
+       * 72 is the number of bytes returned by
+       * sizeof(XSizeHints) on 32 bit platforms.
+       */
 
       if (ret == Success &&
-              ((format >> 3) * nItems) == sizeof(XSizeHints) &&
+              ((format >> 3) * nItems) == 72 &&
                   bytesLeft == 0 &&
                       type == XA_WM_SIZE_HINTS)
       {
@@ -2916,6 +2937,30 @@ FIXME: Do we need to set save unders attribute here?
         fprintf(stderr, "nxagentReconnectWindow: setting WMSizeHints on window %p [%lx - %lx].\n",
                     (void*)pWin, pWin -> drawable.id, nxagentWindow(pWin));
         #endif
+
+        #ifdef _XSERVER64
+
+        data64 = (unsigned char *) malloc(sizeof(XSizeHints) + 4);
+
+        for (i = 0; i < 4; i++)
+        {
+          *(data64 + i) = *(data + i);
+        }
+
+        *(((int *) data64) + 1) = 0;
+
+        for (i = 8; i < sizeof(XSizeHints) + 4; i++)
+        {
+          *(data64 + i) = *(data + i - 4);
+        }
+
+        props = (XSizeHints *) data64;
+
+        #else
+
+        props = (XSizeHints *) data;
+
+        #endif   /* _XSERVER64 */
 
         hints = *props;
       }
@@ -2935,6 +2980,15 @@ FIXME: Do we need to set save unders attribute here?
       XSetWMNormalHints(nxagentDisplay,
                            nxagentWindow(pWin),
                               &hints);
+
+      #ifdef _XSERVER64
+
+      if (data64 != NULL)
+      {
+        free(data64);
+      }
+
+      #endif
     }
   }
 
