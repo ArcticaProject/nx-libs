@@ -8,7 +8,7 @@ XCOMM $XFree86: xc/programs/Xserver/Xext/Imakefile,v 3.43 2003/04/21 18:56:48 sv
 
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2007 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2009 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NX-X11, NX protocol compression and NX extensions to this software     */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -17,7 +17,7 @@ XCOMM $XFree86: xc/programs/Xserver/Xext/Imakefile,v 3.43 2003/04/21 18:56:48 sv
 /*                                                                        */
 /* Check http://www.nomachine.com/licensing.html for applicability.       */
 /*                                                                        */
-/* NX and NoMachine are trademarks of NoMachine S.r.l.                    */
+/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
 /*                                                                        */
 /* All rights reserved.                                                   */
 /*                                                                        */

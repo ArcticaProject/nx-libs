@@ -1,5 +1,11 @@
 ChangeLog:
 
+nx-X11-3.4.0-1
+
+- Opened the 3.4.0 branch based on nx-X11-3.3.0-7.
+
+- Updated copyright to year 2009.
+
 nx-X11-3.3.0-7
 
 - Fixed TR08G02257. The maximum client condition was reached because
