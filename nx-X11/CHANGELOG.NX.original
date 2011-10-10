@@ -1,5 +1,12 @@
 ChangeLog:
 
+nx-X11-3.1.0-4
+
+- Imported patch fixing issues from  X.Org security advisory, January
+  17th, 2008: Multiple vulnerabilities in the X server.  CVE IDs:
+  CVE-2007-5760    CVE-2007-5958    CVE-2007-6427   CVE-2007-6428
+  CVE-2007-6429    CVE-2008-0006.
+
 nx-X11-3.1.0-3
 
 - Moved a variable definition placed in _mesa_make_current().

@@ -506,7 +506,6 @@ ChangeStringFeedback (client, dev, mask, s, f)
     xStringFeedbackCtl 	*f;
     {
     register char n;
-    register long *p;
     int		i, j;
     KeySym	*syms, *sup_syms;
 
@@ -514,12 +513,7 @@ ChangeStringFeedback (client, dev, mask, s, f)
     if (client->swapped)
 	{
 	swaps(&f->length,n);	/* swapped num_keysyms in calling proc */
-	p = (long *) (syms);
-	for (i=0; i<f->num_keysyms; i++)
-	    {
-	    swapl(p, n);
-	    p++;
-	    }
+	SwapLongs((CARD32 *) syms, f->num_keysyms);
 	}
 
     if (f->num_keysyms > s->ctrl.max_symbols)

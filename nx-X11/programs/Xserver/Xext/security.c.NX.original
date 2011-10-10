@@ -1822,11 +1822,11 @@ SecurityLoadPropertyAccessList(void)
 
 #ifdef NXAGENT_SERVER
 
-    f = fopen(_NXGetPolicyFilePath(SecurityPolicyFile), "r");
+    f = Fopen(_NXGetPolicyFilePath(SecurityPolicyFile), "r");
 
 #else
 
-    f = fopen(SecurityPolicyFile, "r");
+    f = Fopen(SecurityPolicyFile, "r");
 
 #endif
 
@@ -1834,11 +1834,11 @@ SecurityLoadPropertyAccessList(void)
 
 #ifdef NXAGENT_SERVER
 
-    f = fopen((char*)__XOS2RedirRoot( _NXGetPolicyFilePath(SecurityPolicyFile)), "r");
+    f = Fopen((char*)__XOS2RedirRoot( _NXGetPolicyFilePath(SecurityPolicyFile)), "r");
 
 #else
 
-    f = fopen((char*)__XOS2RedirRoot(SecurityPolicyFile), "r");
+    f = Fopen((char*)__XOS2RedirRoot(SecurityPolicyFile), "r");
 
 #endif
 
@@ -1960,7 +1960,7 @@ SecurityLoadPropertyAccessList(void)
     }
 #endif /* PROPDEBUG */
 
-    fclose(f);
+    Fclose(f);
 } /* SecurityLoadPropertyAccessList */
 
 
