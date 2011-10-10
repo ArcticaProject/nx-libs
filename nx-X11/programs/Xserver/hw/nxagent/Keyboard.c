@@ -444,7 +444,7 @@ N/A
                                      max_keycode - min_keycode + 1,
                                      &mapWidth);
 
-        if (keymap == NULL)
+        if (keymap64 == NULL)
         {
           XFreeModifiermap(modifier_keymap);
 
