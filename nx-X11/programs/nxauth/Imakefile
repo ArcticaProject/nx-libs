@@ -7,7 +7,7 @@ XCOMM $XFree86: xc/programs/xauth/Imakefile,v 3.5 2001/03/30 02:15:23 keithp Exp
 
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2007 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAUTH, NX protocol compression and NX extensions to this software     */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -16,7 +16,7 @@ XCOMM $XFree86: xc/programs/xauth/Imakefile,v 3.5 2001/03/30 02:15:23 keithp Exp
 /*                                                                        */
 /* Check http://www.nomachine.com/licensing.html for applicability.       */
 /*                                                                        */
-/* NX and NoMachine are trademarks of NoMachine S.r.l.                    */
+/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
 /*                                                                        */
 /* All rights reserved.                                                   */
 /*                                                                        */
