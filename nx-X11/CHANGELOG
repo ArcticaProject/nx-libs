@@ -1,5 +1,9 @@
 ChangeLog:
 
+nx-X11-3.4.0-4
+
+- Fixed TR06H02359. Removed compiler warnings.
+
 nx-X11-3.4.0-3
 
 - Updated copyright to year 2010.

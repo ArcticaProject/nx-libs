@@ -43,7 +43,7 @@
 #include "unpack.h"
 #include "g_disptab.h"
 #include "g_disptab_EXT.h"
-#include "indirect_size.h"
+
 
 void __glXDispSwap_Map1f(GLbyte *pc)
 {

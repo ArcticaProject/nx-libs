@@ -239,9 +239,7 @@ char 		*errorStringRet;
 		    SIZEOF (smRegisterClientMsg), WORD64COUNT (extra),
 		    smRegisterClientMsg, pMsg, pData);
 
-                previousId = NULL;
-
-		STORE_ARRAY8 (pData, 0, previousId);
+		STORE_ARRAY8 (pData, 0, NULL);
 
 		IceFlush (iceConn);
 
