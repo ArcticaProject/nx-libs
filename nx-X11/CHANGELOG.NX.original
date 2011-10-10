@@ -1,5 +1,13 @@
 ChangeLog:
 
+nx-X11-3.4.0-3
+
+- Updated copyright to year 2010.
+
+nx-X11-3.4.0-2
+
+- Fixed TR04G02208. Added a path to rgb file.
+
 nx-X11-3.4.0-1
 
 - Opened the 3.4.0 branch based on nx-X11-3.3.0-7.

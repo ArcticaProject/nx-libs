@@ -7,7 +7,7 @@ XCOMM $XFree86: xc/programs/Xserver/os/Imakefile,v 3.40 2003/09/09 03:20:41 dawe
 
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2009 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NX-X11, NX protocol compression and NX extensions to this software     */
 /* are copyright of NoMachine. Redistribution and use of the present      */
