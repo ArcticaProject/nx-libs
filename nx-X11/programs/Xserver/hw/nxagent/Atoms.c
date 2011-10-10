@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2007 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -9,7 +9,7 @@
 /*                                                                        */
 /* Check http://www.nomachine.com/licensing.html for applicability.       */
 /*                                                                        */
-/* NX and NoMachine are trademarks of NoMachine S.r.l.                    */
+/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
 /*                                                                        */
 /* All rights reserved.                                                   */
 /*                                                                        */
@@ -66,19 +66,21 @@ Atom nxagentAtoms[NXAGENT_NUMBER_OF_ATOMS];
 
 static char *nxagentAtomNames[NXAGENT_NUMBER_OF_ATOMS + 1] =
 {
-  "NX_IDENTITY",          /* 0  */
-  "WM_PROTOCOLS",         /* 1  */
-  "WM_DELETE_WINDOW",     /* 2  */
-  "WM_NX_READY",          /* 3  */
-  "MCOPGLOBALS",          /* 4  */
-  "NX_CUT_BUFFER_SERVER", /* 5  */
-  "TARGETS",              /* 6  */
-  "TEXT",                 /* 7  */
-  "NX_AGENT_SIGNATURE",   /* 8  */
-  "NXDARWIN",             /* 9  */
-  "CLIPBOARD",            /* 10 */
-  "TIMESTAMP",            /* 11 */
-  "UTF8_STRING",          /* 12 */
+  "NX_IDENTITY",              /* 0  */
+  "WM_PROTOCOLS",             /* 1  */
+  "WM_DELETE_WINDOW",         /* 2  */
+  "WM_NX_READY",              /* 3  */
+  "MCOPGLOBALS",              /* 4  */
+  "NX_CUT_BUFFER_SERVER",     /* 5  */
+  "TARGETS",                  /* 6  */
+  "TEXT",                     /* 7  */
+  "NX_AGENT_SIGNATURE",       /* 8  */
+  "NXDARWIN",                 /* 9  */
+  "CLIPBOARD",                /* 10 */
+  "TIMESTAMP",                /* 11 */
+  "UTF8_STRING",              /* 12 */
+  "_NET_WM_STATE",            /* 13 */
+  "_NET_WM_STATE_FULLSCREEN", /* 14 */
   NULL,
   NULL
 };

@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2007 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -9,7 +9,7 @@
 /*                                                                        */
 /* Check http://www.nomachine.com/licensing.html for applicability.       */
 /*                                                                        */
-/* NX and NoMachine are trademarks of NoMachine S.r.l.                    */
+/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
 /*                                                                        */
 /* All rights reserved.                                                   */
 /*                                                                        */
@@ -160,7 +160,6 @@ void nxagentPropagateArtsdProperties(ScreenPtr pScreen, char *port);
 
 #endif
 
-Window nxagentIconWindow = None;
 Window nxagentFullscreenWindow = None;
 
 #ifdef VIEWPORT_FRAME
@@ -286,166 +285,6 @@ void nxagentSetPixmapFormats(ScreenInfo *screenInfo)
                         screenInfo -> formats[i].scanlinePad);
     #endif
   }
-}
-
-void nxagentMinimizeFromFullScreen(ScreenPtr pScreen)
-{
-  XUnmapWindow(nxagentDisplay, nxagentFullscreenWindow);
-
-  if(nxagentIpaq)
-  {
-    XMapWindow(nxagentDisplay, nxagentIconWindow);
-    XIconifyWindow(nxagentDisplay, nxagentIconWindow,
-                       DefaultScreen(nxagentDisplay));
-  }
-  else
-  {
-    XIconifyWindow(nxagentDisplay, nxagentIconWindow,
-                       DefaultScreen(nxagentDisplay));
-  }
-}
-
-void nxagentMaximizeToFullScreen(ScreenPtr pScreen)
-{
-  if(nxagentIpaq)
-  {
-    XUnmapWindow(nxagentDisplay, nxagentIconWindow);
-
-    XMapWindow(nxagentDisplay, nxagentFullscreenWindow);
-  }
-  else
-  {
-/*
-    XUnmapWindow(nxagentDisplay, nxagentIconWindow);
-*/
-/*
-FIXME: We'll chech for ReparentNotify and LeaveNotify events after XReparentWindow()
-       in order to avoid the session window is iconified.
-       We could avoid the sesssion window is iconified when a LeaveNotify event is received,
-       so this check would be unnecessary.
-*/
-    struct timeval timeout;
-    int i;
-    XEvent e;
-
-    XReparentWindow(nxagentDisplay, nxagentFullscreenWindow,
-                        RootWindow(nxagentDisplay, DefaultScreen(nxagentDisplay)), 0, 0);
-
-    for (i = 0; i < 100 && nxagentWMIsRunning; i++)
-    {
-      #ifdef TEST
-      fprintf(stderr, "nxagentSwitchFullscreen: WARNING! Going to wait for the ReparentNotify event.\n");
-      #endif
-
-      if (XCheckTypedWindowEvent(nxagentDisplay, nxagentFullscreenWindow, ReparentNotify, &e))
-      {
-        break;
-      }
-
-      XSync(nxagentDisplay, 0);
-
-      timeout.tv_sec = 0;
-      timeout.tv_usec = 50 * 1000;
-
-      nxagentWaitEvents(nxagentDisplay, &timeout);
-    }
-
-    XMapRaised(nxagentDisplay, nxagentFullscreenWindow);
-
-    XIconifyWindow(nxagentDisplay, nxagentIconWindow,
-                       DefaultScreen(nxagentDisplay));
-
-    while (XCheckTypedWindowEvent(nxagentDisplay, nxagentFullscreenWindow, LeaveNotify, &e));
-/*
-    XMapWindow(nxagentDisplay, nxagentIconWindow);
-*/
-  }
-}
-
-Window nxagentCreateIconWindow()
-{
-  XSetWindowAttributes attributes;
-  unsigned long valuemask;
-  char* window_name;
-  XTextProperty windowName;
-  XSizeHints sizeHints;
-  XWMHints wmHints;
-  Window w;
-  Mask mask;
-
-  /*
-   * Create icon window.
-   */
-
-  attributes.override_redirect = False;
-  attributes.colormap = DefaultColormap(nxagentDisplay, DefaultScreen(nxagentDisplay));
-  attributes.background_pixmap = nxagentScreenSaverPixmap;
-  valuemask = CWOverrideRedirect | CWBackPixmap | CWColormap;
-
-  #ifdef TEST
-  fprintf(stderr, "nxagentCreateIconWindow: Going to create new icon window.\n");
-  #endif
-
-  w = XCreateWindow(nxagentDisplay, DefaultRootWindow(nxagentDisplay),
-                        0, 0, 1, 1, 0,
-                            DefaultDepth(nxagentDisplay, DefaultScreen(nxagentDisplay)),
-                                InputOutput,
-                                    DefaultVisual(nxagentDisplay, DefaultScreen(nxagentDisplay)),
-                                        valuemask, &attributes);
-
-  #ifdef TEST
-  fprintf(stderr, "nxagentCreateIconWindow: Created new icon window with id [%ld].\n",
-              nxagentIconWindow);
-  #endif
-
-  /*
-   *  Set hints to the window manager for the icon window.
-   */
-
-  window_name = nxagentWindowName;
-  XStringListToTextProperty(&window_name, 1, &windowName);
-  sizeHints.flags = PMinSize | PMaxSize;
-  sizeHints.min_width = sizeHints.max_width = 1;
-  sizeHints.min_height = sizeHints.max_height = 1;
-  wmHints.flags = IconPixmapHint | IconMaskHint;
-  wmHints.initial_state = IconicState;
-  wmHints.icon_pixmap = nxagentIconPixmap;
-
-  if (useXpmIcon)
-  {
-    wmHints.icon_mask = nxagentIconShape;
-    wmHints.flags = IconPixmapHint | IconMaskHint;
-  }
-  else
-  {
-    wmHints.flags = StateHint | IconPixmapHint;
-  }
-
-  XSetWMProperties(nxagentDisplay, w,
-                      &windowName, &windowName,
-                          NULL , 0 , &sizeHints, &wmHints, NULL);
-
-  /*
-   * Enable events from the icon window.
-   */
-
-  nxagentGetDefaultEventMask(&mask);
-
-  XSelectInput(nxagentDisplay, w, (mask & ~(KeyPressMask |
-                   KeyReleaseMask)) | StructureNotifyMask);
-
-  /*
-   * Notify to client if user closes icon window.
-   */
-
-  if (nxagentWMIsRunning && !nxagentOption(Rootless))
-  {
-    XlibAtom deleteWMAtom = nxagentAtoms[2]; /* WM_DELETE_WINDOW */
-
-    XSetWMProtocols(nxagentDisplay, w, &deleteWMAtom, 1);
-  }
-
-  return w;
 }
 
 Bool nxagentMagicPixelZone(int x, int y)
@@ -977,6 +816,8 @@ Bool nxagentOpenScreen(int index, ScreenPtr pScreen,
 
     nxagentChangeOption(Fullscreen, False);
 
+    nxagentFullscreenWindow = 0;
+
     resetAgentPosition = True;
   }
 
@@ -1382,8 +1223,6 @@ N/A
 
     if (nxagentOption(Fullscreen))
     {
-      attributes.override_redirect = True;
-
       /*
        * We need to disable the host's screensaver or
        * it will otherwise grab the screen even if it
@@ -1609,8 +1448,7 @@ N/A
   if (nxagentDoFullGeneration == 1 ||
           nxagentReconnectTrap == 1)
   {
-    valuemask = CWBackPixel | CWEventMask | CWColormap |
-                    (nxagentOption(Fullscreen) == 1 ? CWOverrideRedirect : 0);
+    valuemask = CWBackPixel | CWEventMask | CWColormap;
 
     attributes.background_pixel = nxagentBlackPixel;
 
@@ -1620,8 +1458,6 @@ N/A
 
     if (nxagentOption(Fullscreen) == 1)
     {
-      attributes.override_redirect = True;
-
       if (nxagentReconnectTrap)
       {
         /*
@@ -1754,7 +1590,7 @@ N/A
     sizeHints.width = nxagentOption(RootWidth);
     sizeHints.height = nxagentOption(RootHeight);
 
-    if (nxagentOption(DesktopResize) == 1)
+    if (nxagentOption(DesktopResize) == 1 || nxagentOption(Fullscreen) == 1)
     {
       sizeHints.max_width = WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
       sizeHints.max_height = HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
@@ -1798,37 +1634,6 @@ N/A
      */
 
     XClearWindow(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum]);
-
-    if (nxagentOption(Fullscreen))
-    {
-      valuemask = CWBackPixmap | CWColormap | CWOverrideRedirect;
-    }
-    else
-    {
-      valuemask = CWBackPixmap | CWColormap;
-    }
-
-    attributes.background_pixmap = nxagentScreenSaverPixmap;
-    attributes.colormap = DefaultColormap(nxagentDisplay, DefaultScreen(nxagentDisplay));
-
-    if (nxagentOption(Fullscreen))
-    {
-      attributes.override_redirect = False;
-      if (nxagentReconnectTrap)
-      {
-        XGrabKeyboard(nxagentDisplay, nxagentFullscreenWindow, True, GrabModeAsync,
-                      GrabModeAsync, CurrentTime);
-      }
-    }
-
-    if (nxagentOption(Fullscreen))
-    {
-      nxagentIconWindow = nxagentCreateIconWindow();
-    }
-    else
-    {
-      nxagentIconWindow = 0;
-    }
 
     /*
      * When we don't have window manager we grab keyboard
@@ -1880,13 +1685,6 @@ N/A
        */
 
       XSetWMProtocols(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], &deleteWMatom, 1);
-
-      /*
-      if (nxagentOption(Fullscreen))
-      {
-        XSetWMProtocols(nxagentDisplay, nxagentIconWindow, &deleteWMatom, 1);
-      }
-      */
     }
     else
     {
@@ -2266,13 +2064,10 @@ FIXME: We should try to restore the previously
 
   if (nxagentOption(Fullscreen))
   {
-    nxagentChangeOption(Width, WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay)));
-    nxagentChangeOption(Height, HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay)));
-
-    nxagentChangeOption(RootX, (WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay))
-                            - nxagentOption(RootWidth)) / 2);
-    nxagentChangeOption(RootY,  (HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay))
-                            - nxagentOption(RootHeight)) / 2);
+    nxagentChangeOption(RootX, (nxagentOption(Width) -
+                            nxagentOption(RootWidth)) / 2);
+    nxagentChangeOption(RootY, (nxagentOption(Height) -
+                            nxagentOption(RootHeight)) / 2);
   }
   else
   {
@@ -2282,62 +2077,6 @@ FIXME: We should try to restore the previously
 
   nxagentChangeOption(ViewportXSpan, nxagentOption(Width) - nxagentOption(RootWidth));
   nxagentChangeOption(ViewportYSpan, nxagentOption(Height) - nxagentOption(RootHeight));
-
-  /*
-   * Change agent window size and size hints.
-   */
-
-  sizeHints.flags = PPosition | PMinSize | PMaxSize;
-  sizeHints.x = nxagentOption(X);
-  sizeHints.y = nxagentOption(Y);
-
-  sizeHints.min_width = MIN_NXAGENT_WIDTH;
-  sizeHints.min_height = MIN_NXAGENT_HEIGHT;
-  sizeHints.width = width;
-  sizeHints.height = height;
-
-  if (nxagentOption(DesktopResize) == 1)
-  {
-    sizeHints.max_width = WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
-    sizeHints.max_height = HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
-  }
-  else
-  {
-    sizeHints.max_width = nxagentOption(RootWidth);
-    sizeHints.max_height = nxagentOption(RootHeight);
-  }
-
-  if (nxagentUserGeometry.flag & XValue || nxagentUserGeometry.flag & YValue)
-  {
-    sizeHints.flags |= USPosition;
-  }
-
-  if (nxagentUserGeometry.flag & WidthValue || nxagentUserGeometry.flag & HeightValue)
-  {
-    sizeHints.flags |= USSize;
-  }
-
-  XSetWMNormalHints(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], &sizeHints);
-
-  if (nxagentOption(Fullscreen))
-  {
-    XResizeWindow(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum],
-                      WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay)),
-                          HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay)));
-
-    XResizeWindow(nxagentDisplay, nxagentInputWindows[pScreen -> myNum],
-                      WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay)),
-                          HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay)));
-  }
-  else
-  {
-    XResizeWindow(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], width, height);
-
-    if (nxagentOption(Rootless) == 0)
-    {
-      XResizeWindow(nxagentDisplay, nxagentInputWindows[pScreen -> myNum], width, height);
-    }
-  }
 
   /*
    * Set properties for the agent root window.
@@ -2360,8 +2099,6 @@ FIXME: We should try to restore the previously
 
   (*pScreen -> PositionWindow)(WindowTable[pScreen -> myNum], 0, 0);
 
-  pRootWinSize = &WindowTable[pScreen -> myNum] -> winSize;
-
   nxagentSetRootClip(pScreen, 1);
 
   XMoveWindow(nxagentDisplay, nxagentWindow(WindowTable[0]),
@@ -2369,12 +2106,17 @@ FIXME: We should try to restore the previously
 
   nxagentMoveViewport(pScreen, 0, 0);
 
+  /*
+   * Update pointer bounds.
+   */
+
+  ScreenRestructured(pScreen);
+
   #ifdef TEST
   nxagentPrintAgentGeometry("After Resize Screen", "nxagentResizeScreen:");
   #endif
 
-  fprintf(stderr, "Info: Screen [%d] resized to geometry [%dx%d].\n",
-              pScreen -> myNum, width, height);
+  nxagentSetPrintGeometry(pScreen -> myNum);
 
   return 1;
 
@@ -2451,9 +2193,10 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
   #endif
 
   #ifdef TEST
-  fprintf(stderr, "Info: Init shadow session. nxagentDisplayName [%s] nxagentDisplay "
-              "[%p] nxagentShadowDisplayName [%s].\n", nxagentDisplayName,
-                  (void *) nxagentDisplay, nxagentShadowDisplayName);
+  fprintf(stderr, "Info: Init shadow session. nxagentDisplayName [%s] "
+              "nxagentDisplay [%p] nxagentShadowDisplayName [%s].\n",
+                  nxagentDisplayName, (void *) nxagentDisplay,
+                      nxagentShadowDisplayName);
   #endif
 
   if (nxagentKeyboard != NULL)
@@ -2463,7 +2206,7 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
     if(nxagentKeyboard[i] == 0 || nxagentKeyboard[i + 1] == 0 || i == 0)
     {
       #ifdef WARNING
-      fprintf(stderr,"Warning: Wrong keyboard type: %s.\n", nxagentKeyboard);
+      fprintf(stderr,"WARNING! Wrong keyboard type: %s.\n", nxagentKeyboard);
       #endif
     }
     else
@@ -2475,7 +2218,8 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
   }
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentShadowInit: Setting the master uid [%d].\n", nxagentShadowUid);
+  fprintf(stderr, "nxagentShadowInit: Setting the master uid [%d].\n",
+              nxagentShadowUid);
   #endif
 
 #if !defined (__CYGWIN32__) && !defined (WIN32)
@@ -2495,8 +2239,9 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
   if (NXShadowCreate(nxagentDisplay, layout, nxagentShadowDisplayName,
                          (void *) &nxagentShadowDisplay) != 1)
   {
-    #ifdef TEST
-    fprintf(stderr, "nxagentShadowInit: Failed to initialize shadow display [%s].\n", nxagentShadowDisplayName);
+    #ifdef PANIIC
+    fprintf(stderr, "nxagentShadowInit: PANIC! Failed to initialize shadow "
+                "display [%s].\n", nxagentShadowDisplayName);
     #endif
 
     return -1;
@@ -2519,8 +2264,8 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
   if (NXShadowAddUpdaterDisplay(nxagentDisplay, &nxagentShadowWidth,
                                     &nxagentShadowHeight, &nxagentMasterDepth) == 0)
   {
-    #ifdef TEST
-    fprintf(stderr, "nxagentShadowInit: Failed to add display [%s].\n",
+    #ifdef PANIC
+    fprintf(stderr, "nxagentShadowInit: PANIC! Failed to add display [%s].\n",
                 nxagentDisplayName);
     #endif
 
@@ -2540,12 +2285,69 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
                               nxagentOption(RootHeight) * 1.0 / nxagentShadowHeight);
   }
 
-  if (DefaultVisualOfScreen(DefaultScreenOfDisplay(nxagentDisplay)) -> class != TrueColor ||
-          DefaultVisualOfScreen(DefaultScreenOfDisplay(nxagentShadowDisplay)) -> class != TrueColor)
+  if (DefaultVisualOfScreen(DefaultScreenOfDisplay(nxagentDisplay)) ->
+          class != TrueColor)
   {
-    #ifdef TEST
-    fprintf(stderr, "nxagentShadowInit: PANIC! The visual class is not TrueColor.\n");
+    #ifdef PANIC
+    fprintf(stderr, "nxagentShadowInit: PANIC! The visual class of the remote "
+                "X server is not TrueColor.\n");
     #endif
+
+    return -1;
+  }
+
+  if (DefaultVisualOfScreen(DefaultScreenOfDisplay(nxagentShadowDisplay)) ->
+          class != TrueColor)
+  {
+    #ifdef PANIC
+
+    const char *className;
+
+    switch (DefaultVisualOfScreen(DefaultScreenOfDisplay(nxagentShadowDisplay)) -> class)
+    {
+      case StaticGray:
+      {
+        className = "StaticGray";
+
+        break;
+      }
+      case StaticColor:
+      {
+        className = "StaticColor";
+
+        break;
+      }
+      case PseudoColor:
+      {
+        className = "PseudoColor";
+
+        break;
+      }
+      case DirectColor:
+      {
+        className = "DirectColor";
+
+        break;
+      }
+      case GrayScale:
+      {
+        className = "GrayScale";
+
+        break;
+      }
+      default:
+      {
+        className = "";
+
+        break;
+      }
+    }
+
+    fprintf(stderr, "nxagentShadowInit: PANIC! Cannot shadow the display. "
+                "%s visual class is not supported. Only TrueColor visuals "
+                    "are supported.\n", className);
+
+    #endif /* #endif PANIC */
 
     return -1;
   }
@@ -2566,7 +2368,8 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
       else if (nxagentShadowDepth == 8)
       {
         #ifdef PANIC
-        fprintf(stderr, "nxagentShadowInit: PANIC! The target depth is 8 bit.\n");
+        fprintf(stderr, "nxagentShadowInit: PANIC! Unable to shadow a %d bit "
+                    "display with a 8 bit screen depth.\n", nxagentMasterDepth);
         #endif
 
         return -1;
@@ -2585,7 +2388,8 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
       else if (nxagentShadowDepth == 8)
       {
         #ifdef PANIC
-        fprintf(stderr, "nxagentShadowInit: PANIC! The target depth is 8 bit.\n");
+        fprintf(stderr, "nxagentShadowInit: PANIC! Unable to shadow a 16 bit "
+                    "display with a 8 bit screen depth.\n");
         #endif
 
         return -1;
@@ -2600,7 +2404,8 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
       if (nxagentShadowDepth != 8)
       {
         #ifdef PANIC
-        fprintf(stderr, "nxagentShadowInit: PANIC! The target depth is 8 bit.\n");
+        fprintf(stderr, "nxagentShadowInit: PANIC! Unable to shadow a 8 bit "
+                    "display with a %d bit screen depth.\n", nxagentShadowDepth);
         #endif
 
         return -1;
@@ -3046,7 +2851,7 @@ void nxagentShadowAdaptDepth(unsigned int width, unsigned int height,
     #ifdef WARNING
     fprintf(stderr, "nxagentCorrectDepthShadow: WARNING! Visual not found. Using default visual.\n");
     #endif
-    
+
     pVisual = nxagentVisuals[nxagentDefaultVisualIndex].visual;
   }
 
@@ -3473,10 +3278,10 @@ int nxagentRRSetScreenConfig(ScreenPtr pScreen, int width, int height)
     RRScreenSizePtr oldSizes;
 
     pScrPriv = rrGetScrPriv(pScreen);
-   
+
     oldWidth = pScreen->width;
     oldHeight = pScreen->height;
-    
+
     if (!pScrPriv)
     {
       return 1;
@@ -3556,7 +3361,7 @@ int nxagentRRSetScreenConfig(ScreenPtr pScreen, int width, int height)
     }
 
     RREditConnectionInfo (pScreen);
-    
+
     /*
      * Fix pointer bounds and location
      */
@@ -3694,7 +3499,8 @@ void nxagentSaveAreas(PixmapPtr pPixmap, RegionPtr prgnSave, int xorg, int yorg,
   return;
 }
 
-void nxagentRestoreAreas(PixmapPtr pPixmap, RegionPtr prgnRestore, int xorg, int yorg, WindowPtr pWin)
+void nxagentRestoreAreas(PixmapPtr pPixmap, RegionPtr prgnRestore, int xorg,
+                             int yorg, WindowPtr pWin)
 {
   PixmapPtr pVirtualPixmap;
   RegionPtr clipRegion;
@@ -3709,6 +3515,14 @@ void nxagentRestoreAreas(PixmapPtr pPixmap, RegionPtr prgnRestore, int xorg, int
   XRectangle *pRects;
   BoxRec extents;
   miBSWindowPtr pBackingStore;
+
+  /*
+   * Limit the area to restore to the
+   * root window size.
+   */
+
+  REGION_INTERSECT(pWin -> pScreen, prgnRestore, prgnRestore,
+                       &WindowTable[pWin -> drawable.pScreen -> myNum] -> winSize);
 
   pBackingStore = (miBSWindowPtr) pWin -> backStorage;
 
@@ -3901,6 +3715,24 @@ void nxagentShadowAdaptToRatio(void)
   nxagentMarkCorruptedRegion((DrawablePtr)nxagentShadowPixmapPtr, &region);
 
   REGION_UNINIT(pScreen, &region);
+}
+
+void nxagentPrintGeometry()
+{
+  int i;
+
+  for (i = 0; i < screenInfo.numScreens; i++)
+  {
+    if (nxagentPrintGeometryFlags && (1 << i))
+    {
+      fprintf(stderr, "Info: Screen [%d] resized to geometry [%dx%d] "
+                  "fullscreen [%d].\n", i, screenInfo.screens[i] -> width,
+                      screenInfo.screens[i] -> height,
+                          nxagentOption(Fullscreen));
+    }
+  }
+
+  nxagentPrintGeometryFlags = 0;
 }
 
 #ifdef DUMP

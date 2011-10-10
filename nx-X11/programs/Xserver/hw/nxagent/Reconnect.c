@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2007 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -9,7 +9,7 @@
 /*                                                                        */
 /* Check http://www.nomachine.com/licensing.html for applicability.       */
 /*                                                                        */
-/* NX and NoMachine are trademarks of NoMachine S.r.l.                    */
+/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
 /*                                                                        */
 /* All rights reserved.                                                   */
 /*                                                                        */
@@ -80,6 +80,8 @@ extern Bool nxagentInstallFontServerPath(void);
 extern Bool nxagentUninstallFontServerPath(void);
 
 extern void nxagentRemoveXConnection(void);
+
+extern void nxagentInitPointerMap(void);
 
 static char *nxagentGetReconnectError(void);
 
@@ -257,7 +259,11 @@ TODO: This should be reset only when
 
       if ((dispatchException & DE_TERMINATE) == 0)
       {
+        #ifdef NX_DEBUG_INPUT
+        fprintf(stderr, "Session: Session suspended at '%s' timestamp [%lu].\n", GetTimeAsString(), GetTimeInMillis());
+        #else
         fprintf(stderr, "Session: Session suspended at '%s'.\n", GetTimeAsString());
+        #endif
       }
 
       nxagentResetDisplayHandlers();
@@ -580,6 +586,8 @@ Bool nxagentReconnectSession(void)
     nxagentOldKeyboard = NULL;
   }
 
+  nxagentInitPointerMap();
+
   nxagentDeactivatePointerGrab();
 
   nxagentWakeupByReconnect();
@@ -609,7 +617,11 @@ Bool nxagentReconnectSession(void)
     goto nxagentReconnectError;
   }
 
+  #ifdef NX_DEBUG_INPUT
+  fprintf(stderr, "Session: Session resumed at '%s' timestamp [%lu].\n", GetTimeAsString(), GetTimeInMillis());
+  #else
   fprintf(stderr, "Session: Session resumed at '%s'.\n", GetTimeAsString());
+  #endif
 
   nxagentRemoveSplashWindow(NULL);
 

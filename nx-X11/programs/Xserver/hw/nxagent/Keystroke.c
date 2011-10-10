@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2007 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -9,7 +9,7 @@
 /*                                                                        */
 /* Check http://www.nomachine.com/licensing.html for applicability.       */
 /*                                                                        */
-/* NX and NoMachine are trademarks of NoMachine S.r.l.                    */
+/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
 /*                                                                        */
 /* All rights reserved.                                                   */
 /*                                                                        */
@@ -30,6 +30,12 @@
 
 extern Bool nxagentWMIsRunning;
 extern Bool nxagentIpaq;
+
+#ifdef NX_DEBUG_INPUT
+int nxagentDebugInputDevices = 0;
+unsigned long nxagentLastInputDevicesDumpTime = 0;
+extern void nxagentDeactivateInputDevicesGrabs();
+#endif
 
 /*
  * Set here the required log level.
@@ -86,6 +92,18 @@ int nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
   {
     switch (sym)
     {
+      #ifdef DEBUG_TREE
+
+      case XK_q:
+      case XK_Q:
+      {
+        *result = doDebugTree;
+
+        break;
+      }
+
+      #endif /* DEBUG_TREE */
+
       case XK_t:
       case XK_T:
       {
@@ -209,6 +227,105 @@ int nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
       }
 
       #endif
+
+      #ifdef NX_DEBUG_INPUT
+
+      case XK_X:
+      case XK_x:
+      {
+        /*
+         * Used to test the input devices state.
+         */
+
+        if (X -> type == KeyPress)
+        {
+          if (nxagentDebugInputDevices == 0)
+          {
+            fprintf(stderr, "Info: Turning input devices debug ON.\n");
+    
+            nxagentDebugInputDevices = 1;
+          }
+          else
+          {
+            fprintf(stderr, "Info: Turning input devices debug OFF.\n");
+    
+            nxagentDebugInputDevices = 0;
+    
+            nxagentLastInputDevicesDumpTime = 0;
+          }
+        }
+
+        return 1;
+      }
+
+      case XK_Y:
+      case XK_y:
+      {
+        /*
+         * Used to deactivate input devices grab.
+         */
+
+        if (X -> type == KeyPress)
+        {
+          nxagentDeactivateInputDevicesGrabs();
+        }
+
+        return 1;
+      }
+
+      #endif
+    }
+  }
+  else if ((X -> state & nxagentAltMetaMask) &&
+               ((X -> state & (ControlMask | ShiftMask)) == (ControlMask |
+                   ShiftMask)))
+  {
+    switch (sym)
+    {
+      case XK_Left:
+      case XK_KP_Left:
+      {
+        if (nxagentOption(Rootless) == 0 &&
+                nxagentOption(DesktopResize) == 0)
+        {
+          *result = doViewportMoveLeft;
+        }
+
+        break;
+      }
+      case XK_Up:
+      case XK_KP_Up:
+      {
+        if (nxagentOption(Rootless) == 0 &&
+                nxagentOption(DesktopResize) == 0)
+        {
+          *result = doViewportMoveUp;
+        }
+
+        break;
+      }
+      case XK_Right:
+      case XK_KP_Right:
+      {
+        if (nxagentOption(Rootless) == 0 &&
+                nxagentOption(DesktopResize) == 0)
+        {
+          *result = doViewportMoveRight;
+        }
+
+        break;
+      }
+      case XK_Down:
+      case XK_KP_Down:
+      {
+        if (nxagentOption(Rootless) == 0 &&
+                nxagentOption(DesktopResize) == 0)
+        {
+          *result = doViewportMoveDown;
+        }
+
+        break;
+      }
     }
   }
 

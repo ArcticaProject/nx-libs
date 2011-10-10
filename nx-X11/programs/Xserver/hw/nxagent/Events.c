@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2007 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -9,7 +9,7 @@
 /*                                                                        */
 /* Check http://www.nomachine.com/licensing.html for applicability.       */
 /*                                                                        */
-/* NX and NoMachine are trademarks of NoMachine S.r.l.                    */
+/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
 /*                                                                        */
 /* All rights reserved.                                                   */
 /*                                                                        */
@@ -76,7 +76,9 @@
 #include "input.h"
 #endif
 
+#define Time XlibXID
 #include "XKBlib.h"
+#undef Time
 
 #define GC     XlibGC
 #define Font   XlibFont
@@ -203,6 +205,8 @@ CARD32 nxagentLastEventTime     = 0;
 CARD32 nxagentLastKeyPressTime  = 0;
 Time   nxagentLastServerTime    = 0;
 
+int nxagentPointerAndKeyboardGrabbed = 0;
+
 /*
  * Used for storing windows that need to
  * receive expose events from the agent.
@@ -217,6 +221,16 @@ RegionPtr nxagentRemoteExposeRegion = NULL;
 static void nxagentForwardRemoteExpose(void);
 
 static int nxagentClipAndSendExpose(WindowPtr pWin, pointer ptr);
+
+/*
+ * This is from NXproperty.c.
+ */
+
+int GetWindowProperty(WindowPtr pWin, Atom property, long longOffset,
+                          long longLength, Bool delete, Atom type,
+                              Atom *actualType, int *format, unsigned
+                                  long *nItems, unsigned long *bytesAfter,
+                                      unsigned char **propData);
 
 /*
  * Associate a resource to a drawable and
@@ -274,6 +288,280 @@ void ProcessInputEvents()
   mieqProcessInputEvents();
 }
 
+#ifdef DEBUG_TREE
+
+/*
+ * Print ID and name of window.
+ */
+
+void nxagentRemoteWindowID(Window window, Bool newline)
+{
+#ifdef NO_I18N
+    char *winName;
+#else
+    XTextProperty tp;
+#endif
+
+  fprintf(stderr, "0x%lx", window);
+
+  if (!window)
+  {
+    fprintf(stderr, " (none) ");
+  }
+  else
+  {
+    if (window == DefaultRootWindow(nxagentDisplay))
+    {
+      fprintf(stderr, " (the root window) ");
+    }
+
+#ifdef NO_I18N
+
+    if (!XFetchName(nxagentDisplay, window, &winName))
+    {
+      fprintf(stderr, " (has no name) ");
+    }
+    else if (winName)
+    {
+      fprintf(stderr, " \"%s\" ", winName);
+      XFree(winName);
+    }
+
+#else
+
+    if (XGetWMName(nxagentDisplay, window, &tp) != 0)
+    {
+      fprintf(stderr, " (has no name) ");
+    }
+    else if (tp.nitems > 0)
+    {
+      int count = 0;
+      int i, ret;
+      char **list = NULL;
+
+      fprintf(stderr, " \"");
+
+      ret = XmbTextPropertyToTextList(nxagentDisplay, &tp, &list, &count);
+
+      if ((ret == Success || ret > 0) && list != NULL)
+      {
+        for (i = 0; i < count; i++)
+        {
+          fprintf(stderr, "%s", list[i]);
+        }
+
+        XFreeStringList(list);
+      }
+      else
+      {
+        fprintf(stderr, "%s", tp.value);
+      }
+
+      fprintf(stderr, "\" ");
+    }
+
+#endif
+
+    else
+    {
+      fprintf(stderr, " (has no name) ");
+    }
+  }
+
+  if (newline == TRUE)
+  {
+    fprintf(stderr, "\n");
+  }
+
+  return;
+}
+
+/*
+ * Print info about remote window.
+ */
+
+void nxagentRemoteWindowInfo(Window win, int indent, Bool newLine)
+{
+  XWindowAttributes attributes;
+  int i;
+
+  if (XGetWindowAttributes(nxagentDisplay, win, &attributes) == 0)
+  {
+    return;
+  }
+
+  for (i = 0; i < indent; i++)
+  {
+    fprintf(stderr, " ");
+  }
+
+  fprintf(stderr, "x=%d y=%d width=%d height=%d class=%s map_state=%s "
+             "override_redirect=%s\n", attributes.x, attributes.y,
+                 attributes.width, attributes.height, (attributes.class == 0) ?
+                     "InputOutput" : "InputOnly", (attributes.map_state == 0) ?
+                         "IsUnmapped" : (attributes.map_state == 1 ?
+                             "IsUnviewable" : "IsViewable"),
+                                 (attributes.override_redirect == 0) ?
+                                     "No" : "Yes" );
+
+  if (newLine == TRUE)
+  {
+    fprintf(stderr, "\n");
+  }
+}
+
+/*
+ * Walk remote windows tree.
+ */
+
+void nxagentRemoteWindowsTree(Window window, int level)
+{
+  int i, j;
+  Window rootWin, parentWin;
+  unsigned int numChildren;
+  Window *childList;
+
+  if (!XQueryTree(nxagentDisplay, window, &rootWin, &parentWin, &childList,
+                      &numChildren))
+  {
+    fprintf(stderr, "nxagentRemoteWindowsTree - XQueryTree failed.\n");
+
+    return;
+  }
+
+  if (level == 0)
+  {
+    fprintf(stderr, "\n");
+
+    fprintf(stderr, "  Root Window ID: ");
+    nxagentRemoteWindowID(rootWin, TRUE);
+
+    fprintf(stderr, "  Parent window ID: ");
+    nxagentRemoteWindowID(parentWin, TRUE);
+  }
+
+  if (level == 0 || numChildren > 0)
+  {
+    fprintf(stderr, "     ");
+
+    for (j = 0; j < level; j++)
+    {
+      fprintf(stderr, "    ");
+    }
+
+    fprintf(stderr, "%d child%s%s\n", numChildren, (numChildren == 1) ? "" :
+               "ren", (numChildren == 1) ? ":" : ".");
+  }
+
+  for (i = (int) numChildren - 1; i >= 0; i--)
+  {
+    fprintf(stderr, "      ");
+
+    for (j = 0; j < level; j++)
+    {
+      fprintf(stderr, "     ");
+    }
+
+    nxagentRemoteWindowID(childList[i], TRUE);
+
+    nxagentRemoteWindowInfo(childList[i], (level * 5) + 6, TRUE);
+
+    nxagentRemoteWindowsTree(childList[i], level + 1);
+  }
+
+  if (childList)
+  {
+    XFree((char *) childList);
+  }
+}
+
+/*
+ * Print info about internal window.
+ */
+
+void nxagentInternalWindowInfo(WindowPtr pWin, int indent, Bool newLine)
+{
+  int i;
+  int result;
+  unsigned long ulReturnItems;
+  unsigned long ulReturnBytesLeft;
+  Atom          atomReturnType;
+  int           iReturnFormat;
+  unsigned char *pszReturnData = NULL;
+
+  fprintf(stderr, "Window ID=[0x%lx] Remote ID=[0x%lx] ", pWin -> drawable.id,
+             nxagentWindow(pWin));
+
+  result = GetWindowProperty(pWin, MakeAtom("WM_NAME", 7, False) , 0,
+                                sizeof(CARD32), False, AnyPropertyType,
+                                    &atomReturnType, &iReturnFormat,
+                                        &ulReturnItems, &ulReturnBytesLeft,
+                                            &pszReturnData);
+
+  fprintf(stderr, "Name: ");
+
+  if (result == Success && pszReturnData != NULL)
+  {
+    pszReturnData[ulReturnItems] = '\0';
+
+    fprintf(stderr, "\"%s\"\n", (char *) pszReturnData);
+  }
+  else
+  {
+    fprintf(stderr, "%s\n", "( has no name )");
+  }
+
+  for (i = 0; i < indent; i++)
+  {
+    fprintf(stderr, " ");
+  }
+
+  fprintf(stderr, "x=%d y=%d width=%d height=%d class=%s map_state=%s "
+             "override_redirect=%s", pWin -> drawable.x, pWin -> drawable.y,
+                 pWin -> drawable.width, pWin -> drawable.height,
+                     (pWin -> drawable.class == 0) ? "InputOutput" :
+                         "InputOnly", (pWin -> mapped == 0) ?
+                             "IsUnmapped" : (pWin -> mapped == 1 ?
+                                 "IsUnviewable" : "IsViewable"),
+                                     (pWin -> overrideRedirect == 0) ?
+                                         "No" : "Yes");
+
+  if (newLine == TRUE)
+  {
+    fprintf(stderr, "\n");
+  }
+}
+
+/*
+ * Walk internal windows tree.
+ */
+
+void nxagentInternalWindowsTree(WindowPtr pWin, int indent)
+{
+  WindowPtr pChild;
+  int i;
+
+  while (pWin)
+  {
+    pChild = pWin -> firstChild;
+
+    for (i = 0; i < indent; i++)
+    {
+      fprintf(stderr, " ");
+    }
+
+    nxagentInternalWindowInfo(pWin, indent, TRUE);
+
+    fprintf(stderr, "\n");
+
+    nxagentInternalWindowsTree(pChild, indent + 4);
+
+    pWin = pWin -> nextSib;
+  }
+}
+
+#endif /* DEBUG_TREE */
+
 void nxagentSwitchResizeMode(ScreenPtr pScreen)
 {
   XSizeHints sizeHints;
@@ -290,8 +578,14 @@ void nxagentSwitchResizeMode(ScreenPtr pScreen)
 
     nxagentLaunchDialog(DIALOG_DISABLE_DESKTOP_RESIZE_MODE);
 
-    sizeHints.max_width = nxagentOption(RootWidth);
-    sizeHints.max_height = nxagentOption(RootHeight);
+    if (nxagentOption(Fullscreen) == 0)
+    {
+      sizeHints.max_width = nxagentOption(RootWidth);
+      sizeHints.max_height = nxagentOption(RootHeight);
+
+      XSetWMNormalHints(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum],
+                            &sizeHints);
+    }
   }
   else
   {
@@ -299,7 +593,8 @@ void nxagentSwitchResizeMode(ScreenPtr pScreen)
 
     nxagentLaunchDialog(DIALOG_ENABLE_DESKTOP_RESIZE_MODE);
 
-    nxagentRRSetScreenConfig(pScreen, nxagentOption(Width), nxagentOption(Height));
+    nxagentRRSetScreenConfig(pScreen, nxagentOption(Width),
+                                 nxagentOption(Height));
 
     if (nxagentOption(ClientOs) == ClientOsWinnt)
     {
@@ -308,10 +603,10 @@ void nxagentSwitchResizeMode(ScreenPtr pScreen)
 
     sizeHints.max_width = WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
     sizeHints.max_height = HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
-  }
 
-  XSetWMNormalHints(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum],
-                       &sizeHints);
+    XSetWMNormalHints(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum],
+                          &sizeHints);
+  }
 }
 
 void nxagentShadowSwitchResizeMode(ScreenPtr pScreen)
@@ -655,6 +950,22 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
           {
             break;
           }
+
+          #ifdef DEBUG_TREE
+
+          case doDebugTree:
+          {
+            fprintf(stderr, "\n ========== nxagentRemoteWindowsTree ==========\n");
+            nxagentRemoteWindowsTree(nxagentWindow(WindowTable[0]), 0);
+
+            fprintf(stderr, "\n========== nxagentInternalWindowsTree ==========\n");
+            nxagentInternalWindowsTree(WindowTable[0], 0);
+
+            break;
+          }
+
+          #endif /* DEBUG_TREE */
+
           case doCloseSession:
           {
             closeSession = TRUE;
@@ -676,6 +987,30 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
           case doSwitchFullscreen:
           {
             switchFullscreen = TRUE;
+
+            break;
+          }
+          case doViewportMoveUp:
+          {
+            nxagentMoveViewport(pScreen, 0, -nxagentOption(Height));
+
+            break;
+          }
+          case doViewportMoveDown:
+          {
+            nxagentMoveViewport(pScreen, 0, nxagentOption(Height));
+
+            break;
+          }
+          case doViewportMoveLeft:
+          {
+            nxagentMoveViewport(pScreen, -nxagentOption(Width), 0);
+
+            break;
+          }
+          case doViewportMoveRight:
+          {
+            nxagentMoveViewport(pScreen, nxagentOption(Width), 0);
 
             break;
           }
@@ -755,6 +1090,8 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
 
         if (nxagentOption(ViewOnly) == 0 && nxagentOption(Shadow) == 1 && result == doNothing)
         {
+          X.xkey.keycode = nxagentConvertKeycode(X.xkey.keycode);
+
           NXShadowEvent(nxagentDisplay, X);
         }
 
@@ -763,6 +1100,27 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
       case KeyRelease:
       {
         enum HandleEventResult result;
+        int sendKey = 0;
+
+/*
+FIXME: If we don't flush the queue here, it could happen
+       that the inputInfo structure will not be up to date
+       when we perform the following check on down keys.
+*/
+        ProcessInputEvents();
+
+/*
+FIXME: Don't enqueue the KeyRelease event if the key was
+       not already pressed. This workaround avoids a fake
+       KeyPress is enqueued by the XKEYBOARD extension.
+       Another solution would be to let the events are
+       enqueued and to remove the KeyPress afterwards.
+*/
+        if (BitIsOn(inputInfo.keyboard -> key -> down,
+                       nxagentConvertKeycode(X.xkey.keycode)))
+        {
+          sendKey = 1;
+        }
 
         #ifdef TEST
         fprintf(stderr, "nxagentDispatchEvents: Going to handle new KeyRelease event.\n");
@@ -803,7 +1161,12 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
 
         nxagentLastEventTime = GetTimeInMillis();
 
-        if (!(nxagentCheckSpecialKeystroke(&X.xkey, &result)))
+        if (x.u.keyButtonPointer.time > nxagentLastEventTime)
+        {
+          x.u.keyButtonPointer.time = nxagentLastEventTime;
+        }
+
+        if (!(nxagentCheckSpecialKeystroke(&X.xkey, &result)) && sendKey == 1)
         {
           mieqEnqueue(&x);
 
@@ -811,6 +1174,8 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
 
           if (nxagentOption(ViewOnly) == 0 && nxagentOption(Shadow))
           {
+            X.xkey.keycode = nxagentConvertKeycode(X.xkey.keycode);
+
             NXShadowEvent(nxagentDisplay, X);
           }
         }
@@ -827,6 +1192,23 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
         #endif
 
         nxagentInputEvent = 1;
+
+        if (nxagentOption(ClientOs) == ClientOsMac && (X.xbutton.state & ControlMask) == ControlMask)
+        {
+          x.u.u.type = ButtonPress;
+          x.u.u.detail = inputInfo.pointer -> button -> map[3];
+          x.u.keyButtonPointer.time = nxagentLastEventTime = GetTimeInMillis();
+
+          mieqEnqueue(&x);
+
+          x.u.u.type = ButtonRelease;
+          x.u.u.detail = inputInfo.pointer -> button -> map[3];
+          x.u.keyButtonPointer.time = nxagentLastEventTime = GetTimeInMillis();
+
+          mieqEnqueue(&x);
+
+          break;
+        }
 
         if (nxagentOption(Fullscreen))
         {
@@ -874,7 +1256,7 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
                     X.xbutton.subwindow == None))
         {
           x.u.u.type = ButtonPress;
-          x.u.u.detail = X.xbutton.button;
+          x.u.u.detail = inputInfo.pointer -> button -> map[nxagentReversePointerMap[X.xbutton.button - 1]];
           x.u.keyButtonPointer.time = nxagentLastEventTime = GetTimeInMillis();
 
           if (nxagentOption(Rootless))
@@ -931,6 +1313,11 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
 
         nxagentInputEvent = 1;
 
+        if (nxagentOption(ClientOs) == ClientOsMac && (X.xbutton.state & ControlMask) == ControlMask)
+        {
+          break;
+        }
+
         if (viewportCursor)
         {
           /*
@@ -947,7 +1334,7 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
         if (minimize != True)
         {
           x.u.u.type = ButtonRelease;
-          x.u.u.detail = X.xbutton.button;
+          x.u.u.detail = inputInfo.pointer -> button -> map[nxagentReversePointerMap[X.xbutton.button - 1]];
           x.u.keyButtonPointer.time = nxagentLastEventTime = GetTimeInMillis();
 
           if (nxagentOption(Rootless))
@@ -1301,10 +1688,11 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
           nxagentScreenTrap = 0;
         }
 
-        if (nxagentOption(Fullscreen))
+        if (nxagentOption(Fullscreen) == 1)
         {
-          if (X.xcrossing.window == nxagentFullscreenWindow &&
-                  X.xcrossing.detail != NotifyInferior)
+          if (X.xcrossing.window == nxagentDefaultWindows[0] &&
+                  X.xcrossing.detail != NotifyInferior &&
+                      X.xcrossing.mode == NotifyNormal)
           {
             nxagentGrabPointerAndKeyboard(&X);
           }
@@ -1356,14 +1744,11 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
           nxagentLastEnteredWindow = NULL;
         }
 
-        if (nxagentOption(Fullscreen))
+        if (X.xcrossing.window == nxagentDefaultWindows[0] &&
+                X.xcrossing.detail != NotifyInferior &&
+                    X.xcrossing.mode == NotifyNormal)
         {
-          if (X.xcrossing.window == nxagentFullscreenWindow &&
-                  X.xcrossing.detail != NotifyInferior &&
-                      X.xcrossing.mode == NotifyNormal)
-          {
-            nxagentUngrabPointerAndKeyboard(&X);
-          }
+          nxagentUngrabPointerAndKeyboard(&X);
         }
 
         if (X.xcrossing.detail != NotifyInferior)
@@ -1617,7 +2002,7 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
         }
 
         if (nxagentUseNXTrans == 1 && nxagentOption(Rootless) == 0 &&
-                nxagentOption(Nested) == 0 && X.xmap.window != nxagentIconWindow)
+                nxagentOption(Nested) == 0)
         {
           nxagentVisibility = VisibilityFullyObscured;
         }
@@ -1658,12 +2043,6 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
 
         if (nxagentOption(Fullscreen) == 1)
         {
-          if (X.xmap.window == nxagentIconWindow)
-          {
-            pScreen = nxagentScreen(X.xmap.window);
-            nxagentMaximizeToFullScreen(pScreen);
-          }
-
           nxagentVisibility = VisibilityUnobscured;
           nxagentVisibilityStop = False;
           nxagentVisibilityTimeout = GetTimeInMillis() + 2000;
@@ -1673,9 +2052,16 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
       }
       case MappingNotify:
       {
+        XMappingEvent *mappingEvent = (XMappingEvent *) &X;
+
         #ifdef DEBUG
         fprintf(stderr, "nxagentDispatchEvents: WARNING! Going to handle new MappingNotify event.\n");
         #endif
+
+        if (mappingEvent -> request == MappingPointer)
+        {
+            nxagentInitPointerMap();
+        }
 
         break;
       }
@@ -1750,14 +2136,8 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
 
     if (nxagentWMIsRunning)
     {
-      if (nxagentOption(Fullscreen))
-      {
-        nxagentMinimizeFromFullScreen(pScreen);
-      }
-      else
-      {
-        XIconifyWindow(nxagentDisplay, nxagentDefaultWindows[0], DefaultScreen(nxagentDisplay));
-      }
+      XIconifyWindow(nxagentDisplay, nxagentDefaultWindows[0],
+                         DefaultScreen(nxagentDisplay));
     }
   }
 
@@ -1916,8 +2296,16 @@ int nxagentHandleKeyPress(XEvent *X, enum HandleEventResult *result)
     return 1;
   }
 
-  nxagentLastEventTime = nxagentLastKeyPressTime = GetTimeInMillis();
+  if (X -> xkey.keycode == 66)
+  {
+    nxagentXkbState.Caps = (~nxagentXkbState.Caps & 1);
+  }
+  else if (X -> xkey.keycode == 77)
+  {
+    nxagentXkbState.Num = (~nxagentXkbState.Num & 1);
+  }
 
+  nxagentLastEventTime = nxagentLastKeyPressTime = GetTimeInMillis();
   
   x.u.u.type = KeyPress;
   x.u.u.detail = nxagentConvertKeycode(X -> xkey.keycode);
@@ -2227,7 +2615,6 @@ int nxagentHandleGraphicsExposeEvent(XEvent *X)
 
 int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
 {
-  ScreenPtr pScreen;
   WindowPtr pWin;
   xEvent x;
 
@@ -2343,19 +2730,8 @@ int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
         fprintf(stderr, "Events: WM_DELETE_WINDOW arrived Atom = %ld.\n", wmAtom);
         #endif
 
-        if (X -> xclient.window == nxagentIconWindow)
-        {
-          pScreen = nxagentScreen(X -> xmap.window);
-
-          XMapRaised(nxagentDisplay, nxagentFullscreenWindow);
-
-          XIconifyWindow(nxagentDisplay, nxagentIconWindow,
-                             DefaultScreen(nxagentDisplay));
-
-        }
-
-        if (X -> xclient.window == (nxagentOption(Fullscreen) ?
-              nxagentIconWindow : nxagentDefaultWindows[0]))
+        if (X -> xclient.window == nxagentDefaultWindows[0] ||
+                nxagentWMIsRunning == 0)
         {
           *result = doCloseSession;
         }
@@ -2952,85 +3328,110 @@ int nxagentHandleConfigureNotify(XEvent* X)
 
     if (X -> xconfigure.window == nxagentDefaultWindows[pScreen -> myNum])
     {
+      if (nxagentOption(DesktopResize) == 1)
+      {
+        if (nxagentOption(Width) != X -> xconfigure.width ||
+              nxagentOption(Height) != X -> xconfigure.height)
+        {
+          Bool newEvents = False;
+
+          doRandR = True;
+
+          NXFlushDisplay(nxagentDisplay, NXFlushLink);
+
+          do
+          {
+            newEvents = False;
+
+            timeout.tv_sec  = 0;
+            timeout.tv_usec = 500 * 1000;
+
+            nxagentWaitEvents(nxagentDisplay, &timeout);
+
+            /*
+             * This should also flush
+             * the NX link for us.
+             */
+
+            XSync(nxagentDisplay, 0);
+
+            while (XCheckTypedWindowEvent(nxagentDisplay, nxagentDefaultWindows[pScreen -> myNum],
+                                            ConfigureNotify, X))
+            {
+              newEvents = True;
+            }
+
+          } while (newEvents);
+        }
+      }
+
+      if (nxagentWMIsRunning == 0 || X -> xconfigure.send_event)
+      {
+        nxagentChangeOption(X, X -> xconfigure.x);
+        nxagentChangeOption(Y, X -> xconfigure.y);
+      }
+
+      if (nxagentOption(Shadow) == 1 && nxagentOption(DesktopResize) == 1 &&
+              (nxagentOption(Width) != X -> xconfigure.width ||
+                  nxagentOption(Height) != X -> xconfigure.height))
+      {
+        nxagentShadowResize = 1;
+      }
+
+      nxagentChangeOption(Width, X -> xconfigure.width);
+      nxagentChangeOption(Height, X -> xconfigure.height);
+
+      nxagentChangeOption(ViewportXSpan, (int) X -> xconfigure.width -
+                              (int) nxagentOption(RootWidth));
+      nxagentChangeOption(ViewportYSpan, (int) X -> xconfigure.height -
+                              (int) nxagentOption(RootHeight));
+
+      nxagentMoveViewport(pScreen, 0, 0);
+
+      if (nxagentOption(Shadow) == 1 ||
+              (nxagentOption(Width) == nxagentOption(RootWidth) &&
+                  nxagentOption(Height) == nxagentOption(RootHeight)))
+      {
+        doRandR = 0;
+      }
+
+      nxagentChangeOption(Width, X -> xconfigure.width);
+      nxagentChangeOption(Height, X -> xconfigure.height);
+
+      XMoveResizeWindow(nxagentDisplay, nxagentInputWindows[0], 0, 0,
+                            X -> xconfigure.width, X -> xconfigure.height);
+
       if (nxagentOption(Fullscreen) == 0)
       {
-        if (nxagentOption(DesktopResize) == 1)
-        {
-          if (nxagentOption(Width) != X -> xconfigure.width ||
-                nxagentOption(Height) != X -> xconfigure.height)
-          {
-            Bool newEvents = False;
-
-            doRandR = True;
-
-            NXFlushDisplay(nxagentDisplay, NXFlushLink);
-
-            do
-            {
-              newEvents = False;
-
-              timeout.tv_sec  = 0;
-              timeout.tv_usec = 500 * 1000;
-
-              nxagentWaitEvents(nxagentDisplay, &timeout);
-
-              /*
-               * This should also flush
-               * the NX link for us.
-               */
-
-              XSync(nxagentDisplay, 0);
-
-              while (XCheckTypedWindowEvent(nxagentDisplay, nxagentDefaultWindows[pScreen -> myNum],
-                                              ConfigureNotify, X))
-              {
-                newEvents = True;
-              }
-
-            } while (newEvents);
-          }
-        }
-
-        if (nxagentWMIsRunning == 0 || X -> xconfigure.send_event)
-        {
-          nxagentChangeOption(X, X -> xconfigure.x);
-          nxagentChangeOption(Y, X -> xconfigure.y);
-        }
-
-        if (nxagentOption(Shadow) == 1 && nxagentOption(DesktopResize) == 1 &&
-                (nxagentOption(Width) != X -> xconfigure.width ||
-                    nxagentOption(Height) != X -> xconfigure.height))
-        {
-          nxagentShadowResize = 1;
-        }
-
-        nxagentChangeOption(Width, X -> xconfigure.width);
-        nxagentChangeOption(Height, X -> xconfigure.height);
-
-        nxagentChangeOption(ViewportXSpan, (int) X -> xconfigure.width -
-                                (int) nxagentOption(RootWidth));
-        nxagentChangeOption(ViewportYSpan, (int) X -> xconfigure.height -
-                                (int) nxagentOption(RootHeight));
-
         nxagentMoveViewport(pScreen, 0, 0);
+      }
+      else
+      {
+        nxagentChangeOption(RootX, (nxagentOption(Width) -
+                                nxagentOption(RootWidth)) / 2);
+        nxagentChangeOption(RootY, (nxagentOption(Height) -
+                                nxagentOption(RootHeight)) / 2);
+        nxagentChangeOption(ViewportXSpan, nxagentOption(Width) -
+                                nxagentOption(RootWidth));
+        nxagentChangeOption(ViewportYSpan, nxagentOption(Height) -
+                                nxagentOption(RootHeight));
 
-        if (nxagentOption(Shadow) == 1 ||
-                (nxagentOption(Width) == nxagentOption(RootWidth) &&
-                    nxagentOption(Height) == nxagentOption(RootHeight)))
-        {
-          doRandR = 0;
-        }
+        nxagentUpdateViewportFrame(0, 0, nxagentOption(RootWidth),
+                                       nxagentOption(RootHeight));
 
-        if (doRandR)
-        {
-          #ifdef TEST
-          fprintf(stderr,"nxagentHandleConfigureNotify: Width %d Height %d.\n",
-                      nxagentOption(Width), nxagentOption(Height));
-          #endif
+        XMoveWindow(nxagentDisplay, nxagentWindow(WindowTable[pScreen -> myNum]),
+                        nxagentOption(RootX), nxagentOption(RootY));
+      }
 
-          nxagentRRSetScreenConfig(screenInfo.screens[DefaultScreen(nxagentDisplay)],
-                                     nxagentOption(Width), nxagentOption(Height));
-        }
+      if (doRandR)
+      {
+        #ifdef TEST
+        fprintf(stderr,"nxagentHandleConfigureNotify: Width %d Height %d.\n",
+                    nxagentOption(Width), nxagentOption(Height));
+        #endif
+
+        nxagentRRSetScreenConfig(screenInfo.screens[DefaultScreen(nxagentDisplay)],
+                                   nxagentOption(Width), nxagentOption(Height));
       }
 
       return 1;
@@ -3042,8 +3443,6 @@ int nxagentHandleConfigureNotify(XEvent* X)
 
 int nxagentHandleReparentNotify(XEvent* X)
 {
-  ScreenPtr pScreen = nxagentScreen(X -> xreparent.window);
-
   #ifdef TEST
   fprintf(stderr, "nxagentHandleReparentNotify: Going to handle a new reparent event.\n");
   #endif
@@ -3096,6 +3495,8 @@ int nxagentHandleReparentNotify(XEvent* X)
           #ifdef WARNING
           fprintf(stderr, "nxagentHandleReparentNotify: WARNING! Failed QueryTree request.\n");
           #endif
+
+          break;
         }
 
         if (result && children_return)
@@ -3147,6 +3548,95 @@ int nxagentHandleReparentNotify(XEvent* X)
     }
 
     return 1;
+  }
+  else if (nxagentWMIsRunning == 1 && nxagentOption(Fullscreen) == 0 &&
+               nxagentOption(WMBorderWidth) == -1)
+  {
+    XlibWindow w;
+    XlibWindow rootReturn = 0;
+    XlibWindow parentReturn = 0;
+    XlibWindow junk;
+    XlibWindow *childrenReturn = NULL;
+    unsigned int nchildrenReturn = 0;
+    Status result;
+    XWindowAttributes attributes;
+    int x, y;
+    int xParent, yParent;
+
+    /*
+     * Calculate the absolute upper-left X e Y 
+     */
+
+    if ((XGetWindowAttributes(nxagentDisplay, X -> xreparent.window,
+                                  &attributes) == 0))
+    {
+      #ifdef WARNING
+      fprintf(stderr, "nxagentHandleReparentNotify: WARNING! "
+                  "XGetWindowAttributes failed.\n");
+      #endif
+
+      return 1;
+    }
+
+    x = attributes.x;
+    y = attributes.y;
+
+    XTranslateCoordinates(nxagentDisplay, X -> xreparent.window,
+                              attributes.root, -attributes.border_width,
+                                  -attributes.border_width, &x, &y, &junk);
+
+   /*
+    * Calculate the parent X and parent Y.
+    */
+
+    w = X -> xreparent.parent;
+
+    if (w != DefaultRootWindow(nxagentDisplay))
+    {
+      do
+      {
+        result = XQueryTree(nxagentDisplay, w, &rootReturn, &parentReturn,
+                                &childrenReturn, &nchildrenReturn);
+    
+        if (parentReturn == rootReturn || parentReturn == 0 || result == 0)
+        {
+          break;
+        }
+
+        if (result == 1 && childrenReturn != NULL)
+        {
+          XFree(childrenReturn);
+        }
+    
+        w = parentReturn;
+      }
+      while (True);
+
+      /*
+       * WM reparented. Find edge of the frame.
+       */
+
+      if (XGetWindowAttributes(nxagentDisplay, w, &attributes) == 0)
+      {
+        #ifdef WARNING
+        fprintf(stderr, "nxagentHandleReparentNotify: WARNING! "
+                    "XGetWindowAttributes failed for parent window.\n");
+        #endif
+
+        return 1;
+      }
+
+      xParent = attributes.x;
+      yParent = attributes.y;
+
+      /*
+       * Difference between Absolute X and Parent X gives thickness of side frame.
+       * Difference between Absolute Y and Parent Y gives thickness of title bar. 
+       */
+
+      nxagentChangeOption(WMBorderWidth, (x - xParent));
+      nxagentChangeOption(WMTitleHeight, (y - yParent));
+    }
   }
 
   return 1;
@@ -3308,6 +3798,13 @@ void nxagentGrabPointerAndKeyboard(XEvent *X)
 
   int resource;
 
+  int result;
+
+  if (nxagentPointerAndKeyboardGrabbed == 1)
+  {
+    return;
+  }
+
   #ifdef TEST
   fprintf(stderr, "nxagentGrabPointerAndKeyboard: Grabbing pointer and keyboard with event at [%p].\n",
               (void *) X);
@@ -3326,8 +3823,22 @@ void nxagentGrabPointerAndKeyboard(XEvent *X)
   fprintf(stderr, "nxagentGrabPointerAndKeyboard: Going to grab the keyboard in context [B1].\n");
   #endif
 
-  XGrabKeyboard(nxagentDisplay, nxagentFullscreenWindow,
-                    True, GrabModeAsync, GrabModeAsync, now);
+  result = XGrabKeyboard(nxagentDisplay, nxagentFullscreenWindow,
+                             True, GrabModeAsync, GrabModeAsync, now);
+
+  if (result != GrabSuccess)
+  {
+    return;
+  }
+
+  /*
+   * The smart scheduler could be stopped while
+   * waiting for the reply. In this case we need
+   * to yield explicitly to avoid to be stuck in
+   * the dispatch loop forever.
+   */
+
+  isItTimeToYield = 1;
 
   #ifdef TEST
   fprintf(stderr, "nxagentGrabPointerAndKeyboard: Going to grab the pointer in context [B2].\n");
@@ -3356,11 +3867,18 @@ void nxagentGrabPointerAndKeyboard(XEvent *X)
     XSetInputFocus(nxagentDisplay, nxagentFullscreenWindow,
                        RevertToParent, now);
   }
+
+  nxagentPointerAndKeyboardGrabbed = 1;
 }
 
 void nxagentUngrabPointerAndKeyboard(XEvent *X)
 {
   unsigned long now;
+
+  if (nxagentPointerAndKeyboardGrabbed == 0)
+  {
+    return;
+  }
 
   #ifdef TEST
   fprintf(stderr, "nxagentUngrabPointerAndKeyboard: Ungrabbing pointer and keyboard with event at [%p].\n",
@@ -3387,6 +3905,8 @@ void nxagentUngrabPointerAndKeyboard(XEvent *X)
   #endif
 
   XUngrabPointer(nxagentDisplay, now);
+
+  nxagentPointerAndKeyboardGrabbed = 0;
 }
 
 void nxagentDeactivatePointerGrab()
@@ -4020,6 +4540,182 @@ void nxagentGuessDumpInputInfo(ClientPtr client, Atom property, char *data)
       nxagentDebugInput = 0;
     }
   }
+}
+
+void nxagentDeactivateInputDevicesGrabs()
+{
+  fprintf(stderr, "Info: Deactivating input devices grabs.\n");
+
+  if (inputInfo.pointer -> grab)
+  {
+    (*inputInfo.pointer -> DeactivateGrab)(inputInfo.pointer);
+  }
+
+  if (inputInfo.keyboard -> grab)
+  {
+    (*inputInfo.keyboard -> DeactivateGrab)(inputInfo.keyboard);
+  }
+}
+
+static const char *nxagentGrabStateToString(int state)
+{
+  switch (state)
+  {
+    case 0:
+      return "NOT_GRABBED";
+    case 1:
+      return "THAWED";
+    case 2:
+      return "THAWED_BOTH";
+    case 3:
+      return "FREEZE_NEXT_EVENT";
+    case 4:
+      return "FREEZE_BOTH_NEXT_EVENT";
+    case 5:
+      return "FROZEN_NO_EVENT";
+    case 6:
+      return "FROZEN_WITH_EVENT";
+    case 7:
+      return "THAW_OTHERS";
+    default:
+      return "unknown state";
+  }
+}
+
+void nxagentDumpInputDevicesState(void)
+{
+  int i, k;
+  int mask = 1;
+  CARD8 val;
+  DeviceIntPtr dev;
+  GrabPtr grab;
+  WindowPtr pWin = NULL;
+
+  fprintf(stderr, "\n*** Dump input devices state: BEGIN ***"
+              "\nKeys down:");
+
+  dev = inputInfo.keyboard;
+
+  for (i = 0; i < DOWN_LENGTH; i++)
+  {
+    val = dev -> key -> down[i];
+
+    if (val != 0)
+    {
+      for (k = 0; k < 8; k++)
+      {
+        if (val & (mask << k))
+        {
+          fprintf(stderr, "\n\t[%d] [%s]", i * 8 + k,
+                      XKeysymToString(XKeycodeToKeysym(nxagentDisplay, i * 8 + k, 0)));
+        }
+      }
+    }
+  }
+
+  fprintf(stderr, "\nKeyboard device state: \n\tdevice [%p]\n\tlast grab time [%lu]"
+              "\n\tfrozen [%s]\n\tstate [%s]\n\tother [%p]\n\tevent count [%d]"
+                  "\n\tfrom passive grab [%s]\n\tactivating key [%d]", dev,
+                      dev -> grabTime.milliseconds, dev -> sync.frozen ? "Yes": "No",
+                          nxagentGrabStateToString(dev -> sync.state),
+                              dev -> sync.other, dev -> sync.evcount,
+                                  dev -> fromPassiveGrab ? "Yes" : "No",
+                                      dev -> activatingKey);
+
+  grab = dev -> grab;
+
+  if (grab)
+  {
+    fprintf(stderr, "\nKeyboard grab state: \n\twindow pointer [%p]"
+                "\n\towner events flag [%s]\n\tgrab mode [%s]",
+                    grab -> window, grab -> ownerEvents ? "True" : "False",
+                        grab -> keyboardMode ? "asynchronous" : "synchronous");
+
+   /*
+    * Passive grabs.
+    */
+
+    pWin = grab -> window;
+    grab = wPassiveGrabs(pWin);
+
+    while (grab)
+    {
+      fprintf(stderr, "\nPassive grab state: \n\tdevice [%p]\n\towner events flag [%s]"
+                  "\n\tpointer grab mode [%s]\n\tkeyboard grab mode [%s]\n\tevent type [%d]"
+                      "\n\tmodifiers [%x]\n\tbutton/key [%u]\n\tevent mask [%lx]",
+                          grab -> device, grab -> ownerEvents ? "True" : "False",
+                              grab -> pointerMode ? "asynchronous" : "synchronous",
+                                  grab -> keyboardMode ? "asynchronous" : "synchronous",
+                                      grab -> type, grab -> modifiersDetail.exact,
+                                          grab -> detail.exact, grab -> eventMask);
+
+      grab = grab -> next;
+    }
+  }
+
+  fprintf(stderr, "\nButtons down:");
+
+  dev = inputInfo.pointer;
+
+  for (i = 0; i < DOWN_LENGTH; i++)
+  {
+    val = dev -> button -> down[i];
+
+    if (val != 0)
+    {
+      for (k = 0; k < 8; k++)
+      {
+        if (val & (mask << k))
+        {
+          fprintf(stderr, "\n\t[%d]", i * 8 + k);
+        }
+      }
+    }
+  }
+
+  fprintf(stderr, "\nPointer device state: \n\tdevice [%p]\n\tlast grab time [%lu]"
+              "\n\tfrozen [%s]\n\tstate [%s]\n\tother [%p]\n\tevent count [%d]"
+                  "\n\tfrom passive grab [%s]\n\tactivating button [%d]", dev,
+                      dev -> grabTime.milliseconds, dev -> sync.frozen ? "Yes" : "No",
+                          nxagentGrabStateToString(dev -> sync.state),
+                              dev -> sync.other, dev -> sync.evcount,
+                                  dev -> fromPassiveGrab ? "Yes" : "No",
+                                      dev -> activatingKey);
+
+  grab = dev -> grab;
+
+  if (grab)
+  {
+    fprintf(stderr, "\nPointer grab state: \n\twindow pointer [%p]"
+                "\n\towner events flag [%s]\n\tgrab mode [%s]",
+                    grab -> window, grab -> ownerEvents ? "True" : "False",
+                        grab -> pointerMode ? "asynchronous" : "synchronous");
+
+    if (grab -> window != pWin)
+    {
+      /*
+       * Passive grabs.
+       */
+
+      grab = wPassiveGrabs(grab -> window);
+
+      while (grab)
+      {
+        fprintf(stderr, "\nPassive grab state: \n\tdevice [%p]\n\towner events flag [%s]"
+                    "\n\tpointer grab mode [%s]\n\tkeyboard grab mode [%s]\n\tevent type [%d]"
+                        "\n\tmodifiers [%x]\n\tbutton/key [%u]\n\tevent mask [%lx]",
+                            grab -> device, grab -> ownerEvents ? "True" : "False",
+                                grab -> pointerMode ? "asynchronous" : "synchronous",
+                                    grab -> keyboardMode ? "asynchronous" : "synchronous",
+                                        grab -> type, grab -> modifiersDetail.exact,
+                                            grab -> detail.exact, grab -> eventMask);
+
+        grab = grab -> next;
+      }
+    }
+  }
+
+  fprintf(stderr, "\n*** Dump input devices state: FINISH ***\n");
 }
 
 #endif

@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2007 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -9,7 +9,7 @@
 /*                                                                        */
 /* Check http://www.nomachine.com/licensing.html for applicability.       */
 /*                                                                        */
-/* NX and NoMachine are trademarks of NoMachine S.r.l.                    */
+/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
 /*                                                                        */
 /* All rights reserved.                                                   */
 /*                                                                        */
@@ -291,9 +291,20 @@ void nxagentSetInstalledColormapWindows(ScreenPtr pScreen)
 	  pCmap = (ColormapPtr)LookupIDByType(pScreen->defColormap,
 					      RT_COLORMAP);
 
-	XSetWindowColormap(nxagentDisplay,
-			   nxagentDefaultWindows[pScreen->myNum],
-			   nxagentColormap(pCmap));
+        if (pCmap != NULL)
+        {
+          XSetWindowColormap(nxagentDisplay,
+	                         nxagentDefaultWindows[pScreen->myNum],
+                                     nxagentColormap(pCmap));
+        }
+        #ifdef WARNING
+        else
+        {
+          fprintf(stderr, "nxagentSetInstalledColormapWindows: WARNING! "
+                      "Window at [%p] has no colormap with class [%d].\n",
+                          pWin, pWin -> drawable.class);
+        }
+        #endif
       }
 #endif /* DUMB_WINDOW_MANAGERS */
   }

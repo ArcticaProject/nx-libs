@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2007 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -9,7 +9,7 @@
 /*                                                                        */
 /* Check http://www.nomachine.com/licensing.html for applicability.       */
 /*                                                                        */
-/* NX and NoMachine are trademarks of NoMachine S.r.l.                    */
+/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
 /*                                                                        */
 /* All rights reserved.                                                   */
 /*                                                                        */
@@ -450,6 +450,21 @@ static void nxagentSigchldHandler(int signal)
       #endif
 
       pid = nxagentSuspendDialogPid = 0;
+    }
+  }
+
+  if (pid == 0 && nxagentFontsReplacementDialogPid)
+  {
+    pid = waitpid(nxagentFontsReplacementDialogPid, &status, options);
+
+    if (pid == -1 && errno == ECHILD)
+    {
+      #ifdef WARNING
+      fprintf(stderr, "nxagentSigchldHandler: Got ECHILD waiting for child %d (Fonts replacement).\n",
+                  nxagentFontsReplacementDialogPid);
+      #endif
+
+      pid = nxagentFontsReplacementDialogPid = 0;
     }
   }
 
@@ -1609,19 +1624,30 @@ void nxagentInitPixmapFormats()
 
   nxagentNumPixmapFormats = 0;
 
-  nxagentPixmapFormats = xalloc(nxagentNumDepths * sizeof(XPixmapFormatValues));
+/*
+XXX: Some X server doesn't list 1 among available depths...
+*/
+
+  nxagentPixmapFormats = xalloc((nxagentNumDepths + 1) * sizeof(XPixmapFormatValues));
 
   for (i = 1; i <= MAXDEPTH; i++)
   {
     depth = 0;
 
-    for (j = 0; j < nxagentNumDepths; j++)
+    if (i == 1)
     {
-      if (nxagentDepths[j] == i)
+      depth = 1;
+    }
+    else
+    {
+      for (j = 0; j < nxagentNumDepths; j++)
       {
-        depth = i;
+        if (nxagentDepths[j] == i)
+        {
+          depth = i;
 
-        break;
+          break;
+        }
       }
     }
 

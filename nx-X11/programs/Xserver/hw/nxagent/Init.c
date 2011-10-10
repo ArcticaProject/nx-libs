@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2007 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -9,7 +9,7 @@
 /*                                                                        */
 /* Check http://www.nomachine.com/licensing.html for applicability.       */
 /*                                                                        */
-/* NX and NoMachine are trademarks of NoMachine S.r.l.                    */
+/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
 /*                                                                        */
 /* All rights reserved.                                                   */
 /*                                                                        */
@@ -74,7 +74,7 @@ is" without express or implied warranty.
 #undef  DEBUG
 #undef  DUMP
 
-#define NXAGENT_VERSION  "3.3.0"
+#define NXAGENT_VERSION  "3.4.0"
 
 /*
  * ProcVector array defined in tables.c.
@@ -193,7 +193,7 @@ void InitOutput(ScreenInfo *screenInfo, int argc, char *argv[])
   if (serverGeneration <= 1)
   {
     fprintf(stderr, "\nNXAGENT - Version " NXAGENT_VERSION "\n\n");
-    fprintf(stderr, "Copyright (C) 2001, 2007 NoMachine.\n");
+    fprintf(stderr, "Copyright (C) 2001, 2010 NoMachine.\n");
     fprintf(stderr, "See http://www.nomachine.com/ for more information.\n\n");
 
     fprintf(stderr, "Info: Agent running with pid '%d'.\n", getpid());

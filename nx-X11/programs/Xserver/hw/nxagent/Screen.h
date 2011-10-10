@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2007 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -9,7 +9,7 @@
 /*                                                                        */
 /* Check http://www.nomachine.com/licensing.html for applicability.       */
 /*                                                                        */
-/* NX and NoMachine are trademarks of NoMachine S.r.l.                    */
+/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
 /*                                                                        */
 /* All rights reserved.                                                   */
 /*                                                                        */
@@ -36,6 +36,9 @@ is" without express or implied warranty.
 #define MIN_NXAGENT_HEIGHT 60
 #define NXAGENT_FRAME_WIDTH 2000
 
+#define nxagentSetPrintGeometry(screen) \
+    nxagentPrintGeometryFlags = (1 << (screen));
+    
 extern int nxagentClients;
 
 extern int nxagentAutoDisconnectTimeout;
@@ -44,7 +47,6 @@ extern ScreenPtr nxagentDefaultScreen;
 
 extern Pixmap nxagentPixmapLogo;
 
-extern Window nxagentIconWindow;
 extern Window nxagentFullscreenWindow;
 
 extern RegionRec nxagentShadowUpdateRegion;
@@ -57,6 +59,8 @@ extern short nxagentShadowUid;
 
 void nxagentSetScreenInfo(ScreenInfo *screenInfo);
 void nxagentSetPixmapFormats(ScreenInfo *screenInfo);
+
+void nxagentPrintGeometry();
 
 extern Window nxagentDefaultWindows[MAXSCREENS];
 extern Window nxagentInputWindows[MAXSCREENS];
@@ -82,11 +86,6 @@ Bool nxagentCloseScreen(int index, ScreenPtr pScreen);
 extern int nxagentBitsPerPixel(int depth);
 
 void nxagentSetScreenSaverTime(void);
-
-void nxagentMinimizeFromFullScreen(ScreenPtr pScreen);
-void nxagentMaximizeToFullScreen(ScreenPtr pScreen);
-
-Window nxagentCreateIconWindow(void);
 
 Bool nxagentMagicPixelZone(int x, int y);
 

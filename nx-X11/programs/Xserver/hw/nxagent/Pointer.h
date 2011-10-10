@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2007 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -9,7 +9,7 @@
 /*                                                                        */
 /* Check http://www.nomachine.com/licensing.html for applicability.       */
 /*                                                                        */
-/* NX and NoMachine are trademarks of NoMachine S.r.l.                    */
+/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
 /*                                                                        */
 /* All rights reserved.                                                   */
 /*                                                                        */
@@ -38,8 +38,17 @@ is" without express or implied warranty.
   (ButtonPressMask | ButtonReleaseMask | PointerMotionMask | \
        EnterWindowMask | LeaveWindowMask)
 
+/*
+ * The nxagentReversePointerMap array is used to
+ * memorize remote display pointer map.
+ */
+
+extern unsigned char nxagentReversePointerMap[MAXBUTTONS];
+
 void nxagentChangePointerControl(DeviceIntPtr pDev, PtrCtrl *ctrl);
 
 int nxagentPointerProc(DeviceIntPtr pDev, int onoff);
+
+void nxagentInitPointerMap(void);
 
 #endif /* __Pointer_H__ */

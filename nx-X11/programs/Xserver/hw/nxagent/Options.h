@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2007 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -9,7 +9,7 @@
 /*                                                                        */
 /* Check http://www.nomachine.com/licensing.html for applicability.       */
 /*                                                                        */
-/* NX and NoMachine are trademarks of NoMachine S.r.l.                    */
+/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
 /*                                                                        */
 /* All rights reserved.                                                   */
 /*                                                                        */
@@ -28,6 +28,8 @@
 
 #define UNDEFINED -1
 #define COPY_UNLIMITED -1
+
+extern unsigned int nxagentPrintGeometryFlags;
 
 typedef enum _BackingStoreMode
 {
@@ -123,6 +125,9 @@ typedef struct _AgentOptions
    * switching back to window mode from full-
    * screen.
    */
+
+  int WMBorderWidth;
+  int WMTitleHeight;
 
   int SavedX;
   int SavedY;

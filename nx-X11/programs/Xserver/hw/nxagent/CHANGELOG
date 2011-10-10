@@ -1,5 +1,205 @@
 ChangeLog:
 
+nxagent-3.4.0-11
+
+- Corrected switching between viewport mode and resize mode.
+
+- Fixed TR04H02340. Keycode is correctly translated in shadow sessions
+  also if the remote X display is using evdev.
+
+nxagent-3.4.0-10
+
+- Handled XGrabKeyboard() return value.
+
+- Fixed TR10D01512. NumLock and CapsLock keys are now synchronized
+  between local and remote.
+
+nxagent-3.4.0-9
+
+- Fixed TR06H02362. No icon was swown in the task bar.
+
+- Fixed keyboard grab in fullscreen mode.
+
+- Fixed compiler warnings.
+
+nxagent-3.4.0-8
+
+- Grab the keyboard in fullscreen mode on EnterNotify only if mode is
+  'NotifyNormal'.
+
+- Yield control in the dispatch loop in case we stop the smart sche-
+  duler timer while waiting for a reply from the remote display.
+
+nxagent-3.4.0-7
+
+- Fixed TR08D01478. The communication with the compiz window manager
+  by means of the _NET_WM_PING property was not handled properly.
+
+- Fixed a type mismatch in XKB events on 64 bit platforms.
+
+- Moved grab/ungrab keyboard from focus in/out event to enter/leave
+  notify event.
+
+- Removed nxagentIconWindow because it's not longer used.
+
+nxagent-3.4.0-6
+
+- Fixed TR09F02102. Problem was with pointer buttons map.
+
+- Fixed TR02H02327. Some KeyRelease events was discarded.
+
+- Fixed up Num and Caps locks.
+
+- Fixed TR03H02335. Emulated right mouse button for Mac clients.
+
+- Added utilities to print info about internal and remote windows.
+
+- Fixed TR01F01995. Solved a picture resource leak by destroying remo-
+  te pictures only when their reference counter returns to zero.
+
+- Fixed TR04H02337. Errors occurred because pictures with no drawable
+  were handled badly.
+
+- Implemented handling nxagent's private for gradient pictures and so-
+  lid fill picture.
+
+- Fixed BadMatch condition check in function ProcRenderComposite.
+
+- Fixed nxagentComposite() to handle situations with source picture
+  drawable pointing to NULL.
+
+- Implemented render acceleration for requests:  CreateSolidFill,
+  CreateLinearGradient, CreateRadialGradient, CreateConicalGradient.
+
+- Fixed TR03G02196. Dialogs are shown to the fore when the NX session
+  is in fullscreen mode.
+
+- Changed mechanism to switch to fullscreen mode. Now the override
+  redirect attribute is no longer used and _NET_WM_STATE_FULLSCREEN
+  hint is sent to the WM.
+
+nxagent-3.4.0-5
+
+- Updated copyright to year 2010.
+
+nxagent-3.4.0-4
+
+- Fixed TR07F02090. Now XDMCP sessions start without problems.
+
+- Fixed TR08G02259. Corrected window border granularity of rootless
+  session at reconnection on 64 bit platforms.
+
+- Fixed TR11G02290. Forcing null timeout with queued events only if
+  display connection is up. This prevents the flood of session log.
+
+- Fixed TR10G02287. Now QueryTree's loop is aborted in case of failure
+  and session log isn't filled anymore with repeated warning messages.
+
+- Fixed TR01G02154. Corrected window placement when switching between
+  fullscreen and windowed mode.
+
+- Fixed TR09G02276. Now the agent does not receive unwanted characters
+  while interacting with the local window manager.
+
+- Implemented FR02G02174. Added ability to do large screen pans in
+  viewport mode through key combination Ctrl+Alt+Shift+Arrow.
+
+- Corrected parsing of the 'client' option when the client OS is Mac.
+
+nxagent-3.4.0-3
+
+- Fixed TR09G02271. The array containing the font name fields was not
+  correctly initialized for non-standard font names.
+
+nxagent-3.4.0-2
+
+- Updated copyright to year 2009.
+
+nxagent-3.4.0-1
+
+- Opened the 3.4.0 branch based on nxagent-3.3.0-19.
+
+- Changed the printed version number.
+
+nxagent-3.3.0-19
+
+- Fixed TR09G02266. A proper error message is printed in the session
+  log if the shadowing initialization fails because of a mismatch in
+  the visual class.
+
+- Added a workaround for X servers that doesn't return 1 among the
+  available depths.
+
+nxagent-3.3.0-18
+
+- The area to restore from the backing store is limited by the screen
+  size instead of the visible screen.
+
+nxagent-3.3.0-17
+
+- Fixed TR12F02150. The agent could crash when copying text from VNC
+  viewer. Fixed by aborting the procedure in case the retrieved pro-
+  perty has not a valid format.
+
+nxagent-3.3.0-16
+
+- Fixed TR07G02247. Don't try to call XSetWindowColormap() if the
+  window has no colormap, e.g. if its class is InputOnly.
+
+nxagent-3.3.0-15
+
+- Fixed TR04G02210. Region is cut to the visible screen before re-
+  storing areas from the backing store.
+
+- Fixed TR07G02246. Box is shrinked if bounds can't stay in a short
+  signed integer.
+
+nxagent-3.3.0-14
+
+- Fixed TR03G02206. waitpid() call was missing for the "Fonts replace-
+  ment" dialog type.
+
+- Fixed TR03G02195. Added a properties structure compatible with 32
+  and 64 bit platform types.
+
+nxagent-3.3.0-13
+
+- Handle the window unmap immediately. Don't add it to the configure
+  queue.
+
+nxagent-3.3.0-12
+
+- Fixed TR03G02200. Timestamps could be in the future in KeyRelease
+  events sent to the X clients.
+
+- Added debug logging of input devices state  Logging can be enabled
+  or disabled via the Ctrl+Alt+x shortcut. State info is dumped every
+  5 seconds.
+
+- Added Ctrl+Alt+y shortcut used to deactivate input devices grab for
+  debug purposes.
+
+nxagent-3.3.0-11
+
+- Changed the message logging the screen size changes, in order to
+  show the fullscreen state.
+
+- Handle the window unmapping in the nxagentConfigureWindow queue.
+
+nxagent-3.3.0-10
+
+- Fixed TR12F02146. Compare the drawable and the bitmap data before
+  realizing the image update, in order to delay the data clean up that
+  caused the memcmp() failure.
+
+- Fixed TR01G02156. Reduce the exposing area by subtracting the ex-
+  posed region.
+
+- Fixed a compile warning in Drawable.c.
+
+- Added detailed logs in the nxagentSynchronizeRegion() function if
+  the data memory allocation fails.
+
 nxagent-3.3.0-9
 
 - Added /usr/NX/share/base to alternate font paths. This would fix

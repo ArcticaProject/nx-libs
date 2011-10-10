@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2007 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -9,7 +9,7 @@
 /*                                                                        */
 /* Check http://www.nomachine.com/licensing.html for applicability.       */
 /*                                                                        */
-/* NX and NoMachine are trademarks of NoMachine S.r.l.                    */
+/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
 /*                                                                        */
 /* All rights reserved.                                                   */
 /*                                                                        */
@@ -105,6 +105,13 @@
 
 #define MINIMUM_DISPLAY_BUFFER   512
 
+#ifdef NX_DEBUG_INPUT
+extern int nxagentDebugInputDevices;
+extern unsigned long nxagentLastInputDevicesDumpTime;
+
+extern void nxagentDumpInputDevicesState(void);
+#endif
+
 /*
  * Used in the handling of the X desktop
  * manager protocol.
@@ -185,6 +192,18 @@ void nxagentBlockHandler(pointer data, struct timeval **timeout, pointer mask)
   #endif
 
   now = GetTimeInMillis();
+
+  #ifdef NX_DEBUG_INPUT
+
+  if (nxagentDebugInputDevices == 1 &&
+        now - nxagentLastInputDevicesDumpTime > 5000)
+  {
+    nxagentLastInputDevicesDumpTime = now;
+
+    nxagentDumpInputDevicesState();
+  }
+
+  #endif
 
   if (nxagentNeedConnectionChange() == 1)
   {
@@ -508,7 +527,8 @@ void nxagentBlockHandler(pointer data, struct timeval **timeout, pointer mask)
                 synchronize, nxagentReady);
     #endif
 
-    if (nxagentQueuedEvents(nxagentDisplay) > 0)
+    if (NXDisplayError(nxagentDisplay) == 0 &&
+            nxagentQueuedEvents(nxagentDisplay) > 0)
     {
       #ifdef WARNING
       fprintf(stderr, "nxagentBlockHandler: WARNING! Forcing a null timeout with events queued.\n");
@@ -539,6 +559,8 @@ void nxagentBlockHandler(pointer data, struct timeval **timeout, pointer mask)
   nxagentStopTimer();
 
   #endif
+
+  nxagentPrintGeometry();
 
   #ifdef BLOCKS
   fprintf(stderr, "[End block]\n");
@@ -819,6 +841,8 @@ FIXME: Must queue multiple writes and handle
   }
 
   #endif
+
+  nxagentPrintGeometry();
 
   #ifdef BLOCKS
   fprintf(stderr, "[End block]\n");

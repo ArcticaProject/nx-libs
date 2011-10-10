@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2007 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -9,7 +9,7 @@
 /*                                                                        */
 /* Check http://www.nomachine.com/licensing.html for applicability.       */
 /*                                                                        */
-/* NX and NoMachine are trademarks of NoMachine S.r.l.                    */
+/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
 /*                                                                        */
 /* All rights reserved.                                                   */
 /*                                                                        */
@@ -513,13 +513,6 @@ Dispatch(void)
      * completed. We can now handle our clients.
      */
 
-    if (serverGeneration > nxagentMaxAllowedResets)
-    {
-      fprintf(stderr, "Session: Session started at '%s'.\n", GetTimeAsString());
-
-      nxagentSessionState = SESSION_UP;
-    }
-
     #ifdef XKB
 
     nxagentInitXkbWrapper();
@@ -601,6 +594,21 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 
           clientReady[0] = -1;
           clientReady[1] = NXAGENT_WAKEUP;
+        }
+
+        if (serverGeneration > nxagentMaxAllowedResets &&
+                nxagentSessionState == SESSION_STARTING &&
+                    (nxagentOption(Xdmcp) == 0 || nxagentXdmcpUp == 1))
+        {
+          #ifdef NX_DEBUG_INPUT
+          fprintf(stderr, "Session: Session started at '%s' timestamp [%lu].\n",
+                      GetTimeAsString(), GetTimeInMillis());
+          #else
+          fprintf(stderr, "Session: Session started at '%s'.\n",
+                      GetTimeAsString());
+          #endif
+
+          nxagentSessionState = SESSION_UP;
         }
 
         #ifdef BLOCKS

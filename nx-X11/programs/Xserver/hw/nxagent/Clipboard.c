@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2007 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -9,7 +9,7 @@
 /*                                                                        */
 /* Check http://www.nomachine.com/licensing.html for applicability.       */
 /*                                                                        */
-/* NX and NoMachine are trademarks of NoMachine S.r.l.                    */
+/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
 /*                                                                        */
 /* All rights reserved.                                                   */
 /*                                                                        */
@@ -669,6 +669,30 @@ void nxagentCollectPropertyEvent(int resource)
     #endif
 
     nxagentSendSelectionNotify(None);
+
+    lastClientWindowPtr = NULL;
+    lastClientStage = SelectionStageNone;
+
+    if (pszReturnData != NULL)
+    {
+      XFree(pszReturnData);
+    }
+
+    return;
+  }
+ 
+  if (resultFormat != 8 && resultFormat != 16 && resultFormat != 32)
+  {
+
+    #ifdef DEBUG
+    fprintf (stderr, "nxagentCollectPropertyEvent: WARNING! Invalid property "
+                 "value.\n");
+    #endif
+
+    if (lastClientClientPtr != NULL)
+    {
+      nxagentSendSelectionNotify(None);
+    }
 
     lastClientWindowPtr = NULL;
     lastClientStage = SelectionStageNone;

@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2007 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -9,7 +9,7 @@
 /*                                                                        */
 /* Check http://www.nomachine.com/licensing.html for applicability.       */
 /*                                                                        */
-/* NX and NoMachine are trademarks of NoMachine S.r.l.                    */
+/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
 /*                                                                        */
 /* All rights reserved.                                                   */
 /*                                                                        */
@@ -104,5 +104,7 @@ void nxagentReconnectPicture(pointer p0, XID x1, void *p2);
 void nxagentDisconnectPicture(pointer p0, XID x1, void* p2);
 
 void nxagentReconnectGlyphSet(void* p0, XID x1, void *p2);
+
+void nxagentDestroyPicture(PicturePtr pPicture);
 
 #endif /* __Render_H__ */

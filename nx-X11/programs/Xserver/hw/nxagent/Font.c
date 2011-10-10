@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2007 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -9,7 +9,7 @@
 /*                                                                        */
 /* Check http://www.nomachine.com/licensing.html for applicability.       */
 /*                                                                        */
-/* NX and NoMachine are trademarks of NoMachine S.r.l.                    */
+/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
 /*                                                                        */
 /* All rights reserved.                                                   */
 /*                                                                        */
@@ -827,7 +827,10 @@ static XFontStruct *nxagentLoadBestQueryFont(Display* dpy, char *fontName, FontP
 
       for (j = 0; j < numSearchFields; j++)
       {
-        free (searchFields[j]);
+        if (searchFields[j] != NULL)
+        {
+          free(searchFields[j]);
+        }
       }
     }
   }
@@ -846,7 +849,10 @@ static XFontStruct *nxagentLoadBestQueryFont(Display* dpy, char *fontName, FontP
 
   for (j = 0; j < numFontFields; j++)
   {
-    free (fontNameFields[j]);
+    if (fontNameFields[j] != NULL)
+    {
+      free(fontNameFields[j]);
+    }
   }
 
   return fontStruct;
@@ -1764,6 +1770,10 @@ int nxagentSplitString(char *string, char *fields[], int nfields, char *sep)
       fields[i] = (char *) malloc(fieldlen + 1);
       strncpy(fields[i], current, fieldlen);
       *(fields[i] + fieldlen) = 0;
+    }
+    else
+    {
+      fields[i] = NULL;
     }
 
     current = next + seplen;
