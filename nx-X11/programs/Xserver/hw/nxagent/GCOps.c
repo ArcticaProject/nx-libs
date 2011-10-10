@@ -451,6 +451,8 @@ FIXME: The popup could be synchronized with one
 
       CARD32 targetAttributes[2];
 
+      Bool pClipRegionFree = True;
+
       /*
        * As we want to copy only the synchronized
        * areas of the source drawable, we create
@@ -503,6 +505,13 @@ FIXME: The popup could be synchronized with one
 
         nxagentChangeClip(targetGC, CT_REGION, pClipRegion, 0);
 
+        /*
+         * Next call to nxagentChangeClip() will destroy
+         * pClipRegion, so it has not to be freed.
+         */
+
+        pClipRegionFree = False;
+
         #ifdef DEBUG
         fprintf(stderr, "nxagentDeferCopyArea: Going to execute a copy area with clip mask "
                     "[%d,%d,%d,%d] and origin [%d,%d].\n", ((RegionPtr) targetGC -> clientClip) -> extents.x1,
@@ -517,6 +526,11 @@ FIXME: The popup could be synchronized with one
                     nxagentGC(targetGC), srcx, srcy, width, height, dstx, dsty);
 
       nxagentChangeClip(targetGC, CT_NONE, NullRegion, 0);
+
+      if (pClipRegionFree == True)
+      {
+        nxagentFreeRegion(pSrcDrawable, pClipRegion);
+      }
 
       FreeScratchGC(targetGC);
     }
@@ -1184,7 +1198,9 @@ void nxagentPolySegment(DrawablePtr pDrawable, GCPtr pGC,
                     (XSegment *) pSegments, nSegments);
     }
 
+    SET_GC_TRAP();
     fbPolySegment(nxagentVirtualDrawable(pDrawable), pGC, nSegments, pSegments);
+    RESET_GC_TRAP();
 
     return;
   }
@@ -1193,7 +1209,9 @@ void nxagentPolySegment(DrawablePtr pDrawable, GCPtr pGC,
     XDrawSegments(nxagentDisplay, nxagentDrawable(pDrawable), nxagentGC(pGC),
                  (XSegment *) pSegments, nSegments);
 
+    SET_GC_TRAP();
     fbPolySegment(pDrawable, pGC, nSegments, pSegments);
+    RESET_GC_TRAP();
   }
 }
 

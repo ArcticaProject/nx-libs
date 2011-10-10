@@ -922,7 +922,12 @@ void nxagentRealizeImage(DrawablePtr pDrawable, GCPtr pGC, int depth,
   int numSubImages;
   int totalHeight;
 
-  const int subSize = (MAX_REQUEST_SIZE << 2) - sizeof(xPutImageReq);
+  /*
+   * NXPutPackedImage is longer than PutPackedImage
+   * so that we subtract the bigger one to be sure.
+   */
+
+  const int subSize = (MAX_REQUEST_SIZE << 2) - sizeof(xNXPutPackedImageReq);
 
   Visual *pVisual = NULL;
 
@@ -1171,7 +1176,7 @@ FIXME: Should use an unpack resource here.
    */
 
   pack = (nxagentOption(LinkType) != LINK_TYPE_NONE &&
-              packMethod != PACK_NONE && depth > 8);
+              packMethod != PACK_NONE && depth > 8 && format == ZPixmap);
 
   lossless = (packMethod == nxagentPackLossless);
 

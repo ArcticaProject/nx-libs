@@ -69,6 +69,17 @@
 #undef  DEBUG
 #undef  TEST
 
+#else
+
+#include "picturestr.h"
+#include "glyphstr.h"
+
+#endif
+
+#if HAVE_STDINT_H
+#include <stdint.h>
+#elif !defined(UINT32_MAX)
+#define UINT32_MAX 0xffffffffU
 #endif
 
 /*
@@ -401,8 +412,12 @@ AllocateGlyph (xGlyphInfo *gi, int fdepth)
 {
     int		size;
     GlyphPtr	glyph;
-
-    size = gi->height * PixmapBytePad (gi->width, glyphDepths[fdepth]);
+    size_t	     padded_width;
+    
+    padded_width = PixmapBytePad (gi->width, glyphDepths[fdepth]);
+    if (gi->height && padded_width > (UINT32_MAX - sizeof(GlyphRec))/gi->height)
+	return 0;
+    size = gi->height * padded_width;
     glyph = (GlyphPtr) xalloc (size + sizeof (GlyphRec));
     if (!glyph)
 	return 0;

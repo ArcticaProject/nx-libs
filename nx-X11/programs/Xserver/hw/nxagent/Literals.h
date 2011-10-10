@@ -142,6 +142,13 @@ static char *nxagentRequestLiteral[] =
   "GetPointerMapping",
   "SetModifierMapping",
   "GetModifierMapping",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
+  "",
   "NoOperation"
 };
 

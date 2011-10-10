@@ -444,7 +444,7 @@ N/A
                                      max_keycode - min_keycode + 1,
                                      &mapWidth);
 
-        if (keymap == NULL)
+        if (keymap64 == NULL)
         {
           XFreeModifiermap(modifier_keymap);
 
@@ -755,6 +755,8 @@ XkbError:
           XkbSetRulesDflts(rules, model, layout, variants, options);
           XkbInitKeyboardDeviceStruct((pointer)pDev, &names, &keySyms, modmap,
                                           nxagentBell, nxagentChangeKeyboardControl);
+
+          free(nxagentXkbConfigFilePath);
 
           if (!nxagentKeyboard ||
                  (nxagentKeyboard && (strcmp(nxagentKeyboard, "query") == 0)))

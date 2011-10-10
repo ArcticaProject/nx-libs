@@ -74,7 +74,7 @@ is" without express or implied warranty.
 #undef  DEBUG
 #undef  DUMP
 
-#define NXAGENT_VERSION  "3.1.0"
+#define NXAGENT_VERSION  "3.2.0"
 
 /*
  * ProcVector array defined in tables.c.
@@ -332,6 +332,13 @@ FIXME: These variables, if not removed at all because have probably
   nxagentAllocateGraphicContexts();
 
   nxagentDoFullGeneration = nxagentFullGeneration;
+
+  /*
+   * Use a solid black root window
+   * background.
+   */
+
+  blackRoot = TRUE;
 }
 
 void InitInput(argc, argv)

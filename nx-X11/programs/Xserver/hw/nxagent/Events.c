@@ -22,6 +22,7 @@
 #include "Xproto.h"
 #include "screenint.h"
 #include "input.h"
+#include "dix.h"
 #include "misc.h"
 #include "scrnintstr.h"
 #include "windowstr.h"
@@ -60,6 +61,9 @@
 #include "NX.h"
 #include "NXvars.h"
 #include "NXproto.h"
+
+#include "xfixesproto.h"
+#include <X11/extensions/Xfixes.h>
 
 #ifdef NXAGENT_FIXKEYS
 #include "inputstr.h"
@@ -112,6 +116,15 @@ extern int nxagentLastClipboardClient;
 #ifdef DEBUG
 extern Bool nxagentRootlessTreesMatch(void);
 #endif
+
+extern Selection *CurrentSelections;
+extern int NumCurrentSelections;
+
+typedef union _XFixesSelectionEvent {
+        int                          type;
+        XFixesSelectionNotifyEvent   xfixesselection;
+        XEvent                       core;
+} XFixesSelectionEvent;
 
 Bool   xkbdRunning = False;
 pid_t  pidkbd;
@@ -742,7 +755,19 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
 
         if (nxagentXkbState.Initialized == 0)
         {
+          if (X.xkey.keycode == 66)
+          {
+            nxagentXkbCapsTrap = 1;
+          }
+          else if (X.xkey.keycode == 77)
+          {
+            nxagentXkbNumTrap = 1;
+          }
+
           nxagentInitKeyboardState();
+
+          nxagentXkbCapsTrap = 0;
+          nxagentXkbNumTrap = 0;
         }
 
         x.u.u.type = KeyRelease;
@@ -1283,10 +1308,6 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
                       X.xcrossing.mode == NotifyNormal)
           {
             nxagentUngrabPointerAndKeyboard(&X);
-
-            pScreen = nxagentScreen(X.xcrossing.window);
-
-            minimize = True;
           }
         }
 
@@ -1610,7 +1631,7 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
          * state modification event.
          */
 
-        if (nxagentHandleKeyboardEvent(&X) == 0)
+        if (nxagentHandleKeyboardEvent(&X) == 0 && nxagentHandleXFixesSelectionNotify(&X) == 0)
         {
           #ifdef TEST
           fprintf(stderr, "nxagentDispatchEvents: WARNING! Unhandled event code [%d].\n",
@@ -1805,7 +1826,19 @@ int nxagentHandleKeyPress(XEvent *X, enum HandleEventResult *result)
 
   if (nxagentXkbState.Initialized == 0)
   {
+    if (X -> xkey.keycode == 66)
+    {
+      nxagentXkbCapsTrap = 1;
+    }
+    else if (X -> xkey.keycode == 77)
+    {
+      nxagentXkbNumTrap = 1;
+    }
+
     nxagentInitKeyboardState();
+
+    nxagentXkbCapsTrap = 0;
+    nxagentXkbNumTrap = 0;
   }
 
   if (nxagentCheckSpecialKeystroke(&X -> xkey, result))
@@ -2228,7 +2261,11 @@ int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
         {
           pScreen = nxagentScreen(X -> xmap.window);
 
-          nxagentMaximizeToFullScreen(pScreen);
+          XMapRaised(nxagentDisplay, nxagentFullscreenWindow);
+
+          XIconifyWindow(nxagentDisplay, nxagentIconWindow,
+                             DefaultScreen(nxagentDisplay));
+
         }
 
         if (X -> xclient.window == (nxagentOption(Fullscreen) ?
@@ -2273,13 +2310,28 @@ int nxagentHandleKeyboardEvent(XEvent *X)
       fprintf(stderr, "nxagentHandleKeyboardEvent: Sending fake key [66] to engage capslock.\n");
       #endif
 
-      nxagentSendFakeKey(66);
+      if (!nxagentXkbCapsTrap)
+      {
+        nxagentSendFakeKey(66);
+      }
     }
 
     if (nxagentXkbState.Caps == 1 &&
           !(nxagentXkbState.Locked & CAPSFLAG_IN_EVENT))
     {
       nxagentXkbState.Caps = 0;
+
+      #ifdef TEST
+      fprintf(stderr, "nxagentHandleKeyboardEvent: Sending fake key [66] to release capslock.\n");
+      #endif
+
+      nxagentSendFakeKey(66);
+    }
+
+    if (nxagentXkbState.Caps == 0 &&
+          !(nxagentXkbState.Locked & CAPSFLAG_IN_EVENT) &&
+              nxagentXkbCapsTrap)
+    {
 
       #ifdef TEST
       fprintf(stderr, "nxagentHandleKeyboardEvent: Sending fake key [66] to release capslock.\n");
@@ -2297,7 +2349,10 @@ int nxagentHandleKeyboardEvent(XEvent *X)
       fprintf(stderr, "nxagentHandleKeyboardEvent: Sending fake key [77] to engage numlock.\n");
       #endif
 
-      nxagentSendFakeKey(77);
+      if (!nxagentXkbNumTrap)
+      {
+        nxagentSendFakeKey(77);
+      }
     }
 
     if (nxagentXkbState.Num == 1 &&
@@ -2312,10 +2367,93 @@ int nxagentHandleKeyboardEvent(XEvent *X)
       nxagentSendFakeKey(77);
     }
 
+    if (nxagentXkbState.Num == 0 &&
+          !(nxagentXkbState.Locked & NUMFLAG_IN_EVENT) &&
+              nxagentXkbNumTrap)
+    {
+
+      #ifdef TEST
+      fprintf(stderr, "nxagentHandleKeyboardEvent: Sending fake key [77] to release numlock.\n");
+      #endif
+
+      nxagentSendFakeKey(77);
+    }
+
     return 1;
   }
 
   return 0;
+}
+
+int nxagentHandleXFixesSelectionNotify(XEvent *X)
+{
+  int i;
+  Atom local;
+
+  XFixesSelectionEvent *xfixesEvent = (XFixesSelectionEvent *) X;
+
+  if (nxagentXFixesInfo.Initialized == 0 ||
+          xfixesEvent -> type != (nxagentXFixesInfo.EventBase + XFixesSelectionNotify))
+    return 0;
+
+  #ifdef TEST
+  fprintf(stderr, "nxagentHandleXFixesSelectionNotify: Handling event.\n");
+  #endif
+
+  local = nxagentRemoteToLocalAtom(xfixesEvent -> xfixesselection.selection);
+
+  if (SelectionCallback)
+  {
+    i = 0;
+
+    while ((i < NumCurrentSelections) &&
+            CurrentSelections[i].selection != local)
+      i++;
+
+    if (i < NumCurrentSelections)
+    {
+      SelectionInfoRec    info;
+
+      if (CurrentSelections[i].client != 0)
+      {
+        #ifdef TEST
+        fprintf(stderr, "nxagentHandleXFixesSelectionNotify: Do nothing.\n");
+        #endif
+
+        return 1;
+      }
+
+      #ifdef TEST
+      fprintf(stderr, "nxagentHandleXFixesSelectionNotify: Calling callbacks for %d [%s] selection.\n",
+                       CurrentSelections[i].selection, NameForAtom(CurrentSelections[i].selection));
+      #endif
+
+      #ifdef DEBUG
+      fprintf(stderr, "nxagentHandleXFixesSelectionNotify: Subtype ");
+
+      switch (xfixesEvent -> xfixesselection.subtype)
+      {
+        case SelectionSetOwner:
+          fprintf(stderr, "SelectionSetOwner.\n");
+          break;
+        case SelectionWindowDestroy:
+          fprintf(stderr, "SelectionWindowDestroy.\n");
+          break;
+        case SelectionClientClose:
+          fprintf(stderr, "SelectionClientClose.\n");
+          break;
+        default:
+          fprintf(stderr, ".\n");
+          break;
+      }
+      #endif
+
+      info.selection = &CurrentSelections[i];
+      info.kind = xfixesEvent->xfixesselection.subtype;
+      CallCallbacks(&SelectionCallback, &info);
+    }
+  }
+  return 1;
 }
 
 int nxagentHandleProxyEvent(XEvent *X)
@@ -2923,56 +3061,6 @@ int nxagentHandleReparentNotify(XEvent* X)
     }
 
     return 1;
-  }
-  else
-  {
-    /*
-     * This code is supposed to detect if a window manager
-     * is running but in some cases it may be unreliable.
-     * Each window manager behaves differently so the check
-     * can fail for some less common WMs.
-     */
-
-    if (!nxagentWMIsRunning && nxagentOption(Fullscreen) &&
-            X -> xreparent.window == nxagentDefaultWindows[pScreen -> myNum])
-    {
-      #ifdef WARNING
-      fprintf(stderr, "Warning: The agent window was reparented. Is a "
-                  "window manager running?\n");
-      #endif
-
-      /*
-       * If no window manager is running and we are supposed to
-       * be in fullscreen mode then don't wait for the reparent
-       * event. We can assume that there is an undetected window
-       * manager and, as switching to fullscreen could have fail-
-       * ed, we try it again.
-       */
-
-      nxagentSwitchFullscreen(pScreen, True);
-
-      nxagentWMIsRunning = True;
-    }
-    else if (nxagentWMIsRunning && X -> xreparent.window ==
-                 nxagentDefaultWindows[pScreen -> myNum] && X -> xreparent.parent ==
-                     RootWindow(nxagentDisplay, (pScreen -> myNum)))
-    {
-      #ifdef WARNING
-
-      fprintf(stderr, "Warning: The agent window has been reparented to the root.\n");
-
-      fprintf(stderr, "Warning: No window manager seems to be running.\n");
-
-      #endif
-
-      /*
-       * The agent window was unexpectedly reparented
-       * to the root window. We assume that the window
-       * manager was terminated.
-       */
-
-      nxagentWMIsRunning = False;
-    }
   }
 
   return 1;

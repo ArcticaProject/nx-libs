@@ -201,6 +201,10 @@ void RegisterResourceName (RESTYPE type, char *name)
 
 #endif
 
+#ifdef NXAGENT_SERVER
+static int nxagentResChangedFlag = 0;
+#endif
+
 RESTYPE
 CreateNewResourceType(DeleteType deleteFunc)
 {
@@ -590,6 +594,9 @@ AddResource(XID id, RESTYPE type, pointer value)
     res->value = value;
     *head = res;
     rrec->elements++;
+    #ifdef NXAGENT_SERVER
+    nxagentResChangedFlag = 1;
+    #endif
     if (!(id & SERVER_BIT) && (id >= rrec->expectID))
 	rrec->expectID = id + 1;
     return TRUE;
@@ -675,6 +682,9 @@ FreeResource(XID id, RESTYPE skipDeleteFuncType)
 		RESTYPE rtype = res->type;
 		*prev = res->next;
 		elements = --*eltptr;
+                #ifdef NXAGENT_SERVER
+                nxagentResChangedFlag = 1;
+                #endif
 		if (rtype & RC_CACHED)
 		    FlushClientCaches(res->id);
 		if (rtype != skipDeleteFuncType)
@@ -715,6 +725,9 @@ FreeResourceByType(XID id, RESTYPE type, Bool skipFree)
 	    if (res->id == id && res->type == type)
 	    {
 		*prev = res->next;
+                #ifdef NXAGENT_SERVER
+                nxagentResChangedFlag = 1;
+                #endif
 		if (type & RC_CACHED)
 		    FlushClientCaches(res->id);
 		if (!skipFree)
@@ -809,12 +822,44 @@ RestartLoop:
 	    next = this->next;
 	    if (!type || this->type == type) {
 		elements = *eltptr;
+
+                /*
+                 * FIXME:
+                 * It is not safe to let a function change the resource
+                 * table we are reading!
+                 */
+
+                #ifdef NXAGENT_SERVER
+                nxagentResChangedFlag = 0;
+                #endif
 		(*func)(this->value, this->id, cdata);
+
+                /*
+                 * Avoid that a call to RebuildTable() could invalidate the
+                 * pointer. This is safe enough, because in RebuildTable()
+                 * the new pointer is allocated just before the old one is
+                 * freed, so it can't point to the same address.
+                 */
+
                 #ifdef NXAGENT_SERVER
                 if (*resptr != resources)
                    goto RestartLoop;
                 #endif
+
+                /*
+                 * It's not enough to check if the number of elements has
+                 * changed, beacause it could happen that the number of
+                 * resources that have been added matches the number of
+                 * the freed ones.
+                 * 'nxagentResChangedFlag' is set if a resource has been
+                 * added or freed.
+                 */
+
+                #ifdef NXAGENT_SERVER
+                if (*eltptr != elements || nxagentResChangedFlag)
+                #else
 		if (*eltptr != elements)
+                #endif
 		    next = resources[i]; /* start over */
 	    }
 	}
@@ -861,12 +906,44 @@ RestartLoop:
         {
             next = this->next;
             elements = *eltptr;
+
+            /*
+             * FIXME:
+             * It is not safe to let a function change the resource
+             * table we are reading!
+             */
+
+            #ifdef NXAGENT_SERVER
+            nxagentResChangedFlag = 0;
+            #endif
             (*func)(this->value, this->id, this->type, cdata);
+
+            /*
+             * Avoid that a call to RebuildTable() could invalidate the
+             * pointer. This is safe enough, because in RebuildTable()
+             * the new pointer is allocated just before the old one is
+             * freed, so it can't point to the same address.
+             */
+
             #ifdef NXAGENT_SERVER
             if (*resptr != resources)
                 goto RestartLoop;
             #endif
+
+            /*
+             * It's not enough to check if the number of elements has
+             * changed, beacause it could happen that the number of
+             * resources that have been added matches the number of
+             * the freed ones.
+             * 'nxagentResChangedFlag' is set if a resource has been
+             * added or freed.
+             */
+
+            #ifdef NXAGENT_SERVER
+            if (*eltptr != elements || nxagentResChangedFlag)
+            #else
             if (*eltptr != elements)
+            #endif
                 next = resources[i]; /* start over */
         }
     }

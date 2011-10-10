@@ -101,6 +101,8 @@ static XFontStruct *nxagentLoadQueryFont(register Display *dpy , char *fontName 
 int nxagentFreeFont(XFontStruct *fs);
 static Bool nxagentGetFontServerPath(char * fontServerPath);
 
+static char * nxagentMakeScalableFontName(const char *fontName, int scalableResolution);
+
 RESTYPE RT_NX_FONT;
 
 #ifdef NXAGENT_RECONNECT_FONT_DEBUG
@@ -419,13 +421,59 @@ Bool nxagentFontFind(const char *name, int *pos)
 Bool nxagentFontLookUp(const char *name)
 {
   int i;
-  if (name)
-    if (!strlen(name))
-       return 0;
-  if (nxagentFontFind(name, &i))
-    return (nxagentRemoteFontList.list[i]->status > 0);
-  else
+  int result;
+
+  char *scalable;
+
+  if (name != NULL && strlen(name) == 0)
+  {
     return 0;
+  }
+
+  result = nxagentFontFind(name, &i);
+
+  scalable = NULL;
+
+  /*
+   * Let's try with the scalable font description.
+   */
+
+  if (result == 0)
+  {
+    scalable = nxagentMakeScalableFontName(name, 0); 
+
+    if (scalable != NULL)
+    {
+      result = nxagentFontFind(scalable, &i);
+
+      free(scalable);
+    }
+  }
+
+  /*
+   * Let's try again after replacing zero to xdpi and ydpi in the pattern.
+   */
+
+  if (result == 0)
+  {
+    scalable = nxagentMakeScalableFontName(name, 1); 
+
+    if (scalable != NULL)
+    {
+      result = nxagentFontFind(scalable, &i);
+
+      free(scalable);
+    }
+  }
+
+  if (result == 0)
+  {
+    return 0;
+  }
+  else
+  {
+    return (nxagentRemoteFontList.list[i]->status > 0);
+  }
 }
 
 Bool nxagentRealizeFont(ScreenPtr pScreen, FontPtr pFont)
@@ -768,6 +816,11 @@ static XFontStruct *nxagentLoadBestQueryFont(Display* dpy, char *fontName, FontP
         fprintf(stderr, "nxagentLoadBestQueryFont: Weight '%d' of more accurate font '%s' .\n", weight, substFontBuf);
         #endif
       }
+
+      for (j = 0; j < numSearchFields; j++)
+      {
+        free (searchFields[j]);
+      }
     }
   }
 
@@ -782,6 +835,11 @@ static XFontStruct *nxagentLoadBestQueryFont(Display* dpy, char *fontName, FontP
   fontStruct = nxagentLoadQueryFont(dpy, substFontBuf, pFont);
 
   free (substFontBuf);
+
+  for (j = 0; j < numFontFields; j++)
+  {
+    free (fontNameFields[j]);
+  }
 
   return fontStruct;
 }
@@ -1688,3 +1746,88 @@ int nxagentSplitString(char *string, char *fields[], int nfields, char *sep)
   return i;
 }
 
+char *nxagentMakeScalableFontName(const char *fontName, int scalableResolution)
+{
+  char *scalableFontName;
+  const char *s;
+  int len;
+  int field;
+
+  len = strlen(fontName) + 1;
+
+  scalableFontName = malloc(len);
+
+  if (scalableFontName == NULL)
+  {
+    #ifdef PANIC
+    fprintf(stderr, "nxagentMakeScalableFontName: PANIC! malloc() failed.\n");
+    #endif
+
+    return NULL;
+  }
+
+  scalableFontName[0] = 0;
+
+  if (*fontName != '-')
+  {
+    goto MakeScalableFontNameError;
+  }
+
+  s = fontName;
+
+  field = 0;
+
+  while (s != NULL)
+  {
+    s = strchr(s + 1, '-');
+
+    if (s != NULL)
+    {
+      if (field == 6 || field == 7 || field == 11)
+      {
+        /*
+         * PIXEL_SIZE || POINT_SIZE || AVERAGE_WIDTH
+         */
+
+        strcat(scalableFontName, "-0");
+      }
+      else if (scalableResolution == 1 && (field == 8 || field == 9))
+      {
+        /*
+         * RESOLUTION_X || RESOLUTION_Y
+         */
+
+        strcat(scalableFontName, "-0");
+      }
+      else
+      {
+        strncat(scalableFontName, fontName, s - fontName);
+      }
+
+      fontName = s;
+    }
+    else
+    {
+      strcat(scalableFontName, fontName);
+    }
+
+    field++;
+  }
+
+  if (field != 14)
+  {
+    goto MakeScalableFontNameError;
+  }
+
+  return scalableFontName;
+
+MakeScalableFontNameError:
+
+  free(scalableFontName);
+
+  #ifdef DEBUG
+  fprintf(stderr, "nxagentMakeScalableFontName: Invalid font name.\n");
+  #endif
+
+  return NULL;
+}

@@ -153,6 +153,9 @@ extern Bool nxagentScreenTrap;
  *
  ******/
 
+static unsigned char _back_lsb[4] = {0x88, 0x22, 0x44, 0x11};
+static unsigned char _back_msb[4] = {0x11, 0x44, 0x22, 0x88};
+
 int screenIsSaved = SCREEN_SAVER_OFF;
 
 ScreenSaverStuffRec savedScreenInfo[MAXSCREENS];
@@ -355,18 +358,7 @@ void nxagentClearSplash(WindowPtr pW)
     (*pScreen->ChangeWindowAttributes)(pW, CWBackPixmap|CWBackPixel);
 }
 
-static void
-#if NeedFunctionPrototypes
-MakeRootTile(WindowPtr pWin)
-#else
-MakeRootTile(pWin)
-    WindowPtr pWin;
-#endif
-{
-    nxagentRootTileWindow = pWin;
-}
-
-#else /* NXAGENT_SERVER */
+#endif /* NXAGENT_SERVER */
 
 static void
 MakeRootTile(WindowPtr pWin)
@@ -412,9 +404,10 @@ MakeRootTile(WindowPtr pWin)
 
    FreeScratchGC(pGC);
 
-}
-
+#ifdef NXAGENT_SERVER
+   nxagentRootTileWindow = pWin;
 #endif /* NXAGENT_SERVER */
+}
 
 WindowPtr
 AllocateWindow(ScreenPtr pScreen)

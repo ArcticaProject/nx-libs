@@ -553,12 +553,6 @@ Bool nxagentReconnectSession(void)
            strcmp(nxagentKeyboard, nxagentOldKeyboard) != 0 ||
                strcmp(nxagentKeyboard, "query") == 0)
     {
-      if (nxagentOldKeyboard != NULL)
-      {
-        xfree(nxagentOldKeyboard);
-
-        nxagentOldKeyboard = NULL;
-      }
 
       if (nxagentResetKeyboard() == 0)
       {
@@ -574,6 +568,15 @@ Bool nxagentReconnectSession(void)
         goto nxagentReconnectError;
       }
     }
+  }
+
+  nxagentXkbState.Initialized = 0;
+
+  if (nxagentOldKeyboard != NULL)
+  {
+    xfree(nxagentOldKeyboard);
+
+    nxagentOldKeyboard = NULL;
   }
 
   nxagentDeactivatePointerGrab();
@@ -684,6 +687,13 @@ nxagentReconnectError:
   if (nxagentDisplay == NULL)
   {
     nxagentDisconnectDisplay();
+  }
+
+  if (nxagentOldKeyboard != NULL)
+  {
+    xfree(nxagentOldKeyboard);
+
+    nxagentOldKeyboard = NULL;
   }
 
   return 0;

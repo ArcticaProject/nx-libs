@@ -31,6 +31,10 @@
 #include "Rootless.h"
 #include "Clipboard.h"
 
+#include "gcstruct.h"
+#include "xfixeswire.h"
+#include <X11/extensions/Xfixes.h>
+
 /*
  * Use asyncronous get property replies.
  */
@@ -115,14 +119,23 @@ static Time   lastServerTime;
 
 static Atom serverTARGETS;
 static Atom serverTEXT;
+static Atom serverUTF8_STRING;
 static Atom clientTARGETS;
 static Atom clientTEXT;
 static Atom clientCOMPOUND_TEXT;
+static Atom clientUTF8_STRING;
 
 static char szAgentTARGETS[] = "TARGETS";
 static char szAgentTEXT[] = "TEXT";
 static char szAgentCOMPOUND_TEXT[] = "COMPOUND_TEXT";
+static char szAgentUTF8_STRING[] = "UTF8_STRING";
 static char szAgentNX_CUT_BUFFER_CLIENT[] = "NX_CUT_BUFFER_CLIENT";
+
+/*
+ * Save the values queried from X server.
+ */
+
+XFixesAgentInfoRec nxagentXFixesInfo = { -1, -1, -1, 0 };
 
 extern Display *nxagentDisplay;
 
@@ -299,7 +312,7 @@ FIXME: Do we need this?
       result = XChangeProperty (nxagentDisplay,
                                 X->xselectionrequest.requestor,
                                 X->xselectionrequest.property,
-                                X->xselectionrequest.target,
+                                XInternAtom(nxagentDisplay, "ATOM", 0),
                                 sizeof(Atom)*8,
                                 PropModeReplace,
                                 (unsigned char*)&xa_STRING,
@@ -1178,19 +1191,20 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
 
   if (target == clientTARGETS)
   {
-    Atom xa_STRING[3];
+    Atom xa_STRING[4];
     xEvent x;
 
     xa_STRING[0] = XA_STRING;
     xa_STRING[1] = clientTEXT;
     xa_STRING[2] = clientCOMPOUND_TEXT;
+    xa_STRING[3] = clientUTF8_STRING;
 
     ChangeWindowProperty(pWin,
                          property,
-                         target,
+                         MakeAtom("ATOM", 4, 1),
                          sizeof(Atom)*8,
                          PropModeReplace,
-                         3,
+                         4,
                          &xa_STRING, 1);
 
     x.u.u.type = SelectionNotify;
@@ -1264,7 +1278,10 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     }
   }
 
-  if ((target == clientTEXT) || (target == XA_STRING) || (target == clientCOMPOUND_TEXT))
+  if ((target == clientTEXT) ||
+          (target == XA_STRING) ||
+              (target == clientCOMPOUND_TEXT) ||
+                  (target == clientUTF8_STRING))
   {
     lastClientWindowPtr = pWin;
     lastClientStage = SelectionStageNone;
@@ -1283,8 +1300,16 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
       selection = lastSelectionOwner[nxagentClipboardSelection].selection;
     }
 
-    XConvertSelection(nxagentDisplay, selection, XA_STRING, serverCutProperty,
-                         serverWindow, CurrentTime);
+    if (target == clientUTF8_STRING)
+    {
+      XConvertSelection(nxagentDisplay, selection, serverUTF8_STRING, serverCutProperty,
+                           serverWindow, CurrentTime);
+    }
+    else
+    {
+      XConvertSelection(nxagentDisplay, selection, XA_STRING, serverCutProperty,
+                           serverWindow, CurrentTime);
+    }
 
     #ifdef DEBUG
     fprintf(stderr, "nxagentConvertSelection: Sent XConvertSelection with target=[%s], property [%s]\n",
@@ -1465,6 +1490,7 @@ int nxagentInitClipboard(WindowPtr pWin)
   serverCutProperty = nxagentAtoms[5];  /* NX_CUT_BUFFER_SERVER */
   serverTARGETS = nxagentAtoms[6];  /* TARGETS */
   serverTEXT = nxagentAtoms[7];  /* TEXT */
+  serverUTF8_STRING = nxagentAtoms[12]; /* UTF8_STRING */
 
   if (serverCutProperty == None)
   {
@@ -1481,6 +1507,29 @@ int nxagentInitClipboard(WindowPtr pWin)
   #endif
 
   XSetSelectionOwner(nxagentDisplay, serverCutProperty, iWindow, CurrentTime);
+
+  if (XQueryExtension(nxagentDisplay,
+                      "XFIXES",
+                      &nxagentXFixesInfo.Opcode,
+                      &nxagentXFixesInfo.EventBase,
+                      &nxagentXFixesInfo.ErrorBase) == 0)
+  {
+    ErrorF("Unable to initialize XFixes extension.\n");
+  }
+
+  else
+  {
+    #ifdef TEST
+    fprintf(stderr, "nxagentInitClipboard: Registering for XFixesSelectionNotify events.\n");
+    #endif
+
+    XFixesSelectSelectionInput(nxagentDisplay, iWindow, nxagentClipboardAtom,
+                               XFixesSetSelectionOwnerNotifyMask |
+                               XFixesSelectionWindowDestroyNotifyMask |
+                               XFixesSelectionClientCloseNotifyMask);
+
+    nxagentXFixesInfo.Initialized = 1;
+  }
 
   if (nxagentSessionId[0])
   {
@@ -1525,6 +1574,7 @@ int nxagentInitClipboard(WindowPtr pWin)
     clientTARGETS = MakeAtom(szAgentTARGETS, strlen(szAgentTARGETS), True);
     clientTEXT = MakeAtom(szAgentTEXT, strlen(szAgentTEXT), True);
     clientCOMPOUND_TEXT = MakeAtom(szAgentCOMPOUND_TEXT, strlen(szAgentCOMPOUND_TEXT), True);
+    clientUTF8_STRING = MakeAtom(szAgentUTF8_STRING, strlen(szAgentUTF8_STRING), True);
 
     if (clientCutProperty == None)
     {

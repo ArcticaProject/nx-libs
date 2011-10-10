@@ -78,7 +78,16 @@ is" without express or implied warranty.
 #include "Utils.h"
 
 #include "Xrandr.h"
+
+#define GC     XlibGC
+#define Font   XlibFont
+#define KeySym XlibKeySym
+#define XID    XlibXID
 #include <X11/Xlibint.h>
+#undef  GC
+#undef  Font
+#undef  KeySym
+#undef  XID
 
 #include "Xatom.h"
 #include "Xproto.h"
@@ -309,10 +318,44 @@ void nxagentMaximizeToFullScreen(ScreenPtr pScreen)
 /*
     XUnmapWindow(nxagentDisplay, nxagentIconWindow);
 */
+/*
+FIXME: We'll chech for ReparentNotify and LeaveNotify events after XReparentWindow()
+       in order to avoid the session window is iconified.
+       We could avoid the sesssion window is iconified when a LeaveNotify event is received,
+       so this check would be unnecessary.
+*/
+    struct timeval timeout;
+    int i;
+    XEvent e;
+
+    XReparentWindow(nxagentDisplay, nxagentFullscreenWindow,
+                        RootWindow(nxagentDisplay, DefaultScreen(nxagentDisplay)), 0, 0);
+
+    for (i = 0; i < 100 && nxagentWMIsRunning; i++)
+    {
+      #ifdef TEST
+      fprintf(stderr, "nxagentSwitchFullscreen: WARNING! Going to wait for the ReparentNotify event.\n");
+      #endif
+
+      if (XCheckTypedWindowEvent(nxagentDisplay, nxagentFullscreenWindow, ReparentNotify, &e))
+      {
+        break;
+      }
+
+      XSync(nxagentDisplay, 0);
+
+      timeout.tv_sec = 0;
+      timeout.tv_usec = 50 * 1000;
+
+      nxagentWaitEvents(nxagentDisplay, &timeout);
+    }
+
     XMapRaised(nxagentDisplay, nxagentFullscreenWindow);
 
     XIconifyWindow(nxagentDisplay, nxagentIconWindow,
                        DefaultScreen(nxagentDisplay));
+
+    while (XCheckTypedWindowEvent(nxagentDisplay, nxagentFullscreenWindow, LeaveNotify, &e));
 /*
     XMapWindow(nxagentDisplay, nxagentIconWindow);
 */
@@ -2872,6 +2915,15 @@ int nxagentShadowPoll(PixmapPtr nxagentShadowPixmapPtr, GCPtr nxagentShadowGCPtr
       width = pBox[n].y1 - pBox[n].x1;/* y1 = x2 */
       height = y2 - pBox[n].x2;   /* x2 = y1 */
 
+      if((x + width) > nxagentShadowWidth || (y + height) > nxagentShadowHeight)
+      {
+        /*
+         * Out of bounds. Maybe a resize of the master session is going on.
+         */
+
+        continue;
+      }
+
       line = PixmapBytePad(width, nxagentMasterDepth);
 
       #ifdef DEBUG
@@ -3826,8 +3878,8 @@ void nxagentShadowAdaptToRatio(void)
 
   pScreen = screenInfo.screens[0];
 
-  nxagentShadowSetRatio(nxagentOption(Width) * 1.0 / WindowTable[0] -> drawable.width, 
-                            nxagentOption(Height) * 1.0 / WindowTable[0] -> drawable.height);
+  nxagentShadowSetRatio(nxagentOption(Width) * 1.0 / nxagentShadowWidth,
+                            nxagentOption(Height) * 1.0 / nxagentShadowHeight);
 
   nxagentShadowCreateMainWindow(pScreen, WindowTable[0], nxagentShadowWidth, nxagentShadowHeight);
 

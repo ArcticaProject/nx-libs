@@ -3835,6 +3835,8 @@ ProcSetScreenSaver (register ClientPtr client)
       {
         ScreenSaverInterval = defaultScreenSaverInterval;
       }
+
+      SetScreenSaverTimer();
     }
     #ifdef TEST
 
@@ -3846,7 +3848,6 @@ ProcSetScreenSaver (register ClientPtr client)
 
     #endif
 
-    SetScreenSaverTimer();
     return (client->noClientException);
 }
 

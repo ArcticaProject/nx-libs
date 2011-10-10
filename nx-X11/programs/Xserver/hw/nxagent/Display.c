@@ -123,12 +123,12 @@ static enum
 } reconnectDisplayState;
 
 int nxagentDefaultVisualIndex;
-Colormap *nxagentDefaultColormaps;
+Colormap *nxagentDefaultColormaps = NULL;
 int nxagentNumDefaultColormaps;
-int *nxagentDepths;
+int *nxagentDepths = NULL;
 int nxagentNumDepths;
-XPixmapFormatValues *nxagentPixmapFormats;
-XPixmapFormatValues *nxagentRemotePixmapFormats;
+XPixmapFormatValues *nxagentPixmapFormats = NULL;
+XPixmapFormatValues *nxagentRemotePixmapFormats = NULL;
 int nxagentNumPixmapFormats;
 int nxagentRemoteNumPixmapFormats;
 Pixel nxagentBlackPixel;
@@ -2497,6 +2497,25 @@ Bool nxagentReconnectDisplay(void *p0)
                                  "Couldn't restore all the required depths.");
 
     return False;
+  }
+
+  /*
+   * nxagentPixmapFormats and nxagentRemotePixmapFormats
+   * will be reallocated in nxagentInitPixmapFormats().
+   */
+
+  if (nxagentPixmapFormats != NULL)
+  {
+    XFree(nxagentPixmapFormats);
+
+    nxagentPixmapFormats = NULL;
+  }
+
+  if (nxagentRemotePixmapFormats != NULL)
+  {
+    XFree(nxagentRemotePixmapFormats);
+
+    nxagentRemotePixmapFormats = NULL;
   }
 
   /*

@@ -1,17 +1,9 @@
 ChangeLog:
 
-nxagent-3.2.0-10
-
-- Extended fix for TR07F02091 to include font names having zero in
-  fields RESOLUTION_X and RESOLUTION_Y.
-
-nxagent-3.2.0-9
+nxagent-3.2.0-8-MAR1
 
 - Fixed TR07F02091. Scalable fonts were not correctly listed among
   available fonts.
-
-- Fixed TR06F02080. Use the corrupted area extents as maximum size of
-  the image data.
 
 nxagent-3.2.0-8
 

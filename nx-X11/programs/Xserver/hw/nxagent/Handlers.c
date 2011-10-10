@@ -33,6 +33,7 @@
 #include "Millis.h"
 
 #include "NXlib.h"
+#include "Shadow.h"
 
 /*
  * Set here the required log level.
@@ -705,6 +706,7 @@ void nxagentShadowBlockHandler(pointer data, struct timeval **timeout, pointer m
   int changed;
   int suspended = 0;
   int result;
+  int width_, height_;
 
   #ifdef BLOCKS
   fprintf(stderr, "[Begin block]\n");
@@ -753,6 +755,19 @@ void nxagentShadowBlockHandler(pointer data, struct timeval **timeout, pointer m
   #endif
 
   changed = 0;
+
+  NXShadowGetScreenSize(&width_, &height_);
+
+  if (width_ != nxagentShadowWidth || height_ != nxagentShadowHeight)
+  {
+    /*
+     * The master session has been resized.
+     */
+
+    NXShadowSetScreenSize(&nxagentShadowWidth, &nxagentShadowHeight);
+
+    nxagentShadowAdaptToRatio();
+  }
 
   nxagentShadowPoll(nxagentShadowPixmapPtr, nxagentShadowGCPtr, nxagentShadowDepth, nxagentShadowWidth,
                         nxagentShadowHeight, nxagentShadowBuffer, &changed, &suspended);

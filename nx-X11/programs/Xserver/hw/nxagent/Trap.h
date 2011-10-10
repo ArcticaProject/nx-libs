@@ -97,4 +97,20 @@ extern int nxagentLosslessTrap;
 
 extern int nxagentSplitTrap;
 
+/*
+ * Set to avoid CapsLock synchronization
+ * problems when CapsLock is the first
+ * key to be pressed in the session.
+ */
+
+extern int nxagentXkbCapsTrap;
+
+/*
+ * Set to avoid NumLock synchronization
+ * problems when NumLock is the first
+ * key to be pressed in the session.
+ */
+
+extern int nxagentXkbNumTrap;
+
 #endif /* __Trap_H__ */

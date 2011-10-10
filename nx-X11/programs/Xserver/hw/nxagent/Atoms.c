@@ -78,6 +78,7 @@ static char *nxagentAtomNames[NXAGENT_NUMBER_OF_ATOMS + 1] =
   "NXDARWIN",             /* 9  */
   "CLIPBOARD",            /* 10 */
   "TIMESTAMP",            /* 11 */
+  "UTF8_STRING",          /* 12 */
   NULL,
   NULL
 };

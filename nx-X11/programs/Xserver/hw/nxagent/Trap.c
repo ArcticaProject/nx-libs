@@ -96,4 +96,19 @@ int nxagentLosslessTrap = 0;
 
 int nxagentSplitTrap = 0;
 
+/*
+ * Set to avoid CapsLock synchronization
+ * problems when CapsLock is the first
+ * key to be pressed in the session.
+ */
+
+int nxagentXkbCapsTrap = 0;
+
+/*
+ * Set to avoid NumLock synchronization
+ * problems when NumLock is the first
+ * key to be pressed in the session.
+ */
+
+int nxagentXkbNumTrap = 0;
 

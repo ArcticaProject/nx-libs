@@ -19,6 +19,21 @@
 #define __Clipboard_H__
 
 /*
+ * Queried at clipboard initialization.
+ */
+
+typedef struct _XFixesAgentInfo
+{
+  int Opcode;
+  int EventBase;
+  int ErrorBase;
+  int Initialized;
+
+} XFixesAgentInfoRec;
+
+extern XFixesAgentInfoRec nxagentXFixesInfo;
+
+/*
  * Create the NX_CUT_BUFFER_CLIENT atom and
  * initialize the required property to exchange
  * data with the X server.

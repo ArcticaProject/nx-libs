@@ -22,7 +22,7 @@
 #include "../../include/window.h"
 #include "screenint.h"
 
-#define NXAGENT_NUMBER_OF_ATOMS  13
+#define NXAGENT_NUMBER_OF_ATOMS  14
 
 extern Atom nxagentAtoms[NXAGENT_NUMBER_OF_ATOMS];
 
