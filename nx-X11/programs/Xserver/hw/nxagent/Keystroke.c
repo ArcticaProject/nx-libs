@@ -31,12 +31,6 @@
 extern Bool nxagentWMIsRunning;
 extern Bool nxagentIpaq;
 
-#ifdef NX_DEBUG_INPUT
-int nxagentDebugInputDevices = 0;
-unsigned long nxagentLastInputDevicesDumpTime = 0;
-extern void nxagentDeactivateInputDevicesGrabs();
-#endif
-
 /*
  * Set here the required log level.
  */
@@ -210,53 +204,6 @@ int nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
          */
 
         nxagentRegionsOnScreen();
-
-        return 1;
-      }
-
-      #endif
-
-      #ifdef NX_DEBUG_INPUT
-
-      case XK_X:
-      case XK_x:
-      {
-        /*
-         * Used to test the input devices state.
-         */
-
-        if (X -> type == KeyPress)
-        {
-          if (nxagentDebugInputDevices == 0)
-          {
-            fprintf(stderr, "Info: Turning input devices debug ON.\n");
-    
-            nxagentDebugInputDevices = 1;
-          }
-          else
-          {
-            fprintf(stderr, "Info: Turning input devices debug OFF.\n");
-    
-            nxagentDebugInputDevices = 0;
-    
-            nxagentLastInputDevicesDumpTime = 0;
-          }
-        }
-
-        return 1;
-      }
-
-      case XK_Y:
-      case XK_y:
-      {
-        /*
-         * Used to deactivate input devices grab.
-         */
-
-        if (X -> type == KeyPress)
-        {
-          nxagentDeactivateInputDevicesGrabs();
-        }
 
         return 1;
       }

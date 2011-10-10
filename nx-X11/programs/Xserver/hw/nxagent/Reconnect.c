@@ -257,11 +257,7 @@ TODO: This should be reset only when
 
       if ((dispatchException & DE_TERMINATE) == 0)
       {
-        #ifdef NX_DEBUG_INPUT
-        fprintf(stderr, "Session: Session suspended at '%s' timestamp [%lu].\n", GetTimeAsString(), GetTimeInMillis());
-        #else
         fprintf(stderr, "Session: Session suspended at '%s'.\n", GetTimeAsString());
-        #endif
       }
 
       nxagentResetDisplayHandlers();
@@ -551,28 +547,27 @@ Bool nxagentReconnectSession(void)
     goto nxagentReconnectError;
   }
 
-  if (nxagentOption(ResetKeyboardAtResume) == 1 &&
-         (nxagentKeyboard  == NULL || nxagentOldKeyboard == NULL ||
-             strcmp(nxagentKeyboard, nxagentOldKeyboard) != 0 ||
-                 strcmp(nxagentKeyboard, "query") == 0))
+  if (nxagentOption(ResetKeyboardAtResume))
   {
-    if (nxagentResetKeyboard() == 0)
+    if (nxagentKeyboard  == NULL || nxagentOldKeyboard == NULL ||
+           strcmp(nxagentKeyboard, nxagentOldKeyboard) != 0 ||
+               strcmp(nxagentKeyboard, "query") == 0)
     {
-      #ifdef WARNING
-      if (nxagentVerbose == 1)
+
+      if (nxagentResetKeyboard() == 0)
       {
-        fprintf(stderr, "nxagentReconnect: Failed to reset keyboard device.\n");
+        #ifdef WARNING
+        if (nxagentVerbose == 1)
+        {
+          fprintf(stderr, "nxagentReconnect: Failed to reset keyboard device.\n");
+        }
+        #endif
+
+        failedStep = WINDOW_STEP;
+
+        goto nxagentReconnectError;
       }
-      #endif
-
-      failedStep = WINDOW_STEP;
-
-      goto nxagentReconnectError;
     }
-  }
-  else
-  {
-    nxagentResetKeycodeConversion();
   }
 
   nxagentXkbState.Initialized = 0;
@@ -613,11 +608,7 @@ Bool nxagentReconnectSession(void)
     goto nxagentReconnectError;
   }
 
-  #ifdef NX_DEBUG_INPUT
-  fprintf(stderr, "Session: Session resumed at '%s' timestamp [%lu].\n", GetTimeAsString(), GetTimeInMillis());
-  #else
   fprintf(stderr, "Session: Session resumed at '%s'.\n", GetTimeAsString());
-  #endif
 
   nxagentRemoveSplashWindow(NULL);
 

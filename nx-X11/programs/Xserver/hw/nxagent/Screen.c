@@ -2373,7 +2373,8 @@ FIXME: We should try to restore the previously
   nxagentPrintAgentGeometry("After Resize Screen", "nxagentResizeScreen:");
   #endif
 
-  nxagentSetPrintGeometry(pScreen -> myNum);
+  fprintf(stderr, "Info: Screen [%d] resized to geometry [%dx%d].\n",
+              pScreen -> myNum, width, height);
 
   return 1;
 
@@ -3045,7 +3046,7 @@ void nxagentShadowAdaptDepth(unsigned int width, unsigned int height,
     #ifdef WARNING
     fprintf(stderr, "nxagentCorrectDepthShadow: WARNING! Visual not found. Using default visual.\n");
     #endif
-
+    
     pVisual = nxagentVisuals[nxagentDefaultVisualIndex].visual;
   }
 
@@ -3472,10 +3473,10 @@ int nxagentRRSetScreenConfig(ScreenPtr pScreen, int width, int height)
     RRScreenSizePtr oldSizes;
 
     pScrPriv = rrGetScrPriv(pScreen);
-
+   
     oldWidth = pScreen->width;
     oldHeight = pScreen->height;
-
+    
     if (!pScrPriv)
     {
       return 1;
@@ -3555,7 +3556,7 @@ int nxagentRRSetScreenConfig(ScreenPtr pScreen, int width, int height)
     }
 
     RREditConnectionInfo (pScreen);
-
+    
     /*
      * Fix pointer bounds and location
      */
@@ -3693,8 +3694,7 @@ void nxagentSaveAreas(PixmapPtr pPixmap, RegionPtr prgnSave, int xorg, int yorg,
   return;
 }
 
-void nxagentRestoreAreas(PixmapPtr pPixmap, RegionPtr prgnRestore, int xorg,
-                             int yorg, WindowPtr pWin)
+void nxagentRestoreAreas(PixmapPtr pPixmap, RegionPtr prgnRestore, int xorg, int yorg, WindowPtr pWin)
 {
   PixmapPtr pVirtualPixmap;
   RegionPtr clipRegion;
@@ -3709,14 +3709,6 @@ void nxagentRestoreAreas(PixmapPtr pPixmap, RegionPtr prgnRestore, int xorg,
   XRectangle *pRects;
   BoxRec extents;
   miBSWindowPtr pBackingStore;
-
-  /*
-   * Limit the area to restore to the
-   * root window size.
-   */
-
-  REGION_INTERSECT(pWin -> pScreen, prgnRestore, prgnRestore,
-                       &WindowTable[pWin -> drawable.pScreen -> myNum] -> winSize);
 
   pBackingStore = (miBSWindowPtr) pWin -> backStorage;
 
@@ -3909,24 +3901,6 @@ void nxagentShadowAdaptToRatio(void)
   nxagentMarkCorruptedRegion((DrawablePtr)nxagentShadowPixmapPtr, &region);
 
   REGION_UNINIT(pScreen, &region);
-}
-
-void nxagentPrintGeometry()
-{
-  int i;
-
-  for (i = 0; i < screenInfo.numScreens; i++)
-  {
-    if (nxagentPrintGeometryFlags && (1 << i))
-    {
-      fprintf(stderr, "Info: Screen [%d] resized to geometry [%dx%d] "
-                  "fullscreen [%d].\n", i, screenInfo.screens[i] -> width,
-                      screenInfo.screens[i] -> height,
-                          nxagentOption(Fullscreen));
-    }
-  }
-
-  nxagentPrintGeometryFlags = 0;
 }
 
 #ifdef DUMP

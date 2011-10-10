@@ -63,13 +63,7 @@
 #include "NXproto.h"
 
 #include "xfixesproto.h"
-#define Window     XlibWindow
-#define Atom   XlibAtom
-#define Time XlibXID
 #include <X11/extensions/Xfixes.h>
-#undef Window
-#undef Atom
-#undef Time
 
 #ifdef NXAGENT_FIXKEYS
 #include "inputstr.h"
@@ -795,18 +789,12 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
         }
 
         x.u.u.type = KeyRelease;
-        x.u.u.detail = nxagentConvertKeycode(X.xkey.keycode);
-        x.u.keyButtonPointer.time = nxagentLastKeyPressTime +
-            (X.xkey.time - nxagentLastServerTime);
+        x.u.u.detail = X.xkey.keycode;
+        x.u.keyButtonPointer.time = nxagentLastKeyPressTime + (X.xkey.time - nxagentLastServerTime);
 
         nxagentLastServerTime = X.xkey.time;
 
         nxagentLastEventTime = GetTimeInMillis();
-
-        if (x.u.keyButtonPointer.time > nxagentLastEventTime)
-        {
-          x.u.keyButtonPointer.time = nxagentLastEventTime;
-        }
 
         if (!(nxagentCheckSpecialKeystroke(&X.xkey, &result)))
         {
@@ -930,7 +918,7 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
         #ifdef NX_DEBUG_INPUT
         if (nxagentDebugInput == 1)
         {
-          fprintf(stderr, "nxagentDispatchEvents: Going to handle new ButtonRelease event.\n");
+          fprintf(stderr, "nxagentDispatchEvents: Going to handle new ButtonPress event.\n");
         }
         #endif
 
@@ -1028,17 +1016,18 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
             nxagentLastEnteredWindow = pWin;
           }
 
-          if (nxagentPulldownDialogPid == 0 && nxagentLastEnteredTopLevelWindow &&
-                  (X.xmotion.y_root < nxagentLastEnteredTopLevelWindow -> drawable.y + 4))
+          if (nxagentPulldownDialogPid == 0 && (X.xmotion.y_root <
+                  nxagentLastEnteredTopLevelWindow -> drawable.y + 4))
           {
-            if (pWin && nxagentClientIsDialog(wClient(pWin)) == 0 &&
-                    nxagentLastEnteredTopLevelWindow -> parent == WindowTable[0] &&
-                        nxagentLastEnteredTopLevelWindow -> overrideRedirect == False &&
-                            X.xmotion.x_root > (nxagentLastEnteredTopLevelWindow -> drawable.x +
-                                (nxagentLastEnteredTopLevelWindow -> drawable.width >> 1) - 50) &&
-                                    X.xmotion.x_root < (nxagentLastEnteredTopLevelWindow -> drawable.x +
-                                        (nxagentLastEnteredTopLevelWindow -> drawable.width >> 1) + 50) &&
-                                            nxagentOption(Menu) == 1)
+            if (pWin && nxagentLastEnteredTopLevelWindow &&
+                    nxagentClientIsDialog(wClient(pWin)) == 0 &&
+                        nxagentLastEnteredTopLevelWindow -> parent == WindowTable[0] &&
+                            nxagentLastEnteredTopLevelWindow -> overrideRedirect == False &&
+                                X.xmotion.x_root > (nxagentLastEnteredTopLevelWindow -> drawable.x +
+                                    (nxagentLastEnteredTopLevelWindow -> drawable.width >> 1) - 50) &&
+                                        X.xmotion.x_root < (nxagentLastEnteredTopLevelWindow -> drawable.x +
+                                            (nxagentLastEnteredTopLevelWindow -> drawable.width >> 1) + 50) &&
+                                                nxagentOption(Menu) == 1)
             {
               nxagentPulldownDialog(nxagentLastEnteredTopLevelWindow -> drawable.id);
             }
@@ -1063,8 +1052,7 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
           #ifdef NX_DEBUG_INPUT
           if (nxagentDebugInput == 1)
           {
-            fprintf(stderr, "nxagentDispatchEvents: Adding motion event [%d, %d] to the queue.\n",
-                        x.u.keyButtonPointer.rootX, x.u.keyButtonPointer.rootY);
+            fprintf(stderr, "nxagentDispatchEvents: Adding motion event [%d, %d] to the queue.\n", x.u.keyButtonPointer.rootX, x.u.keyButtonPointer.rootY);
           }
           #endif
 
@@ -1923,9 +1911,8 @@ int nxagentHandleKeyPress(XEvent *X, enum HandleEventResult *result)
 
   nxagentLastEventTime = nxagentLastKeyPressTime = GetTimeInMillis();
 
-  
   x.u.u.type = KeyPress;
-  x.u.u.detail = nxagentConvertKeycode(X -> xkey.keycode);
+  x.u.u.detail = X -> xkey.keycode;
   x.u.keyButtonPointer.time = nxagentLastKeyPressTime;
 
   nxagentLastServerTime = X -> xkey.time;
@@ -4025,182 +4012,6 @@ void nxagentGuessDumpInputInfo(ClientPtr client, Atom property, char *data)
       nxagentDebugInput = 0;
     }
   }
-}
-
-void nxagentDeactivateInputDevicesGrabs()
-{
-  fprintf(stderr, "Info: Deactivating input devices grabs.\n");
-
-  if (inputInfo.pointer -> grab)
-  {
-    (*inputInfo.pointer -> DeactivateGrab)(inputInfo.pointer);
-  }
-
-  if (inputInfo.keyboard -> grab)
-  {
-    (*inputInfo.keyboard -> DeactivateGrab)(inputInfo.keyboard);
-  }
-}
-
-static const char *nxagentGrabStateToString(int state)
-{
-  switch (state)
-  {
-    case 0:
-      return "NOT_GRABBED";
-    case 1:
-      return "THAWED";
-    case 2:
-      return "THAWED_BOTH";
-    case 3:
-      return "FREEZE_NEXT_EVENT";
-    case 4:
-      return "FREEZE_BOTH_NEXT_EVENT";
-    case 5:
-      return "FROZEN_NO_EVENT";
-    case 6:
-      return "FROZEN_WITH_EVENT";
-    case 7:
-      return "THAW_OTHERS";
-    default:
-      return "unknown state";
-  }
-}
-
-void nxagentDumpInputDevicesState(void)
-{
-  int i, k;
-  int mask = 1;
-  CARD8 val;
-  DeviceIntPtr dev;
-  GrabPtr grab;
-  WindowPtr pWin = NULL;
-
-  fprintf(stderr, "\n*** Dump input devices state: BEGIN ***"
-              "\nKeys down:");
-
-  dev = inputInfo.keyboard;
-
-  for (i = 0; i < DOWN_LENGTH; i++)
-  {
-    val = dev -> key -> down[i];
-
-    if (val != 0)
-    {
-      for (k = 0; k < 8; k++)
-      {
-        if (val & (mask << k))
-        {
-          fprintf(stderr, "\n\t[%d] [%s]", i * 8 + k,
-                      XKeysymToString(XKeycodeToKeysym(nxagentDisplay, i * 8 + k, 0)));
-        }
-      }
-    }
-  }
-
-  fprintf(stderr, "\nKeyboard device state: \n\tdevice [%p]\n\tlast grab time [%lu]"
-              "\n\tfrozen [%s]\n\tstate [%s]\n\tother [%p]\n\tevent count [%d]"
-                  "\n\tfrom passive grab [%s]\n\tactivating key [%d]", dev,
-                      dev -> grabTime.milliseconds, dev -> sync.frozen ? "Yes": "No",
-                          nxagentGrabStateToString(dev -> sync.state),
-                              dev -> sync.other, dev -> sync.evcount,
-                                  dev -> fromPassiveGrab ? "Yes" : "No",
-                                      dev -> activatingKey);
-
-  grab = dev -> grab;
-
-  if (grab)
-  {
-    fprintf(stderr, "\nKeyboard grab state: \n\twindow pointer [%p]"
-                "\n\towner events flag [%s]\n\tgrab mode [%s]",
-                    grab -> window, grab -> ownerEvents ? "True" : "False",
-                        grab -> keyboardMode ? "asynchronous" : "synchronous");
-
-   /*
-    * Passive grabs.
-    */
-
-    pWin = grab -> window;
-    grab = wPassiveGrabs(pWin);
-
-    while (grab)
-    {
-      fprintf(stderr, "\nPassive grab state: \n\tdevice [%p]\n\towner events flag [%s]"
-                  "\n\tpointer grab mode [%s]\n\tkeyboard grab mode [%s]\n\tevent type [%d]"
-                      "\n\tmodifiers [%x]\n\tbutton/key [%u]\n\tevent mask [%lx]",
-                          grab -> device, grab -> ownerEvents ? "True" : "False",
-                              grab -> pointerMode ? "asynchronous" : "synchronous",
-                                  grab -> keyboardMode ? "asynchronous" : "synchronous",
-                                      grab -> type, grab -> modifiersDetail.exact,
-                                          grab -> detail.exact, grab -> eventMask);
-
-      grab = grab -> next;
-    }
-  }
-
-  fprintf(stderr, "\nButtons down:");
-
-  dev = inputInfo.pointer;
-
-  for (i = 0; i < DOWN_LENGTH; i++)
-  {
-    val = dev -> button -> down[i];
-
-    if (val != 0)
-    {
-      for (k = 0; k < 8; k++)
-      {
-        if (val & (mask << k))
-        {
-          fprintf(stderr, "\n\t[%d]", i * 8 + k);
-        }
-      }
-    }
-  }
-
-  fprintf(stderr, "\nPointer device state: \n\tdevice [%p]\n\tlast grab time [%lu]"
-              "\n\tfrozen [%s]\n\tstate [%s]\n\tother [%p]\n\tevent count [%d]"
-                  "\n\tfrom passive grab [%s]\n\tactivating button [%d]", dev,
-                      dev -> grabTime.milliseconds, dev -> sync.frozen ? "Yes" : "No",
-                          nxagentGrabStateToString(dev -> sync.state),
-                              dev -> sync.other, dev -> sync.evcount,
-                                  dev -> fromPassiveGrab ? "Yes" : "No",
-                                      dev -> activatingKey);
-
-  grab = dev -> grab;
-
-  if (grab)
-  {
-    fprintf(stderr, "\nPointer grab state: \n\twindow pointer [%p]"
-                "\n\towner events flag [%s]\n\tgrab mode [%s]",
-                    grab -> window, grab -> ownerEvents ? "True" : "False",
-                        grab -> pointerMode ? "asynchronous" : "synchronous");
-
-    if (grab -> window != pWin)
-    {
-      /*
-       * Passive grabs.
-       */
-
-      grab = wPassiveGrabs(grab -> window);
-
-      while (grab)
-      {
-        fprintf(stderr, "\nPassive grab state: \n\tdevice [%p]\n\towner events flag [%s]"
-                    "\n\tpointer grab mode [%s]\n\tkeyboard grab mode [%s]\n\tevent type [%d]"
-                        "\n\tmodifiers [%x]\n\tbutton/key [%u]\n\tevent mask [%lx]",
-                            grab -> device, grab -> ownerEvents ? "True" : "False",
-                                grab -> pointerMode ? "asynchronous" : "synchronous",
-                                    grab -> keyboardMode ? "asynchronous" : "synchronous",
-                                        grab -> type, grab -> modifiersDetail.exact,
-                                            grab -> detail.exact, grab -> eventMask);
-
-        grab = grab -> next;
-      }
-    }
-  }
-
-  fprintf(stderr, "\n*** Dump input devices state: FINISH ***\n");
 }
 
 #endif

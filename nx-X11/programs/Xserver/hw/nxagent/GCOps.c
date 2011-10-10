@@ -594,8 +594,6 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
   unsigned int format;
   unsigned long planeMask = 0xffffffff;
 
-  int oldDstxyValue;
-
   RegionPtr pDstRegion;
 
   int skip = 0;
@@ -606,91 +604,6 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
                       (pDstDrawable -> type == DRAWABLE_PIXMAP) ? "PIXMAP" : "WINDOW", 
                           (void *) pDstDrawable, srcx, srcy, dstx, dsty, width, height);
   #endif
-
- /*
-  * Here, before using fbDoCopy() called by fbCopyArea(),
-  * it should be provided that the cast in fbDoCopy() from
-  * int to short int would not cut off significative bits.
-  */
-
-  if (dstx + pDstDrawable->x + width > 32767)
-  {
-    #ifdef WARNING
-    fprintf(stderr, "nxagentCopyArea: x2 exceeding short int.\n");
-    #endif
-
-    width = 32767 - dstx - pDstDrawable->x;
-
-    if (width <= 0)
-    {
-      #ifdef TEST
-      fprintf(stderr, "nxagentCopyArea: Returning null on x2 check.\n");
-      #endif
-
-      return NullRegion;
-    }
-  }
-
-  if (dstx + pDstDrawable->x < -32768)
-  {
-    #ifdef WARNING
-    fprintf(stderr, "nxagentCopyArea: x1 exceeding short int.\n");
-    #endif
-
-    width += pDstDrawable->x + dstx + 32768;
-    srcx  -= pDstDrawable->x + dstx + 32768;
-    dstx = -32768 - pDstDrawable->x;
-
-    if (width <= 0)
-    {
-      #ifdef TEST
-      fprintf(stderr, "nxagentCopyArea: Returning null on x1 check.\n");
-      #endif
-
-      return NullRegion;
-    }
-  }
-
-    oldDstxyValue = dsty;
-
-  if (dsty + pDstDrawable->y + height > 32767)
-  {
-    #ifdef WARNING
-    fprintf(stderr, "nxagentCopyArea: y2 exceeding short int.\n");
-    #endif
-
-    height = 32767 - dsty - pDstDrawable->y;
-
-    if (height <= 0)
-    {
-      #ifdef TEST
-      fprintf(stderr, "nxagentCopyArea: Returning null on y2 check.\n");
-      #endif
-
-      return NullRegion;
-    }
-  }
-
-  if (dsty + pDstDrawable->y < -32768)
-  {
-    #ifdef WARNING
-    fprintf(stderr, "nxagentCopyArea: y1 exceeding short int.\n");
-    #endif
-
-    height += 32768 + pDstDrawable->y + dsty;
-    srcy   -= 32768 + pDstDrawable->y + dsty;
-    dsty = -32768 - pDstDrawable->y;
-
-    if (height <= 0)
-    {
-      #ifdef TEST
-      fprintf(stderr, "nxagentCopyArea: Returning null on y1 check.\n");
-      #endif
-
-      return NullRegion;
-    }
-  }
-
 
   if (nxagentGCTrap == 1 || nxagentShmTrap == 1)
   {

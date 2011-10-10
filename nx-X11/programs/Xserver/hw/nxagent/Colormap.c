@@ -291,20 +291,9 @@ void nxagentSetInstalledColormapWindows(ScreenPtr pScreen)
 	  pCmap = (ColormapPtr)LookupIDByType(pScreen->defColormap,
 					      RT_COLORMAP);
 
-        if (pCmap != NULL)
-        {
-          XSetWindowColormap(nxagentDisplay,
-	                         nxagentDefaultWindows[pScreen->myNum],
-                                     nxagentColormap(pCmap));
-        }
-        #ifdef WARNING
-        else
-        {
-          fprintf(stderr, "nxagentSetInstalledColormapWindows: WARNING! "
-                      "Window at [%p] has no colormap with class [%d].\n",
-                          pWin, pWin -> drawable.class);
-        }
-        #endif
+	XSetWindowColormap(nxagentDisplay,
+			   nxagentDefaultWindows[pScreen->myNum],
+			   nxagentColormap(pCmap));
       }
 #endif /* DUMB_WINDOW_MANAGERS */
   }
