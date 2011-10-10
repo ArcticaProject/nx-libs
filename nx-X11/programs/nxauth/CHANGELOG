@@ -1,5 +1,11 @@
 ChangeLog:
 
+nxauth-3.5.0-1
+
+- Opened the 3.5.0 branch based on nxauth-3.4.0-3.
+
+- Updated copyright to year 2011.
+
 nxauth-3.4.0-3
 
 - Updated the launchd socket detection to support OSX versions relea-
