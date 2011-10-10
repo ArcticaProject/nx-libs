@@ -1,9 +1,5 @@
 ChangeLog:
 
-nx-X11-3.3.0-3
-
-- Fixed the search path for the XKB base directory.
-
 nx-X11-3.3.0-2
 
 - Fixed TR10F02116. The X11 agent could enter an indefinite wait state

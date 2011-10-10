@@ -559,7 +559,7 @@ char 	*cmd = NULL,file[PATH_MAX],xkm_output_dir[PATH_MAX],*map,*outFile;
 #ifndef __UNIXOS2__
 
 #ifdef NXAGENT_SERVER
-        char *xkbbasedir = _NXGetXkbCompPath(XkbBaseDirectory);
+        char *xkbbasedir = _NXGetXkbBasePath(XkbBaseDirectory);
         char *xkbbindir = _NXGetXkbCompPath(XkbBinDirectory);
 #else
         char *xkbbasedir = XkbBaseDirectory;
@@ -569,7 +569,7 @@ char 	*cmd = NULL,file[PATH_MAX],xkm_output_dir[PATH_MAX],*map,*outFile;
 #else
         /* relocate the basedir and replace the slashes with backslashes */
 #ifdef NXAGENT_SERVER
-        char *xkbbasedir = (char*)__XOS2RedirRoot(_NXGetXkbCompPath(XkbBaseDirectory));
+        char *xkbbasedir = (char*)__XOS2RedirRoot(_NXGetXkbBasePath(XkbBaseDirectory));
         char *xkbbindir = (char*)__XOS2RedirRoot(_NXGetXkbCompPath(XkbBinDirectory));
 #else
         char *xkbbasedir = (char*)__XOS2RedirRoot(XkbBaseDirectory);
@@ -675,7 +675,7 @@ char tmpname[PATH_MAX];
 #endif
 #ifndef __UNIXOS2__
 #ifdef NXAGENT_SERVER
-        char *xkbbasedir = _NXGetXkbCompPath(XkbBaseDirectory);
+        char *xkbbasedir = _NXGetXkbBasePath(XkbBaseDirectory);
         char *xkbbindir = _NXGetXkbCompPath(XkbBinDirectory);
 #else
         char *xkbbasedir = XkbBaseDirectory;
@@ -684,7 +684,7 @@ char tmpname[PATH_MAX];
 #else
         int i;
 #ifdef NXAGENT_SERVER
-        char *xkbbasedir = (char*)__XOS2RedirRoot(_NXGetXkbCompPath(XkbBaseDirectory));
+        char *xkbbasedir = (char*)__XOS2RedirRoot(_NXGetXkbBasePath(XkbBaseDirectory));
         char *xkbbindir = (char*)__XOS2RedirRoot(_NXGetXkbCompPath(XkbBinDirectory));
 #else
         char *xkbbasedir = (char*)__XOS2RedirRoot(XkbBaseDirectory);

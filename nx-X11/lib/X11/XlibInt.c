@@ -1840,7 +1840,20 @@ _XSend (
         int congestion;
 #endif
 
+#ifdef AGENT_SERVER
+        if (!size || (dpy->flags & XlibDisplayIOError))
+        {
+            if (dpy->flags & XlibDisplayIOError)
+            {
+	        dpy->bufptr = dpy->buffer;
+	        dpy->last_req = (char *)&_dummy_request;
+            }
+
+	    return;
+	}
+#else
 	if (!size || (dpy->flags & XlibDisplayIOError)) return;
+#endif
 	dbufsize = dpy->bufptr - dpy->buffer;
 #ifdef XTHREADS
 	dpy->flags |= XlibDisplayWriting;
