@@ -453,6 +453,21 @@ static void nxagentSigchldHandler(int signal)
     }
   }
 
+  if (pid == 0 && nxagentFontsReplacementDialogPid)
+  {
+    pid = waitpid(nxagentFontsReplacementDialogPid, &status, options);
+
+    if (pid == -1 && errno == ECHILD)
+    {
+      #ifdef WARNING
+      fprintf(stderr, "nxagentSigchldHandler: Got ECHILD waiting for child %d (Fonts replacement).\n",
+                  nxagentFontsReplacementDialogPid);
+      #endif
+
+      pid = nxagentFontsReplacementDialogPid = 0;
+    }
+  }
+
   if (pid == 0 && nxagentEnableRandRModeDialogPid)
   {
     pid = waitpid(nxagentEnableRandRModeDialogPid, &status, options);

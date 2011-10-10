@@ -680,6 +680,30 @@ void nxagentCollectPropertyEvent(int resource)
 
     return;
   }
+ 
+  if (resultFormat != 8 && resultFormat != 16 && resultFormat != 32)
+  {
+
+    #ifdef DEBUG
+    fprintf (stderr, "nxagentCollectPropertyEvent: WARNING! Invalid property "
+                 "value.\n");
+    #endif
+
+    if (lastClientClientPtr != NULL)
+    {
+      nxagentSendSelectionNotify(None);
+    }
+
+    lastClientWindowPtr = NULL;
+    lastClientStage = SelectionStageNone;
+
+    if (pszReturnData != NULL)
+    {
+      XFree(pszReturnData);
+    }
+
+    return;
+  }
 
   switch (lastClientStage)
   {

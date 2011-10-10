@@ -42,7 +42,7 @@ extern int nxagentKillDialogPid;
 extern int nxagentSuspendDialogPid;
 extern int nxagentRootlessDialogPid;
 extern int nxagentPulldownDialogPid;
-extern int nxagentFontsReplacement;
+extern int nxagentFontsReplacementDialogPid;
 extern int nxagentEnableRandRModeDialogPid;
 extern int nxagentDisableRandRModeDialogPid;
 extern int nxagentEnableDeferModePid;

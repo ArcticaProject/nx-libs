@@ -3045,7 +3045,7 @@ void nxagentShadowAdaptDepth(unsigned int width, unsigned int height,
     #ifdef WARNING
     fprintf(stderr, "nxagentCorrectDepthShadow: WARNING! Visual not found. Using default visual.\n");
     #endif
-    
+
     pVisual = nxagentVisuals[nxagentDefaultVisualIndex].visual;
   }
 
@@ -3472,10 +3472,10 @@ int nxagentRRSetScreenConfig(ScreenPtr pScreen, int width, int height)
     RRScreenSizePtr oldSizes;
 
     pScrPriv = rrGetScrPriv(pScreen);
-   
+
     oldWidth = pScreen->width;
     oldHeight = pScreen->height;
-    
+
     if (!pScrPriv)
     {
       return 1;
@@ -3555,7 +3555,7 @@ int nxagentRRSetScreenConfig(ScreenPtr pScreen, int width, int height)
     }
 
     RREditConnectionInfo (pScreen);
-    
+
     /*
      * Fix pointer bounds and location
      */
@@ -3693,7 +3693,8 @@ void nxagentSaveAreas(PixmapPtr pPixmap, RegionPtr prgnSave, int xorg, int yorg,
   return;
 }
 
-void nxagentRestoreAreas(PixmapPtr pPixmap, RegionPtr prgnRestore, int xorg, int yorg, WindowPtr pWin)
+void nxagentRestoreAreas(PixmapPtr pPixmap, RegionPtr prgnRestore, int xorg,
+                             int yorg, WindowPtr pWin)
 {
   PixmapPtr pVirtualPixmap;
   RegionPtr clipRegion;
@@ -3708,6 +3709,14 @@ void nxagentRestoreAreas(PixmapPtr pPixmap, RegionPtr prgnRestore, int xorg, int
   XRectangle *pRects;
   BoxRec extents;
   miBSWindowPtr pBackingStore;
+
+  /*
+   * Limit the area to restore to the
+   * root window size.
+   */
+
+  REGION_INTERSECT(pWin -> pScreen, prgnRestore, prgnRestore,
+                       &WindowTable[pWin -> drawable.pScreen -> myNum] -> winSize);
 
   pBackingStore = (miBSWindowPtr) pWin -> backStorage;
 

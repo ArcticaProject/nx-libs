@@ -60,6 +60,27 @@ typedef struct
 }
 nxagentWMHints;
 
+/*
+ * This structure is compatible with 32
+ * and 64 bit library interface. It has
+ * been copied from Xatomtype.h and it's
+ * a parameter of XChangeProperty().
+ */
+
+typedef struct
+{
+  unsigned long flags;
+  long          input;
+  long          initialState;
+  unsigned long iconPixmap;
+  unsigned long iconWindow;
+  long          iconX;
+  long          iconY;
+  unsigned long iconMask;
+  unsigned long windowGroup;
+}
+nxagentPropWMHints;
+
 WindowPtr nxagentRootlessWindow = NULL;
 
 #define TOP_LEVEL_TABLE_UNIT 100
@@ -429,6 +450,7 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
   Atom propertyX, typeX;
   char *output = NULL;
   nxagentWMHints wmHints;
+  nxagentPropWMHints propHints;
   Bool export = False;
   Bool freeMem = False;
 
@@ -489,8 +511,22 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
     wmHints.flags |= InputHint;
     wmHints.input = True;
 
-    output = (char*) &wmHints;
-    export  = True;
+    /*
+     * Initialize the structure used in XChangeProperty().
+     */
+
+    propHints.flags = wmHints.flags;
+    propHints.input = (wmHints.input == True ? 1 : 0);
+    propHints.initialState = wmHints.initial_state;
+    propHints.iconPixmap = wmHints.icon_pixmap;
+    propHints.iconWindow = wmHints.icon_window;
+    propHints.iconX = wmHints.icon_x;
+    propHints.iconY = wmHints.icon_y;
+    propHints.iconMask = wmHints.icon_mask;
+    propHints.windowGroup = wmHints.window_group;
+
+    output = (char*) &propHints;
+    export = True;
 
     if ((wmHints.flags & IconPixmapHint) && (wmHints.icon_pixmap != None))
     {
@@ -504,17 +540,17 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
           nxagentSynchronizeRegion((DrawablePtr) icon, NullRegion, NEVER_BREAK, NULL);
         }
 
-        wmHints.icon_pixmap = nxagentPixmap(icon);
+        propHints.iconPixmap = nxagentPixmap(icon);
       }
       else
       {
-        wmHints.flags &= ~IconPixmapHint;
+        propHints.flags &= ~IconPixmapHint;
 
         #ifdef WARNING
         fprintf(stderr, "nxagentExportProperty: WARNING! Failed to look up icon pixmap %x from hint "
                     "exporting property %s type %s on window %p.\n",
                         (unsigned int) wmHints.icon_pixmap, propertyS, typeS,
-                            (void*)pWin);
+                            (void *) pWin);
         #endif
       }
     }
@@ -526,17 +562,17 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
 
       if (icon)
       {
-        wmHints.icon_window = nxagentWindow(icon);
+        propHints.iconWindow = nxagentWindow(icon);
       }
       else
       {
-        wmHints.flags &= ~IconWindowHint;
+        propHints.flags &= ~IconWindowHint;
 
         #ifdef WARNING
         fprintf(stderr, "nxagentExportProperty: WARNING! Failed to look up icon window %x from hint "
                     "exporting property %s type %s on window %p.\n",
                         (unsigned int) wmHints.icon_window, propertyS, typeS,
-                            (void*)pWin);
+                            (void *) pWin);
         #endif
       }
     }
@@ -548,17 +584,17 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
 
       if (icon)
       {
-        wmHints.icon_mask = nxagentPixmap(icon);
+        propHints.iconMask = nxagentPixmap(icon);
       }
       else
       {
-        wmHints.flags &= ~IconMaskHint;
+        propHints.flags &= ~IconMaskHint;
 
         #ifdef WARNING
         fprintf(stderr, "nxagentExportProperty: WARNING! Failed to look up icon mask %x from hint "
                     "exporting property %s type %s on window %p.\n",
                         (unsigned int) wmHints.icon_mask, propertyS, typeS,
-                            (void*)pWin);
+                            (void *) pWin);
         #endif
       }
     }
@@ -570,17 +606,17 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
 
       if (window)
       {
-        wmHints.window_group = nxagentWindow(window);
+        propHints.windowGroup = nxagentWindow(window);
       }
       else
       {
-        wmHints.flags &= ~WindowGroupHint;
+        propHints.flags &= ~WindowGroupHint;
 
         #ifdef WARNING
         fprintf(stderr, "nxagentExportProperty: WARNING! Failed to look up window group %x from hint "
                     "exporting property %s type %s on window %p.\n",
                         (unsigned int) wmHints.window_group, propertyS, typeS,
-                            (void*)pWin);
+                            (void *) pWin);
         #endif
       }
     }
