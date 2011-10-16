@@ -437,6 +437,19 @@ extern LockInfoPtr _Xglobal_lock;
  * X Protocol packetizing macros.
  */
 
+/**
+ * Return a len-sized request buffer for the request type. This function may
+ * flush the output queue.
+ *
+ * @param dpy The display connection
+ * @param type The request type
+ * @param len Length of the request in bytes
+ *
+ * @returns A pointer to the request buffer with a few default values
+ * initialized.
+ */
+extern void *_XGetRequest(Display *dpy, CARD8 type, size_t len);
+
 /*
  * GetReq - Get the next available X request packet in the buffer and
  * return it.
@@ -448,23 +461,10 @@ extern LockInfoPtr _Xglobal_lock;
 
 #if !defined(UNIXCPP) || defined(ANSICPP)
 #define GetReq(name, req) \
-	if ((dpy->bufptr + SIZEOF(x##name##Req)) > dpy->bufmax)\
-		_XFlush(dpy);\
-	req = (x##name##Req *)(dpy->last_req = dpy->bufptr);\
-	req->reqType = X_##name;\
-	req->length = (SIZEOF(x##name##Req))>>2;\
-	dpy->bufptr += SIZEOF(x##name##Req);\
-	dpy->request++
-
+       req = (x##name##Req *) _XGetRequest(dpy, X_##name, SIZEOF(x##name##Req))
 #else  /* non-ANSI C uses empty comment instead of "##" for token concatenation */
 #define GetReq(name, req) \
-	if ((dpy->bufptr + SIZEOF(x/**/name/**/Req)) > dpy->bufmax)\
-		_XFlush(dpy);\
-	req = (x/**/name/**/Req *)(dpy->last_req = dpy->bufptr);\
-	req->reqType = X_/**/name;\
-	req->length = (SIZEOF(x/**/name/**/Req))>>2;\
-	dpy->bufptr += SIZEOF(x/**/name/**/Req);\
-	dpy->request++
+	req = (x/**/name/**/Req *) _XGetRequest(dpy, X_/**/name, SIZEOF(x/**/name/**/Req))
 #endif
 
 /* GetReqExtra is the same as GetReq, but allocates "n" additional
@@ -472,22 +472,10 @@ extern LockInfoPtr _Xglobal_lock;
 
 #if !defined(UNIXCPP) || defined(ANSICPP)
 #define GetReqExtra(name, n, req) \
-	if ((dpy->bufptr + SIZEOF(x##name##Req) + n) > dpy->bufmax)\
-		_XFlush(dpy);\
-	req = (x##name##Req *)(dpy->last_req = dpy->bufptr);\
-	req->reqType = X_##name;\
-	req->length = (SIZEOF(x##name##Req) + n)>>2;\
-	dpy->bufptr += SIZEOF(x##name##Req) + n;\
-	dpy->request++
+	req = (x##name##Req *) _XGetRequest(dpy, X_##name, SIZEOF(x##name##Req) + n)
 #else
 #define GetReqExtra(name, n, req) \
-	if ((dpy->bufptr + SIZEOF(x/**/name/**/Req) + n) > dpy->bufmax)\
-		_XFlush(dpy);\
-	req = (x/**/name/**/Req *)(dpy->last_req = dpy->bufptr);\
-	req->reqType = X_/**/name;\
-	req->length = (SIZEOF(x/**/name/**/Req) + n)>>2;\
-	dpy->bufptr += SIZEOF(x/**/name/**/Req) + n;\
-	dpy->request++
+	req = (x/**/name/**/Req *) _XGetRequest(dpy, X_/**/name, SIZEOF(x/**/name/**/Req) + n)
 #endif
 
 
