@@ -548,12 +548,13 @@ char *PngCompressData(XImage *image, int *compressed_size)
   }
 
   png_write_end(png_ptr, NULL);
-  png_destroy_write_struct(&png_ptr, &info_ptr);
 
   if (color_type == PNG_COLOR_TYPE_PALETTE)
   {
     png_free(png_ptr, palette);
   }
+
+  png_destroy_write_struct(&png_ptr, &info_ptr);
 
   /*
    * Check the size of the resulting data.
