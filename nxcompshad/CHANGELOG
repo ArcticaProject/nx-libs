@@ -1,5 +1,9 @@
 ChangeLog:
 
+nxcompshad-3.2.0-1
+
+- Opened the 3.2.0 branch based on nxcompshad-3.1.0-2.
+
 nxcompshad-3.1.0-2
 
 - Updated file VERSION to match the current release version.
