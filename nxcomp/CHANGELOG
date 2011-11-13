@@ -1,5 +1,13 @@
 ChangeLog:
 
+nxcomp-3.4.0-1
+
+- Opened the 3.4.0 branch based on nxcomp-3.3.0-4.
+
+- Changed version number.
+
+- Updated copyright to year 2009.
+
 nxcomp-3.3.0-4
 
 - Check if the variable storing the ping time exceeded the maximum
