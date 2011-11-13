@@ -16,11 +16,12 @@
 /**************************************************************************/
 
 #include <stdio.h>
-#include <fstream.h>
 #include <unistd.h>
 #include <string.h>
 
 #include <algorithm>
+
+#include "Misc.h"
 
 //
 // We need channel's cache data.

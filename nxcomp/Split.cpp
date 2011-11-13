@@ -15,12 +15,13 @@
 /*                                                                        */
 /**************************************************************************/
 
-#include <fstream.h>
 #include <unistd.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <utime.h>
+
+#include "Misc.h"
 
 #include "Split.h"
 

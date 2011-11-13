@@ -18,9 +18,10 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <fstream.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+
+#include "Misc.h"
 
 #if defined(__CYGWIN32__) || defined(__APPLE__) || defined(__FreeBSD__) || defined(__sun)
 #include <netinet/in_systm.h>

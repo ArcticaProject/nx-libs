@@ -29,7 +29,6 @@
 #include <dirent.h>
 #include <pwd.h>
 
-#include <fstream.h>
 #include <fcntl.h>
 
 #include <sys/types.h>
@@ -41,6 +40,8 @@
 #include <netdb.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+
+#include "Misc.h"
 
 #ifdef __sun
 #include <strings.h>

@@ -18,11 +18,13 @@
 #ifndef Misc_H
 #define Misc_H
 
-#include <iostream.h>
-#include <fstream.h>
+#include <iostream>
+#include <fstream>
 
 #include <errno.h>
 #include <string.h>
+
+using namespace std;
 
 //
 // This is MD5 length.

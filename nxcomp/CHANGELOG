@@ -1,5 +1,9 @@
 ChangeLog:
 
+nxcomp-3.2.0-7
+
+- Solved a compilation problem on GCC 4.3.
+
 nxcomp-3.2.0-6
 
 - Changes considering that unsetenv() returns void on Mac OS X.
