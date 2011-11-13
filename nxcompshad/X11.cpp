@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2009 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXCOMPSHAD, NX protocol compression and NX extensions to this software */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -127,7 +127,7 @@ Poller::~Poller()
     XCloseDisplay(display_);
   }
 
-  if (tmpBuffer_ != NULL && shmExtension_ == 1 && damageExtension_ == 1)
+  if (tmpBuffer_ != NULL && shmExtension_ != -1 && damageExtension_ == 1)
   {
     XFree(tmpBuffer_);
 
@@ -181,13 +181,21 @@ int Poller::updateShadowFrameBuffer(void)
 
       return -1;
     }
-
-    return 1;
   }
   else
   {
-    return 0;
+    image_ = XGetImage(display_, DefaultRootWindow(display_), 0, 0, width_,
+                           height_, AllPlanes, ZPixmap);
+
+    if (image_ == NULL)
+    {
+      logDebug("Poller::updateShadowFrameBuffer", "XGetImage failed!");
+
+      return -1;
+    }
   }
+
+  return 1;
 }
 
 char *Poller::getRect(XRectangle r)
@@ -255,6 +263,8 @@ char *Poller::getRect(XRectangle r)
     }
 
     XFree(image_);
+
+    image_ = NULL;
   }
 
   return tmpBuffer_;
@@ -1469,42 +1479,71 @@ void Poller::handleDamageNotify(XEvent *X)
 
 void Poller::updateDamagedAreas(void)
 {
-  if (shmExtension_ == 1)
+  BOX *boxPtr;
+
+  XRectangle rectangle;
+
+  int i;
+  int y;
+  
+  for (i = 0; i < lastUpdatedRegion_ -> numRects; i++)
   {
-    BOX *boxPtr;
+    boxPtr = lastUpdatedRegion_ -> rects + i;
 
-    XRectangle rectangle;
-
-    int i;
-    int y;
-
-    for (i = 0; i < lastUpdatedRegion_ -> numRects; i++)
+    if (shmExtension_ == 1)
     {
-      boxPtr = lastUpdatedRegion_ -> rects + i;
-
       image_ -> width  = boxPtr -> x2 - boxPtr -> x1;
-      image_ -> height = boxPtr -> y2 - boxPtr -> y1; 
-
-      image_ -> bytes_per_line = ROUNDUP((image_ -> bits_per_pixel * image_ -> width), image_ -> bitmap_pad);
-
-      if (XShmGetImage(display_, DefaultRootWindow(display_), image_, boxPtr -> x1, boxPtr -> y1, AllPlanes) == 0)
+      image_ -> height = boxPtr -> y2 - boxPtr -> y1;
+      image_ -> bytes_per_line =
+          ROUNDUP((image_ -> bits_per_pixel * image_ -> width),
+                      image_ -> bitmap_pad);
+      
+      if (XShmGetImage(display_, DefaultRootWindow(display_), image_,
+                           boxPtr -> x1, boxPtr -> y1, AllPlanes) == 0)
       {
-        logDebug("Poller::getRect", "XShmGetImage failed!");
+        logDebug("Poller::updateDamagedAreas", "XShmGetImage failed!");
+
+        return;
+      }
+    }
+    else if (shmExtension_ == 0)
+    {
+      image_ = XGetImage(display_, DefaultRootWindow(display_), boxPtr -> x1,
+                             boxPtr -> y1, boxPtr -> x2 - boxPtr -> x1,
+                                 boxPtr -> y2 - boxPtr -> y1, AllPlanes,
+                                     ZPixmap);
+
+      if (image_ == NULL)
+      {
+        logDebug("Poller::updateDamagedAreas", "XGetImage failed!");
 
         return;
       }
 
-      rectangle.height = 1;
-      rectangle.width = image_ -> width;
-      rectangle.x = boxPtr -> x1;
-      rectangle.y = boxPtr -> y1;
+      image_ -> width  = boxPtr -> x2 - boxPtr -> x1;
+      image_ -> height = boxPtr -> y2 - boxPtr -> y1;
+      image_ -> bytes_per_line =
+          ROUNDUP((image_ -> bits_per_pixel * image_ -> width),
+                      image_ -> bitmap_pad);
+    }
 
-      for (y = 0; y < image_ -> height; y++)
-      {
-        update(image_ -> data + y * image_ -> bytes_per_line, rectangle);
+    rectangle.height = 1;
+    rectangle.width = image_ -> width;
+    rectangle.x = boxPtr -> x1;
+    rectangle.y = boxPtr -> y1;
 
-        rectangle.y++; 
-      }
+    for (y = 0; y < image_ -> height; y++)
+    {
+      update(image_ -> data + y * image_ -> bytes_per_line, rectangle);
+
+      rectangle.y++; 
+    }
+
+    if (shmExtension_ != 1)
+    {
+       XDestroyImage(image_);
+
+      image_ = NULL;
     }
   }
 

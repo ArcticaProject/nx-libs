@@ -1,5 +1,18 @@
 ChangeLog:
 
+nxcompshad-3.4.0-3
+
+- Updated copyright to year 2010.
+
+nxcompshad-3.4.0-2
+
+- Fixed TR08G02256. Now the Shadow session is shown correctly with
+  MIT-SHM extension disabled.
+
+- Improved updateShadowFrameBuffer() and ~Poller() functions.
+
+- Avoided memory leak.
+
 nxcompshad-3.4.0-1
 
 - Opened the 3.4.0 branch based on nxcompshad-3.3.0-3.
