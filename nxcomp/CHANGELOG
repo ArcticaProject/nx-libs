@@ -1,5 +1,10 @@
 ChangeLog:
 
+nxcomp-3.4.0-7
+
+- Fixed TR03H02334. Modified the UNIX domain socket checks on MacOSX
+  to be compliant with the standard introduced in OSX 10.6.3.
+
 nxcomp-3.4.0-6
 
 - Solved compilation problems on Solaris.

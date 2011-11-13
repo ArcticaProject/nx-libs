@@ -4261,6 +4261,13 @@ int SetupDisplaySocket(int &xServerAddrFamily, sockaddr *&xServerAddr,
 
     if (useLaunchdSocket == 1)
     {
+      char *slash = rindex(display, '/');
+
+      if (slash != NULL)
+      {
+        *slash = '\0';
+      }
+
       snprintf(unixSocketDir, DEFAULT_STRING_LENGTH - 1, "%s", display);
     }
 
@@ -4301,7 +4308,7 @@ int SetupDisplaySocket(int &xServerAddrFamily, sockaddr *&xServerAddr,
 
     if (useLaunchdSocket == 1)
     {
-      sprintf(unixSocketName, "%s:%d", unixSocketDir, xPort);
+      strncpy(unixSocketName, displayHost, DEFAULT_STRING_LENGTH - 1);
     }
 
     #endif
