@@ -1,5 +1,18 @@
 ChangeLog:
 
+nxcomp-3.3.0-3
+
+- Removed a condition in ClientChannel that caused a loss in event
+  sequence numbers.
+
+nxcomp-3.3.0-2
+
+- Updated VERSION.
+
+nxcomp-3.3.0-1
+
+- Opened the 3.3.0 branch based on nxcomp-3.2.0-7.
+
 nxcomp-3.2.0-7
 
 - Solved a compilation problem on GCC 4.3.

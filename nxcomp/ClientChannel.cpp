@@ -4539,6 +4539,24 @@ int ClientChannel::handleWrite(const unsigned char *message, unsigned int length
             lastSequence_ = serverSequence_;
           }
         }
+/*
+FIXME: This block was added, otherwise we have a loss
+       of the nxagent events.
+*/
+        else
+        {
+          #ifdef DEBUG
+          *logofs << "handleWrite: Updating last event's sequence "
+                  << lastSequence_ << " to X server's sequence number "
+                  << serverSequence_ << " for FD#" << fd_
+                  << ".\n" << logofs_flush;
+          #endif
+
+          lastSequence_ = serverSequence_;
+        }
+
+/*
+FIXME: This causes the loss of the nxagent events.
 
         //
         // Check if by producing events at client side we
@@ -4571,6 +4589,7 @@ int ClientChannel::handleWrite(const unsigned char *message, unsigned int length
                   << logofs_flush;
         }
         #endif
+*/
 
         //
         // Check if remote side used fast encoding.
