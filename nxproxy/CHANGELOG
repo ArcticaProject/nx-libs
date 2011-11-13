@@ -1,5 +1,13 @@
 ChangeLog:
 
+nxproxy-3.1.0-2
+
+- Updated version number.
+
+nxproxy-3.1.0-1
+
+- Opened the 3.1.0 branch based on nxproxy-3.0.0-4.
+
 nxproxy-3.0.0-4
 
 - Added file COPYING.
