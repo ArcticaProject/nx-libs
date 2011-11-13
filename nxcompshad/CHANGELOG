@@ -1,5 +1,15 @@
 ChangeLog:
 
+nxcompshad-3.4.0-1
+
+- Opened the 3.4.0 branch based on nxcompshad-3.3.0-3.
+
+- Updated version number.
+
+- Updated copyright to year 2009.
+
+- Improved error messages logging in case of initialization failures.
+
 nxcompshad-3.3.0-3
 
 - Fixed TR01G02158. Keymap initialization could be incorrect because

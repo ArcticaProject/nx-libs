@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2007 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2009 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXCOMPSHAD, NX protocol compression and NX extensions to this software */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -1305,16 +1305,18 @@ void Poller::randrInit(void)
   int randrEventBase;
   int randrErrorBase;
 
-  randrExtension_ = 0;
-
-  XRRSelectInput(display_, DefaultRootWindow(display_), RRScreenChangeNotifyMask);
-
   if (XRRQueryExtension(display_, &randrEventBase, &randrErrorBase) == 0)
   {
-    #ifdef PANIC
-    fprintf(stderr, "nxagentShadowInit: Randr extension not supported on this display.\n");
-    #endif
+    logWarning("Poller::randrInit", "Randr extension not supported on this "
+                   "display.");
+
+    randrExtension_ = 0;
+
+    return;
   }
+
+  XRRSelectInput(display_, DefaultRootWindow(display_),
+                     RRScreenChangeNotifyMask);
 
   randrEventBase_ = randrEventBase;
 
@@ -1412,7 +1414,7 @@ void Poller::getEvents(void)
   {
     if (randrExtension_ == 1 && (X.type == randrEventBase_ + RRScreenChangeNotify || X.type == ConfigureNotify))
     {
-      XRRUpdateConfiguration (&X);
+      XRRUpdateConfiguration(&X);
 
       handleRRScreenChangeNotify(&X);
 

@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2007 NoMachine, http://www.nomachine.com.          */
+/* Copyright (c) 2001, 2009 NoMachine, http://www.nomachine.com.          */
 /*                                                                        */
 /* NXCOMPSHAD, NX protocol compression and NX extensions to this software */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -152,7 +152,7 @@ static int NXCreatePoller(Display *display, Display **shadowDisplay)
 
   if (poller -> init() == -1)
   {
-    logTest("NXCreatePoller", "Failed to initialize poller.");
+    logWarning("NXCreatePoller", "Failed to initialize poller.");
 
     return -1;
   }
@@ -270,7 +270,7 @@ int NXShadowCreate(void *dpy, char *keymap, char* shadowDisplayName, void **shad
 
   if (NXCreatePoller(display, shadowDisplay) != 1)
   {
-    logTest("NXShadowCreate", "NXCreatePoller failed.");
+    logWarning("NXShadowCreate", "NXCreatePoller failed.");
 
     return -1;
   }
