@@ -3424,6 +3424,8 @@ static void _NXNotifyImage(Display *dpy, int resource, Bool success)
 
   async_event.type = ClientMessage;
 
+  async_event.xclient.serial = _NXCollectedImages[resource] -> sequence;
+
   async_event.xclient.window       = 0;
   async_event.xclient.message_type = 0;
   async_event.xclient.format       = 32;
@@ -3815,6 +3817,8 @@ static void _NXNotifyProperty(Display *dpy, int resource, Bool success)
 
   async_event.type = ClientMessage;
 
+  async_event.xclient.serial = _NXCollectedProperties[resource] -> sequence;
+
   async_event.xclient.window       = 0;
   async_event.xclient.message_type = 0;
   async_event.xclient.format       = 32;
@@ -4183,6 +4187,8 @@ static void _NXNotifyGrabPointer(Display *dpy, int resource, Bool success)
 
   async_event.type = ClientMessage;
 
+  async_event.xclient.serial = _NXCollectedGrabPointers[resource] -> sequence;
+
   async_event.xclient.window       = 0;
   async_event.xclient.message_type = 0;
   async_event.xclient.format       = 32;
@@ -4464,6 +4470,8 @@ static void _NXNotifyInputFocus(Display *dpy, int resource, Bool success)
   XEvent async_event;
 
   async_event.type = ClientMessage;
+
+  async_event.xclient.serial = _NXCollectedInputFocuses[resource] -> sequence;
 
   async_event.xclient.window       = 0;
   async_event.xclient.message_type = 0;

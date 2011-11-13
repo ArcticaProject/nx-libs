@@ -1,5 +1,10 @@
 ChangeLog:
 
+nxcompext-3.3.0-3
+
+- Now setting the correct event serial number when sending collect
+  notifies back.
+
 nxcompext-3.3.0-2
 
 - Updated VERSION.
