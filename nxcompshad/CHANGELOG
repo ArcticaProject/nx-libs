@@ -1,5 +1,10 @@
 ChangeLog:
 
+nxcompshad-3.3.0-3
+
+- Fixed TR01G02158. Keymap initialization could be incorrect because
+  of a type mismatch on 64 bit platforms.
+
 nxcompshad-3.3.0-2
 
 - Updated VERSION.

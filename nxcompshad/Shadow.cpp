@@ -466,6 +466,5 @@ void NXShadowInitKeymap(void *keysyms)
 {
   NXShadowKeymap = (KeySymsPtr) keysyms;
 
-  logTest("NXShadowInitKeymap","KeySyms pointer [0x%p] mapWidth [%d]",
-              (void *)NXShadowKeymap, NXShadowKeymap -> mapWidth);
+  logTest("NXShadowInitKeymap","KeySyms pointer [0x%p]", (void *)NXShadowKeymap);
 }

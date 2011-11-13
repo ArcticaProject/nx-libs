@@ -23,6 +23,7 @@
 #undef  DEBUG
 
 #include <X11/Xlibint.h>
+#include <X11/Xproto.h>
 #include <X11/extensions/XTest.h>
 #include <X11/keysym.h>
 #include <string.h>
@@ -58,6 +59,8 @@ static KeyPressedRec *shadowKeyPressedPtr = NULL;
 
 static KeySym *shadowKeysyms = NULL;
 static KeySym *masterKeysyms = NULL;
+
+static KeySym *shadowKeymap = NULL;
 
 static int shadowMinKey, shadowMaxKey, shadowMapWidth;
 static int masterMinKey, masterMaxKey, masterMapWidth;
@@ -409,12 +412,35 @@ void Poller::shmInit(void)
 
 void Poller::keymapShadowInit(Display *display)
 {
-  if (NXShadowKeymap)
+  int i, len;
+  CARD32 *map;
+
+  if (NXShadowKeymap != NULL)
   {
-    shadowMinKey = NXShadowKeymap -> minKeyCode;
-    shadowMaxKey = NXShadowKeymap -> maxKeyCode;
+    shadowMinKey   = NXShadowKeymap -> minKeyCode;
+    shadowMaxKey   = NXShadowKeymap -> maxKeyCode;
     shadowMapWidth = NXShadowKeymap -> mapWidth;
-    shadowKeysyms = NXShadowKeymap -> map;
+
+    len = (shadowMaxKey - shadowMinKey + 1) * shadowMapWidth;
+
+    map = (CARD32 *) NXShadowKeymap -> map;
+
+    if (shadowKeymap != NULL)
+    {
+      free(shadowKeymap);
+    }
+
+    shadowKeymap = (KeySym *) malloc(len * sizeof(KeySym));
+
+    if (shadowKeymap != NULL)
+    {
+      for (i = 0; i < len; i++)
+      {
+        shadowKeymap[i] = map[i];
+      }
+
+      shadowKeysyms = shadowKeymap;
+    }
   }
 
   if (shadowKeysyms == NULL)
@@ -426,13 +452,16 @@ void Poller::keymapShadowInit(Display *display)
   }
 
   #ifdef DEBUG
-  if (shadowKeysyms)
+  if (shadowKeysyms != NULL)
   {
-    for (int i = 0; i < (shadowMaxKey - shadowMinKey) * shadowMapWidth; i++)
+    for (i = 0; i < (shadowMaxKey - shadowMinKey + 1) * shadowMapWidth; i++)
     {
-      logDebug("Poller::keymapShadowInit", "keycode %d - keysym %x %s",
-                   (int)(i / shadowMapWidth), (unsigned int)shadowKeysyms[i],
-                       XKeysymToString(shadowKeysyms[i]));
+      if (i % shadowMapWidth == 0)
+      {
+        logDebug("Poller::keymapShadowInit", "keycode [%d]", (int) (i / shadowMapWidth));
+      }
+
+      logDebug("\tkeysym", " [%x] [%s]", (unsigned int) shadowKeysyms[i], XKeysymToString(shadowKeysyms[i]));
     }
   }
   #endif
@@ -446,13 +475,16 @@ void Poller::keymapMasterInit()
                                           &masterMapWidth);
 
   #ifdef DEBUG
-  if (masterKeysyms)
+  if (masterKeysyms != NULL)
   {
-    for (int i = 0; i < (masterMaxKey - masterMinKey) * masterMapWidth; i++)
+    for (int i = 0; i < (masterMaxKey - masterMinKey + 1) * masterMapWidth; i++)
     {
-      logDebug("Poller::keymapMasterInit", "keycode %d - keysym %x %s",
-                   (int)(i / masterMapWidth), (unsigned int)masterKeysyms[i],
-                       XKeysymToString(masterKeysyms[i]));
+      if (i % masterMapWidth == 0)
+      {
+        logDebug("Poller::keymapMasterInit", "keycode [%d]", (int) (i / masterMapWidth));
+      }
+
+      logDebug("\tkeysym", " [%x] [%s]", (unsigned int) masterKeysyms[i], XKeysymToString(masterKeysyms[i]));
     }
   }
   #endif
