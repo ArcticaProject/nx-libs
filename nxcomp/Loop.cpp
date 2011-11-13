@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2009 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXCOMP, NX protocol compression and NX extensions to this software     */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -354,7 +354,7 @@ static int HandleChild(int child);
 static int CheckChild(int pid, int status);
 static int WaitChild(int child, const char *label, int force);
 
-int CheckParent(char *name, char *type, int parent);
+int CheckParent(const char *name, const char *type, int parent);
 
 void RegisterChild(int child);
 
@@ -1514,9 +1514,9 @@ int NXTransClose(int fd)
    * end of the socket pair.
    */
 
-  if (control != NULL && (agent != NULL &&
+  if (control != NULL && ((agent != NULL &&
           (fd == agentFD[0] || fd == NX_FD_ANY)) ||
-              (fd == proxyFD || fd == NX_FD_ANY))
+              (fd == proxyFD || fd == NX_FD_ANY)))
   {
     if (proxy != NULL)
     {
@@ -1551,9 +1551,9 @@ int NXTransDestroy(int fd)
     logofs = &cerr;
   }
 
-  if (control != NULL && (agent != NULL &&
+  if (control != NULL && ((agent != NULL &&
           (fd == agentFD[0] || fd == NX_FD_ANY)) ||
-              (fd == proxyFD || fd == NX_FD_ANY))
+              (fd == proxyFD || fd == NX_FD_ANY)))
   {
     //
     // Shut down the X connections and
@@ -6396,7 +6396,7 @@ void RegisterChild(int child)
   lastChild = child;
 }
 
-int CheckParent(char *name, char *type, int parent)
+int CheckParent(const char *name, const char *type, int parent)
 {
   if (parent != getppid() || parent == 1)
   {
@@ -9995,8 +9995,8 @@ char *GetLastCache(char *listBuffer, const char *searchPath)
 
   *selectedName = '\0';
 
-  char *localPrefix;
-  char *remotePrefix;
+  const char *localPrefix;
+  const char *remotePrefix;
 
   if (control -> ProxyMode == proxy_client)
   {
@@ -10979,7 +10979,7 @@ int ParsePackOption(const char *opt)
                                       packMethod == PACK_LOSSLESS ||
                                           packMethod == PACK_ADAPTIVE)
   {
-    char *dash = rindex(opt, '-');
+    const char *dash = rindex(opt, '-');
 
     if (dash != NULL && strlen(dash) == 2 &&
             *(dash + 1) >= '0' && *(dash + 1) <= '9')
@@ -13927,7 +13927,7 @@ void PrintProcessInfo()
          << "." << control -> LocalVersionMinor << "."
          << control -> LocalVersionPatch << "\n\n";
 
-    cerr << "Copyright (C) 2001, 2007 NoMachine.\n"
+    cerr << "Copyright (C) 2001, 2010 NoMachine.\n"
          << "See http://www.nomachine.com/ for more information.\n\n";
   }
 
@@ -14080,8 +14080,8 @@ void PrintConnectionInfo()
   }
 
   if (control -> ProxyMode == proxy_client &&
-          useUnixSocket > 0 || useTcpSocket > 0 ||
-              useAgentSocket > 0)
+          (useUnixSocket > 0 || useTcpSocket > 0 ||
+              useAgentSocket > 0))
   {
     cerr << "Info" << ": Listening to X11 connections "
          << "on display ':" << xPort << "'.\n";
@@ -15764,8 +15764,8 @@ static void handleAlertInLoop()
       int replace = 1;
       int local   = 1;
 
-      char *message;
-      char *type;
+      const char *message;
+      const char *type;
 
       switch (lastAlert.code)
       {
@@ -16218,7 +16218,7 @@ static inline void handleReadableInLoop(int &resultFDs, fd_set &readSet)
   {
     T_channel_type type = channel_none;
 
-    char *label = NULL;
+    const char *label = NULL;
     int domain  = -1;
     int fd      = -1;
 

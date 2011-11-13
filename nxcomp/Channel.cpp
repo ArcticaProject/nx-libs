@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2009 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXCOMP, NX protocol compression and NX extensions to this software     */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -2037,10 +2037,10 @@ Split *Channel::handleSplitCommitRemove(int request, int resource, int position)
           << ".\n" << logofs_flush;
   #endif
 
-  if (control -> isProtoStep7() == 1 &&
+  if ((control -> isProtoStep7() == 1 &&
           (resource != split -> getResource() ||
                request != split -> getRequest() ||
-                   position != split -> getPosition()) ||
+                   position != split -> getPosition())) ||
                        (request != split -> getRequest() ||
                            position != split -> getPosition()))
   {

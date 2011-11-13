@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2009 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXCOMP, NX protocol compression and NX extensions to this software     */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -498,9 +498,9 @@ class Channel
 
   int canCleanStore(MessageStore *store)
   {
-    return (store -> getSize() > 0 && (store -> getRemoteStorageSize() >
+    return ((store -> getSize() > 0 && (store -> getRemoteStorageSize() >
                 (control -> RemoteTotalStorageSize / 100 * store ->
-                    cacheLowerThreshold)) || (store -> getLocalStorageSize() >
+                    cacheLowerThreshold))) || (store -> getLocalStorageSize() >
                         (control -> LocalTotalStorageSize / 100 *  store ->
                             cacheLowerThreshold)));
   }

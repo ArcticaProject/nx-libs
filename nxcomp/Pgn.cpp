@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2009 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXCOMP, NX protocol compression and NX extensions to this software     */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -104,8 +104,8 @@ int UnpackPng(T_geometry *geometry, unsigned char method, unsigned char *srcData
   // Check if data is coming from a failed unsplit.
   //
 
-  if (srcSize < 2 || srcData[0] == SPLIT_PATTERN &&
-          srcData[1] == SPLIT_PATTERN)
+  if (srcSize < 2 || (srcData[0] == SPLIT_PATTERN &&
+          srcData[1] == SPLIT_PATTERN))
   {
     #ifdef WARNING
     *logofs << "UnpackPng: WARNING! Skipping unpack of dummy data.\n"
@@ -456,6 +456,23 @@ int DecompressPng16(unsigned char *compressedData, int compressedLen,
     for (dx = 0; dx < w; dx++)
     {
       pixel = RGB24_TO_PIXEL(16, tmpBuf[dx*3], tmpBuf[dx*3+1], tmpBuf[dx*3+2]);
+
+      //
+      // Follow the server byte order when arranging data.
+      //
+ 
+      if (byteOrder == LSBFirst)
+      {
+        data[0] = (unsigned char) (pixel & 0xff);
+        data[1] = (unsigned char) ((pixel >> 8) & 0xff);
+      }
+      else
+      {
+        data[1] = (unsigned char) (pixel & 0xff);
+        data[0] = (unsigned char) ((pixel >> 8) & 0xff);
+      }
+ 
+      data += 2; 
     }
 
     //

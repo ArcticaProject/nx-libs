@@ -2687,8 +2687,8 @@ echo "${ECHO_T}no" >&6
         ;;
 esac
 
-echo "$as_me:$LINENO: checking whether compiler accepts -Wmissing-declarations and -Wnested-externs" >&5
-echo $ECHO_N "checking whether compiler accepts -Wmissing-declarations and -Wnested-externs... $ECHO_C" >&6
+echo "$as_me:$LINENO: checking whether compiler accepts -Wmissing-declarations" >&5
+echo $ECHO_N "checking whether compiler accepts -Wmissing-declarations... $ECHO_C" >&6
 gcc_version=`${CC} --version | grep 'gcc (GCC) [3-4].' | head -n 1`
 case "${gcc_version}" in
      gcc*)
@@ -2699,7 +2699,7 @@ echo "${ECHO_T}no" >&6
      *)
         echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6
-        CXXFLAGS="$CXXFLAGS -Wmissing-declarations -Wnested-externs"
+        CXXFLAGS="$CXXFLAGS -Wmissing-declarations"
         ;;
 esac
 

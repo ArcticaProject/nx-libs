@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2009 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXCOMP, NX protocol compression and NX extensions to this software     */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -22,6 +22,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+#include "Pipe.h"
 #include "Misc.h"
 #include "Fork.h"
 
@@ -35,6 +36,8 @@
 #undef  DEBUG
 
 extern void RegisterChild(int child);
+
+static int Psplit(const char *command, char *parameters[], int limit);
 
 //
 // These are slightly modified versions of popen(3) and pclose(3)

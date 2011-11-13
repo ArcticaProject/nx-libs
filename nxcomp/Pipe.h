@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2009 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXCOMP, NX protocol compression and NX extensions to this software     */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -21,7 +21,7 @@
 // that they can also work on Windows.
 //
 
-FILE *Popen(char * const parameters[], const char *type);
-FILE *Popen(const char *command, const char *type);
+extern FILE *Popen(char * const parameters[], const char *type);
+extern FILE *Popen(const char *command, const char *type);
 
-int Pclose(FILE *file);
+extern int Pclose(FILE *file);

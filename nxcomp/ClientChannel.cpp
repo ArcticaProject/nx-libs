@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2009 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXCOMP, NX protocol compression and NX extensions to this software     */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -5646,9 +5646,9 @@ int ClientChannel::handleSplitChecksum(EncodeBuffer &encodeBuffer, T_checksum ch
   // persistent image cache is enabled.
   //
 
-  if (control -> ImageCacheEnableLoad == 1 ||
-          control -> ImageCacheEnableSave == 1 &&
-              enableLoad_ == 1 || enableSave_ == 1)
+  if ((control -> ImageCacheEnableLoad == 1 ||
+          control -> ImageCacheEnableSave == 1) &&
+              (enableLoad_ == 1 || enableSave_ == 1))
   {
     encodeBuffer.encodeBoolValue(1);
 

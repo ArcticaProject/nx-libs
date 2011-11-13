@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2009 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXCOMP, NX protocol compression and NX extensions to this software     */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -371,7 +371,7 @@ const char *GetUsageInfo()
 
 static const char CopyrightInfo[] =
 "\
-Copyright (c) 2001, 2009 NoMachine, http://www.nomachine.com/.\n\
+Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.\n\
 \n\
 NXCOMP, NX protocol compression and NX extensions to this software \n\
 are copyright of NoMachine. Redistribution and use of the present\n\

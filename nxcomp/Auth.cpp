@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2009 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXCOMP, NX protocol compression and NX extensions to this software     */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -268,7 +268,7 @@ int Auth::getCookie()
     snprintf(line, DEFAULT_STRING_LIMIT, "%.200s", display_);
   }
 
-  char *parameters[256];
+  const char *parameters[256];
 
   parameters[0] = command;
   parameters[1] = command;
@@ -295,7 +295,7 @@ int Auth::getCookie()
   // implementation.
   //
 
-  FILE *data = Popen(parameters, "r");
+  FILE *data = Popen((char *const *) parameters, "r");
 
   int result = -1;
 
@@ -342,7 +342,21 @@ int Auth::getCookie()
             << "'.\n" << logofs_flush;
     #endif
 
-    if (sscanf(line, "%*s %*s %511s", realCookie_) != 1)
+    // 
+    // Skip the hostname in the authority entry
+    // just in case it includes some white spaces.
+    //
+
+    char *cookie = NULL;
+
+    cookie = index(line, ':');
+
+    if (cookie == NULL)
+    {
+      cookie = line;
+    }
+
+    if (sscanf(cookie, "%*s %*s %511s", realCookie_) != 1)
     {
       #ifdef PANIC
       *logofs << "Auth: PANIC! Failed to identify the cookie "
@@ -499,7 +513,7 @@ int Auth::checkCookie(unsigned char *buffer)
     return -1;
   }
 
-  char *protoName = "MIT-MAGIC-COOKIE-1";
+  const char *protoName = "MIT-MAGIC-COOKIE-1";
   int protoSize = strlen(protoName);
 
   int matchedProtoSize;

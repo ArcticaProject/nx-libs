@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2009 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXCOMP, NX protocol compression and NX extensions to this software     */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -69,7 +69,8 @@ extern void InstallSignals();
 
 extern char *GetClientPath();
 
-extern int CheckParent(char *name, char *type, int parent);
+extern int CheckParent(const char *name, const char *type,
+                           int parent);
 
 #ifdef __sun
 extern char **environ;
@@ -81,19 +82,23 @@ extern char **environ;
 // have been disabled in the main process.
 //
 
-static void SystemCleanup(char *name);
+static void SystemCleanup(const char *name);
 
 //
 // Release all objects allocated in the
 // heap.
 
-static void MemoryCleanup(char *name);
+static void MemoryCleanup(const char *name);
 
 //
 // Remove 'name' from the environment.
 //
 
-static int UnsetEnv(char *name);
+static int UnsetEnv(const char *name);
+
+static int NXTransKeeperHandler(int signal);
+static void NXTransKeeperCheck();
+
 
 //
 // Start a nxclient process in dialog mode.
@@ -926,7 +931,7 @@ int NXTransKeeper(int caches, int images, const char *root)
   exit(0);
 }
 
-void SystemCleanup(char *name)
+void SystemCleanup(const char *name)
 {
   #ifdef TEST
   *logofs << name << ": Performing system cleanup in process "
@@ -942,7 +947,7 @@ void SystemCleanup(char *name)
   InstallSignals();
 }
 
-void MemoryCleanup(char *name)
+void MemoryCleanup(const char *name)
 {
   #ifdef TEST
   *logofs << name << ": Performing memory cleanup in process "
@@ -977,7 +982,7 @@ void MemoryCleanup(char *name)
   EnableSignals();
 }
 
-int UnsetEnv(char *name)
+int UnsetEnv(const char *name)
 {
   int result;
 

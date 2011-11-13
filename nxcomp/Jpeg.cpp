@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2009 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXCOMP, NX protocol compression and NX extensions to this software     */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -91,6 +91,8 @@ static int DecompressJpeg24(unsigned char *compressedData, int compressedLen,
 static int DecompressJpeg32(unsigned char *compressedData, int compressedLen,
                                 unsigned int w, unsigned int h, unsigned char *dstBuf, int byteOrder);
 
+void UnpackJpegErrorHandler(j_common_ptr cinfo);
+
 //
 // Colormap stuff.
 //
@@ -142,8 +144,8 @@ int UnpackJpeg(T_geometry *geometry, unsigned char method, unsigned char *srcDat
   // Check if data is coming from a failed unsplit.
   //
 
-  if (srcSize < 2 || srcData[0] == SPLIT_PATTERN &&
-          srcData[1] == SPLIT_PATTERN)
+  if (srcSize < 2 || (srcData[0] == SPLIT_PATTERN &&
+          srcData[1] == SPLIT_PATTERN))
   {
     #ifdef WARNING
     *logofs << "UnpackJpeg: WARNING! Skipping unpack of dummy data.\n"

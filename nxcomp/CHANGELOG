@@ -1,5 +1,28 @@
 ChangeLog:
 
+nxcomp-3.4.0-6
+
+- Solved compilation problems on Solaris.
+
+nxcomp-3.4.0-5
+
+- Solved compilation problems on GCC 4.4.
+
+nxcomp-3.4.0-4
+
+- Added reference to fixed TR02H02325.
+
+nxcomp-3.4.0-3
+
+- Updated copyright to year 2010.
+
+nxcomp-3.4.0-2
+
+- Fixed TR03G02204. Changed the parsing of X authority entries in
+  order to handle the case where the hostname includes white spaces.
+
+- Fixed TR02H02325. Bug in PNG decompression on 16bpp displays.
+
 nxcomp-3.4.0-1
 
 - Opened the 3.4.0 branch based on nxcomp-3.3.0-4.

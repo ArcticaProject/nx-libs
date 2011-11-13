@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2009 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXCOMP, NX protocol compression and NX extensions to this software     */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -6622,7 +6622,7 @@ int ServerChannel::handleAuthorization(const unsigned char *buffer, int size)
 
   if (*buffer != 1)
   {
-    char *reason = NULL;
+    const char *reason = NULL;
 
     //
     // At the moment we don't take into account the end-

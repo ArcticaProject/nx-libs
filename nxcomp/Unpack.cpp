@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2009 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXCOMP, NX protocol compression and NX extensions to this software     */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -31,6 +31,72 @@
 z_stream unpackStream;
 
 static int unpackInitialized;
+
+int Unpack8To8(const T_colormask *colormask, const unsigned char *data,
+                   unsigned char *out, unsigned char *end);
+
+int Unpack8To8(T_colormap *colormap, const unsigned char *data,
+                   unsigned char *out, unsigned char *end);
+
+int Unpack8To16(const T_colormask *colormask, const unsigned char *data,
+                    unsigned char *out, unsigned char *end);
+
+int Unpack8To16(T_colormap *colormap, const unsigned char *data,
+                    unsigned char *out, unsigned char *end);
+
+int Unpack8To24(const T_colormask *colormask, const unsigned char *data,
+                    unsigned char *out, unsigned char *end);
+
+int Unpack8To24(T_colormap *colormap, const unsigned char *data,
+                    unsigned char *out, unsigned char *end);
+
+int Unpack8To32(const T_colormask *colormask, const unsigned char *data,
+                    unsigned char *out, unsigned char *end);
+
+int Unpack8To32(T_colormap *colormap, const unsigned char *data,
+                    unsigned char *out, unsigned char *end);
+
+int Unpack15To16(const unsigned char *data, unsigned char *out,
+                     unsigned char *end);
+
+int Unpack15To24(const unsigned char *data, unsigned char *out,
+                     unsigned char *end);
+
+int Unpack15To32(const unsigned char *data, unsigned char *out,
+                     unsigned char *end);
+
+int Unpack16To16(const T_colormask *colormask, const unsigned char *data,
+                     unsigned char *out, unsigned char *end);
+
+int Unpack16To16(const unsigned char *data, unsigned char *out,
+                     unsigned char *end, int imageByteOrder);
+
+int Unpack16To24(const T_colormask *colormask, const unsigned char *data,
+                     unsigned char *out, unsigned char *end);
+
+int Unpack16To24(const unsigned char *data, unsigned char *out,
+                     unsigned char *end, int imageByteOrder);
+
+int Unpack16To32(const T_colormask *colormask, const unsigned char *data,
+                     unsigned char *out, unsigned char *end);
+
+int Unpack16To32(const unsigned char *data, unsigned char *out,
+                     unsigned char *end, int imageByteOrder);
+
+int Unpack24To24(const T_colormask *colormask, const unsigned char *data,
+                     unsigned char *out, unsigned char *end);
+
+int Unpack24To24(const unsigned char *data, unsigned char *out,
+                     unsigned char *end);
+
+int Unpack24To32(const T_colormask *colormask, const unsigned char *data,
+                     unsigned char *out, unsigned char *end);
+
+int Unpack24To32(const unsigned char *data, unsigned char *out, unsigned char *end);
+
+int Unpack32To32(const T_colormask *colormask, const unsigned int *data,
+                            unsigned int *out, unsigned int *end);
+
 
 void UnpackInit()
 {
@@ -540,11 +606,15 @@ int Unpack24To24(const T_colormask *colormask, const unsigned char *data,
   {
     while (out < end)
     {
-      if (data[0] == data[1] == data[2] == 0x00)
+      if (data[0] == 0x00 &&
+              data[1] == 0x00 &&
+                  data[2] == 0x00)
       {
         out[0] = out[1] = out[2] = 0x00;
       }
-      else if (data[0] == data[1] == data[2] == 0xff)
+      else if (data[0] == 0xff &&
+                   data[1] == 0xff &&
+                       data[2] == 0xff)
       {
         out[0] = out[1] = out[2] = 0xff;
       }
