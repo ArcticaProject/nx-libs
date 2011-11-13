@@ -1,0 +1,21 @@
+README
+------
+
+Building
+--------
+
+1. To compile:
+
+   > tar zxvf nxcomp-X.Y.Z-N.tar.gz
+   > cd nxcomp
+   > ./configure
+   > make
+
+   You'll have to run gmake under Solaris.
+
+2. The 'make install' target is not currently supported
+   in the Makefile, but it should be simple to fix.
+
+You need at least nxproxy and nxagent packages to enjoy this code. Check the
+NoMachine website at http://www.nomachine.com to get the latest release.
+
