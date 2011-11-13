@@ -1,5 +1,13 @@
 ChangeLog:
 
+nxcompext-3.4.0-1
+
+- Opened the 3.4.0 branch based on nxcompext-3.3.0-4.
+
+- Updated version number.
+
+- Updated copyright to year 2009.
+
 nxcompext-3.3.0-4
 
 - Fixed TR03G02199. The color palette allocated for encoding an image
