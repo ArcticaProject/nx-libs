@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXCOMPSHAD, NX protocol compression and NX extensions to this software */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -981,6 +981,7 @@ void Poller::handleKeyboardEvent(Display *display, XEvent *event)
 
   Bool isKeyPress = False;
   Bool isModifier = False;
+  Bool isShiftComb = False;
   Bool skip = False;
 
   if (event -> type == KeyPress)
@@ -1048,19 +1049,26 @@ void Poller::handleKeyboardEvent(Display *display, XEvent *event)
             (!modeSwitchOn && !level3ShiftOn && !altROn) &&
                 !skip)
     {
-      keysym = keymapKeycodeToKeysym(event -> xkey.keycode, shadowKeysyms,
-                                         shadowMinKey, shadowMapWidth, 1);
-    }
+      KeySym tempKeysym = keymapKeycodeToKeysym(event -> xkey.keycode, shadowKeysyms,
+                                                    shadowMinKey, shadowMapWidth, 1);
 
-    if ((!leftShiftOn && !rightShiftOn) &&
-            (modeSwitchOn || level3ShiftOn || altROn))
+      if (tempKeysym == 0)
+      {
+        isShiftComb = True;
+      }
+      else
+      {
+        keysym = tempKeysym;
+      }
+    }
+    else if ((!leftShiftOn && !rightShiftOn) &&
+                 (modeSwitchOn || level3ShiftOn || altROn))
     {
       keysym = keymapKeycodeToKeysym(event -> xkey.keycode, shadowKeysyms,
                                          shadowMinKey, shadowMapWidth, 2);
     }
-
-    if ((leftShiftOn || rightShiftOn) &&
-            (modeSwitchOn || level3ShiftOn || altROn))
+    else if ((leftShiftOn || rightShiftOn) &&
+                 (modeSwitchOn || level3ShiftOn || altROn))
     {
       keysym = keymapKeycodeToKeysym(event -> xkey.keycode, shadowKeysyms,
                                        shadowMinKey, shadowMapWidth, 3);
@@ -1103,7 +1111,7 @@ void Poller::handleKeyboardEvent(Display *display, XEvent *event)
    * Send fake modifier events.
    */
 
-  if (!isModifier)
+  if (!isModifier && isShiftComb == False)
   {
     sendFakeModifierEvents(col, ((keysym >> 8) == 0) && (keysym >= XK_A) && (keysym <= XK_Z));
   }

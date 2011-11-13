@@ -1,5 +1,16 @@
 ChangeLog:
 
+nxcompshad-3.5.0-2
+
+- Fixed TR03G02189. Now key combinations involving the Shift keys
+  are recognized correctly.
+
+nxcompshad-3.5.0-1
+
+- Opened the 3.5.0 branch based on nxcompshad-3.4.0-3.
+
+- Updated copyright to year 2011.
+
 nxcompshad-3.4.0-3
 
 - Updated copyright to year 2010.
