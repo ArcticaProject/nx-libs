@@ -1,6 +1,6 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
 /*                                                                        */
 /* NXCOMP, NX protocol compression and NX extensions to this software     */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -1624,6 +1624,23 @@ int Proxy::handleControlFromProxy(const unsigned char *message)
   //
 
   int channelId = *(message + 2);
+
+  //
+  // Check if the channel has been dropped.
+  //
+
+  if (channels_[channelId] != NULL &&
+          (channels_[channelId] -> getDrop() == 1 ||
+              channels_[channelId] -> getClosing() == 1))
+  {
+    #ifdef TEST
+    *logofs << "Proxy: Dropping the descriptor FD#"
+            << getFd(channelId) << " channel ID#"
+            << channelId << ".\n" << logofs_flush;
+    #endif
+
+    handleDrop(channelId);
+  }
 
   //
   // Check if the channel is in the valid

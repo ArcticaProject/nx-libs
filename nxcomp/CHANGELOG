@@ -1,5 +1,9 @@
 ChangeLog:
 
+nxcomp-3.5.0-2
+
+- Fixed TR11H02398. Solved a race condition when creating channels.
+
 nxcomp-3.5.0-1
 
 - Opened the 3.5.0 branch based on nxcomp-3.4.0-7.
