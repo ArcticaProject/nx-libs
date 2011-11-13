@@ -1139,8 +1139,18 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
           }
 
           unsigned int numPoints = ((inputLength - 16) >> 2);
-          encodeBuffer.encodeCachedValue(numPoints, 14,
-                             clientCache_ -> fillPolyNumPointsCache, 4);
+
+          if (control -> isProtoStep10() == 1)
+          {
+            encodeBuffer.encodeCachedValue(numPoints, 16,
+                               clientCache_ -> fillPolyNumPointsCache, 4);
+          }
+          else
+          {
+            encodeBuffer.encodeCachedValue(numPoints, 14,
+                               clientCache_ -> fillPolyNumPointsCache, 4);
+          }
+
           encodeBuffer.encodeXidValue(GetULONG(inputMessage + 4, bigEndian_),
                              clientCache_ -> drawableCache);
           encodeBuffer.encodeXidValue(GetULONG(inputMessage + 8, bigEndian_),

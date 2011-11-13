@@ -2753,8 +2753,18 @@ int ServerChannel::handleWrite(const unsigned char *message, unsigned int length
           }
 
           unsigned int numPoints;
-          decodeBuffer.decodeCachedValue(numPoints, 14,
-                                 clientCache_ -> fillPolyNumPointsCache, 4);
+
+          if (control -> isProtoStep10() == 1)
+          {
+            decodeBuffer.decodeCachedValue(numPoints, 16,
+                               clientCache_ -> fillPolyNumPointsCache, 4);
+          }
+          else
+          {
+            decodeBuffer.decodeCachedValue(numPoints, 14,
+                               clientCache_ -> fillPolyNumPointsCache, 4);
+          }
+
           outputLength = 16 + (numPoints << 2);
           outputMessage = writeBuffer_.addMessage(outputLength);
           decodeBuffer.decodeXidValue(value, clientCache_ -> drawableCache);

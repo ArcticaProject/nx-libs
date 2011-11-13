@@ -659,10 +659,11 @@ Control::Control()
   // time the session is negotiated.
   //
 
-  protoStep6_ = 0;
-  protoStep7_ = 0;
-  protoStep8_ = 0;
-  protoStep9_ = 0;
+  protoStep6_  = 0;
+  protoStep7_  = 0;
+  protoStep8_  = 0;
+  protoStep9_  = 0;
+  protoStep10_ = 0;
 }
 
 Control::~Control()
@@ -734,37 +735,51 @@ void Control::setProtoStep(int step)
   {
     case 6:
     {
-      protoStep6_ = 1;
-      protoStep7_ = 0;
-      protoStep8_ = 0;
-      protoStep9_ = 0;
+      protoStep6_  = 1;
+      protoStep7_  = 0;
+      protoStep8_  = 0;
+      protoStep9_  = 0;
+      protoStep10_ = 0;
 
       break;
     }
     case 7:
     {
-      protoStep6_ = 1;
-      protoStep7_ = 1;
-      protoStep8_ = 0;
-      protoStep9_ = 0;
+      protoStep6_  = 1;
+      protoStep7_  = 1;
+      protoStep8_  = 0;
+      protoStep9_  = 0;
+      protoStep10_ = 0;
 
       break;
     }
     case 8:
     {
-      protoStep6_ = 1;
-      protoStep7_ = 1;
-      protoStep8_ = 1;
-      protoStep9_ = 0;
+      protoStep6_  = 1;
+      protoStep7_  = 1;
+      protoStep8_  = 1;
+      protoStep9_  = 0;
+      protoStep10_ = 0;
 
       break;
     }
     case 9:
     {
-      protoStep6_ = 1;
-      protoStep7_ = 1;
-      protoStep8_ = 1;
-      protoStep9_ = 1;
+      protoStep6_  = 1;
+      protoStep7_  = 1;
+      protoStep8_  = 1;
+      protoStep9_  = 1;
+      protoStep10_ = 0;
+
+      break;
+    }
+    case 10:
+    {
+      protoStep6_  = 1;
+      protoStep7_  = 1;
+      protoStep8_  = 1;
+      protoStep9_  = 1;
+      protoStep10_ = 1;
 
       break;
     }
@@ -783,7 +798,11 @@ void Control::setProtoStep(int step)
 
 int Control::getProtoStep()
 {
-  if (protoStep9_ == 1)
+  if (protoStep10_ == 1)
+  {
+    return 10;
+  }
+  else if (protoStep9_ == 1)
   {
     return 9;
   }

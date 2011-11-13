@@ -888,6 +888,13 @@ static int useSlaveSocket = 0;
 static int useAgentSocket = 0;
 
 //
+// Set if the launchd service is running
+// and its socket must be used as X socket.
+//
+
+static int useLaunchdSocket = 0;
+
+//
 // Set by user if he/she wants to modify
 // the default TCP_NODELAY option as set
 // in control.
@@ -3745,7 +3752,90 @@ int SetupAuthInstance()
   {
     if (authCookie != NULL && *authCookie != '\0')
     {
-      auth = new Auth(displayHost, authCookie);
+      if (useLaunchdSocket == 1)
+      {
+        //
+        // If we are going to retrieve the X11 autho-
+        // rization through the launchd service, make
+        // a connection to its socket to trigger the
+        // X server starting.
+        //
+
+        sockaddr_un launchdAddrUnix;
+
+        unsigned int launchdAddrLength = sizeof(sockaddr_un);
+
+        int launchdAddrFamily = AF_UNIX;
+
+        launchdAddrUnix.sun_family = AF_UNIX;
+
+        const int launchdAddrNameLength = 108;
+
+        int success = -1;
+
+        strncpy(launchdAddrUnix.sun_path, displayHost, launchdAddrNameLength);
+
+        *(launchdAddrUnix.sun_path + launchdAddrNameLength - 1) = '\0';
+
+        #ifdef TEST
+        *logofs << "Loop: Connecting to launchd service "
+                << "on Unix port '" << displayHost << "'.\n" << logofs_flush;
+        #endif
+
+        int launchdFd = socket(launchdAddrFamily, SOCK_STREAM, PF_UNSPEC);
+
+        if (launchdFd < 0)
+        {
+          #ifdef PANIC
+          *logofs << "Loop: PANIC! Call to socket failed. "
+                  << "Error is " << EGET() << " '" << ESTR()
+                  << "'.\n" << logofs_flush;
+          #endif
+        }
+        else if ((success = connect(launchdFd, (sockaddr *) &launchdAddrUnix, launchdAddrLength)) < 0)
+        {
+          #ifdef WARNING
+          *logofs << "Loop: WARNING! Connection to launchd service "
+                  << "on Unix port '" << displayHost << "' failed "
+                  << "with error " << EGET() << ", '" << ESTR() << "'.\n"
+                  << logofs_flush;
+          #endif
+        }
+
+        if (launchdFd >= 0)
+        {
+          close(launchdFd);
+        }
+
+        //
+        // The real cookie will not be available
+        // until the X server starts. Query for the
+        // cookie in a loop, unless the connection
+        // to the launchd service failed.
+        //
+
+        int attempts = (success < 0 ? 1 : 10);
+
+        for (int i = 0; i < attempts; i++)
+        {
+          delete auth;
+
+          auth = new Auth(displayHost, authCookie);
+
+          if (auth != NULL && auth -> isFake() == 1)
+          {
+            usleep(200000);
+
+            continue;
+          }
+
+          break;
+        }
+      }
+      else
+      {
+        auth = new Auth(displayHost, authCookie);
+      }
 
       if (auth == NULL || auth -> isValid() != 1)
       {
@@ -3757,6 +3847,20 @@ int SetupAuthInstance()
         cerr << "Error" << ": Error creating the X authorization.\n";
 
         HandleCleanup();
+      }
+      else if (auth -> isFake() == 1)
+      {
+        #ifdef WARNING
+        *logofs << "Loop: WARNING! Could not retrieve the X server "
+                << "authentication cookie.\n"
+                << logofs_flush;
+        #endif
+
+        cerr << "Warning" << ": Failed to read data from the X "
+             << "auth command.\n";
+
+        cerr << "Warning" << ": Generated a fake cookie for X "
+             << "authentication.\n";
       }
     }
     else
@@ -4068,6 +4172,20 @@ int SetupDisplaySocket(int &xServerAddrFamily, sockaddr *&xServerAddr,
 
   strcpy(display, displayHost);
 
+  #ifdef __APPLE__
+
+  if (strncasecmp(display, "/tmp/launch", 11) == 0)
+  {
+    #ifdef TEST
+    *logofs << "Loop: Using launchd service on socket '"
+            << display << "'.\n" << logofs_flush;
+    #endif
+
+    useLaunchdSocket = 1;
+  }
+
+  #endif
+
   char *separator = rindex(display, ':');
 
   if ((separator == NULL) || !isdigit(*(separator + 1)))
@@ -4092,7 +4210,16 @@ int SetupDisplaySocket(int &xServerAddrFamily, sockaddr *&xServerAddr,
           << xPort << "'.\n" << logofs_flush;
   #endif
 
+  #ifdef __APPLE__
+
+  if (separator == display || strcmp(display, "unix") == 0 ||
+          useLaunchdSocket == 1)
+
+  #else
+
   if (separator == display || strcmp(display, "unix") == 0)
+
+  #endif
   {
     //
     // UNIX domain port.
@@ -4129,6 +4256,15 @@ int SetupDisplaySocket(int &xServerAddrFamily, sockaddr *&xServerAddr,
     snprintf(unixSocketDir, DEFAULT_STRING_LENGTH - 1, "%s/.X11-unix",
                  control -> TempPath);
 
+    #ifdef __APPLE__
+
+    if (useLaunchdSocket == 1)
+    {
+      snprintf(unixSocketDir, DEFAULT_STRING_LENGTH - 1, "%s", display);
+    }
+
+    #endif
+
     *(unixSocketDir + DEFAULT_STRING_LENGTH - 1) = '\0';
 
     #ifdef TEST
@@ -4159,6 +4295,15 @@ int SetupDisplaySocket(int &xServerAddrFamily, sockaddr *&xServerAddr,
     }
 
     sprintf(unixSocketName, "%s/X%d", unixSocketDir, xPort);
+
+    #ifdef __APPLE__
+
+    if (useLaunchdSocket == 1)
+    {
+      sprintf(unixSocketName, "%s:%d", unixSocketDir, xPort);
+    }
+
+    #endif
 
     #ifdef TEST
     *logofs << "Loop: Assuming X socket name '" << unixSocketName
@@ -12345,9 +12490,13 @@ int SetVersion()
   {
     step = 7;
   }
-  else if (major >= 3)
+  else if (major == 3)
   {
-    if (minor > 0 || patch > 0)
+    if (minor >= 2)
+    {
+      step = 10;
+    }
+    else if (minor > 0 || patch > 0)
     {
       step = 9;
     }
@@ -12355,6 +12504,10 @@ int SetVersion()
     {
       step = 8;
     }
+  }
+  else if (major > 3)
+  {
+    step = 10;
   }
 
   if (step == 0)

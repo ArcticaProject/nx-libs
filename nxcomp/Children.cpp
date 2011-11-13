@@ -71,6 +71,10 @@ extern char *GetClientPath();
 
 extern int CheckParent(char *name, char *type, int parent);
 
+#ifdef __sun
+extern char **environ;
+#endif
+
 //
 // Close all the unused descriptors and
 // install any signal handler that might
@@ -84,6 +88,12 @@ static void SystemCleanup(char *name);
 // heap.
 
 static void MemoryCleanup(char *name);
+
+//
+// Remove 'name' from the environment.
+//
+
+static int UnsetEnv(char *name);
 
 //
 // Start a nxclient process in dialog mode.
@@ -186,6 +196,8 @@ int NXTransDialog(const char *caption, const char *message,
   snprintf(parent, DEFAULT_STRING_LIMIT, "%d", getppid());
 
   parent[DEFAULT_STRING_LIMIT - 1] = '\0';
+
+  UnsetEnv("LD_LIBRARY_PATH");
 
   for (int i = 0; i < 2; i++)
   {
@@ -408,6 +420,8 @@ int NXTransClient(const char* display)
   setenv("DISPLAY", newDisplay, 1);
 
   #endif
+
+  UnsetEnv("LD_LIBRARY_PATH");
 
   for (int i = 0; i < 2; i++)
   {
@@ -961,4 +975,59 @@ void MemoryCleanup(char *name)
   CleanupGlobal();
 
   EnableSignals();
+}
+
+int UnsetEnv(char *name)
+{
+  int result;
+
+  #ifdef __sun
+
+  char **pEnv = environ;
+
+  int nameLen = strlen(name) + 1;
+
+  char *varName = new char[nameLen + 1];
+
+  strcpy(varName, name);
+
+  strcat(varName, "=");
+
+  pEnv = environ;
+
+  while (*pEnv != NULL)
+  {
+    if (!strncmp(varName, *pEnv, nameLen))
+    {
+      break;
+    }
+
+    *pEnv++;
+  }
+
+  while (*pEnv != NULL)
+  {
+    *pEnv = *(pEnv + 1);
+
+    pEnv++;
+  }
+
+  result = 0;
+
+  #else
+
+  #ifdef __APPLE__
+
+  unsetenv(name);
+  result = 0;
+
+  #else
+
+  result = unsetenv(name);
+
+  #endif
+
+  #endif
+
+  return result;
 }

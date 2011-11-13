@@ -87,20 +87,13 @@ inline T_timestamp getTimestamp(long ms)
 
 inline long diffTimestamp(const T_timestamp &ts1, const T_timestamp &ts2)
 {
-  if (ts1.tv_sec == 0 && ts1.tv_usec == 0)
-  {
-     return -1;
-  }
-
   //
   // Add 500 microseconds to round up
   // to the nearest millisecond.
   //
 
-  long ms = ((ts2.tv_sec * 1000 + (ts2.tv_usec + 500) / 1000) -
-                 (ts1.tv_sec * 1000 + (ts1.tv_usec + 500) / 1000));
-
-  return (ms < 0 ? -1 : ms);
+  return ((ts2.tv_sec * 1000 + (ts2.tv_usec + 500) / 1000) -
+             (ts1.tv_sec * 1000 + (ts1.tv_usec + 500) / 1000));
 }
 
 //
@@ -110,20 +103,8 @@ inline long diffTimestamp(const T_timestamp &ts1, const T_timestamp &ts2)
 
 inline long diffUsTimestamp(const T_timestamp &ts1, const T_timestamp &ts2)
 {
-  if (ts1.tv_sec == 0 && ts1.tv_usec == 0)
-  {
-     return -1;
-  }
-
-  //
-  // Add 500 microseconds to round up
-  // to the nearest millisecond.
-  //
-
-  long ms = ((ts2.tv_sec * 1000000 + ts2.tv_usec) -
-                 (ts1.tv_sec * 1000000 + ts1.tv_usec));
-
-  return (ms < 0 ? -1 : ms);
+  return ((ts2.tv_sec * 1000000 + ts2.tv_usec) -
+             (ts1.tv_sec * 1000000 + ts1.tv_usec));
 }
 
 //
@@ -234,40 +215,16 @@ inline bool isTimestamp(const T_timestamp &ts)
   return 1;
 }
 
-inline void subMsToTimestamp(T_timestamp &ts, long ms)
+inline void subMsTimestamp(T_timestamp &ts, long ms)
 {
-  long sec = ms / 1000;
-
-  ts.tv_sec -= sec;
-
-  long mod = ms % (ms * 1000);
-
-  if (ts.tv_usec >= (mod * 1000))
-  {
-    ts.tv_sec -= mod * 1000;
-  }
-  else
-  {
-    ts.tv_sec--;
-
-    ts.tv_usec = 1000000 - mod * 1000;
-  }
+  ts.tv_sec  -= ms / 1000;
+  ts.tv_usec -= (ms % 1000) * 1000;
 }
 
-inline void addMsToTimestamp(T_timestamp &ts, long ms)
+inline void addMsTimestamp(T_timestamp &ts, long ms)
 {
-  long sec = ms / 1000;
-
-  ts.tv_sec += sec;
-
-  long mod = ms % (ms * 1000);
-
-  ts.tv_usec += mod * 1000;
-
-  if (ts.tv_usec > 1000000)
-  {
-    ts.tv_sec += 1;
-  }
+  ts.tv_sec  += ms / 1000;
+  ts.tv_usec += (ms % 1000) * 1000;
 }
 
 //

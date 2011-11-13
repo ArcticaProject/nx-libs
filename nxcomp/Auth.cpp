@@ -55,6 +55,8 @@ Auth::Auth(char *display, char *cookie)
 
   dataSize_ = 0;
 
+  generatedCookie_ = 0;
+
   if (display == NULL || *display == '\0' || cookie == NULL ||
           *cookie == '\0' || strlen(cookie) != 32)
   {
@@ -316,16 +318,20 @@ int Auth::getCookie()
             << "auth command.\n" << logofs_flush;
     #endif
 
+    #ifdef TEST
     cerr << "Warning" << ": Failed to read data from the X "
          << "auth command.\n";
+    #endif
 
     #ifdef PANIC
     *logofs << "Auth: WARNING! Generating a fake cookie for "
             << "X authentication.\n" << logofs_flush;
     #endif
 
+    #ifdef TEST
     cerr << "Warning" << ": Generating a fake cookie for "
          << "X authentication.\n";
+    #endif
 
     generateCookie(realCookie_);
   }
@@ -620,6 +626,8 @@ void Auth::generateCookie(char *cookie)
 
     data >>= 8;
   }
+
+  generatedCookie_ = 1;
 
   #ifdef TEST
   *logofs << "Auth: Generated X cookie string '"

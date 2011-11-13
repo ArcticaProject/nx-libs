@@ -410,14 +410,14 @@ void Statistics::updateBitrate(int bytes)
 
     if (diffStartInMs > control -> ShortBitrateTimeFrame)
     {
-      addMsToTimestamp(startShortFrameTs_, diffStartInMs);
+      addMsTimestamp(startShortFrameTs_, diffStartInMs);
     }
 
     diffStartInMs = diffTimestamp(thisFrameTs, startLongFrameTs_);
 
     if (diffStartInMs > control -> LongBitrateTimeFrame)
     {
-      addMsToTimestamp(startLongFrameTs_, diffStartInMs);
+      addMsTimestamp(startLongFrameTs_, diffStartInMs);
     }
 
     startFrameTs_ = thisFrameTs;

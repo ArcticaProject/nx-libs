@@ -719,6 +719,11 @@ class Control
     return protoStep9_;
   }
 
+  int isProtoStep10()
+  {
+    return protoStep10_;
+  }
+
   private:
 
   //
@@ -736,6 +741,7 @@ class Control
   int protoStep7_;
   int protoStep8_;
   int protoStep9_;
+  int protoStep10_;
 };
 
 #endif /* Control_H */

@@ -52,6 +52,11 @@ class Auth
                         realData_ != NULL && dataSize_ != 0);
   }
 
+  int isFake() const
+  {
+    return generatedCookie_;
+  }
+
   //
   // Method called in the channel class to find if the
   // provided cookie matches the fake one. If the data
@@ -107,6 +112,8 @@ class Auth
   char *realData_;
 
   int dataSize_;
+
+  int generatedCookie_;
 };
 
 #endif /* Auth_H */

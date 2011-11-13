@@ -1,5 +1,35 @@
 ChangeLog:
 
+nxcomp-3.2.0-6
+
+- Changes considering that unsetenv() returns void on Mac OS X.
+
+nxcomp-3.2.0-5
+
+- Fixed TR03F02024. Assume the launchd unix socket as X socket.
+
+- Changed the authorization cookie retrieval when using the launchd
+  socket on MacOSX, in order to wait for the X server start.
+
+nxcomp-3.2.0-4
+
+- Fixed TR03F02026. Unset environment variable LD_LIBRARY_PATH before
+  calling the exec function running nxclient.
+
+nxcomp-3.2.0-3
+
+- Fix addMsTimestamp() and subMsTimestamp(). Remove the check for
+  a valid input in diffTimestamp() and diffUsTimestamp().
+
+nxcomp-3.2.0-2
+
+- Fixed TR12E01973. Now the correct number of bits are used for the
+  number of points in a X_FillPoly request.
+
+nxcomp-3.2.0-1
+
+- Opened the 3.2.0 branch based on nxcomp-3.1.0-6.
+
 nxcomp-3.1.0-6
 
 - Always use a timeout of 50 ms to update the congestion counter.
@@ -36,7 +66,7 @@ nxcomp-3.1.0-2
   
 nxcomp-3.1.0-1
 
-- Opened the 3.0.1 branch based on nxcomp-3.0.0-46.
+- Opened the 3.1.0 branch based on nxcomp-3.0.0-46.
 
 nxcomp-3.0.0-46
 
@@ -325,7 +355,7 @@ nxcomp-3.0.0-15
 
 - Removed the pending_ flag from the proxy and channel class mem-
   bers. If needed, the classes will query the transport buffers
-  to see whether there is data pending.B
+  to see whether there is data pending.
 
 - Removed the additional parameter from NXTransFlush().
 
