@@ -410,7 +410,7 @@ int ServerProxy::handleNewXConnectionFromProxy(int channelId)
 
 int ServerProxy::handleCheckDrop()
 {
-  T_list &channelList = activeChannels_.getList();
+  T_list channelList = activeChannels_.copyList();
 
   for (T_list::iterator j = channelList.begin();
            j != channelList.end(); j++)

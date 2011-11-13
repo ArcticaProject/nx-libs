@@ -3647,32 +3647,20 @@ int Proxy::handlePing()
       if (diffPing >= (control -> PingTimeout -
               control -> LatencyTimeout * 5))
       {
-        if (tokens_[token_control].remaining > 0)
-        {
-          #if defined(TEST) || defined(INFO) || defined(PING)
-          *logofs << "Proxy: Sending a new ping at " << strMsTimestamp()
-                  << " with " << tokens_[token_control].remaining
-                  << " tokens and elapsed in " << diffIn << " out "
-                  << diffOut << " ping " << diffPing
-                  << ".\n" << logofs_flush;
-          #endif
-
-          if (handleFrame(frame_ping) < 0)
-          {
-            return -1;
-          }
-
-          timeouts_.pingTs = nowTs;
-        }
         #if defined(TEST) || defined(INFO) || defined(PING)
-        else
-        {
-          *logofs << "Proxy: WARNING! Can't send a new ping "
-                  << "with no tokens and elapsed in " << diffIn
-                  << " out " << diffOut << " ping " << diffPing
-                  << ".\n" << logofs_flush;
-        }
+        *logofs << "Proxy: Sending a new ping at " << strMsTimestamp()
+                << " with " << tokens_[token_control].remaining
+                << " tokens and elapsed in " << diffIn << " out "
+                << diffOut << " ping " << diffPing
+                << ".\n" << logofs_flush;
         #endif
+
+        if (handleFrame(frame_ping) < 0)
+        {
+          return -1;
+        }
+
+        timeouts_.pingTs = nowTs;
       }
       #if defined(TEST) || defined(INFO) || defined(PING)
       else

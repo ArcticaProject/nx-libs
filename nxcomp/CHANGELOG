@@ -1,5 +1,17 @@
 ChangeLog:
 
+nxcomp-3.1.0-6
+
+- Always use a timeout of 50 ms to update the congestion counter.
+
+nxcomp-3.1.0-5
+
+- Solve the possible deadlock caused by both proxies running out of
+  tokens at the same time.
+
+- In ServerProxy::handleCheckDrop() copy the list since the function
+  can delete the elements.
+
 nxcomp-3.1.0-4
 
 - Classes ProxyReadBuffer and ServerReadBuffer returned an invalid

@@ -12745,7 +12745,7 @@ int SetLinkIsdn()
 
   control -> SplitTimeout   = 50;
   control -> MotionTimeout  = 20;
-  control -> IdleTimeout    = 20;
+  control -> IdleTimeout    = 50;
 
   control -> PackMethod  = PACK_ADAPTIVE;
   control -> PackQuality = 5;
@@ -12775,7 +12775,7 @@ int SetLinkAdsl()
 
   control -> SplitTimeout   = 50;
   control -> MotionTimeout  = 10;
-  control -> IdleTimeout    = 10;
+  control -> IdleTimeout    = 50;
 
   control -> PackMethod  = PACK_ADAPTIVE;
   control -> PackQuality = 7;
@@ -12805,7 +12805,7 @@ int SetLinkWan()
 
   control -> SplitTimeout   = 50;
   control -> MotionTimeout  = 5;
-  control -> IdleTimeout    = 5;
+  control -> IdleTimeout    = 50;
 
   control -> PackMethod  = PACK_ADAPTIVE;
   control -> PackQuality = 9;
@@ -12835,7 +12835,7 @@ int SetLinkLan()
 
   control -> SplitTimeout   = 50;
   control -> MotionTimeout  = 0;
-  control -> IdleTimeout    = 0;
+  control -> IdleTimeout    = 50;
 
   control -> PackMethod  = PACK_ADAPTIVE;
   control -> PackQuality = 9;

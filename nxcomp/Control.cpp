@@ -94,7 +94,7 @@
 // the proxy is idle for this time.
 //
 
-#define IDLE_TIMEOUT                             0
+#define IDLE_TIMEOUT                             50
 
 //
 // Close X connection if can't write before this
