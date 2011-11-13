@@ -1,5 +1,11 @@
 ChangeLog:
 
+nxcomp-3.5.0-1
+
+- Opened the 3.5.0 branch based on nxcomp-3.4.0-7.
+
+- Updated copyright to year 2011.
+
 nxcomp-3.4.0-7
 
 - Fixed TR03H02334. Modified the UNIX domain socket checks on MacOSX
