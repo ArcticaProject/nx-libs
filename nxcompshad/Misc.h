@@ -18,10 +18,12 @@
 #ifndef Misc_H
 #define Misc_H
 
-#include <iostream.h>
+#include <iostream>
 
 #include <errno.h>
 #include <string.h>
+
+using namespace std;
 
 //
 // Error handling macros.

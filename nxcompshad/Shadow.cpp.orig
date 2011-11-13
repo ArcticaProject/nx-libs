@@ -304,16 +304,6 @@ void NXShadowDisableDamage(void)
   NXShadowOptions.optionDamageExtension = 0;
 }
 
-void NXShadowGetScreenSize(int *w, int *h)
-{
-  poller -> getScreenSize(w, h);
-}
-
-void NXShadowSetScreenSize(int *w, int *h)
-{
-  poller -> setScreenSize(w, h);
-}
-
 #endif
 
 void NXShadowDestroy()

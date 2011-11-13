@@ -72,6 +72,7 @@ class Poller : public CorePoller
   
   int Poller::updateShadowFrameBuffer(void);
   void handleKeyboardEvent(Display *, XEvent *);
+  void handleWebKeyboardEvent(KeySym keysym, Bool isKeyPress);
   void addToKeymap(char *keyname, unsigned char scancode, unsigned short modifiers, char *mapname);
   int xkeymapRead(char *mapname);
   FILE *xkeymapOpen(char *filename);

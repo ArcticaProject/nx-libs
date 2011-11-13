@@ -1,5 +1,29 @@
 ChangeLog:
 
+nxcompshad-3.2.0-3
+
+- Improved keycode translation.
+
+nxcompshad-3.2.0-2
+
+- Solved a problem when sending fake modifier events.
+
+- Added support for keyboard events handling for the web player.
+
+- Changed keycodes translation for Solaris keyboard.
+
+- Corrected a problem for keycodes translation from Solaris keyboard.
+
+- Fixed TR02F02001. In shadow session the shadower's keyboard layout
+  could be wrong. Now keycodes are correctly translated if master and
+  shadow keyboards have different layouts.
+
+- Added NXShadowGetScreenSize() and NXShadowSetScreenSize() functions,
+  so that the shadow session can handle correctly the resize of the
+  master session window.
+
+- Solved a compilation problem on GCC 4.3.
+
 nxcompshad-3.2.0-1
 
 - Opened the 3.2.0 branch based on nxcompshad-3.1.0-2.

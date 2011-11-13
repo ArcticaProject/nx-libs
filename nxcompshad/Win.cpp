@@ -479,6 +479,13 @@ void Poller::handleKeyboardEvent(Display *display, XEvent *event)
   delete[] keyname;
 }
 
+void Poller::handleWebKeyboardEvent(KeySym keysym, Bool isKeyPress)
+{
+/*
+FIXME
+*/
+}
+
 void Poller::handleMouseEvent(Display *display, XEvent *event)
 {
   DWORD flg = 0;

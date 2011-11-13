@@ -81,11 +81,17 @@ extern void          NXShadowColorCorrect(int, int, unsigned int, unsigned int, 
 extern void          NXShadowUpdateBuffer(void **);
 
 extern void          NXShadowEvent(Display *, XEvent);
+extern void          NXShadowWebKeyEvent(KeySym keysym, Bool isKeyPress);
 
 extern void          NXShadowSetDisplayUid(int uid);
 
 extern void          NXShadowDisableShm(void);
 extern void          NXShadowDisableDamage(void);
+
+extern void          NXShadowGetScreenSize(int *width, int *height);
+extern void          NXShadowSetScreenSize(int *width, int *height);
+
+extern void          NXShadowInitKeymap(void *keysyms);
 
 #ifdef __cplusplus
 }

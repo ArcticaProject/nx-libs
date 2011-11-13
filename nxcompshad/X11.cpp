@@ -35,7 +35,49 @@
 
 #define ROUNDUP(nbytes, pad) ((((nbytes) + ((pad)-1)) / (pad)) * ((pad)>>3))
 
-#define TRANSLATE_KEYCODES
+#undef  TRANSLATE_KEYCODES
+#define TRANSLATE_ALWAYS
+
+typedef struct {
+    KeySym  *map;
+    KeyCode minKeyCode,
+            maxKeyCode;
+    int     mapWidth;
+} KeySymsRec, *KeySymsPtr;
+
+extern KeySymsPtr NXShadowKeymap;
+
+typedef struct _KeyPressed
+{
+  KeyCode keyRcvd;
+  KeyCode keySent;
+  struct _KeyPressed *next;
+} KeyPressedRec;
+
+static KeyPressedRec *shadowKeyPressedPtr = NULL;
+
+static KeySym *shadowKeysyms = NULL;
+static KeySym *masterKeysyms = NULL;
+
+static int shadowMinKey, shadowMaxKey, shadowMapWidth;
+static int masterMinKey, masterMaxKey, masterMapWidth;
+
+static int leftShiftOn = 0;
+static int rightShiftOn = 0;
+static int modeSwitchOn = 0;
+static int level3ShiftOn = 0;
+static int altROn = 0;
+
+static int sentFakeLShiftPress = 0;
+static int sentFakeLShiftRelease = 0;
+static int sentFakeRShiftRelease = 0;
+static int sentFakeModeSwitchPress = 0;
+static int sentFakeModeSwitchRelease = 0;
+static int sentFakeLevel3ShiftPress = 0;
+static int sentFakeLevel3ShiftRelease = 0;
+static int sentFakeAltRRelease = 0;
+
+static int shmInitTrap = 0;
 
 Poller::Poller(Input *input, Display *display, int depth) : CorePoller(input, display)
 {
@@ -226,7 +268,10 @@ void Poller::shmInit(void)
   {
     logDebug("Poller::shmInit", "Called with shared memory already initialized.");
 
-    return;
+    if (shmInitTrap == 0)
+    {
+      return;
+    }
   }
 
   if (shmExtension_ < 0 && NXShadowOptions.optionShmExtension == 0)
@@ -362,6 +407,520 @@ void Poller::shmInit(void)
   }
 }
 
+void Poller::keymapShadowInit(Display *display)
+{
+  if (NXShadowKeymap)
+  {
+    shadowMinKey = NXShadowKeymap -> minKeyCode;
+    shadowMaxKey = NXShadowKeymap -> maxKeyCode;
+    shadowMapWidth = NXShadowKeymap -> mapWidth;
+    shadowKeysyms = NXShadowKeymap -> map;
+  }
+
+  if (shadowKeysyms == NULL)
+  {
+    XDisplayKeycodes(display, &shadowMinKey, &shadowMaxKey);
+
+    shadowKeysyms = XGetKeyboardMapping(display, shadowMinKey, shadowMaxKey - shadowMinKey + 1,
+                                            &shadowMapWidth);
+  }
+
+  #ifdef DEBUG
+  if (shadowKeysyms)
+  {
+    for (int i = 0; i < (shadowMaxKey - shadowMinKey) * shadowMapWidth; i++)
+    {
+      logDebug("Poller::keymapShadowInit", "keycode %d - keysym %x %s",
+                   (int)(i / shadowMapWidth), (unsigned int)shadowKeysyms[i],
+                       XKeysymToString(shadowKeysyms[i]));
+    }
+  }
+  #endif
+}
+
+void Poller::keymapMasterInit()
+{
+  XDisplayKeycodes(display_, &masterMinKey, &masterMaxKey);
+
+  masterKeysyms = XGetKeyboardMapping(display_, masterMinKey, masterMaxKey - masterMinKey + 1,
+                                          &masterMapWidth);
+
+  #ifdef DEBUG
+  if (masterKeysyms)
+  {
+    for (int i = 0; i < (masterMaxKey - masterMinKey) * masterMapWidth; i++)
+    {
+      logDebug("Poller::keymapMasterInit", "keycode %d - keysym %x %s",
+                   (int)(i / masterMapWidth), (unsigned int)masterKeysyms[i],
+                       XKeysymToString(masterKeysyms[i]));
+    }
+  }
+  #endif
+}
+
+KeySym Poller::keymapKeycodeToKeysym(KeyCode keycode, KeySym *keysyms,
+                                         int minKey, int mapWidth, int col)
+{
+  int index = ((keycode - minKey) * mapWidth) + col;
+  return keysyms[index];
+}
+
+KeyCode Poller::keymapKeysymToKeycode(KeySym keysym, KeySym *keysyms,
+                                          int minKey, int maxKey, int mapWidth, int *col)
+{
+  for (int i = 0; i < (maxKey - minKey + 1) * mapWidth; i++)
+  {
+    if (keysyms[i] == keysym)
+    {
+      *col = i % mapWidth;
+      return i / mapWidth + minKey;
+    }
+  }
+  return 0;
+}
+
+KeyCode Poller::translateKeysymToKeycode(KeySym keysym, int *col)
+{
+  KeyCode keycode;
+
+  keycode = keymapKeysymToKeycode(keysym, masterKeysyms, masterMinKey,
+                                      masterMaxKey, masterMapWidth, col);
+
+  if (keycode == 0)
+  {
+    if (((keysym >> 8) == 0) && (keysym >= XK_a) && (keysym <= XK_z))
+    {
+      /*
+       * The master session has a Solaris keyboard.
+       */
+
+      keysym -= XK_a - XK_A;
+
+      keycode = keymapKeysymToKeycode(keysym, masterKeysyms, masterMinKey,
+                                          masterMaxKey, masterMapWidth, col);
+    }
+    else if (keysym == XK_Shift_R)
+    {
+      keysym = XK_Shift_L;
+
+      keycode = keymapKeysymToKeycode(keysym, masterKeysyms, masterMinKey,
+                                          masterMaxKey, masterMapWidth, col);
+    }
+    else if (keysym == XK_Shift_L)
+    {
+      keysym = XK_Shift_R;
+
+      keycode = keymapKeysymToKeycode(keysym, masterKeysyms, masterMinKey,
+                                          masterMaxKey, masterMapWidth, col);
+    }
+    else if (keysym == XK_ISO_Level3_Shift)
+    {
+      keysym = XK_Mode_switch;
+
+      if ((keycode = keymapKeysymToKeycode(keysym, masterKeysyms, masterMinKey,
+                                               masterMaxKey, masterMapWidth, col)) == 0)
+      {
+        keysym = XK_Alt_R;
+
+        keycode = keymapKeysymToKeycode(keysym, masterKeysyms, masterMinKey,
+                                            masterMaxKey, masterMapWidth, col);
+      }
+    }
+    else if (keysym == XK_Alt_R)
+    {
+      keysym = XK_ISO_Level3_Shift;
+
+      if ((keycode = keymapKeysymToKeycode(keysym, masterKeysyms, masterMinKey,
+                                               masterMaxKey, masterMapWidth, col)) == 0)
+      {
+        keysym = XK_Mode_switch;
+
+        keycode = keymapKeysymToKeycode(keysym, masterKeysyms, masterMinKey,
+                                            masterMaxKey, masterMapWidth, col);
+      }
+    }
+  }
+  return keycode;
+}
+
+Bool Poller::checkModifierKeys(KeySym keysym, Bool isKeyPress)
+{
+  switch (keysym)
+  {
+    case XK_Shift_L:
+      leftShiftOn = isKeyPress;
+      return True;
+    case XK_Shift_R:
+      rightShiftOn = isKeyPress;
+      return True;
+    case XK_Mode_switch:
+      modeSwitchOn = isKeyPress;
+      return True;
+    case XK_ISO_Level3_Shift:
+      level3ShiftOn = isKeyPress;
+      return True;
+    case XK_Alt_R:
+      altROn = isKeyPress;
+      return True;
+    default:
+      return False;
+  }
+}
+
+void Poller::sendFakeModifierEvents(int pos, Bool skip)
+{
+  KeySym fakeKeysym;
+  int col;
+
+  if ((!leftShiftOn && !rightShiftOn) &&
+          (!modeSwitchOn && !level3ShiftOn && !altROn))
+  {
+    if (pos == 1 || pos == 3)
+    {
+      fakeKeysym = keymapKeysymToKeycode(XK_Shift_L, masterKeysyms, masterMinKey,
+                                             masterMaxKey, masterMapWidth, &col);
+      XTestFakeKeyEvent(display_, fakeKeysym, 1, 0);
+      sentFakeLShiftPress = 1;
+    }
+    if (pos == 2 || pos == 3)
+    {
+      fakeKeysym = keymapKeysymToKeycode(XK_ISO_Level3_Shift, masterKeysyms, masterMinKey,
+                                             masterMaxKey, masterMapWidth, &col);
+
+      if (fakeKeysym == 0)
+      {
+        fakeKeysym = keymapKeysymToKeycode(XK_Mode_switch, masterKeysyms, masterMinKey,
+                                               masterMaxKey, masterMapWidth, &col);
+        sentFakeModeSwitchPress = 1;
+      }
+      else
+      {
+        sentFakeLevel3ShiftPress = 1;
+      }
+
+      XTestFakeKeyEvent(display_, fakeKeysym, 1, 0);
+    }
+  }
+
+  else if ((leftShiftOn || rightShiftOn) &&
+               (!modeSwitchOn && !level3ShiftOn && !altROn))
+  {
+    if ((pos == 0 && !skip) || pos == 2)
+    {
+      if (leftShiftOn)
+      {
+        fakeKeysym = keymapKeysymToKeycode(XK_Shift_L, masterKeysyms, masterMinKey,
+                                               masterMaxKey, masterMapWidth, &col);
+        XTestFakeKeyEvent(display_, fakeKeysym, 0, 0);
+        sentFakeLShiftRelease = 1;
+      }
+      if (rightShiftOn)
+      {
+        fakeKeysym = keymapKeysymToKeycode(XK_Shift_R, masterKeysyms, masterMinKey,
+                                               masterMaxKey, masterMapWidth, &col);
+        XTestFakeKeyEvent(display_, fakeKeysym, 0, 0);
+        sentFakeRShiftRelease = 1;
+      }
+    }
+    if (pos == 2 || pos ==3)
+    {
+      fakeKeysym = keymapKeysymToKeycode(XK_ISO_Level3_Shift, masterKeysyms, masterMinKey,
+                                             masterMaxKey, masterMapWidth, &col);
+
+      if (fakeKeysym == 0)
+      {
+        fakeKeysym = keymapKeysymToKeycode(XK_Mode_switch, masterKeysyms, masterMinKey,
+                                               masterMaxKey, masterMapWidth, &col);
+        sentFakeModeSwitchPress = 1;
+      }
+      else
+      {
+        sentFakeLevel3ShiftPress = 1;
+      }
+
+      XTestFakeKeyEvent(display_, fakeKeysym, 1, 0);
+    }
+  }
+
+  else if ((!leftShiftOn && !rightShiftOn) &&
+               (modeSwitchOn || level3ShiftOn || altROn))
+  {
+    if (pos == 1 || pos == 3)
+    {
+      fakeKeysym = keymapKeysymToKeycode(XK_Shift_L, masterKeysyms, masterMinKey,
+                                             masterMaxKey, masterMapWidth, &col);
+      XTestFakeKeyEvent(display_, fakeKeysym, 1, 0);
+      sentFakeLShiftPress = 1;
+    }
+    if (pos == 0 || pos == 1)
+    {
+      if (modeSwitchOn)
+      {
+        fakeKeysym = keymapKeysymToKeycode(XK_Mode_switch, masterKeysyms, masterMinKey,
+                                               masterMaxKey, masterMapWidth, &col);
+        XTestFakeKeyEvent(display_, fakeKeysym, 0, 0);
+        sentFakeModeSwitchRelease = 1;
+      }
+      if (level3ShiftOn)
+      {
+        fakeKeysym = keymapKeysymToKeycode(XK_ISO_Level3_Shift, masterKeysyms, masterMinKey,
+                                               masterMaxKey, masterMapWidth, &col);
+        XTestFakeKeyEvent(display_, fakeKeysym, 0, 0);
+        sentFakeLevel3ShiftRelease = 1;
+      }
+      if (altROn)
+      {
+        fakeKeysym = keymapKeysymToKeycode(XK_Alt_R, masterKeysyms, masterMinKey,
+                                               masterMaxKey, masterMapWidth, &col);
+        XTestFakeKeyEvent(display_, fakeKeysym, 0, 0);
+        sentFakeAltRRelease = 1;
+      }
+    }
+  }
+
+  else if ((leftShiftOn || rightShiftOn) &&
+               (modeSwitchOn || level3ShiftOn || altROn))
+  {
+    if (pos == 0 || pos == 2)
+    {
+      if (leftShiftOn)
+      {
+        fakeKeysym = keymapKeysymToKeycode(XK_Shift_L, masterKeysyms, masterMinKey,
+                                               masterMaxKey, masterMapWidth, &col);
+        XTestFakeKeyEvent(display_, fakeKeysym, 0, 0);
+        sentFakeLShiftRelease = 1;
+      }
+      if (rightShiftOn)
+      {
+        fakeKeysym = keymapKeysymToKeycode(XK_Shift_R, masterKeysyms, masterMinKey,
+                                               masterMaxKey, masterMapWidth, &col);
+        XTestFakeKeyEvent(display_, fakeKeysym, 0, 0);
+        sentFakeRShiftRelease = 1;
+      }
+    }
+    if (pos == 0 || pos == 1)
+    {
+      if (modeSwitchOn)
+      {
+        fakeKeysym = keymapKeysymToKeycode(XK_Mode_switch, masterKeysyms, masterMinKey,
+                                               masterMaxKey, masterMapWidth, &col);
+        XTestFakeKeyEvent(display_, fakeKeysym, 0, 0);
+        sentFakeModeSwitchRelease = 1;
+      }
+      if (level3ShiftOn)
+      {
+        fakeKeysym = keymapKeysymToKeycode(XK_ISO_Level3_Shift, masterKeysyms, masterMinKey,
+                                               masterMaxKey, masterMapWidth, &col);
+        XTestFakeKeyEvent(display_, fakeKeysym, 0, 0);
+        sentFakeLevel3ShiftRelease = 1;
+      }
+      if (altROn)
+      {
+        fakeKeysym = keymapKeysymToKeycode(XK_Alt_R, masterKeysyms, masterMinKey,
+                                               masterMaxKey, masterMapWidth, &col);
+        XTestFakeKeyEvent(display_, fakeKeysym, 0, 0);
+        sentFakeAltRRelease = 1;
+      }
+    }
+  }
+}
+
+void Poller::cancelFakeModifierEvents()
+{
+  KeySym fakeKeysym;
+  int col;
+
+  if (sentFakeLShiftPress)
+  {
+    logTest("Poller::handleKeyboardEvent", "Fake Shift_L key press event has been sent");
+    logTest("Poller::handleKeyboardEvent", "Sending fake Shift_L key release event");
+
+    fakeKeysym = keymapKeysymToKeycode(XK_Shift_L, masterKeysyms, masterMinKey,
+                                           masterMaxKey, masterMapWidth, &col);
+    XTestFakeKeyEvent(display_, fakeKeysym, 0, 0);
+
+    sentFakeLShiftPress = 0;
+  }
+
+  if (sentFakeLShiftRelease)
+  {
+    logTest("Poller::handleKeyboardEvent", "Fake Shift_L key release event has been sent");
+    logTest("Poller::handleKeyboardEvent", "Sending fake Shift_L key press event");
+
+    fakeKeysym = keymapKeysymToKeycode(XK_Shift_L, masterKeysyms, masterMinKey,
+                                           masterMaxKey, masterMapWidth, &col);
+    XTestFakeKeyEvent(display_, fakeKeysym, 1, 0);
+
+    sentFakeLShiftRelease = 0;
+  }
+
+  if (sentFakeRShiftRelease)
+  {
+    logTest("Poller::handleKeyboardEvent", "Fake Shift_R key release event has been sent");
+    logTest("Poller::handleKeyboardEvent", "Sending fake Shift_R key press event");
+
+    fakeKeysym = keymapKeysymToKeycode(XK_Shift_R, masterKeysyms, masterMinKey,
+                                           masterMaxKey, masterMapWidth, &col);
+    XTestFakeKeyEvent(display_, fakeKeysym, 1, 0);
+
+    sentFakeRShiftRelease = 0;
+  }
+
+  if (sentFakeModeSwitchPress)
+  {
+    logTest("Poller::handleKeyboardEvent", "Fake Mode_switch key press event has been sent");
+    logTest("Poller::handleKeyboardEvent", "Sending fake Mode_switch key release event");
+
+    fakeKeysym = keymapKeysymToKeycode(XK_Mode_switch, masterKeysyms, masterMinKey,
+                                           masterMaxKey, masterMapWidth, &col);
+    XTestFakeKeyEvent(display_, fakeKeysym, 0, 0);
+
+    sentFakeModeSwitchPress = 0;
+  }
+
+  if (sentFakeModeSwitchRelease)
+  {
+    logTest("Poller::handleKeyboardEvent", "Fake Mode_switch key release event has been sent");
+    logTest("Poller::handleKeyboardEvent", "Sending Mode_switch key press event");
+
+    fakeKeysym = keymapKeysymToKeycode(XK_Mode_switch, masterKeysyms, masterMinKey,
+                                           masterMaxKey, masterMapWidth, &col);
+    XTestFakeKeyEvent(display_, fakeKeysym, 1, 0);
+
+    sentFakeModeSwitchRelease = 0;
+  }
+
+  if (sentFakeLevel3ShiftPress)
+  {
+    logTest("Poller::handleKeyboardEvent", "Fake ISO_Level3_Shift key press event has been sent");
+    logTest("Poller::handleKeyboardEvent", "Sending fake ISO_Level3_Shift key release event");
+
+    fakeKeysym = keymapKeysymToKeycode(XK_ISO_Level3_Shift, masterKeysyms, masterMinKey,
+                                           masterMaxKey, masterMapWidth, &col);
+    XTestFakeKeyEvent(display_, fakeKeysym, 0, 0);
+
+    sentFakeLevel3ShiftPress = 0;
+  }
+
+  if (sentFakeLevel3ShiftRelease)
+  {
+    logTest("Poller::handleKeyboardEvent", "Fake ISO_Level3_Shift key release event has been sent");
+    logTest("Poller::handleKeyboardEvent", "Sending fake ISO_Level3_Shift key press event");
+
+    fakeKeysym = keymapKeysymToKeycode(XK_ISO_Level3_Shift, masterKeysyms, masterMinKey,
+                                           masterMaxKey, masterMapWidth, &col);
+    XTestFakeKeyEvent(display_, fakeKeysym, 1, 0);
+
+    sentFakeLevel3ShiftRelease = 0;
+  }
+
+  if (sentFakeAltRRelease)
+  {
+    logTest("Poller::handleKeyboardEvent", "Fake XK_Alt_R key release event has been sent");
+    logTest("Poller::handleKeyboardEvent", "Sending fake XK_Alt_R key press event");
+
+    fakeKeysym = keymapKeysymToKeycode(XK_Alt_R, masterKeysyms, masterMinKey,
+                                           masterMaxKey, masterMapWidth, &col);
+    XTestFakeKeyEvent(display_, fakeKeysym, 1, 0);
+
+    sentFakeAltRRelease = 0;
+  }
+}
+
+Bool Poller::keyIsDown(KeyCode keycode)
+{
+  KeyPressedRec *downKey;
+
+  downKey = shadowKeyPressedPtr;
+
+  while (downKey)
+  {
+    if (downKey -> keyRcvd == keycode)
+    {
+      return True;
+    }
+    downKey = downKey -> next;
+  }
+
+  return False;
+}
+
+void Poller::addKeyPressed(KeyCode received, KeyCode sent)
+{
+  KeyPressedRec *downKey;
+
+  if (!keyIsDown(received))
+  {
+    if (shadowKeyPressedPtr == NULL)
+    {
+      shadowKeyPressedPtr = (KeyPressedRec *) malloc(sizeof(KeyPressedRec));
+
+      shadowKeyPressedPtr -> keyRcvd = received;
+      shadowKeyPressedPtr -> keySent = sent;
+      shadowKeyPressedPtr -> next = NULL;
+    }
+    else
+    {
+      downKey = shadowKeyPressedPtr;
+
+      while (downKey -> next != NULL)
+      {
+        downKey = downKey -> next;
+      }
+
+      downKey -> next = (KeyPressedRec *) malloc(sizeof(KeyPressedRec));
+
+      downKey -> next -> keyRcvd = received;
+      downKey -> next -> keySent = sent;
+      downKey -> next -> next = NULL;
+    }
+  }
+}
+
+KeyCode Poller::getKeyPressed(KeyCode received)
+{
+  KeyCode sent;
+  KeyPressedRec *downKey;
+  KeyPressedRec *tempKey;
+
+  if (shadowKeyPressedPtr != NULL)
+  {
+    if (shadowKeyPressedPtr -> keyRcvd == received)
+    {
+      sent = shadowKeyPressedPtr -> keySent;
+
+      tempKey = shadowKeyPressedPtr;
+      shadowKeyPressedPtr = shadowKeyPressedPtr -> next;
+      free(tempKey);
+
+      return sent;
+    }
+    else
+    {
+      downKey = shadowKeyPressedPtr;
+
+      while (downKey -> next != NULL)
+      {
+        if (downKey -> next -> keyRcvd == received)
+        {
+          sent = downKey -> next -> keySent;
+
+          tempKey = downKey -> next;
+          downKey -> next = downKey -> next -> next;
+          free(tempKey);
+
+          return sent;
+        }
+        else
+        {
+          downKey = downKey -> next;
+        }
+      }
+    }
+  }
+  return 0;
+}
+
 void Poller::handleKeyboardEvent(Display *display, XEvent *event)
 {
   if (xtestExtension_ == 0 || display_ == 0)
@@ -370,6 +929,158 @@ void Poller::handleKeyboardEvent(Display *display, XEvent *event)
   }
 
   logTest("Poller::handleKeyboardEvent", "Handling event at [%p]", event);
+
+#ifdef TRANSLATE_ALWAYS
+
+  KeyCode keycode;
+  KeySym keysym;
+
+  int col = 0;
+
+  Bool isKeyPress = False;
+  Bool isModifier = False;
+  Bool skip = False;
+
+  if (event -> type == KeyPress)
+  {
+    isKeyPress = True;
+  }
+
+  if (shadowKeysyms == NULL)
+  {
+    keymapShadowInit(event -> xkey.display);
+  }
+
+  if (masterKeysyms == NULL)
+  {
+    keymapMasterInit();
+  }
+
+  if (shadowKeysyms == NULL || masterKeysyms == NULL)
+  {
+    logTest("Poller::handleKeyboardEvent", "Unable to initialize keymaps. Do not translate");
+
+    keycode = event -> xkey.keycode;
+
+    goto SendKeycode;
+  }
+
+  keysym = keymapKeycodeToKeysym(event -> xkey.keycode, shadowKeysyms,
+                                   shadowMinKey, shadowMapWidth, 0);
+
+  isModifier = checkModifierKeys(keysym, isKeyPress);
+
+  if (event -> type == KeyRelease)
+  {
+    KeyCode keycodeToSend;
+
+    keycodeToSend = getKeyPressed(event -> xkey.keycode);
+
+    if (keycodeToSend)
+    {
+      keycode = keycodeToSend;
+
+      goto SendKeycode;
+    }
+  }
+
+  /*
+   * Convert case for Solaris keyboard.
+   */
+
+  if (((keysym >> 8) == 0) && (keysym >= XK_A) && (keysym <= XK_Z))
+  {
+    if (!leftShiftOn && !rightShiftOn)
+    {
+      keysym += XK_a - XK_A;
+    }
+    else
+    {
+      skip = True;
+    }
+  }
+
+  if (!isModifier)
+  {
+    if ((leftShiftOn || rightShiftOn) &&
+            (!modeSwitchOn && !level3ShiftOn && !altROn) &&
+                !skip)
+    {
+      keysym = keymapKeycodeToKeysym(event -> xkey.keycode, shadowKeysyms,
+                                         shadowMinKey, shadowMapWidth, 1);
+    }
+
+    if ((!leftShiftOn && !rightShiftOn) &&
+            (modeSwitchOn || level3ShiftOn || altROn))
+    {
+      keysym = keymapKeycodeToKeysym(event -> xkey.keycode, shadowKeysyms,
+                                         shadowMinKey, shadowMapWidth, 2);
+    }
+
+    if ((leftShiftOn || rightShiftOn) &&
+            (modeSwitchOn || level3ShiftOn || altROn))
+    {
+      keysym = keymapKeycodeToKeysym(event -> xkey.keycode, shadowKeysyms,
+                                       shadowMinKey, shadowMapWidth, 3);
+    }
+  }
+
+  if (keysym == 0)
+  {
+    logTest("Poller::handleKeyboardEvent", "Null keysym. Return");
+
+    return;
+  }
+
+  logTest("Poller::handleKeyboardEvent", "keysym [%x] [%s]",
+              (unsigned int)keysym, XKeysymToString(keysym));
+
+  if (keysym == XK_Mode_switch)
+  {
+    keysym = XK_ISO_Level3_Shift;
+  }
+
+  keycode = translateKeysymToKeycode(keysym, &col);
+
+  if (keycode == 0)
+  {
+    logTest("Poller::handleKeyboardEvent", "No keycode found for keysym [%x] [%s]. Return",
+                (unsigned int)keysym, XKeysymToString(keysym));
+    return;
+  }
+
+  logTest("Poller::handleKeyboardEvent", "keycode [%d] translated into keycode [%d]",
+              (int)event -> xkey.keycode, (unsigned int)keycode);
+
+  if (event -> type == KeyPress)
+  {
+    addKeyPressed(event -> xkey.keycode, keycode);
+  }
+
+  /*
+   * Send fake modifier events.
+   */
+
+  if (!isModifier)
+  {
+    sendFakeModifierEvents(col, ((keysym >> 8) == 0) && (keysym >= XK_A) && (keysym <= XK_Z));
+  }
+
+SendKeycode:
+
+  /*
+   * Send the event.
+   */
+
+  XTestFakeKeyEvent(display_, keycode, isKeyPress, 0);
+
+  /*
+   * Check if fake modifier events have been sent.
+   */
+
+  cancelFakeModifierEvents();
+
+#else // TRANSLATE_ALWAYS
 
   //
   // Use keysyms to translate keycodes across different
@@ -417,6 +1128,60 @@ void Poller::handleKeyboardEvent(Display *display, XEvent *event)
   {
     XTestFakeKeyEvent(display_, event -> xkey.keycode, 0, 0);
   }
+
+#endif // TRANSLATE_ALWAYS
+}
+
+void Poller::handleWebKeyboardEvent(KeySym keysym, Bool isKeyPress)
+{
+  KeyCode keycode;
+  int col;
+
+  if (masterKeysyms == NULL)
+  {
+    keymapMasterInit();
+  }
+
+  if (masterKeysyms == NULL)
+  {
+    logTest("Poller::handleWebKeyboardEvent", "Unable to initialize keymap");
+
+    return;
+  }
+
+  keycode = translateKeysymToKeycode(keysym, &col);
+
+  if (keycode == 0)
+  {
+    logTest("Poller::handleKeyboardEvent", "No keycode found for keysym [%x] [%s]. Return",
+                (unsigned int)keysym, XKeysymToString(keysym));
+    return;
+  }
+
+  logTest("Poller::handleKeyboardEvent", "keysym [%x] [%s] translated into keycode [%x]",
+              (unsigned int)keysym, XKeysymToString(keysym), (unsigned int)keycode);
+
+  /*
+   * Send fake modifier events.
+   */
+
+  if (!checkModifierKeys(keysym, isKeyPress))
+  {
+    sendFakeModifierEvents(col, False);
+  }
+
+  /*
+   * Send the event.
+   */
+
+  XTestFakeKeyEvent(display_, keycode, isKeyPress, 0);
+
+  /*
+   * Check if fake modifier events have been sent.
+   */
+
+  cancelFakeModifierEvents();
+
 }
 
 void Poller::handleMouseEvent(Display *display, XEvent *event)
@@ -710,6 +1475,26 @@ void Poller::updateDamagedAreas(void)
   }
 
   return;
+}
+
+void Poller::getScreenSize(int *w, int *h)
+{
+  *w = WidthOfScreen(DefaultScreenOfDisplay(display_));
+  *h = HeightOfScreen(DefaultScreenOfDisplay(display_));
+}
+
+void Poller::setScreenSize(int *w, int *h)
+{
+  setRootSize();
+
+  shmInitTrap = 1;
+  shmInit();
+  shmInitTrap = 0;
+
+  *w = width_;
+  *h = height_;
+
+  logDebug("Poller::setScreenSize", "New size of screen [%d, %d]", width_, height_);
 }
 
 int anyEventPredicate(Display *display, XEvent *event, XPointer parameter)

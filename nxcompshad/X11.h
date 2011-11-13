@@ -41,6 +41,10 @@ class Poller : public CorePoller
 
   void getEvents(void);
 
+  void getScreenSize(int *width, int *height);
+
+  void setScreenSize(int *width, int *height);
+
   private:
 
   Display *display_;
@@ -77,7 +81,33 @@ class Poller : public CorePoller
 
   char *getRect(XRectangle);
 
+  void keymapShadowInit(Display *display);
+
+  void keymapMasterInit();
+
+  KeySym keymapKeycodeToKeysym(KeyCode keycode, KeySym *keysyms,
+                                   int minKey, int per, int col);
+
+  KeyCode keymapKeysymToKeycode(KeySym keysym, KeySym *keysyms,
+                                    int minKey, int maxKey, int per, int *col);
+
+  KeyCode translateKeysymToKeycode(KeySym keysym, int *col);
+
+  Bool checkModifierKeys(KeySym keysym, Bool isKeyPress);
+
+  void sendFakeModifierEvents(int pos, Bool skip);
+
+  void cancelFakeModifierEvents();
+
+  Bool keyIsDown(KeyCode keycode);
+
+  void addKeyPressed(KeyCode received, KeyCode sent);
+
+  KeyCode getKeyPressed(KeyCode received);
+
   void handleKeyboardEvent(Display *display, XEvent *);
+
+  void handleWebKeyboardEvent(KeySym keysym, Bool isKeyPress);
 
   void handleMouseEvent(Display *, XEvent *);
 

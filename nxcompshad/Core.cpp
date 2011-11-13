@@ -538,6 +538,15 @@ void CorePoller::update(char *src, XRectangle r)
 
   for (unsigned int i = 0; i < r.height; i++)
   {
+    if(((r.x * bpp_ + r.y * bpl_) + bpl) > (bpl_ * height_))
+    {
+      //
+      // Out of bounds. Maybe a resize is going on.
+      //
+
+      continue;
+    }
+
     memcpy(dst, src, bpl);
 
     src += bpl;
@@ -572,6 +581,13 @@ void CorePoller::handleEvent(Display *display, XEvent *event)
       break;
     }
   }
+}
+
+void CorePoller::handleWebKeyEvent(KeySym keysym, Bool isKeyPress)
+{
+  logTrace("CorePoller::handleWebKeyEvent");
+
+  handleWebKeyboardEvent(keysym, isKeyPress);
 }
 
 void CorePoller::handleInput()

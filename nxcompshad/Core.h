@@ -68,6 +68,8 @@ class CorePoller
 
   void handleEvent(Display *, XEvent *);
 
+  void handleWebKeyEvent(KeySym keysym, Bool isKeyPress);
+
   Display *getShadowDisplay();
 
   void setShadowDisplay(Display *shadowDisplay);
@@ -114,6 +116,8 @@ class CorePoller
   private:
 
   virtual void handleKeyboardEvent(Display *, XEvent *) = 0;
+
+  virtual void handleWebKeyboardEvent(KeySym keysym, Bool isKeyPress) = 0;
 
   virtual void handleMouseEvent(Display *, XEvent *) = 0;
 
