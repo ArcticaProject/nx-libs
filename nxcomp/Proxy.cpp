@@ -3645,7 +3645,7 @@ int Proxy::handlePing()
     {
       int diffPing = diffTimestamp(timeouts_.pingTs, nowTs);
 
-      if (diffPing >= (control -> PingTimeout -
+      if (diffPing < 0 || diffPing >= (control -> PingTimeout -
               control -> LatencyTimeout * 5))
       {
         #if defined(TEST) || defined(INFO) || defined(PING)

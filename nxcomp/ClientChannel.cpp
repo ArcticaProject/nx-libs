@@ -4539,24 +4539,6 @@ int ClientChannel::handleWrite(const unsigned char *message, unsigned int length
             lastSequence_ = serverSequence_;
           }
         }
-/*
-FIXME: This block was added, otherwise we have a loss
-       of the nxagent events.
-*/
-        else
-        {
-          #ifdef DEBUG
-          *logofs << "handleWrite: Updating last event's sequence "
-                  << lastSequence_ << " to X server's sequence number "
-                  << serverSequence_ << " for FD#" << fd_
-                  << ".\n" << logofs_flush;
-          #endif
-
-          lastSequence_ = serverSequence_;
-        }
-
-/*
-FIXME: This causes the loss of the nxagent events.
 
         //
         // Check if by producing events at client side we
@@ -4565,7 +4547,12 @@ FIXME: This causes the loss of the nxagent events.
         // comply with the last one known by client.
         //
 
-        if (serverSequence_ > lastSequence_)
+/*
+FIXME: Recover the sequence number if the proxy
+       is not connected to an agent.
+*/
+        if (serverSequence_ > lastSequence_ ||
+                control -> SessionMode != session_proxy)
         {
           #ifdef DEBUG
           *logofs << "handleWrite: Updating last event's sequence "
@@ -4589,7 +4576,6 @@ FIXME: This causes the loss of the nxagent events.
                   << logofs_flush;
         }
         #endif
-*/
 
         //
         // Check if remote side used fast encoding.

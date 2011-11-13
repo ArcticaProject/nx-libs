@@ -1,5 +1,13 @@
 ChangeLog:
 
+nxcomp-3.3.0-4
+
+- Check if the variable storing the ping time exceeded the maximum
+  integer value.
+
+- Recover incorrect sequence number when the proxy is not connected
+  to an agent.
+
 nxcomp-3.3.0-3
 
 - Removed a condition in ClientChannel that caused a loss in event
