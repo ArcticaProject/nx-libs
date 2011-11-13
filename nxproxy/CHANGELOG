@@ -1,5 +1,15 @@
 ChangeLog:
 
+nxproxy-3.4.0-2
+
+- Updated copyright to year 2009.
+
+nxproxy-3.4.0-1
+
+- Opened the 3.4.0 branch based on nxproxy-3.3.0-2.
+
+- Changed version number.
+
 nxproxy-3.3.0-2
 
 - Updated VERSION.
