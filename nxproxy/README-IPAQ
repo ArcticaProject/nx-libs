@@ -1,0 +1,27 @@
+README-IPAQ
+-----------
+
+1. Install a cross-compiler for ARM. You can find detailed
+   informations at:
+
+   http://www.ailis.de/~k/knowledge/crosscompiling/toolchain.php
+
+   There are also binaries needed to install the cross-compiler.
+
+2. Configure and compile nxproxy using:
+
+   $ ./configure --with-ipaq
+   $ make
+
+   After compilation type:
+
+   $ arm-linux-strip nxproxy
+
+3. You need libXcomp.so to run nxproxy. Be sure you include the
+   library in your LD_LIBRARY_PATH. For example, you can run:
+
+   > export LD_LIBRARY_PATH $HOME/NX/nxcomp
+   > nxproxy -S localhost:8
+
+4. The package nxscripts contains many examples of NX usage that
+   you can modify to suit your needs.

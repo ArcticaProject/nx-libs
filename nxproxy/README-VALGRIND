@@ -1,0 +1,39 @@
+README-VALGRIND
+---------------
+
+You can run nxproxy (and nxcomp) under the supervision of valgrind
+(a very good memory debugger) by wrapping nxproxy in the following
+script:
+
+<snip>
+#!/bin/bash
+
+# Enable core dumps.
+
+ulimit -c unlimited
+
+# Set this to directory where nxproxy is located.
+
+NXPROXY_DIR=~/NX/nxproxy
+
+# Set this to directory where valgrind is located.
+
+VALGRIND_DIR=/usr/local/bin
+
+exec ${VALGRIND_DIR}/valgrind -v --leak-check=yes --leak-resolution=high \
+                              --show-reachable=yes --show-reachable=yes \
+                              --suppressions=${NXPROXY_DIR}/nxproxy.supp \
+                              --num-callers=16 --logfile-fd=2 \
+\
+${NXPROXY_DIR}/nxproxy $1 $2 $3 $4 $5 $6 $7 $8 $9
+<snip>
+
+Run the following commands on your shell, right in the place where
+the nxproxy executable is to be placed in your setup:
+
+$ cat >nxproxy
+<copy paste the previous lines here>
+$ chmod a+x nxproxy
+
+Output of valgrind will go on stderr, that is in session file, if
+run in NX environment.

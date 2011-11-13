@@ -1,0 +1,185 @@
+dnl Process this file with autoconf to produce a configure script.
+
+dnl Prolog
+
+AC_INIT(Main.c)
+AC_PREREQ(2.13)
+
+dnl Reset default compilation flags.
+
+CXXFLAGS="-O3"
+CPPFLAGS="-O3"
+
+dnl Prefer headers and libraries from nx-X11 if present.
+
+if test -d "../nx-X11/exports/include" ; then
+    CXXFLAGS="$CXXFLAGS -I../nx-X11/exports/include"
+    LIBS="$LIBS -L../nx-X11/exports/lib"
+fi
+
+dnl Check whether --with-ipaq was given.
+
+if test "${with_ipaq}" = yes; then
+  echo -e "enabling ipaq configuration"
+  CXX="arm-linux-c++"
+  CC="arm-linux-gcc"
+  unset ac_cv_prog_armcxx
+  unset ac_cv_prog_armcc
+  unset ac_cv_prog_CXXCPP
+  AC_CHECK_PROG([armcxx],["$CXX"],[yes],[no],[$PATH])
+  AC_CHECK_PROG([armcc],["$CC"],[yes],[no],[$PATH])
+  if test $armcxx = "yes" && test $armcc = "yes" ; then
+    ac_cv_prog_CXX="$CXX"
+    ac_cv_prog_CC="$CC"
+  else
+    AC_MSG_ERROR(installation or configuration problem: I cannot find compiler for arm-linux)
+  fi
+else
+  unset ac_cv_prog_CXX
+  unset ac_cv_prog_CC
+  unset ac_cv_prog_CXXCPP
+fi  
+
+dnl Check for programs.
+
+AC_PROG_CXX
+AC_PROG_CC
+AC_LANG_CPLUSPLUS
+
+dnl Check for BSD compatible install.
+
+AC_PROG_INSTALL
+
+dnl Check for extra header files.
+
+AC_PATH_XTRA
+
+dnl Custom addition.
+
+ac_help="$ac_help
+  --with-symbols          give -g flag to compiler to produce debug symbols
+  --with-info             define INFO at compile time to get basic log output
+  --with-valgrind         clean up allocated buffers to avoid valgrind warnings
+  --with-version          use this version for produced libraries"
+
+dnl Check to see if we're running under Cygwin32.
+
+
+dnl Check to see if we're running under FreeBSD.
+AC_DEFUN(nxconf_FreeBSD,
+[AC_CACHE_CHECK(for FreeBSD environment, nxconf_cv_freebsd,
+[AC_TRY_COMPILE(,[return __FreeBSD__;],
+nxconf_cv_freebsd=yes, nxconf_cv_freebsd=no)
+rm -f conftest*])
+FreeBSD=
+test "$nxconf_cv_freebsd" = yes && FreeBSD=yes])
+nxconf_FreeBSD
+
+
+AC_DEFUN(nxconf_CYGWIN32,
+[AC_CACHE_CHECK(for Cygwin32 environment, nxconf_cv_cygwin32,
+[AC_TRY_COMPILE(,[return __CYGWIN32__;],
+nxconf_cv_cygwin32=yes, nxconf_cv_cygwin32=no)
+rm -f conftest*])
+CYGWIN32=
+test "$nxconf_cv_cygwin32" = yes && CYGWIN32=yes])
+nxconf_CYGWIN32
+
+dnl Check for Darwin environment.
+
+AC_DEFUN(nxconf_DARWIN,
+[AC_CACHE_CHECK(for Darwin environment, nxconf_cv_darwin,
+[AC_TRY_COMPILE(,[return __APPLE__;],
+nxconf_cv_darwin=yes, nxconf_cv_darwin=no)
+rm -f conftest*])
+DARWIN=
+test "$nxconf_cv_darwin" = yes && DARWIN=yes])
+nxconf_DARWIN
+
+dnl Check to see if we're running under Solaris.
+
+AC_DEFUN(nxconf_SUN,
+[AC_CACHE_CHECK(for SunOS environment, nxconf_cv_sun,
+[AC_TRY_COMPILE(,[return __sun;],
+nxconf_cv_sun=yes, nxconf_cv_sun=no)
+rm -f conftest*])
+SUN=
+test "$nxconf_cv_sun" = yes && SUN=yes])
+nxconf_SUN
+
+dnl Check whether --with-version was given.
+
+AC_SUBST(LIBVERSION)
+AC_SUBST(VERSION)
+if test "${with_version}" = yes; then
+  VERSION=${ac_option}
+else
+  VERSION=`cat VERSION`
+fi
+echo -e "compiling version ${VERSION}"
+
+LIBVERSION=`echo ${VERSION} | cut -d '.' -f 1`
+
+CXXFLAGS="$CXXFLAGS -DVERSION=\\\"${VERSION}\\\""
+CPPFLAGS="$CPPFLAGS -DVERSION=\\\"${VERSION}\\\""
+
+dnl Check whether --with-symbols or --without-symbols was
+dnl given and set the required optimization level.
+
+if test "${with_symbols}" = yes; then
+  echo -e "enabling production of debug symbols"
+  CXXFLAGS="-g $CXXFLAGS"
+  CPPFLAGS="-g $CPPFLAGS"
+else
+  echo -e "disabling production of debug symbols"
+fi
+
+dnl Check whether --with-info or --without-info was given.
+
+if test "${with_info}" = yes; then
+  echo -e "enabling info output in the log file"
+  CXXFLAGS="$CXXFLAGS -DINFO"
+  CPPFLAGS="$CPPFLAGS -DINFO"
+else
+  echo -e "disabling info output in the log file"
+fi
+
+dnl Check whether --with-valgrind or --without-valgrind was given.
+
+if test "${with_valgrind}" = yes; then
+  echo -e "enabling valgrind memory checker workarounds"
+  CXXFLAGS="$CXXFLAGS -DVALGRIND"
+  CPPFLAGS="$CPPFLAGS -DVALGRIND"
+else
+  echo -e "disabling valgrind memory checker workarounds"
+fi
+
+dnl Cygwin requires that the stdc++ library is linked explicitly.
+dnl GCC 3.3.x requires also the z, png and jpeg libraries. This is
+dnl not true anymore since GCC 3.4.x.
+
+if test "$CYGWIN32" = yes; then
+    LIBS="$LIBS -L../nxcomp -lXcomp -lstdc++ -Wl,-e,_mainCRTStartup -ljpeg -lpng -lz"
+else
+    LIBS="$LIBS -L../nxcomp -lXcomp"
+fi
+
+dnl Find makedepend somewhere.
+
+AC_SUBST(MAKEDEPEND)
+
+if test -x "../nx-X11/config/makedepend/makedepend" ; then
+  MAKEDEPEND=../nx-X11/config/makedepend/makedepend
+else
+  if test -x "/usr/X11R6/bin/makedepend" ; then
+    MAKEDEPEND=/usr/X11R6/bin/makedepend
+  else
+    if test -x "/usr/openwin/bin/makedepend" ; then
+      MAKEDEPEND=/usr/openwin/bin/makedepend
+    else
+      MAKEDEPEND=makedepend
+    fi
+  fi
+fi
+
+AC_OUTPUT(Makefile)
