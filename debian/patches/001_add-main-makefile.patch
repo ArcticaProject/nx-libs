@@ -1,0 +1,36 @@
+Add main Makefile to build all NX subprojects in this source tree.--- /dev/null
++++ b/Makefile
+@@ -0,0 +1,33 @@
++#!/usr/bin/make -f
++
++all: build
++
++build: build-arch build-indep
++
++clean:
++	cd nx-X11 && test -f Makefile && make $@ || true
++	cd nxcomp && test -f Makefile && make $@ || true
++	cd nxcompext && test -f Makefile && make $@ || true
++	cd nxcompshad && test -f Makefile && make $@ || true
++	cd nxproxy && test -f Makefile && make $@ || true
++
++
++distclean:
++	cd nx-X11 && test -f Makefile && make clean || true
++	cd nxcomp && test -f Makefile && make $@ || true
++	cd nxcompext && test -f Makefile && make $@ || true
++	cd nxcompshad && test -f Makefile && make $@ || true
++	cd nxproxy && test -f Makefile && make $@ || true
++
++build-arch:
++	cd nxcomp && autoconf
++	cd nxcompext && autoconf
++	cd nxcompshad && autoconf
++	cd nx-X11 && make World
++	cd nxproxy &&  autoconf
++
++build-indep:
++
++install:
++
++uninstall:

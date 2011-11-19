@@ -9,16 +9,22 @@ else
 endif
 
 %:
-	LD_LIBRARY_PATH=`pwd`/debian/libnx-x11/usr/lib/nx/X11:$$LD_LIBRARY_PATH dh $@
+	LD_LIBRARY_PATH=`pwd`/debian/libnx-x11/usr/lib/nx/X11:$$LD_LIBRARY_PATH dh $@ --with quilt
 
 override_dh_auto_clean:
 	rm -Rf nx-X11/.build-exports
-	LD_LIBRARY_PATH=`pwd`/debian/libnx-x11/usr/lib/nx/X11:$$LD_LIBRARY_PATH dh_auto_clean
+	LD_LIBRARY_PATH=`pwd`/debian/libnx-x11/usr/lib/nx/X11:$$LD_LIBRARY_PATH dh_auto_clean --with quilt
 
 override_dh_auto_build:
 	debian/pre-build-nx.sh
-	LD_LIBRARY_PATH=`pwd`/debian/libnx-x11/usr/lib/nx/X11:$$LD_LIBRARY_PATH dh_auto_build
+	LD_LIBRARY_PATH=`pwd`/debian/libnx-x11/usr/lib/nx/X11:$$LD_LIBRARY_PATH dh_auto_build --with quilt
 	debian/post-build-nx.sh
 
 override_dh_auto_install:
 
+override_dh_quilt_patch:
+	dh_quilt_patch
+	chown a+x Makefile
+
+override_dh_quilt_unpatch:
+	dh_quilt_unpatch

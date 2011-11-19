@@ -3,5 +3,6 @@ nx-libs (2:3.5.0-0~x2go1) UNRELEASED; urgency=low
   * Initial release.
   * Use NX adapted LD_LIBRARY_PATH in debian/rules.
   * Add quilt as build dependency.
+  * Add main Makefile via patch: 001_add-main-makefile.patch.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 14 Oct 2011 03:01:39 +0200
