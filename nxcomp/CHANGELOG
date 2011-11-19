@@ -1,0 +1,3778 @@
+ChangeLog:
+
+nxcomp-3.5.0-2
+
+- Fixed TR11H02398. Solved a race condition when creating channels.
+
+nxcomp-3.5.0-1
+
+- Opened the 3.5.0 branch based on nxcomp-3.4.0-7.
+
+- Updated copyright to year 2011.
+
+nxcomp-3.4.0-7
+
+- Fixed TR03H02334. Modified the UNIX domain socket checks on MacOSX
+  to be compliant with the standard introduced in OSX 10.6.3.
+
+nxcomp-3.4.0-6
+
+- Solved compilation problems on Solaris.
+
+nxcomp-3.4.0-5
+
+- Solved compilation problems on GCC 4.4.
+
+nxcomp-3.4.0-4
+
+- Added reference to fixed TR02H02325.
+
+nxcomp-3.4.0-3
+
+- Updated copyright to year 2010.
+
+nxcomp-3.4.0-2
+
+- Fixed TR03G02204. Changed the parsing of X authority entries in
+  order to handle the case where the hostname includes white spaces.
+
+- Fixed TR02H02325. Bug in PNG decompression on 16bpp displays.
+
+nxcomp-3.4.0-1
+
+- Opened the 3.4.0 branch based on nxcomp-3.3.0-4.
+
+- Changed version number.
+
+- Updated copyright to year 2009.
+
+nxcomp-3.3.0-4
+
+- Check if the variable storing the ping time exceeded the maximum
+  integer value.
+
+- Recover incorrect sequence number when the proxy is not connected
+  to an agent.
+
+nxcomp-3.3.0-3
+
+- Removed a condition in ClientChannel that caused a loss in event
+  sequence numbers.
+
+nxcomp-3.3.0-2
+
+- Updated VERSION.
+
+nxcomp-3.3.0-1
+
+- Opened the 3.3.0 branch based on nxcomp-3.2.0-7.
+
+nxcomp-3.2.0-7
+
+- Solved a compilation problem on GCC 4.3.
+
+nxcomp-3.2.0-6
+
+- Changes considering that unsetenv() returns void on Mac OS X.
+
+nxcomp-3.2.0-5
+
+- Fixed TR03F02024. Assume the launchd unix socket as X socket.
+
+- Changed the authorization cookie retrieval when using the launchd
+  socket on MacOSX, in order to wait for the X server start.
+
+nxcomp-3.2.0-4
+
+- Fixed TR03F02026. Unset environment variable LD_LIBRARY_PATH before
+  calling the exec function running nxclient.
+
+nxcomp-3.2.0-3
+
+- Fix addMsTimestamp() and subMsTimestamp(). Remove the check for
+  a valid input in diffTimestamp() and diffUsTimestamp().
+
+nxcomp-3.2.0-2
+
+- Fixed TR12E01973. Now the correct number of bits are used for the
+  number of points in a X_FillPoly request.
+
+nxcomp-3.2.0-1
+
+- Opened the 3.2.0 branch based on nxcomp-3.1.0-6.
+
+nxcomp-3.1.0-6
+
+- Always use a timeout of 50 ms to update the congestion counter.
+
+nxcomp-3.1.0-5
+
+- Solve the possible deadlock caused by both proxies running out of
+  tokens at the same time.
+
+- In ServerProxy::handleCheckDrop() copy the list since the function
+  can delete the elements.
+
+nxcomp-3.1.0-4
+
+- Classes ProxyReadBuffer and ServerReadBuffer returned an invalid
+  number of characters to read in the case of a readable() failure.
+
+- Connections to proxy versions newer than 3.0.0 were not accepted.
+
+- Reading options from file could fail if options contained spaces
+  or other characters interrupting the fscanf()'s matching of input.
+
+- The proxy link could not be flushed if a ping request was replied
+  after the end of the read loop.
+
+nxcomp-3.1.0-3
+
+- Fixed a compilation warning on GCC 2.95.
+  
+nxcomp-3.1.0-2
+
+- Solved TR09E01852. Modified the encoding of the number of rects
+  in the XSetClipRectangles request.
+  
+nxcomp-3.1.0-1
+
+- Opened the 3.1.0 branch based on nxcomp-3.0.0-46.
+
+nxcomp-3.0.0-46
+
+- Fixed TR09E01865 and TR08E01831. Assume the old behavior of compr-
+  essing the CUPS, SMB, HTTP and Font channels when connected to an
+  old proxy version.
+
+nxcomp-3.0.0-45
+
+- Retry the fork() 30 times, but only on Cygwin (Sob!).
+
+nxcomp-3.0.0-44
+
+- In the case of an error, try again to fork() after a second, for
+  a maximum of 5 times. This seems to constitute a valid workaround
+  to the intermittent fork() failures observed on Windows.
+  
+- Fixed NXTransDestroy() to show the 'broken connection' dialog in
+  the case of a link failure on the client.
+
+- Handled the 'terminating' and 'terminated' messages as new proxy
+  stages.
+
+- Force all the directories and files created by the library to be
+  readable only by the user.
+
+- Don't complain if the shared memory segment can't be initialized
+  on Windows.
+
+nxcomp-3.0.0-43
+
+- Prevent the reallocation of the read buffer in the proxy and the
+  agent transport if the buffer was borrowed by an upper layer.
+
+- Let the house-keeping process remove the cache directories that
+  are empty and have not be used since more than 30 days.
+
+- Added the missing destruction of the ZLIB stream used for image
+  decompression at proxy shutdown.
+
+nxcomp-3.0.0-42
+
+- In handleFastWriteReply(), moved the initialization of the 'next'
+  pointer inside the '#ifndef __sun' block. This should fix the re-
+  maining encoding problems on SPARCs.
+
+nxcomp-3.0.0-41
+
+- VMWare virtual machines can have the system timer deadly broken.
+  In the case of timeout, try to send a ping regardless we are the
+  client or the server proxy to force a write by the remote.
+
+- Removed the messages 'Info: Using image cache parameters...' and
+  'Info: Using image streaming parameters...' from the session log
+  if the image cache is not enabled.
+
+nxcomp-3.0.0-40
+
+- Removed the messages 'Info: Shutting down the NX transport' and
+  'Info: End of NX transport requested by...' at the session tear
+  down.
+
+- Removed the remaining log output.
+
+nxcomp-3.0.0-39
+
+- Don't reset the timer on proxy shutdown.
+
+nxcomp-3.0.0-38
+
+- Don't reinstall the signal handler if the signal was enabled and
+  the NXTransSignal() action is NX_SIGNAL_FORWARD.
+
+nxcomp-3.0.0-37
+
+- Return a congestion level 9 if the agent channel is in congestion
+  state.
+
+- Set the idle timeout (used to update the congestion state) based
+  on the link type. The timeout is 0 ms with link LAN and 50 ms in
+  the case of MODEM, with the other values in the between.
+
+nxcomp-3.0.0-36
+
+- Changed the encoding of the RenderCompositeGlyphs requests. Use
+  a separate cache for X and Y. Send a single bit for offset X and
+  offset Y if they match the source coordinates.
+
+- Always use the memcpy() in the handleFastWrite*() on Sun, as the
+  alternative code doesn't work on SPARC if the buffer is not word
+  aligned.
+
+nxcomp-3.0.0-35
+
+- Ensure a smooth transition between different congestion states.
+  If the current congestion counter is greater than the previous,
+  ramp up the value quickly by taking the current counter. If the
+  new congestion counter is less than the previous, ramp down the
+  reported value slowly by calculating the average of the last 8
+  updates. Reset the congestion counter to 0 if no token reply is
+  pending and the proxy is idle until a timeout.
+
+nxcomp-3.0.0-34
+
+- Calculate the current congestion as the average of the last 3
+  frames sent.
+
+nxcomp-3.0.0-33
+
+- When sending a X_RenderCompositeGlyph update, send a single bit
+  if the source X and Y match the values in cache.
+
+- Save the check on the bytes readable from the proxy descriptor
+  after the select.
+
+nxcomp-3.0.0-32
+
+- Send the X_GetImage replies uncompressed to better leverage the
+  stream compression.
+
+- Before entering in congestion state, force a read to see whether
+  the remote proxy aborted the connection.
+
+nxcomp-3.0.0-31
+
+- Try to avoid using memcpy() in the channels' handleFastWrite*().
+
+- Changed the copyright notices at the beginning of the files that
+  were referring to NXPROXY to refer to NXCOMP.
+
+nxcomp-3.0.0-30
+
+- Set the agent and proxy descriptors as ready, when appropriate,
+  also in the case of an interrupt.
+
+nxcomp-3.0.0-29
+
+- On the X server side, read more events from the X server just be-
+  fore and just after having written some data. On the X client si-
+  de, apply the same to the proxy link.
+
+- X11 channels originate a congestion control code as soon as the-
+  re is some data left from the previous write.
+
+nxcomp-3.0.0-28
+
+- Displaced automatically the "channel unresponsive" and "no data
+  received from remote" dialogs if the error condition is ceased.
+
+- Rewritten the channel drain procedure.
+
+- Tried a different approach to the channel congestion handling.
+  The X11 channels are not drained after a blocking write but only
+  if a further write is requested and the channel is still in con-
+  gestion state. Benchmarks show that this is still sub-optimal,
+  compared to sending the congestion code immediately also for X11
+  channels. See the next version.
+
+nxcomp-3.0.0-27
+
+- Ignored the agent option 'defer'.
+
+- Dropped support for the 1.4.0 versions.
+
+- More fixes to support the 1.5.0.
+
+nxcomp-3.0.0-26
+
+- The channel read buffer can inherit the data to be encoded from
+  the caller, instead of taking it from the transport. This is le-
+  veraged by the agent channel to save the copy.
+
+- Ignored the agent option 'clients'.
+
+- Removed the deprecated code checking the CPU limits.
+
+- Removed the counters that were duplicated in the Statistics and
+  the Control classes.
+
+nxcomp-3.0.0-25
+
+- Improved the effectiveness of the caching of the RenderComposite-
+  Glyphs by using a differential encoding for the length, delta x
+  and delta y of the first string.
+
+- Better handle the compatibility between different formats of the
+  cache files.
+
+nxcomp-3.0.0-24
+
+- Fixed the compatibility problem with the 1.5.0 versions.
+
+- Removed the constants NXDisplayReadable, NXDisplayFlushable and
+  NXDisplayCongestion. Now nxcompext has three distinct functions.
+
+nxcomp-3.0.0-23
+
+- Removed support for Rdp, Tight and Hextile packed images decod-
+  ing since they have been made obsolete by the new NX server.
+
+- Use the value 0 for the action is_hit and 1 for is_added. This
+  increases the frequency of zeroes in the encode buffer, giving
+  better compression.
+
+- Changed the copyright attribution from Medialogic to NoMachine.
+
+nxcomp-3.0.0-22
+
+- Implemented an alternate encoding reducing the size of the int
+  caches to 16 elements and transmitting the values in blocks of
+  4 bits. Although this encoding reduces the effectiveness of
+  the differential compression, it allows better compression of
+  the final stream, resulting in a 10% to 20% gain in all condi-
+  tions. The new encoding is experimental, as it would make the
+  3.0.0 incompatible with all the previous NX versions. Use this
+  package as a reference for future implementations.
+
+nxcomp-3.0.0-21
+
+- Encode the first two coordinates of a FillPoly message by using
+  a differential encoding, thus the origin of the polygon is not
+  included in the checksum. This is aimed to work in combination
+  with the agent converting all the FillPoly requests to the rela-
+  tive coordinate mode.
+
+- Add the coordinate mode to the checksum of the PolyPoint and Po-
+  lyLine messages so that it doesn't need to be encoded separately.
+
+- Disable the streaming for all messages. This saves the encoding
+  of a boolean for each message that could potentially be streamed.
+
+- Don't try to match the block size when encoding a value based on
+  an IntCache. This saves the additional bool in 90% of the cases.
+ 
+- Removed support for the former RDP and RFB session types. 
+
+- Due to the above changes, this version is incompatible with the
+  previous 3.0.0 releases.
+
+nxcomp-3.0.0-20
+
+- Added support for the 'lossy', 'lossless' and 'adaptive' pack me-
+  thod literals. These values activate the dynamic selection of the
+  pack method by the agent.
+
+- Made the 'adaptive' pack method the default for all link types.
+
+- The default stream compression level is now 6 for link type ISDN,
+  4 for ADSL and 1 for WAN. The default data compression level is
+  always 1, except for LAN that is 0.
+
+nxcomp-3.0.0-19
+
+- Print in the session log the X11 display that the proxy is imper-
+  sonating or where it is forwarding the connections.
+
+nxcomp-3.0.0-18
+
+- Implemented decoding of the PACK_BITMAP_16M_COLORS pack method.
+  This is a very simple encoder removing the 4th byte in 32 bits-
+  per-plane images. This encoder is intended to better leverage
+  the stream compression on low bandwidth links.
+
+- Removed the code cleaning the padding bytes in RenderAddGlyphs
+  and RenderCompositeGlyphs as the operation is now performed in
+  Xrender.
+
+- Removed the "Info: Synchronizing local and remote caches." and
+  "Info: Using remote server '...'." lines from the session log.
+
+nxcomp-3.0.0-17
+
+- Determine the CPU endianess at compile time only on Linux and
+  Cygwin.
+
+nxcomp-3.0.0-16
+
+- Optimized the memory allocation of the ReadBuffer classes. The
+  buffers from the Transport classes are used, when possible, to
+  avoid the copy.
+
+nxcomp-3.0.0-15
+
+- Reworked the code dealing with the channel congestion control
+  messages for increased efficiency.
+
+- Removed the pending_ flag from the proxy and channel class mem-
+  bers. If needed, the classes will query the transport buffers
+  to see whether there is data pending.
+
+- Removed the additional parameter from NXTransFlush().
+
+- The proxy doesn't issue anymore a sync control message on a X
+  reply. Anyway it will respond to the request for compatibility
+  with older versions.
+
+- Removed the dynamic selection of the encoding method for the
+  X_QueryColors request and X_ListFonts, X_QueryColors, X_Query-
+  Font replies. Now all of them use the differential encoding to
+  better leverage the stream compression.
+
+- Fixed to build on SUNs where we don't have endian.h.
+
+nxcomp-3.0.0-14
+
+- When handling partial proxy messages, don't try to determine how
+  many bytes still need to be read if the ZLIB stream compression
+  is enabled.
+
+- If a message can't be located, the ReadBuffer class checks if it
+  is possible to consume the data already in the transport buffer.
+
+- Optimize the MD5 routines by determining the CPU endianess at
+  compile time.
+
+- Force Drawable and GContext to be CARD32 in NXproto.h.
+  
+nxcomp-3.0.0-13
+
+- Changed the semantic of the NXDisplayFlushHandler callback. The
+  function is called when new data is sent to the remote proxy or,
+  with a 0 length, upon receiving a new token reply, so that the
+  agent can update its congestion state.
+
+- Added the NXTransCongestion() function. It returns a value bet-
+  ween 0 and 9 indicating the congestion level based on the tokens
+  remaining. A value of 9 means that the link is congested and no
+  further data can be sent.
+
+- Removed the congestion and synchronization callbacks. They are
+  superseded by the new NXTransCongestion() implementation.
+
+nxcomp-3.0.0-12
+
+- Send the token replies at the end of the encode loop instead of
+  flushing the buffer immediately.
+
+- Fixed TR05E01687. Correctly detect CTRL-ALT-SHIFT-ESC keystrokes.
+
+- Renamed the option 'block' as 'tile'.
+
+- Ignored the option 'menu', targeting the X11 agent.
+
+nxcomp-3.0.0-11
+
+- Removed the 'interactive' attribute from generic channels. We now
+  use the 'prioritized' attribute which yields the same result.
+
+- Simplified the channels' read loop by always reading only once.
+
+- The channels flush the link as soon as the token is exceeded even
+  if the flush policy is set to deferred.
+
+- Reserved more cache memory for the images when running a shadow
+  session.
+
+nxcomp-3.0.0-10
+
+- Added the NXDisplayWriteHandler callback definition.
+
+- Removed the code that forced the proxy to retain in the cache the
+  images referenced at session startup.
+
+- Disabled the persistent image cache since this is not supported
+  by the current agent. This will save the overhead caused by the
+  image house-keeping process.
+
+nxcomp-3.0.0-9
+
+- Fixed a cast problem in GetBytesReadable().
+
+nxcomp-3.0.0-8
+
+- Added the NXTransTime() utility. It return the time in milliseconds
+  elapsed since the last call to the same function. Useful for bench-
+  marking the Xlib layer.
+
+- Ignored the option 'block' targeting the X11 agent.
+
+nxcomp-3.0.0-7
+
+- Ignored the options 'shadow', 'shadowmode' targeting the X11 agent.
+
+- Added the session type 'shadow'.
+
+nxcomp-3.0.0-6
+
+- Fixed TR08D01484. Fixed a bug in the cleanup of the RenderAddGlyphs
+  messages. We clean up only the glyphs with depth 8, width greater
+  than 1 and pixmap byte pad 4.
+
+- Added file COPYING.
+
+nxcomp-3.0.0-5
+
+- Updated the copyright notices to the current year.
+
+nxcomp-3.0.0-4
+
+- Imported changes up to nxcomp-2.1.0-6.
+
+- Fixed TR12D01563. Changed the configure script to always build the
+  library with the -fPIC option. This is related to the way SELinux
+  works.
+
+- Fixed the dependency from local endianess for 16-bit color RDP un-
+  packing functions. This caused wrong colors to be displayed when the
+  proxy and the X server were running on two separate machines having 
+  different endianess.
+
+- Fixed TR10D01523. The Channel::handleDrain() method now accounts
+  for the fact that agent connections can't be drained.
+
+- Changed the Tight and Hextile decoding functions to use the X ser-
+  ver's byte order.
+
+nxcomp-3.0.0-3
+
+- Changed the main loop to handle the 3.0.0 version.
+
+nxcomp-3.0.0-2
+
+- Updated the file VERSION.
+
+nxcomp-3.0.0-1
+
+- Opened the 3.0.0 branch based on nxcomp-2.0.0-81.
+
+nxcomp-2.0.0-81
+
+- Fixed the dependency from local endianess for JPEG and PNG decomp-
+  ression functions. This caused wrong colors to be displayed when
+  the proxy and the X server were running on two separate machines
+  having different endianess.
+
+- Fixed the number of entries in the handleColormap() function.
+
+nxcomp-2.0.0-80
+
+- Fixed TR06D01404. Removed the warning issued when calling the
+  AgentTransport::drain() method.
+
+nxcomp-2.0.0-79
+
+- Updated copyright to year 2006.
+
+nxcomp-2.0.0-78
+
+- Fixed a bug in the cleanup of the RenderAddGlyphs messages.
+
+- Minor improvements to the encoding of the RenderCompositeGlyphs
+  and RenderComposite requests.
+
+- Added 'client' to the list of the ignored options.
+
+nxcomp-2.0.0-77
+
+- Added cleanup of the padding bytes in the RenderCompositeGlyphs
+  and RenderAddGlyphs requests.
+
+nxcomp-2.0.0-76
+
+- Before adding the frame's bytes to the tokens, the frame length
+  is normalized based on the stream compression ratio of the last
+  frame sent. This avoids entering the drain loop too early when
+  the data is highly compressible. 
+
+- Moved the render messages' private data in a union to reduce the
+  footprint of the render store.
+
+nxcomp-2.0.0-75
+
+- The action performed on the remote message store and the affected
+  position are encoded as a single value. This saves approximately
+  1 bit per each message.
+
+- Created more Compat classes to handle the backward compatibility
+  with the 1.4.0 and 1.5.0 versions.
+
+nxcomp-2.0.0-74
+
+- Added support for the RLE pack method and made it the default if
+  the selected link type is LAN.
+
+- Removed the legacy support for the 'render' option provided at X
+  server side.
+
+- When defining LAME in ClientChannel.h, the channel has the chance
+  of suppressing more opcodes by the handleTaintLameRequest() call.
+  This is for test purposes.
+
+nxcomp-2.0.0-73
+
+- The X_NXSetUnpackColormap and X_NXSetUnpackAlpha now carry their
+  data in compressed form. The alpha data is compressed using the
+  ZLIB RLE encoding, while the colormap data is compressed using
+  the default ZLIB deflate.
+
+- Thanks to the above changes, ZLIB data compression of all messa-
+  ges which do not have a specific encoding is turned off, so that
+  we can make better use of the final stream compression.
+
+- Created new message structures to handle the compatibility with
+  the old proxy versions. When connected to an old proxy version
+  the agent should use the NXSetUnpackColormapCompat() and NXSet-
+  UnpackAlpha() interfaces.
+
+nxcomp-2.0.0-72
+
+- Solved a compatibility problem with the 1.X.X versions due to the
+  new render encodings.
+
+nxcomp-2.0.0-71
+
+- Improvements to X_RenderSetPictureClipRectangles.
+
+- Fixed handleUnpack() to pass the correct byte order parameter to
+  to the unpack alpha function.
+
+- Added the --parent parameter to the client even in pulldown mode.
+
+- Fixed a deallocation bug in StaticCompressor.
+
+nxcomp-2.0.0-70
+
+- Added compression of X_RenderSetPictureFilter, X_RenderSetPicture-
+  Transform, X_RenderTrapezoids and X_RenderTriangles.
+
+nxcomp-2.0.0-69
+
+- Changed the format of the persistent cache to accomodate the new
+  encoding of the render opcodes. Caches from the 1.4.0 and 1.5.0
+  should be still loaded and saved correctly when connected to and
+  old version of the library.
+
+- Improved the encoding of the X_CreatePixmap, X_ChangeGC, X_Render-
+  CompositeGlyphs, X_RenderComposite, X_RenderCreateGlyphSet, X_Rend-
+  erFreePicture and X_RenderCreatePicture messages. Added new classes
+  to handle the backward compatibility.
+
+- Made the static compression and decompression code reside in the
+  same class.
+
+nxcomp-2.0.0-68
+
+- Improved the encoding of the X_RenderCreateGlyphSet and X_Render-
+  FreeGlyphSet requests.
+
+nxcomp-2.0.0-67
+
+- Modified the following session messages:
+
+  From: "Session: Session starting at..."
+  To:   "Session: Starting session at..."
+
+  From: "Session: Session terminating at..."
+  To:   "Session: Terminating session at..."
+
+- Improved the encoding of the requests creating or freeing an XID.
+  This affects X_CreateGC, X_CreateWindow, X_CreatePixmap, X_Render-
+  CreatePicture, X_FreeGC, X_DestroyWindow, X_FreePixmap, X_Render-
+  FreePicture.
+
+- Added 'streaming' and 'backingstore' to the list of options used
+  by agents.
+
+- Modified the info messages to print the ZLIB compression paramet-
+  ers to be more compact and only use two lines.
+
+nxcomp-2.0.0-66
+
+- When part of an agent, the proxy will wait for the NXTransDestroy()
+  function to initiate the shutdown.
+
+nxcomp-2.0.0-65
+
+- Starting from this version the NX client can control the behaviour
+  of the client proxy by monitoring the messages marked as "Session".
+
+  At the early initialization the proxy will print:
+
+  "Session: Session starting at '...'.
+
+  The ellipsis here represent the current timestamp, as reported by
+  the POSIX function ctime():
+
+  Once the session is running, the proxy will print:
+
+  "Session: Session started at '...'.
+
+  At the time the session is being shut down, the proxy will print:
+
+  "Session: Session terminating at '...'.
+
+  Followed by:
+
+  Session: Session terminated at '...'.
+
+  The message "Info: Starting X protocol compression." is removed,
+  replaced by the message 'Session started at...' with the same
+  meaning. 
+
+  Once the message 'Session: Session terminated at..." is read from
+  the output, the client can optionally wait for the proxy process
+  to complete and terminate with an exit code 0.
+
+- The "Session" messages are not printed when the proxy is running
+  on the NX server side, as part of an agent.
+
+nxcomp-2.0.0-64
+
+- Reduced the default token limit from 32 to 24. The synchronizat-
+  ion callback is triggered by the tokens going below half the li-
+  mit.
+
+nxcomp-2.0.0-63
+
+- Added -I/usr/include/c++ to makedepend.
+
+nxcomp-2.0.0-62
+
+- The house-keeping process is now started upon the initialization,
+  if the memory cache is enabled, and, on the X server side, when
+  the remote actually requested access to the image cache.
+
+nxcomp-2.0.0-61
+
+- Added a NX_HANDLER_SYNCHRONIZATION callback to NXTransHandler().
+  The handler is called when the agent can use the available band-
+  width to synchronize X objects that are corrupted or incomplete.
+
+  The reason can be:
+
+  NX_SYNCHRONIZATION_BEGIN:   The synchronizationis is allowed.
+
+  NX_SYNCHRONIZATION_END:     The synchronizationis must stop.
+
+  The reason can be determined by agents by using the NXBeginSynch-
+  ronization and NXEndSynchronization values defined in NXvars.h.
+
+- Bytes from 14 to 24 in the X_NXGetControlParameters reply report,
+  respectively, the frame timeout, the ping timeout, the preferred
+  image split mode and the split size threshold.
+
+nxcomp-2.0.0-60
+
+- The following messages used by the NX client and server have been
+  changed. The NX client and server should be modified accordingly.
+
+  From: "Info: Shutting down the link and exiting."
+  To:   "Info: Shutting down the NX transport."
+
+  From: "Info: End of session requested by remote proxy."
+  To:   "Info: End of NX transport requested by remote"
+
+  From: "Info: End of session requested by agent termination."
+  To:   "Info: End of NX transport requested by agent."
+
+  From: "Info: End of session requested by signal '...'."
+  To:   "Info: End of NX transport requested by signal '...'."
+
+  From: "Info: Shutting down the link and exiting."
+  To:   "Info: Shutting down the NX transport."
+
+  From: "Info: Waiting for cleanup timeout to complete."
+  To:   "Info: Waiting the cleanup timeout to complete."
+
+  From: "Info: Waiting for watchdog process to complete."
+  To:   "Info: Waiting the watchdog process to complete."
+
+nxcomp-2.0.0-59
+
+- Added more debug information regarding the timing of packets sent
+  and received.
+
+- Added the possibility to redirect the log output to a file that can
+  be later shared with nxssh running in "binder" mode. This is useful
+  when testing the forwarding of the SSHD connection by nxssh to the
+  agent. Activated by defining BINDER in Loop.cpp.
+
+nxcomp-2.0.0-58
+
+- Fixed the unpack alpha procedure to only rely on the image's byte
+  order.
+
+- Solved the X_PutImage encoding problem introduced in the 2.0.0-56
+  version and restored the compatibility with the 1.5.0 version.
+
+nxcomp-2.0.0-57
+
+- Added a NXTransFile() function. It returns the name of the files
+  used by the proxy for the current session.
+
+  The type parameter can be:
+
+  NX_FILE_SESSION:  Usually the file 'session' in the user's session
+                    directory.
+
+  NX_FILE_ERRORS:   The file used for the diagnostic output. Usually
+                    the file 'errors' in the session directory.
+
+  NX_FILE_OPTIONS:  The file containing the NX options, if any.
+ 
+  NX_FILE_STATS:    The file used for the statistics output.
+
+  The returned string is allocated in static memory. The caller must
+  copy the string upon returning from the function, without freeing
+  the pointer.
+
+- Fixed the PANIC in the handling of the abort split messages.
+
+- The encode and decode routines may write one byte past the nominal
+  end of the encode buffer. This additional byte is now included in
+  the payload. This is actually a bug, but harmless.
+
+nxcomp-2.0.0-56
+
+- Added the X_NXAbortSplit request. It can be used to interrupt the
+  streaming of all the messages currently in the split store for
+  the specified resource. Depending if the split store did or did
+  not contain split messages, the client will receive an immediate
+  end-split or no-split notification.
+
+- Removed the split modes NXSplitModeEager and NXSplitModeLazy. The
+  available modes are now NXSplitModeSync and NXSplitModeAsync. The
+  mode NXSplitModeAsync replaces the two old modes and is now the
+  default. Similarly to NXSplitModeEager, it makes the proxy split
+  only messages that exceed a size threshold, but the threshold is
+  generally smaller than in the previous versions.
+
+  #define NXSplitModeDefault  0
+  #define NXSplitModeAsync    1
+  #define NXSplitModeSync     2
+
+- Renamed X_NXSplit to X_NXSplitData, X_NXAbortSplit to X_NXSplitEv-
+  ent.
+
+- The proxy now enters a drain loop, when in congestion state, and
+  waits until the decongestion. Also the X channels are drained if
+  blocked.
+
+- The select is restarted immediately if only the proxy is selected
+  and the data read doesn't make a complete message.
+
+- The size of the shared memory segment used by the X server proxy
+  is now negotiated at startup and the selected value is printed in
+  the session log.
+
+- Added the option 'encrypted'. It tells the local proxy if it is
+  running as part of a program providing encryption of the point to
+  point communication. This is useful to determine if the proxy can
+  block waiting for data or needs to yield to the client to let it
+  handle the remote connection.
+
+nxcomp-2.0.0-55
+
+- Fixed handleRestart() to correctly send the end-split event only
+  after the split sequence has been closed by the client.
+
+- Fixed a possible memory error in the Keeper class occurring if the
+  image caches were erased while in the middle of a loop.
+
+nxcomp-2.0.0-54
+
+- Added a '--parent' option when running the client in dialog mode.
+  This is the process id that needs to be signaled in the case the
+  user chooses to do so.
+
+nxcomp-2.0.0-53
+
+- Solved a bug in the abort split procedure. The procedure assumed
+  that the split had to be at the head of the list. This may not be
+  the case if the split was loaded from disk asynchronously, after
+  a different split with the same checksum was recomposed.
+
+- By defining STRICT in Loop.cpp, the number of available tokens is
+  set to 1. This can be used to trigger the congestion more often
+  than it would possible when testing the software with the default
+  settings.
+
+- Added more debug output to the procedures handling the streaming
+  of the images.
+
+- Reset the channel's split pending and congestion flags in the fin-
+  ish procedure. Not doing so caused some additional loops at chan-
+  nel shutdown.
+
+- Fixed a bug on Cygwin that prevented the log files to be succes-
+  sfully reopened when the size limit was exceeded.
+
+- Failures to write to the agent transport are reported sooner when
+  the channel is finished. This saves a few more loops at session
+  shutdown.
+
+nxcomp-2.0.0-52
+
+- Started implementing a new handler to let the agent include arbit-
+  rary data in the transport statistics. The parameter, in this case,
+  is a pointer to a pointer to a null terminated string. The pointer
+  is set at the time the handler is registered. The pointed string
+  will have to be filled by the agent with its statistics data. For
+  now, only the interfaces and the stubs exist.
+
+- Disabled the timestamp cache as it still causes rounding problems
+  when calculating the current bitrate.
+
+nxcomp-2.0.0-51
+
+- Removed SelectPackMethod(), not used anymore, from Pack.c.
+
+nxcomp-2.0.0-50
+
+- Added the X_NXFinishSplit request. It forces the proxy to comple-
+  tely transfer all the split messages for the given resource, and
+  then notify the agent.
+
+- Fixed the statistics to not account the split bits to the control
+  token.
+
+nxcomp-2.0.0-49
+
+- Fixed a bug that caused the split timeout to be reset even if a
+  different channel had splits to send.
+
+- Removed an error condition that arose when a split operation was
+  requested by a different channel than the first to connect. The
+  reason is that an auxiliary channel (like the one created by the
+  server to store the keyboard configuration) can be the first to
+  open a connection to the X server, then can come the agent, that
+  is actually using the NX opcodes. The proxy will now simply print
+  a debug message. 
+
+- Removed a further error condition that was assumed by the proxy
+  if a pending flush was detected while no channel was selected for
+  output. This can actually happen if the channel was dropped and,
+  in the meanwhile, the user requested the proxy statistics.
+
+nxcomp-2.0.0-48
+
+- Added a 'type' parameter to NXTransFlush(). The new NX_FLUSH_IDLE
+  type should be used by agents when they have finished handling all
+  their clients and are going to wait for more input. This is the
+  case, for example, of the X agent returning from WaitForSomething()
+  after having set a small timeout to find out if there are clients
+  ready, or the case of a RDP agent finding that there are no opcodes
+  to read from the RDP server. The 'idle' flush should be requested
+  also when the X11 agent is waiting for a split to complete. When
+  the flag is used, the proxy uses the available bandwidth to encode
+  more low-priority data, like the payload of images being streamed.
+
+nxcomp-2.0.0-47
+
+- Added a new RGB image encoder. For now the encoder uses a static
+  Z stream to compress the image data in the destination buffer and
+  allows the agent to use the simplest encoding by still separating
+  the alpha channel from the image data. The new encoder can be the
+  the base for implementing color reduction by dithering or a color-
+  mapped translation of the image similar to PNG, but without the
+  PNG overhead and with the colormap being sent to the client using
+  the NXSetUnpackColormap() opcode.
+
+- Put the routines implementing static deflating and inflating of
+  a ZLIB buffer from the Compressor and Decompressor classes to Z.h
+  and Z.cpp, so that they can be reused by the new RGB encoder.
+
+nxcomp-2.0.0-46
+
+- Fixed a segfault arising when trying to start a child without the
+  NX transport.
+
+nxcomp-2.0.0-45
+
+- Undefined the MATCH directive.
+
+nxcomp-2.0.0-44
+
+- Changed the encoding of the X_CreatePixmap, X_CreateGC, X_Render-
+  CreatePicture, X_CreateWindow, RenderCreateGlyphSet.cpp. The Xid
+  of the drawable is included in the checksum of the X_CreateGC and
+  X_CreatePixmap message. This leverages the way GC and Pixmaps are
+  allocated in the X agent to obtain better compression.
+
+- Removed the code handling the reset of the proxy connection. This
+  functionality was unused since when the persistence is handled by
+  the agent.
+
+- Added a specific section in the statistics output for the render
+  extension.
+
+nxcomp-2.0.0-43
+
+- Fixed a bug that could have caused the sending of multiple 'end
+  split' messages for the same split sequence.
+
+- Added handling of the option 'strict'.
+
+nxcomp-2.0.0-42
+
+- Added a missing channel switch directive when encoding abort split
+  messages at the server side. This could cause a decoding error on
+  the client.
+
+nxcomp-2.0.0-41
+
+- Ensured that the link is flushed immediately on the X server side
+  when important keyboard or mouse activity is detected in input.
+
+- Implemented a timestamp cache to avoid calling gettimeofday() when
+  it is enough to use the last timestamp gotten from the system. The
+  cache can be disabled by undefining CACHE_TIMESTAMP in Timestamp.h.
+
+nxcomp-2.0.0-40
+
+- Added the karma delay field to the X_NXGetControlParameters reply.
+
+- Solved a bug with the decoding of split messages likely to happen
+  only when using link type LAN.
+
+nxcomp-2.0.0-39
+
+- Implemented separate flow control for the generic channels and the
+  image streaming data.
+
+- Improved the split procedure to load a message from the disk cache
+  if found after it was originally discarded because locked.
+
+nxcomp-2.0.0-38
+
+- Renamed the 'shmem' option as 'shseg'. The 'shmem' option becomes
+  specific to the agent and will be used together with 'shpix' option
+  to indicate if, respectively, the shared memory extension and the
+  use of the shared pixmaps must be enabled in the agent server. The
+  new option will be instead used by the proxy to determine the size
+  of the memory segment shared between the proxy and the X server.
+
+- Added the 'shmem', 'shpix', 'keyboard' and 'clipboard' to the list
+  of ignored options. The 'keyboard' option should become a synonym
+  of 'kbtype'. The 'clipboard' option will tell the NX agent if the
+  clipboard support should be disabled for security reasons.
+
+nxcomp-2.0.0-37
+
+- Ensured that, when running a raw session, the persistent cache is
+  loaded and saved only once in the session lifetime.
+
+- Added the 'product' keyword to the list of recognized options. The
+  option is ignored by the proxy, but can be used by the client or
+  server to facilitate the support.
+
+nxcomp-2.0.0-36
+
+- Added the remote version number in the X_NXGetControlParameters
+  reply.
+
+- Solved a bug related to the removal of the split stores.
+
+- Removed the unused code dealing with the flush timeouts.
+
+nxcomp-2.0.0-35
+
+- Added an alert to notify the user about the failure of the XDMCP
+  session.
+
+nxcomp-2.0.0-34
+
+- The active channels and the agent resources are now stored in a
+  list container.
+
+- Added the X_NXFreeSplit request. The request is currently unused
+  because the split store is freed automatically when it becomes
+  empty, but can be useful in future if we want to implement other
+  otpimizations.
+
+nxcomp-2.0.0-33
+
+- There is now a split store for each agent resource. This allows
+  the proxy to divide the bandwidth among the agent resources.
+
+- A simple round-robin load-balancing is implemented, dividing the
+  bandwidth equally among all the split stores.
+
+- If there is a previous request being streamed for the same res-
+  ource, cached messages are appended to the split store and then
+  committed in the original order. This makes possible to stream
+  the colormap and the alpha channel data even if the split invol-
+  ves multiple PutImage or PutPackedImage operations in a single
+  start-split/end-split sequence.
+
+- Implemented the commit store class. Made the commit store expand
+  the message in the final buffer, instead of leveraging the mes-
+  sage store.
+
+- Channels having a drop command pending are checked before trying
+  to load or save the cache. This prevents a potential problem with
+  the protocol violation error that could be reported by the client
+  side proxy.
+
+- The current bitrate is now calculated at the time the transport
+  actually writes the data to the network, not at the time the data
+  is appended to the transport by the upper layers. The reason is
+  that the data can be compressed by the stream compressor and so
+  we can calculate the real bitrate only after having flushed the
+  ZLIB stream. This fixes the wrong numbers that could be reported
+  by the statistics in the previous versions.
+
+nxcomp-2.0.0-32
+
+- More progress in the implementation of the new image streaming.
+  This version has been tested to work when connecting to an 1.5.0
+  server. Due to the significant changes in the way the streaming
+  works in the newer versions, split is never activated by a 2.0.0
+  server connecting to a 1.5.0 client.
+
+- Fixed the NXTransClose() function to check if the fd matches the
+  NX agent connection.
+
+- Fixed the includes in Socket.h to compile on Solaris and MacOSX.
+
+nxcomp-2.0.0-31
+
+- Changed the NX transport functions that didn't require a NX fd
+  parameter to include one. The value can be NX_FD_ANY to signify
+  any running NX transport.
+
+nxcomp-2.0.0-30
+
+- More progress in the new implementation of image streaming.
+
+- This version is apparently compatible with the 1.5.0 client but
+  needs further testing.
+
+nxcomp-2.0.0-29
+
+- Implemented the NXTransHandler() interface and made the proxy
+  use the callback, when it is installed, instead of the notifi-
+  cation events.
+
+- Modified the agent transport to report an EOF condition as soon
+  as the channel is dropped, instead of reporting the error only
+  after the proxy shutdown. This allows the agent to handle its
+  clients while the proxy is handling the grace timeout.
+
+- Added a test facility to verify if the client and server caches
+  match at shutdown.
+
+- More advances in the new implementation of streaming.
+
+nxcomp-2.0.0-28
+
+- Made the session shutdown faster, normally below 1 second. The
+  grace time is now 500 ms once all channels have been dropped.
+
+nxcomp-2.0.0-27
+
+- The house-keeping process will now run a number of iterations
+  (currently 100) and then will exit. The proxy will check the
+  exit code and, if it was requested by the child, will restart
+  it. This is intended to keep the memory consumption low, as I
+  noted that after a big number of iterations the performance of
+  the allocator start to degrade quickly.
+
+nxcomp-2.0.0-26
+
+- Started implementing the NXTransHandler() interface to let the X
+  application hook a callback and be notified by the proxy when an
+  event occurs. At the moment only congestion events are supported.
+  The interface makes possible for the caller to provide a generic
+  parameter. This parameter is passed back to the handler function.
+  The parameter is expected to be the Xlib display pointer, given
+  that the proxy doesn't have access to the Xlib structures.
+
+- Moved all the internal variables shared between Xlib, nxcompext
+  and the X server in nxcomp. Declarations and function prototypes
+  moved to NXvars.h.
+
+- Removed the NXGetCleanupParameters() and NXGetImageParameters()
+  interfaces and the remaining references to the unused display
+  buffer and image cleanup functions.
+
+- In this version the images streaming functionality is disabled.
+  Because of that, expect compatibility problems when connecting
+  to a different nxcomp version.
+
+nxcomp-2.0.0-25
+
+- Forced the end of the session earlier if a shutdown has been re-
+  quested by the local side but the remote proxy is not responding.
+
+nxcomp-2.0.0-24
+
+- Changed the loop deleting the file items in Keeper to pick the
+  first element instead of looping through the iterator.
+
+- More problems with the libstdc++ allocators. During the tests, I
+  found that the Keeper class can leak industrial amounts of memory.
+  Valgrind says that the objects that are not freed are the File
+  items we allocate in collect(). As this looked suspicious, I log-
+  ged the constructors and destructors and can say that everything
+  is OK on our side. Unfortunately, by removing the spleeps used
+  to let the program work silently in background, one can find that
+  the memory occupation still grows by a MB every few seconds. This
+  is less a problem on Windows, where the memory occupation remains
+  almost constant. See the comment on __USE_MALLOC below.
+
+- Increased the maximum size of a message that the proxy is allo-
+  wed to cache to 4MB. This makes possible to cache many replies
+  (like the X_QueryFont replies) that often exceeded the previous
+  limit.
+
+nxcomp-2.0.0-23
+
+- Fixed a compatibility problem with the 1.5.0 that arose when
+  encoding an image with caching and streaming temporarily disa-
+  bled.
+
+- Removed the __USE_MALLOC define in Types.h because this is what
+  the g++ developers want. I'll try to avoid flames and will not
+  comment on this.
+
+- Added a --with-use-malloc configure option. This option should
+  be used when building the release packages on GCC versions that
+  support it.
+
+- Started fixing the commit procedure to be able to deal with the
+  alpha channel.
+
+nxcomp-2.0.0-22
+
+- Prevented channels from being dropped while in the middle of a
+  read loop.
+
+- Added a small utility ensuring that the SIGCHLD we receive in
+  the main loop can be always identified as pertaining to an our
+  child.
+
+- Increased the space available for the control messages at the
+  beginning of the encode buffer and ensured that there is always
+  enough space for adding a token message, in the case this is
+  required by the flush procedure.
+
+- Made all cache files readable only by the user.
+
+nxcomp-2.0.0-21
+
+- Solved a bug in the streaming of images that caused the agent's
+  clients to never resume when connected to an old proxy version.
+
+nxcomp-2.0.0-20
+
+- Disabled again streaming of the alpha channel data. By enabling
+  it, the agent randomly fails to repaint the exposed regions. The
+  reason is to be investigated.
+
+nxcomp-2.0.0-19
+
+- Implemented the split mode NXSplitModeSync. When this mode is
+  selected, the proxy will not send data for the split at the head
+  of the list until the  remote peer has confirmed that the message
+  is not available in the image cache. This is going to be useful
+  in combination with the lazy encoding.
+
+- Improved the error detection in the case of failure when saving
+  a recomposed split on disk.
+
+- Added X_NXSetUnpackAlpha to the set of requests that is possible
+  to stream.
+
+nxcomp-2.0.0-18
+
+- Enabled the 2.0.0 features that were disabled for test purposes.
+
+- Changed the LICENSE file to state that the software is only made
+  available under the version 2 of the GPL.
+
+nxcomp-2.0.0-17
+
+- Introduced a new channel of type 'slave'. Opening a slave channel
+  should let the proxy fork a new NX client instance (or whatever
+  is in the NX_SLAVE environment) and pass to it the channel's desc-
+  riptors. This client instance should authenticate the peer, for
+  example using the proxy cookie (see how this is implemented in
+  nxsensor) and then negotiate the service to be used on the channel.
+  This can be used to implement forwarding of arbitrary ports or ad-
+  ditional services, like a simple file transfer protocol. For now
+  the implementation is incomplete. Opening a slave channel will
+  result in the remote proxy just dropping the channel connection.
+
+- The proxy is forcibly flushed at the end of each loop. This is a
+  temporary fix until the agents are updated to flush the proxy link
+  on demand.
+
+- Added a new alert to be used in the case the RDP session is closed
+  and replaced with a new session using the same Windows account.
+
+- Added a forward declaration of class RenderMinorExtensionStore in
+  file RenderExtension.h to compile using gcc 4.0.X.
+
+- Added removal of all .orig file when running a 'make clean'.
+
+- The code uses again the 2.0.0 style shutdown (the one waiting for
+  the watchdog process to terminate).
+
+nxcomp-2.0.0-16
+
+- Added the NXTransChannel() interface to allow agents to create
+  new channels connected to the port that will be forwarded by the
+  remote proxy. The function returns 1 on success, 0 if the NX
+  transport is not running, or -1 in the case of error. On success,
+  the descriptor provided by the caller can be used for all the
+  subsequent I/O, including selecting the descriptor to check if
+  I/O is possible. The type parameter not only tells to the proxy
+  the remote port where the channel has to be connected, but gives
+  a hint about the type of data that will be carried by the channel,
+  so that the proxy can optimize the compression and schedule the
+  traffic on the slow link.
+
+  The type can be:
+
+  NX_CHANNEL_X:     The channel will carry X traffic and it
+                    will be connected to the remote X display.
+
+  NX_CHANNEL_CUPS:  The channel will carry CUPS/IPP protocol.
+
+  NX_CHANNEL_SMB:   The channel will carry SMB/CIFS protocol.
+
+  NX_CHANNEL_MEDIA: The channel will transport audio or other
+                    multimedia data.
+
+  NX_CHANNEL_HTTP:  The channel will carry HTTP protocol.
+
+  NX_CHANNEL_FONT:  The channel will forward a X font server
+                    connection.
+
+  Only the proxy running at the NX server/X client side will be
+  able to create a X, CUPS, SMB, MEDIA and HTTP channel. A proxy
+  running at the NX client/X server side can create font server
+  connections. The channel creation will also fail if the remote
+  end was not set up to forward the connection.
+
+  To create a new channel the agent will have to set up a socket-
+  pair and pass to the proxy one of the socket descriptors.
+
+  Example:
+
+  #include <sys/types.h>
+  #include <sys/socket.h>
+
+  int fds[2];
+
+  if (socketpair(PF_LOCAL, SOCK_STREAM, 0, fds) < 0)
+  {
+    ...
+  }
+  else
+  {
+    //
+    // Use fds[0] locally and let the
+    // proxy use fds[1].
+    //
+
+    if (NXTransChannel(fds[1], NX_CHANNEL_X) <= 0)
+    {
+      ...
+    }
+
+    //
+    // The agent can now use fds[0] in
+    // read(), write() and select()
+    // system calls.
+    //
+
+    ...
+  }
+
+  Note that all the I/O on the descriptor should be non-blocking,
+  to give a chance to the NX transport to run in the background
+  and handle the data that will be fed to the agent's side of the
+  socketpair. This will happen automatically, as long as the agent
+  uses the XSelect() version of the select() function (as it is
+  normal whenever performing Xlib I/O). In all the other cases,
+  like presumably in the agent's main loop, the agent will have
+  to loop through NXTransPrepare(), NXTransSelect() and NXTrans-
+  Execute() functions explicitly, adding to the sets the descript-
+  ors that are awaited by the agent. Please check the implementa-
+  tion of _XSelect() in nx-X11/lib/X11/XlibInt.c for an example.
+
+nxcomp-2.0.0-15
+
+- Some changes aimed at finding a workaround to the unreliability
+  of the font server connections. The X server seems to be really
+  picky about the network latency, so we try to read immediately
+  from the channel just being created, instead of waiting for a
+  new loop. Additionally the proxy will keep reading from the font
+  server connections even after the maximum length of the frame
+  is exceeded, in the hope that it will be able to send a complete
+  message in a single frame.
+
+- updated the various internal consistency tests run when the TEST
+  or INFO flags are enabled.
+
+nxcomp-2.0.0-14
+
+- It seems that the closure of the socket sometimes takes several
+  seconds, on Windows, after the connection is broken, with the
+  result that the alert can be shown long after the user has gone
+  after the failed session. We now skip the closure of the proxy
+  link on Windows if we are about to exit.
+
+- The code uses the 1.5.0 style shutdown (the one waiting for the
+  term signal in the main process) to be able to test the library
+  with the old server. To activate the new shutdown procedure be
+  sure the define SHUTDOWN_COMPATIBLE_1_5_0 is unset.
+
+nxcomp-2.0.0-13
+
+- Ensured that static members in channels are reset at the time a
+  new proxy is created.
+
+- Adjusted the token parameters for link modes other than modem.
+
+nxcomp-2.0.0-12
+
+- Handled compatibility with 1.X.X versions not sending the count
+  field in the token.
+
+- The proxy link is now flushed automatically if the agent has not
+  set the deferred flush mode.
+
+nxcomp-2.0.0-11
+
+- Significant modifications to allow the proxy to keep data in the
+  encode buffer across multiple loops, until the data is flushed
+  because an explicit request by the agent or. Besides maximizing
+  the amount of data sent in a single frame, this makes it possi-
+  ble to move any packet coalescence strategy in the agent, while
+  still using an 'immediate' flush policy.
+
+- Modified the procedure handling the proxy congestion. Each token
+  now carries a counter which represents the multiple of TokenBytes
+  data bytes that need to be confirmed by the remote end. The ser-
+  ver side proxy will need to reply by including the value of the
+  counter. When sending a new token, the tokens are decremented by
+  the counter and the client side proxy enters in congestion when
+  the available tokens becomes zero or negative.
+
+nxcomp-2.0.0-10
+
+- Implemented specific encoding of the X_NXSetCacheParameters
+  request.
+
+- Handled the compatibility with older versions not supporting the
+  new request. In this case the request is handled at the local si-
+  de, preventing the X requests to be cached or split, even without
+  the cooperation of the remote side.
+
+nxcomp-2.0.0-9
+
+- Modified the shutdown procedure to not rely on the TERM signal
+  when the proxy needs to wait for the server to complete. We will
+  now print the following message in the session log:
+
+  Info: Watchdog running with pid 'n'.
+  Info: Waiting for watchdog process to complete.
+
+  The NX server will have to kill the process with the given pid
+  to mandate the proxy shutdown. This solves the TR11C01192.
+
+- Added the X_NXSetCacheParameters request. It tells to the proxy
+  how to handle caching of X requests, namely if requests should
+  be stored in the memory cache, split in smaller data chunks and,
+  in the case of images, saved on disk in the persistent image
+  cache. The request affects all the X messages until the proxy
+  is further configured.
+
+- Enabling and disabling loading and saving of persistent images
+  due to a X_NXSetCacheParameters is still to be implemented.
+
+- Implemented font channel compatibility with older versions. If
+  the font port is queried and the remote proxy doesn't support
+  the tunneling of font server connections, an empty string is
+  returned.
+
+- The option 'resize', used by agents, is now silently ignored.
+  This solves the TR10C01061.
+
+- Added the missing reference to TR08C000981.
+
+nxcomp-2.0.0-8
+
+- Discarded the first idea of setting the font path implicitly in
+  the X server side proxy, by means of a multi-pass operation and
+  added the NXGetFontParameters() request and reply. If the proxy
+  has been configured accordingly, the request returns the X font
+  path that can be set by the agent to tunnel the font server con-
+  nections through the NX link.
+
+- Changed the parsing of the font server port to be able to handle
+  the defaults.
+
+nxcomp-2.0.0-7
+
+- More work on tunneling of font server connections.
+
+- The synchronization requests are now replied at the same time
+  as a new request is received, by checking if the channel has
+  already gone past the awaited sequence number. This avoids the
+  delay caused by the previous versions in the case the expected
+  reply had been handled asynchronously, inside the write loop.
+
+nxcomp-2.0.0-6
+
+- The display is again passed to the client using the -display
+  parameter.
+
+- The option 'type' is now ignored at X server side. Support at
+  the X server side had been left for compatibility with older
+  versions of the proxy.
+
+- Added direct support for more session types, namely 'unix-cde',
+  'unix-xdm', 'unix-console', 'unix-default'. The 'unix-console'
+  and 'unix-default', similarly to 'unix-application', will now
+  trigger the 'raw' mode.
+
+nxcomp-2.0.0-5
+
+- Renamed Png.h and Png.cpp to Pgn.h and Pgn.cpp to avoid name
+  clashes on Windows.
+
+- The distclean target now removes the autom4te.cache directory.
+
+nxcomp-2.0.0-4
+
+- Added the 'kill=n' option to let the proxy add the process to
+  the list of daemons that must be terminated at session shutdown.
+  Multiple 'kill=n' options can be specified. The proxy will send
+  to each process a SIGTERM signal before exiting.
+
+- Removed the code that forcibly disabled the RENDER extension on
+  Solaris. Eventual compatibility problems will be now handled in
+  the NX agent.
+
+- The path to the client executable is now assumed to be in the
+  NX_CLIENT environment. If the variable is not set, the proxy
+  will guess the location based on the target platform. This is
+  part of the FR11C01215.
+
+nxcomp-2.0.0-3
+
+- More code cleanup. Protocol step 5 and cache step 2 are assumed
+  by default. This allows us to remove the various channel caches
+  that are not used anymore.
+
+- Removed the outdated encodeBegin() and encodeEnd() methods.
+
+nxcomp-2.0.0-2
+
+- Added compatibility with the 1.5.0 and 1.4.0 versions. Protocol
+  version older than the 1.4.0 will cause the proxy to drop the
+  connection.
+
+- Rewritten the version negotiatiation logic to better handle the
+  compatibility between the local and the remote version.
+
+- Removed the conditional code handling the compatibility with
+  the protocol encodings from 1 to 4.
+
+- Small adjustments to the session negotiation procedure to give
+  more hints in the case of errors. A dialog is now issued if the
+  remote proxy drops the connection due to a probable authentica-
+  tion failure or when the remote proxy version is not compatible
+  with our version.
+
+nxcomp-2.0.0-1
+
+- Opened the 2.0.0 branch based on nxcomp-1.5.0-80.
+
+nxcomp-1.5.0-80
+
+- Fixed a bug that prevented the Unix socket to be created in the
+  right directory. This affected the ability of the server to run
+  NX sessions without the agent encoding.
+  
+nxcomp-1.5.0-79
+
+- Solved a bug in the 15 to 16 bpp conversion for RDP sessions.
+
+- Corrected a typo in the PANIC message of Unpack16To24 function.
+
+- Optimized the 16 bpp RDP decompression routine.
+
+nxcomp-1.5.0-78
+
+- Implemented the FR11C01215. The following environment variables
+  are checked to determine the location of the relevant NX direct-
+  ories:
+
+  $NX_ROOT   The root NX directory is the place where the session
+             directory and the cache files are created. This is
+             usually overridden by passing the 'root=' option. By
+             default, the root NX directory is assumed to be the
+             directory '.nx' in the user's home.
+
+  $NX_SYSTEM The directory where NX programs and libraries reside.
+             If not set, the value is assumed to be '/usr/NX'.
+             Programs, libraries and data files are respectedly
+             searched in the 'bin', 'lib' and 'share' subdirecto-
+             ries.
+
+  $NX_HOME   The NX user's home directory. If $NX_ROOT is not set
+             or invalid, the user's NX directory is created here.
+
+  $NX_TEMP   The directory where the X11 Unix Domain Sockets and
+             all temporary files are to be created.
+
+  $NX_CLIENT The full path to the nxclient executable. If the va-
+             riable is not set, the nxclient executable will be
+             run assuming that the program is in the system path.
+             This can be useful on platforms like Windows and the
+             Mac where nxclient is located in a different direct-
+             ory compared to the other programs, to make easier
+             for the user to execute the program from the shell.
+
+  Other environment variables:
+
+  $HOME      The variable is checked in the case $NX_HOME is not
+             set, null or invalid.
+
+  $TEMP      The variable is checked whenever the $NX_TEMP direct-
+             ory is not set, null or invalid.
+
+  $PATH      The path where all executables are searched, except
+             nxclient. If $NX_CLIENT is not set, also the client
+             executable is searched in the system path.
+
+  $XAUTHORITY
+             This is the file containing the X11 authorization
+             cookies. If not set, the file is assumed to be in
+             the user's home (either $NX_HOME or $HOME).
+
+  $LD_LIBRARY_PATH
+             System-wide library search order. This should be set
+             by the program invoking the proxy.
+
+- Extended the usage message to document the relevant environment.
+
+- Made the WaitChild() function interruptible. This allows the user
+  to terminate the connection procedure immediately, by sending a
+  signal to the proxy process while an abort dialog is shown in the
+  foreground. This is part of the solution to the TR11C01216.
+
+- Implementation of the FR11C01215 is not yet complete. The client
+  program and the nxauth/xauth are still searched using the previ-
+  ous logic. In particular, the NX_CLIENT variable is ignored.
+	
+nxcomp-1.5.0-77
+
+- Corrected the typo in the alert dealing with VNC authentication
+  failures. This solves the TR11C01199.
+
+nxcomp-1.5.0-76
+
+- Added the missing initialization in the client and server proxy
+  constructors.
+
+nxcomp-1.5.0-75
+
+- Starting from this version the build procedure will automatically
+  create a DLL on Windows.
+
+- Disabled exceptions in the compiled code.
+
+- Disabled run-time type information to further reduce the size of
+  the executable.
+
+- Compiling with GCC 4.0.0 and -fno-exceptions produces a warning
+  in some files, due to control apparently reaching the end of a
+  non void function. This is bogus and has been confirmed to be a
+  GCC 4.0.0 bug solved in more recent versions.
+
+nxcomp-1.5.0-74
+
+- Imported changes from nxcomp-1.6.0-4.
+
+- Solved a compilation error on Solaris and MacOSX platforms.
+
+- The 'font' option now accepts either a numeric value (for a TCP
+  port) or a 'unix/:port' or 'tcp/:port' specification. In the case
+  of Unix ports, we assume that a port specification "unix/:7100"
+  corresponds to the "/tmp/.font-unix/fs7100" socket and a port like
+  "unix/:-1" corresponds to "/tmp/.font-unix/fs-1".
+
+- An absolute file path is also accepted as a valid socket. This is
+  useful to test the forwarding of the font server connection, for
+  example by running a normal X client and pointing the socket to
+  the X server.
+
+- Protocol step 7 is now only assumed when connecting to a remote
+  proxy version 1.6.0 or later.
+
+nxcomp-1.5.0-73
+
+- Use the include files from nx-X11 if the nx-X11/include directory
+  is found. The previous configure checked the presence of nx-X11/
+  exports/include, that might not be built at the time this library
+  is compiled.
+
+nxcomp-1.5.0-72
+
+- Fixed a problem on AMD64 due to the size of the area pointed by
+  the argument of NXTransReadable(). The ioctl() requires a pointer
+  to an int, at least on Linux. The original _X11TransBytesReadable()
+  function simply calls the ioctl() by passing the pointer that is
+  provided. Returning the value assuming a pointer to a long crashes
+  some applications, among them xterm. Now NXTransReadable() follows
+  the same schema of the ioctl() call and stores the result assuming
+  a pointer to an int.
+
+nxcomp-1.5.0-71
+
+- Ensured that the NX trasport is destroyed on NXTransExit() even if
+  the parent has overridden our signal handlers.
+
+- Added attribute 'noreturn' to NXTransExit().
+
+- Small change to the shutdown procedure to send the "Waiting for a
+  further signal" just after the watchdog is started.
+
+nxcomp-1.5.0-70
+
+- Added the definition of protocol step 7. The new protocol step is
+  implicitly assumed when activating the font server channel, so that
+  NX clients and servers may decide what to do by verifying the patch
+  version of the peer software. This makes possible to activate the
+  feature without stepping up the 1.5.0 version of the software.
+
+nxcomp-1.5.0-69
+
+- Added the -fPIC GCC flag when compiling on AMD64 architectures.
+
+- Small changes to configure.in to have specific CFLAGS.
+
+- Created a new configure using autoconf 2.59.
+
+- Added the 'mask=n' option to determine how channel ids are distri-
+  buted between client ans server. By default, channels whose ids are
+  multiple of 8 (starting from 0) are reserved for the client side.
+  All other channels can be allocated at the NX server side.
+
+- A check is missing on the protocol supported by the remote side,
+  so it is likely that mixing this version with older 1.5.0 will not
+  work.
+
+- The release has the debug logs enabled.
+
+nxcomp-1.5.0-68
+
+- Added provision for opening new channels on both client and server
+  side. This required small changes to the way channel ids are mapped
+  and retrieved, so that both sides now support bidirectional mapping
+  of file descriptors to channels.
+
+- Made the code handling allocation of new generic channels to reside
+  in the base Proxy class.
+
+nxcomp-1.5.0-67
+
+- Renamed the 'embedded keyboard' channels as 'aux' channel.
+
+- Renamed 'samba' channels as 'smb'.
+
+- The 'samba' and 'smb' options can now be used interchangeably. The
+  same applies to the 'keybd' and 'aux' options, used to set up the
+  auxiliary X channel.
+
+- Added a new font channel. The channel is used to forward X font
+  server connections from the X server on the NX client to the remote
+  NX server. The channel is not yet functional and requires change to
+  the channel allocation mechanism.
+
+- Added a common interface to create new listening sockets. This is
+  currently used for additional services, but not for the X display
+  sockets.
+
+- Simplified the interface used to accept new connections to channels 
+  being forwarded.
+
+- Removed the -V option as nxproxy is not using dlopen() anymore.
+
+- Removed the inclusion of ClientChannel.h in Proxy.cpp that caused
+  test symbols to be reverted to undefined.
+
+nxcomp-1.5.0-66
+
+- Made failures setting the IPTOS_LOWDELAY on the proxy socket to
+  cause a warning, instead of an error.
+
+- Made the clean target delete the Cygwin specific libraries.
+
+- Updated the configure and Message.h to deal with GCC 4. Solves the
+  TR08C000981.
+
+nxcomp-1.5.0-65
+
+- Removed the warning issued on parsing the agent option 'rootless'.
+  Solves the TR08C00959.
+
+- MacOSX 10.4 defines socklen_t. Made the definition conditional so
+  that we can still support older versions. Solves the TR07C00926.
+
+- Updated the ChangeLog to include references to the solved TRs.
+
+nxcomp-1.5.0-64
+
+- Imported the 1.6.0 changes in the maintenance 1.5.0.
+
+- Removed a wrong assertion that might cause the session to fail
+  when the software was compiled with TEST enabled in Proxy.cpp.
+
+- The nxclient dialog process is signaled with SIGKILL on Windows,
+  as the SIGTERM is ignored. This solves the TR07C00929.
+
+- Ensured the JPEG error flag is always set before jumping out of
+  the Jpeg decompression.
+
+- Skipped errors encontered setting the TCP_NODELAY flag on Mac.
+  Solves TR08C00940.
+
+- Few cosmetic changes.
+
+nxcomp-1.5.0-63
+
+- Ensured that the parent is checked often in the keeper process,
+  so that, in the case of a premature death, the child is exited
+  earlier.
+
+nxcomp-1.5.0-62
+
+- Some performance tuning of the LAN and WAN link modes.
+
+nxcomp-1.5.0-61
+
+- Fixed the problems arisen with loading or saving the image files
+  on Windows by forcing the streams to be opened in binary mode.
+  These problems have been triggered by the recent Cygwin upgrade.
+
+- Removed the logs that had be left enabled for test purposes.
+
+nxcomp-1.5.0-60
+
+- Made all errors encountered while unpacking an image just print
+  a warning in the session log. Such errors are not fatal but the
+  client monitors the state of the session at startup, so that by
+  marking image decompression errors as such may cause the session
+  to be aborted.
+
+- Marked as warnings also errors encountered by trying to load an
+  image from disk.
+
+nxcomp-1.5.0-59
+
+- When detected, the CTRL+ALT+SHIFT+ESC sequence is removed from
+  the event stream.
+
+- Also modified the message in the session log to issue a warning,
+  instead of an error.
+
+nxcomp-1.5.0-58
+
+- Added a setjmp() before yielding the control to the JPEG library.
+  This makes possible to recover from the JPEG decompression errors
+  that were previously fatal.
+
+- In the commit split request, the client id is now encoded by the
+  client channel beside the propagate flag. The client id is igno-
+  red by the decoding party. As in the old protocol versions, the
+  committing client is taken from the client id that was originally
+  sent together with the packed image.
+
+- Fixed the compilation problem when defining OPCODES in Misc.cpp.
+
+- Skipped the synchronous flush of the proxy link when connecting
+  to a previous NX version.
+
+- Ensured that the new alerts are only requested when connected to
+  a compatible proxy.
+
+- Ignored the option 'fullscreen', targeting the agents.
+
+nxcomp-1.5.0-57
+
+- Added more alerts and changed the name of those dealing with the
+  resume of a session.
+
+- Added the MIXED define. When set, the proxy will let all logs go
+  to the standard error. This is useful to interleave the Xlib log
+  output with the proxy output in a single file.
+
+- Added a new alert to report an I/O error at agent reconnection.
+  This is one of those alert that can't be actually shown, but are
+  included to offer a consistent view to the agent implementation.
+
+nxcomp-1.5.0-56
+
+- Added the split mode NXSplitModeSync. By selecting this mode,
+  the proxy will try to empty the split store immediately, until
+  all messages marked in such mode will be synchronized. The im-
+  plementation is left to future versions.
+
+  #define NXSplitModeSync     3
+
+- Added the messages specific to RDP and VNC sessions in NXalert.h.
+  Included are also a few alerts related to changes to the color
+  depth and desktop geometry that may be eventually mandated by the
+  remote server.
+
+- Corrected a typo in NXalert.h
+
+nxcomp-1.5.0-55
+
+- Added the 'mode' field in the X_NXStartSplit request. It determi-
+  nes the strategy that the proxy will adopt to handle the image.
+  If set to 'eager', the proxy will only split the messages whose
+  size exceeds the split threshold (the threshold can be found in
+  the X_NXGetControlParameters reply). If mode is set to lazy, the
+  proxy will split any image that it is not able to find in its
+  cache.
+
+  The opcode and the two available modes are defined in NXproto.h,
+  currently:
+
+  #define NXSplitModeDefault  0
+  #define NXSplitModeEager    1
+  #define NXSplitModeLazy     2
+
+- All requests related to image streaming now carry a 'resource' id.
+  The id is currently ignored by the proxy in the case of X_NXCom-
+  mitSplit requests.
+
+- Added a new NXSetSplitMode() request. It determines the strategy
+  that the proxy will adopt to stream the images. If set to 'eager'
+  the proxy will only split the messages whose size exceeds the
+  split threshold, otherwise it will  split all the images, regard-
+  less their size. This is in preparation of the lazy encoding in
+  agent.
+
+- Slightly decreased the startup timeout compared to the value it
+  had in the 1.4.0. This timeout is used to retain the images used
+  during session startup in the persistent cache.
+
+nxcomp-1.5.0-54
+
+- Modified the text of the begin-reconnection alert to mention the
+  speed of the connection detected by the agent.
+
+nxcomp-1.5.0-53
+
+- Reworked the handling of the abort-split events issued by the re-
+  remote proxy so that we now finalize the procedure and restart the
+  client asynchronously, in the middle of the write loop.
+
+nxcomp-1.5.0-52
+
+- Rewritten the internal interface to the notification events. There
+  are now five different split notification events:
+
+  NXNoSplitNotify        The operation didn't cause any actual split.
+                         The client can be immediately restarted.
+
+  NXStartSplitNotify     A split is ongoing. The client should be
+                         suspended until the end of the split.
+
+  NXCommitSplitNotify    A complete request has been recomposed. The
+                         client can commit the given request to the
+                          X server.
+
+  NXEndSplitNotify       The split operation was duly completed. The
+                         client can be restarted.
+
+  NXEmptySplitNotify     No more split operation are pending. The
+                         agent can use this information to implement
+                         specific strategies, requiring for example
+                         that all messages have been recomposed at
+                         the remote end. This can include updating
+                         the drawables that were not synchronized
+                         because of the lazy encoding.
+
+- Removed the X_NXSync and X_NXKarma operations, not used anymore by
+  the NX agents.
+
+- Increasing or decreasing a timeout makes it respectively equal to
+  the base timeout or to the base timeout / 4.
+
+nxcomp-1.5.0-51
+
+- Improved the mechanism by which synchronization replies are sent
+  to the X client proxy.
+
+- Using the leftPad field as passed by the nxagent 1.5.0-58 doesn't
+  seem to work with the MIT-SHM. The workaround is to disable the
+  MIT-SHM operation in the case of 1 bpp images.
+
+- Removed the limitation on the size of the shared memory segment
+  that had been introduced for test purposes.
+
+nxcomp-1.5.0-50
+
+- Solved compilation problem when --with-info was not given.
+
+nxcomp-1.5.0-49
+
+- Improved support for color matching from 15 and 16 bpp to 24 and
+  32 bpp in RDP sessions.
+
+- Solved TR05C00910. This was about "shadows" that might appear in
+  RDP sessions when small elements like tooltips were drawn.
+
+nxcomp-1.5.0-48
+
+- Added a 'commit' field in X_NXCommitSplit request. When zero, the
+  X server side proxy will unlock the message in the message store,
+  without actually committing the image to the X server. The new
+  field required changes to the encoding. This means that this ver-
+  sion is not compatible with older 1.5.0 nxcomp releases.
+
+- Added a new control message. This is used by NXTransFlush() to for-
+  ce a roundtrip between the proxies and speed-up the handling of
+  the synchronous replies.
+
+nxcomp-1.5.0-47
+
+- Made the timeouts dynamic, based on the user input and the current
+  bitrate.
+
+- Set the available tokens to 8. This allows for 16 KB to be sent on
+  a modem before having to wait for a reply.
+
+- Added provision for removing a dialog on the remote end. This can
+  be used, for example, to get rid of a message that was displayed
+  by the agent at the beginning of a lengthy operation.
+
+- Fixed a fault that arose when trying to run the proxy on a display
+  whose name began with the 'nx' string.
+
+- Running a client or server session on a display host beginning with
+  'nx' should be now possible.
+
+- Flush is now always immediate when there is already data queued in
+  the TCP socket.
+
+nxcomp-1.5.0-46
+
+- Created the NXalert.h header from Alert.h to share the alert codes
+  with the agents. The new NXTransAlert() interface can be used to
+  start an alert on the remote side.
+
+- Created the NXTransParse*() and NXTransCleanup() wrappers.
+
+- Temporarily using the single-dash style when passing parameters to
+  nxclient until the double-dash style is fixed.
+
+nxcomp-1.5.0-45
+
+- Motion events are now flushed at the time the X server channel is
+  sending the token reply.
+
+- Renamed NXDialog() to NXTransDialog() and added a window ID parame-
+  ter, to be used by the agent when starting the "pulldown" dialogs.
+
+- Also renamed the other NX utility functions.
+
+nxcomp-1.5.0-44
+
+- Solved a bug that prevented auxiliary X connections from working
+  with the agent.
+
+- Added the missing check on the proxy pointer in HandleTimer() as
+  it may be actually called before the proxy is created.
+
+nxcomp-1.5.0-43
+
+- Started tuning the performance. For now, the available tokens are
+  set to an improbable value of 10000.
+
+nxcomp-1.5.0-42
+
+- Disabled the X server side remote expose events for test purposes.
+  This is intended uncover the display problems introduced by the
+  new handling of exposures in the X11 agent.
+
+- Fixed some timestamp related functions to avoid rounding problems.
+
+- Moved the timestamps of split, frame and flush from the Control
+  to the Proxy class.
+
+- Made the X server side proxy to skip updating the counters related
+  to token management.
+
+- Made also the X server side use deferred flushes.
+
+- Modified handleFrame() to manage both pings and data frames and
+  send the token before the actual write operation.
+
+- Cleaned the pseudo-files used to load the control parameters.
+
+- Cleaned up the FIXME's in the lower layers. More FIXME's remain in
+  the frontend classes.
+
+- Added a further counter to the statistics tracking the number of
+  network writes performed on the proxy link.
+
+nxcomp-1.5.0-41
+
+- Now the watchdog process doesn't kill the parent. The termination
+  event is determined by monitoring the child. This is advisable to
+  avoid interfering with the signal handling in agent.
+ 
+- The house-keeping process is not started if differential compres-
+  sion (and thus caching of images) is disabled.
+
+- Wait for the watchdog to terminate before starting the house-keep-
+  ing process.
+
+- Fixed the problem of gray stripes in white areas when using 15bpp
+  RDP compression. This solves the TR06C00916.
+
+- Added a log in Message.cpp to tell when an image is removed from
+  the memory cache.
+
+- Removed most of the logs. Only left the logs directly related to
+  the deferred flushes.
+
+- Removed a warning due to a missing definition in NX.h.
+
+nxcomp-1.5.0-40
+
+- Added the signal '12' to the set of blocked signal on Cygwin. This
+  is what is delivered to the application when it tries to create a
+  shared memory segment when the cygserver is not running. The call
+  later returns "Operation not implemented", only useful if you have
+  survived to the signal.
+
+- Modified the configure script to not link against cygipc.
+
+- Improved error handling in the negotiation phase.
+
+- Reset the last signal received when aborting a connection attempt.
+  Not doing that might cause a warning.
+
+nxcomp-1.5.0-39
+
+- Both channels and proxy can now deal with incomplete messages by
+  waiting for the full data to become available. This is not going
+  to work when the transport is connected to an agent that is run-
+  ning in-process, so the timeout must be really small.
+
+- Made the main loop more compact by letting a single function read
+  from proxy and channels. The same change applies to writing to
+  descriptors that are reported to be ready.
+  
+- Optimized the loop to report as ready the agent descriptors that
+  have become available after the proxy execution phase. 
+
+- Now the proxy will try to asynchronously read from its descriptor
+  after having read from the channel.
+
+- Unified the routine setting the routines setting the read and write
+  descriptors and the timeouts.
+
+- Unified the routine handling the channel events.
+
+- Reintroduced the last ping timestamp to avoid sending more than a
+  single ping every PingTimeout milliseconds.
+
+- The cleanup procedure now waits for the watchdog and house-keeping
+  processes to terminate.
+
+- Reverted the change occurred in 1.5.0-35 about the byte-ordering
+  problem in decompression of PNG and JPEG images.
+
+- More coding about deferred flushes.
+
+- Relevant debug logs are enabled in the main loop, in the proxy and
+  in the channel classes, so use only for testing.
+
+nxcomp-1.5.0-38
+
+- Started the implementation of deferred writes based on the new NX
+  transport.
+
+- Solved a problem with the statistics file affecting the Windows
+  platform. Basically it seems that Cygwin or the stdc++ library
+  don't deal correctly with files that are reopened just after
+  having unlinked them.
+
+- Implemented support for 15 bpp RDP bitmaps.
+
+- Added "rdpcolors" and "rdpcache" to the list of parameters that
+  are ignored in ParseEnviromentOptions().
+
+- This version has lot of logs enabled and some forced cleanups in
+  the case of unexpected conditions. Avoid to use it for long-last-
+  ing test sessions.
+
+nxcomp-1.5.0-37
+
+- Now splitting of images is fully disabled when running with link
+  LAN. Previously the split was not executed by the proxy, but the
+  agent was configured to send the start/end sequence.
+
+- Added the check protecting the proxy from token underflow. In the
+  previous code the check was left out to verify the conditions un-
+  der which this event might be encountered.
+
+- NXTransWrite() and NXTransWriteVector() allocate a context before
+  calling handleRead(), so they can correctly return in the case of
+  a cleanup.
+
+nxcomp-1.5.0-36
+
+- Modified the channel write loop to interleave abort split events
+  between the writes to the X server socket.
+
+nxcomp-1.5.0-35
+
+- Solved a byte-ordering problem in decompression of PNG and JPEG
+  images.
+
+- Changed the handleToken() interface to make explicit if a token
+  must be issued because of a ping.
+
+- Small fix to prevent a warning in Jpeg.cpp when TEST is enabled.
+
+nxcomp-1.5.0-34
+
+- Solved a few problems introduced by the rewrite of the read loops
+  in channels.
+
+- Added definition of NXCollectInputFocusNotify.
+
+nxcomp-1.5.0-33
+
+- Implemented a new control flow system based on tokens exchanged bet-
+  ween the proxies. When the clint side runs out of tokens it stops
+  sending data until a new token is returned. Tokens are sent whenever
+  the data written to the socket exceeds the amount of data set for a
+  scheduled write, so the proxy is free to send a number of smaller
+  frames before running out of tokens.
+
+- The reason the new system is introduced is because the old method
+  had two outstanding problems:
+
+  - It worked very well when the proxies were directly connected,
+    but couldn't reliably detect a link congestion when tunneled
+    over SSH.
+
+  - In the attempt of reducing the data queued to the TCP layer, it
+    didn't leverage all the available bandwidth.
+
+- Moved the final check on the state of the session at the end of
+  execution stage, instead of the beginning. The signals sent by the
+  user to request the statistics could be reset before the proxy had
+  entered the right procedure.
+
+- Added the session type 'unix-rootless', to be used for single apps
+  run with the agent in rootless mode.
+
+nxcomp-1.5.0-32
+
+- Modified the main loop to skip the select when I/O is possible on
+  any of the agent descriptors or the proxy link.
+
+- Now the house-keeping process is allocated in the heap instead of
+  the stack.
+
+nxcomp-1.5.0-31
+
+- The server channel now performs asynchronous reads from the display
+  by interleaving them with data decoded from the remote proxy.
+
+- Improved the handling of the memory-to-memory transport.
+
+nxcomp-1.5.0-30
+
+- Redesigned the handling of the congestion events to work more re-
+  liably and to report the events to the remote peer earlier.
+
+- Increased the size of the shared memory segment when the MIT-SHM
+  extension is activated.
+
+- Solved a bug that prevented the ping timeout to work as expected.
+
+- Ensured that, when entering the main select(), neither the chan-
+  nels or the proxy have pending messages in the read buffers.
+
+- There is now only a single case where we can have pending messa-
+  ges, namely in the handling of the MIT-SHM events.
+
+- Solved a bug introduced by the 1.5.0-29 that made the proxy en-
+  ter the select with a null timeout.
+
+- Renamed LINK_TYPE_AUTO to LINK_TYPE_NONE in NXproto.h.
+
+nxcomp-1.5.0-29
+
+- Now encoding data from the agent descriptors happens in the same
+  context as data is written to the buffer.
+
+- Optimized the handling of the congestion events to avoid running
+  further unneeded loops.
+
+- Added timer handling utilities.
+
+nxcomp-1.5.0-28
+
+- Added code providing information about the reason of the failure
+  encountered connecting to the local X server. This greatly helps
+  when troubleshooting X authorization problems.
+
+- On connection failure a warning message is printed in the session
+  log.
+
+- Removed the warning that was previously printed when the MIT-SHM
+  extension failed to be initialized on Windows. Shared memory has
+  problems on Cygwin and it currently doesn't work in NXWin.
+
+- Reworked the message printed in the case of link failure.
+
+nxcomp-1.5.0-27
+
+- Solved a bug in the connection procedure introduced by 1.5.0-25.
+
+nxcomp-1.5.0-26
+
+- Transformed the errors printed on failure of the fork() creating
+  the children into warnings. This can happen quite often on Win-
+  dows, due to well known Cygwin problems. See also the ChangeLog
+  entry for nxcomp 1.4.0-28. This patch closes the TRSL052278 but
+  it's obviously not a long-term solution.
+
+- Set the sticky bit when creating the '/tmp/.X11-unix' directory.
+
+- Modified the Makefile.in to remove the *.out.* files generated by
+  Valgrind.
+
+- Updated the README files.
+
+nxcomp-1.5.0-25
+
+- Changed the directory where the client for the Mac is searched if
+  it is not found in the system path.
+
+- Modified Auth.cpp to use nxauth also on the Mac.
+
+- Reworked the procedure showing the alert dialog when a timeout is
+  encountered in the initial connection.
+
+- Removed the experimental code from the official 1.5.0 branch.
+
+nxcomp-1.5.0-24
+
+- Implemented more experimental classes.
+
+nxcomp-1.5.0-23
+
+- Added the NX_SIGNAL_FORWARD action to NXTransSignal(). This can
+  be used to let the proxy call the original signal handler of the
+  agent after having blocked the signal.
+
+nxcomp-1.5.0-22
+
+- Ensured that we always have a context, even before creating the
+  transport.
+
+- Suppressed the error message printed when passing the -h option.
+
+- Added the experimental code that is currently under development.
+
+nxcomp-1.5.0-21
+
+- Enabled the fake X cookie authentication. This requires checking
+  the remote proxy version to verify that the server supports the
+  new authorization mechanism.
+
+- It's worth noting that the X client side proxy doesn't care which
+  cookie is sent over the connection. The problem is that clients
+  connecting to 1.4.0 servers don't have a method to force the ser-
+  ver to use the fake cookie. This means that we have to solve the
+  problem by letting the proxy check the remote version so that it
+  can omit to replace the cookie when connecting to older servers.
+
+nxcomp-1.5.0-20
+
+- Added the NXTransCongestion() function. It returns true if proxy
+  is in congestion state.
+
+- Removed an incorrect warning that was printed when calling force()
+  for the memory-to-memory transport. The agent could actually re-
+  quire multiple loops to read all data queued for it.
+
+nxcomp-1.5.0-19
+
+- Small optimization in NXTransReadable() to run a new NXTransConti-
+  nue() loop only after at least RetryTimeout milliseconds are pas-
+  sed since the last call and still no data is available. This cuts
+  the number of unneeded loops to 1/4th of the total, probably more,
+  on faster machines.
+
+- Added NXCollectGrabPointerNotify to NXproto.h.
+
+nxcomp-1.5.0-18
+
+- Minor changes to NXTransContinue().
+
+nxcomp-1.5.0-17
+
+- Moved respawning of a new nxclient instance in the cleanup procedu-
+  re. This ensures that the respawn is executed whatever is the rea-
+  son of the session shutdown.
+
+- Added a method to force closure of a given channel in proxy.
+
+- Removed code handling the special case triggered on Windows by the
+  presence of a NX_SESSION variable in the environment.
+
+nxcomp-1.5.0-16
+
+- Added the NXTransSignal() function to let agents tell to the proxy
+  how to handle the standard POSIX signals. Given the SIGINT signal,
+  for example, the caller can specify any of the following actions.
+
+  NX_SIGNAL_ENABLE:  A signal handler will have to be installed by
+                     the library, so that it can be intercepted by
+                     the proxy.
+
+  NX_SIGNAL_DISABLE: The signal will be handled by the caller and,
+                     eventually, forwarded to the proxy by calling
+                     NXTransSignal() explicitly.
+
+  NX_SIGNAL_RAISE:   The signal must be handled now, as if it had
+                     been delivered by the operating system. This
+                     function can be called by the agent with the
+                     purpose of propagating a signal to the proxy.
+
+  As a rule of thumb, agents should let the proxy handle SIGUSR1 and
+  SIGUSR2, used for producing the NX protocol statistics, and SIGHUP,
+  used for disconnecting the NX transport.
+
+- The following signals are blocked by default upon creation of the
+  NX transport:
+
+  SIGCHLD    These signals should be always put under the control
+  SIGUSR1    of the proxy. If agents are intercepting them, agents
+  SIGUSR2    should later call NXTransSignal(..., NX_SIGNAL_RAISE)
+  SIGHUP     to forward the signal to the proxy.
+
+  SIGINT     These signals should be intercepted by agents. Agents
+  SIGTERM    should ensure that NXTransDestroy() is called before
+             exiting, to give the proxy a chance to shut down the
+             NX transport.
+
+  SIGPIPE    This signal is blocked by the proxy, but not used to
+             implement any functionality. It can be handled by the
+             NX agent without affecting the proxy.
+
+  SIGALRM    This is not blocked by the proxy, but could be used
+             in future.
+
+  SIGVTALRM  These signals are not used and should not be used in
+  SIGWINCH   future versions of the library.
+  SIGIO
+  SIGTSTP
+  SIGTTIN
+  SIGTTOU
+
+- By calling NXTransSignal(..., NX_SIGNAL_DISABLE) nxcomp will res-
+  tore the signal handler that was saved at the time the proxy hand-
+  ler was installed. This means that you should call the function
+  just after the XOpenDisplay() or any other function used to init-
+  ialize the NX transport.
+
+nxcomp-1.5.0-15
+
+- In NXTransContinue(), if the transport is gone, return immediately,
+  that is without having to wait until the NXTransSelect() timeout.
+
+- Ensure that NXTransCreate() has a jump context, just in the case
+  a subsequent operation would cause a cleanup.
+
+nxcomp-1.5.0-14
+
+- Solved a problem with requests left in the agent's buffer when run-
+  ning the NX transport. The agent could have enqueued data to our
+  side and checked the available events but requests could not be
+  written to the proxy because proxy might not have had a chance to
+  enter a new select. We found that this behaviour was triggered by
+  _XEventsQueued, so now a new loop is forced when agent is calling
+  _X11TransDataReadable. The procedure can be optimized, by avoiding
+  an expensive loop when no critical I/O is pending.
+
+- Added a few additional logs to ClientChannel and ServerChannel.
+
+nxcomp-1.5.0-13
+
+- Added the code handling the special cases of an user not specifying
+  a proxy cookie or the case of the X authorization file not contain-
+  ing a value matching the display. In the first case we'll forward
+  the same cookie that was feeded to the proxy, in the second case we
+  will forward to the X server a random generated cookie, similarly to
+  what SSH does in this same condition.
+
+- Rewritten the command line parser. Removed all the command line
+  options parsed on behalf of nxproxy except:
+
+  -C          Specify that nxproxy has to run on the "X client"
+              side, listening for connections and impersonating
+              an X server.\n\
+
+  -S          Specify that nxproxy has to run in "X server" mode,
+              thus forwarding the connections to daemons running
+              on the client.\n\
+
+  -V n.n.n    Request nxproxy to load the given nxcomp version.
+              This option is only present on Solaris and Linux.
+
+  -v          Print version information.
+
+  host:port   Put at the end, specifies the host and port of the
+              listening proxy.
+
+  value=name  Set the NX option to the provided value.
+
+  Multiple NX options can be specified in the DISPLAY environment or
+  on the command line, by using the nx/nx,name=value notation.
+
+- The above information is printed on the console when incurring in
+  a parse error, together with a list of the available option=value
+  parameters.
+
+- Renamed the 'log' option to 'errors'. This makes sense as the de-
+  fault name for the log file is actually 'errors'.
+
+- Now the "Established X server connection" message is printed to
+  the session log only after the X connection has passed the X auth-
+  entication phase. This means that the NX client should become able
+  to show the details of the session log whenever the session fails
+  due to a cookie problem.
+
+- When selecting the additional services without specifying a port,
+  the client proxy will now automatically forward the connections to
+  the corresponding well-known ports of the CUPS, SMB and HTTP servi-
+  ces. Embedded X keyboard connections will be automatically forward-
+  ed to the same display port used to connect to the X server. The
+  user will still have to specify the port to be used for the media
+  connections as we don't have a suitable well-known port.
+
+- Starting from this version, connections to the keybd port will cre-
+  ate real X connection channels. This is required to let connections
+  leverage the fake authorization cookie.
+
+- By testing the forwarding of keybd connections I found that, when
+  letting X clients connect to the port, it is required to provide
+  the X cookie for the unix display. Adding only the TCP cookie will
+  not work. For example, by creating a cookie as in:
+
+  xauth add localhost:2009  MIT-MAGIC-COOKIE-1  6f...f4
+
+  And running:
+
+  xterm xterm -display localhost:2009
+
+  You will get the following error:
+
+  Xlib: connection to "localhost:2009.0" refused by server
+  Xlib: No protocol specified
+
+  Adding also the unix cookie will fix it:
+
+  xauth add localhost/unix:2009  MIT-MAGIC-COOKIE-1  6f...f4
+
+  This seems to be a Xlib problem, with Xlib trying to get the cookie
+  for the UDS port even if the TCP port was requested by the user.
+
+- Fixed a bug that prevented the nxclient dialog to be displayed when
+  the session was abruptedly shut down.
+
+- Fixed the compilation error on Apple MacOSX due to the sa_restorer
+  field in sigaction. As long as this field is present on Linux we
+  will keep following the safer route and will set it explicitly to
+  NULL.
+
+- Included what needs to be included in Process.cpp to compile with
+  older gcc.
+
+nxcomp-1.5.0-12
+
+- Implemented a replacement for the popen() and pclose() that do not
+  rely on a shell to run the command. They were required on Windows,
+  where we don't ship a suitable shell in the install.
+
+- Removed code forcing the PATH to include the bin directory on
+  Windows.
+
+nxcomp-1.5.0-11
+
+- Forced Auth.cpp on Windows to have the directory containing the
+  nxauth executable in the PATH. This is just for testing, until
+  nxclient is fixed.
+
+- Fixed compilation errors on Cygwin and Sun.
+
+- Removed the NX_FORCE_* stubs.
+
+nxcomp-1.5.0-10
+
+- Modified the memory management policies in ReadBuffer to fit all
+  the available bytes in a single buffer allocation.
+
+- The locateMessage() methods now give hints on the amount of data
+  that has to be read.
+
+- The read loop in channel now doesn't yield in the case of prio-
+  ritized messages. This is experimental.
+
+- Removed the check on isTimeToYield() between encodings of multi-
+  ple messages. This is aimed at reducing the risk of leaving pen-
+  ding messages in channels.
+
+- Modified the channels' read loop to always read all the available
+  data.
+
+- Disabled the log output that was selected when compiling with the
+  configure option --with-info. This leaves space for other log out-
+  put to be selected for more up-to-date scopes.
+
+- Implemented the NXTransReadVector() and the NXTransWriteVector()
+  functions to replace READV() and WRITEV().
+
+- Implemented memory-to-memory communication between the agent and
+  the NX proxy by making use of the NXTransAgent() interface in the
+  nx-X11/lib/X11/Xtranssock.c file.
+
+- Added a check in NXTransSelect() for the EBADF and, on Solaris,
+  the EINVAL errors. It can happen in the X11 code that a descript-
+  or has become invalid before it is removed from the managed set 
+
+- Rewritten the signal handling functions to restore the old actions
+  and masks when the NX transport is destroyed.
+
+- Added a NXTransAgent() function to let agents tell the proxy which
+  descriptor must be used for the controlling connection. Setting a
+  controlling connection has the effect of disabling further X client
+  connections and makes the proxy terminate when the channel is shut
+  down.
+
+- Solved a problem with setting the initial timeout in the select().
+
+- Modified the Makefile.in to not include -Wno-deprecated when compi-
+  ling C programs.
+
+nxcomp-1.5.0-9
+
+- Fixed a problem that prevented the 1.5.0-8 to work on the NX server
+  side.
+
+- This version has NX_FORCE_NULL_LISTEN_OPTION and NX_FORCE_NEW_SES-
+  SION_OPTION undefined, so it should work in a way that is compati-
+  ble with the old nxcomp.
+
+nxcomp-1.5.0-8
+
+- The new code comes with a preliminary integration of nxcomp with
+  SSH. It is now possible to create the NX transport by just calling
+  the "switch" command as in the following example:
+
+  NX> 299 Switching connection to: NX options: ...
+
+- Other possible forms for the NX switch command are:
+
+  NX> 299 Switching connection to: NX mode: ...
+
+  NX> 299 Switching connection to: NX mode: ... options: ...
+
+  Or just:
+
+  NX> 299 Switching connection to: NX
+
+  The "mode" parameter is there to provide a way to run both enc-
+  rypted and unencrypted connections. Possible values are "encrypt-
+  ed", "unencrypted" or "default", the latter being an alias for
+  "encrypted". Unfortunately I was not able to test unencrypted
+  connections, so this may or may not work.
+
+- The top-level process can create the NX transport layer by calling
+  NXTransCreate(). The user has to set up a socket pair and pass the
+  higher descriptor to nxcomp. nxcomp will later monitor its end, by
+  reading and writing NX-encoded traffic. The user has to call the
+  NXTransExecute() function as often as it is possible, by letting
+  first NXTransPrepare() combine the sets of NX descriptors with the
+  descriptors that are used inside its process. A custom NXTransSel-
+  ect() is provided to optionally replace the original select(). This
+  function saves the original error code and the number of selected
+  descriptors upon exit, so the user can call it, restore the original
+  values as they were returned by the select() and run the rest of
+  the loop unmodified.
+
+- Future versions of the library should provide appropriate methods
+  for passing data to and from the proxy by means of a memcpy(), so
+  that it will be possible to remove the even minimal TCP overhead.
+
+- Note that integration is far from complete. More work is required
+  especially to manage the shutdown cleanly, in a way that gives to
+  SSH a chance to free its resources, and on adding facilities for
+  handling SSH and NX signals in a single function.
+
+- Rewritten the initialization procedure to make possible to run the
+  proxy in-process in an arbitrary connection manager, like SSH or a
+  HTTP utility. The same functionality can be used to embed nxcomp in
+  the NX agents, so that nxcomp has not to run in a separate process.
+
+- A new state-machine handles the advances through the connection
+  stages until the remote proxy (or the forwarder process ) is auth-
+  enticated, options have been negotiated and the session is started.
+
+- The option "session" is now used to pass the name of the session
+  file to the proxy. The parameter was previously used to pass the
+  literal name of the session, as set by the user, and was ignored
+  by the proxy. By default the session log is the standard error of
+  the process. It is anyway required to set the option when running
+  inside SSH, otherwise output will go to the same file as the SSH
+  output. In the NX client this would be the 'sshlog' file.
+
+- This version can be easily crafted to test the new integration by
+  setting the following define:
+
+  NX_FORCE_NULL_LISTEN_OPTION
+
+  This makes possible to test the nxcomp/nxssh integration by using
+  any production 1.4.0 client. To run this version you are required
+  to use nxproxy 1.5.0-4 and nxssh-1.5.0-6.
+
+- New functions handling enabling and disabling signals, based on
+  sigprocmask().
+
+- Improved error reporting when failures are encountered while ne-
+  gotiating the session.
+
+nxcomp-1.5.0-7
+
+- Caches are saved with a version identifier 1.4.0 so that they are
+  not discarded after upgrading the software to the 1.5.0.
+
+- Made values of T_* enumerations to be all lower case.
+
+- Updated copyright to year 2005.
+
+- Started working on an interface for running nxcomp in-process, as
+  a additional transport layer of nxssh or nxagent.
+
+nxcomp-1.5.0-6
+
+- Modified the configure script and the makefiles to not include the
+  -Wstrict-prototypes and -Wmissing-prototypes compilation flags. The
+  -Wnested-externs and -Wmissing-declarations flags are not included
+  when using GCC 3.
+
+- Removed the initial newline from string "NXPROXY - Version" printed
+  at program startup.
+  
+- Made X authentication compatible with 1.4.0 clients. This is a tem-
+  porary solution while code is updated to handle the new X authori-
+  zation scheme.
+
+nxcomp-1.5.0-5
+
+- Added an Auth class to handle the X authentication. The NX server
+  should now use the same proxie cookie that is passed by the client
+  at session startup. The X server side proxy will forward the autho-
+  rization credentials by replacing the fake cookie with the real co-
+  okie, as it is read from the auth file using the xauth utility. The
+  implementation is based on the corresponding code found in the SSH
+  client and comes with the same limitations: only MIT-MAGIC-COOKIE-1
+  cookies are checked and the authorization file is read only once,
+  at the time the instance is initialized. If the auth file changes
+  along the life of the session, the old cookie will still be used.
+  This works with X servers because of an undocumented "feature".
+  See also nx-X11.
+
+nxcomp-1.5.0-4
+
+- Adjusted for alarm(0) returning an inconsistent value in ConnectTo-
+  Remote().
+
+- Small changes to Types.h, Jpeg.cpp and Png.cpp to compile with gcc
+  3.4.2.
+
+- Cosmetic changes to the ChangeLog file.
+
+nxcomp-1.5.0-3
+
+- Removed test code from ServerChannel.cpp.
+
+- Small cosmetic change in Loop.cpp.
+
+- Tested for compatibility against 1.4.1-8.
+
+nxcomp-1.5.0-2
+
+- Changed VERSION file according to TRCL052336.
+
+nxcomp-1.5.0-1
+
+- Opened the 1.5.0 branch based on 1.4.1-9.
+
+nxcomp-1.4.1-9
+
+- Implemented methods PACK_RDP_PLAIN_64K_COLORS and PACK_RDP_PLAIN_-
+  16M_COLORS. It seems that 16 bpp plain bitmaps can be seldom recei-
+  ved. This doesn't seem to be the case of 24 bpp bitmaps.
+
+nxcomp-1.4.1-8
+
+- The new code enables use of 16 bpp and 32 bpp RDP bitmaps. This re-
+  quired modifications to the following files:
+
+  Misc.h
+  Misc.cpp
+  Loop.cpp
+  Control.cpp
+  ServerChannel.cpp
+  Unpack.h
+  Unpack.cpp
+
+- Lots of cosmetic changes compared to the original code in 1.4.1-7.
+
+- Merged the 1.4.0 and the 1.4.1 branches by importing changes up to
+  the 1.4.1-7.
+
+nxcomp-1.4.0-30
+
+- Modified the function checking the Unix socket where X connections
+  will be forwarded. The function will not fail if the socket itself
+  doesn't exist yet. This solves the TRCL042203.
+
+- Moved the code checking for the CTRL+ALT+SHIFT+ESC sequence to a
+  separate function. The implementation will now look for a different
+  sequence on the MacOS/X platform. This should solve the TRCL042182.
+
+nxcomp-1.4.0-29
+
+- Solved a bug that could cause proxy to stop reading data from the
+  X channels due to an incorrect calculation of the bytes queued on
+  the proxy link. The bug only affected Linux kernels of the 2.0/2.2
+  series.
+
+- Fixed a problem in the proxy class that could let the select time-
+  out to become zero.
+
+nxcomp-1.4.0-28
+
+- Prevented the main proxy process from quitting when the fork() of
+  any of the children fails. This can actually happen on Windows due
+  to conflicts in reallocating any of the Cygwin DLLs.
+
+- Reworked handling of the priority flag in channels when dealing
+  with the X_InternAtoms and X_AllocColor requests to reduce the time
+  of session startup. Priority is never set in case of X_InternAtom
+  requests and replies as we assume that most clients use the appro-
+  priate Xlib function to pipeline multiple requests in a single net-
+  work operation.
+
+- The timeout after which proxy will abort the peer connection is
+  still 120 seconds. An alert dialog will be shown earlier, after 30
+  seconds instead of 60.
+
+nxcomp-1.4.0-27
+
+- Removed the code setting priority on channels on ButtonPress and
+  Button release events. It seems preferrable to delay the flush and
+  pack more events in a single frame. This makes possible to get the
+  ButtonRelease together with the ButtonPress.
+
+- Fixed error detection in SetNoDelay() where a positive result
+  could produce a 'not supported' message in debug mode.
+
+nxcomp-1.4.0-26
+
+- Reworked the check aimed at detecting the clock drifts. The previ-
+  ous code, introduced in 1.3.2-2, had the undesired side-effect of
+  resetting the proxy timeout. This could cause the proxy to never
+  detect that the other end had been killed.
+
+- The default behaviour of proxy is now to terminate the session at
+  the time an error is encountered. This includes network failures.
+
+- Added a new dialog to be shown to the user whenever the session
+  is terminated abnormally.
+
+nxcomp-1.4.0-25
+
+- Fixed a bug in handling of suppression of errors generated by
+  committing the image splits. Other errors, unrelated to the commit
+  of split, could be suppressed. This might cause the hangup of the
+  session when the suppressed error was matching a reply.
+
+nxcomp-1.4.0-24
+
+- When killing the proxy process -9 the watchdog could remain alive.
+  This caused the SSH link to keep the stderr open, with the effect
+  that former proxy message were not flushed to the session log.
+  Now the watchdog checks every second if the parent is dead, so
+  that file descriptors can be closed as soon as possible.
+
+- SetupDisplaySocket() tried to force the connections to the X
+  server on the UNIX port whenever the display was set to localhost.
+  This patch was intended to fix a bug in nxclient, using the TCP
+  port even when the display was set to a UNIX socket. This beha-
+  viour caused problems when running nxclient on a remote host by
+  means of a ssh -X. Proxy will now adhere to the display setting.
+
+nxcomp-1.4.0-23
+
+- Added the possibility to respawn nxclient at the end of session.
+  This is an useful feature when powering thin-clients where NX
+  is the only application made available.
+
+- This configuration applies system-wide to the local client ins-
+  tallation. By default it is disabled. It can be enabled by the
+  by creating a 'noexit' file in the directory '/usr/NX/share',
+  or at compile time, by setting ENABLE_RESTART_ON_SHUTDOWN to 1.
+
+- Note that the solution is not perfect yet, as there are cases
+  where session could die without going through HandleShutdown(),
+  for example if a decoding error is raised in the communication
+  with the remote peer and the subsequent restore of the proxy
+  link fails to succeed.
+
+nxcomp-1.4.0-22
+
+- Corrected typos in Timestamp.h and Loop.cpp.
+
+nxcomp-1.4.0-21
+
+- Tuned the handling of RenderCompositeGlyphs. Now compression of
+  RENDER shows an average ratio of 8:1. This is a steady increase
+  compared to the 5:1 of the 1.3.2 version. The overall advantage
+  when running clients displaying a large amount of text is 30%.
+
+nxcomp-1.4.0-20
+
+- Added a new message store for the CreatePixmap request.
+
+- Fixed handleCopy() to only send the data part past the offset.
+  This fix can save a significant amount of traffic, especially
+  when sending many small images whose size doesn't reach the
+  threshold set for compressing them.
+
+nxcomp-1.4.0-19
+
+- Added tuning of all the RENDER requests. RenderCompositeGlyphs
+  will require further work.
+
+- Completed porting of the RENDER requests to the new templates.
+
+nxcomp-1.4.0-18
+
+- Tuned the handling of RenderCreatePicture and RenderFreePicture.
+
+- Created a new template system for writing new message encoders.
+
+- Renamed getBits() in EncodeBuffer with diffBits(). The getBits()
+  method now returns the bits actually allocated in the buffer and
+  can be called multiple times.
+
+nxcomp-1.4.0-17
+
+- Provided specific encoding of the remaining RENDER requests and
+  added compression of RenderCreateGlyphSet.
+
+nxcomp-1.4.0-16
+
+- Code underwent through 7 different patch versions but seems to
+  be stable now. It still needs to provide specific encoding for
+  RenderCreatePicture RenderChangePicture and RenderFreePicture.
+  Code will likely include incompatible changes at any new version
+  until the new encoding will stabilize, so be sure that you use
+  the same nxcomp version at both sides.
+
+- Created the infrastructure for compressing extension messages
+  based on the minor opcode. A new class, MinorMessageStore, has
+  to be inherited by stores requiring specific compression, so
+  that all the encoding methods of the parent can be redirected
+  to it. The RENDER extension is now compressed using this new
+  class.
+
+- Managed to maintain the compatibility with caches created by the
+  1.3.X version. Caches will be saved using the old format if the
+  remote version is not a 1.4.x. When restoring a cache created
+  by the 1.3.x with both proxies being the newest version, RENDER
+  mesages will be discarded without having to discard the whole
+  cache.
+
+- Added a member to the message class to store the identity size.
+  This field is now used instead of the default data offset to
+  manage the message data, that is the part of message after the
+  identity.
+
+- Removed the warnings printed in the session log when passing the
+  'kbtype' and the 'geometry' options to the proxy. These options
+  are actually used by agents.
+
+nxcomp-1.4.0-15
+
+- Started implementation of the new framework for handling enco-
+  ding of X extensions.
+
+- Renamed the overloaded methods handleEncode() and handleDecode()
+  to handleEncodeCached(), handleEncodeIdentity() and handleDecode-
+  Cached(), handleDecodeIdentity().
+
+- Updated the copyright notice to year 2004.
+
+nxcomp-1.4.0-14
+
+- Added the new channel for HTTP connections. This channel can be
+  used to let applications running on the NX server get access to
+  data and applications made available by a HTTP daemon running at
+  the client side.
+
+  This channel is not used at the moment by nxclient. It can be
+  activated by passing http=1 to the NX server side proxy and the
+  value http=80 to the NX client side.
+
+nxcomp-1.4.0-13
+
+- Quick patch to run on MacOS/X where inet_addr("127.0.0.1")
+  alone seems to fail to return a valid interface.
+
+nxcomp-1.4.0-12
+
+- Few cosmetic changes to logging.
+
+- Removed the debug output.
+
+nxcomp-1.4.0-11
+
+- Removed code used for simulating the new forwarding function-
+  ality without client and server support.
+
+nxcomp-1.4.0-10
+
+- Implemented authentication of the forwarder to the listening
+  proxy. If a session cookie is required, the forwarder must
+  provide the cookie upon connection.
+
+  An authentication phase at the time the forwarder connects
+  to the NX client side is strongly suggested because it is usu-
+  ally this side that sends the authorization cookie. Without
+  such a forwarder authentication, the local peer would reveal
+  the cookie to the first process connecting to the port.
+
+- If no cookie is specified in the switch command, the forward-
+  er is required to skip the authentication phase. This can be
+  useful when running the programs on the command line.
+
+- The implementation required appropriate changes to session
+  negotiation in nxssh. This version requires nxssh-1.4.0-8.
+
+nxcomp-1.4.0-9
+
+- Fixed the startup procedure to correctly negotiate the cookie
+  when the X server side proxy is listening for a forwarder.
+
+- When listening for a local forwarder (that is when the listen
+  option is enabled at X server side), proxy will listen for the
+  forwarder on the localhost interface.
+
+- This version has ports and and other parameters hardcoded for
+  testing purposes and is not intended for normal use.
+
+nxcomp-1.4.0-8
+
+- Slightly modified the text of FAILED_PROXY_CONNECTION alert.
+
+nxcomp-1.4.0-7
+
+- Added provision for leaving a running dialog showing an OK box
+  if proxy is exiting abnormally. This seems to fail to yield the
+  expected results as, at the present moment, client checks if
+  parent has exited.
+
+- Added a Binder class invoked when calling proxy with -B option.
+  It would serve as a replacement of the modifications I'm doing
+  in nxssh. The class is just a framework and the implementation
+  is unfinished.
+
+nxcomp-1.4.0-6
+
+- Added a line in the session log if the connection procedure is
+  aborted due to a signal.
+
+- Fixed ParseHostOption() to let it take in account the proxy
+  port offset when passing 'host:port' as the last parameter at
+  X server side.
+
+nxcomp-1.4.0-5
+
+- Lowered the default port offsets used for CUPS and SMB services
+  to 2000 and 3000. Arbitrary ports can be used by passing the ser-
+  vice's port at proxy startup. By default, anyway, the port is at
+  the same offset of the proxied display. Considering that the NX
+  server uses to start the first session at display 1000, we must
+  lower some of the defaults to avoid interference with the normal
+  X sessions run on the server.
+
+  Session at display ":1000" will have:
+
+  . Forwarding of CUPS connections at 3000.
+
+  . Forwarding of SMB connections at 4000.
+
+  . The listening proxy (at NX server side) at 5000. This
+    port is not used when enabling SSH tunneling
+
+  . The proxied X display (NX agent or proxy) at 7000.
+
+  . Forwarding of multimedia channels at 8000.
+
+  . Forwarding of embedded keyboard connections at 9000.
+
+- Turned off the log output.
+
+nxcomp-1.4.0-4
+
+- Managed to get the X client side proxy connect to the remote
+  peer. This means that some parameters that were implicitly
+  assumed based on the proxied port simulating the X display
+  must be now specified in the NX display string.
+
+- The 'port' parameter now specifies the remote TCP port where
+  the local proxy will connect to the remote peer. In previous
+  versions this parameter also affected the proxied port. This
+  was mainly a side effect, as the remote peer was always con-
+  tacted at port 4000 plus the proxied display offset.
+
+- Added the 'listen' parameter to tell to the proxy that is go-
+  ing to accept the peer connection on which port it will be
+  contacted. By default, similarly to the previous version, the
+  proxy will listen at the proxied display offset.
+
+- A check has been added in order to disallow passing both the
+  'accept' and the 'connect' parameter at the same time. A simi-
+  lar check affects the 'listen' parameter.
+
+- Renamed the previously unused 'sync' channel as 'cups'.
+
+nxcomp-1.4.0-3
+
+- Preserved the ability of version 1.3.2 to load caches generated
+  by this version.
+
+nxcomp-1.4.0-2
+
+- Small fixes to compile under Solaris 8.
+
+nxcomp-1.4.0-1
+
+- Opened the 1.4.0 branch.
+
+nxcomp-1.3.2-4
+
+- Fixed a problem with shmget(). Code in ServerChannel checked
+  the return value for being greater then 0, while 0 can actual-
+  ly be a valid segment.
+
+- When memory cache is disabled, nxcomp will explicitly set the
+  appropriate control variables dealing with loading and saving
+  of the persistent cache. This can be considered a cosmetic
+  change as nxcomp will disable NX delta compression if memory
+  cache is not available and this has an implicit effect on the
+  ability to load and save such a cache.
+
+nxcomp-1.3.2-3
+
+- Removed inclusion of zlib.h in Png.cpp. Conflicting symbols
+  with zlib.h from nx-X11 could cause compilation to fail.
+
+nxcomp-1.3.2-2
+
+- Added a function to take into account the clock drifts at the
+  time we check the ping from the remote proxy. This can be
+  caused by the user changing the system time or by small adjust-
+  ments introduced by the operating system making the clock go
+  backward. Such events could cause the proxy link to be shut
+  down and reconnected.
+
+- Reduced the length of lines printed in statistics when showing
+  the details of X protocol's opcodes. This is intended to help
+  nxclient to keep the whole statistics in the 'details' window,
+  so that users don't have to use the scrollbars.
+
+nxcomp-1.3.2-1
+
+- Opened the 1.3.2 branch.
+
+nxcomp-1.3.1-5
+
+- It seems that Solaris can return an EINVAL error selecting a
+  shutdown descriptor even before we actually close the socket.
+  We now ignore the condition on Solaris. This is definitely a
+  Solaris bug. 
+
+nxcomp-1.3.1-4
+
+- Increased the timeout after which proxy will abort the peer
+  connection to 120 seconds. An alert dialog will now be shown
+  after 60 seconds, instead of the 30 seconds being the default
+  in the previous version. Some users reported the timeout to
+  be too short in the case of temporary network failures.
+
+nxcomp-1.3.1-3
+
+- Some optimizations in the cache house-keeping process. Now it
+  runs at lower system priority in respect to the parent. Any 2
+  iterations through directories and images, it also sleeps for
+  a tiny amount of time. This further decreases the system load.
+
+- Removed the underline characters and added a colon in the
+  title of this ChangeLog to fully comply with format used in
+  the release notices.
+
+nxcomp-1.3.1-2
+
+- Fixed a crash when running both client and server on the SPARC
+  Solaris. An optimization used to avoid byte-swapping when both
+  hosts have the same endianess doesn't work on SPARC if buffer
+  is not aligned to word boundary. A better version of the code
+  should check the CPU, not the OS, as this probably applies to
+  other processors.
+
+nxcomp-1.3.1-1
+
+- Opened the 1.3.1 branch.
+
+nxcomp-1.3.0-50
+
+- Disabled the processor limit in X client side proxy. In previous
+  versions the processor load limit was set to an idle time ratio
+  of 2. This was likely to cause an unwanted slowdown on very old
+  hardware or when running the server as guest OS inside a VMWare
+  virtual machine.
+
+nxcomp-1.3.0-49
+
+- Last minute update on proxy shutdown bug on Cygwin. A stack
+  trace reveals that faillure happens in the static destructor of
+  the BlockCacheSet class. It seems that problem appeared just
+  after having upgraded to the latest version of Cygwin DLL. Now
+  the destructor is skipped at shutdown.
+
+nxcomp-1.3.0-48
+
+- Further fix to overcome the shutdown problem on Windows.
+
+nxcomp-1.3.0-47
+
+- Used T_files::value_type() in Keeper.cpp. The form without the
+  explicit constructor fails to compile with GCC 2.91 on RH 6.2.
+
+- Fixed '==' -> '=' in configure.in to build under RH 6.2 and
+  probably other platforms.
+
+nxcomp-1.3.0-46
+
+- The cleanup procedure now skips deletion of the IO streams
+  under Windows. This is intended to overcome a strange segfault
+  occurring at random time, at the time proxy is being shutdown.
+
+nxcomp-1.3.0-45
+
+- Newer versions of the stdlibc++ do not seem to be able to deal
+  with NULL strings or non printable characters. This caused the
+  standard error stream to get sometimes corrupted in the case
+  TEST and DEBUG logs were enabled in Loop.cpp.
+
+nxcomp-1.3.0-44
+
+- Disabled TEST and DEBUG logs in ServerChannel.
+
+nxcomp-1.3.0-43
+
+- Fixed a crash when unpacking an image in server proxy in the
+  case the unpack state for the given channel had not been
+  previously created.
+
+nxcomp-1.3.0-42
+
+- Small modification to setSchedule() to not account previous
+  data accumulated in the encode buffer. The new code seems to
+  allow better use of the available bandwidth.
+
+nxcomp-1.3.0-41
+
+- Further fix in Tight decompression. Content of the main write
+  buffer was not removed before flushing the unpacked data to
+  the X server link.
+
+nxcomp-1.3.0-40
+
+- Removed the code marked as FIXME in Loop and ServerChannel.
+  Code was used in previous version to override any pack method
+  other than NO_PACK and to disable initialization of the shared
+  memory.
+
+nxcomp-1.3.0-39
+
+- Solved the problem with unpacking of RDP text on big-endian
+  architectures. The width field in PutPackedImage was put as
+  16 bits and extracted as 32 bits at decoding side.
+
+- Moved the code checking if any of the children has exited in a
+  specific function. This function is now called any time signals
+  are newly enabled. This works even on Solaris.
+
+- Enabled use of shared memory with Tight image decompression.
+
+- Added event NXCollectPropertyNotify to NXproto.h.
+
+nxcomp-1.3.0-38
+
+- Message locks are now checked before splitting a message.
+
+nxcomp-1.3.0-37
+
+- Added a further counter to yield encoding data if the amount 
+  of output bytes to be written to channels exceeds a threshold.
+
+- Modified proxy to write data immediately if the encoding loop
+  was interrupted.
+
+nxcomp-1.3.0-36
+
+- Further fix required by Tight decompression. By handling mul-
+  tiple writes in the Tight class we may flush the main write
+  buffer in the wrong order. If Tight decompression is enabled,
+  the buffer is now flushed before decoding the packed image.
+
+- A SIGCHLD is raised any time signals are newly enabled. This
+  allows the main loop to wait() the pid of children that had
+  exited while signals were disabled.
+
+nxcomp-1.3.0-35
+
+- Fixed Tight decompression by handling multiple writes to the
+  channel's transport inside the decompression function.
+
+- Made Tight decompressor in ServerChannel a pointer instead of
+  an instance of the class. Class is allocated the first time it
+  is referenced.
+
+- Rewritten handleUnpack() in ServerChannel to use a switch()
+  on the pack method instead of multiple if().
+
+nxcomp-1.3.0-34
+
+- Disabled RENDER extension when running X agent sessions on
+  the Solaris client. Problems seem to be caused by incompati-
+  bilities in the implementation of RENDER on the Sun X server
+  shipped by default. We did not test NX with the XFree86 X
+  server, but it seems that, when using the Sun X server, even
+  plain X clients don't make full use of the extension.
+
+nxcomp-1.3.0-33
+
+- Added 4 new fields to the X_NXGetControlParameters reply.
+  A dialog should be shown by agent if proxy was not able to
+  negotiate a persistent cache or if a cache was selected but
+  not loaded because incompatible or corrupted.
+
+- Fixed a bug on Solaris where socket() must be recreated if
+  the first connect() fails. Not a problem. The strange thing
+  is that if you reuse the socket(), the subsequent connect()
+  is successful and the program fails as soon as you try to
+  write to it.
+
+nxcomp-1.3.0-32
+
+- Added request X_NXFreeUnpack to free the resources allocated
+  by the remote proxy to unpack images for the given agent's
+  client
+
+- Added an alert at X server side if proxies were not able to
+  negotiate a persistent cache or if a cache was selected but
+  not loaded at X server side (that means that probably cache
+  was not compatible or corrupted). The alert is not enabled
+  at the moment. Before enabling it, we need to find a way to
+  deal with full-screen mode.
+
+- Tuning of MIT-SHM parameters.
+
+nxcomp-1.3.0-31
+
+- Modified the following requests to carry the id of the
+  agent's client:
+
+  - X_NXSetUnpackGeometry
+  - X_NXSetUnpackColormap
+  - X_NXSetUnpackAlpha
+  - X_NXPutPackedImage
+
+  Now each agent's client has its own record pointing to the
+  geometry, colormap and alpha channel that will be used to
+  unpack the image. Code is not finished yet so it is advisable
+  that agents' writers keep using client id 0. Note also that
+  the final solution will require some changes to the way split
+  notifications are sent to agent that I plan to implement in
+  the next versions.
+
+- The X_NXSetUnpackGeometry request has now a message store.
+  This should reduce the overhead to the minimum even in the
+  case of dumb agents not checking if the current geometry
+  matches the image to be unpacked.
+
+nxcomp-1.3.0-30
+
+- Improved handling of short-circuited replies at X client
+  side. Request opcodes are now pushed in the sequence queue
+  to determine if a reply is expected. In this case tainting
+  of reply is skipped to preserve the sequence ordering of
+  any event or error that could have generated by the reply.
+  This seems to solve all the problems reported by people
+  running a NX session in virtual desktop mode nested in an
+  existing session being run in single application mode.
+
+- Modified the cleanup procedure to print the 'Waiting for'
+  message in the session log only at the time all X channels
+  have been actually shut down. This message can be used by
+  the NX server to find out the appropriate time to close
+  the session.
+
+- Added the selected session type to the 'Using pack method'
+  message printed at startup.
+
+- Added the option to close down the proxy link and perform
+  a clean shutdown of the session, re-read the whole session
+  configuration or restart the proxy link when a SIGHUP is
+  delivered to the proxy process. The default behaviour is
+  to close down the session. The new default (the old one was
+  to restart the link) is a required feature to let users run
+  full sessions using single application mode f.e. in a LTSP
+  environment. I noted that when the controlling terminal of
+  the X session is closed, a SIGHUP is delivered to the X
+  server side proxy (probably it is delivered to all the con-
+  nected clients, and, thus for NX, only to the proxy). This
+  signal can be used to terminate the whole session.
+
+nxcomp-1.3.0-29
+
+- Changed defaults to disable image masks when running proxy
+  in single application mode. The new configuration requires
+  changes in NX server and in NX X11 library. Users should
+  experience much better image quality when using NX on slow
+  links. This comes at the cost of slightly worse compression
+  ratios.
+
+nxcomp-1.3.0-28
+
+- Opcode of request was not rewritten by server channel when
+  using link LAN. This caused problems with taint of replies.
+
+nxcomp-1.3.0-27
+
+- Modified the split store and the split procedures in client
+  channel to always return the client id in the notification
+  events. The new field is added to event at byte offset 28
+  to preserve compatibility with previous agent releases. The
+  modification permits to agent to match the commit of alpha
+  channel with the original image, if requests are split by
+  proxy.
+
+- Temporarily set the timeout used to poll MIT-SHM completion
+  events coming from X server to 0. More testing is required.
+
+- Fixed an inconsistent message generated in statistics due to
+  a division by 0.
+
+nxcomp-1.3.0-26
+
+- Modified pending timeout from 1 to 0 milliseconds. This means
+  that both channels and proxy are now immediately restarted to
+  let them consume all data left in their read buffer.
+
+- When querying the X server for MIT-SHM support, size of name
+  in X_QueryExtension request was sent as 32 bits instead of 16.
+  This caused request to fail on big endian architectures.
+
+- Modified the MIT-SHM initialization procedure to always send
+  all the 3 protocol requests also in the case of early failures.
+
+nxcomp-1.3.0-25
+
+- Implemented handling of the new X_NXSetUnpackAlpha message.
+  Performances are very satisfactory. Using most of the current
+  GNOME and KDE applications, caching reaches 90% of the total
+  messages.
+
+- Modified the persistent cache management routines to handle
+  backward compatibility with proxy versions prior of 1.3.0.
+
+- It has been made possible to send both X_NXSetUnpackColormap
+  and X_NXSetUnpackAlpha messages with 0 entries to temporarily
+  disable use of the colormap or the alpha channel and free the
+  resources allocated by the server channel class.
+
+- Added function UnpackAlpha() to Unpack.cpp.
+
+nxcomp-1.3.0-24
+
+- Using WriteBuffer::registerPointer() to track growing of the
+  write buffer in handleFastWrite() functions. This problem
+  existed even in 1.2.2 but never shown up because we didn't
+  have to use the pointer after data had been written to the
+  write buffer. Now, instead, we have to post-process the write
+  buffer to copy data to the shared segment.
+
+- Optimized memory allocations running with link LAN to save a
+  memcpy() any time new data is allocated in the scratch buffer.
+
+- When running with link LAN the scratch buffer is now used only
+  when:
+
+  - A further allocation would case growing of the write buffer
+    (and, thus, a memcpy() of the previous content).
+
+  - When data to added is bigger than the write threshold.
+
+  In previous versions the scratch buffer was used any time the 
+  total amount of data to be written (write buffer + scratch
+  buffer) exceeded the scheduled write threshold. This caused
+  small writes to be appended even when a single write could
+  be  obtained without reallocating the buffer.
+
+- Preliminary support for transporting the alpha channel in a
+  separate message in case of 32 bits displays using the RENDER
+  extension.
+
+nxcomp-1.3.0-23
+
+- Modified the mask used to open the shared memory segment on
+  OS/X to 0777. We have to better investigate why the previous
+  0600 mask doesn't work even if the user running the proxy is
+  the same user running the X server.
+
+nxcomp-1.3.0-22
+
+- Implemented MIT-SHM support on LAN connections.
+
+- More MIT-SHM bug fixes.
+
+nxcomp-1.3.0-21
+
+- Better use of the shared segment through an improved
+  algorithm leveraging the offset field of the X_ShmPutImage
+  request. The new algorithm greatly reduces the amount of
+  polls the proxy needs to perform to find if the completion
+  event has arrived.
+
+- Implemented MIT-SHM support for X_PutImage requests.
+
+- Implemented option shmem=value. Use of this option is anyway
+  discouraged. Proxy will allocate the shared memory segment
+  based on the size of the in-memory cache set by the user.
+  Use of MIT-SHM is disabled when user did set a memory cache
+  smaller than 2MB (for example on the embedded client).
+
+- Rewritten post-processing of images in server channel loop.
+
+- Improved error handling to ensure we intercept all MIT-SHM
+  X errors before they reach the NX agent.
+
+- Solved a problem that was causing channels to not reflect
+  shared memory support flags set in control.
+
+nxcomp-1.3.0-20
+
+- Solved a compatibility problem when mixing proxy versions
+  1.2.2 and 1.3.0.
+
+nxcomp-1.3.0-18
+
+- Rewritten interfaces to shared memory initialization in
+  client and server channel.
+
+- Server channel checks for the completion event until a
+  timeout before reusing the shared memory segment.
+
+- Flush flag was not cleared after the write buffer had been
+  flushed in handleWrite() of both client and server channels.
+  This could lead to multiple fragmented writes, affecting
+  the performances.
+
+- Added -lcygipc to linking on Windows platform.
+
+- Added a check on GCC version to see if -Wnested-externs
+  -Wmissing-declarations are valid options.
+
+nxcomp-1.3.0-17
+
+- Implemented initial support for MIT-SHM extension in the
+  network path between the X server proxy and the real X
+  server. Presently it works only for X_NXPutPackedImages.
+
+- Modified configure.in to compile under FreeBSD.
+
+- Small changes to sources due to FreeBSD support.
+
+nxcomp-1.3.0-16
+
+- Fixed caching of RENDER extension on MacOS/X and Solaris.
+
+- Under Solaris an explicit call to EnableSignal() is needed
+  at the end of the signal handler as raising a signal seems
+  to reset the previous settings.
+
+- Can't find a way to get bytes queued for write on Solaris as
+  both FIONWRITE and TIOCOUTQ don't seem to be available. This
+  means that NX server on Solaris is only able to detect con-
+  gestions on proxy link at the time a write fails with error
+  EAGAIN.
+
+- Starting from this version, render extension messages are not
+  automatically discarded from cache when running agent based X
+  sessions. This is in preparation of render support introduced
+  in this release.
+
+nxcomp-1.3.0-15
+
+- Changed default to force writes if X channels exceed buffer
+  limits. This change was suggested by benchmarks performed on
+  Win32.
+
+- Wrapped IO on cache files in functions performing better error
+  checking.
+
+- General cleanup in handling of socket options for MacOS/X and
+  Solaris.
+
+nxcomp-1.3.0-14
+
+- Corrupted persistent caches were not deleted in case loading
+  of any of the message stores failed. To run further sessions
+  on the same host, user had to delete the cache file manually.
+
+- Improved error handling in JPEG decompression. Now connection
+  is reset in case of failure.
+
+- Before performing JPEG or PNG decompression, image is better
+  checked to verify if loading from disk failed.
+
+- Improved error handling in case of failure loading persistent
+  cache from disk. On MacOS/X istream -> fail() doesn't seem to
+  work properly. This needs further investigation.
+
+- The default installation path of nxclient is searched under
+  MacOS/X at the time nxclient is invoked in dialog mode.
+
+nxcomp-1.3.0-13
+
+- Fixed a (further) compilation problem under Solaris. Now static
+  libraries are first searched under /usr/sfw/lib (in case Sun
+  would decide to include them in future releases).
+
+nxcomp-1.3.0-12
+
+- Fixed parsing of command line when passing option -V.
+
+- Correctly detected ENOPROTOOPT when setting TCP_NODELAY socket
+  option on MacOS/X and Solaris.
+
+nxcomp-1.3.0-11
+
+- Given option in configure to specify what needs to be built
+  statically:
+
+  --with-static-png     enable static linking of PNG library
+  --with-static-jpeg    enable static linking of JPEG library
+  --with-static-z       enable static linking of Z library
+
+nxcomp-1.3.0-10
+
+- Fixed a problem in saving of persistent cache on big-endian
+  machines.
+
+nxcomp-1.3.0-9
+
+- Testing with different settings to check if it's possible to
+  increase the performances under Windows.
+
+- Solved a problem in parsing of options that prevented proxy
+  to connect to a remote session running at port offset 0.
+
+- Fixed two warnings compiling on Solaris.
+
+- Changed configure.in to first check for nx-X11 includes
+  and libraries. Added "/usr/openwin/bin/makedepend" to path
+  searched for the executable.
+
+nxcomp-1.3.0-8
+
+- Small cleanup in configure.in and files modified by Gregorz
+  Kryza to add support for Solaris.
+
+- A new configure script has been generated using autoconf-2.57-3.
+
+nxcomp-1.3.0-7
+
+- Added support for detection of Solaris in configure script.
+  Now Makefile.in uses ranlib instead of ar.
+
+- Small changes in source and header files to support Solaris.
+
+nxcomp-1.3.0-4
+
+- Corrected a bug that could cause priority on proxy and channels 
+  to be not taken in account at the time proxy tries to determine 
+  if it's time to flush the proxy link.
+
+- Better implementation of abort split notification by X server
+  proxy to its remote peer. The new implementation doesn't
+  need to set a timeout and permits notifications to be received
+  earlier.
+
+- Improved support for 'tainting' XSync() messages coming from 
+  X clients in single application mode. Now a X_GetInputFocus
+  is sent to the real X server any n such messages received by
+  proxy. 
+
+- Included support for 15 bpp displays. It seems that handling
+  them as 16 bpp it's OK.
