@@ -8,7 +8,8 @@ Build-Depends:
  debhelper (>= 7.0.50~),
  libpng-dev,
  libjpeg-dev,
- zlib1g-dev
+ zlib1g-dev,
+ quilt
 Build-Conflicts:
  x11proto-core-dev,
  x11proto-kb-dev,
