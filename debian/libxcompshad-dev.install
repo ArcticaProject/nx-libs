@@ -1,0 +1,4 @@
+nxcompshad/*.h		usr/include/nx
+nxcompshad/*.a		usr/lib/nx/
+nxcompshad/lib*.so	usr/lib/nx/
+nxcompshad/*.a		usr/lib/nx/

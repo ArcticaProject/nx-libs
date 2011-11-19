@@ -1,0 +1,59 @@
+This package was created by Mike Gabriel <mike.gabriel@das-netzwerkteam.de> on Thu Oct  10 22:53:56 CEST 2011
+
+The software components were downloaded from http://www.nomachine.com/sources.php
+
+Copyright (c) 2001-2011 NoMachine, http://www.nomachine.com/.
+
+   This program is free software; you can redistribute it and/or modify it
+   under the terms of the GNU General Public License as published by the Free
+   Software Foundation; either version 2 of the License, or (at your option)
+   any later version.
+
+   This program is distributed in the hope that it will be useful, but WITHOUT
+   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+   more details.
+
+   You should have received a copy of the GNU General Public License along with
+   this program; if not, write to the Free Software Foundation, Inc., 51
+   Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+Parts of this software are derived from DXPC project. These copyright
+notices apply to original DXPC code:
+
+   Redistribution and use in source and binary forms are permitted provided
+   that the above copyright notice and this paragraph are duplicated in all
+   such forms.
+
+   THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR IMPLIED
+   WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
+   MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+   Copyright (c) 1995,1996 Brian Pane
+   Copyright (c) 1996,1997 Zachary Vonler and Brian Pane
+   Copyright (c) 1999 Kevin Vigor and Brian Pane
+   Copyright (c) 2000,2001 Gian Filippo Pinzari and Brian Pane
+
+The files MD5.[ch] are copyright (C) 1999, 2000, 2002 Aladdin Enterprises.
+
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
+
+
+The packaging for Debian is copyright 2011 Mike Gabriel and is released
+under the GPL version 2. On Debian systems, the complete text of the GNU
+General Public License can be found in `/usr/share/common-licenses/GPL'.
+

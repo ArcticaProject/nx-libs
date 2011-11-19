@@ -1,0 +1,4 @@
+nxcomp/libXcomp.so	usr/lib/nx
+nxcomp/libXcomp.a	usr/lib/nx
+nxcomp/NX*.h		usr/include/nx
+nxcomp/MD5.h		usr/include/nx

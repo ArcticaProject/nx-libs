@@ -1,0 +1,3 @@
+nx-X11/extras/Mesa/include/GL/*.h               usr/include/nx/extras/Mesa/GL/
+nx-X11/extras/Mesa/include/GL/internal/*.h      usr/include/nx/extras/Mesa/GL/internal/
+nx-X11/extras/Mesa/include/GLES/*.h             usr/include/nx/extras/Mesa/GLES/
