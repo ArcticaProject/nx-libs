@@ -1,0 +1,192 @@
+############################################################################
+#                                                                          #
+#  Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.          #
+#                                                                          #
+#  NXCOMP, NX protocol compression and NX extensions to this software      #
+#  are copyright of NoMachine. Redistribution and use of the present       #
+#  software is allowed according to terms specified in the file LICENSE    #
+#  which comes in the source distribution.                                 #
+#                                                                          #
+#  Check http://www.nomachine.com/licensing.html for applicability.        #
+#                                                                          #
+#  NX and NoMachine are trademarks of Medialogic S.p.A.                    #
+#                                                                          #
+#  All rights reserved.                                                    #
+#                                                                          #
+############################################################################
+
+#
+# Get values from configure script.
+#
+
+VERSION=@VERSION@
+LIBVERSION=@LIBVERSION@
+
+#
+# We would really like to enable all warnings, -Wredundant-decls,
+# though, gives a warning caused by pthread.h and unistd.h and
+# GCC 3.4 was changed in a way that it now complains about some
+# of the -W directives we used before (-Wmissing-declarations,
+# -Wnested-externs, -Wstrict-prototypes and -Wmissing-prototypes).
+#
+
+CXX         = @CXX@
+CXXFLAGS    = @CXXFLAGS@ @X_CFLAGS@ @DEFS@ \
+              -Wall -Wpointer-arith
+CXXINCLUDES =
+CXXDEFINES  =
+
+#
+# C programs don't share the C++ flags. They should
+# have their own @CCFLAGS@.
+#
+
+CC          = @CC@
+CCFLAGS     = @X_CFLAGS@ @DEFS@ \
+              -Wall -Wpointer-arith
+CCINCLUDES  =
+CCDEFINES   =
+
+LDFLAGS     = @LDFLAGS@
+LIBS        = @LIBS@ -L/usr/X11R6/lib -lX11
+
+#
+# Only if THREADS is defined.
+#
+# LIBS = $(LIBS) -lpthread
+#
+
+#
+# Only if you want ElectricFence.
+#
+# LIBS = $(LIBS) -lefence
+#
+
+#
+# Only if you want mpatrol.
+#
+# LIBS = $(LIBS) -lmpatrol -lbfd -liberty
+#
+
+srcdir      = @srcdir@
+prefix      = @prefix@
+exec_prefix = @exec_prefix@
+bindir      = @bindir@
+man1dir     = @mandir@/man1
+VPATH       = @srcdir@
+
+INSTALL         = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA    = @INSTALL_DATA@
+
+#
+# This should be autodetected.
+#
+
+MAKEDEPEND     = @MAKEDEPEND@
+DEPENDINCLUDES = -I/usr/include/g++ -I/usr/include/g++-3
+
+.SUFFIXES: .cpp.c
+
+.cpp.o:
+	$(CXX) -c $(CXXFLAGS) $(CXXINCLUDES) $(CXXDEFINES) $<
+.c.o:
+	$(CC) -c $(CCFLAGS) $(CCINCLUDES) $(CCDEFINES) $<
+
+LIBRARY = Xcompshad
+
+LIBNAME    = lib$(LIBRARY)
+LIBFULL    = lib$(LIBRARY).so.$(VERSION)
+LIBLOAD    = lib$(LIBRARY).so.$(LIBVERSION)
+LIBSHARED  = lib$(LIBRARY).so
+LIBARCHIVE = lib$(LIBRARY).a
+
+MSRC   = Main.c
+
+CSRC   =
+
+CXXSRC = Core.cpp \
+	 Input.cpp \
+	 Logger.cpp \
+	 Shadow.cpp \
+	 X11.cpp \
+	 Win.cpp \
+	 Updater.cpp \
+	 Manager.cpp
+
+MOBJ   = $(MSRC:.c.cpp=.o)
+COBJ   = $(CSRC:.c=.o)
+CXXOBJ = $(CXXSRC:.cpp=.o)
+
+MLIBS  = -L. -lXShadow
+
+ifeq ($(findstring -lgdi32,$(LIBS)),-lgdi32)
+
+# We need a smarter way to detect windows
+# platform.
+
+LIBDLL       = cyg$(LIBRARY).dll
+LIBDLLSTATIC = lib${LIBRARY}.dll.a
+
+all: depend $(LIBARCHIVE) $(LIBDLL)
+
+else
+
+EXTRALIBS = -lXtst -lXrandr -lXdamage
+
+all: depend $(LIBFULL) $(LIBLOAD) $(LIBSHARED) $(LIBARCHIVE)
+
+endif
+
+$(LIBFULL):	$(CXXOBJ) $(COBJ)
+		$(CXX) -o $@ $(LDFLAGS) $(CXXOBJ) $(COBJ) $(LIBS) $(EXTRALIBS)
+
+$(LIBLOAD):	$(LIBFULL)
+		rm -f $(LIBLOAD)
+		ln -s $(LIBFULL) $(LIBLOAD)
+
+$(LIBSHARED):	$(LIBFULL)
+		rm -f $(LIBSHARED)
+		ln -s $(LIBFULL) $(LIBSHARED)
+
+$(LIBARCHIVE):	$(CXXOBJ) $(COBJ)
+		rm -f  $(LIBARCHIVE)
+		ar clq $(LIBARCHIVE) $(CXXOBJ) $(COBJ)
+		ranlib $(LIBARCHIVE)
+
+$(LIBDLL): $(LIBARCHIVE)
+		$(CC) -o $@ \
+		-shared \
+		-Wl,--out-implib=$(LIBDLLSTATIC) \
+		-Wl,--export-all-symbols \
+		-Wl,--enable-auto-import \
+		-Wl,--whole-archive ${LIBARCHIVE} \
+		-Wl,--no-whole-archive \
+		${LIBS} -L/usr/X11R6/lib
+
+$(PROGRAM):	$(MOBJ) $(COBJ) $(CXXOBJ) $(LIBDLL)
+#		$(CC) $(CCFLAGS) -o $@ $(MOBJ) $(MLIBS)
+
+depends:	depend.status
+
+depend:		depend.status
+
+depend.status:	
+		if [ -x $(MAKEDEPEND) ] ; then \
+			$(MAKEDEPEND) $(CXXINCLUDES) $(CCINCLUDES) \
+                        $(DEPENDINCLUDES) -f Makefile $(MSRC) $(CSRC) $(CXXSRC) 2>/dev/null; \
+		fi
+		touch depend.status
+
+install:	install.bin install.man
+
+install.bin:
+
+install.man:
+
+clean:
+		-rm -f *~ *.o *.bak st?????? core core.* *.out.* *.exe.stackdump \
+		$(LIBFULL) $(LIBLOAD) $(LIBSHARED) $(LIBARCHIVE) $(LIBDLL) $(LIBDLLSTATIC) $(PROGRAM) $(PROGRAM).exe
+
+distclean:	clean
+		-rm -rf config.status config.log config.cache depend.status Makefile tags autom4te.cache

@@ -1,0 +1,404 @@
+ChangeLog:
+
+nxcompshad-3.5.0-2
+
+- Fixed TR03G02189. Now key combinations involving the Shift keys
+  are recognized correctly.
+
+nxcompshad-3.5.0-1
+
+- Opened the 3.5.0 branch based on nxcompshad-3.4.0-3.
+
+- Updated copyright to year 2011.
+
+nxcompshad-3.4.0-3
+
+- Updated copyright to year 2010.
+
+nxcompshad-3.4.0-2
+
+- Fixed TR08G02256. Now the Shadow session is shown correctly with
+  MIT-SHM extension disabled.
+
+- Improved updateShadowFrameBuffer() and ~Poller() functions.
+
+- Avoided memory leak.
+
+nxcompshad-3.4.0-1
+
+- Opened the 3.4.0 branch based on nxcompshad-3.3.0-3.
+
+- Updated version number.
+
+- Updated copyright to year 2009.
+
+- Improved error messages logging in case of initialization failures.
+
+nxcompshad-3.3.0-3
+
+- Fixed TR01G02158. Keymap initialization could be incorrect because
+  of a type mismatch on 64 bit platforms.
+
+nxcompshad-3.3.0-2
+
+- Updated VERSION.
+
+nxcompshad-3.3.0-1
+
+- Opened the 3.3.0 branch based on nxcompshad-3.2.0-3.
+
+nxcompshad-3.2.0-3
+
+- Improved keycode translation.
+
+nxcompshad-3.2.0-2
+
+- Solved a problem when sending fake modifier events.
+
+- Added support for keyboard events handling for the web player.
+
+- Changed keycodes translation for Solaris keyboard.
+
+- Corrected a problem for keycodes translation from Solaris keyboard.
+
+- Fixed TR02F02001. In shadow session the shadower's keyboard layout
+  could be wrong. Now keycodes are correctly translated if master and
+  shadow keyboards have different layouts.
+
+- Added NXShadowGetScreenSize() and NXShadowSetScreenSize() functions,
+  so that the shadow session can handle correctly the resize of the
+  master session window.
+
+- Solved a compilation problem on GCC 4.3.
+
+nxcompshad-3.2.0-1
+
+- Opened the 3.2.0 branch based on nxcompshad-3.1.0-2.
+
+nxcompshad-3.1.0-2
+
+- Updated file VERSION to match the current release version.
+
+nxcompshad-3.1.0-1
+
+- Opened the 3.1.0 branch based on nxcompshad-3.0.0-19.
+
+nxcompshad-3.0.0-19
+
+- Skip initialization of damage extension if it was already disabled.
+
+nxcompshad-3.0.0-18
+
+- The poller destructor checks if the damage extension is in use.
+
+- Small changes to the function getting the screen content in the case
+  damage is not in use.
+
+nxcompshad-3.0.0-17
+
+- Cleanup of some log messages.
+
+nxcompshad-3.0.0-16
+
+- Disabled some log message in the functions initializing the poller.
+
+nxcompshad-3.0.0-15
+
+- Before calling XTest functions, it is checked if the connection to
+  master X server has been initialized.
+
+nxcompshad-3.0.0-14
+
+- After the shm segment is created, its mode is changed and it is
+  marked for destroying. A check on the number of attaches is done.
+
+nxcompshad-3.0.0-13
+
+- Creating the shm segment even if the uid of master X server can't be
+  retrieved.
+
+- Fixed reallocation of update region.
+
+- Checking if the master X server provides XTest extension.
+
+nxcompshad-3.0.0-12
+
+- Fixed a compiler warning on AMD64 platform.
+
+- Changed configure script to add -fPIC option.
+
+- Fixed a mismatch in UpdateManager destructor.
+
+nxcompshad-3.0.0-11
+
+- Fixed the function setting the uid of shm segment.
+
+- Sync with the master X server before marking the shm segment to be
+  destroyed.
+
+nxcompshad-3.0.0-10
+
+- Setting the shm segments as readable only by the master X server
+  process.
+
+- Mark shm segments to be destroyed when the last process detach.
+
+- Enabled keycode translation in order to allow keyboards of different
+  models to work.
+
+nxcompshad-3.0.0-9
+
+- Changed the LICENSE file to state that the software is only made
+  available under the version 2 of the GPL.
+
+- Added file COPYING.
+
+- Changes to translate keycodes between different keyboard types. The
+  keycodes are translated through the keysym.
+
+- Changes to convert a Mode_switch key to ISO_Level3_Shift if it is
+  needed.
+
+nxcompshad-3.0.0-8
+
+- Added interface function NXShadowDisableShm disabling the use of
+  MIT-SHM extension.
+
+- Added interface function NXShadowDisableDamage disabling the use of
+  DAMAGE extension.
+
+- Added interface function NXShadowSetDisplayUid setting the uid of
+  shadowed X server
+
+- Changed the owner of shared memory segments to the uid of the sha-
+  dowed X server.
+
+- Fixed logWarning method.
+
+- Moved the code initializing the use of shared memory to shmInit
+  method of X11 Poller.
+
+nxcompshad-3.0.0-7
+
+- Removed the class qualifier in the declaration of destroyUpdate-
+  ManagerRegion().
+
+nxcompshad-3.0.0-6
+
+- Fixed build errors on 64 bit platforms.
+
+- Called XTestGrabControl to override possible grabs of the X server.
+
+nxcompshad-3.0.0-5
+
+- Added some stub members to the Poller class. These are intended to
+  handle keyboard state.
+
+- Changes in the default polling algorithm to disable the line pri-
+  ority persistence.
+
+nxcompshad-3.0.0-4
+
+- If a low layer handling of screen changes is available (DAMAGE in
+  case of X11), polling routine uses it and returns immediately.
+
+- Creating a Damage notify object if the extension is supported.
+
+- DamageNotify events are saved in the update region. After all avail-
+  able events have been handled, the content of screen is retrieved
+  by ShnGetImage requests.
+
+- XDamageSubtract and XSync are done before any event handling.
+
+- Damages are requested as raw rectangles.
+
+- Added Xdamage and Xrandr to required libraries.
+
+- Fixed a problem with some lines not refreshed in shadowing mode.
+
+nxcompshad-3.0.0-3
+
+- Added destroyUpdateManagerRegion() method to UpdateManager class.
+
+- Turned off some log messages.
+
+- Changed configure.in to remove warnings related to deprecated header
+  files and options.
+
+- Changed Makefile.in to remove autom4te.cache dir if the target is
+  'distclean'.
+
+- Removed multi-word file names.
+
+nxcompshad-3.0.0-2
+
+- Changes to get the screen of original display by a ShmGetImage.
+
+- Exit the polling loop if more than 50 ms have elapsed.
+
+nxcompshad-3.0.0-1
+
+- Created nxcompshad based on nxshadow-3.0.0-7.
+
+nxshadow-3.0.0-7
+
+- Deleted files KeyCursorTmp.cpp, scancodes.h, constant.h.
+
+- Renamed NXshadow.h to Shadow.h.
+
+- Merged NXshadowEvent.h with Shadow.h.
+
+- Fixed configure.in, changed Makefile.in to build Xcompshad library,
+  rebuilt configure script.
+
+nxshadow-3.0.0-6
+
+- Implemented a callback mechanism to ask the caller program if screen
+  polling have to be suspended.
+
+nxshadow-3.0.0-5
+
+- Changes to comply with the library name.
+
+- Fixed a bug in CorePoller that could prevent the update of the last
+  line of a rectangle.
+
+nxshadow-3.0.0-4
+
+- Removed some parameters of the NXShadowAddUpdaterDisplay() function.
+
+nxshadow-3.0.0-3
+
+- Updated copyright notices to the current year.
+
+- Code cleanup in KeysCursorTmp.c file.
+
+nxshadow-3.0.0-2
+
+- If master agent uses shared memory extension, the GetImage is rea-
+  lized by XShmGetImage() function.
+
+- Added new parameters to NXShadowAddUpdaterDisplay() function, the
+  depth and bit mask color of the master display.
+
+nxshadow-3.0.0-1
+
+- Opened the nxshadow-3.0.0 branch based on the nxaccess-3.0.0-13.
+
+- Renamed NXaccess.h NXaccessEvent.h and RegionM.h files as NXshadow.h
+  NXshadowEvent.h and Regions.h.
+
+- Modified the Makefile.in file and configure scripts in order to
+  compile the component.
+
+nxaccess-3.0.0-13
+
+- Fixed X11Poller.cpp pre-processing.
+
+nxaccess-3.0.0-12
+
+- Fixed build problems on Solaris.
+
+nxaccess-3.0.0-11
+
+- Added NXShadowUpdateBuffer() function. This function creates the
+  buffer for the polling.
+
+- If the scaline fails, the polling will suspend for 50 ms.
+
+- Added some functions in order to access data member class.
+
+nxaccess-3.0.0-10
+
+- Used XTEST extension to make the shared display create input events.
+
+nxaccess-3.0.0-9
+
+- Added the mouse events.
+
+- Now, it's possible to connect to X server display or agent display,
+  the display's content is captured by GetImage and sent to another
+  display by PutImage.
+
+nxaccess-3.0.0-8
+
+- Added KeysCursorTmp.cpp file.
+
+- Solved a problem with the keys, when the window lost focus the Key-
+  Release events weren't propagated.
+
+nxaccess-3.0.0-7
+
+- Added functions in order to remove issues with some keys combina-
+  tion.
+
+nxaccess-3.0.0-6
+
+- Added functions to simulate keys Ctrl + Alt + Del in order to run
+  the Task Manager application.
+
+- Now nxaccess is able to manage all switches between desktops.
+
+nxaccess-3.0.0-5
+
+- Solved a problem with the cursor shape. After a while, the cursor
+  shape are no more updated.
+
+- Now the cursor is updated only when it changes its shape.
+
+- Removed a dirty lines after screen updates.
+
+- Removed the unused file Keyboard.cpp.
+
+- Added the colorCorrect() macro in NXaccess.h.
+
+- Removed the colorCorrect() function in Updater.cpp.
+
+nxaccess-3.0.0-4
+
+- Renamed some source files and functions conforming them to the name
+  of component.
+
+nxaccess-3.0.0-3
+
+- Removed the parameter of type Display in all methods of the class
+  Poller.
+
+- Print, Break and Pause keys are enabled.
+
+nxaccess-3.0.0-2
+
+- Modified the Makefile.in in order to avoid compiling the executive
+  file.
+
+- Removed the unused file Main.cpp.
+
+- The Windows keys are enabled.
+
+- Synchronized local and remote states of Num_Lock, Caps_Lock and
+  Scroll_Lock.
+
+- Updated the NoMachine copyright notices.
+
+nxaccess-3.0.0-1
+
+- Opened the 3.0.0 branch based on the nxmirror-2.0.0-3.
+
+nxmirror-2.0.0-3
+
+- Added the keyboard events for all layouts.
+
+- The mouse wheel button is enabled.
+
+nxmirror-2.0.0-2
+
+- Completed implementation of the keyboard events only for italian
+  layout.
+
+- Added the mouse events and shape cursor.
+
+nxmirror-2.0.0-1
+
+- Opened the 2.0.0 branch based on the 1.5.0-60.
+
+- Added CHANGELOG.
