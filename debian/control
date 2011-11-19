@@ -9,7 +9,7 @@ Build-Depends:
  libpng-dev,
  libjpeg-dev,
  zlib1g-dev,
- quilt
+ quilt (>= 0.46-7~)
 Build-Conflicts:
  x11proto-core-dev,
  x11proto-kb-dev,
