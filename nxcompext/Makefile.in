@@ -1,0 +1,162 @@
+############################################################################
+#                                                                          #
+#  Copyright (c) 2001, 2007 NoMachine, http://www.nomachine.com.           #
+#                                                                          #
+#  NXCOMPEXT, NX protocol compression and NX extensions to this software   #
+#  are copyright of NoMachine. Redistribution and use of the present       #
+#  software is allowed according to terms specified in the file LICENSE    #
+#  which comes in the source distribution.                                 #
+#                                                                          #
+#  Check http://www.nomachine.com/licensing.html for applicability.        #
+#                                                                          #
+#  NX and NoMachine are trademarks of NoMachine S.r.l.                     #
+#                                                                          #
+#  All rights reserved.                                                    #
+#                                                                          #
+############################################################################
+
+#
+# Get values from configure script.
+#
+
+VERSION=@VERSION@
+LIBVERSION=@LIBVERSION@
+
+#
+# We want to enable really all warnings. -Wredundant-decls,
+# though, gives a warning caused by pthread.h and unistd.h.
+#
+
+CXX         = @CXX@
+CXXFLAGS    = @CXXFLAGS@ @X_CFLAGS@ @DEFS@ \
+              -Wall -Wpointer-arith -Wstrict-prototypes -Wmissing-prototypes \
+              -Wmissing-declarations -Wnested-externs
+CXXINCLUDES = -I. -I../nxcomp
+CXXDEFINES  =
+
+CC          = @CC@
+CCFLAGS     = @CFLAGS@ @X_CFLAGS@ @DEFS@ \
+              -Wall -Wpointer-arith -Wstrict-prototypes -Wmissing-prototypes \
+              -Wmissing-declarations -Wnested-externs
+CCINCLUDES  = -I. -I../nxcomp
+CCDEFINES   =
+
+LDFLAGS     = @LDFLAGS@ -L../nxcomp
+LIBS        = @LIBS@ -lz -lX11 -lXcomp
+
+#
+# Only if THREADS is defined
+#
+# LIBS = @LIBS@ -lz -ljpeg -lpthread -lX11 -lXcomp
+#
+
+srcdir      = @srcdir@
+prefix      = @prefix@
+exec_prefix = @exec_prefix@
+bindir      = @bindir@
+man1dir     = @mandir@/man1
+VPATH       = @srcdir@
+
+INSTALL         = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA    = @INSTALL_DATA@
+
+#
+# This should be autodetected.
+#
+
+MAKEDEPEND     = @MAKEDEPEND@
+DEPENDINCLUDES =  -I/usr/include/c++ -I/usr/include/g++ -I/usr/include/g++-3 
+
+.SUFFIXES: .cpp.c
+
+.cpp.o:
+	$(CXX) -c $(CXXFLAGS) $(CXXINCLUDES) $<
+.c.o:
+	$(CC) -c $(CCFLAGS) $(CCINCLUDES) $<
+
+LIBRARY = Xcompext
+
+LIBNAME    = lib$(LIBRARY)
+LIBFULL    = lib$(LIBRARY).so.$(VERSION)
+LIBLOAD    = lib$(LIBRARY).so.$(LIBVERSION)
+LIBSHARED  = lib$(LIBRARY).so
+LIBARCHIVE = lib$(LIBRARY).a
+
+LIBCYGSHARED  = cyg$(LIBRARY).dll
+LIBCYGARCHIVE = lib$(LIBRARY).dll.a
+
+all: depend @ALL@
+
+MSRC=
+
+CSRC=	NXlib.c		\
+	Clean.c		\
+	Mask.c		\
+	Colormap.c	\
+	Alpha.c		\
+	Jpeg.c		\
+	Pgn.c		\
+	Bitmap.c	\
+	Rgb.c		\
+	Rle.c		\
+        Z.c
+
+CXXSRC=
+
+MOBJ   = $(MSRC:.c=.o)
+COBJ   = $(CSRC:.c=.o)
+CXXOBJ = $(CXXSRC:.cpp=.o)
+
+$(LIBFULL):	 $(CXXOBJ) $(COBJ)
+		 $(CXX) -o $@ $(LDFLAGS) $(CXXOBJ) $(COBJ) $(LIBS)
+
+$(LIBLOAD):	 $(LIBFULL)
+		 rm -f $(LIBLOAD)
+		 ln -s $(LIBFULL) $(LIBLOAD)
+
+$(LIBSHARED):	 $(LIBFULL)
+		 rm -f $(LIBSHARED)
+		 ln -s $(LIBFULL) $(LIBSHARED)
+
+$(LIBARCHIVE):	 $(CXXOBJ) $(COBJ)
+		 rm -f  $(LIBARCHIVE)
+		 ar clq $(LIBARCHIVE) $(CXXOBJ) $(COBJ)
+		 ranlib $(LIBARCHIVE)
+
+$(LIBCYGSHARED): $(LIBARCHIVE)
+		 $(CC) -shared -o $(LIBCYGSHARED) \
+		 -Wl,--out-implib=$(LIBCYGARCHIVE) \
+		 -Wl,--export-all-symbols \
+		 -Wl,--enable-auto-import \
+		 -Wl,--whole-archive $(LIBARCHIVE) \
+		 -Wl,--no-whole-archive $(LIBS) \
+		 $(LDFLAGS)
+
+$(LIBCYGARCHIVE): $(LIBCYGSHARED)
+
+depends:	depend.status
+
+depend:		depend.status
+
+depend.status:	
+		if [ -x $(MAKEDEPEND) ] ; then \
+			$(MAKEDEPEND) $(CXXINCLUDES) $(CCINCLUDES) \
+                        $(DEPENDINCLUDES) -f Makefile $(MSRC) $(CSRC) \
+			$(CXXSRC) 2>/dev/null; \
+		fi
+		touch depend.status
+
+install:	install.bin install.man
+
+install.bin:
+
+install.man:
+
+clean:
+		-rm -f *~ *.o *.bak *.orig *.rej st?????? core core.* *.out.* \
+		@ALL@
+
+distclean:	clean
+		-rm -rf autom4te.cache config.status config.log \
+		config.cache depend.status Makefile tags

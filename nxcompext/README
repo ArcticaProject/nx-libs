@@ -1,0 +1,15 @@
+README
+------
+
+1. To compile:
+
+   > tar zxvf nxcompext-X.Y.Z-N.tar.gz
+   > cd nxcompext
+   > ./configure
+   > make
+
+   You'll have to run gmake under Solaris.
+
+2. The 'make install' target is not currently supported
+   in the Makefile, but it should be simple to fix.
+

@@ -1,0 +1,806 @@
+ChangeLog:
+
+nxcompext-3.5.0-1
+
+- Opened the 3.5.0 branch based on nxcompext-3.4.0-1.
+
+- Updated copyright to year 2011. 
+
+nxcompext-3.4.0-1
+
+- Opened the 3.4.0 branch based on nxcompext-3.3.0-4.
+
+- Updated version number.
+
+- Updated copyright to year 2009.
+
+nxcompext-3.3.0-4
+
+- Fixed TR03G02199. The color palette allocated for encoding an image
+  having 256 colors or less was not freed.
+
+nxcompext-3.3.0-3
+
+- Now setting the correct event serial number when sending collect
+  notifies back.
+
+nxcompext-3.3.0-2
+
+- Updated VERSION.
+
+nxcompext-3.3.0-1
+
+- Opened the 3.3.0 branch based on nxcompext-3.2.0-1.
+
+nxcompext-3.2.0-1
+
+- Opened the 3.2.0 branch based on nxcompext-3.1.0-2.
+
+nxcompext-3.1.0-2
+
+- Updated file VERSION to match the current release version.
+
+nxcompext-3.1.0-1
+
+- Opened the 3.1.0 branch based on nxcompext-3.0.0-18.
+
+nxcompext-3.0.0-18
+
+- Removed the remaining debug output.
+
+nxcompext-3.0.0-17
+
+- Changed the copyright notices at the beginning of the files that
+  were referring to NXPROXY to refer to NXCOMPEXT.
+
+nxcompext-3.0.0-16
+
+- Handle the reply failure in NXGetShmemParameters().
+
+nxcompext-3.0.0-15
+
+- Separated the functionalities made available by NXQueryDisplay()
+  in three distinct functions:
+
+  NXDisplayReadable()  Query the number of bytes readable from
+                       the display connection.
+
+  NXDisplayFlushable() Query the number of the outstanding bytes
+                       to flush to the display connection.
+
+  NXDisplayCongestion() Return a value between 0 and 9 indicating
+                        the congestion level of the NX transport.
+
+- Renamed NXQueryDisplayError() to NXDisplayError().
+
+nxcompext-3.0.0-14
+
+- Removed support for Rdp, Tight and Hextile packed images encod-
+  ing since they have been made obsolete by the new NX server.
+
+- Changed the copyright attribution from Medialogic to NoMachine.
+
+nxcompext-3.0.0-13
+
+- Allocate 1024 additional bytes for the Jpeg compression, instead
+  of 512, to avoid failures on very tiny images.
+
+- Removed support for the special *PNG_JPEG* pack method.
+
+nxcompext-3.0.0-12
+
+- Implemented the NXEncodeBitmap() method. This is a very simple
+  encoder removing the 4th byte in 32 bits-per-plane images. For
+  the other pixmap depths it simply returns a pointer to the orig-
+  inal image data, saving the copy. This encoding is intended to
+  better leverage the stream compression on low bandwidth links.
+
+- Removed the quality parameter from the RGB/RLE encoding function.
+
+nxcompext-3.0.0-11
+
+- Removed the additional parameter in the call to NXTransFlush().
+
+nxcompext-3.0.0-10
+
+- Moved the _NXRDPGlyph and _NXRDPText declarations from NXlib.h
+  to NXproto.h to force fields to be CARD32.
+
+- Fixed a typo in NXSetDisplayBuffer() that could cause a double
+  free.
+
+- Fixed a compilation error with old GCC versions.
+
+- Removed the warning issued on AMD64 when compiling with the logs
+  enabled.
+
+nxcompext-3.0.0-9
+
+- Added the NXDisplayCongestion query type to NXQueryDisplay(). It
+  returns a value between 0 and 9, with 9 meaning that the link is
+  congested and no further data can be sent.
+
+- Added the NXSetDisplayBuffer() function. It allows the caller to
+  set the display output buffer size at runtime.
+
+- Removed the congestion and synchronization callbacks.
+
+nxcompext-3.0.0-8
+
+- Removed the warnings issued when purging the collected data at
+  display reset.
+
+nxcompext-3.0.0-7
+
+- Added the NXSetDisplayWriteHandler() interface. The function
+  registers a callback that will be invoked every time more data
+  is written to the display socket.
+
+nxcompext-3.0.0-6
+
+- Made NXQueryDisplay() take into account the bytes in the display
+  buffer when queried for the bytes flushable.
+
+nxcompext-3.0.0-5
+
+- Added file COPYING.
+
+nxcompext-3.0.0-4
+
+- Updated copyright notices to the current year.
+
+nxcompext-3.0.0-3
+
+- Imported changes up to nxcompext-2.1.0-4.
+
+- Fixed TR12D01564. Changed configure script to build library with
+  -fPIC option.
+
+- Added 256 byte to the size of Jpeg destination buffer. 
+
+nxcompext-3.0.0-2
+
+- Updated the file VERSION.
+
+nxcompext-3.0.0-1
+
+- Opened the 3.0.0 branch based on nxcompext-2.0.0-33.
+
+nxcompext-2.0.0-33
+
+- Placed the inclusion of jpeglib.h after the X includes to fix a
+  possible compilation error.
+
+nxcompext-2.0.0-32
+
+- Avoid to copy the data to the scratch buffer and yield the task
+  of padding the output to _XSend() in the NXPutPackedImage(), NX-
+  SetUnpackAlpha() and NXSetUnpackColormap() requests.
+
+- Added support for the RLE pack method.
+
+nxcompext-2.0.0-31
+
+- The X_NXSetUnpackColormap and X_NXSetUnpackAlpha now carry their
+  data in compressed form. The alpha data is compressed using the
+  ZLIB RLE encoding, while the colormap data is compressed using
+  the default ZLIB deflate.
+
+- Created new message structures to handle the compatibility with
+  the old proxy versions. When connected to an old proxy version
+  the agent should use the NXSetUnpackColormapCompat() and NXSet-
+  UnpackAlpha() interfaces.
+
+nxcompext-2.0.0-30
+
+- Removed the unfriendly warning printed if a client tried to reset
+  the library multiple times.
+
+nxcompext-2.0.0-29
+
+- Made possible to compile even if makedepend is not found.
+
+nxcompext-2.0.0-28
+
+- Added the NXSetDisplaySynchronizationHandler() interface. The NX
+  transport will use the callback to report when the agent can use
+  the available bandwidth to synchronize the X objects that are
+  corrupted or incomplete.
+
+- Bytes from 14 to 24 in the NXGetControlParameters() reply report,
+  respectively, the frame timeout, the ping timeout, the preferred
+  image split mode and the split size threshold.
+
+nxcompext-2.0.0-27
+
+- Changed the image cleanup functions and the Png and Jpeg encoders
+  to be independent from the host endianess.
+
+- Enabled again the image cleanup on big endian machines.
+
+nxcompext-2.0.0-26
+
+- Added the NXAbortSplit() request.
+
+- Added information about the size of the shared memory segment used
+  by the remote proxy in the NXGetShmemParameters() reply.
+
+nxcompext-2.0.0-25
+
+- Renamed the NXGetSplitResource() and NXGetUnpackResource() utili-
+  ties to NXAllocSplit() and NXAllocUnpack(). They can be called
+  with a NXAnyResource parameter to get the first available id or
+  requre a specific resource. From this version the resource must
+  be explicitly reserved. NXFreeUnpack() and NXFreeSplit() check
+  if the resource was allocated and don't do anything if it is not
+  the case. NXAllocSplit() and NXAllocUnpack() return NXNoResource
+  if the resource can't be reserved.
+
+nxcompext-2.0.0-24
+
+- NXFlushDisplay() now verifies whether the XlibDisplayWriting flag
+  is set before flushing the display buffer. in this case, it only
+  flushes the NX link.
+
+nxcompext-2.0.0-23
+
+- Implemented a move-to-front strategy for the image cache, to mi-
+  nimize the number of lookups.
+
+- Fixed the problems imtroduced by the new cache implementation by
+  modifying the memory allocation routines in Jpeg.c and Pgn.c.
+
+- Temporarily fixed the cleanup problems on big-endian machines by
+  skipping the operation.
+
+- Added a NXSetDisplayStatisticsHandler() to let the agent include
+  arbitrary data in the transport statistics. The parameter is a
+  pointer to a pointer to a null terminated string. The pointer is
+  set at the time the handler is registered. The pointed string can
+  be filled by the agent with its statistics data.
+
+nxcompext-2.0.0-22
+
+- The NXCacheFindImage() returns a pointer to the checksum, if the
+  image is found.
+
+- The image cache uses the data passed to NXCacheAddImage() instead
+  of making a copy.
+
+- The Z stream used by the RGB encoder is allocated at initializat-
+  ion and freed at reset.
+
+nxcompext-2.0.0-21
+
+- Removed the reliance on the local byte order in the image cleanup
+  functions.
+
+nxcompext-2.0.0-20
+
+- Added the NXFinishSplit() request. It forces the proxy to comple-
+  tely transfer all the split messages for the given resource, and
+  then notify the agent.
+
+nxcompext-2.0.0-19
+
+- Enabled again the cleanup of images.
+
+- Updated to comply with the new NXTransFlush() interface.
+
+nxcompext-2.0.0-18
+
+- Moved all the declarations in Rgb.c at the beginning of the block
+  to avoid the possible compilation errors with old compilers.
+
+nxcompext-2.0.0-17
+
+- Added a new RGB image encoder. For now the encoder uses a static
+  Z stream to compress the image data in the destination buffer and
+  allows the agent to use the simplest encoding by still separating
+  the alpha channel from the image data. The new encoder can be the
+  the base for implementing color reduction by dithering or a color-
+  mapped translation of the image similar to PNG, but without the
+  PNG overhead and with the colormap being sent to the client using
+  the NXSetUnpackColormap() opcode.
+
+- Created a new NXCleanImage() function that takes a XImage pointer
+  and uses either the CleanXYImage() or the CleanZImage() routines
+  to cleanup the padding bits.
+
+nxcompext-2.0.0-16
+
+- Added a parameter to NXFlushDisplay() to specify what needs to be
+  flushed. The parameter can be one the following values, defined
+  in NXvars.h:
+
+  NXFlushBuffer   Only the Xlib buffer is to be flushed.
+
+  NXFlushLink     Flush both the Xlib buffer and any pending
+                  data encoded by the NX transport.
+
+  NXFlushIdle     Inform the NX transport that the agent is
+                  idle. This will let the NX transport encode
+                  more low-priority data, and then flush the
+                  link.
+
+- Ensured that the padding bytes are cleaned when creating a new
+  PNG image. It seems that some images are still missed. This is
+  to be investigated.
+
+nxcompext-2.0.0-15
+
+- Ensured that the packed image cache is recreated only on a size
+  change.
+
+nxcompext-2.0.0-14
+
+- Updated to get the karma delay field from the X_NXGetControlPara-
+  meters reply.
+
+nxcompext-2.0.0-13
+
+- Added the NXSetDisplayPolicy() and NXSetDisplayFlushHandler() in-
+  terfaces. The second function registers a callback that will be
+  invoked by the NX transport when the number of bytes encoded by
+  the proxy exceeds the threshold set for the scheduled write.
+
+- Added the NXFlushDisplay() and NXQueryDisplay() interfaces. They
+  are used to hide the corresponding NX transport functions to the
+  application. NXQueryDisplay() can be called with the NXDisplay-
+  Flushable or NXDisplayReadable parameters, to get, repectively,
+  the number of bytes that are queued to the NX transport and the
+  number of bytes that is possible to read.
+
+- Included the remote proxy version in the NXGetControlParameter()
+  reply.
+
+nxcompext-2.0.0-12
+
+- Added the NXGetSplitResource() and NXGetUnpackResource utilities.
+  These can be used by the client to find out the first unused id
+  available for a split or unpack operation.
+
+- Added the NXFreeSplit() request function. It makes the resource
+  available for the next operation and tells the proxy to destroy
+  all the storage associated to the split.
+
+- Renamed the NXNumberOfConnections constant to NXNumberOfResources.
+
+nxcompext-2.0.0-11
+
+- Changed NXForceDisplayError() to also shut down the NX transport
+  by calling NXTransClose().
+
+- Updated to comply with the new NX function prototypes introduced
+  in nxcomp-2.0.0-31.
+
+nxcompext-2.0.0-10
+
+- NXQueryDisplayError() now checks the predicate function only if
+  the I/O error was not encountered already.
+
+nxcompext-2.0.0-9
+
+- Added the NXSetDisplayErrorPredicate(), NXSetDisplayBlockHand-
+  ler(), NXSetDisplayCongestionHandler(), NXSetLostSequenceHand-
+  ler() interfaces to let the user set the values used internal-
+  ly. All functions return the previous handler. See ChangeLog
+  in nx-X11-2.0.0-16 and nx-X11-2.0.0-17.
+
+- Moved all the internal variables shared between Xlib, nxcompext
+  and the X server in nxcomp. Declarations and function prototypes
+  moved to NXvars.h.
+
+- Some name changes. In particular the NXContinueOnDisplayError()
+  function iss renamed NXHandleDisplayError() and NXDisplayError()
+  is now renamed NXQueryDisplayError(). To verify if the display
+  is valid, NXQueryDisplayError() will now call the _NXDisplayEr-
+  rorPredicate function, or, if the predicate function is not set,
+  will simply check the value of the XlibDisplayIOError flag.
+
+- Removed the NXGetCleanupParameters() and NXGetImageParameters()
+  interfaces and the remaining references to the unused display
+  buffer and image cleanup functions.
+
+- Updated the NoMachine copyright notice to year 2006.
+
+nxcompext-2.0.0-8
+
+- Removed the unused screen parameter from XSetUnpackGeometry().
+
+- NXSetUnpackGeometry() now fails if no visual is provided.
+
+nxcompext-2.0.0-7
+
+- Changed the LICENSE file to state that the software is only made
+  available under the version 2 of the GPL.
+
+- Removed the misplaced DXPC copyright notices from the license.
+  They were copied from NXCOMP but they don't apply in any way to
+  NXCOMPEXT.
+
+nxcompext-2.0.0-6
+
+- Added the NXSetCacheParameters() request. It tells to the local
+  proxy how to handle the X requests, namely if the next requests
+  have to be stored in the memory cache, split in smal data chunks,
+  and in the case of images, saved on disk in the persistent image
+  cache. The request will affect all X messages, including plain
+  and packed images. It can be used to tell the proxy to discard
+  images coming from some selected operations, like GLX or XVideo.
+
+nxcompext-2.0.0-5
+
+- Added the NXGetFontParameters() request and reply. If the proxy
+  has been configured accordingly, the request returns the X font
+  path that can be set by the agent to tunnel the font server con-
+  nections through the NX link.
+
+nxcompext-2.0.0-4
+
+- Initial work on font server tunneling.
+
+nxcompext-2.0.0-3
+
+- Renamed the NXSetExposeEvents request to NXSetExposeParameters.
+
+nxcompext-2.0.0-2
+
+- Modified the configure and the makefiles to support the Cygwin
+  environment.
+
+- Renamed Png.h to Pgn.h to avoid name clashes on Windows.
+
+- The distclean target now removes the autom4te.cache directory.
+
+nxcompext-2.0.0-1
+
+- Opened the 2.0.0 branch based on nxcompext-1.5.0-20.
+
+nxcompext-1.5.0-20
+
+- Removed the code installing a SIGSEGV handler before trying to
+  clean an image in NXCleanImageInPlace().
+
+nxcompext-1.5.0-19
+
+- Added the NXUnsetLibraryPath() function to specify the behaviour
+  of the Popen() in the X server. If the _NXUnsetLibraryPath flag
+  is set, the Popen() will remove the LD_LIBRARY_PATH variable from
+  the environment before running the child process. This will cause
+  the X server to run the process (for example the keyboard initia-
+  lization utilities) by using the native system libraries, instead
+  of the libraries shipped with the NX environment.
+
+nxcompext-1.5.0-18
+
+- Moved the declarations of _NXEnable* and related structures from
+  Xlibint.h to NXlibint.h.  
+
+- Use the include files from nx-X11 if the nx-X11/include directory
+  is found. The previous configure checked the presence of nx-X11/
+  exports/include, that might not be built at the time this library
+  is compiled.
+
+nxcompext-1.5.0-17
+
+- Added the -fPIC GCC flag when compiling on AMD64 architectures.
+
+- Removed all warnings when compiling with GCC4.
+
+- Small changes to configure.in to have specific CFLAGS.
+
+- Created a new configure using autoconf 2.59.
+
+nxcompext-1.5.0-16
+
+- Added the 'mode' field in the NXStartSplit() request. It determi-
+  nes the strategy that the proxy will adopt to handle the image.
+  If set to 'eager', the proxy will only split the messages whose
+  size exceeds the split threshold (the threshold can be found in
+  the NXGetControlParameters() reply). If mode is set to lazy, the
+  proxy will split any image that it is not able to find in its
+  cache.
+
+  The opcode and the two available modes are defined in NXproto.h,
+  currently:
+
+  #define NXSplitModeDefault  0
+  #define NXSplitModeEager    1
+  #define NXSplitModeLazy     2
+
+- All requests related to image streaming now carry a 'resource' id.
+  The id is currently ignored by the proxy in the case of NXCommit-
+  Split() requests.
+
+nxcompext-1.5.0-15
+
+- Removed the NXSync() and NXKarma() operations, not used anymore
+  by the NX agents.
+
+- Updated to comply with changes occurred in the numbering of the
+  notification events and in the interface to the image streaming
+  functions.
+
+nxcompext-1.5.0-14
+
+- Accounted for the missing xoffset field in clean-up of XYPixmaps.
+
+nxcompext-1.5.0-13
+
+- Added a 'commit' field in NXCommitSplit(). When zero, the remote
+  proxy will remove the message from the split store, without send-
+  ing the recomposed image to the X server.
+
+nxcompext-1.5.0-12
+
+- Added the NXContinueOnDisplayError() function to specify the be-
+  haviour of the Xlib I/O error handler. If the flag is set to true,
+  Xlib will simply return, instead of quitting the program. This
+  leaves to the application the responsibility of checking the sta-
+  te of the XlibDisplayIOError flag.
+
+- Changed NXDisplayIsValid() to NXDisplayError() and inverted the
+  logic. Now the function returns true if the display pointer is
+  NULL or the XlibDisplayIOError flag is set.
+
+- Added the NXForceDisplayError() function, to shutdown the display
+  descriptor and force Xlib to set the I/O error flag.
+
+nxcompext-1.5.0-11
+
+- Added -I../nx-X11/exports/include to CCINCLUDES in Makefile.in.
+
+nxcompext-1.5.0-10
+
+- Added FindLSB() to replace ffs() that may be not present on some
+  systems.
+
+- Some cosmetic changes.
+
+nxcompext-1.5.0-9
+
+- Fixed a printf() that prevented the code to compile if TEST was
+  enabled.
+
+nxcompext-1.5.0-8
+
+- Implemented the NXLib interface for asynchronous handling of the
+  XGetInputFocus requests and replies.
+
+nxcompext-1.5.0-7
+
+- Removed the _NXFlushSize parameter. New agents run the NX trans-
+  port in-process, so we don't get any benefit from increasing the
+  display buffer size.
+
+nxcompext-1.5.0-6
+
+- Added a NXDisplayIsValid() to check that the display is not NULL
+  and that the descriptor was not shut down after an IOError. The
+  reason a function is needed for this is that the flags field is
+  only in Xlibint and it is not visible to Xlib applications.
+
+nxcompext-1.5.0-5
+
+- Added the NXGetCollect*Resource utility functions, returning the
+  first available small integer resource id that can be used in a
+  subsequent collect request.
+
+nxcompext-1.5.0-4
+
+- Added the NXNumberOfConnections constant.
+
+nxcompext-1.5.0-3
+
+- Implemented the NXLib interface for the asynchronous handling of
+  the XGrabPointer requests and replies.
+
+- Solved an error in image cleaning that prevented the 8 bits-per-
+  pixel images to be completely cleaned. Due to the bug, only half
+  of the total lines were cleaned.
+
+- Removed a bug that prevented the cleaning of XYPixmaps images of
+  bitmap unit 32 and byte order LSB.
+
+- Renamed the NXImageCache variables to show they are global. They
+  are currently used in the nxagent code.
+
+nxcompext-1.5.0-2
+
+- Changed VERSION file.
+
+nxcompext-1.5.0-1
+
+- Opened the 1.5.0 branch.
+
+nxcompext-1.4.1-1
+
+- Removed the configure option --with-static. There are two options
+  now, --with-static-png and --with-static-jpeg, to offer a greater
+  degree of control on the resulting library.
+
+- This version differs from the 1.4.0-3-KRY1 in the way that the con-
+  figure script is generated by GNU Autoconf 2.57, the same version
+  used for nxcomp.
+
+- Opened the 1.4.1 branch.
+
+nxcompext-1.4.0-3
+
+- Updated the VERSION file to reflect the 1.4.0 status.
+
+nxcompext-1.4.0-2
+
+- Imported changes from the latest 1.3.2 development branch.
+
+- The 1.4.0 branch already had a 1.4.0-1 version. The changes from
+  the 1.4.0-1 were up to date with the 1.3.2-2 version.
+
+nxcompext-1.3.2-6
+
+- Fixed problem with icons in KDE and Mozilla on SPARC Solaris. The
+  problem was related to cleaning of one-bit XYPixmaps on big-endian
+  hosts, where shift of the cleaning mask executed in the wrong di-
+  rection.
+
+nxcompext-1.3.2-5
+
+- Changes in Clean.c to compile on Solaris.
+
+nxcompext-1.3.2-4
+
+- Fixed a bug in clean image procedures for 1bit XYPixmaps. The bug
+  caused Mozilla to trash some transparent icons in web pages and
+  the toolbar.
+
+- Added cleaning of the padding bytes at the end of the data chunk
+  inside XImage structure
+
+- Implemented handling of SIGSEGV during cleanup in case of static
+  data.
+
+- Moved image cleanup and masking code in new Clean.c and Mask.c
+  sources.
+
+- Corrected few typos in NXCollectImage code.
+
+nxcompext-1.3.2-2
+
+- Imported 1.4.0-1 changes from the 1.4.0 development branch.
+
+- Modified NXAllocColors to handle errors generated allocating
+  each requested color. A per-color result code is now returned 
+  to the caller.
+
+- Code cleanup in Png.h and Png.c.
+
+nxcompext-1.3.2-1
+
+- Opened the 1.3.2 branch.
+
+nxcompext-1.3.1-2
+
+- Removed the underline characters and added a colon in the
+  title of this ChangeLog to fully comply with format used in
+  the release notices.
+
+nxcompext-1.3.1-1
+
+- Opened the 1.3.1 branch.
+
+nxcompext-1.3.0-18
+
+- Added the _NXLostSequenceHandler function to let NX agents
+  suppress the error message and modify the default Xlib
+  behaviour when out-of-order sequence numbers are received.
+  Pointer to function is assigned to _NXLostSequenceFunction
+  in XlibInt.c.
+
+- Original output buffer size in stock XFree86 is 2048. We try
+  to reduce context switches and help stream compression by
+  increasing the maximum size of the buffer 8192. _NXFlushSize
+  determines when the display buffer is actually flushed. It is
+  set by default to 4096 in XlibInt.c and set to 0 to use the
+  maximum available size at the time NXGetControlParameters()
+  is called.
+
+nxcompext-1.3.0-17
+
+- In handling of asynchronous GetProperty replies a warning
+  message was printed in session log when a null property was
+  stored in the state structure. This message is now printed
+  only if TEST is defined.
+
+nxcompext-1.3.0-16
+
+- Added asynchronous handling of GetProperty request and reply
+  by means of the NXCollectProperty and NXGetCollectedProperty
+  requests and the NXCollectPropertyNotify event.
+
+nxcompext-1.3.0-15
+
+- Added 4 new fields to the X_NXGetControlParameters reply.
+
+nxcompext-1.3.0-14
+
+- Added request X_NXFreeUnpack to free the resources allocated
+  by the remote proxy to unpack images for the given agent's
+  client
+
+nxcompext-1.3.0-13
+
+- Modified the following requests to carry the id of the
+  agent's client in the field resource:
+
+  - X_NXSetUnpackGeometry
+  - X_NXSetUnpackColormap
+  - X_NXSetUnpackAlpha
+  - X_NXPutPackedImage
+
+nxcompext-1.3.0-11
+
+- Modified the MIT-SHM initialization procedure to always send
+  all the 3 protocol requests also in the case of early failures.
+
+nxcompext-1.3.0-10
+
+- Added handling of X_NXSetUnpackAlpha request.
+
+- It has been made possible to send both X_NXSetUnpackColormap
+  and X_NXSetUnpackAlpha messages with 0 entries to temporarily
+  disable use of the colormap or the alpha channel and free the
+  resources allocated by the remote proxy.
+
+nxcompext-1.3.0-9
+
+- Solved a compatibility problem when mixing proxy versions
+  1.2.2 and 1.3.0 due to the missing X_NXGetShmemParameters
+  request.
+
+nxcompext-1.3.0-7
+
+- Reduced the number of requests needed to setup the shared
+  segment at X server proxy from 4 to 3.
+
+- Small changes to the shared memory interface to support
+  path X agent to X client proxy.
+
+nxcompext-1.3.0-6
+
+- Implemented initial support for MIT-SHM extension in the
+  network path between the X server proxy and the real X
+  server.
+
+- Configure script now checks for the FreeBSD environment.
+
+- New configure script generated using autoconf-2.57-3.
+
+- Removed the XFree86 CCDEFINES from Makefile.in.
+
+nxcompext-1.3.0-5
+
+- Cosmetic changes.
+
+- Started to convert configure.in to the new layout adopted
+  for nxcomp.
+
+- Created file CHANGELOG.
+
+nxcompext-1.3.0-4
+
+- More fixes in image clean-up.
+
+nxcompext-1.3.0-3
+
+- Many fixes in image clean-up functions to handle differences
+  in endianess between client and X server.
+
+nxcompext-1.3.0-2
+
+- Modified configure.in to compile under Solaris.
+
+nxcompext-1.3.0-1
+
+- First 1.3.0 version based on nxcompext-1.2.2-12.
+
