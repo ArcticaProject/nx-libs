@@ -1,0 +1,26 @@
+--- a/nxcompshad/Logger.h
++++ b/nxcompshad/Logger.h
+@@ -18,8 +18,8 @@
+ #ifndef Logger_H
+ #define Logger_H
+ 
+-#include <errno.h>
+-#include <stdarg.h>
++#include <cerrno>
++#include <cstdarg>
+ 
+ //
+ // Error handling macros.
+--- a/nxcompshad/Misc.h
++++ b/nxcompshad/Misc.h
+@@ -20,8 +20,8 @@
+ 
+ #include <iostream>
+ 
+-#include <errno.h>
+-#include <string.h>
++#include <cerrno>
++#include <cstring>
+ 
+ using namespace std;
+ 

@@ -5,5 +5,6 @@ nx-libs (2:3.5.0-0~x2go1) UNRELEASED; urgency=low
   * Add quilt as build dependency.
   * Add main Makefile via patch: 001_add-main-makefile.patch.
   * Add patch: 002_nxcompshad-build-against-nx-x11-only.patch
+  * Add patch: 003_nxcompshad-gcc43.patch
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 14 Oct 2011 03:01:39 +0200
