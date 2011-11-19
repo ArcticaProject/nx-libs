@@ -25,6 +25,7 @@ override_dh_auto_install:
 override_dh_quilt_patch:
 	dh_quilt_patch
 	chown a+x Makefile
+	chown a+x bin/nxagent
 
 override_dh_quilt_unpatch:
 	dh_quilt_unpatch
