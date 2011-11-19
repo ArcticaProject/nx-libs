@@ -1,3 +1,4 @@
 001_add-main-makefile.patch
 002_nxcompshad-build-against-nx-x11-only.patch
 003_nxcompshad-gcc43.patch
+004_nx-x11-fix-nxcompshad-build.patch
