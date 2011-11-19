@@ -1,1 +1,2 @@
 001_add-main-makefile.patch
+002_nxcompshad-build-against-nx-x11-only.patch
