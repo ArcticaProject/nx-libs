@@ -58,7 +58,7 @@ Depends:
  ${shlibs:Depends},
  ${misc:Depends}
 Description: NX agent (NoMachine)
- x2goagent is an agent providing X transport of X sessions. The application
+ nxagent is an agent providing X transport of X sessions. The application
  is based on the well known Xnest "nested" server. nxagent, like Xnest,
  is an X server for its own clients, and at the same time, an X client
  for a system's local X server.
@@ -69,8 +69,8 @@ Description: NX agent (NoMachine)
  by itself, this is demanded of nxagent.
  .
  Being an X server, nxagent is able to resolve all the property/atoms related
- requests locally, ensuring that the most common source of round-trips are nearly
- reduced to zero.
+ requests locally, ensuring that the most common source of round-trips are
+ nearly reduced to zero.
 
 Package: nxagent-dbg
 Architecture: any
