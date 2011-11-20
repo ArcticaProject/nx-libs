@@ -23,5 +23,6 @@ nx-libs (2:3.5.0-0~x2go1) UNRELEASED; urgency=low
   * Add patch: 010_nxauth-fix-binary-name-in-man-page.patch.
   * Add patch: 011_add-nxauth-wrapper.patch.
   * Build nxauth package.
+  * Add lintian overrides for libxcomp*: breaks-without-version.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 14 Oct 2011 03:01:39 +0200
