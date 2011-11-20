@@ -7,7 +7,7 @@ nx-libs (2:3.5.0-0~x2go1) UNRELEASED; urgency=low
   * Add patch: 002_nxcompshad-build-against-nx-x11-only.patch.
   * Add patch: 003_nxcompshad-gcc43.patch.
   * Add patch: 004_nx-x11-fix-nxcompshad-build.patch.
-  * Add patch: 005_add_nxagent_wrapper.patch.
+  * Add patch: 005_add-nxagent-wrapper.patch.
   * Fix for lintian issue: missing-build-dependency quilt (>= 0.46-7~).
   * Fix for lintian issue: extended-description-line-too-long (nxagent).
   * Disabling build of *-dbg packages for now...
