@@ -3,3 +3,4 @@
 003_nxcompshad-gcc43.patch
 004_nx-x11-fix-nxcompshad-build.patch
 005_add_nxagent_wrapper.patch
+006_remove-configure-files.patch
