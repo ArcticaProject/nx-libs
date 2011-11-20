@@ -26,6 +26,7 @@ override_dh_quilt_patch:
 	dh_quilt_patch
 	chmod a+x Makefile
 	chmod a+x bin/nxagent
+	chmod a+x bin/nxproxy
 
 override_dh_quilt_unpatch:
 	dh_quilt_unpatch
