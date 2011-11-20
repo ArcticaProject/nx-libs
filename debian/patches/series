@@ -7,3 +7,4 @@
 007_nxcompshad-clean-gch-files.patch
 008_add-nx-proxy-wrapper.patch
 009_nxproxy-add-man-page.patch
+010_nxauth-fix-binary-name-in-man-page.patch
