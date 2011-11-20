@@ -5,3 +5,4 @@
 005_add_nxagent_wrapper.patch
 006_remove-configure-files.patch
 007_nxcompshad-clean-gch-files.patch
+008_add-nx-proxy-wrapper.patch

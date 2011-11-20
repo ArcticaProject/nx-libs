@@ -110,6 +110,30 @@ Description: NX agent (NoMachine)
 # .
 # This package contains the debug symbols of nxagent. Source: nx-libs
 
+Package: nxproxy
+Architecture: any
+Depends:
+ libxcomp3 (>= ${source:Version}), libxcomp3 (<< ${source:Version}.1~),
+ ${shlibs:Depends},
+ ${misc:Depends}
+Description: NX proxy (NoMachine)
+ NX provides a differential X compression library for X11.
+ .
+ This package provides the NX proxy (client) binary.
+
+#Package: nxproxy-dbg
+#Architecture: any
+#Depends:
+# libxcomp3 (>= ${source:Version}), libxcomp3 (<< ${source:Version}.1~),
+# ${shlibs:Depends},
+# ${misc:Depends}
+#Priority: extra
+#Section: debug
+#Description: NX proxy (NoMachine), debug symbols
+# NX provides a differential X compression library for X11.
+# .
+# This package provides the NX proxy (client) binary.
+
 Package: libxcomp3
 Architecture: any
 Depends:
