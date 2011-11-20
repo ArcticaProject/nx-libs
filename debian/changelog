@@ -12,5 +12,6 @@ nx-libs (2:3.5.0-0~x2go1) UNRELEASED; urgency=low
   * Fix for lintian issue: extended-description-line-too-long (nxagent).
   * Disabling build of *-dbg packages for now...
   * Add patch: 006_remove-configure-files.patch.
+  * Add patch: 007_nxcompshad-clean-gch-files.patch.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 14 Oct 2011 03:01:39 +0200

@@ -1,0 +1,11 @@
+--- a/nxcompshad/Makefile.in
++++ b/nxcompshad/Makefile.in
+@@ -185,7 +185,7 @@
+ install.man:
+ 
+ clean:
+-		-rm -f *~ *.o *.bak st?????? core core.* *.out.* *.exe.stackdump \
++		-rm -f *~ *.o *.gch *.bak st?????? core core.* *.out.* *.exe.stackdump \
+ 		$(LIBFULL) $(LIBLOAD) $(LIBSHARED) $(LIBARCHIVE) $(LIBDLL) $(LIBDLLSTATIC) $(PROGRAM) $(PROGRAM).exe
+ 
+ distclean:	clean
