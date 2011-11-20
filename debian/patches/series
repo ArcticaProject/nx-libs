@@ -8,3 +8,4 @@
 008_add-nx-proxy-wrapper.patch
 009_nxproxy-add-man-page.patch
 010_nxauth-fix-binary-name-in-man-page.patch
+011_add-nxauth-wrapper.patch
