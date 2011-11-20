@@ -134,6 +134,30 @@ Description: NX proxy (NoMachine)
 # .
 # This package provides the NX proxy (client) binary.
 
+Package: nxauth
+Architecture: any
+Depends:
+ libnx-x11 (>= ${source:Version}), libnx-x11 (<< ${source:Version}.1~),
+ ${shlibs:Depends},
+ ${misc:Depends}
+Description: NX xauth (NoMachine)
+ NX provides a differential X compression library for X11.
+ .
+ This package provides the NX xauth binary.
+
+#Package: nxauth-dbg
+#Architecture: any
+#Depends:
+# libnx-x11 (>= ${source:Version}), libnx-x11 (<< ${source:Version}.1~),
+# ${shlibs:Depends},
+# ${misc:Depends}
+#Priority: extra
+#Section: debug
+#Description: NX xauth (NoMachine), debug symbols
+# NX provides a differential X compression library for X11.
+# .
+# This package provides the NX xauth binary.
+
 Package: libxcomp3
 Architecture: any
 Depends:
