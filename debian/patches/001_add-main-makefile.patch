@@ -27,7 +27,7 @@
 +	cd nxcompext && autoconf
 +	cd nxcompshad && autoconf
 +	cd nx-X11 && make World
-+	cd nxproxy &&  autoconf
++	cd nxproxy && autoconf && configure && make
 +
 +build-indep:
 +

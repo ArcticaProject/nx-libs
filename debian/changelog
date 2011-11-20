@@ -18,5 +18,7 @@ nx-libs (2:3.5.0-0~x2go1) UNRELEASED; urgency=low
   * Add patch: 008_add-nxproxy-wrapper.patch. Build nxproxy package.
   * Add patch: 009_nxproxy-add-man-page.patch.
   * Add nxproxy man page to nxproxy package.
+  * Fix of nxproxy build in main Makefile (modifies
+    001_add-main-makefile.patch).
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 14 Oct 2011 03:01:39 +0200
