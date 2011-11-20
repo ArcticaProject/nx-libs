@@ -13,7 +13,7 @@ endif
 
 override_dh_auto_clean:
 	rm -Rf nx-X11/.build-exports
-	LD_LIBRARY_PATH=`pwd`/debian/libnx-x11/usr/lib/nx/X11:$$LD_LIBRARY_PATH dh_auto_clean --with quilt
+	LD_LIBRARY_PATH=`pwd`/debian/libnx-x11/usr/lib/nx/X11:$$LD_LIBRARY_PATH dh_auto_clean
 
 override_dh_auto_build:
 	debian/pre-build-nx.sh
