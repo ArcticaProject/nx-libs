@@ -13,3 +13,4 @@
 013_nxcompext-makefile-uninstall.patch
 014_nxcompshad-makefile-uninstall.patch
 015_nxproxy-makefile-uninstall.patch
+016_nx-x11-install.patch

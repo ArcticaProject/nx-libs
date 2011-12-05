@@ -29,5 +29,7 @@ nx-libs (2:3.5.0-0~x2go1) UNRELEASED; urgency=low
   * Add patch: 015_nxproxy-makefile-uninstall.patch.
   * Add install/uninstall stanza to main Makefile (via patch
     001_add-main-makefile.patch).
+  * Add patch 016_nx-x11-install.patch, to allow installation of nx-X11 from
+    Makefile (via make install).
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 14 Oct 2011 03:01:39 +0200
