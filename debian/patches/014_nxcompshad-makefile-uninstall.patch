@@ -1,0 +1,56 @@
+--- a/nxcompshad/Makefile.in
++++ b/nxcompshad/Makefile.in
+@@ -76,8 +76,13 @@
+ VPATH       = @srcdir@
+ 
+ INSTALL         = @INSTALL@
++INSTALL_DIR     = $(INSTALL) -d -o root -g root -m 0755 
+ INSTALL_PROGRAM = @INSTALL_PROGRAM@
+ INSTALL_DATA    = @INSTALL_DATA@
++INSTALL_LINK    = cp -av
++DESTDIR         =
++RM_FILE         = rm -f
++RM_DIR          = rmdir -p --ignore-fail-on-non-empty
+ 
+ #
+ # This should be autodetected.
+@@ -178,12 +183,38 @@
+ 		fi
+ 		touch depend.status
+ 
+-install:	install.bin install.man
++install:       install.bin install.lib install.man
+ 
+ install.bin:
+ 
++install.lib: all
++	$(INSTALL_DIR)                          $(DESTDIR)$(prefix)/lib/nx
++	$(INSTALL_DIR)                          $(DESTDIR)$(prefix)/include/nx
++	$(INSTALL_DATA) libXcompshad.so.3.*     $(DESTDIR)$(prefix)/lib/nx
++	$(INSTALL_LINK) libXcompshad.so.3       $(DESTDIR)$(prefix)/lib/nx
++	$(INSTALL_LINK) libXcompshad.so         $(DESTDIR)$(prefix)/lib/nx
++	$(INSTALL_DATA) *.a                     $(DESTDIR)$(prefix)/lib/nx
++	$(INSTALL_DATA) *.h                     $(DESTDIR)$(prefix)/include/nx
++	echo "Running ldconfig tool, this may take a while..." && ldconfig || true
++
+ install.man:
+ 
++uninstall:     uninstall.bin uninstall.lib uninstall.man
++
++uninstall.bin:
++
++uninstall.lib:
++	$(RM_FILE) $(DESTDIR)$(prefix)/lib/nx/libXcompshad.so.3.*
++	$(RM_FILE) $(DESTDIR)$(prefix)/lib/nx/libXcompshad.so.3
++	$(RM_FILE) $(DESTDIR)$(prefix)/lib/nx/libXcompshad.so
++	$(RM_FILE) $(DESTDIR)$(prefix)/lib/nx/libXcompshad.a
++	for header in *.h; do $(RM_FILE) $(DESTDIR)$(prefix)/include/nx/$$header; done
++	$(RM_DIR) $(DESTDIR)$(prefix)/lib/nx/
++	$(RM_DIR) $(DESTDIR)$(prefix)/include/nx/
++	echo "Running ldconfig tool, this may take a while..." && ldconfig || true
++
++uninstall.man:
++
+ clean:
+ 		-rm -f *~ *.o *.gch *.bak st?????? core core.* *.out.* *.exe.stackdump \
+ 		$(LIBFULL) $(LIBLOAD) $(LIBSHARED) $(LIBARCHIVE) $(LIBDLL) $(LIBDLLSTATIC) $(PROGRAM) $(PROGRAM).exe

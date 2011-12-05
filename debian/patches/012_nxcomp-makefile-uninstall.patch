@@ -1,0 +1,60 @@
+Index: nx-libs/nxcomp/Makefile.in
+===================================================================
+--- nx-libs.orig/nxcomp/Makefile.in	2011-12-05 09:16:34.000000000 +0100
++++ nx-libs/nxcomp/Makefile.in	2011-12-05 09:19:28.000000000 +0100
+@@ -68,6 +68,9 @@
+ INSTALL         = @INSTALL@
+ INSTALL_PROGRAM = @INSTALL_PROGRAM@
+ INSTALL_DATA    = @INSTALL_DATA@
++INSTALL_LINK    = cp -av
++DESTDIR         =
++RM_FILE         = rm -f
+ 
+ #
+ # This should be autodetected.
+@@ -264,12 +267,44 @@
+ 		fi
+ 		touch depend.status
+ 
+-install:	install.bin install.man
++install:	install.bin install.lib install.man
+ 
+ install.bin:
+ 
++install.lib: all
++	./mkinstalldirs $(DESTDIR)$(prefix)/lib/nx
++	./mkinstalldirs $(DESTDIR)$(prefix)/include/nx
++	$(INSTALL_DATA) libXcomp.so.3.*         $(DESTDIR)$(prefix)/lib/nx
++	$(INSTALL_LINK) libXcomp.so.3           $(DESTDIR)$(prefix)/lib/nx
++	$(INSTALL_LINK) libXcomp.so             $(DESTDIR)$(prefix)/lib/nx
++	$(INSTALL_DATA) libXcomp.a              $(DESTDIR)$(prefix)/lib/nx
++	$(INSTALL_DATA) NX*.h                   $(DESTDIR)$(prefix)/include/nx
++	$(INSTALL_DATA) MD5.h                   $(DESTDIR)$(prefix)/include/nx
++	echo "Running ldconfig tool, this may take a while..." && ldconfig || true
++
+ install.man:
+ 
++uninstall:	uninstall.bin uninstall.lib uninstall.man
++
++uninstall.bin:
++
++uninstall.lib:
++	$(RM_FILE) $(DESTDIR)$(prefix)/lib/nx/libXcomp.so.3.*
++	$(RM_FILE) $(DESTDIR)$(prefix)/lib/nx/libXcomp.so.3
++	$(RM_FILE) $(DESTDIR)$(prefix)/lib/nx/libXcomp.so
++	$(RM_FILE) $(DESTDIR)$(prefix)/lib/nx/libXcomp.a
++	$(RM_FILE) $(DESTDIR)$(prefix)/include/nx/NXalert.h
++	$(RM_FILE) $(DESTDIR)$(prefix)/include/nx/NX.h
++	$(RM_FILE) $(DESTDIR)$(prefix)/include/nx/NXmitshm.h
++	$(RM_FILE) $(DESTDIR)$(prefix)/include/nx/NXpack.h
++	$(RM_FILE) $(DESTDIR)$(prefix)/include/nx/NXproto.h
++	$(RM_FILE) $(DESTDIR)$(prefix)/include/nx/NXrender.h
++	$(RM_FILE) $(DESTDIR)$(prefix)/include/nx/NXvars.h
++	$(RM_FILE) $(DESTDIR)$(prefix)/include/nx/MD5.h
++	echo "Running ldconfig tool, this may take a while..." && ldconfig || true
++
++uninstall.man:
++
+ clean:
+ 		-rm -f *~ *.o *.bak *.orig *.rej st?????? core core.* *.out.* \
+ 		@ALL@

@@ -9,3 +9,7 @@
 009_nxproxy-add-man-page.patch
 010_nxauth-fix-binary-name-in-man-page.patch
 011_add-nxauth-wrapper.patch
+012_nxcomp-makefile-uninstall.patch
+013_nxcompext-makefile-uninstall.patch
+014_nxcompshad-makefile-uninstall.patch
+015_nxproxy-makefile-uninstall.patch
