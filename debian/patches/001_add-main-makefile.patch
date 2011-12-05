@@ -1,6 +1,6 @@
 --- /dev/null
 +++ b/Makefile
-@@ -0,0 +1,33 @@
+@@ -0,0 +1,43 @@
 +#!/usr/bin/make -f
 +
 +all: build
@@ -32,5 +32,15 @@
 +build-indep:
 +
 +install:
++	cd nxcomp && make install
++	cd nxcompext && make install
++	cd nxcompshad && make install
++	cd nx-X11 && make install
++	cd nxproxy && make install
 +
 +uninstall:
++	cd nxcomp && make uninstall
++	cd nxcompext && make uninstall
++	cd nxcompshad && make uninstall
++	cd nx-X11 && make uninstall
++	cd nxproxy && make uninstall
