@@ -1,0 +1,35 @@
+--- a/nxproxy/Makefile.in
++++ b/nxproxy/Makefile.in
+@@ -41,6 +41,8 @@
+ INSTALL         = @INSTALL@
+ INSTALL_PROGRAM = @INSTALL_PROGRAM@
+ INSTALL_DATA    = @INSTALL_DATA@
++DESTDIR         =
++RM_FILE         = rm -f
+ 
+ #
+ # This should be autodetected.
+@@ -87,11 +89,20 @@
+ install:	install.bin install.man
+ 
+ install.bin:	$(PROGRAM)
+-		$(srcdir)/mkinstalldirs $(bindir)
+-		$(INSTALL) $(PROGRAM) $(bindir)/$(PROGRAM)
++		$(srcdir)/mkinstalldirs $(DESTDIR)$(bindir)
++		$(INSTALL_PROGRAM) $(PROGRAM) $(DESTDIR)$(bindir)/$(PROGRAM)
+ 
+ install.man:
+-		$(srcdir)/mkinstalldirs $(man1dir)
++		$(srcdir)/mkinstalldirs $(DESTDIR)$(man1dir)
++		$(INSTALL_DATA) man/$(PROGRAM).1 $(DESTDIR)$(man1dir)/$(PROGRAM).1
++
++uninstall:      uninstall.bin uninstall.man
++
++uninstall.bin:
++		$(RM_FILE) $(DESTDIR)$(bindir)/$(PROGRAM)
++
++uninstall.man:
++		$(RM_FILE) $(DESTDIR)$(man1dir)/nxproxy.1
+ 
+ clean:
+ 		-rm -f *~ *.o *.bak st?????? core core.* *.out.* \
