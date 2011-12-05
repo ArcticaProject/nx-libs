@@ -26,5 +26,6 @@ nx-libs (2:3.5.0-0~x2go1) UNRELEASED; urgency=low
   * Add lintian overrides for libxcomp*: breaks-without-version.
   * Add patches: 012, 013, 014 - Makefile uninstall stanza patches for
     nxcomp, nxcompext, nxcompshad.
+  * Add patch: 015_nxproxy-makefile-uninstall.patch.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 14 Oct 2011 03:01:39 +0200
