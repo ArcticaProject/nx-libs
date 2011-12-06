@@ -5,7 +5,7 @@
  #ifndef UsrLibDir
  #ifdef ProjectRoot
 -#define UsrLibDir Concat3(ProjectRoot,/,LibDirName)
-+#define UsrLibDir Concat5(ProjectRoot,/,LibDirName,/,nx)
++#define UsrLibDir Concat4(ProjectRoot,/,LibDirName,/nx)
  #ifndef AlternateUsrLibDir
  #define AlternateUsrLibDir YES
  #endif
