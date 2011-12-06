@@ -11,7 +11,7 @@
  #endif
  #else
 -#define UsrLibDir Concat3(/usr,/,LibDirName)
-+#define UsrLibDir Concat5(/usr,/,LibDirName,/,nx)
++#define UsrLibDir Concat4(/usr,/,LibDirName,/nx)
  #ifndef AlternateUsrLibDir
  #define AlternateUsrLibDir NO
  #endif
