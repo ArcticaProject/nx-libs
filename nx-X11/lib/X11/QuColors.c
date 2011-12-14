@@ -29,8 +29,8 @@ in this Software without prior written authorization from The Open Group.
 #endif
 #include "Xlibint.h"
 
-int
-XQueryColors(
+static void
+_XQueryColors(
     register Display *dpy,
     Colormap cmap,
     XColor *defs, 		/* RETURN */
@@ -40,11 +40,10 @@ XQueryColors(
     xQueryColorsReply rep;
     register xQueryColorsReq *req;
 
-    LockDisplay(dpy);
     GetReq(QueryColors, req);
 
     req->cmap = cmap;
-    req->length += ncolors; /* each pixel is a CARD32 */
+    SetReqLen(req, ncolors, ncolors); /* each pixel is a CARD32 */
 
     for (i = 0; i < ncolors; i++)
       Data32 (dpy, (long *)&defs[i].pixel, 4L);
@@ -70,6 +69,30 @@ XQueryColors(
 	else
 	    _XEatDataWords(dpy, rep.length);
     }
+}
+
+int
+XQueryColors(
+    register Display * const dpy,
+    const Colormap cmap,
+    XColor *defs,              /* RETURN */
+    int ncolors)
+{
+    int n;
+
+    if (dpy->bigreq_size > 0)
+       n = dpy->bigreq_size - (sizeof (xQueryColorsReq) >> 2) - 1;
+    else
+       n = dpy->max_request_size - (sizeof (xQueryColorsReq) >> 2);
+
+    LockDisplay(dpy);
+    while (ncolors >= n) {
+       _XQueryColors(dpy, cmap, defs, n);
+       defs += n;
+       ncolors -= n;
+    }
+    if (ncolors > 0)
+       _XQueryColors(dpy, cmap, defs, ncolors);
     UnlockDisplay(dpy);
     SyncHandle();
     return 1;
