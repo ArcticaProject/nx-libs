@@ -1,4 +1,10 @@
-nx-libs (2:3.5.0-0~x2go1) UNRELEASED; urgency=low
+nx-libs (2:3.5.0-0~x2go2) UNRELEASED; urgency=low
+
+  * New upstream release of nxagent (3.5.0-7).
+
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 28 Dec 2011 19:06:26 +0100
+
+nx-libs (2:3.5.0-0~x2go1) unstable; urgency=low
 
   * Initial release.
   * Use NX adapted LD_LIBRARY_PATH in debian/rules.
@@ -32,4 +38,4 @@ nx-libs (2:3.5.0-0~x2go1) UNRELEASED; urgency=low
   * Add patch 016_nx-x11-install.patch, to allow installation of nx-X11 from
     Makefile (via make install).
 
- -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 14 Oct 2011 03:01:39 +0200
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 28 Dec 2011 19:05:48 +0100
