@@ -69,8 +69,9 @@ Bool nxagentCreateColormap(ColormapPtr pCmap)
   Visual *visual;
   int class;
 
-  #ifdef TEST
-  fprintf(stderr, "nxagentCreateColormap: Going to create new colormap.\n");
+  #if defined(DEBUG) || defined(DEBUG_COLORMAP)
+  fprintf(stderr, "nxagentCreateColormap: Going to create new colormap with "
+              " visual [%lu].\n", pCmap->pVisual);
   #endif
 
   pVisual = pCmap->pVisual;
@@ -510,6 +511,11 @@ Bool nxagentCreateDefaultColormap(ScreenPtr pScreen)
   ColormapPtr pCmap;
   unsigned short zero = 0, ones = 0xFFFF;
   Pixel wp, bp;
+
+  #if defined(DEBUG) || defined(DEBUG_COLORMAP)
+  fprintf(stderr, "Debug: Searching for the root visual [%lu].\n",
+              pScreen->rootVisual);
+  #endif
 
   for (pVisual = pScreen->visuals;
        pVisual->vid != pScreen->rootVisual;

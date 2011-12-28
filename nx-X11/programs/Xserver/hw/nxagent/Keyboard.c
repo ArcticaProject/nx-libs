@@ -189,7 +189,12 @@ static char *nxagentXkbGetRules(void);
 
 unsigned int nxagentAltMetaMask;
 
-void nxagentCheckAltMetaKeys(CARD8, int);
+static void nxagentCheckAltMetaKeys(CARD8, int);
+
+CARD8 nxagentCapsLockKeycode = 66;
+CARD8 nxagentNumLockKeycode  = 77;
+
+static void nxagentCheckRemoteKeycodes(void);
 
 static CARD8 nxagentConvertedKeycodes[] =
 {
@@ -784,6 +789,8 @@ N/A
         }
       XFreeModifiermap(modifier_keymap);
 
+      nxagentCheckRemoteKeycodes();
+
       keySyms.minKeyCode = min_keycode;
       keySyms.maxKeyCode = max_keycode;
       keySyms.mapWidth = mapWidth;
@@ -1343,7 +1350,7 @@ int nxagentResetKeyboard(void)
   }
 }
 
-void  nxagentCheckAltMetaKeys(CARD8 keycode, int j)
+void nxagentCheckAltMetaKeys(CARD8 keycode, int j)
 {
   if (keycode == XKeysymToKeycode(nxagentDisplay, XK_Meta_L))
   {
@@ -1364,6 +1371,19 @@ void  nxagentCheckAltMetaKeys(CARD8 keycode, int j)
   {
     nxagentAltMetaMask |= 1 << j;
   }
+}
+
+void nxagentCheckRemoteKeycodes()
+{
+  nxagentCapsLockKeycode = XKeysymToKeycode(nxagentDisplay, XK_Caps_Lock);
+
+  nxagentNumLockKeycode  = XKeysymToKeycode(nxagentDisplay, XK_Num_Lock);
+
+  #ifdef DEBUG
+  fprintf(stderr, "nxagentCheckRemoteKeycodes: Remote CapsLock keycode "
+              "is [%d] NumLock [%d].\n", nxagentCapsLockKeycode,
+                  nxagentNumLockKeycode);
+  #endif
 }
 
 static int nxagentSaveKeyboardDeviceData(DeviceIntPtr dev, DeviceIntPtr devBackup)

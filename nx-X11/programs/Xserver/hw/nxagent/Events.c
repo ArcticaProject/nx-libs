@@ -395,8 +395,10 @@ void nxagentRemoteWindowInfo(Window win, int indent, Bool newLine)
 
   fprintf(stderr, "x=%d y=%d width=%d height=%d class=%s map_state=%s "
              "override_redirect=%s\n", attributes.x, attributes.y,
-                 attributes.width, attributes.height, (attributes.class == 0) ?
-                     "InputOutput" : "InputOnly", (attributes.map_state == 0) ?
+                 attributes.width, attributes.height,
+                     (attributes.class == 0) ? "CopyFromParent" :
+                     ((attributes.class == 1) ? "InputOutput" : "InputOnly"),
+                     (attributes.map_state == 0) ?
                          "IsUnmapped" : (attributes.map_state == 1 ?
                              "IsUnviewable" : "IsViewable"),
                                  (attributes.override_redirect == 0) ?
@@ -415,9 +417,9 @@ void nxagentRemoteWindowInfo(Window win, int indent, Bool newLine)
 void nxagentRemoteWindowsTree(Window window, int level)
 {
   int i, j;
-  Window rootWin, parentWin;
+  unsigned long rootWin, parentWin;
   unsigned int numChildren;
-  Window *childList;
+  unsigned long *childList;
 
   if (!XQueryTree(nxagentDisplay, window, &rootWin, &parentWin, &childList,
                       &numChildren))
@@ -517,9 +519,11 @@ void nxagentInternalWindowInfo(WindowPtr pWin, int indent, Bool newLine)
   fprintf(stderr, "x=%d y=%d width=%d height=%d class=%s map_state=%s "
              "override_redirect=%s", pWin -> drawable.x, pWin -> drawable.y,
                  pWin -> drawable.width, pWin -> drawable.height,
-                     (pWin -> drawable.class == 0) ? "InputOutput" :
-                         "InputOnly", (pWin -> mapped == 0) ?
-                             "IsUnmapped" : (pWin -> mapped == 1 ?
+                     (pWin -> drawable.class == 0) ? "CopyFromParent" :
+                     ((pWin -> drawable.class == 1) ? "InputOutput" :
+                      "InputOnly"),
+                      (pWin -> mapped == 0) ?
+                             "IsUnmapped" : (pWin -> realized == 0 ?
                                  "IsUnviewable" : "IsViewable"),
                                      (pWin -> overrideRedirect == 0) ?
                                          "No" : "Yes");
@@ -1142,11 +1146,11 @@ FIXME: Don't enqueue the KeyRelease event if the key was
 
         if (nxagentXkbState.Initialized == 0)
         {
-          if (X.xkey.keycode == 66)
+          if (X.xkey.keycode == nxagentCapsLockKeycode)
           {
             nxagentXkbCapsTrap = 1;
           }
-          else if (X.xkey.keycode == 77)
+          else if (X.xkey.keycode == nxagentNumLockKeycode)
           {
             nxagentXkbNumTrap = 1;
           }
@@ -2292,11 +2296,11 @@ int nxagentHandleKeyPress(XEvent *X, enum HandleEventResult *result)
 
   if (nxagentXkbState.Initialized == 0)
   {
-    if (X -> xkey.keycode == 66)
+    if (X -> xkey.keycode == nxagentCapsLockKeycode)
     {
       nxagentXkbCapsTrap = 1;
     }
-    else if (X -> xkey.keycode == 77)
+    else if (X -> xkey.keycode == nxagentNumLockKeycode)
     {
       nxagentXkbNumTrap = 1;
     }
@@ -2312,11 +2316,11 @@ int nxagentHandleKeyPress(XEvent *X, enum HandleEventResult *result)
     return 1;
   }
 
-  if (X -> xkey.keycode == 66)
+  if (X -> xkey.keycode == nxagentCapsLockKeycode)
   {
     nxagentXkbState.Caps = (~nxagentXkbState.Caps & 1);
   }
-  else if (X -> xkey.keycode == 77)
+  else if (X -> xkey.keycode == nxagentNumLockKeycode)
   {
     nxagentXkbState.Num = (~nxagentXkbState.Num & 1);
   }

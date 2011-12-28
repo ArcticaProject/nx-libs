@@ -839,6 +839,8 @@ Bool nxagentOpenScreen(int index, ScreenPtr pScreen,
   int bitsPerPixel;
   int sizeInBytes;
 
+  int defaultVisualIndex = 0;
+
   #ifdef TEST
   fprintf(stderr, "nxagentOpenScreen: Called for screen index [%d].\n",
               index);
@@ -1163,6 +1165,11 @@ Bool nxagentOpenScreen(int index, ScreenPtr pScreen,
      * Initialize the visuals.
      */
 
+    #if defined(DEBUG) || defined(DEBUG_COLORMAP)
+    fprintf(stderr, "Debug: Setting up visuals. Original array has size "
+                "[%d].\n", nxagentNumVisuals); 
+    #endif
+
     numVisuals = 0;
     numDepths = nxagentNumDepths;
 
@@ -1186,25 +1193,45 @@ Bool nxagentOpenScreen(int index, ScreenPtr pScreen,
        * Check for and remove the duplicates.
        */
 
-      for (j = 0; j < numVisuals; j++)
+      if (i == nxagentDefaultVisualIndex)
       {
-        if (visuals[numVisuals].class           == visuals[j].class           &&
-            visuals[numVisuals].bitsPerRGBValue == visuals[j].bitsPerRGBValue &&
-            visuals[numVisuals].ColormapEntries == visuals[j].ColormapEntries &&
-            visuals[numVisuals].nplanes         == visuals[j].nplanes         &&
-            visuals[numVisuals].redMask         == visuals[j].redMask         &&
-            visuals[numVisuals].greenMask       == visuals[j].greenMask       &&
-            visuals[numVisuals].blueMask        == visuals[j].blueMask        &&
-            visuals[numVisuals].offsetRed       == visuals[j].offsetRed       &&
-            visuals[numVisuals].offsetGreen     == visuals[j].offsetGreen     &&
-            visuals[numVisuals].offsetBlue      == visuals[j].offsetBlue)
-          break;
+        defaultVisualIndex = numVisuals;
+
+        #if defined(DEBUG) || defined(DEBUG_COLORMAP)
+        fprintf(stderr, "Debug: Set default visual index [%d].\n" ,
+                    defaultVisualIndex); 
+        #endif
+      }
+      else
+      {
+        for (j = 0; j < numVisuals; j++)
+        {
+          if (visuals[numVisuals].class == visuals[j].class &&
+              visuals[numVisuals].bitsPerRGBValue ==
+                  visuals[j].bitsPerRGBValue &&
+              visuals[numVisuals].ColormapEntries ==
+                  visuals[j].ColormapEntries &&
+              visuals[numVisuals].nplanes == visuals[j].nplanes &&
+              visuals[numVisuals].redMask == visuals[j].redMask &&
+              visuals[numVisuals].greenMask == visuals[j].greenMask &&
+              visuals[numVisuals].blueMask == visuals[j].blueMask &&
+              visuals[numVisuals].offsetRed == visuals[j].offsetRed &&
+              visuals[numVisuals].offsetGreen == visuals[j].offsetGreen &&
+              visuals[numVisuals].offsetBlue == visuals[j].offsetBlue)
+            break;
+        }
+ 
+        if (j < numVisuals)
+            continue;
+
       }
 
-      if (j < numVisuals)
-        continue;
-
       depthIndex = UNDEFINED;
+
+      #if defined(DEBUG) || defined(DEBUG_COLORMAP)
+      fprintf(stderr, "Debug: Added visual [%lu].\n" ,
+                  visuals[numVisuals].vid); 
+      #endif
 
       for (j = 0; j < numDepths; j++)
       {
@@ -1240,11 +1267,25 @@ Bool nxagentOpenScreen(int index, ScreenPtr pScreen,
 
       depths[depthIndex].numVids++;
 
+      #if defined(DEBUG) || defined(DEBUG_COLORMAP)
+      fprintf(stderr, "Debug: Registered visual [%lu] for depth [%d (%d)].\n" ,
+                  visuals[numVisuals].vid, depthIndex,
+                      depths[depthIndex].depth); 
+      #endif
+
       numVisuals++;
     }
 
-    defaultVisual = visuals[nxagentDefaultVisualIndex].vid;
-    rootDepth = visuals[nxagentDefaultVisualIndex].nplanes;
+    #if defined(DEBUG) || defined(DEBUG_COLORMAP)
+    fprintf(stderr, "Debug: Setting default visual [%d (%lu)].\n",
+                defaultVisualIndex, visuals[defaultVisualIndex].vid);
+
+    fprintf(stderr, "Debug: Setting root depth [%d].\n",
+                visuals[defaultVisualIndex].nplanes); 
+    #endif
+
+    defaultVisual = visuals[defaultVisualIndex].vid;
+    rootDepth = visuals[defaultVisualIndex].nplanes;
 
     nxagentInitAlphaVisual();
 
@@ -1271,7 +1312,7 @@ Bool nxagentOpenScreen(int index, ScreenPtr pScreen,
       return FALSE;
     }
 
-    #ifdef TEST
+    #if defined(DEBUG) || defined(DEBUG_COLORMAP)
     fprintf(stderr, "nxagentOpenScreen: Before fbScreenInit numVisuals [%d] numDepths [%d] "
               "rootDepth [%d] defaultVisual [%ld].\n", numVisuals, numDepths,
                   rootDepth, defaultVisual);
@@ -1288,7 +1329,7 @@ Bool nxagentOpenScreen(int index, ScreenPtr pScreen,
       return FALSE;
     }
 
-    #ifdef TEST
+    #if defined(DEBUG) || defined(DEBUG_COLORMAP)
     fprintf(stderr, "nxagentOpenScreen: After fbScreenInit numVisuals [%d] numDepths [%d] "
               "rootDepth [%d] defaultVisual [%ld].\n", numVisuals, numDepths,
                   rootDepth, defaultVisual);
@@ -1300,7 +1341,7 @@ Bool nxagentOpenScreen(int index, ScreenPtr pScreen,
      * and will modify numVisuals and numDepths.
      */
 
-    #ifdef TEST
+    #if defined(DEBUG) || defined(DEBUG_COLORMAP)
     fprintf(stderr, "nxagentOpenScreen: Before GLX numVisuals [%d] numDepths [%d] "
               "rootDepth [%d] defaultVisual [%ld].\n", numVisuals, numDepths,
                   rootDepth, defaultVisual);
@@ -1309,7 +1350,7 @@ Bool nxagentOpenScreen(int index, ScreenPtr pScreen,
     nxagentInitGlxExtension(&visuals, &depths, &numVisuals, &numDepths,
                                 &rootDepth, &defaultVisual);
 
-    #ifdef TEST
+    #if defined(DEBUG) || defined(DEBUG_COLORMAP)
     fprintf(stderr, "nxagentOpenScreen: After GLX numVisuals [%d] numDepths [%d] "
               "rootDepth [%d] defaultVisual [%ld].\n", numVisuals, numDepths,
                   rootDepth, defaultVisual);
