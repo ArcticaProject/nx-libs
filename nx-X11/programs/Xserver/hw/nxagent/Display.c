@@ -1482,6 +1482,10 @@ void nxagentSetDefaultVisual(void)
 
   int i;
 
+  nxagentDefaultVisualIndex = 3;
+
+  return;
+
   if (nxagentUserDefaultClass || nxagentUserDefaultDepth)
   {
     nxagentDefaultVisualIndex = UNDEFINED;
@@ -1840,68 +1844,98 @@ FIXME: Is this needed?
   nxagentDisplay = NULL;
 }
 
+static FILE *nxagentLookForIconFile(char *iconName, const char *permission,
+                                        char *return_path)
+{
+  char *path;
+  char *end;
+  char singlePath[PATH_MAX];
+  int breakLoop;
+  FILE *fptr = NULL;
+
+  #ifdef WIN32
+  const char separator = ';';
+  const char *slash = "\\";
+  #else
+  const char separator = ':';
+  const char *slash = "/";
+  #endif
+
+  if ((path = getenv("PATH")) == NULL)
+  {
+    return NULL;
+  }
+
+  for(breakLoop = 0; breakLoop == 0 && fptr == NULL; )
+  {
+    end = strchr(path, separator);
+
+    if (end != NULL)
+    {
+      strncpy(singlePath, path, (unsigned long)(end - path));
+
+      singlePath[(unsigned long)(end - path)] = 0;
+
+      path = end + 1;
+    }
+    else
+    {
+      strcpy(singlePath, path);
+
+      breakLoop = 1;
+    }
+
+    if (singlePath[strlen(singlePath)- 1] == slash[0])
+    {
+      singlePath[strlen(singlePath)- 1] = 0;
+    }
+
+    if (strlen(singlePath) + strlen(iconName) + 1 < PATH_MAX)
+    {
+      strncat(singlePath, slash, 1);
+      strcat(singlePath, iconName);
+
+      if ((fptr = fopen(singlePath, permission)) != NULL)
+      {
+        strcpy(return_path, singlePath);
+      }
+    }
+    else
+    {
+      fprintf(stderr, "Error: Path too long.\n");
+    }
+  }
+
+  return fptr;
+}
+
 Bool nxagentMakeIcon(Display *display, Pixmap *nxIcon, Pixmap *nxMask)
 {
-  char *env_path = getenv("PATH");
-  int lenght_env_path = 0;
-  char icon_filename [256];
-  char default_path [256];
-  char *icon_path = malloc( strlen(env_path) + sizeof(icon_filename) );
+  char default_path [PATH_MAX];
+  char icon_path [PATH_MAX];
   FILE *icon_fp;
   int status;
   Bool success = False;
   XlibPixmap IconPixmap;
   XlibPixmap IconShape;
 
-  if (env_path == NULL)
-    lenght_env_path = 0;
-  else
-    lenght_env_path = strlen(env_path) + 1;
-  strncpy(icon_filename, "", 255);
-  strncpy(default_path, "", 255);
-
-  strcat(icon_filename, NXAGENT_ICON_NAME);
-  strcat(default_path,"/usr/NX/share/images/");
-  strcat(default_path,icon_filename);
+  snprintf(default_path, PATH_MAX-1, "/usr/NX/share/images/%s", NXAGENT_ICON_NAME);
 
   if ((icon_fp = fopen(default_path, "r")) == NULL)
   {
-    char *s;
-    char *temp_path = malloc(lenght_env_path + strlen(icon_filename) );
-    char *temp_path1 = malloc(lenght_env_path + strlen(icon_filename) );
+    icon_fp = nxagentLookForIconFile(NXAGENT_ICON_NAME, "r", icon_path);
 
-    strncpy(temp_path, env_path, strlen(env_path));
-    strncpy(temp_path1, "", lenght_env_path + strlen(icon_filename) );
-
-    while (strlen(temp_path) > 0)
+    if (icon_fp != NULL)
     {
-       s = strpbrk (temp_path, ":");
-       if (s == NULL) break;
-
-       strncpy (temp_path1, temp_path , strlen(temp_path) - strlen(s) );
-       strncat (temp_path1, "/", 1);
-       strncat (temp_path1, icon_filename, strlen(icon_filename));
-       if ((icon_fp = fopen(temp_path1, "r")) != NULL)
-       {
-          fclose (icon_fp);
-          success = True;
-          strcpy(icon_path,temp_path1);
-          break;
-       }
-       strncpy(temp_path1, "", lenght_env_path + strlen(icon_filename) );
-       strncpy(temp_path1, s + 1, strlen(s)-1);
-       strncpy(temp_path, "", lenght_env_path + strlen(icon_filename) );
-       strcpy(temp_path, temp_path1 );
-       strncpy(temp_path1, "", lenght_env_path + strlen(icon_filename) );
-     }
-     free(temp_path);
-     free(temp_path1);
+      fclose (icon_fp);
+      success = True;
+    }
   }
   else
   {
-     fclose (icon_fp);
-     success = True;
-     strcpy(icon_path, default_path);
+    fclose (icon_fp);
+    success = True;
+    strcpy(icon_path, default_path);
   }
 
   if (success)
@@ -1948,7 +1982,6 @@ Bool nxagentMakeIcon(Display *display, Pixmap *nxIcon, Pixmap *nxMask)
      }
   }
 
-  free(icon_path);
 
   *nxIcon = IconPixmap;
   *nxMask = IconShape;

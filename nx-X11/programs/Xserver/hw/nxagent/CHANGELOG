@@ -1,5 +1,19 @@
 ChangeLog:
 
+nxagent-3.5.0-7
+
+- Fixed TR10I02622. Corrected function searching for icon file.
+
+nxagent-3.5.0-6
+
+- Fixed TR10I02621. Avoided explicit call to XMapWindow() at recon-
+  nection stage.
+
+- Fixed TR10I02620. Solved error in default visual set up.
+
+- Fixed TR10H02390. Get the actual remote key code for CapsLock and
+  NumLock.
+
 nxagent-3.5.0-5
 
 - The NX agent failed to resize its own window to fit the desktop size

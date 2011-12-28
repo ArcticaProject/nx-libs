@@ -3170,10 +3170,17 @@ static void nxagentReconfigureWindow(pointer param0, XID param1, pointer data_bu
     {
         nxagentRealizeWindow (pWin);
     }
+/*
+XXX: This would break Motif menus.
+     If pWin is mapped but not realized, a followin UnmapWindow() wouldn't
+     do anything, leaving this mapped window around. XMapWindow()
+     is called in nxagentRealizeWindow() and there it is enough.
+
     else if (pWin->mapped)
     {
       XMapWindow(nxagentDisplay, nxagentWindow(pWin));
     }
+*/
     else if (nxagentOption(Rootless) && pWin -> overrideRedirect == 0 &&
                  nxagentWindowTopLevel(pWin) && nxagentIsIconic(pWin))
     {
