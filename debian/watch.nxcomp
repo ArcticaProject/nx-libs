@@ -1,0 +1,3 @@
+version=3
+http://www.nomachine.com/sources.php \
+  http://[^"]*/nxcomp-([\d\.-]*)\.tar\.gz
