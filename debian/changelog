@@ -1,6 +1,10 @@
 nx-libs (2:3.5.0-0~x2go2) UNRELEASED; urgency=low
 
   * New upstream release of nxagent (3.5.0-7).
+  * Add lintian-overrides for every package. Override lintian warning:
+    possible-new-upstream-release-without-new-version as there will
+    be new upstream releases of NX subprojects that will not require
+    a version increment of the Debian package.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 28 Dec 2011 19:06:26 +0100
 
