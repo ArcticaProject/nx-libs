@@ -47,6 +47,13 @@ nx-libs (2:3.5.0-0~x2go2) UNRELEASED; urgency=low
 nx-libs (2:3.5.0-0~x2go1) unstable; urgency=low
 
   * Initial release.
+    - nxcomp (3.5.0-2)
+    - nxcompext (3.5.0-1)
+    - nxcompshad (3.5.0-2)
+    - nx-X11 (3.5.0-2)
+    - nxagent (3.5.0-5)
+    - nxauth (3.5.0-1)
+    - nxproxy (3.5.0-1)
   * Use NX adapted LD_LIBRARY_PATH in debian/rules.
   * Add quilt as build dependency.
   * Add main Makefile via patch: 001_add-main-makefile.patch.
