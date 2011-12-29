@@ -35,9 +35,9 @@ nx-libs (2:3.5.0-0~x2go2) UNRELEASED; urgency=low
   * Add lintian-override: outdated-autotools-helper-file to
     source.lintian-overrides as we patch-update the outdated helper files before
     building binaries.
-  * Add patch: 018_nx-x11_update-libtool-ltmain-script.patch. Silence lintian warning
-    ancient-libtool via lintian override as we patch in a new version of ltmain.sh
-    by this patch.
+  * Add patch: 018_nx-x11_update-libtool-ltmain-script.patch. Silence lintian
+    warning ancient-libtool via lintian override as we patch in a new version
+    of ltmain.sh by this patch.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 28 Dec 2011 19:06:26 +0100
 
