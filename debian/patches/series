@@ -5,7 +5,7 @@
 005_nxagent_add-nxagent-wrapper.patch
 006_remove-configure-files.patch
 007_nxcompshad_clean-gch-files.patch
-008_nxproxy_add-nx-proxy-wrapper.patch
+008_nxproxy_add-nxproxy-wrapper.patch
 009_nxproxy_add-man-page.patch
 010_nxauth_fix-binary-name-in-man-page.patch
 011_nxauth_add-nxauth-wrapper.patch
@@ -23,4 +23,5 @@
 107_nxagent_clipboard-compound-text+small-bed-sheets.patch
 108_nxagent_wine-close-delay.patch
 109_nxagent_locale-utf8-compound-text.patch
+110_nxagent_createpixmap-bounds-check.patch
 200_nxagent_unbrand-agent.patch

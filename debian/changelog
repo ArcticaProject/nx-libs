@@ -23,6 +23,9 @@ nx-libs (2:3.5.0-0~x2go2) UNRELEASED; urgency=low
     package.
   * Rework FreeNX patches to be applicable to latest NX sources.
   * Install nxagent.xpm icon to /usr/share/pixmaps.
+  * Rename patch: 008_nxproxy_add-nx-proxy-wrapper.patch to
+    008_nxproxy_add-nxproxy-wrapper.patch.
+  * Add patch from FreeNX patchset: 110_nxagent_createpixmap-bounds-check.patch.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 28 Dec 2011 19:06:26 +0100
 
