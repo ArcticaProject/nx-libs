@@ -3,7 +3,7 @@
 003_nxcompshad_gcc43.patch
 004_nx-x11_fix-nxcompshad-build.patch
 005_nxagent_add-nxagent-wrapper.patch
-006_remove-configure-files.patch
+#006_remove-configure-files.patch
 007_nxcompshad_clean-gch-files.patch
 008_nxproxy_add-nxproxy-wrapper.patch
 009_nxproxy_add-man-page.patch

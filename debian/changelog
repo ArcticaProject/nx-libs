@@ -49,6 +49,8 @@ nx-libs (2:3.5.0-0~x2go2) UNRELEASED; urgency=low
     touch any directory controlled by /etc/ld.so.conf, amongst others
     see BTS issue #205142).
   * Make sure upstream changelog file names are in lower case.
+  * Disable patch: 006_remove-configure-files.patch, remove configure
+    files from within /debian/rules.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 28 Dec 2011 19:06:26 +0100
 
