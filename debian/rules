@@ -15,6 +15,15 @@ override_dh_auto_clean:
 	rm -Rf nx-X11/.build-exports
 	LD_LIBRARY_PATH=`pwd`/debian/libnx-x11/usr/lib/nx/X11:$$LD_LIBRARY_PATH dh_auto_clean
 
+override_dh_clean:
+	rm -f nx-X11/changelog
+	rm -f nxcomp/changelog
+	rm -f nxcompext/changelog
+	rm -f nxcompshad/changelog
+	rm -f nx-X11/programs/Xserver/hw/nxagent/changelog
+	rm -f nx-X11/programs/nxauth/changelog
+	rm -f nxproxy/changelog
+
 override_dh_auto_build:
 	debian/pre-build-nx.sh
 	LD_LIBRARY_PATH=`pwd`/debian/libnx-x11/usr/lib/nx/X11:$$LD_LIBRARY_PATH dh_auto_build --with quilt
