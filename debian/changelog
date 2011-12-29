@@ -42,6 +42,12 @@ nx-libs (2:3.5.0-0~x2go2) UNRELEASED; urgency=low
     override to source.lintian-overrides: ancient-autotools-helper-file as we
     handle autotools helper file updates via patch system.
   * Add upstream CHANGELOG files to all .deb packages of this source package.
+  * Override lintian warnings
+    - libnx-x11: postinst-has-useless-call-to-ldconfig
+    - libnx-x11: postrm-has-useless-call-to-ldconfig
+    as they relate to a bug in debhelper (call of ldconfig although we did not
+    touch any directory controlled by /etc/ld.so.conf, amongst others
+    see BTS issue #205142).
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 28 Dec 2011 19:06:26 +0100
 

@@ -1,1 +1,3 @@
 libnx-x11: possible-new-upstream-release-without-new-version
+libnx-x11: postinst-has-useless-call-to-ldconfig
+libnx-x11: postrm-has-useless-call-to-ldconfig
