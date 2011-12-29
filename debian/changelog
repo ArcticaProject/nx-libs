@@ -21,6 +21,7 @@ nx-libs (2:3.5.0-0~x2go2) UNRELEASED; urgency=low
     - 200_nxagent_unbrand-agent.patch
   * Adapt path names in FreeNX patches to meet requirements for source tree of this
     package.
+  * Rework FreeNX patches to be applicable to latest NX sources.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 28 Dec 2011 19:06:26 +0100
 

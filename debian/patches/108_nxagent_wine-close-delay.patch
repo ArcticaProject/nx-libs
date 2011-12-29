@@ -15,7 +15,7 @@
  /*
   * This is currently unused.
   */
-@@ -1640,6 +1648,17 @@
+@@ -1858,6 +1866,17 @@
    nxagentAddConfiguredWindow(pWin, CWStackingOrder);
    nxagentAddConfiguredWindow(pWin, CW_Shape);
  
@@ -33,7 +33,7 @@
    #ifdef SHAPE
  
    /*
-@@ -1686,6 +1705,17 @@
+@@ -1904,6 +1923,17 @@
      return True;
    }
  

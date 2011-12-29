@@ -1,6 +1,6 @@
 --- a/nx-X11/programs/Xserver/hw/nxagent/Screen.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Screen.c
-@@ -1539,7 +1539,20 @@
+@@ -1754,7 +1754,20 @@
        #ifdef TEST
        fprintf(stderr, "nxagentOpenScreen: Created new default window with id [%ld].\n",
                    nxagentDefaultWindows[pScreen->myNum]);
@@ -32,17 +32,6 @@
  #define nxagentSetPrintGeometry(screen) \
      nxagentPrintGeometryFlags = (1 << (screen));
      
---- a/nx-X11/programs/Xserver/hw/nxagent/Display.c
-+++ b/nx-X11/programs/Xserver/hw/nxagent/Display.c
-@@ -1861,7 +1861,7 @@
-   strncpy(default_path, "", 255);
- 
-   strcat(icon_filename, NXAGENT_ICON_NAME);
--  strcat(default_path,"/usr/NX/share/images/");
-+  strcat(default_path,"/usr/share/pixmaps/");
-   strcat(default_path,icon_filename);
- 
-   if ((icon_fp = fopen(default_path, "r")) == NULL)
 --- a/nx-X11/programs/Xserver/hw/nxagent/Splash.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Splash.c
 @@ -204,6 +204,7 @@
@@ -53,3 +42,14 @@
    if (!nxagentPixmapLogo)
    {
      return;
+--- a/nx-X11/programs/Xserver/hw/nxagent/Display.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/Display.c
+@@ -1919,7 +1919,7 @@
+   XlibPixmap IconPixmap;
+   XlibPixmap IconShape;
+ 
+-  snprintf(default_path, PATH_MAX-1, "/usr/NX/share/images/%s", NXAGENT_ICON_NAME);
++  snprintf(default_path, PATH_MAX-1, "/usr/share/pixmaps/%s", NXAGENT_ICON_NAME);
+ 
+   if ((icon_fp = fopen(default_path, "r")) == NULL)
+   {

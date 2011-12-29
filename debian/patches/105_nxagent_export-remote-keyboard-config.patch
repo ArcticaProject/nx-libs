@@ -18,9 +18,9 @@
 --- a/nx-X11/programs/Xserver/hw/nxagent/Error.h
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Error.h
 @@ -34,4 +34,6 @@
-
+ 
  void nxagentEndRedirectToClientsLog(void);
-
+ 
 +char *nxagentGetSessionPath(void);
 +
  #endif /* __Error_H__ */
@@ -34,7 +34,7 @@
  
  #include "NXlib.h"
  
-@@ -1770,6 +1771,42 @@
+@@ -1790,6 +1791,42 @@
    }
    #endif
  
