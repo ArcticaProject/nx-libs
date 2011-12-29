@@ -5,6 +5,8 @@ nx-libs (2:3.5.0-0~x2go2) UNRELEASED; urgency=low
     possible-new-upstream-release-without-new-version as there will
     be new upstream releases of NX subprojects that will not require
     a version increment of the Debian package.
+  * Add individual watch files for NX components in this source package.
+  * Change naming scheme of patch files.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 28 Dec 2011 19:06:26 +0100
 
