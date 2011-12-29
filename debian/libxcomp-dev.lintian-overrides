@@ -1,1 +1,3 @@
 libxcomp-dev: breaks-without-version
+libxcomp-dev: possible-new-upstream-release-without-new-version
+

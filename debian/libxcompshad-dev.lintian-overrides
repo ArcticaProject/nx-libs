@@ -1,1 +1,3 @@
 libxcompshad-dev: breaks-without-version
+libxcompshad-dev: possible-new-upstream-release-without-new-version
+
