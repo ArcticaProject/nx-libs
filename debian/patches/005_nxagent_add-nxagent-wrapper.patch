@@ -4,7 +4,7 @@
 +#!/bin/bash
 +
 +NX_LIBS=/usr/lib/nx
-+LD_LIBRARY_PATH=/usr/lib/nx
++LD_LIBRARY_PATH=/usr/lib/nx:/usr/lib/nx/X11:$LD_LIBRARY_PATH
 +
 +export NX_LIBS
 +export LD_LIBRARY_PATH
