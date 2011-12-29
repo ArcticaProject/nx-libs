@@ -1,5 +1,5 @@
---- a/nxagent/programs/Xserver/hw/nxagent/Clipboard.c
-+++ b/nxagent/programs/Xserver/hw/nxagent/Clipboard.c
+--- a/nx-X11/programs/Xserver/hw/nxagent/Clipboard.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/Clipboard.c
 @@ -1226,10 +1226,11 @@
      Atom xa_STRING[4];
      xEvent x;
@@ -15,8 +15,8 @@
  
      ChangeWindowProperty(pWin,
                           property,
---- a/nxagent/programs/Xserver/hw/nxagent/Image.c
-+++ b/nxagent/programs/Xserver/hw/nxagent/Image.c
+--- a/nx-X11/programs/Xserver/hw/nxagent/Image.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/Image.c
 @@ -644,6 +644,10 @@
              pDrawable -> depth != 1 &&
                  nxagentOption(DeferLevel) >= 1)

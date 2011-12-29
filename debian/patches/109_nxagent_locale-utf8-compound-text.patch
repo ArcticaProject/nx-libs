@@ -1,5 +1,5 @@
---- a/nxagent/programs/Xserver/hw/nxagent/Init.c
-+++ b/nxagent/programs/Xserver/hw/nxagent/Init.c
+--- a/nx-X11/programs/Xserver/hw/nxagent/Init.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/Init.c
 @@ -64,6 +64,9 @@
  #include "NX.h"
  #include "NXlib.h"
@@ -31,8 +31,8 @@
  }
  
  void InitInput(argc, argv)
---- a/nxagent/programs/Xserver/hw/nxagent/Rootless.c
-+++ b/nxagent/programs/Xserver/hw/nxagent/Rootless.c
+--- a/nx-X11/programs/Xserver/hw/nxagent/Rootless.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/Rootless.c
 @@ -32,6 +32,10 @@
  
  #include "NXlib.h"

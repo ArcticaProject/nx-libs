@@ -3,8 +3,8 @@
 ## All lines beginning with `## DP:' are a description of the patch.
 ## DP: Change the path to the keyboard configuration file
 
---- a/programs/Xserver/os/oscolor.c
-+++ b/programs/Xserver/os/oscolor.c
+--- a/nx-X11/programs/Xserver/os/oscolor.c
++++ b/nx-X11/programs/Xserver/os/oscolor.c
 @@ -53,7 +53,7 @@
  #include <sys/stat.h>
  #include <unistd.h>

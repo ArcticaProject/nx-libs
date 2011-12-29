@@ -1,5 +1,5 @@
---- a/nxagent/programs/Xserver/hw/nxagent/Window.c
-+++ b/nxagent/programs/Xserver/hw/nxagent/Window.c
+--- a/nx-X11/programs/Xserver/hw/nxagent/Window.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/Window.c
 @@ -176,6 +176,14 @@
  
  static int nxagentForceExposure(WindowPtr pWin, pointer ptr);

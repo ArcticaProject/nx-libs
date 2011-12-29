@@ -4,8 +4,8 @@
 ## All lines beginning with `## DP:' are a description of the patch.
 ## DP: Export the client keyboard configurations to a file
 
---- a/nxagent/programs/Xserver/hw/nxagent/Error.c
-+++ b/nxagent/programs/Xserver/hw/nxagent/Error.c
+--- a/nx-X11/programs/Xserver/hw/nxagent/Error.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/Error.c
 @@ -497,7 +497,7 @@
    return rootPath;
  }
@@ -15,17 +15,17 @@
  {
  
    char *rootPath;
---- a/nxagent/programs/Xserver/hw/nxagent/Error.h
-+++ b/nxagent/programs/Xserver/hw/nxagent/Error.h
+--- a/nx-X11/programs/Xserver/hw/nxagent/Error.h
++++ b/nx-X11/programs/Xserver/hw/nxagent/Error.h
 @@ -34,4 +34,6 @@
- 
+
  void nxagentEndRedirectToClientsLog(void);
- 
+
 +char *nxagentGetSessionPath(void);
 +
  #endif /* __Error_H__ */
---- a/nxagent/programs/Xserver/hw/nxagent/Keyboard.c
-+++ b/nxagent/programs/Xserver/hw/nxagent/Keyboard.c
+--- a/nx-X11/programs/Xserver/hw/nxagent/Keyboard.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/Keyboard.c
 @@ -52,6 +52,7 @@
  #include "Keyboard.h"
  #include "Events.h"

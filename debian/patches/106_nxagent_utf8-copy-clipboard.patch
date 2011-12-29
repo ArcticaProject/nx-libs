@@ -1,5 +1,5 @@
---- a/nxagent/programs/Xserver/hw/nxagent/Clipboard.c
-+++ b/nxagent/programs/Xserver/hw/nxagent/Clipboard.c
+--- a/nx-X11/programs/Xserver/hw/nxagent/Clipboard.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/Clipboard.c
 @@ -166,7 +166,9 @@
  
    if (target == XA_STRING) return True;
