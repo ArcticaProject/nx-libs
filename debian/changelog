@@ -51,6 +51,8 @@ nx-libs (2:3.5.0-0~x2go2) UNRELEASED; urgency=low
   * Make sure upstream changelog file names are in lower case.
   * Disable patch: 006_remove-configure-files.patch, remove configure
     files from within /debian/rules.
+  * Add patch: 019_nx-x11_expat-build-against-system-libxmltok.patch, fixes
+    lintian error: embedded-library: expat. Build-depend on libxmltok1-dev.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 28 Dec 2011 19:06:26 +0100
 

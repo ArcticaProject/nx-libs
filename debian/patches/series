@@ -16,6 +16,7 @@
 016_nx-x11_install-location.patch
 017_nx-x11_update-autotools-helper-files.patch
 018_nx-x11_update-libtool-ltmain-script.patch
+019_nx-x11_expat-build-against-system-libxmltok.patch
 101_nxagent_set-rgb-path.patch
 102_xserver-xext_set-securitypolicy-path.patch
 103_nxagent_set-X0-config-path.patch
