@@ -1,0 +1,17 @@
+## 90_enable_debug.dpatch by  <marceloshima@gmail.com>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: No description.
+
+--- a/nxagent/programs/Xserver/hw/nxagent/Imakefile	2010-09-17 14:49:52.000000000 +0200
++++ b/nxagent/programs/Xserver/hw/nxagent/Imakefile	2010-09-17 15:02:43.113911514 +0200
+@@ -205,7 +205,8 @@
+           -DNXAGENT_ONSTART \
+           -DNXAGENT_SPLASH \
+           -DNXAGENT_ARTSD \
+-          -UNX_DEBUG_INPUT \
++          -DNX_DEBUG_INPUT \
++          -DDEBUG \
+           -UPANORAMIX \
+           -UDEBUG_TREE
+ 

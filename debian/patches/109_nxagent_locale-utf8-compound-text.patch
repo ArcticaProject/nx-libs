@@ -1,0 +1,118 @@
+--- a/nxagent/programs/Xserver/hw/nxagent/Init.c
++++ b/nxagent/programs/Xserver/hw/nxagent/Init.c
+@@ -64,6 +64,9 @@
+ #include "NX.h"
+ #include "NXlib.h"
+ 
++/* by dimbor */
++#include <X11/Xlocale.h>
++
+ /*
+  * Set here the required log level.
+  */
+@@ -339,6 +342,20 @@
+    */
+ 
+   blackRoot = TRUE;
++
++  /* by dimbor */
++  char *locale = setlocale(LC_ALL, "");
++  if (!locale)
++   fprintf(stderr, "InitOutput: failed to set locale, reverting to \"C\"\n");
++  else 
++  {
++    if (!XSupportsLocale())
++      fprintf(stderr, "InitOutput: Locale %s not supported by X\n",locale);
++    else
++      fprintf(stderr, "InitOutput: Set %s locale\n",locale);
++  }
++  if (!XSetLocaleModifiers(""))
++         fprintf(stderr,"InitOutput: cannot set locale modifiers.\n");
+ }
+ 
+ void InitInput(argc, argv)
+--- a/nxagent/programs/Xserver/hw/nxagent/Rootless.c
++++ b/nxagent/programs/Xserver/hw/nxagent/Rootless.c
+@@ -32,6 +32,10 @@
+ 
+ #include "NXlib.h"
+ 
++/* by dimbor */
++#include "Xatom.h"
++#include <X11/Xlocale.h>
++
+ /*
+  * Set here the required log level.
+  */
+@@ -100,6 +104,10 @@
+ 
+ static void nxagentRemovePropertyFromList(void);
+ 
++/* by dimbor */
++static char szAgentUTF8_STRING[] = "UTF8_STRING";
++static Atom agentUTF8_STRING;
++
+ /*
+  * This is currently unused.
+  */
+@@ -419,6 +427,28 @@
+   }
+ }
+ 
++/* by dimbor */
++char *textToUTF8String(char *text, int nitems) 
++{
++  XTextProperty t_prop;
++  char *ret=NULL;
++  t_prop.value=((unsigned char *)text);
++  t_prop.nitems=nitems;
++  if (!t_prop.nitems)
++    return ret;
++  t_prop.format=8;
++  t_prop.encoding=XInternAtom(nxagentDisplay, "COMPOUND_TEXT", 0);
++  char **list;
++  int num;
++  int r = XmbTextPropertyToTextList(nxagentDisplay, &t_prop,&list, &num);
++  if ((r == Success || r > 0) && num > 0 && *list)
++  {
++    ret=(char *)strdup (*list);
++    XFreeStringList(list);
++  }
++  return ret;
++}
++
+ int nxagentExportAllProperty(pWin)
+   WindowPtr pWin;
+ {
+@@ -464,6 +494,7 @@
+ 
+   if (strncmp(propertyS, "WM_", 3) != 0 &&
+           strncmp(propertyS, "_NET_", 5) != 0 &&
++          strncmp(propertyS, "_MOTIF_", 7) != 0 &&
+               strcmp(propertyS, "_KDE_NET_WM_SYSTEM_TRAY_WINDOW_FOR") != 0)
+   {
+     #ifdef TEST
+@@ -474,6 +505,7 @@
+     #endif
+   }
+   else if (strcmp(typeS, "STRING") == 0 ||
++             strcmp(typeS, "_MOTIF_WM_HINTS") == 0 ||
+                #ifndef _XSERVER64
+                strcmp(typeS, "CARDINAL") == 0 ||
+                    strcmp(typeS, "WM_SIZE_HINTS") == 0 ||
+@@ -483,6 +515,15 @@
+     output = value;
+     export = True;
+   }
++  /* add by dimbor */
++  else if (strcmp(typeS, "COMPOUND_TEXT") == 0)
++  {
++    output = textToUTF8String(value, nUnits);
++    nUnits = strlen((char *) output);
++    type = MakeAtom(szAgentUTF8_STRING, strlen(szAgentUTF8_STRING), True);
++    freeMem = True;
++    export = True;
++  }
+   #ifdef _XSERVER64
+   else if (strcmp(typeS, "CARDINAL") == 0 || strcmp(typeS, "WM_SIZE_HINTS") == 0)
+   {

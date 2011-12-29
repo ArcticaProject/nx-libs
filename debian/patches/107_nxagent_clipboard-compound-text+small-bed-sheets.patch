@@ -1,0 +1,40 @@
+--- a/nxagent/programs/Xserver/hw/nxagent/Clipboard.c
++++ b/nxagent/programs/Xserver/hw/nxagent/Clipboard.c
+@@ -1226,10 +1226,11 @@
+     Atom xa_STRING[4];
+     xEvent x;
+ 
++    /* --- Order changed by dimbor (prevent sending COMPOUND_TEXT to client --- */
+     xa_STRING[0] = XA_STRING;
+-    xa_STRING[1] = clientTEXT;
+-    xa_STRING[2] = clientCOMPOUND_TEXT;
+-    xa_STRING[3] = clientUTF8_STRING;
++    xa_STRING[1] = clientUTF8_STRING;
++    xa_STRING[2] = clientTEXT;
++    xa_STRING[3] = clientCOMPOUND_TEXT;
+ 
+     ChangeWindowProperty(pWin,
+                          property,
+--- a/nxagent/programs/Xserver/hw/nxagent/Image.c
++++ b/nxagent/programs/Xserver/hw/nxagent/Image.c
+@@ -644,6 +644,10 @@
+             pDrawable -> depth != 1 &&
+                 nxagentOption(DeferLevel) >= 1)
+     {
++    /* -- changed by dimbor (small "bed-sheets" never need be prevented - always put) --*/
++     if (dstHeight > 16)
++     {
++    /* -------------------------------------------------------------------------------- */
+       #ifdef TEST
+       fprintf(stderr, "nxagentPutImage: WARNING! Prevented operation on region [%d,%d,%d,%d] "
+                   "for drawable at [%p] with drawable pixmap.\n", pRegion -> extents.x1,
+@@ -654,6 +658,9 @@
+       nxagentMarkCorruptedRegion(pDrawable, pRegion);
+ 
+       goto nxagentPutImageEnd;
++    /* --- changed by dimbor ---*/
++     }
++    /* ------------------------- */
+     }
+ 
+     if (pDrawable -> type == DRAWABLE_WINDOW &&

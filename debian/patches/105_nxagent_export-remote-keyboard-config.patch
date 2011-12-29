@@ -1,0 +1,79 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 93_export_remote_keyboar_config.dpatch by  <marceloshima@gmail.com>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Export the client keyboard configurations to a file
+
+--- a/nxagent/programs/Xserver/hw/nxagent/Error.c
++++ b/nxagent/programs/Xserver/hw/nxagent/Error.c
+@@ -497,7 +497,7 @@
+   return rootPath;
+ }
+ 
+-char *nxagentGetSessionPath()
++char *nxagentGetSessionPath(void)
+ {
+ 
+   char *rootPath;
+--- a/nxagent/programs/Xserver/hw/nxagent/Error.h
++++ b/nxagent/programs/Xserver/hw/nxagent/Error.h
+@@ -34,4 +34,6 @@
+ 
+ void nxagentEndRedirectToClientsLog(void);
+ 
++char *nxagentGetSessionPath(void);
++
+ #endif /* __Error_H__ */
+--- a/nxagent/programs/Xserver/hw/nxagent/Keyboard.c
++++ b/nxagent/programs/Xserver/hw/nxagent/Keyboard.c
+@@ -52,6 +52,7 @@
+ #include "Keyboard.h"
+ #include "Events.h"
+ #include "Options.h"
++#include "Error.h"
+ 
+ #include "NXlib.h"
+ 
+@@ -1770,6 +1771,42 @@
+   }
+   #endif
+ 
++  if (drulesLen != 0)
++  {
++    char *sessionpath = nxagentGetSessionPath();
++    if (sessionpath != NULL){
++      int keyboard_file_path_size = strlen(sessionpath) + strlen("/keyboard");
++      char *keyboard_file_path = malloc((keyboard_file_path_size + 1) * sizeof(char));
++      FILE *keyboard_file;
++      if ( keyboard_file_path == NULL)
++      {
++        FatalError("nxagentKeyboardProc: malloc failed.");
++      }
++      strcpy(keyboard_file_path, sessionpath);
++      strcat(keyboard_file_path, "/keyboard");
++      if ((keyboard_file = fopen(keyboard_file_path, "w")) != NULL) {
++        if ( drules != NULL )
++          fprintf(keyboard_file, "rules=%s\n", drules);
++        if ( dmodel != NULL )
++          fprintf(keyboard_file, "model=%s\n", dmodel);
++        if ( dlayout != NULL )
++          fprintf(keyboard_file, "layout=%s\n", dlayout);
++        if ( dvariant != NULL )
++          fprintf(keyboard_file, "variant=%s\n", dvariant);
++        if ( doptions != NULL )
++          fprintf(keyboard_file, "options=%s\n", doptions);
++        fclose(keyboard_file);
++      }
++      free(keyboard_file_path);
++      fprintf(stderr, "keyboard file created\n");
++    }
++    fprintf(stderr, "SessionPath not defined\n");
++  }
++  else
++  {
++    fprintf(stderr, "Failed to create the keyboard file\n");
++  }
++
+   if (nxagentOption(ClientOs) == ClientOsLinux &&
+             drules != NULL && dmodel != NULL &&
+                 (strcmp(drules, "evdev") == 0 ||

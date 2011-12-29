@@ -8,6 +8,17 @@ nx-libs (2:3.5.0-0~x2go2) UNRELEASED; urgency=low
   * Add individual watch files for NX components in this source package.
   * Change naming scheme of patch files.
   * Add man page for nxagent. Fix lintian warning: binary-without-manpage.
+  * Add FreeNX patches for nxagent (some with other names compared to FreeNX):
+    - 101_nxagent_set-rgb-path.patch
+    - 102_xserver-xext_set-securitypolicy-path.patch
+    - 103_nxagent_set-X0-config-path.patch
+    - 104_nxagent_enable_debug.patch
+    - 105_nxagent_export-remote-keyboard-config.patch
+    - 106_nxagent_utf8-copy-clipboard.patch
+    - 107_nxagent_clipboard-compound-text+small-bed-sheets.patch
+    - 108_nxagent_wine-close-delay.patch
+    - 109_nxagent_locale-utf8-compound-text.patch
+    - 200_nxagent_unbrand-agent.patch
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 28 Dec 2011 19:06:26 +0100
 

@@ -1,2 +1,2 @@
-nx-X11/.build-exports/lib/*        usr/lib/nx/X11
-
+nx-X11/.build-exports/lib/*                     usr/lib/nx/X11
+nx-X11/programs/Xserver/Xext/SecurityPolicy     usr/share/nx

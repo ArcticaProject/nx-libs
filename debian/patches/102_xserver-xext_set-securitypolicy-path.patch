@@ -1,0 +1,16 @@
+## dpatch by  <marceloshima@gmail.com>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Change the path to the keyboard configuration file
+
+--- a/programs/Xserver/Xext/security.c
++++ b/programs/Xserver/Xext/security.c
+@@ -86,7 +86,7 @@
+ 
+ #ifdef NXAGENT_SERVER
+ 
+-#define NX_ALTERNATIVEPOLICYFILE "/usr/lib/xserver/SecurityPolicy"
++#define NX_ALTERNATIVEPOLICYFILE "/usr/share/nx/SecurityPolicy"
+ 
+ #endif
+ 
