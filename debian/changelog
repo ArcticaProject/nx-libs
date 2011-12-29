@@ -7,6 +7,7 @@ nx-libs (2:3.5.0-0~x2go2) UNRELEASED; urgency=low
     a version increment of the Debian package.
   * Add individual watch files for NX components in this source package.
   * Change naming scheme of patch files.
+  * Add man page for nxagent. Fix lintian warning: binary-without-manpage.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 28 Dec 2011 19:06:26 +0100
 
