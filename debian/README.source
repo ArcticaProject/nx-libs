@@ -1,5 +1,41 @@
+UPSTREAM SOURCES
+----------------
+The current upstream source for this package is NoMachine.
+http://www.nomachine.com/sources.php
+
+
+PACKAGE SOURCE TREE
+-------------------
+This package pulls in 7 source tarballs from NoMachine:
+
+  nx-X11
+  nxagent
+  nxauth
+  nxcomp
+  nxcompshad
+  nxcompext
+  nxproxy
+
+Intensive tests with X2Go/FreeNX on Debian squeeze+ systems showed an extreme
+instability of nxagent when the named sources had been built separately against the
+distribution's Xorg & co. libraries.
+
+The recommended build method by NoMachine is placing the above projects into one
+big source tree and build them in one go. When this build method is chosen,
+the instability issues of nxagent (and x2goagent) disappear.
+
+Unfortunately, so far we could not track down the exact problem of building the
+above sources in separate packages.
+
+
+PATCH SYSTEM
+------------
 This package uses quilt to manage all modifications to the upstream source.
 Changes are stored in the source package as diffs in debian/patches and
 applied during the build.
 
 See /usr/share/doc/quilt/README.source for a detailed explanation.
+
+
+
+X2Go Packaging Team / Mike Gabriel (20111231)
