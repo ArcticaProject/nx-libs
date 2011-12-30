@@ -1,8 +1,9 @@
 Source: nx-libs
 Section: x11
 Priority: extra
-Maintainer: Oleksandr Shneyder <oleksandr.shneyder@obviously-nice.de>
+Maintainer: X2Go Packaging Team <pkg-x2go-devel@lists.alioth.debian.org>
 Uploaders:
+ Reinhard Tartler <siretart@tauware.de>
  Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 Build-Depends:
  debhelper (>= 7.0.50~),
