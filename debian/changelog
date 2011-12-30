@@ -59,7 +59,7 @@ nx-libs (2:3.5.0-2) UNRELEASED; urgency=low
   * Make `breaks-without-version' lintian overrides needless.
   * Break/replace nxlibs and nxlibs-dev (packages provided by
     freenx-team on Launchpad).
-  * Set homepage of X2Go upstream project (using http://wiki.x2go.org).
+  * Set homepage of NoMachine upstream site (using http://www.nomachine.com/sources.php).
   * Packaging Vcs has been relocated to Alioth.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 28 Dec 2011 19:06:26 +0100
