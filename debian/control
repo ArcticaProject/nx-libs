@@ -35,18 +35,6 @@ Replaces: nxlibs
 Description: nx-X11 (NoMachine)
  X11 libraries customized for nxagent (NoMachine).
 
-#Package: libnx-x11-dbg
-#Architecture: any
-#Depends:
-# ${shlibs:Depends},
-# ${misc:Depends}
-#Priority: extra
-#Section: debug
-#Description: nx-X11 (NoMachine), debug symbols
-# X11 libraries customized for nxagent (NoMachine).
-# .
-# This package contains the debug symbols of nx-X11. Source: nx-libs.
-
 Package: libnx-x11-dev
 Section: libdevel
 Architecture: any
@@ -91,31 +79,6 @@ Description: NX agent (NoMachine)
  requests locally, ensuring that the most common source of round-trips are
  nearly reduced to zero.
 
-#Package: nxagent-dbg
-#Architecture: any
-#Depends:
-# libnx-x11 (>= ${source:Version}), libnx-x11 (<< ${source:Version}.1~),
-# ${shlibs:Depends},
-# ${misc:Depends}
-#Priority: extra
-#Section: debug
-#Description: NX agent (NoMachine), debug symbols
-# nxagent is an agent providing X transport of X sessions. The application
-# is based on the well known Xnest "nested" server. nxagent, like Xnest,
-# is an X server for its own clients, and at the same time, an X client
-# for a system's local X server.
-# .
-# The main scope of nxagent is to eliminate X round-trips or transform
-# them into asynchronous replies. nxagent works together with nxproxy from
-# NoMachine. nxproxy itself does not make any effort to minimize round-trips
-# by itself, this is demanded of nxagent.
-# .
-# Being an X server, nxagent is able to resolve all the property/atoms related
-# requests locally, ensuring that the most common source of round-trips are nearly
-# reduced to zero.
-# .
-# This package contains the debug symbols of nxagent. Source: nx-libs
-
 Package: nxproxy
 Architecture: any
 Depends:
@@ -127,19 +90,6 @@ Description: NX proxy (NoMachine)
  .
  This package provides the NX proxy (client) binary.
 
-#Package: nxproxy-dbg
-#Architecture: any
-#Depends:
-# libxcomp3 (>= ${source:Version}), libxcomp3 (<< ${source:Version}.1~),
-# ${shlibs:Depends},
-# ${misc:Depends}
-#Priority: extra
-#Section: debug
-#Description: NX proxy (NoMachine), debug symbols
-# NX provides a differential X compression library for X11.
-# .
-# This package provides the NX proxy (client) binary.
-
 Package: nxauth
 Architecture: any
 Depends:
@@ -150,19 +100,6 @@ Description: NX xauth (NoMachine)
  NX provides a differential X compression library for X11.
  .
  This package provides the NX xauth binary.
-
-#Package: nxauth-dbg
-#Architecture: any
-#Depends:
-# libnx-x11 (>= ${source:Version}), libnx-x11 (<< ${source:Version}.1~),
-# ${shlibs:Depends},
-# ${misc:Depends}
-#Priority: extra
-#Section: debug
-#Description: NX xauth (NoMachine), debug symbols
-# NX provides a differential X compression library for X11.
-# .
-# This package provides the NX xauth binary.
 
 Package: libxcomp3
 Architecture: any
@@ -176,18 +113,6 @@ Description: NX X compression library
  NX provides a differential X compression library for X11.
  .
  This package provides the compression library.
-
-#Package: libxcomp-dbg
-#Priority: extra
-#Section: debug
-#Architecture: any
-#Depends:
-# libxcomp3 (= ${binary:Version}),
-# ${misc:Depends}
-#Description: NX X compression library, debug symbols
-# NX provides a differential X compression library for X11.
-# .
-# This package provides debug symbols for the libxcomp3 library.
 
 Package: libxcomp-dev
 Section: libdevel
@@ -217,21 +142,6 @@ Description: NX X11 protocol compression extensions library
  using X applications over a network, especially a slow one.
  .
  libXcompext extends the core NX library with additional features.
-
-#Package: libxcompext-dbg
-#Architecture: any
-#Section: debug
-#Priority: extra
-#Depends:
-# libxcompext3 (= ${binary:Version}),
-# ${misc:Depends}
-#Description: NX X11 protocol compression extensions library, debug symbols
-# NX is a software suite from NoMachine which implements very efficient
-# compression of the X11 protocol. This increases performance when
-# using X applications over a network, especially a slow one.
-# .
-# This package contains the debug symbols for the libxcompext3 library.
-# Source: nx-libs.
 
 Package: libxcompext-dev
 Architecture: any
@@ -268,19 +178,6 @@ Description: NX shadowing library
  .
  This library provides support for shadowing sessions.
 
-#Package: libxcompshad-dbg
-#Section: debug
-#Priority: extra
-#Architecture: any
-#Depends: libxcompshad3 (=${binary:Version}), ${misc:Depends}
-#Description: NX shadowing library, debug symbols
-# NX is a software suite from NoMachine which implements very efficient
-# compression of the X11 protocol. This increases performance when
-# using X applications over a network, especially a slow one.
-# .
-# This package contains the debug symbols of the libxcompshad3 library.
-# Source: nx-libs.
-
 Package: libxcompshad-dev
 Section: libdevel
 Architecture: any
@@ -295,4 +192,3 @@ Description: NX shadowing library headers
  using X applications over a network, especially a slow one.
  .
  This package contains the development files for the nxcompshad library.
-
