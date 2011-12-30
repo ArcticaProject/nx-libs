@@ -166,7 +166,7 @@ Depends:
  libnx-x11 (>= ${source:Version}), libnx-x11 (<< ${source:Version}.1~),
  ${shlibs:Depends},
  ${misc:Depends}
-Breaks: nxcomp
+Breaks: nxcomp (<=3.5.1)
 Replaces: nxcomp
 Description: NX X compression library
  NX provides a differential X compression library for X11.
@@ -192,7 +192,7 @@ Depends:
  libnx-x11 (>= ${source:Version}), libnx-x11 (<< ${source:Version}.1~),
  libxcomp3 (= ${binary:Version}),
  ${misc:Depends}
-Breaks: nxcomp-dev
+Breaks: nxcomp-dev (<=3.5.1)
 Replaces: nxcomp-dev
 Description: NX X compression library headers
  NX provides a differential X compression library for X11.
@@ -205,7 +205,7 @@ Depends:
  libnx-x11 (>= ${source:Version}), libnx-x11 (<< ${source:Version}.1~),
  ${shlibs:Depends},
  ${misc:Depends}
-Breaks: nxcompext
+Breaks: nxcompext (<=3.5.1)
 Replaces: nxcompext
 Description: NX X11 protocol compression extensions library
  NX is a software suite from NoMachine which implements very efficient
@@ -237,7 +237,7 @@ Depends:
  libxcompext3 (=${binary:Version}),
  ${misc:Depends},
  libxcomp-dev,
-Breaks: nxcompext-dev
+Breaks: nxcompext-dev (<=3.5.1)
 Replaces: nxcompext-dev
 Description: NX X11 protocol compression extensions library headers
  NX is a software suite from NoMachine which implements very efficient
@@ -255,7 +255,7 @@ Depends:
  libnx-x11 (>= ${source:Version}), libnx-x11 (<< ${source:Version}.1~),
  ${shlibs:Depends},
  ${misc:Depends}
-Breaks: nxcompshad
+Breaks: nxcompshad (<=3.5.1)
 Replaces: nxcompshad
 Description: NX shadowing library
  NX is a software suite from NoMachine which implements very efficient
@@ -283,7 +283,7 @@ Architecture: any
 Depends:
  libxcompshad3 (=${binary:Version}),
  ${misc:Depends}
-Breaks: nxcompshad-dev
+Breaks: nxcompshad-dev (<=3.5.1)
 Replaces: nxcompshad-dev
 Description: NX shadowing library headers
  NX is a software suite from NoMachine which implements very efficient
