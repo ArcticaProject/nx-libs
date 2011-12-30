@@ -13,8 +13,6 @@ Build-Depends:
  quilt (>= 0.46-7~),
  libxmltok1-dev,
  autoconf
-Breaks: nxlibs (<=3.5.1)
-Replaces: nxlibs
 Build-Conflicts:
  x11proto-core-dev,
  x11proto-kb-dev,
@@ -32,8 +30,8 @@ Architecture: any
 Depends:
  ${shlibs:Depends},
  ${misc:Depends}
-Breaks: nxlibs-dev (<=3.5.1)
-Replaces: nxlibs-dev
+Breaks: nxlibs (<=3.5.1)
+Replaces: nxlibs
 Description: nx-X11 (NoMachine)
  X11 libraries customized for nxagent (NoMachine).
 
@@ -52,6 +50,8 @@ Description: nx-X11 (NoMachine)
 Package: libnx-x11-dev
 Section: libdevel
 Architecture: any
+Breaks: nxlibs-dev (<=3.5.1)
+Replaces: nxlibs-dev
 Depends:
  libnx-x11 (>= ${source:Version}), libnx-x11 (<< ${source:Version}.1~),
  ${misc:Depends}
