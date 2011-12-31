@@ -78,6 +78,7 @@ nx-libs (2:3.5.0-2) UNRELEASED; urgency=low
   * Add patch: 011_nxcomp_sa-restorer.patch.
   * Add/insert patch: 005_nxcomp_gcc43.patch.
   * Fix line hunks: 011_nxcomp_sa-restorer.patch.
+  * Call dh_clean again. This got lost somewhere on the way.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 28 Dec 2011 19:06:26 +0100
 

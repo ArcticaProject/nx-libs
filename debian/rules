@@ -26,6 +26,7 @@ override_dh_clean:
 	rm -f nx-X11/programs/Xserver/hw/nxagent/changelog
 	rm -f nx-X11/programs/nxauth/changelog
 	rm -f nxproxy/changelog
+	dh_clean
 
 override_dh_auto_build:
 	debian/pre-build-nx.sh
