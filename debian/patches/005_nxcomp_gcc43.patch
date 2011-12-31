@@ -1,0 +1,77 @@
+Description: gcc43 fix
+ Use builtin includes to build with gcc43.
+ .
+ Originally contributed by Marcelo Boveto Shima <marceloshima@gmail.com>.
+Forwarded: not-yet
+Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+Last-Update: 2011-12-31
+--- a/nxcomp/Message.cpp      2010-03-18 19:32:44.476930493 -0300
++++ b/nxcomp/Message.cpp   2010-03-18 19:40:48.669719034 -0300
+@@ -15,9 +15,9 @@
+ /*                                                                        */
+ /**************************************************************************/
+ 
+-#include <stdio.h>
++#include <cstdio>
+ #include <unistd.h>
+-#include <string.h>
++#include <cstring>
+ 
+ #include <algorithm>
+ 
+--- a/nxcomp/Misc.cpp 2010-03-18 19:32:44.488465101 -0300
++++ b/nxcomp/Misc.cpp      2010-03-18 19:40:48.669719034 -0300
+@@ -15,11 +15,11 @@
+ /*                                                                        */
+ /**************************************************************************/
+ 
+-#include <stdio.h>
+-#include <ctype.h>
+-#include <stdlib.h>
++#include <cstdio>
++#include <cctype>
++#include <cstdlib>
+ #include <unistd.h>
+-#include <signal.h>
++#include <csignal>
+ 
+ #include <errno.h>
+ #include <string.h>
+--- a/nxcomp/Misc.h   2010-03-18 19:32:44.488465101 -0300
++++ b/nxcomp/Misc.h        2010-03-18 19:40:48.669719034 -0300
+@@ -21,8 +21,8 @@
+ #include <iostream>
+ #include <fstream>
+ 
+-#include <errno.h>
+-#include <string.h>
++#include <cerrno>
++#include <cstring>
+ 
+ #ifdef __sun
+ 
+--- a/nxcomp/Proxy.cpp        2010-03-18 19:32:44.547273410 -0300
++++ b/nxcomp/Proxy.cpp     2010-03-18 19:40:48.669719034 -0300
+@@ -15,9 +15,9 @@
+ /*                                                                        */
+ /**************************************************************************/
+ 
+-#include <stdio.h>
++#include <cstdio>
+ #include <unistd.h>
+-#include <stdlib.h>
++#include <cstdlib>
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ 
+--- a/nxcomp/Split.cpp        2010-03-18 19:32:44.688465322 -0300
++++ nxcomp-ubuntu/Split.cpp     2010-03-18 19:40:48.669719034 -0300
+@@ -16,7 +16,7 @@
+ /**************************************************************************/
+ 
+ #include <unistd.h>
+-#include <string.h>
++#include <cstring>
+ #include <sys/stat.h>
+ #include <sys/types.h>
+ #include <utime.h>
