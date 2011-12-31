@@ -64,6 +64,8 @@ nx-libs (2:3.5.0-2) UNRELEASED; urgency=low
   * Add more upstream source information to README.source.
   * Remove *-dbg packages from /debian/control file.
   * Make package descriptions in /debian/control more explanatory.
+  * Remove patch 006_remove-configure-files.patch. Implemented via
+    /debian/rules.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 28 Dec 2011 19:06:26 +0100
 
