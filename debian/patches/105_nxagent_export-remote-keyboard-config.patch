@@ -1,9 +1,11 @@
-#! /bin/sh /usr/share/dpatch/dpatch-run
-## 93_export_remote_keyboar_config.dpatch by  <marceloshima@gmail.com>
-##
-## All lines beginning with `## DP:' are a description of the patch.
-## DP: Export the client keyboard configurations to a file
-
+Description: Export remote keyboard configuration to session directory
+ Let nxagent write the keyboard configuration to <session_directory>/keyboard
+ and make it available within the NX session.
+ .
+ Originally contributed by Marcelo Boveto Shima <marceloshima@gmail.com>.
+Forwarded: pending...
+Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+Last-Update: 2011-12-31
 --- a/nx-X11/programs/Xserver/hw/nxagent/Error.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Error.c
 @@ -497,7 +497,7 @@

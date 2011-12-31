@@ -1,5 +1,8 @@
-Index: nx-libs/nxcompext/Makefile.in
-===================================================================
+Description: Add install and uninstall stanzas to nxcompext/Makefile
+ Provide install and uninstall functionality in nxcompext/Makefile.
+Forwarded: pending...
+Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+Last-Update: 2011-12-31
 --- nx-libs.orig/nxcompext/Makefile.in	2011-12-05 09:20:15.000000000 +0100
 +++ nx-libs/nxcompext/Makefile.in	2011-12-05 09:24:37.000000000 +0100
 @@ -60,7 +60,9 @@

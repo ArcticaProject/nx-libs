@@ -1,3 +1,10 @@
+Description: Enable locale support
+ Enable locale support in nxagent.
+ .
+ Originally contributed by FreeNX Team (dimbor).
+Forwarded: not-yet
+Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+Last-Update: 2011-12-31
 --- a/nx-X11/programs/Xserver/hw/nxagent/Init.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Init.c
 @@ -64,6 +64,9 @@

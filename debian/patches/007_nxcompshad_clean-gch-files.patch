@@ -1,3 +1,9 @@
+Description: Remove .gch files during cleanup.
+ When building nxcompshad .gch files get created. On
+ cleanup these should be removed.
+Forwarded: pending...
+Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+Last-Update: 2012-12-31
 --- a/nxcompshad/Makefile.in
 +++ b/nxcompshad/Makefile.in
 @@ -185,7 +185,7 @@

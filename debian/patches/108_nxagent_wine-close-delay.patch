@@ -1,3 +1,10 @@
+Description: Wine Close Delay
+ Wine close delay.
+ .
+ Originally contributed by FreeNX Team (dimbor).
+Forwarded: not-yet
+Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+Last-Update: 2011-12-31
 --- a/nx-X11/programs/Xserver/hw/nxagent/Window.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Window.c
 @@ -176,6 +176,14 @@

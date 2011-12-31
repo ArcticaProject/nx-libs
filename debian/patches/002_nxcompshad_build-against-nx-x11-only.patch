@@ -1,4 +1,11 @@
-Build nxcompshad against own nx-X11 sources instead of the system's X11.
+Description: Build nxcompshad against nx-X11.
+ Make sure nxcompshad get built against nx-X11.
+ .
+ Furthermore /usr/X11R6/lib is an outdated path on
+ current Debian systems.
+Forwarded: pending...
+Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+Last-Update: 2011-12-31
 --- a/nxcompshad/Makefile.in
 +++ b/nxcompshad/Makefile.in
 @@ -48,7 +48,7 @@

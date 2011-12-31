@@ -1,8 +1,11 @@
-## dpatch by  <marceloshima@gmail.com>
-##
-## All lines beginning with `## DP:' are a description of the patch.
-## DP: Change the path to the keyboard configuration file
-
+Description: FHS path fix for SecurityPolicy file
+ This patch is needed on Debian only, not reporting this path
+ change to upstream.
+ .
+ Originally contributed by Marcelo Boveto Shima <marceloshima@gmail.com>.
+Forwarded: not-needed
+Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+Last-Update: 2011-12-31
 --- a/nx-X11/programs/Xserver/Xext/security.c
 +++ b/nx-X11/programs/Xserver/Xext/security.c
 @@ -86,7 +86,7 @@

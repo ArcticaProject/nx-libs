@@ -1,3 +1,8 @@
+Description: Add install and uninstall stanzas to nxcompshad/Makefile
+ Provide install and uninstall functionality in nxcompshad/Makefile.
+Forwarded: pending...
+Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+Last-Update: 2011-12-31
 --- a/nxcompshad/Makefile.in
 +++ b/nxcompshad/Makefile.in
 @@ -76,8 +76,13 @@

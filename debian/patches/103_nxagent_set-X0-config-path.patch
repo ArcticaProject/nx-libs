@@ -1,3 +1,11 @@
+Description: FHS path fix for keyboard config file
+ This patch is needed on Debian only, not reporting this path
+ addition to upstream.
+ .
+ Originally contributed by FreeNX Team.
+Forwarded: not-needed
+Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+Last-Update: 2011-12-31
 --- a/nx-X11/programs/Xserver/hw/nxagent/Keyboard.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Keyboard.c
 @@ -136,7 +136,7 @@

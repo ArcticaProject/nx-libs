@@ -1,3 +1,13 @@
+Description: Update outdated/ancient autotools files
+ Replace autotools files for at these locations:
+ - nx-X11/extras/expat/conftools
+ - nx-X11/extras/fontconfig
+ - nx-X11/extras/freetype2/builds/unix
+ - nx-X11/programs/xterm
+ - nx-X11/lib/Xft
+Forwarded: pending...
+Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+Last-Update: 2011-12-31
 --- a/nx-X11/extras/expat/conftools/config.guess
 +++ b/nx-X11/extras/expat/conftools/config.guess
 @@ -1,9 +1,10 @@

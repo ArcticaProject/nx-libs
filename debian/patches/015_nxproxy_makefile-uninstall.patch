@@ -1,3 +1,8 @@
+Description: Add install and uninstall stanzas to nxcomp/Makefile
+ Provide install and uninstall functionality in nxcomp/Makefile.
+Forwarded: pending...
+Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+Last-Update: 2011-12-31
 --- a/nxproxy/Makefile.in
 +++ b/nxproxy/Makefile.in
 @@ -41,6 +41,8 @@

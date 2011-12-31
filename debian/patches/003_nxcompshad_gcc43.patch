@@ -1,3 +1,10 @@
+Description: gcc43 fix
+ Use builtin includes to build with gcc43.
+ .
+ Originally contributed by Marcelo Boveto Shima <marceloshima@gmail.com>.
+Forwarded: pending...
+Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+Last-Update: 2011-12-31
 --- a/nxcompshad/Logger.h
 +++ b/nxcompshad/Logger.h
 @@ -18,8 +18,8 @@

@@ -1,3 +1,10 @@
+Description: UTF-8 Clipboard copying
+ Enable UTF-8 clipboard copies.
+ .
+ Originally contributed by FreeNX Team (dimbor).
+Forwarded: not-yet
+Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+Last-Update: 2011-12-31
 --- a/nx-X11/programs/Xserver/hw/nxagent/Clipboard.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Clipboard.c
 @@ -166,7 +166,9 @@

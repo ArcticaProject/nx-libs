@@ -1,3 +1,11 @@
+Description: Building expat against system's libxmltok library
+ Provide support for building expat against the system's libxmltok library.
+ .
+ Not reported to upstream as this patch is mainly imported for being compliant
+ with Debian policy (lintian error: embedded-library).
+Forwarded: not-needed
+Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+Last-Update: 2011-12-31
 --- a/nx-X11/lib/expat/Imakefile
 +++ b/nx-X11/lib/expat/Imakefile
 @@ -19,7 +19,7 @@

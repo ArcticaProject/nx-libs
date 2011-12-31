@@ -1,3 +1,9 @@
+Description: Update outdated libtool file
+ Replace libtool file at this location:
+ - nx-X11/extras/expat/conftools/ltmain.sh
+Forwarded: pending...
+Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+Last-Update: 2011-12-31
 --- a/nx-X11/extras/expat/conftools/ltmain.sh
 +++ b/nx-X11/extras/expat/conftools/ltmain.sh
 @@ -1,4631 +1,9435 @@

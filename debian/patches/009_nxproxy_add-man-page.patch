@@ -1,3 +1,8 @@
+Description: Add man page for nxproxy.
+ Providing a man page for nxproxy on Debian.
+Forwarded: not-needed
+Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+Last-Update: 2012-12-31
 --- /dev/null
 +++ b/nxproxy/man/nxproxy.1
 @@ -0,0 +1,27 @@
