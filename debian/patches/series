@@ -2,13 +2,9 @@
 002_nxcompshad_build-against-nx-x11-only.patch
 003_nxcompshad_gcc43.patch
 004_nx-x11_fix-nxcompshad-build.patch
-005_nxagent_add-nxagent-wrapper.patch
-#006_remove-configure-files.patch
 007_nxcompshad_clean-gch-files.patch
-008_nxproxy_add-nxproxy-wrapper.patch
 009_nxproxy_add-man-page.patch
 010_nxauth_fix-binary-name-in-man-page.patch
-011_nxauth_add-nxauth-wrapper.patch
 012_nxcomp_makefile-uninstall.patch
 013_nxcompext_makefile-uninstall.patch
 014_nxcompshad_makefile-uninstall.patch
