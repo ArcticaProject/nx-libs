@@ -76,6 +76,7 @@ nx-libs (2:3.5.0-2) UNRELEASED; urgency=low
   * Fix linking of doc folders for nxcomp*-dev.
   * Transfer patch: 009_nxproxy_add-man-page.patch into man page file
     in /debian/man.
+  * Add patch: 011_nxcomp_sa-restorer.patch.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 28 Dec 2011 19:06:26 +0100
 
