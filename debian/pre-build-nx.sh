@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# create copies of upstream changelog whose names apply to Debian policy...
+# create copies of upstream changelogs so that names apply to Debian policy...
 cp -a nx-X11/CHANGELOG nx-X11/changelog
 cp -a nxcomp/CHANGELOG nxcomp/changelog
 cp -a nxcompext/CHANGELOG nxcompext/changelog
