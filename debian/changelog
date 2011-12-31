@@ -73,6 +73,7 @@ nx-libs (2:3.5.0-2) UNRELEASED; urgency=low
   * Remove patch: 104_nxagent_enable_debug.patch, as it breaks package build.
   * Add patch headers to all patch files, report most patches upstream. Waiting for
     feedback and quotable URLs from NoMachine.
+  * Fix linking of doc folders for nxcomp*-dev.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 28 Dec 2011 19:06:26 +0100
 
