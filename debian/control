@@ -33,7 +33,12 @@ Depends:
 Breaks: nxlibs (<=3.5.1)
 Replaces: nxlibs
 Description: nx-X11 (NoMachine)
- X11 libraries customized for nxagent (NoMachine).
+ NX is a software suite from NoMachine which implements very efficient
+ compression of the X11 protocol. This increases performance when
+ using X applications over a network, especially a slow one.
+ .
+ This package provides the core nx-X11 libraries customized for
+ NoMachine's nxagent.
 
 Package: libnx-x11-dev
 Section: libdevel
@@ -44,9 +49,12 @@ Depends:
  libnx-x11 (>= ${source:Version}), libnx-x11 (<< ${source:Version}.1~),
  ${misc:Depends}
 Description: Library headers for nx-X11 (NoMachine)
- X11 libraries customized for nxagent (NoMachine).
+ NX is a software suite from NoMachine which implements very efficient
+ compression of the X11 protocol. This increases performance when
+ using X applications over a network, especially a slow one.
  .
- This package provides the compression library headers.
+ This package provides the core nx-X11 libraries customized for
+ NoMachine's nxagent (header files).
 
 Package: libnx-mesa-extras-dev
 Section: libdevel
@@ -54,9 +62,12 @@ Architecture: any
 Depends:
  ${misc:Depends}
 Description: Library headers for nx-X11 (NoMachine. extra headers)
- X11 libraries customized for nxagent (NoMachine).
+ NX is a software suite from NoMachine which implements very efficient
+ compression of the X11 protocol. This increases performance when
+ using X applications over a network, especially a slow one.
  .
- This package provides extra compression library headers.
+ This package provides extra nx-X11 development files for NoMachine's
+ nxagent (header files, mesa-extras).
 
 Package: nxagent
 Architecture: any
@@ -65,7 +76,11 @@ Depends:
  ${shlibs:Depends},
  ${misc:Depends}
 Description: NX agent (NoMachine)
- nxagent is an agent providing X transport of X sessions. The application
+ NX is a software suite from NoMachine which implements very efficient
+ compression of the X11 protocol. This increases performance when
+ using X applications over a network, especially a slow one.
+ .
+ nxagent is an agent providing NX transport of X sessions. The application
  is based on the well known Xnest "nested" server. nxagent, like Xnest,
  is an X server for its own clients, and at the same time, an X client
  for a system's local X server.
@@ -86,7 +101,9 @@ Depends:
  ${shlibs:Depends},
  ${misc:Depends}
 Description: NX proxy (NoMachine)
- NX provides a differential X compression library for X11.
+ NX is a software suite from NoMachine which implements very efficient
+ compression of the X11 protocol. This increases performance when
+ using X applications over a network, especially a slow one.
  .
  This package provides the NX proxy (client) binary.
 
@@ -97,7 +114,9 @@ Depends:
  ${shlibs:Depends},
  ${misc:Depends}
 Description: NX xauth (NoMachine)
- NX provides a differential X compression library for X11.
+ NX is a software suite from NoMachine which implements very efficient
+ compression of the X11 protocol. This increases performance when
+ using X applications over a network, especially a slow one.
  .
  This package provides the NX xauth binary.
 
@@ -110,7 +129,9 @@ Depends:
 Breaks: nxcomp (<=3.5.1)
 Replaces: nxcomp
 Description: NX X compression library
- NX provides a differential X compression library for X11.
+ NX is a software suite from NoMachine which implements very efficient
+ compression of the X11 protocol. This increases performance when
+ using X applications over a network, especially a slow one.
  .
  This package provides the compression library.
 
@@ -124,9 +145,11 @@ Depends:
 Breaks: nxcomp-dev (<=3.5.1)
 Replaces: nxcomp-dev
 Description: NX X compression library headers
- NX provides a differential X compression library for X11.
+ NX is a software suite from NoMachine which implements very efficient
+ compression of the X11 protocol. This increases performance when
+ using X applications over a network, especially a slow one.
  .
- This package provides the compression library headers.
+ This package provides the compression library (header files).
 
 Package: libxcompext3
 Architecture: any
@@ -141,7 +164,7 @@ Description: NX X11 protocol compression extensions library
  compression of the X11 protocol. This increases performance when
  using X applications over a network, especially a slow one.
  .
- libXcompext extends the core NX library with additional features.
+ This package extends the core NX library with additional features.
 
 Package: libxcompext-dev
 Architecture: any
@@ -158,9 +181,8 @@ Description: NX X11 protocol compression extensions library headers
  compression of the X11 protocol. This increases performance when
  using X applications over a network, especially a slow one.
  .
- libXcompext extends the core NX library with additional features.
- .
- This package contains the development files for the nxcompext library.
+ This package extends the core NX library with additional features
+ (header files).
 
 Package: libxcompshad3
 Section: x11
@@ -176,7 +198,7 @@ Description: NX shadowing library
  compression of the X11 protocol. This increases performance when
  using X applications over a network, especially a slow one.
  .
- This library provides support for shadowing sessions.
+ This package provides a library for shadow session support.
 
 Package: libxcompshad-dev
 Section: libdevel
@@ -191,4 +213,5 @@ Description: NX shadowing library headers
  compression of the X11 protocol. This increases performance when
  using X applications over a network, especially a slow one.
  .
- This package contains the development files for the nxcompshad library.
+ This package provides a library for shadow session support (header
+ files).
