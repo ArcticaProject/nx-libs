@@ -3,7 +3,6 @@
 003_nxcompshad_gcc43.patch
 004_nx-x11_fix-nxcompshad-build.patch
 007_nxcompshad_clean-gch-files.patch
-009_nxproxy_add-man-page.patch
 010_nxauth_fix-binary-name-in-man-page.patch
 012_nxcomp_makefile-uninstall.patch
 013_nxcompext_makefile-uninstall.patch
