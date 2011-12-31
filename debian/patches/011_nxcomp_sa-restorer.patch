@@ -3,9 +3,9 @@ Description: sa_restorer vs. memset
 Forwarded: not-yet
 Author: Stéphane Graber <stgraber@ubuntu.com>
 Last-Update: 2011-12-31
---- a/Loop.cpp
-+++ b/Loop.cpp
-@@ -5895,7 +5895,7 @@ void InstallSignal(int signal, int action)
+--- a/nxcomp/Loop.cpp
++++ b/nxcomp/Loop.cpp
+@@ -5895,7 +5895,7 @@
  
    #if defined(__linux__)
  
@@ -14,7 +14,7 @@ Last-Update: 2011-12-31
  
    #endif
  
-@@ -6513,7 +6513,7 @@ void SetTimer(int value)
+@@ -6513,7 +6513,7 @@
  
    #if defined(__linux__)
  
