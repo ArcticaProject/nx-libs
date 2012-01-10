@@ -2,6 +2,8 @@ nx-libs (2:3.5.0.2-0) UNRELEASED; urgency=low
 
   * Re-add binary wrapper scripts to the patch system as we
     want to provide them in the tarball.
+  * Update folder name where applied patches end up in the tarball
+    release.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Tue, 10 Jan 2012 14:33:50 +0100
 

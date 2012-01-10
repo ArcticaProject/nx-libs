@@ -1,7 +1,5 @@
-Index: nx-libs/README.NX-redistributed
-===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ nx-libs/README.NX-redistributed	2012-01-10 09:52:44.000000000 +0100
+--- /dev/null
++++ b/README.NX-redistributed
 @@ -0,0 +1,43 @@
 +NX redistribution by X2Go
 +-------------------------
@@ -29,7 +27,7 @@ Index: nx-libs/README.NX-redistributed
 +The patches we apply are shipped with this tarball, for further introspection
 +please refer to this folder:
 +
-+  .applied-patches-on-top-of-NX-upstream
++  doc/applied-patches
 +
 +This source tree is maintained on the X2Go Git server:
 +Browsing...     http://code.x2go.org/gitweb?p=nx-libs.git;a=summary
@@ -45,4 +43,4 @@ Index: nx-libs/README.NX-redistributed
 +
 +thanks+light+love
 +Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
-+ 
++
