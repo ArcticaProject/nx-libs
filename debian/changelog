@@ -1,4 +1,4 @@
-nx-libs (2:3.5.0-2) UNRELEASED; urgency=low
+nx-libs (2:3.5.0.0-0) UNRELEASED; urgency=low
 
   * New upstream release of nxagent (3.5.0-7).
   * Add lintian-overrides for every package. Override lintian warning:
