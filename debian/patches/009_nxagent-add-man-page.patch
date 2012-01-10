@@ -1,0 +1,40 @@
+--- /dev/null
++++ b/nx-X11/programs/Xserver/hw/nxagent/man/nxagent.1
+@@ -0,0 +1,37 @@
++.TH NXAGENT 1
++.SH NAME
++nxagent \- NoMachine's NX Agent.
++.SH SYNOPSIS
++.B nxagent
++.I "[options]"
++
++.SH DESCRIPTION
++\fBnxagent\fR is an Xnest-like X server for remote application/desktop access.
++.PP
++\fBnxagent\fR implements a very efficient compression of the X11 protocol.
++.PP
++This increases performance when using X applications over high latency and
++low bandwidth networks, while providing a local (LAN-like) usage experience
++even if connecting from off-site locations (via cable modem or GSM).
++.PP
++\fBnxagent\fR is not designed to be used as a standalone application.
++It has to be launched on the server side by remote desktop frameworks like FreeNX.
++.PP
++Available clients are
++NoMachine's \fBnxclient\fR or the community projects \fBqtnx\fR and \fBremmina\fR
++(with NX plugin).
++
++.SH OPTIONS
++.TP
++.B \--help
++Lists all others options that are not listed here.
++
++.SH FURTHER READINGS
++Information on NX: http://www.nomachine.com
++.PP
++Information on FreeNX: http://freenx.berlios.de
++
++.SH AUTHOR
++This manual page was written by Per Hansen <spamhans@yahoo.de>,
++and modified by Marcelo Boveto Shima <marceloshima@gmail.com> and
++Mike Gabriel <mike.gabriel@das-netzwerkteam.de>.

@@ -5,6 +5,8 @@
 004_nx-x11_fix-nxcompshad-build.patch
 005_nxcomp_gcc43.patch
 007_nxcompshad_clean-gch-files.patch
+009_nxproxy-add-man-page.patch
+009_nxagent-add-man-page.patch
 010_nxauth_fix-binary-name-in-man-page.patch
 011_nxcomp_sa-restorer.patch
 012_nxcomp_makefile-uninstall.patch
