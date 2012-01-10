@@ -1,3 +1,4 @@
+000_add-NX-redistribution-README.patch
 001_add-main-makefile.patch
 002_nxcompshad_build-against-nx-x11-only.patch
 003_nxcompshad_gcc43.patch

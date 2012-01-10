@@ -1,0 +1,48 @@
+Index: nx-libs/README.NX-redistributed
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ nx-libs/README.NX-redistributed	2012-01-10 09:52:44.000000000 +0100
+@@ -0,0 +1,43 @@
++NX redistribution by X2Go
++-------------------------
++This source tree is a re-distribution of those NX packages needed to
++setup FreeNX and/or X2Go on a Linux server.
++
++The NX re-distribution currently is maintained by the X2Go Project:
++http://wiki.x2go.org
++
++Our goal is: 
++    - provide _one_ tarball that builds NX projects via a common Makefile
++    - provide _one_ tarball for distribution packagers
++
++This re-distribution contains the following tarballs derived from
++NoMachine (http://www.nomachine.com/sources.php):
++
++  nxcomp
++  nxcompext
++  nxcompshad
++  nxproxy
++  nx-X11
++  nxagent
++  nxauth
++
++The patches we apply are shipped with this tarball, for further introspection
++please refer to this folder:
++
++  .applied-patches-on-top-of-NX-upstream
++
++This source tree is maintained on the X2Go Git server:
++Browsing...     http://code.x2go.org/gitweb?p=nx-libs.git;a=summary
++Git-Cloning...  git clone git://code.x2go.org/nx-libs.git
++
++If you have any questions about this NX redistribution or want to file 
++a bug, then please contact the X2Go developers on
++
++  x2go-dev@lists.berlios.de
++
++The X2Go-Dev mailing list requires subscription before you can post to it:
++http://lists.berlios.de/mailman/listinfo/x2go-dev
++
++thanks+light+love
++Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
++ 
