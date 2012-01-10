@@ -1,2 +1,2 @@
 nx-X11/programs/nxauth/nxauth                    usr/lib/nx/
-debian/bin/nxauth                                usr/bin
+bin/nxauth                                       usr/bin
