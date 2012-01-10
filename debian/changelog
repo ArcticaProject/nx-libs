@@ -81,6 +81,7 @@ nx-libs (2:3.5.0.0-0) UNRELEASED; urgency=low
   * Call dh_clean again. This got lost somewhere on the way.
   * Remove branding from descriptions in control file.
   * Add patch: 000_add-NX-redistribution-README.patch.
+  * Fix dh_installman for nxproxy.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 28 Dec 2011 19:06:26 +0100
 
