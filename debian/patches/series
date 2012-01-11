@@ -21,6 +21,7 @@
 021_add-nxauth-wrapper.patch
 022_add-nxproxy-wrapper.patch
 023_add-x2goagent-wrapper.patch
+101_nxagent_set-rgb-path.patch
 102_xserver-xext_set-securitypolicy-path.patch
 103_nxagent_set-X0-config-path.patch
 105_nxagent_export-remote-keyboard-config.patch
@@ -31,7 +32,6 @@
 110_nxagent_createpixmap-bounds-check.patch
 200_nxagent_check-binary-x2go-flavour.patch
 201_nxagent_set-x2go-icon-if-x2goagent-flavour.patch
-202_nxagent_set-rgb-path-x2go-flavour-aware.patch
 209_x2goagent-add-man-page.patch
 300_nxagent_set-wm-class.patch
 999_nxagent_unbrand-nxagent-brand-x2goagent.patch
