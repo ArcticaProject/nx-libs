@@ -29,4 +29,4 @@
 108_nxagent_wine-close-delay.patch
 109_nxagent_locale-utf8-compound-text.patch
 110_nxagent_createpixmap-bounds-check.patch
-200_nxagent_unbrand-agent.patch
+999_nxagent_unbrand-agent.patch

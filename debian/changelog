@@ -1,3 +1,10 @@
+nx-libs (2:3.5.0.2-1) UNRELEASED; urgency=low
+
+  * Rename nxagent-unbrand patch, so that is the last patch to be applied
+    (999_<patchname>).
+
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 11 Jan 2012 15:30:36 +0100
+
 nx-libs (2:3.5.0.2-0) unstable; urgency=low
 
   * Re-add binary wrapper scripts to the patch system as we
