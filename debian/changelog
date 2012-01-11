@@ -10,6 +10,8 @@ nx-libs (2:3.5.0.2-1) UNRELEASED; urgency=low
     - 999_nxagent_unbrand-nxagent-brand-x2goagent.patch
   * Add patch: 023_add-x2goagent-wrapper.patch.
   * Add patch: 209_x2goagent-add-man-page.patch.
+  * Add binary package: x2goagent, includes man page
+    patch: 209_x2goagent-add-man-page.patch
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 11 Jan 2012 15:30:36 +0100
 
