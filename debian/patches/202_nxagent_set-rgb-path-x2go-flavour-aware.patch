@@ -2,18 +2,32 @@ Description: FHS path fix for rgb file
  This patch is needed on Debian only, not reporting this path
  addition to upstream.
  .
+ This patch also is X2Go-flavour-aware.
+ .
  Originally contributed by Marcelo Boveto Shima <marceloshima@gmail.com>.
 Forwarded: not-needed
 Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 Last-Update: 2011-12-31
 --- a/nx-X11/programs/Xserver/os/oscolor.c
 +++ b/nx-X11/programs/Xserver/os/oscolor.c
-@@ -53,7 +53,7 @@
+@@ -47,13 +47,19 @@
+ ******************************************************************/
+ /* $Xorg: oscolor.c,v 1.4 2001/02/09 02:05:23 xorgcvs Exp $ */
+ 
++#include "Init.h"
++
+ #ifdef NX_TRANS_SOCKET
+ 
+ #include <sys/types.h>
  #include <sys/stat.h>
  #include <unistd.h>
  
 -static char* nxAltRgbPaths[] = {"/usr/NX/share/rgb", "/usr/share/X11/rgb", "/etc/X11/rgb"};
-+static char* nxAltRgbPaths[] = {"/usr/share/nx/rgb", "/usr/NX/share/rgb", "/usr/share/X11/rgb", "/etc/X11/rgb"};
++if (nxagentX2go) {
++    static char* nxAltRgbPaths[] = {"/usr/share/x2go/rgb", "/usr/NX/share/rgb", "/usr/share/X11/rgb", "/etc/X11/rgb"};
++} else {
++    static char* nxAltRgbPaths[] = {"/usr/share/nx/rgb", "/usr/NX/share/rgb", "/usr/share/X11/rgb", "/etc/X11/rgb"};
++}
  static char _NXRgbPath[1024];
  
  #endif
