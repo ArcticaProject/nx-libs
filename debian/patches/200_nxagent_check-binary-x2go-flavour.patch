@@ -1,0 +1,64 @@
+Description: Detect nxagent/x2goagent flavour
+ Whether the agent runs in X2Go or NX mode is decide by the
+ name of the binary that executes the code.
+ .
+ Binary name equal to nxagent -> (Free)NX flavour
+ Binary name equal to x2goagent -> X2Go flavour
+Forwarded: not-needed
+Author: Oleksandr Shneyder <oleksandr.shneyder@obviously-nice.de>
+Last-Update: 2012-01-11
+--- a/nx-X11/programs/Xserver/hw/nxagent/Init.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/Init.c
+@@ -178,6 +178,29 @@
+ 
+ int nxagentDoFullGeneration = 1;
+ 
++ /*
++ * 1 if agent running as X2goAgent
++ * 0 if NX Agent
++ */
++int nxagentX2go;
++
++/*
++ * Checking if agent is x2go agent
++ */
++
++void checkX2goAgent()
++{
++  extern const char *__progname;
++  if( strcasecmp(__progname,"x2goagent") == 0)
++  {
++    fprintf(stderr, "\nrunning as X2Go Agent\n");
++    nxagentX2go=1;
++  }
++  else
++    nxagentX2go=0;
++}
++
++
+ /*
+  * Called at X server's initialization.
+  */
+@@ -194,6 +217,11 @@
+   #endif
+ 
+   /*
++   * Check if we running as X2Go Agent
++   */
++  checkX2goAgent();
++
++  /*
+    * Print our pid and version information.
+    */
+ 
+--- a/nx-X11/programs/Xserver/hw/nxagent/Init.h
++++ b/nx-X11/programs/Xserver/hw/nxagent/Init.h
+@@ -37,6 +37,8 @@
+ extern int nxagentBackingStore;
+ extern int nxagentSaveUnder;
+ 
++extern int  nxagentX2go;
++
+ extern ServerGrabInfoRec nxagentGrabServerInfo;
+ 
+ #endif /* __Init_H__ */

@@ -3,6 +3,11 @@ nx-libs (2:3.5.0.2-1) UNRELEASED; urgency=low
   * Rename nxagent-unbrand patch, so that is the last patch to be applied
     (999_<patchname>).
   * Drop NX agent unbrand patch from FreeNX.
+  * Add X2Go agent / NX agent flavouring via patch system:
+    - 200_nxagent_check-binary-x2go-flavour.patch
+    - 201_nxagent_set-x2go-icon-if-x2goagent-flavour.patch
+    - 300_nxagent_set-wm-class.patch
+    - 999_nxagent_unbrand-nxagent-brand-x2goagent.patch
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 11 Jan 2012 15:30:36 +0100
 
