@@ -1,6 +1,6 @@
 Description: FHS path fix for keyboard config file
- This patch is needed on Debian only, not reporting this path
- addition to upstream.
+ This patch is needed for Tarball installation and on Distros like
+ Debian, not reporting this path addition to upstream.
  .
  Originally contributed by FreeNX Team.
 Forwarded: not-needed

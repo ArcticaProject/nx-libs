@@ -19,9 +19,10 @@
 +# along with this program.  If not, see http://www.gnu.org/licenses/.
 +
 +NX_LIBS=/usr/lib/nx
-+LD_LIBRARY_PATH=/usr/lib/nx:/usr/lib/nx/X11:$LD_LIBRARY_PATH
++NX_LOCAL_LIBS=/usr/local/lib/nx
++LD_LIBRARY_PATH=$NX_LIBS:$NX_LIBS/X11:$NX_LOCAL_LIBS:$NX_LOCAL_LIBS/X11:$LD_LIBRARY_PATH
 +
-+export NX_LIBS
++test -d NX_LIBS && export NX_LIBS || export NX_LIBS=$NX_LOCAL_LIBS
 +export LD_LIBRARY_PATH
 +
-+exec /usr/lib/nx/nxproxy "$@"
++exec $NX_LIBS/nxproxy "$@"

@@ -13,7 +13,7 @@ Last-Update: 2011-12-31
  EXPATINC = $(EXPATTOP)/lib
  
 -INCLUDES = -I$(EXPATINC) -I$(EXPATTOP) -I.
-+INCLUDES = -I/usr/include/xmltok -I$(EXPATINC) -I$(EXPATTOP) -I. 
++INCLUDES = -I/usr/include/xmltok -I/usr/local/include/xmltok -I$(EXPATINC) -I$(EXPATTOP) -I. 
  
  /*
   * Endianness (for short's)
