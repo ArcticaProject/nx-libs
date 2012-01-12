@@ -284,3 +284,13 @@ Last-Update: 2012-01-11
  
    useXpmIcon = nxagentMakeIcon(nxagentDisplay, &nxagentIconPixmap, &nxagentIconShape);
  
+--- a/nx-X11/programs/Xserver/hw/nxagent/Splash.h
++++ b/nx-X11/programs/Xserver/hw/nxagent/Splash.h
+@@ -33,6 +33,7 @@
+ extern int nxagentLogoWhite;
+ extern int nxagentLogoRed;
+ extern int nxagentLogoBlack;
++extern int nxagentLogoGray;
+ 
+ extern Window nxagentSplashWindow;
+ 
