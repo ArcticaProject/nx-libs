@@ -18,6 +18,8 @@ nx-libs (2:3.5.0.2-1) UNRELEASED; urgency=low
     has been installed to /usr/local/lib/nx via tarball or it has been packaged
     for a distribution and is installed to /usr/lib/nx. Other installation paths
     are currently not supported.
+  * Fix RGB color pallette (gray X2GO logo to be more accurate) for agent splash
+    screen.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 11 Jan 2012 15:30:36 +0100
 

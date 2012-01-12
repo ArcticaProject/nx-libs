@@ -228,47 +228,59 @@ Last-Update: 2012-01-11
    XSetWindowBackgroundPixmap(nxagentDisplay, win, nxagentPixmapLogo);
  
    #ifdef NXAGENT_LOGO_DEBUG
---- a/nx-X11/programs/Xserver/hw/nxagent/Splash.h
-+++ b/nx-X11/programs/Xserver/hw/nxagent/Splash.h
-@@ -33,6 +33,7 @@
- extern int nxagentLogoWhite;
- extern int nxagentLogoRed;
- extern int nxagentLogoBlack;
-+extern int nxagentLogoGray;
- 
- extern Window nxagentSplashWindow;
- 
 --- a/nx-X11/programs/Xserver/hw/nxagent/Display.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Display.c
-@@ -1408,6 +1408,7 @@
-     nxagentLogoBlack = 0x000000;
-     nxagentLogoRed   = 0xff0000;
-     nxagentLogoWhite = 0xffffff;
-+    nxagentLogoGray  = 0x222222;
-   }
-   else
-   {
-@@ -1418,6 +1419,7 @@
-     nxagentLogoRed   = nxagentLogoColor(0xff0000);
-     nxagentLogoBlack = nxagentLogoColor(0x000000);
-     nxagentLogoWhite = 0xffffff;
-+    nxagentLogoGray  = nxagentLogoColor(0x222222);
-   }
+@@ -1403,22 +1403,10 @@
+   g = pV.green_mask;
+   b = pV.blue_mask;
+ 
+-  if (!pV.red_mask || !pV.green_mask || !pV.blue_mask)
+-  {
+-    nxagentLogoBlack = 0x000000;
+-    nxagentLogoRed   = 0xff0000;
+-    nxagentLogoWhite = 0xffffff;
+-  }
+-  else
+-  {
+-    for (or=0, off=0x800000; (r&(off>>or)) == 0; or++);
+-    for (og=0, off=0x800000; (g&(off>>og)) == 0; og++);
+-    for (ob=0, off=0x800000; (b&(off>>ob)) == 0; ob++);
+-
+-    nxagentLogoRed   = nxagentLogoColor(0xff0000);
+-    nxagentLogoBlack = nxagentLogoColor(0x000000);
+-    nxagentLogoWhite = 0xffffff;
+-  }
++  nxagentLogoBlack = 0x000000;
++  nxagentLogoRed   = 0xff0000;
++  nxagentLogoWhite = 0xffffff;
++  nxagentLogoGray  = 0x222222;
  
    #ifdef WATCH
-@@ -2678,6 +2680,7 @@
-     nxagentLogoBlack = 0x000000;
-     nxagentLogoRed   = 0xff0000;
-     nxagentLogoWhite = 0xffffff;
-+    nxagentLogoGray  = 0x222222;
-   }
-   else
-   {
-@@ -2688,6 +2691,7 @@
-     nxagentLogoRed   = nxagentLogoColor(0xff0000);
-     nxagentLogoBlack = nxagentLogoColor(0x000000);
-     nxagentLogoWhite = 0xffffff;
-+    nxagentLogoGray  = nxagentLogoColor(0x222222);
-   }
+ 
+@@ -2673,22 +2661,10 @@
+   g = pV.green_mask;
+   b = pV.blue_mask;
+ 
+-  if (!pV.red_mask || !pV.green_mask || !pV.blue_mask)
+-  {
+-    nxagentLogoBlack = 0x000000;
+-    nxagentLogoRed   = 0xff0000;
+-    nxagentLogoWhite = 0xffffff;
+-  }
+-  else
+-  {
+-    for (or=0, off=0x800000; (r&(off>>or)) == 0; or++);
+-    for (og=0, off=0x800000; (g&(off>>og)) == 0; og++);
+-    for (ob=0, off=0x800000; (b&(off>>ob)) == 0; ob++);
+-
+-    nxagentLogoRed   = nxagentLogoColor(0xff0000);
+-    nxagentLogoBlack = nxagentLogoColor(0x000000);
+-    nxagentLogoWhite = 0xffffff;
+-  }
++  nxagentLogoBlack = 0x000000;
++  nxagentLogoRed   = 0xff0000;
++  nxagentLogoWhite = 0xffffff;
++  nxagentLogoGray  = 0x222222;
  
    useXpmIcon = nxagentMakeIcon(nxagentDisplay, &nxagentIconPixmap, &nxagentIconShape);
+ 
