@@ -1,0 +1,19 @@
+Description: FHS path fix for SecurityPolicy file
+ This patch is needed on Debian only, not reporting this path
+ change to upstream.
+ .
+ Originally contributed by Marcelo Boveto Shima <marceloshima@gmail.com>.
+Forwarded: not-needed
+Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+Last-Update: 2012-01-12
+--- a/nx-X11/programs/Xserver/Xext/security.c
++++ b/nx-X11/programs/Xserver/Xext/security.c
+@@ -86,7 +86,7 @@
+ 
+ #ifdef NXAGENT_SERVER
+ 
+-#define NX_ALTERNATIVEPOLICYFILE "/usr/local/share/nx/SecurityPolicy"
++#define NX_ALTERNATIVEPOLICYFILE "/usr/share/nx/SecurityPolicy"
+ 
+ #endif
+ 
