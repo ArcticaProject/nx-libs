@@ -1,4 +1,4 @@
-nx-libs (2:3.5.0.3-0) UNRELEASED; urgency=low
+nx-libs (2:3.5.0.3-0) unstable; urgency=low
 
   * Rename nxagent-unbrand patch, so that is the last patch to be applied
     (999_<patchname>).
@@ -21,7 +21,7 @@ nx-libs (2:3.5.0.3-0) UNRELEASED; urgency=low
   * Fix RGB color pallette (gray X2GO logo to be more accurate) for agent
     splash screen.
 
- -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 11 Jan 2012 15:30:36 +0100
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Thu, 12 Jan 2012 13:04:03 +0100
 
 nx-libs (2:3.5.0.2-0) unstable; urgency=low
 
