@@ -1,3 +1,9 @@
+nx-libs (2:3.5.0.5-0) UNRELEASED; urgency=low
+
+  * Fix wrapper script patches for nxagent, x2goagent, nxauth, nxproxy.
+
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 13 Jan 2012 00:35:56 +0100
+
 nx-libs (2:3.5.0.4-0) unstable; urgency=low
 
   * Update/fix patch: 999_nxagent_unbrand-nxagent-brand-x2goagent.patch.
