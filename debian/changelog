@@ -12,6 +12,8 @@ nx-libs (2:3.5.0.2-1) UNRELEASED; urgency=low
   * Add patch: 209_x2goagent-add-man-page.patch.
   * Add binary package: x2goagent, includes man page
     patch: 209_x2goagent-add-man-page.patch
+  * Modify patch: 101_nxagent_set-rgb-path.patch, add path to RGB file
+    if NX (redistributed) is installed via tarball under /usr/local.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 11 Jan 2012 15:30:36 +0100
 
