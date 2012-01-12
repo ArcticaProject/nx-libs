@@ -1,8 +1,8 @@
-nx-libs (2:3.5.0.4-0) UNRELEASED; urgency=low
+nx-libs (2:3.5.0.4-0) unstable; urgency=low
 
   * Update/fix patch: 999_nxagent_unbrand-nxagent-brand-x2goagent.patch.
 
- -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Thu, 12 Jan 2012 23:03:03 +0100
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Thu, 12 Jan 2012 23:04:37 +0100
 
 nx-libs (2:3.5.0.3-0) unstable; urgency=low
 
