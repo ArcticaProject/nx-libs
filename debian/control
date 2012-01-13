@@ -97,13 +97,11 @@ Description: NX agent
 Package: x2goagent
 Architecture: any
 Depends:
- libnx-x11 (>= ${source:Version}), libnx-x11 (<< ${source:Version}.1~),
- nxagent (>= ${source:Version})
- ${shlibs:Depends},
+ nxagent (>= ${source:Version}),
  ${misc:Depends}
 Suggests:
  x2goserver
-Description: NX agent
+Description: X2Go agent
  X2Go is a software suite that uses NX technology for remote desktop
  computing.
  .

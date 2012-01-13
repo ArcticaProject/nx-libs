@@ -1,6 +1,9 @@
 nx-libs (2:3.5.0.6-0) UNRELEASED; urgency=low
 
   * Add patch: 202_nx-x11_enable-xinerama.patch.
+  * Fix lintian issue: missing-separator-between-items for x2goagent package.
+    Drop dependency on libnx-x11 as we already depend on nxagent and fix
+    description synopsis of x2goagent package.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 13 Jan 2012 10:28:49 +0100
 
