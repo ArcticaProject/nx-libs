@@ -1,3 +1,12 @@
+Description: Enable Xinerama support for NX
+ This patch adds Xinerama awareness to NX agent windows.
+ .
+ The advantage of Xinerama awareness is that an NX session window
+ will only maximize to the dimensions of the active physical
+ display.
+Forwarded: pending
+Author: Oleksandr Shneyder <oleksandr.shneyder@obviously-nice.de>
+Last-Update: 2012-01-13
 --- a/nx-X11/config/cf/host.def
 +++ b/nx-X11/config/cf/host.def
 @@ -686,7 +686,7 @@
