@@ -8,6 +8,8 @@ nx-libs (2:3.5.0.6-0) UNRELEASED; urgency=low
   * Silence lintian on debian-revision-should-not-be-zero. As this is no Debian
     packaging repository, but ,,NX (redistributed)'', we will always release
     with rev no. set to ,,0''.
+  * Install libXinerama into libnx-x11 package. Header files into
+    libnx-x11-dev.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 13 Jan 2012 10:28:49 +0100
 

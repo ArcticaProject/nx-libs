@@ -1,2 +1,4 @@
-nx-X11/.build-exports/include/*           usr/include/nx/
+nx-X11/.build-exports/include/*           usr/include/nx/X11/
+nx-X11/include/extensions/Xinerama.h      usr/include/nx/X11/extensions/
+
 
