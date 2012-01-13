@@ -1,2 +1,3 @@
 libxcompshad-dev: possible-new-upstream-release-without-new-version
+libxcompshad-dev: debian-revision-should-not-be-zero
 

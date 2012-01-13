@@ -1,1 +1,2 @@
 libnx-mesa-extras-dev: possible-new-upstream-release-without-new-version
+libnx-mesa-extras-dev: debian-revision-should-not-be-zero

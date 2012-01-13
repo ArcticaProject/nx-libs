@@ -1,3 +1,4 @@
 nx-libs source: ancient-autotools-helper-file
 nx-libs source: outdated-autotools-helper-file
 nx-libs source: ancient-libtool
+nx-libs source: debian-revision-should-not-be-zero
