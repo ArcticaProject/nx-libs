@@ -1,3 +1,9 @@
+nx-libs (2:3.5.0.6-0) UNRELEASED; urgency=low
+
+  * Add patch: 202_nx-x11_enable-xinerama.patch.
+
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 13 Jan 2012 10:28:49 +0100
+
 nx-libs (2:3.5.0.5-0) unstable; urgency=low
 
   * Fix wrapper script patches for nxagent, x2goagent, nxauth, nxproxy.

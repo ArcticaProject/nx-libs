@@ -1,0 +1,259 @@
+--- a/nx-X11/config/cf/host.def
++++ b/nx-X11/config/cf/host.def
+@@ -686,7 +686,7 @@
+  *
+ #define BuildXinerama		NO
+  */
+-#define BuildXinerama		NO
++#define BuildXinerama		YES
+ 
+ /*
+  * If you don't want to build support for the GLX extension, uncomment this.
+--- a/nx-X11/config/cf/X11.tmpl
++++ b/nx-X11/config/cf/X11.tmpl
+@@ -456,7 +456,7 @@
+ #define BuildXinerama		NO
+ #endif
+ #ifndef BuildXineramaLibrary
+-#define BuildXineramaLibrary	(BuildXinerama && !BuildServersOnly)
++#define BuildXineramaLibrary	(BuildXinerama)
+ #endif
+ #ifndef BuildDmxDevelTools
+ #define BuildDmxDevelTools	NO
+--- a/nx-X11/lib/Xinerama/Xinerama.c
++++ b/nx-X11/lib/Xinerama/Xinerama.c
+@@ -249,6 +249,9 @@
+     xXineramaIsActiveReq  	*req;
+     XExtDisplayInfo 		*info = find_display (dpy);
+ 
++
++    return True;
++
+     if(!XextHasExtension(info))
+ 	return False;  /* server doesn't even have the extension */
+ 
+@@ -279,39 +282,72 @@
+     xXineramaQueryScreensReq	*req;
+     XineramaScreenInfo		*scrnInfo = NULL;
+ 
+-    PanoramiXCheckExtension (dpy, info, 0);
++    int i;
++    int x,y,w,h;
++    FILE* fptr;
++    if((fptr=fopen(getenv("NX_XINERAMA_CONF"),"r"))==NULL) {
++	PanoramiXCheckExtension (dpy, info, 0);
++	LockDisplay (dpy);
++	GetReq (XineramaQueryScreens, req);
++	req->reqType = info->codes->major_opcode;
++	req->panoramiXReqType = X_XineramaQueryScreens;
++	if (!_XReply (dpy, (xReply *) &rep, 0, xFalse)) {
++	    UnlockDisplay (dpy);
++	    SyncHandle ();
++	    return NULL;
++	}
++	if(rep.number) {
++	    if((scrnInfo = Xmalloc(sizeof(XineramaScreenInfo) * rep.number))) {
++		xXineramaScreenInfo scratch;
++		int i;
++
++		for(i = 0; i < rep.number; i++) {
++		    _XRead(dpy, (char*)(&scratch), sz_XineramaScreenInfo);
++		    scrnInfo[i].screen_number = i;
++		    scrnInfo[i].x_org    = scratch.x_org;
++		    scrnInfo[i].y_org    = scratch.y_org;
++		    scrnInfo[i].width    = scratch.width;
++		    scrnInfo[i].height           = scratch.height;
++		}
++
++		*number = rep.number;
++	    } else {
++		_XEatData(dpy, rep.length << 2);
++	    }
++	}
+ 
+-    LockDisplay (dpy);
+-    GetReq (XineramaQueryScreens, req);
+-    req->reqType = info->codes->major_opcode;
+-    req->panoramiXReqType = X_XineramaQueryScreens;
+-    if (!_XReply (dpy, (xReply *) &rep, 0, xFalse)) {
+ 	UnlockDisplay (dpy);
+ 	SyncHandle ();
+-	return NULL;
+-    }
+ 
+-    if(rep.number) {
+-	if((scrnInfo = Xmalloc(sizeof(XineramaScreenInfo) * rep.number))) {
+-	    xXineramaScreenInfo scratch;
+-	    int i;
+-
+-	    for(i = 0; i < rep.number; i++) {
+-		_XRead(dpy, (char*)(&scratch), sz_XineramaScreenInfo);
+-		scrnInfo[i].screen_number = i;
+-		scrnInfo[i].x_org 	  = scratch.x_org;
+-		scrnInfo[i].y_org 	  = scratch.y_org;
+-		scrnInfo[i].width 	  = scratch.width;
+-		scrnInfo[i].height 	  = scratch.height;
+-	    }
++    } else {
+ 
+-	    *number = rep.number;
+-	} else
+-	    _XEatData(dpy, rep.length << 2);
++	i=0;
++	while(!feof(fptr)) {
++	    w=h=0;
++	    fscanf(fptr,"%d %d %d %d",&x,&y,&w,&h);
++	    if(w&&h)
++	    i++;
++	}
++	rewind(fptr);
++	*number=i;
++	if((scrnInfo = Xmalloc(sizeof(XineramaScreenInfo) * i))) {
++	    i=0;
++	    while(!feof(fptr)){
++		w=h=0;
++		fscanf(fptr,"%d %d %d %d",&x,&y,&w,&h);
++		if(w&&h){
++		    scrnInfo[i].screen_number=i;
++		    scrnInfo[i].x_org=x;
++		    scrnInfo[i].y_org=y;
++		    scrnInfo[i].width=w;
++		    scrnInfo[i].height=h;
++		    i++;
++		}
++	    }
++	}
++	fclose(fptr);
+     }
+ 
+-    UnlockDisplay (dpy);
+-    SyncHandle ();
+     return scrnInfo;
+ }
+ 
+--- a/nx-X11/programs/Xserver/hw/nxagent/Imakefile
++++ b/nx-X11/programs/Xserver/hw/nxagent/Imakefile
+@@ -206,7 +206,7 @@
+           -UNX_DEBUG_INPUT \
+ 	  -DRANDR_10_INTERFACE \
+ 	  -DRANDR_12_INTERFACE \
+-          -UPANORAMIX \
++          -DPANORAMIX \
+           -UDEBUG_TREE
+ 
+ all:: $(OBJS)
+--- a/nx-X11/programs/Xserver/hw/nxagent/X/NXxvdisp.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/X/NXxvdisp.c
+@@ -275,17 +275,19 @@
+     case xv_PutVideo:
+ #ifdef PANORAMIX
+         if(!noPanoramiXExtension)
+-            result = (XineramaXvPutVideo(client)); break;
++            result = (XineramaXvPutVideo(client));
+         else
+ #endif
+-            result = (ProcXvPutVideo(client)); break;
++            result = (ProcXvPutVideo(client));
++            break;
+     case xv_PutStill:
+ #ifdef PANORAMIX
+         if(!noPanoramiXExtension)
+-            result = (XineramaXvPutStill(client)); break
++            result = (XineramaXvPutStill(client));
+         else
+ #endif
+-    	    result = (ProcXvPutStill(client)); break;
++    	    result = (ProcXvPutStill(client));
++    	    break;
+     case xv_GetVideo: result = (ProcXvGetVideo(client)); break;
+     case xv_GetStill: result = (ProcXvGetStill(client)); break;
+     case xv_GrabPort: result = (ProcXvGrabPort(client)); break;
+@@ -295,35 +297,39 @@
+     case xv_StopVideo: 
+ #ifdef PANORAMIX
+         if(!noPanoramiXExtension)
+-	    result = (XineramaXvStopVideo(client)); break;
++	    result = (XineramaXvStopVideo(client));
+ 	else
+ #endif
+-	    result = (ProcXvStopVideo(client)); break;
++	    result = (ProcXvStopVideo(client)); 
++            break;
+     case xv_SetPortAttribute: 
+ #ifdef PANORAMIX
+         if(!noPanoramiXExtension)
+-	    result = (XineramaXvSetPortAttribute(client)); break;
++	    result = (XineramaXvSetPortAttribute(client));
+ 	else
+ #endif
+-	    result = (ProcXvSetPortAttribute(client)); break;
++	    result = (ProcXvSetPortAttribute(client));
++            break;
+     case xv_GetPortAttribute: result = (ProcXvGetPortAttribute(client)); break;
+     case xv_QueryBestSize: result = (ProcXvQueryBestSize(client)); break;
+     case xv_QueryPortAttributes: result = (ProcXvQueryPortAttributes(client)); break;
+     case xv_PutImage:
+ #ifdef PANORAMIX
+         if(!noPanoramiXExtension)
+-	    result = (XineramaXvPutImage(client)); break;
++	    result = (XineramaXvPutImage(client));
+ 	else
+ #endif
+-	    result = (ProcXvPutImage(client)); break;
++	    result = (ProcXvPutImage(client));
++            break;
+ #ifdef MITSHM
+     case xv_ShmPutImage: 
+ #ifdef PANORAMIX
+         if(!noPanoramiXExtension)
+-	    result = (XineramaXvShmPutImage(client)); break;
++	    result = (XineramaXvShmPutImage(client));
+ 	else
+ #endif
+-	    result = (ProcXvShmPutImage(client)); break;
++	    result = (ProcXvShmPutImage(client));
++	    break;
+ #endif
+     case xv_QueryImageAttributes: result = (ProcXvQueryImageAttributes(client)); break;
+     case xv_ListImageFormats: result = (ProcXvListImageFormats(client)); break;
+--- a/nx-X11/programs/Xserver/Imakefile
++++ b/nx-X11/programs/Xserver/Imakefile
+@@ -1021,7 +1021,7 @@
+ #else
+ NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext -L ../../../nxcompshad \
+                 -lXcomp -lXcompext -lXcompshad -lXrender -lX11 -lXext -lXfixes \
+-                -L../../../nx-X11/exports/lib -lXtst -lXdamage -lXrandr -lXcomposite
++                -L../../../nx-X11/exports/lib -lXtst -lXdamage -lXrandr -lXcomposite -lXinerama
+ #endif
+ 
+ #endif
+--- a/nx-X11/programs/Xserver/Xext/panoramiX.c
++++ b/nx-X11/programs/Xserver/Xext/panoramiX.c
+@@ -1045,16 +1045,7 @@
+     rep.type = X_Reply;
+     rep.length = 0;
+     rep.sequenceNumber = client->sequence;
+-#if 1
+-    {
+-	/* The following hack fools clients into thinking that Xinerama
+-	 * is disabled even though it is not. */
+-	extern Bool PanoramiXExtensionDisabledHack;
+-	rep.state = !noPanoramiXExtension && !PanoramiXExtensionDisabledHack;
+-    }
+-#else
+     rep.state = !noPanoramiXExtension;
+-#endif
+     if (client->swapped) {
+ 	register int n;
+ 	swaps (&rep.sequenceNumber, n);
+--- a/nx-X11/programs/Xserver/Xext/panoramiX.h
++++ b/nx-X11/programs/Xserver/Xext/panoramiX.h
+@@ -44,7 +44,7 @@
+ #define _PANORAMIX_H_
+ 
+ #include <X11/extensions/panoramiXext.h>
+-#include "gcstruct.h"
++/*#include "gcstruct.h"*/
+ 
+ 
+ typedef struct _PanoramiXData {

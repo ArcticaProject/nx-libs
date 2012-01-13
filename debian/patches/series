@@ -34,6 +34,7 @@
 110_nxagent_createpixmap-bounds-check.patch
 200_nxagent_check-binary-x2go-flavour.patch
 201_nxagent_set-x2go-icon-if-x2goagent-flavour.patch
+202_nx-x11_enable-xinerama.patch
 209_x2goagent-add-man-page.patch
 300_nxagent_set-wm-class.patch
 999_nxagent_unbrand-nxagent-brand-x2goagent.patch
