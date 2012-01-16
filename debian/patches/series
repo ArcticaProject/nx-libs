@@ -8,7 +8,6 @@
 009_nxproxy-add-man-page.patch
 009_nxagent-add-man-page.patch
 010_nxauth_fix-binary-name-in-man-page.patch
-011_nxcomp_sa-restorer.patch
 012_nxcomp_makefile-uninstall.patch
 013_nxcompext_makefile-uninstall.patch
 014_nxcompshad_makefile-uninstall.patch
