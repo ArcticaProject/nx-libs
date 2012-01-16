@@ -1,8 +1,8 @@
-nx-libs (2:3.5.0.7-0) UNRELEASED; urgency=low
+nx-libs (2:3.5.0.7-0) unstable; urgency=low
 
   * Drop patch: 011_nxcomp_sa-restorer.patch.
 
- -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Mon, 16 Jan 2012 10:38:53 +0100
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Mon, 16 Jan 2012 11:28:14 +0100
 
 nx-libs (2:3.5.0.6-0) unstable; urgency=low
 
