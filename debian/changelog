@@ -1,3 +1,10 @@
+nx-libs (2:3.5.0.8-0) UNRELEASED; urgency=low
+
+  * Reorganize patch names, to reflect patch inclusion into lite+full or
+    full-only ,,NX (redistributed)'' tarball.
+
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Mon, 16 Jan 2012 22:28:13 +0100
+
 nx-libs (2:3.5.0.7-0) unstable; urgency=low
 
   * Drop patch: 011_nxcomp_sa-restorer.patch.
