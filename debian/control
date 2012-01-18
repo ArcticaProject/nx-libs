@@ -95,7 +95,7 @@ Description: NX agent
  nearly reduced to zero.
 
 Package: x2goagent
-Architecture: any
+Architecture: all
 Depends:
  nxagent (>= ${source:Version}),
  ${misc:Depends}
