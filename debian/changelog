@@ -1,4 +1,4 @@
-nx-libs (2:3.5.0.8-0) UNRELEASED; urgency=low
+nx-libs (2:3.5.0.8-0) unstable; urgency=low
 
   * Reorganize patch names, to reflect patch inclusion into lite+full or
     full-only ,,NX (redistributed)'' tarball.
@@ -10,7 +10,7 @@ nx-libs (2:3.5.0.8-0) UNRELEASED; urgency=low
   * Fix patch: 109_nxagent_locale-utf8-compound-text.patch, fix crashes
     reported from Stefan Baur. Thanks for reporting and testing!!!
 
- -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Mon, 16 Jan 2012 22:28:13 +0100
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Sun, 22 Jan 2012 23:36:19 +0100
 
 nx-libs (2:3.5.0.7-0) unstable; urgency=low
 
