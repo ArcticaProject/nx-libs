@@ -1,3 +1,9 @@
+nx-libs (2:3.5.0.9-0) UNRELEASED; urgency=low
+
+  * Continue development...
+
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Mon, 23 Jan 2012 00:04:57 +0100
+
 nx-libs (2:3.5.0.8-0) unstable; urgency=low
 
   * Reorganize patch names, to reflect patch inclusion into lite+full or
