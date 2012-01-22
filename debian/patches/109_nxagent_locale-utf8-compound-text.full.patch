@@ -26,7 +26,7 @@ Last-Update: 2011-12-31
 +  char *locale = setlocale(LC_ALL, "");
 +  if (!locale)
 +   fprintf(stderr, "InitOutput: failed to set locale, reverting to \"C\"\n");
-+  else 
++  else
 +  {
 +    if (!XSupportsLocale())
 +      fprintf(stderr, "InitOutput: Locale %s not supported by X\n",locale);
@@ -51,23 +51,12 @@ Last-Update: 2011-12-31
  /*
   * Set here the required log level.
   */
-@@ -100,6 +104,10 @@
- 
- static void nxagentRemovePropertyFromList(void);
- 
-+/* by dimbor */
-+static char szAgentUTF8_STRING[] = "UTF8_STRING";
-+static Atom agentUTF8_STRING;
-+
- /*
-  * This is currently unused.
-  */
-@@ -419,6 +427,28 @@
+@@ -419,6 +423,28 @@
    }
  }
  
 +/* by dimbor */
-+char *textToUTF8String(char *text, int nitems) 
++char *textToUTF8String(char *text, int nitems)
 +{
 +  XTextProperty t_prop;
 +  char *ret=NULL;
@@ -79,7 +68,7 @@ Last-Update: 2011-12-31
 +  t_prop.encoding=XInternAtom(nxagentDisplay, "COMPOUND_TEXT", 0);
 +  char **list;
 +  int num;
-+  int r = XmbTextPropertyToTextList(nxagentDisplay, &t_prop,&list, &num);
++  int r = Xutf8TextPropertyToTextList(nxagentDisplay, &t_prop,&list, &num);
 +  if ((r == Success || r > 0) && num > 0 && *list)
 +  {
 +    ret=(char *)strdup (*list);
@@ -91,7 +80,7 @@ Last-Update: 2011-12-31
  int nxagentExportAllProperty(pWin)
    WindowPtr pWin;
  {
-@@ -464,6 +494,7 @@
+@@ -464,6 +490,7 @@
  
    if (strncmp(propertyS, "WM_", 3) != 0 &&
            strncmp(propertyS, "_NET_", 5) != 0 &&
@@ -99,7 +88,7 @@ Last-Update: 2011-12-31
                strcmp(propertyS, "_KDE_NET_WM_SYSTEM_TRAY_WINDOW_FOR") != 0)
    {
      #ifdef TEST
-@@ -474,6 +505,7 @@
+@@ -474,6 +501,7 @@
      #endif
    }
    else if (strcmp(typeS, "STRING") == 0 ||
@@ -107,18 +96,20 @@ Last-Update: 2011-12-31
                 #ifndef _XSERVER64
                 strcmp(typeS, "CARDINAL") == 0 ||
                     strcmp(typeS, "WM_SIZE_HINTS") == 0 ||
-@@ -483,6 +515,15 @@
+@@ -483,6 +511,17 @@
      output = value;
      export = True;
    }
-+  /* add by dimbor */
++  /* add by dimbor, modified by Mike Gabriel <mike.gabriel@das-netzwerkteam.de> */
 +  else if (strcmp(typeS, "COMPOUND_TEXT") == 0)
 +  {
 +    output = textToUTF8String(value, nUnits);
-+    nUnits = strlen((char *) output);
-+    type = MakeAtom(szAgentUTF8_STRING, strlen(szAgentUTF8_STRING), True);
-+    freeMem = True;
-+    export = True;
++    if ( output != NULL ) {
++      nUnits = strlen((char *) output);
++      type = MakeAtom("UTF8_STRING", strlen("UTF8_STRING"), True);
++      freeMem = True;
++      export = True;
++    }
 +  }
    #ifdef _XSERVER64
    else if (strcmp(typeS, "CARDINAL") == 0 || strcmp(typeS, "WM_SIZE_HINTS") == 0)
