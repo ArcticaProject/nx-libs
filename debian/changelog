@@ -5,6 +5,8 @@ nx-libs (2:3.5.0.8-0) UNRELEASED; urgency=low
   * Update patch: 001_add-main-makefile.full+lite.patch, only build, install,
     clean etc. NX subprojects if the folder exists.
   * Package x2goagent is an ,,all'' package, not ,,any''.
+  * Add folder /debian/patches-pending-evaluation with two newly discovered
+    patches from git.etersoft.ru (AltLinux packaging repository for NX).
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Mon, 16 Jan 2012 22:28:13 +0100
 

@@ -1,0 +1,566 @@
+From: Boris Savelev <boris@altlinux.org>
+Date: Fri, 11 Jul 2008 13:50:46 +0000 (+0400)
+Subject: fix icons and clipboard (thanks to dimbor)
+X-Git-Tag: 3.3.0-alt2~24
+X-Git-Url: http://git.etersoft.ru?p=rx%2Fnx.git;a=commitdiff_plain;h=c51ec5f4afcbf6199da5343f52241f6ef8edbbfb
+
+fix icons and clipboard (thanks to dimbor)
+---
+
+diff --git a/nxwin/programs/Xserver/hw/nxwin/wincutpaste.c b/nxwin/programs/Xserver/hw/nxwin/wincutpaste.c
+index 862f75a..5405568 100644
+--- a/nxwin/programs/Xserver/hw/nxwin/wincutpaste.c
++++ b/nxwin/programs/Xserver/hw/nxwin/wincutpaste.c
+@@ -78,6 +78,8 @@
+ 
+ #define MIN(a,b) ((a) < (b) ? (a) : (b))
+ 
++/*#define NXWIN_CLIPBOARD_DEBUG*/
++
+ extern          WindowPtr *WindowTable;
+ extern          Selection *CurrentSelections;
+ extern int      NumCurrentSelections;
+@@ -96,6 +98,8 @@ Atom            clientTARGETS;
+ Atom            clientTEXT;
+ Atom            clientCutProperty;
+ Atom            clientCLIPBOARD;
++Atom		UTF8_STRING;
++Atom		COMPOUND_TEXT;
+ 
+ Bool            windowsOwner = FALSE;
+ Bool            clientOwner  = FALSE;
+@@ -119,7 +123,7 @@ void nxwinClearSelection(void)
+      return;
+ 
+ #ifdef NXWIN_CLIPBOARD_DEBUG
+-   ErrorF("ClearSelection\n");
++   ErrorF("%d nxwinClearSelection: ClearSelection\n",GetTickCount());
+ #endif
+ 
+ for (i = 0; i < MIN(MaxSelections, NumCurrentSelections); i++)
+@@ -155,8 +159,16 @@ void nxwinInitSelection(HWND hwnd)
+    clientTEXT           = MakeAtom("TEXT", strlen("TEXT"), TRUE);
+    clientCutProperty    = MakeAtom("NX_CUT_BUFFER_CLIENT", strlen("NX_CUT_BUFFER_CLIENT"), TRUE);
+    clientCLIPBOARD      = MakeAtom("CLIPBOARD", strlen("CLIPBOARD"), TRUE);
++/* */
++   UTF8_STRING		= MakeAtom("UTF8_STRING", strlen("UTF8_STRING"), TRUE);
++   COMPOUND_TEXT        = MakeAtom("COMPOUND_TEXT", strlen("COMPOUND_TEXT"), TRUE);
++/* */
+    nxwinClipboardStatus = TRUE;
+    windowsOwner         = TRUE;
++#ifdef NXWIN_CLIPBOARD_DEBUG
++/*   ErrorF("%d nxwinInitSelection\n",GetTickCount()); 
++*/
++#endif
+ /*   nxwinSetWindowClipboard(" ");*/
+ }
+ 
+@@ -165,15 +177,17 @@ void nxwinSetSelectionOwner(Selection *pSelection)
+    if (!nxwinClipboardStatus)
+      return;
+ 
+-#ifdef NXWIN_CLIPBOARD_DEBUG
+-   ErrorF("SetSelectionOwner\n");
+-#endif
+ 
+    lastOwnerWindowPtr = pSelection->pWin;
+    lastOwnerWindow    = pSelection->window;
+    lastOwnerClientPtr = pSelection->client;
+    
+    nxwinSelection = TRUE;
++
++#ifdef NXWIN_CLIPBOARD_DEBUG
++/*   ErrorF("%d nxwinSetSelectionOwner:  window [%p], pWin [%p]\n",GetTickCount(),pSelection->window,pSelection->pWin);
++*/
++#endif
+ /*
+     if (pSelection->selection == XA_PRIMARY)
+     {
+@@ -194,21 +208,67 @@ void nxwinSetSelectionOwner(Selection *pSelection)
+                                 NoEventMask, NoEventMask ,
+                                 NullGrab);
+ #ifdef NXWIN_CLIPBOARD_DEBUG
+-       ErrorF("SetSelectionOwner XA_PRIMARY \n");
++       ErrorF(" nxwinSetSelectionOwner: SetSelectionOwner XA_PRIMARY \n");
+ #endif
+ 
+        windowsOwner = FALSE;   
+      }
+ */
++
++}
++
++/* ------------------ My  ------------------------------------------- */
++char * unicode_to_some_cp(wchar_t *unicode_string, int CP)
++{
++	int err;
++	char * res;
++	int res_len = WideCharToMultiByte(
++		CP,				// Code page
++		0,					// Default replacement of illegal chars
++		unicode_string,		// Multibyte characters string
++		-1,					// Number of unicode chars is not known
++		NULL,				// No buffer yet, allocate it later
++		0,					// No buffer
++		NULL,				// Use system default
++		NULL				// We are not interested whether the default char was used
++		);
++	if (res_len == 0) 
++	{
++		return NULL;
++	}
++	res = malloc(res_len);
++	if (res == NULL) 
++	{
++		return NULL;
++	}
++	err = WideCharToMultiByte(
++		CP,				// Code page
++		0,					// Default replacement of illegal chars
++		unicode_string,		// Multibyte characters string
++		-1,					// Number of unicode chars is not known
++		res,				// Output buffer
++		res_len,			// buffer size
++		NULL,				// Use system default
++		NULL				// We are not interested whether the default char was used
++		);
++	if (err == 0)
++	{
++		free(res);
++		return NULL;
++	}
++	return res;
+ }
+ 
++
++/* ------------------ My ------------------------------------------- */
++
+ Bool nxwinConvertSelection(ClientPtr client ,WindowPtr pWin, Atom selection, Window requestor, Atom property, Atom target, Time time)
+ {
+    if (!nxwinClipboardStatus)
+      return 0;
+ 
+ #ifdef NXWIN_CLIPBOARD_DEBUG
+-   ErrorF("ConvertSelection\n");
++   ErrorF("%d nxwinConvertSelection: pWin [%p], selection [%s], target [%s]\n",GetTickCount(),pWin,NameForAtom(selection),NameForAtom(target));
+ #endif
+ 
+    if (!windowsOwner) /* there is a X client owner, let normal stuff happens */
+@@ -236,20 +296,25 @@ Bool nxwinConvertSelection(ClientPtr client ,WindowPtr pWin, Atom selection, Win
+       return 1;
+    }
+ 
+-#ifdef NXWIN_CLIPBOARD_DEBUG
+-   ErrorF("ConvertSelection converting...\n");
+-#endif
+ 
+-   if ((target == clientTEXT) || (target == XA_STRING))
++   if ((target == clientTEXT) || (target == XA_STRING) || (target == UTF8_STRING))
+    {
+       HGLOBAL hGlobal;
+       char *pszGlobalData;
+       xEvent x;
+ 
++      char *pszData=NULL;
++
+       /* Access the clipboard */
+       if (!OpenClipboard (lastHwnd)) return 0;
+-
+-      hGlobal = GetClipboardData (CF_TEXT);
++      if (target == UTF8_STRING)
++      {
++        hGlobal = GetClipboardData (CF_UNICODETEXT);
++      }
++      else
++      {
++        hGlobal = GetClipboardData (CF_TEXT);
++      }
+       if (!hGlobal)
+       {
+         CloseClipboard();
+@@ -264,10 +329,29 @@ Bool nxwinConvertSelection(ClientPtr client ,WindowPtr pWin, Atom selection, Win
+         return 1;
+       }
+       pszGlobalData = (char *) GlobalLock (hGlobal);
+-
+-      /* Convert DOS string to UNIX string */
+-      DOStoUNIX (pszGlobalData, strlen (pszGlobalData));
+-
++			
++      if (target == UTF8_STRING)
++      {
++         /* Convert DOS string to UNIX string */
++         DOStoUNIX (pszGlobalData, strlen (pszGlobalData));
++         pszData = unicode_to_some_cp((wchar_t *) pszGlobalData,CP_UTF8);
++#ifdef NXWIN_CLIPBOARD_DEBUG
++        ErrorF("  Set sel [%s], target [%s], prop [%s] to UTF-8 string [%s]\n",NameForAtom(selection),NameForAtom(target),NameForAtom(property),pszData);
++#endif
++      /* Copy the clipboard text to the requesting window */
++        ChangeWindowProperty(pWin,
++                             property,
++                             target,
++                             8,
++                             PropModeReplace,
++                             strlen(pszData),
++                             pszData, 1);
++      }
++      else
++      {
++#ifdef NXWIN_CLIPBOARD_DEBUG
++      ErrorF("  Set sel [%s], target [%s], prop [%s] to CP-1251 string [%s]\n",NameForAtom(selection),NameForAtom(target),NameForAtom(property),pszGlobalData);
++#endif
+       /* Copy the clipboard text to the requesting window */
+       ChangeWindowProperty(pWin,
+                            property,
+@@ -276,12 +360,16 @@ Bool nxwinConvertSelection(ClientPtr client ,WindowPtr pWin, Atom selection, Win
+                            PropModeReplace,
+                            strlen(pszGlobalData),
+                            pszGlobalData, 1);
++      }
+ 
+       /* Release the clipboard data */
+       GlobalUnlock (hGlobal);
+       pszGlobalData = NULL;
+       CloseClipboard ();
+ 
++      if (pszData != NULL)
++	free (pszData);
++
+       x.u.u.type = SelectionNotify;
+       x.u.selectionNotify.time = time;
+       x.u.selectionNotify.requestor = requestor;
+@@ -370,6 +458,7 @@ UNIXtoDOS (char **ppszData, int iLength)
+ }
+ 
+ 
++
+ void
+ DOStoUNIX (char *pszSrc, int iLength)
+ {
+@@ -401,8 +490,11 @@ void nxwinSetWindowClipboard(char *text, int iLength)
+   char          *pszGlobalData;
+   char          *pszTemp;
+ 
++
+   if (!nxwinClipboardStatus)
++  {
+      return;
++  }
+ 
+   if (OpenClipboard(lastHwnd))
+   {
+@@ -440,6 +532,9 @@ void nxwinSetWindowClipboard(char *text, int iLength)
+       /* free the allocated memory */
+       xfree(pszTemp);
+ 
++#ifdef NXWIN_CLIPBOARD_DEBUG
++   ErrorF("%d nxwinSetWindowClipboard: [%s].\n",GetTickCount(),pszGlobalData);
++#endif
+       /* Release the pointer to the global memory */
+       GlobalUnlock (hGlobal);
+       pszGlobalData = NULL;
+@@ -466,10 +561,14 @@ Bool nxwinSendNotify(xEvent* x)
+  int iReturn;
+ 
+ #ifdef NXWIN_CLIPBOARD_DEBUG
+-  ErrorF("SendNotify\n");
++  ErrorF("%d nxwinSendNotify: pwin [%p];",GetTickCount(),lastOwnerWindowPtr);
++  ErrorF(" x->u.u.type [%s]; x->u.selectionNotify: property [%s]; target [%s]; selection [%s]",NameForAtom(x->u.u.type),NameForAtom(x->u.selectionNotify.property),NameForAtom(x->u.selectionNotify.target),NameForAtom(x->u.selectionNotify.selection)); 
+ #endif
+   if (x->u.selectionNotify.property == clientCutProperty)
+   {
++#ifdef NXWIN_CLIPBOARD_DEBUG
++     ErrorF("\n");
++#endif
+      Atom       atomReturnType;
+      int     iReturnFormat;
+      unsigned long   ulReturnItems;
+@@ -479,13 +578,26 @@ Bool nxwinSendNotify(xEvent* x)
+                                 AnyPropertyType, &atomReturnType, &iReturnFormat,
+                                 &ulReturnItems, &ulReturnBytesLeft, &pszReturnData);
+ 
++/*
++#ifdef NXWIN_CLIPBOARD_DEBUG
++     ErrorF("nxwinSendNotify: called 1-st GetWindowProperty - status = %d, ulReturnBytesLeft = %d\n",Success,ulReturnBytesLeft);
++#endif
++*/
+      if ((iReturn == Success) && (ulReturnBytesLeft > 0))
+      {
+         iReturn = GetWindowProperty(lastOwnerWindowPtr,clientCutProperty,0,ulReturnBytesLeft, FALSE,
+                                         AnyPropertyType, &atomReturnType, &iReturnFormat,
+                                         &ulReturnItems, &ulReturnBytesLeft, &pszReturnData);
++/*
++#ifdef NXWIN_CLIPBOARD_DEBUG
++	ErrorF("nxwinSendNotify: called 2-nd GetWindowProperty - status=%d, ulReturnItems=%d\n",Success,ulReturnItems);
++#endif
++*/
+         if ((iReturn == Success) && (ulReturnItems > 0))
+         {
++#ifdef NXWIN_CLIPBOARD_DEBUG
++  	  ErrorF("  AtomReturnType [%s]\n",NameForAtom(atomReturnType));
++#endif
+           nxwinSetWindowClipboard(pszReturnData, ulReturnItems);
+ 
+           clientOwner = TRUE;
+@@ -495,6 +607,9 @@ Bool nxwinSendNotify(xEvent* x)
+         }
+      }
+   }
++#ifdef NXWIN_CLIPBOARD_DEBUG
++  else ErrorF(" !! MISSED !!\n");
++#endif
+   return FALSE;
+ }
+ 
+@@ -512,19 +627,27 @@ void nxwinLostFocus(void)
+    if (lastOwnerWindowPtr)
+    {
+       xEvent x;
++#ifdef NXWIN_CLIPBOARD_DEBUG
++   ErrorF("%d nxwinLostFocus: lastOwnerWindow [%p]; pWin [%p]; target [%s]; prop [%s]\n",GetTickCount(),lastOwnerWindow,lastOwnerWindowPtr,NameForAtom(XA_STRING),NameForAtom(clientCutProperty));
++#endif
+ 
+       x.u.u.type = SelectionRequest;
+       x.u.selectionRequest.time = GetTimeInMillis();
+       x.u.selectionRequest.owner = lastOwnerWindow;
+       x.u.selectionRequest.requestor = WindowTable[0]->drawable.id;
+-      x.u.selectionRequest.selection = XA_PRIMARY;
++/* My changes */
++/*
++      x.u.selectionRequest.selection =  XA_PRIMARY; 
++*/
++      x.u.selectionRequest.selection = clientCLIPBOARD;  
++/* My changes */
+       x.u.selectionRequest.target = XA_STRING;
+       x.u.selectionRequest.property = clientCutProperty;
+-
+       (void) TryClientEvents (lastOwnerClientPtr, &x, 1,
+                                NoEventMask, NoEventMask /* CantBeFiltered */,
+                                NullGrab);
+       SetCriticalOutputPending();
++
+    }
+ }
+ 
+diff --git a/nxwin/programs/Xserver/hw/nxwin/winmultiwindowwm.c b/nxwin/programs/Xserver/hw/nxwin/winmultiwindowwm.c
+index e8149c7..a09d227 100644
+--- a/nxwin/programs/Xserver/hw/nxwin/winmultiwindowwm.c
++++ b/nxwin/programs/Xserver/hw/nxwin/winmultiwindowwm.c
+@@ -408,7 +408,9 @@ privateGetWindowName(void *pWin, char **ppName, Atom atom)
+    if( (retValue = GetWindowProperty(pWin, atom, 0L, 0L, False,
+                         AnyPropertyType, &retType, &retFormat, 
+                         &nItems, &bytesLeft, (unsigned char**)NULL)) != Success){
+-       ErrorF("GetWindowName: GetWindowProperty failed\n");
++#ifdef NXWIN_MULTIWINDOW_DEBUG
++       ErrorF("GetWindowName: GetWindowProperty /length/ failed\n");
++#endif
+        return retValue; 
+    }
+    origLen = bytesLeft;
+@@ -417,7 +419,9 @@ privateGetWindowName(void *pWin, char **ppName, Atom atom)
+    if( (retValue = GetWindowProperty(pWin, atom, 0L, bytesLeft, False,
+                         AnyPropertyType, &retType, &retFormat, 
+                         &nItems, &bytesLeft, (unsigned char**)ppName)) != Success){
+-       ErrorF("GetWindowName: GetWindowProperty failed\n");
++#ifdef NXWIN_MULTIWINDOW_DEBUG
++       ErrorF("GetWindowName: GetWindowProperty /value/ failed\n");
++#endif
+        free(strName);
+        return retValue;
+    }
+@@ -448,8 +452,16 @@ GetWindowName (void *pWin, char **ppName)
+ 
+    /* TRY with ATOM WM_NAME */
+    reqAtom = XA_WM_NAME;
+-   if( privateGetWindowName(pWin, ppName, reqAtom) == Success )
++   if( privateGetWindowName(pWin, ppName, reqAtom) == Success ) 
++/* ------------------ My crooked additions ------------------------------------------- */
++/* sometimes *ppName is present and zero length - anyway need to try second atom */
++   { if (strlen(*ppName) > 0)
++     {
+       return;
++     }
++     else free(*ppName);
++   }
++/* ------------------ My crooked additions ------------------------------------------- */
+    reqAtom = MakeAtom(atom_NET_WM_NAME, sizeof(atom_NET_WM_NAME) - 1, True);
+    privateGetWindowName(pWin, ppName, reqAtom);
+ }
+@@ -537,6 +549,98 @@ winMultStackWindow(pWin, val)
+     return 1;
+ }
+ 
++/* ------------------ My crooked additions ------------------------------------------- */
++wchar_t * utf8_to_unicode(char *utf8_string)
++{
++	int err;
++	wchar_t * res;
++	int res_len = 1000;
++	res = malloc(res_len);
++	err = MultiByteToWideChar(
++		CP_UTF8,		// Code page
++		0,			// No flags
++		utf8_string,		// Multibyte characters string
++		-1,			// The string is NULL terminated
++		res,			// Output buffer
++		res_len			// buffer size
++		);
++	if (err == 0)
++	{
++//		printf("Failed to convert to unicode\n");
++		free(res);
++		return NULL;
++	}
++	return res;
++}
++
++void 
++winSetWinName (WMMsgNodePtr pNode)
++{
++  {
++    /*XWindowAttributes		attr;*/
++    char			*pszName;
++    wchar_t 			*pszWName;
++#if 0
++    XWMHints			*pHints;
++#endif
++    /* Get the window attributes */
++    /*
++    XGetWindowAttributes (pWMInfo->pDisplay,
++			  pNode->msg.iWindow,
++			  &attr);
++    */
++    if (!winGetOverrideRedirectPriv(pNode->msg.pWin))
++     {
++#ifdef NXWIN_MULTIWINDOW
++#ifdef NXWIN_MULTIWINDOW_DEBUG
++	if(nxwinMultiwindow)
++             ErrorF("winMultiWindowWMProc: LOCK before GetWindowName\n");
++	else
++	     ErrorF("winMultiWindowWMProc: before GetWindowName\n");	
++#endif
++             if(nxwinMultiwindow && pthread_mutex_lock(&nxwinMultiwindowMutex))
++                     ErrorF("winMultiWindowWMProc: pthread_mutex_lock failed\n");
++#endif
++	/* Set the Windows window name */
++	GetWindowName(pNode->msg.pWin, &pszName);
++#ifdef NXWIN_MULTIWINDOW
++#ifdef NXWIN_MULTIWINDOW_DEBUG
++	if(nxwinMultiwindow)
++             ErrorF("winMultiWindowWMProc: UNLOCK after GetWindowName\n");
++	else
++	     ErrorF("winMultiWindowWMProc: after GetWindowName\n");
++#endif
++        if(nxwinMultiwindow && pthread_mutex_unlock(&nxwinMultiwindowMutex) != 0)
++             ErrorF("winMultiWindowWMProc: !!! pthread_mutex_unlock failed\n");
++#endif
++	if(!pszName){
++	     ErrorF("winMultiWindowWMProc: GetWindowName failed\n");	
++	     return;
++		}
++
++#ifdef NXWIN_MULTIWINDOW_DEBUG
++	ErrorF("winMultiWindowWMProc!!!: Window title before converting - %s\n",pszName);
++#endif
++/* if you know, how to get system charset from server, tell me about them */
++	pszWName = utf8_to_unicode(pszName);
++#ifdef NXWIN_MULTIWINDOW_DEBUG
++	ErrorF("winMultiWindowWMProc!!!: Window title after converting  - %s\n",pszWName);
++#endif
++	SetWindowTextW (pNode->msg.hwndWindow, pszWName); 
++//	SetWindowText (pNode->msg.hwndWindow, pszName);
++
++#ifdef NXWIN_MULTIWINDOW_DEBUG
++	ErrorF("winMultiWindowWMProc: Insert here LoadIcon\n");
++#endif
++	free (pszName);
++        if (pszWName != NULL)
++		free (pszWName);
++      }
++  }
++}
++/* -----------End of my crooked additions ------------------------------------------- */
++
++
+ static void *
+ winMultiWindowWMProc (void *pArg)
+ {
+@@ -599,6 +703,10 @@ winMultiWindowWMProc (void *pArg)
+      /*
+      XRaiseWindow (pWMInfo->pDisplay, pNode->msg.iWindow);
+      */
++
++/* ------------------ My crooked additions ------------------------------------------- */
++	  winSetWinName (pNode);
++/* -----------End of my crooked additions ------------------------------------------- */
+      break;
+ 
+    case WM_WM_LOWER:
+@@ -617,54 +725,9 @@ winMultiWindowWMProc (void *pArg)
+ #if CYGMULTIWINDOW_DEBUG
+      ErrorF ("\tWM_WM_MAP\n");
+ #endif
+-	  {
+-	    /*XWindowAttributes		attr;*/
+-	    char			*pszName;
+-#if 0
+-	    XWMHints			*pHints;
+-#endif
+-
+-	    /* Get the window attributes */
+-	    /*
+-	    XGetWindowAttributes (pWMInfo->pDisplay,
+-				  pNode->msg.iWindow,
+-				  &attr);
+-             */
+-	    if (!winGetOverrideRedirectPriv(pNode->msg.pWin))
+-	      {
+-#ifdef NXWIN_MULTIWINDOW
+-#ifdef NXWIN_MULTIWINDOW_DEBUG
+-		if(nxwinMultiwindow)
+-	             ErrorF("winMultiWindowWMProc: LOCK before GetWindowName\n");
+-		else
+-		     ErrorF("winMultiWindowWMProc: before GetWindowName\n");	
+-#endif
+-                if(nxwinMultiwindow && pthread_mutex_lock(&nxwinMultiwindowMutex))
+-	                     ErrorF("winMultiWindowWMProc: pthread_mutex_lock failed\n");
+-#endif
+-		/* Set the Windows window name */
+-		GetWindowName(pNode->msg.pWin, &pszName);
+-#ifdef NXWIN_MULTIWINDOW
+-#ifdef NXWIN_MULTIWINDOW_DEBUG
+-		if(nxwinMultiwindow)
+-	             ErrorF("winMultiWindowWMProc: UNLOCK after GetWindowName\n");
+-		else
+-		     ErrorF("winMultiWindowWMProc: after GetWindowName\n");
+-#endif
+-                if(nxwinMultiwindow && pthread_mutex_unlock(&nxwinMultiwindowMutex) != 0)
+-	             ErrorF("winMultiWindowWMProc: !!! pthread_mutex_unlock failed\n");
+-#endif
+-		if(!pszName){
+-		     ErrorF("winMultiWindowWMProc: GetWindowName failed\n");	
+-		     break;
+-		}
+-		SetWindowText (pNode->msg.hwndWindow, pszName);
+-#ifdef NXWIN_MULTIWINDOW_DEBUG
+-		ErrorF("winMultiWindowWMProc: Insert here LoadIcon\n");
+-#endif
+-		free (pszName);
+-	      }
+-	  }
++/* ------------------ My crooked additions ------------------------------------------- */
++	  winSetWinName (pNode);
++/* -----------End of my crooked additions ------------------------------------------- */
+      break;
+ 
+    case WM_WM_UNMAP:
+@@ -904,6 +967,9 @@ winMultiWindowWMProc (void *pArg)
+      if(nxwinMultiwindow && pthread_mutex_unlock(&nxwinMultiwindowMutex))
+                ErrorF("!!! pthread_mutex_unlock failed\n");
+ #endif
++/* ------------------ My crooked additions ------------------------------------------- */
++	  winSetWinName (pNode);
++/* -----------End of my crooked additions ------------------------------------------- */
+      break;
+ #if 0
+    case WM_WM_X_EVENT:

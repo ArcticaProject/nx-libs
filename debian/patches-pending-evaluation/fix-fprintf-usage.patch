@@ -1,0 +1,31 @@
+From: Vitaly Lipatov <lav@etersoft.ru>
+Date: Wed, 3 Jun 2009 00:49:01 +0000 (+0400)
+Subject: fix fprintf using
+X-Git-Tag: 3.3.0-alt16.1~1^2
+X-Git-Url: http://git.etersoft.ru?p=rx%2Fnx.git;a=commitdiff_plain;h=f68888aab5c92e99f398f5fe7407edf09e2c86ce
+
+ fix fprintf using
+
++--- a/nx-X11/config/imake/imake.c
+++++ b/nx-X11/config/imake/imake.c
++@@ -1015,7 +1015,7 @@ get_libc_version(FILE *inFile)
++     abort ();
++ 
++   while (fgets (command, len, fp))
++-    fprintf (inFile, command);
+++    fwrite (command, strlen(command), 1, inFile);
++ 
++   len = pclose (fp);
++   remove (aout);
++
++--- a/nx-X11/extras/rman/rman.c.orig	2009-06-03 04:29:39 +0400
+++++ b/nx-X11/extras/rman/rman.c	2009-06-03 05:19:07 +0400
++@@ -1432,7 +1432,7 @@ HTML(enum command cmd)
++ 		break;
++ 	   case BEGINSECTION:	break;
++ 	   case ENDSECTION:
++-		if (sectheadid==NAME && message!=NULL) printf(message);
+++		if (sectheadid==NAME && message!=NULL) printf("%s",message);
++ 		break;
++ 	   case BEGINSUBSECTION:	break;
++ 	   case ENDSUBSECTION:	break;
