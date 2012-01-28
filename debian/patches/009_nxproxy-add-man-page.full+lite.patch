@@ -18,13 +18,13 @@
 +\fBnxproxy\fR  <options>
 +
 +.SH DESCRIPTION
-+\fBnxproxy\fR is a tool that allows to tunnel X sessions through
++\fBnxproxy\fR is a tool that allows one to tunnel X sessions through
 +the NX compression libraries. \fBnxproxy\fR is a backend application
 +utilized by the X2goClient GUI and some other NX/X2go clients.
 +.PP
 +.SH OPTIONS
-+For an insight in \fBnxproxy\fR options use \fBnxproxy --help\fR on the command line.
++For an insight in \fBnxproxy\fR options use \fBnxproxy \-\-help\fR on the command line.
 +.PP
 +.SH AUTHOR
-+This manual has been written by Mike Gabriel <mike.gabriel@das-netzwerkteam.de> for the X2go project
++This manual has been written by Mike Gabriel <mike.gabriel@das\-netzwerkteam.de> for the X2go project
 +(http://www.x2go.org).
