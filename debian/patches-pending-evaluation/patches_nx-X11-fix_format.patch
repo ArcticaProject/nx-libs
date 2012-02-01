@@ -1,0 +1,126 @@
+diff --git a/nx/lib/xtrans/Xtransint.h b/nx/lib/xtrans/Xtransint.h
+index 88d2230..8d3d1cb 100644
+--- a/nx/lib/xtrans/Xtransint.h
++++ b/nx/lib/xtrans/Xtransint.h
+@@ -443,7 +443,7 @@ static int trans_mkdir (
+ 			int hack= 0, saveerrno=errno; \
+                         struct timeval tp;\
+                         gettimeofday(&tp,0); \
+-			ErrorF(__xtransname); \
++			ErrorF("%s", __xtransname); \
+ 			ErrorF(x+hack,a,b,c); \
+                         ErrorF("timestamp (ms): %d\n",tp.tv_sec*1000+tp.tv_usec/1000); \
+ 			errno=saveerrno; \
+@@ -453,7 +453,7 @@ static int trans_mkdir (
+ 			int hack= 0, saveerrno=errno; \
+                         struct timeval tp;\
+                         gettimeofday(&tp,0); \
+-			fprintf(stderr, __xtransname); fflush(stderr); \
++			fprintf(stderr, "%s", __xtransname); fflush(stderr); \
+ 			fprintf(stderr, x+hack,a,b,c); fflush(stderr); \
+                         fprintf(stderr, "timestamp (ms): %d\n",tp.tv_sec*1000+tp.tv_usec/1000); \
+                         fflush(stderr); \
+@@ -465,14 +465,14 @@ static int trans_mkdir (
+ /* Use ErrorF() for the X server */
+ #define PRMSG(lvl,x,a,b,c)	if (lvl <= XTRANSDEBUG){ \
+ 			int hack= 0, saveerrno=errno; \
+-			ErrorF(__xtransname); \
++			ErrorF("%s", __xtransname); \
+ 			ErrorF(x+hack,a,b,c); \
+ 			errno=saveerrno; \
+ 			} else ((void)0)
+ #else
+ #define PRMSG(lvl,x,a,b,c)	if (lvl <= XTRANSDEBUG){ \
+ 			int hack= 0, saveerrno=errno; \
+-			fprintf(stderr, __xtransname); fflush(stderr); \
++			fprintf(stderr, "%s", __xtransname); fflush(stderr); \
+ 			fprintf(stderr, x+hack,a,b,c); fflush(stderr); \
+ 			errno=saveerrno; \
+ 			} else ((void)0)
+diff --git a/nx/lib/Xaw/DisplayList.c b/nx/lib/Xaw/DisplayList.c
+index e43621b..5b2dfe6 100644
+--- a/nx/lib/Xaw/DisplayList.c
++++ b/nx/lib/Xaw/DisplayList.c
+@@ -293,7 +293,7 @@ _XawDisplayList *XawCreateDisplayList(String string, Screen *screen,
+ 	}
+       if (fp)
+ 	{
+-	  XmuSnprintf(cname, fp - fname + 1, fname);
++	  XmuSnprintf(cname, fp - fname + 1, "%s", fname);
+ 	  memmove(fname, fp + 1, strlen(fp));
+ 	  lc = cname[0] ? XawGetDisplayListClass(cname) : xlibc;
+ 	  if (!lc)
+diff --git a/nx/programs/Xserver/os/log.c b/nx/programs/Xserver/os/log.c
+index d3aef03..c8d0d5b 100644
+--- a/nx/programs/Xserver/os/log.c
++++ b/nx/programs/Xserver/os/log.c
+@@ -692,9 +692,9 @@ Error(char *str)
+ 	    return;
+ 	sprintf(err, "%s: ", str);
+ 	strcat(err, strerror(saveErrno));
+-	LogWrite(-1, err);
++	LogWrite(-1, "%s", err);
+     } else
+-	LogWrite(-1, strerror(saveErrno));
++	LogWrite(-1, "%s", strerror(saveErrno));
+ }
+ 
+ void
+diff --git a/nx/programs/Xserver/GL/glx/glximports.c b/nx/programs/Xserver/GL/glx/glximports.c
+index fae2346..6e1f0db 100644
+--- a/nx/programs/Xserver/GL/glx/glximports.c
++++ b/nx/programs/Xserver/GL/glx/glximports.c
+@@ -110,12 +110,12 @@ void *__glXImpRealloc(__GLcontext *gc, void *addr, size_t newSize)
+ 
+ void __glXImpWarning(__GLcontext *gc, char *msg)
+ {
+-    ErrorF((char *)msg);
++    ErrorF("%s", (char *)msg);
+ }
+ 
+ void __glXImpFatal(__GLcontext *gc, char *msg)
+ {
+-    ErrorF((char *)msg);
++    ErrorF("%s", (char *)msg);
+     __glXAbort();
+ }
+ 
+diff --git a/nx-X11/programs/Xserver/hw/nxagent/Init.c b/nx-X11/programs/Xserver/hw/nxagent/Init.c
+index 64b6583..0e0f9e1 100644
+--- a/nx-X11/programs/Xserver/hw/nxagent/Init.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/Init.c
+@@ -454,7 +454,7 @@ void OsVendorVErrorFFunction(const char *f, va_list args)
+ 
+     nxagentStartRedirectToClientsLog();
+ 
+-    fprintf(stderr, buffer);
++    fprintf(stderr, "%s", buffer);
+ 
+     nxagentEndRedirectToClientsLog();
+   }
+diff --git a/nx-X11/programs/Xserver/hw/nxagent/Error.c b/nx-X11/programs/Xserver/hw/nxagent/Error.c
+index 963cfa2..2f778b7 100644
+--- a/nx-X11/programs/Xserver/hw/nxagent/Error.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/Error.c
+@@ -232,7 +232,7 @@ static int nxagentPrintError(dpy, event, fp)
+ 
+ int nxagentExitHandler(const char *message)
+ {
+-  FatalError(message);
++  FatalError("%s", message);
+ 
+   return 0;
+ }
+diff --git a/nx-X11/programs/nxauth/process.c b/nx-X11/programs/nxauth/process.c
+index 90fb23f..b494286 100644
+--- a/nxauth/programs/nxauth/process.c
++++ b/nxauth/programs/nxauth/process.c
+@@ -974,7 +974,7 @@ fprintfhex(register FILE *fp, int len, char *cp)
+     char *hex;
+ 
+     hex = bintohex(len, cp);
+-    fprintf(fp, hex);
++    fprintf(fp, "%s", hex);
+     free(hex);
+ }
+ 

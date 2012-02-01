@@ -1,7 +1,7 @@
 nx-libs (2:3.5.0.9-0) UNRELEASED; urgency=low
 
   [ Mike Gabriel ]
-  * Continue development...
+  * Providing pending patches in source tree.
 
   [ Oleksandr Shneyder ]
   * Update patch: 202_nx-x11_enable-xinerama.full.patch, disable Xinerama

@@ -1,0 +1,23 @@
+Index: nxcomp-3.2.0-7/Loop.cpp
+===================================================================
+--- nxcomp-3.2.0-7.orig/Loop.cpp	2008-09-23 19:20:51.000000000 +0200
++++ nxcomp-3.2.0-7/Loop.cpp	2008-09-23 19:20:21.000000000 +0200
+@@ -7329,6 +7329,18 @@
+           << logofs_flush;
+   #endif
+ 
++  // Henning Heinold
++  // fix up error from libnxcl where bye can be in front of NXPROXY
++  if (strncmp(options, "bye", strlen("bye")) == 0)
++  {
++	  int bye_length = strlen("bye");
++	  char *moo = &options[bye_length+1];
++
++	  memmove(options, moo, DEFAULT_REMOTE_OPTIONS_LENGTH-bye_length-1);
++	  *logofs << "Loop: Cleanded the bye in options, options now looks '"
++		              << options << "'.\n" << logofs_flush;
++  }
++
+   if (strncmp(options, "NXPROXY-", strlen("NXPROXY-")) != 0)
+   {
+     #ifdef PANIC
