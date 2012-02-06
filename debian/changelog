@@ -1,6 +1,7 @@
 nx-libs (2:3.5.0.10) UNRELEASED; urgency=low
 
-  * Continue development...
+  * Add patch: 006_nxcomp_libpng15.full+lite.patch, fix build against
+    libpng 1.5.x.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 01 Feb 2012 14:48:31 +0100
 
