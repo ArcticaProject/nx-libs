@@ -1,6 +1,7 @@
 nx-libs (2:3.5.0.11-0) UNRELEASED; urgency=low
 
-  * Use ,,make -C'' in main Makefile for calling Makefiles in subdirectories.
+  * Use ,,$(MAKE) -C'' in main Makefile for calling Makefiles in subdirectories,
+    make build stanza work for nx-libs-full and nx-libs-lite.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Tue, 07 Feb 2012 13:48:19 +0100
 

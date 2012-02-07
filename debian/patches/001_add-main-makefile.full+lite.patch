@@ -5,7 +5,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 Last-Update: 2011-12-31
 --- /dev/null
 +++ b/Makefile
-@@ -0,0 +1,42 @@
+@@ -0,0 +1,46 @@
 +#!/usr/bin/make -f
 +
 +all: build
@@ -13,38 +13,42 @@ Last-Update: 2011-12-31
 +build: build-arch build-indep
 +
 +clean:
-+	-make -C nx-X11 $@
-+	-make -C nxcomp $@
-+	-make -C nxcompext $@
-+	-make -C nxcompshad $@
-+	-make -C nxproxy $@
++	if test -d nx-X11; then $(MAKE) -C nx-X11 $@; fi
++	if test -d nxcomp; then $(MAKE) -C nxcomp $@; fi
++	if test -d nxcompext; then $(MAKE) -C nxcompext $@; fi
++	if test -d nxcompshad; then $(MAKE) -C nxcompshad $@; fi
++	if test -d nxproxy; then $(MAKE) -C nxproxy $@; fi
 +
 +distclean:
-+	-make -C nx-X11 $@
-+	-make -C nxcomp $@
-+	-make -C nxcompext $@
-+	-make -C nxcompshad $@
-+	-make -C nxproxy $@
++	if test -d nx-X11; then $(MAKE) -C nx-X11 $@; fi
++	if test -d nxcomp; then $(MAKE) -C nxcomp $@; fi
++	if test -d nxcompext; then $(MAKE) -C nxcompext $@; fi
++	if test -d nxcompshad; then $(MAKE) -C nxcompshad $@; fi
++	if test -d nxproxy; then $(MAKE) -C nxproxy $@; fi
 +
 +build-arch:
-+	cd nxcomp && autoconf && ./configure && make
-+	-cd nxcompext && autoconf && ./configure && make
-+	-cd nxcompshad && autoconf && ./configure && make
-+	-cd nx-X11 && make World && ./configure && make
-+	cd nxproxy && autoconf && ./configure && make
++	if test -d nx-X11; then \
++	    if test -d nxcomp; then cd nxcomp && autoconf; cd ..; fi; \
++	    if test -d nxcompext; then cd nxcompext && autoconf; cd ..; fi; \
++	    if test -d nxcompshad; then cd nxcompshad && autoconf; cd ..; fi; \
++	    cd nx-X11 && make World && cd ..; \
++	else \
++	    if test -d nxcomp; then cd nxcomp && autoconf && ./configure && make; cd ..; fi; \
++	fi
++	if test -d nxproxy; then cd nxproxy && autoconf && ./configure && make; cd ..; fi
 +
 +build-indep:
 +
 +install:
-+	-make -C nx-X11 $@
-+	-make -C nxcomp $@
-+	-make -C nxcompext $@
-+	-make -C nxcompshad $@
-+	-make -C nxproxy $@
++	if test -d nx-X11; then $(MAKE) -C nx-X11 $@; fi
++	if test -d nxcomp; then $(MAKE) -C nxcomp $@; fi
++	if test -d nxcompext; then $(MAKE) -C nxcompext $@; fi
++	if test -d nxcompshad; then $(MAKE) -C nxcompshad $@; fi
++	if test -d nxproxy; then $(MAKE) -C nxproxy $@; fi
 +
 +uninstall:
-+	-make -C nx-X11 $@
-+	-make -C nxcomp $@
-+	-make -C nxcompext $@
-+	-make -C nxcompshad $@
-+	-make -C nxproxy $@
++	if test -d nx-X11; then $(MAKE) -C nx-X11 $@; fi
++	if test -d nxcomp; then $(MAKE) -C nxcomp $@; fi
++	if test -d nxcompext; then $(MAKE) -C nxcompext $@; fi
++	if test -d nxcompshad; then $(MAKE) -C nxcompshad $@; fi
++	if test -d nxproxy; then $(MAKE) -C nxproxy $@; fi
