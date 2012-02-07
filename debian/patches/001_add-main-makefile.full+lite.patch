@@ -5,7 +5,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 Last-Update: 2011-12-31
 --- /dev/null
 +++ b/Makefile
-@@ -0,0 +1,43 @@
+@@ -0,0 +1,42 @@
 +#!/usr/bin/make -f
 +
 +all: build
@@ -13,39 +13,38 @@ Last-Update: 2011-12-31
 +build: build-arch build-indep
 +
 +clean:
-+	test -d nx-X11 && cd nx-X11 && test -f Makefile && make $@ || true
-+	test -d nxcomp && cd nxcomp && test -f Makefile && make $@ || true
-+	test -d nxcompext && cd nxcompext && test -f Makefile && make $@ || true
-+	test -d nxcompshad && cd nxcompshad && test -f Makefile && make $@ || true
-+	test -d nxproxy && cd nxproxy && test -f Makefile && make $@ || true
-+
++	-make -C nx-X11 $@
++	-make -C nxcomp $@
++	-make -C nxcompext $@
++	-make -C nxcompshad $@
++	-make -C nxproxy $@
 +
 +distclean:
-+	test -d nx-X11 && cd nx-X11 && test -f Makefile && make $@ || true
-+	test -d nxcomp && cd nxcomp && test -f Makefile && make $@ || true
-+	test -d nxcompext && cd nxcompext && test -f Makefile && make $@ || true
-+	test -d nxcompshad && cd nxcompshad && test -f Makefile && make $@ || true
-+	test -d nxproxy && cd nxproxy && test -f Makefile && make $@ || true
++	-make -C nx-X11 $@
++	-make -C nxcomp $@
++	-make -C nxcompext $@
++	-make -C nxcompshad $@
++	-make -C nxproxy $@
 +
 +build-arch:
-+	test -d nxcomp && cd nxcomp && autoconf
-+	test -d nxcompext && cd nxcompext && autoconf
-+	test -d nxcompshad && cd nxcompshad && autoconf
-+	test -d nx-X11 && cd nx-X11 && make World
-+	test -d nxproxy && cd nxproxy && autoconf && ./configure && make
++	cd nxcomp && autoconf && ./configure && make
++	-cd nxcompext && autoconf && ./configure && make
++	-cd nxcompshad && autoconf && ./configure && make
++	-cd nx-X11 && make World && ./configure && make
++	cd nxproxy && autoconf && ./configure && make
 +
 +build-indep:
 +
 +install:
-+	test -d nxcomp && cd nxcomp && make install
-+	test -d nxcompext && cd nxcompext && make install
-+	test -d nxcompshad && cd nxcompshad && make install
-+	test -d nx-X11 && cd nx-X11 && make install
-+	test -d nxproxy && cd nxproxy && make install
++	-make -C nx-X11 $@
++	-make -C nxcomp $@
++	-make -C nxcompext $@
++	-make -C nxcompshad $@
++	-make -C nxproxy $@
 +
 +uninstall:
-+	test -d nxcomp && cd nxcomp && make uninstall
-+	test -d nxcompext && cd nxcompext && make uninstall
-+	test -d nxcompshad && cd nxcompshad && make uninstall
-+	test -d nx-X11 && cd nx-X11 && make uninstall
-+	test -d nxproxy && cd nxproxy && make uninstall
++	-make -C nx-X11 $@
++	-make -C nxcomp $@
++	-make -C nxcompext $@
++	-make -C nxcompshad $@
++	-make -C nxproxy $@
