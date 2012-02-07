@@ -1,11 +1,11 @@
-nx-libs (2:3.5.0.10-0) UNRELEASED; urgency=low
+nx-libs (2:3.5.0.10-0) unstable; urgency=low
 
   * Add patch: 006_nxcomp_libpng15.full+lite.patch, fix build against
     libpng 1.5.x.
   * Reintroduce patch: 008_nxcomp_sa_restorer.full+lite.patch, now in a
     version found on etersoft.ru, fixes build on ia64 architecture.
 
- -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 01 Feb 2012 14:48:31 +0100
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Tue, 07 Feb 2012 13:43:50 +0100
 
 nx-libs (2:3.5.0.9-0) unstable; urgency=low
 
