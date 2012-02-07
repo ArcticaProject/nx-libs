@@ -1,4 +1,4 @@
-nx-libs (2:3.5.0.10) UNRELEASED; urgency=low
+nx-libs (2:3.5.0.10-0) UNRELEASED; urgency=low
 
   * Add patch: 006_nxcomp_libpng15.full+lite.patch, fix build against
     libpng 1.5.x.
