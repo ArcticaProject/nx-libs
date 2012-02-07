@@ -5,10 +5,22 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 Last-Update: 2011-12-31
 --- /dev/null
 +++ b/Makefile
-@@ -0,0 +1,31 @@
+@@ -0,0 +1,34 @@
 +#!/usr/bin/make -f
 +
++%:
++	$(MAKE) -C nxcomp $@
++	$(MAKE) -C nxproxy $@
++	if test -d nx-X11; then \
++	    $(MAKE) -C nxcompext $@; \
++	    $(MAKE) -C nxcompshad; \
++	    $(MAKE) -C nx-X11 $@; \
++	fi
++
 +all: build
++
++test:
++	echo "No testing for NX (redistributed)"
 +
 +build-lite:
 +	cd nxcomp && autoconf && ./configure && $(MAKE)
@@ -27,13 +39,4 @@ Last-Update: 2011-12-31
 +	    $(MAKE) build-lite; \
 +	else \
 +	    $(MAKE) build-full; \
-+	fi
-+
-+%:
-+	$(MAKE) -C nxcomp $@
-+	$(MAKE) -C nxproxy $@
-+	if test -d nx-X11; then \
-+	    $(MAKE) -C nxcompext $@; \
-+	    $(MAKE) -C nxcompshad; \
-+	    $(MAKE) -C nx-X11 $@; \
 +	fi
