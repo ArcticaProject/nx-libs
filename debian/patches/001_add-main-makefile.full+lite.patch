@@ -13,42 +13,42 @@ Last-Update: 2011-12-31
 +build: build-arch build-indep
 +
 +clean:
++	$(MAKE) -C nxcomp $@
++	$(MAKE) -C nxproxy $@
 +	if test -d nx-X11; then $(MAKE) -C nx-X11 $@; fi
-+	if test -d nxcomp; then $(MAKE) -C nxcomp $@; fi
 +	if test -d nxcompext; then $(MAKE) -C nxcompext $@; fi
 +	if test -d nxcompshad; then $(MAKE) -C nxcompshad $@; fi
-+	if test -d nxproxy; then $(MAKE) -C nxproxy $@; fi
 +
 +distclean:
++	$(MAKE) -C nxcomp $@
++	$(MAKE) -C nxproxy $@
 +	if test -d nx-X11; then $(MAKE) -C nx-X11 $@; fi
-+	if test -d nxcomp; then $(MAKE) -C nxcomp $@; fi
 +	if test -d nxcompext; then $(MAKE) -C nxcompext $@; fi
 +	if test -d nxcompshad; then $(MAKE) -C nxcompshad $@; fi
-+	if test -d nxproxy; then $(MAKE) -C nxproxy $@; fi
 +
 +build-arch:
 +	if test -d nx-X11; then \
-+	    if test -d nxcomp; then cd nxcomp && autoconf; cd ..; fi; \
-+	    if test -d nxcompext; then cd nxcompext && autoconf; cd ..; fi; \
-+	    if test -d nxcompshad; then cd nxcompshad && autoconf; cd ..; fi; \
++	    cd nxcomp && autoconf; cd ..; \
++	    cd nxcompext && autoconf; cd ..; \
++	    cd nxcompshad && autoconf; cd ..; \
 +	    cd nx-X11 && make World && cd ..; \
 +	else \
-+	    if test -d nxcomp; then cd nxcomp && autoconf && ./configure && make; cd ..; fi; \
++	    cd nxcomp && autoconf && ./configure && make; cd ..; \
 +	fi
-+	if test -d nxproxy; then cd nxproxy && autoconf && ./configure && make; cd ..; fi
++	cd nxproxy && autoconf && ./configure && make; cd ..
 +
 +build-indep:
 +
 +install:
++	$(MAKE) -C nxcomp $@
++	$(MAKE) -C nxproxy $@
 +	if test -d nx-X11; then $(MAKE) -C nx-X11 $@; fi
-+	if test -d nxcomp; then $(MAKE) -C nxcomp $@; fi
 +	if test -d nxcompext; then $(MAKE) -C nxcompext $@; fi
 +	if test -d nxcompshad; then $(MAKE) -C nxcompshad $@; fi
-+	if test -d nxproxy; then $(MAKE) -C nxproxy $@; fi
 +
 +uninstall:
++	$(MAKE) -C nxcomp $@
++	$(MAKE) -C nxproxy $@
 +	if test -d nx-X11; then $(MAKE) -C nx-X11 $@; fi
-+	if test -d nxcomp; then $(MAKE) -C nxcomp $@; fi
 +	if test -d nxcompext; then $(MAKE) -C nxcompext $@; fi
 +	if test -d nxcompshad; then $(MAKE) -C nxcompshad $@; fi
-+	if test -d nxproxy; then $(MAKE) -C nxproxy $@; fi
