@@ -1,0 +1,46 @@
+Description: sa_restorer vs. memset
+ Use memset instead of setting sa_restorer to NULL.
+Forwarded: pending
+Author: Alexander Morozov
+Last-Update: 2012-02-07
+--- a/nxcomp/Loop.cpp
++++ b/nxcomp/Loop.cpp
+@@ -5884,20 +5884,9 @@
+ 
+   struct sigaction newAction;
+ 
+-  newAction.sa_handler = HandleSignal;
+-
+-  //
+-  // This field doesn't exist on most OSes except
+-  // Linux. We keep setting the field to NULL to
+-  // avoid side-effects in the case the field is
+-  // a value return.
+-  //
++  memset(&newAction, 0, sizeof(newAction));
+ 
+-  #if defined(__linux__)
+-
+-  newAction.sa_restorer = NULL;
+-
+-  #endif
++  newAction.sa_handler = HandleSignal;
+ 
+   sigemptyset(&(newAction.sa_mask));
+ 
+@@ -6509,13 +6498,9 @@
+ 
+   struct sigaction action;
+ 
+-  action.sa_handler = HandleTimer;
+-
+-  #if defined(__linux__)
++  memset(&action, 0, sizeof(action));
+ 
+-  action.sa_restorer = NULL;
+-
+-  #endif
++  action.sa_handler = HandleTimer;
+ 
+   sigemptyset(&action.sa_mask);
+ 

@@ -6,6 +6,7 @@
 005_nxcomp_gcc43.full+lite.patch
 006_nxcomp_libpng15.full+lite.patch
 007_nxcompshad_clean-gch-files.full.patch
+008_nxcomp_sa_restorer.full+lite.patch
 009_nxproxy-add-man-page.full+lite.patch
 009_nxagent-add-man-page.full.patch
 010_nxauth_fix-binary-name-in-man-page.full.patch
