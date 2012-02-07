@@ -5,50 +5,35 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 Last-Update: 2011-12-31
 --- /dev/null
 +++ b/Makefile
-@@ -0,0 +1,46 @@
+@@ -0,0 +1,31 @@
 +#!/usr/bin/make -f
 +
 +all: build
 +
-+build: build-arch build-indep
++build-lite:
++	cd nxcomp && autoconf && ./configure && $(MAKE)
++	cd nxproxy && autoconf && ./configure && $(MAKE)
 +
-+clean:
-+	$(MAKE) -C nxcomp $@
-+	$(MAKE) -C nxproxy $@
-+	if test -d nx-X11; then $(MAKE) -C nx-X11 $@; fi
-+	if test -d nxcompext; then $(MAKE) -C nxcompext $@; fi
-+	if test -d nxcompshad; then $(MAKE) -C nxcompshad $@; fi
++build-full:
++# in the full case, we rely on "magic" in the nx-X11 imake-based makefiles...
++	cd nxcomp && autoconf && ./configure
++	cd nxcompext && autoconf
++	cd nxcompshad && autoconf
++	cd nx-X11 && $(MAKE) World
++	cd nxproxy && autoconf && ./configure && $(MAKE)
 +
-+distclean:
-+	$(MAKE) -C nxcomp $@
-+	$(MAKE) -C nxproxy $@
-+	if test -d nx-X11; then $(MAKE) -C nx-X11 $@; fi
-+	if test -d nxcompext; then $(MAKE) -C nxcompext $@; fi
-+	if test -d nxcompshad; then $(MAKE) -C nxcompshad $@; fi
-+
-+build-arch:
-+	if test -d nx-X11; then \
-+	    cd nxcomp && autoconf; cd ..; \
-+	    cd nxcompext && autoconf; cd ..; \
-+	    cd nxcompshad && autoconf; cd ..; \
-+	    cd nx-X11 && make World && cd ..; \
++build:
++	if ! test -d nx-X11; then \
++	    $(MAKE) build-lite; \
 +	else \
-+	    cd nxcomp && autoconf && ./configure && make; cd ..; \
++	    $(MAKE) build-full; \
 +	fi
-+	cd nxproxy && autoconf && ./configure && make; cd ..
 +
-+build-indep:
-+
-+install:
++%:
 +	$(MAKE) -C nxcomp $@
 +	$(MAKE) -C nxproxy $@
-+	if test -d nx-X11; then $(MAKE) -C nx-X11 $@; fi
-+	if test -d nxcompext; then $(MAKE) -C nxcompext $@; fi
-+	if test -d nxcompshad; then $(MAKE) -C nxcompshad $@; fi
-+
-+uninstall:
-+	$(MAKE) -C nxcomp $@
-+	$(MAKE) -C nxproxy $@
-+	if test -d nx-X11; then $(MAKE) -C nx-X11 $@; fi
-+	if test -d nxcompext; then $(MAKE) -C nxcompext $@; fi
-+	if test -d nxcompshad; then $(MAKE) -C nxcompshad $@; fi
++	if test -d nx-X11; then \
++	    $(MAKE) -C nxcompext $@; \
++	    $(MAKE) -C nxcompshad; \
++	    $(MAKE) -C nx-X11 $@; \
++	fi
