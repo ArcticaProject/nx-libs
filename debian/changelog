@@ -2,6 +2,8 @@ nx-libs (2:3.5.0.11-0) UNRELEASED; urgency=low
 
   * Use ,,$(MAKE) -C'' in main Makefile for calling Makefiles in subdirectories,
     make build stanza work for nx-libs-full and nx-libs-lite.
+  * Add patch: 111_nxcomp_byerace.full+lite.patch. Work around race condition in
+    qtnx and libnxcl.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Tue, 07 Feb 2012 13:48:19 +0100
 
