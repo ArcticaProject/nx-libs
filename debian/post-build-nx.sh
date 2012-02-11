@@ -21,9 +21,10 @@ find nx-X11/exports/lib/ | egrep "^.*\.so$" | while read libpath; do
         ln -s $libfile ${libdir//exports/.build-exports}/$(basename $symlink)
     done
 
-    # do not install libXinerama into default path...
-    rm -f ${libdir//exports/.build-exports}/lib/libXinerama*
 
 done
+
+# do not install libXinerama into default path...
+rm -f nx-X11/.build-exports/lib/libXinerama*
 
 exit 0
