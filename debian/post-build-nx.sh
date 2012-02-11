@@ -13,11 +13,17 @@ cp -aL nx-X11/exports/include/* nx-X11/.build-exports/include
 find nx-X11/exports/lib/ | egrep "^.*\.so$" | while read libpath; do
     libfile=$(basename $libpath)
     libdir=$(dirname $libpath)
+
     mkdir -p ${libdir//exports/.build-exports}
     cp -L $libpath ${libdir//exports/.build-exports}
+
     find $libdir/$libfile.* | while read symlink; do
         ln -s $libfile ${libdir//exports/.build-exports}/$(basename $symlink)
     done
+
+    # do not install libXinerama into default path...
+    rm -f ${libdir//exports/.build-exports}/lib/libXinerama*
+
 done
 
 exit 0
