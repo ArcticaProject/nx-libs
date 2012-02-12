@@ -9,7 +9,7 @@ else
 endif
 
 %:
-	LD_LIBRARY_PATH=`pwd`/debian/libnx-x11/usr/lib/nx/X11:$$LD_LIBRARY_PATH dh $@ --with quilt
+	LD_LIBRARY_PATH=`pwd`/debian/libnx-x11/usr/lib/nx/X11:`pwd`/debian/libnx-x11/usr/lib/nx/X11/Xinerama:$$LD_LIBRARY_PATH dh $@ --with quilt
 
 override_dh_auto_clean:
 	rm -Rf nx-X11/.build-exports
