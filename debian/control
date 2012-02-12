@@ -60,6 +60,7 @@ Package: libnx-mesa-extras-dev
 Section: libdevel
 Architecture: any
 Depends:
+ libnx-x11-dev (>= ${source:Version}), libnx-x11-dev (<< ${source:Version}.1~),
  ${misc:Depends}
 Description: Library headers for nx-X11 (extra headers)
  NX is a software suite which implements very efficient
@@ -145,7 +146,6 @@ Description: NX xauth
 Package: libxcomp3
 Architecture: any
 Depends:
- libnx-x11 (>= ${source:Version}), libnx-x11 (<< ${source:Version}.1~),
  ${shlibs:Depends},
  ${misc:Depends}
 Breaks: nxcomp (<=3.5.1)
@@ -161,7 +161,6 @@ Package: libxcomp-dev
 Section: libdevel
 Architecture: any
 Depends:
- libnx-x11 (>= ${source:Version}), libnx-x11 (<< ${source:Version}.1~),
  libxcomp3 (= ${binary:Version}),
  ${misc:Depends}
 Breaks: nxcomp-dev (<=3.5.1)
