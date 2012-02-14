@@ -14,6 +14,8 @@ nx-libs (2:3.5.0.11-0) UNRELEASED; urgency=low
   * Rename patches 030_nx-X11_... and 031_nx-X11_..., the tarball roll script
     currently requires ,,full'' or ,,full+lite'' in the file name.
   * Make patch headers DEP5 compliant (030_nx-X11_... and 031_nx-X11_...).
+  * Update patch: 001_add-main-makefile.full+lite.patch, fix missing $(CONFIGURE)
+    variable.
 
   [ Jan Engelhardt ]
   * Update patch: 001_add-main-makefile.full+lite.patch, allow passing of
