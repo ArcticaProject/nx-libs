@@ -11,6 +11,8 @@ nx-libs (2:3.5.0.11-0) UNRELEASED; urgency=low
   * Enable parallel build for Debian package.
   * Merge honor-ac-dirs.patch from Jan Engelhardt (OpenSUSE) with already existing
     Makefile patches (012_nxcomp..., 013_nxcompext_..., 014_nxcompshad_...).
+  * Rename patches 030_nx-X11_... and 031_nx-X11_..., the tarball roll script
+    currently requires ,,full'' or ,,full+lite'' in the file name.
 
   [ Jan Engelhardt ]
   * Update patch: 001_add-main-makefile.full+lite.patch, allow passing of
