@@ -32,7 +32,7 @@ Last-Update: 2011-12-31
 +	cd nxcompext && autoconf
 +	cd nxcompshad && autoconf
 +	cd nx-X11 && $(MAKE) World
-+	cd nxproxy && autoconf && ./configure && $(MAKE)
++	cd nxproxy && autoconf && (${CONFIGURE}) && $(MAKE)
 +
 +build:
 +	if ! test -d nx-X11; then \
