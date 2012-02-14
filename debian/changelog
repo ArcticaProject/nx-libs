@@ -13,6 +13,7 @@ nx-libs (2:3.5.0.11-0) UNRELEASED; urgency=low
     Makefile patches (012_nxcomp..., 013_nxcompext_..., 014_nxcompshad_...).
   * Rename patches 030_nx-X11_... and 031_nx-X11_..., the tarball roll script
     currently requires ,,full'' or ,,full+lite'' in the file name.
+  * Make patch headers DEP5 compliant (030_nx-X11_... and 031_nx-X11_...).
 
   [ Jan Engelhardt ]
   * Update patch: 001_add-main-makefile.full+lite.patch, allow passing of

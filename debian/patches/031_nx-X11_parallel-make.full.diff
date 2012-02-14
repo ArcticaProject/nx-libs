@@ -1,9 +1,10 @@
-From: Jan Engelhardt <jengelh@medozas.de>
-Date: 2012-01-26 22:29:13.993994227 +0100
-
-Restore ability to build things in parallel.
-(${MAKE} must always appear in the rule directly, and not be
-hidden through expansions of other variables to get this to work.)
+Description: Enable parallel make
+ Restore ability to build things in parallel.
+ (${MAKE} must always appear in the rule directly, and not be
+ hidden through expansions of other variables to get this to work.)
+Forward: pending
+Author: Jan Engelhardt <jengelh@medozas.de>
+Last-Update: 2012-01-26 22:29:13.993994227 +0100
 
 ---
  nx-X11/Makefile                       |   64 +++++++++++++++++-----------------

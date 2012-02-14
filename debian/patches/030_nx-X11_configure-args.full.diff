@@ -1,9 +1,8 @@
-From: Jan Engelhardt <jengelh@medozas.de>
-Date: 2012-01-26 23:30:37.605560191 +0100
-Upstream: pending
-
-Allow to pass in configure args.
-
+Description: Allow to pass in configure args.
+ Allow to pass in configure args.
+Forward: pending
+Author: Jan Engelhardt <jengelh@medozas.de>
+Last-Update: 2012-02-14
 ---
  nx-X11/lib/X11/Imakefile          |    6 ++++--
  nx-X11/programs/Xserver/Imakefile |    4 +++-
