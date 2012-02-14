@@ -10,9 +10,9 @@
 009_nxproxy-add-man-page.full+lite.patch
 009_nxagent-add-man-page.full.patch
 010_nxauth_fix-binary-name-in-man-page.full.patch
-012_nxcomp_makefile-uninstall.full+lite.patch
-013_nxcompext_makefile-uninstall.full.patch
-014_nxcompshad_makefile-uninstall.full.patch
+012_nxcomp_makefile-uninstall+autoconf.full+lite.patch
+013_nxcompext_makefile-uninstall+autoconf.full.patch
+014_nxcompshad_makefile-uninstall+autoconf.full.patch
 015_nxproxy_makefile-uninstall.full+lite.patch
 016_nx-x11_install-location.full.patch
 016_nx-X11_install-location.debian.patch

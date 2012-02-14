@@ -1,0 +1,64 @@
+Description: Add install and uninstall stanzas to nxcompext/Makefile, honor autoconf dirs.
+ Provide install and uninstall functionality in nxcompext/Makefile.
+ .
+ Honor autoconf's libdir (and includedir, while at it). This is a
+ must-have for multiarch platforms like x86_64 et al where multiple
+ forms of libraries can be installed at the same time.
+Forwarded: pending...
+Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+Author: Jan Engelhardt <jengelh@medozas.de>
+Last-Update: 2012-02-14
+--- a/nxcompext/Makefile.in
++++ b/nxcompext/Makefile.in
+@@ -56,11 +56,15 @@
+ bindir      = @bindir@
+ man1dir     = @mandir@/man1
+ VPATH       = @srcdir@
++libdir = @libdir@
++includedir = @includedir@
+ 
+ INSTALL         = @INSTALL@
+ INSTALL_PROGRAM = @INSTALL_PROGRAM@
+ INSTALL_DATA    = @INSTALL_DATA@
+-
++INSTALL_LINK    = cp -av
++DESTDIR         =
++RM_FILE         = rm -f
+ #
+ # This should be autodetected.
+ #
+@@ -147,12 +151,33 @@
+ 		fi
+ 		touch depend.status
+ 
+-install:	install.bin install.man
++install:       install.bin install.lib install.man
+ 
+ install.bin:
+ 
++install.lib: all
++	./mkinstalldirs $(DESTDIR)${libdir}/nx
++	./mkinstalldirs $(DESTDIR)${includedir}/nx
++	$(INSTALL_DATA) libXcompext.so.*        $(DESTDIR)${libdir}/nx
++	$(INSTALL_LINK) libXcompext.so          $(DESTDIR)${libdir}/nx
++	$(INSTALL_DATA) NX*.h                   $(DESTDIR)${includedir}/nx
++	echo "Running ldconfig tool, this may take a while..." && ldconfig || true
++
+ install.man:
+ 
++uninstall:     uninstall.bin uninstall.lib uninstall.man
++
++uninstall.bin:
++
++uninstall.lib:
++	$(RM_FILE) $(DESTDIR)${libdir}/nx/libXcompext.so.*
++	$(RM_FILE) $(DESTDIR)${libdir}/nx/libXcompext.so
++	$(RM_FILE) $(DESTDIR)${includedir}/nx/NXlib.h
++	$(RM_FILE) $(DESTDIR)${includedir}/nx/NXlibint.h
++	echo "Running ldconfig tool, this may take a while..." && ldconfig || true
++
++uninstall.man:
++
+ clean:
+ 		-rm -f *~ *.o *.bak *.orig *.rej st?????? core core.* *.out.* \
+ 		@ALL@

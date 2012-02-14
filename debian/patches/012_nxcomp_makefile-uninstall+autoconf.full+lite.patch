@@ -1,0 +1,74 @@
+Description: Add install and uninstall stanzas to nxcomp/Makefile, honor ac dirs
+ Provide install and uninstall functionality in nxcomp/Makefile.
+ .
+ Honor autoconf's libdir (and includedir, while at it). This is a
+ must-have for multiarch platforms like x86_64 et al where multiple
+ forms of libraries can be installed at the same time.
+Forwarded: pending...
+Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+Author: Jan Engelhardt <jengelh@medozas.de>
+Last-Update: 2012-02-14
+--- a/nxcomp/Makefile.in
++++ b/nxcomp/Makefile.in
+@@ -64,10 +64,15 @@
+ bindir      = @bindir@
+ man1dir     = @mandir@/man1
+ VPATH       = @srcdir@
++libdir      = @libdir@
++includedir  = @includedir@
+ 
+ INSTALL         = @INSTALL@
+ INSTALL_PROGRAM = @INSTALL_PROGRAM@
+ INSTALL_DATA    = @INSTALL_DATA@
++INSTALL_LINK    = cp -av
++DESTDIR         =
++RM_FILE         = rm -f
+ 
+ #
+ # This should be autodetected.
+@@ -264,12 +269,44 @@
+ 		fi
+ 		touch depend.status
+ 
+-install:	install.bin install.man
++install:	install.bin install.lib install.man
+ 
+ install.bin:
+ 
++install.lib: all
++	./mkinstalldirs $(DESTDIR)${libdir}/nx
++	./mkinstalldirs $(DESTDIR)${includedir}/nx
++	$(INSTALL_DATA) libXcomp.so.3.*         $(DESTDIR)${libdir}/nx
++	$(INSTALL_LINK) libXcomp.so.3           $(DESTDIR)${libdir}/nx
++	$(INSTALL_LINK) libXcomp.so             $(DESTDIR)${libdir}/nx
++	$(INSTALL_DATA) libXcomp.a              $(DESTDIR)${libdir}/nx
++	$(INSTALL_DATA) NX*.h                   $(DESTDIR)${includedir}/nx
++	$(INSTALL_DATA) MD5.h                   $(DESTDIR)${includedir}/nx
++	echo "Running ldconfig tool, this may take a while..." && ldconfig || true
++
+ install.man:
+ 
++uninstall:	uninstall.bin uninstall.lib uninstall.man
++
++uninstall.bin:
++
++uninstall.lib:
++	$(RM_FILE) $(DESTDIR)${libdir}/nx/libXcomp.so.3.*
++	$(RM_FILE) $(DESTDIR)${libdir}/nx/libXcomp.so.3
++	$(RM_FILE) $(DESTDIR)${libdir}/nx/libXcomp.so
++	$(RM_FILE) $(DESTDIR)${libdir}/nx/libXcomp.a
++	$(RM_FILE) $(DESTDIR)${includedir}/nx/NXalert.h
++	$(RM_FILE) $(DESTDIR)${includedir}/nx/NX.h
++	$(RM_FILE) $(DESTDIR)${includedir}/nx/NXmitshm.h
++	$(RM_FILE) $(DESTDIR)${includedir}/nx/NXpack.h
++	$(RM_FILE) $(DESTDIR)${includedir}/nx/NXproto.h
++	$(RM_FILE) $(DESTDIR)${includedir}/nx/NXrender.h
++	$(RM_FILE) $(DESTDIR)${includedir}/nx/NXvars.h
++	$(RM_FILE) $(DESTDIR)${includedir}/nx/MD5.h
++	echo "Running ldconfig tool, this may take a while..." && ldconfig || true
++
++uninstall.man:
++
+ clean:
+ 		-rm -f *~ *.o *.bak *.orig *.rej st?????? core core.* *.out.* \
+ 		@ALL@
