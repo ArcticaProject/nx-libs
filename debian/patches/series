@@ -40,5 +40,6 @@
 202_nx-x11_enable-xinerama.full.patch
 209_x2goagent-add-man-page.full.patch
 300_nxagent_set-wm-class.full.patch
+301_nx-X11_use-shared-libs.full.diff
 999_nxagent_unbrand-nxagent-brand-x2goagent.full.patch
 

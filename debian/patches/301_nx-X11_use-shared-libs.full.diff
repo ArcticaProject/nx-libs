@@ -1,0 +1,106 @@
+Description: Use shared libraries
+ Many distributions have a policy to reduce code duplications.
+ One means to avoid such duplications is to use shared libraries
+ instead of using libs that are ofter shipped for convenience.
+ .
+ Fedora:
+ http://fedoraproject.org/wiki/Packaging:Guidelines#Shared_Libraries
+ .
+ Debian (Section 10.7.4 of Debian policy):
+ http://www.debian.org/doc/debian-policy/ch-files.html
+Forwarded: pending...
+Author: Jan Engelhardt <jengelh@medozas.de>
+Last-Update: 2012-02-14
+---
+ nx-X11/config/cf/host.def         |   11 ++++++-----
+ nx-X11/programs/Xserver/Imakefile |    6 +++---
+ nx-X11/programs/nxauth/Imakefile  |    2 +-
+ 3 files changed, 10 insertions(+), 9 deletions(-)
+
+Index: nx-X11/config/cf/host.def
+===================================================================
+--- a/nx-X11/config/cf/host.def
++++ b/nx-X11/config/cf/host.def
+@@ -138,7 +138,7 @@ XCOMM $XFree86: xc/config/cf/xf86site.de
+ #define BuildRenderLibrary	YES
+ #define SharedLibFreetype2	YES
+ #define NormalLibFreetype2	YES
+-#define FontLibSharedFreeType 	NO
++#define FontLibSharedFreeType 	YES
+ #endif
+ 
+ /*
+@@ -649,6 +649,7 @@ XCOMM $XFree86: xc/config/cf/xf86site.de
+  *
+ #define XserverStaticFontLib	NO
+  */
++#define XserverStaticFontLib	YES
+ 
+ /*
+  * To enable binary compatibility with previous versions of the font
+@@ -733,7 +734,7 @@ XCOMM $XFree86: xc/config/cf/xf86site.de
+ #define BuildXKB		YES
+ #define BuildXKBlib		YES
+ 
+-#define SharedLibXau		NO
++#define SharedLibXau		YES
+ 
+ /*
+  * If you are running NetBSD 0.9C or later, and have the aperture driver
+@@ -956,9 +957,9 @@ XCOMM $XFree86: xc/config/cf/xf86site.de
+ #define BuildXterm YES
+  */
+ 
+-#define SharedLibXau           NO
++#define SharedLibXau           YES
+ 
+-#define SharedLibXdmcp         NO
++#define SharedLibXdmcp         YES
+ 
+ #define BuildXaw7              YES
+ 
+@@ -976,7 +977,7 @@ XCOMM $XFree86: xc/config/cf/xf86site.de
+ #define BuildFontServer             NO
+ #define BuildFreeType               NO
+ #define BuildXTrueType              NO
+-#define FontLibSharedFreeType       NO
++#define FontLibSharedFreeType       YES
+ #endif
+ 
+ #if !defined(NXZaurusXServer) && defined(NXiPAQXServer)
+Index: nx-X11/programs/Xserver/Imakefile
+===================================================================
+--- a/nx-X11/programs/Xserver/Imakefile
++++ b/nx-X11/programs/Xserver/Imakefile
+@@ -1013,15 +1013,15 @@ $(NXAGENTOBJS) $(NXAGENTLIBS) $(NXAGENTS
+ #if defined(SunArchitecture)
+ NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext -L ../../../nxcompshad \
+                 -lXcomp -lXcompext -lXcompshad -lrt -L/usr/sfw/lib -lXrender -lXfixes \
+-                -L../../../nx-X11/exports/lib -lXtst -lXdamage -lXrandr -lXcomposite
++                -L../../../nx-X11/exports/lib -lXtst -lXdamage -lXrandr -lXcomposite -lXdmcp
+ #elif defined(cygwinArchitecture)
+ NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext \
+                 -lXcomp -lXcompext -lXrender -lX11 -lXext -lXcomposite -lXfixes \
+-                -L ../../../nxcompshad -lXcompshad -L../../../nx-X11/exports/lib -lXtst
++                -L ../../../nxcompshad -lXcompshad -L../../../nx-X11/exports/lib -lXtst -lXdmcp
+ #else
+ NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext -L ../../../nxcompshad \
+                 -lXcomp -lXcompext -lXcompshad -lXrender -lX11 -lXext -lXfixes \
+-                -L../../../nx-X11/exports/lib -lXtst -lXdamage -lXrandr -lXcomposite -lXinerama
++                -L../../../nx-X11/exports/lib -lXtst -lXdamage -lXrandr -lXcomposite -lXinerama -lXdmcp
+ #endif
+ 
+ #endif
+Index: nx-X11/programs/nxauth/Imakefile
+===================================================================
+--- a/nx-X11/programs/nxauth/Imakefile
++++ b/nx-X11/programs/nxauth/Imakefile
+@@ -26,7 +26,7 @@ XCOMM $XFree86: xc/programs/xauth/Imakef
+ 
+   INCLUDES=-I../../lib
+   DEPLIBS = $(DEPXAUTHLIB)
+-  LOCAL_LIBRARIES = ../../exports/lib/libXau.a
++  LOCAL_LIBRARIES = $(XAUTHLIB)
+            SRCS = xauth.c gethost.c process.c parsedpy.c
+            OBJS = xauth.o gethost.o process.o parsedpy.o
+    CONN_DEFINES = $(CONNECTION_FLAGS)
