@@ -6,6 +6,8 @@ nx-libs (2:3.5.0.11-0) UNRELEASED; urgency=low
   * Do not install libXinerama directly into /usr/lib/nx. Recommended method is
     installing to /usr/lib/nx/Xinerama, so that you can enable/disable usage of
     the Xinerama extension.
+  * Update patch: 001_add-main-makefile.full+lite.patch, use curly braces for
+    macros.
 
   [ Jan Engelhardt ]
   * Update patch: 001_add-main-makefile.full+lite.patch, allow passing of

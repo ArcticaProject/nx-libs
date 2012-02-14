@@ -9,12 +9,12 @@ Last-Update: 2011-12-31
 +#!/usr/bin/make -f
 +
 +%:
-+	$(MAKE) -C nxcomp $@
-+	$(MAKE) -C nxproxy $@
++	${MAKE} -C nxcomp $@
++	${MAKE} -C nxproxy $@
 +	if test -d nx-X11; then \
-+	    $(MAKE) -C nxcompext $@; \
-+	    $(MAKE) -C nxcompshad; \
-+	    $(MAKE) -C nx-X11 $@; \
++	    ${MAKE} -C nxcompext $@; \
++	    ${MAKE} -C nxcompshad; \
++	    ${MAKE} -C nx-X11 $@; \
 +	fi
 +
 +all: build
@@ -23,20 +23,20 @@ Last-Update: 2011-12-31
 +	echo "No testing for NX (redistributed)"
 +
 +build-lite:
-+	cd nxcomp && autoconf && ./configure && $(MAKE)
-+	cd nxproxy && autoconf && ./configure && $(MAKE)
++	cd nxcomp && autoconf && ./configure && ${MAKE}
++	cd nxproxy && autoconf && ./configure && ${MAKE}
 +
 +build-full:
 +# in the full case, we rely on "magic" in the nx-X11 imake-based makefiles...
 +	cd nxcomp && autoconf && ./configure
 +	cd nxcompext && autoconf
 +	cd nxcompshad && autoconf
-+	cd nx-X11 && $(MAKE) World
-+	cd nxproxy && autoconf && (${CONFIGURE}) && $(MAKE)
++	cd nx-X11 && ${MAKE} World
++	cd nxproxy && autoconf && (${CONFIGURE}) && ${MAKE}
 +
 +build:
 +	if ! test -d nx-X11; then \
-+	    $(MAKE) build-lite; \
++	    ${MAKE} build-lite; \
 +	else \
-+	    $(MAKE) build-full; \
++	    ${MAKE} build-full; \
 +	fi
