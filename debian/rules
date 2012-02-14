@@ -30,7 +30,7 @@ override_dh_clean:
 
 override_dh_auto_build:
 	debian/pre-build-nx.sh
-	LD_LIBRARY_PATH=`pwd`/debian/libnx-x11/usr/lib/nx/X11:$$LD_LIBRARY_PATH dh_auto_build --with quilt
+	LD_LIBRARY_PATH=`pwd`/debian/libnx-x11/usr/lib/nx/X11:$$LD_LIBRARY_PATH dh_auto_build --with quilt --parallel
 	debian/post-build-nx.sh
 
 override_dh_auto_install:

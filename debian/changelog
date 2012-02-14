@@ -8,6 +8,7 @@ nx-libs (2:3.5.0.11-0) UNRELEASED; urgency=low
     the Xinerama extension.
   * Update patch: 001_add-main-makefile.full+lite.patch, use curly braces for
     macros.
+  * Enable parallel build for Debian package.
 
   [ Jan Engelhardt ]
   * Update patch: 001_add-main-makefile.full+lite.patch, allow passing of
