@@ -13,6 +13,7 @@ nx-libs (2:3.5.0.11-0) UNRELEASED; urgency=low
   * Update patch: 001_add-main-makefile.full+lite.patch, allow passing of
     configure args.
   * Add patch: 030_nx-X11_configure-args.diff. Allow passing of configure args.
+  * Add patch: 031_nx-X11_parallel-make.diff, enable parallel make.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Tue, 07 Feb 2012 13:48:19 +0100
 

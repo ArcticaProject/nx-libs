@@ -1,0 +1,293 @@
+From: Jan Engelhardt <jengelh@medozas.de>
+Date: 2012-01-26 22:29:13.993994227 +0100
+
+Restore ability to build things in parallel.
+(${MAKE} must always appear in the rule directly, and not be
+hidden through expansions of other variables to get this to work.)
+
+---
+ nx-X11/Makefile                       |   64 +++++++++++++++++-----------------
+ nx-X11/config/imake/Makefile.ini      |    1 
+ nx-X11/extras/Mesa/Makefile           |    2 -
+ nx-X11/extras/Xpm/Makefile.noX        |    1 
+ nx-X11/extras/drm/linux-core/Makefile |    4 +-
+ nx-X11/extras/drm/linux/Makefile      |    4 +-
+ nx-X11/extras/ttf2pt1/Makefile        |    4 +-
+ nx-X11/lib/X11/Imakefile              |   12 ++----
+ nx-X11/lib/X11/Imakefile.NX.original  |   12 ++----
+ nx-X11/programs/Xserver/Imakefile     |    4 +-
+ 10 files changed, 60 insertions(+), 69 deletions(-)
+
+--- a/nx-X11/Makefile
++++ b/nx-X11/Makefile
+@@ -32,8 +32,8 @@
+ VERSPROG = $(CONFIGSRC)/util/printver.exe
+ 
+ all:
+-	@$(MAKE_CMD) xmakefile-exists || $(MAKE) all-initial
+-	@$(MAKE_CMD) $@
++	@${MAKE} ${MAKE_OPTS} xmakefile-exists || $(MAKE) all-initial
++	@${MAKE} ${MAKE_OPTS} $@
+ 
+ all-initial:
+ 	@echo Please use make World, or on NT use nmake World.Win32.
+@@ -57,8 +57,8 @@
+ 	@date
+ 	@echo ""
+ 	@if [ -f xmakefile ]; then \
+-	    $(MAKE_CMD) -k distclean || \
+-	    $(MAKE_CMD) -k clean || \
++	    ${MAKE} ${MAKE_OPTS} -k distclean || \
++	    ${MAKE} ${MAKE_OPTS} -k clean || \
+ 	    $(RM) xmakefile; \
+ 	fi
+ 	@if [ ! -f $(IRULESRC)/host.def ]; then \
+@@ -84,14 +84,14 @@
+ #	fi
+ 	cd $(IMAKESRC) && $(MAKE) $(FLAGS) clean
+ 	$(MAKE) $(MFLAGS) Makefile.boot
+-	$(MAKE_CMD) $(MFLAGS) version.def
++	${MAKE} ${MAKE_OPTS} $(MFLAGS) version.def
+ 	$(MAKE) $(MFLAGS) Makefile.boot
+-	$(MAKE_CMD) $(MFLAGS) VerifyOS
+-	$(MAKE_CMD) $(MFLAGS) Makefiles
+-	$(MAKE_CMD) $(MFLAGS) BOOTSTRAPSUBDIRS= clean
+-	$(MAKE_CMD) $(MFLAGS) includes
+-	$(MAKE_CMD) $(MFLAGS) depend
+-	$(MAKE_CMD) $(MFLAGS) $(WORLDOPTS) World
++	${MAKE} ${MAKE_OPTS} $(MFLAGS) VerifyOS
++	${MAKE} ${MAKE_OPTS} $(MFLAGS) Makefiles
++	${MAKE} ${MAKE_OPTS} $(MFLAGS) BOOTSTRAPSUBDIRS= clean
++	${MAKE} ${MAKE_OPTS} $(MFLAGS) includes
++	${MAKE} ${MAKE_OPTS} $(MFLAGS) depend
++	${MAKE} ${MAKE_OPTS} $(MFLAGS) $(WORLDOPTS) World
+ 	@echo ""
+ 	@date
+ 	@echo ""
+@@ -153,15 +153,15 @@
+ 	-if exist xmakefile.bak del xmakefile.bak
+ 	-if exist xmakefile ren xmakefile xmakefile.bak
+ 	$(IMAKE:/=\) -s xmakefile -I$(IRULESRC) $(IMAKE_DEFINES) -DTOPDIR=$(TOP) -DCURDIR=$(CURRENT_DIR)
+-	$(MAKE_CMD) $(MFLAGS) VerifyOS
+-	$(MAKE_CMD) $(MFLAGS) Makefiles
+-	$(MAKE_CMD) $(MFLAGS) clean
++	${MAKE} ${MAKE_OPTS} $(MFLAGS) VerifyOS
++	${MAKE} ${MAKE_OPTS} $(MFLAGS) Makefiles
++	${MAKE} ${MAKE_OPTS} $(MFLAGS) clean
+ 	cd $(CONFIGSRC)\util
+ 	$(MAKE) mkdirhier.exe
+ 	cd ..\..
+-	$(MAKE_CMD) $(MFLAGS) includes
+-	$(MAKE_CMD) $(MFLAGS) depend
+-	$(MAKE_CMD) $(MFLAGS) $(WIN32WORLDOPTS)
++	${MAKE} ${MAKE_OPTS} $(MFLAGS) includes
++	${MAKE} ${MAKE_OPTS} $(MFLAGS) depend
++	${MAKE} ${MAKE_OPTS} $(MFLAGS) $(WIN32WORLDOPTS)
+ 	@echo :
+ 	@echo :
+ 	@echo Full build of $(RELEASE) complete.
+@@ -197,33 +197,33 @@
+ # a copy of every rule that might be invoked at top level
+ 
+ clean:
+-	    $(MAKE_CMD) $@
++	    ${MAKE} ${MAKE_OPTS} $@
+ dangerous_strip_clean:
+-	    $(MAKE_CMD) $@
++	    ${MAKE} ${MAKE_OPTS} $@
+ distclean:
+-	    $(MAKE_CMD) $@
++	    ${MAKE} ${MAKE_OPTS} $@
+ 	    $(RM) xmakefile $(IRULESRC)/version.def $(IRULESRC)/date.def
+ depend:
+-	    $(MAKE_CMD) $@
++	    ${MAKE} ${MAKE_OPTS} $@
+ Everything:
+-	    $(MAKE_CMD) $@
++	    ${MAKE} ${MAKE_OPTS} $@
+ external.ln:
+-	    $(MAKE_CMD) $@
++	    ${MAKE} ${MAKE_OPTS} $@
+ includes:
+-	    $(MAKE_CMD) $@
++	    ${MAKE} ${MAKE_OPTS} $@
+ install.sdk:
+-	    $(MAKE_CMD) $@
++	    ${MAKE} ${MAKE_OPTS} $@
+ install.ln:
+-	    $(MAKE_CMD) $@
++	    ${MAKE} ${MAKE_OPTS} $@
+ install.man:
+-	    $(MAKE_CMD) $@
++	    ${MAKE} ${MAKE_OPTS} $@
+ install:
+-	    $(MAKE_CMD) $@
++	    ${MAKE} ${MAKE_OPTS} $@
+ Makefiles:
+-	    $(MAKE_CMD) $@
++	    ${MAKE} ${MAKE_OPTS} $@
+ man_keywords:
+-	    $(MAKE_CMD) $@
++	    ${MAKE} ${MAKE_OPTS} $@
+ tags:
+-	    $(MAKE_CMD) $@
++	    ${MAKE} ${MAKE_OPTS} $@
+ VerifyOS:
+-	    $(MAKE_CMD) $@
++	    ${MAKE} ${MAKE_OPTS} $@
+--- a/nx-X11/config/imake/Makefile.ini
++++ b/nx-X11/config/imake/Makefile.ini
+@@ -21,7 +21,6 @@
+ SHELL = /bin/sh
+ RM = rm -f
+ MV = mv
+-MAKE = make
+ RM_CMD = $(RM) *.CKP *.ln *.BAK *.bak *.o core errs ,* *~ *.a \
+ 	 tags TAGS make.log
+ NPROC = 1
+--- a/nx-X11/extras/Mesa/Makefile
++++ b/nx-X11/extras/Mesa/Makefile
+@@ -12,7 +12,7 @@
+ 
+ 
+ doxygen:
+-	(cd doxygen ; make) ; \
++	(cd doxygen ; ${MAKE}) ; \
+ 
+ clean:
+ 	@for dir in $(SUBDIRS) ; do \
+--- a/nx-X11/extras/Xpm/Makefile.noX
++++ b/nx-X11/extras/Xpm/Makefile.noX
+@@ -32,7 +32,6 @@
+ 
+ SUBDIRS= lib sxpm cxpm
+ 
+-MAKE=make
+ MFLAGS=-f Makefile.noX
+ INSTALL= install -c
+ CURRENT_DIR=.
+--- a/nx-X11/extras/drm/linux-core/Makefile
++++ b/nx-X11/extras/drm/linux-core/Makefile
+@@ -176,7 +176,7 @@
+ all: modules
+ 
+ modules: includes
+-	make -C $(LINUXDIR) $(GETCONFIG) SUBDIRS=`pwd` DRMSRCDIR=`pwd` modules
++	${MAKE} -C $(LINUXDIR) $(GETCONFIG) SUBDIRS=`pwd` DRMSRCDIR=`pwd` modules
+ 
+ ifeq ($(HEADERFROMBOOT),1)
+ 
+@@ -246,7 +246,7 @@
+ 	rm -rf $(CLEANFILES)
+ 
+ $(MODULE_LIST)::
+-	make DRM_MODULES=$@ modules
++	${MAKE} DRM_MODULES=$@ modules
+ 
+ # Build test utilities
+ 
+--- a/nx-X11/extras/drm/linux/Makefile
++++ b/nx-X11/extras/drm/linux/Makefile
+@@ -184,7 +184,7 @@
+ all: modules
+ 
+ modules: includes
+-	make -C $(LINUXDIR) $(GETCONFIG) SUBDIRS=`pwd` DRMSRCDIR=`pwd` modules
++	${MAKE} -C $(LINUXDIR) $(GETCONFIG) SUBDIRS=`pwd` DRMSRCDIR=`pwd` modules
+ 
+ ifeq ($(HEADERFROMBOOT),1)
+ 
+@@ -254,7 +254,7 @@
+ 	rm -rf $(CLEANFILES)
+ 
+ $(MODULE_LIST)::
+-	make DRM_MODULES=$@ modules
++	${MAKE} DRM_MODULES=$@ modules
+ 
+ # Build test utilities
+ 
+--- a/nx-X11/extras/ttf2pt1/Makefile
++++ b/nx-X11/extras/ttf2pt1/Makefile
+@@ -158,8 +158,8 @@
+ 
+ clean:
+ 	rm -f t1asm ttf2pt1 *.o app/RPM/Makefile app/RPM/*.spec *.core core.* core
+-	( cd other && make clean; )
+-	( cd app/netscape && make clean; )
++	( cd other && ${MAKE} clean; )
++	( cd app/netscape && ${MAKE} clean; )
+ 
+ veryclean: clean
+ 	rm -f $(DOCS) $(MANS)
+--- a/nx-X11/lib/X11/Imakefile
++++ b/nx-X11/lib/X11/Imakefile
+@@ -1161,21 +1161,17 @@
+ 
+ #ifdef SunArchitecture
+ $(NX_XCOMPLIBTARGET): $(NX_XCOMPCONFIGTARGET)
+-	cd $(NX_XCOMPLIBDIR) && \
+-	gmake
++	${MAKE} -C $(NX_XCOMPLIBDIR)
+ 
+ $(NX_XCOMPEXTLIBTARGET): $(NX_XCOMPEXTCONFIGTARGET)
+-	cd ../../../nxcompext && \
+-	gmake
++	${MAKE} -C ../../../nxcompext
+ 
+ #else
+ $(NX_XCOMPLIBTARGET): $(NX_XCOMPCONFIGTARGET)
+-	cd $(NX_XCOMPLIBDIR) && \
+-	make
++	${MAKE} -C $(NX_XCOMPLIBDIR)
+ 
+ $(NX_XCOMPEXTLIBTARGET): $(NX_XCOMPEXTCONFIGTARGET)
+-	cd ../../../nxcompext && \
+-	make
++	${MAKE} -C ../../../nxcompext
+ 
+ #endif
+ 
+--- a/nx-X11/lib/X11/Imakefile.NX.original
++++ b/nx-X11/lib/X11/Imakefile.NX.original
+@@ -1159,21 +1159,17 @@
+ 
+ #ifdef SunArchitecture
+ $(NX_XCOMPLIBTARGET): $(NX_XCOMPCONFIGTARGET)
+-	cd $(NX_XCOMPLIBDIR) && \
+-	gmake
++	${MAKE} -C $(NX_XCOMPLIBDIR)
+ 
+ $(NX_XCOMPEXTLIBTARGET): $(NX_XCOMPEXTCONFIGTARGET)
+-	cd ../../../nxcompext && \
+-	gmake
++	${MAKE} -C ../../../nxcompext
+ 
+ #else
+ $(NX_XCOMPLIBTARGET): $(NX_XCOMPCONFIGTARGET)
+-	cd $(NX_XCOMPLIBDIR) && \
+-	make
++	${MAKE} -C $(NX_XCOMPLIBDIR)
+ 
+ $(NX_XCOMPEXTLIBTARGET): $(NX_XCOMPEXTCONFIGTARGET)
+-	cd ../../../nxcompext && \
+-	make
++	${MAKE} -C ../../../nxcompext
+ 
+ #endif
+ 
+--- a/nx-X11/programs/Xserver/Imakefile
++++ b/nx-X11/programs/Xserver/Imakefile
+@@ -1045,11 +1045,11 @@
+ #ifdef SunArchitecture
+ $(NX_XSHADOWLIBTARGET): $(NX_XSHADOWCONFIGTARGET)
+ 	cd $(NX_XSHADOWLIBDIR) && \
+-	gmake
++	${MAKE}
+ #else
+ $(NX_XSHADOWLIBTARGET): $(NX_XSHADOWCONFIGTARGET)
+ 	cd $(NX_XSHADOWLIBDIR) && \
+-	rm -f *.o && make
++	rm -f *.o && ${MAKE}
+ #endif
+ 
+ ServerTarget(nxagent,$(NX_XSHADOWLIBTARGET) $(NXAGENTDIRS),$(NXAGENTOBJS), \
