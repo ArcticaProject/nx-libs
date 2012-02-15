@@ -25,6 +25,7 @@
 023_add-x2goagent-wrapper.full.patch
 030_nx-X11_configure-args.full.diff
 031_nx-X11_parallel-make.full.diff
+032_no-x11r6.full.patch
 101_nxagent_set-rgb-path.full.patch
 102_xserver-xext_set-securitypolicy-path.full.patch
 102_xserver-xext_set-securitypolicy-path.debian.patch
