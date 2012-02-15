@@ -28,6 +28,8 @@ nx-libs (2:3.5.0.11-0) UNRELEASED; urgency=low
     existing files, therefore, both /usr/X11R6 and /usr are excluded
     possibilities for ProjectRoot. Use %_libexecdir/somename, since that is
     still allowed by FHS.
+  * Add patch 600_nx-X11+nxcompext+nxcompshad_unique-libnames.full.patch, use
+    unique library names for nx-X11 based X11 libraries.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Tue, 07 Feb 2012 13:48:19 +0100
 

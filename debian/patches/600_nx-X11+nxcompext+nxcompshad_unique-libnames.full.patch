@@ -1,0 +1,2384 @@
+Description: Unique Library Names Patch
+ Patch from the RPM folks...
+ .
+ We really want to make use of rpm's automatic dependency finding.
+ Binaries are scanned for DT_NEEDED entries, the latter of which are
+ then used for populating the "Requires"-type deps. The "nxagent"
+ binary for example would require libX11.so.6. That incurs problems:
+ .
+ 1. A package manager told to install nxagent could select xorg-x11
+ rather than nx-libs, even though nxagent depends on the NX version.
+ .
+ 2. A package manager told to install $some_program could select nx-libs
+ rather than xorg-x11 (since both provide libX11.so.6), but, since
+ the NX library is in an obscure directory, running $some_program
+ would fail as libX11.so.6 is not found.
+ .
+ To solve this, give the NX libraries unique names different from the
+ Xorg ones.
+Forward: pending
+Author: Jan Engelhardt <jengelh@medozas.de>
+Last-Update: 2012-02-15
+---
+ nx-X11/config/cf/Imake.rules                        |   12 -
+ nx-X11/config/cf/Motif.tmpl                         |    4 
+ nx-X11/config/cf/X11.tmpl                           |  240 ++++++++++----------
+ nx-X11/config/cf/bsdLib.rules                       |    6 
+ nx-X11/config/cf/bsdLib.tmpl                        |    2 
+ nx-X11/config/cf/bsdiLib.tmpl                       |    2 
+ nx-X11/config/cf/convex.cf                          |    6 
+ nx-X11/config/cf/cygwin.tmpl                        |    2 
+ nx-X11/config/cf/darwinLib.tmpl                     |    2 
+ nx-X11/config/cf/gnuLib.tmpl                        |    2 
+ nx-X11/config/cf/ibmLib.rules                       |   12 -
+ nx-X11/config/cf/ibmLib.tmpl                        |    2 
+ nx-X11/config/cf/lnxLib.rules                       |   16 -
+ nx-X11/config/cf/lnxLib.tmpl                        |    4 
+ nx-X11/config/cf/mingw.tmpl                         |    2 
+ nx-X11/config/cf/nto.rules                          |    2 
+ nx-X11/config/cf/os2Lib.tmpl                        |   58 ++--
+ nx-X11/config/cf/sco5.cf                            |    2 
+ nx-X11/config/cf/sv3Lib.tmpl                        |   24 +-
+ nx-X11/config/cf/sv4Lib.tmpl                        |    2 
+ nx-X11/config/cf/usl.cf                             |    2 
+ nx-X11/extras/Mesa/src/mesa/main/Imakefile          |    2 
+ nx-X11/extras/Xpm/lib/Imakefile                     |    2 
+ nx-X11/extras/drm/libdrm.pc.in                      |    2 
+ nx-X11/extras/fontconfig/fontconfig.pc.in           |    2 
+ nx-X11/extras/ogl-sample/main/gfx/lib/glu/Imakefile |    2 
+ nx-X11/lib/FS/Imakefile                             |    2 
+ nx-X11/lib/GLw/Imakefile                            |    2 
+ nx-X11/lib/ICE/Imakefile                            |    2 
+ nx-X11/lib/SM/Imakefile                             |    2 
+ nx-X11/lib/X11/Imakefile                            |    2 
+ nx-X11/lib/X11/Imakefile.NX.original                |    2 
+ nx-X11/lib/X11/Imakefile.X.original                 |    2 
+ nx-X11/lib/XRes/Imakefile                           |    2 
+ nx-X11/lib/XTrap/Imakefile                          |    2 
+ nx-X11/lib/Xau/Imakefile                            |    2 
+ nx-X11/lib/Xaw/Imakefile                            |    2 
+ nx-X11/lib/Xaw6/Imakefile                           |    2 
+ nx-X11/lib/Xaw7/Imakefile                           |    2 
+ nx-X11/lib/Xcomposite/Imakefile                     |    2 
+ nx-X11/lib/Xcomposite/xcomposite.pc.in              |    2 
+ nx-X11/lib/Xcursor/Imakefile                        |    2 
+ nx-X11/lib/Xcursor/xcursor.pc.in                    |    2 
+ nx-X11/lib/Xdamage/Imakefile                        |    2 
+ nx-X11/lib/Xdamage/xdamage.pc.in                    |    2 
+ nx-X11/lib/Xdmcp/Imakefile                          |    2 
+ nx-X11/lib/Xevie/Imakefile                          |    2 
+ nx-X11/lib/Xevie/xevie.pc.in                        |    2 
+ nx-X11/lib/Xext/Imakefile                           |    2 
+ nx-X11/lib/Xfixes/Imakefile                         |    2 
+ nx-X11/lib/Xfixes/xfixes.pc.in                      |    2 
+ nx-X11/lib/Xfontcache/Imakefile                     |    2 
+ nx-X11/lib/Xft/Imakefile                            |    2 
+ nx-X11/lib/Xft/xft.pc.in                            |    2 
+ nx-X11/lib/Xft1/Imakefile                           |    2 
+ nx-X11/lib/Xi/Imakefile                             |    2 
+ nx-X11/lib/Xinerama/Imakefile                       |    2 
+ nx-X11/lib/Xmu/Imakefile                            |    2 
+ nx-X11/lib/Xmuu/Imakefile                           |    2 
+ nx-X11/lib/Xp/Imakefile                             |    2 
+ nx-X11/lib/Xpm/Imakefile                            |    2 
+ nx-X11/lib/Xpm/Imakefile.NX.original                |    2 
+ nx-X11/lib/Xpm/Imakefile.X.original                 |    2 
+ nx-X11/lib/XprintAppUtil/Imakefile                  |    2 
+ nx-X11/lib/XprintUtil/Imakefile                     |    2 
+ nx-X11/lib/Xrandr/Imakefile                         |    2 
+ nx-X11/lib/Xrender/Imakefile                        |    2 
+ nx-X11/lib/Xrender/xrender.pc.in                    |    2 
+ nx-X11/lib/Xss/Imakefile                            |    2 
+ nx-X11/lib/Xt/Imakefile                             |    2 
+ nx-X11/lib/Xt/Imakefile.NX.original                 |    2 
+ nx-X11/lib/Xt/Imakefile.X.original                  |    2 
+ nx-X11/lib/Xtst/Imakefile                           |    2 
+ nx-X11/lib/Xv/Imakefile                             |    2 
+ nx-X11/lib/XvMC/Imakefile                           |    2 
+ nx-X11/lib/XvMC/hw/i810/Imakefile                   |    2 
+ nx-X11/lib/XvMC/hw/via/unichrome/Imakefile          |    2 
+ nx-X11/lib/XvMC/hw/via/unichromeProA/Imakefile      |    2 
+ nx-X11/lib/XvMC/wrapper/Imakefile                   |    2 
+ nx-X11/lib/Xxf86dga/Imakefile                       |    2 
+ nx-X11/lib/Xxf86misc/Imakefile                      |    2 
+ nx-X11/lib/Xxf86rush/Imakefile                      |    2 
+ nx-X11/lib/Xxf86vm/Imakefile                        |    2 
+ nx-X11/lib/apple/Imakefile                          |    2 
+ nx-X11/lib/dmx/Imakefile                            |    2 
+ nx-X11/lib/dps/Imakefile                            |    2 
+ nx-X11/lib/dpstk/Imakefile                          |    2 
+ nx-X11/lib/expat/Imakefile                          |    2 
+ nx-X11/lib/font/Imakefile                           |    2 
+ nx-X11/lib/fontconfig/Imakefile                     |    2 
+ nx-X11/lib/fontenc/Imakefile                        |    2 
+ nx-X11/lib/freetype2/Imakefile                      |    2 
+ nx-X11/lib/oldX/Imakefile                           |    2 
+ nx-X11/lib/psres/Imakefile                          |    2 
+ nx-X11/lib/regex/Imakefile                          |    2 
+ nx-X11/lib/windows/Imakefile                        |    2 
+ nx-X11/lib/xkbfile/Imakefile                        |    2 
+ nx-X11/lib/xkbui/Imakefile                          |    2 
+ nx-X11/lib/zlib/Imakefile                           |    2 
+ nx-X11/programs/Xserver/Imakefile                   |   18 -
+ nx-X11/programs/Xserver/hw/xfree86/parser/Imakefile |    2 
+ nxcompext/Makefile.in                               |    4 
+ nxcompshad/Makefile.in                              |    4 
+ 103 files changed, 294 insertions(+), 294 deletions(-)
+
+Index: nx-libs_3.5.0.9/nx-X11/config/cf/Imake.rules
+===================================================================
+--- a/nx-X11/config/cf/Imake.rules
++++ b/nx-X11/config/cf/Imake.rules
+@@ -2124,9 +2124,9 @@ LintLibReferences(varname,libname,libsou
+  */
+ #ifndef ProjectUnsharedFontLibReferences
+ #define ProjectUnsharedFontLibReferences()					@@\
+-DEPFONTLIB = _UseCat($(USRLIBDIR)/,XBuildLibDir/,LibraryTargetName(Xfont))	@@\
+-FONTLIB = -L$(FREETYPELIBDIR) -L$(FONTLIBSRC) LoaderLibPrefix -lXfont		@@\
+-LintLibReferences(XFONT,Xfont,$(FONTLIBSRC))
++DEPFONTLIB = _UseCat($(USRLIBDIR)/,XBuildLibDir/,LibraryTargetName(NX_Xfont))	@@\
++FONTLIB = -L$(FREETYPELIBDIR) -L$(FONTLIBSRC) LoaderLibPrefix -lNX_Xfont		@@\
++LintLibReferences(XFONT,NX_Xfont,$(FONTLIBSRC))
+ #endif
+ 
+ /*
+@@ -2142,9 +2142,9 @@ LintLibReferences(XFONT,Xfont,$(FONTLIBS
+ #ifndef SharedFontLibReferences
+ #define SharedFontLibReferences()					@@\
+ SOFONTREV = SharedFontRev						@@\
+-DEPFONTLIB = SharedLibDependencies(Xfont,$(FONTLIBSRC),SOFONTREV)	@@\
+-FONTLIB = -L$(FREETYPELIBDIR) -L$(FONTLIBSRC) LoaderLibPrefix -lXfont	@@\
+-LintLibReferences(XFONT,Xfont,$(FONTLIBSRC))
++DEPFONTLIB = SharedLibDependencies(NX_Xfont,$(FONTLIBSRC),SOFONTREV)	@@\
++FONTLIB = -L$(FREETYPELIBDIR) -L$(FONTLIBSRC) LoaderLibPrefix -lNX_Xfont	@@\
++LintLibReferences(XFONT,NX_Xfont,$(FONTLIBSRC))
+ #endif
+ 
+ /*
+Index: nx-libs_3.5.0.9/nx-X11/config/cf/Motif.tmpl
+===================================================================
+--- a/nx-X11/config/cf/Motif.tmpl
++++ b/nx-X11/config/cf/Motif.tmpl
+@@ -465,9 +465,9 @@ TOP_MOTIF_INCLUDES = -I$(MINCLUDESRC)
+ #endif
+ 
+ #if SharedLibXm
+-SharedLibReferences(XM,Xm,$(MWIDGETSRC),SOXMREV,SharedXmRev)
++SharedLibReferences(XM,NX_Xm,$(MWIDGETSRC),SOXMREV,SharedXmRev)
+ #else
+-ProjectUnsharedLibReferences(XM,Xm,$(MWIDGETSRC),MBuildLibDir)
++ProjectUnsharedLibReferences(XM,NX_Xm,$(MWIDGETSRC),MBuildLibDir)
+ #endif
+ 
+ #if SharedLibMrm
+Index: nx-libs_3.5.0.9/nx-X11/config/cf/X11.tmpl
+===================================================================
+--- a/nx-X11/config/cf/X11.tmpl
++++ b/nx-X11/config/cf/X11.tmpl
+@@ -1835,9 +1835,9 @@ VENDORSUPPORTDEFS = VendorSupportDefines
+ #ifndef SharedX11Rev
+ #define SharedX11Rev 6.2
+ #endif
+-SharedLibReferences(XONLY,X11,$(XLIBSRC),SOXLIBREV,SharedX11Rev)
++SharedLibReferences(XONLY,NX_X11,$(XLIBSRC),SOXLIBREV,SharedX11Rev)
+ #else
+-ProjectUnsharedLibReferences(XONLY,X11,$(XLIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XONLY,NX_X11,$(XLIBSRC),XBuildLibDir)
+ #endif
+       /* Common alternate spellings */
+       DEPXLIBONLY = $(DEPXONLYLIB)
+@@ -2466,9 +2466,9 @@ ProjectUnsharedLibReferences(XONLY,X11,$
+ #ifndef SharedXextRev
+ #define SharedXextRev 6.4
+ #endif
+-SharedLibReferences(EXTENSION,Xext,$(XEXTLIBSRC),SOXEXTREV,SharedXextRev)
++SharedLibReferences(EXTENSION,NX_Xext,$(XEXTLIBSRC),SOXEXTREV,SharedXextRev)
+ #else
+-ProjectUnsharedLibReferences(EXTENSION,Xext,$(XEXTLIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(EXTENSION,NX_Xext,$(XEXTLIBSRC),XBuildLibDir)
+ #endif
+ LINTEXTENSIONLIB = $(LINTEXTENSION)
+           DEPXLIB = $(DEPEXTENSIONLIB) $(DEPXONLYLIB)
+@@ -2480,9 +2480,9 @@ LINTEXTENSIONLIB = $(LINTEXTENSION)
+ #ifndef SharedXssRev
+ #define SharedXssRev 1.0
+ #endif
+-SharedLibReferences(XSS,Xss,$(XSSLIBSRC),SOXSSREV,SharedXssRev)
++SharedLibReferences(XSS,NX_Xss,$(XSSLIBSRC),SOXSSREV,SharedXssRev)
+ #else
+-ProjectUnsharedLibReferences(XSS,Xss,$(XSSLIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XSS,NX_Xss,$(XSSLIBSRC),XBuildLibDir)
+ #endif
+ 
+     XXF86MISCLIBSRC = $(LIBSRC)/Xxf86misc
+@@ -2490,9 +2490,9 @@ ProjectUnsharedLibReferences(XSS,Xss,$(X
+ #ifndef SharedXxf86miscRev
+ #define SharedXxf86miscRev 1.1
+ #endif
+-SharedLibReferences(XXF86MISC,Xxf86misc,$(XXF86MISCLIBSRC),SOXXF86MISCREV,SharedXxf86miscRev)
++SharedLibReferences(XXF86MISC,NX_Xxf86misc,$(XXF86MISCLIBSRC),SOXXF86MISCREV,SharedXxf86miscRev)
+ #else
+-ProjectUnsharedLibReferences(XXF86MISC,Xxf86misc,$(XXF86MISCLIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XXF86MISC,NX_Xxf86misc,$(XXF86MISCLIBSRC),XBuildLibDir)
+ #endif
+ 
+     XXF86VMLIBSRC = $(LIBSRC)/Xxf86vm
+@@ -2500,9 +2500,9 @@ ProjectUnsharedLibReferences(XXF86MISC,X
+ #ifndef SharedXxf86vmRev
+ #define SharedXxf86vmRev 1.0
+ #endif
+-SharedLibReferences(XXF86VM,Xxf86vm,$(XXF86VMLIBSRC),SOXXF86VMREV,SharedXxf86vmRev)
++SharedLibReferences(XXF86VM,NX_Xxf86vm,$(XXF86VMLIBSRC),SOXXF86VMREV,SharedXxf86vmRev)
+ #else
+-ProjectUnsharedLibReferences(XXF86VM,Xxf86vm,$(XXF86VMLIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XXF86VM,NX_Xxf86vm,$(XXF86VMLIBSRC),XBuildLibDir)
+ #endif
+ 
+     XXF86DGALIBSRC = $(LIBSRC)/Xxf86dga
+@@ -2510,9 +2510,9 @@ ProjectUnsharedLibReferences(XXF86VM,Xxf
+ #ifndef SharedXxf86dgaRev
+ #define SharedXxf86dgaRev 1.0
+ #endif
+-SharedLibReferences(XXF86DGA,Xxf86dga,$(XXF86DGALIBSRC),SOXXF86DGAREV,SharedXxf86dgaRev)
++SharedLibReferences(XXF86DGA,NX_Xxf86dga,$(XXF86DGALIBSRC),SOXXF86DGAREV,SharedXxf86dgaRev)
+ #else
+-ProjectUnsharedLibReferences(XXF86DGA,Xxf86dga,$(XXF86DGALIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XXF86DGA,NX_Xxf86dga,$(XXF86DGALIBSRC),XBuildLibDir)
+ #endif
+ 
+ #if BuildDmxLibrary
+@@ -2544,9 +2544,9 @@ ProjectUnsharedLibReferences(XXF86DGA,Xx
+ #ifndef SharedXxf86rushRev
+ #define SharedXxf86rushRev 1.0
+ #endif
+-SharedLibReferences(XXF86RUSH,Xxf86rush,$(XXF86RUSHLIBSRC),SOXXF86RUSHREV,SharedXxf86rushRev)
++SharedLibReferences(XXF86RUSH,NX_Xxf86rush,$(XXF86RUSHLIBSRC),SOXXF86RUSHREV,SharedXxf86rushRev)
+ #else
+-ProjectUnsharedLibReferences(XXF86RUSH,Xxf86rush,$(XXF86RUSHLIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XXF86RUSH,NX_Xxf86rush,$(XXF86RUSHLIBSRC),XBuildLibDir)
+ #endif
+ 
+ 
+@@ -2555,9 +2555,9 @@ ProjectUnsharedLibReferences(XXF86RUSH,X
+ #ifndef SharedXvRev
+ #define SharedXvRev 1.0
+ #endif
+-SharedLibReferences(XV,Xv,$(XVLIBSRC),SOXVREV,SharedXvRev)
++SharedLibReferences(XV,NX_Xv,$(XVLIBSRC),SOXVREV,SharedXvRev)
+ #else
+-ProjectUnsharedLibReferences(XV,Xv,$(XVLIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XV,NX_Xv,$(XVLIBSRC),XBuildLibDir)
+ #endif
+ 
+ 
+@@ -2566,9 +2566,9 @@ ProjectUnsharedLibReferences(XV,Xv,$(XVL
+ #ifndef SharedXvMCRev
+ #define SharedXvMCRev 1.0
+ #endif
+-SharedLibReferences(XVMC,XvMC,$(XVMCLIBSRC),SOXVMCREV,SharedXvMCRev)
++SharedLibReferences(XVMC,NX_XvMC,$(XVMCLIBSRC),SOXVMCREV,SharedXvMCRev)
+ #else
+-ProjectUnsharedLibReferences(XVMC,XvMC,$(XVMCLIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XVMC,NX_XvMC,$(XVMCLIBSRC),XBuildLibDir)
+ #endif
+ 
+     XINERAMALIBSRC = $(LIBSRC)/Xinerama
+@@ -2576,9 +2576,9 @@ ProjectUnsharedLibReferences(XVMC,XvMC,$
+ #ifndef SharedXineramaRev
+ #define SharedXineramaRev 1.0
+ #endif
+-SharedLibReferences(XINERAMA,Xinerama,$(XINERAMALIBSRC),SOXINERAMAREV,SharedXineramaRev)
++SharedLibReferences(XINERAMA,NX_Xinerama,$(XINERAMALIBSRC),SOXINERAMAREV,SharedXineramaRev)
+ #else
+-ProjectUnsharedLibReferences(XINERAMA,Xinerama,$(XINERAMALIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XINERAMA,NX_Xinerama,$(XINERAMALIBSRC),XBuildLibDir)
+ #endif
+ 
+     XRESLIBSRC = $(LIBSRC)/XRes
+@@ -2586,9 +2586,9 @@ ProjectUnsharedLibReferences(XINERAMA,Xi
+ #ifndef SharedXResRev
+ #define SharedXResRev 1.0
+ #endif
+-SharedLibReferences(XRES,XRes,$(XRESLIBSRC),SOXRESREV,SharedXResRev)
++SharedLibReferences(XRES,NX_XRes,$(XRESLIBSRC),SOXRESREV,SharedXResRev)
+ #else
+-ProjectUnsharedLibReferences(XRES,XRes,$(XRESLIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XRES,NX_XRes,$(XRESLIBSRC),XBuildLibDir)
+ #endif
+ 
+     DMXLIBSRC = $(LIBSRC)/dmx
+@@ -2596,9 +2596,9 @@ ProjectUnsharedLibReferences(XRES,XRes,$
+ #ifndef SharedDmxRev
+ #define SharedDmxRev 1.0
+ #endif
+-SharedLibReferences(DMX,dmx,$(DMXLIBSRC),SODMXREV,SharedDmxRev)
++SharedLibReferences(DMX,NX_dmx,$(DMXLIBSRC),SODMXREV,SharedDmxRev)
+ #else
+-ProjectUnsharedLibReferences(DMX,dmx,$(DMXLIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(DMX,NX_dmx,$(DMXLIBSRC),XBuildLibDir)
+ #endif
+ 
+     DPSLIBSRC = $(LIBSRC)/dps
+@@ -2606,9 +2606,9 @@ ProjectUnsharedLibReferences(DMX,dmx,$(D
+ #ifndef SharedDpsRev
+ #define SharedDpsRev 1.0
+ #endif
+-SharedLibReferences(DPS,dps,$(DPSLIBSRC),SODPSREV,SharedDpsRev)
++SharedLibReferences(DPS,NX_dps,$(DPSLIBSRC),SODPSREV,SharedDpsRev)
+ #else
+-ProjectUnsharedLibReferences(DPS,dps,$(DPSLIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(DPS,NX_dps,$(DPSLIBSRC),XBuildLibDir)
+ #endif
+ 
+     DPSTKLIBSRC = $(LIBSRC)/dpstk
+@@ -2616,9 +2616,9 @@ ProjectUnsharedLibReferences(DPS,dps,$(D
+ #ifndef SharedDpsTkRev
+ #define SharedDpsTkRev 1.0
+ #endif
+-SharedLibReferences(DPSTK,dpstk,$(DPSTKLIBSRC),SODPSTKREV,SharedDpsTkRev)
++SharedLibReferences(DPSTK,NX_dpstk,$(DPSTKLIBSRC),SODPSTKREV,SharedDpsTkRev)
+ #else
+-ProjectUnsharedLibReferences(DPSTK,dpstk,$(DPSTKLIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(DPSTK,NX_dpstk,$(DPSTKLIBSRC),XBuildLibDir)
+ #endif
+ 
+     PSRESLIBSRC = $(LIBSRC)/psres
+@@ -2626,9 +2626,9 @@ ProjectUnsharedLibReferences(DPSTK,dpstk
+ #ifndef SharedPSResRev
+ #define SharedPSResRev 1.0
+ #endif
+-SharedLibReferences(PSRES,psres,$(PSRESLIBSRC),SOPSRESREV,SharedPSResRev)
++SharedLibReferences(PSRES,NX_psres,$(PSRESLIBSRC),SOPSRESREV,SharedPSResRev)
+ #else
+-ProjectUnsharedLibReferences(PSRES,psres,$(PSRESLIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(PSRES,NX_psres,$(PSRESLIBSRC),XBuildLibDir)
+ #endif
+ 
+     GLULIBSRC = $(LIBSRC)/GLU
+@@ -2636,9 +2636,9 @@ ProjectUnsharedLibReferences(PSRES,psres
+ #ifndef SharedGluRev
+ #define SharedGluRev 1.3
+ #endif
+-SharedLibReferences(GLU,GLU,$(GLULIBSRC),SOGLUREV,SharedGluRev)
++SharedLibReferences(GLU,NX_GLU,$(GLULIBSRC),SOGLUREV,SharedGluRev)
+ #else
+-ProjectUnsharedLibReferences(GLU,GLU,$(GLULIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(GLU,NX_GLU,$(GLULIBSRC),XBuildLibDir)
+ #endif
+ 
+     GLXLIBSRC = $(LIBSRC)/GL
+@@ -2646,18 +2646,18 @@ ProjectUnsharedLibReferences(GLU,GLU,$(G
+ #ifndef SharedGlxRev
+ #define SharedGlxRev 1.2
+ #endif
+-SharedLibReferences(GLX,GL,$(GLXLIBSRC),SOGLREV,SharedGlxRev)
++SharedLibReferences(GLX,NX_GL,$(GLXLIBSRC),SOGLREV,SharedGlxRev)
+ #else
+-ProjectUnsharedLibReferences(GLX,GL,$(GLXLIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(GLX,NX_GL,$(GLXLIBSRC),XBuildLibDir)
+ #endif
+     GLWIDGETSRC = $(LIBSRC)/GLw
+ #if SharedLibGLw
+ #ifndef SharedGLwRev
+ #define SharedGLwRev 1.0		/* used to name the shared library */
+ #endif
+-SharedDSLibReferences(GLW,GLw,$(GLWIDGETSRC),SOGLWREV,SharedGLwRev)
++SharedDSLibReferences(GLW,NX_GLw,$(GLWIDGETSRC),SOGLWREV,SharedGLwRev)
+ #else
+-ProjectUnsharedLibReferences(GLW,GLw,$(GLWIDGETSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(GLW,NX_GLw,$(GLWIDGETSRC),XBuildLibDir)
+ #endif
+ 
+     XRENDERLIBSRC = $(LIBSRC)/Xrender
+@@ -2665,9 +2665,9 @@ ProjectUnsharedLibReferences(GLW,GLw,$(G
+ #ifndef SharedXrenderRev
+ #define SharedXrenderRev 1.2.2
+ #endif
+-SharedLibReferences(XRENDER,Xrender,$(XRENDERLIBSRC),SOXRENDERREV,SharedXrenderRev)
++SharedLibReferences(XRENDER,NX_Xrender,$(XRENDERLIBSRC),SOXRENDERREV,SharedXrenderRev)
+ #else
+-ProjectUnsharedLibReferences(XRENDER,Xrender,$(XRENDERLIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XRENDER,NX_Xrender,$(XRENDERLIBSRC),XBuildLibDir)
+ #endif
+ 
+     XRANDRLIBSRC = $(LIBSRC)/Xrandr
+@@ -2675,9 +2675,9 @@ ProjectUnsharedLibReferences(XRENDER,Xre
+ #ifndef SharedXrandrRev
+ #define SharedXrandrRev 2.0
+ #endif
+-SharedLibReferences(XRANDR,Xrandr,$(XRANDRLIBSRC),SOXRANDRREV,SharedXrandrRev)
++SharedLibReferences(XRANDR,NX_Xrandr,$(XRANDRLIBSRC),SOXRANDRREV,SharedXrandrRev)
+ #else
+-ProjectUnsharedLibReferences(XRANDR,Xrandr,$(XRANDRLIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XRANDR,NX_Xrandr,$(XRANDRLIBSRC),XBuildLibDir)
+ #endif
+ 
+     XFIXESLIBSRC = $(LIBSRC)/Xfixes
+@@ -2685,9 +2685,9 @@ ProjectUnsharedLibReferences(XRANDR,Xran
+ #ifndef SharedXfixesRev
+ #define SharedXfixesRev 3.0
+ #endif
+-SharedLibReferences(XFIXES,Xfixes,$(XFIXESLIBSRC),SOXFIXESREV,SharedXfixesRev)
++SharedLibReferences(XFIXES,NX_Xfixes,$(XFIXESLIBSRC),SOXFIXESREV,SharedXfixesRev)
+ #else
+-ProjectUnsharedLibReferences(XFIXES,Xfixes,$(XFIXESLIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XFIXES,NX_Xfixes,$(XFIXESLIBSRC),XBuildLibDir)
+ #endif
+ 
+    XDAMAGELIBSRC = $(LIBSRC)/Xdamage
+@@ -2695,9 +2695,9 @@ ProjectUnsharedLibReferences(XFIXES,Xfix
+ #ifndef SharedXdamageRev
+ #define SharedXdamageRev 1.0
+ #endif
+-SharedLibReferences(XDAMAGE,Xdamage,$(XDAMAGELIBSRC),SOXDAMAGEREV,SharedXdamageRev)
++SharedLibReferences(XDAMAGE,NX_Xdamage,$(XDAMAGELIBSRC),SOXDAMAGEREV,SharedXdamageRev)
+ #else
+-ProjectUnsharedLibReferences(XDAMAGE,Xdamage,$(XDAMAGELIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XDAMAGE,NX_Xdamage,$(XDAMAGELIBSRC),XBuildLibDir)
+ #endif
+ 
+ XCOMPOSITELIBSRC = $(LIBSRC)/Xcomposite
+@@ -2705,9 +2705,9 @@ XCOMPOSITELIBSRC = $(LIBSRC)/Xcomposite
+ #ifndef SharedXcompositeRev
+ #define SharedXcompositeRev 1.0
+ #endif
+-SharedLibReferences(XCOMPOSITE,Xcomposite,$(XCOMPOSITELIBSRC),SOXCOMPOSITEREV,SharedXcompositeRev)
++SharedLibReferences(XCOMPOSITE,NX_Xcomposite,$(XCOMPOSITELIBSRC),SOXCOMPOSITEREV,SharedXcompositeRev)
+ #else
+-ProjectUnsharedLibReferences(XCOMPOSITE,Xcomposite,$(XCOMPOSITELIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XCOMPOSITE,NX_Xcomposite,$(XCOMPOSITELIBSRC),XBuildLibDir)
+ #endif
+ 
+ XEVIELIBSRC = $(LIBSRC)/Xevie
+@@ -2715,9 +2715,9 @@ XEVIELIBSRC = $(LIBSRC)/Xevie
+ #ifndef SharedXevieRev
+ #define SharedXevieRev 1.0
+ #endif
+-SharedLibReferences(XEVIE,Xevie,$(XEVIELIBSRC),SOXEVIEREV,SharedXevieRev)
++SharedLibReferences(XEVIE,NX_Xevie,$(XEVIELIBSRC),SOXEVIEREV,SharedXevieRev)
+ #else
+-ProjectUnsharedLibReferences(XEVIE,Xevie,$(XEVIELIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XEVIE,NX_Xevie,$(XEVIELIBSRC),XBuildLibDir)
+ #endif
+ 
+    XCURSORLIBSRC = $(LIBSRC)/Xcursor
+@@ -2725,9 +2725,9 @@ ProjectUnsharedLibReferences(XEVIE,Xevie
+ #ifndef SharedXcursorRev
+ #define SharedXcursorRev 1.0.2
+ #endif
+-SharedLibReferences(XCURSOR,Xcursor,$(XCURSORLIBSRC),SOXCURSORREV,SharedXcursorRev)
++SharedLibReferences(XCURSOR,NX_Xcursor,$(XCURSORLIBSRC),SOXCURSORREV,SharedXcursorRev)
+ #else
+-ProjectUnsharedLibReferences(XCURSOR,Xcursor,$(XCURSORLIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XCURSOR,NX_Xcursor,$(XCURSORLIBSRC),XBuildLibDir)
+ #endif
+ 
+    APPLEWMLIBSRC = $(LIBSRC)/apple
+@@ -2735,9 +2735,9 @@ ProjectUnsharedLibReferences(XCURSOR,Xcu
+ #ifndef SharedAppleWMRev
+ #define SharedAppleWMRev 1.0
+ #endif
+-SharedLibReferences(APPLEWM,AppleWM,$(APPLEWMLIBSRC),SOAPPLEWMREV,SharedAppleWMRev)
++SharedLibReferences(APPLEWM,NX_AppleWM,$(APPLEWMLIBSRC),SOAPPLEWMREV,SharedAppleWMRev)
+ #else
+-ProjectUnsharedLibReferences(APPLEWM,AppleWM,$(APPLEWMLIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(APPLEWM,NX_AppleWM,$(APPLEWMLIBSRC),XBuildLibDir)
+ #endif
+ 
+    WINDOWSWMLIBSRC = $(LIBSRC)/windows
+@@ -2745,9 +2745,9 @@ ProjectUnsharedLibReferences(APPLEWM,App
+ #ifndef SharedWindowsWMRev
+ #define SharedWindowsWMRev 1.0
+ #endif
+-SharedLibReferences(WINDOWSWM,WindowsWM,$(WINDOWSWMLIBSRC),SOWINDOWSWMREV,SharedWindowsWMRev)
++SharedLibReferences(WINDOWSWM,NX_WindowsWM,$(WINDOWSWMLIBSRC),SOWINDOWSWMREV,SharedWindowsWMRev)
+ #else
+-ProjectUnsharedLibReferences(WINDOWSWM,WindowsWM,$(WINDOWSWMLIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(WINDOWSWM,NX_WindowsWM,$(WINDOWSWMLIBSRC),XBuildLibDir)
+ #endif
+ 
+ # ifndef SharedLibXfontcache
+@@ -2768,9 +2768,9 @@ ProjectUnsharedLibReferences(WINDOWSWM,W
+ #ifndef SharedXfontcacheRev
+ #define SharedXfontcacheRev 1.2
+ #endif
+-SharedLibReferences(XFONTCACHE,Xfontcache,$(XFONTCACHELIBSRC),SOXFONTCACHEREV,SharedXfontcacheRev)
++SharedLibReferences(XFONTCACHE,NX_Xfontcache,$(XFONTCACHELIBSRC),SOXFONTCACHEREV,SharedXfontcacheRev)
+ #else
+-ProjectUnsharedLibReferences(XFONTCACHE,Xfontcache,$(XFONTCACHELIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XFONTCACHE,NX_Xfontcache,$(XFONTCACHELIBSRC),XBuildLibDir)
+ #endif
+ 
+ #ifndef SharedLibXau
+@@ -2790,12 +2790,12 @@ ProjectUnsharedLibReferences(XFONTCACHE,
+ #ifndef SharedXauRev
+ #define SharedXauRev 6.0
+ #endif
+-SharedLibReferences(XAUTH,Xau,$(XAUTHSRC),SOXAUTHREV,SharedXauRev)
++SharedLibReferences(XAUTH,NX_Xau,$(XAUTHSRC),SOXAUTHREV,SharedXauRev)
+ #else
+ #if !UseInstalledXauLib
+-ProjectUnsharedLibReferences(XAUTH,Xau,$(XAUTHSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XAUTH,NX_Xau,$(XAUTHSRC),XBuildLibDir)
+ #else
+-ProjectUnsharedLibReferences(XAUTH,Xau,$(XAUTHSRC),$(USRLIBDIR))
++ProjectUnsharedLibReferences(XAUTH,NX_Xau,$(XAUTHSRC),$(USRLIBDIR))
+ #endif
+ #endif
+ 
+@@ -2816,12 +2816,12 @@ ProjectUnsharedLibReferences(XAUTH,Xau,$
+ #ifndef SharedXdmcpRev
+ #define SharedXdmcpRev 6.0
+ #endif
+-SharedLibReferences(XDMCP,Xdmcp,$(XDMCPLIBSRC),SOXDMCPREV,SharedXdmcpRev)
++SharedLibReferences(XDMCP,NX_Xdmcp,$(XDMCPLIBSRC),SOXDMCPREV,SharedXdmcpRev)
+ #else
+ #if !UseInstalledXdmcpLib
+-ProjectUnsharedLibReferences(XDMCP,Xdmcp,$(XDMCPLIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XDMCP,NX_Xdmcp,$(XDMCPLIBSRC),XBuildLibDir)
+ #else
+-ProjectUnsharedLibReferences(XDMCP,Xdmcp,$(XDMCPLIBSRC),$(USRLIBDIR))
++ProjectUnsharedLibReferences(XDMCP,NX_Xdmcp,$(XDMCPLIBSRC),$(USRLIBDIR))
+ #endif
+ #endif
+ 
+@@ -2842,9 +2842,9 @@ ProjectUnsharedLibReferences(XDMCP,Xdmcp
+ #ifndef SharedXmuRev
+ #define SharedXmuRev 6.2
+ #endif
+-SharedDSLibReferences(XMU,Xmu,$(XMUSRC),SOXMUREV,SharedXmuRev)
++SharedDSLibReferences(XMU,NX_Xmu,$(XMUSRC),SOXMUREV,SharedXmuRev)
+ #else
+-ProjectUnsharedLibReferences(XMU,Xmu,$(XMUSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XMU,NX_Xmu,$(XMUSRC),XBuildLibDir)
+ #endif
+ 
+ #ifndef SharedLibXmuu
+@@ -2864,9 +2864,9 @@ ProjectUnsharedLibReferences(XMU,Xmu,$(X
+ #ifndef SharedXmuuRev
+ #define SharedXmuuRev 1.0
+ #endif
+-SharedLibReferences(XMUU,Xmuu,$(XMUUSRC),SOXMUUREV,SharedXmuuRev)
++SharedLibReferences(XMUU,NX_Xmuu,$(XMUUSRC),SOXMUUREV,SharedXmuuRev)
+ #else
+-ProjectUnsharedLibReferences(XMUU,Xmuu,$(XMUUSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XMUU,NX_Xmuu,$(XMUUSRC),XBuildLibDir)
+ #endif
+ 
+ #ifndef SharedOldX
+@@ -2886,9 +2886,9 @@ ProjectUnsharedLibReferences(XMUU,Xmuu,$
+ #ifndef SharedOldXRev
+ #define SharedOldXRev 6.0
+ #endif
+-SharedLibReferences(OLDX,oldX,$(OLDXLIBSRC),SOOLDXREV,SharedOldXRev)
++SharedLibReferences(OLDX,NX_oldX,$(OLDXLIBSRC),SOOLDXREV,SharedOldXRev)
+ #else
+-ProjectUnsharedLibReferences(OLDX,oldX,$(OLDXLIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(OLDX,NX_oldX,$(OLDXLIBSRC),XBuildLibDir)
+ #endif
+ 
+ #ifndef SharedLibXp
+@@ -2908,9 +2908,9 @@ ProjectUnsharedLibReferences(OLDX,oldX,$
+ #ifndef SharedXpRev
+ #define SharedXpRev 6.2
+ #endif
+-SharedLibReferences(XP,Xp,$(XPLIBSRC),SOXPREV,SharedXpRev)
++SharedLibReferences(XP,NX_Xp,$(XPLIBSRC),SOXPREV,SharedXpRev)
+ #else
+-ProjectUnsharedLibReferences(XP,Xp,$(XPLIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XP,NX_Xp,$(XPLIBSRC),XBuildLibDir)
+ #endif
+ 
+ #ifndef SharedLibXt
+@@ -2930,9 +2930,9 @@ ProjectUnsharedLibReferences(XP,Xp,$(XPL
+ #ifndef SharedXtRev
+ #define SharedXtRev 6.0
+ #endif
+-SharedDSLibReferences(XTOOLONLY,Xt,$(TOOLKITSRC),SOXTREV,SharedXtRev)
++SharedDSLibReferences(XTOOLONLY,NX_Xt,$(TOOLKITSRC),SOXTREV,SharedXtRev)
+ #else
+-ProjectUnsharedLibReferences(XTOOLONLY,Xt,$(TOOLKITSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XTOOLONLY,NX_Xt,$(TOOLKITSRC),XBuildLibDir)
+ #endif
+       DEPXTOOLLIB = $(DEPXTOOLONLYLIB) $(DEPSMLIB) $(DEPICELIB)
+          XTOOLLIB = $(XTOOLONLYLIB) $(SMLIB) $(ICELIB)
+@@ -2956,9 +2956,9 @@ ProjectUnsharedLibReferences(XTOOLONLY,X
+ #ifndef SharedXaRev
+ #define SharedXaRev 1.0
+ #endif
+-SharedLibReferences(XA,Xa,$(XALIBSRC),SOXAREV,SharedXaRev)
++SharedLibReferences(XA,NX_Xa,$(XALIBSRC),SOXAREV,SharedXaRev)
+ #else
+-UnsharedLibReferences(XA,Xa,$(XALIBSRC))
++UnsharedLibReferences(XA,NX_Xa,$(XALIBSRC))
+ #endif
+ 
+ #ifndef BuildXaw
+@@ -2985,9 +2985,9 @@ UnsharedLibReferences(XA,Xa,$(XALIBSRC))
+ #ifndef SharedXawRev
+ #define SharedXawRev 8.0
+ #endif
+-SharedDSLibReferences(XAW,Xaw,$(AWIDGETSRC),SOXAWREV,SharedXawRev)
++SharedDSLibReferences(XAW,NX_Xaw,$(AWIDGETSRC),SOXAWREV,SharedXawRev)
+ #else
+-ProjectUnsharedLibReferences(XAW,Xaw,$(AWIDGETSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XAW,NX_Xaw,$(AWIDGETSRC),XBuildLibDir)
+ #endif
+ #endif
+ 
+@@ -3013,14 +3013,14 @@ ProjectUnsharedLibReferences(XAW,Xaw,$(A
+ #ifndef SharedXaw7Rev
+ #define SharedXaw7Rev 7.0
+ #endif
+-SharedDSLibReferences(XAW7,Xaw,$(AWIDGET7SRC),SOXAW7REV,SharedXaw7Rev)
++SharedDSLibReferences(XAW7,NX_Xaw,$(AWIDGET7SRC),SOXAW7REV,SharedXaw7Rev)
+ #if !BuildXaw
+-SharedDSLibReferences(XAW,Xaw,$(AWIDGET7SRC),SOXAWREV,SharedXawRev)
++SharedDSLibReferences(XAW,NX_Xaw,$(AWIDGET7SRC),SOXAWREV,SharedXawRev)
+ #endif
+ #else
+-ProjectUnsharedLibReferences(XAW7,Xaw,$(AWIDGET7SRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XAW7,NX_Xaw,$(AWIDGET7SRC),XBuildLibDir)
+ #if !BuildXaw
+-ProjectUnsharedLibReferences(XAW,Xaw,$(AWIDGET7SRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XAW,NX_Xaw,$(AWIDGET7SRC),XBuildLibDir)
+ #endif
+ #endif
+ #endif
+@@ -3048,14 +3048,14 @@ ProjectUnsharedLibReferences(XAW,Xaw,$(A
+ #ifndef SharedXaw6Rev
+ #define SharedXaw6Rev 6.1
+ #endif
+-SharedDSLibReferences(XAW6,Xaw,$(AWIDGET6SRC),SOXAW6REV,SharedXaw6Rev)
++SharedDSLibReferences(XAW6,NX_Xaw,$(AWIDGET6SRC),SOXAW6REV,SharedXaw6Rev)
+ #if !BuildXaw && !BuildXaw7
+-SharedDSLibReferences(XAW,Xaw,$(AWIDGET6SRC),SOXAWREV,SharedXawRev)
++SharedDSLibReferences(XAW,NX_Xaw,$(AWIDGET6SRC),SOXAWREV,SharedXawRev)
+ #endif
+ #else
+-ProjectUnsharedLibReferences(XAW6,Xaw,$(AWIDGET6SRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XAW6,NX_Xaw,$(AWIDGET6SRC),XBuildLibDir)
+ #if !BuildXaw && !BuildXaw7
+-ProjectUnsharedLibReferences(XAW,Xaw,$(AWIDGET6SRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XAW,NX_Xaw,$(AWIDGET6SRC),XBuildLibDir)
+ #endif
+ #endif
+ #endif
+@@ -3077,9 +3077,9 @@ ProjectUnsharedLibReferences(XAW,Xaw,$(A
+ #ifndef SharedXiRev
+ #define SharedXiRev 6.0
+ #endif
+-SharedLibReferences(XI,Xi,$(XILIBSRC),SOXINPUTREV,SharedXiRev)
++SharedLibReferences(XI,NX_Xi,$(XILIBSRC),SOXINPUTREV,SharedXiRev)
+ #else
+-ProjectUnsharedLibReferences(XI,Xi,$(XILIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XI,NX_Xi,$(XILIBSRC),XBuildLibDir)
+ #endif
+ 
+ #ifndef SharedLibXtst
+@@ -3099,12 +3099,12 @@ ProjectUnsharedLibReferences(XI,Xi,$(XIL
+ #ifndef SharedXtstRev
+ #define SharedXtstRev 6.1
+ #endif
+-SharedLibReferences(XTEST,Xtst,$(XTESTLIBSRC),SOXTESTREV,SharedXtstRev)
++SharedLibReferences(XTEST,NX_Xtst,$(XTESTLIBSRC),SOXTESTREV,SharedXtstRev)
+ #else
+-ProjectUnsharedLibReferences(XTEST,Xtst,$(XTESTLIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XTEST,NX_Xtst,$(XTESTLIBSRC),XBuildLibDir)
+ #endif
+ 
+-ProjectUnsharedLibReferences(XBSD,Xbsd,$(LIBSRC)/Xbsd,XBuildLibDir)
++ProjectUnsharedLibReferences(XBSD,NX_Xbsd,$(LIBSRC)/Xbsd,XBuildLibDir)
+ 
+ #ifndef SharedLibICE
+ #define SharedLibICE HasSharedLibraries
+@@ -3123,9 +3123,9 @@ ProjectUnsharedLibReferences(XBSD,Xbsd,$
+ #ifndef SharedICERev
+ #define SharedICERev 6.4
+ #endif
+-SharedLibReferences(ICE,ICE,$(ICESRC),SOICEREV,SharedICERev)
++SharedLibReferences(ICE,NX_ICE,$(ICESRC),SOICEREV,SharedICERev)
+ #else
+-ProjectUnsharedLibReferences(ICE,ICE,$(ICESRC),XBuildLibDir)
++ProjectUnsharedLibReferences(ICE,NX_ICE,$(ICESRC),XBuildLibDir)
+ #endif
+ 
+ #ifndef SharedLibSM
+@@ -3145,9 +3145,9 @@ ProjectUnsharedLibReferences(ICE,ICE,$(I
+ #ifndef SharedSMRev
+ #define SharedSMRev 6.0
+ #endif
+-SharedLibReferences(SM,SM,$(SMSRC),SOSMREV,SharedSMRev)
++SharedLibReferences(SM,NX_SM,$(SMSRC),SOSMREV,SharedSMRev)
+ #else
+-ProjectUnsharedLibReferences(SM,SM,$(SMSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(SM,NX_SM,$(SMSRC),XBuildLibDir)
+ #endif
+ 
+ #ifndef SharedLibXkey
+@@ -3167,9 +3167,9 @@ ProjectUnsharedLibReferences(SM,SM,$(SMS
+ #ifndef SharedXkeyRev
+ #define SharedXkeyRev 6.0
+ #endif
+-SharedLibReferences(XKEY,Xkey,$(XKEYSRC),SOXKEYREV,SharedXkeyRev)
++SharedLibReferences(XKEY,NX_Xkey,$(XKEYSRC),SOXKEYREV,SharedXkeyRev)
+ #else
+-ProjectUnsharedLibReferences(XKEY,Xkey,$(XKEYSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XKEY,NX_Xkey,$(XKEYSRC),XBuildLibDir)
+ #endif
+ 
+ #ifndef SharedLibFS
+@@ -3189,9 +3189,9 @@ ProjectUnsharedLibReferences(XKEY,Xkey,$
+ #ifndef SharedFSRev
+ #define SharedFSRev 6.0
+ #endif
+-SharedLibReferences(FS,FS,$(FSLIBSRC),SOFSREV,SharedFSRev)
++SharedLibReferences(FS,NX_FS,$(FSLIBSRC),SOFSREV,SharedFSRev)
+ #else
+-ProjectUnsharedLibReferences(FS,FS,$(FSLIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(FS,NX_FS,$(FSLIBSRC),XBuildLibDir)
+ #endif
+ 
+ #ifndef SharedLibFont
+@@ -3212,14 +3212,14 @@ ProjectUnsharedLibReferences(FS,FS,$(FSL
+ #define SharedFontRev 1.5
+ #endif
+ SharedFontLibReferences()
+-XCOMM SharedLibReferences(XFONT,Xfont,$(FONTLIBSRC),SOFONTREV,SharedFontRev)
++XCOMM SharedLibReferences(XFONT,NX_Xfont,$(FONTLIBSRC),SOFONTREV,SharedFontRev)
+ #else
+ ProjectUnsharedFontLibReferences()
+-XCOMM ProjectUnsharedLibReferences(XFONT,Xfont,$(FONTLIBSRC),XBuildLibDir)
++XCOMM ProjectUnsharedLibReferences(XFONT,NX_Xfont,$(FONTLIBSRC),XBuildLibDir)
+ #endif
+ 
+      FONTSTUBLIBSRC = $(FONTLIBSRC)/stubs
+-ProjectUnsharedLibReferences(FONTSTUB,fntstubs,$(FONTSUBLIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(FONTSTUB,NX_fntstubs,$(FONTSUBLIBSRC),XBuildLibDir)
+          DEPFONTLIB = $(DEPXFONTLIB) $(DEPFONTSTUBLIB)
+             FONTLIB = $(XFONTLIB) $(FONTSTUBLIB) $(FREETYPE2LIB)
+ 
+@@ -3241,9 +3241,9 @@ ProjectUnsharedLibReferences(FONTSTUB,fn
+ #ifndef SharedFontEncRev
+ #define SharedFontEncRev 1.0
+ #endif
+-SharedLibReferences(XFONTENC,fontenc,$(FONTENCLIBSRC),SOFONTENCREV,SharedFontEncRev)
++SharedLibReferences(XFONTENC,NX_fontenc,$(FONTENCLIBSRC),SOFONTENCREV,SharedFontEncRev)
+ #else
+-ProjectUnsharedLibReferences(XFONTENC,fontenc,$(FONTENCLIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XFONTENC,NX_fontenc,$(FONTENCLIBSRC),XBuildLibDir)
+ #endif
+ 
+ #ifndef SharedLibXpm
+@@ -3263,9 +3263,9 @@ ProjectUnsharedLibReferences(XFONTENC,fo
+ #ifndef SharedXpmRev
+ #define SharedXpmRev 4.11
+ #endif
+-SharedLibReferences(XPM,Xpm,$(XPMLIBSRC),SOXPMREV,SharedXpmRev)
++SharedLibReferences(XPM,NX_Xpm,$(XPMLIBSRC),SOXPMREV,SharedXpmRev)
+ #else
+-ProjectUnsharedLibReferences(XPM,Xpm,$(XPMLIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XPM,NX_Xpm,$(XPMLIBSRC),XBuildLibDir)
+ #endif
+ 
+ #if UseFreetype2
+@@ -3313,9 +3313,9 @@ ProjectUnsharedLibReferences(XPM,Xpm,$(X
+ #define SharedFreetype2Rev 9.0
+ #endif
+ #endif
+-SharedLibReferences(FREETYPE2,freetype,$(FREETYPE2LIBSRC),SOFREETYPE2REV,SharedFreetype2Rev)
++SharedLibReferences(FREETYPE2,NX_freetype,$(FREETYPE2LIBSRC),SOFREETYPE2REV,SharedFreetype2Rev)
+ #else
+-ProjectUnsharedLibReferences(FREETYPE2,freetype,$(FREETYPE2LIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(FREETYPE2,NX_freetype,$(FREETYPE2LIBSRC),XBuildLibDir)
+ #endif
+ 
+ #ifdef UseInstalled
+@@ -3470,9 +3470,9 @@ MOTIFINCLUDES = -I$(MOTIFINCDIR)
+ #define SharedExpatRev 4.0
+ #endif
+ #endif
+-SharedLibReferences(EXPAT,expat,$(EXPATLIBSRC),SOEXPATREV,SharedExpatRev)
++SharedLibReferences(EXPAT,NX_expat,$(EXPATLIBSRC),SOEXPATREV,SharedExpatRev)
+ #else
+-ProjectUnsharedLibReferences(EXPAT,expat,$(EXPATLIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(EXPAT,NX_expat,$(EXPATLIBSRC),XBuildLibDir)
+ #endif
+ 
+ #if UseExpat
+@@ -3552,9 +3552,9 @@ EXPATDEFINES = -DEXPAT
+ #ifndef SharedXft1Rev
+ #define SharedXft1Rev 1.1
+ #endif
+-SharedLibReferences(XFT1,Xft,$(XFT1LIBSRC),SOXFT1REV,SharedXft1Rev)
++SharedLibReferences(XFT1,NX_Xft,$(XFT1LIBSRC),SOXFT1REV,SharedXft1Rev)
+ #else
+-ProjectUnsharedLibReferences(XFT1,Xft,$(XFT1LIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XFT1,NX_Xft,$(XFT1LIBSRC),XBuildLibDir)
+ #endif
+ 
+ #ifndef Xft1ClientDepLibs
+@@ -3589,9 +3589,9 @@ ProjectUnsharedLibReferences(XFT1,Xft,$(
+ #ifndef SharedXftRev
+ #define SharedXftRev 2.1.2
+ #endif
+-SharedLibReferences(XFT,Xft,$(XFTLIBSRC),SOXFTREV,SharedXftRev)
++SharedLibReferences(XFT,NX_Xft,$(XFTLIBSRC),SOXFTREV,SharedXftRev)
+ #else
+-ProjectUnsharedLibReferences(XFT,Xft,$(XFTLIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XFT,NX_Xft,$(XFTLIBSRC),XBuildLibDir)
+ #endif
+ 
+ #ifndef XftClientDepLibs
+@@ -3622,9 +3622,9 @@ ProjectUnsharedLibReferences(XFT,Xft,$(X
+ #ifndef SharedFontconfigRev
+ #define SharedFontconfigRev 1.0.4
+ #endif
+-SharedLibReferences(FONTCONFIG,fontconfig,$(FONTCONFIGLIBSRC),SOFONTCONFIGREV,SharedFontconfigRev)
++SharedLibReferences(FONTCONFIG,NX_fontconfig,$(FONTCONFIGLIBSRC),SOFONTCONFIGREV,SharedFontconfigRev)
+ #else
+-ProjectUnsharedLibReferences(FONTCONFIG,fontconfig,$(FONTCONFIGLIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(FONTCONFIG,NX_fontconfig,$(FONTCONFIGLIBSRC),XBuildLibDir)
+ #endif
+ 
+ #ifdef UseInstalled
+@@ -3827,9 +3827,9 @@ LIBPNGLIB = -L$(LIBPNGLIBDIR) LinkerRunt
+ # ifndef SharedxkbfileRev
+ #  define SharedxkbfileRev	1.0
+ # endif
+-SharedLibReferences(XKBFILE,xkbfile,$(XKBFILESRC),SOXKBFILEREV, SharedxkbfileRev)
++SharedLibReferences(XKBFILE,NX_xkbfile,$(XKBFILESRC),SOXKBFILEREV, SharedxkbfileRev)
+ #else
+-ProjectUnsharedLibReferences(XKBFILE,xkbfile,$(XKBFILELIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XKBFILE,NX_xkbfile,$(XKBFILELIBSRC),XBuildLibDir)
+ #endif
+ 
+ #if BuildXKBlib
+@@ -3899,9 +3899,9 @@ ProjectUnsharedLibReferences(XKBFILE,xkb
+ # ifndef SharedxkbuiRev
+ #  define SharedxkbuiRev	1.0
+ # endif
+-SharedLibReferences(XKBUI,xkbui,$(XKBUISRC),SOXKBUIREV, SharedxkbuiRev)
++SharedLibReferences(XKBUI,NX_xkbui,$(XKBUISRC),SOXKBUIREV, SharedxkbuiRev)
+ #else
+-ProjectUnsharedLibReferences(XKBUI,xkbui,$(XKBUILIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XKBUI,NX_xkbui,$(XKBUILIBSRC),XBuildLibDir)
+ #endif
+ 
+ #ifndef XkbuiLibs
+@@ -3974,9 +3974,9 @@ EXTRAXAWCLIENTLIBS = ExtraXawClientLibs
+ #ifndef SharedXTrapRev
+ #define SharedXTrapRev 6.4
+ #endif
+-SharedLibReferences(XTRAP,XTrap,$(XTRAPLIBSRC),SOXTRAPREV,SharedXTrapRev)
++SharedLibReferences(XTRAP,NX_XTrap,$(XTRAPLIBSRC),SOXTRAPREV,SharedXTrapRev)
+ #else
+-ProjectUnsharedLibReferences(XTRAP,XTrap,$(XTRAPLIBSRC),XBuildLibDir)
++ProjectUnsharedLibReferences(XTRAP,NX_XTrap,$(XTRAPLIBSRC),XBuildLibDir)
+ #endif
+ 
+ #ifndef NeedDefaultDepLibs
+Index: nx-X11/config/cf/bsdLib.rules
+===================================================================
+--- a/nx-X11/config/cf/bsdLib.rules
++++ b/nx-X11/config/cf/bsdLib.rules
+@@ -134,9 +134,9 @@ LintLibReferences(varname,libname,libsou
+ #ifndef SharedFontLibReferences
+ #define SharedFontLibReferences()					@@\
+ SOFONTREV = SharedFontRev						@@\
+-DEPFONTLIB = SharedLibDependencies(Xfont,$(FONTLIBSRC),SOFONTREV)	@@\
+-FONTLIB = -L$(FREETYPELIBDIR) -L$(FONTLIBSRC) LoaderLibPrefix -lXfont	@@\
+-LintLibReferences(XFONT,Xfont,$(FONTLIBSRC))
++DEPFONTLIB = SharedLibDependencies(NX_Xfont,$(FONTLIBSRC),SOFONTREV)	@@\
++FONTLIB = -L$(FREETYPELIBDIR) -L$(FONTLIBSRC) LoaderLibPrefix -lNX_Xfont	@@\
++LintLibReferences(XFONT,NX_Xfont,$(FONTLIBSRC))
+ #endif
+ 
+ /*
+Index: nx-X11/config/cf/bsdLib.tmpl
+===================================================================
+--- a/nx-X11/config/cf/bsdLib.tmpl
++++ b/nx-X11/config/cf/bsdLib.tmpl
+@@ -38,7 +38,7 @@ XCOMM $XFree86: xc/config/cf/bsdLib.tmpl
+ 
+ #ifndef FixupLibReferences
+ #define FixupLibReferences()						@@\
+-XMULIBONLY = -lXmu							@@\
++XMULIBONLY = -lNX_Xmu							@@\
+ XMULIB = $(XMULIBONLY) $(XTOOLLIB) $(XLIB)
+ #endif
+ 
+Index: nx-X11/config/cf/bsdiLib.tmpl
+===================================================================
+--- a/nx-X11/config/cf/bsdiLib.tmpl
++++ b/nx-X11/config/cf/bsdiLib.tmpl
+@@ -11,7 +11,7 @@ XCOMM $XFree86: xc/config/cf/bsdiLib.tmp
+ 
+ #ifndef FixupLibReferences
+ #define FixupLibReferences()						@@\
+-XMULIBONLY = -lXmu							@@\
++XMULIBONLY = -lNX_Xmu							@@\
+ XMULIB = $(XMULIBONLY) $(XTOOLLIB) $(XLIB)
+ #endif
+ 
+Index: nx-X11/config/cf/convex.cf
+===================================================================
+--- a/nx-X11/config/cf/convex.cf
++++ b/nx-X11/config/cf/convex.cf
+@@ -90,9 +90,9 @@ DEPMRESOURCELIB = _UseCat($(USRLIBDIR),$
+ LINTMRESOURCELIB= _UseCat($(LINTLIBDIR),$(MRESOURCESRC),/llib-lMrm.ln)
+ 
+        XMLIBSRC = $(LIBSRC)/Xm
+-       DEPXMLIB = _UseCat($(USRLIBDIR),$(XMLIBSRC),/libXm.a)
+-          XMLIB = LoaderLibPrefix _Use(-lXm,$(DEPXMLIB))
+-      LINTXMLIB = _UseCat($(LINTLIBDIR),$(XMLIBSRC),/llib-lXm.ln)
++       DEPXMLIB = _UseCat($(USRLIBDIR),$(XMLIBSRC),/libNX_Xm.a)
++          XMLIB = LoaderLibPrefix _Use(-lNX_Xm,$(DEPXMLIB))
++      LINTXMLIB = _UseCat($(LINTLIBDIR),$(XMLIBSRC),/llib-lNX_Xm.ln)
+ 
+       UILLIBSRC = $(LIBSRC)/uil
+       DEPUILLIB = _UseCat($(USRLIBDIR),$(UILLIBSRC),/libUil.a)
+Index: nx-X11/config/cf/cygwin.tmpl
+===================================================================
+--- a/nx-X11/config/cf/cygwin.tmpl
++++ b/nx-X11/config/cf/cygwin.tmpl
+@@ -50,7 +50,7 @@ XCOMM $XFree86: xc/config/cf/cygwin.tmpl
+ 
+ #ifndef FixupLibReferences
+ # define FixupLibReferences()						@@\
+-XMULIBONLY = -lXmu							@@\
++XMULIBONLY = -lNX_Xmu							@@\
+ XMULIB = $(XMULIBONLY) $(XTOOLLIB) $(XLIB)
+ #endif
+ 
+Index: nx-X11/config/cf/darwinLib.tmpl
+===================================================================
+--- a/nx-X11/config/cf/darwinLib.tmpl
++++ b/nx-X11/config/cf/darwinLib.tmpl
+@@ -5,7 +5,7 @@ XCOMM $XFree86: xc/config/cf/darwinLib.t
+ 
+ #ifndef FixupLibReferences
+ #define FixupLibReferences()						@@\
+-XMULIBONLY = -lXmu							@@\
++XMULIBONLY = -lNX_Xmu							@@\
+ XMULIB = $(XMULIBONLY) $(XTOOLLIB) $(XLIB)
+ #endif
+ 
+Index: nx-X11/config/cf/gnuLib.tmpl
+===================================================================
+--- a/nx-X11/config/cf/gnuLib.tmpl
++++ b/nx-X11/config/cf/gnuLib.tmpl
+@@ -6,7 +6,7 @@ XCOMM
+ 
+ #ifndef FixupLibReferences
+ #define FixupLibReferences()						@@\
+-XMULIBONLY = -lXmu							@@\
++XMULIBONLY = -lNX_Xmu							@@\
+ XMULIB = $(XMULIBONLY) $(XTOOLLIB) $(XLIB)
+ #endif
+ 
+Index: nx-X11/config/cf/ibmLib.rules
+===================================================================
+--- a/nx-X11/config/cf/ibmLib.rules
++++ b/nx-X11/config/cf/ibmLib.rules
+@@ -127,23 +127,23 @@ LintLibReferences(varname,libname,libsou
+ #   ifndef SharedFontLibReferences
+ #    define SharedFontLibReferences()					@@\
+ DEPFONTLIB = /**/							@@\
+-FONTLIB = -L$(FREETYPELIBDIR) _Use(-lXfont,$(FONTLIBSRC)/libXfont.a)	@@\
+-LintLibReferences(XFONT,Xfont,$(FONTLIBSRC))
++FONTLIB = -L$(FREETYPELIBDIR) _Use(-lNX_Xfont,$(FONTLIBSRC)/libNX_Xfont.a)	@@\
++LintLibReferences(XFONT,NX_Xfont,$(FONTLIBSRC))
+ #   endif
+ #  else
+ #   ifndef SharedFontLibReferences
+ #    define SharedFontLibReferences()					@@\
+ DEPFONTLIB = /**/							@@\
+-FONTLIB = -L$(FREETYPELIBDIR) _Use(-lXfont,$(BUILDLIBDIR)/font.imp) $(BUILDLIBDI)/libXfont.a)) @@\
+-LintLibReferences(XFONT,Xfont,$(FONTLIBSRC))
++FONTLIB = -L$(FREETYPELIBDIR) _Use(-lNX_Xfont,$(BUILDLIBDIR)/font.imp) $(BUILDLIBDI)/libNX_Xfont.a)) @@\
++LintLibReferences(XFONT,NX_Xfont,$(FONTLIBSRC))
+ #   endif
+ #  endif
+ # else /* OSMajorVersion < 5 */
+ #  ifndef SharedFontLibReferences
+ #   define SharedFontLibReferences()					@@\
+ DEPFONTLIB = /**/							@@\
+-FONTLIB = -L$(FREETYPELIBDIR) _Use(-lXfont,$(BUILDLIBDI)/libXfont.so)) @@\
+-LintLibReferences(XFONT,Xfont,$(FONTLIBSRC))
++FONTLIB = -L$(FREETYPELIBDIR) _Use(-lNX_Xfont,$(BUILDLIBDI)/libNX_Xfont.so)) @@\
++LintLibReferences(XFONT,NX_Xfont,$(FONTLIBSRC))
+ #  endif
+ 
+ # endif
+Index: nx-X11/config/cf/ibmLib.tmpl
+===================================================================
+--- a/nx-X11/config/cf/ibmLib.tmpl
++++ b/nx-X11/config/cf/ibmLib.tmpl
+@@ -81,7 +81,7 @@ XCOMM $XFree86: xc/config/cf/ibmLib.tmpl
+    /* we want this to be defined only when building X */
+ # ifndef FixupLibReferences
+ # define FixupLibReferences()						@@\
+-DEPXTOOLLIB = _UseCat($(USRLIBDIR),$(TOOLKITSRC),/libXt.a)
++DEPXTOOLLIB = _UseCat($(USRLIBDIR),$(TOOLKITSRC),/libNX_Xt.a)
+ # endif
+ #endif
+ 
+Index: nx-X11/config/cf/lnxLib.rules
+===================================================================
+--- a/nx-X11/config/cf/lnxLib.rules
++++ b/nx-X11/config/cf/lnxLib.rules
+@@ -389,7 +389,7 @@ JUMP_LDLIBS_libc = `$(CC) --print-libgcc
+ XCOMM libX11.so (X11, SM, ICE)
+ JUMP_ROOT_X11 = $(XLIBSRC)
+ JUMP_IS_HOST_X11 = YES
+-JUMP_STUBLIBS_X11 = libX11.sa libSM.sa libICE.sa
++JUMP_STUBLIBS_X11 = libNX_X11.sa libNX_SM.sa libNX_ICE.sa
+ JUMP_SIBDIRS_X11 = $(JUMP_ROOT_SM) $(JUMP_ROOT_ICE)
+ JUMP_DIR_X11 = $(JUMP_ROOT_X11)/shared
+ JUMP_DEFS_X11 = $(XDMAUTHDEFS) $(XKB_DEFINES)
+@@ -400,9 +400,9 @@ JUMP_EXPORT_X11 = $(JUMP_DIR_X11)/jump.v
+ JUMP_ADDRESS_X11 = 0x60200000
+ JUMP_JUMPTABLESIZE_X11 = 0x4000
+ JUMP_GOTSIZE_X11 = 4096
+-JUMP_STUBNAMES_X11 = libX11 libSM libICE
++JUMP_STUBNAMES_X11 = libNX_X11 libNX_SM libNX_ICE
+ JUMP_STUBS_IMPORT_X11 = $(LIBC_SA)
+-JUMP_SIBARS_X11 = jump/libSM.a~ jump/libICE.a~
++JUMP_SIBARS_X11 = jump/libNX_SM.a~ jump/libNX_ICE.a~
+ JUMP_LDLIBS_X11 = $(JUMP_SIBARS_X11) $(JUMP_LDLIBS_libc)
+ 
+ XCOMM libSM (part of libX11.so)
+@@ -435,9 +435,9 @@ JUMP_JUMPTABLESIZE_Xt = 0x4000
+ JUMP_GOTSIZE_Xt = 4096
+ JUMP_STUBNAMES_Xt = libXt libXmu libXext libXi libXtst libXp
+ JUMP_STUBS_IMPORT_Xt = $(JUMP_STUBS_IMPORT_X11)
+-JUMP_SIBARS_Xt = jump/libXmu.a~ jump/libXext.a~ jump/libXi.a~ jump/libXtst.a~ jump/libXp.a~
+-JUMP_LDLIBS_Xt = $(JUMP_SIBARS_Xt) $(JUMP_ROOT_ICE)/libICE.sa \
+-	$(JUMP_ROOT_SM)/libSM.sa $(JUMP_ROOT_X11)/libX11.sa $(JUMP_LDLIBS_libc)
++JUMP_SIBARS_Xt = jump/libNX_Xmu.a~ jump/libNX_Xext.a~ jump/libNX_Xi.a~ jump/libNX_Xtst.a~ jump/libNX_Xp.a~
++JUMP_LDLIBS_Xt = $(JUMP_SIBARS_Xt) $(JUMP_ROOT_ICE)/libNX_ICE.sa \
++	$(JUMP_ROOT_SM)/libNX_SM.sa $(JUMP_ROOT_X11)/libNX_X11.sa $(JUMP_LDLIBS_libc)
+ 
+ XCOMM libXmu (part of libXt.so)
+ JUMP_ROOT_Xmu = $(XMUSRC)
+@@ -485,8 +485,8 @@ JUMP_JUMPTABLESIZE_Xaw = 0x4000
+ JUMP_GOTSIZE_Xaw = 4096
+ JUMP_STUBNAMES_Xaw = libXaw
+ JUMP_STUBS_IMPORT_Xaw = $(JUMP_STUBS_IMPORT_X11)
+-JUMP_LDLIBS_Xaw = $(JUMP_ROOT_Xt)/libXt.sa $(JUMP_ROOT_Xt)/libXmu.sa \
+-	$(JUMP_ROOT_Xt)/libXext.sa $(JUMP_ROOT_X11)/libX11.sa \
++JUMP_LDLIBS_Xaw = $(JUMP_ROOT_Xt)/libNX_Xt.sa $(JUMP_ROOT_Xt)/libNX_Xmu.sa \
++	$(JUMP_ROOT_Xt)/libNX_Xext.sa $(JUMP_ROOT_X11)/libNX_X11.sa \
+ 	$(JUMP_LDLIBS_libc)
+ 
+ # endif /* !UseInstalled */
+Index: nx-X11/config/cf/lnxLib.tmpl
+===================================================================
+--- a/nx-X11/config/cf/lnxLib.tmpl
++++ b/nx-X11/config/cf/lnxLib.tmpl
+@@ -9,7 +9,7 @@ XCOMM $XFree86: xc/config/cf/lnxLib.tmpl
+ 
+ #ifndef FixupLibReferences
+ #define FixupLibReferences()						@@\
+-XMULIBONLY = -lXmu							@@\
++XMULIBONLY = -lNX_Xmu							@@\
+ XMULIB = $(XMULIBONLY) $(XTOOLLIB) $(XLIB)
+ #endif
+ 
+@@ -66,7 +66,7 @@ XMULIB = $(XMULIBONLY) $(XTOOLLIB) $(XLI
+ 
+ #ifndef FixupLibReferences
+ #define FixupLibReferences()						@@\
+-XMULIB = -lXmu $(XLIB)
++XMULIB = -lNX_Xmu $(XLIB)
+ #endif
+ 
+ #endif	/* UseElfFormat */
+Index: nx-X11/config/cf/mingw.tmpl
+===================================================================
+--- a/nx-X11/config/cf/mingw.tmpl
++++ b/nx-X11/config/cf/mingw.tmpl
+@@ -50,7 +50,7 @@ XCOMM $XFree86: xc/config/cf/cygwin.tmpl
+ 
+ #ifndef FixupLibReferences
+ # define FixupLibReferences()						@@\
+-XMULIBONLY = -lXmu							@@\
++XMULIBONLY = -lNX_Xmu							@@\
+ XMULIB = $(XMULIBONLY) $(XTOOLLIB) $(XLIB)
+ #endif
+ 
+Index: nx-X11/config/cf/nto.rules
+===================================================================
+--- a/nx-X11/config/cf/nto.rules
++++ b/nx-X11/config/cf/nto.rules
+@@ -104,7 +104,7 @@ ComplexHostProgramTarget(program)
+ 
+ #ifndef FixupLibReferences
+ #define FixupLibReferences()						@@\
+-XMULIBONLY = -lXmu							@@\
++XMULIBONLY = -lNX_Xmu							@@\
+ XMULIB = $(XMULIBONLY) $(XTOOLLIB) $(XLIB)
+ #endif
+ 
+Index: nx-X11/config/cf/os2Lib.tmpl
+===================================================================
+--- a/nx-X11/config/cf/os2Lib.tmpl
++++ b/nx-X11/config/cf/os2Lib.tmpl
+@@ -107,35 +107,35 @@ XCOMM $XFree86: xc/config/cf/os2Lib.tmpl
+ #endif
+ 
+ #if LinkStatically
+-#define SDlibX11 -lX11_s
+-#define SDlibXExt -lXExt_s
+-#define SDlibXmu -lXmu_s
+-#define SDlibXt -lXt_s
+-#define SDlibXaw -lXaw_s
+-#define SDlibXaw7 -lXaw_s
+-#define SDlibXaw6 -lXaw_s
+-#define SDlibXi -lXi_s
+-#define SDlibXtst -lXtst_s
+-#define SDlibXp -lXp_s
+-#define SDlibXv -lXv_s
+-#define SDlibGL -lGL_s
+-#define SDlibDPS -lDPS_s
+-#define SDlibDPSTK -lDPSTK_s
++#define SDlibX11 -lNX_X11_s
++#define SDlibXExt -lNX_XExt_s
++#define SDlibXmu -lNX_Xmu_s
++#define SDlibXt -lNX_Xt_s
++#define SDlibXaw -lNX_Xaw_s
++#define SDlibXaw7 -lNX_Xaw_s
++#define SDlibXaw6 -lNX_Xaw_s
++#define SDlibXi -lNX_Xi_s
++#define SDlibXtst -lNX_Xtst_s
++#define SDlibXp -lNX_Xp_s
++#define SDlibXv -lNX_Xv_s
++#define SDlibGL -lNX_GL_s
++#define SDlibDPS -lNX_DPS_s
++#define SDlibDPSTK -lNX_DPSTK_s
+ #else
+-#define SDlibX11 -lX11
+-#define SDlibXExt -lXExt
+-#define SDlibXmu -lXmu
+-#define SDlibXt -lXt
+-#define SDlibXaw -lXaw
+-#define SDlibXaw7 -lXaw
+-#define SDlibXaw6 -lXaw
+-#define SDlibXi -lXi
+-#define SDlibXtst -lXtst
+-#define SDlibXp -lXp
+-#define SDlibXv -lXv
+-#define SDlibGL -lGL
+-#define SDlibDPS -lDPS
+-#define SDlibDPSTK -lDPSTK
++#define SDlibX11 -lNX_X11
++#define SDlibXExt -lNX_XExt
++#define SDlibXmu -lNX_Xmu
++#define SDlibXt -lNX_Xt
++#define SDlibXaw -lNX_Xaw
++#define SDlibXaw7 -lNX_Xaw
++#define SDlibXaw6 -lNX_Xaw
++#define SDlibXi -lNX_Xi
++#define SDlibXtst -lNX_Xtst
++#define SDlibXp -lNX_Xp
++#define SDlibXv -lNX_Xv
++#define SDlibGL -lNX_GL
++#define SDlibDPS -lNX_DPS
++#define SDlibDPSTK -lNX_DPSTK
+ #endif
+ 
+ /*
+@@ -159,7 +159,7 @@ XCOMM $XFree86: xc/config/cf/os2Lib.tmpl
+ #endif
+ #if SharedOldX
+       DEPOLDXLIB = 
+-         OLDXLIB = _Use(-loldX,-L$(OLDXLIBSRC) -loldX)
++         OLDXLIB = _Use(-lNX_oldX,-L$(OLDXLIBSRC) -lNX_oldX)
+ #endif
+ #if SharedLibXt
+      DEPXTOOLLIB = 
+Index: nx-X11/config/cf/sco5.cf
+===================================================================
+--- a/nx-X11/config/cf/sco5.cf
++++ b/nx-X11/config/cf/sco5.cf
+@@ -318,7 +318,7 @@ XCOMM $XdotOrg: xc/config/cf/sco5.cf,v 1
+  */
+ #ifndef FixupLibReferences
+ #define FixupLibReferences()						@@\
+-XMULIBONLY = -lXmu							@@\
++XMULIBONLY = -lNX_Xmu							@@\
+ XMULIB = $(XMULIBONLY) $(XTOOLLIB) $(XLIB)
+ #endif
+ 
+Index: nx-X11/config/cf/sv3Lib.tmpl
+===================================================================
+--- a/nx-X11/config/cf/sv3Lib.tmpl
++++ b/nx-X11/config/cf/sv3Lib.tmpl
+@@ -40,31 +40,31 @@ XCOMM $XFree86: xc/config/cf/sv3Lib.tmpl
+  * are using shared libraries, we really do not need to depend on anything
+  */
+ #if SharedLibXext
+-  DEPEXTENSIONLIB = _UseCat($(USRLIBDIR),$(EXTENSIONSRC)/lib,/libXext_s.a)
+-     EXTENSIONLIB = LoaderLibPrefix _Use(-lXext_s, $(DEPEXTENSIONLIB))
++  DEPEXTENSIONLIB = _UseCat($(USRLIBDIR),$(EXTENSIONSRC)/lib,/libNX_Xext_s.a)
++     EXTENSIONLIB = LoaderLibPrefix _Use(-lNX_Xext_s, $(DEPEXTENSIONLIB))
+ #endif
+ #if SharedLibX
+-          DEPXLIB = $(DEPEXTENSIONLIB) _UseCat($(USRLIBDIR),$(XLIBSRC),/libX11_s.a)
+-             XLIB = $(EXTENSIONLIB) LoaderLibPrefix _Use(-lX11_s,$(XLIBSRC)/libX11_s.a)
++          DEPXLIB = $(DEPEXTENSIONLIB) _UseCat($(USRLIBDIR),$(XLIBSRC),/libNX_X11_s.a)
++             XLIB = $(EXTENSIONLIB) LoaderLibPrefix _Use(-lNX_X11_s,$(XLIBSRC)/libNX_X11_s.a)
+ #endif
+ #if SharedLibXmu
+-        DEPXMULIB = _UseCat($(USRLIBDIR),$(XMUSRC),/libXmu_s.a)
+-           XMULIB = LoaderLibPrefix _Use(-lXmu_s,$(DEPXMULIB))
++        DEPXMULIB = _UseCat($(USRLIBDIR),$(XMUSRC),/libNX_Xmu_s.a)
++           XMULIB = LoaderLibPrefix _Use(-lNX_Xmu_s,$(DEPXMULIB))
+ #endif
+ #if SharedOldLibX
+        DEPOLDXLIB = _UseCat($(USRLIBDIR),$(OLDXLIBSRC),/liboldX_s.a)
+           OLDXLIB = LoaderLibPrefix _Use(-loldX_s,$(DEPOLDXLIB))
+ #endif
+ #if SharedLibXt
+-      DEPXTOOLLIB = _UseCat($(USRLIBDIR),$(TOOLKITSRC),/libXt_s.a)
+-         XTOOLLIB = LoaderLibPrefix _Use(-lXt_s,$(DEPXTOOLLIB))
++      DEPXTOOLLIB = _UseCat($(USRLIBDIR),$(TOOLKITSRC),/libNX_Xt_s.a)
++         XTOOLLIB = LoaderLibPrefix _Use(-lNX_Xt_s,$(DEPXTOOLLIB))
+ #endif
+ #if SharedLibXaw
+-        DEPXAWLIB = _UseCat($(USRLIBDIR),$(AWIDGETSRC),/libXaw_s.a)
+-           XAWLIB = LoaderLibPrefix _Use(-lXaw_s,$(DEPXAWLIB))
++        DEPXAWLIB = _UseCat($(USRLIBDIR),$(AWIDGETSRC),/libNX_Xaw_s.a)
++           XAWLIB = LoaderLibPrefix _Use(-lNX_Xaw_s,$(DEPXAWLIB))
+ #endif
+ #if SharedLibXinput
+-         DEPXILIB = _UseCat($(USRLIBDIR),$(XILIBSRC),/libXi_s.a)
+-            XILIB = LoaderLibPrefix _Use(-lXi_s,$(DEPXILIB))
++         DEPXILIB = _UseCat($(USRLIBDIR),$(XILIBSRC),/libNX_Xi_s.a)
++            XILIB = LoaderLibPrefix _Use(-lNX_Xi_s,$(DEPXILIB))
+ #endif
+ 
+Index: nx-X11/config/cf/sv4Lib.tmpl
+===================================================================
+--- a/nx-X11/config/cf/sv4Lib.tmpl
++++ b/nx-X11/config/cf/sv4Lib.tmpl
+@@ -7,7 +7,7 @@ XCOMM $Xorg: sv4Lib.tmpl,v 1.3 2000/08/1
+ XCOMM $XFree86: xc/config/cf/sv4Lib.tmpl,v 3.7 2003/05/29 21:56:57 herrb Exp $
+ 
+ /* SVR4 shared libraries are deficient in link semantics */
+-XMULIBONLY = -lXmu
++XMULIBONLY = -lNX_Xmu
+ #ifndef FixupLibReferences
+ # define FixupLibReferences()						@@\
+ XMULIB = $(XMULIBONLY) -z nodefs
+Index: nx-X11/config/cf/usl.cf
+===================================================================
+--- a/nx-X11/config/cf/usl.cf
++++ b/nx-X11/config/cf/usl.cf
+@@ -262,7 +262,7 @@ XCOMM operating system: OSName (OSMajorV
+  */
+ #ifndef FixupLibReferences
+ #define FixupLibReferences()						@@\
+-XMULIBONLY = -lXmu							@@\
++XMULIBONLY = -lNX_Xmu							@@\
+ XMULIB = $(XMULIBONLY) $(XTOOLLIB) $(XLIB)
+ #endif
+ 
+Index: nx-X11/extras/Mesa/src/mesa/main/Imakefile
+===================================================================
+--- a/nx-X11/extras/Mesa/src/mesa/main/Imakefile
++++ b/nx-X11/extras/Mesa/src/mesa/main/Imakefile
+@@ -2,7 +2,7 @@
+ #define DoSharedLib YES
+ #define DoDebugLib NO
+ #define DoProfileLib NO
+-#define LibName MESAGL
++#define LibName NX_MESAGL
+ #define SoRev SOX11REV
+ #define LibHeaders NO
+ 
+Index: nx-X11/extras/Xpm/lib/Imakefile
+===================================================================
+--- a/nx-X11/extras/Xpm/lib/Imakefile
++++ b/nx-X11/extras/Xpm/lib/Imakefile
+@@ -125,7 +125,7 @@ OS_NAME_DEFINES = OsNameDefines
+     STD_DEFINES = LibraryDefines
+     CDEBUGFLAGS = LibraryCDebugFlags
+ #else
+-#define LibName Xpm
++#define LibName NX_Xpm
+ #define SoRev SOXPMLIBREV
+ #define IncSubdir X11
+ /* we have to cheat on Library.tmpl to get what we want... */
+Index: nx-X11/extras/drm/libdrm.pc.in
+===================================================================
+--- a/nx-X11/extras/drm/libdrm.pc.in
++++ b/nx-X11/extras/drm/libdrm.pc.in
+@@ -6,5 +6,5 @@ includedir=@includedir@
+ Name: libdrm
+ Description: Userspace interface to kernel DRM services
+ Version: @PACKAGE_VERSION@
+-Libs: -L${libdir} -ldrm
++Libs: -L${libdir} -lNX_drm
+ Cflags: -I${includedir} -I${includedir}/drm
+Index: nx-X11/extras/fontconfig/fontconfig.pc.in
+===================================================================
+--- a/nx-X11/extras/fontconfig/fontconfig.pc.in
++++ b/nx-X11/extras/fontconfig/fontconfig.pc.in
+@@ -6,5 +6,5 @@ includedir=@includedir@
+ Name: Fontconfig
+ Description: Font configuration and customization library
+ Version: @VERSION@
+-Libs: -L${libdir} -lfontconfig
++Libs: -L${libdir} -lNX_fontconfig
+ Cflags: -I${includedir}
+Index: nx-X11/extras/ogl-sample/main/gfx/lib/glu/Imakefile
+===================================================================
+--- a/nx-X11/extras/ogl-sample/main/gfx/lib/glu/Imakefile
++++ b/nx-X11/extras/ogl-sample/main/gfx/lib/glu/Imakefile
+@@ -36,7 +36,7 @@ XCOMM
+ #define DoDebugLib DebugLibGlu
+ #define DoProfileLib ProfileLibGlu
+ #define IHaveSubdirs
+-#define LibName GLU
++#define LibName NX_GLU
+ #define PassCDebugFlags 'CDEBUGFLAGS=$(CDEBUGFLAGS)'
+ #define SoRev SOGLUREV
+ 
+Index: nx-X11/lib/FS/Imakefile
+===================================================================
+--- a/nx-X11/lib/FS/Imakefile
++++ b/nx-X11/lib/FS/Imakefile
+@@ -11,7 +11,7 @@ XCOMM $XFree86: xc/lib/FS/Imakefile,v 3.
+ #define DoExtraLib SharedLibFS
+ #define DoDebugLib DebugLibFS
+ #define DoProfileLib ProfileLibFS
+-#define LibName FS
++#define LibName NX_FS
+ #define SoRev SOFSREV
+ #define IncSubdir X11
+ #define IncSubSubdir fonts
+Index: nx-X11/lib/GLw/Imakefile
+===================================================================
+--- a/nx-X11/lib/GLw/Imakefile
++++ b/nx-X11/lib/GLw/Imakefile
+@@ -46,7 +46,7 @@ XCOMM MOTIF_LDFLAGS  = -L/usr/local/lib
+ #define DoProfileLib	ProfileLibGLw
+ 
+ #define HasSharedData	NO
+-#define LibName GLw
++#define LibName NX_GLw
+ #define SoRev SOGLWREV
+ #define IncSubdir GL
+ 
+Index: nx-X11/lib/ICE/Imakefile
+===================================================================
+--- a/nx-X11/lib/ICE/Imakefile
++++ b/nx-X11/lib/ICE/Imakefile
+@@ -10,7 +10,7 @@ XCOMM $XFree86: xc/lib/ICE/Imakefile,v 3
+ #define DoExtraLib SharedLibICE
+ #define DoDebugLib DebugLibICE
+ #define DoProfileLib ProfileLibICE
+-#define LibName ICE
++#define LibName NX_ICE
+ #define SoRev SOICEREV
+ #define IncSubdir X11
+ #define IncSubSubdir ICE
+Index: nx-X11/lib/SM/Imakefile
+===================================================================
+--- a/nx-X11/lib/SM/Imakefile
++++ b/nx-X11/lib/SM/Imakefile
+@@ -10,7 +10,7 @@ XCOMM $XFree86: xc/lib/SM/Imakefile,v 1.
+ #define DoExtraLib SharedLibSM
+ #define DoDebugLib DebugLibSM
+ #define DoProfileLib ProfileLibSM
+-#define LibName SM
++#define LibName NX_SM
+ #define SoRev SOSMREV
+ #define IncSubdir X11
+ #define IncSubSubdir SM
+Index: nx-X11/lib/X11/Imakefile
+===================================================================
+--- a/nx-X11/lib/X11/Imakefile
++++ b/nx-X11/lib/X11/Imakefile
+@@ -83,7 +83,7 @@ NX_XCOMPEXTCONFIGTARGET = $(NX_XCOMPEXTL
+ #define DoExtraLib SharedLibX11
+ #define DoDebugLib DebugLibX11
+ #define DoProfileLib ProfileLibX11
+-#define LibName X11
++#define LibName NX_X11
+ #define SoRev SOXLIBREV
+ #define HugeLibrary YES
+ #define IncSubdir X11
+Index: nx-X11/lib/X11/Imakefile.NX.original
+===================================================================
+--- a/nx-X11/lib/X11/Imakefile.NX.original
++++ b/nx-X11/lib/X11/Imakefile.NX.original
+@@ -83,7 +83,7 @@ NX_XCOMPEXTCONFIGTARGET = $(NX_XCOMPEXTL
+ #define DoExtraLib SharedLibX11
+ #define DoDebugLib DebugLibX11
+ #define DoProfileLib ProfileLibX11
+-#define LibName X11
++#define LibName NX_X11
+ #define SoRev SOXLIBREV
+ #define HugeLibrary YES
+ #define IncSubdir X11
+Index: nx-X11/lib/X11/Imakefile.X.original
+===================================================================
+--- a/nx-X11/lib/X11/Imakefile.X.original
++++ b/nx-X11/lib/X11/Imakefile.X.original
+@@ -28,7 +28,7 @@ BuildIncludes($(HEADERS),IncSubdir,..)
+ #define DoExtraLib SharedLibX11
+ #define DoDebugLib DebugLibX11
+ #define DoProfileLib ProfileLibX11
+-#define LibName X11
++#define LibName NX_X11
+ #define SoRev SOXLIBREV
+ #define HugeLibrary YES
+ #define IncSubdir X11
+Index: nx-X11/lib/XRes/Imakefile
+===================================================================
+--- a/nx-X11/lib/XRes/Imakefile
++++ b/nx-X11/lib/XRes/Imakefile
+@@ -4,7 +4,7 @@ XCOMM $XFree86: xc/lib/XRes/Imakefile,v
+ #define DoSharedLib SharedLibXRes
+ #define DoDebugLib DebugLibXRes
+ #define DoProfileLib ProfileLibXRes
+-#define LibName XRes
++#define LibName NX_XRes
+ #define SoRev SOXRESREV
+ #define LibHeaders NO
+ 
+Index: nx-X11/lib/XTrap/Imakefile
+===================================================================
+--- a/nx-X11/lib/XTrap/Imakefile
++++ b/nx-X11/lib/XTrap/Imakefile
+@@ -4,7 +4,7 @@ XCOMM $XFree86$
+ #define DoSharedLib SharedLibXTrap
+ #define DoDebugLib DebugLibXTrap
+ #define DoProfileLib ProfileLibXTrap
+-#define LibName XTrap
++#define LibName NX_XTrap
+ #define SoRev SOXTRAPREV
+ #define LibHeaders NO
+ 
+Index: nx-X11/lib/Xau/Imakefile
+===================================================================
+--- a/nx-X11/lib/Xau/Imakefile
++++ b/nx-X11/lib/Xau/Imakefile
+@@ -10,7 +10,7 @@ XCOMM $XFree86: xc/lib/Xau/Imakefile,v 3
+ #define DoExtraLib SharedLibXau
+ #define DoDebugLib DebugLibXau
+ #define DoProfileLib ProfileLibXau
+-#define LibName Xau
++#define LibName NX_Xau
+ #define SoRev SOXAUTHREV
+ #define IncSubdir X11
+ 
+Index: nx-X11/lib/Xaw/Imakefile
+===================================================================
+--- a/nx-X11/lib/Xaw/Imakefile
++++ b/nx-X11/lib/Xaw/Imakefile
+@@ -11,7 +11,7 @@ XCOMM $XFree86: xc/lib/Xaw/Imakefile,v 1
+ #define DoDebugLib DebugLibXaw 
+ #define DoProfileLib ProfileLibXaw 
+ #define HasSharedData YES
+-#define LibName Xaw
++#define LibName NX_Xaw
+ #define SoRev SOXAWREV
+ #define IncSubdir X11
+ #define IncSubSubdir Xaw
+Index: nx-X11/lib/Xaw6/Imakefile
+===================================================================
+--- a/nx-X11/lib/Xaw6/Imakefile
++++ b/nx-X11/lib/Xaw6/Imakefile
+@@ -5,7 +5,7 @@ XCOMM $XFree86: xc/lib/Xaw6/Imakefile,v
+ #define DoDebugLib DebugLibXaw6
+ #define DoProfileLib ProfileLibXaw6
+ #define HasSharedData YES
+-#define LibName Xaw
++#define LibName NX_Xaw
+ #define SoRev SOXAW6REV
+ #define LibHeaders NO
+ #define NoSoSymlink
+Index: nx-X11/lib/Xaw7/Imakefile
+===================================================================
+--- a/nx-X11/lib/Xaw7/Imakefile
++++ b/nx-X11/lib/Xaw7/Imakefile
+@@ -5,7 +5,7 @@ XCOMM $Xorg$
+ #define DoDebugLib DebugLibXaw7
+ #define DoProfileLib ProfileLibXaw7
+ #define HasSharedData YES
+-#define LibName Xaw
++#define LibName NX_Xaw
+ #define SoRev SOXAW7REV
+ 
+ #if BuildXaw
+Index: nx-X11/lib/Xcomposite/Imakefile
+===================================================================
+--- a/nx-X11/lib/Xcomposite/Imakefile
++++ b/nx-X11/lib/Xcomposite/Imakefile
+@@ -14,7 +14,7 @@ SOXCOMPOSITEREV=1.0.0
+ #define DoDebugLib DebugLibXcomposite
+ #define DoProfileLib ProfileLibXcomposite
+ 
+-#define LibName Xcomposite
++#define LibName NX_Xcomposite
+ #define SoRev SOXCOMPOSITEREV
+ #define IncSubdir X11
+ #define IncSubSubdir extensions
+Index: nx-X11/lib/Xcomposite/xcomposite.pc.in
+===================================================================
+--- a/nx-X11/lib/Xcomposite/xcomposite.pc.in
++++ b/nx-X11/lib/Xcomposite/xcomposite.pc.in
+@@ -7,4 +7,4 @@ Name: Xcomposite
+ Description: X Composite Library
+ Version: @VERSION@
+ Cflags: -I${includedir} @XCOMPOSITE_CFLAGS@ @X_CFLAGS@
+-Libs: -L${libdir} -lXcomposite @XCOMPOSITE_LIBS@ @X_LIBS@
++Libs: -L${libdir} -lNX_Xcomposite @XCOMPOSITE_LIBS@ @X_LIBS@
+Index: nx-X11/lib/Xcursor/Imakefile
+===================================================================
+--- a/nx-X11/lib/Xcursor/Imakefile
++++ b/nx-X11/lib/Xcursor/Imakefile
+@@ -15,7 +15,7 @@ SOXCURSORREV=1.0.2
+ #define DoDebugLib DebugLibXcursor
+ #define DoProfileLib ProfileLibXcursor
+ 
+-#define LibName Xcursor
++#define LibName NX_Xcursor
+ #define SoRev SOXCURSORREV
+ #define IncSubdir X11
+ #define IncSubSubdir Xcursor
+Index: nx-X11/lib/Xcursor/xcursor.pc.in
+===================================================================
+--- a/nx-X11/lib/Xcursor/xcursor.pc.in
++++ b/nx-X11/lib/Xcursor/xcursor.pc.in
+@@ -12,4 +12,4 @@ Description: X Cursor Library
+ Version: @VERSION@
+ Requires: xrender
+ Cflags: -I${includedir} ${xrendercflags} ${xcflags}
+-Libs: -L${libdir} -lXcursor ${xrenderlibs} ${xlibs}
++Libs: -L${libdir} -lNX_Xcursor ${xrenderlibs} ${xlibs}
+Index: nx-X11/lib/Xdamage/Imakefile
+===================================================================
+--- a/nx-X11/lib/Xdamage/Imakefile
++++ b/nx-X11/lib/Xdamage/Imakefile
+@@ -14,7 +14,7 @@ SOXDAMAGEREV=1.0.1
+ #define DoDebugLib DebugLibXdamage
+ #define DoProfileLib ProfileLibXdamage
+ 
+-#define LibName Xdamage
++#define LibName NX_Xdamage
+ #define SoRev SOXDAMAGEREV
+ #define IncSubdir X11
+ #define IncSubSubdir extensions
+Index: nx-X11/lib/Xdamage/xdamage.pc.in
+===================================================================
+--- a/nx-X11/lib/Xdamage/xdamage.pc.in
++++ b/nx-X11/lib/Xdamage/xdamage.pc.in
+@@ -7,4 +7,4 @@ Name: Xdamage
+ Description: X Damage Library
+ Version: @VERSION@
+ Cflags: -I${includedir} @XDAMAGE_CFLAGS@ @X_CFLAGS@
+-Libs: -L${libdir} -lXdamage @XDAMAGE_LIBS@ @X_LIBS@
++Libs: -L${libdir} -lNX_Xdamage @XDAMAGE_LIBS@ @X_LIBS@
+Index: nx-X11/lib/Xdmcp/Imakefile
+===================================================================
+--- a/nx-X11/lib/Xdmcp/Imakefile
++++ b/nx-X11/lib/Xdmcp/Imakefile
+@@ -10,7 +10,7 @@ XCOMM $XFree86: xc/lib/Xdmcp/Imakefile,v
+ #define DoExtraLib SharedLibXdmcp
+ #define DoDebugLib DebugLibXdmcp
+ #define DoProfileLib ProfileLibXdmcp
+-#define LibName Xdmcp
++#define LibName NX_Xdmcp
+ #define SoRev SOXDMCPREV
+ #define IncSubdir X11
+ 
+Index: nx-X11/lib/Xevie/Imakefile
+===================================================================
+--- a/nx-X11/lib/Xevie/Imakefile
++++ b/nx-X11/lib/Xevie/Imakefile
+@@ -14,7 +14,7 @@ SOXEVIEREV=1.0.0
+ #define DoDebugLib DebugLibXevie
+ #define DoProfileLib ProfileLibXevie
+ 
+-#define LibName Xevie
++#define LibName NX_Xevie
+ #define SoRev SOXEVIEREV
+ #define IncSubdir X11
+ #define IncSubSubdir extensions
+Index: nx-X11/lib/Xevie/xevie.pc.in
+===================================================================
+--- a/nx-X11/lib/Xevie/xevie.pc.in
++++ b/nx-X11/lib/Xevie/xevie.pc.in
+@@ -9,4 +9,4 @@ Name: Xevie
+ Description: X Event Interceptor Library
+ Version: @VERSION@
+ Cflags: -I${includedir} ${xcflags}
+-Libs: -L${libdir} -lXevie ${xlibs}
++Libs: -L${libdir} -lNX_Xevie ${xlibs}
+Index: nx-X11/lib/Xext/Imakefile
+===================================================================
+--- a/nx-X11/lib/Xext/Imakefile
++++ b/nx-X11/lib/Xext/Imakefile
+@@ -10,7 +10,7 @@ XCOMM $XFree86: xc/lib/Xext/Imakefile,v
+ #define DoExtraLib SharedLibXext
+ #define DoDebugLib DebugLibXext
+ #define DoProfileLib ProfileLibXext
+-#define LibName Xext
++#define LibName NX_Xext
+ #define SoRev SOXEXTREV
+ #define LibHeaders NO
+ 
+Index: nx-X11/lib/Xfixes/Imakefile
+===================================================================
+--- a/nx-X11/lib/Xfixes/Imakefile
++++ b/nx-X11/lib/Xfixes/Imakefile
+@@ -14,7 +14,7 @@ SOXFIXESREV=3.0.0
+ #define DoDebugLib DebugLibXfixes
+ #define DoProfileLib ProfileLibXfixes
+ 
+-#define LibName Xfixes
++#define LibName NX_Xfixes
+ #define SoRev SOXFIXESREV
+ #define IncSubdir X11
+ #define IncSubSubdir extensions
+Index: nx-X11/lib/Xfixes/xfixes.pc.in
+===================================================================
+--- a/nx-X11/lib/Xfixes/xfixes.pc.in
++++ b/nx-X11/lib/Xfixes/xfixes.pc.in
+@@ -7,4 +7,4 @@ Name: Xfixes
+ Description: X Fixes Library
+ Version: @VERSION@
+ Cflags: -I${includedir} @X_CFLAGS@
+-Libs: -L${libdir} -lXfixes @X_LIBS@
++Libs: -L${libdir} -lNX_Xfixes @X_LIBS@
+Index: nx-X11/lib/Xfontcache/Imakefile
+===================================================================
+--- a/nx-X11/lib/Xfontcache/Imakefile
++++ b/nx-X11/lib/Xfontcache/Imakefile
+@@ -9,7 +9,7 @@ XCOMM $XFree86: xc/lib/Xfontcache/Imakef
+ #define DoExtraLib SharedLibXfontcache
+ #define DoDebugLib DebugLibXfontcache
+ #define DoProfileLib ProfileLibXfontcache
+-#define LibName Xfontcache
++#define LibName NX_Xfontcache
+ #define SoRev SOXFONTCACHEREV
+ #define LibHeaders NO
+ 
+Index: nx-X11/lib/Xft/Imakefile
+===================================================================
+--- a/nx-X11/lib/Xft/Imakefile
++++ b/nx-X11/lib/Xft/Imakefile
+@@ -8,7 +8,7 @@ XCOMM $XdotOrg: xc/lib/Xft/Imakefile,v 1
+ #define DoProfileLib ProfileLibXft
+ 
+ #define HasSharedData YES
+-#define LibName Xft
++#define LibName NX_Xft
+ #define SoRev SOXFTREV
+ #define IncSubdir X11
+ #define IncSubSubdir Xft
+Index: nx-X11/lib/Xft/xft.pc.in
+===================================================================
+--- a/nx-X11/lib/Xft/xft.pc.in
++++ b/nx-X11/lib/Xft/xft.pc.in
+@@ -9,4 +9,4 @@ Version: @VERSION@
+ Requires: xrender, fontconfig, freetype2
+ Requires.private: xrender, fontconfig, freetype2
+ Cflags: -I${includedir}
+-Libs: -L${libdir} -lXft
++Libs: -L${libdir} -lNX_Xft
+Index: nx-X11/lib/Xft1/Imakefile
+===================================================================
+--- a/nx-X11/lib/Xft1/Imakefile
++++ b/nx-X11/lib/Xft1/Imakefile
+@@ -70,7 +70,7 @@ LDPRELIBS=LdPreLibs
+ #define DoDebugLib NO
+ #define DoProfileLib NO
+ #define HasSharedData YES
+-#define LibName Xft
++#define LibName NX_Xft
+ #define SoRev SOXFT1REV
+ #define LibHeaders NO
+ #define NoSoSymlink
+Index: nx-X11/lib/Xi/Imakefile
+===================================================================
+--- a/nx-X11/lib/Xi/Imakefile
++++ b/nx-X11/lib/Xi/Imakefile
+@@ -10,7 +10,7 @@ XCOMM $XFree86: xc/lib/Xi/Imakefile,v 1.
+ #define DoExtraLib SharedLibXi
+ #define DoDebugLib DebugLibXi
+ #define DoProfileLib ProfileLibXi
+-#define LibName Xi
++#define LibName NX_Xi
+ #define SoRev SOXINPUTREV
+ #define LibHeaders NO
+ 
+Index: nx-X11/lib/Xinerama/Imakefile
+===================================================================
+--- a/nx-X11/lib/Xinerama/Imakefile
++++ b/nx-X11/lib/Xinerama/Imakefile
+@@ -4,7 +4,7 @@ XCOMM $XFree86: xc/lib/Xinerama/Imakefil
+ #define DoSharedLib SharedLibXinerama
+ #define DoDebugLib DebugLibXinerama
+ #define DoProfileLib ProfileLibXinerama
+-#define LibName Xinerama
++#define LibName NX_Xinerama
+ #define SoRev SOXINERAMAREV
+ #define LibHeaders NO
+ 
+Index: nx-X11/lib/Xmu/Imakefile
+===================================================================
+--- a/nx-X11/lib/Xmu/Imakefile
++++ b/nx-X11/lib/Xmu/Imakefile
+@@ -11,7 +11,7 @@ XCOMM $XFree86: xc/lib/Xmu/Imakefile,v 1
+ #define DoDebugLib DebugLibXmu
+ #define DoProfileLib ProfileLibXmu
+ #define HasSharedData YES
+-#define LibName Xmu
++#define LibName NX_Xmu
+ #define SoRev SOXMUREV
+ #define IncSubdir X11
+ #define IncSubSubdir Xmu
+Index: nx-X11/lib/Xmuu/Imakefile
+===================================================================
+--- a/nx-X11/lib/Xmuu/Imakefile
++++ b/nx-X11/lib/Xmuu/Imakefile
+@@ -11,7 +11,7 @@ XCOMM other than Xlib and the system C l
+ #define DoExtraLib SharedLibXmuu
+ #define DoDebugLib DebugLibXmuu
+ #define DoProfileLib ProfileLibXmuu
+-#define LibName Xmuu
++#define LibName NX_Xmuu
+ #define SoRev SOXMUUREV
+ #define LibHeaders NO
+ 
+Index: nx-X11/lib/Xp/Imakefile
+===================================================================
+--- a/nx-X11/lib/Xp/Imakefile
++++ b/nx-X11/lib/Xp/Imakefile
+@@ -44,7 +44,7 @@ XCOMM $XFree86: xc/lib/Xp/Imakefile,v 1.
+ #define DoExtraLib	SharedLibXp
+ #define DoDebugLib	DebugLibXp
+ #define DoProfileLib	ProfileLibXp
+-#define LibName		Xp
++#define LibName		NX_Xp
+ #define SoRev		SOXPREV
+ #define LibHeaders	NO
+ 
+Index: nx-X11/lib/Xpm/Imakefile
+===================================================================
+--- a/nx-X11/lib/Xpm/Imakefile
++++ b/nx-X11/lib/Xpm/Imakefile
+@@ -12,7 +12,7 @@ XCOMM $XFree86: xc/lib/Xpm/Imakefile,v 1
+ #define DoDebugLib DebugLibXpm
+ #define DoProfileLib ProfileLibXpm
+ #define HasSharedData NO
+-#define LibName Xpm
++#define LibName NX_Xpm
+ #define SoRev SOXPMREV
+ #define IncSubdir X11
+ 
+Index: nx-X11/lib/Xpm/Imakefile.NX.original
+===================================================================
+--- a/nx-X11/lib/Xpm/Imakefile.NX.original
++++ b/nx-X11/lib/Xpm/Imakefile.NX.original
+@@ -12,7 +12,7 @@ XCOMM $XFree86: xc/lib/Xpm/Imakefile,v 1
+ #define DoDebugLib DebugLibXpm
+ #define DoProfileLib ProfileLibXpm
+ #define HasSharedData NO
+-#define LibName Xpm
++#define LibName NX_Xpm
+ #define SoRev SOXPMREV
+ #define IncSubdir X11
+ 
+Index: nx-X11/lib/Xpm/Imakefile.X.original
+===================================================================
+--- a/nx-X11/lib/Xpm/Imakefile.X.original
++++ b/nx-X11/lib/Xpm/Imakefile.X.original
+@@ -8,7 +8,7 @@ XCOMM $XFree86: xc/lib/Xpm/Imakefile,v 1
+ #define DoDebugLib DebugLibXpm
+ #define DoProfileLib ProfileLibXpm
+ #define HasSharedData NO
+-#define LibName Xpm
++#define LibName NX_Xpm
+ #define SoRev SOXPMREV
+ #define IncSubdir X11
+ 
+Index: nx-X11/lib/XprintAppUtil/Imakefile
+===================================================================
+--- a/nx-X11/lib/XprintAppUtil/Imakefile
++++ b/nx-X11/lib/XprintAppUtil/Imakefile
+@@ -5,7 +5,7 @@
+ #define DoDebugLib    NO
+ #define DoProfileLib  NO
+ #define HasSharedData NO
+-#define LibName       XprintAppUtil
++#define LibName       NX_XprintAppUtil
+ #define SoRev         SOZLIBREV
+ #define IncSubdir     X11
+ #define IncSubSubdir  XprintAppUtil
+Index: nx-X11/lib/XprintUtil/Imakefile
+===================================================================
+--- a/nx-X11/lib/XprintUtil/Imakefile
++++ b/nx-X11/lib/XprintUtil/Imakefile
+@@ -5,7 +5,7 @@
+ #define DoDebugLib    NO
+ #define DoProfileLib  NO
+ #define HasSharedData NO
+-#define LibName       XprintUtil
++#define LibName       NX_XprintUtil
+ #define SoRev         SOZLIBREV
+ #define IncSubdir     X11
+ #define IncSubSubdir  XprintUtil
+Index: nx-X11/lib/Xrandr/Imakefile
+===================================================================
+--- a/nx-X11/lib/Xrandr/Imakefile
++++ b/nx-X11/lib/Xrandr/Imakefile
+@@ -5,7 +5,7 @@ XCOMM $XdotOrg: xc/lib/Xrandr/Imakefile,
+ #define DoSharedLib SharedLibXrandr
+ #define DoDebugLib DebugLibXrandr
+ #define DoProfileLib ProfileLibXrandr
+-#define LibName Xrandr
++#define LibName NX_Xrandr
+ #define SoRev SOXRANDRREV
+ #define IncSubdir X11
+ #define IncSubSubdir extensions
+Index: nx-X11/lib/Xrender/Imakefile
+===================================================================
+--- a/nx-X11/lib/Xrender/Imakefile
++++ b/nx-X11/lib/Xrender/Imakefile
+@@ -74,7 +74,7 @@ clean::
+ #define DoSharedLib SharedLibXrender
+ #define DoDebugLib DebugLibXrender
+ #define DoProfileLib ProfileLibXrender
+-#define LibName Xrender
++#define LibName NX_Xrender
+ #define SoRev SOXRENDERREV
+ 
+ #ifdef XBuildIncDir
+Index: nx-X11/lib/Xrender/xrender.pc.in
+===================================================================
+--- a/nx-X11/lib/Xrender/xrender.pc.in
++++ b/nx-X11/lib/Xrender/xrender.pc.in
+@@ -8,4 +8,4 @@ Description: X Render Library
+ Version: @VERSION@
+ Requires: @X_REQUIRES@
+ Cflags: -I${includedir} @RENDER_CFLAGS@ @X_NON_PKG_CFLAGS@
+-Libs: -L${libdir} -lXrender @X_NON_PKG_LIBS@
++Libs: -L${libdir} -lNX_Xrender @X_NON_PKG_LIBS@
+Index: nx-X11/lib/Xss/Imakefile
+===================================================================
+--- a/nx-X11/lib/Xss/Imakefile
++++ b/nx-X11/lib/Xss/Imakefile
+@@ -4,7 +4,7 @@ XCOMM $XFree86: xc/lib/Xss/Imakefile,v 3
+ #define DoExtraLib SharedLibXss
+ #define DoDebugLib DebugLibXss
+ #define DoProfileLib ProfileLibXss
+-#define LibName Xss
++#define LibName NX_Xss
+ #define SoRev SOXSSREV
+ #define LibHeaders NO
+ 
+Index: nx-X11/lib/Xt/Imakefile
+===================================================================
+--- a/nx-X11/lib/Xt/Imakefile
++++ b/nx-X11/lib/Xt/Imakefile
+@@ -42,7 +42,7 @@ NX_DEFINES = -DNX_TRANS_SOCKET
+ #define DoDebugLib DebugLibXt
+ #define DoProfileLib ProfileLibXt
+ #define HasSharedData YES
+-#define LibName Xt
++#define LibName NX_Xt
+ #define SoRev SOXTREV
+ #define IncSubdir X11
+ 
+Index: nx-X11/lib/Xt/Imakefile.NX.original
+===================================================================
+--- a/nx-X11/lib/Xt/Imakefile.NX.original
++++ b/nx-X11/lib/Xt/Imakefile.NX.original
+@@ -42,7 +42,7 @@ NX_DEFINES = -DNX_TRANS_SOCKET
+ #define DoDebugLib DebugLibXt
+ #define DoProfileLib ProfileLibXt
+ #define HasSharedData YES
+-#define LibName Xt
++#define LibName NX_Xt
+ #define SoRev SOXTREV
+ #define IncSubdir X11
+ 
+Index: nx-X11/lib/Xt/Imakefile.X.original
+===================================================================
+--- a/nx-X11/lib/Xt/Imakefile.X.original
++++ b/nx-X11/lib/Xt/Imakefile.X.original
+@@ -11,7 +11,7 @@ XCOMM $XFree86: xc/lib/Xt/Imakefile,v 3.
+ #define DoDebugLib DebugLibXt
+ #define DoProfileLib ProfileLibXt
+ #define HasSharedData YES
+-#define LibName Xt
++#define LibName NX_Xt
+ #define SoRev SOXTREV
+ #define IncSubdir X11
+ 
+Index: nx-X11/lib/Xtst/Imakefile
+===================================================================
+--- a/nx-X11/lib/Xtst/Imakefile
++++ b/nx-X11/lib/Xtst/Imakefile
+@@ -10,7 +10,7 @@ XCOMM $XFree86: xc/lib/Xtst/Imakefile,v
+ #define DoExtraLib SharedLibXtst
+ #define DoDebugLib DebugLibXtst
+ #define DoProfileLib ProfileLibXtst
+-#define LibName Xtst
++#define LibName NX_Xtst
+ #define SoRev SOXTESTREV
+ #define LibHeaders NO
+ 
+Index: nx-X11/lib/Xv/Imakefile
+===================================================================
+--- a/nx-X11/lib/Xv/Imakefile
++++ b/nx-X11/lib/Xv/Imakefile
+@@ -4,7 +4,7 @@ XCOMM $XFree86: xc/lib/Xv/Imakefile,v 1.
+ #define DoSharedLib SharedLibXv
+ #define DoDebugLib DebugLibXv
+ #define DoProfileLib ProfileLibXv
+-#define LibName Xv
++#define LibName NX_Xv
+ #define SoRev SOXVREV
+ #define LibHeaders NO
+ 
+Index: nx-X11/lib/XvMC/Imakefile
+===================================================================
+--- a/nx-X11/lib/XvMC/Imakefile
++++ b/nx-X11/lib/XvMC/Imakefile
+@@ -4,7 +4,7 @@ XCOMM $XFree86: xc/lib/XvMC/Imakefile,v
+ #define DoSharedLib SharedLibXvMC
+ #define DoDebugLib DebugLibXvMC
+ #define DoProfileLib ProfileLibXvMC
+-#define LibName XvMC
++#define LibName NX_XvMC
+ #define SoRev SOXVMCREV
+ #define LibHeaders NO
+ 
+Index: nx-X11/lib/XvMC/hw/i810/Imakefile
+===================================================================
+--- a/nx-X11/lib/XvMC/hw/i810/Imakefile
++++ b/nx-X11/lib/XvMC/hw/i810/Imakefile
+@@ -3,7 +3,7 @@ XCOMM $XFree86: xc/lib/XvMC/hw/i810/Imak
+ #define DoSharedLib SharedLibXvMC
+ #define DoDebugLib DebugLibXvMC
+ #define DoProfileLib ProfileLibXvMC
+-#define LibName I810XvMC
++#define LibName NX_I810XvMC
+ #define SoRev SOXVMCREV
+ #define LibHeaders NO
+ 
+Index: nx-X11/lib/XvMC/hw/via/unichrome/Imakefile
+===================================================================
+--- a/nx-X11/lib/XvMC/hw/via/unichrome/Imakefile
++++ b/nx-X11/lib/XvMC/hw/via/unichrome/Imakefile
+@@ -2,7 +2,7 @@
+ #define DoSharedLib SharedLibXvMC
+ #define DoDebugLib DebugLibXvMC
+ #define DoProfileLib ProfileLibXvMC
+-#define LibName viaXvMC
++#define LibName NX_viaXvMC
+ #define SoRev SOXVMCREV
+ #define LibHeaders NO
+ 
+Index: nx-X11/lib/XvMC/hw/via/unichromeProA/Imakefile
+===================================================================
+--- a/nx-X11/lib/XvMC/hw/via/unichromeProA/Imakefile
++++ b/nx-X11/lib/XvMC/hw/via/unichromeProA/Imakefile
+@@ -2,7 +2,7 @@
+ #define DoSharedLib SharedLibXvMC
+ #define DoDebugLib DebugLibXvMC
+ #define DoProfileLib ProfileLibXvMC
+-#define LibName viaXvMCPro
++#define LibName NX_viaXvMCPro
+ #define SoRev SOXVMCREV
+ #define LibHeaders NO
+ 
+Index: nx-X11/lib/XvMC/wrapper/Imakefile
+===================================================================
+--- a/nx-X11/lib/XvMC/wrapper/Imakefile
++++ b/nx-X11/lib/XvMC/wrapper/Imakefile
+@@ -3,7 +3,7 @@ XCOMM $XFree86: xc/lib/XvMC/wrapper/Imak
+ #define DoSharedLib SharedLibXvMC
+ #define DoDebugLib DebugLibXvMC
+ #define DoProfileLib ProfileLibXvMC
+-#define LibName XvMCW
++#define LibName NX_XvMCW
+ #define SoRev SOXVMCREV
+ #define LibHeaders NO
+ 
+Index: nx-X11/lib/Xxf86dga/Imakefile
+===================================================================
+--- a/nx-X11/lib/Xxf86dga/Imakefile
++++ b/nx-X11/lib/Xxf86dga/Imakefile
+@@ -6,7 +6,7 @@ XCOMM $XFree86: xc/lib/Xxf86dga/Imakefil
+ #define DoExtraLib SharedLibXxf86dga
+ #define DoDebugLib DebugLibXxf86dga
+ #define DoProfileLib ProfileLibXxf86dga
+-#define LibName Xxf86dga
++#define LibName NX_Xxf86dga
+ #define SoRev SOXXF86DGAREV
+ #define LibHeaders NO
+ 
+Index: nx-X11/lib/Xxf86misc/Imakefile
+===================================================================
+--- a/nx-X11/lib/Xxf86misc/Imakefile
++++ b/nx-X11/lib/Xxf86misc/Imakefile
+@@ -6,7 +6,7 @@ XCOMM $XdotOrg: xc/lib/Xxf86misc/Imakefi
+ #define DoExtraLib SharedLibXxf86misc
+ #define DoDebugLib DebugLibXxf86misc
+ #define DoProfileLib ProfileLibXxf86misc
+-#define LibName Xxf86misc
++#define LibName NX_Xxf86misc
+ #define SoRev SOXXF86MISCREV
+ #define LibHeaders NO
+ 
+Index: nx-X11/lib/Xxf86rush/Imakefile
+===================================================================
+--- a/nx-X11/lib/Xxf86rush/Imakefile
++++ b/nx-X11/lib/Xxf86rush/Imakefile
+@@ -3,7 +3,7 @@ XCOMM $XFree86: xc/lib/Xxf86rush/Imakefi
+ #define DoSharedLib SharedLibXxf86rush
+ #define DoDebugLib DebugLibXxf86rush
+ #define DoProfileLib ProfileLibXxf86rush
+-#define LibName Xxf86rush
++#define LibName NX_Xxf86rush
+ #define SoRev SOXXF86RUSHREV
+ #define LibHeaders NO
+ 
+Index: nx-X11/lib/Xxf86vm/Imakefile
+===================================================================
+--- a/nx-X11/lib/Xxf86vm/Imakefile
++++ b/nx-X11/lib/Xxf86vm/Imakefile
+@@ -6,7 +6,7 @@ XCOMM $XdotOrg: xc/lib/Xxf86vm/Imakefile
+ #define DoExtraLib SharedLibXxf86vm
+ #define DoDebugLib DebugLibXxf86vm
+ #define DoProfileLib ProfileLibXxf86vm
+-#define LibName Xxf86vm
++#define LibName NX_Xxf86vm
+ #define SoRev SOXXF86VMREV
+ #define LibHeaders NO
+ 
+Index: nx-X11/lib/apple/Imakefile
+===================================================================
+--- a/nx-X11/lib/apple/Imakefile
++++ b/nx-X11/lib/apple/Imakefile
+@@ -5,7 +5,7 @@ XCOMM $XFree86: xc/lib/Xrandr/Imakefile,
+ #define DoSharedLib SharedLibAppleWM
+ #define DoDebugLib DebugLibAppleWM
+ #define DoProfileLib ProfileLibAppleWM
+-#define LibName AppleWM
++#define LibName NX_AppleWM
+ #define SoRev SOAPPLEWMREV
+ #define IncSubdir X11
+ #define IncSubSubdir extensions
+Index: nx-X11/lib/dmx/Imakefile
+===================================================================
+--- a/nx-X11/lib/dmx/Imakefile
++++ b/nx-X11/lib/dmx/Imakefile
+@@ -5,7 +5,7 @@ XCOMM $XFree86$
+ #define DoDebugLib DebugLibDmx
+ #define DoProfileLib ProfileLibDmx
+ 
+-#define LibName dmx
++#define LibName NX_dmx
+ #define SoRev SODMXREV
+ #define LibHeaders NO
+ 
+Index: nx-X11/lib/dps/Imakefile
+===================================================================
+--- a/nx-X11/lib/dps/Imakefile
++++ b/nx-X11/lib/dps/Imakefile
+@@ -5,7 +5,7 @@ XCOMM $XFree86: xc/lib/dps/Imakefile,v 1
+ #define DoExtraLib SharedLibDps
+ #define DoDebugLib DebugLibDps
+ #define DoProfileLib ProfileLibDps
+-#define LibName dps
++#define LibName NX_dps
+ #define SoRev SODPSREV
+ #define IncSubdir DPS
+ 
+Index: nx-X11/lib/dpstk/Imakefile
+===================================================================
+--- a/nx-X11/lib/dpstk/Imakefile
++++ b/nx-X11/lib/dpstk/Imakefile
+@@ -5,7 +5,7 @@ XCOMM $XFree86: xc/lib/dpstk/Imakefile,v
+ #define DoExtraLib SharedLibDpsTk
+ #define DoDebugLib DebugLibDpsTk
+ #define DoProfileLib ProfileLibDpsTk
+-#define LibName dpstk
++#define LibName NX_dpstk
+ #define SoRev SODPSTKREV
+ #define LibHeaders NO
+ 
+Index: nx-X11/lib/expat/Imakefile
+===================================================================
+--- a/nx-X11/lib/expat/Imakefile
++++ b/nx-X11/lib/expat/Imakefile
+@@ -6,7 +6,7 @@ XCOMM $XFree86: xc/lib/expat/Imakefile,v
+ #define DoDebugLib DebugLibExpat
+ #define DoProfileLib ProfileLibExpat
+ #define HasSharedData YES
+-#define LibName expat
++#define LibName NX_expat
+ #define SoRev SOEXPATREV
+ #ifdef SharedLibtoolExpatRev
+ #define SharedLibtoolRev SharedLibtoolExpatRev
+Index: nx-X11/lib/font/Imakefile
+===================================================================
+--- a/nx-X11/lib/font/Imakefile
++++ b/nx-X11/lib/font/Imakefile
+@@ -31,7 +31,7 @@ XCOMM $XFree86: xc/lib/font/Imakefile,v
+ STUBDIRS = stubs
+ #endif
+ 
+-LIBNAME = Xfont
++LIBNAME = NX_Xfont
+ SOREV = $(SOFONTREV)
+ 
+ #ifndef SeparateSharedCompile
+Index: nx-X11/lib/fontconfig/Imakefile
+===================================================================
+--- a/nx-X11/lib/fontconfig/Imakefile
++++ b/nx-X11/lib/fontconfig/Imakefile
+@@ -7,7 +7,7 @@ XCOMM $XFree86: xc/lib/fontconfig/Imakef
+ #define DoDebugLib DebugLibFontconfig
+ #define DoProfileLib ProfileLibFontconfig
+ #define HasSharedData YES
+-#define LibName fontconfig
++#define LibName NX_fontconfig
+ #define SoRev SOFONTCONFIGREV
+ #define LibInstall InstallFontconfigLibrary
+ #define LibHeaders InstallFontconfigLibrary
+Index: nx-X11/lib/fontenc/Imakefile
+===================================================================
+--- a/nx-X11/lib/fontenc/Imakefile
++++ b/nx-X11/lib/fontenc/Imakefile
+@@ -17,7 +17,7 @@ FONTENCDEFS = -DFONTENC_NO_LIBFONT \
+ #define DoSharedLib SharedLibFontEnc
+ #define DoDebugLib DebugLibFontEnc
+ #define DoProfileLib ProfileLibFontEnc
+-#define LibName fontenc
++#define LibName NX_fontenc
+ #define SoRev SOFONTENCREV
+ #define IncSubdir X11
+ #define IncSubSubdir fonts
+Index: nx-X11/lib/freetype2/Imakefile
+===================================================================
+--- a/nx-X11/lib/freetype2/Imakefile
++++ b/nx-X11/lib/freetype2/Imakefile
+@@ -11,7 +11,7 @@ XCOMM $XFree86: xc/lib/freetype2/Imakefi
+ #define DoDebugLib DebugLibFreetype2
+ #define DoProfileLib ProfileLibFreetype2
+ #define HasSharedData YES
+-#define LibName freetype
++#define LibName NX_freetype
+ #define SoRev SOFREETYPE2REV
+ #ifdef SharedLibtoolFreetype2Rev
+ #define SharedLibtoolRev SharedLibtoolFreetype2Rev
+Index: nx-X11/lib/oldX/Imakefile
+===================================================================
+--- a/nx-X11/lib/oldX/Imakefile
++++ b/nx-X11/lib/oldX/Imakefile
+@@ -10,7 +10,7 @@ XCOMM $XFree86: xc/lib/oldX/Imakefile,v
+ #define DoExtraLib SharedOldX
+ #define DoDebugLib DebugOldX
+ #define DoProfileLib ProfileOldX
+-#define LibName oldX
++#define LibName NX_oldX
+ #define SoRev SOOLDXREV
+ #define IncSubdir X11
+ 
+Index: nx-X11/lib/psres/Imakefile
+===================================================================
+--- a/nx-X11/lib/psres/Imakefile
++++ b/nx-X11/lib/psres/Imakefile
+@@ -5,7 +5,7 @@ XCOMM $XFree86: xc/lib/psres/Imakefile,v
+ #define DoExtraLib SharedLibPSRes
+ #define DoDebugLib DebugLibPSRes
+ #define DoProfileLib ProfileLibPSRes
+-#define LibName psres
++#define LibName NX_psres
+ #define SoRev SOPSRESREV
+ #define LibHeaders NO
+ 
+Index: nx-X11/lib/regex/Imakefile
+===================================================================
+--- a/nx-X11/lib/regex/Imakefile
++++ b/nx-X11/lib/regex/Imakefile
+@@ -6,7 +6,7 @@ XCOMM $XFree86$
+ #define DoDebugLib	NO
+ #define DoProfileLib	NO
+ #define HasSharedData	NO
+-#define LibName		regex
++#define LibName		NX_regex
+ #define LibHeaders	NO
+ #define LibInstall	NO
+ #define LibInstallBuild	YES
+Index: nx-X11/lib/windows/Imakefile
+===================================================================
+--- a/nx-X11/lib/windows/Imakefile
++++ b/nx-X11/lib/windows/Imakefile
+@@ -2,7 +2,7 @@
+ #define DoSharedLib SharedLibWindowsWM
+ #define DoDebugLib DebugLibWindowsWM
+ #define DoProfileLib ProfileLibWindowsWM
+-#define LibName WindowsWM
++#define LibName NX_WindowsWM
+ #define SoRev SOWINDOWSWMREV
+ #define IncSubdir X11
+ #define IncSubSubdir extensions
+Index: nx-X11/lib/xkbfile/Imakefile
+===================================================================
+--- a/nx-X11/lib/xkbfile/Imakefile
++++ b/nx-X11/lib/xkbfile/Imakefile
+@@ -11,7 +11,7 @@ XCOMM $XFree86: xc/lib/xkbfile/Imakefile
+ #define DoDebugLib	DebugLibxkbfile
+ #define DoProfileLib	ProfileLibxkbfile
+ #define HasSharedData	NO
+-#define LibName		xkbfile
++#define LibName		NX_xkbfile
+ #define SoRev		SOXKBFILEREV
+ #define IncSubdir	X11
+ #define	IncSubSubdir	extensions
+Index: nx-X11/lib/xkbui/Imakefile
+===================================================================
+--- a/nx-X11/lib/xkbui/Imakefile
++++ b/nx-X11/lib/xkbui/Imakefile
+@@ -6,7 +6,7 @@ XCOMM $XFree86: xc/lib/xkbui/Imakefile,v
+ #define DoDebugLib DebugLibxkbui
+ #define DoProfileLib ProfileLibxkbui
+ #define HasSharedData NO
+-#define LibName xkbui
++#define LibName NX_xkbui
+ #define SoRev SOXKBUIREV
+ #define	IncSubdir X11
+ #define	IncSubSubdir extensions
+Index: nx-X11/lib/zlib/Imakefile
+===================================================================
+--- a/nx-X11/lib/zlib/Imakefile
++++ b/nx-X11/lib/zlib/Imakefile
+@@ -12,7 +12,7 @@ XCOMM $XFree86: xc/lib/zlib/Imakefile,v
+ #define DoDebugLib    NO
+ #define DoProfileLib  NO
+ #define HasSharedData NO
+-#define LibName       z
++#define LibName       NX_z
+ #define SoRev         SOZLIBREV
+ 
+  ZLIBDIR = $(TOP)/extras/zlib
+Index: nx-X11/programs/Xserver/Imakefile
+===================================================================
+--- a/nx-X11/programs/Xserver/Imakefile
++++ b/nx-X11/programs/Xserver/Imakefile
+@@ -313,7 +313,7 @@ XPFBLIBS = dix/LibraryTargetName(xpstubs
+        FONTBASE = $(FONTLIBSRC)/fontbase.o \
+ 		  $(FONTLIBSRC)/LibraryTargetName(fontbase)
+ #if XserverStaticFontLib
+-           FONT = $(FONTLIBSRC)/LibraryTargetName(Xfont) $(FREETYPE2LIB)
++           FONT = $(FONTLIBSRC)/LibraryTargetName(NX_Xfont) $(FREETYPE2LIB)
+ #else
+            FONT = $(LDPRELIB) $(XFONTLIB) $(FREETYPE2LIB)
+ #endif
+@@ -994,7 +994,7 @@ NXAGENTOBJS = hw/nxagent/miinitext.o
+               dix/main.o
+ #endif
+ 
+-XPMLIB =  -lXpm
++XPMLIB =  -lNX_Xpm
+ NXAGENT = hw/nxagent/LibraryTargetName(nxagent)
+ NXAGENTLIBS = PreFbLibs $(NXAGENT) FbPostFbLibs $(NXAGENT) $(MI)
+ NXAGENTSYSLIBS = $(FONTLIBS) $(LDPRELIBS) $(XLIB) $(SYSLIBS) $(XPMLIB)
+@@ -1012,16 +1012,16 @@ $(NXAGENTOBJS) $(NXAGENTLIBS) $(NXAGENTS
+ 
+ #if defined(SunArchitecture)
+ NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext -L ../../../nxcompshad \
+-                -lXcomp -lXcompext -lXcompshad -lrt -L/usr/sfw/lib -lXrender -lXfixes \
+-                -L../../../nx-X11/exports/lib -lXtst -lXdamage -lXrandr -lXcomposite -lXdmcp
++                -lXcomp -lXcompext -lXcompshad -lrt -L/usr/sfw/lib -lNX_Xrender -lNX_Xfixes \
++                -L../../../nx-X11/exports/lib -lNX_Xtst -lNX_Xdamage -lNX_Xrandr -lNX_Xcomposite -lNX_Xdmcp
+ #elif defined(cygwinArchitecture)
+ NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext \
+-                -lXcomp -lXcompext -lXrender -lX11 -lXext -lXcomposite -lXfixes \
+-                -L ../../../nxcompshad -lXcompshad -L../../../nx-X11/exports/lib -lXtst -lXdmcp
++                -lXcomp -lXcompext -lNX_Xrender -lNX_X11 -lNX_Xext -lNX_Xcomposite -lNX_Xfixes \
++                -L ../../../nxcompshad -lXcompshad -L../../../nx-X11/exports/lib -lNX_Xtst -lNX_Xdmcp
+ #else
+ NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext -L ../../../nxcompshad \
+-                -lXcomp -lXcompext -lXcompshad -lXrender -lX11 -lXext -lXfixes \
+-                -L../../../nx-X11/exports/lib -lXtst -lXdamage -lXrandr -lXcomposite -lXinerama -lXdmcp
++                -lXcomp -lXcompext -lXcompshad -lNX_Xrender -lNX_X11 -lNX_Xext -lNX_Xfixes \
++                -L../../../nx-X11/exports/lib -lNX_Xtst -lNX_Xdamage -lNX_Xrandr -lNX_Xcomposite -lNX_Xinerama -lNX_Xdmcp
+ #endif
+ 
+ #endif
+@@ -1075,7 +1075,7 @@ nxagent_static_nolibs:  nxagent
+ 	else exit 0; fi
+ 	$(CCLINK) -o nxagent_static_nolibs -Wl,-Bstatic $(LDOPTIONS) $(NXAGENTOBJS) \
+ 	$(NXAGENTLIBS) $(LOADABLEEXTS) $(LIBCWRAPPER) $(LDLIBS) $(FONTLIBS) \
+-	$(LDPRELIBS) $(SYSLIBS) -Wl,-Bdynamic -lXext -lX11 $(EXTRA_LOAD_FLAGS)
++	$(LDPRELIBS) $(SYSLIBS) -Wl,-Bdynamic -lNX_Xext -lNX_X11 $(EXTRA_LOAD_FLAGS)
+ #endif /* NXAgentServer */
+ 
+ #if defined(XnonServer) && XnonServer
+Index: nx-X11/programs/Xserver/hw/xfree86/parser/Imakefile
+===================================================================
+--- a/nx-X11/programs/Xserver/hw/xfree86/parser/Imakefile
++++ b/nx-X11/programs/Xserver/hw/xfree86/parser/Imakefile
+@@ -7,7 +7,7 @@
+ #define DoDebugLib      NO
+ #define DoProfileLib    NO
+ #define HasSharedData   NO
+-#define LibName         xf86config
++#define LibName         NX_xf86config
+ 
+ #define UseDBMalloc	NO
+ 
+Index: nxcompext/Makefile.in
+===================================================================
+--- a/nxcompext/Makefile.in
++++ b/nxcompext/Makefile.in
+@@ -42,12 +42,12 @@ CCINCLUDES  = -I. -I../nxcomp
+ CCDEFINES   =
+ 
+ LDFLAGS     = @LDFLAGS@ -L../nxcomp
+-LIBS        = @LIBS@ -lz -lX11 -lXcomp
++LIBS        = @LIBS@ -lz -lNX_X11 -lXcomp
+ 
+ #
+ # Only if THREADS is defined
+ #
+-# LIBS = @LIBS@ -lz -ljpeg -lpthread -lX11 -lXcomp
++# LIBS = @LIBS@ -lz -ljpeg -lpthread -lNX_X11 -lXcomp
+ #
+ 
+ srcdir      = @srcdir@
+Index: nxcompshad/Makefile.in
+===================================================================
+--- a/nxcompshad/Makefile.in
++++ b/nxcompshad/Makefile.in
+@@ -48,7 +48,7 @@ CCINCLUDES  =
+ CCDEFINES   =
+ 
+ LDFLAGS     = @LDFLAGS@
+-LIBS        = @LIBS@ -lX11
++LIBS        = @LIBS@ -lNX_X11
+ 
+ #
+ # Only if THREADS is defined.
+@@ -139,7 +139,7 @@ all: depend $(LIBARCHIVE) $(LIBDLL)
+ 
+ else
+ 
+-EXTRALIBS = -lXtst -lXrandr -lXdamage
++EXTRALIBS = -lNX_Xtst -lNX_Xrandr -lNX_Xdamage
+ 
+ all: depend $(LIBFULL) $(LIBLOAD) $(LIBSHARED) $(LIBARCHIVE)
+ 
