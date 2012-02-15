@@ -17,6 +17,11 @@ nx-libs (2:3.5.0.11-0) UNRELEASED; urgency=low
   * Make patch headers DEP5 compliant (030_nx-X11_... and 031_nx-X11_...).
   * Update patch: 001_add-main-makefile.full+lite.patch, fix missing
     $(CONFIGURE) variable.
+  * Update patches: 012_nxcomp..., 013_nxcompext_..., 014_nxcompshad_....
+    Also make use of $(LIBFULL) in Makefile.in's install and uninstall stanzas.
+    Inspired by Jan Engelhardt's so-version.diff patch. However, the version
+    name change requested in that patch has been rejected for
+    NX (redistributed).
 
   [ Jan Engelhardt ]
   * Update patch: 001_add-main-makefile.full+lite.patch, allow passing of

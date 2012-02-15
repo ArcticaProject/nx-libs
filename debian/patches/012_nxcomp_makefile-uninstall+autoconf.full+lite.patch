@@ -38,7 +38,7 @@ Last-Update: 2012-02-14
 +install.lib: all
 +	./mkinstalldirs $(DESTDIR)${libdir}/nx
 +	./mkinstalldirs $(DESTDIR)${includedir}/nx
-+	$(INSTALL_DATA) libXcomp.so.3.*         $(DESTDIR)${libdir}/nx
++	$(INSTALL_DATA) $(LIBFULL)              $(DESTDIR)${libdir}/nx
 +	$(INSTALL_LINK) libXcomp.so.3           $(DESTDIR)${libdir}/nx
 +	$(INSTALL_LINK) libXcomp.so             $(DESTDIR)${libdir}/nx
 +	$(INSTALL_DATA) libXcomp.a              $(DESTDIR)${libdir}/nx
@@ -53,7 +53,7 @@ Last-Update: 2012-02-14
 +uninstall.bin:
 +
 +uninstall.lib:
-+	$(RM_FILE) $(DESTDIR)${libdir}/nx/libXcomp.so.3.*
++	$(RM_FILE) $(DESTDIR)${libdir}/nx/$(LIBFULL)
 +	$(RM_FILE) $(DESTDIR)${libdir}/nx/libXcomp.so.3
 +	$(RM_FILE) $(DESTDIR)${libdir}/nx/libXcomp.so
 +	$(RM_FILE) $(DESTDIR)${libdir}/nx/libXcomp.a

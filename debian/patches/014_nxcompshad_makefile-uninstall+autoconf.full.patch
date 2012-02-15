@@ -40,7 +40,7 @@ Last-Update: 2012-02-14
 +install.lib: all
 +	$(INSTALL_DIR)                          $(DESTDIR)${libdir}/nx
 +	$(INSTALL_DIR)                          $(DESTDIR)${includedir}/nx
-+	$(INSTALL_DATA) libXcompshad.so.3.*     $(DESTDIR)${libdir}/nx
++	$(INSTALL_DATA) $(LIBFULL)              $(DESTDIR)${libdir}/nx
 +	$(INSTALL_LINK) libXcompshad.so.3       $(DESTDIR)${libdir}/nx
 +	$(INSTALL_LINK) libXcompshad.so         $(DESTDIR)${libdir}/nx
 +	$(INSTALL_DATA) *.a                     $(DESTDIR)${libdir}/nx
@@ -54,7 +54,7 @@ Last-Update: 2012-02-14
 +uninstall.bin:
 +
 +uninstall.lib:
-+	$(RM_FILE) $(DESTDIR)${libdir}/nx/libXcompshad.so.3.*
++	$(RM_FILE) $(DESTDIR)${libdir}/nx/$(LIBFULL)
 +	$(RM_FILE) $(DESTDIR)${libdir}/nx/libXcompshad.so.3
 +	$(RM_FILE) $(DESTDIR)${libdir}/nx/libXcompshad.so
 +	$(RM_FILE) $(DESTDIR)${libdir}/nx/libXcompshad.a

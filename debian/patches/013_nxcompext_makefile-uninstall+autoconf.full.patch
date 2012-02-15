@@ -27,7 +27,7 @@ Last-Update: 2012-02-14
  #
  # This should be autodetected.
  #
-@@ -147,12 +151,33 @@
+@@ -147,12 +151,35 @@
  		fi
  		touch depend.status
  
@@ -39,7 +39,8 @@ Last-Update: 2012-02-14
 +install.lib: all
 +	./mkinstalldirs $(DESTDIR)${libdir}/nx
 +	./mkinstalldirs $(DESTDIR)${includedir}/nx
-+	$(INSTALL_DATA) libXcompext.so.*        $(DESTDIR)${libdir}/nx
++	$(INSTALL_DATA) $(LIBFULL)              $(DESTDIR)${libdir}/nx
++	$(INSTALL_DATA) libXcompext.so.3	$(DESTDIR)${libdir}/nx
 +	$(INSTALL_LINK) libXcompext.so          $(DESTDIR)${libdir}/nx
 +	$(INSTALL_DATA) NX*.h                   $(DESTDIR)${includedir}/nx
 +	echo "Running ldconfig tool, this may take a while..." && ldconfig || true
@@ -51,7 +52,8 @@ Last-Update: 2012-02-14
 +uninstall.bin:
 +
 +uninstall.lib:
-+	$(RM_FILE) $(DESTDIR)${libdir}/nx/libXcompext.so.*
++	$(RM_FILE) $(DESTDIR)${libdir}/nx/$(LIBFULL)
++	$(RM_FILE) $(DESTDIR)${libdir}/nx/libXcompext.so.3
 +	$(RM_FILE) $(DESTDIR)${libdir}/nx/libXcompext.so
 +	$(RM_FILE) $(DESTDIR)${includedir}/nx/NXlib.h
 +	$(RM_FILE) $(DESTDIR)${includedir}/nx/NXlibint.h
