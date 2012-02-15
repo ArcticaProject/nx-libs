@@ -24,7 +24,7 @@ nx-libs (2:3.5.0.11-0) UNRELEASED; urgency=low
   * Add patch: 031_nx-X11_parallel-make.diff, enable parallel make.
   * Add patch: 301_nx-X11_use-shared-libs.full.diff, use shared libraries from
     distribution rather then libs included in source tree.
-  * Add patch 032_nx-X11_no-x11r6-project-root. We must not overlap with any
+  * Add patch: 032_nx-X11_no-x11r6-project-root. We must not overlap with any
     existing files, therefore, both /usr/X11R6 and /usr are excluded
     possibilities for ProjectRoot. Use %_libexecdir/somename, since that is
     still allowed by FHS.
