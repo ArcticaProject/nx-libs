@@ -15,7 +15,6 @@
 014_nxcompshad_makefile-uninstall+autoconf.full.patch
 015_nxproxy_makefile-uninstall.full+lite.patch
 016_nx-x11_install-location.full.patch
-016_nx-X11_install-location.debian.patch
 017_nx-x11_update-autotools-helper-files.full.patch
 018_nx-x11_update-libtool-ltmain-script.full.patch
 019_nx-x11_expat-build-against-system-libxmltok.full.patch
@@ -28,7 +27,6 @@
 032_no-x11r6.full.patch
 101_nxagent_set-rgb-path.full.patch
 102_xserver-xext_set-securitypolicy-path.full.patch
-102_xserver-xext_set-securitypolicy-path.debian.patch
 103_nxagent_set-X0-config-path.full.patch
 105_nxagent_export-remote-keyboard-config.full.patch
 106_nxagent_utf8-copy-clipboard.full.patch
@@ -44,4 +42,5 @@
 301_nx-X11_use-shared-libs.full.diff
 600_nx-X11+nxcompext+nxcompshad_unique-libnames.full.patch
 999_nxagent_unbrand-nxagent-brand-x2goagent.full.patch
-
+016_nx-X11_install-location.debian.patch
+102_xserver-xext_set-securitypolicy-path.debian.patch
