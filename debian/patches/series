@@ -22,8 +22,8 @@
 021_add-nxauth-wrapper.full.patch
 022_add-nxproxy-wrapper.full+lite.patch
 023_add-x2goagent-wrapper.full.patch
-030_nx-X11_configure-args.full.diff
-031_nx-X11_parallel-make.full.diff
+030_nx-X11_configure-args.full.patch
+031_nx-X11_parallel-make.full.patch
 032_no-x11r6.full.patch
 101_nxagent_set-rgb-path.full.patch
 102_xserver-xext_set-securitypolicy-path.full.patch

@@ -23,6 +23,7 @@ nx-libs (2:3.5.0.11-0) UNRELEASED; urgency=low
     name change requested in that patch has been rejected for
     NX (redistributed).
   * Apply patches for the Debian package as the last patches in the series.
+  * Fix faulty patch name suffix (has to be .patch, not .diff).
 
   [ Jan Engelhardt ]
   * Update patch: 001_add-main-makefile.full+lite.patch, allow passing of
