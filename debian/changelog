@@ -27,6 +27,7 @@ nx-libs (2:3.5.0.11-0) UNRELEASED; urgency=low
   * Fix Xinerama support in Debian package libnx-x11 when NX gets built with
     patch 600_nx-X11+nxcompext+nxcompshad_unique-libnames.full.patch. Still on
     the todo list: fix the nx-X11 installation via Makefile.
+  * Fine-tune symlinking of libXinerama.
 
   [ Jan Engelhardt ]
   * Update patch: 001_add-main-makefile.full+lite.patch, allow passing of

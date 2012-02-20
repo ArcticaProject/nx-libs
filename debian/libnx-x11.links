@@ -1,4 +1,4 @@
 usr/lib/libX11.so.6  usr/lib/nx/X11/Xinerama/libNX_X11.so.6
 usr/lib/libXext.so.6 usr/lib/nx/X11/Xinerama/libNX_Xext.so.6
-usr/lib/nx/X11/Xinerama/libNX_Xinerama.so usr/lib/nx/X11/Xinerama/libXinerama.so
-usr/lib/nx/X11/Xinerama/libNX_Xinerama.so.1 usr/lib/nx/X11/Xinerama/libXinerama.so.1
+usr/lib/nx/X11/libNX_Xinerama.so usr/lib/nx/X11/Xinerama/libXinerama.so
+usr/lib/nx/X11/libNX_Xinerama.so.1 usr/lib/nx/X11/Xinerama/libXinerama.so.1
