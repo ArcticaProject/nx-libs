@@ -1,4 +1,4 @@
-nx-libs (2:3.5.0.11-0) UNRELEASED; urgency=low
+nx-libs (2:3.5.0.11-0) unstable; urgency=low
 
   [ Mike Gabriel ]
   * Use ,,$(MAKE) -C'' in main Makefile for calling Makefiles in subdirectories,
@@ -43,7 +43,7 @@ nx-libs (2:3.5.0.11-0) UNRELEASED; urgency=low
   * Add patch 600_nx-X11+nxcompext+nxcompshad_unique-libnames.full.patch, use
     unique library names for nx-X11 based X11 libraries.
 
- -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Tue, 07 Feb 2012 13:48:19 +0100
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 22 Feb 2012 14:41:07 +0100
 
 nx-libs (2:3.5.0.10-0) unstable; urgency=low
 
