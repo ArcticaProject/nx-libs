@@ -11,12 +11,12 @@ Last-Update: 2011-12-31
 +CONFIGURE=./configure
 +
 +%:
-+	${MAKE} -C nxcomp $@
-+	${MAKE} -C nxproxy $@
++	if test -f nxcomp/Makefile; then ${MAKE} -C nxcomp $@; fi
++	if test -f nxproxy/Makefile; then ${MAKE} -C nxproxy $@; fi
 +	if test -d nx-X11; then \
-+	    ${MAKE} -C nxcompext $@; \
-+	    ${MAKE} -C nxcompshad; \
-+	    ${MAKE} -C nx-X11 $@; \
++	    if test -f nxcompext/Makefile; then ${MAKE} -C nxcompext $@; fi; \
++	    if test -f nxcompshad/Makefile; then ${MAKE} -C nxcompshad $@; fi; \
++	    if test -f nx-X11/Makefile; then ${MAKE} -C nx-X11 $@; fi; \
 +	fi
 +
 +all: build
