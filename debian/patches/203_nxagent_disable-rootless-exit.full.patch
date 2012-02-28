@@ -1,0 +1,60 @@
+--- a/nx-X11/programs/Xserver/hw/nxagent/Args.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/Args.c
+@@ -656,6 +656,12 @@
+     return 1;
+   }
+ 
++  if (!strcmp(argv[i], "-norootlessexit")) {
++    nxagentChangeOption(NoRootlessExit, True);
++    return 1;
++  }
++
++
+   if (!strcmp(argv[i], "-noonce"))
+   {
+       nxagentOnce = False;
+@@ -1837,6 +1843,7 @@
+   ErrorF("The NX system adds the following arguments:\n");
+   ErrorF("-forcenx               force use of NX protocol messages assuming communication through nxproxy\n");
+   ErrorF("-timeout int           auto-disconnect timeout in seconds (minimum allowed: 60)\n");
++  ErrorF("-norootlessexit        don't exit if there are no clients in rootless mode\n");
+ #ifdef RENDER
+   ErrorF("-norender              disable the use of the render extension\n");
+   ErrorF("-nocomposite           disable the use of the composite extension\n");
+--- a/nx-X11/programs/Xserver/hw/nxagent/Handlers.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/Handlers.c
+@@ -217,7 +217,7 @@
+ 
+   if (nxagentOption(Rootless) &&
+           nxagentLastWindowDestroyed && nxagentRootlessDialogPid == 0 &&
+-              now > nxagentLastWindowDestroyedTime + 30 * 1000)
++              now > nxagentLastWindowDestroyedTime + 30 * 1000 && !nxagentOption(NoRootlessExit))
+   {
+     #ifdef WARNING
+     fprintf(stderr, "nxagentBlockHandler: No application running. Closing the session.\n");
+--- a/nx-X11/programs/Xserver/hw/nxagent/Options.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/Options.c
+@@ -56,6 +56,7 @@
+   nxagentOptions.Persistent = 1;
+   nxagentOptions.Rootless   = UNDEFINED;
+   nxagentOptions.Fullscreen = UNDEFINED;
++  nxagentOptions.NoRootlessExit = False;
+ 
+   nxagentOptions.X           = 0;
+   nxagentOptions.Y           = 0;
+--- a/nx-X11/programs/Xserver/hw/nxagent/Options.h
++++ b/nx-X11/programs/Xserver/hw/nxagent/Options.h
+@@ -369,6 +369,13 @@
+ 
+   int CopyBufferSize;
+ 
++ /*
++  * True if agent should not exit if there are no
++  * clients in rootless mode
++  */
++
++  int NoRootlessExit;
++
+ } AgentOptionsRec;
+ 
+ typedef AgentOptionsRec *AgentOptionsPtr;

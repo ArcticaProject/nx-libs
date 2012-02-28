@@ -37,6 +37,7 @@
 200_nxagent_check-binary-x2go-flavour.full.patch
 201_nxagent_set-x2go-icon-if-x2goagent-flavour.full.patch
 202_nx-x11_enable-xinerama.full.patch
+203_nxagent_disable-rootless-exit.full.patch
 209_x2goagent-add-man-page.full.patch
 300_nxagent_set-wm-class.full.patch
 301_nx-X11_use-shared-libs.full.patch
