@@ -26,7 +26,7 @@ case "$1" in
 		if dpkg-architecture -qDEB_BUILD_MULTIARCH &>/dev/null; then
 			rm -f /usr/lib/nx/X11/Xinerama/libNX_X11.so.6
 			rm -f /usr/lib/nx/X11/Xinerama/libNX_Xext.so.6
-			$libdir=/usr/lib/$(dpkg-architecture -qDEB_BUILD_MULTIARCH)
+			libdir=/usr/lib/$(dpkg-architecture -qDEB_BUILD_MULTIARCH)
 			if test -e $libdir/libX11.so.6; then
 				ln -s $libdir/libX11.so.6 /usr/lib/nx/X11/Xinerama/libNX_X11.so.6
 			fi
