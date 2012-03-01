@@ -9,6 +9,8 @@ nx-libs (2:3.5.0.12-0) UNRELEASED; urgency=low
   * Add patch: 051_nxcomp_macos105-fdisset.full+lite.patch, work around
     issue in Mac OS X 10.5 SDK. Pass address of fd_set structs on the stack
     to the FD_ISSET macro/function, instead of the struct itself.
+  * Update patch: 005_nxcomp_gcc43.full+lite.patch, fix faulty path to
+    nxcomp/Split.cpp.
 
   [ Oleksandr Shneyder ]
   * Create patch: 203_nxagent_disable-rootless-exit.full.patch.
