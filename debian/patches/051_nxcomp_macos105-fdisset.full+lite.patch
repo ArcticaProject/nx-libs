@@ -27,14 +27,14 @@ Author: Mihai Moldovan <ionic@ionic.de>
      *logofs << "Agent: remoteCanRead() is " <<
 -               (FD_ISSET(remoteFd_, readSet) && transport_ -> dequeuable() != 0)
 -            << " with FD_ISSET() " << (int) FD_ISSET(remoteFd_, readSet)
-+               (FD_ISSET(remoteFd_, readWorkSet) && transport_ -> dequeuable() != 0)
-+            << " with FD_ISSET() " << (int) FD_ISSET(remoteFd_, readWorkSet)
++               (FD_ISSET(remoteFd_, &readWorkSet) && transport_ -> dequeuable() != 0)
++            << " with FD_ISSET() " << (int) FD_ISSET(remoteFd_, &readWorkSet)
              << " and dequeuable " << transport_ -> dequeuable()
              << ".\n" << logofs_flush;
      #endif
  
 -    return (FD_ISSET(remoteFd_, readSet) &&
-+    return (FD_ISSET(remoteFd_, readWorkSet) &&
++    return (FD_ISSET(remoteFd_, &readWorkSet) &&
                  transport_ -> dequeuable() != 0);
    }
  
@@ -47,16 +47,16 @@ Author: Mihai Moldovan <ionic@ionic.de>
      #if defined(TEST) || defined(INFO)
      *logofs << "Agent: remoteCanWrite() is " <<
 -               (FD_ISSET(remoteFd_, writeSet) && transport_ ->
-+               (FD_ISSET(remoteFd_, writeWorkSet) && transport_ ->
++               (FD_ISSET(remoteFd_, &writeWorkSet) && transport_ ->
                 queuable() != 0 && canRead_ == 1) << " with FD_ISSET() "
 -            << (int) FD_ISSET(remoteFd_, writeSet) << " queueable "
-+            << (int) FD_ISSET(remoteFd_, writeWorkSet) << " queueable "
++            << (int) FD_ISSET(remoteFd_, &writeWorkSet) << " queueable "
              << transport_ -> queuable() << " channel can read "
              << canRead_ << ".\n" << logofs_flush;
      #endif
  
 -    return (FD_ISSET(remoteFd_, writeSet) &&
-+    return (FD_ISSET(remoteFd_, writeWorkSet) &&
++    return (FD_ISSET(remoteFd_, &writeWorkSet) &&
                  transport_ -> queuable() != 0 &&
                      canRead_ == 1);
    }
