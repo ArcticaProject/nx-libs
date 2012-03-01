@@ -20,8 +20,6 @@ find nx-X11/exports/lib/ | egrep "^.*\.so$" | while read libpath; do
     find $libdir/$libfile.* | while read symlink; do
         ln -s $libfile ${libdir//exports/.build-exports}/$(basename $symlink)
     done
-
-
 done
 
 exit 0

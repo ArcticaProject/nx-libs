@@ -4,6 +4,8 @@ nx-libs (2:3.5.0.12-0) UNRELEASED; urgency=low
   * Update patch: 001_add-main-makefile.full+lite.patch, adapt patch from
     packaging. Test for Makefiles in subfolders before calling them.
     Fixes build failure during ,,make distclean'' calls.
+  * Provide temporary workaround for installation on Debian 64bit with
+    multiarch support.
 
   [ Mihai Moldovan ]
   * Add patch: 051_nxcomp_macos105-fdisset.full+lite.patch, work around
