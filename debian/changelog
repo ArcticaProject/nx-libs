@@ -15,11 +15,10 @@ nx-libs (2:3.5.0.12-0) UNRELEASED; urgency=low
     nxcomp/Split.cpp.
 
   [ Oleksandr Shneyder ]
-  * Create patch: 203_nxagent_disable-rootless-exit.full.patch.
-    Add command line argument "-norootlessexit".
-    Usually, nxagent exits after 30 seconds if running in rootless mode
-    and no X-Clients are present.  Starting nxagent with option "-norootlessexit"
-    will change this behaviour.
+  * Add patch: 203_nxagent_disable-rootless-exit.full.patch, add command line
+    argument "-norootlessexit". Usually, nxagent exits after 30 seconds if
+    running in rootless mode and no X-Clients are present. Starting nxagent
+    with option "-norootlessexit" will change this behaviour.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 22 Feb 2012 15:05:38 +0100
 
