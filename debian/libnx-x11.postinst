@@ -23,7 +23,7 @@ case "$1" in
 		### FIXME: this is a work-around while we have not implemented
 		###        multiarch support into the Debian source package of
 		###        nx-libs.
-		if dpkg-architecture -qDEB_BUILD_MULTIARCH &>/dev/null; then
+		if dpkg-architecture -qDEB_BUILD_MULTIARCH 1>/dev/null 2>/dev/null; then
 			rm -f /usr/lib/nx/X11/Xinerama/libNX_X11.so.6
 			rm -f /usr/lib/nx/X11/Xinerama/libNX_Xext.so.6
 			libdir=/usr/lib/$(dpkg-architecture -qDEB_BUILD_MULTIARCH)
