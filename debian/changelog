@@ -1,4 +1,4 @@
-nx-libs (2:3.5.0.12-0) UNRELEASED; urgency=low
+nx-libs (2:3.5.0.12-0) unstable; urgency=low
 
   [ Mike Gabriel ]
   * Update patch: 001_add-main-makefile.full+lite.patch, adapt patch from
@@ -21,7 +21,7 @@ nx-libs (2:3.5.0.12-0) UNRELEASED; urgency=low
     running in rootless mode and no X-Clients are present. Starting nxagent
     with option "-norootlessexit" will change this behaviour.
 
- -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 22 Feb 2012 15:05:38 +0100
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 07 Mar 2012 20:50:14 +0100
 
 nx-libs (2:3.5.0.11-0) unstable; urgency=low
 
