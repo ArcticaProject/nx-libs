@@ -1092,7 +1092,7 @@ static void GetIncludeFile(
 
 static void GetDatabase(
     XrmDatabase db,
-    _Xconst register char *str,
+    _Xconst char *str,
     _Xconst char *filename,
     Bool doall,
     int depth)
