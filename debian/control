@@ -74,7 +74,6 @@ Package: nxagent
 Architecture: any
 Depends:
  libnx-x11 (>= ${source:Version}), libnx-x11 (<< ${source:Version}.1~),
- xfonts-base,
  ${shlibs:Depends},
  ${misc:Depends}
 Description: NX agent
