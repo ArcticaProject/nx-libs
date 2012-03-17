@@ -13,6 +13,7 @@ nx-libs (2:3.5.0.12-0) unstable; urgency=low
   * Provide temporary workaround for installation on Debian 64bit with
     multiarch support (via libnx-x11.postinst and .prerm).
   * Re-introduce proper Xinerama support on non-multiarch systems.
+  * Let nxagent Debian package depend on xfonts-base.
 
   [ Mihai Moldovan ]
   * Add patch: 051_nxcomp_macos105-fdisset.full+lite.patch, work around
