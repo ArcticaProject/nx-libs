@@ -1,6 +1,6 @@
 nx-libs (2:3.5.0.13-0) UNRELEASED; urgency=low
 
-  * Continue development...
+  * Let nxagent Debian package depend on xfonts-base.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 07 Mar 2012 21:01:21 +0100
 
