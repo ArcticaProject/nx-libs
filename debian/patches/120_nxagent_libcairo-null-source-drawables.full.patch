@@ -1,3 +1,66 @@
+Description: Fix nxagent/x2goagent With New LibCairo (>1.12.1)
+ Quoting two postings of Jim Burnes <jvburnes@gmail.com> on x2go-dev ML:
+
+ I don't know what the current patch status is for fixing nxagent with the
+ new libcairo (1.12.1+ I believe), but eventually I got tired of waiting and
+ created my own patches for nxagent/x2goagent.
+
+ Most of the fixes were required because the render extension now allows
+ (and libcairo uses) null source drawables (for gradients etc), null masks
+ and null mask drawables.
+
+ This change creates a bit of a logic mess in the code.   Previous patches
+ to the code tried to account for all of the possibilities, but fell a
+ little short.
+
+ Consider this an alpha-quality patch.  I've only tested it in KDE while
+ running GTK applications.   All my favorite GTK apps like Firefox, Emacs,
+ rox-filer and all my other GTK apps that were broken are now working just
+ fine.  (Though I'm getting only the standard GTK look and feel - don't know
+ if that's caused by anything I've done.)
+
+ Could someone test this under Gnome?
+
+ Also, since I'm not primarily an X software engineer I'd like a specialist
+ to take a look at it.   The fix is a little crude.   I just attached to the
+ x2goagent process and fixed the lines that caused segfaults.   (About 10 of
+ them).
+
+ I also rewrote one of the macros in Pixels.h into a local subroutine in
+ Render.c.  It had a bug in it and complex macro bugs are a PITA to debug in
+ gdb (or anything else really).   The macro is only used in one place and
+ although the code in the macro is called pretty often, it's very likely
+ that the compiler would inline it anyway.  The rewrite increases
+ readability by a large factor.
+
+ A better patch could be created by someone that understands nxagent and X
+ much better.   The render extension code receives render ops from X client
+ programs.  The render ops can contain any combination of picture source,
+ picture destination and picture mask.  It's apparently legal to send render
+ ops with combinations of null picture source drawables, picture masks and
+ picture mask drawables.   A better way to patch this would be to simply
+ perform a return on all the illegal combinations of null parameters for the
+ render ops.  That way you wouldn't have to keep re-checking the parameter
+ values.
+
+ So anyway, here it is.  I appreciate it if someone out there would test it
+ and let me know.   Also if anyone knows of the X docs which discuss null
+ picture sources and masks in the render extension I'd be glad to create a
+ cleaner patch that conforms to the stands.
+
+
+ You can reproduce the issue by running any recent copy of x2go/nxagent and
+ start any program that uses very recent versions of libCairo.  Things
+ started breaking for both ArchLinux and Debian SID users about 3 weeks ago.
+
+ The issues started with versions of libCairo >= libcairo2_1.12.0-2_amd64
+ (debian packages of course).  These versions of Cairo seem to use null
+ parameters in render ops a lot.   Users of recent GTK environments would
+ have the startup process just crash.  KDE sessions start and run fine until
+ you start a gtk app.
+Forwarded: pending
+Author: Jim Burnes <jvburnes@gmail.com>
+Last-Update: 2012-05-11
 --- a/nx-X11/programs/Xserver/hw/nxagent/Render.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Render.c
 @@ -995,6 +995,36 @@
