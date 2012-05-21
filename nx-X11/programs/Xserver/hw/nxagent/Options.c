@@ -85,6 +85,8 @@ void nxagentInitOptions()
 
   nxagentOptions.DeviceControl = 0;
 
+  nxagentOptions.DeviceControlUserDefined = 0;
+
   nxagentOptions.ResetKeyboardAtResume = 1;
 
   nxagentOptions.Reset = 0;
@@ -149,6 +151,8 @@ void nxagentInitOptions()
   nxagentOptions.InhibitXkb = 1;
 
   nxagentOptions.CopyBufferSize = COPY_UNLIMITED;
+
+  nxagentOptions.ImageRateLimit = 0;
 }
 
 /*

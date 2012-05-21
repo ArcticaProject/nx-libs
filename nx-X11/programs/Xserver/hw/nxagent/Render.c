@@ -1095,8 +1095,9 @@ void nxagentComposite(CARD8 op, PicturePtr pSrc, PicturePtr pMask, PicturePtr pD
     }
   }
 
-  if (pMask != NULL && pMask -> pDrawable != pSrc -> pDrawable &&
-          pMask -> pDrawable != pDst -> pDrawable)
+  if (pMask != NULL && pMask -> pDrawable != NULL &&
+          pMask -> pDrawable != pSrc -> pDrawable &&
+              pMask -> pDrawable != pDst -> pDrawable)
   {
     nxagentSynchronizeShmPixmap(pMask -> pDrawable, xMask, yMask, width, height);
 
@@ -1259,7 +1260,8 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
    * on the real X server.
    */
 
-  if (nxagentDrawableStatus(pSrc -> pDrawable) == NotSynchronized)
+  if (pSrc -> pDrawable != NULL &&
+          nxagentDrawableStatus(pSrc -> pDrawable) == NotSynchronized)
   {
     #ifdef TEST
     fprintf(stderr, "nxagentGlyphs: Synchronizing source [%s] at [%p].\n",
@@ -1749,7 +1751,8 @@ FIXME: Is this useful or just a waste of bandwidth?
     return;
   }
 
-  if (nxagentDrawableStatus(pSrc -> pDrawable) == NotSynchronized)
+  if (pSrc -> pDrawable != NULL &&
+          nxagentDrawableStatus(pSrc -> pDrawable) == NotSynchronized)
   {
     #ifdef TEST
     fprintf(stderr, "nxagentTrapezoids: Going to synchronize the source drawable at [%p].\n",
@@ -1843,7 +1846,8 @@ void nxagentTriangles(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
    * operation like nxagentTrapezoids() does.
    */
 
-  if (nxagentDrawableStatus(pSrc -> pDrawable) == NotSynchronized)
+  if (pSrc -> pDrawable != NULL &&
+          nxagentDrawableStatus(pSrc -> pDrawable) == NotSynchronized)
   {
     #ifdef TEST
     fprintf(stderr, "nxagentTriangles: Going to synchronize the source drawable at [%p].\n",
@@ -1920,7 +1924,8 @@ void nxagentTriStrip(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
    * operation like nxagentTrapezoids() does.
    */
 
-  if (nxagentDrawableStatus(pSrc -> pDrawable) == NotSynchronized)
+  if (pSrc -> pDrawable != NULL &&
+          nxagentDrawableStatus(pSrc -> pDrawable) == NotSynchronized)
   {
     #ifdef TEST
     fprintf(stderr, "nxagentTriStrip: Going to synchronize the source drawable at [%p].\n",
@@ -1997,7 +2002,8 @@ void nxagentTriFan(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
    * operation like nxagentTrapezoids() does.
    */
 
-  if (nxagentDrawableStatus(pSrc -> pDrawable) == NotSynchronized)
+  if (pSrc -> pDrawable != NULL &&
+          nxagentDrawableStatus(pSrc -> pDrawable) == NotSynchronized)
   {
     #ifdef TEST
     fprintf(stderr, "nxagentTriFan: Going to synchronize the source drawable at [%p].\n",

@@ -290,10 +290,25 @@ void nxagentRecolorCursor(ScreenPtr pScreen, CursorPtr pCursor,
                  &fg_color, &bg_color);
 }
 
+Bool (*nxagentSetCursorPositionW)(ScreenPtr pScreen, int x, int y,
+                                      Bool generateEvent);
+
 Bool nxagentSetCursorPosition(ScreenPtr pScreen, int x, int y,
                                   Bool generateEvent)
 {
-  return 1;
+  if (generateEvent != 0)
+  {
+    return (*nxagentSetCursorPositionW)(pScreen, x, y, generateEvent);
+  }
+  else
+  {
+    /*
+     * Calling miSetCursorPosition with generateEvent == 0
+     * causes a crash in miPoiterUpdate().
+     */
+
+    return 1;
+  }
 }
 
 void nxagentReconnectCursor(pointer p0, XID x1, pointer p2)

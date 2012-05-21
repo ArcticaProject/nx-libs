@@ -124,13 +124,24 @@ void nxagentGuessClientHint(ClientPtr client, Atom property, char *data)
 
   if (nxagentClientPriv(client) -> clientHint == UNKNOWN)
   {
-    if (property == XA_WM_CLASS && strcmp(data, "nxclient") == 0)
+    if (property == XA_WM_CLASS)
     {
-      #ifdef TEST
-      fprintf(stderr, "++++++nxagentGuessClientHint: Detected nxclient as [%d].\n", client -> index);
-      #endif
+      if (strcmp(data, "nxclient") == 0)
+      {
+        #ifdef TEST
+        fprintf(stderr, "++++++nxagentGuessClientHint: Detected nxclient as [%d].\n", client -> index);
+        #endif
 
-      nxagentClientHint(client) = NXCLIENT_WINDOW;
+        nxagentClientHint(client) = NXCLIENT_WINDOW;
+      }
+      else if (strstr(data, "java"))
+      {
+        #ifdef TEST
+        fprintf(stderr, "++++++nxagentGuessClientHint: Detected java as [%d].\n", client -> index);
+        #endif
+
+        nxagentClientHint(client) = JAVA_WINDOW;
+      }
     }
   }
 

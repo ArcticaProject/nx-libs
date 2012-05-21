@@ -1,5 +1,24 @@
 ChangeLog:
 
+nxagent-3.5.0-9
+
+- Fixed an issue with cursor position set in XTest extension.
+
+nxagent-3.5.0-8
+
+- Fixed TR01J02646. Performance issues with cairo version 1.12.
+
+- Fixed TR01J02667. Changes to mouse sensitivity couldn't be forwarded
+  to NX client host although -noignore was among extra options.
+
+- Fixed TR05J02705. Agent ignore WarpPointer requests.
+
+- Fixed TR05J02706. Suspended sessions could not be recovered using
+  a client form a different version.
+
+- Fixed TR05J02703. Agent failed because of missing checks on source
+  drawables in the render code.
+
 nxagent-3.5.0-7
 
 - Fixed TR10I02622. Corrected function searching for icon file.

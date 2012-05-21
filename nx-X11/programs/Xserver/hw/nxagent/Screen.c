@@ -1644,6 +1644,9 @@ N/A
     pScreen->RealizeCursor = nxagentRealizeCursor;
     pScreen->UnrealizeCursor = nxagentUnrealizeCursor;
     pScreen->RecolorCursor = nxagentRecolorCursor;
+
+    nxagentSetCursorPositionW = pScreen->SetCursorPosition;
+
     pScreen->SetCursorPosition = nxagentSetCursorPosition;
 
     #define POSITION_OFFSET (pScreen->myNum * (nxagentOption(Width) + \

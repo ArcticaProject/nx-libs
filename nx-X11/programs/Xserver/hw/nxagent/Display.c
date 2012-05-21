@@ -746,8 +746,19 @@ static void nxagentDisplayWriteHandler(Display *display, int length)
   }
 }
 
+static CARD32 nxagentRateTime = 5000;
+static CARD32 nxagentLastTime;
+static unsigned int nxagentRate = 0;
+
+int nxagentGetDataRate(void)
+{
+  return nxagentRate;
+}
+
 static void nxagentDisplayFlushHandler(Display *display, int length)
 {
+  CARD32 time;
+
   if (nxagentDisplay != NULL)
   {
     #ifdef TEST
@@ -765,6 +776,22 @@ static void nxagentDisplayFlushHandler(Display *display, int length)
     if (nxagentOption(LinkType) != LINK_TYPE_NONE)
     {
       nxagentFlush = GetTimeInMillis();
+
+      time = nxagentFlush;
+
+      time = time - nxagentLastTime;
+
+      if (time < nxagentRateTime)
+      {
+        nxagentRate = ((nxagentRate * (nxagentRateTime - time) +
+                          length) * 1000) / nxagentRateTime;
+      }
+      else
+      {
+        nxagentRate = (length * 1000) / nxagentRateTime;
+      }
+
+      nxagentLastTime = nxagentFlush;
     }
   }
 }
@@ -1481,10 +1508,6 @@ void nxagentSetDefaultVisual(void)
   XVisualInfo vi;
 
   int i;
-
-  nxagentDefaultVisualIndex = 3;
-
-  return;
 
   if (nxagentUserDefaultClass || nxagentUserDefaultDepth)
   {

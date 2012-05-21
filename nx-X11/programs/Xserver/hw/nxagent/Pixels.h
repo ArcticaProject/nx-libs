@@ -134,7 +134,7 @@ FIXME: Changed macro: NXAGENT_SHOULD_DEFER_COMPOSITE
              (nxagentOption(DeferLevel) == 1 &&                                                          \
               (pDst) -> pDrawable -> type == DRAWABLE_PIXMAP &&                                          \
               (((pSrc) -> pDrawable && nxagentDrawableStatus((pSrc) -> pDrawable) == NotSynchronized) || \
-              ((pMask) && nxagentDrawableStatus((pMask) -> pDrawable) == NotSynchronized))))
+              ((pMask) && (pMask) -> pDrawable && nxagentDrawableStatus((pMask) -> pDrawable) == NotSynchronized))))
 
 
 #define NXAGENT_SHOULD_DEFER_PUTIMAGE(pDrawable) \

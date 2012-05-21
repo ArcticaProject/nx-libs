@@ -514,6 +514,22 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     return 0;
   }
 
+  if (!strcmp(argv[i], "-irlimit"))
+  {
+    int limit;
+
+    if (++i < argc &&
+            sscanf(argv[i], "%i", &limit) == 1)
+    {
+      nxagentChangeOption(ImageRateLimit, limit);
+
+  
+      return 2;
+    }
+
+    return 0;
+  }
+
   if (!strcmp(argv[i], "-tile"))
   {
     int width;
@@ -779,6 +795,8 @@ int ddxProcessArgument(int argc, char *argv[], int i)
   if (!strcmp(argv[i], "-noignore"))
   {
     nxagentChangeOption(DeviceControl, True);
+
+    nxagentChangeOption(DeviceControlUserDefined , True);
 
     return 1;
   }

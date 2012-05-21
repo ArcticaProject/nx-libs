@@ -32,7 +32,8 @@ enum ClientHint
   UNKNOWN = 0,
   NXCLIENT_WINDOW,
   NXCLIENT_DIALOG,
-  NXAGENT_SHADOW
+  NXAGENT_SHADOW,
+  JAVA_WINDOW
 };
 
 typedef struct _PrivClientRec
