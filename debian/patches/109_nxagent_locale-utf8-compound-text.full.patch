@@ -17,7 +17,7 @@ Last-Update: 2011-12-31
  /*
   * Set here the required log level.
   */
-@@ -348,6 +351,20 @@
+@@ -366,6 +369,20 @@
     */
  
    blackRoot = TRUE;

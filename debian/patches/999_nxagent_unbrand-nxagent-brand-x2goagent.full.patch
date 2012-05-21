@@ -230,7 +230,7 @@ Last-Update: 2012-01-11
    #ifdef NXAGENT_LOGO_DEBUG
 --- a/nx-X11/programs/Xserver/hw/nxagent/Display.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Display.c
-@@ -1403,22 +1403,10 @@
+@@ -1430,22 +1430,10 @@
    g = pV.green_mask;
    b = pV.blue_mask;
  
@@ -257,7 +257,7 @@ Last-Update: 2012-01-11
  
    #ifdef WATCH
  
-@@ -2673,22 +2661,10 @@
+@@ -2696,22 +2684,10 @@
    g = pV.green_mask;
    b = pV.blue_mask;
  

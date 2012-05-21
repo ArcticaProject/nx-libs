@@ -9,7 +9,7 @@ Author: Oleksandr Shneyder <oleksandr.shneyder@obviously-nice.de>
 Last-Update: 2012-01-11
 --- a/nx-X11/programs/Xserver/hw/nxagent/Init.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Init.c
-@@ -178,6 +178,29 @@
+@@ -180,6 +180,29 @@
  
  int nxagentDoFullGeneration = 1;
  
@@ -39,7 +39,7 @@ Last-Update: 2012-01-11
  /*
   * Called at X server's initialization.
   */
-@@ -194,6 +217,11 @@
+@@ -196,6 +219,11 @@
    #endif
  
    /*

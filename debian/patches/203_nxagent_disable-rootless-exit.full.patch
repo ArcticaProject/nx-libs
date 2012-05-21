@@ -1,6 +1,6 @@
 --- a/nx-X11/programs/Xserver/hw/nxagent/Args.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Args.c
-@@ -656,6 +656,12 @@
+@@ -672,6 +672,12 @@
      return 1;
    }
  
@@ -13,7 +13,7 @@
    if (!strcmp(argv[i], "-noonce"))
    {
        nxagentOnce = False;
-@@ -1837,6 +1843,7 @@
+@@ -1855,6 +1861,7 @@
    ErrorF("The NX system adds the following arguments:\n");
    ErrorF("-forcenx               force use of NX protocol messages assuming communication through nxproxy\n");
    ErrorF("-timeout int           auto-disconnect timeout in seconds (minimum allowed: 60)\n");
@@ -23,7 +23,7 @@
    ErrorF("-nocomposite           disable the use of the composite extension\n");
 --- a/nx-X11/programs/Xserver/hw/nxagent/Handlers.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Handlers.c
-@@ -217,7 +217,7 @@
+@@ -219,7 +219,7 @@
  
    if (nxagentOption(Rootless) &&
            nxagentLastWindowDestroyed && nxagentRootlessDialogPid == 0 &&
@@ -44,9 +44,9 @@
    nxagentOptions.Y           = 0;
 --- a/nx-X11/programs/Xserver/hw/nxagent/Options.h
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Options.h
-@@ -369,6 +369,13 @@
+@@ -381,6 +381,13 @@
  
-   int CopyBufferSize;
+   int ImageRateLimit;
  
 + /*
 +  * True if agent should not exit if there are no

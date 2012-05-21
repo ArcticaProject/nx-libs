@@ -4,9 +4,9 @@ Description: X2Go icon when run with x2goagent flavour
 Forwarded: not-needed
 Author: Oleksandr Shneyder <oleksandr.shneyder@obviously-nice.de>
 Last-Update: 2012-01-11
---- a/nx-X11/programs/Xserver/hw/nxagent/Display.c	2012-01-11 10:09:05.000000000 +0100
-+++ b/nx-X11/programs/Xserver/hw/nxagent/Display.c	2012-01-11 12:28:11.000000000 +0100
-@@ -77,6 +77,7 @@ is" without express or implied warranty.
+--- a/nx-X11/programs/Xserver/hw/nxagent/Display.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/Display.c
+@@ -77,6 +77,7 @@
  #include "NXlib.h"
  
  #include NXAGENT_ICON_NAME
@@ -14,7 +14,7 @@ Last-Update: 2012-01-11
  
  /*
   * Set here the required log level.
-@@ -1918,12 +1919,29 @@ Bool nxagentMakeIcon(Display *display, P
+@@ -1941,12 +1942,29 @@
    Bool success = False;
    XlibPixmap IconPixmap;
    XlibPixmap IconShape;
@@ -46,7 +46,7 @@ Last-Update: 2012-01-11
  
      if (icon_fp != NULL)
      {
-@@ -1962,7 +1980,7 @@ Bool nxagentMakeIcon(Display *display, P
+@@ -1985,7 +2003,7 @@
    {
       status = XpmCreatePixmapFromData(display,
                                          DefaultRootWindow(display),
@@ -55,8 +55,8 @@ Last-Update: 2012-01-11
                                          &IconPixmap,
                                          &IconShape,
                                          NULL);
---- a/nx-X11/programs/Xserver/hw/nxagent/Icons.h	2012-01-11 10:09:05.000000000 +0100
-+++ b/nx-X11/programs/Xserver/hw/nxagent/Icons.h	2012-01-11 12:17:21.000000000 +0100
+--- a/nx-X11/programs/Xserver/hw/nxagent/Icons.h
++++ b/nx-X11/programs/Xserver/hw/nxagent/Icons.h
 @@ -24,6 +24,8 @@
  
  #define NXAGENT_ICON_NAME  "nxagent.xpm"
@@ -66,8 +66,8 @@ Last-Update: 2012-01-11
  #define NXAGENT_PLACEHOLDER_NAME  "nxmissing.xpm"
  
  #endif /* __Icons_H__ */
---- a/nx-X11/programs/Xserver/hw/nxagent/x2go.xpm	1970-01-01 01:00:00.000000000 +0100
-+++ b/nx-X11/programs/Xserver/hw/nxagent/x2go.xpm	2012-01-11 12:26:24.000000000 +0100
+--- /dev/null
++++ b/nx-X11/programs/Xserver/hw/nxagent/x2go.xpm
 @@ -0,0 +1,148 @@
 +/* XPM */
 +static char  *x2goagentIconData[]={
@@ -217,4 +217,3 @@ Last-Update: 2012-01-11
 +"..#cccbne.............................................................................................................menkccc#..",
 +"...okccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccbe...",
 +"....mhjccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccg#....."};
-
