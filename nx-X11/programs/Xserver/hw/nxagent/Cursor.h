@@ -97,6 +97,9 @@ void nxagentRecolorCursor(ScreenPtr pScreen, CursorPtr pCursor,
 Bool nxagentSetCursorPosition(ScreenPtr pScreen, int x, int y,
                                   Bool generateEvent);
 
+extern Bool (*nxagentSetCursorPositionW)(ScreenPtr pScreen, int x, int y,
+                                             Bool generateEvent);
+
 void nxagentDisconnectCursor(pointer p0, XID x1, pointer p2);
 void nxagentReconnectCursor(pointer p0, XID x1, pointer p2);
 void nxagentReDisplayCurrentCursor(void);

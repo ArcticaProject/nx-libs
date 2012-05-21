@@ -120,6 +120,8 @@ extern int OsVendorVErrorFFatal;
 extern void (*OsVendorStartRedirectErrorFProc)();
 extern void (*OsVendorEndRedirectErrorFProc)();
 
+extern void SetVendorRelease(int release);
+
 void OsVendorStartRedirectErrorFFunction();
 void OsVendorEndRedirectErrorFFunction();
 
@@ -203,6 +205,22 @@ void InitOutput(ScreenInfo *screenInfo, int argc, char *argv[])
     fprintf(stderr, "Info: Agent running with pid '%d'.\n", getpid());
 
     fprintf(stderr, "Session: Starting session at '%s'.\n", GetTimeAsString());
+  }
+
+  /*
+   * Avoid slowness due to buggy_repeat workaround
+   * in libcairo versions >= 1.10.
+   */
+
+  SetVendorRelease(70000000);
+
+  /*
+   * Init the time count for image rate.
+   */
+
+  if (nxagentOption(ImageRateLimit) != 0)
+  { 
+    fprintf(stderr, "Info: Image rate limit set to %u kB/s.\n", nxagentOption(ImageRateLimit));
   }
 
   /*

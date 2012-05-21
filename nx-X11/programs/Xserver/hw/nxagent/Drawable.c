@@ -112,6 +112,27 @@ unsigned long nxagentGetColor(DrawablePtr pDrawable, int xPixel, int yPixel);
 unsigned long nxagentGetDrawableColor(DrawablePtr pDrawable);
 unsigned long nxagentGetRegionColor(DrawablePtr pDrawable, RegionPtr pRegion);
 
+int nxagentSkipImage = 0;
+
+static int nxagentTooManyImageData(void)
+{
+  unsigned int r;
+  unsigned int limit;
+
+  limit = nxagentOption(ImageRateLimit);
+
+  r = nxagentGetDataRate() / 1000;
+
+  #ifdef TEST
+  if (r > limit)
+  {
+    fprintf(stderr, "Warning: Current bit rate is: %u kB/s.\n", r);
+  }
+  #endif
+
+  return (r > limit);
+}
+
 int nxagentSynchronizeDrawable(DrawablePtr pDrawable, int wait, unsigned int breakMask, WindowPtr owner)
 {
   int result;
@@ -1304,6 +1325,18 @@ FIXME: All drawables should be set as synchronized and
        never marked as corrupted while the display is
        down.
 */
+
+  nxagentSkipImage = nxagentTooManyImageData();
+
+  if (nxagentOption(ImageRateLimit) && nxagentSkipImage)
+  {
+    #ifdef TEST
+    fprintf(stderr, "nxagentSynchronizeDrawable: Skipping due to bit rate limit reached.\n");
+    #endif
+
+    return;
+  }
+
   if (NXDisplayError(nxagentDisplay) == 1)
   {
     #ifdef TEST

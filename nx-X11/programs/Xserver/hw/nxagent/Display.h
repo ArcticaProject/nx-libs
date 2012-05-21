@@ -159,6 +159,8 @@ extern int nxagentShadowXConnectionNumber;
 
 int nxagentServerOrder(void);
 
+int nxagentGetDataRate(void);
+
 #define nxagentClientOrder(client) \
     ((client)->swapped ? !nxagentServerOrder() : nxagentServerOrder())
 

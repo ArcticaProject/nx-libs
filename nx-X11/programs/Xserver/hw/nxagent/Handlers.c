@@ -159,6 +159,8 @@ struct _DispatchRec nxagentDispatch = { UNDEFINED, 0, 0, 0 };
  * for our clients or the X server.
  */
 
+extern int nxagentSkipImage;
+
 void nxagentBlockHandler(pointer data, struct timeval **timeout, pointer mask)
 {
   /*
@@ -357,7 +359,7 @@ void nxagentBlockHandler(pointer data, struct timeval **timeout, pointer mask)
                            nxagentCorruptedBackgrounds > 0 ||
                                nxagentCorruptedPixmaps > 0));
 
-    if (synchronize == 1)
+    if (nxagentSkipImage == 0 && synchronize == 1)
     {
       #ifdef TEST
       fprintf(stderr, "nxagentBlockHandler: Setting a zero timeout with [%d][%d][%d] and "

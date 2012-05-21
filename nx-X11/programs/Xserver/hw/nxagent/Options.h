@@ -184,6 +184,12 @@ typedef struct _AgentOptions
   int DeviceControl;
 
   /*
+   * Explicitly asked config propagation.
+   */
+
+  int DeviceControlUserDefined;
+
+  /*
    * Resuming keyboard device corrects keymap if session
    * migrates across platforms with different keycode
    * layout.
@@ -368,6 +374,12 @@ typedef struct _AgentOptions
    */
 
   int CopyBufferSize;
+
+  /*
+   * Max image data rate to the encoder input.
+   */
+
+  int ImageRateLimit;
 
 } AgentOptionsRec;
 

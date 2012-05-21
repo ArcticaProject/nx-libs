@@ -377,11 +377,10 @@ Bool nxagentReconnectSession(void)
   nxagentResizeDesktopAtStartup = False;
 
   /*
-   * The default is device settings have
-   * not to be propagated to the X server.
+   * Propagate device settings if explicitly asked for.
    */
 
-  nxagentChangeOption(DeviceControl, False);
+  nxagentChangeOption(DeviceControl, nxagentOption(DeviceControlUserDefined));
 
   /*
    * We need to zero out every new XID
