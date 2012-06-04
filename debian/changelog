@@ -1,9 +1,15 @@
 nx-libs (2:3.5.0.14-0) UNRELEASED; urgency=low
 
+  [ Mike Gabriel ]
   * New upstream release of nxagent (3.5.0-9).
   * Adapt patch series (all hunks succeeded automatically).
   * Drop patch: 120_nxagent_libcairo-null-source-drawables.full.patch, the issue
     has been fixed by NoMachine (TR05J02703).
+
+  [ Mihai Moldovan ]
+  * Add patch: 052_nxcomp_macos10-nxauth-location.full+lite.patch, change
+    nxauth search location on Mac OS X to $NX_SYSTEM/nxauth to facilitate
+    application bundle building.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 11 May 2012 23:57:18 +0200
 

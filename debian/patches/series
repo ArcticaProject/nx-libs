@@ -26,6 +26,7 @@
 031_nx-X11_parallel-make.full.patch
 032_no-x11r6.full.patch
 051_nxcomp_macos105-fdisset.full+lite.patch
+052_nxcomp_macos10-nxauth-location.full+lite.patch
 101_nxagent_set-rgb-path.full.patch
 102_xserver-xext_set-securitypolicy-path.full.patch
 103_nxagent_set-X0-config-path.full.patch

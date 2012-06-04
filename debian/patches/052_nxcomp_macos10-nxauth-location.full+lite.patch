@@ -1,0 +1,38 @@
+--- a/nxcomp/Auth.cpp
++++ b/nxcomp/Auth.cpp
+@@ -217,22 +217,31 @@
+ 
+   //
+   // Use the nxauth command on Windows and the Mac, xauth
+-  // on all the other platforms. On Windows and on the Mac
+-  // we assume that the nxauth command is located under
+-  // bin in the client installation directory. On all the
++  // on all the other platforms. On Windows we assume that
++  // the nxauth command is located under bin in the client
++  // installation directory. On Mac OS X we assume that the
++  // command is located directly in the client installation
++  // directory, to make bundle shipping easier. On all the
+   // other platforms we use the default xauth command that
+   // is in our path.
+   //
+ 
+   char command[DEFAULT_STRING_LIMIT];
+ 
+-  #if defined(__CYGWIN32__) || defined(__APPLE__)
++  #if defined(__CYGWIN32__)
+ 
+   snprintf(command, DEFAULT_STRING_LIMIT - 1,
+                "%s/bin/nxauth", control -> SystemPath);
+ 
+   *(command + DEFAULT_STRING_LIMIT - 1) = '\0';
+ 
++  #elif defined(__APPLE__)
++
++  snprintf(command, DEFAULT_STRING_LIMIT - 1,
++               "%s/nxauth", control -> SystemPath);
++
++  *(command + DEFAULT_STRING_LIMIT - 1) = '\0';
++
+   #else
+ 
+   strcpy(command, "xauth");
