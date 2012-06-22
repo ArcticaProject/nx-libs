@@ -642,7 +642,6 @@ ProcRRSetCrtcConfig (ClientPtr client)
     int			    numOutputs;
     RROutputPtr		    *outputs = NULL;
     RROutput		    *outputIds;
-    TimeStamp		    configTime;
     TimeStamp		    time;
     Rotation		    rotation;
     int			    i, j;
@@ -745,7 +744,6 @@ ProcRRSetCrtcConfig (ClientPtr client)
     pScrPriv = rrGetScrPriv(pScreen);
     
     time = ClientTimeToServerTime(stuff->timestamp);
-    configTime = ClientTimeToServerTime(stuff->configTimestamp);
     
     if (!pScrPriv)
     {
@@ -753,19 +751,6 @@ ProcRRSetCrtcConfig (ClientPtr client)
 	rep.status = RRSetConfigFailed;
 	goto sendReply;
     }
-    
-#if 0
-    /*
-     * if the client's config timestamp is not the same as the last config
-     * timestamp, then the config information isn't up-to-date and
-     * can't even be validated
-     */
-    if (CompareTimeStamps (configTime, pScrPriv->lastConfigTime) != 0)
-    {
-	rep.status = RRSetConfigInvalidConfigTime;
-	goto sendReply;
-    }
-#endif
     
     /*
      * Validate requested rotation
