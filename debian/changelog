@@ -5,6 +5,9 @@ nx-libs (2:3.5.0.14-0) UNRELEASED; urgency=low
   * Adapt patch series (all hunks succeeded automatically).
   * Drop patch: 120_nxagent_libcairo-null-source-drawables.full.patch, the issue
     has been fixed by NoMachine (TR05J02703).
+  * Drop patch: 109_nxagent_locale-utf8-compound-text.patch, the patch causes
+    Qt applications to be rendered without window decorations when running in
+    rootless window mode.
 
   [ Mihai Moldovan ]
   * Add patch: 052_nxcomp_macos10-nxauth-location.full+lite.patch, change

@@ -96,21 +96,23 @@ Last-Update: 2011-12-31
                 #ifndef _XSERVER64
                 strcmp(typeS, "CARDINAL") == 0 ||
                     strcmp(typeS, "WM_SIZE_HINTS") == 0 ||
-@@ -483,6 +511,17 @@
+@@ -483,6 +511,19 @@
      output = value;
      export = True;
    }
-+  /* add by dimbor, modified by Mike Gabriel <mike.gabriel@das-netzwerkteam.de> */
++  /* add by dimbor, modified by Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 +  else if (strcmp(typeS, "COMPOUND_TEXT") == 0)
 +  {
 +    output = textToUTF8String(value, nUnits);
 +    if ( output != NULL ) {
-+      nUnits = strlen((char *) output);
 +      type = MakeAtom("UTF8_STRING", strlen("UTF8_STRING"), True);
-+      freeMem = True;
-+      export = True;
++    } else {
++      output = value;
 +    }
-+  }
++    nUnits = strlen((char *) output);
++    freeMem = True;
++    export = True;
++  } */
    #ifdef _XSERVER64
    else if (strcmp(typeS, "CARDINAL") == 0 || strcmp(typeS, "WM_SIZE_HINTS") == 0)
    {
