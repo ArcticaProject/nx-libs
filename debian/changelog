@@ -1,4 +1,4 @@
-nx-libs (2:3.5.0.14-0) UNRELEASED; urgency=low
+nx-libs (2:3.5.0.14-0) unstable; urgency=low
 
   [ Mike Gabriel ]
   * New upstream release of nxagent (3.5.0-9).
@@ -14,7 +14,7 @@ nx-libs (2:3.5.0.14-0) UNRELEASED; urgency=low
     nxauth search location on Mac OS X to $NX_SYSTEM/nxauth to facilitate
     application bundle building.
 
- -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 11 May 2012 23:57:18 +0200
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Thu, 28 Jun 2012 14:52:24 +0200
 
 nx-libs (2:3.5.0.13-0) unstable; urgency=low
 
