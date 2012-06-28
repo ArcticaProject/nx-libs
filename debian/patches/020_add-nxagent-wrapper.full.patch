@@ -1,6 +1,6 @@
 --- /dev/null
 +++ b/bin/nxagent
-@@ -0,0 +1,25 @@
+@@ -0,0 +1,30 @@
 +#!/bin/bash
 +
 +# Copyright (C) 2012 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
@@ -20,9 +20,14 @@
 +
 +NX_LIBS=/usr/lib/nx
 +NX_LOCAL_LIBS=/usr/local/lib/nx
-+LD_LIBRARY_PATH=$NX_LIBS:$NX_LIBS/X11:$NX_LOCAL_LIBS:$NX_LOCAL_LIBS/X11:$LD_LIBRARY_PATH
 +
++# make sure nxagent starts properly with pam_tmpdir.so being in use
++NX_TEMP=${NX_TEMP:-/tmp}
++
++LD_LIBRARY_PATH=$NX_LIBS:$NX_LIBS/X11:$NX_LOCAL_LIBS:$NX_LOCAL_LIBS/X11:$LD_LIBRARY_PATH
 +test -d $NX_LIBS && export NX_LIBS || export NX_LIBS=$NX_LOCAL_LIBS
++
 +export LD_LIBRARY_PATH
++export NX_TEMP
 +
 +exec $NX_LIBS/nxagent "$@"
