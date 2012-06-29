@@ -228,7 +228,7 @@ ProcRRGetScreenSizeRange (ClientPtr client)
     rrScrPrivPtr		pScrPriv;
     int				rc;
     
-    REQUEST_SIZE_MATCH(xRRGetScreenInfoReq);
+    REQUEST_SIZE_MATCH(xRRGetScreenSizeRangeReq);
     #ifndef NXAGENT_SERVER
     rc = dixLookupWindow(&pWin, stuff->window, client, DixReadAccess);
     #else
