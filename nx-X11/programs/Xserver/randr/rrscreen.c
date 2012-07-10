@@ -745,6 +745,7 @@ ProcRRGetScreenInfo (ClientPtr client)
 	swaps(&rep.sequenceNumber, n);
 	swapl(&rep.length, n);
 	swapl(&rep.timestamp, n);
+        swapl(&rep.configTimestamp, n);
 	swaps(&rep.rotation, n);
 	swaps(&rep.nSizes, n);
 	swaps(&rep.sizeID, n);
