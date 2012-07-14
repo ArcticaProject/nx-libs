@@ -98,8 +98,10 @@ RRModeCreate (xRRModeInfo   *modeInfo,
     }
 
     mode->mode.id = FakeClientID(0);
-    if (!AddResource (mode->mode.id, RRModeType, (pointer) mode))
-	return NULL;
+    if (!AddResource(mode->mode.id, RRModeType, (pointer) mode)) {
+        free(newModes);
+        return NULL;
+    }
     modes = newModes;
     modes[num_modes++] = mode;
     
