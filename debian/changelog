@@ -6,6 +6,7 @@ nx-libs (2:3.5.0.15-0) UNRELEASED; urgency=low
     sure x2goagent launches even with pam_tmpdir.so being in use.
   * Add VERSION.x2goagent to package x2goagent package so x2goversion command
     lists up x2goagent in the list of X2Go server-side packages.
+  * Refresh patch: 200_nxagent_check-binary-x2go-flavour.full.patch.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Thu, 28 Jun 2012 14:54:51 +0200
 
