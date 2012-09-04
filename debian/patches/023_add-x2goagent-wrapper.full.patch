@@ -23,11 +23,11 @@
 +
 +# make sure nxagent starts properly with pam_tmpdir.so being in use
 +NX_TEMP=${NX_TEMP:-/tmp}
++export NX_TEMP
 +
 +LD_LIBRARY_PATH=$NX_LIBS:$NX_LIBS/X11:$NX_LOCAL_LIBS:$NX_LOCAL_LIBS/X11:$LD_LIBRARY_PATH
 +test -d $NX_LIBS && export NX_LIBS || export NX_LIBS=$NX_LOCAL_LIBS
 +
 +export LD_LIBRARY_PATH
-+export NX_TEMP
 +
 +exec $NX_LIBS/../x2go/x2goagent "$@"

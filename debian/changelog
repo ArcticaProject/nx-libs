@@ -7,6 +7,8 @@ nx-libs (2:3.5.0.15-0) UNRELEASED; urgency=low
   * Add VERSION.x2goagent to package x2goagent package so x2goversion command
     lists up x2goagent in the list of X2Go server-side packages.
   * Refresh patch: 200_nxagent_check-binary-x2go-flavour.full.patch.
+  * Make sure the NX_TEMP envvar gets set in all wrapper script for all nx*
+    execubles.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Thu, 28 Jun 2012 14:54:51 +0200
 
