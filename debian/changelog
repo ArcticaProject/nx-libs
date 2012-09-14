@@ -9,6 +9,7 @@ nx-libs (2:3.5.0.15-0) UNRELEASED; urgency=low
   * Refresh patch: 200_nxagent_check-binary-x2go-flavour.full.patch.
   * Make sure the NX_TEMP envvar gets set in all wrapper script for all nx*
     execubles.
+  * Link libNX_Xrandr to a separate location where we can provide it as libXrandr.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Thu, 28 Jun 2012 14:54:51 +0200
 

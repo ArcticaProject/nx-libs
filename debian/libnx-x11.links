@@ -1,2 +1,4 @@
 usr/lib/nx/X11/libNX_Xinerama.so usr/lib/nx/X11/Xinerama/libXinerama.so
 usr/lib/nx/X11/libNX_Xinerama.so.1 usr/lib/nx/X11/Xinerama/libXinerama.so.1
+usr/lib/nx/X11/libNX_Xrandr.so usr/lib/nx/X11/Xrandr/libXrandr.so
+usr/lib/nx/X11/libNX_Xrandr.so.2 usr/lib/nx/X11/Xrandr/libXrandr.so.2
