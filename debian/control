@@ -191,7 +191,6 @@ Description: NX X11 protocol compression extensions library
 
 Package: libxcompext-dev
 Architecture: any
-Priority: extra
 Section: libdevel
 Depends:
  libxcompext3 (=${binary:Version}),
