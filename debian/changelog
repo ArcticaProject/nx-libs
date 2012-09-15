@@ -10,6 +10,9 @@ nx-libs (2:3.5.0.15-0) UNRELEASED; urgency=low
   * Make sure the NX_TEMP envvar gets set in all wrapper script for all nx*
     execubles.
   * Link libNX_Xrandr to a separate location where we can provide it as libXrandr.
+  * /debian/control:
+    + Maintainer change in package: X2Go Developers <x2go-dev@lists.berlios.de>.
+    + Priority: optional.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Thu, 28 Jun 2012 14:54:51 +0200
 

@@ -1,10 +1,11 @@
 Source: nx-libs
 Section: x11
-Priority: extra
-Maintainer: X2Go Packaging Team <pkg-x2go-devel@lists.alioth.debian.org>
+Priority: optional
+Maintainer: X2Go Developers <x2go-dev@lists.berlios.de>
 Uploaders:
  Reinhard Tartler <siretart@tauware.de>,
- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+ Mike Gabriel <mike.gabriel@das-netzwerkteam.de>,
+ Oleksandr Shneyder <oleksandr.shneyder@obviously-nice.de>,
 Build-Depends:
  debhelper (>= 7.0.50~),
  libpng-dev,
