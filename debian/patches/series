@@ -40,7 +40,7 @@
 202_nx-x11_enable-xinerama.full.patch
 203_nxagent_disable-rootless-exit.full.patch
 209_x2goagent-add-man-page.full.patch
-220_nxproxy-bind-loopback-only.patch
+220_nxproxy-bind-loopback-only.full+lite.patch
 300_nxagent_set-wm-class.full.patch
 301_nx-X11_use-shared-libs.full.patch
 600_nx-X11+nxcompext+nxcompshad_unique-libnames.full.patch
