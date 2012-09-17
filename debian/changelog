@@ -13,6 +13,8 @@ nx-libs (2:3.5.0.15-0) UNRELEASED; urgency=low
   * /debian/control:
     + Maintainer change in package: X2Go Developers <x2go-dev@lists.berlios.de>.
     + Priority: optional.
+  * Add patch: 220_nxproxy-bind-loopback-only.patch, adds loopback option to
+    nxproxy options and forces nxproxy to bind to loopback devices only.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Thu, 28 Jun 2012 14:54:51 +0200
 

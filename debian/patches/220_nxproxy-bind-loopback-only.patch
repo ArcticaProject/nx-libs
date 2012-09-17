@@ -1,0 +1,130 @@
+Description: Force NX proxy to bind to loopback devices only (loopback option)
+Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+--- a/nxcomp/Loop.cpp
++++ b/nxcomp/Loop.cpp
+@@ -952,6 +952,7 @@
+ static char displayHost[DEFAULT_STRING_LENGTH] = { 0 };
+ static char authCookie[DEFAULT_STRING_LENGTH]  = { 0 };
+ 
++static int loopbackBind = DEFAULT_LOOPBACK_BIND;
+ static int proxyPort = DEFAULT_NX_PROXY_PORT;
+ static int xPort     = DEFAULT_NX_X_PORT;
+ 
+@@ -3959,7 +3960,14 @@
+ 
+   tcpAddr.sin_family = AF_INET;
+   tcpAddr.sin_port = htons(proxyPortTCP);
+-  tcpAddr.sin_addr.s_addr = htonl(INADDR_ANY);
++  if ( loopbackBind )
++  {
++    tcpAddr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
++  }
++  else
++  {
++    tcpAddr.sin_addr.s_addr = htonl(INADDR_ANY);
++  }
+ 
+   if (bind(tcpFD, (sockaddr *) &tcpAddr, sizeof(tcpAddr)) == -1)
+   {
+@@ -4512,7 +4520,14 @@
+ 
+   tcpAddr.sin_family = AF_INET;
+   tcpAddr.sin_port = htons(portTCP);
+-  tcpAddr.sin_addr.s_addr = htonl(INADDR_ANY);
++  if ( loopbackBind )
++  {
++    tcpAddr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
++  }
++  else
++  {
++    tcpAddr.sin_addr.s_addr = htonl(INADDR_ANY);
++  }
+ 
+   if (bind(newFD, (sockaddr *) &tcpAddr, sizeof(tcpAddr)) == -1)
+   {
+@@ -6680,7 +6695,14 @@
+ 
+   #ifdef __APPLE__
+ 
+-  tcpAddr.sin_addr.s_addr = htonl(INADDR_ANY);
++  if ( loopbackBind )
++  {
++    tcpAddr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
++  }
++  else
++  {
++    tcpAddr.sin_addr.s_addr = htonl(INADDR_ANY);
++  }
+ 
+   #else
+ 
+@@ -8359,6 +8381,10 @@
+ 
+       listenPort = ValidateArg("local", name, value);
+     }
++    else if (strcasecmp(name, "loopback") == 0)
++    {
++      loopbackBind = ValidateArg("local", name, value);
++    }
+     else if (strcasecmp(name, "accept") == 0)
+     {
+       if (*connectHost != '\0')
+@@ -13735,7 +13761,14 @@
+     }
+     else
+     {
+-      address = htonl(INADDR_ANY);
++      if ( loopbackBind )
++      {
++        address = htonl(INADDR_LOOPBACK);
++      }
++      else
++      {
++        address = htonl(INADDR_ANY);
++      }
+     }
+   }
+   else
+--- a/nxcomp/Misc.cpp
++++ b/nxcomp/Misc.cpp
+@@ -42,6 +42,14 @@
+ #undef  DEBUG
+ 
+ //
++// By default nxproxy binds to all network interfaces, setting
++// DEFAULT_LOOPBACK_BIND to 1 enables binding to the loopback
++// device only.
++//
++
++const int DEFAULT_LOOPBACK_BIND = 0;
++
++//
+ // TCP port offset applied to any NX port specification.
+ //
+ 
+@@ -137,6 +145,8 @@
+ \n\
+   listen=n     Local port used for accepting the proxy connection.\n\
+ \n\
++  loopback=b   Bind to the loopback device only.\n\
++\n\
+   accept=s     Name or IP of host that can connect to the proxy.\n\
+ \n\
+   connect=s    Name or IP of host that the proxy will connect to.\n\
+--- a/nxcomp/Misc.h
++++ b/nxcomp/Misc.h
+@@ -90,6 +90,14 @@
+ extern const int DEFAULT_NX_SLAVE_PORT_SERVER_OFFSET;
+ 
+ //
++// NX proxy binds to all network interfaces by default
++// With the -loopback parameter, you can switch
++// over to binding to the loopback device only.
++//
++
++extern const int DEFAULT_LOOPBACK_BIND;
++
++//
+ // Return strings containing various info.
+ //
+ 
