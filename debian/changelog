@@ -20,7 +20,8 @@ nx-libs (2:3.5.0.15-0) UNRELEASED; urgency=low
 
   [ Oleksandr Shneyder ]
   * Add patch: 204-nxagent_repaint-solidpict.full.patch. Fixes repainting of
-    SolidFill pictures by nxagent/x2goagent on reconnects.
+    SolidFill pictures by nxagent/x2goagent on reconnects. Closes upstream
+    issue #16.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Thu, 28 Jun 2012 14:54:51 +0200
 
