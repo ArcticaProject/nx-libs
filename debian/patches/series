@@ -39,6 +39,7 @@
 201_nxagent_set-x2go-icon-if-x2goagent-flavour.full.patch
 202_nx-x11_enable-xinerama.full.patch
 203_nxagent_disable-rootless-exit.full.patch
+204-nxagent_repaint-solidpict.full.patch
 209_x2goagent-add-man-page.full.patch
 220_nxproxy-bind-loopback-only.full+lite.patch
 300_nxagent_set-wm-class.full.patch

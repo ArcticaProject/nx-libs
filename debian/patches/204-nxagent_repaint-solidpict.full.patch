@@ -1,0 +1,53 @@
+Description: Fix repainting of SolidFill pictures with libcairo > 1.12.x
+Author: Oleksandr Shneyder <oleksandr.shneyder@obviously-nice.de>
+diff -rupN a/nx-X11/programs/Xserver/hw/nxagent/Render.c b/nx-X11/programs/Xserver/hw/nxagent/Render.c
+--- a/nx-X11/programs/Xserver/hw/nxagent/Render.c	2012-05-16 18:05:07.000000000 +0200
++++ b/nx-X11/programs/Xserver/hw/nxagent/Render.c	2012-09-20 20:53:37.893459269 +0200
+@@ -2689,11 +2689,17 @@ void nxagentReconnectPicture(pointer p0,
+     #endif
+   }
+ 
+-  if (!pForm)
++  if (!pForm && pPicture->pSourcePict)
+   {
+-    *pBool = False;
+-
+-    return;
++        /*possible we need to add support for other picture types, for example gradients...*/
++        switch(pPicture->pSourcePict->type)
++        {
++        case SourcePictTypeSolidFill:
++            nxagentPicturePriv(pPicture) -> picture = XRenderCreateSolidFill(nxagentDisplay,
++                    (const XRenderColor*) &pPicture->pSourcePict->solidFill.fullColor);
++            break;
++        }
++        return;
+   }
+ 
+   #ifdef TEST
+diff -rupN a/nx-X11/programs/Xserver/hw/nxagent/X/NXpicture.c b/nx-X11/programs/Xserver/hw/nxagent/X/NXpicture.c
+--- a/nx-X11/programs/Xserver/hw/nxagent/X/NXpicture.c	2010-11-11 21:18:00.000000000 +0100
++++ b/nx-X11/programs/Xserver/hw/nxagent/X/NXpicture.c	2012-09-20 20:54:50.209817849 +0200
+@@ -1137,6 +1137,10 @@ CreateSolidPicture (Picture pid, xRender
+     }
+     pPicture->pSourcePict->type = SourcePictTypeSolidFill;
+     pPicture->pSourcePict->solidFill.color = xRenderColorToCard32(*color);
++    pPicture->pSourcePict->solidFill.fullColor.alpha=color->alpha;
++    pPicture->pSourcePict->solidFill.fullColor.red=color->red;
++    pPicture->pSourcePict->solidFill.fullColor.green=color->green;
++    pPicture->pSourcePict->solidFill.fullColor.blue=color->blue;
+     return pPicture;
+ }
+ 
+diff -rupN a/nx-X11/programs/Xserver/hw/nxagent/X/NXpicturestr.h b/nx-X11/programs/Xserver/hw/nxagent/X/NXpicturestr.h
+--- a/nx-X11/programs/Xserver/hw/nxagent/X/NXpicturestr.h	2010-10-22 16:04:24.000000000 +0200
++++ b/nx-X11/programs/Xserver/hw/nxagent/X/NXpicturestr.h	2012-09-20 20:55:31.106020653 +0200
+@@ -95,6 +95,7 @@ typedef struct _PictTransform {
+ typedef struct _PictSolidFill {
+     unsigned int type;
+     CARD32 color;
++    xRenderColor fullColor;
+ } PictSolidFill, *PictSolidFillPtr;
+ 
+ typedef struct _PictGradientStop {
+

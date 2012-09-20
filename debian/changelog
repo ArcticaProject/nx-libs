@@ -1,5 +1,6 @@
 nx-libs (2:3.5.0.15-0) UNRELEASED; urgency=low
 
+  [ Mike Gabriel ]
   * Improve 020_add-nxagent-wrapper.full.patch: Properly set NX_TEMP, make
     sure nxagent launches even with pam_tmpdir.so being in use.
   * Improve 023_add-x2goagent-wrapper.full.patch: Properly set NX_TEMP, make
@@ -16,6 +17,10 @@ nx-libs (2:3.5.0.15-0) UNRELEASED; urgency=low
   * Add patch: 220_nxproxy-bind-loopback-only.full+lite.patch, adds loopback
     option to nxproxy options and forces nxproxy to bind to loopback devices
     only.
+
+  [ Oleksandr Shneyder ]
+  * Add patch: 204-nxagent_repaint-solidpict.full.patch. Fixes repainting of
+    SolidFill pictures by nxagent/x2goagent on reconnects.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Thu, 28 Jun 2012 14:54:51 +0200
 
