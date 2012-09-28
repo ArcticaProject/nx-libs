@@ -1,6 +1,6 @@
 nx-libs (2:3.5.0.16-0) UNRELEASED; urgency=low
 
-  * Continue development...
+  * Fix installation of header files in Debian package.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 21 Sep 2012 10:06:54 +0200
 
