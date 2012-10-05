@@ -18,7 +18,7 @@ Index: nx-X11/config/cf/site.def
  
  #ifndef ProjectRoot
 -#define ProjectRoot /usr/X11R6
-+#define ProjectRoot /usr/lib/NX3
++#define ProjectRoot /usr/local/lib/nx
  #endif
  
  /*
