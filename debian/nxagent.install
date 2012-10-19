@@ -1,4 +1,4 @@
-nx-X11/programs/Xserver/nxagent                usr/lib/nx
+nx-X11/programs/Xserver/nxagent                usr/lib/nx/bin
 bin/nxagent                                    usr/bin
 debian/rgb                                     usr/share/nx
 debian/nxagent.keyboard                        etc/nxagent

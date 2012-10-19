@@ -72,7 +72,7 @@ XCOMM site:  $XFree86: xc/config/cf/site.def,v 3.24 2000/06/25 20:17:29 dawes Ex
 #ifdef AfterVendorCF
 
 #ifndef ProjectRoot
-#define ProjectRoot /usr/X11R6
+#define ProjectRoot /usr/local/lib/nx
 #endif
 
 /*

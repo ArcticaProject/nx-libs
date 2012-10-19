@@ -30,4 +30,4 @@
 +
 +export LD_LIBRARY_PATH
 +
-+exec $NX_LIBS/../x2go/x2goagent "$@"
++exec $NX_LIBS/../x2go/bin/x2goagent "$@"

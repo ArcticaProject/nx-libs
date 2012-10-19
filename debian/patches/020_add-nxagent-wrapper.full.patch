@@ -30,4 +30,4 @@
 +
 +export LD_LIBRARY_PATH
 +
-+exec $NX_LIBS/nxagent "$@"
++exec $NX_LIBS/bin/nxagent "$@"

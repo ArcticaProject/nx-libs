@@ -4,6 +4,8 @@ nx-libs (2:3.5.0.16-0) UNRELEASED; urgency=low
   * Fix patch file names concerning component nx-X11.
   * Modify patch: 032_no-x11r6.full.patch. Install nx-X11 to /usr/local/lib/nx.
   * Add patch: 032_no-x11r6.debian.patch. Use /usr/lib/nx for nx-X11 on Debian.
+  * Drop patch 032, fix other patches so that installation via make install
+    installs NX components to /usr/local/lib/nx and /usr/local/include/nx.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 21 Sep 2012 10:06:54 +0200
 

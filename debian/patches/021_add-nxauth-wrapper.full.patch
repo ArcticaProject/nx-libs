@@ -29,4 +29,4 @@
 +test -d $NX_LIBS && export NX_LIBS || export NX_LIBS=$NX_LOCAL_LIBS
 +export LD_LIBRARY_PATH
 +
-+exec $NX_LIBS/nxauth "$@"
++exec $NX_LIBS/bin/nxauth "$@"

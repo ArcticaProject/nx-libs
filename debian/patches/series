@@ -24,7 +24,6 @@
 023_add-x2goagent-wrapper.full.patch
 030_nx-X11_configure-args.full.patch
 031_nx-X11_parallel-make.full.patch
-032_no-x11r6.full.patch
 051_nxcomp_macos105-fdisset.full+lite.patch
 052_nxcomp_macos10-nxauth-location.full+lite.patch
 101_nxagent_set-rgb-path.full.patch
@@ -48,4 +47,3 @@
 999_nxagent_unbrand-nxagent-brand-x2goagent.full.patch
 016_nx-X11_install-location.debian.patch
 102_xserver-xext_set-securitypolicy-path.debian.patch
-032_no-x11r6.debian.patch
