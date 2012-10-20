@@ -1,0 +1,51 @@
+Description: Provide main Makefile for whole source tree
+ By design this patch is not needed to be sent upstream.
+Forwarded: not-needed
+Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+Last-Update: 2012-10-19
+--- a/nx-X11/Makefile
++++ b/nx-X11/Makefile
+@@ -138,6 +138,7 @@
+ 
+ xmakefile: Imakefile
+ 	$(RM) xmakefile
++	@rm -f $(IRULESRC)/date.def; echo "" > $(IRULESRC)/date.def;
+ 	$(IMAKE_CMD) -s xmakefile -DTOPDIR=$(TOP) -DCURDIR=$(CURRENT_DIR)
+ 
+ World.Win32:
+@@ -197,11 +198,16 @@
+ # a copy of every rule that might be invoked at top level
+ 
+ clean:
+-	    $(MAKE_CMD) $@
++	    -$(MAKE_CMD) $@
++	    find config -type f | egrep '.*/Makefile$$' | while read makefile; do rm -f $$makefile; done
++	    find lib -type f | egrep '.*/Makefile$$' | while read makefile; do rm -f $$makefile; done
++	    find programs -type f | egrep '.*/Makefile$$' | while read makefile; do rm -f $$makefile; done
++	    find include -type f | egrep '.*/Makefile$$' | while read makefile; do rm -f $$makefile; done
++	    rm -f config/cf/{version.def,date.def}
+ dangerous_strip_clean:
+ 	    $(MAKE_CMD) $@
+ distclean:
+-	    $(MAKE_CMD) $@
++	    -$(MAKE_CMD) $@
+ 	    $(RM) xmakefile $(IRULESRC)/version.def $(IRULESRC)/date.def
+ depend:
+ 	    $(MAKE_CMD) $@
+--- a/nxcompext/Makefile.in
++++ b/nxcompext/Makefile.in
+@@ -185,5 +185,5 @@
+ 		@ALL@
+ 
+ distclean:	clean
+-		-rm -rf autom4te.cache config.status config.log \
++		-rm -rf autom4te.cache config.status config.log configure \
+ 		config.cache depend.status Makefile tags
+--- a/nxcompshad/Makefile.in
++++ b/nxcompshad/Makefile.in
+@@ -222,4 +222,4 @@
+ 		$(LIBFULL) $(LIBLOAD) $(LIBSHARED) $(LIBARCHIVE) $(LIBDLL) $(LIBDLLSTATIC) $(PROGRAM) $(PROGRAM).exe
+ 
+ distclean:	clean
+-		-rm -rf config.status config.log config.cache depend.status Makefile tags autom4te.cache
++		-rm -rf config.status config.log config.cache depend.status Makefile tags autom4te.cache configure 

@@ -65,7 +65,7 @@ Last-Update: 2012-01-26 22:29:13.993994227 +0100
  	@echo ""
  	@date
  	@echo ""
-@@ -153,15 +153,15 @@
+@@ -154,15 +154,15 @@
  	-if exist xmakefile.bak del xmakefile.bak
  	-if exist xmakefile ren xmakefile xmakefile.bak
  	$(IMAKE:/=\) -s xmakefile -I$(IRULESRC) $(IMAKE_DEFINES) -DTOPDIR=$(TOP) -DCURDIR=$(CURRENT_DIR)
@@ -87,18 +87,23 @@ Last-Update: 2012-01-26 22:29:13.993994227 +0100
  	@echo :
  	@echo :
  	@echo Full build of $(RELEASE) complete.
-@@ -197,33 +197,33 @@
+@@ -198,38 +198,38 @@
  # a copy of every rule that might be invoked at top level
  
  clean:
--	    $(MAKE_CMD) $@
-+	    ${MAKE} ${MAKE_OPTS} $@
+-	    -$(MAKE_CMD) $@
++	    -${MAKE_CMD} ${MAKE_OPTS} $@
+ 	    find config -type f | egrep '.*/Makefile$$' | while read makefile; do rm -f $$makefile; done
+ 	    find lib -type f | egrep '.*/Makefile$$' | while read makefile; do rm -f $$makefile; done
+ 	    find programs -type f | egrep '.*/Makefile$$' | while read makefile; do rm -f $$makefile; done
+ 	    find include -type f | egrep '.*/Makefile$$' | while read makefile; do rm -f $$makefile; done
+ 	    rm -f config/cf/{version.def,date.def}
  dangerous_strip_clean:
 -	    $(MAKE_CMD) $@
 +	    ${MAKE} ${MAKE_OPTS} $@
  distclean:
--	    $(MAKE_CMD) $@
-+	    ${MAKE} ${MAKE_OPTS} $@
+-	    -$(MAKE_CMD) $@
++	    -${MAKE} ${MAKE_OPTS} $@
  	    $(RM) xmakefile $(IRULESRC)/version.def $(IRULESRC)/date.def
  depend:
 -	    $(MAKE_CMD) $@

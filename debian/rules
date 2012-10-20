@@ -16,9 +16,6 @@ override_dh_auto_clean:
 	LD_LIBRARY_PATH=`pwd`/debian/libnx-x11/usr/lib/nx/X11:$$LD_LIBRARY_PATH dh_auto_clean
 
 override_dh_clean:
-	rm -f nxcomp/configure
-	rm -f nxcompext/configure
-	rm -f nxcompshad/configure
 	rm -f nx-X11/changelog
 	rm -f nxcomp/changelog
 	rm -f nxcompext/changelog
