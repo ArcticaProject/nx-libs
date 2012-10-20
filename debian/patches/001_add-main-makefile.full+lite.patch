@@ -45,7 +45,7 @@ Last-Update: 2011-12-31
 +	fi
 --- /dev/null
 +++ b/bin/Makefile
-@@ -0,0 +1,15 @@
+@@ -0,0 +1,24 @@
 +#!/usr/bin/make -f
 +
 +INSTALL_DIR=install -d -o root -g root -m 755
@@ -55,9 +55,18 @@ Last-Update: 2011-12-31
 +DESTDIR=
 +PREFIX ?= /usr/local
 +BINDIR=$(PREFIX)/bin
++NXLIBDIR=$(PREFIX)/lib/nx
++X2GOLIBDIR=$(PREFIX)/lib/x2go
 +
 +%:
++	echo "Nothing to do for $@..."
 +
 +install:
++	$(INSTALL_DIR) $(X2GOLIBDIR)/bin/
++	ln -sf $(NXLIBDIR)/bin/nxagent $(X2GOLIBDIR)/bin/x2goagent
 +	find nx* | while read file; do $(INSTALL_PROGRAM) $$file $(BINDIR)/; done
 +	find x2go* | while read file; do $(INSTALL_PROGRAM) $$file $(BINDIR)/; done
++
++uninstall:
++	find nx* | while read file; do rm -f $(BINDIR)/$$file; done
++	find x2go* | while read file; do rm -f $(BINDIR)/$$file; done

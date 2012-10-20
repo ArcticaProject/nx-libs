@@ -13,6 +13,8 @@ nx-libs (2:3.5.0.16-0) UNRELEASED; urgency=low
     unneeded build file from NoMachine's nxproxy sources.
   * Modify patch: 001_add-main-makefile.full+lite.patch. Install nx* and
     x2goagent wrapper scripts during make install.
+  * Fix wrapper scripts: make sure all NX executables can be launched
+    if NX gets installed via the tarball installation method.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 21 Sep 2012 10:06:54 +0200
 
