@@ -9,6 +9,8 @@ nx-libs (2:3.5.0.16-0) UNRELEASED; urgency=low
   * Add patches: 024_fix-make-clean.full.patch,
     024_fix-make-clean.full+lite.patch. Fix clean-up of build tree after
     make build has run.
+  * Add patch: 025_nxproxy_no-configure-file.full+lite.patch. Remove
+    unneeded build file from NoMachine's nxproxy sources.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 21 Sep 2012 10:06:54 +0200
 
