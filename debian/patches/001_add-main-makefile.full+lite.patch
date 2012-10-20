@@ -5,12 +5,13 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 Last-Update: 2011-12-31
 --- /dev/null
 +++ b/Makefile
-@@ -0,0 +1,36 @@
+@@ -0,0 +1,37 @@
 +#!/usr/bin/make -f
 +
 +CONFIGURE=./configure
 +
 +%:
++	if test -f bin/Makefile; then ${MAKE} -C bin $@; fi
 +	if test -f nxcomp/Makefile; then ${MAKE} -C nxcomp $@; fi
 +	if test -f nxproxy/Makefile; then ${MAKE} -C nxproxy $@; fi
 +	if test -d nx-X11; then \
@@ -42,3 +43,21 @@ Last-Update: 2011-12-31
 +	else \
 +	    ${MAKE} build-full; \
 +	fi
+--- /dev/null
++++ b/bin/Makefile
+@@ -0,0 +1,15 @@
++#!/usr/bin/make -f
++
++INSTALL_DIR=install -d -o root -g root -m 755
++INSTALL_FILE=install -o root -g root -m 644
++INSTALL_PROGRAM=install -o root -g root -m 755
++
++DESTDIR=
++PREFIX ?= /usr/local
++BINDIR=$(PREFIX)/bin
++
++%:
++
++install:
++	find nx* | while read file; do $(INSTALL_PROGRAM) $$file $(BINDIR)/; done
++	find x2go* | while read file; do $(INSTALL_PROGRAM) $$file $(BINDIR)/; done
