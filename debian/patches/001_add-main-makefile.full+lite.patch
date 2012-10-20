@@ -5,9 +5,10 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 Last-Update: 2011-12-31
 --- /dev/null
 +++ b/Makefile
-@@ -0,0 +1,37 @@
+@@ -0,0 +1,51 @@
 +#!/usr/bin/make -f
 +
++PREFIX ?= /usr/local
 +CONFIGURE=./configure
 +
 +%:
@@ -43,14 +44,30 @@ Last-Update: 2011-12-31
 +	else \
 +	    ${MAKE} build-full; \
 +	fi
++
++uninstall:
++	if test -f bin/Makefile; then ${MAKE} -C bin $@; fi
++	if test -f nxcomp/Makefile; then ${MAKE} -C nxcomp $@; fi
++	if test -f nxproxy/Makefile; then ${MAKE} -C nxproxy $@; fi
++	if test -d nx-X11; then \
++	    if test -f nxcompext/Makefile; then ${MAKE} -C nxcompext $@; fi; \
++	    if test -f nxcompshad/Makefile; then ${MAKE} -C nxcompshad $@; fi; \
++	    if test -f nx-X11/Makefile; then \
++	        if test -d $(PREFIX)/lib/nx; then rm -rf $(PREFIX)/lib/nx; fi; \
++	        if test -d $(PREFIX)/include/nx; then rm -rf $(PREFIX)/include/nx; fi; \
++	    fi; \
++	fi
 --- /dev/null
 +++ b/bin/Makefile
-@@ -0,0 +1,24 @@
+@@ -0,0 +1,29 @@
 +#!/usr/bin/make -f
 +
 +INSTALL_DIR=install -d -o root -g root -m 755
 +INSTALL_FILE=install -o root -g root -m 644
 +INSTALL_PROGRAM=install -o root -g root -m 755
++
++RM_FILE=rm -f
++RM_DIR=rmdir -p --ignore-fail-on-non-empty
 +
 +DESTDIR=
 +PREFIX ?= /usr/local
@@ -70,3 +87,5 @@ Last-Update: 2011-12-31
 +uninstall:
 +	find nx* | while read file; do rm -f $(BINDIR)/$$file; done
 +	find x2go* | while read file; do rm -f $(BINDIR)/$$file; done
++	$(RM_FILE) $(X2GOLIBDIR)/bin/x2goagent
++	$(RM_DIR) $(X2GOLIBDIR)/bin/
