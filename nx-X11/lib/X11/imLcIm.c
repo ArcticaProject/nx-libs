@@ -88,14 +88,14 @@ struct _XimCacheStruct {
     /* char encoding[1] */
 };
 
-Private struct  _XimCacheStruct* _XimCache_mmap = NULL;
-Private DefTreeBase _XimCachedDefaultTreeBase;
-Private int     _XimCachedDefaultTreeRefcount = 0;
+static struct  _XimCacheStruct* _XimCache_mmap = NULL;
+static DefTreeBase _XimCachedDefaultTreeBase;
+static int     _XimCachedDefaultTreeRefcount = 0;
 
 #endif
 
 
-Public Bool
+Bool
 _XimCheckIfLocalProcessing(Xim im)
 {
     FILE        *fp;
@@ -119,7 +119,7 @@ _XimCheckIfLocalProcessing(Xim im)
     return(False);
 }
 
-Private void
+static void
 XimFreeDefaultTree(
     DefTreeBase *b)
 {
@@ -146,7 +146,7 @@ XimFreeDefaultTree(
     b->utf8used = b->utf8size = 0;
 }
 
-Public void
+void
 _XimLocalIMFree(
     Xim		im)
 {
@@ -220,7 +220,7 @@ _XimLocalIMFree(
     return;
 }
 
-Private Status
+static Status
 _XimLocalCloseIM(
     XIM		xim)
 {
@@ -241,7 +241,7 @@ _XimLocalCloseIM(
     return(True);
 }
 
-Public char *
+char *
 _XimLocalGetIMValues(
     XIM			 xim,
     XIMArg		*values)
@@ -254,7 +254,7 @@ _XimLocalGetIMValues(
 			im->core.im_resources, im->core.im_num_resources));
 }
 
-Public char *
+char *
 _XimLocalSetIMValues(
     XIM			 xim,
     XIMArg		*values)
@@ -273,7 +273,7 @@ _XimLocalSetIMValues(
 
 #ifdef COMPOSECACHE
 
-Private Bool
+static Bool
 _XimReadCachedDefaultTree(
     int          fd_cache,
     const char  *name,
@@ -324,7 +324,7 @@ _XimReadCachedDefaultTree(
     return True;
 }
 
-Private unsigned int strToHash (
+static unsigned int strToHash (
     const char *name)
 {
     unsigned int hash = 0;
@@ -336,7 +336,7 @@ Private unsigned int strToHash (
 
 /* Returns read-only fd of cache file, -1 if none.
  * Sets *res to cache filename if safe. Sets *size to file size of cache. */
-Private int _XimCachedFileName (
+static int _XimCachedFileName (
     const char *dir, const char *name,
     const char *intname, const char *encoding,
     uid_t uid, int isglobal, char **res, off_t *size)
@@ -421,7 +421,7 @@ Private int _XimCachedFileName (
 }
 
 
-Private Bool _XimLoadCache (
+static Bool _XimLoadCache (
     int         fd,
     const char *name,
     const char *encoding,
@@ -441,7 +441,7 @@ Private Bool _XimLoadCache (
 }
 
 
-Private void
+static void
 _XimWriteCachedDefaultTree(
     const char *name,
     const char *encoding,
@@ -516,7 +516,7 @@ _XimWriteCachedDefaultTree(
 #endif
 
 
-Private void
+static void
 _XimCreateDefaultTree(
     Xim		im)
 {
@@ -646,7 +646,7 @@ _XimCreateDefaultTree(
 	Xfree (cachename);
 }
 
-Private XIMMethodsRec      Xim_im_local_methods = {
+static XIMMethodsRec      Xim_im_local_methods = {
     _XimLocalCloseIM,           /* close */
     _XimLocalSetIMValues,       /* set_values */
     _XimLocalGetIMValues,       /* get_values */
@@ -656,7 +656,7 @@ Private XIMMethodsRec      Xim_im_local_methods = {
     _XimLcctstoutf8		/* ctstoutf8 */
 };
 
-Public Bool
+Bool
 _XimLocalOpenIM(
     Xim			 im)
 {
