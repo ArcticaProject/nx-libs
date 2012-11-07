@@ -22,9 +22,9 @@ Build-Conflicts:
  x11proto-xinerama-dev,
  xbitmaps
 Standards-Version: 3.9.3
-Homepage: http://www.nomachine.com/sources.php
-Vcs-Git: git://git.debian.org/git/collab-maint/x2go/nx-libs.git
-Vcs-Browser: http://anonscm.debian.org/gitweb/?p=collab-maint/x2go/nx-libs.git;a=summary
+Homepage: http://code.x2go.org/gitweb?p=nx-libs.git;a=summary
+Vcs-Git: git://code.x2go.org/nx-libs.git
+Vcs-Browser: http://code.x2go.org/gitweb?p=nx-libs.git;a=summary
 
 Package: libnx-x11
 Architecture: any
