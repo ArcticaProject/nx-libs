@@ -1,4 +1,4 @@
-nx-libs (2:3.5.0.16-0) UNRELEASED; urgency=low
+nx-libs (2:3.5.0.16-0) unstable; urgency=low
 
   * Fix installation of header files in Debian package.
   * Fix patch file names concerning component nx-X11.
@@ -21,7 +21,7 @@ nx-libs (2:3.5.0.16-0) UNRELEASED; urgency=low
   * Bump Debian Standards to 3.9.3 (no changes needed). Update Home page and
     Vcs information.
 
- -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 21 Sep 2012 10:06:54 +0200
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 07 Nov 2012 21:07:49 +0100
 
 nx-libs (2:3.5.0.15-0) unstable; urgency=low
 
