@@ -59,7 +59,7 @@ Last-Update: 2011-12-31
 +	fi
 --- /dev/null
 +++ b/bin/Makefile
-@@ -0,0 +1,29 @@
+@@ -0,0 +1,31 @@
 +#!/usr/bin/make -f
 +
 +INSTALL_DIR=install -d -o root -g root -m 755
@@ -79,13 +79,15 @@ Last-Update: 2011-12-31
 +	echo "Nothing to do for $@..."
 +
 +install:
-+	$(INSTALL_DIR) $(X2GOLIBDIR)/bin/
-+	ln -sf $(NXLIBDIR)/bin/nxagent $(X2GOLIBDIR)/bin/x2goagent
-+	find nx* | while read file; do $(INSTALL_PROGRAM) $$file $(BINDIR)/; done
-+	find x2go* | while read file; do $(INSTALL_PROGRAM) $$file $(BINDIR)/; done
++	mkdir -p $(DESTDIR)$(X2GOLIBDIR)/bin
++	$(INSTALL_DIR) $(DESTDIR)$(X2GOLIBDIR)/bin/
++	ln -sf $(NXLIBDIR)/bin/nxagent $(DESTDIR)$(X2GOLIBDIR)/bin/x2goagent
++	mkdir -p $(DESTDIR)$(BINDIR)
++	find nx* | while read file; do $(INSTALL_PROGRAM) $$file $(DESTDIR)$(BINDIR)/; done
++	find x2go* | while read file; do $(INSTALL_PROGRAM) $$file $(DESTDIR)$(BINDIR)/; done
 +
 +uninstall:
-+	find nx* | while read file; do rm -f $(BINDIR)/$$file; done
-+	find x2go* | while read file; do rm -f $(BINDIR)/$$file; done
-+	$(RM_FILE) $(X2GOLIBDIR)/bin/x2goagent
-+	$(RM_DIR) $(X2GOLIBDIR)/bin/
++	find nx* | while read file; do rm -f $(DESTDIR)$(BINDIR)/$$file; done
++	find x2go* | while read file; do rm -f $(DESTDIR)$(BINDIR)/$$file; done
++	$(RM_FILE) $(DESTDIR)$(X2GOLIBDIR)/bin/x2goagent
++	$(RM_DIR) $(DESTDIR)$(X2GOLIBDIR)/bin/
