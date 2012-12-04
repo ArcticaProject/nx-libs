@@ -1,6 +1,6 @@
 --- /dev/null
 +++ b/README.NX-redistributed
-@@ -0,0 +1,43 @@
+@@ -0,0 +1,42 @@
 +NX redistribution by X2Go
 +-------------------------
 +This source tree is a re-distribution of those NX packages needed to
@@ -43,4 +43,3 @@
 +
 +thanks+light+love
 +Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
-+
