@@ -3,6 +3,10 @@ nx-libs (2:3.5.0.17-0) UNRELEASED; urgency=low
   [ Jan Engelhardt ]
   * Fix /bin/Makefile. Add $(DESTDIR) to every install path.
 
+  [ Alexander Wuerstlein ]
+  * Add patch: 210_nxagent_configurable-keystrokes.full.patch, replaces the
+    hardcoded nxagent keybindings by a configurable table of keybindings.
+
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 07 Nov 2012 21:14:23 +0100
 
 nx-libs (2:3.5.0.16-0) unstable; urgency=low
