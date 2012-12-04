@@ -43,10 +43,10 @@
 203_nxagent_disable-rootless-exit.full.patch
 204_nxagent_repaint-solidpict.full.patch
 209_x2goagent-add-man-page.full.patch
-210_nxagent_configurable-keystrokes.full.patch
 220_nxproxy-bind-loopback-only.full+lite.patch
 300_nxagent_set-wm-class.full.patch
 301_nx-X11_use-shared-libs.full.patch
+302_nxagent_configurable-keystrokes.full.patch
 600_nx-X11+nxcompext+nxcompshad_unique-libnames.full.patch
 999_nxagent_unbrand-nxagent-brand-x2goagent.full.patch
 016_nx-X11_install-location.debian.patch
