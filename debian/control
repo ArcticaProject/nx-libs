@@ -22,7 +22,7 @@ Build-Conflicts:
  x11proto-randr-dev,
  x11proto-record-dev,
  x11proto-xinerama-dev,
- xbitmaps
+ xbitmaps,
 Standards-Version: 3.9.3
 Homepage: http://code.x2go.org/gitweb?p=nx-libs.git;a=summary
 Vcs-Git: git://code.x2go.org/nx-libs.git
@@ -32,7 +32,7 @@ Package: libnx-x11
 Architecture: any
 Depends:
  ${shlibs:Depends},
- ${misc:Depends}
+ ${misc:Depends},
 Breaks: nxlibs (<=3.5.1)
 Replaces: nxlibs
 Description: nx-X11
@@ -50,7 +50,7 @@ Breaks: nxlibs-dev (<=3.5.1)
 Replaces: nxlibs-dev
 Depends:
  libnx-x11 (>= ${source:Version}), libnx-x11 (<< ${source:Version}.1~),
- ${misc:Depends}
+ ${misc:Depends},
 Description: Library headers for nx-X11
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -64,7 +64,7 @@ Section: libdevel
 Architecture: any
 Depends:
  libnx-x11-dev (>= ${source:Version}), libnx-x11-dev (<< ${source:Version}.1~),
- ${misc:Depends}
+ ${misc:Depends},
 Description: Library headers for nx-X11 (extra headers)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -79,7 +79,7 @@ Depends:
  libnx-x11 (>= ${source:Version}), libnx-x11 (<< ${source:Version}.1~),
  xfonts-base,
  ${shlibs:Depends},
- ${misc:Depends}
+ ${misc:Depends},
 Description: NX agent
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -102,8 +102,8 @@ Description: NX agent
 Package: x2goagent
 Architecture: all
 Depends:
- nxagent (>= ${source:Version}),
- ${misc:Depends}
+ nxagent (>= ${source:Version}), nxagent (<< ${source:Version}.1~),
+ ${misc:Depends},
 Suggests:
  x2goserver
 Description: X2Go agent
@@ -126,7 +126,7 @@ Architecture: any
 Depends:
  libxcomp3 (>= ${source:Version}), libxcomp3 (<< ${source:Version}.1~),
  ${shlibs:Depends},
- ${misc:Depends}
+ ${misc:Depends},
 Description: NX proxy
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -139,7 +139,7 @@ Architecture: any
 Depends:
  libnx-x11 (>= ${source:Version}), libnx-x11 (<< ${source:Version}.1~),
  ${shlibs:Depends},
- ${misc:Depends}
+ ${misc:Depends},
 Description: NX xauth
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -151,7 +151,7 @@ Package: libxcomp3
 Architecture: any
 Depends:
  ${shlibs:Depends},
- ${misc:Depends}
+ ${misc:Depends},
 Breaks: nxcomp (<=3.5.1)
 Replaces: nxcomp
 Description: NX X compression library
@@ -166,7 +166,7 @@ Section: libdevel
 Architecture: any
 Depends:
  libxcomp3 (= ${binary:Version}),
- ${misc:Depends}
+ ${misc:Depends},
 Breaks: nxcomp-dev (<=3.5.1)
 Replaces: nxcomp-dev
 Description: NX X compression library headers
@@ -181,7 +181,7 @@ Architecture: any
 Depends:
  libnx-x11 (>= ${source:Version}), libnx-x11 (<< ${source:Version}.1~),
  ${shlibs:Depends},
- ${misc:Depends}
+ ${misc:Depends},
 Breaks: nxcompext (<=3.5.1)
 Replaces: nxcompext
 Description: NX X11 protocol compression extensions library
@@ -214,7 +214,7 @@ Architecture: any
 Depends:
  libnx-x11 (>= ${source:Version}), libnx-x11 (<< ${source:Version}.1~),
  ${shlibs:Depends},
- ${misc:Depends}
+ ${misc:Depends},
 Breaks: nxcompshad (<=3.5.1)
 Replaces: nxcompshad
 Description: NX shadowing library
@@ -229,7 +229,7 @@ Section: libdevel
 Architecture: any
 Depends:
  libxcompshad3 (=${binary:Version}),
- ${misc:Depends}
+ ${misc:Depends},
 Breaks: nxcompshad-dev (<=3.5.1)
 Replaces: nxcompshad-dev
 Description: NX shadowing library headers
