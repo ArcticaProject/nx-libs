@@ -8,6 +8,9 @@ nx-libs (2:3.5.0.17-0) UNRELEASED; urgency=low
     hardcoded nxagent keybindings by a configurable table of keybindings.
     (Closes upstream issue: #74).
 
+  [ Mike Gabriel ]
+  * Add README.keystrokes to doc section of bin:package nxagent.
+
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 07 Nov 2012 21:14:23 +0100
 
 nx-libs (2:3.5.0.16-0) unstable; urgency=low
