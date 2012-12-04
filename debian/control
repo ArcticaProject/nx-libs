@@ -14,7 +14,8 @@ Build-Depends:
  quilt (>= 0.46-7~),
  libxmltok1-dev,
  libxml2-dev,
- autoconf
+ autoconf,
+ pkg-config,
 Build-Conflicts:
  x11proto-core-dev,
  x11proto-kb-dev,
