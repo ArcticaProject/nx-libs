@@ -7,6 +7,8 @@ nx-libs (2:3.5.0.17-0) UNRELEASED; urgency=low
   * Add patch: 302_nxagent_configurable-keystrokes.full.patch, replaces the
     hardcoded nxagent keybindings by a configurable table of keybindings.
     (Closes upstream issue: #74).
+  * Follow-up commit for 302_nxagent_configurable-keystrokes.full.patch, fixes
+    FTBFS problem with the first version of that patch.
 
   [ Mike Gabriel ]
   * Add README.keystrokes to doc section of bin:package nxagent.

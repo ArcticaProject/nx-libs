@@ -987,3 +987,45 @@ Description: Make nxagent-specific keyboard bindings configurable
 +regions_on_screen
 +test_input
 +deactivate_input_devices_grab
+--- a/nx-X11/programs/Xserver/hw/nxagent/Args.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/Args.c
+@@ -148,6 +148,8 @@
+ 
+ char nxagentVerbose = 0;
+ 
++char *nxagentKeystrokeFile = NULL;
++
+ int ddxProcessArgument(int argc, char *argv[], int i)
+ {
+   /*
+@@ -1021,6 +1023,20 @@
+     return 1;
+   }
+ 
++  if (!strcmp(argv[i], "-keystrokefile"))
++  {
++    if (i + 1 < argc)
++    {
++      if (NULL != (nxagentKeystrokeFile = strdup(argv[i + 1])))
++      {
++        return 2;
++      } else {
++	FatalError("malloc failed");
++      }
++    }
++    return 0;
++  }
++
+   return 0;
+ }
+
+--- a/nx-X11/programs/Xserver/hw/nxagent/Args.h
++++ b/nx-X11/programs/Xserver/hw/nxagent/Args.h
+@@ -83,4 +83,6 @@
+ 
+ extern int nxagentRemoteMajor;
+ 
++extern char *nxagentKeystrokeFile;
++
+ #endif /* __Args_H__ */
+
