@@ -239,3 +239,15 @@ Description: NX shadowing library headers
  .
  This package provides a library for shadow session support (header
  files).
+
+Package: nx-x11-dbg
+Section: debug
+Architecture: any
+Description: Debug Symbols for nx-x11 libraries
+ NX is a software suite which implements very efficient
+ compression of the X11 protocol. This increases performance when
+ using X applications over a network, especially a slow one.
+ .
+ This package contains detached debug symbols that help generating more
+ helpful backtraces. You can safely remove it if you do not intend to
+ debug X2Go packages on this system.
