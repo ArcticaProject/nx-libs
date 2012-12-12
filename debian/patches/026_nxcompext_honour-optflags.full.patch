@@ -1,0 +1,17 @@
+Description: Honour compiler/linker option flags
+Forwarded: pending
+Author: Orion Poplawski <orion@cora.nwra.com>
+diff -up a/nxcompext/configure.in b/nxcompext/configure.in
+--- a/nxcompext/configure.in	2012-11-10 06:40:55.000000000 -0700
++++ b/nxcompext/configure.in	2012-12-11 13:15:26.712576302 -0700
+@@ -7,8 +7,8 @@ AC_PREREQ(2.13)
+ 
+ dnl Reset default compilation flags.
+ 
+-CXXFLAGS="-O3"
+-CFLAGS="-O3"
++CXXFLAGS="$CXXFLAGS -O3"
++CFLAGS="$CFLAGS -O3"
+ 
+ dnl Reset default linking directives.
+ 
