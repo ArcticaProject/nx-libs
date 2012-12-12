@@ -15,6 +15,10 @@ nx-libs (2:3.5.0.17-0) UNRELEASED; urgency=low
   * Add libxml2-dev to build dependencies.
   * Add pkg-config to build dependencies.
 
+  [ Orion Poplawski ]
+  * Add patches: 026_nxcomp*_honour-optflags.full*.patch. (Closes upstream
+    issue #84).
+
   [ Reinhard Tartler ]
   * Install debug symbols for all packages in a new binary package
     'nx-x11-dbg'.

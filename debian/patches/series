@@ -25,6 +25,9 @@
 024_fix-make-clean.full.patch
 024_fix-make-clean.full+lite.patch
 025_nxproxy_no-configure-file.full+lite.patch
+026_nxcompext_honour-optflags.full.patch
+026_nxcomp_honour-optflags.full+lite.patch
+026_nxcompshad_honour-optflags.full.patch
 030_nx-X11_configure-args.full.patch
 031_nx-X11_parallel-make.full.patch
 051_nxcomp_macos105-fdisset.full+lite.patch
