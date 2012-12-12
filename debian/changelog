@@ -16,9 +16,9 @@ nx-libs (2:3.5.0.17-0) UNRELEASED; urgency=low
   * Add pkg-config to build dependencies.
 
   [ Reinhard Tartler ]
-  * install debug symbols for all packages in a new binary package
+  * Install debug symbols for all packages in a new binary package
     'nx-x11-dbg'.
-  
+
  -- Reinhard Tartler <siretart@tauware.de>  Sun, 09 Dec 2012 09:38:58 +0100
 
 nx-libs (2:3.5.0.16-0) unstable; urgency=low
