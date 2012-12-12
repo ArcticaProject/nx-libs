@@ -24,6 +24,7 @@ override_dh_clean:
 	rm -f nx-X11/programs/nxauth/changelog
 	rm -f nxproxy/changelog
 	rm -f Makefile
+	rm -f nx*/configure
 	dh_clean
 
 override_dh_auto_build:

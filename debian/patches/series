@@ -23,7 +23,6 @@
 023_add-x2goagent-wrapper.full.patch
 024_fix-make-clean.full.patch
 024_fix-make-clean.full+lite.patch
-025_nxproxy_no-configure-file.full+lite.patch
 026_nxcompext_honour-optflags.full.patch
 026_nxcomp_honour-optflags.full+lite.patch
 026_nxcompshad_honour-optflags.full.patch
