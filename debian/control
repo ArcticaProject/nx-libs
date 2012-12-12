@@ -250,4 +250,4 @@ Description: Debug Symbols for nx-x11 libraries
  .
  This package contains detached debug symbols that help generating more
  helpful backtraces. You can safely remove it if you do not intend to
- debug X2Go packages on this system.
+ debug NX packages on this system.
