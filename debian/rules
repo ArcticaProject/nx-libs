@@ -23,6 +23,7 @@ override_dh_clean:
 	rm -f nx-X11/programs/Xserver/hw/nxagent/changelog
 	rm -f nx-X11/programs/nxauth/changelog
 	rm -f nxproxy/changelog
+	rm -f Makefile
 	dh_clean
 
 override_dh_auto_build:
@@ -34,6 +35,7 @@ override_dh_auto_build:
 	cp -a nx-X11/programs/Xserver/hw/nxagent/CHANGELOG nx-X11/programs/Xserver/hw/nxagent/changelog
 	cp -a nx-X11/programs/nxauth/CHANGELOG nx-X11/programs/nxauth/changelog
 	cp -a nxproxy/CHANGELOG nxproxy/changelog
+	ln -s debian/Makefile.nx-libs Makefile
 	LD_LIBRARY_PATH=`pwd`/debian/libnx-x11/usr/lib/nx/X11:$$LD_LIBRARY_PATH dh_auto_build --with quilt
 	debian/post-build-nx.sh
 
