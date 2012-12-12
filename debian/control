@@ -77,9 +77,10 @@ Package: nxagent
 Architecture: any
 Depends:
  libnx-x11 (>= ${source:Version}), libnx-x11 (<< ${source:Version}.1~),
- xfonts-base,
  ${shlibs:Depends},
  ${misc:Depends},
+Recommends:
+ xfonts-base,
 Description: NX agent
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
