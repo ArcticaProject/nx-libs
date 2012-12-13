@@ -40,7 +40,7 @@ Last-Update: 2012-02-14
 +	./mkinstalldirs $(DESTDIR)${libdir}/nx
 +	./mkinstalldirs $(DESTDIR)${includedir}/nx
 +	$(INSTALL_DATA) $(LIBFULL)              $(DESTDIR)${libdir}/nx
-+	$(INSTALL_DATA) libXcompext.so.3	$(DESTDIR)${libdir}/nx
++	$(INSTALL_LINK) libXcompext.so.3	$(DESTDIR)${libdir}/nx
 +	$(INSTALL_LINK) libXcompext.so          $(DESTDIR)${libdir}/nx
 +	$(INSTALL_DATA) NX*.h                   $(DESTDIR)${includedir}/nx
 +	echo "Running ldconfig tool, this may take a while..." && ldconfig || true
