@@ -22,6 +22,20 @@ nx-libs (2:3.5.0.17-0) UNRELEASED; urgency=low
   [ Reinhard Tartler ]
   * Install debug symbols for all packages in a new binary package
     'nx-x11-dbg'.
+  * Drop patch: 025_nxproxy_no-configure-file.full+lite.patch, instead remove
+    file nxproxy/configure from the source tree.
+  * Add roll-tarball.sh: replaces nx-tarballrelease script that could be
+    found in nx-buildscripts branch of nx-libs.git. Use this script to
+    create tarballs of nx-libs and nx-libs-lite.
+  * Fix installation of libxcompext, thanks to Orion Paplowski for spotting
+    this.
+  * /debian/rules:
+    + Integrate code from /debian/pre-build-nx.sh and drop the named file.
+    + Disable parallel build of .deb packages.
+  * /debian/control:
+    + Rely on shlibs instead of hardcoded dependencies.
+    + Drop xbitmaps from Build-Depends.
+    + Move xfonts-base over to Recommends.
 
  -- Reinhard Tartler <siretart@tauware.de>  Sun, 09 Dec 2012 09:38:58 +0100
 
