@@ -108,6 +108,13 @@ fi
 for f in $(ls README* 2>/dev/null); do
     mv -v $f doc/;
 done
+
+mkdir -p bin/
+# old releases introude the wrappers via quilt patch
+for w in $(ls debian/wrappers/* 2>/dev/null); do
+    cp -v $w bin/
+done
+
 mv -v debian/changelog doc/changelog
 
 # copy the top-level makefile if no quilt patch created it before

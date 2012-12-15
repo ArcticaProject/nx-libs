@@ -17,10 +17,6 @@
 017_nx-X11_update-autotools-helper-files.full.patch
 018_nx-X11_update-libtool-ltmain-script.full.patch
 019_nx-X11_expat-build-against-system-libxmltok.full.patch
-020_add-nxagent-wrapper.full.patch
-021_add-nxauth-wrapper.full.patch
-022_add-nxproxy-wrapper.full+lite.patch
-023_add-x2goagent-wrapper.full.patch
 024_fix-make-clean.full.patch
 024_fix-make-clean.full+lite.patch
 026_nxcompext_honour-optflags.full.patch
