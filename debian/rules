@@ -37,7 +37,7 @@ override_dh_auto_build:
 	cp -a nx-X11/programs/nxauth/CHANGELOG nx-X11/programs/nxauth/changelog
 	cp -a nxproxy/CHANGELOG nxproxy/changelog
 	ln -s debian/Makefile.nx-libs Makefile
-	LD_LIBRARY_PATH=`pwd`/debian/libnx-x11/usr/lib/nx/X11:$$LD_LIBRARY_PATH dh_auto_build --with quilt
+	LD_LIBRARY_PATH=`pwd`/debian/libnx-x11/usr/lib/nx/X11:$$LD_LIBRARY_PATH dh_auto_build --with quilt --parallel
 	debian/post-build-nx.sh
 
 override_dh_auto_install:
