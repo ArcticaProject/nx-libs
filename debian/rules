@@ -20,9 +20,11 @@ override_dh_clean:
 	rm -f nx*/changelog
 	rm -f nx-X11/programs/Xserver/hw/nxagent/changelog
 	rm -f nx-X11/programs/nxauth/changelog
-	rm -f Makefile
-	rm -f bin
+	rm -f Makefile bin rgb VERSION.x2goagent
 	dh_clean
+
+override_dh_auto_install:
+	PREFIX=/usr dh_auto_install -Smakefile
 
 override_dh_auto_build:
 	# create copies of upstream changelogs so that names apply to Debian policy...
@@ -35,10 +37,10 @@ override_dh_auto_build:
 	cp -a nxproxy/CHANGELOG nxproxy/changelog
 	ln -s debian/Makefile.nx-libs Makefile
 	ln -s debian/wrappers bin
+	ln -s debian/rgb
+	ln -s debian/VERSION.x2goagent
 	LD_LIBRARY_PATH=`pwd`/debian/libnx-x11/usr/lib/nx/X11:$$LD_LIBRARY_PATH dh_auto_build --with quilt --parallel
 	debian/post-build-nx.sh
-
-override_dh_auto_install:
 
 override_dh_strip:
 	dh_strip --dbg-package=nx-x11-dbg

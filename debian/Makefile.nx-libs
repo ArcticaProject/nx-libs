@@ -1,10 +1,18 @@
 #!/usr/bin/make -f
 
+INSTALL_DIR=install -d -m 755
+INSTALL_FILE=install -m 644
+INSTALL_PROGRAM=install -m 755
+RM_FILE=rm -f
+RM_DIR=rmdir -p --ignore-fail-on-non-empty
+
 PREFIX ?= /usr/local
+BINDIR=$(PREFIX)/bin
+NXLIBDIR=$(PREFIX)/lib/nx
+X2GOLIBDIR=$(PREFIX)/lib/x2go
 CONFIGURE=./configure
 
 %:
-	if test -f bin/Makefile; then ${MAKE} -C bin $@; fi
 	if test -f nxcomp/Makefile; then ${MAKE} -C nxcomp $@; fi
 	if test -f nxproxy/Makefile; then ${MAKE} -C nxproxy $@; fi
 	if test -d nx-X11; then \
@@ -37,8 +45,39 @@ build:
 	    ${MAKE} build-full; \
 	fi
 
+install:
+	$(INSTALL_DIR) $(DESTDIR)$(BINDIR)
+	for f in nxagent nxauth nxproxy x2goagent; do \
+	   $(INSTALL_PROGRAM) bin/$$f $(DESTDIR)$(BINDIR); done
+	for d in nxcomp nxproxy; do \
+	   $(MAKE) -C $$d install; done
+	[ ! -d nx-X11 ] || for d in nxcompext nxcompshad; do \
+	   $(MAKE) -C $$d install; done
+	$(INSTALL_DIR) $(DESTDIR)$(X2GOLIBDIR)/bin/
+	cd $(DESTDIR)$(X2GOLIBDIR)/bin/ && ln -sf ../../nx/bin/nxagent x2goagent
+	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/pixmaps
+	$(INSTALL_FILE) nx-X11/programs/Xserver/hw/nxagent/x2go.xpm $(DESTDIR)$(PREFIX)/share/pixmaps
+	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/x2go
+	$(INSTALL_FILE) rgb $(DESTDIR)$(PREFIX)/share/x2go
+	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/x2go/versions
+	$(INSTALL_FILE) VERSION.x2goagent $(DESTDIR)$(PREFIX)/share/x2go/versions
+	$(INSTALL_DIR) $(DESTDIR)$(NXLIBDIR)/bin
+	$(INSTALL_PROGRAM) nx-X11/programs/nxauth/nxauth $(DESTDIR)$(NXLIBDIR)/bin
+	$(INSTALL_PROGRAM) nxproxy/nxproxy $(DESTDIR)$(NXLIBDIR)/bin
+	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/include/nx/extras/Mesa/GL/internal
+	$(INSTALL_FILE) nx-X11/extras/Mesa/include/GL/*.h \
+	                $(DESTDIR)$(PREFIX)/include/nx/extras/Mesa/GL/
+	$(INSTALL_FILE) nx-X11/extras/Mesa/include/GL/internal/*.h \
+	                $(DESTDIR)$(PREFIX)/include/nx/extras/Mesa/GL/internal/
+	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/include/nx/extras/Mesa/GLES/
+	$(INSTALL_FILE) nx-X11/extras/Mesa/include/GLES/*.h \
+	                $(DESTDIR)$(PREFIX)/include/nx/extras/Mesa/GLES/
+
 uninstall:
-	if test -f bin/Makefile; then ${MAKE} -C bin $@; fi
+	for f in nxagent nxauth nxproxy x2goagent; do \
+	   $(RM_FILE) $(DESTDIR)$(BINDIR)/$$f; done
+	$(RM_FILE) $(DESTDIR)$(X2GOLIBDIR)/bin/x2goagent
+	$(RM_DIR) $(DESTDIR)$(X2GOLIBDIR)/bin/
 	if test -f nxcomp/Makefile; then ${MAKE} -C nxcomp $@; fi
 	if test -f nxproxy/Makefile; then ${MAKE} -C nxproxy $@; fi
 	if test -d nx-X11; then \

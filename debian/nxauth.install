@@ -1,2 +1,2 @@
-nx-X11/programs/nxauth/nxauth                    usr/lib/nx/bin
-bin/nxauth                                       usr/bin
+usr/lib/nx/bin/nxauth
+usr/bin/nxauth

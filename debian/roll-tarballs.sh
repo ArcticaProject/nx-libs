@@ -86,6 +86,7 @@ if [ "x$MODE" = "xfull" ]; then
         cp -v $file doc/applied-patches
         echo ${file##*/} >> doc/applied-patches/series
     done
+    cp -v debian/rgb debian/VERSION.x2goagent .
 else
     rm -Rf "nxcompshad"*
     rm -Rf "nxcompext"*

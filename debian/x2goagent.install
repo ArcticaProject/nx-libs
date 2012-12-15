@@ -1,4 +1,5 @@
-bin/x2goagent                                  usr/bin
-debian/rgb                                     usr/share/x2go
-nx-X11/programs/Xserver/hw/nxagent/x2go.xpm    usr/share/pixmaps
-debian/VERSION.x2goagent                       usr/share/x2go/versions
+usr/bin/x2goagent
+usr/lib/x2go/bin/x2goagent
+usr/share/pixmaps/x2go.xpm
+usr/share/x2go/rgb
+usr/share/x2go/versions/VERSION.x2goagent

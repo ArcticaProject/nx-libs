@@ -1,3 +1,2 @@
-nxproxy/nxproxy                    usr/lib/nx/bin
-bin/nxproxy                        usr/bin
-
+usr/lib/nx/bin/nxproxy
+usr/bin/nxproxy
