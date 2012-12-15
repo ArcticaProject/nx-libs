@@ -21,7 +21,7 @@ Last-Update: 2012-01-26 22:29:13.993994227 +0100
 
 --- a/nx-X11/Makefile
 +++ b/nx-X11/Makefile
-@@ -32,8 +32,8 @@
+@@ -32,8 +32,8 @@ VERSSRC = $(CONFIGSRC)/util/printver.c
  VERSPROG = $(CONFIGSRC)/util/printver.exe
  
  all:
@@ -32,7 +32,7 @@ Last-Update: 2012-01-26 22:29:13.993994227 +0100
  
  all-initial:
  	@echo Please use make World, or on NT use nmake World.Win32.
-@@ -57,8 +57,8 @@
+@@ -57,8 +57,8 @@ World:
  	@date
  	@echo ""
  	@if [ -f xmakefile ]; then \
@@ -43,7 +43,7 @@ Last-Update: 2012-01-26 22:29:13.993994227 +0100
  	    $(RM) xmakefile; \
  	fi
  	@if [ ! -f $(IRULESRC)/host.def ]; then \
-@@ -84,14 +84,14 @@
+@@ -84,14 +84,14 @@ World:
  #	fi
  	cd $(IMAKESRC) && $(MAKE) $(FLAGS) clean
  	$(MAKE) $(MFLAGS) Makefile.boot
@@ -65,7 +65,7 @@ Last-Update: 2012-01-26 22:29:13.993994227 +0100
  	@echo ""
  	@date
  	@echo ""
-@@ -154,15 +154,15 @@
+@@ -154,15 +154,15 @@ World.Win32:
  	-if exist xmakefile.bak del xmakefile.bak
  	-if exist xmakefile ren xmakefile xmakefile.bak
  	$(IMAKE:/=\) -s xmakefile -I$(IRULESRC) $(IMAKE_DEFINES) -DTOPDIR=$(TOP) -DCURDIR=$(CURRENT_DIR)
@@ -87,7 +87,7 @@ Last-Update: 2012-01-26 22:29:13.993994227 +0100
  	@echo :
  	@echo :
  	@echo Full build of $(RELEASE) complete.
-@@ -198,38 +198,38 @@
+@@ -198,38 +198,38 @@ World.OS2:
  # a copy of every rule that might be invoked at top level
  
  clean:
@@ -143,7 +143,7 @@ Last-Update: 2012-01-26 22:29:13.993994227 +0100
 +	    ${MAKE} ${MAKE_OPTS} $@
 --- a/nx-X11/config/imake/Makefile.ini
 +++ b/nx-X11/config/imake/Makefile.ini
-@@ -21,7 +21,6 @@
+@@ -21,7 +21,6 @@ IMAKEMDEP_CROSSCOMPILE = -DCROSSCOMPILE_
  SHELL = /bin/sh
  RM = rm -f
  MV = mv
@@ -153,7 +153,7 @@ Last-Update: 2012-01-26 22:29:13.993994227 +0100
  NPROC = 1
 --- a/nx-X11/extras/Mesa/Makefile
 +++ b/nx-X11/extras/Mesa/Makefile
-@@ -12,7 +12,7 @@
+@@ -12,7 +12,7 @@ default: $(TOP)/configs/current
  
  
  doxygen:
@@ -174,7 +174,7 @@ Last-Update: 2012-01-26 22:29:13.993994227 +0100
  CURRENT_DIR=.
 --- a/nx-X11/extras/drm/linux-core/Makefile
 +++ b/nx-X11/extras/drm/linux-core/Makefile
-@@ -176,7 +176,7 @@
+@@ -176,7 +176,7 @@ endif
  all: modules
  
  modules: includes
@@ -183,7 +183,7 @@ Last-Update: 2012-01-26 22:29:13.993994227 +0100
  
  ifeq ($(HEADERFROMBOOT),1)
  
-@@ -246,7 +246,7 @@
+@@ -246,7 +246,7 @@ clean cleandir:
  	rm -rf $(CLEANFILES)
  
  $(MODULE_LIST)::
@@ -194,7 +194,7 @@ Last-Update: 2012-01-26 22:29:13.993994227 +0100
  
 --- a/nx-X11/extras/drm/linux/Makefile
 +++ b/nx-X11/extras/drm/linux/Makefile
-@@ -184,7 +184,7 @@
+@@ -184,7 +184,7 @@ endif
  all: modules
  
  modules: includes
@@ -203,7 +203,7 @@ Last-Update: 2012-01-26 22:29:13.993994227 +0100
  
  ifeq ($(HEADERFROMBOOT),1)
  
-@@ -254,7 +254,7 @@
+@@ -254,7 +254,7 @@ clean cleandir:
  	rm -rf $(CLEANFILES)
  
  $(MODULE_LIST)::
@@ -214,7 +214,7 @@ Last-Update: 2012-01-26 22:29:13.993994227 +0100
  
 --- a/nx-X11/extras/ttf2pt1/Makefile
 +++ b/nx-X11/extras/ttf2pt1/Makefile
-@@ -158,8 +158,8 @@
+@@ -158,8 +158,8 @@ mans: $(MANS)
  
  clean:
  	rm -f t1asm ttf2pt1 *.o app/RPM/Makefile app/RPM/*.spec *.core core.* core
@@ -227,7 +227,7 @@ Last-Update: 2012-01-26 22:29:13.993994227 +0100
  	rm -f $(DOCS) $(MANS)
 --- a/nx-X11/lib/X11/Imakefile
 +++ b/nx-X11/lib/X11/Imakefile
-@@ -1161,21 +1161,17 @@
+@@ -1161,25 +1161,23 @@ $(NX_XCOMPEXTCONFIGTARGET):
  
  #ifdef SunArchitecture
  $(NX_XCOMPLIBTARGET): $(NX_XCOMPCONFIGTARGET)
@@ -246,16 +246,24 @@ Last-Update: 2012-01-26 22:29:13.993994227 +0100
 -	make
 +	${MAKE} -C $(NX_XCOMPLIBDIR)
  
- $(NX_XCOMPEXTLIBTARGET): $(NX_XCOMPEXTCONFIGTARGET)
+-$(NX_XCOMPEXTLIBTARGET): $(NX_XCOMPEXTCONFIGTARGET)
 -	cd ../../../nxcompext && \
 -	make
++$(NX_XCOMPEXTLIBTARGET): $(NX_XCOMPEXTCONFIGTARGET) $(NX_XCOMPLIBTARGET) lib$(LIBNAME).so.$(SOXLIBREV)
 +	${MAKE} -C ../../../nxcompext
  
  #endif
  
+-depend:: $(NX_XCOMPLIBTARGET)
++depend::
++
++lib$(LIBNAME).so.$(SOXLIBREV): $(NX_XCOMPLIBTARGET)
+ 
+ all:: $(NX_XCOMPLIBTARGET)
+ 
 --- a/nx-X11/lib/X11/Imakefile.NX.original
 +++ b/nx-X11/lib/X11/Imakefile.NX.original
-@@ -1159,21 +1159,17 @@
+@@ -1159,21 +1159,17 @@ $(NX_XCOMPEXTCONFIGTARGET):
  
  #ifdef SunArchitecture
  $(NX_XCOMPLIBTARGET): $(NX_XCOMPCONFIGTARGET)
@@ -283,7 +291,7 @@ Last-Update: 2012-01-26 22:29:13.993994227 +0100
  
 --- a/nx-X11/programs/Xserver/Imakefile
 +++ b/nx-X11/programs/Xserver/Imakefile
-@@ -1045,11 +1045,11 @@
+@@ -1045,11 +1045,11 @@ $(NX_XSHADOWCONFIGTARGET):
  #ifdef SunArchitecture
  $(NX_XSHADOWLIBTARGET): $(NX_XSHADOWCONFIGTARGET)
  	cd $(NX_XSHADOWLIBDIR) && \
