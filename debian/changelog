@@ -38,7 +38,7 @@ nx-libs (2:3.5.0.17-0) UNRELEASED; urgency=low
     + Move xfonts-base over to Recommends.
   * Update 031_nx-X11_parallel-make.full.patch. Add an explicit dependency
     from the NX libX11.so to the nxcomp libraries. Unbreaks parallel builds.
-    (Closes: #87).
+    (Fixes: #87).
 
  -- Reinhard Tartler <siretart@tauware.de>  Sat, 15 Dec 2012 14:29:12 +0100
 
