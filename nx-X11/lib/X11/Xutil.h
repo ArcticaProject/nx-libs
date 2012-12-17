@@ -54,6 +54,14 @@ SOFTWARE.
 #include <nx-X11/Xlib.h>
 #include <nx-X11/keysym.h>
 
+/* The Xlib structs are full of implicit padding to properly align members.
+   We can't clean that up without breaking ABI, so tell clang not to bother
+   complaining about it. */
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wpadded"
+#endif
+
 /*
  * Bitmask returned by XParseGeometry().  Each bit tells if the corresponding
  * value (x, y, width, height) was found in the parsed string.
@@ -821,6 +829,10 @@ extern int XXorRegion(
     Region		/* srb */,
     Region		/* dr_return */
 );
+
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 
 _XFUNCPROTOEND
 
