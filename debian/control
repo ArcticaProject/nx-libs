@@ -1,6 +1,6 @@
 Source: nx-libs
 Section: x11
-Priority: optional
+Priority: extra
 Maintainer: X2Go Developers <x2go-dev@lists.berlios.de>
 Uploaders:
  Reinhard Tartler <siretart@tauware.de>,
@@ -101,7 +101,7 @@ Description: NX agent
 Package: x2goagent
 Architecture: all
 Depends:
- nxagent (>= ${source:Version})
+ nxagent (>= ${source:Version}),
  ${misc:Depends},
 Suggests:
  x2goserver
