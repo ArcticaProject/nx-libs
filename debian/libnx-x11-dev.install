@@ -1,3 +1,5 @@
-usr/include/nx
-
-
+usr/include/nx/*.h
+usr/include/nx/GL
+usr/include/nx/X11
+usr/include/nx/fontconfig
+usr/include/nx/freetype2
