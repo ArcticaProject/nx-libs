@@ -238,6 +238,8 @@ Description: NX shadowing library headers
 Package: nx-x11-dbg
 Section: debug
 Architecture: any
+Depends:
+ ${misc:Depends},
 Description: Debug Symbols for nx-x11 libraries
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
