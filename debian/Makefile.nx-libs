@@ -3,6 +3,7 @@
 INSTALL_DIR=install -d -m 755
 INSTALL_FILE=install -m 644
 INSTALL_PROGRAM=install -m 755
+COPY_SYMLINK=cp -a
 RM_FILE=rm -f
 RM_DIR=rmdir -p --ignore-fail-on-non-empty
 
@@ -10,7 +11,9 @@ PREFIX ?= /usr/local
 BINDIR=$(PREFIX)/bin
 NXLIBDIR=$(PREFIX)/lib/nx
 X2GOLIBDIR=$(PREFIX)/lib/x2go
-CONFIGURE=./configure
+CONFIGURE ?= ./configure
+
+SHELL:=/bin/bash
 
 %:
 	if test -f nxcomp/Makefile; then ${MAKE} -C nxcomp $@; fi
@@ -46,40 +49,108 @@ build:
 	fi
 
 install:
+	$(MAKE) install-lite
+	[ ! -d nx-X11 ] || $(MAKE) install-full
+
+install-lite:
 	$(INSTALL_DIR) $(DESTDIR)$(BINDIR)
-	for f in nxagent nxauth nxproxy x2goagent; do \
+	for f in nxproxy; do \
 	   $(INSTALL_PROGRAM) bin/$$f $(DESTDIR)$(BINDIR); done
 	for d in nxcomp nxproxy; do \
 	   $(MAKE) -C $$d install; done
-	[ ! -d nx-X11 ] || for d in nxcompext nxcompshad; do \
+	$(INSTALL_DIR) $(DESTDIR)$(NXLIBDIR)/bin
+	$(INSTALL_PROGRAM) nxproxy/nxproxy $(DESTDIR)$(NXLIBDIR)/bin
+
+install-full:
+	for f in nxagent nxauth x2goagent; do \
+	   $(INSTALL_PROGRAM) bin/$$f $(DESTDIR)$(BINDIR); done
+	for d in nxcompext nxcompshad; do \
 	   $(MAKE) -C $$d install; done
+
 	$(INSTALL_DIR) $(DESTDIR)$(X2GOLIBDIR)/bin/
 	cd $(DESTDIR)$(X2GOLIBDIR)/bin/ && ln -sf ../../nx/bin/nxagent x2goagent
+
 	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/pixmaps
 	$(INSTALL_FILE) nx-X11/programs/Xserver/hw/nxagent/x2go.xpm $(DESTDIR)$(PREFIX)/share/pixmaps
+
 	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/x2go
 	$(INSTALL_FILE) rgb $(DESTDIR)$(PREFIX)/share/x2go
+
+	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/nx
+	$(INSTALL_FILE) nx-X11/programs/Xserver/Xext/SecurityPolicy $(DESTDIR)$(PREFIX)/share/nx
+
 	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/x2go/versions
 	$(INSTALL_FILE) VERSION.x2goagent $(DESTDIR)$(PREFIX)/share/x2go/versions
+
 	$(INSTALL_DIR) $(DESTDIR)$(NXLIBDIR)/bin
 	$(INSTALL_PROGRAM) nx-X11/programs/nxauth/nxauth $(DESTDIR)$(NXLIBDIR)/bin
-	$(INSTALL_PROGRAM) nxproxy/nxproxy $(DESTDIR)$(NXLIBDIR)/bin
+	$(INSTALL_PROGRAM) nx-X11/programs/Xserver/nxagent $(DESTDIR)$(NXLIBDIR)/bin
+
+	# create a clean nx-X11/.build-exports space
+	rm -Rf nx-X11/.build-exports
+	mkdir -p nx-X11/.build-exports/include
+	mkdir -p nx-X11/.build-exports/lib
+
+	# copy headers (for libnx-x11-dev)
+	cp -aL nx-X11/exports/include/* nx-X11/.build-exports/include
+
+	# copy libs (for libnx-x11)
+	find nx-X11/exports/lib/ | egrep "^.*\.so$$" | while read libpath; do \
+	    libfile=$$(basename $$libpath); \
+	    libdir=$$(dirname $$libpath); \
+	\
+	    mkdir -p $${libdir//exports/.build-exports}; \
+	    cp -L $$libpath $${libdir//exports/.build-exports}; \
+	\
+	    find $$libdir/$$libfile.* | while read symlink; do \
+	        ln -s $$libfile $${libdir//exports/.build-exports}/$$(basename $$symlink); \
+	    done; \
+	done;
+
+	$(INSTALL_DIR) $(DESTDIR)$(NXLIBDIR)/X11
+	$(INSTALL_FILE) nx-X11/.build-exports/lib/*.so $(DESTDIR)$(NXLIBDIR)/X11/
+	$(COPY_SYMLINK) nx-X11/.build-exports/lib/*.so.* $(DESTDIR)$(NXLIBDIR)/X11/
+
+	find nx-X11/.build-exports/include/ -type d | grep -v "include/X11/bitmaps" | \
+	    while read dirname; do \
+	        $(INSTALL_DIR) $${dirname//"nx-X11/.build-exports/include"/"$(DESTDIR)$(PREFIX)/include/nx"}; \
+	        $(INSTALL_FILE) $${dirname}/*.h \
+	                        $${dirname//"nx-X11/.build-exports/include"/"$(DESTDIR)$(PREFIX)/include/nx"}/ || true; \
+	    done; \
+
+	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/include/nx/X11/bitmaps
+	$(INSTALL_FILE) nx-X11/.build-exports/include/X11/bitmaps/* \
+	                $(DESTDIR)$(PREFIX)/include/nx/X11/bitmaps/
+
 	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/include/nx/extras/Mesa/GL/internal
 	$(INSTALL_FILE) nx-X11/extras/Mesa/include/GL/*.h \
 	                $(DESTDIR)$(PREFIX)/include/nx/extras/Mesa/GL/
+
 	$(INSTALL_FILE) nx-X11/extras/Mesa/include/GL/internal/*.h \
 	                $(DESTDIR)$(PREFIX)/include/nx/extras/Mesa/GL/internal/
+
 	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/include/nx/extras/Mesa/GLES/
 	$(INSTALL_FILE) nx-X11/extras/Mesa/include/GLES/*.h \
 	                $(DESTDIR)$(PREFIX)/include/nx/extras/Mesa/GLES/
 
 uninstall:
-	for f in nxagent nxauth nxproxy x2goagent; do \
+	$(MAKE) uninstall-lite
+	[ ! -d nx-X11 ] || $(MAKE) uninstall-full
+
+uninstall-lite:
+	for f in nxproxy; do \
 	   $(RM_FILE) $(DESTDIR)$(BINDIR)/$$f; done
+
+uninstall-full:
+	for f in nxagent nxauth x2goagent; do \
+	    $(RM_FILE) $(DESTDIR)$(BINDIR)/$$f; done
+
 	$(RM_FILE) $(DESTDIR)$(X2GOLIBDIR)/bin/x2goagent
 	$(RM_DIR) $(DESTDIR)$(X2GOLIBDIR)/bin/
+
 	if test -f nxcomp/Makefile; then ${MAKE} -C nxcomp $@; fi
 	if test -f nxproxy/Makefile; then ${MAKE} -C nxproxy $@; fi
+
 	if test -d nx-X11; then \
 	    if test -f nxcompext/Makefile; then ${MAKE} -C nxcompext $@; fi; \
 	    if test -f nxcompshad/Makefile; then ${MAKE} -C nxcompshad $@; fi; \

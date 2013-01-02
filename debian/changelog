@@ -14,6 +14,9 @@ nx-libs (2:3.5.0.17-0) UNRELEASED; urgency=low
   * Add README.keystrokes to doc section of bin:package nxagent.
   * Add libxml2-dev to build dependencies.
   * Add pkg-config to build dependencies.
+  * Continue Reinhard's work on top-level install/uninstall. Esp.
+    integrate debian/post-nx-build.sh into main Makefile. Make
+    value of CONFIGURE variable traversable through the Makefile tree.
 
   [ Orion Poplawski ]
   * Add patches: 026_nxcomp*_honour-optflags.full*.patch. (Closes upstream

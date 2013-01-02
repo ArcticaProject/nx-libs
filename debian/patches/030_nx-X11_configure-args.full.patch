@@ -16,7 +16,7 @@ Index: nx-X11/lib/X11/Imakefile
  
  includes:: ks_tables.h
  
-+CONFIGURE=./configure
++CONFIGURE ?= ./configure
 +
  #if NXLibraries
  
@@ -40,7 +40,7 @@ Index: nx-X11/programs/Xserver/Imakefile
  NX_XSHADOWLIBTARGET = $(NX_XSHADOWLIBDIR)/$(NX_XSHADOWLIBNAME)
  NX_XSHADOWCONFIGTARGET = $(NX_XSHADOWLIBDIR)/config.status
  
-+CONFIGURE=./configure
++CONFIGURE ?= ./configure
 +
  $(NX_XSHADOWCONFIGTARGET):
  	cd $(NX_XSHADOWLIBDIR) && \

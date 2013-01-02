@@ -9,7 +9,7 @@ else
 endif
 
 %:
-	LD_LIBRARY_PATH=`pwd`/debian/libnx-x11/usr/lib/nx/X11:$$LD_LIBRARY_PATH dh $@ --with quilt
+	CONFIGURE="./configure --prefix=/usr" LD_LIBRARY_PATH=`pwd`/debian/libnx-x11/usr/lib/nx/X11:$$LD_LIBRARY_PATH dh $@ --with quilt
 
 override_dh_auto_clean:
 	rm -Rf nx-X11/.build-exports
@@ -20,7 +20,7 @@ override_dh_clean:
 	rm -f nx*/changelog
 	rm -f nx-X11/programs/Xserver/hw/nxagent/changelog
 	rm -f nx-X11/programs/nxauth/changelog
-	rm -f Makefile bin rgb VERSION.x2goagent
+	rm -Rf Makefile bin rgb VERSION.x2goagent
 	dh_clean
 
 override_dh_auto_install:
@@ -40,7 +40,6 @@ override_dh_auto_build:
 	ln -s debian/rgb
 	ln -s debian/VERSION.x2goagent
 	LD_LIBRARY_PATH=`pwd`/debian/libnx-x11/usr/lib/nx/X11:$$LD_LIBRARY_PATH dh_auto_build --with quilt --parallel
-	debian/post-build-nx.sh
 
 override_dh_strip:
 	dh_strip --dbg-package=nx-x11-dbg
