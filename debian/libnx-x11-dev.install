@@ -1,4 +1,5 @@
-usr/include/nx/*.h
+usr/include/nx/expat.h
+usr/include/nx/ft2build.h
 usr/include/nx/GL
 usr/include/nx/X11
 usr/include/nx/fontconfig
