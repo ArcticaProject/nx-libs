@@ -239,6 +239,8 @@ Package: nx-x11-dbg
 Section: debug
 Architecture: any
 Depends:
+ libnx-x11 (= ${binary:Version}),
+ nxagent (= ${binary:Version}),
  ${misc:Depends},
 Description: Debug Symbols for nx-x11 libraries
  NX is a software suite which implements very efficient
