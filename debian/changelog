@@ -1,4 +1,4 @@
-nx-libs (2:3.5.0.17-0) UNRELEASED; urgency=low
+nx-libs (2:3.5.0.17-0) unstable; urgency=low
 
   [ Jan Engelhardt ]
   * Fix /bin/Makefile. Add $(DESTDIR) to every install path.
@@ -45,7 +45,7 @@ nx-libs (2:3.5.0.17-0) UNRELEASED; urgency=low
   * Fix and greatly enhance the top-level install and uninstall target for
     plain makefile installs.
 
- -- Reinhard Tartler <siretart@tauware.de>  Sat, 15 Dec 2012 14:29:12 +0100
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 04 Jan 2013 13:23:57 +0100
 
 nx-libs (2:3.5.0.16-0) unstable; urgency=low
 
