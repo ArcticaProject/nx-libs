@@ -13,7 +13,7 @@ nx-libs (2:3.5.0.17-0) unstable; urgency=low
   [ Alexander Wuerstlein ]
   * Add patch: 302_nxagent_configurable-keystrokes.full.patch, replaces the
     hardcoded nxagent keybindings by a configurable table of keybindings.
-    (Closes upstream issue: #74).
+    (Fixes: #74).
   * Follow-up commit for 302_nxagent_configurable-keystrokes.full.patch, fixes
     FTBFS problem with the first version of that patch.
 
@@ -26,8 +26,7 @@ nx-libs (2:3.5.0.17-0) unstable; urgency=low
     value of CONFIGURE variable traversable through the Makefile tree.
 
   [ Orion Poplawski ]
-  * Add patches: 026_nxcomp*_honour-optflags.full*.patch. (Closes upstream
-    issue #84).
+  * Add patches: 026_nxcomp*_honour-optflags.full*.patch. (Fixes: #84).
 
   [ Reinhard Tartler ]
   * Install debug symbols for all packages in a new binary package
@@ -101,8 +100,7 @@ nx-libs (2:3.5.0.15-0) unstable; urgency=low
 
   [ Oleksandr Shneyder ]
   * Add patch: 204-nxagent_repaint-solidpict.full.patch. Fixes repainting of
-    SolidFill pictures by nxagent/x2goagent on reconnects. Closes upstream
-    issue #16.
+    SolidFill pictures by nxagent/x2goagent on reconnects. (Fixes: #16).
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 21 Sep 2012 10:02:16 +0200
 
