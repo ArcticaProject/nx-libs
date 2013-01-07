@@ -58,8 +58,6 @@ install-lite:
 	   $(INSTALL_PROGRAM) bin/$$f $(DESTDIR)$(BINDIR); done
 	for d in nxcomp nxproxy; do \
 	   $(MAKE) -C $$d install; done
-	$(INSTALL_DIR) $(DESTDIR)$(NXLIBDIR)/bin
-	$(INSTALL_PROGRAM) nxproxy/nxproxy $(DESTDIR)$(NXLIBDIR)/bin
 
 install-full:
 	for f in nxagent nxauth x2goagent; do \

@@ -1,6 +1,7 @@
 nx-libs (2:3.5.0.18-0) UNRELEASED; urgency=low
 
-  * Continue development...
+  * Remove duplicate install of nxproxy from main Makefile. Spotted by Jan
+    Engelhard.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 04 Jan 2013 13:27:05 +0100
 
