@@ -92,22 +92,18 @@ install-full:
 	# copy headers (for libnx-x11-dev)
 	cp -aL nx-X11/exports/include/* nx-X11/.build-exports/include
 
-	# copy libs (for libnx-x11)
-	find nx-X11/exports/lib/ | egrep "^.*\.so$$" | while read libpath; do \
+	# copy libs (for libnx-x11), we want the targets of the links
+	find nx-X11/exports/lib/ | grep -F ".so" | while read libpath; do \
 	    libfile=$$(basename $$libpath); \
 	    libdir=$$(dirname $$libpath); \
+	    link=$$(readlink $$libpath); \
 	\
 	    mkdir -p $${libdir//exports/.build-exports}; \
-	    cp -L $$libpath $${libdir//exports/.build-exports}; \
-	\
-	    find $$libdir/$$libfile.* | while read symlink; do \
-	        ln -s $$libfile $${libdir//exports/.build-exports}/$$(basename $$symlink); \
-	    done; \
+	    cp -a $${libpath/$$libfile/$$link} $${libdir//exports/.build-exports}; \
 	done;
 
 	$(INSTALL_DIR) $(DESTDIR)$(NXLIBDIR)/X11
-	$(INSTALL_FILE) nx-X11/.build-exports/lib/*.so $(DESTDIR)$(NXLIBDIR)/X11/
-	$(COPY_SYMLINK) nx-X11/.build-exports/lib/*.so.* $(DESTDIR)$(NXLIBDIR)/X11/
+	$(COPY_SYMLINK) nx-X11/.build-exports/lib/*.so* $(DESTDIR)$(NXLIBDIR)/X11/
 
 	find nx-X11/.build-exports/include/ -type d | grep -v "include/X11/bitmaps" | \
 	    while read dirname; do \

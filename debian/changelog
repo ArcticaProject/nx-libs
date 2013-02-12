@@ -1,7 +1,11 @@
 nx-libs (2:3.5.0.18-0) UNRELEASED; urgency=low
 
+  [ Mike Gabriel ]
   * Remove duplicate install of nxproxy from main Makefile. Spotted by Jan
     Engelhard.
+
+  [ Orion Poplawski ]
+  * Fix wrong symlink direction of libNX_* files. (Fixes: #107).
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 04 Jan 2013 13:27:05 +0100
 
