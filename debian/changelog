@@ -6,6 +6,8 @@ nx-libs (2:3.5.0.18-0) UNRELEASED; urgency=low
 
   [ Orion Poplawski ]
   * Fix wrong symlink direction of libNX_* files. (Fixes: #107).
+  * Avoid building of libxcomp1 (which actually is identical to libxcomp3,
+    just with a wrong name). (Fixes: #104).
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 04 Jan 2013 13:27:05 +0100
 
