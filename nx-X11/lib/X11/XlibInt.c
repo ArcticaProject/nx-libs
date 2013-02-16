@@ -3852,7 +3852,7 @@ void _Xbcopy(b1, b2, length)
 #ifdef DataRoutineIsProcedure
 void Data(
 	Display *dpy,
-	char *data,
+	_Xconst char *data,
 	long len)
 {
 	if (dpy->bufptr + (len) <= dpy->bufmax) {
@@ -3869,7 +3869,7 @@ void Data(
 int
 _XData32(
     Display *dpy,
-    register long *data,
+    register _Xconst long *data,
     unsigned len)
 {
     register int *buf;
