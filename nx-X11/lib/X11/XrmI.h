@@ -35,11 +35,13 @@ from The Open Group.
 
 #include	<nx-X11/Xos.h>
 #include        <sys/stat.h>
+#include        <limits.h>
 
 #define GetSizeOfFile(fd,size)                      \
 {                                                   \
     struct stat status_buffer;                      \
-    if ( (fstat((fd), &status_buffer)) == -1 )      \
+    if ( ((fstat((fd), &status_buffer)) == -1 ) ||  \
+         (status_buffer.st_size >= INT_MAX) )       \
 	size = -1;                                  \
     else                                            \
 	size = status_buffer.st_size;               \
