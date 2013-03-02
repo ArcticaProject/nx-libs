@@ -58,6 +58,8 @@ extern int _Xmbstoutf8(
     int		len
 );
 
+static void parsestringfile(FILE *fp, Xim im, int depth);
+
 /*
  *	Parsing File Format:
  *
@@ -447,7 +449,8 @@ static int
 parseline(
     FILE *fp,
     Xim   im,
-    char* tokenbuf)
+    char* tokenbuf,
+    int   depth)
 {
     int token;
     DTModifier modifier_mask;
@@ -494,11 +497,13 @@ parseline(
                 goto error;
             if ((filename = TransFileName(im, tokenbuf)) == NULL)
                 goto error;
+            if (++depth > 100)
+                goto error;
             infp = _XFopenFile(filename, "r");
                 Xfree(filename);
             if (infp == NULL)
                 goto error;
-            _XimParseStringFile(infp, im);
+            parsestringfile(infp, im, depth);
             fclose(infp);
             return (0);
 	} else if ((token == KEY) && (strcmp("None", tokenbuf) == 0)) {
@@ -692,6 +697,15 @@ _XimParseStringFile(
     FILE *fp,
     Xim   im)
 {
+    parsestringfile(fp, im, 0);
+}
+
+static void
+parsestringfile(
+    FILE *fp,
+    Xim   im,
+    int   depth)
+{
     char tb[8192];
     char* tbp;
     struct stat st;
@@ -704,7 +718,7 @@ _XimParseStringFile(
 	else tbp = malloc (size);
 
 	if (tbp != NULL) {
-	    while (parseline(fp, im, tbp) >= 0) {}
+	    while (parseline(fp, im, tbp, depth) >= 0) {}
 	    if (tbp != tb) free (tbp);
 	}
     }
