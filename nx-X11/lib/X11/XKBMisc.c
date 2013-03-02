@@ -30,7 +30,6 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <config.h>
 #endif
 
-#ifndef XKB_IN_SERVER
 
 #include <stdio.h>
 #include "Xlibint.h"
@@ -38,18 +37,6 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <nx-X11/keysym.h>
 #include "XKBlibint.h"
 
-#else
-
-#include <stdio.h>
-#include <nx-X11/X.h>
-#include <nx-X11/Xproto.h>
-#include "misc.h"
-#include "inputstr.h"
-#include <nx-X11/keysym.h>
-#define	XKBSRV_NEED_FILE_FUNCS
-#include <nx-X11/extensions/XKBsrv.h>
-
-#endif /* XKB_IN_SERVER */
 
 /***====================================================================***/
 
