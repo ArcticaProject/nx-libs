@@ -1146,7 +1146,7 @@ MakeLintSubdirs($(LINTSUBDIRS),install.ln,install.ln)
 #endif
 #endif
 
-includes:: XlibConf.h
+includes:: XlibConf.h pathmax.h
 
 #include <Threads.tmpl>
 
