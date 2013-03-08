@@ -215,7 +215,7 @@ _XQueryFont (
 	DeqAsyncHandler(dpy, &async);
     reply_left = reply.length -
 	((SIZEOF(xQueryFontReply) - SIZEOF(xReply)) >> 2);
-    if (! (fs = (XFontStruct *) Xmalloc (sizeof (XFontStruct)))) {
+    if (! (fs = Xmalloc (sizeof (XFontStruct)))) {
 	_XEatDataWords(dpy, reply_left);
 	return (XFontStruct *)NULL;
     }
@@ -324,7 +324,7 @@ _XF86BigfontCodes (
     if (pData)
 	return (XF86BigfontCodes *) pData->private_data;
 
-    pData = (XExtData *) Xmalloc(sizeof(XExtData) + sizeof(XF86BigfontCodes));
+    pData = Xmalloc(sizeof(XExtData) + sizeof(XF86BigfontCodes));
     if (!pData) {
 	/* Out of luck. */
 	return (XF86BigfontCodes *) NULL;
@@ -460,7 +460,7 @@ _XF86BigfontQueryFont (
 	DeqAsyncHandler(dpy, &async1);
     reply_left = reply.length -
 	((SIZEOF(xXF86BigfontQueryFontReply) - SIZEOF(xReply)) >> 2);
-    if (! (fs = (XFontStruct *) Xmalloc (sizeof (XFontStruct)))) {
+    if (! (fs = Xmalloc (sizeof (XFontStruct)))) {
 	_XEatDataWords(dpy, reply_left);
 	return (XFontStruct *)NULL;
     }
@@ -523,14 +523,14 @@ _XF86BigfontQueryFont (
 
 	    nbytes = reply.nUniqCharInfos * SIZEOF(xCharInfo)
 	             + (reply.nCharInfos+1)/2 * 2 * sizeof(CARD16);
-	    pUniqCI = (xCharInfo *) Xmalloc (nbytes);
+	    pUniqCI = Xmalloc (nbytes);
 	    if (!pUniqCI) {
 		if (fs->properties) Xfree((char *) fs->properties);
 		Xfree((char *) fs);
 		_XEatDataWords(dpy, reply_left);
 		return (XFontStruct *)NULL;
 	    }
-	    if (! (fs->per_char = (XCharStruct *) Xmalloc (reply.nCharInfos * sizeof(XCharStruct)))) {
+	    if (! (fs->per_char = Xmalloc (reply.nCharInfos * sizeof(XCharStruct)))) {
 		Xfree((char *) pUniqCI);
 		if (fs->properties) Xfree((char *) fs->properties);
 		Xfree((char *) fs);
@@ -557,7 +557,7 @@ _XF86BigfontQueryFont (
 	    XEDataObject fs_union;
 	    char *addr;
 
-	    pData = (XExtData *) Xmalloc(sizeof(XExtData));
+	    pData = Xmalloc(sizeof(XExtData));
 	    if (!pData) {
 		if (fs->properties) Xfree((char *) fs->properties);
 		Xfree((char *) fs);
