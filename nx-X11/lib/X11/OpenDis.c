@@ -713,6 +713,9 @@ fallback_success:
 #endif /* !USE_XCB */
 
 #if USE_XCB
+/*
+ * get availability of large requests
+ */
 	dpy->bigreq_size = xcb_get_maximum_request_length(dpy->xcb->connection);
 	if(dpy->bigreq_size <= dpy->max_request_size)
 		dpy->bigreq_size = 0;
@@ -740,7 +743,6 @@ fallback_success:
 	(void) XSynchronize(dpy, _Xdebug);
 
 /*
- * get availability of large requests, and
  * get the resource manager database off the root window.
  */
 	LockDisplay(dpy);
