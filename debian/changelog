@@ -1,4 +1,4 @@
-nx-libs (2:3.5.0.18-0) UNRELEASED; urgency=low
+nx-libs (2:3.5.0.18-0) unstable; urgency=low
 
   [ Mike Gabriel ]
   * Remove duplicate install of nxproxy from main Makefile. Spotted by Jan
@@ -14,7 +14,7 @@ nx-libs (2:3.5.0.18-0) UNRELEASED; urgency=low
   * Avoid building of libxcomp1 (which actually is identical to libxcomp3,
     just with a wrong name). (Fixes: #104).
 
- -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 04 Jan 2013 13:27:05 +0100
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 22 Mar 2013 23:39:39 +0100
 
 nx-libs (2:3.5.0.17-0) unstable; urgency=low
 
