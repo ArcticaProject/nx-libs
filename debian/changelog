@@ -6,6 +6,8 @@ nx-libs (2:3.5.0.18-0) UNRELEASED; urgency=low
   * Work-in patch from Jan Engehardt for working around different
     improper bash implementations of string-in-string replacing. (Fixes:
     #145).
+  * Main Makefile: Use absolute symlink when linking from $(X2GOLIBDIR)
+    into $(NXLIBDIR) (i.e. linking x2goagent -> nxagent). (Fixes: #143).
 
   [ Orion Poplawski ]
   * Fix wrong symlink direction of libNX_* files. (Fixes: #107).

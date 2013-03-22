@@ -66,7 +66,7 @@ install-full:
 	   $(MAKE) -C $$d install; done
 
 	$(INSTALL_DIR) $(DESTDIR)$(X2GOLIBDIR)/bin/
-	cd $(DESTDIR)$(X2GOLIBDIR)/bin/ && ln -sf ../../nx/bin/nxagent x2goagent
+	cd $(DESTDIR)$(X2GOLIBDIR)/bin/ && ln -sf $(DESTDIR)$(NXLIBDIR)/bin/nxagent x2goagent
 
 	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/pixmaps
 	$(INSTALL_FILE) nx-X11/programs/Xserver/hw/nxagent/x2go.xpm $(DESTDIR)$(PREFIX)/share/pixmaps
