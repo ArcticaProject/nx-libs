@@ -93,23 +93,23 @@ install-full:
 	cp -aL nx-X11/exports/include/* nx-X11/.build-exports/include
 
 	# copy libs (for libnx-x11), we want the targets of the links
-	find nx-X11/exports/lib/ | grep -F ".so" | while read libpath; do \
+	. replace.sh; set -x; find nx-X11/exports/lib/ | grep -F ".so" | while read libpath; do \
 	    libfile=$$(basename $$libpath); \
 	    libdir=$$(dirname $$libpath); \
 	    link=$$(readlink $$libpath); \
 	\
-	    mkdir -p $${libdir//exports/.build-exports}; \
-	    cp -a $${libpath/$$libfile/$$link} $${libdir//exports/.build-exports}; \
+	    mkdir -p "$$(string_rep "$$libdir" exports .build-exports)"; \
+	    cp -a "$$(string_rep "$$libpath" "$$libfile" "$$link")" "$$(string_rep "$$libdir" exports .build-exports)"; \
 	done;
 
 	$(INSTALL_DIR) $(DESTDIR)$(NXLIBDIR)/X11
 	$(COPY_SYMLINK) nx-X11/.build-exports/lib/*.so* $(DESTDIR)$(NXLIBDIR)/X11/
 
-	find nx-X11/.build-exports/include/ -type d | grep -v "include/X11/bitmaps" | \
+	. replace.sh; set -x; find nx-X11/.build-exports/include/ -type d | grep -v "include/X11/bitmaps" | \
 	    while read dirname; do \
-	        $(INSTALL_DIR) $${dirname//"nx-X11/.build-exports/include"/"$(DESTDIR)$(PREFIX)/include/nx"}; \
+	        $(INSTALL_DIR) "$$(string_rep "$$dirname" nx-X11/.build-exports/include "$(DESTDIR)$(PREFIX)/include/nx")"; \
 	        $(INSTALL_FILE) $${dirname}/*.h \
-	                        $${dirname//"nx-X11/.build-exports/include"/"$(DESTDIR)$(PREFIX)/include/nx"}/ || true; \
+	                        "$$(string_rep "$$dirname" nx-X11/.build-exports/include "$(DESTDIR)$(PREFIX)/include/nx")"/ || true; \
 	    done; \
 
 	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/include/nx/X11/bitmaps

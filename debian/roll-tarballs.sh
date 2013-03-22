@@ -120,6 +120,7 @@ mv -v debian/changelog doc/changelog
 
 # copy the top-level makefile if no quilt patch created it before
 test -f Makefile || test -f debian/Makefile.nx-libs && cp -v debian/Makefile.nx-libs Makefile
+test -f replace.sh || test -f debian/Makefile.replace.sh && cp -v debian/Makefile.replace.sh replace.sh
 
 # remove folders that we do not want to roll into the tarball
 rm -Rf ".pc/"

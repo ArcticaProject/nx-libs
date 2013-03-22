@@ -3,6 +3,9 @@ nx-libs (2:3.5.0.18-0) UNRELEASED; urgency=low
   [ Mike Gabriel ]
   * Remove duplicate install of nxproxy from main Makefile. Spotted by Jan
     Engelhard.
+  * Work-in patch from Jan Engehardt for working around different
+    improper bash implementations of string-in-string replacing. (Fixes:
+    #145).
 
   [ Orion Poplawski ]
   * Fix wrong symlink direction of libNX_* files. (Fixes: #107).
