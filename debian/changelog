@@ -1,3 +1,10 @@
+nx-libs (2:3.5.0.19-0) UNRELEASED; urgency=low
+
+  * Add Jan's reasoning for using string_rep() instead of bash based
+    string substitutions as comment to /debian/Makefile.replaces.sh.
+
+ -- Mike Gabriel <sunweaver@debian.org>  Sat, 23 Mar 2013 00:42:01 +0100
+
 nx-libs (2:3.5.0.18-0) unstable; urgency=low
 
   [ Mike Gabriel ]
