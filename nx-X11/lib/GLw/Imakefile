@@ -46,7 +46,7 @@ XCOMM MOTIF_LDFLAGS  = -L/usr/local/lib
 #define DoProfileLib	ProfileLibGLw
 
 #define HasSharedData	NO
-#define LibName GLw
+#define LibName NX_GLw
 #define SoRev SOGLWREV
 #define IncSubdir GL
 

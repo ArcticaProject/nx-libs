@@ -15,7 +15,7 @@ SOXCURSORREV=1.0.2
 #define DoDebugLib DebugLibXcursor
 #define DoProfileLib ProfileLibXcursor
 
-#define LibName Xcursor
+#define LibName NX_Xcursor
 #define SoRev SOXCURSORREV
 #define IncSubdir X11
 #define IncSubSubdir Xcursor

@@ -6,7 +6,7 @@ XCOMM $XFree86: xc/lib/Xxf86dga/Imakefile,v 3.6 2003/05/05 20:42:30 tsi Exp $
 #define DoExtraLib SharedLibXxf86dga
 #define DoDebugLib DebugLibXxf86dga
 #define DoProfileLib ProfileLibXxf86dga
-#define LibName Xxf86dga
+#define LibName NX_Xxf86dga
 #define SoRev SOXXF86DGAREV
 #define LibHeaders NO
 

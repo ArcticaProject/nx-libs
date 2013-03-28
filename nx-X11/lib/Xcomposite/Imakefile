@@ -14,7 +14,7 @@ SOXCOMPOSITEREV=1.0.0
 #define DoDebugLib DebugLibXcomposite
 #define DoProfileLib ProfileLibXcomposite
 
-#define LibName Xcomposite
+#define LibName NX_Xcomposite
 #define SoRev SOXCOMPOSITEREV
 #define IncSubdir X11
 #define IncSubSubdir extensions

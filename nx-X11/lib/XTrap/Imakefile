@@ -4,7 +4,7 @@ XCOMM $XFree86$
 #define DoSharedLib SharedLibXTrap
 #define DoDebugLib DebugLibXTrap
 #define DoProfileLib ProfileLibXTrap
-#define LibName XTrap
+#define LibName NX_XTrap
 #define SoRev SOXTRAPREV
 #define LibHeaders NO
 

@@ -7,7 +7,7 @@
 #define DoDebugLib      NO
 #define DoProfileLib    NO
 #define HasSharedData   NO
-#define LibName         xf86config
+#define LibName         NX_xf86config
 
 #define UseDBMalloc	NO
 

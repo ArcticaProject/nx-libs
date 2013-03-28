@@ -2,7 +2,7 @@
 #define DoSharedLib YES
 #define DoDebugLib NO
 #define DoProfileLib NO
-#define LibName MESAGL
+#define LibName NX_MESAGL
 #define SoRev SOX11REV
 #define LibHeaders NO
 

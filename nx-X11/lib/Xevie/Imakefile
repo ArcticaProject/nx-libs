@@ -14,7 +14,7 @@ SOXEVIEREV=1.0.0
 #define DoDebugLib DebugLibXevie
 #define DoProfileLib ProfileLibXevie
 
-#define LibName Xevie
+#define LibName NX_Xevie
 #define SoRev SOXEVIEREV
 #define IncSubdir X11
 #define IncSubSubdir extensions

@@ -3,7 +3,7 @@ XCOMM $XFree86: xc/lib/XvMC/hw/i810/Imakefile,v 1.2 2002/10/30 12:52:02 alanh Ex
 #define DoSharedLib SharedLibXvMC
 #define DoDebugLib DebugLibXvMC
 #define DoProfileLib ProfileLibXvMC
-#define LibName I810XvMC
+#define LibName NX_I810XvMC
 #define SoRev SOXVMCREV
 #define LibHeaders NO
 

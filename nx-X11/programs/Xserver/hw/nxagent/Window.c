@@ -176,6 +176,14 @@ static void nxagentReconfigureWindow(pointer, XID, pointer);
 
 static int nxagentForceExposure(WindowPtr pWin, pointer ptr);
 
+/* by dimbor */
+typedef struct
+{
+  CARD32 state;
+  Window icon;
+}
+nxagentWMStateRec;
+    
 /*
  * This is currently unused.
  */
@@ -1858,6 +1866,17 @@ Bool nxagentRealizeWindow(WindowPtr pWin)
   nxagentAddConfiguredWindow(pWin, CWStackingOrder);
   nxagentAddConfiguredWindow(pWin, CW_Shape);
 
+  /* add by dimbor */
+  if (nxagentOption(Rootless) && nxagentWindowTopLevel(pWin))
+  {
+    Atom prop = MakeAtom("WM_STATE", strlen("WM_STATE"), True);
+    nxagentWMStateRec wmState;
+    wmState.state = 1; /* NormalState */
+    wmState.icon = None;
+    if (ChangeWindowProperty(pWin, prop, prop, 32, 0, 2, &wmState, 1) != Success)
+      fprintf(stderr, "nxagentRealizeWindow: Additing WM_STATE fail.\n");
+  }
+
   #ifdef SHAPE
 
   /*
@@ -1902,6 +1921,17 @@ Bool nxagentUnrealizeWindow(pWin)
   if (nxagentScreenTrap)
   {
     return True;
+  }
+
+  /* add by dimbor */
+  if (nxagentOption(Rootless) && nxagentWindowTopLevel(pWin))
+  {
+    Atom prop = MakeAtom("WM_STATE", strlen("WM_STATE"), True);
+    nxagentWMStateRec wmState;
+    wmState.state = 3; /* WithdrawnState */
+    wmState.icon = None;
+    if (ChangeWindowProperty(pWin, prop, prop, 32, 0, 2, &wmState, 1) != Success)
+      fprintf(stderr, "nxagentUnRealizeWindow: Changing WM_STATE failed.\n");
   }
 
   XUnmapWindow(nxagentDisplay, nxagentWindow(pWin));

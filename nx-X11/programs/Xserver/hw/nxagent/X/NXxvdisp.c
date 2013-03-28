@@ -275,17 +275,19 @@ ProcXvDispatch(ClientPtr client)
     case xv_PutVideo:
 #ifdef PANORAMIX
         if(!noPanoramiXExtension)
-            result = (XineramaXvPutVideo(client)); break;
+            result = (XineramaXvPutVideo(client));
         else
 #endif
-            result = (ProcXvPutVideo(client)); break;
+            result = (ProcXvPutVideo(client));
+            break;
     case xv_PutStill:
 #ifdef PANORAMIX
         if(!noPanoramiXExtension)
-            result = (XineramaXvPutStill(client)); break
+            result = (XineramaXvPutStill(client));
         else
 #endif
-    	    result = (ProcXvPutStill(client)); break;
+    	    result = (ProcXvPutStill(client));
+    	    break;
     case xv_GetVideo: result = (ProcXvGetVideo(client)); break;
     case xv_GetStill: result = (ProcXvGetStill(client)); break;
     case xv_GrabPort: result = (ProcXvGrabPort(client)); break;
@@ -295,35 +297,39 @@ ProcXvDispatch(ClientPtr client)
     case xv_StopVideo: 
 #ifdef PANORAMIX
         if(!noPanoramiXExtension)
-	    result = (XineramaXvStopVideo(client)); break;
+	    result = (XineramaXvStopVideo(client));
 	else
 #endif
-	    result = (ProcXvStopVideo(client)); break;
+	    result = (ProcXvStopVideo(client));
+            break;
     case xv_SetPortAttribute: 
 #ifdef PANORAMIX
         if(!noPanoramiXExtension)
-	    result = (XineramaXvSetPortAttribute(client)); break;
+	    result = (XineramaXvSetPortAttribute(client));
 	else
 #endif
-	    result = (ProcXvSetPortAttribute(client)); break;
+	    result = (ProcXvSetPortAttribute(client));
+            break;
     case xv_GetPortAttribute: result = (ProcXvGetPortAttribute(client)); break;
     case xv_QueryBestSize: result = (ProcXvQueryBestSize(client)); break;
     case xv_QueryPortAttributes: result = (ProcXvQueryPortAttributes(client)); break;
     case xv_PutImage:
 #ifdef PANORAMIX
         if(!noPanoramiXExtension)
-	    result = (XineramaXvPutImage(client)); break;
+	    result = (XineramaXvPutImage(client));
 	else
 #endif
-	    result = (ProcXvPutImage(client)); break;
+	    result = (ProcXvPutImage(client));
+            break;
 #ifdef MITSHM
     case xv_ShmPutImage: 
 #ifdef PANORAMIX
         if(!noPanoramiXExtension)
-	    result = (XineramaXvShmPutImage(client)); break;
+	    result = (XineramaXvShmPutImage(client));
 	else
 #endif
-	    result = (ProcXvShmPutImage(client)); break;
+	    result = (ProcXvShmPutImage(client));
+	    break;
 #endif
     case xv_QueryImageAttributes: result = (ProcXvQueryImageAttributes(client)); break;
     case xv_ListImageFormats: result = (ProcXvListImageFormats(client)); break;

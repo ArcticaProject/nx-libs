@@ -1,10 +1,10 @@
-nx-libs (2:3.5.0.19-0) UNRELEASED; urgency=low
+nx-libs (2:3.5.0.19-0) unstable; urgency=low
 
   * Add Jan's reasoning for using string_rep() instead of bash based
     string substitutions as comment to /debian/Makefile.replaces.sh.
   * Fix FTBFS for .deb packages after including fix for #145.
 
- -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Sat, 23 Mar 2013 00:42:01 +0100
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Thu, 28 Mar 2013 08:55:02 +0100
 
 nx-libs (2:3.5.0.18-0) unstable; urgency=low
 

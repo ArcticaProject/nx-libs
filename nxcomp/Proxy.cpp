@@ -15,9 +15,9 @@
 /*                                                                        */
 /**************************************************************************/
 
-#include <stdio.h>
+#include <cstdio>
 #include <unistd.h>
-#include <stdlib.h>
+#include <cstdlib>
 #include <sys/types.h>
 #include <sys/stat.h>
 

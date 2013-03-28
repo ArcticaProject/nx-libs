@@ -5,7 +5,7 @@ XCOMM $XFree86: xc/lib/Xrandr/Imakefile,v 1.2 2002/10/02 16:55:41 keithp Exp $
 #define DoSharedLib SharedLibAppleWM
 #define DoDebugLib DebugLibAppleWM
 #define DoProfileLib ProfileLibAppleWM
-#define LibName AppleWM
+#define LibName NX_AppleWM
 #define SoRev SOAPPLEWMREV
 #define IncSubdir X11
 #define IncSubSubdir extensions

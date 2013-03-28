@@ -8,7 +8,7 @@ XCOMM $XFree86: xc/lib/Xpm/Imakefile,v 1.1 1999/01/11 14:40:02 dawes Exp $
 #define DoDebugLib DebugLibXpm
 #define DoProfileLib ProfileLibXpm
 #define HasSharedData NO
-#define LibName Xpm
+#define LibName NX_Xpm
 #define SoRev SOXPMREV
 #define IncSubdir X11
 

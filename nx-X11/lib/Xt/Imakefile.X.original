@@ -11,7 +11,7 @@ XCOMM $XFree86: xc/lib/Xt/Imakefile,v 3.18tsi Exp $
 #define DoDebugLib DebugLibXt
 #define DoProfileLib ProfileLibXt
 #define HasSharedData YES
-#define LibName Xt
+#define LibName NX_Xt
 #define SoRev SOXTREV
 #define IncSubdir X11
 

@@ -5,7 +5,7 @@ XCOMM $XFree86: xc/lib/dps/Imakefile,v 1.16tsi Exp $
 #define DoExtraLib SharedLibDps
 #define DoDebugLib DebugLibDps
 #define DoProfileLib ProfileLibDps
-#define LibName dps
+#define LibName NX_dps
 #define SoRev SODPSREV
 #define IncSubdir DPS
 

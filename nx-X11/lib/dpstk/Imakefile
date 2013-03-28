@@ -5,7 +5,7 @@ XCOMM $XFree86: xc/lib/dpstk/Imakefile,v 1.5 2000/05/23 19:32:52 dawes Exp $
 #define DoExtraLib SharedLibDpsTk
 #define DoDebugLib DebugLibDpsTk
 #define DoProfileLib ProfileLibDpsTk
-#define LibName dpstk
+#define LibName NX_dpstk
 #define SoRev SODPSTKREV
 #define LibHeaders NO
 

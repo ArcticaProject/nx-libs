@@ -6,7 +6,7 @@ XCOMM $XdotOrg: xc/lib/Xxf86vm/Imakefile,v 1.3 2005/05/14 18:35:56 alanc Exp $
 #define DoExtraLib SharedLibXxf86vm
 #define DoDebugLib DebugLibXxf86vm
 #define DoProfileLib ProfileLibXxf86vm
-#define LibName Xxf86vm
+#define LibName NX_Xxf86vm
 #define SoRev SOXXF86VMREV
 #define LibHeaders NO
 

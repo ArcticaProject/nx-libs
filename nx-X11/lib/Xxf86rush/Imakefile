@@ -3,7 +3,7 @@ XCOMM $XFree86: xc/lib/Xxf86rush/Imakefile,v 1.1 1999/09/04 09:14:09 dawes Exp $
 #define DoSharedLib SharedLibXxf86rush
 #define DoDebugLib DebugLibXxf86rush
 #define DoProfileLib ProfileLibXxf86rush
-#define LibName Xxf86rush
+#define LibName NX_Xxf86rush
 #define SoRev SOXXF86RUSHREV
 #define LibHeaders NO
 

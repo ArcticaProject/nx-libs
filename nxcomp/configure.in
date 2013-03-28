@@ -7,8 +7,8 @@ AC_PREREQ(2.13)
 
 dnl Set our default compilation flags.
 
-CXXFLAGS="-O3 -fno-rtti -fno-exceptions"
-CFLAGS="-O3"
+CXXFLAGS="$CXXFLAGS -O3 -fno-rtti -fno-exceptions"
+CFLAGS="$CFLAGS -O3"
 
 dnl Reset default linking directives.
 

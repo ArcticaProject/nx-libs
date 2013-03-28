@@ -125,7 +125,7 @@ OS_NAME_DEFINES = OsNameDefines
     STD_DEFINES = LibraryDefines
     CDEBUGFLAGS = LibraryCDebugFlags
 #else
-#define LibName Xpm
+#define LibName NX_Xpm
 #define SoRev SOXPMLIBREV
 #define IncSubdir X11
 /* we have to cheat on Library.tmpl to get what we want... */

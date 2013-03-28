@@ -9,4 +9,4 @@ Version: @VERSION@
 Requires: xrender, fontconfig, freetype2
 Requires.private: xrender, fontconfig, freetype2
 Cflags: -I${includedir}
-Libs: -L${libdir} -lXft
+Libs: -L${libdir} -lNX_Xft

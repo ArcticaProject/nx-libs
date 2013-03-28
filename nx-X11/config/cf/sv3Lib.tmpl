@@ -40,31 +40,31 @@ XCOMM $XFree86: xc/config/cf/sv3Lib.tmpl,v 3.2 2001/01/17 16:38:49 dawes Exp $
  * are using shared libraries, we really do not need to depend on anything
  */
 #if SharedLibXext
-  DEPEXTENSIONLIB = _UseCat($(USRLIBDIR),$(EXTENSIONSRC)/lib,/libXext_s.a)
-     EXTENSIONLIB = LoaderLibPrefix _Use(-lXext_s, $(DEPEXTENSIONLIB))
+  DEPEXTENSIONLIB = _UseCat($(USRLIBDIR),$(EXTENSIONSRC)/lib,/libNX_Xext_s.a)
+     EXTENSIONLIB = LoaderLibPrefix _Use(-lNX_Xext_s, $(DEPEXTENSIONLIB))
 #endif
 #if SharedLibX
-          DEPXLIB = $(DEPEXTENSIONLIB) _UseCat($(USRLIBDIR),$(XLIBSRC),/libX11_s.a)
-             XLIB = $(EXTENSIONLIB) LoaderLibPrefix _Use(-lX11_s,$(XLIBSRC)/libX11_s.a)
+          DEPXLIB = $(DEPEXTENSIONLIB) _UseCat($(USRLIBDIR),$(XLIBSRC),/libNX_X11_s.a)
+             XLIB = $(EXTENSIONLIB) LoaderLibPrefix _Use(-lNX_X11_s,$(XLIBSRC)/libNX_X11_s.a)
 #endif
 #if SharedLibXmu
-        DEPXMULIB = _UseCat($(USRLIBDIR),$(XMUSRC),/libXmu_s.a)
-           XMULIB = LoaderLibPrefix _Use(-lXmu_s,$(DEPXMULIB))
+        DEPXMULIB = _UseCat($(USRLIBDIR),$(XMUSRC),/libNX_Xmu_s.a)
+           XMULIB = LoaderLibPrefix _Use(-lNX_Xmu_s,$(DEPXMULIB))
 #endif
 #if SharedOldLibX
        DEPOLDXLIB = _UseCat($(USRLIBDIR),$(OLDXLIBSRC),/liboldX_s.a)
           OLDXLIB = LoaderLibPrefix _Use(-loldX_s,$(DEPOLDXLIB))
 #endif
 #if SharedLibXt
-      DEPXTOOLLIB = _UseCat($(USRLIBDIR),$(TOOLKITSRC),/libXt_s.a)
-         XTOOLLIB = LoaderLibPrefix _Use(-lXt_s,$(DEPXTOOLLIB))
+      DEPXTOOLLIB = _UseCat($(USRLIBDIR),$(TOOLKITSRC),/libNX_Xt_s.a)
+         XTOOLLIB = LoaderLibPrefix _Use(-lNX_Xt_s,$(DEPXTOOLLIB))
 #endif
 #if SharedLibXaw
-        DEPXAWLIB = _UseCat($(USRLIBDIR),$(AWIDGETSRC),/libXaw_s.a)
-           XAWLIB = LoaderLibPrefix _Use(-lXaw_s,$(DEPXAWLIB))
+        DEPXAWLIB = _UseCat($(USRLIBDIR),$(AWIDGETSRC),/libNX_Xaw_s.a)
+           XAWLIB = LoaderLibPrefix _Use(-lNX_Xaw_s,$(DEPXAWLIB))
 #endif
 #if SharedLibXinput
-         DEPXILIB = _UseCat($(USRLIBDIR),$(XILIBSRC),/libXi_s.a)
-            XILIB = LoaderLibPrefix _Use(-lXi_s,$(DEPXILIB))
+         DEPXILIB = _UseCat($(USRLIBDIR),$(XILIBSRC),/libNX_Xi_s.a)
+            XILIB = LoaderLibPrefix _Use(-lNX_Xi_s,$(DEPXILIB))
 #endif
 

@@ -52,6 +52,7 @@ is" without express or implied warranty.
 #include "Keyboard.h"
 #include "Events.h"
 #include "Options.h"
+#include "Error.h"
 
 #include "NXlib.h"
 
@@ -136,7 +137,7 @@ extern        Status        XkbGetControls(
 #define XKB_ALTERNATE_BASE_DIRECTORY   "/usr/X11R6/lib/X11/xkb"
 #endif
 #ifndef XKB_CONFIG_FILE
-#define XKB_CONFIG_FILE      "X0-config.keyboard"
+#define XKB_CONFIG_FILE      "/etc/nxagent/nxagent.keyboard"
 #endif
 #ifndef XKB_DFLT_RULES_FILE
 #define XKB_DFLT_RULES_FILE  "xfree86"
@@ -985,8 +986,7 @@ XkbError:
 
         XkbGetControls(nxagentDisplay, XkbAllControlsMask, xkb);
 
-        nxagentXkbConfigFilePathSize = strlen(XkbBaseDirectory) +
-                                           strlen(XKB_CONFIG_FILE) + 1;
+        nxagentXkbConfigFilePathSize = strlen(XKB_CONFIG_FILE);
 
         nxagentXkbConfigFilePath = malloc((nxagentXkbConfigFilePathSize + 1) * sizeof(char));
 
@@ -995,9 +995,7 @@ XkbError:
           FatalError("nxagentKeyboardProc: malloc failed.");
         }
 
-        strcpy(nxagentXkbConfigFilePath, XkbBaseDirectory);
-        strcat(nxagentXkbConfigFilePath, "/");
-        strcat(nxagentXkbConfigFilePath, XKB_CONFIG_FILE);
+        strcpy(nxagentXkbConfigFilePath, XKB_CONFIG_FILE);
  
         #ifdef TEST
         fprintf(stderr, "nxagentKeyboardProc: nxagentXkbConfigFilePath [%s].\n",
@@ -1792,6 +1790,42 @@ void nxagentKeycodeConversionSetup(void)
                 "Failed to retrieve remote rules.\n");
   }
   #endif
+
+  if (drulesLen != 0)
+  {
+    char *sessionpath = nxagentGetSessionPath();
+    if (sessionpath != NULL){
+      int keyboard_file_path_size = strlen(sessionpath) + strlen("/keyboard");
+      char *keyboard_file_path = malloc((keyboard_file_path_size + 1) * sizeof(char));
+      FILE *keyboard_file;
+      if ( keyboard_file_path == NULL)
+      {
+        FatalError("nxagentKeyboardProc: malloc failed.");
+      }
+      strcpy(keyboard_file_path, sessionpath);
+      strcat(keyboard_file_path, "/keyboard");
+      if ((keyboard_file = fopen(keyboard_file_path, "w")) != NULL) {
+        if ( drules != NULL )
+          fprintf(keyboard_file, "rules=%s\n", drules);
+        if ( dmodel != NULL )
+          fprintf(keyboard_file, "model=%s\n", dmodel);
+        if ( dlayout != NULL )
+          fprintf(keyboard_file, "layout=%s\n", dlayout);
+        if ( dvariant != NULL )
+          fprintf(keyboard_file, "variant=%s\n", dvariant);
+        if ( doptions != NULL )
+          fprintf(keyboard_file, "options=%s\n", doptions);
+        fclose(keyboard_file);
+      }
+      free(keyboard_file_path);
+      fprintf(stderr, "keyboard file created\n");
+    }
+    fprintf(stderr, "SessionPath not defined\n");
+  }
+  else
+  {
+    fprintf(stderr, "Failed to create the keyboard file\n");
+  }
 
   if (nxagentOption(ClientOs) == ClientOsLinux &&
             drules != NULL && dmodel != NULL &&

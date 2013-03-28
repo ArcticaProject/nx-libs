@@ -166,7 +166,9 @@ Bool nxagentValidServerTargets(Atom target)
 
   if (target == XA_STRING) return True;
   if (target == serverTEXT) return True;
-
+  /* by dimbor */
+  if (target == serverUTF8_STRING) return True;
+    
   return False;
 }
 
@@ -402,7 +404,12 @@ FIXME: Do we need this?
         lastServerProperty = X->xselectionrequest.property;
         lastServerRequestor = X->xselectionrequest.requestor;
         lastServerTarget = X->xselectionrequest.target;
-        lastServerTime = X->xselectionrequest.time;
+
+        /* by dimbor */
+        if (lastServerTarget != XA_STRING)
+	  lastServerTarget = serverUTF8_STRING;
+			  
+	lastServerTime = X->xselectionrequest.time;
 
         x.u.u.type = SelectionRequest;
         x.u.selectionRequest.time = GetTimeInMillis();
@@ -424,11 +431,12 @@ FIXME: Do we need this?
 
         x.u.selectionRequest.selection = CurrentSelections[i].selection;
 
-        /*
-         * x.u.selectionRequest.target = X->xselectionrequest.target;
-         */
-
-        x.u.selectionRequest.target = XA_STRING;
+        /* by dimbor (idea from zahvatov) */
+        if (X->xselectionrequest.target != XA_STRING)
+          x.u.selectionRequest.target = clientUTF8_STRING;
+        else
+          x.u.selectionRequest.target = XA_STRING;
+					    
         x.u.selectionRequest.property = clientCutProperty;
 
         (void) TryClientEvents(lastSelectionOwner[i].client, &x, 1,
@@ -1218,10 +1226,11 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
     Atom xa_STRING[4];
     xEvent x;
 
+    /* --- Order changed by dimbor (prevent sending COMPOUND_TEXT to client --- */
     xa_STRING[0] = XA_STRING;
-    xa_STRING[1] = clientTEXT;
-    xa_STRING[2] = clientCOMPOUND_TEXT;
-    xa_STRING[3] = clientUTF8_STRING;
+    xa_STRING[1] = clientUTF8_STRING;
+    xa_STRING[2] = clientTEXT;
+    xa_STRING[3] = clientCOMPOUND_TEXT;
 
     ChangeWindowProperty(pWin,
                          property,

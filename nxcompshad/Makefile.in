@@ -48,7 +48,7 @@ CCINCLUDES  =
 CCDEFINES   =
 
 LDFLAGS     = @LDFLAGS@
-LIBS        = @LIBS@ -L/usr/X11R6/lib -lX11
+LIBS        = @LIBS@ -lNX_X11
 
 #
 # Only if THREADS is defined.
@@ -74,10 +74,17 @@ exec_prefix = @exec_prefix@
 bindir      = @bindir@
 man1dir     = @mandir@/man1
 VPATH       = @srcdir@
+libdir      = @libdir@
+includedir  = @includedir@
 
 INSTALL         = @INSTALL@
+INSTALL_DIR     = $(INSTALL) -d -o root -g root -m 0755 
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA    = @INSTALL_DATA@
+INSTALL_LINK    = cp -av
+DESTDIR         =
+RM_FILE         = rm -f
+RM_DIR          = rmdir -p --ignore-fail-on-non-empty
 
 #
 # This should be autodetected.
@@ -132,7 +139,7 @@ all: depend $(LIBARCHIVE) $(LIBDLL)
 
 else
 
-EXTRALIBS = -lXtst -lXrandr -lXdamage
+EXTRALIBS = -lNX_Xtst -lNX_Xrandr -lNX_Xdamage
 
 all: depend $(LIBFULL) $(LIBLOAD) $(LIBSHARED) $(LIBARCHIVE)
 
@@ -162,7 +169,7 @@ $(LIBDLL): $(LIBARCHIVE)
 		-Wl,--enable-auto-import \
 		-Wl,--whole-archive ${LIBARCHIVE} \
 		-Wl,--no-whole-archive \
-		${LIBS} -L/usr/X11R6/lib
+		${LIBS}
 
 $(PROGRAM):	$(MOBJ) $(COBJ) $(CXXOBJ) $(LIBDLL)
 #		$(CC) $(CCFLAGS) -o $@ $(MOBJ) $(MLIBS)
@@ -178,15 +185,41 @@ depend.status:
 		fi
 		touch depend.status
 
-install:	install.bin install.man
+install:       install.bin install.lib install.man
 
 install.bin:
 
+install.lib: all
+	$(INSTALL_DIR)                          $(DESTDIR)${libdir}/nx
+	$(INSTALL_DIR)                          $(DESTDIR)${includedir}/nx
+	$(INSTALL_DATA) $(LIBFULL)              $(DESTDIR)${libdir}/nx
+	$(INSTALL_LINK) libXcompshad.so.3       $(DESTDIR)${libdir}/nx
+	$(INSTALL_LINK) libXcompshad.so         $(DESTDIR)${libdir}/nx
+	$(INSTALL_DATA) *.a                     $(DESTDIR)${libdir}/nx
+	$(INSTALL_DATA) *.h                     $(DESTDIR)${includedir}/nx
+	echo "Running ldconfig tool, this may take a while..." && ldconfig || true
+
 install.man:
 
+uninstall:     uninstall.bin uninstall.lib uninstall.man
+
+uninstall.bin:
+
+uninstall.lib:
+	$(RM_FILE) $(DESTDIR)${libdir}/nx/$(LIBFULL)
+	$(RM_FILE) $(DESTDIR)${libdir}/nx/libXcompshad.so.3
+	$(RM_FILE) $(DESTDIR)${libdir}/nx/libXcompshad.so
+	$(RM_FILE) $(DESTDIR)${libdir}/nx/libXcompshad.a
+	for header in *.h; do $(RM_FILE) $(DESTDIR)${includedir}/nx/$$header; done
+	$(RM_DIR) $(DESTDIR)${libdir}/nx/
+	$(RM_DIR) $(DESTDIR)${includedir}/nx/
+	echo "Running ldconfig tool, this may take a while..." && ldconfig || true
+
+uninstall.man:
+
 clean:
-		-rm -f *~ *.o *.bak st?????? core core.* *.out.* *.exe.stackdump \
+		-rm -f *~ *.o *.gch *.bak st?????? core core.* *.out.* *.exe.stackdump \
 		$(LIBFULL) $(LIBLOAD) $(LIBSHARED) $(LIBARCHIVE) $(LIBDLL) $(LIBDLLSTATIC) $(PROGRAM) $(PROGRAM).exe
 
 distclean:	clean
-		-rm -rf config.status config.log config.cache depend.status Makefile tags autom4te.cache
+		-rm -rf config.status config.log config.cache depend.status Makefile tags autom4te.cache configure 

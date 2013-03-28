@@ -83,7 +83,7 @@ NX_XCOMPEXTCONFIGTARGET = $(NX_XCOMPEXTLIBDIR)/config.status
 #define DoExtraLib SharedLibX11
 #define DoDebugLib DebugLibX11
 #define DoProfileLib ProfileLibX11
-#define LibName X11
+#define LibName NX_X11
 #define SoRev SOXLIBREV
 #define HugeLibrary YES
 #define IncSubdir X11
@@ -1159,21 +1159,17 @@ $(NX_XCOMPEXTCONFIGTARGET):
 
 #ifdef SunArchitecture
 $(NX_XCOMPLIBTARGET): $(NX_XCOMPCONFIGTARGET)
-	cd $(NX_XCOMPLIBDIR) && \
-	gmake
+	${MAKE} -C $(NX_XCOMPLIBDIR)
 
 $(NX_XCOMPEXTLIBTARGET): $(NX_XCOMPEXTCONFIGTARGET)
-	cd ../../../nxcompext && \
-	gmake
+	${MAKE} -C ../../../nxcompext
 
 #else
 $(NX_XCOMPLIBTARGET): $(NX_XCOMPCONFIGTARGET)
-	cd $(NX_XCOMPLIBDIR) && \
-	make
+	${MAKE} -C $(NX_XCOMPLIBDIR)
 
 $(NX_XCOMPEXTLIBTARGET): $(NX_XCOMPEXTCONFIGTARGET)
-	cd ../../../nxcompext && \
-	make
+	${MAKE} -C ../../../nxcompext
 
 #endif
 

@@ -12,7 +12,7 @@ default: $(TOP)/configs/current
 
 
 doxygen:
-	(cd doxygen ; make) ; \
+	(cd doxygen ; ${MAKE}) ; \
 
 clean:
 	@for dir in $(SUBDIRS) ; do \

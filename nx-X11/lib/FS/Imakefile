@@ -11,7 +11,7 @@ XCOMM $XFree86: xc/lib/FS/Imakefile,v 3.5 2001/01/17 19:41:28 dawes Exp $
 #define DoExtraLib SharedLibFS
 #define DoDebugLib DebugLibFS
 #define DoProfileLib ProfileLibFS
-#define LibName FS
+#define LibName NX_FS
 #define SoRev SOFSREV
 #define IncSubdir X11
 #define IncSubSubdir fonts

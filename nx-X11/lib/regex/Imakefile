@@ -6,7 +6,7 @@ XCOMM $XFree86$
 #define DoDebugLib	NO
 #define DoProfileLib	NO
 #define HasSharedData	NO
-#define LibName		regex
+#define LibName		NX_regex
 #define LibHeaders	NO
 #define LibInstall	NO
 #define LibInstallBuild	YES

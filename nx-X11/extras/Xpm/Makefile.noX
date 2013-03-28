@@ -32,7 +32,6 @@
 
 SUBDIRS= lib sxpm cxpm
 
-MAKE=make
 MFLAGS=-f Makefile.noX
 INSTALL= install -c
 CURRENT_DIR=.

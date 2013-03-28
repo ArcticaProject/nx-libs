@@ -148,6 +148,8 @@ static int nxagentGetDialogName(void);
 
 char nxagentVerbose = 0;
 
+char *nxagentKeystrokeFile = NULL;
+
 int ddxProcessArgument(int argc, char *argv[], int i)
 {
   /*
@@ -672,6 +674,12 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     return 1;
   }
 
+  if (!strcmp(argv[i], "-norootlessexit")) {
+    nxagentChangeOption(NoRootlessExit, True);
+    return 1;
+  }
+
+
   if (!strcmp(argv[i], "-noonce"))
   {
       nxagentOnce = False;
@@ -1013,6 +1021,20 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     nxagentVerbose = 1;
 
     return 1;
+  }
+
+  if (!strcmp(argv[i], "-keystrokefile"))
+  {
+    if (i + 1 < argc)
+    {
+      if (NULL != (nxagentKeystrokeFile = strdup(argv[i + 1])))
+      {
+        return 2;
+      } else {
+	FatalError("malloc failed");
+      }
+    }
+    return 0;
   }
 
   return 0;
@@ -1855,6 +1877,7 @@ void ddxUseMsg()
   ErrorF("The NX system adds the following arguments:\n");
   ErrorF("-forcenx               force use of NX protocol messages assuming communication through nxproxy\n");
   ErrorF("-timeout int           auto-disconnect timeout in seconds (minimum allowed: 60)\n");
+  ErrorF("-norootlessexit        don't exit if there are no clients in rootless mode\n");
 #ifdef RENDER
   ErrorF("-norender              disable the use of the render extension\n");
   ErrorF("-nocomposite           disable the use of the composite extension\n");

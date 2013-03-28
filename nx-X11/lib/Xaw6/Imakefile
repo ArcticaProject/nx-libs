@@ -5,7 +5,7 @@ XCOMM $XFree86: xc/lib/Xaw6/Imakefile,v 1.2 1999/06/06 14:05:55 dawes Exp $
 #define DoDebugLib DebugLibXaw6
 #define DoProfileLib ProfileLibXaw6
 #define HasSharedData YES
-#define LibName Xaw
+#define LibName NX_Xaw
 #define SoRev SOXAW6REV
 #define LibHeaders NO
 #define NoSoSymlink

@@ -1137,6 +1137,10 @@ CreateSolidPicture (Picture pid, xRenderColor *color, int *error)
     }
     pPicture->pSourcePict->type = SourcePictTypeSolidFill;
     pPicture->pSourcePict->solidFill.color = xRenderColorToCard32(*color);
+    pPicture->pSourcePict->solidFill.fullColor.alpha=color->alpha;
+    pPicture->pSourcePict->solidFill.fullColor.red=color->red;
+    pPicture->pSourcePict->solidFill.fullColor.green=color->green;
+    pPicture->pSourcePict->solidFill.fullColor.blue=color->blue;
     return pPicture;
 }
 

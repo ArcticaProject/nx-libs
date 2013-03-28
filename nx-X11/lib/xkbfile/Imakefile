@@ -11,7 +11,7 @@ XCOMM $XFree86: xc/lib/xkbfile/Imakefile,v 3.5 2003/10/15 21:23:38 herrb Exp $
 #define DoDebugLib	DebugLibxkbfile
 #define DoProfileLib	ProfileLibxkbfile
 #define HasSharedData	NO
-#define LibName		xkbfile
+#define LibName		NX_xkbfile
 #define SoRev		SOXKBFILEREV
 #define IncSubdir	X11
 #define	IncSubSubdir	extensions

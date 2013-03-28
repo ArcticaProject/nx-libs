@@ -6,7 +6,7 @@ XCOMM $XFree86: xc/lib/xkbui/Imakefile,v 3.4 2003/10/15 21:23:38 herrb Exp $
 #define DoDebugLib DebugLibxkbui
 #define DoProfileLib ProfileLibxkbui
 #define HasSharedData NO
-#define LibName xkbui
+#define LibName NX_xkbui
 #define SoRev SOXKBUIREV
 #define	IncSubdir X11
 #define	IncSubSubdir extensions

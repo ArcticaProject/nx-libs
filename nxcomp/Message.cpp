@@ -15,9 +15,9 @@
 /*                                                                        */
 /**************************************************************************/
 
-#include <stdio.h>
+#include <cstdio>
 #include <unistd.h>
-#include <string.h>
+#include <cstring>
 
 #include <algorithm>
 

@@ -5,7 +5,7 @@
 #define DoDebugLib    NO
 #define DoProfileLib  NO
 #define HasSharedData NO
-#define LibName       XprintAppUtil
+#define LibName       NX_XprintAppUtil
 #define SoRev         SOZLIBREV
 #define IncSubdir     X11
 #define IncSubSubdir  XprintAppUtil

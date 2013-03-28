@@ -2,7 +2,7 @@
 #define DoSharedLib SharedLibWindowsWM
 #define DoDebugLib DebugLibWindowsWM
 #define DoProfileLib ProfileLibWindowsWM
-#define LibName WindowsWM
+#define LibName NX_WindowsWM
 #define SoRev SOWINDOWSWMREV
 #define IncSubdir X11
 #define IncSubSubdir extensions

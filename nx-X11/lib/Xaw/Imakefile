@@ -11,7 +11,7 @@ XCOMM $XFree86: xc/lib/Xaw/Imakefile,v 1.10 2001/01/17 19:42:27 dawes Exp $
 #define DoDebugLib DebugLibXaw 
 #define DoProfileLib ProfileLibXaw 
 #define HasSharedData YES
-#define LibName Xaw
+#define LibName NX_Xaw
 #define SoRev SOXAWREV
 #define IncSubdir X11
 #define IncSubSubdir Xaw

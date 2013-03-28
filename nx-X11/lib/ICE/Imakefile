@@ -10,7 +10,7 @@ XCOMM $XFree86: xc/lib/ICE/Imakefile,v 3.5 2001/04/23 16:17:06 tsi Exp $
 #define DoExtraLib SharedLibICE
 #define DoDebugLib DebugLibICE
 #define DoProfileLib ProfileLibICE
-#define LibName ICE
+#define LibName NX_ICE
 #define SoRev SOICEREV
 #define IncSubdir X11
 #define IncSubSubdir ICE

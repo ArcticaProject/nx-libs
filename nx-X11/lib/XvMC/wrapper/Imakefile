@@ -3,7 +3,7 @@ XCOMM $XFree86: xc/lib/XvMC/wrapper/Imakefile,v 1.2 2002/10/30 12:52:02 alanh Ex
 #define DoSharedLib SharedLibXvMC
 #define DoDebugLib DebugLibXvMC
 #define DoProfileLib ProfileLibXvMC
-#define LibName XvMCW
+#define LibName NX_XvMCW
 #define SoRev SOXVMCREV
 #define LibHeaders NO
 

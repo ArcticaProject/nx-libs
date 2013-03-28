@@ -176,7 +176,7 @@ endif
 all: modules
 
 modules: includes
-	make -C $(LINUXDIR) $(GETCONFIG) SUBDIRS=`pwd` DRMSRCDIR=`pwd` modules
+	${MAKE} -C $(LINUXDIR) $(GETCONFIG) SUBDIRS=`pwd` DRMSRCDIR=`pwd` modules
 
 ifeq ($(HEADERFROMBOOT),1)
 
@@ -246,7 +246,7 @@ clean cleandir:
 	rm -rf $(CLEANFILES)
 
 $(MODULE_LIST)::
-	make DRM_MODULES=$@ modules
+	${MAKE} DRM_MODULES=$@ modules
 
 # Build test utilities
 

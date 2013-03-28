@@ -381,6 +381,13 @@ typedef struct _AgentOptions
 
   int ImageRateLimit;
 
+ /*
+  * True if agent should not exit if there are no
+  * clients in rootless mode
+  */
+
+  int NoRootlessExit;
+
 } AgentOptionsRec;
 
 typedef AgentOptionsRec *AgentOptionsPtr;

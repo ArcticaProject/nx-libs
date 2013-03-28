@@ -21,8 +21,8 @@
 #include <iostream>
 #include <fstream>
 
-#include <errno.h>
-#include <string.h>
+#include <cerrno>
+#include <cstring>
 
 #ifdef __sun
 
@@ -88,6 +88,14 @@ extern const int DEFAULT_NX_FONT_PORT_OFFSET;
 
 extern const int DEFAULT_NX_SLAVE_PORT_CLIENT_OFFSET;
 extern const int DEFAULT_NX_SLAVE_PORT_SERVER_OFFSET;
+
+//
+// NX proxy binds to all network interfaces by default
+// With the -loopback parameter, you can switch
+// over to binding to the loopback device only.
+//
+
+extern const int DEFAULT_LOOPBACK_BIND;
 
 //
 // Return strings containing various info.

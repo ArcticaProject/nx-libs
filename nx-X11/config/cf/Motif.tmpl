@@ -465,9 +465,9 @@ TOP_MOTIF_INCLUDES = -I$(MINCLUDESRC)
 #endif
 
 #if SharedLibXm
-SharedLibReferences(XM,Xm,$(MWIDGETSRC),SOXMREV,SharedXmRev)
+SharedLibReferences(XM,NX_Xm,$(MWIDGETSRC),SOXMREV,SharedXmRev)
 #else
-ProjectUnsharedLibReferences(XM,Xm,$(MWIDGETSRC),MBuildLibDir)
+ProjectUnsharedLibReferences(XM,NX_Xm,$(MWIDGETSRC),MBuildLibDir)
 #endif
 
 #if SharedLibMrm
