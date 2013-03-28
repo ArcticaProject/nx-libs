@@ -4,7 +4,7 @@ nx-libs (2:3.5.0.19-0) UNRELEASED; urgency=low
     string substitutions as comment to /debian/Makefile.replaces.sh.
   * Fix FTBFS for .deb packages after including fix for #145.
 
- -- Mike Gabriel <sunweaver@debian.org>  Sat, 23 Mar 2013 00:42:01 +0100
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Sat, 23 Mar 2013 00:42:01 +0100
 
 nx-libs (2:3.5.0.18-0) unstable; urgency=low
 
