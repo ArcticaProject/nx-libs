@@ -20,7 +20,7 @@ override_dh_clean:
 	rm -f nx*/changelog
 	rm -f nx-X11/programs/Xserver/hw/nxagent/changelog
 	rm -f nx-X11/programs/nxauth/changelog
-	rm -Rf Makefile bin rgb VERSION.x2goagent
+	rm -Rf replace.sh Makefile bin rgb VERSION.x2goagent
 	dh_clean
 
 override_dh_auto_install:
@@ -36,6 +36,7 @@ override_dh_auto_build:
 	cp -a nx-X11/programs/nxauth/CHANGELOG nx-X11/programs/nxauth/changelog
 	cp -a nxproxy/CHANGELOG nxproxy/changelog
 	ln -s debian/Makefile.nx-libs Makefile
+	ln -s debian/Makefile.replace.sh replace.sh
 	ln -s debian/wrappers bin
 	ln -s debian/rgb
 	ln -s debian/VERSION.x2goagent
