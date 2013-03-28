@@ -11,7 +11,7 @@ XCOMM other than Xlib and the system C library
 #define DoExtraLib SharedLibXmuu
 #define DoDebugLib DebugLibXmuu
 #define DoProfileLib ProfileLibXmuu
-#define LibName NX_Xmuu
+#define LibName Xmuu
 #define SoRev SOXMUUREV
 #define LibHeaders NO
 

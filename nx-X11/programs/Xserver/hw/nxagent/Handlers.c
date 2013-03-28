@@ -219,7 +219,7 @@ void nxagentBlockHandler(pointer data, struct timeval **timeout, pointer mask)
 
   if (nxagentOption(Rootless) &&
           nxagentLastWindowDestroyed && nxagentRootlessDialogPid == 0 &&
-              now > nxagentLastWindowDestroyedTime + 30 * 1000 && !nxagentOption(NoRootlessExit))
+              now > nxagentLastWindowDestroyedTime + 30 * 1000)
   {
     #ifdef WARNING
     fprintf(stderr, "nxagentBlockHandler: No application running. Closing the session.\n");

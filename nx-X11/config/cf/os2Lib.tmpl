@@ -107,35 +107,35 @@ XCOMM $XFree86: xc/config/cf/os2Lib.tmpl,v 3.18 2003/11/12 00:10:23 dawes Exp $
 #endif
 
 #if LinkStatically
-#define SDlibX11 -lNX_X11_s
-#define SDlibXExt -lNX_XExt_s
-#define SDlibXmu -lNX_Xmu_s
-#define SDlibXt -lNX_Xt_s
-#define SDlibXaw -lNX_Xaw_s
-#define SDlibXaw7 -lNX_Xaw_s
-#define SDlibXaw6 -lNX_Xaw_s
-#define SDlibXi -lNX_Xi_s
-#define SDlibXtst -lNX_Xtst_s
-#define SDlibXp -lNX_Xp_s
-#define SDlibXv -lNX_Xv_s
-#define SDlibGL -lNX_GL_s
-#define SDlibDPS -lNX_DPS_s
-#define SDlibDPSTK -lNX_DPSTK_s
+#define SDlibX11 -lX11_s
+#define SDlibXExt -lXExt_s
+#define SDlibXmu -lXmu_s
+#define SDlibXt -lXt_s
+#define SDlibXaw -lXaw_s
+#define SDlibXaw7 -lXaw_s
+#define SDlibXaw6 -lXaw_s
+#define SDlibXi -lXi_s
+#define SDlibXtst -lXtst_s
+#define SDlibXp -lXp_s
+#define SDlibXv -lXv_s
+#define SDlibGL -lGL_s
+#define SDlibDPS -lDPS_s
+#define SDlibDPSTK -lDPSTK_s
 #else
-#define SDlibX11 -lNX_X11
-#define SDlibXExt -lNX_XExt
-#define SDlibXmu -lNX_Xmu
-#define SDlibXt -lNX_Xt
-#define SDlibXaw -lNX_Xaw
-#define SDlibXaw7 -lNX_Xaw
-#define SDlibXaw6 -lNX_Xaw
-#define SDlibXi -lNX_Xi
-#define SDlibXtst -lNX_Xtst
-#define SDlibXp -lNX_Xp
-#define SDlibXv -lNX_Xv
-#define SDlibGL -lNX_GL
-#define SDlibDPS -lNX_DPS
-#define SDlibDPSTK -lNX_DPSTK
+#define SDlibX11 -lX11
+#define SDlibXExt -lXExt
+#define SDlibXmu -lXmu
+#define SDlibXt -lXt
+#define SDlibXaw -lXaw
+#define SDlibXaw7 -lXaw
+#define SDlibXaw6 -lXaw
+#define SDlibXi -lXi
+#define SDlibXtst -lXtst
+#define SDlibXp -lXp
+#define SDlibXv -lXv
+#define SDlibGL -lGL
+#define SDlibDPS -lDPS
+#define SDlibDPSTK -lDPSTK
 #endif
 
 /*
@@ -159,7 +159,7 @@ XCOMM $XFree86: xc/config/cf/os2Lib.tmpl,v 3.18 2003/11/12 00:10:23 dawes Exp $
 #endif
 #if SharedOldX
       DEPOLDXLIB = 
-         OLDXLIB = _Use(-lNX_oldX,-L$(OLDXLIBSRC) -lNX_oldX)
+         OLDXLIB = _Use(-loldX,-L$(OLDXLIBSRC) -loldX)
 #endif
 #if SharedLibXt
      DEPXTOOLLIB = 

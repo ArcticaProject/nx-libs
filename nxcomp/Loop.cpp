@@ -952,7 +952,6 @@ static char listenHost[DEFAULT_STRING_LENGTH]  = { 0 };
 static char displayHost[DEFAULT_STRING_LENGTH] = { 0 };
 static char authCookie[DEFAULT_STRING_LENGTH]  = { 0 };
 
-static int loopbackBind = DEFAULT_LOOPBACK_BIND;
 static int proxyPort = DEFAULT_NX_PROXY_PORT;
 static int xPort     = DEFAULT_NX_X_PORT;
 
@@ -3960,14 +3959,7 @@ int SetupTcpSocket()
 
   tcpAddr.sin_family = AF_INET;
   tcpAddr.sin_port = htons(proxyPortTCP);
-  if ( loopbackBind )
-  {
-    tcpAddr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-  }
-  else
-  {
-    tcpAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-  }
+  tcpAddr.sin_addr.s_addr = htonl(INADDR_ANY);
 
   if (bind(tcpFD, (sockaddr *) &tcpAddr, sizeof(tcpAddr)) == -1)
   {
@@ -4520,14 +4512,7 @@ int ListenConnection(int port, const char *label)
 
   tcpAddr.sin_family = AF_INET;
   tcpAddr.sin_port = htons(portTCP);
-  if ( loopbackBind )
-  {
-    tcpAddr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-  }
-  else
-  {
-    tcpAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-  }
+  tcpAddr.sin_addr.s_addr = htonl(INADDR_ANY);
 
   if (bind(newFD, (sockaddr *) &tcpAddr, sizeof(tcpAddr)) == -1)
   {
@@ -5899,9 +5884,20 @@ void InstallSignal(int signal, int action)
 
   struct sigaction newAction;
 
-  memset(&newAction, 0, sizeof(newAction));
-
   newAction.sa_handler = HandleSignal;
+
+  //
+  // This field doesn't exist on most OSes except
+  // Linux. We keep setting the field to NULL to
+  // avoid side-effects in the case the field is
+  // a value return.
+  //
+
+  #if defined(__linux__)
+
+  newAction.sa_restorer = NULL;
+
+  #endif
 
   sigemptyset(&(newAction.sa_mask));
 
@@ -6513,9 +6509,13 @@ void SetTimer(int value)
 
   struct sigaction action;
 
-  memset(&action, 0, sizeof(action));
-
   action.sa_handler = HandleTimer;
+
+  #if defined(__linux__)
+
+  action.sa_restorer = NULL;
+
+  #endif
 
   sigemptyset(&action.sa_mask);
 
@@ -6695,14 +6695,7 @@ int WaitForRemote(int portNum)
 
   #ifdef __APPLE__
 
-  if ( loopbackBind )
-  {
-    tcpAddr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-  }
-  else
-  {
-    tcpAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-  }
+  tcpAddr.sin_addr.s_addr = htonl(INADDR_ANY);
 
   #else
 
@@ -8380,10 +8373,6 @@ int ParseEnvironmentOptions(const char *env, int force)
       }
 
       listenPort = ValidateArg("local", name, value);
-    }
-    else if (strcasecmp(name, "loopback") == 0)
-    {
-      loopbackBind = ValidateArg("local", name, value);
     }
     else if (strcasecmp(name, "accept") == 0)
     {
@@ -13761,14 +13750,7 @@ int ParseListenOption(int &address)
     }
     else
     {
-      if ( loopbackBind )
-      {
-        address = htonl(INADDR_LOOPBACK);
-      }
-      else
-      {
-        address = htonl(INADDR_ANY);
-      }
+      address = htonl(INADDR_ANY);
     }
   }
   else

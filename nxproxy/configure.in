@@ -7,8 +7,8 @@ AC_PREREQ(2.13)
 
 dnl Reset default compilation flags.
 
-CXXFLAGS="$CXXFLAGS -O3"
-CPPFLAGS="$CPPFLAGS -O3"
+CXXFLAGS="-O3"
+CPPFLAGS="-O3"
 
 dnl Prefer headers and libraries from nx-X11 if present.
 

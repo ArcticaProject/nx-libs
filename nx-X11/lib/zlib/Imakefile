@@ -12,7 +12,7 @@ XCOMM $XFree86: xc/lib/zlib/Imakefile,v 1.9tsi Exp $
 #define DoDebugLib    NO
 #define DoProfileLib  NO
 #define HasSharedData NO
-#define LibName       NX_z
+#define LibName       z
 #define SoRev         SOZLIBREV
 
  ZLIBDIR = $(TOP)/extras/zlib

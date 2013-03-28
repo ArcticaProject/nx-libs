@@ -63,6 +63,7 @@ NX_XCOMPLIBDIR    = $(XTOP)/../nxcomp
 NX_XCOMPLIBLINK   = Xcomp
 NX_XCOMPLIBTARGET = $(NX_XCOMPLIBDIR)/$(NX_XCOMPLIBNAME)
 NX_REQUIREDLIBS   = -L$(NX_XCOMPLIBDIR) -l$(NX_XCOMPLIBLINK)
+NX_XCOMPDEPTARGET = $(BUILDLIBDIR)/$(NX_XCOMPLIBNAME)
 NX_XCOMPCONFIGTARGET = $(NX_XCOMPLIBDIR)/config.status
 
 NX_XCOMPEXTLIBDIR    = $(XTOP)/../nxcompext
@@ -82,7 +83,7 @@ NX_XCOMPEXTCONFIGTARGET = $(NX_XCOMPEXTLIBDIR)/config.status
 #define DoExtraLib SharedLibX11
 #define DoDebugLib DebugLibX11
 #define DoProfileLib ProfileLibX11
-#define LibName NX_X11
+#define LibName X11
 #define SoRev SOXLIBREV
 #define HugeLibrary YES
 #define IncSubdir X11
@@ -1146,43 +1147,51 @@ ks_tables.h: $(XINCLUDESRC)/keysymdef.h util/makekeys.c
 
 includes:: ks_tables.h
 
-CONFIGURE ?= ./configure
-
 #if NXLibraries
 
 $(NX_XCOMPCONFIGTARGET):
 	cd ../../../nxcomp && \
-	${CONFIGURE}
+	./configure
 
 $(NX_XCOMPEXTCONFIGTARGET):
 	cd ../../../nxcompext && \
-	${CONFIGURE}
+	./configure
 
 #ifdef SunArchitecture
 $(NX_XCOMPLIBTARGET): $(NX_XCOMPCONFIGTARGET)
-	${MAKE} -C $(NX_XCOMPLIBDIR)
+	cd $(NX_XCOMPLIBDIR) && \
+	gmake
 
 $(NX_XCOMPEXTLIBTARGET): $(NX_XCOMPEXTCONFIGTARGET)
-	${MAKE} -C ../../../nxcompext
+	cd ../../../nxcompext && \
+	gmake
 
 #else
 $(NX_XCOMPLIBTARGET): $(NX_XCOMPCONFIGTARGET)
-	${MAKE} -C $(NX_XCOMPLIBDIR)
+	cd $(NX_XCOMPLIBDIR) && \
+	make
 
-$(NX_XCOMPEXTLIBTARGET): $(NX_XCOMPEXTCONFIGTARGET) $(NX_XCOMPLIBTARGET) lib$(LIBNAME).so.$(SOXLIBREV)
-	${MAKE} -C ../../../nxcompext
+$(NX_XCOMPEXTLIBTARGET): $(NX_XCOMPEXTCONFIGTARGET)
+	cd ../../../nxcompext && \
+	make
 
 #endif
 
-depend::
-
-lib$(LIBNAME).so.$(SOXLIBREV): $(NX_XCOMPLIBTARGET)
+depend:: $(NX_XCOMPLIBTARGET)
 
 all:: $(NX_XCOMPLIBTARGET)
 
+$(NX_XCOMPDEPTARGET):
+	ln -s $(NX_XCOMPLIBDIR)/$(NX_XCOMPLIBNAME) $(BUILDLIBDIR)/$(NX_XCOMPLIBNAME)
+	ln -s $(NX_XCOMPLIBDIR)/$(NX_XCOMPLIBNAME).1 $(BUILDLIBDIR)/$(NX_XCOMPLIBNAME).1
+
 depend:: $(NX_XCOMPLIBTARGET)
 
-all:: $(NX_XCOMPEXTLIBTARGET) 
+all:: $(NX_XCOMPDEPTARGET) $(NX_XCOMPEXTLIBTARGET) 
+
+clean::
+	rm -f $(BUILDLIBDIR)/$(NX_XCOMPLIBNAME)
+	rm -f $(BUILDLIBDIR)/$(NX_XCOMPLIBNAME).1
 
 #endif
 

@@ -33,7 +33,6 @@ extern int nxagentLogoDepth;
 extern int nxagentLogoWhite;
 extern int nxagentLogoRed;
 extern int nxagentLogoBlack;
-extern int nxagentLogoGray;
 
 extern Window nxagentSplashWindow;
 

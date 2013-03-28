@@ -35,7 +35,6 @@
 #include "Windows.h"
 #include "Atoms.h"
 #include "Trap.h"
-#include "Init.h"
 
 /*
  * Set here the required log level.
@@ -54,7 +53,6 @@ int nxagentLogoDepth;
 int nxagentLogoWhite;
 int nxagentLogoRed;
 int nxagentLogoBlack;
-int nxagentLogoGray;
 
 void nxagentPaintLogo(Window win, GC gc, int scale, int width, int height);
 
@@ -168,15 +166,6 @@ void nxagentPaintLogo(Window win, GC gc, int scale, int width, int height)
   XPoint    m[12];
   int w, h, c, w2, h2;
 
-  /*
-   * Show only X2GO Logo when running as X2Go Agent
-   */
-   if(! nxagentX2go)
-   {
-     nxagentPixmapLogo = 0L;
-     return;
-   }
-
   #ifdef DEBUG
   fprintf(stderr, "nxagenShowtLogo: Got called.\n");
   #endif
@@ -229,145 +218,74 @@ void nxagentPaintLogo(Window win, GC gc, int scale, int width, int height)
   XSetForeground(nxagentDisplay, gc, nxagentLogoRed);
   XSetBackground(nxagentDisplay, gc, nxagentLogoWhite);
 
-  /*
-   * Draw X2GO Logo
-   */
+  rect[0].x = w2-10*c;               rect[0].y = h2-8*c;
+  rect[1].x = w2-10*c;               rect[1].y = h2+8*c;
+  rect[2].x = w2+10*c;               rect[2].y = h2+8*c;
+  rect[3].x = w2+10*c;               rect[3].y = h2-8*c;
+
+  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
+
+  #ifdef NXAGENT_LOGO_DEBUG
+  fprintf(stderr, "filled red rect\n");
+  #endif
+
+  rect[0].x = w2-9*c;               rect[0].y = h2-7*c;
+  rect[1].x = w2-9*c;               rect[1].y = h2+7*c;
+  rect[2].x = w2+9*c;               rect[2].y = h2+7*c;
+  rect[3].x = w2+9*c;               rect[3].y = h2-7*c;
+
+  XSetForeground(nxagentDisplay, gc, nxagentLogoWhite);
+  XSetBackground(nxagentDisplay, gc, nxagentLogoRed);
+
+  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
 
   /*
-   * Begin 'X'.
+   * Begin 'M'.
    */
 
-  XSetForeground(nxagentDisplay, gc, nxagentLogoGray);
+  m[0].x = w2-3*c;  m[0].y = h2-5*c;
+  m[1].x = w2+7*c;  m[1].y = h2-5*c;
+  m[2].x = w2+7*c;  m[2].y = h2+5*c;
+  m[3].x = w2+5*c;  m[3].y = h2+5*c;
+  m[4].x = w2+5*c;  m[4].y = h2-3*c;
+  m[5].x = w2+3*c;  m[5].y = h2-3*c;
+  m[6].x = w2+3*c;  m[6].y = h2+5*c;
+  m[7].x = w2+1*c;  m[7].y = h2+5*c;
+  m[8].x = w2+1*c;  m[8].y = h2-3*c;
+  m[9].x = w2-1*c;  m[9].y = h2-3*c;
+  m[10].x = w2-1*c; m[10].y = h2+5*c;
+  m[11].x = w2-3*c; m[11].y = h2+5*c;
+
+  XSetForeground(nxagentDisplay, gc, nxagentLogoRed);
   XSetBackground(nxagentDisplay, gc, nxagentLogoWhite);
+
+  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, m, 12, Nonconvex, CoordModeOrigin);
+
+  /*
+   * End 'M'.
+   */
+
+  /*
+   * Begin '!'.
+   */
+
   rect[0].x = w2-7*c;               rect[0].y = h2-5*c;
-  rect[1].x = w2-8*c;               rect[1].y = h2-5*c;
-  rect[2].x = w2-4*c;               rect[2].y = h2+3*c;
-  rect[3].x = w2-3*c;               rect[3].y = h2+3*c;
+  rect[1].x = w2-5*c;               rect[1].y = h2-5*c;
+  rect[2].x = w2-5*c;               rect[2].y = h2+2*c;
+  rect[3].x = w2-7*c;               rect[3].y = h2+2*c;
+
   XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
 
-  rect[0].x = w2-4*c;               rect[0].y = h2-5*c;
-  rect[1].x = w2-3*c;               rect[1].y = h2-5*c;
-  rect[2].x = w2-7*c;               rect[2].y = h2+3*c;
-  rect[3].x = w2-8*c;               rect[3].y = h2+3*c;
-  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
+  rect[0].x = w2-7*c;               rect[0].y = h2+3*c;
+  rect[1].x = w2-5*c;               rect[1].y = h2+3*c;
+  rect[2].x = w2-5*c;               rect[2].y = h2+5*c;
+  rect[3].x = w2-7*c;               rect[3].y = h2+5*c;
 
-  /*
-   * End 'X'.
-   */
-
-  /*
-   * Start '2'.
-   */
-
-  rect[0].x = w2-2*c;               rect[0].y = h2-5*c;
-  rect[1].x = w2-1*c;               rect[1].y = h2-5*c;
-  rect[2].x = w2-1*c;               rect[2].y = h2-3*c;
-  rect[3].x = w2-2*c;               rect[3].y = h2-3*c;
-  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
-
-  rect[0].x = w2-2*c;               rect[0].y = h2-5*c;
-  rect[1].x = w2+2*c;               rect[1].y = h2-5*c;
-  rect[2].x = w2+2*c;               rect[2].y = h2-4*c;
-  rect[3].x = w2-2*c;               rect[3].y = h2-4*c;
-  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
-
-  rect[0].x = w2+1*c;               rect[0].y = h2-5*c;
-  rect[1].x = w2+2*c;               rect[1].y = h2-5*c;
-  rect[2].x = w2+2*c;               rect[2].y = h2-2*c;
-  rect[3].x = w2+1*c;               rect[3].y = h2-2*c;
-  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
-
-  rect[0].x = w2+2*c;               rect[0].y = h2-2*c;
-  rect[1].x = w2+1*c;               rect[1].y = h2-2*c;
-  rect[2].x = w2-2*c;               rect[2].y = h2+2*c;
-  rect[3].x = w2-1*c;               rect[3].y = h2+2*c;
-  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
-
-
-  rect[0].x = w2-2*c;               rect[0].y = h2+2*c;
-  rect[1].x = w2+2*c;               rect[1].y = h2+2*c;
-  rect[2].x = w2+2*c;               rect[2].y = h2+3*c;
-  rect[3].x = w2-2*c;               rect[3].y = h2+3*c;
-  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
-  /*
-   * End '2'.
-   */
-
-  /*
-   * Start 'G'.
-   */
-
-  rect[0].x = w2+3*c;               rect[0].y = h2-5*c;
-  rect[1].x = w2+7*c;               rect[1].y = h2-5*c;
-  rect[2].x = w2+7*c;               rect[2].y = h2-4*c;
-  rect[3].x = w2+3*c;               rect[3].y = h2-4*c;
-  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
-
-  rect[0].x = w2+3*c;               rect[0].y = h2-5*c;
-  rect[1].x = w2+4*c;               rect[1].y = h2-5*c;
-  rect[2].x = w2+4*c;               rect[2].y = h2+3*c;
-  rect[3].x = w2+3*c;               rect[3].y = h2+3*c;
-  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
-
-  rect[0].x = w2+3*c;               rect[0].y = h2+2*c;
-  rect[1].x = w2+7*c;               rect[1].y = h2+2*c;
-  rect[2].x = w2+7*c;               rect[2].y = h2+3*c;
-  rect[3].x = w2+3*c;               rect[3].y = h2+3*c;
-  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
-
-  rect[0].x = w2+6*c;               rect[0].y = h2-5*c;
-  rect[1].x = w2+7*c;               rect[1].y = h2-5*c;
-  rect[2].x = w2+7*c;               rect[2].y = h2-3*c;
-  rect[3].x = w2+6*c;               rect[3].y = h2-3*c;
-  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
-
-  rect[0].x = w2+6*c;               rect[0].y = h2-0*c;
-  rect[1].x = w2+7*c;               rect[1].y = h2-0*c;
-  rect[2].x = w2+7*c;               rect[2].y = h2+3*c;
-  rect[3].x = w2+6*c;               rect[3].y = h2+3*c;
-  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
-
-  rect[0].x = w2+5*c;               rect[0].y = h2-1*c;
-  rect[1].x = w2+7*c;               rect[1].y = h2-1*c;
-  rect[2].x = w2+7*c;               rect[2].y = h2+0*c;
-  rect[3].x = w2+5*c;               rect[3].y = h2+0*c;
-  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
-  /*
-   * End 'G'.
-   */
-
-  /*
-   * Start 'O'.
-   */
-
-  rect[0].x = w2+8*c;               rect[0].y = h2-5*c;
-  rect[1].x = w2+12*c;              rect[1].y = h2-5*c;
-  rect[2].x = w2+12*c;              rect[2].y = h2-4*c;
-  rect[3].x = w2+8*c;               rect[3].y = h2-4*c;
-  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
-
-  rect[0].x = w2+8*c;               rect[0].y = h2+3*c;
-  rect[1].x = w2+12*c;              rect[1].y = h2+3*c;
-  rect[2].x = w2+12*c;              rect[2].y = h2+2*c;
-  rect[3].x = w2+8*c;               rect[3].y = h2+2*c;
-  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
-
-  rect[0].x = w2+8*c;               rect[0].y = h2-5*c;
-  rect[1].x = w2+9*c;               rect[1].y = h2-5*c;
-  rect[2].x = w2+9*c;               rect[2].y = h2+3*c;
-  rect[3].x = w2+8*c;               rect[3].y = h2+3*c;
-  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
-
-  rect[0].x = w2+11*c;               rect[0].y = h2-5*c;
-  rect[1].x = w2+12*c;               rect[1].y = h2-5*c;
-  rect[2].x = w2+12*c;               rect[2].y = h2+3*c;
-  rect[3].x = w2+11*c;               rect[3].y = h2+3*c;
   XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
 
   /*
-   * End 'O'.
+   * End 'M'.
    */
-
 
   XSetWindowBackgroundPixmap(nxagentDisplay, win, nxagentPixmapLogo);
 

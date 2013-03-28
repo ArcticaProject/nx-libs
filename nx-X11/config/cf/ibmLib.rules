@@ -127,23 +127,23 @@ LintLibReferences(varname,libname,libsource)
 #   ifndef SharedFontLibReferences
 #    define SharedFontLibReferences()					@@\
 DEPFONTLIB = /**/							@@\
-FONTLIB = -L$(FREETYPELIBDIR) _Use(-lNX_Xfont,$(FONTLIBSRC)/libNX_Xfont.a)	@@\
-LintLibReferences(XFONT,NX_Xfont,$(FONTLIBSRC))
+FONTLIB = -L$(FREETYPELIBDIR) _Use(-lXfont,$(FONTLIBSRC)/libXfont.a)	@@\
+LintLibReferences(XFONT,Xfont,$(FONTLIBSRC))
 #   endif
 #  else
 #   ifndef SharedFontLibReferences
 #    define SharedFontLibReferences()					@@\
 DEPFONTLIB = /**/							@@\
-FONTLIB = -L$(FREETYPELIBDIR) _Use(-lNX_Xfont,$(BUILDLIBDIR)/font.imp) $(BUILDLIBDI)/libNX_Xfont.a)) @@\
-LintLibReferences(XFONT,NX_Xfont,$(FONTLIBSRC))
+FONTLIB = -L$(FREETYPELIBDIR) _Use(-lXfont,$(BUILDLIBDIR)/font.imp) $(BUILDLIBDI)/libXfont.a)) @@\
+LintLibReferences(XFONT,Xfont,$(FONTLIBSRC))
 #   endif
 #  endif
 # else /* OSMajorVersion < 5 */
 #  ifndef SharedFontLibReferences
 #   define SharedFontLibReferences()					@@\
 DEPFONTLIB = /**/							@@\
-FONTLIB = -L$(FREETYPELIBDIR) _Use(-lNX_Xfont,$(BUILDLIBDI)/libNX_Xfont.so)) @@\
-LintLibReferences(XFONT,NX_Xfont,$(FONTLIBSRC))
+FONTLIB = -L$(FREETYPELIBDIR) _Use(-lXfont,$(BUILDLIBDI)/libXfont.so)) @@\
+LintLibReferences(XFONT,Xfont,$(FONTLIBSRC))
 #  endif
 
 # endif

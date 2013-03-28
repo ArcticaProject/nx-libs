@@ -95,7 +95,6 @@ typedef struct _PictTransform {
 typedef struct _PictSolidFill {
     unsigned int type;
     CARD32 color;
-    xRenderColor fullColor;
 } PictSolidFill, *PictSolidFillPtr;
 
 typedef struct _PictGradientStop {

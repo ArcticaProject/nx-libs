@@ -14,7 +14,7 @@ SOXDAMAGEREV=1.0.1
 #define DoDebugLib DebugLibXdamage
 #define DoProfileLib ProfileLibXdamage
 
-#define LibName NX_Xdamage
+#define LibName Xdamage
 #define SoRev SOXDAMAGEREV
 #define IncSubdir X11
 #define IncSubSubdir extensions

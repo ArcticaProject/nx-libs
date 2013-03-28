@@ -820,12 +820,12 @@ TCLIBDIR = TclLibDir
 
 #ifndef UsrLibDir
 #ifdef ProjectRoot
-#define UsrLibDir Concat4(ProjectRoot,/,LibDirName,/nx)
+#define UsrLibDir Concat3(ProjectRoot,/,LibDirName)
 #ifndef AlternateUsrLibDir
 #define AlternateUsrLibDir YES
 #endif
 #else
-#define UsrLibDir Concat4(/usr,/,LibDirName,/nx)
+#define UsrLibDir Concat3(/usr,/,LibDirName)
 #ifndef AlternateUsrLibDir
 #define AlternateUsrLibDir NO
 #endif
@@ -863,7 +863,7 @@ TCLIBDIR = TclLibDir
 #endif
 #ifndef IncRoot
 #ifdef ProjectRoot
-#define IncRoot Concat(ProjectRoot,/include/nx)
+#define IncRoot Concat(ProjectRoot,/include)
 #ifndef AlternateIncRoot
 #define AlternateIncRoot YES
 #endif

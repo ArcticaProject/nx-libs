@@ -9,7 +9,7 @@ XCOMM $XFree86: xc/lib/Xfontcache/Imakefile,v 1.5 2003/10/13 21:49:21 herrb Exp 
 #define DoExtraLib SharedLibXfontcache
 #define DoDebugLib DebugLibXfontcache
 #define DoProfileLib ProfileLibXfontcache
-#define LibName NX_Xfontcache
+#define LibName Xfontcache
 #define SoRev SOXFONTCACHEREV
 #define LibHeaders NO
 

@@ -90,9 +90,9 @@ DEPMRESOURCELIB = _UseCat($(USRLIBDIR),$(MRESOURCESRC),/libMrm.a)
 LINTMRESOURCELIB= _UseCat($(LINTLIBDIR),$(MRESOURCESRC),/llib-lMrm.ln)
 
        XMLIBSRC = $(LIBSRC)/Xm
-       DEPXMLIB = _UseCat($(USRLIBDIR),$(XMLIBSRC),/libNX_Xm.a)
-          XMLIB = LoaderLibPrefix _Use(-lNX_Xm,$(DEPXMLIB))
-      LINTXMLIB = _UseCat($(LINTLIBDIR),$(XMLIBSRC),/llib-lNX_Xm.ln)
+       DEPXMLIB = _UseCat($(USRLIBDIR),$(XMLIBSRC),/libXm.a)
+          XMLIB = LoaderLibPrefix _Use(-lXm,$(DEPXMLIB))
+      LINTXMLIB = _UseCat($(LINTLIBDIR),$(XMLIBSRC),/llib-lXm.ln)
 
       UILLIBSRC = $(LIBSRC)/uil
       DEPUILLIB = _UseCat($(USRLIBDIR),$(UILLIBSRC),/libUil.a)

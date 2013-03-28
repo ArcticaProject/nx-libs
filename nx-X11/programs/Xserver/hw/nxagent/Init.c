@@ -177,29 +177,6 @@ int nxagentSaveUnder;
 
 int nxagentDoFullGeneration = 1;
 
- /*
- * 1 if agent running as X2goAgent
- * 0 if NX Agent
- */
-int nxagentX2go;
-
-/*
- * Checking if agent is x2go agent
- */
-
-void checkX2goAgent()
-{
-  extern const char *__progname;
-  if( strcasecmp(__progname,"x2goagent") == 0)
-  {
-    fprintf(stderr, "\nrunning as X2Go Agent\n");
-    nxagentX2go=1;
-  }
-  else
-    nxagentX2go=0;
-}
-
-
 /*
  * Called at X server's initialization.
  */
@@ -214,11 +191,6 @@ void InitOutput(ScreenInfo *screenInfo, int argc, char *argv[])
   char *environment;
 
   #endif
-
-  /*
-   * Check if we running as X2Go Agent
-   */
-  checkX2goAgent();
 
   /*
    * Print our pid and version information.

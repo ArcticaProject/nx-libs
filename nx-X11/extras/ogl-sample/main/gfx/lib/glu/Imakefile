@@ -36,7 +36,7 @@ XCOMM
 #define DoDebugLib DebugLibGlu
 #define DoProfileLib ProfileLibGlu
 #define IHaveSubdirs
-#define LibName NX_GLU
+#define LibName GLU
 #define PassCDebugFlags 'CDEBUGFLAGS=$(CDEBUGFLAGS)'
 #define SoRev SOGLUREV
 

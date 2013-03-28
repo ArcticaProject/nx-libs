@@ -42,12 +42,12 @@ CCINCLUDES  = -I. -I../nxcomp
 CCDEFINES   =
 
 LDFLAGS     = @LDFLAGS@ -L../nxcomp
-LIBS        = @LIBS@ -lz -lNX_X11 -lXcomp
+LIBS        = @LIBS@ -lz -lX11 -lXcomp
 
 #
 # Only if THREADS is defined
 #
-# LIBS = @LIBS@ -lz -ljpeg -lpthread -lNX_X11 -lXcomp
+# LIBS = @LIBS@ -lz -ljpeg -lpthread -lX11 -lXcomp
 #
 
 srcdir      = @srcdir@
@@ -56,15 +56,11 @@ exec_prefix = @exec_prefix@
 bindir      = @bindir@
 man1dir     = @mandir@/man1
 VPATH       = @srcdir@
-libdir = @libdir@
-includedir = @includedir@
 
 INSTALL         = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA    = @INSTALL_DATA@
-INSTALL_LINK    = cp -av
-DESTDIR         =
-RM_FILE         = rm -f
+
 #
 # This should be autodetected.
 #
@@ -151,39 +147,16 @@ depend.status:
 		fi
 		touch depend.status
 
-install:       install.bin install.lib install.man
+install:	install.bin install.man
 
 install.bin:
 
-install.lib: all
-	./mkinstalldirs $(DESTDIR)${libdir}/nx
-	./mkinstalldirs $(DESTDIR)${includedir}/nx
-	$(INSTALL_DATA) $(LIBFULL)              $(DESTDIR)${libdir}/nx
-	$(INSTALL_LINK) libXcompext.so.3	$(DESTDIR)${libdir}/nx
-	$(INSTALL_LINK) libXcompext.so          $(DESTDIR)${libdir}/nx
-	$(INSTALL_DATA) NX*.h                   $(DESTDIR)${includedir}/nx
-	echo "Running ldconfig tool, this may take a while..." && ldconfig || true
-
 install.man:
-
-uninstall:     uninstall.bin uninstall.lib uninstall.man
-
-uninstall.bin:
-
-uninstall.lib:
-	$(RM_FILE) $(DESTDIR)${libdir}/nx/$(LIBFULL)
-	$(RM_FILE) $(DESTDIR)${libdir}/nx/libXcompext.so.3
-	$(RM_FILE) $(DESTDIR)${libdir}/nx/libXcompext.so
-	$(RM_FILE) $(DESTDIR)${includedir}/nx/NXlib.h
-	$(RM_FILE) $(DESTDIR)${includedir}/nx/NXlibint.h
-	echo "Running ldconfig tool, this may take a while..." && ldconfig || true
-
-uninstall.man:
 
 clean:
 		-rm -f *~ *.o *.bak *.orig *.rej st?????? core core.* *.out.* \
 		@ALL@
 
 distclean:	clean
-		-rm -rf autom4te.cache config.status config.log configure \
+		-rm -rf autom4te.cache config.status config.log \
 		config.cache depend.status Makefile tags

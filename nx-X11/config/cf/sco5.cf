@@ -318,7 +318,7 @@ XCOMM $XdotOrg: xc/config/cf/sco5.cf,v 1.9 2005/12/20 22:30:48 alanc Exp $
  */
 #ifndef FixupLibReferences
 #define FixupLibReferences()						@@\
-XMULIBONLY = -lNX_Xmu							@@\
+XMULIBONLY = -lXmu							@@\
 XMULIB = $(XMULIBONLY) $(XTOOLLIB) $(XLIB)
 #endif
 

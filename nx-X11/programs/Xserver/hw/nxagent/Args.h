@@ -83,6 +83,4 @@ extern int nxagentUserDefinedFontPath;
 
 extern int nxagentRemoteMajor;
 
-extern char *nxagentKeystrokeFile;
-
 #endif /* __Args_H__ */

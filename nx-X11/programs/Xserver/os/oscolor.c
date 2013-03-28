@@ -53,7 +53,7 @@ SOFTWARE.
 #include <sys/stat.h>
 #include <unistd.h>
 
-static char* nxAltRgbPaths[] = {"/usr/share/nx/rgb", "/usr/local/share/nx/rgb", "/usr/NX/share/rgb", "/usr/share/X11/rgb", "/etc/X11/rgb"};
+static char* nxAltRgbPaths[] = {"/usr/NX/share/rgb", "/usr/share/X11/rgb", "/etc/X11/rgb"};
 static char _NXRgbPath[1024];
 
 #endif

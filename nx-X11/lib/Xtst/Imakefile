@@ -10,7 +10,7 @@ XCOMM $XFree86: xc/lib/Xtst/Imakefile,v 1.2 1998/12/20 11:57:12 dawes Exp $
 #define DoExtraLib SharedLibXtst
 #define DoDebugLib DebugLibXtst
 #define DoProfileLib ProfileLibXtst
-#define LibName NX_Xtst
+#define LibName Xtst
 #define SoRev SOXTESTREV
 #define LibHeaders NO
 

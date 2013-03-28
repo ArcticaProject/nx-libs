@@ -1759,42 +1759,6 @@ N/A
                   nxagentDefaultWindows[pScreen->myNum]);
       #endif
 
-      /*
-       * Setting WM_CLASS to "X2GoAgent" when running in X2Go Agent mode
-       * we need it to properly display all window parameters by some WMs
-       * (for example on Maemo)
-       */
-      if(nxagentX2go)
-      {
-        #ifdef TEST
-        fprintf(stderr, "nxagentOpenScreen: Setting WM_CLASS and WM_NAME for window withid [%ld].\n",
-                nxagentDefaultWindows[pScreen->myNum]);
-        #endif
-        XClassHint hint;
-        hint.res_name=malloc(strlen("X2GoAgent")+1);
-        hint.res_class=malloc(strlen("X2GoAgent")+1);
-        strcpy(hint.res_name,"X2GoAgent");
-        strcpy(hint.res_class,"X2GoAgent");
-        XSetClassHint(nxagentDisplay,nxagentDefaultWindows[pScreen->myNum],&hint);
-        free(hint.res_name);
-        free(hint.res_class);
-      } else {
-        #ifdef TEST
-        fprintf(stderr, "nxagentOpenScreen: Setting WM_CLASS and WM_NAME for window withid [%ld].\n",
-                nxagentDefaultWindows[pScreen->myNum]);      
-        #endif
-      
-        XClassHint hint;
-        hint.res_name=malloc(strlen("NXAgent")+1);
-        hint.res_class=malloc(strlen("NXAgent")+1);
-        strcpy(hint.res_name,"NXAgent");
-        strcpy(hint.res_class,"NXAgent");
-        XSetClassHint(nxagentDisplay,nxagentDefaultWindows[pScreen->myNum],&hint);
-        free(hint.res_name);
-        free(hint.res_class);
-      }
-
-
       if (nxagentOption(Fullscreen))
       {
         nxagentFullscreenWindow = nxagentDefaultWindows[pScreen->myNum];

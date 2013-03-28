@@ -8,4 +8,4 @@ Description: X Render Library
 Version: @VERSION@
 Requires: @X_REQUIRES@
 Cflags: -I${includedir} @RENDER_CFLAGS@ @X_NON_PKG_CFLAGS@
-Libs: -L${libdir} -lNX_Xrender @X_NON_PKG_LIBS@
+Libs: -L${libdir} -lXrender @X_NON_PKG_LIBS@

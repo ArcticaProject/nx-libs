@@ -9,7 +9,7 @@ XCOMM $XFree86: xc/config/cf/lnxLib.tmpl,v 3.19 2003/10/15 22:47:48 herrb Exp $
 
 #ifndef FixupLibReferences
 #define FixupLibReferences()						@@\
-XMULIBONLY = -lNX_Xmu							@@\
+XMULIBONLY = -lXmu							@@\
 XMULIB = $(XMULIBONLY) $(XTOOLLIB) $(XLIB)
 #endif
 
@@ -66,7 +66,7 @@ XMULIB = $(XMULIBONLY) $(XTOOLLIB) $(XLIB)
 
 #ifndef FixupLibReferences
 #define FixupLibReferences()						@@\
-XMULIB = -lNX_Xmu $(XLIB)
+XMULIB = -lXmu $(XLIB)
 #endif
 
 #endif	/* UseElfFormat */

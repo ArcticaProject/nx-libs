@@ -11,7 +11,7 @@ XCOMM $XFree86: xc/lib/Xmu/Imakefile,v 1.7 1999/04/28 15:04:50 dawes Exp $
 #define DoDebugLib DebugLibXmu
 #define DoProfileLib ProfileLibXmu
 #define HasSharedData YES
-#define LibName NX_Xmu
+#define LibName Xmu
 #define SoRev SOXMUREV
 #define IncSubdir X11
 #define IncSubSubdir Xmu

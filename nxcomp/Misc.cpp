@@ -15,11 +15,11 @@
 /*                                                                        */
 /**************************************************************************/
 
-#include <cstdio>
-#include <cctype>
-#include <cstdlib>
+#include <stdio.h>
+#include <ctype.h>
+#include <stdlib.h>
 #include <unistd.h>
-#include <csignal>
+#include <signal.h>
 
 #include <errno.h>
 #include <string.h>
@@ -40,14 +40,6 @@
 #define OPCODES
 #undef  TEST
 #undef  DEBUG
-
-//
-// By default nxproxy binds to all network interfaces, setting
-// DEFAULT_LOOPBACK_BIND to 1 enables binding to the loopback
-// device only.
-//
-
-const int DEFAULT_LOOPBACK_BIND = 0;
 
 //
 // TCP port offset applied to any NX port specification.
@@ -144,8 +136,6 @@ static const char UsageInfo[] =
                to be forwarded by the proxy running on the client.\n\
 \n\
   listen=n     Local port used for accepting the proxy connection.\n\
-\n\
-  loopback=b   Bind to the loopback device only.\n\
 \n\
   accept=s     Name or IP of host that can connect to the proxy.\n\
 \n\

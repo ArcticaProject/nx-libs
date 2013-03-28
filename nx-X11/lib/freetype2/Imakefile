@@ -11,7 +11,7 @@ XCOMM $XFree86: xc/lib/freetype2/Imakefile,v 1.19 2003/11/21 02:33:22 dawes Exp 
 #define DoDebugLib DebugLibFreetype2
 #define DoProfileLib ProfileLibFreetype2
 #define HasSharedData YES
-#define LibName NX_freetype
+#define LibName freetype
 #define SoRev SOFREETYPE2REV
 #ifdef SharedLibtoolFreetype2Rev
 #define SharedLibtoolRev SharedLibtoolFreetype2Rev

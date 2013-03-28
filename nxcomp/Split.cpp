@@ -16,7 +16,7 @@
 /**************************************************************************/
 
 #include <unistd.h>
-#include <cstring>
+#include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <utime.h>

@@ -5,7 +5,7 @@ XCOMM $XdotOrg: xc/lib/Xrandr/Imakefile,v 1.5 2005/10/24 23:30:21 alanc Exp $
 #define DoSharedLib SharedLibXrandr
 #define DoDebugLib DebugLibXrandr
 #define DoProfileLib ProfileLibXrandr
-#define LibName NX_Xrandr
+#define LibName Xrandr
 #define SoRev SOXRANDRREV
 #define IncSubdir X11
 #define IncSubSubdir extensions

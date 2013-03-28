@@ -7,7 +7,7 @@ XCOMM $XFree86: xc/lib/fontconfig/Imakefile,v 1.17 2003/11/19 20:57:37 dawes Exp
 #define DoDebugLib DebugLibFontconfig
 #define DoProfileLib ProfileLibFontconfig
 #define HasSharedData YES
-#define LibName NX_fontconfig
+#define LibName fontconfig
 #define SoRev SOFONTCONFIGREV
 #define LibInstall InstallFontconfigLibrary
 #define LibHeaders InstallFontconfigLibrary

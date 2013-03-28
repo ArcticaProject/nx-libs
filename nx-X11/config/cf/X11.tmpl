@@ -456,7 +456,7 @@ XORGRELSTRING = XorgManVersionString
 #define BuildXinerama		NO
 #endif
 #ifndef BuildXineramaLibrary
-#define BuildXineramaLibrary	(BuildXinerama)
+#define BuildXineramaLibrary	(BuildXinerama && !BuildServersOnly)
 #endif
 #ifndef BuildDmxDevelTools
 #define BuildDmxDevelTools	NO
@@ -1401,7 +1401,7 @@ FCHOWN_DEFINES = -DHAS_FCHOWN
 
 #ifndef BinDir
 #ifdef ProjectRoot
-#define BinDir Concat(ProjectRoot,/lib/nx/bin)
+#define BinDir Concat(ProjectRoot,/bin)
 #else
 #define BinDir /usr/bin/X11
 #endif
@@ -1461,7 +1461,7 @@ FCHOWN_DEFINES = -DHAS_FCHOWN
 #endif
 #ifndef LibDir
 # ifdef ProjectRoot
-#  define LibDir Concat(ProjectRoot,/lib/nx/X11)
+#  define LibDir Concat(ProjectRoot,/lib/X11)
 # else
 #  define LibDir /usr/lib/X11
 # endif
@@ -1835,9 +1835,9 @@ VENDORSUPPORTDEFS = VendorSupportDefines
 #ifndef SharedX11Rev
 #define SharedX11Rev 6.2
 #endif
-SharedLibReferences(XONLY,NX_X11,$(XLIBSRC),SOXLIBREV,SharedX11Rev)
+SharedLibReferences(XONLY,X11,$(XLIBSRC),SOXLIBREV,SharedX11Rev)
 #else
-ProjectUnsharedLibReferences(XONLY,NX_X11,$(XLIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XONLY,X11,$(XLIBSRC),XBuildLibDir)
 #endif
       /* Common alternate spellings */
       DEPXLIBONLY = $(DEPXONLYLIB)
@@ -2466,9 +2466,9 @@ ProjectUnsharedLibReferences(XONLY,NX_X11,$(XLIBSRC),XBuildLibDir)
 #ifndef SharedXextRev
 #define SharedXextRev 6.4
 #endif
-SharedLibReferences(EXTENSION,NX_Xext,$(XEXTLIBSRC),SOXEXTREV,SharedXextRev)
+SharedLibReferences(EXTENSION,Xext,$(XEXTLIBSRC),SOXEXTREV,SharedXextRev)
 #else
-ProjectUnsharedLibReferences(EXTENSION,NX_Xext,$(XEXTLIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(EXTENSION,Xext,$(XEXTLIBSRC),XBuildLibDir)
 #endif
 LINTEXTENSIONLIB = $(LINTEXTENSION)
           DEPXLIB = $(DEPEXTENSIONLIB) $(DEPXONLYLIB)
@@ -2480,9 +2480,9 @@ LINTEXTENSIONLIB = $(LINTEXTENSION)
 #ifndef SharedXssRev
 #define SharedXssRev 1.0
 #endif
-SharedLibReferences(XSS,NX_Xss,$(XSSLIBSRC),SOXSSREV,SharedXssRev)
+SharedLibReferences(XSS,Xss,$(XSSLIBSRC),SOXSSREV,SharedXssRev)
 #else
-ProjectUnsharedLibReferences(XSS,NX_Xss,$(XSSLIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XSS,Xss,$(XSSLIBSRC),XBuildLibDir)
 #endif
 
     XXF86MISCLIBSRC = $(LIBSRC)/Xxf86misc
@@ -2490,9 +2490,9 @@ ProjectUnsharedLibReferences(XSS,NX_Xss,$(XSSLIBSRC),XBuildLibDir)
 #ifndef SharedXxf86miscRev
 #define SharedXxf86miscRev 1.1
 #endif
-SharedLibReferences(XXF86MISC,NX_Xxf86misc,$(XXF86MISCLIBSRC),SOXXF86MISCREV,SharedXxf86miscRev)
+SharedLibReferences(XXF86MISC,Xxf86misc,$(XXF86MISCLIBSRC),SOXXF86MISCREV,SharedXxf86miscRev)
 #else
-ProjectUnsharedLibReferences(XXF86MISC,NX_Xxf86misc,$(XXF86MISCLIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XXF86MISC,Xxf86misc,$(XXF86MISCLIBSRC),XBuildLibDir)
 #endif
 
     XXF86VMLIBSRC = $(LIBSRC)/Xxf86vm
@@ -2500,9 +2500,9 @@ ProjectUnsharedLibReferences(XXF86MISC,NX_Xxf86misc,$(XXF86MISCLIBSRC),XBuildLib
 #ifndef SharedXxf86vmRev
 #define SharedXxf86vmRev 1.0
 #endif
-SharedLibReferences(XXF86VM,NX_Xxf86vm,$(XXF86VMLIBSRC),SOXXF86VMREV,SharedXxf86vmRev)
+SharedLibReferences(XXF86VM,Xxf86vm,$(XXF86VMLIBSRC),SOXXF86VMREV,SharedXxf86vmRev)
 #else
-ProjectUnsharedLibReferences(XXF86VM,NX_Xxf86vm,$(XXF86VMLIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XXF86VM,Xxf86vm,$(XXF86VMLIBSRC),XBuildLibDir)
 #endif
 
     XXF86DGALIBSRC = $(LIBSRC)/Xxf86dga
@@ -2510,9 +2510,9 @@ ProjectUnsharedLibReferences(XXF86VM,NX_Xxf86vm,$(XXF86VMLIBSRC),XBuildLibDir)
 #ifndef SharedXxf86dgaRev
 #define SharedXxf86dgaRev 1.0
 #endif
-SharedLibReferences(XXF86DGA,NX_Xxf86dga,$(XXF86DGALIBSRC),SOXXF86DGAREV,SharedXxf86dgaRev)
+SharedLibReferences(XXF86DGA,Xxf86dga,$(XXF86DGALIBSRC),SOXXF86DGAREV,SharedXxf86dgaRev)
 #else
-ProjectUnsharedLibReferences(XXF86DGA,NX_Xxf86dga,$(XXF86DGALIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XXF86DGA,Xxf86dga,$(XXF86DGALIBSRC),XBuildLibDir)
 #endif
 
 #if BuildDmxLibrary
@@ -2544,9 +2544,9 @@ ProjectUnsharedLibReferences(XXF86DGA,NX_Xxf86dga,$(XXF86DGALIBSRC),XBuildLibDir
 #ifndef SharedXxf86rushRev
 #define SharedXxf86rushRev 1.0
 #endif
-SharedLibReferences(XXF86RUSH,NX_Xxf86rush,$(XXF86RUSHLIBSRC),SOXXF86RUSHREV,SharedXxf86rushRev)
+SharedLibReferences(XXF86RUSH,Xxf86rush,$(XXF86RUSHLIBSRC),SOXXF86RUSHREV,SharedXxf86rushRev)
 #else
-ProjectUnsharedLibReferences(XXF86RUSH,NX_Xxf86rush,$(XXF86RUSHLIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XXF86RUSH,Xxf86rush,$(XXF86RUSHLIBSRC),XBuildLibDir)
 #endif
 
 
@@ -2555,9 +2555,9 @@ ProjectUnsharedLibReferences(XXF86RUSH,NX_Xxf86rush,$(XXF86RUSHLIBSRC),XBuildLib
 #ifndef SharedXvRev
 #define SharedXvRev 1.0
 #endif
-SharedLibReferences(XV,NX_Xv,$(XVLIBSRC),SOXVREV,SharedXvRev)
+SharedLibReferences(XV,Xv,$(XVLIBSRC),SOXVREV,SharedXvRev)
 #else
-ProjectUnsharedLibReferences(XV,NX_Xv,$(XVLIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XV,Xv,$(XVLIBSRC),XBuildLibDir)
 #endif
 
 
@@ -2566,9 +2566,9 @@ ProjectUnsharedLibReferences(XV,NX_Xv,$(XVLIBSRC),XBuildLibDir)
 #ifndef SharedXvMCRev
 #define SharedXvMCRev 1.0
 #endif
-SharedLibReferences(XVMC,NX_XvMC,$(XVMCLIBSRC),SOXVMCREV,SharedXvMCRev)
+SharedLibReferences(XVMC,XvMC,$(XVMCLIBSRC),SOXVMCREV,SharedXvMCRev)
 #else
-ProjectUnsharedLibReferences(XVMC,NX_XvMC,$(XVMCLIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XVMC,XvMC,$(XVMCLIBSRC),XBuildLibDir)
 #endif
 
     XINERAMALIBSRC = $(LIBSRC)/Xinerama
@@ -2576,9 +2576,9 @@ ProjectUnsharedLibReferences(XVMC,NX_XvMC,$(XVMCLIBSRC),XBuildLibDir)
 #ifndef SharedXineramaRev
 #define SharedXineramaRev 1.0
 #endif
-SharedLibReferences(XINERAMA,NX_Xinerama,$(XINERAMALIBSRC),SOXINERAMAREV,SharedXineramaRev)
+SharedLibReferences(XINERAMA,Xinerama,$(XINERAMALIBSRC),SOXINERAMAREV,SharedXineramaRev)
 #else
-ProjectUnsharedLibReferences(XINERAMA,NX_Xinerama,$(XINERAMALIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XINERAMA,Xinerama,$(XINERAMALIBSRC),XBuildLibDir)
 #endif
 
     XRESLIBSRC = $(LIBSRC)/XRes
@@ -2586,9 +2586,9 @@ ProjectUnsharedLibReferences(XINERAMA,NX_Xinerama,$(XINERAMALIBSRC),XBuildLibDir
 #ifndef SharedXResRev
 #define SharedXResRev 1.0
 #endif
-SharedLibReferences(XRES,NX_XRes,$(XRESLIBSRC),SOXRESREV,SharedXResRev)
+SharedLibReferences(XRES,XRes,$(XRESLIBSRC),SOXRESREV,SharedXResRev)
 #else
-ProjectUnsharedLibReferences(XRES,NX_XRes,$(XRESLIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XRES,XRes,$(XRESLIBSRC),XBuildLibDir)
 #endif
 
     DMXLIBSRC = $(LIBSRC)/dmx
@@ -2596,9 +2596,9 @@ ProjectUnsharedLibReferences(XRES,NX_XRes,$(XRESLIBSRC),XBuildLibDir)
 #ifndef SharedDmxRev
 #define SharedDmxRev 1.0
 #endif
-SharedLibReferences(DMX,NX_dmx,$(DMXLIBSRC),SODMXREV,SharedDmxRev)
+SharedLibReferences(DMX,dmx,$(DMXLIBSRC),SODMXREV,SharedDmxRev)
 #else
-ProjectUnsharedLibReferences(DMX,NX_dmx,$(DMXLIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(DMX,dmx,$(DMXLIBSRC),XBuildLibDir)
 #endif
 
     DPSLIBSRC = $(LIBSRC)/dps
@@ -2606,9 +2606,9 @@ ProjectUnsharedLibReferences(DMX,NX_dmx,$(DMXLIBSRC),XBuildLibDir)
 #ifndef SharedDpsRev
 #define SharedDpsRev 1.0
 #endif
-SharedLibReferences(DPS,NX_dps,$(DPSLIBSRC),SODPSREV,SharedDpsRev)
+SharedLibReferences(DPS,dps,$(DPSLIBSRC),SODPSREV,SharedDpsRev)
 #else
-ProjectUnsharedLibReferences(DPS,NX_dps,$(DPSLIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(DPS,dps,$(DPSLIBSRC),XBuildLibDir)
 #endif
 
     DPSTKLIBSRC = $(LIBSRC)/dpstk
@@ -2616,9 +2616,9 @@ ProjectUnsharedLibReferences(DPS,NX_dps,$(DPSLIBSRC),XBuildLibDir)
 #ifndef SharedDpsTkRev
 #define SharedDpsTkRev 1.0
 #endif
-SharedLibReferences(DPSTK,NX_dpstk,$(DPSTKLIBSRC),SODPSTKREV,SharedDpsTkRev)
+SharedLibReferences(DPSTK,dpstk,$(DPSTKLIBSRC),SODPSTKREV,SharedDpsTkRev)
 #else
-ProjectUnsharedLibReferences(DPSTK,NX_dpstk,$(DPSTKLIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(DPSTK,dpstk,$(DPSTKLIBSRC),XBuildLibDir)
 #endif
 
     PSRESLIBSRC = $(LIBSRC)/psres
@@ -2626,9 +2626,9 @@ ProjectUnsharedLibReferences(DPSTK,NX_dpstk,$(DPSTKLIBSRC),XBuildLibDir)
 #ifndef SharedPSResRev
 #define SharedPSResRev 1.0
 #endif
-SharedLibReferences(PSRES,NX_psres,$(PSRESLIBSRC),SOPSRESREV,SharedPSResRev)
+SharedLibReferences(PSRES,psres,$(PSRESLIBSRC),SOPSRESREV,SharedPSResRev)
 #else
-ProjectUnsharedLibReferences(PSRES,NX_psres,$(PSRESLIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(PSRES,psres,$(PSRESLIBSRC),XBuildLibDir)
 #endif
 
     GLULIBSRC = $(LIBSRC)/GLU
@@ -2636,9 +2636,9 @@ ProjectUnsharedLibReferences(PSRES,NX_psres,$(PSRESLIBSRC),XBuildLibDir)
 #ifndef SharedGluRev
 #define SharedGluRev 1.3
 #endif
-SharedLibReferences(GLU,NX_GLU,$(GLULIBSRC),SOGLUREV,SharedGluRev)
+SharedLibReferences(GLU,GLU,$(GLULIBSRC),SOGLUREV,SharedGluRev)
 #else
-ProjectUnsharedLibReferences(GLU,NX_GLU,$(GLULIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(GLU,GLU,$(GLULIBSRC),XBuildLibDir)
 #endif
 
     GLXLIBSRC = $(LIBSRC)/GL
@@ -2646,18 +2646,18 @@ ProjectUnsharedLibReferences(GLU,NX_GLU,$(GLULIBSRC),XBuildLibDir)
 #ifndef SharedGlxRev
 #define SharedGlxRev 1.2
 #endif
-SharedLibReferences(GLX,NX_GL,$(GLXLIBSRC),SOGLREV,SharedGlxRev)
+SharedLibReferences(GLX,GL,$(GLXLIBSRC),SOGLREV,SharedGlxRev)
 #else
-ProjectUnsharedLibReferences(GLX,NX_GL,$(GLXLIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(GLX,GL,$(GLXLIBSRC),XBuildLibDir)
 #endif
     GLWIDGETSRC = $(LIBSRC)/GLw
 #if SharedLibGLw
 #ifndef SharedGLwRev
 #define SharedGLwRev 1.0		/* used to name the shared library */
 #endif
-SharedDSLibReferences(GLW,NX_GLw,$(GLWIDGETSRC),SOGLWREV,SharedGLwRev)
+SharedDSLibReferences(GLW,GLw,$(GLWIDGETSRC),SOGLWREV,SharedGLwRev)
 #else
-ProjectUnsharedLibReferences(GLW,NX_GLw,$(GLWIDGETSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(GLW,GLw,$(GLWIDGETSRC),XBuildLibDir)
 #endif
 
     XRENDERLIBSRC = $(LIBSRC)/Xrender
@@ -2665,9 +2665,9 @@ ProjectUnsharedLibReferences(GLW,NX_GLw,$(GLWIDGETSRC),XBuildLibDir)
 #ifndef SharedXrenderRev
 #define SharedXrenderRev 1.2.2
 #endif
-SharedLibReferences(XRENDER,NX_Xrender,$(XRENDERLIBSRC),SOXRENDERREV,SharedXrenderRev)
+SharedLibReferences(XRENDER,Xrender,$(XRENDERLIBSRC),SOXRENDERREV,SharedXrenderRev)
 #else
-ProjectUnsharedLibReferences(XRENDER,NX_Xrender,$(XRENDERLIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XRENDER,Xrender,$(XRENDERLIBSRC),XBuildLibDir)
 #endif
 
     XRANDRLIBSRC = $(LIBSRC)/Xrandr
@@ -2675,9 +2675,9 @@ ProjectUnsharedLibReferences(XRENDER,NX_Xrender,$(XRENDERLIBSRC),XBuildLibDir)
 #ifndef SharedXrandrRev
 #define SharedXrandrRev 2.0
 #endif
-SharedLibReferences(XRANDR,NX_Xrandr,$(XRANDRLIBSRC),SOXRANDRREV,SharedXrandrRev)
+SharedLibReferences(XRANDR,Xrandr,$(XRANDRLIBSRC),SOXRANDRREV,SharedXrandrRev)
 #else
-ProjectUnsharedLibReferences(XRANDR,NX_Xrandr,$(XRANDRLIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XRANDR,Xrandr,$(XRANDRLIBSRC),XBuildLibDir)
 #endif
 
     XFIXESLIBSRC = $(LIBSRC)/Xfixes
@@ -2685,9 +2685,9 @@ ProjectUnsharedLibReferences(XRANDR,NX_Xrandr,$(XRANDRLIBSRC),XBuildLibDir)
 #ifndef SharedXfixesRev
 #define SharedXfixesRev 3.0
 #endif
-SharedLibReferences(XFIXES,NX_Xfixes,$(XFIXESLIBSRC),SOXFIXESREV,SharedXfixesRev)
+SharedLibReferences(XFIXES,Xfixes,$(XFIXESLIBSRC),SOXFIXESREV,SharedXfixesRev)
 #else
-ProjectUnsharedLibReferences(XFIXES,NX_Xfixes,$(XFIXESLIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XFIXES,Xfixes,$(XFIXESLIBSRC),XBuildLibDir)
 #endif
 
    XDAMAGELIBSRC = $(LIBSRC)/Xdamage
@@ -2695,9 +2695,9 @@ ProjectUnsharedLibReferences(XFIXES,NX_Xfixes,$(XFIXESLIBSRC),XBuildLibDir)
 #ifndef SharedXdamageRev
 #define SharedXdamageRev 1.0
 #endif
-SharedLibReferences(XDAMAGE,NX_Xdamage,$(XDAMAGELIBSRC),SOXDAMAGEREV,SharedXdamageRev)
+SharedLibReferences(XDAMAGE,Xdamage,$(XDAMAGELIBSRC),SOXDAMAGEREV,SharedXdamageRev)
 #else
-ProjectUnsharedLibReferences(XDAMAGE,NX_Xdamage,$(XDAMAGELIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XDAMAGE,Xdamage,$(XDAMAGELIBSRC),XBuildLibDir)
 #endif
 
 XCOMPOSITELIBSRC = $(LIBSRC)/Xcomposite
@@ -2705,9 +2705,9 @@ XCOMPOSITELIBSRC = $(LIBSRC)/Xcomposite
 #ifndef SharedXcompositeRev
 #define SharedXcompositeRev 1.0
 #endif
-SharedLibReferences(XCOMPOSITE,NX_Xcomposite,$(XCOMPOSITELIBSRC),SOXCOMPOSITEREV,SharedXcompositeRev)
+SharedLibReferences(XCOMPOSITE,Xcomposite,$(XCOMPOSITELIBSRC),SOXCOMPOSITEREV,SharedXcompositeRev)
 #else
-ProjectUnsharedLibReferences(XCOMPOSITE,NX_Xcomposite,$(XCOMPOSITELIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XCOMPOSITE,Xcomposite,$(XCOMPOSITELIBSRC),XBuildLibDir)
 #endif
 
 XEVIELIBSRC = $(LIBSRC)/Xevie
@@ -2715,9 +2715,9 @@ XEVIELIBSRC = $(LIBSRC)/Xevie
 #ifndef SharedXevieRev
 #define SharedXevieRev 1.0
 #endif
-SharedLibReferences(XEVIE,NX_Xevie,$(XEVIELIBSRC),SOXEVIEREV,SharedXevieRev)
+SharedLibReferences(XEVIE,Xevie,$(XEVIELIBSRC),SOXEVIEREV,SharedXevieRev)
 #else
-ProjectUnsharedLibReferences(XEVIE,NX_Xevie,$(XEVIELIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XEVIE,Xevie,$(XEVIELIBSRC),XBuildLibDir)
 #endif
 
    XCURSORLIBSRC = $(LIBSRC)/Xcursor
@@ -2725,9 +2725,9 @@ ProjectUnsharedLibReferences(XEVIE,NX_Xevie,$(XEVIELIBSRC),XBuildLibDir)
 #ifndef SharedXcursorRev
 #define SharedXcursorRev 1.0.2
 #endif
-SharedLibReferences(XCURSOR,NX_Xcursor,$(XCURSORLIBSRC),SOXCURSORREV,SharedXcursorRev)
+SharedLibReferences(XCURSOR,Xcursor,$(XCURSORLIBSRC),SOXCURSORREV,SharedXcursorRev)
 #else
-ProjectUnsharedLibReferences(XCURSOR,NX_Xcursor,$(XCURSORLIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XCURSOR,Xcursor,$(XCURSORLIBSRC),XBuildLibDir)
 #endif
 
    APPLEWMLIBSRC = $(LIBSRC)/apple
@@ -2735,9 +2735,9 @@ ProjectUnsharedLibReferences(XCURSOR,NX_Xcursor,$(XCURSORLIBSRC),XBuildLibDir)
 #ifndef SharedAppleWMRev
 #define SharedAppleWMRev 1.0
 #endif
-SharedLibReferences(APPLEWM,NX_AppleWM,$(APPLEWMLIBSRC),SOAPPLEWMREV,SharedAppleWMRev)
+SharedLibReferences(APPLEWM,AppleWM,$(APPLEWMLIBSRC),SOAPPLEWMREV,SharedAppleWMRev)
 #else
-ProjectUnsharedLibReferences(APPLEWM,NX_AppleWM,$(APPLEWMLIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(APPLEWM,AppleWM,$(APPLEWMLIBSRC),XBuildLibDir)
 #endif
 
    WINDOWSWMLIBSRC = $(LIBSRC)/windows
@@ -2745,9 +2745,9 @@ ProjectUnsharedLibReferences(APPLEWM,NX_AppleWM,$(APPLEWMLIBSRC),XBuildLibDir)
 #ifndef SharedWindowsWMRev
 #define SharedWindowsWMRev 1.0
 #endif
-SharedLibReferences(WINDOWSWM,NX_WindowsWM,$(WINDOWSWMLIBSRC),SOWINDOWSWMREV,SharedWindowsWMRev)
+SharedLibReferences(WINDOWSWM,WindowsWM,$(WINDOWSWMLIBSRC),SOWINDOWSWMREV,SharedWindowsWMRev)
 #else
-ProjectUnsharedLibReferences(WINDOWSWM,NX_WindowsWM,$(WINDOWSWMLIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(WINDOWSWM,WindowsWM,$(WINDOWSWMLIBSRC),XBuildLibDir)
 #endif
 
 # ifndef SharedLibXfontcache
@@ -2768,9 +2768,9 @@ ProjectUnsharedLibReferences(WINDOWSWM,NX_WindowsWM,$(WINDOWSWMLIBSRC),XBuildLib
 #ifndef SharedXfontcacheRev
 #define SharedXfontcacheRev 1.2
 #endif
-SharedLibReferences(XFONTCACHE,NX_Xfontcache,$(XFONTCACHELIBSRC),SOXFONTCACHEREV,SharedXfontcacheRev)
+SharedLibReferences(XFONTCACHE,Xfontcache,$(XFONTCACHELIBSRC),SOXFONTCACHEREV,SharedXfontcacheRev)
 #else
-ProjectUnsharedLibReferences(XFONTCACHE,NX_Xfontcache,$(XFONTCACHELIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XFONTCACHE,Xfontcache,$(XFONTCACHELIBSRC),XBuildLibDir)
 #endif
 
 #ifndef SharedLibXau
@@ -2790,12 +2790,12 @@ ProjectUnsharedLibReferences(XFONTCACHE,NX_Xfontcache,$(XFONTCACHELIBSRC),XBuild
 #ifndef SharedXauRev
 #define SharedXauRev 6.0
 #endif
-SharedLibReferences(XAUTH,NX_Xau,$(XAUTHSRC),SOXAUTHREV,SharedXauRev)
+SharedLibReferences(XAUTH,Xau,$(XAUTHSRC),SOXAUTHREV,SharedXauRev)
 #else
 #if !UseInstalledXauLib
-ProjectUnsharedLibReferences(XAUTH,NX_Xau,$(XAUTHSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XAUTH,Xau,$(XAUTHSRC),XBuildLibDir)
 #else
-ProjectUnsharedLibReferences(XAUTH,NX_Xau,$(XAUTHSRC),$(USRLIBDIR))
+ProjectUnsharedLibReferences(XAUTH,Xau,$(XAUTHSRC),$(USRLIBDIR))
 #endif
 #endif
 
@@ -2816,12 +2816,12 @@ ProjectUnsharedLibReferences(XAUTH,NX_Xau,$(XAUTHSRC),$(USRLIBDIR))
 #ifndef SharedXdmcpRev
 #define SharedXdmcpRev 6.0
 #endif
-SharedLibReferences(XDMCP,NX_Xdmcp,$(XDMCPLIBSRC),SOXDMCPREV,SharedXdmcpRev)
+SharedLibReferences(XDMCP,Xdmcp,$(XDMCPLIBSRC),SOXDMCPREV,SharedXdmcpRev)
 #else
 #if !UseInstalledXdmcpLib
-ProjectUnsharedLibReferences(XDMCP,NX_Xdmcp,$(XDMCPLIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XDMCP,Xdmcp,$(XDMCPLIBSRC),XBuildLibDir)
 #else
-ProjectUnsharedLibReferences(XDMCP,NX_Xdmcp,$(XDMCPLIBSRC),$(USRLIBDIR))
+ProjectUnsharedLibReferences(XDMCP,Xdmcp,$(XDMCPLIBSRC),$(USRLIBDIR))
 #endif
 #endif
 
@@ -2842,9 +2842,9 @@ ProjectUnsharedLibReferences(XDMCP,NX_Xdmcp,$(XDMCPLIBSRC),$(USRLIBDIR))
 #ifndef SharedXmuRev
 #define SharedXmuRev 6.2
 #endif
-SharedDSLibReferences(XMU,NX_Xmu,$(XMUSRC),SOXMUREV,SharedXmuRev)
+SharedDSLibReferences(XMU,Xmu,$(XMUSRC),SOXMUREV,SharedXmuRev)
 #else
-ProjectUnsharedLibReferences(XMU,NX_Xmu,$(XMUSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XMU,Xmu,$(XMUSRC),XBuildLibDir)
 #endif
 
 #ifndef SharedLibXmuu
@@ -2864,9 +2864,9 @@ ProjectUnsharedLibReferences(XMU,NX_Xmu,$(XMUSRC),XBuildLibDir)
 #ifndef SharedXmuuRev
 #define SharedXmuuRev 1.0
 #endif
-SharedLibReferences(XMUU,NX_Xmuu,$(XMUUSRC),SOXMUUREV,SharedXmuuRev)
+SharedLibReferences(XMUU,Xmuu,$(XMUUSRC),SOXMUUREV,SharedXmuuRev)
 #else
-ProjectUnsharedLibReferences(XMUU,NX_Xmuu,$(XMUUSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XMUU,Xmuu,$(XMUUSRC),XBuildLibDir)
 #endif
 
 #ifndef SharedOldX
@@ -2886,9 +2886,9 @@ ProjectUnsharedLibReferences(XMUU,NX_Xmuu,$(XMUUSRC),XBuildLibDir)
 #ifndef SharedOldXRev
 #define SharedOldXRev 6.0
 #endif
-SharedLibReferences(OLDX,NX_oldX,$(OLDXLIBSRC),SOOLDXREV,SharedOldXRev)
+SharedLibReferences(OLDX,oldX,$(OLDXLIBSRC),SOOLDXREV,SharedOldXRev)
 #else
-ProjectUnsharedLibReferences(OLDX,NX_oldX,$(OLDXLIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(OLDX,oldX,$(OLDXLIBSRC),XBuildLibDir)
 #endif
 
 #ifndef SharedLibXp
@@ -2908,9 +2908,9 @@ ProjectUnsharedLibReferences(OLDX,NX_oldX,$(OLDXLIBSRC),XBuildLibDir)
 #ifndef SharedXpRev
 #define SharedXpRev 6.2
 #endif
-SharedLibReferences(XP,NX_Xp,$(XPLIBSRC),SOXPREV,SharedXpRev)
+SharedLibReferences(XP,Xp,$(XPLIBSRC),SOXPREV,SharedXpRev)
 #else
-ProjectUnsharedLibReferences(XP,NX_Xp,$(XPLIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XP,Xp,$(XPLIBSRC),XBuildLibDir)
 #endif
 
 #ifndef SharedLibXt
@@ -2930,9 +2930,9 @@ ProjectUnsharedLibReferences(XP,NX_Xp,$(XPLIBSRC),XBuildLibDir)
 #ifndef SharedXtRev
 #define SharedXtRev 6.0
 #endif
-SharedDSLibReferences(XTOOLONLY,NX_Xt,$(TOOLKITSRC),SOXTREV,SharedXtRev)
+SharedDSLibReferences(XTOOLONLY,Xt,$(TOOLKITSRC),SOXTREV,SharedXtRev)
 #else
-ProjectUnsharedLibReferences(XTOOLONLY,NX_Xt,$(TOOLKITSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XTOOLONLY,Xt,$(TOOLKITSRC),XBuildLibDir)
 #endif
       DEPXTOOLLIB = $(DEPXTOOLONLYLIB) $(DEPSMLIB) $(DEPICELIB)
          XTOOLLIB = $(XTOOLONLYLIB) $(SMLIB) $(ICELIB)
@@ -2956,9 +2956,9 @@ ProjectUnsharedLibReferences(XTOOLONLY,NX_Xt,$(TOOLKITSRC),XBuildLibDir)
 #ifndef SharedXaRev
 #define SharedXaRev 1.0
 #endif
-SharedLibReferences(XA,NX_Xa,$(XALIBSRC),SOXAREV,SharedXaRev)
+SharedLibReferences(XA,Xa,$(XALIBSRC),SOXAREV,SharedXaRev)
 #else
-UnsharedLibReferences(XA,NX_Xa,$(XALIBSRC))
+UnsharedLibReferences(XA,Xa,$(XALIBSRC))
 #endif
 
 #ifndef BuildXaw
@@ -2985,9 +2985,9 @@ UnsharedLibReferences(XA,NX_Xa,$(XALIBSRC))
 #ifndef SharedXawRev
 #define SharedXawRev 8.0
 #endif
-SharedDSLibReferences(XAW,NX_Xaw,$(AWIDGETSRC),SOXAWREV,SharedXawRev)
+SharedDSLibReferences(XAW,Xaw,$(AWIDGETSRC),SOXAWREV,SharedXawRev)
 #else
-ProjectUnsharedLibReferences(XAW,NX_Xaw,$(AWIDGETSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XAW,Xaw,$(AWIDGETSRC),XBuildLibDir)
 #endif
 #endif
 
@@ -3013,14 +3013,14 @@ ProjectUnsharedLibReferences(XAW,NX_Xaw,$(AWIDGETSRC),XBuildLibDir)
 #ifndef SharedXaw7Rev
 #define SharedXaw7Rev 7.0
 #endif
-SharedDSLibReferences(XAW7,NX_Xaw,$(AWIDGET7SRC),SOXAW7REV,SharedXaw7Rev)
+SharedDSLibReferences(XAW7,Xaw,$(AWIDGET7SRC),SOXAW7REV,SharedXaw7Rev)
 #if !BuildXaw
-SharedDSLibReferences(XAW,NX_Xaw,$(AWIDGET7SRC),SOXAWREV,SharedXawRev)
+SharedDSLibReferences(XAW,Xaw,$(AWIDGET7SRC),SOXAWREV,SharedXawRev)
 #endif
 #else
-ProjectUnsharedLibReferences(XAW7,NX_Xaw,$(AWIDGET7SRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XAW7,Xaw,$(AWIDGET7SRC),XBuildLibDir)
 #if !BuildXaw
-ProjectUnsharedLibReferences(XAW,NX_Xaw,$(AWIDGET7SRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XAW,Xaw,$(AWIDGET7SRC),XBuildLibDir)
 #endif
 #endif
 #endif
@@ -3048,14 +3048,14 @@ ProjectUnsharedLibReferences(XAW,NX_Xaw,$(AWIDGET7SRC),XBuildLibDir)
 #ifndef SharedXaw6Rev
 #define SharedXaw6Rev 6.1
 #endif
-SharedDSLibReferences(XAW6,NX_Xaw,$(AWIDGET6SRC),SOXAW6REV,SharedXaw6Rev)
+SharedDSLibReferences(XAW6,Xaw,$(AWIDGET6SRC),SOXAW6REV,SharedXaw6Rev)
 #if !BuildXaw && !BuildXaw7
-SharedDSLibReferences(XAW,NX_Xaw,$(AWIDGET6SRC),SOXAWREV,SharedXawRev)
+SharedDSLibReferences(XAW,Xaw,$(AWIDGET6SRC),SOXAWREV,SharedXawRev)
 #endif
 #else
-ProjectUnsharedLibReferences(XAW6,NX_Xaw,$(AWIDGET6SRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XAW6,Xaw,$(AWIDGET6SRC),XBuildLibDir)
 #if !BuildXaw && !BuildXaw7
-ProjectUnsharedLibReferences(XAW,NX_Xaw,$(AWIDGET6SRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XAW,Xaw,$(AWIDGET6SRC),XBuildLibDir)
 #endif
 #endif
 #endif
@@ -3077,9 +3077,9 @@ ProjectUnsharedLibReferences(XAW,NX_Xaw,$(AWIDGET6SRC),XBuildLibDir)
 #ifndef SharedXiRev
 #define SharedXiRev 6.0
 #endif
-SharedLibReferences(XI,NX_Xi,$(XILIBSRC),SOXINPUTREV,SharedXiRev)
+SharedLibReferences(XI,Xi,$(XILIBSRC),SOXINPUTREV,SharedXiRev)
 #else
-ProjectUnsharedLibReferences(XI,NX_Xi,$(XILIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XI,Xi,$(XILIBSRC),XBuildLibDir)
 #endif
 
 #ifndef SharedLibXtst
@@ -3099,12 +3099,12 @@ ProjectUnsharedLibReferences(XI,NX_Xi,$(XILIBSRC),XBuildLibDir)
 #ifndef SharedXtstRev
 #define SharedXtstRev 6.1
 #endif
-SharedLibReferences(XTEST,NX_Xtst,$(XTESTLIBSRC),SOXTESTREV,SharedXtstRev)
+SharedLibReferences(XTEST,Xtst,$(XTESTLIBSRC),SOXTESTREV,SharedXtstRev)
 #else
-ProjectUnsharedLibReferences(XTEST,NX_Xtst,$(XTESTLIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XTEST,Xtst,$(XTESTLIBSRC),XBuildLibDir)
 #endif
 
-ProjectUnsharedLibReferences(XBSD,NX_Xbsd,$(LIBSRC)/Xbsd,XBuildLibDir)
+ProjectUnsharedLibReferences(XBSD,Xbsd,$(LIBSRC)/Xbsd,XBuildLibDir)
 
 #ifndef SharedLibICE
 #define SharedLibICE HasSharedLibraries
@@ -3123,9 +3123,9 @@ ProjectUnsharedLibReferences(XBSD,NX_Xbsd,$(LIBSRC)/Xbsd,XBuildLibDir)
 #ifndef SharedICERev
 #define SharedICERev 6.4
 #endif
-SharedLibReferences(ICE,NX_ICE,$(ICESRC),SOICEREV,SharedICERev)
+SharedLibReferences(ICE,ICE,$(ICESRC),SOICEREV,SharedICERev)
 #else
-ProjectUnsharedLibReferences(ICE,NX_ICE,$(ICESRC),XBuildLibDir)
+ProjectUnsharedLibReferences(ICE,ICE,$(ICESRC),XBuildLibDir)
 #endif
 
 #ifndef SharedLibSM
@@ -3145,9 +3145,9 @@ ProjectUnsharedLibReferences(ICE,NX_ICE,$(ICESRC),XBuildLibDir)
 #ifndef SharedSMRev
 #define SharedSMRev 6.0
 #endif
-SharedLibReferences(SM,NX_SM,$(SMSRC),SOSMREV,SharedSMRev)
+SharedLibReferences(SM,SM,$(SMSRC),SOSMREV,SharedSMRev)
 #else
-ProjectUnsharedLibReferences(SM,NX_SM,$(SMSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(SM,SM,$(SMSRC),XBuildLibDir)
 #endif
 
 #ifndef SharedLibXkey
@@ -3167,9 +3167,9 @@ ProjectUnsharedLibReferences(SM,NX_SM,$(SMSRC),XBuildLibDir)
 #ifndef SharedXkeyRev
 #define SharedXkeyRev 6.0
 #endif
-SharedLibReferences(XKEY,NX_Xkey,$(XKEYSRC),SOXKEYREV,SharedXkeyRev)
+SharedLibReferences(XKEY,Xkey,$(XKEYSRC),SOXKEYREV,SharedXkeyRev)
 #else
-ProjectUnsharedLibReferences(XKEY,NX_Xkey,$(XKEYSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XKEY,Xkey,$(XKEYSRC),XBuildLibDir)
 #endif
 
 #ifndef SharedLibFS
@@ -3189,9 +3189,9 @@ ProjectUnsharedLibReferences(XKEY,NX_Xkey,$(XKEYSRC),XBuildLibDir)
 #ifndef SharedFSRev
 #define SharedFSRev 6.0
 #endif
-SharedLibReferences(FS,NX_FS,$(FSLIBSRC),SOFSREV,SharedFSRev)
+SharedLibReferences(FS,FS,$(FSLIBSRC),SOFSREV,SharedFSRev)
 #else
-ProjectUnsharedLibReferences(FS,NX_FS,$(FSLIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(FS,FS,$(FSLIBSRC),XBuildLibDir)
 #endif
 
 #ifndef SharedLibFont
@@ -3212,14 +3212,14 @@ ProjectUnsharedLibReferences(FS,NX_FS,$(FSLIBSRC),XBuildLibDir)
 #define SharedFontRev 1.5
 #endif
 SharedFontLibReferences()
-XCOMM SharedLibReferences(XFONT,NX_Xfont,$(FONTLIBSRC),SOFONTREV,SharedFontRev)
+XCOMM SharedLibReferences(XFONT,Xfont,$(FONTLIBSRC),SOFONTREV,SharedFontRev)
 #else
 ProjectUnsharedFontLibReferences()
-XCOMM ProjectUnsharedLibReferences(XFONT,NX_Xfont,$(FONTLIBSRC),XBuildLibDir)
+XCOMM ProjectUnsharedLibReferences(XFONT,Xfont,$(FONTLIBSRC),XBuildLibDir)
 #endif
 
      FONTSTUBLIBSRC = $(FONTLIBSRC)/stubs
-ProjectUnsharedLibReferences(FONTSTUB,NX_fntstubs,$(FONTSUBLIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(FONTSTUB,fntstubs,$(FONTSUBLIBSRC),XBuildLibDir)
          DEPFONTLIB = $(DEPXFONTLIB) $(DEPFONTSTUBLIB)
             FONTLIB = $(XFONTLIB) $(FONTSTUBLIB) $(FREETYPE2LIB)
 
@@ -3241,9 +3241,9 @@ ProjectUnsharedLibReferences(FONTSTUB,NX_fntstubs,$(FONTSUBLIBSRC),XBuildLibDir)
 #ifndef SharedFontEncRev
 #define SharedFontEncRev 1.0
 #endif
-SharedLibReferences(XFONTENC,NX_fontenc,$(FONTENCLIBSRC),SOFONTENCREV,SharedFontEncRev)
+SharedLibReferences(XFONTENC,fontenc,$(FONTENCLIBSRC),SOFONTENCREV,SharedFontEncRev)
 #else
-ProjectUnsharedLibReferences(XFONTENC,NX_fontenc,$(FONTENCLIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XFONTENC,fontenc,$(FONTENCLIBSRC),XBuildLibDir)
 #endif
 
 #ifndef SharedLibXpm
@@ -3263,9 +3263,9 @@ ProjectUnsharedLibReferences(XFONTENC,NX_fontenc,$(FONTENCLIBSRC),XBuildLibDir)
 #ifndef SharedXpmRev
 #define SharedXpmRev 4.11
 #endif
-SharedLibReferences(XPM,NX_Xpm,$(XPMLIBSRC),SOXPMREV,SharedXpmRev)
+SharedLibReferences(XPM,Xpm,$(XPMLIBSRC),SOXPMREV,SharedXpmRev)
 #else
-ProjectUnsharedLibReferences(XPM,NX_Xpm,$(XPMLIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XPM,Xpm,$(XPMLIBSRC),XBuildLibDir)
 #endif
 
 #if UseFreetype2
@@ -3313,9 +3313,9 @@ ProjectUnsharedLibReferences(XPM,NX_Xpm,$(XPMLIBSRC),XBuildLibDir)
 #define SharedFreetype2Rev 9.0
 #endif
 #endif
-SharedLibReferences(FREETYPE2,NX_freetype,$(FREETYPE2LIBSRC),SOFREETYPE2REV,SharedFreetype2Rev)
+SharedLibReferences(FREETYPE2,freetype,$(FREETYPE2LIBSRC),SOFREETYPE2REV,SharedFreetype2Rev)
 #else
-ProjectUnsharedLibReferences(FREETYPE2,NX_freetype,$(FREETYPE2LIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(FREETYPE2,freetype,$(FREETYPE2LIBSRC),XBuildLibDir)
 #endif
 
 #ifdef UseInstalled
@@ -3470,9 +3470,9 @@ MOTIFINCLUDES = -I$(MOTIFINCDIR)
 #define SharedExpatRev 4.0
 #endif
 #endif
-SharedLibReferences(EXPAT,NX_expat,$(EXPATLIBSRC),SOEXPATREV,SharedExpatRev)
+SharedLibReferences(EXPAT,expat,$(EXPATLIBSRC),SOEXPATREV,SharedExpatRev)
 #else
-ProjectUnsharedLibReferences(EXPAT,NX_expat,$(EXPATLIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(EXPAT,expat,$(EXPATLIBSRC),XBuildLibDir)
 #endif
 
 #if UseExpat
@@ -3552,9 +3552,9 @@ EXPATDEFINES = -DEXPAT
 #ifndef SharedXft1Rev
 #define SharedXft1Rev 1.1
 #endif
-SharedLibReferences(XFT1,NX_Xft,$(XFT1LIBSRC),SOXFT1REV,SharedXft1Rev)
+SharedLibReferences(XFT1,Xft,$(XFT1LIBSRC),SOXFT1REV,SharedXft1Rev)
 #else
-ProjectUnsharedLibReferences(XFT1,NX_Xft,$(XFT1LIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XFT1,Xft,$(XFT1LIBSRC),XBuildLibDir)
 #endif
 
 #ifndef Xft1ClientDepLibs
@@ -3589,9 +3589,9 @@ ProjectUnsharedLibReferences(XFT1,NX_Xft,$(XFT1LIBSRC),XBuildLibDir)
 #ifndef SharedXftRev
 #define SharedXftRev 2.1.2
 #endif
-SharedLibReferences(XFT,NX_Xft,$(XFTLIBSRC),SOXFTREV,SharedXftRev)
+SharedLibReferences(XFT,Xft,$(XFTLIBSRC),SOXFTREV,SharedXftRev)
 #else
-ProjectUnsharedLibReferences(XFT,NX_Xft,$(XFTLIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XFT,Xft,$(XFTLIBSRC),XBuildLibDir)
 #endif
 
 #ifndef XftClientDepLibs
@@ -3622,9 +3622,9 @@ ProjectUnsharedLibReferences(XFT,NX_Xft,$(XFTLIBSRC),XBuildLibDir)
 #ifndef SharedFontconfigRev
 #define SharedFontconfigRev 1.0.4
 #endif
-SharedLibReferences(FONTCONFIG,NX_fontconfig,$(FONTCONFIGLIBSRC),SOFONTCONFIGREV,SharedFontconfigRev)
+SharedLibReferences(FONTCONFIG,fontconfig,$(FONTCONFIGLIBSRC),SOFONTCONFIGREV,SharedFontconfigRev)
 #else
-ProjectUnsharedLibReferences(FONTCONFIG,NX_fontconfig,$(FONTCONFIGLIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(FONTCONFIG,fontconfig,$(FONTCONFIGLIBSRC),XBuildLibDir)
 #endif
 
 #ifdef UseInstalled
@@ -3827,9 +3827,9 @@ LIBPNGLIB = -L$(LIBPNGLIBDIR) LinkerRuntimeLibraryPathFlag($(LIBPNGLIBDIR)) -lpn
 # ifndef SharedxkbfileRev
 #  define SharedxkbfileRev	1.0
 # endif
-SharedLibReferences(XKBFILE,NX_xkbfile,$(XKBFILESRC),SOXKBFILEREV, SharedxkbfileRev)
+SharedLibReferences(XKBFILE,xkbfile,$(XKBFILESRC),SOXKBFILEREV, SharedxkbfileRev)
 #else
-ProjectUnsharedLibReferences(XKBFILE,NX_xkbfile,$(XKBFILELIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XKBFILE,xkbfile,$(XKBFILELIBSRC),XBuildLibDir)
 #endif
 
 #if BuildXKBlib
@@ -3899,9 +3899,9 @@ ProjectUnsharedLibReferences(XKBFILE,NX_xkbfile,$(XKBFILELIBSRC),XBuildLibDir)
 # ifndef SharedxkbuiRev
 #  define SharedxkbuiRev	1.0
 # endif
-SharedLibReferences(XKBUI,NX_xkbui,$(XKBUISRC),SOXKBUIREV, SharedxkbuiRev)
+SharedLibReferences(XKBUI,xkbui,$(XKBUISRC),SOXKBUIREV, SharedxkbuiRev)
 #else
-ProjectUnsharedLibReferences(XKBUI,NX_xkbui,$(XKBUILIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XKBUI,xkbui,$(XKBUILIBSRC),XBuildLibDir)
 #endif
 
 #ifndef XkbuiLibs
@@ -3974,9 +3974,9 @@ EXTRAXAWCLIENTLIBS = ExtraXawClientLibs
 #ifndef SharedXTrapRev
 #define SharedXTrapRev 6.4
 #endif
-SharedLibReferences(XTRAP,NX_XTrap,$(XTRAPLIBSRC),SOXTRAPREV,SharedXTrapRev)
+SharedLibReferences(XTRAP,XTrap,$(XTRAPLIBSRC),SOXTRAPREV,SharedXTrapRev)
 #else
-ProjectUnsharedLibReferences(XTRAP,NX_XTrap,$(XTRAPLIBSRC),XBuildLibDir)
+ProjectUnsharedLibReferences(XTRAP,XTrap,$(XTRAPLIBSRC),XBuildLibDir)
 #endif
 
 #ifndef NeedDefaultDepLibs

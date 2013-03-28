@@ -8,7 +8,7 @@ XCOMM $XdotOrg: xc/lib/Xft/Imakefile,v 1.5 2005/10/19 02:46:56 kem Exp $
 #define DoProfileLib ProfileLibXft
 
 #define HasSharedData YES
-#define LibName NX_Xft
+#define LibName Xft
 #define SoRev SOXFTREV
 #define IncSubdir X11
 #define IncSubSubdir Xft

@@ -34,6 +34,4 @@ void nxagentStartRedirectToClientsLog(void);
 
 void nxagentEndRedirectToClientsLog(void);
 
-char *nxagentGetSessionPath(void);
-
 #endif /* __Error_H__ */

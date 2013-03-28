@@ -5,7 +5,7 @@ XCOMM $XFree86$
 #define DoDebugLib DebugLibDmx
 #define DoProfileLib ProfileLibDmx
 
-#define LibName NX_dmx
+#define LibName dmx
 #define SoRev SODMXREV
 #define LibHeaders NO
 

@@ -134,9 +134,9 @@ LintLibReferences(varname,libname,libsource)
 #ifndef SharedFontLibReferences
 #define SharedFontLibReferences()					@@\
 SOFONTREV = SharedFontRev						@@\
-DEPFONTLIB = SharedLibDependencies(NX_Xfont,$(FONTLIBSRC),SOFONTREV)	@@\
-FONTLIB = -L$(FREETYPELIBDIR) -L$(FONTLIBSRC) LoaderLibPrefix -lNX_Xfont	@@\
-LintLibReferences(XFONT,NX_Xfont,$(FONTLIBSRC))
+DEPFONTLIB = SharedLibDependencies(Xfont,$(FONTLIBSRC),SOFONTREV)	@@\
+FONTLIB = -L$(FREETYPELIBDIR) -L$(FONTLIBSRC) LoaderLibPrefix -lXfont	@@\
+LintLibReferences(XFONT,Xfont,$(FONTLIBSRC))
 #endif
 
 /*

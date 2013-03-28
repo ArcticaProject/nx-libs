@@ -497,7 +497,7 @@ char *nxagentGetRootPath(void)
   return rootPath;
 }
 
-char *nxagentGetSessionPath(void)
+char *nxagentGetSessionPath()
 {
 
   char *rootPath;

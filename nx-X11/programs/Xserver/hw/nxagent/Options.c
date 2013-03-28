@@ -56,7 +56,6 @@ void nxagentInitOptions()
   nxagentOptions.Persistent = 1;
   nxagentOptions.Rootless   = UNDEFINED;
   nxagentOptions.Fullscreen = UNDEFINED;
-  nxagentOptions.NoRootlessExit = False;
 
   nxagentOptions.X           = 0;
   nxagentOptions.Y           = 0;

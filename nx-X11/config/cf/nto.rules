@@ -104,7 +104,7 @@ ComplexHostProgramTarget(program)
 
 #ifndef FixupLibReferences
 #define FixupLibReferences()						@@\
-XMULIBONLY = -lNX_Xmu							@@\
+XMULIBONLY = -lXmu							@@\
 XMULIB = $(XMULIBONLY) $(XTOOLLIB) $(XLIB)
 #endif
 

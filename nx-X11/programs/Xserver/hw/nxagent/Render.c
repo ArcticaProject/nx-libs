@@ -2689,17 +2689,11 @@ void nxagentReconnectPicture(pointer p0, XID x1, void *p2)
     #endif
   }
 
-  if (!pForm && pPicture->pSourcePict)
+  if (!pForm)
   {
-        /*possible we need to add support for other picture types, for example gradients...*/
-        switch(pPicture->pSourcePict->type)
-        {
-        case SourcePictTypeSolidFill:
-            nxagentPicturePriv(pPicture) -> picture = XRenderCreateSolidFill(nxagentDisplay,
-                    (const XRenderColor*) &pPicture->pSourcePict->solidFill.fullColor);
-            break;
-        }
-        return;
+    *pBool = False;
+
+    return;
   }
 
   #ifdef TEST

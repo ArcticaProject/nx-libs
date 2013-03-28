@@ -2,7 +2,7 @@
 #define DoSharedLib SharedLibXvMC
 #define DoDebugLib DebugLibXvMC
 #define DoProfileLib ProfileLibXvMC
-#define LibName NX_viaXvMCPro
+#define LibName viaXvMCPro
 #define SoRev SOXVMCREV
 #define LibHeaders NO
 

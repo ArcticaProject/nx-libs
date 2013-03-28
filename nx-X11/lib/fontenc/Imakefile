@@ -17,7 +17,7 @@ FONTENCDEFS = -DFONTENC_NO_LIBFONT \
 #define DoSharedLib SharedLibFontEnc
 #define DoDebugLib DebugLibFontEnc
 #define DoProfileLib ProfileLibFontEnc
-#define LibName NX_fontenc
+#define LibName fontenc
 #define SoRev SOFONTENCREV
 #define IncSubdir X11
 #define IncSubSubdir fonts

@@ -6,7 +6,7 @@ XCOMM $XFree86: xc/lib/expat/Imakefile,v 1.8tsi Exp $
 #define DoDebugLib DebugLibExpat
 #define DoProfileLib ProfileLibExpat
 #define HasSharedData YES
-#define LibName NX_expat
+#define LibName expat
 #define SoRev SOEXPATREV
 #ifdef SharedLibtoolExpatRev
 #define SharedLibtoolRev SharedLibtoolExpatRev
@@ -19,7 +19,7 @@ EXPATTOP = $(TOP)/extras/expat
 EXPATSRC = $(EXPATTOP)/lib
 EXPATINC = $(EXPATTOP)/lib
 
-INCLUDES = -I/usr/include/xmltok -I/usr/local/include/xmltok -I$(EXPATINC) -I$(EXPATTOP) -I. 
+INCLUDES = -I$(EXPATINC) -I$(EXPATTOP) -I.
 
 /*
  * Endianness (for short's)
@@ -31,8 +31,8 @@ INCLUDES = -I/usr/include/xmltok -I/usr/local/include/xmltok -I$(EXPATINC) -I$(E
 DEFINES = -DXML_BYTE_ORDER=0 -DX_BYTE_ORDER=$(X_BYTE_ORDER)
 REQUIREDLIBS=$(LDPRELIBS)
 
-#SRCS = xmlparse.c xmltok.c xmlrole.c
-#OBJS = xmlparse.o xmltok.o xmlrole.o
+SRCS = xmlparse.c xmltok.c xmlrole.c
+OBJS = xmlparse.o xmltok.o xmlrole.o
 
 HEADERS = expat.h
 
@@ -45,9 +45,9 @@ SpecialCObjectRule(sharedlib,NullParameter,$(SHLIBDEF))
 
 DependTarget()
 
-#LinkSourceFile(xmlparse.c,$(EXPATSRC))
-#LinkSourceFile(xmltok.c,$(EXPATSRC))
-#LinkSourceFile(xmlrole.c,$(EXPATSRC))
+LinkSourceFile(xmlparse.c,$(EXPATSRC))
+LinkSourceFile(xmltok.c,$(EXPATSRC))
+LinkSourceFile(xmlrole.c,$(EXPATSRC))
 LinkSourceFile(expat.h,$(EXPATINC))
 
 

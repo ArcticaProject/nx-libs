@@ -10,7 +10,7 @@ XCOMM $XFree86: xc/lib/Xi/Imakefile,v 1.4 2001/01/17 19:42:47 dawes Exp $
 #define DoExtraLib SharedLibXi
 #define DoDebugLib DebugLibXi
 #define DoProfileLib ProfileLibXi
-#define LibName NX_Xi
+#define LibName Xi
 #define SoRev SOXINPUTREV
 #define LibHeaders NO
 

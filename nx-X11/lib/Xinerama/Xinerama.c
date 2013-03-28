@@ -34,7 +34,7 @@ Equipment Corporation.
 #include <X11/extensions/panoramiXext.h>
 #include <X11/extensions/panoramiXproto.h>
 #include <X11/extensions/Xinerama.h>
-#include <stdio.h>
+
 
 static XExtensionInfo _panoramiX_ext_info_data;
 static XExtensionInfo *panoramiX_ext_info = &_panoramiX_ext_info_data;
@@ -249,16 +249,6 @@ Bool XineramaIsActive(Display *dpy)
     xXineramaIsActiveReq  	*req;
     XExtDisplayInfo 		*info = find_display (dpy);
 
-
-    FILE* fptr;
-    if((fptr=fopen(getenv("NX_XINERAMA_CONF"),"r"))!=NULL) {
-	fclose (fptr);
-	return True;
-    }
-    else {
-	return False;
-    }
-
     if(!XextHasExtension(info))
 	return False;  /* server doesn't even have the extension */
 
@@ -276,6 +266,7 @@ Bool XineramaIsActive(Display *dpy)
     return rep.state;
 }
 
+#include <stdio.h>
 
 XineramaScreenInfo * 
 XineramaQueryScreens(
@@ -288,72 +279,39 @@ XineramaQueryScreens(
     xXineramaQueryScreensReq	*req;
     XineramaScreenInfo		*scrnInfo = NULL;
 
-    int i;
-    int x,y,w,h;
-    FILE* fptr;
-    if((fptr=fopen(getenv("NX_XINERAMA_CONF"),"r"))==NULL) {
-	PanoramiXCheckExtension (dpy, info, 0);
-	LockDisplay (dpy);
-	GetReq (XineramaQueryScreens, req);
-	req->reqType = info->codes->major_opcode;
-	req->panoramiXReqType = X_XineramaQueryScreens;
-	if (!_XReply (dpy, (xReply *) &rep, 0, xFalse)) {
-	    UnlockDisplay (dpy);
-	    SyncHandle ();
-	    return NULL;
-	}
-	if(rep.number) {
-	    if((scrnInfo = Xmalloc(sizeof(XineramaScreenInfo) * rep.number))) {
-		xXineramaScreenInfo scratch;
-		int i;
+    PanoramiXCheckExtension (dpy, info, 0);
 
-		for(i = 0; i < rep.number; i++) {
-		    _XRead(dpy, (char*)(&scratch), sz_XineramaScreenInfo);
-		    scrnInfo[i].screen_number = i;
-		    scrnInfo[i].x_org    = scratch.x_org;
-		    scrnInfo[i].y_org    = scratch.y_org;
-		    scrnInfo[i].width    = scratch.width;
-		    scrnInfo[i].height           = scratch.height;
-		}
-
-		*number = rep.number;
-	    } else {
-		_XEatData(dpy, rep.length << 2);
-	    }
-	}
-
+    LockDisplay (dpy);
+    GetReq (XineramaQueryScreens, req);
+    req->reqType = info->codes->major_opcode;
+    req->panoramiXReqType = X_XineramaQueryScreens;
+    if (!_XReply (dpy, (xReply *) &rep, 0, xFalse)) {
 	UnlockDisplay (dpy);
 	SyncHandle ();
-
-    } else {
-
-	i=0;
-	while(!feof(fptr)) {
-	    w=h=0;
-	    fscanf(fptr,"%d %d %d %d",&x,&y,&w,&h);
-	    if(w&&h)
-	    i++;
-	}
-	rewind(fptr);
-	*number=i;
-	if((scrnInfo = Xmalloc(sizeof(XineramaScreenInfo) * i))) {
-	    i=0;
-	    while(!feof(fptr)){
-		w=h=0;
-		fscanf(fptr,"%d %d %d %d",&x,&y,&w,&h);
-		if(w&&h){
-		    scrnInfo[i].screen_number=i;
-		    scrnInfo[i].x_org=x;
-		    scrnInfo[i].y_org=y;
-		    scrnInfo[i].width=w;
-		    scrnInfo[i].height=h;
-		    i++;
-		}
-	    }
-	}
-	fclose(fptr);
+	return NULL;
     }
 
+    if(rep.number) {
+	if((scrnInfo = Xmalloc(sizeof(XineramaScreenInfo) * rep.number))) {
+	    xXineramaScreenInfo scratch;
+	    int i;
+
+	    for(i = 0; i < rep.number; i++) {
+		_XRead(dpy, (char*)(&scratch), sz_XineramaScreenInfo);
+		scrnInfo[i].screen_number = i;
+		scrnInfo[i].x_org 	  = scratch.x_org;
+		scrnInfo[i].y_org 	  = scratch.y_org;
+		scrnInfo[i].width 	  = scratch.width;
+		scrnInfo[i].height 	  = scratch.height;
+	    }
+
+	    *number = rep.number;
+	} else
+	    _XEatData(dpy, rep.length << 2);
+    }
+
+    UnlockDisplay (dpy);
+    SyncHandle ();
     return scrnInfo;
 }
 

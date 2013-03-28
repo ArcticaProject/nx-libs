@@ -7,4 +7,4 @@ Name: Xcomposite
 Description: X Composite Library
 Version: @VERSION@
 Cflags: -I${includedir} @XCOMPOSITE_CFLAGS@ @X_CFLAGS@
-Libs: -L${libdir} -lNX_Xcomposite @XCOMPOSITE_LIBS@ @X_LIBS@
+Libs: -L${libdir} -lXcomposite @XCOMPOSITE_LIBS@ @X_LIBS@

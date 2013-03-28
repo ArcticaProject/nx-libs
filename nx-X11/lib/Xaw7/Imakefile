@@ -5,7 +5,7 @@ XCOMM $Xorg$
 #define DoDebugLib DebugLibXaw7
 #define DoProfileLib ProfileLibXaw7
 #define HasSharedData YES
-#define LibName NX_Xaw
+#define LibName Xaw
 #define SoRev SOXAW7REV
 
 #if BuildXaw

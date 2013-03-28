@@ -70,7 +70,7 @@ LDPRELIBS=LdPreLibs
 #define DoDebugLib NO
 #define DoProfileLib NO
 #define HasSharedData YES
-#define LibName NX_Xft
+#define LibName Xft
 #define SoRev SOXFT1REV
 #define LibHeaders NO
 #define NoSoSymlink

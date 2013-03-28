@@ -42,7 +42,7 @@ NX_DEFINES = -DNX_TRANS_SOCKET
 #define DoDebugLib DebugLibXt
 #define DoProfileLib ProfileLibXt
 #define HasSharedData YES
-#define LibName NX_Xt
+#define LibName Xt
 #define SoRev SOXTREV
 #define IncSubdir X11
 

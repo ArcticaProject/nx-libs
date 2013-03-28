@@ -4,7 +4,7 @@ XCOMM $XFree86: xc/lib/XvMC/Imakefile,v 1.5 2002/10/16 00:37:33 dawes Exp $
 #define DoSharedLib SharedLibXvMC
 #define DoDebugLib DebugLibXvMC
 #define DoProfileLib ProfileLibXvMC
-#define LibName NX_XvMC
+#define LibName XvMC
 #define SoRev SOXVMCREV
 #define LibHeaders NO
 

@@ -9,4 +9,4 @@ Name: Xevie
 Description: X Event Interceptor Library
 Version: @VERSION@
 Cflags: -I${includedir} ${xcflags}
-Libs: -L${libdir} -lNX_Xevie ${xlibs}
+Libs: -L${libdir} -lXevie ${xlibs}

@@ -1054,7 +1054,7 @@ InstallNamedTargetNoClobber(install,file.ad,$(INSTAPPFLAGS),$(XAPPLOADDIR),class
 
 #if HaveLib64
 # ifndef LibDirName
-#  define LibDirName		lib
+#  define LibDirName		lib64
 # endif
 # ifndef SystemUsrLibDir
 #  define SystemUsrLibDir	/usr/lib64

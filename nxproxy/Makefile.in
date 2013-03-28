@@ -33,7 +33,7 @@ LIBS    = @LIBS@
 
 srcdir      = @srcdir@
 prefix      = @prefix@
-exec_prefix = @exec_prefix@/lib/nx
+exec_prefix = @exec_prefix@
 bindir      = @bindir@
 man1dir     = @mandir@/man1
 VPATH       = @srcdir@
@@ -41,8 +41,6 @@ VPATH       = @srcdir@
 INSTALL         = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA    = @INSTALL_DATA@
-DESTDIR         =
-RM_FILE         = rm -f
 
 #
 # This should be autodetected.
@@ -89,24 +87,15 @@ depend.status:
 install:	install.bin install.man
 
 install.bin:	$(PROGRAM)
-		$(srcdir)/mkinstalldirs $(DESTDIR)$(bindir)
-		$(INSTALL_PROGRAM) $(PROGRAM) $(DESTDIR)$(bindir)/$(PROGRAM)
+		$(srcdir)/mkinstalldirs $(bindir)
+		$(INSTALL) $(PROGRAM) $(bindir)/$(PROGRAM)
 
 install.man:
-		$(srcdir)/mkinstalldirs $(DESTDIR)$(man1dir)
-		$(INSTALL_DATA) man/$(PROGRAM).1 $(DESTDIR)$(man1dir)/$(PROGRAM).1
-
-uninstall:      uninstall.bin uninstall.man
-
-uninstall.bin:
-		$(RM_FILE) $(DESTDIR)$(bindir)/$(PROGRAM)
-
-uninstall.man:
-		$(RM_FILE) $(DESTDIR)$(man1dir)/nxproxy.1
+		$(srcdir)/mkinstalldirs $(man1dir)
 
 clean:
 		-rm -f *~ *.o *.bak st?????? core core.* *.out.* \
 		$(PROGRAM) $(PROGRAM).exe $(LIBFULL) $(LIBLOAD) $(LIBSHARED) $(LIBARCHIVE)
 
 distclean:	clean
-		-rm -rf autom4te.cache config.status config.log config.cache depend.status Makefile tags configure
+		-rm -f config.status config.log config.cache depend.status Makefile tags

@@ -36,17 +36,17 @@ XCOMM $XFree86: xc/config/cf/X11.rules,v 1.6 2001/01/17 16:22:31 dawes Exp $
 #endif
 
 #if defined(X11ProjectRoot)
-# define XBinDir	$(XPROJECTROOT)/lib/nx/bin
+# define XBinDir	$(XPROJECTROOT)/bin
 #elif defined(ProjectRoot) 
-# define XBinDir	$(PROJECTROOT)/lib/nx/bin
+# define XBinDir	$(PROJECTROOT)/bin
 #else
 # define XBinDir	$(BINDIR)
 #endif
 
 #ifdef X11ProjectRoot
-# define XUsrLibDirPath	$(USRLIBDIR)/nx:$(XPROJECTROOT)
+# define XUsrLibDirPath	$(USRLIBDIR):$(XPROJECTROOT)/lib
 #else
-# define XUsrLibDirPath	$(USRLIBDIR)/nx
+# define XUsrLibDirPath	$(USRLIBDIR)
 #endif
 #ifdef UsrLibDirPath
 # undef UsrLibDirPath
@@ -60,7 +60,7 @@ XCOMM $XFree86: xc/config/cf/X11.rules,v 1.6 2001/01/17 16:22:31 dawes Exp $
 #if ImportX11
 # define XLdPreLibs	-L$(LIBSRC)
 #elif defined(UseInstalledX11) && defined(X11ProjectRoot)
-# define XLdPreLibs	-L$(XPROJECTROOT)
+# define XLdPreLibs	-L$(XPROJECTROOT)/lib
 #else
 # define XLdPreLibs	/**/
 #endif
@@ -70,7 +70,7 @@ XCOMM $XFree86: xc/config/cf/X11.rules,v 1.6 2001/01/17 16:22:31 dawes Exp $
 #define LdPreLibs	LdPreLib XLdPreLibs
 
 #ifdef X11ProjectRoot
-# define XLdPostLibs	-L$(XPROJECTROOT)
+# define XLdPostLibs	-L$(XPROJECTROOT)/lib
 #else
 # define XLdPostLibs	/**/
 #endif
@@ -86,7 +86,7 @@ XCOMM $XFree86: xc/config/cf/X11.rules,v 1.6 2001/01/17 16:22:31 dawes Exp $
 #  define TopXInclude	-I$(TOP)/exports/include
 #else
 #  ifdef X11ProjectRoot
-#   define TopXInclude	-I$(XPROJECTROOT)/../../include/nx
+#   define TopXInclude	-I$(XPROJECTROOT)/include
 #  else
 #   define TopXInclude	/**/
 #  endif
@@ -98,7 +98,7 @@ XCOMM $XFree86: xc/config/cf/X11.rules,v 1.6 2001/01/17 16:22:31 dawes Exp $
 #define TopIncludes	TopInclude $(TOP_X_INCLUDES)
 
 #if UseInstalledX11 && defined(X11ProjectRoot)
-# define X11BuildLibPath	$(XPROJECTROOT)
+# define X11BuildLibPath	$(XPROJECTROOT)/lib
 #elif UseInstalledX11
 # define X11BuildLibPath	$(USRLIBDIR)
 #elif ImportX11
