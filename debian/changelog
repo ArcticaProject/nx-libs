@@ -1,6 +1,8 @@
 nx-libs (2:3.5.0.20-0) UNRELEASED; urgency=low
 
-  * Continue development...
+  * Fix faulty symlink path. Make sure that x2goagent symlink
+    does not point to absolute path somewhere within the build
+    environment.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Thu, 28 Mar 2013 09:11:43 +0100
 
