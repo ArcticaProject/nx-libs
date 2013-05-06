@@ -38,6 +38,8 @@ override_dh_auto_build:
 	ln -s debian/Makefile.nx-libs Makefile
 	ln -s debian/Makefile.replace.sh replace.sh
 	ln -s debian/wrappers bin
+	mkdir -p etc/
+	ln -s debian/keystrokes.cfg etc/keystrokes.cfg
 	ln -s debian/rgb
 	ln -s debian/VERSION.x2goagent
 	LD_LIBRARY_PATH=`pwd`/debian/libnx-x11/usr/lib/nx/X11:$$LD_LIBRARY_PATH dh_auto_build --with quilt --parallel

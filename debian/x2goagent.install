@@ -3,3 +3,4 @@ usr/lib/x2go/bin/x2goagent
 usr/share/pixmaps/x2go.xpm
 usr/share/x2go/rgb
 usr/share/x2go/versions/VERSION.x2goagent
+etc/x2go/keystrokes.cfg

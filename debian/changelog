@@ -1,6 +1,7 @@
 nx-libs (2:3.5.0.21-0) UNRELEASED; urgency=low
 
-  * Continue development...
+  * Provide a default keystrokes.cfg in /etc/nx (for nxagent) and /etc/x2go
+    (for x2goagent). (Fixes: #199).
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Thu, 28 Mar 2013 21:07:42 +0100
 

@@ -122,6 +122,10 @@ mv -v debian/changelog doc/changelog
 test -f Makefile || test -f debian/Makefile.nx-libs && cp -v debian/Makefile.nx-libs Makefile
 test -f replace.sh || test -f debian/Makefile.replace.sh && cp -v debian/Makefile.replace.sh replace.sh
 
+# provide a default keystrokes.cfg file
+mkdir -p etc
+test -f etc/keystrokes.cfg || test -f debian/keystrokes.cfg && cp -v debian/keystrokes.cfg etc/keystrokes.cfg
+
 # remove folders that we do not want to roll into the tarball
 rm -Rf ".pc/"
 rm -Rf "debian/"

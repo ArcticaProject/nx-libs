@@ -7,6 +7,8 @@ COPY_SYMLINK=cp -a
 RM_FILE=rm -f
 RM_DIR=rmdir -p --ignore-fail-on-non-empty
 
+ETCDIR_NX ?= /etc/nx
+ETCDIR_X2GO ?= /etc/x2go
 PREFIX ?= /usr/local
 BINDIR=$(PREFIX)/bin
 NXLIBDIR=$(PREFIX)/lib/nx
@@ -126,6 +128,11 @@ install-full:
 	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/include/nx/extras/Mesa/GLES/
 	$(INSTALL_FILE) nx-X11/extras/Mesa/include/GLES/*.h \
 	                $(DESTDIR)$(PREFIX)/include/nx/extras/Mesa/GLES/
+
+	$(INSTALL_DIR) $(DESTDIR)/$(ETCDIR_NX)
+	$(INSTALL_DIR) $(DESTDIR)/$(ETCDIR_X2GO)
+	$(INSTALL_FILE) etc/keystrokes.cfg $(DESTDIR)/$(ETCDIR_NX)/
+	$(INSTALL_FILE) etc/keystrokes.cfg $(DESTDIR)/$(ETCDIR_X2GO)/
 
 uninstall:
 	$(MAKE) uninstall-lite
