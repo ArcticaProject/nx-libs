@@ -20,7 +20,7 @@ override_dh_clean:
 	rm -f nx*/changelog
 	rm -f nx-X11/programs/Xserver/hw/nxagent/changelog
 	rm -f nx-X11/programs/nxauth/changelog
-	rm -Rf replace.sh Makefile bin rgb VERSION.x2goagent
+	rm -Rf replace.sh Makefile bin rgb VERSION.x2goagent etc/keystrokes.cfg
 	dh_clean
 
 override_dh_auto_install:
