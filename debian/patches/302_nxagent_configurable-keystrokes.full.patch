@@ -4,7 +4,7 @@ Description: Make nxagent-specific keyboard bindings configurable
  table of keybindings. The default configuration is the same as the
  original one, to maintain compatibility. A user/administrator can either
  specify a command line parameter, environment variable or place a file
- in ~/.nx/config/keystroke.cfg or /etc/nx/keystroke.cfg to reconfigure
+ in ~/.nx/config/keystroke.cfg or /etc/nxagent/keystroke.cfg to reconfigure
  these keybindings.
  .
  The configuration file format is XML, a dependency on libxml2 is added
@@ -397,7 +397,7 @@ Description: Make nxagent-specific keyboard bindings configurable
 + *  - '-keystrokefile' commandline parameter
 + *  - $NXAGENT_KEYSTROKEFILE environment variable
 + *  - $HOME/.nx/config/keystroke.cfg
-+ *  - /etc/nx/keystroke.cfg
++ *  - /etc/nxagent/keystroke.cfg
 + *  - hardcoded traditional NX default settings
 + */
 +static void parse_keystroke_file(void)
@@ -411,7 +411,7 @@ Description: Make nxagent-specific keyboard bindings configurable
 -      {
 -        *result = doSwitchDeferMode;
 +  char *homefile = "/.nx/config/keystroke.cfg";
-+  char *etcfile = "/etc/nx/keystroke.cfg";
++  char *etcfile = "/etc/nxagent/keystroke.cfg";
  
 -        break;
 +  if (nxagentKeystrokeFile != NULL && access(nxagentKeystrokeFile, R_OK) == 0)
@@ -916,7 +916,7 @@ Description: Make nxagent-specific keyboard bindings configurable
 +- in the location given by the '-keystrokefile' command line parameter
 +- in the location given by the NXAGENT_KEYSTROKEFILE environment variable
 +- in ~/.nx/config/keystroke.cfg
-+- in /etc/nx/keystroke.cfg
++- in /etc/nxagent/keystroke.cfg
 +
 +If none of those files is accessible, the default configuration is used which
 +is the same as the old, traditional nxagent keybindings.

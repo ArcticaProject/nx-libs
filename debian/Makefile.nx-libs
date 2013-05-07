@@ -7,7 +7,7 @@ COPY_SYMLINK=cp -a
 RM_FILE=rm -f
 RM_DIR=rmdir -p --ignore-fail-on-non-empty
 
-ETCDIR_NX ?= /etc/nx
+ETCDIR_NX ?= /etc/nxagent
 ETCDIR_X2GO ?= /etc/x2go
 PREFIX ?= /usr/local
 BINDIR=$(PREFIX)/bin

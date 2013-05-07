@@ -3,6 +3,7 @@ nx-libs (2:3.5.0.21-0) UNRELEASED; urgency=low
   * Provide a default keystrokes.cfg in /etc/nx (for nxagent) and /etc/x2go
     (for x2goagent). (Fixes: #199).
   * Set NXAGENT_KEYSTROKEFILE to /etc/x2go/keystrokes.cfg for wrapper x2goagent.
+  * For vanilla nxagent move keystrokes.cfg from /etc/nx to /etc/nxagent.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Thu, 28 Mar 2013 21:07:42 +0100
 
