@@ -3,4 +3,4 @@ bin/nxagent                                    usr/bin
 debian/rgb                                     usr/share/nx
 debian/nxagent.keyboard                        etc/nxagent
 nx-X11/programs/Xserver/hw/nxagent/nxagent.xpm usr/share/pixmaps
-etc/nx/keystrokes.cfg
+etc/nxagent/keystrokes.cfg
