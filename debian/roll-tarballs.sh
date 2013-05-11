@@ -111,20 +111,24 @@ for f in $(ls README* 2>/dev/null); do
 done
 
 mkdir -p bin/
-# old releases introude the wrappers via quilt patch
-for w in $(ls debian/wrappers/* 2>/dev/null); do
-    cp -v $w bin/
-done
+if [ "$MODE" = "lite" ]; then
+    # copy wrapper script nxproxy only into tarball
+    cp -v debian/wrappers/nxproxy bin/
+else
+    # copy wrapper scripts into tarball
+    for w in $(ls debian/wrappers/* 2>/dev/null); do
+        cp -v $w bin/
+    done
+    # provide a default keystrokes.cfg file
+    mkdir -p etc
+    test -f etc/keystrokes.cfg || test -f debian/keystrokes.cfg && cp -v debian/keystrokes.cfg etc/keystrokes.cfg
+fi
 
 mv -v debian/changelog doc/changelog
 
 # copy the top-level makefile if no quilt patch created it before
 test -f Makefile || test -f debian/Makefile.nx-libs && cp -v debian/Makefile.nx-libs Makefile
 test -f replace.sh || test -f debian/Makefile.replace.sh && cp -v debian/Makefile.replace.sh replace.sh
-
-# provide a default keystrokes.cfg file
-mkdir -p etc
-test -f etc/keystrokes.cfg || test -f debian/keystrokes.cfg && cp -v debian/keystrokes.cfg etc/keystrokes.cfg
 
 # remove folders that we do not want to roll into the tarball
 rm -Rf ".pc/"
