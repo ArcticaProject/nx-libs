@@ -2,6 +2,7 @@
 #ifndef _XINTATOM_H_
 #define _XINTATOM_H_ 1
 
+#include <nx-X11/Xlib.h>
 #include <nx-X11/Xfuncproto.h>
 
 /* IntAtom.c */

@@ -8,6 +8,8 @@
 #ifndef XPRIVATE_H
 #define XPRIVATE_H
 
+#include <nx-X11/Xlib.h>
+
 extern void _XIDHandler(Display *dpy);
 extern void _XSeqSyncFunction(Display *dpy);
 extern void _XSetPrivSyncFunction(Display *dpy);
