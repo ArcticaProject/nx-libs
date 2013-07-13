@@ -32,16 +32,24 @@
 
 #define X_PresentQueryVersion		0
 #define X_PresentRegion			1
-#define X_PresentSelectInput		2
+#define X_PresentNotifyMSC		2
+#define X_PresentSelectInput		3
 
-#define PresentNumberRequests		3
+#define PresentNumberRequests		4
 
 #define PresentConfigureNotify	0
 #define PresentCompleteNotify	1
-#define PresentRedirectNotify	2
+#define PresentMSCNotify	2
+#define PresentRedirectNotify	3
 
-#define PresentAllEvents   ((1 << PresentConfigureNotify) |     \
-                            (1 << PresentCompleteNotify) |      \
-                            (1 << PresentRedirectNotify))
+#define PresentConfigureNotifyMask      1
+#define PresentCompleteNotifyMask       2
+#define PresentMSCNotifyMask            4
+#define PresentRedirectNotifyMask       8
+
+#define PresentAllEvents   (PresentConfigureNotifyMask |        \
+                            PresentCompleteNotifyMask |         \
+                            PresentMSCNotifyMask |              \
+                            PresentRedirectNotifyMask)
 
 #endif

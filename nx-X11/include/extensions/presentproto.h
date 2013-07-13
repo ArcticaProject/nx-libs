@@ -56,17 +56,37 @@ typedef struct {
     CARD8   presentReqType;
     CARD16  length B16;
     Window  window B32;
+
     Pixmap  pixmap B32;
+    CARD32  serial B32;
+
     Region  valid B32;
     Region  update B32;
+
     INT16   x_off B16;
     INT16   y_off B16;
+    XSyncFence idle_fence B32;
+
     CARD64  target_msc;
     CARD64  divisor;
     CARD64  remainder;
-    XSyncFence idle_fence B32;
 } xPresentRegionReq;
-#define sz_xPresentRegionReq	52
+#define sz_xPresentRegionReq	56
+
+typedef struct {
+    CARD8   reqType;
+    CARD8   presentReqType;
+    CARD16  length B16;
+    Window  window B32;
+
+    CARD32  serial B32;
+    CARD32  pad0 B32;
+
+    CARD64  target_msc;
+    CARD64  divisor;
+    CARD64  remainder;
+} xPresentNotifyMSCReq;
+#define sz_xPresentNotifyMSCReq	40
 
 typedef struct {
     CARD8   reqType;
@@ -115,12 +135,13 @@ typedef struct {
     CARD16 pad2 B16;
     CARD32 eid B32;
     Window window B32;
-    CARD32 pad3 B32;
+    CARD32 serial B32;
     CARD64 ust;
     CARD64 msc;
     CARD64 sbc;
-} xPresentCompleteNotify;
+} xPresentCompleteNotify, xPresentMSCNotify;
 #define sz_xPresentCompleteNotify 48
+#define sz_xPresentMSCNotify 48
 
 typedef struct {
     CARD8 type;
