@@ -30,6 +30,7 @@
 #define PresentNumberErrors		0
 #define PresentNumberEvents		0
 
+/* Requests */
 #define X_PresentQueryVersion		0
 #define X_PresentRegion			1
 #define X_PresentNotifyMSC		2
@@ -37,19 +38,23 @@
 
 #define PresentNumberRequests		4
 
+/* Events */
 #define PresentConfigureNotify	0
 #define PresentCompleteNotify	1
-#define PresentMSCNotify	2
-#define PresentRedirectNotify	3
+#define PresentRedirectNotify	2
 
+/* Event Masks */
 #define PresentConfigureNotifyMask      1
 #define PresentCompleteNotifyMask       2
-#define PresentMSCNotifyMask            4
-#define PresentRedirectNotifyMask       8
+#define PresentRedirectNotifyMask       4
 
 #define PresentAllEvents   (PresentConfigureNotifyMask |        \
                             PresentCompleteNotifyMask |         \
-                            PresentMSCNotifyMask |              \
                             PresentRedirectNotifyMask)
+
+/* Complete Kinds */
+
+#define PresentCompleteKindRegion       0
+#define PresentCompleteKindNotifyMSC    1
 
 #endif

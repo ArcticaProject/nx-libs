@@ -132,16 +132,15 @@ typedef struct {
     CARD16 sequenceNumber B16;
     CARD32 length;
     CARD16 evtype B16;
-    CARD16 pad2 B16;
+    CARD16 kind B16;
     CARD32 eid B32;
     Window window B32;
     CARD32 serial B32;
     CARD64 ust;
+
     CARD64 msc;
-    CARD64 sbc;
-} xPresentCompleteNotify, xPresentMSCNotify;
-#define sz_xPresentCompleteNotify 48
-#define sz_xPresentMSCNotify 48
+} xPresentCompleteNotify;
+#define sz_xPresentCompleteNotify 40
 
 typedef struct {
     CARD8 type;
