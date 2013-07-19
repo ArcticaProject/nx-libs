@@ -10,6 +10,8 @@ nx-libs (2:3.5.0.21-0) UNRELEASED; urgency=low
   * Tarball roller script:
     + Only install keystrokes.cfg when in full mode.
     + Only install nxproxy wrapper when in lite mode.
+  * /debian/control:
+    + Add B-Ds: libfontconfig1-dev, libfontenc-dev.
 
   [ Orion Poplawski ]
   * Change build options so that bundled libraries are not used anymore at

@@ -12,6 +12,8 @@ Build-Depends:
  libjpeg-dev,
  zlib1g-dev,
  quilt (>= 0.46-7~),
+ libfontconfig1-dev,
+ libfontenc-dev,
  libxmltok1-dev,
  libxml2-dev,
  autoconf,
