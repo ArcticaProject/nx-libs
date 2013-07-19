@@ -12,6 +12,8 @@ nx-libs (2:3.5.0.21-0) UNRELEASED; urgency=low
     + Only install nxproxy wrapper when in lite mode.
   * /debian/control:
     + Add B-Ds: libfontconfig1-dev, libfontenc-dev.
+  * /debian/nx-libs-dev.install:
+    + Remove unrelated files from -dev package.
 
   [ Orion Poplawski ]
   * Change build options so that bundled libraries are not used anymore at
