@@ -1,5 +1,6 @@
 nx-libs (2:3.5.0.21-0) UNRELEASED; urgency=low
 
+  [ Mike Gabriel ]
   * Provide a default keystrokes.cfg in /etc/nx (for nxagent) and /etc/x2go
     (for x2goagent). (Fixes: #199).
   * Use a keystrokes.cfg that reflects the normally hard-coded defaults of
@@ -9,6 +10,11 @@ nx-libs (2:3.5.0.21-0) UNRELEASED; urgency=low
   * Tarball roller script:
     + Only install keystrokes.cfg when in full mode.
     + Only install nxproxy wrapper when in lite mode.
+
+  [ Orion Poplawski ]
+  * Change build options so that bundled libraries are not used anymore at
+    build time. Remove bundled libraries from rolled tarballs, as well. (Fixes:
+    #238).
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Thu, 28 Mar 2013 21:07:42 +0100
 
