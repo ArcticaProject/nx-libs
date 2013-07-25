@@ -29,6 +29,12 @@
 #define XSyncFence CARD32
 
 typedef struct {
+    Window  window B32;
+    CARD32  serial B32;
+} xPresentNotify;
+#define sz_xPresentNotify               8
+
+typedef struct {
     CARD8   reqType;
     CARD8   presentReqType;
     CARD16  length B16;
@@ -67,11 +73,15 @@ typedef struct {
     INT16   y_off B16;
     XSyncFence idle_fence B32;
 
+    CARD32  target_crtc B32;
+    CARD32  pad1 B32;
+
     CARD64  target_msc;
     CARD64  divisor;
     CARD64  remainder;
+    /* followed by a LISTofPRESENTNOTIFY */
 } xPresentRegionReq;
-#define sz_xPresentRegionReq	56
+#define sz_xPresentRegionReq	64
 
 typedef struct {
     CARD8   reqType;
@@ -148,29 +158,37 @@ typedef struct {
     CARD16 sequenceNumber B16;
     CARD32 length;
     CARD16 evtype B16;
-    CARD16 pad2;
+    CARD8 update_window;
+    CARD8 pad1;
     CARD32 eid B32;
-
     Window event_window B32;
     Window window B32;
     Pixmap pixmap B32;
+    CARD32 serial B32;
+    
+    /* 32-byte boundary */
+
     Region valid_region B32;
+    Region update_region B32;
 
     xRectangle valid_rect;
+
     xRectangle update_rect;
 
-    Region update_region B32;
     INT16 x_off B16;
     INT16 y_off B16;
-    CARD64 target_msc;
+    CARD32 target_crtc B32;
 
+    CARD64 target_msc;
     CARD64 divisor;
     CARD64 remainder;
 
-    XSyncFence idle_fence;
+    XSyncFence idle_fence B32;
+    CARD32 pad2 B32;
+
 } xPresentRedirectNotify;
 
-#define sz_xPresentRedirectNotify 84
+#define sz_xPresentRedirectNotify 96
 
 #undef Region
 #undef XSyncFence
