@@ -14,6 +14,8 @@ nx-libs (2:3.5.0.21-0) UNRELEASED; urgency=low
     + Add B-Ds: libfontconfig1-dev, libfontenc-dev.
   * /debian/nx-libs-dev.install:
     + Remove unrelated files from -dev package.
+  * Fix keystrokes.cfg, use Ctrl+Alt+<key> instead of just Ctrl+<key>. (Adds to
+    fixing #223).
 
   [ Orion Poplawski ]
   * Change build options so that bundled libraries are not used anymore at
