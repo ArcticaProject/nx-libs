@@ -19,6 +19,11 @@ nx-libs (2:3.5.0.21-0) UNRELEASED; urgency=low
   * Change build options so that bundled libraries are not used anymore at
     build time. Remove bundled libraries from rolled tarballs, as well. (Fixes:
     #238).
+  * Add patch: 602_nx-X11_initgroups.full.patch. Fix calling setuid and setgid
+    without setgroups or initgroups. There is a high probability this means it
+    didn't relinquish all groups, and this would be a potential security issue
+    to be fixed. Seek POS36-C on the web for details about the problem. (Fixes:
+    #293).
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Thu, 28 Mar 2013 21:07:42 +0100
 

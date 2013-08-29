@@ -1,0 +1,67 @@
+Description: Be compliant with POS36-C: Observe correct revocation order while relinquishing privileges
+Author: Orion Poplawski <orion@cora.nwra.com>
+Abstract:
+ The Fedora review of NX (redistributed) caught the following rpmlint issue:
+ .
+ This executable is calling setuid and setgid without setgroups or initgroups.
+ There is a high probability this mean it didn't relinquish all groups, and this
+ would be a potential security issue to be fixed. Seek POS36-C on the web for
+ details about the problem.
+ .
+ Ref POS36-C:
+ https://www.securecoding.cert.org/confluence/display/seccode/POS36-C.+Observe+correct+revocation+order+while+relinquishing+privileges
+ .
+ This patch adds initgroups() calls to the code to initialize the supplemental group list.
+diff --git a/nx-X11/programs/Xserver/os/utils.c b/nx-X11/programs/Xserver/os/utils.c
+index 7e62654..9b2431a 100644
+--- a/nx-X11/programs/Xserver/os/utils.c
++++ b/nx-X11/programs/Xserver/os/utils.c
+@@ -112,6 +112,9 @@ OR PERFORMANCE OF THIS SOFTWARE.
+ #include <sys/stat.h>
+ #include <ctype.h>    /* for isspace */
+ #include <stdarg.h>
++#include <sys/types.h>
++#include <grp.h>
++#include <pwd.h>
+ 
+ #if defined(DGUX)
+ #include <sys/resource.h>
+@@ -1770,6 +1773,7 @@ System(char *command)
+     void (*csig)(int);
+ #endif
+     int status;
++    struct passwd *pwent;
+ 
+     if (!command)
+ 	return(1);
+@@ -1791,6 +1795,9 @@ System(char *command)
+     case -1:	/* error */
+ 	p = -1;
+     case 0:	/* child */
++	pwent = getpwuid(getuid());
++	if (initgroups(pwent->pw_name,getgid()) == -1)
++	    _exit(127);
+ 	if (setgid(getgid()) == -1)
+ 	    _exit(127);
+ 	if (setuid(getuid()) == -1)
+diff --git a/nxcomp/Pipe.cpp b/nxcomp/Pipe.cpp
+index 7238d0c..aacbbae 100644
+--- a/nxcomp/Pipe.cpp
++++ b/nxcomp/Pipe.cpp
+@@ -21,6 +21,7 @@
+ #include <pwd.h>
+ #include <sys/types.h>
+ #include <sys/wait.h>
++#include <grp.h>
+ 
+ #include "Pipe.h"
+ #include "Misc.h"
+@@ -234,6 +235,8 @@ FILE *Popen(char * const parameters[], const char *type)
+       // Child.
+       //
+ 
++      struct passwd *pwent = getpwuid(getuid());
++      if (pwent) initgroups(pwent->pw_name,getgid());
+       setgid(getgid());
+       setuid(getuid());
+ 

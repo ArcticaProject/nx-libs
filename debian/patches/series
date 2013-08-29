@@ -47,6 +47,7 @@
 302_nxagent_configurable-keystrokes.full.patch
 600_nx-X11+nxcompext+nxcompshad_unique-libnames.full.patch
 601_nx-X11_build-option-changes-to-not-use-bundled-libraries.full.patch
+602_nx-X11_initgroups.full.patch
 999_nxagent_unbrand-nxagent-brand-x2goagent.full.patch
 016_nx-X11_install-location.debian.patch
 102_xserver-xext_set-securitypolicy-path.debian.patch
