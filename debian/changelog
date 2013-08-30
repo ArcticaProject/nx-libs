@@ -1,4 +1,4 @@
-nx-libs (2:3.5.0.21-0) UNRELEASED; urgency=low
+nx-libs (2:3.5.0.21-0) unstable; urgency=low
 
   [ Mike Gabriel ]
   * Provide a default keystrokes.cfg in /etc/nx (for nxagent) and /etc/x2go
@@ -27,7 +27,7 @@ nx-libs (2:3.5.0.21-0) UNRELEASED; urgency=low
     to be fixed. Seek POS36-C on the web for details about the problem. (Fixes:
     #293).
 
- -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Thu, 28 Mar 2013 21:07:42 +0100
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 30 Aug 2013 16:18:04 +0200
 
 nx-libs (2:3.5.0.20-0) unstable; urgency=low
 
