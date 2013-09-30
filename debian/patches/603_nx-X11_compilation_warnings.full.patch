@@ -1,0 +1,38 @@
+Description: Handle some serious compilation warnings
+Author: Mirraz Mirraz <mirraz1@rambler.ru>
+--- a/nx-X11/extras/Mesa/src/mesa/shader/arbprogparse.c	2013-08-30 20:18:40.000000000 +0600
++++ b/nx-X11/extras/Mesa/src/mesa/shader/arbprogparse.c	2013-09-30 18:39:42.357560169 +0600
+@@ -3259,7 +3259,6 @@
+    vp->SrcReg[0].Swizzle = SWIZZLE_NOOP;
+    vp->SrcReg[1].Swizzle = SWIZZLE_NOOP;
+    vp->SrcReg[2].Swizzle = SWIZZLE_NOOP;
+-   vp->SrcReg[3].Swizzle = SWIZZLE_NOOP;
+    vp->DstReg.WriteMask = 0xf;
+ 
+    switch (type) {
+--- a/nx-X11/lib/X11/imLcPrs.c	2013-08-30 20:18:40.000000000 +0600
++++ b/nx-X11/lib/X11/imLcPrs.c	2013-09-30 19:02:56.925125678 +0600
+@@ -589,7 +589,7 @@
+ 
+     l = _Xmbstoutf8(local_utf8_buf, rhs_string_mb, LOCAL_UTF8_BUFSIZE - 1);
+     if (l == LOCAL_UTF8_BUFSIZE - 1) {
+-	local_wc_buf[l] = '\0';
++	local_utf8_buf[l] = '\0';
+     }
+     if( (rhs_string_utf8 = (char *)Xmalloc(l + 1)) == NULL ) {
+ 	Xfree( rhs_string_wc );
+--- a/nx-X11/programs/Xserver/xkb/ddxLoad.c	2013-08-30 20:18:40.000000000 +0600
++++ b/nx-X11/programs/Xserver/xkb/ddxLoad.c	2013-09-30 18:56:27.358995920 +0600
+@@ -37,6 +37,12 @@
+ #include <errno.h>
+ #include <stdio.h>
+ #include <ctype.h>
++
++/* stat() */
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <unistd.h>
++
+ #define	NEED_EVENTS 1
+ #include <X11/X.h>
+ #include <X11/Xos.h>

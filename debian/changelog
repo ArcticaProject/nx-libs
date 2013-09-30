@@ -1,6 +1,9 @@
 nx-libs (2:3.5.0.22-0) UNRELEASED; urgency=low
 
-  * Continue development...
+  [ Mirraz Mirraz ]
+  * Add patch: 603_nx-X11_compilation_warnings.full.patch. Fix 3 evident bugs:
+    one implicit function declaration issue and two array index out of bounds
+    issues. (Fixes: #314).
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 30 Aug 2013 16:20:18 +0200
 
