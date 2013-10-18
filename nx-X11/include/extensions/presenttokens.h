@@ -32,11 +32,19 @@
 
 /* Requests */
 #define X_PresentQueryVersion		0
-#define X_PresentRegion			1
+#define X_PresentPixmap			1
 #define X_PresentNotifyMSC		2
 #define X_PresentSelectInput		3
 
 #define PresentNumberRequests		4
+
+/* Present operation options */
+#define PresentOptionNone               0
+#define PresentOptionAsync              (1 << 0)
+#define PresentOptionCopy               (1 << 1)
+
+#define PresentAllOptions       (PresentOptionAsync | \
+                                 PresentOptionCopy)
 
 /* Events */
 #define PresentConfigureNotify	0
@@ -54,7 +62,13 @@
 
 /* Complete Kinds */
 
-#define PresentCompleteKindRegion       0
+#define PresentCompleteKindPixmap       0
 #define PresentCompleteKindNotifyMSC    1
+
+/* Complete Modes */
+
+#define PresentCompleteModeCopy         0
+#define PresentCompleteModeFlip         1
+#define PresentCompleteModeSkip         2
 
 #endif

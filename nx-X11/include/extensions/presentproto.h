@@ -71,17 +71,20 @@ typedef struct {
 
     INT16   x_off B16;
     INT16   y_off B16;
+    CARD32  target_crtc B32;
+
+    XSyncFence wait_fence B32;
     XSyncFence idle_fence B32;
 
-    CARD32  target_crtc B32;
+    CARD32  options B32;
     CARD32  pad1 B32;
 
     CARD64  target_msc;
     CARD64  divisor;
     CARD64  remainder;
     /* followed by a LISTofPRESENTNOTIFY */
-} xPresentRegionReq;
-#define sz_xPresentRegionReq	64
+} xPresentPixmapReq;
+#define sz_xPresentPixmapReq	72
 
 typedef struct {
     CARD8   reqType;
@@ -142,7 +145,8 @@ typedef struct {
     CARD16 sequenceNumber B16;
     CARD32 length;
     CARD16 evtype B16;
-    CARD16 kind B16;
+    CARD8  kind;
+    CARD8  mode;
     CARD32 eid B32;
     Window window B32;
     CARD32 serial B32;
@@ -162,6 +166,7 @@ typedef struct {
     CARD8 pad1;
     CARD32 eid B32;
     Window event_window B32;
+
     Window window B32;
     Pixmap pixmap B32;
     CARD32 serial B32;
@@ -179,16 +184,19 @@ typedef struct {
     INT16 y_off B16;
     CARD32 target_crtc B32;
 
+    XSyncFence wait_fence B32;
+    XSyncFence idle_fence B32;
+
+    CARD32 options B32;
+    CARD32 pad2 B32;
+
     CARD64 target_msc;
     CARD64 divisor;
     CARD64 remainder;
 
-    XSyncFence idle_fence B32;
-    CARD32 pad2 B32;
-
 } xPresentRedirectNotify;
 
-#define sz_xPresentRedirectNotify 96
+#define sz_xPresentRedirectNotify 104
 
 #undef Region
 #undef XSyncFence
