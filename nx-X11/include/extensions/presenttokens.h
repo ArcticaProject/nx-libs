@@ -35,29 +35,46 @@
 #define X_PresentPixmap			1
 #define X_PresentNotifyMSC		2
 #define X_PresentSelectInput		3
+#define X_PresentQueryCapabilities      4
 
-#define PresentNumberRequests		4
+#define PresentNumberRequests		5
 
 /* Present operation options */
 #define PresentOptionNone               0
 #define PresentOptionAsync              (1 << 0)
 #define PresentOptionCopy               (1 << 1)
+#define PresentOptionUST                (1 << 2)
 
 #define PresentAllOptions       (PresentOptionAsync | \
-                                 PresentOptionCopy)
+                                 PresentOptionCopy | \
+                                 PresentOptionUST)
+
+/* Present capabilities */
+
+#define PresentCapabilityNone           0
+#define PresentCapabilityAsync          1
+#define PresentCapabilityFence          2
+#define PresentCapabilityUST            4
+
+#define PresentAllCapabilities  (PresentCapabilityAsync | \
+                                 PresentCapabilityFence | \
+                                 PresentCapabilityUST)
 
 /* Events */
 #define PresentConfigureNotify	0
 #define PresentCompleteNotify	1
-#define PresentRedirectNotify	2
+#define PresentIdleNotify       2
+#define PresentRedirectNotify	3
 
 /* Event Masks */
 #define PresentConfigureNotifyMask      1
 #define PresentCompleteNotifyMask       2
-#define PresentRedirectNotifyMask       4
+#define PresentIdleNotifyMask           4
+#define PresentRedirectNotifyMask       8
 
 #define PresentAllEvents   (PresentConfigureNotifyMask |        \
                             PresentCompleteNotifyMask |         \
+                            PresentIdleNotifyMask |             \
                             PresentRedirectNotifyMask)
 
 /* Complete Kinds */

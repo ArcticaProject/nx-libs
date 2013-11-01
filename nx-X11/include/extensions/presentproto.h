@@ -27,6 +27,7 @@
 
 #define Region CARD32
 #define XSyncFence CARD32
+#define EventID CARD32
 
 typedef struct {
     Window  window B32;
@@ -109,7 +110,29 @@ typedef struct {
     CARD32  window B32;
     CARD32  eventMask B32;
 } xPresentSelectInputReq;
-#define sz_xPresentSelectInputReq   12
+#define sz_xPresentSelectInputReq   16
+
+typedef struct {
+    CARD8   reqType;
+    CARD8   presentReqType;
+    CARD16  length B16;
+    CARD32  target B32;
+} xPresentQueryCapabilitiesReq;
+#define sz_xPresentQueryCapabilitiesReq   8
+
+typedef struct {
+    BYTE    type;   /* X_Reply */
+    BYTE    pad1;
+    CARD16  sequenceNumber B16;
+    CARD32  length B32;
+    CARD32  capabilities B32;
+    CARD32  pad3 B32;
+    CARD32  pad4 B32;
+    CARD32  pad5 B32;
+    CARD32  pad6 B32;
+    CARD32  pad7 B32;
+} xPresentQueryCapabilitiesReply;
+#define sz_xPresentQueryCapabilitiesReply       32
 
 /*
  * Events
@@ -162,11 +185,25 @@ typedef struct {
     CARD16 sequenceNumber B16;
     CARD32 length;
     CARD16 evtype B16;
+    CARD16 pad2 B16;
+    CARD32 eid B32;
+    Window window B32;
+    CARD32 serial B32;
+    Pixmap pixmap B32;
+    CARD32 idle_fence B32;
+} xPresentIdleNotify;
+#define sz_xPresentIdleNotify   32
+
+typedef struct {
+    CARD8 type;
+    CARD8 extension;
+    CARD16 sequenceNumber B16;
+    CARD32 length;
+    CARD16 evtype B16;
     CARD8 update_window;
     CARD8 pad1;
     CARD32 eid B32;
     Window event_window B32;
-
     Window window B32;
     Pixmap pixmap B32;
     CARD32 serial B32;
@@ -200,5 +237,6 @@ typedef struct {
 
 #undef Region
 #undef XSyncFence
+#undef EventID
 
 #endif
