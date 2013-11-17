@@ -232,12 +232,6 @@ extern void _XlcGetLocaleDataBase(
     int*		/* count */
 );
 
-#ifdef X_LOCALE
-extern char *
-_Xsetlocale(
-    int           category,
-    _Xconst char  *name);
-#else
 #if defined(__APPLE__) || defined(__DARWIN__)
 extern char *
 _Xsetlocale(
@@ -247,7 +241,6 @@ _Xsetlocale(
 extern char *_XlcMapOSLocaleName(
     char *osname,
     char *siname);
-#endif
 
 extern int
 _Xmbstoutf8(

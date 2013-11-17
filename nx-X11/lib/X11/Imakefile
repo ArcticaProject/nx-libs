@@ -924,10 +924,7 @@ STATICI18NSTATICSRCS = \
 	imTrX.c \
 	imTransR.c \
 	imTrans.c \
-	lcEuc.c \
 	lcGenConv.c \
-	lcJis.c \
-	lcSjis.c \
 	lcUTF8Load.c \
 	omDefault.c \
 	omGeneric.c \
@@ -998,10 +995,7 @@ STATICI18NSTATICOBJS = \
 	imTrX.o \
 	imTransR.o \
 	imTrans.o \
-	lcEuc.o \
 	lcGenConv.o \
-	lcJis.o \
-	lcSjis.o \
 	lcUTF8Load.o \
 	omDefault.o \
 	omGeneric.o \
