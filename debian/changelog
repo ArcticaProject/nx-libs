@@ -5,6 +5,10 @@ nx-libs (2:3.5.0.22-0) UNRELEASED; urgency=low
     one implicit function declaration issue and two array index out of bounds
     issues. (Fixes: #314).
 
+  [ Mike Gabriel ]
+  * debian/source/format:
+    + Switch to format 1.0.
+
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 30 Aug 2013 16:20:18 +0200
 
 nx-libs (2:3.5.0.21-0) unstable; urgency=low
