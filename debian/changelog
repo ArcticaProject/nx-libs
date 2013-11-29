@@ -1,4 +1,4 @@
-nx-libs (2:3.5.0.22-0) UNRELEASED; urgency=low
+nx-libs (2:3.5.0.22-0x2go1) UNRELEASED; urgency=low
 
   [ Mirraz Mirraz ]
   * Add patch: 603_nx-X11_compilation_warnings.full.patch. Fix 3 evident bugs:
