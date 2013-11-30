@@ -14,6 +14,7 @@ Build-Depends:
  quilt (>= 0.46-7~),
  libfontconfig1-dev,
  libfontenc-dev,
+ libfreetype6-dev,
  libxmltok1-dev,
  libxml2-dev,
  autoconf,
