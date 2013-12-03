@@ -13,6 +13,10 @@ nx-libs (2:3.5.0.22-0x2go1) UNRELEASED; urgency=low
   * debian/control:
     + Add libfreetype6-dev to Build-Depends: field.
 
+  [ Clemens Lang ]
+  * Add patch 605_nxcomp_Types.h-dont-use-STL-internals-on-libc++.full.patch. Fix
+    FTBFS of nx-libs-lite on Mac OS X Mavericks. (Fixes: #337).
+
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 30 Aug 2013 16:20:18 +0200
 
 nx-libs (2:3.5.0.21-0) unstable; urgency=low
