@@ -1,0 +1,15 @@
+Description: Fix FTBFS against libfreetype6 (>= 2.5.0)
+Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+--- a/nx-X11/lib/Xft/xftglyphs.c
++++ b/nx-X11/lib/Xft/xftglyphs.c
+@@ -23,7 +23,9 @@
+  */
+ 
+ #include "xftint.h"
+-#include <freetype/ftoutln.h>
++
++#include <ft2build.h>
++#include FT_FREETYPE_H
+ 
+ static const int    filters[3][3] = {
+     /* red */

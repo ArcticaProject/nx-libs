@@ -49,6 +49,7 @@
 601_nx-X11_build-option-changes-to-not-use-bundled-libraries.full.patch
 602_nx-X11_initgroups.full.patch
 603_nx-X11_compilation_warnings.full.patch
+604_nx-X11_recent-freetype-API.full.patch
 999_nxagent_unbrand-nxagent-brand-x2goagent.full.patch
 016_nx-X11_install-location.debian.patch
 102_xserver-xext_set-securitypolicy-path.debian.patch

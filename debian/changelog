@@ -6,6 +6,8 @@ nx-libs (2:3.5.0.22-0x2go1) UNRELEASED; urgency=low
     issues. (Fixes: #314).
 
   [ Mike Gabriel ]
+  * Add patch 604_nx-X11_recent-freetype-API.full.patch. Fix FTBFS against
+    recent (>= 2.5.0) libfreetype6 API.
   * debian/source/format:
     + Switch to format 1.0.
   * debian/control:
