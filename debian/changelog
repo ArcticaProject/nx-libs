@@ -13,8 +13,11 @@ nx-libs (2:3.5.0.22-0x2go1) UNRELEASED; urgency=low
   * debian/control:
     + Add libfreetype6-dev to Build-Depends: field.
   * Refresh patch: 600_nx-X11+nxcompext+nxcompshad_unique-libnames.full.patch.
-  * Add patch: 302_nx-X11_do-not-build-bundled-libs.full.patch. Taken from Fedora.
-    Do not build bundled libraries, rather use system libraries instead.
+  * Improve patch:
+    601_nx-X11_build-option-changes-to-not-use-bundled-libraries.full.patch.
+    Improvements taken from the current Fedora package. Thanks to Orion
+    Paplowski!!! Also adapt roll-tarball.sh do dropping more bundled
+    libraries.
   * Rename patch: 302_nxagent_configurable-keystrokes.full.patch to
     320_nxagent_configurable-keystrokes.full.patch.
   * nx-libs.spec:

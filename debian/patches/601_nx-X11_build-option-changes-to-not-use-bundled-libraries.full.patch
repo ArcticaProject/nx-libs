@@ -1,8 +1,13 @@
-From e3569945417272ea2556d4b77b6bc041fdea885f Mon Sep 17 00:00:00 2001
-From: Orion Poplawski <orion@nwra.com>
-Date: Wed, 10 Jul 2013 14:09:45 -0600
-Subject: [PATCH 2/2] Build option changes to not use bundled libraries
-
+Description: Do not build bundled libraries.
+Author: Orion Poplawski <orion@nwra.com>
+Abstract:
+ This commit has been submitted by Orion in two
+ portions. One was submitted to X2Go BTS and created
+ on Wed, 10 Jul 2013.
+ .
+ The other portion has been taken from the Fedora
+ package by Mike Gabriel and worked into this
+ patch on Fri, 06 Dec 2013.
 ---
  nx-X11/config/cf/host.def         | 10 +++++++---
  nx-X11/lib/font/include/Imakefile |  2 +-
@@ -45,13 +50,27 @@ Subject: [PATCH 2/2] Build option changes to not use bundled libraries
  
  /* 
   * To use a Expat library already installed outside the default search
-@@ -1019,3 +1020,6 @@
+@@ -961,7 +962,7 @@
+ 
+ #define SharedLibXdmcp         YES
+ 
+-#define BuildXaw7              YES
++#define BuildXaw7              NO
+ 
+ #else /* #if !defined(NXZaurusXServer) && !defined(NXiPAQXServer) && !defined(DarwinArchitecture) */
+ 
+@@ -1019,3 +1020,11 @@
  #endif
  
  #endif /* #if !defined(NXZaurusXServer) && !defined(NXiPAQXServer) && !defined(DarwinArchitecture) */
 +
 +#define BuildRman NO
 +#define BuildFontEncLib NO
++#define BuildXcursorLibrary NO
++#define BuildXftLibrary NO
++#define BuildXft1Library NO
++#define SharedLibFont NO
++#define BuildLoadableXlibI18n NO
 --- a/nx-X11/lib/font/include/Imakefile
 +++ b/nx-X11/lib/font/include/Imakefile
 @@ -1,5 +1,5 @@
@@ -61,3 +80,20 @@ Subject: [PATCH 2/2] Build option changes to not use bundled libraries
  	      fontencc.h fontmisc.h fontmod.h fontshow.h fontutil.h \
  	      fontxlfd.h
  all::
+--- a/nx-X11/lib/Imakefile
++++ b/nx-X11/lib/Imakefile
+@@ -213,14 +213,8 @@
+ 
+ #if BuildLibraries
+ OLDXLIBDIR = oldX
+-ICELIBDIR = ICE
+-SMLIBDIR = SM
+-XTLIBDIR = Xt
+-XMULIBDIR = Xmu
+-XMUULIBDIR = Xmuu
+ XPMLIBDIR = Xpm
+ XTSTLIBDIR = Xtst
+-FSLIBDIR = FS
+ #endif
+ 
+ 
