@@ -490,6 +490,12 @@ cp -v debian/Makefile.nx-libs Makefile
 cp -v debian/Makefile.replace.sh replace.sh
 cp -v debian/rgb rgb
 cp -v debian/VERSION.x2goagent VERSION.x2goagent
+# remove bundled libraries (also taken from roll-tarball.sh)
+rm -Rf nx-X11/extras/{drm,expat,fontconfig,freetype2,fonts,ogl-sample,regex,rman,ttf2pt1,x86emu,zlib}
+rm -Rf nx-X11/lib/{expat,fontconfig,fontenc,font/FreeType,font/include/fontenc.h,freetype2,regex,zlib}
+rm -Rf nx-X11/lib/{FS,ICE,SM,Xaw,Xft,Xt,Xmu,Xmuu}
+# remove build cruft that is in Git (also taken from roll-tarball.sh)
+rm -Rf nx*/configure nx*/autom4te.cache*
 # Install into /usr
 sed -i -e 's,/usr/local,/usr,' nx-X11/config/cf/site.def
 # Use rpm optflags
@@ -514,7 +520,6 @@ find -type f -name '*.[hc]' | xargs chmod -x
 # Xcursor - Other code still references files in it
 # Xfont - Statically linked to nxarget, others?
 # Xpm
-rm -r nx-X11/lib/{FS,ICE,SM,Xaw,Xft,Xt,Xmu,Xmuu}
 
 
 %build
