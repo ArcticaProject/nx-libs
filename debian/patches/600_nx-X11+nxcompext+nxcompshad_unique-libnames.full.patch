@@ -1340,7 +1340,7 @@ Last-Update: 2012-02-15
  #define IncSubSubdir SM
 --- a/nx-X11/lib/X11/Imakefile
 +++ b/nx-X11/lib/X11/Imakefile
-@@ -83,7 +83,7 @@
+@@ -82,7 +82,7 @@
  #define DoExtraLib SharedLibX11
  #define DoDebugLib DebugLibX11
  #define DoProfileLib ProfileLibX11

@@ -12,6 +12,7 @@ nx-libs (2:3.5.0.22-0x2go1) UNRELEASED; urgency=low
     + Switch to format 1.0.
   * debian/control:
     + Add libfreetype6-dev to Build-Depends: field.
+  * Refresh patch: 600_nx-X11+nxcompext+nxcompshad_unique-libnames.full.patch.
 
   [ Clemens Lang ]
   * Add patch 605_nxcomp_Types.h-dont-use-STL-internals-on-libc++.full.patch. Fix
