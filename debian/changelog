@@ -13,9 +13,11 @@ nx-libs (2:3.5.0.22-0x2go1) UNRELEASED; urgency=low
   * debian/control:
     + Add libfreetype6-dev to Build-Depends: field.
   * Refresh patch: 600_nx-X11+nxcompext+nxcompshad_unique-libnames.full.patch.
-  * Ship nx-libs.spec (RPM package definitions) in upstream project. (Thanks
-    to the Fedora package maintainers). File differs from the Fedora file
-    already.
+  * nx-libs.spec:
+    + Ship nx-libs.spec (RPM package definitions) in upstream project. (Thanks
+      to the Fedora package maintainers). File differs from the Fedora file
+      already.
+    + Use local tarball, don't expect  ,,-full'' in tarball name.
 
   [ Clemens Lang ]
   * Add patch 605_nxcomp_Types.h-dont-use-STL-internals-on-libc++.full.patch. Fix

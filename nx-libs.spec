@@ -8,7 +8,8 @@ Summary:        NX X11 protocol compression libraries
 Group:          System Environment/Libraries
 License:        GPLv2+
 URL:            http://x2go.org/
-Source0:        http://code.x2go.org/releases/source/%{name}/%{name}-%{version}-full.tar.gz
+#Source0:        http://code.x2go.org/releases/source/%{name}/%{name}-%{version}-full.tar.gz
+Source0:        %{name}-%{version}.tar.gz
 # git clone git://code.x2go.org/nx-libs
 # cd nx-libs
 # debian/roll-tarballs.sh HEAD server
