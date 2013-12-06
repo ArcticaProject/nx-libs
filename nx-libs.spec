@@ -480,6 +480,16 @@ information on NX.
 
 %prep
 %setup -q
+# copy files from the debian/ folder to designated places in the source tree,
+# taken from roll-tarball.sh:
+mkdir bin/
+cp -v debian/wrappers/* bin/
+mkdir etc/
+cp -v debian/keystrokes.cfg etc/keystrokes.cfg
+cp -v debian/Makefile.nx-libs Makefile
+cp -v debian/Makefile.replace.sh replace.sh
+cp -v debian/rgb rgb
+cp -v debian/VERSION.x2goagent VERSION.x2goagent
 # Install into /usr
 sed -i -e 's,/usr/local,/usr,' nx-X11/config/cf/site.def
 # Use rpm optflags
