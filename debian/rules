@@ -27,6 +27,7 @@ override_dh_auto_install:
 	PREFIX=/usr dh_auto_install -Smakefile
 
 override_dh_auto_build:
+
 	# create copies of upstream changelogs so that names apply to Debian policy...
 	cp -a nx-X11/CHANGELOG nx-X11/changelog
 	cp -a nxcomp/CHANGELOG nxcomp/changelog
@@ -42,6 +43,12 @@ override_dh_auto_build:
 	ln -s ../debian/keystrokes.cfg etc/keystrokes.cfg
 	ln -s debian/rgb
 	ln -s debian/VERSION.x2goagent
+
+	# remove bundled libraries (keep this in sync with roll-tarball.sh)
+	rm -Rf nx-X11/extras/{drm,expat,fontconfig,freetype2,fonts,ogl-sample,regex,rman,ttf2pt1,x86emu,zlib}
+	rm -Rf nx-X11/lib/{expat,fontconfig,fontenc,font/FreeType,font/include/fontenc.h,freetype2,regex,zlib}
+	rm -Rf nx-X11/lib/{FS,ICE,SM,Xaw,Xft,Xt,Xmu,Xmuu}
+
 	LD_LIBRARY_PATH=`pwd`/debian/libnx-x11/usr/lib/nx/X11:$$LD_LIBRARY_PATH dh_auto_build --with quilt --parallel
 
 override_dh_strip:

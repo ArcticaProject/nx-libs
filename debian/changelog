@@ -8,10 +8,6 @@ nx-libs (2:3.5.0.22-0x2go1) UNRELEASED; urgency=low
   [ Mike Gabriel ]
   * Add patch 604_nx-X11_recent-freetype-API.full.patch. Fix FTBFS against
     recent (>= 2.5.0) libfreetype6 API.
-  * debian/source/format:
-    + Switch to format 1.0.
-  * debian/control:
-    + Add libfreetype6-dev to Build-Depends: field.
   * Refresh patch: 600_nx-X11+nxcompext+nxcompshad_unique-libnames.full.patch.
   * Improve patch:
     601_nx-X11_build-option-changes-to-not-use-bundled-libraries.full.patch.
@@ -20,6 +16,12 @@ nx-libs (2:3.5.0.22-0x2go1) UNRELEASED; urgency=low
     libraries.
   * Rename patch: 302_nxagent_configurable-keystrokes.full.patch to
     320_nxagent_configurable-keystrokes.full.patch.
+  * debian/source/format:
+    + Switch to format 1.0.
+  * debian/control:
+    + Add libfreetype6-dev to Build-Depends: field.
+  * debian/rules:
+    + Remove bundled libraries from source tree before building the package.
   * nx-libs.spec:
     + Ship nx-libs.spec (RPM package definitions) in upstream project. (Thanks
       to the Fedora package maintainers). File differs from the Fedora file
