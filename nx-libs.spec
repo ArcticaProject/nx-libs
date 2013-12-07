@@ -527,6 +527,8 @@ cat >"my_configure" <<'EOF'
 %configure
 EOF
 chmod a+x my_configure;
+# The RPM macro for the linker flags does not exist on EPEL
+%{!?__global_ldflags: %global __global_ldflags -Wl,-z,relro}
 export SHLIBGLOBALSFLAGS="%{__global_ldflags}"
 make %{?_smp_mflags} CONFIGURE="$PWD/my_configure" USRLIBDIR=%{_libdir}/nx SHLIBDIR=%{_libdir}/nx
 
