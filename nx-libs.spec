@@ -33,6 +33,9 @@ Provides:       nx = %{version}-%{release}
 Obsoletes:      nx%{?_isa} < 3.5.0-19
 Provides:       nx%{?_isa} = %{version}-%{release}
 
+For compatibility with EPEL5
+BuildRoot:      %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+
 %description
 NX is a software suite which implements very efficient compression of
 the X11 protocol. This increases performance when using X
