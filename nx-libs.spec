@@ -33,7 +33,7 @@ Provides:       nx = %{version}-%{release}
 Obsoletes:      nx%{?_isa} < 3.5.0-19
 Provides:       nx%{?_isa} = %{version}-%{release}
 
-For compatibility with EPEL5
+# For compatibility with EPEL5
 BuildRoot:      %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
 %description
