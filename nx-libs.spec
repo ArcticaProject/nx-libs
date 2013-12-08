@@ -2,7 +2,7 @@
 
 Name:           nx-libs
 Version:        3.5.0.22
-Release:        0x2go1%{?dist}
+Release:        0.0x2go1%{?dist}
 Summary:        NX X11 protocol compression libraries
 
 Group:          System Environment/Libraries
