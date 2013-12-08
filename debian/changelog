@@ -26,6 +26,7 @@ nx-libs (2:3.5.0.22-0x2go1) UNRELEASED; urgency=low
     + Ship nx-libs.spec (RPM package definitions) in upstream project. (Thanks
       to the Fedora package maintainers). File differs from the Fedora file
       already.
+    + Clear (Fedora package) changelog.
     + Use local tarball, don't expect  ,,-full'' in tarball name.
     + The RPM macro for the linker flags does not exist on EPEL. Thus, hardcode
       __global_ldflags macro for EPEL builds.
