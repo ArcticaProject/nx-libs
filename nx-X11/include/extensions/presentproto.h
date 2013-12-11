@@ -25,6 +25,8 @@
 
 #include <X11/extensions/presenttokens.h>
 
+#define Window CARD32
+#define Pixmap CARD32
 #define Region CARD32
 #define XSyncFence CARD32
 #define EventID CARD32
@@ -235,6 +237,8 @@ typedef struct {
 
 #define sz_xPresentRedirectNotify 104
 
+#undef Window
+#undef Pixmap
 #undef Region
 #undef XSyncFence
 #undef EventID
