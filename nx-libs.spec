@@ -469,7 +469,6 @@ This package provides the NX proxy (client) binary.
 Group:          Applications/System
 Summary:        X2Go Agent
 Requires:       nxagent
-Requires:       x2goserver
 
 %description -n x2goagent
 X2Go Agent functionality has been completely incorporated into
