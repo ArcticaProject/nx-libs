@@ -196,6 +196,7 @@ typedef struct {
 } xPresentIdleNotify;
 #define sz_xPresentIdleNotify   32
 
+#if PRESENT_FUTURE_VERSION
 typedef struct {
     CARD8 type;
     CARD8 extension;
@@ -236,6 +237,7 @@ typedef struct {
 } xPresentRedirectNotify;
 
 #define sz_xPresentRedirectNotify 104
+#endif
 
 #undef Window
 #undef Pixmap
