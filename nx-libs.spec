@@ -419,7 +419,7 @@ needed to develop X11 applications that require these.
 
 %package -n nxagent
 Group:          Applications/System
-Summary:        NX agent
+Summary:        NX Agent
 Obsoletes:      nx < 3.5.0-19
 Provides:       nx = %{version}-%{release}
 Obsoletes:      nx%{?_isa} < 3.5.0-19
@@ -447,7 +447,7 @@ round-trips are nearly reduced to zero.
 
 %package -n nxauth
 Group:          Applications/System
-Summary:        NX xauth
+Summary:        NX Auth
 
 %description -n nxauth
 This package provides the NX xauth binary.
@@ -455,7 +455,7 @@ This package provides the NX xauth binary.
 
 %package -n nxproxy
 Group:          Applications/System
-Summary:        NX proxy
+Summary:        NX Proxy
 Obsoletes:      nx < 3.5.0-19
 Provides:       nx = %{version}-%{release}
 Obsoletes:      nx%{?_isa} < 3.5.0-19
@@ -467,14 +467,14 @@ This package provides the NX proxy (client) binary.
 
 %package -n x2goagent
 Group:          Applications/System
-Summary:        X2go agent
+Summary:        X2Go Agent
 Requires:       nxagent
 Requires:       x2goserver
 
 %description -n x2goagent
-X2go agent functionality has been completely incorporated into
+X2Go Agent functionality has been completely incorporated into
 nxagent's code base. If the nxagent binary is executed under the name
-of "x2goagent", the X2go functionalities get activated.
+of "x2goagent", the X2Go functionalities get activated.
 
 The x2goagent package is a wrapper that activates X2Go branding in
 nxagent. Please refer to the nxagent package's description for more
