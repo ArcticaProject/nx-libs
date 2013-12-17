@@ -578,8 +578,8 @@ rm -r %{buildroot}%{_includedir}/nx/X11/Xtrans
 %post -n libNX_Xext -p /sbin/ldconfig
 %post -n libNX_Xfixes -p /sbin/ldconfig
 %post -n libNX_Xinerama
-ln -s -f %{_libdir}/libX11.so.6 %{_libdir}/X11/Xinerama/libNX_X11.so.6
-ln -s -f %{_libdir}/libXext.so.6 %{_libdir}/X11/Xinerama/libNX_Xext.so.6
+ln -s -f %{_libdir}/libX11.so.6 %{_libdir}/nx/X11/Xinerama/libNX_X11.so.6
+ln -s -f %{_libdir}/libXext.so.6 %{_libdir}/nx/X11/Xinerama/libNX_Xext.so.6
 /sbin/ldconfig
 
 %post -n libNX_Xpm -p /sbin/ldconfig
@@ -591,8 +591,8 @@ ln -s -f %{_libdir}/libXext.so.6 %{_libdir}/X11/Xinerama/libNX_Xext.so.6
 %post -n libXcompshad -p /sbin/ldconfig
 
 %preun -n libNX_Xinerama
-rm -f %{_libdir}/X11/Xinerama/libNX_X11.so.6
-rm -f %{_libdir}/X11/Xinerama/libNX_Xext.so.6
+rm -f %{_libdir}/nx/X11/Xinerama/libNX_X11.so.6
+rm -f %{_libdir}/nx/X11/Xinerama/libNX_Xext.so.6
 
 %postun -p /sbin/ldconfig
 %postun -n libNX_X11 -p /sbin/ldconfig
