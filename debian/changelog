@@ -20,6 +20,8 @@ nx-libs (2:3.5.0.22-0x2go1) UNRELEASED; urgency=low
     + Switch to format 1.0.
   * debian/control:
     + Add libfreetype6-dev to Build-Depends: field.
+    + Drop symlinking libNX_xrandr for setting a custom LD_LIBRARY_PATH. Not in
+      use anymore and not recommended at all to have that.
   * debian/rules:
     + Remove bundled libraries from source tree before building the package.
   * nx-libs.spec:
