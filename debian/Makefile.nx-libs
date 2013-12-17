@@ -3,6 +3,7 @@
 INSTALL_DIR=install -d -m 755
 INSTALL_FILE=install -m 644
 INSTALL_PROGRAM=install -m 755
+INSTALL_SYMLINK=ln -s -f
 COPY_SYMLINK=cp -a
 RM_FILE=rm -f
 RM_DIR=rmdir -p --ignore-fail-on-non-empty
@@ -113,6 +114,14 @@ install-full:
 	        $(INSTALL_FILE) $${dirname}/*.h \
 	                        "$$(string_rep "$$dirname" nx-X11/.build-exports/include "$(DESTDIR)$(PREFIX)/include/nx")"/ || true; \
 	    done; \
+
+	# Provide means for Xinerama support in NX/X2Go sessions. This
+	# This also requires two post-install symlinks:
+	# (DESTDIR)$(NXLIBDIR)/X11/Xinerama/libNX_X11.so.6 -> /usr/<libdir>/libX11.so.6
+	# (DESTDIR)$(NXLIBDIR)/X11/Xinerama/libNX_Xext.so.6 -> /usr/<libdir>/libXext.so.6
+	$(INSTALL_DIR) $(DESTDIR)$(NXLIBDIR)/X11/Xinerama
+	$(INSTALL_SYMLINK) ../libNX_Xinerama.so $(DESTDIR)$(NXLIBDIR)/X11/Xinerama/libXinerama.so
+	$(INSTALL_SYMLINK) ../libNX_Xinerama.so.1 $(DESTDIR)$(NXLIBDIR)/X11/Xinerama/libXinerama.so.1
 
 	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/include/nx/X11/bitmaps
 	$(INSTALL_FILE) nx-X11/.build-exports/include/X11/bitmaps/* \

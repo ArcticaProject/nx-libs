@@ -235,6 +235,8 @@ various limitations in the core protocol.
 Group:          System Environment/Libraries
 Summary:        Xinerama extension to the NX Protocol
 Requires:       %{name}%{?_isa} = %{version}-%{release}
+Requires:       libX11
+Requires:       libXext
 
 %description -n libNX_Xinerama
 Xinerama is an extension to the X Window System which enables
@@ -534,7 +536,6 @@ chmod a+x my_configure;
 export SHLIBGLOBALSFLAGS="%{__global_ldflags}"
 make %{?_smp_mflags} CONFIGURE="$PWD/my_configure" USRLIBDIR=%{_libdir}/nx SHLIBDIR=%{_libdir}/nx
 
-
 %install
 make install \
         DESTDIR=%{buildroot} \
@@ -577,6 +578,9 @@ rm -r %{buildroot}%{_includedir}/nx/X11/Xtrans
 %post -n libNX_Xext -p /sbin/ldconfig
 %post -n libNX_Xfixes -p /sbin/ldconfig
 %post -n libNX_Xinerama -p /sbin/ldconfig
+ln -s -f %{_libdir}/libX11.so.6 %{_libdir}/X11/Xinerama/libNX_X11.so.6
+ln -s -f %{_libdir}/libXext.so.6 %{_libdir}/X11/Xinerama/libNX_Xext.so.6
+
 %post -n libNX_Xpm -p /sbin/ldconfig
 %post -n libNX_Xrandr -p /sbin/ldconfig
 %post -n libNX_Xrender -p /sbin/ldconfig
@@ -584,6 +588,10 @@ rm -r %{buildroot}%{_includedir}/nx/X11/Xtrans
 %post -n libXcomp -p /sbin/ldconfig
 %post -n libXcompext -p /sbin/ldconfig
 %post -n libXcompshad -p /sbin/ldconfig
+
+%preun -n libNX_Xinerama
+rm -f %{_libdir}/X11/Xinerama/libNX_X11.so.6
+rm -f %{_libdir}/X11/Xinerama/libNX_Xext.so.6
 
 %postun -p /sbin/ldconfig
 %postun -n libNX_X11 -p /sbin/ldconfig
@@ -689,6 +697,7 @@ rm -r %{buildroot}%{_includedir}/nx/X11/Xtrans
 
 %files -n libNX_Xinerama
 %{_libdir}/nx/X11/libNX_Xinerama.so.1*
+%{_libdir}/nx/X11/Xinerama/
 
 %files -n libNX_Xpm-devel
 %{_libdir}/nx/X11/libNX_Xpm.so
