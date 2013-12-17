@@ -577,9 +577,10 @@ rm -r %{buildroot}%{_includedir}/nx/X11/Xtrans
 %post -n libNX_Xdmcp -p /sbin/ldconfig
 %post -n libNX_Xext -p /sbin/ldconfig
 %post -n libNX_Xfixes -p /sbin/ldconfig
-%post -n libNX_Xinerama -p /sbin/ldconfig
+%post -n libNX_Xinerama
 ln -s -f %{_libdir}/libX11.so.6 %{_libdir}/X11/Xinerama/libNX_X11.so.6
 ln -s -f %{_libdir}/libXext.so.6 %{_libdir}/X11/Xinerama/libNX_Xext.so.6
+/sbin/ldconfig
 
 %post -n libNX_Xpm -p /sbin/ldconfig
 %post -n libNX_Xrandr -p /sbin/ldconfig

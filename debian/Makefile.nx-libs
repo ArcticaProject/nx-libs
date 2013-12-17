@@ -120,7 +120,6 @@ install-full:
 	# (DESTDIR)$(NXLIBDIR)/X11/Xinerama/libNX_X11.so.6 -> /usr/<libdir>/libX11.so.6
 	# (DESTDIR)$(NXLIBDIR)/X11/Xinerama/libNX_Xext.so.6 -> /usr/<libdir>/libXext.so.6
 	$(INSTALL_DIR) $(DESTDIR)$(NXLIBDIR)/X11/Xinerama
-	$(INSTALL_SYMLINK) ../libNX_Xinerama.so $(DESTDIR)$(NXLIBDIR)/X11/Xinerama/libXinerama.so
 	$(INSTALL_SYMLINK) ../libNX_Xinerama.so.1 $(DESTDIR)$(NXLIBDIR)/X11/Xinerama/libXinerama.so.1
 
 	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/include/nx/X11/bitmaps
