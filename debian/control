@@ -80,6 +80,9 @@ Architecture: any
 Depends:
  ${shlibs:Depends},
  ${misc:Depends},
+ libxcomp3 (= ${binary:Version}),
+ libxcompext3 (= ${binary:Version}),
+ libxcompshad3 (= ${binary:Version}),
 Recommends:
  xfonts-base,
 Description: NX agent
@@ -104,7 +107,7 @@ Description: NX agent
 Package: x2goagent
 Architecture: all
 Depends:
- nxagent (>= ${source:Version}),
+ nxagent (= ${binary:Version}),
  ${misc:Depends},
 Suggests:
  x2goserver
