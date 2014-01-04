@@ -1,4 +1,4 @@
-nx-libs (2:3.5.0.22-0x2go1) UNRELEASED; urgency=low
+nx-libs (2:3.5.0.22-0x2go1) unstable; urgency=low
 
   [ Mirraz Mirraz ]
   * Add patch: 603_nx-X11_compilation_warnings.full.patch. Fix 3 evident bugs:
@@ -39,7 +39,7 @@ nx-libs (2:3.5.0.22-0x2go1) UNRELEASED; urgency=low
   * Add patch 605_nxcomp_Types.h-dont-use-STL-internals-on-libc++.full.patch. Fix
     FTBFS of nx-libs-lite on Mac OS X Mavericks. (Fixes: #337).
 
- -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Fri, 30 Aug 2013 16:20:18 +0200
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Sat, 04 Jan 2014 21:39:17 +0100
 
 nx-libs (2:3.5.0.21-0) unstable; urgency=low
 
