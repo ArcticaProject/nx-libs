@@ -1,8 +1,8 @@
-nx-libs (2:3.5.0.22-0x2go2) UNRELEASED; urgency=low
+nx-libs (2:3.5.0.22-0x2go2) unstable; urgency=low
 
   * Update version in VERSION.x2goagent.
 
- -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Sat, 04 Jan 2014 21:59:36 +0100
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Sat, 04 Jan 2014 22:01:40 +0100
 
 nx-libs (2:3.5.0.22-0x2go1) unstable; urgency=low
 
