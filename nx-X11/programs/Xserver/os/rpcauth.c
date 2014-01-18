@@ -78,6 +78,10 @@ authdes_ezdecode(char *inmsg, int len)
     SVCXPRT         xprt;
 
     temp_inmsg = (char *) xalloc(len);
+    if (temp_inmsg == NULL) {
+        why = AUTH_FAILED; /* generic error, since there is no AUTH_BADALLOC */
+        return NULL;
+    }
     memmove(temp_inmsg, inmsg, len);
 
     memset((char *)&msg, 0, sizeof(msg));
