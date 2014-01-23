@@ -172,7 +172,6 @@ Equipment Corporation.
         ((r1)->y1 <= (r2)->y1) && \
         ((r1)->y2 >= (r2)->y2) )
 
-#define xallocData(n) (RegDataPtr)xalloc(REGION_SZOF(n))
 #define xfreeData(reg) if ((reg)->data && (reg)->data->size) xfree((reg)->data)
 
 #define RECTALLOC_BAIL(pReg,n,bail) \
@@ -209,8 +208,9 @@ if (!(pReg)->data || (((pReg)->data->numRects + (n)) > (pReg)->data->size)) \
 #define DOWNSIZE(reg,numRects)						 \
 if (((numRects) < ((reg)->data->size >> 1)) && ((reg)->data->size > 50)) \
 {									 \
-    RegDataPtr NewData;							 \
-    NewData = (RegDataPtr)xrealloc((reg)->data, REGION_SZOF(numRects));	 \
+    size_t NewSize = REGION_SZOF(numRects);				 \
+    RegDataPtr NewData =						 \
+	(NewSize > 0) ? (RegDataPtr)xrealloc((reg)->data, NewSize) : NULL;	 \
     if (NewData)							 \
     {									 \
 	NewData->size = (numRects);					 \
@@ -337,7 +337,7 @@ miRegionCreate(rect, size)
     int size;
 {
     register RegionPtr pReg;
-   
+    size_t newSize;
     pReg = (RegionPtr)xalloc(sizeof(RegionRec));
     if (!pReg)
 	return &miBrokenRegion;
@@ -349,7 +349,9 @@ miRegionCreate(rect, size)
     else
     {
 	pReg->extents = miEmptyBox;
-	if ((size > 1) && (pReg->data = xallocData(size)))
+	newSize = REGION_SZOF(size);
+	if ((size > 1) && (newSize > 0) &&
+	    (pReg->data = xalloc(newSize)))
 	{
 	    pReg->data->size = size;
 	    pReg->data->numRects = 0;
@@ -371,6 +373,8 @@ miRegionInit(pReg, rect, size)
     BoxPtr rect;
     int size;
 {
+    size_t newSize;
+
     if (rect)
     {
 	pReg->extents = *rect;
@@ -379,7 +383,9 @@ miRegionInit(pReg, rect, size)
     else
     {
 	pReg->extents = miEmptyBox;
-	if ((size > 1) && (pReg->data = xallocData(size)))
+	newSize = REGION_SZOF(size);
+	if ((size > 1) && (newSize > 0) &&
+	    (pReg->data = xalloc(newSize)))
 	{
 	    pReg->data->size = size;
 	    pReg->data->numRects = 0;
@@ -423,11 +429,13 @@ miRectAlloc(
     int n)
 {
     RegDataPtr	data;
+    size_t rgnSize;
     
     if (!pRgn->data)
     {
 	n++;
-	pRgn->data = xallocData(n);
+	rgnSize = REGION_SZOF(n);
+	pRgn->data = (rgnSize > 0) ? xalloc(rgnSize) : NULL;
 	if (!pRgn->data)
 	    return miRegionBreak (pRgn);
 	pRgn->data->numRects = 1;
@@ -435,7 +443,8 @@ miRectAlloc(
     }
     else if (!pRgn->data->size)
     {
-	pRgn->data = xallocData(n);
+	rgnSize = REGION_SZOF(n);
+	pRgn->data = (rgnSize > 0) ? xalloc(rgnSize) : NULL;
 	if (!pRgn->data)
 	    return miRegionBreak (pRgn);
 	pRgn->data->numRects = 0;
@@ -449,7 +458,8 @@ miRectAlloc(
 		n = 250;
 	}
 	n += pRgn->data->numRects;
-	data = (RegDataPtr)xrealloc(pRgn->data, REGION_SZOF(n));
+	rgnSize = REGION_SZOF(n);
+	data = (rgnSize > 0) ? xrealloc(pRgn->data, rgnSize) : NULL;
 	if (!data)
 	    return miRegionBreak (pRgn);
 	pRgn->data = data;
@@ -476,8 +486,10 @@ miRegionCopy(dst, src)
     }
     if (!dst->data || (dst->data->size < src->data->numRects))
     {
+	size_t newSize = REGION_SZOF(src->data->numRects);
 	xfreeData(dst);
-	dst->data = xallocData(src->data->numRects);
+
+	dst->data = newSize > 0 ? xalloc(newSize) : NULL;
 	if (!dst->data)
 	    return miRegionBreak (dst);
 	dst->data->size = src->data->numRects;
@@ -1667,6 +1679,7 @@ miRectsToRegion(nrects, prect, ctype)
     register BoxPtr	pBox;
     register int        i;
     int			x1, y1, x2, y2;
+    size_t newSize;
 
     pRgn = miRegionCreate(NullBox, 0);
     if (REGION_NAR (pRgn))
@@ -1691,7 +1704,8 @@ miRectsToRegion(nrects, prect, ctype)
 	}
 	return pRgn;
     }
-    pData = xallocData(nrects);
+    newSize = REGION_SZOF(nrects);
+    pData = newSize > 0 ? xalloc(newSize) : NULL;
     if (!pData)
     {
 	miRegionBreak (pRgn);
@@ -2206,8 +2220,9 @@ miRegionDataCopy(
     }
     if (!dst->data || (dst->data->size < src->data->numRects))
     {
+	size_t newSize = REGION_SZOF(src->data->numRects);
 	xfreeData(dst);
-	dst->data = xallocData(src->data->numRects);
+	dst->data = newSize > 0 ? xalloc(newSize) : NULL;
 	if (!dst->data)
 	    return miRegionBreak (dst);
     }

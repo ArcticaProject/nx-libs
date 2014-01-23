@@ -53,6 +53,9 @@ SOFTWARE.
 
 typedef struct _Region RegionRec, *RegionPtr;
 
+#include <stddef.h>
+#include <limits.h>
+
 #include "miscstruct.h"
 
 /* Return values from RectIn() */
@@ -93,7 +96,7 @@ extern RegDataRec miBrokenData;
 #define REGION_BOX(reg,i) (&REGION_BOXPTR(reg)[i])
 #define REGION_TOP(reg) REGION_BOX(reg, (reg)->data->numRects)
 #define REGION_END(reg) REGION_BOX(reg, (reg)->data->numRects - 1)
-#define REGION_SZOF(n) (sizeof(RegDataRec) + ((n) * sizeof(BoxRec)))
+#define REGION_SZOF(n) (n < ((INT_MAX - sizeof(RegDataRec)) / sizeof(BoxRec)) ?  sizeof(RegDataRec) + ((n) * sizeof(BoxRec)) : 0)
 
 /* Keith recommends weaning the region code of pScreen argument */
 #define REG_pScreen	screenInfo.screens[0]
@@ -257,9 +260,10 @@ extern RegDataRec miBrokenData;
     } \
     else \
     { \
+        size_t rgnSize; \
         (_pReg)->extents = miEmptyBox; \
-        if (((_size) > 1) && ((_pReg)->data = \
-                             (RegDataPtr)xalloc(REGION_SZOF(_size)))) \
+        if (((_size) > 1) && ((rgnSize = REGION_SZOF(_size)) > 0) && \
+            ((_pReg)->data = (RegDataPtr)xalloc(rgnSize))) \
         { \
             (_pReg)->data->size = (_size); \
             (_pReg)->data->numRects = 0; \
