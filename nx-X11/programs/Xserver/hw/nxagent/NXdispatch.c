@@ -2618,7 +2618,9 @@ ProcPutImage(register ClientPtr client)
 
     tmpImage = (char *)&stuff[1];
     lengthProto = length;
-	
+    if (lengthProto >= (INT32_MAX / stuff->height))
+        return BadLength;
+
     if (((((lengthProto * stuff->height) + (unsigned)3) >> 2) + 
 	(sizeof(xPutImageReq) >> 2)) != client->req_len)
 	return BadLength;
