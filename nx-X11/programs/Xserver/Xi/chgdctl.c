@@ -87,7 +87,7 @@ SProcXChangeDeviceControl(client)
 
     REQUEST(xChangeDeviceControlReq);
     swaps(&stuff->length, n);
-    REQUEST_AT_LEAST_SIZE(xChangeDeviceControlReq);
+    REQUEST_AT_LEAST_EXTRA_SIZE(xChangeDeviceControlReq, sizeof(xDeviceCtl));
     swaps(&stuff->control, n);
     return(ProcXChangeDeviceControl(client));
     }
@@ -111,7 +111,7 @@ ProcXChangeDeviceControl(client)
     CARD32 *resolution;
 
     REQUEST(xChangeDeviceControlReq);
-    REQUEST_AT_LEAST_SIZE(xChangeDeviceControlReq);
+    REQUEST_AT_LEAST_EXTRA_SIZE(xChangeDeviceControlReq, sizeof(xDeviceCtl));
 
     len = stuff->length - (sizeof(xChangeDeviceControlReq) >>2);
     dev = LookupDeviceIntRec (stuff->deviceid);

@@ -154,6 +154,9 @@ ProcXSendExtensionEvent (client)
 	return Success;
 	}
 
+    if (stuff->num_events == 0)
+        return ret;
+
     /* The client's event type must be one defined by an extension. */
 
     first = ((xEvent *) &stuff[1]);

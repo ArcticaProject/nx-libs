@@ -160,6 +160,8 @@ ProcXChangeFeedbackControl(client)
 	    xStringFeedbackCtl *f = ((xStringFeedbackCtl *) &stuff[1]);
 	    if (client->swapped)
 		{
+		if (len < (sizeof(xStringFeedbackCtl) + 3) >> 2)
+		    return BadLength;
 		swaps(&f->num_keysyms,n);
 		}
 	    if (len != ((sizeof(xStringFeedbackCtl)>>2) + f->num_keysyms))
