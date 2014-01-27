@@ -216,6 +216,7 @@ SProcXFixesSelectSelectionInput (ClientPtr client)
     register int n;
     REQUEST(xXFixesSelectSelectionInputReq);
 
+    REQUEST_SIZE_MATCH(xXFixesSelectSelectionInputReq);
     swaps(&stuff->length, n);
     swapl(&stuff->window, n);
     swapl(&stuff->selection, n);
