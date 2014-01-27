@@ -228,6 +228,7 @@ SProcXCMiscGetXIDList(client)
 {
     register int n;
     REQUEST(xXCMiscGetXIDListReq);
+    REQUEST_SIZE_MATCH(xXCMiscGetXIDListReq);
 
     swaps(&stuff->length, n);
     swapl(&stuff->count, n);
