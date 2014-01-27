@@ -28,6 +28,7 @@ SProcRRQueryVersion (ClientPtr client)
     register int n;
     REQUEST(xRRQueryVersionReq);
 
+	REQUEST_SIZE_MATCH(xRRQueryVersionReq);
     swaps(&stuff->length, n);
     swapl(&stuff->majorVersion, n);
     swapl(&stuff->minorVersion, n);
@@ -40,6 +41,7 @@ SProcRRGetScreenInfo (ClientPtr client)
     register int n;
     REQUEST(xRRGetScreenInfoReq);
 
+	REQUEST_SIZE_MATCH(xRRGetScreenInfoReq);
     swaps(&stuff->length, n);
     swapl(&stuff->window, n);
     return (*ProcRandrVector[stuff->randrReqType]) (client);
@@ -75,6 +77,7 @@ SProcRRSelectInput (ClientPtr client)
     register int n;
     REQUEST(xRRSelectInputReq);
 
+	REQUEST_SIZE_MATCH(xRRSelectInputReq);
     swaps(&stuff->length, n);
     swapl(&stuff->window, n);
     swaps(&stuff->enable, n);
