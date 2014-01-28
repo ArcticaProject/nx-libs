@@ -1,6 +1,6 @@
 Description: Fix FTBFS on ppc64 architecture
 Author: Orion Poplawski <orion@cora.nwra.com>
-diff -up nx-libs-3.5.0.22/nx-X11/lib/GL/mesa/main/Imakefile.inc.ppc64 nx-libs-3.5.0.22/nx-X11/lib/GL/mesa/main/Imakefile.inc
+diff -up a/nx-X11/lib/GL/mesa/main/Imakefile.inc b/nx-X11/lib/GL/mesa/main/Imakefile.inc
 --- a/nx-X11/lib/GL/mesa/main/Imakefile.inc	2014-01-04 13:39:35.000000000 -0700
 +++ b/nx-X11/lib/GL/mesa/main/Imakefile.inc	2014-01-24 12:04:00.085272615 -0700
 @@ -1,5 +1,8 @@
