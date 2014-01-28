@@ -26,6 +26,8 @@ BuildRequires:  libfontenc-devel
 BuildRequires:  libjpeg-devel
 BuildRequires:  libpng-devel
 BuildRequires:  libxml2-devel
+# For imake
+BuildRequires:  xorg-x11-proto-devel
 BuildRequires:  zlib-devel
 
 Obsoletes:      nx < 3.5.0-19
