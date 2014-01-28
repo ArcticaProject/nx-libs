@@ -6,6 +6,9 @@ nx-libs (2:3.5.0.23-0x2go1) UNRELEASED; urgency=low
   * Add patch: 055_nx-X11_imake-Werror-format-security.full.patch. Fix FTBFS
     of imake on current Fedora rawhide (21) which uses the compiler option
     -Werror=format-security for all builds. (Fixes: #412).
+  * nx-libs.spec:
+    - Sync nx-libs.spec in Fedora with upstream's nx-libs.spec file. (Fixes:
+      #393).
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Sat, 04 Jan 2014 22:02:16 +0100
 

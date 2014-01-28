@@ -235,8 +235,8 @@ various limitations in the core protocol.
 Group:          System Environment/Libraries
 Summary:        Xinerama extension to the NX Protocol
 Requires:       %{name}%{?_isa} = %{version}-%{release}
-Requires:       libX11
-Requires:       libXext
+Requires:       libX11%{?_isa}
+Requires:       libXext%{?_isa}
 
 %description -n libNX_Xinerama
 Xinerama is an extension to the X Window System which enables
@@ -568,6 +568,9 @@ rm -r %{buildroot}%{_includedir}/nx/X11/extensions/XK*.h
 rm -r %{buildroot}%{_includedir}/nx/X11/extensions/*Xv*.h
 rm -r %{buildroot}%{_includedir}/nx/X11/Xtrans
 
+# Needed for Xinerama support
+ln -s -f ../../../../%{_lib}/libX11.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama/libNX_X11.so.6
+ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama/libNX_Xext.so.6
 
 %post -p /sbin/ldconfig
 %post -n libNX_X11 -p /sbin/ldconfig
@@ -577,10 +580,7 @@ rm -r %{buildroot}%{_includedir}/nx/X11/Xtrans
 %post -n libNX_Xdmcp -p /sbin/ldconfig
 %post -n libNX_Xext -p /sbin/ldconfig
 %post -n libNX_Xfixes -p /sbin/ldconfig
-%post -n libNX_Xinerama
-ln -s -f %{_libdir}/libX11.so.6 %{_libdir}/nx/X11/Xinerama/libNX_X11.so.6
-ln -s -f %{_libdir}/libXext.so.6 %{_libdir}/nx/X11/Xinerama/libNX_Xext.so.6
-/sbin/ldconfig
+%post -n libNX_Xinerama -p /sbin/ldconfig
 
 %post -n libNX_Xpm -p /sbin/ldconfig
 %post -n libNX_Xrandr -p /sbin/ldconfig
