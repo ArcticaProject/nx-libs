@@ -19,8 +19,8 @@ Build-Depends:
  libxml2-dev,
  autoconf,
  pkg-config,
-Build-Conflicts:
  x11proto-core-dev,
+Build-Conflicts:
  x11proto-kb-dev,
  x11proto-randr-dev,
  x11proto-record-dev,
