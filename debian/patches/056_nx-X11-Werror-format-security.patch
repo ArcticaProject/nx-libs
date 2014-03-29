@@ -1,0 +1,107 @@
+Description: Fix -Werror=format-security errors
+Author: Orion Poplawski <orion@cora.nwra.com>
+Abstract:
+ The below patch fixes more -Werror=format-security errors.
+ Interestingly, most of the errors only showed up on our arm builds.  No
+ idea why.
+--- a/nx-X11/lib/xtrans/Xtransint.h
++++ b/nx-X11/lib/xtrans/Xtransint.h
+@@ -443,7 +443,7 @@
+ 			int hack= 0, saveerrno=errno; \
+                         struct timeval tp;\
+                         gettimeofday(&tp,0); \
+-			ErrorF(__xtransname); \
++			ErrorF("%s",__xtransname); \
+ 			ErrorF(x+hack,a,b,c); \
+                         ErrorF("timestamp (ms): %d\n",tp.tv_sec*1000+tp.tv_usec/1000); \
+ 			errno=saveerrno; \
+@@ -453,7 +453,7 @@
+ 			int hack= 0, saveerrno=errno; \
+                         struct timeval tp;\
+                         gettimeofday(&tp,0); \
+-			fprintf(stderr, __xtransname); fflush(stderr); \
++			fprintf(stderr, "%s",__xtransname); fflush(stderr); \
+ 			fprintf(stderr, x+hack,a,b,c); fflush(stderr); \
+                         fprintf(stderr, "timestamp (ms): %d\n",tp.tv_sec*1000+tp.tv_usec/1000); \
+                         fflush(stderr); \
+@@ -465,14 +465,14 @@
+ /* Use ErrorF() for the X server */
+ #define PRMSG(lvl,x,a,b,c)	if (lvl <= XTRANSDEBUG){ \
+ 			int hack= 0, saveerrno=errno; \
+-			ErrorF(__xtransname); \
++			ErrorF("%s",__xtransname); \
+ 			ErrorF(x+hack,a,b,c); \
+ 			errno=saveerrno; \
+ 			} else ((void)0)
+ #else
+ #define PRMSG(lvl,x,a,b,c)	if (lvl <= XTRANSDEBUG){ \
+ 			int hack= 0, saveerrno=errno; \
+-			fprintf(stderr, __xtransname); fflush(stderr); \
++			fprintf(stderr, "%s",__xtransname); fflush(stderr); \
+ 			fprintf(stderr, x+hack,a,b,c); fflush(stderr); \
+ 			errno=saveerrno; \
+ 			} else ((void)0)
+--- a/nx-X11/programs/nxauth/process.c
++++ b/nx-X11/programs/nxauth/process.c
+@@ -974,7 +974,7 @@
+     char *hex;
+ 
+     hex = bintohex(len, cp);
+-    fprintf(fp, hex);
++    fprintf(fp, "%s", hex);
+     free(hex);
+ }
+ 
+--- a/nx-X11/programs/Xserver/GL/glx/glximports.c
++++ b/nx-X11/programs/Xserver/GL/glx/glximports.c
+@@ -110,12 +110,12 @@
+ 
+ void __glXImpWarning(__GLcontext *gc, char *msg)
+ {
+-    ErrorF((char *)msg);
++    ErrorF("%s",(char *)msg);
+ }
+ 
+ void __glXImpFatal(__GLcontext *gc, char *msg)
+ {
+-    ErrorF((char *)msg);
++    ErrorF("%s",(char *)msg);
+     __glXAbort();
+ }
+ 
+--- a/nx-X11/programs/Xserver/hw/nxagent/Error.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/Error.c
+@@ -232,7 +232,7 @@
+ 
+ int nxagentExitHandler(const char *message)
+ {
+-  FatalError(message);
++  FatalError("%s", message);
+ 
+   return 0;
+ }
+--- a/nx-X11/programs/Xserver/hw/nxagent/Init.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/Init.c
+@@ -481,7 +481,7 @@
+ 
+     nxagentStartRedirectToClientsLog();
+ 
+-    fprintf(stderr, buffer);
++    fprintf(stderr, "%s", buffer);
+ 
+     nxagentEndRedirectToClientsLog();
+   }
+--- a/nx-X11/programs/Xserver/os/log.c
++++ b/nx-X11/programs/Xserver/os/log.c
+@@ -692,9 +692,9 @@
+ 	    return;
+ 	sprintf(err, "%s: ", str);
+ 	strcat(err, strerror(saveErrno));
+-	LogWrite(-1, err);
++	LogWrite(-1, "%s", err);
+     } else
+-	LogWrite(-1, strerror(saveErrno));
++	LogWrite(-1, "%s", strerror(saveErrno));
+ }
+ 
+ void
