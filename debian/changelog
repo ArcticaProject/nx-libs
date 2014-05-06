@@ -19,6 +19,10 @@ nx-libs (2:3.5.0.23-0x2go1) UNRELEASED; urgency=low
   * nx-libs.spec:
     + Build our imake against xorg-x11-proto-devel.
 
+  [ Oleksandr Shneyder ]
+  * nxagent: add patch to fix refresh error on RDP connections to Windows 2012
+    if speed=ADSL.
+
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Sat, 04 Jan 2014 22:02:16 +0100
 
 nx-libs (2:3.5.0.22-0x2go2) unstable; urgency=low
