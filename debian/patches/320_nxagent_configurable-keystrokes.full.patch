@@ -396,8 +396,8 @@ Description: Make nxagent-specific keyboard bindings configurable
 + * search order:
 + *  - '-keystrokefile' commandline parameter
 + *  - $NXAGENT_KEYSTROKEFILE environment variable
-+ *  - $HOME/.nx/config/keystroke.cfg
-+ *  - /etc/nxagent/keystroke.cfg
++ *  - $HOME/.nx/config/keystrokes.cfg
++ *  - /etc/nxagent/keystrokes.cfg
 + *  - hardcoded traditional NX default settings
 + */
 +static void parse_keystroke_file(void)
@@ -410,8 +410,8 @@ Description: Make nxagent-specific keyboard bindings configurable
 -      case XK_e:
 -      {
 -        *result = doSwitchDeferMode;
-+  char *homefile = "/.nx/config/keystroke.cfg";
-+  char *etcfile = "/etc/nxagent/keystroke.cfg";
++  char *homefile = "/.nx/config/keystrokes.cfg";
++  char *etcfile = "/etc/nxagent/keystrokes.cfg";
  
 -        break;
 +  if (nxagentKeystrokeFile != NULL && access(nxagentKeystrokeFile, R_OK) == 0)
@@ -907,7 +907,7 @@ Description: Make nxagent-specific keyboard bindings configurable
 +Configurable keybindings in nxagent
 +
 +Keybindings in the redistributed x2go version of nxagent can now be configured
-+by the user. This is done via a configuration file. 
++by the user. This is done via a configuration file.
 +
 +File location
 +-------------
@@ -915,8 +915,8 @@ Description: Make nxagent-specific keyboard bindings configurable
 +nxagent searches for the configuration file in the following order:
 +- in the location given by the '-keystrokefile' command line parameter
 +- in the location given by the NXAGENT_KEYSTROKEFILE environment variable
-+- in ~/.nx/config/keystroke.cfg
-+- in /etc/nxagent/keystroke.cfg
++- in ~/.nx/config/keystrokes.cfg
++- in /etc/nxagent/keystrokes.cfg
 +
 +If none of those files is accessible, the default configuration is used which
 +is the same as the old, traditional nxagent keybindings.
@@ -1018,7 +1018,7 @@ Description: Make nxagent-specific keyboard bindings configurable
 +
    return 0;
  }
-
+ 
 --- a/nx-X11/programs/Xserver/hw/nxagent/Args.h
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Args.h
 @@ -83,4 +83,6 @@
@@ -1028,4 +1028,3 @@ Description: Make nxagent-specific keyboard bindings configurable
 +extern char *nxagentKeystrokeFile;
 +
  #endif /* __Args_H__ */
-
