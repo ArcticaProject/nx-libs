@@ -7,6 +7,8 @@ nx-libs (2:3.5.0.24-0x2go1) UNRELEASED; urgency=low
     + Fix: nx-libs source: not-binnmuable-all-depends-any x2goagent -> nxagent.
   * Update 320_nxagent_configurable-keystrokes.full.patch: The keystrokes config
     file's default name now is keystrokes.cfg (plural).
+  * Configurable keystrokes: Don't ignore first XML element in keystrokes.cfg
+    anymore. (Fixes: #488).
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Tue, 06 May 2014 18:34:36 +0200
 

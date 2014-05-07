@@ -83,7 +83,7 @@ Description: Make nxagent-specific keyboard bindings configurable
  
  #ifdef NX_DEBUG_INPUT
  int nxagentDebugInputDevices = 0;
-@@ -47,297 +54,527 @@
+@@ -47,297 +54,528 @@
  #undef  DEBUG
  #undef  DUMP
  
@@ -649,10 +649,11 @@ Description: Make nxagent-specific keyboard bindings configurable
 -        {
 -          *result = doViewportMoveUp;
 -        }
-+  while ((cur++)->stroke != KEYSTROKE_END_MARKER) {
++  while (cur->stroke != KEYSTROKE_END_MARKER) {
 +    if (cur->keysym == keysym && modifier_matches(cur->modifierMask, cur->modifierAltMeta, X->state)) {
 +      return cur->stroke;
 +    }
++    cur++;
 +  }
  
 -        break;
