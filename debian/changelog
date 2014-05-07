@@ -1,6 +1,8 @@
 nx-libs (2:3.5.0.24-0x2go1) UNRELEASED; urgency=low
 
   * Clean up debian/patches/series: Remove commented out patches.
+  * Make sure, patch 056_nx-X11-Werror-format-security.full.patch gets
+    included into rolled tarball (by renaming *.patch to *.full.patch).
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Tue, 06 May 2014 18:34:36 +0200
 
