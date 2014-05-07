@@ -1,6 +1,6 @@
 nx-libs (2:3.5.0.24-0x2go1) UNRELEASED; urgency=low
 
-  * Continue development...
+  * Clean up debian/patches/series: Remove commented out patches.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Tue, 06 May 2014 18:34:36 +0200
 
