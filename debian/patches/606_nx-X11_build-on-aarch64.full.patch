@@ -1,0 +1,77 @@
+Description: Provide build support for aarch64 architecture
+Author: Orion Poplawski <orion@cora.nwra.com>
+--- a/nx-X11/config/cf/Imake.cf
++++ b/nx-X11/config/cf/Imake.cf
+@@ -908,6 +908,9 @@
+ #  endif
+ #  undef __ARMEB__
+ # endif
++# ifdef __aarch64__
++#  define Arm64Architecture
++# endif
+ # ifdef mc68000
+ #  define Mc68020Architecture
+ #  undef mc68000
+--- a/nx-X11/config/cf/linux.cf
++++ b/nx-X11/config/cf/linux.cf
+@@ -844,6 +844,16 @@
+ # define ServerExtraDefines	-DGCCUSESGAS XFree86ServerDefines
+ #endif /* Arm32Achitecture */
+ 
++#ifdef Arm64Architecture
++# define DefaultCCOptions
++# ifndef OptimizedCDebugFlags
++#  define OptimizedCDebugFlags	-O3
++# endif
++# define LinuxMachineDefines	-D__aarch64__ -U__arm -Uarm
++# define ServerOSDefines	XFree86ServerOSDefines -DDDXTIME
++# define ServerExtraDefines	-DGCCUSESGAS XFree86ServerDefines
++#endif /* Arm64Achitecture */
++
+ #ifdef HPArchitecture
+ # define OptimizedCDebugFlags	-O2  GccAliasingArgs
+ # define LinuxMachineDefines	-D__hppa__
+--- a/nx-X11/config/cf/Imake.tmpl
++++ b/nx-X11/config/cf/Imake.tmpl
+@@ -526,6 +526,10 @@
+ #define ByteOrder		X_BIG_ENDIAN
+ #elif defined(Arm32Architecture)
+ #define ByteOrder		X_LITTLE_ENDIAN
++#elif defined(Arm64ebArchitecture)
++#define ByteOrder		X_BIG_ENDIAN
++#elif defined(Arm64Architecture)
++#define ByteOrder		X_LITTLE_ENDIAN
+ #elif defined(RsArchitecture)
+ #define ByteOrder		X_BIG_ENDIAN
+ #elif defined(PpcArchitecture) || defined(Ppc64Architecture)
+--- a/nx-X11/programs/Xserver/include/servermd.h
++++ b/nx-X11/programs/Xserver/include/servermd.h
+@@ -154,6 +154,28 @@
+ 
+ #endif /* __arm32__ */
+ 
++#ifdef __aarch64__
++
++#ifdef __AARCH64EL__
++#define IMAGE_BYTE_ORDER        LSBFirst
++#define BITMAP_BIT_ORDER        LSBFirst
++#endif
++#ifdef __AARCH64EB__
++#define IMAGE_BYTE_ORDER        MSBFirst
++#define BITMAP_BIT_ORDER        MSBFirst
++#endif
++
++# if defined(XF86MONOVGA) || defined(XF86VGA16)
++#  define BITMAP_SCANLINE_UNIT  8
++# endif
++
++#define GLYPHPADBYTES           4
++#define GETLEFTBITS_ALIGNMENT   1
++#define LARGE_INSTRUCTION_CACHE
++#define AVOID_MEMORY_READ
++
++#endif /* __aarch64__ */
++
+ #if defined (hpux) || defined __hppa__
+ 
+ #define IMAGE_BYTE_ORDER	MSBFirst
