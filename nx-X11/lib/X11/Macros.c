@@ -30,6 +30,9 @@ in this Software without prior written authorization from The Open Group.
 #include "Xlibint.h"
 #define XUTIL_DEFINE_FUNCTIONS
 #include "Xutil.h"
+#if USE_XCB
+#include "Xxcbint.h"
+#endif
 
 /*
  * This file makes full definitions of routines for each macro.
@@ -135,10 +138,28 @@ int XBitmapPad(Display *dpy) { return (BitmapPad(dpy)); }
 
 int XImageByteOrder(Display *dpy) { return (ImageByteOrder(dpy)); }
 
+#if !USE_XCB
 unsigned long XNextRequest(Display *dpy)
 {
     return (NextRequest(dpy));
 }
+#else
+/* XNextRequest() differs from the rest of the functions here because it is
+ * no longer a macro wrapper - when libX11 is being used mixed together
+ * with direct use of xcb, the next request field of the Display structure will
+ * not be updated. We can't fix the NextRequest() macro in any easy way,
+ * but we can at least make XNextRequest() do the right thing.
+ */
+unsigned long XNextRequest(Display *dpy)
+{
+    unsigned long next_request;
+    LockDisplay(dpy);
+    next_request = _XNextRequest(dpy);
+    UnlockDisplay(dpy);
+
+    return next_request;
+}
+#endif
 
 unsigned long XLastKnownRequestProcessed(Display *dpy)
 {
