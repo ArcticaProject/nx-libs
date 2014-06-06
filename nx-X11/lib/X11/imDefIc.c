@@ -1568,10 +1568,9 @@ _XimProtoCreateIC(
 
 ErrorOnCreatingIC:
     _XimUnregisterFilter(ic);
-    if (ic->private.proto.ic_resources)
-	Xfree(ic->private.proto.ic_resources);
-    if (ic->private.proto.ic_inner_resources)
-	Xfree(ic->private.proto.ic_inner_resources);
+
+    Xfree(ic->private.proto.ic_resources);
+    Xfree(ic->private.proto.ic_inner_resources);
     Xfree(ic);
     return (XIC)NULL;
 }
