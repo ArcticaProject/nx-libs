@@ -2,12 +2,12 @@ nx-libs (2:3.5.0.25-0x2go1) UNRELEASED; urgency=low
 
   * Add 606_nx-X11_build-on-aarch64.full.patch. Build on aarch64
     architectures. (Fixes: #490).
-  * Add 027_nxcomp_abstract-X11-socket.patch. In proxy mode "server" let
+  * Add 027_nxcomp_abstract-X11-socket.full+lite.patch. In proxy mode "server" let
     NX proxy attempt connecting to the abstract X11 socket first, and only
     fallback to the file system socket, if the abstract socket is not
     available. (Fixes: #505).
   * Make 220_nxproxy-bind-loopback-only.full+lite.patch cleanly apply after
-    having added 027_nxcomp_abstract-X11-socket.patch.
+    having added 027_nxcomp_abstract-X11-socket.full+lite.patch.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 07 May 2014 09:58:10 +0200
 
