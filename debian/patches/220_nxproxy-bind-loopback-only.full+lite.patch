@@ -26,7 +26,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
  
    if (bind(tcpFD, (sockaddr *) &tcpAddr, sizeof(tcpAddr)) == -1)
    {
-@@ -4512,7 +4520,14 @@
+@@ -4550,7 +4558,14 @@
  
    tcpAddr.sin_family = AF_INET;
    tcpAddr.sin_port = htons(portTCP);
@@ -42,7 +42,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
  
    if (bind(newFD, (sockaddr *) &tcpAddr, sizeof(tcpAddr)) == -1)
    {
-@@ -6680,7 +6695,14 @@
+@@ -6718,7 +6733,14 @@
  
    #ifdef __APPLE__
  
@@ -58,7 +58,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
  
    #else
  
-@@ -8359,6 +8381,10 @@
+@@ -8397,6 +8419,10 @@
  
        listenPort = ValidateArg("local", name, value);
      }
@@ -69,7 +69,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
      else if (strcasecmp(name, "accept") == 0)
      {
        if (*connectHost != '\0')
-@@ -13735,7 +13761,14 @@
+@@ -13773,7 +13799,14 @@
      }
      else
      {
