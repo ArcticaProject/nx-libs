@@ -1,0 +1,56 @@
+diff --git a/nxcomp/Loop.cpp b/nxcomp/Loop.cpp
+index 92b6fc2..d86809d 100644
+--- a/nxcomp/Loop.cpp
++++ b/nxcomp/Loop.cpp
+@@ -4250,6 +4250,39 @@ int SetupDisplaySocket(int &xServerAddrFamily, sockaddr *&xServerAddr,
+     // where the socket will be created.
+     //
+ 
++    // Try abstract X11 socket first (via a test connect), if that fails
++    // fall back to Unix domain socket file.
++
++    #ifdef __linux__
++    int testSocketFD;
++    testSocketFD = socket(xServerAddrFamily, SOCK_STREAM, PF_UNSPEC);
++
++    int len = sprintf(unixSocketName + 1, "/tmp/.X11-unix/X%d", xPort);
++    unixSocketName[0] = '\0';
++
++    sockaddr_un *xServerAddrABSTRACT = new sockaddr_un;
++    memset(xServerAddrABSTRACT, 0, xServerAddrLength);
++    xServerAddrABSTRACT -> sun_family = AF_UNIX;
++    memcpy(xServerAddrABSTRACT -> sun_path, unixSocketName, len+1);
++    xServerAddrLength = len +3;
++
++    int ret = connect(testSocketFD, (struct sockaddr *) xServerAddrABSTRACT, xServerAddrLength);
++    if (ret == 0) {
++
++        cerr << "Info" << ": Using abstract X11 socket in kernel namespace "
++             << "for accessing DISPLAY=:" << xPort << ".\n";
++
++        close(testSocketFD);
++        xServerAddr = (sockaddr *) xServerAddrABSTRACT;
++        return 1;
++
++    } else {
++
++        cerr << "Info" << ": Falling back to file system X11 socket "
++             << "for accessing DISPLAY=:" << xPort << ".\n";
++
++    #endif
++
+     struct stat statInfo;
+ 
+     char unixSocketDir[DEFAULT_STRING_LENGTH];
+@@ -4322,6 +4355,11 @@ int SetupDisplaySocket(int &xServerAddrFamily, sockaddr *&xServerAddr,
+ 
+     xServerAddr = (sockaddr *) xServerAddrUNIX;
+     xServerAddrLength = sizeof(sockaddr_un);
++
++    #ifdef __linux__
++
++    }
++    #endif
+   }
+   else
+   {
