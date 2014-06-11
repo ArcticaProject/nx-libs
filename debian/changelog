@@ -8,6 +8,7 @@ nx-libs (2:3.5.0.25-0x2go1) UNRELEASED; urgency=low
     available. (Fixes: #505).
   * Make 220_nxproxy-bind-loopback-only.full+lite.patch cleanly apply after
     having added 027_nxcomp_abstract-X11-socket.full+lite.patch.
+  * Make 016_nx-X11_install-location.debian.patch cleanly apply again.
   * Add 028_nx-X11_abstract-kernel-sockets.full.patch. Provide abstract local
     socket support for Linux based systems. This patch pulls in abstract
     socket relevant code from xtrans 1.2.7. (Fixes: #504).
