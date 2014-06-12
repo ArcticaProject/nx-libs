@@ -1,0 +1,84 @@
+Description: Test for xkb/rules/base instead of xkb/keymap.dir for setting XkbBaseDir
+Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+Abstract:
+ In recent (as of 2014/06) X.org release, the keymap.dir file
+ has become obsolete. Let's test for the xkb/rules/base file
+ instead.
+--- a/nx-X11/programs/Xserver/xkb/ddxLoad.c
++++ b/nx-X11/programs/Xserver/xkb/ddxLoad.c
+@@ -180,7 +180,7 @@
+ 
+ #define NX_XKB_BASE_DIRECTORY            "/usr/lib/X11/xkb"
+ #define NX_XKB_ALTERNATE_BASE_DIRECTORY  "/usr/share/X11/xkb"
+-#define NX_KEYMAP_DIR_FILE               "keymap.dir"
++#define NX_XKB_RULES_BASE_FILE           "rules/base"
+ #define NX_ALT_XKBCOMP_PATH              "/usr/bin"
+ 
+ static char _NXXkbBasePath[PATH_MAX];
+@@ -189,43 +189,43 @@
+ static int NXVerifyXkbBaseDirectory(const char *dirPath)
+ {
+   int size;
+-  char *keymapDirFilePath;
+-  struct stat keymapDirFileStat;
++  char *rulesBaseFilePath;
++  struct stat rulesBaseFileStat;
+ 
+   /*
+-   * If keymap.dir file
+-   * is not present into
+-   * Xkb Base Directory,
++   * If rules/base file
++   * is not present inside
++   * the Xkb Base Directory,
+    * we suppose that the
+    * path is not valid.
+    */
+ 
+   size = strlen(dirPath) + strlen("/") +
+-             strlen(NX_KEYMAP_DIR_FILE) + 1;
++             strlen(NX_XKB_RULES_BASE_FILE) + 1;
+ 
+-  if ((keymapDirFilePath = malloc((size + 1) * sizeof(char))) == NULL)
++  if ((rulesBaseFilePath = malloc((size + 1) * sizeof(char))) == NULL)
+   {
+     FatalError("NXVerifyXkbBaseDirectory: malloc failed.\n");
+   }
+ 
+-  strcpy(keymapDirFilePath, dirPath);
+-  strcat(keymapDirFilePath, "/");
+-  strcat(keymapDirFilePath, NX_KEYMAP_DIR_FILE);
++  strcpy(rulesBaseFilePath, dirPath);
++  strcat(rulesBaseFilePath, "/");
++  strcat(rulesBaseFilePath, NX_XKB_RULES_BASE_FILE);
+ 
+   #ifdef TEST
+   fprintf(stderr, "NXVerifyXkbBaseDirectory: Looking for [%s] file.\n",
+-              keymapDirFilePath);
++              rulesBaseFilePath);
+   #endif
+ 
+-  if (stat(keymapDirFilePath, &keymapDirFileStat) != 0)
++  if (stat(rulesBaseFilePath, &rulesBaseFileStat) != 0)
+   {
+ 
+     #ifdef TEST
+     fprintf(stderr, "NXVerifyXkbBaseDirectory: Can't find the keymap.dir file [%s].\n",
+-                keymapDirFilePath);
++                rulesBaseFilePath);
+     #endif
+ 
+-    free(keymapDirFilePath);
++    free(rulesBaseFilePath);
+ 
+     return 0;
+   }
+@@ -235,7 +235,7 @@
+               dirPath);
+   #endif
+ 
+-  free(keymapDirFilePath);
++  free(rulesBaseFilePath);
+ 
+   return 1;
+ }

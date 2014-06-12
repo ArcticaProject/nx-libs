@@ -12,6 +12,9 @@ nx-libs (2:3.5.0.25-0x2go1) UNRELEASED; urgency=low
   * Add 028_nx-X11_abstract-kernel-sockets.full.patch. Provide abstract local
     socket support for Linux based systems. This patch pulls in abstract
     socket relevant code from xtrans 1.2.7. (Fixes: #504).
+  * Add 302_nx-X11_xkbbasedir-detection.patch. For detecting XkbBaseDir
+    test for xkb/rules/base instead of testing for deprecated file
+    xkb/keymap.dir. (Fixes: #40).
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 07 May 2014 09:58:10 +0200
 
