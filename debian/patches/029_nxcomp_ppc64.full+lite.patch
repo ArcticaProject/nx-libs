@@ -1,8 +1,6 @@
-diff --git a/nxcomp/Loop.cpp b/nxcomp/Loop.cpp
-index c9617c3..955be85 100644
 --- a/nxcomp/Loop.cpp
 +++ b/nxcomp/Loop.cpp
-@@ -6854,9 +6854,9 @@ int WaitForRemote(int portNum)
+@@ -6832,9 +6832,9 @@
      {
        sockaddr_in newAddr;
  
