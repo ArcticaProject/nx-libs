@@ -1,0 +1,16 @@
+diff --git a/nxcomp/Loop.cpp b/nxcomp/Loop.cpp
+index c9617c3..955be85 100644
+--- a/nxcomp/Loop.cpp
++++ b/nxcomp/Loop.cpp
+@@ -6854,9 +6854,9 @@ int WaitForRemote(int portNum)
+     {
+       sockaddr_in newAddr;
+ 
+-      size_t addrLen = sizeof(sockaddr_in);
++      socklen_t addrLen = sizeof(sockaddr_in);
+ 
+-      newFD = accept(proxyFD, (sockaddr *) &newAddr, (socklen_t *) &addrLen);
++      newFD = accept(proxyFD, (sockaddr *) &newAddr, &addrLen);
+ 
+       if (newFD == -1)
+       {

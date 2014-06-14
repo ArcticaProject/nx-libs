@@ -15,6 +15,8 @@ nx-libs (2:3.5.0.25-0x2go1) UNRELEASED; urgency=low
   * Add 302_nx-X11_xkbbasedir-detection.patch. For detecting XkbBaseDir
     test for xkb/rules/base instead of testing for deprecated file
     xkb/keymap.dir. (Fixes: #40).
+  * Add 029_nxcomp_ppc64.full+lite.patch. Fix sockaddr handling on
+    Big Endian systems (like PPC64). (Fixes: #515).
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 07 May 2014 09:58:10 +0200
 

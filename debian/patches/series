@@ -24,6 +24,7 @@
 026_nxcompshad_honour-optflags.full.patch
 027_nxcomp_abstract-X11-socket.full+lite.patch
 028_nx-X11_abstract-kernel-sockets.full.patch
+029_nxcomp_ppc64.full+lite.patch
 030_nx-X11_configure-args.full.patch
 031_nx-X11_parallel-make.full.patch
 051_nxcomp_macos105-fdisset.full+lite.patch
