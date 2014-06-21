@@ -1,7 +1,8 @@
 Description: No session window with on PPC64 builds
 Author: Mihai Moldovan <ionic@ionic.de>
 Abstract:
- An endiannes issue was setting incorrect event masks when creating X11 windows.
+ Multiple endiannes issues were setting incorrect event masks when creating and
+ drawing X11 windows.
  .
  This time, a smaller integer has been casted to a bigger one and passed to some
  function actually setting its value.
@@ -10,7 +11,7 @@ Abstract:
  putting unknown memory into the lower bytes of the bigger integer.
  .
  Fix this by creating a big, initialized temporary variable, let the function do
- its magic on that one and pass the value back to the smaller variable -- and
+ its magic on that one and pass the value back to the smaller variable--and
  cross your fingers the smaller variable can hold it without overrunning. (The
  last bit is a design issue we can't really fix and has been around even before
  this patch.)
