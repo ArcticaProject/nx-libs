@@ -1,0 +1,43 @@
+Description: No session window with on PPC64 builds
+Author: Mihai Moldovan <ionic@ionic.de>
+Abstract:
+ An endiannes issue was setting incorrect event masks when creating X11 windows.
+ .
+ This time, a smaller integer has been casted to a bigger one and passed to some
+ function actually setting its value.
+ .
+ This meant, that garbage from stack was attached to the smaller integer value,
+ putting unknown memory into the lower bytes of the bigger integer.
+ .
+ Fix this by creating a big, initialized temporary variable, let the function do
+ its magic on that one and pass the value back to the smaller variable -- and
+ cross your fingers the smaller variable can hold it without overrunning. (The
+ last bit is a design issue we can't really fix and has been around even before
+ this patch.)
+
+--- a/nx-X11/programs/Xserver/hw/nxagent/Window.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/Window.c
+@@ -327,7 +327,10 @@
+ 
+   if (mask & CWEventMask)
+   {
+-    nxagentGetEventMask(pWin, (Mask*)&attributes.event_mask);
++    /* Assume that the mask fits in int... broken on Big Endian 64bit systems. */
++    Mask tmp_mask = attributes.event_mask;
++    nxagentGetEventMask(pWin, &tmp_mask);
++    attributes.event_mask = (int)tmp_mask;
+   }
+   #ifdef WARNING
+   else
+@@ -2891,7 +2894,10 @@
+ 
+   if (mask & CWEventMask)
+   {
+-    nxagentGetEventMask(pWin, (Mask*)&attributes.event_mask);
++    /* Assume that the mask fits in int... broken on Big Endian 64bit systems. */
++    Mask tmp_mask = attributes.event_mask;
++    nxagentGetEventMask(pWin, &tmp_mask);
++    attributes.event_mask = (int)tmp_mask;
+   }
+   #ifdef WARNING
+   else

@@ -1,5 +1,13 @@
 nx-libs (2:3.5.0.25-0x2go1) UNRELEASED; urgency=low
 
+  [ Mihai Moldovan ]
+  * Add 029_nxcomp_ppc64.full+lite.patch. Fix sockaddr handling on
+    Big Endian systems (like PPC64). (Fixes: #515).
+  * Add 057_nx-X11-bigendian-ppc64-no-session-window.patch. Fix
+    failures in session windows coming up on Big Endian systems
+    like PPC64. (Fixes: #516).
+
+  [ Mike Gabriel ]
   * Add 606_nx-X11_build-on-aarch64.full.patch. Build on aarch64
     architectures. (Fixes: #490).
   * Add 027_nxcomp_abstract-X11-socket.full+lite.patch. In proxy mode "server"
@@ -15,10 +23,6 @@ nx-libs (2:3.5.0.25-0x2go1) UNRELEASED; urgency=low
   * Add 302_nx-X11_xkbbasedir-detection.patch. For detecting XkbBaseDir
     test for xkb/rules/base instead of testing for deprecated file
     xkb/keymap.dir. (Fixes: #40).
-
-  [ Mihai Moldovan ]
-  * Add 029_nxcomp_ppc64.full+lite.patch. Fix sockaddr handling on
-    Big Endian systems (like PPC64). (Fixes: #515).
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 07 May 2014 09:58:10 +0200
 
