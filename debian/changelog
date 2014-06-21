@@ -13,6 +13,8 @@ nx-libs (2:3.5.0.25-0x2go1) UNRELEASED; urgency=low
     Only print an error message if SessionPath *really* is not defined.
   * Improve 028_nx-X11_abstract-kernel-sockets.full.patch. Make it more
     Big Endian robust by assigning correct types for socklen_t objects.
+  * Add 990_fix-DEBUG-and-TEST-builds.full.patch. Fix debug builds (e.g.
+    when globally setting -DDEBUG and -DTEST at build time).
 
   [ Mike Gabriel ]
   * Add 606_nx-X11_build-on-aarch64.full.patch. Build on aarch64

@@ -1,0 +1,69 @@
+Author: Mihai Moldovan <ionic@ionic.de>
+Description: Several fixes for building debug versions of NX
+Abstract:
+ (1) In nx-X11/programs/Xserver/dix:
+ .
+ Fix several compile errors when specifying -DDEBUG globally. Previous GCC
+ versions were more liberal and the code thus compiled.
+ .
+ Also initialize/reset a count variable correctly.
+ .
+ .
+ (2) In nx-X11/programs/Xserver/hw/nxagent/Render.c:
+ .
+ Check for pSrc->pDrawable to exist instead of having nxagent segfault when
+ it does not.
+ .
+ This enables the possibility of compiling all nxagent modules in TEST mode.
+
+--- a/nx-X11/programs/Xserver/dix/dixfonts.c
++++ b/nx-X11/programs/Xserver/dix/dixfonts.c
+@@ -2203,7 +2203,7 @@
+ 	byte = 0;
+ 	for (l = 0; l <= (cip->metrics.rightSideBearing -
+ 			  cip->metrics.leftSideBearing); l++) {
+-	    if (maskTab[l & 7] & row[l >> 3])
++	    if (maskTab[l & 7] & (((int*)row)[l >> 3]))
+ 		putchar('X');
+ 	    else
+ 		putchar('.');
+--- a/nx-X11/programs/Xserver/hw/nxagent/Render.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/Render.c
+@@ -1678,10 +1678,11 @@
+ 
+   #ifdef TEST
+ 
+-  fprintf(stderr, "nxagentTrapezoids: Source is a [%s] of geometry [%d,%d].\n",
+-              (pSrc -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
+-                  pSrc -> pDrawable -> width, pSrc -> pDrawable -> height);
+-
++  if (pSrc->pDrawable) {
++    fprintf(stderr, "nxagentTrapezoids: Source is a [%s] of geometry [%d,%d].\n",
++                (pSrc -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
++                    pSrc -> pDrawable -> width, pSrc -> pDrawable -> height);
++  }
+   if (pSrc ->pDrawable != pDst -> pDrawable)
+   {
+     fprintf(stderr, "nxagentTrapezoids: Destination is a [%s] of geometry [%d,%d].\n",
+--- a/nx-X11/programs/Xserver/hw/nxagent/X/NXdispatch.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/X/NXdispatch.c
+@@ -734,7 +734,7 @@
+ 
+ 		client->sequence++;
+ #ifdef DEBUG
+-		if (client->requestLogIndex == MAX_REQUEST_LOG)
++		if ((client->requestLogIndex >= MAX_REQUEST_LOG) || (client->requestLogIndex <= 0))
+ 		    client->requestLogIndex = 0;
+ 		client->requestLog[client->requestLogIndex] = MAJOROP;
+ 		client->requestLogIndex++;
+--- a/nx-X11/programs/Xserver/hw/nxagent/X/NXdixfonts.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/X/NXdixfonts.c
+@@ -2351,7 +2351,7 @@
+ 	byte = 0;
+ 	for (l = 0; l <= (cip->metrics.rightSideBearing -
+ 			  cip->metrics.leftSideBearing); l++) {
+-	    if (maskTab[l & 7] & row[l >> 3])
++	    if (maskTab[l & 7] & (((int *)row)[l >> 3]))
+ 		putchar('X');
+ 	    else
+ 		putchar('.');

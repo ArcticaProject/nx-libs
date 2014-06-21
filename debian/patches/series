@@ -61,6 +61,7 @@
 604_nx-X11_recent-freetype-API.full.patch
 605_nxcomp_Types.h-dont-use-STL-internals-on-libc++.full.patch
 606_nx-X11_build-on-aarch64.full.patch
+990_fix-DEBUG-and-TEST-builds.full.patch
 999_nxagent_unbrand-nxagent-brand-x2goagent.full.patch
 016_nx-X11_install-location.debian.patch
 102_xserver-xext_set-securitypolicy-path.debian.patch
