@@ -6,7 +6,7 @@ Abstract:
  idea why.
 --- a/nx-X11/lib/xtrans/Xtransint.h
 +++ b/nx-X11/lib/xtrans/Xtransint.h
-@@ -443,7 +443,7 @@
+@@ -444,7 +444,7 @@
  			int hack= 0, saveerrno=errno; \
                          struct timeval tp;\
                          gettimeofday(&tp,0); \
@@ -15,7 +15,7 @@ Abstract:
  			ErrorF(x+hack,a,b,c); \
                          ErrorF("timestamp (ms): %d\n",tp.tv_sec*1000+tp.tv_usec/1000); \
  			errno=saveerrno; \
-@@ -453,7 +453,7 @@
+@@ -454,7 +454,7 @@
  			int hack= 0, saveerrno=errno; \
                          struct timeval tp;\
                          gettimeofday(&tp,0); \
@@ -24,7 +24,7 @@ Abstract:
  			fprintf(stderr, x+hack,a,b,c); fflush(stderr); \
                          fprintf(stderr, "timestamp (ms): %d\n",tp.tv_sec*1000+tp.tv_usec/1000); \
                          fflush(stderr); \
-@@ -465,14 +465,14 @@
+@@ -466,14 +466,14 @@
  /* Use ErrorF() for the X server */
  #define PRMSG(lvl,x,a,b,c)	if (lvl <= XTRANSDEBUG){ \
  			int hack= 0, saveerrno=errno; \
