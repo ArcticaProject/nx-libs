@@ -34,7 +34,29 @@ Abstract:
      struct sockaddr sa;
      fd_set fs;
      struct timeval t;
-@@ -1477,23 +1483,28 @@
+@@ -914,9 +920,11 @@
+     struct sockaddr_in socknamev4;
+     void *socknamePtr;
+ #if defined(SVR4) || defined(__SCO__)
++#   define SOCKLEN_T_PTR void*
+     size_t namelen;
+ #else
+-    int namelen;
++#   define SOCKLEN_T_PTR socklen_t*
++    socklen_t namelen;
+ #endif
+ 
+     PRMSG (3,"SocketINETGetAddr(%p)\n", ciptr, 0, 0);
+@@ -935,7 +943,7 @@
+     }
+ 
+     if (getsockname (ciptr->fd,(struct sockaddr *) socknamePtr,
+-		     (void *)&namelen) < 0)
++		     (SOCKLEN_T_PTR)&namelen) < 0)
+     {
+ #ifdef WIN32
+ 	errno = WSAGetLastError();
+@@ -1477,23 +1485,28 @@
  
  #ifdef UNIXCONN
  static int
@@ -73,7 +95,7 @@ Abstract:
      return 0;
  }
  #endif
-@@ -1726,6 +1737,12 @@
+@@ -1726,6 +1739,12 @@
      int			oldUmask;
      int			status;
      unsigned int	mode;
@@ -86,7 +108,7 @@ Abstract:
  
      PRMSG (2, "SocketUNIXCreateListener(%s)\n",
  	port ? port : "NULL", 0, 0);
-@@ -1741,11 +1758,11 @@
+@@ -1741,11 +1760,11 @@
      mode = 0777;
  #endif
  #ifdef NX_TRANS_SOCKET
@@ -100,7 +122,7 @@ Abstract:
  	PRMSG (1, "SocketUNIXCreateListener: mkdir(%s) failed, errno = %d\n",
  	       UNIX_DIR, errno, 0);
  #endif
-@@ -1754,13 +1771,18 @@
+@@ -1754,13 +1773,18 @@
      }
  #endif
  
@@ -121,7 +143,7 @@ Abstract:
  #endif
  	    PRMSG (1, "SocketUNIXCreateListener: path too long\n", 0, 0, 0);
  	    return TRANS_CREATE_LISTENER_FAILED;
-@@ -1784,7 +1806,12 @@
+@@ -1784,7 +1808,12 @@
      fprintf(stderr, "SocketUNIXCreateListener: Unlinking path [%s] for ciptr at [%p].\n",
                  sockname.sun_path, (void *) ciptr);
  #endif
@@ -135,7 +157,7 @@ Abstract:
  
      if ((status = TRANS(SocketCreateListener) (ciptr,
  	(struct sockaddr *) &sockname, namelen, flags)) < 0)
-@@ -1814,6 +1841,9 @@
+@@ -1814,6 +1843,9 @@
          return TRANS_CREATE_LISTENER_FAILED;
      }
  
@@ -145,7 +167,7 @@ Abstract:
      ciptr->family = sockname.sun_family;
      ciptr->addrlen = namelen;
      memcpy (ciptr->addr, &sockname, ciptr->addrlen);
-@@ -1823,7 +1853,6 @@
+@@ -1823,7 +1855,6 @@
      return 0;
  }
  
@@ -153,7 +175,7 @@ Abstract:
  static int
  TRANS(SocketUNIXResetListener) (XtransConnInfo ciptr)
  
-@@ -1836,15 +1865,20 @@
+@@ -1836,15 +1867,20 @@
      struct stat		statb;
      int 		status = TRANS_RESET_NOOP;
      unsigned int	mode;
@@ -176,7 +198,7 @@ Abstract:
  #endif
      {
  	int oldUmask = umask (0);
-@@ -2034,6 +2068,11 @@
+@@ -2034,6 +2070,11 @@
      }
  
  
@@ -188,7 +210,7 @@ Abstract:
      newciptr->addrlen = ciptr->addrlen;
      memcpy (newciptr->addr, ciptr->addr, newciptr->addrlen);
  
-@@ -2626,6 +2665,12 @@
+@@ -2626,6 +2667,12 @@
      struct sockaddr_un	sockname;
      int			namelen;
  
@@ -201,7 +223,7 @@ Abstract:
  #if defined(hpux) && defined(X11_t)
      struct sockaddr_un	old_sockname;
      int			old_namelen;
-@@ -2674,9 +2719,9 @@
+@@ -2674,9 +2721,9 @@
      sockname.sun_family = AF_UNIX;
  
  #ifdef NX_TRANS_SOCKET
@@ -213,7 +235,7 @@ Abstract:
  #endif
  	PRMSG (1, "SocketUNIXConnect: path too long\n", 0, 0, 0);
  	return TRANS_CONNECT_FAILED;
-@@ -2722,6 +2767,14 @@
+@@ -2722,6 +2769,14 @@
  #endif
  
      /*
@@ -228,7 +250,7 @@ Abstract:
       * Do the connect()
       */
  
-@@ -2757,12 +2810,18 @@
+@@ -2757,12 +2812,18 @@
  	     * should try again.
  	     */
  
@@ -252,7 +274,7 @@ Abstract:
  		PRMSG (2,"SocketUNIXConnect: Can't connect: errno = %d\n",
  		       EGET(),0, 0);
  
-@@ -2791,6 +2850,9 @@
+@@ -2791,6 +2852,9 @@
          return TRANS_CONNECT_FAILED;
      }
  
@@ -262,7 +284,7 @@ Abstract:
      ciptr->family = AF_UNIX;
      ciptr->addrlen = namelen;
      ciptr->peeraddrlen = namelen;
-@@ -3323,7 +3385,11 @@
+@@ -3323,7 +3387,11 @@
  Xtransport	TRANS(SocketLocalFuncs) = {
  	/* Socket Interface */
  	"local",
@@ -274,7 +296,7 @@ Abstract:
  #ifdef TRANS_CLIENT
  	TRANS(SocketOpenCOTSClient),
  #endif /* TRANS_CLIENT */
-@@ -3369,7 +3435,7 @@
+@@ -3369,7 +3437,7 @@
  Xtransport	TRANS(SocketUNIXFuncs) = {
  	/* Socket Interface */
  	"unix",
