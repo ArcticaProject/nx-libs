@@ -41,3 +41,29 @@ Abstract:
    }
    #ifdef WARNING
    else
+@@ -3352,7 +3358,10 @@
+ 
+   if (nxagentOption(Rootless) && nxagentWindowTopLevel(pWin))
+   {
+-    nxagentGetEventMask(pWin, (Mask*)&attributes.event_mask);
++    /* Assume that the mask fits in int... broken on Big Endian 64bit systems. */
++    Mask tmp_mask = attributes.event_mask;
++    nxagentGetEventMask(pWin, &tmp_mask);
++    attributes.event_mask = (int)tmp_mask;
+ 
+     XChangeWindowAttributes(nxagentDisplay, nxagentWindow(pWin), mask, &attributes);
+   }
+--- a/nx-X11/programs/Xserver/hw/nxagent/Screen.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/Screen.c
+@@ -1665,7 +1665,10 @@
+ 
+     attributes.background_pixel = nxagentBlackPixel;
+ 
+-    nxagentGetDefaultEventMask((Mask*)&attributes.event_mask);
++    /* Assume that the mask fits in int... broken on Big Endian 64bit systems. */
++    Mask tmp_mask = attributes.event_mask;
++    nxagentGetDefaultEventMask(&tmp_mask);
++    attributes.event_mask = (int)tmp_mask;
+ 
+     attributes.colormap = nxagentDefaultVisualColormap(nxagentDefaultVisual(pScreen));
+ 
