@@ -36,7 +36,16 @@ Last-Update: 2011-12-31
  
  #include "NXlib.h"
  
-@@ -1790,6 +1791,42 @@
+@@ -72,6 +73,8 @@
+ 
+ #include "Xatom.h"
+ 
++#include <errno.h>
++
+ static int nxagentXkbGetNames(char **rules, char **model, char **layout,
+                                   char **variant, char **options);
+ 
+@@ -1790,6 +1793,48 @@
    }
    #endif
  
@@ -65,11 +74,17 @@ Last-Update: 2011-12-31
 +        if ( doptions != NULL )
 +          fprintf(keyboard_file, "options=%s\n", doptions);
 +        fclose(keyboard_file);
++        fprintf(stderr, "keyboard file created\n");
++      }
++      else {
++        int save_err = errno;
++        fprintf(stderr, "keyboard file not created: %s\n", strerror(save_err));
 +      }
 +      free(keyboard_file_path);
-+      fprintf(stderr, "keyboard file created\n");
 +    }
-+    fprintf(stderr, "SessionPath not defined\n");
++    else {
++      fprintf(stderr, "SessionPath not defined\n");
++    }
 +  }
 +  else
 +  {
