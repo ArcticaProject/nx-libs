@@ -1,4 +1,4 @@
-Description: No session window with on PPC64 builds
+Description: Create Windows and fix drawing issues on Big Endian 64bit systems
 Author: Mihai Moldovan <ionic@ionic.de>
 Abstract:
  Multiple endiannes issues were setting incorrect event masks when creating and
