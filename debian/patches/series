@@ -5,9 +5,9 @@
 005_nxcomp_gcc43.full+lite.patch
 006_nxcomp_libpng15.full+lite.patch
 007_nxcompshad_clean-gch-files.full.patch
-008_nxcomp_sa_restorer.full+lite.patch
-009_nxproxy-add-man-page.full+lite.patch
-009_nxagent-add-man-page.full.patch
+008_nxcomp_sa-restorer.full+lite.patch
+009_nxproxy_add-man-page.full+lite.patch
+009_nxagent_add-man-page.full.patch
 010_nxauth_fix-binary-name-in-man-page.full.patch
 012_nxcomp_makefile-uninstall+autoconf.full+lite.patch
 013_nxcompext_makefile-uninstall+autoconf.full.patch
@@ -32,7 +32,7 @@
 053_nx-X11_no-xcomp1-install-target.full.patch
 054_nx-X11_ppc64-ftbfs.full.patch
 055_nx-X11_imake-Werror-format-security.full.patch
-056_nx-X11-Werror-format-security.full.patch
+056_nx-X11_Werror-format-security.full.patch
 057_nx-X11_sanitize-eventmasks.full.patch
 101_nxagent_set-rgb-path.full.patch
 102_xserver-xext_set-securitypolicy-path.full.patch
@@ -48,8 +48,8 @@
 203_nxagent_disable-rootless-exit.full.patch
 204_nxagent_repaint-solidpict.full.patch
 205_nxagent_refresh-adsl.full.patch
-209_x2goagent-add-man-page.full.patch
-220_nxproxy-bind-loopback-only.full+lite.patch
+209_x2goagent_add-man-page.full.patch
+220_nxproxy_bind-loopback-only.full+lite.patch
 300_nxagent_set-wm-class.full.patch
 301_nx-X11_use-shared-libs.full.patch
 302_nx-X11_xkbbasedir-detection.patch

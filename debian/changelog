@@ -37,6 +37,14 @@ nx-libs (2:3.5.0.25-0x2go1) UNRELEASED; urgency=low
     + 108_nxagent_wine-close-delay.full.patch
     + 300_nxagent_set-wm-class.full.patch
 
+  * Rename patches to match our naming scheme:
+    + 008_nxcomp_sa-restorer.full+lite.patch
+    + 009_nxagent_add-man-page.full.patch
+    + 009_nxproxy_add-man-page.full+lite.patch
+    + 056_nx-X11_Werror-format-security.full.patch
+    + 209_x2goagent_add-man-page.full.patch
+    + 220_nxproxy_bind-loopback-only.full+lite.patch
+
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 07 May 2014 09:58:10 +0200
 
 nx-libs (2:3.5.0.24-0x2go1) unstable; urgency=low
