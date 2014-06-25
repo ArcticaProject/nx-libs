@@ -50,6 +50,9 @@ nx-libs (2:3.5.0.25-0x2go1) UNRELEASED; urgency=low
     specified by "state" option in agent options file. If option is omitted,
     session state will not be saved. Session states are: STARTING, RUNNING,
     SUSPENDING, SUSPENDED, RESUMING, TERMINATING, TERMINATED.
+  * Add 211_nxcomp_set_default_options.patch. Set default arguments for options
+    'link' and 'pack' to avoid session damage by resuming with incorrect options
+    file.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 07 May 2014 09:58:10 +0200
 
