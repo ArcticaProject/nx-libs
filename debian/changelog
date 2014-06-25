@@ -45,6 +45,12 @@ nx-libs (2:3.5.0.25-0x2go1) UNRELEASED; urgency=low
     + 209_x2goagent_add-man-page.full.patch
     + 220_nxproxy_bind-loopback-only.full+lite.patch
 
+  [ Oleksandr Shneyder ]
+  * Add 210_nxagent_nxcomp_save_session_state.patch. Save session state in path
+    specified by "state" option in agent options file. If option is omitted,
+    session state will not be saved. Session states are: STARTING, RUNNING,
+    SUSPENDING, SUSPENDED, RESUMING, TERMINATING, TERMINATED.
+
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 07 May 2014 09:58:10 +0200
 
 nx-libs (2:3.5.0.24-0x2go1) unstable; urgency=low
