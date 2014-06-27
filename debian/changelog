@@ -29,6 +29,11 @@ nx-libs (2:3.5.0.25-0x2go1) UNRELEASED; urgency=low
   * Add 302_nx-X11_xkbbasedir-detection.patch. For detecting XkbBaseDir
     test for xkb/rules/base instead of testing for deprecated file
     xkb/keymap.dir. (Fixes: #40).
+  * Add 206_nxagent_clipboard-as-nxoption.full.patch. Make the clipboard
+    option configurable in nxagent via NX options as addition to the
+    command line parameter -clipboard. Note that the command line
+    parameter overrides the clipboard NX option. Possible values are
+    both or 1, client, server, none or 0.
 
   * Update patches, to make them apply cleanly after above changes:
     + 220_nxproxy-bind-loopback-only.full+lite.patch

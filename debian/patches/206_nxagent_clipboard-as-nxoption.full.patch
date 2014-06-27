@@ -1,0 +1,50 @@
+--- a/nx-X11/programs/Xserver/hw/nxagent/Args.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/Args.c
+@@ -984,7 +984,7 @@
+ 
+   if (!strcmp(argv[i], "-clipboard"))
+   {
+-    if (!strcmp(argv[i+1], "both"))
++    if ((!strcmp(argv[i+1], "both")) || (!strcmp(argv[i+1], "1")))
+     {
+       nxagentChangeOption(Clipboard, ClipboardBoth);
+     }
+@@ -996,7 +996,7 @@
+     {
+       nxagentChangeOption(Clipboard, ClipboardServer);
+     }
+-    else if (!strcmp(argv[i+1], "none"))
++    else if ((!strcmp(argv[i+1], "none")) || (!strcmp(argv[i+1], "1")))
+     {
+       nxagentChangeOption(Clipboard, ClipboardNone);
+     }
+@@ -1255,6 +1255,29 @@
+ 
+     return;
+   }
++  else if  (strcmp(name, "clipboard") == 0)
++  {
++    if ((strcmp(value, "both") == 0) || (strcmp(value, "1") == 0))
++    {
++      nxagentChangeOption(Clipboard, ClipboardBoth);
++    }
++    else if (strcmp(value, "client") == 0)
++    {
++      nxagentChangeOption(Clipboard, ClipboardClient);
++    }
++    else if (strcmp(value, "server") == 0)
++    {
++      nxagentChangeOption(Clipboard, ClipboardServer);
++    }
++    else if ((strcmp(value, "none") == 0) || (strcmp(value, "0") == 0))
++    {
++      nxagentChangeOption(Clipboard, ClipboardNone);
++    }
++    else
++    {
++      nxagentChangeOption(Clipboard, ClipboardBoth);
++    }
++  }
+   else
+   {
+     #ifdef DEBUG

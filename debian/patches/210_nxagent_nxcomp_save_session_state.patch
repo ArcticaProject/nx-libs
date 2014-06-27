@@ -23,7 +23,7 @@ Author: Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
    else if (!strcmp(name, "fullscreen"))
    {
      if (nxagentReconnectTrap == True)
-@@ -1362,6 +1368,11 @@
+@@ -1385,6 +1391,11 @@
                validateString(nxagentOptionFile));
    #endif
  
