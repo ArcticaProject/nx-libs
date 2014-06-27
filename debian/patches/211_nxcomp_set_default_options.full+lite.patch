@@ -3,7 +3,7 @@ Author: Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
 
 --- a/nxcomp/Loop.cpp
 +++ b/nxcomp/Loop.cpp
-@@ -8350,8 +8350,8 @@
+@@ -8328,8 +8328,8 @@
  
          cerr << "Error" << ": Can't identify 'link' option in string '"
               << value << "'.\n";
@@ -14,7 +14,7 @@ Author: Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
        }
      }
      else if (strcasecmp(name, "limit") == 0)
-@@ -8809,8 +8809,8 @@
+@@ -8783,8 +8783,8 @@
  
          cerr << "Error" << ": Can't identify pack method for string '"
               << value << "'.\n";

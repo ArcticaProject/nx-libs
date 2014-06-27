@@ -990,7 +990,7 @@ Description: Make nxagent-specific keyboard bindings configurable
 +deactivate_input_devices_grab
 --- a/nx-X11/programs/Xserver/hw/nxagent/Args.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Args.c
-@@ -148,6 +148,8 @@
+@@ -149,6 +149,8 @@
  
  char nxagentVerbose = 0;
  
@@ -999,7 +999,7 @@ Description: Make nxagent-specific keyboard bindings configurable
  int ddxProcessArgument(int argc, char *argv[], int i)
  {
    /*
-@@ -1021,6 +1023,20 @@
+@@ -1022,6 +1024,20 @@
      return 1;
    }
  

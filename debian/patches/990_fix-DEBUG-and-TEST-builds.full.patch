@@ -47,7 +47,7 @@ Abstract:
      fprintf(stderr, "nxagentTrapezoids: Destination is a [%s] of geometry [%d,%d].\n",
 --- a/nx-X11/programs/Xserver/hw/nxagent/X/NXdispatch.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/X/NXdispatch.c
-@@ -734,7 +734,7 @@
+@@ -735,7 +735,7 @@
  
  		client->sequence++;
  #ifdef DEBUG

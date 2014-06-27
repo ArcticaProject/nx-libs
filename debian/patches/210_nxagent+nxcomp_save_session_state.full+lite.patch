@@ -11,7 +11,7 @@ Author: Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
  
  /*
   * NX includes and definitions.
-@@ -1106,6 +1107,11 @@
+@@ -1090,6 +1091,11 @@
  
      return;
    }
@@ -23,7 +23,7 @@ Author: Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
    else if (!strcmp(name, "fullscreen"))
    {
      if (nxagentReconnectTrap == True)
-@@ -1385,6 +1391,11 @@
+@@ -1369,6 +1375,11 @@
                validateString(nxagentOptionFile));
    #endif
  
@@ -176,7 +176,7 @@ Author: Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
      DEALLOCATE_LOCAL(clientReady);
 --- a/nxcomp/Loop.cpp
 +++ b/nxcomp/Loop.cpp
-@@ -8898,7 +8898,8 @@
+@@ -8872,7 +8872,8 @@
      }
      else if (strcasecmp(name, "defer") == 0 ||
                   strcasecmp(name, "tile") == 0 ||
