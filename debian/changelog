@@ -52,10 +52,11 @@ nx-libs (2:3.5.0.25-0x2go1) UNRELEASED; urgency=low
     + 220_nxproxy_bind-loopback-only.full+lite.patch
 
   [ Oleksandr Shneyder ]
-  * Add 210_nxagent_nxcomp_save_session_state.patch. Save session state in path
-    specified by "state" option in agent options file. If option is omitted,
-    session state will not be saved. Session states are: STARTING, RUNNING,
-    SUSPENDING, SUSPENDED, RESUMING, TERMINATING, TERMINATED.
+  * Add 210_nxagent_nxcomp_save_session_state.full+lite.patch. Save session
+    state in path specified by "state" option in agent options file. If
+    option is omitted, session state will not be saved. Session states are:
+    STARTING, RUNNING, SUSPENDING, SUSPENDED, RESUMING, TERMINATING,
+    TERMINATED.
   * Add 211_nxcomp_set_default_options.full+lite.patch. Set default arguments
     for options 'link' and 'pack' to avoid session damage by resuming with
     incorrect options file.
