@@ -50,6 +50,8 @@
 205_nxagent_refresh-adsl.full.patch
 206_nxagent_clipboard-as-nxoption.full.patch
 209_x2goagent_add-man-page.full.patch
+210_nxagent+nxcomp_save_session_state.full+lite.patch
+211_nxcomp_set_default_options.full+lite.patch
 220_nxproxy_bind-loopback-only.full+lite.patch
 300_nxagent_set-wm-class.full.patch
 301_nx-X11_use-shared-libs.full.patch
@@ -66,5 +68,3 @@
 999_nxagent_unbrand-nxagent-brand-x2goagent.full.patch
 016_nx-X11_install-location.debian.patch
 102_xserver-xext_set-securitypolicy-path.debian.patch
-210_nxagent_nxcomp_save_session_state.patch
-211_nxcomp_set_default_options.patch

@@ -58,6 +58,7 @@ nx-libs (2:3.5.0.25-0x2go1) UNRELEASED; urgency=low
   * Add 211_nxcomp_set_default_options.patch. Set default arguments for options
     'link' and 'pack' to avoid session damage by resuming with incorrect options
     file.
+  * Rename Patches 210 and 211. Update series file.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 07 May 2014 09:58:10 +0200
 
