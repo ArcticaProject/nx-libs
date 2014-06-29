@@ -1,0 +1,253 @@
+Author: Nito Martinez <Nito@Qindel.ES>
+Description: Fix FTBFS of nxproxy/nxcomp on Android
+
+--- a/nxcomp/Jpeg.cpp
++++ b/nxcomp/Jpeg.cpp
+@@ -17,6 +17,9 @@
+ 
+ #include <X11/Xmd.h>
+ 
++#ifdef ANDROID
++#include <strings.h>
++#endif
+ #include <unistd.h>
+ #include <setjmp.h>
+ #include <zlib.h>
+--- a/nxcomp/Loop.cpp
++++ b/nxcomp/Loop.cpp
+@@ -4187,7 +4187,7 @@
+ 
+   #endif
+ 
+-  char *separator = rindex(display, ':');
++  char *separator = strrchr(display, ':');
+ 
+   if ((separator == NULL) || !isdigit(*(separator + 1)))
+   {
+@@ -8240,7 +8240,7 @@
+   char *name;
+   char *value;
+ 
+-  value = rindex(nextOpts, ':');
++  value = strrchr(nextOpts, ':');
+ 
+   if (value != NULL)
+   {
+@@ -11010,7 +11010,7 @@
+                                       packMethod == PACK_LOSSLESS ||
+                                           packMethod == PACK_ADAPTIVE)
+   {
+-    const char *dash = rindex(opt, '-');
++    const char *dash = strrchr(opt, '-');
+ 
+     if (dash != NULL && strlen(dash) == 2 &&
+             *(dash + 1) >= '0' && *(dash + 1) <= '9')
+@@ -12275,6 +12275,10 @@
+     control -> ShmemServer = 0;
+   }
+ 
++  // For android, no shared memory available
++  control -> ShmemServer = 0;
++  control -> ShmemClientSize = 0;
++
+   return 1;
+ }
+ 
+@@ -13525,7 +13529,7 @@
+ 
+   int newPort = port;
+ 
+-  const char *separator = rindex(opt, ':');
++  const char *separator = strrchr(opt, ':');
+ 
+   if (separator != NULL)
+   {
+--- a/nxcomp/Pgn.cpp
++++ b/nxcomp/Pgn.cpp
+@@ -23,6 +23,9 @@
+ 
+ #include <X11/Xmd.h>
+ 
++#ifdef ANDROID
++#include <strings.h>
++#endif
+ #include <unistd.h>
+ #include <stdio.h>
+ #include <png.h>
+--- a/nxcomp/Proxy.cpp
++++ b/nxcomp/Proxy.cpp
+@@ -20,6 +20,11 @@
+ #include <cstdlib>
+ #include <sys/types.h>
+ #include <sys/stat.h>
++#ifdef ANDROID
++#include <netinet/in.h>
++#include <netinet/ip.h>
++#include <netinet/tcp.h>
++#endif
+ 
+ #include "Misc.h"
+ 
+@@ -31,9 +36,11 @@
+ #include <sys/un.h>
+ #endif
+ 
++#ifndef ANDROID
+ #include <netinet/in.h>
+ #include <netinet/ip.h>
+ #include <netinet/tcp.h>
++#endif
+ 
+ #if defined(__EMX__ ) || defined(__CYGWIN32__)
+ 
+--- a/nxcomp/ServerChannel.cpp
++++ b/nxcomp/ServerChannel.cpp
+@@ -18,7 +18,9 @@
+ #include <string.h>
+ #include <sys/types.h>
+ #include <sys/ipc.h>
++#ifndef ANDROID
+ #include <sys/shm.h>
++#endif
+ 
+ #include <X11/X.h>
+ #include <X11/Xatom.h>
+@@ -1079,7 +1081,6 @@
+ 
+                   priority_++;
+                 }
+-
+                 //
+                 // Account this data to the original opcode.
+                 //
+@@ -1500,7 +1501,6 @@
+             continue;
+           }
+         }
+-
+         //
+         // Check if user pressed the CTRL+ALT+SHIFT+ESC key
+         // sequence because was unable to kill the session
+@@ -5475,7 +5475,7 @@
+     *logofs << "handleColormap: Dumping colormap entries:\n"
+             << logofs_flush;
+ 
+-    const unsigned char *p = unpackState_[resource] -> colormap -> data;
++    const unsigned char *p = (const unsigned char *) unpackState_[resource] -> colormap -> data;
+ 
+     for (unsigned int i = 0; i < unpackState_[resource] ->
+              colormap -> entries; i++)
+@@ -7100,7 +7100,12 @@
+   {
+     encodeBuffer.encodeValue(stage, 2);
+ 
++#ifndef ANDROID
+     shmemState_ -> present = *(buffer + 8);
++#else
++    shmemState_ -> present = 0;
++    cerr << "Info: handleShmemReply: In android no shared memory. Setting present to 0 hardcoded\n";
++#endif
+     shmemState_ -> opcode  = *(buffer + 9);
+     shmemState_ -> event   = *(buffer + 10);
+     shmemState_ -> error   = *(buffer + 11);
+@@ -7128,7 +7133,12 @@
+       cerr << "Info" << ": Using shared memory parameters 1/"
+            << (shmemState_ -> size / 1024) << "K.\n";
+ 
++#ifndef ANDROID
+       shmemState_ -> enabled = 1;
++#else
++      cerr << "Info: handleShmemReply: In android no shared memory. Setting enabled to -1. This should not be displayed\n";
++      shmemState_ -> enabled = -1;
++#endif
+ 
+       encodeBuffer.encodeBoolValue(1);
+     }
+@@ -7241,7 +7251,7 @@
+       // memory support is disabled by the
+       // user.
+       //
+-
++#ifndef ANDROID
+       if (control -> ShmemServer == 1 &&
+               control -> ShmemServerSize > 0 &&
+                   enableServer == 1)
+@@ -7252,8 +7262,12 @@
+       {
+         memcpy(buffer + 8, "NO-MIT-", 7);
+       }
++#else
++      cerr << "Info: handleShmemRequest: In android no shared memory. Returning NO-MIT- answer\n";
+ 
+-      sequenceQueue_.push(clientSequence_, opcode,
++        memcpy(buffer + 8, "NO-MIT-", 7);
++#endif
++     sequenceQueue_.push(clientSequence_, opcode,
+                               opcodeStore_ -> getShmemParameters, stage);
+ 
+       //
+@@ -7289,9 +7303,13 @@
+ 
+         shmemState_ -> size = control -> ShmemServerSize;
+ 
++#ifndef ANDROID
+         shmemState_ -> id = shmget(IPC_PRIVATE, shmemState_ -> size,
+                                        IPC_CREAT | permissions);
+-
++#else
++	cerr << "Info: handleShmemReqyest: In android no shared memory (shmget). This message should not be displayed present should never be 1 in android\n";
++	shmemState_ -> id = -1;
++#endif
+         if (shmemState_ -> id >= 0)
+         {
+           #if defined(TEST) || defined(INFO)
+@@ -7302,8 +7320,12 @@
+           #endif
+ 
+ 
++#ifndef ANDROID
+           shmemState_ -> address = shmat(shmemState_ -> id, 0, 0);
+-
++#else
++	  cerr << "Info: handleShmemReqyest: In android no shared memory (shmat). This message should not be displayed. present should never be 1 in android\n";
++	  shmemState_ -> address = NULL;
++#endif
+           if (shmemState_ -> address != NULL)
+           {
+             #ifdef TEST
+@@ -7437,6 +7459,10 @@
+ 
+     return 0;
+   }
++#ifdef ANDROID
++  cerr << "Info: handleShmem: In android no shared memory.  enabled should never be 1. This should not be displayed\n";
++  return 0;
++#endif
+ 
+   //
+   // Ignore null requests and requests that will not result
+@@ -8054,14 +8080,22 @@
+ {
+   if (shmemState_ != NULL)
+   {
+-    if (shmemState_ -> address != NULL)
++   if (shmemState_ -> address != NULL)
+     {
+-      shmdt((char *) shmemState_ -> address);
++#ifndef ANDROID
++       shmdt((char *) shmemState_ -> address);
++#else
++    cerr << "Info: handleShmemStateRemove: In android no shared memory. This should not be displayed. address should always be NULL\n";
++#endif
+     }
+ 
+     if (shmemState_ -> id > 0)
+     {
++#ifndef ANDROID
+       shmctl(shmemState_ -> id, IPC_RMID, 0);
++#else
++      cerr << "Info: handleShmemStateRemove: In android no shared memory. This should not be displayed. id should always be 0\n";
++#endif
+     }
+ 
+     delete shmemState_;

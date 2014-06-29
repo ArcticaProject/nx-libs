@@ -35,6 +35,10 @@ nx-libs (2:3.5.0.25-0x2go1) UNRELEASED; urgency=low
     parameter overrides the clipboard NX option. Possible values are
     both or 1, client, server, none or 0.
 
+  [ Nito Martínez ]
+  * Add 212_nxcomp_build-on-Android.patch. Fix FTBFS of nxproxy/nxcomp when
+    build against the Android system. (Fixes: #339).
+
   * Update patches, to make them apply cleanly after above changes:
     + 220_nxproxy-bind-loopback-only.full+lite.patch
     + 016_nx-X11_install-location.debian.patch

@@ -69,7 +69,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
      else if (strcasecmp(name, "accept") == 0)
      {
        if (*connectHost != '\0')
-@@ -13774,7 +13800,14 @@
+@@ -13778,7 +13804,14 @@
      }
      else
      {
