@@ -16,6 +16,20 @@ nx-libs (2:3.5.0.25-0x2go1) UNRELEASED; urgency=low
   * Add 990_fix-DEBUG-and-TEST-builds.full.patch. Fix debug builds (e.g.
     when globally setting -DDEBUG and -DTEST at build time).
 
+  [ Nito Martínez ]
+  * Add 212_nxcomp_build-on-Android.patch. Fix FTBFS of nxproxy/nxcomp when
+    build against the Android system. (Fixes: #339).
+
+  [ Oleksandr Shneyder ]
+  * Add 210_nxagent_nxcomp_save_session_state.full+lite.patch. Save session
+    state in path specified by "state" option in agent options file. If
+    option is omitted, session state will not be saved. Session states are:
+    STARTING, RUNNING, SUSPENDING, SUSPENDED, RESUMING, TERMINATING,
+    TERMINATED.
+  * Add 211_nxcomp_set_default_options.full+lite.patch. Set default arguments
+    for options 'link' and 'pack' to avoid session damage by resuming with
+    incorrect options file.
+
   [ Mike Gabriel ]
   * Add 606_nx-X11_build-on-aarch64.full.patch. Build on aarch64
     architectures. (Fixes: #490).
@@ -35,10 +49,6 @@ nx-libs (2:3.5.0.25-0x2go1) UNRELEASED; urgency=low
     parameter overrides the clipboard NX option. Possible values are
     both or 1, client, server, none or 0.
 
-  [ Nito Martínez ]
-  * Add 212_nxcomp_build-on-Android.patch. Fix FTBFS of nxproxy/nxcomp when
-    build against the Android system. (Fixes: #339).
-
   * Update patches, to make them apply cleanly after above changes:
     + 220_nxproxy-bind-loopback-only.full+lite.patch
     + 016_nx-X11_install-location.debian.patch
@@ -54,16 +64,6 @@ nx-libs (2:3.5.0.25-0x2go1) UNRELEASED; urgency=low
     + 056_nx-X11_Werror-format-security.full.patch
     + 209_x2goagent_add-man-page.full.patch
     + 220_nxproxy_bind-loopback-only.full+lite.patch
-
-  [ Oleksandr Shneyder ]
-  * Add 210_nxagent_nxcomp_save_session_state.full+lite.patch. Save session
-    state in path specified by "state" option in agent options file. If
-    option is omitted, session state will not be saved. Session states are:
-    STARTING, RUNNING, SUSPENDING, SUSPENDED, RESUMING, TERMINATING,
-    TERMINATED.
-  * Add 211_nxcomp_set_default_options.full+lite.patch. Set default arguments
-    for options 'link' and 'pack' to avoid session damage by resuming with
-    incorrect options file.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 07 May 2014 09:58:10 +0200
 
