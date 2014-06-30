@@ -1,6 +1,10 @@
 nx-libs (2:3.5.0.26-0x2go1) UNRELEASED; urgency=medium
 
-  * Continue development...
+  * Fix patch names:
+    + 212_nxcomp_build-on-Android.patch ->
+        212_nxcomp_build-on-Android.full+lite.patch
+    + 302_nx-X11_xkbbasedir-detection.patch ->
+        302_nx-X11_xkbbasedir-detection.full.patch
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Mon, 30 Jun 2014 14:24:42 +0200
 

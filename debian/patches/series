@@ -52,11 +52,11 @@
 209_x2goagent_add-man-page.full.patch
 210_nxagent+nxcomp_save_session_state.full+lite.patch
 211_nxcomp_set_default_options.full+lite.patch
-212_nxcomp_build-on-Android.patch
+212_nxcomp_build-on-Android.full+lite.patch
 220_nxproxy_bind-loopback-only.full+lite.patch
 300_nxagent_set-wm-class.full.patch
 301_nx-X11_use-shared-libs.full.patch
-302_nx-X11_xkbbasedir-detection.patch
+302_nx-X11_xkbbasedir-detection.full.patch
 320_nxagent_configurable-keystrokes.full.patch
 600_nx-X11+nxcompext+nxcompshad_unique-libnames.full.patch
 601_nx-X11_build-option-changes-to-not-use-bundled-libraries.full.patch
