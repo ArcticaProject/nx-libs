@@ -50,7 +50,8 @@
 205_nxagent_refresh-adsl.full.patch
 206_nxagent_clipboard-as-nxoption.full.patch
 209_x2goagent_add-man-page.full.patch
-210_nxagent+nxcomp_save_session_state.full+lite.patch
+210_nxagent_save_session_state.full.patch
+210_nxcomp_save_session_state.full+lite.patch
 211_nxcomp_set_default_options.full+lite.patch
 212_nxcomp_build-on-Android.full+lite.patch
 220_nxproxy_bind-loopback-only.full+lite.patch

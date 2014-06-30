@@ -1,0 +1,15 @@
+Description: Ignore state=<statefile> option in nxproxy/nxcomp
+Author: Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+
+--- a/nxcomp/Loop.cpp
++++ b/nxcomp/Loop.cpp
+@@ -8872,7 +8872,8 @@
+     }
+     else if (strcasecmp(name, "defer") == 0 ||
+                  strcasecmp(name, "tile") == 0 ||
+-                     strcasecmp(name, "menu") == 0)
++                     strcasecmp(name, "menu") == 0 ||
++                        strcasecmp(name, "state") == 0 )
+     {
+       #ifdef DEBUG
+       *logofs << "Loop: Ignoring agent option '" << name

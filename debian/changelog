@@ -1,3 +1,11 @@
+nx-libs (2:3.5.0.27-0x2go1) UNRELEASED; urgency=medium
+
+  * Split up patch 210 (for correct creation nx-libs, nx-libs-lite tarballs):
+    + 210_nxagent_save_session_state.full.patch
+    + 210_nxcomp_save_session_state.full+lite.patch
+
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Mon, 30 Jun 2014 14:51:09 +0200
+
 nx-libs (2:3.5.0.26-0x2go1) unstable; urgency=medium
 
   * Fix patch names:
