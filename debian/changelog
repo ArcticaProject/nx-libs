@@ -1,4 +1,4 @@
-nx-libs (2:3.5.0.26-0x2go1) UNRELEASED; urgency=medium
+nx-libs (2:3.5.0.26-0x2go1) unstable; urgency=medium
 
   * Fix patch names:
     + 212_nxcomp_build-on-Android.patch ->
@@ -6,7 +6,7 @@ nx-libs (2:3.5.0.26-0x2go1) UNRELEASED; urgency=medium
     + 302_nx-X11_xkbbasedir-detection.patch ->
         302_nx-X11_xkbbasedir-detection.full.patch
 
- -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Mon, 30 Jun 2014 14:24:42 +0200
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Mon, 30 Jun 2014 14:42:51 +0200
 
 nx-libs (2:3.5.0.25-0x2go1) unstable; urgency=low
 
