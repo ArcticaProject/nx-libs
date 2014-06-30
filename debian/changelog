@@ -1,4 +1,4 @@
-nx-libs (2:3.5.0.25-0x2go1) UNRELEASED; urgency=low
+nx-libs (2:3.5.0.25-0x2go1) unstable; urgency=low
 
   [ Mihai Moldovan ]
   * Add 029_nxcomp_ppc64.full+lite.patch. Fix sockaddr handling on
@@ -65,7 +65,7 @@ nx-libs (2:3.5.0.25-0x2go1) UNRELEASED; urgency=low
     + 209_x2goagent_add-man-page.full.patch
     + 220_nxproxy_bind-loopback-only.full+lite.patch
 
- -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 07 May 2014 09:58:10 +0200
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Mon, 30 Jun 2014 14:05:46 +0200
 
 nx-libs (2:3.5.0.24-0x2go1) unstable; urgency=low
 
