@@ -1,3 +1,9 @@
+nx-libs (2:3.5.0.26-0x2go1) UNRELEASED; urgency=medium
+
+  * Continue development...
+
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Mon, 30 Jun 2014 14:24:42 +0200
+
 nx-libs (2:3.5.0.25-0x2go1) unstable; urgency=low
 
   [ Mihai Moldovan ]
