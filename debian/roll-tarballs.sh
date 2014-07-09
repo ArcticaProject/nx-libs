@@ -97,6 +97,7 @@ else
         echo ${file##*/} >> doc/applied-patches/series
     done
 fi
+cp -v debian/COPYING.full+lite COPYING
 
 # apply all patches shipped in debian/patches and create a copy of them that we ship with the tarball
 if [ -s "doc/applied-patches/series" ]; then

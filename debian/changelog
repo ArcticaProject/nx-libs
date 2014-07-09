@@ -1,6 +1,6 @@
 nx-libs (2:3.5.0.28-0x2go1) UNRELEASED; urgency=medium
 
-  * Continue development...
+  * Provide COPYING file in tarball. Update debian/copyright.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Mon, 30 Jun 2014 15:05:54 +0200
 

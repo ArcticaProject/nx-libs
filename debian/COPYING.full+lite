@@ -1,11 +1,9 @@
-This package was created by Mike Gabriel <mike.gabriel@das-netzwerkteam.de> on Thu Oct  10 22:53:56 CEST 2011
-
 The software components were originally downloaded from http://www.nomachine.com/sources.php
 
 The software has been improved via various patches by the X2Go project.
-The patches reside in the subfolder debian/patches/ of this source package.
+The patches reside in the subfolder doc/applied-patches/ of this source tree.
 
-Copyright (c) 2011-2014 X2Go Project, http://www.x2go.org.
+Copyright (c) 2011-2014 X2Go Project, http://www.x2go.org/.
 Copyright (c) 2001-2011 NoMachine, http://www.nomachine.com/.
 
    This program is free software; you can redistribute it and/or modify it
@@ -55,9 +53,3 @@ The files MD5.[ch] are copyright (C) 1999, 2000, 2002 Aladdin Enterprises.
   2. Altered source versions must be plainly marked as such, and must not be
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
-
-
-The packaging for Debian is copyright 2011 Mike Gabriel and is released
-under the GPL version 2. On Debian systems, the complete text of the GNU
-General Public License can be found in `/usr/share/common-licenses/GPL'.
-
