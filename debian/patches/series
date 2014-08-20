@@ -19,6 +19,7 @@
 019_nx-X11_expat-build-against-system-libxmltok.full.patch
 024_fix-make-clean.full.patch
 024_fix-make-clean.full+lite.patch
+025_nxcomp-fix-ftbfs-against-jpeg9a.full+lite.patch
 026_nxcompext_honour-optflags.full.patch
 026_nxcomp_honour-optflags.full+lite.patch
 026_nxcompshad_honour-optflags.full.patch
