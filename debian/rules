@@ -42,7 +42,8 @@ override_dh_auto_build:
 	mkdir -p etc/
 	ln -s ../debian/keystrokes.cfg etc/keystrokes.cfg
 	ln -s debian/rgb
-	ln -s debian/VERSION.x2goagent
+	ln -sf VERSION.x2goagent debian/VERSION
+	ln -sf nxcomp/VERSION debian/VERSION
 
 	# remove bundled libraries (keep this in sync with roll-tarball.sh)
 	rm -Rf nx-X11/extras/{drm,expat,fontconfig,freetype2,fonts,ogl-sample,regex,rman,ttf2pt1,x86emu,zlib}

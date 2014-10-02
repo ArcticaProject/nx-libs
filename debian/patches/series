@@ -60,6 +60,7 @@
 301_nx-X11_use-shared-libs.full.patch
 302_nx-X11_xkbbasedir-detection.full.patch
 320_nxagent_configurable-keystrokes.full.patch
+400_nxcomp-version.full+lite.patch
 600_nx-X11+nxcompext+nxcompshad_unique-libnames.full.patch
 601_nx-X11_build-option-changes-to-not-use-bundled-libraries.full.patch
 602_nx-X11_initgroups.full.patch

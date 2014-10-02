@@ -1,9 +1,14 @@
 nx-libs (2:3.5.0.28-0x2go1) UNRELEASED; urgency=medium
 
+  [ Mike Gabriel ]
   * Provide COPYING file in tarball. Update debian/copyright.
   * Add 025_nxcomp-fix-ftbfs-against-jpeg9a.full+lite.patch. Fix FTBFS when
     built against libjpeg9a. Thanks to Gabriel Marcano for sending this in.
     (Fixes: #578).
+
+  [ Nito Martinez ]
+  * Add 400_nxcomp-version.full+lite.patch. Allow 4-digit version comparison
+    during NX session handshake. (Fixes: #610).
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Mon, 30 Jun 2014 15:05:54 +0200
 

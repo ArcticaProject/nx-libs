@@ -86,7 +86,8 @@ if [ "x$MODE" = "xfull" ]; then
         cp -v $file doc/applied-patches
         echo ${file##*/} >> doc/applied-patches/series
     done
-    cp -v debian/rgb debian/VERSION.x2goagent .
+    cp -v debian/rgb ./
+    cp -v debian/VERSION ./VERSION.x2goagent
 else
     rm -Rf "nxcompshad"*
     rm -Rf "nxcompext"*
@@ -97,6 +98,7 @@ else
         echo ${file##*/} >> doc/applied-patches/series
     done
 fi
+cp -v debian/VERSION ./nxcomp/VERSION
 cp -v debian/COPYING.full+lite COPYING
 
 # apply all patches shipped in debian/patches and create a copy of them that we ship with the tarball
