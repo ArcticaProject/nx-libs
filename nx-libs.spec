@@ -495,7 +495,8 @@ cp -v debian/keystrokes.cfg etc/keystrokes.cfg
 cp -v debian/Makefile.nx-libs Makefile
 cp -v debian/Makefile.replace.sh replace.sh
 cp -v debian/rgb rgb
-cp -v debian/VERSION.x2goagent VERSION.x2goagent
+cp -v debian/VERSION VERSION.x2goagent
+cp -v debian/VERSION nxcomp/VERSION
 # remove bundled libraries (also taken from roll-tarball.sh)
 rm -Rf nx-X11/extras/{drm,expat,fontconfig,freetype2,fonts,ogl-sample,regex,rman,ttf2pt1,x86emu,zlib}
 rm -Rf nx-X11/lib/{expat,fontconfig,fontenc,font/FreeType,font/include/fontenc.h,freetype2,regex,zlib}
