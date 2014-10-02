@@ -21,6 +21,7 @@ override_dh_clean:
 	rm -f nx-X11/programs/Xserver/hw/nxagent/changelog
 	rm -f nx-X11/programs/nxauth/changelog
 	rm -Rf replace.sh Makefile bin rgb VERSION.x2goagent etc/keystrokes.cfg
+	rm -f debian/libnx-x11.postinst
 	dh_clean
 
 override_dh_auto_install:
@@ -44,6 +45,9 @@ override_dh_auto_build:
 	ln -s debian/rgb
 	ln -sf VERSION.x2goagent debian/VERSION
 	ln -sf nxcomp/VERSION debian/VERSION
+
+	# let's prep the libnx-x11.postinst script with the value of the build systems's DEB_BUILD_MULTIARCH variable
+	sed debian/libnx-x11.postinst.in -e 's/#DEB_BUILD_MULTIARCH#/$(DEB_BUILD_MULTIARCH)/' > debian/libnx-x11.postinst
 
 	# remove bundled libraries (keep this in sync with roll-tarball.sh)
 	rm -Rf nx-X11/extras/{drm,expat,fontconfig,freetype2,fonts,ogl-sample,regex,rman,ttf2pt1,x86emu,zlib}
