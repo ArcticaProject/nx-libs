@@ -9,6 +9,8 @@ nx-libs (2:3.5.0.28-0x2go1) UNRELEASED; urgency=medium
     + Don't use dpkg-architecture (bin:package dpkg-dev) in postinst script.
       Instead prep a libnx-x11.postinst script at build time. (Fixes:
       #621).
+  * debian/rules:
+    + No such option for dh_auto_build: --with quilt."
   * nx-libs.spec:
     + Adapt installation of debian/VERSION as VERSION.x2goagent and
       nxcomp/VERSION to latest changes introduced by
