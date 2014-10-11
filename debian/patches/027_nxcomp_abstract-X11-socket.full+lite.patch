@@ -1,3 +1,6 @@
+Description: Add X11 abstract socket support to nxcomp/nxproxy
+Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+
 diff --git a/nxcomp/Loop.cpp b/nxcomp/Loop.cpp
 index 92b6fc2..d86809d 100644
 --- a/nxcomp/Loop.cpp

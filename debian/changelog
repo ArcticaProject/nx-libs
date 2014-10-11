@@ -5,6 +5,8 @@ nx-libs (2:3.5.0.28-0x2go1) UNRELEASED; urgency=medium
   * Add 025_nxcomp-fix-ftbfs-against-jpeg9a.full+lite.patch. Fix FTBFS when
     built against libjpeg9a. Thanks to Gabriel Marcano for sending this in.
     (Fixes: #578).
+  * Update 027_nxcomp_abstract-X11-socket.full+lite: Add patch header
+    (Description: and Author: field).
   * debian/libnx-x11.postinst:
     + Don't use dpkg-architecture (bin:package dpkg-dev) in postinst script.
       Instead prep a libnx-x11.postinst script at build time. (Fixes:
