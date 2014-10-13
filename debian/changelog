@@ -21,6 +21,8 @@ nx-libs (2:3.5.0.28-0x2go1) UNRELEASED; urgency=medium
     + SUSE hack for linking to files in libX11-6 and libXext6.
     + Make sure all package directories are owned by one of the
       built bin:packages.
+    + Fix Xinerama symlink installation into RPM bin:package
+      libNX_Xinerama. (Fixes: #269).
 
   [ Nito Martinez ]
   * Add 400_nxcomp-version.full+lite.patch. Allow 4-digit version comparison

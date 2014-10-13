@@ -37,7 +37,6 @@ BuildRequires:  pkgconfig(libpng)
 BuildRequires:  pkgconfig(libxml-2.0)
 BuildRequires:  pkgconfig(x11)
 BuildRequires:  pkgconfig(xext)
-
 %else
 BuildRequires:  libexpat-devel
 BuildRequires:  fontconfig-devel
@@ -637,7 +636,6 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %post -n libNX_Xext -p /sbin/ldconfig
 %post -n libNX_Xfixes -p /sbin/ldconfig
 %post -n libNX_Xinerama -p /sbin/ldconfig
-
 %post -n libNX_Xpm -p /sbin/ldconfig
 %post -n libNX_Xrandr -p /sbin/ldconfig
 %post -n libNX_Xrender -p /sbin/ldconfig
@@ -645,11 +643,6 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %post -n libXcomp -p /sbin/ldconfig
 %post -n libXcompext -p /sbin/ldconfig
 %post -n libXcompshad -p /sbin/ldconfig
-
-%preun -n libNX_Xinerama
-rm -f %{_libdir}/nx/X11/Xinerama/libNX_X11.so.6
-rm -f %{_libdir}/nx/X11/Xinerama/libNX_Xext.so.6
-
 %postun -p /sbin/ldconfig
 %postun -n libNX_X11 -p /sbin/ldconfig
 %postun -n libNX_Xau -p /sbin/ldconfig
@@ -756,7 +749,9 @@ rm -f %{_libdir}/nx/X11/Xinerama/libNX_Xext.so.6
 
 %files -n libNX_Xinerama
 %{_libdir}/nx/X11/libNX_Xinerama.so.1*
-%{_libdir}/nx/X11/Xinerama/
+%dir %{_libdir}/nx/X11/Xinerama/
+%{_libdir}/nx/X11/Xinerama/libNX_X11.so.6
+%{_libdir}/nx/X11/Xinerama/libNX_Xext.so.6
 
 %files -n libNX_Xpm-devel
 %{_libdir}/nx/X11/libNX_Xpm.so
