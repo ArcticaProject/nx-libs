@@ -95,7 +95,6 @@ Requires:       %{name}%{?_isa} = %{version}-%{release}
 %if 0%{?suse_version}
 Requires:       xorg-x11-fonts-core
 %endif
-Conflicts:      nx
 
 %description -n libNX_X11
 The X Window System is a network-transparent window system that was
