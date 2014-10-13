@@ -18,6 +18,32 @@ Source0:        %{name}-%{version}.tar.gz
 # Remove bundled libraries
 #Patch0:         nx-libs-bundled.patch
 
+%if 0%{?suse_version} >= 1230
+BuildRequires:  gpg-offline
+%endif
+%if 0%{?suse_version}
+BuildRequires:  fdupes
+%if 0%{?suse_version} >= 1130
+BuildRequires:  pkgconfig(expat)
+BuildRequires:  pkgconfig(fontconfig)
+BuildRequires:  pkgconfig(fontenc)
+BuildRequires:  pkgconfig(freetype2)
+BuildRequires:  pkgconfig(libpng)
+BuildRequires:  pkgconfig(libxml-2.0)
+BuildRequires:  pkgconfig(x11)
+%else
+BuildRequires:  libexpat-devel
+BuildRequires:  fontconfig-devel
+BuildRequires:  freetype2-devel
+BuildRequires:  libpng-devel
+BuildRequires:  libxml2-devel
+BuildRequires:  xorg-x11-libX11-devel
+BuildRequires:  xorg-x11-libfontenc-devel
+%endif
+BuildRequires:  xorg-x11-util-devel
+%endif
+
+%if 0%{?fedora_version} || 0%{?rhel_version} || 0%{?centos_version}
 BuildRequires:  autoconf
 BuildRequires:  expat-devel
 BuildRequires:  fontconfig-devel
@@ -26,9 +52,17 @@ BuildRequires:  libfontenc-devel
 BuildRequires:  libjpeg-devel
 BuildRequires:  libpng-devel
 BuildRequires:  libxml2-devel
+%endif
+
 # For imake
 BuildRequires:  xorg-x11-proto-devel
 BuildRequires:  zlib-devel
+
+%if 0%{?suse_version} >= 1130 || 0%{?fedora_version}
+%define cond_noarch BuildArch: noarch
+%else
+%define cond_noarch %nil
+%endif
 
 Obsoletes:      nx < 3.5.0-19
 Provides:       nx = %{version}-%{release}
@@ -53,6 +87,10 @@ nxagent/x2goagent.
 Group:          System Environment/Libraries
 Summary:        Core NX protocol client library
 Requires:       %{name}%{?_isa} = %{version}-%{release}
+%if 0%{?suse_version}
+Requires:       xorg-x11-fonts-core
+%endif
+Conflicts:      nx
 
 %description -n libNX_X11
 The X Window System is a network-transparent window system that was
@@ -430,6 +468,9 @@ Obsoletes:      nx < 3.5.0-19
 Provides:       nx = %{version}-%{release}
 Obsoletes:      nx%{?_isa} < 3.5.0-19
 Provides:       nx%{?_isa} = %{version}-%{release}
+%if 0%{?suse_version}
+Requires:       xorg-x11-fonts-core
+%endif
 
 %description -n nxagent
 NX is a software suite which implements very efficient compression of
@@ -576,6 +617,10 @@ rm -r %{buildroot}%{_includedir}/nx/X11/Xtrans
 # Needed for Xinerama support
 ln -s -f ../../../../%{_lib}/libX11.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama/libNX_X11.so.6
 ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama/libNX_Xext.so.6
+
+%if 0%{?fdupes:1}
+%fdupes %buildroot/%_prefix
+%endif
 
 %post -p /sbin/ldconfig
 %post -n libNX_X11 -p /sbin/ldconfig
