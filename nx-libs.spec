@@ -36,6 +36,8 @@ BuildRequires:  pkgconfig(freetype2)
 BuildRequires:  pkgconfig(libpng)
 BuildRequires:  pkgconfig(libxml-2.0)
 BuildRequires:  pkgconfig(x11)
+BuildRequires:  pkgconfig(xext)
+
 %else
 BuildRequires:  libexpat-devel
 BuildRequires:  fontconfig-devel
@@ -43,11 +45,10 @@ BuildRequires:  freetype2-devel
 BuildRequires:  libpng-devel
 BuildRequires:  libxml2-devel
 BuildRequires:  xorg-x11-libX11-devel
+BuildRequires:  xorg-x11-libXext-devel
 BuildRequires:  xorg-x11-libfontenc-devel
 %endif
 BuildRequires:  xorg-x11-util-devel
-# neededforbuild
-Requires:       libX11-6 libXext6
 %endif
 
 %if 0%{?fedora_version} || 0%{?rhel_version} || 0%{?centos_version}
