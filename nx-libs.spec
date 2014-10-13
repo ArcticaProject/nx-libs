@@ -50,7 +50,7 @@ BuildRequires:  xorg-x11-libfontenc-devel
 BuildRequires:  xorg-x11-util-devel
 %endif
 
-%if 0%{?fedora_version} || 0%{?rhel_version} || 0%{?centos_version}
+%if 0%{?fedora} || 0%{?rhel}
 BuildRequires:  expat-devel
 BuildRequires:  fontconfig-devel
 BuildRequires:  freetype-devel
@@ -63,7 +63,7 @@ BuildRequires:  libxml2-devel
 BuildRequires:  xorg-x11-proto-devel
 BuildRequires:  zlib-devel
 
-%if 0%{?suse_version} >= 1130 || 0%{?fedora_version}
+%if 0%{?suse_version} >= 1130 || 0%{?fedora}
 %define cond_noarch BuildArch: noarch
 %else
 %define cond_noarch %nil
