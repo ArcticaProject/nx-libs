@@ -479,6 +479,7 @@ Provides:       nx%{?_isa} = %{version}-%{release}
 %if 0%{?suse_version}
 Requires:       xorg-x11-fonts-core
 %endif
+Requires:       libNX_Xinerama%{?_isa} = %{version}-%{release}
 
 %description -n nxagent
 NX is a software suite which implements very efficient compression of
@@ -524,7 +525,6 @@ This package provides the NX proxy (client) binary.
 Group:          Applications/System
 Summary:        X2Go Agent
 Requires:       nxagent
-Requires:       libNX_Xinerama%{?_isa} = %{version}-%{release}
 
 %description -n x2goagent
 X2Go Agent functionality has been completely incorporated into
