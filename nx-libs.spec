@@ -752,6 +752,7 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %dir %{_libdir}/nx/X11/Xinerama/
 %{_libdir}/nx/X11/Xinerama/libNX_X11.so.6
 %{_libdir}/nx/X11/Xinerama/libNX_Xext.so.6
+%{_libdir}/nx/X11/Xinerama/libXinerama.so.1*
 
 %files -n libNX_Xpm-devel
 %{_libdir}/nx/X11/libNX_Xpm.so
