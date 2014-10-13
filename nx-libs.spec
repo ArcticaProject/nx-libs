@@ -44,7 +44,6 @@ BuildRequires:  xorg-x11-util-devel
 %endif
 
 %if 0%{?fedora_version} || 0%{?rhel_version} || 0%{?centos_version}
-BuildRequires:  autoconf
 BuildRequires:  expat-devel
 BuildRequires:  fontconfig-devel
 BuildRequires:  freetype-devel
@@ -53,6 +52,8 @@ BuildRequires:  libjpeg-devel
 BuildRequires:  libpng-devel
 BuildRequires:  libxml2-devel
 %endif
+
+BuildRequires:  autoconf
 
 # For imake
 BuildRequires:  xorg-x11-proto-devel
