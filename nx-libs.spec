@@ -18,6 +18,11 @@ Source0:        %{name}-%{version}.tar.gz
 # Remove bundled libraries
 #Patch0:         nx-libs-bundled.patch
 
+BuildRequires:  autoconf >= 2.13
+BuildRequires:  gcc-c++
+BuildRequires:  libjpeg-devel
+BuildRequires:  pkgconfig
+
 %if 0%{?suse_version} >= 1230
 BuildRequires:  gpg-offline
 %endif
@@ -48,12 +53,9 @@ BuildRequires:  expat-devel
 BuildRequires:  fontconfig-devel
 BuildRequires:  freetype-devel
 BuildRequires:  libfontenc-devel
-BuildRequires:  libjpeg-devel
 BuildRequires:  libpng-devel
 BuildRequires:  libxml2-devel
 %endif
-
-BuildRequires:  autoconf
 
 # For imake
 BuildRequires:  xorg-x11-proto-devel
