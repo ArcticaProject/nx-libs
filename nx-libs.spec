@@ -281,7 +281,11 @@ various limitations in the core protocol.
 Group:          System Environment/Libraries
 Summary:        Xinerama extension to the NX Protocol
 Requires:       %{name}%{?_isa} = %{version}-%{release}
+%if 0%{?suse_version}
+Requires:       libX11-6%{?_isa}
+%else
 Requires:       libX11%{?_isa}
+%fi
 Requires:       libXext%{?_isa}
 
 %description -n libNX_Xinerama
@@ -520,6 +524,7 @@ This package provides the NX proxy (client) binary.
 Group:          Applications/System
 Summary:        X2Go Agent
 Requires:       nxagent
+Requires:       libNX_Xinerama%{?_isa} = %{version}-%{release}
 
 %description -n x2goagent
 X2Go Agent functionality has been completely incorporated into
