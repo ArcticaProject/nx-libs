@@ -671,9 +671,11 @@ rm -f %{_libdir}/nx/X11/Xinerama/libNX_Xext.so.6
 %doc nx-X11/{COPYING,LICENSE,README}
 %config(noreplace) %{_sysconfdir}/ld.so.conf.d/%{name}-%{_arch}.conf
 %dir %{_libdir}/nx
+%dir %{_datadir}/nx
 %{_datadir}/nx/SecurityPolicy
 
 %files -n libNX_X11
+%dir %{_libdir}/nx/X11
 %{_libdir}/nx/X11/libNX_X11.so.6*
 
 %files -n libNX_X11-devel
@@ -950,6 +952,9 @@ rm -f %{_libdir}/nx/X11/Xinerama/libNX_Xext.so.6
 
 %files -n x2goagent
 #%%{_sysconfdir}/x2go is owned by x2goserver, which this requires
+%dir %{_sysconfdir}/x2go
+%dir %{_libdir}/x2go
+%dir %{_libdir}/x2go/bin
 %config(noreplace) %{_sysconfdir}/x2go/keystrokes.cfg
 %{_bindir}/x2goagent
 %{_libdir}/x2go/bin/x2goagent
