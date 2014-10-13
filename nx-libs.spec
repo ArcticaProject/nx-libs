@@ -285,7 +285,7 @@ Requires:       %{name}%{?_isa} = %{version}-%{release}
 Requires:       libX11-6%{?_isa}
 %else
 Requires:       libX11%{?_isa}
-%fi
+%endif
 Requires:       libXext%{?_isa}
 
 %description -n libNX_Xinerama
