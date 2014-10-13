@@ -17,6 +17,7 @@ nx-libs (2:3.5.0.28-0x2go1) UNRELEASED; urgency=medium
     + Adapt installation of debian/VERSION as VERSION.x2goagent and
       nxcomp/VERSION to latest changes introduced by
       400_nxcomp-version.full+lite.patch.
+    + Additionally adapt to building on openSUSE/SLES.
 
   [ Nito Martinez ]
   * Add 400_nxcomp-version.full+lite.patch. Allow 4-digit version comparison
