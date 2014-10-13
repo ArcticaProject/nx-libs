@@ -283,10 +283,11 @@ Summary:        Xinerama extension to the NX Protocol
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 %if 0%{?suse_version}
 Requires:       libX11-6%{?_isa}
+Requires:       libXext6%{?_isa}
 %else
 Requires:       libX11%{?_isa}
-%endif
 Requires:       libXext%{?_isa}
+%endif
 
 %description -n libNX_Xinerama
 Xinerama is an extension to the X Window System which enables
