@@ -46,6 +46,8 @@ BuildRequires:  xorg-x11-libX11-devel
 BuildRequires:  xorg-x11-libfontenc-devel
 %endif
 BuildRequires:  xorg-x11-util-devel
+# neededforbuild
+Requires:       libX11-6 libXext6
 %endif
 
 %if 0%{?fedora_version} || 0%{?rhel_version} || 0%{?centos_version}
