@@ -18,7 +18,7 @@ nx-libs (2:3.5.0.28-0x2go1) UNRELEASED; urgency=medium
       nxcomp/VERSION to latest changes introduced by
       400_nxcomp-version.full+lite.patch.
     + Additionally adapt to building on openSUSE/SLES.
-    + nx-libs.spec: SUSE hack for linking to files in libX11-6 and libXext6.
+    + SUSE hack for linking to files in libX11-6 and libXext6.
 
   [ Nito Martinez ]
   * Add 400_nxcomp-version.full+lite.patch. Allow 4-digit version comparison
