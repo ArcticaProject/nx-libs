@@ -6,17 +6,13 @@ Release:        0.0x2go1%{?dist}
 Summary:        NX X11 protocol compression libraries
 
 Group:          System Environment/Libraries
+%if 0%{?suse_version}
+License:        GPL-2.0+
+%else
 License:        GPLv2+
+%endif
 URL:            http://x2go.org/
-#Source0:        http://code.x2go.org/releases/source/%{name}/%{name}-%{version}-full.tar.gz
 Source0:        %{name}-%{version}.tar.gz
-# git clone git://code.x2go.org/nx-libs
-# cd nx-libs
-# debian/roll-tarballs.sh HEAD server
-# mv _releases_/source/nx-libs/nx-libs-HEAD-full.tar.gz .
-#Source0:       ns-libs-HEAD-full.tar.gz
-# Remove bundled libraries
-#Patch0:         nx-libs-bundled.patch
 
 BuildRequires:  autoconf >= 2.13
 BuildRequires:  gcc-c++
@@ -666,6 +662,7 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %postun -n libXcompshad -p /sbin/ldconfig
 
 %files
+%defattr(-,root,root)
 %doc nx-X11/{COPYING,LICENSE,README}
 %config(noreplace) %{_sysconfdir}/ld.so.conf.d/%{name}-%{_arch}.conf
 %dir %{_libdir}/nx
@@ -673,10 +670,12 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %{_datadir}/nx/SecurityPolicy
 
 %files -n libNX_X11
+%defattr(-,root,root)
 %dir %{_libdir}/nx/X11
 %{_libdir}/nx/X11/libNX_X11.so.6*
 
 %files -n libNX_X11-devel
+%defattr(-,root,root)
 %{_libdir}/nx/X11/libNX_X11.so
 %dir %{_includedir}/nx
 %dir %{_includedir}/nx/X11
@@ -693,26 +692,33 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %{_includedir}/nx/X11/cursorfont.h
 
 %files -n libNX_Xau-devel
+%defattr(-,root,root)
 %{_libdir}/nx/X11/libNX_Xau.so
 %{_includedir}/nx/X11/Xauth.h
 
 %files -n libNX_Xau
+%defattr(-,root,root)
 %{_libdir}/nx/X11/libNX_Xau.so.6*
 
 %files -n libNX_Xcomposite
+%defattr(-,root,root)
 %{_libdir}/nx/X11/libNX_Xcomposite.so.1*
 
 %files -n libNX_Xdamage
+%defattr(-,root,root)
 %{_libdir}/nx/X11/libNX_Xdamage.so.1*
 
 %files -n libNX_Xdmcp-devel
+%defattr(-,root,root)
 %{_libdir}/nx/X11/libNX_Xdmcp.so
 %{_includedir}/nx/X11/Xdmcp.h
 
 %files -n libNX_Xdmcp
+%defattr(-,root,root)
 %{_libdir}/nx/X11/libNX_Xdmcp.so.6*
 
 %files -n libNX_Xext-devel
+%defattr(-,root,root)
 %{_libdir}/nx/X11/libNX_Xext.so
 %dir %{_includedir}/nx/X11/extensions
 %{_includedir}/nx/X11/extensions/MITMisc.h
@@ -743,16 +749,20 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %{_includedir}/nx/X11/extensions/xteststr.h
 
 %files -n libNX_Xext
+%defattr(-,root,root)
 %{_libdir}/nx/X11/libNX_Xext.so.6*
 
 %files -n libNX_Xfixes-devel
+%defattr(-,root,root)
 %{_libdir}/nx/X11/libNX_Xfixes.so
 %{_includedir}/nx/X11/extensions/Xfixes.h
 
 %files -n libNX_Xfixes
+%defattr(-,root,root)
 %{_libdir}/nx/X11/libNX_Xfixes.so.3*
 
 %files -n libNX_Xinerama
+%defattr(-,root,root)
 %{_libdir}/nx/X11/libNX_Xinerama.so.1*
 %dir %{_libdir}/nx/X11/Xinerama/
 %{_libdir}/nx/X11/Xinerama/libNX_X11.so.6
@@ -760,26 +770,33 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %{_libdir}/nx/X11/Xinerama/libXinerama.so.1*
 
 %files -n libNX_Xpm-devel
+%defattr(-,root,root)
 %{_libdir}/nx/X11/libNX_Xpm.so
 %{_includedir}/nx/X11/xpm.h
 
 %files -n libNX_Xpm
+%defattr(-,root,root)
 %{_libdir}/nx/X11/libNX_Xpm.so.4*
 
 %files -n libNX_Xrandr
+%defattr(-,root,root)
 %{_libdir}/nx/X11/libNX_Xrandr.so.2*
 
 %files -n libNX_Xrender-devel
+%defattr(-,root,root)
 %{_libdir}/nx/X11/libNX_Xrender.so
 %{_includedir}/nx/X11/extensions/Xrender.h
 
 %files -n libNX_Xrender
+%defattr(-,root,root)
 %{_libdir}/nx/X11/libNX_Xrender.so.1*
 
 %files -n libNX_Xtst
+%defattr(-,root,root)
 %{_libdir}/nx/X11/libNX_Xtst.so.6*
 
 %files -n libXcomp-devel
+%defattr(-,root,root)
 %_libdir/nx/libXcomp.so
 %{_includedir}/nx/MD5.h
 %{_includedir}/nx/NX.h
@@ -791,19 +808,23 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %{_includedir}/nx/NXvars.h
 
 %files -n libXcomp
+%defattr(-,root,root)
 %doc nxcomp/{COPYING,LICENSE,README}
 %_libdir/nx/libXcomp.so.3*
 
 %files -n libXcompext-devel
+%defattr(-,root,root)
 %_libdir/nx/libXcompext.so
 %{_includedir}/nx/NXlib.h
 %{_includedir}/nx/NXlibint.h
 
 %files -n libXcompext
+%defattr(-,root,root)
 %doc nxcompext/{COPYING,LICENSE,README}
 %_libdir/nx/libXcompext.so.3*
 
 %files -n libXcompshad-devel
+%defattr(-,root,root)
 %_libdir/nx/libXcompshad.so
 %{_includedir}/nx/Core.h
 %{_includedir}/nx/Input.h
@@ -818,10 +839,12 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %{_includedir}/nx/X11.h
 
 %files -n libXcompshad
+%defattr(-,root,root)
 %doc nxcompshad/{CHANGELOG,COPYING,LICENSE}
 %_libdir/nx/libXcompshad.so.3*
 
 %files devel
+%defattr(-,root,root)
 %{_libdir}/nx/X11/libNX_Xcomposite.so
 %{_libdir}/nx/X11/libNX_Xdamage.so
 %{_libdir}/nx/X11/libNX_Xinerama.so
@@ -865,6 +888,7 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %{_includedir}/nx/X11/os.h
 
 %files -n nx-proto-devel
+%defattr(-,root,root)
 %dir %{_includedir}/nx/X11
 %{_includedir}/nx/X11/DECkeysym.h
 %{_includedir}/nx/X11/HPkeysym.h
@@ -936,6 +960,7 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %{_includedir}/nx/X11/fonts/fsmasks.h
 
 %files -n nxagent
+%defattr(-,root,root)
 %dir %{_sysconfdir}/nxagent
 %config(noreplace) %{_sysconfdir}/nxagent/keystrokes.cfg
 %{_bindir}/nxagent
@@ -943,15 +968,18 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %{_libdir}/nx/bin/nxagent
 
 %files -n nxauth
+%defattr(-,root,root)
 %{_bindir}/nxauth
 %dir %{_libdir}/nx/bin
 %{_libdir}/nx/bin/nxauth
 
 %files -n nxproxy
+%defattr(-,root,root)
 %{_bindir}/nxproxy
 %{_mandir}/man1/nxproxy.1*
 
 %files -n x2goagent
+%defattr(-,root,root)
 #%%{_sysconfdir}/x2go is owned by x2goserver, which this requires
 %dir %{_sysconfdir}/x2go
 %dir %{_libdir}/x2go
