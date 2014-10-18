@@ -7,6 +7,8 @@ nx-libs (2:3.5.0.28-0x2go1) UNRELEASED; urgency=medium
     (Fixes: #578).
   * Update 027_nxcomp_abstract-X11-socket.full+lite: Add patch header
     (Description: and Author: field).
+  * Add 607_nxcomp_macosx-X11-launcher-in-private-tmp.full+lite.patch. Fix check
+    for launchd socket path in $DISPLAY on recent Mac OS X systems.
   * debian/libnx-x11.postinst:
     + Don't use dpkg-architecture (bin:package dpkg-dev) in postinst script.
       Instead prep a libnx-x11.postinst script at build time. (Fixes:
