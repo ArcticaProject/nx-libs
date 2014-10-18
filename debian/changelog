@@ -9,6 +9,10 @@ nx-libs (2:3.5.0.28-0x2go1) UNRELEASED; urgency=medium
     (Description: and Author: field).
   * Add 607_nxcomp_macosx-X11-launcher-in-private-tmp.full+lite.patch. Fix check
     for launchd socket path in $DISPLAY on recent Mac OS X systems.
+  * Rename 605_nxcomp_Types.h-dont-use-STL-internals-on-libc++.full.patch to
+    605_nxcomp_Types.h-dont-use-STL-internals-on-libc++.full+lite.patch. It is
+    an nxcomp patch that needs to be applied in the nx-libs-lite _and_ the
+    nx-libs-full tarball release.
   * debian/libnx-x11.postinst:
     + Don't use dpkg-architecture (bin:package dpkg-dev) in postinst script.
       Instead prep a libnx-x11.postinst script at build time. (Fixes:
