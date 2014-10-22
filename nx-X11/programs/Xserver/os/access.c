@@ -1171,7 +1171,7 @@ ResetHosts (char *display)
     struct dn_naddr 	dnaddr, *dnaddrp, *dnet_addr();
 #endif
     int			family = 0;
-    void		*addr;
+    void		*addr = NULL;
     int 		len;
 
     siTypesInitialize();
@@ -1309,8 +1309,8 @@ ResetHosts (char *display)
 		    for (a = addresses ; a != NULL ; a = a->ai_next) {
 			len = a->ai_addrlen;
 			f = ConvertAddr(a->ai_addr,&len,(void **)&addr);
-			if ( (family == f) || 
-			     ((family == FamilyWild) && (f != -1)) ) {
+			if (addr && ((family == f) ||
+			    ((family == FamilyWild) && (f != -1)))) {
 			    NewHost(f, addr, len, FALSE);
 			}			
 		    }
@@ -1778,7 +1778,7 @@ InvalidHost (
     ClientPtr			client)
 {
     int 			family;
-    void			*addr;
+    void			*addr = NULL;
     register HOST 		*selfhost, *host;
 
     if (!AccessEnabled)   /* just let them in */
@@ -1809,11 +1809,11 @@ InvalidHost (
     for (host = validhosts; host; host = host->next)
     {
 	if ((host->family == FamilyServerInterpreted)) {
-	    if (siAddrMatch (family, addr, len, host, client)) {
+	    if (addr && siAddrMatch (family, addr, len, host, client)) {
 		return (0);
 	    }
 	} else {
-	    if (addrEqual (family, addr, len, host))
+	    if (addr && addrEqual (family, addr, len, host))
 		return (0);
 	}
 
@@ -2085,7 +2085,7 @@ siHostnameAddrMatch(int family, void * addr, int len,
 	struct addrinfo *addresses;
 	struct addrinfo *a;
 	int f, hostaddrlen;
-	void * hostaddr;
+	void * hostaddr = NULL;
 
 	if (siAddrLen >= sizeof(hostname)) 
 	    return FALSE;
@@ -2097,7 +2097,7 @@ siHostnameAddrMatch(int family, void * addr, int len,
 	    for (a = addresses ; a != NULL ; a = a->ai_next) {
 		hostaddrlen = a->ai_addrlen;
 		f = ConvertAddr(a->ai_addr,&hostaddrlen,&hostaddr);
-		if ((f == family) && (len == hostaddrlen) &&
+		if ((f == family) && (len == hostaddrlen) && hostaddr &&
 		  (acmp (addr, hostaddr, len) == 0) ) {
 		    res = TRUE;
 		    break;
