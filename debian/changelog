@@ -15,6 +15,7 @@ nx-libs (2:3.5.0.28-0x2go1) UNRELEASED; urgency=medium
     nx-libs-full tarball release.
   * Add 401_nxcomp_big-requests.full+lite.patch. Support usage of the
     BIG-REQUESTS X11 extension on the server-side. (See Debian bug #766299).
+    (PATCH DISABLED FOR NOW, IT CAUSES NXPROXY CRASHES EVERY 1-2 minutes).
   * debian/libnx-x11.postinst:
     + Don't use dpkg-architecture (bin:package dpkg-dev) in postinst script.
       Instead prep a libnx-x11.postinst script at build time. (Fixes:
