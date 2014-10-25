@@ -13,6 +13,8 @@ nx-libs (2:3.5.0.28-0x2go1) UNRELEASED; urgency=medium
     605_nxcomp_Types.h-dont-use-STL-internals-on-libc++.full+lite.patch. It is
     an nxcomp patch that needs to be applied in the nx-libs-lite _and_ the
     nx-libs-full tarball release.
+  * Add 401_nxcomp_big-requests.full+lite.patch. Support usage of the
+    BIG-REQUESTS X11 extension on the server-side. (See Debian bug #766299).
   * debian/libnx-x11.postinst:
     + Don't use dpkg-architecture (bin:package dpkg-dev) in postinst script.
       Instead prep a libnx-x11.postinst script at build time. (Fixes:
