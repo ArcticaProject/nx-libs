@@ -37,6 +37,10 @@ nx-libs (2:3.5.0.28-0x2go1) UNRELEASED; urgency=medium
   * Add 400_nxcomp-version.full+lite.patch. Allow 4-digit version comparison
     during NX session handshake. (Fixes: #610).
 
+  [ Ulrich Sibiller ]
+  * Add 207_nxagent_fix-xfixes-selection.full.patch. Fix selection handling
+    when XFIXES is enabled. (Fixes: #585).
+
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Mon, 30 Jun 2014 15:05:54 +0200
 
 nx-libs (2:3.5.0.27-0x2go1) unstable; urgency=medium

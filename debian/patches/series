@@ -50,6 +50,7 @@
 204_nxagent_repaint-solidpict.full.patch
 205_nxagent_refresh-adsl.full.patch
 206_nxagent_clipboard-as-nxoption.full.patch
+207_nxagent_fix-xfixes-selection.full.patch
 209_x2goagent_add-man-page.full.patch
 210_nxagent_save_session_state.full.patch
 210_nxcomp_save_session_state.full+lite.patch
