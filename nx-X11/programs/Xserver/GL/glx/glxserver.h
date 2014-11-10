@@ -54,6 +54,7 @@
 #include "GL/glx_ansic.h"
 
 
+#include <limits.h>
 /*
 ** The X header misc.h defines these math functions.
 */
@@ -223,6 +224,46 @@ extern void glxSwapQueryServerStringReply(ClientPtr client,
 /*
  * Routines for computing the size of variably-sized rendering commands.
  */
+static __inline__ int
+safe_add(int a, int b)
+{
+    if (a < 0 || b < 0)
+        return -1;
+
+    if (INT_MAX - a < b)
+        return -1;
+
+    return a + b;
+}
+
+static __inline__ int
+safe_mul(int a, int b)
+{
+    if (a < 0 || b < 0)
+        return -1;
+
+    if (a == 0 || b == 0)
+        return 0;
+
+    if (a > INT_MAX / b)
+        return -1;
+
+   return a * b;
+}
+
+static __inline__ int
+safe_pad(int a)
+{
+    int ret;
+
+    if (a < 0)
+        return -1;
+
+    if ((ret = safe_add(a, 3)) < 0)
+        return -1;
+
+    return ret & (GLuint)~3;
+}
 
 extern int __glXTypeSize(GLenum enm);
 extern int __glXImageSize(GLenum format, GLenum type,
