@@ -797,10 +797,12 @@ int __glXSwapRenderLarge(__GLXclientState *cl, GLbyte *pc)
 
 int __glXSwapVendorPrivate(__GLXclientState *cl, GLbyte *pc)
 {
+    ClientPtr client = cl->client;
     xGLXVendorPrivateReq *req;
     GLint vendorcode;
 
     __GLX_DECLARE_SWAP_VARIABLES;
+    REQUEST_AT_LEAST_SIZE(xGLXVendorPrivateReq);
 
     req = (xGLXVendorPrivateReq *) pc;
     __GLX_SWAP_SHORT(&req->length);
@@ -835,10 +837,12 @@ int __glXSwapVendorPrivate(__GLXclientState *cl, GLbyte *pc)
 
 int __glXSwapVendorPrivateWithReply(__GLXclientState *cl, GLbyte *pc)
 {
+    ClientPtr client = cl->client;
     xGLXVendorPrivateWithReplyReq *req;
     GLint vendorcode;
 
     __GLX_DECLARE_SWAP_VARIABLES;
+    REQUEST_AT_LEAST_SIZE(xGLXVendorPrivateWithReplyReq);
 
     req = (xGLXVendorPrivateWithReplyReq *) pc;
     __GLX_SWAP_SHORT(&req->length);
