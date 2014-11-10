@@ -89,7 +89,8 @@ extern xGLXSingleReply __glXReply;
 ** pointer.
 */
 #define __GLX_GET_ANSWER_BUFFER(res,cl,size,align)			 \
-    if ((size) > sizeof(answerBuffer)) {				 \
+    if (size < 0) return BadLength;                                      \
+    else if ((size) > sizeof(answerBuffer)) {				 \
 	int bump;							 \
 	if ((cl)->returnBufSize < (size)+(align)) {			 \
 	    (cl)->returnBuf = (GLbyte*)Xrealloc((cl)->returnBuf,	 \
