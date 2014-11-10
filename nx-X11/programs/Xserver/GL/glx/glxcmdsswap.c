@@ -498,7 +498,7 @@ int __glXSwapRender(__GLXclientState *cl, GLbyte *pc)
     left = (req->length << 2) - sz_xGLXRenderReq;
     while (left > 0) {
         __GLXrenderSizeData *entry;
-        int extra;
+        int extra = 0;
 	void (* proc)(GLbyte *);
 
 	/*
@@ -510,6 +510,9 @@ int __glXSwapRender(__GLXclientState *cl, GLbyte *pc)
 	__GLX_SWAP_SHORT(&hdr->opcode);
 	cmdlen = hdr->length;
 	opcode = hdr->opcode;
+
+	if (left < cmdlen)
+	return BadLength;
 
 	if ( (opcode >= __GLX_MIN_RENDER_OPCODE) && 
 	     (opcode <= __GLX_MAX_RENDER_OPCODE) ) {
@@ -531,22 +534,19 @@ int __glXSwapRender(__GLXclientState *cl, GLbyte *pc)
 	    client->errorValue = commandsDone;
             return __glXBadRenderRequest;
         }
+
+	if (cmdlen < entry->bytes) {
+	    return BadLength;
+	}
+
         if (entry->varsize) {
             /* variable size command */
             extra = (*entry->varsize)(pc + __GLX_RENDER_HDR_SIZE, True);
             if (extra < 0) {
                 return BadLength;
             }
-            if (cmdlen != __GLX_PAD(entry->bytes + extra)) {
-                return BadLength;
-            }
-        } else {
-            /* constant size command */
-            if (cmdlen != __GLX_PAD(entry->bytes)) {
-                return BadLength;
-            }
         }
-	if (left < cmdlen) {
+	if (cmdlen != safe_pad(safe_add(entry->bytes, extra))) {
 	    return BadLength;
 	}
 
