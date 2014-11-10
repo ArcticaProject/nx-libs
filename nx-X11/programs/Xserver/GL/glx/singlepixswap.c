@@ -58,6 +58,8 @@ int __glXDispSwap_ReadPixels(__GLXclientState *cl, GLbyte *pc)
     int error;
     char *answer, answerBuffer[200];
 
+    REQUEST_FIXED_SIZE(xGLXSingleReq, 28);
+
     __GLX_SWAP_INT(&((xGLXSingleReq *)pc)->contextTag);
     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
     if (!cx) {
@@ -120,6 +122,7 @@ int __glXDispSwap_GetTexImage(__GLXclientState *cl, GLbyte *pc)
     char *answer, answerBuffer[200];
     GLint width=0, height=0, depth=1;
 
+    REQUEST_FIXED_SIZE(xGLXSingleReq, 24);
     __GLX_SWAP_INT(&((xGLXSingleReq *)pc)->contextTag);
     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
     if (!cx) {
@@ -190,6 +193,7 @@ int __glXDispSwap_GetPolygonStipple(__GLXclientState *cl, GLbyte *pc)
     char *answer;
     __GLX_DECLARE_SWAP_VARIABLES;
 
+    REQUEST_FIXED_SIZE(xGLXSingleReq, 4);
     __GLX_SWAP_INT(&((xGLXSingleReq *)pc)->contextTag);
     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
     if (!cx) {
@@ -230,6 +234,7 @@ int __glXDispSwap_GetSeparableFilter(__GLXclientState *cl, GLbyte *pc)
     char *answer, answerBuffer[200];
     GLint width=0, height=0;
 
+    REQUEST_FIXED_SIZE(xGLXSingleReq, 16);
     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
     if (!cx) {
 	return error;
@@ -257,13 +262,11 @@ int __glXDispSwap_GetSeparableFilter(__GLXclientState *cl, GLbyte *pc)
     compsize = __glGetTexImage_size(target,1,format,type,width,1,1);
     compsize2 = __glGetTexImage_size(target,1,format,type,height,1,1);
 
-    if (compsize < 0) return BadLength;
-    if (compsize2 < 0) compsize2 = 0;
-    compsize = __GLX_PAD(compsize);
-    compsize2 = __GLX_PAD(compsize2);
+    if ((compsize = safe_pad(compsize)) < 0) return BadLength;
+    if ((compsize2 = safe_pad(compsize2)) < 0) return BadLength;
 
     glPixelStorei(GL_PACK_SWAP_BYTES, !swapBytes);
-    __GLX_GET_ANSWER_BUFFER(answer,cl,compsize + compsize2,1);
+    __GLX_GET_ANSWER_BUFFER(answer,cl,safe_add(compsize, compsize2),1);
     __glXClearErrorOccured();
     glGetSeparableFilter(
 		  *(GLenum   *)(pc + 0),
@@ -302,6 +305,7 @@ int __glXDispSwap_GetConvolutionFilter(__GLXclientState *cl, GLbyte *pc)
     char *answer, answerBuffer[200];
     GLint width=0, height=0;
 
+    REQUEST_FIXED_SIZE(xGLXSingleReq, 16);
     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
     if (!cx) {
 	return error;
@@ -368,6 +372,7 @@ int __glXDispSwap_GetHistogram(__GLXclientState *cl, GLbyte *pc)
     char *answer, answerBuffer[200];
     GLint width=0;
 
+    REQUEST_FIXED_SIZE(xGLXSingleReq, 16);
     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
     if (!cx) {
 	return error;
@@ -422,6 +427,7 @@ int __glXDispSwap_GetMinmax(__GLXclientState *cl, GLbyte *pc)
     __GLX_DECLARE_SWAP_VARIABLES;
     char *answer, answerBuffer[200];
 
+    REQUEST_FIXED_SIZE(xGLXSingleReq, 16);
     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
     if (!cx) {
 	return error;
@@ -470,6 +476,7 @@ int __glXDispSwap_GetColorTable(__GLXclientState *cl, GLbyte *pc)
     char *answer, answerBuffer[200];
     GLint width=0;
 
+    REQUEST_FIXED_SIZE(xGLXSingleReq, 16);
     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
     if (!cx) {
 	return error;
