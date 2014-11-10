@@ -541,7 +541,8 @@ int __glXSwapRender(__GLXclientState *cl, GLbyte *pc)
 
         if (entry->varsize) {
             /* variable size command */
-            extra = (*entry->varsize)(pc + __GLX_RENDER_HDR_SIZE, True);
+	    extra = (*entry->varsize)(pc + __GLX_RENDER_HDR_SIZE, True,
+				      left - __GLX_RENDER_HDR_SIZE);
             if (extra < 0) {
                 return BadLength;
             }
@@ -620,6 +621,7 @@ int __glXSwapRenderLarge(__GLXclientState *cl, GLbyte *pc)
     if (cl->largeCmdRequestsSoFar == 0) {
 	__GLXrenderSizeData *entry;
 	int extra = 0;
+        int left = (req->length << 2) - sz_xGLXRenderLargeReq;
 	size_t cmdlen;
 	/*
 	** This is the first request of a multi request command.
@@ -667,7 +669,8 @@ int __glXSwapRenderLarge(__GLXclientState *cl, GLbyte *pc)
 	    ** be computed from its parameters), all the parameters needed
 	    ** will be in the 1st request, so it's okay to do this.
 	    */
-	    extra = (*entry->varsize)(pc + __GLX_RENDER_LARGE_HDR_SIZE, True);
+	    extra = (*entry->varsize)(pc + __GLX_RENDER_LARGE_HDR_SIZE, True,
+				      left - __GLX_RENDER_LARGE_HDR_SIZE);
 	    if (extra < 0) {
 		return BadLength;
 	    }
