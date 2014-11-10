@@ -1484,7 +1484,7 @@ int __glXRender(__GLXclientState *cl, GLbyte *pc)
             /* variable size command */
             extra = (*entry->varsize)(pc + __GLX_RENDER_HDR_SIZE, False);
             if (extra < 0) {
-                extra = 0;
+                return BadLength;
             }
             if (cmdlen != __GLX_PAD(entry->bytes + extra)) {
                 return BadLength;
@@ -1601,7 +1601,7 @@ int __glXRenderLarge(__GLXclientState *cl, GLbyte *pc)
 	    */
 	    extra = (*entry->varsize)(pc + __GLX_RENDER_LARGE_HDR_SIZE, False);
 	    if (extra < 0) {
-		extra = 0;
+	        return BadLength;
 	    }
 	    /* large command's header is 4 bytes longer, so add 4 */
 	    if (cmdlen != __GLX_PAD(entry->bytes + 4 + extra)) {
