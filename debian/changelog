@@ -1,6 +1,9 @@
 nx-libs (2:3.5.0.29-0x2go1) UNRELEASED; urgency=medium
 
-  * Continue development...
+  [ Paul Szabo ]
+  * Add 401_nxcomp_bigrequests-and-genericevent-extensions.full+lite.patch.
+    Enable support for the X11 big requests extension and the generic events
+    extension.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Thu, 13 Nov 2014 21:59:00 +0100
 
