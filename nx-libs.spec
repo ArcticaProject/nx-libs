@@ -19,7 +19,7 @@ BuildRequires:  gcc-c++
 BuildRequires:  libjpeg-devel
 BuildRequires:  pkgconfig
 
-%if !0%{?sles_version} && 0%{?suse_version} >= 1230
+%if 0%{?sles_version} == 0 && 0%{?suse_version} >= 1230
 BuildRequires:  gpg-offline
 %endif
 %if 0%{?suse_version}
