@@ -10,6 +10,9 @@ nx-libs (2:3.5.0.29-0x2go1) UNRELEASED; urgency=medium
     + The gpg-offline bin:package is not available in our SLE repo. We can do
       without.
 
+  [ Mihai Moldovan ]
+  * Change string "X2go" to "X2Go" where appropriate.
+
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Thu, 13 Nov 2014 21:59:00 +0100
 
 nx-libs (2:3.5.0.28-0x2go1) unstable; urgency=medium
