@@ -9,6 +9,9 @@ nx-libs (2:3.5.0.29-0x2go1) UNRELEASED; urgency=medium
   * nx-libs.spec:
     + The gpg-offline bin:package is not available in our SLE repo. We can do
       without.
+    + Update 320_nxagent_configurable-keystrokes.full.patch. Fix a typo that
+      prevented the /etc/nxagent/keystrokes.cfg file to be parsed. (Fixes:
+      #741).
 
   [ Mihai Moldovan ]
   * Change string "X2go" to "X2Go" where appropriate.

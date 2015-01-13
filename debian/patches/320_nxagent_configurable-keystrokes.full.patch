@@ -481,7 +481,7 @@ Description: Make nxagent-specific keyboard bindings configurable
 +    {
 +      /* empty */
 +    }
-+    else if (access(etcfile, R_OK == 0))
++    else if (access(etcfile, R_OK) == 0)
 +    {
 +      if (filename)
 +        free(filename);
