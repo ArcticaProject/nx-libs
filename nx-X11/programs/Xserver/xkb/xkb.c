@@ -4441,15 +4441,14 @@ static char *
 _GetCountedString(char **wire_inout,Bool swap)
 {
 char *	wire,*str;
-CARD16	len,*plen;
+CARD16	len;
 
     wire= *wire_inout;
-    plen= (CARD16 *)wire;
+    len= (CARD16 *)wire;
     if (swap) {
 	register int n;
-	swaps(plen,n);
+	swaps(&len, n);
     }
-    len= *plen;
     str= (char *)_XkbAlloc(len+1);
     if (str) {
 	memcpy(str,&wire[2],len);
@@ -4468,26 +4467,29 @@ _CheckSetDoodad(	char **		wire_inout,
 {
 char *			wire;
 xkbDoodadWireDesc *	dWire;
+xkbAnyDoodadWireDesc	any;
+xkbTextDoodadWireDesc	text;
 XkbDoodadPtr		doodad;
 
     dWire= (xkbDoodadWireDesc *)(*wire_inout);
+    any = dWire->any;
     wire= (char *)&dWire[1];
     if (client->swapped) {
 	register int n;
-	swapl(&dWire->any.name,n);
-	swaps(&dWire->any.top,n);
-	swaps(&dWire->any.left,n);
-	swaps(&dWire->any.angle,n);
+	swapl(&any.name, n);
+	swaps(&any.top, n);
+	swaps(&any.left, n);
+	swaps(&any.angle, n);
     }
     CHK_ATOM_ONLY(dWire->any.name);
-    doodad= XkbAddGeomDoodad(geom,section,dWire->any.name);
+    doodad = XkbAddGeomDoodad(geom, section, any.name);
     if (!doodad)
 	return BadAlloc;
     doodad->any.type= dWire->any.type;
     doodad->any.priority= dWire->any.priority;
-    doodad->any.top= dWire->any.top;
-    doodad->any.left= dWire->any.left;
-    doodad->any.angle= dWire->any.angle;
+    doodad->any.top = any.top;
+    doodad->any.left = any.left;
+    doodad->any.angle = any.angle;
     switch (doodad->any.type) {
 	case XkbOutlineDoodad:
 	case XkbSolidDoodad:
@@ -4510,13 +4512,14 @@ XkbDoodadPtr		doodad;
 							dWire->text.colorNdx);
 		return BadMatch;
 	    }
+	    text = dWire->text;
 	    if (client->swapped) {
 		register int n;
-		swaps(&dWire->text.width,n);
-		swaps(&dWire->text.height,n);
+		swaps(&text.width, n);
+		swaps(&text.height, n);
 	    }
-	    doodad->text.width= dWire->text.width;
-	    doodad->text.height= dWire->text.height;
+	    doodad->text.width= text.width;
+	    doodad->text.height= text.height;
 	    doodad->text.color_ndx= dWire->text.colorNdx;
 	    doodad->text.text= _GetCountedString(&wire,client->swapped);
 	    doodad->text.font= _GetCountedString(&wire,client->swapped);
