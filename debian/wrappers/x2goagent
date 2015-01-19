@@ -29,7 +29,4 @@ test -x $NX_LIBS/../x2go/bin/$NXAPP && export NX_LIBS=$NX_LIBS
 
 export LD_LIBRARY_PATH
 
-NXAGENT_KEYSTROKEFILE=/etc/x2go/keystrokes.cfg
-export NXAGENT_KEYSTROKEFILE
-
 exec $NX_LIBS/../x2go/bin/$NXAPP "$@"

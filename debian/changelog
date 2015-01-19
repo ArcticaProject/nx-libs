@@ -14,6 +14,9 @@ nx-libs (2:3.5.0.29-0x2go1) UNRELEASED; urgency=medium
   * Update 320_nxagent_configurable-keystrokes.full.patch. Fix a typo that
     prevented the /etc/nxagent/keystrokes.cfg file from being parsed. (Fixes:
     #741).
+  * Add 321_nxagent_x2go-specific-keystroke-config.full.patch. If nxagent is
+    launched as x2goagent, use X2Go-specific paths for the keystrokes.cfg file.
+    (Fixes: #744).
 
   [ Mihai Moldovan ]
   * Change string "X2go" to "X2Go" where appropriate.

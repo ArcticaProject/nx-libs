@@ -61,6 +61,7 @@
 301_nx-X11_use-shared-libs.full.patch
 302_nx-X11_xkbbasedir-detection.full.patch
 320_nxagent_configurable-keystrokes.full.patch
+321_nxagent_x2go-specific-keystroke-config.full.patch
 400_nxcomp-version.full+lite.patch
 #401_nxcomp_bigrequests-and-genericevent-extensions.full+lite.patch
 600_nx-X11+nxcompext+nxcompshad_unique-libnames.full.patch
