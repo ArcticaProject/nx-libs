@@ -165,6 +165,9 @@ rm -Rf nx-X11/lib/{expat,fontconfig,fontenc,font/FreeType,font/include/fontenc.h
 rm -Rf nx-X11/lib/{FS,ICE,SM,Xaw,Xft,Xt,Xmu,Xmuu}
 rm -Rf nx-X11/programs/Xserver/hw/{darwin,dmx,kdrive,sun,sunLynx,vfb,xfree86,xnest,xwin}
 rm -Rf nx-X11/programs/xterm
+rm -Rf nx-X11/programs/Xserver/miext/shadow/
+rm -Rf nx-X11/programs/Xserver/XpConfig/
+rm -Rf nx-X11/programs/Xserver/Xprint/
 
 # re-create the to-be-preserved files
 cp -a .preserve/* ./

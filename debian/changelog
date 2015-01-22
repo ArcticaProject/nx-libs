@@ -23,6 +23,10 @@ nx-libs (2:3.5.0.29-0x2go1) UNRELEASED; urgency=medium
   * Stop shipping unused / very old xterm code.
   * Drop nx-X11/programs/Xserver/hw/xfree86 except of four files symlinked
     to other locations in the source tree at build time.
+  * Drop more unused folders from tarball release / before .deb package build:
+      - nx-X11/programs/Xserver/miext/shadow/
+      - nx-X11/programs/Xserver/XpConfig/
+      - nx-X11/programs/Xserver/Xprint/
 
   [ Horst Schirmeier ]
   * Update 320_nxagent_configurable-keystrokes.full.patch. Fix a typo that

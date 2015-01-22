@@ -49,6 +49,9 @@ UNUSED_CODE =   nx-X11/extras/drm/ \
                 nx-X11/programs/Xserver/hw/xnest/ \
                 nx-X11/programs/Xserver/hw/xwin/ \
                 nx-X11/programs/Xserver/hw/xfree86/ \
+                nx-X11/programs/Xserver/miext/shadow/ \
+                nx-X11/programs/Xserver/XpConfig/ \
+                nx-X11/programs/Xserver/Xprint/ \
                 nx-X11/programs/xterm/ \
                 $(NULL)
 
