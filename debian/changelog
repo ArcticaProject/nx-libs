@@ -33,6 +33,7 @@ nx-libs (2:3.5.0.29-0x2go1) UNRELEASED; urgency=medium
     + Turn libnx-*-dev packages into dummy packages. Shipping development files
       for nx-X11 makes no sense. No other programme build against nx-X11's
       header files except nxagent itself.
+  * Makefile.nx-libs: Don't install Mesa header files into DESTDIR anymore.
 
   [ Horst Schirmeier ]
   * Update 320_nxagent_configurable-keystrokes.full.patch. Fix a typo that

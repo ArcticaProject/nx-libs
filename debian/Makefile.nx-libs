@@ -126,17 +126,6 @@ install-full:
 	$(INSTALL_FILE) nx-X11/.build-exports/include/X11/bitmaps/* \
 	                $(DESTDIR)$(PREFIX)/include/nx/X11/bitmaps/
 
-	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/include/nx/extras/Mesa/GL/internal
-	$(INSTALL_FILE) nx-X11/extras/Mesa/include/GL/*.h \
-	                $(DESTDIR)$(PREFIX)/include/nx/extras/Mesa/GL/
-
-	$(INSTALL_FILE) nx-X11/extras/Mesa/include/GL/internal/*.h \
-	                $(DESTDIR)$(PREFIX)/include/nx/extras/Mesa/GL/internal/
-
-	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/include/nx/extras/Mesa/GLES/
-	$(INSTALL_FILE) nx-X11/extras/Mesa/include/GLES/*.h \
-	                $(DESTDIR)$(PREFIX)/include/nx/extras/Mesa/GLES/
-
 	$(INSTALL_DIR) $(DESTDIR)/$(ETCDIR_NX)
 	$(INSTALL_DIR) $(DESTDIR)/$(ETCDIR_X2GO)
 	$(INSTALL_FILE) etc/keystrokes.cfg $(DESTDIR)/$(ETCDIR_NX)/
