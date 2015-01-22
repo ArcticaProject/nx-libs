@@ -1,5 +1,6 @@
 #!/usr/bin/make -f
 
+NULL =
 CFLAGS = -Wall -g
 
 ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
@@ -10,6 +11,36 @@ endif
 
 %:
 	CONFIGURE="./configure --prefix=/usr" LD_LIBRARY_PATH=`pwd`/debian/libnx-x11/usr/lib/nx/X11:$$LD_LIBRARY_PATH dh $@ --with quilt
+
+# before build, we will remove unused code / bundled libraries (keep this in sync with roll-tarball.sh)
+UNUSED_CODE = nx-X11/extras/drm \
+              nx-X11/extras/expat \
+              nx-X11/extras/fontconfig \
+              nx-X11/extras/freetype2 \
+              nx-X11/extras/fonts \
+              nx-X11/extras/ogl-sample \
+              nx-X11/extras/regex \
+              nx-X11/extras/rman \
+              nx-X11/extras/ttf2pt1 \
+              nx-X11/extras/x86emu \
+              nx-X11/extras/zlib \
+              nx-X11/lib/expat \
+              nx-X11/lib/fontconfig \
+              nx-X11/lib/fontenc \
+              nx-X11/lib/font/FreeType \
+              nx-X11/lib/font/include/fontenc.h \
+              nx-X11/lib/freetype2 \
+              nx-X11/lib/regex \
+              nx-X11/lib/zlib \
+              nx-X11/lib/FS \
+              nx-X11/lib/ICE \
+              nx-X11/lib/SM \
+              nx-X11/lib/Xaw \
+              nx-X11/lib/Xft \
+              nx-X11/lib/Xt \
+              nx-X11/lib/Xmu \
+              nx-X11/lib/Xmuu \
+              $(NULL)
 
 override_dh_auto_clean:
 	rm -Rf nx-X11/.build-exports
@@ -51,10 +82,9 @@ override_dh_auto_build:
 	# let's prep the libnx-x11.postinst script with the value of the build systems's DEB_BUILD_MULTIARCH variable
 	sed debian/libnx-x11.postinst.in -e 's/#DEB_BUILD_MULTIARCH#/$(DEB_BUILD_MULTIARCH)/' > debian/libnx-x11.postinst
 
-	# remove bundled libraries (keep this in sync with roll-tarball.sh)
-	rm -Rf nx-X11/extras/{drm,expat,fontconfig,freetype2,fonts,ogl-sample,regex,rman,ttf2pt1,x86emu,zlib}
-	rm -Rf nx-X11/lib/{expat,fontconfig,fontenc,font/FreeType,font/include/fontenc.h,freetype2,regex,zlib}
-	rm -Rf nx-X11/lib/{FS,ICE,SM,Xaw,Xft,Xt,Xmu,Xmuu}
+	# remove unused code / bundled libraries (see at the top of this file
+        # for the exact list of files and folders
+	rm -Rf $(UNUSED_CODE)
 
 	LD_LIBRARY_PATH=`pwd`/debian/libnx-x11/usr/lib/nx/X11:$$LD_LIBRARY_PATH dh_auto_build --parallel
 

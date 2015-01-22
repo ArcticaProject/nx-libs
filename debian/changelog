@@ -15,6 +15,9 @@ nx-libs (2:3.5.0.29-0x2go1) UNRELEASED; urgency=medium
     + Backup nxcomp/VERSION file from NoMachine before replacing it with
       a symlink to debian/VERSION. Recreate the original file when cleaning
       up.
+    + Fix removal of unused code (that part of the code that we know of so
+      far). (The debian/rules file is a Makefile and Makefiles don't understand
+      shell globbing with curly braces).
 
   [ Horst Schirmeier ]
   * Update 320_nxagent_configurable-keystrokes.full.patch. Fix a typo that
