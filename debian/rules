@@ -22,6 +22,7 @@ override_dh_clean:
 	rm -f nx-X11/programs/nxauth/changelog
 	rm -Rf replace.sh Makefile bin rgb VERSION.x2goagent etc/keystrokes.cfg
 	rm -f debian/libnx-x11.postinst
+	if [ -f nxcomp/.VERSION.NoMachine ]; then mv nxcomp/.VERSION.NoMachine nxcomp/VERSION; fi
 	dh_clean
 
 override_dh_auto_install:
@@ -32,6 +33,7 @@ override_dh_auto_build:
 	# create copies of upstream changelogs so that names apply to Debian policy...
 	cp -a nx-X11/CHANGELOG nx-X11/changelog
 	cp -a nxcomp/CHANGELOG nxcomp/changelog
+	if [ -f nxcomp/VERSION ]; then cp nxcomp/VERSION nxcomp/.VERSION.NoMachine; fi
 	cp -a nxcompext/CHANGELOG nxcompext/changelog
 	cp -a nxcompshad/CHANGELOG nxcompshad/changelog
 	cp -a nx-X11/programs/Xserver/hw/nxagent/CHANGELOG nx-X11/programs/Xserver/hw/nxagent/changelog
