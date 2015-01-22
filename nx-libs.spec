@@ -613,14 +613,6 @@ mkdir -p %{buildroot}%{_sysconfdir}/ld.so.conf.d/
 echo %{_libdir}/nx > %{buildroot}%{_sysconfdir}/ld.so.conf.d/%{name}-%{_arch}.conf
 echo %{_libdir}/nx/X11 >> %{buildroot}%{_sysconfdir}/ld.so.conf.d/%{name}-%{_arch}.conf
 
-#Remove extras, GL, and other unneeded headers
-rm -r %{buildroot}%{_includedir}/nx/{extras,GL}
-rm -r %{buildroot}%{_includedir}/nx/X11/bitmaps
-rm -r %{buildroot}%{_includedir}/nx/X11/extensions/XInput.h
-rm -r %{buildroot}%{_includedir}/nx/X11/extensions/XK*.h
-rm -r %{buildroot}%{_includedir}/nx/X11/extensions/*Xv*.h
-rm -r %{buildroot}%{_includedir}/nx/X11/Xtrans
-
 # Needed for Xinerama support
 ln -s -f ../../../../%{_lib}/libX11.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama/libNX_X11.so.6
 ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama/libNX_Xext.so.6

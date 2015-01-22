@@ -79,6 +79,8 @@ nx-libs (2:3.5.0.28-0x2go1) unstable; urgency=medium
       built bin:packages.
     + Fix Xinerama symlink installation into RPM bin:package
       libNX_Xinerama. (Fixes: #269).
+    + Header files need not be removed anymore. They don't get installed via
+      Makefile.nx-libs anymore.
 
   [ Nito Martinez ]
   * Add 400_nxcomp-version.full+lite.patch. Allow 4-digit version comparison
