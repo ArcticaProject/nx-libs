@@ -141,6 +141,7 @@ rm -Rf nx-X11/extras/{drm,expat,fontconfig,freetype2,fonts,ogl-sample,regex,rman
 rm -Rf nx-X11/lib/{expat,fontconfig,fontenc,font/FreeType,font/include/fontenc.h,freetype2,regex,zlib}
 rm -Rf nx-X11/lib/{FS,ICE,SM,Xaw,Xft,Xt,Xmu,Xmuu}
 rm -Rf nx-X11/programs/Xserver/hw/{darwin,dmx,kdrive,sun,sunLynx,vfb,xnest,xwin}
+rm -Rf nx-X11/programs/xterm
 
 # remove files, that we do not want in the tarballs (build cruft)
 rm -Rf nx*/configure nx*/autom4te.cache*
