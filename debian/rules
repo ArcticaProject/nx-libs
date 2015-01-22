@@ -40,6 +40,14 @@ UNUSED_CODE = nx-X11/extras/drm \
               nx-X11/lib/Xt \
               nx-X11/lib/Xmu \
               nx-X11/lib/Xmuu \
+              nx-X11/programs/Xserver/hw/darwin \
+              nx-X11/programs/Xserver/hw/dmx \
+              nx-X11/programs/Xserver/hw/kdrive \
+              nx-X11/programs/Xserver/hw/sun \
+              nx-X11/programs/Xserver/hw/sunLynx \
+              nx-X11/programs/Xserver/hw/vfb \
+              nx-X11/programs/Xserver/hw/xnest \
+              nx-X11/programs/Xserver/hw/xwin \
               $(NULL)
 
 override_dh_auto_clean:
