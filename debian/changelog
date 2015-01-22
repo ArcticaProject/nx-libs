@@ -21,6 +21,8 @@ nx-libs (2:3.5.0.29-0x2go1) UNRELEASED; urgency=medium
   * Drop more unused code in nx-X11/programs/Xserver/hw/. Do this in
     roll-tarball.sh and in debian/rules alike.
   * Stop shipping unused / very old xterm code.
+  * Drop nx-X11/programs/Xserver/hw/xfree86 except of four files symlinked
+    to other locations in the source tree at build time.
 
   [ Horst Schirmeier ]
   * Update 320_nxagent_configurable-keystrokes.full.patch. Fix a typo that

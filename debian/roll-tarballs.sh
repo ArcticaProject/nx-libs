@@ -31,6 +31,7 @@ usage() {
 }
 
 PROJECT="nx-libs"
+NULL=""
 
 test -d .git || usage
 test -f debian/Makefile.nx-libs || usage
@@ -133,15 +134,41 @@ mv -v debian/changelog doc/changelog
 test -f Makefile || test -f debian/Makefile.nx-libs && cp -v debian/Makefile.nx-libs Makefile
 test -f replace.sh || test -f debian/Makefile.replace.sh && cp -v debian/Makefile.replace.sh replace.sh
 
+
 # remove folders that we do not want to roll into the tarball
 rm -Rf ".pc/"
 rm -Rf "debian/"
-# bundled libraries we do not need
+
+#### bundled libraries we do not need
+
+# first preserve a few files...
+PRESERVE_CODE="
+    nx-X11/programs/Xserver/hw/xfree86/common/compiler.h \
+    nx-X11/programs/Xserver/hw/xfree86/os-support/xf86_ansic.h \
+    nx-X11/programs/Xserver/hw/xfree86/os-support/xf86_libc.h \
+    nx-X11/programs/Xserver/hw/xfree86/xf86Version.h \
+    ${NULL}
+"
+mkdir -p .preserve/
+for path in ${PRESERVE_CODE}; do
+	if [ ! -d $path ]; then
+		path_dirname=$(dirname "$path")
+	else
+		path_dirname="$path"
+	fi
+	mkdir -vp ".preserve/$path_dirname"
+	cp -av "$path" ".preserve/$path"
+done
+
 rm -Rf nx-X11/extras/{drm,expat,fontconfig,freetype2,fonts,ogl-sample,regex,rman,ttf2pt1,x86emu,zlib}
 rm -Rf nx-X11/lib/{expat,fontconfig,fontenc,font/FreeType,font/include/fontenc.h,freetype2,regex,zlib}
 rm -Rf nx-X11/lib/{FS,ICE,SM,Xaw,Xft,Xt,Xmu,Xmuu}
-rm -Rf nx-X11/programs/Xserver/hw/{darwin,dmx,kdrive,sun,sunLynx,vfb,xnest,xwin}
+rm -Rf nx-X11/programs/Xserver/hw/{darwin,dmx,kdrive,sun,sunLynx,vfb,xfree86,xnest,xwin}
 rm -Rf nx-X11/programs/xterm
+
+# re-create the to-be-preserved files
+cp -a .preserve/* ./
+rm -Rf .preserve/
 
 # remove files, that we do not want in the tarballs (build cruft)
 rm -Rf nx*/configure nx*/autom4te.cache*

@@ -13,43 +13,50 @@ endif
 	CONFIGURE="./configure --prefix=/usr" LD_LIBRARY_PATH=`pwd`/debian/libnx-x11/usr/lib/nx/X11:$$LD_LIBRARY_PATH dh $@ --with quilt
 
 # before build, we will remove unused code / bundled libraries (keep this in sync with roll-tarball.sh)
-UNUSED_CODE = nx-X11/extras/drm \
-              nx-X11/extras/expat \
-              nx-X11/extras/fontconfig \
-              nx-X11/extras/freetype2 \
-              nx-X11/extras/fonts \
-              nx-X11/extras/ogl-sample \
-              nx-X11/extras/regex \
-              nx-X11/extras/rman \
-              nx-X11/extras/ttf2pt1 \
-              nx-X11/extras/x86emu \
-              nx-X11/extras/zlib \
-              nx-X11/lib/expat \
-              nx-X11/lib/fontconfig \
-              nx-X11/lib/fontenc \
-              nx-X11/lib/font/FreeType \
-              nx-X11/lib/font/include/fontenc.h \
-              nx-X11/lib/freetype2 \
-              nx-X11/lib/regex \
-              nx-X11/lib/zlib \
-              nx-X11/lib/FS \
-              nx-X11/lib/ICE \
-              nx-X11/lib/SM \
-              nx-X11/lib/Xaw \
-              nx-X11/lib/Xft \
-              nx-X11/lib/Xt \
-              nx-X11/lib/Xmu \
-              nx-X11/lib/Xmuu \
-              nx-X11/programs/Xserver/hw/darwin \
-              nx-X11/programs/Xserver/hw/dmx \
-              nx-X11/programs/Xserver/hw/kdrive \
-              nx-X11/programs/Xserver/hw/sun \
-              nx-X11/programs/Xserver/hw/sunLynx \
-              nx-X11/programs/Xserver/hw/vfb \
-              nx-X11/programs/Xserver/hw/xnest \
-              nx-X11/programs/Xserver/hw/xwin \
-              nx-X11/programs/xterm \
-              $(NULL)
+UNUSED_CODE =   nx-X11/extras/drm/ \
+                nx-X11/extras/expat/ \
+                nx-X11/extras/fontconfig/ \
+                nx-X11/extras/freetype2/ \
+                nx-X11/extras/fonts/ \
+                nx-X11/extras/ogl-sample/ \
+                nx-X11/extras/regex/ \
+                nx-X11/extras/rman/ \
+                nx-X11/extras/ttf2pt1/ \
+                nx-X11/extras/x86emu/ \
+                nx-X11/extras/zlib/ \
+                nx-X11/lib/expat/ \
+                nx-X11/lib/fontconfig/ \
+                nx-X11/lib/fontenc/ \
+                nx-X11/lib/font/FreeType/ \
+                nx-X11/lib/font/include/fontenc.h \
+                nx-X11/lib/freetype2/ \
+                nx-X11/lib/regex/ \
+                nx-X11/lib/zlib/ \
+                nx-X11/lib/FS/ \
+                nx-X11/lib/ICE/ \
+                nx-X11/lib/SM/ \
+                nx-X11/lib/Xaw/ \
+                nx-X11/lib/Xft/ \
+                nx-X11/lib/Xt/ \
+                nx-X11/lib/Xmu/ \
+                nx-X11/lib/Xmuu/ \
+                nx-X11/programs/Xserver/hw/darwin/ \
+                nx-X11/programs/Xserver/hw/dmx/ \
+                nx-X11/programs/Xserver/hw/kdrive/ \
+                nx-X11/programs/Xserver/hw/sun/ \
+                nx-X11/programs/Xserver/hw/sunLynx/ \
+                nx-X11/programs/Xserver/hw/vfb/ \
+                nx-X11/programs/Xserver/hw/xnest/ \
+                nx-X11/programs/Xserver/hw/xwin/ \
+                nx-X11/programs/Xserver/hw/xfree86/ \
+                nx-X11/programs/xterm/ \
+                $(NULL)
+
+PRESERVE_CODE = nx-X11/programs/Xserver/hw/xfree86/common/compiler.h \
+                nx-X11/programs/Xserver/hw/xfree86/os-support/xf86_ansic.h \
+                nx-X11/programs/Xserver/hw/xfree86/os-support/xf86_libc.h \
+                nx-X11/programs/Xserver/hw/xfree86/xf86Version.h \
+                $(NULL)
 
 override_dh_auto_clean:
 	rm -Rf nx-X11/.build-exports
@@ -62,6 +69,7 @@ override_dh_clean:
 	rm -f nx-X11/programs/nxauth/changelog
 	rm -Rf replace.sh Makefile bin rgb VERSION.x2goagent etc/keystrokes.cfg
 	rm -f debian/libnx-x11.postinst
+	rm -Rf .preserve/
 	if [ -f nxcomp/.VERSION.NoMachine ]; then mv nxcomp/.VERSION.NoMachine nxcomp/VERSION; fi
 	dh_clean
 
@@ -91,9 +99,17 @@ override_dh_auto_build:
 	# let's prep the libnx-x11.postinst script with the value of the build systems's DEB_BUILD_MULTIARCH variable
 	sed debian/libnx-x11.postinst.in -e 's/#DEB_BUILD_MULTIARCH#/$(DEB_BUILD_MULTIARCH)/' > debian/libnx-x11.postinst
 
+	# make a copy of code to be preserved for build
+	mkdir -p .preserve
+	for path in $(PRESERVE_CODE); do test -d $$path && mkdir -p .preserve/$$path || mkdir -p .preserve/$$(dirname $$path); cp -av $$path .preserve/$$path; done
+
 	# remove unused code / bundled libraries (see at the top of this file
         # for the exact list of files and folders
 	rm -Rf $(UNUSED_CODE)
+
+	# copy to-be-preserved files back into code tree
+	cp -av .preserve/* .
+	rm -Rf .preserve/
 
 	LD_LIBRARY_PATH=`pwd`/debian/libnx-x11/usr/lib/nx/X11:$$LD_LIBRARY_PATH dh_auto_build --parallel
 
