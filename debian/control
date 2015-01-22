@@ -53,13 +53,14 @@ Replaces: nxlibs-dev
 Depends:
  libnx-x11 (= ${binary:Version}),
  ${misc:Depends},
-Description: Library headers for nx-X11
+Description: Library headers for nx-X11 (dummy package)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
  using X applications over a network, especially a slow one.
  .
- This package provides the core nx-X11 libraries customized for
- nxagent (header files).
+ This package can be safely removed. Since 3.5.0.29 of nx-libs we
+ have stopped shipping development headers with nx-X11. No software
+ should ever link against the nx-X11 library.
 
 Package: libnx-mesa-extras-dev
 Section: libdevel
@@ -67,13 +68,14 @@ Architecture: any
 Depends:
  libnx-x11-dev (= ${binary:Version}),
  ${misc:Depends},
-Description: Library headers for nx-X11 (extra headers)
+Description: Library headers for nx-X11/Meas (dummy package)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
  using X applications over a network, especially a slow one.
  .
- This package provides extra nx-X11 development files for
- nxagent (header files, mesa-extras).
+ This package can be safely removed. Since 3.5.0.29 of nx-libs we
+ have stopped shipping development headers with nx-X11. No software
+ should ever link against the nx-X11 library.
 
 Package: nxagent
 Architecture: any
