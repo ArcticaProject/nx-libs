@@ -1,0 +1,3 @@
+usr/lib/*/libNX_Xinerama.so
+usr/include/*/nx/X11/extensions/Xinerama.h
+usr/include/*/nx/X11/extensions/panoramiXext.h

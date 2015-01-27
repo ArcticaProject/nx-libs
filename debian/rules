@@ -9,8 +9,11 @@ else
         CFLAGS += -O2
 endif
 
+export LIBDIR = "/usr/lib/$(shell dpkg-architecture -qDEB_BUILD_MULTIARCH)"
+export INCLUDEDIR = "/usr/include/$(shell dpkg-architecture -qDEB_BUILD_MULTIARCH)"
+
 %:
-	CONFIGURE="./configure --prefix=/usr" LD_LIBRARY_PATH=`pwd`/debian/libnx-x11/usr/lib/nx/X11:$$LD_LIBRARY_PATH dh $@ --with quilt
+	CONFIGURE="./configure --with-symbols --prefix=/usr --libdir=$(LIBDIR) --includedir=$(INCLUDEDIR)" dh $@ --with quilt
 
 # before build, we will remove unused code / bundled libraries (keep this in sync with roll-tarball.sh)
 UNUSED_FOLDERS = nx-X11/extras/drm/ \
@@ -741,18 +744,64 @@ PRESERVE_SYMLINKED_FILES = nx-X11/extras/Mesa/include/GL/glext.h \
 
 override_dh_auto_clean:
 	rm -Rf nx-X11/.build-exports
-	LD_LIBRARY_PATH=`pwd`/debian/libnx-x11/usr/lib/nx/X11:$$LD_LIBRARY_PATH dh_auto_clean
+	dh_auto_clean
 
 override_dh_clean:
 	rm -f nx*/configure
 	rm -f nx*/changelog
 	rm -f nx-X11/programs/Xserver/hw/nxagent/changelog
 	rm -f nx-X11/programs/nxauth/changelog
-	rm -Rf replace.sh Makefile bin rgb VERSION.x2goagent etc/keystrokes.cfg
-	rm -f debian/libnx-x11.postinst
-	rm -Rf .preserve/
+	if [ ! -f replace.sh ] && [ ! -h replace.sh ]; then ln -s debian/Makefile.replace.sh replace.sh; fi
+	. ./replace.sh; set -x; ls debian/*.install.in | while read file; do rm -f $$(string_rep $$file .install.in .install); done
+	rm -fR replace.sh Makefile bin etc/rgb VERSION.x2goagent etc/keystrokes.cfg etc/nxagent.keyboard etc/x2goagent.keyboard
+	rm -f debian/libnx-xinerama1.postinst
+	rm -fR .preserve/
 	if [ -f nxcomp/.VERSION.NoMachine ]; then mv nxcomp/.VERSION.NoMachine nxcomp/VERSION; fi
 	dh_clean
+
+override_dh_install:
+
+	# handle builds for Debian squeeze (non multi-arch)
+	. ./replace.sh; set -x; if [ -z "$(DEB_BUILD_MULTIARCH)" ]; then \
+	    find debian/*.install.in | while read file; do \
+	        cat $$file | sed -e 's#/\*/#/#g' > $$(string_rep $$file .install.in .install); \
+	    done; \
+	fi
+
+	# remove static libs
+	rm debian/tmp/usr/lib/$(DEB_BUILD_MULTIARCH)/libXcomp.a
+	rm debian/tmp/usr/lib/$(DEB_BUILD_MULTIARCH)/libXcompshad.a
+
+	# remove extras, GL, and other unneeded headers
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/GL/
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/bitmaps/
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/XInput.h
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/XK*.h
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/*Xv*.h
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/xtrap*.h
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/Print*.h
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/XRes*.h
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/record*.h
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/xf86vmode.h
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/xf86vmstr.h
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/xf86misc.h
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/xf86dga1.h
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/xf86dgastr.h
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/xf86dga.h
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/xf86dga1str.h
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/xf86mscstr.h
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/dmxext.h
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/dmxproto.h
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/bigreqstr.h
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/xcmiscstr.h
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/XIproto.h
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/xf86bigfstr.h
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/xf86bigfont.h
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/XI.h
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/fonts/
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/Xtrans/
+
+	dh_install --fail-missing
 
 override_dh_auto_install:
 	PREFIX=/usr dh_auto_install -Smakefile
@@ -777,8 +826,8 @@ override_dh_auto_build:
 	ln -sf debian/VERSION VERSION.x2goagent
 	ln -sf ../debian/VERSION nxcomp/VERSION
 
-	# let's prep the libnx-x11.postinst script with the value of the build systems's DEB_BUILD_MULTIARCH variable
-	sed debian/libnx-x11.postinst.in -e 's/#DEB_BUILD_MULTIARCH#/$(DEB_BUILD_MULTIARCH)/' > debian/libnx-x11.postinst
+	# let's prep the libnx-xinerama1.postinst script with the value of the build systems's DEB_BUILD_MULTIARCH variable
+	sed debian/libnx-xinerama1.postinst.in -e 's/#DEB_BUILD_MULTIARCH#/$(DEB_BUILD_MULTIARCH)/' > debian/libnx-xinerama1.postinst
 
 	# make a copy of code to be preserved for build
 	mkdir -p .preserve
@@ -793,7 +842,25 @@ override_dh_auto_build:
 	cp -av .preserve/* .
 	rm -Rf .preserve/
 
-	LD_LIBRARY_PATH=`pwd`/debian/libnx-x11/usr/lib/nx/X11:$$LD_LIBRARY_PATH dh_auto_build --parallel
+	SHLIBDIR=$(LIBDIR) PREFIX=/usr dh_auto_build --parallel
 
 override_dh_strip:
-	dh_strip --dbg-package=nx-x11-dbg
+	dh_strip -plibnx-x11-6 --dbg-package=libnx-x11-6-dbg
+	dh_strip -plibnx-xau6 --dbg-package=libnx-xau6-dbg
+	dh_strip -plibnx-xcomposite1 --dbg-package=libnx-xcomposite1-dbg
+	dh_strip -plibnx-xdamage1 --dbg-package=libnx-xdamage1-dbg
+	dh_strip -plibnx-xdmcp6 --dbg-package=libnx-xdmcp6-dbg
+	dh_strip -plibnx-xext6 --dbg-package=libnx-xext6-dbg
+	dh_strip -plibnx-xfixes3 --dbg-package=libnx-xfixes3-dbg
+	dh_strip -plibnx-xinerama1 --dbg-package=libnx-xinerama1-dbg
+	dh_strip -plibnx-xpm4 --dbg-package=libnx-xpm4-dbg
+	dh_strip -plibnx-xrandr2 --dbg-package=libnx-xrandr2-dbg
+	dh_strip -plibnx-xrender1 --dbg-package=libnx-xrender1-dbg
+	dh_strip -plibnx-xtst6 --dbg-package=libnx-xtst6-dbg
+	dh_strip -plibxcomp3 --dbg-package=libxcomp3-dbg
+	dh_strip -plibxcompshad3 --dbg-package=libxcompshad3-dbg
+	dh_strip -plibxcompext3 --dbg-package=libxcompext3-dbg
+	dh_strip -pnxagent --dbg-package=nxagent-dbg
+	dh_strip -pnxproxy --dbg-package=nxproxy-dbg
+	dh_strip -pnxauth --dbg-package=nxauth-dbg
+

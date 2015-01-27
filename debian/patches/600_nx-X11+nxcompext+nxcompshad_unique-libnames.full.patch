@@ -41,22 +41,13 @@ Last-Update: 2012-02-15
  nx-X11/config/cf/sv3Lib.tmpl                        |   24 +-
  nx-X11/config/cf/sv4Lib.tmpl                        |    2 
  nx-X11/config/cf/usl.cf                             |    2 
- nx-X11/extras/Mesa/src/mesa/main/Imakefile          |    2 
- nx-X11/extras/Xpm/lib/Imakefile                     |    2 
- nx-X11/extras/drm/libdrm.pc.in                      |    2 
- nx-X11/extras/fontconfig/fontconfig.pc.in           |    2 
- nx-X11/extras/ogl-sample/main/gfx/lib/glu/Imakefile |    2 
- nx-X11/lib/FS/Imakefile                             |    2 
  nx-X11/lib/GLw/Imakefile                            |    2 
- nx-X11/lib/ICE/Imakefile                            |    2 
- nx-X11/lib/SM/Imakefile                             |    2 
  nx-X11/lib/X11/Imakefile                            |    2 
  nx-X11/lib/X11/Imakefile.NX.original                |    2 
  nx-X11/lib/X11/Imakefile.X.original                 |    2 
  nx-X11/lib/XRes/Imakefile                           |    2 
  nx-X11/lib/XTrap/Imakefile                          |    2 
  nx-X11/lib/Xau/Imakefile                            |    2 
- nx-X11/lib/Xaw/Imakefile                            |    2 
  nx-X11/lib/Xaw6/Imakefile                           |    2 
  nx-X11/lib/Xaw7/Imakefile                           |    2 
  nx-X11/lib/Xcomposite/Imakefile                     |    2 
@@ -72,13 +63,9 @@ Last-Update: 2012-02-15
  nx-X11/lib/Xfixes/Imakefile                         |    2 
  nx-X11/lib/Xfixes/xfixes.pc.in                      |    2 
  nx-X11/lib/Xfontcache/Imakefile                     |    2 
- nx-X11/lib/Xft/Imakefile                            |    2 
- nx-X11/lib/Xft/xft.pc.in                            |    2 
  nx-X11/lib/Xft1/Imakefile                           |    2 
  nx-X11/lib/Xi/Imakefile                             |    2 
  nx-X11/lib/Xinerama/Imakefile                       |    2 
- nx-X11/lib/Xmu/Imakefile                            |    2 
- nx-X11/lib/Xmuu/Imakefile                           |    2 
  nx-X11/lib/Xp/Imakefile                             |    2 
  nx-X11/lib/Xpm/Imakefile                            |    2 
  nx-X11/lib/Xpm/Imakefile.NX.original                |    2 
@@ -89,9 +76,6 @@ Last-Update: 2012-02-15
  nx-X11/lib/Xrender/Imakefile                        |    2 
  nx-X11/lib/Xrender/xrender.pc.in                    |    2 
  nx-X11/lib/Xss/Imakefile                            |    2 
- nx-X11/lib/Xt/Imakefile                             |    2 
- nx-X11/lib/Xt/Imakefile.NX.original                 |    2 
- nx-X11/lib/Xt/Imakefile.X.original                  |    2 
  nx-X11/lib/Xtst/Imakefile                           |    2 
  nx-X11/lib/Xv/Imakefile                             |    2 
  nx-X11/lib/XvMC/Imakefile                           |    2 
@@ -107,20 +91,13 @@ Last-Update: 2012-02-15
  nx-X11/lib/dmx/Imakefile                            |    2 
  nx-X11/lib/dps/Imakefile                            |    2 
  nx-X11/lib/dpstk/Imakefile                          |    2 
- nx-X11/lib/expat/Imakefile                          |    2 
  nx-X11/lib/font/Imakefile                           |    2 
- nx-X11/lib/fontconfig/Imakefile                     |    2 
- nx-X11/lib/fontenc/Imakefile                        |    2 
- nx-X11/lib/freetype2/Imakefile                      |    2 
  nx-X11/lib/oldX/Imakefile                           |    2 
  nx-X11/lib/psres/Imakefile                          |    2 
- nx-X11/lib/regex/Imakefile                          |    2 
  nx-X11/lib/windows/Imakefile                        |    2 
  nx-X11/lib/xkbfile/Imakefile                        |    2 
  nx-X11/lib/xkbui/Imakefile                          |    2 
- nx-X11/lib/zlib/Imakefile                           |    2 
  nx-X11/programs/Xserver/Imakefile                   |   18 -
- nx-X11/programs/Xserver/hw/xfree86/parser/Imakefile |    2 
  nxcompext/Makefile.in                               |    4 
  nxcompshad/Makefile.in                              |    4 
  103 files changed, 294 insertions(+), 294 deletions(-)
@@ -1243,68 +1220,6 @@ Last-Update: 2012-02-15
  XMULIB = $(XMULIBONLY) $(XTOOLLIB) $(XLIB)
  #endif
  
---- a/nx-X11/extras/Mesa/src/mesa/main/Imakefile
-+++ b/nx-X11/extras/Mesa/src/mesa/main/Imakefile
-@@ -2,7 +2,7 @@
- #define DoSharedLib YES
- #define DoDebugLib NO
- #define DoProfileLib NO
--#define LibName MESAGL
-+#define LibName NX_MESAGL
- #define SoRev SOX11REV
- #define LibHeaders NO
- 
---- a/nx-X11/extras/Xpm/lib/Imakefile
-+++ b/nx-X11/extras/Xpm/lib/Imakefile
-@@ -125,7 +125,7 @@
-     STD_DEFINES = LibraryDefines
-     CDEBUGFLAGS = LibraryCDebugFlags
- #else
--#define LibName Xpm
-+#define LibName NX_Xpm
- #define SoRev SOXPMLIBREV
- #define IncSubdir X11
- /* we have to cheat on Library.tmpl to get what we want... */
---- a/nx-X11/extras/drm/libdrm.pc.in
-+++ b/nx-X11/extras/drm/libdrm.pc.in
-@@ -6,5 +6,5 @@
- Name: libdrm
- Description: Userspace interface to kernel DRM services
- Version: @PACKAGE_VERSION@
--Libs: -L${libdir} -ldrm
-+Libs: -L${libdir} -lNX_drm
- Cflags: -I${includedir} -I${includedir}/drm
---- a/nx-X11/extras/fontconfig/fontconfig.pc.in
-+++ b/nx-X11/extras/fontconfig/fontconfig.pc.in
-@@ -6,5 +6,5 @@
- Name: Fontconfig
- Description: Font configuration and customization library
- Version: @VERSION@
--Libs: -L${libdir} -lfontconfig
-+Libs: -L${libdir} -lNX_fontconfig
- Cflags: -I${includedir}
---- a/nx-X11/extras/ogl-sample/main/gfx/lib/glu/Imakefile
-+++ b/nx-X11/extras/ogl-sample/main/gfx/lib/glu/Imakefile
-@@ -36,7 +36,7 @@
- #define DoDebugLib DebugLibGlu
- #define DoProfileLib ProfileLibGlu
- #define IHaveSubdirs
--#define LibName GLU
-+#define LibName NX_GLU
- #define PassCDebugFlags 'CDEBUGFLAGS=$(CDEBUGFLAGS)'
- #define SoRev SOGLUREV
- 
---- a/nx-X11/lib/FS/Imakefile
-+++ b/nx-X11/lib/FS/Imakefile
-@@ -11,7 +11,7 @@
- #define DoExtraLib SharedLibFS
- #define DoDebugLib DebugLibFS
- #define DoProfileLib ProfileLibFS
--#define LibName FS
-+#define LibName NX_FS
- #define SoRev SOFSREV
- #define IncSubdir X11
- #define IncSubSubdir fonts
 --- a/nx-X11/lib/GLw/Imakefile
 +++ b/nx-X11/lib/GLw/Imakefile
 @@ -46,7 +46,7 @@
@@ -1316,28 +1231,6 @@ Last-Update: 2012-02-15
  #define SoRev SOGLWREV
  #define IncSubdir GL
  
---- a/nx-X11/lib/ICE/Imakefile
-+++ b/nx-X11/lib/ICE/Imakefile
-@@ -10,7 +10,7 @@
- #define DoExtraLib SharedLibICE
- #define DoDebugLib DebugLibICE
- #define DoProfileLib ProfileLibICE
--#define LibName ICE
-+#define LibName NX_ICE
- #define SoRev SOICEREV
- #define IncSubdir X11
- #define IncSubSubdir ICE
---- a/nx-X11/lib/SM/Imakefile
-+++ b/nx-X11/lib/SM/Imakefile
-@@ -10,7 +10,7 @@
- #define DoExtraLib SharedLibSM
- #define DoDebugLib DebugLibSM
- #define DoProfileLib ProfileLibSM
--#define LibName SM
-+#define LibName NX_SM
- #define SoRev SOSMREV
- #define IncSubdir X11
- #define IncSubSubdir SM
 --- a/nx-X11/lib/X11/Imakefile
 +++ b/nx-X11/lib/X11/Imakefile
 @@ -82,7 +82,7 @@
@@ -1404,17 +1297,6 @@ Last-Update: 2012-02-15
  #define SoRev SOXAUTHREV
  #define IncSubdir X11
  
---- a/nx-X11/lib/Xaw/Imakefile
-+++ b/nx-X11/lib/Xaw/Imakefile
-@@ -11,7 +11,7 @@
- #define DoDebugLib DebugLibXaw 
- #define DoProfileLib ProfileLibXaw 
- #define HasSharedData YES
--#define LibName Xaw
-+#define LibName NX_Xaw
- #define SoRev SOXAWREV
- #define IncSubdir X11
- #define IncSubSubdir Xaw
 --- a/nx-X11/lib/Xaw6/Imakefile
 +++ b/nx-X11/lib/Xaw6/Imakefile
 @@ -5,7 +5,7 @@
@@ -1565,36 +1447,6 @@ Last-Update: 2012-02-15
  #define SoRev SOXFONTCACHEREV
  #define LibHeaders NO
  
---- a/nx-X11/lib/Xft/Imakefile
-+++ b/nx-X11/lib/Xft/Imakefile
-@@ -8,7 +8,7 @@
- #define DoProfileLib ProfileLibXft
- 
- #define HasSharedData YES
--#define LibName Xft
-+#define LibName NX_Xft
- #define SoRev SOXFTREV
- #define IncSubdir X11
- #define IncSubSubdir Xft
---- a/nx-X11/lib/Xft/xft.pc.in
-+++ b/nx-X11/lib/Xft/xft.pc.in
-@@ -9,4 +9,4 @@
- Requires: xrender, fontconfig, freetype2
- Requires.private: xrender, fontconfig, freetype2
- Cflags: -I${includedir}
--Libs: -L${libdir} -lXft
-+Libs: -L${libdir} -lNX_Xft
---- a/nx-X11/lib/Xft1/Imakefile
-+++ b/nx-X11/lib/Xft1/Imakefile
-@@ -70,7 +70,7 @@
- #define DoDebugLib NO
- #define DoProfileLib NO
- #define HasSharedData YES
--#define LibName Xft
-+#define LibName NX_Xft
- #define SoRev SOXFT1REV
- #define LibHeaders NO
- #define NoSoSymlink
 --- a/nx-X11/lib/Xi/Imakefile
 +++ b/nx-X11/lib/Xi/Imakefile
 @@ -10,7 +10,7 @@
@@ -1615,28 +1467,6 @@ Last-Update: 2012-02-15
 -#define LibName Xinerama
 +#define LibName NX_Xinerama
  #define SoRev SOXINERAMAREV
- #define LibHeaders NO
- 
---- a/nx-X11/lib/Xmu/Imakefile
-+++ b/nx-X11/lib/Xmu/Imakefile
-@@ -11,7 +11,7 @@
- #define DoDebugLib DebugLibXmu
- #define DoProfileLib ProfileLibXmu
- #define HasSharedData YES
--#define LibName Xmu
-+#define LibName NX_Xmu
- #define SoRev SOXMUREV
- #define IncSubdir X11
- #define IncSubSubdir Xmu
---- a/nx-X11/lib/Xmuu/Imakefile
-+++ b/nx-X11/lib/Xmuu/Imakefile
-@@ -11,7 +11,7 @@
- #define DoExtraLib SharedLibXmuu
- #define DoDebugLib DebugLibXmuu
- #define DoProfileLib ProfileLibXmuu
--#define LibName Xmuu
-+#define LibName NX_Xmuu
- #define SoRev SOXMUUREV
  #define LibHeaders NO
  
 --- a/nx-X11/lib/Xp/Imakefile
@@ -1745,39 +1575,6 @@ Last-Update: 2012-02-15
 +#define LibName NX_Xss
  #define SoRev SOXSSREV
  #define LibHeaders NO
- 
---- a/nx-X11/lib/Xt/Imakefile
-+++ b/nx-X11/lib/Xt/Imakefile
-@@ -42,7 +42,7 @@
- #define DoDebugLib DebugLibXt
- #define DoProfileLib ProfileLibXt
- #define HasSharedData YES
--#define LibName Xt
-+#define LibName NX_Xt
- #define SoRev SOXTREV
- #define IncSubdir X11
- 
---- a/nx-X11/lib/Xt/Imakefile.NX.original
-+++ b/nx-X11/lib/Xt/Imakefile.NX.original
-@@ -42,7 +42,7 @@
- #define DoDebugLib DebugLibXt
- #define DoProfileLib ProfileLibXt
- #define HasSharedData YES
--#define LibName Xt
-+#define LibName NX_Xt
- #define SoRev SOXTREV
- #define IncSubdir X11
- 
---- a/nx-X11/lib/Xt/Imakefile.X.original
-+++ b/nx-X11/lib/Xt/Imakefile.X.original
-@@ -11,7 +11,7 @@
- #define DoDebugLib DebugLibXt
- #define DoProfileLib ProfileLibXt
- #define HasSharedData YES
--#define LibName Xt
-+#define LibName NX_Xt
- #define SoRev SOXTREV
- #define IncSubdir X11
  
 --- a/nx-X11/lib/Xtst/Imakefile
 +++ b/nx-X11/lib/Xtst/Imakefile
@@ -1944,17 +1741,6 @@ Last-Update: 2012-02-15
  #define SoRev SODPSTKREV
  #define LibHeaders NO
  
---- a/nx-X11/lib/expat/Imakefile
-+++ b/nx-X11/lib/expat/Imakefile
-@@ -6,7 +6,7 @@
- #define DoDebugLib DebugLibExpat
- #define DoProfileLib ProfileLibExpat
- #define HasSharedData YES
--#define LibName expat
-+#define LibName NX_expat
- #define SoRev SOEXPATREV
- #ifdef SharedLibtoolExpatRev
- #define SharedLibtoolRev SharedLibtoolExpatRev
 --- a/nx-X11/lib/font/Imakefile
 +++ b/nx-X11/lib/font/Imakefile
 @@ -31,7 +31,7 @@
@@ -1966,39 +1752,6 @@ Last-Update: 2012-02-15
  SOREV = $(SOFONTREV)
  
  #ifndef SeparateSharedCompile
---- a/nx-X11/lib/fontconfig/Imakefile
-+++ b/nx-X11/lib/fontconfig/Imakefile
-@@ -7,7 +7,7 @@
- #define DoDebugLib DebugLibFontconfig
- #define DoProfileLib ProfileLibFontconfig
- #define HasSharedData YES
--#define LibName fontconfig
-+#define LibName NX_fontconfig
- #define SoRev SOFONTCONFIGREV
- #define LibInstall InstallFontconfigLibrary
- #define LibHeaders InstallFontconfigLibrary
---- a/nx-X11/lib/fontenc/Imakefile
-+++ b/nx-X11/lib/fontenc/Imakefile
-@@ -17,7 +17,7 @@
- #define DoSharedLib SharedLibFontEnc
- #define DoDebugLib DebugLibFontEnc
- #define DoProfileLib ProfileLibFontEnc
--#define LibName fontenc
-+#define LibName NX_fontenc
- #define SoRev SOFONTENCREV
- #define IncSubdir X11
- #define IncSubSubdir fonts
---- a/nx-X11/lib/freetype2/Imakefile
-+++ b/nx-X11/lib/freetype2/Imakefile
-@@ -11,7 +11,7 @@
- #define DoDebugLib DebugLibFreetype2
- #define DoProfileLib ProfileLibFreetype2
- #define HasSharedData YES
--#define LibName freetype
-+#define LibName NX_freetype
- #define SoRev SOFREETYPE2REV
- #ifdef SharedLibtoolFreetype2Rev
- #define SharedLibtoolRev SharedLibtoolFreetype2Rev
 --- a/nx-X11/lib/oldX/Imakefile
 +++ b/nx-X11/lib/oldX/Imakefile
 @@ -10,7 +10,7 @@
@@ -2021,17 +1774,6 @@ Last-Update: 2012-02-15
  #define SoRev SOPSRESREV
  #define LibHeaders NO
  
---- a/nx-X11/lib/regex/Imakefile
-+++ b/nx-X11/lib/regex/Imakefile
-@@ -6,7 +6,7 @@
- #define DoDebugLib	NO
- #define DoProfileLib	NO
- #define HasSharedData	NO
--#define LibName		regex
-+#define LibName		NX_regex
- #define LibHeaders	NO
- #define LibInstall	NO
- #define LibInstallBuild	YES
 --- a/nx-X11/lib/windows/Imakefile
 +++ b/nx-X11/lib/windows/Imakefile
 @@ -2,7 +2,7 @@
@@ -2065,17 +1807,6 @@ Last-Update: 2012-02-15
  #define SoRev SOXKBUIREV
  #define	IncSubdir X11
  #define	IncSubSubdir extensions
---- a/nx-X11/lib/zlib/Imakefile
-+++ b/nx-X11/lib/zlib/Imakefile
-@@ -12,7 +12,7 @@
- #define DoDebugLib    NO
- #define DoProfileLib  NO
- #define HasSharedData NO
--#define LibName       z
-+#define LibName       NX_z
- #define SoRev         SOZLIBREV
- 
-  ZLIBDIR = $(TOP)/extras/zlib
 --- a/nx-X11/programs/Xserver/Imakefile
 +++ b/nx-X11/programs/Xserver/Imakefile
 @@ -313,7 +313,7 @@
@@ -2130,17 +1861,6 @@ Last-Update: 2012-02-15
  #endif /* NXAgentServer */
  
  #if defined(XnonServer) && XnonServer
---- a/nx-X11/programs/Xserver/hw/xfree86/parser/Imakefile
-+++ b/nx-X11/programs/Xserver/hw/xfree86/parser/Imakefile
-@@ -7,7 +7,7 @@
- #define DoDebugLib      NO
- #define DoProfileLib    NO
- #define HasSharedData   NO
--#define LibName         xf86config
-+#define LibName         NX_xf86config
- 
- #define UseDBMalloc	NO
- 
 --- a/nxcompext/Makefile.in
 +++ b/nxcompext/Makefile.in
 @@ -42,12 +42,12 @@

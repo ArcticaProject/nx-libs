@@ -36,12 +36,12 @@ Last-Update: 2012-02-14
  install.bin:
  
 +install.lib: all
-+	./mkinstalldirs $(DESTDIR)${libdir}/nx
++	./mkinstalldirs $(DESTDIR)${libdir}
 +	./mkinstalldirs $(DESTDIR)${includedir}/nx
-+	$(INSTALL_DATA) $(LIBFULL)              $(DESTDIR)${libdir}/nx
-+	$(INSTALL_LINK) libXcomp.so.3           $(DESTDIR)${libdir}/nx
-+	$(INSTALL_LINK) libXcomp.so             $(DESTDIR)${libdir}/nx
-+	$(INSTALL_DATA) libXcomp.a              $(DESTDIR)${libdir}/nx
++	$(INSTALL_DATA) $(LIBFULL)              $(DESTDIR)${libdir}
++	$(INSTALL_LINK) libXcomp.so.3           $(DESTDIR)${libdir}
++	$(INSTALL_LINK) libXcomp.so             $(DESTDIR)${libdir}
++	$(INSTALL_DATA) libXcomp.a              $(DESTDIR)${libdir}
 +	$(INSTALL_DATA) NX*.h                   $(DESTDIR)${includedir}/nx
 +	$(INSTALL_DATA) MD5.h                   $(DESTDIR)${includedir}/nx
 +	echo "Running ldconfig tool, this may take a while..." && ldconfig || true
@@ -53,10 +53,10 @@ Last-Update: 2012-02-14
 +uninstall.bin:
 +
 +uninstall.lib:
-+	$(RM_FILE) $(DESTDIR)${libdir}/nx/$(LIBFULL)
-+	$(RM_FILE) $(DESTDIR)${libdir}/nx/libXcomp.so.3
-+	$(RM_FILE) $(DESTDIR)${libdir}/nx/libXcomp.so
-+	$(RM_FILE) $(DESTDIR)${libdir}/nx/libXcomp.a
++	$(RM_FILE) $(DESTDIR)${libdir}/$(LIBFULL)
++	$(RM_FILE) $(DESTDIR)${libdir}/libXcomp.so.3
++	$(RM_FILE) $(DESTDIR)${libdir}/libXcomp.so
++	$(RM_FILE) $(DESTDIR)${libdir}/libXcomp.a
 +	$(RM_FILE) $(DESTDIR)${includedir}/nx/NXalert.h
 +	$(RM_FILE) $(DESTDIR)${includedir}/nx/NX.h
 +	$(RM_FILE) $(DESTDIR)${includedir}/nx/NXmitshm.h

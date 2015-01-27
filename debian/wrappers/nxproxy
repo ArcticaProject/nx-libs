@@ -23,10 +23,7 @@ NX_LOCAL_LIBS=/usr/local/lib/nx
 NX_TEMP=${NX_TEMP:-/tmp}
 export NX_TEMP
 
-LD_LIBRARY_PATH=$NX_LOCAL_LIBS:$NX_LOCAL_LIBS/X11:$NX_LIBS:$NX_LIBS/X11:$LD_LIBRARY_PATH
 test -x $NX_LOCAL_LIBS/bin/$NXAPP && export NX_LIBS=$NX_LOCAL_LIBS
 test -x $NX_LIBS/bin/$NXAPP && export NX_LIBS=$NX_LIBS
-
-export LD_LIBRARY_PATH
 
 exec $NX_LIBS/bin/$NXAPP "$@"

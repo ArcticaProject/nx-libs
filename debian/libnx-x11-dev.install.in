@@ -1,0 +1,15 @@
+usr/lib/*/libNX_X11.so
+usr/include/*/nx/X11/ImUtil.h
+usr/include/*/nx/X11/XKBlib.h
+usr/include/*/nx/X11/Xcms.h
+usr/include/*/nx/X11/Xlib.h
+usr/include/*/nx/X11/XlibConf.h
+usr/include/*/nx/X11/Xlibint.h
+usr/include/*/nx/X11/Xlocale.h
+usr/include/*/nx/X11/Xregion.h
+usr/include/*/nx/X11/Xresource.h
+usr/include/*/nx/X11/Xutil.h
+usr/include/*/nx/X11/cursorfont.h
+usr/include/*/nx/X11/misc.h
+usr/include/*/nx/X11/os.h
+usr/include/*/nx/X11/X10.h

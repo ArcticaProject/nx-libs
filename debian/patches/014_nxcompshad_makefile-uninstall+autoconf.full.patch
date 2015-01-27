@@ -38,12 +38,12 @@ Last-Update: 2012-02-14
  install.bin:
  
 +install.lib: all
-+	$(INSTALL_DIR)                          $(DESTDIR)${libdir}/nx
++	$(INSTALL_DIR)                          $(DESTDIR)${libdir}
 +	$(INSTALL_DIR)                          $(DESTDIR)${includedir}/nx
-+	$(INSTALL_DATA) $(LIBFULL)              $(DESTDIR)${libdir}/nx
-+	$(INSTALL_LINK) libXcompshad.so.3       $(DESTDIR)${libdir}/nx
-+	$(INSTALL_LINK) libXcompshad.so         $(DESTDIR)${libdir}/nx
-+	$(INSTALL_DATA) *.a                     $(DESTDIR)${libdir}/nx
++	$(INSTALL_DATA) $(LIBFULL)              $(DESTDIR)${libdir}
++	$(INSTALL_LINK) libXcompshad.so.3       $(DESTDIR)${libdir}
++	$(INSTALL_LINK) libXcompshad.so         $(DESTDIR)${libdir}
++	$(INSTALL_DATA) *.a                     $(DESTDIR)${libdir}
 +	$(INSTALL_DATA) *.h                     $(DESTDIR)${includedir}/nx
 +	echo "Running ldconfig tool, this may take a while..." && ldconfig || true
 +
@@ -54,10 +54,10 @@ Last-Update: 2012-02-14
 +uninstall.bin:
 +
 +uninstall.lib:
-+	$(RM_FILE) $(DESTDIR)${libdir}/nx/$(LIBFULL)
-+	$(RM_FILE) $(DESTDIR)${libdir}/nx/libXcompshad.so.3
-+	$(RM_FILE) $(DESTDIR)${libdir}/nx/libXcompshad.so
-+	$(RM_FILE) $(DESTDIR)${libdir}/nx/libXcompshad.a
++	$(RM_FILE) $(DESTDIR)${libdir}/$(LIBFULL)
++	$(RM_FILE) $(DESTDIR)${libdir}/libXcompshad.so.3
++	$(RM_FILE) $(DESTDIR)${libdir}/libXcompshad.so
++	$(RM_FILE) $(DESTDIR)${libdir}/libXcompshad.a
 +	for header in *.h; do $(RM_FILE) $(DESTDIR)${includedir}/nx/$$header; done
 +	$(RM_DIR) $(DESTDIR)${libdir}/nx/
 +	$(RM_DIR) $(DESTDIR)${includedir}/nx/

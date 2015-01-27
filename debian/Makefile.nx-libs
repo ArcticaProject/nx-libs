@@ -8,13 +8,16 @@ COPY_SYMLINK=cp -a
 RM_FILE=rm -f
 RM_DIR=rmdir -p --ignore-fail-on-non-empty
 
-ETCDIR_NX ?= /etc/nxagent
+ETCDIR_NX   ?= /etc/nxagent
 ETCDIR_X2GO ?= /etc/x2go
-PREFIX ?= /usr/local
-BINDIR=$(PREFIX)/bin
-NXLIBDIR=$(PREFIX)/lib/nx
-X2GOLIBDIR=$(PREFIX)/lib/x2go
-CONFIGURE ?= ./configure
+PREFIX      ?= /usr/local
+BINDIR      ?= $(PREFIX)/bin
+LIBDIR      ?= $(PREFIX)/lib
+USRLIBDIR   ?= $(LIBDIR)
+INCLUDEDIR  ?= $(PREFIX)/include
+NXLIBDIR    ?= $(PREFIX)/lib/nx
+X2GOLIBDIR  ?= $(PREFIX)/lib/x2go
+CONFIGURE   ?= ./configure
 
 SHELL:=/bin/bash
 
@@ -105,14 +108,14 @@ install-full:
 	    cp -a "$$(string_rep "$$libpath" "$$libfile" "$$link")" "$$(string_rep "$$libdir" exports .build-exports)"; \
 	done;
 
-	$(INSTALL_DIR) $(DESTDIR)$(NXLIBDIR)/X11
-	$(COPY_SYMLINK) nx-X11/.build-exports/lib/*.so* $(DESTDIR)$(NXLIBDIR)/X11/
+	$(INSTALL_DIR) $(DESTDIR)$(USRLIBDIR)
+	$(COPY_SYMLINK) nx-X11/.build-exports/lib/*.so* $(DESTDIR)$(USRLIBDIR)/
 
 	. replace.sh; set -x; find nx-X11/.build-exports/include/ -type d | grep -v "include/X11/bitmaps" | \
 	    while read dirname; do \
-	        $(INSTALL_DIR) "$$(string_rep "$$dirname" nx-X11/.build-exports/include "$(DESTDIR)$(PREFIX)/include/nx")"; \
+	        $(INSTALL_DIR) "$$(string_rep "$$dirname" nx-X11/.build-exports/include "$(DESTDIR)$(INCLUDEDIR)/nx")"; \
 	        $(INSTALL_FILE) $${dirname}/*.h \
-	                        "$$(string_rep "$$dirname" nx-X11/.build-exports/include "$(DESTDIR)$(PREFIX)/include/nx")"/ || true; \
+	                        "$$(string_rep "$$dirname" nx-X11/.build-exports/include "$(DESTDIR)$(INCLUDEDIR)/nx")"/ || true; \
 	    done; \
 
 	# Provide means for Xinerama support in NX/X2Go sessions. This
@@ -120,11 +123,11 @@ install-full:
 	# (DESTDIR)$(NXLIBDIR)/X11/Xinerama/libNX_X11.so.6 -> /usr/<libdir>/libX11.so.6
 	# (DESTDIR)$(NXLIBDIR)/X11/Xinerama/libNX_Xext.so.6 -> /usr/<libdir>/libXext.so.6
 	$(INSTALL_DIR) $(DESTDIR)$(NXLIBDIR)/X11/Xinerama
-	$(INSTALL_SYMLINK) ../libNX_Xinerama.so.1 $(DESTDIR)$(NXLIBDIR)/X11/Xinerama/libXinerama.so.1
+	$(INSTALL_SYMLINK) $(DESTDIR)/$(USRLIBDIR)/libNX_Xinerama.so.1 $(DESTDIR)$(NXLIBDIR)/X11/Xinerama/libXinerama.so.1
 
-	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/include/nx/X11/bitmaps
+	$(INSTALL_DIR) $(DESTDIR)$(INCLUDEDIR)/nx/X11/bitmaps
 	$(INSTALL_FILE) nx-X11/.build-exports/include/X11/bitmaps/* \
-	                $(DESTDIR)$(PREFIX)/include/nx/X11/bitmaps/
+	                $(DESTDIR)$(INCLUDEDIR)/nx/X11/bitmaps/
 
 	$(INSTALL_DIR) $(DESTDIR)/$(ETCDIR_NX)
 	$(INSTALL_DIR) $(DESTDIR)/$(ETCDIR_X2GO)
@@ -153,7 +156,7 @@ uninstall-full:
 	    if test -f nxcompext/Makefile; then ${MAKE} -C nxcompext $@; fi; \
 	    if test -f nxcompshad/Makefile; then ${MAKE} -C nxcompshad $@; fi; \
 	    if test -f nx-X11/Makefile; then \
-	        if test -d $(PREFIX)/lib/nx; then rm -rf $(PREFIX)/lib/nx; fi; \
-	        if test -d $(PREFIX)/include/nx; then rm -rf $(PREFIX)/include/nx; fi; \
+	        if test -d $(NXLIBDIR); then rm -rf $(NXLIBDIR); fi; \
+	        if test -d $(INCLUDEDIR)/nx; then rm -rf $(INCLUDEDIR)/nx; fi; \
 	    fi; \
 	fi

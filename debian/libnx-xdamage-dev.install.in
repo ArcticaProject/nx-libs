@@ -1,0 +1,2 @@
+usr/lib/*/libNX_Xdamage.so
+usr/include/*/nx/X11/extensions/Xdamage.h

@@ -1,4 +1,4 @@
-nx-libs (2:3.5.0.29-0x2go1) UNRELEASED; urgency=medium
+nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
 
   [ Paul Szabo ]
   * DISABLED:401_nxcomp_bigrequests-and-genericevent-extensions.full+lite.patch.
@@ -11,13 +11,6 @@ nx-libs (2:3.5.0.29-0x2go1) UNRELEASED; urgency=medium
       without.
   * Update 320_nxagent_configurable-keystrokes.full.patch. Fix patch header
     referring to keystrokes.cfg (plural), not keystroke.cfg.
-  * debian/rules:
-    + Backup nxcomp/VERSION file from NoMachine before replacing it with
-      a symlink to debian/VERSION. Recreate the original file when cleaning
-      up.
-    + Fix removal of unused code (that part of the code that we know of so
-      far). (The debian/rules file is a Makefile and Makefiles don't understand
-      shell globbing with curly braces).
   * Drop more unused code in nx-X11/programs/Xserver/hw/. Do this in
     roll-tarball.sh and in debian/rules alike.
   * Stop shipping unused / very old xterm code.
@@ -29,11 +22,25 @@ nx-libs (2:3.5.0.29-0x2go1) UNRELEASED; urgency=medium
       - nx-X11/programs/Xserver/miext/shadow/
       - nx-X11/programs/Xserver/XpConfig/
       - nx-X11/programs/Xserver/Xprint/
-  * debian/control:
-    + Turn libnx-*-dev packages into dummy packages. Shipping development files
-      for nx-X11 makes no sense. No other programme build against nx-X11's
-      header files except nxagent itself.
   * Makefile.nx-libs: Don't install Mesa header files into DESTDIR anymore.
+
+  * Debian/Ubuntu packaging:
+    + Fully rework the way nx-libs gets packaged for Debian/Ubuntu.
+    + Split up libnx-x11 into individual packages.
+    + Provide dbg:packages for each bin:package containing binaries.
+    + Use Makefile logic to install files into DESTDIR.
+    + Provide dev:packages for each lib:package individually.
+    + Provide nx-x11proto-*-dev packages for all libnx-* libraries.
+    + Install _all_ library files (*.so*) to /usr/lib/<triplet>/, so
+      no extra settings of LD_LIBRARY_PATH is necessary.
+
+  * debian/rules:
+    + Backup nxcomp/VERSION file from NoMachine before replacing it with
+      a symlink to debian/VERSION. Recreate the original file when cleaning
+      up.
+    + Fix removal of unused code (that part of the code that we know of so
+      far). (The debian/rules file is a Makefile and Makefiles don't understand
+      shell globbing with curly braces).
 
   [ Horst Schirmeier ]
   * Update 320_nxagent_configurable-keystrokes.full.patch. Fix a typo that

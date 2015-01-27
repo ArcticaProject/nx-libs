@@ -141,6 +141,36 @@ rm -Rf "debian/"
 
 #### bundled libraries and other stuff we do not need
 UNUSED_FOLDERS="
+                 nx-X11/config/docbook/ \
+                 nx-X11/config/pswrap/ \
+                 nx-X11/config/util/ \
+                 nx-X11/extras/Mesa/bin/ \
+                 nx-X11/extras/Mesa/config/ \
+                 nx-X11/extras/Mesa/docs/ \
+                 nx-X11/extras/Mesa/vms/ \
+                 nx-X11/extras/Mesa/windows/ \
+                 nx-X11/extras/Mesa/src/glw/ \
+                 nx-X11/extras/Mesa/src/mesa/drivers/dri/fb/ \
+                 nx-X11/extras/Mesa/src/mesa/drivers/dri/ffb/ \
+                 nx-X11/extras/Mesa/src/mesa/drivers/dri/gamma/ \
+                 nx-X11/extras/Mesa/src/mesa/drivers/dri/i810/ \
+                 nx-X11/extras/Mesa/src/mesa/drivers/dri/i830/ \
+                 nx-X11/extras/Mesa/src/mesa/drivers/dri/i915/ \
+                 nx-X11/extras/Mesa/src/mesa/drivers/dri/mach64/ \
+                 nx-X11/extras/Mesa/src/mesa/drivers/dri/mga/ \
+                 nx-X11/extras/Mesa/src/mesa/drivers/dri/r128/ \
+                 nx-X11/extras/Mesa/src/mesa/drivers/dri/r200/ \
+                 nx-X11/extras/Mesa/src/mesa/drivers/dri/r300/ \
+                 nx-X11/extras/Mesa/src/mesa/drivers/dri/radeon/ \
+                 nx-X11/extras/Mesa/src/mesa/drivers/dri/s3v/ \
+                 nx-X11/extras/Mesa/src/mesa/drivers/dri/savage/ \
+                 nx-X11/extras/Mesa/src/mesa/drivers/dri/sis/ \
+                 nx-X11/extras/Mesa/src/mesa/drivers/dri/tdfx/ \
+                 nx-X11/extras/Mesa/src/mesa/drivers/dri/trident/ \
+                 nx-X11/extras/Mesa/src/mesa/drivers/dri/unichrome/ \
+                 nx-X11/extras/Mesa/src/mesa/drivers/dri/x11/ \
+                 nx-X11/extras/Mesa/src/mesa/drivers/fbdev/ \
+                 nx-X11/extras/Mesa/src/mesa/drivers/glide/ \
                  nx-X11/extras/drm/ \
                  nx-X11/extras/expat/ \
                  nx-X11/extras/fontconfig/ \
@@ -168,34 +198,12 @@ UNUSED_FOLDERS="
                  nx-X11/lib/Xt/ \
                  nx-X11/lib/Xmu/ \
                  nx-X11/lib/Xmuu/ \
-                 nx-X11/extras/Mesa/bin/ \
-                 nx-X11/extras/Mesa/config/ \
-                 nx-X11/extras/Mesa/docs/ \
-                 nx-X11/extras/Mesa/vms/ \
-                 nx-X11/extras/Mesa/windows/ \
-                 nx-X11/extras/Mesa/src/glw/ \
-                 nx-X11/extras/Mesa/src/glx/ \
-                 nx-X11/extras/Mesa/src/mesa/drivers/dri/fb/ \
-                 nx-X11/extras/Mesa/src/mesa/drivers/dri/ffb/ \
-                 nx-X11/extras/Mesa/src/mesa/drivers/dri/gamma/ \
-                 nx-X11/extras/Mesa/src/mesa/drivers/dri/i810/ \
-                 nx-X11/extras/Mesa/src/mesa/drivers/dri/i830/ \
-                 nx-X11/extras/Mesa/src/mesa/drivers/dri/i915/ \
-                 nx-X11/extras/Mesa/src/mesa/drivers/dri/mach64/ \
-                 nx-X11/extras/Mesa/src/mesa/drivers/dri/mga/ \
-                 nx-X11/extras/Mesa/src/mesa/drivers/dri/r128/ \
-                 nx-X11/extras/Mesa/src/mesa/drivers/dri/r200/ \
-                 nx-X11/extras/Mesa/src/mesa/drivers/dri/r300/ \
-                 nx-X11/extras/Mesa/src/mesa/drivers/dri/radeon/ \
-                 nx-X11/extras/Mesa/src/mesa/drivers/dri/s3v/ \
-                 nx-X11/extras/Mesa/src/mesa/drivers/dri/savage/ \
-                 nx-X11/extras/Mesa/src/mesa/drivers/dri/sis/ \
-                 nx-X11/extras/Mesa/src/mesa/drivers/dri/tdfx/ \
-                 nx-X11/extras/Mesa/src/mesa/drivers/dri/trident/ \
-                 nx-X11/extras/Mesa/src/mesa/drivers/dri/unichrome/ \
-                 nx-X11/extras/Mesa/src/mesa/drivers/dri/x11/ \
-                 nx-X11/extras/Mesa/src/mesa/drivers/fbdev/ \
-                 nx-X11/extras/Mesa/src/mesa/drivers/glide/ \
+                 nx-X11/nls/ \
+                 nx-X11/programs/Xserver/afb/ \
+                 nx-X11/programs/Xserver/cfb/ \
+                 nx-X11/programs/Xserver/cfb16/ \
+                 nx-X11/programs/Xserver/cfb24/ \
+                 nx-X11/programs/Xserver/cfb32/ \
                  nx-X11/programs/Xserver/hw/darwin/ \
                  nx-X11/programs/Xserver/hw/dmx/ \
                  nx-X11/programs/Xserver/hw/kdrive/ \
@@ -205,15 +213,25 @@ UNUSED_FOLDERS="
                  nx-X11/programs/Xserver/hw/xnest/ \
                  nx-X11/programs/Xserver/hw/xwin/ \
                  nx-X11/programs/Xserver/hw/xfree86/ \
+                 nx-X11/programs/Xserver/hw/xfree86/ \
+                 nx-X11/programs/Xserver/ilbm/ \
+                 nx-X11/programs/Xserver/iplan2p2/ \
+                 nx-X11/programs/Xserver/iplan2p4/ \
+                 nx-X11/programs/Xserver/iplan2p8/ \
+                 nx-X11/programs/Xserver/lbx/ \
+                 nx-X11/programs/Xserver/mfb/ \
+                 nx-X11/programs/Xserver/miext/layer/ \
                  nx-X11/programs/Xserver/miext/shadow/ \
                  nx-X11/programs/Xserver/XpConfig/ \
                  nx-X11/programs/Xserver/Xprint/ \
                  nx-X11/programs/xterm/ \
+                 nx-X11/util/ \
                  ${NULL}
 "
 
 # folders to go away completely, but may get recreated by PRESERVE_SYMLINKED_FILES section below
 CLEANUP_FOLDERS="
+                  nx-X11/config/cf/ \
                   nx-X11/extras/Mesa/ \
                   nx-X11/extras/Xpm/ \
                   ${NULL}
@@ -221,6 +239,143 @@ CLEANUP_FOLDERS="
 
 # files that are symlinked into the nxagent Xserver, that we do need
 PRESERVE_SYMLINKED_FILES="
+                           nx-X11/config/cf/sunLib.tmpl.X.original
+                           nx-X11/config/cf/Amoeba.cf
+                           nx-X11/config/cf/sequent.cf
+                           nx-X11/config/cf/cde.rules
+                           nx-X11/config/cf/osfLib.rules
+                           nx-X11/config/cf/mingw.rules
+                           nx-X11/config/cf/X11.rules
+                           nx-X11/config/cf/sunLib.tmpl
+                           nx-X11/config/cf/cygwin.cf
+                           nx-X11/config/cf/scoLib.rules
+                           nx-X11/config/cf/os2def.db
+                           nx-X11/config/cf/darwin.cf
+                           nx-X11/config/cf/OpenBSDLib.tmpl
+                           nx-X11/config/cf/oldlib.rules
+                           nx-X11/config/cf/os2.rules
+                           nx-X11/config/cf/pegasus.cf
+                           nx-X11/config/cf/lnxLib.rules
+                           nx-X11/config/cf/Win32.rules
+                           nx-X11/config/cf/sco5.cf
+                           nx-X11/config/cf/mingw.cf
+                           nx-X11/config/cf/WinLib.tmpl
+                           nx-X11/config/cf/apollo.cf
+                           nx-X11/config/cf/convex.cf
+                           nx-X11/config/cf/bsdLib.tmpl
+                           nx-X11/config/cf/svr4.cf.X.original
+                           nx-X11/config/cf/noop.rules
+                           nx-X11/config/cf/dmx.cf
+                           nx-X11/config/cf/sv3Lib.tmpl
+                           nx-X11/config/cf/ibmLib.rules
+                           nx-X11/config/cf/sv4Lib.rules
+                           nx-X11/config/cf/hpLib.tmpl
+                           nx-X11/config/cf/bsd.cf
+                           nx-X11/config/cf/Motif.tmpl
+                           nx-X11/config/cf/gnuLib.tmpl
+                           nx-X11/config/cf/necLib.rules
+                           nx-X11/config/cf/xorgsite.def
+                           nx-X11/config/cf/QNX4.rules
+                           nx-X11/config/cf/lynx.cf
+                           nx-X11/config/cf/osf1.cf
+                           nx-X11/config/cf/xf86.tmpl
+                           nx-X11/config/cf/svr3.cf
+                           nx-X11/config/cf/linux.cf
+                           nx-X11/config/cf/minix.cf
+                           nx-X11/config/cf/hp.cf
+                           nx-X11/config/cf/QNX4.cf
+                           nx-X11/config/cf/sgi.cf
+                           nx-X11/config/cf/xf86.rules
+                           nx-X11/config/cf/Imake.tmpl
+                           nx-X11/config/cf/xprint_host.def
+                           nx-X11/config/cf/xf86site.def
+                           nx-X11/config/cf/ncr.cf
+                           nx-X11/config/cf/sony.cf
+                           nx-X11/config/cf/gnuLib.rules
+                           nx-X11/config/cf/sun.cf.X.original
+                           nx-X11/config/cf/OpenBSDLib.rules
+                           nx-X11/config/cf/darwinLib.tmpl
+                           nx-X11/config/cf/sequentLib.rules
+                           nx-X11/config/cf/sv4Lib.tmpl
+                           nx-X11/config/cf/hpLib.rules
+                           nx-X11/config/cf/darwinLib.rules
+                           nx-X11/config/cf/bsdiLib.tmpl
+                           nx-X11/config/cf/host.def
+                           nx-X11/config/cf/iPAQH3600.cf.NX.original
+                           nx-X11/config/cf/Threads.tmpl
+                           nx-X11/config/cf/nto.cf
+                           nx-X11/config/cf/cygwin.tmpl
+                           nx-X11/config/cf/sco.cf
+                           nx-X11/config/cf/svr4.cf
+                           nx-X11/config/cf/ServerLib.tmpl
+                           nx-X11/config/cf/usl.cf
+                           nx-X11/config/cf/sun.cf.NX.original
+                           nx-X11/config/cf/host.def.NX.original
+                           nx-X11/config/cf/sgiLib.tmpl
+                           nx-X11/config/cf/cross.def.NX.original
+                           nx-X11/config/cf/iPAQH3600.cf.X.original
+                           nx-X11/config/cf/mingw.tmpl
+                           nx-X11/config/cf/xorgversion.def
+                           nx-X11/config/cf/sunLib.rules
+                           nx-X11/config/cf/lnxLib.tmpl
+                           nx-X11/config/cf/xfree86.cf
+                           nx-X11/config/cf/sgiLib.rules
+                           nx-X11/config/cf/ultrix.cf
+                           nx-X11/config/cf/bsdiLib.rules
+                           nx-X11/config/cf/ibm.cf
+                           nx-X11/config/cf/cygwin.rules
+                           nx-X11/config/cf/cross.def
+                           nx-X11/config/cf/Win32.cf
+                           nx-X11/config/cf/site.def
+                           nx-X11/config/cf/os2.cf
+                           nx-X11/config/cf/gnu.cf
+                           nx-X11/config/cf/cross.rules
+                           nx-X11/config/cf/nec.cf
+                           nx-X11/config/cf/Library.tmpl
+                           nx-X11/config/cf/OpenBSD.cf
+                           nx-X11/config/cf/Server.tmpl
+                           nx-X11/config/cf/fujitsu.cf
+                           nx-X11/config/cf/os2Lib.tmpl
+                           nx-X11/config/cf/Oki.cf
+                           nx-X11/config/cf/README
+                           nx-X11/config/cf/FreeBSD.cf
+                           nx-X11/config/cf/site.sample
+                           nx-X11/config/cf/bsdLib.rules
+                           nx-X11/config/cf/Imake.cf
+                           nx-X11/config/cf/cde.tmpl
+                           nx-X11/config/cf/Motif.rules
+                           nx-X11/config/cf/DragonFly.cf
+                           nx-X11/config/cf/Mips.cf
+                           nx-X11/config/cf/lnxdoc.rules
+                           nx-X11/config/cf/necLib.tmpl
+                           nx-X11/config/cf/lnxdoc.tmpl
+                           nx-X11/config/cf/cross.def.X.original
+                           nx-X11/config/cf/sunLib.tmpl.NX.original
+                           nx-X11/config/cf/os2Lib.rules
+                           nx-X11/config/cf/NetBSD.cf
+                           nx-X11/config/cf/host.def.X.original
+                           nx-X11/config/cf/moto.cf
+                           nx-X11/config/cf/sv3Lib.rules
+                           nx-X11/config/cf/bsdi.cf
+                           nx-X11/config/cf/xorg.cf
+                           nx-X11/config/cf/svr4.cf.NX.original
+                           nx-X11/config/cf/DGUX.cf
+                           nx-X11/config/cf/osfLib.tmpl
+                           nx-X11/config/cf/x386.cf
+                           nx-X11/config/cf/iPAQH3600.cf
+                           nx-X11/config/cf/Imake.rules
+                           nx-X11/config/cf/X11.tmpl
+                           nx-X11/config/cf/luna.cf
+                           nx-X11/config/cf/mach.cf
+                           nx-X11/config/cf/xorg.tmpl
+                           nx-X11/config/cf/ibmLib.tmpl
+                           nx-X11/config/cf/isc.cf
+                           nx-X11/config/cf/generic.cf
+                           nx-X11/config/cf/sun.cf
+                           nx-X11/config/cf/macII.cf
+                           nx-X11/config/cf/cray.cf
+                           nx-X11/config/cf/Imakefile
+                           nx-X11/config/cf/nto.rules
                            nx-X11/extras/Mesa/include/GL/glext.h \
                            nx-X11/extras/Mesa/include/GL/gl.h \
                            nx-X11/extras/Mesa/include/GL/glxext.h \
@@ -874,8 +1029,13 @@ PRESERVE_SYMLINKED_FILES="
                            ${NULL}
 "
 
+PRESERVE_INCLUDED_FILES="
+                           nx-X11/programs/Xserver/mfb/maskbits.h \
+                           ${NULL}
+"
+
 mkdir -p .preserve/
-for path in ${PRESERVE_SYMLINKED_FILES}; do
+for path in ${PRESERVE_SYMLINKED_FILES} ${PRESERVE_INCLUDED_FILES}; do
 	if [ ! -d $path ]; then
 		path_dirname=$(dirname "$path")
 	else
