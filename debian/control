@@ -66,7 +66,6 @@ Package: libnx-x11
 Architecture: any
 Multi-Arch: same
 Depends:
- ${shlibs:Depends},
  ${misc:Depends},
  libnx-x11-6 (>= ${source:Version}), libnx-x11-6 (<< ${source:Version}.1), 
 Description: nx-X11 client-side library (transitional dummy package)
