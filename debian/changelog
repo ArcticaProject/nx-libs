@@ -50,6 +50,7 @@ nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
       support Multi-Arch.
     + Support hardened builds for nxcomp* libraries.
     + Support hardened builds for nxagent and libNX_*.so files.
+    + Add debian/*.symbols files for shared nx-X11 libraries.
 
   * debian/rules:
     + Backup nxcomp/VERSION file from NoMachine before replacing it with

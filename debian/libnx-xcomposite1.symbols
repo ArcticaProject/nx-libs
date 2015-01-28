@@ -1,0 +1,13 @@
+libNX_Xcomposite.so.1 libnx-xcomposite1 #MINVER#
+ XCompositeCreateRegionFromBorderClip@Base 3.5.0.29
+ XCompositeExtensionInfo@Base 3.5.0.29
+ XCompositeExtensionName@Base 3.5.0.29
+ XCompositeFindDisplay@Base 3.5.0.29
+ XCompositeNameWindowPixmap@Base 3.5.0.29
+ XCompositeQueryExtension@Base 3.5.0.29
+ XCompositeQueryVersion@Base 3.5.0.29
+ XCompositeRedirectSubwindows@Base 3.5.0.29
+ XCompositeRedirectWindow@Base 3.5.0.29
+ XCompositeUnredirectSubwindows@Base 3.5.0.29
+ XCompositeUnredirectWindow@Base 3.5.0.29
+ XCompositeVersion@Base 3.5.0.29
