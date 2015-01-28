@@ -987,6 +987,8 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %{_bindir}/nxagent
 %dir %{_libdir}/nx/bin
 %{_libdir}/nx/bin/nxagent
+%{_datadir}/pixmaps/nxagent.xpm
+%{_datadir}/nx/rgb
 
 %files -n nxauth
 %defattr(-,root,root)
