@@ -1,0 +1,94 @@
+--- a/nxcomp/CHANGELOG
++++ b/nxcomp/CHANGELOG
+@@ -668,7 +668,7 @@
+ 
+ nxcomp-2.0.0-69
+ 
+-- Changed the format of the persistent cache to accomodate the new
++- Changed the format of the persistent cache to accommodate the new
+   encoding of the render opcodes. Caches from the 1.4.0 and 1.5.0
+   should be still loaded and saved correctly when connected to and
+   old version of the library.
+--- a/nxcomp/ClientReadBuffer.cpp
++++ b/nxcomp/ClientReadBuffer.cpp
+@@ -29,7 +29,7 @@
+   //
+   // Even if the pending data is not
+   // enough to make a complete message,
+-  // resize the buffer to accomodate
++  // resize the buffer to accommodate
+   // it all.
+   //
+ 
+--- a/nxcomp/EncodeBuffer.cpp
++++ b/nxcomp/EncodeBuffer.cpp
+@@ -505,12 +505,12 @@
+   {
+     #ifdef PANIC
+     *logofs << "EncodeBuffer: PANIC! Error in context [C] "
+-            << "growing buffer to accomodate " << numBytes
++            << "growing buffer to accommodate " << numBytes
+             << " bytes .\n" << logofs_flush;
+     #endif
+ 
+     cerr << "Error" << ": Error in context [C] "
+-         << "growing encode buffer to accomodate "
++         << "growing encode buffer to accommodate "
+          << numBytes << " bytes.\n";
+ 
+     HandleAbort();
+--- a/nxcomp/GenericChannel.cpp
++++ b/nxcomp/GenericChannel.cpp
+@@ -210,7 +210,7 @@
+   // All data has been read from the read buffer.
+   // We still need to mark the end of the encode
+   // buffer just before sending the frame. This
+-  // allows us to accomodate multiple reads in
++  // allows us to accommodate multiple reads in
+   // a single frame.
+   //
+ 
+--- a/nxcomp/ProxyReadBuffer.cpp
++++ b/nxcomp/ProxyReadBuffer.cpp
+@@ -50,7 +50,7 @@
+   //
+   // Even if the readable data is not
+   // enough to make a complete message,
+-  // resize the buffer to accomodate
++  // resize the buffer to accommodate
+   // it all.
+   //
+ 
+--- a/nxcomp/ServerReadBuffer.cpp
++++ b/nxcomp/ServerReadBuffer.cpp
+@@ -46,7 +46,7 @@
+   //
+   // Even if the readable data is not
+   // enough to make a complete message,
+-  // resize the buffer to accomodate
++  // resize the buffer to accommodate
+   // it all.
+   //
+ 
+--- a/nxcomp/Transport.h
++++ b/nxcomp/Transport.h
+@@ -226,7 +226,7 @@
+   protected:
+ 
+   //
+-  // Make room in the buffer to accomodate 
++  // Make room in the buffer to accommodate 
+   // at least size bytes.
+   //
+ 
+--- a/nxcomp/Types.h
++++ b/nxcomp/Types.h
+@@ -179,7 +179,7 @@
+ typedef list < int > T_list;
+ 
+ //
+-// Used to accomodate data to be read and
++// Used to accommodate data to be read and
+ // written to a socket.
+ //
+ 

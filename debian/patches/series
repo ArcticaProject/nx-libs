@@ -73,6 +73,8 @@
 606_nx-X11_build-on-aarch64.full.patch
 607_nxcomp_macosx-X11-launcher-in-private-tmp.full+lite.patch
 990_fix-DEBUG-and-TEST-builds.full.patch
+991_fix-hr-typos.full+lite.patch
+991_fix-hr-typos.full.patch
 999_nxagent_unbrand-nxagent-brand-x2goagent.full.patch
 016_nx-X11_install-location.debian.patch
 102_xserver-xext_set-securitypolicy-path.debian.patch
