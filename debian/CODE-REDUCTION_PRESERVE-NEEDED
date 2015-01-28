@@ -1,3 +1,5 @@
+nx-X11/config/cf/cross.def
+nx-X11/config/cf/cross.rules
 nx-X11/config/cf/host.def
 nx-X11/config/cf/Imake.cf
 nx-X11/config/cf/Imakefile
