@@ -544,13 +544,38 @@ mkdir etc/
 cp -v debian/keystrokes.cfg etc/keystrokes.cfg
 cp -v debian/Makefile.nx-libs Makefile
 cp -v debian/Makefile.replace.sh replace.sh
-cp -v debian/rgb rgb
+cp -v debian/rgb etc/rgb
+cp -v debian/nxagent.keyboard etc/nxagent.keyboard
+cp -v debian/x2goagent.keyboard etc/x2goagent.keyboard
 cp -v debian/VERSION VERSION.x2goagent
 cp -v debian/VERSION nxcomp/VERSION
-# remove bundled libraries (also taken from roll-tarball.sh)
-rm -Rf nx-X11/extras/{drm,expat,fontconfig,freetype2,fonts,ogl-sample,regex,rman,ttf2pt1,x86emu,zlib}
-rm -Rf nx-X11/lib/{expat,fontconfig,fontenc,font/FreeType,font/include/fontenc.h,freetype2,regex,zlib}
-rm -Rf nx-X11/lib/{FS,ICE,SM,Xaw,Xft,Xt,Xmu,Xmuu}
+
+### remove bundled libraries (also taken from roll-tarball.sh)
+UNUSED_FOLDERS=`cat debian/CODE-REDUCTION_CLEANUP-UNUSED`
+CLEANUP_FOLDERS=`cat debian/CODE-REDUCTION_CLEANUP-BRUTAL`
+UNNEEDED_BACKUPS=`cat debian/CODE-REDUCTION_CLEANUP-BACKUPFILES`
+PRESERVE_SYMLINKED_FILES=`cat debian/CODE-REDUCTION_PRESERVE-SYMLINKED`
+PRESERVE_INCLUDED_FILES=`cat debian/CODE-REDUCTION_PRESERVE-SYMLINKED`
+PRESERVE_NEEDED_FILES=`cat debian/CODE-REDUCTION_PRESERVE-NEEDED`
+mkdir -p .preserve/
+for path in ${PRESERVE_SYMLINKED_FILES} ${PRESERVE_INCLUDED_FILES} ${PRESERVE_NEEDED_FILES}; do
+    if [ ! -d $path ]; then
+	path_dirname=$(dirname "$path")
+    else
+	path_dirname="$path"
+    fi
+    mkdir -vp ".preserve/$path_dirname"
+    cp -av "$path" ".preserve/$path"
+done
+for path in ${UNUSED_FOLDERS} ${CLEAN_FOLDERS} ${UNNEEDED_BACKUPS}; do
+    rm -R "$path"
+done
+
+# re-create the to-be-preserved files
+cp -a .preserve/* ./
+rm -Rf .preserve/
+### end of remove bundle libraries
+
 # remove build cruft that is in Git (also taken from roll-tarball.sh)
 rm -Rf nx*/configure nx*/autom4te.cache*
 # Install into /usr
@@ -587,19 +612,20 @@ chmod a+x my_configure;
 # The RPM macro for the linker flags does not exist on EPEL
 %{!?__global_ldflags: %global __global_ldflags -Wl,-z,relro}
 export SHLIBGLOBALSFLAGS="%{__global_ldflags}"
+export LOCAL_LDFLAGS="%{__global_ldflags}"
 make %{?_smp_mflags} CONFIGURE="$PWD/my_configure" USRLIBDIR=%{_libdir}/nx SHLIBDIR=%{_libdir}/nx
 
 %install
 make install \
         DESTDIR=%{buildroot} \
         PREFIX=%{_prefix} \
-        USRLIBDIR=%{_libdir}/nx SHLIBDIR=%{_libdir}/nx \
+        USRLIBDIR=%{_libdir} SHLIBDIR=%{_libdir} \
         INSTALL_DIR="install -dm0755" \
         INSTALL_FILE="install -pm0644" \
         INSTALL_PROGRAM="install -pm0755"
 
 # Remove static libs
-rm %{buildroot}%{_libdir}/nx/*.a
+rm %{buildroot}%{_libdir}/*.a
 
 # Make sure x2goagent is linked relative and on 64-bit
 mkdir -p %{buildroot}%{_libdir}/x2go/bin
@@ -607,11 +633,6 @@ ln -sf ../../nx/bin/nxagent %{buildroot}%{_libdir}/x2go/bin/x2goagent
 
 # Fix permissions on shared libraries
 chmod 755  %{buildroot}%{_libdir}/nx/{,X11/}lib*.so*
-
-# Linker
-mkdir -p %{buildroot}%{_sysconfdir}/ld.so.conf.d/
-echo %{_libdir}/nx > %{buildroot}%{_sysconfdir}/ld.so.conf.d/%{name}-%{_arch}.conf
-echo %{_libdir}/nx/X11 >> %{buildroot}%{_sysconfdir}/ld.so.conf.d/%{name}-%{_arch}.conf
 
 #Remove extras, GL, and other unneeded headers
 rm -r %{buildroot}%{_includedir}/nx/GL
@@ -665,19 +686,16 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %files
 %defattr(-,root,root)
 %doc nx-X11/{COPYING,LICENSE,README}
-%config(noreplace) %{_sysconfdir}/ld.so.conf.d/%{name}-%{_arch}.conf
-%dir %{_libdir}/nx
 %dir %{_datadir}/nx
 %{_datadir}/nx/SecurityPolicy
 
 %files -n libNX_X11
 %defattr(-,root,root)
-%dir %{_libdir}/nx/X11
 %{_libdir}/nx/X11/libNX_X11.so.6*
 
 %files -n libNX_X11-devel
 %defattr(-,root,root)
-%{_libdir}/nx/X11/libNX_X11.so
+%{_libdir}/libNX_X11.so
 %dir %{_includedir}/nx
 %dir %{_includedir}/nx/X11
 %{_includedir}/nx/X11/ImUtil.h
@@ -694,33 +712,33 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 
 %files -n libNX_Xau-devel
 %defattr(-,root,root)
-%{_libdir}/nx/X11/libNX_Xau.so
+%{_libdir}/libNX_Xau.so
 %{_includedir}/nx/X11/Xauth.h
 
 %files -n libNX_Xau
 %defattr(-,root,root)
-%{_libdir}/nx/X11/libNX_Xau.so.6*
+%{_libdir}/libNX_Xau.so.6*
 
 %files -n libNX_Xcomposite
 %defattr(-,root,root)
-%{_libdir}/nx/X11/libNX_Xcomposite.so.1*
+%{_libdir}/libNX_Xcomposite.so.1*
 
 %files -n libNX_Xdamage
 %defattr(-,root,root)
-%{_libdir}/nx/X11/libNX_Xdamage.so.1*
+%{_libdir}/libNX_Xdamage.so.1*
 
 %files -n libNX_Xdmcp-devel
 %defattr(-,root,root)
-%{_libdir}/nx/X11/libNX_Xdmcp.so
+%{_libdir}/libNX_Xdmcp.so
 %{_includedir}/nx/X11/Xdmcp.h
 
 %files -n libNX_Xdmcp
 %defattr(-,root,root)
-%{_libdir}/nx/X11/libNX_Xdmcp.so.6*
+%{_libdir}/libNX_Xdmcp.so.6*
 
 %files -n libNX_Xext-devel
 %defattr(-,root,root)
-%{_libdir}/nx/X11/libNX_Xext.so
+%{_libdir}/libNX_Xext.so
 %dir %{_includedir}/nx/X11/extensions
 %{_includedir}/nx/X11/extensions/MITMisc.h
 %{_includedir}/nx/X11/extensions/XEVI.h
@@ -751,20 +769,20 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 
 %files -n libNX_Xext
 %defattr(-,root,root)
-%{_libdir}/nx/X11/libNX_Xext.so.6*
+%{_libdir}/libNX_Xext.so.6*
 
 %files -n libNX_Xfixes-devel
 %defattr(-,root,root)
-%{_libdir}/nx/X11/libNX_Xfixes.so
+%{_libdir}/libNX_Xfixes.so
 %{_includedir}/nx/X11/extensions/Xfixes.h
 
 %files -n libNX_Xfixes
 %defattr(-,root,root)
-%{_libdir}/nx/X11/libNX_Xfixes.so.3*
+%{_libdir}/libNX_Xfixes.so.3*
 
 %files -n libNX_Xinerama
 %defattr(-,root,root)
-%{_libdir}/nx/X11/libNX_Xinerama.so.1*
+%{_libdir}/libNX_Xinerama.so.1*
 %dir %{_libdir}/nx/X11/Xinerama/
 %{_libdir}/nx/X11/Xinerama/libNX_X11.so.6
 %{_libdir}/nx/X11/Xinerama/libNX_Xext.so.6
@@ -772,33 +790,33 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 
 %files -n libNX_Xpm-devel
 %defattr(-,root,root)
-%{_libdir}/nx/X11/libNX_Xpm.so
+%{_libdir}/libNX_Xpm.so
 %{_includedir}/nx/X11/xpm.h
 
 %files -n libNX_Xpm
 %defattr(-,root,root)
-%{_libdir}/nx/X11/libNX_Xpm.so.4*
+%{_libdir}/libNX_Xpm.so.4*
 
 %files -n libNX_Xrandr
 %defattr(-,root,root)
-%{_libdir}/nx/X11/libNX_Xrandr.so.2*
+%{_libdir}/libNX_Xrandr.so.2*
 
 %files -n libNX_Xrender-devel
 %defattr(-,root,root)
-%{_libdir}/nx/X11/libNX_Xrender.so
+%{_libdir}/libNX_Xrender.so
 %{_includedir}/nx/X11/extensions/Xrender.h
 
 %files -n libNX_Xrender
 %defattr(-,root,root)
-%{_libdir}/nx/X11/libNX_Xrender.so.1*
+%{_libdir}/libNX_Xrender.so.1*
 
 %files -n libNX_Xtst
 %defattr(-,root,root)
-%{_libdir}/nx/X11/libNX_Xtst.so.6*
+%{_libdir}/libNX_Xtst.so.6*
 
 %files -n libXcomp-devel
 %defattr(-,root,root)
-%_libdir/nx/libXcomp.so
+%_libdir/libXcomp.so
 %{_includedir}/nx/MD5.h
 %{_includedir}/nx/NX.h
 %{_includedir}/nx/NXalert.h
@@ -811,22 +829,22 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %files -n libXcomp
 %defattr(-,root,root)
 %doc nxcomp/{COPYING,LICENSE,README}
-%_libdir/nx/libXcomp.so.3*
+%_libdir/libXcomp.so.3*
 
 %files -n libXcompext-devel
 %defattr(-,root,root)
-%_libdir/nx/libXcompext.so
+%_libdir/libXcompext.so
 %{_includedir}/nx/NXlib.h
 %{_includedir}/nx/NXlibint.h
 
 %files -n libXcompext
 %defattr(-,root,root)
 %doc nxcompext/{COPYING,LICENSE,README}
-%_libdir/nx/libXcompext.so.3*
+%_libdir/libXcompext.so.3*
 
 %files -n libXcompshad-devel
 %defattr(-,root,root)
-%_libdir/nx/libXcompshad.so
+%_libdir/libXcompshad.so
 %{_includedir}/nx/Core.h
 %{_includedir}/nx/Input.h
 %{_includedir}/nx/Logger.h
@@ -842,15 +860,15 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %files -n libXcompshad
 %defattr(-,root,root)
 %doc nxcompshad/{CHANGELOG,COPYING,LICENSE}
-%_libdir/nx/libXcompshad.so.3*
+%_libdir/libXcompshad.so.3*
 
 %files devel
 %defattr(-,root,root)
-%{_libdir}/nx/X11/libNX_Xcomposite.so
-%{_libdir}/nx/X11/libNX_Xdamage.so
-%{_libdir}/nx/X11/libNX_Xinerama.so
-%{_libdir}/nx/X11/libNX_Xrandr.so
-%{_libdir}/nx/X11/libNX_Xtst.so
+%{_libdir}/libNX_Xcomposite.so
+%{_libdir}/libNX_Xdamage.so
+%{_libdir}/libNX_Xinerama.so
+%{_libdir}/libNX_Xrandr.so
+%{_libdir}/libNX_Xtst.so
 %{_includedir}/nx/X11/X10.h
 %dir %{_includedir}/nx/X11/extensions
 %{_includedir}/nx/X11/extensions/XRes.h
@@ -964,6 +982,8 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %defattr(-,root,root)
 %dir %{_sysconfdir}/nxagent
 %config(noreplace) %{_sysconfdir}/nxagent/keystrokes.cfg
+%config(noreplace) %{_sysconfdir}/nxagent/nxagent.keyboard
+%config(noreplace) %{_sysconfdir}/nxagent/rgb
 %{_bindir}/nxagent
 %dir %{_libdir}/nx/bin
 %{_libdir}/nx/bin/nxagent
@@ -986,6 +1006,8 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %dir %{_libdir}/x2go
 %dir %{_libdir}/x2go/bin
 %config(noreplace) %{_sysconfdir}/x2go/keystrokes.cfg
+%config(noreplace) %{_sysconfdir}/x2go/x2goagent.keyboard
+%config(noreplace) %{_sysconfdir}/x2go/rgb
 %{_bindir}/x2goagent
 %{_libdir}/x2go/bin/x2goagent
 %{_datadir}/pixmaps/x2go.xpm

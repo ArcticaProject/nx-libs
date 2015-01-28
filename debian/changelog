@@ -65,6 +65,8 @@ nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
   * nx-libs.spec:
     + The gpg-offline bin:package is not available in our SLE repo. We can do
       without.
+    + Update .spec file to meet changes in tarball size reduction and
+      restructuring.
 
   * debian/roll-tarball.sh:
     + Install etc/ files into etc/ subfolder (rgb, nxagent.keyboard,
