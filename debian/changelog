@@ -41,6 +41,8 @@ nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
     + Fix removal of unused code (that part of the code that we know of so
       far). (The debian/rules file is a Makefile and Makefiles don't understand
       shell globbing with curly braces).
+    + Correctly link config files (etc/rgb, etc/nxagent.keyboard,
+      etc/x2goagent.keyboard) before dh_auto_build.
   * Modify 101_nxagent_set-rgb-path.full.patch. Allow configurable rgb files.
   * Extend 999_nxagent_unbrand-nxagent-brand-x2goagent.full.patch. Let rgb
     file shipped with x2goagent supersede rgb file shipped with nxagent.

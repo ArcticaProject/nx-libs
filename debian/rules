@@ -822,7 +822,9 @@ override_dh_auto_build:
 	ln -s debian/wrappers bin
 	mkdir -p etc/
 	ln -s ../debian/keystrokes.cfg etc/keystrokes.cfg
-	ln -s debian/rgb
+	ln -s ../debian/rgb etc/rgb
+	ln -s ../debian/nxagent.keyboard etc/nxagent.keyboard
+	ln -s ../debian/x2goagent.keyboard etc/x2goagent.keyboard
 	ln -sf debian/VERSION VERSION.x2goagent
 	ln -sf ../debian/VERSION nxcomp/VERSION
 
