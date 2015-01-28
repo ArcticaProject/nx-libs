@@ -35,7 +35,6 @@ nx-X11/lib/GL/mesa/drivers/dri/sis
 nx-X11/lib/GL/mesa/drivers/dri/tdfx
 nx-X11/lib/GL/mesa/drivers/dri/unichrome
 nx-X11/lib/GL/mesa/drivers/dri/via
-nx-X11/lib/GL/windows/
 nx-X11/lib/GLU/
 nx-X11/lib/GLw/
 nx-X11/lib/ICE/
