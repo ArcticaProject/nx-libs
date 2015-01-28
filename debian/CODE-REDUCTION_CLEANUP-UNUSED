@@ -40,7 +40,6 @@ nx-X11/programs/Xserver/hw/sun/
 nx-X11/programs/Xserver/hw/sunLynx/
 nx-X11/programs/Xserver/hw/vfb/
 nx-X11/programs/Xserver/hw/xfree86/
-nx-X11/programs/Xserver/hw/xfree86/
 nx-X11/programs/Xserver/hw/xnest/
 nx-X11/programs/Xserver/hw/xwin/
 nx-X11/programs/Xserver/ilbm/

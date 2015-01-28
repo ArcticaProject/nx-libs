@@ -1,4 +1,3 @@
-nx-X11/config/cf/date.def
 nx-X11/config/cf/host.def
 nx-X11/config/cf/Imake.cf
 nx-X11/config/cf/Imakefile
@@ -8,14 +7,12 @@ nx-X11/config/cf/Library.tmpl
 nx-X11/config/cf/linux.cf
 nx-X11/config/cf/lnxLib.rules
 nx-X11/config/cf/lnxLib.tmpl
-nx-X11/config/cf/Makefile
 nx-X11/config/cf/noop.rules
 nx-X11/config/cf/README
 nx-X11/config/cf/ServerLib.tmpl
 nx-X11/config/cf/Server.tmpl
 nx-X11/config/cf/site.def
 nx-X11/config/cf/Threads.tmpl
-nx-X11/config/cf/version.def
 nx-X11/config/cf/X11.rules
 nx-X11/config/cf/X11.tmpl
 nx-X11/config/cf/xf86.rules

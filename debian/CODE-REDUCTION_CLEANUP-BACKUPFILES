@@ -6,8 +6,6 @@ nx-X11/include/Xpoll.h.in.NX.original
 nx-X11/include/Xpoll.h.in.X.original
 nx-X11/lib/font/fontfile/encparse.c.NX.original
 nx-X11/lib/font/fontfile/encparse.c.X.original
-nx-X11/lib/SM/sm_client.c.NX.original
-nx-X11/lib/SM/sm_client.c.SM.original
 nx-X11/lib/X11/ChkIfEv.c.NX.original
 nx-X11/lib/X11/ChkIfEv.c.X.original
 nx-X11/lib/X11/cmsProp.c.X.original
@@ -195,10 +193,6 @@ nx-X11/programs/Xserver/randr/rrscreen.c.X.original
 nx-X11/programs/Xserver/randr/rrxinerama.c.NX.original
 nx-X11/programs/Xserver/randr/rrxinerama.c.X.original
 nx-X11/programs/Xserver/randr.X.original
-nx-X11/programs/Xserver/randr.X.original/Imakefile
-nx-X11/programs/Xserver/randr.X.original/mirandr.c
-nx-X11/programs/Xserver/randr.X.original/randr.c
-nx-X11/programs/Xserver/randr.X.original/randrstr.h
 nx-X11/programs/Xserver/render/renderedge.c.NX.original
 nx-X11/programs/Xserver/render/renderedge.c.X.original
 nx-X11/programs/Xserver/Xext/Imakefile.NX.original
@@ -217,10 +211,4 @@ nx-X11/programs/Xserver/xkb/Imakefile.NX.original
 nx-X11/programs/Xserver/xkb/Imakefile.X.original
 nx-X11/programs/Xserver/xkb/xkbDflts.h.NX.original
 nx-X11/programs/Xserver/xkb/xkbDflts.h.X.original
-nx-X11/programs/xterm/charproc.c.NX.original
-nx-X11/programs/xterm/charproc.c.X.original
-nx-X11/programs/xterm/Imakefile.NX.original
-nx-X11/programs/xterm/Imakefile.X.original
-nx-X11/programs/xterm/main.c.NX.original
-nx-X11/programs/xterm/main.c.X.original
 nx-X11/WSDrawBuffer.h.X.original
