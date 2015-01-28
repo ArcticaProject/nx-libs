@@ -149,8 +149,6 @@ nx-X11/programs/Xserver/Imakefile.NX.original
 nx-X11/programs/Xserver/Imakefile.X.original
 nx-X11/programs/Xserver/include/dixstruct.h.NX.original
 nx-X11/programs/Xserver/include/dixstruct.h.X.original
-nx-X11/programs/Xserver/miext/rootless/Imakefile.NX.original
-nx-X11/programs/Xserver/miext/rootless/Imakefile.X.original
 nx-X11/programs/Xserver/mi/Imakefile.NX.original
 nx-X11/programs/Xserver/mi/Imakefile.X.original
 nx-X11/programs/Xserver/os/auth.c.NX.original
