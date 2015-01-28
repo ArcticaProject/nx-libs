@@ -46,6 +46,8 @@ nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
     file shipped with x2goagent supersede rgb file shipped with nxagent.
     FIXME: a better approach would be to decide at runtime if to use
     /etc/x2go/rgb or /etc/nxagent/rgb.
+  * Extend 999_nxagent_unbrand-nxagent-brand-x2goagent.full.patch. Allow
+    separate .keyboard files for x2goagent and nxagent.
 
   [ Horst Schirmeier ]
   * Update 320_nxagent_configurable-keystrokes.full.patch. Fix a typo that
