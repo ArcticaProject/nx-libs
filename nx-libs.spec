@@ -85,7 +85,7 @@ This package provides the core nx-X11 libraries customized for
 nxagent/x2goagent.
 
 
-%package -n libNX_X11
+%package -n libNX_X11-6
 Group:          System Environment/Libraries
 Summary:        Core NX protocol client library
 Requires:       %{name}%{?_isa} = %{version}-%{release}
@@ -93,7 +93,7 @@ Requires:       %{name}%{?_isa} = %{version}-%{release}
 Requires:       xorg-x11-fonts-core
 %endif
 
-%description -n libNX_X11
+%description -n libNX_X11-6
 The X Window System is a network-transparent window system that was
 designed at MIT. X display servers run on computers with either
 monochrome or color bitmap display hardware. The server distributes
@@ -107,7 +107,7 @@ stream connection.
 %package -n libNX_X11-devel
 Group:          Development/Libraries
 Summary:        Development files for the Core NX protocol library
-Requires:       libNX_X11%{?_isa} = %{version}-%{release}
+Requires:       libNX_X11-6%{?_isa} = %{version}-%{release}
 Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
 
 %description -n libNX_X11-devel
@@ -127,7 +127,7 @@ needed to develop applications that require these.
 %package -n libNX_Xau-devel
 Group:          Development/Libraries
 Summary:        Development files for the NX authorization protocol library
-Requires:       libNX_Xau%{?_isa} = %{version}-%{release}
+Requires:       libNX_Xau6%{?_isa} = %{version}-%{release}
 Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
 
 %description -n libNX_Xau-devel
@@ -141,12 +141,12 @@ This package contains all necessary include files and libraries
 needed to develop applications that require these.
 
 
-%package -n libNX_Xau
+%package -n libNX_Xau6
 Group:          System Environment/Libraries
 Summary:        NX authorization protocol library
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 
-%description -n libNX_Xau
+%description -n libNX_Xau6
 libXau provides mechanisms for individual access to an X Window
 System display. It uses existing core protocol and library hooks for
 specifying authorization data in the connection setup block to
@@ -154,12 +154,12 @@ restrict use of the display to only those clients that show that they
 know a server-specific key called a "magic cookie".
 
 
-%package -n libNX_Xcomposite
+%package -n libNX_Xcomposite1
 Group:          System Environment/Libraries
 Summary:        NX protocol Composite extension client library
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 
-%description -n libNX_Xcomposite
+%description -n libNX_Xcomposite1
 The Composite extension causes a entire sub-tree of the window
 hierarchy to be rendered to an off-screen buffer. Applications can
 then take the contents of that buffer and do whatever they like. The
@@ -167,12 +167,12 @@ off-screen buffer can be automatically merged into the parent window
 or merged by external programs, called compositing managers.
 
 
-%package -n libNX_Xdamage
+%package -n libNX_Xdamage1
 Group:          System Environment/Libraries
 Summary:        NX Damage Extension library
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 
-%description -n libNX_Xdamage
+%description -n libNX_Xdamage1
 The X Damage Extension allows applications to track modified regions
 of drawables.
 
@@ -181,7 +181,7 @@ of drawables.
 Group:          Development/Libraries
 Summary:        Development files for the NXDM Control Protocol library
 Requires:       %{name}%{?_isa} = %{version}-%{release}
-Requires:       libNX_Xdmcp%{?_isa} = %{version}-%{release}
+Requires:       libNX_Xdmcp6%{?_isa} = %{version}-%{release}
 Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
 
 %description -n libNX_Xdmcp-devel
@@ -197,12 +197,12 @@ This package contains all necessary include files and libraries
 needed to develop applications that require these.
 
 
-%package -n libNX_Xdmcp
+%package -n libNX_Xdmcp6
 Group:          System Environment/Libraries
 Summary:        NX Display Manager Control Protocol library
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 
-%description -n libNX_Xdmcp
+%description -n libNX_Xdmcp6
 The X Display Manager Control Protocol (XDMCP) provides a uniform
 mechanism for an autonomous display to request login service from a
 remote host. By autonomous, we mean the display consists of hardware
@@ -215,8 +215,8 @@ display.
 %package -n libNX_Xext-devel
 Group:          Development/Libraries
 Summary:        Development files for the NX Common Extensions library
-Requires:       libNX_Xext%{?_isa} = %{version}-%{release}
-Requires:       libNX_Xau-devel%{?_isa} = %{version}-%{release}
+Requires:       libNX_Xext6%{?_isa} = %{version}-%{release}
+Requires:       libNX_Xau6-devel%{?_isa} = %{version}-%{release}
 Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
 
 %description -n libNX_Xext-devel
@@ -233,12 +233,12 @@ This package contains all necessary include files and libraries
 needed to develop applications that require these.
 
 
-%package -n libNX_Xext
+%package -n libNX_Xext6
 Group:          System Environment/Libraries
 Summary:        Common extensions to the NX protocol
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 
-%description -n libNX_Xext
+%description -n libNX_Xext6
 The Xext library contains a handful of X11 extensions:
 - Double Buffer extension (DBE/Xdbe)
 - Display Power Management Signaling (DPMS) extension
@@ -252,7 +252,7 @@ The Xext library contains a handful of X11 extensions:
 %package -n libNX_Xfixes-devel
 Group:          Development/Libraries
 Summary:        Development files for the NX Xfixes extension library
-Requires:       libNX_Xfixes%{?_isa} = %{version}-%{release}
+Requires:       libNX_Xfixes3%{?_isa} = %{version}-%{release}
 Requires:       libNX_X11-devel%{?_isa} = %{version}-%{release}
 Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
 
@@ -264,17 +264,17 @@ This package contains all necessary include files and libraries
 needed to develop applications that require these.
 
 
-%package -n libNX_Xfixes
+%package -n libNX_Xfixes3
 Group:          System Environment/Libraries
 Summary:        NX miscellaneous "fixes" extension library
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 
-%description -n libNX_Xfixes
+%description -n libNX_Xfixes3
 The X Fixes extension provides applications with work-arounds for
 various limitations in the core protocol.
 
 
-%package -n libNX_Xinerama
+%package -n libNX_Xinerama1
 Group:          System Environment/Libraries
 Summary:        Xinerama extension to the NX Protocol
 Requires:       %{name}%{?_isa} = %{version}-%{release}
@@ -286,7 +286,7 @@ Requires:       libX11%{?_isa}
 Requires:       libXext%{?_isa}
 %endif
 
-%description -n libNX_Xinerama
+%description -n libNX_Xinerama1
 Xinerama is an extension to the X Window System which enables
 multi-headed X applications and window managers to use two or more
 physical displays as one large virtual display.
@@ -295,7 +295,7 @@ physical displays as one large virtual display.
 %package -n libNX_Xpm-devel
 Group:          Development/Libraries
 Summary:        Development files for the NX Pixmap image file format library
-Requires:       libNX_Xpm%{?_isa} = %{version}-%{release}
+Requires:       libNX_Xpm4%{?_isa} = %{version}-%{release}
 
 %description -n libNX_Xpm-devel
 libXpm facilitates working with XPM (X PixMap), a format for
@@ -305,22 +305,22 @@ This package contains all necessary include files and libraries
 needed to develop applications that require these.
 
 
-%package -n libNX_Xpm
+%package -n libNX_Xpm4
 Group:          System Environment/Libraries
 Summary:        NX Pixmap image file format library
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 
-%description -n libNX_Xpm
+%description -n libNX_Xpm4
 libXpm facilitates working with XPM (X PixMap), a format for
 storing/retrieving X pixmaps to/from files.
 
 
-%package -n libNX_Xrandr
+%package -n libNX_Xrandr2
 Group:          System Environment/Libraries
 Summary:        NX Resize, Rotate and Reflection extension library
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 
-%description -n libNX_Xrandr
+%description -n libNX_Xrandr2
 The X Resize, Rotate and Reflect Extension (RandR) allows clients to
 dynamically change X screens, so as to resize, to change the
 orientation and layout of the root window of a screen.
@@ -329,7 +329,7 @@ orientation and layout of the root window of a screen.
 %package -n libNX_Xrender-devel
 Group:          Development/Libraries
 Summary:        Development files for the NX Render Extension library
-Requires:       libNX_Xrender%{?_isa} = %{version}-%{release}
+Requires:       libNX_Xrender1%{?_isa} = %{version}-%{release}
 Requires:       libNX_X11-devel%{?_isa} = %{version}-%{release}
 Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
 
@@ -341,22 +341,22 @@ This package contains all necessary include files and libraries
 needed to develop applications that require these.
 
 
-%package -n libNX_Xrender
+%package -n libNX_Xrender1
 Group:          System Environment/Libraries
 Summary:        NX Rendering Extension library
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 
-%description -n libNX_Xrender
+%description -n libNX_Xrender1
 The Xrender library is designed as a lightweight library interface to
 the Render extension.
 
 
-%package -n libNX_Xtst
+%package -n libNX_Xtst6
 Group:          System Environment/Libraries
 Summary:        Xlib-based client API for the XTEST and RECORD extensions on NX
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 
-%description -n libNX_Xtst
+%description -n libNX_Xtst6
 The XTEST extension is a minimal set of client and server extensions
 required to completely test the X11 server with no user intervention.
 This extension is not intended to support general journaling and
@@ -369,19 +369,19 @@ X protocol and arbitrary X extension protocol.
 %package -n libXcomp-devel
 Group:          Development/Libraries
 Summary:        Development files for the NX differential compression library
-Requires:       libXcomp%{?_isa} = %{version}-%{release}
+Requires:       libXcomp3%{?_isa} = %{version}-%{release}
 Requires:       nx-proto-devel = %{version}-%{release}
 
 %description -n libXcomp-devel
 The NX differential compression library's development files.
 
 
-%package -n libXcomp
+%package -n libXcomp3
 Group:          System Environment/Libraries
 Summary:        NX differential compression library
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 
-%description -n libXcomp
+%description -n libXcomp3
 NX is a software suite from NoMachine which implements very efficient
 compression of the X11 protocol. This increases performance when
 using X applications over a network, especially a slow one.
@@ -392,7 +392,7 @@ This package contains the NX differential compression library for X11.
 %package -n libXcompext-devel
 Group:          Development/Libraries
 Summary:        Development files for the NX compression extensions library
-Requires:       libXcompext%{?_isa} = %{version}-%{release}
+Requires:       libXcompext3%{?_isa} = %{version}-%{release}
 Requires:       libNX_X11-devel%{?_isa} = %{version}-%{release}
 Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
 
@@ -400,12 +400,12 @@ Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
 The NX compression extensions library's development files.
 
 
-%package -n libXcompext
+%package -n libXcompext3
 Group:          System Environment/Libraries
 Summary:        NX protocol compression extensions library
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 
-%description -n libXcompext
+%description -n libXcompext3
 NX is a software suite from NoMachine which implements very efficient
 compression of the X11 protocol. This increases performance when
 using X applications over a network, especially a slow one.
@@ -417,7 +417,7 @@ the core NX library.
 %package -n libXcompshad-devel
 Group:          Development/Libraries
 Summary:        Development files for the NX session shadowing library
-Requires:       libXcompshad%{?_isa} = %{version}-%{release}
+Requires:       libXcompshad3%{?_isa} = %{version}-%{release}
 Requires:       libNX_X11-devel%{?_isa} = %{version}-%{release}
 Requires:       libNX_Xext-devel%{?_isa} = %{version}-%{release}
 Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
@@ -427,12 +427,12 @@ Requires:       %{name}-devel%{?_isa} = %{version}-%{release}
 The NX session shadowing library's development files.
 
 
-%package -n libXcompshad
+%package -n libXcompshad3
 Group:          System Environment/Libraries
 Summary:        NX session shadowing Library
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 
-%description -n libXcompshad
+%description -n libXcompshad3
 NX is a software suite from NoMachine which implements very efficient
 compression of the X11 protocol. This increases performance when
 using X applications over a network, especially a slow one.
@@ -477,7 +477,7 @@ Provides:       nx%{?_isa} = %{version}-%{release}
 %if 0%{?suse_version}
 Requires:       xorg-x11-fonts-core
 %endif
-Requires:       libNX_Xinerama%{?_isa} = %{version}-%{release}
+Requires:       libNX_Xinerama1%{?_isa} = %{version}-%{release}
 
 %description -n nxagent
 NX is a software suite which implements very efficient compression of
@@ -651,37 +651,37 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %endif
 
 %post -p /sbin/ldconfig
-%post -n libNX_X11 -p /sbin/ldconfig
-%post -n libNX_Xau -p /sbin/ldconfig
-%post -n libNX_Xcomposite -p /sbin/ldconfig
-%post -n libNX_Xdamage -p /sbin/ldconfig
-%post -n libNX_Xdmcp -p /sbin/ldconfig
-%post -n libNX_Xext -p /sbin/ldconfig
-%post -n libNX_Xfixes -p /sbin/ldconfig
-%post -n libNX_Xinerama -p /sbin/ldconfig
-%post -n libNX_Xpm -p /sbin/ldconfig
-%post -n libNX_Xrandr -p /sbin/ldconfig
-%post -n libNX_Xrender -p /sbin/ldconfig
-%post -n libNX_Xtst -p /sbin/ldconfig
-%post -n libXcomp -p /sbin/ldconfig
-%post -n libXcompext -p /sbin/ldconfig
-%post -n libXcompshad -p /sbin/ldconfig
+%post -n libNX_X11-6 -p /sbin/ldconfig
+%post -n libNX_Xau6 -p /sbin/ldconfig
+%post -n libNX_Xcomposite1 -p /sbin/ldconfig
+%post -n libNX_Xdamage1 -p /sbin/ldconfig
+%post -n libNX_Xdmcp6 -p /sbin/ldconfig
+%post -n libNX_Xext6 -p /sbin/ldconfig
+%post -n libNX_Xfixes3 -p /sbin/ldconfig
+%post -n libNX_Xinerama1 -p /sbin/ldconfig
+%post -n libNX_Xpm4 -p /sbin/ldconfig
+%post -n libNX_Xrandr2 -p /sbin/ldconfig
+%post -n libNX_Xrender1 -p /sbin/ldconfig
+%post -n libNX_Xtst6 -p /sbin/ldconfig
+%post -n libXcomp3 -p /sbin/ldconfig
+%post -n libXcompext3 -p /sbin/ldconfig
+%post -n libXcompshad3 -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
-%postun -n libNX_X11 -p /sbin/ldconfig
-%postun -n libNX_Xau -p /sbin/ldconfig
-%postun -n libNX_Xcomposite -p /sbin/ldconfig
-%postun -n libNX_Xdamage -p /sbin/ldconfig
-%postun -n libNX_Xdmcp -p /sbin/ldconfig
-%postun -n libNX_Xext -p /sbin/ldconfig
-%postun -n libNX_Xfixes -p /sbin/ldconfig
-%postun -n libNX_Xinerama -p /sbin/ldconfig
-%postun -n libNX_Xpm -p /sbin/ldconfig
-%postun -n libNX_Xrandr -p /sbin/ldconfig
-%postun -n libNX_Xrender -p /sbin/ldconfig
-%postun -n libNX_Xtst -p /sbin/ldconfig
-%postun -n libXcomp -p /sbin/ldconfig
-%postun -n libXcompext -p /sbin/ldconfig
-%postun -n libXcompshad -p /sbin/ldconfig
+%postun -n libNX_X11-6 -p /sbin/ldconfig
+%postun -n libNX_Xau6 -p /sbin/ldconfig
+%postun -n libNX_Xcomposite1 -p /sbin/ldconfig
+%postun -n libNX_Xdamage1 -p /sbin/ldconfig
+%postun -n libNX_Xdmcp6 -p /sbin/ldconfig
+%postun -n libNX_Xext6 -p /sbin/ldconfig
+%postun -n libNX_Xfixes3 -p /sbin/ldconfig
+%postun -n libNX_Xinerama1 -p /sbin/ldconfig
+%postun -n libNX_Xpm4 -p /sbin/ldconfig
+%postun -n libNX_Xrandr2 -p /sbin/ldconfig
+%postun -n libNX_Xrender1 -p /sbin/ldconfig
+%postun -n libNX_Xtst6 -p /sbin/ldconfig
+%postun -n libXcomp3 -p /sbin/ldconfig
+%postun -n libXcompext3 -p /sbin/ldconfig
+%postun -n libXcompshad3 -p /sbin/ldconfig
 
 %files
 %defattr(-,root,root)
@@ -689,7 +689,7 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %dir %{_datadir}/nx
 %{_datadir}/nx/SecurityPolicy
 
-%files -n libNX_X11
+%files -n libNX_X11-6
 %defattr(-,root,root)
 %dir %{_libdir}/nx
 %dir %{_libdir}/nx/X11
@@ -717,15 +717,15 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %{_libdir}/libNX_Xau.so
 %{_includedir}/nx/X11/Xauth.h
 
-%files -n libNX_Xau
+%files -n libNX_Xau6
 %defattr(-,root,root)
 %{_libdir}/libNX_Xau.so.6*
 
-%files -n libNX_Xcomposite
+%files -n libNX_Xcomposite1
 %defattr(-,root,root)
 %{_libdir}/libNX_Xcomposite.so.1*
 
-%files -n libNX_Xdamage
+%files -n libNX_Xdamage1
 %defattr(-,root,root)
 %{_libdir}/libNX_Xdamage.so.1*
 
@@ -734,7 +734,7 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %{_libdir}/libNX_Xdmcp.so
 %{_includedir}/nx/X11/Xdmcp.h
 
-%files -n libNX_Xdmcp
+%files -n libNX_Xdmcp6
 %defattr(-,root,root)
 %{_libdir}/libNX_Xdmcp.so.6*
 
@@ -769,7 +769,7 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %{_includedir}/nx/X11/extensions/xtestext1.h
 %{_includedir}/nx/X11/extensions/xteststr.h
 
-%files -n libNX_Xext
+%files -n libNX_Xext6
 %defattr(-,root,root)
 %{_libdir}/libNX_Xext.so.6*
 
@@ -778,11 +778,11 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %{_libdir}/libNX_Xfixes.so
 %{_includedir}/nx/X11/extensions/Xfixes.h
 
-%files -n libNX_Xfixes
+%files -n libNX_Xfixes3
 %defattr(-,root,root)
 %{_libdir}/libNX_Xfixes.so.3*
 
-%files -n libNX_Xinerama
+%files -n libNX_Xinerama1
 %defattr(-,root,root)
 %{_libdir}/libNX_Xinerama.so.1*
 %dir %{_libdir}/nx/X11/Xinerama/
@@ -795,11 +795,11 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %{_libdir}/libNX_Xpm.so
 %{_includedir}/nx/X11/xpm.h
 
-%files -n libNX_Xpm
+%files -n libNX_Xpm4
 %defattr(-,root,root)
 %{_libdir}/libNX_Xpm.so.4*
 
-%files -n libNX_Xrandr
+%files -n libNX_Xrandr2
 %defattr(-,root,root)
 %{_libdir}/libNX_Xrandr.so.2*
 
@@ -808,11 +808,11 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %{_libdir}/libNX_Xrender.so
 %{_includedir}/nx/X11/extensions/Xrender.h
 
-%files -n libNX_Xrender
+%files -n libNX_Xrender1
 %defattr(-,root,root)
 %{_libdir}/libNX_Xrender.so.1*
 
-%files -n libNX_Xtst
+%files -n libNX_Xtst6
 %defattr(-,root,root)
 %{_libdir}/libNX_Xtst.so.6*
 
@@ -828,7 +828,7 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %{_includedir}/nx/NXrender.h
 %{_includedir}/nx/NXvars.h
 
-%files -n libXcomp
+%files -n libXcomp3
 %defattr(-,root,root)
 %doc nxcomp/{COPYING,LICENSE,README}
 %_libdir/libXcomp.so.3*
@@ -839,7 +839,7 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %{_includedir}/nx/NXlib.h
 %{_includedir}/nx/NXlibint.h
 
-%files -n libXcompext
+%files -n libXcompext3
 %defattr(-,root,root)
 %doc nxcompext/{COPYING,LICENSE,README}
 %_libdir/libXcompext.so.3*
@@ -859,7 +859,7 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %{_includedir}/nx/Win.h
 %{_includedir}/nx/X11.h
 
-%files -n libXcompshad
+%files -n libXcompshad3
 %defattr(-,root,root)
 %doc nxcompshad/{CHANGELOG,COPYING,LICENSE}
 %_libdir/libXcompshad.so.3*
