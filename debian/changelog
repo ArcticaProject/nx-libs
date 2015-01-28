@@ -51,6 +51,10 @@ nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
   * Extend 999_nxagent_unbrand-nxagent-brand-x2goagent.full.patch. Allow
     separate .keyboard files for x2goagent and nxagent.
 
+  * debian/roll-tarball.sh:
+    + Install etc/ files into etc/ subfolder (rgb, nxagent.keyboard,
+      x2goagent.keyboard).
+
   [ Horst Schirmeier ]
   * Update 320_nxagent_configurable-keystrokes.full.patch. Fix a typo that
     prevented the /etc/nxagent/keystrokes.cfg file from being parsed. (Fixes:

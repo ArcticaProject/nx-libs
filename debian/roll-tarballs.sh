@@ -87,7 +87,10 @@ if [ "x$MODE" = "xfull" ]; then
         cp -v $file doc/applied-patches
         echo ${file##*/} >> doc/applied-patches/series
     done
-    cp -v debian/rgb ./
+    mkdir -p ./etc/
+    cp -v debian/rgb ./etc/
+    cp -v debian/nxagent.keyboard ./etc/
+    cp -v debian/x2goagent.keyboard ./etc/
     cp -v debian/VERSION ./VERSION.x2goagent
 else
     rm -Rf "nxcompshad"*
@@ -101,6 +104,8 @@ else
 fi
 cp -v debian/VERSION ./nxcomp/VERSION
 cp -v debian/COPYING.full+lite COPYING
+cp -v debian/nxagent.keyboard nxagent.keyboard
+cp -v debian/x2goagent.keyboard x2goagent.keyboard
 
 # apply all patches shipped in debian/patches and create a copy of them that we ship with the tarball
 if [ -s "doc/applied-patches/series" ]; then
