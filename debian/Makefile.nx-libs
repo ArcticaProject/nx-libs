@@ -121,7 +121,7 @@ install-full:
 	# (DESTDIR)$(NXLIBDIR)/X11/Xinerama/libNX_X11.so.6 -> /usr/<libdir>/libX11.so.6
 	# (DESTDIR)$(NXLIBDIR)/X11/Xinerama/libNX_Xext.so.6 -> /usr/<libdir>/libXext.so.6
 	$(INSTALL_DIR) $(DESTDIR)$(NXLIBDIR)/X11/Xinerama
-	$(INSTALL_SYMLINK) $(DESTDIR)/$(USRLIBDIR)/libNX_Xinerama.so.1 $(DESTDIR)$(NXLIBDIR)/X11/Xinerama/libXinerama.so.1
+	$(INSTALL_SYMLINK) $(USRLIBDIR)/libNX_Xinerama.so.1 $(DESTDIR)$(NXLIBDIR)/X11/Xinerama/libXinerama.so.1
 
 	$(INSTALL_DIR) $(DESTDIR)$(INCLUDEDIR)/nx/X11/bitmaps
 	$(INSTALL_FILE) nx-X11/.build-exports/include/X11/bitmaps/* \
@@ -137,10 +137,10 @@ install-full:
 	$(INSTALL_FILE) etc/x2goagent.keyboard $(DESTDIR)$(ETCDIR_X2GO)/
 
 	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/x2go
-	$(INSTALL_SYMLINK) $(DESTDIR)$(ETCDIR_X2GO)/rgb $(DESTDIR)$(PREFIX)/share/x2go/rgb
+	$(INSTALL_SYMLINK) $(ETCDIR_X2GO)/rgb $(DESTDIR)$(PREFIX)/share/x2go/rgb
 
 	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/nx
-	$(INSTALL_SYMLINK) $(DESTDIR)$(ETCDIR_NX)/rgb $(DESTDIR)$(PREFIX)/share/nx/rgb
+	$(INSTALL_SYMLINK) $(ETCDIR_NX)/rgb $(DESTDIR)$(PREFIX)/share/nx/rgb
 
 uninstall:
 	$(MAKE) uninstall-lite
