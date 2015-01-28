@@ -990,9 +990,9 @@ Description: Library headers for nx-X11/Meas (dummy package)
  compression of the X11 protocol. This increases performance when
  using X applications over a network, especially a slow one.
  .
- This package can be safely removed. Since 3.5.0.29 of nx-libs we
- have stopped shipping development headers with nx-X11. No software
- should ever link against the nx-X11 library.
+ This package can be safely removed. Since 3.5.0.29 of nx-libs
+ no Mesa header files are shipped with binary packages of NX
+ (redistributed) any more.
 
 Package: nxagent
 Architecture: any
