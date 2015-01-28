@@ -632,7 +632,7 @@ mkdir -p %{buildroot}%{_libdir}/x2go/bin
 ln -sf ../../nx/bin/nxagent %{buildroot}%{_libdir}/x2go/bin/x2goagent
 
 # Fix permissions on shared libraries
-chmod 755  %{buildroot}%{_libdir}/nx/{,X11/}lib*.so*
+chmod 755  %{buildroot}%{_libdir}/lib*.so*
 
 #Remove extras, GL, and other unneeded headers
 rm -r %{buildroot}%{_includedir}/nx/GL
