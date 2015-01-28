@@ -345,6 +345,8 @@ nx-X11/extras/Mesa/src/mesa/tnl/t_vtx_api.h
 nx-X11/extras/Mesa/src/mesa/tnl/t_vtx_eval.c
 nx-X11/extras/Mesa/src/mesa/tnl/t_vtx_exec.c
 nx-X11/extras/Mesa/src/mesa/tnl/t_vtx_generic.c
+nx-X11/extras/Mesa/src/mesa/tnl/t_vtx_x86.c
+nx-X11/extras/Mesa/src/mesa/tnl/t_vtx_x86_gcc.S
 nx-X11/extras/Xpm/lib/Attrib.c
 nx-X11/extras/Xpm/lib/CrBufFrI.c
 nx-X11/extras/Xpm/lib/CrBufFrP.c
