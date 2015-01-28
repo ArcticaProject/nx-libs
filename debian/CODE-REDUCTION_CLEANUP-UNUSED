@@ -11,6 +11,7 @@ nx-X11/extras/rman/
 nx-X11/extras/ttf2pt1/
 nx-X11/extras/x86emu/
 nx-X11/extras/zlib/
+nx-X11/include/DPS/
 nx-X11/lib/expat/
 nx-X11/lib/fontconfig/
 nx-X11/lib/fontenc/
@@ -40,6 +41,7 @@ nx-X11/lib/GLw/
 nx-X11/lib/ICE/
 nx-X11/lib/regex/
 nx-X11/lib/SM/
+nx-X11/lib/XTrap/
 nx-X11/lib/Xaw/
 nx-X11/lib/Xaw6/
 nx-X11/lib/Xaw7/
