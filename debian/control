@@ -20,6 +20,7 @@ Build-Depends:
  autoconf,
  pkg-config,
  x11proto-core-dev,
+ expat,
 Build-Conflicts:
  x11proto-kb-dev,
  x11proto-randr-dev,

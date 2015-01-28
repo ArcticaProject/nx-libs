@@ -19,7 +19,7 @@ nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
   * Extend 999_nxagent_unbrand-nxagent-brand-x2goagent.full.patch. Allow
     separate .keyboard files for x2goagent and nxagent.
 
-  * NX code reduction efforts (from 93Mb to 52Mb):
+  * NX code reduction efforts (from 93Mb to 60Mb):
     - Drop more unused code in nx-X11/programs/Xserver/hw/. Do this in
       roll-tarball.sh and in debian/rules alike.
     - Stop shipping unused / very old xterm code.
@@ -32,6 +32,8 @@ nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
       .  nx-X11/programs/Xserver/XpConfig/
       .  nx-X11/programs/Xserver/Xprint/
     -  Makefile.nx-libs: Don't install Mesa header files into DESTDIR anymore.
+    - Unify source tree reduction (debian/rules vs. roll-tarball.sh) via file/
+      folder lists in text files named debian/CODE-REDUCTION_*.
 
   * Debian/Ubuntu packaging:
     + Fully rework the way nx-libs gets packaged for Debian/Ubuntu.
@@ -53,6 +55,7 @@ nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
       shell globbing with curly braces).
     + Correctly link config files (etc/rgb, etc/nxagent.keyboard,
       etc/x2goagent.keyboard) before dh_auto_build.
+    + Add to B-D: expat.
 
   * nx-libs.spec:
     + The gpg-offline bin:package is not available in our SLE repo. We can do
