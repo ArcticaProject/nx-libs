@@ -691,7 +691,7 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 
 %files -n libNX_X11
 %defattr(-,root,root)
-%{_libdir}/nx/X11/libNX_X11.so.6*
+%{_libdir}/libNX_X11.so.6*
 
 %files -n libNX_X11-devel
 %defattr(-,root,root)
