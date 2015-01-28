@@ -76,9 +76,7 @@ install-full:
 
 	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/pixmaps
 	$(INSTALL_FILE) nx-X11/programs/Xserver/hw/nxagent/x2go.xpm $(DESTDIR)$(PREFIX)/share/pixmaps
-
-	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/x2go
-	$(INSTALL_FILE) rgb $(DESTDIR)$(PREFIX)/share/x2go
+	$(INSTALL_FILE) nx-X11/programs/Xserver/hw/nxagent/nxagent.xpm $(DESTDIR)$(PREFIX)/share/pixmaps
 
 	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/nx
 	$(INSTALL_FILE) nx-X11/programs/Xserver/Xext/SecurityPolicy $(DESTDIR)$(PREFIX)/share/nx
@@ -133,6 +131,16 @@ install-full:
 	$(INSTALL_DIR) $(DESTDIR)/$(ETCDIR_X2GO)
 	$(INSTALL_FILE) etc/keystrokes.cfg $(DESTDIR)/$(ETCDIR_NX)/
 	$(INSTALL_FILE) etc/keystrokes.cfg $(DESTDIR)/$(ETCDIR_X2GO)/
+	$(INSTALL_FILE) etc/rgb $(DESTDIR)$(ETCDIR_X2GO)/
+	$(INSTALL_FILE) etc/rgb $(DESTDIR)$(ETCDIR_NX)/
+	$(INSTALL_FILE) etc/nxagent.keyboard $(DESTDIR)$(ETCDIR_NX)/
+	$(INSTALL_FILE) etc/x2goagent.keyboard $(DESTDIR)$(ETCDIR_X2GO)/
+
+	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/x2go
+	$(INSTALL_SYMLINK) $(DESTDIR)$(ETCDIR_X2GO)/rgb $(DESTDIR)$(PREFIX)/share/x2go/rgb
+
+	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/nx
+	$(INSTALL_SYMLINK) $(DESTDIR)$(ETCDIR_NX)/rgb $(DESTDIR)$(PREFIX)/share/nx/rgb
 
 uninstall:
 	$(MAKE) uninstall-lite

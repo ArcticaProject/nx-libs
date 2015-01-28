@@ -1,6 +1,7 @@
 etc/nxagent/keystrokes.cfg
+etc/nxagent/rgb
+usr/share/nx/rgb
 usr/lib/nx/bin/nxagent
 usr/bin/nxagent
-debian/rgb                                     usr/share/nx
-debian/nxagent.keyboard                        etc/nxagent
-nx-X11/programs/Xserver/hw/nxagent/nxagent.xpm usr/share/pixmaps
+usr/share/pixmaps/nxagent.xpm
+etc/nxagent/nxagent.keyboard
