@@ -24,15 +24,10 @@ Last-Update: 2012-02-15
  nx-X11/config/cf/X11.tmpl                           |  240 ++++++++++----------
  nx-X11/config/cf/lnxLib.rules                       |   16 -
  nx-X11/config/cf/lnxLib.tmpl                        |    4 
- nx-X11/lib/GLw/Imakefile                            |    2 
  nx-X11/lib/X11/Imakefile                            |    2 
- nx-X11/lib/X11/Imakefile.NX.original                |    2 
- nx-X11/lib/X11/Imakefile.X.original                 |    2 
  nx-X11/lib/XRes/Imakefile                           |    2 
  nx-X11/lib/XTrap/Imakefile                          |    2 
  nx-X11/lib/Xau/Imakefile                            |    2 
- nx-X11/lib/Xaw6/Imakefile                           |    2 
- nx-X11/lib/Xaw7/Imakefile                           |    2 
  nx-X11/lib/Xcomposite/Imakefile                     |    2 
  nx-X11/lib/Xcomposite/xcomposite.pc.in              |    2 
  nx-X11/lib/Xcursor/Imakefile                        |    2 
@@ -40,44 +35,18 @@ Last-Update: 2012-02-15
  nx-X11/lib/Xdamage/Imakefile                        |    2 
  nx-X11/lib/Xdamage/xdamage.pc.in                    |    2 
  nx-X11/lib/Xdmcp/Imakefile                          |    2 
- nx-X11/lib/Xevie/Imakefile                          |    2 
- nx-X11/lib/Xevie/xevie.pc.in                        |    2 
  nx-X11/lib/Xext/Imakefile                           |    2 
  nx-X11/lib/Xfixes/Imakefile                         |    2 
  nx-X11/lib/Xfixes/xfixes.pc.in                      |    2 
  nx-X11/lib/Xfontcache/Imakefile                     |    2 
- nx-X11/lib/Xft1/Imakefile                           |    2 
- nx-X11/lib/Xi/Imakefile                             |    2 
  nx-X11/lib/Xinerama/Imakefile                       |    2 
- nx-X11/lib/Xp/Imakefile                             |    2 
  nx-X11/lib/Xpm/Imakefile                            |    2 
- nx-X11/lib/Xpm/Imakefile.NX.original                |    2 
- nx-X11/lib/Xpm/Imakefile.X.original                 |    2 
- nx-X11/lib/XprintAppUtil/Imakefile                  |    2 
- nx-X11/lib/XprintUtil/Imakefile                     |    2 
  nx-X11/lib/Xrandr/Imakefile                         |    2 
  nx-X11/lib/Xrender/Imakefile                        |    2 
  nx-X11/lib/Xrender/xrender.pc.in                    |    2 
- nx-X11/lib/Xss/Imakefile                            |    2 
  nx-X11/lib/Xtst/Imakefile                           |    2 
- nx-X11/lib/Xv/Imakefile                             |    2 
- nx-X11/lib/XvMC/Imakefile                           |    2 
- nx-X11/lib/XvMC/hw/i810/Imakefile                   |    2 
- nx-X11/lib/XvMC/hw/via/unichrome/Imakefile          |    2 
- nx-X11/lib/XvMC/hw/via/unichromeProA/Imakefile      |    2 
- nx-X11/lib/XvMC/wrapper/Imakefile                   |    2 
- nx-X11/lib/Xxf86dga/Imakefile                       |    2 
- nx-X11/lib/Xxf86misc/Imakefile                      |    2 
- nx-X11/lib/Xxf86rush/Imakefile                      |    2 
- nx-X11/lib/Xxf86vm/Imakefile                        |    2 
- nx-X11/lib/apple/Imakefile                          |    2 
- nx-X11/lib/dmx/Imakefile                            |    2 
- nx-X11/lib/dps/Imakefile                            |    2 
- nx-X11/lib/dpstk/Imakefile                          |    2 
  nx-X11/lib/font/Imakefile                           |    2 
  nx-X11/lib/oldX/Imakefile                           |    2 
- nx-X11/lib/psres/Imakefile                          |    2 
- nx-X11/lib/windows/Imakefile                        |    2 
  nx-X11/lib/xkbfile/Imakefile                        |    2 
  nx-X11/lib/xkbui/Imakefile                          |    2 
  nx-X11/programs/Xserver/Imakefile                   |   18 -
@@ -885,42 +854,9 @@ Last-Update: 2012-02-15
  #endif
  
  #endif	/* UseElfFormat */
---- a/nx-X11/lib/GLw/Imakefile
-+++ b/nx-X11/lib/GLw/Imakefile
-@@ -46,7 +46,7 @@
- #define DoProfileLib	ProfileLibGLw
- 
- #define HasSharedData	NO
--#define LibName GLw
-+#define LibName NX_GLw
- #define SoRev SOGLWREV
- #define IncSubdir GL
- 
 --- a/nx-X11/lib/X11/Imakefile
 +++ b/nx-X11/lib/X11/Imakefile
 @@ -82,7 +82,7 @@
- #define DoExtraLib SharedLibX11
- #define DoDebugLib DebugLibX11
- #define DoProfileLib ProfileLibX11
--#define LibName X11
-+#define LibName NX_X11
- #define SoRev SOXLIBREV
- #define HugeLibrary YES
- #define IncSubdir X11
---- a/nx-X11/lib/X11/Imakefile.NX.original
-+++ b/nx-X11/lib/X11/Imakefile.NX.original
-@@ -83,7 +83,7 @@
- #define DoExtraLib SharedLibX11
- #define DoDebugLib DebugLibX11
- #define DoProfileLib ProfileLibX11
--#define LibName X11
-+#define LibName NX_X11
- #define SoRev SOXLIBREV
- #define HugeLibrary YES
- #define IncSubdir X11
---- a/nx-X11/lib/X11/Imakefile.X.original
-+++ b/nx-X11/lib/X11/Imakefile.X.original
-@@ -28,7 +28,7 @@
  #define DoExtraLib SharedLibX11
  #define DoDebugLib DebugLibX11
  #define DoProfileLib ProfileLibX11
@@ -962,28 +898,6 @@ Last-Update: 2012-02-15
  #define SoRev SOXAUTHREV
  #define IncSubdir X11
  
---- a/nx-X11/lib/Xaw6/Imakefile
-+++ b/nx-X11/lib/Xaw6/Imakefile
-@@ -5,7 +5,7 @@
- #define DoDebugLib DebugLibXaw6
- #define DoProfileLib ProfileLibXaw6
- #define HasSharedData YES
--#define LibName Xaw
-+#define LibName NX_Xaw
- #define SoRev SOXAW6REV
- #define LibHeaders NO
- #define NoSoSymlink
---- a/nx-X11/lib/Xaw7/Imakefile
-+++ b/nx-X11/lib/Xaw7/Imakefile
-@@ -5,7 +5,7 @@
- #define DoDebugLib DebugLibXaw7
- #define DoProfileLib ProfileLibXaw7
- #define HasSharedData YES
--#define LibName Xaw
-+#define LibName NX_Xaw
- #define SoRev SOXAW7REV
- 
- #if BuildXaw
 --- a/nx-X11/lib/Xcomposite/Imakefile
 +++ b/nx-X11/lib/Xcomposite/Imakefile
 @@ -14,7 +14,7 @@
@@ -1052,25 +966,6 @@ Last-Update: 2012-02-15
  #define SoRev SOXDMCPREV
  #define IncSubdir X11
  
---- a/nx-X11/lib/Xevie/Imakefile
-+++ b/nx-X11/lib/Xevie/Imakefile
-@@ -14,7 +14,7 @@
- #define DoDebugLib DebugLibXevie
- #define DoProfileLib ProfileLibXevie
- 
--#define LibName Xevie
-+#define LibName NX_Xevie
- #define SoRev SOXEVIEREV
- #define IncSubdir X11
- #define IncSubSubdir extensions
---- a/nx-X11/lib/Xevie/xevie.pc.in
-+++ b/nx-X11/lib/Xevie/xevie.pc.in
-@@ -9,4 +9,4 @@
- Description: X Event Interceptor Library
- Version: @VERSION@
- Cflags: -I${includedir} ${xcflags}
--Libs: -L${libdir} -lXevie ${xlibs}
-+Libs: -L${libdir} -lNX_Xevie ${xlibs}
 --- a/nx-X11/lib/Xext/Imakefile
 +++ b/nx-X11/lib/Xext/Imakefile
 @@ -10,7 +10,7 @@
@@ -1112,17 +1007,6 @@ Last-Update: 2012-02-15
  #define SoRev SOXFONTCACHEREV
  #define LibHeaders NO
  
---- a/nx-X11/lib/Xi/Imakefile
-+++ b/nx-X11/lib/Xi/Imakefile
-@@ -10,7 +10,7 @@
- #define DoExtraLib SharedLibXi
- #define DoDebugLib DebugLibXi
- #define DoProfileLib ProfileLibXi
--#define LibName Xi
-+#define LibName NX_Xi
- #define SoRev SOXINPUTREV
- #define LibHeaders NO
- 
 --- a/nx-X11/lib/Xinerama/Imakefile
 +++ b/nx-X11/lib/Xinerama/Imakefile
 @@ -4,7 +4,7 @@
@@ -1133,17 +1017,6 @@ Last-Update: 2012-02-15
 +#define LibName NX_Xinerama
  #define SoRev SOXINERAMAREV
  #define LibHeaders NO
- 
---- a/nx-X11/lib/Xp/Imakefile
-+++ b/nx-X11/lib/Xp/Imakefile
-@@ -44,7 +44,7 @@
- #define DoExtraLib	SharedLibXp
- #define DoDebugLib	DebugLibXp
- #define DoProfileLib	ProfileLibXp
--#define LibName		Xp
-+#define LibName		NX_Xp
- #define SoRev		SOXPREV
- #define LibHeaders	NO
  
 --- a/nx-X11/lib/Xpm/Imakefile
 +++ b/nx-X11/lib/Xpm/Imakefile
@@ -1156,50 +1029,6 @@ Last-Update: 2012-02-15
  #define SoRev SOXPMREV
  #define IncSubdir X11
  
---- a/nx-X11/lib/Xpm/Imakefile.NX.original
-+++ b/nx-X11/lib/Xpm/Imakefile.NX.original
-@@ -12,7 +12,7 @@
- #define DoDebugLib DebugLibXpm
- #define DoProfileLib ProfileLibXpm
- #define HasSharedData NO
--#define LibName Xpm
-+#define LibName NX_Xpm
- #define SoRev SOXPMREV
- #define IncSubdir X11
- 
---- a/nx-X11/lib/Xpm/Imakefile.X.original
-+++ b/nx-X11/lib/Xpm/Imakefile.X.original
-@@ -8,7 +8,7 @@
- #define DoDebugLib DebugLibXpm
- #define DoProfileLib ProfileLibXpm
- #define HasSharedData NO
--#define LibName Xpm
-+#define LibName NX_Xpm
- #define SoRev SOXPMREV
- #define IncSubdir X11
- 
---- a/nx-X11/lib/XprintAppUtil/Imakefile
-+++ b/nx-X11/lib/XprintAppUtil/Imakefile
-@@ -5,7 +5,7 @@
- #define DoDebugLib    NO
- #define DoProfileLib  NO
- #define HasSharedData NO
--#define LibName       XprintAppUtil
-+#define LibName       NX_XprintAppUtil
- #define SoRev         SOZLIBREV
- #define IncSubdir     X11
- #define IncSubSubdir  XprintAppUtil
---- a/nx-X11/lib/XprintUtil/Imakefile
-+++ b/nx-X11/lib/XprintUtil/Imakefile
-@@ -5,7 +5,7 @@
- #define DoDebugLib    NO
- #define DoProfileLib  NO
- #define HasSharedData NO
--#define LibName       XprintUtil
-+#define LibName       NX_XprintUtil
- #define SoRev         SOZLIBREV
- #define IncSubdir     X11
- #define IncSubSubdir  XprintUtil
 --- a/nx-X11/lib/Xrandr/Imakefile
 +++ b/nx-X11/lib/Xrandr/Imakefile
 @@ -5,7 +5,7 @@
@@ -1230,17 +1059,6 @@ Last-Update: 2012-02-15
  Cflags: -I${includedir} @RENDER_CFLAGS@ @X_NON_PKG_CFLAGS@
 -Libs: -L${libdir} -lXrender @X_NON_PKG_LIBS@
 +Libs: -L${libdir} -lNX_Xrender @X_NON_PKG_LIBS@
---- a/nx-X11/lib/Xss/Imakefile
-+++ b/nx-X11/lib/Xss/Imakefile
-@@ -4,7 +4,7 @@
- #define DoExtraLib SharedLibXss
- #define DoDebugLib DebugLibXss
- #define DoProfileLib ProfileLibXss
--#define LibName Xss
-+#define LibName NX_Xss
- #define SoRev SOXSSREV
- #define LibHeaders NO
- 
 --- a/nx-X11/lib/Xtst/Imakefile
 +++ b/nx-X11/lib/Xtst/Imakefile
 @@ -10,7 +10,7 @@
@@ -1250,160 +1068,6 @@ Last-Update: 2012-02-15
 -#define LibName Xtst
 +#define LibName NX_Xtst
  #define SoRev SOXTESTREV
- #define LibHeaders NO
- 
---- a/nx-X11/lib/Xv/Imakefile
-+++ b/nx-X11/lib/Xv/Imakefile
-@@ -4,7 +4,7 @@
- #define DoSharedLib SharedLibXv
- #define DoDebugLib DebugLibXv
- #define DoProfileLib ProfileLibXv
--#define LibName Xv
-+#define LibName NX_Xv
- #define SoRev SOXVREV
- #define LibHeaders NO
- 
---- a/nx-X11/lib/XvMC/Imakefile
-+++ b/nx-X11/lib/XvMC/Imakefile
-@@ -4,7 +4,7 @@
- #define DoSharedLib SharedLibXvMC
- #define DoDebugLib DebugLibXvMC
- #define DoProfileLib ProfileLibXvMC
--#define LibName XvMC
-+#define LibName NX_XvMC
- #define SoRev SOXVMCREV
- #define LibHeaders NO
- 
---- a/nx-X11/lib/XvMC/hw/i810/Imakefile
-+++ b/nx-X11/lib/XvMC/hw/i810/Imakefile
-@@ -3,7 +3,7 @@
- #define DoSharedLib SharedLibXvMC
- #define DoDebugLib DebugLibXvMC
- #define DoProfileLib ProfileLibXvMC
--#define LibName I810XvMC
-+#define LibName NX_I810XvMC
- #define SoRev SOXVMCREV
- #define LibHeaders NO
- 
---- a/nx-X11/lib/XvMC/hw/via/unichrome/Imakefile
-+++ b/nx-X11/lib/XvMC/hw/via/unichrome/Imakefile
-@@ -2,7 +2,7 @@
- #define DoSharedLib SharedLibXvMC
- #define DoDebugLib DebugLibXvMC
- #define DoProfileLib ProfileLibXvMC
--#define LibName viaXvMC
-+#define LibName NX_viaXvMC
- #define SoRev SOXVMCREV
- #define LibHeaders NO
- 
---- a/nx-X11/lib/XvMC/hw/via/unichromeProA/Imakefile
-+++ b/nx-X11/lib/XvMC/hw/via/unichromeProA/Imakefile
-@@ -2,7 +2,7 @@
- #define DoSharedLib SharedLibXvMC
- #define DoDebugLib DebugLibXvMC
- #define DoProfileLib ProfileLibXvMC
--#define LibName viaXvMCPro
-+#define LibName NX_viaXvMCPro
- #define SoRev SOXVMCREV
- #define LibHeaders NO
- 
---- a/nx-X11/lib/XvMC/wrapper/Imakefile
-+++ b/nx-X11/lib/XvMC/wrapper/Imakefile
-@@ -3,7 +3,7 @@
- #define DoSharedLib SharedLibXvMC
- #define DoDebugLib DebugLibXvMC
- #define DoProfileLib ProfileLibXvMC
--#define LibName XvMCW
-+#define LibName NX_XvMCW
- #define SoRev SOXVMCREV
- #define LibHeaders NO
- 
---- a/nx-X11/lib/Xxf86dga/Imakefile
-+++ b/nx-X11/lib/Xxf86dga/Imakefile
-@@ -6,7 +6,7 @@
- #define DoExtraLib SharedLibXxf86dga
- #define DoDebugLib DebugLibXxf86dga
- #define DoProfileLib ProfileLibXxf86dga
--#define LibName Xxf86dga
-+#define LibName NX_Xxf86dga
- #define SoRev SOXXF86DGAREV
- #define LibHeaders NO
- 
---- a/nx-X11/lib/Xxf86misc/Imakefile
-+++ b/nx-X11/lib/Xxf86misc/Imakefile
-@@ -6,7 +6,7 @@
- #define DoExtraLib SharedLibXxf86misc
- #define DoDebugLib DebugLibXxf86misc
- #define DoProfileLib ProfileLibXxf86misc
--#define LibName Xxf86misc
-+#define LibName NX_Xxf86misc
- #define SoRev SOXXF86MISCREV
- #define LibHeaders NO
- 
---- a/nx-X11/lib/Xxf86rush/Imakefile
-+++ b/nx-X11/lib/Xxf86rush/Imakefile
-@@ -3,7 +3,7 @@
- #define DoSharedLib SharedLibXxf86rush
- #define DoDebugLib DebugLibXxf86rush
- #define DoProfileLib ProfileLibXxf86rush
--#define LibName Xxf86rush
-+#define LibName NX_Xxf86rush
- #define SoRev SOXXF86RUSHREV
- #define LibHeaders NO
- 
---- a/nx-X11/lib/Xxf86vm/Imakefile
-+++ b/nx-X11/lib/Xxf86vm/Imakefile
-@@ -6,7 +6,7 @@
- #define DoExtraLib SharedLibXxf86vm
- #define DoDebugLib DebugLibXxf86vm
- #define DoProfileLib ProfileLibXxf86vm
--#define LibName Xxf86vm
-+#define LibName NX_Xxf86vm
- #define SoRev SOXXF86VMREV
- #define LibHeaders NO
- 
---- a/nx-X11/lib/apple/Imakefile
-+++ b/nx-X11/lib/apple/Imakefile
-@@ -5,7 +5,7 @@
- #define DoSharedLib SharedLibAppleWM
- #define DoDebugLib DebugLibAppleWM
- #define DoProfileLib ProfileLibAppleWM
--#define LibName AppleWM
-+#define LibName NX_AppleWM
- #define SoRev SOAPPLEWMREV
- #define IncSubdir X11
- #define IncSubSubdir extensions
---- a/nx-X11/lib/dmx/Imakefile
-+++ b/nx-X11/lib/dmx/Imakefile
-@@ -5,7 +5,7 @@
- #define DoDebugLib DebugLibDmx
- #define DoProfileLib ProfileLibDmx
- 
--#define LibName dmx
-+#define LibName NX_dmx
- #define SoRev SODMXREV
- #define LibHeaders NO
- 
---- a/nx-X11/lib/dps/Imakefile
-+++ b/nx-X11/lib/dps/Imakefile
-@@ -5,7 +5,7 @@
- #define DoExtraLib SharedLibDps
- #define DoDebugLib DebugLibDps
- #define DoProfileLib ProfileLibDps
--#define LibName dps
-+#define LibName NX_dps
- #define SoRev SODPSREV
- #define IncSubdir DPS
- 
---- a/nx-X11/lib/dpstk/Imakefile
-+++ b/nx-X11/lib/dpstk/Imakefile
-@@ -5,7 +5,7 @@
- #define DoExtraLib SharedLibDpsTk
- #define DoDebugLib DebugLibDpsTk
- #define DoProfileLib ProfileLibDpsTk
--#define LibName dpstk
-+#define LibName NX_dpstk
- #define SoRev SODPSTKREV
  #define LibHeaders NO
  
 --- a/nx-X11/lib/font/Imakefile
@@ -1428,28 +1092,6 @@ Last-Update: 2012-02-15
  #define SoRev SOOLDXREV
  #define IncSubdir X11
  
---- a/nx-X11/lib/psres/Imakefile
-+++ b/nx-X11/lib/psres/Imakefile
-@@ -5,7 +5,7 @@
- #define DoExtraLib SharedLibPSRes
- #define DoDebugLib DebugLibPSRes
- #define DoProfileLib ProfileLibPSRes
--#define LibName psres
-+#define LibName NX_psres
- #define SoRev SOPSRESREV
- #define LibHeaders NO
- 
---- a/nx-X11/lib/windows/Imakefile
-+++ b/nx-X11/lib/windows/Imakefile
-@@ -2,7 +2,7 @@
- #define DoSharedLib SharedLibWindowsWM
- #define DoDebugLib DebugLibWindowsWM
- #define DoProfileLib ProfileLibWindowsWM
--#define LibName WindowsWM
-+#define LibName NX_WindowsWM
- #define SoRev SOWINDOWSWMREV
- #define IncSubdir X11
- #define IncSubSubdir extensions
 --- a/nx-X11/lib/xkbfile/Imakefile
 +++ b/nx-X11/lib/xkbfile/Imakefile
 @@ -11,7 +11,7 @@
