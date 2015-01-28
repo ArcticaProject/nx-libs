@@ -18,6 +18,8 @@ nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
     /etc/x2go/rgb or /etc/nxagent/rgb.
   * Extend 999_nxagent_unbrand-nxagent-brand-x2goagent.full.patch. Allow
     separate .keyboard files for x2goagent and nxagent.
+  * Update 600_nx-X11+nxcompext+nxcompshad_unique-libnames.full.patch. Don't
+    patch files that get removed during code reduction.
 
   * NX code reduction efforts (from 93Mb to 60Mb):
     - Drop more unused code in nx-X11/programs/Xserver/hw/. Do this in
