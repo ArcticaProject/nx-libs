@@ -1,3 +1,6 @@
+Description: Avoid building libXcomp.so.1 (which is identical to libXcomp.so.3)
+Author: Orion Poplawski <orion@cora.nwra.com>
+
 --- a/nx-X11/lib/X11/Imakefile	2013-01-04 05:25:49.000000000 -0700
 +++ b/nx-X11/lib/X11/Imakefile	2013-01-15 15:26:07.969167259 -0700
 @@ -63,7 +63,6 @@ NX_XCOMPLIBDIR    = $(XTOP)/../nxcomp

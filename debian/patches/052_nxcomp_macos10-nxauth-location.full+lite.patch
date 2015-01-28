@@ -1,3 +1,6 @@
+Description: Fix nxauth location on Mac OS X 10
+Author: Mihai Moldovan <ionic@ionic.de>
+
 --- a/nxcomp/Auth.cpp
 +++ b/nxcomp/Auth.cpp
 @@ -217,22 +217,31 @@

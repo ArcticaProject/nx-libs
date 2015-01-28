@@ -1,3 +1,6 @@
+Description: Fix several typos in nx-X11
+Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+
 --- a/nx-X11/extras/Mesa/src/mesa/drivers/dri/common/xmlconfig.c
 +++ b/nx-X11/extras/Mesa/src/mesa/drivers/dri/common/xmlconfig.c
 @@ -729,7 +729,7 @@

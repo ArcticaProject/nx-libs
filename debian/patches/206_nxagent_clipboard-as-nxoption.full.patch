@@ -1,3 +1,6 @@
+Descripion: Add -clipboard cmdline option to nxagent
+Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+
 --- a/nx-X11/programs/Xserver/hw/nxagent/Args.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Args.c
 @@ -984,7 +984,7 @@

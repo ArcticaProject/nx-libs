@@ -1,3 +1,6 @@
+Description: Adapt paths of keystrokes.cfg if nxagent runs as x2goagent
+Author: Horst Schirmeier <horst@schirmeier.com>
+
 --- a/nx-X11/programs/Xserver/hw/nxagent/Keystroke.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Keystroke.c
 @@ -27,6 +27,7 @@

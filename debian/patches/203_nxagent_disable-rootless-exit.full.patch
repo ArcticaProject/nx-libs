@@ -1,3 +1,6 @@
+Description: Add -norootlessexit cmdline option to nxagent
+Author: Oleksandr Shneyder <o.schneyder@phoca-gmbh.de>
+
 --- a/nx-X11/programs/Xserver/hw/nxagent/Args.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Args.c
 @@ -672,6 +672,12 @@

@@ -1,7 +1,6 @@
 Description: Fix binary name in man page for nxauth.
  The NX auth man page in upstream still uses xauth as
  binary name.
-Forwarded: pending...
 Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 Last-Update: 2012-12-31
 --- a/nx-X11/programs/nxauth/nxauth.man

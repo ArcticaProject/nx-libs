@@ -23,6 +23,7 @@ nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
   * Add 991_fix-hr-typos.full+lite.patch and 991_fix-hr-typos.full.patch.
     Fix several typos in upstream code detected by lintian.
   * Makefile.nx-libs: Don't allow symlinks to point into buildroot.
+  * Add Description: and Author: fields to various patch headers.
 
   * NX code reduction efforts (from 93Mb to 41Mb):
     - Drop more unused code in nx-X11/programs/Xserver/hw/. Do this in

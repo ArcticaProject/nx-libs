@@ -1,3 +1,6 @@
+Description: fix clean rule in nxcomp's Makefile.in
+Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+
 --- a/nxcomp/Makefile.in
 +++ b/nxcomp/Makefile.in
 @@ -313,4 +313,4 @@

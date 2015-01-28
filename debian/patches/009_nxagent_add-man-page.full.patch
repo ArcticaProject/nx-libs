@@ -1,3 +1,6 @@
+Description: man page for nxagent
+Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+
 --- /dev/null
 +++ b/nx-X11/programs/Xserver/hw/nxagent/man/nxagent.1
 @@ -0,0 +1,37 @@

@@ -1,3 +1,6 @@
+Description: Fix several typos in nxcomp
+Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+
 --- a/nxcomp/CHANGELOG
 +++ b/nxcomp/CHANGELOG
 @@ -668,7 +668,7 @@
