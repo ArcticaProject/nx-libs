@@ -41,11 +41,7 @@ override_dh_clean:
 override_dh_installchangelog:
 
 	### the doc/changelog file is the actual NX (redistributed) ChangeLog
-	#dh_installchangelog doc/changelog
-
-	### the nx-X11/CHANGELOG is an old upstream ChangeLog by NoMachine that prevents us from
-        ### being shouted at by lintian (while testing the package build scripts)
-	dh_installchangelog nx-X11/CHANGELOG
+	dh_installchangelog doc/changelog
 
 override_dh_install:
 
