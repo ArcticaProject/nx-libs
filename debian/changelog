@@ -79,6 +79,7 @@ nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
     + Use SONAME based library package naming scheme.
     + Mention NX technology in every package description.
     + Install man pages into bin:packages.
+    + Make libNX_X11-6 and libXinerama1 compliant to Shared Library Policy.
 
   * debian/roll-tarball.sh:
     + Install etc/ files into etc/ subfolder (rgb, nxagent.keyboard,

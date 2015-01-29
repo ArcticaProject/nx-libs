@@ -787,13 +787,17 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %files
 %defattr(-,root,root)
 %doc nx-X11/{COPYING,LICENSE,README}
+%dir %{_libdir}/nx
+%dir %{_libdir}/nx/X11
 %dir %{_datadir}/nx
 %{_datadir}/nx/SecurityPolicy
+%dir %{_libdir}/nx/X11/Xinerama/
+%{_libdir}/nx/X11/Xinerama/libNX_X11.so.6
+%{_libdir}/nx/X11/Xinerama/libNX_Xext.so.6
+%{_libdir}/nx/X11/Xinerama/libXinerama.so.1*
 
 %files -n libNX_X11-6
 %defattr(-,root,root)
-%dir %{_libdir}/nx
-%dir %{_libdir}/nx/X11
 %{_libdir}/libNX_X11.so.6*
 
 %files -n libNX_X11-devel
@@ -886,10 +890,6 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %files -n libNX_Xinerama1
 %defattr(-,root,root)
 %{_libdir}/libNX_Xinerama.so.1*
-%dir %{_libdir}/nx/X11/Xinerama/
-%{_libdir}/nx/X11/Xinerama/libNX_X11.so.6
-%{_libdir}/nx/X11/Xinerama/libNX_Xext.so.6
-%{_libdir}/nx/X11/Xinerama/libXinerama.so.1*
 
 %files -n libNX_Xpm-devel
 %defattr(-,root,root)
