@@ -729,7 +729,7 @@ chmod a+x my_configure;
 %{!?__global_ldflags: %global __global_ldflags -Wl,-z,relro}
 export SHLIBGLOBALSFLAGS="%{__global_ldflags}"
 export LOCAL_LDFLAGS="%{__global_ldflags}"
-make %{?_smp_mflags} CONFIGURE="$PWD/my_configure" USRLIBDIR=%{_libdir}/nx SHLIBDIR=%{_libdir}/nx
+make %{?_smp_mflags} CONFIGURE="$PWD/my_configure" PREFIX=%{_prefix} USRLIBDIR=%{_libdir} SHLIBDIR=%{_libdir}
 
 %install
 make install \
