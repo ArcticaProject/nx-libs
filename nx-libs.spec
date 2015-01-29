@@ -83,6 +83,8 @@ Requires:       libXext%{?_isa}
 %if 0%{?el5}
 # For compatibility with EPEL5
 BuildRoot:      %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+%else
+BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 %endif
 
 %description
