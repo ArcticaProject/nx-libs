@@ -740,8 +740,8 @@ make install \
         INSTALL_FILE="install -pm0644" \
         INSTALL_PROGRAM="install -pm0755"
 
-# Remove static libs
-rm %{buildroot}%{_libdir}/*.a
+# Remove static libs (they don't exist on SLES, so using -f here)
+rm -f %{buildroot}%{_libdir}/*.a
 
 # Make sure x2goagent is linked relative and on 64-bit
 mkdir -p %{buildroot}%{_libdir}/x2go/bin
