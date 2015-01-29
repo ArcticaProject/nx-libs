@@ -1092,17 +1092,20 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %{_libdir}/nx/bin/nxagent
 %{_datadir}/pixmaps/nxagent.xpm
 %{_datadir}/nx/rgb
+%{_datadir}/man/man1/nxagent.1*
 
 %files -n nxauth
 %defattr(-,root,root)
 %{_bindir}/nxauth
 %dir %{_libdir}/nx/bin
 %{_libdir}/nx/bin/nxauth
+%{_datadir}/man/man1/nxauth.1*
 
 %files -n nxproxy
 %defattr(-,root,root)
 %{_bindir}/nxproxy
 %{_mandir}/man1/nxproxy.1*
+%{_datadir}/man/man1/nxproxy.1*
 
 %files -n x2goagent
 %defattr(-,root,root)
@@ -1117,6 +1120,7 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %{_libdir}/x2go/bin/x2goagent
 %{_datadir}/pixmaps/x2go.xpm
 %{_datadir}/x2go/
+%{_datadir}/man/man1/x2goagent.1*
 
 
 %changelog
