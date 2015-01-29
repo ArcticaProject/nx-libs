@@ -55,6 +55,7 @@ nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
     + Support hardened builds for nxcomp* libraries.
     + Support hardened builds for nxagent and libNX_*.so files.
     + Add debian/*.symbols files for shared nx-X11 libraries.
+    + Support .symbols for 64bit and 32bit alike.
     + Provide CDBS-generated debian/copyright.in file.
 
   * debian/rules:

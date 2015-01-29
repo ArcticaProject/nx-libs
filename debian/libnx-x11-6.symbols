@@ -817,7 +817,7 @@ libNX_X11.so.6 libnx-x11-6 #MINVER#
  _XConnectDisplay@Base 3.5.0.29
  _XCopyToArg@Base 3.5.0.29
  _XCreateMutex_fn@Base 3.5.0.29
- _XData32@Base 3.5.0.29
+  (arch=amd64 ia64 alpha ppc64 arm64)_XData32@Base 3.5.0.29
  _XDefaultError@Base 3.5.0.29
  _XDefaultIOError@Base 3.5.0.29
  _XDefaultWireError@Base 3.5.0.29
@@ -872,7 +872,7 @@ libNX_X11.so.6 libnx-x11-6 #MINVER#
  _XPollfdCacheInit@Base 3.5.0.29
  _XProcessWindowAttributes@Base 3.5.0.29
  _XPutBackEvent@Base 3.5.0.29
- _XRead32@Base 3.5.0.29
+ (arch=amd64 ia64 alpha ppc64 arm64)_XRead32@Base 3.5.0.29
  _XRead@Base 3.5.0.29
  _XReadEvents@Base 3.5.0.29
  _XReadPad@Base 3.5.0.29
@@ -1121,9 +1121,9 @@ libNX_X11.so.6 libnx-x11-6 #MINVER#
  _XkbInternAtomFunc@Base 3.5.0.29
  _XkbNoteCoreMapChanges@Base 3.5.0.29
  _XkbPeekAtReadBuffer@Base 3.5.0.29
- _XkbReadBufferCopy32@Base 3.5.0.29
+ (arch=amd64 ia64 alpha ppc64 arm64)_XkbReadBufferCopy32@Base 3.5.0.29
  _XkbReadBufferCopyKeySyms@Base 3.5.0.29
- _XkbReadCopyData32@Base 3.5.0.29
+ (arch=amd64 ia64 alpha ppc64 arm64)_XkbReadCopyData32@Base 3.5.0.29
  _XkbReadCopyKeySyms@Base 3.5.0.29
  _XkbReadGetCompatMapReply@Base 3.5.0.29
  _XkbReadGetGeometryReply@Base 3.5.0.29
@@ -1132,7 +1132,7 @@ libNX_X11.so.6 libnx-x11-6 #MINVER#
  _XkbReadGetNamesReply@Base 3.5.0.29
  _XkbReloadDpy@Base 3.5.0.29
  _XkbSkipReadBufferData@Base 3.5.0.29
- _XkbWriteCopyData32@Base 3.5.0.29
+ (arch=amd64 ia64 alpha ppc64 arm64)_XkbWriteCopyData32@Base 3.5.0.29
  _XkbWriteCopyKeySyms@Base 3.5.0.29
  _XkeyTable@Base 3.5.0.29
  _XlcAddCT@Base 3.5.0.29
