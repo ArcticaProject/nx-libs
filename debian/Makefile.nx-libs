@@ -65,6 +65,11 @@ install-lite:
 	for d in nxcomp nxproxy; do \
 	   $(MAKE) -C $$d install; done
 
+	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/man/man1/
+	$(INSTALL_FILE) nxproxy/nxproxy.1 $(DESTDIR)$(PREFIX)/share/man/man1/
+	gzip $(DESTDIR)$(PREFIX)/share/man/man1/*.1
+
+
 install-full:
 	for f in nxagent nxauth x2goagent; do \
 	   $(INSTALL_PROGRAM) bin/$$f $(DESTDIR)$(BINDIR); done
@@ -87,6 +92,13 @@ install-full:
 	$(INSTALL_DIR) $(DESTDIR)$(NXLIBDIR)/bin
 	$(INSTALL_PROGRAM) nx-X11/programs/nxauth/nxauth $(DESTDIR)$(NXLIBDIR)/bin
 	$(INSTALL_PROGRAM) nx-X11/programs/Xserver/nxagent $(DESTDIR)$(NXLIBDIR)/bin
+
+	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/man/man1/
+	$(INSTALL_FILE) nx-X11/programs/Xserver/hw/nxagent/man/x2goagent.1 $(DESTDIR)$(PREFIX)/share/man/man1/
+	$(INSTALL_FILE) nx-X11/programs/Xserver/hw/nxagent/man/nxagent.1 $(DESTDIR)$(PREFIX)/share/man/man1/
+	$(INSTALL_FILE) nx-X11/programs/nxauth/nxauth.man $(DESTDIR)$(PREFIX)/share/man/man1/
+	mv -f $(DESTDIR)$(PREFIX)/share/man/man1/nxauth.man $(DESTDIR)$(PREFIX)/share/man/man1/nxauth.1
+	gzip $(DESTDIR)$(PREFIX)/share/man/man1/*.1
 
 	# create a clean nx-X11/.build-exports space
 	rm -Rf nx-X11/.build-exports
