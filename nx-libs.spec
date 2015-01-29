@@ -81,9 +81,6 @@ NX is a software suite which implements very efficient compression of
 the X11 protocol. This increases performance when using X
 applications over a network, especially a slow one.
 
-This package provides the core nx-X11 libraries customized for
-nxagent/x2goagent.
-
 
 %package -n libNX_X11-6
 Group:          System Environment/Libraries
@@ -94,6 +91,10 @@ Requires:       xorg-x11-fonts-core
 %endif
 
 %description -n libNX_X11-6
+NX is a software suite which implements very efficient compression of
+the X11 protocol. This increases performance when using X
+applications over a network, especially a slow one.
+
 The X Window System is a network-transparent window system that was
 designed at MIT. X display servers run on computers with either
 monochrome or color bitmap display hardware. The server distributes
@@ -111,6 +112,10 @@ Requires:       libNX_X11-6%{?_isa} = %{version}-%{release}
 Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
 
 %description -n libNX_X11-devel
+NX is a software suite which implements very efficient compression of
+the X11 protocol. This increases performance when using X
+applications over a network, especially a slow one.
+
 The X Window System is a network-transparent window system that was
 designed at MIT. X display servers run on computers with either
 monochrome or color bitmap display hardware. The server distributes
@@ -131,11 +136,15 @@ Requires:       libNX_Xau6%{?_isa} = %{version}-%{release}
 Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
 
 %description -n libNX_Xau-devel
-libXau provides mechanisms for individual access to an X Window
+NX is a software suite which implements very efficient compression of
+the X11 protocol. This increases performance when using X
+applications over a network, especially a slow one.
+
+libNX_Xau provides mechanisms for individual access to an nx-X11 Window
 System display. It uses existing core protocol and library hooks for
-specifying authorization data in the connection setup block to
-restrict use of the display to only those clients that show that they
-know a server-specific key called a "magic cookie".
+specifying authorization data in the connection setup block to restrict
+use of the display to only those clients that show that they know a
+server-specific key called a "magic cookie".
 
 This package contains all necessary include files and libraries
 needed to develop applications that require these.
@@ -147,7 +156,11 @@ Summary:        NX authorization protocol library
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 
 %description -n libNX_Xau6
-libXau provides mechanisms for individual access to an X Window
+NX is a software suite which implements very efficient compression of
+the X11 protocol. This increases performance when using X
+applications over a network, especially a slow one.
+
+libNX_Xau provides mechanisms for individual access to an X Window
 System display. It uses existing core protocol and library hooks for
 specifying authorization data in the connection setup block to
 restrict use of the display to only those clients that show that they
@@ -160,6 +173,10 @@ Summary:        NX protocol Composite extension client library
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 
 %description -n libNX_Xcomposite1
+NX is a software suite which implements very efficient compression of
+the X11 protocol. This increases performance when using X
+applications over a network, especially a slow one.
+
 The Composite extension causes a entire sub-tree of the window
 hierarchy to be rendered to an off-screen buffer. Applications can
 then take the contents of that buffer and do whatever they like. The
@@ -173,6 +190,10 @@ Summary:        NX Damage Extension library
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 
 %description -n libNX_Xdamage1
+NX is a software suite which implements very efficient compression of
+the X11 protocol. This increases performance when using X
+applications over a network, especially a slow one.
+
 The X Damage Extension allows applications to track modified regions
 of drawables.
 
@@ -185,6 +206,10 @@ Requires:       libNX_Xdmcp6%{?_isa} = %{version}-%{release}
 Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
 
 %description -n libNX_Xdmcp-devel
+NX is a software suite which implements very efficient compression of
+the X11 protocol. This increases performance when using X
+applications over a network, especially a slow one.
+
 The X Display Manager Control Protocol (XDMCP) provides a uniform
 mechanism for an autonomous display to request login service from a
 remote host. By autonomous, we mean the display consists of hardware
@@ -203,6 +228,10 @@ Summary:        NX Display Manager Control Protocol library
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 
 %description -n libNX_Xdmcp6
+NX is a software suite which implements very efficient compression of
+the X11 protocol. This increases performance when using X
+applications over a network, especially a slow one.
+
 The X Display Manager Control Protocol (XDMCP) provides a uniform
 mechanism for an autonomous display to request login service from a
 remote host. By autonomous, we mean the display consists of hardware
@@ -220,7 +249,11 @@ Requires:       libNX_Xau6-devel%{?_isa} = %{version}-%{release}
 Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
 
 %description -n libNX_Xext-devel
-The Xext library contains a handful of X11 extensions:
+NX is a software suite which implements very efficient compression of
+the X11 protocol. This increases performance when using X
+applications over a network, especially a slow one.
+
+The NX_Xext library contains a handful of X11 extensions:
 - Double Buffer extension (DBE/Xdbe)
 - Display Power Management Signaling (DPMS) extension
 - X11 Nonrectangular Window Shape extension (Xshape)
@@ -239,7 +272,11 @@ Summary:        Common extensions to the NX protocol
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 
 %description -n libNX_Xext6
-The Xext library contains a handful of X11 extensions:
+NX is a software suite which implements very efficient compression of
+the X11 protocol. This increases performance when using X
+applications over a network, especially a slow one.
+
+The NX_Xext library contains a handful of X11 extensions:
 - Double Buffer extension (DBE/Xdbe)
 - Display Power Management Signaling (DPMS) extension
 - X11 Nonrectangular Window Shape extension (Xshape)
@@ -257,7 +294,11 @@ Requires:       libNX_X11-devel%{?_isa} = %{version}-%{release}
 Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
 
 %description -n libNX_Xfixes-devel
-The X Fixes extension provides applications with work-arounds for
+NX is a software suite which implements very efficient compression of
+the X11 protocol. This increases performance when using X
+applications over a network, especially a slow one.
+
+The nx-X11 Fixes extension provides applications with work-arounds for
 various limitations in the core protocol.
 
 This package contains all necessary include files and libraries
@@ -270,7 +311,11 @@ Summary:        NX miscellaneous "fixes" extension library
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 
 %description -n libNX_Xfixes3
-The X Fixes extension provides applications with work-arounds for
+NX is a software suite which implements very efficient compression of
+the X11 protocol. This increases performance when using X
+applications over a network, especially a slow one.
+
+The nx_X11 Fixes extension provides applications with work-arounds for
 various limitations in the core protocol.
 
 
@@ -287,6 +332,10 @@ Requires:       libXext%{?_isa}
 %endif
 
 %description -n libNX_Xinerama1
+NX is a software suite which implements very efficient compression of
+the X11 protocol. This increases performance when using X
+applications over a network, especially a slow one.
+
 Xinerama is an extension to the X Window System which enables
 multi-headed X applications and window managers to use two or more
 physical displays as one large virtual display.
@@ -298,6 +347,10 @@ Summary:        Development files for the NX Pixmap image file format library
 Requires:       libNX_Xpm4%{?_isa} = %{version}-%{release}
 
 %description -n libNX_Xpm-devel
+NX is a software suite which implements very efficient compression of
+the X11 protocol. This increases performance when using X
+applications over a network, especially a slow one.
+
 libXpm facilitates working with XPM (X PixMap), a format for
 storing/retrieving X pixmaps to/from files.
 
@@ -311,7 +364,11 @@ Summary:        NX Pixmap image file format library
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 
 %description -n libNX_Xpm4
-libXpm facilitates working with XPM (X PixMap), a format for
+NX is a software suite which implements very efficient compression of
+the X11 protocol. This increases performance when using X
+applications over a network, especially a slow one.
+
+libNX_Xpm facilitates working with XPM (X PixMap), a format for
 storing/retrieving X pixmaps to/from files.
 
 
@@ -321,6 +378,10 @@ Summary:        NX Resize, Rotate and Reflection extension library
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 
 %description -n libNX_Xrandr2
+NX is a software suite which implements very efficient compression of
+the X11 protocol. This increases performance when using X
+applications over a network, especially a slow one.
+
 The X Resize, Rotate and Reflect Extension (RandR) allows clients to
 dynamically change X screens, so as to resize, to change the
 orientation and layout of the root window of a screen.
@@ -334,6 +395,10 @@ Requires:       libNX_X11-devel%{?_isa} = %{version}-%{release}
 Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
 
 %description -n libNX_Xrender-devel
+NX is a software suite which implements very efficient compression of
+the X11 protocol. This increases performance when using X
+applications over a network, especially a slow one.
+
 The Xrender library is designed as a lightweight library interface to
 the Render extension.
 
@@ -347,6 +412,10 @@ Summary:        NX Rendering Extension library
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 
 %description -n libNX_Xrender1
+NX is a software suite which implements very efficient compression of
+the X11 protocol. This increases performance when using X
+applications over a network, especially a slow one.
+
 The Xrender library is designed as a lightweight library interface to
 the Render extension.
 
@@ -357,6 +426,10 @@ Summary:        Xlib-based client API for the XTEST and RECORD extensions on NX
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 
 %description -n libNX_Xtst6
+NX is a software suite which implements very efficient compression of
+the X11 protocol. This increases performance when using X
+applications over a network, especially a slow one.
+
 The XTEST extension is a minimal set of client and server extensions
 required to completely test the X11 server with no user intervention.
 This extension is not intended to support general journaling and
@@ -373,6 +446,10 @@ Requires:       libXcomp3%{?_isa} = %{version}-%{release}
 Requires:       nx-proto-devel = %{version}-%{release}
 
 %description -n libXcomp-devel
+NX is a software suite which implements very efficient compression of
+the X11 protocol. This increases performance when using X
+applications over a network, especially a slow one.
+
 The NX differential compression library's development files.
 
 
@@ -397,6 +474,10 @@ Requires:       libNX_X11-devel%{?_isa} = %{version}-%{release}
 Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
 
 %description -n libXcompext-devel
+NX is a software suite from NoMachine which implements very efficient
+compression of the X11 protocol. This increases performance when
+using X applications over a network, especially a slow one.
+
 The NX compression extensions library's development files.
 
 
@@ -424,6 +505,10 @@ Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
 Requires:       %{name}-devel%{?_isa} = %{version}-%{release}
 
 %description -n libXcompshad-devel
+NX is a software suite from NoMachine which implements very efficient
+compression of the X11 protocol. This increases performance when
+using X applications over a network, especially a slow one.
+
 The NX session shadowing library's development files.
 
 
@@ -454,8 +539,12 @@ Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 
 %description devel
+NX is a software suite from NoMachine which implements very efficient
+compression of the X11 protocol. This increases performance when
+using X applications over a network, especially a slow one.
+
 This package contains all necessary include files and libraries
-needed to develop X11 applications that require these.
+needed to develop nx-X11 applications that require these.
 
 
 %package -n nx-proto-devel
@@ -463,8 +552,12 @@ Group:          Development/Libraries
 Summary:        Include files for NX development
 
 %description -n nx-proto-devel
+NX is a software suite from NoMachine which implements very efficient
+compression of the X11 protocol. This increases performance when
+using X applications over a network, especially a slow one.
+
 This package contains all necessary include files and libraries
-needed to develop X11 applications that require these.
+for the nx_X11 wire protocol.
 
 
 %package -n nxagent
@@ -504,6 +597,10 @@ Group:          Applications/System
 Summary:        NX Auth
 
 %description -n nxauth
+NX is a software suite which implements very efficient compression of
+the X11 protocol. This increases performance when using X
+applications over a network, especially a slow one.
+
 This package provides the NX xauth binary.
 
 
@@ -516,6 +613,10 @@ Obsoletes:      nx%{?_isa} < 3.5.0-19
 Provides:       nx%{?_isa} = %{version}-%{release}
 
 %description -n nxproxy
+NX is a software suite which implements very efficient compression of
+the X11 protocol. This increases performance when using X
+applications over a network, especially a slow one.
+
 This package provides the NX proxy (client) binary.
 
 
@@ -1019,3 +1120,5 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 
 
 %changelog
+* Thu Jan 29 2015 Mike Gabriel <mike.gabriel@das-netzwerkteam.de> 3.5.0.29
+- See debian/changelog for details.

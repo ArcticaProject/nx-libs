@@ -76,6 +76,7 @@ nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
     + Update .spec file to meet changes in tarball size reduction and
       restructuring.
     + Use SONAME based library package naming scheme.
+    + Mention NX technology in every package description.
 
   * debian/roll-tarball.sh:
     + Install etc/ files into etc/ subfolder (rgb, nxagent.keyboard,
