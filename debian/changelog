@@ -80,6 +80,9 @@ nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
     + Mention NX technology in every package description.
     + Install man pages into bin:packages.
     + Make libNX_X11-6 and libXinerama1 compliant to Shared Library Policy.
+    + Add Obsoletes: fields to all shared libs for marking the non-versioned
+      library package (names) as obsolete.
+    + Don't depend on nx-libs base package with fixed version.
 
   * debian/roll-tarball.sh:
     + Install etc/ files into etc/ subfolder (rgb, nxagent.keyboard,

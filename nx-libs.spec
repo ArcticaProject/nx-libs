@@ -71,6 +71,15 @@ Provides:       nx = %{version}-%{release}
 Obsoletes:      nx%{?_isa} < 3.5.0-19
 Provides:       nx%{?_isa} = %{version}-%{release}
 
+# for Xinerama in NX to work:
+%if 0%{?suse_version}
+Requires:       libX11-6%{?_isa}
+Requires:       libXext6%{?_isa}
+%else
+Requires:       libX11%{?_isa}
+Requires:       libXext%{?_isa}
+%endif
+
 %if 0%{?el5}
 # For compatibility with EPEL5
 BuildRoot:      %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
@@ -85,7 +94,8 @@ applications over a network, especially a slow one.
 %package -n libNX_X11-6
 Group:          System Environment/Libraries
 Summary:        Core NX protocol client library
-Requires:       %{name}%{?_isa} = %{version}-%{release}
+Requires:       %{name}%{?_isa} >= 3.5.0.29
+Obsoletes:      libNX_X11
 %if 0%{?suse_version}
 Requires:       xorg-x11-fonts-core
 %endif
@@ -153,7 +163,8 @@ needed to develop applications that require these.
 %package -n libNX_Xau6
 Group:          System Environment/Libraries
 Summary:        NX authorization protocol library
-Requires:       %{name}%{?_isa} = %{version}-%{release}
+Requires:       %{name}%{?_isa} >= 3.5.0.29
+Obsoletes:      libNX_Xau
 
 %description -n libNX_Xau6
 NX is a software suite which implements very efficient compression of
@@ -170,7 +181,8 @@ know a server-specific key called a "magic cookie".
 %package -n libNX_Xcomposite1
 Group:          System Environment/Libraries
 Summary:        NX protocol Composite extension client library
-Requires:       %{name}%{?_isa} = %{version}-%{release}
+Requires:       %{name}%{?_isa} >= 3.5.0.29
+Obsoletes:      libNX_Xcomposite
 
 %description -n libNX_Xcomposite1
 NX is a software suite which implements very efficient compression of
@@ -187,7 +199,8 @@ or merged by external programs, called compositing managers.
 %package -n libNX_Xdamage1
 Group:          System Environment/Libraries
 Summary:        NX Damage Extension library
-Requires:       %{name}%{?_isa} = %{version}-%{release}
+Requires:       %{name}%{?_isa} >= 3.5.0.29
+Obsoletes:      libNX_Xdamage
 
 %description -n libNX_Xdamage1
 NX is a software suite which implements very efficient compression of
@@ -225,7 +238,8 @@ needed to develop applications that require these.
 %package -n libNX_Xdmcp6
 Group:          System Environment/Libraries
 Summary:        NX Display Manager Control Protocol library
-Requires:       %{name}%{?_isa} = %{version}-%{release}
+Requires:       %{name}%{?_isa} >= 3.5.0.29
+Obsoletes:      libNX_Xdmcp
 
 %description -n libNX_Xdmcp6
 NX is a software suite which implements very efficient compression of
@@ -269,7 +283,8 @@ needed to develop applications that require these.
 %package -n libNX_Xext6
 Group:          System Environment/Libraries
 Summary:        Common extensions to the NX protocol
-Requires:       %{name}%{?_isa} = %{version}-%{release}
+Requires:       %{name}%{?_isa} >= 3.5.0.29
+Obsoletes:      libNX_Xext
 
 %description -n libNX_Xext6
 NX is a software suite which implements very efficient compression of
@@ -308,7 +323,7 @@ needed to develop applications that require these.
 %package -n libNX_Xfixes3
 Group:          System Environment/Libraries
 Summary:        NX miscellaneous "fixes" extension library
-Requires:       %{name}%{?_isa} = %{version}-%{release}
+Requires:       %{name}%{?_isa} >= 3.5.0.29
 
 %description -n libNX_Xfixes3
 NX is a software suite which implements very efficient compression of
@@ -322,14 +337,8 @@ various limitations in the core protocol.
 %package -n libNX_Xinerama1
 Group:          System Environment/Libraries
 Summary:        Xinerama extension to the NX Protocol
-Requires:       %{name}%{?_isa} = %{version}-%{release}
-%if 0%{?suse_version}
-Requires:       libX11-6%{?_isa}
-Requires:       libXext6%{?_isa}
-%else
-Requires:       libX11%{?_isa}
-Requires:       libXext%{?_isa}
-%endif
+Requires:       %{name}%{?_isa} >= 3.5.0.29
+Obsoletes:      libNX_Xinerama
 
 %description -n libNX_Xinerama1
 NX is a software suite which implements very efficient compression of
@@ -361,7 +370,8 @@ needed to develop applications that require these.
 %package -n libNX_Xpm4
 Group:          System Environment/Libraries
 Summary:        NX Pixmap image file format library
-Requires:       %{name}%{?_isa} = %{version}-%{release}
+Requires:       %{name}%{?_isa} >= 3.5.0.29
+Obsoletes:      libNX_Xpm
 
 %description -n libNX_Xpm4
 NX is a software suite which implements very efficient compression of
@@ -375,7 +385,8 @@ storing/retrieving X pixmaps to/from files.
 %package -n libNX_Xrandr2
 Group:          System Environment/Libraries
 Summary:        NX Resize, Rotate and Reflection extension library
-Requires:       %{name}%{?_isa} = %{version}-%{release}
+Requires:       %{name}%{?_isa} >= 3.5.0.29
+Obsoletes:      libNX_Xrandr
 
 %description -n libNX_Xrandr2
 NX is a software suite which implements very efficient compression of
@@ -409,7 +420,8 @@ needed to develop applications that require these.
 %package -n libNX_Xrender1
 Group:          System Environment/Libraries
 Summary:        NX Rendering Extension library
-Requires:       %{name}%{?_isa} = %{version}-%{release}
+Requires:       %{name}%{?_isa} >= 3.5.0.29
+Obsoletes:      libNX_Xrender
 
 %description -n libNX_Xrender1
 NX is a software suite which implements very efficient compression of
@@ -423,7 +435,8 @@ the Render extension.
 %package -n libNX_Xtst6
 Group:          System Environment/Libraries
 Summary:        Xlib-based client API for the XTEST and RECORD extensions on NX
-Requires:       %{name}%{?_isa} = %{version}-%{release}
+Requires:       %{name}%{?_isa} >= 3.5.0.29
+Obsoletes:      libNX_Xtst
 
 %description -n libNX_Xtst6
 NX is a software suite which implements very efficient compression of
@@ -456,7 +469,8 @@ The NX differential compression library's development files.
 %package -n libXcomp3
 Group:          System Environment/Libraries
 Summary:        NX differential compression library
-Requires:       %{name}%{?_isa} = %{version}-%{release}
+Requires:       %{name}%{?_isa} >= 3.5.0.29
+Obsoletes:      libNX_Xcomp
 
 %description -n libXcomp3
 NX is a software suite from NoMachine which implements very efficient
@@ -484,7 +498,8 @@ The NX compression extensions library's development files.
 %package -n libXcompext3
 Group:          System Environment/Libraries
 Summary:        NX protocol compression extensions library
-Requires:       %{name}%{?_isa} = %{version}-%{release}
+Requires:       %{name}%{?_isa} >= 3.5.0.29
+Obsoletes:      libNX_Xcompext
 
 %description -n libXcompext3
 NX is a software suite from NoMachine which implements very efficient
@@ -515,7 +530,8 @@ The NX session shadowing library's development files.
 %package -n libXcompshad3
 Group:          System Environment/Libraries
 Summary:        NX session shadowing Library
-Requires:       %{name}%{?_isa} = %{version}-%{release}
+Requires:       %{name}%{?_isa} >= 3.5.0.29
+Obsoletes:      libNX_Xcompshad
 
 %description -n libXcompshad3
 NX is a software suite from NoMachine which implements very efficient
@@ -570,7 +586,6 @@ Provides:       nx%{?_isa} = %{version}-%{release}
 %if 0%{?suse_version}
 Requires:       xorg-x11-fonts-core
 %endif
-Requires:       libNX_Xinerama1%{?_isa} = %{version}-%{release}
 
 %description -n nxagent
 NX is a software suite which implements very efficient compression of
