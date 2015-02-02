@@ -65,7 +65,6 @@
 601_nx-X11_build-option-changes-to-not-use-bundled-libraries.full.patch
 602_nx-X11_initgroups.full.patch
 603_nx-X11_compilation_warnings.full.patch
-604_nx-X11_recent-freetype-API.full.patch
 605_nxcomp_Types.h-dont-use-STL-internals-on-libc++.full+lite.patch
 606_nx-X11_build-on-aarch64.full.patch
 607_nxcomp_macosx-X11-launcher-in-private-tmp.full+lite.patch
