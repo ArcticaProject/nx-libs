@@ -73,6 +73,10 @@ Provides:       nx%{?_isa} = %{version}-%{release}
 
 # for Xinerama in NX to work:
 %if 0%{?suse_version}
+%if 0%{?suse_version} < 1140
+Requires:       xorg-x11-libX11%{?_isa}
+Requires:       xorg-x11-libXext%{?_isa}
+%else
 Requires:       libX11-6%{?_isa}
 Requires:       libXext6%{?_isa}
 %else
