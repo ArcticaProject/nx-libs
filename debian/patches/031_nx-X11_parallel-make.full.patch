@@ -198,31 +198,3 @@ Last-Update: 2012-01-26 22:29:13.993994227 +0100
  
  ServerTarget(nxagent,$(NX_XSHADOWLIBTARGET) $(NXAGENTDIRS),$(NXAGENTOBJS), \
 
---- a/nx-X11/lib/X11/Imakefile.NX.original
-+++ b/nx-X11/lib/X11/Imakefile.NX.original
-@@ -1159,21 +1159,17 @@
- 
- #ifdef SunArchitecture
- $(NX_XCOMPLIBTARGET): $(NX_XCOMPCONFIGTARGET)
--	cd $(NX_XCOMPLIBDIR) && \
--	gmake
-+	${MAKE} -C $(NX_XCOMPLIBDIR)
- 
- $(NX_XCOMPEXTLIBTARGET): $(NX_XCOMPEXTCONFIGTARGET)
--	cd ../../../nxcompext && \
--	gmake
-+	${MAKE} -C ../../../nxcompext
- 
- #else
- $(NX_XCOMPLIBTARGET): $(NX_XCOMPCONFIGTARGET)
--	cd $(NX_XCOMPLIBDIR) && \
--	make
-+	${MAKE} -C $(NX_XCOMPLIBDIR)
- 
- $(NX_XCOMPEXTLIBTARGET): $(NX_XCOMPEXTCONFIGTARGET)
--	cd ../../../nxcompext && \
--	make
-+	${MAKE} -C ../../../nxcompext
- 
- #endif
- 
