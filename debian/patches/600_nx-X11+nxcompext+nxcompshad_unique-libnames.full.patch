@@ -26,7 +26,6 @@ Last-Update: 2012-02-15
  nx-X11/config/cf/lnxLib.tmpl                        |    4 
  nx-X11/lib/X11/Imakefile                            |    2 
  nx-X11/lib/XRes/Imakefile                           |    2 
- nx-X11/lib/XTrap/Imakefile                          |    2 
  nx-X11/lib/Xau/Imakefile                            |    2 
  nx-X11/lib/Xcomposite/Imakefile                     |    2 
  nx-X11/lib/Xcomposite/xcomposite.pc.in              |    2 
@@ -38,7 +37,6 @@ Last-Update: 2012-02-15
  nx-X11/lib/Xext/Imakefile                           |    2 
  nx-X11/lib/Xfixes/Imakefile                         |    2 
  nx-X11/lib/Xfixes/xfixes.pc.in                      |    2 
- nx-X11/lib/Xfontcache/Imakefile                     |    2 
  nx-X11/lib/Xinerama/Imakefile                       |    2 
  nx-X11/lib/Xpm/Imakefile                            |    2 
  nx-X11/lib/Xrandr/Imakefile                         |    2 
@@ -876,17 +874,6 @@ Last-Update: 2012-02-15
  #define SoRev SOXRESREV
  #define LibHeaders NO
  
---- a/nx-X11/lib/XTrap/Imakefile
-+++ b/nx-X11/lib/XTrap/Imakefile
-@@ -4,7 +4,7 @@
- #define DoSharedLib SharedLibXTrap
- #define DoDebugLib DebugLibXTrap
- #define DoProfileLib ProfileLibXTrap
--#define LibName XTrap
-+#define LibName NX_XTrap
- #define SoRev SOXTRAPREV
- #define LibHeaders NO
- 
 --- a/nx-X11/lib/Xau/Imakefile
 +++ b/nx-X11/lib/Xau/Imakefile
 @@ -10,7 +10,7 @@
@@ -996,17 +983,6 @@ Last-Update: 2012-02-15
  Cflags: -I${includedir} @X_CFLAGS@
 -Libs: -L${libdir} -lXfixes @X_LIBS@
 +Libs: -L${libdir} -lNX_Xfixes @X_LIBS@
---- a/nx-X11/lib/Xfontcache/Imakefile
-+++ b/nx-X11/lib/Xfontcache/Imakefile
-@@ -9,7 +9,7 @@
- #define DoExtraLib SharedLibXfontcache
- #define DoDebugLib DebugLibXfontcache
- #define DoProfileLib ProfileLibXfontcache
--#define LibName Xfontcache
-+#define LibName NX_Xfontcache
- #define SoRev SOXFONTCACHEREV
- #define LibHeaders NO
- 
 --- a/nx-X11/lib/Xinerama/Imakefile
 +++ b/nx-X11/lib/Xinerama/Imakefile
 @@ -4,7 +4,7 @@
