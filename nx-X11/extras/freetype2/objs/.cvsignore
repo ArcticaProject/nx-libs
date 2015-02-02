@@ -1,4 +1,0 @@
-*.lo
-libfreetype.la
-freetype.lib
-.libs
