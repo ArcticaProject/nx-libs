@@ -14,9 +14,6 @@
 014_nxcompshad_makefile-uninstall+autoconf.full.patch
 015_nxproxy_makefile-uninstall.full+lite.patch
 016_nx-X11_install-location.full.patch
-017_nx-X11_update-autotools-helper-files.full.patch
-018_nx-X11_update-libtool-ltmain-script.full.patch
-019_nx-X11_expat-build-against-system-libxmltok.full.patch
 024_fix-make-clean.full.patch
 024_fix-make-clean.full+lite.patch
 025_nxcomp-fix-ftbfs-against-jpeg9a.full+lite.patch
