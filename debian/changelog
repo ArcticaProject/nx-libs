@@ -43,6 +43,18 @@ nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
     - Makefile.nx-libs: Don't install Mesa header files into DESTDIR anymore.
     - Unify source tree reduction (debian/rules vs. roll-tarball.sh) via file/
       folder lists in text files named debian/CODE-REDUCTION_*.
+    - Update 991_fix-hr-typos.full.patch. Don't patch files that get removed by
+      the NX code reduction effort.
+    - Drop 604_nx-X11_recent-freetype-API.full.patch. Not used in current build
+      process.
+    - Update 600_nx-X11+nxcompext+nxcompshad_unique-libnames.full.patch. Don't
+      patch files matter to the NX code reduction efforts.
+    - Update 031_nx-X11_parallel-make.full.patch. Don't patch .original files in
+      NX code tree.
+    - Drop patches: 017_nx-X11_update-autotools-helper-files.full.patch,
+      018_nx-X11_update-libtool-ltmain-script.full.patch,
+      019_nx-X11_expat-build-against-system-libxmltok.full.patch. They patch files
+      that are not used at build time.
 
   * Debian/Ubuntu packaging:
     + Fully rework the way nx-libs gets packaged for Debian/Ubuntu.
