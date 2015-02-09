@@ -27,51 +27,51 @@
 .\"
 .TH XAUTH 1 __xorgversion__
 .SH NAME
-xauth \- X authority file utility
+nxauth \- NoMachine X authority file utility
 .SH SYNOPSIS
-.B xauth
+.B nxauth
 [ \fB\-f\fP \fIauthfile\fP ] [ \fB\-vqib\fP ] [ \fIcommand arg ...\fP ]
 .SH DESCRIPTION
 .PP
-The \fIxauth\fP program is used to edit and display the authorization 
+The \fInxauth\fP program is used to edit and display the authorization 
 information used in connecting to the X server.  This program is usually
 used to extract authorization records from one machine and merge them in on 
 another (as is the case when using remote logins or granting access to
 other users).  Commands (described below) may be entered interactively,
-on the \fIxauth\fP command line, or in scripts.  Note that this program
+on the \fInxauth\fP command line, or in scripts.  Note that this program
 does \fBnot\fP contact the X server except when the generate command is used.
-Normally \fIxauth\fP is not used to create the authority file entry in
+Normally \fInxauth\fP is not used to create the authority file entry in
 the first place; \fIxdm\fP does that.
 .SH OPTIONS
-The following options may be used with \fIxauth\fP.  They may be given 
+The following options may be used with \fInxauth\fP.  They may be given 
 individually (e.g., \fI\-q \-i\|\fP) or may combined (e.g., \fI\-qi\|\fP).
 .TP 8
 .B "\-f \fIauthfile\fP"
 This option specifies the name of the authority file to use.  By default,
-\fIxauth\fP will use the file specified by the XAUTHORITY environment variable
+\fInxauth\fP will use the file specified by the nxauthORITY environment variable
 or \fI\.Xauthority\fP in the user's home directory.
 .TP 8
 .B \-q
-This option indicates that \fIxauth\fP should operate quietly and not print
-unsolicited status messages.  This is the default if an \fIxauth\fP command is
+This option indicates that \fInxauth\fP should operate quietly and not print
+unsolicited status messages.  This is the default if an \fInxauth\fP command is
 is given on the command line or if the standard output is not directed to a
 terminal.
 .TP 8
 .B \-v
-This option indicates that \fIxauth\fP should operate verbosely and print
+This option indicates that \fInxauth\fP should operate verbosely and print
 status messages indicating the results of various operations (e.g., how many
-records have been read in or written out).  This is the default if \fIxauth\fP
+records have been read in or written out).  This is the default if \fInxauth\fP
 is reading commands from its standard input and its standard output is
 directed to a terminal.
 .TP 8
 .B \-i
-This option indicates that \fIxauth\fP should ignore any authority file
-locks.  Normally, \fIxauth\fP will refuse to read or edit any authority files
+This option indicates that \fInxauth\fP should ignore any authority file
+locks.  Normally, \fInxauth\fP will refuse to read or edit any authority files
 that have been locked by other programs (usually \fIxdm\fP or another 
-\fIxauth\fP).
+\fInxauth\fP).
 .TP 8
 .B \-b
-This option indicates that \fIxauth\fP should attempt to break any authority
+This option indicates that \fInxauth\fP should attempt to break any authority
 file locks before proceeding.  Use this option only to clean up stale locks.
 .SH COMMANDS
 The following commands may be used to manipulate authority files:
@@ -157,14 +157,14 @@ Authorization entries matching the specified displays are removed from the
 authority file.
 .TP 8
 .B "source \fIfilename"
-The specified file is treated as a script containing \fIxauth\fP commands
+The specified file is treated as a script containing \fInxauth\fP commands
 to execute.  Blank lines and lines beginning with a sharp sign (#) are 
 ignored.  A single dash may be used to indicate the standard input, if it
 hasn't already been read.
 .TP 8
 .B "info"
 Information describing the authorization file, whether or not any changes
-have been made, and from where \fIxauth\fP commands are being read
+have been made, and from where \fInxauth\fP commands are being read
 is printed on the standard output. 
 .TP 8
 .B "exit"
@@ -194,12 +194,12 @@ referred to as \fIhostname\fP/unix:\fIdisplaynumber\fP so that
 local entries for different machines may be stored in one authority file.
 .SH EXAMPLE
 .PP
-The most common use for \fIxauth\fP is to extract the entry for the 
+The most common use for \fInxauth\fP is to extract the entry for the 
 current display, copy it to another machine, and merge it into the 
 user's authority file on the remote machine:
 .sp
 .nf
-        %  xauth extract \- $DISPLAY | rsh otherhost xauth merge \-
+        %  nxauth extract \- $DISPLAY | rsh otherhost nxauth merge \-
 .fi
 .PP
 .sp
@@ -207,10 +207,10 @@ The following command contacts the server :0 to create an
 authorization using the MIT-MAGIC-COOKIE-1 protocol.  Clients that
 connect with this authorization will be untrusted.
 .nf
-	%  xauth generate :0 .
+	%  nxauth generate :0 .
 .fi
 .SH ENVIRONMENT
-This \fIxauth\fP program uses the following environment variables:
+This \fInxauth\fP program uses the following environment variables:
 .TP 8
 .B XAUTHORITY
 to get the name of the authority file to use if the \fI\-f\fP option isn't
