@@ -112,11 +112,6 @@ nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
     launched as x2goagent, use X2Go-specific paths for the keystrokes.cfg file.
     (Fixes: #744).
 
-  [ Heinrich Schuchardt ]
-  + Add patch 700_nx-X11_mesa-initialize-server-support-correctly.full.patch.
-    Initialize server_support array with correct size. Fix Mesa upstream
-    bugzilla bug #7353. (Fixes: #776).
-
   [ Mihai Moldovan ]
   * Change string "X2go" to "X2Go" where appropriate.
 
