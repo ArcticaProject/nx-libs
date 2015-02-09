@@ -20,8 +20,8 @@
 
 #include <iostream>
 
-#include <errno.h>
-#include <string.h>
+#include <cerrno>
+#include <cstring>
 
 using namespace std;
 

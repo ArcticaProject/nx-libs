@@ -18,8 +18,8 @@
 #ifndef Logger_H
 #define Logger_H
 
-#include <errno.h>
-#include <stdarg.h>
+#include <cerrno>
+#include <cstdarg>
 
 //
 // Error handling macros.
