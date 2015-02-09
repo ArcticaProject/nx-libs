@@ -138,6 +138,7 @@ Makefile::
 
 xmakefile: Imakefile
 	$(RM) xmakefile
+	@rm -f $(IRULESRC)/date.def; echo "" > $(IRULESRC)/date.def;
 	$(IMAKE_CMD) -s xmakefile -DTOPDIR=$(TOP) -DCURDIR=$(CURRENT_DIR)
 
 World.Win32:
@@ -197,11 +198,16 @@ World.OS2:
 # a copy of every rule that might be invoked at top level
 
 clean:
-	    $(MAKE_CMD) $@
+	    -$(MAKE_CMD) $@
+	    find config -type f | egrep '.*/Makefile$$' | while read makefile; do rm -f $$makefile; done
+	    find lib -type f | egrep '.*/Makefile$$' | while read makefile; do rm -f $$makefile; done
+	    find programs -type f | egrep '.*/Makefile$$' | while read makefile; do rm -f $$makefile; done
+	    find include -type f | egrep '.*/Makefile$$' | while read makefile; do rm -f $$makefile; done
+	    rm -f config/cf/{version.def,date.def}
 dangerous_strip_clean:
 	    $(MAKE_CMD) $@
 distclean:
-	    $(MAKE_CMD) $@
+	    -$(MAKE_CMD) $@
 	    $(RM) xmakefile $(IRULESRC)/version.def $(IRULESRC)/date.def
 depend:
 	    $(MAKE_CMD) $@

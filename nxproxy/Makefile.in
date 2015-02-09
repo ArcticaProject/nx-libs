@@ -109,4 +109,4 @@ clean:
 		$(PROGRAM) $(PROGRAM).exe $(LIBFULL) $(LIBLOAD) $(LIBSHARED) $(LIBARCHIVE)
 
 distclean:	clean
-		-rm -f config.status config.log config.cache depend.status Makefile tags
+		-rm -rf autom4te.cache config.status config.log config.cache depend.status Makefile tags configure

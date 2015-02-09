@@ -185,5 +185,5 @@ clean:
 		@ALL@
 
 distclean:	clean
-		-rm -rf autom4te.cache config.status config.log \
+		-rm -rf autom4te.cache config.status config.log configure \
 		config.cache depend.status Makefile tags

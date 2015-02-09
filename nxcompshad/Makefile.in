@@ -222,4 +222,4 @@ clean:
 		$(LIBFULL) $(LIBLOAD) $(LIBSHARED) $(LIBARCHIVE) $(LIBDLL) $(LIBDLLSTATIC) $(PROGRAM) $(PROGRAM).exe
 
 distclean:	clean
-		-rm -rf config.status config.log config.cache depend.status Makefile tags autom4te.cache
+		-rm -rf config.status config.log config.cache depend.status Makefile tags autom4te.cache configure
