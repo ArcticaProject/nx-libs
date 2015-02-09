@@ -2985,7 +2985,7 @@ _fs_recv_conn_setup (FSFpePtr conn)
     int			ret;
     fsConnSetup		*setup;
     FSFpeAltPtr		alts;
-    int			i, alt_len;
+    unsigned int	i, alt_len;
     int			setup_len;
     char		*alt_save, *alt_names;
     
@@ -3012,9 +3012,9 @@ _fs_recv_conn_setup (FSFpePtr conn)
 	}
 	if (setup->num_alternates)
 	{
+	    size_t alt_name_len = setup->alternate_len << 2;
 	    alts = (FSFpeAltPtr) xalloc (setup->num_alternates * 
-					 sizeof (FSFpeAltRec) +
-					 (setup->alternate_len << 2));
+					 sizeof (FSFpeAltRec) + alt_name_len);
 	    if (alts)
 	    {
 		alt_names = (char *) (setup + 1);
@@ -3023,10 +3023,25 @@ _fs_recv_conn_setup (FSFpePtr conn)
 		{
 		    alts[i].subset = alt_names[0];
 		    alt_len = alt_names[1];
+		    if (alt_len >= alt_name_len) {
+			/*
+			 * Length is longer than setup->alternate_len
+			 * told us to allocate room for, assume entire
+			 * alternate list is corrupted.
+			 */
+#ifdef DEBUG
+			fprintf (stderr,
+				 "invalid alt list (length %lx >= %lx)\n",
+				 (long) alt_len, (long) alt_name_len);
+#endif
+			xfree(alts);
+			return FSIO_ERROR;
+		    }
 		    alts[i].name = alt_save;
 		    memcpy (alt_save, alt_names + 2, alt_len);
 		    alt_save[alt_len] = '\0';
 		    alt_save += alt_len + 1;
+		    alt_name_len -= alt_len + 1;
 		    alt_names += _fs_pad_length (alt_len + 2);
 		}
 		conn->numAlts = setup->num_alternates;
