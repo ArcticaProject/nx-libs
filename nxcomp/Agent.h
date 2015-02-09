@@ -149,30 +149,38 @@ class Agent
 
   int remoteCanRead(const fd_set * const readSet)
   {
+    // OS X 10.5 requires the second argument to be non-const, so copy readSet.
+    // It's safe though, as FD_ISSET does not operate on it.
+    fd_set readWorkSet = *readSet;
+
     #if defined(TEST) || defined(INFO)
     *logofs << "Agent: remoteCanRead() is " <<
-               (FD_ISSET(remoteFd_, readSet) && transport_ -> dequeuable() != 0)
-            << " with FD_ISSET() " << (int) FD_ISSET(remoteFd_, readSet)
+               (FD_ISSET(remoteFd_, &readWorkSet) && transport_ -> dequeuable() != 0)
+            << " with FD_ISSET() " << (int) FD_ISSET(remoteFd_, &readWorkSet)
             << " and dequeuable " << transport_ -> dequeuable()
             << ".\n" << logofs_flush;
     #endif
 
-    return (FD_ISSET(remoteFd_, readSet) &&
+    return (FD_ISSET(remoteFd_, &readWorkSet) &&
                 transport_ -> dequeuable() != 0);
   }
 
   int remoteCanWrite(const fd_set * const writeSet)
   {
+    // OS X 10.5 requires the second argument to be non-const, so copy writeSet.
+    // It's safe though, as FD_ISSET does not operate on it.
+    fd_set writeWorkSet = *writeSet;
+
     #if defined(TEST) || defined(INFO)
     *logofs << "Agent: remoteCanWrite() is " <<
-               (FD_ISSET(remoteFd_, writeSet) && transport_ ->
+               (FD_ISSET(remoteFd_, &writeWorkSet) && transport_ ->
                queuable() != 0 && canRead_ == 1) << " with FD_ISSET() "
-            << (int) FD_ISSET(remoteFd_, writeSet) << " queueable "
+            << (int) FD_ISSET(remoteFd_, &writeWorkSet) << " queueable "
             << transport_ -> queuable() << " channel can read "
             << canRead_ << ".\n" << logofs_flush;
     #endif
 
-    return (FD_ISSET(remoteFd_, writeSet) &&
+    return (FD_ISSET(remoteFd_, &writeWorkSet) &&
                 transport_ -> queuable() != 0 &&
                     canRead_ == 1);
   }
@@ -203,13 +211,17 @@ class Agent
 
   int proxyCanRead(const fd_set * const readSet)
   {
+    // OS X 10.5 requires the second argument to be non-const, so copy readSet.
+    // It's safe though, as FD_ISSET does not operate on it.
+    fd_set readWorkSet = *readSet;
+
     #if defined(TEST) || defined(INFO)
     *logofs << "Agent: proxyCanRead() is "
-            << ((int) FD_ISSET(proxy -> getFd(), readSet)
+            << ((int) FD_ISSET(proxy -> getFd(), &readWorkSet)
             << ".\n" << logofs_flush;
     #endif
 
-    return (FD_ISSET(proxy -> getFd(), readSet));
+    return (FD_ISSET(proxy -> getFd(), &readWorkSet));
   }
 
   int enqueueData(const char *data, const int size) const
