@@ -139,38 +139,9 @@ mv -v debian/changelog doc/changelog
 test -f Makefile || test -f debian/Makefile.nx-libs && cp -v debian/Makefile.nx-libs Makefile
 test -f replace.sh || test -f debian/Makefile.replace.sh && cp -v debian/Makefile.replace.sh replace.sh
 
-
-
-#### stuff we do not needed
-UNUSED_FOLDERS=`cat debian/CODE-REDUCTION_CLEANUP-UNUSED`
-CLEANUP_FOLDERS=`cat debian/CODE-REDUCTION_CLEANUP-BRUTAL`
-UNNEEDED_BACKUPS=`cat debian/CODE-REDUCTION_CLEANUP-BACKUPFILES`
-PRESERVE_SYMLINKED_FILES=`cat debian/CODE-REDUCTION_PRESERVE-SYMLINKED`
-PRESERVE_INCLUDED_FILES=`cat debian/CODE-REDUCTION_PRESERVE-INCLUDED`
-PRESERVE_NEEDED_FILES=`cat debian/CODE-REDUCTION_PRESERVE-NEEDED`
-
 # remove folders that we do not want to roll into the tarball
 rm -Rf ".pc/"
 rm -Rf "debian/"
-
-mkdir -p .preserve/
-for path in ${PRESERVE_SYMLINKED_FILES} ${PRESERVE_INCLUDED_FILES} ${PRESERVE_NEEDED_FILES}; do
-	if [ ! -d $path ]; then
-		path_dirname=$(dirname "$path")
-	else
-		path_dirname="$path"
-	fi
-	mkdir -vp ".preserve/$path_dirname"
-	cp -av "$path" ".preserve/$path"
-done
-
-for path in ${UNUSED_FOLDERS} ${CLEANUP_FOLDERS} ${UNNEEDED_BACKUPS}; do
-    rm -R "$path"
-done
-
-# re-create the to-be-preserved files
-cp -a .preserve/* ./
-rm -Rf .preserve/
 
 # remove files, that we do not want in the tarballs (build cruft)
 rm -Rf nx*/configure nx*/autom4te.cache*

@@ -13,14 +13,6 @@ export INCLUDEDIR = "/usr/include/$(shell dpkg-architecture -qDEB_BUILD_MULTIARC
 %:
 	CONFIGURE="./configure --with-symbols --prefix=/usr --libdir=$(LIBDIR) --includedir=$(INCLUDEDIR)" dh $@ --with quilt
 
-# before build, we will remove unused code / bundled libraries (keep this in sync with roll-tarball.sh)
-UNUSED_FOLDERS           = "debian/CODE-REDUCTION_CLEANUP-UNUSED"
-CLEANUP_FOLDERS          = "debian/CODE-REDUCTION_CLEANUP-BRUTAL"
-UNNEEDED_BACKUPS         = "debian/CODE-REDUCTION_CLEANUP-BACKUPFILES"
-PRESERVE_SYMLINKED_FILES = "debian/CODE-REDUCTION_PRESERVE-SYMLINKED"
-PRESERVE_NEEDED_FILES    = "debian/CODE-REDUCTION_PRESERVE-NEEDED"
-PRESERVE_INCLUDED_FILES  = "debian/CODE-REDUCTION_PRESERVE-INCLUDED"
-
 override_dh_auto_clean:
 	rm -Rf nx-X11/.build-exports
 	dh_auto_clean
@@ -120,24 +112,6 @@ override_dh_auto_build:
 
 	# let's prep the libnx-xinerama1.postinst script with the value of the build systems's DEB_BUILD_MULTIARCH variable
 	sed debian/libnx-xinerama1.postinst.in -e 's/#DEB_BUILD_MULTIARCH#/$(DEB_BUILD_MULTIARCH)/' > debian/libnx-xinerama1.postinst
-
-	# make a copy of code to be preserved for build
-	mkdir -p .preserve
-	for path in `cat $(PRESERVE_SYMLINKED_FILES)` `cat $(PRESERVE_NEEDED_FILES)` `cat $(PRESERVE_INCLUDED_FILES)`; do \
-	    if echo $$path | grep -E "^#.*"; then continue; fi; \
-	    test -d $$path && mkdir -p .preserve/$$path || mkdir -p .preserve/$$(dirname $$path); \
-	    cp -av $$path .preserve/$$path; \
-	done
-
-	# remove unused code / bundled libraries (see at the top of the debian/rules file)
-        # for the exact list of files and folders
-	rm -Rf `cat $(UNUSED_FOLDERS)`
-	rm -Rf `cat $(CLEANUP_FOLDERS)`
-	rm -Rf `cat $(UNNEEDED_BACKUPS)`
-
-	# copy to-be-preserved files back into code tree
-	cp -av .preserve/* .
-	rm -Rf .preserve/
 
 	LOCAL_LDFLAGS=$(LDFLAGS) SHLIBGLOBALSFLAGS=$(LDFLAGS) SHLIBDIR=$(LIBDIR) PREFIX=/usr dh_auto_build --parallel
 

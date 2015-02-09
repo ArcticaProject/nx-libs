@@ -672,32 +672,6 @@ cp -v debian/x2goagent.keyboard etc/x2goagent.keyboard
 cp -v debian/VERSION VERSION.x2goagent
 cp -v debian/VERSION nxcomp/VERSION
 
-### remove bundled libraries (also taken from roll-tarball.sh)
-UNUSED_FOLDERS=`cat debian/CODE-REDUCTION_CLEANUP-UNUSED`
-CLEANUP_FOLDERS=`cat debian/CODE-REDUCTION_CLEANUP-BRUTAL`
-UNNEEDED_BACKUPS=`cat debian/CODE-REDUCTION_CLEANUP-BACKUPFILES`
-PRESERVE_SYMLINKED_FILES=`cat debian/CODE-REDUCTION_PRESERVE-SYMLINKED`
-PRESERVE_INCLUDED_FILES=`cat debian/CODE-REDUCTION_PRESERVE-INCLUDED`
-PRESERVE_NEEDED_FILES=`cat debian/CODE-REDUCTION_PRESERVE-NEEDED`
-mkdir -p .preserve/
-for path in ${PRESERVE_SYMLINKED_FILES} ${PRESERVE_INCLUDED_FILES} ${PRESERVE_NEEDED_FILES}; do
-    if [ ! -d $path ]; then
-	path_dirname=$(dirname "$path")
-    else
-	path_dirname="$path"
-    fi
-    mkdir -vp ".preserve/$path_dirname"
-    cp -av "$path" ".preserve/$path"
-done
-for path in ${UNUSED_FOLDERS} ${CLEANUP_FOLDERS} ${UNNEEDED_BACKUPS}; do
-    rm -R "$path"
-done
-
-# re-create the to-be-preserved files
-cp -a .preserve/* ./
-rm -Rf .preserve/
-### end of remove bundle libraries
-
 # remove build cruft that is in Git (also taken from roll-tarball.sh)
 rm -Rf nx*/configure nx*/autom4te.cache*
 # Install into /usr
