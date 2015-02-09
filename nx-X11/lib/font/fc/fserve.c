@@ -2366,7 +2366,7 @@ fs_read_list_info(FontPathElementPtr fpe, FSBlockDataPtr blockrec)
     _fs_free_props (&binfo->info);
 
     rep = (fsListFontsWithXInfoReply *) fs_get_reply (conn, &ret);
-    if (rep == 0)
+	if (!rep || rep->type == FS_Error)
     {
 	if (ret == FSIO_BLOCK)
 	    return StillWorking;
