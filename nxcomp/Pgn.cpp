@@ -414,7 +414,7 @@ int DecompressPng16(unsigned char *compressedData, int compressedLen,
 
   png_read_info(pngPtr, infoPtr);
 
-  if (infoPtr -> color_type == PNG_COLOR_TYPE_PALETTE)
+  if (png_get_color_type(pngPtr, infoPtr) == PNG_COLOR_TYPE_PALETTE)
   {
     png_set_expand(pngPtr);
   }
@@ -565,7 +565,7 @@ int DecompressPng24(unsigned char *compressedData, int compressedLen,
 
   png_read_info( pngPtr, infoPtr ) ;
 
-  if (infoPtr -> color_type == PNG_COLOR_TYPE_PALETTE)
+  if (png_get_color_type(pngPtr, infoPtr) == PNG_COLOR_TYPE_PALETTE)
   {
     png_set_expand(pngPtr);
   }
@@ -709,7 +709,7 @@ int DecompressPng32(unsigned char *compressedData, int compressedLen,
   png_read_info(pngPtr, infoPtr) ;
 
 
-  if (infoPtr -> color_type == PNG_COLOR_TYPE_PALETTE)
+  if (png_get_color_type(pngPtr, infoPtr) == PNG_COLOR_TYPE_PALETTE)
   {
     png_set_expand(pngPtr);
   }
