@@ -481,7 +481,7 @@ void OsVendorVErrorFFunction(const char *f, va_list args)
 
     nxagentStartRedirectToClientsLog();
 
-    fprintf(stderr, buffer);
+    fprintf(stderr, "%s", buffer);
 
     nxagentEndRedirectToClientsLog();
   }

@@ -692,9 +692,9 @@ Error(char *str)
 	    return;
 	sprintf(err, "%s: ", str);
 	strcat(err, strerror(saveErrno));
-	LogWrite(-1, err);
+	LogWrite(-1, "%s", err);
     } else
-	LogWrite(-1, strerror(saveErrno));
+	LogWrite(-1, "%s", strerror(saveErrno));
 }
 
 void

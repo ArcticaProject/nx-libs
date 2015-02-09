@@ -232,7 +232,7 @@ static int nxagentPrintError(dpy, event, fp)
 
 int nxagentExitHandler(const char *message)
 {
-  FatalError(message);
+  FatalError("%s", message);
 
   return 0;
 }

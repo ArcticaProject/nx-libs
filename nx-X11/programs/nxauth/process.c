@@ -974,7 +974,7 @@ fprintfhex(register FILE *fp, int len, char *cp)
     char *hex;
 
     hex = bintohex(len, cp);
-    fprintf(fp, hex);
+    fprintf(fp, "%s", hex);
     free(hex);
 }
 

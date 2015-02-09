@@ -110,12 +110,12 @@ void *__glXImpRealloc(__GLcontext *gc, void *addr, size_t newSize)
 
 void __glXImpWarning(__GLcontext *gc, char *msg)
 {
-    ErrorF((char *)msg);
+    ErrorF("%s",(char *)msg);
 }
 
 void __glXImpFatal(__GLcontext *gc, char *msg)
 {
-    ErrorF((char *)msg);
+    ErrorF("%s",(char *)msg);
     __glXAbort();
 }
 
