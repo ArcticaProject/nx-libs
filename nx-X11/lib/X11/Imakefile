@@ -1147,15 +1147,17 @@ ks_tables.h: $(XINCLUDESRC)/keysymdef.h util/makekeys.c
 
 includes:: ks_tables.h
 
+CONFIGURE ?= ./configure
+
 #if NXLibraries
 
 $(NX_XCOMPCONFIGTARGET):
 	cd ../../../nxcomp && \
-	./configure
+	${CONFIGURE}
 
 $(NX_XCOMPEXTCONFIGTARGET):
 	cd ../../../nxcompext && \
-	./configure
+	${CONFIGURE}
 
 #ifdef SunArchitecture
 $(NX_XCOMPLIBTARGET): $(NX_XCOMPCONFIGTARGET)

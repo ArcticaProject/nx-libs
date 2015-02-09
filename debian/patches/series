@@ -1,4 +1,3 @@
-030_nx-X11_configure-args.full.patch
 031_nx-X11_parallel-make.full.patch
 051_nxcomp_macos105-fdisset.full+lite.patch
 052_nxcomp_macos10-nxauth-location.full+lite.patch
