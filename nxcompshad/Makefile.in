@@ -74,10 +74,17 @@ exec_prefix = @exec_prefix@
 bindir      = @bindir@
 man1dir     = @mandir@/man1
 VPATH       = @srcdir@
+libdir      = @libdir@
+includedir  = @includedir@
 
 INSTALL         = @INSTALL@
+INSTALL_DIR     = $(INSTALL) -d -o root -g root -m 0755 
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA    = @INSTALL_DATA@
+INSTALL_LINK    = cp -av
+DESTDIR         =
+RM_FILE         = rm -f
+RM_DIR          = rmdir -p --ignore-fail-on-non-empty
 
 #
 # This should be autodetected.
@@ -178,11 +185,37 @@ depend.status:
 		fi
 		touch depend.status
 
-install:	install.bin install.man
+install:       install.bin install.lib install.man
 
 install.bin:
 
+install.lib: all
+	$(INSTALL_DIR)                          $(DESTDIR)${libdir}
+	$(INSTALL_DIR)                          $(DESTDIR)${includedir}/nx
+	$(INSTALL_DATA) $(LIBFULL)              $(DESTDIR)${libdir}
+	$(INSTALL_LINK) libXcompshad.so.3       $(DESTDIR)${libdir}
+	$(INSTALL_LINK) libXcompshad.so         $(DESTDIR)${libdir}
+	$(INSTALL_DATA) *.a                     $(DESTDIR)${libdir}
+	$(INSTALL_DATA) *.h                     $(DESTDIR)${includedir}/nx
+	echo "Running ldconfig tool, this may take a while..." && ldconfig || true
+
 install.man:
+
+uninstall:     uninstall.bin uninstall.lib uninstall.man
+
+uninstall.bin:
+
+uninstall.lib:
+	$(RM_FILE) $(DESTDIR)${libdir}/$(LIBFULL)
+	$(RM_FILE) $(DESTDIR)${libdir}/libXcompshad.so.3
+	$(RM_FILE) $(DESTDIR)${libdir}/libXcompshad.so
+	$(RM_FILE) $(DESTDIR)${libdir}/libXcompshad.a
+	for header in *.h; do $(RM_FILE) $(DESTDIR)${includedir}/nx/$$header; done
+	$(RM_DIR) $(DESTDIR)${libdir}/nx/
+	$(RM_DIR) $(DESTDIR)${includedir}/nx/
+	echo "Running ldconfig tool, this may take a while..." && ldconfig || true
+
+uninstall.man:
 
 clean:
 		-rm -f *~ *.o *.gch *.bak st?????? core core.* *.out.* *.exe.stackdump \
