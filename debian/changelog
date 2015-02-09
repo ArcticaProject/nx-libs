@@ -96,7 +96,8 @@ nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
       library package (names) as obsolete.
     + Don't depend on nx-libs base package with fixed version.
     + Don't fail if removing *.a files fails due to the files being non-present.
-    + Set PREFIX=%{_prefix} USRLIBDIR=%{_libdir} SHLIBDIR=%{_libdir} at build time.
+    + Set PREFIX=%{_prefix} USRLIBDIR=%{_libdir} SHLIBDIR=%{_libdir} at build
+      time.
     + Assure that BuildRoot: is set.
     + On SLE 11.x: libX* packages are prefixed with "xorg-x11-".
 
