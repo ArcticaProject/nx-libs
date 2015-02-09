@@ -1,6 +1,3 @@
-026_nxcompext_honour-optflags.full.patch
-026_nxcomp_honour-optflags.full+lite.patch
-026_nxcompshad_honour-optflags.full.patch
 027_nxcomp_abstract-X11-socket.full+lite.patch
 028_nx-X11_abstract-kernel-sockets.full.patch
 029_nxcomp_ppc64.full+lite.patch
