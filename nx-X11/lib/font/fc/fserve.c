@@ -2500,6 +2500,7 @@ fs_read_list_info(FontPathElementPtr fpe, FSBlockDataPtr blockrec)
     FSBlockedListInfoPtr	binfo = (FSBlockedListInfoPtr) blockrec->data;
     fsListFontsWithXInfoReply	*rep;
     char			*buf;
+    long			bufleft;
     FSFpePtr			conn = (FSFpePtr) fpe->private;
     fsPropInfo			*pi;
     fsPropOffset		*po;
@@ -2536,7 +2537,8 @@ fs_read_list_info(FontPathElementPtr fpe, FSBlockDataPtr blockrec)
     }
 
     buf = (char *) rep + SIZEOF (fsListFontsWithXInfoReply);
-    
+    bufleft = (rep->length << 2) - SIZEOF (fsListFontsWithXInfoReply);
+ 
     /*
      * The original FS implementation didn't match
      * the spec, version 1 was respecified to match the FS.
@@ -2544,19 +2546,71 @@ fs_read_list_info(FontPathElementPtr fpe, FSBlockDataPtr blockrec)
      */
     if (conn->fsMajorVersion <= 1)
     {
+	if (rep->nameLength > bufleft) {
+#ifdef DEBUG
+	    fprintf(stderr,
+		    "fsListFontsWithXInfo: name length (%d) > bufleft (%ld)\n",
+		    (int) rep->nameLength, bufleft);
+#endif
+	    err = AllocError;
+	    goto done;
+	}
+	/* binfo->name is a 256 char array, rep->nameLength is a CARD8 */
 	memcpy (binfo->name, buf, rep->nameLength);
 	buf += _fs_pad_length (rep->nameLength);
+	bufleft -= _fs_pad_length (rep->nameLength);
     }
     pi = (fsPropInfo *) buf;
+    if (SIZEOF (fsPropInfo) > bufleft) {
+#ifdef DEBUG
+	fprintf(stderr,
+		"fsListFontsWithXInfo: PropInfo length (%d) > bufleft (%ld)\n",
+		(int) SIZEOF (fsPropInfo), bufleft);
+#endif
+	err = AllocError;
+	goto done;
+    }
+    bufleft -= SIZEOF (fsPropInfo);
     buf += SIZEOF (fsPropInfo);
     po = (fsPropOffset *) buf;
+    if (pi->num_offsets > (bufleft / SIZEOF (fsPropOffset))) {
+#ifdef DEBUG
+	fprintf(stderr,
+		"fsListFontsWithXInfo: offset length (%d * %d) > bufleft (%ld)\n",
+		pi->num_offsets, (int) SIZEOF (fsPropOffset), bufleft);
+#endif
+	err = AllocError;
+	goto done;
+    }
+    bufleft -= pi->num_offsets * SIZEOF (fsPropOffset);
     buf += pi->num_offsets * SIZEOF (fsPropOffset);
     pd = (pointer) buf;
+    if (pi->data_len > bufleft) {
+#ifdef DEBUG
+	fprintf(stderr,
+		"fsListFontsWithXInfo: data length (%d) > bufleft (%ld)\n",
+		pi->data_len, bufleft);
+#endif
+	err = AllocError;
+	goto done;
+    }
+    bufleft -= pi->data_len;
     buf += pi->data_len;
     if (conn->fsMajorVersion > 1)
     {
+	if (rep->nameLength > bufleft) {
+#ifdef DEBUG
+	    fprintf(stderr,
+		    "fsListFontsWithXInfo: name length (%d) > bufleft (%ld)\n",
+		    (int) rep->nameLength, bufleft);
+#endif
+	    err = AllocError;
+	    goto done;
+	}
+	/* binfo->name is a 256 char array, rep->nameLength is a CARD8 */
 	memcpy (binfo->name, buf, rep->nameLength);
 	buf += _fs_pad_length (rep->nameLength);
+	bufleft -= _fs_pad_length (rep->nameLength);
     }
 
 #ifdef DEBUG
