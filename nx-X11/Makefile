@@ -32,8 +32,8 @@ VERSSRC = $(CONFIGSRC)/util/printver.c
 VERSPROG = $(CONFIGSRC)/util/printver.exe
 
 all:
-	@$(MAKE_CMD) xmakefile-exists || $(MAKE) all-initial
-	@$(MAKE_CMD) $@
+	@${MAKE} ${MAKE_OPTS} xmakefile-exists || $(MAKE) all-initial
+	@${MAKE} ${MAKE_OPTS} $@
 
 all-initial:
 	@echo Please use make World, or on NT use nmake World.Win32.
@@ -57,8 +57,8 @@ World:
 	@date
 	@echo ""
 	@if [ -f xmakefile ]; then \
-	    $(MAKE_CMD) -k distclean || \
-	    $(MAKE_CMD) -k clean || \
+	    ${MAKE} ${MAKE_OPTS} -k distclean || \
+	    ${MAKE} ${MAKE_OPTS} -k clean || \
 	    $(RM) xmakefile; \
 	fi
 	@if [ ! -f $(IRULESRC)/host.def ]; then \
@@ -84,14 +84,14 @@ World:
 #	fi
 	cd $(IMAKESRC) && $(MAKE) $(FLAGS) clean
 	$(MAKE) $(MFLAGS) Makefile.boot
-	$(MAKE_CMD) $(MFLAGS) version.def
+	${MAKE} ${MAKE_OPTS} $(MFLAGS) version.def
 	$(MAKE) $(MFLAGS) Makefile.boot
-	$(MAKE_CMD) $(MFLAGS) VerifyOS
-	$(MAKE_CMD) $(MFLAGS) Makefiles
-	$(MAKE_CMD) $(MFLAGS) BOOTSTRAPSUBDIRS= clean
-	$(MAKE_CMD) $(MFLAGS) includes
-	$(MAKE_CMD) $(MFLAGS) depend
-	$(MAKE_CMD) $(MFLAGS) $(WORLDOPTS) World
+	${MAKE} ${MAKE_OPTS} $(MFLAGS) VerifyOS
+	${MAKE} ${MAKE_OPTS} $(MFLAGS) Makefiles
+	${MAKE} ${MAKE_OPTS} $(MFLAGS) BOOTSTRAPSUBDIRS= clean
+	${MAKE} ${MAKE_OPTS} $(MFLAGS) includes
+	${MAKE} ${MAKE_OPTS} $(MFLAGS) depend
+	${MAKE} ${MAKE_OPTS} $(MFLAGS) $(WORLDOPTS) World
 	@echo ""
 	@date
 	@echo ""
@@ -154,15 +154,15 @@ World.Win32:
 	-if exist xmakefile.bak del xmakefile.bak
 	-if exist xmakefile ren xmakefile xmakefile.bak
 	$(IMAKE:/=\) -s xmakefile -I$(IRULESRC) $(IMAKE_DEFINES) -DTOPDIR=$(TOP) -DCURDIR=$(CURRENT_DIR)
-	$(MAKE_CMD) $(MFLAGS) VerifyOS
-	$(MAKE_CMD) $(MFLAGS) Makefiles
-	$(MAKE_CMD) $(MFLAGS) clean
+	${MAKE} ${MAKE_OPTS} $(MFLAGS) VerifyOS
+	${MAKE} ${MAKE_OPTS} $(MFLAGS) Makefiles
+	${MAKE} ${MAKE_OPTS} $(MFLAGS) clean
 	cd $(CONFIGSRC)\util
 	$(MAKE) mkdirhier.exe
 	cd ..\..
-	$(MAKE_CMD) $(MFLAGS) includes
-	$(MAKE_CMD) $(MFLAGS) depend
-	$(MAKE_CMD) $(MFLAGS) $(WIN32WORLDOPTS)
+	${MAKE} ${MAKE_OPTS} $(MFLAGS) includes
+	${MAKE} ${MAKE_OPTS} $(MFLAGS) depend
+	${MAKE} ${MAKE_OPTS} $(MFLAGS) $(WIN32WORLDOPTS)
 	@echo :
 	@echo :
 	@echo Full build of $(RELEASE) complete.
@@ -198,38 +198,38 @@ World.OS2:
 # a copy of every rule that might be invoked at top level
 
 clean:
-	    -$(MAKE_CMD) $@
+	    -${MAKE_CMD} ${MAKE_OPTS} $@
 	    find config -type f | egrep '.*/Makefile$$' | while read makefile; do rm -f $$makefile; done
 	    find lib -type f | egrep '.*/Makefile$$' | while read makefile; do rm -f $$makefile; done
 	    find programs -type f | egrep '.*/Makefile$$' | while read makefile; do rm -f $$makefile; done
 	    find include -type f | egrep '.*/Makefile$$' | while read makefile; do rm -f $$makefile; done
 	    rm -f config/cf/{version.def,date.def}
 dangerous_strip_clean:
-	    $(MAKE_CMD) $@
+	    ${MAKE} ${MAKE_OPTS} $@
 distclean:
-	    -$(MAKE_CMD) $@
+	    -${MAKE} ${MAKE_OPTS} $@
 	    $(RM) xmakefile $(IRULESRC)/version.def $(IRULESRC)/date.def
 depend:
-	    $(MAKE_CMD) $@
+	    ${MAKE} ${MAKE_OPTS} $@
 Everything:
-	    $(MAKE_CMD) $@
+	    ${MAKE} ${MAKE_OPTS} $@
 external.ln:
-	    $(MAKE_CMD) $@
+	    ${MAKE} ${MAKE_OPTS} $@
 includes:
-	    $(MAKE_CMD) $@
+	    ${MAKE} ${MAKE_OPTS} $@
 install.sdk:
-	    $(MAKE_CMD) $@
+	    ${MAKE} ${MAKE_OPTS} $@
 install.ln:
-	    $(MAKE_CMD) $@
+	    ${MAKE} ${MAKE_OPTS} $@
 install.man:
-	    $(MAKE_CMD) $@
+	    ${MAKE} ${MAKE_OPTS} $@
 install:
-	    $(MAKE_CMD) $@
+	    ${MAKE} ${MAKE_OPTS} $@
 Makefiles:
-	    $(MAKE_CMD) $@
+	    ${MAKE} ${MAKE_OPTS} $@
 man_keywords:
-	    $(MAKE_CMD) $@
+	    ${MAKE} ${MAKE_OPTS} $@
 tags:
-	    $(MAKE_CMD) $@
+	    ${MAKE} ${MAKE_OPTS} $@
 VerifyOS:
-	    $(MAKE_CMD) $@
+	    ${MAKE} ${MAKE_OPTS} $@

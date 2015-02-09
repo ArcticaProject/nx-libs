@@ -1161,25 +1161,23 @@ $(NX_XCOMPEXTCONFIGTARGET):
 
 #ifdef SunArchitecture
 $(NX_XCOMPLIBTARGET): $(NX_XCOMPCONFIGTARGET)
-	cd $(NX_XCOMPLIBDIR) && \
-	gmake
+	${MAKE} -C $(NX_XCOMPLIBDIR)
 
 $(NX_XCOMPEXTLIBTARGET): $(NX_XCOMPEXTCONFIGTARGET)
-	cd ../../../nxcompext && \
-	gmake
+	${MAKE} -C ../../../nxcompext
 
 #else
 $(NX_XCOMPLIBTARGET): $(NX_XCOMPCONFIGTARGET)
-	cd $(NX_XCOMPLIBDIR) && \
-	make
+	${MAKE} -C $(NX_XCOMPLIBDIR)
 
-$(NX_XCOMPEXTLIBTARGET): $(NX_XCOMPEXTCONFIGTARGET)
-	cd ../../../nxcompext && \
-	make
+$(NX_XCOMPEXTLIBTARGET): $(NX_XCOMPEXTCONFIGTARGET) $(NX_XCOMPLIBTARGET) lib$(LIBNAME).so.$(SOXLIBREV)
+	${MAKE} -C ../../../nxcompext
 
 #endif
 
-depend:: $(NX_XCOMPLIBTARGET)
+depend::
+
+lib$(LIBNAME).so.$(SOXLIBREV): $(NX_XCOMPLIBTARGET)
 
 all:: $(NX_XCOMPLIBTARGET)
 

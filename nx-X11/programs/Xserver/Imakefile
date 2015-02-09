@@ -1045,11 +1045,11 @@ $(NX_XSHADOWCONFIGTARGET):
 #ifdef SunArchitecture
 $(NX_XSHADOWLIBTARGET): $(NX_XSHADOWCONFIGTARGET)
 	cd $(NX_XSHADOWLIBDIR) && \
-	gmake
+	${MAKE}
 #else
 $(NX_XSHADOWLIBTARGET): $(NX_XSHADOWCONFIGTARGET)
 	cd $(NX_XSHADOWLIBDIR) && \
-	rm -f *.o && make
+	rm -f *.o && ${MAKE}
 #endif
 
 ServerTarget(nxagent,$(NX_XSHADOWLIBTARGET) $(NXAGENTDIRS),$(NXAGENTOBJS), \
