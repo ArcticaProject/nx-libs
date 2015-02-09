@@ -5884,20 +5884,9 @@ void InstallSignal(int signal, int action)
 
   struct sigaction newAction;
 
+  memset(&newAction, 0, sizeof(newAction));
+
   newAction.sa_handler = HandleSignal;
-
-  //
-  // This field doesn't exist on most OSes except
-  // Linux. We keep setting the field to NULL to
-  // avoid side-effects in the case the field is
-  // a value return.
-  //
-
-  #if defined(__linux__)
-
-  newAction.sa_restorer = NULL;
-
-  #endif
 
   sigemptyset(&(newAction.sa_mask));
 
@@ -6509,13 +6498,9 @@ void SetTimer(int value)
 
   struct sigaction action;
 
+  memset(&action, 0, sizeof(action));
+
   action.sa_handler = HandleTimer;
-
-  #if defined(__linux__)
-
-  action.sa_restorer = NULL;
-
-  #endif
 
   sigemptyset(&action.sa_mask);
 
