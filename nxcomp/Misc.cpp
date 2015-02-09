@@ -15,11 +15,11 @@
 /*                                                                        */
 /**************************************************************************/
 
-#include <stdio.h>
-#include <ctype.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cctype>
+#include <cstdlib>
 #include <unistd.h>
-#include <signal.h>
+#include <csignal>
 
 #include <errno.h>
 #include <string.h>

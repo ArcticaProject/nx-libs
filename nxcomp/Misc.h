@@ -21,8 +21,8 @@
 #include <iostream>
 #include <fstream>
 
-#include <errno.h>
-#include <string.h>
+#include <cerrno>
+#include <cstring>
 
 #ifdef __sun
 
