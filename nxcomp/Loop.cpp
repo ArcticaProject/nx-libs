@@ -6832,9 +6832,9 @@ int WaitForRemote(int portNum)
     {
       sockaddr_in newAddr;
 
-      size_t addrLen = sizeof(sockaddr_in);
+      socklen_t addrLen = sizeof(sockaddr_in);
 
-      newFD = accept(proxyFD, (sockaddr *) &newAddr, (socklen_t *) &addrLen);
+      newFD = accept(proxyFD, (sockaddr *) &newAddr, &addrLen);
 
       if (newFD == -1)
       {
