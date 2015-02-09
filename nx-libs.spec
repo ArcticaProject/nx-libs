@@ -79,6 +79,7 @@ Requires:       xorg-x11-libXext%{?_isa}
 %else
 Requires:       libX11-6%{?_isa}
 Requires:       libXext6%{?_isa}
+%endif
 %else
 Requires:       libX11%{?_isa}
 Requires:       libXext%{?_isa}
