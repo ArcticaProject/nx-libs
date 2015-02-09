@@ -1,4 +1,3 @@
-004_nx-X11_fix-nxcompshad-build.full.patch
 005_nxcomp_gcc43.full+lite.patch
 006_nxcomp_libpng15.full+lite.patch
 007_nxcompshad_clean-gch-files.full.patch
