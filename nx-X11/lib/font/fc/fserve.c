@@ -2365,6 +2365,7 @@ fs_read_list(FontPathElementPtr fpe, FSBlockDataPtr blockrec)
     FSBlockedListPtr	blist = (FSBlockedListPtr) blockrec->data;
     fsListFontsReply	*rep;
     char		*data;
+    long		dataleft; /* length of reply left to use */
     int			length,
 			i,
 			ret;
@@ -2382,16 +2383,30 @@ fs_read_list(FontPathElementPtr fpe, FSBlockDataPtr blockrec)
 	return AllocError;
     }
     data = (char *) rep + SIZEOF (fsListFontsReply);
+    dataleft = (rep->length << 2) - SIZEOF (fsListFontsReply);
 
     err = Successful;
     /* copy data into FontPathRecord */
     for (i = 0; i < rep->nFonts; i++) 
     {
+	if (dataleft < 1)
+	    break;
 	length = *(unsigned char *)data++;
+	dataleft--; /* used length byte */
+	if (length > dataleft) {
+#ifdef DEBUG
+	    fprintf(stderr,
+		    "fsListFonts: name length (%d) > dataleft (%ld)\n",
+		    length, dataleft);
+#endif
+	    err = BadFontName;
+	    break;
+	}
 	err = AddFontNamesName(blist->names, data, length);
 	if (err != Successful)
 	    break;
 	data += length;
+	dataleft -= length;
     }
     _fs_done_read (conn, rep->length << 2);
     return err;
