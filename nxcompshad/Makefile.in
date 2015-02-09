@@ -48,7 +48,7 @@ CCINCLUDES  =
 CCDEFINES   =
 
 LDFLAGS     = @LDFLAGS@
-LIBS        = @LIBS@ -L/usr/X11R6/lib -lX11
+LIBS        = @LIBS@ -lX11
 
 #
 # Only if THREADS is defined.
@@ -162,7 +162,7 @@ $(LIBDLL): $(LIBARCHIVE)
 		-Wl,--enable-auto-import \
 		-Wl,--whole-archive ${LIBARCHIVE} \
 		-Wl,--no-whole-archive \
-		${LIBS} -L/usr/X11R6/lib
+		${LIBS}
 
 $(PROGRAM):	$(MOBJ) $(COBJ) $(CXXOBJ) $(LIBDLL)
 #		$(CC) $(CCFLAGS) -o $@ $(MOBJ) $(MLIBS)

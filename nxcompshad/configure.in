@@ -19,7 +19,7 @@ dnl Prefer headers and libraries from nx-X11, if present.
 
 if test -d "../nx-X11/exports/include" ; then
     CXXFLAGS="$CXXFLAGS -I../nx-X11/exports/include"
-    LIBS="$LIBS -L../nx-X11/exports/lib"
+    LIBS="-L../nx-X11/exports/lib"
 fi
 
 dnl Check whether --with-ipaq was given.
