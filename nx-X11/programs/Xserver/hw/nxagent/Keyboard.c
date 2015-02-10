@@ -52,6 +52,7 @@ is" without express or implied warranty.
 #include "Keyboard.h"
 #include "Events.h"
 #include "Options.h"
+#include "Error.h"
 
 #include "NXlib.h"
 
@@ -71,6 +72,8 @@ is" without express or implied warranty.
 #include "X11/extensions/XKBrules.h"
 
 #include "Xatom.h"
+
+#include <errno.h>
 
 static int nxagentXkbGetNames(char **rules, char **model, char **layout,
                                   char **variant, char **options);
@@ -1789,6 +1792,48 @@ void nxagentKeycodeConversionSetup(void)
                 "Failed to retrieve remote rules.\n");
   }
   #endif
+
+  if (drulesLen != 0)
+  {
+    char *sessionpath = nxagentGetSessionPath();
+    if (sessionpath != NULL){
+      int keyboard_file_path_size = strlen(sessionpath) + strlen("/keyboard");
+      char *keyboard_file_path = malloc((keyboard_file_path_size + 1) * sizeof(char));
+      FILE *keyboard_file;
+      if ( keyboard_file_path == NULL)
+      {
+        FatalError("nxagentKeyboardProc: malloc failed.");
+      }
+      strcpy(keyboard_file_path, sessionpath);
+      strcat(keyboard_file_path, "/keyboard");
+      if ((keyboard_file = fopen(keyboard_file_path, "w")) != NULL) {
+        if ( drules != NULL )
+          fprintf(keyboard_file, "rules=%s\n", drules);
+        if ( dmodel != NULL )
+          fprintf(keyboard_file, "model=%s\n", dmodel);
+        if ( dlayout != NULL )
+          fprintf(keyboard_file, "layout=%s\n", dlayout);
+        if ( dvariant != NULL )
+          fprintf(keyboard_file, "variant=%s\n", dvariant);
+        if ( doptions != NULL )
+          fprintf(keyboard_file, "options=%s\n", doptions);
+        fclose(keyboard_file);
+        fprintf(stderr, "keyboard file created\n");
+      }
+      else {
+        int save_err = errno;
+        fprintf(stderr, "keyboard file not created: %s\n", strerror(save_err));
+      }
+      free(keyboard_file_path);
+    }
+    else {
+      fprintf(stderr, "SessionPath not defined\n");
+    }
+  }
+  else
+  {
+    fprintf(stderr, "Failed to create the keyboard file\n");
+  }
 
   if (nxagentOption(ClientOs) == ClientOsLinux &&
             drules != NULL && dmodel != NULL &&
