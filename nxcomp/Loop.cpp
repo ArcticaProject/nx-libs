@@ -8328,8 +8328,8 @@ int ParseEnvironmentOptions(const char *env, int force)
 
         cerr << "Error" << ": Can't identify 'link' option in string '"
              << value << "'.\n";
-
-        return -1;
+        if (ParseLinkOption("adsl") < 0)
+           return -1;
       }
     }
     else if (strcasecmp(name, "limit") == 0)
@@ -8783,8 +8783,8 @@ int ParseEnvironmentOptions(const char *env, int force)
 
         cerr << "Error" << ": Can't identify pack method for string '"
              << value << "'.\n";
-
-        return -1;
+        if (ParsePackOption("nopack")<0)
+           return -1;
       }
     }
     else if (strcasecmp(name, "core") == 0)
