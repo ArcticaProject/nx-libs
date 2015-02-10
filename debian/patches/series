@@ -1,4 +1,3 @@
-220_nxproxy_bind-loopback-only.full+lite.patch
 300_nxagent_set-wm-class.full.patch
 301_nx-X11_use-shared-libs.full.patch
 302_nx-X11_xkbbasedir-detection.full.patch
