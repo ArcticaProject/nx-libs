@@ -20,6 +20,11 @@
 #include <cstdlib>
 #include <sys/types.h>
 #include <sys/stat.h>
+#ifdef ANDROID
+#include <netinet/in.h>
+#include <netinet/ip.h>
+#include <netinet/tcp.h>
+#endif
 
 #include "Misc.h"
 
@@ -31,9 +36,11 @@
 #include <sys/un.h>
 #endif
 
+#ifndef ANDROID
 #include <netinet/in.h>
 #include <netinet/ip.h>
 #include <netinet/tcp.h>
+#endif
 
 #if defined(__EMX__ ) || defined(__CYGWIN32__)
 

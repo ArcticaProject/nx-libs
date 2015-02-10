@@ -4187,7 +4187,7 @@ int SetupDisplaySocket(int &xServerAddrFamily, sockaddr *&xServerAddr,
 
   #endif
 
-  char *separator = rindex(display, ':');
+  char *separator = strrchr(display, ':');
 
   if ((separator == NULL) || !isdigit(*(separator + 1)))
   {
@@ -8240,7 +8240,7 @@ int ParseEnvironmentOptions(const char *env, int force)
   char *name;
   char *value;
 
-  value = rindex(nextOpts, ':');
+  value = strrchr(nextOpts, ':');
 
   if (value != NULL)
   {
@@ -11010,7 +11010,7 @@ int ParsePackOption(const char *opt)
                                       packMethod == PACK_LOSSLESS ||
                                           packMethod == PACK_ADAPTIVE)
   {
-    const char *dash = rindex(opt, '-');
+    const char *dash = strrchr(opt, '-');
 
     if (dash != NULL && strlen(dash) == 2 &&
             *(dash + 1) >= '0' && *(dash + 1) <= '9')
@@ -12275,6 +12275,10 @@ int SetShmem()
     control -> ShmemServer = 0;
   }
 
+  // For android, no shared memory available
+  control -> ShmemServer = 0;
+  control -> ShmemClientSize = 0;
+
   return 1;
 }
 
@@ -13525,7 +13529,7 @@ int ParseHostOption(const char *opt, char *host, int &port)
 
   int newPort = port;
 
-  const char *separator = rindex(opt, ':');
+  const char *separator = strrchr(opt, ':');
 
   if (separator != NULL)
   {

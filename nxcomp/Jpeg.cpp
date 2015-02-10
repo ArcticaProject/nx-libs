@@ -17,6 +17,9 @@
 
 #include <X11/Xmd.h>
 
+#ifdef ANDROID
+#include <strings.h>
+#endif
 #include <unistd.h>
 #include <setjmp.h>
 #include <zlib.h>
