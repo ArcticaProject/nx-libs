@@ -1556,10 +1556,14 @@ int nxagentInitClipboard(WindowPtr pWin)
     fprintf(stderr, "nxagentInitClipboard: Registering for XFixesSelectionNotify events.\n");
     #endif
 
-    XFixesSelectSelectionInput(nxagentDisplay, iWindow, nxagentClipboardAtom,
-                               XFixesSetSelectionOwnerNotifyMask |
-                               XFixesSelectionWindowDestroyNotifyMask |
-                               XFixesSelectionClientCloseNotifyMask);
+    for (i = 0; i < nxagentMaxSelections; i++)
+    {
+      XFixesSelectSelectionInput(nxagentDisplay, iWindow,
+                                 lastSelectionOwner[i].selection,
+                                 XFixesSetSelectionOwnerNotifyMask |
+                                 XFixesSelectionWindowDestroyNotifyMask |
+                                 XFixesSelectionClientCloseNotifyMask);
+    }
 
     nxagentXFixesInfo.Initialized = 1;
   }
