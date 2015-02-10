@@ -1665,7 +1665,10 @@ N/A
 
     attributes.background_pixel = nxagentBlackPixel;
 
-    nxagentGetDefaultEventMask((Mask*)&attributes.event_mask);
+    /* Assume that the mask fits in int... broken on Big Endian 64bit systems. */
+    Mask tmp_mask = attributes.event_mask;
+    nxagentGetDefaultEventMask(&tmp_mask);
+    attributes.event_mask = (int)tmp_mask;
 
     attributes.colormap = nxagentDefaultVisualColormap(nxagentDefaultVisual(pScreen));
 
