@@ -1,4 +1,3 @@
-108_nxagent_wine-close-delay.full.patch
 110_nxagent_createpixmap-bounds-check.full.patch
 200_nxagent_check-binary-x2go-flavour.full.patch
 201_nxagent_set-x2go-icon-if-x2goagent-flavour.full.patch
