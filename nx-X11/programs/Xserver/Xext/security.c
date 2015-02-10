@@ -86,7 +86,7 @@ extern unsigned char LbxReqCode;
 
 #ifdef NXAGENT_SERVER
 
-#define NX_ALTERNATIVEPOLICYFILE "/usr/lib/xserver/SecurityPolicy"
+#define NX_ALTERNATIVEPOLICYFILE "/usr/local/share/nx/SecurityPolicy"
 
 #endif
 
