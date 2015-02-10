@@ -339,7 +339,7 @@ FIXME: The popup could be synchronized with one
    */
 
   if ((pDstDrawable -> type == DRAWABLE_PIXMAP &&
-          nxagentOption(DeferLevel) > 0) || nxagentOption(DeferLevel) >= 2)
+          nxagentOption(DeferLevel) > 0) || nxagentOption(DeferLevel) >= 3)
   {
     pClipRegion = nxagentCreateRegion(pSrcDrawable, NULL, srcx, srcy,
                                           width, height);
