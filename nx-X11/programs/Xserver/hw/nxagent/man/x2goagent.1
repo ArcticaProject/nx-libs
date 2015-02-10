@@ -1,0 +1,35 @@
+.TH x2goagent 1
+.SH NAME
+x2goagent \- X2Go Agent.
+.SH SYNOPSIS
+.B x2goagent
+.I "[options]"
+
+.SH DESCRIPTION
+\fBx2goagent\fR is an Xnest-like X server for remote application/desktop access.
+.PP
+\fBx2goagent\fR implements a very efficient compression of the X11 protocol.
+.PP
+This increases performance when using X applications over high latency and
+low bandwidth networks, while providing a local (LAN-like) usage experience
+even if connecting from off-site locations (via cable modem or GSM).
+.PP
+\fBx2goagent\fR is not designed to be used as a standalone application.
+It has to be launched on the server side by the X2Go server software.
+.PP
+Available clients are
+\fBx2goclient\fR, \fBpyhoca-gui\fR and \fBpyhoca-gui\fR (using the
+Python X2Go API).
+
+.SH OPTIONS
+.TP
+.B \--help
+Lists all others options that are not listed here.
+
+.SH FURTHER READINGS
+Information on X2Go: http://wiki.x2go.org
+.PP
+Information on NX: http://www.nomachine.com
+
+.SH AUTHOR
+This manual page was written by Mike Gabriel <mike.gabriel@das-netzwerkteam.de>.

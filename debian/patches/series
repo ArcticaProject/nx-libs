@@ -1,4 +1,3 @@
-209_x2goagent_add-man-page.full.patch
 210_nxagent_save_session_state.full.patch
 210_nxcomp_save_session_state.full+lite.patch
 211_nxcomp_set_default_options.full+lite.patch
