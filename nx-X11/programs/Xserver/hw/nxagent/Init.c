@@ -63,7 +63,7 @@ is" without express or implied warranty.
 
 #include "NX.h"
 #include "NXlib.h"
-
+#include "Reconnect.h"
 /*
  * Set here the required log level.
  */
@@ -233,6 +233,7 @@ void InitOutput(ScreenInfo *screenInfo, int argc, char *argv[])
     fprintf(stderr, "Info: Agent running with pid '%d'.\n", getpid());
 
     fprintf(stderr, "Session: Starting session at '%s'.\n", GetTimeAsString());
+    saveAgentState("STARTING");
   }
 
   /*

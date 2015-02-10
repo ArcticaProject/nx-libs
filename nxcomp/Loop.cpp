@@ -8872,7 +8872,8 @@ int ParseEnvironmentOptions(const char *env, int force)
     }
     else if (strcasecmp(name, "defer") == 0 ||
                  strcasecmp(name, "tile") == 0 ||
-                     strcasecmp(name, "menu") == 0)
+                     strcasecmp(name, "menu") == 0 ||
+                        strcasecmp(name, "state") == 0 )
     {
       #ifdef DEBUG
       *logofs << "Loop: Ignoring agent option '" << name

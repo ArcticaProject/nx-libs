@@ -60,6 +60,7 @@ is" without express or implied warranty.
 #endif
 #include "Handlers.h"
 #include "Error.h"
+#include "Reconnect.h"
 
 /*
  * NX includes and definitions.
@@ -1090,6 +1091,11 @@ static void nxagentParseOptions(char *name, char *value)
 
     return;
   }
+  else if (!strcmp(name, "state"))
+  {
+    setStatePath(value);
+    return;
+  }
   else if (!strcmp(name, "fullscreen"))
   {
     if (nxagentReconnectTrap == True)
@@ -1368,6 +1374,11 @@ void nxagentProcessOptionsFile()
   fprintf(stderr, "nxagentProcessOptionsFile: Going to process option the file [%s].\n",
               validateString(nxagentOptionFile));
   #endif
+
+  /*
+   * Init statePath
+   */
+  setStatePath("");
 
   if (nxagentOptionFile == NULL)
   {

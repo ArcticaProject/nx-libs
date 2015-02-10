@@ -609,6 +609,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
           #endif
 
           nxagentSessionState = SESSION_UP;
+          saveAgentState("RUNNING");
         }
 
         #ifdef BLOCKS
@@ -823,6 +824,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
        */
   
       fprintf(stderr, "Session: Terminating session at '%s'.\n", GetTimeAsString());
+      saveAgentState("TERMINATING");
 
       nxagentWaitDisplay();
 
@@ -833,6 +835,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
     {
       NXShadowDestroy();
     }
+    saveAgentState("TERMINATED");
 
     KillAllClients();
     DEALLOCATE_LOCAL(clientReady);

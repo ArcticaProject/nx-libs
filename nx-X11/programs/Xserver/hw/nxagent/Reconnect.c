@@ -118,6 +118,33 @@ void *reconnectLossyLevel[STEP_NONE];
 
 static enum RECONNECTION_STEP failedStep;
 
+#include <limits.h>
+
+/*
+ * Path of state File
+ */
+char stateFile[PATH_MAX];
+
+
+void setStatePath(char* path)
+{
+    strncpy(stateFile, path, PATH_MAX-1);
+}
+
+void saveAgentState(char* state)
+{
+    FILE* fptr;
+    if(strlen(stateFile))
+    {
+        fptr=fopen(stateFile, "w");
+        if(!fptr)
+            return;
+        fprintf(fptr,"%s", state);
+        fclose(fptr);
+    }
+}
+
+
 int nxagentHandleConnectionStates(void)
 {
   #ifdef TEST
@@ -211,6 +238,7 @@ TODO: This should be reset only when
           fprintf(stderr, "Session: Display failure detected at '%s'.\n", GetTimeAsString());
 
           fprintf(stderr, "Session: Suspending session at '%s'.\n", GetTimeAsString());
+          saveAgentState("SUSPENDING");
         }
 
         nxagentDisconnectSession();
@@ -265,6 +293,7 @@ TODO: This should be reset only when
         fprintf(stderr, "Session: Session suspended at '%s'.\n", GetTimeAsString());
         #endif
       }
+      saveAgentState("SUSPENDED");
 
       nxagentResetDisplayHandlers();
 
@@ -622,6 +651,7 @@ Bool nxagentReconnectSession(void)
   #else
   fprintf(stderr, "Session: Session resumed at '%s'.\n", GetTimeAsString());
   #endif
+  saveAgentState("RUNNING");
 
   nxagentRemoveSplashWindow(NULL);
 
@@ -785,12 +815,14 @@ void nxagentHandleConnectionChanges()
   if (nxagentSessionState == SESSION_GOING_DOWN)
   {
     fprintf(stderr, "Session: Suspending session at '%s'.\n", GetTimeAsString());
+    saveAgentState("SUSPENDING");
 
     nxagentDisconnectSession();
   }
   else if (nxagentSessionState == SESSION_GOING_UP)
   {
     fprintf(stderr, "Session: Resuming session at '%s'.\n", GetTimeAsString());
+    saveAgentState("RESUMING");
 
     if (nxagentReconnectSession())
     {
@@ -803,6 +835,7 @@ void nxagentHandleConnectionChanges()
       fprintf(stderr, "Session: Display failure detected at '%s'.\n", GetTimeAsString());
 
       fprintf(stderr, "Session: Suspending session at '%s'.\n", GetTimeAsString());
+      saveAgentState("SUSPENDING");
 
       nxagentDisconnectSession();
     }

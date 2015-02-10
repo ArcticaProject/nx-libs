@@ -34,6 +34,8 @@ void nxagentInitReconnector(void);
 Bool nxagentReconnectSession(void);
 int nxagentHandleConnectionStates(void);
 void nxagentHandleConnectionChanges(void);
+void setStatePath(char*);
+void saveAgentState(char*);
 
 enum SESSION_STATE
 {
