@@ -136,7 +136,7 @@ extern        Status        XkbGetControls(
 #define XKB_ALTERNATE_BASE_DIRECTORY   "/usr/X11R6/lib/X11/xkb"
 #endif
 #ifndef XKB_CONFIG_FILE
-#define XKB_CONFIG_FILE      "X0-config.keyboard"
+#define XKB_CONFIG_FILE      "/etc/nxagent/nxagent.keyboard"
 #endif
 #ifndef XKB_DFLT_RULES_FILE
 #define XKB_DFLT_RULES_FILE  "xfree86"
@@ -985,8 +985,7 @@ XkbError:
 
         XkbGetControls(nxagentDisplay, XkbAllControlsMask, xkb);
 
-        nxagentXkbConfigFilePathSize = strlen(XkbBaseDirectory) +
-                                           strlen(XKB_CONFIG_FILE) + 1;
+        nxagentXkbConfigFilePathSize = strlen(XKB_CONFIG_FILE);
 
         nxagentXkbConfigFilePath = malloc((nxagentXkbConfigFilePathSize + 1) * sizeof(char));
 
@@ -995,9 +994,7 @@ XkbError:
           FatalError("nxagentKeyboardProc: malloc failed.");
         }
 
-        strcpy(nxagentXkbConfigFilePath, XkbBaseDirectory);
-        strcat(nxagentXkbConfigFilePath, "/");
-        strcat(nxagentXkbConfigFilePath, XKB_CONFIG_FILE);
+        strcpy(nxagentXkbConfigFilePath, XKB_CONFIG_FILE);
  
         #ifdef TEST
         fprintf(stderr, "nxagentKeyboardProc: nxagentXkbConfigFilePath [%s].\n",
