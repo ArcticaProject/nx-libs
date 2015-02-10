@@ -166,6 +166,8 @@ Bool nxagentValidServerTargets(Atom target)
 
   if (target == XA_STRING) return True;
   if (target == serverTEXT) return True;
+  /* by dimbor */
+  if (target == serverUTF8_STRING) return True;
 
   return False;
 }
@@ -402,6 +404,11 @@ FIXME: Do we need this?
         lastServerProperty = X->xselectionrequest.property;
         lastServerRequestor = X->xselectionrequest.requestor;
         lastServerTarget = X->xselectionrequest.target;
+
+        /* by dimbor */
+        if (lastServerTarget != XA_STRING)
+            lastServerTarget = serverUTF8_STRING;
+
         lastServerTime = X->xselectionrequest.time;
 
         x.u.u.type = SelectionRequest;
@@ -424,11 +431,12 @@ FIXME: Do we need this?
 
         x.u.selectionRequest.selection = CurrentSelections[i].selection;
 
-        /*
-         * x.u.selectionRequest.target = X->xselectionrequest.target;
-         */
+        /* by dimbor (idea from zahvatov) */
+        if (X->xselectionrequest.target != XA_STRING)
+          x.u.selectionRequest.target = clientUTF8_STRING;
+        else
+          x.u.selectionRequest.target = XA_STRING;
 
-        x.u.selectionRequest.target = XA_STRING;
         x.u.selectionRequest.property = clientCutProperty;
 
         (void) TryClientEvents(lastSelectionOwner[i].client, &x, 1,
