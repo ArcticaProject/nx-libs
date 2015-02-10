@@ -138,7 +138,7 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
 #define BuildRenderLibrary	YES
 #define SharedLibFreetype2	YES
 #define NormalLibFreetype2	YES
-#define FontLibSharedFreeType 	NO
+#define FontLibSharedFreeType 	YES
 #endif
 
 /*
@@ -649,6 +649,7 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
  *
 #define XserverStaticFontLib	NO
  */
+#define XserverStaticFontLib	YES
 
 /*
  * To enable binary compatibility with previous versions of the font
@@ -733,7 +734,7 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
 #define BuildXKB		YES
 #define BuildXKBlib		YES
 
-#define SharedLibXau		NO
+#define SharedLibXau		YES
 
 /*
  * If you are running NetBSD 0.9C or later, and have the aperture driver
@@ -956,9 +957,9 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
 #define BuildXterm YES
  */
 
-#define SharedLibXau           NO
+#define SharedLibXau           YES
 
-#define SharedLibXdmcp         NO
+#define SharedLibXdmcp         YES
 
 #define BuildXaw7              YES
 
@@ -976,7 +977,7 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
 #define BuildFontServer             NO
 #define BuildFreeType               NO
 #define BuildXTrueType              NO
-#define FontLibSharedFreeType       NO
+#define FontLibSharedFreeType       YES
 #endif
 
 #if !defined(NXZaurusXServer) && defined(NXiPAQXServer)

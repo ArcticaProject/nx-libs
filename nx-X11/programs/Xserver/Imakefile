@@ -1013,15 +1013,15 @@ $(NXAGENTOBJS) $(NXAGENTLIBS) $(NXAGENTSYSLIBS):: $(NXAGENTDIRS)
 #if defined(SunArchitecture)
 NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext -L ../../../nxcompshad \
                 -lXcomp -lXcompext -lXcompshad -lrt -L/usr/sfw/lib -lXrender -lXfixes \
-                -L../../../nx-X11/exports/lib -lXtst -lXdamage -lXrandr -lXcomposite
+                -L../../../nx-X11/exports/lib -lXtst -lXdamage -lXrandr -lXcomposite -lXdmcp
 #elif defined(cygwinArchitecture)
 NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext \
                 -lXcomp -lXcompext -lXrender -lX11 -lXext -lXcomposite -lXfixes \
-                -L ../../../nxcompshad -lXcompshad -L../../../nx-X11/exports/lib -lXtst
+                -L ../../../nxcompshad -lXcompshad -L../../../nx-X11/exports/lib -lXtst -lXdmcp
 #else
 NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext -L ../../../nxcompshad \
                 -lXcomp -lXcompext -lXcompshad -lXrender -lX11 -lXext -lXfixes \
-                -L../../../nx-X11/exports/lib -lXtst -lXdamage -lXrandr -lXcomposite -lXinerama
+                -L../../../nx-X11/exports/lib -lXtst -lXdamage -lXrandr -lXcomposite -lXinerama -lXdmcp
 #endif
 
 #endif
