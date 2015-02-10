@@ -984,7 +984,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
 
   if (!strcmp(argv[i], "-clipboard"))
   {
-    if (!strcmp(argv[i+1], "both"))
+    if ((!strcmp(argv[i+1], "both")) || (!strcmp(argv[i+1], "1")))
     {
       nxagentChangeOption(Clipboard, ClipboardBoth);
     }
@@ -996,7 +996,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     {
       nxagentChangeOption(Clipboard, ClipboardServer);
     }
-    else if (!strcmp(argv[i+1], "none"))
+    else if ((!strcmp(argv[i+1], "none")) || (!strcmp(argv[i+1], "1")))
     {
       nxagentChangeOption(Clipboard, ClipboardNone);
     }
@@ -1254,6 +1254,29 @@ static void nxagentParseOptions(char *name, char *value)
     nxagentChangeOption(CopyBufferSize, atoi(value));
 
     return;
+  }
+  else if  (strcmp(name, "clipboard") == 0)
+  {
+    if ((strcmp(value, "both") == 0) || (strcmp(value, "1") == 0))
+    {
+      nxagentChangeOption(Clipboard, ClipboardBoth);
+    }
+    else if (strcmp(value, "client") == 0)
+    {
+      nxagentChangeOption(Clipboard, ClipboardClient);
+    }
+    else if (strcmp(value, "server") == 0)
+    {
+      nxagentChangeOption(Clipboard, ClipboardServer);
+    }
+    else if ((strcmp(value, "none") == 0) || (strcmp(value, "0") == 0))
+    {
+      nxagentChangeOption(Clipboard, ClipboardNone);
+    }
+    else
+    {
+      nxagentChangeOption(Clipboard, ClipboardBoth);
+    }
   }
   else
   {
