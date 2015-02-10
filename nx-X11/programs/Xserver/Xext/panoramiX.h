@@ -44,7 +44,7 @@ Equipment Corporation.
 #define _PANORAMIX_H_
 
 #include <X11/extensions/panoramiXext.h>
-#include "gcstruct.h"
+/*#include "gcstruct.h"*/
 
 
 typedef struct _PanoramiXData {

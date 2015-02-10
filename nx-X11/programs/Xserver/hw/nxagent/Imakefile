@@ -206,7 +206,7 @@ DEFINES = -g $(OS_DEFINES) $(EXT_DEFINES) $(UPG_DEFINES) \
           -UNX_DEBUG_INPUT \
 	  -DRANDR_10_INTERFACE \
 	  -DRANDR_12_INTERFACE \
-          -UPANORAMIX \
+          -DPANORAMIX \
           -UDEBUG_TREE
 
 all:: $(OBJS)

@@ -1021,7 +1021,7 @@ NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext \
 #else
 NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext -L ../../../nxcompshad \
                 -lXcomp -lXcompext -lXcompshad -lXrender -lX11 -lXext -lXfixes \
-                -L../../../nx-X11/exports/lib -lXtst -lXdamage -lXrandr -lXcomposite
+                -L../../../nx-X11/exports/lib -lXtst -lXdamage -lXrandr -lXcomposite -lXinerama
 #endif
 
 #endif

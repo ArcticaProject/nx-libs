@@ -686,7 +686,7 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
  *
 #define BuildXinerama		NO
  */
-#define BuildXinerama		NO
+#define BuildXinerama		YES
 
 /*
  * If you don't want to build support for the GLX extension, uncomment this.
