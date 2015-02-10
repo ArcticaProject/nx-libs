@@ -644,6 +644,10 @@ FIXME: Should use these.
             pDrawable -> depth != 1 &&
                 nxagentOption(DeferLevel) >= 1)
     {
+    /* -- changed by dimbor (small "bed-sheets" never need be prevented - always put) --*/
+     if (dstHeight > 16)
+     {
+    /* -------------------------------------------------------------------------------- */
       #ifdef TEST
       fprintf(stderr, "nxagentPutImage: WARNING! Prevented operation on region [%d,%d,%d,%d] "
                   "for drawable at [%p] with drawable pixmap.\n", pRegion -> extents.x1,
@@ -654,6 +658,9 @@ FIXME: Should use these.
       nxagentMarkCorruptedRegion(pDrawable, pRegion);
 
       goto nxagentPutImageEnd;
+    /* --- changed by dimbor ---*/
+     }
+    /* ------------------------- */
     }
 
     if (pDrawable -> type == DRAWABLE_WINDOW &&
