@@ -104,6 +104,10 @@ nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
     launched as x2goagent, use X2Go-specific paths for the keystrokes.cfg file.
     (Fixes: #744).
 
+  [ Michael DePaulo ]
+  * debian/rules:
+    + Fix build for LDFLAGS containing spaces.
+
   [ Mihai Moldovan ]
   * Change string "X2go" to "X2Go" where appropriate.
 
