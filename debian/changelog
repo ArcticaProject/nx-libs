@@ -25,6 +25,8 @@ nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
   * Makefile.nx-libs: Don't allow symlinks to point into buildroot.
   * Makefile.nx-libs: Install man pages via main Makefile.
   * Add Description: and Author: fields to various patch headers.
+  * Makefile.nx-libs: Run make install for nxproxy first, then create the
+    wrapper script.
 
   * NX code reduction efforts (from 93Mb to 41Mb):
     - Drop more unused code in nx-X11/programs/Xserver/hw/. Do this in
