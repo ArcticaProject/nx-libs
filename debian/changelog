@@ -82,6 +82,7 @@ nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
       etc/x2goagent.keyboard) before dh_auto_build.
     + Add to B-D: expat.
     + Install upstream ChangeLogs into bin:packages.
+    + Remove upstream nx-libs ChangeLog during override_dh_clean.
 
   * nx-libs.spec:
     + The gpg-offline bin:package is not available in our SLE repo. We can do

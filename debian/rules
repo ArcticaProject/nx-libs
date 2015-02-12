@@ -28,6 +28,7 @@ override_dh_auto_clean:
 override_dh_clean:
 	rm -f nx*/configure
 	rm -f nx*/changelog
+	rm -f doc/changelog
 	rm -f nx-X11/programs/Xserver/hw/nxagent/changelog
 	rm -f nx-X11/programs/nxauth/changelog
 	if [ ! -f replace.sh ] && [ ! -h replace.sh ]; then ln -s debian/Makefile.replace.sh replace.sh; fi
