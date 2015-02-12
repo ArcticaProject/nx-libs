@@ -60,10 +60,12 @@ install:
 
 install-lite:
 	$(INSTALL_DIR) $(DESTDIR)$(BINDIR)
-	for f in nxproxy; do \
-	   $(INSTALL_PROGRAM) bin/$$f $(DESTDIR)$(BINDIR); done
 	for d in nxcomp nxproxy; do \
 	   $(MAKE) -C $$d install; done
+	mkdir -p $(DESTDIR)$(NXLIBDIR)/bin/
+	mv $(DESTDIR)$(BINDIR)/nxproxy $(DESTDIR)$(NXLIBDIR)/bin/
+	for f in nxproxy; do \
+	   $(INSTALL_PROGRAM) bin/$$f $(DESTDIR)$(BINDIR); done
 
 	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/man/man1/
 	$(INSTALL_FILE) nxproxy/man/nxproxy.1 $(DESTDIR)$(PREFIX)/share/man/man1/
