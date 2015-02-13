@@ -299,17 +299,26 @@ class Control
   // Version number of local and remote proxy.
   //
 
+  /* 
+   * LocalVersionMaintenancePatch, RemoteVersionMaintenancePatch
+   * CompatVersionMaintenancePatch
+   *
+   * currently not used, for future compatibility checks
+   */
   int LocalVersionMajor;
   int LocalVersionMinor;
   int LocalVersionPatch;
+  int LocalVersionMaintenancePatch;
 
   int RemoteVersionMajor;
   int RemoteVersionMinor;
   int RemoteVersionPatch;
+  int RemoteVersionMaintenancePatch;
 
   int CompatVersionMajor;
   int CompatVersionMinor;
   int CompatVersionPatch;
+  int CompatVersionMaintenancePatch;
 
   //
   // Which unpack methods are implemented in proxy?

@@ -15,6 +15,7 @@
 /*                                                                        */
 /**************************************************************************/
 
+#include "NX.h"
 #include "NXpack.h"
 
 #include "Control.h"
@@ -594,44 +595,17 @@ Control::Control()
   RemoteVersionMajor = -1;
   RemoteVersionMinor = -1;
   RemoteVersionPatch = -1;
+  RemoteVersionMaintenancePatch = -1;
 
   CompatVersionMajor = -1;
   CompatVersionMinor = -1;
   CompatVersionPatch = -1;
+  CompatVersionMaintenancePatch = -1;
 
-  char version[32];
-
-  strcpy(version, VERSION);
-
-  char *value;
-
-  value = strtok(version, ".");
-
-  for (int i = 0; value != NULL && i < 3; i++)
-  {
-    switch (i)
-    {
-      case 0:
-
-        LocalVersionMajor = atoi(value);
-
-        break;
-
-      case 1:
-
-        LocalVersionMinor = atoi(value);
-
-        break;
-
-      case 2:
-
-        LocalVersionPatch = atoi(value);
-
-        break;
-    }
-
-    value = strtok(NULL, ".");
-  }
+  LocalVersionMajor = NXMajorVersion();
+  LocalVersionMinor = NXMinorVersion();
+  LocalVersionPatch = NXPatchVersion();
+  LocalVersionMaintenancePatch = NXMaintenancePatchVersion();
 
   #ifdef TEST
   *logofs << "Control: Major version is " << LocalVersionMajor

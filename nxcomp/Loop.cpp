@@ -14250,7 +14250,8 @@ void PrintVersionInfo()
   cerr << "NXPROXY - " << "Version "
        << control -> LocalVersionMajor << "."
        << control -> LocalVersionMinor << "."
-       << control -> LocalVersionPatch;
+       << control -> LocalVersionPatch << "."
+       << control -> LocalVersionMaintenancePatch;
 
   cerr << endl;
 }

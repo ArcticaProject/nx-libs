@@ -105,7 +105,8 @@ MSRC   =
 
 CSRC   = MD5.c					\
 	 Pack.c					\
-         Vars.c
+	 Vars.c					\
+	 Version.c
 
 CXXSRC = Loop.cpp 				\
 	 Children.cpp				\

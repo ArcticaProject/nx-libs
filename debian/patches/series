@@ -1,4 +1,3 @@
-400_nxcomp-version.full+lite.patch
 #401_nxcomp_bigrequests-and-genericevent-extensions.full+lite.patch
 600_nx-X11+nxcompext+nxcompshad_unique-libnames.full.patch
 601_nx-X11_build-option-changes-to-not-use-bundled-libraries.full.patch

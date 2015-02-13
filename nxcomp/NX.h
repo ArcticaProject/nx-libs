@@ -442,6 +442,12 @@ extern int NXTransParseEnvironment(const char *env, int force);
 
 extern void NXTransCleanup(void) __attribute__((noreturn));
 
+extern const char* NXVersion();
+extern int NXMajorVersion();
+extern int NXMinorVersion();
+extern int NXPatchVersion();
+extern int NXMaintenancePatchVersion();
+
 #ifdef __cplusplus
 }
 #endif
