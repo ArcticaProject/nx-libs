@@ -589,7 +589,7 @@ parseline(
 
     l = _Xmbstoutf8(local_utf8_buf, rhs_string_mb, LOCAL_UTF8_BUFSIZE - 1);
     if (l == LOCAL_UTF8_BUFSIZE - 1) {
-	local_wc_buf[l] = '\0';
+	local_utf8_buf[l] = '\0';
     }
     if( (rhs_string_utf8 = (char *)Xmalloc(l + 1)) == NULL ) {
 	Xfree( rhs_string_wc );

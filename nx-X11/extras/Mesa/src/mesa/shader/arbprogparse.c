@@ -3259,7 +3259,6 @@ parse_vp_instruction (GLcontext * ctx, GLubyte ** inst,
    vp->SrcReg[0].Swizzle = SWIZZLE_NOOP;
    vp->SrcReg[1].Swizzle = SWIZZLE_NOOP;
    vp->SrcReg[2].Swizzle = SWIZZLE_NOOP;
-   vp->SrcReg[3].Swizzle = SWIZZLE_NOOP;
    vp->DstReg.WriteMask = 0xf;
 
    switch (type) {

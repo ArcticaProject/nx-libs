@@ -37,6 +37,12 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <errno.h>
 #include <stdio.h>
 #include <ctype.h>
+
+/* stat() */
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
 #define	NEED_EVENTS 1
 #include <X11/X.h>
 #include <X11/Xos.h>
