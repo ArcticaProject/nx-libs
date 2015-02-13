@@ -313,7 +313,7 @@ XPFBLIBS = dix/LibraryTargetName(xpstubs)
        FONTBASE = $(FONTLIBSRC)/fontbase.o \
 		  $(FONTLIBSRC)/LibraryTargetName(fontbase)
 #if XserverStaticFontLib
-           FONT = $(FONTLIBSRC)/LibraryTargetName(Xfont) $(FREETYPE2LIB)
+           FONT = $(FONTLIBSRC)/LibraryTargetName(NX_Xfont) $(FREETYPE2LIB)
 #else
            FONT = $(LDPRELIB) $(XFONTLIB) $(FREETYPE2LIB)
 #endif
@@ -994,7 +994,7 @@ NXAGENTOBJS = hw/nxagent/miinitext.o     \
               dix/main.o
 #endif
 
-XPMLIB =  -lXpm
+XPMLIB =  -lNX_Xpm
 NXAGENT = hw/nxagent/LibraryTargetName(nxagent)
 NXAGENTLIBS = PreFbLibs $(NXAGENT) FbPostFbLibs $(NXAGENT) $(MI)
 NXAGENTSYSLIBS = $(FONTLIBS) $(LDPRELIBS) $(XLIB) $(SYSLIBS) $(XPMLIB)
@@ -1012,18 +1012,18 @@ $(NXAGENTOBJS) $(NXAGENTLIBS) $(NXAGENTSYSLIBS):: $(NXAGENTDIRS)
 
 #if defined(SunArchitecture)
 NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext -L ../../../nxcompshad \
-                -lXcomp -lXcompext -lXcompshad -lrt -L/usr/sfw/lib -lXrender -lXfixes \
-                -L../../../nx-X11/exports/lib -lXtst -lXdamage -lXrandr -lXcomposite -lXdmcp \
+                -lXcomp -lXcompext -lXcompshad -lrt -L/usr/sfw/lib -lNX_Xrender -lNX_Xfixes \
+                -L../../../nx-X11/exports/lib -lNX_Xtst -lNX_Xdamage -lNX_Xrandr -lNX_Xcomposite -lNX_Xdmcp \
 `pkg-config --libs libxml-2.0`
 #elif defined(cygwinArchitecture)
 NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext \
-                -lXcomp -lXcompext -lXrender -lX11 -lXext -lXcomposite -lXfixes \
-                -L ../../../nxcompshad -lXcompshad -L../../../nx-X11/exports/lib -lXtst -lXdmcp \
+                -lXcomp -lXcompext -lNX_Xrender -lX11 -lNX_Xext -lNX_Xcomposite -lNX_Xfixes \
+                -L ../../../nxcompshad -lXcompshad -L../../../nx-X11/exports/lib -lNX_Xtst -lNX_Xdmcp \
 `pkg-config --libs libxml-2.0`
 #else
 NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext -L ../../../nxcompshad \
-                -lXcomp -lXcompext -lXcompshad -lXrender -lX11 -lXext -lXfixes \
-                -L../../../nx-X11/exports/lib -lXtst -lXdamage -lXrandr -lXcomposite -lXinerama -lXdmcp \
+                -lXcomp -lXcompext -lXcompshad -lNX_Xrender -lNX_X11 -lNX_Xext -lNX_Xfixes \
+                -L../../../nx-X11/exports/lib -lNX_Xtst -lNX_Xdamage -lNX_Xrandr -lNX_Xcomposite -lNX_Xinerama -lNX_Xdmcp \
 `pkg-config --libs libxml-2.0`
 #endif
 
@@ -1078,7 +1078,7 @@ nxagent_static_nolibs:  nxagent
 	else exit 0; fi
 	$(CCLINK) -o nxagent_static_nolibs -Wl,-Bstatic $(LDOPTIONS) $(NXAGENTOBJS) \
 	$(NXAGENTLIBS) $(LOADABLEEXTS) $(LIBCWRAPPER) $(LDLIBS) $(FONTLIBS) \
-	$(LDPRELIBS) $(SYSLIBS) -Wl,-Bdynamic -lXext -lX11 $(EXTRA_LOAD_FLAGS)
+	$(LDPRELIBS) $(SYSLIBS) -Wl,-Bdynamic -lNX_Xext -lNX_X11 $(EXTRA_LOAD_FLAGS)
 #endif /* NXAgentServer */
 
 #if defined(XnonServer) && XnonServer

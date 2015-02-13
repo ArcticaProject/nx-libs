@@ -10,7 +10,7 @@ XCOMM $XFree86: xc/lib/oldX/Imakefile,v 1.2 1998/12/20 11:57:19 dawes Exp $
 #define DoExtraLib SharedOldX
 #define DoDebugLib DebugOldX
 #define DoProfileLib ProfileOldX
-#define LibName oldX
+#define LibName NX_oldX
 #define SoRev SOOLDXREV
 #define IncSubdir X11
 

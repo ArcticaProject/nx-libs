@@ -74,7 +74,7 @@ clean::
 #define DoSharedLib SharedLibXrender
 #define DoDebugLib DebugLibXrender
 #define DoProfileLib ProfileLibXrender
-#define LibName Xrender
+#define LibName NX_Xrender
 #define SoRev SOXRENDERREV
 
 #ifdef XBuildIncDir

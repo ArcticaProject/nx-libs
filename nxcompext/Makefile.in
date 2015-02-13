@@ -42,12 +42,12 @@ CCINCLUDES  = -I. -I../nxcomp
 CCDEFINES   =
 
 LDFLAGS     = @LDFLAGS@ -L../nxcomp
-LIBS        = @LIBS@ -lz -lX11 -lXcomp
+LIBS        = @LIBS@ -lz -lNX_X11 -lXcomp
 
 #
 # Only if THREADS is defined
 #
-# LIBS = @LIBS@ -lz -ljpeg -lpthread -lX11 -lXcomp
+# LIBS = @LIBS@ -lz -ljpeg -lpthread -lNX_X11 -lXcomp
 #
 
 srcdir      = @srcdir@

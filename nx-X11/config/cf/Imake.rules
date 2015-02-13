@@ -2124,9 +2124,9 @@ LintLibReferences(varname,libname,libsource)
  */
 #ifndef ProjectUnsharedFontLibReferences
 #define ProjectUnsharedFontLibReferences()					@@\
-DEPFONTLIB = _UseCat($(USRLIBDIR)/,XBuildLibDir/,LibraryTargetName(Xfont))	@@\
-FONTLIB = -L$(FREETYPELIBDIR) -L$(FONTLIBSRC) LoaderLibPrefix -lXfont		@@\
-LintLibReferences(XFONT,Xfont,$(FONTLIBSRC))
+DEPFONTLIB = _UseCat($(USRLIBDIR)/,XBuildLibDir/,LibraryTargetName(NX_Xfont))	@@\
+FONTLIB = -L$(FREETYPELIBDIR) -L$(FONTLIBSRC) LoaderLibPrefix -lNX_Xfont		@@\
+LintLibReferences(XFONT,NX_Xfont,$(FONTLIBSRC))
 #endif
 
 /*
@@ -2142,9 +2142,9 @@ LintLibReferences(XFONT,Xfont,$(FONTLIBSRC))
 #ifndef SharedFontLibReferences
 #define SharedFontLibReferences()					@@\
 SOFONTREV = SharedFontRev						@@\
-DEPFONTLIB = SharedLibDependencies(Xfont,$(FONTLIBSRC),SOFONTREV)	@@\
-FONTLIB = -L$(FREETYPELIBDIR) -L$(FONTLIBSRC) LoaderLibPrefix -lXfont	@@\
-LintLibReferences(XFONT,Xfont,$(FONTLIBSRC))
+DEPFONTLIB = SharedLibDependencies(NX_Xfont,$(FONTLIBSRC),SOFONTREV)	@@\
+FONTLIB = -L$(FREETYPELIBDIR) -L$(FONTLIBSRC) LoaderLibPrefix -lNX_Xfont	@@\
+LintLibReferences(XFONT,NX_Xfont,$(FONTLIBSRC))
 #endif
 
 /*

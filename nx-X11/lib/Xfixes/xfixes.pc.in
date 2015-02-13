@@ -7,4 +7,4 @@ Name: Xfixes
 Description: X Fixes Library
 Version: @VERSION@
 Cflags: -I${includedir} @X_CFLAGS@
-Libs: -L${libdir} -lXfixes @X_LIBS@
+Libs: -L${libdir} -lNX_Xfixes @X_LIBS@

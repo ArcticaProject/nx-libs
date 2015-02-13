@@ -14,7 +14,7 @@ SOXFIXESREV=3.0.0
 #define DoDebugLib DebugLibXfixes
 #define DoProfileLib ProfileLibXfixes
 
-#define LibName Xfixes
+#define LibName NX_Xfixes
 #define SoRev SOXFIXESREV
 #define IncSubdir X11
 #define IncSubSubdir extensions

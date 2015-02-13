@@ -31,7 +31,7 @@ XCOMM $XFree86: xc/lib/font/Imakefile,v 3.37 2003/10/24 16:21:12 tsi Exp $
 STUBDIRS = stubs
 #endif
 
-LIBNAME = Xfont
+LIBNAME = NX_Xfont
 SOREV = $(SOFONTREV)
 
 #ifndef SeparateSharedCompile

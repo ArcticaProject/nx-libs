@@ -48,7 +48,7 @@ CCINCLUDES  =
 CCDEFINES   =
 
 LDFLAGS     = @LDFLAGS@
-LIBS        = @LIBS@ -lX11
+LIBS        = @LIBS@ -lNX_X11
 
 #
 # Only if THREADS is defined.
@@ -139,7 +139,7 @@ all: depend $(LIBARCHIVE) $(LIBDLL)
 
 else
 
-EXTRALIBS = -lXtst -lXrandr -lXdamage
+EXTRALIBS = -lNX_Xtst -lNX_Xrandr -lNX_Xdamage
 
 all: depend $(LIBFULL) $(LIBLOAD) $(LIBSHARED) $(LIBARCHIVE)
 

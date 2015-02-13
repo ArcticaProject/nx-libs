@@ -10,7 +10,7 @@ XCOMM $XFree86: xc/lib/Xau/Imakefile,v 3.5 1999/04/17 09:08:11 dawes Exp $
 #define DoExtraLib SharedLibXau
 #define DoDebugLib DebugLibXau
 #define DoProfileLib ProfileLibXau
-#define LibName Xau
+#define LibName NX_Xau
 #define SoRev SOXAUTHREV
 #define IncSubdir X11
 

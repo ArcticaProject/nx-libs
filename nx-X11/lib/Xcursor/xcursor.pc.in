@@ -12,4 +12,4 @@ Description: X Cursor Library
 Version: @VERSION@
 Requires: xrender
 Cflags: -I${includedir} ${xrendercflags} ${xcflags}
-Libs: -L${libdir} -lXcursor ${xrenderlibs} ${xlibs}
+Libs: -L${libdir} -lNX_Xcursor ${xrenderlibs} ${xlibs}
