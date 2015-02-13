@@ -149,6 +149,8 @@ static int nxagentGetDialogName(void);
 
 char nxagentVerbose = 0;
 
+char *nxagentKeystrokeFile = NULL;
+
 int ddxProcessArgument(int argc, char *argv[], int i)
 {
   /*
@@ -1020,6 +1022,20 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     nxagentVerbose = 1;
 
     return 1;
+  }
+
+  if (!strcmp(argv[i], "-keystrokefile"))
+  {
+    if (i + 1 < argc)
+    {
+      if (NULL != (nxagentKeystrokeFile = strdup(argv[i + 1])))
+      {
+        return 2;
+      } else {
+	FatalError("malloc failed");
+      }
+    }
+    return 0;
   }
 
   return 0;

@@ -142,7 +142,8 @@ INCLUDES = -I. -I../../../../../nxcomp -I../../../../../nxcompext -I../../../../
            -I../../miext/damage -I../../miext/cw \
 	   -I../../GL/glx -I../../GL/include -I../../../../lib/GL/include -I../../Xext \
            -I$(EXTINCSRC) -I$(XINCLUDESRC) \
-	   $(VFBINCLUDES) $(NXFONTINCLUDES) $(LIBXRANDRINCLUDES)
+	   $(VFBINCLUDES) $(NXFONTINCLUDES) $(LIBXRANDRINCLUDES) \
+           `pkg-config --cflags-only-I libxml-2.0`
 #ifdef SunArchitecture
 INCLUDES = -I. -I../../../../../nxcomp -I../../../../../nxcompext -I../../../../../nxcompshad \
            -I../../../../extras/Mesa/include \
@@ -152,7 +153,8 @@ INCLUDES = -I. -I../../../../../nxcomp -I../../../../../nxcompext -I../../../../
 	   -I../../GL/glx -I../../GL/include -I../../../../lib/GL/include -I../../Xext \
            -I../../miext/damage -I../../miext/cw \
            -I$(EXTINCSRC) -I$(XINCLUDESRC) \
-	   $(VFBINCLUDES) $(NXFONTINCLUDES) $(LIBXRANDRINCLUDES)
+	   $(VFBINCLUDES) $(NXFONTINCLUDES) $(LIBXRANDRINCLUDES) \
+           `pkg-config --cflags-only-I libxml-2.0`
 #else
 #ifdef cygwinArchitecture
 INCLUDES = -I. -I$(XBUILDINCDIR) -I$(FONTINCSRC) \
@@ -162,7 +164,8 @@ INCLUDES = -I. -I$(XBUILDINCDIR) -I$(FONTINCSRC) \
            -I../../../../../nxcomp -I../../../../../nxcompext -I../../../../../nxcompshad \
            -I../../../../extras/Mesa/include \
            -I$(EXTINCSRC) -I$(XINCLUDESRC) \
-	   $(VFBINCLUDES) $(NXFONTINCLUDES) $(LIBXRANDRINCLUDES)
+	   $(VFBINCLUDES) $(NXFONTINCLUDES) $(LIBXRANDRINCLUDES) \
+           `pkg-config --cflags-only-I libxml-2.0`
 #endif
 #endif
 
