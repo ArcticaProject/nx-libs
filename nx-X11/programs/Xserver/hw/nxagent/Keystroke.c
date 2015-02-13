@@ -27,6 +27,7 @@
 #include "Options.h"
 #include "Keystroke.h"
 #include "Drawable.h"
+#include "Init.h" /* extern int nxagentX2go */
 
 #include <unistd.h>
 
@@ -260,6 +261,11 @@ static void parse_keystroke_file(void)
 
   char *homefile = "/.nx/config/keystrokes.cfg";
   char *etcfile = "/etc/nxagent/keystrokes.cfg";
+
+  if (nxagentX2go) {
+    homefile = "/.x2go/config/keystrokes.cfg";
+    etcfile = "/etc/x2go/keystrokes.cfg";
+  }
 
   if (nxagentKeystrokeFile != NULL && access(nxagentKeystrokeFile, R_OK) == 0)
   {
