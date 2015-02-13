@@ -1678,10 +1678,11 @@ FIXME: Is this useful or just a waste of bandwidth?
 
   #ifdef TEST
 
-  fprintf(stderr, "nxagentTrapezoids: Source is a [%s] of geometry [%d,%d].\n",
-              (pSrc -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
-                  pSrc -> pDrawable -> width, pSrc -> pDrawable -> height);
-
+  if (pSrc->pDrawable) {
+    fprintf(stderr, "nxagentTrapezoids: Source is a [%s] of geometry [%d,%d].\n",
+                (pSrc -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
+                    pSrc -> pDrawable -> width, pSrc -> pDrawable -> height);
+  }
   if (pSrc ->pDrawable != pDst -> pDrawable)
   {
     fprintf(stderr, "nxagentTrapezoids: Destination is a [%s] of geometry [%d,%d].\n",

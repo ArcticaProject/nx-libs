@@ -735,7 +735,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 
 		client->sequence++;
 #ifdef DEBUG
-		if (client->requestLogIndex == MAX_REQUEST_LOG)
+		if ((client->requestLogIndex >= MAX_REQUEST_LOG) || (client->requestLogIndex <= 0))
 		    client->requestLogIndex = 0;
 		client->requestLog[client->requestLogIndex] = MAJOROP;
 		client->requestLogIndex++;
