@@ -1,5 +1,5 @@
 XCOMM $Xorg$
-    HEADERS = bitmap.h bufio.h fntfil.h fntfilio.h fntfilst.h fontenc.h \
+    HEADERS = bitmap.h bufio.h fntfil.h fntfilio.h fntfilst.h \
 	      fontencc.h fontmisc.h fontmod.h fontshow.h fontutil.h \
 	      fontxlfd.h
 all::

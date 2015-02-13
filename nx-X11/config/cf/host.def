@@ -311,6 +311,7 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
  *
 #define BuildFreeType		NO
  */
+#define BuildFreeType		NO
 
 /*
  * To set non-default build options for the underlying FreeType libraries,
@@ -892,7 +893,7 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
  *
 #define HasFreetype2 NO
  */
-#define HasFreetype2 NO
+#define HasFreetype2 YES
 
 /* 
  * To use a FreeType library already installed outside the default search
@@ -909,7 +910,7 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
  *
 #define HasFontconfig NO
  */
-#define HasFontconfig NO
+#define HasFontconfig YES
 
 /* 
  * To use a Fontconfig library already installed outside the default search
@@ -925,7 +926,7 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
  *
 #define HasExpat NO
  */
-#define HasExpat NO
+#define HasExpat YES
 
 /* 
  * To use a Expat library already installed outside the default search
@@ -961,7 +962,7 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
 
 #define SharedLibXdmcp         YES
 
-#define BuildXaw7              YES
+#define BuildXaw7              NO
 
 #else /* #if !defined(NXZaurusXServer) && !defined(NXiPAQXServer) && !defined(DarwinArchitecture) */
 
@@ -1019,3 +1020,11 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
 #endif
 
 #endif /* #if !defined(NXZaurusXServer) && !defined(NXiPAQXServer) && !defined(DarwinArchitecture) */
+
+#define BuildRman NO
+#define BuildFontEncLib NO
+#define BuildXcursorLibrary NO
+#define BuildXftLibrary NO
+#define BuildXft1Library NO
+#define SharedLibFont NO
+#define BuildLoadableXlibI18n NO
