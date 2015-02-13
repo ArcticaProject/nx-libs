@@ -1,0 +1,138 @@
+--- ./nx-X11/programs/Xserver/hw/nxagent/X/NXdamage.c.X.original	2015-02-13 14:03:44.740441589 +0100
++++ ./nx-X11/programs/Xserver/hw/nxagent/X/NXdamage.c	2015-02-10 19:13:13.828684988 +0100
+@@ -1,3 +1,20 @@
++/**************************************************************************/
++/*                                                                        */
++/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
++/*                                                                        */
++/* NXAGENT, NX protocol compression and NX extensions to this software    */
++/* are copyright of NoMachine. Redistribution and use of the present      */
++/* software is allowed according to terms specified in the file LICENSE   */
++/* which comes in the source distribution.                                */
++/*                                                                        */
++/* Check http://www.nomachine.com/licensing.html for applicability.       */
++/*                                                                        */
++/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
++/*                                                                        */
++/* All rights reserved.                                                   */
++/*                                                                        */
++/**************************************************************************/
++
+ /*
+  * $Id: damage.c,v 1.19 2005/10/06 21:55:41 anholt Exp $
+  *
+@@ -1358,17 +1375,24 @@
+     if (n != 0) {
+ 	damageDamageChars (pDrawable, pGC->font, x + pDrawable->x, y + pDrawable->y, n,
+ 			   charinfo, imageblt, pGC->subWindowMode);
++
++#ifndef NXAGENT_SERVER
++
+ 	if (imageblt)
+ 	    (*pGC->ops->ImageGlyphBlt)(pDrawable, pGC, x, y, n, charinfo,
+ 				       FONTGLYPHS(pGC->font));
+ 	else
+ 	    (*pGC->ops->PolyGlyphBlt)(pDrawable, pGC, x, y, n, charinfo,
+ 				      FONTGLYPHS(pGC->font));
++#endif
++
+     }
+     DEALLOCATE_LOCAL(charinfo);
+     return x + w;
+ }
+ 
++#ifndef NXAGENT_SERVER
++
+ static int
+ damagePolyText8(DrawablePtr pDrawable,
+ 		GCPtr	    pGC,
+@@ -1445,6 +1469,89 @@
+     DAMAGE_GC_OP_EPILOGUE(pGC, pDrawable);
+ }
+ 
++#else /* #ifndef NXAGENT_SERVER */
++
++static int
++damagePolyText8(DrawablePtr pDrawable,
++		GCPtr	    pGC,
++		int	    x,
++		int	    y,
++		int	    count,
++		char	    *chars)
++{
++    DAMAGE_GC_OP_PROLOGUE(pGC, pDrawable);
++
++    if (checkGCDamage (pDrawable, pGC))
++	damageText (pDrawable, pGC, x, y, (unsigned long) count, chars,
++		    Linear8Bit, TT_POLY8);
++
++    x = (*pGC->ops->PolyText8)(pDrawable, pGC, x, y, count, chars);
++
++    DAMAGE_GC_OP_EPILOGUE(pGC, pDrawable);
++    return x;
++}
++
++static int
++damagePolyText16(DrawablePtr	pDrawable,
++		 GCPtr		pGC,
++		 int		x,
++		 int		y,
++		 int		count,
++		 unsigned short	*chars)
++{
++    DAMAGE_GC_OP_PROLOGUE(pGC, pDrawable);
++
++    if (checkGCDamage (pDrawable, pGC))
++	damageText (pDrawable, pGC, x, y, (unsigned long) count, (char *) chars,
++		    FONTLASTROW(pGC->font) == 0 ? Linear16Bit : TwoD16Bit,
++		    TT_POLY16);
++
++    x = (*pGC->ops->PolyText16)(pDrawable, pGC, x, y, count, chars);
++
++    DAMAGE_GC_OP_EPILOGUE(pGC, pDrawable);
++    return x;
++}
++
++static void
++damageImageText8(DrawablePtr	pDrawable,
++		 GCPtr		pGC,
++		 int		x,
++		 int		y,
++		 int		count,
++		 char		*chars)
++{
++    DAMAGE_GC_OP_PROLOGUE(pGC, pDrawable);
++
++    if (checkGCDamage (pDrawable, pGC))
++	damageText (pDrawable, pGC, x, y, (unsigned long) count, chars,
++		    Linear8Bit, TT_IMAGE8);
++
++    (*pGC->ops->ImageText8)(pDrawable, pGC, x, y, count, chars);
++
++    DAMAGE_GC_OP_EPILOGUE(pGC, pDrawable);
++}
++
++static void
++damageImageText16(DrawablePtr	pDrawable,
++		  GCPtr		pGC,
++		  int		x,
++		  int		y,
++		  int		count,
++		  unsigned short *chars)
++{
++    DAMAGE_GC_OP_PROLOGUE(pGC, pDrawable);
++
++    if (checkGCDamage (pDrawable, pGC))
++	damageText (pDrawable, pGC, x, y, (unsigned long) count, (char *) chars,
++		    FONTLASTROW(pGC->font) == 0 ? Linear16Bit : TwoD16Bit,
++		    TT_IMAGE16);
++
++    (*pGC->ops->ImageText16)(pDrawable, pGC, x, y, count, chars);
++
++    DAMAGE_GC_OP_EPILOGUE(pGC, pDrawable);
++}
++
++#endif /* #ifndef NXAGENT_SERVER */
+ 
+ static void
+ damageImageGlyphBlt(DrawablePtr	    pDrawable,

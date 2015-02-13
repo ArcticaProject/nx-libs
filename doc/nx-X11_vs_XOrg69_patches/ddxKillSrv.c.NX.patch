@@ -1,0 +1,21 @@
+--- ./nx-X11/programs/Xserver/xkb/ddxKillSrv.c.X.original	2015-02-13 14:03:44.792440567 +0100
++++ ./nx-X11/programs/Xserver/xkb/ddxKillSrv.c	2015-02-10 19:13:13.736688433 +0100
+@@ -52,10 +52,18 @@
+ int
+ XkbDDXTerminateServer(DeviceIntPtr dev,KeyCode key,XkbAction *act)
+ {
++#ifdef NXAGENT_SERVER
++
++    return 0;
++
++#else
++
+ #ifdef XF86DDXACTIONS
+     xf86ProcessActionEvent(ACTION_TERMINATE, NULL);
+ #else
+     GiveUp(1);
+ #endif
+     return 0;
++
++#endif /* NXAGENT_SERVER */
+ }

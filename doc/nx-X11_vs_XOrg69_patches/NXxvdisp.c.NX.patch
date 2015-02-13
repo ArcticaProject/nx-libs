@@ -1,0 +1,266 @@
+--- ./nx-X11/programs/Xserver/hw/nxagent/X/NXxvdisp.c.X.original	2015-02-13 14:03:44.748441432 +0100
++++ ./nx-X11/programs/Xserver/hw/nxagent/X/NXxvdisp.c	2015-02-13 14:03:44.748441432 +0100
+@@ -1,3 +1,20 @@
++/**************************************************************************/
++/*                                                                        */
++/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
++/*                                                                        */
++/* NXAGENT, NX protocol compression and NX extensions to this software    */
++/* are copyright of NoMachine. Redistribution and use of the present      */
++/* software is allowed according to terms specified in the file LICENSE   */
++/* which comes in the source distribution.                                */
++/*                                                                        */
++/* Check http://www.nomachine.com/licensing.html for applicability.       */
++/*                                                                        */
++/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
++/*                                                                        */
++/* All rights reserved.                                                   */
++/*                                                                        */
++/**************************************************************************/
++
+ /* $XdotOrg: xc/programs/Xserver/Xext/xvdisp.c,v 1.6 2005/07/03 08:53:36 daniels Exp $ */
+ /***********************************************************
+ Copyright 1991 by Digital Equipment Corporation, Maynard, Massachusetts,
+@@ -71,6 +88,11 @@
+ #include <X11/extensions/shmstr.h>
+ #endif
+ 
++#include "Trap.h"
++
++#undef  TEST
++#undef  DEBUG
++
+ #ifdef EXTMODULE
+ #include "xf86_ansic.h"
+ #endif
+@@ -227,129 +249,175 @@
+ int
+ ProcXvDispatch(ClientPtr client)
+ {
++  int result;
++
+   REQUEST(xReq);
+ 
+   UpdateCurrentTime();
+ 
++  /*
++   * Report upstream that we are
++   * dispatching a XVideo operation.
++   */
++
++  nxagentXvTrap = 1;
++
++  #ifdef TEST
++  fprintf(stderr, "ProcXvDispatch: Going to dispatch XVideo operation [%d] for client [%d].\n", 
++              stuff->data, client -> index);
++  #endif
++
+   switch (stuff->data) 
+     {
+-    case xv_QueryExtension: return(ProcXvQueryExtension(client));
+-    case xv_QueryAdaptors: return(ProcXvQueryAdaptors(client));
+-    case xv_QueryEncodings: return(ProcXvQueryEncodings(client));
++    case xv_QueryExtension: result = (ProcXvQueryExtension(client)); break;
++    case xv_QueryAdaptors: result = (ProcXvQueryAdaptors(client)); break;
++    case xv_QueryEncodings: result = (ProcXvQueryEncodings(client)); break;
+     case xv_PutVideo:
+ #ifdef PANORAMIX
+         if(!noPanoramiXExtension)
+-            return(XineramaXvPutVideo(client));
++            result = (XineramaXvPutVideo(client)); break;
+         else
+ #endif
+-            return(ProcXvPutVideo(client));
++            result = (ProcXvPutVideo(client)); break;
+     case xv_PutStill:
+ #ifdef PANORAMIX
+         if(!noPanoramiXExtension)
+-            return(XineramaXvPutStill(client));
++            result = (XineramaXvPutStill(client)); break
+         else
+ #endif
+-    	    return(ProcXvPutStill(client));
+-    case xv_GetVideo: return(ProcXvGetVideo(client));
+-    case xv_GetStill: return(ProcXvGetStill(client));
+-    case xv_GrabPort: return(ProcXvGrabPort(client));
+-    case xv_UngrabPort: return(ProcXvUngrabPort(client));
+-    case xv_SelectVideoNotify: return(ProcXvSelectVideoNotify(client));
+-    case xv_SelectPortNotify: return(ProcXvSelectPortNotify(client));
++    	    result = (ProcXvPutStill(client)); break;
++    case xv_GetVideo: result = (ProcXvGetVideo(client)); break;
++    case xv_GetStill: result = (ProcXvGetStill(client)); break;
++    case xv_GrabPort: result = (ProcXvGrabPort(client)); break;
++    case xv_UngrabPort: result = (ProcXvUngrabPort(client)); break;
++    case xv_SelectVideoNotify: result = (ProcXvSelectVideoNotify(client)); break;
++    case xv_SelectPortNotify: result = (ProcXvSelectPortNotify(client)); break;
+     case xv_StopVideo: 
+ #ifdef PANORAMIX
+         if(!noPanoramiXExtension)
+-	    return(XineramaXvStopVideo(client));
++	    result = (XineramaXvStopVideo(client)); break;
+ 	else
+ #endif
+-	    return(ProcXvStopVideo(client));
++	    result = (ProcXvStopVideo(client)); break;
+     case xv_SetPortAttribute: 
+ #ifdef PANORAMIX
+         if(!noPanoramiXExtension)
+-	    return(XineramaXvSetPortAttribute(client));
++	    result = (XineramaXvSetPortAttribute(client)); break;
+ 	else
+ #endif
+-	    return(ProcXvSetPortAttribute(client));
+-    case xv_GetPortAttribute: return(ProcXvGetPortAttribute(client));
+-    case xv_QueryBestSize: return(ProcXvQueryBestSize(client));
+-    case xv_QueryPortAttributes: return(ProcXvQueryPortAttributes(client));
++	    result = (ProcXvSetPortAttribute(client)); break;
++    case xv_GetPortAttribute: result = (ProcXvGetPortAttribute(client)); break;
++    case xv_QueryBestSize: result = (ProcXvQueryBestSize(client)); break;
++    case xv_QueryPortAttributes: result = (ProcXvQueryPortAttributes(client)); break;
+     case xv_PutImage:
+ #ifdef PANORAMIX
+         if(!noPanoramiXExtension)
+-	    return(XineramaXvPutImage(client));
++	    result = (XineramaXvPutImage(client)); break;
+ 	else
+ #endif
+-	    return(ProcXvPutImage(client));
++	    result = (ProcXvPutImage(client)); break;
+ #ifdef MITSHM
+     case xv_ShmPutImage: 
+ #ifdef PANORAMIX
+         if(!noPanoramiXExtension)
+-	    return(XineramaXvShmPutImage(client));
++	    result = (XineramaXvShmPutImage(client)); break;
+ 	else
+ #endif
+-	    return(ProcXvShmPutImage(client));
++	    result = (ProcXvShmPutImage(client)); break;
+ #endif
+-    case xv_QueryImageAttributes: return(ProcXvQueryImageAttributes(client));
+-    case xv_ListImageFormats: return(ProcXvListImageFormats(client));
++    case xv_QueryImageAttributes: result = (ProcXvQueryImageAttributes(client)); break;
++    case xv_ListImageFormats: result = (ProcXvListImageFormats(client)); break;
+     default:
+       if (stuff->data < xvNumRequests)
+ 	{
+ 	  SendErrorToClient(client, XvReqCode, stuff->data, 0, 
+ 			    BadImplementation);
+-	  return(BadImplementation);
++	  result = (BadImplementation); break;
+ 	}
+       else
+ 	{
+ 	  SendErrorToClient(client, XvReqCode, stuff->data, 0, BadRequest);
+-	  return(BadRequest);
++	  result = (BadRequest);  break;
+ 	}
+     }
++
++  nxagentXvTrap = 0;
++
++  #ifdef TEST
++  fprintf(stderr, "ProcXvDispatch: Dispatched XVideo operation [%d] for client [%d].\n", 
++              stuff->data, client -> index);
++  #endif
++
++  return result;
+ }
+ 
+ int
+ SProcXvDispatch(ClientPtr client)
+ {
++  int result;
++
+   REQUEST(xReq);
+ 
+   UpdateCurrentTime();
+ 
++  /*
++   * Report upstream that we are
++   * dispatching a XVideo operation.
++   */
++
++  nxagentXvTrap = 1;
++
++  #ifdef TEST
++  fprintf(stderr, "SProcXvDispatch: Going to dispatch XVideo operation [%d] for client [%d].\n", 
++              stuff->data, client -> index);
++  #endif
++
+   switch (stuff->data) 
+     {
+-    case xv_QueryExtension: return(SProcXvQueryExtension(client));
+-    case xv_QueryAdaptors: return(SProcXvQueryAdaptors(client));
+-    case xv_QueryEncodings: return(SProcXvQueryEncodings(client));
+-    case xv_PutVideo: return(SProcXvPutVideo(client));
+-    case xv_PutStill: return(SProcXvPutStill(client));
+-    case xv_GetVideo: return(SProcXvGetVideo(client));
+-    case xv_GetStill: return(SProcXvGetStill(client));
+-    case xv_GrabPort: return(SProcXvGrabPort(client));
+-    case xv_UngrabPort: return(SProcXvUngrabPort(client));
+-    case xv_SelectVideoNotify: return(SProcXvSelectVideoNotify(client));
+-    case xv_SelectPortNotify: return(SProcXvSelectPortNotify(client));
+-    case xv_StopVideo: return(SProcXvStopVideo(client));
+-    case xv_SetPortAttribute: return(SProcXvSetPortAttribute(client));
+-    case xv_GetPortAttribute: return(SProcXvGetPortAttribute(client));
+-    case xv_QueryBestSize: return(SProcXvQueryBestSize(client));
+-    case xv_QueryPortAttributes: return(SProcXvQueryPortAttributes(client));
+-    case xv_PutImage: return(SProcXvPutImage(client));
++    case xv_QueryExtension: result = (SProcXvQueryExtension(client)); break;
++    case xv_QueryAdaptors: result = (SProcXvQueryAdaptors(client)); break;
++    case xv_QueryEncodings: result = (SProcXvQueryEncodings(client)); break;
++    case xv_PutVideo: result = (SProcXvPutVideo(client)); break;
++    case xv_PutStill: result = (SProcXvPutStill(client)); break;
++    case xv_GetVideo: result = (SProcXvGetVideo(client)); break;
++    case xv_GetStill: result = (SProcXvGetStill(client)); break;
++    case xv_GrabPort: result = (SProcXvGrabPort(client)); break;
++    case xv_UngrabPort: result = (SProcXvUngrabPort(client)); break;
++    case xv_SelectVideoNotify: result = (SProcXvSelectVideoNotify(client)); break;
++    case xv_SelectPortNotify: result = (SProcXvSelectPortNotify(client)); break;
++    case xv_StopVideo: result = (SProcXvStopVideo(client)); break;
++    case xv_SetPortAttribute: result = (SProcXvSetPortAttribute(client)); break;
++    case xv_GetPortAttribute: result = (SProcXvGetPortAttribute(client)); break;
++    case xv_QueryBestSize: result = (SProcXvQueryBestSize(client)); break;
++    case xv_QueryPortAttributes: result = (SProcXvQueryPortAttributes(client)); break;
++    case xv_PutImage: result = (SProcXvPutImage(client)); break;
+ #ifdef MITSHM
+-    case xv_ShmPutImage: return(SProcXvShmPutImage(client));
++    case xv_ShmPutImage: result = (SProcXvShmPutImage(client)); break;
+ #endif
+-    case xv_QueryImageAttributes: return(SProcXvQueryImageAttributes(client));
+-    case xv_ListImageFormats: return(SProcXvListImageFormats(client));
++    case xv_QueryImageAttributes: result = (SProcXvQueryImageAttributes(client)); break;
++    case xv_ListImageFormats: result = (SProcXvListImageFormats(client)); break;
+     default:
+       if (stuff->data < xvNumRequests)
+ 	{
+ 	  SendErrorToClient(client, XvReqCode, stuff->data, 0, 
+ 			    BadImplementation);
+-	  return(BadImplementation);
++	  result = (BadImplementation); break;
+ 	}
+       else
+ 	{
+ 	  SendErrorToClient(client, XvReqCode, stuff->data, 0, BadRequest);
+-	  return(BadRequest);
++	  result = (BadRequest); break;
+ 	}
+     }
++
++  nxagentXvTrap = 0;
++
++  #ifdef TEST
++  fprintf(stderr, "ProcXvDispatch: Dispatched XVideo operation [%d] for client [%d].\n", 
++              stuff->data, client -> index);
++  #endif
++
++  return result;
+ }
+ 
+ static int
+@@ -2215,3 +2283,4 @@
+ }
+ 
+ #endif
++

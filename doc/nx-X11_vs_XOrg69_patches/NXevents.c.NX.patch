@@ -1,0 +1,648 @@
+--- ./nx-X11/programs/Xserver/hw/nxagent/X/NXevents.c.X.original	2015-02-13 14:03:44.744441510 +0100
++++ ./nx-X11/programs/Xserver/hw/nxagent/X/NXevents.c	2015-02-10 19:13:13.788686485 +0100
+@@ -1,3 +1,20 @@
++/**************************************************************************/
++/*                                                                        */
++/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
++/*                                                                        */
++/* NXAGENT, NX protocol compression and NX extensions to this software    */
++/* are copyright of NoMachine. Redistribution and use of the present      */
++/* software is allowed according to terms specified in the file LICENSE   */
++/* which comes in the source distribution.                                */
++/*                                                                        */
++/* Check http://www.nomachine.com/licensing.html for applicability.       */
++/*                                                                        */
++/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
++/*                                                                        */
++/* All rights reserved.                                                   */
++/*                                                                        */
++/**************************************************************************/
++
+ /* $XdotOrg: xc/programs/Xserver/dix/events.c,v 1.17 2005/08/25 22:11:04 anholt Exp $ */
+ /* $XFree86: xc/programs/Xserver/dix/events.c,v 3.51 2004/01/12 17:04:52 tsi Exp $ */
+ /************************************************************
+@@ -116,6 +133,7 @@
+ #endif
+ 
+ #include <X11/X.h>
++#include "Xlib.h"
+ #include "misc.h"
+ #include "resource.h"
+ #define NEED_EVENTS
+@@ -163,7 +181,22 @@
+ 
+ #include "dixevents.h"
+ #include "dixgrabs.h"
+-#include "dispatch.h"
++#include "../../dix/dispatch.h"
++
++#include "NXlib.h"
++
++#include "Events.h"
++#include "Windows.h"
++#include "Args.h"
++
++#ifdef NX_DEBUG_INPUT
++extern int nxagentDebugInput;
++extern int nxagentDebugInputDevices;
++#endif
++ 
++extern Display *nxagentDisplay;
++
++extern WindowPtr nxagentLastEnteredWindow;
+ 
+ #define EXTENSION_EVENT_BASE  64
+ 
+@@ -1322,6 +1355,51 @@
+     mouse->fromPassiveGrab = autoGrab;
+     PostNewCursor();
+     CheckGrabForSyncs(mouse,(Bool)grab->pointerMode, (Bool)grab->keyboardMode);
++
++    #ifdef NXAGENT_SERVER
++
++    /*
++     * If grab is synchronous, events are delivered to clients only if they send
++     * an AllowEvent request. If mode field in AllowEvent request is SyncPointer, the 
++     * delivered event is saved in a queue and replayed later, when grab is released.
++     * We should  export sync grab to X as async in order to avoid events to be 
++     * queued twice, in the agent and in the X server. This solution have a drawback:
++     * replayed events are not delivered to that application that are not clients of
++     * the agent.
++     * A different solution could be to make the grab asynchronous in the agent and 
++     * to export it as synchronous. But this seems to be less safe.
++     *
++     * To make internal grab asynchronous, change previous line as follows.
++     *
++     * if (nxagentOption(Rootless))
++     * {
++     *   CheckGrabForSyncs(mouse, GrabModeAsync, (Bool)grab->keyboardMode);
++     * }
++     * else
++     * {
++     *   CheckGrabForSyncs(mouse,(Bool)grab->pointerMode, (Bool)grab->keyboardMode);
++     * }
++     */
++
++    if (nxagentOption(Rootless) == 1)
++    {
++      /*
++       * FIXME: We should use the correct value
++       * for the cursor. Temporarily we set it
++       * to None.
++       */
++
++       int resource = nxagentWaitForResource(NXGetCollectGrabPointerResource,
++                                                 nxagentCollectGrabPointerPredicate);
++
++       NXCollectGrabPointer(nxagentDisplay, resource, nxagentWindow(grab -> window),
++                                1, grab -> eventMask & PointerGrabMask,
++                                    GrabModeAsync, GrabModeAsync, (grab -> confineTo) ?
++                                        nxagentWindow(grab -> confineTo) : None,
++                                            None, CurrentTime);
++    }
++
++    #endif
+ }
+ 
+ void
+@@ -1346,6 +1424,22 @@
+     if (grab->cursor)
+ 	FreeCursor(grab->cursor, (Cursor)0);
+     ComputeFreezes();
++
++    #ifdef NXAGENT_SERVER
++
++    if (nxagentOption(Rootless) == 1)
++    {
++      XUngrabPointer(nxagentDisplay, CurrentTime);
++
++      if (sprite.win == ROOT)
++      {
++        mouse -> button -> state &=
++            ~(Button1Mask | Button2Mask | Button3Mask |
++                  Button4Mask | Button5Mask);
++      }
++    }
++
++    #endif
+ }
+ 
+ void
+@@ -1546,6 +1640,17 @@
+ 	    client->errorValue = stuff->mode;
+ 	    return BadValue;
+     }
++
++    /*
++     * This is not necessary if we export grab to X as asynchronous.
++     *
++     * if (nxagentOption(Rootless) && stuff -> mode != ReplayKeyboard &&
++     *         stuff -> mode != SyncKeyboard && stuff -> mode != AsyncKeyboard)
++     * {
++     *   XAllowEvents(nxagentDisplay, stuff -> mode, CurrentTime);
++     * }
++     */
++
+     return Success;
+ }
+ 
+@@ -1582,11 +1687,28 @@
+     int i;
+     int type;
+ 
+-#ifdef DEBUG
++#ifdef NX_DEBUG_INPUT
++    if (grab && nxagentDebugInput && grab->window)
++    {
++	fprintf(stderr, "TryClientEvents: Grab window is [0x%x].\n",
++		(unsigned int)grab->window->drawable.id);
++	if (!SameClient(grab, client))
++		fprintf(stderr, "TryClientEvents: Events are going to be "
++			    "discarded.\n");
++    }
++#endif
++#if defined(DEBUG) || defined(NX_DEBUG_INPUT)
++#ifdef NX_DEBUG_INPUT
++    if (nxagentDebugInput == 1)
++	fprintf(stderr, "Event([%d, %d], mask=0x%x), client=%d",
++	pEvents->u.u.type, pEvents->u.u.detail, (unsigned int)mask,
++	client->index);
++#else
+     if (debug_events) ErrorF(
+ 	"Event([%d, %d], mask=0x%x), client=%d",
+ 	pEvents->u.u.type, pEvents->u.u.detail, mask, client->index);
+ #endif
++#endif
+     if ((client) && (client != serverClient) && (!client->clientGone) &&
+ 	((filter == CantBeFiltered) || (mask & filter)))
+     {
+@@ -1600,10 +1722,17 @@
+ 		if (WID(inputInfo.pointer->valuator->motionHintWindow) ==
+ 		    pEvents->u.keyButtonPointer.event)
+ 		{
+-#ifdef DEBUG
++#if defined(DEBUG) || defined(NX_DEBUG_INPUT)
++#ifdef NX_DEBUG_INPUT
++    if (nxagentDebugInput == 1)
++    {
++	fprintf(stderr,"\nmotionHintWindow == keyButtonPointer.event\n");
++    }
++#else
+ 		    if (debug_events) ErrorF("\n");
+ 	    fprintf(stderr,"motionHintWindow == keyButtonPointer.event\n");
+ #endif
++#endif
+ 		    return 1; /* don't send, but pretend we did */
+ 		}
+ 		pEvents->u.u.detail = NotifyHint;
+@@ -1640,16 +1769,26 @@
+ 	}
+ 
+ 	WriteEventsToClient(client, count, pEvents);
+-#ifdef DEBUG
++#if defined(DEBUG) || defined(NX_DEBUG_INPUT)
++#ifdef NX_DEBUG_INPUT
++    if (nxagentDebugInput == 1)
++	fprintf(stderr, " delivered\n");
++#else
+ 	if (debug_events) ErrorF(  " delivered\n");
+ #endif
++#endif
+ 	return 1;
+     }
+     else
+     {
+-#ifdef DEBUG
++#if defined(DEBUG) || defined(NX_DEBUG_INPUT)
++#ifdef NX_DEBUG_INPUT
++    if (nxagentDebugInput == 1)
++	fprintf(stderr, "\n");
++#else
+ 	if (debug_events) ErrorF("\n");
+ #endif
++#endif
+ 	return 0;
+     }
+ }
+@@ -1727,6 +1866,12 @@
+ 	tempGrab.pointerMode = GrabModeAsync;
+ 	tempGrab.confineTo = NullWindow;
+ 	tempGrab.cursor = NullCursor;
++        #ifdef NX_DEBUG_INPUT
++        if (nxagentDebugInputDevices == 1)
++        {
++          fprintf(stderr, "DeliverEventsToWindow: Activating passive grab on pointer.\n");
++        }
++        #endif
+ 	(*inputInfo.pointer->ActivateGrab)(inputInfo.pointer, &tempGrab,
+ 					   currentTime, TRUE);
+     }
+@@ -1999,7 +2144,26 @@
+     BoxRec		box;
+ 
+     spriteTraceGood = 1;	/* root window still there */
+-    pWin = ROOT->firstChild;
++
++    if (nxagentOption(Rootless))
++    {
++      if (nxagentLastEnteredWindow == NULL)
++      {
++        return ROOT;
++      }
++
++      pWin = ROOT->lastChild;
++
++      while (pWin && pWin != ROOT->firstChild && pWin != nxagentLastEnteredWindow)
++      {
++        pWin = pWin->prevSib;
++      }
++    }
++    else
++    {
++      pWin = ROOT->firstChild;
++    }
++
+     while (pWin)
+     {
+ 	if ((pWin->mapped) &&
+@@ -2090,13 +2254,22 @@
+ 	    ConfineToShape(sprite.hotShape, &sprite.hot.x, &sprite.hot.y);
+ #endif
+ 	sprite.hotPhys = sprite.hot;
+-	if ((sprite.hotPhys.x != XE_KBPTR.rootX) ||
+-	    (sprite.hotPhys.y != XE_KBPTR.rootY))
+-	{
+-	    (*sprite.hotPhys.pScreen->SetCursorPosition)(
+-		sprite.hotPhys.pScreen,
+-		sprite.hotPhys.x, sprite.hotPhys.y, FALSE);
+-	}
++
++        /*
++         * This code force cursor position to be inside the
++         * root window of the agent. We can't view a reason
++         * to do this and it interacts in an undesirable way
++         * with toggling fullscreen.
++         *
++         * if ((sprite.hotPhys.x != XE_KBPTR.rootX) ||
++         *          (sprite.hotPhys.y != XE_KBPTR.rootY))
++         * {
++         *   (*sprite.hotPhys.pScreen->SetCursorPosition)(
++         *       sprite.hotPhys.pScreen,
++         *           sprite.hotPhys.x, sprite.hotPhys.y, FALSE);
++         * }
++         */
++
+ 	XE_KBPTR.rootX = sprite.hot.x;
+ 	XE_KBPTR.rootY = sprite.hot.y;
+     }
+@@ -2176,6 +2349,10 @@
+ DefineInitialRootWindow(register WindowPtr win)
+ {
+     register ScreenPtr pScreen = win->drawable.pScreen;
++    #ifdef VIEWPORT_FRAME
++    extern void nxagentInitViewportFrame(ScreenPtr, WindowPtr);
++    #endif
++    extern int  nxagentShadowInit(ScreenPtr, WindowPtr);
+ 
+     sprite.hotPhys.pScreen = pScreen;
+     sprite.hotPhys.x = pScreen->width / 2;
+@@ -2215,6 +2392,18 @@
+ 	REGION_NULL(pScreen, &sprite.Reg2);
+     }
+ #endif
++
++    #ifdef VIEWPORT_FRAME
++    nxagentInitViewportFrame(pScreen, win);
++    #endif
++
++    if (nxagentOption(Shadow))
++    {
++      if (nxagentShadowInit(pScreen, win) == -1)
++      {
++        FatalError("Failed to connect to display '%s'", nxagentShadowDisplayName);
++      }
++    }
+ }
+ 
+ /*
+@@ -2553,6 +2742,13 @@
+ 				tempGrab.modifiersDetail.exact&(~0x1f00);
+ 	    }
+ #endif
++            #ifdef NX_DEBUG_INPUT
++            if (nxagentDebugInputDevices == 1)
++            {
++              fprintf(stderr, "CheckPassiveGrabsOnWindow: Activating passive grab on %s.\n",
++                          device == inputInfo.keyboard ? "keyboard" : "pointer");
++            }
++            #endif
+ 	    (*device->ActivateGrab)(device, grab, currentTime, TRUE);
+  
+ 	    FixUpEventFromWindow(xE, grab->window, None, TRUE);
+@@ -2911,7 +3107,17 @@
+     else
+ 	DeliverFocusedEvent(keybd, xE, sprite.win, count);
+     if (deactivateGrab)
++    #ifdef NX_DEBUG_INPUT
++    {
++      if (nxagentDebugInputDevices == 1)
++      {
++        fprintf(stderr, "ProcessKeyboardEvent: Deactivating grab on keyboard.\n");
++      }
++    #endif
+         (*keybd->DeactivateGrab)(keybd);
++    #ifdef NX_DEBUG_INPUT
++    }
++    #endif
+ }
+ 
+ #ifdef XKB
+@@ -2961,7 +3167,9 @@
+     Bool                deactivateGrab = FALSE;
+     register ButtonClassPtr butc = mouse->button;
+ #ifdef XKB
+-    XkbSrvInfoPtr xkbi= inputInfo.keyboard->key->xkbInfo;
++    XkbSrvInfoPtr xkbi;
++
++    xkbi = inputInfo.keyboard->key->xkbInfo;
+ #endif
+ #ifdef XEVIE
+     if(xevieFlag && clients[xevieClientIndex] && !xeviegrabState &&
+@@ -2970,6 +3178,12 @@
+         xevieEventSent = 0;
+       else {
+         xeviemouse = mouse;
++        #ifdef NX_DEBUG_INPUT
++        if (nxagentDebugInput == 1)
++        {
++          fprintf(stderr, "ProcessPointerEvent: Going to send XEVIE event.\n");
++        }
++        #endif
+         WriteToClient(clients[xevieClientIndex], sizeof(xEvent), (char *)xE);
+         return;
+       }
+@@ -3024,14 +3238,38 @@
+ #if !defined(XFree86Server) || !defined(XINPUT)
+ 	    xE->u.u.detail = butc->map[key];
+ #endif
++	    #ifdef NX_DEBUG_INPUT
++	    if (xE->u.u.detail == 0)
++	    {
++		if (nxagentDebugInput == 1)
++		{
++		    fprintf(stderr, "ProcessPointerEvent: WARNING! detail == 0"
++			    " for ButtonPress.\n");
++		}
++		return;
++	    }
++	    #else
+ 	    if (xE->u.u.detail == 0)
+ 		return;
++	    #endif
+ 	    if (xE->u.u.detail <= 5)
+ 		butc->state |= (Button1Mask >> 1) << xE->u.u.detail;
+ 	    filters[MotionNotify] = Motion_Filter(butc);
+ 	    if (!grab)
++	    #ifdef NX_DEBUG_INPUT
++		if (CheckDeviceGrabs(mouse, xE, 0, count))
++		{
++		    if (nxagentDebugInput == 1)
++		    {
++			fprintf(stderr, "ProcessPointerEvent: CheckDeviceGrabs"
++				" returned True for ButtonPress.\n");
++		    }
++		    return;
++		}
++	    #else
+ 		if (CheckDeviceGrabs(mouse, xE, 0, count))
+ 		    return;
++	    #endif
+ 	    break;
+ 	case ButtonRelease: 
+ 	    mouse->valuator->motionHintWindow = NullWindow;
+@@ -3043,8 +3281,20 @@
+ #if !defined(XFree86Server) || !defined(XINPUT)
+ 	    xE->u.u.detail = butc->map[key];
+ #endif
++	    #ifdef NX_DEBUG_INPUT
+ 	    if (xE->u.u.detail == 0)
++	    {
++		if (nxagentDebugInput == 1)
++		{
++		    fprintf(stderr, "ProcessPointerEvent: WARNING! detail == 0"
++			    " for ButtonRelease.\n");
++		}
+ 		return;
++	    }
++	    #else
++	    if (xE->u.u.detail == 0)
++		return;
++	    #endif
+ 	    if (xE->u.u.detail <= 5)
+ 		butc->state &= ~((Button1Mask >> 1) << xE->u.u.detail);
+ 	    filters[MotionNotify] = Motion_Filter(butc);
+@@ -3055,6 +3305,36 @@
+ 	    FatalError("bogus pointer event from ddx");
+ 	}
+     }
++    #ifdef NX_DEBUG_INPUT
++    else if (!CheckMotion(xE))
++    {
++	if (nxagentDebugInput == 1)
++	{
++	    fprintf(stderr, "ProcessPointerEvent: CheckMotion returned False"
++		    " for MotionNotify.\n");
++	}
++	return;
++    }
++    if (grab)
++    {
++	if (nxagentDebugInput == 1)
++	{
++	    fprintf(stderr, "ProcessPointerEvent: Going to deliver grabbed "
++		    "events (count = %d).\n", count);
++	}
++	DeliverGrabbedEvent(xE, mouse, deactivateGrab, count);
++    }
++    else
++    {
++	if (nxagentDebugInput == 1)
++	{
++	    fprintf(stderr, "ProcessPointerEvent: Going to deliver device "
++		    "events (count = %d).\n", count);
++	}
++	DeliverDeviceEvents(sprite.win, xE, NullGrab, NullWindow,
++			    mouse, count);
++    }
++    #else
+     else if (!CheckMotion(xE))
+ 	return;
+     if (grab)
+@@ -3062,8 +3342,19 @@
+     else
+ 	DeliverDeviceEvents(sprite.win, xE, NullGrab, NullWindow,
+ 			    mouse, count);
++    #endif
+     if (deactivateGrab)
++    #ifdef NX_DEBUG_INPUT
++    {
++      if (nxagentDebugInputDevices == 1)
++      {
++        fprintf(stderr, "ProcessPointerEvent: Deactivating grab on pointer.\n");
++      }
++    #endif
+         (*mouse->DeactivateGrab)(mouse);
++    #ifdef NX_DEBUG_INPUT
++    }
++    #endif
+ }
+ 
+ #define AtMostOneClient \
+@@ -3784,6 +4075,12 @@
+     pWin = SecurityLookupWindow(stuff->grabWindow, client, SecurityReadAccess);
+     if (!pWin)
+ 	return BadWindow;
++    #ifdef NX_DEBUG_INPUT
++    if (nxagentDebugInputDevices == 1)
++    {
++      fprintf(stderr, "ProcGrabPointer: pWin [%p] client [%d].\n", pWin, client -> index);
++    }
++    #endif
+     if (stuff->confineTo == None)
+ 	confineTo = NullWindow;
+     else 
+@@ -3843,6 +4140,12 @@
+ 	tempGrab.keyboardMode = stuff->keyboardMode;
+ 	tempGrab.pointerMode = stuff->pointerMode;
+ 	tempGrab.device = device;
++        #ifdef NX_DEBUG_INPUT
++        if (nxagentDebugInputDevices == 1)
++        {
++          fprintf(stderr, "ProcGrabPointer: Activating active grab on pointer.\n");
++        }
++        #endif
+ 	(*device->ActivateGrab)(device, &tempGrab, time, FALSE);
+ 	if (oldCursor)
+ 	    FreeCursor (oldCursor, (Cursor)0);
+@@ -3906,6 +4209,12 @@
+     TimeStamp time;
+     REQUEST(xResourceReq);
+ 
++    #ifdef NX_DEBUG_INPUT
++    if (nxagentDebugInputDevices == 1)
++    {
++      fprintf(stderr, "ProcUngrabPointer: client [%d].\n", client -> index);
++    }
++    #endif
+     REQUEST_SIZE_MATCH(xResourceReq);
+     UpdateCurrentTime();
+     grab = device->grab;
+@@ -3913,7 +4222,25 @@
+     if ((CompareTimeStamps(time, currentTime) != LATER) &&
+ 	    (CompareTimeStamps(time, device->grabTime) != EARLIER) &&
+ 	    (grab) && SameClient(grab, client))
++    #ifdef NX_DEBUG_INPUT
++    {
++      if (nxagentDebugInputDevices == 1)
++      {
++        fprintf(stderr, "ProcUngrabPointer: Deactivating grab on pointer.\n");
++      }
++    #endif
+ 	(*device->DeactivateGrab)(device);
++    #ifdef NX_DEBUG_INPUT
++    }
++    else
++    {
++      if (nxagentDebugInputDevices == 1)
++      {
++        fprintf(stderr, "ProcUngrabPointer: current time [%lu] request time [%lu] grab time [%lu].\n",
++                    currentTime.milliseconds, time.milliseconds, device->grabTime.milliseconds);
++      }
++    }
++    #endif
+     return Success;
+ }
+ 
+@@ -3968,6 +4295,12 @@
+ 	tempGrab.pointerMode = other_mode;
+ 	tempGrab.eventMask = mask;
+ 	tempGrab.device = dev;
++        #ifdef NX_DEBUG_INPUT
++        if (nxagentDebugInputDevices == 1)
++        {
++          fprintf(stderr, "GrabDevice: Activating active grab on keyboard.\n");
++        }
++        #endif
+ 	(*dev->ActivateGrab)(dev, &tempGrab, time, FALSE);
+ 	*status = GrabSuccess;
+     }
+@@ -3981,6 +4314,12 @@
+     REQUEST(xGrabKeyboardReq);
+     int result;
+ 
++    #ifdef NX_DEBUG_INPUT
++    if (nxagentDebugInputDevices == 1)
++    {
++      fprintf(stderr, "ProcGrabKeyboard: client [%d].\n", client -> index);
++    }
++    #endif
+     REQUEST_SIZE_MATCH(xGrabKeyboardReq);
+ #ifdef XCSECURITY
+     if (!SecurityCheckDeviceAccess(client, inputInfo.keyboard, TRUE))
+@@ -4011,6 +4350,12 @@
+     TimeStamp time;
+     REQUEST(xResourceReq);
+ 
++    #ifdef NX_DEBUG_INPUT
++    if (nxagentDebugInputDevices == 1)
++    {
++      fprintf(stderr, "ProcUngrabKeyboard: client [%d].\n", client -> index);
++    }
++    #endif
+     REQUEST_SIZE_MATCH(xResourceReq);
+     UpdateCurrentTime();
+     grab = device->grab;
+@@ -4018,7 +4363,25 @@
+     if ((CompareTimeStamps(time, currentTime) != LATER) &&
+ 	(CompareTimeStamps(time, device->grabTime) != EARLIER) &&
+ 	(grab) && SameClient(grab, client))
++    #ifdef NX_DEBUG_INPUT
++    {
++      if (nxagentDebugInputDevices == 1)
++      {
++        fprintf(stderr, "ProcUngrabKeyboard: Deactivating grab on keyboard.\n");
++      }
++    #endif
+ 	(*device->DeactivateGrab)(device);
++    #ifdef NX_DEBUG_INPUT
++    }
++    else
++    {
++      if (nxagentDebugInputDevices == 1)
++      {
++        fprintf(stderr, "ProcUngrabKeyboard: current time [%lu] request time [%lu] grab time [%lu].\n",
++                    currentTime.milliseconds, time.milliseconds, device->grabTime.milliseconds);
++      }
++    }
++    #endif
+     return Success;
+ }
+ 
+@@ -4152,6 +4515,17 @@
+     /* The client's event type must be a core event type or one defined by an
+ 	extension. */
+ 
++
++#ifdef NXAGENT_CLIPBOARD
++
++    if (stuff -> event.u.u.type == SelectionNotify)
++    {
++    	extern int nxagentSendNotify(xEvent*);
++	if (nxagentSendNotify(&stuff->event) == 1)
++	  return Success;
++    }
++#endif
++
+     if ( ! ((stuff->event.u.u.type > X_Reply &&
+ 	     stuff->event.u.u.type < LASTEvent) || 
+ 	    (stuff->event.u.u.type >= EXTENSION_EVENT_BASE &&

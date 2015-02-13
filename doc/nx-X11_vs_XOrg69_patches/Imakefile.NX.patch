@@ -1,0 +1,11 @@
+--- ./nx-X11/programs/Xserver/GL/mesa/X/Imakefile.X.original	2015-02-13 14:03:44.680442769 +0100
++++ ./nx-X11/programs/Xserver/GL/mesa/X/Imakefile	2015-02-10 19:13:14.340665851 +0100
+@@ -57,7 +57,7 @@
+ 		-I$(XF86OSSRC) \
+ 		-I$(DRMSRCDIR)/shared-core
+ 
+-      DEFINES = $(GLX_DEFINES) $(GLXSRV_DEFINES) /*-DUSE_X86_ASM*/ /*-DUSE_SPARC_ASM*/
++      DEFINES = $(GLX_DEFINES) $(GLXSRV_DEFINES) -DNXAGENT_SERVER /*-DUSE_X86_ASM*/ /*-DUSE_SPARC_ASM*/
+ 
+ #ifdef IHaveModules
+ ModuleObjectRule()

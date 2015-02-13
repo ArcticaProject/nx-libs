@@ -1,0 +1,53 @@
+--- ./nx-X11/programs/Xserver/hw/nxagent/X/NXmiwindow.c.X.original	2015-02-13 14:03:44.744441510 +0100
++++ ./nx-X11/programs/Xserver/hw/nxagent/X/NXmiwindow.c	2015-02-10 19:13:13.776686935 +0100
+@@ -1,3 +1,20 @@
++/**************************************************************************/
++/*                                                                        */
++/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
++/*                                                                        */
++/* NXAGENT, NX protocol compression and NX extensions to this software    */
++/* are copyright of NoMachine. Redistribution and use of the present      */
++/* software is allowed according to terms specified in the file LICENSE   */
++/* which comes in the source distribution.                                */
++/*                                                                        */
++/* Check http://www.nomachine.com/licensing.html for applicability.       */
++/*                                                                        */
++/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
++/*                                                                        */
++/* All rights reserved.                                                   */
++/*                                                                        */
++/**************************************************************************/
++
+ /* $XFree86: xc/programs/Xserver/mi/miwindow.c,v 1.9tsi Exp $ */
+ /***********************************************************
+ 
+@@ -1048,8 +1065,29 @@
+ 	bsExposed = (*pScreen->TranslateBackingStore)
+ 			     (pWin, 0, 0, pOldClip,
+ 			      pWin->drawable.x, pWin->drawable.y);
++#ifdef NXAGENT_SERVER
++
++        /*
++         * We got a few, rare, segfaults here after having
++         * started using the backing store. It may be a
++         * different bug but miChangeSaveUnder() calls mi-
++         * CheckSubSaveUnder() that, in turn, can change
++         * the backing store attribute of the window. This
++         * means that we may try to destroy the region
++         * even if it was not created at the beginning of
++         * this function as, at the time, the backing store
++         * was off. miCheckSubSaveUnder() appear to get a
++         * pointer to the parent, so maybe doesn't change
++         * the attribute of the window itself. This is to
++         * be better investigated.
++         */
++
++        if (WasViewable && pOldClip)
++            REGION_DESTROY(pScreen, pOldClip);
++#else
+ 	if (WasViewable)
+ 	    REGION_DESTROY(pScreen, pOldClip);
++#endif
+ 	if (bsExposed)
+ 	{
+ 	    RegionPtr	valExposed = NullRegion;

@@ -1,0 +1,67 @@
+--- ./nx-X11/include/Xpoll.h.in.X.original	2015-02-13 14:03:44.612444107 +0100
++++ ./nx-X11/include/Xpoll.h.in	2015-02-10 19:13:14.464661220 +0100
+@@ -51,6 +51,23 @@
+ 
+ /* $XFree86: xc/include/Xpoll.h,v 3.8 2001/01/17 17:53:11 dawes Exp $ */
+ 
++/**************************************************************************/
++/*                                                                        */
++/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
++/*                                                                        */
++/* NX-X11, NX protocol compression and NX extensions to this software     */
++/* are copyright of NoMachine. Redistribution and use of the present      */
++/* software is allowed according to terms specified in the file LICENSE   */
++/* which comes in the source distribution.                                */
++/*                                                                        */
++/* Check http://www.nomachine.com/licensing.html for applicability.       */
++/*                                                                        */
++/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
++/*                                                                        */
++/* All rights reserved.                                                   */
++/*                                                                        */
++/**************************************************************************/
++
+ #ifndef _XPOLL_H_
+ #define _XPOLL_H_
+ 
+@@ -120,6 +137,31 @@
+ } fd_set;
+ #endif
+ 
++/*
++ * Replace the standard Select with a version giving NX a
++ * chance to check its own descriptors. This doesn't cover
++ * the cases where the system is using poll or when system-
++ * specific defines override the Select definition (OS/2).
++ * See XlibInt.c for _XSelect().
++ */
++
++#ifdef NX_TRANS_SOCKET
++
++extern int _XSelect(int maxfds, fd_set *readfds, fd_set *writefds,
++                        fd_set *exceptfds, struct timeval *timeout);
++
++#ifndef hpux /* and perhaps old BSD ??? */
++# define Select(n,r,w,e,t) _XSelect(n,(fd_set*)r,(fd_set*)w,(fd_set*)e,(struct timeval*)t)
++#else
++# ifndef _XPG4_EXTENDED /* HPUX 9.x and earlier */
++#  define Select(n,r,w,e,t) _XSelect(n,(int*)r,(int*)w,(int*)e,(struct timeval*)t)
++# else
++#  define Select(n,r,w,e,t) _XSelect(n,(fd_set*)r,(fd_set*)w,(fd_set*)e,(struct timeval*)t)
++# endif
++#endif
++
++#else /* #ifdef NX_TRANS_SOCKET */
++
+ #ifndef hpux /* and perhaps old BSD ??? */
+ # define Select(n,r,w,e,t) select(n,(fd_set*)r,(fd_set*)w,(fd_set*)e,(struct timeval*)t)
+ #else
+@@ -130,6 +172,8 @@
+ # endif
+ #endif
+ 
++#endif /* #ifdef NX_TRANS_SOCKET */
++
+ #define __X_FDS_BITS @USE_FDS_BITS@
+ 
+ #ifndef __FDS_BITS

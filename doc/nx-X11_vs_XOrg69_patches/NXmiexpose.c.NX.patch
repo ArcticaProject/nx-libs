@@ -1,0 +1,116 @@
+--- ./nx-X11/programs/Xserver/hw/nxagent/X/NXmiexpose.c.X.original	2015-02-13 14:03:44.744441510 +0100
++++ ./nx-X11/programs/Xserver/hw/nxagent/X/NXmiexpose.c	2015-02-10 19:13:13.768687235 +0100
+@@ -1,3 +1,20 @@
++/**************************************************************************/
++/*                                                                        */
++/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
++/*                                                                        */
++/* NXAGENT, NX protocol compression and NX extensions to this software    */
++/* are copyright of NoMachine. Redistribution and use of the present      */
++/* software is allowed according to terms specified in the file LICENSE   */
++/* which comes in the source distribution.                                */
++/*                                                                        */
++/* Check http://www.nomachine.com/licensing.html for applicability.       */
++/*                                                                        */
++/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
++/*                                                                        */
++/* All rights reserved.                                                   */
++/*                                                                        */
++/**************************************************************************/
++
+ /* $XdotOrg: xc/programs/Xserver/mi/miexpose.c,v 1.6 2005/07/03 08:53:51 daniels Exp $ */
+ /* $XFree86: xc/programs/Xserver/mi/miexpose.c,v 3.9tsi Exp $ */
+ /***********************************************************
+@@ -109,6 +126,12 @@
+ the region package can call this.
+ */
+ 
++#ifdef NXAGENT_SERVER
++
++#include "Windows.h"
++
++#endif
++
+ #ifndef RECTLIMIT
+ #define RECTLIMIT 25		/* pick a number, any number > 8 */
+ #endif
+@@ -158,6 +181,20 @@
+     BoxRec expBox;
+     Bool extents;
+ 
++#ifdef NXAGENT_SERVER
++
++    /*
++     * Set the elements reported by the compiler
++     * as uninitialized.
++     */
++
++    expBox.x1 = 0;
++    expBox.y1 = 0;
++    expBox.x2 = 0;
++    expBox.y2 = 0;
++
++#endif
++
+     /* This prevents warning about pscr not being used. */
+     pGC->pScreen = pscr = pGC->pScreen;
+ 
+@@ -498,6 +535,11 @@
+     WindowPtr pWin;
+     register RegionPtr prgn, other_exposed;
+ {
++#ifdef NXAGENT_SERVER
++
++    int total;
++
++#endif
+     RegionPtr   exposures = prgn;
+     if (pWin->backStorage && prgn)
+ 	/*
+@@ -533,7 +575,20 @@
+ 	    }
+ 	    exposures = other_exposed;
+ 	}
++#ifdef NXAGENT_SERVER
++
++        /*
++         * If the number of rectangles is greater
++         * than 4, let the function decide.
++         */
++
++        total = REGION_NUM_RECTS(exposures);
++
++        if (clientInterested && exposures && (total > RECTLIMIT ||
++                (total > 4 && nxagentExtentsPredicate(total) == 1)))
++#else
+ 	if (clientInterested && exposures && (REGION_NUM_RECTS(exposures) > RECTLIMIT))
++#endif
+ 	{
+ 	    /*
+ 	     * If we have LOTS of rectangles, we decide to take the extents
+@@ -666,6 +721,25 @@
+     register xRectangle *prect;
+     int numRects;
+ 
++#ifdef NXAGENT_SERVER
++
++    /*
++     * Set the elements reported by the compiler
++     * as uninitialized.
++     */
++
++    prgnWin.extents.x1 = 0;
++    prgnWin.extents.y1 = 0;
++    prgnWin.extents.x2 = 0;
++    prgnWin.extents.y2 = 0;
++
++    prgnWin.data = NULL;
++
++    oldCorner.x = 0;
++    oldCorner.y = 0;
++
++#endif
++
+     gcmask = 0;
+ 
+     if (what == PW_BACKGROUND)

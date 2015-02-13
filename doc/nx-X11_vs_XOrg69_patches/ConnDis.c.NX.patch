@@ -1,0 +1,319 @@
+--- ./nx-X11/lib/X11/ConnDis.c.X.original	2015-02-13 14:03:44.620443950 +0100
++++ ./nx-X11/lib/X11/ConnDis.c	2015-02-10 19:13:13.008715687 +0100
+@@ -25,6 +25,24 @@
+ in this Software without prior written authorization from The Open Group.
+ 
+ */
++
++/**************************************************************************/
++/*                                                                        */
++/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
++/*                                                                        */
++/* NX-X11, NX protocol compression and NX extensions to this software     */
++/* are copyright of NoMachine. Redistribution and use of the present      */
++/* software is allowed according to terms specified in the file LICENSE   */
++/* which comes in the source distribution.                                */
++/*                                                                        */
++/* Check http://www.nomachine.com/licensing.html for applicability.       */
++/*                                                                        */
++/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
++/*                                                                        */
++/* All rights reserved.                                                   */
++/*                                                                        */
++/**************************************************************************/
++
+ /* $XFree86: xc/lib/X11/ConnDis.c,v 3.28 2003/12/02 23:33:17 herrb Exp $ */
+ 
+ /* 
+@@ -162,6 +180,39 @@
+     saddrlen = 0;			/* set so that we can clear later */
+     saddr = NULL;
+ 
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST)
++        fprintf(stderr, "_X11TransConnectDisplay: Called with display_name [%s].\n", display_name);
++#endif
++
++#ifdef NX_TRANS_SOCKET
++
++    /*
++     * Check if user selected the "nx"
++     * protocol or an "nx" hostname.
++     */
++
++    if (!strncasecmp(p, "nx/", 3) || !strcasecmp(p, "nx") ||
++            !strncasecmp(p, "nx:", 3) || !strncasecmp(p, "nx,", 3))
++    {
++        if (*(display_name + 2) == '/')
++        {
++          p += 3;
++        }
++
++        pprotocol = copystring ("nx", 2);
++
++        if (!pprotocol) goto bad;
++
++#ifdef NX_TRANS_TEST
++        fprintf(stderr, "_X11TransConnectDisplay: Forced protocol to [%s].\n", pprotocol);
++#endif
++
++    }
++    else
++    {
++
++#endif
++
+     /*
+      * Step 0, find the protocol.  This is delimited by the optional 
+      * slash ('/').
+@@ -176,6 +227,60 @@
+     } else
+ 	p = display_name;		/* reset the pointer in
+ 					   case no protocol was given */
++#ifdef NX_TRANS_SOCKET
++
++    } /* End of step 0. */
++
++    /*
++     * Check if user specified the "nx" protocol or
++     * hostname is "nx" or in the form "nx,...".
++     */
++
++    if (pprotocol && !strcasecmp(pprotocol, "nx"))
++    {
++
++#ifdef NX_TRANS_TEST
++        fprintf(stderr, "_X11TransConnectDisplay: Checking hostname [%s].\n", p);
++#endif
++
++        /*
++         * Options can include a "display=" tuple so
++         * need to scan right to left.
++         */
++
++        lastp = p;
++        lastc = NULL;
++
++        for (; *p; p++)
++            if (*p == ':')
++                lastc = p;
++
++        /*
++         * Don't complain if no screen was provided.
++         */
++
++        if (lastc)
++        {
++            phostname = copystring (lastp, lastc - lastp);
++
++            p = lastc;
++        }
++        else
++        {
++            phostname = copystring (lastp, strlen(lastp));
++        }
++
++        if (!phostname) goto bad;
++
++#ifdef NX_TRANS_TEST
++        fprintf(stderr, "_X11TransConnectDisplay: Forced hostname [%s].\n", phostname);
++#endif
++
++    }
++    else
++    {
++
++#endif
+ 
+     /*
+      * Step 1, find the hostname.  This is delimited by either one colon,
+@@ -240,6 +345,20 @@
+     }
+ #endif
+ 
++#ifdef NX_TRANS_SOCKET
++
++    } /* End of step 1. */
++
++    /*
++     * Check if no display was specified. In this case
++     * search the "port=n" option in NX host string.
++     */
++
++    if (*p)
++    {
++
++#endif
++
+ 
+     /*
+      * Step 2, find the display number.  This field is required and is 
+@@ -254,6 +373,66 @@
+       goto bad;
+     idisplay = atoi (pdpynum);
+ 
++#ifdef NX_TRANS_SOCKET
++
++    }
++    else
++    {
++        char *host  = NULL;
++        char *name  = NULL;
++        char *value = NULL;
++
++#ifdef NX_TRANS_TEST
++        fprintf(stderr, "_X11TransConnectDisplay: Searching port in port [%s].\n", phostname);
++#endif
++
++        if (!strncasecmp(phostname, "nx,", 3))
++        {
++            host = copystring(phostname + 3, strlen(phostname) - 3);
++        }
++
++        if (!host) goto bad;
++
++        idisplay = -1;
++
++        name = strtok(host, "=");
++
++        while (name)
++        {
++            value = strtok(NULL, ",");
++
++            if (value == NULL || strstr(value, "=") != NULL ||
++                    strstr(name, ",") != NULL || strlen(value) >= 128)
++            {
++                Xfree(host);
++
++                goto bad;
++            }
++            else if (strcasecmp(name, "port") == 0)
++            {
++                idisplay = atoi(value);
++
++                pdpynum = copystring(value, strlen(value));
++
++                if (!pdpynum) goto bad;
++
++                break;
++            }
++
++            name = strtok(NULL, "=");
++        }
++
++        Xfree(host);
++
++        if (idisplay == -1)
++        {
++            goto bad;
++        }
++
++    } /* End of step 2. */
++
++#endif
++
+ 
+     /*
+      * Step 3, find the screen number.  This field is optional.  It is 
+@@ -286,6 +465,27 @@
+      * is "unix", then choose BSD UNIX domain sockets (if configured).
+      */
+ 
++#ifdef NX_TRANS_SOCKET
++
++    /*
++     * If user selected the "nx" protocol
++     * force "local" transport.
++     */
++
++    if (pprotocol && !strcasecmp(pprotocol, "nx"))
++    {
++        pprotocol = copystring ("local", 5);
++
++        if (!pprotocol) goto bad;
++
++#ifdef NX_TRANS_TEST
++        fprintf(stderr, "_X11TransConnectDisplay: Converted protocol to [%s].\n", pprotocol);
++#endif
++
++    }
++
++#endif
++
+ #if defined(TCPCONN) || defined(UNIXCONN) || defined(LOCALCONN) || defined(MNX_TCPCONN) || defined(OS2PIPECONN)
+     if (!pprotocol) {
+ 	if (!phostname) {
+@@ -358,14 +558,26 @@
+      * being a server listening at all, which is why we have to not retry
+      * too many times).
+      */
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST)
++        fprintf(stderr, "_X11TransConnectDisplay: Entering connection loop.\n");
++#endif
+     for(retry=X_CONNECTION_RETRIES; retry>=0; retry-- )
+ 	{
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST)
++        fprintf(stderr, "_X11TransConnectDisplay: Going to call _X11TransOpenCOTSClient(address) with address [%s].\n", address);
++#endif
+ 	if ( (trans_conn = _X11TransOpenCOTSClient(address)) == NULL )
+ 	    {
+ 	    break;
+ 	    }
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST)
++        fprintf(stderr, "_X11TransConnectDisplay: Going to call _X11TransConnect(trans_conn,address).\n");
++#endif
+ 	if ((connect_stat = _X11TransConnect(trans_conn,address)) < 0 )
+ 	    {
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST)
++            fprintf(stderr, "_X11TransConnectDisplay: Going to call _X11TransClose(trans_conn).\n");
++#endif
+ 	    _X11TransClose(trans_conn);
+ 	    trans_conn = NULL;
+ 
+@@ -378,6 +590,9 @@
+ 		break;
+ 	    }
+ 
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST)
++        fprintf(stderr, "_X11TransConnectDisplay: Going to call _X11TransGetPeerAddr(trans_conn, &family, &saddrlen, &saddr).\n");
++#endif
+ 	_X11TransGetPeerAddr(trans_conn, &family, &saddrlen, &saddr);
+ 
+ 	/*
+@@ -386,6 +601,9 @@
+ 	 * X protocol (ie FamilyInternet).
+ 	 */
+ 
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST)
++        fprintf(stderr, "_X11TransConnectDisplay: Going to call _X11TransConvertAddress(&family, &saddrlen, &saddr).\n");
++#endif
+ 	if( _X11TransConvertAddress(&family, &saddrlen, &saddr) < 0 )
+ 	    {
+ 	    _X11TransClose(trans_conn);
+@@ -402,6 +620,9 @@
+ 	break;
+ 	}
+ 
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST)
++        fprintf(stderr, "_X11TransConnectDisplay: Out of connection loop.\n");
++#endif
+     if (address != addrbuf) Xfree (address);
+     address = addrbuf;
+ 
+@@ -570,6 +791,17 @@
+ 
+     if (len != 0)
+ 	return -1;
++#ifdef NX_TRANS_SOCKET
++    if (_NXDisplayWriteFunction != NULL) {
++        (*_NXDisplayWriteFunction)(dpy, len);
++    }
++#ifdef NX_TRANS_CHANGE
++    if (_NXDisplayCongestionFunction != NULL &&
++            _X11TransSocketCongestionChange(dpy->trans_conn, &congestion) == 1) {
++        (*_NXDisplayCongestionFunction)(dpy, congestion);
++    }
++#endif
++#endif
+ 
+ #ifdef K5AUTH
+     if (auth_length == 14 &&

@@ -1,0 +1,561 @@
+--- ./nx-X11/programs/Xserver/hw/nxagent/X/NXwindow.c.X.original	2015-02-13 14:03:44.748441432 +0100
++++ ./nx-X11/programs/Xserver/hw/nxagent/X/NXwindow.c	2015-02-10 19:13:13.780686785 +0100
+@@ -1,3 +1,20 @@
++/**************************************************************************/
++/*                                                                        */
++/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
++/*                                                                        */
++/* NXAGENT, NX protocol compression and NX extensions to this software    */
++/* are copyright of NoMachine. Redistribution and use of the present      */
++/* software is allowed according to terms specified in the file LICENSE   */
++/* which comes in the source distribution.                                */
++/*                                                                        */
++/* Check http://www.nomachine.com/licensing.html for applicability.       */
++/*                                                                        */
++/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
++/*                                                                        */
++/* All rights reserved.                                                   */
++/*                                                                        */
++/**************************************************************************/
++
+ /* $XdotOrg: xc/programs/Xserver/dix/window.c,v 1.12 2005/07/03 08:53:38 daniels Exp $ */
+ /* $Xorg: window.c,v 1.4 2001/02/09 02:04:41 xorgcvs Exp $ */
+ /*
+@@ -97,9 +114,10 @@
+ #include "dixstruct.h"
+ #include "gcstruct.h"
+ #include "servermd.h"
++#include "selection.h"
+ #ifdef PANORAMIX
+-#include "panoramiX.h"
+-#include "panoramiXsrv.h"
++#include "../../Xext/panoramiX.h"
++#include "../../Xext/panoramiXsrv.h"
+ #endif
+ #include "dixevents.h"
+ #include "globals.h"
+@@ -112,6 +130,19 @@
+ #include <X11/extensions/security.h>
+ #endif
+ 
++#include "Screen.h"
++#include "Options.h"
++#include "Atoms.h"
++#include "Clipboard.h"
++#include "Splash.h"
++#include "Rootless.h"
++#include "Composite.h"
++#include "Drawable.h"
++#include "Colormap.h"
++
++extern Bool nxagentWMIsRunning;
++extern Bool nxagentScreenTrap;
++
+ /******
+  * Window stuff for server 
+  *
+@@ -160,10 +191,25 @@
+ #define SubStrSend(pWin,pParent) (StrSend(pWin) || SubSend(pParent))
+ 
+ 
++/*
++ * Set here the required log level.
++ */
++
++#define PANIC
++#define WARNING
++#undef  TEST
++#undef  DEBUG
++
+ int numSaveUndersViewable = 0;
+ int deltaSaveUndersViewable = 0;
+ 
+-#ifdef DEBUG
++WindowPtr nxagentRootTileWindow;
++
++/*
++ * This block used the DEBUG symbol.
++ */
++
++#ifdef WINDOW_TREE_DEBUG
+ /******
+  * PrintWindowTree
+  *    For debugging only
+@@ -289,6 +335,31 @@
+ #endif
+ }
+ 
++#ifdef NXAGENT_SERVER
++
++void nxagentClearSplash(WindowPtr pW)
++{
++    int w, h;
++    ScreenPtr pScreen;
++
++    w = pW->drawable.width;
++    h = pW->drawable.height;
++
++    pScreen = pW->drawable.pScreen;
++
++    if (pW->backgroundState == BackgroundPixmap)
++    {
++      (*pScreen->DestroyPixmap)(pW->background.pixmap);
++    }
++
++    pW->backgroundState = BackgroundPixel;
++    pW->background.pixel = nxagentLogoBlack;
++
++    (*pScreen->ChangeWindowAttributes)(pW, CWBackPixmap|CWBackPixel);
++}
++
++#endif /* NXAGENT_SERVER */
++
+ static void
+ MakeRootTile(WindowPtr pWin)
+ {
+@@ -333,6 +404,9 @@
+ 
+    FreeScratchGC(pGC);
+ 
++#ifdef NXAGENT_SERVER
++   nxagentRootTileWindow = pWin;
++#endif /* NXAGENT_SERVER */
+ }
+ 
+ WindowPtr
+@@ -458,9 +532,16 @@
+ 	return FALSE;
+ 
+     if (disableBackingStore)
+-	pScreen->backingStoreSupport = NotUseful;
++    {
++      pScreen -> backingStoreSupport = NotUseful;
++    }
++
+     if (enableBackingStore)
+-	pScreen->backingStoreSupport = Always;
++    {
++      pScreen -> backingStoreSupport = Always;
++    }
++
++    pScreen->saveUnderSupport = False;
+ 
+ #ifdef DO_SAVE_UNDERS
+     if ((pScreen->backingStoreSupport != NotUseful) &&
+@@ -480,6 +561,107 @@
+     return TRUE;
+ }
+ 
++#ifdef NXAGENT_SERVER
++
++void
++InitRootWindow(WindowPtr pWin)
++{
++    ScreenPtr pScreen;
++
++    #ifdef TEST
++    fprintf(stderr, "InitRootWindow: Called for window at [%p][%ld] with parent [%p].\n",
++                (void *) pWin, nxagentWindowPriv(pWin)->window, (void *) pWin -> parent);
++    #endif
++
++    if (nxagentOption(Rootless))
++    {
++      #ifdef TEST
++      fprintf(stderr, "InitRootWindow: Assigned agent root to window at [%p][%ld] with parent [%p].\n",
++                  (void *) pWin, nxagentWindowPriv(pWin)->window, (void *) pWin -> parent);
++      #endif
++
++      nxagentRootlessWindow = pWin;
++    }
++
++    pScreen = pWin->drawable.pScreen;
++
++    /*
++     * A root window is created for each screen by main
++     * and the pointer is saved in WindowTable as in the
++     * following snippet:
++     *
++     * for (i = 0; i < screenInfo.numScreens; i++)
++     *          InitRootWindow(WindowTable[i]);
++     *
++     * Our root window on the real display was already
++     * created at the time the screen was opened, so it
++     * is unclear how this window (or the other window,
++     * if you prefer) fits in the big picture.
++     */
++
++    #ifdef TEST
++    fprintf(stderr, "InitRootWindow: Going to create window as root at [%p][%ld] with parent [%p].\n",
++                (void *) pWin, nxagentWindowPriv(pWin)->window, (void *) pWin -> parent);
++    #endif
++
++    if (!(*pScreen->CreateWindow)(pWin))
++	return; /* XXX */
++
++    #ifdef TEST
++    fprintf(stderr, "InitRootWindow: Created window as root at [%p][%ld] with parent [%p].\n",
++                (void *) pWin, nxagentWindowPriv(pWin)->window, (void *) pWin -> parent);
++    #endif
++
++    (*pScreen->PositionWindow)(pWin, 0, 0);
++
++    pWin->cursorIsNone = FALSE;
++    pWin->optional->cursor = rootCursor;
++    rootCursor->refcnt++;
++    pWin->backingStore = defaultBackingStore;
++    pWin->forcedBS = (defaultBackingStore != NotUseful);
++
++    #ifdef NXAGENT_SPLASH
++    /* We SHOULD check for an error value here XXX */
++    pWin -> background.pixel = pScreen -> blackPixel;
++    (*pScreen->ChangeWindowAttributes)(pWin,
++		       CWBackPixel|CWBorderPixel|CWCursor|CWBackingStore);
++    #else
++    (*pScreen->ChangeWindowAttributes)(pWin,
++		       CWBackPixmap|CWBorderPixel|CWCursor|CWBackingStore);
++    #endif
++
++    MakeRootTile(pWin);
++
++    /*
++     * Map both the root and the default agent window.
++     */
++
++    #ifdef TEST
++    fprintf(stderr, "InitRootWindow: Mapping default windows.\n");
++    #endif
++
++    nxagentInitAtoms(pWin);
++
++    nxagentInitClipboard(pWin);
++
++    nxagentMapDefaultWindows();
++
++    nxagentRedirectDefaultWindows();
++
++    #ifdef NXAGENT_ARTSD
++    {
++      char artsd_port[10];
++      int nPort;
++      extern void nxagentPropagateArtsdProperties(ScreenPtr pScreen, char *port);
++      nPort = atoi(display) + 7000;
++      sprintf(artsd_port,"%d", nPort);
++      nxagentPropagateArtsdProperties(pScreen, artsd_port);
++    }
++    #endif
++}
++
++#else /* NXAGENT_SERVER */
++
+ void
+ InitRootWindow(WindowPtr pWin)
+ {
+@@ -502,6 +684,8 @@
+     MapWindow(pWin, serverClient);
+ }
+ 
++#endif /* NXAGENT_SERVER */
++
+ /* Set the region to the intersection of the rectangle and the
+  * window's winSize.  The window is typically the parent of the
+  * window from which the region came.
+@@ -512,7 +696,9 @@
+                      register int x, register int y,
+                      register int w, register int h)
+ {
++#ifndef NXAGENT_SERVER
+     ScreenPtr pScreen = pWin->drawable.pScreen;
++#endif /* NXAGENT_SERVER */
+     BoxRec box;
+ 
+     box = *(REGION_EXTENTS(pScreen, &pWin->winSize));
+@@ -907,6 +1093,14 @@
+ 	if (pWin->prevSib)
+ 	    pWin->prevSib->nextSib = pWin->nextSib;
+     }
++
++    if (pWin -> optional &&
++            pWin -> optional -> colormap &&
++                pWin -> parent)
++    {
++      nxagentSetInstalledColormapWindows(pWin -> drawable.pScreen);
++    }
++
+     xfree(pWin);
+     return Success;
+ }
+@@ -1147,6 +1341,12 @@
+ 		goto PatchUp;
+ 	    }
+ 	    pWin->backingStore = val;
++
++            #ifdef TEST
++            fprintf(stderr, "ChangeWindowAttributes: Changed backing store value to %d for window at %p.\n",
++                        val, (void*)pWin);
++            #endif
++
+ 	    pWin->forcedBS = FALSE;
+ 	    break;
+ 	  case CWBackingPlanes:
+@@ -1227,6 +1427,22 @@
+ #endif /* DO_SAVE_UNDERS */
+ 	    break;
+ 	  case CWEventMask:
++            /*
++             * TODO: Some applications like java bean shell
++             * don' t work if they cannot monitor the root
++             * window for Structure Redirect events. However
++             * this doesn't seem to be the best solution, since
++             * also an X server with a window manager running,
++             * doesn't allow to monitor for those events, but
++             * the java bean shell works flawlessy on this
++             * server.
++             *
++             * if (nxagentCheckIllegalRootMonitoring(pWin, (Mask)*pVlist))
++             * {
++             *   return BadAccess;
++             * }
++             */
++
+ 	    result = EventSelectForWindow(pWin, client, (Mask )*pVlist);
+ 	    if (result)
+ 	    {
+@@ -1611,8 +1827,9 @@
+     pRgn = REGION_CREATE(pWin->drawable.pScreen, &box, 1);
+ #ifdef SHAPE
+     if (wBoundingShape (pWin) || wClipShape (pWin)) {
++#ifndef NXAGENT_SERVER
+ 	ScreenPtr pScreen = pWin->drawable.pScreen;
+-
++#endif /* NXAGENT_SERVER */
+ 	REGION_TRANSLATE(pScreen, pRgn, - pWin->drawable.x,
+ 			 - pWin->drawable.y);
+ 	if (wBoundingShape (pWin))
+@@ -1647,8 +1864,9 @@
+ 			 (int)pWin->drawable.height);
+ #ifdef SHAPE
+     if (wBoundingShape (pWin) || wClipShape (pWin)) {
++#ifndef NXAGENT_SERVER
+ 	ScreenPtr pScreen = pWin->drawable.pScreen;
+-
++#endif /* NXAGENT_SERVER */
+ 	REGION_TRANSLATE(pScreen, &pWin->winSize, - pWin->drawable.x,
+ 			 - pWin->drawable.y);
+ 	if (wBoundingShape (pWin))
+@@ -1689,8 +1907,9 @@
+ 		(int)(pWin->drawable.height + (bw<<1)));
+ #ifdef SHAPE
+ 	if (wBoundingShape (pWin)) {
++#ifndef NXAGENT_SERVER
+ 	    ScreenPtr pScreen = pWin->drawable.pScreen;
+-
++#endif /* NXAGENT_SERVER */
+ 	    REGION_TRANSLATE(pScreen, &pWin->borderSize, - pWin->drawable.x,
+ 			     - pWin->drawable.y);
+ 	    REGION_INTERSECT(pScreen, &pWin->borderSize, &pWin->borderSize,
+@@ -1800,7 +2019,19 @@
+ 	pSib->drawable.y = pWin->drawable.y + pSib->origin.y;
+ 	SetWinSize (pSib);
+ 	SetBorderSize (pSib);
+-	(*pScreen->PositionWindow)(pSib, pSib->drawable.x, pSib->drawable.y);
++
++        /*
++         * Don't force X to move children. It will position them
++         * according with gravity.
++         *
++         * (*pScreen->PositionWindow)(pSib, pSib->drawable.x, pSib->drawable.y);
++         */
++
++        /*
++         * Update pSib privates, as this window is moved by X.
++         */
++
++        nxagentAddConfiguredWindow(pSib, CW_Update);
+ 
+ 	if ( (pChild = pSib->firstChild) )
+ 	{
+@@ -1812,8 +2043,10 @@
+ 				     pChild->origin.y;
+ 		SetWinSize (pChild);
+ 		SetBorderSize (pChild);
+-		(*pScreen->PositionWindow)(pChild,
+-				    pChild->drawable.x, pChild->drawable.y);
++
++                (*pScreen->PositionWindow)(pChild, pChild->drawable.x,
++                                               pChild->drawable.y);
++
+ 		if (pChild->firstChild)
+ 		{
+ 		    pChild = pChild->firstChild;
+@@ -1900,8 +2133,9 @@
+     BoxPtr	pBox)
+ {
+     RegionPtr	pRgn;
++#ifndef NXAGENT_SERVER
+     ScreenPtr   pScreen = pWin->drawable.pScreen;
+-
++#endif /* NXAGENT_SERVER */
+     pRgn = REGION_CREATE(pScreen, pBox, 1);
+     if (wBoundingShape (pWin)) {
+ 	    REGION_TRANSLATE(pScreen, pRgn, -pWin->origin.x,
+@@ -2286,6 +2520,28 @@
+ 	/* Figure out if the window should be moved.  Doesnt
+ 	   make the changes to the window if event sent */
+ 
++    #ifdef TEST
++    if (nxagentWindowTopLevel(pWin))
++    {
++
++      fprintf(stderr, "ConfigureWindow: pWin [%p] mask [%lu] client [%p]\n",
++                  pWin, mask, client);
++
++      fprintf(stderr, "ConfigureWindow: x [%d] y [%d] w [%d] h [%d] CWStackMode [%d] "
++                  "smode [%d] pSib [%p]\n",
++                      x, y, w, h, (mask & CWStackMode) ? 1 : 0, smode, pSib);
++    }
++    #endif
++
++    if (nxagentOption(Rootless) && nxagentWindowTopLevel(pWin) &&
++            pWin -> overrideRedirect == 0 &&
++                nxagentScreenTrap == 0)
++    {
++      nxagentConfigureRootlessWindow(pWin, x, y, w, h, bw, pSib, smode, mask);
++
++      return Success;
++    }
++
+     if (mask & CWStackMode)
+ 	pSib = WhereDoIGoInTheStack(pWin, pSib, pParent->drawable.x + x,
+ 				    pParent->drawable.y + y,
+@@ -2443,6 +2699,9 @@
+ 
+     if (action != RESTACK_WIN)
+ 	CheckCursorConfinement(pWin);
++
++    nxagentFlushConfigureWindow();
++
+     return(Success);
+ #undef RESTACK_WIN
+ #undef MOVE_WIN
+@@ -2468,6 +2727,20 @@
+     xEvent event;
+     BoxRec box;
+ 
++    #ifdef TEST
++    fprintf(stderr, "CirculateWindow: pParent [%p] direction [%d] client [%p]\n",
++                pParent, direction, client);
++    #endif
++
++    /*
++     * if (nxagentOption(Rootless) && nxagentWMIsRunning &&
++     *         nxagentWindowTopLevel(pWin) && pWin -> overrideRedirect == 0)
++     * {
++     *   nxagentCirculateRootlessWindows(direction);
++     *   return Success;
++     * }
++     */
++
+     pHead = RealChildHead(pParent);
+     pFirst = pHead ? pHead->nextSib : pParent->firstChild;
+     if (direction == RaiseLowest)
+@@ -2582,6 +2855,12 @@
+     /* insert at begining of pParent */
+     pWin->parent = pParent;
+     pPrev = RealChildHead(pParent);
++
++    if (pWin->parent == WindowTable[0])
++    {
++      nxagentSetTopLevelEventMask(pWin);
++    }
++ 
+     if (pPrev)
+     {
+ 	pWin->nextSib = pPrev->nextSib;
+@@ -2614,7 +2893,9 @@
+ 
+     if (pScreen->ReparentWindow)
+ 	(*pScreen->ReparentWindow)(pWin, pPriorParent);
++
+     (*pScreen->PositionWindow)(pWin, pWin->drawable.x, pWin->drawable.y);
++
+     ResizeChildrenWinSize(pWin, 0, 0, 0, 0);
+ 
+     CheckWindowOptionalNeed(pWin);
+@@ -2677,6 +2958,13 @@
+ #endif
+     WindowPtr  pLayerWin;
+ 
++    #ifdef TEST
++    if (nxagentWindowTopLevel(pWin))
++    {
++      fprintf(stderr, "MapWindow: pWin [%p] client [%p]\n", pWin, client);
++    }
++    #endif
++
+     if (pWin->mapped)
+ 	return(Success);
+ 
+@@ -2782,6 +3070,8 @@
+ 	REGION_UNINIT(pScreen, &temp);
+     }
+ 
++    nxagentFlushConfigureWindow();
++
+     return(Success);
+ }
+ 
+@@ -2981,6 +3271,14 @@
+     ScreenPtr pScreen = pWin->drawable.pScreen;
+     WindowPtr pLayerWin = pWin;
+ 
++    #ifdef TEST
++    if (nxagentWindowTopLevel(pWin))
++    {
++      fprintf(stderr, "UnmapWindow: pWin [%p] fromConfigure [%d]\n", pWin,
++                  fromConfigure);
++    }
++    #endif
++
+     if ((!pWin->mapped) || (!(pParent = pWin->parent)))
+ 	return(Success);
+     if (SubStrSend(pWin, pParent))
+@@ -3324,9 +3622,19 @@
+ 	   (* screenInfo.screens[i]->SaveScreen) (screenInfo.screens[i], on);
+ 	if (savedScreenInfo[i].ExternalScreenSaver)
+ 	{
+-	    if ((*savedScreenInfo[i].ExternalScreenSaver)
+-		(screenInfo.screens[i], type, on == SCREEN_SAVER_FORCER))
+-		continue;
++          if (nxagentOption(Timeout) != 0)
++          {
++            #ifdef TEST
++            fprintf(stderr, "SaveScreens: An external screen-saver handler is installed. "
++                        "Ignoring it to let the auto-disconnect feature work.\n");
++            #endif
++          }
++          else
++          {
++	      if ((*savedScreenInfo[i].ExternalScreenSaver)
++		  (screenInfo.screens[i], type, on == SCREEN_SAVER_FORCER))
++		  continue;
++          }
+ 	}
+ 	if (type == screenIsSaved)
+ 	    continue;
+@@ -3669,6 +3977,11 @@
+     }
+     else
+ 	pWin->cursorIsNone = TRUE;
++/* FIXME
++   There is an error when disposing ClientResources on Agent exit
++   this xfree is not valid in some window at exit
++*/
++
+     xfree (pWin->optional);
+     pWin->optional = NULL;
+ }
+@@ -3851,3 +4164,4 @@
+ }
+ 
+ #endif
++

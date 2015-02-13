@@ -1,0 +1,96 @@
+--- ./nx-X11/lib/X11/OpenDis.c.X.original	2015-02-13 14:03:44.620443950 +0100
++++ ./nx-X11/lib/X11/OpenDis.c	2015-02-10 19:13:12.748725444 +0100
+@@ -24,6 +24,24 @@
+ in this Software without prior written authorization from The Open Group.
+ 
+ */
++
++/**************************************************************************/
++/*                                                                        */
++/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
++/*                                                                        */
++/* NX-X11, NX protocol compression and NX extensions to this software     */
++/* are copyright of NoMachine. Redistribution and use of the present      */
++/* software is allowed according to terms specified in the file LICENSE   */
++/* which comes in the source distribution.                                */
++/*                                                                        */
++/* Check http://www.nomachine.com/licensing.html for applicability.       */
++/*                                                                        */
++/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
++/*                                                                        */
++/* All rights reserved.                                                   */
++/*                                                                        */
++/**************************************************************************/
++
+ /* $XFree86: xc/lib/X11/OpenDis.c,v 3.16 2003/07/04 16:24:23 eich Exp $ */
+ 
+ #define NEED_REPLIES
+@@ -43,6 +61,10 @@
+ #include "XKBlib.h"
+ #endif /* XKB */
+ 
++#ifdef NX_TRANS_SOCKET
++extern void *_X11TransSocketProxyConnInfo(XtransConnInfo);
++#endif
++
+ #ifdef X_NOT_POSIX
+ #define Size_t unsigned int
+ #else
+@@ -117,6 +139,9 @@
+ 	bzero((char *) &client, sizeof(client));
+ 	bzero((char *) &prefix, sizeof(prefix));
+ 
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST)
++        fprintf(stderr, "\nXOpenDisplay: Called with display [%s].\n", display);
++#endif
+ 	/*
+ 	 * If the display specifier string supplied as an argument to this 
+ 	 * routine is NULL or a pointer to NULL, read the DISPLAY variable.
+@@ -162,6 +187,9 @@
+ 
+ 	dpy->fd = _X11TransGetConnectionNumber (dpy->trans_conn);
+ 
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST) 
++        fprintf(stderr, "\nXOpenDisplay: Connected display with dpy->fd = [%d].\n", dpy->fd);
++#endif
+ 	/* Initialize as much of the display structure as we can.
+ 	 * Initialize pointers to NULL so that XFreeDisplayStructure will
+ 	 * work if we run out of memory before we finish initializing.
+@@ -258,6 +286,10 @@
+         conn_buf_size = 1024 * strtol(xlib_buffer_size, NULL, 10);
+     if (conn_buf_size < XLIBMINBUFSIZE)
+         conn_buf_size = XLIBMINBUFSIZE;
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST) 
++    fprintf (stderr, "Xlib: Running with XLIBBUFFERSIZE [%d] XLIBMINBUFSIZE [%d] "
++                 "buffer size [%ld].\n", XLIBDEFAULTBUFSIZE, XLIBMINBUFSIZE, conn_buf_size);
++#endif
+ 
+     if ((dpy->bufptr = dpy->buffer = Xcalloc(1, conn_buf_size)) == NULL) {
+          OutOfMemory (dpy, setup);
+@@ -324,9 +356,16 @@
+ 
+ 	if (prefix.majorVersion != X_PROTOCOL) {
+ 	    /* XXX - printing messages marks a bad programming interface */
++#ifdef NX_TRANS_SOCKET
++            if (_X11TransSocketProxyConnInfo(dpy->trans_conn) == NULL) {
++                fprintf (stderr, "Xlib: client uses different protocol version (%d) "
++                             "than server (%d)!\r\n", X_PROTOCOL, prefix.majorVersion);
++            }
++#else
+ 	    fprintf (stderr,
+      "Xlib: client uses different protocol version (%d) than server (%d)!\r\n",
+ 		     X_PROTOCOL, prefix.majorVersion);
++#endif
+ 	    _XDisconnectDisplay (dpy->trans_conn);
+ 	    Xfree ((char *)dpy);
+ 	    return(NULL);
+@@ -698,6 +737,9 @@
+ /*
+  * and return successfully
+  */
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST) 
++        fprintf(stderr, "XOpenDisplay: Returning display at [%p].\n", dpy);
++#endif
+  	return(dpy);
+ }
+ 

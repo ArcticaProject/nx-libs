@@ -1,0 +1,118 @@
+--- ./nx-X11/programs/Xserver/hw/nxagent/X/NXglxext.c.X.original	2015-02-13 14:03:44.744441510 +0100
++++ ./nx-X11/programs/Xserver/hw/nxagent/X/NXglxext.c	2015-02-10 19:13:13.808685737 +0100
+@@ -1,3 +1,20 @@
++/**************************************************************************/
++/*                                                                        */
++/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
++/*                                                                        */
++/* NXAGENT, NX protocol compression and NX extensions to this software    */
++/* are copyright of NoMachine. Redistribution and use of the present      */
++/* software is allowed according to terms specified in the file LICENSE   */
++/* which comes in the source distribution.                                */
++/*                                                                        */
++/* Check http://www.nomachine.com/licensing.html for applicability.       */
++/*                                                                        */
++/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
++/*                                                                        */
++/* All rights reserved.                                                   */
++/*                                                                        */
++/**************************************************************************/
++
+ /* $XFree86: xc/programs/Xserver/GL/glx/glxext.c,v 1.9 2003/09/28 20:15:43 alanh Exp $
+ ** The contents of this file are subject to the GLX Public License Version 1.0
+ ** (the "License"). You may not use this file except in compliance with the
+@@ -33,6 +50,12 @@
+ #include "glxext.h"
+ #include "micmap.h"
+ 
++#include "Trap.h"
++
++#define PANIC
++#define WARNING
++#undef  TEST
++#undef  DEBUG
+ 
+ void GlxWrapInitVisuals(miInitVisualsProcPtr *);
+ void GlxSetVisualConfigs(int nconfigs, 
+@@ -395,6 +418,8 @@
+ */
+ static int __glXDispatch(ClientPtr client)
+ {
++    int result;
++
+     REQUEST(xGLXSingleReq);
+     CARD8 opcode;
+     int (*proc)(__GLXclientState *cl, GLbyte *pc);
+@@ -444,11 +469,35 @@
+     ** Use the opcode to index into the procedure table.
+     */
+     proc = __glXSingleTable[opcode];
+-    return (*proc)(cl, (GLbyte *) stuff);
++
++    /*
++     * Report upstream that we are
++     * dispatching a GLX operation.
++     */
++
++    nxagentGlxTrap = 1;
++
++    #ifdef TEST
++    fprintf(stderr, "__glXDispatch: Going to dispatch GLX operation [%d] for client [%d].\n", 
++                opcode, client -> index);
++    #endif
++    
++    result = (*proc)(cl, (GLbyte *) stuff);
++
++    nxagentGlxTrap = 0;
++
++    #ifdef TEST
++    fprintf(stderr, "__glXDispatch: Dispatched GLX operation [%d] for client [%d].\n", 
++                opcode, client -> index);
++    #endif
++
++    return result;
+ }
+ 
+ static int __glXSwapDispatch(ClientPtr client)
+ {
++    int result;
++
+     REQUEST(xGLXSingleReq);
+     CARD8 opcode;
+     int (*proc)(__GLXclientState *cl, GLbyte *pc);
+@@ -490,7 +539,29 @@
+     ** Use the opcode to index into the procedure table.
+     */
+     proc = __glXSwapSingleTable[opcode];
+-    return (*proc)(cl, (GLbyte *) stuff);
++
++    /*
++     * Report upstream that we are
++     * dispatching a GLX operation.
++     */
++
++    nxagentGlxTrap = 1;
++
++    #ifdef TEST
++    fprintf(stderr, "__glXDispatch: Going to dispatch GLX operation [%d] for client [%d].\n", 
++                opcode, client -> index);
++    #endif
++    
++    result = (*proc)(cl, (GLbyte *) stuff);
++
++    nxagentGlxTrap = 0;
++
++    #ifdef TEST
++    fprintf(stderr, "__glXDispatch: Dispatched GLX operation [%d] for client [%d].\n", 
++                opcode, client -> index);
++    #endif
++
++    return result;
+ }
+ 
+ int __glXNoSuchSingleOpcode(__GLXclientState *cl, GLbyte *pc)
+@@ -502,4 +573,3 @@
+ {
+     return;
+ }
+-

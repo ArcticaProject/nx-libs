@@ -1,0 +1,1133 @@
+--- ./nx-X11/lib/xtrans/Xtranssock.c.X.original	2015-02-13 14:03:44.672442927 +0100
++++ ./nx-X11/lib/xtrans/Xtranssock.c	2015-02-13 14:03:44.672442927 +0100
+@@ -53,6 +53,35 @@
+  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+  */
+ 
++/**************************************************************************/
++/*                                                                        */
++/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
++/*                                                                        */
++/* NX-X11, NX protocol compression and NX extensions to this software     */
++/* are copyright of NoMachine. Redistribution and use of the present      */
++/* software is allowed according to terms specified in the file LICENSE   */
++/* which comes in the source distribution.                                */
++/*                                                                        */
++/* Check http://www.nomachine.com/licensing.html for applicability.       */
++/*                                                                        */
++/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
++/*                                                                        */
++/* All rights reserved.                                                   */
++/*                                                                        */
++/**************************************************************************/
++
++#ifdef NX_TRANS_SOCKET
++
++#ifdef NX_TRANS_DEBUG
++#define XTRANSDEBUG 5
++#endif
++
++#ifndef PF_LOCAL
++#define PF_LOCAL PF_UNIX
++#endif
++
++#endif
++
+ #include <ctype.h>
+ #ifdef XTHREADS
+ #include <X11/Xthreads.h>
+@@ -294,6 +323,560 @@
+ static int haveIPv6 = 1;
+ #endif
+ 
++#ifndef X11_t
++
++/*
++ * No NX changes if this is not
++ * compiled as a X11 transport.
++ */
++
++#undef NX_TRANS_SOCKET
++
++#endif
++
++#ifdef NX_TRANS_SOCKET
++
++#ifdef TRANS_CLIENT
++
++#include "NX.h"
++
++typedef struct
++{
++    XtransConnInfo info;
++    int            local;
++    int            remote;
++    int            congestion;
++
++} _NXProxyConnInfo;
++
++#define NX_PROXY_CONN_LIMIT     256
++
++static _NXProxyConnInfo *_NXProxyConnInfoTab[NX_PROXY_CONN_LIMIT];
++
++#endif /* #ifdef TRANS_CLIENT */
++
++/*
++ * Override the UNIX_DIR and UNIX_PATH settings and
++ * make them configurable, based on the NX_TEMP or
++ * the TEMP environment.
++ *
++ * We must be careful as the same defines are used
++ * for different directories, based on the subsystem
++ * that is compiling this, while we want to override
++ * only the '/tmp/.X11-unix' and '/tmp/.X11-unix/X'
++ * settings.
++ */
++
++static char _NXUnixDir[1024];
++static char _NXUnixPath[1024];
++
++static char *_NXGetUnixDir(char *dir)
++{
++    const char *tempDir;
++
++    PRMSG (3, "_NXGetUnixDir(%s)\n", dir, 0, 0);
++
++    if (strcmp(dir, UNIX_DIR) != 0)
++    {
++#ifdef NX_TRANS_TEST
++        fprintf(stderr, "_NXGetUnixDir: Returning other Unix directory [%s].\n", dir);
++#endif
++        return dir;
++    }
++
++    /*
++     * Check the environment only once.
++     */
++
++    if (*_NXUnixDir != '\0')
++    {
++        return _NXUnixDir;
++    }
++
++#ifdef NX_TRANS_TEST
++    fprintf(stderr, "_NXGetUnixDir: Trying with the NX_TEMP environment.\n");
++#endif
++
++    tempDir = getenv("NX_TEMP");
++
++    if (tempDir == NULL || *tempDir == '\0')
++    {
++#ifdef NX_TRANS_TEST
++        fprintf(stderr, "_NXGetUnixDir: Trying with the TEMP environment.\n");
++#endif
++
++        tempDir = getenv("TEMP");
++    }
++
++    if (tempDir != NULL && *tempDir != '\0')
++    {
++        if (strlen(tempDir) + strlen("/.X11-unix") + 1 > 1024)
++        {
++#ifdef NX_TRANS_TEST
++            fprintf(stderr, "_NXGetUnixDir: WARNING! Maximum length of X11 Unix directory exceeded.\n");
++#endif
++            goto _NXGetUnixDirError;
++        }
++
++        strcpy(_NXUnixDir, tempDir);
++        strcat(_NXUnixDir, "/.X11-unix");
++
++#ifdef NX_TRANS_TEST
++        fprintf(stderr, "_NXGetUnixDir: Using X11 Unix directory [%s].\n", _NXUnixDir);
++#endif
++
++        return _NXUnixDir;
++    }
++
++_NXGetUnixDirError:
++
++    strcpy(_NXUnixDir, dir);
++ 
++#ifdef NX_TRANS_TEST
++    fprintf(stderr, "_NXGetUnixDir: Returning default X11 Unix directory [%s].\n", _NXUnixDir);
++#endif
++
++    return _NXUnixDir;
++}
++
++static char *_NXGetUnixPath(char *path)
++{
++    const char *unixDir;
++
++    PRMSG (3, "_NXGetUnixPath(%s)\n", path, 0, 0);
++
++    if (strcmp(path, UNIX_PATH) != 0)
++    {
++#ifdef NX_TRANS_TEST
++        fprintf(stderr, "_NXGetUnixPath: Returning other X11 Unix path [%s].\n", path);
++#endif
++        return path;
++    }
++
++    /*
++     * Check the environment only once.
++     */
++
++    if (*_NXUnixPath != '\0')
++    {
++        return _NXUnixPath;
++    }
++
++    unixDir = _NXGetUnixDir(UNIX_DIR);
++
++#ifdef NX_TRANS_TEST
++    fprintf(stderr, "_NXGetUnixPath: Got X11 Unix directory [%s].\n", unixDir);
++#endif
++
++    if (strlen(unixDir) + strlen("/X") + 1 > 1024)
++    {
++#ifdef NX_TRANS_TEST
++        fprintf(stderr, "_NXGetUnixPath: WARNING! Maximum length of X11 Unix path exceeded.\n");
++#endif
++
++        goto _NXGetUnixPathError;
++    }
++
++    strcpy(_NXUnixPath, unixDir);
++    strcat(_NXUnixPath, "/X");
++
++#ifdef NX_TRANS_TEST
++    fprintf(stderr, "_NXGetUnixPath: Returning X11 Unix path [%s].\n", _NXUnixPath);
++#endif
++
++    return _NXUnixPath;
++
++_NXGetUnixPathError:
++
++    strcpy(_NXUnixPath, path);
++
++#ifdef NX_TRANS_TEST
++    fprintf(stderr, "_NXGetUnixPath: Returning default X11 Unix path [%s].\n", _NXUnixPath);
++#endif
++
++    return _NXUnixPath;
++}
++
++#ifdef hpux
++
++static char *_NXGetOldUnixPath(char *path)
++{
++    PRMSG (3, "_NXGetOldUnixPath(%s)\n", path, 0, 0);
++
++    if (strcmp(path, OLD_UNIX_PATH) == 0)
++    {
++#ifdef NX_TRANS_TEST
++        fprintf(stderr, "_NXGetOldUnixPath: Returning X11 Unix path [%s].\n",
++                    _NXGetUnixPath(path));
++#endif
++
++        return _NXGetUnixPath(path);
++    }
++
++#ifdef NX_TRANS_TEST
++    fprintf(stderr, "_NXGetOldUnixPath: Returning other old X11 Unix path [%s].\n", path);
++#endif
++
++    return path;
++}
++
++#endif /* #ifdef hpux */
++
++/*
++ * Forcibly close any connection attempt on the
++ * listening socket. Need this to avoid loopback
++ * connections to the agent server.
++ */
++
++#ifdef TRANS_SERVER
++
++void TRANS(SocketRejectConnection) (XtransConnInfo ciptr)
++{
++    size_t sa_l = sizeof(struct sockaddr);
++    struct sockaddr sa;
++    fd_set fs;
++    struct timeval t;
++    int f;
++
++    PRMSG (3, "SocketRejectConnection(%x)\n", ciptr, 0, 0);
++
++    FD_ZERO(&fs);
++    FD_SET(ciptr -> fd, &fs);
++
++    t.tv_sec  = 0;
++    t.tv_usec = 0;
++
++    /*
++     * Check if there is an awaiting connection.
++     */
++
++    if (select(ciptr -> fd + 1, &fs, NULL, NULL, &t) == 1)
++    {
++#ifdef NX_TRANS_TEST
++        fprintf(stderr, "SocketRejectConnection: Accepting connection attempt on fd [%d].\n",
++                    ciptr -> fd);
++#endif
++        /*
++         * If there is one, close it.
++         */
++ 
++        if ((f = accept(ciptr -> fd, &sa, &sa_l)) >= 0)
++        {
++#ifdef NX_TRANS_TEST
++            fprintf(stderr, "SocketRejectConnection: Closing connection attempt on fd [%d].\n",
++                        ciptr -> fd);
++#endif
++            close(f);
++        }
++    }
++}
++
++#endif /* #ifdef TRANS_SERVER */
++
++#ifdef TRANS_CLIENT
++
++void *TRANS(SocketProxyConnInfo) (XtransConnInfo ciptr)
++{
++    if (_NXProxyConnInfoTab[ciptr->fd] != NULL)
++    {
++      return ciptr->priv;
++    }
++
++    return NULL;
++}
++
++static XtransConnInfo TRANS(SocketCreateConnInfo) ()
++{
++    XtransConnInfo ciptr;
++
++    int fds[2];
++
++#ifdef NX_TRANS_TEST
++    fprintf(stderr, "SocketCreateConnInfo: Going to create the NX connection info.\n");
++#endif
++
++    if ((ciptr = (XtransConnInfo) xcalloc (1, sizeof(struct _XtransConnInfo))) == NULL)
++    {
++        PRMSG (1, "SocketCreateConnInfo: malloc failed\n", 0, 0, 0);
++        return NULL;
++    }
++
++    /*
++     * Create a pair of sockets. We'll communicate with
++     * the NX proxy by reading and writing to our end.
++     */
++
++#ifdef NX_TRANS_TEST
++    fprintf(stderr, "SocketCreateConnInfo: Going to create the NX socketpair.\n");
++#endif
++
++    if (socketpair(PF_LOCAL, SOCK_STREAM, 0, fds) < 0)
++    {
++        PRMSG (1, "SocketCreateConnInfo: socketpair() failed.\n", 0, 0, 0);
++        xfree ((char *) ciptr);
++        return NULL;
++    }
++
++#ifdef NX_TRANS_TEST
++    fprintf(stderr, "SocketCreateConnInfo: X socket end is [%d] NX proxy end is [%d].\n",
++                fds[0], fds[1]);
++#endif
++
++    /*
++     * Save in _NXProxyConnInfoTab the local and remote end of
++     * the socketpair. The remote end will be used by the proxy.
++     * When the memory-to-memory transport is activated, the
++     * agent and the proxy don't read or write to the real des-
++     * criptors but the communication takes place by reading
++     * and writing to the proxy's buffers.
++     */
++
++    ciptr->fd = fds[0];
++
++    if (ciptr->fd >= NX_PROXY_CONN_LIMIT)
++    {
++        PRMSG (1, "SocketCreateConnInfo: No space for a new _NXProxyConnInfo for [%d].\n",
++                  ciptr->fd, 0, 0);
++        xfree ((char *) ciptr);
++        return NULL;
++    }
++    else if (_NXProxyConnInfoTab[ciptr->fd] != NULL)
++    {
++        PRMSG (1, "SocketCreateConnInfo: _NXProxyConnInfo for [%d] is not NULL. Exiting.\n",
++                   ciptr->fd, 0, 0);
++        exit(1);
++    }
++
++    _NXProxyConnInfoTab[ciptr->fd] = (_NXProxyConnInfo *) xcalloc(1, sizeof(_NXProxyConnInfo));
++
++    if (_NXProxyConnInfoTab[ciptr->fd] == NULL)
++    {
++        PRMSG (1, "SocketCreateConnInfo: Alloc of _NXProxyConnInfo failed.\n", 0, 0, 0);
++        xfree ((char *) ciptr);
++        return NULL;
++    }
++
++#ifdef NX_TRANS_TEST
++    fprintf(stderr, "SocketCreateConnInfo: Allocated new _NXProxyConnInfo for [%d].\n",
++                ciptr->fd);
++#endif
++
++    _NXProxyConnInfoTab[ciptr->fd]->info       = ciptr;
++    _NXProxyConnInfoTab[ciptr->fd]->local      = fds[0];
++    _NXProxyConnInfoTab[ciptr->fd]->remote     = fds[1];
++    _NXProxyConnInfoTab[ciptr->fd]->congestion = 0;
++
++    ciptr->priv = (char *) _NXProxyConnInfoTab[ciptr->fd];
++
++    return ciptr;
++}
++
++static int TRANS(SocketConnectConnInfo) (XtransConnInfo ciptr, char *host, char *port)
++{
++    int fds[2];
++    char display[1024];
++
++    _NXProxyConnInfo *proxy_conn;
++
++#ifdef NX_TRANS_TEST
++    fprintf(stderr, "SocketConnectConnInfo: Going to connect NX fd [%d] to host [%s] port [%s].\n",
++                ciptr->fd, host, port);
++#endif
++
++    /*
++     * We should have already created the socket pair.
++     */
++
++    proxy_conn = (_NXProxyConnInfo *) ciptr->priv;
++
++    if (proxy_conn == NULL)
++    {
++        PRMSG (1, "SocketConnectConnInfo: Pointer to _NXProxyConnInfo is NULL. Exiting.\n", 0, 0, 0);
++
++        exit(1);
++    }
++    else if (_NXProxyConnInfoTab[ciptr->fd] != (_NXProxyConnInfo *) ciptr->priv)
++    {
++        PRMSG (1, "SocketConnectConnInfo: Can't find _NXProxyConnInfo in table. Exiting.\n",
++                   0, 0, 0);
++
++        exit(1);
++    }
++
++    if (strlen(host) + strlen(port) + 1 >= 1023)
++    {
++        PRMSG (1, "SocketConnectConnInfo: Length of NX display string '%s:%s' would exceed %d characters.\n",
++                   host, port, 1023);
++
++        return TRANS_CONNECT_FAILED;
++    }
++
++    sprintf(display, "%s:%s", host, port);
++
++#ifdef NX_TRANS_TEST
++    fprintf(stderr, "SocketConnectConnInfo: Setting close-on-exec flag on local NX descriptor [%d].\n",
++                proxy_conn -> local);
++#endif
++
++#ifdef F_SETFD
++#ifdef FD_CLOEXEC
++    if (fcntl(proxy_conn -> local, F_SETFD, FD_CLOEXEC) != 0)
++#else
++    if (fcntl(proxy_conn -> local, F_SETFD, 1) != 0)
++#endif
++#endif
++    {
++        PRMSG (1, "SocketConnectConnInfo: Cannot set close-on-exec on local NX descriptor [%d].\n",
++                   proxy_conn -> local, 0, 0);
++
++        return TRANS_CONNECT_FAILED;
++    }
++
++#ifdef NX_TRANS_TEST
++    fprintf(stderr, "SocketConnectConnInfo: Creating the NX transport with display [%s].\n",
++                display);
++#endif
++
++    if (NXTransCreate(NX_FD_ANY, NX_MODE_CLIENT, display) < 0)
++    {
++        PRMSG (1, "SocketConnectConnInfo: Cannot create the NX transport.\n",
++                   0, 0, 0);
++
++        return TRANS_CONNECT_FAILED;
++    }
++
++#ifdef NX_TRANS_TEST
++    fprintf(stderr, "SocketConnectConnInfo: Starting the NX agent with descriptor [%d].\n",
++                proxy_conn -> remote);
++#endif
++
++    fds[0] = proxy_conn -> local;
++    fds[1] = proxy_conn -> remote;
++
++    NXTransAgent(fds);
++
++    return 0;
++}
++
++static void TRANS(SocketCloseConnInfo) (XtransConnInfo ciptr)
++{
++    _NXProxyConnInfo *proxy_conn;
++
++#ifdef NX_TRANS_TEST
++    fprintf(stderr, "SocketCloseConnInfo: Going to close the NX fd [%d].\n", ciptr->fd);
++#endif
++
++    proxy_conn = (_NXProxyConnInfo *) ciptr->priv;
++
++    if (proxy_conn == NULL)
++    {
++        PRMSG (1, "SocketCloseConnInfo: Pointer to _NXProxyConnInfo is NULL. Exiting.\n", 0, 0, 0);
++
++        exit(1);
++    }
++    else if (ciptr->fd >= NX_PROXY_CONN_LIMIT ||
++                 _NXProxyConnInfoTab[ciptr->fd] != (_NXProxyConnInfo *) ciptr->priv)
++    {
++        PRMSG (1, "SocketCloseConnInfo: Can't find _NXProxyConnInfo in table. Exiting.\n",
++                   0, 0, 0);
++        exit(1);
++    }
++    else if (_NXProxyConnInfoTab[ciptr->fd] -> info != ciptr ||
++                 _NXProxyConnInfoTab[ciptr->fd] -> local != ciptr->fd)
++    {
++        PRMSG (1, "SocketCloseConnInfo: Invalid _NXProxyConnInfo structure for [%d]. Exiting.\n",
++                   ciptr->fd, 0, 0);
++        exit(1);
++    }
++    else if (proxy_conn->local < 0 || proxy_conn->remote < 0)
++    {
++        PRMSG (1, "SocketCloseConnInfo: Invalid socket pair in NX connection for [%d]. Exiting.\n",
++                   ciptr->fd, 0, 0);
++        exit(1);
++    }
++
++    NXTransClose(ciptr->fd);
++
++    /*
++     *  Get rid of the _NXProxyConnInfo structure.
++     */
++
++#ifdef NX_TRANS_TEST
++    fprintf(stderr, "SocketCloseConnInfo: Freeing _NXProxyConnInfo structure for [%d].\n",
++                ciptr->fd);
++#endif
++
++    xfree((char *) _NXProxyConnInfoTab[ciptr->fd]);
++
++    _NXProxyConnInfoTab[ciptr->fd] = NULL;
++
++    ciptr->priv = NULL;
++
++#ifdef NX_TRANS_TEST
++    fprintf(stderr, "SocketCloseConnInfo: Should now close the local descriptor [%d].\n",
++                ciptr->fd);
++#endif
++}
++
++#endif /* #ifdef TRANS_CLIENT */
++
++#if defined(TRANS_CLIENT) && defined(NX_TRANS_CHANGE)
++
++/*
++ * Check the congestion state of the NX transport
++ * and return 1 if there has been a change. This
++ * can be extended by adding a few counters track-
++ * ing the bandwidth usage of the X11 connection.
++ */
++
++int TRANS(SocketCongestionChange) (XtransConnInfo ciptr, int *state)
++{
++    int congestion;
++
++    _NXProxyConnInfo *proxy_conn;
++
++    PRMSG (3, "SocketCongestionChange(%x)\n", ciptr, 0, 0);
++
++    proxy_conn = (_NXProxyConnInfo *) ciptr->priv;
++
++    if (proxy_conn == NULL)
++    {
++#ifdef NX_TRANS_DEBUG
++        fprintf(stderr, "SocketCongestionChange: Descriptor [%d] doesn't appear to be a NX connection.\n",
++                    ciptr->fd);
++#endif
++        return 0;
++    }
++
++#ifdef NX_TRANS_DEBUG
++    fprintf(stderr, "SocketCongestionChange: Checking congestion on fd [%d] with old state [%d].\n",
++                ciptr->fd, proxy_conn->congestion);
++#endif
++
++    congestion = NXTransCongestion(ciptr->fd);
++
++    if (congestion != proxy_conn->congestion)
++    {
++        proxy_conn->congestion = congestion;
++
++#ifdef NX_TRANS_TEST
++        fprintf(stderr, "SocketCongestionChange: Change detected on fd [%d] with new state [%d].\n",
++                    ciptr->fd, proxy_conn->congestion);
++#endif
++        return 1;
++    }
++
++#ifdef NX_TRANS_TEST
++    fprintf(stderr, "SocketCongestionChange: No change on fd [%d] with current state [%d].\n",
++                ciptr->fd, congestion);
++#endif
++    return 0;
++}
++
++#endif /* #if defined(TRANS_CLIENT) && defined(NX_TRANS_CHANGE) */
++
++#endif /* #ifdef NX_TRANS_SOCKET */
++
+ /*
+  * These are some utility function used by the real interface function below.
+  */
+@@ -562,6 +1145,29 @@
+     SocketInitOnce();
+ 
+     while ((i = TRANS(SocketSelectFamily) (i, transname)) >= 0) {
++
++#if defined(NX_TRANS_SOCKET) && defined(TRANS_CLIENT)
++
++        if ((!strcmp(protocol, "local") || !strcmp(protocol, "nx")) &&
++                (!strcasecmp(host, "nx") || !strncasecmp(host, "nx,", 3)))
++        {
++            ciptr = TRANS(SocketCreateConnInfo) ();
++
++            if (ciptr == NULL)
++            {
++                PRMSG (1, "SocketOpenCOTSClient: Unable to create the NX connection info for %s.\n",
++                           transname, 0, 0);
++
++                return NULL;
++            }
++
++            ciptr->index = i;
++
++            return ciptr;
++        }
++
++#endif /* #if defined(NX_TRANS_SOCKET) && defined(TRANS_CLIENT) */
++
+ 	if ((ciptr = TRANS(SocketOpen) (
+ 		 i, Sockettrans2devtab[i].devcotsname)) != NULL)
+ 	    break;
+@@ -576,6 +1182,12 @@
+ 	return NULL;
+     }
+ 
++#if defined(NX_TRANS_SOCKET) && defined(TRANS_CLIENT)
++
++    ciptr->priv = NULL;
++
++#endif
++
+     /* Save the index for later use */
+ 
+     ciptr->index = i;
+@@ -677,6 +1289,29 @@
+     SocketInitOnce();
+ 
+     while ((i = TRANS(SocketSelectFamily) (i, thistrans->TransName)) >= 0) {
++
++#if defined(NX_TRANS_SOCKET) && defined(TRANS_CLIENT)
++
++        if ((!strcmp(protocol, "local") || !strcmp(protocol, "nx")) &&
++                (!strcasecmp(host, "nx") || !strncasecmp(host, "nx,", 3)))
++        {
++            ciptr = TRANS(SocketCreateConnInfo) ();
++
++            if (ciptr == NULL)
++            {
++                PRMSG (1, "SocketOpenCLTSClient: Unable to create the NX connection info for %s.\n",
++                           thistrans->TransName, 0, 0);
++
++                return NULL;
++            }
++
++            ciptr->index = i;
++
++            return ciptr;
++        }
++
++#endif /* #if defined(NX_TRANS_SOCKET) && defined(TRANS_CLIENT) */
++
+ 	if ((ciptr = TRANS(SocketOpen) (
+ 		 i, Sockettrans2devtab[i].devcotsname)) != NULL)
+ 	    break;
+@@ -691,6 +1326,12 @@
+ 	return NULL;
+     }
+ 
++#if defined(NX_TRANS_SOCKET) && defined(TRANS_CLIENT)
++
++    ciptr->priv = NULL;
++
++#endif /* #if defined(NX_TRANS_SOCKET) && defined(TRANS_CLIENT) */
++
+     /* Save the index for later use */
+ 
+     ciptr->index = i;
+@@ -826,6 +1467,11 @@
+ {
+     PRMSG (2,"SocketSetOption(%d,%d,%d)\n", ciptr->fd, option, arg);
+ 
++#ifdef NX_TRANS_TEST
++    fprintf(stderr, "SocketSetOption: WARNING! Not setting option [%d] with value [%d] on descriptor [%d].\n",
++                option, arg, ciptr -> fd);
++#endif
++
+     return -1;
+ }
+ 
+@@ -875,6 +1521,11 @@
+     else
+ 	retry = 0;
+ 
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST)
++    fprintf(stderr, "SocketCreateListener: Creating listener for ciptr at [%p] on path [%s].\n",
++                (void *) ciptr, ((struct sockaddr_un *) sockname)->sun_family == AF_UNIX ?
++                    ((struct sockaddr_un *) sockname)->sun_path : "TCP");
++#endif
+     while (bind (fd, (struct sockaddr *) sockname, namelen) < 0)
+     {
+ 	if (errno == EADDRINUSE) {
+@@ -926,6 +1577,11 @@
+ 
+     ciptr->flags = 1 | (ciptr->flags & TRANS_KEEPFLAGS);
+ 
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST)
++    fprintf(stderr, "SocketCreateListener: Set flags to [%d] for ciptr [%p].\n",
++                ciptr->flags, (void *) ciptr);
++#endif
++
+     return 0;
+ }
+ 
+@@ -1084,9 +1740,15 @@
+ #else
+     mode = 0777;
+ #endif
++#ifdef NX_TRANS_SOCKET
++    if (trans_mkdir(_NXGetUnixDir(UNIX_DIR), mode) == -1) {
++        PRMSG (1, "SocketUNIXCreateListener: mkdir(%s) failed, errno = %d\n",
++               _NXGetUnixDir(UNIX_DIR), errno, 0);
++#else
+     if (trans_mkdir(UNIX_DIR, mode) == -1) {
+ 	PRMSG (1, "SocketUNIXCreateListener: mkdir(%s) failed, errno = %d\n",
+ 	       UNIX_DIR, errno, 0);
++#endif
+ 	(void) umask (oldUmask);
+ 	return TRANS_CREATE_LISTENER_FAILED;
+     }
+@@ -1095,12 +1757,20 @@
+     sockname.sun_family = AF_UNIX;
+ 
+     if (port && *port) {
++#ifdef NX_TRANS_SOCKET
++        if (set_sun_path(port, _NXGetUnixPath(UNIX_PATH), sockname.sun_path) != 0) {
++#else
+ 	if (set_sun_path(port, UNIX_PATH, sockname.sun_path) != 0) {
++#endif
+ 	    PRMSG (1, "SocketUNIXCreateListener: path too long\n", 0, 0, 0);
+ 	    return TRANS_CREATE_LISTENER_FAILED;
+ 	}
+     } else {
++#ifdef NX_TRANS_SOCKET
++	sprintf (sockname.sun_path, "%s%ld", _NXGetUnixPath(UNIX_PATH), (long)getpid());
++#else
+ 	sprintf (sockname.sun_path, "%s%ld", UNIX_PATH, (long)getpid());
++#endif
+     }
+ 
+ #if (defined(BSD44SOCKETS) || defined(__UNIXWARE__)) && !defined(Lynx)
+@@ -1110,6 +1780,10 @@
+     namelen = strlen(sockname.sun_path) + sizeof(sockname.sun_family);
+ #endif
+ 
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST)
++    fprintf(stderr, "SocketUNIXCreateListener: Unlinking path [%s] for ciptr at [%p].\n",
++                sockname.sun_path, (void *) ciptr);
++#endif
+     unlink (sockname.sun_path);
+ 
+     if ((status = TRANS(SocketCreateListener) (ciptr,
+@@ -1181,9 +1855,15 @@
+ #else
+ 	mode = 0777;
+ #endif
++#ifdef NX_TRANS_SOCKET
++        if (trans_mkdir(_NXGetUnixDir(UNIX_DIR), mode) == -1) {
++            PRMSG (1, "SocketUNIXResetListener: mkdir(%s) failed, errno = %d\n",
++            _NXGetUnixDir(UNIX_DIR), errno, 0);
++#else
+         if (trans_mkdir(UNIX_DIR, mode) == -1) {
+             PRMSG (1, "SocketUNIXResetListener: mkdir(%s) failed, errno = %d\n",
+ 	    UNIX_DIR, errno, 0);
++#endif
+ 	    (void) umask (oldUmask);
+ 	    return TRANS_RESET_FAILURE;
+         }
+@@ -1962,7 +2642,12 @@
+      * we know for sure it will fail.
+      */
+ 
++#if defined(NX_TRANS_SOCKET) && defined(TRANS_CLIENT)
++    if (strcmp(host, "unix") != 0 && strcasecmp(host, "nx") != 0 &&
++            strncasecmp(host, "nx,", 3) != 0 && !UnixHostReallyLocal (host))
++#else
+     if (strcmp (host, "unix") != 0 && !UnixHostReallyLocal (host))
++#endif
+     {
+ 	PRMSG (1,
+ 	   "SocketUNIXConnect: Cannot connect to non-local host %s\n",
+@@ -1988,7 +2673,11 @@
+     
+     sockname.sun_family = AF_UNIX;
+ 
++#ifdef NX_TRANS_SOCKET
++    if (set_sun_path(port, _NXGetUnixPath(UNIX_PATH), sockname.sun_path) != 0) {
++#else
+     if (set_sun_path(port, UNIX_PATH, sockname.sun_path) != 0) {
++#endif
+ 	PRMSG (1, "SocketUNIXConnect: path too long\n", 0, 0, 0);
+ 	return TRANS_CONNECT_FAILED;
+     }
+@@ -2006,7 +2695,11 @@
+      * This is gross, but it was in Xlib
+      */
+     old_sockname.sun_family = AF_UNIX;
++#ifdef NX_TRANS_SOCKET
++    if (set_sun_path(port, _NXGetOldUnixPath(OLD_UNIX_PATH), old_sockname.sun_path) != 0) {
++#else
+     if (set_sun_path(port, OLD_UNIX_PATH, old_sockname.sun_path) != 0) {
++#endif
+ 	PRMSG (1, "SocketUNIXConnect: path too long\n", 0, 0, 0);
+ 	return TRANS_CONNECT_FAILED;
+     }
+@@ -2014,6 +2707,19 @@
+ 	sizeof (old_sockname.sun_family);
+ #endif
+ 
++#if defined(NX_TRANS_SOCKET) && defined(TRANS_CLIENT)
++
++    if (ciptr->priv != NULL)
++    {
++        if (TRANS(SocketConnectConnInfo) (ciptr, host, port) != 0)
++        {
++            return TRANS_CONNECT_FAILED;
++        }
++
++        goto SocketUNIXConnectPost;
++    }
++
++#endif
+ 
+     /*
+      * Do the connect()
+@@ -2065,6 +2771,12 @@
+ 	}
+     }
+ 
++#if defined(NX_TRANS_SOCKET) && defined(TRANS_CLIENT)
++
++SocketUNIXConnectPost:
++
++#endif
++
+     /*
+      * Get the socket name and the peer name from the connect socket,
+      * since this is unix domain.
+@@ -2099,6 +2811,58 @@
+ {
+     PRMSG (2,"SocketBytesReadable(%p,%d,%p)\n",
+ 	ciptr, ciptr->fd, pend);
++
++#if defined(NX_TRANS_SOCKET) && defined(TRANS_CLIENT)
++
++    if (ciptr->priv)
++    {
++        if (NXTransRunning(ciptr->fd) == 0)
++        {
++            /*
++             * Force the application to shut down the
++             * socket if the NX transport is gone. We
++             * may probably save this additional call.
++             */
++
++#ifdef NX_TRANS_DEBUG
++            fprintf(stderr, "SocketBytesReadable: NX transport not running for descriptor [%d].\n",
++                        ciptr->fd);
++#endif
++            ESET(EPIPE);
++
++            return -1;
++        }
++        else
++        {
++            /*
++             * Emulate BytesReadable. Some X applications may use the system
++             * select() in their main loop, instead of the _XSelect() that is
++             * replaced by NX. Still these applications use _XEventsQueued to
++             * poll events from the X connection, and _XEventsQueued uses the
++             * NX _XSelect(), so it is generally possible to let the client
++             * yield the control to NX and let it handle the I/O on the proxy
++             * descriptors even if the application is not explicitly designed
++             * to work as a NX agent.         
++             */
++
++#ifdef NX_TRANS_DEBUG
++
++            int result;
++
++            result = NXTransReadable(ciptr->fd, (int *) pend);
++
++            fprintf(stderr, "SocketBytesReadable: Descriptor [%d] result [%d] readable [%ld].\n",
++                        ciptr->fd, result, *pend);
++
++            return result;
++#else
++            return NXTransReadable(ciptr->fd, (int *) pend);
++#endif
++        }
++    }
++
++#endif /* #if defined(NX_TRANS_SOCKET) && defined(TRANS_CLIENT) */
++
+ #if defined(QNX4)
+     *pend = 0L; /* FIONREAD only returns a short. Zero out upper bits */
+ #endif
+@@ -2128,6 +2892,41 @@
+ {
+     PRMSG (2,"SocketRead(%d,%p,%d)\n", ciptr->fd, buf, size);
+ 
++#if defined(NX_TRANS_SOCKET) && defined(TRANS_CLIENT)
++
++    /*
++     * If we have a valid priv pointer then this
++     * is an internal connection to the proxy.
++     * In this case we should emulate the read.
++     */
++
++    if (ciptr->priv)
++    {
++        int result;
++
++        result = NXTransRead(ciptr->fd, buf, size);
++
++#ifdef NX_TRANS_DEBUG
++        if (result < 0 && EGET() == EAGAIN)
++        {
++            fprintf(stderr, "SocketRead: Read from descriptor [%d] would block.\n",
++                     ciptr->fd);
++        }
++        else
++        {
++            fprintf(stderr, "SocketRead: Read [%d] bytes from descriptor [%d].\n",
++                     result, ciptr->fd);
++        }
++#endif
++        return result;
++    }
++    else
++    {
++        return read (ciptr->fd, buf, size);
++    }
++
++#else /* #if defined(NX_TRANS_SOCKET) && defined(TRANS_CLIENT) */
++
+ #if defined(WIN32) || defined(__UNIXOS2__)
+     {
+ 	int ret = recv ((SOCKET)ciptr->fd, buf, size, 0);
+@@ -2139,6 +2938,8 @@
+ #else
+     return read (ciptr->fd, buf, size);
+ #endif /* WIN32 */
++
++#endif /* #if defined(NX_TRANS_SOCKET) && defined(TRANS_CLIENT) */
+ }
+ 
+ 
+@@ -2148,6 +2949,41 @@
+ {
+     PRMSG (2,"SocketWrite(%d,%p,%d)\n", ciptr->fd, buf, size);
+ 
++#if defined(NX_TRANS_SOCKET) && defined(TRANS_CLIENT)
++
++    /*
++     * If we have a valid priv pointer then this
++     * is an internal connection to the proxy.
++     * In this case we should emulate the write.
++     */
++
++    if (ciptr->priv)
++    {
++        int result;
++
++        result = NXTransWrite(ciptr->fd, buf, size);
++
++#ifdef NX_TRANS_DEBUG
++        if (result < 0 && EGET() == EAGAIN)
++        {
++            fprintf(stderr, "SocketWrite: Write on descriptor [%d] would block.\n",
++                     ciptr->fd);
++        }
++        else
++        {
++            fprintf(stderr, "SocketWrite: Written [%d] bytes on descriptor [%d].\n",
++                     result, ciptr->fd);
++        }
++#endif
++        return result;
++    }
++    else
++    {
++        return write (ciptr->fd, buf, size);
++    }
++
++#else /* #if defined(NX_TRANS_SOCKET) && defined(TRANS_CLIENT) */
++
+ #if defined(WIN32) || defined(__UNIXOS2__)
+     {
+ 	int ret = send ((SOCKET)ciptr->fd, buf, size, 0);
+@@ -2159,6 +2995,8 @@
+ #else
+     return write (ciptr->fd, buf, size);
+ #endif /* WIN32 */
++
++#endif /* #if defined(NX_TRANS_SOCKET) && defined(TRANS_CLIENT) */
+ }
+ 
+ 
+@@ -2168,7 +3006,28 @@
+ {
+     PRMSG (2,"SocketReadv(%d,%p,%d)\n", ciptr->fd, buf, size);
+ 
++#if defined(NX_TRANS_SOCKET) && defined(TRANS_CLIENT)
++
++    /*
++     * If we have a valid priv pointer then this
++     * is an internal connection to the proxy.
++     * In this case we should emulate the readv.
++     */
++
++    if (ciptr->priv)
++    {
++        return NXTransReadVector(ciptr->fd, buf, size);
++    }
++    else
++    {
++        return READV (ciptr, buf, size);
++    }
++
++#else /* #if defined(NX_TRANS_SOCKET) && defined(TRANS_CLIENT) */
++
+     return READV (ciptr, buf, size);
++
++#endif /* #if defined(NX_TRANS_SOCKET) && defined(TRANS_CLIENT) */
+ }
+ 
+ 
+@@ -2178,7 +3037,28 @@
+ {
+     PRMSG (2,"SocketWritev(%d,%p,%d)\n", ciptr->fd, buf, size);
+ 
++#if defined(NX_TRANS_SOCKET) && defined(TRANS_CLIENT)
++
++    /*
++     * If we have a valid priv pointer then this
++     * is an internal connection to the proxy.
++     * In this case we should emulate the writev.
++     */
++
++    if (ciptr->priv)
++    {
++        return NXTransWriteVector(ciptr->fd, buf, size);
++    }
++    else
++    {
++        return WRITEV (ciptr, buf, size);
++    }
++
++#else /* #if defined(NX_TRANS_SOCKET) && defined(TRANS_CLIENT) */
++
+     return WRITEV (ciptr, buf, size);
++
++#endif /* #if defined(NX_TRANS_SOCKET) && defined(TRANS_CLIENT) */
+ }
+ 
+ 
+@@ -2234,17 +3114,41 @@
+     struct sockaddr_un	*sockname = (struct sockaddr_un *) ciptr->addr;
+     int ret;
+ 
+-    PRMSG (2,"SocketUNIXClose(%p,%d)\n", ciptr, ciptr->fd, 0);
++    PRMSG (2,"SocketUNIXClose(%x,%d)\n", ciptr, ciptr->fd, 0);
++
++#if defined(NX_TRANS_SOCKET) && defined(TRANS_CLIENT)
++
++    if (ciptr->priv)
++    {
++        TRANS(SocketCloseConnInfo) (ciptr);
++    }
++
++#endif
+ 
+     ret = close(ciptr->fd);
+ 
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST)
++    fprintf(stderr, "SocketUNIXClose: Flags are [%d] for ciptr at [%p] check is [%d].\n",
++                ciptr->flags, (void *) ciptr, (ciptr->flags && sockname
++                    && sockname->sun_family == AF_UNIX && sockname->sun_path[0]));
++#endif
++
+     if (ciptr->flags
+        && sockname
+        && sockname->sun_family == AF_UNIX
+        && sockname->sun_path[0])
+     {
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST)
++        if (!(ciptr->flags & TRANS_NOUNLINK))
++        {
++                fprintf(stderr, "SocketUNIXClose: Unlinking path [%s] for ciptr at [%p].\n",
++                            sockname->sun_path, (void *) ciptr);
++                unlink (sockname->sun_path);
++        }
++#else
+ 	if (!(ciptr->flags & TRANS_NOUNLINK))
+ 		unlink (sockname->sun_path);
++#endif
+     }
+ 
+     return ret;
+@@ -2263,6 +3167,15 @@
+     PRMSG (2,"SocketUNIXCloseForCloning(%p,%d)\n",
+ 	ciptr, ciptr->fd, 0);
+ 
++#if defined(NX_TRANS_SOCKET) && defined(TRANS_CLIENT)
++
++    if (ciptr->priv)
++    {
++        TRANS(SocketCloseConnInfo) (ciptr);
++    }
++
++#endif
++
+     ret = close(ciptr->fd);
+ 
+     return ret;

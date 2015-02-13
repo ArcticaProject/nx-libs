@@ -1,0 +1,39 @@
+--- ./nx-X11/lib/Xrender/Xrender.h.X.original	2015-02-13 14:03:44.652443320 +0100
++++ ./nx-X11/lib/Xrender/Xrender.h	2015-02-10 19:13:12.596731149 +0100
+@@ -25,6 +25,8 @@
+ #ifndef _XRENDER_H_
+ #define _XRENDER_H_
+ 
++#define NX_CLEANUP
++
+ #include <X11/extensions/render.h>
+ 
+ #include <X11/Xlib.h>
+@@ -32,6 +34,10 @@
+ #include <X11/Xosdefs.h>
+ #include <X11/Xutil.h>
+ 
++#ifdef NX_CLEANUP
++#include "renderproto.h"
++#endif
++
+ typedef struct {
+     short   red;
+     short   redMask;
+@@ -296,6 +302,16 @@
+ void
+ XRenderFreeGlyphSet (Display *dpy, GlyphSet glyphset);
+ 
++#ifdef NX_CLEANUP
++
++void XRenderCleanGlyphs (xGlyphInfo  *gi,
++                         int         nglyphs,
++                         CARD8       *images,
++                         int         depth,
++                         Display     *dpy);
++
++#endif /* #ifdef NX_CLEANUP */
++
+ void
+ XRenderAddGlyphs (Display		*dpy,
+ 		  GlyphSet		glyphset,

@@ -1,0 +1,12 @@
+--- ./nx-X11/programs/Xserver/include/dixstruct.h.X.original	2015-02-13 14:03:44.780440803 +0100
++++ ./nx-X11/programs/Xserver/include/dixstruct.h	2015-02-10 19:13:14.300667345 +0100
+@@ -170,6 +170,9 @@
+ extern Bool SmartScheduleIdle;
+ extern Bool SmartScheduleTimerStopped;
+ extern Bool SmartScheduleStartTimer(void);
++#ifdef NXAGENT_SERVER
++extern Bool SmartScheduleStopTimer(void);
++#endif
+ #define SMART_MAX_PRIORITY  (20)
+ #define SMART_MIN_PRIORITY  (-20)
+ 

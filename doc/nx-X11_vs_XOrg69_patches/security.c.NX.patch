@@ -1,0 +1,315 @@
+--- ./nx-X11/programs/Xserver/Xext/security.c.X.original	2015-02-13 14:03:44.684442691 +0100
++++ ./nx-X11/programs/Xserver/Xext/security.c	2015-02-13 14:03:44.684442691 +0100
+@@ -27,6 +27,23 @@
+ */
+ /* $XFree86: xc/programs/Xserver/Xext/security.c,v 1.16tsi Exp $ */
+ 
++/**************************************************************************/
++/*                                                                        */
++/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
++/*                                                                        */
++/* NX-X11, NX protocol compression and NX extensions to this software     */
++/* are copyright of NoMachine. Redistribution and use of the present      */
++/* software is allowed according to terms specified in the file LICENSE   */
++/* which comes in the source distribution.                                */
++/*                                                                        */
++/* Check http://www.nomachine.com/licensing.html for applicability.       */
++/*                                                                        */
++/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
++/*                                                                        */
++/* All rights reserved.                                                   */
++/*                                                                        */
++/**************************************************************************/
++
+ #ifdef HAVE_DIX_CONFIG_H
+ #include <dix-config.h>
+ #endif
+@@ -54,14 +71,49 @@
+ #include <stdio.h>  /* for file reading operations */
+ #include <X11/Xatom.h>  /* for XA_STRING */
+ 
++#ifdef NXAGENT_SERVER
++
++#include <unistd.h>
++#include <string.h>
++#include <sys/types.h>
++#include <sys/stat.h>
++
++#endif
++
+ #ifndef DEFAULTPOLICYFILE
+ # define DEFAULTPOLICYFILE NULL
+ #endif
++
++#ifdef NXAGENT_SERVER
++
++#define NX_ALTERNATIVEPOLICYFILE "/usr/lib/xserver/SecurityPolicy"
++
++#endif
++
+ #if defined(WIN32) || defined(__CYGWIN__)
+ #include <X11/Xos.h>
+ #undef index
+ #endif
+ 
++/*
++ * Set here the required NX log level.
++ */
++
++#ifdef NXAGENT_SERVER
++
++#define PANIC
++#define WARNING
++#undef  TEST
++#undef  DEBUG
++
++#endif
++
++#ifdef NXAGENT_SERVER
++
++static char _NXPolicyFilePath[1024];
++
++#endif
++
+ #include "modinit.h"
+ 
+ static int SecurityErrorBase;  /* first Security error number */
+@@ -87,6 +139,115 @@
+     ClientPtr /*client*/
+ );
+ 
++#ifdef NXAGENT_SERVER
++
++/*
++ * This function returns the SecurityPolicy
++ * file full path. This path is referred by
++ * SecurityPolicyFile variable (generally it
++ * contains the hardcoded path at compile time).
++ * If the path does not exist, the function will
++ * try a set of well known paths.
++ */
++
++const char *_NXGetPolicyFilePath(const char *path)
++{
++
++  struct stat SecurityPolicyStat;
++
++  /*
++   * Check the policy file path only once.
++   */
++
++  if (*_NXPolicyFilePath != '\0')
++  {
++    return _NXPolicyFilePath;
++  }
++
++  if (stat(path, &SecurityPolicyStat) == 0)
++  {
++    if (strlen(path) + 1 > 1024)
++    {
++      #ifdef WARNING
++      fprintf(stderr, "_NXGetPolicyFilePath: WARNING! Maximum length of SecurityPolicy file path exceeded.\n");
++      #endif
++
++      goto _NXGetPolicyFilePathError;
++    }
++
++    strcpy(_NXPolicyFilePath, path);
++
++    #ifdef TEST
++    fprintf(stderr, "_NXGetPolicyFilePath: Using SecurityPolicy file path [%s].\n",
++                _NXPolicyFilePath);
++    #endif
++
++    return _NXPolicyFilePath;
++  }
++
++  if (stat(DEFAULTPOLICYFILE, &SecurityPolicyStat) == 0)
++  {
++    if (strlen(DEFAULTPOLICYFILE) + 1 > 1024)
++    {
++      #ifdef WARNING
++      fprintf(stderr, "_NXGetPolicyFilePath: WARNING! Maximum length of SecurityPolicy file path exceeded.\n");
++      #endif
++
++      goto _NXGetPolicyFilePathError;
++    }
++
++    strcpy(_NXPolicyFilePath, DEFAULTPOLICYFILE);
++
++    #ifdef TEST
++    fprintf(stderr, "_NXGetPolicyFilePath: Using SecurityPolicy file path [%s].\n",
++                _NXPolicyFilePath);
++    #endif
++
++    return _NXPolicyFilePath;
++  }
++
++  if (stat(NX_ALTERNATIVEPOLICYFILE, &SecurityPolicyStat) == 0)
++  {
++    if (strlen(NX_ALTERNATIVEPOLICYFILE) + 1 > 1024)
++    {
++      #ifdef WARNING
++      fprintf(stderr, "_NXGetPolicyFilePath: WARNING! Maximum length of SecurityPolicy file path exceeded.\n");
++      #endif
++
++      goto _NXGetPolicyFilePathError;
++    }
++
++    strcpy(_NXPolicyFilePath, NX_ALTERNATIVEPOLICYFILE);
++
++    #ifdef TEST
++    fprintf(stderr, "_NXGetPolicyFilePath: Using SecurityPolicy file path [%s].\n",
++                _NXPolicyFilePath);
++    #endif
++
++    return _NXPolicyFilePath;
++  }
++
++_NXGetPolicyFilePathError:
++
++  if (strlen(path) + 1 > 1024)
++  {
++    #ifdef WARNING
++    fprintf(stderr, "_NXGetPolicyFilePath: WARNING! Maximum length of SecurityPolicy file exceeded.\n");
++    #endif
++  }
++
++  strcpy(_NXPolicyFilePath, path);
++
++  #ifdef TEST
++  fprintf(stderr, "_NXGetPolicyFilePath: Using default SecurityPolicy file path [%s].\n",
++              _NXPolicyFilePath);
++  #endif
++
++  return _NXPolicyFilePath;
++}
++
++#endif
++
+ /* SecurityAudit
+  *
+  * Arguments:
+@@ -1647,18 +1808,60 @@
+ 
+     SecurityMaxPropertyName = 0;
+ 
++#ifdef NXAGENT_SERVER
++
++    if (!_NXGetPolicyFilePath(SecurityPolicyFile))
++    {
++      return;
++    }
++
++#else
++
+     if (!SecurityPolicyFile)
+ 	return;
+ 
++#endif
++
+ #ifndef __UNIXOS2__
++
++#ifdef NXAGENT_SERVER
++
++    f = Fopen(_NXGetPolicyFilePath(SecurityPolicyFile), "r");
++
++#else
++
+     f = Fopen(SecurityPolicyFile, "r");
++
++#endif
++
++#else
++
++#ifdef NXAGENT_SERVER
++
++    f = Fopen((char*)__XOS2RedirRoot( _NXGetPolicyFilePath(SecurityPolicyFile)), "r");
++
+ #else
++
+     f = Fopen((char*)__XOS2RedirRoot(SecurityPolicyFile), "r");
+-#endif    
++
++#endif
++
++#endif
++ 
+     if (!f)
+     {
++#ifdef NXAGENT_SERVER
++
++        ErrorF("error opening security policy file %s\n",
++                   _NXGetPolicyFilePath(SecurityPolicyFile));
++
++#else
++
+ 	ErrorF("error opening security policy file %s\n",
+ 	       SecurityPolicyFile);
++
++#endif
++
+ 	return;
+     }
+ 
+@@ -1678,8 +1881,19 @@
+ 	    char *v = SecurityParseString(&p);
+ 	    if (strcmp(v, SECURITY_POLICY_FILE_VERSION) != 0)
+ 	    {
++
++#ifdef NXAGENT_SERVER
++
++                ErrorF("%s: invalid security policy file version, ignoring file\n",
++                           _NXGetPolicyFilePath(SecurityPolicyFile));
++
++#else
++
+ 		ErrorF("%s: invalid security policy file version, ignoring file\n",
+ 		       SecurityPolicyFile);
++
++#endif
++
+ 		break;
+ 	    }
+ 	    validLine = TRUE;
+@@ -1706,9 +1920,22 @@
+ 	    }
+ 	}
+ 
++#ifdef NXAGENT_SERVER
++
++        if (!validLine)
++        {
++          ErrorF("Line %d of %s invalid, ignoring\n",
++                     lineNumber, _NXGetPolicyFilePath(SecurityPolicyFile));
++        }
++
++#else
++
+ 	if (!validLine)
+ 	    ErrorF("Line %d of %s invalid, ignoring\n",
+ 		   lineNumber, SecurityPolicyFile);
++
++#endif
++
+     } /* end while more input */
+ 
+ #ifdef PROPDEBUG
+@@ -1799,7 +2026,17 @@
+     {
+ 	struct stat buf;
+ 	static time_t lastmod = 0;
++
++#ifdef NXAGENT_SERVER
++
++        int ret = stat(_NXGetPolicyFilePath(SecurityPolicyFile), &buf);
++
++#else
++
+ 	int ret = stat(SecurityPolicyFile , &buf);
++
++#endif
++
+ 	if ( (ret == 0) && (buf.st_mtime > lastmod) )
+ 	{
+ 	    ErrorF("reloading property rules\n");

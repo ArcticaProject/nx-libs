@@ -1,0 +1,15 @@
+--- ./nx-X11/programs/Xserver/randr/rrdispatch.c.X.original	2015-02-13 14:03:44.792440567 +0100
++++ ./nx-X11/programs/Xserver/randr/rrdispatch.c	2015-02-10 19:13:13.632692326 +0100
+@@ -76,7 +76,12 @@
+     int		rc;
+ 
+     REQUEST_SIZE_MATCH(xRRSelectInputReq);
++    #ifndef NXAGENT_SERVER
+     rc = dixLookupWindow(&pWin, stuff->window, client, DixWriteAccess);
++    #else
++    pWin = SecurityLookupWindow(stuff->window, client, SecurityWriteAccess);
++    rc = pWin ? Success : BadWindow;
++    #endif
+     if (rc != Success)
+ 	return rc;
+     pHead = (RREventPtr *)SecurityLookupIDByType(client,

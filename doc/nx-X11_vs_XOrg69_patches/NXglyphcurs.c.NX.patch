@@ -1,0 +1,121 @@
+--- ./nx-X11/programs/Xserver/hw/nxagent/X/NXglyphcurs.c.X.original	2015-02-13 14:03:44.744441510 +0100
++++ ./nx-X11/programs/Xserver/hw/nxagent/X/NXglyphcurs.c	2015-02-10 19:13:13.808685737 +0100
+@@ -1,3 +1,20 @@
++/**************************************************************************/
++/*                                                                        */
++/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
++/*                                                                        */
++/* NXAGENT, NX protocol compression and NX extensions to this software    */
++/* are copyright of NoMachine. Redistribution and use of the present      */
++/* software is allowed according to terms specified in the file LICENSE   */
++/* which comes in the source distribution.                                */
++/*                                                                        */
++/* Check http://www.nomachine.com/licensing.html for applicability.       */
++/*                                                                        */
++/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
++/*                                                                        */
++/* All rights reserved.                                                   */
++/*                                                                        */
++/**************************************************************************/
++
+ /************************************************************************
+ 
+ Copyright 1987, 1998  The Open Group
+@@ -62,6 +79,12 @@
+ #include "opaque.h"
+ #include "servermd.h"
+ 
++#include "../../fb/fb.h"
++#include "Pixmaps.h"
++
++#ifndef True
++#define True  1
++#endif
+ 
+ /*
+     get the bits out of the font in a portable way.  to avoid
+@@ -98,44 +121,68 @@
+     /* zeroing the (pad) bits seems to help some ddx cursor handling */
+     bzero(pbits, nby);
+ 
+-    ppix = (PixmapPtr)(*pScreen->CreatePixmap)(pScreen, cm->width,
+-					       cm->height, 1);
++    ppix = fbCreatePixmap(pScreen, cm->width, cm->height, 1);
+     pGC = GetScratchGC(1, pScreen);
+     if (!ppix || !pGC)
+     {
+ 	if (ppix)
+-	    (*pScreen->DestroyPixmap)(ppix);
++	    fbDestroyPixmap(ppix);
+ 	if (pGC)
+ 	    FreeScratchGC(pGC);
+ 	xfree(pbits);
+ 	return BadAlloc;
+     }
+ 
++    #ifdef TEST
++    fprintf(stderr, "ServerBitsFromGlyph: Created virtual pixmap at [%p] with width [%d] height [%d] depth [%d].\n",
++                (void *) ppix, cm->width, cm->height, 1);
++    #endif
++
++    nxagentPixmapPriv(ppix) -> id = 0;
++    nxagentPixmapPriv(ppix) -> mid = 0;
++    nxagentPixmapPriv(ppix) -> isVirtual = True;
++    nxagentPixmapPriv(ppix) -> pRealPixmap = NULL;
++    nxagentPixmapPriv(ppix) -> pVirtualPixmap = NULL;
++
+     rect.x = 0;
+     rect.y = 0;
+     rect.width = cm->width;
+     rect.height = cm->height;
+ 
+-    /* fill the pixmap with 0 */
+-    gcval[0].val = GXcopy;
+-    gcval[1].val = 0;
+-    gcval[2].ptr = (pointer)pfont;
+-    dixChangeGC(NullClient, pGC, GCFunction | GCForeground | GCFont,
+-		NULL, gcval);
++    pGC->stateChanges |= GCFunction | GCForeground | GCFont;
++    pGC->alu = GXcopy;
++
++    pGC->fgPixel = 0;
++
++    pfont->refcnt++;
++
++    if (pGC->font)
++      CloseFont(pGC->font, (Font)0);
++
++    pGC->font = pfont;
++
+     ValidateGC((DrawablePtr)ppix, pGC);
+-    (*pGC->ops->PolyFillRect)((DrawablePtr)ppix, pGC, 1, &rect);
++    fbPolyFillRect((DrawablePtr)ppix, pGC, 1, &rect);
+ 
+     /* draw the glyph */
+     gcval[0].val = 1;
+-    dixChangeGC(NullClient, pGC, GCForeground, NULL, gcval);
++    pGC->fgPixel = 1;
++
++    pGC->stateChanges |= GCForeground;
++
+     ValidateGC((DrawablePtr)ppix, pGC);
+-    (*pGC->ops->PolyText16)((DrawablePtr)ppix, pGC, cm->xhot, cm->yhot,
+-			    1, (unsigned short *)char2b);
+-    (*pScreen->GetImage)((DrawablePtr)ppix, 0, 0, cm->width, cm->height,
+-			 XYPixmap, 1, pbits);
++    miPolyText16((DrawablePtr)ppix, pGC, (int)cm->xhot, (int)cm->yhot, (int)1, (unsigned short*)char2b);
++    fbGetImage((DrawablePtr)ppix, 0, 0, cm->width, cm->height,
++                         XYPixmap, 1, pbits);
+     *ppbits = (unsigned char *)pbits;
+     FreeScratchGC(pGC);
+-    (*pScreen->DestroyPixmap)(ppix);
++    fbDestroyPixmap(ppix);
++
++    #ifdef TEST
++    fprintf(stderr, "ServerBitsFromGlyph: Destroyed virtual pixmap at [%p].\n",
++                (void *) ppix);
++    #endif
++
+     return Success;
+ }
+ 

@@ -1,0 +1,30 @@
+--- ./nx-X11/lib/X11/Pending.c.X.original	2015-02-13 14:03:44.620443950 +0100
++++ ./nx-X11/lib/X11/Pending.c	2015-02-10 19:13:12.880720490 +0100
+@@ -25,6 +25,8 @@
+ 
+ */
+ 
++#include <stdio.h>
++
+ #ifdef HAVE_CONFIG_H
+ #include <config.h>
+ #endif
+@@ -37,11 +39,18 @@
+     int mode;
+ {
+     int ret_val;
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST)
++    fprintf(stderr, "\nXEventsQueued: Called with a display at [%p].\n", dpy);
++#endif
++
+     LockDisplay(dpy);
+     if (dpy->qlen || (mode == QueuedAlready))
+ 	ret_val = dpy->qlen;
+     else
+ 	ret_val = _XEventsQueued (dpy, mode);
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST)
++    fprintf(stderr, "\nXEventsQueued: Going to unlock the display at [%p].\n", dpy);
++#endif
+     UnlockDisplay(dpy);
+     return ret_val;
+ }

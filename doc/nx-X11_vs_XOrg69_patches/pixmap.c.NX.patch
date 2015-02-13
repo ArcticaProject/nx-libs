@@ -1,0 +1,18 @@
+--- ./nx-X11/programs/Xserver/dix/pixmap.c.X.original	2015-02-13 14:03:44.704442298 +0100
++++ ./nx-X11/programs/Xserver/dix/pixmap.c	2015-02-10 19:13:13.696689930 +0100
+@@ -121,7 +121,14 @@
+     if (pScreen->totalPixmapSize > ((size_t)-1) - pixDataSize)
+ 	return NullPixmap;
+     
+-    pPixmap = (PixmapPtr)xalloc(pScreen->totalPixmapSize + pixDataSize);
++    /*
++     * FIXME: Allocate 4 bytes at the end of each pixmap. This
++     * is a quick workaround intended to fix a problem reported
++     * by Valgrind due to fbBlt() writing just after the end of
++     * the pixmap buffer. This may be a RENDER bug.
++     */
++
++    pPixmap = (PixmapPtr)xalloc(pScreen->totalPixmapSize + pixDataSize + 4);
+     if (!pPixmap)
+ 	return NullPixmap;
+     ppriv = (DevUnion *)(pPixmap + 1);

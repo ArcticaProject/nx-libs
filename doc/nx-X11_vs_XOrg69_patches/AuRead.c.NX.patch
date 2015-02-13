@@ -1,0 +1,62 @@
+--- ./nx-X11/lib/Xau/AuRead.c.X.original	2015-02-13 14:03:44.624443872 +0100
++++ ./nx-X11/lib/Xau/AuRead.c	2015-02-10 19:13:12.488735202 +0100
+@@ -32,14 +32,29 @@
+ #endif
+ #include <X11/Xauth.h>
+ #include <stdlib.h>
++#include <errno.h>
+ 
+ static int
+ read_short (unsigned short *shortp, FILE *file)
+ {
+     unsigned char   file_short[2];
+ 
+-    if (fread ((char *) file_short, (int) sizeof (file_short), 1, file) != 1)
+-	return 0;
++    /*
++     * Added a check on EINTR to prevent the fread() call to be
++     * interrupted by any signal not blocked by OsBlockSignals().
++     */
++
++    for (;;) {
++        if (fread ((char *) file_short, (int) sizeof (file_short), 1, file) != 1) {
++            if (errno == EINTR && ferror (file)) {
++                perror ("Reading from auth file");
++                clearerr (file);
++                continue;
++            }
++            return 0;
++        }
++        break;
++    }
+     *shortp = file_short[0] * 256 + file_short[1];
+     return 1;
+ }
+@@ -58,11 +73,22 @@
+     	data = malloc ((unsigned) len);
+     	if (!data)
+ 	    return 0;
+-    	if (fread (data, (int) sizeof (char), (int) len, file) != len) {
+-	    bzero (data, len);
+-	    free (data);
+-	    return 0;
+-    	}
++        for (;;)
++        {
++            if (fread (data, (int) sizeof (char), (int) len, file) != len)
++            {
++                if (errno == EINTR && ferror (file))
++                {
++                    perror ("Reading from auth file");
++                    clearerr (file);
++                    continue;
++                }
++	        bzero (data, len);
++	        free (data);
++	        return 0;
++    	    }
++            break;
++        }
+     }
+     *stringp = data;
+     *countp = len;

@@ -1,0 +1,70 @@
+--- ./nx-X11/programs/Xserver/GL/mesa/X/xf86glx.c.X.original	2015-02-13 14:03:44.680442769 +0100
++++ ./nx-X11/programs/Xserver/GL/mesa/X/xf86glx.c	2015-02-10 19:13:14.340665851 +0100
+@@ -71,6 +71,10 @@
+ 
+ #include "glcontextmodes.h"
+ 
++#ifdef NXAGENT_SERVER
++#include "../main/WSDrawBuffer.h"
++#endif
++
+ /*
+  * This structure is statically allocated in the __glXScreens[]
+  * structure.  This struct is not used anywhere other than in
+@@ -95,6 +99,36 @@
+     NULL                  /* WrappedPositionWindow is overwritten */
+ };
+ 
++#ifdef NXAGENT_SERVER
++WSDrawBufferPtr pWSDrawBuffer = NULL;
++
++void AddWSDrawBuffer(GLframebuffer *mesa_buffer)
++{
++  WSDrawBufferPtr prevWSDB;
++  WSDrawBufferPtr newWSDB;
++  WSDrawBufferPtr p;
++
++  prevWSDB = NULL;
++  newWSDB = NULL;
++  p = pWSDrawBuffer;
++  while (p != NULL) {
++    prevWSDB = p;
++    if (prevWSDB -> DrawBuffer == mesa_buffer) {
++      return;
++    }
++    p = p -> next;
++  }
++  newWSDB = malloc(sizeof(WSDrawBufferRec));
++  newWSDB -> DrawBuffer = mesa_buffer;
++  newWSDB -> next = NULL;
++
++  if (pWSDrawBuffer == NULL)
++    pWSDrawBuffer = newWSDB;
++  else
++    prevWSDB -> next = newWSDB;
++}
++#endif
++
+ void *__glXglDDXScreenInfo(void) {
+     return &__glDDXScreenInfo;
+ }
+@@ -748,6 +782,10 @@
+     __MESA_buffer buf = (__MESA_buffer)glPriv->private;
+     __GLXdrawablePrivate *glxPriv = (__GLXdrawablePrivate *)glPriv->other;
+ 
++#ifdef NXAGENT_SERVER
++    AddWSDrawBuffer(& (buf -> xm_buf -> mesa_buffer) );
++#endif
++
+     /* Destroy Mesa's buffers */
+     if (buf->xm_buf)
+ 	XMesaDestroyBuffer(buf->xm_buf);
+@@ -757,7 +795,7 @@
+     glPriv->frontBuffer.resize = buf->fbresize;
+ 
+     __glXFree(glPriv->private);
+-    glPriv->private = NULL;
++    glPriv->private = NULL; 
+ }
+ 
+ __GLinterface *__MESA_createContext(__GLimports *imports,

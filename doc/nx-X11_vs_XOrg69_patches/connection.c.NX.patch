@@ -1,0 +1,48 @@
+--- ./nx-X11/programs/Xserver/os/connection.c.X.original	2015-02-13 14:03:44.788440645 +0100
++++ ./nx-X11/programs/Xserver/os/connection.c	2015-02-10 19:13:13.452699065 +0100
+@@ -486,6 +486,45 @@
+ #endif
+ }
+ 
++#ifdef NX_TRANS_SOCKET
++
++/*
++ * The following block is now defined also
++ * under Cygwin to support this environment.
++ */
++
++#ifndef __DARWIN__
++
++/*
++ * This is defined in Xtranssock.c and must
++ * be called explicitly as it doesn't share
++ * a pointer in the transport function table.
++ */
++
++extern void _XSERVTransSocketRejectConnection(XtransConnInfo);
++
++void
++RejectWellKnownSockets ()
++{
++    int i;
++
++    for (i = 0; i < ListenTransCount; i++)
++    {
++        _XSERVTransSocketRejectConnection(ListenTransConns[i]);
++    }
++}
++
++#endif /* #ifndef __DARWIN__ */
++
++#else /* #ifdef NX_TRANS_SOCKET */
++
++void
++RejectWellKnownSockets ()
++{
++}
++
++#endif /* #ifdef NX_TRANS_SOCKET */
++
+ void
+ ResetWellKnownSockets (void)
+ {

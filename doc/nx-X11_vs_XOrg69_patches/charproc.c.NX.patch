@@ -1,0 +1,40 @@
+--- ./nx-X11/programs/xterm/charproc.c.X.original	2015-02-13 14:03:44.800440409 +0100
++++ ./nx-X11/programs/xterm/charproc.c	2015-02-13 14:03:44.796440488 +0100
+@@ -82,6 +82,23 @@
+  * SOFTWARE.
+  */
+ 
++/**************************************************************************/
++/*                                                                        */
++/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
++/*                                                                        */
++/* NX-X11, NX protocol compression and NX extensions to this software     */
++/* are copyright of NoMachine. Redistribution and use of the present      */
++/* software is allowed according to terms specified in the file LICENSE   */
++/* which comes in the source distribution.                                */
++/*                                                                        */
++/* Check http://www.nomachine.com/licensing.html for applicability.       */
++/*                                                                        */
++/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
++/*                                                                        */
++/* All rights reserved.                                                   */
++/*                                                                        */
++/**************************************************************************/
++
+ /* charproc.c */
+ 
+ #include <version.h>
+@@ -3177,6 +3194,13 @@
+ 	}
+ 	if (need_cleanup)
+ 	    Cleanup(0);
++
++#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST)
++    fprintf(stderr, "xterm::in_put: Select called with [%d][%p][%p][%p][%p].\n",
++                max_plus1, (void *) &select_mask, (void *) &write_mask, (void *) 0,
++                    (void *) (time_select ? &select_timeout : 0));
++#endif
++
+ 	i = Select(max_plus1, &select_mask, &write_mask, 0,
+ 		   (time_select ? &select_timeout : 0));
+ 	if (i < 0) {

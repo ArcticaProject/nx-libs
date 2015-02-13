@@ -1,0 +1,271 @@
+--- ./nx-X11/programs/Xserver/os/auth.c.X.original	2015-02-13 14:03:44.788440645 +0100
++++ ./nx-X11/programs/Xserver/os/auth.c	2015-02-10 19:13:13.452699065 +0100
+@@ -28,6 +28,23 @@
+ */
+ /* $XFree86: auth.c,v 1.13 2003/04/27 21:31:08 herrb Exp $ */
+ 
++/**************************************************************************/
++/*                                                                        */
++/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
++/*                                                                        */
++/* NX-X11, NX protocol compression and NX extensions to this software     */
++/* are copyright of NoMachine. Redistribution and use of the present      */
++/* software is allowed according to terms specified in the file LICENSE   */
++/* which comes in the source distribution.                                */
++/*                                                                        */
++/* Check http://www.nomachine.com/licensing.html for applicability.       */
++/*                                                                        */
++/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
++/*                                                                        */
++/* All rights reserved.                                                   */
++/*                                                                        */
++/**************************************************************************/
++
+ /*
+  * authorization hooks for the server
+  * Author:  Keith Packard, MIT X Consortium
+@@ -129,7 +146,24 @@
+ void
+ InitAuthorization (char *file_name)
+ {
++#ifdef __sun 
++    char * envBuffer;
++#endif
+     authorization_file = file_name;
++#ifdef NX_TRANS_AUTH
++#ifdef NX_TRANS_TEST
++    fprintf(stderr, "InitAuthorization: Going to propagate auth file '%s' to the environment.\n",
++                authorization_file);
++#endif
++#ifdef __sun 
++    envBuffer = malloc(15+strlen(authorization_file));
++    sprintf(envBuffer,"NX_XAUTHORITY=%s",authorization_file);
++    putenv(envBuffer);
++#else
++    setenv("NX_XAUTHORITY", authorization_file, 1);
++#endif
++#endif
++
+ }
+ 
+ static int
+@@ -144,6 +178,68 @@
+     if (!authorization_file)
+ 	return 0;
+ 
++#ifdef NX_TRANS_AUTH
++
++    /*
++     * We think that the way LoadAuthorization() is working is wrong.
++     * It doesn't reset the list of stored authorizations before reading
++     * the new cookies. Our take is that if a new auth file is to be
++     * read, the only cookies that are to be accepted are those that are
++     * in the new file, not those in the file -plus- those that have
++     * been in the file in the past. Furthermore, if the list can't be
++     * read or it is empty, it should assume that it ignores which co-
++     * okies are valid and thus it should disable any access. Your mile-
++     * age can vary. A less draconian approach could be to leave the old
++     * cookies if the file can't be read and remove them only if the
++     * file is empty.
++     *
++     * Adding the cookies without removing the old values for the same
++     * protocol has an important implication. If an user shares the co-
++     * okie with somebody and later wants to revoke the access to the
++     * display, changing the cookie will not work. This is especially
++     * important with NX. For security reasons, after reconnecting the
++     * session to a different display, it is advisable to generate a
++     * new set of cookies, but doing that it is useless with the current
++     * code, as the old cookies are going to be still accepted. On the
++     * same topic, consider that once an user has got access to the X
++     * server, he/she can freely enable host authentication from any
++     * host, so the safe behaviour should be to reset the host based
++     * authenthication at least at reconnection, and keep as valid only
++     * the cookies that are actually in the file. This behaviour would
++     * surely break many applications, among them a SSH connection run
++     * inside a NX session, as ssh -X reads the cookie for the display
++     * only at session startup and does not read the cookies again
++     * when the auth file is changed.
++     *
++     * Another bug (or feature, depending on how you want to consider
++     * it) is that if the authority file contains entries for different
++     * displays (as it is the norm when the authority file is the default
++     * .Xauthority in the user's home), the server will match -any- of
++     * the cookies, even cookies that are not for its own display. This 
++     * means that you have be careful when passing an authority file to
++     * nxagent or Xnest and maybe keep separate files for letting nxagent
++     * find the cookie to be used to connect to the remote display and
++     * for letting it find what cookies to accept. If the file is the
++     * same, clients will be able to connect to nxagent with both the
++     * cookies.
++     */
++
++#ifdef NX_TRANS_AUTH_RESET
++
++    #ifdef NX_TRANS_TEST
++    fprintf(stderr, "LoadAuthorization: Resetting authorization info.\n");
++    #endif
++
++    for (i = 0; i < NUM_AUTHORIZATION; i++) {
++        if (protocols[i].Reset) {
++            (*protocols[i].Reset) ();
++        }
++    }
++
++#endif
++
++#endif /* #ifdef NX_TRANS_AUTH */
++
+     f = Fopen (authorization_file, "r");
+     if (!f)
+ 	return -1;
+@@ -154,6 +250,14 @@
+ 		memcmp (protocols[i].name, auth->name, (int) auth->name_length) == 0 &&
+ 		protocols[i].Add)
+ 	    {
++#ifdef NX_TRANS_AUTH
++
++                #ifdef NX_TRANS_TEST
++                fprintf(stderr, "LoadAuthorization: Adding new record from file [%s].\n",
++                            authorization_file);
++                #endif
++
++#endif
+ 		++count;
+ 		(*protocols[i].Add) (auth->data_length, auth->data,
+ 					 FakeClientID(0));
+@@ -162,7 +266,46 @@
+ 	XauDisposeAuth (auth);
+     }
+ 
++#ifdef NX_TRANS_AUTH
++
++    if (count == 0)
++    {
++      fprintf(stderr, "Warning: No authorization record could be read from file '%s'.\n",
++                  authorization_file);
++
++      fprintf(stderr, "Warning: Please, create a valid authorization cookie using the command\n"
++                  "Warning: 'xauth -f %s add <display> MIT-MAGIC-COOKIE-1 <cookie>'.\n",
++                      authorization_file);
++    }
++
++#endif
++
++#ifdef NX_TRANS_AUTH
++    if (Fclose (f) != 0)
++    {
++        /*
++         * If the Fclose() fails, for example because of a signal,
++         * it's advisable to return the number of protocols read,
++         * if any, or otherwise the server would believe that no
++         * cookie is valid and eventually fall back to host based
++         * authentication. Note anyway that the new code in Check-
++         * Authorization() doesn't care the return value and gives
++         * a chance to the function to check the file at the next
++         * connection.
++         */
++
++        if (count > 0)
++        {
++            return count;
++        }
++        else
++        {
++            return -1;
++        }
++    }
++#else
+     Fclose (f);
++#endif
+     return count;
+ }
+ 
+@@ -194,7 +337,10 @@
+     int	i;
+     struct stat buf;
+     static time_t lastmod = 0;
++
++    #ifndef NX_TRANS_AUTH
+     static Bool loaded = FALSE;
++    #endif
+ 
+     if (!authorization_file || stat(authorization_file, &buf))
+     {
+@@ -225,7 +371,67 @@
+ 	 * entries for this server), and reloading it later fails, don't
+ 	 * change anything. (loadauth == -1 && loaded)
+ 	 */
+-	
++
++#ifdef NX_TRANS_AUTH
++
++        /*
++         * The implementation of CheckAuthorization() was changed. The way
++         * the auth file was handled previously was questionable and could
++         * open the way to a vast array of security problems. There might be
++         * ways for an attacker to prevent the server from reading the file
++         * and it was enough for the server to fail reading the file once
++         * (because of a not blocked signal, for example) to leave the dis-
++         * play open to all the users running a session on the same terminal
++         * server.
++         *
++         * In NX we want to have only two cases: either we have to check an
++         * authorization file or we don't. In the first case we need to do our
++         * best to read the file at any new client access and never fall back
++         * to host based authentication. Falling back to local host access has
++         * no way back, as it will always take precedence over the auth cookie
++         * (unless the user explicitly disables, one by one, all the rules
++         * allowing local access, if and only if he/she becomes aware of the
++         * problem). In the second case we assume that user doesn't care secu-
++         * rity and so allow unrestricted access from the local machine.
++         */
++
++        #ifdef NX_TRANS_TEST
++        fprintf(stderr, "CheckAuthorization: Going to set authorization with loadauth [%d].\n",
++                    loadauth);
++        #endif
++
++        if (authorization_file)
++        {
++            #ifdef NX_TRANS_TEST
++            fprintf(stderr, "CheckAuthorization: Disabling local host access.\n");
++            #endif
++
++            DisableLocalHost();
++        }
++        else
++        {
++            /*
++             * Enable host-based authentication only if
++             * the authorization file was not specified
++             * either on the command line or in the env-
++             * ironment.
++             */
++
++            #ifdef NX_TRANS_TEST
++            fprintf(stderr, "CheckAuthorization: Enabling local host access.\n");
++            #endif
++
++            EnableLocalHost();
++        }
++
++        /*
++         * Avoid the 'unused variable' warning.
++         */
++
++        loadauth = loadauth;
++
++#else /* #ifdef NX_TRANS_AUTH */
++
+ 	if (loadauth > 0)
+ 	{
+ 	    DisableLocalHost(); /* got at least one */
+@@ -233,6 +439,8 @@
+ 	}
+ 	else if (loadauth == 0 || !loaded)
+ 	    EnableLocalHost ();
++
++#endif /* #ifdef NX_TRANS_AUTH */
+     }
+     if (name_length) {
+ 	for (i = 0; i < NUM_AUTHORIZATION; i++) {
