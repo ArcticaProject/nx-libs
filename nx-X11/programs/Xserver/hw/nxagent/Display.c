@@ -1430,22 +1430,10 @@ FIXME: Use of nxagentParentWindow is strongly deprecated.
   g = pV.green_mask;
   b = pV.blue_mask;
 
-  if (!pV.red_mask || !pV.green_mask || !pV.blue_mask)
-  {
-    nxagentLogoBlack = 0x000000;
-    nxagentLogoRed   = 0xff0000;
-    nxagentLogoWhite = 0xffffff;
-  }
-  else
-  {
-    for (or=0, off=0x800000; (r&(off>>or)) == 0; or++);
-    for (og=0, off=0x800000; (g&(off>>og)) == 0; og++);
-    for (ob=0, off=0x800000; (b&(off>>ob)) == 0; ob++);
-
-    nxagentLogoRed   = nxagentLogoColor(0xff0000);
-    nxagentLogoBlack = nxagentLogoColor(0x000000);
-    nxagentLogoWhite = 0xffffff;
-  }
+  nxagentLogoBlack = 0x000000;
+  nxagentLogoRed   = 0xff0000;
+  nxagentLogoWhite = 0xffffff;
+  nxagentLogoGray  = 0x222222;
 
   #ifdef WATCH
 
@@ -2696,22 +2684,10 @@ Bool nxagentReconnectDisplay(void *p0)
   g = pV.green_mask;
   b = pV.blue_mask;
 
-  if (!pV.red_mask || !pV.green_mask || !pV.blue_mask)
-  {
-    nxagentLogoBlack = 0x000000;
-    nxagentLogoRed   = 0xff0000;
-    nxagentLogoWhite = 0xffffff;
-  }
-  else
-  {
-    for (or=0, off=0x800000; (r&(off>>or)) == 0; or++);
-    for (og=0, off=0x800000; (g&(off>>og)) == 0; og++);
-    for (ob=0, off=0x800000; (b&(off>>ob)) == 0; ob++);
-
-    nxagentLogoRed   = nxagentLogoColor(0xff0000);
-    nxagentLogoBlack = nxagentLogoColor(0x000000);
-    nxagentLogoWhite = 0xffffff;
-  }
+  nxagentLogoBlack = 0x000000;
+  nxagentLogoRed   = 0xff0000;
+  nxagentLogoWhite = 0xffffff;
+  nxagentLogoGray  = 0x222222;
 
   useXpmIcon = nxagentMakeIcon(nxagentDisplay, &nxagentIconPixmap, &nxagentIconShape);
 

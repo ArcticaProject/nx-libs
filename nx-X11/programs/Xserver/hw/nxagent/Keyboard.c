@@ -62,6 +62,7 @@ is" without express or implied warranty.
 
 #include "globals.h"
 #include "property.h"
+#include "Init.h"
 
 #include <X11/extensions/XKB.h>
 
@@ -138,8 +139,11 @@ extern        Status        XkbGetControls(
 #ifndef XKB_ALTERNATE_BASE_DIRECTORY
 #define XKB_ALTERNATE_BASE_DIRECTORY   "/usr/X11R6/lib/X11/xkb"
 #endif
-#ifndef XKB_CONFIG_FILE
-#define XKB_CONFIG_FILE      "/etc/nxagent/nxagent.keyboard"
+#ifndef XKB_CONFIG_FILE_NX
+#define XKB_CONFIG_FILE_NX   "/etc/nxagent/nxagent.keyboard"
+#endif
+#ifndef XKB_CONFIG_FILE_X2GO
+#define XKB_CONFIG_FILE_X2GO "/etc/x2go/x2goagent.keyboard"
 #endif
 #ifndef XKB_DFLT_RULES_FILE
 #define XKB_DFLT_RULES_FILE  "xfree86"
@@ -988,7 +992,10 @@ XkbError:
 
         XkbGetControls(nxagentDisplay, XkbAllControlsMask, xkb);
 
-        nxagentXkbConfigFilePathSize = strlen(XKB_CONFIG_FILE);
+        if (nxagentX2go)
+            nxagentXkbConfigFilePathSize = strlen(XKB_CONFIG_FILE_X2GO);
+        else
+            nxagentXkbConfigFilePathSize = strlen(XKB_CONFIG_FILE_NX);
 
         nxagentXkbConfigFilePath = malloc((nxagentXkbConfigFilePathSize + 1) * sizeof(char));
 
@@ -997,7 +1004,10 @@ XkbError:
           FatalError("nxagentKeyboardProc: malloc failed.");
         }
 
-        strcpy(nxagentXkbConfigFilePath, XKB_CONFIG_FILE);
+        if (nxagentX2go)
+            nxagentXkbConfigFilePathSize = strlen(XKB_CONFIG_FILE_X2GO);
+        else
+            nxagentXkbConfigFilePathSize = strlen(XKB_CONFIG_FILE_NX);
  
         #ifdef TEST
         fprintf(stderr, "nxagentKeyboardProc: nxagentXkbConfigFilePath [%s].\n",

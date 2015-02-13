@@ -53,7 +53,19 @@ SOFTWARE.
 #include <sys/stat.h>
 #include <unistd.h>
 
-static char* nxAltRgbPaths[] = {"/etc/nxagent/rgb", "/usr/share/nx/rgb", "/usr/local/share/nx/rgb", "/usr/NX/share/rgb", "/usr/share/X11/rgb", "/etc/X11/rgb"};
+/* FIXME: we need more intelligent code (like provided by the nxagentX2go
+ * var in hw/nxagent/Init.h) to detect our current runtime mode (running
+ * as x2goagent, running as nxagent)
+ */
+static char* nxAltRgbPaths[] = {"/etc/x2go/rgb", \
+                                "/usr/share/x2go/rgb", \
+                                "/usr/local/share/x2go/rgb", \
+                                "/etc/nxagent/rgb", \
+                                "/usr/share/nx/rgb", \
+                                "/usr/local/share/nx/rgb", \
+                                "/usr/NX/share/rgb", \
+                                "/usr/share/X11/rgb", \
+                                "/etc/X11/rgb"};
 static char _NXRgbPath[1024];
 
 #endif

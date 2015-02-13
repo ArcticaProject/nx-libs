@@ -1,4 +1,3 @@
 #401_nxcomp_bigrequests-and-genericevent-extensions.full+lite.patch
-999_nxagent_unbrand-nxagent-brand-x2goagent.full.patch
 016_nx-X11_install-location.debian.patch
 102_xserver-xext_set-securitypolicy-path.debian.patch
