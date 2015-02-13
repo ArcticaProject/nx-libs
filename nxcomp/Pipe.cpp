@@ -21,6 +21,7 @@
 #include <pwd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <grp.h>
 
 #include "Pipe.h"
 #include "Misc.h"
@@ -234,6 +235,8 @@ FILE *Popen(char * const parameters[], const char *type)
       // Child.
       //
 
+      struct passwd *pwent = getpwuid(getuid());
+      if (pwent) initgroups(pwent->pw_name,getgid());
       setgid(getgid());
       setuid(getuid());
 

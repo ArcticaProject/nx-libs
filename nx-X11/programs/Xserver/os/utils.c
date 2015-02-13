@@ -112,6 +112,9 @@ OR PERFORMANCE OF THIS SOFTWARE.
 #include <sys/stat.h>
 #include <ctype.h>    /* for isspace */
 #include <stdarg.h>
+#include <sys/types.h>
+#include <grp.h>
+#include <pwd.h>
 
 #if defined(DGUX)
 #include <sys/resource.h>
@@ -1770,6 +1773,7 @@ System(char *command)
     void (*csig)(int);
 #endif
     int status;
+    struct passwd *pwent;
 
     if (!command)
 	return(1);
@@ -1791,6 +1795,9 @@ System(char *command)
     case -1:	/* error */
 	p = -1;
     case 0:	/* child */
+	pwent = getpwuid(getuid());
+	if (initgroups(pwent->pw_name,getgid()) == -1)
+	    _exit(127);
 	if (setgid(getgid()) == -1)
 	    _exit(127);
 	if (setuid(getuid()) == -1)
