@@ -50,7 +50,7 @@ unsigned int ProxyReadBuffer::suggestedLength(unsigned int pendingLength)
   //
   // Even if the readable data is not
   // enough to make a complete message,
-  // resize the buffer to accomodate
+  // resize the buffer to accommodate
   // it all.
   //
 

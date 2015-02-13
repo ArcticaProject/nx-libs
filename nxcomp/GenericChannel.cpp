@@ -210,7 +210,7 @@ int GenericChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *
   // All data has been read from the read buffer.
   // We still need to mark the end of the encode
   // buffer just before sending the frame. This
-  // allows us to accomodate multiple reads in
+  // allows us to accommodate multiple reads in
   // a single frame.
   //
 

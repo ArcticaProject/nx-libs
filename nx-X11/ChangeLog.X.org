@@ -12733,7 +12733,7 @@ Mon Jan  3 12:45:10 2005  Søren Sandmann  <sandmann@redhat.com>
 	* programs/xkill/xkill.c: (get_window_id):
 	Changed cursor for the 'kill' action from XC_draped_box to
 	XC_Pirate. If you don't like it we can change it back
-	(original author unkown).
+	(original author unknown).
 
 	* programs/xman/vendor.h:
 	Added 'pic' to the man page rendering command pipeline

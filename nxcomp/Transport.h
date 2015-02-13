@@ -226,7 +226,7 @@ class Transport
   protected:
 
   //
-  // Make room in the buffer to accomodate 
+  // Make room in the buffer to accommodate
   // at least size bytes.
   //
 

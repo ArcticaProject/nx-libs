@@ -179,7 +179,7 @@ typedef set < File *, T_older > T_files;
 typedef list < int > T_list;
 
 //
-// Used to accomodate data to be read and
+// Used to accommodate data to be read and
 // written to a socket.
 //
 

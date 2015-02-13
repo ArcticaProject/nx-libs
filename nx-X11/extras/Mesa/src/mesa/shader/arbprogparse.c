@@ -4106,7 +4106,7 @@ _mesa_parse_arb_program (GLcontext * ctx, const GLubyte * str, GLsizei len,
    if (*inst++ != REVISION) {
       _mesa_set_program_error (ctx, 0, "Grammar version mismatch");
       _mesa_error(ctx, GL_INVALID_OPERATION,
-                  "glProgramStringARB(Grammar verison mismatch)");
+                  "glProgramStringARB(Grammar version mismatch)");
       err = GL_TRUE;
    }
    else {

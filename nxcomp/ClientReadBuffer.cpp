@@ -29,7 +29,7 @@ unsigned int ClientReadBuffer::suggestedLength(unsigned int pendingLength)
   //
   // Even if the pending data is not
   // enough to make a complete message,
-  // resize the buffer to accomodate
+  // resize the buffer to accommodate
   // it all.
   //
 

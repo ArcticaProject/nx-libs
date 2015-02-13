@@ -505,12 +505,12 @@ void EncodeBuffer::growBuffer(unsigned int numBytes)
   {
     #ifdef PANIC
     *logofs << "EncodeBuffer: PANIC! Error in context [C] "
-            << "growing buffer to accomodate " << numBytes
+            << "growing buffer to accommodate " << numBytes
             << " bytes .\n" << logofs_flush;
     #endif
 
     cerr << "Error" << ": Error in context [C] "
-         << "growing encode buffer to accomodate "
+         << "growing encode buffer to accommodate "
          << numBytes << " bytes.\n";
 
     HandleAbort();

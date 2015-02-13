@@ -668,7 +668,7 @@ nxcomp-2.0.0-70
 
 nxcomp-2.0.0-69
 
-- Changed the format of the persistent cache to accomodate the new
+- Changed the format of the persistent cache to accommodate the new
   encoding of the render opcodes. Caches from the 1.4.0 and 1.5.0
   should be still loaded and saved correctly when connected to and
   old version of the library.
