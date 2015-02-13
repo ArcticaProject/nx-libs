@@ -154,6 +154,28 @@ SOFTWARE.
 
 #endif /* __arm32__ */
 
+#ifdef __aarch64__
+
+#ifdef __AARCH64EL__
+#define IMAGE_BYTE_ORDER        LSBFirst
+#define BITMAP_BIT_ORDER        LSBFirst
+#endif
+#ifdef __AARCH64EB__
+#define IMAGE_BYTE_ORDER        MSBFirst
+#define BITMAP_BIT_ORDER        MSBFirst
+#endif
+
+# if defined(XF86MONOVGA) || defined(XF86VGA16)
+#  define BITMAP_SCANLINE_UNIT  8
+# endif
+
+#define GLYPHPADBYTES           4
+#define GETLEFTBITS_ALIGNMENT   1
+#define LARGE_INSTRUCTION_CACHE
+#define AVOID_MEMORY_READ
+
+#endif /* __aarch64__ */
+
 #if defined (hpux) || defined __hppa__
 
 #define IMAGE_BYTE_ORDER	MSBFirst

@@ -844,6 +844,16 @@ InstallNamedTargetNoClobber(install,file.ad,$(INSTAPPFLAGS),$(XAPPLOADDIR),class
 # define ServerExtraDefines	-DGCCUSESGAS XFree86ServerDefines
 #endif /* Arm32Achitecture */
 
+#ifdef Arm64Architecture
+# define DefaultCCOptions
+# ifndef OptimizedCDebugFlags
+#  define OptimizedCDebugFlags	-O3
+# endif
+# define LinuxMachineDefines	-D__aarch64__ -U__arm -Uarm
+# define ServerOSDefines	XFree86ServerOSDefines -DDDXTIME
+# define ServerExtraDefines	-DGCCUSESGAS XFree86ServerDefines
+#endif /* Arm64Achitecture */
+
 #ifdef HPArchitecture
 # define OptimizedCDebugFlags	-O2  GccAliasingArgs
 # define LinuxMachineDefines	-D__hppa__

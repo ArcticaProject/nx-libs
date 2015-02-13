@@ -526,6 +526,10 @@ XCOMM the platform-specific parameters - edit site.def to change
 #define ByteOrder		X_BIG_ENDIAN
 #elif defined(Arm32Architecture)
 #define ByteOrder		X_LITTLE_ENDIAN
+#elif defined(Arm64ebArchitecture)
+#define ByteOrder		X_BIG_ENDIAN
+#elif defined(Arm64Architecture)
+#define ByteOrder		X_LITTLE_ENDIAN
 #elif defined(RsArchitecture)
 #define ByteOrder		X_BIG_ENDIAN
 #elif defined(PpcArchitecture) || defined(Ppc64Architecture)

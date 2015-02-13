@@ -908,6 +908,9 @@ XCOMM Keep cpp from replacing path elements containing i486/i586/i686
 #  endif
 #  undef __ARMEB__
 # endif
+# ifdef __aarch64__
+#  define Arm64Architecture
+# endif
 # ifdef mc68000
 #  define Mc68020Architecture
 #  undef mc68000
