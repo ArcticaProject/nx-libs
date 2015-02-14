@@ -140,7 +140,7 @@ override_dh_auto_build:
 	cp -av .preserve/* .
 	rm -Rf .preserve/
 
-	LOCAL_LDFLAGS=$(LDFLAGS) SHLIBGLOBALSFLAGS=$(LDFLAGS) SHLIBDIR=$(LIBDIR) PREFIX=/usr dh_auto_build --parallel
+	LOCAL_LDFLAGS="$(LDFLAGS)" SHLIBGLOBALSFLAGS="$(LDFLAGS)" SHLIBDIR="$(LIBDIR)" PREFIX=/usr dh_auto_build --parallel
 
 override_dh_strip:
 	dh_strip -plibnx-x11-6 --dbg-package=libnx-x11-6-dbg
