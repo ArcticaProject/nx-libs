@@ -130,8 +130,6 @@ else
     test -f etc/keystrokes.cfg || test -f debian/keystrokes.cfg && cp -v debian/keystrokes.cfg etc/keystrokes.cfg
 fi
 
-mv -v debian/changelog doc/changelog
-
 # remove folders that we do not want to roll into the tarball
 rm -Rf ".pc/"
 rm -Rf "debian/"

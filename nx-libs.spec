@@ -954,7 +954,7 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 
 %files -n libXcompshad3
 %defattr(-,root,root)
-%doc nxcompshad/{CHANGELOG,COPYING,LICENSE}
+%doc nxcompshad/{COPYING,LICENSE}
 %_libdir/libXcompshad.so.3*
 
 %files devel
@@ -1116,5 +1116,5 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 
 
 %changelog
-* Thu Jan 29 2015 Mike Gabriel <mike.gabriel@das-netzwerkteam.de> 3.5.0.29
-- See debian/changelog for details.
+* Thu Jan 29 2015 Mike Gabriel <mike.gabriel@das-netzwerkteam.de> 3.5.99.0
+- See upstream ChangeLog and debian/changelog for details.
