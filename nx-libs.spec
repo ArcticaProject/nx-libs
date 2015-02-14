@@ -768,7 +768,8 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 
 %files
 %defattr(-,root,root)
-%doc nx-X11/{COPYING,LICENSE,README}
+%doc COPYING
+%doc nx-X11/README
 %dir %{_libdir}/nx
 %dir %{_libdir}/nx/X11
 %dir %{_datadir}/nx
@@ -913,7 +914,8 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 
 %files -n libXcomp3
 %defattr(-,root,root)
-%doc nxcomp/{COPYING,LICENSE,README}
+%doc COPYING
+%doc nxcomp/README
 %_libdir/libXcomp.so.3*
 
 %files -n libXcompext-devel
@@ -924,7 +926,8 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 
 %files -n libXcompext3
 %defattr(-,root,root)
-%doc nxcompext/{COPYING,LICENSE,README}
+%doc COPYING
+%doc nxcompext/README
 %_libdir/libXcompext.so.3*
 
 %files -n libXcompshad-devel
@@ -944,7 +947,7 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 
 %files -n libXcompshad3
 %defattr(-,root,root)
-%doc nxcompshad/{COPYING,LICENSE}
+%doc COPYING
 %_libdir/libXcompshad.so.3*
 
 %files devel
