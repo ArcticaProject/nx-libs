@@ -20,7 +20,6 @@ override_dh_auto_clean:
 override_dh_clean:
 	rm -f nx*/configure
 	. ./replace.sh; set -x; ls debian/*.install.in | while read file; do rm -f $$(string_rep $$file .install.in .install); done
-	rm -fR etc/rgb etc/keystrokes.cfg etc/nxagent.keyboard etc/x2goagent.keyboard
 	rm -f debian/libnx-xinerama1.postinst
 	rm -fR .preserve/
 	dh_clean
@@ -77,12 +76,6 @@ override_dh_auto_install:
 	PREFIX=/usr dh_auto_install -Smakefile
 
 override_dh_auto_build:
-
-	mkdir -p etc/
-	ln -s ../debian/keystrokes.cfg etc/keystrokes.cfg
-	ln -s ../debian/rgb etc/rgb
-	ln -s ../debian/nxagent.keyboard etc/nxagent.keyboard
-	ln -s ../debian/x2goagent.keyboard etc/x2goagent.keyboard
 
 	# let's prep the libnx-xinerama1.postinst script with the value of the build systems's DEB_BUILD_MULTIARCH variable
 	sed debian/libnx-xinerama1.postinst.in -e 's/#DEB_BUILD_MULTIARCH#/$(DEB_BUILD_MULTIARCH)/' > debian/libnx-xinerama1.postinst

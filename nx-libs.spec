@@ -659,14 +659,6 @@ information on NX.
 
 %prep
 %setup -q
-# copy files from the debian/ folder to designated places in the source tree,
-# taken from roll-tarball.sh:
-mkdir etc/
-cp -v debian/keystrokes.cfg etc/keystrokes.cfg
-cp -v debian/rgb etc/rgb
-cp -v debian/nxagent.keyboard etc/nxagent.keyboard
-cp -v debian/x2goagent.keyboard etc/x2goagent.keyboard
-
 # remove build cruft that is in Git (also taken from roll-tarball.sh)
 rm -Rf nx*/configure nx*/autom4te.cache*
 # Install into /usr

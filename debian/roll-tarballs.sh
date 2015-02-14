@@ -86,10 +86,6 @@ if [ "x$MODE" = "xfull" ]; then
         cp -v debian/patches/$file doc/applied-patches
         echo ${file##*/} >> doc/applied-patches/series
     done
-    mkdir -p ./etc/
-    cp -v debian/rgb ./etc/
-    cp -v debian/nxagent.keyboard ./etc/
-    cp -v debian/x2goagent.keyboard ./etc/
 else
     rm -Rf "nxcompshad"*
     rm -Rf "nxcompext"*
@@ -101,8 +97,6 @@ else
     done
 fi
 cp -v debian/COPYING.full+lite COPYING
-cp -v debian/nxagent.keyboard nxagent.keyboard
-cp -v debian/x2goagent.keyboard x2goagent.keyboard
 
 # apply all patches shipped in debian/patches and create a copy of them that we ship with the tarball
 if [ -s "doc/applied-patches/series" ]; then
@@ -115,12 +109,6 @@ fi
 for f in $(ls README* 2>/dev/null); do
     mv -v $f doc/;
 done
-
-if [ "$MODE" = "full" ]; then
-    # provide a default keystrokes.cfg file
-    mkdir -p etc
-    test -f etc/keystrokes.cfg || test -f debian/keystrokes.cfg && cp -v debian/keystrokes.cfg etc/keystrokes.cfg
-fi
 
 # remove folders that we do not want to roll into the tarball
 rm -Rf ".pc/"
