@@ -1,0 +1,132 @@
+From 78b38a8a37e6105360c82a710ef62c92643ea4c1 Mon Sep 17 00:00:00 2001
+From: Julien Cristau <jcristau@debian.org>
+Date: Mon, 10 Nov 2014 12:13:41 -0500
+Subject: [PATCH 35/40] glx: Length checking for GLXRender requests (v2)
+ [CVE-2014-8098 2/8] (v3)
+
+v2:
+Remove can't-happen comparison for cmdlen < 0 (Michal Srb)
+
+v3: backport to RHEL5 hit old paths
+
+v4: backport to nx-libs 3.6.x (Mike DePaulo)
+
+Reviewed-by: Adam Jackson <ajax@redhat.com>
+Reviewed-by: Michal Srb <msrb@suse.com>
+Reviewed-by: Andy Ritger <aritger@nvidia.com>
+Signed-off-by: Julien Cristau <jcristau@debian.org>
+Signed-off-by: Alan Coopersmith <alan.coopersmith@oracle.com>
+Signed-off-by: Fedora X Ninjas <x@fedoraproject.org>
+Signed-off-by: Dave Airlie <airlied@redhat.com>
+---
+ nx-X11/programs/Xserver/GL/glx/glxcmds.c     | 20 ++++++++++----------
+ nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c | 20 ++++++++++----------
+ 2 files changed, 20 insertions(+), 20 deletions(-)
+
+diff --git a/nx-X11/programs/Xserver/GL/glx/glxcmds.c b/nx-X11/programs/Xserver/GL/glx/glxcmds.c
+index 02f3ba7..831c65b 100644
+--- a/nx-X11/programs/Xserver/GL/glx/glxcmds.c
++++ b/nx-X11/programs/Xserver/GL/glx/glxcmds.c
+@@ -1443,7 +1443,7 @@ int __glXRender(__GLXclientState *cl, GLbyte *pc)
+     left = (req->length << 2) - sz_xGLXRenderReq;
+     while (left > 0) {
+         __GLXrenderSizeData *entry;
+-        int extra;
++        int extra = 0;
+ 	void (* proc)(GLbyte *);
+ 
+ 	/*
+@@ -1454,6 +1454,9 @@ int __glXRender(__GLXclientState *cl, GLbyte *pc)
+ 	cmdlen = hdr->length;
+ 	opcode = hdr->opcode;
+ 
++	if (left < cmdlen)
++	    return BadLength;
++
+ 	/*
+ 	** Check for core opcodes and grab entry data.
+ 	*/
+@@ -1480,22 +1483,19 @@ int __glXRender(__GLXclientState *cl, GLbyte *pc)
+             client->errorValue = commandsDone;
+             return __glXBadRenderRequest;
+         }
++
++        if (cmdlen < entry->bytes) {
++            return BadLength;
++        }
++
+         if (entry->varsize) {
+             /* variable size command */
+             extra = (*entry->varsize)(pc + __GLX_RENDER_HDR_SIZE, False);
+             if (extra < 0) {
+                 return BadLength;
+             }
+-            if (cmdlen != __GLX_PAD(entry->bytes + extra)) {
+-                return BadLength;
+-            }
+-        } else {
+-            /* constant size command */
+-            if (cmdlen != __GLX_PAD(entry->bytes)) {
+-                return BadLength;
+-            }
+         }
+-	if (left < cmdlen) {
++	if (cmdlen != safe_pad(safe_add(entry->bytes, extra))) {
+ 	    return BadLength;
+ 	}
+ 
+diff --git a/nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c b/nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c
+index 027cba7..7174fda 100644
+--- a/nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c
++++ b/nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c
+@@ -498,7 +498,7 @@ int __glXSwapRender(__GLXclientState *cl, GLbyte *pc)
+     left = (req->length << 2) - sz_xGLXRenderReq;
+     while (left > 0) {
+         __GLXrenderSizeData *entry;
+-        int extra;
++        int extra = 0;
+ 	void (* proc)(GLbyte *);
+ 
+ 	/*
+@@ -511,6 +511,9 @@ int __glXSwapRender(__GLXclientState *cl, GLbyte *pc)
+ 	cmdlen = hdr->length;
+ 	opcode = hdr->opcode;
+ 
++	if (left < cmdlen)
++	return BadLength;
++
+ 	if ( (opcode >= __GLX_MIN_RENDER_OPCODE) && 
+ 	     (opcode <= __GLX_MAX_RENDER_OPCODE) ) {
+ 	    entry = &__glXRenderSizeTable[opcode];
+@@ -531,22 +534,19 @@ int __glXSwapRender(__GLXclientState *cl, GLbyte *pc)
+ 	    client->errorValue = commandsDone;
+             return __glXBadRenderRequest;
+         }
++
++	if (cmdlen < entry->bytes) {
++	    return BadLength;
++	}
++
+         if (entry->varsize) {
+             /* variable size command */
+             extra = (*entry->varsize)(pc + __GLX_RENDER_HDR_SIZE, True);
+             if (extra < 0) {
+                 return BadLength;
+             }
+-            if (cmdlen != __GLX_PAD(entry->bytes + extra)) {
+-                return BadLength;
+-            }
+-        } else {
+-            /* constant size command */
+-            if (cmdlen != __GLX_PAD(entry->bytes)) {
+-                return BadLength;
+-            }
+         }
+-	if (left < cmdlen) {
++	if (cmdlen != safe_pad(safe_add(entry->bytes, extra))) {
+ 	    return BadLength;
+ 	}
+ 
+-- 
+2.1.4
+

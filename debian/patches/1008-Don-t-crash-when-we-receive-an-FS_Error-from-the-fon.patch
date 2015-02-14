@@ -1,0 +1,27 @@
+From a2c7cd9fef2d7d108e224ab47e77130dc98b249d Mon Sep 17 00:00:00 2001
+From: Mike DePaulo <mikedep333@gmail.com>
+Date: Sun, 8 Feb 2015 21:33:30 -0500
+Subject: [PATCH 08/40] Don't crash when we receive an FS_Error from the font
+ server (Guillem Jover). from xorg/lib/libXfont commit
+ bfb8a71f4f7e5c5ed4278cb3ee271bf9990d276d
+
+---
+ nx-X11/lib/font/fc/fserve.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/nx-X11/lib/font/fc/fserve.c b/nx-X11/lib/font/fc/fserve.c
+index 0fdcc1d..c159b2b 100644
+--- a/nx-X11/lib/font/fc/fserve.c
++++ b/nx-X11/lib/font/fc/fserve.c
+@@ -2366,7 +2366,7 @@ fs_read_list_info(FontPathElementPtr fpe, FSBlockDataPtr blockrec)
+     _fs_free_props (&binfo->info);
+ 
+     rep = (fsListFontsWithXInfoReply *) fs_get_reply (conn, &ret);
+-    if (rep == 0)
++	if (!rep || rep->type == FS_Error)
+     {
+ 	if (ret == FSIO_BLOCK)
+ 	    return StillWorking;
+-- 
+2.1.4
+

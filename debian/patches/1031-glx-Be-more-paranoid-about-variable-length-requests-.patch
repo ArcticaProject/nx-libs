@@ -1,0 +1,76 @@
+From 5c43bb2484414b37115dac56dc76f1ecf4c05837 Mon Sep 17 00:00:00 2001
+From: Adam Jackson <ajax@redhat.com>
+Date: Mon, 10 Nov 2014 12:13:36 -0500
+Subject: [PATCH 31/40] glx: Be more paranoid about variable-length requests
+ [CVE-2014-8093 1/6] (v2)
+
+If the size computation routine returns -1 we should just reject the
+request outright.  Clamping it to zero could give an attacker the
+opportunity to also mangle cmdlen in such a way that the subsequent
+length check passes, and the request would get executed, thus passing
+data we wanted to reject to the renderer.
+
+v3: backport to nx-libs 3.6.x (Mike DePaulo)
+v2: backport to RHEL5 - fix swap paths
+Reviewed-by: Keith Packard <keithp@keithp.com>
+Reviewed-by: Julien Cristau <jcristau@debian.org>
+Reviewed-by: Michal Srb <msrb@suse.com>
+Reviewed-by: Andy Ritger <aritger@nvidia.com>
+Signed-off-by: Adam Jackson <ajax@redhat.com>
+Signed-off-by: Alan Coopersmith <alan.coopersmith@oracle.com>
+Signed-off-by: Fedora X Ninjas <x@fedoraproject.org>
+Signed-off-by: Dave Airlie <airlied@redhat.com>
+
+fixup swaps
+---
+ nx-X11/programs/Xserver/GL/glx/glxcmds.c     | 4 ++--
+ nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/nx-X11/programs/Xserver/GL/glx/glxcmds.c b/nx-X11/programs/Xserver/GL/glx/glxcmds.c
+index ca5eee8..02f3ba7 100644
+--- a/nx-X11/programs/Xserver/GL/glx/glxcmds.c
++++ b/nx-X11/programs/Xserver/GL/glx/glxcmds.c
+@@ -1484,7 +1484,7 @@ int __glXRender(__GLXclientState *cl, GLbyte *pc)
+             /* variable size command */
+             extra = (*entry->varsize)(pc + __GLX_RENDER_HDR_SIZE, False);
+             if (extra < 0) {
+-                extra = 0;
++                return BadLength;
+             }
+             if (cmdlen != __GLX_PAD(entry->bytes + extra)) {
+                 return BadLength;
+@@ -1601,7 +1601,7 @@ int __glXRenderLarge(__GLXclientState *cl, GLbyte *pc)
+ 	    */
+ 	    extra = (*entry->varsize)(pc + __GLX_RENDER_LARGE_HDR_SIZE, False);
+ 	    if (extra < 0) {
+-		extra = 0;
++	        return BadLength;
+ 	    }
+ 	    /* large command's header is 4 bytes longer, so add 4 */
+ 	    if (cmdlen != __GLX_PAD(entry->bytes + 4 + extra)) {
+diff --git a/nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c b/nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c
+index 595e814..027cba7 100644
+--- a/nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c
++++ b/nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c
+@@ -535,7 +535,7 @@ int __glXSwapRender(__GLXclientState *cl, GLbyte *pc)
+             /* variable size command */
+             extra = (*entry->varsize)(pc + __GLX_RENDER_HDR_SIZE, True);
+             if (extra < 0) {
+-                extra = 0;
++                return BadLength;
+             }
+             if (cmdlen != __GLX_PAD(entry->bytes + extra)) {
+                 return BadLength;
+@@ -659,7 +659,7 @@ int __glXSwapRenderLarge(__GLXclientState *cl, GLbyte *pc)
+ 	    */
+ 	    extra = (*entry->varsize)(pc + __GLX_RENDER_LARGE_HDR_SIZE, True);
+ 	    if (extra < 0) {
+-		extra = 0;
++		return BadLength;
+ 	    }
+ 	    /* large command's header is 4 bytes longer, so add 4 */
+ 	    if (cmdlen != __GLX_PAD(entry->bytes + 4 + extra)) {
+-- 
+2.1.4
+

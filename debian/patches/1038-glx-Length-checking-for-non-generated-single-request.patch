@@ -1,0 +1,413 @@
+From 8931066077a04999d973932e04da577bd6906c82 Mon Sep 17 00:00:00 2001
+From: Adam Jackson <ajax@redhat.com>
+Date: Mon, 10 Nov 2014 12:13:47 -0500
+Subject: [PATCH 38/40] glx: Length checking for non-generated single requests
+ (v2) [CVE-2014-8098 7/8]
+
+v2:
+Fix single versus vendor-private length checking for ARB_imaging subset
+extensions. (Julien Cristau)
+
+v3:
+Fix single versus vendor-private length checking for ARB_imaging subset
+extensions. (Julien Cristau)
+
+v4: backport to nx-libs 3.6.x (Mike DePaulo)
+
+Reviewed-by: Michal Srb <msrb@suse.com>
+Reviewed-by: Andy Ritger <aritger@nvidia.com>
+Signed-off-by: Adam Jackson <ajax@redhat.com>
+Signed-off-by: Julien Cristau <jcristau@debian.org>
+Signed-off-by: Alan Coopersmith <alan.coopersmith@oracle.com>
+Signed-off-by: Fedora X Ninjas <x@fedoraproject.org>
+Signed-off-by: Dave Airlie <airlied@redhat.com>
+
+fix safe_Add
+---
+ nx-X11/programs/Xserver/GL/glx/single2.c       | 21 +++++++++++++++------
+ nx-X11/programs/Xserver/GL/glx/single2swap.c   | 15 +++++++++++----
+ nx-X11/programs/Xserver/GL/glx/singlepix.c     | 19 ++++++++++++++-----
+ nx-X11/programs/Xserver/GL/glx/singlepixswap.c | 17 ++++++++++++-----
+ 4 files changed, 52 insertions(+), 20 deletions(-)
+
+diff --git a/nx-X11/programs/Xserver/GL/glx/single2.c b/nx-X11/programs/Xserver/GL/glx/single2.c
+index 9fee5ff..10152c3 100644
+--- a/nx-X11/programs/Xserver/GL/glx/single2.c
++++ b/nx-X11/programs/Xserver/GL/glx/single2.c
+@@ -48,11 +48,14 @@
+ 
+ int __glXDisp_FeedbackBuffer(__GLXclientState *cl, GLbyte *pc)
+ {
++    ClientPtr client = cl->client;
+     GLsizei size;
+     GLenum type;
+     __GLXcontext *cx;
+     int error;
+ 
++    REQUEST_FIXED_SIZE(xGLXSingleReq, 8);
++
+     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
+     if (!cx) {
+ 	return error;
+@@ -78,10 +81,12 @@ int __glXDisp_FeedbackBuffer(__GLXclientState *cl, GLbyte *pc)
+ 
+ int __glXDisp_SelectBuffer(__GLXclientState *cl, GLbyte *pc)
+ {
++    ClientPtr client = cl->client;
+     __GLXcontext *cx;
+     GLsizei size;
+     int error;
+ 
++    REQUEST_FIXED_SIZE(xGLXSingleReq, 4);
+     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
+     if (!cx) {
+ 	return error;
+@@ -106,7 +111,7 @@ int __glXDisp_SelectBuffer(__GLXclientState *cl, GLbyte *pc)
+ 
+ int __glXDisp_RenderMode(__GLXclientState *cl, GLbyte *pc)
+ {
+-    ClientPtr client;
++    ClientPtr client = cl->client;
+     xGLXRenderModeReply reply;
+     __GLXcontext *cx;
+     GLint nitems=0, retBytes=0, retval, newModeCheck;
+@@ -114,6 +119,8 @@ int __glXDisp_RenderMode(__GLXclientState *cl, GLbyte *pc)
+     GLenum newMode;
+     int error;
+ 
++    REQUEST_FIXED_SIZE(xGLXSingleReq, 4);
++
+     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
+     if (!cx) {
+ 	return error;
+@@ -188,7 +195,6 @@ int __glXDisp_RenderMode(__GLXclientState *cl, GLbyte *pc)
+     ** selection array, as per the API for glRenderMode itself.
+     */
+   noChangeAllowed:;
+-    client = cl->client;
+     reply.length = nitems;
+     reply.type = X_Reply;
+     reply.sequenceNumber = client->sequence;
+@@ -204,9 +210,11 @@ int __glXDisp_RenderMode(__GLXclientState *cl, GLbyte *pc)
+ 
+ int __glXDisp_Flush(__GLXclientState *cl, GLbyte *pc)
+ {
++        ClientPtr client = cl->client;
+ 	__GLXcontext *cx;
+ 	int error;
+ 
++	REQUEST_SIZE_MATCH(xGLXSingleReq);
+ 	cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
+ 	if (!cx) {
+ 		return error;
+@@ -219,10 +227,11 @@ int __glXDisp_Flush(__GLXclientState *cl, GLbyte *pc)
+ 
+ int __glXDisp_Finish(__GLXclientState *cl, GLbyte *pc)
+ {
++    ClientPtr client = cl->client;
+     __GLXcontext *cx;
+-    ClientPtr client;
+     int error;
+ 
++    REQUEST_SIZE_MATCH(xGLXSingleReq);
+     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
+     if (!cx) {
+ 	return error;
+@@ -233,7 +242,6 @@ int __glXDisp_Finish(__GLXclientState *cl, GLbyte *pc)
+     __GLX_NOTE_FLUSHED_CMDS(cx);
+ 
+     /* Send empty reply packet to indicate finish is finished */
+-    client = cl->client;
+     __GLX_BEGIN_REPLY(0);
+     __GLX_SEND_HEADER();
+     return Success;
+@@ -302,7 +310,7 @@ char *__glXcombine_strings(const char *cext_string, const char *sext_string)
+ 
+ int DoGetString(__GLXclientState *cl, GLbyte *pc, GLboolean need_swap)
+ {
+-    ClientPtr client;
++    ClientPtr client = cl->client;
+     __GLXcontext *cx;
+     GLenum name;
+     const char *string;
+@@ -311,6 +319,8 @@ int DoGetString(__GLXclientState *cl, GLbyte *pc, GLboolean need_swap)
+     char *buf = NULL, *buf1 = NULL;
+     GLint length = 0;
+ 
++    REQUEST_FIXED_SIZE(xGLXSingleReq, 4);
++
+     /* If the client has the opposite byte order, swap the contextTag and
+      * the name.
+      */
+@@ -327,7 +337,6 @@ int DoGetString(__GLXclientState *cl, GLbyte *pc, GLboolean need_swap)
+     pc += __GLX_SINGLE_HDR_SIZE;
+     name = *(GLenum *)(pc + 0);
+     string = (const char *)glGetString(name);
+-    client = cl->client;
+ 
+     /*
+     ** Restrict extensions to those that are supported by both the
+diff --git a/nx-X11/programs/Xserver/GL/glx/single2swap.c b/nx-X11/programs/Xserver/GL/glx/single2swap.c
+index dab98ad..4b8541b 100644
+--- a/nx-X11/programs/Xserver/GL/glx/single2swap.c
++++ b/nx-X11/programs/Xserver/GL/glx/single2swap.c
+@@ -48,12 +48,14 @@
+ 
+ int __glXDispSwap_FeedbackBuffer(__GLXclientState *cl, GLbyte *pc)
+ {
++    ClientPtr client = cl->client;
+     GLsizei size;
+     GLenum type;
+     __GLX_DECLARE_SWAP_VARIABLES;
+     __GLXcontext *cx;
+     int error;
+ 
++    REQUEST_FIXED_SIZE(xGLXSingleReq, 8);
+     __GLX_SWAP_INT(&((xGLXSingleReq *)pc)->contextTag);
+     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
+     if (!cx) {
+@@ -82,11 +84,13 @@ int __glXDispSwap_FeedbackBuffer(__GLXclientState *cl, GLbyte *pc)
+ 
+ int __glXDispSwap_SelectBuffer(__GLXclientState *cl, GLbyte *pc)
+ {
++    ClientPtr client = cl->client;
+     __GLXcontext *cx;
+     GLsizei size;
+     __GLX_DECLARE_SWAP_VARIABLES;
+     int error;
+ 
++    REQUEST_FIXED_SIZE(xGLXSingleReq, 4);
+     __GLX_SWAP_INT(&((xGLXSingleReq *)pc)->contextTag);
+     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
+     if (!cx) {
+@@ -113,7 +117,7 @@ int __glXDispSwap_SelectBuffer(__GLXclientState *cl, GLbyte *pc)
+ 
+ int __glXDispSwap_RenderMode(__GLXclientState *cl, GLbyte *pc)
+ {
+-    ClientPtr client;
++    ClientPtr client = cl->client;
+     __GLXcontext *cx;
+     xGLXRenderModeReply reply;
+     GLint nitems=0, retBytes=0, retval, newModeCheck;
+@@ -123,6 +127,8 @@ int __glXDispSwap_RenderMode(__GLXclientState *cl, GLbyte *pc)
+     __GLX_DECLARE_SWAP_ARRAY_VARIABLES;
+     int error;
+ 
++    REQUEST_FIXED_SIZE(xGLXSingleReq, 4);
++
+     __GLX_SWAP_INT(&((xGLXSingleReq *)pc)->contextTag);
+     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
+     if (!cx) {
+@@ -201,7 +207,6 @@ int __glXDispSwap_RenderMode(__GLXclientState *cl, GLbyte *pc)
+     ** selection array, as per the API for glRenderMode itself.
+     */
+   noChangeAllowed:;
+-    client = cl->client;
+     reply.length = nitems;
+     reply.type = X_Reply;
+     reply.sequenceNumber = client->sequence;
+@@ -222,10 +227,12 @@ int __glXDispSwap_RenderMode(__GLXclientState *cl, GLbyte *pc)
+ 
+ int __glXDispSwap_Flush(__GLXclientState *cl, GLbyte *pc)
+ {
++    ClientPtr client = cl->client;
+ 	__GLXcontext *cx;
+ 	int error;
+ 	__GLX_DECLARE_SWAP_VARIABLES;
+ 
++	REQUEST_SIZE_MATCH(xGLXSingleReq);
+ 	__GLX_SWAP_INT(&((xGLXSingleReq *)pc)->contextTag);
+ 	cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
+ 	if (!cx) {
+@@ -239,11 +246,12 @@ int __glXDispSwap_Flush(__GLXclientState *cl, GLbyte *pc)
+ 
+ int __glXDispSwap_Finish(__GLXclientState *cl, GLbyte *pc)
+ {
++    ClientPtr client = cl->client;
+     __GLXcontext *cx;
+-    ClientPtr client;
+     int error;
+     __GLX_DECLARE_SWAP_VARIABLES;
+ 
++    REQUEST_SIZE_MATCH(xGLXSingleReq);
+     __GLX_SWAP_INT(&((xGLXSingleReq *)pc)->contextTag);
+     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
+     if (!cx) {
+@@ -255,7 +263,6 @@ int __glXDispSwap_Finish(__GLXclientState *cl, GLbyte *pc)
+     __GLX_NOTE_FLUSHED_CMDS(cx);
+ 
+     /* Send empty reply packet to indicate finish is finished */
+-    client = cl->client;
+     __GLX_BEGIN_REPLY(0);
+     __GLX_PUT_RETVAL(0);
+     __GLX_SWAP_REPLY_HEADER();
+diff --git a/nx-X11/programs/Xserver/GL/glx/singlepix.c b/nx-X11/programs/Xserver/GL/glx/singlepix.c
+index be804d8..a156db5 100644
+--- a/nx-X11/programs/Xserver/GL/glx/singlepix.c
++++ b/nx-X11/programs/Xserver/GL/glx/singlepix.c
+@@ -57,6 +57,8 @@ int __glXDisp_ReadPixels(__GLXclientState *cl, GLbyte *pc)
+     int error;
+     char *answer, answerBuffer[200];
+ 
++    REQUEST_FIXED_SIZE(xGLXSingleReq, 28);
++
+     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
+     if (!cx) {
+ 	return error;
+@@ -108,6 +110,7 @@ int __glXDisp_GetTexImage(__GLXclientState *cl, GLbyte *pc)
+     char *answer, answerBuffer[200];
+     GLint width=0, height=0, depth=1;
+ 
++    REQUEST_FIXED_SIZE(xGLXSingleReq, 20);
+     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
+     if (!cx) {
+ 	return error;
+@@ -204,6 +207,7 @@ int __glXDisp_GetSeparableFilter(__GLXclientState *cl, GLbyte *pc)
+     char *answer, answerBuffer[200];
+     GLint width=0, height=0;
+ 
++    REQUEST_FIXED_SIZE(xGLXSingleReq, 16);
+     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
+     if (!cx) {
+ 	return error;
+@@ -227,13 +231,11 @@ int __glXDisp_GetSeparableFilter(__GLXclientState *cl, GLbyte *pc)
+     compsize = __glGetTexImage_size(target,1,format,type,width,1,1);
+     compsize2 = __glGetTexImage_size(target,1,format,type,height,1,1);
+ 
+-    if (compsize < 0) return BadLength;
+-    if (compsize2 < 0) compsize2 = 0;
+-    compsize = __GLX_PAD(compsize);
+-    compsize2 = __GLX_PAD(compsize2);
++    if ((compsize = safe_pad(compsize)) < 0) return BadLength;
++    if ((compsize2 = safe_pad(compsize2)) < 0) return BadLength;
+ 
+     glPixelStorei(GL_PACK_SWAP_BYTES, swapBytes);
+-    __GLX_GET_ANSWER_BUFFER(answer,cl,compsize + compsize2,1);
++    __GLX_GET_ANSWER_BUFFER(answer,cl,safe_add(compsize, compsize2),1);
+     __glXClearErrorOccured();
+     glGetSeparableFilter(
+ 		  *(GLenum   *)(pc + 0),
+@@ -269,6 +271,7 @@ int __glXDisp_GetConvolutionFilter(__GLXclientState *cl, GLbyte *pc)
+     char *answer, answerBuffer[200];
+     GLint width=0, height=0;
+ 
++    REQUEST_FIXED_SIZE(xGLXSingleReq, 16);
+     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
+     if (!cx) {
+ 	return error;
+@@ -328,6 +331,8 @@ int __glXDisp_GetHistogram(__GLXclientState *cl, GLbyte *pc)
+     char *answer, answerBuffer[200];
+     GLint width=0;
+ 
++    REQUEST_FIXED_SIZE(xGLXSingleReq, 16);
++
+     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
+     if (!cx) {
+ 	return error;
+@@ -376,6 +381,8 @@ int __glXDisp_GetMinmax(__GLXclientState *cl, GLbyte *pc)
+     int error;
+     char *answer, answerBuffer[200];
+ 
++    REQUEST_FIXED_SIZE(xGLXSingleReq, 16);
++
+     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
+     if (!cx) {
+ 	return error;
+@@ -419,6 +426,8 @@ int __glXDisp_GetColorTable(__GLXclientState *cl, GLbyte *pc)
+     char *answer, answerBuffer[200];
+     GLint width=0;
+ 
++    REQUEST_FIXED_SIZE(xGLXSingleReq, 16);
++
+     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
+     if (!cx) {
+ 	return error;
+diff --git a/nx-X11/programs/Xserver/GL/glx/singlepixswap.c b/nx-X11/programs/Xserver/GL/glx/singlepixswap.c
+index cdc6f16..24f2e76 100644
+--- a/nx-X11/programs/Xserver/GL/glx/singlepixswap.c
++++ b/nx-X11/programs/Xserver/GL/glx/singlepixswap.c
+@@ -58,6 +58,8 @@ int __glXDispSwap_ReadPixels(__GLXclientState *cl, GLbyte *pc)
+     int error;
+     char *answer, answerBuffer[200];
+ 
++    REQUEST_FIXED_SIZE(xGLXSingleReq, 28);
++
+     __GLX_SWAP_INT(&((xGLXSingleReq *)pc)->contextTag);
+     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
+     if (!cx) {
+@@ -120,6 +122,7 @@ int __glXDispSwap_GetTexImage(__GLXclientState *cl, GLbyte *pc)
+     char *answer, answerBuffer[200];
+     GLint width=0, height=0, depth=1;
+ 
++    REQUEST_FIXED_SIZE(xGLXSingleReq, 24);
+     __GLX_SWAP_INT(&((xGLXSingleReq *)pc)->contextTag);
+     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
+     if (!cx) {
+@@ -190,6 +193,7 @@ int __glXDispSwap_GetPolygonStipple(__GLXclientState *cl, GLbyte *pc)
+     char *answer;
+     __GLX_DECLARE_SWAP_VARIABLES;
+ 
++    REQUEST_FIXED_SIZE(xGLXSingleReq, 4);
+     __GLX_SWAP_INT(&((xGLXSingleReq *)pc)->contextTag);
+     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
+     if (!cx) {
+@@ -230,6 +234,7 @@ int __glXDispSwap_GetSeparableFilter(__GLXclientState *cl, GLbyte *pc)
+     char *answer, answerBuffer[200];
+     GLint width=0, height=0;
+ 
++    REQUEST_FIXED_SIZE(xGLXSingleReq, 16);
+     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
+     if (!cx) {
+ 	return error;
+@@ -257,13 +262,11 @@ int __glXDispSwap_GetSeparableFilter(__GLXclientState *cl, GLbyte *pc)
+     compsize = __glGetTexImage_size(target,1,format,type,width,1,1);
+     compsize2 = __glGetTexImage_size(target,1,format,type,height,1,1);
+ 
+-    if (compsize < 0) return BadLength;
+-    if (compsize2 < 0) compsize2 = 0;
+-    compsize = __GLX_PAD(compsize);
+-    compsize2 = __GLX_PAD(compsize2);
++    if ((compsize = safe_pad(compsize)) < 0) return BadLength;
++    if ((compsize2 = safe_pad(compsize2)) < 0) return BadLength;
+ 
+     glPixelStorei(GL_PACK_SWAP_BYTES, !swapBytes);
+-    __GLX_GET_ANSWER_BUFFER(answer,cl,compsize + compsize2,1);
++    __GLX_GET_ANSWER_BUFFER(answer,cl,safe_add(compsize, compsize2),1);
+     __glXClearErrorOccured();
+     glGetSeparableFilter(
+ 		  *(GLenum   *)(pc + 0),
+@@ -302,6 +305,7 @@ int __glXDispSwap_GetConvolutionFilter(__GLXclientState *cl, GLbyte *pc)
+     char *answer, answerBuffer[200];
+     GLint width=0, height=0;
+ 
++    REQUEST_FIXED_SIZE(xGLXSingleReq, 16);
+     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
+     if (!cx) {
+ 	return error;
+@@ -368,6 +372,7 @@ int __glXDispSwap_GetHistogram(__GLXclientState *cl, GLbyte *pc)
+     char *answer, answerBuffer[200];
+     GLint width=0;
+ 
++    REQUEST_FIXED_SIZE(xGLXSingleReq, 16);
+     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
+     if (!cx) {
+ 	return error;
+@@ -422,6 +427,7 @@ int __glXDispSwap_GetMinmax(__GLXclientState *cl, GLbyte *pc)
+     __GLX_DECLARE_SWAP_VARIABLES;
+     char *answer, answerBuffer[200];
+ 
++    REQUEST_FIXED_SIZE(xGLXSingleReq, 16);
+     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
+     if (!cx) {
+ 	return error;
+@@ -470,6 +476,7 @@ int __glXDispSwap_GetColorTable(__GLXclientState *cl, GLbyte *pc)
+     char *answer, answerBuffer[200];
+     GLint width=0;
+ 
++    REQUEST_FIXED_SIZE(xGLXSingleReq, 16);
+     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
+     if (!cx) {
+ 	return error;
+-- 
+2.1.4
+

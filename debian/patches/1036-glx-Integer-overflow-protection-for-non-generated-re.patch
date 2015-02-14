@@ -1,0 +1,215 @@
+From ddb1235bc621d06bf28309be70c173ae06131edf Mon Sep 17 00:00:00 2001
+From: Adam Jackson <ajax@redhat.com>
+Date: Mon, 10 Nov 2014 12:13:42 -0500
+Subject: [PATCH 36/40] glx: Integer overflow protection for non-generated
+ render requests (v3) [CVE-2014-8093 5/6]
+
+v2:
+Fix constants in __glXMap2fReqSize (Michal Srb)
+Validate w/h/d for proxy targets too (Keith Packard)
+
+v3:
+Fix Map[12]Size to correctly reject order == 0 (Julien Cristau)
+
+v4: backport to nx-libs 3.6.x (Mike DePaulo)
+
+Reviewed-by: Keith Packard <keithp@keithp.com>
+Reviewed-by: Michal Srb <msrb@suse.com>
+Reviewed-by: Andy Ritger <aritger@nvidia.com>
+Signed-off-by: Adam Jackson <ajax@redhat.com>
+Signed-off-by: Alan Coopersmith <alan.coopersmith@oracle.com>
+Signed-off-by: Fedora X Ninjas <x@fedoraproject.org>
+Signed-off-by: Dave Airlie <airlied@redhat.com>
+---
+ nx-X11/programs/Xserver/GL/glx/rensize.c | 68 +++++++++++++++++---------------
+ 1 file changed, 37 insertions(+), 31 deletions(-)
+
+diff --git a/nx-X11/programs/Xserver/GL/glx/rensize.c b/nx-X11/programs/Xserver/GL/glx/rensize.c
+index 7ab02d2..9bf0d00 100644
+--- a/nx-X11/programs/Xserver/GL/glx/rensize.c
++++ b/nx-X11/programs/Xserver/GL/glx/rensize.c
+@@ -167,16 +167,10 @@ int __glXTexEnvivReqSize(GLbyte *pc, Bool swap )
+     return __glXTexEnvfvReqSize( pc, swap );
+ }
+ 
+-static int Map1Size( GLint k, GLint order)
+-{
+-    if (order <= 0 || k < 0) return -1;
+-    return k * order;
+-}
+-
+ int __glXMap1dReqSize(GLbyte *pc, Bool swap )
+ {
+     GLenum target;
+-    GLint order, k;
++    GLint order;
+ 
+     target = *(GLenum*) (pc + 16);
+     order = *(GLint*) (pc + 20);
+@@ -184,14 +178,15 @@ int __glXMap1dReqSize(GLbyte *pc, Bool swap )
+ 	target = SWAPL( target );
+ 	order = SWAPL( order );
+     }
+-    k = __glMap1d_size( target );
+-    return 8 * Map1Size( k, order );
++    if (order < 1)
++	return -1;
++    return safe_mul(8, safe_mul(__glMap1d_size(target), order));
+ }
+ 
+ int __glXMap1fReqSize(GLbyte *pc, Bool swap )
+ {
+     GLenum target;
+-    GLint order, k;
++    GLint order;
+ 
+     target = *(GLenum *)(pc + 0);
+     order = *(GLint *)(pc + 12);
+@@ -199,20 +194,21 @@ int __glXMap1fReqSize(GLbyte *pc, Bool swap )
+ 	target = SWAPL( target );
+ 	order = SWAPL( order );
+     }
+-    k = __glMap1f_size(target);
+-    return 4 * Map1Size(k, order);
++    if (order < 1)
++	return -1;
++    return safe_mul(4, safe_mul(__glMap1f_size(target), order));
+ }
+ 
+ static int Map2Size(int k, int majorOrder, int minorOrder)
+ {
+-    if (majorOrder <= 0 || minorOrder <= 0 || k < 0) return -1;
+-    return k * majorOrder * minorOrder;
++    if (majorOrder < 1 || minorOrder < 1) return -1;
++    return safe_mul(k, safe_mul(majorOrder, minorOrder));
+ }
+ 
+ int __glXMap2dReqSize(GLbyte *pc, Bool swap )
+ {
+     GLenum target;
+-    GLint uorder, vorder, k;
++    GLint uorder, vorder;
+ 
+     target = *(GLenum *)(pc + 32);
+     uorder = *(GLint *)(pc + 36);
+@@ -222,14 +218,13 @@ int __glXMap2dReqSize(GLbyte *pc, Bool swap )
+ 	uorder = SWAPL( uorder );
+ 	vorder = SWAPL( vorder );
+     }
+-    k = __glMap2d_size( target );
+-    return 8 * Map2Size( k, uorder, vorder );
++    return safe_mul(8, Map2Size(__glMap2d_size(target), uorder, vorder));
+ }
+ 
+ int __glXMap2fReqSize(GLbyte *pc, Bool swap )
+ {
+     GLenum target;
+-    GLint uorder, vorder, k;
++    GLint uorder, vorder;
+ 
+     target = *(GLenum *)(pc + 0);
+     uorder = *(GLint *)(pc + 12);
+@@ -239,8 +234,7 @@ int __glXMap2fReqSize(GLbyte *pc, Bool swap )
+ 	uorder = SWAPL( uorder );
+ 	vorder = SWAPL( vorder );
+     }
+-    k = __glMap2f_size( target );
+-    return 4 * Map2Size( k, uorder, vorder );
++    return safe_mul(4, Map2Size(__glMap2f_size(target), uorder, vorder));
+ }
+ 
+ int __glXPixelMapfvReqSize(GLbyte *pc, Bool swap )
+@@ -315,13 +309,16 @@ int __glXImageSize( GLenum format, GLenum type, GLenum target,
+     GLint bytesPerElement, elementsPerGroup, groupsPerRow;
+     GLint groupSize, rowSize, padding, imageSize;
+ 
++    if (w == 0 || h == 0 || d == 0)
++        return 0;
++
+     if (w < 0 || h < 0 || d < 0 ||
+ 	(type == GL_BITMAP &&
+ 	 (format != GL_COLOR_INDEX && format != GL_STENCIL_INDEX))) {
+ 	return -1;
+     }
+-    if (w==0 || h==0 || d == 0) return 0;
+ 
++    /* proxy targets have no data */
+     switch( target ) {
+     case GL_PROXY_TEXTURE_1D:
+     case GL_PROXY_TEXTURE_2D:
+@@ -338,6 +335,12 @@ int __glXImageSize( GLenum format, GLenum type, GLenum target,
+ 	return 0;
+     }
+ 
++    /* real data has to have real sizes */
++    if (imageHeight < 0 || rowLength < 0 || skipImages < 0 || skipRows < 0)
++        return -1;
++    if (alignment != 1 && alignment != 2 && alignment != 4 && alignment != 8)
++        return -1;
++
+     if (type == GL_BITMAP) {
+ 	if (rowLength > 0) {
+ 	    groupsPerRow = rowLength;
+@@ -345,11 +348,13 @@ int __glXImageSize( GLenum format, GLenum type, GLenum target,
+ 	    groupsPerRow = w;
+ 	}
+ 	rowSize = (groupsPerRow + 7) >> 3;
++        if (rowSize < 0)
++            return -1;
+ 	padding = (rowSize % alignment);
+ 	if (padding) {
+ 	    rowSize += alignment - padding;
+ 	}
+-	return ((h + skipRows) * rowSize);
++        return safe_mul(safe_add(h, skipRows), rowSize);
+     } else {
+ 	switch(format) {
+ 	  case GL_COLOR_INDEX:
+@@ -430,23 +435,25 @@ int __glXImageSize( GLenum format, GLenum type, GLenum target,
+ 	  default:
+ 	    return -1;
+ 	}
++        /* known safe by the switches above, not checked */
+ 	groupSize = bytesPerElement * elementsPerGroup;
+ 	if (rowLength > 0) {
+ 	    groupsPerRow = rowLength;
+ 	} else {
+ 	    groupsPerRow = w;
+ 	}
+-	rowSize = groupsPerRow * groupSize;
++        if ((rowSize = safe_mul(groupsPerRow, groupSize)) < 0)
++            return -1;
+ 	padding = (rowSize % alignment);
+ 	if (padding) {
+ 	    rowSize += alignment - padding;
+ 	}
+-	if (imageHeight > 0) {
+-	    imageSize = (imageHeight + skipRows) * rowSize;
+-	} else {
+-	    imageSize = (h + skipRows) * rowSize;
+-	}
+-	return ((d + skipImages) * imageSize);
++        if (imageHeight > 0)
++            h = imageHeight;
++        h = safe_add(h, skipRows);
++
++        imageSize = safe_mul(h, rowSize);
++        return safe_mul(safe_add(d, skipImages), imageSize);
+     }
+ }
+ 
+@@ -873,10 +880,9 @@ int __glXSeparableFilter2DReqSize(GLbyte *pc, Bool swap )
+     /* XXX Should rowLength be used for either or both image? */
+     image1size = __glXImageSize( format, type, 0, w, 1, 1,
+ 				 0, rowLength, 0, 0, alignment );
+-    image1size = __GLX_PAD(image1size);
+     image2size = __glXImageSize( format, type, 0, h, 1, 1,
+ 				 0, rowLength, 0, 0, alignment );
+-    return image1size + image2size;
++    return safe_add(safe_pad(image1size), image2size);
+ 
+ }
+ 
+-- 
+2.1.4
+

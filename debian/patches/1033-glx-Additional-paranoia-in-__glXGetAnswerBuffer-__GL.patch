@@ -1,0 +1,41 @@
+From d0fcbc8a6ca82df82c410d0f8f9062b05fa5ec8d Mon Sep 17 00:00:00 2001
+From: Adam Jackson <ajax@redhat.com>
+Date: Mon, 10 Nov 2014 12:13:38 -0500
+Subject: [PATCH 33/40] glx: Additional paranoia in __glXGetAnswerBuffer /
+ __GLX_GET_ANSWER_BUFFER (v2) [CVE-2014-8093 3/6]
+
+If the computed reply size is negative, something went wrong, treat it
+as an error.
+
+v2: Be more careful about size_t being unsigned (Matthieu Herrb)
+v3: SIZE_MAX not SIZE_T_MAX (Alan Coopersmith)
+v4: backport to nx-libs 3.6.x (Mike DePaulo)
+
+Reviewed-by: Julien Cristau <jcristau@debian.org>
+Reviewed-by: Michal Srb <msrb@suse.com>
+Reviewed-by: Andy Ritger <aritger@nvidia.com>
+Signed-off-by: Adam Jackson <ajax@redhat.com>
+Signed-off-by: Alan Coopersmith <alan.coopersmith@oracle.com>
+Signed-off-by: Fedora X Ninjas <x@fedoraproject.org>
+Signed-off-by: Dave Airlie <airlied@redhat.com>
+---
+ nx-X11/programs/Xserver/GL/glx/unpack.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/nx-X11/programs/Xserver/GL/glx/unpack.h b/nx-X11/programs/Xserver/GL/glx/unpack.h
+index 723fb85..94bdae8 100644
+--- a/nx-X11/programs/Xserver/GL/glx/unpack.h
++++ b/nx-X11/programs/Xserver/GL/glx/unpack.h
+@@ -89,7 +89,8 @@ extern xGLXSingleReply __glXReply;
+ ** pointer.
+ */
+ #define __GLX_GET_ANSWER_BUFFER(res,cl,size,align)			 \
+-    if ((size) > sizeof(answerBuffer)) {				 \
++    if (size < 0) return BadLength;                                      \
++    else if ((size) > sizeof(answerBuffer)) {				 \
+ 	int bump;							 \
+ 	if ((cl)->returnBufSize < (size)+(align)) {			 \
+ 	    (cl)->returnBuf = (GLbyte*)Xrealloc((cl)->returnBuf,	 \
+-- 
+2.1.4
+

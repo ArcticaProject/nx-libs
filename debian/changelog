@@ -121,6 +121,73 @@ nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
     launched as x2goagent, use X2Go-specific paths for the keystrokes.cfg file.
     (Fixes: #744).
 
+  [ Michael DePaulo ]
+  * Security fixes:
+    - Rebase loads of X.Org patches (mainly from RHEL-5) against NX. If not
+      all patches from a CVE patch series appear here, then it means that
+      the affected file/code is not used in NX at build time.
+
+    - X.Org CVE-2011-2895:
+        1001-LZW-decompress-fix-for-CVE-2011-2895-From-xorg-lib-X.patch
+    - X.Org CVE-2011-4028:
+        1002-Fix-CVE-2011-4028-File-disclosure-vulnerability.-ups.patch
+    - X.Org CVE-2013-4396:
+        1003-Avoid-use-after-free-in-dix-dixfonts.c-doImageText-C.patch
+    - X.Org CVE-2013-6462:
+        1004-CVE-2013-6462-unlimited-sscanf-overflows-stack-buffe.patch
+    - X.Org CVE-2014-0209:
+        1005-CVE-2014-0209-integer-overflow-of-realloc-size-in-Fo.patch
+        1006-CVE-2014-0209-integer-overflow-of-realloc-size-in-le.patch
+    - X.Org CVE-2014-0210:
+        1007-CVE-2014-0210-unvalidated-length-in-_fs_recv_conn_se.patch
+        1009-CVE-2014-0210-unvalidated-lengths-when-reading-repli.patch
+        1011-CVE-2014-0210-unvalidated-length-fields-in-fs_read_q.patch
+        1014-CVE-2014-0210-unvalidated-length-fields-in-fs_read_e.patch
+        1015-CVE-2014-0210-unvalidated-length-fields-in-fs_read_g.patch
+        1016-CVE-2014-0210-unvalidated-length-fields-in-fs_read_l.patch
+        1017-CVE-2014-0210-unvalidated-length-fields-in-fs_read_l.patch
+    - X.Org CVE-2014-0211:
+        1010-CVE-2014-0211-Integer-overflow-in-fs_get_reply-_fs_s.patch
+        1012-CVE-2014-0211-integer-overflow-in-fs_read_extent_inf.patch
+        1013-CVE-2014-0211-integer-overflow-in-fs_alloc_glyphs-fr.patch
+        1018-unchecked-malloc-may-allow-unauthed-client-to-crash-.patch
+    - X.Org CVE-2014-8092:
+        1019-dix-integer-overflow-in-ProcPutImage-CVE-2014-8092-1.patch
+        1020-dix-integer-overflow-in-GetHosts-CVE-2014-8092-2-4.patch
+        1021-dix-integer-overflow-in-RegionSizeof-CVE-2014-8092-3.patch
+        1022-dix-integer-overflow-in-REQUEST_FIXED_SIZE-CVE-2014-.patch
+    - X.Org CVE-2014-8097:
+        1023-dbe-unvalidated-lengths-in-DbeSwapBuffers-calls-CVE-.patch
+    - X.Org CVE-2014-8095:
+        1024-Xi-unvalidated-lengths-in-Xinput-extension-CVE-2014-.patch
+    - X.Org CVE-2014-8096:
+        1025-xcmisc-unvalidated-length-in-SProcXCMiscGetXIDList-C.patch
+    - X.Org CVE-2014-8099:
+        1026-Xv-unvalidated-lengths-in-XVideo-extension-swapped-p.patch
+    - X.Org CVE-2014-8100:
+        1027-render-check-request-size-before-reading-it-CVE-2014.patch
+        1028-render-unvalidated-lengths-in-Render-extn.-swapped-p.patch
+    - X.Org CVE-2014-8102:
+        1029-xfixes-unvalidated-length-in-SProcXFixesSelectSelect.patch
+    - X.Org CVE-2014-8101:
+        1030-randr-unvalidated-lengths-in-RandR-extension-swapped.patch
+    - X.Org CVE-2014-8093:
+        1031-glx-Be-more-paranoid-about-variable-length-requests-.patch
+        1032-glx-Be-more-strict-about-rejecting-invalid-image-siz.patch
+        1033-glx-Additional-paranoia-in-__glXGetAnswerBuffer-__GL.patch
+        1034-glx-Add-safe_-add-mul-pad-v3-CVE-2014-8093-4-6-v4.patch
+        1036-glx-Integer-overflow-protection-for-non-generated-re.patch
+    - X.Org CVE-2014-8098:
+        1035-glx-Length-checking-for-GLXRender-requests-v2-CVE-20.patch
+        1037-glx-Top-level-length-checking-for-swapped-VendorPriv.patch
+        1038-glx-Length-checking-for-non-generated-single-request.patch
+        1039-glx-Length-checking-for-RenderLarge-requests-v2-CVE-.patch
+        1040-glx-Pass-remaining-request-length-into-varsize-v2-CV.patch
+
+    - Security fixes with no assigned CVE:
+        1008-Don-t-crash-when-we-receive-an-FS_Error-from-the-fon.patch
+
+
   [ Mihai Moldovan ]
   * Change string "X2go" to "X2Go" where appropriate.
 
