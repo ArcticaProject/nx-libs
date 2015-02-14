@@ -114,7 +114,7 @@ override_dh_auto_build:
 	# let's prep the libnx-xinerama1.postinst script with the value of the build systems's DEB_BUILD_MULTIARCH variable
 	sed debian/libnx-xinerama1.postinst.in -e 's/#DEB_BUILD_MULTIARCH#/$(DEB_BUILD_MULTIARCH)/' > debian/libnx-xinerama1.postinst
 
-	LOCAL_LDFLAGS=$(LDFLAGS) SHLIBGLOBALSFLAGS=$(LDFLAGS) SHLIBDIR=$(LIBDIR) PREFIX=/usr dh_auto_build --parallel
+	LOCAL_LDFLAGS="$(LDFLAGS)" SHLIBGLOBALSFLAGS="$(LDFLAGS)" SHLIBDIR="$(LIBDIR)" PREFIX=/usr dh_auto_build --parallel
 
 override_dh_strip:
 	dh_strip -plibnx-x11-6 --dbg-package=libnx-x11-6-dbg

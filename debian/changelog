@@ -85,6 +85,7 @@ nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
     + Add to B-D: expat.
     + Install upstream ChangeLogs into bin:packages.
     + Remove upstream nx-libs ChangeLog during override_dh_clean.
+    + Use proper quoting on build flag vars (they may contain spaces).
 
   * nx-libs.spec:
     + The gpg-offline bin:package is not available in our SLE repo. We can do
