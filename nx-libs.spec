@@ -707,7 +707,7 @@ sed -i -e 's,/usr/local,/usr,' nx-X11/config/cf/site.def
 sed -i -e 's#-O3#%{optflags}#' nx-X11/config/cf/host.def
 # Use multilib dirs
 # We're installing binaries into %%{_libdir}/nx/bin rather than %%{_libexedir}/nx
-# becuase upstream expects libraries and binaries in the same directory
+# because upstream expects libraries and binaries in the same directory
 sed -i -e 's,/lib/nx,/%{_lib}/nx,' Makefile nx-X11/config/cf/X11.tmpl
 sed -i -e 's,/lib/x2go,/%{_lib}/x2go,' Makefile
 sed -i -e 's,/usr/lib/,/usr/%{_lib}/,' bin/*
