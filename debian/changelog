@@ -1,3 +1,10 @@
+nx-libs (2:3.5.99.0-0~build1) UNRELEASED; urgency=medium
+
+  * Version bump, continuing NX 3.x development..
+    Targeting NX 3.6.x.y some time.
+
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Sat, 14 Feb 2015 14:27:25 +0100
+
 nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
 
   [ Paul Szabo ]
@@ -124,7 +131,7 @@ nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
   [ Mihai Moldovan ]
   * Change string "X2go" to "X2Go" where appropriate.
 
- -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Thu, 13 Nov 2014 21:59:00 +0100
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Sat, 14 Feb 2015 14:25:17 +0100
 
 nx-libs (2:3.5.0.28-0x2go1) unstable; urgency=medium
 
