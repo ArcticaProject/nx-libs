@@ -23,9 +23,8 @@ override_dh_clean:
 	rm -f doc/changelog
 	rm -f nx-X11/programs/Xserver/hw/nxagent/changelog
 	rm -f nx-X11/programs/nxauth/changelog
-	if [ ! -f replace.sh ] && [ ! -h replace.sh ]; then ln -s debian/Makefile.replace.sh replace.sh; fi
 	. ./replace.sh; set -x; ls debian/*.install.in | while read file; do rm -f $$(string_rep $$file .install.in .install); done
-	rm -fR replace.sh Makefile bin etc/rgb VERSION.x2goagent etc/keystrokes.cfg etc/nxagent.keyboard etc/x2goagent.keyboard
+	rm -fR bin etc/rgb VERSION.x2goagent etc/keystrokes.cfg etc/nxagent.keyboard etc/x2goagent.keyboard
 	rm -f debian/libnx-xinerama1.postinst
 	rm -fR .preserve/
 	if [ -f nxcomp/.VERSION.NoMachine ]; then mv nxcomp/.VERSION.NoMachine nxcomp/VERSION; fi
@@ -98,8 +97,6 @@ override_dh_auto_build:
 	cp -a nx-X11/programs/Xserver/hw/nxagent/CHANGELOG nx-X11/programs/Xserver/hw/nxagent/changelog
 	cp -a nx-X11/programs/nxauth/CHANGELOG nx-X11/programs/nxauth/changelog
 	cp -a nxproxy/CHANGELOG nxproxy/changelog
-	ln -s debian/Makefile.nx-libs Makefile
-	ln -s debian/Makefile.replace.sh replace.sh
 	ln -s debian/wrappers bin
 	mkdir -p etc/
 	ln -s ../debian/keystrokes.cfg etc/keystrokes.cfg

@@ -665,8 +665,6 @@ mkdir bin/
 cp -v debian/wrappers/* bin/
 mkdir etc/
 cp -v debian/keystrokes.cfg etc/keystrokes.cfg
-cp -v debian/Makefile.nx-libs Makefile
-cp -v debian/Makefile.replace.sh replace.sh
 cp -v debian/rgb etc/rgb
 cp -v debian/nxagent.keyboard etc/nxagent.keyboard
 cp -v debian/x2goagent.keyboard etc/x2goagent.keyboard
