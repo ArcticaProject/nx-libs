@@ -62,8 +62,6 @@ install-lite:
 	$(INSTALL_DIR) $(DESTDIR)$(BINDIR)
 	for d in nxcomp nxproxy; do \
 	   $(MAKE) -C $$d install; done
-	mkdir -p $(DESTDIR)$(NXLIBDIR)/bin/
-	mv $(DESTDIR)$(BINDIR)/nxproxy $(DESTDIR)$(NXLIBDIR)/bin/
 	for f in nxproxy; do \
 	   $(INSTALL_PROGRAM) bin/$$f $(DESTDIR)$(BINDIR); done
 
