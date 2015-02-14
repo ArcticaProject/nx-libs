@@ -661,8 +661,6 @@ information on NX.
 %setup -q
 # copy files from the debian/ folder to designated places in the source tree,
 # taken from roll-tarball.sh:
-mkdir bin/
-cp -v debian/wrappers/* bin/
 mkdir etc/
 cp -v debian/keystrokes.cfg etc/keystrokes.cfg
 cp -v debian/rgb etc/rgb

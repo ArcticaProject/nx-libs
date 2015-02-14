@@ -20,7 +20,7 @@ override_dh_auto_clean:
 override_dh_clean:
 	rm -f nx*/configure
 	. ./replace.sh; set -x; ls debian/*.install.in | while read file; do rm -f $$(string_rep $$file .install.in .install); done
-	rm -fR bin etc/rgb etc/keystrokes.cfg etc/nxagent.keyboard etc/x2goagent.keyboard
+	rm -fR etc/rgb etc/keystrokes.cfg etc/nxagent.keyboard etc/x2goagent.keyboard
 	rm -f debian/libnx-xinerama1.postinst
 	rm -fR .preserve/
 	dh_clean
@@ -78,7 +78,6 @@ override_dh_auto_install:
 
 override_dh_auto_build:
 
-	ln -s debian/wrappers bin
 	mkdir -p etc/
 	ln -s ../debian/keystrokes.cfg etc/keystrokes.cfg
 	ln -s ../debian/rgb etc/rgb

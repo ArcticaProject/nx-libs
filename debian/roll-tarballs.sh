@@ -116,15 +116,7 @@ for f in $(ls README* 2>/dev/null); do
     mv -v $f doc/;
 done
 
-mkdir -p bin/
-if [ "$MODE" = "lite" ]; then
-    # copy wrapper script nxproxy only into tarball
-    cp -v debian/wrappers/nxproxy bin/
-else
-    # copy wrapper scripts into tarball
-    for w in $(ls debian/wrappers/* 2>/dev/null); do
-        cp -v $w bin/
-    done
+if [ "$MODE" = "full" ]; then
     # provide a default keystrokes.cfg file
     mkdir -p etc
     test -f etc/keystrokes.cfg || test -f debian/keystrokes.cfg && cp -v debian/keystrokes.cfg etc/keystrokes.cfg
