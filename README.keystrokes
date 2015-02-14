@@ -1,0 +1,83 @@
+Configurable keybindings in nxagent
+
+Keybindings in the redistributed x2go version of nxagent can now be configured
+by the user. This is done via a configuration file.
+
+File location
+-------------
+
+nxagent searches for the configuration file in the following order:
+- in the location given by the '-keystrokefile' command line parameter
+- in the location given by the NXAGENT_KEYSTROKEFILE environment variable
+- in ~/.nx/config/keystrokes.cfg
+- in /etc/nxagent/keystrokes.cfg
+
+If none of those files is accessible, the default configuration is used which
+is the same as the old, traditional nxagent keybindings.
+
+File format
+-----------
+
+The configuration file is XML with the following format:
+
+<!DOCTYPE NXKeystroke>
+<keystrokes>
+<keystroke action="fullscreen" AltMeta="1" Control="1" key="b" />
+<keystroke action="minimize" AltMeta="1" Control="1" key="space" />
+<keystroke action="minimize" key="Escape" Shift="1" />
+<keystroke action="close_session" key="F7" />
+<keystroke action="fullscreen" key="F7" Mod1="1" />
+<keystroke action="fullscreen" key="F6" Mod1="1" />
+<keystroke action="force_synchronization" key="f" />
+<keystroke action="fullscreen" key="space" Mod1="0" Mod2="0" Control="0" Shift="0" AltMeta="0" />
+</keystrokes>
+
+Each 'action' defines an action to be executed when receiving that keystroke. A
+list of possible actions is given below. Some of those actions are only
+available with debug builds of nxagent.
+
+Keys are given as a combination of 'key' and (optionally) a number of
+modifiers. The key attribute is evaluated into a X11 key via the usual
+XStringToKeysym function. A list of possible keys can be found in
+/usr/include/X11/keysymdef.h, the names are specified without the leading
+'XK_'. Evaluation is case-sensitive, so, 'space' and 'Escape' will work while
+'Space' and 'escape' won't.
+
+Modifiers are given as boolean attributes, possible modifiers are Mod1, Mod2,
+Mod3, Mod4, Control, Shift, Lock. Sensible combinations strongly depend on your
+keyboard configuration, but usually you will need Mod1 and Control. Boolean in
+this context means '0', 'false' and an unspecified attribute are false, anything
+else is considered true.
+
+Everything in this file is case-sensitive. Unknown lines are ignored.
+Keybindings are evaluated from top to bottom, so if a keybinding matches, other
+keybindings further down will be ignored. The contents of the file replaces the
+default keybindings, and only one file is read, no merging between different
+configuration files is done. This also means that an empty or invalid configuration
+file deactivates all keybindings.
+
+List of possible 'action' attributes:
+-------------------------------------
+
+close_session
+switch_all_screens
+minimize
+left
+up
+right
+down
+resize
+defer
+ignore
+fullscreen
+viewport_move_left
+viewport_move_up
+viewport_move_right
+viewport_move_down
+
+Only in builds with certain debugging options enabled, ignored otherwise:
+force_synchronization
+debug_tree
+regions_on_screen
+test_input
+deactivate_input_devices_grab
