@@ -1128,6 +1128,8 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %{_bindir}/nxproxy
 %{_mandir}/man1/nxproxy.1*
 %{_datadir}/man/man1/nxproxy.1*
+%dir %{_libdir}/nx/bin
+%{_libdir}/nx/bin/nxproxy
 
 %files -n x2goagent
 %defattr(-,root,root)
