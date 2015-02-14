@@ -90,7 +90,6 @@ if [ "x$MODE" = "xfull" ]; then
     cp -v debian/rgb ./etc/
     cp -v debian/nxagent.keyboard ./etc/
     cp -v debian/x2goagent.keyboard ./etc/
-    cp -v debian/VERSION ./VERSION.x2goagent
 else
     rm -Rf "nxcompshad"*
     rm -Rf "nxcompext"*
@@ -101,7 +100,6 @@ else
         echo ${file##*/} >> doc/applied-patches/series
     done
 fi
-cp -v debian/VERSION ./nxcomp/VERSION
 cp -v debian/COPYING.full+lite COPYING
 cp -v debian/nxagent.keyboard nxagent.keyboard
 cp -v debian/x2goagent.keyboard x2goagent.keyboard

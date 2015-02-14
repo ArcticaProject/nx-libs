@@ -24,10 +24,9 @@ override_dh_clean:
 	rm -f nx-X11/programs/Xserver/hw/nxagent/changelog
 	rm -f nx-X11/programs/nxauth/changelog
 	. ./replace.sh; set -x; ls debian/*.install.in | while read file; do rm -f $$(string_rep $$file .install.in .install); done
-	rm -fR bin etc/rgb VERSION.x2goagent etc/keystrokes.cfg etc/nxagent.keyboard etc/x2goagent.keyboard
+	rm -fR bin etc/rgb etc/keystrokes.cfg etc/nxagent.keyboard etc/x2goagent.keyboard
 	rm -f debian/libnx-xinerama1.postinst
 	rm -fR .preserve/
-	if [ -f nxcomp/.VERSION.NoMachine ]; then mv nxcomp/.VERSION.NoMachine nxcomp/VERSION; fi
 	dh_clean
 
 override_dh_installchangelog:
@@ -91,7 +90,6 @@ override_dh_auto_build:
 	# create copies of upstream changelogs so that names apply to Debian policy...
 	cp -a nx-X11/CHANGELOG nx-X11/changelog
 	cp -a nxcomp/CHANGELOG nxcomp/changelog
-	if [ -f nxcomp/VERSION ]; then cp nxcomp/VERSION nxcomp/.VERSION.NoMachine; fi
 	cp -a nxcompext/CHANGELOG nxcompext/changelog
 	cp -a nxcompshad/CHANGELOG nxcompshad/changelog
 	cp -a nx-X11/programs/Xserver/hw/nxagent/CHANGELOG nx-X11/programs/Xserver/hw/nxagent/changelog
@@ -105,8 +103,6 @@ override_dh_auto_build:
 	ln -s ../debian/x2goagent.keyboard etc/x2goagent.keyboard
 	mkdir -p doc/
 	ln -s ../debian/changelog doc/changelog
-	ln -sf debian/VERSION VERSION.x2goagent
-	ln -sf ../debian/VERSION nxcomp/VERSION
 
 	# let's prep the libnx-xinerama1.postinst script with the value of the build systems's DEB_BUILD_MULTIARCH variable
 	sed debian/libnx-xinerama1.postinst.in -e 's/#DEB_BUILD_MULTIARCH#/$(DEB_BUILD_MULTIARCH)/' > debian/libnx-xinerama1.postinst

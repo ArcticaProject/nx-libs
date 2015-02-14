@@ -668,8 +668,6 @@ cp -v debian/keystrokes.cfg etc/keystrokes.cfg
 cp -v debian/rgb etc/rgb
 cp -v debian/nxagent.keyboard etc/nxagent.keyboard
 cp -v debian/x2goagent.keyboard etc/x2goagent.keyboard
-cp -v debian/VERSION VERSION.x2goagent
-cp -v debian/VERSION nxcomp/VERSION
 
 # remove build cruft that is in Git (also taken from roll-tarball.sh)
 rm -Rf nx*/configure nx*/autom4te.cache*
