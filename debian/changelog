@@ -111,6 +111,7 @@ nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
       time.
     + Assure that BuildRoot: is set.
     + On SLE 11.x: libX* packages are prefixed with "xorg-x11-".
+    + Install "%{_libdir}/nx/bin" into nxproxy package.
 
   * debian/roll-tarball.sh:
     + Install etc/ files into etc/ subfolder (rgb, nxagent.keyboard,
