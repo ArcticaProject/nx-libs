@@ -74,7 +74,8 @@ is" without express or implied warranty.
 #undef  DEBUG
 #undef  DUMP
 
-#define NXAGENT_VERSION  "3.5.0"
+#define NXAGENT_VERSION NX_VERSION_CURRENT
+#define NXAGENT_VERSION_STRING NX_VERSION_CURRENT_STRING
 
 /*
  * ProcVector array defined in tables.c.
@@ -226,7 +227,7 @@ void InitOutput(ScreenInfo *screenInfo, int argc, char *argv[])
 
   if (serverGeneration <= 1)
   {
-    fprintf(stderr, "\nNXAGENT - Version " NXAGENT_VERSION "\n\n");
+    fprintf(stderr, "\nNXAGENT - Version " NXAGENT_VERSION_STRING "\n\n");
     fprintf(stderr, "Copyright (C) 2001, 2011 NoMachine.\n");
     fprintf(stderr, "See http://www.nomachine.com/ for more information.\n\n");
 

@@ -27,7 +27,8 @@ xorgsite.def \
 $(VERSIONDEFFILES) \
 $(HOSTDEFFILES) \
 site.def \
-xorgversion.def  
+xorgversion.def \
+nxversion.def
 
 RULEFILES = \
 Imake.rules \

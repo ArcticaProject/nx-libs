@@ -19,6 +19,11 @@ NXLIBDIR    ?= $(PREFIX)/lib/nx
 X2GOLIBDIR  ?= $(PREFIX)/lib/x2go
 CONFIGURE   ?= ./configure
 
+NX_VERSION_MAJOR=$(shell ./version.sh 1)
+NX_VERSION_MINOR=$(shell ./version.sh 2)
+NX_VERSION_MICRO=$(shell ./version.sh 3)
+NX_VERSION_PATCH=$(shell ./version.sh 4)
+
 SHELL:=/bin/bash
 
 %:
@@ -44,7 +49,21 @@ build-full:
 	cd nxcomp && autoconf
 	cd nxcompext && autoconf
 	cd nxcompshad && autoconf
+
+	# prepare nx-X11/config/cf/nxversion.def
+	sed \
+	    -e 's/###NX_VERSION_MAJOR###/$(NX_VERSION_MAJOR)/' \
+	    -e 's/###NX_VERSION_MINOR###/$(NX_VERSION_MINOR)/' \
+	    -e 's/###NX_VERSION_MICRO###/$(NX_VERSION_MICRO)/' \
+	    -e 's/###NX_VERSION_PATCH###/$(NX_VERSION_PATCH)/' \
+	    nx-X11/config/cf/nxversion.def.in \
+	    > nx-X11/config/cf/nxversion.def
+
 	cd nx-X11 && ${MAKE} World
+
+	# clean directly after build
+	rm -f nx-X11/config/cf/nxversion.def
+
 	cd nxproxy && autoconf && (${CONFIGURE}) && ${MAKE}
 
 build:
