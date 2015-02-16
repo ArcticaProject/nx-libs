@@ -59,16 +59,21 @@ install:
 	[ ! -d nx-X11 ] || $(MAKE) install-full
 
 install-lite:
+	# install nxcomp library
+	$(MAKE) -C nxcomp install
+
+	# install nxproxy wrapper script
 	$(INSTALL_DIR) $(DESTDIR)$(BINDIR)
-	for d in nxcomp nxproxy; do \
-	   $(MAKE) -C $$d install; done
-	for f in nxproxy; do \
-	   $(INSTALL_PROGRAM) bin/$$f $(DESTDIR)$(BINDIR); done
+	$(INSTALL_PROGRAM) bin/nxproxy $(DESTDIR)$(BINDIR)
+
+	# FIXME: the below install logic should work via nxproxy/Makefile.in
+	# overriding for now...
+	$(INSTALL_DIR) $(DESTDIR)$(NXLIBDIR)/bin
+	$(INSTALL_PROGRAM) nxproxy/nxproxy $(DESTDIR)$(NXLIBDIR)/bin
 
 	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/man/man1/
 	$(INSTALL_FILE) nxproxy/man/nxproxy.1 $(DESTDIR)$(PREFIX)/share/man/man1/
 	gzip $(DESTDIR)$(PREFIX)/share/man/man1/*.1
-
 
 install-full:
 	for f in nxagent nxauth x2goagent; do \
