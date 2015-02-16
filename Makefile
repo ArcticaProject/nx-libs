@@ -164,8 +164,15 @@ uninstall:
 	[ ! -d nx-X11 ] || $(MAKE) uninstall-full
 
 uninstall-lite:
-	for f in nxproxy; do \
-	   $(RM_FILE) $(DESTDIR)$(BINDIR)/$$f; done
+	if test -f nxcomp/Makefile; then ${MAKE} -C nxcomp $@; fi
+
+	# uninstall nproxy wrapper script
+	$(RM_FILE) $(DESTDIR)$(BINDIR)/nxproxy
+	# FIXME: don't use uninstall rule in nxproxy/Makefile.in, let's do
+        # it on our own for now...
+	$(RM_FILE) $(DESTDIR)$(NXLIBDIR)/bin/nxproxy
+	$(RM_DIR) $(DESTDIR)$(NXLIBDIR)/bin/
+	$(RM_FILE) $(DESTDIR)$(PREFIX)/share/man/man1/*.1
 
 uninstall-full:
 	for f in nxagent nxauth x2goagent; do \
@@ -173,9 +180,6 @@ uninstall-full:
 
 	$(RM_FILE) $(DESTDIR)$(X2GOLIBDIR)/bin/x2goagent
 	$(RM_DIR) $(DESTDIR)$(X2GOLIBDIR)/bin/
-
-	if test -f nxcomp/Makefile; then ${MAKE} -C nxcomp $@; fi
-	if test -f nxproxy/Makefile; then ${MAKE} -C nxproxy $@; fi
 
 	if test -d nx-X11; then \
 	    if test -f nxcompext/Makefile; then ${MAKE} -C nxcompext $@; fi; \
