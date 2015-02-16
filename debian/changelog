@@ -34,6 +34,8 @@ nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
   * Add Description: and Author: fields to various patch headers.
   * Makefile.nx-libs: Run make install for nxproxy first, then create the
     wrapper script.
+  * Make install-lite rule in Makefile.nx-libs more predictable and not
+    rely on nxproxy/Makefile.in.
 
   * NX code reduction efforts (from 93Mb to 41Mb):
     - Drop more unused code in nx-X11/programs/Xserver/hw/. Do this in
