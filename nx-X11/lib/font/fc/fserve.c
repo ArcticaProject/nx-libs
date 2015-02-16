@@ -1917,7 +1917,7 @@ fs_read_glyphs(FontPathElementPtr fpe, FSBlockDataPtr blockrec)
     FontInfoPtr		    pfi = &pfont->info;
     fsQueryXBitmaps16Reply  *rep;
     char		    *buf;
-    long		    bufleft; /* length of reply left to use */
+    long		    bufleft = 0; /* length of reply left to use */
     fsOffset32		    *ppbits;
     fsOffset32		    local_off;
     char		    *off_adr;
@@ -2501,7 +2501,7 @@ fs_read_list_info(FontPathElementPtr fpe, FSBlockDataPtr blockrec)
     FSBlockedListInfoPtr	binfo = (FSBlockedListInfoPtr) blockrec->data;
     fsListFontsWithXInfoReply	*rep;
     char			*buf;
-    long			bufleft;
+    long			bufleft = 0;
     FSFpePtr			conn = (FSFpePtr) fpe->private;
     fsPropInfo			*pi;
     fsPropOffset		*po;
