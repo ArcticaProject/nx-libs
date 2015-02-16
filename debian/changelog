@@ -29,6 +29,8 @@ nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
     wrapper script.
   * Make install-lite rule in Makefile.nx-libs more predictable and not
     rely on nxproxy/Makefile.in.
+  * Makefile.nx-libs: Fix uninstall-lite rule. The nxproxy and nxcomp
+    uninstallation has to be in uninstall-lite, not in uninstall-full.
 
   * NX code reduction efforts (from 93Mb to 41Mb):
     - Drop more unused code in nx-X11/programs/Xserver/hw/. Do this in
