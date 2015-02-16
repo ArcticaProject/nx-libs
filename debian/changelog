@@ -197,6 +197,13 @@ nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
 
   [ Mihai Moldovan ]
   * Change string "X2go" to "X2Go" where appropriate.
+  * CVE security review:
+    - Update 1007-CVE-2014-0210-unvalidated-length-in-_fs_recv_conn_se.patch.
+      Use xfree() instead of free() in nx-libs.
+    - Update 1011-CVE-2014-0210-unvalidated-length-fields-in-fs_read_q.patch.
+      Apply correctly on nx-libs 3.6.x.
+    - Update 1020-dix-integer-overflow-in-GetHosts-CVE-2014-8092-2-4.patch.
+      Human-readable version of "1 MB".
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Thu, 13 Nov 2014 21:59:00 +0100
 
