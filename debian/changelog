@@ -53,12 +53,12 @@ nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
       process.
     - Update 0600_nx-X11+nxcompext+nxcompshad_unique-libnames.full.patch. Don't
       patch files matter to the NX code reduction efforts.
-    - Update 0031_nx-X11_parallel-make.full.patch. Don't patch .original files in
-      NX code tree.
+    - Update 0031_nx-X11_parallel-make.full.patch. Don't patch .original files
+      in NX code tree.
     - Drop patches: 0017_nx-X11_update-autotools-helper-files.full.patch,
       0018_nx-X11_update-libtool-ltmain-script.full.patch,
-      0019_nx-X11_expat-build-against-system-libxmltok.full.patch. They patch files
-      that are not used at build time.
+      0019_nx-X11_expat-build-against-system-libxmltok.full.patch. They patch
+      files that are not used at build time.
 
   * Patch system:
     - Prepend a "0" to every patch file name in debian/patches/. Adapt only this
