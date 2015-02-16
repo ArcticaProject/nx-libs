@@ -204,6 +204,10 @@ nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
       Apply correctly on nx-libs 3.6.x.
     - Update 1020-dix-integer-overflow-in-GetHosts-CVE-2014-8092-2-4.patch.
       Human-readable version of "1 MB".
+    - Add 1041-nx-X11-lib-font-fc-fserve.c-initialize-remaining-buf.patch.
+      Initialize remaining bufleft variables (nx-X11/lib/font/fc/fserve.c).
+    - Add 1042-Do-proper-input-validation-to-fix-for-CVE-2011-2895.patch.
+      Do proper input validation to fix for CVE-2011-2895.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Thu, 13 Nov 2014 21:59:00 +0100
 

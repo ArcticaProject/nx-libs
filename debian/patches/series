@@ -112,5 +112,7 @@
 1038-glx-Length-checking-for-non-generated-single-request.patch
 1039-glx-Length-checking-for-RenderLarge-requests-v2-CVE-.patch
 1040-glx-Pass-remaining-request-length-into-varsize-v2-CV.patch
+1041-nx-X11-lib-font-fc-fserve.c-initialize-remaining-buf.patch
+1042-Do-proper-input-validation-to-fix-for-CVE-2011-2895.patch
 0016_nx-X11_install-location.debian.patch
 0102_xserver-xext_set-securitypolicy-path.debian.patch

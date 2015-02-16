@@ -1,7 +1,7 @@
 From b04f11915e29d9563d279e1326f61b50ea414dba Mon Sep 17 00:00:00 2001
 From: Mihai Moldovan <ionic@ionic.de>
 Date: Mon, 16 Feb 2015 06:03:48 +0100
-Subject: [PATCH 07/15] nx-X11/lib/font/fc/fserve.c: initialize remaining
+Subject: [PATCH 01/02] nx-X11/lib/font/fc/fserve.c: initialize remaining
  bufleft variables.
 
 ---
