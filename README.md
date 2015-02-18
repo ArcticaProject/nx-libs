@@ -1,11 +1,15 @@
-NX development by ArcticaProject and X2Go
------------------------------------------
+NX development by ArticaProject, X2Go and TheQVD
+------------------------------------------------
 
 This source tree started as a re-distribution of those NX packages needed
 to setup FreeNX and/or X2Go on a Linux server.
 
 The NX re-distribution (3.5.0.x) has been maintained by the X2Go Project:
 http://wiki.x2go.org
+
+In 2014, TheQVD project run by the Spanish company "The Quindel Group"
+joined the group of people being interested in NX maintenance and
+improvement.
 
 Since 2015, the Arctica Project has joined in the NX development. The
 core devs of X2Go and Arctica have agreed on stopping to redistribute
