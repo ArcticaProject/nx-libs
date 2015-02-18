@@ -114,5 +114,9 @@
 1040-glx-Pass-remaining-request-length-into-varsize-v2-CV.patch
 1041-nx-X11-lib-font-fc-fserve.c-initialize-remaining-buf.patch
 1042-Do-proper-input-validation-to-fix-for-CVE-2011-2895.patch
+1101-Coverity-844-845-846-Fix-memory-leaks.patch
+1102-include-introduce-byte-counting-functions.patch
+1103-xkb-Don-t-swap-XkbSetGeometry-data-in-the-input-buff.patch
+1104-xkb-Check-strings-length-against-request-size.patch
 0016_nx-X11_install-location.debian.patch
 0102_xserver-xext_set-securitypolicy-path.debian.patch

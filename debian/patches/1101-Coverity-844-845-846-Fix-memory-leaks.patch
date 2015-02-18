@@ -1,0 +1,63 @@
+From d6ce946f9c0bb5746b8333b3f589aa8527739431 Mon Sep 17 00:00:00 2001
+From: Daniel Stone <daniel@fooishbar.org>
+Date: Fri, 7 Apr 2006 16:07:50 +0000
+Subject: [PATCH 1/4] Coverity #844, #845, #846: Fix memory leaks.
+
+v2: backport to nx-libs 3.6.x as a prereq for
+the CVE-2015-0255 fix (Mike DePaulo)
+---
+ nx-X11/programs/Xserver/xkb/xkb.c | 22 +++++++++++++++++++---
+ 1 file changed, 19 insertions(+), 3 deletions(-)
+
+diff --git a/nx-X11/programs/Xserver/xkb/xkb.c b/nx-X11/programs/Xserver/xkb/xkb.c
+index 2405090..2561c89 100644
+--- a/nx-X11/programs/Xserver/xkb/xkb.c
++++ b/nx-X11/programs/Xserver/xkb/xkb.c
+@@ -4794,9 +4794,20 @@ char *		wire;
+     for (i=0;i<req->nProperties;i++) {
+ 	char *name,*val;
+ 	name= _GetCountedString(&wire,client->swapped);
++        if (!name)
++            return BadAlloc;
+ 	val= _GetCountedString(&wire,client->swapped);
+-	if ((!name)||(!val)||(XkbAddGeomProperty(geom,name,val)==NULL))
++        if (!val) {
++            xfree(name);
++            return BadAlloc;
++        }
++	if (XkbAddGeomProperty(geom,name,val)==NULL) {
++            xfree(name);
++            xfree(val);
+ 	    return BadAlloc;
++        }
++        xfree(name);
++        xfree(val);
+     }
+ 
+     if (req->nColors<2) {
+@@ -4813,15 +4824,20 @@ char *		wire;
+     }
+     if (req->labelColorNdx==req->baseColorNdx) {
+ 	client->errorValue= _XkbErrCode3(0x04,req->baseColorNdx,
+-							req->labelColorNdx);
++                                         req->labelColorNdx);
+ 	return BadMatch;
+     }
+ 
+     for (i=0;i<req->nColors;i++) {
+ 	char *name;
+ 	name= _GetCountedString(&wire,client->swapped);
+-	if ((!name)||(!XkbAddGeomColor(geom,name,geom->num_colors)))
++	if (!name)
++            return BadAlloc;
++        if (!XkbAddGeomColor(geom,name,geom->num_colors)) {
++            xfree(name);
+ 	    return BadAlloc;
++        }
++        xfree(name);
+     }
+     if (req->nColors!=geom->num_colors) {
+ 	client->errorValue= _XkbErrCode3(0x05,req->nColors,geom->num_colors);
+-- 
+1.9.1
+

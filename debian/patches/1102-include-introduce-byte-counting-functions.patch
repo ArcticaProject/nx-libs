@@ -1,0 +1,70 @@
+From 3937db18a203f9936387286b95328f27013a5ffe Mon Sep 17 00:00:00 2001
+From: Peter Hutterer <peter.hutterer@who-t.net>
+Date: Mon, 29 Jun 2009 13:09:57 +1000
+Subject: [PATCH 2/4] include: introduce byte counting functions.
+
+This patch adds the following three functions:
+ bits_to_bytes(bits) - the number of bytes needed to hold 'bits'
+ bytes_to_int32(bytes) - the number of 4-byte units to hold 'bytes'
+ pad_to_int32(bytes) - the closest multiple of 4 equal to or larger than
+                        'bytes'.
+
+All three operations are common in protocol processing and currently the
+server has ((foo + 7)/8 + 3)/4 operations all over the place. A common set
+of functions reduce the error rate of these (albeit simple) calculations and
+improve readability of the code.
+
+The functions do not check for overflow.
+
+v2: backport to nx-libs 3.6.x as a prereq for
+the CVE-2015-0255 fix (Mike DePaulo)
+
+Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+---
+ nx-X11/programs/Xserver/include/misc.h | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+
+diff --git a/nx-X11/programs/Xserver/include/misc.h b/nx-X11/programs/Xserver/include/misc.h
+index 5944a42..849f1b5 100644
+--- a/nx-X11/programs/Xserver/include/misc.h
++++ b/nx-X11/programs/Xserver/include/misc.h
+@@ -193,6 +193,36 @@ typedef struct _xReq *xReqPtr;
+ 
+ #endif
+ 
++/**
++ * Calculate the number of bytes needed to hold bits.
++ * @param bits The minimum number of bits needed.
++ * @return The number of bytes needed to hold bits.
++ */
++static __inline__ int
++bits_to_bytes(const int bits) {
++    return ((bits + 7) >> 3);
++}
++/**
++ * Calculate the number of 4-byte units needed to hold the given number of
++ * bytes.
++ * @param bytes The minimum number of bytes needed.
++ * @return The number of 4-byte units needed to hold bytes.
++ */
++static __inline__ int
++bytes_to_int32(const int bytes) {
++    return (((bytes) + 3) >> 2);
++}
++
++/**
++ * Calculate the number of bytes (in multiples of 4) needed to hold bytes.
++ * @param bytes The minimum number of bytes needed.
++ * @return The closest multiple of 4 that is equal or higher than bytes.
++ */
++static __inline__ int
++pad_to_int32(const int bytes) {
++    return (((bytes) + 3) & ~3);
++}
++
+ /* some macros to help swap requests, replies, and events */
+ 
+ #define LengthRestB(stuff) \
+-- 
+1.9.1
+

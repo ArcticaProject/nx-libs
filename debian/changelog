@@ -190,9 +190,17 @@ nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
         1038-glx-Length-checking-for-non-generated-single-request.patch
         1039-glx-Length-checking-for-RenderLarge-requests-v2-CVE-.patch
         1040-glx-Pass-remaining-request-length-into-varsize-v2-CV.patch
+    - X.org CVE-2015-0255
+        1104-xkb-Check-strings-length-against-request-size.patch
 
     - Security fixes with no assigned CVE:
         1008-Don-t-crash-when-we-receive-an-FS_Error-from-the-fon.patch
+
+    - Rebase the following patches that are prerequisites for the
+      CVE-2015-0255 patch:
+        1101-Coverity-844-845-846-Fix-memory-leaks.patch
+        1102-include-introduce-byte-counting-functions.patch
+        1103-xkb-Don-t-swap-XkbSetGeometry-data-in-the-input-buff.patch
 
     - Fix FTBFS due to the nxproxy executable already existing under
       /usr/lib/nx/bin/nx/
