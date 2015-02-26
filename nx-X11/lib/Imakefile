@@ -213,7 +213,6 @@ XEXTLIBDIR = Xext
 
 #if BuildLibraries
 OLDXLIBDIR = oldX
-XPMLIBDIR = Xpm
 XTSTLIBDIR = Xtst
 #endif
 

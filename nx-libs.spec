@@ -34,6 +34,7 @@ BuildRequires:  pkgconfig(libpng)
 BuildRequires:  pkgconfig(libxml-2.0)
 BuildRequires:  pkgconfig(x11)
 BuildRequires:  pkgconfig(xext)
+BuildRequires:  pkgconfig(xpm)
 %else
 BuildRequires:  libexpat-devel
 BuildRequires:  fontconfig-devel
@@ -43,6 +44,7 @@ BuildRequires:  libxml2-devel
 BuildRequires:  xorg-x11-libX11-devel
 BuildRequires:  xorg-x11-libXext-devel
 BuildRequires:  xorg-x11-libfontenc-devel
+BuildRequires:  xorg-x11-libXpm-devel
 %endif
 BuildRequires:  xorg-x11-util-devel
 %endif
@@ -359,7 +361,7 @@ physical displays as one large virtual display.
 
 %package -n libNX_Xpm-devel
 Group:          Development/Libraries
-Summary:        Development files for the NX Pixmap image file format library
+Summary:        Development files for the NX Pixmap image file format library (dummy package)
 Requires:       libNX_Xpm4%{?_isa} = %{version}-%{release}
 
 %description -n libNX_Xpm-devel
@@ -367,16 +369,12 @@ NX is a software suite which implements very efficient compression of
 the X11 protocol. This increases performance when using X
 applications over a network, especially a slow one.
 
-libXpm facilitates working with XPM (X PixMap), a format for
-storing/retrieving X pixmaps to/from files.
-
-This package contains all necessary include files and libraries
-needed to develop applications that require these.
+This package obsoletes libNX_Xpm-devel in NX and can be safely removed.
 
 
 %package -n libNX_Xpm4
 Group:          System Environment/Libraries
-Summary:        NX Pixmap image file format library
+Summary:        NX Pixmap image file format library (dummy package)
 Requires:       %{name}%{?_isa} >= 3.5.0.29
 Obsoletes:      libNX_Xpm
 
@@ -385,8 +383,7 @@ NX is a software suite which implements very efficient compression of
 the X11 protocol. This increases performance when using X
 applications over a network, especially a slow one.
 
-libNX_Xpm facilitates working with XPM (X PixMap), a format for
-storing/retrieving X pixmaps to/from files.
+This package obsoletes libNX_Xpm4 in NX and can be safely removed.
 
 
 %package -n libNX_Xrandr2
@@ -556,7 +553,6 @@ Requires:       libNX_Xau-devel%{?_isa} = %{version}-%{release}
 Requires:       libNX_Xdmcp-devel%{?_isa} = %{version}-%{release}
 Requires:       libNX_Xext-devel%{?_isa} = %{version}-%{release}
 Requires:       libNX_Xfixes-devel%{?_isa} = %{version}-%{release}
-Requires:       libNX_Xpm-devel%{?_isa} = %{version}-%{release}
 Requires:       libNX_Xrender-devel%{?_isa} = %{version}-%{release}
 Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
 Requires:       %{name}%{?_isa} = %{version}-%{release}
@@ -742,7 +738,6 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %post -n libNX_Xext6 -p /sbin/ldconfig
 %post -n libNX_Xfixes3 -p /sbin/ldconfig
 %post -n libNX_Xinerama1 -p /sbin/ldconfig
-%post -n libNX_Xpm4 -p /sbin/ldconfig
 %post -n libNX_Xrandr2 -p /sbin/ldconfig
 %post -n libNX_Xrender1 -p /sbin/ldconfig
 %post -n libNX_Xtst6 -p /sbin/ldconfig
@@ -758,7 +753,6 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %postun -n libNX_Xext6 -p /sbin/ldconfig
 %postun -n libNX_Xfixes3 -p /sbin/ldconfig
 %postun -n libNX_Xinerama1 -p /sbin/ldconfig
-%postun -n libNX_Xpm4 -p /sbin/ldconfig
 %postun -n libNX_Xrandr2 -p /sbin/ldconfig
 %postun -n libNX_Xrender1 -p /sbin/ldconfig
 %postun -n libNX_Xtst6 -p /sbin/ldconfig
@@ -873,15 +867,6 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %files -n libNX_Xinerama1
 %defattr(-,root,root)
 %{_libdir}/libNX_Xinerama.so.1*
-
-%files -n libNX_Xpm-devel
-%defattr(-,root,root)
-%{_libdir}/libNX_Xpm.so
-%{_includedir}/nx/X11/xpm.h
-
-%files -n libNX_Xpm4
-%defattr(-,root,root)
-%{_libdir}/libNX_Xpm.so.4*
 
 %files -n libNX_Xrandr2
 %defattr(-,root,root)

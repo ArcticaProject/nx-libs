@@ -33,7 +33,7 @@
 #include "../../include/gc.h"
 #include "../../include/window.h"
 
-#include "xpm.h"
+#include <X11/xpm.h>
 
 #include "Agent.h"
 #include "Pixmaps.h"

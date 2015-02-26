@@ -994,7 +994,7 @@ NXAGENTOBJS = hw/nxagent/miinitext.o     \
               dix/main.o
 #endif
 
-XPMLIB =  -lNX_Xpm
+XPMLIB =  -lXpm
 NXAGENT = hw/nxagent/LibraryTargetName(nxagent)
 NXAGENTLIBS = PreFbLibs $(NXAGENT) FbPostFbLibs $(NXAGENT) $(MI)
 NXAGENTSYSLIBS = $(FONTLIBS) $(LDPRELIBS) $(XLIB) $(SYSLIBS) $(XPMLIB)
