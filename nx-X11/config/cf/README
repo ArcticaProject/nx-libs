@@ -461,7 +461,6 @@ The following variables are used by some part of the tree:
 	SvgaConfig		default SVGA configuration
 	HasGetReturnAddress	util/memleak
 	HasShadowPasswd		system has getspnam() function
-	XnestServer		build X server with Xlib-based ddx
 	XVirtualFramebufferServer	build X server with virtual memory framebuffer
 	WebServer		host:port of your Web server (see programs/xrx)
 	HtmlDir			path used by Web server for HTML and RX docs

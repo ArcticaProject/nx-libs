@@ -76,13 +76,6 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
 #define XorgServer		NO
 
 /*
- * To disable building the Xnest server, uncomment this.
- *
-#define XnestServer		NO
- */
-#define XnestServer		NO
-
-/*
  * To disable building Xvfb, uncomment this.
  *
 #define XVirtualFramebufferServer	NO
@@ -167,7 +160,7 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
  *
 #define BuildLibrariesForXServers	YES
  */
-#if XnestServer || NXAgentServer
+#if NXAgentServer
 #define BuildLibraries			YES
 #endif
 
@@ -972,7 +965,6 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
 #define DefaultRGBDatabase          /usr/NX/share/rgb
 #define XprtServer                  NO
 #define BuildXprint                 NO
-#define XnestServer                 NO
 #define XVirtualFramebufferServer   NO
 #define BuildFontServer             NO
 #define BuildFreeType               NO

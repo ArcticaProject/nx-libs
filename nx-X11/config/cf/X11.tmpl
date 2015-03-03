@@ -386,7 +386,7 @@ XORGRELSTRING = XorgManVersionString
 #else
 #define BuildFontLib		(BuildLibraries || \
 				 (BuildServer && !DoLoadableServer) || \
-				 XnestServer || XVirtualFramebufferServer || \
+				 XVirtualFramebufferServer || \
 				 XprtServer || XdmxServer)
 #endif
 #endif
@@ -420,7 +420,7 @@ XORGRELSTRING = XorgManVersionString
 #endif
 #ifndef BuildXKBlib
 #define BuildXKBlib		(BuildXKB && (!BuildServersOnly || \
-					      XnestServer || XdmxServer || \
+					      XdmxServer || \
 					      BuildXkbcomp ))
 #endif
 #ifndef BuildXKBuilib

@@ -542,9 +542,6 @@ XF86SERVER = XFree86
 #if defined(XorgServer) && XorgServer
 XF86SERVER = Xorg
 #endif
-#if defined(XnestServer) && XnestServer
-XNEST = Xnext
-#endif
 #if defined(XVirtualFramebufferServer) && XVirtualFramebufferServer
 XVFB = Xvfb
 #endif
@@ -559,12 +556,11 @@ NXWIN = NXWin
 #endif
 #if (defined(XF86Server) && XF86Server) || \
     (defined(XorgServer) && XorgServer) || \
-    (defined(XnestServer) && XnestServer) || \
     (defined(NXAgentServer) && NXAgentServer) || \
     (defined(XVirtualFramebufferServer) && XVirtualFramebufferServer) || \
     (defined(XdmxServer) && XdmxServer) || \
     (!MakeDllModules && defined(NXWinServer) && NXWinServer) 
-MakeMutex($(XF86SERVER) $(XNEST) $(XVFB) $(NXAGENT) $(NXWIN))
+MakeMutex($(XF86SERVER) $(XVFB) $(NXAGENT) $(NXWIN))
 #endif
 MakeMutex($(STDDIRS) mfb fb cfb cfb16 cfb24 cfb32)
 #endif
@@ -878,40 +874,6 @@ $(XPOBJS) $(XPLIBS) $(XPSYSLIBS):: $(XPSUBDIRS)
 ServerTarget(Xprt,$(XPSUBDIRS),$(XPOBJS), \
 	$(LIBCWRAPPER) $(XPLIBS) $(LOADABLEEXTS),$(XPSYSLIBS))
 #endif	/* XprtServer */
-
-#if defined(XnestServer) && XnestServer
-XCOMM
-XCOMM Server with Xlib-based ddx
-XCOMM
-#ifndef Win32Architecture
-XNESTDDXDIR = hw/xnest
-#else
-XNESTDDXDIR = hw
-#endif
-#if BuildDPMS
-XNESTDPMSSTUBOBJS = $(XNESTDDXDIR)/dpmsstubs.o
-#endif
-XNESTDIRS = $(STDDIRS) $(XNESTDDXDIR) $(DEPDIRS)
-#if !defined(LynxOSArchitecture) && \
-    !defined(Win32Architecture) && \
-    !defined(QNX4Architecture)
-XNESTOBJS = hw/xnest/miinitext.o $(XNESTDPMSSTUBOBJS)
-#else
-XNESTOBJS = hw/xnest/miinitext.o dix/main.o $(XNESTDPMSSTUBOBJS)
-#endif
-XNEST = hw/xnest/LibraryTargetName(xnest)
-XNESTLIBS = PreFbLibs $(XNEST) NoMfbPostFbLibs $(XNEST)
-XNESTSYSLIBS = $(FONTLIBS) $(LDPRELIBS) $(XLIB) $(SYSLIBS)
-#if HasParallelMake
-MakeMutex($(XNESTDIRS) $(XNESTOBJS) $(XNESTLIBS) $(XNESTSYSLIBS))
-#endif
-#if ForceServerRemake
-$(XNESTOBJS) $(XNESTLIBS) $(XNESTSYSLIBS):: $(XNESTDIRS)
-	@if [ -f $@ ]; then touch $@ >/dev/null 2>&1 || exit 0; fi
-#endif
-ServerTarget(Xnest,$(XNESTDIRS),$(XNESTOBJS) $(XNESTDEFFILE), \
-	$(LIBCWRAPPER) $(XNESTLIBS) $(LOADABLEEXTS),$(XNESTSYSLIBS))
-#endif /* XnestServer */
 
 #if defined(NXAgentServer) && NXAgentServer
 XCOMM
@@ -1448,7 +1410,7 @@ MIEXTDIRS = $(SHADOWDIR) $(LAYERDIR) $(ROOTLESSDIR) $(MIDAMAGEDIR)
 IPLANDIRS = $(IPLAN2P2DIR) $(IPLAN2P4DIR) $(IPLAN2P8DIR)
 DDXDIRS = $(DECWSDDXDIR) $(SUNDDXDIR) $(LYNXDDXDIR) \
 	  $(HPDDXDIR) $(XFREE86DDXDIR) $(DARWINDDXDIR) \
-	  $(XVFBDDXDIR) $(XNESTDDXDIR) $(XDMXDDXDIR) $(NXAGENTDDXDIR) $(NXWINDDXDIR)
+	  $(XVFBDDXDIR) $(XDMXDDXDIR) $(NXAGENTDDXDIR) $(NXWINDDXDIR)
 SUBDIRS = $(STDDIRS) $(MFBSUBDIR) $(CFBSUBDIRS) \
 	  $(IPLANDIRS) $(ILBMDIR) $(AFBSUBDIR) \
           $(DDXDIRS) $(FBSUBDIR) $(KDRIVEDIRS) $(MIEXTDIRS)

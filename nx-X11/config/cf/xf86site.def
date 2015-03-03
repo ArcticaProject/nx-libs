@@ -45,12 +45,6 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
  */
 
 /*
- * To disable building the Xnest server, uncomment this.
- *
-#define XnestServer		NO
- */
-
-/*
  * To disable building Xvfb, uncomment this.
  *
 #define XVirtualFramebufferServer	NO
