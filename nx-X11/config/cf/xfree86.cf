@@ -1876,9 +1876,6 @@ IPLAN2P8_DEFS = -DUSE_IPLAN2P8
 # define UseServerLock	YES
 #endif
 
-#ifndef XVirtualFramebufferServer
-# define XVirtualFramebufferServer	YES
-#endif
 #ifndef XprtServer
 # define XprtServer			YES
 #endif

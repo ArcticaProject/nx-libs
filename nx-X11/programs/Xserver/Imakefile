@@ -542,9 +542,6 @@ XF86SERVER = XFree86
 #if defined(XorgServer) && XorgServer
 XF86SERVER = Xorg
 #endif
-#if defined(XVirtualFramebufferServer) && XVirtualFramebufferServer
-XVFB = Xvfb
-#endif
 #if XdmxServer
 XDMX = Xdmx
 #endif
@@ -557,10 +554,9 @@ NXWIN = NXWin
 #if (defined(XF86Server) && XF86Server) || \
     (defined(XorgServer) && XorgServer) || \
     (defined(NXAgentServer) && NXAgentServer) || \
-    (defined(XVirtualFramebufferServer) && XVirtualFramebufferServer) || \
     (defined(XdmxServer) && XdmxServer) || \
     (!MakeDllModules && defined(NXWinServer) && NXWinServer) 
-MakeMutex($(XF86SERVER) $(XVFB) $(NXAGENT) $(NXWIN))
+MakeMutex($(XF86SERVER) $(NXAGENT) $(NXWIN))
 #endif
 MakeMutex($(STDDIRS) mfb fb cfb cfb16 cfb24 cfb32)
 #endif
@@ -1054,40 +1050,6 @@ Xnon: $(STDDIRS) $(MFBDIR) $(CFB8DIR) $(CFB16DIR) $(CFB32DIR) $(DEPDIRS)
 #endif /* XnonServer */
 
 
-#if defined(XVirtualFramebufferServer) && XVirtualFramebufferServer
-XCOMM
-XCOMM server with Virtual (malloced) framebuffer
-XCOMM
-MFBSUBDIR = mfb
-FBSUBDIR  = fb
-#if defined(Win32Architecture)
-XVFBDDXDIR = hw
-#else
-XVFBDDXDIR = hw/vfb
-#endif
-XVFBDIRS = $(STDDIRS) $(MFBDIR) $(FBDIR) $(XVFBDDXDIR) $(DEPDIRS)
-#ifndef Win32Architecture
-#if BuildDPMS
-XVFBDPMSSTUBOBJS = $(XVFBDDXDIR)/dpmsstubs.o
-#endif
-XVFBOBJS = $(XVFBDDXDIR)/stubs.o $(XVFBDDXDIR)/miinitext.o $(XVFBDPMSSTUBOBJS)
-#else
-XVFBOBJS = dix/main.o hw/vfb/stubs.o hw/vfb/miinitext.o
-#endif
-XVFB = $(XVFBDDXDIR)/LibraryTargetName(vfb)
-XVFBLIBS = PreFbLibs $(XVFB) $(FB) PostFbLibs $(MI)
-XVFBSYSLIBS = $(FONTLIBS) $(SYSLIBS)
-#if HasParallelMake
-MakeMutex($(XVFBDIRS) $(XVFBOBJS) $(XVFB) $(XVFBLIBS) $(XVFBSYSLIBS))
-#endif
-#if ForceServerRemake
-$(XVFBOBJS) $(XVFB) $(XVFBLIBS) $(XVFBSYSLIBS):: $(XVFBDIRS)
-	@if [ -f $@ ]; then touch $@ >/dev/null 2>&1 || exit 0; fi
-#endif
-ServerTarget(Xvfb,$(XVFBDIRS),$(XVFBOBJS) $(XVFBDEFFILE), \
-	$(LIBCWRAPPER) $(XVFBLIBS) $(LOADABLEEXTS),$(XVFBSYSLIBS))
-#endif /* XVirtualFramebufferServer */
-
 #if defined(XdmxServer) && XdmxServer
 XCOMM
 XCOMM distribued multihead Server
@@ -1410,7 +1372,7 @@ MIEXTDIRS = $(SHADOWDIR) $(LAYERDIR) $(ROOTLESSDIR) $(MIDAMAGEDIR)
 IPLANDIRS = $(IPLAN2P2DIR) $(IPLAN2P4DIR) $(IPLAN2P8DIR)
 DDXDIRS = $(DECWSDDXDIR) $(SUNDDXDIR) $(LYNXDDXDIR) \
 	  $(HPDDXDIR) $(XFREE86DDXDIR) $(DARWINDDXDIR) \
-	  $(XVFBDDXDIR) $(XDMXDDXDIR) $(NXAGENTDDXDIR) $(NXWINDDXDIR)
+	  $(XDMXDDXDIR) $(NXAGENTDDXDIR) $(NXWINDDXDIR)
 SUBDIRS = $(STDDIRS) $(MFBSUBDIR) $(CFBSUBDIRS) \
 	  $(IPLANDIRS) $(ILBMDIR) $(AFBSUBDIR) \
           $(DDXDIRS) $(FBSUBDIR) $(KDRIVEDIRS) $(MIEXTDIRS)

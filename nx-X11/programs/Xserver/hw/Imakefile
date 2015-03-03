@@ -6,15 +6,11 @@ XCOMM This is only used on NT where we do not know how to jump over this dir
 #define IHaveSubdirs
 #define PassCDebugFlags CDEBUGFLAGS="$(CDEBUGFLAGS)"
 
-#if XVirtualFramebufferServer
-XVFBDIR = vfb
-#endif
-
 #if XdmxServer
 XDMXDIR = dmx
 #endif
 
-SUBDIRS= $(XVFBDIR) $(XDMXDIR)
+SUBDIRS= $(XDMXDIR)
 
 MakeSubdirs($(SUBDIRS))
 DependSubdirs($(SUBDIRS))

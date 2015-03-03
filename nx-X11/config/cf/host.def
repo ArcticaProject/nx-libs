@@ -76,13 +76,6 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
 #define XorgServer		NO
 
 /*
- * To disable building Xvfb, uncomment this.
- *
-#define XVirtualFramebufferServer	NO
- */
-#define XVirtualFramebufferServer	NO
-
-/*
  * To enable building Xdmx, uncomment this.
  *
 #define XdmxServer YES
@@ -965,7 +958,6 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
 #define DefaultRGBDatabase          /usr/NX/share/rgb
 #define XprtServer                  NO
 #define BuildXprint                 NO
-#define XVirtualFramebufferServer   NO
 #define BuildFontServer             NO
 #define BuildFreeType               NO
 #define BuildXTrueType              NO
