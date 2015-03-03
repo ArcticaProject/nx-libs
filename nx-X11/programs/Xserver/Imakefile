@@ -551,9 +551,6 @@ XVFB = Xvfb
 #if XdmxServer
 XDMX = Xdmx
 #endif
-#if defined(XWinServer) && XWinServer && !MakeDllModules
-XWIN = XWin
-#endif
 #if defined(NXAgentServer) && NXAgentServer
 NXAGENT = nxagent
 #endif
@@ -566,9 +563,8 @@ NXWIN = NXWin
     (defined(NXAgentServer) && NXAgentServer) || \
     (defined(XVirtualFramebufferServer) && XVirtualFramebufferServer) || \
     (defined(XdmxServer) && XdmxServer) || \
-    (!MakeDllModules && defined(XWinServer) && XWinServer) || \
     (!MakeDllModules && defined(NXWinServer) && NXWinServer) 
-MakeMutex($(XF86SERVER) $(XNEST) $(XVFB) $(XWIN) $(NXAGENT) $(NXWIN))
+MakeMutex($(XF86SERVER) $(XNEST) $(XVFB) $(NXAGENT) $(NXWIN))
 #endif
 MakeMutex($(STDDIRS) mfb fb cfb cfb16 cfb24 cfb32)
 #endif
@@ -1177,97 +1173,6 @@ ServerTarget(Xdmx,$(XDMXDIRS),$(XDMXOBJS), \
        $(LIBCWRAPPER) $(XDMXLIBS) $(LOADABLEEXTS),$(XDMXSYSLIBS))
 #endif /* XdmxServer */
 
-#if defined(XWinServer) && XWinServer
-XCOMM
-XCOMM X Server for MS Windows
-XCOMM
-FBSUBDIR = fb
-MIDAMAGEDIR = miext/damage
-SHADOWDIR = miext/shadow
-#if BuildXWinLayer
-LAYERDIR = miext/layer
-XWINLAYERLIB = $(LAYER)
-#else
-LAYERDIR = 
-XWINLAYERLIB = 
-#endif
-#if BuildXWinMultiWindowExtWM
-ROOTLESSDIR = miext/rootless
-ROOTLESSLIB = $(ROOTLESSDIR)/LibraryTargetName(rootless) \
-	      $(ROOTLESSDIR)/safeAlpha/LibraryTargetName(safeAlpha) \
-	      $(ROOTLESSDIR)/accel/LibraryTargetName(rlAccel)
-#else
-ROOTLESSDIR = 
-ROOTLESSLIB = 
-#endif
-XWINDDXDIR = hw/xwin
-#if BuildXWinXF86Config
-XWINPARSERDIR = hw/xfree86/parser
-XWINPARSERLIB = $(XWINPARSERDIR)/LibraryTargetName(xf86config)
-#else
-XWINPARSERDIR = 
-XWINPARSERLIB = 
-#endif
-#if defined(GlxUseWindows) && GlxUseWindows
-XWINOPENGLLIB = -lopengl32
-#else
-XWINOPENGLLIB = 
-#endif
-
-XWINLIB = $(XWINDDXDIR)/LibraryTargetName(XWin)
-XWINDIRS = $(STDDIRS) $(FBDIR) $(SHADOWDIR) $(LAYERDIR) $(XWINDDXDIR) \
-	   $(DEPDIRS) $(XWINPARSERDIR) $(ROOTLESSDIR) $(MIDAMAGEDIR)
-XWINOBJS = $(XWINDDXDIR)/stubs.o $(XWINDDXDIR)/XWin.res
-XWINLIBS = PreFbLibs $(XWINLIB) FbPostFbLibs $(XWINLIB) $(XWINLAYERLIB) \
-           $(SHADOW) $(XWINPARSERLIB) $(ROOTLESSLIB) $(OS)
-#if BuildXWinMultiWindow || BuildXWinClipboard
-XWINX11  = $(XONLYLIB)	   
-# if defined(Win32Architecture)
-PTHREADLIB = -lpthreadGC2
-# endif
-#endif
-#if defined(Win32Architecture)
-# if defined(GlxUseWindows) && GlxUseWindows
-XWINGL32 = -lopengl32
-# endif
-XWINW32  = -lgdi32 -lwsock32 $(XWINGL32) $(PTHREADLIB) 
-#else
-XWINW32  = -lgdi32
-#endif
-XWINSYSLIBS = $(FONTLIBS) $(LDPRELIBS) $(XWINX11) $(SYSLIBS) $(XWINW32)
-
-EXTRA_LDOPTIONS = -e _mainCRTStartup
-
-#if HasParallelMake
-MakeMutex($(XWINDIRS) $(XWINOBJS) $(XWINLIB) $(XWINLIBS) $(XWINSYSLIBS))
-#endif
-
-#if ForceServerRemake
-$(XWINOBJS) $(XWINLIB) $(XWINLIBS) $(XWINSYSLIBS):: $(XWINDIRS)
-	@if [ -f $@ ]; then touch $@ >/dev/null 2>&1 || exit 0; fi
-#endif
-
-#ifdef mingwArchitecture
-XWINSERVERNAME=Xming    
-XWINGLSERVERNAME=XmingGL    
-#else
-XWINSERVERNAME=XWin    
-XWINGLSERVERNAME=XWin_GL 
-#endif
-ServerTarget($(XWINSERVERNAME),$(XWINDIRS),$(XWINOBJS), \
-	     $(LIBCWRAPPER) $(XWINLIBS) $(LOADABLEEXTS),$(XWINSYSLIBS))
-#if defined(cygwinArchitecture) && defined(GlxUseWindows) && GlxUseWindows 
-ServerTarget($(XWINGLSERVERNAME),$(XWINDIRS),$(XWINOBJS), \
-	     $(LIBCWRAPPER) $(XWINLIBS) $(LOADABLEEXTS),$(XWINSYSLIBS) \
-	     $(XWINOPENGLLIB)) 
-#endif
-
-#ifndef ServerToInstall
-# define ServerToInstall $(XWINSERVERNAME)
-#endif
-
-#endif /* XWinServer */
-
 
 #if defined(NXWinServer) && NXWinServer
 XCOMM
@@ -1542,7 +1447,7 @@ CFBSUBDIRS = $(CFB8SUBDIR) $(CFB16SUBDIR) $(CFB24SUBDIR) $(CFB32SUBDIR)
 MIEXTDIRS = $(SHADOWDIR) $(LAYERDIR) $(ROOTLESSDIR) $(MIDAMAGEDIR)
 IPLANDIRS = $(IPLAN2P2DIR) $(IPLAN2P4DIR) $(IPLAN2P8DIR)
 DDXDIRS = $(DECWSDDXDIR) $(SUNDDXDIR) $(LYNXDDXDIR) \
-	  $(HPDDXDIR) $(XFREE86DDXDIR) $(XWINDDXDIR) $(DARWINDDXDIR) \
+	  $(HPDDXDIR) $(XFREE86DDXDIR) $(DARWINDDXDIR) \
 	  $(XVFBDDXDIR) $(XNESTDDXDIR) $(XDMXDDXDIR) $(NXAGENTDDXDIR) $(NXWINDDXDIR)
 SUBDIRS = $(STDDIRS) $(MFBSUBDIR) $(CFBSUBDIRS) \
 	  $(IPLANDIRS) $(ILBMDIR) $(AFBSUBDIR) \
