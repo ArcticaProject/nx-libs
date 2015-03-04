@@ -158,49 +158,6 @@ INSTPGMFLAGS =
     LIBCWRAPPER = os/libcwrapper.o
 #endif
 
-#if BuildXprint
-
-XPCONFIGDIR = XpConfig
-
-#ifndef XpRasterDDX
-#define XpRasterDDX YES
-#endif
-#ifndef XpColorPclDDX
-#define XpColorPclDDX YES
-#endif
-#ifndef XpMonoPclDDX
-#define XpMonoPclDDX NO
-#endif
-#ifndef XpPostScriptDDX
-#define XpPostScriptDDX YES
-#endif
-
-#if XpRasterDDX
-XPRASTLIB = Xprint/raster/LibraryTargetName(raster)
-#endif
-#if XpColorPclDDX
-XPPCLLIB = Xprint/pcl/LibraryTargetName(pcl)
-#endif
-#if XpMonoPclDDX
-XPMPCLLIB = Xprint/pcl-mono/LibraryTargetName(pcl)
-#endif
-#if XpPostScriptDDX
-XPPSLIB = Xprint/ps/LibraryTargetName(ps)
-#endif
-
-XPDDXLIBS = Xprint/LibraryTargetName(printer) \
-	    $(XPRASTLIB) $(XPPCLLIB) $(XPMPCLLIB) $(XPPSLIB)
-XPDDXFBLIBS = $(MFB) $(CFB32)
-#if !PrintOnlyServer
-      XPFBLIBS = $(XPDDXFBLIBS)
-      XPDDX = $(XPDDXLIBS)
-#endif
-      XPDDXDIR = Xprint
-#endif
-#if !BuildXprint || PrintOnlyServer
-XPFBLIBS = dix/LibraryTargetName(xpstubs)
-#endif
-
 #if BuildRender
       RENDERDIR = render
       RENDERLIB = $(RENDERDIR)/librender.a
@@ -833,39 +790,6 @@ ServerDriverSDKTarget(Xorg)
 #define ServerToInstall Xorg
 #endif
 #endif        /* XorgServer */
-
-#if defined(XprtServer) && XprtServer
-XCOMM
-XCOMM Print Server
-XCOMM
-MFBSUBDIR  = mfb
-CFB8SUBDIR = cfb
-CFB32SUBDIR = cfb32
-MIDAMAGEDIR = miext/damage
-XPSUBDIRS = $(STDDIRS) $(MFBDIR) $(CFB8DIR) $(CFB32DIR) $(DEPDIRS) \
-	    $(MIDAMAGEDIR)
-XPOBJS = Xprint/ddxInit.o Xprint/dpmsstubs.o Xprint/miinitext.o
-#if PrintOnlyServer
-XPLIBS = PreFbLibs $(XPDDXLIBS) $(XPDDXFBLIBS) PostFbLibs
-#else
-XPLIBS = PreFbLibs PostFbLibs
-#endif
-#if (defined(SunArchitecture) || defined(SparcArchitecture)) && \
-    defined(SVR4Architecture)
-XPSYSLIBS = $(FONTLIBS) $(CBRT) $(SYSLIBS) $(XONLYLIB) -lw
-#else
-XPSYSLIBS = $(FONTLIBS) $(CBRT) $(SYSLIBS) $(XONLYLIB)
-#endif
-#if HasParallelMake
-MakeMutex($(XPSUBDIRS) $(XPOBJS) $(XPLIBS) $(XPSYSLIBS))
-#endif
-#if ForceServerRemake
-$(XPOBJS) $(XPLIBS) $(XPSYSLIBS):: $(XPSUBDIRS)
-	@if [ -f $@ ]; then touch $@ >/dev/null 2>&1 || exit 0; fi
-#endif
-ServerTarget(Xprt,$(XPSUBDIRS),$(XPOBJS), \
-	$(LIBCWRAPPER) $(XPLIBS) $(LOADABLEEXTS),$(XPSYSLIBS))
-#endif	/* XprtServer */
 
 #if defined(NXAgentServer) && NXAgentServer
 XCOMM

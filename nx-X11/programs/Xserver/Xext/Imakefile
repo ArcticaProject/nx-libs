@@ -131,16 +131,11 @@ XF86BIGFOBJS = xf86bigfont.o
        XEVIEOBJS = xevie.o
 #endif
 
-#if BuildXprint
-      XPRINTSRCS = xprint.c
-      XPRINTOBJS = xprint.o
-#endif
-
        SRCS = shape.c $(SHMSRCS) $(MULTIBUFSRC) \
               mitmisc.c xtest.c xtest1di.c xtest1dd.c sleepuntil.c \
 	      bigreq.c sync.c $(SCRNSAVSRC) xcmisc.c $(VIDMODESRCS) \
 	      $(XF86MISCSRCS) $(XF86BIGFSRCS) $(XF86DGASRCS) $(SECURITYSRCS) \
-	      $(APPGROUPSRCS) $(XPRINTSRCS) $(CUPSRCS) $(PNRXSRCS) $(DPMSSRCS) \
+	      $(APPGROUPSRCS) $(CUPSRCS) $(PNRXSRCS) $(DPMSSRCS) \
 	      $(XEVIESRCS) \
 	      $(EVISRCS) $(XVSRCS) $(FONTCACHESRCS) $(XRESSRCS) $(DMXSRCS)
 
@@ -148,11 +143,11 @@ XF86BIGFOBJS = xf86bigfont.o
               mitmisc.o xtest.o xtest1di.o xtest1dd.o sleepuntil.o \
               bigreq.o sync.o $(SCRNSAVOBJ) xcmisc.o $(VIDMODEOBJS) \
 	      $(XF86MISCOBJS) $(XF86BIGFOBJS) $(XF86DGAOBJS) $(SECURITYOBJS) \
-	      $(APPGROUPOBJS) $(XPRINTOBJS) $(CUPOBJS) $(PNRXOBJS) $(DPMSOBJS) \
+	      $(APPGROUPOBJS) $(CUPOBJS) $(PNRXOBJS) $(DPMSOBJS) \
 	      $(XEVIEOBJS) \
 	      $(EVIOBJS) $(XVOBJS) $(FONTCACHEOBJS) $(XRESOBJS) $(DMXOBJS)
 
-      SOBJS = $(SHMOBJS) $(APPGROUPOBJS) $(SECURITYOBJS) $(XPRINTOBJS) \
+      SOBJS = $(SHMOBJS) $(APPGROUPOBJS) $(SECURITYOBJS) \
 	      shape.o xtest.o xtest1di.o xtest1dd.o sleepuntil.o $(PNRXOBJS) \
 	      $(XEVIEOBJS) \
 	      $(XF86BIGFOBJS)

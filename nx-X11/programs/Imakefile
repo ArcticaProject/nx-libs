@@ -57,9 +57,6 @@ SCREENSAVESRCDIR = beforelight
 #if BuildLBX
   LBXPROXYSRCDIR = lbxproxy
 #endif
-#if BuildXprintClients
-  XPSRCDIRS = xplsprinters xprehashprinterlist xphelloworld xpr
-#endif
   PROXYMGRSRCDIR = proxymngr
     RSTARTSRCDIR = rstart
    SMPROXYSRCDIR = smproxy
@@ -109,10 +106,6 @@ XTRAPCLIENTDIRS = xtrap
 #if BuildDPSClients
      DPSCLIENTDIRS = dpsinfo dpsexec texteroids
 #endif
-#if BuildDBElib && BuildXprintClients
-     DBECLIENTDIRS = xdbedizzy
-#endif
-
    XPMCLIENTDIRS = cxpm sxpm
 
 #if BuildGLXLibrary

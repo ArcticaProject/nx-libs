@@ -1005,8 +1005,6 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %{_includedir}/nx/X11/ap_keysym.h
 %{_includedir}/nx/X11/keysym.h
 %{_includedir}/nx/X11/keysymdef.h
-%{_includedir}/nx/X11/extensions/Print.h
-%{_includedir}/nx/X11/extensions/Printstr.h
 %{_includedir}/nx/X11/extensions/XI.h
 %{_includedir}/nx/X11/extensions/XIproto.h
 %{_includedir}/nx/X11/extensions/XResproto.h

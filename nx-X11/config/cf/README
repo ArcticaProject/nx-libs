@@ -325,14 +325,6 @@ X11.tmpl provides defaults for the following variables:
 	XdmDir			directory in which to install xdm files
 	XdmServersType		type of xdm Xservers file to install
 	XinitDir		directory in which to install xinit files
-	XPrintDir		parent of X Print server config directory
-	XprtServer		build the X Print server
-	XpRasterDDX		include the raster print ddx driver
-	XpColorPclDDX		include the color PCL print ddx driver
-	XpMonoPclDDX		include the monochrome PCL print ddx driver
-	XpPostScriptDDX		include the PostScript print ddx driver
-	XpPdfDDX		include the PDF print ddx driver
-	XpSvgDDX		include the SVG print ddx driver
 	XmanLocalSearchPath	non-standard path for man pages
 	XtErrorPrefix		leading text in XtError() msg; eg. 'X Toolkit '
 	XtWarningPrefix		leading text in XtWarning()msg, same as above

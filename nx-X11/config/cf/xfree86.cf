@@ -1876,10 +1876,6 @@ IPLAN2P8_DEFS = -DUSE_IPLAN2P8
 # define UseServerLock	YES
 #endif
 
-#ifndef XprtServer
-# define XprtServer			YES
-#endif
-
 #ifndef ServerExtraDefines
 # define ServerExtraDefines	XFree86ServerDefines
 #endif

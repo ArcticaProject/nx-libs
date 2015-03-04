@@ -166,7 +166,7 @@ BOOTSTRAPCFLAGS =
 		  $(RANDOM_DEFINES) $(BUGMSG) $(XTRANS_FAILDEFINES) $(NX_DEFINES)
        INCLUDES = -I. -I../include -I$(XINCLUDESRC) -I$(EXTINCSRC) \
 		  -I$(SERVERSRC)/Xext -I$(FONTINCSRC) -I$(SERVERSRC)/render \
-		  -I$(TOP)/lib/Xau -I../lbx -I../Xprint Krb5Includes $(NX_INCLUDES)
+		  -I$(TOP)/lib/Xau -I../lbx Krb5Includes $(NX_INCLUDES)
  DEPEND_DEFINES = $(DBM_DEFINES) $(XDMCP_DEFINES) $(EXT_DEFINES) \
 		  $(TRANS_INCLUDES) $(CONNECTION_FLAGS) $(GETPEER_DEFINES) \
 		  DependDefines

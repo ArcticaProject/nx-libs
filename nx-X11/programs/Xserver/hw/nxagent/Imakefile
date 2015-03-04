@@ -66,6 +66,7 @@ SRCS =  NXwindow.c \
 	Composite.c \
 	Pixels.c \
 	stubs.c \
+	xpstubs.c \
 	miinitext.c \
 	$(SRCS1)
 
@@ -128,6 +129,7 @@ OBJS =  NXwindow.o \
 	Composite.o \
 	Pixels.o \
 	stubs.o \
+	xpstubs.o \
 	miinitext.o \
 	$(OBJS1)
 
@@ -220,6 +222,7 @@ DEFINES = -g $(OS_DEFINES) $(EXT_DEFINES) $(UPG_DEFINES) $(NX_DEFINES) \
 all:: $(OBJS)
 
 LinkSourceFile(stubs.c,$(SERVERSRC)/Xi)
+LinkSourceFile(xpstubs.c,$(SERVERSRC)/dix)
 SpecialCObjectRule(Init,$(ICONFIGFILES),$(_NOOP_))
 LinkSourceFile(miinitext.c,$(SERVERSRC)/mi)
 SpecialCObjectRule(miinitext,$(ICONFIGFILES), $(_NOOP_))

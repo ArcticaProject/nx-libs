@@ -92,7 +92,6 @@ HEADERS = Xext.h \
 	security.h securstr.h \
 	shape.h shapestr.h \
 	sync.h syncstr.h \
-	Print.h Printstr.h \
 	Xcup.h Xcupstr.h \
 	dpms.h dpmsstr.h \
 	XEVI.h XEVIstr.h

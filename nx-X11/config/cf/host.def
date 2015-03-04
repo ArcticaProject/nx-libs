@@ -76,21 +76,6 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
 #define XorgServer		NO
 
 /*
- * To disable building Xprt, uncomment this.
- *
-#define XprtServer NO
- */
-#define XprtServer NO
-
-/*
- * Xprint is needed by Xprt. You can disable it if
- * you are not going to build Xprt.
- *
-#define BuildXprint		NO
- */
-#define BuildXprint		NO
-
-/*
  * Building libraries with NX enhancements is disabled
  * by default. You should enable this in your host.def.
  *
@@ -949,8 +934,6 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
 #define BuildServersOnly            YES
 #define DefaultFontPath             /usr/NX/share/fonts/misc/,/usr/NX/share/fonts/TTF/
 #define DefaultRGBDatabase          /usr/NX/share/rgb
-#define XprtServer                  NO
-#define BuildXprint                 NO
 #define BuildFontServer             NO
 #define BuildFreeType               NO
 #define BuildXTrueType              NO

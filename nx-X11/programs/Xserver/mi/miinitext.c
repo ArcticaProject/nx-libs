@@ -73,34 +73,6 @@ SOFTWARE.
 #undef GLXEXT
 #endif
 
-/* Make sure Xprt only announces extensions it supports */
-#ifdef PRINT_ONLY_SERVER
-#undef MITSHM /* this is incompatible to the vector-based Xprint DDX */
-#undef XKB
-#undef PANORAMIX
-#undef RES
-#undef XINPUT
-#undef XV
-#undef SCREENSAVER
-#undef XIDLE
-#undef XRECORD
-#undef XF86VIDMODE
-#undef XF86MISC
-#undef XFreeXDGA
-#undef XF86DRI
-#undef DPMSExtension
-#undef DPSEXT
-#undef FONTCACHE
-#undef DAMAGE
-#undef XFIXES
-#undef XEVIE
-#else
-#ifndef LOADABLEPRINTDDX
-#undef XPRINT
-#endif /* LOADABLEPRINTDDX */
-#endif /* PRINT_ONLY_SERVER */
-
-
 extern Bool noTestExtensions;
 
 #ifdef BIGREQS
@@ -232,9 +204,6 @@ typedef void (*InitExtension)(INITARGS);
 #define _XLBX_SERVER_
 #include <X11/extensions/lbxstr.h>
 #endif
-#ifdef XPRINT
-#include "Print.h"
-#endif
 #ifdef XAPPGROUP
 #define _XAG_SERVER_
 #include <X11/extensions/Xagstr.h>
@@ -320,9 +289,6 @@ extern void XagExtensionInit(INITARGS);
 #endif
 #ifdef XCSECURITY
 extern void SecurityExtensionInit(INITARGS);
-#endif
-#ifdef XPRINT
-extern void XpExtensionInit(INITARGS);
 #endif
 #ifdef XF86BIGFONT
 extern void XFree86BigfontExtensionInit(INITARGS);
@@ -606,9 +572,6 @@ InitExtensions(argc, argv)
 #ifdef XCSECURITY
     if (!noSecurityExtension) SecurityExtensionInit();
 #endif
-#ifdef XPRINT
-    XpExtensionInit(); /* server-specific extension, cannot be disabled */
-#endif
 #ifdef TOGCUP
     if (!noXcupExtension) XcupExtensionInit();
 #endif
@@ -640,11 +603,6 @@ InitExtensions(argc, argv)
     if (!noGlxExtension) GlxExtensionInit();
 #else
     if (!noGlxExtension) DarwinGlxExtensionInit();
-#endif
-#endif
-#ifdef DPSEXT
-#ifndef XPRINT
-    if (!noDPSExtension) DPSExtensionInit();
 #endif
 #endif
 #ifdef XFIXES
@@ -716,9 +674,6 @@ static ExtensionModule staticExtensions[] = {
 #endif
 #ifdef XCSECURITY
     { SecurityExtensionInit, SECURITY_EXTENSION_NAME, &noSecurityExtension, NULL, NULL },
-#endif
-#ifdef XPRINT
-    { XpExtensionInit, XP_PRINTNAME, NULL, NULL, NULL },
 #endif
 #ifdef PANORAMIX
     { PanoramiXExtensionInit, PANORAMIX_PROTOCOL_NAME, &noPanoramiXExtension, NULL, NULL },
