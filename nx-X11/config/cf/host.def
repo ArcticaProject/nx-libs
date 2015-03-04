@@ -250,13 +250,6 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
  */
 
 /*
- * To disable building the font server, uncomment this.
- *
-#define BuildFontServer		NO
- */
-#define BuildFontServer		NO
-
-/*
  * Speedo fonts have been disabled by default in this release.
  * To re-enable support for Speedo fonts, uncomment this.
  *
@@ -934,7 +927,6 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
 #define BuildServersOnly            YES
 #define DefaultFontPath             /usr/NX/share/fonts/misc/,/usr/NX/share/fonts/TTF/
 #define DefaultRGBDatabase          /usr/NX/share/rgb
-#define BuildFontServer             NO
 #define BuildFreeType               NO
 #define BuildXTrueType              NO
 #define FontLibSharedFreeType       YES

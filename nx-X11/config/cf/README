@@ -178,7 +178,6 @@ X11.tmpl provides defaults for the following variables:
 	BuildDBE		build DOUBLE-BUFFER extension
 	BuildDmx		build Distributed Multihead X server and extension
 	BuildDPMS		build Display Power Management Signaling extension
-	BuildFontServer		build font server
 	BuildFonts		build pcf fonts
 	BuildIncRoot		relative path to location of headers in build
 	BuildIncTop		path from build includes directory to top

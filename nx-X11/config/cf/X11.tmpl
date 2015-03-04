@@ -144,9 +144,6 @@ XORGRELSTRING = XorgManVersionString
 #ifndef BuildLibrariesForXServers
 #define BuildLibrariesForXServers	BuildServer
 #endif
-#ifndef BuildFontServer
-#define BuildFontServer		YES
-#endif
 #ifndef XserverStaticFontLib
 #define XserverStaticFontLib	YES
 #endif
@@ -166,7 +163,7 @@ XORGRELSTRING = XorgManVersionString
 #define BuildBuiltinFonts	NO
 #endif
 #ifndef BuildFonts
-#define BuildFonts		(BuildServer | BuildFontServer)
+#define BuildFonts		BuildServer
 #endif
 #ifndef Build75DpiFonts
 #define Build75DpiFonts		YES
@@ -1688,7 +1685,6 @@ XCOMM X Window System make variables; these need to be coordinated with rules
            RGBSRC = $(XTOP)/programs/rgb
       BDFTOPCFSRC = $(PROGRAMSRC)/bdftopcf
      MKFONTDIRSRC = $(PROGRAMSRC)/mkfontdir
-    FONTSERVERSRC = $(PROGRAMSRC)/xfs
        FONTINCSRC = $(XTOP)/include/fonts
         EXTINCSRC = $(XTOP)/include/extensions
       FTSOURCEDIR = FreeTypeSrcDir

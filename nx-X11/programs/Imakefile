@@ -36,9 +36,6 @@ XCOMM $XFree86: xc/programs/Imakefile,v 3.54 2003/04/14 20:37:16 herrb Exp $
 #if HasXServer
      XINITSRCDIR = xinit
 #endif
-#if BuildFontServer
-       XFSSRCDIR = xfs
-#endif
 #if BuildXKBlib
       XKBSRCDIRS = setxkbmap $(XKBCOMPDIR) xkbevd xkbprint xkbutils
 #endif
@@ -155,7 +152,7 @@ SUBDIRS = \
 	$(SMPROXYSRCDIR) $(TWMSRCDIR) viewres x11perf xauth xbiff xcalc \
 	xclipboard xclock \
 	xcmsdb $(XCONSOLESRCDIR) xditview $(XDMSRCDIR) xdpyinfo \
-	$(XF86DGASRCDIR) xedit xev xeyes xfd xfontsel $(XFSSRCDIR) xfsinfo \
+	$(XF86DGASRCDIR) xedit xev xeyes xfd xfontsel xfsinfo \
 	$(XFINDPROXYSRCDIR) $(XFWPSRCDIR) $(XGAMMASRCDIR) xgc $(XHOSTSRCDIR) \
 	$(XINITSRCDIR) $(XKBSRCDIRS) xkill $(XLOADDIR) xlogo xlsatoms \
 	xlsclients xlsfonts xmag xman xmessage xmh xmodmap $(XMORE) xprop \

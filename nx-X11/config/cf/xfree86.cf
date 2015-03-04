@@ -1684,13 +1684,6 @@ IPLAN2P8_DEFS = -DUSE_IPLAN2P8
 #endif
 
 /*
- * Build the font server
- */
-#ifndef BuildFontServer
-# define BuildFontServer	YES
-#endif
-
-/*
  * Include fonts support
  */
 #ifndef BuildSpeedo

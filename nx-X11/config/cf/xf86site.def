@@ -139,12 +139,6 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
  */
 
 /*
- * To disable building the font server, uncomment this.
- *
-#define BuildFontServer		NO
- */
-
-/*
  * To disable support for Speedo fonts, uncomment this.
  *
 #define BuildSpeedo		NO
