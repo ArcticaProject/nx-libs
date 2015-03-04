@@ -45,12 +45,6 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
  */
 
 /*
- * To enable building Xdmx, uncomment this.
- *
-#define XdmxServer YES
- */
-
-/*
  * To disable building Xprt, uncomment this.
  *
 #define XprtServer NO

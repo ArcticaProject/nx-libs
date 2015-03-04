@@ -465,7 +465,6 @@ The following variables are used by some part of the tree:
 	HtmlDir			path used by Web server for HTML and RX docs
 	CgiBinDir		path used by Web server for CGI programs
 	ProxyManager		ICE network ID to contact a running proxymngr
-	XdmxServer		build Distributed Multihead X server
 
 
 Make Variables

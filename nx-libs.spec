@@ -952,7 +952,6 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %{_includedir}/nx/X11/extensions/Xevie.h
 %{_includedir}/nx/X11/extensions/Xinerama.h
 %{_includedir}/nx/X11/extensions/Xrandr.h
-%{_includedir}/nx/X11/extensions/dmxext.h
 %{_includedir}/nx/X11/extensions/lbxbuf.h
 %{_includedir}/nx/X11/extensions/lbxbufstr.h
 %{_includedir}/nx/X11/extensions/lbxdeltastr.h
@@ -1017,7 +1016,6 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %{_includedir}/nx/X11/extensions/compositeproto.h
 %{_includedir}/nx/X11/extensions/damageproto.h
 %{_includedir}/nx/X11/extensions/damagewire.h
-%{_includedir}/nx/X11/extensions/dmxproto.h
 %{_includedir}/nx/X11/extensions/panoramiXproto.h
 %{_includedir}/nx/X11/extensions/randr.h
 %{_includedir}/nx/X11/extensions/randrproto.h

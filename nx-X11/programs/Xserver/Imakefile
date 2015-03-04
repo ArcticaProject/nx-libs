@@ -542,9 +542,6 @@ XF86SERVER = XFree86
 #if defined(XorgServer) && XorgServer
 XF86SERVER = Xorg
 #endif
-#if XdmxServer
-XDMX = Xdmx
-#endif
 #if defined(NXAgentServer) && NXAgentServer
 NXAGENT = nxagent
 #endif
@@ -554,7 +551,6 @@ NXWIN = NXWin
 #if (defined(XF86Server) && XF86Server) || \
     (defined(XorgServer) && XorgServer) || \
     (defined(NXAgentServer) && NXAgentServer) || \
-    (defined(XdmxServer) && XdmxServer) || \
     (!MakeDllModules && defined(NXWinServer) && NXWinServer) 
 MakeMutex($(XF86SERVER) $(NXAGENT) $(NXWIN))
 #endif
@@ -1050,54 +1046,6 @@ Xnon: $(STDDIRS) $(MFBDIR) $(CFB8DIR) $(CFB16DIR) $(CFB32DIR) $(DEPDIRS)
 #endif /* XnonServer */
 
 
-#if defined(XdmxServer) && XdmxServer
-XCOMM
-XCOMM distribued multihead Server
-XCOMM
-#ifndef Win32Architecture
-XDMXDDXDIR = hw/dmx
-#else
-XDMXDDXDIR = hw
-#endif
-FBDIR = fb
-FBSUBDIR = fb
-MIDAMAGEDIR = miext/damage
-SHADOWDIR = miext/shadow
-XDMXDIRS = $(STDDIRS) $(XDMXDDXDIR) $(SHADOWDIR) $(DEPDIRS) $(FBDIR) $(MIDAMAGEDIR)
-#if BuildGlxExt
-#if BuildXinerama
-GLXPROXY_EXTRAOBJS = hw/dmx/panoramiX.o
-#endif
-GLXPROXYLIB = hw/dmx/glxProxy/LibraryTargetName(glxProxy)
-#endif
-#if !defined(LynxOSArchitecture) && \
-    !defined(Win32Architecture) && \
-    !defined(QNX4Architecture)
-XDMXOBJS = hw/dmx/miinitext.o $(GLXPROXY_EXTRAOBJS)
-#else
-XDMXOBJS = hw/dmx/miinitext.o $(GLXPROXY_EXTRAOBJS) dix/main.o
-#endif
-XDMX = hw/dmx/LibraryTargetName(dmx) \
-       hw/dmx/input/LibraryTargetName(dmxinput) \
-       hw/dmx/config/LibraryTargetName(dmxconfig) \
-       $(GLXPROXYLIB)
-XDMXLIBS = PreFbLibs $(XDMX) MiExtLibs FbPostFbLibs $(XDMX)
-#if BuildRender
-XDMXRENDERLIB = $(XRENDERLIB)
-#endif
-XDMXSYSLIBS = $(FONTLIBS) $(LDPRELIBS) $(XILIB) $(XLIB) $(SYSLIBS) $(XMULIB) $(XDMXRENDERLIB)
-#if HasParallelMake
-MakeMutex($(XDMXDIRS) $(XDMXOBJS) $(XDMXLIBS) $(XDMXSYSLIBS))
-#endif
-#if ForceServerRemake
-$(XDMXOBJS) $(XDMXLIBS) $(XDMXSYSLIBS):: $(XDMXDIRS)
-	@if [ -f $@ ]; then touch $@ >/dev/null 2>&1 || exit 0; fi
-#endif
-ServerTarget(Xdmx,$(XDMXDIRS),$(XDMXOBJS), \
-       $(LIBCWRAPPER) $(XDMXLIBS) $(LOADABLEEXTS),$(XDMXSYSLIBS))
-#endif /* XdmxServer */
-
-
 #if defined(NXWinServer) && NXWinServer
 XCOMM
 XCOMM X Server for MS Windows
@@ -1372,7 +1320,7 @@ MIEXTDIRS = $(SHADOWDIR) $(LAYERDIR) $(ROOTLESSDIR) $(MIDAMAGEDIR)
 IPLANDIRS = $(IPLAN2P2DIR) $(IPLAN2P4DIR) $(IPLAN2P8DIR)
 DDXDIRS = $(DECWSDDXDIR) $(SUNDDXDIR) $(LYNXDDXDIR) \
 	  $(HPDDXDIR) $(XFREE86DDXDIR) $(DARWINDDXDIR) \
-	  $(XDMXDDXDIR) $(NXAGENTDDXDIR) $(NXWINDDXDIR)
+	  $(NXAGENTDDXDIR) $(NXWINDDXDIR)
 SUBDIRS = $(STDDIRS) $(MFBSUBDIR) $(CFBSUBDIRS) \
 	  $(IPLANDIRS) $(ILBMDIR) $(AFBSUBDIR) \
           $(DDXDIRS) $(FBSUBDIR) $(KDRIVEDIRS) $(MIEXTDIRS)

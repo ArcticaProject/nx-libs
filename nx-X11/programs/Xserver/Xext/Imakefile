@@ -113,11 +113,6 @@ XF86BIGFOBJS = xf86bigfont.o
         PNRXOBJS = panoramiX.o panoramiXSwap.o panoramiXprocs.o
     PNRXINCLUDES = -I$(FONTINCSRC) -I../mi -I../render
 #endif
-#if XdmxServer
-         DMXSRCS = dmx.c
-         DMXOBJS = dmx.o
-     DMXINCLUDES = -I../hw/dmx
-#endif
 #if BuildDPMS
         DPMSSRCS = dpms.c
         DPMSOBJS = dpms.o

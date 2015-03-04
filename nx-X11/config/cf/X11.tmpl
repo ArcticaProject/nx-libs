@@ -138,18 +138,8 @@ XORGRELSTRING = XorgManVersionString
 #ifndef BuildDocs
 #define BuildDocs		!BuildServersOnly
 #endif
-#ifndef BuildDmx
-#define BuildDmx		NO
-#endif
-#ifndef XdmxServer
-#define XdmxServer		BuildDmx
-#endif
-#ifndef BuildLibrariesForDmx
-#define BuildLibrariesForDmx	XdmxServer
-#endif
 #ifndef BuildLibraries
-#define BuildLibraries		(!BuildServersOnly || BuildClients || \
-				 BuildLibrariesForDmx)
+#define BuildLibraries		(!BuildServersOnly || BuildClients)
 #endif
 #ifndef BuildLibrariesForXServers
 #define BuildLibrariesForXServers	BuildServer
@@ -362,8 +352,7 @@ XORGRELSTRING = XorgManVersionString
 #define BuildXInputExt		NO
 #endif
 #ifndef BuildXInputLib
-#define BuildXInputLib		(BuildXInputExt && \
-				 (!BuildServersOnly || BuildLibrariesForDmx))
+#define BuildXInputLib		(BuildXInputExt && !BuildServersOnly)
 #endif
 #ifndef BuildEVI
 #define BuildEVI		YES
@@ -385,8 +374,7 @@ XORGRELSTRING = XorgManVersionString
 #define BuildFontLib		(BuildLibraries || BuildServer)
 #else
 #define BuildFontLib		(BuildLibraries || \
-				 (BuildServer && !DoLoadableServer) || \
-				 XprtServer || XdmxServer)
+				 (BuildServer && !DoLoadableServer) || XprtServer)
 #endif
 #endif
 #ifndef BuildFontCache
@@ -419,7 +407,6 @@ XORGRELSTRING = XorgManVersionString
 #endif
 #ifndef BuildXKBlib
 #define BuildXKBlib		(BuildXKB && (!BuildServersOnly || \
-					      XdmxServer || \
 					      BuildXkbcomp ))
 #endif
 #ifndef BuildXKBuilib
@@ -458,13 +445,6 @@ XORGRELSTRING = XorgManVersionString
 #endif
 #ifndef BuildXineramaLibrary
 #define BuildXineramaLibrary	(BuildXinerama)
-#endif
-#ifndef BuildDmxDevelTools
-#define BuildDmxDevelTools	NO
-#endif
-#ifndef BuildDmxLibrary
-#define BuildDmxLibrary		(BuildDmx && \
-				 (!BuildServersOnly || BuildDmxDevelTools))
 #endif
 #ifndef BuildXCSecurity
 #define BuildXCSecurity		YES
@@ -550,8 +530,7 @@ XORGRELSTRING = XorgManVersionString
 #define BuildXResExt            NO
 #endif
 #ifndef BuildXResLibrary
-#define BuildXResLibrary        (BuildXResExt && \
-				 (!BuildServersOnly || BuildDmxDevelTools))
+#define BuildXResLibrary        (BuildXResExt && !BuildServersOnly)
 #endif
 #ifndef BuildXvExt
 #define BuildXvExt		NO
@@ -616,7 +595,7 @@ XORGRELSTRING = XorgManVersionString
 #define BuildRender		YES
 #endif
 #ifndef BuildRenderLibrary
-#define BuildRenderLibrary	(XdmxServer || !BuildServersOnly)
+#define BuildRenderLibrary	!BuildServersOnly
 #endif
 #ifndef BuildXftLibrary
 #define BuildXftLibrary		BuildRenderLibrary
@@ -2516,30 +2495,6 @@ SharedLibReferences(XXF86DGA,NX_Xxf86dga,$(XXF86DGALIBSRC),SOXXF86DGAREV,SharedX
 ProjectUnsharedLibReferences(XXF86DGA,NX_Xxf86dga,$(XXF86DGALIBSRC),XBuildLibDir)
 #endif
 
-#if BuildDmxLibrary
-#ifndef SharedLibDmx
-#define SharedLibDmx		NO
-#endif
-#ifndef NormalLibDmx
-#define NormalLibDmx		YES
-#endif
-#ifndef DebugLibDmx
-#define DebugLibDmx		NO
-#endif
-#ifndef ProfileLibDmx
-#define ProfileLibDmx		NO
-#endif
-#else /* BuildDmxLibrary */
-#undef SharedLibDmx
-#define SharedLibDmx		NO
-#undef NormalLibDmx
-#define NormalLibDmx		NO
-#undef DebugLibDmx
-#define DebugLibDmx		NO
-#undef ProfileLibDmx
-#define ProfileLibDmx		NO
-#endif /* BuildDmxLibrary */
-
     XXF86RUSHLIBSRC = $(LIBSRC)/Xxf86rush
 #if SharedLibXxf86rush
 #ifndef SharedXxf86rushRev
@@ -2590,16 +2545,6 @@ ProjectUnsharedLibReferences(XINERAMA,NX_Xinerama,$(XINERAMALIBSRC),XBuildLibDir
 SharedLibReferences(XRES,NX_XRes,$(XRESLIBSRC),SOXRESREV,SharedXResRev)
 #else
 ProjectUnsharedLibReferences(XRES,NX_XRes,$(XRESLIBSRC),XBuildLibDir)
-#endif
-
-    DMXLIBSRC = $(LIBSRC)/dmx
-#if SharedLibDmx
-#ifndef SharedDmxRev
-#define SharedDmxRev 1.0
-#endif
-SharedLibReferences(DMX,NX_dmx,$(DMXLIBSRC),SODMXREV,SharedDmxRev)
-#else
-ProjectUnsharedLibReferences(DMX,NX_dmx,$(DMXLIBSRC),XBuildLibDir)
 #endif
 
     DPSLIBSRC = $(LIBSRC)/dps
