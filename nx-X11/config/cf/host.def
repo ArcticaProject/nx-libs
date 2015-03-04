@@ -46,8 +46,6 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
 /*                                                                        */
 /**************************************************************************/
 
-#if !defined(NXZaurusXServer) && !defined(NXiPAQXServer) && !defined(DarwinArchitecture)
-
 #if defined(SunArchitecture)
 #define ProjectRoot /usr/openwin
 #endif
@@ -919,58 +917,6 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
 #define SharedLibXdmcp         YES
 
 #define BuildXaw7              NO
-
-#else /* #if !defined(NXZaurusXServer) && !defined(NXiPAQXServer) && !defined(DarwinArchitecture) */
-
-#if defined(DarwinArchitecture) && !defined(NXZaurusXServer) && !defined(NXiPAQXServer)
-#define NXDarwinServer              NO
-#define BuildServersOnly            YES
-#define DefaultFontPath             /usr/NX/share/fonts/misc/,/usr/NX/share/fonts/TTF/
-#define DefaultRGBDatabase          /usr/NX/share/rgb
-#define BuildFreeType               NO
-#define BuildXTrueType              NO
-#define FontLibSharedFreeType       YES
-#endif
-
-#if !defined(NXZaurusXServer) && defined(NXiPAQXServer)
-#define KDriveXServer               YES
-#define XiPAQH3500Server            YES
-#define BuildServersOnly            YES
-#define NXEmbeddedXServer           YES
-#define KdriveServerExtraDefines    -DITSY -DMAXSCREENS=1
-#define TinyXServer                 YES
-#define CrossCompiling              YES
-#define TouchScreen                 YES
-#define ItsyCompilerBug             YES
-#undef  BuildRandR
-#define BuildRandR                  YES
-#define BuildXInputLib              YES
-#define BuildXTrueType              YES
-#define ServerXdmcpDefines
-#define XipaqServer                 YES
-#endif
-
-#if !defined(NXiPAQXServer) && defined(NXZaurusXServer)
-#define KDriveXServer               YES
-#define XiPAQH3500Server            YES
-#define BuildServersOnly            YES
-#define ZaurusXServer               YES
-#define NXEmbeddedXServer           YES
-#define KdriveServerExtraDefines    -DITSY -DMAXSCREENS=1
-#define TinyXServer                 YES
-#define CrossCompiling              YES
-#define TouchScreen                 YES
-#define ItsyCompilerBug             YES
-#undef  BuildRandR
-#define BuildRandR                  YES
-#define BuildXInputLib              YES
-#define BuildXTrueType              YES
-#define ServerXdmcpDefines
-#define XipaqServer                 YES
-#define XfbdevServer                YES
-#endif
-
-#endif /* #if !defined(NXZaurusXServer) && !defined(NXiPAQXServer) && !defined(DarwinArchitecture) */
 
 #define BuildRman NO
 #define BuildFontEncLib NO
