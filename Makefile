@@ -35,6 +35,11 @@ SHELL:=/bin/bash
 	    if test -f nx-X11/Makefile; then ${MAKE} -C nx-X11 $@; fi; \
 	fi
 
+	# clean auto-generated nxversion.def file \
+	if [ "x$@" == "xclean" ]; then \
+	    rm -f nx-X11/config/cf/nxversion.def; \
+	fi
+
 all: build
 
 test:
@@ -60,9 +65,6 @@ build-full:
 	    > nx-X11/config/cf/nxversion.def
 
 	cd nx-X11 && ${MAKE} World
-
-	# clean directly after build
-	rm -f nx-X11/config/cf/nxversion.def
 
 	cd nxproxy && autoconf && (${CONFIGURE}) && ${MAKE}
 
