@@ -17,11 +17,12 @@ NX and instead of that: continue the development of NX 3.x as new
 upstream (starting with NX 3.5.99).
 
 Our goal is: 
-    - provide _one_ tarball that builds NX projects via a common Makefile
-    - provide _one_ tarball for distribution packagers
-    - provide support for security issues
-    - provide support for latest X11 extensions
-    - improve NX where possible
+
+* provide _one_ tarball that builds NX projects via a common Makefile
+* provide _one_ tarball for distribution packagers
+* provide support for security issues
+* provide support for latest X11 extensions
+* improve NX where possible
 
 This source tree is maintained on Github:
 
@@ -29,16 +30,16 @@ This source tree is maintained on Github:
 
 Release goal for the post-NoMachine nx-libs release series 3.6.x:
 
-    - CVE security audit (complete)
-    - remove unused code (+/- complete)
-    - no bundled libraries anymore (work in progress)
-    - complete imake cleanup (work in progress)
-    - replace as many liNX_X* libraries by X.org's libX* libraries
-      (work in progress)
-    - socket communication for nxproxy -C <-> nxproxy -S connections
-      (todo)
-    - event FIFO sockets for attaching external applications
-      (todo)
+* CVE security audit (complete)
+* remove unused code (+/- complete)
+* no bundled libraries anymore (work in progress)
+* complete imake cleanup (work in progress)
+* replace as many liNX_X* libraries by X.org's libX* libraries
+  (work in progress)
+* socket communication for nxproxy -C <-> nxproxy -S connections
+  (todo)
+* event FIFO sockets for attaching external applications
+  (todo)
 
 If you have any questions about this NX development or want to file  a
 bug, then please contact the Arctica or the X2Go developers via the
