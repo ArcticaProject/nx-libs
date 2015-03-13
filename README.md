@@ -28,7 +28,7 @@ This source tree is maintained on Github:
 
   https://github.com/ArcticaProject/nx-libs (3.6.x branch)
 
-Release goal for the post-NoMachine nx-libs release series 3.6.x:
+Release goals for the post-NoMachine nx-libs release series 3.6.x:
 
 * CVE security audit (complete)
 * remove unused code (+/- complete)
@@ -45,5 +45,5 @@ If you have any questions about this NX development or want to file  a
 bug, then please contact the Arctica or the X2Go developers via the
 Github issue tracker.
 
-thanks+light+love, 20150209
+thanks+light+love, 20150313
 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
