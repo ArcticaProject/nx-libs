@@ -27,6 +27,18 @@ This source tree is maintained on Github:
 
   https://github.com/ArcticaProject/nx-libs (3.6.x branch)
 
+Release goal for the post-NoMachine nx-libs release series 3.6.x:
+
+    - CVE security audit (complete)
+    - remove unused code (+/- complete)
+    - no bundled libraries anymore (work in progress)
+    - complete imake cleanup (work in progress)
+    - replace as many liNX_X* libraries by X.org's libX* libraries
+      (work in progress)
+    - socket communication for nxproxy -C <-> nxproxy -S connections
+      (todo)
+    - event FIFO sockets for attaching external applications
+      (todo)
 
 If you have any questions about this NX development or want to file  a
 bug, then please contact the Arctica or the X2Go developers via the
