@@ -1,11 +1,6 @@
-nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
+nx-libs (2:3.5.0.29-0x2go2) unstable; urgency=medium
 
-  [ Paul Szabo ]
-  * DISABLED:0401_nxcomp_bigrequests-and-genericevent-extensions.full+lite.patch.
-    Enable support for the X11 big requests extension and the generic events
-    extension.
-
-  [ Mike Gabriel ]
+    [ Mike Gabriel ]
   * Update 0320_nxagent_configurable-keystrokes.full.patch. Fix patch header
     referring to keystrokes.cfg (plural), not keystroke.cfg.
   * Allow sysadmins to manipulate nxagent's / x2goagent's rgb file by placing
@@ -63,8 +58,9 @@ nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
       files that are not used at build time.
 
   * Patch system:
-    - Prepend a "0" to every patch file name in debian/patches/. Adapt only this
-      changelog stanza to this modification.
+    - Prepend a "0" to every patch file name in debian/patches/. The patch
+      order is now given by a 4 digit ID. Adapt only this changelog stanza to
+      this modification.
 
   * Debian/Ubuntu packaging:
     + Fully rework the way nx-libs gets packaged for Debian/Ubuntu.
@@ -219,7 +215,7 @@ nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
     - Add 1042-Do-proper-input-validation-to-fix-for-CVE-2011-2895.patch.
       Do proper input validation to fix for CVE-2011-2895.
 
- -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Thu, 13 Nov 2014 21:59:00 +0100
+ -- X2Go Release Manager <git-admin@x2go.org>  Fri, 13 Mar 2015 15:50:00 +0100
 
 nx-libs (2:3.5.0.28-0x2go1) unstable; urgency=medium
 
