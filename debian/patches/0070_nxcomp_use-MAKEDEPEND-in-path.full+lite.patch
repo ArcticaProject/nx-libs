@@ -1,0 +1,27 @@
+Description: Discover makedepend in $PATH. Especially important for MacPorts (OS X.)
+Author: Clemens Lang <cal@macports.org>
+
+--- a/nxcomp/configure.in
++++ b/nxcomp/configure.in
+@@ -362,20 +362,7 @@ fi
+ dnl Find makedepend somewhere.
+ 
+ AC_SUBST(MAKEDEPEND)
+-
+-if test -x "../nx-X11/config/makedepend/makedepend" ; then
+-  MAKEDEPEND=../nx-X11/config/makedepend/makedepend
+-else
+-  if test -x "/usr/X11R6/bin/makedepend" ; then
+-    MAKEDEPEND=/usr/X11R6/bin/makedepend
+-  else
+-    if test -x "/usr/openwin/bin/makedepend" ; then
+-      MAKEDEPEND=/usr/openwin/bin/makedepend
+-    else
+-      MAKEDEPEND=/usr/bin/makedepend
+-    fi
+-  fi
+-fi
++MAKEDEPEND="$(which makedepend)"
+ 
+ dnl Determine what to build based on the platform.
+ dnl Override the LIBS settings on Cygwin32 so that

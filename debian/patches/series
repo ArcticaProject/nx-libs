@@ -32,6 +32,10 @@
 0055_nx-X11_imake-Werror-format-security.full.patch
 0056_nx-X11_Werror-format-security.full.patch
 0057_nx-X11_sanitize-eventmasks.full.patch
+0070_nxcomp_use-MAKEDEPEND-in-path.full+lite.patch
+0071_nxcompext_use-MAKEDEPEND-in-path.full+lite.patch
+0072_nxcompshad_use-MAKEDEPEND-in-path.full+lite.patch
+0073_nxproxy_use-MAKEDEPEND-in-path.full+lite.patch
 0101_nxagent_set-rgb-path.full.patch
 0102_xserver-xext_set-securitypolicy-path.full.patch
 0103_nxagent_set-X0-config-path.full.patch
