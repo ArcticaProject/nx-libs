@@ -1,0 +1,58 @@
+Description: Use the correct library naming scheme on OS X. It differs from other UNIX-based systems.
+Author: Clemens Lang <cal@macports.org>
+
+--- a/nxcomp/Makefile.in
++++ b/nxcomp/Makefile.in
+@@ -91,9 +91,17 @@ DEPENDINCLUDES = -I/usr/include/c++ -I/u
+ LIBRARY = Xcomp
+ 
+ LIBNAME    = lib$(LIBRARY)
++ifeq ($(shell uname),Darwin)
++LIBFULL    = lib$(LIBRARY).$(VERSION).dylib
++LIBLOAD    = lib$(LIBRARY).$(LIBVERSION).dylib
++LIBSHARED  = lib$(LIBRARY).dylib
++LIBFLAGS   = -install_name $(libdir)/$(LIBLOAD) -compatibility_version $(LIBVERSION) -current_version $(VERSION)
++else
+ LIBFULL    = lib$(LIBRARY).so.$(VERSION)
+ LIBLOAD    = lib$(LIBRARY).so.$(LIBVERSION)
+ LIBSHARED  = lib$(LIBRARY).so
++LIBFLAGS   =
++endif
+ LIBARCHIVE = lib$(LIBRARY).a
+ 
+ LIBCYGSHARED  = cyg$(LIBRARY).dll
+@@ -232,7 +240,7 @@ COBJ   = $(CSRC:.c=.o)
+ CXXOBJ = $(CXXSRC:.cpp=.o)
+ 
+ $(LIBFULL):	 $(CXXOBJ) $(COBJ)
+-		 $(CXX) -o $@ $(LDFLAGS) $(CXXOBJ) $(COBJ) $(LIBS)
++		 $(CXX) -o $@ $(LDFLAGS) $(LIBFLAGS) $(CXXOBJ) $(COBJ) $(LIBS)
+ 
+ $(LIBLOAD):	 $(LIBFULL)
+ 		 rm -f $(LIBLOAD)
+@@ -278,9 +286,9 @@ install.lib: all
+ 	./mkinstalldirs $(DESTDIR)${libdir}
+ 	./mkinstalldirs $(DESTDIR)${includedir}/nx
+ 	$(INSTALL_DATA) $(LIBFULL)              $(DESTDIR)${libdir}
+-	$(INSTALL_LINK) libXcomp.so.3           $(DESTDIR)${libdir}
+-	$(INSTALL_LINK) libXcomp.so             $(DESTDIR)${libdir}
+-	$(INSTALL_DATA) libXcomp.a              $(DESTDIR)${libdir}
++	$(INSTALL_LINK) $(LIBLOAD)              $(DESTDIR)${libdir}
++	$(INSTALL_LINK) $(LIBSHARED)            $(DESTDIR)${libdir}
++	$(INSTALL_DATA) $(LIBARCHIVE)           $(DESTDIR)${libdir}
+ 	$(INSTALL_DATA) NX*.h                   $(DESTDIR)${includedir}/nx
+ 	$(INSTALL_DATA) MD5.h                   $(DESTDIR)${includedir}/nx
+ 	echo "Running ldconfig tool, this may take a while..." && ldconfig || true
+@@ -293,9 +301,9 @@ uninstall.bin:
+ 
+ uninstall.lib:
+ 	$(RM_FILE) $(DESTDIR)${libdir}/$(LIBFULL)
+-	$(RM_FILE) $(DESTDIR)${libdir}/libXcomp.so.3
+-	$(RM_FILE) $(DESTDIR)${libdir}/libXcomp.so
+-	$(RM_FILE) $(DESTDIR)${libdir}/libXcomp.a
++	$(RM_FILE) $(DESTDIR)${libdir}/$(LIBLOAD)
++	$(RM_FILE) $(DESTDIR)${libdir}/$(LIBSHARED)
++	$(RM_FILE) $(DESTDIR)${libdir}/$(LIBARCHIVE)
+ 	$(RM_FILE) $(DESTDIR)${includedir}/nx/NXalert.h
+ 	$(RM_FILE) $(DESTDIR)${includedir}/nx/NX.h
+ 	$(RM_FILE) $(DESTDIR)${includedir}/nx/NXmitshm.h

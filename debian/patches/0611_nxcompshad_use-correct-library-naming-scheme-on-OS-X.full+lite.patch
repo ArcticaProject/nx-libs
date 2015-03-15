@@ -1,0 +1,58 @@
+Description: Use the correct library naming scheme on OS X. It differs from other UNIX-based systems.
+Author: Clemens Lang <cal@macports.org>
+
+--- a/nxcompshad/Makefile.in
++++ b/nxcompshad/Makefile.in
+@@ -103,9 +103,17 @@ DEPENDINCLUDES = -I/usr/include/g++ -I/u
+ LIBRARY = Xcompshad
+ 
+ LIBNAME    = lib$(LIBRARY)
++ifeq ($(shell uname),Darwin)
++LIBFULL    = lib$(LIBRARY).$(VERSION).dylib
++LIBLOAD    = lib$(LIBRARY).$(LIBVERSION).dylib
++LIBSHARED  = lib$(LIBRARY).dylib
++LIBFLAGS   = -install_name $(libdir)/$(LIBLOAD) -compatibility_version $(LIBVERSION) -current_version $(VERSION)
++else
+ LIBFULL    = lib$(LIBRARY).so.$(VERSION)
+ LIBLOAD    = lib$(LIBRARY).so.$(LIBVERSION)
+ LIBSHARED  = lib$(LIBRARY).so
++LIBFLAGS   =
++endif
+ LIBARCHIVE = lib$(LIBRARY).a
+ 
+ MSRC   = Main.c
+@@ -146,7 +154,7 @@ all: depend $(LIBFULL) $(LIBLOAD) $(LIBS
+ endif
+ 
+ $(LIBFULL):	$(CXXOBJ) $(COBJ)
+-		$(CXX) -o $@ $(LDFLAGS) $(CXXOBJ) $(COBJ) $(LIBS) $(EXTRALIBS)
++		$(CXX) -o $@ $(LDFLAGS) $(LIBFLAGS) $(CXXOBJ) $(COBJ) $(LIBS) $(EXTRALIBS)
+ 
+ $(LIBLOAD):	$(LIBFULL)
+ 		rm -f $(LIBLOAD)
+@@ -193,9 +201,9 @@ install.lib: all
+ 	$(INSTALL_DIR)                          $(DESTDIR)${libdir}
+ 	$(INSTALL_DIR)                          $(DESTDIR)${includedir}/nx
+ 	$(INSTALL_DATA) $(LIBFULL)              $(DESTDIR)${libdir}
+-	$(INSTALL_LINK) libXcompshad.so.3       $(DESTDIR)${libdir}
+-	$(INSTALL_LINK) libXcompshad.so         $(DESTDIR)${libdir}
+-	$(INSTALL_DATA) *.a                     $(DESTDIR)${libdir}
++	$(INSTALL_LINK) $(LIBLOAD)              $(DESTDIR)${libdir}
++	$(INSTALL_LINK) $(LIBSHARED)            $(DESTDIR)${libdir}
++	$(INSTALL_DATA) $(LIBARCHIVE)           $(DESTDIR)${libdir}
+ 	$(INSTALL_DATA) *.h                     $(DESTDIR)${includedir}/nx
+ 	echo "Running ldconfig tool, this may take a while..." && ldconfig || true
+ 
+@@ -207,9 +215,9 @@ uninstall.bin:
+ 
+ uninstall.lib:
+ 	$(RM_FILE) $(DESTDIR)${libdir}/$(LIBFULL)
+-	$(RM_FILE) $(DESTDIR)${libdir}/libXcompshad.so.3
+-	$(RM_FILE) $(DESTDIR)${libdir}/libXcompshad.so
+-	$(RM_FILE) $(DESTDIR)${libdir}/libXcompshad.a
++	$(RM_FILE) $(DESTDIR)${libdir}/$(LIBLOAD)
++	$(RM_FILE) $(DESTDIR)${libdir}/$(LIBSHARED)
++	$(RM_FILE) $(DESTDIR)${libdir}/$(LIBARCHIVE)
+ 	for header in *.h; do $(RM_FILE) $(DESTDIR)${includedir}/nx/$$header; done
+ 	$(RM_DIR) $(DESTDIR)${libdir}/nx/
+ 	$(RM_DIR) $(DESTDIR)${includedir}/nx/
