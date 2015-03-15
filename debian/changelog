@@ -3,14 +3,35 @@ nx-libs (2:3.5.99.0-0~build1) UNRELEASED; urgency=medium
   * Version bump, continuing NX 3.x development..
     Targeting NX 3.6.x.y some time.
 
- -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Sat, 14 Feb 2015 14:27:25 +0100
-
-nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
-
   [ Paul Szabo ]
   * DISABLED:0401_nxcomp_bigrequests-and-genericevent-extensions.full+lite.patch.
     Enable support for the X11 big requests extension and the generic events
     extension.
+
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Sat, 14 Feb 2015 14:27:25 +0100
+
+nx-libs (2:3.5.0.31-0x2go1) UNRELEASED; urgency=low
+
+  [ X2Go Release Manager ]
+  * Continue development
+
+ -- X2Go Release Manager <git-admin@x2go.org>  Sun, 15 Mar 2015 00:48:06 +0100
+
+nx-libs (2:3.5.0.30-0x2go1) unstable; urgency=low
+
+  [ Mike Gabriel ]
+  * Version bump release of nx-libs to assure a working
+    upgrade path on Ubuntu (where the build daemons strip-off
+    the "-0x2goX" revision suffix from the package version.
+
+  [ X2Go Release Manager ]
+  * debian/roll-tarball.sh:
+    + Only clean up nx-X11 source tree if it is there (i.e., skip that
+      for the nx-libs-lite tarball generation).
+
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Sat, 14 Mar 2015 14:37:58 +0100
+
+nx-libs (2:3.5.0.29-0x2go2) unstable; urgency=medium
 
   [ Mike Gabriel ]
   * Update 0320_nxagent_configurable-keystrokes.full.patch. Fix patch header
@@ -38,6 +59,8 @@ nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
     rely on nxproxy/Makefile.in.
   * Makefile.nx-libs: Fix uninstall-lite rule. The nxproxy and nxcomp
     uninstallation has to be in uninstall-lite, not in uninstall-full.
+  * Update 1042-Do-proper-input-validation-to-fix-for-CVE-2011-2895.patch.
+    Fix broken comment paragraph, whitespace fix.
 
   * NX code reduction efforts (from 93Mb to 41Mb):
     - Drop more unused code in nx-X11/programs/Xserver/hw/. Do this in
@@ -66,6 +89,11 @@ nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
       0018_nx-X11_update-libtool-ltmain-script.full.patch,
       0019_nx-X11_expat-build-against-system-libxmltok.full.patch. They patch
       files that are not used at build time.
+
+  * Patch system:
+    - Prepend a "0" to every patch file name in debian/patches/. The patch
+      order is now given by a 4 digit ID. Adapt only this changelog stanza to
+      this modification.
 
   * Debian/Ubuntu packaging:
     + Fully rework the way nx-libs gets packaged for Debian/Ubuntu.
@@ -208,6 +236,17 @@ nx-libs (2:3.5.0.29-0x2go2) UNRELEASED; urgency=medium
 
   [ Mihai Moldovan ]
   * Change string "X2go" to "X2Go" where appropriate.
+  * CVE security review:
+    - Update 1007-CVE-2014-0210-unvalidated-length-in-_fs_recv_conn_se.patch.
+      Use xfree() instead of free() in nx-libs.
+    - Update 1011-CVE-2014-0210-unvalidated-length-fields-in-fs_read_q.patch.
+      Apply correctly on nx-libs 3.6.x.
+    - Update 1020-dix-integer-overflow-in-GetHosts-CVE-2014-8092-2-4.patch.
+      Human-readable version of "1 MB".
+    - Add 1041-nx-X11-lib-font-fc-fserve.c-initialize-remaining-buf.patch.
+      Initialize remaining bufleft variables (nx-X11/lib/font/fc/fserve.c).
+    - Add 1042-Do-proper-input-validation-to-fix-for-CVE-2011-2895.patch.
+      Do proper input validation to fix for CVE-2011-2895.
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Sat, 14 Feb 2015 14:25:17 +0100
 
