@@ -15,6 +15,8 @@ nx-libs (2:3.5.0.31-0x2go1) UNRELEASED; urgency=low
   [ Clemens Lang ]
   * Use path discovery for finding makedepend. Remove old cruft.
   * Fix dynamic library linking on OS X. Use -dynamiclib instead of -bundle.
+  * Use the correct library naming scheme on OS X. It differs from other
+    UNIX-based systems.
 
  -- X2Go Release Manager <git-admin@x2go.org>  Sun, 15 Mar 2015 00:48:06 +0100
 
