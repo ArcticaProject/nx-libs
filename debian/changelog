@@ -6,6 +6,10 @@ nx-libs (2:3.5.0.31-0x2go1) UNRELEASED; urgency=low
     - 0071_nxcompext_use-MAKEDEPEND-in-path.full+lite.patch
     - 0072_nxcompshad_use-MAKEDEPEND-in-path.full+lite.patch
     - 0073_nxproxy_use-MAKEDEPEND-in-path.full+lite.patch
+  * Fix dynamic library linking on OS X. Use -dynamiclib instead of -bundle.
+    Adds:
+    - 0074_nxcomp_use-dynamiclib-flag-on-OS-X.full+lite.patch
+    - 0075_nxcompshad_use-dynamiclib-flag-on-OS-X.full+lite.patch
 
  -- X2Go Release Manager <git-admin@x2go.org>  Sun, 15 Mar 2015 00:48:06 +0100
 

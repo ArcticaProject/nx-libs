@@ -1,0 +1,19 @@
+Description: Fix dynamic library linking on OS X. Use -dynamiclib instead of -bundle.
+Author: Clemens Lang <cal@macports.org>
+
+--- a/nxcompshad/configure.in
++++ b/nxcompshad/configure.in
+@@ -175,11 +175,11 @@ if test "$FreeBSD" = yes; then
+ fi
+ 
+ dnl Under Darwin we don't have support for -soname option and
+-dnl we need the -bundle flag. Under Solaris, instead, we need
++dnl we need the -dynamiclib flag. Under Solaris, instead, we need
+ dnl the options -G -h.
+ 
+ if test "$DARWIN" = yes; then
+-  LDFLAGS="$LDFLAGS -bundle"
++  LDFLAGS="$LDFLAGS -dynamiclib"
+ elif test "$SUN" = yes; then
+   LDFLAGS="$LDFLAGS -G -h \$(LIBLOAD)"
+ else

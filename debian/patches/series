@@ -36,6 +36,8 @@
 0071_nxcompext_use-MAKEDEPEND-in-path.full+lite.patch
 0072_nxcompshad_use-MAKEDEPEND-in-path.full+lite.patch
 0073_nxproxy_use-MAKEDEPEND-in-path.full+lite.patch
+0074_nxcomp_use-dynamiclib-flag-on-OS-X.full+lite.patch
+0075_nxcompshad_use-dynamiclib-flag-on-OS-X.full+lite.patch
 0101_nxagent_set-rgb-path.full.patch
 0102_xserver-xext_set-securitypolicy-path.full.patch
 0103_nxagent_set-X0-config-path.full.patch
