@@ -21,7 +21,7 @@ nx-libs (2:3.5.0.30-0x2go1) unstable; urgency=low
 
 nx-libs (2:3.5.0.29-0x2go2) unstable; urgency=medium
 
-    [ Mike Gabriel ]
+  [ Mike Gabriel ]
   * Update 0320_nxagent_configurable-keystrokes.full.patch. Fix patch header
     referring to keystrokes.cfg (plural), not keystroke.cfg.
   * Allow sysadmins to manipulate nxagent's / x2goagent's rgb file by placing
@@ -36,7 +36,7 @@ nx-libs (2:3.5.0.29-0x2go2) unstable; urgency=medium
     separate .keyboard files for x2goagent and nxagent.
   * Update 0600_nx-X11+nxcompext+nxcompshad_unique-libnames.full.patch. Don't
     patch files that get removed during code reduction.
-  * Add 0991_fix-hr-typos.full+lite.patch and 991_fix-hr-typos.full.patch.
+  * Add 0991_fix-hr-typos.full+lite.patch and 0991_fix-hr-typos.full.patch.
     Fix several typos in upstream code detected by lintian.
   * Makefile.nx-libs: Don't allow symlinks to point into buildroot.
   * Makefile.nx-libs: Install man pages via main Makefile.
