@@ -175,11 +175,11 @@ if test "$FreeBSD" = yes; then
 fi
 
 dnl Under Darwin we don't have support for -soname option and
-dnl we need the -bundle flag. Under Solaris, instead, we need
+dnl we need the -dynamiclib flag. Under Solaris, instead, we need
 dnl the options -G -h.
 
 if test "$DARWIN" = yes; then
-  LDFLAGS="$LDFLAGS -bundle"
+  LDFLAGS="$LDFLAGS -dynamiclib"
 elif test "$SUN" = yes; then
   LDFLAGS="$LDFLAGS -G -h \$(LIBLOAD)"
 else
