@@ -187,9 +187,9 @@ depends:	depend.status
 depend:		depend.status
 
 depend.status:	
-		if [ -x $(MAKEDEPEND) ] ; then \
+		if [ -n "$(MAKEDEPEND)" ] && [ -x "$(MAKEDEPEND)" ] ; then \
 			$(MAKEDEPEND) $(CXXINCLUDES) $(CCINCLUDES) \
-                        $(DEPENDINCLUDES) -f Makefile $(MSRC) $(CSRC) $(CXXSRC) 2>/dev/null; \
+			$(DEPENDINCLUDES) -f Makefile $(MSRC) $(CSRC) $(CXXSRC) 2>/dev/null; \
 		fi
 		touch depend.status
 

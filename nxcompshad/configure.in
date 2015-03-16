@@ -271,4 +271,14 @@ dnl Find makedepend somewhere.
 AC_SUBST(MAKEDEPEND)
 MAKEDEPEND="$(which makedepend)"
 
+# Try to desperately find makedepend.
+# Set MAKEDEPEND to the shipped makedepend binary. This will not
+# exist in nx-libs-lite, though, in which case MAKEDEPEND
+# will stay empty.
+if test -z "${MAKEDEPEND}"; then
+  if test -x "../nx-X11/config/makedepend/makedepend"; then
+    MAKEDEPEND="../nx-X11/config/makedepend/makedepend"
+  fi
+fi
+
 AC_OUTPUT(Makefile)
