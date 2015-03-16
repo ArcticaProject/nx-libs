@@ -1,0 +1,47 @@
+Description: Discover makedepend in $PATH. Especially important for MacPorts (OS X.)
+Author: Clemens Lang <cal@macports.org>
+        v2: Mihai Moldovan <ionic@ionic.de>
+
+--- a/nxcompext/configure.in
++++ b/nxcompext/configure.in
+@@ -219,18 +219,15 @@ CFLAGS="$CFLAGS -DVERSION=\\\"${VERSION}
+ dnl Find makedepend somewhere.
+ 
+ AC_SUBST(MAKEDEPEND)
++MAKEDEPEND="$(which makedepend)"
+ 
+-if test -x "../nx-X11/config/makedepend/makedepend" ; then
+-  MAKEDEPEND=../nx-X11/config/makedepend/makedepend
+-else
+-  if test -x "/usr/X11R6/bin/makedepend" ; then
+-    MAKEDEPEND=/usr/X11R6/bin/makedepend
+-  else
+-    if test -x "/usr/openwin/bin/makedepend" ; then
+-      MAKEDEPEND=/usr/openwin/bin/makedepend
+-    else
+-      MAKEDEPEND=/usr/bin/makedepend
+-    fi
++# Try to desperately find makedepend.
++# Set MAKEDEPEND to the shipped makedepend binary. This will not
++# exist in nx-libs-lite, though, in which case MAKEDEPEND
++# will stay empty.
++if test -z "${MAKEDEPEND}"; then
++  if test -x "../nx-X11/config/makedepend/makedepend"; then
++    MAKEDEPEND="../nx-X11/config/makedepend/makedepend"
+   fi
+ fi
+ 
+--- a/nxcompext/Makefile.in
++++ b/nxcompext/Makefile.in
+@@ -144,9 +144,9 @@ depends:	depend.status
+ depend:		depend.status
+ 
+ depend.status:	
+-		if [ -x $(MAKEDEPEND) ] ; then \
++		if [ -n "$(MAKEDEPEND)" ] && [ -x "$(MAKEDEPEND)" ] ; then \
+ 			$(MAKEDEPEND) $(CXXINCLUDES) $(CCINCLUDES) \
+-                        $(DEPENDINCLUDES) -f Makefile $(MSRC) $(CSRC) \
++			$(DEPENDINCLUDES) -f Makefile $(MSRC) $(CSRC) \
+ 			$(CXXSRC) 2>/dev/null; \
+ 		fi
+ 		touch depend.status
