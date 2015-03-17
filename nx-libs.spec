@@ -333,6 +333,7 @@ needed to develop applications that require these.
 Group:          System Environment/Libraries
 Summary:        NX miscellaneous "fixes" extension library
 Requires:       %{name}%{?_isa} >= 3.5.0.29
+Obsoletes:      libNX_Xfixes
 
 %description -n libNX_Xfixes3
 NX is a software suite which implements very efficient compression of
