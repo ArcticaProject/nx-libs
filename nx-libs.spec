@@ -474,7 +474,7 @@ The NX differential compression library's development files.
 Group:          System Environment/Libraries
 Summary:        NX differential compression library
 Requires:       %{name}%{?_isa} >= 3.5.0.29
-Obsoletes:      libNX_Xcomp
+Obsoletes:      libXcomp
 
 %description -n libXcomp3
 NX is a software suite from NoMachine which implements very efficient
@@ -503,7 +503,7 @@ The NX compression extensions library's development files.
 Group:          System Environment/Libraries
 Summary:        NX protocol compression extensions library
 Requires:       %{name}%{?_isa} >= 3.5.0.29
-Obsoletes:      libNX_Xcompext
+Obsoletes:      libXcompext
 
 %description -n libXcompext3
 NX is a software suite from NoMachine which implements very efficient
@@ -535,7 +535,7 @@ The NX session shadowing library's development files.
 Group:          System Environment/Libraries
 Summary:        NX session shadowing Library
 Requires:       %{name}%{?_isa} >= 3.5.0.29
-Obsoletes:      libNX_Xcompshad
+Obsoletes:      libXcompshad
 
 %description -n libXcompshad3
 NX is a software suite from NoMachine which implements very efficient

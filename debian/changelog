@@ -18,6 +18,13 @@ nx-libs (2:3.5.0.31-0x2go1) UNRELEASED; urgency=low
   * Use the correct library naming scheme on OS X. It differs from other
     UNIX-based systems.
 
+  [ Mihai Moldovan ]
+  * nx{comp{,ext,shad},proxy}: try really hard to find makedepend. Do not fail
+    if it is not available.
+  * nx-libs.spec:
+    - Versioned libXcomp* should obsolete unversioned libXcomp*, not
+      libNX_Xcomp*.
+
  -- X2Go Release Manager <git-admin@x2go.org>  Sun, 15 Mar 2015 00:48:06 +0100
 
 nx-libs (2:3.5.0.30-0x2go1) unstable; urgency=low
