@@ -39,6 +39,9 @@ nx-libs (2:3.5.0.31-0x2go1) UNRELEASED; urgency=low
     - 0611_nxcompshad_use-correct-library-naming-scheme-on-OS-X.full+lite.patch
       =>
       0621_nxcompshad_use-correct-library-naming-scheme-on-OS-X.full+lite.patch
+  * nx-libs.spec:
+    - Versioned libXcomp* should obsolete unversioned libXcomp*, not
+      libNX_Xcomp*.
 
  -- X2Go Release Manager <git-admin@x2go.org>  Sun, 15 Mar 2015 00:48:06 +0100
 
