@@ -1,9 +1,10 @@
 Description: Use the correct library naming scheme on OS X. It differs from other UNIX-based systems.
 Author: Clemens Lang <cal@macports.org>
+v2: Make sure only the first three digits are used for current_version. (Mihai Moldovan)
 
 --- a/nxcompext/Makefile.in
 +++ b/nxcompext/Makefile.in
-@@ -82,9 +82,17 @@ DEPENDINCLUDES =  -I/usr/include/c++ -I/
+@@ -82,9 +82,18 @@ DEPENDINCLUDES =  -I/usr/include/c++ -I/
  LIBRARY = Xcompext
  
  LIBNAME    = lib$(LIBRARY)
@@ -11,7 +12,8 @@ Author: Clemens Lang <cal@macports.org>
 +LIBFULL    = lib$(LIBRARY).$(VERSION).dylib
 +LIBLOAD    = lib$(LIBRARY).$(LIBVERSION).dylib
 +LIBSHARED  = lib$(LIBRARY).dylib
-+LIBFLAGS   = -install_name $(libdir)/$(LIBLOAD) -compatibility_version $(LIBVERSION) -current_version $(VERSION)
++COMP_VER   = $(shell echo '$(VERSION)' | cut -d '.' -f 1-3)
++LIBFLAGS   = -install_name $(libdir)/$(LIBLOAD) -compatibility_version $(LIBVERSION) -current_version $(COMP_VER)
 +else
  LIBFULL    = lib$(LIBRARY).so.$(VERSION)
  LIBLOAD    = lib$(LIBRARY).so.$(LIBVERSION)
@@ -21,7 +23,7 @@ Author: Clemens Lang <cal@macports.org>
  LIBARCHIVE = lib$(LIBRARY).a
  
  LIBCYGSHARED  = cyg$(LIBRARY).dll
-@@ -113,7 +121,7 @@ COBJ   = $(CSRC:.c=.o)
+@@ -113,7 +122,7 @@ COBJ   = $(CSRC:.c=.o)
  CXXOBJ = $(CXXSRC:.cpp=.o)
  
  $(LIBFULL):	 $(CXXOBJ) $(COBJ)
@@ -30,7 +32,7 @@ Author: Clemens Lang <cal@macports.org>
  
  $(LIBLOAD):	 $(LIBFULL)
  		 rm -f $(LIBLOAD)
-@@ -159,8 +167,8 @@ install.lib: all
+@@ -159,8 +168,8 @@ install.lib: all
  	./mkinstalldirs $(DESTDIR)${libdir}
  	./mkinstalldirs $(DESTDIR)${includedir}/nx
  	$(INSTALL_DATA) $(LIBFULL)              $(DESTDIR)${libdir}
@@ -41,7 +43,7 @@ Author: Clemens Lang <cal@macports.org>
  	$(INSTALL_DATA) NX*.h                   $(DESTDIR)${includedir}/nx
  	echo "Running ldconfig tool, this may take a while..." && ldconfig || true
  
-@@ -172,8 +180,8 @@ uninstall.bin:
+@@ -172,8 +181,8 @@ uninstall.bin:
  
  uninstall.lib:
  	$(RM_FILE) $(DESTDIR)${libdir}/$(LIBFULL)

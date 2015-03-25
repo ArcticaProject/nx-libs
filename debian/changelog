@@ -1,6 +1,12 @@
 nx-libs (2:3.5.0.32-0x2go1) UNRELEASED; urgency=low
 
-  * Continue development
+  [ Mihai Moldovan ]
+  * Only use the first three numbers in the full version for current_version
+    on OS X. ld(1) on 10.6 fails otherwise.
+    Affected:
+    - 0420_nxcomp_use-correct-library-naming-scheme-on-OS-X.full+lite.patch
+    - 0620_nxcompext_use-correct-library-naming-scheme-on-OS-X.full.patch
+    - 0621_nxcompshad_use-correct-library-naming-scheme-on-OS-X.full.patch
 
  -- X2Go Release Manager <git-admin@x2go.org>  Tue, 17 Mar 2015 19:19:32 +0100
 

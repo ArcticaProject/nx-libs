@@ -1,9 +1,10 @@
 Description: Use the correct library naming scheme on OS X. It differs from other UNIX-based systems.
 Author: Clemens Lang <cal@macports.org>
+v2: Make sure only the first three digits are used for current_version. (Mihai Moldovan)
 
 --- a/nxcompshad/Makefile.in
 +++ b/nxcompshad/Makefile.in
-@@ -103,9 +103,17 @@ DEPENDINCLUDES = -I/usr/include/g++ -I/u
+@@ -103,9 +103,18 @@ DEPENDINCLUDES = -I/usr/include/g++ -I/u
  LIBRARY = Xcompshad
  
  LIBNAME    = lib$(LIBRARY)
@@ -11,7 +12,8 @@ Author: Clemens Lang <cal@macports.org>
 +LIBFULL    = lib$(LIBRARY).$(VERSION).dylib
 +LIBLOAD    = lib$(LIBRARY).$(LIBVERSION).dylib
 +LIBSHARED  = lib$(LIBRARY).dylib
-+LIBFLAGS   = -install_name $(libdir)/$(LIBLOAD) -compatibility_version $(LIBVERSION) -current_version $(VERSION)
++COMP_VER   = $(shell echo '$(VERSION)' | cut -d '.' -f 1-3)
++LIBFLAGS   = -install_name $(libdir)/$(LIBLOAD) -compatibility_version $(LIBVERSION) -current_version $(COMP_VER)
 +else
  LIBFULL    = lib$(LIBRARY).so.$(VERSION)
  LIBLOAD    = lib$(LIBRARY).so.$(LIBVERSION)
@@ -21,7 +23,7 @@ Author: Clemens Lang <cal@macports.org>
  LIBARCHIVE = lib$(LIBRARY).a
  
  MSRC   = Main.c
-@@ -146,7 +154,7 @@ all: depend $(LIBFULL) $(LIBLOAD) $(LIBS
+@@ -146,7 +155,7 @@ all: depend $(LIBFULL) $(LIBLOAD) $(LIBS
  endif
  
  $(LIBFULL):	$(CXXOBJ) $(COBJ)
@@ -30,7 +32,7 @@ Author: Clemens Lang <cal@macports.org>
  
  $(LIBLOAD):	$(LIBFULL)
  		rm -f $(LIBLOAD)
-@@ -193,9 +201,9 @@ install.lib: all
+@@ -193,9 +202,9 @@ install.lib: all
  	$(INSTALL_DIR)                          $(DESTDIR)${libdir}
  	$(INSTALL_DIR)                          $(DESTDIR)${includedir}/nx
  	$(INSTALL_DATA) $(LIBFULL)              $(DESTDIR)${libdir}
@@ -43,7 +45,7 @@ Author: Clemens Lang <cal@macports.org>
  	$(INSTALL_DATA) *.h                     $(DESTDIR)${includedir}/nx
  	echo "Running ldconfig tool, this may take a while..." && ldconfig || true
  
-@@ -207,9 +215,9 @@ uninstall.bin:
+@@ -207,9 +216,9 @@ uninstall.bin:
  
  uninstall.lib:
  	$(RM_FILE) $(DESTDIR)${libdir}/$(LIBFULL)
