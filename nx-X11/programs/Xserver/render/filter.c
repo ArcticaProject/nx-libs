@@ -271,33 +271,69 @@ PictureResetFilters (ScreenPtr pScreen)
 int
 SetPictureFilter (PicturePtr pPicture, char *name, int len, xFixed *params, int nparams)
 {
-    ScreenPtr		pScreen = pPicture->pDrawable->pScreen;
-    PictFilterPtr	pFilter = PictureFindFilter (pScreen, name, len);
-    xFixed		*new_params;
-    int			i;
+    ScreenPtr     pScreen;
+    PictFilterPtr pFilter;
+    xFixed        *new_params;
+    int           i;
+
+    if (pPicture->pDrawable) {
+        pScreen = pPicture->pDrawable->pScreen;
+    }
+    else {
+        pScreen = screenInfo.screens[0];
+    }
+
+    pFilter = PictureFindFilter (pScreen, name, len);
 
     if (!pFilter)
-	return BadName;
-    if (pFilter->ValidateParams)
-    {
-	if (!(*pFilter->ValidateParams) (pPicture, pFilter->id, params, nparams))
-	    return BadMatch;
-    }
-    else if (nparams)
-	return BadMatch;
+        return BadName;
 
-    if (nparams != pPicture->filter_nparams)
-    {
-	new_params = xalloc (nparams * sizeof (xFixed));
-	if (!new_params)
-	    return BadAlloc;
-	xfree (pPicture->filter_params);
-	pPicture->filter_params = new_params;
-	pPicture->filter_nparams = nparams;
+    if (!pPicture->pDrawable) {
+        int s;
+
+        /* For source pictures, the picture isn't tied to a screen.  So, ensure
+         * that all screens can handle a filter we set for the picture.
+         */
+        for (s = 1; s < screenInfo.numScreens; s++) {
+            PictFilterPtr pScreenFilter;
+
+            pScreenFilter = PictureFindFilter(screenInfo.screens[s], name, len);
+            if (!pScreenFilter || pScreenFilter->id != pFilter->id)
+                return BadMatch;
+        }
+    }
+
+    if (pFilter->ValidateParams) {
+        if (!(*pFilter->ValidateParams) (pPicture, pFilter->id, params, nparams))
+          return BadMatch;
+    }
+    else if (nparams) {
+        return BadMatch;
+    }
+
+    if (nparams != pPicture->filter_nparams) {
+        new_params = xalloc (nparams * sizeof (xFixed));
+
+        if (!new_params && nparams)
+            return BadAlloc;
+        xfree (pPicture->filter_params);
+        pPicture->filter_params = new_params;
+        pPicture->filter_nparams = nparams;
     }
     for (i = 0; i < nparams; i++)
-	pPicture->filter_params[i] = params[i];
+        pPicture->filter_params[i] = params[i];
     pPicture->filter = pFilter->id;
+
+    if (pPicture->pDrawable) {
+        PictureScreenPtr ps = GetPictureScreen (pscreen);
+        int result;
+
+        result = (*ps->ChangePictureFilter) (pPicture, pPicture->filter,
+                                             params, nparams);
+
+        return result;
+    }
     pPicture->serialNumber |= GC_CHANGE_SERIAL_BIT;
+
     return Success;
 }
