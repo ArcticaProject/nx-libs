@@ -11,6 +11,9 @@ nx-libs (2:3.5.0.32-0x2go1) UNRELEASED; urgency=low
     gracefully.
     Adds:
     - 0017_nx-X11_fix-SetPictureFilter.full.patch
+  * nx-X11: fix typo in previous patch.
+    Affects:
+    - 0017_nx-X11_fix-SetPictureFilter.full.patch
 
  -- X2Go Release Manager <git-admin@x2go.org>  Tue, 17 Mar 2015 19:19:32 +0100
 
