@@ -325,7 +325,7 @@ SetPictureFilter (PicturePtr pPicture, char *name, int len, xFixed *params, int 
     pPicture->filter = pFilter->id;
 
     if (pPicture->pDrawable) {
-        PictureScreenPtr ps = GetPictureScreen (pscreen);
+        PictureScreenPtr ps = GetPictureScreen (pScreen);
         int result;
 
         result = (*ps->ChangePictureFilter) (pPicture, pPicture->filter,
