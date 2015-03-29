@@ -7,6 +7,10 @@ nx-libs (2:3.5.0.32-0x2go1) UNRELEASED; urgency=low
     - 0420_nxcomp_use-correct-library-naming-scheme-on-OS-X.full+lite.patch
     - 0620_nxcompext_use-correct-library-naming-scheme-on-OS-X.full.patch
     - 0621_nxcompshad_use-correct-library-naming-scheme-on-OS-X.full.patch
+  * nx-X11: handle source pictures (those without a Drawable surface)
+    gracefully.
+    Adds:
+    - 0017_nx-X11_fix-SetPictureFilter.full.patch
 
  -- X2Go Release Manager <git-admin@x2go.org>  Tue, 17 Mar 2015 19:19:32 +0100
 

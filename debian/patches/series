@@ -14,6 +14,7 @@
 0014_nxcompshad_makefile-uninstall+autoconf.full.patch
 0015_nxproxy_makefile-uninstall.full+lite.patch
 0016_nx-X11_install-location.full.patch
+0017_nx-X11_fix-SetPictureFilter.full.patch
 0024_fix-make-clean.full.patch
 0024_fix-make-clean.full+lite.patch
 0025_nxcomp-fix-ftbfs-against-jpeg9a.full+lite.patch

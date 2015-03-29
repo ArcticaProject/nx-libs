@@ -1,0 +1,179 @@
+Description: Handle source pictures (those without a Drawable surface) gracefully.
+Author: Mihai Moldovan <ionic@ionic.de>
+Abstract:
+ This is basically a merge of the most current xorg-server (1.17.1) code into
+ nx-X11.
+ .
+ It makes sure that for source pictures, which do not have a drawable surface,
+ a filter is selected that is supported on the "main" and all other screens.
+ Alternatively, if the requested filter is not available on all screens and
+ the picture is a source picture, this function fails gracefully.
+ .
+ Additionally, the ChangePictureFilter hook is now called for non-source
+ pictures.
+ .
+ This also needs an implementation in mipict.{c,h}. The default hook does
+ nothing and returns a success value.
+
+--- a/nx-X11/programs/Xserver/render/filter.c
++++ b/nx-X11/programs/Xserver/render/filter.c
+@@ -271,33 +271,69 @@ PictureResetFilters (ScreenPtr pScreen)
+ int
+ SetPictureFilter (PicturePtr pPicture, char *name, int len, xFixed *params, int nparams)
+ {
+-    ScreenPtr		pScreen = pPicture->pDrawable->pScreen;
+-    PictFilterPtr	pFilter = PictureFindFilter (pScreen, name, len);
+-    xFixed		*new_params;
+-    int			i;
++    ScreenPtr     pScreen;
++    PictFilterPtr pFilter;
++    xFixed        *new_params;
++    int           i;
++
++    if (pPicture->pDrawable) {
++        pScreen = pPicture->pDrawable->pScreen;
++    }
++    else {
++        pScreen = screenInfo.screens[0];
++    }
++
++    pFilter = PictureFindFilter (pScreen, name, len);
+ 
+     if (!pFilter)
+-	return BadName;
+-    if (pFilter->ValidateParams)
+-    {
+-	if (!(*pFilter->ValidateParams) (pPicture, pFilter->id, params, nparams))
+-	    return BadMatch;
+-    }
+-    else if (nparams)
+-	return BadMatch;
+-
+-    if (nparams != pPicture->filter_nparams)
+-    {
+-	new_params = xalloc (nparams * sizeof (xFixed));
+-	if (!new_params)
+-	    return BadAlloc;
+-	xfree (pPicture->filter_params);
+-	pPicture->filter_params = new_params;
+-	pPicture->filter_nparams = nparams;
++        return BadName;
++
++    if (!pPicture->pDrawable) {
++        int s;
++
++        /* For source pictures, the picture isn't tied to a screen.  So, ensure
++         * that all screens can handle a filter we set for the picture.
++         */
++        for (s = 1; s < screenInfo.numScreens; s++) {
++            PictFilterPtr pScreenFilter;
++
++            pScreenFilter = PictureFindFilter(screenInfo.screens[s], name, len);
++            if (!pScreenFilter || pScreenFilter->id != pFilter->id)
++                return BadMatch;
++        }
++    }
++
++    if (pFilter->ValidateParams) {
++        if (!(*pFilter->ValidateParams) (pPicture, pFilter->id, params, nparams))
++          return BadMatch;
++    }
++    else if (nparams) {
++        return BadMatch;
++    }
++
++    if (nparams != pPicture->filter_nparams) {
++        new_params = xalloc (nparams * sizeof (xFixed));
++
++        if (!new_params && nparams)
++            return BadAlloc;
++        xfree (pPicture->filter_params);
++        pPicture->filter_params = new_params;
++        pPicture->filter_nparams = nparams;
+     }
+     for (i = 0; i < nparams; i++)
+-	pPicture->filter_params[i] = params[i];
++        pPicture->filter_params[i] = params[i];
+     pPicture->filter = pFilter->id;
++
++    if (pPicture->pDrawable) {
++        PictureScreenPtr ps = GetPictureScreen (pscreen);
++        int result;
++
++        result = (*ps->ChangePictureFilter) (pPicture, pPicture->filter,
++                                             params, nparams);
++
++        return result;
++    }
+     pPicture->serialNumber |= GC_CHANGE_SERIAL_BIT;
++
+     return Success;
+ }
+--- a/nx-X11/programs/Xserver/render/picturestr.h
++++ b/nx-X11/programs/Xserver/render/picturestr.h
+@@ -344,7 +344,13 @@ typedef struct _PictureScreen {
+     int				nfilterAliases;
+ 
+     ChangePictureTransformProcPtr   ChangePictureTransform;
++
++    /**
++     * Called immediately after a picture's transform is changed through the
++     * SetPictureFilter request.  Not called for source-only pictures.
++     */
+     ChangePictureFilterProcPtr	ChangePictureFilter;
++
+     DestroyPictureFilterProcPtr	DestroyPictureFilter;
+ 
+     TrapezoidsProcPtr		Trapezoids;
+--- a/nx-X11/programs/Xserver/render/mipict.c
++++ b/nx-X11/programs/Xserver/render/mipict.c
+@@ -250,6 +250,22 @@ miValidatePicture (PicturePtr pPicture,
+     }
+ }
+ 
++int
++miChangePictureTransform (PicturePtr	pPicture,
++			  PictTransform *transform)
++{
++    return Success;
++}
++
++int
++miChangePictureFilter (PicturePtr pPicture,
++		       int	  filter,
++		       xFixed     *params,
++		       int	  nparams)
++{
++    return Success;
++}
++
+ #define BOUND(v)	(INT16) ((v) < MINSHORT ? MINSHORT : (v) > MAXSHORT ? MAXSHORT : (v))
+ 
+ static __inline Bool
+@@ -611,6 +627,8 @@ miPictureInit (ScreenPtr pScreen, PictFo
+     ps->InitIndexed = miInitIndexed;
+     ps->CloseIndexed = miCloseIndexed;
+     ps->UpdateIndexed = miUpdateIndexed;
++    ps->ChangePictureTransform = miChangePictureTransform;
++    ps->ChangePictureFilter = miChangePictureFilter;
+ 
+     /* MI rendering routines */
+     ps->Composite	= 0;			/* requires DDX support */
+--- a/nx-X11/programs/Xserver/render/mipict.h
++++ b/nx-X11/programs/Xserver/render/mipict.h
+@@ -71,6 +71,15 @@ void
+ miValidatePicture (PicturePtr pPicture,
+ 		   Mask       mask);
+ 
++int
++miChangePictureTransform (PicturePtr	pPicture,
++			  PictTransform *transform);
++
++int
++miChangePictureFilter (PicturePtr pPicture,
++		       int	  filter,
++		       xFixed     *params,
++		       int	  nparams);
+ 
+ Bool
+ miClipPicture (RegionPtr    pRegion,
