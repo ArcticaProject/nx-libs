@@ -946,7 +946,7 @@ void nxagentChangePicture(PicturePtr pPicture, Mask mask)
 
   #ifdef TEST
 
-  if (pPicture -> pDrawable -> type == DRAWABLE_PIXMAP)
+  if (pPicture && pPicture->pDrawable && pPicture -> pDrawable -> type == DRAWABLE_PIXMAP)
   {
     fprintf(stderr, "nxagentChangePicture: %sPixmap [%p] Picture [%p][%p].\n",
                 nxagentIsShmPixmap((PixmapPtr)pPicture -> pDrawable) ? "Shared " : "",
@@ -1008,7 +1008,7 @@ void nxagentComposite(CARD8 op, PicturePtr pSrc, PicturePtr pMask, PicturePtr pD
 
   #ifdef DEBUG
 
-  if (pSrc -> pDrawable != NULL)
+  if (pSrc && pSrc -> pDrawable != NULL)
   {
     fprintf(stderr, "nxagentComposite: Source Picture [%lu][%p] with drawable [%s%s][%p].\n",
                 nxagentPicturePriv(pSrc) -> picture, (void *) pSrc,
@@ -1018,14 +1018,16 @@ void nxagentComposite(CARD8 op, PicturePtr pSrc, PicturePtr pMask, PicturePtr pD
                              (void *) pSrc -> pDrawable);
   }
 
-  fprintf(stderr, "nxagentComposite: Destination Picture [%lu][%p] with drawable [%s%s][%p].\n",
-              nxagentPicturePriv(pDst) -> picture, (void *) pDst,
-              (pDst -> pDrawable -> type == DRAWABLE_PIXMAP &&
-                  nxagentIsShmPixmap((PixmapPtr) pDst -> pDrawable)) ? "Shared " : "",
-                       pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "Pixmap" : "Window",
-                           (void *) pDst -> pDrawable);
+  if (pDst && pDst->pDrawable) {
+    fprintf(stderr, "nxagentComposite: Destination Picture [%lu][%p] with drawable [%s%s][%p].\n",
+                nxagentPicturePriv(pDst) -> picture, (void *) pDst,
+                (pDst -> pDrawable -> type == DRAWABLE_PIXMAP &&
+                    nxagentIsShmPixmap((PixmapPtr) pDst -> pDrawable)) ? "Shared " : "",
+                         pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "Pixmap" : "Window",
+                             (void *) pDst -> pDrawable);
+  }
 
-  if (pMask)
+  if (pMask && pMask->pDrawable)
   {
     fprintf(stderr, "nxagentComposite: Mask Picture [%lu][%p] with drawable [%s%s][%p].\n",
                 nxagentPicturePriv(pMask) -> picture, (void *) pMask,
@@ -1042,12 +1044,13 @@ void nxagentComposite(CARD8 op, PicturePtr pSrc, PicturePtr pMask, PicturePtr pD
     pDstRegion = nxagentCreateRegion(pDst -> pDrawable, NULL, xDst, yDst, width, height);
 
     #ifdef TEST
-    fprintf(stderr, "nxagentComposite: WARNING! Prevented operation on region [%d,%d,%d,%d] "
-                "for drawable at [%p] with type [%s].\n", pDstRegion -> extents.x1,
-                    pDstRegion -> extents.y1, pDstRegion -> extents.x2, pDstRegion -> extents.y2,
-                        (void *) pDst -> pDrawable,
-                            pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window");
-
+    if ((pDstRegion) && (pDst && pDst->pDrawable)) {
+      fprintf(stderr, "nxagentComposite: WARNING! Prevented operation on region [%d,%d,%d,%d] "
+                  "for drawable at [%p] with type [%s].\n", pDstRegion -> extents.x1,
+                      pDstRegion -> extents.y1, pDstRegion -> extents.x2, pDstRegion -> extents.y2,
+                          (void *) pDst -> pDrawable,
+                              pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window");
+    }
     #endif
 
     nxagentMarkCorruptedRegion(pDst -> pDrawable, pDstRegion);
@@ -1176,10 +1179,12 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
   }
 
   #ifdef TEST
-  fprintf(stderr, "nxagentGlyphs: Called with source [%s][%p] destination [%s][%p] and size id [%d].\n",
-              (pSrc -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"), (void *) pSrc, 
-                  (pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"), (void *) pDst, 
-                      sizeID);
+  if ((pSrc && pSrc->pDrawable) && (pDst && pDst->pDrawable)) {
+      fprintf(stderr, "nxagentGlyphs: Called with source [%s][%p] destination [%s][%p] and size id [%d].\n",
+                  (pSrc -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"), (void *) pSrc, 
+                      (pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"), (void *) pDst, 
+                          sizeID);
+  }
   #endif
 
   pForm = NULL;
@@ -1264,9 +1269,11 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
           nxagentDrawableStatus(pSrc -> pDrawable) == NotSynchronized)
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentGlyphs: Synchronizing source [%s] at [%p].\n",
-                pSrc -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window",
-                    (void *) pSrc -> pDrawable);
+    if (pSrc && pSrc->pDrawable) {
+      fprintf(stderr, "nxagentGlyphs: Synchronizing source [%s] at [%p].\n",
+                  pSrc -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window",
+                      (void *) pSrc -> pDrawable);
+    }
     #endif
 
     /*
@@ -1280,12 +1287,14 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
     if (pSrc -> repeat == 1 || nxagentGlyphsExtents == NullBox)
     {
       #ifdef DEBUG
-      fprintf(stderr, "nxagentGlyphs: Synchronizing source [%s] at [%p] "
-                  "with geometry [%d,%d,%d,%d].\n", 
-                      (pSrc -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
-                          (void *) pSrc -> pDrawable, pSrc -> pDrawable -> x, pSrc -> pDrawable -> y,
-                              pSrc -> pDrawable -> x + pSrc -> pDrawable -> width,
-                                  pSrc -> pDrawable -> y + pSrc -> pDrawable -> height);
+      if (pSrc && pSrc->pDrawable) {
+        fprintf(stderr, "nxagentGlyphs: Synchronizing source [%s] at [%p] "
+                    "with geometry [%d,%d,%d,%d].\n", 
+                        (pSrc -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
+                            (void *) pSrc -> pDrawable, pSrc -> pDrawable -> x, pSrc -> pDrawable -> y,
+                                pSrc -> pDrawable -> x + pSrc -> pDrawable -> width,
+                                    pSrc -> pDrawable -> y + pSrc -> pDrawable -> height);
+      }
       #endif
 
       nxagentSynchronizeBox(pSrc -> pDrawable, NullBox, NEVER_BREAK);
@@ -1293,12 +1302,14 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
     else
     {
       #ifdef DEBUG
-      fprintf(stderr, "nxagentGlyphs: Synchronizing region [%d,%d,%d,%d] of source [%s] at [%p] "
-                  "with geometry [%d,%d,%d,%d].\n", glyphBox.x1, glyphBox.y1, glyphBox.x2, glyphBox.y2,
-                          (pSrc -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
-                              (void *) pSrc -> pDrawable, pSrc -> pDrawable -> x, pSrc -> pDrawable -> y,
-                                  pSrc -> pDrawable -> x + pSrc -> pDrawable -> width,
-                                      pSrc -> pDrawable -> y + pSrc -> pDrawable -> height);
+      if (pSrc && pSrc->pDrawable) {
+        fprintf(stderr, "nxagentGlyphs: Synchronizing region [%d,%d,%d,%d] of source [%s] at [%p] "
+                    "with geometry [%d,%d,%d,%d].\n", glyphBox.x1, glyphBox.y1, glyphBox.x2, glyphBox.y2,
+                            (pSrc -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
+                                (void *) pSrc -> pDrawable, pSrc -> pDrawable -> x, pSrc -> pDrawable -> y,
+                                    pSrc -> pDrawable -> x + pSrc -> pDrawable -> width,
+                                        pSrc -> pDrawable -> y + pSrc -> pDrawable -> height);
+      }
       #endif
 
       nxagentSynchronizeBox(pSrc -> pDrawable, &glyphBox, NEVER_BREAK);
@@ -1314,20 +1325,24 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
           nxagentDrawableStatus(pDst -> pDrawable) == NotSynchronized)
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentGlyphs: Synchronizing destination [%s] at [%p].\n",
-                pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window",
-                    (void *) pDst -> pDrawable);
+    if (pDst && pDst->pDrawable) {
+      fprintf(stderr, "nxagentGlyphs: Synchronizing destination [%s] at [%p].\n",
+                  pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window",
+                      (void *) pDst -> pDrawable);
+    }
     #endif
 
     if (nxagentGlyphsExtents == NullBox)
     {
       #ifdef DEBUG
-      fprintf(stderr, "nxagentGlyphs: Synchronizing destination [%s] at [%p] "
-                  "with geometry [%d,%d,%d,%d].\n", 
-                      (pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
-                          (void *) pDst -> pDrawable, pDst -> pDrawable -> x, pDst -> pDrawable -> y,
-                              pDst -> pDrawable -> x + pDst -> pDrawable -> width,
-                                  pDst -> pDrawable -> y + pDst -> pDrawable -> height);
+      if (pDst && pDst->pDrawable) {
+        fprintf(stderr, "nxagentGlyphs: Synchronizing destination [%s] at [%p] "
+                    "with geometry [%d,%d,%d,%d].\n", 
+                        (pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
+                            (void *) pDst -> pDrawable, pDst -> pDrawable -> x, pDst -> pDrawable -> y,
+                                pDst -> pDrawable -> x + pDst -> pDrawable -> width,
+                                    pDst -> pDrawable -> y + pDst -> pDrawable -> height);
+      }
       #endif
 
       nxagentSynchronizeBox(pDst -> pDrawable, NullBox, NEVER_BREAK);
@@ -1335,12 +1350,14 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
     else
     {
       #ifdef DEBUG
-      fprintf(stderr, "nxagentGlyphs: Synchronizing region [%d,%d,%d,%d] of destination [%s] at [%p] "
-                  "with geometry [%d,%d,%d,%d].\n", glyphBox.x1, glyphBox.y1, glyphBox.x2, glyphBox.y2,
-                          (pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
-                              (void *) pDst -> pDrawable, pDst -> pDrawable -> x, pDst -> pDrawable -> y,
-                                  pDst -> pDrawable -> x + pDst -> pDrawable -> width,
-                                      pDst -> pDrawable -> y + pDst -> pDrawable -> height);
+      if (pDst && pDst->pDrawable) {
+        fprintf(stderr, "nxagentGlyphs: Synchronizing region [%d,%d,%d,%d] of destination [%s] at [%p] "
+                    "with geometry [%d,%d,%d,%d].\n", glyphBox.x1, glyphBox.y1, glyphBox.x2, glyphBox.y2,
+                            (pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
+                                (void *) pDst -> pDrawable, pDst -> pDrawable -> x, pDst -> pDrawable -> y,
+                                    pDst -> pDrawable -> x + pDst -> pDrawable -> width,
+                                        pDst -> pDrawable -> y + pDst -> pDrawable -> height);
+      }
       #endif
 
       nxagentSynchronizeBox(pDst -> pDrawable, &glyphBox, NEVER_BREAK);
@@ -1355,9 +1372,11 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
   nxagentSetDrawableContainGlyphs(pDst -> pDrawable, 1);
 
   #ifdef TEST
-  fprintf(stderr, "nxagentGlyphs: Glyph flag set on drawable [%s][%p].\n",
-              pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window",
-                  (void *) pDst -> pDrawable);
+  if (pDst && pDst->pDrawable) {
+    fprintf(stderr, "nxagentGlyphs: Glyph flag set on drawable [%s][%p].\n",
+                pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window",
+                    (void *) pDst -> pDrawable);
+  }
   #endif
 
   #ifdef SPLIT_GLYPH_LISTS
@@ -1569,9 +1588,11 @@ void nxagentCompositeRects(CARD8 op, PicturePtr pDst, xRenderColor *color,
   }
 
   #ifdef TEST
-  fprintf(stderr, "nxagentCompositeRects: Called for picture at [%p] with [%s] at [%p].\n",
-              (void *) pDst, (pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
-                  (void *) pDst -> pDrawable);
+  if (pDst && pDst->pDrawable) {
+    fprintf(stderr, "nxagentCompositeRects: Called for picture at [%p] with [%s] at [%p].\n",
+                (void *) pDst, (pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window"),
+                    (void *) pDst -> pDrawable);
+  }
   #endif
 
   /*
@@ -1703,11 +1724,13 @@ FIXME: Is this useful or just a waste of bandwidth?
                              nxagentTrapezoidExtents) == rgnIN)
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentTrapezoids: WARNING! Prevented operation on region [%d,%d,%d,%d] already dirty "
-                "for drawable [%s][%p].\n", nxagentTrapezoidExtents -> x1, nxagentTrapezoidExtents -> y1,
-                    nxagentTrapezoidExtents -> x2, nxagentTrapezoidExtents -> y2,
-                        pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window",
-                            (void *) pDst -> pDrawable);
+    if (pDst && pDst->pDrawable) {
+      fprintf(stderr, "nxagentTrapezoids: WARNING! Prevented operation on region [%d,%d,%d,%d] already dirty "
+                  "for drawable [%s][%p].\n", nxagentTrapezoidExtents -> x1, nxagentTrapezoidExtents -> y1,
+                      nxagentTrapezoidExtents -> x2, nxagentTrapezoidExtents -> y2,
+                          pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window",
+                              (void *) pDst -> pDrawable);
+    }
     #endif
 
     if (pDst -> pDrawable -> type == DRAWABLE_PIXMAP)
@@ -1733,11 +1756,13 @@ FIXME: Is this useful or just a waste of bandwidth?
                                      nxagentTrapezoidExtents -> y2 - nxagentTrapezoidExtents -> y1);
 
     #ifdef TEST
-    fprintf(stderr, "nxagentTrapezoids: WARNING! Prevented operation on region [%d,%d,%d,%d] "
-                "for drawable [%s][%p].\n", pDstRegion -> extents.x1, pDstRegion -> extents.y1,
-                    pDstRegion -> extents.x2, pDstRegion -> extents.y2,
-                        pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window",
-                            (void *) pDst -> pDrawable);
+    if (pDst && pDst->pDrawable) {
+      fprintf(stderr, "nxagentTrapezoids: WARNING! Prevented operation on region [%d,%d,%d,%d] "
+                  "for drawable [%s][%p].\n", pDstRegion -> extents.x1, pDstRegion -> extents.y1,
+                      pDstRegion -> extents.x2, pDstRegion -> extents.y2,
+                          pDst -> pDrawable -> type == DRAWABLE_PIXMAP ? "pixmap" : "window",
+                              (void *) pDst -> pDrawable);
+    }
     #endif
 
     nxagentMarkCorruptedRegion(pDst -> pDrawable, pDstRegion);
