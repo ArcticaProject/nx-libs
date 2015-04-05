@@ -37,6 +37,7 @@ BuildRequires:  pkgconfig(xext)
 BuildRequires:  pkgconfig(xpm)
 BuildRequires:  pkgconfig(xdmcp)
 BuildRequires:  pkgconfig(xcomposite)
+BuildRequires:  pkgconfig(xdamage)
 %else
 BuildRequires:  libexpat-devel
 BuildRequires:  fontconfig-devel
@@ -49,6 +50,7 @@ BuildRequires:  xorg-x11-libfontenc-devel
 BuildRequires:  xorg-x11-libXpm-devel
 BuildRequires:  xorg-x11-libXdmcp-devel
 BuildRequires:  xorg-x11-libXcomposite-devel
+BuildRequires:  xorg-x11-libXdamage-devel
 %endif
 BuildRequires:  xorg-x11-util-devel
 %endif
@@ -207,7 +209,7 @@ This package obsoletes libNX_Xcomposite1 in NX and can be safely removed.
 
 %package -n libNX_Xdamage1
 Group:          System Environment/Libraries
-Summary:        NX Damage Extension library
+Summary:        NX Damage Extension library (dummy package)
 Requires:       %{name}%{?_isa} >= 3.5.0.29
 Obsoletes:      libNX_Xdamage
 
@@ -216,8 +218,7 @@ NX is a software suite which implements very efficient compression of
 the X11 protocol. This increases performance when using X
 applications over a network, especially a slow one.
 
-The X Damage Extension allows applications to track modified regions
-of drawables.
+This package obsoletes libNX_Xdamage1 in NX and can be safely removed.
 
 
 %package -n libNX_Xdmcp-devel
@@ -716,7 +717,6 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %post -p /sbin/ldconfig
 %post -n libNX_X11-6 -p /sbin/ldconfig
 %post -n libNX_Xau6 -p /sbin/ldconfig
-%post -n libNX_Xdamage1 -p /sbin/ldconfig
 %post -n libNX_Xext6 -p /sbin/ldconfig
 %post -n libNX_Xfixes3 -p /sbin/ldconfig
 %post -n libNX_Xinerama1 -p /sbin/ldconfig
@@ -729,7 +729,6 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %postun -p /sbin/ldconfig
 %postun -n libNX_X11-6 -p /sbin/ldconfig
 %postun -n libNX_Xau6 -p /sbin/ldconfig
-%postun -n libNX_Xdamage1 -p /sbin/ldconfig
 %postun -n libNX_Xext6 -p /sbin/ldconfig
 %postun -n libNX_Xfixes3 -p /sbin/ldconfig
 %postun -n libNX_Xinerama1 -p /sbin/ldconfig
@@ -782,10 +781,6 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %files -n libNX_Xau6
 %defattr(-,root,root)
 %{_libdir}/libNX_Xau.so.6*
-
-%files -n libNX_Xdamage1
-%defattr(-,root,root)
-%{_libdir}/libNX_Xdamage.so.1*
 
 %files -n libNX_Xext-devel
 %defattr(-,root,root)
@@ -904,7 +899,6 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 
 %files devel
 %defattr(-,root,root)
-%{_libdir}/libNX_Xdamage.so
 %{_libdir}/libNX_Xinerama.so
 %{_libdir}/libNX_Xrandr.so
 %{_libdir}/libNX_Xtst.so
@@ -912,7 +906,6 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %dir %{_includedir}/nx/X11/extensions
 %{_includedir}/nx/X11/extensions/XRes.h
 %{_includedir}/nx/X11/extensions/XTest.h
-%{_includedir}/nx/X11/extensions/Xdamage.h
 %{_includedir}/nx/X11/extensions/Xevie.h
 %{_includedir}/nx/X11/extensions/Xinerama.h
 %{_includedir}/nx/X11/extensions/Xrandr.h

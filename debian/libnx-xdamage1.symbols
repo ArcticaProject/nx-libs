@@ -1,9 +1,0 @@
-libNX_Xdamage.so.1 libnx-xdamage1 #MINVER#
- XDamageCreate@Base 3.5.0.29
- XDamageDestroy@Base 3.5.0.29
- XDamageExtensionInfo@Base 3.5.0.29
- XDamageExtensionName@Base 3.5.0.29
- XDamageFindDisplay@Base 3.5.0.29
- XDamageQueryExtension@Base 3.5.0.29
- XDamageQueryVersion@Base 3.5.0.29
- XDamageSubtract@Base 3.5.0.29
