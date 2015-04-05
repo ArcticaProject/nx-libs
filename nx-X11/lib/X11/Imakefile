@@ -27,7 +27,7 @@ XCOMM $XFree86: xc/lib/X11/Imakefile,v 3.52 2003/05/27 16:53:15 tsi Exp $
         HEADERS = Xlib.h Xresource.h Xutil.h cursorfont.h Xlibint.h \
 		Xcms.h Xlocale.h XKBlib.h XlibConf.h Xregion.h ImUtil.h
 
-#if BuildServersOnly && !XWinServer && !XnestServer && !BuildGLXLibrary && !BuildClients && !XdmxServer && !NXAgentServer
+#if BuildServersOnly && !BuildGLXLibrary && !BuildClients && !NXAgentServer
 all::
 
 BuildIncludes($(HEADERS),IncSubdir,..)

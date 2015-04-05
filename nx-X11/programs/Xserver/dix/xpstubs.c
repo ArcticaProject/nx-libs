@@ -33,9 +33,6 @@ from The Open Group.
 
 #include "misc.h"
 #include <X11/fonts/font.h>
-#ifdef XPRINT
-#include "DiPrint.h"
-#endif
 
 Bool
 XpClientIsBitmapClient(
@@ -51,27 +48,3 @@ XpClientIsPrintClient(
 {
     return FALSE;
 }
-#ifdef XPRINT
-int
-PrinterOptions(
-    int argc,
-    char **argv,
-    int i)
-{
-    return i;
-}
-void
-PrinterInitOutput(
-     ScreenInfo *pScreenInfo,
-     int argc,
-     char **argv)
-{
-}
-void PrinterUseMsg(void)
-{
-}
-void PrinterInitGlobals(void)
-{
-}
-#endif /* XPRINT */
-

@@ -178,7 +178,6 @@ X11.tmpl provides defaults for the following variables:
 	BuildDBE		build DOUBLE-BUFFER extension
 	BuildDmx		build Distributed Multihead X server and extension
 	BuildDPMS		build Display Power Management Signaling extension
-	BuildFontServer		build font server
 	BuildFonts		build pcf fonts
 	BuildIncRoot		relative path to location of headers in build
 	BuildIncTop		path from build includes directory to top
@@ -325,14 +324,6 @@ X11.tmpl provides defaults for the following variables:
 	XdmDir			directory in which to install xdm files
 	XdmServersType		type of xdm Xservers file to install
 	XinitDir		directory in which to install xinit files
-	XPrintDir		parent of X Print server config directory
-	XprtServer		build the X Print server
-	XpRasterDDX		include the raster print ddx driver
-	XpColorPclDDX		include the color PCL print ddx driver
-	XpMonoPclDDX		include the monochrome PCL print ddx driver
-	XpPostScriptDDX		include the PostScript print ddx driver
-	XpPdfDDX		include the PDF print ddx driver
-	XpSvgDDX		include the SVG print ddx driver
 	XmanLocalSearchPath	non-standard path for man pages
 	XtErrorPrefix		leading text in XtError() msg; eg. 'X Toolkit '
 	XtWarningPrefix		leading text in XtWarning()msg, same as above
@@ -461,13 +452,10 @@ The following variables are used by some part of the tree:
 	SvgaConfig		default SVGA configuration
 	HasGetReturnAddress	util/memleak
 	HasShadowPasswd		system has getspnam() function
-	XnestServer		build X server with Xlib-based ddx
-	XVirtualFramebufferServer	build X server with virtual memory framebuffer
 	WebServer		host:port of your Web server (see programs/xrx)
 	HtmlDir			path used by Web server for HTML and RX docs
 	CgiBinDir		path used by Web server for CGI programs
 	ProxyManager		ICE network ID to contact a running proxymngr
-	XdmxServer		build Distributed Multihead X server
 
 
 Make Variables

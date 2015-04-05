@@ -1684,13 +1684,6 @@ IPLAN2P8_DEFS = -DUSE_IPLAN2P8
 #endif
 
 /*
- * Build the font server
- */
-#ifndef BuildFontServer
-# define BuildFontServer	YES
-#endif
-
-/*
  * Include fonts support
  */
 #ifndef BuildSpeedo
@@ -1874,16 +1867,6 @@ IPLAN2P8_DEFS = -DUSE_IPLAN2P8
 
 #ifndef UseServerLock
 # define UseServerLock	YES
-#endif
-
-#ifndef XnestServer
-# define XnestServer		YES
-#endif
-#ifndef XVirtualFramebufferServer
-# define XVirtualFramebufferServer	YES
-#endif
-#ifndef XprtServer
-# define XprtServer			YES
 #endif
 
 #ifndef ServerExtraDefines

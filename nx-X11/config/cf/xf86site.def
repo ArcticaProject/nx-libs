@@ -45,30 +45,6 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
  */
 
 /*
- * To disable building the Xnest server, uncomment this.
- *
-#define XnestServer		NO
- */
-
-/*
- * To disable building Xvfb, uncomment this.
- *
-#define XVirtualFramebufferServer	NO
- */
-
-/*
- * To enable building Xdmx, uncomment this.
- *
-#define XdmxServer		YES
- */
-
-/*
- * To disable building Xprt, uncomment this.
- *
-#define XprtServer NO
- */
-
-/*
  * Set the default server (ie the one that gets the sym-link to "X")
  *
 #define ServerToInstall		XFree86
@@ -160,12 +136,6 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
  * If you have the HALlib source code installed in xfree86/drivers/mga/hallib,
  * uncomment this:
 #define BuildMatroxHal		YES
- */
-
-/*
- * To disable building the font server, uncomment this.
- *
-#define BuildFontServer		NO
  */
 
 /*
