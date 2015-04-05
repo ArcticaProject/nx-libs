@@ -204,7 +204,7 @@ INSTPGMFLAGS =
 #if BuildLBX || GzipFontCompression
            ZLIB = GzipLibrary
 #endif
-             OS = os/LibraryTargetName(os) $(DEPXAUTHLIB) $(DEPXDMCPLIB)
+             OS = os/LibraryTargetName(os) $(DEPXAUTHLIB)
         BSDEMUL = $(DEPXBSDLIB)
 #if DoLoadableServer
             MFB = mfb/ModuleLibraryTargetName(mfb)
@@ -732,17 +732,17 @@ $(NXAGENTOBJS) $(NXAGENTLIBS) $(NXAGENTSYSLIBS):: $(NXAGENTDIRS)
 #if defined(SunArchitecture)
 NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext -L ../../../nxcompshad \
                 -lXcomp -lXcompext -lXcompshad -lrt -L/usr/sfw/lib -lNX_Xrender -lNX_Xfixes \
-                -L../../../nx-X11/exports/lib -lNX_Xtst -lNX_Xdamage -lNX_Xrandr -lNX_Xcomposite -lNX_Xdmcp \
+                -L../../../nx-X11/exports/lib -lNX_Xtst -lNX_Xdamage -lNX_Xrandr -lNX_Xcomposite -lXdmcp \
 `pkg-config --libs libxml-2.0`
 #elif defined(cygwinArchitecture)
 NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext \
                 -lXcomp -lXcompext -lNX_Xrender -lX11 -lNX_Xext -lNX_Xcomposite -lNX_Xfixes \
-                -L ../../../nxcompshad -lXcompshad -L../../../nx-X11/exports/lib -lNX_Xtst -lNX_Xdmcp \
+                -L ../../../nxcompshad -lXcompshad -L../../../nx-X11/exports/lib -lNX_Xtst -lXdmcp \
 `pkg-config --libs libxml-2.0`
 #else
 NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext -L ../../../nxcompshad \
                 -lXcomp -lXcompext -lXcompshad -lNX_Xrender -lNX_X11 -lNX_Xext -lNX_Xfixes \
-                -L../../../nx-X11/exports/lib -lNX_Xtst -lNX_Xdamage -lNX_Xrandr -lNX_Xcomposite -lNX_Xinerama -lNX_Xdmcp \
+                -L../../../nx-X11/exports/lib -lNX_Xtst -lNX_Xdamage -lNX_Xrandr -lNX_Xcomposite -lNX_Xinerama -lXdmcp \
 `pkg-config --libs libxml-2.0`
 #endif
 

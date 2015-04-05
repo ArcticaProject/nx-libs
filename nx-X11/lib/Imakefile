@@ -191,10 +191,6 @@ FONTENCSUBDIR = fontenc
 XAULIBDIR = Xau
 #endif
 
-#if BuildXdmcpLib
-XDMCPLIBDIR = Xdmcp
-#endif
-
 #if BuildX11Lib
 X11LIBDIR = X11
 #endif
@@ -209,7 +205,7 @@ XTSTLIBDIR = Xtst
 #endif
 
 
-LINTSUBDIRS = $(XAULIBDIR) $(XDMCPLIBDIR) $(X11LIBDIR) \
+LINTSUBDIRS = $(XAULIBDIR) $(X11LIBDIR) \
              $(OLDXLIBDIR) $(ICELIBDIR) $(SMLIBDIR) $(XEXTLIBDIR) $(XTLIBDIR) \
              $(SSLIBDIR) $(XF86MISCLIBDIR) $(XF86VMLIBDIR) $(XF86DGALIBDIR) \
              $(XF86RUSHLIBDIR) $(XMULIBDIR) $(XMUULIBDIR) $(XPMLIBDIR) \
@@ -232,4 +228,3 @@ MakeSubdirs($(SUBDIRS))
 DependSubdirs($(SUBDIRS))
 MakeLintLibSubdirs($(LINTSUBDIRS))
 MakeLintSubdirs($(LINTSUBDIRS),install.ln,install.ln)
-

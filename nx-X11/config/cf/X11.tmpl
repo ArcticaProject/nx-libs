@@ -323,10 +323,6 @@ XORGRELSTRING = XorgManVersionString
 #define BuildXauLib		(BuildLibraries || BuildLibrariesForXServers)
 #endif
 #define UseInstalledXauLib	(defined(UseInstalled) || !BuildXauLib)
-#ifndef BuildXdmcpLib
-#define BuildXdmcpLib		(BuildLibraries || BuildLibrariesForXServers)
-#endif
-#define UseInstalledXdmcpLib	(defined(UseInstalled) || !BuildXdmcpLib)
 #ifndef BuildMITMiscExt
 #define BuildMITMiscExt		YES
 #endif
@@ -2698,6 +2694,7 @@ ProjectUnsharedLibReferences(XFONTCACHE,NX_Xfontcache,$(XFONTCACHELIBSRC),XBuild
 #ifndef ProfileLibXau
 #define ProfileLibXau		NO	/* profiled auth library */
 #endif
+      XDMCPLIBSRC = $(LIBSRC)/Xdmcp
          XAUTHSRC = $(LIBSRC)/Xau
 #if SharedLibXau
 #ifndef SharedXauRev
@@ -2709,32 +2706,6 @@ SharedLibReferences(XAUTH,NX_Xau,$(XAUTHSRC),SOXAUTHREV,SharedXauRev)
 ProjectUnsharedLibReferences(XAUTH,NX_Xau,$(XAUTHSRC),XBuildLibDir)
 #else
 ProjectUnsharedLibReferences(XAUTH,NX_Xau,$(XAUTHSRC),$(USRLIBDIR))
-#endif
-#endif
-
-#ifndef SharedLibXdmcp
-#define SharedLibXdmcp		YES
-#endif
-#ifndef NormalLibXdmcp
-#define NormalLibXdmcp (!SharedLibXdmcp | ForceNormalLib)
-#endif
-#ifndef DebugLibXdmcp
-#define DebugLibXdmcp		NO	/* debugged XDMCP library */
-#endif
-#ifndef ProfileLibXdmcp
-#define ProfileLibXdmcp		NO	/* profiled XDMCP library */
-#endif
-      XDMCPLIBSRC = $(LIBSRC)/Xdmcp
-#if SharedLibXdmcp
-#ifndef SharedXdmcpRev
-#define SharedXdmcpRev 6.0
-#endif
-SharedLibReferences(XDMCP,NX_Xdmcp,$(XDMCPLIBSRC),SOXDMCPREV,SharedXdmcpRev)
-#else
-#if !UseInstalledXdmcpLib
-ProjectUnsharedLibReferences(XDMCP,NX_Xdmcp,$(XDMCPLIBSRC),XBuildLibDir)
-#else
-ProjectUnsharedLibReferences(XDMCP,NX_Xdmcp,$(XDMCPLIBSRC),$(USRLIBDIR))
 #endif
 #endif
 

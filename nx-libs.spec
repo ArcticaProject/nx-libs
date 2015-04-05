@@ -35,6 +35,7 @@ BuildRequires:  pkgconfig(libxml-2.0)
 BuildRequires:  pkgconfig(x11)
 BuildRequires:  pkgconfig(xext)
 BuildRequires:  pkgconfig(xpm)
+BuildRequires:  pkgconfig(xdmcp)
 %else
 BuildRequires:  libexpat-devel
 BuildRequires:  fontconfig-devel
@@ -45,6 +46,7 @@ BuildRequires:  xorg-x11-libX11-devel
 BuildRequires:  xorg-x11-libXext-devel
 BuildRequires:  xorg-x11-libfontenc-devel
 BuildRequires:  xorg-x11-libXpm-devel
+BuildRequires:  xorg-x11-libXdmcp-devel
 %endif
 BuildRequires:  xorg-x11-util-devel
 %endif
@@ -189,7 +191,7 @@ know a server-specific key called a "magic cookie".
 
 %package -n libNX_Xcomposite1
 Group:          System Environment/Libraries
-Summary:        NX protocol Composite extension client library
+Summary:        NX protocol Composite extension client library (dummy package)
 Requires:       %{name}%{?_isa} >= 3.5.0.29
 Obsoletes:      libNX_Xcomposite
 
@@ -222,9 +224,8 @@ of drawables.
 
 %package -n libNX_Xdmcp-devel
 Group:          Development/Libraries
-Summary:        Development files for the NXDM Control Protocol library
+Summary:        Development files for the NXDM Control Protocol library (dummy package)
 Requires:       %{name}%{?_isa} = %{version}-%{release}
-Requires:       libNX_Xdmcp6%{?_isa} = %{version}-%{release}
 Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
 
 %description -n libNX_Xdmcp-devel
@@ -232,21 +233,12 @@ NX is a software suite which implements very efficient compression of
 the X11 protocol. This increases performance when using X
 applications over a network, especially a slow one.
 
-The X Display Manager Control Protocol (XDMCP) provides a uniform
-mechanism for an autonomous display to request login service from a
-remote host. By autonomous, we mean the display consists of hardware
-and processes that are independent of any particular host where login
-service is desired. An X terminal (screen, keyboard, mouse,
-processor, network interface) is a prime example of an autonomous
-display.
-
-This package contains all necessary include files and libraries
-needed to develop applications that require these.
+This package obsoletes libNX_Xdmcp-devel in NX and can be safely removed.
 
 
 %package -n libNX_Xdmcp6
 Group:          System Environment/Libraries
-Summary:        NX Display Manager Control Protocol library
+Summary:        NX Display Manager Control Protocol library (dummy package)
 Requires:       %{name}%{?_isa} >= 3.5.0.29
 Obsoletes:      libNX_Xdmcp
 
@@ -255,13 +247,7 @@ NX is a software suite which implements very efficient compression of
 the X11 protocol. This increases performance when using X
 applications over a network, especially a slow one.
 
-The X Display Manager Control Protocol (XDMCP) provides a uniform
-mechanism for an autonomous display to request login service from a
-remote host. By autonomous, we mean the display consists of hardware
-and processes that are independent of any particular host where login
-service is desired. An X terminal (screen, keyboard, mouse,
-processor, network interface) is a prime example of an autonomous
-display.
+This package obsoletes libNX_Xdmcp6 in NX and can be safely removed.
 
 
 %package -n libNX_Xext-devel
@@ -551,7 +537,6 @@ Group:          Development/Libraries
 Summary:        Include files and libraries for NX development
 Requires:       libNX_X11-devel%{?_isa} = %{version}-%{release}
 Requires:       libNX_Xau-devel%{?_isa} = %{version}-%{release}
-Requires:       libNX_Xdmcp-devel%{?_isa} = %{version}-%{release}
 Requires:       libNX_Xext-devel%{?_isa} = %{version}-%{release}
 Requires:       libNX_Xfixes-devel%{?_isa} = %{version}-%{release}
 Requires:       libNX_Xrender-devel%{?_isa} = %{version}-%{release}
@@ -735,7 +720,6 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %post -n libNX_Xau6 -p /sbin/ldconfig
 %post -n libNX_Xcomposite1 -p /sbin/ldconfig
 %post -n libNX_Xdamage1 -p /sbin/ldconfig
-%post -n libNX_Xdmcp6 -p /sbin/ldconfig
 %post -n libNX_Xext6 -p /sbin/ldconfig
 %post -n libNX_Xfixes3 -p /sbin/ldconfig
 %post -n libNX_Xinerama1 -p /sbin/ldconfig
@@ -750,7 +734,6 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %postun -n libNX_Xau6 -p /sbin/ldconfig
 %postun -n libNX_Xcomposite1 -p /sbin/ldconfig
 %postun -n libNX_Xdamage1 -p /sbin/ldconfig
-%postun -n libNX_Xdmcp6 -p /sbin/ldconfig
 %postun -n libNX_Xext6 -p /sbin/ldconfig
 %postun -n libNX_Xfixes3 -p /sbin/ldconfig
 %postun -n libNX_Xinerama1 -p /sbin/ldconfig
@@ -811,15 +794,6 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %files -n libNX_Xdamage1
 %defattr(-,root,root)
 %{_libdir}/libNX_Xdamage.so.1*
-
-%files -n libNX_Xdmcp-devel
-%defattr(-,root,root)
-%{_libdir}/libNX_Xdmcp.so
-%{_includedir}/nx/X11/Xdmcp.h
-
-%files -n libNX_Xdmcp6
-%defattr(-,root,root)
-%{_libdir}/libNX_Xdmcp.so.6*
 
 %files -n libNX_Xext-devel
 %defattr(-,root,root)
