@@ -74,10 +74,6 @@ XINERAMADIR=Xinerama
 XRESLIBDIR = XRes
 #endif
 
-#if BuildDmxLibrary
-DMXLIBDIR = dmx
-#endif
-
 #if BuildGLXLibrary
 GLXLIBDIR = GL
 #endif
