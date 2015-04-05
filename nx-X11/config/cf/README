@@ -204,7 +204,6 @@ X11.tmpl provides defaults for the following variables:
 	DebugLibX11		build libX11_d.a
 	DebugLibXau		build libXau_d.a
 	DebugLibXaw		build libXaw_d.a
-	DebugLibXdmcp		build libXdmcp_d.a
 	DebugLibXext		build libXext_d.a
 	DebugLibXi		build libXi_d.a
 	DebugLibXmu		build libXmu_d.a
@@ -253,7 +252,6 @@ X11.tmpl provides defaults for the following variables:
 	NormalLibX11		build libX11.a
 	NormalLibXau		build libXau.a
 	NormalLibXaw		build libXaw.a
-	NormalLibXdmcp		build libXdmcp.a
 	NormalLibXext		build libXext.a
 	NormalLibXi		build libXi.a
 	NormalLibXmu		build libXmu.a
@@ -269,7 +267,6 @@ X11.tmpl provides defaults for the following variables:
 	ProfileLibX11		build libX11_p.a
 	ProfileLibXau		build libXau_p.a
 	ProfileLibXaw		build libXaw_p.a
-	ProfileLibXdmcp		build libXdmcp_p.a
 	ProfileLibXext		build libXext_p.a
 	ProfileLibXi		build libXi_p.a
 	ProfileLibXmu		build libXmu_p.a
@@ -291,7 +288,6 @@ X11.tmpl provides defaults for the following variables:
 	SharedLibX11		boolean for making sharable libX11.so
 	SharedLibXau		boolean for making sharable libXau.so
 	SharedLibXaw		boolean for making sharable libXaw.so
-	SharedLibXdmcp		boolean for making sharable libXdmcp.so
 	SharedLibXext		boolean for making sharable libXext.so
 	SharedLibXi		boolean for making sharable libXi.so
 	SharedLibXmu		boolean for making sharable libXmu.so
@@ -384,8 +380,6 @@ An <os>Lib.tmpl file provides defaults for the following variables:
 	SharedXauRev		version number for libXau.so
 	SharedXawReqs		required libs for libXaw.so
 	SharedXawRev		version number for libXaw.so
-	SharedXdmcpReqs		required libs for libXdmcp.so
-	SharedXdmcpRev		version number for libXdmcp.so
 	SharedXextReqs		required libs for libXext.so
 	SharedXextRev		version number for libXext.so
 	SharedXiReqs		required libs for libXi.so
