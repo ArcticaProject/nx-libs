@@ -38,6 +38,7 @@ BuildRequires:  pkgconfig(xpm)
 BuildRequires:  pkgconfig(xdmcp)
 BuildRequires:  pkgconfig(xcomposite)
 BuildRequires:  pkgconfig(xdamage)
+BuildRequires:  pkgconfig(xfixes)
 %else
 BuildRequires:  libexpat-devel
 BuildRequires:  fontconfig-devel
@@ -51,6 +52,7 @@ BuildRequires:  xorg-x11-libXpm-devel
 BuildRequires:  xorg-x11-libXdmcp-devel
 BuildRequires:  xorg-x11-libXcomposite-devel
 BuildRequires:  xorg-x11-libXdamage-devel
+BuildRequires:  xorg-x11-libXfixes-devel
 %endif
 BuildRequires:  xorg-x11-util-devel
 %endif
@@ -297,9 +299,7 @@ The NX_Xext library contains a handful of X11 extensions:
 
 %package -n libNX_Xfixes-devel
 Group:          Development/Libraries
-Summary:        Development files for the NX Xfixes extension library
-Requires:       libNX_Xfixes3%{?_isa} = %{version}-%{release}
-Requires:       libNX_X11-devel%{?_isa} = %{version}-%{release}
+Summary:        Development files for the NX Xfixes extension library (dummy package)
 Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
 
 %description -n libNX_Xfixes-devel
@@ -307,16 +307,12 @@ NX is a software suite which implements very efficient compression of
 the X11 protocol. This increases performance when using X
 applications over a network, especially a slow one.
 
-The nx-X11 Fixes extension provides applications with work-arounds for
-various limitations in the core protocol.
-
-This package contains all necessary include files and libraries
-needed to develop applications that require these.
+This package obsoletes libNX_Xfixes-devel in NX and can be safely removed.
 
 
 %package -n libNX_Xfixes3
 Group:          System Environment/Libraries
-Summary:        NX miscellaneous "fixes" extension library
+Summary:        NX miscellaneous "fixes" extension library (dummy package)
 Requires:       %{name}%{?_isa} >= 3.5.0.29
 Obsoletes:      libNX_Xfixes
 
@@ -325,8 +321,7 @@ NX is a software suite which implements very efficient compression of
 the X11 protocol. This increases performance when using X
 applications over a network, especially a slow one.
 
-The nx_X11 Fixes extension provides applications with work-arounds for
-various limitations in the core protocol.
+This package obsoletes libNX_Xfixes3 in NX and can be safely removed.
 
 
 %package -n libNX_Xinerama1
@@ -537,7 +532,6 @@ Summary:        Include files and libraries for NX development
 Requires:       libNX_X11-devel%{?_isa} = %{version}-%{release}
 Requires:       libNX_Xau-devel%{?_isa} = %{version}-%{release}
 Requires:       libNX_Xext-devel%{?_isa} = %{version}-%{release}
-Requires:       libNX_Xfixes-devel%{?_isa} = %{version}-%{release}
 Requires:       libNX_Xrender-devel%{?_isa} = %{version}-%{release}
 Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
 Requires:       %{name}%{?_isa} = %{version}-%{release}
@@ -718,7 +712,6 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %post -n libNX_X11-6 -p /sbin/ldconfig
 %post -n libNX_Xau6 -p /sbin/ldconfig
 %post -n libNX_Xext6 -p /sbin/ldconfig
-%post -n libNX_Xfixes3 -p /sbin/ldconfig
 %post -n libNX_Xinerama1 -p /sbin/ldconfig
 %post -n libNX_Xrandr2 -p /sbin/ldconfig
 %post -n libNX_Xrender1 -p /sbin/ldconfig
@@ -730,7 +723,6 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %postun -n libNX_X11-6 -p /sbin/ldconfig
 %postun -n libNX_Xau6 -p /sbin/ldconfig
 %postun -n libNX_Xext6 -p /sbin/ldconfig
-%postun -n libNX_Xfixes3 -p /sbin/ldconfig
 %postun -n libNX_Xinerama1 -p /sbin/ldconfig
 %postun -n libNX_Xrandr2 -p /sbin/ldconfig
 %postun -n libNX_Xrender1 -p /sbin/ldconfig
@@ -816,15 +808,6 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %files -n libNX_Xext6
 %defattr(-,root,root)
 %{_libdir}/libNX_Xext.so.6*
-
-%files -n libNX_Xfixes-devel
-%defattr(-,root,root)
-%{_libdir}/libNX_Xfixes.so
-%{_includedir}/nx/X11/extensions/Xfixes.h
-
-%files -n libNX_Xfixes3
-%defattr(-,root,root)
-%{_libdir}/libNX_Xfixes.so.3*
 
 %files -n libNX_Xinerama1
 %defattr(-,root,root)

@@ -21,6 +21,7 @@ Build-Depends:
  libxdmcp-dev,
  libxcomposite-dev,
  libxdamage-dev,
+ libxfixes-dev,
  autoconf,
  pkg-config,
  x11proto-core-dev,
@@ -482,19 +483,16 @@ Multi-Arch: same
 Pre-Depends:
  ${misc:Pre-Depends},
 Depends:
- ${shlibs:Depends},
  ${misc:Depends},
-Breaks: nxlibs (<= 3.5.1),
-        libnx-x11 (<< 2:3.5.0.29-0x2go2~),
-Description: nx-X11 miscellaneous 'fixes' extension library
+Description: nx-X11 miscellaneous 'fixes' extension library (dummy package)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
  using X applications over a network, especially a slow one.
  .
- libNX_Xfixes provides an X Window System client interface to the
- 'XFIXES' extension to the X protocol.
+ This package removes the obsoleted libNX_Xfixes.so.3 library. With
+ recent versions of NX, the system-wide installed libXfixes gets used.
  .
- It provides support for Region types, and some cursor functions.
+ This package can be safely removed.
  
 Package: libnx-xfixes-dev
 Provides: libnx-xfixes3-dev
@@ -502,22 +500,17 @@ Section: libdevel
 Architecture: any
 Multi-Arch: same
 Depends:
- libnx-xfixes3 (= ${binary:Version}),
- nx-x11proto-xfixes-dev (= ${binary:Version}),
  ${misc:Depends},
-Breaks: nxlibs (<= 3.5.1),
-        libnx-x11-dev (<< 2:3.5.0.29-0x2go2~),
-Description: nx-X11 miscellaneous 'fixes' extension library (development headers)
+Description: nx-X11 miscellaneous 'fixes' extension library (dummy package)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
  using X applications over a network, especially a slow one.
  .
- libNX_Xfixes provides an X Window System client interface to the
- 'XFIXES' extension to the X protocol.
+ This package removes the obsoleted headers for the libNX_Xfixes.so.3
+ library. With recent versions of NX, the system-wide installed
+ libXfixes gets used.
  .
- It provides support for Region types, and some cursor functions.
- .
- This package contains the development headers for this library.
+ This package can be safely removed.
 
 Package: nx-x11proto-xfixes-dev
 Section: libdevel
@@ -541,21 +534,18 @@ Multi-Arch: same
 Pre-Depends:
  ${misc:Pre-Depends},
 Depends:
- libnx-xfixes3 (= ${binary:Version}),
  ${misc:Depends},
 Section: debug
-Breaks: nx-x11-dbg (<< 2:3.5.0.29-0x2go2~),
-Description: nx-X11 miscellaneous 'fixes' extension library (debug package)
+Description: nx-X11 miscellaneous 'fixes' extension library (dummy package)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
  using X applications over a network, especially a slow one.
  .
- libNX_Xfixes provides an X Window System client interface to the
- 'XFIXES' extension to the X protocol.
+ This package removes the obsoleted debug symbols for the libNX_Xfixes.so.3
+ library. With recent versions of NX, the system-wide installed libXfixes
+ gets used.
  .
- It provides support for Region types, and some cursor functions.
- .
- This package contains debug symbols for this library.
+ This package can be safely removed.
 
 Package: libnx-xinerama1
 Architecture: any

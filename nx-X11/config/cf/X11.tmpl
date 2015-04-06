@@ -621,9 +621,6 @@ XORGRELSTRING = XorgManVersionString
 #ifndef BuildXfixes
 #define BuildXfixes		YES
 #endif
-#ifndef BuildXfixesLibrary
-#define BuildXfixesLibrary	!BuildServersOnly
-#endif
 
 #ifndef BuildDamage
 #define BuildDamage		BuildXfixes
@@ -2116,30 +2113,6 @@ ProjectUnsharedLibReferences(XONLY,NX_X11,$(XLIBSRC),XBuildLibDir)
 # define ProfileLibXrandr	NO
 #endif
 
-#if BuildXfixesLibrary
-#ifndef SharedLibXfixes
-#define SharedLibXfixes		HasSharedLibraries
-#endif
-#ifndef NormalLibXfixes
-#define NormalLibXfixes		(!SharedLibXfixes || ForceNormalLib)
-#endif
-#ifndef DebugLibXfixes
-#define DebugLibXfixes		NO
-#endif
-#ifndef ProfileLibXfixes
-#define ProfileLibXfixes	NO
-#endif
-#else
-#undef  SharedLibXfixes
-#define SharedLibXfixes		NO
-#undef  NormalLibXfixes
-#define NormalLibXfixes		NO
-#undef  DebugLibXfixes
-#define DebugLibXfixes		NO
-#undef  ProfileLibXfixes
-#define ProfileLibXfixes	NO
-#endif
-
 #if BuildXevieLibrary
 #ifndef SharedLibXevie
 #define SharedLibXevie		HasSharedLibraries
@@ -2532,16 +2505,6 @@ ProjectUnsharedLibReferences(XRENDER,NX_Xrender,$(XRENDERLIBSRC),XBuildLibDir)
 SharedLibReferences(XRANDR,NX_Xrandr,$(XRANDRLIBSRC),SOXRANDRREV,SharedXrandrRev)
 #else
 ProjectUnsharedLibReferences(XRANDR,NX_Xrandr,$(XRANDRLIBSRC),XBuildLibDir)
-#endif
-
-    XFIXESLIBSRC = $(LIBSRC)/Xfixes
-#if SharedLibXfixes
-#ifndef SharedXfixesRev
-#define SharedXfixesRev 3.0
-#endif
-SharedLibReferences(XFIXES,NX_Xfixes,$(XFIXESLIBSRC),SOXFIXESREV,SharedXfixesRev)
-#else
-ProjectUnsharedLibReferences(XFIXES,NX_Xfixes,$(XFIXESLIBSRC),XBuildLibDir)
 #endif
 
 XEVIELIBSRC = $(LIBSRC)/Xevie
