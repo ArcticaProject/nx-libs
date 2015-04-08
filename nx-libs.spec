@@ -39,6 +39,7 @@ BuildRequires:  pkgconfig(xdmcp)
 BuildRequires:  pkgconfig(xcomposite)
 BuildRequires:  pkgconfig(xdamage)
 BuildRequires:  pkgconfig(xfixes)
+BuildRequires:  pkgconfig(xtst)
 %else
 BuildRequires:  libexpat-devel
 BuildRequires:  fontconfig-devel
@@ -53,6 +54,7 @@ BuildRequires:  xorg-x11-libXdmcp-devel
 BuildRequires:  xorg-x11-libXcomposite-devel
 BuildRequires:  xorg-x11-libXdamage-devel
 BuildRequires:  xorg-x11-libXfixes-devel
+BuildRequires:  xorg-x11-libXtst-devel
 %endif
 BuildRequires:  xorg-x11-util-devel
 %endif
@@ -419,7 +421,7 @@ the Render extension.
 
 %package -n libNX_Xtst6
 Group:          System Environment/Libraries
-Summary:        Xlib-based client API for the XTEST and RECORD extensions on NX
+Summary:        Xlib-based client API for the XTEST and RECORD extensions on NX (dummy package)
 Requires:       %{name}%{?_isa} >= 3.5.0.29
 Obsoletes:      libNX_Xtst
 
@@ -428,13 +430,7 @@ NX is a software suite which implements very efficient compression of
 the X11 protocol. This increases performance when using X
 applications over a network, especially a slow one.
 
-The XTEST extension is a minimal set of client and server extensions
-required to completely test the X11 server with no user intervention.
-This extension is not intended to support general journaling and
-playback of user actions.
-
-The RECORD extension supports the recording and reporting of all core
-X protocol and arbitrary X extension protocol.
+This package obsoletes libNX_Xtst6 in NX and can be safely removed.
 
 
 %package -n libXcomp-devel
@@ -715,7 +711,6 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %post -n libNX_Xinerama1 -p /sbin/ldconfig
 %post -n libNX_Xrandr2 -p /sbin/ldconfig
 %post -n libNX_Xrender1 -p /sbin/ldconfig
-%post -n libNX_Xtst6 -p /sbin/ldconfig
 %post -n libXcomp3 -p /sbin/ldconfig
 %post -n libXcompext3 -p /sbin/ldconfig
 %post -n libXcompshad3 -p /sbin/ldconfig
@@ -726,7 +721,6 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %postun -n libNX_Xinerama1 -p /sbin/ldconfig
 %postun -n libNX_Xrandr2 -p /sbin/ldconfig
 %postun -n libNX_Xrender1 -p /sbin/ldconfig
-%postun -n libNX_Xtst6 -p /sbin/ldconfig
 %postun -n libXcomp3 -p /sbin/ldconfig
 %postun -n libXcompext3 -p /sbin/ldconfig
 %postun -n libXcompshad3 -p /sbin/ldconfig
@@ -826,10 +820,6 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %defattr(-,root,root)
 %{_libdir}/libNX_Xrender.so.1*
 
-%files -n libNX_Xtst6
-%defattr(-,root,root)
-%{_libdir}/libNX_Xtst.so.6*
-
 %files -n libXcomp-devel
 %defattr(-,root,root)
 %_libdir/libXcomp.so
@@ -884,7 +874,6 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %defattr(-,root,root)
 %{_libdir}/libNX_Xinerama.so
 %{_libdir}/libNX_Xrandr.so
-%{_libdir}/libNX_Xtst.so
 %{_includedir}/nx/X11/X10.h
 %dir %{_includedir}/nx/X11/extensions
 %{_includedir}/nx/X11/extensions/XRes.h

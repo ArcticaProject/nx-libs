@@ -64,6 +64,7 @@ override_dh_install:
 	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/xf86bigfstr.h
 	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/xf86bigfont.h
 	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/XI.h
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/extensions/XTest.h
 	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/fonts/
 	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx/X11/Xtrans/
 
@@ -86,7 +87,6 @@ override_dh_strip:
 	dh_strip -plibnx-xinerama1 --dbg-package=libnx-xinerama1-dbg
 	dh_strip -plibnx-xrandr2 --dbg-package=libnx-xrandr2-dbg
 	dh_strip -plibnx-xrender1 --dbg-package=libnx-xrender1-dbg
-	dh_strip -plibnx-xtst6 --dbg-package=libnx-xtst6-dbg
 	dh_strip -plibxcomp3 --dbg-package=libxcomp3-dbg
 	dh_strip -plibxcompshad3 --dbg-package=libxcompshad3-dbg
 	dh_strip -plibxcompext3 --dbg-package=libxcompext3-dbg

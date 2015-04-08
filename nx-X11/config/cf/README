@@ -209,7 +209,6 @@ X11.tmpl provides defaults for the following variables:
 	DebugLibXi		build libXi_d.a
 	DebugLibXmu		build libXmu_d.a
 	DebugLibXt		build libXt_d.a
-	DebugLibXtst		build libXtst_d.a
 	DebugLibXag		build libXag_d.a
 	DebugOldX		build liboldX_d.a
 	DefaultCursorTheme      name of default cursor theme
@@ -264,7 +263,6 @@ X11.tmpl provides defaults for the following variables:
 	NormalLibXi		build libXi.a
 	NormalLibXmu		build libXmu.a
 	NormalLibXt		build libXt.a
-	NormalLibXtst		build libXtst.a
 	NormalLibXag		build libXag.a
 	NormalOldX		build liboldX.a
 	OsNameDefines		If uname(2) unavailable, set to -DOS_NAME=OSName
@@ -279,7 +277,6 @@ X11.tmpl provides defaults for the following variables:
 	ProfileLibXi		build libXi_p.a
 	ProfileLibXmu		build libXmu_p.a
 	ProfileLibXt		build libXt_p.a
-	ProfileLibXtst		build libXtst_p.a
 	ProfileLibXag		build libXag_p.a
 	ProfileOldX		build liboldX_p.a
 	ProjectX		version indicating this is the X Window System
@@ -300,7 +297,6 @@ X11.tmpl provides defaults for the following variables:
 	SharedLibXi		boolean for making sharable libXi.so
 	SharedLibXmu		boolean for making sharable libXmu.so
 	SharedLibXt		boolean for making sharable libXt.so
-	SharedLibXtst		boolean for making sharable libXtst.so
 	SharedLibXag		boolean for making sharable libXag.so
 	SharedOldX		boolean for making sharable liboldX.so
 	ShmDefines		MIT-SHM define
@@ -396,8 +392,6 @@ An <os>Lib.tmpl file provides defaults for the following variables:
 	SharedXmuRev		version number for libXmu.so
 	SharedXtReqs		required libs for libXt.so
 	SharedXtRev		version number for libXt.so
-	SharedXtstReqs		required libs for libXtst.so
-	SharedXtstRev		version number for libXtst.so
 	SharedXmReqs		required libs for libXm.so
 	SharedXmRev		version number for libXm.so
 	SharedMrmReqs		required libs for libMrm.so
