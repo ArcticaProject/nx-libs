@@ -19,6 +19,7 @@ Build-Depends:
  libxml2-dev,
  libxpm-dev,
  libxdmcp-dev,
+ libxcomposite-dev,
  autoconf,
  pkg-config,
  x11proto-core-dev,
@@ -200,20 +201,17 @@ Multi-Arch: same
 Pre-Depends:
  ${misc:Pre-Depends},
 Depends:
- ${shlibs:Depends},
  ${misc:Depends},
-Breaks: nxlibs (<= 3.5.1),
-        libnx-x11 (<< 2:3.5.0.29-0x2go2~),
-Description: nx-X11 Composite extension library
+Description: nx-X11 Composite extension library (dummy package)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
  using X applications over a network, especially a slow one.
  .
- libNX_Xcomposite provides an X Window System client interface to the Composite
- extension to the X protocol
+ This package removes the obsoleted libNX_Xcomposite.so.1 library. With
+ recent versions of NX, the system-wide installed libXcomposite gets
+ used.
  .
- The Composite extension allows clients called compositing managers to control
- the final drawing of the screen. Rendering is done into an off-screen buffer.
+ This package can be safely removed.
 
 Package: libnx-xcomposite-dev
 Provides: libnx-xcomposite1-dev
@@ -221,23 +219,17 @@ Section: libdevel
 Architecture: any
 Multi-Arch: same
 Depends:
- libnx-xcomposite1 (= ${binary:Version}),
- nx-x11proto-composite-dev (= ${binary:Version}),
  ${misc:Depends},
-Breaks: nxlibs (<= 3.5.1),
-        libnx-x11-dev (<< 2:3.5.0.29-0x2go2~),
-Description: nx-X11 Composite extension library (development headers)
+Description: nx-X11 Composite extension library (dummy package)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
  using X applications over a network, especially a slow one.
  .
- libNX_Xcomposite provides an X Window System client interface to the Composite
- extension to the X protocol
+ This package removes the obsoleted headers for the libNX_Xcomposite.so.1
+ library. With recent versions of NX, the system-wide installed
+ libXcomposite gets used.
  .
- The Composite extension allows clients called compositing managers to control
- the final drawing of the screen. Rendering is done into an off-screen buffer.
- .
- This package contains the development headers for this library.
+ This package can be safely removed.
 
 Package: nx-x11proto-composite-dev
 Section: libdevel
@@ -245,8 +237,6 @@ Architecture: any
 Multi-Arch: same
 Depends:
  ${misc:Depends},
-Breaks: nxlibs (<= 3.5.1),
-        libnx-x11-dev (<< 2:3.5.0.29-0x2go2~),
 Description: nx-X11 Composite extension wire protocol
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -262,22 +252,18 @@ Multi-Arch: same
 Pre-Depends:
  ${misc:Pre-Depends},
 Depends:
- libnx-xcomposite1 (= ${binary:Version}),
  ${misc:Depends},
 Section: debug
-Breaks: nx-x11-dbg (<< 2:3.5.0.29-0x2go2~),
-Description: nx-X11 Composite extension library (debug package)
+Description: nx-X11 Composite extension library (dummy package)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
  using X applications over a network, especially a slow one.
  .
- libNX_Xcomposite provides an X Window System client interface to the Composite
- extension to the X protocol
+ This package removes the debug symbols for the obsoleted
+ libNX_Xcomposite.so.1 library. With recent versions of NX, the
+ system-wide installed libXcomposite gets used.
  .
- The Composite extension allows clients called compositing managers to control
- the final drawing of the screen. Rendering is done into an off-screen buffer.
- .
- This package contains debug symbols for this library.
+ This package can be safely removed.
 
 Package: libnx-xdamage1
 Architecture: any

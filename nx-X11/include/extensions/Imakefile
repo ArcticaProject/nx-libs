@@ -48,7 +48,7 @@ XFIXESHEADERS = xfixeswire.h xfixesproto.h
 #if BuildDamage || BuildDamageLibrary
 DAMAGEHEADERS = damagewire.h damageproto.h
 #endif
-#if BuildComposite || BuildCompositeLibrary
+#if BuildComposite
 COMPOSITEHEADERS = composite.h compositeproto.h
 #endif
 #if BuildRandR || BuildRandRLibrary

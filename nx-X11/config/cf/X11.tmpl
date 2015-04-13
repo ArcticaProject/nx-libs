@@ -633,11 +633,7 @@ XORGRELSTRING = XorgManVersionString
 #endif
 
 #ifndef BuildComposite
-#define BuildComposite		(BuildXfixes && BuildDamage)
-#endif
-#ifndef BuildCompositeLibrary
-#define BuildCompositeLibrary	!BuildServersOnly && (BuildXfixesLibrary && \
-				BuildDamageLibrary)
+#define BuildComposite         (BuildXfixes && BuildDamage)
 #endif
 
 #ifndef BuildXevie
@@ -2171,30 +2167,6 @@ ProjectUnsharedLibReferences(XONLY,NX_X11,$(XLIBSRC),XBuildLibDir)
 #define ProfileLibXdamage	NO
 #endif
 
-#if BuildCompositeLibrary
-#ifndef SharedLibXcomposite
-#define SharedLibXcomposite	HasSharedLibraries
-#endif
-#ifndef NormalLibXcomposite
-#define NormalLibXcomposite	(!SharedLibXcomposite || ForceNormalLib)
-#endif
-#ifndef DebugLibXcomposite
-#define DebugLibXcomposite	NO
-#endif
-#ifndef ProfileLibXcomposite
-#define ProfileLibXcomposite	NO
-#endif
-#else
-#undef  SharedLibXcomposite
-#define SharedLibXcomposite	NO
-#undef  NormalLibXcomposite
-#define NormalLibXcomposite	NO
-#undef  DebugLibXcomposite
-#define DebugLibXcomposite	NO
-#undef  ProfileLibXcomposite
-#define ProfileLibXcomposite	NO
-#endif
-
 #if BuildXevieLibrary
 #ifndef SharedLibXevie
 #define SharedLibXevie		HasSharedLibraries
@@ -2607,16 +2579,6 @@ ProjectUnsharedLibReferences(XFIXES,NX_Xfixes,$(XFIXESLIBSRC),XBuildLibDir)
 SharedLibReferences(XDAMAGE,NX_Xdamage,$(XDAMAGELIBSRC),SOXDAMAGEREV,SharedXdamageRev)
 #else
 ProjectUnsharedLibReferences(XDAMAGE,NX_Xdamage,$(XDAMAGELIBSRC),XBuildLibDir)
-#endif
-
-XCOMPOSITELIBSRC = $(LIBSRC)/Xcomposite
-#if SharedLibXcomposite
-#ifndef SharedXcompositeRev
-#define SharedXcompositeRev 1.0
-#endif
-SharedLibReferences(XCOMPOSITE,NX_Xcomposite,$(XCOMPOSITELIBSRC),SOXCOMPOSITEREV,SharedXcompositeRev)
-#else
-ProjectUnsharedLibReferences(XCOMPOSITE,NX_Xcomposite,$(XCOMPOSITELIBSRC),XBuildLibDir)
 #endif
 
 XEVIELIBSRC = $(LIBSRC)/Xevie

@@ -36,6 +36,7 @@ BuildRequires:  pkgconfig(x11)
 BuildRequires:  pkgconfig(xext)
 BuildRequires:  pkgconfig(xpm)
 BuildRequires:  pkgconfig(xdmcp)
+BuildRequires:  pkgconfig(xcomposite)
 %else
 BuildRequires:  libexpat-devel
 BuildRequires:  fontconfig-devel
@@ -47,6 +48,7 @@ BuildRequires:  xorg-x11-libXext-devel
 BuildRequires:  xorg-x11-libfontenc-devel
 BuildRequires:  xorg-x11-libXpm-devel
 BuildRequires:  xorg-x11-libXdmcp-devel
+BuildRequires:  xorg-x11-libXcomposite-devel
 %endif
 BuildRequires:  xorg-x11-util-devel
 %endif
@@ -200,11 +202,7 @@ NX is a software suite which implements very efficient compression of
 the X11 protocol. This increases performance when using X
 applications over a network, especially a slow one.
 
-The Composite extension causes a entire sub-tree of the window
-hierarchy to be rendered to an off-screen buffer. Applications can
-then take the contents of that buffer and do whatever they like. The
-off-screen buffer can be automatically merged into the parent window
-or merged by external programs, called compositing managers.
+This package obsoletes libNX_Xcomposite1 in NX and can be safely removed.
 
 
 %package -n libNX_Xdamage1
@@ -718,7 +716,6 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %post -p /sbin/ldconfig
 %post -n libNX_X11-6 -p /sbin/ldconfig
 %post -n libNX_Xau6 -p /sbin/ldconfig
-%post -n libNX_Xcomposite1 -p /sbin/ldconfig
 %post -n libNX_Xdamage1 -p /sbin/ldconfig
 %post -n libNX_Xext6 -p /sbin/ldconfig
 %post -n libNX_Xfixes3 -p /sbin/ldconfig
@@ -732,7 +729,6 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %postun -p /sbin/ldconfig
 %postun -n libNX_X11-6 -p /sbin/ldconfig
 %postun -n libNX_Xau6 -p /sbin/ldconfig
-%postun -n libNX_Xcomposite1 -p /sbin/ldconfig
 %postun -n libNX_Xdamage1 -p /sbin/ldconfig
 %postun -n libNX_Xext6 -p /sbin/ldconfig
 %postun -n libNX_Xfixes3 -p /sbin/ldconfig
@@ -786,10 +782,6 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %files -n libNX_Xau6
 %defattr(-,root,root)
 %{_libdir}/libNX_Xau.so.6*
-
-%files -n libNX_Xcomposite1
-%defattr(-,root,root)
-%{_libdir}/libNX_Xcomposite.so.1*
 
 %files -n libNX_Xdamage1
 %defattr(-,root,root)
@@ -912,7 +904,6 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 
 %files devel
 %defattr(-,root,root)
-%{_libdir}/libNX_Xcomposite.so
 %{_libdir}/libNX_Xdamage.so
 %{_libdir}/libNX_Xinerama.so
 %{_libdir}/libNX_Xrandr.so
@@ -921,7 +912,6 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %dir %{_includedir}/nx/X11/extensions
 %{_includedir}/nx/X11/extensions/XRes.h
 %{_includedir}/nx/X11/extensions/XTest.h
-%{_includedir}/nx/X11/extensions/Xcomposite.h
 %{_includedir}/nx/X11/extensions/Xdamage.h
 %{_includedir}/nx/X11/extensions/Xevie.h
 %{_includedir}/nx/X11/extensions/Xinerama.h
