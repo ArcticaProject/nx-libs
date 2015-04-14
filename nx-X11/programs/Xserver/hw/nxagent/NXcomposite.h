@@ -1,5 +1,3 @@
-#ifndef NXAGENT_UPGRADE
-
 /*
  * $Id: Xcomposite.h,v 1.3 2005/07/03 07:00:56 daniels Exp $
  *
@@ -82,5 +80,3 @@ XCompositeNameWindowPixmap (Display *dpy, Window window);
 _XFUNCPROTOEND
 
 #endif /* _XCOMPOSITE_H_ */
-
-#endif /* #ifndef NXAGENT_UPGRADE */

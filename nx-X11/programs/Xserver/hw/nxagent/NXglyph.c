@@ -1,9 +1,3 @@
-#ifdef NXAGENT_UPGRADE
-
-#include "X/NXglyph.c"
-
-#else
-
 /**************************************************************************/
 /*                                                                        */
 /* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
@@ -22,9 +16,9 @@
 /**************************************************************************/
 
 /*
- * $XFree86: xc/programs/Xserver/render/glyph.c,v 1.6 2001/10/28 03:34:19 tsi Exp $
+ * $XFree86: xc/programs/Xserver/render/glyph.c,v 1.5 2001/01/30 07:01:22 keithp Exp $
  *
- * Copyright © 2000 SuSE, Inc.
+ * Copyright Â© 2000 SuSE, Inc.
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
  * documentation for any purpose is hereby granted without fee, provided that
@@ -45,6 +39,10 @@
  *
  * Author:  Keith Packard, SuSE, Inc.
  */
+
+#ifdef HAVE_DIX_CONFIG_H
+#include <dix-config.h>
+#endif
 
 #include "misc.h"
 #include "scrnintstr.h"
@@ -71,6 +69,17 @@
 #undef  DEBUG
 #undef  TEST
 
+#else
+
+#include "picturestr.h"
+#include "glyphstr.h"
+
+#endif
+
+#if HAVE_STDINT_H
+#include <stdint.h>
+#elif !defined(UINT32_MAX)
+#define UINT32_MAX 0xffffffffU
 #endif
 
 /*
@@ -121,6 +130,50 @@ FindGlyphHashSet (CARD32 filled)
 	if (glyphHashSets[i].entries >= filled)
 	    return &glyphHashSets[i];
     return 0;
+}
+
+static int _GlyphSetPrivateAllocateIndex = 0;
+
+int
+AllocateGlyphSetPrivateIndex (void)
+{
+    return _GlyphSetPrivateAllocateIndex++;
+}
+
+void
+ResetGlyphSetPrivateIndex (void)
+{
+    _GlyphSetPrivateAllocateIndex = 0;
+}
+
+Bool
+_GlyphSetSetNewPrivate (GlyphSetPtr glyphSet, int n, pointer ptr)
+{
+    pointer *new;
+
+    if (n > glyphSet->maxPrivate) {
+	if (glyphSet->devPrivates &&
+	    glyphSet->devPrivates != (pointer)(&glyphSet[1])) {
+	    new = (pointer *) xrealloc (glyphSet->devPrivates,
+					(n + 1) * sizeof (pointer));
+	    if (!new)
+		return FALSE;
+	} else {
+	    new = (pointer *) xalloc ((n + 1) * sizeof (pointer));
+	    if (!new)
+		return FALSE;
+	    if (glyphSet->devPrivates)
+		memcpy (new,
+			glyphSet->devPrivates,
+			(glyphSet->maxPrivate + 1) * sizeof (pointer));
+	}
+	glyphSet->devPrivates = new;
+	/* Zero out new, uninitialize privates */
+	while (++glyphSet->maxPrivate < n)
+	    glyphSet->devPrivates[glyphSet->maxPrivate] = (pointer)0;
+    }
+    glyphSet->devPrivates[n] = ptr;
+    return TRUE;
 }
 
 Bool
@@ -359,8 +412,12 @@ AllocateGlyph (xGlyphInfo *gi, int fdepth)
 {
     int		size;
     GlyphPtr	glyph;
-
-    size = gi->height * PixmapBytePad (gi->width, glyphDepths[fdepth]);
+    size_t	     padded_width;
+    
+    padded_width = PixmapBytePad (gi->width, glyphDepths[fdepth]);
+    if (gi->height && padded_width > (UINT32_MAX - sizeof(GlyphRec))/gi->height)
+	return 0;
+    size = gi->height * padded_width;
     glyph = (GlyphPtr) xalloc (size + sizeof (GlyphRec));
     if (!glyph)
 	return 0;
@@ -456,15 +513,24 @@ GlyphSetPtr
 AllocateGlyphSet (int fdepth, PictFormatPtr format)
 {
     GlyphSetPtr	glyphSet;
+    int size;
     
     if (!globalGlyphs[fdepth].hashSet)
     {
 	if (!AllocateGlyphHash (&globalGlyphs[fdepth], &glyphHashSets[0]))
 	    return FALSE;
     }
-    glyphSet = xalloc (sizeof (GlyphSetRec));
+
+    size = (sizeof (GlyphSetRec) +
+	    (sizeof (pointer) * _GlyphSetPrivateAllocateIndex));
+    glyphSet = xalloc (size);
     if (!glyphSet)
 	return FALSE;
+    bzero((char *)glyphSet, size);
+    glyphSet->maxPrivate = _GlyphSetPrivateAllocateIndex - 1;
+    if (_GlyphSetPrivateAllocateIndex)
+	glyphSet->devPrivates = (pointer)(&glyphSet[1]);
+
     if (!AllocateGlyphHash (&glyphSet->hash, &glyphHashSets[0]))
     {
 	xfree (glyphSet);
@@ -503,9 +569,13 @@ FreeGlyphSet (pointer	value,
 	else
 	    ResizeGlyphHash (&globalGlyphs[glyphSet->fdepth], 0, TRUE);
 	xfree (table);
+
+	if (glyphSet->devPrivates &&
+	    glyphSet->devPrivates != (pointer)(&glyphSet[1]))
+	    xfree(glyphSet->devPrivates);
+
 	xfree (glyphSet);
     }
     return Success;
 }
 
-#endif /* #ifdef NXAGENT_UPGRADE */

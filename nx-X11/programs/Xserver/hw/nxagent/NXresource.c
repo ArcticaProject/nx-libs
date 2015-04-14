@@ -1,8 +1,19 @@
-#ifdef NXAGENT_UPGRADE
-
-#include "X/NXresource.c"
-
-#else
+/**************************************************************************/
+/*                                                                        */
+/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/*                                                                        */
+/* NXAGENT, NX protocol compression and NX extensions to this software    */
+/* are copyright of NoMachine. Redistribution and use of the present      */
+/* software is allowed according to terms specified in the file LICENSE   */
+/* which comes in the source distribution.                                */
+/*                                                                        */
+/* Check http://www.nomachine.com/licensing.html for applicability.       */
+/*                                                                        */
+/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/*                                                                        */
+/* All rights reserved.                                                   */
+/*                                                                        */
+/**************************************************************************/
 
 /************************************************************
 
@@ -50,10 +61,37 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ********************************************************/
+/* The panoramix components contained the following notice */
+/*****************************************************************
+
+Copyright (c) 1991, 1997 Digital Equipment Corporation, Maynard, Massachusetts.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software.
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+DIGITAL EQUIPMENT CORPORATION BE LIABLE FOR ANY CLAIM, DAMAGES, INCLUDING,
+BUT NOT LIMITED TO CONSEQUENTIAL OR INCIDENTAL DAMAGES, OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
+IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Except as contained in this notice, the name of Digital Equipment Corporation
+shall not be used in advertising or otherwise to promote the sale, use or other
+dealings in this Software without prior written authorization from Digital
+Equipment Corporation.
+
+******************************************************************/
 
 /* $Xorg: resource.c,v 1.5 2001/02/09 02:04:40 xorgcvs Exp $ */
-
-
+/* $XdotOrg: xc/programs/Xserver/dix/resource.c,v 1.8 2005/07/03 08:53:38 daniels Exp $ */
 /* $TOG: resource.c /main/41 1998/02/09 14:20:31 kaleb $ */
 
 /*	Routines to manage various kinds of resources:
@@ -78,10 +116,14 @@ SOFTWARE.
  *      1, and an otherwise arbitrary ID in the low 22 bits, we can create a
  *      resource "owned" by the client.
  */
-/* $XFree86: xc/programs/Xserver/dix/resource.c,v 3.12 2002/03/06 21:13:38 mvojkovi Exp $ */
+/* $XFree86: xc/programs/Xserver/dix/resource.c,v 3.13 2003/09/24 02:43:13 dawes Exp $ */
 
 #define NEED_EVENTS
-#include "X.h"
+#ifdef HAVE_DIX_CONFIG_H
+#include <dix-config.h>
+#endif
+
+#include <X11/X.h>
 #include "misc.h"
 #include "os.h"
 #include "resource.h"
@@ -115,9 +157,7 @@ SOFTWARE.
 #endif
 
 static void RebuildTable(
-#if NeedFunctionPrototypes
     int /*client*/
-#endif
 );
 
 #define SERVER_MINID 32
@@ -161,9 +201,12 @@ void RegisterResourceName (RESTYPE type, char *name)
 
 #endif
 
+#ifdef NXAGENT_SERVER
+static int nxagentResChangedFlag = 0;
+#endif
+
 RESTYPE
-CreateNewResourceType(deleteFunc)
-    DeleteType deleteFunc;
+CreateNewResourceType(DeleteType deleteFunc)
 {
     RESTYPE next = lastResourceType + 1;
     DeleteType *funcs;
@@ -213,8 +256,7 @@ ClientResourceRec clientTable[MAXCLIENTS];
  *****************/
 
 Bool
-InitClientResources(client)
-    ClientPtr client;
+InitClientResources(ClientPtr client)
 {
     register int i, j;
  
@@ -273,13 +315,7 @@ InitClientResources(client)
 
 
 static int
-#if NeedFunctionPrototypes
 Hash(int client, register XID id)
-#else
-Hash(client, id)
-    int client;
-    register XID id;
-#endif
 {
     id &= RESOURCE_ID_MASK;
     switch (clientTable[client].hashsize)
@@ -301,17 +337,11 @@ Hash(client, id)
 }
 
 static XID
-#if NeedFunctionPrototypes
 AvailableID(
     register int client,
     register XID id,
     register XID maxid,
     register XID goodid)
-#else
-AvailableID(client, id, maxid, goodid)
-    register int client;
-    register XID id, maxid, goodid;
-#endif
 {
     register ResourcePtr res;
 
@@ -329,10 +359,7 @@ AvailableID(client, id, maxid, goodid)
 }
 
 void
-GetXIDRange(client, server, minp, maxp)
-    int client;
-    Bool server;
-    XID *minp, *maxp;
+GetXIDRange(int client, Bool server, XID *minp, XID *maxp)
 {
     register XID id, maxid;
     register ResourcePtr *resp;
@@ -366,7 +393,8 @@ GetXIDRange(client, server, minp, maxp)
     *maxp = maxid;
 }
 
-/*  GetXIDList is called by the XC-MISC extension's MiscGetXIDList function.
+/**
+ *  GetXIDList is called by the XC-MISC extension's MiscGetXIDList function.
  *  This function tries to find count unused XIDs for the given client.  It 
  *  puts the IDs in the array pids and returns the number found, which should
  *  almost always be the number requested.
@@ -382,10 +410,7 @@ GetXIDRange(client, server, minp, maxp)
  */
 
 unsigned int
-GetXIDList(pClient, count, pids)
-    ClientPtr pClient;
-    unsigned int count;
-    XID *pids;
+GetXIDList(ClientPtr pClient, unsigned count, XID *pids)
 {
     unsigned int found = 0;
     XID id = pClient->clientAsMask;
@@ -412,8 +437,7 @@ GetXIDList(pClient, count, pids)
  */
 
 XID
-FakeClientID(client)
-    register int client;
+FakeClientID(register int client)
 {
     XID id, maxid;
 
@@ -528,21 +552,18 @@ int nxagentSwitchResourceType(int client, RESTYPE type, pointer value)
 #endif
 
 Bool
-AddResource(id, type, value)
-    XID id;
-    RESTYPE type;
-    pointer value;
+AddResource(XID id, RESTYPE type, pointer value)
 {
     int client;
     register ClientResourceRec *rrec;
     register ResourcePtr res, *head;
-    	
+
     client = CLIENT_ID(id);
     rrec = &clientTable[client];
     if (!rrec->buckets)
     {
-	ErrorF("AddResource(%x, %x, %x), client=%d \n",
-		id, type, (unsigned long)value, client);
+	ErrorF("AddResource(%lx, %lx, %lx), client=%d \n",
+		(unsigned long)id, type, (unsigned long)value, client);
         FatalError("client not in use\n");
     }
 
@@ -573,14 +594,16 @@ AddResource(id, type, value)
     res->value = value;
     *head = res;
     rrec->elements++;
+    #ifdef NXAGENT_SERVER
+    nxagentResChangedFlag = 1;
+    #endif
     if (!(id & SERVER_BIT) && (id >= rrec->expectID))
 	rrec->expectID = id + 1;
     return TRUE;
 }
 
 static void
-RebuildTable(client)
-    int client;
+RebuildTable(int client)
 {
     register int j;
     register ResourcePtr res, next;
@@ -629,9 +652,7 @@ RebuildTable(client)
 }
 
 void
-FreeResource(id, skipDeleteFuncType)
-    XID id;
-    RESTYPE skipDeleteFuncType;
+FreeResource(XID id, RESTYPE skipDeleteFuncType)
 {
     int		cid;
     register    ResourcePtr res;
@@ -639,6 +660,14 @@ FreeResource(id, skipDeleteFuncType)
     register	int *eltptr;
     int		elements;
     Bool	gotOne = FALSE;
+
+#ifdef NXAGENT_SERVER
+
+    #ifdef TEST
+    fprintf(stderr, "FreeResource: Freeing resource id [%lu].\n", (unsigned long) id);
+    #endif
+
+#endif
 
     if (((cid = CLIENT_ID(id)) < MAXCLIENTS) && clientTable[cid].buckets)
     {
@@ -653,6 +682,9 @@ FreeResource(id, skipDeleteFuncType)
 		RESTYPE rtype = res->type;
 		*prev = res->next;
 		elements = --*eltptr;
+                #ifdef NXAGENT_SERVER
+                nxagentResChangedFlag = 1;
+                #endif
 		if (rtype & RC_CACHED)
 		    FlushClientCaches(res->id);
 		if (rtype != skipDeleteFuncType)
@@ -672,15 +704,13 @@ FreeResource(id, skipDeleteFuncType)
 	}
     }
     if (!gotOne)
-	FatalError("Freeing resource id=%X which isn't there", id);
+	ErrorF("Freeing resource id=%lX which isn't there.\n",
+		   (unsigned long)id);
 }
 
 
 void
-FreeResourceByType(id, type, skipFree)
-    XID id;
-    RESTYPE type;
-    Bool    skipFree;
+FreeResourceByType(XID id, RESTYPE type, Bool skipFree)
 {
     int		cid;
     register    ResourcePtr res;
@@ -695,6 +725,9 @@ FreeResourceByType(id, type, skipFree)
 	    if (res->id == id && res->type == type)
 	    {
 		*prev = res->next;
+                #ifdef NXAGENT_SERVER
+                nxagentResChangedFlag = 1;
+                #endif
 		if (type & RC_CACHED)
 		    FlushClientCaches(res->id);
 		if (!skipFree)
@@ -720,10 +753,7 @@ FreeResourceByType(id, type, skipFree)
  */
 
 Bool
-ChangeResourceValue (id, rtype, value)
-    XID	id;
-    RESTYPE rtype;
-    pointer value;
+ChangeResourceValue (XID id, RESTYPE rtype, pointer value)
 {
     int    cid;
     register    ResourcePtr res;
@@ -762,10 +792,28 @@ FindClientResourcesByType(
     int i, elements;
     register int *eltptr;
 
+    #ifdef NXAGENT_SERVER
+    register ResourcePtr **resptr;
+    #endif
+
     if (!client)
 	client = serverClient;
 
+/*
+ * If func triggers a resource table
+ * rebuild then restart the loop.
+ */
+
+#ifdef NXAGENT_SERVER
+RestartLoop:
+#endif
+
     resources = clientTable[client->index].resources;
+
+    #ifdef NXAGENT_SERVER
+    resptr = &clientTable[client->index].resources;
+    #endif
+
     eltptr = &clientTable[client->index].elements;
     for (i = 0; i < clientTable[client->index].buckets; i++) 
     {
@@ -774,8 +822,44 @@ FindClientResourcesByType(
 	    next = this->next;
 	    if (!type || this->type == type) {
 		elements = *eltptr;
+
+                /*
+                 * FIXME:
+                 * It is not safe to let a function change the resource
+                 * table we are reading!
+                 */
+
+                #ifdef NXAGENT_SERVER
+                nxagentResChangedFlag = 0;
+                #endif
 		(*func)(this->value, this->id, cdata);
+
+                /*
+                 * Avoid that a call to RebuildTable() could invalidate the
+                 * pointer. This is safe enough, because in RebuildTable()
+                 * the new pointer is allocated just before the old one is
+                 * freed, so it can't point to the same address.
+                 */
+
+                #ifdef NXAGENT_SERVER
+                if (*resptr != resources)
+                   goto RestartLoop;
+                #endif
+
+                /*
+                 * It's not enough to check if the number of elements has
+                 * changed, beacause it could happen that the number of
+                 * resources that have been added matches the number of
+                 * the freed ones.
+                 * 'nxagentResChangedFlag' is set if a resource has been
+                 * added or freed.
+                 */
+
+                #ifdef NXAGENT_SERVER
+                if (*eltptr != elements || nxagentResChangedFlag)
+                #else
 		if (*eltptr != elements)
+                #endif
 		    next = resources[i]; /* start over */
 	    }
 	}
@@ -793,10 +877,28 @@ FindAllClientResources(
     int i, elements;
     register int *eltptr;
 
+    #ifdef NXAGENT_SERVER
+    register ResourcePtr **resptr;
+    #endif
+
     if (!client)
         client = serverClient;
 
+/*
+ * If func triggers a resource table
+ * rebuild then restart the loop.
+ */
+
+#ifdef NXAGENT_SERVER
+RestartLoop:
+#endif
+
     resources = clientTable[client->index].resources;
+
+    #ifdef NXAGENT_SERVER
+    resptr = &clientTable[client->index].resources;
+    #endif
+
     eltptr = &clientTable[client->index].elements;
     for (i = 0; i < clientTable[client->index].buckets; i++)
     {
@@ -804,8 +906,44 @@ FindAllClientResources(
         {
             next = this->next;
             elements = *eltptr;
+
+            /*
+             * FIXME:
+             * It is not safe to let a function change the resource
+             * table we are reading!
+             */
+
+            #ifdef NXAGENT_SERVER
+            nxagentResChangedFlag = 0;
+            #endif
             (*func)(this->value, this->id, this->type, cdata);
+
+            /*
+             * Avoid that a call to RebuildTable() could invalidate the
+             * pointer. This is safe enough, because in RebuildTable()
+             * the new pointer is allocated just before the old one is
+             * freed, so it can't point to the same address.
+             */
+
+            #ifdef NXAGENT_SERVER
+            if (*resptr != resources)
+                goto RestartLoop;
+            #endif
+
+            /*
+             * It's not enough to check if the number of elements has
+             * changed, beacause it could happen that the number of
+             * resources that have been added matches the number of
+             * the freed ones.
+             * 'nxagentResChangedFlag' is set if a resource has been
+             * added or freed.
+             */
+
+            #ifdef NXAGENT_SERVER
+            if (*eltptr != elements || nxagentResChangedFlag)
+            #else
             if (*eltptr != elements)
+            #endif
                 next = resources[i]; /* start over */
         }
     }
@@ -823,15 +961,44 @@ LookupClientResourceComplex(
     ResourcePtr this;
     int i;
 
+    #ifdef NXAGENT_SERVER
+    ResourcePtr **resptr;
+    Bool res;
+    #endif
+
     if (!client)
 	client = serverClient;
 
+/*
+ * If func triggers a resource table
+ * rebuild then restart the loop.
+ */
+
+#ifdef NXAGENT_SERVER
+RestartLoop:
+#endif
+
     resources = clientTable[client->index].resources;
+
+    #ifdef NXAGENT_SERVER
+    resptr = &clientTable[client->index].resources;
+    #endif
+
     for (i = 0; i < clientTable[client->index].buckets; i++) {
         for (this = resources[i]; this; this = this->next) {
 	    if (!type || this->type == type) {
+                #ifdef NXAGENT_SERVER
+                res = (*func)(this->value, this->id, cdata);
+
+                if (*resptr != resources)
+                    goto RestartLoop;
+
+                if (res)
+                    return this->value;
+                #else
 		if((*func)(this->value, this->id, cdata))
 		    return this->value;
+                #endif
 	    }
 	}
     }
@@ -872,8 +1039,7 @@ FreeClientNeverRetainResources(ClientPtr client)
 }
 
 void
-FreeClientResources(client)
-    ClientPtr client;
+FreeClientResources(ClientPtr client)
 {
     register ResourcePtr *resources;
     register ResourcePtr this;
@@ -931,9 +1097,7 @@ FreeAllResources()
 }
 
 Bool
-LegalNewID(id, client)
-    XID id;
-    register ClientPtr client;
+LegalNewID(XID id, register ClientPtr client)
 {
 
 #ifdef PANORAMIX
@@ -963,11 +1127,7 @@ LegalNewID(id, client)
  */
 
 pointer
-SecurityLookupIDByType(client, id, rtype, mode)
-    ClientPtr client;
-    XID id;
-    RESTYPE rtype;
-    Mask mode;
+SecurityLookupIDByType(ClientPtr client, XID id, RESTYPE rtype, Mask mode)
 {
     int    cid;
     register    ResourcePtr res;
@@ -996,11 +1156,7 @@ SecurityLookupIDByType(client, id, rtype, mode)
 
 
 pointer
-SecurityLookupIDByClass(client, id, classes, mode)
-    ClientPtr client;
-    XID id;
-    RESTYPE classes;
-    Mask mode;
+SecurityLookupIDByClass(ClientPtr client, XID id, RESTYPE classes, Mask mode)
 {
     int    cid;
     register ResourcePtr res = NULL;
@@ -1032,18 +1188,14 @@ SecurityLookupIDByClass(client, id, classes, mode)
  */
 
 pointer
-LookupIDByType(id, rtype)
-    XID id;
-    RESTYPE rtype;
+LookupIDByType(XID id, RESTYPE rtype)
 {
     return SecurityLookupIDByType(NullClient, id, rtype,
 				  SecurityUnknownAccess);
 }
 
 pointer
-LookupIDByClass(id, classes)
-    XID id;
-    RESTYPE classes;
+LookupIDByClass(XID id, RESTYPE classes)
 {
     return SecurityLookupIDByClass(NullClient, id, classes,
 				   SecurityUnknownAccess);
@@ -1055,9 +1207,7 @@ LookupIDByClass(id, classes)
  *  LookupIDByType returns the object with the given id and type, else NULL.
  */ 
 pointer
-LookupIDByType(id, rtype)
-    XID id;
-    RESTYPE rtype;
+LookupIDByType(XID id, RESTYPE rtype)
 {
     int    cid;
     register    ResourcePtr res;
@@ -1079,9 +1229,7 @@ LookupIDByType(id, rtype)
  *  given classes, else NULL.
  */ 
 pointer
-LookupIDByClass(id, classes)
-    XID id;
-    RESTYPE classes;
+LookupIDByClass(XID id, RESTYPE classes)
 {
     int    cid;
     register    ResourcePtr res;
@@ -1100,4 +1248,3 @@ LookupIDByClass(id, classes)
 
 #endif /* XCSECURITY */
 
-#endif /* #ifdef NXAGENT_UPGRADE */

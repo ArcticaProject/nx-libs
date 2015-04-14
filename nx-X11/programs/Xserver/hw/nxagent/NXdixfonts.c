@@ -1,9 +1,3 @@
-#ifdef NXAGENT_UPGRADE
-
-#include "X/NXdixfonts.c"
-
-#else
-
 /**************************************************************************/
 /*                                                                        */
 /* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
@@ -21,7 +15,8 @@
 /*                                                                        */
 /**************************************************************************/
 
-/* $XFree86: xc/programs/Xserver/dix/dixfonts.c,v 3.27 2003/02/15 03:47:05 dawes Exp $ */
+/* $XdotOrg: xc/programs/Xserver/dix/dixfonts.c,v 1.8 2005/07/03 08:53:38 daniels Exp $ */
+/* $XFree86: xc/programs/Xserver/dix/dixfonts.c,v 3.28 2003/11/08 02:02:03 dawes Exp $ */
 /************************************************************************
 Copyright 1987 by Digital Equipment Corporation, Maynard, Massachusetts.
 
@@ -44,13 +39,43 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ************************************************************************/
+/* The panoramix components contained the following notice */
+/*
+Copyright (c) 1991, 1997 Digital Equipment Corporation, Maynard, Massachusetts.
 
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software.
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+DIGITAL EQUIPMENT CORPORATION BE LIABLE FOR ANY CLAIM, DAMAGES, INCLUDING,
+BUT NOT LIMITED TO CONSEQUENTIAL OR INCIDENTAL DAMAGES, OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
+IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Except as contained in this notice, the name of Digital Equipment Corporation
+shall not be used in advertising or otherwise to promote the sale, use or other
+dealings in this Software without prior written authorization from Digital
+Equipment Corporation.
+
+******************************************************************/
 /* $Xorg: dixfonts.c,v 1.4 2000/08/17 19:48:18 cpqbld Exp $ */
 
 #define NEED_REPLIES
-#include "X.h"
-#include "Xmd.h"
-#include "Xproto.h"
+#ifdef HAVE_DIX_CONFIG_H
+#include <dix-config.h>
+#endif
+
+#include <X11/X.h>
+#include <X11/Xmd.h>
+#include <X11/Xproto.h>
 #include "scrnintstr.h"
 #include "resource.h"
 #include "dixstruct.h"
@@ -123,7 +148,8 @@ static const char *_NXGetFontPath(const char *path)
 
 _NXGetFontPathError:
 
-    strcpy(_NXFontPath, path);
+    strncpy(_NXFontPath, path, 1023);
+    _NXFontPath[1023] = '\0';
 
 #ifdef NX_TRANS_TEST
     fprintf(stderr, "_NXGetFontPath: Using default font path [%s].\n", _NXFontPath);
@@ -145,7 +171,7 @@ _NXGetFontPathError:
 
 #ifdef XF86BIGFONT
 #define _XF86BIGFONT_SERVER_
-#include "xf86bigfont.h"
+#include <X11/extensions/xf86bigfont.h>
 #endif
 
 #define QUERYCHARINFO(pci, pr)  *(pr) = (pci)->metrics
@@ -190,8 +216,7 @@ FontToXError(err)
  * adding RT_FONT prevents conflict with default cursor font
  */
 Bool
-SetDefaultFont(defaultfontname)
-    char       *defaultfontname;
+SetDefaultFont(char *defaultfontname)
 {
     int         err;
     FontPtr     pf;
@@ -219,8 +244,7 @@ SetDefaultFont(defaultfontname)
  * freed data.
  */
 void
-QueueFontWakeup(fpe)
-    FontPathElementPtr fpe;
+QueueFontWakeup(FontPathElementPtr fpe)
 {
     int         i;
     FontPathElementPtr *new;
@@ -249,8 +273,7 @@ QueueFontWakeup(fpe)
 }
 
 void
-RemoveFontWakeup(fpe)
-    FontPathElementPtr fpe;
+RemoveFontWakeup(FontPathElementPtr fpe)
 {
     int         i,
                 j;
@@ -266,12 +289,8 @@ RemoveFontWakeup(fpe)
     }
 }
 
-/* ARGSUSED */
 void
-FontWakeup(data, count, LastSelectMask)
-    pointer     data;
-    int		count;
-    pointer     LastSelectMask;
+FontWakeup(pointer data, int count, pointer LastSelectMask)
 {
     int         i;
     FontPathElementPtr fpe;
@@ -287,23 +306,13 @@ FontWakeup(data, count, LastSelectMask)
 
 /* XXX -- these two funcs may want to be broken into macros */
 static void
-#if NeedFunctionPrototypes
 UseFPE(FontPathElementPtr fpe)
-#else
-UseFPE(fpe)
-    FontPathElementPtr fpe;
-#endif
 {
     fpe->refcount++;
 }
 
 static void
-#if NeedFunctionPrototypes
 FreeFPE (FontPathElementPtr fpe)
-#else
-FreeFPE (fpe)
-    FontPathElementPtr	fpe;
-#endif
 {
     fpe->refcount--;
     if (fpe->refcount == 0) {
@@ -314,13 +323,7 @@ FreeFPE (fpe)
 }
 
 static Bool
-#if NeedFunctionPrototypes
 doOpenFont(ClientPtr client, OFclosurePtr c)
-#else
-doOpenFont(client, c)
-    ClientPtr   client;
-    OFclosurePtr c;
-#endif
 {
     FontPtr     pfont = NullFont;
     FontPathElementPtr fpe = NULL;
@@ -435,6 +438,13 @@ doOpenFont(client, c)
 	err = BadFontName;
 	goto bail;
     }
+    /* check values for firstCol, lastCol, firstRow, and lastRow */
+    if (pfont->info.firstCol > pfont->info.lastCol ||
+       pfont->info.firstRow > pfont->info.lastRow ||
+       pfont->info.lastCol - pfont->info.firstCol > 255) {
+       err = AllocError;
+       goto bail;
+    }
     if (!pfont->fpe)
 	pfont->fpe = fpe;
     pfont->refcnt++;
@@ -498,12 +508,7 @@ bail:
 }
 
 int
-OpenFont(client, fid, flags, lenfname, pfontname)
-    ClientPtr   client;
-    XID         fid;
-    Mask        flags;
-    unsigned    lenfname;
-    char       *pfontname;
+OpenFont(ClientPtr client, XID fid, Mask flags, unsigned lenfname, char *pfontname)
 {
     OFclosurePtr c;
     int         i;
@@ -587,14 +592,13 @@ OpenFont(client, fid, flags, lenfname, pfontname)
     return Success;
 }
 
-/*
+/**
  * Decrement font's ref count, and free storage if ref count equals zero
+ *
+ *  \param value must conform to DeleteType
  */
-/*ARGSUSED*/
 int
-CloseFont(value, fid)
-    pointer	value;  /* must conform to DeleteType */
-    XID		fid;
+CloseFont(pointer value, XID fid)
 {
     int         nscr;
     ScreenPtr   pscr;
@@ -636,16 +640,14 @@ CloseFont(value, fid)
 
 /***====================================================================***/
 
- /*
-  * \ Sets up pReply as the correct QueryFontReply for pFont with the first
-  * nProtoCCIStructs char infos. \
+/**
+ * Sets up pReply as the correct QueryFontReply for pFont with the first
+ * nProtoCCIStructs char infos.
+ *
+ *  \param pReply caller must allocate this storage
   */
-
 void
-QueryFont(pFont, pReply, nProtoCCIStructs)
-    FontPtr          pFont;
-    xQueryFontReply *pReply;	/* caller must allocate this storage */
-    int              nProtoCCIStructs;
+QueryFont(FontPtr pFont, xQueryFontReply *pReply, int nProtoCCIStructs)
 {
     FontPropPtr      pFP;
     int              r,
@@ -707,13 +709,7 @@ QueryFont(pFont, pReply, nProtoCCIStructs)
 }
 
 static Bool
-#if NeedFunctionPrototypes
 doListFontsAndAliases(ClientPtr client, LFclosurePtr c)
-#else
-doListFontsAndAliases(client, c)
-    ClientPtr   client;
-    LFclosurePtr c;
-#endif
 {
     FontPathElementPtr fpe;
     int         err = Successful;
@@ -792,9 +788,6 @@ doListFontsAndAliases(client, c)
 				    (ClientSleepProcPtr)doListFontsAndAliases,
 				    (pointer) c);
 			c->slept = TRUE;
-#ifdef NXAGENT_DEBUG
-                        fprintf(stderr, " NXdixfonts: doListFont (2): client [%lx] sleeping.\n", client);
-#endif
 		    }
 		    return TRUE;
 		}
@@ -813,6 +806,9 @@ doListFontsAndAliases(client, c)
 				    (ClientSleepProcPtr)doListFontsAndAliases,
 				    (pointer) c);
 			c->slept = TRUE;
+#ifdef NXAGENT_DEBUG
+                        fprintf(stderr, " NXdixfonts: doListFont (2): client [%lx] sleeping.\n", client);
+#endif
 #ifdef NXAGENT_DEBUG
                         fprintf(stderr, " NXdixfonts: doListFont (3): client [%lx] sleeping.\n", client);
 #endif
@@ -1001,11 +997,8 @@ bail:
 }
 
 int
-ListFonts(client, pattern, length, max_names)
-    ClientPtr   client;
-    unsigned char *pattern;
-    unsigned int length;
-    unsigned int max_names;
+ListFonts(ClientPtr client, unsigned char *pattern, unsigned length, 
+          unsigned max_names)
 {
     int         i;
     LFclosurePtr c;
@@ -1054,9 +1047,7 @@ ListFonts(client, pattern, length, max_names)
 }
 
 int
-doListFontsWithInfo(client, c)
-    ClientPtr   client;
-    LFWIclosurePtr c;
+doListFontsWithInfo(ClientPtr client, LFWIclosurePtr c)
 {
     FontPathElementPtr fpe;
     int         err = Successful;
@@ -1167,7 +1158,11 @@ doListFontsWithInfo(client, c)
 		c->saved = c->current;
 		c->haveSaved = TRUE;
 		c->savedNumFonts = numFonts;
-		c->savedName = (char *) pFontInfo;
+		if (c->savedName)
+		  xfree(c->savedName);
+		c->savedName = (char *)xalloc(namelen + 1);
+		if (c->savedName)
+		  memmove(c->savedName, name, namelen + 1);
 		aliascount = 20;
 	    }
 	    memmove(c->current.pattern, name, namelen);
@@ -1290,16 +1285,14 @@ bail:
 	FreeFPE(c->fpe_list[i]);
     xfree(c->reply);
     xfree(c->fpe_list);
+    if (c->savedName) xfree(c->savedName);
     xfree(c);
     return TRUE;
 }
 
 int
-StartListFontsWithInfo(client, length, pattern, max_names)
-    ClientPtr   client;
-    int         length;
-    unsigned char       *pattern;
-    int         max_names;
+StartListFontsWithInfo(ClientPtr client, int length, unsigned char *pattern, 
+                       int max_names)
 {
     int		    i;
     LFWIclosurePtr  c;
@@ -1340,6 +1333,7 @@ StartListFontsWithInfo(client, length, pattern, max_names)
     c->savedNumFonts = 0;
     c->haveSaved = FALSE;
     c->slept = FALSE;
+    c->savedName = 0;
     doListFontsWithInfo(client, c);
     return Success;
 badAlloc:
@@ -1352,9 +1346,7 @@ static XID clearGC[] = { CT_NONE };
 #define clearGCmask (GCClipMask)
 
 int
-doPolyText(client, c)
-    ClientPtr   client;
-    register PTclosurePtr c;
+doPolyText(ClientPtr client, register PTclosurePtr c)
 {
     register FontPtr pFont = c->pGC->font, oldpFont;
     Font	fid, oldfid;
@@ -1632,16 +1624,8 @@ bail:
 }
 
 int
-PolyText(client, pDraw, pGC, pElt, endReq, xorg, yorg, reqType, did)
-    ClientPtr client;
-    DrawablePtr pDraw;
-    GC *pGC;
-    unsigned char *pElt;
-    unsigned char *endReq;
-    int xorg;
-    int yorg;
-    int reqType;
-    XID did;
+PolyText(ClientPtr client, DrawablePtr pDraw, GC *pGC, unsigned char *pElt, 
+         unsigned char *endReq, int xorg, int yorg, int reqType, XID did)
 {
     PTclosureRec local_closure;
 
@@ -1675,9 +1659,7 @@ PolyText(client, pDraw, pGC, pElt, endReq, xorg, yorg, reqType, did)
 #undef FontShiftSize
 
 int
-doImageText(client, c)
-    ClientPtr   client;
-    register ITclosurePtr c;
+doImageText(ClientPtr client, register ITclosurePtr c)
 {
     int err = Success, lgerr;	/* err is in X error, not font error, space */
     FontPathElementPtr fpe;
@@ -1810,16 +1792,8 @@ bail:
 }
 
 int
-ImageText(client, pDraw, pGC, nChars, data, xorg, yorg, reqType, did)
-    ClientPtr client;
-    DrawablePtr pDraw;
-    GC *pGC;
-    int nChars;
-    unsigned char *data;
-    int xorg;
-    int yorg;
-    int reqType;
-    XID did;
+ImageText(ClientPtr client, DrawablePtr pDraw, GC *pGC, int nChars, 
+          unsigned char *data, int xorg, int yorg, int reqType, XID did)
 {
     ITclosureRec local_closure;
 
@@ -1850,12 +1824,7 @@ ImageText(client, pDraw, pGC, nChars, data, xorg, yorg, reqType, did)
 
 /* does the necessary magic to figure out the fpe type */
 static int
-#if NeedFunctionPrototypes
 DetermineFPEType(char *pathname)
-#else
-DetermineFPEType(pathname)
-    char       *pathname;
-#endif
 {
     int         i;
 
@@ -1868,14 +1837,7 @@ DetermineFPEType(pathname)
 
 
 static void
-#if NeedFunctionPrototypes
 FreeFontPath(FontPathElementPtr *list, int n, Bool force)
-#else
-FreeFontPath(list, n, force)
-    FontPathElementPtr	*list;
-    Bool		force;
-    int         n;
-#endif
 {
     int         i;
 
@@ -1902,15 +1864,7 @@ FreeFontPath(list, n, force)
 }
 
 static FontPathElementPtr
-#if NeedFunctionPrototypes
 find_existing_fpe(FontPathElementPtr *list, int num, unsigned char *name, int len)
-#else
-find_existing_fpe(list, num, name, len)
-    FontPathElementPtr *list;
-    int         num;
-    unsigned char *name;
-    int         len;
-#endif
 {
     FontPathElementPtr fpe;
     int         i;
@@ -1925,15 +1879,7 @@ find_existing_fpe(list, num, name, len)
 
 
 static int
-#if NeedFunctionPrototypes
 SetFontPathElements(int npaths, unsigned char *paths, int *bad, Bool persist)
-#else
-SetFontPathElements(npaths, paths, bad, persist)
-    int         npaths;
-    unsigned char *paths;
-    int        *bad;
-    Bool	persist;
-#endif
 {
     int         i, err = 0;
     int         valid_paths = 0;
@@ -2008,11 +1954,13 @@ SetFontPathElements(npaths, paths, bad, persist)
 		    err = (*fpe_functions[fpe->type].init_fpe) (fpe);
 		if (err != Successful)
 		{
+                    #ifndef NXAGENT_SERVER
 		    if (persist)
 		    {
 			ErrorF("Could not init font path element %s, removing from list!\n",
 			       fpe->name);
 		    }
+                    #endif
 		    xfree (fpe->name);
 		    xfree (fpe);
 		}
@@ -2047,11 +1995,7 @@ bail:
 
 /* XXX -- do we need to pass error down to each renderer? */
 int
-SetFontPath(client, npaths, paths, error)
-    ClientPtr   client;
-    int         npaths;
-    unsigned char *paths;
-    int        *error;
+SetFontPath(ClientPtr client, int npaths, unsigned char *paths, int *error)
 {
     int   err = Success;
 
@@ -2065,8 +2009,7 @@ SetFontPath(client, npaths, paths, error)
 }
 
 int
-SetDefaultFontPath(path)
-    char       *path;
+SetDefaultFontPath(char *path)
 {
     unsigned char *cp,
                *pp,
@@ -2115,9 +2058,7 @@ SetDefaultFontPath(path)
 }
 
 unsigned char *
-GetFontPath(count, length)
-    int			*count;
-    int			*length;
+GetFontPath(int *count, int *length)
 {
     int			i;
     unsigned char       *c;
@@ -2147,12 +2088,7 @@ GetFontPath(count, length)
 }
 
 int
-LoadGlyphs(client, pfont, nchars, item_size, data)
-    ClientPtr   client;
-    FontPtr     pfont;
-    unsigned    nchars;
-    int         item_size;
-    unsigned char *data;
+LoadGlyphs(ClientPtr client, FontPtr pfont, unsigned nchars, int item_size, unsigned char *data)
 {
     if (fpe_functions[pfont->fpe->type].load_glyphs)
 	return (*fpe_functions[pfont->fpe->type].load_glyphs)
@@ -2162,8 +2098,7 @@ LoadGlyphs(client, pfont, nchars, item_size, data)
 }
 
 void
-DeleteClientFontStuff(client)
-    ClientPtr	client;
+DeleteClientFontStuff(ClientPtr client)
 {
     int			i;
     FontPathElementPtr	fpe;
@@ -2207,8 +2142,7 @@ GetDefaultPointSize ()
 
 
 FontResolutionPtr
-GetClientResolutions (num)
-    int        *num;
+GetClientResolutions (int *num)
 {
     if (requestingClient && requestingClient->fontResFunc != NULL &&
 	!requestingClient->clientGone)
@@ -2313,8 +2247,7 @@ FreeFonts()
 /* convenience functions for FS interface */
 
 FontPtr
-find_old_font(id)
-    XID         id;
+find_old_font(XID id)
 {
     return (FontPtr) SecurityLookupIDByType(NullClient, id, RT_NONE,
 					    SecurityUnknownAccess);
@@ -2327,23 +2260,19 @@ GetNewFontClientID()
 }
 
 int
-StoreFontClientFont(pfont, id)
-    FontPtr     pfont;
-    Font        id;
+StoreFontClientFont(FontPtr pfont, Font id)
 {
     return AddResource(id, RT_NONE, (pointer) pfont);
 }
 
 void
-DeleteFontClientID(id)
-    Font        id;
+DeleteFontClientID(Font id)
 {
     FreeResource(id, RT_NONE);
 }
 
 int
-client_auth_generation(client)
-    ClientPtr client;
+client_auth_generation(ClientPtr client)
 {
     return 0;
 }
@@ -2352,9 +2281,7 @@ static int  fs_handlers_installed = 0;
 static unsigned int last_server_gen;
 
 int
-init_fs_handlers(fpe, block_handler)
-    FontPathElementPtr fpe;
-    BlockHandlerProcPtr block_handler;
+init_fs_handlers(FontPathElementPtr fpe, BlockHandlerProcPtr block_handler)
 {
     /* if server has reset, make sure the b&w handlers are reinstalled */
     if (last_server_gen < serverGeneration) {
@@ -2377,10 +2304,7 @@ init_fs_handlers(fpe, block_handler)
 }
 
 void
-remove_fs_handlers(fpe, block_handler, all)
-    FontPathElementPtr fpe;
-    BlockHandlerProcPtr block_handler;
-    Bool        all;
+remove_fs_handlers(FontPathElementPtr fpe, BlockHandlerProcPtr block_handler, Bool all)
 {
     if (all) {
 	/* remove the handlers if no one else is using them */
@@ -2408,8 +2332,8 @@ remove_fs_handlers(fpe, block_handler, all)
 #define GLYPH_SIZE(ch, nbytes)          \
 	GLWIDTHBYTESPADDED((ch)->metrics.rightSideBearing - \
 			(ch)->metrics.leftSideBearing, (nbytes))
-dump_char_ascii(cip)
-    CharInfoPtr cip;
+void
+dump_char_ascii(CharInfoPtr cip)
 {
     int         r,
                 l;
@@ -2427,7 +2351,7 @@ dump_char_ascii(cip)
 	byte = 0;
 	for (l = 0; l <= (cip->metrics.rightSideBearing -
 			  cip->metrics.leftSideBearing); l++) {
-	    if (maskTab[l & 7] & row[l >> 3])
+	    if (maskTab[l & 7] & (((int *)row)[l >> 3]))
 		putchar('X');
 	    else
 		putchar('.');
@@ -2879,5 +2803,3 @@ nxOpenFont(client, fid, flags, lenfname, pfontname)
     return Success;
 }
 
-
-#endif /* #ifdef NXAGENT_UPGRADE */

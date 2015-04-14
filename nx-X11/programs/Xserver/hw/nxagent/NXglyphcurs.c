@@ -1,9 +1,3 @@
-#ifdef NXAGENT_UPGRADE
-
-#include "X/NXglyphcurs.c"
-
-#else
-
 /**************************************************************************/
 /*                                                                        */
 /* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
@@ -70,8 +64,12 @@ SOFTWARE.
 
 /* $Xorg: glyphcurs.c,v 1.4 2001/02/09 02:04:40 xorgcvs Exp $ */
 
+#ifdef HAVE_DIX_CONFIG_H
+#include <dix-config.h>
+#endif
+
 #include "misc.h"
-#include "fontstruct.h"
+#include <X11/fonts/fontstruct.h>
 #include "dixfontstr.h"
 #include "scrnintstr.h"
 #include "gcstruct.h"
@@ -100,11 +98,7 @@ cursor metrics.
 */
 
 int
-ServerBitsFromGlyph(pfont, ch, cm, ppbits)
-    FontPtr	pfont;
-    unsigned int ch;
-    register CursorMetricPtr cm;
-    unsigned char **ppbits;
+ServerBitsFromGlyph(FontPtr pfont, unsigned ch, register CursorMetricPtr cm, unsigned char **ppbits)
 {
     register ScreenPtr pScreen;
     register GCPtr pGC;
@@ -194,10 +188,7 @@ ServerBitsFromGlyph(pfont, ch, cm, ppbits)
 
 
 Bool
-CursorMetricsFromGlyph( pfont, ch, cm)
-    register FontPtr 	pfont;
-    unsigned		ch;
-    register CursorMetricPtr cm;
+CursorMetricsFromGlyph(register FontPtr pfont, unsigned ch, register CursorMetricPtr cm)
 {
     CharInfoPtr 	pci;
     unsigned long	nglyphs;
@@ -248,5 +239,3 @@ CursorMetricsFromGlyph( pfont, ch, cm)
     }
     return TRUE;
 }
-
-#endif /* #ifdef NXAGENT_UPGRADE */

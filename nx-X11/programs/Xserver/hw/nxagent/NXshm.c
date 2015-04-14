@@ -1,10 +1,21 @@
-#ifdef NXAGENT_UPGRADE
+/**************************************************************************/
+/*                                                                        */
+/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/*                                                                        */
+/* NXAGENT, NX protocol compression and NX extensions to this software    */
+/* are copyright of NoMachine. Redistribution and use of the present      */
+/* software is allowed according to terms specified in the file LICENSE   */
+/* which comes in the source distribution.                                */
+/*                                                                        */
+/* Check http://www.nomachine.com/licensing.html for applicability.       */
+/*                                                                        */
+/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/*                                                                        */
+/* All rights reserved.                                                   */
+/*                                                                        */
+/**************************************************************************/
 
-#include "X/NXshm.c"
-
-#else
-
-/* $XFree86: xc/programs/Xserver/Xext/shm.c,v 3.36 2002/04/03 19:51:11 herrb Exp $ */
+/* $XFree86: xc/programs/Xserver/Xext/shm.c,v 3.41 2003/12/17 23:28:56 alanh Exp $ */
 /************************************************************
 
 Copyright 1989, 1998  The Open Group
@@ -35,6 +46,12 @@ in this Software without prior written authorization from The Open Group.
 
 /* $Xorg: shm.c,v 1.4 2001/02/09 02:04:33 xorgcvs Exp $ */
 
+#define SHM
+
+#ifdef HAVE_DIX_CONFIG_H
+#include <dix-config.h>
+#endif
+
 #include <sys/types.h>
 #ifndef Lynx
 #include <sys/ipc.h>
@@ -47,8 +64,8 @@ in this Software without prior written authorization from The Open Group.
 #include <sys/stat.h>
 #define NEED_REPLIES
 #define NEED_EVENTS
-#include "X.h"
-#include "Xproto.h"
+#include <X11/X.h>
+#include <X11/Xproto.h>
 #include "misc.h"
 #include "os.h"
 #include "dixstruct.h"
@@ -60,8 +77,8 @@ in this Software without prior written authorization from The Open Group.
 #include "extnsionst.h"
 #include "servermd.h"
 #define _XSHM_SERVER_
-#include "shmstr.h"
-#include "Xfuncproto.h"
+#include <X11/extensions/shmstr.h>
+#include <X11/Xfuncproto.h>
 #ifdef EXTMODULE
 #include "xf86_ansic.h"
 #endif
@@ -70,6 +87,8 @@ in this Software without prior written authorization from The Open Group.
 #include "panoramiX.h"
 #include "panoramiXsrv.h"
 #endif
+
+#include "modinit.h"
 
 #include "Trap.h"
 #include "Agent.h"
@@ -84,6 +103,10 @@ in this Software without prior written authorization from The Open Group.
 #define WARNING
 #undef  TEST
 #undef  DEBUG
+
+#ifdef TEST
+#include "Literals.h"
+#endif
 
 extern void fbGetImage(DrawablePtr pDrw, int x, int y, int w, int h,
                            unsigned int format, unsigned long planeMask, char *d);
@@ -105,21 +128,15 @@ static void miShmPutImage(XSHM_PUT_IMAGE_ARGS);
 static void fbShmPutImage(XSHM_PUT_IMAGE_ARGS);
 static PixmapPtr fbShmCreatePixmap(XSHM_CREATE_PIXMAP_ARGS);
 static int ShmDetachSegment(
-#if NeedFunctionPrototypes
     pointer		/* value */,
     XID			/* shmseg */
-#endif
     );
 static void ShmResetProc(
-#if NeedFunctionPrototypes
     ExtensionEntry *	/* extEntry */
-#endif
     );
 static void SShmCompletionEvent(
-#if NeedFunctionPrototypes
     xShmCompletionEvent * /* from */,
     xShmCompletionEvent * /* to */
-#endif
     );
 
 static Bool ShmDestroyPixmap (PixmapPtr pPixmap);
@@ -208,23 +225,32 @@ static Bool CheckForShmSyscall()
 
     badSysCall = FALSE;
     shmid = shmget(IPC_PRIVATE, 4096, IPC_CREAT);
-    /* Clean up */
+
     if (shmid != -1)
     {
+        /* Successful allocation - clean up */
 	shmctl(shmid, IPC_RMID, (struct shmid_ds *)NULL);
+    }
+    else
+    {
+        /* Allocation failed */
+        badSysCall = TRUE;
     }
     signal(SIGSYS, oldHandler);
     return(!badSysCall);
 }
+
+#define MUST_CHECK_FOR_SHM_SYSCALL
+
 #endif
-    
+
 void
-ShmExtensionInit()
+ShmExtensionInit(INITARGS)
 {
     ExtensionEntry *extEntry;
     int i;
 
-#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__CYGWIN__)
+#ifdef MUST_CHECK_FOR_SHM_SYSCALL
     if (!CheckForShmSyscall())
     {
 	ErrorF("MIT-SHM extension disabled due to lack of kernel support\n");
@@ -307,17 +333,17 @@ ExtensionEntry	*extEntry;
 }
 
 void
-ShmRegisterFuncs(pScreen, funcs)
-    ScreenPtr pScreen;
-    ShmFuncsPtr funcs;
+ShmRegisterFuncs(
+    ScreenPtr pScreen,
+    ShmFuncsPtr funcs)
 {
     shmFuncs[pScreen->myNum] = funcs;
 }
 
 void
-ShmSetPixmapFormat(pScreen, format)
-    ScreenPtr pScreen;
-    int format;
+ShmSetPixmapFormat(
+    ScreenPtr pScreen,
+    int format)
 {
     shmPixFormat[pScreen->myNum] = format;
 }
@@ -661,8 +687,7 @@ ProcPanoramiXShmPutImage(register ClientPtr client)
                 client, stuff->gc, XRT_GC, SecurityReadAccess)))
         return BadGC;
 
-    isRoot = (draw->type == XRT_WINDOW) &&
-		(stuff->drawable == WindowTable[0]->drawable.id);
+    isRoot = (draw->type == XRT_WINDOW) && draw->u.win.root;
 
     orig_x = stuff->dstX;
     orig_y = stuff->dstY;
@@ -722,8 +747,7 @@ ProcPanoramiXShmGetImage(ClientPtr client)
     format = stuff->format;
     planemask = stuff->planeMask;
 
-    isRoot = (draw->type == XRT_WINDOW) &&
-		(stuff->drawable == WindowTable[0]->drawable.id);
+    isRoot = (draw->type == XRT_WINDOW) && draw->u.win.root;
 
     if(isRoot) {
       if( /* check for being onscreen */
@@ -798,8 +822,8 @@ ProcPanoramiXShmGetImage(ClientPtr client)
 }
 
 static int
-ProcPanoramiXShmCreatePixmap(client)
-    register ClientPtr client;
+ProcPanoramiXShmCreatePixmap(
+    register ClientPtr client)
 {
     ScreenPtr pScreen = NULL;
     PixmapPtr pMap = NULL;
@@ -808,6 +832,8 @@ ProcPanoramiXShmCreatePixmap(client)
     int i, j, result;
     ShmDescPtr shmdesc;
     REQUEST(xShmCreatePixmapReq);
+    unsigned int width, height, depth;
+    unsigned long size;
     PanoramiXRes *newPix;
 
     REQUEST_SIZE_MATCH(xShmCreatePixmapReq);
@@ -817,11 +843,18 @@ ProcPanoramiXShmCreatePixmap(client)
     LEGAL_NEW_RESOURCE(stuff->pid, client);
     VERIFY_GEOMETRABLE(pDraw, stuff->drawable, client);
     VERIFY_SHMPTR(stuff->shmseg, stuff->offset, TRUE, shmdesc, client);
-    if (!stuff->width || !stuff->height)
+
+    width = stuff->width;
+    height = stuff->height;
+    depth = stuff->depth;
+    if (!width || !height || !depth)
     {
 	client->errorValue = 0;
         return BadValue;
     }
+    if (width > 32767 || height > 32767)
+        return BadAlloc;
+
     if (stuff->depth != 1)
     {
         pDepth = pDraw->pScreen->allowedDepths;
@@ -831,10 +864,18 @@ ProcPanoramiXShmCreatePixmap(client)
 	client->errorValue = stuff->depth;
         return BadValue;
     }
+
 CreatePmap:
-    VERIFY_SHMSIZE(shmdesc, stuff->offset,
-		   PixmapBytePad(stuff->width, stuff->depth) * stuff->height,
-		   client);
+    size = PixmapBytePad(width, depth) * height;
+    if (sizeof(size) == 4 && BitsPerPixel(depth) > 8) {
+        if (size < width * height)
+            return BadAlloc;
+        /* thankfully, offset is unsigned */
+        if (stuff->offset + size < size)
+            return BadAlloc;
+    }
+
+    VERIFY_SHMSIZE(shmdesc, stuff->offset, size, client);
 
     if(!(newPix = (PanoramiXRes *) xalloc(sizeof(PanoramiXRes))))
 	return BadAlloc;
@@ -926,8 +967,17 @@ ProcShmPutImage(client)
         return BadValue;
     }
 
-    VERIFY_SHMSIZE(shmdesc, stuff->offset, length * stuff->totalHeight,
-		   client);
+    /* 
+     * There's a potential integer overflow in this check:
+     * VERIFY_SHMSIZE(shmdesc, stuff->offset, length * stuff->totalHeight,
+     *                client);
+     * the version below ought to avoid it
+     */
+    if (stuff->totalHeight != 0 && 
+	length > (shmdesc->size - stuff->offset)/stuff->totalHeight) {
+	client->errorValue = stuff->totalWidth;
+	return BadValue;
+    }
     if (stuff->srcX > stuff->totalWidth)
     {
 	client->errorValue = stuff->srcX;
@@ -1150,6 +1200,8 @@ ProcShmCreatePixmap(client)
     register int i;
     ShmDescPtr shmdesc;
     REQUEST(xShmCreatePixmapReq);
+    unsigned int width, height, depth;
+    unsigned long size;
 
     REQUEST_SIZE_MATCH(xShmCreatePixmapReq);
     client->errorValue = stuff->pid;
@@ -1158,11 +1210,18 @@ ProcShmCreatePixmap(client)
     LEGAL_NEW_RESOURCE(stuff->pid, client);
     VERIFY_GEOMETRABLE(pDraw, stuff->drawable, client);
     VERIFY_SHMPTR(stuff->shmseg, stuff->offset, TRUE, shmdesc, client);
-    if (!stuff->width || !stuff->height)
+    
+    width = stuff->width;
+    height = stuff->height;
+    depth = stuff->depth;
+    if (!width || !height || !depth)
     {
 	client->errorValue = 0;
         return BadValue;
     }
+    if (width > 32767 || height > 32767)
+	return BadAlloc;
+
     if (stuff->depth != 1)
     {
         pDepth = pDraw->pScreen->allowedDepths;
@@ -1172,10 +1231,18 @@ ProcShmCreatePixmap(client)
 	client->errorValue = stuff->depth;
         return BadValue;
     }
+
 CreatePmap:
-    VERIFY_SHMSIZE(shmdesc, stuff->offset,
-		   PixmapBytePad(stuff->width, stuff->depth) * stuff->height,
-		   client);
+    size = PixmapBytePad(width, depth) * height;
+    if (sizeof(size) == 4 && BitsPerPixel(depth) > 8) {
+	if (size < width * height)
+	    return BadAlloc;
+	/* thankfully, offset is unsigned */
+	if (stuff->offset + size < size)
+	    return BadAlloc;
+    }
+
+    VERIFY_SHMSIZE(shmdesc, stuff->offset, size, client);
     pMap = (*shmFuncs[pDraw->pScreen->myNum]->CreatePixmap)(
 			    pDraw->pScreen, stuff->width,
 			    stuff->height, stuff->depth,
@@ -1205,6 +1272,12 @@ ProcShmDispatch (client)
     #ifdef TEST
     fprintf(stderr, "ProcShmDispatch: Going to execute operation [%d] for client [%d].\n", 
                 stuff -> data, client -> index);
+
+    if (stuff->data <= X_ShmCreatePixmap)
+    {
+      fprintf(stderr, "ProcShmDispatch: Request [%s] OPCODE#%d.\n",
+                  nxagentShmRequestLiteral[stuff->data], stuff->data);
+    }
     #endif
 
     switch (stuff->data)
@@ -1364,6 +1437,7 @@ SProcShmCreatePixmap(client)
     REQUEST(xShmCreatePixmapReq);
     swaps(&stuff->length, n);
     REQUEST_SIZE_MATCH(xShmCreatePixmapReq);
+    swapl(&stuff->pid, n);
     swapl(&stuff->drawable, n);
     swaps(&stuff->width, n);
     swaps(&stuff->height, n);
@@ -1422,4 +1496,3 @@ SProcShmDispatch (client)
     }
 }
 
-#endif /* #ifdef NXAGENT_UPGRADE */

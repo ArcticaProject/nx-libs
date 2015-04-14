@@ -1,10 +1,22 @@
-#ifdef NXAGENT_UPGRADE
+/**************************************************************************/
+/*                                                                        */
+/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/*                                                                        */
+/* NXAGENT, NX protocol compression and NX extensions to this software    */
+/* are copyright of NoMachine. Redistribution and use of the present      */
+/* software is allowed according to terms specified in the file LICENSE   */
+/* which comes in the source distribution.                                */
+/*                                                                        */
+/* Check http://www.nomachine.com/licensing.html for applicability.       */
+/*                                                                        */
+/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/*                                                                        */
+/* All rights reserved.                                                   */
+/*                                                                        */
+/**************************************************************************/
 
-#include "X/NXmiexpose.c"
-
-#else
-
-/* $XFree86: xc/programs/Xserver/mi/miexpose.c,v 3.9 2001/12/14 20:00:22 dawes Exp $ */
+/* $XdotOrg: xc/programs/Xserver/mi/miexpose.c,v 1.6 2005/07/03 08:53:51 daniels Exp $ */
+/* $XFree86: xc/programs/Xserver/mi/miexpose.c,v 3.9tsi Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -51,13 +63,44 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
+/*****************************************************************
+
+Copyright (c) 1991, 1997 Digital Equipment Corporation, Maynard, Massachusetts.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software.
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+DIGITAL EQUIPMENT CORPORATION BE LIABLE FOR ANY CLAIM, DAMAGES, INCLUDING,
+BUT NOT LIMITED TO CONSEQUENTIAL OR INCIDENTAL DAMAGES, OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
+IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Except as contained in this notice, the name of Digital Equipment Corporation
+shall not be used in advertising or otherwise to promote the sale, use or other
+dealings in this Software without prior written authorization from Digital
+Equipment Corporation.
+
+******************************************************************/
 
 /* $Xorg: miexpose.c,v 1.4 2001/02/09 02:05:20 xorgcvs Exp $ */
 
-#include "X.h"
+#ifdef HAVE_DIX_CONFIG_H
+#include <dix-config.h>
+#endif
+
+#include <X11/X.h>
 #define NEED_EVENTS
-#include "Xproto.h"
-#include "Xprotostr.h"
+#include <X11/Xproto.h>
+#include <X11/Xprotostr.h>
 
 #include "misc.h"
 #include "regionstr.h"
@@ -69,7 +112,7 @@ SOFTWARE.
 
 #include "dixstruct.h"
 #include "mi.h"
-#include "Xmd.h"
+#include <X11/Xmd.h>
 
 #include "globals.h"
 
@@ -190,7 +233,7 @@ miHandleExposures(pSrcDrawable, pDstDrawable,
 	    if ((RECT_IN_REGION(pscr, &pSrcWin->clipList, &TsrcBox)) == rgnIN)
 		return NULL;
 	    prgnSrcClip = &rgnSrcRec;
-	    REGION_INIT(pscr, prgnSrcClip, NullBox, 0);
+	    REGION_NULL(pscr, prgnSrcClip);
 	    REGION_COPY(pscr, prgnSrcClip, &pSrcWin->clipList);
 	}
 	REGION_TRANSLATE(pscr, prgnSrcClip,
@@ -227,7 +270,7 @@ miHandleExposures(pSrcDrawable, pDstDrawable,
 	else
 	{
 	    prgnDstClip = &rgnDstRec;
-	    REGION_INIT(pscr, prgnDstClip, NullBox, 0);
+	    REGION_NULL(pscr, prgnDstClip);
 	    REGION_COPY(pscr, prgnDstClip,
 				&((WindowPtr)pDstDrawable)->clipList);
 	}
@@ -934,5 +977,3 @@ miClearDrawable(pDraw, pGC)
     DoChangeGC(pGC, GCForeground, &fg, 0);
     ValidateGC(pDraw, pGC);
 }
-
-#endif /* NXAGENT_UPGRADE */

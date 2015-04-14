@@ -1,9 +1,3 @@
-#ifdef NXAGENT_UPGRADE
-
-#include "X/NXglyphstr.h"
-
-#else
-
 /**************************************************************************/
 /*                                                                        */
 /* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
@@ -22,9 +16,9 @@
 /**************************************************************************/
 
 /*
- * $XFree86: xc/programs/Xserver/render/glyphstr.h,v 1.4 2001/01/21 21:19:39 tsi Exp $
+ * $XFree86: xc/programs/Xserver/render/glyphstr.h,v 1.3 2000/11/20 07:13:13 keithp Exp $
  *
- * Copyright © 2000 SuSE, Inc.
+ * Copyright Â© 2000 SuSE, Inc.
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
  * documentation for any purpose is hereby granted without fee, provided that
@@ -56,7 +50,7 @@
 #ifndef _GLYPHSTR_H_
 #define _GLYPHSTR_H_
 
-#include "renderproto.h"
+#include <X11/extensions/renderproto.h>
 #include "../../render/picture.h"
 #include "screenint.h"
 
@@ -99,8 +93,20 @@ typedef struct _GlyphSet {
     PictFormatPtr   format;
     int		    fdepth;
     GlyphHashRec    hash;
+    int             maxPrivate;
+    pointer         *devPrivates;
     CARD32          remoteID;
 } GlyphSetRec, *GlyphSetPtr;
+
+#define GlyphSetGetPrivate(pGlyphSet,n)					\
+	((n) > (pGlyphSet)->maxPrivate ?				\
+	 (pointer) 0 :							\
+	 (pGlyphSet)->devPrivates[n])
+
+#define GlyphSetSetPrivate(pGlyphSet,n,ptr)				\
+	((n) > (pGlyphSet)->maxPrivate ?				\
+	 _GlyphSetSetNewPrivate(pGlyphSet, n, ptr) :			\
+	 ((((pGlyphSet)->devPrivates[n] = (ptr)) != 0) || TRUE))
 
 typedef struct _GlyphList {
     INT16	    xOff;
@@ -113,6 +119,15 @@ extern GlyphHashRec	globalGlyphs[GlyphFormatNum];
 
 GlyphHashSetPtr
 FindGlyphHashSet (CARD32 filled);
+
+int
+AllocateGlyphSetPrivateIndex (void);
+
+void
+ResetGlyphSetPrivateIndex (void);
+
+Bool
+_GlyphSetSetNewPrivate (GlyphSetPtr glyphSet, int n, pointer ptr);
 
 Bool
 GlyphInit (ScreenPtr pScreen);
@@ -157,5 +172,3 @@ FreeGlyphSet (pointer   value,
 
 
 #endif /* _GLYPHSTR_H_ */
-
-#endif /* #ifdef NXAGENT_UPGRADE */

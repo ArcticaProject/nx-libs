@@ -1,13 +1,21 @@
-#ifdef NXAGENT_UPGRADE
+/**************************************************************************/
+/*                                                                        */
+/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/*                                                                        */
+/* NXAGENT, NX protocol compression and NX extensions to this software    */
+/* are copyright of NoMachine. Redistribution and use of the present      */
+/* software is allowed according to terms specified in the file LICENSE   */
+/* which comes in the source distribution.                                */
+/*                                                                        */
+/* Check http://www.nomachine.com/licensing.html for applicability.       */
+/*                                                                        */
+/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/*                                                                        */
+/* All rights reserved.                                                   */
+/*                                                                        */
+/**************************************************************************/
 
-#if !defined(__sun) && !defined(__CYGWIN__)
-
-#include "X/NXxvdisp.c"
-
-#endif
-
-#else
-
+/* $XdotOrg: xc/programs/Xserver/Xext/xvdisp.c,v 1.6 2005/07/03 08:53:36 daniels Exp $ */
 /***********************************************************
 Copyright 1991 by Digital Equipment Corporation, Maynard, Massachusetts,
 and the Massachusetts Institute of Technology, Cambridge, Massachusetts.
@@ -31,7 +39,7 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $XFree86: xc/programs/Xserver/Xext/xvdisp.c,v 1.25 2001/11/18 23:55:48 mvojkovi Exp $ */
+/* $XFree86: xc/programs/Xserver/Xext/xvdisp.c,v 1.27 2003/07/16 01:38:31 dawes Exp $ */
 
 /*
 ** File: 
@@ -57,8 +65,14 @@ SOFTWARE.
 **
 */
 
-#include "X.h"
-#include "Xproto.h"
+#if !defined(__sun) && !defined(__CYGWIN__)
+
+#ifdef HAVE_DIX_CONFIG_H
+#include <dix-config.h>
+#endif
+
+#include <X11/X.h>
+#include <X11/Xproto.h>
 #include "misc.h"
 #include "scrnintstr.h"
 #include "windowstr.h"
@@ -68,12 +82,12 @@ SOFTWARE.
 #include "resource.h"
 #include "opaque.h"
 
-#include "Xv.h"
-#include "Xvproto.h"
+#include <X11/extensions/Xv.h>
+#include <X11/extensions/Xvproto.h>
 #include "xvdix.h"
 #ifdef MITSHM
 #define _XSHM_SERVER_
-#include "shmstr.h"
+#include <X11/extensions/shmstr.h>
 #endif
 
 #include "Trap.h"
@@ -84,6 +98,8 @@ SOFTWARE.
 #ifdef EXTMODULE
 #include "xf86_ansic.h"
 #endif
+
+#include "xvdisp.h"
 
 #ifdef PANORAMIX
 #include "panoramiX.h"
@@ -261,17 +277,19 @@ ProcXvDispatch(ClientPtr client)
     case xv_PutVideo:
 #ifdef PANORAMIX
         if(!noPanoramiXExtension)
-            result = (XineramaXvPutVideo(client)); break;
+            result = (XineramaXvPutVideo(client));
         else
 #endif
-            result = (ProcXvPutVideo(client)); break;
+            result = (ProcXvPutVideo(client));
+            break;
     case xv_PutStill:
 #ifdef PANORAMIX
         if(!noPanoramiXExtension)
-            result = (XineramaXvPutStill(client)); break
+            result = (XineramaXvPutStill(client));
         else
 #endif
-    	    result = (ProcXvPutStill(client)); break;
+    	    result = (ProcXvPutStill(client));
+    	    break;
     case xv_GetVideo: result = (ProcXvGetVideo(client)); break;
     case xv_GetStill: result = (ProcXvGetStill(client)); break;
     case xv_GrabPort: result = (ProcXvGrabPort(client)); break;
@@ -281,35 +299,39 @@ ProcXvDispatch(ClientPtr client)
     case xv_StopVideo: 
 #ifdef PANORAMIX
         if(!noPanoramiXExtension)
-	    result = (XineramaXvStopVideo(client)); break;
+	    result = (XineramaXvStopVideo(client));
 	else
 #endif
-	    result = (ProcXvStopVideo(client)); break;
+	    result = (ProcXvStopVideo(client));
+            break;
     case xv_SetPortAttribute: 
 #ifdef PANORAMIX
         if(!noPanoramiXExtension)
-	    result = (XineramaXvSetPortAttribute(client)); break;
+	    result = (XineramaXvSetPortAttribute(client));
 	else
 #endif
-	    result = (ProcXvSetPortAttribute(client)); break;
+	    result = (ProcXvSetPortAttribute(client));
+            break;
     case xv_GetPortAttribute: result = (ProcXvGetPortAttribute(client)); break;
     case xv_QueryBestSize: result = (ProcXvQueryBestSize(client)); break;
     case xv_QueryPortAttributes: result = (ProcXvQueryPortAttributes(client)); break;
     case xv_PutImage:
 #ifdef PANORAMIX
         if(!noPanoramiXExtension)
-	    result = (XineramaXvPutImage(client)); break;
+	    result = (XineramaXvPutImage(client));
 	else
 #endif
-	    result = (ProcXvPutImage(client)); break;
+	    result = (ProcXvPutImage(client));
+            break;
 #ifdef MITSHM
     case xv_ShmPutImage: 
 #ifdef PANORAMIX
         if(!noPanoramiXExtension)
-	    result = (XineramaXvShmPutImage(client)); break;
+	    result = (XineramaXvShmPutImage(client));
 	else
 #endif
-	    result = (ProcXvShmPutImage(client)); break;
+	    result = (ProcXvShmPutImage(client));
+	    break;
 #endif
     case xv_QueryImageAttributes: result = (ProcXvQueryImageAttributes(client)); break;
     case xv_ListImageFormats: result = (ProcXvListImageFormats(client)); break;
@@ -1268,7 +1290,7 @@ ProcXvShmPutImage(ClientPtr client)
 #endif
 
 #ifdef XvMCExtension
-XvImagePtr XvMCFindXvImage(XvPortPtr pPort, CARD32 id);
+#include "xvmcext.h"
 #endif
 
 static int 
@@ -2000,8 +2022,7 @@ XineramaXvShmPutImage(ClientPtr client)
                 client, stuff->port, XvXRTPort, SecurityReadAccess)))
         return _XvBadPort;
  
-    isRoot = (draw->type == XRT_WINDOW) &&
-                (stuff->drawable == WindowTable[0]->drawable.id);
+    isRoot = (draw->type == XRT_WINDOW) && draw->u.win.root;
 
     x = stuff->drw_x;
     y = stuff->drw_y;
@@ -2048,8 +2069,7 @@ XineramaXvPutImage(ClientPtr client)
 		client, stuff->port, XvXRTPort, SecurityReadAccess)))
 	return _XvBadPort;
  
-    isRoot = (draw->type == XRT_WINDOW) &&
-                (stuff->drawable == WindowTable[0]->drawable.id);
+    isRoot = (draw->type == XRT_WINDOW) && draw->u.win.root;
 
     x = stuff->drw_x;
     y = stuff->drw_y;
@@ -2094,8 +2114,7 @@ XineramaXvPutVideo(ClientPtr client)
                 client, stuff->port, XvXRTPort, SecurityReadAccess)))
         return _XvBadPort;
 
-    isRoot = (draw->type == XRT_WINDOW) &&
-                (stuff->drawable == WindowTable[0]->drawable.id);
+    isRoot = (draw->type == XRT_WINDOW) && draw->u.win.root;
 
     x = stuff->drw_x;
     y = stuff->drw_y;
@@ -2140,8 +2159,7 @@ XineramaXvPutStill(ClientPtr client)
                 client, stuff->port, XvXRTPort, SecurityReadAccess)))
         return _XvBadPort;
 
-    isRoot = (draw->type == XRT_WINDOW) &&
-                (stuff->drawable == WindowTable[0]->drawable.id);
+    isRoot = (draw->type == XRT_WINDOW) && draw->u.win.root;
 
     x = stuff->drw_x;
     y = stuff->drw_y;
@@ -2274,4 +2292,4 @@ void XineramifyXv(void)
 
 #endif
 
-#endif /* #ifdef NXAGENT_UPGRADE */
+#endif /* !defined(__sun) && !defined(__CYGWIN__) */

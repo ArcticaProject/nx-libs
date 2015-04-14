@@ -1,5 +1,3 @@
-#ifndef NXAGENT_UPGRADE
-
 /*
  * $Id: composite.h,v 1.4 2004/07/08 07:20:55 keithp Exp $
  *
@@ -51,5 +49,3 @@
 #define CompositeNumberRequests	    (X_CompositeNameWindowPixmap + 1)
 
 #endif /* _COMPOSITE_H_ */
-
-#endif /* #ifndef NXAGENT_UPGRADE */
