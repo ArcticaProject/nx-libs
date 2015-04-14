@@ -201,7 +201,7 @@ INSTPGMFLAGS =
                   $(LBXDIRS) $(DBEDIR) $(RECORDDIR) $(SITEEXTDIRS) \
                   $(RANDRDIR) $(RENDERDIR) $(XTRAPDIR) $(XPCONFIGDIR) \
 		  $(FIXESDIR) $(DAMAGEDIR) $(CWDIR) $(COMPOSITEDIR)
-#if BuildLBX || GzipFontCompression
+#if BuildLBX
            ZLIB = GzipLibrary
 #endif
              OS = os/LibraryTargetName(os) $(DEPXAUTHLIB) $(DEPXDMCPLIB)
@@ -267,14 +267,6 @@ INSTPGMFLAGS =
 #endif
    MIINITEXTOBJ = mi/miinitext.o
             DIX = dix/LibraryTargetName(dix)
-       FONTBASE = $(FONTLIBSRC)/fontbase.o \
-		  $(FONTLIBSRC)/LibraryTargetName(fontbase)
-#if XserverStaticFontLib
-           FONT = $(FONTLIBSRC)/LibraryTargetName(NX_Xfont) $(FREETYPE2LIB)
-#else
-           FONT = $(LDPRELIB) $(XFONTLIB) $(FREETYPE2LIB)
-#endif
-       FONTLIBS = $(FONT) $(XPFBLIBS)
 #if UsbMouseSupport 
 #if !HasLibUsb
             USB = $(XF86OSSRC)/bsd/libusb/LibraryTargetName(usb)
@@ -432,7 +424,7 @@ NXAGENTOBJS = hw/nxagent/miinitext.o     \
 XPMLIB =  -lXpm
 NXAGENT = hw/nxagent/LibraryTargetName(nxagent)
 NXAGENTLIBS = PreFbLibs $(NXAGENT) FbPostFbLibs $(NXAGENT) $(MI)
-NXAGENTSYSLIBS = $(FONTLIBS) $(LDPRELIBS) $(XLIB) $(SYSLIBS) $(XPMLIB)
+NXAGENTSYSLIBS = $(LDPRELIBS) $(XLIB) $(SYSLIBS) $(XPMLIB)
 #if HasParallelMake
 MakeMutex($(NXAGENTDIRS) $(NXAGENTOBJS) $(NXAGENTLIBS) $(NXAGENTSYSLIBS))
 #endif
@@ -447,17 +439,17 @@ $(NXAGENTOBJS) $(NXAGENTLIBS) $(NXAGENTSYSLIBS):: $(NXAGENTDIRS)
 
 #if defined(SunArchitecture)
 NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext -L ../../../nxcompshad \
-                -lXcomp -lXcompext -lXcompshad -lrt -L/usr/sfw/lib -lNX_Xrender -lNX_Xfixes \
+                -lXcomp -lXcompext -lXcompshad -lrt -L/usr/sfw/lib -lNX_Xrender -lNX_Xfixes -lXfont \
                 -L../../../nx-X11/exports/lib -lNX_Xtst -lNX_Xdamage -lNX_Xrandr -lNX_Xcomposite -lNX_Xdmcp \
 `pkg-config --libs libxml-2.0`
 #elif defined(cygwinArchitecture)
 NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext \
-                -lXcomp -lXcompext -lNX_Xrender -lX11 -lNX_Xext -lNX_Xcomposite -lNX_Xfixes \
+                -lXcomp -lXcompext -lNX_Xrender -lX11 -lNX_Xext -lNX_Xcomposite -lNX_Xfixes -lXfont \
                 -L ../../../nxcompshad -lXcompshad -L../../../nx-X11/exports/lib -lNX_Xtst -lNX_Xdmcp \
 `pkg-config --libs libxml-2.0`
 #else
 NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext -L ../../../nxcompshad \
-                -lXcomp -lXcompext -lXcompshad -lNX_Xrender -lNX_X11 -lNX_Xext -lNX_Xfixes \
+                -lXcomp -lXcompext -lXcompshad -lNX_Xrender -lNX_X11 -lNX_Xext -lNX_Xfixes -lXfont \
                 -L../../../nx-X11/exports/lib -lNX_Xtst -lNX_Xdamage -lNX_Xrandr -lNX_Xcomposite -lNX_Xinerama -lNX_Xdmcp \
 `pkg-config --libs libxml-2.0`
 #endif
@@ -512,7 +504,7 @@ nxagent_static_nolibs:  nxagent
 	$(MV) nxagent__static_nolibs nxagent_static_nolibs.bak; \
 	else exit 0; fi
 	$(CCLINK) -o nxagent_static_nolibs -Wl,-Bstatic $(LDOPTIONS) $(NXAGENTOBJS) \
-	$(NXAGENTLIBS) $(LOADABLEEXTS) $(LIBCWRAPPER) $(LDLIBS) $(FONTLIBS) \
+	$(NXAGENTLIBS) $(LOADABLEEXTS) $(LIBCWRAPPER) $(LDLIBS) \
 	$(LDPRELIBS) $(SYSLIBS) -Wl,-Bdynamic -lNX_Xext -lNX_X11 $(EXTRA_LOAD_FLAGS)
 #endif /* NXAgentServer */
 
@@ -573,7 +565,7 @@ XWINW32  = -lgdi32 -lwsock32 $(XWINGL32) $(PTHREADLIB)
 #else
 XWINW32  = -lgdi32
 #endif
-NXWINSYSLIBS = $(FONTLIBS) $(LDPRELIBS) $(XWINX11) $(SYSLIBS) $(XWINW32)
+NXWINSYSLIBS = $(LDPRELIBS) $(XWINX11) $(SYSLIBS) $(XWINW32)
 
 NXWINNXLIBS = -L../../../nxcomp -lXcomp
 
@@ -638,7 +630,7 @@ NXWINDIRS = $(STDDIRS) $(FBDIR) $(SHADOWDIR) $(LAYERDIR) $(NXWINDDXDIR) \
 NXWINOBJS = $(NXWINDDXDIR)/stubs.o $(NXWINDDXDIR)/NX.res
 NXWINLIBS = PreFbLibs $(NXWINLIB) FbPostFbLibs $(LAYER) $(SHADOW) \
            $(XWINPARSERLIB)
-NXWINSYSLIBS = $(FONTLIBS) $(LDPRELIBS) $(XLIB) $(SYSLIBS) -lgdi32 -lddraw
+NXWINSYSLIBS = $(LDPRELIBS) $(XLIB) $(SYSLIBS) -lgdi32 -lddraw
 NXWINNXLIBS = -L../../../nxcomp -lXcomp
 
 /*
@@ -704,7 +696,7 @@ XCOMM Hackery for building dlopen-able .so modules on Solaris
 
 AllTarget(linker-deps)
 
-LINKER_DEPS_DIRS = $(SUBDIRS) $(FONTLIBSRC)
+LINKER_DEPS_DIRS = $(SUBDIRS)
 
 XCOMM After everything is built, run through and generate linker dependencies
 linker-deps:

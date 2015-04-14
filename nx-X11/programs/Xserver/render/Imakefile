@@ -27,9 +27,9 @@ XCOMM $XFree86: xc/programs/Xserver/render/Imakefile,v 1.10 2002/11/23 02:38:15 
                 render.o \
 		renderedge.o
 
-   INCLUDES = -I. -I../include -I../mi -I../../../include/fonts \
+   INCLUDES = -I. -I../include -I../mi \
                 -I../fb -I../hw/kdrive -I$(EXTINCSRC) -I$(XINCLUDESRC) \
-                -I$(FONTINCSRC) -I../Xext
+                -I../Xext
    LINTLIBS = ../dix/llib-ldix.ln ../os/llib-los.ln
 
 NormalLibraryTarget(render,$(OBJS))

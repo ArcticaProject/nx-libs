@@ -36,7 +36,7 @@ is" without express or implied warranty.
 #include "pixmapstr.h"
 #include "scrnintstr.h"
 #include "dixstruct.h"
-#include "fontstruct.h"
+#include <X11/fonts/fontstruct.h>
 #include "mistruct.h"
 #include "region.h"
 

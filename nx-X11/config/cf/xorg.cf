@@ -1248,50 +1248,6 @@ IPLAN2P8_DEFS = -DUSE_IPLAN2P8
 #endif
 
 /*
- * Include fonts support
- */
-#ifndef BuildSpeedo
-# define BuildSpeedo		NO
-#endif
-
-#ifndef BuildType1
-# define BuildType1		NO
-#endif
-
-#ifndef BuildCID
-# define BuildCID		YES
-#endif
-
-#ifndef BuildFreeType
-# define BuildFreeType		YES
-#endif
-
-/*
- * By default, build all of the fonts.
- */
-#ifndef Build75DpiFonts
-# define Build75DpiFonts	YES
-#endif
-#ifndef Build100DpiFonts
-# define Build100DpiFonts	YES
-#endif
-#ifndef BuildSpeedoFonts
-# define BuildSpeedoFonts	NO
-#endif
-#ifndef BuildType1Fonts
-# define BuildType1Fonts	YES
-#endif
-#ifndef BuildCIDFonts
-# define BuildCIDFonts		YES
-#endif
-#ifndef BuildTrueTypeFonts
-# define BuildTrueTypeFonts	YES
-#endif
-#ifndef BuildCyrillicFonts
-# define BuildCyrillicFonts	YES
-#endif
-
-/*
  * Build scanpci?
  */
 #ifndef SystemV
@@ -1310,14 +1266,6 @@ IPLAN2P8_DEFS = -DUSE_IPLAN2P8
 # else
 #   define BuildScanpci		NO
 # endif
-#endif
-
-#ifndef CompressAllFonts
-# define CompressAllFonts	YES
-#endif
-
-#ifndef GzipFontCompression
-# define GzipFontCompression	YES
 #endif
 
 /* Disable stripping installed programs for this release. */

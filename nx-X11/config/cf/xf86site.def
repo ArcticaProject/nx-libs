@@ -139,103 +139,6 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
  */
 
 /*
- * To disable support for Speedo fonts, uncomment this.
- *
-#define BuildSpeedo		NO
- */
-
-/*
- * To disable support for Type1 fonts, uncomment this.
- *
-#define BuildType1		NO
- */
-
-/*
- * To disable support for CID fonts, uncomment this.
- *
-#define BuildCID		NO
- */
-
-/*
- * To disable support for TrueType fonts, uncomment these.
- *
-#define BuildFreeType		NO
- */
-
-/*
- * To set non-default build options for the underlying FreeType libraries,
- * add them here and uncomment.
- *
-#define Freetype2BuildDefines	-DFREETYPE_BUILD_DEFINES
- */
-
-/*
- * To build the FreeType libraries with the TrueType byte code interpreter
- * enabled, uncomment this.  Note that there are patent issues related to the
- * TrueType byte code interpreter, and we only recommend you enabling this
- * if you are sure that there are no legal impediments to you doing so.  See
- * <http://www.freetype.org/patents.html> for further information.
- *
-#define Freetype2BuildDefines -DTT_CONFIG_OPTION_BYTECODE_INTERPRETER
- */
-
-/*
- * Do you want to Build Fonts (Usually you only want to build and install
- * fonts once, if this is a first time install you will want to build the
- * fonts)
- *
-#define BuildFonts		NO
- */
-
-/*
- * To not build/install the 75dpi fonts, uncomment the following
- *
-#define Build75DpiFonts		NO
- */
-
-/*
- * To not build/install the 100dpi fonts, uncomment the following
- *
-#define Build100DpiFonts	NO
- */
-
-/*
- * To not build/install the Speedo fonts, uncomment the following
- *
-#define BuildSpeedoFonts	NO
- */
-
-/*
- * To not build/install the Type1 fonts, uncomment the following
- *
-#define BuildType1Fonts		NO
- */
-
-/*
- * To not build/install the CID fonts, uncomment the following
- *
-#define BuildCIDFonts		NO
- */
-
-/*
- * To not build/install the True Type fonts, uncomment the following
- *
-#define BuildTrueTypeFonts	NO
- */
-
-/*
- * To not build/install the Cyrillic fonts, uncomment the following
- *
-#define BuildCyrillicFonts	NO
- */
-
-/*
- * To not install the local font directory, uncomment the following
- *
-#define MakeLocalFontDir	NO
- */
-
-/*
  * To build only the servers with a cut-down source tree, uncomment
  * this.
  *
@@ -453,20 +356,6 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
  * The following example includes support for syscons and pcvt only.
  *
 #define XFree86ConsoleDefines	-DSYSCONS_SUPPORT -DPCVT_SUPPORT
- */
-
-/*
- * To link the X server with a dynamic version of the Xfont library,
- * uncomment this.
- *
-#define XserverStaticFontLib	NO
- */
-
-/*
- * To enable binary compatibility with previous versions of the font
- * encoding support, uncomment this.
- *
-#define FontencCompatibility    YES
  */
 
 /*

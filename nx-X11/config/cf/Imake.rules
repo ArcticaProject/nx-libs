@@ -2119,32 +2119,11 @@ Concat(varname,LIB) = LoaderLibPrefix Concat(-l,libname)		@@\
 LintLibReferences(varname,libname,libsource)
 #endif
 
- /*
- * ProjectUnsharedFontLibReferences - unshared font libraries
- */
-#ifndef ProjectUnsharedFontLibReferences
-#define ProjectUnsharedFontLibReferences()					@@\
-DEPFONTLIB = _UseCat($(USRLIBDIR)/,XBuildLibDir/,LibraryTargetName(NX_Xfont))	@@\
-FONTLIB = -L$(FREETYPELIBDIR) -L$(FONTLIBSRC) LoaderLibPrefix -lNX_Xfont		@@\
-LintLibReferences(XFONT,NX_Xfont,$(FONTLIBSRC))
-#endif
-
 /*
  * SharedLibDependencies - shared library dependencies
  */
 #ifndef SharedLibDependencies
 #define SharedLibDependencies(libname,libsource,revname) /**/
-#endif
-
-/*
- * SharedFontLibReferences - shared font libraries
- */
-#ifndef SharedFontLibReferences
-#define SharedFontLibReferences()					@@\
-SOFONTREV = SharedFontRev						@@\
-DEPFONTLIB = SharedLibDependencies(NX_Xfont,$(FONTLIBSRC),SOFONTREV)	@@\
-FONTLIB = -L$(FREETYPELIBDIR) -L$(FONTLIBSRC) LoaderLibPrefix -lNX_Xfont	@@\
-LintLibReferences(XFONT,NX_Xfont,$(FONTLIBSRC))
 #endif
 
 /*

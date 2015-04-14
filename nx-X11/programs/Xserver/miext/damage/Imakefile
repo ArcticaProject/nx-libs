@@ -10,7 +10,7 @@ SRCS = damage.c
 OBJS = damage.o
 
    INCLUDES = -I. -I../shadow -I../../mi -I../../fb -I../../include -I$(XINCLUDESRC) \
-	      -I$(FONTINCSRC) -I$(XF86SRC)/common $(EXTRAINCLUDES) \
+	      -I$(XF86SRC)/common $(EXTRAINCLUDES) \
 	      -I../../render -I../cw -I$(EXTINCSRC)
    LINTLIBS = ../../dix/llib-ldix.ln ../../os/llib-los.ln \
 	     ../../mi/llib-lmi.ln

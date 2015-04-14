@@ -15,7 +15,7 @@ GLXDIR = GL
 DPSDIR = DPS
 #endif
 
-SUBDIRS = bitmaps extensions fonts $(GLXDIR) $(DPSDIR)
+SUBDIRS = bitmaps extensions $(GLXDIR) $(DPSDIR)
 
 #ifdef Win32Architecture
 EXTRA_HEADERS = Xw32defs.h Xwinsock.h Xwindows.h

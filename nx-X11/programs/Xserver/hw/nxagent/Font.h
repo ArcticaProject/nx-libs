@@ -32,7 +32,7 @@ is" without express or implied warranty.
 #ifndef __Font_H__
 #define __Font_H__
 
-#include "fontstruct.h"
+#include <X11/fonts/fontstruct.h>
 #include "resource.h"
 
 extern RESTYPE RT_NX_FONT;

@@ -602,14 +602,6 @@ XCOMM deprecated; please strongly consider using vendor-supplied packages.
 #ifndef GzipLibrary	/* if OS config didn't define it, assume it's -lz */
 #define GzipLibrary -lz
 #endif
-/* If the system has the Freetype2 library - if NO, the copy in extras is built */
-#ifndef HasFreetype2
-#define HasFreetype2		YES
-#endif
-/* If the system has the Fontconfig library - if NO, the copy in extras is built  */
-#ifndef HasFontconfig
-#define HasFontconfig		NO
-#endif
 /* If the system has the PNG library - if NO, xcursorgen is not built */
 #ifndef HasLibpng
 #define HasLibpng		NO

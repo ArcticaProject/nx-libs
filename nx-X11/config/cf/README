@@ -178,7 +178,6 @@ X11.tmpl provides defaults for the following variables:
 	BuildDBE		build DOUBLE-BUFFER extension
 	BuildDmx		build Distributed Multihead X server and extension
 	BuildDPMS		build Display Power Management Signaling extension
-	BuildFonts		build pcf fonts
 	BuildIncRoot		relative path to location of headers in build
 	BuildIncTop		path from build includes directory to top
 	BuildEVI		build EVI server extension
@@ -214,7 +213,6 @@ X11.tmpl provides defaults for the following variables:
 	DebugLibXag		build libXag_d.a
 	DebugOldX		build liboldX_d.a
 	DefaultCursorTheme      name of default cursor theme
-	DefaultFSConfigFile	default font server config file
 	DefaultFontPath		default server font path
 	DefaultRGBDatabase	default server rgb color database
 	DefaultSystemPath	default system xdm PATH environment variable
@@ -226,13 +224,7 @@ X11.tmpl provides defaults for the following variables:
 	DriverManSuffix		man suffix for driver pages
 	ExtensionDefines	-D's for universal extensions
 	ExtensionOSDefines	-D's for additional extensions
-	FontCompilerFlags	flags for bdftosnf
-	FontDefines		-D's to turn on font options
-	FontDir			directory in which to install fonts
-	FontFilters		-D's to specify font conversion filters
-	FontOSDefines		-D's for which fonts to support
 	ForceNormalLib		force building of .a in addition to shared lib
-	GzipFontCompression	boolean for using gzip instead of compress
 	HasXdmAuth		boolean for using XDM-AUTHORIZATION-1;
 					needs Wraphelp.c, see Release Notes
 	InstallAppDefFiles	install new app defaults files over old?

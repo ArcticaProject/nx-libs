@@ -91,9 +91,6 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
 
 #ifdef NXAgentServer
 #define BuildRenderLibrary	YES
-#define SharedLibFreetype2	YES
-#define NormalLibFreetype2	YES
-#define FontLibSharedFreeType 	YES
 #endif
 
 /*
@@ -241,101 +238,6 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
  */
 
 /*
- * Speedo fonts have been disabled by default in this release.
- * To re-enable support for Speedo fonts, uncomment this.
- *
-#define BuildSpeedo		YES
- */
-
-/*
- * To disable support for CID fonts, uncomment this.
- *
-#define BuildCID		NO
- */
-
-/*
- * To disable support for TrueType fonts, uncomment these.
- *
-#define BuildFreeType		NO
- */
-#define BuildFreeType		NO
-
-/*
- * To set non-default build options for the underlying FreeType libraries,
- * add them here and uncomment.
- *
-#define Freetype2BuildDefines	-DFREETYPE_BUILD_DEFINES
- */
-
-/*
- * To build the FreeType libraries with the TrueType byte code interpreter
- * enabled, uncomment this.  Note that there are patent issues related to the
- * TrueType byte code interpreter, and we only recommend you enabling this
- * if you are sure that there are no legal impediments to you doing so.  See
- * <http://www.freetype.org/patents.html> for further information.
- *
-#define Freetype2BuildDefines -DTT_CONFIG_OPTION_BYTECODE_INTERPRETER
- */
-
-/*
- * Do you want to Build Fonts (Usually you only want to build and install
- * fonts once, if this is a first time install you will want to build the
- * fonts)
- *
-#define BuildFonts		NO
- */
-#define BuildFonts		NO
-
-/*
- * To not build/install the 75dpi fonts, uncomment the following
- *
-#define Build75DpiFonts		NO
- */
-
-/*
- * To not build/install the 100dpi fonts, uncomment the following
- *
-#define Build100DpiFonts	NO
- */
-
-/*
- * To build/install the Speedo fonts, uncomment the following
- * (see setting above about Speedo support as well)
- *
-#define BuildSpeedoFonts	YES
- */
-
-/*
- * To not build/install the Type1 fonts, uncomment the following
- *
-#define BuildType1Fonts		NO
- */
-
-/*
- * To not build/install the CID fonts, uncomment the following
- *
-#define BuildCIDFonts		NO
- */
-
-/*
- * To not build/install the True Type fonts, uncomment the following
- *
-#define BuildTrueTypeFonts	NO
- */
-
-/*
- * To not build/install the Cyrillic fonts, uncomment the following
- *
-#define BuildCyrillicFonts	NO
- */
-
-/*
- * To not install the local font directory, uncomment the following
- *
-#define MakeLocalFontDir	NO
- */
-
-/*
  * Include True Type Fonts to default font path. It is safe to do
  * this by default as NX intaller carries only misc and TTF in the
  * basic set of fonts installed under Windows.
@@ -368,7 +270,6 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
  *
 #define InstallXinitConfig	YES
 #define InstallXdmConfig	YES
-#define InstallFSConfig		YES
  */
 
 /*
@@ -589,21 +490,6 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
  * The following example includes support for syscons and pcvt only.
  *
 #define XFree86ConsoleDefines	-DSYSCONS_SUPPORT -DPCVT_SUPPORT
- */
-
-/*
- * To link the X server with a dynamic version of the Xfont library,
- * uncomment this.
- *
-#define XserverStaticFontLib	NO
- */
-#define XserverStaticFontLib	YES
-
-/*
- * To enable binary compatibility with previous versions of the font
- * encoding support, uncomment this.
- *
-#define FontencCompatibility    YES
  */
 
 /*
@@ -834,38 +720,6 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
 #define X86EMU_LIBPATH /usr/local/lib
  */ 
 
-/*
- * Most platforms default to using an already installed FreeType 2 library.
- * To use the one included in this release instead, uncomment the following.
- *
-#define HasFreetype2 NO
- */
-#define HasFreetype2 YES
-
-/* 
- * To use a FreeType library already installed outside the default search
- * paths, uncomment the following and set the path as needed.
- *
-#define HasFreetype2 YES
-#define Freetype2Dir /usr/local
- */
-
-
-/*
- * Most platforms default to using an already installed Fontconfig library.
- * To use the one included in this release instead, uncomment the following.
- *
-#define HasFontconfig NO
- */
-#define HasFontconfig YES
-
-/* 
- * To use a Fontconfig library already installed outside the default search
- * paths, uncomment the following and set the path as needed.
-#define HasFontconfig YES
-#define FontconfigDir /usr/local
- */
-
 
 /*
  * Most platforms default to using an already installed Expat library.
@@ -912,9 +766,5 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
 #define BuildXaw7              NO
 
 #define BuildRman NO
-#define BuildFontEncLib NO
 #define BuildXcursorLibrary NO
-#define BuildXftLibrary NO
-#define BuildXft1Library NO
-#define SharedLibFont NO
 #define BuildLoadableXlibI18n NO

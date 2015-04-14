@@ -106,22 +106,6 @@ RENDERLIBDIR = Xrender
 EXPATBUILDDIR = expat
 #endif
 
-#if BuildFreetype2Library
-FREETYPE2BUILDDIR = freetype2
-#endif
-
-#if BuildFontconfigLibrary
-FONTCONFIGBUILDDIR = fontconfig
-#endif
-
-#if BuildXftLibrary
-XFTLIBDIR = Xft
-#endif
-
-#if BuildXft1Library
-XFT1LIBDIR = Xft1
-#endif
-
 #if BuildRandRLibrary
 RANDRLIBDIR = Xrandr
 #endif
@@ -165,7 +149,7 @@ XF86EXTLIBS = $(XF86MISCLIBDIR) $(XF86VMLIBDIR) \
 LBXUTILDIR = lbxutil
 #endif
 
-#if (BuildLBX || GzipFontCompression) && !HasZlib
+#if BuildLBX && !HasZlib
 ZLIBDIR = zlib
 #endif
 
@@ -175,16 +159,6 @@ REGEXDIR = regex
 
 #if BuildXAudio
 XALIBDIR = Xa
-#endif
-
-#if BuildFontCacheLib
-FONTCACHELIBDIR = Xfontcache
-#endif
-
-FONTSUBDIR = font
-
-#if BuildFontEncLib
-FONTENCSUBDIR = fontenc
 #endif
 
 #if BuildXauLib
@@ -218,15 +192,13 @@ LINTSUBDIRS = $(XAULIBDIR) $(XDMCPLIBDIR) $(X11LIBDIR) \
              $(XKBUILIBDIR) $(LBXUTILDIR) $(XALIBDIR) $(EXPATBUILDDIR) \
              $(XVLIBDIR) $(GLXLIBDIR) $(GLULIBDIR) $(GLWLIBDIR) \
              $(DPSLIBDIR) $(PSRESLIBDIR) $(DPSTKLIBDIR) $(XINERAMADIR) \
-             $(ZLIBDIR) $(REGEXDIR) $(RENDERLIBDIR) $(FREETYPE2BUILDDIR) \
-             $(FONTCONFIGBUILDDIR) $(XFT1LIBDIR) \
-	     $(XFTLIBDIR) $(XVMCLIBDIR) $(RANDRLIBDIR) $(XTRAPLIBDIR) \
+             $(ZLIBDIR) $(REGEXDIR) $(RENDERLIBDIR) \
+	     $(XVMCLIBDIR) $(RANDRLIBDIR) $(XTRAPLIBDIR) \
 	     $(XRESLIBDIR) $(APPLELIBDIR) $(DMXLIBDIR) $(WINDOWSLIBDIR) \
 	     $(XEVIELIBDIR) $(XFIXESLIBDIR) $(DAMAGELIBDIR) \
 	     $(XCURSORLIBDIR) $(COMPOSITELIBDIR)
 
-SUBDIRS = $(BERKDIR) xtrans $(LINTSUBDIRS) $(FONTSUBDIR) $(FONTENCSUBDIR) \
-          $(FONTCACHELIBDIR)
+SUBDIRS = $(BERKDIR) xtrans $(LINTSUBDIRS)
 
 MakeSubdirs($(SUBDIRS))
 DependSubdirs($(SUBDIRS))

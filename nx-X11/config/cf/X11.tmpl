@@ -23,20 +23,6 @@ XCOMM $XFree86: xc/config/cf/X11.tmpl,v 1.248 2004/02/16 04:07:37 dawes Exp $
  *
  * InstallAppDefaults		(class)
  * InstallAppDefaultsLong	(file,class)
- * MakeFontsDir			(deplist)
- * MakeFcCache			(deplist)
- * MakeFonts			()
- * InstallFontObjs		(objs,dest)
- * InstallFonts			(dest)
- * InstallFontAliases		(dest)
- * InstallFcCache		(dest)
- * FontSrc			(basename)
- * FontBaseObj			(basename)
- * InstallFontScale		(dest)
- * UncompressedFontTarget	(basename)
- * CompressedFontTarget		(basename)
- * FontTarget			(basename)
- * FontObj			(basename)
  * MakeXkbDir			(basedir,subdir)
  */
 
@@ -144,144 +130,6 @@ XORGRELSTRING = XorgManVersionString
 #ifndef BuildLibrariesForXServers
 #define BuildLibrariesForXServers	BuildServer
 #endif
-#ifndef XserverStaticFontLib
-#define XserverStaticFontLib	YES
-#endif
-#ifndef BuildSpeedo
-#define BuildSpeedo		NO
-#endif
-#ifndef BuildType1
-#define BuildType1		NO
-#endif
-#ifndef BuildCID
-#define BuildCID		YES
-#endif
-#ifndef BuildFreeType
-#define BuildFreeType		NO
-#endif
-#ifndef BuildBuiltinFonts
-#define BuildBuiltinFonts	NO
-#endif
-#ifndef BuildFonts
-#define BuildFonts		BuildServer
-#endif
-#ifndef Build75DpiFonts
-#define Build75DpiFonts		YES
-#endif
-#ifndef Build100DpiFonts
-#define Build100DpiFonts	YES
-#endif
-#ifndef BuildSpeedoFonts
-#define BuildSpeedoFonts	NO
-#endif
-#ifndef BuildType1Fonts
-#define BuildType1Fonts		YES
-#endif
-#ifndef BuildCIDFonts
-#define BuildCIDFonts		YES
-#endif
-#ifndef BuildTrueTypeFonts
-#define BuildTrueTypeFonts	YES
-#endif
-#ifndef BuildBethMarduthoFonts
-#define BuildBethMarduthoFonts	NO
-#endif
-#ifndef BuildEthiopicFonts
-#define BuildEthiopicFonts	NO
-#endif
-#ifndef BuildCyrillicFonts
-#define BuildCyrillicFonts	YES
-#endif
-/* Some bdf font generation details.  The scripts for this require perl. */
-#ifndef TruncateUCSFonts
-#define TruncateUCSFonts	HasPerl5
-#endif
-#ifndef MaxUCSChar
-#define MaxUCSChar		0x3200
-#endif
-#ifndef DerivedUCSFonts
-#define DerivedUCSFonts		YES
-#endif
-/* These primarily control generation of derived 8-bit fonts. */
-#ifndef BuildUCSFonts
-#define BuildUCSFonts		YES
-#endif
-/* Setting BuildISO8859_1Fonts to NO may result in problems. */
-#ifndef BuildISO8859_1Fonts
-#define BuildISO8859_1Fonts	YES
-#endif
-#ifndef BuildISO8859_2Fonts
-#define BuildISO8859_2Fonts	YES
-#endif
-#ifndef BuildISO8859_3Fonts
-#define BuildISO8859_3Fonts	YES
-#endif
-#ifndef BuildISO8859_4Fonts
-#define BuildISO8859_4Fonts	YES
-#endif
-#ifndef BuildISO8859_5Fonts
-#define BuildISO8859_5Fonts	BuildCyrillicFonts
-#endif
-#ifndef BuildArabicFonts
-#define BuildArabicFonts	YES
-#endif
-#ifndef BuildISO8859_6Fonts
-#define BuildISO8859_6Fonts	BuildArabicFonts
-#endif
-#ifndef BuildGreekFonts
-#define BuildGreekFonts		YES
-#endif
-#ifndef BuildISO8859_7Fonts
-#define BuildISO8859_7Fonts	BuildGreekFonts
-#endif
-#ifndef BuildHebrewFonts
-#define BuildHebrewFonts	YES
-#endif
-#ifndef BuildISO8859_8Fonts
-#define BuildISO8859_8Fonts	BuildHebrewFonts
-#endif
-#ifndef BuildISO8859_9Fonts
-#define BuildISO8859_9Fonts	YES
-#endif
-#ifndef BuildISO8859_10Fonts
-#define BuildISO8859_10Fonts	YES
-#endif
-#ifndef BuildThaiFonts
-#define BuildThaiFonts		YES
-#endif
-#ifndef BuildISO8859_11Fonts
-#define BuildISO8859_11Fonts	BuildThaiFonts
-#endif
-#ifndef BuildISO8859_13Fonts
-#define BuildISO8859_13Fonts	YES
-#endif
-#ifndef BuildISO8859_14Fonts
-#define BuildISO8859_14Fonts	YES
-#endif
-#ifndef BuildISO8859_15Fonts
-#define BuildISO8859_15Fonts	YES
-#endif
-#ifndef BuildISO8859_16Fonts
-#define BuildISO8859_16Fonts	YES
-#endif
-#ifndef BuildKOI8_RFonts
-#define BuildKOI8_RFonts	BuildCyrillicFonts
-#endif
-#ifndef BuildJapaneseFonts
-#define BuildJapaneseFonts	YES
-#endif
-#ifndef BuildJISX0201Fonts
-#define BuildJISX0201Fonts	BuildJapaneseFonts
-#endif
-#ifndef BuildKoreanFonts
-#define BuildKoreanFonts	YES
-#endif
-#ifndef BuildChineseFonts
-#define BuildChineseFonts	YES
-#endif
-#ifndef MakeLocalFontDir
-#define MakeLocalFontDir	YES
-#endif
 #ifndef HasXAudio
 #define HasXAudio		NO
 #endif
@@ -366,34 +214,8 @@ XORGRELSTRING = XorgManVersionString
 #ifndef BuildDPMS
 #define BuildDPMS		YES
 #endif
-#ifndef BuildFontLib
-#if (!defined(XF86Server) || !XF86Server) && (!defined (XorgServer) || !XorgServer)
-#define BuildFontLib		(BuildLibraries || BuildServer)
-#else
-#define BuildFontLib		(BuildLibraries || (BuildServer && !DoLoadableServer))
-#endif
-#endif
 #ifndef BuildFontCache
 #define BuildFontCache		NO
-#endif
-#ifndef BuildFontCacheLib
-#define BuildFontCacheLib	(BuildFontCache && !BuildServersOnly)
-#endif
-#ifndef BuildFontEncLib
-#define BuildFontEncLib		BuildLibraries
-#endif
-/*
- * This enables binary compatibility with the older (XFree86 <= 4.1) fontenc
- * entry points in the Xfont library (and X server).  If this is turned off,
- * then SharedFontRev should have it's major revision bumped, and the
- * XFree86 font module ABI (in xfree86/common/xf86Module.h) should have it's
- * major revision bumped.
- *
- * Note: this does not enable those older functions in the separate libfontenc
- * library (which didn't exist previously).
- */
-#ifndef FontencCompatibility
-#define FontencCompatibility	YES
 #endif
 #ifndef BuildLBX
 #define BuildLBX		YES
@@ -580,39 +402,15 @@ XORGRELSTRING = XorgManVersionString
 #ifndef BuildRenderLibrary
 #define BuildRenderLibrary	!BuildServersOnly
 #endif
-#ifndef BuildXftLibrary
-#define BuildXftLibrary		BuildRenderLibrary
-#endif
-#ifndef BuildXft1Library
-#define BuildXft1Library	BuildRenderLibrary
-#endif
-#ifndef UseFontconfig
-#define UseFontconfig		BuildXftLibrary
-#endif
-#ifndef BuildFontconfigLibrary
-#define BuildFontconfigLibrary	(UseFontconfig && !HasFontconfig)
-#endif
-#ifndef UseFreetype2
-#define UseFreetype2		(BuildXftLibrary || BuildXft1Library || \
-				 UseFontconfig || BuildFreeType)
-#endif
-#ifndef InstallFontconfigLibrary
-# define InstallFontconfigLibrary  YES
-#endif
+
 #ifndef HasExpat
 #define HasExpat		YES
 #endif
 #ifndef UseExpat
-#define UseExpat		(UseFontconfig || BuildXF86DRI)
+#define UseExpat		BuildXF86DRI
 #endif
 #ifndef BuildExpatLibrary
 #define BuildExpatLibrary	(UseExpat && !HasExpat)
-#endif
-#ifndef BuildFreetype2Library
-#define BuildFreetype2Library	(UseFreetype2 && !HasFreetype2)
-#endif
-#ifndef Freetype2BuildDefines
-#define Freetype2BuildDefines	/**/
 #endif
 
 #ifndef BuildRandR
@@ -739,9 +537,6 @@ XORGRELSTRING = XorgManVersionString
 #ifndef UseConfDirForXkb
 #define UseConfDirForXkb	YES
 #endif
-#ifndef CompressAllFonts
-#define CompressAllFonts	NO
-#endif
 #ifndef ThreadedX
 #if HasPosixThreads || HasCThreads
 #define ThreadedX		YES	/* multi-threaded libraries */
@@ -795,9 +590,6 @@ XORGRELSTRING = XorgManVersionString
 #ifndef ServerErrorDefines
 #define ServerErrorDefines	/**/
 #endif
-#ifndef FontCompilerFlags
-#define FontCompilerFlags -t
-#endif
 /*
  * NOTE:  IPv6Flags could be tacked on to either ConnectionFlags or
  *        ExtraConnectionDefs.  Here, we choose the later in order to
@@ -848,12 +640,6 @@ FCHOWN_DEFINES = -DHAS_FCHOWN
 #endif
 #ifndef ProjectThreadsDefines
 #define ProjectThreadsDefines -DXTHREADS
-#endif
-#ifndef FontOSDefines
-#define FontOSDefines /**/
-#endif
-#ifndef FontDefines
-#define FontDefines -DFONT_SNF -DFONT_BDF -DFONT_PCF -DCOMPRESSED_FONTS FontOSDefines
 #endif
 #ifndef XawI18nDefines
 #if SystemV4
@@ -1627,44 +1413,26 @@ XCOMM X Window System make variables; these need to be coordinated with rules
       LBXPROXYDIR = LbxproxyDir		/* lbxproxy files */
   PROXYMANAGERDIR = ProxyManagerDir	/* proxy manager config files */
       XAPPLOADDIR = XAppLoadDir		/* application default resource dir */
-       FONTCFLAGS = FontCompilerFlags
 
      INSTAPPFLAGS = $(INSTDATFLAGS)	/* XXX - this should go away - XXX */
 
 #if UseInstalledX11
               RGB = $(XBINDIR)/rgb
-            FONTC = $(XBINDIR)/bdftopcf
-      MKFONTSCALE = $(XBINDIR)/mkfontscale
-        MKFONTDIR = $(XBINDIR)/mkfontdir
       MKHTMLINDEX = $(XBINDIR)/mkhtmlindex
-          UCS2ANY = $(XBINDIR)/ProgramTargetName(ucs2any)
-      BDFTRUNCATE = $(XBINDIR)/bdftruncate
-     UCSMAPPREFIX = $(FONTDIR)/util/map-
        XCURSORGEN = $(XBINDIR)/xcursorgen
 #else
               RGB = $(CLIENTENVSETUP) $(XBUILDBINDIR)/rgb
 # if !CrossCompiling
-            FONTC = $(CLIENTENVSETUP) $(PRELOADFONTSETUP) $(XBUILDBINDIR)/bdftopcf
-      MKFONTSCALE = $(CLIENTENVSETUP) $(PRELOADFREETYPESETUP) $(XBUILDBINDIR)/mkfontscale
-        MKFONTDIR = $(MKFONTSCALE) -b -s -l
        XCURSORGEN = $(CLIENTENVSETUP) $(PRELOADSETUP) $(XBUILDBINDIR)/xcursorgen
-          UCS2ANY = $(XBUILDBINDIR)/ProgramTargetName(ucs2any)
 # elif UseInstalledOnCrossCompile
-        MKFONTDIR = $(XBINDIR)/mkfontdir
-      MKFONTSCALE = $(XBINDIR)/mkfontscale
-            FONTC = $(XBINDIR)/bdftopcf
        XCURSORGEN = $(XBINDIR)/xcursorgen
-          UCS2ANY = $(XBINDIR)/ucs2any
 # endif
 # if HasPerl
       MKHTMLINDEX = RunPerlScript($(CONFIGSRC)/util/mkhtmlindex.pl,)
 # else
       MKHTMLINDEX = $(SHELL) $(CONFIGSRC)/util/mkhtmlindex.sh
 # endif
-      BDFTRUNCATE = $(FONTSRC)/util/bdftruncate.pl
-     UCSMAPPREFIX = $(FONTSRC)/util/map-
 #endif
-
      HTMLINDEXCMD = HtmlIndexCmd
 
        DOCUTILSRC = $(XTOP)/doc/util
@@ -1674,8 +1442,6 @@ XCOMM X Window System make variables; these need to be coordinated with rules
        XIDXMACROS = $(DOCUTILSRC)/indexmacros.t
        PROGRAMSRC = $(TOP)/programs
            LIBSRC = $(XTOP)/lib
-          FONTSRC = $(XTOP)/fonts
-     ENCODINGSSRC = $(FONTSRC)/encodings
        INCLUDESRC = BuildIncDir
       XINCLUDESRC = $(INCLUDESRC)/X11
         SERVERSRC = $(XTOP)/programs/Xserver
@@ -1683,11 +1449,7 @@ XCOMM X Window System make variables; these need to be coordinated with rules
    UNSUPPORTEDSRC = UnsupportedDir
            DOCSRC = $(XTOP)/doc
            RGBSRC = $(XTOP)/programs/rgb
-      BDFTOPCFSRC = $(PROGRAMSRC)/bdftopcf
-     MKFONTDIRSRC = $(PROGRAMSRC)/mkfontdir
-       FONTINCSRC = $(XTOP)/include/fonts
         EXTINCSRC = $(XTOP)/include/extensions
-      FTSOURCEDIR = FreeTypeSrcDir
         DRMSRCDIR = DRMSrcDir
        MESASRCDIR = MesaSrcDir
   OGLSAMPLESRCDIR = OglSampleSrcDir
@@ -1739,15 +1501,6 @@ VENDORSUPPORTDEFS = VendorSupportDefines
 
 #ifdef PreloadSetup
      PRELOADSETUP = PreloadSetup
-#endif
-#ifdef PreloadFontSetup
- PRELOADFONTSETUP = PreloadFontSetup
-#endif
-#ifdef PreloadFreetypeSetup
- PRELOADFREETYPESETUP = PreloadFreetypeSetup
-#endif
-#ifdef PreloadXFTSetup
-     PRELOADXFTSETUP = PreloadXFTSetup
 #endif
 
 #ifndef ShLibIncludeFile
@@ -2663,29 +2416,6 @@ SharedLibReferences(WINDOWSWM,NX_WindowsWM,$(WINDOWSWMLIBSRC),SOWINDOWSWMREV,Sha
 ProjectUnsharedLibReferences(WINDOWSWM,NX_WindowsWM,$(WINDOWSWMLIBSRC),XBuildLibDir)
 #endif
 
-# ifndef SharedLibXfontcache
-#  define SharedLibXfontcache	HasSharedLibraries
-# endif
-# ifndef NormalLibXfontcache
-#  define NormalLibXfontcache	(!SharedLibXfontcache || ForceNormalLib)
-# endif
-# ifndef DebugLibXfontcache
-#  define DebugLibXfontcache	NO
-# endif
-# ifndef ProfileLibXfontcache
-#  define ProfileLibXfontcache	NO
-# endif
-
-    XFONTCACHELIBSRC = $(LIBSRC)/Xfontcache
-#if SharedLibXfontcache
-#ifndef SharedXfontcacheRev
-#define SharedXfontcacheRev 1.2
-#endif
-SharedLibReferences(XFONTCACHE,NX_Xfontcache,$(XFONTCACHELIBSRC),SOXFONTCACHEREV,SharedXfontcacheRev)
-#else
-ProjectUnsharedLibReferences(XFONTCACHE,NX_Xfontcache,$(XFONTCACHELIBSRC),XBuildLibDir)
-#endif
-
 #ifndef SharedLibXau
 #define SharedLibXau		YES
 #endif
@@ -3107,58 +2837,6 @@ SharedLibReferences(FS,NX_FS,$(FSLIBSRC),SOFSREV,SharedFSRev)
 ProjectUnsharedLibReferences(FS,NX_FS,$(FSLIBSRC),XBuildLibDir)
 #endif
 
-#ifndef SharedLibFont
-#define SharedLibFont HasSharedLibraries
-#endif
-#ifndef NormalLibFont
-#define NormalLibFont (!SharedLibFont | ForceNormalLib | XserverStaticFontLib)
-#endif
-#ifndef DebugLibFont
-#define DebugLibFont		NO	/* debugged Font library */
-#endif
-#ifndef ProfileLibFont
-#define ProfileLibFont		NO	/* profiled Font library */
-#endif
-         FONTLIBSRC = $(LIBSRC)/font
-#if SharedLibFont
-#ifndef SharedFontRev
-#define SharedFontRev 1.5
-#endif
-SharedFontLibReferences()
-XCOMM SharedLibReferences(XFONT,NX_Xfont,$(FONTLIBSRC),SOFONTREV,SharedFontRev)
-#else
-ProjectUnsharedFontLibReferences()
-XCOMM ProjectUnsharedLibReferences(XFONT,NX_Xfont,$(FONTLIBSRC),XBuildLibDir)
-#endif
-
-     FONTSTUBLIBSRC = $(FONTLIBSRC)/stubs
-ProjectUnsharedLibReferences(FONTSTUB,NX_fntstubs,$(FONTSUBLIBSRC),XBuildLibDir)
-         DEPFONTLIB = $(DEPXFONTLIB) $(DEPFONTSTUBLIB)
-            FONTLIB = $(XFONTLIB) $(FONTSTUBLIB) $(FREETYPE2LIB)
-
-
-#ifndef SharedLibFontEnc
-#define SharedLibFontEnc	HasSharedLibraries
-#endif
-#ifndef NormalLibFontEnc
-#define NormalLibFontEnc (!SharedLibFontEnc | ForceNormalLib)
-#endif
-#ifndef DebugLibFontEnc
-#define DebugLibFontEnc		NO	/* debugged fontenc library */
-#endif
-#ifndef ProfileLibFontEnc
-#define ProfileLibFontEnc	NO	/* profiled fontenc library */
-#endif
-         FONTENCLIBSRC = $(LIBSRC)/fontenc
-#if SharedLibFontEnc
-#ifndef SharedFontEncRev
-#define SharedFontEncRev 1.0
-#endif
-SharedLibReferences(XFONTENC,NX_fontenc,$(FONTENCLIBSRC),SOFONTENCREV,SharedFontEncRev)
-#else
-ProjectUnsharedLibReferences(XFONTENC,NX_fontenc,$(FONTENCLIBSRC),XBuildLibDir)
-#endif
-
 #ifndef SharedLibXpm
 #define SharedLibXpm HasSharedLibraries
 #endif
@@ -3180,121 +2858,6 @@ SharedLibReferences(XPM,Xpm,$(XPMLIBSRC),SOXPMREV,SharedXpmRev)
 #else
 ProjectUnsharedLibReferences(XPM,Xpm,$(XPMLIBSRC),XBuildLibDir)
 #endif
-
-#if UseFreetype2
-
-#if BuildFreetype2Library
-
-#ifndef SharedLibFreetype2
-#define SharedLibFreetype2 HasSharedLibraries
-#endif
-#ifndef NormalLibFreetype2
-#define NormalLibFreetype2 (!SharedLibFreetype2 | ForceNormalLib)
-#endif
-#ifndef DebugLibFreetype2
-#define DebugLibFreetype2		NO
-#endif
-#ifndef ProfileLibFreetype2
-#define ProfileLibFreetype2		NO
-#endif
-          FREETYPE2LIBSRC = $(LIBSRC)/freetype2
-
-/*
- * FreeType 2.1.9
- *
- * Get the library version information from version_info in
- * in xc/extras/freetype2/builds/unix/configure.ac.
- *
- * current:revision:age = 9:7:3
- *
- * The LibtoolMinorVersions revision is "(current - age).age".
- * The !LibtoolMinorVersions revision is "current.0".
- * Freetype2Version should be set to "current.revision.age"
- */
-#ifndef Freetype2Version
-#define Freetype2Version 9.7.3
-#endif
-
-#if SharedLibFreetype2
-#ifndef SharedLibtoolFreetype2Rev
-#define SharedLibtoolFreetype2Rev	9:7:3
-#endif
-#ifndef SharedFreetype2Rev
-#if LibtoolMinorVersions
-#define SharedFreetype2Rev 6.3.8
-#else
-#define SharedFreetype2Rev 9.0
-#endif
-#endif
-SharedLibReferences(FREETYPE2,NX_freetype,$(FREETYPE2LIBSRC),SOFREETYPE2REV,SharedFreetype2Rev)
-#else
-ProjectUnsharedLibReferences(FREETYPE2,NX_freetype,$(FREETYPE2LIBSRC),XBuildLibDir)
-#endif
-
-#ifdef UseInstalled
-FREETYPE2INCDIR=$(INCDIR)
-#else
-FREETYPE2INCDIR=$(BUILDINCDIR)
-#endif
-
-#else /* BuildFreetype2Library */
-
-#if HasFreetype2
-
-#ifndef Freetype2Dir
-#define Freetype2Dir /usr
-#ifndef Freetype2DirStandard
-# define Freetype2DirStandard YES
-#endif
-#endif
-#ifndef Freetype2DirStandard
-#define Freetype2DirStandard NO
-#endif
-
-#ifndef Freetype2LibDir
-#define Freetype2LibDir Freetype2Dir/LibDirName
-# if Freetype2DirStandard
-#  define Freetype2LibDirStandard YES
-# endif
-#endif
-#ifndef Freetype2LibDirStandard
-# define Freetype2LibDirStandard NO
-#endif
-
-#ifndef Freetype2IncDir
-#define Freetype2IncDir Freetype2Dir/include
-# if Freetype2DirStandard
-#  define Freetype2IncDirStandard YES
-# endif
-#endif
-
-FREETYPE2DIR = Freetype2Dir
-FREETYPE2LIBDIR = Freetype2LibDir
-FREETYPE2INCDIR = Freetype2IncDir
-#if Freetype2LibDirStandard
-FREETYPE2LIB = -lfreetype
-#else
-FREETYPE2LIB = -L$(FREETYPE2LIBDIR) LinkerRuntimeLibraryPathFlag($(FREETYPE2LIBDIR)) -lfreetype
-#endif
-
-#endif /* HasFreetype2 */
-
-#endif /* else BuildFreetype2Library */
-
-#ifndef Freetype2IncDirStandard
-# define Freetype2IncDirStandard NO
-#endif
-
-#if BuildFreetype2Library || HasFreetype2
-#if Freetype2IncDirStandard
-FREETYPE2INCLUDES = -I$(FREETYPE2INCDIR)/freetype2 -I$(FREETYPE2INCDIR)/freetype2/config
-#else
-FREETYPE2INCLUDES = -I$(FREETYPE2INCDIR) -I$(FREETYPE2INCDIR)/freetype2 -I$(FREETYPE2INCDIR)/freetype2/config
-#endif
-FREETYPE2DEFINES = -DFREETYPE2
-#endif
-
-#endif /* UseFreetype2 */
 
 #if HasMotif
 
@@ -3448,188 +3011,6 @@ EXPATDEFINES = -DEXPAT
 
 #endif /* UseExpat */
 
-#ifndef SharedLibXft1
-#define SharedLibXft1 HasSharedLibraries
-#endif
-#ifndef NormalLibXft1
-#define NormalLibXft1		NO
-#endif
-#ifndef DebugLibXft1
-#define DebugLibXft1		NO
-#endif
-#ifndef ProfileLibXft1
-#define ProfileLibXft1		NO
-#endif
-          XFT1LIBSRC = $(LIBSRC)/Xft1
-#if SharedLibXft1
-#ifndef SharedXft1Rev
-#define SharedXft1Rev 1.1
-#endif
-SharedLibReferences(XFT1,NX_Xft,$(XFT1LIBSRC),SOXFT1REV,SharedXft1Rev)
-#else
-ProjectUnsharedLibReferences(XFT1,NX_Xft,$(XFT1LIBSRC),XBuildLibDir)
-#endif
-
-#ifndef Xft1ClientDepLibs
-#if UseFreetype2
-#define Xft1ClientDepLibs $(DEPXFT1LIB) $(DEPFREETYPE2LIB) $(DEPXRENDERLIB)
-#else
-#define Xft1ClientDepLibs $(DEPXFT1LIB) $(DEPXRENDERLIB)
-#endif
-#endif
-#ifndef Xft1ClientLibs
-#if UseFreetype2
-#define Xft1ClientLibs $(XFT1LIB) $(FREETYPE2LIB) $(XRENDERLIB)
-#else
-#define Xft1ClientLibs $(XFT1LIB) $(XRENDERLIB)
-#endif
-#endif
-
-#ifndef SharedLibXft
-#define SharedLibXft HasSharedLibraries
-#endif
-#ifndef NormalLibXft
-#define NormalLibXft (!SharedLibXft | ForceNormalLib)
-#endif
-#ifndef DebugLibXft
-#define DebugLibXft		NO
-#endif
-#ifndef ProfileLibXft
-#define ProfileLibXft		NO
-#endif
-          XFTLIBSRC = $(LIBSRC)/Xft
-#if SharedLibXft
-#ifndef SharedXftRev
-#define SharedXftRev 2.1.2
-#endif
-SharedLibReferences(XFT,NX_Xft,$(XFTLIBSRC),SOXFTREV,SharedXftRev)
-#else
-ProjectUnsharedLibReferences(XFT,NX_Xft,$(XFTLIBSRC),XBuildLibDir)
-#endif
-
-#ifndef XftClientDepLibs
-#define XftClientDepLibs $(DEPXFTLIB) FontconfigClientDepLibs $(DEPXRENDERLIB)
-#endif
-#ifndef XftClientLibs
-#define XftClientLibs $(XFTLIB) FontconfigClientLibs $(XRENDERLIB)
-#endif
-
-#if UseFontconfig
-
-#if BuildFontconfigLibrary
-
-#ifndef SharedLibFontconfig
-#define SharedLibFontconfig HasSharedLibraries
-#endif
-#ifndef NormalLibFontconfig
-#define NormalLibFontconfig (!SharedLibFontconfig | ForceNormalLib)
-#endif
-#ifndef DebugLibFontconfig
-#define DebugLibFontconfig		NO
-#endif
-#ifndef ProfileLibFontconfig
-#define ProfileLibFontconfig		NO
-#endif
-          FONTCONFIGLIBSRC = $(LIBSRC)/fontconfig
-#if SharedLibFontconfig
-#ifndef SharedFontconfigRev
-#define SharedFontconfigRev 1.0.4
-#endif
-SharedLibReferences(FONTCONFIG,NX_fontconfig,$(FONTCONFIGLIBSRC),SOFONTCONFIGREV,SharedFontconfigRev)
-#else
-ProjectUnsharedLibReferences(FONTCONFIG,NX_fontconfig,$(FONTCONFIGLIBSRC),XBuildLibDir)
-#endif
-
-#ifdef UseInstalled
-FONTCONFIGINCDIR=$(INCDIR)
-#else
-FONTCONFIGINCDIR=$(BUILDINCDIR)
-#endif
-
-FONTCONFIGINCLUDES = -I$(FONTCONFIGINCDIR)
-
-#if UseInstalledX11
-FCCACHE = $(BINDIR)/fc-cache
-#else
-FCCACHE = set -x; $(CLIENTENVSETUP) $(PRELOADXFTSETUP) FONTCONFIG_PATH=$(FONTCONFIGLIBSRC) $(XBUILDBINDIR)/fc-cache
-#endif
-
-#else /* BuildFontconfigLibrary */
-
-#if HasFontconfig
-
-#ifndef FontconfigDir
-# define FontconfigDir /usr
-# ifndef FontconfigDirStandard
-#  define FontconfigDirStandard YES
-# endif
-#endif
-
-#ifndef FontconfigDirStandard
-# define FontconfigDirStandard NO
-#endif
-
-#ifndef FontconfigLibDir
-# define FontconfigLibDir FontconfigDir/LibDirName
-# if FontconfigDirStandard
-#  define FontconfigLibDirStandard YES
-# endif
-#endif
-#ifndef FontconfigLibDirStandard
-# define FontconfigLibDirStandard NO
-#endif
-
-#ifndef FontconfigBinDir
-# define FontconfigBinDir FontconfigDir/bin
-#endif
-
-#ifndef FontconfigIncDir
-# define FontconfigIncDir FontconfigDir/include
-# if FontconfigDirStandard
-#  define FontconfigIncDirStandard YES
-# endif
-#endif
-
-#ifndef FontconfigIncDirStandard
-# define FontconfigIncDirStandard NO
-#endif
-
-FONTCONFIGDIR = FontconfigDir
-FONTCONFIGLIBDIR = FontconfigLibDir
-FONTCONFIGINCDIR = FontconfigIncDir
-FONTCONFIGBINDIR = FontconfigBinDir
-#if FontconfigLibDirStandard
-FONTCONFIGLIB = -lfontconfig
-#else
-FONTCONFIGLIB = -L$(FONTCONFIGLIBDIR) LinkerRuntimeLibraryPathFlag($(FONTCONFIGLIBDIR)) -lfontconfig
-#endif
-
-#if FontconfigIncDirStandard
-FONTCONFIGINCLUDES =
-#else
-FONTCONFIGINCLUDES = -I$(FONTCONFIGINCDIR)
-#endif
-
-FCCACHE = $(FONTCONFIGBINDIR)/fc-cache
-
-#endif /* HasFontconfig */
-
-#endif /* else BuildFontconfigLibrary */
-
-#if BuildFontconfigLibrary || HasFontconfig
-FONTCONFIGDEFINES = -DFONTCONFIG
-#endif
-
-#ifndef FontconfigClientDepLibs
-#define FontconfigClientDepLibs $(DEPFONTCONFIGLIB) $(DEPFREETYPE2LIB) ExpatClientDepLibs
-#endif
-#ifndef FontconfigClientLibs
-#define FontconfigClientLibs $(FONTCONFIGLIB) $(FREETYPE2LIB) ExpatClientLibs
-#endif
-
-#endif /* UseFontconfig */
-
-XFTINCLUDES=$(FONTCONFIGINCLUDES) $(FREETYPE2INCLUDES)
 
 #ifdef HasLibpng
 
@@ -3952,383 +3333,6 @@ InstallNamedTargetNoClobber(install,file.ad,$(INSTAPPFLAGS),$(XAPPLOADDIR),class
 #endif /* InstallAppDefaultsLong */
 
 /*
- * MakeFcCache - generate rules to build fontconfig cache database
- */
-
-#if defined UseFreetype2 && !CrossCompiling
-
-# ifndef MakeFcCache
-#  define MakeFcCache(deplist)						@@\
-all:: fonts.cache							@@\
-									@@\
-fonts.cache: deplist							@@\
-	RunProgram(FCCACHE, $(FCCACHEOPTS) .)				@@\
-									@@\
-clean::									@@\
-	RemoveFiles(fonts.cache*)
-# endif /* MakeFcCache */
-
-# ifndef InstallFcCache
-#  define InstallFcCache(dest)						@@\
-install::								@@\
-	RunProgram(FCCACHE, $(FCCACHEOPTS) $(DESTDIR)dest)
-# endif /* InstallFcCache */
-
-#else
-
-#ifndef MakeFcCache
-#define MakeFcCache(deplist)
-#endif
-
-#ifndef InstallFcCache
-#define InstallFcCache(dest)
-#endif
-
-#endif
-
-/*
- * MakeFontsScale - generate rules to build fonts.scale database.
- */
-#ifndef MakeFontsScale
-# if !CrossCompiling ||  UseInstalledOnCrossCompile
-#  define MakeFontsScale(deplist)					@@\
-all:: fonts.scale							@@\
-									@@\
-fonts.scale:  deplist							@@\
-	RemoveFile(fonts.scale)						@@\
-	RunProgram(MKFONTSCALE, .)					@@\
-									@@\
-clean::									@@\
-	RemoveFile(fonts.scale)
-# else
-#  define MakeFontsScale(deplist)					@@\
-clean::									@@\
-	RemoveFile(fonts.scale)
-# endif
-#endif /* MakeFontsScale */
-
-/*
- * MakeFontsDir - generate rules to build fonts.dir database.
- */
-#ifndef MakeFontsDir
-# if !CrossCompiling ||  UseInstalledOnCrossCompile
-#  define MakeFontsDir(deplist)						@@\
-all:: fonts.dir								@@\
-									@@\
-fonts.dir:  deplist							@@\
-	RemoveFile(fonts.dir)						@@\
-	RunProgram(MKFONTDIR, $(MKFONTDIROPTS) .)			@@\
-									@@\
-clean::									@@\
-	RemoveFile(fonts.dir)
-# else
-#  define MakeFontsDir(deplist)						@@\
-clean::									@@\
-	RemoveFile(fonts.dir)
-# endif
-#endif /* MakeFontsDir */
-
-
-/*
- * MakeFonts - generate rules to build font database.
- */
-#ifndef MakeFonts
-# if !CrossCompiling || UseInstalledOnCrossCompile
-#  define MakeFonts()							@@\
-all::  $(OBJS)								@@\
-									@@\
-MakeFontsDir($(OBJS))							@@\
-									@@\
-clean::									@@\
-	RemoveFiles(*.pcf *.pcf.Z *.pcf.gz)
-# else
-#  define MakeFonts()							@@\
-MakeFontsDir($(OBJS))							@@\
-									@@\
-clean::									@@\
-	RemoveFiles(*.pcf *.pcf.Z *.pcf.gz)
-# endif
-#endif /* MakeFonts */
-
-#ifndef InstallFontsDir
-# if !CrossCompiling ||  UseInstalledOnCrossCompile
-#  define InstallFontsDir(dest)						@@\
-install::								@@\
-	MakeDir($(DESTDIR)dest)						@@\
-	@if [ X$(STATIC_FONTS_SCALE) = X ]; then (set -x; \		@@\
-	  RemoveFile($(DESTDIR)dest/fonts.scale); \			@@\
-	  RunProgram(MKFONTSCALE, $(DESTDIR)dest)); \			@@\
-	else (set -x; \							@@\
-	  InstallInline(fonts.scale,$(INSTDATFLAGS),dest)); \		@@\
-	fi								@@\
-	RemoveFile($(DESTDIR)dest/fonts.dir)				@@\
-	RunProgram(MKFONTDIR, $(MKFONTDIROPTS) $(DESTDIR)dest)
-# else
-#  define InstallFontsDir(dest)
-# endif
-#endif
-
-/*
- * InstallFontObjs - generate rules to install font files
- */
-#ifndef InstallFontObjs
-# if !CrossCompiling || UseInstalledOnCrossCompile
-#  define InstallFontObjs(objs,dest)					@@\
-InstallMultipleFlags(objs,dest,$(INSTDATFLAGS))				@@\
-									@@\
-InstallFontsDir(dest)
-# else
-#  define InstallFontObjs(objs,dest)
-# endif
-#endif /* InstallFontObjs */
-
-
-/*
- * InstallFonts - generate rules to install font files
- */
-#ifndef InstallFonts
-#define InstallFonts(dest)						@@\
-InstallFontObjs($(OBJS),dest)
-#endif /* InstallFonts */
-
-
-/*
- * InstallFontAliases - generate rules to install font aliases databases.
- */
-#ifndef InstallFontAliases
-#define InstallFontAliases(dest)					@@\
-InstallTarget(install,fonts.alias,$(INSTDATFLAGS),dest)
-#endif /* InstallFontAliases */
-
-#ifndef InstallNamedFontAliases
-#define InstallNamedFontAliases(src,dest)				@@\
-InstallNamedTarget(install,src,$(INSTDATFLAGS),dest,fonts.alias)
-#endif /* InstallNamedFontAliases */
-
-#ifndef FontSrc
-#define FontSrc(basename) basename.bdf
-#endif
-
-#ifndef FontBaseObj
-#define FontBaseObj(basename)basename.pcf
-#endif
-
-/*
- * InstallFontScale - generate rules to install font scale database.
- */
-#ifndef InstallFontScale
-#define InstallFontScale(dest)						@@\
-InstallTarget(install,fonts.scale,$(INSTDATFLAGS),dest)
-#endif /* InstallFontScale */
-
-/*
- * UncompressedFontTargetLong
- */
-#if ! CrossCompiling || UseInstalledOnCrossCompile
-# ifndef UncompressedFontTargetLong
-#  define UncompressedFontTargetLong(sname,tname)			@@\
-FontBaseObj(tname):  FontSrc(sname)					@@\
-	RunProgram(FONTC,$(FONTCFLAGS) $? -o $@)
-# endif /* UncompressedFontTargetLong */
-#else
-# ifndef UncompressedFontTargetLong
-#  define UncompressedFontTargetLong(sname,tname)
-# endif
-#endif
-
-/*
- * CompressedFontTarget
- */
-#ifndef GzipFontCompression
-#define GzipFontCompression NO
-#endif
-
-#if ! CrossCompiling || UseInstalledOnCrossCompile
-# ifndef CompressedFontTargetLong
-#  if GzipFontCompression
-#   define CompressedFontTargetLong(sname,tname)			@@\
-FontBaseObj(tname).gz:  FontSrc(sname)					@@\
-	RunProgram(FONTC,$(FONTCFLAGS) $?) | $(GZIPCMD) > $@
-#  else
-#   define CompressedFontTargetLong(sname,tname)			@@\
-FontBaseObj(tname).Z:  FontSrc(sname)					@@\
-	RunProgram(FONTC,$(FONTCFLAGS) $?) | $(COMPRESS) > $@
-#  endif
-# endif /* CompressedFontTargetLong */
-#else
-#   define CompressedFontTargetLong(sname,tname)
-#endif
-
-/*
- * UncompressedFontTarget
- */
-#ifndef UncompressedFontTarget
-#define UncompressedFontTarget(basename) UncompressedFontTargetLong(basename,basename)
-#endif /* UncompressedFontTarget */
-
-#ifndef CompressedFontTarget
-#define CompressedFontTarget(basename) CompressedFontTargetLong(basename,basename)
-#endif /* CompressedFontTarget */
-
-#if !defined(FontTarget) && !defined(FontObj)
-#if CompressAllFonts
-#define FontTargetLong(sname,tname) CompressedFontTargetLong(sname,tname)
-#define FontTarget(basename) CompressedFontTarget(basename)
-#if GzipFontCompression
-#define FontObj(basename) FontBaseObj(basename).gz
-#else
-#define FontObj(basename) FontBaseObj(basename).Z
-#endif
-#else
-#define FontTargetLong(sname,tname) UncompressedFontTargetLong(sname,tname)
-#define FontTarget(basename) UncompressedFontTarget(basename)
-#define FontObj(basename) FontBaseObj(basename)
-#endif /* CompressAllFonts */
-#endif
-
-
-#ifndef EncObj
-#define EncObj(basename) basename.enc
-#endif
-#ifndef EncObjComp
-#if GzipFontCompression
-#define EncObjComp(basename) basename.enc.gz
-#else
-#define EncObjComp(basename) basename.enc.Z
-#endif
-#endif
-
-#ifndef EncodingTarget
-#define EncodingTarget(basename) /**/
-#endif
-
-#ifndef CompEncodingTarget
-#if GzipFontCompression
-#define CompEncodingTarget(basename)					@@\
-EncObjComp(basename): EncObj(basename)					@@\
-	cat $? | $(GZIPCMD) > $@
-#else
-#define CompEncodingTarget(basename)					@@\
-EncObjComp(basename): EncObj(basename)					@@\
-	cat $? | $(COMPRESS) > $@
-#endif
-#endif
-
-#ifndef MakeEncDir
-# if !CrossCompiling || UseInstalledOnCrossCompile
-#  define MakeEncDir(deplist,inst,dirlist )				@@\
-AllTarget(encodings.dir)						@@\
-									@@\
-encodings.dir: deplist							@@\
-	RemoveFiles(encodings.dir fonts.dir)				@@\
-	@(E=; for i in dirlist; do \					@@\
-	   E="$$E -e $$i"; done; \					@@\
-	 set -x; \							@@\
-	 RunProgram(MKFONTDIR, -n -r -p inst/ $$E .))			@@\
-									@@\
-clean::									@@\
-	RemoveFiles(fonts.dir encodings.dir)
-# else
-#  define MakeEncDir(deplist,inst,dirlist )				@@\
-clean::									@@\
-	RemoveFiles(fonts.dir encodings.dir)
-# endif
-#endif
-
-#ifndef MakeEncodings
-#define MakeEncodings(deplist,inst,dirlist)				@@\
-									@@\
-MakeEncDir(deplist $(OBJS),inst,dirlist)				@@\
-									@@\
-clean::									@@\
-	RemoveFiles(*.enc.Z *.enc.gz)
-#endif /* MakeEncodings */
-
-#ifndef InstallEncObjs
-# if !CrossCompiling || UseInstalledOnCrossCompile
-#  define InstallEncObjs(objs,dest)					@@\
-InstallMultipleFlags(objs,dest,$(INSTDATFLAGS))				@@\
-									@@\
-InstallTarget(install,encodings.dir,$(INSTDATFLAGS),dest)
-# else
-#  define InstallEncObjs(objs,dest)
-# endif
-#endif /* InstallEncObjs */
-
-#ifndef InstallEncodings
-#define InstallEncodings(dest)						@@\
-InstallEncObjs($(OBJS),dest)
-#endif /* InstallEncodings */
-
-#ifndef InstallEncodingsDir
-# if !CrossCompiling || UseInstalledOnCrossCompile
-#  define InstallEncodingsDir(edir,fdir)				@@\
-InstallNamedTarget(install,edir/encodings.dir,$(INSTDATFLAGS),fdir,encodings.dir)
-# else
-#  define InstallEncodingsDir(edir,fdir)
-# endif
-#endif
-
-
-#ifndef MakeBdfFontFromUCSMaster
-#define MakeBdfFontFromUCSMaster(font,enc)				@@\
-font-enc.bdf: font.bdf $(UCS2ANY)					@@\
-	RemoveFile($@)							@@\
-	$(UCS2ANY) font.bdf $(UCSMAPPREFIX)enc enc			@@\
-									@@\
-clean::									@@\
-	RemoveFile(font-enc.bdf)
-#endif
-
-#ifndef MakeTruncatedUCSBdfFont
-#if HasPerl5
-#define MakeTruncatedUCSBdfFont(font,trunc,name)			@@\
-name.bdf: font.bdf $(BDFTRUNCATE)					@@\
-	RemoveFile($@)							@@\
-	RunPerlScript($(BDFTRUNCATE),trunc < font.bdf > name.bdf)	@@\
-									@@\
-clean::									@@\
-	RemoveFile(name.bdf)
-#endif
-#endif
-
-/* 
- * InstallXpPMFLink - install link for a Xprint PMF "font" from one
- * print model to another
- */
-#ifndef InstallXpPMFLink
-#define InstallXpPMFLink(fontfilename,srcmodelfontdir,destmodelfontdir)				@@\
-	InstallLink(install,srcmodelfontdir/fontfilename,fontfilename,destmodelfontdir)
-#endif /* InstallXpPMFLink */
-/* 
- * InstallXpMultiplePMFLinks - install multiple links for PMF fonts
- * from one print model to another
- */
-#ifndef InstallXpMultiplePMFLinks
-#define InstallXpMultiplePMFLinks(list,srcmodelfontdir,destmodelfontdir)			@@\
-install::											@@\
-	MakeDir($(DESTDIR)destmodelfontdir)							@@\
-	for i in list ; do \									@@\
-	    $(RM) $(DESTDIR)destmodelfontdir/$$i ; \						@@\
-	    $(LN) -s -f srcmodelfontdir/$$i $(DESTDIR)destmodelfontdir/$$i ; \			@@\
-	done
-#endif /* InstallXpPMFLink */
-
-/*
- * InstallXpPMFFontsDir - make and install a fonts.dir index for model-config fonts
- */
-#ifndef InstallXpPMFFontsDir
-#if BuildServersOnly
-#define InstallXpPMFFontsDir(destmodelfontdir) /**/
-#else
-#define InstallXpPMFFontsDir(destmodelfontdir)			@@\
-install::							@@\
-	($(MKFONTSCALE) -b -s -l $(DESTDIR)destmodelfontdir)
-#endif
-#endif /* InstallXpPMFFontsDir */
-
-
-/*
  * MakeXkbDir
  */
 #ifndef MakeXkbDir
@@ -4647,42 +3651,6 @@ clean::									@@\
 InstallDoc(name,deps)
 #endif
 
-/*
- * Rule for maintainers to use to updated generated copies of fonts in the
- * source tree.  Use with care.
- */
-
-#ifndef UpdateDerivedFont
-#define UpdateDerivedFont(src,dst)					@@\
-update.fonts:: src							@@\
-	-@if [ -f dst ]; then \						@@\
-	    if [ "$(FORCEUPDATE)" = yes ]; then \			@@\
-		if [ "$(FOLLOWLINK)" = no ]; then \			@@\
-			(set -x; $(RM) dst); \				@@\
-		fi; \							@@\
-		set -x; cp src dst; \					@@\
-	    else \							@@\
-		grep -v "XFree86:" src > __tmp1__; \			@@\
-		grep -v "XFree86:" dst > __tmp2__; \			@@\
-		if diff __tmp1__ __tmp2__ > /dev/null 2>&1; then :; \	@@\
-		else \							@@\
-			if [ "$(FOLLOWLINK)" = no ]; then \		@@\
-				(set -x; $(RM) dst); \			@@\
-			fi; \						@@\
-			set -x; cp src dst; \					@@\
-		fi; \							@@\
-	    fi; \							@@\
-	fi								@@\
-	@$(RM) __tmp1__ __tmp2__
-#endif
-
-#if !HasFreetype2
-      FT2PRELOADPATTERN = libfreetype.so.?
-#endif
-#if !HasFontconfig
-       FCPRELOADPATTERN = libfontconfig.so.?
-#endif
-      XFTPRELOADPATTERN = libXft.so.?
   XRENDERPRELOADPATTERN = libXrender.so.?
     XFONTPRELOADPATTERN = libXfont*.so.?
 
