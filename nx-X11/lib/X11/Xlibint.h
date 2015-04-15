@@ -528,6 +528,14 @@ extern LockInfoPtr _Xglobal_lock;
 	dpy->request++
 #endif
 
+/*
+ * MakeBigReq sets the CARD16 "req->length" to 0 and inserts a new CARD32
+ * length, after req->length, before the data in the request. The new length
+ * includes the "n" extra 32-bit words.
+ *
+ * Do not use MakeBigReq if there is no data already in the request.
+ * req->length must already be >= 2.
+ */
 #ifdef LONG64
 #define MakeBigReq(req,n) \
     { \
@@ -535,7 +543,7 @@ extern LockInfoPtr _Xglobal_lock;
     CARD32 _BRlen = req->length - 1; \
     req->length = 0; \
     _BRdat = ((CARD32 *)req)[_BRlen]; \
-    memmove(((char *)req) + 8, ((char *)req) + 4, _BRlen << 2); \
+    memmove(((char *)req) + 8, ((char *)req) + 4, (_BRlen - 1) << 2); \
     ((CARD32 *)req)[1] = _BRlen + n + 2; \
     Data32(dpy, &_BRdat, 4); \
     }
@@ -546,7 +554,7 @@ extern LockInfoPtr _Xglobal_lock;
     CARD32 _BRlen = req->length - 1; \
     req->length = 0; \
     _BRdat = ((CARD32 *)req)[_BRlen]; \
-    memmove(((char *)req) + 8, ((char *)req) + 4, _BRlen << 2); \
+    memmove(((char *)req) + 8, ((char *)req) + 4, (_BRlen - 1) << 2); \
     ((CARD32 *)req)[1] = _BRlen + n + 2; \
     Data32(dpy, &_BRdat, 4); \
     }
