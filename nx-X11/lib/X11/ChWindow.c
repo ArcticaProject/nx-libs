@@ -44,20 +44,11 @@ unsigned int width, height;
 
     req->window = w;
     req->mask = CWWidth | CWHeight;
-#ifdef MUSTCOPY
-    {
-	unsigned long lwidth = width, lheight = height;
-    dpy->bufptr -= 8;
-    Data32 (dpy, (long *) &lwidth, 4);	/* order dictated by values of */
-    Data32 (dpy, (long *) &lheight, 4);	/* CWWidth and CWHeight */
-    }
-#else
     {
 	CARD32 *valuePtr = (CARD32 *) NEXTPTR(req,xConfigureWindowReq);
 	*valuePtr++ = width;
 	*valuePtr = height;
     }
-#endif /* MUSTCOPY */
     UnlockDisplay(dpy);
     SyncHandle();
     return 1;

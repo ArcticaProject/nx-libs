@@ -48,12 +48,6 @@ XDrawArc(dpy, d, gc, x, y, width, height, angle1, angle2)
 {
     register xPolyArcReq *req;
     register xArc *arc;
-#ifdef MUSTCOPY
-    xArc arcdata;
-    long len = SIZEOF(xArc);
-
-    arc = &arcdata;
-#endif /* MUSTCOPY */
 
     LockDisplay(dpy);
     FlushGC(dpy, gc);
@@ -62,9 +56,7 @@ XDrawArc(dpy, d, gc, x, y, width, height, angle1, angle2)
     req->drawable = d;
     req->gc = gc->gid;
 
-#ifndef MUSTCOPY
     arc = (xArc *) NEXTPTR(req,xPolyArcReq);
-#endif /* MUSTCOPY */
 
     arc->x = x;
     arc->y = y;
@@ -72,11 +64,6 @@ XDrawArc(dpy, d, gc, x, y, width, height, angle1, angle2)
     arc->height = height;
     arc->angle1 = angle1;
     arc->angle2 = angle2;
-
-#ifdef MUSTCOPY
-    dpy->bufptr -= SIZEOF(xArc);
-    Data (dpy, (char *) arc, len);
-#endif /* MUSTCOPY */
 
     UnlockDisplay(dpy);
     SyncHandle();

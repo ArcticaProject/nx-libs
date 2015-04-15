@@ -44,12 +44,6 @@ XRenderFillRectangle (Display	    *dpy,
     XRenderExtDisplayInfo		*info = XRenderFindDisplay (dpy);
     xRectangle			*rect;
     xRenderFillRectanglesReq	*req;
-#ifdef MUSTCOPY
-    xRectangle			rectdata;
-    long			len = SIZEOF(xRectangle);
-
-    rect = &rectdata;
-#endif /* MUSTCOPY */
 
     RenderSimpleCheckExtension (dpy, info);
     LockDisplay(dpy);
@@ -68,10 +62,8 @@ XRenderFillRectangle (Display	    *dpy,
 	(char *)dpy->bufptr - (char *)req < size)
     {
 	req->length += SIZEOF(xRectangle) >> 2;
-#ifndef MUSTCOPY
 	rect = (xRectangle *) dpy->bufptr;
 	dpy->bufptr += SIZEOF(xRectangle);
-#endif /* not MUSTCOPY */
     }
     else 
     {
@@ -86,20 +78,13 @@ XRenderFillRectangle (Display	    *dpy,
 	req->color.blue = color->blue;
 	req->color.alpha = color->alpha;
 	
-#ifdef MUSTCOPY
-	dpy->bufptr -= SIZEOF(xRectangle);
-#else
 	rect = (xRectangle *) NEXTPTR(req,xRenderFillRectanglesReq);
-#endif /* MUSTCOPY */
     }
     rect->x = x;
     rect->y = y;
     rect->width = width;
     rect->height = height;
 
-#ifdef MUSTCOPY
-    Data (dpy, (char *) rect, len);
-#endif /* MUSTCOPY */
     UnlockDisplay(dpy);
     SyncHandle();
 }

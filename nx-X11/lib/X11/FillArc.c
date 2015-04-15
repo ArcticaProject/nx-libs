@@ -45,12 +45,6 @@ XFillArc(dpy, d, gc, x, y, width, height, angle1, angle2)
     int angle1, angle2; /* INT16 */
 {
     xArc *arc;
-#ifdef MUSTCOPY
-    xArc arcdata;
-    long len = SIZEOF(xArc);
-
-    arc = &arcdata;
-#endif /* MUSTCOPY */
 
     LockDisplay(dpy);
     FlushGC(dpy, gc);
@@ -66,10 +60,8 @@ XFillArc(dpy, d, gc, x, y, width, height, angle1, angle2)
        && ((dpy->bufptr + SIZEOF(xArc)) <= dpy->bufmax)
        && (((char *)dpy->bufptr - (char *)req) < size) ) {
 	 req->length += SIZEOF(xArc) >> 2;
-#ifndef MUSTCOPY
          arc = (xArc *) dpy->bufptr;
 	 dpy->bufptr += SIZEOF(xArc);
-#endif /* not MUSTCOPY */
 	 }
 
     else {
@@ -77,11 +69,7 @@ XFillArc(dpy, d, gc, x, y, width, height, angle1, angle2)
 
 	req->drawable = d;
 	req->gc = gc->gid;
-#ifdef MUSTCOPY
-	dpy->bufptr -= SIZEOF(xArc);
-#else
 	arc = (xArc *) NEXTPTR(req,xPolyFillArcReq);
-#endif /* MUSTCOPY */
 	}
     arc->x = x;
     arc->y = y;
@@ -89,10 +77,6 @@ XFillArc(dpy, d, gc, x, y, width, height, angle1, angle2)
     arc->height = height;
     arc->angle1 = angle1;
     arc->angle2 = angle2;
-
-#ifdef MUSTCOPY
-    Data (dpy, (char *) arc, len);
-#endif /* MUSTCOPY */
 
     }
     UnlockDisplay(dpy);

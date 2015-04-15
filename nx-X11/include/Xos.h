@@ -45,9 +45,6 @@ in this Software without prior written authorization from The Open Group.
 
 #ifdef USG
 #ifndef __TYPES__
-#ifdef CRAY
-#define word word_t
-#endif /* CRAY */
 #include <sys/types.h>			/* forgot to protect it... */
 #define __TYPES__
 #endif /* __TYPES__ */
@@ -149,7 +146,7 @@ extern int sys_nerr;
  */
 #if defined(X_NOT_POSIX)
 #include <fcntl.h>
-#if defined(USL) || defined(CRAY) || defined(MOTOROLA) || (defined(i386) && (defined(SYSV) || defined(SVR4))) || defined(__sxg__)
+#if defined(USL) || defined(MOTOROLA) || (defined(i386) && (defined(SYSV) || defined(SVR4))) || defined(__sxg__)
 #include <unistd.h>
 #endif
 #ifdef WIN32
@@ -179,10 +176,7 @@ extern int sys_nerr;
 #include <sys/time.h>
 #endif
 #include <time.h>
-#ifdef CRAY
-#undef word
-#endif /* CRAY */
-#if defined(USG) && !defined(CRAY) && !defined(MOTOROLA) && !defined(uniosu) && !defined(__sxg__) && !defined(clipper) && !defined(__clipper__)
+#if defined(USG) && !defined(MOTOROLA) && !defined(uniosu) && !defined(__sxg__) && !defined(clipper) && !defined(__clipper__)
 struct timeval {
     long tv_sec;
     long tv_usec;

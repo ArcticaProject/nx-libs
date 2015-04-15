@@ -133,10 +133,8 @@ static char *permalloc(unsigned int length)
     return(ret);
 }
 
-#ifndef WORD64
 typedef struct {char a; double b;} TestType1;
 typedef struct {char a; unsigned long b;} TestType2;
-#endif
 
 #ifdef XTHREADS
 static char *_Xpermalloc(unsigned int length);
@@ -159,7 +157,6 @@ char *Xpermalloc(unsigned int length)
     int i;
 
     if (neverFreeTableSize && length < NEVERFREETABLESIZE) {
-#ifndef WORD64
 	if ((sizeof(TestType1) !=
 	     (sizeof(TestType2) - sizeof(unsigned long) + sizeof(double))) &&
 	    !(length & (DALIGN-1)) &&
@@ -167,7 +164,6 @@ char *Xpermalloc(unsigned int length)
 	    neverFreeTableSize -= DALIGN - i;
 	    neverFreeTable += DALIGN - i;
 	} else
-#endif
 	    if ((i = (NEVERFREETABLESIZE - neverFreeTableSize) & (WALIGN-1))) {
 		neverFreeTableSize -= WALIGN - i;
 		neverFreeTable += WALIGN - i;
