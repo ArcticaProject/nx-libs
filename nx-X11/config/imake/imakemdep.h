@@ -112,9 +112,6 @@ in this Software without prior written authorization from The Open Group.
 #endif
 #endif
 #endif
-#ifdef _CRAY
-#define imake_ccflags "-DSYSV -DUSG"
-#endif
 
 #if defined(_IBMR2) || defined(aix)
 #define imake_ccflags "-Daix -DSYSV"
@@ -225,7 +222,7 @@ in this Software without prior written authorization from The Open Group.
  *     descriptor onto another, define such a mechanism here (if you don't
  *     already fall under the existing category(ies).
  */
-#if defined(SYSV) && !defined(_CRAY) && !defined(Mips) && !defined(_SEQUENT_) && !defined(__SCO__)
+#if defined(SYSV) && !defined(Mips) && !defined(_SEQUENT_) && !defined(__SCO__)
 #define	dup2(fd1,fd2)	((fd1 == fd2) ? fd1 : (close(fd2), \
 					       fcntl(fd1, F_DUPFD, fd2)))
 #endif
@@ -308,9 +305,6 @@ in this Software without prior written authorization from The Open Group.
 #endif
 #ifdef __sxg__
 #define DEFAULT_CPP "/usr/lib/cpp"
-#endif
-#ifdef _CRAY
-#define DEFAULT_CPP "/lib/pcpp"
 #endif
 #if defined(__386BSD__)
 #define DEFAULT_CPP "/usr/libexec/cpp"
@@ -497,9 +491,6 @@ char *cpp_argv[ARGUMENTS] = {
 	"-Duniosu",
 #endif
 #endif /* luna */
-#ifdef _CRAY		/* Cray */
-	"-Ucray",
-#endif
 #ifdef Mips
 	"-DMips",	/* Define and use Mips for Mips Co. OS/mach. */
 # if defined(SYSTYPE_BSD) || defined(BSD) || defined(BSD43)
@@ -1097,15 +1088,6 @@ struct symtab	predefs[] = {
 #endif
 #ifdef VMS
 	{"VMS", "1"},
-#endif
-#ifdef cray
-	{"cray", "1"},
-#endif
-#ifdef CRAY
-	{"CRAY", "1"},
-#endif
-#ifdef _CRAY
-	{"_CRAY", "1"},
 #endif
 #ifdef att
 	{"att", "1"},

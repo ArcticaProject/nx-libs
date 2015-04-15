@@ -672,8 +672,6 @@ XRecordFreeData(data)
 
 /* the EXTRACT macros are adapted from ICElibint.h */
 
-#ifndef WORD64
-
 #define EXTRACT_CARD16(swap, src, dst) \
 { \
     (dst) = *((CARD16 *) (src)); \
@@ -687,32 +685,6 @@ XRecordFreeData(data)
     if (swap) \
         (dst) = lswapl (dst); \
 }
-
-#else /* WORD64 */
-
-#define EXTRACT_CARD16(swap, src, dst) \
-{ \
-    (dst) = *((src) + 0); \
-    (dst) <<= 8; \
-    (dst) |= *((src) + 1); \
-    if (swap) \
-        (dst) = lswaps (dst); \
-}
-
-#define EXTRACT_CARD32(swap, src, dst) \
-{ \
-    (dst) = *((src) + 0); \
-    (dst) <<= 8; \
-    (dst) |= *((src) + 1); \
-    (dst) <<= 8; \
-    (dst) |= *((src) + 2); \
-    (dst) <<= 8; \
-    (dst) |= *((src) + 3); \
-    if (swap) \
-        (dst) = lswapl (dst); \
-}
-
-#endif /* WORD64 */
 
 /* byte swapping macros from xfs/include/misc.h */
 

@@ -746,7 +746,7 @@ char *base_name(char *file)
 #  define NEED_RENAME
 # endif
 #else /* Imake configured, check known OS'es without rename() */
-# if defined(USG) && !defined(CRAY) && !defined(SVR4) && !defined(__UNIXOS2__) && !defined(clipper) && !defined(__clipper__)
+# if defined(USG) && !defined(SVR4) && !defined(__UNIXOS2__) && !defined(clipper) && !defined(__clipper__)
 #  define NEED_RENAME
 # endif
 #endif

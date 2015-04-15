@@ -421,7 +421,6 @@ XF86VidModeGetAllModeLines(dpy, screen, modecount, modelinesPtr)
  */
 #if !defined(UNIXCPP) || defined(ANSICPP)
 #define GetOldReq(name, oldname, req) \
-        WORD64ALIGN\
 	if ((dpy->bufptr + SIZEOF(x##oldname##Req)) > dpy->bufmax)\
 		_XFlush(dpy);\
 	req = (x##oldname##Req *)(dpy->last_req = dpy->bufptr);\
@@ -432,7 +431,6 @@ XF86VidModeGetAllModeLines(dpy, screen, modecount, modelinesPtr)
 
 #else  /* non-ANSI C uses empty comment instead of "##" for token concatenation */
 #define GetOldReq(name, oldname, req) \
-        WORD64ALIGN\
 	if ((dpy->bufptr + SIZEOF(x/**/oldname/**/Req)) > dpy->bufmax)\
 		_XFlush(dpy);\
 	req = (x/**/oldname/**/Req *)(dpy->last_req = dpy->bufptr);\

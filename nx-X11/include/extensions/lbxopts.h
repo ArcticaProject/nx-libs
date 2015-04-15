@@ -78,7 +78,7 @@
 
 #include <sys/types.h>
 
-#if defined(WIN32) || (defined(USG) && !defined(CRAY) && !defined(umips) && !defined(MOTOROLA) && !defined(uniosu) && !defined(__sxg__))
+#if defined(WIN32) || (defined(USG) && !defined(umips) && !defined(MOTOROLA) && !defined(uniosu) && !defined(__sxg__))
 
 struct iovec {
     caddr_t iov_base;

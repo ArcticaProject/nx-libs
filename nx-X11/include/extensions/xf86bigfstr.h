@@ -58,13 +58,9 @@ typedef struct {
     CARD16	sequenceNumber B16;
     CARD32	length B32;
     xCharInfo	minBounds;
-#ifndef WORD64
     CARD32	walign1 B32;
-#endif
     xCharInfo	maxBounds;
-#ifndef WORD64
     CARD32	walign2 B32;
-#endif
     CARD16	minCharOrByte2 B16;
     CARD16	maxCharOrByte2 B16;
     CARD16	defaultChar B16;
