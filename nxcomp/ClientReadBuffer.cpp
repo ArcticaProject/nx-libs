@@ -119,15 +119,34 @@ int ClientReadBuffer::locateMessage(const unsigned char *start,
 
     dataLength = (GetUINT(start + 2, bigEndian_) << 2);
 
-    if (dataLength < 4)
+    if (dataLength == 0)        // or equivalently (dataLength < 4)
     {
-      #ifdef TEST
-      *logofs << "ClientReadBuffer: WARNING! Assuming length 4 "
-              << "for suspicious message of length " << dataLength
-              << ".\n" << logofs_flush;
-      #endif
+      // BIG-REQUESTS extension
+      if (size < 8)
+      {
+        remaining_ = 8 - size;
+        return 0;
+      }
 
-      dataLength = 4;
+      dataLength = (GetULONG(start + 4, bigEndian_) << 2);
+
+// See WRITE_BUFFER_OVERFLOW_SIZE elsewhere
+// and also ENCODE_BUFFER_OVERFLOW_SIZE DECODE_BUFFER_OVERFLOW_SIZE.
+      if (dataLength < 8 || dataLength > 100*1024*1024)
+      {
+        #ifdef WARNING
+        *logofs << "BIG-REQUESTS with unacceptable dataLength="
+                << dataLength << ", now set to 8.\n" << logofs_flush;
+        #endif
+        dataLength = 8;
+      }
+      else if (dataLength < 4*64*1024)
+      {
+        #ifdef WARNING
+        *logofs << "BIG-REQUESTS with silly dataLength="
+                << dataLength << ".\n" << logofs_flush;
+        #endif
+      }
     }
   }
 

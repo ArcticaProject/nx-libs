@@ -32,8 +32,14 @@
 // This is likely to be a reply to a X_ListFonts where
 // user has a large amount of installed fonts.
 //
+// Used also for messages sent, and should accommodate any BIG-REQUESTS.
+// Value was 4MB = 4194304, changed to 100MB = 104857600.
+// See also sanity check limits (set same, to 100*1024*1024) in
+// ClientReadBuffer.cpp ServerReadBuffer.cpp and ClientChannel.cpp, and
+// ENCODE_BUFFER_OVERFLOW_SIZE DECODE_BUFFER_OVERFLOW_SIZE elsewhere.
+//
 
-#define WRITE_BUFFER_OVERFLOW_SIZE        4194304
+#define WRITE_BUFFER_OVERFLOW_SIZE        100*1024*1024
 
 class WriteBuffer
 {

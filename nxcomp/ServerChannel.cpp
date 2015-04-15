@@ -104,7 +104,8 @@ extern Proxy *proxy;
 //
 
 #define HIDE_MIT_SHM_EXTENSION
-#define HIDE_BIG_REQUESTS_EXTENSION
+// HIDE_BIG_REQUESTS_EXTENSION : No good to hide, some clients may send crap instead...
+#undef  HIDE_BIG_REQUESTS_EXTENSION
 #define HIDE_XFree86_Bigfont_EXTENSION
 #undef  HIDE_SHAPE_EXTENSION
 #undef  HIDE_XKEYBOARD_EXTENSION
@@ -1412,6 +1413,9 @@ int ServerChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
 
         unsigned int inputSequence = GetUINT(inputMessage + 2, bigEndian_);
 
+        // Sometimes we get inputSequence=0 or =256 when inputOpcode=11=X_UnmapSubwindows
+        // Seems weird... but is "normal" and is to be accepted.
+
         //
         // Check if this is an event which we can discard.
         //
@@ -1905,6 +1909,12 @@ int ServerChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
           break;
         default:
           {
+            // BEWARE: not only inputOpcode == GenericEvent but also
+            // others not handled above, at least:
+            //   GraphicsExpose    13
+            //   MapRequest        20
+            //   ConfigureRequest  23
+            // and any beyond LASTEvent.
             #ifdef TEST
             *logofs << "handleRead: Using generic event compression "
                     << "for OPCODE#" << (unsigned int) inputOpcode
@@ -1918,6 +1928,16 @@ int ServerChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
             {
               encodeBuffer.encodeCachedValue(GetUINT(inputMessage + i * 2 + 4, bigEndian_),
                                  16, *serverCache_ -> genericEventIntCache[i]);
+            }
+            // Handle "X Generic Event Extension"
+            // Cannot cache extra data...
+// FIXME: BUG ALERT: is it OK to have the first 32 bytes cached, but not the rest?
+            if (inputOpcode == GenericEvent && inputLength > 32)
+            {
+              for (unsigned int i = 14; i < ((inputLength-4)>>1); i++)
+              {
+                encodeBuffer.encodeValue(GetUINT(inputMessage + i * 2 + 4, bigEndian_), 16);
+              }
             }
           }
 
@@ -3756,7 +3776,7 @@ int ServerChannel::handleWrite(const unsigned char *message, unsigned int length
           }
 
           unsigned int numPoints;
-          decodeBuffer.decodeValue(numPoints, 16, 4);
+          decodeBuffer.decodeValue(numPoints, 32, 4);
           outputLength = (numPoints << 2) + 12;
           outputMessage = writeBuffer_.addMessage(outputLength);
           unsigned int relativeCoordMode;
@@ -3802,7 +3822,7 @@ int ServerChannel::handleWrite(const unsigned char *message, unsigned int length
           }
 
           unsigned int numPoints;
-          decodeBuffer.decodeValue(numPoints, 16, 4);
+          decodeBuffer.decodeValue(numPoints, 32, 4);
           outputLength = (numPoints << 2) + 12;
           outputMessage = writeBuffer_.addMessage(outputLength);
           unsigned int relativeCoordMode;
@@ -3839,7 +3859,7 @@ int ServerChannel::handleWrite(const unsigned char *message, unsigned int length
       case X_PolyRectangle:
         {
           unsigned int numRectangles;
-          decodeBuffer.decodeValue(numRectangles, 16, 3);
+          decodeBuffer.decodeValue(numRectangles, 32, 3);
           outputLength = (numRectangles << 3) + 12;
           outputMessage = writeBuffer_.addMessage(outputLength);
           decodeBuffer.decodeXidValue(value, clientCache_ -> drawableCache);
@@ -3869,7 +3889,7 @@ int ServerChannel::handleWrite(const unsigned char *message, unsigned int length
           }
 
           unsigned int numSegments;
-          decodeBuffer.decodeValue(numSegments, 16, 4);
+          decodeBuffer.decodeValue(numSegments, 32, 4);
           outputLength = (numSegments << 3) + 12;
           outputMessage = writeBuffer_.addMessage(outputLength);
           decodeBuffer.decodeXidValue(value, clientCache_ -> drawableCache);
@@ -4590,7 +4610,29 @@ int ServerChannel::handleWrite(const unsigned char *message, unsigned int length
 
         *outputMessage = (unsigned char) outputOpcode;
 
-        PutUINT(outputLength >> 2, outputMessage + 2, bigEndian_);
+        if (outputLength < 4*64*1024)
+          PutUINT(outputLength >> 2, outputMessage + 2, bigEndian_);
+        else
+        {
+          // Handle BIG-REQUESTS
+          PutUINT(0, outputMessage + 2, bigEndian_);
+// FIXME: BUG ALERT: following write may not work well,
+// particularly with un-flushed messages.
+if (outputMessage != writeBuffer_.getData())
+{
+*logofs << "PSz BUG handleWrite BIG-REQUESTS:"
+        << " have " << (unsigned int)(outputMessage - writeBuffer_.getData())
+        << " bytes in buffer"
+        << ", write immediate of 4-byte header will not work well"
+        << "\n" << logofs_flush;
+}
+// But, it works well enough in my testing...
+          // Write first four bytes
+          if (transport_ -> write(write_immediate, outputMessage, 4) < 0)
+              return -1;
+          // Replace with new 4-byte length
+          PutULONG(1 + (outputLength >> 2), outputMessage, bigEndian_);
+        }
 
         #if defined(TEST) || defined(OPCODES)
         *logofs << "handleWrite: Handled request OPCODE#"
@@ -5912,7 +5954,7 @@ int ServerChannel::handleMotion(EncodeBuffer &encodeBuffer)
   unsigned char opcode = *lastMotion_;
   unsigned int size = 32;
 
-  if (GetUINT(buffer + 2, bigEndian_) < serverSequence_)
+  if (SequenceNumber_x_gt_y(serverSequence_, GetUINT(buffer + 2, bigEndian_)))
   {
     PutUINT(serverSequence_, (unsigned char *) buffer + 2, bigEndian_);
   }

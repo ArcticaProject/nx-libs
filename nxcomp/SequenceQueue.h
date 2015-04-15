@@ -18,6 +18,22 @@
 #ifndef SequenceQueue_H
 #define SequenceQueue_H
 
+inline int SequenceNumber_x_gt_y(unsigned int x, unsigned int y)
+{
+  // For two sequence numbers x and y, determine whether (x > y).
+  // Sequence numbers are the trailing 16 bits of a bigger number:
+  // need to handle wraparound, e.g. 0 is 65536, just after 65535.
+  if (x != (x & 0x00ffff)) return 0;
+  if (y != (y & 0x00ffff)) return 0;
+  // Closeness when comparison makes sense: arbitrarily set at 16*1024
+  if ((x > y) && ((x-y) < 16*1024)) return 1;
+  // Wrapped value
+  unsigned int w = x + 64*1024;
+  // We know that w>y but test left for symmetry
+  if ((w > y) && ((w-y) < 16*1024)) return 1;
+  return 0;
+}
+
 //
 // List of outstanding request messages which
 // are waiting for a reply. This class is used

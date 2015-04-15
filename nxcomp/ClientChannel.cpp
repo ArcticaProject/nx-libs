@@ -447,6 +447,26 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         }
       }
 
+      // Get other bits of the header, so will not need to refer to them again
+      unsigned char inputDataByte = inputMessage[1];
+      unsigned int buffer2 = GetUINT(inputMessage + 2, bigEndian_);
+      unsigned int inputDataSize = buffer2 - 1;
+      if (buffer2 == 0)
+      {
+        // BIG-REQUESTS
+        inputMessage += 4;
+        inputLength -= 4;
+        inputDataSize = GetULONG(inputMessage, bigEndian_) - 2;
+      }
+      if (inputLength != (4 * (inputDataSize + 1)))
+      {
+        #ifdef WARNING
+        *logofs << "handleRead: inputLength=" << inputLength
+                << " mismatch inputDataSize=" << inputDataSize
+                << ".\n" << logofs_flush;
+        #endif
+      }
+
       //
       // Go to the message's specific encoding.
       //
@@ -455,6 +475,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
       {
       case X_AllocColor:
         {
+          #ifdef WARNING
+          if (inputLength < 14)
+            *logofs << "handleRead: X_AllocColor inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           encodeBuffer.encodeCachedValue(GetULONG(inputMessage + 4, bigEndian_), 29,
                              clientCache_ -> colormapCache);
           const unsigned char *nextSrc = inputMessage + 8;
@@ -476,6 +501,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_ReparentWindow:
         {
+          #ifdef WARNING
+          if (inputLength < 16)
+            *logofs << "handleRead: X_ReparentWindow inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           encodeBuffer.encodeXidValue(GetULONG(inputMessage + 4, bigEndian_),
                              clientCache_ -> windowCache);
           encodeBuffer.encodeXidValue(GetULONG(inputMessage + 8, bigEndian_),
@@ -486,6 +516,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_ChangeProperty:
         {
+          #ifdef WARNING
+          if (inputLength < 24)
+            *logofs << "handleRead: X_ChangeProperty inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           MessageStore *messageStore = clientStore_ ->
                                getRequestStore(X_ChangeProperty);
 
@@ -501,8 +536,36 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
           encodeBuffer.encodeCachedValue(format, 8,
                              clientCache_ -> changePropertyFormatCache);
           unsigned int dataLength = GetULONG(inputMessage + 20, bigEndian_);
+
+          // Self-preserving sanity check (otherwise we crash and dump core):
+          // some clients do this when not getting their beloved BIG-REQUESTS.
+          unsigned int maxLength = 0;
+          if (format == 8)
+          {
+            maxLength = inputLength - 24;
+          }
+          else if (format == 32)
+          {
+            maxLength = (inputLength - 24) >> 2;
+          }
+          else if (format == 16)
+          {
+            maxLength = (inputLength - 24) >> 1;
+          }
+          if (dataLength > maxLength)
+          {
+            #ifdef WARNING
+            *logofs << "handleRead X_ChangeProperty bogus dataLength=" << dataLength
+                    << " set to " << maxLength
+                    << " when format=" << (int)format
+                    << " inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+            #endif
+            dataLength = maxLength;
+          }
+
           encodeBuffer.encodeValue(dataLength, 32, 6);
-          encodeBuffer.encodeValue(inputMessage[1], 2);
+          encodeBuffer.encodeValue(inputDataByte, 2);
           encodeBuffer.encodeXidValue(GetULONG(inputMessage + 4, bigEndian_),
                              clientCache_ -> windowCache);
           encodeBuffer.encodeCachedValue(GetULONG(inputMessage + 8, bigEndian_), 29,
@@ -533,13 +596,20 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
               nextSrc += 4;
             }
           }
-          else
+          else if (format == 16)
           {
             for (unsigned int i = 0; i < dataLength; i++)
             {
               encodeBuffer.encodeValue(GetUINT(nextSrc, bigEndian_), 16);
               nextSrc += 2;
             }
+          }
+          else
+          {
+            #ifdef WARNING
+            *logofs << "ChangeProperty bogus format=" << (int)format
+                    << ".\n" << logofs_flush;
+            #endif
           }
         }
         break;
@@ -551,6 +621,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
           // ratio.
           //
 
+          #ifdef WARNING
+          if (inputLength < 44)
+            *logofs << "handleRead: X_SendEvent inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           MessageStore *messageStore = clientStore_ ->
                                getRequestStore(X_SendEvent);
 
@@ -562,7 +637,7 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
             break;
           }
 
-          encodeBuffer.encodeBoolValue((unsigned int) inputMessage[1]);
+          encodeBuffer.encodeBoolValue((unsigned int) inputDataByte);
           unsigned int window = GetULONG(inputMessage + 4, bigEndian_);
 
           if (window == 0 || window == 1)
@@ -599,7 +674,12 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_ChangeWindowAttributes:
         {
-          encodeBuffer.encodeValue((inputLength - 12) >> 2, 4);
+          #ifdef WARNING
+          if (inputLength < 16)
+            *logofs << "handleRead: X_ChangeWindowAttributes inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
+          encodeBuffer.encodeValue(inputDataSize - 2, 4);
           encodeBuffer.encodeXidValue(GetULONG(inputMessage + 4, bigEndian_),
                              clientCache_ -> windowCache);
           unsigned int bitmask = GetULONG(inputMessage + 8, bigEndian_);
@@ -621,6 +701,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_ClearArea:
         {
+          #ifdef WARNING
+          if (inputLength < 16)
+            *logofs << "handleRead: X_ClearArea inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           #ifdef TARGETS
 
           unsigned int t_id = GetULONG(inputMessage + 4, bigEndian_);
@@ -654,7 +739,7 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
             break;
           }
 
-          encodeBuffer.encodeBoolValue((unsigned int) inputMessage[1]);
+          encodeBuffer.encodeBoolValue((unsigned int) inputDataByte);
           encodeBuffer.encodeXidValue(GetULONG(inputMessage + 4, bigEndian_),
                              clientCache_ -> windowCache);
           const unsigned char *nextSrc = inputMessage + 8;
@@ -668,6 +753,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_CloseFont:
         {
+          #ifdef WARNING
+          if (inputLength < 8)
+            *logofs << "handleRead: X_CloseFont inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           unsigned int font = GetULONG(inputMessage + 4, bigEndian_);
           encodeBuffer.encodeValue(font - clientCache_ -> lastFont, 29, 5);
           clientCache_ -> lastFont = font;
@@ -675,6 +765,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_ConfigureWindow:
         {
+          #ifdef WARNING
+          if (inputLength < 12)
+            *logofs << "handleRead: X_ConfigureWindow inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           MessageStore *messageStore = clientStore_ ->
                                getRequestStore(X_ConfigureWindow);
 
@@ -708,6 +803,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_ConvertSelection:
         {
+          #ifdef WARNING
+          if (inputLength < 24)
+            *logofs << "handleRead: X_ConvertSelection inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           encodeBuffer.encodeCachedValue(GetULONG(inputMessage + 4, bigEndian_), 29,
                              clientCache_ -> convertSelectionRequestorCache, 9);
           const unsigned char* nextSrc = inputMessage + 8;
@@ -725,6 +825,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_CopyArea:
         {
+          #ifdef WARNING
+          if (inputLength < 28)
+            *logofs << "handleRead: X_CopyArea inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           #ifdef TARGETS
 
           unsigned int t_id = GetULONG(inputMessage + 4, bigEndian_);
@@ -793,6 +898,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_CopyGC:
         {
+          #ifdef WARNING
+          if (inputLength < 16)
+            *logofs << "handleRead: X_CopyGC inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           #ifdef TARGETS
 
           unsigned int s_g_id = GetULONG(inputMessage + 4, bigEndian_);
@@ -814,6 +924,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_CopyPlane:
         {
+          #ifdef WARNING
+          if (inputLength < 32)
+            *logofs << "handleRead: X_CopyPlane inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           encodeBuffer.encodeXidValue(GetULONG(inputMessage + 4,
                              bigEndian_), clientCache_ -> drawableCache);
           encodeBuffer.encodeXidValue(GetULONG(inputMessage + 8,
@@ -833,6 +948,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_CreateGC:
         {
+          #ifdef WARNING
+          if (inputLength < 16)
+            *logofs << "handleRead: X_CreateGC inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           #ifdef TARGETS
 
           unsigned int g_id = GetULONG(inputMessage + 4, bigEndian_);
@@ -917,6 +1037,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_ChangeGC:
         {
+          #ifdef WARNING
+          if (inputLength < 16)
+            *logofs << "handleRead: X_ChangeGC inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           #ifdef TARGETS
 
           unsigned int g_id = GetULONG(inputMessage + 4, bigEndian_);
@@ -998,14 +1123,19 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_CreatePixmap:
         {
+          #ifdef WARNING
+          if (inputLength < 16)
+            *logofs << "handleRead: X_CreatePixmap inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           #ifdef TARGETS
 
-          *logofs << "handleRead: X_CreatePixmap depth " << (unsigned) inputMessage[1]
+          *logofs << "handleRead: X_CreatePixmap depth " << (unsigned) inputDataByte
                   << ", pixmap id " << GetULONG(inputMessage + 4, bigEndian_)
                   << ", drawable " << GetULONG(inputMessage + 8, bigEndian_)
                   << ", width " << GetUINT(inputMessage + 12, bigEndian_)
                   << ", height " << GetUINT(inputMessage + 14, bigEndian_)
-                  << ", size " << GetUINT(inputMessage + 2, bigEndian_) << 2
+                  << ", length " << inputLength
                   << ".\n" << logofs_flush;
 
           unsigned int   p_id = GetULONG(inputMessage + 4, bigEndian_);
@@ -1042,6 +1172,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_CreateWindow:
         {
+          #ifdef WARNING
+          if (inputLength < 32)
+            *logofs << "handleRead: X_CreateWindow inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           #ifdef TARGETS
 
           unsigned int w_id = GetULONG(inputMessage + 4, bigEndian_);
@@ -1054,7 +1189,7 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
           #endif
 
           unsigned bitmask = GetULONG(inputMessage + 28, bigEndian_);
-          encodeBuffer.encodeCachedValue((unsigned int) inputMessage[1], 8,
+          encodeBuffer.encodeCachedValue((unsigned int) inputDataByte, 8,
                                          clientCache_ -> depthCache);
           encodeBuffer.encodeXidValue(GetULONG(inputMessage + 8, bigEndian_),
                              clientCache_ -> windowCache);
@@ -1098,6 +1233,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_DeleteProperty:
         {
+          #ifdef WARNING
+          if (inputLength < 12)
+            *logofs << "handleRead: X_DeleteProperty inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           encodeBuffer.encodeXidValue(GetULONG(inputMessage + 4, bigEndian_),
                              clientCache_ -> windowCache);
           encodeBuffer.encodeValue(GetULONG(inputMessage + 8, bigEndian_), 29, 9);
@@ -1105,6 +1245,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_FillPoly:
         {
+          #ifdef WARNING
+          if (inputLength < 16)
+            *logofs << "handleRead: X_FillPoly inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           #ifdef TARGETS
 
           unsigned int t_id = GetULONG(inputMessage + 4, bigEndian_);
@@ -1138,7 +1283,7 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
             break;
           }
 
-          unsigned int numPoints = ((inputLength - 16) >> 2);
+          unsigned int numPoints = (inputDataSize - 3);
 
           if (control -> isProtoStep10() == 1)
           {
@@ -1209,7 +1354,12 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_FreeColors:
         {
-          unsigned int numPixels = GetUINT(inputMessage + 2, bigEndian_) - 3;
+          #ifdef WARNING
+          if (inputLength < 12)
+            *logofs << "handleRead: X_FreeColors inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
+          unsigned int numPixels = inputDataSize - 2;
           encodeBuffer.encodeValue(numPixels, 16, 4);
           encodeBuffer.encodeCachedValue(GetULONG(inputMessage + 4, bigEndian_), 29,
                                          clientCache_ -> colormapCache);
@@ -1225,12 +1375,22 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_FreeCursor:
         {
+          #ifdef WARNING
+          if (inputLength < 8)
+            *logofs << "handleRead: X_FreeCursor inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           encodeBuffer.encodeCachedValue(GetULONG(inputMessage + 4, bigEndian_),
                                          29, clientCache_ -> cursorCache, 9);
         }
         break;
       case X_FreeGC:
         {
+          #ifdef WARNING
+          if (inputLength < 8)
+            *logofs << "handleRead: X_FreeGC inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           #ifdef TARGETS
 
           unsigned int g_id = GetULONG(inputMessage + 4, bigEndian_);
@@ -1284,6 +1444,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_FreePixmap:
         {
+          #ifdef WARNING
+          if (inputLength < 8)
+            *logofs << "handleRead: X_FreePixmap inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           #ifdef TARGETS
 
           unsigned int p_id = GetULONG(inputMessage + 4, bigEndian_);
@@ -1318,6 +1483,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_GetAtomName:
         {
+          #ifdef WARNING
+          if (inputLength < 8)
+            *logofs << "handleRead: X_GetAtomName inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           encodeBuffer.encodeValue(GetULONG(inputMessage + 4, bigEndian_), 29, 9);
 
           sequenceQueue_.push(clientSequence_, inputOpcode);
@@ -1327,6 +1497,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_GetGeometry:
         {
+          #ifdef WARNING
+          if (inputLength < 8)
+            *logofs << "handleRead: X_GetGeometry inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           encodeBuffer.encodeXidValue(GetULONG(inputMessage + 4, bigEndian_),
                              clientCache_ -> drawableCache);
 
@@ -1351,6 +1526,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_GetKeyboardMapping:
         {
+          #ifdef WARNING
+          if (inputLength < 8)
+            *logofs << "handleRead: X_GetKeyboardMapping inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           encodeBuffer.encodeValue((unsigned int) inputMessage[4], 8);
           encodeBuffer.encodeValue((unsigned int) inputMessage[5], 8);
 
@@ -1361,6 +1541,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_GetProperty:
         {
+          #ifdef WARNING
+          if (inputLength < 24)
+            *logofs << "handleRead: X_GetProperty inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           MessageStore *messageStore = clientStore_ ->
                                getRequestStore(X_GetProperty);
 
@@ -1378,7 +1563,7 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
             break;
           }
 
-          encodeBuffer.encodeBoolValue((unsigned int) inputMessage[1]);
+          encodeBuffer.encodeBoolValue((unsigned int) inputDataByte);
           encodeBuffer.encodeXidValue(GetULONG(inputMessage + 4, bigEndian_),
                              clientCache_ -> windowCache);
           unsigned int property = GetULONG(inputMessage + 8, bigEndian_);
@@ -1394,6 +1579,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_GetSelectionOwner:
         {
+          #ifdef WARNING
+          if (inputLength < 8)
+            *logofs << "handleRead: X_GetSelectionOwner inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           encodeBuffer.encodeCachedValue(GetULONG(inputMessage + 4, bigEndian_), 29,
                              clientCache_ -> getSelectionOwnerSelectionCache, 9);
 
@@ -1404,7 +1594,12 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_GrabButton:
         {
-          encodeBuffer.encodeBoolValue((unsigned int) inputMessage[1]);
+          #ifdef WARNING
+          if (inputLength < 24)
+            *logofs << "handleRead: X_GrabButton inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
+          encodeBuffer.encodeBoolValue((unsigned int) inputDataByte);
           encodeBuffer.encodeXidValue(GetULONG(inputMessage + 4, bigEndian_),
                              clientCache_ -> windowCache);
           encodeBuffer.encodeCachedValue(GetUINT(inputMessage + 8, bigEndian_), 16,
@@ -1423,7 +1618,12 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_GrabPointer:
         {
-          encodeBuffer.encodeBoolValue((unsigned int) inputMessage[1]);
+          #ifdef WARNING
+          if (inputLength < 24)
+            *logofs << "handleRead: X_GrabPointer inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
+          encodeBuffer.encodeBoolValue((unsigned int) inputDataByte);
           encodeBuffer.encodeXidValue(GetULONG(inputMessage + 4, bigEndian_),
                              clientCache_ -> windowCache);
           encodeBuffer.encodeCachedValue(GetUINT(inputMessage + 8, bigEndian_), 16,
@@ -1448,7 +1648,12 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_GrabKeyboard:
         {
-          encodeBuffer.encodeBoolValue((unsigned int) inputMessage[1]);
+          #ifdef WARNING
+          if (inputLength < 12)
+            *logofs << "handleRead: X_GrabKeyboard inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
+          encodeBuffer.encodeBoolValue((unsigned int) inputDataByte);
           encodeBuffer.encodeXidValue(GetULONG(inputMessage + 4, bigEndian_),
                              clientCache_ -> windowCache);
           unsigned int timestamp = GetULONG(inputMessage + 8, bigEndian_);
@@ -1471,6 +1676,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_PolyText8:
         {
+          #ifdef WARNING
+          if (inputLength < 16)
+            *logofs << "handleRead: X_PolyText8 inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           #ifdef TARGETS
 
           unsigned int t_id = GetULONG(inputMessage + 4, bigEndian_);
@@ -1555,6 +1765,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_PolyText16:
         {
+          #ifdef WARNING
+          if (inputLength < 16)
+            *logofs << "handleRead: X_PolyText16 inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           #ifdef TARGETS
 
           unsigned int t_id = GetULONG(inputMessage + 4, bigEndian_);
@@ -1639,6 +1854,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_ImageText8:
         {
+          #ifdef WARNING
+          if (inputLength < 16 + (unsigned int)inputDataByte)
+            *logofs << "handleRead: X_ImageText8 inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           #ifdef TARGETS
 
           unsigned int t_id = GetULONG(inputMessage + 4, bigEndian_);
@@ -1673,7 +1893,7 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
             break;
           }
 
-          unsigned int textLength = (unsigned int) inputMessage[1];
+          unsigned int textLength = (unsigned int) inputDataByte;
           encodeBuffer.encodeCachedValue(textLength, 8,
                              clientCache_ -> imageTextLengthCache, 4);
           encodeBuffer.encodeXidValue(GetULONG(inputMessage + 4,
@@ -1706,6 +1926,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_ImageText16:
         {
+          #ifdef WARNING
+          if (inputLength < 16 + (unsigned int)inputDataByte)
+            *logofs << "handleRead: X_ImageText16 inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           #ifdef TARGETS
 
           unsigned int t_id = GetULONG(inputMessage + 4, bigEndian_);
@@ -1740,7 +1965,7 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
             break;
           }
 
-          unsigned int textLength = (unsigned int) inputMessage[1];
+          unsigned int textLength = (unsigned int) inputDataByte;
           encodeBuffer.encodeCachedValue(textLength, 8,
                              clientCache_ -> imageTextLengthCache, 4);
           encodeBuffer.encodeXidValue(GetULONG(inputMessage + 4,
@@ -1773,6 +1998,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_InternAtom:
         {
+          #ifdef WARNING
+          if (inputLength < 8)
+            *logofs << "handleRead: X_InternAtom inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           MessageStore *messageStore = clientStore_ ->
                                getRequestStore(X_InternAtom);
 
@@ -1796,8 +2026,18 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
           }
 
           unsigned int nameLength = GetUINT(inputMessage + 4, bigEndian_);
+          unsigned int maxLength = inputLength - 8;
+          if (nameLength > maxLength)
+          {
+            #ifdef WARNING
+            *logofs << "handleRead X_InternAtom bogus nameLength=" << nameLength
+                    << " set to " << maxLength
+                    << ".\n" << logofs_flush;
+            #endif
+            nameLength = maxLength;
+          }
           encodeBuffer.encodeValue(nameLength, 16, 6);
-          encodeBuffer.encodeBoolValue((unsigned int) inputMessage[1]);
+          encodeBuffer.encodeBoolValue((unsigned int) inputDataByte);
           const unsigned char *nextSrc = inputMessage + 8;
 
           if (control -> isProtoStep7() == 1)
@@ -1827,7 +2067,22 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_ListFonts:
         {
+          #ifdef WARNING
+          if (inputLength < 8)
+            *logofs << "handleRead: X_ListFonts inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           unsigned int textLength = GetUINT(inputMessage + 6, bigEndian_);
+          unsigned int maxLength = inputLength - 8;
+          if (textLength > maxLength)
+          {
+            #ifdef WARNING
+            *logofs << "handleRead X_ListFonts bogus textLength=" << textLength
+                    << " set to " << maxLength
+                    << ".\n" << logofs_flush;
+            #endif
+            textLength = maxLength;
+          }
           encodeBuffer.encodeValue(textLength, 16, 6);
           encodeBuffer.encodeValue(GetUINT(inputMessage + 4, bigEndian_), 16, 6);
           const unsigned char* nextSrc = inputMessage + 8;
@@ -1853,7 +2108,22 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
       case X_LookupColor:
       case X_AllocNamedColor:
         {
+          #ifdef WARNING
+          if (inputLength < 12)
+            *logofs << "handleRead: X_AllocNamedColor inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           unsigned int textLength = GetUINT(inputMessage + 8, bigEndian_);
+          unsigned int maxLength = inputLength - 12;
+          if (textLength > maxLength)
+          {
+            #ifdef WARNING
+            *logofs << "handleRead X_AllocNamedColor bogus textLength=" << textLength
+                    << " set to " << maxLength
+                    << ".\n" << logofs_flush;
+            #endif
+            textLength = maxLength;
+          }
           encodeBuffer.encodeValue(textLength, 16, 6);
           encodeBuffer.encodeCachedValue(GetULONG(inputMessage + 4, bigEndian_),
                                          29, clientCache_ -> colormapCache);
@@ -1886,6 +2156,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
       case X_QueryPointer:
       case X_QueryTree:
         {
+          #ifdef WARNING
+          if (inputLength < 8)
+            *logofs << "handleRead: X_MapWindow...X_QueryTree inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           #ifdef TARGETS
 
           if (inputOpcode == X_DestroyWindow)
@@ -1923,7 +2198,22 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_OpenFont:
         {
+          #ifdef WARNING
+          if (inputLength < 12)
+            *logofs << "handleRead: X_OpenFont inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           unsigned int nameLength = GetUINT(inputMessage + 8, bigEndian_);
+          unsigned int maxLength = inputLength - 12;
+          if (nameLength > maxLength)
+          {
+            #ifdef WARNING
+            *logofs << "handleRead X_InternAtom bogus nameLength=" << nameLength
+                    << " set to " << maxLength
+                    << ".\n" << logofs_flush;
+            #endif
+            nameLength = maxLength;
+          }
           encodeBuffer.encodeValue(nameLength, 16, 7);
           unsigned int font = GetULONG(inputMessage + 4, bigEndian_);
           encodeBuffer.encodeValue(font - clientCache_ -> lastFont, 29, 5);
@@ -1947,6 +2237,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_PolyFillRectangle:
         {
+          #ifdef WARNING
+          if (inputLength < 12)
+            *logofs << "handleRead: X_PolyFillRectangle inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           #ifdef TARGETS
 
           unsigned int t_id = GetULONG(inputMessage + 4, bigEndian_);
@@ -2034,6 +2329,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_PolyFillArc:
         {
+          #ifdef WARNING
+          if (inputLength < 12)
+            *logofs << "handleRead: X_PolyFillArc inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           #ifdef TARGETS
 
           unsigned int t_id = GetULONG(inputMessage + 4, bigEndian_);
@@ -2135,6 +2435,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_PolyArc:
         {
+          #ifdef WARNING
+          if (inputLength < 12)
+            *logofs << "handleRead: X_PolyArc inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           #ifdef TARGETS
 
           unsigned int t_id = GetULONG(inputMessage + 4, bigEndian_);
@@ -2236,6 +2541,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_PolyPoint:
         {
+          #ifdef WARNING
+          if (inputLength < 12)
+            *logofs << "handleRead: X_PolyPoint inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           #ifdef TARGETS
 
           unsigned int t_id = GetULONG(inputMessage + 4, bigEndian_);
@@ -2269,8 +2579,8 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
             break;
           }
 
-          encodeBuffer.encodeValue(GetUINT(inputMessage + 2, bigEndian_) - 3, 16, 4);
-          encodeBuffer.encodeBoolValue((unsigned int) inputMessage[1]);
+          encodeBuffer.encodeValue(inputDataSize - 2, 32, 4);
+          encodeBuffer.encodeBoolValue((unsigned int) inputDataByte);
           encodeBuffer.encodeXidValue(GetULONG(inputMessage + 4, bigEndian_),
                              clientCache_ -> drawableCache);
           encodeBuffer.encodeXidValue(GetULONG(inputMessage + 8, bigEndian_),
@@ -2303,6 +2613,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_PolyLine:
         {
+          #ifdef WARNING
+          if (inputLength < 12)
+            *logofs << "handleRead: X_PolyLine inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           #ifdef TARGETS
 
           unsigned int t_id = GetULONG(inputMessage + 4, bigEndian_);
@@ -2336,8 +2651,8 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
             break;
           }
 
-          encodeBuffer.encodeValue(GetUINT(inputMessage + 2, bigEndian_) - 3, 16, 4);
-          encodeBuffer.encodeBoolValue((unsigned int) inputMessage[1]);
+          encodeBuffer.encodeValue(inputDataSize - 2, 32, 4);
+          encodeBuffer.encodeBoolValue((unsigned int) inputDataByte);
           encodeBuffer.encodeXidValue(GetULONG(inputMessage + 4,
                              bigEndian_), clientCache_ -> drawableCache);
           encodeBuffer.encodeXidValue(GetULONG(inputMessage + 8,
@@ -2370,8 +2685,12 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_PolyRectangle:
         {
-          encodeBuffer.encodeValue((GetUINT(inputMessage + 2,
-                                            bigEndian_) - 3) >> 1, 16, 3);
+          #ifdef WARNING
+          if (inputLength < 12)
+            *logofs << "handleRead: X_PolyRectangle inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
+          encodeBuffer.encodeValue((inputDataSize - 2) >> 1, 32, 3);
           encodeBuffer.encodeXidValue(GetULONG(inputMessage + 4,
                              bigEndian_), clientCache_ -> drawableCache);
           encodeBuffer.encodeXidValue(GetULONG(inputMessage + 8,
@@ -2391,6 +2710,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_PolySegment:
         {
+          #ifdef WARNING
+          if (inputLength < 12)
+            *logofs << "handleRead: X_PolySegment inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           #ifdef TARGETS
 
           unsigned int t_id = GetULONG(inputMessage + 4, bigEndian_);
@@ -2424,8 +2748,7 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
             break;
           }
 
-          encodeBuffer.encodeValue((GetUINT(inputMessage + 2,
-                                            bigEndian_) - 3) >> 1, 16, 4);
+          encodeBuffer.encodeValue((inputDataSize - 2) >> 1, 32, 4);
           encodeBuffer.encodeXidValue(GetULONG(inputMessage + 4,
                              bigEndian_), clientCache_ -> drawableCache);
           encodeBuffer.encodeXidValue(GetULONG(inputMessage + 8,
@@ -2491,6 +2814,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_PutImage:
         {
+          #ifdef WARNING
+          if (inputLength < 8)
+            *logofs << "handleRead: X_PutImage inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           #ifdef TARGETS
 
           unsigned int t_id = GetULONG(inputMessage + 4, bigEndian_);
@@ -2522,7 +2850,12 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_QueryBestSize:
         {
-          encodeBuffer.encodeValue((unsigned int)inputMessage[1], 2);
+          #ifdef WARNING
+          if (inputLength < 12)
+            *logofs << "handleRead: X_QueryBestSize inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
+          encodeBuffer.encodeValue((unsigned int)inputDataByte, 2);
           encodeBuffer.encodeXidValue(GetULONG(inputMessage + 4,
                              bigEndian_), clientCache_ -> drawableCache);
           encodeBuffer.encodeValue(GetUINT(inputMessage + 8, bigEndian_), 16, 8);
@@ -2535,10 +2868,15 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_QueryColors:
         {
+          #ifdef WARNING
+          if (inputLength < 8)
+            *logofs << "handleRead: X_QueryColors inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           // Differential encoding.
           encodeBuffer.encodeBoolValue(1);
 
-          unsigned int numColors = ((inputLength - 8) >> 2);
+          unsigned int numColors = (inputDataSize - 1);
           encodeBuffer.encodeValue(numColors, 16, 5);
           encodeBuffer.encodeCachedValue(GetULONG(inputMessage + 4, bigEndian_), 29,
                                          clientCache_ -> colormapCache);
@@ -2567,15 +2905,20 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_QueryExtension:
         {
+          #ifdef WARNING
+          if (inputLength < 8)
+            *logofs << "handleRead: X_QueryExtension inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           #ifdef TEST
 
           char data[256];
 
           int length = GetUINT(inputMessage + 4, bigEndian_);
 
-          if (length > 256)
+          if (length > 255)
           {
-            length = 256;
+            length = 255;
           }
 
           strncpy(data, (char *) inputMessage + 8, length);
@@ -2588,6 +2931,16 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
           #endif
 
           unsigned int nameLength = GetUINT(inputMessage + 4, bigEndian_);
+          unsigned int maxLength = inputLength - 8;
+          if (nameLength > maxLength)
+          {
+            #ifdef WARNING
+            *logofs << "handleRead X_QueryExtension bogus nameLength=" << nameLength
+                    << " set to " << maxLength
+                    << ".\n" << logofs_flush;
+            #endif
+            nameLength = maxLength;
+          }
           encodeBuffer.encodeValue(nameLength, 16, 6);
           const unsigned char *nextSrc = inputMessage + 8;
 
@@ -2614,6 +2967,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_QueryFont:
         {
+          #ifdef WARNING
+          if (inputLength < 8)
+            *logofs << "handleRead: X_QueryFont inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           unsigned int font = GetULONG(inputMessage + 4, bigEndian_);
           encodeBuffer.encodeValue(font - clientCache_ -> lastFont, 29, 5);
           clientCache_ -> lastFont = font;
@@ -2625,6 +2983,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_SetClipRectangles:
         {
+          #ifdef WARNING
+          if (inputLength < 12)
+            *logofs << "handleRead: X_SetClipRectangles inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           MessageStore *messageStore = clientStore_ ->
                                getRequestStore(X_SetClipRectangles);
 
@@ -2636,7 +2999,7 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
             break;
           }
 
-          unsigned int numRectangles = ((inputLength - 12) >> 3);
+          unsigned int numRectangles = ((inputDataSize - 2) >> 1);
 
           if (control -> isProtoStep9() == 1)
           {
@@ -2647,7 +3010,7 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
             encodeBuffer.encodeValue(numRectangles, 13, 4);
           }
 
-          encodeBuffer.encodeValue((unsigned int) inputMessage[1], 2);
+          encodeBuffer.encodeValue((unsigned int) inputDataByte, 2);
           encodeBuffer.encodeXidValue(GetULONG(inputMessage + 4, bigEndian_),
                              clientCache_ -> gcCache);
           encodeBuffer.encodeCachedValue(GetUINT(inputMessage + 8, bigEndian_), 16,
@@ -2668,7 +3031,22 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_SetDashes:
         {
+          #ifdef WARNING
+          if (inputLength < 12)
+            *logofs << "handleRead: X_SetDashes inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           unsigned int numDashes = GetUINT(inputMessage + 10, bigEndian_);
+          unsigned int maxLength = inputLength - 12;
+          if (numDashes > maxLength)
+          {
+            #ifdef WARNING
+            *logofs << "handleRead X_SetDashes bogus numDashes=" << numDashes
+                    << " set to " << maxLength
+                    << ".\n" << logofs_flush;
+            #endif
+            numDashes = maxLength;
+          }
           encodeBuffer.encodeCachedValue(numDashes, 16,
                              clientCache_ -> setDashesLengthCache, 5);
           encodeBuffer.encodeXidValue(GetULONG(inputMessage + 4, bigEndian_),
@@ -2683,6 +3061,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_SetSelectionOwner:
         {
+          #ifdef WARNING
+          if (inputLength < 16)
+            *logofs << "handleRead: X_SetSelectionOwner inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           encodeBuffer.encodeCachedValue(GetULONG(inputMessage + 4, bigEndian_), 29,
                                     clientCache_ -> setSelectionOwnerCache, 9);
           encodeBuffer.encodeCachedValue(GetULONG(inputMessage + 8, bigEndian_), 29,
@@ -2693,6 +3076,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_TranslateCoords:
         {
+          #ifdef WARNING
+          if (inputLength < 16)
+            *logofs << "handleRead: X_TranslateCoords inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           #ifdef TARGETS
 
           unsigned int t_id = GetULONG(inputMessage + 4, bigEndian_);
@@ -2764,6 +3152,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
         break;
       case X_GetImage:
         {
+          #ifdef WARNING
+          if (inputLength < 20)
+            *logofs << "handleRead: X_GetImage inputLength=" << inputLength
+                    << ".\n" << logofs_flush;
+          #endif
           #ifdef TARGETS
 
           unsigned int t_id = GetULONG(inputMessage + 4, bigEndian_);
@@ -2802,7 +3195,7 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
           }
 
           // Format.
-          encodeBuffer.encodeValue((unsigned int) inputMessage[1], 2);
+          encodeBuffer.encodeValue((unsigned int) inputDataByte, 2);
           // Drawable.
           encodeBuffer.encodeXidValue(GetULONG(inputMessage + 4,
                              bigEndian_), clientCache_ -> drawableCache);
@@ -2869,6 +3262,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
           }
           else if (inputOpcode == opcodeStore_ -> putPackedImage)
           {
+            #ifdef WARNING
+            if (inputLength < 24)
+              *logofs << "handleRead: putPackedImage inputLength=" << inputLength
+                      << ".\n" << logofs_flush;
+            #endif
             #ifdef TARGETS
 
             unsigned int t_id = GetULONG(inputMessage + 4, bigEndian_);
@@ -3004,7 +3402,7 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
                     << ".\n" << logofs_flush;
             #endif
 
-            encodeBuffer.encodeCachedValue(*(inputMessage + 1), 8,
+            encodeBuffer.encodeCachedValue(inputDataByte, 8,
                          clientCache_ -> resourceCache);
           }
           else if (inputOpcode == opcodeStore_ -> freeUnpack)
@@ -3015,7 +3413,7 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
                     << ".\n" << logofs_flush;
             #endif
 
-            encodeBuffer.encodeCachedValue(*(inputMessage + 1), 8,
+            encodeBuffer.encodeCachedValue(inputDataByte, 8,
                          clientCache_ -> resourceCache);
           }
           else if (inputOpcode == opcodeStore_ -> getControlParameters)
@@ -3130,6 +3528,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
             // Enable or disable expose events
             // coming from the real server.
             //
+            #ifdef WARNING
+            if (inputLength < 8)
+              *logofs << "handleRead: setExposeParameters inputLength=" << inputLength
+                      << ".\n" << logofs_flush;
+            #endif
 
             encodeBuffer.encodeBoolValue(*(inputMessage + 4));
             encodeBuffer.encodeBoolValue(*(inputMessage + 5));
@@ -3198,10 +3601,10 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
       {
         if (hit)
         {
-          statistics -> addRenderCachedRequest(*(inputMessage + 1));
+          statistics -> addRenderCachedRequest(inputDataByte);
         }
 
-        statistics -> addRenderRequestBits(*(inputMessage + 1), inputLength << 3, bits);
+        statistics -> addRenderRequestBits(inputDataByte, inputLength << 3, bits);
       }
 
     }  // End if (firstRequest_)... else ...
@@ -4548,10 +4951,10 @@ int ClientChannel::handleWrite(const unsigned char *message, unsigned int length
         //
 
 /*
-FIXME: Recover the sequence number if the proxy
+Fixed as below? - FIXME: Recover the sequence number if the proxy
        is not connected to an agent.
 */
-        if (serverSequence_ > lastSequence_ ||
+        if (SequenceNumber_x_gt_y(serverSequence_, lastSequence_) ||
                 control -> SessionMode != session_proxy)
         {
           #ifdef DEBUG
@@ -4564,7 +4967,7 @@ FIXME: Recover the sequence number if the proxy
           lastSequence_ = serverSequence_;
         }
         #ifdef DEBUG
-        else if (serverSequence_ < lastSequence_)
+        else if (SequenceNumber_x_gt_y(lastSequence_, serverSequence_))
         {
           //
           // Use our last auto-generated sequence.
@@ -5003,6 +5406,12 @@ FIXME: Recover the sequence number if the proxy
           break;
         default:
           {
+            // BEWARE: not only inputOpcode == GenericEvent but also
+            // others not handled above, at least:
+            //   GraphicsExpose    13
+            //   MapRequest        20
+            //   ConfigureRequest  23
+            // and any beyond LASTEvent.
             #ifdef TEST
             *logofs << "handleWrite: Using generic event compression "
                     << "for OPCODE#" << (unsigned int) outputOpcode
@@ -5014,11 +5423,51 @@ FIXME: Recover the sequence number if the proxy
 
             for (unsigned int i = 0; i < 14; i++)
             {
-              decodeBuffer.decodeCachedValue(value, 16,
-                           *serverCache_ -> genericEventIntCache[i]);
+              //decodeBuffer.decodeCachedValue(value, 16,
+              //             *serverCache_ -> genericEventIntCache[i]);
+              if ( ! (decodeBuffer.decodeCachedValue(value, 16,
+                           *serverCache_ -> genericEventIntCache[i])) )
+              {
+                #ifdef WARNING
+                *logofs << "decodeCachedValue failed for GenEvt:"
+                        << " buffer length=" << length
+                        << " i=" << i
+                        << "\n" << logofs_flush;
+                #endif
+                break;
+              }
 
               PutUINT(value, outputMessage + i * 2 + 4, bigEndian_);
             }
+            // Handle "X Generic Event Extension"
+            // Extra data is not cached...
+            if (outputOpcode == GenericEvent && *(outputMessage+1) != 0 && outputLength == 32)
+            {
+              unsigned int extraOutputLength = (GetULONG(outputMessage + 4, bigEndian_) << 2);
+              if (extraOutputLength > 0 && extraOutputLength < 100*1024*1024)
+              {
+                // Extend buffer for the extra data
+                outputMessage = writeBuffer_.addMessage(extraOutputLength);
+                // Decode data and write into buffer at new position
+                for (unsigned int i = 0; i < (extraOutputLength>>1); i++)
+                {
+                  //decodeBuffer.decodeValue(value, 16);
+                  if ( ! (decodeBuffer.decodeValue(value, 16)) )
+                  {
+                    #ifdef WARNING
+                    *logofs << "decodeValue failed for GenEvt:"
+                            << " extraOutputLength=" << extraOutputLength
+                            << " buffer length=" << length
+                            << " i=" << i
+                            << "\n" << logofs_flush;
+                    #endif
+                    break;
+                  }
+                  PutUINT(value, outputMessage + i * 2, bigEndian_);
+                }
+              }
+            }
+
           }
         } // End of switch (outputOpcode)...
 
@@ -6892,7 +7341,7 @@ int ClientChannel::handleNotify(T_notification_type type, T_sequence_mode mode,
   }
   else
   {
-    if (serverSequence_ > lastSequence_)
+    if (SequenceNumber_x_gt_y(serverSequence_, lastSequence_))
     {
       #ifdef DEBUG
       *logofs << "handleNotify: Updating last event's sequence "
@@ -6904,7 +7353,7 @@ int ClientChannel::handleNotify(T_notification_type type, T_sequence_mode mode,
       lastSequence_ = serverSequence_;
     }
     #ifdef DEBUG
-    else if (serverSequence_ < lastSequence_)
+    else if (SequenceNumber_x_gt_y(lastSequence_, serverSequence_))
     {
       //
       // Use our last auto-generated sequence.

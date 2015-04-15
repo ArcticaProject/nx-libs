@@ -78,34 +78,45 @@ int DecodeBuffer::decodeValue(unsigned int &value, unsigned int numBits,
       {
         if (!endOkay)
         {
-          #ifdef PANIC
-          *logofs << "DecodeBuffer: PANIC! Assertion failed. Error [A] "
-                  << "in decodeValue() nextSrc_ = " << (nextSrc_ - buffer_)
-                  << " end_ = " << (end_ - buffer_) << ".\n"
-                  << logofs_flush;
+          #ifdef WARNING
+          *logofs << "DecodeBuffer: Error [A] in decodeValue(), returning 0:"
+                  << " nextSrc_ = " << (nextSrc_ - buffer_)
+                  << " end_ = " << (end_ - buffer_)
+                  << ".\n" << logofs_flush;
           #endif
-
-          //
-          // Label "context" is just used to identify
-          // the routine which detected the problem in
-          // present source file.
-          //
-
-          cerr << "Error" << ": Failure decoding data in context [A].\n";
-
-          HandleAbort();
+          value = 0;
+          return 0;
+          //#ifdef PANIC
+          //*logofs << "DecodeBuffer: PANIC! Assertion failed. Error [A] "
+          //        << "in decodeValue() nextSrc_ = " << (nextSrc_ - buffer_)
+          //        << " end_ = " << (end_ - buffer_) << ".\n"
+          //        << logofs_flush;
+          //#endif
+          ////
+          //// Label "context" is just used to identify
+          //// the routine which detected the problem in
+          //// present source file.
+          ////
+          //cerr << "Error" << ": Failure decoding data in context [A].\n";
+          //HandleAbort();
         }
 
-        #ifdef PANIC
-        *logofs << "DecodeBuffer: PANIC! Assertion failed. Error [B] "
-                << "in decodeValue() nextSrc_ = " << (nextSrc_ - buffer_)
-                << " end_ = " << (end_ - buffer_) << ".\n"
-                << logofs_flush;
+        #ifdef WARNING
+        *logofs << "DecodeBuffer: Error [B] in decodeValue(), returning 0:"
+                << " nextSrc_ = " << (nextSrc_ - buffer_)
+                << " end_ = " << (end_ - buffer_)
+                << ".\n" << logofs_flush;
         #endif
-
-        cerr << "Error" << ": Failure decoding data in context [B].\n";
-
-        HandleAbort();
+        value = 0;
+        return 0;
+        //#ifdef PANIC
+        //*logofs << "DecodeBuffer: PANIC! Assertion failed. Error [B] "
+        //        << "in decodeValue() nextSrc_ = " << (nextSrc_ - buffer_)
+        //        << " end_ = " << (end_ - buffer_) << ".\n"
+        //        << logofs_flush;
+        //#endif
+        //cerr << "Error" << ": Failure decoding data in context [B].\n";
+        //HandleAbort();
       }
 
       lastBit = (nextSrcChar & srcMask_);
@@ -134,28 +145,40 @@ int DecodeBuffer::decodeValue(unsigned int &value, unsigned int numBits,
       {
         if (!endOkay)
         {
-          #ifdef PANIC
-          *logofs << "DecodeBuffer: PANIC! Assertion failed. Error [C] "
-                  << "in decodeValue() nextSrc_ = " << (nextSrc_ - buffer_)
-                  << " end_ = " << (end_ - buffer_) << ".\n"
-                  << logofs_flush;
+          #ifdef WARNING
+          *logofs << "DecodeBuffer: Error [C] in decodeValue(), returning 0:"
+                  << " nextSrc_ = " << (nextSrc_ - buffer_)
+                  << " end_ = " << (end_ - buffer_)
+                  << ".\n" << logofs_flush;
           #endif
-
-          cerr << "Error" << ": Failure decoding data in context [C].\n";
-
-          HandleAbort();
+          value = 0;
+          return 0;
+          //#ifdef PANIC
+          //*logofs << "DecodeBuffer: PANIC! Assertion failed. Error [C] "
+          //        << "in decodeValue() nextSrc_ = " << (nextSrc_ - buffer_)
+          //        << " end_ = " << (end_ - buffer_) << ".\n"
+          //        << logofs_flush;
+          //#endif
+          //cerr << "Error" << ": Failure decoding data in context [C].\n";
+          //HandleAbort();
         }
 
-        #ifdef PANIC
-        *logofs << "DecodeBuffer: PANIC! Assertion failed. Error [D] "
-                << "in decodeValue() nextSrc_ = " << (nextSrc_ - buffer_)
-                << " end_ = " << (end_ - buffer_) << ".\n"
-                << logofs_flush;
+        #ifdef WARNING
+        *logofs << "DecodeBuffer: Error [D] in decodeValue(), returning 0:"
+                << " nextSrc_ = " << (nextSrc_ - buffer_)
+                << " end_ = " << (end_ - buffer_)
+                << ".\n" << logofs_flush;
         #endif
-
-        cerr << "Error" << ": Failure decoding data in context [D].\n";
-
-        HandleAbort();
+        value = 0;
+        return 0;
+        //#ifdef PANIC
+        //*logofs << "DecodeBuffer: PANIC! Assertion failed. Error [D] "
+        //        << "in decodeValue() nextSrc_ = " << (nextSrc_ - buffer_)
+        //        << " end_ = " << (end_ - buffer_) << ".\n"
+        //        << logofs_flush;
+        //#endif
+        //cerr << "Error" << ": Failure decoding data in context [D].\n";
+        //HandleAbort();
       }
 
       unsigned char moreData = (nextSrcChar & srcMask_);
@@ -212,16 +235,24 @@ int DecodeBuffer::decodeCachedValue(unsigned int &value, unsigned int numBits,
 
   if (nextSrc_ >= end_)
   {
-    #ifdef PANIC
-    *logofs << "DecodeBuffer: PANIC! Assertion failed. Error [E] "
-            << "in decodeValue() nextSrc_ = " << (nextSrc_ - buffer_)
-            << " end_ = " << (end_ - buffer_) << ".\n"
-            << logofs_flush;
+    #ifdef WARNING
+    *logofs << "DecodeBuffer: Error [E] in decodeCachedValue(), returning 0:"
+            << " nextSrc_ = " << (nextSrc_ - buffer_)
+            << " end_ = " << (end_ - buffer_)
+            << ".\n" << logofs_flush;
     #endif
-
-    cerr << "Error" << ": Failure decoding data in context [E].\n";
-
-    HandleAbort();
+    // Failed: return value 0
+    value = 0;
+    // Failed: return 0, though our callers do not check that...
+    return 0;
+    //#ifdef PANIC
+    //*logofs << "DecodeBuffer: PANIC! Assertion failed. Error [E] "
+    //        << "in decodeValue() nextSrc_ = " << (nextSrc_ - buffer_)
+    //        << " end_ = " << (end_ - buffer_) << ".\n"
+    //        << logofs_flush;
+    //#endif
+    //cerr << "Error" << ": Failure decoding data in context [E].\n";
+    //HandleAbort();
   }
 
   unsigned int index = 0;
@@ -237,30 +268,33 @@ int DecodeBuffer::decodeCachedValue(unsigned int &value, unsigned int numBits,
       nextSrc_++;
       if (nextSrc_ >= end_)
       {
-        if (!endOkay)
-        {
-          #ifdef PANIC
-          *logofs << "DecodeBuffer: PANIC! Assertion failed. Error [F] "
-                  << "in decodeCachedValue() nextSrc_ = "
-                  << (nextSrc_ - buffer_) << " end_ = "
-                  << (end_ - buffer_) << ".\n" << logofs_flush;
-          #endif
-
-          cerr << "Error" << ": Failure decoding data in context [F].\n";
-
-          HandleAbort();
-        }
-
-        #ifdef PANIC
-        *logofs << "DecodeBuffer: PANIC! Assertion failed. Error [G] "
-                << "in decodeValue() nextSrc_ = " << (nextSrc_ - buffer_)
-                << " end_ = " << (end_ - buffer_) << ".\n"
-                << logofs_flush;
+        #ifdef WARNING
+        *logofs << "DecodeBuffer: Error [G] in decodeCachedValue(), returning 0:"
+                << " nextSrc_ = " << (nextSrc_ - buffer_)
+                << " end_ = " << (end_ - buffer_)
+                << ".\n" << logofs_flush;
         #endif
-
-        cerr << "Error" << ": Failure decoding data in context [G].\n";
-
-        HandleAbort();
+        value = 0;
+        return 0;
+        //if (!endOkay)
+        //{
+        //  #ifdef PANIC
+        //  *logofs << "DecodeBuffer: PANIC! Assertion failed. Error [F] "
+        //          << "in decodeCachedValue() nextSrc_ = "
+        //          << (nextSrc_ - buffer_) << " end_ = "
+        //          << (end_ - buffer_) << ".\n" << logofs_flush;
+        //  #endif
+        //  cerr << "Error" << ": Failure decoding data in context [F].\n";
+        //  HandleAbort();
+        //}
+        //#ifdef PANIC
+        //*logofs << "DecodeBuffer: PANIC! Assertion failed. Error [G] "
+        //        << "in decodeValue() nextSrc_ = " << (nextSrc_ - buffer_)
+        //        << " end_ = " << (end_ - buffer_) << ".\n"
+        //        << logofs_flush;
+        //#endif
+        //cerr << "Error" << ": Failure decoding data in context [G].\n";
+        //HandleAbort();
       }
 
       nextSrcChar = *nextSrc_;
@@ -288,15 +322,20 @@ int DecodeBuffer::decodeCachedValue(unsigned int &value, unsigned int numBits,
         return 1;
       }
 
-      #ifdef PANIC
-      *logofs << "DecodeBuffer: PANIC! Assertion failed. Error [H] "
-              << "in decodeCacheValue() with no value found.\n"
-              << logofs_flush;
+      #ifdef WARNING
+      *logofs << "DecodeBuffer: Error [H] in decodeCachedValue(), returning 0:"
+              << " no value found"
+              << ".\n" << logofs_flush;
       #endif
-
-      cerr << "Error" << ": Failure decoding data in context [H].\n";
-
-      HandleAbort();
+      value = 0;
+      return 0;
+      //#ifdef PANIC
+      //*logofs << "DecodeBuffer: PANIC! Assertion failed. Error [H] "
+      //        << "in decodeCacheValue() with no value found.\n"
+      //        << logofs_flush;
+      //#endif
+      //cerr << "Error" << ": Failure decoding data in context [H].\n";
+      //HandleAbort();
     }
     else
     {
@@ -323,15 +362,20 @@ int DecodeBuffer::decodeCachedValue(unsigned int &value, unsigned int numBits,
           return 1;
         }
 
-        #ifdef PANIC
-        *logofs << "DecodeBuffer: PANIC! Assertion failed. Error [H] "
-                << "in decodeCacheValue() with no value found.\n"
-                << logofs_flush;
+        #ifdef WARNING
+        *logofs << "DecodeBuffer: Error [F] in decodeCachedValue(), returning 0:"
+                << " no value found"
+                << " .\n" << logofs_flush;
         #endif
-
-        cerr << "Error" << ": Failure decoding data in context [H].\n";
-
-        HandleAbort();
+        value = 0;
+        return 0;
+        //#ifdef PANIC
+        //*logofs << "DecodeBuffer: PANIC! Assertion failed. Error [H] "
+        //        << "in decodeCacheValue() with no value found.\n"
+        //        << logofs_flush;
+        //#endif
+        //cerr << "Error" << ": Failure decoding data in context [H].\n";
+        //HandleAbort();
       }
     }
   }
@@ -344,16 +388,22 @@ int DecodeBuffer::decodeCachedValue(unsigned int &value, unsigned int numBits,
 
     if (index > cache.getSize())
     {
-      #ifdef PANIC
-      *logofs << "DecodeBuffer: PANIC! Assertion failed. Error [I] "
-              << "in decodeCachedValue() index = " << index
-              << " cache size = " << cache.getSize() << ".\n"
-              << logofs_flush;
+      #ifdef WARNING
+      *logofs << "DecodeBuffer: Error [I] in decodeCachedValue(), returning 0:"
+              << " index = " << index
+              << " cache size = " << cache.getSize()
+              << ".\n" << logofs_flush;
       #endif
-
-      cerr << "Error" << ": Failure decoding data in context [I].\n";
-
-      HandleAbort();
+      value = 0;
+      return 0;
+      //#ifdef PANIC
+      //*logofs << "DecodeBuffer: PANIC! Assertion failed. Error [I] "
+      //        << "in decodeCachedValue() index = " << index
+      //        << " cache size = " << cache.getSize() << ".\n"
+      //        << logofs_flush;
+      //#endif
+      //cerr << "Error" << ": Failure decoding data in context [I].\n";
+      //HandleAbort();
     }
 
     value = cache.get(index);
@@ -401,16 +451,22 @@ int DecodeBuffer::decodeCachedValue(unsigned char &value, unsigned int numBits,
       {
         if (!endOkay)
         {
-          #ifdef PANIC
-          *logofs << "DecodeBuffer: PANIC! Assertion failed. Error [K] "
-                  << "in decodeCachedValue() nextSrc_ "
-                  << (nextSrc_ - buffer_) << " end_ " << (end_ - buffer_)
+          #ifdef WARNING
+          *logofs << "DecodeBuffer: Error [K] in decodeCachedValue(), returning 0:"
+                  << " nextSrc_ " << (nextSrc_ - buffer_)
+                  << " end_ " << (end_ - buffer_)
                   << ".\n" << logofs_flush;
           #endif
-
-          cerr << "Error" << ": Failure decoding data in context [K].\n";
-
-          HandleAbort();
+          value = 0;
+          return 0;
+          //#ifdef PANIC
+          //*logofs << "DecodeBuffer: PANIC! Assertion failed. Error [K] "
+          //        << "in decodeCachedValue() nextSrc_ "
+          //        << (nextSrc_ - buffer_) << " end_ " << (end_ - buffer_)
+          //        << ".\n" << logofs_flush;
+          //#endif
+          //cerr << "Error" << ": Failure decoding data in context [K].\n";
+          //HandleAbort();
         }
 
         #ifdef TEST
@@ -446,15 +502,20 @@ int DecodeBuffer::decodeCachedValue(unsigned char &value, unsigned int numBits,
     }
     else
     {
-      #ifdef PANIC
-      *logofs << "DecodeBuffer: PANIC! Assertion failed. Error [M] "
-              << "in decodeValue() with index = 2.\n"
-              << logofs_flush;
+      #ifdef WARNING
+      *logofs << "DecodeBuffer: Error [M] in decodeCachedValue(), returning 0:"
+              << "with index = 2"
+              << ".\n" << logofs_flush;
       #endif
-
-      cerr << "Error" << ": Failure decoding data in context [M].\n";
-
-      HandleAbort();
+      value = 0;
+      return 0;
+      //#ifdef PANIC
+      //*logofs << "DecodeBuffer: PANIC! Assertion failed. Error [M] "
+      //        << "in decodeValue() with index = 2.\n"
+      //        << logofs_flush;
+      //#endif
+      //cerr << "Error" << ": Failure decoding data in context [M].\n";
+      //HandleAbort();
     }
   }
   else
@@ -466,16 +527,22 @@ int DecodeBuffer::decodeCachedValue(unsigned char &value, unsigned int numBits,
 
     if (index > cache.getSize())
     {
-      #ifdef PANIC
-      *logofs << "DecodeBuffer: PANIC! Assertion failed. Error [N] "
-              << "in decodeCachedValue() " << "index = " << index
-              << " cache size = " << cache.getSize() << ".\n"
-              << logofs_flush;
+      #ifdef WARNING
+      *logofs << "DecodeBuffer: Error [N] in decodeCachedValue(), returning 0:"
+              << " index = " << index
+              << " cache size = " << cache.getSize()
+              << ".\n" << logofs_flush;
       #endif
-
-      cerr << "Error" << ": Failure decoding data in context [N].\n";
-
-      HandleAbort();
+      value = 0;
+      return 0;
+      //#ifdef PANIC
+      //*logofs << "DecodeBuffer: PANIC! Assertion failed. Error [N] "
+      //        << "in decodeCachedValue() " << "index = " << index
+      //        << " cache size = " << cache.getSize() << ".\n"
+      //        << logofs_flush;
+      //#endif
+      //cerr << "Error" << ": Failure decoding data in context [N].\n";
+      //HandleAbort();
     }
 
     value = cache.get(index);
@@ -538,16 +605,22 @@ const unsigned char *DecodeBuffer::decodeMemory(unsigned int numBytes)
   }
   else if (end_ - nextSrc_ < (int) numBytes)
   {
-    #ifdef PANIC
-    *logofs << "DecodeBuffer: PANIC! Assertion failed. Error [P] "
-            << "in decodeMemory() " << "with length " << numBytes
+    #ifdef WARNING
+    *logofs << "DecodeBuffer: Error [P] in decodeMemory(), returning NULL:"
+            << " with length " << numBytes
             << " and " << (end_ - nextSrc_)
-            << " bytes remaining.\n" << logofs_flush;
+            << " bytes remaining"
+            << ".\n" << logofs_flush;
     #endif
-
-    cerr << "Error" << ": Failure decoding data in context [P].\n";
-
-    HandleAbort();
+    return NULL;
+    //#ifdef PANIC
+    //*logofs << "DecodeBuffer: PANIC! Assertion failed. Error [P] "
+    //        << "in decodeMemory() " << "with length " << numBytes
+    //        << " and " << (end_ - nextSrc_)
+    //        << " bytes remaining.\n" << logofs_flush;
+    //#endif
+    //cerr << "Error" << ": Failure decoding data in context [P].\n";
+    //HandleAbort();
   }
 
   nextSrc_ += numBytes;

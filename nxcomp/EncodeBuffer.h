@@ -33,10 +33,10 @@
 //
 // This should match the maximum size of
 // a single message added to write buffer
-// (see WriteBuffer.h).
+// (see WriteBuffer.h and DecodeBuffer.h).
 //
 
-#define ENCODE_BUFFER_OVERFLOW_SIZE       4194304
+#define ENCODE_BUFFER_OVERFLOW_SIZE       10*1024*1024
 
 //
 // Adjust for the control messages and the

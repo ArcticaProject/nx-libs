@@ -30,7 +30,8 @@
 #include "ActionCacheCompat.h"
 #include "PositionCacheCompat.h"
 
-#define DECODE_BUFFER_OVERFLOW_SIZE        4194304
+// See WriteBuffer.h and EncodeBuffer.h
+#define DECODE_BUFFER_OVERFLOW_SIZE        10*1024*1024
 
 #define DECODE_BUFFER_POSTFIX_SIZE         1
 
