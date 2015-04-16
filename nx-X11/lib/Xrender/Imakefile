@@ -159,7 +159,7 @@ all:: xrender.pc
 
 xrender.pc: xrender.pc.in
 	RemoveFile($@)
-	sh ../Xcursor/config-subst $(SUBSTVARS) < xrender.pc.in > $@
+	sh config-subst $(SUBSTVARS) < xrender.pc.in > $@
 
 InstallNonExecFile(xrender.pc,$(USRLIBDIR)/pkgconfig)
 
