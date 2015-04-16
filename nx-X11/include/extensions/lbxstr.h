@@ -377,13 +377,9 @@ typedef struct {
 typedef struct {
     xCharInfo minBounds; 
 /* XXX do we need to leave this gunk? */
-#ifndef WORD64
     CARD32 walign1 B32;
-#endif
     xCharInfo maxBounds; 
-#ifndef WORD64
     CARD32 walign2 B32;
-#endif
     CARD16 minCharOrByte2 B16, maxCharOrByte2 B16;
     CARD16 defaultChar B16;
     CARD16 nFontProps B16;  /* followed by this many xFontProp structures */

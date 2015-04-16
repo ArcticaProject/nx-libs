@@ -520,17 +520,6 @@ XCOMM $XFree86: xc/config/cf/Imake.cf,v 3.88 2003/12/16 21:30:21 herrb Exp $
 # define MacIIArchitecture
 #endif /* macII */
 
-#ifdef _CRAY
-# define MacroIncludeFile <cray.cf>
-# define MacroFile cray.cf
-# undef cray
-# undef CRAY
-# undef CRAY1
-# undef CRAY2
-# undef YMP
-# define CrayArchitecture
-#endif /* _CRAY */
-
 #ifdef sgi
 # define MacroIncludeFile <sgi.cf>
 # define MacroFile sgi.cf

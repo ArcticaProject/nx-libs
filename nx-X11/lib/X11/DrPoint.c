@@ -43,12 +43,6 @@ XDrawPoint(dpy, d, gc, x, y)
     int x, y; /* INT16 */
 {
     xPoint *point;
-#ifdef MUSTCOPY
-    xPoint pointdata;
-    long len = SIZEOF(xPoint);
-
-    point = &pointdata;
-#endif /* MUSTCOPY */
 
     LockDisplay(dpy);
     FlushGC(dpy, gc);
@@ -66,10 +60,8 @@ XDrawPoint(dpy, d, gc, x, y)
        && ((dpy->bufptr + SIZEOF(xPoint)) <= dpy->bufmax)
        && (((char *)dpy->bufptr - (char *)req) < size) ) {
 	 req->length += SIZEOF(xPoint) >> 2;
-#ifndef MUSTCOPY
          point = (xPoint *) dpy->bufptr;
 	 dpy->bufptr += SIZEOF(xPoint);
-#endif /* not MUSTCOPY */
 	 }
 
     else {
@@ -77,19 +69,12 @@ XDrawPoint(dpy, d, gc, x, y)
 	req->drawable = d;
 	req->gc = gc->gid;
 	req->coordMode = CoordModeOrigin;
-#ifdef MUSTCOPY
-	dpy->bufptr -= SIZEOF(xPoint);
-#else
 	point = (xPoint *) NEXTPTR(req,xPolyPointReq);
-#endif /* MUSTCOPY */
 	}
 
     point->x = x;
     point->y = y;
 
-#ifdef MUSTCOPY
-    Data (dpy, (char *) point, len);
-#endif /* MUSTCOPY */
     }
     UnlockDisplay(dpy);
     SyncHandle();

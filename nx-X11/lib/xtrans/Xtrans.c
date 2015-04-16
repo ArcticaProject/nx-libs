@@ -1265,44 +1265,6 @@ TRANS(MakeAllCLTSServerListeners) (char *port, int *partial, int *count_ret,
  * may be used by it.
  */
 
-#ifdef CRAY
-
-/*
- * Cray UniCOS does not have readv and writev so we emulate
- */
-
-static int TRANS(ReadV) (XtransConnInfo ciptr, struct iovec *iov, int iovcnt)
-
-{
-    struct msghdr hdr;
-
-    hdr.msg_iov = iov;
-    hdr.msg_iovlen = iovcnt;
-    hdr.msg_accrights = 0;
-    hdr.msg_accrightslen = 0;
-    hdr.msg_name = 0;
-    hdr.msg_namelen = 0;
-
-    return (recvmsg (ciptr->fd, &hdr, 0));
-}
-
-static int TRANS(WriteV) (XtransConnInfo ciptr, struct iovec *iov, int iovcnt)
-
-{
-    struct msghdr hdr;
-
-    hdr.msg_iov = iov;
-    hdr.msg_iovlen = iovcnt;
-    hdr.msg_accrights = 0;
-    hdr.msg_accrightslen = 0;
-    hdr.msg_name = 0;
-    hdr.msg_namelen = 0;
-
-    return (sendmsg (ciptr->fd, &hdr, 0));
-}
-
-#endif /* CRAY */
-
 #if (defined(SYSV) && defined(i386) && !defined(__SCO__)) || defined(WIN32) || defined(__sxg__) || defined(__UNIXOS2__)
 
 /*

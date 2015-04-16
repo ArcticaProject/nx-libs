@@ -2359,26 +2359,10 @@ TRANS(SocketINETConnect) (XtransConnInfo ciptr, char *host, char *port)
 		ESET(EPROTOTYPE);
 		return TRANS_CONNECT_FAILED;
 	    }
-	
-#if defined(CRAY) && defined(OLDTCP)
-	    /* Only Cray UNICOS3 and UNICOS4 will define this */
-	    {
-		long t;
-		memcpy ((char *)&t, (char *) hostp->h_addr, sizeof (t));
-		sockname.sin_addr = t;
-	    }
-#else
 	    memcpy ((char *) &sockname.sin_addr, (char *) hostp->h_addr,
 		    sizeof (sockname.sin_addr));
-#endif /* CRAY and OLDTCP */
-
 	} else {
-#if defined(CRAY) && defined(OLDTCP)
-	    /* Only Cray UNICOS3 and UNICOS4 will define this */
-	    sockname.sin_addr = tmpaddr;
-#else
 	    sockname.sin_addr.s_addr = tmpaddr;
-#endif /* CRAY and OLDTCP */
         }
 
 	/*

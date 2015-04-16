@@ -54,13 +54,11 @@ in this Software without prior written authorization from The Open Group.
  * with other packages.
  */
 
-#ifndef CRAY
-# ifdef BUILD_SPEEDO
-#  define XFONT_SPEEDO 1
-# endif
-# ifdef BUILD_TYPE1
-#  define XFONT_TYPE1 1
-# endif
+#ifdef BUILD_SPEEDO
+# define XFONT_SPEEDO 1
+#endif
+#ifdef BUILD_TYPE1
+# define XFONT_TYPE1 1
 #endif
 
 #ifdef BUILD_CID

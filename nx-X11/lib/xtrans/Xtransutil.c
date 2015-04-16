@@ -104,17 +104,8 @@ TRANS(ConvertAddress)(int *familyp, int *addrlenp, Xtransaddr **addrp)
 	 */
 
 	struct sockaddr_in saddr;
-#ifdef CRAY
-#ifdef OLDTCP
-	int len = sizeof(saddr.sin_addr);
-#else
-	int len = SIZEOF_in_addr;
-#endif /* OLDTCP */
-	char *cp = (char *) &saddr.sin_addr;
-#else /* else not CRAY */
 	int len = sizeof(saddr.sin_addr.s_addr);
 	char *cp = (char *) &saddr.sin_addr.s_addr;
-#endif /* CRAY */
 
 	memcpy (&saddr, *addrp, sizeof (struct sockaddr_in));
 
