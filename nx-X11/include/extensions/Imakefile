@@ -42,13 +42,13 @@ XINERAMAHEADERS = Xinerama.h panoramiXext.h panoramiXproto.h
 #if BuildRender || BuildXftLibrary
 RENDERHEADERS = render.h renderproto.h
 #endif
-#if BuildXfixes || BuildXfixesLibrary
+#if BuildXfixes
 XFIXESHEADERS = xfixeswire.h xfixesproto.h
 #endif
-#if BuildDamage || BuildDamageLibrary
+#if BuildDamage
 DAMAGEHEADERS = damagewire.h damageproto.h
 #endif
-#if BuildComposite || BuildCompositeLibrary
+#if BuildComposite
 COMPOSITEHEADERS = composite.h compositeproto.h
 #endif
 #if BuildRandR || BuildRandRLibrary

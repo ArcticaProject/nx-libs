@@ -323,10 +323,6 @@ XORGRELSTRING = XorgManVersionString
 #define BuildXauLib		(BuildLibraries || BuildLibrariesForXServers)
 #endif
 #define UseInstalledXauLib	(defined(UseInstalled) || !BuildXauLib)
-#ifndef BuildXdmcpLib
-#define BuildXdmcpLib		(BuildLibraries || BuildLibrariesForXServers)
-#endif
-#define UseInstalledXdmcpLib	(defined(UseInstalled) || !BuildXdmcpLib)
 #ifndef BuildMITMiscExt
 #define BuildMITMiscExt		YES
 #endif
@@ -625,23 +621,13 @@ XORGRELSTRING = XorgManVersionString
 #ifndef BuildXfixes
 #define BuildXfixes		YES
 #endif
-#ifndef BuildXfixesLibrary
-#define BuildXfixesLibrary	!BuildServersOnly
-#endif
 
 #ifndef BuildDamage
 #define BuildDamage		BuildXfixes
 #endif
-#ifndef BuildDamageLibrary
-#define BuildDamageLibrary	!BuildServersOnly
-#endif
 
 #ifndef BuildComposite
-#define BuildComposite		(BuildXfixes && BuildDamage)
-#endif
-#ifndef BuildCompositeLibrary
-#define BuildCompositeLibrary	!BuildServersOnly && (BuildXfixesLibrary && \
-				BuildDamageLibrary)
+#define BuildComposite         (BuildXfixes && BuildDamage)
 #endif
 
 #ifndef BuildXevie
@@ -2127,78 +2113,6 @@ ProjectUnsharedLibReferences(XONLY,NX_X11,$(XLIBSRC),XBuildLibDir)
 # define ProfileLibXrandr	NO
 #endif
 
-#if BuildXfixesLibrary
-#ifndef SharedLibXfixes
-#define SharedLibXfixes		HasSharedLibraries
-#endif
-#ifndef NormalLibXfixes
-#define NormalLibXfixes		(!SharedLibXfixes || ForceNormalLib)
-#endif
-#ifndef DebugLibXfixes
-#define DebugLibXfixes		NO
-#endif
-#ifndef ProfileLibXfixes
-#define ProfileLibXfixes	NO
-#endif
-#else
-#undef  SharedLibXfixes
-#define SharedLibXfixes		NO
-#undef  NormalLibXfixes
-#define NormalLibXfixes		NO
-#undef  DebugLibXfixes
-#define DebugLibXfixes		NO
-#undef  ProfileLibXfixes
-#define ProfileLibXfixes	NO
-#endif
-
-#if BuildDamageLibrary
-#ifndef SharedLibXdamage
-#define SharedLibXdamage	HasSharedLibraries
-#endif
-#ifndef NormalLibXdamage
-#define NormalLibXdamage	(!SharedLibXdamage || ForceNormalLib)
-#endif
-#ifndef DebugLibXdamage
-#define DebugLibXdamage		NO
-#endif
-#ifndef ProfileLibXdamage
-#define ProfileLibXdamage	NO
-#endif
-#else
-#undef  SharedLibXdamage
-#define SharedLibXdamage	NO
-#undef  NormalLibXdamage
-#define NormalLibXdamage	NO
-#undef  DebugLibXdamage
-#define DebugLibXdamage		NO
-#undef  ProfileLibXdamage
-#define ProfileLibXdamage	NO
-#endif
-
-#if BuildCompositeLibrary
-#ifndef SharedLibXcomposite
-#define SharedLibXcomposite	HasSharedLibraries
-#endif
-#ifndef NormalLibXcomposite
-#define NormalLibXcomposite	(!SharedLibXcomposite || ForceNormalLib)
-#endif
-#ifndef DebugLibXcomposite
-#define DebugLibXcomposite	NO
-#endif
-#ifndef ProfileLibXcomposite
-#define ProfileLibXcomposite	NO
-#endif
-#else
-#undef  SharedLibXcomposite
-#define SharedLibXcomposite	NO
-#undef  NormalLibXcomposite
-#define NormalLibXcomposite	NO
-#undef  DebugLibXcomposite
-#define DebugLibXcomposite	NO
-#undef  ProfileLibXcomposite
-#define ProfileLibXcomposite	NO
-#endif
-
 #if BuildXevieLibrary
 #ifndef SharedLibXevie
 #define SharedLibXevie		HasSharedLibraries
@@ -2593,36 +2507,6 @@ SharedLibReferences(XRANDR,NX_Xrandr,$(XRANDRLIBSRC),SOXRANDRREV,SharedXrandrRev
 ProjectUnsharedLibReferences(XRANDR,NX_Xrandr,$(XRANDRLIBSRC),XBuildLibDir)
 #endif
 
-    XFIXESLIBSRC = $(LIBSRC)/Xfixes
-#if SharedLibXfixes
-#ifndef SharedXfixesRev
-#define SharedXfixesRev 3.0
-#endif
-SharedLibReferences(XFIXES,NX_Xfixes,$(XFIXESLIBSRC),SOXFIXESREV,SharedXfixesRev)
-#else
-ProjectUnsharedLibReferences(XFIXES,NX_Xfixes,$(XFIXESLIBSRC),XBuildLibDir)
-#endif
-
-   XDAMAGELIBSRC = $(LIBSRC)/Xdamage
-#if SharedLibXdamage
-#ifndef SharedXdamageRev
-#define SharedXdamageRev 1.0
-#endif
-SharedLibReferences(XDAMAGE,NX_Xdamage,$(XDAMAGELIBSRC),SOXDAMAGEREV,SharedXdamageRev)
-#else
-ProjectUnsharedLibReferences(XDAMAGE,NX_Xdamage,$(XDAMAGELIBSRC),XBuildLibDir)
-#endif
-
-XCOMPOSITELIBSRC = $(LIBSRC)/Xcomposite
-#if SharedLibXcomposite
-#ifndef SharedXcompositeRev
-#define SharedXcompositeRev 1.0
-#endif
-SharedLibReferences(XCOMPOSITE,NX_Xcomposite,$(XCOMPOSITELIBSRC),SOXCOMPOSITEREV,SharedXcompositeRev)
-#else
-ProjectUnsharedLibReferences(XCOMPOSITE,NX_Xcomposite,$(XCOMPOSITELIBSRC),XBuildLibDir)
-#endif
-
 XEVIELIBSRC = $(LIBSRC)/Xevie
 #if SharedLibXevie
 #ifndef SharedXevieRev
@@ -2698,6 +2582,7 @@ ProjectUnsharedLibReferences(XFONTCACHE,NX_Xfontcache,$(XFONTCACHELIBSRC),XBuild
 #ifndef ProfileLibXau
 #define ProfileLibXau		NO	/* profiled auth library */
 #endif
+      XDMCPLIBSRC = $(LIBSRC)/Xdmcp
          XAUTHSRC = $(LIBSRC)/Xau
 #if SharedLibXau
 #ifndef SharedXauRev
@@ -2709,32 +2594,6 @@ SharedLibReferences(XAUTH,NX_Xau,$(XAUTHSRC),SOXAUTHREV,SharedXauRev)
 ProjectUnsharedLibReferences(XAUTH,NX_Xau,$(XAUTHSRC),XBuildLibDir)
 #else
 ProjectUnsharedLibReferences(XAUTH,NX_Xau,$(XAUTHSRC),$(USRLIBDIR))
-#endif
-#endif
-
-#ifndef SharedLibXdmcp
-#define SharedLibXdmcp		YES
-#endif
-#ifndef NormalLibXdmcp
-#define NormalLibXdmcp (!SharedLibXdmcp | ForceNormalLib)
-#endif
-#ifndef DebugLibXdmcp
-#define DebugLibXdmcp		NO	/* debugged XDMCP library */
-#endif
-#ifndef ProfileLibXdmcp
-#define ProfileLibXdmcp		NO	/* profiled XDMCP library */
-#endif
-      XDMCPLIBSRC = $(LIBSRC)/Xdmcp
-#if SharedLibXdmcp
-#ifndef SharedXdmcpRev
-#define SharedXdmcpRev 6.0
-#endif
-SharedLibReferences(XDMCP,NX_Xdmcp,$(XDMCPLIBSRC),SOXDMCPREV,SharedXdmcpRev)
-#else
-#if !UseInstalledXdmcpLib
-ProjectUnsharedLibReferences(XDMCP,NX_Xdmcp,$(XDMCPLIBSRC),XBuildLibDir)
-#else
-ProjectUnsharedLibReferences(XDMCP,NX_Xdmcp,$(XDMCPLIBSRC),$(USRLIBDIR))
 #endif
 #endif
 
@@ -2993,28 +2852,6 @@ ProjectUnsharedLibReferences(XAW,NX_Xaw,$(AWIDGET6SRC),XBuildLibDir)
 SharedLibReferences(XI,NX_Xi,$(XILIBSRC),SOXINPUTREV,SharedXiRev)
 #else
 ProjectUnsharedLibReferences(XI,NX_Xi,$(XILIBSRC),XBuildLibDir)
-#endif
-
-#ifndef SharedLibXtst
-#define SharedLibXtst HasSharedLibraries
-#endif
-#ifndef NormalLibXtst
-#define NormalLibXtst (!SharedLibXtst | ForceNormalLib)
-#endif
-#ifndef DebugLibXtst
-#define DebugLibXtst		NO	/* debugged Xtst library */
-#endif
-#ifndef ProfileLibXtst
-#define ProfileLibXtst		NO	/* profiled Xtst library */
-#endif
-      XTESTLIBSRC = $(LIBSRC)/Xtst
-#if SharedLibXtst
-#ifndef SharedXtstRev
-#define SharedXtstRev 6.1
-#endif
-SharedLibReferences(XTEST,NX_Xtst,$(XTESTLIBSRC),SOXTESTREV,SharedXtstRev)
-#else
-ProjectUnsharedLibReferences(XTEST,NX_Xtst,$(XTESTLIBSRC),XBuildLibDir)
 #endif
 
 ProjectUnsharedLibReferences(XBSD,NX_Xbsd,$(LIBSRC)/Xbsd,XBuildLibDir)

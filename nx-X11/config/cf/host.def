@@ -126,12 +126,6 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
 #define BuildLibraries			YES
 #endif
 
-#define BuildDamageLibrary              YES
-
-#define BuildXfixesLibrary              YES
-
-#define BuildCompositeLibrary           YES
-
 #define BuildRandRLibrary               YES
 
 #define BuildDocs                       NO

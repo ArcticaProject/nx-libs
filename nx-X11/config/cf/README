@@ -205,12 +205,10 @@ X11.tmpl provides defaults for the following variables:
 	DebugLibX11		build libX11_d.a
 	DebugLibXau		build libXau_d.a
 	DebugLibXaw		build libXaw_d.a
-	DebugLibXdmcp		build libXdmcp_d.a
 	DebugLibXext		build libXext_d.a
 	DebugLibXi		build libXi_d.a
 	DebugLibXmu		build libXmu_d.a
 	DebugLibXt		build libXt_d.a
-	DebugLibXtst		build libXtst_d.a
 	DebugLibXag		build libXag_d.a
 	DebugOldX		build liboldX_d.a
 	DefaultCursorTheme      name of default cursor theme
@@ -261,12 +259,10 @@ X11.tmpl provides defaults for the following variables:
 	NormalLibX11		build libX11.a
 	NormalLibXau		build libXau.a
 	NormalLibXaw		build libXaw.a
-	NormalLibXdmcp		build libXdmcp.a
 	NormalLibXext		build libXext.a
 	NormalLibXi		build libXi.a
 	NormalLibXmu		build libXmu.a
 	NormalLibXt		build libXt.a
-	NormalLibXtst		build libXtst.a
 	NormalLibXag		build libXag.a
 	NormalOldX		build liboldX.a
 	OsNameDefines		If uname(2) unavailable, set to -DOS_NAME=OSName
@@ -277,12 +273,10 @@ X11.tmpl provides defaults for the following variables:
 	ProfileLibX11		build libX11_p.a
 	ProfileLibXau		build libXau_p.a
 	ProfileLibXaw		build libXaw_p.a
-	ProfileLibXdmcp		build libXdmcp_p.a
 	ProfileLibXext		build libXext_p.a
 	ProfileLibXi		build libXi_p.a
 	ProfileLibXmu		build libXmu_p.a
 	ProfileLibXt		build libXt_p.a
-	ProfileLibXtst		build libXtst_p.a
 	ProfileLibXag		build libXag_p.a
 	ProfileOldX		build liboldX_p.a
 	ProjectX		version indicating this is the X Window System
@@ -299,12 +293,10 @@ X11.tmpl provides defaults for the following variables:
 	SharedLibX11		boolean for making sharable libX11.so
 	SharedLibXau		boolean for making sharable libXau.so
 	SharedLibXaw		boolean for making sharable libXaw.so
-	SharedLibXdmcp		boolean for making sharable libXdmcp.so
 	SharedLibXext		boolean for making sharable libXext.so
 	SharedLibXi		boolean for making sharable libXi.so
 	SharedLibXmu		boolean for making sharable libXmu.so
 	SharedLibXt		boolean for making sharable libXt.so
-	SharedLibXtst		boolean for making sharable libXtst.so
 	SharedLibXag		boolean for making sharable libXag.so
 	SharedOldX		boolean for making sharable liboldX.so
 	ShmDefines		MIT-SHM define
@@ -392,8 +384,6 @@ An <os>Lib.tmpl file provides defaults for the following variables:
 	SharedXauRev		version number for libXau.so
 	SharedXawReqs		required libs for libXaw.so
 	SharedXawRev		version number for libXaw.so
-	SharedXdmcpReqs		required libs for libXdmcp.so
-	SharedXdmcpRev		version number for libXdmcp.so
 	SharedXextReqs		required libs for libXext.so
 	SharedXextRev		version number for libXext.so
 	SharedXiReqs		required libs for libXi.so
@@ -402,8 +392,6 @@ An <os>Lib.tmpl file provides defaults for the following variables:
 	SharedXmuRev		version number for libXmu.so
 	SharedXtReqs		required libs for libXt.so
 	SharedXtRev		version number for libXt.so
-	SharedXtstReqs		required libs for libXtst.so
-	SharedXtstRev		version number for libXtst.so
 	SharedXmReqs		required libs for libXm.so
 	SharedXmRev		version number for libXm.so
 	SharedMrmReqs		required libs for libMrm.so

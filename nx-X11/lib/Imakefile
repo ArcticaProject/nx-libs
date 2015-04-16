@@ -130,18 +130,6 @@ RANDRLIBDIR = Xrandr
 XEVIELIBDIR = Xevie
 #endif
 
-#if BuildXfixesLibrary
-XFIXESLIBDIR = Xfixes
-#endif
-
-#if BuildDamageLibrary
-DAMAGELIBDIR = Xdamage
-#endif
-
-#if BuildCompositeLibrary
-COMPOSITELIBDIR = Xcomposite
-#endif
-
 #if BuildXcursorLibrary
 XCURSORLIBDIR = Xcursor
 #endif
@@ -191,10 +179,6 @@ FONTENCSUBDIR = fontenc
 XAULIBDIR = Xau
 #endif
 
-#if BuildXdmcpLib
-XDMCPLIBDIR = Xdmcp
-#endif
-
 #if BuildX11Lib
 X11LIBDIR = X11
 #endif
@@ -205,16 +189,15 @@ XEXTLIBDIR = Xext
 
 #if BuildLibraries
 OLDXLIBDIR = oldX
-XTSTLIBDIR = Xtst
 #endif
 
 
-LINTSUBDIRS = $(XAULIBDIR) $(XDMCPLIBDIR) $(X11LIBDIR) \
+LINTSUBDIRS = $(XAULIBDIR) $(X11LIBDIR) \
              $(OLDXLIBDIR) $(ICELIBDIR) $(SMLIBDIR) $(XEXTLIBDIR) $(XTLIBDIR) \
              $(SSLIBDIR) $(XF86MISCLIBDIR) $(XF86VMLIBDIR) $(XF86DGALIBDIR) \
              $(XF86RUSHLIBDIR) $(XMULIBDIR) $(XMUULIBDIR) $(XPMLIBDIR) \
              $(XAW6LIBDIR) $(XAW7LIBDIR) $(XAWLIBDIR) \
-             $(XINPUTLIBDIR) $(XTSTLIBDIR) $(FSLIBDIR) $(XKBLIBDIR) \
+             $(XINPUTLIBDIR) $(FSLIBDIR) $(XKBLIBDIR) \
              $(XKBUILIBDIR) $(LBXUTILDIR) $(XALIBDIR) $(EXPATBUILDDIR) \
              $(XVLIBDIR) $(GLXLIBDIR) $(GLULIBDIR) $(GLWLIBDIR) \
              $(DPSLIBDIR) $(PSRESLIBDIR) $(DPSTKLIBDIR) $(XINERAMADIR) \
@@ -222,8 +205,8 @@ LINTSUBDIRS = $(XAULIBDIR) $(XDMCPLIBDIR) $(X11LIBDIR) \
              $(FONTCONFIGBUILDDIR) $(XFT1LIBDIR) \
 	     $(XFTLIBDIR) $(XVMCLIBDIR) $(RANDRLIBDIR) $(XTRAPLIBDIR) \
 	     $(XRESLIBDIR) $(APPLELIBDIR) $(DMXLIBDIR) $(WINDOWSLIBDIR) \
-	     $(XEVIELIBDIR) $(XFIXESLIBDIR) $(DAMAGELIBDIR) \
-	     $(XCURSORLIBDIR) $(COMPOSITELIBDIR)
+	     $(XEVIELIBDIR) \
+	     $(XCURSORLIBDIR)
 
 SUBDIRS = $(BERKDIR) xtrans $(LINTSUBDIRS) $(FONTSUBDIR) $(FONTENCSUBDIR) \
           $(FONTCACHELIBDIR)
@@ -232,4 +215,3 @@ MakeSubdirs($(SUBDIRS))
 DependSubdirs($(SUBDIRS))
 MakeLintLibSubdirs($(LINTSUBDIRS))
 MakeLintSubdirs($(LINTSUBDIRS),install.ln,install.ln)
-

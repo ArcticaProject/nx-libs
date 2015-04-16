@@ -547,7 +547,7 @@ libNX_X11.so.6 libnx-x11-6 #MINVER#
  XcmsTekHVCWhiteShiftColors@Base 3.5.0.29
  XcmsUNDEFINEDColorSpace@Base 3.5.0.29
  XcmsVisualOfCCC@Base 3.5.0.29
- XdmcpWrap@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0~build1# XdmcpWrap@Base 3.5.0.29
  XkbAddDeviceLedInfo@Base 3.5.0.29
  XkbAddGeomColor@Base 3.5.0.29
  XkbAddGeomDoodad@Base 3.5.0.29
@@ -956,9 +956,9 @@ libNX_X11.so.6 libnx-x11-6 #MINVER#
  _XcmsTekHVC_prefix@Base 3.5.0.29
  _XcmsUnresolveColor@Base 3.5.0.29
  _Xdebug@Base 3.5.0.29
- _XdmcpAuthDoIt@Base 3.5.0.29
- _XdmcpAuthSetup@Base 3.5.0.29
- _XdmcpWrapperToOddParity@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0~build1# _XdmcpAuthDoIt@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0~build1# _XdmcpAuthSetup@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0~build1# _XdmcpWrapperToOddParity@Base 3.5.0.29
  _Xevent_to_mask@Base 3.5.0.29
  _Xglobal_lock@Base 3.5.0.29
  _Xi18n_lock@Base 3.5.0.29
