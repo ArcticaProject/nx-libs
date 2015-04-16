@@ -1,10 +1,21 @@
-#ifdef NXAGENT_UPGRADE
+/**************************************************************************/
+/*                                                                        */
+/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/*                                                                        */
+/* NXAGENT, NX protocol compression and NX extensions to this software    */
+/* are copyright of NoMachine. Redistribution and use of the present      */
+/* software is allowed according to terms specified in the file LICENSE   */
+/* which comes in the source distribution.                                */
+/*                                                                        */
+/* Check http://www.nomachine.com/licensing.html for applicability.       */
+/*                                                                        */
+/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/*                                                                        */
+/* All rights reserved.                                                   */
+/*                                                                        */
+/**************************************************************************/
 
-#include "X/NXglxext.c"
-
-#else
-
-/* $XFree86: xc/programs/Xserver/GL/glx/glxext.c,v 1.8 2001/08/23 18:25:40 alanh Exp $
+/* $XFree86: xc/programs/Xserver/GL/glx/glxext.c,v 1.9 2003/09/28 20:15:43 alanh Exp $
 ** The contents of this file are subject to the GLX Public License Version 1.0
 ** (the "License"). You may not use this file except in compliance with the
 ** License. You may obtain a copy of the License at Silicon Graphics, Inc.,
@@ -25,6 +36,10 @@
 */
 
 #define NEED_REPLIES
+#ifdef HAVE_DIX_CONFIG_H
+#include <dix-config.h>
+#endif
+
 #include "glxserver.h"
 #include <windowstr.h>
 #include <propertyst.h>
@@ -42,9 +57,11 @@
 #undef  TEST
 #undef  DEBUG
 
-extern __GLXextensionInfo __glDDXExtensionInfo;
+void GlxWrapInitVisuals(miInitVisualsProcPtr *);
+void GlxSetVisualConfigs(int nconfigs, 
+                         __GLXvisualConfig *configs, void **privates);
 
-__GLXextensionInfo *__glXExt = &__glDDXExtensionInfo;
+static __GLXextensionInfo *__glXExt /* = &__glDDXExtensionInfo */;
 
 /*
 ** Forward declarations.
@@ -126,7 +143,7 @@ static int ClientGone(int clientIndex, XID id)
 	for (i=0; i < cl->numCurrentContexts; i++) {
 	    cx = cl->currentContexts[i];
 	    if (cx) {
-		__glXDeassociateContext(cx, cx->glxPriv);
+		__glXDeassociateContext(cx);
 		cx->isCurrent = GL_FALSE;
 		if (!cx->idExists) {
 		    __glXFreeContext(cx);
@@ -186,6 +203,18 @@ GLboolean __glXFreeContext(__GLXcontext *cx)
     return GL_TRUE;
 }
 
+extern RESTYPE __glXSwapBarrierRes;
+
+static int SwapBarrierGone(int screen, XID drawable)
+{
+    if (__glXSwapBarrierFuncs &&
+        __glXSwapBarrierFuncs[screen].bindSwapBarrierFunc != NULL) {
+        __glXSwapBarrierFuncs[screen].bindSwapBarrierFunc(screen, drawable, 0);
+    }
+    FreeResourceByType(drawable, __glXSwapBarrierRes, FALSE);
+    return True;
+}
+
 /************************************************************************/
 
 /*
@@ -231,15 +260,9 @@ void GlxExtensionInit(void)
     ExtensionEntry *extEntry;
     int i;
     
-#ifdef X11R5
-    __glXContextRes = CreateNewResourceType(ContextGone);
-    __glXClientRes = CreateNewResourceType(ClientGone);
-    __glXPixmapRes = CreateNewResourceType(PixmapGone);
-#else
     __glXContextRes = CreateNewResourceType((DeleteType)ContextGone);
     __glXClientRes = CreateNewResourceType((DeleteType)ClientGone);
     __glXPixmapRes = CreateNewResourceType((DeleteType)PixmapGone);
-#endif 
 
     /*
     ** Add extension to server extensions.
@@ -267,6 +290,8 @@ void GlxExtensionInit(void)
     __glXBadLargeRequest = extEntry->errorBase + GLXBadLargeRequest;
     __glXUnsupportedPrivateRequest = extEntry->errorBase +
       			GLXUnsupportedPrivateRequest;
+
+    __glXSwapBarrierRes = CreateNewResourceType((DeleteType)SwapBarrierGone);
 
     /*
     ** Initialize table of client state.  There is never a client 0.
@@ -323,6 +348,8 @@ GlxWrapInitVisuals(miInitVisualsProcPtr *initVisProc)
 {
     saveInitVisualsProc = *initVisProc;
     *initVisProc = GlxInitVisuals;
+    /* HACK: this shouldn't be done here but it's the earliest time */
+    __glXExt = __glXglDDXExtensionInfo();       /* from GLcore */
 }
 
 /************************************************************************/
@@ -355,7 +382,7 @@ __GLXcontext *__glXForceCurrent(__GLXclientState *cl, GLXContextTag tag,
     }
 
     if (!cx->isDirect) {
-	if (cx->glxPriv == NULL) {
+	if (cx->drawPriv == NULL) {
 	    /*
 	    ** The drawable has vanished.  It must be a window, because only
 	    ** windows can be destroyed from under us; GLX pixmaps are
@@ -546,5 +573,3 @@ void __glXNoSuchRenderOpcode(GLbyte *pc)
 {
     return;
 }
-
-#endif /* #ifdef NXAGENT_UPGRADE */

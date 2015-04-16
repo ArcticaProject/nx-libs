@@ -89,13 +89,6 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
  */
 #define NXAgentServer		YES
 
-/*
- * Assume the new build tree.
- *
-#define NXUpgradeAgentServer	NO
- */
-#define NXUpgradeAgentServer	YES
-
 #ifdef NXAgentServer
 #define BuildRenderLibrary	YES
 #define SharedLibFreetype2	YES

@@ -1,9 +1,3 @@
-#ifdef NXAGENT_UPGRADE
-
-#include "X/NXextension.c"
-
-#else
-
 /**************************************************************************/
 /*                                                                        */
 /* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
@@ -21,7 +15,7 @@
 /*                                                                        */
 /**************************************************************************/
 
-/* $XFree86: xc/programs/Xserver/dix/extension.c,v 3.12 2002/02/19 11:09:22 alanh Exp $ */
+/* $XFree86: xc/programs/Xserver/dix/extension.c,v 3.11 2001/12/14 19:59:31 dawes Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -70,10 +64,14 @@ SOFTWARE.
 ******************************************************************/
 /* $Xorg: extension.c,v 1.4 2001/02/09 02:04:40 xorgcvs Exp $ */
 
-#include "X.h"
+#ifdef HAVE_DIX_CONFIG_H
+#include <dix-config.h>
+#endif
+
+#include <X11/X.h>
 #define NEED_EVENTS
 #define NEED_REPLIES
-#include "Xproto.h"
+#include <X11/Xproto.h>
 #include "misc.h"
 #include "dixstruct.h"
 #include "extnsionst.h"
@@ -82,7 +80,7 @@ SOFTWARE.
 #include "../../dix/dispatch.h"
 #ifdef XCSECURITY
 #define _SECURITY_SERVER
-#include "security.h"
+#include <X11/extensions/security.h>
 #endif
 #ifdef LBX
 #include "lbxserve.h"
@@ -181,9 +179,7 @@ AddExtension(char *name, int NumEvents, int NumErrors,
     return(ext);
 }
 
-Bool AddExtensionAlias(alias, ext)
-    char *alias;
-    ExtensionEntry *ext;
+Bool AddExtensionAlias(char *alias, ExtensionEntry *ext)
 {
     char *name;
     char **aliases;
@@ -244,9 +240,7 @@ CheckExtension(const char *extname)
 }
 
 void
-DeclareExtensionSecurity(extname, secure)
-    char *extname;
-    Bool secure;
+DeclareExtensionSecurity(char *extname, Bool secure)
 {
 #ifdef XCSECURITY
     int i = FindExtension(extname, strlen(extname));
@@ -272,15 +266,13 @@ DeclareExtensionSecurity(extname, secure)
 }
 
 unsigned short
-StandardMinorOpcode(client)
-    ClientPtr client;
+StandardMinorOpcode(ClientPtr client)
 {
     return ((xReq *)client->requestBuffer)->data;
 }
 
 unsigned short
-MinorOpcodeOfRequest(client)
-    ClientPtr client;
+MinorOpcodeOfRequest(ClientPtr client)
 {
     unsigned char major;
 
@@ -332,8 +324,7 @@ CloseDownExtensions()
 
 
 int
-ProcQueryExtension(client)
-    ClientPtr client;
+ProcQueryExtension(ClientPtr client)
 {
     xQueryExtensionReply reply;
     int i;
@@ -379,8 +370,7 @@ ProcQueryExtension(client)
 }
 
 int
-ProcListExtensions(client)
-    ClientPtr client;
+ProcListExtensions(ClientPtr client)
 {
     xListExtensionsReply reply;
     char *bufptr, *buffer;
@@ -453,9 +443,7 @@ ProcListExtensions(client)
 
 
 ExtensionLookupProc 
-LookupProc(name, pGC)
-    char *name;
-    GCPtr pGC;
+LookupProc(char *name, GCPtr pGC)
 {
     register int i;
     register ScreenProcEntry *spentry;
@@ -470,19 +458,13 @@ LookupProc(name, pGC)
 }
 
 Bool
-RegisterProc(name, pGC, proc)
-    char *name;
-    GC *pGC;
-    ExtensionLookupProc proc;
+RegisterProc(char *name, GC *pGC, ExtensionLookupProc proc)
 {
     return RegisterScreenProc(name, pGC->pScreen, proc);
 }
 
 Bool
-RegisterScreenProc(name, pScreen, proc)
-    char *name;
-    ScreenPtr pScreen;
-    ExtensionLookupProc proc;
+RegisterScreenProc(char *name, ScreenPtr pScreen, ExtensionLookupProc proc)
 {
     register ScreenProcEntry *spentry;
     register ProcEntryPtr procEntry = (ProcEntryPtr)NULL;
@@ -524,5 +506,3 @@ RegisterScreenProc(name, pScreen, proc)
     }
     return TRUE;
 }
-
-#endif /* #ifdef NXAGENT_UPGRADE */

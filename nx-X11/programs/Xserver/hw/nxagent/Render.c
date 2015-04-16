@@ -101,10 +101,6 @@ int nxagentRenderVersionMinor;
 
 int nxagentPicturePrivateIndex = 0;
 
-#ifndef NXAGENT_UPGRADE
-static int picturePrivateCount = 0;
-#endif
-
 static int nxagentNumFormats = 0;
 
 static XRenderPictFormat nxagentArrayFormats[MAX_FORMATS];
@@ -2065,62 +2061,6 @@ void nxagentTriFan(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
 
   #endif
 }
-
-#ifndef NXAGENT_UPGRADE
-
-/*
-FIXME: In the 3.0.0 port these functions have been moved
-       to Picture.c. We can remove them when the port is
-       is complete.
-*/
-int AllocatePicturePrivateIndex()
-{
-  return picturePrivateCount++;
-}
-
-Bool AllocatePicturePrivate(register ScreenPtr pScreen, int index2, unsigned amount)
-{
-  unsigned oldamount;
-
-  PictureScreenPtr ps = GetPictureScreen(pScreen);
-
-  /*
-   * Round up the size for proper alignment.
-   */
-
-  amount = ((amount + (sizeof(long) - 1)) / sizeof(long)) * sizeof(long);
-
-  if (index2 >= ps -> PicturePrivateLen)
-  {
-    unsigned *nsizes = (unsigned *) xrealloc(ps -> PicturePrivateSizes,
-                           (index2 + 1) * sizeof(unsigned));
-    if (nsizes == 0)
-    {
-      return 0;
-    }
-
-    while (ps -> PicturePrivateLen <= index2)
-    {
-      nsizes[ps -> PicturePrivateLen++] = 0;
-
-      ps -> totalPictureSize += sizeof(DevUnion);
-    }
-
-    ps -> PicturePrivateSizes = nsizes;
-  }
-
-  oldamount = ps -> PicturePrivateSizes[index2];
-
-  if (amount > oldamount)
-  {
-    ps -> PicturePrivateSizes[index2] = amount;
-
-    ps -> totalPictureSize += (amount - oldamount);
-  }
-
-  return 1;
-}
-#endif
 
 void nxagentQueryFormats()
 {

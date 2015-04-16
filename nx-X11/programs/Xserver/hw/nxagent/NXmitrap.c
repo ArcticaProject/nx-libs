@@ -1,13 +1,24 @@
-#ifdef NXAGENT_UPGRADE
-
-#include "X/NXmitrap.c"
-
-#else
+/**************************************************************************/
+/*                                                                        */
+/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/*                                                                        */
+/* NXAGENT, NX protocol compression and NX extensions to this software    */
+/* are copyright of NoMachine. Redistribution and use of the present      */
+/* software is allowed according to terms specified in the file LICENSE   */
+/* which comes in the source distribution.                                */
+/*                                                                        */
+/* Check http://www.nomachine.com/licensing.html for applicability.       */
+/*                                                                        */
+/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/*                                                                        */
+/* All rights reserved.                                                   */
+/*                                                                        */
+/**************************************************************************/
 
 /*
- * $XFree86: xc/programs/Xserver/render/mitrap.c,v 1.9 2002/11/05 23:39:16 keithp Exp $
+ * $XFree86: xc/programs/Xserver/render/mitrap.c,v 1.8 2002/09/03 19:28:28 keithp Exp $
  *
- * Copyright © 2002 Keith Packard, member of The XFree86 Project, Inc.
+ * Copyright Â© 2002 Keith Packard, member of The XFree86 Project, Inc.
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
  * documentation for any purpose is hereby granted without fee, provided that
@@ -28,6 +39,10 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
+#ifdef HAVE_DIX_CONFIG_H
+#include <dix-config.h>
+#endif
+
 #include "scrnintstr.h"
 #include "gcstruct.h"
 #include "pixmapstr.h"
@@ -36,6 +51,12 @@
 #include "mi.h"
 #include "picturestr.h"
 #include "mipict.h"
+
+#ifdef NXAGENT_SERVER
+
+#include "Render.h"
+
+#endif
 
 PicturePtr
 miCreateAlphaPicture (ScreenPtr	    pScreen, 
@@ -142,17 +163,46 @@ miTrapezoids (CARD8	    op,
 {
     ScreenPtr		pScreen = pDst->pDrawable->pScreen;
     PictureScreenPtr    ps = GetPictureScreen(pScreen);
-    PicturePtr		pPicture = 0;
-    BoxRec		bounds;
-    INT16		xDst, yDst;
-    INT16		xRel, yRel;
-    
-    xDst = traps[0].left.p1.x >> 16;
-    yDst = traps[0].left.p1.y >> 16;
-    
-    if (maskFormat)
+
+    /*
+     * Check for solid alpha add
+     */
+    if (op == PictOpAdd && miIsSolidAlpha (pSrc))
     {
-	miTrapezoidBounds (ntrap, traps, &bounds);
+	for (; ntrap; ntrap--, traps++)
+	    (*ps->RasterizeTrapezoid) (pDst, traps, 0, 0);
+    } 
+    else if (maskFormat)
+    {
+	PicturePtr	pPicture;
+	BoxRec		bounds;
+	INT16		xDst, yDst;
+	INT16		xRel, yRel;
+	
+	xDst = traps[0].left.p1.x >> 16;
+	yDst = traps[0].left.p1.y >> 16;
+
+        #ifdef NXAGENT_SERVER
+
+        if (nxagentTrapezoidExtents != NullBox)
+        {
+          memcpy(&bounds, nxagentTrapezoidExtents, sizeof(BoxRec));
+        }
+        else
+        {
+          nxagentTrapezoidExtents = (BoxPtr) xalloc(sizeof(BoxRec));
+
+          miTrapezoidBounds (ntrap, traps, &bounds);
+
+          memcpy(nxagentTrapezoidExtents, &bounds, sizeof(BoxRec));
+        }
+
+        #else
+
+        miTrapezoidBounds (ntrap, traps, &bounds);
+
+        #endif
+
 	if (bounds.y1 >= bounds.y2 || bounds.x1 >= bounds.x2)
 	    return;
 	pPicture = miCreateAlphaPicture (pScreen, pDst, maskFormat,
@@ -160,37 +210,9 @@ miTrapezoids (CARD8	    op,
 					 bounds.y2 - bounds.y1);
 	if (!pPicture)
 	    return;
-    }
-    for (; ntrap; ntrap--, traps++)
-    {
-	if (!xTrapezoidValid(traps))
-	    continue;
-	if (!maskFormat)
-	{
-	    miTrapezoidBounds (1, traps, &bounds);
-	    if (bounds.y1 >= bounds.y2 || bounds.x1 >= bounds.x2)
-		continue;
-	    pPicture = miCreateAlphaPicture (pScreen, pDst, maskFormat,
-					     bounds.x2 - bounds.x1,
-					     bounds.y2 - bounds.y1);
-	    if (!pPicture)
-		continue;
-	}
-	(*ps->RasterizeTrapezoid) (pPicture, traps, 
-				   -bounds.x1, -bounds.y1);
-	if (!maskFormat)
-	{
-	    xRel = bounds.x1 + xSrc - xDst;
-	    yRel = bounds.y1 + ySrc - yDst;
-	    CompositePicture (op, pSrc, pPicture, pDst,
-			      xRel, yRel, 0, 0, bounds.x1, bounds.y1,
-			      bounds.x2 - bounds.x1,
-			      bounds.y2 - bounds.y1);
-	    FreePicture (pPicture, 0);
-	}
-    }
-    if (maskFormat)
-    {
+	for (; ntrap; ntrap--, traps++)
+	    (*ps->RasterizeTrapezoid) (pPicture, traps, 
+				       -bounds.x1, -bounds.y1);
 	xRel = bounds.x1 + xSrc - xDst;
 	yRel = bounds.y1 + ySrc - yDst;
 	CompositePicture (op, pSrc, pPicture, pDst,
@@ -199,6 +221,13 @@ miTrapezoids (CARD8	    op,
 			  bounds.y2 - bounds.y1);
 	FreePicture (pPicture, 0);
     }
+    else
+    {
+	if (pDst->polyEdge == PolyEdgeSharp)
+	    maskFormat = PictureMatchFormat (pScreen, 1, PICT_a1);
+	else
+	    maskFormat = PictureMatchFormat (pScreen, 8, PICT_a8);
+	for (; ntrap; ntrap--, traps++)
+	    miTrapezoids (op, pSrc, pDst, maskFormat, xSrc, ySrc, 1, traps);
+    }
 }
-
-#endif /* NXAGENT_UPGRADE */

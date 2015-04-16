@@ -135,8 +135,6 @@ void OsVendorEndRedirectErrorFFunction();
 static void nxagentGrabServerCallback(CallbackListPtr *callbacks, pointer data,
                                    pointer args);
 
-#ifdef NXAGENT_UPGRADE
-
 void ddxInitGlobals(void)
 {
   /*
@@ -148,8 +146,6 @@ void ddxInitGlobals(void)
   OsVendorStartRedirectErrorFProc = OsVendorStartRedirectErrorFFunction;
   OsVendorEndRedirectErrorFProc   = OsVendorEndRedirectErrorFFunction;
 }
-
-#endif
 
 /*
  * Set if the remote display supports
@@ -476,13 +472,9 @@ void ddxGiveUp()
   AbortDDX();
 }
 
-#ifdef NXAGENT_UPGRADE
-
 void ddxBeforeReset(void)
 {
 }
-
-#endif
 
 void OsVendorInit()
 {

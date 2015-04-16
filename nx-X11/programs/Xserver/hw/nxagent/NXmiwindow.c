@@ -1,10 +1,21 @@
-#ifdef NXAGENT_UPGRADE
+/**************************************************************************/
+/*                                                                        */
+/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/*                                                                        */
+/* NXAGENT, NX protocol compression and NX extensions to this software    */
+/* are copyright of NoMachine. Redistribution and use of the present      */
+/* software is allowed according to terms specified in the file LICENSE   */
+/* which comes in the source distribution.                                */
+/*                                                                        */
+/* Check http://www.nomachine.com/licensing.html for applicability.       */
+/*                                                                        */
+/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/*                                                                        */
+/* All rights reserved.                                                   */
+/*                                                                        */
+/**************************************************************************/
 
-#include "X/NXmiwindow.c"
-
-#else
-
-/* $XFree86: xc/programs/Xserver/mi/miwindow.c,v 1.7 2001/12/14 20:00:28 dawes Exp $ */
+/* $XFree86: xc/programs/Xserver/mi/miwindow.c,v 1.9tsi Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -52,8 +63,12 @@ SOFTWARE.
 
 ******************************************************************/
 /* $Xorg: miwindow.c,v 1.4 2001/02/09 02:05:22 xorgcvs Exp $ */
-#include "X.h"
-#include "miscstruct.h"
+#ifdef HAVE_DIX_CONFIG_H
+#include <dix-config.h>
+#endif
+
+#include <X11/X.h>
+#include "regionstr.h"
 #include "region.h"
 #include "mi.h"
 #include "windowstr.h"
@@ -202,7 +217,7 @@ miCheckSubSaveUnder(
 		{
 		    if (!subInited)
 		    {
-			REGION_INIT(pScreen, &SubRegion, NullBox, 0);
+			REGION_NULL(pScreen, &SubRegion);
 			subInited = TRUE;
 		    }
 		    REGION_COPY(pScreen, &SubRegion, pRegion);
@@ -285,7 +300,7 @@ miChangeSaveUnder(pWin, first)
     numSaveUndersViewable += deltaSaveUndersViewable;
     deltaSaveUndersViewable = 0;
     pScreen = pWin->drawable.pScreen;
-    REGION_INIT(pScreen, &rgn, NullBox, 1);
+    REGION_NULL(pScreen, &rgn);
     res = miCheckSubSaveUnder (pWin->parent,
 			       pWin->saveUnder ? first : pWin->nextSib,
 			       &rgn);
@@ -889,8 +904,14 @@ miSlideAndSizeWindow(pWin, x, y, w, h, pSib)
 
 	    /* and move those bits */
 
-	    if (oldpt.x != x || oldpt.y != y)
+	    if (oldpt.x != x || oldpt.y != y
+#ifdef COMPOSITE
+		|| pWin->redirectDraw
+#endif
+		)
+	    {
 		(*pWin->drawable.pScreen->CopyWindow)(pWin, oldpt, gravitate[g]);
+	    }
 
 	    /* remove any overwritten bits from the remaining useful bits */
 
@@ -1103,7 +1124,6 @@ miChangeBorderWidth(pWin, width)
     register WindowPtr pWin;
     unsigned int width;
 {
-    WindowPtr pParent;
     int oldwidth;
     Bool anyMarked = FALSE;
     register ScreenPtr pScreen;
@@ -1119,7 +1139,6 @@ miChangeBorderWidth(pWin, width)
 	return;
     HadBorder = HasBorder(pWin);
     pScreen = pWin->drawable.pScreen;
-    pParent = pWin->parent;
     if (WasViewable && width < oldwidth)
 	anyMarked = (*pScreen->MarkOverlappedWindows)(pWin, pWin, &pLayerWin);
 
@@ -1201,5 +1220,3 @@ miSegregateChildren(WindowPtr pWin, RegionPtr pReg, int depth)
 	    miSegregateChildren(pChild, pReg, depth);
     }
 }
-
-#endif /* #ifdef NXAGENT_UPGRADE */

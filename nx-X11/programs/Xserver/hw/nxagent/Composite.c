@@ -24,17 +24,7 @@
 #include "Options.h"
 #include "Windows.h"
 
-#undef  NXAGENT_UPGRADE
-
-#ifndef NXAGENT_UPGRADE
-
 #include "NXcomposite.h"
-
-#else
-
-#include "composite.h"
-
-#endif
 
 /*
  * Set here the required log level.
