@@ -59,7 +59,7 @@ all:: xcomposite.pc
 
 xcomposite.pc: xcomposite.pc.in
 	RemoveFile($@)
-	sh ../Xcursor/config-subst $(SUBSTVARS) < xcomposite.pc.in > $@
+	sh ../Xrender/config-subst $(SUBSTVARS) < xcomposite.pc.in > $@
 
 InstallNonExecFile(xcomposite.pc,$(USRLIBDIR)/pkgconfig)
 

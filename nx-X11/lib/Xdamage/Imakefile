@@ -59,7 +59,7 @@ all:: xdamage.pc
 
 xdamage.pc: xdamage.pc.in
 	RemoveFile($@)
-	sh ../Xcursor/config-subst $(SUBSTVARS) < xdamage.pc.in > $@
+	sh ../Xrender/config-subst $(SUBSTVARS) < xdamage.pc.in > $@
 
 InstallNonExecFile(xdamage.pc,$(USRLIBDIR)/pkgconfig)
 
