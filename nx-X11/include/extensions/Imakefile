@@ -6,6 +6,8 @@ XCOMM $Xorg: Imakefile,v 1.3 2000/08/18 04:05:44 coskrey Exp $
 
 XCOMM $XFree86: xc/include/extensions/Imakefile,v 3.55 2003/04/21 12:32:06 sven Exp $
 
+NULL =
+
 #if BuildScreenSaverExt || BuildScreenSaverLibrary
 SCREENSAVERHEADERS = saver.h saverproto.h scrnsaver.h
 #endif
@@ -65,15 +67,27 @@ XRESHEADERS = XRes.h XResproto.h
 XEVIEHEADERS = Xevie.h Xeviestr.h
 #endif
 
-EXTRAHEADERS = $(SCREENSAVERHEADERS) $(XF86MISCHEADERS) $(XF86BIGFONTHEADERS) \
-	       $(XF86VIDMODEHEADERS) $(XF86DGAHEADERS) $(XINERAMAHEADERS) \
-	       $(LBXHEADERS) $(XVHEADERS) $(XVMCHEADERS) $(XF86RUSHHEADERS) \
-	       $(FONTCACHEHEADERS) $(RENDERHEADERS) $(RANDRHEADERS) \
-	       $(XFIXESHEADERS) $(DAMAGEHEADERS) $(COMPOSITEHEADERS) \
-	       $(XEVIEHEADERS) \
-	       $(XTRAPHEADERS) $(XRESHEADERS)
-
-
+EXTRAHEADERS = \
+	$(SCREENSAVERHEADERS) \
+	$(XF86MISCHEADERS) \
+	$(XF86BIGFONTHEADERS) \
+	$(XF86VIDMODEHEADERS) \
+	$(XF86DGAHEADERS) \
+	$(XINERAMAHEADERS) \
+	$(LBXHEADERS) \
+	$(XVHEADERS) \
+	$(XVMCHEADERS) \
+	$(XF86RUSHHEADERS) \
+	$(FONTCACHEHEADERS) \
+	$(RENDERHEADERS) \
+	$(RANDRHEADERS) \
+	$(XFIXESHEADERS) \
+	$(DAMAGEHEADERS) \
+	$(COMPOSITEHEADERS) \
+	$(XEVIEHEADERS) \
+	$(XTRAPHEADERS) \
+	$(XRESHEADERS) \
+	$(NULL)
 
 HEADERS = Xext.h \
 	xcmiscstr.h \
@@ -94,7 +108,8 @@ HEADERS = Xext.h \
 	sync.h syncstr.h \
 	Xcup.h Xcupstr.h \
 	dpms.h dpmsstr.h \
-	XEVI.h XEVIstr.h
+	XEVI.h XEVIstr.h \
+	$(NULL)
 
 all::
 
