@@ -588,23 +588,8 @@ X_BYTE_ORDER = ByteOrder
 #ifndef HasFfs
 #define HasFfs			YES
 #endif
-#ifndef HasZlib
-#define HasZlib			YES
-#endif
-#ifndef OsNeedZlibHeaders
-#define OsNeedZlibHeaders	!HasZlib
-#endif
-#if !HasZlib		/* if OS doesn't have it, we'll build it */
-XCOMM Building your own zlib can be a harmful security risk and is
-XCOMM deprecated; please strongly consider using vendor-supplied packages.
-#undef GzipLibrary	/* GzipLibrary was valid only if HasZlib */
-#endif
 #ifndef GzipLibrary	/* if OS config didn't define it, assume it's -lz */
 #define GzipLibrary -lz
-#endif
-/* If the system has the PNG library - if NO, xcursorgen is not built */
-#ifndef HasLibpng
-#define HasLibpng		NO
 #endif
 #if HasKrbIV
 #ifndef KrbIVIncludes

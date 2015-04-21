@@ -14,11 +14,7 @@ NULL =
 GLXDIR = GL
 #endif
 
-#if BuildDPSLibrary
-DPSDIR = DPS
-#endif
-
-SUBDIRS = extensions $(GLXDIR) $(DPSDIR)
+SUBDIRS = extensions $(GLXDIR)
 
 #ifdef Win32Architecture
 EXTRA_HEADERS = Xw32defs.h Xwinsock.h Xwindows.h

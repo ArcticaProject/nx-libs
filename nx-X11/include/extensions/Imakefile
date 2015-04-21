@@ -8,7 +8,7 @@ XCOMM $XFree86: xc/include/extensions/Imakefile,v 3.55 2003/04/21 12:32:06 sven 
 
 NULL =
 
-#if BuildScreenSaverExt || BuildScreenSaverLibrary
+#if BuildScreenSaverExt
 SCREENSAVERHEADERS = saver.h saverproto.h scrnsaver.h
 #endif
 
@@ -24,11 +24,11 @@ XF86VIDMODEHEADERS = xf86vmode.h xf86vmstr.h
 #if BuildXF86DGA || BuildXF86DGALibrary
 XF86DGAHEADERS = xf86dga.h xf86dgastr.h xf86dga1.h xf86dga1str.h
 #endif
-#if BuildLBX || BuildXextLib
+#if BuildXextLib
 LBXHEADERS = XLbx.h lbxbuf.h lbxbufstr.h lbxdeltastr.h lbximage.h lbxopts.h \
 	     lbxstr.h lbxzlib.h
 #endif
-#if BuildXvExt || BuildXvLibrary
+#if BuildXvExt
 XVHEADERS = Xv.h Xvlib.h Xvproto.h
 XVMCHEADERS = XvMC.h XvMClib.h XvMCproto.h vldXvMC.h
 #endif
@@ -56,14 +56,14 @@ COMPOSITEHEADERS = composite.h compositeproto.h
 #if BuildRandR || BuildRandRLibrary
 RANDRHEADERS = randr.h randrproto.h
 #endif
-#if BuildXTrap || BuildXTrapLibrary
+#if BuildXTrap
 XTRAPHEADERS = xtrapbits.h xtrapddmi.h xtrapdi.h xtrapemacros.h xtraplib.h \
 	xtraplibp.h xtrapproto.h
 #endif
 #if BuildXResExt || BuildXResLibrary
 XRESHEADERS = XRes.h XResproto.h
 #endif
-#if BuildXevie || BuildXevieLibrary
+#if BuildXevie
 XEVIEHEADERS = Xevie.h Xeviestr.h
 #endif
 

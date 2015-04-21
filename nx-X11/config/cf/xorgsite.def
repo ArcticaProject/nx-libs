@@ -51,18 +51,6 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
  */
 
 /*
- * If you only run the X server under xdm the X servers don't need to be
- * installed SetUID, and you may comment out the lines below.  If you run
- * the servers by hand (with xinit or startx), then they do need to be
- * installed SetUID on most platforms.
- *
- * Consult your system administrator before making the X server setuid.
- *
-#define InstallXserverSetUID	NO
- */
-
-
-/*
  * Server configuration parameters.  The defaults are shown here:
  */
 
@@ -111,71 +99,10 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
  */
 
 /*
- * There are three parameters that determine where and how the Matrox HAL
- * library is used:
- *
- *   HaveMatroxHal  -- You have the HALlib.a binary library installed
- *                     in xfree86/drivers/mga/HALlib, and you want it to
- *                     be used.
- *                     Default: NO
- *
- *   BuildMatroxHal -- You have the source for the HALlib library (installed
- *                     in xfree86/drivers/mga/hallib), and want to build and
- *                     use it.
- *                     Default: NO
- *
- *   UseMatroxHal   -- You want to build support for loading/using the HAL
- *                     library into the mga driver.  For module server builds
- *                     you don't need to have the HALlib library to do this.
- *                     but you want to build support for loading it and using
- *                     it into the mga driver module.
- *                     Default: YES for loadable server build
- *                              (HaveMatroxHal || BuildMatroxHal) for static
- */
-
-/*
- * To disable use of the Matrox HAL library, uncomment this:
- *
-#define UseMatroxHal		NO
- */
-
-/*
- * If you have the HALlib.a binary installed in xfree86/drivers/mga/HALlib,
- * uncomment this:
- *
-#define HaveMatroxHal		YES
- */
-
-/*
- * If you have the HALlib source code installed in xfree86/drivers/mga/hallib,
- * uncomment this:
-#define BuildMatroxHal		YES
- */
-
-/*
  * To build only the servers with a cut-down source tree, uncomment
  * this.
  *
 #define BuildServersOnly	YES
- */
-
-/*
- * By default, the sample config files for xinit, xdm and xfs are installed
- * only when there is no pre-existing version installed.  Uncommenting the
- * following lines will force the sample versions to be installed even if
- * it means over-writing existing versions.
- *
-#define InstallXinitConfig	YES
-#define InstallXdmConfig	YES
-#define InstallFSConfig		YES
- */
-
-/*
- * By default the application defaults files are always installed.
- * Uncommenting the the following will prevent exising application
- * defaults files from being over-written.
- *
-#define InstallAppDefFiles	NO
  */
 
 /*
@@ -463,7 +390,7 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
 /*
  * To build static and shared libraries with debugging information, uncomment
  * this. Assumes you have Gcc2.
- * (If you don't have Gcc2, you can use the DebugLib{X11,Xt,Xaw,...} variables
+ * (If you don't have Gcc2, you can use the DebugLib{X11,...} variables
  * to build debugging versions of the libraries separately.)
  *
 #define DebuggableLibraries	YES
@@ -561,41 +488,3 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
  *
 #define X86EMU_LIBPATH /usr/local/lib
  */ 
-
-
-/*
- * Most platforms default to using an already installed Expat library.
- * To use the one included in this release instead, uncomment the following.
- *
-#define HasExpat NO
- */
-
-/* 
- * To use a Expat library already installed outside the default search
- * paths, uncomment the following and set the path as needed.
-#define HasExpat YES
-#define ExpatDir /usr/local
- */
-
-
-/*
- * Most platforms default to using an already installed PNG library.
- * To use the one included in this release instead, uncomment the following.
- *
-#define HasLibpng NO
- */
-
-/* 
- * To use a PNG library already installed outside the default search
- * paths, uncomment the following and set the path as needed.
-#define HasLibpng YES
-#define LibpngDir /usr/local
- */
-
-
-/*
- * Most platforms default to using an already installed xterm program.
- * To use the one included in this release instead, uncomment the following.
- *
-#define BuildXterm YES
- */

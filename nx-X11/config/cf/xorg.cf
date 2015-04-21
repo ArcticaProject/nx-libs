@@ -288,45 +288,6 @@ NX_VERSION_CURRENT_STRING  = nxVersionString
 #endif
 
 /*
- * There are three parameters that determine where and how the Matrox HAL
- * library is used:
- *
- *   HaveMatroxHal  -- You have the HALlib.a binary library installed
- *                     in xfree86/drivers/mga/HALlib, and you want it to
- *                     be used.
- *                     Default: NO
- *
- *   BuildMatroxHal -- You have the source for the HALlib library (installed
- *                     in xfree86/drivers/mga/hallib), and want to build and
- *                     use it.
- *                     Default: NO
- *
- *   UseMatroxHal   -- You want to build support for loading/using the HAL
- *                     library into the mga driver.  For module server builds
- *                     you don't need to have the HALlib library to do this.
- *                     but you want to build support for loading it and using
- *                     it into the mga driver module.
- *                     Default: YES for loadable server build
- *                              (HaveMatroxHal || BuildMatroxHal) for static
- */
-
-#ifndef HaveMatroxHal
-#define HaveMatroxHal NO
-#endif
-
-#ifndef BuildMatroxHal
-#define BuildMatroxHal NO
-#endif
-
-#ifndef UseMatroxHal
-#if DoLoadableServer
-#define UseMatroxHal YES
-#else
-#define UseMatroxHal (HaveMatroxHal || BuildMatroxHal)
-#endif
-#endif
-
-/*
  * Many architectures share common X Server pieces.  List them here.
  */
 #if defined(i386Architecture) || defined(ia64Architecture) || \
@@ -860,16 +821,6 @@ IPLAN2P8_DEFS = -DUSE_IPLAN2P8
 #endif
 
 /*
- * The default is to install the X servers setuid-root on most OSs.
- * It the servers are only started by xdm, they should not be setuid-root.
- */
-#if !defined(i386MachArchitecture) && !defined(OS2Architecture)
-# ifndef InstallXserverSetUID
-#  define InstallXserverSetUID	YES
-# endif
-#endif
-
-/*
  * Build GLX server interface
  *   --- Doesn't work for 1-bit and 4-bit servers
  */
@@ -1102,10 +1053,6 @@ IPLAN2P8_DEFS = -DUSE_IPLAN2P8
 # define BuildXF86RushExt	NO
 #endif
 
-#ifndef BuildDBElib
-# define BuildDBElib	YES
-#endif
-
 #ifndef BuildRECORDlib
 # define BuildRECORDlib	YES
 #endif
@@ -1146,9 +1093,6 @@ IPLAN2P8_DEFS = -DUSE_IPLAN2P8
  * Build the extra extension libs even when not including the extra extensions
  * in the servers
  */
-#ifndef BuildScreenSaverLibrary
-# define BuildScreenSaverLibrary   YES
-#endif
 #ifndef BuildXF86MiscLibrary
 # define BuildXF86MiscLibrary	YES
 #endif
@@ -1157,12 +1101,6 @@ IPLAN2P8_DEFS = -DUSE_IPLAN2P8
 #endif
 #ifndef BuildXF86VidModeLibrary
 # define BuildXF86VidModeLibrary YES
-#endif
-#ifndef BuildXvLibrary
-# define BuildXvLibrary		YES
-#endif
-#ifndef BuildXvMCLibrary
-# define BuildXvMCLibrary	YES
 #endif
 #ifndef BuildGLXLibrary
 # define BuildGLXLibrary	YES
