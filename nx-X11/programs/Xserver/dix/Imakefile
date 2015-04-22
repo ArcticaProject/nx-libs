@@ -24,7 +24,7 @@ OBJS = atom.o colormap.o cursor.o devices.o dispatch.o dixutils.o events.o \
 	main.o property.o resource.o swaprep.o swapreq.o \
 	tables.o window.o initatoms.o dixfonts.o privates.o pixmap.o $(FFS_OBJ)
 
-    INCLUDES = -I../include -I$(XINCLUDESRC) -I$(FONTINCSRC) -I$(EXTINCSRC) \
+    INCLUDES = -I../include -I$(XINCLUDESRC) -I$(EXTINCSRC) \
 	       -I$(SERVERSRC)/Xext -I$(SERVERSRC)/lbx
     LINTLIBS = ../os/llib-los.ln
 

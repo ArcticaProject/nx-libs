@@ -31,8 +31,8 @@ is" without express or implied warranty.
 
 #include "scrnintstr.h"
 #include "dixstruct.h"
-#include "../../../../include/fonts/font.h"
-#include "fontstruct.h"
+#include <X11/fonts/font.h>
+#include <X11/fonts/fontstruct.h>
 #include "misc.h"
 #include "miscstruct.h"
 #include "opaque.h"

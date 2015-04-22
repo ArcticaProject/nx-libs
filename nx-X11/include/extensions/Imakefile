@@ -39,7 +39,7 @@ FONTCACHEHEADERS = fontcache.h fontcacheP.h fontcachstr.h
 #if BuildXinerama || BuildXineramaLibrary
 XINERAMAHEADERS = Xinerama.h panoramiXext.h panoramiXproto.h
 #endif
-#if BuildRender || BuildXftLibrary
+#if BuildRender
 RENDERHEADERS = render.h renderproto.h
 #endif
 #if BuildXfixes || BuildXfixesLibrary

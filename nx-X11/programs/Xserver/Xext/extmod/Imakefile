@@ -98,7 +98,7 @@ LinkSourceFile(cup.c,..)
 
 XF86INCLUDES = -I$(XF86COMSRC)
     INCLUDES = -I.. -I../../include -I$(XINCLUDESRC) -I$(EXTINCSRC) \
-	       $(XF86INCLUDES) $(FONTCACHEINCLUDES) -I$(FONTINCSRC)
+	       $(XF86INCLUDES) $(FONTCACHEINCLUDES)
     LINTLIBS = ../../dix/llib-ldix.ln ../../os/llib-los.ln
 
 LinkSourceFile(shape.c,..)

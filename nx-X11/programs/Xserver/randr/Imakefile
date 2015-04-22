@@ -21,9 +21,9 @@ XCOMM $XFree86: xc/programs/Xserver/randr/Imakefile,v 1.1 2001/05/23 03:29:44 ke
 
        OBJS =	mirandr.o randr.o rrcrtc.o rrdispatch.o rrinfo.o rrmode.o rroutput.o rrpointer.o rrproperty.o rrscreen.o rrsdispatch.o rrxinerama.o
 
-   INCLUDES = -I../include -I../mi -I../../../include/fonts \
+   INCLUDES = -I../include -I../mi \
 		-I../fb -I../hw/kdrive -I$(EXTINCSRC) -I$(XINCLUDESRC) \
-		-I$(FONTINCSRC) -I../render
+		-I../render
    LINTLIBS = ../dix/llib-ldix.ln ../os/llib-los.ln
 
     DEFINES = -DNXAGENT_SERVER

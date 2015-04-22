@@ -116,7 +116,6 @@ InstallNamedTargetNoClobber(install,file.ad,$(INSTAPPFLAGS),$(XAPPLOADDIR),class
 # define SharedLibXdmGreet	NO
 # define LinkGLToUsrInclude	NO
 # define LinkGLToUsrLib		NO
-# define SharedLibFont		NO
 # define SharedLibGlu		YES
 # define NormalLibGlu		YES
 # define FSUseSyslog		YES
@@ -156,9 +155,6 @@ InstallNamedTargetNoClobber(install,file.ad,$(INSTAPPFLAGS),$(XAPPLOADDIR),class
 #  define BuildRman			NO
 #  define BuildHtmlManPages		NO
 
-/* we build-depend on libfreetype6-dev (FreeType 2.x) */
-#   define BuildFreetype2Library	NO
-#   define HasFreetype2			YES
 /* m68k has no 2.4 kernel yet */
 #   ifndef Mc68020Architecture
 #    define HasLinuxInput		YES
@@ -537,10 +533,6 @@ InstallNamedTargetNoClobber(install,file.ad,$(INSTAPPFLAGS),$(XAPPLOADDIR),class
 
 #ifndef HasExpat
 # define HasExpat		YES
-#endif
-
-#ifndef HasFreetype2
-# define HasFreetype2		YES
 #endif
 
 #define AvoidNullMakeCommand	YES

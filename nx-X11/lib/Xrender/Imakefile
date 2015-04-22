@@ -26,13 +26,6 @@ XCOMM NONSTANDARD_HEADERS below.
 #define SharedXrenderRev	1.1
 SOXRENDERREV = SharedXrenderRev
 
-#if SharedLibXrender
-#define SharedXft1Rev		1.2
-SharedLibReferences(XFT1,Xft,$(XFT1SRC),SOXFT1REV,SharedXft1Rev)
-#else
-ProjectUnsharedLibReferences(XFT1,Xft,$(XFT1SRC),BuildLibDir)
-#endif
-
 #undef LinkBuildLibrary
 #define LinkBuildLibrary(lib) MakeDir($(BUILDLIBDIR))			@@\
 	RemoveFile($(BUILDLIBDIR)/lib)					@@\

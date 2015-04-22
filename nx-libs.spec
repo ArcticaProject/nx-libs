@@ -27,35 +27,29 @@ BuildRequires:  gpg-offline
 BuildRequires:  fdupes
 %if 0%{?suse_version} >= 1130
 BuildRequires:  pkgconfig(expat)
-BuildRequires:  pkgconfig(fontconfig)
-BuildRequires:  pkgconfig(fontenc)
-BuildRequires:  pkgconfig(freetype2)
 BuildRequires:  pkgconfig(libpng)
 BuildRequires:  pkgconfig(libxml-2.0)
 BuildRequires:  pkgconfig(x11)
 BuildRequires:  pkgconfig(xext)
 BuildRequires:  pkgconfig(xpm)
+BuildRequires:  pkgconfig(xfont)
 %else
 BuildRequires:  libexpat-devel
-BuildRequires:  fontconfig-devel
-BuildRequires:  freetype2-devel
 BuildRequires:  libpng-devel
 BuildRequires:  libxml2-devel
 BuildRequires:  xorg-x11-libX11-devel
 BuildRequires:  xorg-x11-libXext-devel
-BuildRequires:  xorg-x11-libfontenc-devel
 BuildRequires:  xorg-x11-libXpm-devel
+BuildRequires:  xorg-x11-libXfont-devel
 %endif
 BuildRequires:  xorg-x11-util-devel
 %endif
 
 %if 0%{?fedora} || 0%{?rhel}
 BuildRequires:  expat-devel
-BuildRequires:  fontconfig-devel
-BuildRequires:  freetype-devel
-BuildRequires:  libfontenc-devel
 BuildRequires:  libpng-devel
 BuildRequires:  libxml2-devel
+BuildRequires:  libXfont-devel
 %endif
 
 # For imake
@@ -680,7 +674,6 @@ find -type f -name '*.[hc]' | xargs chmod -x
 # Mesa - Used by the X server
 
 # Xcursor - Other code still references files in it
-# Xfont - Statically linked to nxarget, others?
 # Xpm
 
 
@@ -962,20 +955,6 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %{_includedir}/nx/X11/extensions/record.h
 %{_includedir}/nx/X11/extensions/xf86dga1.h
 %{_includedir}/nx/X11/extensions/xf86vmode.h
-%dir %{_includedir}/nx/X11/fonts
-%{_includedir}/nx/X11/fonts/bdfint.h
-%{_includedir}/nx/X11/fonts/bitmap.h
-%{_includedir}/nx/X11/fonts/bufio.h
-%{_includedir}/nx/X11/fonts/fntfil.h
-%{_includedir}/nx/X11/fonts/fntfilio.h
-%{_includedir}/nx/X11/fonts/fntfilst.h
-%{_includedir}/nx/X11/fonts/fontencc.h
-%{_includedir}/nx/X11/fonts/fontmisc.h
-%{_includedir}/nx/X11/fonts/fontmod.h
-%{_includedir}/nx/X11/fonts/fontshow.h
-%{_includedir}/nx/X11/fonts/fontutil.h
-%{_includedir}/nx/X11/fonts/fontxlfd.h
-%{_includedir}/nx/X11/fonts/pcf.h
 %{_includedir}/nx/X11/misc.h
 %{_includedir}/nx/X11/os.h
 
@@ -1041,12 +1020,6 @@ ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama
 %{_includedir}/nx/X11/extensions/xtraplib.h
 %{_includedir}/nx/X11/extensions/xtraplibp.h
 %{_includedir}/nx/X11/extensions/xtrapproto.h
-%dir %{_includedir}/nx/X11/fonts
-%{_includedir}/nx/X11/fonts/FS.h
-%{_includedir}/nx/X11/fonts/FSproto.h
-%{_includedir}/nx/X11/fonts/font.h
-%{_includedir}/nx/X11/fonts/fontstruct.h
-%{_includedir}/nx/X11/fonts/fsmasks.h
 
 %files -n nxagent
 %defattr(-,root,root)

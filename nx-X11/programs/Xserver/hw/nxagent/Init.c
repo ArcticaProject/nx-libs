@@ -42,7 +42,7 @@ is" without express or implied warranty.
 #include "windowstr.h"
 #include "servermd.h"
 #include "mi.h"
-#include "fontstruct.h"
+#include <X11/fonts/fontstruct.h>
 
 #include "Agent.h"
 #include "Display.h"

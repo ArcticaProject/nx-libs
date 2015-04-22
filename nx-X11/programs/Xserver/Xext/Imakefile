@@ -111,7 +111,7 @@ XF86BIGFOBJS = xf86bigfont.o
 #if BuildXinerama
         PNRXSRCS = panoramiX.c panoramiXSwap.c panoramiXprocs.c
         PNRXOBJS = panoramiX.o panoramiXSwap.o panoramiXprocs.o
-    PNRXINCLUDES = -I$(FONTINCSRC) -I../mi -I../render
+    PNRXINCLUDES = -I../mi -I../render
 #endif
 #if BuildDPMS
         DPMSSRCS = dpms.c
@@ -162,7 +162,7 @@ NX_DEFINES = -DNXAGENT_SERVER
 XF86INCLUDES = -I$(XF86COMSRC)
 #endif
     INCLUDES = -I. -I../include -I$(XINCLUDESRC) -I$(EXTINCSRC) \
-		$(PNRXINCLUDES) $(XF86INCLUDES) -I$(FONTINCSRC) \
+		$(PNRXINCLUDES) $(XF86INCLUDES) \
 		$(FONTCACHEINCLUDES) $(DMXINCLUDES)
     LINTLIBS = ../dix/llib-ldix.ln ../os/llib-los.ln
 

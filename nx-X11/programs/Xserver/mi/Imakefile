@@ -88,9 +88,9 @@ EXT_DEFINES = ExtensionDefines -UXINPUT -UXF86VIDMODE -UXFreeXDGA -UXF86MISC \
 
 #endif
 
-INCLUDES = -I. -I../include -I../../../include/fonts -I../render \
+INCLUDES = -I. -I../include -I../render \
 	    -I../xfixes -I../damageext -I../miext/damage \
-           -I$(XINCLUDESRC) -I$(FONTINCSRC) -I$(EXTINCSRC) -I$(SERVERSRC)/Xext
+           -I$(XINCLUDESRC) -I$(EXTINCSRC) -I$(SERVERSRC)/Xext
 LINTLIBS = ../dix/llib-ldix.ln ../os/llib-los.ln
 DEFINES  = $(FFS_DEFINES)
 

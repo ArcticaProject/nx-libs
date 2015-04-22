@@ -6,7 +6,7 @@
 
    INCLUDES =   -I../include -I../mi -I../Xext -I../render -I../xfixes \
 		-I../damageext -I../miext/damage -I$(EXTINCSRC) \
-		-I$(XINCLUDESRC) -I$(FONTINCSRC)
+		-I$(XINCLUDESRC)
 
    LINTLIBS = ../dix/llib-ldix.ln ../os/llib-los.ln
 
