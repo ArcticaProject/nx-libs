@@ -977,7 +977,7 @@ Architecture: any
 Depends:
  libnx-x11-dev (= ${binary:Version}),
  ${misc:Depends},
-Description: Library headers for nx-X11/Meas (dummy package)
+Description: Library headers for nx-X11/Mesa (dummy package)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
  using X applications over a network, especially a slow one.
