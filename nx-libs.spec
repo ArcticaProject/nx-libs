@@ -354,33 +354,6 @@ multi-headed X applications and window managers to use two or more
 physical displays as one large virtual display.
 
 
-%package -n libNX_Xpm-devel
-Group:          Development/Libraries
-Summary:        Development files for the NX Pixmap image file format library (dummy package)
-Requires:       libNX_Xpm4%{?_isa} = %{version}-%{release}
-
-%description -n libNX_Xpm-devel
-NX is a software suite which implements very efficient compression of
-the X11 protocol. This increases performance when using X
-applications over a network, especially a slow one.
-
-This package obsoletes libNX_Xpm-devel in NX and can be safely removed.
-
-
-%package -n libNX_Xpm4
-Group:          System Environment/Libraries
-Summary:        NX Pixmap image file format library (dummy package)
-Requires:       %{name}%{?_isa} >= 3.5.0.29
-Obsoletes:      libNX_Xpm
-
-%description -n libNX_Xpm4
-NX is a software suite which implements very efficient compression of
-the X11 protocol. This increases performance when using X
-applications over a network, especially a slow one.
-
-This package obsoletes libNX_Xpm4 in NX and can be safely removed.
-
-
 %package -n libNX_Xrandr2
 Group:          System Environment/Libraries
 Summary:        NX Resize, Rotate and Reflection extension library
@@ -670,11 +643,9 @@ find -name LICENSE | xargs sed -i \
 find -type f -name '*.[hc]' | xargs chmod -x
 
 # Bundled nx-X11/extras
-# Xpm - Is needed and needs to get linked to libXcomp
 # Mesa - Used by the X server
 
 # Xcursor - Other code still references files in it
-# Xpm
 
 
 %build
