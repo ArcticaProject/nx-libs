@@ -147,7 +147,7 @@ install-full:
 	$(INSTALL_DIR) $(DESTDIR)$(USRLIBDIR)
 	$(COPY_SYMLINK) nx-X11/.build-exports/lib/*.so* $(DESTDIR)$(USRLIBDIR)/
 
-	. replace.sh; set -x; find nx-X11/.build-exports/include/ -type d | grep -v "include/X11/bitmaps" | \
+	. replace.sh; set -x; find nx-X11/.build-exports/include/ -type d | \
 	    while read dirname; do \
 	        $(INSTALL_DIR) "$$(string_rep "$$dirname" nx-X11/.build-exports/include "$(DESTDIR)$(INCLUDEDIR)/nx")"; \
 	        $(INSTALL_FILE) $${dirname}/*.h \
@@ -160,10 +160,6 @@ install-full:
 	# (DESTDIR)$(NXLIBDIR)/X11/Xinerama/libNX_Xext.so.6 -> /usr/<libdir>/libXext.so.6
 	$(INSTALL_DIR) $(DESTDIR)$(NXLIBDIR)/X11/Xinerama
 	$(INSTALL_SYMLINK) $(USRLIBDIR)/libNX_Xinerama.so.1 $(DESTDIR)$(NXLIBDIR)/X11/Xinerama/libXinerama.so.1
-
-	$(INSTALL_DIR) $(DESTDIR)$(INCLUDEDIR)/nx/X11/bitmaps
-	$(INSTALL_FILE) nx-X11/.build-exports/include/X11/bitmaps/* \
-	                $(DESTDIR)$(INCLUDEDIR)/nx/X11/bitmaps/
 
 	$(INSTALL_DIR) $(DESTDIR)/$(ETCDIR_NX)
 	$(INSTALL_DIR) $(DESTDIR)/$(ETCDIR_X2GO)
