@@ -33,8 +33,8 @@ usage() {
 PROJECT="nx-libs"
 NULL=""
 
-test -d .git || usage
-test -f debian/Makefile.nx-libs || usage
+test -d ".git" || usage
+test -f "debian/Makefile.nx-libs" || usage
 RELEASE="$1"
 test -n "${RELEASE}" || usage
 CHECKOUT="$2"
@@ -53,14 +53,14 @@ else
 fi
 
 if [ x"$RELEASE" == "xHEAD" ]; then
-    CHECKOUT=HEAD
+    CHECKOUT="HEAD"
 fi
 
 if ! git rev-parse --verify -q "$CHECKOUT" >/dev/null; then
     echo "   '${RELEASE}' is not a valid release number because there is no git tag named $CHECKOUT."
     echo "   Please specify one of the following releases:"
     echo "HEAD"
-    git tag -l | grep  ^redist | cut -f2 -d/ | sort -u
+    git tag -l | grep "^redist" | cut -f2 -d"/" | sort -u
     exit 1
 fi
 
@@ -72,20 +72,20 @@ TEMP_DIR="$(mktemp -d)"
 trap "rm -f \"${MANIFEST}\"; rm -rf \"${TEMP_DIR}\"" 0
 
 # create local copy of Git project at temp location
-git archive --format=tar ${CHECKOUT} --prefix=${PROJECT}-${RELEASE}/ | ( cd $TEMP_DIR; tar xf - )
+git archive --format=tar "${CHECKOUT}" --prefix="${PROJECT}-${RELEASE}/" | ( cd "$TEMP_DIR"; tar xf - )
 
 echo "Created tarball for $CHECKOUT"
 
 cd "$TEMP_DIR/${PROJECT}-${RELEASE}/"
 
-mkdir -p doc/applied-patches
+mkdir -p "doc/applied-patches"
 
 # prepare patches for lite and full tarball
 if [ "x$MODE" = "xfull" ]; then
-    cat debian/patches/series | sort | grep -v ^# | egrep "([0-9]+_.*\.(full|full\+lite)\.patch)" | while read file
+    cat "debian/patches/series" | sort | grep -v '^#' | egrep "([0-9]+_.*\.(full|full\+lite)\.patch)" | while read file
     do
-        cp -v debian/patches/$file doc/applied-patches
-        echo ${file##*/} >> doc/applied-patches/series
+        cp -v "debian/patches/$file" "doc/applied-patches/"
+        echo "${file##*/}" >> "doc/applied-patches/series"
     done
     mkdir -p ./etc/
     cp -v debian/rgb ./etc/
@@ -96,10 +96,10 @@ else
     rm -Rf "nxcompshad"*
     rm -Rf "nxcompext"*
     rm -Rf "nx-X11"*
-    cat debian/patches/series | sort | grep -v ^# | egrep "([0-9]+_.*\.full\+lite\.patch)" | while read file
+    cat "debian/patches/series" | sort | grep -v '^#' | egrep "([0-9]+_.*\.full\+lite\.patch)" | while read file
     do
-        cp -v debian/patches/$file doc/applied-patches
-        echo ${file##*/} >> doc/applied-patches/series
+        cp -v "debian/patches/$file" "doc/applied-patches/"
+        echo "${file##*/}" >> "doc/applied-patches/series"
     done
 fi
 cp -v debian/VERSION ./nxcomp/VERSION
@@ -109,14 +109,14 @@ cp -v debian/x2goagent.keyboard x2goagent.keyboard
 
 # apply all patches shipped in debian/patches and create a copy of them that we ship with the tarball
 if [ -s "doc/applied-patches/series" ]; then
-    QUILT_PATCHES=doc/applied-patches quilt --quiltrc /dev/null push -a -q
+    QUILT_PATCHES="doc/applied-patches" quilt --quiltrc /dev/null push -a -q
 else
     echo "No patches applied at all. Very old release?"
 fi
 
 # very old release did not add any README
 for f in $(ls README* 2>/dev/null); do
-    mv -v $f doc/;
+    mv -v "$f" "doc/";
 done
 
 mkdir -p bin/
@@ -176,7 +176,7 @@ fi
 # remove files, that we do not want in the tarballs (build cruft)
 rm -Rf nx*/configure nx*/autom4te.cache*
 
-cd $OLDPWD
+cd "$OLDPWD"
 
 # create target location for tarball
 mkdir -p "$TARGETDIR/_releases_/source/${PROJECT}/"
@@ -184,7 +184,7 @@ mkdir -p "$TARGETDIR/_releases_/source/${PROJECT}/"
 # roll the ball...
 cd "$TEMP_DIR"
 find "${PROJECT}-${RELEASE}" -type f | sort > "$MANIFEST"
-cd $OLDPWD
+cd "$OLDPWD"
 
 tar c -C "$TEMP_DIR" \
     --owner 0 \
