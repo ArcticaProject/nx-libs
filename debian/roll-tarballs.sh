@@ -87,11 +87,11 @@ if [ "x$MODE" = "xfull" ]; then
         cp -v "debian/patches/$file" "doc/applied-patches/"
         echo "${file##*/}" >> "doc/applied-patches/series"
     done
-    mkdir -p ./etc/
-    cp -v debian/rgb ./etc/
-    cp -v debian/nxagent.keyboard ./etc/
-    cp -v debian/x2goagent.keyboard ./etc/
-    cp -v debian/VERSION ./VERSION.x2goagent
+    mkdir -p "./etc/"
+    cp -v "debian/rgb" "./etc/"
+    cp -v "debian/nxagent.keyboard" "./etc/"
+    cp -v "debian/x2goagent.keyboard" "./etc/"
+    cp -v "debian/VERSION" "./VERSION.x2goagent"
 else
     rm -Rf "nxcompshad"*
     rm -Rf "nxcompext"*
@@ -102,10 +102,10 @@ else
         echo "${file##*/}" >> "doc/applied-patches/series"
     done
 fi
-cp -v debian/VERSION ./nxcomp/VERSION
-cp -v debian/COPYING.full+lite COPYING
-cp -v debian/nxagent.keyboard nxagent.keyboard
-cp -v debian/x2goagent.keyboard x2goagent.keyboard
+cp -v "debian/VERSION" "./nxcomp/VERSION"
+cp -v "debian/COPYING.full+lite" "COPYING"
+cp -v "debian/nxagent.keyboard" "nxagent.keyboard"
+cp -v "debian/x2goagent.keyboard" "x2goagent.keyboard"
 
 # apply all patches shipped in debian/patches and create a copy of them that we ship with the tarball
 if [ -s "doc/applied-patches/series" ]; then
@@ -122,41 +122,41 @@ done
 mkdir -p bin/
 if [ "$MODE" = "lite" ]; then
     # copy wrapper script nxproxy only into tarball
-    cp -v debian/wrappers/nxproxy bin/
+    cp -v "debian/wrappers/nxproxy" "bin/"
 else
     # copy wrapper scripts into tarball
     for w in $(ls debian/wrappers/* 2>/dev/null); do
-        cp -v $w bin/
+        cp -v "$w" "bin/"
     done
     # provide a default keystrokes.cfg file
-    mkdir -p etc
-    test -f etc/keystrokes.cfg || test -f debian/keystrokes.cfg && cp -v debian/keystrokes.cfg etc/keystrokes.cfg
+    mkdir -p "etc"
+    test -f "etc/keystrokes.cfg" || test -f "debian/keystrokes.cfg" && cp -v "debian/keystrokes.cfg" "etc/keystrokes.cfg"
 fi
 
-mv -v debian/changelog doc/changelog
+mv -v "debian/changelog" "doc/changelog"
 
 # copy the top-level makefile if no quilt patch created it before
-test -f Makefile || test -f debian/Makefile.nx-libs && cp -v debian/Makefile.nx-libs Makefile
-test -f replace.sh || test -f debian/Makefile.replace.sh && cp -v debian/Makefile.replace.sh replace.sh
+test -f "Makefile" || test -f "debian/Makefile.nx-libs" && cp -v "debian/Makefile.nx-libs" "Makefile"
+test -f "replace.sh" || test -f "debian/Makefile.replace.sh" && cp -v "debian/Makefile.replace.sh" "replace.sh"
 
 
 if [ "x$MODE" = "xfull" ]; then
     #### stuff we do not needed
-    UNUSED_FOLDERS=`cat debian/CODE-REDUCTION_CLEANUP-UNUSED`
-    CLEANUP_FOLDERS=`cat debian/CODE-REDUCTION_CLEANUP-BRUTAL`
-    UNNEEDED_BACKUPS=`cat debian/CODE-REDUCTION_CLEANUP-BACKUPFILES`
-    PRESERVE_SYMLINKED_FILES=`cat debian/CODE-REDUCTION_PRESERVE-SYMLINKED`
-    PRESERVE_INCLUDED_FILES=`cat debian/CODE-REDUCTION_PRESERVE-INCLUDED`
-    PRESERVE_NEEDED_FILES=`cat debian/CODE-REDUCTION_PRESERVE-NEEDED`
+    UNUSED_FOLDERS="$(cat "debian/CODE-REDUCTION_CLEANUP-UNUSED")"
+    CLEANUP_FOLDERS="$(cat "debian/CODE-REDUCTION_CLEANUP-BRUTAL")"
+    UNNEEDED_BACKUPS="$(cat "debian/CODE-REDUCTION_CLEANUP-BACKUPFILES")"
+    PRESERVE_SYMLINKED_FILES="$(cat "debian/CODE-REDUCTION_PRESERVE-SYMLINKED")"
+    PRESERVE_INCLUDED_FILES="$(cat "debian/CODE-REDUCTION_PRESERVE-INCLUDED")"
+    PRESERVE_NEEDED_FILES="$(cat "debian/CODE-REDUCTION_PRESERVE-NEEDED")"
 
     # remove folders that we do not want to roll into the tarball
     rm -Rf ".pc/"
     rm -Rf "debian/"
 
-    mkdir -p .preserve/
+    mkdir -p ".preserve/"
     for path in ${PRESERVE_SYMLINKED_FILES} ${PRESERVE_INCLUDED_FILES} ${PRESERVE_NEEDED_FILES}; do
-        if [ ! -d $path ]; then
-            path_dirname=$(dirname "$path")
+        if [ ! -d "$path" ]; then
+            path_dirname="$(dirname "$path")"
         else
             path_dirname="$path"
         fi
@@ -169,8 +169,8 @@ if [ "x$MODE" = "xfull" ]; then
     done
 
     # re-create the to-be-preserved files
-    cp -a .preserve/* ./
-    rm -Rf .preserve/
+    cp -a ".preserve/"* "./"
+    rm -Rf ".preserve/"
 fi
 
 # remove files, that we do not want in the tarballs (build cruft)
