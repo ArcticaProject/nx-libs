@@ -148,7 +148,7 @@ all: depend $(LIBARCHIVE) $(LIBDLL)
 
 else
 
-EXTRALIBS = -lNX_Xtst -lNX_Xrandr -lNX_Xdamage
+EXTRALIBS = -lNX_Xext -lNX_Xtst -lNX_Xrandr -lNX_Xdamage
 
 all: depend $(LIBFULL) $(LIBLOAD) $(LIBSHARED) $(LIBARCHIVE)
 
