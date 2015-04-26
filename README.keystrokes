@@ -60,23 +60,34 @@ List of possible 'action' attributes:
 -------------------------------------
 
 close_session
+  This terminates the session.
 switch_all_screens
 minimize
+  This will minimize the client window (even for fullscreen sessions.)
 left
 up
 right
 down
 resize
+  This action switches between the auto-resize and viewport mode (static size). The default is auto-resize. In viewport mode one can use the 'viewport_move_up', 'viewport_move_down', 'viewport_move_left' and 'viewport_move_right' actions to move within the image.
 defer
+  Works like 'ignore' to make some keys be ignored/defunct inside the session.
 ignore
+  Makes it possible to add 'ignore', as in nothing happens when certain keys are pressed.
 fullscreen
+  Switches the client window into or out of fullscreen mode.
 viewport_move_left
+  Moves the image viewport to the left.
 viewport_move_up
+  Moves the image viewport up.
 viewport_move_right
+  Moves the image viewport to the right.
 viewport_move_down
+  Moves the image viewport down.
 
 Only in builds with certain debugging options enabled, ignored otherwise:
 force_synchronization
+  Forces the drawing of elements to be synchronized which can fix some visual bugs.
 debug_tree
 regions_on_screen
 test_input
