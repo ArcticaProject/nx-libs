@@ -57,7 +57,7 @@ if [ x"$RELEASE" == "xHEAD" ]; then
 fi
 
 if ! git rev-parse --verify -q "$CHECKOUT" >/dev/null; then
-    echo "   '${RELEASE}' is not a valid release number because there is no git tag named $CHECKOUT."
+    echo "   '${RELEASE}' is not a valid release number because there is no git tag named ${CHECKOUT}."
     echo "   Please specify one of the following releases:"
     echo "HEAD"
     git tag -l | grep "^redist" | cut -f2 -d"/" | sort -u
@@ -76,7 +76,7 @@ git archive --format=tar "${CHECKOUT}" --prefix="${PROJECT}-${RELEASE}/" | ( cd 
 
 echo "Created tarball for $CHECKOUT"
 
-cd "$TEMP_DIR/${PROJECT}-${RELEASE}/"
+cd "${TEMP_DIR}/${PROJECT}-${RELEASE}/"
 
 mkdir -p "doc/applied-patches"
 
@@ -179,7 +179,7 @@ rm -Rf nx*/configure nx*/autom4te.cache*
 cd "$OLDPWD"
 
 # create target location for tarball
-mkdir -p "$TARGETDIR/_releases_/source/${PROJECT}/"
+mkdir -p "${TARGETDIR}/_releases_/source/${PROJECT}/"
 
 # roll the ball...
 cd "$TEMP_DIR"
