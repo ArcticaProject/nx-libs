@@ -123,6 +123,9 @@ nx-libs (2:3.5.0.32-0x2go1) UNRELEASED; urgency=low
   * Security fixes:
     - X.Org CVE-2013-7439:
       1200-CVE-2013-7439-MakeBigReq-don-t-move-the-last-wo.full.patch
+  * nx-X11: Prevent underlinking by linking to libNX_X{11,damage,fixes).
+    Adds:
+    - 0640_nx-X11_fix-underlinking-libNX_Xcomposite_damage_fixes.full.patch
 
  -- X2Go Release Manager <git-admin@x2go.org>  Tue, 17 Mar 2015 19:19:32 +0100
 
