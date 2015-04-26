@@ -17,7 +17,7 @@ XMULIB = $(XMULIBONLY) $(XTOOLLIB) $(XLIB)
 #define XawClientLibs $(XAWLIB) $(XMULIBONLY) $(XTOOLLIB) $(XPMLIB) $(EXTRAXAWCLIENTLIBS) $(XLIB)
 #endif
 
-#define SharedX11Reqs     $(LDPRELIB) -ldl
+#define SharedX11Reqs     $(LDPRELIB) -ldl -lXdmcp
 #define SharedXlibi18nReqs $(LDPRELIB) $(XONLYLIB)
 #define SharedOldXReqs	  $(LDPRELIB) $(XONLYLIB)
 #define SharedXtReqs	  $(LDPRELIB) $(XONLYLIB) $(SMLIB) $(ICELIB)
