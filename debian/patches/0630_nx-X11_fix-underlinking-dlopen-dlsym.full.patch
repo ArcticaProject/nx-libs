@@ -1,0 +1,17 @@
+Description: Link to libdl to fix undefined references to 'dlopen' and 'dlsym'.
+Author: Bernard Cafarelli <voyageur@gentoo.org>
+v2: generally link to libdl in all of nx-X11. (Mike Gabriel)
+
+diff --git a/nx-X11/config/cf/lnxLib.tmpl b/nx-X11/config/cf/lnxLib.tmpl
+index 788733c..be1fa14 100644
+--- a/nx-X11/config/cf/lnxLib.tmpl
++++ b/nx-X11/config/cf/lnxLib.tmpl
+@@ -17,7 +17,7 @@ XMULIB = $(XMULIBONLY) $(XTOOLLIB) $(XLIB)
+ #define XawClientLibs $(XAWLIB) $(XMULIBONLY) $(XTOOLLIB) $(XPMLIB) $(EXTRAXAWCLIENTLIBS) $(XLIB)
+ #endif
+ 
+-#define SharedX11Reqs
++#define SharedX11Reqs     $(LDPRELIB) -ldl
+ #define SharedXlibi18nReqs $(LDPRELIB) $(XONLYLIB)
+ #define SharedOldXReqs	  $(LDPRELIB) $(XONLYLIB)
+ #define SharedXtReqs	  $(LDPRELIB) $(XONLYLIB) $(SMLIB) $(ICELIB)

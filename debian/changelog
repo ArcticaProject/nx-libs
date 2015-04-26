@@ -18,6 +18,13 @@ nx-libs (2:3.5.0.32-0x2go1) UNRELEASED; urgency=low
     Affects:
     - 0990_fix-DEBUG-and-TEST-builds.full.patch
 
+  [ Bernard Cafarelli ]
+  * nx-X11: link to libdl to fix undefined references to 'dlopen' and 'dlsym'.
+    Fixes: #853.
+    v2: generally link to libdl in all of nx-X11. (Mike Gabriel)
+    Adds:
+    - 0630_nx-X11_fix-underlinking-dlopen-dlsym.full.patch
+
  -- X2Go Release Manager <git-admin@x2go.org>  Tue, 17 Mar 2015 19:19:32 +0100
 
 nx-libs (2:3.5.0.31-0x2go1) unstable; urgency=low
