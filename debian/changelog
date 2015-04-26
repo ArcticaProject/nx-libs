@@ -17,6 +17,100 @@ nx-libs (2:3.5.0.32-0x2go1) UNRELEASED; urgency=low
   * nx-X11: add more NULL guards to TEST and DEBUG sections of Render.c.
     Affects:
     - 0990_fix-DEBUG-and-TEST-builds.full.patch
+  * CVE patches were previously not included in release tarballs.
+    Rename:
+    - 1001-LZW-decompress-fix-for-CVE-2011-2895-From-xorg-lib-X.patch =>
+      1001-LZW-decompress-fix-for-CVE-2011-2895-From-xorg-.full.patch
+    - 1002-Fix-CVE-2011-4028-File-disclosure-vulnerability.-ups.patch =>
+      1002-Fix-CVE-2011-4028-File-disclosure-vulnerability.full.patch
+    - 1003-Avoid-use-after-free-in-dix-dixfonts.c-doImageText-C.patch =>
+      1003-Avoid-use-after-free-in-dix-dixfonts.c-doImageT.full.patch
+    - 1004-CVE-2013-6462-unlimited-sscanf-overflows-stack-buffe.patch =>
+      1004-CVE-2013-6462-unlimited-sscanf-overflows-stack-.full.patch
+    - 1005-CVE-2014-0209-integer-overflow-of-realloc-size-in-Fo.patch =>
+      1005-CVE-2014-0209-integer-overflow-of-realloc-size-.full.patch
+    - 1006-CVE-2014-0209-integer-overflow-of-realloc-size-in-le.patch =>
+      1006-CVE-2014-0209-integer-overflow-of-realloc-size-.full.patch
+    - 1007-CVE-2014-0210-unvalidated-length-in-_fs_recv_conn_se.patch =>
+      1007-CVE-2014-0210-unvalidated-length-in-_fs_recv_co.full.patch
+    - 1008-Don-t-crash-when-we-receive-an-FS_Error-from-the-fon.patch =>
+      1008-Don-t-crash-when-we-receive-an-FS_Error-from-th.full.patch
+    - 1009-CVE-2014-0210-unvalidated-lengths-when-reading-repli.patch =>
+      1009-CVE-2014-0210-unvalidated-lengths-when-reading-.full.patch
+    - 1010-CVE-2014-0211-Integer-overflow-in-fs_get_reply-_fs_s.patch =>
+      1010-CVE-2014-0211-Integer-overflow-in-fs_get_reply-.full.patch
+    - 1011-CVE-2014-0210-unvalidated-length-fields-in-fs_read_q.patch =>
+      1011-CVE-2014-0210-unvalidated-length-fields-in-fs_r.full.patch
+    - 1012-CVE-2014-0211-integer-overflow-in-fs_read_extent_inf.patch =>
+      1012-CVE-2014-0211-integer-overflow-in-fs_read_exten.full.patch
+    - 1013-CVE-2014-0211-integer-overflow-in-fs_alloc_glyphs-fr.patch =>
+      1013-CVE-2014-0211-integer-overflow-in-fs_alloc_glyp.full.patch
+    - 1014-CVE-2014-0210-unvalidated-length-fields-in-fs_read_e.patch =>
+      1014-CVE-2014-0210-unvalidated-length-fields-in-fs_r.full.patch
+    - 1015-CVE-2014-0210-unvalidated-length-fields-in-fs_read_g.patch =>
+      1015-CVE-2014-0210-unvalidated-length-fields-in-fs_r.full.patch
+    - 1016-CVE-2014-0210-unvalidated-length-fields-in-fs_read_l.patch =>
+      1016-CVE-2014-0210-unvalidated-length-fields-in-fs_r.full.patch
+    - 1017-CVE-2014-0210-unvalidated-length-fields-in-fs_read_l.patch =>
+      1017-CVE-2014-0210-unvalidated-length-fields-in-fs_r.full.patch
+    - 1018-unchecked-malloc-may-allow-unauthed-client-to-crash-.patch =>
+      1018-unchecked-malloc-may-allow-unauthed-client-to-c.full.patch
+    - 1019-dix-integer-overflow-in-ProcPutImage-CVE-2014-8092-1.patch =>
+      1019-dix-integer-overflow-in-ProcPutImage-CVE-2014-8.full.patch
+    - 1020-dix-integer-overflow-in-GetHosts-CVE-2014-8092-2-4.patch =>
+      1020-dix-integer-overflow-in-GetHosts-CVE-2014-8092-.full.patch
+    - 1021-dix-integer-overflow-in-RegionSizeof-CVE-2014-8092-3.patch =>
+      1021-dix-integer-overflow-in-RegionSizeof-CVE-2014-8.full.patch
+    - 1022-dix-integer-overflow-in-REQUEST_FIXED_SIZE-CVE-2014-.patch =>
+      1022-dix-integer-overflow-in-REQUEST_FIXED_SIZE-CVE-.full.patch
+    - 1023-dbe-unvalidated-lengths-in-DbeSwapBuffers-calls-CVE-.patch =>
+      1023-dbe-unvalidated-lengths-in-DbeSwapBuffers-calls.full.patch
+    - 1024-Xi-unvalidated-lengths-in-Xinput-extension-CVE-2014-.patch =>
+      1024-Xi-unvalidated-lengths-in-Xinput-extension-CVE-.full.patch
+    - 1025-xcmisc-unvalidated-length-in-SProcXCMiscGetXIDList-C.patch =>
+      1025-xcmisc-unvalidated-length-in-SProcXCMiscGetXIDL.full.patch
+    - 1026-Xv-unvalidated-lengths-in-XVideo-extension-swapped-p.patch =>
+      1026-Xv-unvalidated-lengths-in-XVideo-extension-swap.full.patch
+    - 1027-render-check-request-size-before-reading-it-CVE-2014.patch =>
+      1027-render-check-request-size-before-reading-it-CVE.full.patch
+    - 1028-render-unvalidated-lengths-in-Render-extn.-swapped-p.patch =>
+      1028-render-unvalidated-lengths-in-Render-extn.-swap.full.patch
+    - 1029-xfixes-unvalidated-length-in-SProcXFixesSelectSelect.patch =>
+      1029-xfixes-unvalidated-length-in-SProcXFixesSelectS.full.patch
+    - 1030-randr-unvalidated-lengths-in-RandR-extension-swapped.patch =>
+      1030-randr-unvalidated-lengths-in-RandR-extension-sw.full.patch
+    - 1031-glx-Be-more-paranoid-about-variable-length-requests-.patch =>
+      1031-glx-Be-more-paranoid-about-variable-length-requ.full.patch
+    - 1032-glx-Be-more-strict-about-rejecting-invalid-image-siz.patch =>
+      1032-glx-Be-more-strict-about-rejecting-invalid-imag.full.patch
+    - 1033-glx-Additional-paranoia-in-__glXGetAnswerBuffer-__GL.patch =>
+      1033-glx-Additional-paranoia-in-__glXGetAnswerBuffer.full.patch
+    - 1034-glx-Add-safe_-add-mul-pad-v3-CVE-2014-8093-4-6-v4.patch =>
+      1034-glx-Add-safe_-add-mul-pad-v3-CVE-2014-8093-4-6-.full.patch
+    - 1035-glx-Length-checking-for-GLXRender-requests-v2-CVE-20.patch =>
+      1035-glx-Length-checking-for-GLXRender-requests-v2-C.full.patch
+    - 1036-glx-Integer-overflow-protection-for-non-generated-re.patch =>
+      1036-glx-Integer-overflow-protection-for-non-generat.full.patch
+    - 1037-glx-Top-level-length-checking-for-swapped-VendorPriv.patch =>
+      1037-glx-Top-level-length-checking-for-swapped-Vendo.full.patch
+    - 1038-glx-Length-checking-for-non-generated-single-request.patch =>
+      1038-glx-Length-checking-for-non-generated-single-re.full.patch
+    - 1039-glx-Length-checking-for-RenderLarge-requests-v2-CVE-.patch =>
+      1039-glx-Length-checking-for-RenderLarge-requests-v2.full.patch
+    - 1040-glx-Pass-remaining-request-length-into-varsize-v2-CV.patch =>
+      1040-glx-Pass-remaining-request-length-into-varsize-.full.patch
+    - 1041-nx-X11-lib-font-fc-fserve.c-initialize-remaining-buf.patch =>
+      1041-nx-X11-lib-font-fc-fserve.c-initialize-remainin.full.patch
+    - 1042-Do-proper-input-validation-to-fix-for-CVE-2011-2895.patch =>
+      1042-Do-proper-input-validation-to-fix-for-CVE-2011-.full.patch
+    - 1101-Coverity-844-845-846-Fix-memory-leaks.patch =>
+      1101-Coverity-844-845-846-Fix-memory-leaks.full.patch
+    - 1102-include-introduce-byte-counting-functions.patch =>
+      1102-include-introduce-byte-counting-functions.full.patch
+    - 1103-xkb-Don-t-swap-XkbSetGeometry-data-in-the-input-buff.patch =>
+      1103-xkb-Don-t-swap-XkbSetGeometry-data-in-the-input.full.patch
+    - 1104-xkb-Check-strings-length-against-request-size.patch =>
+      1104-xkb-Check-strings-length-against-request-size.full.patch
 
   [ Bernard Cafarelli ]
   * nx-X11: link to libdl to fix undefined references to 'dlopen' and 'dlsym'.
