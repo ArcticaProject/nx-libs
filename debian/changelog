@@ -111,6 +111,18 @@ nx-libs (2:3.5.0.32-0x2go1) UNRELEASED; urgency=low
       1103-xkb-Don-t-swap-XkbSetGeometry-data-in-the-input.full.patch
     - 1104-xkb-Check-strings-length-against-request-size.patch =>
       1104-xkb-Check-strings-length-against-request-size.full.patch
+  * debian/rolltarball.sh:
+    - Use more quotes. Fixes potential bugs, including one triggered by an
+      unquoted hash within the command line. BASH accepts this. Other shells
+      do not (i.e., treat everything following the hash character as a
+      comment.)
+    - Convert tabs to spaces for consistency.
+    - Use more curly braces. Prevents random characters as being treated as
+      part of a variable name.
+    - Don't escape last newline of a multiline command. Worked out fine so
+      far, because the next line was empty, but this can easily change...
+
+    Cherry-picked from Arctica GH 3.6.x branch.
 
   [ Bernard Cafarelli ]
   * nx-X11: link to libdl to fix undefined references to 'dlopen' and 'dlsym'.
