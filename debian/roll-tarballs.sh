@@ -39,16 +39,16 @@ test -n "${RELEASE}" || usage
 CHECKOUT="$2"
 test -n "$CHECKOUT" || usage
 
-if [ "x$CHECKOUT" = "xserver" ] || [ "x$CHECKOUT" = "xfull" ]; then
-	MODE="full"
-	CHECKOUT="redist-server/${RELEASE}"
-	RELEASE_SUFFIX='-full'
-elif [ "x$CHECKOUT" = "xclient" ] || [ "x$CHECKOUT" = "xlite" ]; then
-	MODE="lite"
-	CHECKOUT="redist-client/${RELEASE}"
-	RELEASE_SUFFIX='-lite'
+if [ "x$CHECKOUT" = "xserver" ] || [ "x${CHECKOUT}" = "xfull" ]; then
+    MODE="full"
+    CHECKOUT="redist-server/${RELEASE}"
+    RELEASE_SUFFIX='-full'
+elif [ "x$CHECKOUT" = "xclient" ] || [ "x${CHECKOUT}" = "xlite" ]; then
+    MODE="lite"
+    CHECKOUT="redist-client/${RELEASE}"
+    RELEASE_SUFFIX='-lite'
 else
-	usage
+    usage
 fi
 
 if [ x"$RELEASE" == "xHEAD" ]; then
