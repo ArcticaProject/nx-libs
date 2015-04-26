@@ -129,5 +129,6 @@
 1102-include-introduce-byte-counting-functions.patch
 1103-xkb-Don-t-swap-XkbSetGeometry-data-in-the-input-buff.patch
 1104-xkb-Check-strings-length-against-request-size.patch
+1200-CVE-2013-7439-MakeBigReq-don-t-move-the-last-wo.full.patch
 0016_nx-X11_install-location.debian.patch
 0102_xserver-xext_set-securitypolicy-path.debian.patch
