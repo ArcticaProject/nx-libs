@@ -3,6 +3,7 @@ The software components were originally downloaded from http://www.nomachine.com
 The software has been improved via various patches by the X2Go project.
 The patches reside in the subfolder doc/applied-patches/ of this source tree.
 
+Copyright (c) 2015 Arctica Project, https://github.com/ArcticaProject/.
 Copyright (c) 2011-2014 X2Go Project, http://www.x2go.org/.
 Copyright (c) 2001-2011 NoMachine, http://www.nomachine.com/.
 
