@@ -11,7 +11,7 @@ Description: Make nxagent-specific keyboard bindings configurable
  to allow parsing the configuration.
 --- a/nx-X11/programs/Xserver/Imakefile
 +++ b/nx-X11/programs/Xserver/Imakefile
-@@ -1013,15 +1013,18 @@
+@@ -1013,15 +1013,18 @@ $(NXAGENTOBJS) $(NXAGENTLIBS) $(NXAGENTS
  #if defined(SunArchitecture)
  NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext -L ../../../nxcompshad \
                  -lXcomp -lXcompext -lXcompshad -lrt -L/usr/sfw/lib -lXrender -lXfixes \
@@ -35,7 +35,7 @@ Description: Make nxagent-specific keyboard bindings configurable
  #endif
 --- a/nx-X11/programs/Xserver/hw/nxagent/Imakefile
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Imakefile
-@@ -142,7 +142,8 @@
+@@ -142,7 +142,8 @@ INCLUDES = -I. -I../../../../../nxcomp -
             -I../../miext/damage -I../../miext/cw \
  	   -I../../GL/glx -I../../GL/include -I../../../../lib/GL/include -I../../Xext \
             -I$(EXTINCSRC) -I$(XINCLUDESRC) \
@@ -45,7 +45,7 @@ Description: Make nxagent-specific keyboard bindings configurable
  #ifdef SunArchitecture
  INCLUDES = -I. -I../../../../../nxcomp -I../../../../../nxcompext -I../../../../../nxcompshad \
             -I../../../../extras/Mesa/include \
-@@ -152,7 +153,8 @@
+@@ -152,7 +153,8 @@ INCLUDES = -I. -I../../../../../nxcomp -
  	   -I../../GL/glx -I../../GL/include -I../../../../lib/GL/include -I../../Xext \
             -I../../miext/damage -I../../miext/cw \
             -I$(EXTINCSRC) -I$(XINCLUDESRC) \
@@ -55,7 +55,7 @@ Description: Make nxagent-specific keyboard bindings configurable
  #else
  #ifdef cygwinArchitecture
  INCLUDES = -I. -I$(XBUILDINCDIR) -I$(FONTINCSRC) \
-@@ -162,7 +164,8 @@
+@@ -162,7 +164,8 @@ INCLUDES = -I. -I$(XBUILDINCDIR) -I$(FON
             -I../../../../../nxcomp -I../../../../../nxcompext -I../../../../../nxcompshad \
             -I../../../../extras/Mesa/include \
             -I$(EXTINCSRC) -I$(XINCLUDESRC) \
@@ -83,7 +83,7 @@ Description: Make nxagent-specific keyboard bindings configurable
  
  #ifdef NX_DEBUG_INPUT
  int nxagentDebugInputDevices = 0;
-@@ -47,297 +54,528 @@
+@@ -47,297 +54,528 @@ extern void nxagentDeactivateInputDevice
  #undef  DEBUG
  #undef  DUMP
  
@@ -850,7 +850,7 @@ Description: Make nxagent-specific keyboard bindings configurable
  }
 --- a/nx-X11/programs/Xserver/hw/nxagent/Keystroke.h
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Keystroke.h
-@@ -24,4 +24,51 @@
+@@ -24,4 +24,51 @@ extern int nxagentCheckSpecialKeystroke(
  
  unsigned int nxagentAltMetaMask;
  
@@ -904,7 +904,7 @@ Description: Make nxagent-specific keyboard bindings configurable
  #endif /* __Keystroke_H__ */
 --- /dev/null
 +++ b/README.keystrokes
-@@ -0,0 +1,83 @@
+@@ -0,0 +1,94 @@
 +Configurable keybindings in nxagent
 +
 +Keybindings in the redistributed x2go version of nxagent can now be configured
@@ -967,30 +967,41 @@ Description: Make nxagent-specific keyboard bindings configurable
 +-------------------------------------
 +
 +close_session
++  This terminates the session.
 +switch_all_screens
 +minimize
++  This will minimize the client window (even for fullscreen sessions.)
 +left
 +up
 +right
 +down
 +resize
++  This action switches between the auto-resize and viewport mode (static size). The default is auto-resize. In viewport mode one can use the 'viewport_move_up', 'viewport_move_down', 'viewport_move_left' and 'viewport_move_right' actions to move within the image.
 +defer
++  Works like 'ignore' to make some keys be ignored/defunct inside the session.
 +ignore
++  Makes it possible to add 'ignore', as in nothing happens when certain keys are pressed.
 +fullscreen
++  Switches the client window into or out of fullscreen mode.
 +viewport_move_left
++  Moves the image viewport to the left.
 +viewport_move_up
++  Moves the image viewport up.
 +viewport_move_right
++  Moves the image viewport to the right.
 +viewport_move_down
++  Moves the image viewport down.
 +
 +Only in builds with certain debugging options enabled, ignored otherwise:
 +force_synchronization
++  Forces the drawing of elements to be synchronized which can fix some visual bugs.
 +debug_tree
 +regions_on_screen
 +test_input
 +deactivate_input_devices_grab
 --- a/nx-X11/programs/Xserver/hw/nxagent/Args.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Args.c
-@@ -149,6 +149,8 @@
+@@ -149,6 +149,8 @@ static int nxagentGetDialogName(void);
  
  char nxagentVerbose = 0;
  
@@ -999,7 +1010,7 @@ Description: Make nxagent-specific keyboard bindings configurable
  int ddxProcessArgument(int argc, char *argv[], int i)
  {
    /*
-@@ -1022,6 +1024,20 @@
+@@ -1022,6 +1024,20 @@ int ddxProcessArgument(int argc, char *a
      return 1;
    }
  
@@ -1022,7 +1033,7 @@ Description: Make nxagent-specific keyboard bindings configurable
  
 --- a/nx-X11/programs/Xserver/hw/nxagent/Args.h
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Args.h
-@@ -83,4 +83,6 @@
+@@ -83,4 +83,6 @@ extern int nxagentUserDefinedFontPath;
  
  extern int nxagentRemoteMajor;
  
