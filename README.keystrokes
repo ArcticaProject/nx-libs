@@ -14,7 +14,7 @@ If nxagent is called without branding, it searches:
 - in ~/.nx/config/keystrokes.cfg
 - in /etc/nxagent/keystrokes.cfg
 
-If nxagent is called **with X2Go branding** (i.e., as x2goagent), it searches:
+If nxagent is called with X2Go branding (i.e., as x2goagent), it searches:
 - in the location given by the '-keystrokefile' command line parameter
 - in the location given by the NXAGENT_KEYSTROKEFILE environment variable
 - in ~/.x2go/config/keystrokes.cfg
