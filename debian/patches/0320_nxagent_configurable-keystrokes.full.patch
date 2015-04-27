@@ -904,7 +904,7 @@ Description: Make nxagent-specific keyboard bindings configurable
  #endif /* __Keystroke_H__ */
 --- /dev/null
 +++ b/README.keystrokes
-@@ -0,0 +1,94 @@
+@@ -0,0 +1,102 @@
 +Configurable keybindings in nxagent
 +
 +Keybindings in the redistributed x2go version of nxagent can now be configured
@@ -913,13 +913,21 @@ Description: Make nxagent-specific keyboard bindings configurable
 +File location
 +-------------
 +
-+nxagent searches for the configuration file in the following order:
++nxagent parses the first available configuration file and ignores all others.
++
++If nxagent is called without branding, it searches:
 +- in the location given by the '-keystrokefile' command line parameter
 +- in the location given by the NXAGENT_KEYSTROKEFILE environment variable
 +- in ~/.nx/config/keystrokes.cfg
 +- in /etc/nxagent/keystrokes.cfg
 +
-+If none of those files is accessible, the default configuration is used which
++If nxagent is called **with X2Go branding** (i.e., as x2goagent), it searches:
++- in the location given by the '-keystrokefile' command line parameter
++- in the location given by the NXAGENT_KEYSTROKEFILE environment variable
++- in ~/.x2go/config/keystrokes.cfg
++- in /etc/x2go/keystrokes.cfg
++
++If none of these files are accessible, the default configuration is used which
 +is the same as the old, traditional nxagent keybindings.
 +
 +File format

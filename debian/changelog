@@ -112,6 +112,8 @@ nx-libs (2:3.5.0.32-0x2go1) UNRELEASED; urgency=low
     - 1104-xkb-Check-strings-length-against-request-size.patch =>
       1104-xkb-Check-strings-length-against-request-size.full.patch
   * debian/rolltarball.sh:
+    Cherry-picked from Arctica GH 3.6.x branch.
+
     - Use more quotes. Fixes potential bugs, including one triggered by an
       unquoted hash within the command line. BASH accepts this. Other shells
       do not (i.e., treat everything following the hash character as a
@@ -125,6 +127,9 @@ nx-libs (2:3.5.0.32-0x2go1) UNRELEASED; urgency=low
     Backported from Arctica GH 3.6.x branch.
 
     - Copy actions documentation from the wiki.
+      Affects:
+      + 0320_nxagent_configurable-keystrokes.full.patch
+    - Add documentation for branding behavior.
       Affects:
       + 0320_nxagent_configurable-keystrokes.full.patch
 
