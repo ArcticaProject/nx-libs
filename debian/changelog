@@ -130,6 +130,7 @@ nx-libs (2:3.5.0.32-0x2go1) UNRELEASED; urgency=low
 
     - Copy actions documentation from the wiki.
     - Add documentation for branding behavior.
+    - Remove accidentally copied Dokuwiki syntax.
   * debian/keystrokes.cfg: fix whitespace errors.
     Backported from Arctica GH 3.6.x branch.
 
