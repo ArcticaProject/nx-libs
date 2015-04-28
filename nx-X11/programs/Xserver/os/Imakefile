@@ -91,14 +91,6 @@ KRB5SRCS = k5auth.c k5encode.c
    IFADDRS_DEFINES = -DHAS_GETIFADDRS
 #endif
 
-#if BuildLBX
-   LBX_SRCS = lbxio.c
-   LBX_OBJS = lbxio.o
-#else
-   LBX_SRCS =
-   LBX_OBJS =
-#endif
-
 #if !defined(DDXOsColor)
 COLOR_SRCS=oscolor.c
 COLOR_OBJS=oscolor.o
@@ -132,12 +124,12 @@ BOOTSTRAPCFLAGS =
                   osinit.c utils.c log.c auth.c mitauth.c secauth.c \
                   $(XDMAUTHSRCS) $(RPCSRCS) $(KRB5SRCS) xdmcp.c OtherSources \
                   transport.c $(SNPRINTF_SRCS) $(STRLCAT_SRCS) \
-		  $(MALLOC_SRCS) $(LBX_SRCS) xprintf.c
+		  $(MALLOC_SRCS) xprintf.c
            OBJS = WaitFor.o access.o connection.o io.o $(COLOR_OBJS) \
                   osinit.o utils.o log.o auth.o mitauth.o secauth.o \
                   $(XDMAUTHOBJS) $(RPCOBJS) $(KRB5OBJS) xdmcp.o OtherObjects \
                   transport.o $(SNPRINTF_OBJS) $(STRLCAT_OBJS) \
-		  $(MALLOC_OBJS) $(LBX_OBJS) xprintf.o
+		  $(MALLOC_OBJS) xprintf.o
 
 #if SpecialMalloc
      MEM_DEFINES = -DSPECIAL_MALLOC
@@ -166,7 +158,7 @@ BOOTSTRAPCFLAGS =
 		  $(RANDOM_DEFINES) $(BUGMSG) $(XTRANS_FAILDEFINES) $(NX_DEFINES)
        INCLUDES = -I. -I../include -I$(XINCLUDESRC) -I$(EXTINCSRC) \
 		  -I$(SERVERSRC)/Xext -I$(SERVERSRC)/render \
-		  -I$(TOP)/lib/Xau -I../lbx Krb5Includes $(NX_INCLUDES)
+		  -I$(TOP)/lib/Xau Krb5Includes $(NX_INCLUDES)
  DEPEND_DEFINES = $(DBM_DEFINES) $(XDMCP_DEFINES) $(EXT_DEFINES) \
 		  $(TRANS_INCLUDES) $(CONNECTION_FLAGS) $(GETPEER_DEFINES) \
 		  DependDefines
@@ -201,9 +193,6 @@ LinkSourceFile(transport.c,$(TRANSCOMMSRC))
 SpecialCObjectRule(osinit,$(ICONFIGFILES),$(ADM_DEFINES))
 SpecialCObjectRule(WaitFor,$(ICONFIGFILES),$(EXT_DEFINES))
 SpecialCObjectRule(io,$(ICONFIGFILES),$(EXT_DEFINES))
-#if BuildLBX
-SpecialCObjectRule(lbxio,$(ICONFIGFILES),$(EXT_DEFINES))
-#endif
 SpecialCObjectRule(utils,$(ICONFIGFILES),$(XDMCP_DEFINES) $(EXT_DEFINES) $(ERROR_DEFINES) $(PAM_DEFINES))
 SpecialCObjectRule(xalloc,$(ICONFIGFILES),$(XALLOC_DEFINES))
 #if defined(SparcArchitecture) && HasGcc && !HasGcc2

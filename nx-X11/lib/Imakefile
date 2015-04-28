@@ -9,25 +9,7 @@ XCOMM $XFree86: xc/lib/Imakefile,v 3.74 2003/04/14 20:37:07 herrb Exp $
 #define IHaveSubdirs
 #define PassCDebugFlags
 
-#if BuildXaw6 && BuildLibraries
-XAW6LIBDIR = Xaw6
-#endif
-
-#if BuildXaw7 && BuildLibraries
-XAW7LIBDIR = Xaw7
-#endif
-
-#if BuildXaw && BuildLibraries
-XAWLIBDIR = Xaw
-#endif
-
-#ifndef NeedBerklib
-#define NeedBerklib NO
-#endif
-
-#if NeedBerklib
-BERKDIR = Xbsd
-#endif
+NULL =
 
 #if BuildXKBfilelib || BuildXKB
 XKBLIBDIR = xkbfile
@@ -35,14 +17,6 @@ XKBLIBDIR = xkbfile
 
 #if BuildXKBuilib
 XKBUILIBDIR = xkbui
-#endif
-
-#if BuildXInputLib
-XINPUTLIBDIR = Xi
-#endif
-
-#if BuildScreenSaverLibrary
-SSLIBDIR = Xss
 #endif
 
 #if BuildXF86MiscLibrary
@@ -61,11 +35,6 @@ XF86DGALIBDIR = Xxf86dga
 XF86RUSHLIBDIR = Xxf86rush
 #endif
 
-#if BuildXvLibrary
-XVLIBDIR = Xv
-XVMCLIBDIR = XvMC
-#endif
-
 #if BuildXineramaLibrary
 XINERAMADIR=Xinerama
 #endif
@@ -78,40 +47,12 @@ XRESLIBDIR = XRes
 GLXLIBDIR = GL
 #endif
 
-#if BuildGLwLibrary
-GLWLIBDIR = GLw
-#endif
-
-#if BuildGLULibrary
-GLULIBDIR = GLU
-#endif
-
-#if BuildDPSLibrary
-DPSLIBDIR = dps
-#endif
-
-#if BuildDPSTkLibrary
-DPSTKLIBDIR = dpstk
-#endif
-
-#if BuildPSResLibrary
-PSRESLIBDIR = psres
-#endif
-
 #if BuildRenderLibrary
 RENDERLIBDIR = Xrender
 #endif
 
-#if BuildExpatLibrary
-EXPATBUILDDIR = expat
-#endif
-
 #if BuildRandRLibrary
 RANDRLIBDIR = Xrandr
-#endif
-
-#if BuildXevieLibrary
-XEVIELIBDIR = Xevie
 #endif
 
 #if BuildXfixesLibrary
@@ -126,40 +67,12 @@ DAMAGELIBDIR = Xdamage
 COMPOSITELIBDIR = Xcomposite
 #endif
 
-#if BuildXcursorLibrary
-XCURSORLIBDIR = Xcursor
-#endif
-
-#if BuildXTrapLibrary
-XTRAPLIBDIR = XTrap
-#endif
-
-#if BuildAppleWMLibrary
-APPLELIBDIR = apple
-#endif
-
-#if BuildWindowsWMLibrary
-WINDOWSLIBDIR = windows
-#endif
-
-XF86EXTLIBS = $(XF86MISCLIBDIR) $(XF86VMLIBDIR) \
-		$(XF86DGALIBDIR) $(XF86RUSHLIBDIR)
-
-#if BuildLBX
-LBXUTILDIR = lbxutil
-#endif
-
-#if BuildLBX && !HasZlib
-ZLIBDIR = zlib
-#endif
-
-#if (defined(XFree86Version) || defined(XorgVersion)) && !HasPosixRegex
-REGEXDIR = regex
-#endif
-
-#if BuildXAudio
-XALIBDIR = Xa
-#endif
+XF86EXTLIBS = \
+	$(XF86MISCLIBDIR) \
+	$(XF86VMLIBDIR) \
+	$(XF86DGALIBDIR) \
+	$(XF86RUSHLIBDIR) \
+	$(NULL)
 
 #if BuildXauLib
 XAULIBDIR = Xau
@@ -179,22 +92,29 @@ XTSTLIBDIR = Xtst
 #endif
 
 
-LINTSUBDIRS = $(XAULIBDIR) $(X11LIBDIR) \
-             $(OLDXLIBDIR) $(ICELIBDIR) $(SMLIBDIR) $(XEXTLIBDIR) $(XTLIBDIR) \
-             $(SSLIBDIR) $(XF86MISCLIBDIR) $(XF86VMLIBDIR) $(XF86DGALIBDIR) \
-             $(XF86RUSHLIBDIR) $(XMULIBDIR) $(XMUULIBDIR) $(XPMLIBDIR) \
-             $(XAW6LIBDIR) $(XAW7LIBDIR) $(XAWLIBDIR) \
-             $(XINPUTLIBDIR) $(XTSTLIBDIR) $(FSLIBDIR) $(XKBLIBDIR) \
-             $(XKBUILIBDIR) $(LBXUTILDIR) $(XALIBDIR) $(EXPATBUILDDIR) \
-             $(XVLIBDIR) $(GLXLIBDIR) $(GLULIBDIR) $(GLWLIBDIR) \
-             $(DPSLIBDIR) $(PSRESLIBDIR) $(DPSTKLIBDIR) $(XINERAMADIR) \
-             $(ZLIBDIR) $(REGEXDIR) $(RENDERLIBDIR) \
-	     $(XVMCLIBDIR) $(RANDRLIBDIR) $(XTRAPLIBDIR) \
-	     $(XRESLIBDIR) $(APPLELIBDIR) $(DMXLIBDIR) $(WINDOWSLIBDIR) \
-	     $(XEVIELIBDIR) $(XFIXESLIBDIR) $(DAMAGELIBDIR) \
-	     $(XCURSORLIBDIR) $(COMPOSITELIBDIR)
+LINTSUBDIRS = \
+	$(XAULIBDIR) \
+	$(X11LIBDIR) \
+	$(OLDXLIBDIR) \
+	$(XEXTLIBDIR) \
+	$(XF86MISCLIBDIR) \
+	$(XF86VMLIBDIR) \
+	$(XF86DGALIBDIR) \
+	$(XF86RUSHLIBDIR) \
+	$(XTSTLIBDIR) \
+	$(XKBLIBDIR) \
+	$(XKBUILIBDIR) \
+	$(GLXLIBDIR) \
+	$(XINERAMADIR) \
+	$(RENDERLIBDIR) \
+	$(RANDRLIBDIR) \
+	$(XRESLIBDIR) \
+	$(XFIXESLIBDIR) \
+	$(DAMAGELIBDIR) \
+	$(COMPOSITELIBDIR) \
+	$(NULL)
 
-SUBDIRS = $(BERKDIR) xtrans $(LINTSUBDIRS)
+SUBDIRS = xtrans $(LINTSUBDIRS)
 
 MakeSubdirs($(SUBDIRS))
 DependSubdirs($(SUBDIRS))

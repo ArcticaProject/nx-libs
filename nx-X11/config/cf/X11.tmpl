@@ -22,8 +22,6 @@ XCOMM $XFree86: xc/config/cf/X11.tmpl,v 1.248 2004/02/16 04:07:37 dawes Exp $
 /* The following project-specific rules are defined at the end of this file:
  *
  * InstallAppDefaults		(class)
- * InstallAppDefaultsLong	(file,class)
- * MakeXkbDir			(basedir,subdir)
  */
 
 /* X.Org release string */
@@ -130,18 +128,6 @@ XORGRELSTRING = XorgManVersionString
 #ifndef BuildLibrariesForXServers
 #define BuildLibrariesForXServers	BuildServer
 #endif
-#ifndef HasXAudio
-#define HasXAudio		NO
-#endif
-#ifndef BuildXAudio
-#define BuildXAudio		(HasXAudio & HasCplusplus)
-#endif
-#ifndef HasXAServer
-#define HasXAServer		NO
-#endif
-#ifndef BuildXAServer
-#define BuildXAServer		(HasXAServer & HasCplusplus)
-#endif
 #ifndef BuildX11Lib
 #define BuildX11Lib		BuildLibraries
 #endif
@@ -192,17 +178,11 @@ XORGRELSTRING = XorgManVersionString
 #ifndef BuildXInputExt
 #define BuildXInputExt		NO
 #endif
-#ifndef BuildXInputLib
-#define BuildXInputLib		(BuildXInputExt && !BuildServersOnly)
-#endif
 #ifndef BuildEVI
 #define BuildEVI		YES
 #endif
 #ifndef BuildDBE
 #define BuildDBE		YES
-#endif
-#ifndef BuildDBElib
-#define BuildDBElib		BuildDBE
 #endif
 #ifndef BuildDIS
 #define BuildDIS		NO
@@ -213,28 +193,20 @@ XORGRELSTRING = XorgManVersionString
 #ifndef BuildFontCache
 #define BuildFontCache		NO
 #endif
-#ifndef BuildLBX
-#define BuildLBX		YES
-#endif
 #ifndef BuildXKB
 #define BuildXKB		YES
 #endif
 #ifndef BuildXKBlib
-#define BuildXKBlib		(BuildXKB && (!BuildServersOnly || \
-					      BuildXkbcomp ))
+#define BuildXKBlib		(BuildXKB && !BuildServersOnly)
 #endif
 #ifndef BuildXKBuilib
 #define BuildXKBuilib		(BuildXKB && !BuildServersOnly)
 #endif
 #ifndef BuildXKBfilelib
-#define BuildXKBfilelib		(BuildXKB && (!BuildServersOnly || \
-					      BuildXkbcomp ))
+#define BuildXKBfilelib		(BuildXKB && !BuildServersOnly)
 #endif
 #ifndef BuildXTrap
 #define BuildXTrap		YES
-#endif
-#ifndef BuildXTrapLibrary
-#define BuildXTrapLibrary	(BuildXTrap && !BuildServersOnly)
 #endif
 
 	/*
@@ -281,30 +253,9 @@ XORGRELSTRING = XorgManVersionString
 #ifndef BuildPlugin
 #define BuildPlugin		HasPlugin
 #endif
-#ifndef XpRasterDDX
-#define XpRasterDDX             YES
-#endif
-#ifndef XpColorPclDDX
-#define XpColorPclDDX           YES
-#endif
-#ifndef XpMonoPclDDX
-#define XpMonoPclDDX            YES
-#endif
-#ifndef XpPostScriptDDX
-#define XpPostScriptDDX         YES
-#endif
-#ifndef XpPdfDDX
-#define XpPdfDDX                YES
-#endif
-#ifndef XpSvgDDX
-#define XpSvgDDX                YES
-#endif
 
 #ifndef BuildScreenSaverExt
 #define BuildScreenSaverExt	NO
-#endif
-#ifndef BuildScreenSaverLibrary
-#define BuildScreenSaverLibrary	(BuildScreenSaverExt && !BuildServersOnly)
 #endif
 #ifndef BuildXF86VidModeExt
 #define BuildXF86VidModeExt	NO
@@ -336,14 +287,8 @@ XORGRELSTRING = XorgManVersionString
 #ifndef BuildXvExt
 #define BuildXvExt		NO
 #endif
-#ifndef BuildXvLibrary
-#define BuildXvLibrary		(BuildXvExt && !BuildServersOnly)
-#endif
 #ifndef BuildXvMCExt
 #define BuildXvMCExt		NO
-#endif
-#ifndef BuildXvMCLibrary
-#define BuildXvMCLibrary	(BuildXvMCExt && !BuildServersOnly)
 #endif
 #ifndef BuildGlxExt
 #define BuildGlxExt		NO
@@ -361,13 +306,6 @@ XORGRELSTRING = XorgManVersionString
 #ifndef BuildOSMesaLib
 #define BuildOSMesaLib		BuildGlxExt
 #endif
-#ifndef BuildGLULibrary
-#define BuildGLULibrary		(BuildGLXLibrary && BuildLibraries && \
-				 HasCplusplus)
-#endif
-#ifndef BuildGLwLibrary
-#define BuildGLwLibrary		(BuildGLXLibrary && BuildLibraries)
-#endif
 #ifndef BuildXDriInfo
 #define BuildXDriInfo		(BuildGLXLibrary && !BuildServersOnly)
 #endif
@@ -377,36 +315,11 @@ XORGRELSTRING = XorgManVersionString
 #ifndef BuildXF86RushLibrary
 #define BuildXF86RushLibrary	(BuildXF86RushExt && !BuildServersOnly)
 #endif
-#ifndef BuildDPSLibraries
-#define BuildDPSLibraries	NO
-#endif
-#ifndef BuildDPSLibrary
-#define BuildDPSLibrary		BuildDPSLibraries
-#endif
-#ifndef BuildDPSTkLibrary
-#define BuildDPSTkLibrary	BuildDPSLibraries
-#endif
-#ifndef BuildPSResLibrary
-#define BuildPSResLibrary	BuildDPSLibraries
-#endif
-#ifndef BuildDPSClients
-#define BuildDPSClients         BuildDPSLibraries
-#endif
 #ifndef BuildRender
 #define BuildRender		YES
 #endif
 #ifndef BuildRenderLibrary
 #define BuildRenderLibrary	!BuildServersOnly
-#endif
-
-#ifndef HasExpat
-#define HasExpat		YES
-#endif
-#ifndef UseExpat
-#define UseExpat		BuildXF86DRI
-#endif
-#ifndef BuildExpatLibrary
-#define BuildExpatLibrary	(UseExpat && !HasExpat)
 #endif
 
 #ifndef BuildRandR
@@ -441,40 +354,13 @@ XORGRELSTRING = XorgManVersionString
 #ifndef BuildXevie
 #define BuildXevie		YES
 #endif
-#ifndef BuildXevieLibrary
-#define BuildXevieLibrary	!BuildServersOnly
-#endif
 
 #ifndef BuildRootless
 #define BuildRootless	NO
 #endif
 
-#ifndef BuildXterm
-#define BuildXterm		NO
-#endif
-
-#ifndef BuildXkbcomp
-#define BuildXkbcomp		BuildClients
-#endif
-
-#ifndef BuildXcursorLibrary
-#define BuildXcursorLibrary	BuildRenderLibrary
-#endif
-
-#ifndef BuildXcursorgen
-#define BuildXcursorgen		HasLibpng
-#endif
-
 #ifndef DefaultCursorTheme
 #define DefaultCursorTheme	core
-#endif
-
-#ifndef BuildAppleWMLibrary
-#define BuildAppleWMLibrary	NO
-#endif
-
-#ifndef BuildWindowsWMLibrary
-#define BuildWindowsWMLibrary	NO
 #endif
 
 #ifndef BuildMiscDocs
@@ -502,34 +388,7 @@ XORGRELSTRING = XorgManVersionString
 #ifndef InstallLibManPages
 #define InstallLibManPages	YES
 #endif
-#ifndef InstallXtermSetUID
-#define InstallXtermSetUID	YES	/* xterm needs to be set uid */
-#endif
-#ifndef InstallXloadSetGID
-#define InstallXloadSetGID	YES	/* xload often needs set gid kmem */
-#endif
-#ifndef InstallXinitConfig
-#define InstallXinitConfig	NO	/* install sample xinit config */
-#endif
-#ifndef InstallXdmConfig
-#define InstallXdmConfig	NO	/* install sample xdm config */
-#endif
-#ifndef XdmServersType			/* what Xservers files to use */
-#if BuildServer
-#define XdmServersType ws
-#else
-#define XdmServersType fs
-#endif
-#endif
-#ifndef InstallFSConfig
-#define InstallFSConfig		NO	/* install sample fs config */
-#endif
-#ifndef InstallAppDefFiles
-#define InstallAppDefFiles	YES	/* install application defaults */
-#endif
-#ifndef UseConfDirForAppDefaults
-#define UseConfDirForAppDefaults YES
-#endif
+
 #ifndef UseConfDirForXkb
 #define UseConfDirForXkb	YES
 #endif
@@ -637,13 +496,6 @@ FCHOWN_DEFINES = -DHAS_FCHOWN
 #ifndef ProjectThreadsDefines
 #define ProjectThreadsDefines -DXTHREADS
 #endif
-#ifndef XawI18nDefines
-#if SystemV4
-#define XawI18nDefines -DHAS_WCTYPE_H
-#else
-#define XawI18nDefines -DUSE_XWCHAR_STRING
-#endif
-#endif
 #if Malloc0ReturnsNull
 #ifndef XMalloc0ReturnsNullDefines
 #define XMalloc0ReturnsNullDefines Malloc0ReturnsNullDefines
@@ -740,9 +592,6 @@ FCHOWN_DEFINES = -DHAS_FCHOWN
 #define XineramaDefines /**/
 #endif
 #endif
-#ifndef PrintOnlyServer
-#define PrintOnlyServer YES
-#endif
 #ifndef XkbDefines
 #if BuildXKB
 #define XkbDefines -DXKB
@@ -765,13 +614,6 @@ FCHOWN_DEFINES = -DHAS_FCHOWN
 #endif
 # ifndef XkbDefaultRulesFile
 # define XkbDefaultRulesFile  XVendorStdFilePrefix
-#endif
-#ifndef LbxDefines
-#if BuildLBX
-#define LbxDefines -DLBX
-#else
-#define LbxDefines /**/
-#endif
 #endif
 #ifndef BigReqDefines
 #if BuildBigReqsExt
@@ -972,7 +814,7 @@ FCHOWN_DEFINES = -DHAS_FCHOWN
 #endif
 #ifndef PervasiveExtensionDefines
 #define PervasiveExtensionDefines \
-	ShapeDefines XInputDefines XkbDefines LbxDefines AppgroupDefines \
+	ShapeDefines XInputDefines XkbDefines AppgroupDefines \
 	XCSecurityDefines CupDefines PervasiveDBEDefines \
 	XF86BigfontExtensionDefines DPMSDefines \
 	XineramaDefines \
@@ -1264,12 +1106,6 @@ FCHOWN_DEFINES = -DHAS_FCHOWN
 #ifndef XLocaleDir
 #define XLocaleDir $(LIBDIR)/locale
 #endif
-#ifndef LbxproxyDir
-#define LbxproxyDir $(LIBDIR)/lbxproxy
-#endif
-#ifndef LbxproxyConfigSubdir		/* under lbxproxy sources */
-#define LbxproxyConfigSubdir config
-#endif
 #ifndef ProxyManagerDir
 #define ProxyManagerDir $(LIBDIR)/proxymngr
 #endif
@@ -1330,10 +1166,6 @@ FCHOWN_DEFINES = -DHAS_FCHOWN
 
 #ifndef ForceNormalLib
 #define ForceNormalLib (HasGcc && !HasGcc2)
-#endif
-
-#ifndef XkbComp
-#define XkbComp xkbcomp
 #endif
 
 #ifndef PsWrap
@@ -1406,7 +1238,6 @@ XCOMM X Window System make variables; these need to be coordinated with rules
            XSMDIR = XsmDir		/* xsm config files */
            NLSDIR = NlsDir		/* nls files */
        XLOCALEDIR = XLocaleDir		/* locale files */
-      LBXPROXYDIR = LbxproxyDir		/* lbxproxy files */
   PROXYMANAGERDIR = ProxyManagerDir	/* proxy manager config files */
       XAPPLOADDIR = XAppLoadDir		/* application default resource dir */
 
@@ -1415,14 +1246,8 @@ XCOMM X Window System make variables; these need to be coordinated with rules
 #if UseInstalledX11
               RGB = $(XBINDIR)/rgb
       MKHTMLINDEX = $(XBINDIR)/mkhtmlindex
-       XCURSORGEN = $(XBINDIR)/xcursorgen
 #else
               RGB = $(CLIENTENVSETUP) $(XBUILDBINDIR)/rgb
-# if !CrossCompiling
-       XCURSORGEN = $(CLIENTENVSETUP) $(PRELOADSETUP) $(XBUILDBINDIR)/xcursorgen
-# elif UseInstalledOnCrossCompile
-       XCURSORGEN = $(XBINDIR)/xcursorgen
-# endif
 # if HasPerl
       MKHTMLINDEX = RunPerlScript($(CONFIGSRC)/util/mkhtmlindex.pl,)
 # else
@@ -1540,30 +1365,6 @@ ProjectUnsharedLibReferences(XONLY,NX_X11,$(XLIBSRC),XBuildLibDir)
          XLIBONLY = $(XONLYLIB)
      LINTXONLYLIB = $(LINTXONLY)
 
-#if BuildScreenSaverLibrary
-#ifndef SharedLibXss
-#define SharedLibXss	HasSharedLibraries
-#endif
-#ifndef NormalLibXss
-#define NormalLibXss	(!SharedLibXss || ForceNormalLib)
-#endif
-#ifndef DebugLibXss
-#define DebugLibXss	NO
-#endif
-#ifndef ProfileLibXss
-#define ProfileLibXss	NO
-#endif
-#else
-#undef  SharedLibXss
-#define SharedLibXss	NO
-#undef  NormalLibXss
-#define NormalLibXss	NO
-#undef  DebugLibXss
-#define DebugLibXss	NO
-#undef  ProfileLibXss
-#define ProfileLibXss	NO
-#endif
-
 #if BuildXF86MiscLibrary
 #ifndef SharedLibXxf86misc
 #define SharedLibXxf86misc	HasSharedLibraries
@@ -1660,54 +1461,6 @@ ProjectUnsharedLibReferences(XONLY,NX_X11,$(XLIBSRC),XBuildLibDir)
 #define ProfileLibXxf86rush	NO
 #endif
 
-#if BuildXvLibrary
-#ifndef SharedLibXv
-#define SharedLibXv		HasSharedLibraries
-#endif
-#ifndef NormalLibXv
-#define NormalLibXv		(!SharedLibXv || ForceNormalLib)
-#endif
-#ifndef DebugLibXv
-#define DebugLibXv		NO
-#endif
-#ifndef ProfileLibXv
-#define ProfileLibXv		NO
-#endif
-#else
-#undef  SharedLibXv
-#define SharedLibXv		NO
-#undef  NormalLibXv
-#define NormalLibXv		NO
-#undef  DebugLibXv
-#define DebugLibXv		NO
-#undef  ProfileLibXv
-#define ProfileLibXv		NO
-#endif
-
-#if BuildXvMCLibrary
-#ifndef SharedLibXvMC
-#define SharedLibXvMC		HasSharedLibraries
-#endif
-#ifndef NormalLibXvMC
-#define NormalLibXvMC		(!SharedLibXvMC || ForceNormalLib)
-#endif
-#ifndef DebugLibXvMC
-#define DebugLibXvMC		NO
-#endif
-#ifndef ProfileLibXvMC
-#define ProfileLibXvMC		NO
-#endif
-#else
-#undef  SharedLibXvMC
-#define SharedLibXvMC		NO
-#undef  NormalLibXvMC
-#define NormalLibXvMC		NO
-#undef  DebugLibXvMC
-#define DebugLibXvMC		NO
-#undef  ProfileLibXvMC
-#define ProfileLibXvMC		NO
-#endif
-
 #if BuildXineramaLibrary
 #ifndef SharedLibXinerama
 #define SharedLibXinerama	HasSharedLibraries
@@ -1754,78 +1507,6 @@ ProjectUnsharedLibReferences(XONLY,NX_X11,$(XLIBSRC),XBuildLibDir)
 #define DebugLibXRes		NO
 #undef  ProfileLibXRes
 #define ProfileLibXRes		NO
-#endif
-
-#if BuildDPSLibrary
-#ifndef SharedLibDps
-#define SharedLibDps		HasSharedLibraries
-#endif
-#ifndef NormalLibDps
-#define NormalLibDps		(!SharedLibDps || ForceNormalLib)
-#endif
-#ifndef DebugLibDps
-#define DebugLibDps		NO
-#endif
-#ifndef ProfileLibDps
-#define ProfileLibDps		NO
-#endif
-#else
-#undef  SharedLibDps
-#define SharedLibDps		NO
-#undef  NormalLibDps
-#define NormalLibDps		NO
-#undef  DebugLibDps
-#define DebugLibDps		NO
-#undef  ProfileLibDps
-#define ProfileLibDps		NO
-#endif
-
-#if BuildDPSTkLibrary
-#ifndef SharedLibDpsTk
-#define SharedLibDpsTk		HasSharedLibraries
-#endif
-#ifndef NormalLibDpsTk
-#define NormalLibDpsTk		(!SharedLibDpsTk || ForceNormalLib)
-#endif
-#ifndef DebugLibDpsTk
-#define DebugLibDpsTk		NO
-#endif
-#ifndef ProfileLibDpsTk
-#define ProfileLibDpsTk		NO
-#endif
-#else
-#undef  SharedLibDpsTk
-#define SharedLibDpsTk		NO
-#undef  NormalLibDpsTk
-#define NormalLibDpsTk		NO
-#undef  DebugLibDpsTk
-#define DebugLibDpsTk		NO
-#undef  ProfileLibDpsTk
-#define ProfileLibDpsTk		NO
-#endif
-
-#if BuildPSResLibrary
-#ifndef SharedLibPSRes
-#define SharedLibPSRes		HasSharedLibraries
-#endif
-#ifndef NormalLibPSRes
-#define NormalLibPSRes		(!SharedLibPSRes || ForceNormalLib)
-#endif
-#ifndef DebugLibPSRes
-#define DebugLibPSRes		NO
-#endif
-#ifndef ProfileLibPSRes
-#define ProfileLibPSRes		NO
-#endif
-#else
-#undef  SharedLibPSRes
-#define SharedLibPSRes		NO
-#undef  NormalLibPSRes
-#define NormalLibPSRes		NO
-#undef  DebugLibPSRes
-#define DebugLibPSRes		NO
-#undef  ProfileLibPSRes
-#define ProfileLibPSRes		NO
 #endif
 
 #if BuildRenderLibrary
@@ -1948,126 +1629,6 @@ ProjectUnsharedLibReferences(XONLY,NX_X11,$(XLIBSRC),XBuildLibDir)
 #define ProfileLibXcomposite	NO
 #endif
 
-#if BuildXevieLibrary
-#ifndef SharedLibXevie
-#define SharedLibXevie		HasSharedLibraries
-#endif
-#ifndef NormalLibXevie
-#define NormalLibXevie		(!SharedLibXevie || ForceNormalLib)
-#endif
-#ifndef DebugLibXevie
-#define DebugLibXevie		NO
-#endif
-#ifndef ProfileLibXevie
-#define ProfileLibXevie		NO
-#endif
-#else
-#undef  SharedLibXevie
-#define SharedLibXevie		NO
-#undef  NormalLibXevie
-#define NormalLibXevie		NO
-#undef  DebugLibXevie
-#define DebugLibXevie		NO
-#undef  ProfileLibXevie
-#define ProfileLibXevie		NO
-#endif
-
-#if BuildXcursorLibrary
-#ifndef SharedLibXcursor
-#define SharedLibXcursor	HasSharedLibraries
-#endif
-#ifndef NormalLibXcursor
-#define NormalLibXcursor	(!SharedLibXcursor || ForceNormalLib)
-#endif
-#ifndef DebugLibXcursor
-#define DebugLibXcursor		NO
-#endif
-#ifndef ProfileLibXcursor
-#define ProfileLibXcursor	NO
-#endif
-#else
-#undef  SharedLibXcursor
-#define SharedLibXcursor	NO
-#undef  NormalLibXcursor
-#define NormalLibXcursor	NO
-#undef  DebugLibXcursor
-#define DebugLibXcursor		NO
-#undef  ProfileLibXcursor
-#define ProfileLibXcursor	NO
-#endif
-
-#if BuildAppleWMLibrary
-#ifndef SharedLibAppleWM
-#define SharedLibAppleWM	HasSharedLibraries
-#endif
-#ifndef NormalLibAppleWM
-#define NormalLibAppleWM	(!SharedLibAppleWM || ForceNormalLib)
-#endif
-#ifndef DebugLibAppleWM
-#define DebugLibAppleWM		NO
-#endif
-#ifndef ProfileLibAppleWM
-#define ProfileLibAppleWM	NO
-#endif
-#else
-#undef  SharedLibAppleWM
-#define SharedLibAppleWM	NO
-#undef  NormalLibAppleWM
-#define NormalLibAppleWM	NO
-#undef  DebugLibAppleWM
-#define DebugLibAppleWM		NO
-#undef  ProfileLibAppleWM
-#define ProfileLibAppleWM	NO
-#endif
-
-#if BuildWindowsWMLibrary
-#ifndef SharedLibWindowsWM
-#define SharedLibWindowsWM	HasSharedLibraries
-#endif
-#ifndef NormalLibWindowsWM
-#define NormalLibWindowsWM	(!SharedLibWindowsWM || ForceNormalLib)
-#endif
-#ifndef DebugLibWindowsWM
-#define DebugLibWindowsWM	NO
-#endif
-#ifndef ProfileLibWindowsWM
-#define ProfileLibWindowsWM	NO
-#endif
-#else
-#undef  SharedLibWindowsWM
-#define SharedLibWindowsWM	NO
-#undef  NormalLibWindowsWM
-#define NormalLibWindowsWM	NO
-#undef  DebugLibWindowsWM
-#define DebugLibWindowsWM	NO
-#undef  ProfileLibWindowsWM
-#define ProfileLibWindowsWM	NO
-#endif
-
-#if BuildGLULibrary
-#ifndef SharedLibGlu
-#define SharedLibGlu		HasSharedLibraries
-#endif
-#ifndef NormalLibGlu
-#define NormalLibGlu		(!SharedLibX11 | ForceNormalLib)
-#endif
-#ifndef DebugLibGlu
-#define DebugLibGlu		NO
-#endif
-#ifndef ProfileLibGlu
-#define ProfileLibGlu		NO
-#endif
-#else
-#undef  SharedLibGlu
-#define SharedLibGlu		NO
-#undef  NormalLibGlu
-#define NormalLibGlu		NO
-#undef  DebugLibGlu
-#define DebugLibGlu		NO
-#undef  ProfileLibGlu
-#define ProfileLibGlu		NO
-#endif
-
 #if BuildGLXLibrary
 #ifndef SharedLibGlx
 #define SharedLibGlx		HasSharedLibraries
@@ -2113,37 +1674,6 @@ ProjectUnsharedLibReferences(XONLY,NX_X11,$(XLIBSRC),XBuildLibDir)
 #undef  ProfileLibGlx
 #define ProfileLibGlx		NO
 #endif
-/*
- * Only make a shared GLw library on systems with Weak symbols 
- * because it depends on Motif. See xc/lib/GLw/README.txt for details
- */
-#if BuildGLwLibrary
-#ifndef SharedLibGLw
-#define SharedLibGLw		HasSharedLibraries && HasWeakSymbols
-#endif
-#ifndef NormalLibGLw
-#define NormalLibGLw		(!SharedLibGLw || ForceNormalLib)
-#endif
-#ifndef DebugLibGLw
-#define DebugLibGLw		NO	/* debugged widget library */
-#endif
-#ifndef ProfileLibGLw
-#define ProfileLibGLw		NO	/* profiled widget library */
-#endif
-#ifndef GLwUseXmStubs
-	/* create stub (weak) Motif symbols */
-#define GLwUseXmStubs		SharedLibGLw && HasWeakSymbols
-#endif
-#else
-#undef  SharedLibGLw
-#define SharedLibGLw		NO
-#undef  NormalLibGLw
-#define NormalLibGLw		NO
-#undef  DebugLibGLw
-#define DebugLibGLw		NO
-#undef  ProfileLibGLw
-#define ProfileLibGLw		NO
-#endif
 
 #ifndef SharedLibXext
 #define SharedLibXext HasSharedLibraries
@@ -2170,16 +1700,6 @@ LINTEXTENSIONLIB = $(LINTEXTENSION)
           DEPXLIB = $(DEPEXTENSIONLIB) $(DEPXONLYLIB)
              XLIB = $(EXTENSIONLIB) $(XONLYLIB)
          LINTXLIB = $(LINTXONLYLIB)
-
-    XSSLIBSRC = $(LIBSRC)/Xss
-#if SharedLibXss
-#ifndef SharedXssRev
-#define SharedXssRev 1.0
-#endif
-SharedLibReferences(XSS,NX_Xss,$(XSSLIBSRC),SOXSSREV,SharedXssRev)
-#else
-ProjectUnsharedLibReferences(XSS,NX_Xss,$(XSSLIBSRC),XBuildLibDir)
-#endif
 
     XXF86MISCLIBSRC = $(LIBSRC)/Xxf86misc
 #if SharedLibXxf86misc
@@ -2221,28 +1741,6 @@ SharedLibReferences(XXF86RUSH,NX_Xxf86rush,$(XXF86RUSHLIBSRC),SOXXF86RUSHREV,Sha
 ProjectUnsharedLibReferences(XXF86RUSH,NX_Xxf86rush,$(XXF86RUSHLIBSRC),XBuildLibDir)
 #endif
 
-
-    XVLIBSRC = $(LIBSRC)/Xv
-#if SharedLibXv
-#ifndef SharedXvRev
-#define SharedXvRev 1.0
-#endif
-SharedLibReferences(XV,NX_Xv,$(XVLIBSRC),SOXVREV,SharedXvRev)
-#else
-ProjectUnsharedLibReferences(XV,NX_Xv,$(XVLIBSRC),XBuildLibDir)
-#endif
-
-
-    XVMCLIBSRC = $(LIBSRC)/XvMC
-#if SharedLibXvMC
-#ifndef SharedXvMCRev
-#define SharedXvMCRev 1.0
-#endif
-SharedLibReferences(XVMC,NX_XvMC,$(XVMCLIBSRC),SOXVMCREV,SharedXvMCRev)
-#else
-ProjectUnsharedLibReferences(XVMC,NX_XvMC,$(XVMCLIBSRC),XBuildLibDir)
-#endif
-
     XINERAMALIBSRC = $(LIBSRC)/Xinerama
 #if SharedLibXinerama
 #ifndef SharedXineramaRev
@@ -2263,46 +1761,6 @@ SharedLibReferences(XRES,NX_XRes,$(XRESLIBSRC),SOXRESREV,SharedXResRev)
 ProjectUnsharedLibReferences(XRES,NX_XRes,$(XRESLIBSRC),XBuildLibDir)
 #endif
 
-    DPSLIBSRC = $(LIBSRC)/dps
-#if SharedLibDps
-#ifndef SharedDpsRev
-#define SharedDpsRev 1.0
-#endif
-SharedLibReferences(DPS,NX_dps,$(DPSLIBSRC),SODPSREV,SharedDpsRev)
-#else
-ProjectUnsharedLibReferences(DPS,NX_dps,$(DPSLIBSRC),XBuildLibDir)
-#endif
-
-    DPSTKLIBSRC = $(LIBSRC)/dpstk
-#if SharedLibDpsTk
-#ifndef SharedDpsTkRev
-#define SharedDpsTkRev 1.0
-#endif
-SharedLibReferences(DPSTK,NX_dpstk,$(DPSTKLIBSRC),SODPSTKREV,SharedDpsTkRev)
-#else
-ProjectUnsharedLibReferences(DPSTK,NX_dpstk,$(DPSTKLIBSRC),XBuildLibDir)
-#endif
-
-    PSRESLIBSRC = $(LIBSRC)/psres
-#if SharedLibPSRes
-#ifndef SharedPSResRev
-#define SharedPSResRev 1.0
-#endif
-SharedLibReferences(PSRES,NX_psres,$(PSRESLIBSRC),SOPSRESREV,SharedPSResRev)
-#else
-ProjectUnsharedLibReferences(PSRES,NX_psres,$(PSRESLIBSRC),XBuildLibDir)
-#endif
-
-    GLULIBSRC = $(LIBSRC)/GLU
-#if SharedLibGlu
-#ifndef SharedGluRev
-#define SharedGluRev 1.3
-#endif
-SharedLibReferences(GLU,NX_GLU,$(GLULIBSRC),SOGLUREV,SharedGluRev)
-#else
-ProjectUnsharedLibReferences(GLU,NX_GLU,$(GLULIBSRC),XBuildLibDir)
-#endif
-
     GLXLIBSRC = $(LIBSRC)/GL
 #if SharedLibGlx
 #ifndef SharedGlxRev
@@ -2311,15 +1769,6 @@ ProjectUnsharedLibReferences(GLU,NX_GLU,$(GLULIBSRC),XBuildLibDir)
 SharedLibReferences(GLX,NX_GL,$(GLXLIBSRC),SOGLREV,SharedGlxRev)
 #else
 ProjectUnsharedLibReferences(GLX,NX_GL,$(GLXLIBSRC),XBuildLibDir)
-#endif
-    GLWIDGETSRC = $(LIBSRC)/GLw
-#if SharedLibGLw
-#ifndef SharedGLwRev
-#define SharedGLwRev 1.0		/* used to name the shared library */
-#endif
-SharedDSLibReferences(GLW,NX_GLw,$(GLWIDGETSRC),SOGLWREV,SharedGLwRev)
-#else
-ProjectUnsharedLibReferences(GLW,NX_GLw,$(GLWIDGETSRC),XBuildLibDir)
 #endif
 
     XRENDERLIBSRC = $(LIBSRC)/Xrender
@@ -2372,46 +1821,6 @@ SharedLibReferences(XCOMPOSITE,NX_Xcomposite,$(XCOMPOSITELIBSRC),SOXCOMPOSITEREV
 ProjectUnsharedLibReferences(XCOMPOSITE,NX_Xcomposite,$(XCOMPOSITELIBSRC),XBuildLibDir)
 #endif
 
-XEVIELIBSRC = $(LIBSRC)/Xevie
-#if SharedLibXevie
-#ifndef SharedXevieRev
-#define SharedXevieRev 1.0
-#endif
-SharedLibReferences(XEVIE,NX_Xevie,$(XEVIELIBSRC),SOXEVIEREV,SharedXevieRev)
-#else
-ProjectUnsharedLibReferences(XEVIE,NX_Xevie,$(XEVIELIBSRC),XBuildLibDir)
-#endif
-
-   XCURSORLIBSRC = $(LIBSRC)/Xcursor
-#if SharedLibXcursor
-#ifndef SharedXcursorRev
-#define SharedXcursorRev 1.0.2
-#endif
-SharedLibReferences(XCURSOR,NX_Xcursor,$(XCURSORLIBSRC),SOXCURSORREV,SharedXcursorRev)
-#else
-ProjectUnsharedLibReferences(XCURSOR,NX_Xcursor,$(XCURSORLIBSRC),XBuildLibDir)
-#endif
-
-   APPLEWMLIBSRC = $(LIBSRC)/apple
-#if SharedLibAppleWM
-#ifndef SharedAppleWMRev
-#define SharedAppleWMRev 1.0
-#endif
-SharedLibReferences(APPLEWM,NX_AppleWM,$(APPLEWMLIBSRC),SOAPPLEWMREV,SharedAppleWMRev)
-#else
-ProjectUnsharedLibReferences(APPLEWM,NX_AppleWM,$(APPLEWMLIBSRC),XBuildLibDir)
-#endif
-
-   WINDOWSWMLIBSRC = $(LIBSRC)/windows
-#if SharedLibWindowsWM
-#ifndef SharedWindowsWMRev
-#define SharedWindowsWMRev 1.0
-#endif
-SharedLibReferences(WINDOWSWM,NX_WindowsWM,$(WINDOWSWMLIBSRC),SOWINDOWSWMREV,SharedWindowsWMRev)
-#else
-ProjectUnsharedLibReferences(WINDOWSWM,NX_WindowsWM,$(WINDOWSWMLIBSRC),XBuildLibDir)
-#endif
-
 #ifndef SharedLibXau
 #define SharedLibXau		YES
 #endif
@@ -2438,50 +1847,6 @@ ProjectUnsharedLibReferences(XAUTH,NX_Xau,$(XAUTHSRC),$(USRLIBDIR))
 #endif
 #endif
 
-#ifndef SharedLibXmu
-#define SharedLibXmu HasSharedLibraries
-#endif
-#ifndef NormalLibXmu
-#define NormalLibXmu (!SharedLibXmu | ForceNormalLib)
-#endif
-#ifndef DebugLibXmu
-#define DebugLibXmu		NO	/* debugged Xmu library */
-#endif
-#ifndef ProfileLibXmu
-#define ProfileLibXmu		NO	/* profiled Xmu library */
-#endif
-           XMUSRC = $(LIBSRC)/Xmu
-#if SharedLibXmu
-#ifndef SharedXmuRev
-#define SharedXmuRev 6.2
-#endif
-SharedDSLibReferences(XMU,NX_Xmu,$(XMUSRC),SOXMUREV,SharedXmuRev)
-#else
-ProjectUnsharedLibReferences(XMU,NX_Xmu,$(XMUSRC),XBuildLibDir)
-#endif
-
-#ifndef SharedLibXmuu
-#define SharedLibXmuu HasSharedLibraries
-#endif
-#ifndef NormalLibXmuu
-#define NormalLibXmuu		(!SharedLibXmuu | ForceNormalLib)
-#endif
-#ifndef DebugLibXmuu
-#define DebugLibXmuu		NO	/* debugged Xmuu library */
-#endif
-#ifndef ProfileLibXmuu
-#define ProfileLibXmuu		NO	/* profiled Xmuu library */
-#endif
-           XMUUSRC = $(LIBSRC)/Xmuu
-#if SharedLibXmuu
-#ifndef SharedXmuuRev
-#define SharedXmuuRev 1.0
-#endif
-SharedLibReferences(XMUU,NX_Xmuu,$(XMUUSRC),SOXMUUREV,SharedXmuuRev)
-#else
-ProjectUnsharedLibReferences(XMUU,NX_Xmuu,$(XMUUSRC),XBuildLibDir)
-#endif
-
 #ifndef SharedOldX
 #define SharedOldX HasSharedLibraries
 #endif
@@ -2504,197 +1869,6 @@ SharedLibReferences(OLDX,NX_oldX,$(OLDXLIBSRC),SOOLDXREV,SharedOldXRev)
 ProjectUnsharedLibReferences(OLDX,NX_oldX,$(OLDXLIBSRC),XBuildLibDir)
 #endif
 
-#ifndef SharedLibXp
-#define SharedLibXp HasSharedLibraries
-#endif
-#ifndef NormalLibXp
-#define NormalLibXp (!SharedLibXp | ForceNormalLib)
-#endif
-#ifndef DebugLibXp
-#define DebugLibXp              NO      /* debugged Xp library */
-#endif
-#ifndef ProfileLibXp
-#define ProfileLibXp            NO      /* profiled Xp library */
-#endif
-         XPLIBSRC = $(LIBSRC)/Xp
-#if SharedLibXp
-#ifndef SharedXpRev
-#define SharedXpRev 6.2
-#endif
-SharedLibReferences(XP,NX_Xp,$(XPLIBSRC),SOXPREV,SharedXpRev)
-#else
-ProjectUnsharedLibReferences(XP,NX_Xp,$(XPLIBSRC),XBuildLibDir)
-#endif
-
-#ifndef SharedLibXt
-#define SharedLibXt HasSharedLibraries
-#endif
-#ifndef NormalLibXt
-#define NormalLibXt (!SharedLibXt | ForceNormalLib)
-#endif
-#ifndef DebugLibXt
-#define DebugLibXt		NO	/* debugged toolkit library */
-#endif
-#ifndef ProfileLibXt
-#define ProfileLibXt		NO	/* profiled toolkit library */
-#endif
-       TOOLKITSRC = $(LIBSRC)/Xt
-#if SharedLibXt
-#ifndef SharedXtRev
-#define SharedXtRev 6.0
-#endif
-SharedDSLibReferences(XTOOLONLY,NX_Xt,$(TOOLKITSRC),SOXTREV,SharedXtRev)
-#else
-ProjectUnsharedLibReferences(XTOOLONLY,NX_Xt,$(TOOLKITSRC),XBuildLibDir)
-#endif
-      DEPXTOOLLIB = $(DEPXTOOLONLYLIB) $(DEPSMLIB) $(DEPICELIB)
-         XTOOLLIB = $(XTOOLONLYLIB) $(SMLIB) $(ICELIB)
-     LINTXTOOLLIB = $(LINTXTOOLONLYLIB)
-
-#ifndef SharedLibXa
-#define SharedLibXa	(HasSharedLibraries & HasCplusplus)
-#endif
-#ifndef NormalLibXa
-/* #define NormalLibXa	((!SharedLibXa | ForceNormalLib) & HasCplusplus) */
-#define NormalLibXa	YES /* needed for current tests, will correct later */
-#endif
-#ifndef DebugLibXa
-#define DebugLibXa	NO	/* debugged audio library */
-#endif
-#ifndef ProfileLibXa
-#define ProfileLibXa	NO	/* profiled audio library */
-#endif
-       XALIBSRC = $(LIBSRC)/Xa
-#if SharedLibXa
-#ifndef SharedXaRev
-#define SharedXaRev 1.0
-#endif
-SharedLibReferences(XA,NX_Xa,$(XALIBSRC),SOXAREV,SharedXaRev)
-#else
-UnsharedLibReferences(XA,NX_Xa,$(XALIBSRC))
-#endif
-
-#ifndef BuildXaw
-#define BuildXaw !BuildServersOnly
-#endif
-
-       /* AWIDGETSRC is needed by libXaw6 and libXaw7 */
-       AWIDGETSRC = $(LIBSRC)/Xaw
-
-#if BuildXaw
-#ifndef SharedLibXaw
-#define SharedLibXaw HasSharedLibraries
-#endif
-#ifndef NormalLibXaw
-#define NormalLibXaw (!SharedLibXaw | ForceNormalLib)
-#endif
-#ifndef DebugLibXaw
-#define DebugLibXaw		NO	/* debugged widget library */
-#endif
-#ifndef ProfileLibXaw
-#define ProfileLibXaw		NO	/* profiled widget library */
-#endif
-#if SharedLibXaw
-#ifndef SharedXawRev
-#define SharedXawRev 8.0
-#endif
-SharedDSLibReferences(XAW,NX_Xaw,$(AWIDGETSRC),SOXAWREV,SharedXawRev)
-#else
-ProjectUnsharedLibReferences(XAW,NX_Xaw,$(AWIDGETSRC),XBuildLibDir)
-#endif
-#endif
-
-#ifndef BuildXaw7
-#define BuildXaw7 (HasSharedLibraries && !BuildServersOnly)
-#endif
-
-#if BuildXaw7
-#ifndef SharedLibXaw7
-#define SharedLibXaw7 HasSharedLibraries
-#endif
-#ifndef NormalLibXaw7
-#define NormalLibXaw7		NO
-#endif
-#ifndef DebugLibXaw7
-#define DebugLibXaw7		NO	/* debugged widget library */
-#endif
-#ifndef ProfileLibXaw7
-#define ProfileLibXaw7		NO	/* profiled widget library */
-#endif
-       AWIDGET7SRC = $(LIBSRC)/Xaw7
-#if SharedLibXaw7
-#ifndef SharedXaw7Rev
-#define SharedXaw7Rev 7.0
-#endif
-SharedDSLibReferences(XAW7,NX_Xaw,$(AWIDGET7SRC),SOXAW7REV,SharedXaw7Rev)
-#if !BuildXaw
-SharedDSLibReferences(XAW,NX_Xaw,$(AWIDGET7SRC),SOXAWREV,SharedXawRev)
-#endif
-#else
-ProjectUnsharedLibReferences(XAW7,NX_Xaw,$(AWIDGET7SRC),XBuildLibDir)
-#if !BuildXaw
-ProjectUnsharedLibReferences(XAW,NX_Xaw,$(AWIDGET7SRC),XBuildLibDir)
-#endif
-#endif
-#endif
-
-
-#ifndef BuildXaw6
-#define BuildXaw6 (HasSharedLibraries && !BuildServersOnly)
-#endif
-
-#if BuildXaw6
-#ifndef SharedLibXaw6
-#define SharedLibXaw6 HasSharedLibraries
-#endif
-#ifndef NormalLibXaw6
-#define NormalLibXaw6		NO
-#endif
-#ifndef DebugLibXaw6
-#define DebugLibXaw6		NO	/* debugged widget library */
-#endif
-#ifndef ProfileLibXaw6
-#define ProfileLibXaw6		NO	/* profiled widget library */
-#endif
-       AWIDGET6SRC = $(LIBSRC)/Xaw6
-#if SharedLibXaw6
-#ifndef SharedXaw6Rev
-#define SharedXaw6Rev 6.1
-#endif
-SharedDSLibReferences(XAW6,NX_Xaw,$(AWIDGET6SRC),SOXAW6REV,SharedXaw6Rev)
-#if !BuildXaw && !BuildXaw7
-SharedDSLibReferences(XAW,NX_Xaw,$(AWIDGET6SRC),SOXAWREV,SharedXawRev)
-#endif
-#else
-ProjectUnsharedLibReferences(XAW6,NX_Xaw,$(AWIDGET6SRC),XBuildLibDir)
-#if !BuildXaw && !BuildXaw7
-ProjectUnsharedLibReferences(XAW,NX_Xaw,$(AWIDGET6SRC),XBuildLibDir)
-#endif
-#endif
-#endif
-
-#ifndef SharedLibXi
-#define SharedLibXi HasSharedLibraries
-#endif
-#ifndef NormalLibXi
-#define NormalLibXi (!SharedLibXi | ForceNormalLib)
-#endif
-#ifndef DebugLibXi
-#define DebugLibXi		NO	/* debugged Xi library */
-#endif
-#ifndef ProfileLibXi
-#define ProfileLibXi		NO	/* profiled Xi library */
-#endif
-         XILIBSRC = $(LIBSRC)/Xi
-#if SharedLibXi
-#ifndef SharedXiRev
-#define SharedXiRev 6.0
-#endif
-SharedLibReferences(XI,NX_Xi,$(XILIBSRC),SOXINPUTREV,SharedXiRev)
-#else
-ProjectUnsharedLibReferences(XI,NX_Xi,$(XILIBSRC),XBuildLibDir)
-#endif
-
 #ifndef SharedLibXtst
 #define SharedLibXtst HasSharedLibraries
 #endif
@@ -2715,118 +1889,6 @@ ProjectUnsharedLibReferences(XI,NX_Xi,$(XILIBSRC),XBuildLibDir)
 SharedLibReferences(XTEST,NX_Xtst,$(XTESTLIBSRC),SOXTESTREV,SharedXtstRev)
 #else
 ProjectUnsharedLibReferences(XTEST,NX_Xtst,$(XTESTLIBSRC),XBuildLibDir)
-#endif
-
-ProjectUnsharedLibReferences(XBSD,NX_Xbsd,$(LIBSRC)/Xbsd,XBuildLibDir)
-
-#ifndef SharedLibICE
-#define SharedLibICE HasSharedLibraries
-#endif
-#ifndef NormalLibICE
-#define NormalLibICE (!SharedLibICE | ForceNormalLib)
-#endif
-#ifndef DebugLibICE
-#define DebugLibICE		NO	/* debugged ICE library */
-#endif
-#ifndef ProfileLibICE
-#define ProfileLibICE		NO	/* profiled ICE library */
-#endif
-           ICESRC = $(LIBSRC)/ICE
-#if SharedLibICE
-#ifndef SharedICERev
-#define SharedICERev 6.4
-#endif
-SharedLibReferences(ICE,NX_ICE,$(ICESRC),SOICEREV,SharedICERev)
-#else
-ProjectUnsharedLibReferences(ICE,NX_ICE,$(ICESRC),XBuildLibDir)
-#endif
-
-#ifndef SharedLibSM
-#define SharedLibSM HasSharedLibraries
-#endif
-#ifndef NormalLibSM
-#define NormalLibSM (!SharedLibSM | ForceNormalLib)
-#endif
-#ifndef DebugLibSM
-#define DebugLibSM		NO	/* debugged SM library */
-#endif
-#ifndef ProfileLibSM
-#define ProfileLibSM		NO	/* profiled SM library */
-#endif
-            SMSRC = $(LIBSRC)/SM
-#if SharedLibSM
-#ifndef SharedSMRev
-#define SharedSMRev 6.0
-#endif
-SharedLibReferences(SM,NX_SM,$(SMSRC),SOSMREV,SharedSMRev)
-#else
-ProjectUnsharedLibReferences(SM,NX_SM,$(SMSRC),XBuildLibDir)
-#endif
-
-#ifndef SharedLibXkey
-#define SharedLibXkey HasSharedLibraries
-#endif
-#ifndef NormalLibXkey
-#define NormalLibXkey (!SharedLibXkey | ForceNormalLib)
-#endif
-#ifndef DebugLibXkey
-#define DebugLibXkey		NO	/* debugged Xkey library */
-#endif
-#ifndef ProfileLibXkey
-#define ProfileLibXkey		NO	/* profiled Xkey library */
-#endif
-           XKEYSRC = $(LIBSRC)/Xkey
-#if SharedLibXkey
-#ifndef SharedXkeyRev
-#define SharedXkeyRev 6.0
-#endif
-SharedLibReferences(XKEY,NX_Xkey,$(XKEYSRC),SOXKEYREV,SharedXkeyRev)
-#else
-ProjectUnsharedLibReferences(XKEY,NX_Xkey,$(XKEYSRC),XBuildLibDir)
-#endif
-
-#ifndef SharedLibFS
-#define SharedLibFS		HasSharedLibraries
-#endif
-#ifndef NormalLibFS
-#define NormalLibFS (!SharedLibFS | ForceNormalLib)
-#endif
-#ifndef DebugLibFS
-#define DebugLibFS		NO	/* debugged FS library */
-#endif
-#ifndef ProfileLibFS
-#define ProfileLibFS		NO	/* profiled FS library */
-#endif
-         FSLIBSRC = $(LIBSRC)/FS
-#if SharedLibFS
-#ifndef SharedFSRev
-#define SharedFSRev 6.0
-#endif
-SharedLibReferences(FS,NX_FS,$(FSLIBSRC),SOFSREV,SharedFSRev)
-#else
-ProjectUnsharedLibReferences(FS,NX_FS,$(FSLIBSRC),XBuildLibDir)
-#endif
-
-#ifndef SharedLibXpm
-#define SharedLibXpm HasSharedLibraries
-#endif
-#ifndef NormalLibXpm
-#define NormalLibXpm (!SharedLibXpm | ForceNormalLib)
-#endif
-#ifndef DebugLibXpm
-#define DebugLibXpm		NO
-#endif
-#ifndef ProfileLibXpm
-#define ProfileLibXpm		NO
-#endif
-          XPMLIBSRC = $(LIBSRC)/Xpm
-#if SharedLibXpm
-#ifndef SharedXpmRev
-#define SharedXpmRev 4.11
-#endif
-SharedLibReferences(XPM,Xpm,$(XPMLIBSRC),SOXPMREV,SharedXpmRev)
-#else
-ProjectUnsharedLibReferences(XPM,Xpm,$(XPMLIBSRC),XBuildLibDir)
 #endif
 
 #if HasMotif
@@ -2875,185 +1937,6 @@ MOTIFINCLUDES = -I$(MOTIFINCDIR)
 #endif
 
 #endif /* HasMotif */
-
-#ifndef SharedLibExpat
-#define SharedLibExpat HasSharedLibraries
-#endif
-#ifndef NormalLibExpat
-#define NormalLibExpat (!SharedLibExpat | ForceNormalLib)
-#endif
-#ifndef DebugLibExpat
-#define DebugLibExpat		NO
-#endif
-#ifndef ProfileLibExpat
-#define ProfileLibExpat		NO
-#endif
-          EXPATLIBSRC = $(LIBSRC)/expat
-
-/*
- * Expat 1.95.6.
- *
- * Get the library version information from LIBCURRENT, LIBREVISION and LIBAGE
- * in xc/extras/expat/configure.
- *
- * LIBCURRENT:LIBREVISION:LIBAGE = 4:0:4
- *
- * The LibtoolMinorVersions revision is "(LIBCURRENT - LIBAGE).LIBAGE".
- * The !LibtoolMinorVersions revision is "LIBCURRENT.0".
- */
-#ifndef ExpatVersion
-#define ExpatVersion 1.95.6
-#endif
-
-#if SharedLibExpat
-#ifndef SharedLibtoolExpatRev
-#define SharedLibtoolExpatRev	4:0:4
-#endif
-#ifndef SharedExpatRev
-#if LibtoolMinorVersions
-#define SharedExpatRev 0.4
-#else
-#define SharedExpatRev 4.0
-#endif
-#endif
-SharedLibReferences(EXPAT,NX_expat,$(EXPATLIBSRC),SOEXPATREV,SharedExpatRev)
-#else
-ProjectUnsharedLibReferences(EXPAT,NX_expat,$(EXPATLIBSRC),XBuildLibDir)
-#endif
-
-#if UseExpat
-
-#if BuildExpatLibrary
-EXPATINCLUDES=$(TOP_X_INCLUDES)
-EXPATDEFINES=-DEXPAT
-#else	/* BuildExpatLibrary */
-
-#if HasExpat
-
-#ifndef ExpatDir
-#define ExpatDir /usr
-#define ExpatDirStandard YES
-#endif
-#ifndef ExpatDirStandard
-#define ExpatDirStandard NO
-#endif
-
-#ifndef ExpatLibDir
-#define ExpatLibDir ExpatDir/LibDirName
-# if ExpatDirStandard
-#  define ExpatLibDirStandard YES
-# endif
-#endif
-#ifndef ExpatLibDirStandard
-#define ExpatLibDirStandard NO
-#endif
-
-#ifndef ExpatIncDir
-#define ExpatIncDir ExpatDir/include
-# if ExpatDirStandard
-#  define ExpatIncDirStandard YES
-# endif
-#endif
-#ifndef ExpatIncDirStandard
-#define ExpatIncDirStandard NO
-#endif
-
-EXPATDIR = ExpatDir
-EXPATLIBDIR = ExpatLibDir
-EXPATINCDIR = ExpatIncDir
-#if ExpatIncDirStandard
-EXPATINCLUDES =
-#else
-EXPATINCLUDES = -I$(EXPATINCDIR)
-#endif
-#if ExpatLibDirStandard
-EXPATLIB = -lexpat
-#else
-EXPATLIB = -L$(EXPATLIBDIR) LinkerRuntimeLibraryPathFlag($(EXPATLIBDIR)) -lexpat
-#endif
-EXPATDEFINES = -DEXPAT
-#endif /* HasExpat */
-
-#endif /* else BuildExpatLibrary */
-
-#define ExpatClientLibs $(EXPATLIB)
-#define ExpatClientDepLibs $(DEPEXPATLIB)
-
-#endif /* UseExpat */
-
-
-#ifdef HasLibpng
-
-/*
- * Libpng controls:
- *
- *	LibpngDir		prefix for all libpng files
- *	LibpngDirStandard	Boolean - whether png headers/libs are
- *				in default compile/link paths
- *	LibpngLibDir		Directory holding png library
- *	LibpngLibDirStandard	Boolean - whether png libs are
- *				in default link path
- *	LibpngIncDir		Directory holding png includes
- *	LibpngIncDirStandard	Boolean - whether png includes are
- *				in default compile path
- *
- * Make sure that *Standard is set correctly, if not, the
- * standard compile/link paths will be added *before* the
- * local X directorys and installed versions of the standard
- * X headers will end up getting used.
- */
-
-#ifndef LibpngDir
-#define LibpngDir /usr
-#define LibpngDirStandard YES
-#endif
-#ifndef LibpngDirStandard
-#define LibpngDirStandard NO
-#endif
-
-#ifndef LibpngLibDir
-#define LibpngLibDir LibpngDir/LibDirName
-#if LibpngDirStandard
-#define LibpngLibDirStandard YES
-#endif
-#endif
-#ifndef LibpngLibDirStandard
-#define LibpngLibDirStandard NO
-#endif
-
-#ifndef LibpngIncDir
-#define LibpngIncDir LibpngDir/include
-#if LibpngDirStandard
-#define LibpngIncDirStandard YES
-#endif
-#endif
-#ifndef LibpngIncDirStandard
-#define LibpngIncDirStandard NO
-#endif
-
-LIBPNGINCDIR = LibpngIncDir
-#if LibpngIncDirStandard
-LIBPNGINC=
-#else
-LIBPNGINC = -I$(LIBPNGINCDIR)
-#endif
-LIBPNGDIR = LibpngDir
-LIBPNGLIBDIR = LibpngLibDir
-LIBPNGINCDIR = LibpngIncDir
-#if LibpngLibDirStandard
-LIBPNGLIB = -lpng
-#else
-LIBPNGLIB = -L$(LIBPNGLIBDIR) LinkerRuntimeLibraryPathFlag($(LIBPNGLIBDIR)) -lpng
-#endif
-
-#endif
-
-#ifndef XmuuClientDepLibs
-#define XmuuClientDepLibs $(DEPXMUULIB) $(DEPXLIB)
-#endif
-#ifndef XmuuClientLibs
-#define XmuuClientLibs $(XMUULIB) $(XLIB)
-#endif
 
 #ifndef LdLibraryPath
 #define LdLibraryPath LD_LIBRARY_PATH
@@ -3112,16 +1995,6 @@ ProjectUnsharedLibReferences(XKBFILE,NX_xkbfile,$(XKBFILELIBSRC),XBuildLibDir)
 #  endif
 # endif
 
-# if defined(UseInstalled) || (CrossCompiling &&  UseInstalledOnCrossCompile)
-     XKBCOMPCMD = $(XBINDIR)/XkbComp
-# else
-     XKBCOMPSRC = $(PROGRAMSRC)/XkbComp
-#  if CrossCompiling
-     XKBCOMPCMD = $(PROGRAMSRC)/XkbComp/cross/XkbComp
-#  else
-     XKBCOMPCMD = $(CLIENTENVSETUP) $(PRELOADSETUP) $(XBUILDBINDIR)/XkbComp
-#  endif
-# endif
 #else /* !BuildXKBlib */
 # ifndef XkbClientDepLibs
 #  define XkbClientDepLibs
@@ -3175,74 +2048,6 @@ ProjectUnsharedLibReferences(XKBUI,NX_xkbui,$(XKBUILIBSRC),XBuildLibDir)
 # define	XkbuiDepLibs $(DEPXKBFILELIB)
 #endif
 
-#ifndef SharedxrxRev
-# define SharedxrxRev		6.8
-#endif 
-
-#ifndef SharedxrxnestRev
-# define SharedxrxnestRev	6.8
-#endif
-
-#ifndef ExtraXawReqs
-# if BuildXaw
-#  define ExtraXawReqs $(XPLIB)
-# else
-#  define ExtraXawReqs /**/
-# endif
-#endif
-
-EXTRAXAWREQS = ExtraXawReqs
-
-#ifndef ExtraXawClientDepLibs
-# if BuildXaw
-#  define ExtraXawClientDepLibs $(DEPXPLIB)
-# else
-#  define ExtraXawClientDepLibs /**/
-# endif
-#endif
-
-EXTRAXAWCLIENTDEPLIBS = ExtraXawClientDepLibs
-
-#ifndef XawClientDepLibs
-#define XawClientDepLibs $(DEPXAWLIB) $(DEPXMULIB) $(DEPXTOOLLIB) $(DEPXPMLIB) $(EXTRAXAWCLIENTDEPLIBS) $(DEPXLIB)
-#endif
-
-#ifndef ExtraXawClientLibs
-# if BuildXaw
-#  define ExtraXawClientLibs $(XPLIB)
-# else
-#  define ExtraXawClientLibs /**/
-# endif
-#endif
-
-EXTRAXAWCLIENTLIBS = ExtraXawClientLibs
-
-#ifndef XawClientLibs
-#define XawClientLibs $(XAWLIB) $(XMULIB) $(XTOOLLIB) $(XPMLIB) $(EXTRAXAWCLIENTLIBS) $(XLIB)
-#endif
-
-#ifndef SharedLibXTrap
-#define SharedLibXTrap HasSharedLibraries
-#endif
-#ifndef NormalLibXTrap
-#define NormalLibXTrap (!SharedLibXTrap | ForceNormalLib)
-#endif
-#ifndef DebugLibXTrap
-#define DebugLibXTrap		NO	/* debugged XTrap library */
-#endif
-#ifndef ProfileLibXTrap
-#define ProfileLibXTrap		NO	/* profiled XTrap library */
-#endif
-        XTRAPLIBSRC = $(LIBSRC)/XTrap
-#if SharedLibXTrap
-#ifndef SharedXTrapRev
-#define SharedXTrapRev 6.4
-#endif
-SharedLibReferences(XTRAP,NX_XTrap,$(XTRAPLIBSRC),SOXTRAPREV,SharedXTrapRev)
-#else
-ProjectUnsharedLibReferences(XTRAP,NX_XTrap,$(XTRAPLIBSRC),XBuildLibDir)
-#endif
-
 #ifndef NeedDefaultDepLibs
 #define NeedDefaultDepLibs YES
 #endif
@@ -3252,7 +2057,7 @@ ProjectUnsharedLibReferences(XTRAP,NX_XTrap,$(XTRAPLIBSRC),XBuildLibDir)
  * Individual libraries should override this
  */
 #if HasSharedLibraries || defined(UseInstalled)
-          DEPLIBS = $(DEPXAWLIB) $(DEPXMULIB) $(DEPXTOOLLIB) $(DEPXLIB)
+          DEPLIBS = $(DEPXLIB)
 #else
           DEPLIBS = $(LOCAL_LIBRARIES)
 #endif
@@ -3275,55 +2080,6 @@ ProjectUnsharedLibReferences(XTRAP,NX_XTrap,$(XTRAPLIBSRC),XBuildLibDir)
 #ifndef InstallAppDefaults
 #define InstallAppDefaults(class) InstallAppDefaultsLong(class,class)
 #endif /* InstallAppDefaults */
-
-/*
- * InstallAppDefaultsLong - general rule to install application default file
- * if the InstallAppDefFiles configuration parameter is set.
- */
-#ifndef InstallAppDefaultsLong
-#if UseConfDirForAppDefaults
-#if InstallAppDefFiles
-#define InstallAppDefaultsLong(file,class)				@@\
-LinkConfDirectory(app-defaults,.,app-defaults,.)			@@\
-InstallNamedTarget(install,file.ad,$(INSTAPPFLAGS),$(XAPPLOADDIR),class)
-#else
-#define InstallAppDefaultsLong(file,class)				@@\
-LinkConfDirectory(app-defaults,.,app-defaults,.)			@@\
-InstallNamedTargetNoClobber(install,file.ad,$(INSTAPPFLAGS),$(XAPPLOADDIR),class)
-#endif /* InstallAppDefFiles */
-#else /* UseConfDirForAppDefaults */
-#if InstallAppDefFiles
-#define InstallAppDefaultsLong(file,class)				@@\
-InstallNamedTarget(install,file.ad,$(INSTAPPFLAGS),$(XAPPLOADDIR),class)
-#else
-#define InstallAppDefaultsLong(file,class)				@@\
-InstallNamedTargetNoClobber(install,file.ad,$(INSTAPPFLAGS),$(XAPPLOADDIR),class)
-#endif /* InstallAppDefFiles */
-#endif /* UseConfDirForAppDefaults */
-#endif /* InstallAppDefaultsLong */
-
-/*
- * MakeXkbDir
- */
-#ifndef MakeXkbDir
-# if !CrossCompiling || UseInstalledOnCrossCompile
-#  define MakeXkbDir(basedir,subdir)					@@\
-all::   Concat(subdir,.dir)						@@\
-									@@\
-Concat(subdir,.dir):							@@\
-	RemoveFile(Concat(subdir,.dir))					@@\
-	$(XKBCOMPCMD) -lfhlpR -o Concat(subdir,.dir) '*'		@@\
-									@@\
-InstallTarget(install,Concat(subdir,.dir),$(INSTDATFLAGS),basedir)	@@\
-									@@\
-clean::									@@\
-	RemoveFile(Concat(subdir,.dir))
-# else
-#  define MakeXkbDir(basedir,subdir)					@@\
-clean::									@@\
-	RemoveFile(Concat(subdir,.dir))
-# endif
-#endif
 
 /*
  * PostProcessTroffPS - by default moves the working output into place,

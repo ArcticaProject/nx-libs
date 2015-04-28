@@ -93,7 +93,6 @@ Imake.tmpl provides defaults for the following variables:
 	HasVarDirectory		boolean for system has /var
 	HasVFork		boolean for system has vfork()
 	HasVoidSignalReturn	boolean for POSIX signal() procs
-	HasZlib			boolean for system has libz
 	IncludeSharedObjectInNormalLib define for static libs to include
 				       -fPIC objects on relevant archs
 	IncRoot			parent of X11 include directory
@@ -181,35 +180,23 @@ X11.tmpl provides defaults for the following variables:
 	BuildIncRoot		relative path to location of headers in build
 	BuildIncTop		path from build includes directory to top
 	BuildEVI		build EVI server extension
-	BuildLBX		build LBX (aka X.fast) server extension
 	BuildMultibuffer	build Multibuffer extension (obsolete)
 	BuildPlugin		build xrx plug-in for web browsers
 	BuildRECORD		Build RECORD extension
 	BuildServer		build X server
-	BuildXAudio		build Audio 
-	BuildXAServer		build Audio server
 	BuildXCSecurity		Build Security Extension
 	BuildXInputExt		build X Input extension (requires ddx support,
 					which exists only in Xhp and XFree86)
-	BuildXInputLib		build X Input library
 	BuildXKB		build X Keyboard Extension?
 	BuildXKBlib		build X Keyboard Extension into Xlib?
 	UseXKBInClients		Use XKB functions in normal clients?
 	ConfigDir		install directory for config files
 	ConnectionFlags		-D's for supported transports
 	ContribDir		location of user-contributed sources
-	DebugLibFS		build libFS_d.a
-	DebugLibICE		build libICE_d.a
-	DebugLibSM		build libSM_d.a
 	DebugLibX11		build libX11_d.a
 	DebugLibXau		build libXau_d.a
-	DebugLibXaw		build libXaw_d.a
 	DebugLibXext		build libXext_d.a
-	DebugLibXi		build libXi_d.a
-	DebugLibXmu		build libXmu_d.a
-	DebugLibXt		build libXt_d.a
 	DebugLibXtst		build libXtst_d.a
-	DebugLibXag		build libXag_d.a
 	DebugOldX		build liboldX_d.a
 	DefaultCursorTheme      name of default cursor theme
 	DefaultFontPath		default server font path
@@ -226,12 +213,8 @@ X11.tmpl provides defaults for the following variables:
 	ForceNormalLib		force building of .a in addition to shared lib
 	HasXdmAuth		boolean for using XDM-AUTHORIZATION-1;
 					needs Wraphelp.c, see Release Notes
-	InstallAppDefFiles	install new app defaults files over old?
-	InstallFSConfig		install fs config file over old?
 	InstallLibManPages	boolean for installing library man pages
 	InstallSecurityConfig	install server security policy file over old?
-	InstallXdmConfig	install xdm config files over old?
-	InstallXinitConfig	install xinit config files over old?
 	KrbIVDefines		defines for use with KerberosIV
 	LibDir			directory in which to install X11 support files
 	LibManSuffix		man suffix for library pages
@@ -246,33 +229,17 @@ X11.tmpl provides defaults for the following variables:
 	MiscManDir		directory in which to install misc man pages
 	NeedDefaultDepLibs	boolean for enabling default DEPLIBS
 	NlsDir			directory in which to install nls files
-	NormalLibFS		build libFS.a
-	NormalLibICE		build libICE.a
-	NormalLibSM		build libSM.a
 	NormalLibX11		build libX11.a
 	NormalLibXau		build libXau.a
-	NormalLibXaw		build libXaw.a
 	NormalLibXext		build libXext.a
-	NormalLibXi		build libXi.a
-	NormalLibXmu		build libXmu.a
-	NormalLibXt		build libXt.a
 	NormalLibXtst		build libXtst.a
-	NormalLibXag		build libXag.a
 	NormalOldX		build liboldX.a
 	OsNameDefines		If uname(2) unavailable, set to -DOS_NAME=OSName
 	PrimaryScreenResolution	resolution of default server screen
-	ProfileLibFS		build libFS_p.a
-	ProfileLibICE		build libICE_p.a
-	ProfileLibSM		build libSM_p.a
 	ProfileLibX11		build libX11_p.a
 	ProfileLibXau		build libXau_p.a
-	ProfileLibXaw		build libXaw_p.a
 	ProfileLibXext		build libXext_p.a
-	ProfileLibXi		build libXi_p.a
-	ProfileLibXmu		build libXmu_p.a
-	ProfileLibXt		build libXt_p.a
 	ProfileLibXtst		build libXtst_p.a
-	ProfileLibXag		build libXag_p.a
 	ProfileOldX		build liboldX_p.a
 	ProjectX		version indicating this is the X Window System
 	RemoveTargetProgramByMoving	boolean for rm -f that doesn't
@@ -282,18 +249,10 @@ X11.tmpl provides defaults for the following variables:
 	ServerExtraDefines	special -D's for server
 	ServerOSDefines		OS -D's for server
 	ServerAssertDefines	-DNDEBUG for no assertions, /**/ for assertions
-	SharedLibFS		boolean for making sharable libFS.so
-	SharedLibICE		boolean for making sharable libICE.so
-	SharedLibSM		boolean for making sharable libSM.so
 	SharedLibX11		boolean for making sharable libX11.so
 	SharedLibXau		boolean for making sharable libXau.so
-	SharedLibXaw		boolean for making sharable libXaw.so
 	SharedLibXext		boolean for making sharable libXext.so
-	SharedLibXi		boolean for making sharable libXi.so
-	SharedLibXmu		boolean for making sharable libXmu.so
-	SharedLibXt		boolean for making sharable libXt.so
 	SharedLibXtst		boolean for making sharable libXtst.so
-	SharedLibXag		boolean for making sharable libXag.so
 	SharedOldX		boolean for making sharable liboldX.so
 	ShmDefines		MIT-SHM define
 	TwmDir			directory in which to install twm config files
@@ -306,11 +265,8 @@ X11.tmpl provides defaults for the following variables:
 	XFileSearchPathDefault	default path to search for app defaults files
 	XInputDefines		XINPUT define
 	XMalloc0ReturnsNullDefines -D's specifically for libX11
-	XawClientDepLibs	DEPLIBS for clients that use Xaw
-	XawClientLibs		LOCAL_LIBRARIES for clients that use Xaw
 	XdmConfigurationSubdirectory	name of default xdm configuration
 	XdmDir			directory in which to install xdm files
-	XdmServersType		type of xdm Xservers file to install
 	XinitDir		directory in which to install xinit files
 	XmanLocalSearchPath	non-standard path for man pages
 	XtErrorPrefix		leading text in XtError() msg; eg. 'X Toolkit '
@@ -366,54 +322,16 @@ An <os>Lib.rules file provides defaults for the following variables:
 
 An <os>Lib.tmpl file provides defaults for the following variables:
 
-	SharedFSReqs		required libs for libFS.so
-	SharedFSRev		version number for libFS.so
-	SharedICEReqs		required libs for libICE.so
-	SharedICERev		version number for libICE.so
 	SharedOldXReqs		required libs for liboldX.so
 	SharedOldXRev		version number for liboldX.so
-	SharedSMReqs		required libs for libSM.so
-	SharedSMRev		version number for libSM.so
 	SharedX11Reqs		required libs for libX11.so
 	SharedX11Rev		version number for libX11.so
 	SharedXauReqs		required libs for libXau.so
 	SharedXauRev		version number for libXau.so
-	SharedXawReqs		required libs for libXaw.so
-	SharedXawRev		version number for libXaw.so
 	SharedXextReqs		required libs for libXext.so
 	SharedXextRev		version number for libXext.so
-	SharedXiReqs		required libs for libXi.so
-	SharedXiRev		version number for libXi.so
-	SharedXmuReqs		required libs for libXmu.so
-	SharedXmuRev		version number for libXmu.so
-	SharedXtReqs		required libs for libXt.so
-	SharedXtRev		version number for libXt.so
 	SharedXtstReqs		required libs for libXtst.so
 	SharedXtstRev		version number for libXtst.so
-	SharedXmReqs		required libs for libXm.so
-	SharedXmRev		version number for libXm.so
-	SharedMrmReqs		required libs for libMrm.so
-	SharedMrmRev		version number for libMrm.so
-	SharedUilReqs		required libs for libUil.so
-	SharedUilRev		version number for libUil.so
-	SharedTtReqs		required libs for libtt.so
-	SharedTtRev		version number for libtt.so
-	SharedPamReqs		required libs for libpam.so
-	SharedPamRev		version number for libpam.so
-	SharedDtSvcReqs		required libs for libDtSvc.so
-	SharedDtSvcRev		version number for libDtSvc.so
-	SharedDtSearchReqs	required libs for libDtSearch.so
-	SharedDtSearchRev	version number for libDtSearch.so
-	SharedDtWidgetReqs	required libs for libDtWidget.so
-	SharedDtWidgetRev	version number for libDtWidget.so
-	SharedDtHelpReqs	required libs for libDtHelp.so
-	SharedDtHelpRev		version number for libDtHelp.so
-	SharedDtPrintReqs	required libs for libDtPrint.so
-	SharedDtPrintRev	version number for libDtPrint.so
-	SharedDtTermReqs	required libs for libDtTerm.so
-	SharedDtTermRev		version number for libDtTerm.so
-	SharedDtMrmReqs		required libs for libDtMrm.so
-	SharedDtMrmRev		version number for libDtMrm.so
 
 Vendor.cf files and/or site/host specific .def files may define the
 following variables:
@@ -434,7 +352,6 @@ The following variables are used by some part of the tree:
 	DvipsCmd		command to turn .dvi file into PostScript
 	MotifBC			using Motif 1.1.1, 1.1.2, or 1.1.3?
 	GetValuesBC		compat GetValues behavior for broken apps?
-	NeedBerklib		application needs libXbsd?
 	SvgaConfig		default SVGA configuration
 	HasGetReturnAddress	util/memleak
 	HasShadowPasswd		system has getspnam() function

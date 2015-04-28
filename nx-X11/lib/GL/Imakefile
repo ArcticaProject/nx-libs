@@ -50,7 +50,7 @@ XCOMM Server-side tokens:
 XCOMM    BuildGlxExt 
 XCOMM    GlxUseSGISI
 
-
+NULL =
 
 #include <Threads.tmpl>
 
@@ -108,9 +108,23 @@ LIBGLBUILDDIR = GL
  * the drivers, and in the latter case, it needs to be built after the driver.
  */
 #if BuildXF86DRI && GlxUseBuiltInDRIDriver
-SUBDIRS = $(MESADIRS) $(DRIDIRS) $(DRIVERDIRS) $(GLXDIRS) $(LIBGLBUILDDIR) $(OSMESADIRS)
+SUBDIRS = \
+	$(MESADIRS) \
+	$(DRIDIRS) \
+	$(DRIVERDIRS) \
+	$(GLXDIRS) \
+	$(LIBGLBUILDDIR) \
+	$(OSMESADIRS) \
+	$(NULL)
 #else
-SUBDIRS = $(MESADIRS) $(GLXDIRS) $(DRIDIRS) $(LIBGLBUILDDIR) $(OSMESADIRS) $(DRIVERDIRS)
+SUBDIRS = \
+	$(MESADIRS) \
+	$(GLXDIRS) \
+	$(DRIDIRS) \
+	$(LIBGLBUILDDIR) \
+	$(OSMESADIRS) \
+	$(DRIVERDIRS) \
+	$(NULL)
 #endif
 
 MakeSubdirs($(SUBDIRS))

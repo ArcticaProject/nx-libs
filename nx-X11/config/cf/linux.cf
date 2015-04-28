@@ -105,19 +105,10 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 #  define XAppLoadDir		EtcX11Directory/app-defaults
 # define XFileSearchPathDefault	Concat4(EtcX11Directory/%L/%T/%N%C,%S:EtcX11Directory/%l/%T/%N%C,%S:EtcX11Directory/%T/%N%C,%S:EtcX11Directory/%L/%T/%N%S:EtcX11Directory/%l/%T/%N%S:EtcX11Directory/%T/%N%S):Concat4($(LIBDIR)/%L/%T/%N%C,%S:$(LIBDIR)/%l/%T/%N%C,%S:$(LIBDIR)/%T/%N%C,%S:$(LIBDIR)/%L/%T/%N%S:$(LIBDIR)/%l/%T/%N%S:$(LIBDIR)/%T/%N%S)
 /* the relative symlink created by this rule causes problems for us */
-# if defined(InstallAppDefFiles) && InstallAppDefFiles
-#  define InstallAppDefaultsLong(file,class)				@@\
-InstallNamedTarget(install,file.ad,$(INSTAPPFLAGS),$(XAPPLOADDIR),class)
-# else
-#  define InstallAppDefaultsLong(file,class)				@@\
-InstallNamedTargetNoClobber(install,file.ad,$(INSTAPPFLAGS),$(XAPPLOADDIR),class)
-# endif /* InstallAppDefFiles */
 # endif /* !defined(NothingOutsideProjectRoot) || !NothingOutsideProjectRoot */
 # define SharedLibXdmGreet	NO
 # define LinkGLToUsrInclude	NO
 # define LinkGLToUsrLib		NO
-# define SharedLibGlu		YES
-# define NormalLibGlu		YES
 # define FSUseSyslog		YES
 
 # define BuildLibGlxWithoutPIC  NO
@@ -145,9 +136,6 @@ InstallNamedTargetNoClobber(install,file.ad,$(INSTAPPFLAGS),$(XAPPLOADDIR),class
 #  endif
 #  define XFree86Devel			YES
 #  define BuildAllSpecsDocs		YES
-#  define InstallXinitConfig		YES
-#  define InstallXdmConfig		YES
-#  define InstallFSConfig		YES
 #  define DebuggableLibraries		YES
 #  define ForceNormalLib		YES
 #  define BuildSpecsDocs		YES
@@ -232,7 +220,6 @@ InstallNamedTargetNoClobber(install,file.ad,$(INSTAPPFLAGS),$(XAPPLOADDIR),class
                                 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 \
 				LinuxAdditionalIncludes LinuxGnuSourceDefines \
 				LinuxLocaleDefines
-# define XawI18nDefines		-DHAS_WCHAR_H -DHAS_WCTYPE_H -DNO_WIDEC_H
 # define HasPosixThreads	YES
 # define ThreadedX		YES
 # define HasThreadSafeAPI	YES
@@ -249,7 +236,6 @@ InstallNamedTargetNoClobber(install,file.ad,$(INSTAPPFLAGS),$(XAPPLOADDIR),class
 # define LinuxSourceDefines	-D_POSIX_SOURCE -D_POSIX_C_SOURCE=2 \
 				-D_BSD_SOURCE -D_SVID_SOURCE \
 				LinuxGnuSourceDefines LinuxLocaleDefines
-# define XawI18nDefines		-DUSE_XWCHAR_STRING -DUSE_XMBTOWC
 # ifndef HasLibCrypt
 #  define HasLibCrypt		NO
 # endif
@@ -260,10 +246,6 @@ InstallNamedTargetNoClobber(install,file.ad,$(INSTAPPFLAGS),$(XAPPLOADDIR),class
 # if !defined(DefaultCCOptions) && !defined(UseInstalled) && HasGcc
 #  define DefaultCCOptions	GccWarningOptions
 # endif
-#endif
-
-#ifndef InstallXloadSetGID
-#define InstallXloadSetGID	NO
 #endif
 
 /*
@@ -521,18 +503,6 @@ InstallNamedTargetNoClobber(install,file.ad,$(INSTAPPFLAGS),$(XAPPLOADDIR),class
 
 #ifndef HasGroff
 #define HasGroff		YES
-#endif
-
-#ifndef HasZlib
-#define HasZlib			YES
-#endif
-
-#ifndef HasLibpng
-#define HasLibpng		YES
-#endif
-
-#ifndef HasExpat
-# define HasExpat		YES
 #endif
 
 #define AvoidNullMakeCommand	YES

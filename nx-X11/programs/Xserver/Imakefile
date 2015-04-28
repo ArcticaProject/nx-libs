@@ -22,11 +22,6 @@ XCOMM $Xorg: Imakefile,v 1.4 2001/03/14 18:42:02 pookie Exp $
  */
 XCOMM $XFree86: xc/programs/Xserver/Imakefile,v 3.296 2003/11/23 06:47:00 torrey Exp $
 
-#ifndef InstallXserverSetUID
-#define InstallXserverSetUID NO
-#endif
-#define InstallServerSetUID InstallXserverSetUID
-
 #include <Server.tmpl>
 
 /* On most systems the linker requires the libraries in dependency order. 
@@ -122,15 +117,10 @@ INSTPGMFLAGS =
     XF86XKBOBJS = xkb/xf86KillSrv.o xkb/xf86VT.o xkb/xf86Private.o
 #endif
 #endif
-#if BuildLBX
-         LBXEXT = lbx/LibraryTargetName(lbx) \
-                  $(TOP)/lib/lbxutil/LibraryTargetName(lbxutil)
-        LBXDIRS = lbx
-#endif
 #if BuildDBE
          DBEEXT = dbe/LibraryTargetName(dbe)
 #endif
-#if BuildDBE || BuildDBElib
+#if BuildDBE
          DBEDIR = dbe
 #endif
 #if BuildRECORD
@@ -190,20 +180,17 @@ INSTPGMFLAGS =
    LOADABLEEXTS = $(MISCEXT) $(DBEEXT) $(RECORDEXT) $(GLXEXT) $(XTRAPEXT)
         MISCEXT = Xext/LibraryTargetName(ext)
       OTHEREXTS = Xext/LibraryTargetName(exts) $(XKBEXT) $(XINPUTEXT) \
-                  $(LBXEXT) $(SITEEXTS)
+                  $(SITEEXTS)
 #else
      EXTENSIONS = $(COMPOSITELIB) $(DAMAGELIB) $(DAMAGE) $(FIXESLIB) $(CW) \
 		  $(OTHEREXTS) $(GLXEXT) $(RANDRLIB) $(RENDERLIB)
       OTHEREXTS = Xext/LibraryTargetName(ext) $(XKBEXT) $(XINPUTEXT) \
-                  $(LBXEXT) $(DBEEXT) $(RECORDEXT) $(SITEEXTS) $(XTRAPEXT)
+                  $(DBEEXT) $(RECORDEXT) $(SITEEXTS) $(XTRAPEXT)
 #endif
         EXTDIRS = Xext $(XKBDIR) $(XIDIR) $(GLXDIR) \
-                  $(LBXDIRS) $(DBEDIR) $(RECORDDIR) $(SITEEXTDIRS) \
+                  $(DBEDIR) $(RECORDDIR) $(SITEEXTDIRS) \
                   $(RANDRDIR) $(RENDERDIR) $(XTRAPDIR) $(XPCONFIGDIR) \
 		  $(FIXESDIR) $(DAMAGEDIR) $(CWDIR) $(COMPOSITEDIR)
-#if BuildLBX
-           ZLIB = GzipLibrary
-#endif
              OS = os/LibraryTargetName(os) $(DEPXAUTHLIB)
         BSDEMUL = $(DEPXBSDLIB)
 #if DoLoadableServer

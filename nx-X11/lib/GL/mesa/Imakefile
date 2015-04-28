@@ -12,6 +12,8 @@ XCOMM $XFree86: xc/lib/GL/mesa/src/Imakefile,v 1.30tsi Exp $
  * driver modules.
  */
 
+NULL =
+
 #if BuildOSMesaLib || (BuildXF86DRI && (GlxDriverUsesMesa || GlxBuiltInXMesa))
 #define DoNormalLib (NormalLibGlx || SharedLibGlxWithoutPIC)
 #define DoSharedLib (SharedLibGlx && !SharedLibGlxWithoutPIC)
@@ -63,8 +65,17 @@ LibraryObjectRule()
 #define IHaveSubdirs
 #define PassCDebugFlags
 
-SUBDIRS = $(ASM_SUBDIRS) array_cache main math swrast swrast_setup tnl tnl_dd shader
-
+SUBDIRS = \
+	$(ASM_SUBDIRS) \
+	array_cache \
+	main \
+	math \
+	swrast \
+	swrast_setup \
+	tnl \
+	tnl_dd \
+	shader \
+	$(NULL)
 
 MakeSubdirs($(SUBDIRS))
 DependSubdirs($(SUBDIRS))

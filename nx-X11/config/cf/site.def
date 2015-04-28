@@ -124,25 +124,6 @@ XCOMM site:  $XFree86: xc/config/cf/site.def,v 3.24 2000/06/25 20:17:29 dawes Ex
 #define DefaultUserPath /bin:/usr/bin:$(BINDIR):/usr/ucb:/usr/local/bin
 */
 
-
-/* You do NOT need SetUID if you only run the server under xdm */
-/* You MAY need SetUID if users run the server by hand or under xinit */
-/* Consult your system administrator before making the X server setuid */
-/*
-#if defined(SunArchitecture) && OSMajorVersion > 4
-#define InstallXserverSetUID YES
-#endif
-*/
-
-/* You do NOT need SetUID if you only run the server under xdm */
-/* You MAY need SetUID if users run the server by hand or under xinit */
-/* Consult your system administrator before making the X server setuid */
-/*
-#if defined(XFree86Version) || defined (XorgVersion)
-#define InstallXserverSetUID YES
-#endif
-*/
-
 #include <host.def>
 
 #endif /* AfterVendorCF */

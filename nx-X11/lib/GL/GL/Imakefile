@@ -242,5 +242,3 @@ InstallLibrary($(LIBNAME)_d,$(USRLIBDIR))
 ProfiledLibraryTarget($(LIBNAME),$(POBJS))
 InstallLibrary($(LIBNAME)_p,$(USRLIBDIR))
 #endif
-
-

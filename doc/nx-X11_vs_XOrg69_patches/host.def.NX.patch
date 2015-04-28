@@ -787,7 +787,7 @@
 +/*
 + * To build static and shared libraries with debugging information, uncomment
 + * this. Assumes you have Gcc2.
-+ * (If you don't have Gcc2, you can use the DebugLib{X11,Xt,Xaw,...} variables
++ * (If you don't have Gcc2, you can use the DebugLib{X11,...} variables
 + * to build debugging versions of the libraries separately.)
 + *
 +#define DebuggableLibraries	YES
