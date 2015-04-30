@@ -20,7 +20,18 @@ set -e
 case "$1" in
 	remove)
 		if test -d /usr/lib/nx/X11/Xinerama; then
-			rm -rf /usr/lib/nx/X11/Xinerama
+			if test -e /usr/lib/nx/X11/Xinerama/libNX_X11.so.6; then
+				rm -f /usr/lib/nx/X11/Xinerama/libNX_X11.so.6
+			fi
+
+			if test -e /usr/lib/nx/X11/Xinerama/libNX_Xext.so.6; then
+				rm -f /usr/lib/nx/X11/Xinerama/libNX_Xext.so.6
+			fi
+
+
+			if test -e /usr/lib/nx/X11/Xinerama/libXinerama.so.1; then
+				rm -f /usr/lib/nx/X11/Xinerama/libXinerama.so.1
+			fi
 		fi
 		;;
 	deconfigure|upgrade|failed-upgrade)
