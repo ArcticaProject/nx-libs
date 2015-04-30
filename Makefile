@@ -160,7 +160,7 @@ install-full:
 	# $(DESTDIR)$(NXLIBDIR)/X11/Xinerama/libNX_Xext.so.6 -> /usr/<libdir>/libXext.so.6
 	# $(DESTDIR)$(NXLIBDIR)/X11/Xinerama/libXinerama.so.1 -> /usr/<libdir>/libNX_Xinerama.so.1
 	# Only create the owned directory here for nx-x11-common.
-	$(INSTALL_DIR) $(DESTDIR)$(NXLIBDIR)/X11
+	$(INSTALL_DIR) $(DESTDIR)$(NXLIBDIR)/X11/Xinerama
 
 	$(INSTALL_DIR) $(DESTDIR)/$(ETCDIR_NX)
 	$(INSTALL_DIR) $(DESTDIR)/$(ETCDIR_X2GO)
