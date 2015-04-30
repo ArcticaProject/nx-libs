@@ -133,6 +133,13 @@ nx-libs (2:3.5.0.32-0x2go1) UNRELEASED; urgency=low
     - Remove accidentally copied Dokuwiki syntax.
   * debian/keystrokes.cfg: fix whitespace errors.
     Backported from Arctica GH 3.6.x branch.
+  * debian/libnx-xinerama1.*: also create libXinerama symlink in
+    libnx-xinerama1.postinst.postinst (and remove in
+    libnx-xinerama1.postinst.prerm.)
+    Backported from Arctica GH 3.6.x branch.
+  * debian/libnx-xinerama1.*: move Xinerama dir back to nx-x11-common. Only
+    delete known files. Fixes RPM build failures.
+    Backported from Arctica GH 3.6.x branch.
 
   [ Bernard Cafarelli ]
   * nx-X11: link to libdl to fix undefined references to 'dlopen' and 'dlsym'.
