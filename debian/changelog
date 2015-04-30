@@ -29,56 +29,6 @@ nx-libs (2:3.5.0.32-0x2go1) UNRELEASED; urgency=low
   * nx-X11: add more NULL guards to TEST and DEBUG sections of Render.c.
     Affects:
     - 0990_fix-DEBUG-and-TEST-builds.full.patch
-
- -- X2Go Release Manager <git-admin@x2go.org>  Tue, 17 Mar 2015 19:19:32 +0100
-
-nx-libs (2:3.5.0.31-0x2go1) unstable; urgency=low
-
-  [ Clemens Lang ]
-  * Use path discovery for finding makedepend. Remove old cruft. Adds:
-    - 0070_nxcomp_use-MAKEDEPEND-in-path.full+lite.patch
-    - 0071_nxcompext_use-MAKEDEPEND-in-path.full+lite.patch
-    - 0072_nxcompshad_use-MAKEDEPEND-in-path.full+lite.patch
-    - 0073_nxproxy_use-MAKEDEPEND-in-path.full+lite.patch
-  * Fix dynamic library linking on OS X. Use -dynamiclib instead of -bundle.
-    Adds:
-    - 0074_nxcomp_use-dynamiclib-flag-on-OS-X.full+lite.patch
-    - 0075_nxcompshad_use-dynamiclib-flag-on-OS-X.full+lite.patch
-  * Use the correct library naming scheme on OS X. It differs from other
-    UNIX-based systems.
-    Adds:
-    - 0410_nxcomp_use-correct-library-naming-scheme-on-OS-X.full+lite.patch
-    - 0610_nxcompext_use-correct-library-naming-scheme-on-OS-X.full+lite.patch
-    - 0611_nxcompshad_use-correct-library-naming-scheme-on-OS-X.full+lite.patch
-
-  [ Mihai Moldovan ]
-  * nx{comp{,ext,shad},proxy}: try really hard to find makedepend. Do not fail
-    if it is not available.
-  * Rename:
-    - 0070_nxcomp_use-MAKEDEPEND-in-path.full+lite.patch =>
-      0410_nxcomp_use-MAKEDEPEND-in-path.full+lite.patch
-    - 0071_nxcompext_use-MAKEDEPEND-in-path.full+lite.patch =>
-      0610_nxcompext_use-MAKEDEPEND-in-path.full+lite.patch
-    - 0072_nxcompshad_use-MAKEDEPEND-in-path.full+lite.patch =>
-      0611_nxcompshad_use-MAKEDEPEND-in-path.full+lite.patch
-    - 0073_nxproxy_use-MAKEDEPEND-in-path.full+lite.patch =>
-      0612_nxproxy_use-MAKEDEPEND-in-path.full+lite.patch
-    - 0074_nxcomp_use-dynamiclib-flag-on-OS-X.full+lite.patch =>
-      0613_nxcomp_use-dynamiclib-flag-on-OS-X.full+lite.patch
-    - 0075_nxcompshad_use-dynamiclib-flag-on-OS-X.full+lite.patch =>
-      0614_nxcompshad_use-dynamiclib-flag-on-OS-X.full+lite.patch
-    - 0610_nxcompext_use-correct-library-naming-scheme-on-OS-X.full+lite.patch
-      =>
-      0620_nxcompext_use-correct-library-naming-scheme-on-OS-X.full+lite.patch
-    - 0611_nxcompshad_use-correct-library-naming-scheme-on-OS-X.full+lite.patch
-      =>
-      0621_nxcompshad_use-correct-library-naming-scheme-on-OS-X.full+lite.patch
-  * nx-libs.spec:
-    - Versioned libXcomp* should obsolete unversioned libXcomp*, not
-      libNX_Xcomp*.
-    - Add overlooked Obsolete: statement to libNX_Xfixes3.
-  * Mid-release fixup:
-    - Rename *nxcomp{ext,shad}*.full+lite* to *nxcomp{ext,shad}*.full.
   * CVE patches were previously not included in release tarballs.
     Rename:
     - 1001-LZW-decompress-fix-for-CVE-2011-2895-From-xorg-lib-X.patch =>
@@ -195,6 +145,13 @@ nx-libs (2:3.5.0.31-0x2go1) unstable; urgency=low
     - Remove accidentally copied Dokuwiki syntax.
   * debian/keystrokes.cfg: fix whitespace errors.
     Backported from Arctica GH 3.6.x branch.
+  * debian/libnx-xinerama1.*: also create libXinerama symlink in
+    libnx-xinerama1.postinst.postinst (and remove in
+    libnx-xinerama1.postinst.prerm.)
+    Backported from Arctica GH 3.6.x branch.
+  * debian/libnx-xinerama1.*: move Xinerama dir back to nx-x11-common. Only
+    delete known files. Fixes RPM build failures.
+    Backported from Arctica GH 3.6.x branch.
 
   [ Bernard Cafarelli ]
   * nx-X11: link to libdl to fix undefined references to 'dlopen' and 'dlsym'.
@@ -213,6 +170,56 @@ nx-libs (2:3.5.0.31-0x2go1) unstable; urgency=low
   * nxcompshad: Prevent underlinking by linking to libNX_Xext.
     Adds:
     - 0650_nxcompshad_link-to-NX_Xext.full.patch
+
+ -- X2Go Release Manager <git-admin@x2go.org>  Tue, 17 Mar 2015 19:19:32 +0100
+
+nx-libs (2:3.5.0.31-0x2go1) unstable; urgency=low
+
+  [ Clemens Lang ]
+  * Use path discovery for finding makedepend. Remove old cruft. Adds:
+    - 0070_nxcomp_use-MAKEDEPEND-in-path.full+lite.patch
+    - 0071_nxcompext_use-MAKEDEPEND-in-path.full+lite.patch
+    - 0072_nxcompshad_use-MAKEDEPEND-in-path.full+lite.patch
+    - 0073_nxproxy_use-MAKEDEPEND-in-path.full+lite.patch
+  * Fix dynamic library linking on OS X. Use -dynamiclib instead of -bundle.
+    Adds:
+    - 0074_nxcomp_use-dynamiclib-flag-on-OS-X.full+lite.patch
+    - 0075_nxcompshad_use-dynamiclib-flag-on-OS-X.full+lite.patch
+  * Use the correct library naming scheme on OS X. It differs from other
+    UNIX-based systems.
+    Adds:
+    - 0410_nxcomp_use-correct-library-naming-scheme-on-OS-X.full+lite.patch
+    - 0610_nxcompext_use-correct-library-naming-scheme-on-OS-X.full+lite.patch
+    - 0611_nxcompshad_use-correct-library-naming-scheme-on-OS-X.full+lite.patch
+
+  [ Mihai Moldovan ]
+  * nx{comp{,ext,shad},proxy}: try really hard to find makedepend. Do not fail
+    if it is not available.
+  * Rename:
+    - 0070_nxcomp_use-MAKEDEPEND-in-path.full+lite.patch =>
+      0410_nxcomp_use-MAKEDEPEND-in-path.full+lite.patch
+    - 0071_nxcompext_use-MAKEDEPEND-in-path.full+lite.patch =>
+      0610_nxcompext_use-MAKEDEPEND-in-path.full+lite.patch
+    - 0072_nxcompshad_use-MAKEDEPEND-in-path.full+lite.patch =>
+      0611_nxcompshad_use-MAKEDEPEND-in-path.full+lite.patch
+    - 0073_nxproxy_use-MAKEDEPEND-in-path.full+lite.patch =>
+      0612_nxproxy_use-MAKEDEPEND-in-path.full+lite.patch
+    - 0074_nxcomp_use-dynamiclib-flag-on-OS-X.full+lite.patch =>
+      0613_nxcomp_use-dynamiclib-flag-on-OS-X.full+lite.patch
+    - 0075_nxcompshad_use-dynamiclib-flag-on-OS-X.full+lite.patch =>
+      0614_nxcompshad_use-dynamiclib-flag-on-OS-X.full+lite.patch
+    - 0610_nxcompext_use-correct-library-naming-scheme-on-OS-X.full+lite.patch
+      =>
+      0620_nxcompext_use-correct-library-naming-scheme-on-OS-X.full+lite.patch
+    - 0611_nxcompshad_use-correct-library-naming-scheme-on-OS-X.full+lite.patch
+      =>
+      0621_nxcompshad_use-correct-library-naming-scheme-on-OS-X.full+lite.patch
+  * nx-libs.spec:
+    - Versioned libXcomp* should obsolete unversioned libXcomp*, not
+      libNX_Xcomp*.
+    - Add overlooked Obsolete: statement to libNX_Xfixes3.
+  * Mid-release fixup:
+    - Rename *nxcomp{ext,shad}*.full+lite* to *nxcomp{ext,shad}*.full.
 
  -- X2Go Release Manager <git-admin@x2go.org>  Tue, 17 Mar 2015 18:48:06 +0100
 
