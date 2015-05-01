@@ -998,6 +998,12 @@ Package: nxagent
 Architecture: any
 Multi-Arch: foreign
 Depends:
+# <Workaround> for missing dependencies on Ubuntu.
+ libnx-xdamage1 (>= ${source:Version}), libnx-xdamage1 (<< ${source:Version}.1),
+ libnx-xinerama1 (>= ${source:Version}), libnx-xinerama1 (<< ${source:Version}.1),
+ libnx-xrandr2 (>= ${source:Version}), libnx-xrandr2 (<< ${source:Version}.1),
+ libnx-xtst6 (>= ${source:Version}), libnx-xtst6 (<< ${source:Version}.1),
+# </Workaround>
  ${shlibs:Depends},
  ${misc:Depends},
 Recommends:
