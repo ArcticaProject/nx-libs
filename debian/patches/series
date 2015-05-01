@@ -132,5 +132,6 @@
 1103-xkb-Don-t-swap-XkbSetGeometry-data-in-the-input.full.patch
 1104-xkb-Check-strings-length-against-request-size.full.patch
 1200-CVE-2013-7439-MakeBigReq-don-t-move-the-last-wo.full.patch
+1210-CVE-2015-3418-dix-Allow-zero-height-PutImage-re.full.patch
 0016_nx-X11_install-location.debian.patch
 0102_xserver-xext_set-securitypolicy-path.debian.patch
