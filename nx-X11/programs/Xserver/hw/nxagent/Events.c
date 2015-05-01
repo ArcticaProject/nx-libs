@@ -93,7 +93,7 @@
 #include <X11/cursorfont.h>
 
 #include "Shadow.h"
-#include "Xrandr.h"
+#include <X11/extensions/Xrandr.h>
 
 #include "NXlib.h"
 
