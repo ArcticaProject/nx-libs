@@ -51,10 +51,6 @@ GLXLIBDIR = GL
 RENDERLIBDIR = Xrender
 #endif
 
-#if BuildRandRLibrary
-RANDRLIBDIR = Xrandr
-#endif
-
 #if BuildXfixesLibrary
 XFIXESLIBDIR = Xfixes
 #endif
@@ -103,7 +99,6 @@ LINTSUBDIRS = \
 	$(GLXLIBDIR) \
 	$(XINERAMADIR) \
 	$(RENDERLIBDIR) \
-	$(RANDRLIBDIR) \
 	$(XRESLIBDIR) \
 	$(XFIXESLIBDIR) \
 	$(COMPOSITELIBDIR) \
