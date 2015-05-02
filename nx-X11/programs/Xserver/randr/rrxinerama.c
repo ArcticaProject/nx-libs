@@ -119,10 +119,9 @@ static int SProcRRXineramaDispatch(ClientPtr client);
 
 #ifdef NXAGENT_SERVER
 extern Display *nxagentDisplay;
-extern Window nxagentDefaultWindows[];
 #endif
 
-#undef DEBUG
+#define DEBUG
 
 /* Proc */
 
@@ -461,60 +460,6 @@ ProcRRXineramaQueryScreens(ClientPtr client)
 #endif
 }
 
-
-/* determine the position and size of the nxproxy window */
-/* FIXME: is border_width relevant here? */
-BOOL getWindowGeometry(Display *display, Window win, int *x_org, int *y_org, unsigned int *width, unsigned int *height)
-{
-    int x,y, ox, oy;
-    unsigned int w, h, border_width, depth;
-    Status stat;
-    Window root = NULL;
-    Window child = NULL;
-
-    x = y = 0;
-    w = h = border_width = depth = 0;
-
-    stat = XGetGeometry(display, win, &root, &x, &y, &w, &h, &border_width, &depth);
-    if (stat) {
-#ifdef DEBUG
-        fprintf(stderr, "getGeometry: stat=%d, root=0x%x, x=%d, y=%d, width=%d, height=%d, border_width=%d, DISPLAY='%s'\n",
-	        stat, root, x, y, w, h, border_width, XDisplayString(display));
-#endif
-        *width = w;
-        *height = h;
-    } else {
-#ifdef DEBUG
-        fprintf(stderr, "getGeometry: Cannot determine geometry for window 0x%x\n", win);
-#endif
-        return FALSE;
-    }
-
-    /* Get coordinates of the nxproxy window relative to
-       the root window */
-    if (!XTranslateCoordinates(display, win, root, 0, 0, &ox, &oy, &child)) {
-        /* rc=FALSE means the window and root are on different
-	   screens. This cannot happen as we got the root window
-	   from the XGetGeometry call above so win MUST
-	   reside on that root window.
-	   FIXME: We skip this for now as it is unclear what to
-	   do in this situation.*/
-       ;
-#ifdef DEBUG
-       fprintf(stderr, "getGeometry: XTranslateCoordinates() failed\n");
-#endif
-    } else {
-#ifdef DEBUG
-        fprintf(stderr, "getGeometry: XTranslateCoordinates() result: x_org=%d, offset_y=%d\n", ox, oy);
-#endif
-        *x_org = ox;
-        *y_org = oy;
-    }
-
-    return TRUE;
-}
-
-
 int
 ProcRRXineramaQueryScreens_auto(ClientPtr client)
 {
@@ -527,8 +472,34 @@ ProcRRXineramaQueryScreens_auto(ClientPtr client)
     static XineramaScreenInfo *cache_screeninfo = NULL;
     static int cache_number = -1;
 
+
     int number;
     int i;
+
+
+#ifdef DEBUG
+   {
+      fprintf(stderr, "screenInfo.numScreens = %d\n", screenInfo.numScreens);
+      for (i = 0; i < screenInfo.numScreens; i++) {
+	ScreenPtr pScreen = screenInfo.screens[i];
+	/*	fprintf(stderr, "[%d] x_org=%d, y_org=%s, width=%d, height=%d\n", i,pScreen->x_org,pScreen->y_org,pScreen->width,pScreen->height);*/
+	fprintf(stderr, "[%d] width=%d, height=%d\n", i,pScreen->width,pScreen->height);
+
+      }
+      fprintf(stderr,"nxagentOptionsPtr->SavedX = %d\n", nxagentOptionsPtr->SavedX);
+      fprintf(stderr,"nxagentOption(SavedX) = %d\n", nxagentOption(SavedX));
+      fprintf(stderr,"nxagentOptionsPtr->SavedY = %d\n", nxagentOptionsPtr->SavedY);
+      fprintf(stderr,"nxagentOptionsPtr->SavedWidth = %d\n", nxagentOptionsPtr->SavedWidth);
+      fprintf(stderr,"nxagentOptionsPtr->SavedHeight = %d\n", nxagentOptionsPtr->SavedHeight);
+      fprintf(stderr,"nxagentOptionsPtr->X = %d\n", nxagentOptionsPtr->X);
+      fprintf(stderr,"nxagentOption(X) = %d\n", nxagentOption(X));
+      fprintf(stderr,"nxagentOptionsPtr->Y = %d\n", nxagentOptionsPtr->Y);
+      fprintf(stderr,"nxagentOption(Y) = %d\n", nxagentOption(Y));
+      fprintf(stderr,"nxagentOptionsPtr->Width = %d\n", nxagentOptionsPtr->Width);
+      fprintf(stderr,"nxagentOptionsPtr->Height = %d\n", nxagentOptionsPtr->Height);
+
+    }
+#endif
 
     REQUEST_SIZE_MATCH(xXineramaQueryScreensReq);
 
@@ -568,30 +539,7 @@ ProcRRXineramaQueryScreens_auto(ClientPtr client)
 #endif
 
     if (number) {
-        int x_org, y_org;
-	unsigned int width, height;
 	int count = 0;
-
-	/* nxagentDefaultWindows[0] is the window that is referred to in
-	   hw/nxagent/Extensions.c:nxagentRandRSetWindowsSize() and in
-	   this file's header, too. So this should be correct. This
-	   window is NULL when nxagent is in disconnected state, but if
-	   we reach this point it should always be set. Nevertheless we
-	   do some sanity checks */
-	if (!nxagentDefaultWindows[RR_XINERAMA_SCREEN]) {
-	    /* should not happen... */
-#ifdef DEBUG
-	    fprintf(stderr, "ProcRRXineramaQueryScreens_auto: nxagentDefaultWindows[RR_XINERAMA_SCREEN] is NULL\n");
-#endif
-	    number = 0;
-	} else {
-            x_org = y_org = 0; /* get rid of compiler warning */
-	    if (!getWindowGeometry(nxagentDisplay, nxagentDefaultWindows[RR_XINERAMA_SCREEN], &x_org, &y_org, &width, &height)) {
-	        /* should also not happen... */
-	        fprintf(stderr, "ProcRRXineramaQueryScreens_auto: could not determine pos and size of nxagentDefaultWindows[RR_XINERAMA_SCREEN]\n");
-		number = 0;
-	    }
-	}
 
         /* We need to send the number of screens prior to the
 	   screens. But we do not want to send screens that are outside
@@ -607,8 +555,8 @@ ProcRRXineramaQueryScreens_auto(ClientPtr client)
 	    unsigned int new_w, new_h;
 
 	    /* if there's no intersection we skip that screen */
-	    if (!intersect(x_org, y_org,
-                           width, height,
+	    if (!intersect(nxagentOption(X), nxagentOption(Y),
+                           nxagentOption(Width), nxagentOption(Height),
                            screeninfo[i].x_org, screeninfo[i].y_org,
                            screeninfo[i].width, screeninfo[i].height,
 			   &new_x, &new_y, &new_w, &new_h)) {
