@@ -35,6 +35,11 @@ static int nxagentRandRScreenSetSize(ScreenPtr pScreen, CARD16 width,
 
 static int nxagentRandRInitSizes(ScreenPtr pScreen);
 
+static Bool nxagentRandRCrtcSet (ScreenPtr pScreen, RRCrtcPtr crtc,
+				 RRModePtr mode, int x, int y,
+				 Rotation rotation, int numOutputs,
+				 RROutputPtr *outputs);
+
 #ifdef __DARWIN__
 
 void DarwinHandleGUI(int argc, char *argv[])
@@ -83,6 +88,8 @@ void nxagentInitRandRExtension(ScreenPtr pScreen)
     fprintf(stderr, "Warning: Failed to initialize the RandR extension.\n");
   }
 
+
+  /* FIXME: do we need this at all with the new rand/xinerama stuff? */
   nxagentRandRInitSizes(pScreen);
 
   /*
@@ -97,12 +104,41 @@ void nxagentInitRandRExtension(ScreenPtr pScreen)
 
   #if RANDR_12_INTERFACE
   pRandRScrPriv -> rrScreenSetSize = nxagentRandRScreenSetSize;
+  pRandRScrPriv -> rrCrtcSet = nxagentRandRCrtcSet;
   #endif
 
   #if RANDR_10_INTERFACE
   pRandRScrPriv -> rrSetConfig = nxagentRandRSetConfig;
   #endif
 }
+
+void
+RRResetProc (ExtensionEntry *extEntry)
+{
+  fprintf(stderr, "RANDR going down - NX version\n");
+}
+
+
+
+#if RANDR_12_INTERFACE
+/*
+ * Request that the Crtc be reconfigured
+ */
+
+static Bool
+nxagentRandRCrtcSet (ScreenPtr   pScreen,
+		     RRCrtcPtr   crtc,
+		     RRModePtr   mode,
+		     int         x,
+		     int         y,
+		     Rotation    rotation,
+		     int         numOutputs,
+		     RROutputPtr *outputs)
+{
+  return RRCrtcNotify(crtc, mode, x, y, rotation, numOutputs, outputs);
+}
+#endif
+
 
 int nxagentRandRGetInfo(ScreenPtr pScreen, Rotation *pRotations)
 {

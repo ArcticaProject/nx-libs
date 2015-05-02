@@ -154,6 +154,8 @@ void nxagentInitOptions()
   nxagentOptions.CopyBufferSize = COPY_UNLIMITED;
 
   nxagentOptions.ImageRateLimit = 0;
+
+  nxagentOptions.Xinerama = 0;
 }
 
 /*

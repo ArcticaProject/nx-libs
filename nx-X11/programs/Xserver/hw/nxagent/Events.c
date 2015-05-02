@@ -568,6 +568,10 @@ void nxagentSwitchResizeMode(ScreenPtr pScreen)
 {
   XSizeHints sizeHints;
 
+  #ifdef DEBUG
+  fprintf(stderr, "nxagentSwitchResizeMode called.\n");
+  #endif
+
   int desktopResize = nxagentOption(DesktopResize);
 
   nxagentChangeOption(DesktopResize, !desktopResize);
@@ -3366,7 +3370,9 @@ int nxagentHandleConfigureNotify(XEvent* X)
         if (nxagentOption(DesktopResize) == 1)
         {
           if (nxagentOption(Width) != X -> xconfigure.width ||
-                nxagentOption(Height) != X -> xconfigure.height)
+                nxagentOption(Height) != X -> xconfigure.height ||
+                nxagentOption(X) != X -> xconfigure.x ||
+                nxagentOption(Y) != X -> xconfigure.y)
           {
             Bool newEvents = False;
 
@@ -3423,11 +3429,16 @@ int nxagentHandleConfigureNotify(XEvent* X)
 
         nxagentMoveViewport(pScreen, 0, 0);
 
+        /* if in shadowing mode or if neither size nor position have
+           changed we do not need to adjust RandR */
+        /* FIXME: Comment makes no sense */
         if (nxagentOption(Shadow) == 1 ||
                 (nxagentOption(Width) == nxagentOption(RootWidth) &&
-                    nxagentOption(Height) == nxagentOption(RootHeight)))
+		 nxagentOption(Height) == nxagentOption(RootHeight) &&
+		 nxagentOption(X) == nxagentOption(RootX) &&
+		 nxagentOption(Y) == nxagentOption(RootY)))
         {
-          doRandR = 0;
+          doRandR = False;
         }
 
         nxagentChangeOption(Width, X -> xconfigure.width);
@@ -3466,11 +3477,30 @@ int nxagentHandleConfigureNotify(XEvent* X)
           #endif
 
           nxagentChangeScreenConfig(0, nxagentOption(Width),
-                                        nxagentOption(Height), 0, 0);
+                                       nxagentOption(Height), 0, 0);
         }
       }
 
       return 1;
+    }
+    else
+    {
+      if (X -> xconfigure.window == DefaultRootWindow(nxagentDisplay))
+      {
+        #ifdef TEST
+        fprintf(stderr, "nxagentHandleConfigureNotify: remote root window has changed: %d,%d %dx%d\n", X -> xconfigure.x, X -> xconfigure.y, X -> xconfigure.width, X -> xconfigure.height);
+        #endif
+
+        nxagentChangeOption(RootX, X -> xconfigure.x);
+        nxagentChangeOption(RootY, X -> xconfigure.y);
+        nxagentChangeOption(RootWidth, X -> xconfigure.width);
+        nxagentChangeOption(RootHeight, X -> xconfigure.height);
+
+        nxagentChangeScreenConfig(0, nxagentOption(Width),
+                                     nxagentOption(Height), 0, 0);
+
+        return 1;
+      }
     }
   }
 
@@ -4416,6 +4446,10 @@ int nxagentHandleRRScreenChangeNotify(XEvent *X)
 {
   XRRScreenChangeNotifyEvent *Xr;
 
+  #ifdef DEBUG
+  fprintf(stderr, "nxagentHandleRRScreenChangeNotify called.\n");
+  #endif
+
   Xr = (XRRScreenChangeNotifyEvent *) X;
 
   nxagentResizeScreen(screenInfo.screens[DefaultScreen(nxagentDisplay)], Xr -> width, Xr -> height,
@@ -4503,6 +4537,10 @@ int nxagentPendingEvents(Display *dpy)
 int nxagentWaitEvents(Display *dpy, struct timeval *tm)
 {
   XEvent ev;
+
+  #ifdef DEBUG
+  fprintf(stderr, "nxagentWaitEvents called.\n");
+  #endif
 
   NXFlushDisplay(dpy, NXFlushLink);
 
