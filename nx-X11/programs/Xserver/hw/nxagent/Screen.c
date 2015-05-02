@@ -77,6 +77,9 @@ is" without express or implied warranty.
 #include "Shadow.h"
 #include "Utils.h"
 
+#include <X11/Xlib.h>
+#include <X11/extensions/Xinerama.h>
+
 #include <X11/extensions/Xrandr.h>
 
 #define GC     XlibGC
@@ -3585,7 +3588,50 @@ Bool nxagentReconnectScreen(void *p0)
   return True;  
 }
 
-RRModePtr    nxagentRRCustomMode = NULL;
+/* FIXME: there must be such macros somewhere already...*/
+#define MAX(a,b) ((a) > (b)) ? (a) : (b);
+#define MIN(a,b) ((a) < (b)) ? (a) : (b);
+
+/* intersect two rectangles */
+Bool intersect(int ax1, int ay1, unsigned int aw, unsigned int ah,
+	       int bx1, int by1, unsigned int bw, unsigned int bh,
+	       int *x, int *y, unsigned int *w, unsigned int *h)
+{
+    int tx1, ty1, tx2, ty2, ix, iy;
+    unsigned int iw, ih;
+
+    int ax2 = ax1 + aw;
+    int ay2 = ay1 + ah;
+    int bx2 = bx1 + bw;
+    int by2 = by1 + bh;
+
+    /* thanks to http://silentmatt.com/rectangle-intersection */
+
+    /* check if there's any intersection at all */
+    if (ax2 < bx1 || bx2 < ax1 || ay2 < by1 || by2 < ay1) {
+        return FALSE;
+    }
+
+    tx1 = MAX(ax1, bx1);
+    ty1 = MAX(ay1, by1);
+    tx2 = MIN(ax2, bx2);
+    ty2 = MIN(ay2, by2);
+
+    ix = tx1 - ax1;
+    iy = ty1 - ay1;
+    iw = tx2 - tx1;
+    ih = ty2 - ty1;
+
+    /* check if the resulting rectangle is feasible */
+    if (iw <= 0 || ih <= 0) {
+        return FALSE;
+    }
+    *x = ix;
+    *y = iy;
+    *w = iw;
+    *h = ih;
+    return TRUE;
+}
 
 int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, int mmHeight)
 {
@@ -3596,7 +3642,7 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
   RRModePtr    mode;
   xRRModeInfo  modeInfo;
   char         name[100];
-  int          r, c, m;
+  int          r;
   int          refresh = 60;
   int          doNotify = 1;
 
@@ -3607,7 +3653,8 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
 
   UpdateCurrentTime();
 
-  if (nxagentGrabServerInfo.grabstate == SERVER_GRABBED)
+  if (nxagentGrabServerInfo.grabstate == SERVER_GRABBED && nxagentGrabServerInfo.client != NULL)
+    /*if (nxagentGrabServerInfo.grabstate == SERVER_GRABBED )*/
   {
     /*
      * If any client grabbed the server it won't expect that screen
@@ -3615,8 +3662,10 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
      * get an X error because available modes are chanded meanwhile.
      */
 
+    /* FIXME: Resizing an empty nxagent does not work with the check on SERVER_GRABBED. We always exit here... */
+
     #ifdef TEST
-    fprintf(stderr, "nxagentChangeScreenConfig: Cancel with grabbed server.\n");
+    fprintf(stderr, "nxagentChangeScreenConfig: Cancel with grabbed server (grab held by %p).\n", nxagentGrabServerInfo.client);
     #endif
 
     return 0;
@@ -3636,56 +3685,141 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
 
     if (pScrPriv)
     {
-      output = RRFirstOutput(pScreen);
+      int i, j;
+      int number = 0;
+      XineramaScreenInfo *screeninfo = NULL;
 
-      if (output && output -> crtc)
+      screeninfo = XineramaQueryScreens(nxagentDisplay, &number);
+
+      if (number) {
+#ifdef DEBUG
+        fprintf(stderr, "XineramaQueryScreens() returned %d screens\n", number);
+#endif
+      }
+      else
       {
-        crtc = output -> crtc;
+#ifdef DEBUG
+        fprintf(stderr, "XineramaQueryScreens() returned 0 screens - faking one\n" );
+#endif
+        number = 1;
 
-        for (c = 0; c < pScrPriv -> numCrtcs; c++)
-        {
-          RRCrtcSet(pScrPriv -> crtcs[c], NULL, 0, 0, RR_Rotate_0, 0, NULL);
-        }
-
-        memset(&modeInfo, '\0', sizeof(modeInfo));
-        sprintf(name, "%dx%d", width, height);
-
-        modeInfo.width  = width;
-        modeInfo.height = height;
-        modeInfo.hTotal = width;
-        modeInfo.vTotal = height;
-        modeInfo.dotClock = ((CARD32) width * (CARD32) height *
-                                (CARD32) refresh);
-        modeInfo.nameLength = strlen(name);
-
-        if (nxagentRRCustomMode != NULL)
-        {
-          RROutputDeleteUserMode(output, nxagentRRCustomMode);
-          FreeResource(nxagentRRCustomMode -> mode.id, 0);
-
-          if (crtc != NULL && crtc -> mode == nxagentRRCustomMode)
-          {
-            RRCrtcSet(crtc, NULL, 0, 0, RR_Rotate_0, 0, NULL);
+        if (!screeninfo) {
+          if (!(screeninfo = xalloc(sizeof(XineramaScreenInfo)))) {
+            return FALSE;
           }
+        }
+        /* fake a xinerama screeninfo that covers our whole screen */
+        screeninfo->x_org = nxagentOption(X);
+        screeninfo->y_org = nxagentOption(Y);
+        screeninfo->width = nxagentOption(Width);
+        screeninfo->height = nxagentOption(Height);
+      }
 
-          #ifdef TEST
-          fprintf(stderr, "nxagentChangeScreenConfig: "
-                      "Going to destroy mode %p with refcnt %d.\n",
-                          nxagentRRCustomMode, nxagentRRCustomMode->refcnt);
-          #endif
+      /* adjust the number of CRTCs */
+      while (number != pScrPriv->numCrtcs) {
+        if (number < pScrPriv->numCrtcs) {
+#ifdef DEBUG
+          fprintf(stderr, "destroying crtc\n");
+#endif
+          RRCrtcDestroy(pScrPriv->crtcs[pScrPriv->numCrtcs - 1]);
+        }
+        else
+        {
+#ifdef DEBUG
+          fprintf(stderr, "adding crtc\n");
+#endif
+          RRCrtcCreate(pScreen, NULL);
+        }
+      }
 
-          RRModeDestroy(nxagentRRCustomMode);
+#ifdef DEBUG
+      fprintf(stderr, "numCrtcs = %d, numOutputs = %d\n", pScrPriv->numCrtcs, pScrPriv->numOutputs);
+#endif
+      /* delete superflous (non-nx) outputs */
+      for (i = pScrPriv->numOutputs - 1; i >= 0; i--) {
+        if (strncmp(pScrPriv->outputs[i]->name, "nx", 2)) {
+          fprintf(stderr, "destroying output %s\n", pScrPriv->outputs[i]->name);
+          RROutputDestroy(pScrPriv->outputs[i]);
+        }
+      }
+
+      /* add outputs if needed */
+      for (i = pScrPriv->numOutputs; i < number; i++) {
+        sprintf(name, "nxout%d", i);
+        output = RROutputCreate (pScreen, name, strlen(name), NULL);
+        RROutputSetCrtcs(output, &(pScrPriv->crtcs[i]), 1);
+        RROutputSetConnection(output, RR_Disconnected);
+        RROutputSetSubpixelOrder(output, SubPixelUnknown);
+        /* FIXME: what is the correct physical size here? */
+        RROutputSetPhysicalSize(output, 0, 0);
+#ifdef DEBUG
+        fprintf(stderr, "created new output %s\n", name);
+#endif
+      }
+
+      for (i = 0; i < pScrPriv->numOutputs; i++ ) {
+        Bool disable_output = FALSE;
+        RRModePtr mymode;
+        int new_x, new_y;
+        unsigned int new_w, new_h;
+
+        /* if there's no intersection we disconnect the output */
+        disable_output = !intersect(nxagentOption(X), nxagentOption(Y),
+                                    width, height,
+                                    screeninfo[i].x_org, screeninfo[i].y_org,
+                                    screeninfo[i].width, screeninfo[i].height,
+                                    &new_x, &new_y, &new_w, &new_h);
+
+        RROutputSetCrtcs(pScrPriv->outputs[i], &(pScrPriv->crtcs[i]), 1);
+
+        if (disable_output) {
+#ifdef DEBUG
+          fprintf(stderr, "crtc/output %d: no (valid) intersection - disconnecting\n", i);
+#endif
+          RROutputSetConnection(pScrPriv->outputs[i], RR_Disconnected);
+        }
+        else
+        {
+
+#ifdef DEBUG
+          fprintf(stderr, "crtc %d: intersection is x=%d, y=%d, width=%d, height=%d'\n", i, new_x, new_y, new_w, new_h);
+#endif
+          RROutputSetConnection(pScrPriv->outputs[i], RR_Connected);
+
+          memset(&modeInfo, '\0', sizeof(modeInfo));
+          sprintf(name, "%dx%d", new_w, new_h);
+
+          modeInfo.width  = new_w;
+          modeInfo.height = new_h;
+          modeInfo.hTotal = new_w;
+          modeInfo.vTotal = new_h;
+          modeInfo.dotClock = ((CARD32) new_w * (CARD32) new_h * (CARD32) refresh);
+          modeInfo.nameLength = strlen(name);
+
+          mymode = RRModeGet(&modeInfo, name);
+#ifdef DEBUG
+          fprintf(stderr, "mode %s created/received: %p\n", name, mymode);
+#endif
+          RROutputAddUserMode(pScrPriv->outputs[i], mymode);
+          RRCrtcSet(pScrPriv->crtcs[i], mymode, new_x, new_y, RR_Rotate_0, 1, &(pScrPriv->outputs[i]));
+#ifdef DEBUG
+          fprintf(stderr, "mode %s added to output and crtc %d\n", name, i);
+#endif
+        } /* if disable_output */
+
+        /* delete all usermodes except the ones still in use */
+        for (j=0; j < pScrPriv->outputs[i]->numUserModes; j++) {
+          mymode = pScrPriv->outputs[i]->userModes[j];
+          if (mymode) {
+#ifdef DEBUG
+            fprintf(stderr, "trying to delete usermode %s\n", mymode->name);
+#endif
+            RROutputDeleteUserMode(pScrPriv->outputs[i], mymode);
+          }
         }
 
-        nxagentRRCustomMode = RRModeGet(&modeInfo, name);
-
-        RROutputAddUserMode(output, nxagentRRCustomMode);
-
-        RRCrtcSet(crtc, nxagentRRCustomMode, 0, 0, RR_Rotate_0, 1, &output);
-
-        RROutputChanged(output, 1);
-
-        doNotify = 0;
+        RROutputChanged(pScrPriv->outputs[i], 1);
+        RRCrtcChanged(pScrPriv->crtcs[i], TRUE);
       }
 
       pScrPriv -> lastSetTime = currentTime;
@@ -3693,13 +3827,18 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
       pScrPriv->changed = 1;
       pScrPriv->configChanged = 1;
     }
-
-    if (doNotify
-)
-    {
-      RRScreenSizeNotify(pScreen);
-    }
   }
+
+  if (doNotify)
+  {
+    RRScreenSizeNotify(pScreen);
+  }
+
+#ifdef DEBUG
+  fprintf(stderr, "Position: %d,%d %dx%d\n", nxagentOption(X), nxagentOption(Y),nxagentOption(Width),nxagentOption(Height));
+  fprintf(stderr, "Min %dx%d, Max %dx%d \n", pScrPriv->minWidth,pScrPriv->minHeight,pScrPriv->maxWidth,pScrPriv->maxHeight);
+  fprintf(stderr, "nxagentChangeScreenConfig: return %d\n", r);
+#endif
 
   return r;
 }
