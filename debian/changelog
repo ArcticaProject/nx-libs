@@ -144,6 +144,8 @@ nx-libs (2:3.5.0.32-0x2go1) UNRELEASED; urgency=low
     Backported from Arctica GH 3.6.x branch.
   * debian/control: workaround missing dependencies of nxagent on Ubuntu for
     now.
+  * debian/libnx-xinerama1.*: fix faulty logic when creating symlinks.
+    Backported from Arctica GH 3.6.x branch.
 
   [ Bernard Cafarelli ]
   * nx-X11: link to libdl to fix undefined references to 'dlopen' and 'dlsym'.
