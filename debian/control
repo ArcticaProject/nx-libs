@@ -19,13 +19,13 @@ Build-Depends:
  libxdmcp-dev,
  libxdamage-dev,
  libxrandr-dev,
+ libxinerama-dev,
  autoconf,
  pkg-config,
  x11proto-core-dev,
  expat,
 Build-Conflicts:
  x11proto-record-dev,
- x11proto-xinerama-dev,
 Standards-Version: 3.9.6
 Homepage: http://code.x2go.org/gitweb?p=nx-libs.git;a=summary
 Vcs-Git: git://code.x2go.org/nx-libs.git
@@ -570,21 +570,17 @@ Multi-Arch: same
 Pre-Depends:
  ${misc:Pre-Depends},
 Depends:
- ${shlibs:Depends},
  ${misc:Depends},
-Breaks: nxlibs (<= 3.5.1),
-        libnx-x11 (<< 2:3.5.0.29-0x2go2~),
 Description: nx-X11 Xinerama extension library
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
  using X applications over a network, especially a slow one.
  .
- libNX_Xinerama provides an X Window System client interface to the XINERAMA
- extension to the X protocol.
+ This package removes the obsoleted libNX_Xinerama.so.1 library.
+ Xinerama support in NX has been moved into nxagent whereas X-Clients
+ can now use the libXinerama library shipped with X.Org.
  .
- The Xinerama (also known as panoramiX) extension allows for multiple screens
- attached to a single display to be treated as belonging together, and to give
- desktop applications a better idea of the monitor layout. 
+ This package can be safely removed.
 
 Package: libnx-xinerama-dev
 Provides: libnx-xinerama1-dev
@@ -592,24 +588,16 @@ Section: libdevel
 Architecture: any
 Multi-Arch: same
 Depends:
- libnx-xinerama1 (= ${binary:Version}),
- nx-x11proto-xinerama-dev (= ${binary:Version}),
  ${misc:Depends},
-Breaks: nxlibs (<= 3.5.1),
-        libnx-x11-dev (<< 2:3.5.0.29-0x2go2~),
 Description: nx-X11 Xinerama extension library (development headers)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
  using X applications over a network, especially a slow one.
  .
- libNX_Xinerama provides an X Window System client interface to the XINERAMA
- extension to the X protocol.
+ This package removes the obsoleted headers for the libNX_Xinerama.so.1
+ library.
  .
- The Xinerama (also known as panoramiX) extension allows for multiple screens
- attached to a single display to be treated as belonging together, and to give
- desktop applications a better idea of the monitor layout. 
- .
- This package contains the development headers for this library.
+ This package can be safely removed.
 
 Package: nx-x11proto-xinerama-dev
 Section: libdevel
@@ -617,16 +605,15 @@ Architecture: any
 Multi-Arch: same
 Depends:
  ${misc:Depends},
-Breaks: nxlibs (<= 3.5.1),
-        libnx-x11-dev (<< 2:3.5.0.29-0x2go2~),
 Description: nx-X11 Xinerama extension wire protocol
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
  using X applications over a network, especially a slow one.
  .
- This package provides development headers describing the wire protocol
- for the XINERAMA extension, used to use and manage a multiple-screen
- display.
+ This package removes the obsoleted headers for the libNX_Xinerama.so.1
+ library.
+ .
+ This package can be safely removed.
 
 Package: libnx-xinerama1-dbg
 Architecture: any
@@ -646,12 +633,10 @@ Description: nx-X11 Xinerama extension library (debug package)
  libNX_Xinerama provides an X Window System client interface to the XINERAMA
  extension to the X protocol.
  .
- The Xinerama (also known as panoramiX) extension allows for multiple
- screens attached to a single display to be treated as belonging
- together, and to give desktop applications a better idea of the monitor
- layout. 
+ This package removes the obsoleted debug symbols for the libNX_Xinerama.so.1
+ library.
  .
- This package contains debug symbols for this library.
+ This package can be safely removed.
 
 Package: libnx-xpm4
 Architecture: any
