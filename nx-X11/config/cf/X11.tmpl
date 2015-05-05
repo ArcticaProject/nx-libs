@@ -229,9 +229,6 @@ XORGRELSTRING = XorgManVersionString
 #ifndef BuildXinerama
 #define BuildXinerama		NO
 #endif
-#ifndef BuildXineramaLibrary
-#define BuildXineramaLibrary	(BuildXinerama)
-#endif
 #ifndef BuildXCSecurity
 #define BuildXCSecurity		YES
 #endif
@@ -1461,30 +1458,6 @@ ProjectUnsharedLibReferences(XONLY,NX_X11,$(XLIBSRC),XBuildLibDir)
 #define ProfileLibXxf86rush	NO
 #endif
 
-#if BuildXineramaLibrary
-#ifndef SharedLibXinerama
-#define SharedLibXinerama	HasSharedLibraries
-#endif
-#ifndef NormalLibXinerama
-#define NormalLibXinerama	(!SharedLibXinerama || ForceNormalLib)
-#endif
-#ifndef DebugLibXinerama
-#define DebugLibXinerama	NO
-#endif
-#ifndef ProfileLibXinerama
-#define ProfileLibXinerama	NO
-#endif
-#else
-#undef  SharedLibXinerama
-#define SharedLibXinerama	NO
-#undef  NormalLibXinerama
-#define NormalLibXinerama	NO
-#undef  DebugLibXinerama
-#define DebugLibXinerama	NO
-#undef  ProfileLibXinerama
-#define ProfileLibXinerama	NO
-#endif
-
 #if BuildXResLibrary
 #ifndef SharedLibXRes
 #define SharedLibXRes           HasSharedLibraries
@@ -1739,16 +1712,6 @@ ProjectUnsharedLibReferences(XXF86DGA,NX_Xxf86dga,$(XXF86DGALIBSRC),XBuildLibDir
 SharedLibReferences(XXF86RUSH,NX_Xxf86rush,$(XXF86RUSHLIBSRC),SOXXF86RUSHREV,SharedXxf86rushRev)
 #else
 ProjectUnsharedLibReferences(XXF86RUSH,NX_Xxf86rush,$(XXF86RUSHLIBSRC),XBuildLibDir)
-#endif
-
-    XINERAMALIBSRC = $(LIBSRC)/Xinerama
-#if SharedLibXinerama
-#ifndef SharedXineramaRev
-#define SharedXineramaRev 1.0
-#endif
-SharedLibReferences(XINERAMA,NX_Xinerama,$(XINERAMALIBSRC),SOXINERAMAREV,SharedXineramaRev)
-#else
-ProjectUnsharedLibReferences(XINERAMA,NX_Xinerama,$(XINERAMALIBSRC),XBuildLibDir)
 #endif
 
     XRESLIBSRC = $(LIBSRC)/XRes

@@ -23,7 +23,7 @@
  * This Xinerama implementation comes from the SiS driver which has
  * the following notice:
  */
-/* 
+/*
  * SiS driver main code
  *
  * Copyright (C) 2001-2005 by Thomas Winischhofer, Vienna, Austria.
@@ -87,9 +87,14 @@
 
 #include "randrstr.h"
 #include "swaprep.h"
+/* FIXME: there's no difference between
+   X11/extensions/panoramiXproto.h and panoramiXproto.h */
 #ifndef NXAGENT_SERVER
 #include <X11/extensions/panoramiXproto.h>
 #else
+#include <X11/Xlib.h>
+#include <X11/extensions/Xinerama.h>
+#include <../hw/nxagent/Windows.h>
 #include "panoramiXproto.h"
 #endif
 
@@ -105,7 +110,18 @@ static int ProcRRXineramaGetScreenCount(ClientPtr client);
 static int ProcRRXineramaGetScreenSize(ClientPtr client);
 static int ProcRRXineramaIsActive(ClientPtr client);
 static int ProcRRXineramaQueryScreens(ClientPtr client);
+#ifdef NXAGENT_SERVER
+static int ProcRRXineramaQueryScreens_auto(ClientPtr client);
+static int ProcRRXineramaQueryScreens_orig(ClientPtr client);
+static int ProcRRXineramaQueryScreens_file(ClientPtr client, FILE *fptr );
+#endif
 static int SProcRRXineramaDispatch(ClientPtr client);
+
+#ifdef NXAGENT_SERVER
+extern Display *nxagentDisplay;
+#endif
+
+#define DEBUG
 
 /* Proc */
 
@@ -184,7 +200,7 @@ static int
 RRXineramaScreenCount (ScreenPtr pScreen)
 {
     int	i, n;
-    
+
     n = 0;
     if (rrGetScrPriv (pScreen))
     {
@@ -219,7 +235,7 @@ ProcRRXineramaGetScreenCount(ClientPtr client)
     #endif
     if (rc != Success)
 	return rc;
-    
+
     rep.type = X_Reply;
     rep.length = 0;
     rep.sequenceNumber = client->sequence;
@@ -255,7 +271,7 @@ ProcRRXineramaGetScreenSize(ClientPtr client)
 
     pScreen = pWin->drawable.pScreen;
     pRoot = WindowTable[pScreen->myNum];
-    
+
     rep.type = X_Reply;
     rep.length = 0;
     rep.sequenceNumber = client->sequence;
@@ -281,11 +297,31 @@ ProcRRXineramaIsActive(ClientPtr client)
     xXineramaIsActiveReply	rep;
 
     REQUEST_SIZE_MATCH(xXineramaIsActiveReq);
-	
+
     rep.type = X_Reply;
     rep.length = 0;
     rep.sequenceNumber = client->sequence;
+#ifndef NXAGENT_SERVER
     rep.state = RRXineramaScreenActive (screenInfo.screens[RR_XINERAMA_SCREEN]);
+#else
+    /* FIXME: cache that information? */
+    if (nxagentOption(Rootless) == 1) {
+      /* In rootless mode we do not need any xinerama stuff in the
+	 nxagent. Xinerama is only relevant for the client side then. */
+      rep.state = FALSE;
+    }
+    else {
+      /* ask remote X server for that information */
+      rep.state = XineramaIsActive(nxagentDisplay);
+    }
+#ifdef DEBUG
+    if (rep.state) {
+      fprintf(stderr, "ProcRRXineramaIsActive: remote Xinerama on display %s is active\n", XDisplayString(nxagentDisplay));
+    } else {
+      fprintf(stderr, "ProcRRXineramaIsActive: remote Xinerama on display %s is not active\n", XDisplayString(nxagentDisplay));
+    }
+#endif
+#endif
     if(client->swapped) {
 	register int n;
 	swaps(&rep.sequenceNumber, n);
@@ -293,14 +329,333 @@ ProcRRXineramaIsActive(ClientPtr client)
 	swapl(&rep.state, n);
     }
     WriteToClient(client, sizeof(xXineramaIsActiveReply), (char *) &rep);
+
+    return client->noClientException;
+}
+
+/* Helper, send the number of xinerama screens to the client */
+void writeNumScreens(ClientPtr client, int number)
+{
+    xXineramaQueryScreensReply rep;
+
+#ifdef DEBUG
+    fprintf(stderr, "writeNumScreens: number=%d\n", number);
+#endif
+
+    rep.type = X_Reply;
+    rep.sequenceNumber = client->sequence;
+    rep.number = number;
+    rep.length = rep.number * sz_XineramaScreenInfo >> 2;
+    if (client->swapped) {
+        register int n;
+	swaps (&rep.sequenceNumber, n);
+	swapl (&rep.length, n);
+	swapl (&rep.number, n);
+    }
+    WriteToClient (client, sizeof (xXineramaQueryScreensReply), (char *) &rep);
+}
+
+/* Helper, send one xinerama screen to the client */
+void writeOneScreen(ClientPtr client, int x, int y, int w, int h)
+{
+    xXineramaScreenInfo scratch;
+
+#ifdef DEBUG
+    fprintf(stderr, "writeOneScreen: x=%d, y=%d, w=%d, h=%d)\n", x, y, w, h);
+#endif
+    scratch.x_org  = x;
+    scratch.y_org  = y;
+    scratch.width  = w;
+    scratch.height = h;
+    if(client->swapped) {
+        register int n;
+	swaps(&scratch.x_org, n);
+	swaps(&scratch.y_org, n);
+	swaps(&scratch.width, n);
+	swaps(&scratch.height, n);
+    }
+    WriteToClient(client, sz_XineramaScreenInfo, (char *)&scratch);
+}
+
+/* FIXME: there must be such macros somewhere already...*/
+#define MAX(a,b) ((a) > (b)) ? (a) : (b);
+#define MIN(a,b) ((a) < (b)) ? (a) : (b);
+
+/* intersect two rectangles */
+Bool intersect(int ax1, int ay1, unsigned int aw, unsigned int ah,
+	       int bx1, int by1, unsigned int bw, unsigned int bh,
+	       int *x, int *y, unsigned int *w, unsigned int *h)
+{
+    int tx1, ty1, tx2, ty2, ix, iy;
+    unsigned int iw, ih;
+
+    int ax2 = ax1 + aw;
+    int ay2 = ay1 + ah;
+    int bx2 = bx1 + bw;
+    int by2 = by1 + bh;
+
+    /* thanks to http://silentmatt.com/rectangle-intersection */
+
+    /* check if there's any intersection at all */
+    if (ax2 < bx1 || bx2 < ax1 || ay2 < by1 || by2 < ay1) {
+        return FALSE;
+    }
+
+    tx1 = MAX(ax1, bx1);
+    ty1 = MAX(ay1, by1);
+    tx2 = MIN(ax2, bx2);
+    ty2 = MIN(ay2, by2);
+
+    ix = tx1 - ax1;
+    iy = ty1 - ay1;
+    iw = tx2 - tx1;
+    ih = ty2 - ty1;
+
+    /* check if the resulting rectangle is feasible */
+    if (iw <= 0 || ih <= 0) {
+        return FALSE;
+    }
+    *x = ix;
+    *y = iy;
+    *w = iw;
+    *h = ih;
+    return TRUE;
+}
+
+/* second Dispatcher to determine what xinerama code to use */
+int
+ProcRRXineramaQueryScreens(ClientPtr client)
+{
+#ifndef NXAGENT_SERVER
+    return ProcRRXineramaQueryScreens_orig(client);
+#else
+
+    char* envvar = getenv("NX_XINERAMA_CONF");
+    int res;
+    /* if env is not set use auto_xinerama
+       if env is set to "auto" use auto_xinerama
+       if env point to existing file use file_xinerama
+       else use original code
+    */
+
+#ifdef DEBUG
+    if (envvar) {
+        fprintf(stderr, "ProcRRXineramaQueryScreens: envvar NX_XINERAMA_CONF is set to '%s'\n", envvar);
+    } else {
+        fprintf(stderr, "ProcRRXineramaQueryScreens: envvar NX_XINERAMA_CONF is not set\n");
+    }
+#endif
+
+    if (!envvar || strncmp("auto", envvar, 4) == 0) {
+        res = ProcRRXineramaQueryScreens_auto(client);
+    } else {
+        FILE* fptr;
+	if((fptr=fopen(envvar,"r"))) {
+            res = ProcRRXineramaQueryScreens_file(client, fptr);
+        } else {
+            res = ProcRRXineramaQueryScreens_orig(client);
+        }
+    }
+    return res;
+#endif
+}
+
+int
+ProcRRXineramaQueryScreens_auto(ClientPtr client)
+{
+#ifdef DEBUG
+    fprintf(stderr, "ProcRRXineramaQueryScreens_auto: entry\n");
+#endif
+    XineramaScreenInfo *screeninfo;
+
+    /* these are used to store the xinerama screens */
+    static XineramaScreenInfo *cache_screeninfo = NULL;
+    static int cache_number = -1;
+
+
+    int number;
+    int i;
+
+
+#ifdef DEBUG
+   {
+      fprintf(stderr, "screenInfo.numScreens = %d\n", screenInfo.numScreens);
+      for (i = 0; i < screenInfo.numScreens; i++) {
+	ScreenPtr pScreen = screenInfo.screens[i];
+	/*	fprintf(stderr, "[%d] x_org=%d, y_org=%s, width=%d, height=%d\n", i,pScreen->x_org,pScreen->y_org,pScreen->width,pScreen->height);*/
+	fprintf(stderr, "[%d] width=%d, height=%d\n", i,pScreen->width,pScreen->height);
+
+      }
+      fprintf(stderr,"nxagentOptionsPtr->SavedX = %d\n", nxagentOptionsPtr->SavedX);
+      fprintf(stderr,"nxagentOption(SavedX) = %d\n", nxagentOption(SavedX));
+      fprintf(stderr,"nxagentOptionsPtr->SavedY = %d\n", nxagentOptionsPtr->SavedY);
+      fprintf(stderr,"nxagentOptionsPtr->SavedWidth = %d\n", nxagentOptionsPtr->SavedWidth);
+      fprintf(stderr,"nxagentOptionsPtr->SavedHeight = %d\n", nxagentOptionsPtr->SavedHeight);
+      fprintf(stderr,"nxagentOptionsPtr->X = %d\n", nxagentOptionsPtr->X);
+      fprintf(stderr,"nxagentOption(X) = %d\n", nxagentOption(X));
+      fprintf(stderr,"nxagentOptionsPtr->Y = %d\n", nxagentOptionsPtr->Y);
+      fprintf(stderr,"nxagentOption(Y) = %d\n", nxagentOption(Y));
+      fprintf(stderr,"nxagentOptionsPtr->Width = %d\n", nxagentOptionsPtr->Width);
+      fprintf(stderr,"nxagentOptionsPtr->Height = %d\n", nxagentOptionsPtr->Height);
+
+    }
+#endif
+
+    REQUEST_SIZE_MATCH(xXineramaQueryScreensReq);
+
+    /* This call will fail if nxagent is in disconnected mode. For now we
+       try to use cached values then. */
+    /* FIXME: if nxcomp could answer this call from its cache we could drop
+       this code here */
+    if ((screeninfo = XineramaQueryScreens(nxagentDisplay, &number)) == NULL) {
+#ifdef DEBUG
+        fprintf(stderr, "ProcRRXineramaQueryScreens_auto: remote XineramaQueryScreens() for display %s failed\n", XDisplayString(nxagentDisplay));
+#endif
+	/* if we have a cached result use that */
+	if (cache_number > -1) {
+#ifdef DEBUG
+	    fprintf(stderr, "ProcRRXineramaQueryScreens_auto: using cached values\n");
+#endif
+
+	    writeNumScreens(client, cache_number);
+	    for (i = 0; i < cache_number; i++) {
+	        writeOneScreen(client, cache_screeninfo[i].x_org,
+			               cache_screeninfo[i].y_org,
+                                       cache_screeninfo[i].width,
+                                       cache_screeninfo[i].height);
+            }
+        } else {
+#ifdef DEBUG
+            fprintf(stderr, "ProcRRXineramaQueryScreens_auto: cache is empty\n");
+#endif
+            /* we report "no xinerama screens found" */
+	    writeNumScreens(client, 0);
+        }
+        return client->noClientException;
+    }
+
+#ifdef DEBUG
+    fprintf(stderr, "ProcRRXineramaQueryScreens_auto: remote XineramaQueryScreens() for display %s was successful, returned %d screens\n", XDisplayString(nxagentDisplay), number);
+#endif
+
+    if (number) {
+	int count = 0;
+
+        /* We need to send the number of screens prior to the
+	   screens. But we do not want to send screens that are outside
+	   the nxproxy window so we do not know the right number
+	   here. So we update the screeninfo structures and count the
+	   number. After the loop we send the updated structures.  NOTE:
+	   If we skip screens the caches screeninfo will be slightly
+	   bigger than needed! But for ease of implementation this is
+	   tolerable.
+	*/
+	for (i = 0; i < number; i++) {
+	    int new_x, new_y;
+	    unsigned int new_w, new_h;
+
+	    /* if there's no intersection we skip that screen */
+	    if (!intersect(nxagentOption(X), nxagentOption(Y),
+                           nxagentOption(Width), nxagentOption(Height),
+                           screeninfo[i].x_org, screeninfo[i].y_org,
+                           screeninfo[i].width, screeninfo[i].height,
+			   &new_x, &new_y, &new_w, &new_h)) {
+#ifdef DEBUG
+	        fprintf(stderr, "ProcRRXineramaQueryScreens_auto: no (valid) intersection - skipping screen %d'\n", i);
+#endif
+		continue;
+	    }
+
+	    /* store the new values for reply/cache */
+	    screeninfo[count].x_org  = new_x;
+	    screeninfo[count].y_org  = new_y;
+	    screeninfo[count].width  = new_w;
+	    screeninfo[count].height = new_h;
+	    count++;
+
+#ifdef DEBUG
+	    fprintf(stderr, "ProcRRXineramaQueryScreens_auto: intersected screen is x=%d, y=%d, width=%d, height=%d'\n", new_x, new_y, new_w, new_h);
+#endif
+	} /* end for */
+
+	/* correct the number of screens we determined to be valid/of
+	   interest for us (for reply and cache)*/
+	number = count;
+    } /* end if (number) */
+
+    /* we have checked all screens, now answer with the valid ones */
+    writeNumScreens(client, number);
+    for (i = 0; i < number; i++) {
+        writeOneScreen(client, screeninfo[i].x_org, screeninfo[i].y_org, screeninfo[i].width, screeninfo[i].height);
+    }
+
+    /* now cache the result */
+    {
+        /* invalidate exiting cache */
+        if (cache_screeninfo != NULL) {
+            XFree(cache_screeninfo);
+	    cache_screeninfo = NULL;
+        }
+
+#ifdef DEBUG
+        fprintf(stderr, "ProcRRXineramaQueryScreens_auto: caching calculated screeninfo\n");
+#endif
+        cache_screeninfo = screeninfo;
+        cache_number = number;
+    }
+
+    return client->noClientException;
+}
+
+
+int
+ProcRRXineramaQueryScreens_file(ClientPtr client, FILE* fptr)
+{
+#ifdef DEBUG
+    fprintf(stderr, "ProcRRXineramaQueryScreens_file: entry\n");
+#endif
+    int i;
+    int x,y,w,h;
+    int number = 0;
+
+    REQUEST_SIZE_MATCH(xXineramaQueryScreensReq);
+
+    if (fptr) {
+        while (!feof(fptr)) {
+            w = h = 0;
+	    fscanf(fptr,"%d %d %d %d",&x,&y,&w,&h);
+	    if (w && h)
+	        number++;
+	}
+	rewind(fptr);
+
+	writeNumScreens(client, number);
+
+	for (i = 0; i < number; i++) {
+	    while (!feof(fptr)){
+	        w = h = 0;
+		fscanf(fptr,"%d %d %d %d", &x, &y, &w, &h);
+		if (w && h) {
+	            writeOneScreen(client, x, y, w, h);
+		}
+	    }
+	}
+	fclose(fptr);
+    } else {
+        /* report "no xinerama screens" */
+        writeNumScreens(client, 0);
+    }
     return client->noClientException;
 }
 
 int
-ProcRRXineramaQueryScreens(ClientPtr client)
+ProcRRXineramaQueryScreens_orig(ClientPtr client)
 {
-    xXineramaQueryScreensReply	rep;
+#ifdef DEBUG
+    fprintf(stderr, "ProcRRXineramaQueryScreens_orig: entry\n");
+#endif
     ScreenPtr	pScreen = screenInfo.screens[RR_XINERAMA_SCREEN];
+    int number;
 
     REQUEST_SIZE_MATCH(xXineramaQueryScreensReq);
 
@@ -310,22 +665,12 @@ ProcRRXineramaQueryScreens(ClientPtr client)
 	if (pScrPriv->numCrtcs == 0 || pScrPriv->numOutputs == 0)
 	    RRGetInfo (pScreen);
     }
-    
-    rep.type = X_Reply;
-    rep.sequenceNumber = client->sequence;
-    rep.number = RRXineramaScreenCount (pScreen);
-    rep.length = rep.number * sz_XineramaScreenInfo >> 2;
-    if(client->swapped) {
-	register int n;
-	swaps(&rep.sequenceNumber, n);
-	swapl(&rep.length, n);
-	swapl(&rep.number, n);
-    }
-    WriteToClient(client, sizeof(xXineramaQueryScreensReply), (char *)&rep);
 
-    if(rep.number) {
+    number = RRXineramaScreenCount (pScreen);
+    writeNumScreens(client, number);
+
+    if(number) {
 	rrScrPriv(pScreen);
-	xXineramaScreenInfo scratch;
 	int i;
 
 	for(i = 0; i < pScrPriv->numCrtcs; i++) {
@@ -334,24 +679,14 @@ ProcRRXineramaQueryScreens(ClientPtr client)
 	    {
 	        int width, height;
 		RRCrtcGetScanoutSize (crtc, &width, &height);
-		scratch.x_org  = crtc->x;
-		scratch.y_org  = crtc->y;
-		scratch.width  = width;
-		scratch.height = height;
-		if(client->swapped) {
-		    register int n;
-		    swaps(&scratch.x_org, n);
-		    swaps(&scratch.y_org, n);
-		    swaps(&scratch.width, n);
-		    swaps(&scratch.height, n);
-		}
-		WriteToClient(client, sz_XineramaScreenInfo, (char *)&scratch);
+		writeOneScreen(client, crtc->x, crtc->y, width, height);
 	    }
 	}
     }
 
     return client->noClientException;
 }
+
 
 static int
 ProcRRXineramaDispatch(ClientPtr client)

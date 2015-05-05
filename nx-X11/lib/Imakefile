@@ -35,10 +35,6 @@ XF86DGALIBDIR = Xxf86dga
 XF86RUSHLIBDIR = Xxf86rush
 #endif
 
-#if BuildXineramaLibrary
-XINERAMADIR=Xinerama
-#endif
-
 #if BuildXResLibrary
 XRESLIBDIR = XRes
 #endif
