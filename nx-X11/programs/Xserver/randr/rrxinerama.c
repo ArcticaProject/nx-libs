@@ -312,7 +312,7 @@ ProcRRXineramaIsActive(ClientPtr client)
     }
     else {
       /* ask remote X server for that information */
-      rep.state = !XineramaIsActive(nxagentDisplay);
+      rep.state = XineramaIsActive(nxagentDisplay);
     }
 #ifdef DEBUG
     if (rep.state) {
