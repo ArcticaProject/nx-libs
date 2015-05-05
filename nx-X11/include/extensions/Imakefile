@@ -38,9 +38,6 @@ XF86RUSHHEADERS = xf86rush.h xf86rushstr.h
 #if BuildFontCache
 FONTCACHEHEADERS = fontcache.h fontcacheP.h fontcachstr.h
 #endif
-#if BuildXinerama || BuildXineramaLibrary
-XINERAMAHEADERS = Xinerama.h panoramiXext.h panoramiXproto.h
-#endif
 #if BuildRender
 RENDERHEADERS = render.h renderproto.h
 #endif
