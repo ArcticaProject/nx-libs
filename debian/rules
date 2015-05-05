@@ -20,7 +20,6 @@ override_dh_auto_clean:
 override_dh_clean:
 	rm -f nx*/configure
 	. ./replace.sh; set -x; ls debian/*.install.in | while read file; do rm -f $$(string_rep $$file .install.in .install); done
-	rm -f debian/nxagent.postinst
 	rm -fR .preserve/
 	dh_clean
 
@@ -72,16 +71,12 @@ override_dh_auto_install:
 
 override_dh_auto_build:
 
-	# let's prep the nxagent.postinst script with the value of the build systems's DEB_BUILD_MULTIARCH variable
-	sed debian/nxagent.postinst.in -e 's/#DEB_BUILD_MULTIARCH#/$(DEB_BUILD_MULTIARCH)/' > debian/nxagent.postinst
-
 	LOCAL_LDFLAGS="$(LDFLAGS)" SHLIBGLOBALSFLAGS="$(LDFLAGS)" SHLIBDIR="$(LIBDIR)" PREFIX=/usr dh_auto_build --parallel
 
 override_dh_strip:
 	dh_strip -plibnx-x11-6 --dbg-package=libnx-x11-6-dbg
 	dh_strip -plibnx-xau6 --dbg-package=libnx-xau6-dbg
 	dh_strip -plibnx-xext6 --dbg-package=libnx-xext6-dbg
-	dh_strip -plibnx-xinerama1 --dbg-package=libnx-xinerama1-dbg
 	dh_strip -plibnx-xrender1 --dbg-package=libnx-xrender1-dbg
 	dh_strip -plibxcomp3 --dbg-package=libxcomp3-dbg
 	dh_strip -plibxcompshad3 --dbg-package=libxcompshad3-dbg

@@ -79,6 +79,10 @@ is" without express or implied warranty.
 
 #include "X11/include/Xrandr_nxagent.h"
 
+#include <nx-X11/Xlib.h>
+#include "X11/include/Xinerama_nxagent.h"
+
+
 #define GC     XlibGC
 #define Font   XlibFont
 #define KeySym XlibKeySym
