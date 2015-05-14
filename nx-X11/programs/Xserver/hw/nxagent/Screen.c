@@ -3653,16 +3653,13 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
 
   UpdateCurrentTime();
 
-    if (nxagentGrabServerInfo.grabstate == SERVER_GRABBED && nxagentGrabServerInfo.client != NULL)
-      /*        if (nxagentGrabServerInfo.grabstate == SERVER_GRABBED )*/
+  if (nxagentGrabServerInfo.grabstate == SERVER_GRABBED && nxagentGrabServerInfo.client != NULL)
   {
     /*
      * If any client grabbed the server it won't expect that screen
      * configuration changes until it releases the grab. That could
      * get an X error because available modes are chanded meanwhile.
      */
-
-    /* FIXME: Resizing an empty nxagent does not work with the check on SERVER_GRABBED. We always exit here... */
 
     #ifdef TEST
     fprintf(stderr, "nxagentChangeScreenConfig: Cancel with grabbed server (grab held by %p).\n", nxagentGrabServerInfo.client);
