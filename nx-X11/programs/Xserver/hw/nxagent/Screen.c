@@ -105,8 +105,8 @@ is" without express or implied warranty.
 
 #define PANIC
 #define WARNING
-#undef  TEST
-#undef  DEBUG
+#define  TEST
+#define  DEBUG
 #undef  WATCH
 #undef  DUMP
 
@@ -3653,8 +3653,8 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
 
   UpdateCurrentTime();
 
-  if (nxagentGrabServerInfo.grabstate == SERVER_GRABBED && nxagentGrabServerInfo.client != NULL)
-    /*if (nxagentGrabServerInfo.grabstate == SERVER_GRABBED )*/
+    if (nxagentGrabServerInfo.grabstate == SERVER_GRABBED && nxagentGrabServerInfo.client != NULL)
+      /*        if (nxagentGrabServerInfo.grabstate == SERVER_GRABBED )*/
   {
     /*
      * If any client grabbed the server it won't expect that screen
@@ -3687,7 +3687,11 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
     {
       int i, j;
       int number = 0;
+      unsigned int max_w, max_h;
+      RRModePtr maxMode = NULL;
+
       XineramaScreenInfo *screeninfo = NULL;
+      max_w = max_h = 0;
 
       screeninfo = XineramaQueryScreens(nxagentDisplay, &number);
 
@@ -3784,6 +3788,7 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
 #ifdef DEBUG
           fprintf(stderr, "crtc %d: intersection is x=%d, y=%d, width=%d, height=%d'\n", i, new_x, new_y, new_w, new_h);
 #endif
+
           RROutputSetConnection(pScrPriv->outputs[i], RR_Connected);
 
           memset(&modeInfo, '\0', sizeof(modeInfo));
@@ -3800,6 +3805,14 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
 #ifdef DEBUG
           fprintf(stderr, "mode %s created/received: %p\n", name, mymode);
 #endif
+	  /* store the maximum Output mode */
+	  if (max_w < new_w || max_h < new_h ) {
+	    maxMode = mymode;
+	    max_w = MAX(new_w, max_w);
+	    max_h = MAX(new_h, max_h);
+	  }
+
+
           RROutputAddUserMode(pScrPriv->outputs[i], mymode);
           RRCrtcSet(pScrPriv->crtcs[i], mymode, new_x, new_y, RR_Rotate_0, 1, &(pScrPriv->outputs[i]));
 #ifdef DEBUG
@@ -3807,19 +3820,36 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
 #endif
         } /* if disable_output */
 
-        /* delete all usermodes except the ones still in use */
-        for (j=0; j < pScrPriv->outputs[i]->numUserModes; j++) {
-          mymode = pScrPriv->outputs[i]->userModes[j];
-          if (mymode) {
-#ifdef DEBUG
-            fprintf(stderr, "trying to delete usermode %s\n", mymode->name);
-#endif
-            RROutputDeleteUserMode(pScrPriv->outputs[i], mymode);
-          }
-        }
-
         RROutputChanged(pScrPriv->outputs[i], 1);
         RRCrtcChanged(pScrPriv->crtcs[i], TRUE);
+      }
+
+      /* It turned out that some window managers (e.g. LXDE) also take
+	 disconnected outputs into account when calculating stuff like
+	 background tile size and maximum window size. This is
+	 problematic when the disconnected output is smaller than any
+	 of the connected ones. Solution: set the mode of 
+	 the disconnected outputs' crtcs to the maximum known size after all
+	 outputs have been processed.
+      */
+      for (i = 0; i < pScrPriv->numOutputs; i++ ) {
+	if (pScrPriv->outputs[i]->connection == RR_Disconnected && maxMode) {
+	  /*RRCrtcPtr crtc = pScrPriv->outputs[i]->crtc;*/
+	  RRCrtcPtr crtc = pScrPriv->crtcs[i];
+	  /*RRCrtcSet(crtc, maxMode, crtc->x, crtc->y, RR_Rotate_0, 1, &(pScrPriv->outputs[i]));*/
+	  RRCrtcSet(crtc, maxMode, 0, 0, RR_Rotate_0, 1, &(pScrPriv->outputs[i]));
+	}
+
+        /* delete all usermodes except the ones still in use */
+        for (j=0; j < pScrPriv->outputs[i]->numUserModes; j++) {
+          RRModePtr umode = pScrPriv->outputs[i]->userModes[j];
+          if (umode) {	
+#ifdef DEBUG
+            fprintf(stderr, "trying to delete usermode %s\n", umode->name);
+#endif
+            RROutputDeleteUserMode(pScrPriv->outputs[i], umode);
+          }
+        }
       }
 
       pScrPriv -> lastSetTime = currentTime;
@@ -3842,6 +3872,7 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
 
   return r;
 }
+
 
 void nxagentSaveAreas(PixmapPtr pPixmap, RegionPtr prgnSave, int xorg, int yorg, WindowPtr pWin)
 {
