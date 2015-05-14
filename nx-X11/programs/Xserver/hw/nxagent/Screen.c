@@ -3658,7 +3658,7 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
     /*
      * If any client grabbed the server it won't expect that screen
      * configuration changes until it releases the grab. That could
-     * get an X error because available modes are chanded meanwhile.
+     * get an X error because available modes are changed meanwhile.
      */
 
     #ifdef TEST
@@ -3823,7 +3823,7 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
 
       /* It turned out that some window managers (e.g. LXDE) also take
 	 disconnected outputs into account when calculating stuff like
-	 background tile size and maximum window size. This is
+	 wallpaper tile size and maximum window size. This is
 	 problematic when the disconnected output is smaller than any
 	 of the connected ones. Solution: set the mode of 
 	 the disconnected outputs' crtcs to the maximum known size after all
