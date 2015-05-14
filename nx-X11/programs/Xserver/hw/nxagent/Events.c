@@ -3366,7 +3366,9 @@ int nxagentHandleConfigureNotify(XEvent* X)
         if (nxagentOption(DesktopResize) == 1)
         {
           if (nxagentOption(Width) != X -> xconfigure.width ||
-                nxagentOption(Height) != X -> xconfigure.height)
+                nxagentOption(Height) != X -> xconfigure.height ||
+                nxagentOption(X) != X -> xconfigure.x ||
+                nxagentOption(Y) != X -> xconfigure.y)
           {
             Bool newEvents = False;
 
@@ -3423,11 +3425,15 @@ int nxagentHandleConfigureNotify(XEvent* X)
 
         nxagentMoveViewport(pScreen, 0, 0);
 
+	/* if in shadowing mode of if neither size nor position have
+	   changed we do not need to adjust RandR */
         if (nxagentOption(Shadow) == 1 ||
                 (nxagentOption(Width) == nxagentOption(RootWidth) &&
-                    nxagentOption(Height) == nxagentOption(RootHeight)))
+		 nxagentOption(Height) == nxagentOption(RootHeight) &&
+		 nxagentOption(X) == nxagentOption(RootX) &&
+		 nxagentOption(Y) == nxagentOption(RootY)))
         {
-          doRandR = 0;
+          doRandR = False;
         }
 
         nxagentChangeOption(Width, X -> xconfigure.width);

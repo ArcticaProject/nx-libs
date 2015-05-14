@@ -105,8 +105,8 @@ is" without express or implied warranty.
 
 #define PANIC
 #define WARNING
-#define  TEST
-#define  DEBUG
+#undef  TEST
+#undef  DEBUG
 #undef  WATCH
 #undef  DUMP
 
