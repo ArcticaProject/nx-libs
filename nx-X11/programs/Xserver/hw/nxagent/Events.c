@@ -568,6 +568,10 @@ void nxagentSwitchResizeMode(ScreenPtr pScreen)
 {
   XSizeHints sizeHints;
 
+  #ifdef DEBUG
+  fprintf(stderr, "nxagentSwitchResizeMode called.\n");
+  #endif
+
   int desktopResize = nxagentOption(DesktopResize);
 
   nxagentChangeOption(DesktopResize, !desktopResize);
@@ -4422,6 +4426,10 @@ int nxagentHandleRRScreenChangeNotify(XEvent *X)
 {
   XRRScreenChangeNotifyEvent *Xr;
 
+  #ifdef DEBUG
+  fprintf(stderr, "nxagentHandleRRScreenChangeNotify called.\n");
+  #endif
+
   Xr = (XRRScreenChangeNotifyEvent *) X;
 
   nxagentResizeScreen(screenInfo.screens[DefaultScreen(nxagentDisplay)], Xr -> width, Xr -> height,
@@ -4509,6 +4517,10 @@ int nxagentPendingEvents(Display *dpy)
 int nxagentWaitEvents(Display *dpy, struct timeval *tm)
 {
   XEvent ev;
+
+  #ifdef DEBUG
+  fprintf(stderr, "nxagentWaitEvents called.\n");
+  #endif
 
   NXFlushDisplay(dpy, NXFlushLink);
 

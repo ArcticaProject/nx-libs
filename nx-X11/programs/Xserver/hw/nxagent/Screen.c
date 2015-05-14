@@ -3694,13 +3694,13 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
 
       if (number) {
 #ifdef DEBUG
-        fprintf(stderr, "XineramaQueryScreens() returned %d screens\n", number);
+        fprintf(stderr, "nxagentChangeScreenConfig: XineramaQueryScreens() returned %d screens\n", number);
 #endif
       }
       else
       {
 #ifdef DEBUG
-        fprintf(stderr, "XineramaQueryScreens() returned 0 screens - faking one\n" );
+        fprintf(stderr, "nxagentChangeScreenConfig: XineramaQueryScreens() returned 0 screens - faking one\n" );
 #endif
         number = 1;
 
@@ -3720,26 +3720,26 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
       while (number != pScrPriv->numCrtcs) {
         if (number < pScrPriv->numCrtcs) {
 #ifdef DEBUG
-          fprintf(stderr, "destroying crtc\n");
+          fprintf(stderr, "nxagentChangeScreenConfig: destroying crtc\n");
 #endif
           RRCrtcDestroy(pScrPriv->crtcs[pScrPriv->numCrtcs - 1]);
         }
         else
         {
 #ifdef DEBUG
-          fprintf(stderr, "adding crtc\n");
+          fprintf(stderr, "nxagentChangeScreenConfig: adding crtc\n");
 #endif
           RRCrtcCreate(pScreen, NULL);
         }
       }
 
 #ifdef DEBUG
-      fprintf(stderr, "numCrtcs = %d, numOutputs = %d\n", pScrPriv->numCrtcs, pScrPriv->numOutputs);
+      fprintf(stderr, "nxagentChangeScreenConfig: numCrtcs = %d, numOutputs = %d\n", pScrPriv->numCrtcs, pScrPriv->numOutputs);
 #endif
       /* delete superflous (non-nx) outputs */
       for (i = pScrPriv->numOutputs - 1; i >= 0; i--) {
         if (strncmp(pScrPriv->outputs[i]->name, "nx", 2)) {
-          fprintf(stderr, "destroying output %s\n", pScrPriv->outputs[i]->name);
+          fprintf(stderr, "nxagentChangeScreenConfig: destroying output %s\n", pScrPriv->outputs[i]->name);
           RROutputDestroy(pScrPriv->outputs[i]);
         }
       }
@@ -3754,7 +3754,7 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
         /* FIXME: what is the correct physical size here? */
         RROutputSetPhysicalSize(output, 0, 0);
 #ifdef DEBUG
-        fprintf(stderr, "created new output %s\n", name);
+        fprintf(stderr, "nxagentChangeScreenConfig: created new output %s\n", name);
 #endif
       }
 
@@ -3775,7 +3775,7 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
 
         if (disable_output) {
 #ifdef DEBUG
-          fprintf(stderr, "crtc/output %d: no (valid) intersection - disconnecting\n", i);
+          fprintf(stderr, "nxagentChangeScreenConfig: crtc/output %d: no (valid) intersection - disconnecting\n", i);
 #endif
           RROutputSetConnection(pScrPriv->outputs[i], RR_Disconnected);
         }
@@ -3783,7 +3783,7 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
         {
 
 #ifdef DEBUG
-          fprintf(stderr, "crtc %d: intersection is x=%d, y=%d, width=%d, height=%d'\n", i, new_x, new_y, new_w, new_h);
+          fprintf(stderr, "nxagentChangeScreenConfig: crtc %d: intersection is x=%d, y=%d, width=%d, height=%d'\n", i, new_x, new_y, new_w, new_h);
 #endif
 
           RROutputSetConnection(pScrPriv->outputs[i], RR_Connected);
@@ -3800,7 +3800,7 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
 
           mymode = RRModeGet(&modeInfo, name);
 #ifdef DEBUG
-          fprintf(stderr, "mode %s created/received: %p\n", name, mymode);
+          fprintf(stderr, "nxagentChangeScreenConfig: mode %s created/received: %p\n", name, mymode);
 #endif
 	  /* store the maximum Output mode */
 	  if (max_w < new_w || max_h < new_h ) {
@@ -3813,7 +3813,7 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
           RROutputAddUserMode(pScrPriv->outputs[i], mymode);
           RRCrtcSet(pScrPriv->crtcs[i], mymode, new_x, new_y, RR_Rotate_0, 1, &(pScrPriv->outputs[i]));
 #ifdef DEBUG
-          fprintf(stderr, "mode %s added to output and crtc %d\n", name, i);
+          fprintf(stderr, "nxagentChangeScreenConfig: mode %s added to output and crtc %d\n", name, i);
 #endif
         } /* if disable_output */
 
@@ -3842,7 +3842,7 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
           RRModePtr umode = pScrPriv->outputs[i]->userModes[j];
           if (umode) {	
 #ifdef DEBUG
-            fprintf(stderr, "trying to delete usermode %s\n", umode->name);
+            fprintf(stderr, "nxagentChangeScreenConfig: trying to delete usermode %s\n", umode->name);
 #endif
             RROutputDeleteUserMode(pScrPriv->outputs[i], umode);
           }
@@ -3862,8 +3862,8 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
   }
 
 #ifdef DEBUG
-  fprintf(stderr, "Position: %d,%d %dx%d\n", nxagentOption(X), nxagentOption(Y),nxagentOption(Width),nxagentOption(Height));
-  fprintf(stderr, "Min %dx%d, Max %dx%d \n", pScrPriv->minWidth,pScrPriv->minHeight,pScrPriv->maxWidth,pScrPriv->maxHeight);
+  fprintf(stderr, "nxagentChangeScreenConfig: Geometry: %d,%d %dx%d\n", nxagentOption(X), nxagentOption(Y),nxagentOption(Width),nxagentOption(Height));
+  fprintf(stderr, "nxagentChangeScreenConfig: Min %dx%d, Max %dx%d \n", pScrPriv->minWidth,pScrPriv->minHeight,pScrPriv->maxWidth,pScrPriv->maxHeight);
   fprintf(stderr, "nxagentChangeScreenConfig: return %d\n", r);
 #endif
 
