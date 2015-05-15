@@ -442,6 +442,14 @@ extern int NXTransParseEnvironment(const char *env, int force);
 
 extern void NXTransCleanup(void) __attribute__((noreturn));
 
+/*
+ * Cleans up the global and local state
+ * (the same way as NXTransCleanup does)
+ * but does not exit the process
+ * Needed for IOS platform
+ */
+extern void NXTransCleanupForReconnect(void);
+
 extern const char* NXVersion();
 extern int NXMajorVersion();
 extern int NXMinorVersion();

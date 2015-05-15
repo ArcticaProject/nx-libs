@@ -140,6 +140,7 @@ void HandleShutdown() __attribute__((noreturn));
 extern "C"
 {
   void HandleCleanup(int code = 0) __attribute__((noreturn));
+  void HandleCleanupForReconnect();
 }
 
 //
