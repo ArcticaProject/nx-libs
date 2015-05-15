@@ -10,11 +10,10 @@ In 2014, TheQVD project run by the Spanish company "The Quindel Group"
 joined the group of people being interested in NX maintenance and
 improvement.
 
-Since 2015, the Arctica Project has joined in the NX development. The
-core devs of X2Go, Arctica and TheQVD have agreed on stopping to
-redistribute NX and instead of that: continue the development of NX 3.x
-as new upstream and switching the name slightly to *nx-libs*
-(starting with nx-libs v3.5.99.0).
+Since 2015, the Arctica Project has joined in the NX development. The core devs
+of X2Go, Arctica and TheQVD have agreed on stopping to redistribute NX and to
+continue the development of NX 3.x as the new upstream instead. The package
+will see a slight name change to **nx-libs** starting with version 3.5.99.0.
 
 Our intentions for nx-libs are:
 
@@ -60,9 +59,9 @@ Release goals (phase 2) for nx-libs release series 3.7.0.x (not branched-off, ye
 * allow embedding of nxproxy into other windows
 * support for multimedia
 
-If you have any questions about this NX development or want to file  a
-bug, then please contact the Arctica developers, the X2Go developers or
-the TheQVD developers via the project's Github issue tracker.
+If you have any questions about this NX development or want to file a bug
+report, please contact the Arctica developers, the X2Go developers or the
+TheQVD developers via the project's Github issue tracker.
 
 thanks+light+love, 20150515
 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
