@@ -62,7 +62,7 @@ Release goals (phase 2) for nx-libs release series 3.7.0.x (not branched-off, ye
 
 If you have any questions about this NX development or want to file  a
 bug, then please contact the Arctica developers, the X2Go developers or
-the TheQVD developers the project's Github issue tracker.
+the TheQVD developers via the project's Github issue tracker.
 
 thanks+light+love, 20150515
 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
