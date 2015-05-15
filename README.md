@@ -1,5 +1,4 @@
-NX development by ArticaProject, X2Go and TheQVD
-------------------------------------------------
+# NX development by ArticaProject, X2Go and TheQVD
 
 This source tree started as a re-distribution of those NX packages needed
 to setup FreeNX and/or X2Go on a Linux server.
@@ -12,11 +11,12 @@ joined the group of people being interested in NX maintenance and
 improvement.
 
 Since 2015, the Arctica Project has joined in the NX development. The
-core devs of X2Go and Arctica have agreed on stopping to redistribute
-NX and instead of that: continue the development of NX 3.x as new
-upstream (starting with NX 3.5.99).
+core devs of X2Go, Arctica and TheQVD have agreed on stopping to
+redistribute NX and instead of that: continue the development of NX 3.x
+as new upstream and switching the name slightly to *nx-libs*
+(starting with nx-libs v3.5.99.0).
 
-Our goal is: 
+Our intentions for nx-libs are:
 
 * provide _one_ tarball that builds NX projects via a common Makefile
 * provide _one_ tarball for distribution packagers
@@ -28,22 +28,41 @@ This source tree is maintained on Github:
 
   https://github.com/ArcticaProject/nx-libs (3.6.x branch)
 
-Release goals for the post-NoMachine nx-libs release series 3.6.x:
+For the the post-NoMachine era of nx-libs, we will focus on two release
+phases for the upcoming year (06/2015 - 06/2016).
+
+## Release series 3.6.0.x
+
+Scheduled for Q3/2015.
+
+Release goals (phase 1) for nx-libs release series 3.6.0.x:
 
 * CVE security audit (complete)
 * remove unused code (+/- complete)
-* no bundled libraries anymore (work in progress)
+* no bundled non-X11 libraries anymore (done)
+* no bundled Mesa library anymore (todo)
 * complete imake cleanup (work in progress)
 * replace as many liNX_X* libraries by X.org's libX* libraries
   (work in progress)
+* support for iOS (nxproxy)
+
+## Release series 3.6.1.x
+
+Scheduled for Q1/2016.
+
+Release goals (phase 2) for nx-libs release series 3.6.1.x:
+
+* provide support for latest X11 extensions
 * socket communication for nxproxy -C <-> nxproxy -S connections
   (todo)
 * event FIFO sockets for attaching external applications
   (todo)
+* allow embedding of nxproxy into other windows
+* support for multimedia
 
 If you have any questions about this NX development or want to file  a
-bug, then please contact the Arctica or the X2Go developers via the
-Github issue tracker.
+bug, then please contact the Arctica developers, the X2Go developers or
+the TheQVD developers the project's Github issue tracker.
 
-thanks+light+love, 20150313
+thanks+light+love, 20150515
 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
