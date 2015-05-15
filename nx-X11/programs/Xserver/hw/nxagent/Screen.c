@@ -3824,7 +3824,7 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
       for (i = 0; i < pScrPriv->numOutputs; i++ ) {
         for (j=0; j < pScrPriv->outputs[i]->numUserModes; j++) {
           RRModePtr umode = pScrPriv->outputs[i]->userModes[j];
-          if (umode) {	
+          if (umode) {
 #ifdef DEBUG
             fprintf(stderr, "nxagentChangeScreenConfig: trying to delete usermode %s\n", umode->name);
 #endif
@@ -3853,7 +3853,6 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
 
   return r;
 }
-
 
 void nxagentSaveAreas(PixmapPtr pPixmap, RegionPtr prgnSave, int xorg, int yorg, WindowPtr pWin)
 {
