@@ -46,11 +46,11 @@ Release goals (phase 1) for nx-libs release series 3.6.0.x:
   (work in progress)
 * support for iOS (nxproxy)
 
-## Release series 3.6.1.x
+## Release series 3.7.0.x
 
 Scheduled for Q1/2016.
 
-Release goals (phase 2) for nx-libs release series 3.6.1.x:
+Release goals (phase 2) for nx-libs release series 3.7.0.x (not branched-off, yet):
 
 * provide support for latest X11 extensions
 * socket communication for nxproxy -C <-> nxproxy -S connections
