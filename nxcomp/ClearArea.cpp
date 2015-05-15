@@ -92,7 +92,7 @@ void ClearAreaStore::dumpIdentity(const Message *message) const
 
   ClearAreaMessage *clearArea = (ClearAreaMessage *) message;
 
-  *logofs << name() << ": Identity exposures " << clearArea -> (unsigned int) exposures 
+  *logofs << name() << ": Identity exposures " << (unsigned int) clearArea -> exposures 
           << ", window " << clearArea -> window  << ", x " << clearArea -> x 
           << ", y " << clearArea -> y << ", width  " << clearArea -> width 
           << ", height " << clearArea -> height << ", size " << clearArea -> size_ 
