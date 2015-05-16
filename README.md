@@ -43,7 +43,7 @@ Release goals (phase 1) for nx-libs release series 3.6.0.x:
 * complete imake cleanup (work in progress)
 * replace as many liNX_X* libraries by X.org's libX* libraries
   (work in progress)
-* support for iOS (nxproxy)
+* support for iOS (nxproxy, complete)
 
 ## Release series 3.7.0.x
 
