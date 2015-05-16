@@ -1311,6 +1311,11 @@ void NXTransCleanup()
   HandleCleanup();
 }
 
+void NXTransCleanupForReconnect()
+{
+  HandleCleanupForReconnect();
+}
+
 //
 // Check the parameters for subsequent
 // initialization of the NX transport.
@@ -4873,6 +4878,28 @@ int StartKeeper()
   return 1;
 }
 
+void HandleCleanupForReconnect()
+{
+  #ifdef TEST
+  *logofs << "Loop: Going to clean up system resources for Reconnect "
+          << "in process '" << getpid() << "'.\n"
+          << logofs_flush;
+  #endif
+  handleTerminatedInLoop();
+  DisableSignals();
+  if (control)
+    CleanupChildren();
+  CleanupListeners();
+  CleanupSockets();
+  CleanupKeeper();
+  CleanupStreams();
+  CleanupLocal();
+  CleanupGlobal();
+  RestoreSignals();
+  ServerCache::lastInitReply.set(0,NULL);
+  ServerCache::lastKeymap.set(0,NULL);
+  ServerCache::getKeyboardMappingLastMap.set(0,NULL);
+}
 void HandleCleanup(int code)
 {
   #ifdef TEST
