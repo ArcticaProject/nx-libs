@@ -5176,7 +5176,7 @@ char *Proxy::handleSaveAllStores(const char *savePath) const
 
   *(cacheDumpName + DEFAULT_STRING_LENGTH - 1) = '\0';
 
-  mode_t fileMode = umask(0077);
+  fileMode = umask(0077);
 
   cacheDump = new ofstream(cacheDumpName, ios::out);
 

@@ -217,7 +217,7 @@ class Agent
 
     #if defined(TEST) || defined(INFO)
     *logofs << "Agent: proxyCanRead() is "
-            << ((int) FD_ISSET(proxy -> getFd(), &readWorkSet)
+            << ((int) FD_ISSET(proxy -> getFd(), &readWorkSet))
             << ".\n" << logofs_flush;
     #endif
 
