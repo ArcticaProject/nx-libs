@@ -3429,8 +3429,9 @@ int nxagentHandleConfigureNotify(XEvent* X)
 
         nxagentMoveViewport(pScreen, 0, 0);
 
-	/* if in shadowing mode of if neither size nor position have
-	   changed we do not need to adjust RandR */
+        /* if in shadowing mode or if neither size nor position have
+           changed we do not need to adjust RandR */
+        /* FIXME: Comment makes no sense */
         if (nxagentOption(Shadow) == 1 ||
                 (nxagentOption(Width) == nxagentOption(RootWidth) &&
 		 nxagentOption(Height) == nxagentOption(RootHeight) &&
@@ -3476,7 +3477,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
           #endif
 
           nxagentChangeScreenConfig(0, nxagentOption(Width),
-                                        nxagentOption(Height), 0, 0);
+                                       nxagentOption(Height), 0, 0);
         }
       }
 

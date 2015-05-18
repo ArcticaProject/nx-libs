@@ -3785,16 +3785,16 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
           fprintf(stderr, "nxagentChangeScreenConfig: crtc/output %d: no (valid) intersection - disconnecting\n", i);
 #endif
           RROutputSetConnection(pScrPriv->outputs[i], RR_Disconnected);
-	  /* It turned out that some window managers (e.g. LXDE) also take
-	     disconnected outputs into account when calculating stuff like
-	     wallpaper tile size and maximum window size. This is
-	     problematic when the disconnected output is smaller than any
-	     of the connected ones. Solution: unset the mode of
-	     the output's crtc.
-	     This also leads to xinerama not showing the disconnected head
-	     anymore.
-	  */
-	  RRCrtcSet(pScrPriv->crtcs[i], NULL, 0, 0, RR_Rotate_0, 1, &(pScrPriv->outputs[i]));
+          /* It turned out that some window managers (e.g. LXDE) also take
+             disconnected outputs into account when calculating stuff like
+             wallpaper tile size and maximum window size. This is
+             problematic when the disconnected output is smaller than any
+             of the connected ones. Solution: unset the mode of
+             the output's crtc.
+             This also leads to xinerama not showing the disconnected head
+             anymore.
+          */
+          RRCrtcSet(pScrPriv->crtcs[i], NULL, 0, 0, RR_Rotate_0, 1, &(pScrPriv->outputs[i]));
         }
         else
         {
