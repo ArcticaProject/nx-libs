@@ -3733,12 +3733,22 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
 #ifdef DEBUG
       fprintf(stderr, "nxagentChangeScreenConfig: numCrtcs = %d, numOutputs = %d\n", pScrPriv->numCrtcs, pScrPriv->numOutputs);
 #endif
-      /* delete superflous (non-nx) outputs */
+      /* delete superflous non-NX outputs */
       for (i = pScrPriv->numOutputs - 1; i >= 0; i--) {
         if (strncmp(pScrPriv->outputs[i]->name, "NX", 2)) {
+#ifdef DEBUG
           fprintf(stderr, "nxagentChangeScreenConfig: destroying output %s\n", pScrPriv->outputs[i]->name);
+#endif
           RROutputDestroy(pScrPriv->outputs[i]);
         }
+      }
+
+      /* at this stage only NX outputs are left - we delete the superflous ones */
+      for (i = pScrPriv->numOutputs - 1; i >= number; i--) {
+#ifdef DEBUG
+          fprintf(stderr, "nxagentChangeScreenConfig: destroying output %s\n", pScrPriv->outputs[i]->name);
+#endif
+          RROutputDestroy(pScrPriv->outputs[i]);
       }
 
       /* add outputs if needed */
