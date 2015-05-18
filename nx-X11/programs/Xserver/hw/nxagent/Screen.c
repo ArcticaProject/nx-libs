@@ -2038,6 +2038,9 @@ N/A
 
   nxagentCompositeExtensionInit();
 
+  /* We use this to get informed about RandR changes on the real display.
+     FIXME: It would probably be better to use an RRScreenChangeNotifyEvent here. */
+  XSelectInput(nxagentDisplay, DefaultRootWindow(nxagentDisplay), StructureNotifyMask);
 
   #ifdef NXAGENT_TIMESTAMP
 
@@ -3849,6 +3852,8 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
       pScrPriv->configChanged = 1;
     }
   }
+
+  /* FIXME: adjust maximum screen size according to remote randr/xinerama setup */
 
   if (doNotify)
   {

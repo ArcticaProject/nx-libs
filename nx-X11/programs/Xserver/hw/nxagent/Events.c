@@ -3483,6 +3483,25 @@ int nxagentHandleConfigureNotify(XEvent* X)
 
       return 1;
     }
+    else
+    {
+      if (X -> xconfigure.window == DefaultRootWindow(nxagentDisplay))
+      {
+        #ifdef TEST
+        fprintf(stderr, "nxagentHandleConfigureNotify: remote root window has changed: %d,%d %dx%d\n", X -> xconfigure.x, X -> xconfigure.y, X -> xconfigure.width, X -> xconfigure.height);
+        #endif
+
+        nxagentChangeOption(RootX, X -> xconfigure.x);
+        nxagentChangeOption(RootY, X -> xconfigure.y);
+        nxagentChangeOption(RootWidth, X -> xconfigure.width);
+        nxagentChangeOption(RootHeight, X -> xconfigure.height);
+
+        nxagentChangeScreenConfig(0, nxagentOption(Width),
+                                     nxagentOption(Height), 0, 0);
+
+        return 1;
+      }
+    }
   }
 
   return 0;
