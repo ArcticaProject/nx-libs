@@ -1120,6 +1120,9 @@ Bool nxagentOpenScreen(int index, ScreenPtr pScreen,
   nxagentChangeOption(ViewportXSpan, nxagentOption(Width) - nxagentOption(RootWidth));
   nxagentChangeOption(ViewportYSpan, nxagentOption(Height) - nxagentOption(RootHeight));
 
+  /* store the user's preference provided via cmdline */
+  nxagentOption(Xinerama) = !noPanoramiXExtension;
+
   if (nxagentReconnectTrap == 0)
   {
     if (nxagentOption(Persistent))
@@ -3690,17 +3693,34 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
 
       XineramaScreenInfo *screeninfo = NULL;
 
-      screeninfo = XineramaQueryScreens(nxagentDisplay, &number);
-
-      if (number) {
+      if (nxagentOption(Xinerama)) {
+	screeninfo = XineramaQueryScreens(nxagentDisplay, &number);
 #ifdef DEBUG
-        fprintf(stderr, "nxagentChangeScreenConfig: XineramaQueryScreens() returned %d screens\n", number);
-#endif
+	if (number) {
+	  fprintf(stderr, "nxagentChangeScreenConfig: XineramaQueryScreens() returned %d screens\n", number);
+	}
+	else
+	{
+	  fprintf(stderr, "nxagentChangeScreenConfig: XineramaQueryScreens() failed - continuing without xinerama\n");
+	}
       }
       else
       {
+	fprintf(stderr, "nxagentChangeScreenConfig: Xinerama is disabled\n");
+#endif
+      }
+
+      /*
+       * if there's no xinerama on the real server or xinerama is
+       * disabled in nxagent we only report one big screen. Clients
+       * still see xinerama enabled but it will report only one (big)
+       * screen. This is consistent with the way rrxinerama always
+       * behaved. The single PanoramiX/Xinerama extension however
+       * disables xinerama if only one screen exists.
+       */
+      if (number == 0) {
 #ifdef DEBUG
-        fprintf(stderr, "nxagentChangeScreenConfig: XineramaQueryScreens() returned 0 screens - faking one\n" );
+        fprintf(stderr, "nxagentChangeScreenConfig: faking xinerama\n" );
 #endif
         number = 1;
 
@@ -3709,7 +3729,7 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
             return FALSE;
           }
         }
-        /* fake a xinerama screeninfo that covers our whole screen */
+        /* fake a xinerama screeninfo that covers the whole screen */
         screeninfo->x_org = nxagentOption(X);
         screeninfo->y_org = nxagentOption(Y);
         screeninfo->width = nxagentOption(Width);
@@ -3788,14 +3808,14 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
           fprintf(stderr, "nxagentChangeScreenConfig: crtc/output %d: no (valid) intersection - disconnecting\n", i);
 #endif
           RROutputSetConnection(pScrPriv->outputs[i], RR_Disconnected);
-          /* It turned out that some window managers (e.g. LXDE) also take
-             disconnected outputs into account when calculating stuff like
-             wallpaper tile size and maximum window size. This is
-             problematic when the disconnected output is smaller than any
-             of the connected ones. Solution: unset the mode of
-             the output's crtc.
-             This also leads to xinerama not showing the disconnected head
-             anymore.
+          /*
+           * Tests revealed that some window managers (e.g. LXDE) also
+           * take disconnected outputs into account when calculating
+           * stuff like wallpaper tile size and maximum window
+           * size. This is problematic when the disconnected output is
+           * smaller than any of the connected ones. Solution: unset
+           * the mode of the output's crtc.  This also leads to
+           * xinerama not showing the disconnected head anymore.
           */
           RRCrtcSet(pScrPriv->crtcs[i], NULL, 0, 0, RR_Rotate_0, 1, &(pScrPriv->outputs[i]));
         }
