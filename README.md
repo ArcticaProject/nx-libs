@@ -6,7 +6,7 @@ to setup FreeNX and/or X2Go on a Linux server.
 The NX re-distribution (3.5.0.x) has been maintained by the X2Go Project:
 http://wiki.x2go.org
 
-In 2014, TheQVD project run by the Spanish company "The Quindel Group"
+In 2014, http://theqvd.com run by the Company Qindel
 joined the group of people being interested in NX maintenance and
 improvement.
 
