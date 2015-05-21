@@ -1,0 +1,269 @@
+On DXPC retroactive relicensing as BSD-2-clause
+===============================================
+
+TL;DR; In May 2015, all versions of DXPC released before version 3.8.1 (sometime
+in 2002) have retroactively been re-licensed by all previous maintainers
+of DXPC as BSD-2-clause.
+
+This README file gives an overview of the discussion thread that lead to
+the retroactive re-licensing of DXPC.
+
+For the full discussion, see doc/DXPC_re-licensed::debbug_784565.mbox in
+this source project or #784565 on the Debian bug tracker [1].
+
+light+love,
+20150521, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+
+[1] https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=784565
+
+------------------------------------------------------------------------------
+
+STEP 1
+======
+
+In May 2015, a serious license issue around the nxcomp code shipped in
+this source project was raised and solved on the Debian bug tracker (thanks to
+Francesco Poli and many others): http://bugs.debian.org/784565
+
+"""
+From: "Francesco Poli \(wintermute\)" <invernomuto@paranoici.org>
+To: Debian Bug Tracking System <submit@bugs.debian.org>
+Date: Wed, 06 May 2015 19:35:32 +0200
+
+I noticed that the debian/copyright states:
+
+[...]
+| Parts of this software are derived from DXPC project. These copyright
+| notices apply to original DXPC code:
+|
+|    Redistribution and use in source and binary forms are permitted provided
+|    that the above copyright notice and this paragraph are duplicated in all
+|    such forms.
+|
+|    THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR IMPLIED
+|    WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
+|    MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+|
+|    Copyright (c) 1995,1996 Brian Pane
+|    Copyright (c) 1996,1997 Zachary Vonler and Brian Pane
+|    Copyright (c) 1999 Kevin Vigor and Brian Pane
+|    Copyright (c) 2000,2001 Gian Filippo Pinzari and Brian Pane
+[...]
+
+This license lacks the permission to modify the DXPC code.
+Hence, the original DXPC code does not appear to comply with the
+DFSG. And the nx-libs-lite is in part derived from DXPC code.
+
+This basically means that nx-libs-lite includes parts which are
+non-free (as they are derived from non-modifiable code) and
+are also possibly legally undistributable (as they are non-modifiable,
+but actually modified). The combination with the rest of nx-libs-lite
+(which is GPL-licensed) may also be legally undistributable (since
+the license with no permission to modify is GPL-incompatible).
+
+
+If there's anything I misunderstood, please clarify.
+
+Otherwise, please address this issue as soon as possible.
+The copyright owners for the original DXPC code should be
+contacted and persuaded to re-license under GPL-compatible
+terms.
+"""
+The issue has been settled by asking all recent maintainers (i.e.,
+copyright holders) of DXPC, to agree on considering the BSD-2-clause
+license (as introduced in DXPC 3.8.1) retro-actively as the license of
+all pre-3.8.1 DXPC releases.
+"""
+
+STEP 2:
+=======
+
+Kevin Vigor, the (at that time being) latest known maintainer of DXPC
+replied back immediately and provided the info given below. He also
+stated that he agrees to applying BSD-2-clause retroactively to all
+pre-3.8.1 releases of DXPC.
+
+"""
+From: Kevin Vigor <kevin@vigor.nu>
+To: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+CC: 784565@bugs.debian.org, [...]
+Subject: Re: Bug#784565: nx-libs-lite: parts are derived from non-free code
+
+Hi Mike, et al,
+
+   I am not the original author of dxpc, that being Brian Pane. However,
+   I took over maintenance circa 1999 and am still the primary maintainer
+   (though the project has effectively been dead for most of a decade
+   now).
+
+   As you are aware, when I inherited the code, it was licensed under a
+   variant of the BSD license that did not include the 'with
+   modification' clause. To the best of my recollection, somebody from
+   the FSF contacted me circa 2001 regarding this and as a result,
+   subsequent releases were done under a standard 2-clause BSD license
+   with the modification clause. Again, to the best of my recollection, I
+   contacted Brian about this change and he offered no objection.
+
+   Further, I recall distinctly that NoMachine contacted me and
+   explicitly asked permission before including DXPC code in NX, which I
+   happily granted with no new conditions beyond the BSD license already
+   in play.
+
+   It is possible, though by no means certain, that I could dig up
+   ancient email to corroborate this account if necessary. However, I am
+   more than willing to publicly state that I believe NoMachine's use of
+   DXPC code to be both legal and ethical, and that my intent when
+   changing the license to 2-clause BSD was simply to clarity the
+   existing intent and that it ought therefore be considered retroactive.
+
+   Yours,
+      Kevin Vigor
+
+[...]
+"""
+
+STEP 3:
+-------
+
+We were not able to dig out any recent mail address of Zachary Volner,
+another of the DXPC copyright holders, but a phone number.
+
+On Friday, May 15th, I (Mike Gabriel) called that phone number and left a
+message on - hopefully - Zach's voicebox, asking him to mail me, so I
+could explain everything. He mailed back and later on posted the below
+statement to the Debian BTS, also expressing his agreement to the
+retroactive re-licensing of DXPC.
+
+"""
+Date: Mon, 18 May 2015 10:05:38 -0500
+Subject: Re: Bug#784565: nx-libs-lite: parts are derived from non-free code
+From: Zach Vonler <zvonler@gmail.com>
+To: 784565@bugs.debian.org
+
+On Thu, 14 May 2015 05:55:42 +0000 Mike Gabriel <
+mike.gabriel@das-netzwerkteam.de> wrote:
+
+>
+> TL;DR; So here comes my actual question: are you (Brian Pane, Zachary
+> Vonler, Gian Filippo Pinzari) ok with retroactively regarding
+> pre-3.8.1 code of DXPC (that you probably all worked on at that time)
+> as BSD-2-clause? Are you ok with others having taken or taking the
+> pre-3.8.1 DXPC code and distribute it in a modified form?
+>
+
+
+> A yes from all of you as DXPC copyright holders is essential for the
+> continuation of nx-libs development under a free license. This may
+> also possibly be an issue for NXv4 in case parts of it have been
+> derived from DXPC.
+
+
+Yes, I am fine with considering the license change to be retroactive to
+cover the time I was the maintainer.
+
+I have no objections to others distributing modified versions of that code.
+
+Zach
+"""
+
+STEP 4:
+-------
+
+By 18th May 2015, Brian Pane had not mailed back to us. Hoping he is well
+and alive. Giving my personal gratitude to him for his work on DXPC back
+in the nighties.
+
+However, Kevin found an old archive of the DXPC mailing lists, esp. a
+post by Brian expressing openness to modifications of all DXPC code
+versions.
+
+We refer to this regarding his consent on the re-licensing.
+
+"""
+Date: Mon, 18 May 2015 15:11:42 -0600
+From: Kevin Vigor <kevin@vigor.nu>
+To: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>,  784565@bugs.debian.org, Francesco Poli <invernomuto@paranoici.org>
+CC: [...]
+Subject: Re: Bug#784565: nx-libs-lite: parts are derived from non-free code
+
+By the way, poking around the interwebs I find there is an archive of the old DXPC mailing list available at:
+
+http://marc.info/?l=dxpc&r=1&w=2
+
+I think you will find this of particular interest:
+
+
+http://marc.info/?l=dxpc&m=93093790813555&w=2
+
+
+List:       dxpc
+Subject:    Re: future tecnologies
+From:       Brian Pane <brianp () cnet ! com>
+Date:       1999-07-02 16:42:18
+[Download message RAW]
+
+Kevin Vigor <kvigor@eng.ascend.com> wrote:
+> On 01-Jul-99 dxpc@mcfeeley.cc.utexas.edu wrote:
+> > Speaking of licensing, are you putting your 3.8.0 changes to the dxpc
+> > code itself under GPL, or are they going to use the original dxpc's
+> > licensing?
+>
+> No, as you can probably guess, I am no fan of the GPL. For stuff on
+> this level, where my hacking is pretty simple and probably devoid of
+> commercial value, I'll just release my changes to the public domain and
+> give up even a copyright interest in them.
+>
+> Your and Zach's copyrights still stand, of course.
+>
+> I *think* that fact that we use the LZO library and API, but do not
+> directly incorporate the code, allows us to escape the clutch of the GPL
+> virus.
+>
+> btw, is there an original dxpc license? I haven't seen anything but a
+> copyright notice, which to my non-lawyerly mind translates as "free to
+> all the world as is, negotiate with copyright owner if modifying or
+> including in some other product".
+
+The copyright banner in the Readme is all the documentation there's ever
+been.  My intent was to allow _any_ distribution, use, and modification
+of the source, without imposing restrictions on the licensing style of
+any system into which others might incorporate the code.  We probably
+should start stating this clearly in the distributions.
+
+-brian
+
+[prev in list] [next in list] [prev in thread] [next in thread]
+"""
+
+STEP 5:
+-------
+
+Last but not least, Kevin informed us that Gian Filippo Pinzari never
+contributed any code to any of the official DPXC releases. So we assumed
+that his copyrights on the code stem from the time where he - under the
+NoMachine umbrella - worked on the code and should probably be associated
+with the GPL-2 re-licensing of the code later on done by NoMachine
+(which we did in the LICENSE file).
+
+It also appears, that there has been an incongruity between the copyright
+statement in nxcomp/Misc.cpp and nxcomp/LICENSE for Gian Filippo Pinzari.
+We used the copyright years (2000,2003) from nxcomp/Misc.cpp instead of
+those originally given in nxcomp/LICENSE (2000,2006).
+
+"""
+Date: Mon, 18 May 2015 19:16:25 -0600
+From: Kevin Vigor <kevin@vigor.nu>
+To: Francesco Poli <invernomuto@paranoici.org>,
+ Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+CC: 784565@bugs.debian.org, [...]
+Subject: Re: [pkg-x2go-devel] Bug#784565: Bug#784565: nx-libs-lite: parts are derived from non-free code
+
+On 5/18/2015 4:14 PM, Francesco Poli wrote:
+> If it is confirmed that Gian Filippo contributed to the forking of
+> DXPC within the NoMachine project, but not directly to DXPC, then I
+> think that he made his contributions available under the terms of the
+> GPL v2 of the NoMachine project. If this is the case, no feedback
+> should be required from his side.
+I can confirm that Gian Fillippo never contributed directly to DXPC.
+You'll note his name does not appear in the DXPC README, and never has.
+"""
