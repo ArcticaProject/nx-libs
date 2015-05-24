@@ -35,6 +35,8 @@ BuildRequires:  pkgconfig(xpm)
 BuildRequires:  pkgconfig(xfont)
 BuildRequires:  pkgconfig(xdmcp)
 BuildRequires:  pkgconfig(xdamage)
+BuildRequires:  pkgconfig(xrandr)
+BuildRequires:  pkgconfig(xinerama)
 %else
 BuildRequires:  libexpat-devel
 BuildRequires:  libpng-devel
@@ -45,6 +47,8 @@ BuildRequires:  xorg-x11-libXpm-devel
 BuildRequires:  xorg-x11-libXfont-devel
 BuildRequires:  xorg-x11-libXdmcp-devel
 BuildRequires:  xorg-x11-libXdamage-devel
+BuildRequires:  xorg-x11-libXrandr-devel
+BuildRequires:  xorg-x11-libXinerama-devel
 %endif
 BuildRequires:  xorg-x11-util-devel
 %endif
@@ -56,6 +60,8 @@ BuildRequires:  libxml2-devel
 BuildRequires:  libXfont-devel
 BuildRequires:  libXdmcp-devel
 BuildRequires:  libXdamage-devel
+BuildRequires:  libXrandr-devel
+BuildRequires:  libXinerama-devel
 %endif
 
 # For imake
@@ -72,20 +78,6 @@ Obsoletes:      nx < 3.5.0-19
 Provides:       nx = %{version}-%{release}
 Obsoletes:      nx%{?_isa} < 3.5.0-19
 Provides:       nx%{?_isa} = %{version}-%{release}
-
-# for Xinerama in NX to work:
-%if 0%{?suse_version}
-%if 0%{?suse_version} < 1140
-Requires:       xorg-x11-libX11%{?_isa}
-Requires:       xorg-x11-libXext%{?_isa}
-%else
-Requires:       libX11-6%{?_isa}
-Requires:       libXext6%{?_isa}
-%endif
-%else
-Requires:       libX11%{?_isa}
-Requires:       libXext%{?_isa}
-%endif
 
 %if 0%{?el5}
 # For compatibility with EPEL5
@@ -283,38 +275,6 @@ applications over a network, especially a slow one.
 
 The nx_X11 Fixes extension provides applications with work-arounds for
 various limitations in the core protocol.
-
-
-%package -n libNX_Xinerama1
-Group:          System Environment/Libraries
-Summary:        Xinerama extension to the NX Protocol
-Requires:       %{name}%{?_isa} >= 3.5.0.29
-Obsoletes:      libNX_Xinerama
-
-%description -n libNX_Xinerama1
-NX is a software suite which implements very efficient compression of
-the X11 protocol. This increases performance when using X
-applications over a network, especially a slow one.
-
-Xinerama is an extension to the X Window System which enables
-multi-headed X applications and window managers to use two or more
-physical displays as one large virtual display.
-
-
-%package -n libNX_Xrandr2
-Group:          System Environment/Libraries
-Summary:        NX Resize, Rotate and Reflection extension library
-Requires:       %{name}%{?_isa} >= 3.5.0.29
-Obsoletes:      libNX_Xrandr
-
-%description -n libNX_Xrandr2
-NX is a software suite which implements very efficient compression of
-the X11 protocol. This increases performance when using X
-applications over a network, especially a slow one.
-
-The X Resize, Rotate and Reflect Extension (RandR) allows clients to
-dynamically change X screens, so as to resize, to change the
-orientation and layout of the root window of a screen.
 
 
 %package -n libNX_Xrender-devel
@@ -631,11 +591,6 @@ rm -r %{buildroot}%{_includedir}/nx/X11/extensions/XK*.h
 rm -r %{buildroot}%{_includedir}/nx/X11/extensions/*Xv*.h
 rm -r %{buildroot}%{_includedir}/nx/X11/Xtrans
 
-# Needed for Xinerama support
-ln -s -f ../../../../%{_lib}/libX11.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama/libNX_X11.so.6
-ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama/libNX_Xext.so.6
-ln -s -f ../../../../%{_lib}/libNX_Xinerama.so.1 %{buildroot}%{_libdir}/nx/X11/Xinerama/libXinerama.so.1
-
 %if 0%{?fdupes:1}
 %fdupes %buildroot/%_prefix
 %endif
@@ -646,8 +601,6 @@ ln -s -f ../../../../%{_lib}/libNX_Xinerama.so.1 %{buildroot}%{_libdir}/nx/X11/X
 %post -n libNX_Xcomposite1 -p /sbin/ldconfig
 %post -n libNX_Xext6 -p /sbin/ldconfig
 %post -n libNX_Xfixes3 -p /sbin/ldconfig
-%post -n libNX_Xinerama1 -p /sbin/ldconfig
-%post -n libNX_Xrandr2 -p /sbin/ldconfig
 %post -n libNX_Xrender1 -p /sbin/ldconfig
 %post -n libNX_Xtst6 -p /sbin/ldconfig
 %post -n libXcomp3 -p /sbin/ldconfig
@@ -659,8 +612,6 @@ ln -s -f ../../../../%{_lib}/libNX_Xinerama.so.1 %{buildroot}%{_libdir}/nx/X11/X
 %postun -n libNX_Xcomposite1 -p /sbin/ldconfig
 %postun -n libNX_Xext6 -p /sbin/ldconfig
 %postun -n libNX_Xfixes3 -p /sbin/ldconfig
-%postun -n libNX_Xinerama1 -p /sbin/ldconfig
-%postun -n libNX_Xrandr2 -p /sbin/ldconfig
 %postun -n libNX_Xrender1 -p /sbin/ldconfig
 %postun -n libNX_Xtst6 -p /sbin/ldconfig
 %postun -n libXcomp3 -p /sbin/ldconfig
@@ -675,10 +626,6 @@ ln -s -f ../../../../%{_lib}/libNX_Xinerama.so.1 %{buildroot}%{_libdir}/nx/X11/X
 %dir %{_libdir}/nx/X11
 %dir %{_datadir}/nx
 %{_datadir}/nx/SecurityPolicy
-%dir %{_libdir}/nx/X11/Xinerama/
-%{_libdir}/nx/X11/Xinerama/libNX_X11.so.6
-%{_libdir}/nx/X11/Xinerama/libNX_Xext.so.6
-%{_libdir}/nx/X11/Xinerama/libXinerama.so.1*
 
 %files -n libNX_X11-6
 %defattr(-,root,root)
@@ -758,14 +705,6 @@ ln -s -f ../../../../%{_lib}/libNX_Xinerama.so.1 %{buildroot}%{_libdir}/nx/X11/X
 %defattr(-,root,root)
 %{_libdir}/libNX_Xfixes.so.3*
 
-%files -n libNX_Xinerama1
-%defattr(-,root,root)
-%{_libdir}/libNX_Xinerama.so.1*
-
-%files -n libNX_Xrandr2
-%defattr(-,root,root)
-%{_libdir}/libNX_Xrandr.so.2*
-
 %files -n libNX_Xrender-devel
 %defattr(-,root,root)
 %{_libdir}/libNX_Xrender.so
@@ -832,8 +771,6 @@ ln -s -f ../../../../%{_lib}/libNX_Xinerama.so.1 %{buildroot}%{_libdir}/nx/X11/X
 %files devel
 %defattr(-,root,root)
 %{_libdir}/libNX_Xcomposite.so
-%{_libdir}/libNX_Xinerama.so
-%{_libdir}/libNX_Xrandr.so
 %{_libdir}/libNX_Xtst.so
 %{_includedir}/nx/X11/X10.h
 %dir %{_includedir}/nx/X11/extensions
@@ -841,15 +778,12 @@ ln -s -f ../../../../%{_lib}/libNX_Xinerama.so.1 %{buildroot}%{_libdir}/nx/X11/X
 %{_includedir}/nx/X11/extensions/XTest.h
 %{_includedir}/nx/X11/extensions/Xcomposite.h
 %{_includedir}/nx/X11/extensions/Xevie.h
-%{_includedir}/nx/X11/extensions/Xinerama.h
-%{_includedir}/nx/X11/extensions/Xrandr.h
 %{_includedir}/nx/X11/extensions/lbxbuf.h
 %{_includedir}/nx/X11/extensions/lbxbufstr.h
 %{_includedir}/nx/X11/extensions/lbxdeltastr.h
 %{_includedir}/nx/X11/extensions/lbximage.h
 %{_includedir}/nx/X11/extensions/lbxopts.h
 %{_includedir}/nx/X11/extensions/lbxzlib.h
-%{_includedir}/nx/X11/extensions/panoramiXext.h
 %{_includedir}/nx/X11/extensions/record.h
 %{_includedir}/nx/X11/extensions/xf86dga1.h
 %{_includedir}/nx/X11/extensions/xf86vmode.h
@@ -889,9 +823,6 @@ ln -s -f ../../../../%{_lib}/libNX_Xinerama.so.1 %{buildroot}%{_libdir}/nx/X11/X
 %{_includedir}/nx/X11/extensions/bigreqstr.h
 %{_includedir}/nx/X11/extensions/composite.h
 %{_includedir}/nx/X11/extensions/compositeproto.h
-%{_includedir}/nx/X11/extensions/panoramiXproto.h
-%{_includedir}/nx/X11/extensions/randr.h
-%{_includedir}/nx/X11/extensions/randrproto.h
 %{_includedir}/nx/X11/extensions/recordstr.h
 %{_includedir}/nx/X11/extensions/render.h
 %{_includedir}/nx/X11/extensions/renderproto.h

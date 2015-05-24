@@ -35,10 +35,6 @@ XF86DGALIBDIR = Xxf86dga
 XF86RUSHLIBDIR = Xxf86rush
 #endif
 
-#if BuildXineramaLibrary
-XINERAMADIR=Xinerama
-#endif
-
 #if BuildXResLibrary
 XRESLIBDIR = XRes
 #endif
@@ -49,10 +45,6 @@ GLXLIBDIR = GL
 
 #if BuildRenderLibrary
 RENDERLIBDIR = Xrender
-#endif
-
-#if BuildRandRLibrary
-RANDRLIBDIR = Xrandr
 #endif
 
 #if BuildXfixesLibrary
@@ -103,7 +95,6 @@ LINTSUBDIRS = \
 	$(GLXLIBDIR) \
 	$(XINERAMADIR) \
 	$(RENDERLIBDIR) \
-	$(RANDRLIBDIR) \
 	$(XRESLIBDIR) \
 	$(XFIXESLIBDIR) \
 	$(COMPOSITELIBDIR) \

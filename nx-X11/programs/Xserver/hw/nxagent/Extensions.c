@@ -35,6 +35,11 @@ static int nxagentRandRScreenSetSize(ScreenPtr pScreen, CARD16 width,
 
 static int nxagentRandRInitSizes(ScreenPtr pScreen);
 
+static Bool nxagentRandRCrtcSet (ScreenPtr pScreen, RRCrtcPtr crtc,
+				 RRModePtr mode, int x, int y,
+				 Rotation rotation, int numOutputs,
+				 RROutputPtr *outputs);
+
 #ifdef __DARWIN__
 
 void DarwinHandleGUI(int argc, char *argv[])
@@ -97,12 +102,33 @@ void nxagentInitRandRExtension(ScreenPtr pScreen)
 
   #if RANDR_12_INTERFACE
   pRandRScrPriv -> rrScreenSetSize = nxagentRandRScreenSetSize;
+  pRandRScrPriv -> rrCrtcSet = nxagentRandRCrtcSet;
   #endif
 
   #if RANDR_10_INTERFACE
   pRandRScrPriv -> rrSetConfig = nxagentRandRSetConfig;
   #endif
 }
+
+#if RANDR_12_INTERFACE
+/*
+ * Request that the Crtc be reconfigured
+ */
+
+static Bool
+nxagentRandRCrtcSet (ScreenPtr   pScreen,
+		     RRCrtcPtr   crtc,
+		     RRModePtr   mode,
+		     int         x,
+		     int         y,
+		     Rotation    rotation,
+		     int         numOutputs,
+		     RROutputPtr *outputs)
+{
+  return RRCrtcNotify(crtc, mode, x, y, rotation, numOutputs, outputs);
+}
+#endif
+
 
 int nxagentRandRGetInfo(ScreenPtr pScreen, Rotation *pRotations)
 {
