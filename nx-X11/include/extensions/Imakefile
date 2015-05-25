@@ -50,9 +50,6 @@ XFIXESHEADERS = xfixeswire.h xfixesproto.h
 #if BuildComposite || BuildCompositeLibrary
 COMPOSITEHEADERS = composite.h compositeproto.h
 #endif
-#if BuildRandR || BuildRandRLibrary
-RANDRHEADERS = randr.h randrproto.h
-#endif
 #if BuildXTrap
 XTRAPHEADERS = xtrapbits.h xtrapddmi.h xtrapdi.h xtrapemacros.h xtraplib.h \
 	xtraplibp.h xtrapproto.h
@@ -77,7 +74,6 @@ EXTRAHEADERS = \
 	$(XF86RUSHHEADERS) \
 	$(FONTCACHEHEADERS) \
 	$(RENDERHEADERS) \
-	$(RANDRHEADERS) \
 	$(XFIXESHEADERS) \
 	$(COMPOSITEHEADERS) \
 	$(XEVIEHEADERS) \

@@ -77,7 +77,7 @@ is" without express or implied warranty.
 #include "Shadow.h"
 #include "Utils.h"
 
-#include "Xrandr.h"
+#include <X11/extensions/Xrandr.h>
 
 #define GC     XlibGC
 #define Font   XlibFont
