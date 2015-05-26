@@ -35,7 +35,6 @@ NormalLibraryObjectRule()
 
 SubdirLibraryRule($(OBJS))
 
-LintLibraryTarget(dri,$(SRCS))
 NormalLintTarget($(SRCS))
 
 DependTarget()

@@ -71,39 +71,15 @@ INSTPGMFLAGS =
 #define AllFBLibs PreFbLibs $(FB) $(CFB) PostFbLibs
 
 #if BuildGlxExt
-# if BuildXF86DRI && ((defined(XF86Server) && XF86Server) \
-	|| (defined(XorgServer) && XorgServer))
-      DRILIB = GL/dri/ModuleLibraryTargetName(dri)
-# else
-      DRILIB = 
-# endif
-# if GlxUseSGISI
-      GLXLIB = GL/glx/ModuleLibraryTargetName(glx) \
-               GL/sgi-si/ModuleLibraryTargetName(GLcore) \
-               $(DRILIB)
-# else
-#  if defined(GlxUseWindows) && GlxUseWindows
-      XWin_GL.exe.GLXLIB = GL/glx/ModuleLibraryTargetName(glx_stdcall) \
-               GL/windows/ModuleLibraryTargetName(GLcore)
-#  endif /* GlxUseWindows */
-#  if defined(Win32Architecture) && defined(GlxUseWindows) && GlxUseWindows
-      GLXLIB = GL/glx/ModuleLibraryTargetName(glx_stdcall) \
-               GL/windows/ModuleLibraryTargetName(GLcore)
-#  elif DoLoadableServer
+# if DoLoadableServer
       GLXLIB = GL/glx/ModuleLibraryTargetName(glx) \
                GL/mesa/GLcore/ModuleLibraryTargetName(GLcore)
-#  else
+# else
       GLXLIB = GL/glx/ModuleLibraryTargetName(glx) \
-               GL/mesa/GLcore/ModuleLibraryTargetName(GLcore) \
-               $(DRILIB)
-#  endif
+               GL/mesa/GLcore/ModuleLibraryTargetName(GLcore)
 # endif
       GLXDIR = GL
-# if defined(cygwinArchitecture) && defined(GlxUseWindows) && GlxUseWindows
-      GLXEXT = $(if $($@.GLXLIB),$($@.GLXLIB), $(GLXLIB))
-# else
       GLXEXT = $(GLXLIB)
-# endif
 #endif
 
 #if BuildXInputExt
@@ -526,11 +502,7 @@ XWINPARSERLIB = $(XWINPARSERDIR)/LibraryTargetName(xf86config)
 XWINPARSERDIR = 
 XWINPARSERLIB = 
 #endif
-#if defined(GlxUseWindows) && GlxUseWindows
-XWINOPENGLLIB = -lopengl32
-#else
 XWINOPENGLLIB = 
-#endif
 
 NXWINLIB = $(NXWINDDXDIR)/LibraryTargetName(NXWin)
 NXWINDIRS = $(STDDIRS) $(FBDIR) $(SHADOWDIR) $(LAYERDIR) $(NXWINDDXDIR) \
@@ -545,10 +517,7 @@ PTHREADLIB = -lpthreadGC
 # endif
 #endif
 #if defined(Win32Architecture)
-# if defined(GlxUseWindows) && GlxUseWindows
-XWINGL32 = -lopengl32
-# endif
-XWINW32  = -lgdi32 -lwsock32 $(XWINGL32) $(PTHREADLIB) 
+XWINW32  = -lgdi32 -lwsock32 $(PTHREADLIB)
 #else
 XWINW32  = -lgdi32
 #endif
@@ -577,18 +546,11 @@ $(NXWINOBJS) $(NXWINLIB) $(NXWINLIBS) $(NXWINSYSLIBS) $(NXWINNXLIBS):: $(NXWINDI
 
 #ifdef mingwArchitecture
 NXWINSERVERNAME=NXming    
-NXWINGLSERVERNAME=NXmingGL    
 #else
 NXWINSERVERNAME=NXWin    
-NXWINGLSERVERNAME=NXWin_GL 
 #endif
 ServerTarget($(NXWINSERVERNAME),$(NXWINDIRS),$(NXWINOBJS), \
 	     $(LIBCWRAPPER) $(NXWINLIBS) $(LOADABLEEXTS),$(NXWINSYSLIBS) $(NXWINNXLIBS))
-#if defined(cygwinArchitecture) && defined(GlxUseWindows) && GlxUseWindows 
-ServerTarget($(NXWINGLSERVERNAME),$(NXWINDIRS),$(NXWINOBJS), \
-	     $(LIBCWRAPPER) $(NXWINLIBS) $(LOADABLEEXTS),$(NXWINSYSLIBS) $(NXWINNXLIBS)\
-	     $(XWINOPENGLLIB)) 
-#endif
 
 #ifndef ServerToInstall
 # define ServerToInstall $(NXWINSERVERNAME)
