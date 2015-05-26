@@ -146,6 +146,12 @@ nx-libs (2:3.5.0.32-0x2go1) UNRELEASED; urgency=low
     now.
   * debian/libnx-xinerama1.*: fix faulty logic when creating symlinks.
     Backported from Arctica GH 3.6.x branch.
+  * Security fixes:
+    - X.Org CVE-2014-8100:
+      v3: port to NXrender.c rather than render.c (Mike DePaulo)
+      v4: backport v3 to nx-libs 3.5.0.x (Mihai Moldovan)
+      Changes:
+      + 1027-render-check-request-size-before-reading-it-CVE.full.patch
 
   [ Bernard Cafarelli ]
   * nx-X11: link to libdl to fix undefined references to 'dlopen' and 'dlsym'.
