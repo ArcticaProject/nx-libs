@@ -84,6 +84,7 @@
 0990_fix-DEBUG-and-TEST-builds.full.patch
 0991_fix-hr-typos.full+lite.patch
 0991_fix-hr-typos.full.patch
+0992_fix-DEBUG-TEST-DUMP-FLUSH-TOKEN-PING-et-al-builds.full+lite.patch
 0999_nxagent_unbrand-nxagent-brand-x2goagent.full.patch
 1001-LZW-decompress-fix-for-CVE-2011-2895-From-xorg-.full.patch
 1002-Fix-CVE-2011-4028-File-disclosure-vulnerability.full.patch
