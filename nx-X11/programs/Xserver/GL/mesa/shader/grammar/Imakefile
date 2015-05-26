@@ -1,10 +1,5 @@
 #if DoLoadableServer
-#if !BuildModuleInSubdir
 #define IHaveModules
-#elif !defined(IHaveModules)
-#define IHaveSubdirs
-SUBDIRS = module
-#endif
 #endif
 
 #include <Server.tmpl>
@@ -12,11 +7,7 @@ SUBDIRS = module
 #define NeedAllMesaSrc
 #define NeedToLinkMesaSrc
 #define MesaGrammarBuildDir /**/
-#if !defined(IHaveModules) || !BuildModuleInSubdir
-#include "../../../../../../lib/GL/mesa/shader/grammar/Imakefile.inc"
-#else
-#include "../../../../../../../lib/GL/mesa/shader/grammar/Imakefile.inc"
-#endif
+#include "Imakefile.inc"
 
          SRCS = $(MESA_GRAMMAR_SRCS)
          OBJS = $(MESA_GRAMMAR_OBJS)

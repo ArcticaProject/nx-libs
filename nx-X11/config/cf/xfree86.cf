@@ -1282,14 +1282,6 @@ IPLAN2P8_DEFS = -DUSE_IPLAN2P8
 
 #if BuildXF86DRI
 
-#ifndef BuildGLXLibrary
-#  if defined (BuildServersOnly) && BuildServersOnly
-#    define BuildGLXLibrary	NO
-#  else
-#    define BuildGLXLibrary	YES
-#  endif
-#endif
-
 /*
  * One and ONLY one of the GlxBuiltIn* drivers can be defined to be YES.
  * If more than one are defined, the compilation will fail with multiply
@@ -1537,9 +1529,6 @@ IPLAN2P8_DEFS = -DUSE_IPLAN2P8
 #endif
 #ifndef BuildXF86VidModeLibrary
 # define BuildXF86VidModeLibrary YES
-#endif
-#ifndef BuildGLXLibrary
-# define BuildGLXLibrary	YES
 #endif
 #endif
 

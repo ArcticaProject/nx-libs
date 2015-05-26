@@ -10,7 +10,7 @@ NULL =
 #define IHaveSubdirs
 #define PassCDebugFlags /**/
 
-#if BuildGlxExt || BuildGLXLibrary
+#if BuildGlxExt
 GLXDIR = GL
 #endif
 

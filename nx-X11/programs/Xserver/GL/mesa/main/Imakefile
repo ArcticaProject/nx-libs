@@ -2,12 +2,7 @@ XCOMM $XdotOrg: xc/programs/Xserver/GL/mesa/main/Imakefile,v 1.2 2004/08/19 07:3
 XCOMM $XFree86: xc/programs/Xserver/GL/mesa/src/math/Imakefile,v 1.8 2002/11/22 22:56:01 tsi Exp $
 
 #if DoLoadableServer
-#if !BuildModuleInSubdir
 #define IHaveModules
-#elif !defined(IHaveModules)
-#define IHaveSubdirs
-SUBDIRS = module
-#endif
 #endif
 
 /* Large PIC tables needed for Solaris/SPARC builds */
@@ -20,11 +15,7 @@ SUBDIRS = module
 #define NeedAllMesaSrc
 #define NeedToLinkMesaSrc
 #define MesaBuildDir /**/
-#if !defined(IHaveModules) || !BuildModuleInSubdir
-#include "../../../../../lib/GL/mesa/main/Imakefile.inc"
-#else
-#include "../../../../../../lib/GL/mesa/main/Imakefile.inc"
-#endif
+#include "Imakefile.inc"
 
          SRCS = $(COREMESABASESRCS)
          OBJS = $(COREMESABASEOBJS)
