@@ -29,8 +29,5 @@ NormalLintTarget($(SRCS))
 
 DependTarget()
 
-InstallDriverSDKNonExecFile(glyphstr.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(mipict.h,$(DRIVERSDKINCLUDEDIR))
-InstallDriverSDKNonExecFile(picture.h,$(DRIVERSDKINCLUDEDIR))
-InstallDriverSDKNonExecFile(picturestr.h,$(DRIVERSDKINCLUDEDIR))
 
