@@ -1,12 +1,7 @@
 XCOMM $XFree86: xc/programs/Xserver/GL/mesa/src/swrast_setup/Imakefile,v 1.8 2002/11/22 22:56:01 tsi Exp $
 
 #if DoLoadableServer
-#if !BuildModuleInSubdir
 #define IHaveModules
-#elif !defined(IHaveModules)
-#define IHaveSubdirs
-SUBDIRS = module
-#endif
 #endif
 
 #include <Server.tmpl>
@@ -14,11 +9,7 @@ SUBDIRS = module
 #define NeedAllMesaSrc
 #define NeedToLinkMesaSrc
 #define MesaSwrastSetupBuildDir /**/
-#if !defined(IHaveModules) || !BuildModuleInSubdir
-#include "../../../../../lib/GL/mesa/swrast_setup/Imakefile.inc"
-#else
-#include "../../../../../../lib/GL/mesa/swrast_setup/Imakefile.inc"
-#endif
+#include "Imakefile.inc"
 
          SRCS = $(MESA_SWR_SETUP_SRCS)
          OBJS = $(MESA_SWR_SETUP_OBJS)
@@ -52,4 +43,3 @@ DependTarget()
 MakeSubdirs($(SUBDIRS))
 DependSubdirs($(SUBDIRS))
 #endif
-
