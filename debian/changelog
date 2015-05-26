@@ -180,6 +180,11 @@ nx-libs (2:3.5.0.32-0x2go1) UNRELEASED; urgency=low
     - X.Org CVE-2015-3418:
       1210-CVE-2015-3418-dix-Allow-zero-height-PutImage-re.full.patch
 
+  [ Nito Martinez ]
+  * nxcomp: fix DEBUG, TEST, DUMP, FLUSH, TOKEN, PING, MIXED et al builds.
+    Adds:
+    - 0992_fix-DEBUG-TEST-DUMP-FLUSH-TOKEN-PING-et-al-builds.full+lite.patch
+
  -- X2Go Release Manager <git-admin@x2go.org>  Tue, 17 Mar 2015 19:19:32 +0100
 
 nx-libs (2:3.5.0.31-0x2go1) unstable; urgency=low
