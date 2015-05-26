@@ -7,6 +7,8 @@ Subject: [PATCH 27/40] render: check request size before reading it
 Otherwise we may be reading outside of the client request.
 
 v2: backport to nx-libs 3.6.x (Mike DePaulo)
+v3: port to NXrender.c rather than render.c (Mike DePaulo)
+v4: backport v3 to nx-libs 3.5.0.x (Mihai Moldovan)
 
 Signed-off-by: Julien Cristau <jcristau@debian.org>
 Reviewed-by: Alan Coopersmith <alan.coopersmith@oracle.com>
@@ -18,11 +20,9 @@ Conflicts:
  nx-X11/programs/Xserver/render/render.c | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/nx-X11/programs/Xserver/render/render.c b/nx-X11/programs/Xserver/render/render.c
-index d25d497..ebbce81 100644
 --- a/nx-X11/programs/Xserver/render/render.c
 +++ b/nx-X11/programs/Xserver/render/render.c
-@@ -283,10 +283,11 @@ ProcRenderQueryVersion (ClientPtr client)
+@@ -283,10 +283,11 @@ ProcRenderQueryVersion (ClientPtr client
      register int n;
      REQUEST(xRenderQueryVersionReq);
  
@@ -35,6 +35,18 @@ index d25d497..ebbce81 100644
      rep.type = X_Reply;
      rep.length = 0;
      rep.sequenceNumber = client->sequence;
--- 
-2.1.4
-
+--- a/nx-X11/programs/Xserver/hw/nxagent/NXrender.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/NXrender.c
+@@ -326,10 +326,11 @@ ProcRenderQueryVersion (ClientPtr client
+     register int n;
+     REQUEST(xRenderQueryVersionReq);
+ 
++    REQUEST_SIZE_MATCH(xRenderQueryVersionReq);
++
+     pRenderClient->major_version = stuff->majorVersion;
+     pRenderClient->minor_version = stuff->minorVersion;
+ 
+-    REQUEST_SIZE_MATCH(xRenderQueryVersionReq);
+     rep.type = X_Reply;
+     rep.length = 0;
+     rep.sequenceNumber = client->sequence;
