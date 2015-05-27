@@ -145,19 +145,6 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 #   endif
 #   define HasXdmAuth			YES
 #   define HasLatex			YES
-/* at present, glide2 only works on i386 */
-#   if defined(__linux__) && defined(i386Architecture)
-#    define HasGlide2			YES
-#    define Glide2IncDir		/usr/include/glide
-#   endif /* __linux__ && i386Architecture */
-/* at present, glide3 only works on alpha, amd64, i386 and ia64 */
-#   if defined(__linux__) && (defined(i386Architecture) || \
-       defined(AlphaArchitecture) || defined(ia64Architecture) || \
-       defined(AMD64Architecture))
-#    define HasGlide3			YES
-#    define Glide3IncDir		/usr/include/glide3
-#   endif /* __linux__ && (i386Architecture || AlphaArchitecture || \
-             ia64Architecture || AMD64Architecture) */
 /* extended instruction set support */
 #   ifdef i386Architecture
 #   define HasX86Support		YES
@@ -379,13 +366,6 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 #  else
 #    define Has3DNowSupport		NO
 #  endif
-#endif
-
-/*
- * The Rush extension support.
- */
-#ifndef BuildXF86RushExt
-# define BuildXF86RushExt	YES
 #endif
 
 #if defined(__linux__) && !defined(LinuxFBDevSupport)

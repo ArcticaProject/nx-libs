@@ -437,13 +437,6 @@ IPLAN2P8_DEFS = -DUSE_IPLAN2P8
 #  define XF86INT10_BUILD		X86INT10_STUB
 # endif
 #endif
-/*
- * Build the Rush extension library (non standard extension for cooperation
- * between glide library and X server). Enabled by default only for Linux.
- */
-#ifndef BuildXF86RushExt
-# define BuildXF86RushExt	NO
-#endif
 
 #ifndef BuildRECORDlib
 # define BuildRECORDlib	YES

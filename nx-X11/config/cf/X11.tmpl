@@ -290,12 +290,6 @@ XORGRELSTRING = XorgManVersionString
 #ifndef BuildOSMesaLib
 #define BuildOSMesaLib		BuildGlxExt
 #endif
-#ifndef BuildXF86RushExt
-#define BuildXF86RushExt	NO
-#endif
-#ifndef BuildXF86RushLibrary
-#define BuildXF86RushLibrary	(BuildXF86RushExt && !BuildServersOnly)
-#endif
 #ifndef BuildRender
 #define BuildRender		YES
 #endif
@@ -1411,30 +1405,6 @@ ProjectUnsharedLibReferences(XONLY,NX_X11,$(XLIBSRC),XBuildLibDir)
 #define ProfileLibXxf86dga	NO
 #endif
 
-#if BuildXF86RushLibrary
-#ifndef SharedLibXxf86rush
-#define SharedLibXxf86rush	HasSharedLibraries
-#endif
-#ifndef NormalLibXxf86rush
-#define NormalLibXxf86rush	(!SharedLibXxf86rush || ForceNormalLib)
-#endif
-#ifndef DebugLibXxf86rush
-#define DebugLibXxf86rush	NO
-#endif
-#ifndef ProfileLibXxf86rush
-#define ProfileLibXxf86rush	NO
-#endif
-#else
-#undef  SharedLibXxf86rush
-#define SharedLibXxf86rush	NO
-#undef  NormalLibXxf86rush
-#define NormalLibXxf86rush	NO
-#undef  DebugLibXxf86rush
-#define DebugLibXxf86rush	NO
-#undef  ProfileLibXxf86rush
-#define ProfileLibXxf86rush	NO
-#endif
-
 #if BuildXineramaLibrary
 #ifndef SharedLibXinerama
 #define SharedLibXinerama	HasSharedLibraries
@@ -1585,16 +1555,6 @@ ProjectUnsharedLibReferences(XXF86VM,NX_Xxf86vm,$(XXF86VMLIBSRC),XBuildLibDir)
 SharedLibReferences(XXF86DGA,NX_Xxf86dga,$(XXF86DGALIBSRC),SOXXF86DGAREV,SharedXxf86dgaRev)
 #else
 ProjectUnsharedLibReferences(XXF86DGA,NX_Xxf86dga,$(XXF86DGALIBSRC),XBuildLibDir)
-#endif
-
-    XXF86RUSHLIBSRC = $(LIBSRC)/Xxf86rush
-#if SharedLibXxf86rush
-#ifndef SharedXxf86rushRev
-#define SharedXxf86rushRev 1.0
-#endif
-SharedLibReferences(XXF86RUSH,NX_Xxf86rush,$(XXF86RUSHLIBSRC),SOXXF86RUSHREV,SharedXxf86rushRev)
-#else
-ProjectUnsharedLibReferences(XXF86RUSH,NX_Xxf86rush,$(XXF86RUSHLIBSRC),XBuildLibDir)
 #endif
 
     XINERAMALIBSRC = $(LIBSRC)/Xinerama
