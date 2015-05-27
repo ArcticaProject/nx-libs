@@ -257,23 +257,14 @@ XORGRELSTRING = XorgManVersionString
 #ifndef BuildXF86VidModeExt
 #define BuildXF86VidModeExt	NO
 #endif
-#ifndef BuildXF86VidModeLibrary
-#define BuildXF86VidModeLibrary (BuildXF86VidModeExt && !BuildServersOnly)
-#endif
 #ifndef BuildXF86MiscExt
 #define BuildXF86MiscExt	NO
-#endif
-#ifndef BuildXF86MiscLibrary
-#define BuildXF86MiscLibrary	(BuildXF86MiscExt && !BuildServersOnly)
 #endif
 #ifndef BuildXF86BigfontExt
 #define BuildXF86BigfontExt	NO
 #endif
 #ifndef BuildXF86DGA
 #define BuildXF86DGA		NO
-#endif
-#ifndef BuildXF86DGALibrary
-#define BuildXF86DGALibrary	(BuildXF86DGA && !BuildServersOnly)
 #endif
 #ifndef BuildXResExt
 #define BuildXResExt            NO
@@ -1333,78 +1324,6 @@ ProjectUnsharedLibReferences(XONLY,NX_X11,$(XLIBSRC),XBuildLibDir)
          XLIBONLY = $(XONLYLIB)
      LINTXONLYLIB = $(LINTXONLY)
 
-#if BuildXF86MiscLibrary
-#ifndef SharedLibXxf86misc
-#define SharedLibXxf86misc	HasSharedLibraries
-#endif
-#ifndef NormalLibXxf86misc
-#define NormalLibXxf86misc	(!SharedLibXxf86misc || ForceNormalLib)
-#endif
-#ifndef DebugLibXxf86misc
-#define DebugLibXxf86misc	NO
-#endif
-#ifndef ProfileLibXxf86misc
-#define ProfileLibXxf86misc	NO
-#endif
-#else
-#undef  SharedLibXxf86misc
-#define SharedLibXxf86misc	NO
-#undef  NormalLibXxf86misc
-#define NormalLibXxf86misc	NO
-#undef  DebugLibXxf86misc
-#define DebugLibXxf86misc	NO
-#undef  ProfileLibXxf86misc
-#define ProfileLibXxf86misc	NO
-#endif
-
-#if BuildXF86VidModeLibrary
-#ifndef SharedLibXxf86vm
-#define SharedLibXxf86vm	HasSharedLibraries
-#endif
-#ifndef NormalLibXxf86vm
-#define NormalLibXxf86vm	(!SharedLibXxf86vm || ForceNormalLib)
-#endif
-#ifndef DebugLibXxf86vm
-#define DebugLibXxf86vm		NO
-#endif
-#ifndef ProfileLibXxf86vm
-#define ProfileLibXxf86vm	NO
-#endif
-#else
-#undef  SharedLibXxf86vm
-#define SharedLibXxf86vm	NO
-#undef  NormalLibXxf86vm
-#define NormalLibXxf86vm	NO
-#undef  DebugLibXxf86vm
-#define DebugLibXxf86vm		NO
-#undef  ProfileLibXxf86vm
-#define ProfileLibXxf86vm	NO
-#endif
-
-#if BuildXF86DGALibrary
-#ifndef SharedLibXxf86dga
-#define SharedLibXxf86dga	HasSharedLibraries
-#endif
-#ifndef NormalLibXxf86dga
-#define NormalLibXxf86dga	(!SharedLibXxf86dga || ForceNormalLib)
-#endif
-#ifndef DebugLibXxf86dga
-#define DebugLibXxf86dga	NO
-#endif
-#ifndef ProfileLibXxf86dga
-#define ProfileLibXxf86dga	NO
-#endif
-#else
-#undef  SharedLibXxf86dga
-#define SharedLibXxf86dga	NO
-#undef  NormalLibXxf86dga
-#define NormalLibXxf86dga	NO
-#undef  DebugLibXxf86dga
-#define DebugLibXxf86dga	NO
-#undef  ProfileLibXxf86dga
-#define ProfileLibXxf86dga	NO
-#endif
-
 #if BuildXineramaLibrary
 #ifndef SharedLibXinerama
 #define SharedLibXinerama	HasSharedLibraries
@@ -1526,36 +1445,6 @@ LINTEXTENSIONLIB = $(LINTEXTENSION)
           DEPXLIB = $(DEPEXTENSIONLIB) $(DEPXONLYLIB)
              XLIB = $(EXTENSIONLIB) $(XONLYLIB)
          LINTXLIB = $(LINTXONLYLIB)
-
-    XXF86MISCLIBSRC = $(LIBSRC)/Xxf86misc
-#if SharedLibXxf86misc
-#ifndef SharedXxf86miscRev
-#define SharedXxf86miscRev 1.1
-#endif
-SharedLibReferences(XXF86MISC,NX_Xxf86misc,$(XXF86MISCLIBSRC),SOXXF86MISCREV,SharedXxf86miscRev)
-#else
-ProjectUnsharedLibReferences(XXF86MISC,NX_Xxf86misc,$(XXF86MISCLIBSRC),XBuildLibDir)
-#endif
-
-    XXF86VMLIBSRC = $(LIBSRC)/Xxf86vm
-#if SharedLibXxf86vm
-#ifndef SharedXxf86vmRev
-#define SharedXxf86vmRev 1.0
-#endif
-SharedLibReferences(XXF86VM,NX_Xxf86vm,$(XXF86VMLIBSRC),SOXXF86VMREV,SharedXxf86vmRev)
-#else
-ProjectUnsharedLibReferences(XXF86VM,NX_Xxf86vm,$(XXF86VMLIBSRC),XBuildLibDir)
-#endif
-
-    XXF86DGALIBSRC = $(LIBSRC)/Xxf86dga
-#if SharedLibXxf86dga
-#ifndef SharedXxf86dgaRev
-#define SharedXxf86dgaRev 1.0
-#endif
-SharedLibReferences(XXF86DGA,NX_Xxf86dga,$(XXF86DGALIBSRC),SOXXF86DGAREV,SharedXxf86dgaRev)
-#else
-ProjectUnsharedLibReferences(XXF86DGA,NX_Xxf86dga,$(XXF86DGALIBSRC),XBuildLibDir)
-#endif
 
     XINERAMALIBSRC = $(LIBSRC)/Xinerama
 #if SharedLibXinerama

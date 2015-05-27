@@ -12,16 +12,16 @@ NULL =
 SCREENSAVERHEADERS = saver.h saverproto.h scrnsaver.h
 #endif
 
-#if BuildXF86MiscExt || BuildXF86MiscLibrary
+#if BuildXF86MiscExt
 XF86MISCHEADERS = xf86misc.h xf86mscstr.h
 #endif
 #if BuildXF86BigfontExt
 XF86BIGFONTHEADERS = xf86bigfont.h xf86bigfstr.h
 #endif
-#if BuildXF86VidModeExt || BuildXF86VidModeLibrary
+#if BuildXF86VidModeExt
 XF86VIDMODEHEADERS = xf86vmode.h xf86vmstr.h
 #endif
-#if BuildXF86DGA || BuildXF86DGALibrary
+#if BuildXF86DGA
 XF86DGAHEADERS = xf86dga.h xf86dgastr.h xf86dga1.h xf86dga1str.h
 #endif
 #if BuildXextLib
