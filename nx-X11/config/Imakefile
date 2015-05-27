@@ -15,16 +15,14 @@ BOOTSTRAPSUBDIRS = \
 
 SUBDIRS = cf $(BOOTSTRAPSUBDIRS)
 
-#if (defined(XFree86VersionString) || defined(XorgVersionString)) \
+#if defined(XorgVersionString) \
 	&& defined(ProjectRoot) && \
 	defined(BuildBindist)
 all:: version
 
 version: cf/version.def
 	RemoveFile(version)
-#if defined (XFree86VersionString)
-	echo XFree86VersionString > version
-#elif defined (XorgVersionString)
+#if defined (XorgVersionString)
 	echo XorgVersionString > version
 #endif
 

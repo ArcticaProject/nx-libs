@@ -55,15 +55,13 @@ SUBDIRS = extmod
 #endif
 
 #if BuildXF86VidModeExt && \
-    ((defined(XF86Server) && XF86Server) || \
-     (defined(XorgServer) && XorgServer))
+     (defined(XorgServer) && XorgServer)
  VIDMODESRCS = xf86vmode.c
  VIDMODEOBJS = xf86vmode.o
 #endif
 
 #if BuildXF86MiscExt && \
-    ((defined(XF86Server) && XF86Server) || \
-     (defined(XorgServer) && XorgServer))
+     (defined(XorgServer) && XorgServer)
 XF86MISCSRCS = xf86misc.c
 XF86MISCOBJS = xf86misc.o
 #endif
@@ -157,7 +155,7 @@ NX_DEFINES = -DNXAGENT_SERVER
 #endif
 
 
-#if (defined(XFree86Version) || defined(XorgVersion))
+#if defined(XorgVersion)
 /* XXX Check if this can be eliminated */
 XF86INCLUDES = -I$(XF86COMSRC)
 #endif

@@ -1140,7 +1140,7 @@ XFREE86JAPANESEDOCDIR = $(DOCDIR)/Japanese
  */
 
 #ifndef OtherIConfigFiles
-# define OtherIConfigFiles $(IRULESRC)/xfree86.cf $(IRULESRC)/xf86.rules
+# define OtherIConfigFiles $(IRULESRC)/xf86.rules
 #endif
 
 #ifndef UseRgbTxt
