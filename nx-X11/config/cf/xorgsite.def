@@ -84,11 +84,6 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
 				wacom void magictouch aiptek
  */
 
-/* To enable building of development DRI drivers (insecure, or not
- * useful on the chosen architecture, uncomment this define.
-#define BuildDevelDRIDrivers YES
- */
-
 /*
  * To use the deprecated, old keyboard driver, uncomment this.  But
  * even better, make the new keyboard driver (hw/xfree86/input/keyboard)

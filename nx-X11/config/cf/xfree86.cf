@@ -346,24 +346,6 @@ XCOMM $Xorg: xfree86.cf,v 1.4 2000/08/17 19:41:49 cpqbld Exp $
 				dummy XF86OSCardDrivers XF86ExtraCardDrivers
 # endif
 
-/*
- * DRI drivers under development, or drivers included on this platform
- * only for build testing.
- */
-# ifndef DevelDRIDrivers
-#  if XFree86Devel
-#   define DevelDRIDrivers	ffb
-#  else
-#   define DevelDRIDrivers	/**/
-#  endif
-# endif
-
-# ifndef DriDrivers
-#  define DriDrivers		gamma i810 i830 mga r128 radeon r200 \
-				sis tdfx DevelDRIDrivers
-# endif
-#endif
-
 #if defined(AMD64Architecture)
 # ifndef XF86Server
 #  define XF86Server		YES
@@ -446,13 +428,6 @@ XCOMM $Xorg: xfree86.cf,v 1.4 2000/08/17 19:41:49 cpqbld Exp $
 				vga dummy fbdev vesa
 # endif
 
-/* DRI tdfx driver needs Glide, which is not available for AMD64 */
-# define TdfxDriDriver		/**/
-
-# define DevelDRIDrivers	/**/
-
-# define DriDrivers		gamma i810 mga r128 radeon r200 \
-				TdfxDriDriver DevelDRIDrivers
 #endif /*AMD64Arcitecture*/
 
 /* SPARC and UltraSPARC drivers */
@@ -555,10 +530,6 @@ XCOMM $Xorg: xfree86.cf,v 1.4 2000/08/17 19:41:49 cpqbld Exp $
 				XF86OSCardDrivers XF86ExtraCardDrivers \
 				DevelDrivers
 # endif
-# ifndef DriDrivers
-#  define DriDrivers		ffb
-# endif
-
 #endif
 
 /* Sparc64 Drivers */
@@ -652,10 +623,6 @@ XCOMM $Xorg: xfree86.cf,v 1.4 2000/08/17 19:41:49 cpqbld Exp $
 #  define XF86CardDrivers	ati \
 				DevelDrivers \
 				XF86OSCardDrivers XF86ExtraCardDrivers
-# endif
-# define TdfxDriDriver		/**/
-# ifndef DriDrivers
-#  define DriDrivers		/**/
 # endif
 #endif
 
@@ -833,9 +800,6 @@ XCOMM $Xorg: xfree86.cf,v 1.4 2000/08/17 19:41:49 cpqbld Exp $
 				savage nv cirrus DevelDrivers siliconmotion  \
 				vga XF86OSCardDrivers XF86ExtraCardDrivers
 # endif
-# ifndef DriDrivers
-#  define DriDrivers		gamma tdfx mga r128 radeon r200 /*sis*/
-# endif
 #endif
 
 /*
@@ -929,9 +893,6 @@ XCOMM $Xorg: xfree86.cf,v 1.4 2000/08/17 19:41:49 cpqbld Exp $
 				DevelDrivers vga \
 				XF86OSCardDrivers XF86ExtraCardDrivers
 # endif
-# ifndef DriDrivers
-#  define DriDrivers		gamma tdfx mga r128 radeon r200
-# endif
 #endif
 
 /*
@@ -1020,14 +981,6 @@ XCOMM $Xorg: xfree86.cf,v 1.4 2000/08/17 19:41:49 cpqbld Exp $
 				trident chips tdfx fbdev \
 				DevelDrivers vga \
 				XF86OSCardDrivers XF86ExtraCardDrivers
-# endif
-# if HasGlide3
-#  define TdfxDriDriver		tdfx
-# else
-#  define TdfxDriDriver		/**/
-# endif
-# ifndef DriDrivers
-#  define DriDrivers		gamma tdfx mga r128 radeon r200
 # endif
 #endif
 
@@ -1191,14 +1144,6 @@ XCOMM $Xorg: xfree86.cf,v 1.4 2000/08/17 19:41:49 cpqbld Exp $
 				DevelDrivers \
 				XF86OSCardDrivers XF86ExtraCardDrivers
 # endif
-# if HasGlide3
-#  define TdfxDriDriver		
-# else
-#  define TdfxDriDriver		/**/
-# endif
-# ifndef DriDrivers
-#  define DriDrivers		gamma r128
-# endif
 #endif
 
 /*
@@ -1272,190 +1217,29 @@ IPLAN2P8_DEFS = -DUSE_IPLAN2P8
 #  define BuildGlxExt	YES
 #endif
 
-#ifndef BuildXF86DRI
-#define BuildXF86DRI	NO
-#endif
-
-#ifndef GlxUseSGISI
-#define GlxUseSGISI	NO
-#endif
-
-#if BuildXF86DRI
-
-/*
- * One and ONLY one of the GlxBuiltIn* drivers can be defined to be YES.
- * If more than one are defined, the compilation will fail with multiply
- * defined references of GLX and OpenGL functions.
- */
-
-/*
- * The first is a built-in driver that does software rendering client-side
- * and renders to the X server via Xlib.
- */
-
-#  ifndef GlxBuiltInXMesa
-#    define GlxBuiltInXMesa         NO
-#  endif
-
-/*
- * The rest are hardware-specific DRI drivers.
- */
-#  ifndef GlxBuiltInGamma
-#    define GlxBuiltInGamma        NO
-#  endif
-#  ifndef GlxBuiltInTdfx
-#    define GlxBuiltInTdfx         NO
-#  endif
-#  ifndef GlxBuiltInMga
-#    define GlxBuiltInMga          NO
-#  endif
-#  ifndef GlxBuiltInI810
-#    define GlxBuiltInI810         NO
-#  endif
-#  ifndef GlxBuiltInI830
-#    define GlxBuiltInI830         NO
-#  endif
-#  ifndef GlxBuiltInR128
-#    define GlxBuiltInR128         NO
-#  endif
-#  ifndef GlxBuiltInRadeon
-#    define GlxBuiltInRadeon       NO
-#  endif
-#  ifndef GlxBuiltInR200
-#    define GlxBuiltInR200         NO
-#  endif
-#  ifndef GlxBuiltInFfb
-#    define GlxBuiltInFfb          NO
-#  endif
-#  ifndef GlxBuiltInSIS
-#    define GlxBuiltInSIS          NO
-#  endif
-
-#  if GlxBuiltInTdfx || \
-      GlxBuiltInMga || \
-      GlxBuiltInI810 || \
-      GlxBuiltInI830 || \
-      GlxBuiltInR128 || \
-      GlxBuiltInRadeon || \
-      GlxBuiltInR200 || \
-      GlxBuiltInFfb || \
-      GlxBuiltInSIS
-#    define GlxDriverUsesMesa      YES
-#  else
-#    define GlxDriverUsesMesa      NO
-#  endif
-
-#  if GlxBuiltInGamma || \
-      GlxBuiltInTdfx || \
-      GlxBuiltInMga || \
-      GlxBuiltInI810 || \
-      GlxBuiltInI830 || \
-      GlxBuiltInR128 || \
-      GlxBuiltInRadeon || \
-      GlxBuiltInR200 || \
-      GlxBuiltInFfb || \
-      GlxBuiltInSIS
-#    define GlxUseBuiltInDRIDriver YES
-#    define DRIDynLoadDefines /**/
-#  else
-#    define GlxUseBuiltInDRIDriver NO
-#    define DRIDynLoadDefines -DGLX_USE_DLOPEN
-#  endif
-
-#  if GlxUseBuiltInDRIDriver
-#    undef DriDrivers
-#    if GlxBuiltInGamma
-#      define DriDrivers gamma
-#    endif
-#    if GlxBuiltInTdfx
-#      define DriDrivers tdfx
-#    endif
-#    if GlxBuiltInMga
-#      define DriDrivers mga
-#    endif
-#    if GlxBuiltInI810
-#      define DriDrivers i810
-#    endif
-#    if GlxBuiltInI830
-#      define DriDrivers i830
-#    endif
-#    if GlxBuiltInR128
-#      define DriDrivers r128
-#    endif
-#    if GlxBuiltInRadeon
-#      define DriDrivers radeon
-#    endif
-#    if GlxBuiltInR200
-#      define DriDrivers r200
-#    endif
-#    if GlxBuiltInSIS
-#      define DriDrivers sis
-#    endif
-#    if GlxBuiltInFfb
-#      define DriDrivers ffb
-#    endif
-#  endif
-
-#endif
-
-/*
- * This enables building DRI support into video drivers, which can be done
- * even on platforms that don't have functional DRI support.
- *
- * Defining BuildXF86DRIDriverSupport to YES will not work until we have a
- * separate set of defines set up for building driver-only support for the
- * DRI.
- */
-#ifndef BuildXF86DRIDriverSupport
-# define BuildXF86DRIDriverSupport NO
-#endif
-
 #if BuildGlxExt
 
-#  if BuildXF86DRI
-#    define DRIDefines -DXF86DRI -DGLX_DIRECT_RENDERING DRIDynLoadDefines
-#  else
-#    define DRIDefines /**/
-#  endif
-#  if defined(GlxUseSGISI) && GlxUseSGISI
-#    define GlxCoreLibDefines -DGLX_USE_SGI_SI
-#  else
-#    define GlxCoreLibDefines -DGLX_USE_MESA
-#  endif
+# define GlxCoreLibDefines -DGLX_USE_MESA
 
-#  if defined(SparcArchitecture)  \
+# if defined(SparcArchitecture)  \
    || defined (Sparc64Architecture) \
    || defined(ia64Architecture) \
    || defined(s390xArchitecture) \
    || defined(AMD64Architecture)
-#    define GlxArchDefines -D__GLX_ALIGN64
-#  elif defined(AlphaArchitecture)
+#   define GlxArchDefines -D__GLX_ALIGN64
+# elif defined(AlphaArchitecture)
 /* On the Alpha we need to ensure floating point accuracy for 3D */
-#    define GlxArchDefines -D__GLX_ALIGN64 -mieee
-#  elif defined(DarwinArchitecture)
+#   define GlxArchDefines -D__GLX_ALIGN64 -mieee
+# elif defined(DarwinArchitecture)
 /* GLX contains lots of uninitialized globals, which can upset Darwin */
-#    define GlxArchDefines -fno-common
-#  else
-#    define GlxArchDefines /**/
-#  endif
+#   define GlxArchDefines -fno-common
+# else
+#   define GlxArchDefines /**/
+# endif
 
-#  ifndef GlxExtraDefines
-#    define GlxExtraDefines DRIDefines GlxCoreLibDefines GlxArchDefines
-#  endif
-
-#else
-
-/* If we are not building GLX, then make sure the DRI is not built */
-#  undef  BuildXF86DRI
-#  define BuildXF86DRI   NO
-#  undef  BuildXF86DRIDriverSupport
-#  define BuildXF86DRIDriverSupport NO
-
-#endif
-
-#if !BuildXF86DRI
-# define GlxUseBuiltInDRIDriver NO	/* For libOSmesa */
-#endif
+# ifndef GlxExtraDefines
+#   define GlxExtraDefines GlxCoreLibDefines GlxArchDefines
+# endif
 
 # ifndef UseX86Emu
 #  define UseX86Emu		YES

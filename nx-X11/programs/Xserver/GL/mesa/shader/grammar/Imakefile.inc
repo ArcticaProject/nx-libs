@@ -1,9 +1,5 @@
 XCOMM $XFree86$
 
-#ifndef MesaGrammarBuildDir
-#define MesaGrammarBuildDir $(GLXLIBSRC)/mesa/shader/grammar/
-#endif
-
 MESAGRAMMARBUILDDIR=MesaGrammarBuildDir
 
   MESA_GRAMMAR_SRCS =	$(MESAGRAMMARBUILDDIR)grammar_mesa.c

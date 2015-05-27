@@ -3,10 +3,6 @@ XCOMM $XFree86: xc/lib/GL/mesa/src/Imakefile.inc,v 1.7tsi Exp $
 /* gcc on ppc64 defines this, causes macro recursion with pixel below */
 #undef pixel
 
-#ifndef MesaBuildDir
-#define MesaBuildDir $(GLXLIBSRC)/mesa/main/
-#endif
-
 MESABUILDDIR = MesaBuildDir
 
 #ifdef NeedAllMesaSrc

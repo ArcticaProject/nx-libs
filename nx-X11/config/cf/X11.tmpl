@@ -289,13 +289,6 @@ XORGRELSTRING = XorgManVersionString
 #endif
 #ifndef BuildGlxExt
 #define BuildGlxExt		NO
-#else
-#if     BuildGlxExt && !defined(XFree86Version) && !defined(XorgVersion)
-#undef  BuildXF86DRI
-#undef  BuildXF86DRIDriverSupport
-#define BuildXF86DRI			NO
-#define BuildXF86DRIDriverSupport	NO
-#endif
 #endif
 #ifndef BuildOSMesaLib
 #define BuildOSMesaLib		BuildGlxExt
