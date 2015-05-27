@@ -701,14 +701,6 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 # define VarDbDirectory		$(VARDIR)/lib
 #endif
 
-#ifndef XF86OSCardDrivers
-# ifdef __linux__
-#  define XF86OSCardDrivers	fbdev v4l sisusb
-# else
-#  define XF86OSCardDrivers	/**/
-# endif
-#endif
-
 #ifndef OSXInputDrivers
 # if HasLinuxJoystick
 #  define OSXInputDrivers1	ur98
