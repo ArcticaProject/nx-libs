@@ -157,7 +157,7 @@ NX_DEFINES = -DNXAGENT_SERVER
 #endif
 
 
-#if (defined(XFree86Version) || defined(XorgVersion))
+#if defined(XorgVersion)
 /* XXX Check if this can be eliminated */
 XF86INCLUDES = -I$(XF86COMSRC)
 #endif
