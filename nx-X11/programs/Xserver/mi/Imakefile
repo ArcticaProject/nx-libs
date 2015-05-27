@@ -62,7 +62,7 @@ OBJS =	$(CBRT_OBJ) mivaltree.o mipolyseg.o mipolyrect.o \
 	mipointer.o misprite.o midispcur.o miscrinit.o miclipn.o migc.o \
 	micmap.o mioverlay.o
 
-#if (defined (XFree86Version) || defined(XorgVersion))
+#if defined(XorgVersion)
 /* 
  * Make sure XINPUT, XF86VidTune, etc aren't defined for the miinitext.o 
  * used by Xnest, Xvfb 

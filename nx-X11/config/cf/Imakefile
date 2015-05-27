@@ -15,14 +15,13 @@ HOSTDEFFILES = \
 host.def
 #endif
 
-#if defined(XFree86Version) || defined(XorgVersion)
+#if defined(XorgVersion)
 VERSIONDEFFILES = \
 date.def \
 version.def
 #endif
 
 DEFFILES = \
-xf86site.def \
 xorgsite.def \
 $(VERSIONDEFFILES) \
 $(HOSTDEFFILES) \
@@ -45,13 +44,11 @@ ServerLib.tmpl \
 Threads.tmpl \
 X11.tmpl \
 lnxLib.tmpl \
-xf86.tmpl \
 xorg.tmpl
 
 CFFILES = \
 Imake.cf \
 linux.cf \
-xfree86.cf \
 xorg.cf
 
 INSTFILES = $(RULEFILES) $(TMPLFILES) $(DEFFILES) $(CFFILES) $(LOCALFILES)
@@ -73,7 +70,7 @@ install::
 		$(DESTDIR)$(CONFIGDIR)/host.def; \
 	RemoveFile($${TMP}))
 
-#if defined(XFree86Version) || defined(XorgVersion)
+#if defined(XorgVersion)
 install.sdk::
 	@(TMP=/tmp/tmp.$$$$; \
 	RemoveFile($${TMP}); \
