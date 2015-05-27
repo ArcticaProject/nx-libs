@@ -32,9 +32,6 @@ LBXHEADERS = XLbx.h lbxbuf.h lbxbufstr.h lbxdeltastr.h lbximage.h lbxopts.h \
 XVHEADERS = Xv.h Xvlib.h Xvproto.h
 XVMCHEADERS = XvMC.h XvMClib.h XvMCproto.h vldXvMC.h
 #endif
-#if BuildXF86RushExt || BuildXF86RushLibrary
-XF86RUSHHEADERS = xf86rush.h xf86rushstr.h
-#endif
 #if BuildFontCache
 FONTCACHEHEADERS = fontcache.h fontcacheP.h fontcachstr.h
 #endif
@@ -71,7 +68,6 @@ EXTRAHEADERS = \
 	$(LBXHEADERS) \
 	$(XVHEADERS) \
 	$(XVMCHEADERS) \
-	$(XF86RUSHHEADERS) \
 	$(FONTCACHEHEADERS) \
 	$(RENDERHEADERS) \
 	$(XFIXESHEADERS) \
@@ -119,8 +115,6 @@ InstallDriverSDKNonExecFile(dpms.h,$(DRIVERSDKINCLUDEDIR)/extensions)
 InstallDriverSDKNonExecFile(xf86dga1str.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(xf86dgastr.h,$(DRIVERSDKINCLUDEDIR)/extensions)
 InstallDriverSDKNonExecFile(xf86misc.h,$(DRIVERSDKINCLUDEDIR)/extensions)
-InstallDriverSDKNonExecFile(xf86rush.h,$(DRIVERSDKINCLUDEDIR))
-InstallDriverSDKNonExecFile(xf86rushstr.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(renderproto.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(Xv.h,$(DRIVERSDKINCLUDEDIR)/extensions)
 InstallDriverSDKNonExecFile(XvMC.h,$(DRIVERSDKINCLUDEDIR))

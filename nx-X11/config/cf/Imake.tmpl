@@ -651,36 +651,6 @@ NCURSESLIBDIR = NCursesLibDir
 #ifdef NCursesIncDir
 NCURSESINCDIR = NCursesIncDir
 #endif
-#ifndef HasGlide2
-#define HasGlide2 NO
-#endif
-#ifndef Glide2IncDir
-#if HasGlide2
-#define Glide2IncDir /usr/include/glide
-#else
-#define Glide2IncDir
-#endif
-#endif
-GLIDE2INCDIR = Glide2IncDir
-#ifndef HasGlide3
-#define HasGlide3 NO
-#endif
-#ifndef Glide3IncDir
-#if HasGlide3
-#define Glide3IncDir /usr/include/glide3
-#else
-#define Glide3IncDir
-#endif
-#endif
-GLIDE3INCDIR = Glide3IncDir
-#ifndef Glide3LibName
-#if HasGlide3
-#define Glide3LibName glide3
-#else
-#define Glide3LibName
-#endif
-#endif
-GLIDE3LIBNAME = Glide3LibName
 #ifndef HasTk
 #define HasTk NO
 #endif

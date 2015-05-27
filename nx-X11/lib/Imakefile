@@ -27,10 +27,6 @@ XF86VMLIBDIR = Xxf86vm
 XF86DGALIBDIR = Xxf86dga
 #endif
 
-#if BuildXF86RushLibrary
-XF86RUSHLIBDIR = Xxf86rush
-#endif
-
 #if BuildXineramaLibrary
 XINERAMADIR=Xinerama
 #endif
@@ -51,7 +47,6 @@ XF86EXTLIBS = \
 	$(XF86MISCLIBDIR) \
 	$(XF86VMLIBDIR) \
 	$(XF86DGALIBDIR) \
-	$(XF86RUSHLIBDIR) \
 	$(NULL)
 
 #if BuildXauLib
@@ -80,7 +75,6 @@ LINTSUBDIRS = \
 	$(XF86MISCLIBDIR) \
 	$(XF86VMLIBDIR) \
 	$(XF86DGALIBDIR) \
-	$(XF86RUSHLIBDIR) \
 	$(XTSTLIBDIR) \
 	$(XKBLIBDIR) \
 	$(XINERAMADIR) \
