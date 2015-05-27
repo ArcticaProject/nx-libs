@@ -1,9 +1,5 @@
 XCOMM $XFree86: xc/lib/GL/mesa/src/X/Imakefile.inc,v 1.3tsi Exp $
 
-#ifndef MesaXBuildDir
-#define MesaXBuildDir $(GLXLIBSRC)/src/mesa/drivers/x11/
-#endif
-
 MESAXBUILDDIR = MesaXBuildDir
 
 #ifndef MesaInXServer

@@ -46,7 +46,7 @@ XCOMM $XFree86: xc/programs/Xserver/GL/mesa/GLcore/Imakefile,v 1.3 2002/05/31 18
                 ../shader/slang/DONE
 
      INCLUDES = -I$(INCLUDESRC) -I$(XINCLUDESRC) -I$(EXTINCSRC) \
-		-I$(MESASRCDIR)/include -I$(GLXLIBSRC)/include \
+		-I$(MESASRCDIR)/include \
 		-I$(MESASRCDIR)/src/mesa \
 		-I$(SERVERSRC)/include
 

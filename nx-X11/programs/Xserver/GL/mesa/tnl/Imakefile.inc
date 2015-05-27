@@ -1,9 +1,5 @@
 XCOMM $XFree86: xc/lib/GL/mesa/src/tnl/Imakefile.inc,v 1.1tsi Exp $
 
-#ifndef MesaTnlBuildDir
-#define MesaTnlBuildDir $(GLXLIBSRC)/mesa/tnl/
-#endif
-
 MESATNLBUILDDIR = MesaTnlBuildDir
 
   MESA_TNL_SRCS = $(MESATNLBUILDDIR)t_array_api.c \
