@@ -132,14 +132,6 @@ extern Pixmap nxagentIconPixmap;
 extern Pixmap nxagentIconShape;
 extern Bool useXpmIcon;
 
-/*
- * From randr/randr.c.
- */
-
-extern Bool RRGetInfo(ScreenPtr pScreen);
-extern void RRSendConfigNotify(ScreenPtr pScreen);
-extern void RREditConnectionInfo(ScreenPtr pScreen);
-
 Window nxagentDefaultWindows[MAXSCREENS];
 Window nxagentInputWindows[MAXSCREENS];
 Window nxagentScreenSaverWindows[MAXSCREENS];
