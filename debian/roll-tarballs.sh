@@ -113,6 +113,9 @@ rm -Rf ".pc/"
 rm -Rf "debian/"
 rm -Rf "nx-libs.spec"
 
+# some file renamings
+mv README.md README.NX-Development
+
 # very old release did not add any README
 for f in $(ls README* 2>/dev/null); do
     mv -v "$f" "doc/";
