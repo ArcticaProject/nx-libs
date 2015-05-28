@@ -87,9 +87,13 @@ if [ "x$MODE" = "xfull" ]; then
         echo "${file##*/}" >> "doc/applied-patches/series"
     done
 else
+    rm -f  "bin/"{nxagent,nxauth,x2goagent}
     rm -Rf "nxcompshad"*
     rm -Rf "nxcompext"*
     rm -Rf "nx-X11"*
+    rm -Rf "etc"*
+    rm -Rf "doc/nx-X11_vs_XOrg69_patches"*
+    rm -f  "README.keystrokes"
     cat "debian/patches/series" | sort | grep -v '^#' | egrep "([0-9]+(_|-).*\.full\+lite\.patch)" | while read file
     do
         cp -v "debian/patches/$file" "doc/applied-patches/"
@@ -104,14 +108,15 @@ else
     echo "No patches applied at all. Very old release?"
 fi
 
+# remove folders that we do not want to roll into the tarball
+rm -Rf ".pc/"
+rm -Rf "debian/"
+rm -Rf "nx-libs.spec"
+
 # very old release did not add any README
 for f in $(ls README* 2>/dev/null); do
     mv -v "$f" "doc/";
 done
-
-# remove folders that we do not want to roll into the tarball
-rm -Rf ".pc/"
-rm -Rf "debian/"
 
 # remove files, that we do not want in the tarballs (build cruft)
 rm -Rf nx*/configure nx*/autom4te.cache*
