@@ -158,6 +158,11 @@ nx-libs (2:3.5.0.32-0x2go1) UNRELEASED; urgency=low
       v4: backport v3 to nx-libs 3.5.0.x (Mihai Moldovan)
       Changes:
       + 1028-render-unvalidated-lengths-in-Render-extn.-swap.full.patch
+  * nxcomp/Misc.cpp: fix build failure introduced in
+    a27a8aae3ca7a3f70e05152ac3d347942e11159d.
+    Backported from Arctica GH 3.6.x branch.
+    Affects:
+    - 9900-dxpc-license-history.full+lite.patch
 
   [ Bernard Cafarelli ]
   * nx-X11: link to libdl to fix undefined references to 'dlopen' and 'dlsym'.
