@@ -314,7 +314,7 @@ void nxagentMaximizeToFullScreen(ScreenPtr pScreen)
     XUnmapWindow(nxagentDisplay, nxagentIconWindow);
 */
 /*
-FIXME: We'll chech for ReparentNotify and LeaveNotify events after XReparentWindow()
+FIXME: We'll check for ReparentNotify and LeaveNotify events after XReparentWindow()
        in order to avoid the session window is iconified.
        We could avoid the sesssion window is iconified when a LeaveNotify event is received,
        so this check would be unnecessary.
