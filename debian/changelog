@@ -185,6 +185,9 @@ nx-libs (2:3.5.0.32-0x2go1) UNRELEASED; urgency=low
   * debian/COPYING.full+lite:
     + Replace content with GPL-2 license text, because that is the overall
       (i.e., strictest) license we have to deal with in nx-libs.
+  * Add 9900-dxpc-license-history.full+lite.patch. Document license history of
+    DXPC (where nxcomp got forked from).
+    Backported from Arctica GH 3.6.x branch.
 
   [ Nito Martinez ]
   * nxcomp: fix DEBUG, TEST, DUMP, FLUSH, TOKEN, PING, MIXED et al builds.
