@@ -182,6 +182,9 @@ nx-libs (2:3.5.0.32-0x2go1) UNRELEASED; urgency=low
   * debian/roll-tarball.sh:
     + Make sure *.keyboard, debian/**, nx-libs.spec, .pc/** don't end up
       in tarball (special focuse on the nx-libs-lite tarball).
+  * debian/COPYING.full+lite:
+    + Replace content with GPL-2 license text, because that is the overall
+      (i.e., strictest) license we have to deal with in nx-libs.
 
   [ Nito Martinez ]
   * nxcomp: fix DEBUG, TEST, DUMP, FLUSH, TOKEN, PING, MIXED et al builds.
