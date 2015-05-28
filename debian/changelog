@@ -181,7 +181,7 @@ nx-libs (2:3.5.0.32-0x2go1) UNRELEASED; urgency=low
       1210-CVE-2015-3418-dix-Allow-zero-height-PutImage-re.full.patch
   * debian/roll-tarball.sh:
     + Make sure *.keyboard, debian/**, nx-libs.spec, .pc/** don't end up
-      in tarball (special focuse on the nx-libs-lite tarball).
+      in tarball (special focus on the nx-libs-lite tarball).
     + Allow patch files names having a dash next to the four digits (i.e.,
       1234-<patchname>.<suffix>).
     + Support tarring up the HEAD of the current branch.
