@@ -104,8 +104,6 @@ else
 fi
 cp -v "debian/VERSION" "./nxcomp/VERSION"
 cp -v "debian/COPYING.full+lite" "COPYING"
-cp -v "debian/nxagent.keyboard" "nxagent.keyboard"
-cp -v "debian/x2goagent.keyboard" "x2goagent.keyboard"
 
 # apply all patches shipped in debian/patches and create a copy of them that we ship with the tarball
 if [ -s "doc/applied-patches/series" ]; then
@@ -149,10 +147,6 @@ if [ "x$MODE" = "xfull" ]; then
     PRESERVE_INCLUDED_FILES="$(cat "debian/CODE-REDUCTION_PRESERVE-INCLUDED")"
     PRESERVE_NEEDED_FILES="$(cat "debian/CODE-REDUCTION_PRESERVE-NEEDED")"
 
-    # remove folders that we do not want to roll into the tarball
-    rm -Rf ".pc/"
-    rm -Rf "debian/"
-
     mkdir -p ".preserve/"
     for path in ${PRESERVE_SYMLINKED_FILES} ${PRESERVE_INCLUDED_FILES} ${PRESERVE_NEEDED_FILES}; do
         if [ ! -d "$path" ]; then
@@ -172,6 +166,11 @@ if [ "x$MODE" = "xfull" ]; then
     cp -a ".preserve/"* "./"
     rm -Rf ".preserve/"
 fi
+
+# remove files/folders that we do not want to roll into the tarball
+rm -Rf ".pc/"
+rm -Rf "debian/"
+rm -f  "nx-libs.spec"
 
 # remove files, that we do not want in the tarballs (build cruft)
 rm -Rf nx*/configure nx*/autom4te.cache*
