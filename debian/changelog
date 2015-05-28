@@ -184,6 +184,7 @@ nx-libs (2:3.5.0.32-0x2go1) UNRELEASED; urgency=low
       in tarball (special focuse on the nx-libs-lite tarball).
     + Allow patch files names having a dash next to the four digits (i.e.,
       1234-<patchname>.<suffix>).
+    + Support tarring up the HEAD of the current branch.
   * debian/COPYING.full+lite:
     + Replace content with GPL-2 license text, because that is the overall
       (i.e., strictest) license we have to deal with in nx-libs.
