@@ -82,7 +82,7 @@ mkdir -p "doc/applied-patches"
 
 # prepare patches for lite and full tarball
 if [ "x$MODE" = "xfull" ]; then
-    cat "debian/patches/series" | sort | grep -v '^#' | egrep "([0-9]+_.*\.(full|full\+lite)\.patch)" | while read file
+    cat "debian/patches/series" | sort | grep -v '^#' | egrep "([0-9]+(_|-).*\.(full|full\+lite)\.patch)" | while read file
     do
         cp -v "debian/patches/$file" "doc/applied-patches/"
         echo "${file##*/}" >> "doc/applied-patches/series"
@@ -96,7 +96,7 @@ else
     rm -Rf "nxcompshad"*
     rm -Rf "nxcompext"*
     rm -Rf "nx-X11"*
-    cat "debian/patches/series" | sort | grep -v '^#' | egrep "([0-9]+_.*\.full\+lite\.patch)" | while read file
+    cat "debian/patches/series" | sort | grep -v '^#' | egrep "([0-9]+(_|-).*\.full\+lite\.patch)" | while read file
     do
         cp -v "debian/patches/$file" "doc/applied-patches/"
         echo "${file##*/}" >> "doc/applied-patches/series"
