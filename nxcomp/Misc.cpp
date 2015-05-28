@@ -384,9 +384,9 @@ static const char CopyrightInfo[] =
 Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.\n\
 \n\
 NXCOMP, NX protocol compression and NX extensions to this software \n\
-are copyright of NoMachine. Redistribution (modified or unmodified) and
-use of the present\n\ software is allowed according to terms specified in
-the file LICENSE\n\ which comes in the source distribution.\n\
+are copyright of NoMachine. Redistribution (modified or unmodified) and\n\
+use of the present software is allowed according to terms specified in\n\
+the file LICENSE which comes in the source distribution.\n\
 \n\
 Check http://www.nomachine.com/licensing.html for applicability.\n\
 \n\
