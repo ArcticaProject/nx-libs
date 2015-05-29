@@ -3634,16 +3634,12 @@ Bool intersect(int ax1, int ay1, unsigned int aw, unsigned int ah,
 int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, int mmHeight)
 {
   ScreenPtr    pScreen;
-  rrScrPrivPtr pScrPriv;
-  RROutputPtr  output;
-  RRCrtcPtr    crtc;
-  RRModePtr    mode;
-  xRRModeInfo  modeInfo;
-  char         name[100];
+  int          doNotify = TRUE;
   int          r;
-  int          refresh = 60;
-  int          doNotify = 1;
 
+  #ifdef TEST
+  fprintf(stderr, "nxagentChangeScreenConfig: WindowTable[%d] is %p\n", screen, WindowTable[screen]);
+  #endif
   if (WindowTable[screen] == NULL)
   {
     return 0;
@@ -3676,196 +3672,8 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
 
   if (r != 0)
   {
-    pScrPriv = rrGetScrPriv(pScreen);
-
-    if (pScrPriv)
-    {
-      int i, j;
-      int number = 0;
-
-      XineramaScreenInfo *screeninfo = NULL;
-
-      if (nxagentOption(Xinerama)) {
-	screeninfo = XineramaQueryScreens(nxagentDisplay, &number);
-#ifdef DEBUG
-	if (number) {
-	  fprintf(stderr, "nxagentChangeScreenConfig: XineramaQueryScreens() returned %d screens\n", number);
-	}
-	else
-	{
-	  fprintf(stderr, "nxagentChangeScreenConfig: XineramaQueryScreens() failed - continuing without xinerama\n");
-	}
-      }
-      else
-      {
-	fprintf(stderr, "nxagentChangeScreenConfig: Xinerama is disabled\n");
-#endif
-      }
-
-      /*
-       * if there's no xinerama on the real server or xinerama is
-       * disabled in nxagent we only report one big screen. Clients
-       * still see xinerama enabled but it will report only one (big)
-       * screen. This is consistent with the way rrxinerama always
-       * behaved. The single PanoramiX/Xinerama extension however
-       * disables xinerama if only one screen exists.
-       */
-      if (number == 0) {
-#ifdef DEBUG
-        fprintf(stderr, "nxagentChangeScreenConfig: faking xinerama\n" );
-#endif
-        number = 1;
-
-        if (!screeninfo) {
-          if (!(screeninfo = xalloc(sizeof(XineramaScreenInfo)))) {
-            return FALSE;
-          }
-        }
-        /* fake a xinerama screeninfo that covers the whole screen */
-        screeninfo->x_org = nxagentOption(X);
-        screeninfo->y_org = nxagentOption(Y);
-        screeninfo->width = nxagentOption(Width);
-        screeninfo->height = nxagentOption(Height);
-      }
-
-      /* adjust the number of CRTCs */
-      while (number != pScrPriv->numCrtcs) {
-        if (number < pScrPriv->numCrtcs) {
-#ifdef DEBUG
-          fprintf(stderr, "nxagentChangeScreenConfig: destroying crtc\n");
-#endif
-          RRCrtcDestroy(pScrPriv->crtcs[pScrPriv->numCrtcs - 1]);
-        }
-        else
-        {
-#ifdef DEBUG
-          fprintf(stderr, "nxagentChangeScreenConfig: adding crtc\n");
-#endif
-          RRCrtcCreate(pScreen, NULL);
-        }
-      }
-
-#ifdef DEBUG
-      fprintf(stderr, "nxagentChangeScreenConfig: numCrtcs = %d, numOutputs = %d\n", pScrPriv->numCrtcs, pScrPriv->numOutputs);
-#endif
-      /* delete superflous non-NX outputs */
-      for (i = pScrPriv->numOutputs - 1; i >= 0; i--) {
-        if (strncmp(pScrPriv->outputs[i]->name, "NX", 2)) {
-#ifdef DEBUG
-          fprintf(stderr, "nxagentChangeScreenConfig: destroying output %s\n", pScrPriv->outputs[i]->name);
-#endif
-          RROutputDestroy(pScrPriv->outputs[i]);
-        }
-      }
-
-      /* at this stage only NX outputs are left - we delete the superflous ones */
-      for (i = pScrPriv->numOutputs - 1; i >= number; i--) {
-#ifdef DEBUG
-          fprintf(stderr, "nxagentChangeScreenConfig: destroying output %s\n", pScrPriv->outputs[i]->name);
-#endif
-          RROutputDestroy(pScrPriv->outputs[i]);
-      }
-
-      /* add outputs if needed */
-      for (i = pScrPriv->numOutputs; i < number; i++) {
-        sprintf(name, "NX%d", i+1);
-        output = RROutputCreate (pScreen, name, strlen(name), NULL);
-        RROutputSetCrtcs(output, &(pScrPriv->crtcs[i]), 1);
-        RROutputSetConnection(output, RR_Disconnected);
-        RROutputSetSubpixelOrder(output, SubPixelUnknown);
-        /* FIXME: what is the correct physical size here? */
-        RROutputSetPhysicalSize(output, 0, 0);
-#ifdef DEBUG
-        fprintf(stderr, "nxagentChangeScreenConfig: created new output %s\n", name);
-#endif
-      }
-
-      for (i = 0; i < pScrPriv->numOutputs; i++ ) {
-        Bool disable_output = FALSE;
-        RRModePtr mymode;
-        int new_x, new_y;
-        unsigned int new_w, new_h;
-
-        /* if there's no intersection we disconnect the output */
-        disable_output = !intersect(nxagentOption(X), nxagentOption(Y),
-                                    width, height,
-                                    screeninfo[i].x_org, screeninfo[i].y_org,
-                                    screeninfo[i].width, screeninfo[i].height,
-                                    &new_x, &new_y, &new_w, &new_h);
-
-        RROutputSetCrtcs(pScrPriv->outputs[i], &(pScrPriv->crtcs[i]), 1);
-
-        if (disable_output) {
-#ifdef DEBUG
-          fprintf(stderr, "nxagentChangeScreenConfig: crtc/output %d: no (valid) intersection - disconnecting\n", i);
-#endif
-          RROutputSetConnection(pScrPriv->outputs[i], RR_Disconnected);
-          /*
-           * Tests revealed that some window managers (e.g. LXDE) also
-           * take disconnected outputs into account when calculating
-           * stuff like wallpaper tile size and maximum window
-           * size. This is problematic when the disconnected output is
-           * smaller than any of the connected ones. Solution: unset
-           * the mode of the output's crtc.  This also leads to
-           * xinerama not showing the disconnected head anymore.
-          */
-          RRCrtcSet(pScrPriv->crtcs[i], NULL, 0, 0, RR_Rotate_0, 1, &(pScrPriv->outputs[i]));
-        }
-        else
-        {
-
-#ifdef DEBUG
-          fprintf(stderr, "nxagentChangeScreenConfig: crtc %d: intersection is x=%d, y=%d, width=%d, height=%d'\n", i, new_x, new_y, new_w, new_h);
-#endif
-
-          RROutputSetConnection(pScrPriv->outputs[i], RR_Connected);
-
-          memset(&modeInfo, '\0', sizeof(modeInfo));
-          sprintf(name, "%dx%d", new_w, new_h);
-
-          modeInfo.width  = new_w;
-          modeInfo.height = new_h;
-          modeInfo.hTotal = new_w;
-          modeInfo.vTotal = new_h;
-          modeInfo.dotClock = ((CARD32) new_w * (CARD32) new_h * (CARD32) refresh);
-          modeInfo.nameLength = strlen(name);
-
-          mymode = RRModeGet(&modeInfo, name);
-#ifdef DEBUG
-          fprintf(stderr, "nxagentChangeScreenConfig: mode %s created/received: %p\n", name, mymode);
-#endif
-          RROutputAddUserMode(pScrPriv->outputs[i], mymode);
-          RRCrtcSet(pScrPriv->crtcs[i], mymode, new_x, new_y, RR_Rotate_0, 1, &(pScrPriv->outputs[i]));
-#ifdef DEBUG
-          fprintf(stderr, "nxagentChangeScreenConfig: mode %s added to output and crtc %d\n", name, i);
-#endif
-        } /* if disable_output */
-
-        RROutputChanged(pScrPriv->outputs[i], 1);
-        RRCrtcChanged(pScrPriv->crtcs[i], TRUE);
-      }
-
-      /* delete all usermodes except the ones still in use */
-      for (i = 0; i < pScrPriv->numOutputs; i++ ) {
-        for (j=0; j < pScrPriv->outputs[i]->numUserModes; j++) {
-          RRModePtr umode = pScrPriv->outputs[i]->userModes[j];
-          if (umode) {
-#ifdef DEBUG
-            fprintf(stderr, "nxagentChangeScreenConfig: trying to delete usermode %s\n", umode->name);
-#endif
-            RROutputDeleteUserMode(pScrPriv->outputs[i], umode);
-          }
-        }
-      }
-
-      pScrPriv -> lastSetTime = currentTime;
-
-      pScrPriv->changed = 1;
-      pScrPriv->configChanged = 1;
-    }
+    nxagentAdjustRandRXinerama(pScreen);
   }
-
-  /* FIXME: adjust maximum screen size according to remote randr/xinerama setup */
 
   if (doNotify)
   {
@@ -3874,11 +3682,282 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
 
 #ifdef DEBUG
   fprintf(stderr, "nxagentChangeScreenConfig: Geometry: %d,%d %dx%d\n", nxagentOption(X), nxagentOption(Y),nxagentOption(Width),nxagentOption(Height));
-  fprintf(stderr, "nxagentChangeScreenConfig: Min %dx%d, Max %dx%d \n", pScrPriv->minWidth,pScrPriv->minHeight,pScrPriv->maxWidth,pScrPriv->maxHeight);
   fprintf(stderr, "nxagentChangeScreenConfig: return %d\n", r);
 #endif
 
   return r;
+}
+
+int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
+{
+  rrScrPrivPtr pScrPriv;
+  RROutputPtr  output;
+  xRRModeInfo  modeInfo;
+  char         name[100];
+  int          refresh = 60;
+  int          width = nxagentOption(Width);
+  int          height = nxagentOption(Height);
+
+  pScrPriv = rrGetScrPriv(pScreen);
+
+  if (pScrPriv)
+  {
+    int i, j;
+    int number = 0;
+
+    XineramaScreenInfo *screeninfo = NULL;
+
+    if (nxagentOption(Xinerama)) {
+      screeninfo = XineramaQueryScreens(nxagentDisplay, &number);
+#ifdef DEBUG
+      if (number) {
+        fprintf(stderr, "nxagentAdjustRandRXinerama: XineramaQueryScreens() returned %d screens\n", number);
+      }
+      else
+      {
+        fprintf(stderr, "nxagentAdjustRandRXinerama: XineramaQueryScreens() failed - continuing without xinerama\n");
+      }
+    }
+    else
+    {
+      fprintf(stderr, "nxagentAdjustRandRXinerama: Xinerama is disabled\n");
+#endif
+    }
+
+    /*
+     * if there's no xinerama on the real server or xinerama is
+     * disabled in nxagent we only report one big screen. Clients
+     * still see xinerama enabled but it will report only one (big)
+     * screen. This is consistent with the way rrxinerama always
+     * behaved. The single PanoramiX/Xinerama extension however
+     * disables xinerama if only one screen exists.
+     */
+    if (number == 0) {
+      #ifdef DEBUG
+      fprintf(stderr, "nxagentAdjustRandRXinerama: faking xinerama\n" );
+      #endif
+      number = 1;
+
+      if (screeninfo) {
+	xfree(screeninfo);
+      }
+      if (!(screeninfo = xalloc(sizeof(XineramaScreenInfo)))) {
+	return FALSE;
+      }
+
+      /* fake a xinerama screeninfo that covers the whole screen */
+      screeninfo->x_org = nxagentOption(X);
+      screeninfo->y_org = nxagentOption(Y);
+      screeninfo->width = nxagentOption(Width);
+      screeninfo->height = nxagentOption(Height);
+    }
+
+#ifdef DEBUG
+    fprintf(stderr, "nxagentAdjustRandRXinerama: numCrtcs = %d, numOutputs = %d\n", pScrPriv->numCrtcs, pScrPriv->numOutputs);
+    {
+      Bool rrgetinfo;
+
+      /*
+       * Convert old RANDR 1.0 data (if any) to current structure. This
+       * is needed once at the first run of this function. If we don't
+       * do this here it will be done implicitely later and add mode(s) to
+       * our crtc(s)!
+       */
+      rrgetinfo = RRGetInfo(pScreen);
+
+      fprintf(stderr, "nxagentAdjustRandRXinerama: RRGetInfo returned %d\n", rrgetinfo);
+    }
+#else
+    /* we are not interested in the return code */
+    RRGetInfo(pScreen);
+#endif
+
+    #ifdef DEBUG
+    fprintf(stderr, "nxagentAdjustRandRXinerama: numCrtcs = %d, numOutputs = %d\n", pScrPriv->numCrtcs, pScrPriv->numOutputs);
+    #endif
+
+    /* adjust the number of CRTCs to match the number of reported
+       xinerama screens on the real server */
+    while (number != pScrPriv->numCrtcs) {
+      if (number < pScrPriv->numCrtcs) {
+        #ifdef DEBUG
+        fprintf(stderr, "nxagentAdjustRandRXinerama: destroying crtc\n");
+        #endif
+        RRCrtcDestroy(pScrPriv->crtcs[pScrPriv->numCrtcs - 1]);
+      }
+      else
+      {
+        #ifdef DEBUG
+        fprintf(stderr, "nxagentAdjustRandRXinerama: adding crtc\n");
+        #endif
+        RRCrtcCreate(pScreen, NULL);
+      }
+    }
+
+    #ifdef DEBUG
+    fprintf(stderr, "nxagentAdjustRandRXinerama: numCrtcs = %d, numOutputs = %d\n", pScrPriv->numCrtcs, pScrPriv->numOutputs);
+    #endif
+
+    /* delete superfluous non-NX outputs */
+    for (i = pScrPriv->numOutputs - 1; i >= 0; i--) {
+      if (strncmp(pScrPriv->outputs[i]->name, "NX", 2)) {
+        #ifdef DEBUG
+        fprintf(stderr, "nxagentAdjustRandRXinerama: destroying output %s\n", pScrPriv->outputs[i]->name);
+        #endif
+        RROutputDestroy(pScrPriv->outputs[i]);
+      }
+    }
+
+    /* at this stage only NX outputs are left - we delete the superfluous ones */
+    for (i = pScrPriv->numOutputs - 1; i >= number; i--) {
+      #ifdef DEBUG
+      fprintf(stderr, "nxagentAdjustRandRXinerama: destroying output %s\n", pScrPriv->outputs[i]->name);
+      #endif
+      RROutputDestroy(pScrPriv->outputs[i]);
+    }
+
+    /* add and init outputs */
+    for (i = 0; i < number; i++) {
+      if (i >= pScrPriv->numOutputs) {
+        sprintf(name, "NX%d", i+1);
+        output = RROutputCreate(pScreen, name, strlen(name), NULL);
+	/* will be done later
+	RROutputSetConnection(output, RR_Disconnected); 
+	*/
+        #ifdef DEBUG
+        fprintf(stderr, "nxagentAdjustRandRXinerama: created new output %s\n", name);
+        #endif
+      }
+      else
+      {
+        output = pScrPriv->outputs[i];
+      }
+      #ifdef DEBUG
+      fprintf(stderr, "nxagentAdjustRandRXinerama: adjusting output %s\n",  pScrPriv->outputs[i]->name);
+      #endif
+      RROutputSetCrtcs(output, &(pScrPriv->crtcs[i]), 1);
+      /* FIXME: Isn't there a function for setting this? */
+      output->crtc = pScrPriv->crtcs[i];
+      /* FIXME: get SubPixelOrder from real X server */
+      RROutputSetSubpixelOrder(output, SubPixelUnknown);
+      /* FIXME: What is the correct physical size here? */
+      RROutputSetPhysicalSize(output, 0, 0);
+    }
+
+    for (i = 0; i < pScrPriv->numOutputs; i++ ) {
+      Bool disable_output = FALSE;
+      RRModePtr mymode, prevmode;
+      int new_x, new_y;
+      unsigned int new_w, new_h;
+
+      /* if there's no intersection disconnect the output */
+      disable_output = !intersect(nxagentOption(X), nxagentOption(Y),
+                                  width, height,
+                                  screeninfo[i].x_org, screeninfo[i].y_org,
+                                  screeninfo[i].width, screeninfo[i].height,
+                                  &new_x, &new_y, &new_w, &new_h);
+
+      RROutputSetCrtcs(pScrPriv->outputs[i], &(pScrPriv->crtcs[i]), 1);
+
+      /* save old mode */
+      prevmode = pScrPriv->crtcs[i]->mode;
+
+      if (disable_output) {
+        #ifdef DEBUG
+        fprintf(stderr, "nxagentAdjustRandRXinerama: crtc/output %d: no (valid) intersection - disconnecting\n", i);
+        #endif
+        RROutputSetConnection(pScrPriv->outputs[i], RR_Disconnected);
+        /*
+         * Tests revealed that some window managers (e.g. LXDE) also
+         * take disconnected outputs into account when calculating
+         * stuff like wallpaper tile size and maximum window
+         * size. This is problematic when the disconnected output is
+         * smaller than any of the connected ones. Solution: unset
+         * the mode of the output's crtc.  This also leads to
+         * xinerama not showing the disconnected head anymore.
+         */
+        RRCrtcSet(pScrPriv->crtcs[i], NULL, 0, 0, RR_Rotate_0, 1, &(pScrPriv->outputs[i]));
+      }
+      else
+      {
+        #ifdef DEBUG
+        fprintf(stderr, "nxagentAdjustRandRXinerama: crtc %d: intersection is x=%d, y=%d, width=%d, height=%d'\n", i, new_x, new_y, new_w, new_h);
+        #endif
+        RROutputSetConnection(pScrPriv->outputs[i], RR_Connected);
+
+        memset(&modeInfo, '\0', sizeof(modeInfo));
+        sprintf(name, "%dx%d", new_w, new_h);
+
+        modeInfo.width  = new_w;
+        modeInfo.height = new_h;
+        modeInfo.hTotal = new_w;
+        modeInfo.vTotal = new_h;
+        modeInfo.dotClock = ((CARD32) new_w * (CARD32) new_h * (CARD32) refresh);
+        modeInfo.nameLength = strlen(name);
+
+        mymode = RRModeGet(&modeInfo, name);
+#ifdef DEBUG
+        if (mymode) {
+          fprintf(stderr, "nxagentAdjustRandRXinerama: mode %s (%p)created/received\n", name, mymode);
+        }
+        else
+        {
+          fprintf(stderr, "nxagentAdjustRandRXinerama: mode %s creation failed!\n", name);
+        }
+#endif
+        RROutputAddUserMode(pScrPriv->outputs[i], mymode);
+        RRCrtcSet(pScrPriv->crtcs[i], mymode, new_x, new_y, RR_Rotate_0, 1, &(pScrPriv->outputs[i]));
+        #ifdef DEBUG
+        fprintf(stderr, "nxagentAdjustRandRXinerama: mode %s (%p) added to output and crtc %d\n", name, mymode, i);
+        #endif
+      } /* if disable_output */
+
+      /* delete previous usermode */
+      if (prevmode && prevmode != pScrPriv->crtcs[i]->mode) {
+        #ifdef DEBUG
+        fprintf(stderr, "nxagentAdjustRandRXinerama: trying to delete previous usermode %s (%p)\n", prevmode->name, prevmode);
+        #endif
+        RROutputDeleteUserMode(pScrPriv->outputs[i], prevmode);
+        prevmode = NULL;
+      }
+      RROutputChanged(pScrPriv->outputs[i], TRUE);
+      RRCrtcChanged(pScrPriv->crtcs[i], TRUE);
+    }
+
+    /* release allocated memory */
+    if (screeninfo) {
+      xfree(screeninfo);
+      screeninfo = NULL;
+    }
+
+#ifdef DEBUG
+    for (i = 0; i < pScrPriv->numCrtcs; i++) {
+      RRModePtr mode = pScrPriv->crtcs[i]->mode;
+      if (mode) {
+        fprintf(stderr, "nxagentAdjustRandRXinerama: crtc %d has mode %s and %d outputs\n", i, pScrPriv->crtcs[i]->mode->name, pScrPriv->crtcs[i]->numOutputs);
+      }
+      else
+      {
+        fprintf(stderr, "nxagentAdjustRandRXinerama: crtc %d has no mode and %d outputs\n", i, pScrPriv->crtcs[i]->numOutputs);
+      }
+
+      fprintf(stderr, "nxagentAdjustRandRXinerama: output[%d]->crtc=%p\n", i, pScrPriv->outputs[i]->crtc);
+    }
+#endif
+
+    pScrPriv -> lastSetTime = currentTime;
+
+    pScrPriv->changed = TRUE;
+    pScrPriv->configChanged = TRUE;
+  }
+
+  /* FIXME: adjust maximum screen size according to remote randr/xinerama setup */
+
+  #ifdef DEBUG
+  fprintf(stderr, "nxagentAdjustRandRXinerama: Min %dx%d, Max %dx%d \n", pScrPriv->minWidth,pScrPriv->minHeight,pScrPriv->maxWidth,pScrPriv->maxHeight);
+  #endif
+
+  return TRUE;
 }
 
 void nxagentSaveAreas(PixmapPtr pPixmap, RegionPtr prgnSave, int xorg, int yorg, WindowPtr pWin)
