@@ -69,11 +69,11 @@ The copyright owners for the original DXPC code should be
 contacted and persuaded to re-license under GPL-compatible
 terms.
 """
+
 The issue has been settled by asking all recent maintainers (i.e.,
 copyright holders) of DXPC, to agree on considering the BSD-2-clause
 license (as introduced in DXPC 3.8.1) retro-actively as the license of
 all pre-3.8.1 DXPC releases.
-"""
 
 STEP 2:
 =======
