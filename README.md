@@ -44,7 +44,11 @@ Release goals (phase 1) for nx-libs release series 3.6.0.x:
 * replace as many liNX_X* libraries by X.org's libX* libraries
   (work in progress)
 * support for iOS (nxproxy, complete)
-
+* Unix file socket communication for nxproxy -C <-> nxproxy -S connections
+  (todo)
+* allow Unix file sockets as channel endpoints (work in progress)
+* allow embedding of nxproxy into other windows
+ 
 ## Release series 3.7.0.x
 
 Scheduled for Q1/2016.
@@ -52,16 +56,13 @@ Scheduled for Q1/2016.
 Release goals (phase 2) for nx-libs release series 3.7.0.x (not branched-off, yet):
 
 * provide support for latest X11 extensions
-* socket communication for nxproxy -C <-> nxproxy -S connections
-  (todo)
 * event FIFO sockets for attaching external applications
   (todo)
-* allow embedding of nxproxy into other windows
 * support for multimedia
 
 If you have any questions about this NX development or want to file a bug
 report, please contact the Arctica developers, the X2Go developers or the
 TheQVD developers via the project's Github issue tracker.
 
-thanks+light+love, 20150515
+thanks+light+love, 20150531
 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
