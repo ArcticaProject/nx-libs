@@ -3945,72 +3945,7 @@ int SetupTcpSocket()
   // Open TCP socket emulating local display.
   //
 
-  tcpFD = socket(AF_INET, SOCK_STREAM, PF_UNSPEC);
-
-  if (tcpFD == -1)
-  {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Call to socket failed for TCP socket"
-            << ". Error is " << EGET() << " '" << ESTR() << "'.\n"
-            << logofs_flush;
-    #endif
-
-    cerr << "Error" << ": Call to socket failed for TCP socket"
-         << ". Error is " << EGET() << " '" << ESTR() << "'.\n";
-
-    HandleCleanup();
-  }
-  else if (SetReuseAddress(tcpFD) < 0)
-  {
-    HandleCleanup();
-  }
-
-  unsigned int proxyPortTCP = X_TCP_PORT + proxyPort;
-
-  sockaddr_in tcpAddr;
-
-  tcpAddr.sin_family = AF_INET;
-  tcpAddr.sin_port = htons(proxyPortTCP);
-  if ( loopbackBind )
-  {
-    tcpAddr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-  }
-  else
-  {
-    tcpAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-  }
-
-  if (bind(tcpFD, (sockaddr *) &tcpAddr, sizeof(tcpAddr)) == -1)
-  {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Call to bind failed for TCP port "
-            << proxyPortTCP << ". Error is " << EGET() << " '" << ESTR()
-            << "'.\n" << logofs_flush;
-    #endif
-
-    cerr << "Error" << ": Call to bind failed for TCP port "
-         << proxyPortTCP << ". Error is " << EGET() << " '" << ESTR()
-         << "'.\n";
-
-    HandleCleanup();
-  }
-
-  if (listen(tcpFD, 8) == -1)
-  {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Call to listen failed for TCP port "
-            << proxyPortTCP << ". Error is " << EGET() << " '" << ESTR()
-            << "'.\n" << logofs_flush;
-    #endif
-
-    cerr << "Error" << ": Call to listen failed for TCP port "
-         << proxyPortTCP << ". Error is " << EGET() << " '" << ESTR()
-         << "'.\n";
-
-    HandleCleanup();
-  }
-
-  return 1;
+  return ListenConnectionTCP((loopbackBind ? "localhost" : "*"), X_TCP_PORT + proxyPort, "X11");
 }
 
 int SetupUnixSocket()
