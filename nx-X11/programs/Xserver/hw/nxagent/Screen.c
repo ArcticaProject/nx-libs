@@ -3864,14 +3864,15 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
 
       RROutputSetCrtcs(pScrPriv->outputs[i], &(pScrPriv->crtcs[i]), 1);
 
-      /* save old mode */
+      /* save previous mode */
       prevmode = pScrPriv->crtcs[i]->mode;
 
       if (disable_output) {
         #ifdef DEBUG
-        fprintf(stderr, "nxagentAdjustRandRXinerama: crtc/output %d: no (valid) intersection - disconnecting\n", i);
+        fprintf(stderr, "nxagentAdjustRandRXinerama: output %d: no (valid) intersection - disconnecting\n", i);
         #endif
         RROutputSetConnection(pScrPriv->outputs[i], RR_Disconnected);
+
         /*
          * Tests revealed that some window managers (e.g. LXDE) also
          * take disconnected outputs into account when calculating
@@ -3882,6 +3883,17 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
          * xinerama not showing the disconnected head anymore.
          */
         RRCrtcSet(pScrPriv->crtcs[i], NULL, 0, 0, RR_Rotate_0, 1, &(pScrPriv->outputs[i]));
+        RROutputSetModes(pScrPriv->outputs[i], NULL, 0, 0);
+
+        if (prevmode) {
+          /* throw away the previous mode, we do not need it
+             anymore. If refcnt is 1 we call FreeResource() to ensure
+             the system will not try to free it again on shutdown */
+          if (prevmode->refcnt == 1)
+            FreeResource(prevmode->mode.id, 0);
+          else
+            RRModeDestroy(prevmode);
+        }
       }
       else
       {
@@ -3891,7 +3903,13 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
         RROutputSetConnection(pScrPriv->outputs[i], RR_Connected);
 
         memset(&modeInfo, '\0', sizeof(modeInfo));
-        sprintf(name, "%dx%d", new_w, new_h);
+        /* avoid collisions with pre-existing default modes by using a
+           separate namespace. If we'd simply use XxY we could not
+           distinguish between pre-existing modes which should stay
+           and our own modes that should be removed after use. */
+        /*sprintf(name, "nx%d", i+1);*/
+        /*sprintf(name, "%dx%d", new_w, new_h);*/
+        sprintf(name, "nx_%dx%d", new_w, new_h);
 
         modeInfo.width  = new_w;
         modeInfo.height = new_h;
@@ -3901,30 +3919,48 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
         modeInfo.nameLength = strlen(name);
 
         mymode = RRModeGet(&modeInfo, name);
+
 #ifdef DEBUG
         if (mymode) {
-          fprintf(stderr, "nxagentAdjustRandRXinerama: mode %s (%p)created/received\n", name, mymode);
+          fprintf(stderr, "nxagentAdjustRandRXinerama: mode %s (%p) created/received, refcnt=%d\n", name, mymode, mymode->refcnt);
         }
         else
         {
           fprintf(stderr, "nxagentAdjustRandRXinerama: mode %s creation failed!\n", name);
         }
 #endif
-        RROutputAddUserMode(pScrPriv->outputs[i], mymode);
-        RRCrtcSet(pScrPriv->crtcs[i], mymode, new_x, new_y, RR_Rotate_0, 1, &(pScrPriv->outputs[i]));
+
+        if (prevmode) {
+          if (mymode == prevmode)
+          {
+            /* if they are the same RRModeGet() has increased the
+               refcnt by 1. We decrease it again by calling only
+               RRModeDestroy() and forget about prevmode */
+          } else {
+            RROutputSetModes(pScrPriv->outputs[i], &mymode, 1, 0);
+            RRCrtcSet(pScrPriv->crtcs[i], mymode, new_x, new_y, RR_Rotate_0, 1, &(pScrPriv->outputs[i]));
+          }
+
+          /* throw away the mode, we do not need it anymore. If *
+           refcnt is 1 we call FreeResource() to ensure the system
+           will not try to free it again on shutdown */
+          if (prevmode->refcnt == 1)
+            FreeResource(prevmode->mode.id, 0);
+          else
+            RRModeDestroy(prevmode);
+        }
+        else
+        {
+          /* we do not have a previous mode, so there's no need to handle it here */
+          RROutputSetModes(pScrPriv->outputs[i], &mymode, 1, 0);
+          RRCrtcSet(pScrPriv->crtcs[i], mymode, new_x, new_y, RR_Rotate_0, 1, &(pScrPriv->outputs[i]));
+        }
+
         #ifdef DEBUG
         fprintf(stderr, "nxagentAdjustRandRXinerama: mode %s (%p) added to output and crtc %d\n", name, mymode, i);
         #endif
       } /* if disable_output */
 
-      /* delete previous usermode */
-      if (prevmode && prevmode != pScrPriv->crtcs[i]->mode) {
-        #ifdef DEBUG
-        fprintf(stderr, "nxagentAdjustRandRXinerama: trying to delete previous usermode %s (%p)\n", prevmode->name, prevmode);
-        #endif
-        RROutputDeleteUserMode(pScrPriv->outputs[i], prevmode);
-        prevmode = NULL;
-      }
       RROutputChanged(pScrPriv->outputs[i], TRUE);
       RRCrtcChanged(pScrPriv->crtcs[i], TRUE);
     }
