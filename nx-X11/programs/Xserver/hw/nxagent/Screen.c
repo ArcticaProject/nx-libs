@@ -2072,6 +2072,10 @@ Bool nxagentCloseScreen(int index, ScreenPtr pScreen)
 {
   int i;
 
+  #ifdef DEBUG
+  fprintf(stderr, "running nxagentCloseScreen()\n");
+  #endif
+
   for (i = 0; i < pScreen->numDepths; i++)
   {
     xfree(pScreen->allowedDepths[i].vids);
@@ -3634,6 +3638,7 @@ Bool intersect(int ax1, int ay1, unsigned int aw, unsigned int ah,
 int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, int mmHeight)
 {
   ScreenPtr    pScreen;
+  /* FIXME: when is this needed? */
   int          doNotify = TRUE;
   int          r;
 

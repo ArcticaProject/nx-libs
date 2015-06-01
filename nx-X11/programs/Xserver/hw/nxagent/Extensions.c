@@ -88,6 +88,8 @@ void nxagentInitRandRExtension(ScreenPtr pScreen)
     fprintf(stderr, "Warning: Failed to initialize the RandR extension.\n");
   }
 
+
+  /* FIXME: do we need this at all with the new rand/xinerama stuff? */
   nxagentRandRInitSizes(pScreen);
 
   /*
@@ -109,6 +111,14 @@ void nxagentInitRandRExtension(ScreenPtr pScreen)
   pRandRScrPriv -> rrSetConfig = nxagentRandRSetConfig;
   #endif
 }
+
+void
+RRResetProc (ExtensionEntry *extEntry)
+{
+  fprintf(stderr, "RANDR going down - NX version\n");
+}
+
+
 
 #if RANDR_12_INTERFACE
 /*
