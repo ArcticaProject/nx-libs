@@ -3803,6 +3803,18 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
     fprintf(stderr, "nxagentAdjustRandRXinerama: numCrtcs = %d, numOutputs = %d\n", pScrPriv->numCrtcs, pScrPriv->numOutputs);
     #endif
 
+    /* set gamma. Currently the only reason for doing this is
+       preventing the xrandr command from complaining about missing
+       gamma. */
+    for (i = 0; i < pScrPriv->numCrtcs; i++) {
+      if (pScrPriv->crtcs[i]->gammaSize == 0) {
+	CARD16 gamma = 0;
+	RRCrtcGammaSetSize(pScrPriv->crtcs[i], 1);
+	RRCrtcGammaSet(pScrPriv->crtcs[i], &gamma, &gamma, &gamma);
+	RRCrtcGammaNotify(pScrPriv->crtcs[i]);
+      }
+    }
+
     /* delete superfluous non-NX outputs */
     for (i = pScrPriv->numOutputs - 1; i >= 0; i--) {
       if (strncmp(pScrPriv->outputs[i]->name, "NX", 2)) {
