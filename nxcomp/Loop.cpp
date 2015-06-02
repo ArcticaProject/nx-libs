@@ -954,7 +954,6 @@ static char unixSocketName[DEFAULT_STRING_LENGTH] = { 0 };
 
 static char connectHost[DEFAULT_STRING_LENGTH] = { 0 };
 static char acceptHost[DEFAULT_STRING_LENGTH]  = { 0 };
-static char listenHost[DEFAULT_STRING_LENGTH]  = { 0 };
 static char displayHost[DEFAULT_STRING_LENGTH] = { 0 };
 static char authCookie[DEFAULT_STRING_LENGTH]  = { 0 };
 
@@ -5456,7 +5455,6 @@ void CleanupLocal()
 
   *connectHost = '\0';
   *acceptHost  = '\0';
-  *listenHost  = '\0';
   *displayHost = '\0';
   *authCookie  = '\0';
 
@@ -13539,27 +13537,13 @@ ParseFontPathError:
 
 int ParseListenOption(int &address)
 {
-  if (*listenHost == '\0')
-  {
-    //
-    // On the X client side listen on any address.
-    // On the X server side listen to the forwarder
-    // on localhost.
-    //
-
-    if (loopbackBind || (control->ProxyMode == proxy_server)) {
-      address = htonl(INADDR_LOOPBACK);
-    }
-    else
-    {
-      address = htonl(INADDR_ANY);
-    }
+  if (loopbackBind || (control->ProxyMode == proxy_server)) {
+    address = htonl(INADDR_LOOPBACK);
   }
   else
   {
-    address = GetHostAddress(listenHost);
+    address = htonl(INADDR_ANY);
   }
-
   return 1;
 }
 
