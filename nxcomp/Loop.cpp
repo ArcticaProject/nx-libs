@@ -6611,7 +6611,6 @@ int WaitForRemote(int portNum)
   char hostLabel[DEFAULT_STRING_LENGTH] = { 0 };
 
   int retryAccept  = -1;
-  int listenIPAddr = -1;
 
   int proxyFD = -1;
   int newFD   = -1;
@@ -6640,66 +6639,8 @@ int WaitForRemote(int portNum)
     }
   }
 
-  proxyFD = socket(AF_INET, SOCK_STREAM, PF_UNSPEC);
-
-  if (proxyFD == -1)
-  {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Call to socket failed for TCP socket. "
-            << "Error is " << EGET() << " '" << ESTR() << "'.\n"
-            << logofs_flush;
-    #endif
-
-    cerr << "Error" << ": Call to socket failed for TCP socket. "
-         << "Error is " << EGET() << " '" << ESTR() << "'.\n";
-
-    goto WaitForRemoteError;
-  }
-  else if (SetReuseAddress(proxyFD) < 0)
-  {
-    goto WaitForRemoteError;
-  }
-
-  listenIPAddr = 0;
-
-  ParseListenOption(listenIPAddr);
-
-  sockaddr_in tcpAddr;
-
-  tcpAddr.sin_family = AF_INET;
-  tcpAddr.sin_port = htons(portNum);
-
-  tcpAddr.sin_addr.s_addr = listenIPAddr;
-
-  if (bind(proxyFD, (sockaddr *) &tcpAddr, sizeof(tcpAddr)) == -1)
-  {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Call to bind failed for TCP port "
-            << portNum << ". Error is " << EGET() << " '" << ESTR()
-            << "'.\n" << logofs_flush;
-    #endif
-
-    cerr << "Error" << ": Call to bind failed for TCP port "
-         << portNum << ". Error is " << EGET() << " '" << ESTR()
-         << "'.\n";
-
-    goto WaitForRemoteError;
-  }
-
-  if (listen(proxyFD, 4) == -1)
-  {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Call to listen failed for TCP port "
-            << portNum << ". Error is " << EGET() << " '" << ESTR()
-            << "'.\n" << logofs_flush;
-    #endif
-
-    cerr << "Error" << ": Call to listen failed for TCP port "
-         << portNum << ". Error is " << EGET() << " '" << ESTR()
-         << "'.\n";
-
-    goto WaitForRemoteError;
-  }
+  proxyFD = ListenConnectionTCP( ((loopbackBind || (control->ProxyMode == proxy_server)) ? "localhost" : "*"),
+                                 portNum, "NX");
 
   if (*acceptHost != '\0')
   {
