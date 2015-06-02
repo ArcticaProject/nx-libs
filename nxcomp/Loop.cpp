@@ -6671,31 +6671,7 @@ int WaitForRemote(int portNum)
   tcpAddr.sin_family = AF_INET;
   tcpAddr.sin_port = htons(portNum);
 
-  //
-  // Quick patch to run on MacOS/X where inet_addr("127.0.0.1")
-  // alone seems to fail to return a valid interface. It probably
-  // just needs a htonl() or something like that.
-  // 
-  // TODO: We have to give another look at inet_addr("127.0.0.1")
-  // on the Mac.
-  //
-
-  #ifdef __APPLE__
-
-  if ( loopbackBind )
-  {
-    tcpAddr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-  }
-  else
-  {
-    tcpAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-  }
-
-  #else
-
   tcpAddr.sin_addr.s_addr = listenIPAddr;
-
-  #endif
 
   if (bind(proxyFD, (sockaddr *) &tcpAddr, sizeof(tcpAddr)) == -1)
   {
