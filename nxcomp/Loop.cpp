@@ -3954,90 +3954,40 @@ int SetupUnixSocket()
   // Open UNIX domain socket for display.
   //
 
-  unixFD = socket(AF_UNIX, SOCK_STREAM, PF_UNSPEC);
-
-  if (unixFD == -1)
-  {
+  if (!control->TempPath) {
     #ifdef PANIC
-    *logofs << "Loop: PANIC! Call to socket failed for UNIX domain"
-            << ". Error is " << EGET() << " '" << ESTR() << "'.\n"
-            << logofs_flush;
+    *logofs << "Loop: PANIC! Temporal path is null.\n" << logofs_flush;
     #endif
 
-    cerr << "Error" << ": Call to socket failed for UNIX domain"
-         << ". Error is " << EGET() << " '" << ESTR() << "'.\n";
-
+    cerr << "Error" << ": Temporal path is null.\n";
     HandleCleanup();
   }
 
-  sockaddr_un unixAddr;
-  unixAddr.sun_family = AF_UNIX;
+  unsigned int required = snprintf(unixSocketName, DEFAULT_STRING_LENGTH, "%s/.X11-unix", control->TempPath);
+  if (required < sizeof(unixSocketName)) {
 
-  char dirName[DEFAULT_STRING_LENGTH];
+    // No need to execute the following actions conditionally
+    mkdir(unixSocketName, (0777 | S_ISVTX));
+    chmod(unixSocketName, (0777 | S_ISVTX));
 
-  snprintf(dirName, DEFAULT_STRING_LENGTH - 1, "%s/.X11-unix",
-               control -> TempPath);
+    required = snprintf(unixSocketName, DEFAULT_STRING_LENGTH, "%s/.X11-unix/X%d", control->TempPath, proxyPort);
+    if (required < sizeof(unixSocketName)) {
 
-  *(dirName + DEFAULT_STRING_LENGTH - 1) = '\0';
-
-  struct stat dirStat;
-
-  if ((stat(dirName, &dirStat) == -1) && (EGET() == ENOENT))
-  {
-    mkdir(dirName, (0777 | S_ISVTX));
-    chmod(dirName, (0777 | S_ISVTX));
+      unixFD = ListenConnectionUnix(unixSocketName, "x11");
+      if (unixFD >= 0)
+        chmod(unixSocketName, 0777);
+      return unixFD;
+    }
   }
 
-  snprintf(unixSocketName,  DEFAULT_STRING_LENGTH - 1, "%s/X%d",
-               dirName, proxyPort);
+  unixSocketName[0] = '\0'; // Just in case!
 
-  strncpy(unixAddr.sun_path, unixSocketName, 108);
-
-  #ifdef TEST
-  *logofs << "Loop: Assuming Unix socket with name '"
-          << unixAddr.sun_path << "'.\n"
-          << logofs_flush;
+  #ifdef PANIC
+  *logofs << "Loop: PANIC! path for unix socket is too long.\n" << logofs_flush;
   #endif
 
-  *(unixAddr.sun_path + 107) = '\0';
-
-  if (bind(unixFD, (sockaddr *) &unixAddr, sizeof(unixAddr)) == -1)
-  {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Call to bind failed for UNIX domain socket "
-            << unixSocketName << ". Error is " << EGET() << " '" << ESTR()
-            << "'.\n" << logofs_flush;
-    #endif
-
-    cerr << "Error" << ":  Call to bind failed for UNIX domain socket "
-         << unixSocketName << ". Error is " << EGET() << " '" << ESTR()
-         << "'.\n";
-
-    HandleCleanup();
-  }
-
-  if (listen(unixFD, 8) == -1)
-  {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Call to listen failed for UNIX domain socket "
-            << unixSocketName << ". Error is " << EGET() << " '" << ESTR()
-            << "'.\n" << logofs_flush;
-    #endif
-
-    cerr << "Error" << ":  Call to listen failed for UNIX domain socket "
-         << unixSocketName << ". Error is " << EGET() << " '" << ESTR()
-         << "'.\n";
-
-    HandleCleanup();
-  }
-
-  //
-  // Let any local user to gain access to socket.
-  //
-
-  chmod(unixSocketName, 0777);
-
-  return 1;
+  cerr << "Error" << ": path for Unix socket is too long.\n";
+  HandleCleanup();
 }
 
 //
