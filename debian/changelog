@@ -157,6 +157,48 @@ nx-libs (2:3.5.0.32-0x2go1) UNRELEASED; urgency=low
   * debian/control: workaround missing dependencies of nxagent on Ubuntu for
     now.
   * debian/libnx-xinerama1.*: fix faulty logic when creating symlinks.
+    Backported from Arctica GH 3.6.x branch.
+  * Security fixes:
+    - X.Org CVE-2014-8100:
+      v3: port to NXrender.c rather than render.c (Mike DePaulo)
+      v4: backport v3 to nx-libs 3.5.0.x (Mihai Moldovan)
+      Changes:
+      + 1027-render-check-request-size-before-reading-it-CVE.full.patch
+  * Security fixes:
+    - X.Org CVE-2014-8100:
+      v3: port to NXrender.c rather than render.c (Mike DePaulo)
+      v4: backport v3 to nx-libs 3.5.0.x (Mihai Moldovan)
+      Changes:
+      + 1028-render-unvalidated-lengths-in-Render-extn.-swap.full.patch
+  * nxcomp/Misc.cpp: fix build failure introduced in
+    a27a8aae3ca7a3f70e05152ac3d347942e11159d.
+    Backported from Arctica GH 3.6.x branch.
+    Affects:
+    - 9900-dxpc-license-history.full+lite.patch
+  * Security fixes:
+    - X.Org CVE-2013-4396:
+      v2: Apply to NXdixfonts.c rather than dixfonts.c (Mike DePaulo)
+      v3: backport v2 to nx-libs 3.5.0.x (Mihai Moldovan)
+      Changes:
+      + 1003-Avoid-use-after-free-in-dix-dixfonts.c-doImageT.full.patch
+  * Security fixes:
+    - X.Org CVE-2014-8092:
+      v3: port to NXdispatch.c rather than dispatch.c (Mike DePaulo)
+      v4: backport v3 to nx-libs 3.5.0.x (Mihai Moldovan)
+      Changes:
+      + 1019-dix-integer-overflow-in-ProcPutImage-CVE-2014-8.full.patch
+  * Security fixes:
+    - X.Org CVE-2015-3418:
+      v3: port to NXdispatch.c rather than dispatch.c (Mike DePaulo)
+      v4: backport v3 to nx-libs 3.5.0.x (Mihai Moldovan)
+      Changes:
+      + 1210-CVE-2015-3418-dix-Allow-zero-height-PutImage-re.full.patch
+  * Security fixes:
+    - X.Org CVE-2014-8099:
+      v3: port to NXxvdisp.c rather than xvdisp.c (Mike DePaulo)
+      v4: backport v3 to nx-libs 3.5.0.x (Mihai Moldovan)
+      Changes:
+      + 1026-Xv-unvalidated-lengths-in-XVideo-extension-swap.full.patch
 
   [ Bernard Cafarelli ]
   * nx-X11: link to libdl to fix undefined references to 'dlopen' and 'dlsym'.
@@ -175,6 +217,31 @@ nx-libs (2:3.5.0.32-0x2go1) UNRELEASED; urgency=low
   * nxcompshad: Prevent underlinking by linking to libNX_Xext.
     Adds:
     - 0650_nxcompshad_link-to-NX_Xext.full.patch
+  * Security fixes:
+    - X.Org CVE-2015-3418:
+      1210-CVE-2015-3418-dix-Allow-zero-height-PutImage-re.full.patch
+  * debian/roll-tarball.sh:
+    + Make sure *.keyboard, debian/**, nx-libs.spec, .pc/** don't end up
+      in tarball (special focus on the nx-libs-lite tarball).
+    + Allow patch files names having a dash next to the four digits (i.e.,
+      1234-<patchname>.<suffix>).
+    + Support tarring up the HEAD of the current branch.
+  * debian/COPYING.full+lite:
+    + Replace content with GPL-2 license text, because that is the overall
+      (i.e., strictest) license we have to deal with in nx-libs.
+  * Add 9900-dxpc-license-history.full+lite.patch. Document license history of
+    DXPC (where nxcomp got forked from).
+    Backported from Arctica GH 3.6.x branch.
+  * nxcomp/README.on-retroactive-DXPC-license: Some layout and
+    interpunctuation fixes.
+    Backported from Arctica GH 3.6.x branch.
+    Affects:
+    - 9900-dxpc-license-history.full+lite.patch
+
+  [ Nito Martinez ]
+  * nxcomp: fix DEBUG, TEST, DUMP, FLUSH, TOKEN, PING, MIXED et al builds.
+    Adds:
+    - 0992_fix-DEBUG-TEST-DUMP-FLUSH-TOKEN-PING-et-al-builds.full+lite.patch
 
  -- X2Go Release Manager <git-admin@x2go.org>  Tue, 17 Mar 2015 19:19:32 +0100
 
