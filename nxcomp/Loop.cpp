@@ -13571,25 +13571,17 @@ int ParseListenOption(int &address)
     // on localhost.
     //
 
-    if (control -> ProxyMode == proxy_server)
-    {
-      address = (int) inet_addr("127.0.0.1");
+    if (loopbackBind || (control->ProxyMode == proxy_server)) {
+      address = htonl(INADDR_LOOPBACK);
     }
     else
     {
-      if ( loopbackBind )
-      {
-        address = htonl(INADDR_LOOPBACK);
-      }
-      else
-      {
-        address = htonl(INADDR_ANY);
-      }
+      address = htonl(INADDR_ANY);
     }
   }
   else
   {
-    address = inet_addr(listenHost);
+    address = GetHostAddress(listenHost);
   }
 
   return 1;
