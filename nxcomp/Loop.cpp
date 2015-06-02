@@ -6629,21 +6629,15 @@ int WaitForRemote(int portNum)
 
       goto WaitForRemoteError;
     }
-  }
-
-  proxyFD = ListenConnectionTCP( ((loopbackBind || (control->ProxyMode == proxy_server)) ? "localhost" : "*"),
-                                 portNum, "NX");
-
-  if (*acceptHost != '\0')
-  {
-    strcat(hostLabel, "'");
-    strcat(hostLabel, acceptHost);
-    strcat(hostLabel, "'");
+    strcpy(hostLabel, "any host");
   }
   else
   {
-    strcpy(hostLabel, "any host");
+    snprintf(hostLabel, sizeof(hostLabel), "'%s'", acceptHost);
   }
+
+  proxyFD = ListenConnectionTCP(((loopbackBind || (control->ProxyMode == proxy_server)) ? "localhost" : "*"),
+                                portNum, "NX");
 
   #ifdef TEST
   *logofs << "Loop: Waiting for connection from "
