@@ -169,6 +169,12 @@ nx-libs (2:3.5.0.32-0x2go1) UNRELEASED; urgency=low
       v3: backport v2 to nx-libs 3.5.0.x (Mihai Moldovan)
       Changes:
       + 1003-Avoid-use-after-free-in-dix-dixfonts.c-doImageT.full.patch
+  * Security fixes:
+    - X.Org CVE-2014-8092:
+      v3: port to NXdispatch.c rather than dispatch.c (Mike DePaulo)
+      v4: backport v3 to nx-libs 3.5.0.x (Mihai Moldovan)
+      Changes:
+      + 1019-dix-integer-overflow-in-ProcPutImage-CVE-2014-8.full.patch
 
   [ Bernard Cafarelli ]
   * nx-X11: link to libdl to fix undefined references to 'dlopen' and 'dlsym'.
