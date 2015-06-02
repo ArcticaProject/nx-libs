@@ -282,6 +282,13 @@ ProcRRXineramaIsActive(ClientPtr client)
 
     REQUEST_SIZE_MATCH(xXineramaIsActiveReq);
 	
+    {
+      /* Backport "Avoid sending uninitialized padding data over the network"
+	 http://cgit.freedesktop.org/xorg/xserver/commit/randr/rrxinerama.c?h=server-1.17-branch&id=ddb8d8945d1f44d16adc366b6612eef20ae813f7
+       */
+      memset(&rep, 0, sizeof(xXineramaIsActiveReply));
+    }
+
     rep.type = X_Reply;
     rep.length = 0;
     rep.sequenceNumber = client->sequence;

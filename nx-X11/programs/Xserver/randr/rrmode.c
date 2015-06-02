@@ -98,8 +98,12 @@ RRModeCreate (xRRModeInfo   *modeInfo,
     }
 
     mode->mode.id = FakeClientID(0);
-    if (!AddResource (mode->mode.id, RRModeType, (pointer) mode))
-	return NULL;
+    if (!AddResource (mode->mode.id, RRModeType, (pointer) mode)) {
+      /* Backport "RRModeCreate: plug memory leak of newModes if AddResource fails"
+	 http://cgit.freedesktop.org/xorg/xserver/commit/randr/rrmode.c?h=server-1.17-branch&id=c7b7abfaa068042e396d19538215402cfbb4f1e4 */
+      free(newModes);
+      return NULL;
+    }
     modes = newModes;
     modes[num_modes++] = mode;
     
@@ -297,7 +301,6 @@ ProcRRCreateMode (ClientPtr client)
     xRRCreateModeReply	rep;
     WindowPtr		pWin;
     ScreenPtr		pScreen;
-    rrScrPrivPtr	pScrPriv;
     xRRModeInfo		*modeInfo;
     long		units_after;
     char		*name;
@@ -315,7 +318,6 @@ ProcRRCreateMode (ClientPtr client)
 	return rc;
 
     pScreen = pWin->drawable.pScreen;
-    pScrPriv = rrGetScrPriv(pScreen);
     
     modeInfo = &stuff->modeInfo;
     name = (char *) (stuff + 1);
@@ -342,7 +344,16 @@ ProcRRCreateMode (ClientPtr client)
 	swapl(&rep.mode, n);
     }
     WriteToClient(client, sizeof(xRRCreateModeReply), (char *)&rep);
-    
+
+    {
+      /* Backport from xorg 1.17 "Drop a reference to user mode after create
+	 User mode has no customer when create until assigned
+	 to some output."
+	 http://cgit.freedesktop.org/xorg/xserver/commit/randr/rrmode.c?h=server-1.17-branch&id=31c62495f1de6e9ba41e1f6d7fa263eeb849129b */
+      /* Drop out reference to this mode */
+      RRModeDestroy(mode);
+    }
+
     return client->noClientException;
 }
 
