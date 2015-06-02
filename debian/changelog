@@ -196,6 +196,11 @@ nx-libs (2:3.5.0.32-0x2go1) UNRELEASED; urgency=low
   * Add 9900-dxpc-license-history.full+lite.patch. Document license history of
     DXPC (where nxcomp got forked from).
     Backported from Arctica GH 3.6.x branch.
+  * nxcomp/README.on-retroactive-DXPC-license: Some layout and
+    interpunctuation fixes.
+    Backported from Arctica GH 3.6.x branch.
+    Affects:
+    - 9900-dxpc-license-history.full+lite.patch
 
   [ Nito Martinez ]
   * nxcomp: fix DEBUG, TEST, DUMP, FLUSH, TOKEN, PING, MIXED et al builds.
