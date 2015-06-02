@@ -1105,9 +1105,6 @@ IPLAN2P8_DEFS = -DUSE_IPLAN2P8
 #ifndef BuildGLXLibrary
 # define BuildGLXLibrary	YES
 #endif
-#ifndef BuildXResLibrary
-# define BuildXResLibrary       YES
-#endif
 #endif
 
 /*

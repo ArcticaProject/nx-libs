@@ -54,8 +54,8 @@ COMPOSITEHEADERS = composite.h compositeproto.h
 XTRAPHEADERS = xtrapbits.h xtrapddmi.h xtrapdi.h xtrapemacros.h xtraplib.h \
 	xtraplibp.h xtrapproto.h
 #endif
-#if BuildXResExt || BuildXResLibrary
-XRESHEADERS = XRes.h XResproto.h
+#if BuildXResExt
+XRESHEADERS = XResproto.h
 #endif
 #if BuildXevie
 XEVIEHEADERS = Xevie.h Xeviestr.h

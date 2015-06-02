@@ -817,7 +817,6 @@ ln -s -f ../../../../%{_lib}/libNX_Xinerama.so.1 %{buildroot}%{_libdir}/nx/X11/X
 %{_libdir}/libNX_Xtst.so
 %{_includedir}/nx/X11/X10.h
 %dir %{_includedir}/nx/X11/extensions
-%{_includedir}/nx/X11/extensions/XRes.h
 %{_includedir}/nx/X11/extensions/XTest.h
 %{_includedir}/nx/X11/extensions/Xcomposite.h
 %{_includedir}/nx/X11/extensions/Xevie.h

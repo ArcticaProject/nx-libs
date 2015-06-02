@@ -39,10 +39,6 @@ XF86RUSHLIBDIR = Xxf86rush
 XINERAMADIR=Xinerama
 #endif
 
-#if BuildXResLibrary
-XRESLIBDIR = XRes
-#endif
-
 #if BuildGLXLibrary
 GLXLIBDIR = GL
 #endif
@@ -99,7 +95,6 @@ LINTSUBDIRS = \
 	$(GLXLIBDIR) \
 	$(XINERAMADIR) \
 	$(RENDERLIBDIR) \
-	$(XRESLIBDIR) \
 	$(XFIXESLIBDIR) \
 	$(COMPOSITELIBDIR) \
 	$(NULL)
