@@ -8100,16 +8100,52 @@ int ReadRemoteData(int fd, char *buffer, int size, char stop)
 int WriteLocalData(int fd, const char *buffer, int size)
 {
   int position = 0;
+  int ret = 0;
+  fd_set writeSet;
+  struct timeval selectTs = {30, 0};
 
   while (position < size)
   {
+
+    // A write to a non-blocking socket may fail with EAGAIN. The problem is
+    // that cache data is done in several writes, and there's no easy way
+    // to handle failure without rewriting a significant amount of code.
+    //
+    // Bailing out of the outer loop would result in restarting the sending
+    // of the entire cache list, which would confuse the other side.
+
+    FD_ZERO(&writeSet);
+    FD_SET(fd, &writeSet);
+
+    ret = select(fd+1, NULL, &writeSet, NULL, &selectTs);
+
+    #ifdef DEBUG
+    *logofs << "Loop: WriteLocalData: select() returned with a code of " << ret << " and remaining timeout of " 
+            << selectTs.tv_sec << " sec, " << selectTs.tv_usec << "usec\n" << logofs_flush;
+    #endif
+
+    if ( ret < 0 )
+    {
+      *logofs << "Loop: Error in select() when writing data to FD#" << fd << ": " << strerror(EGET()) << "\n" << logofs_flush;
+
+      if ( EGET() == EINTR )
+        continue;
+
+      return -1;
+    }
+    else if ( ret == 0 )
+    {
+      *logofs << "Loop: Timeout expired in select() when writing data to FD#" << fd << ": " << strerror(EGET()) << "\n" << logofs_flush;
+      return -1;
+    }
+
     int result = write(fd, buffer + position, size - position);
 
     getNewTimestamp();
 
     if (result <= 0)
     {
-      if (result < 0 && EGET() == EINTR)
+      if (result < 0 && (EGET() == EINTR || EGET() == EAGAIN || EGET() == EWOULDBLOCK))
       {
         continue;
       }
