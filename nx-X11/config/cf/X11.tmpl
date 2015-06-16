@@ -289,22 +289,9 @@ XORGRELSTRING = XorgManVersionString
 #endif
 #ifndef BuildGlxExt
 #define BuildGlxExt		NO
-#else
-#if     BuildGlxExt && !defined(XFree86Version) && !defined(XorgVersion)
-#undef  BuildXF86DRI
-#undef  BuildXF86DRIDriverSupport
-#define BuildXF86DRI			NO
-#define BuildXF86DRIDriverSupport	NO
-#endif
-#endif
-#ifndef BuildGLXLibrary
-#define BuildGLXLibrary		(BuildGlxExt && !BuildServersOnly)
 #endif
 #ifndef BuildOSMesaLib
 #define BuildOSMesaLib		BuildGlxExt
-#endif
-#ifndef BuildXDriInfo
-#define BuildXDriInfo		(BuildGLXLibrary && !BuildServersOnly)
 #endif
 #ifndef BuildXF86RushExt
 #define BuildXF86RushExt	NO
@@ -1547,52 +1534,6 @@ ProjectUnsharedLibReferences(XONLY,NX_X11,$(XLIBSRC),XBuildLibDir)
 #define ProfileLibXcomposite	NO
 #endif
 
-#if BuildGLXLibrary
-#ifndef SharedLibGlx
-#define SharedLibGlx		HasSharedLibraries
-#endif
-#ifndef NormalLibGlx
-#define NormalLibGlx		(!SharedLibX11 | ForceNormalLib)
-#endif
-#ifndef DebugLibGlx
-#define DebugLibGlx		NO
-#endif
-#ifndef ProfileLibGlx
-#define ProfileLibGlx		NO
-#endif
-#ifndef BuildLibGlxWithoutPIC
-#define BuildLibGlxWithoutPIC	NO
-#endif
-#if BuildLibGlxWithoutPIC && SharedLibGlx
-#define SharedLibGlxWithoutPIC	YES
-#else
-#define SharedLibGlxWithoutPIC	NO
-#endif
-#ifndef LinkGLToUsrLib
-#define LinkGLToUsrLib		NO
-#endif
-#if NothingOutsideProjectRoot
-#undef LinkGLToUsrLib
-#define LinkGLToUsrLib		NO
-#endif
-#ifndef LinkGLToUsrInclude
-#define LinkGLToUsrInclude	NO
-#endif
-#if NothingOutsideProjectRoot
-#undef LinkGLToUsrInclude
-#define LinkGLToUsrInclude	NO
-#endif
-#else
-#undef  SharedLibGlx
-#define SharedLibGlx		NO
-#undef  NormalLibGlx
-#define NormalLibGlx		NO
-#undef  DebugLibGlx
-#define DebugLibGlx		NO
-#undef  ProfileLibGlx
-#define ProfileLibGlx		NO
-#endif
-
 #ifndef SharedLibXext
 #define SharedLibXext HasSharedLibraries
 #endif
@@ -1667,16 +1608,6 @@ ProjectUnsharedLibReferences(XXF86RUSH,NX_Xxf86rush,$(XXF86RUSHLIBSRC),XBuildLib
 SharedLibReferences(XINERAMA,NX_Xinerama,$(XINERAMALIBSRC),SOXINERAMAREV,SharedXineramaRev)
 #else
 ProjectUnsharedLibReferences(XINERAMA,NX_Xinerama,$(XINERAMALIBSRC),XBuildLibDir)
-#endif
-
-    GLXLIBSRC = $(LIBSRC)/GL
-#if SharedLibGlx
-#ifndef SharedGlxRev
-#define SharedGlxRev 1.2
-#endif
-SharedLibReferences(GLX,NX_GL,$(GLXLIBSRC),SOGLREV,SharedGlxRev)
-#else
-ProjectUnsharedLibReferences(GLX,NX_GL,$(GLXLIBSRC),XBuildLibDir)
 #endif
 
     XRENDERLIBSRC = $(LIBSRC)/Xrender

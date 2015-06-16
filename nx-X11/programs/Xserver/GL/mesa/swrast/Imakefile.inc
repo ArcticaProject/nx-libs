@@ -1,9 +1,5 @@
 XCOMM $XFree86: xc/lib/GL/mesa/src/swrast/Imakefile.inc,v 1.1tsi Exp $
 
-#ifndef MesaSwrastBuildDir
-#define MesaSwrastBuildDir $(GLXLIBSRC)/mesa/swrast/
-#endif
-
 MESASWRASTBUILDDIR = MesaSwrastBuildDir
 
   MESA_SWRAST_SRCS = $(MESASWRASTBUILDDIR)s_aaline.c \

@@ -107,11 +107,7 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 /* the relative symlink created by this rule causes problems for us */
 # endif /* !defined(NothingOutsideProjectRoot) || !NothingOutsideProjectRoot */
 # define SharedLibXdmGreet	NO
-# define LinkGLToUsrInclude	NO
-# define LinkGLToUsrLib		NO
 # define FSUseSyslog		YES
-
-# define BuildLibGlxWithoutPIC  NO
 
 # define DriverManSuffix       4x
 # define DriverManDir          $(MANSOURCEPATH)4
@@ -322,58 +318,6 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 #if DoOSFontRestore
 # ifndef FontRestoreCheckOsVersion
 #  define FontRestoreCheckOsVersion YES
-# endif
-#endif
-
-/* The DRM module requires kernel services that appeared in late 2.1.x
-   kernels and are known to be present in 2.2.x kernels. */
-#ifndef BuildXF86DRI
-#  if defined(AlphaArchitecture)
-#    define BuildXF86DRI	YES
-#  elif defined(Arm32Architecture)
-#    define BuildXF86DRI	NO
-#  elif defined(HPArchitecture)
-#    define BuildXF86DRI	YES
-#  elif defined(i386Architecture)
-#    if (defined(__linux__) && (OSMajorVersion > 2 || (OSMajorVersion == 2 && \
-        OSMinorVersion >= 2))) || \
-        defined(__FreeBSD_kernel__)
-#      define BuildXF86DRI	YES
-#    else
-#      define BuildXF86DRI	NO
-#    endif
-#  elif defined(ia64Architecture)
-#    define BuildXF86DRI	YES
-#  elif defined(Mc68020Architecture)
-#    define BuildXF86DRI	NO
-#  elif defined(MipsArchitecture)
-#    define BuildXF86DRI	NO
-#  elif defined(PpcArchitecture)
-#    define BuildXF86DRI	YES
-#  elif defined(Ppc64Architecture)
-#    define BuildXF86DRI	NO
-#  elif defined(s390Architecture) || defined(s390xArchitecture)
-#    define BuildXF86DRI	NO
-#  elif defined(SparcArchitecture)
-#    define BuildXF86DRI	YES
-#  elif defined(SuperHArchitecture)
-#    define BuildXF86DRI	NO
-#  elif defined(AMD64Architecture)
-#    define BuildXF86DRI	YES
-#  else
-#    define BuildXF86DRI	NO
-#  endif
-#endif
-
-/*
- * Build shared libGL and the DRI modules without -fPIC on some architectures.
- * This improves performance.
- */
-#ifndef BuildLibGlxWithoutPIC
-# if BuildXF86DRI
-#  if defined(i386Architecture)
-#   define BuildLibGlxWithoutPIC	YES
-#  endif
 # endif
 #endif
 
@@ -1005,14 +949,6 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 #ifndef StaticLibrary
 # define StaticLibrary(libpath,libname) -Wl,-Bstatic Concat(-L,libpath) Concat(-l,libname) -Wl,-Bdynamic
 #endif
-
-#ifndef LinkGLToUsrLib
-# define LinkGLToUsrLib		YES
-#endif
-# ifndef LinkGLToUsrInclude
-# define LinkGLToUsrInclude	YES
-#endif
-
 
 #define HasGnuMake		YES
 

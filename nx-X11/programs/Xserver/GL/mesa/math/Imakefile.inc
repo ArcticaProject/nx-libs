@@ -1,9 +1,5 @@
 XCOMM $XFree86: xc/lib/GL/mesa/src/math/Imakefile.inc,v 1.1tsi Exp $
 
-#ifndef MesaMathBuildDir
-#define MesaMathBuildDir $(GLXLIBSRC)/mesa/math/
-#endif
-
 MESAMATHBUILDDIR = MesaMathBuildDir
 
   MESA_MATH_SRCS = $(MESAMATHBUILDDIR)m_debug_clip.c \

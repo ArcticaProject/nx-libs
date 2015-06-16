@@ -1,9 +1,5 @@
 XCOMM $XFree86$
 
-#ifndef MesaSlangBuildDir
-#define MesaSlangBuildDir $(GLXLIBSRC)/mesa/shader/slang/
-#endif
-
 MESASLANGBUILDDIR=MesaSlangBuildDir
 
   MESA_SLANG_SRCS =	$(MESASLANGBUILDDIR)slang_assemble_assignment.c \

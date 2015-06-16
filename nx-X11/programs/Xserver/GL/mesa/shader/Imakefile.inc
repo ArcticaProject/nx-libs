@@ -1,9 +1,5 @@
 XCOMM $XFree86:$
 
-#ifndef MesaShaderBuildDir
-#define MesaShaderBuildDir $(GLXLIBSRC)/mesa/shader/
-#endif
-
 MESASHADERBUILDDIR = MesaShaderBuildDir
 
   MESA_SHADER_SRCS =	$(MESASHADERBUILDDIR)arbprogparse.c \

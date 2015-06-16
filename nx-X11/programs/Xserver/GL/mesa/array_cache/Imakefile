@@ -1,12 +1,7 @@
 XCOMM $XFree86: xc/programs/Xserver/GL/mesa/src/array_cache/Imakefile,v 1.8 2002/11/22 22:56:01 tsi Exp $
 
 #if DoLoadableServer
-#if !BuildModuleInSubdir
 #define IHaveModules
-#elif !defined(IHaveModules)
-#define IHaveSubdirs
-SUBDIRS = module
-#endif
 #endif
 
 #include <Server.tmpl>
@@ -14,11 +9,7 @@ SUBDIRS = module
 #define NeedAllMesaSrc
 #define NeedToLinkMesaSrc
 #define MesaACBuildDir /**/
-#if !defined(IHaveModules) || !BuildModuleInSubdir
-#include "../../../../../lib/GL/mesa/array_cache/Imakefile.inc"
-#else
-#include "../../../../../../lib/GL/mesa/array_cache/Imakefile.inc"
-#endif
+#include "Imakefile.inc"
 
          SRCS = $(MESA_AC_SRCS)
          OBJS = $(MESA_AC_OBJS)
@@ -44,7 +35,6 @@ NormalLibraryObjectRule()
 
 SubdirLibraryRule($(OBJS))
 
-LintLibraryTarget(dri,$(SRCS))
 NormalLintTarget($(SRCS))
 
 DependTarget()

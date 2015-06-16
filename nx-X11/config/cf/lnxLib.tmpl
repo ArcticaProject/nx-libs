@@ -12,12 +12,7 @@ XCOMM $XFree86: xc/config/cf/lnxLib.tmpl,v 3.19 2003/10/15 22:47:48 herrb Exp $
 #define SharedXrenderReqs $(LDPRELIB) $(XLIB)
 #define SharedXtstReqs	  $(LDPRELIB) $(XLIB)
 
-#if GlxUseBuiltInDRIDriver
-#define ExtraSharedGLReqs /**/
-#else
-#define ExtraSharedGLReqs -ldl
-#endif
-#define SharedGLReqs	  $(LDPRELIB) $(XLIB) ExtraSharedGLReqs
+#define SharedGLReqs	  $(LDPRELIB) $(XLIB) -ldl
 
 #define SharedXineramaReqs	$(LDPRELIB) $(XLIB)
 #define SharedXxf86dgaReqs	$(LDPRELIB) $(XLIB)

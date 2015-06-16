@@ -1,27 +1,16 @@
 #if DoLoadableServer
-#if !BuildModuleInSubdir
 #define IHaveModules
-#elif !defined(IHaveModules)
-#define IHaveSubdirs
-SUBDIRS = module
-#endif
 #endif
 
-#if !defined(IHaveModules) || !BuildModuleInSubdir
 #define IHaveSubdirs
       SUBDIRS = grammar slang
-#endif
 
 #include <Server.tmpl>
 
 #define NeedAllMesaSrc
 #define NeedToLinkMesaSrc
 #define MesaShaderBuildDir /**/
-#if !defined(IHaveModules) || !BuildModuleInSubdir
-#include "../../../../../lib/GL/mesa/shader/Imakefile.inc"
-#else
-#include "../../../../../../lib/GL/mesa/shader/Imakefile.inc"
-#endif
+#include "Imakefile.inc"
 
          SRCS = $(MESA_SHADER_SRCS)
          OBJS = $(MESA_SHADER_OBJS)
@@ -48,7 +37,6 @@ NormalLibraryObjectRule()
 
 SubdirLibraryRule($(OBJS))
 
-LintLibraryTarget(dri,$(SRCS))
 NormalLintTarget($(SRCS))
 
 DependTarget()
