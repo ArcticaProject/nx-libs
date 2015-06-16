@@ -81,6 +81,7 @@
 0630_nx-X11_fix-underlinking-dlopen-dlsym.full.patch
 0640_nx-X11_fix-underlinking-libNX_Xcomposite_damage_fixes.full.patch
 0650_nxcompshad_link-to-NX_Xext.full.patch
+0660_nxcomp_fix-negotiation-in-stage-10-error.full+lite.patch
 0990_fix-DEBUG-and-TEST-builds.full.patch
 0991_fix-hr-typos.full+lite.patch
 0991_fix-hr-typos.full.patch
