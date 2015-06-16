@@ -8120,7 +8120,7 @@ int WriteLocalData(int fd, const char *buffer, int size)
     ret = select(fd+1, NULL, &writeSet, NULL, &selectTs);
 
     #ifdef DEBUG
-    *logofs << "Loop: WriteLocalData: select() returned with a code of " << ret << " and remaining timeout of " 
+    *logofs << "Loop: WriteLocalData: select() returned with a code of " << ret << " and remaining timeout of "
             << selectTs.tv_sec << " sec, " << selectTs.tv_usec << "usec\n" << logofs_flush;
     #endif
 
