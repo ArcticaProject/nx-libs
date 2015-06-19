@@ -1022,6 +1022,8 @@ Description: X2Go agent
 
 Package: nxproxy
 Architecture: any
+Breaks: qvd-nxproxy
+Replaces: qvd-nxproxy
 Multi-Arch: foreign
 Depends:
  ${shlibs:Depends},
@@ -1094,8 +1096,10 @@ Pre-Depends:
 Depends:
  ${shlibs:Depends},
  ${misc:Depends},
-Breaks: nxcomp (<= 3.5.1)
-Replaces: nxcomp
+Breaks: nxcomp (<= 3.5.1),
+ qvd-libxcomp3,
+Replaces: nxcomp,
+ qvd-libxcomp3,
 Description: nx-X11 compression library
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
