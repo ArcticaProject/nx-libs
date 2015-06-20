@@ -196,7 +196,6 @@ NX_VERSION_CURRENT_STRING  = nxVersionString
 #define BuildXF86VidModeLibrary	YES
 #define BuildXKBlib		YES
 #define BuildXKBfilelib		YES
-#define BuildXKBuilib		YES
 #endif
 
 /*
