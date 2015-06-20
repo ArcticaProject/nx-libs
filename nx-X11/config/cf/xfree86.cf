@@ -160,7 +160,6 @@ XCOMM $Xorg: xfree86.cf,v 1.4 2000/08/17 19:41:49 cpqbld Exp $
 #define BuildXF86VidModeLibrary	YES
 #define BuildXKBlib		YES
 #define BuildXKBfilelib		YES
-#define BuildXKBuilib		YES
 #endif
 
 /*

@@ -15,10 +15,6 @@ NULL =
 XKBLIBDIR = xkbfile
 #endif
 
-#if BuildXKBuilib
-XKBUILIBDIR = xkbui
-#endif
-
 #if BuildXF86MiscLibrary
 XF86MISCLIBDIR = Xxf86misc
 #endif
@@ -87,7 +83,6 @@ LINTSUBDIRS = \
 	$(XF86RUSHLIBDIR) \
 	$(XTSTLIBDIR) \
 	$(XKBLIBDIR) \
-	$(XKBUILIBDIR) \
 	$(XINERAMADIR) \
 	$(RENDERLIBDIR) \
 	$(XFIXESLIBDIR) \
