@@ -82,7 +82,7 @@ clean::
 	-$(RM) Xpoll.h
 
 XCOMM For the Linux/OpenGL base standard
-#if LinkGLToUsrInclude && AlternateIncRoot
+#if AlternateIncRoot
 install::
 	MakeDir($(DESTDIR)$(SYSTEMUSRINCDIR))
 	-$(RM) $(DESTDIR)$(SYSTEMUSRINCDIR)/GL
