@@ -41,7 +41,7 @@ Release goals (phase 1) for nx-libs release series 3.6.0.x:
 * no bundled non-X11 libraries anymore (done)
 * no bundled Mesa library anymore (todo)
 * complete imake cleanup (work in progress)
-* replace as many liNX_X* libraries by X.org's libX* libraries
+* replace as many libNX_X* libraries by X.org's libX* libraries
   (work in progress)
 * support for iOS (nxproxy, complete)
 * Unix file socket communication for nxproxy -C <-> nxproxy -S connections
