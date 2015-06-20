@@ -199,9 +199,6 @@ XORGRELSTRING = XorgManVersionString
 #ifndef BuildXKBlib
 #define BuildXKBlib		(BuildXKB && !BuildServersOnly)
 #endif
-#ifndef BuildXKBuilib
-#define BuildXKBuilib		(BuildXKB && !BuildServersOnly)
-#endif
 #ifndef BuildXKBfilelib
 #define BuildXKBfilelib		(BuildXKB && !BuildServersOnly)
 #endif
@@ -1822,50 +1819,6 @@ ProjectUnsharedLibReferences(XKBFILE,NX_xkbfile,$(XKBFILELIBSRC),XBuildLibDir)
 #  define XkbClientLibs
 # endif
 #endif /* BuildXKBlib */
-
-#if BuildXKBlib
-# ifndef SharedLibxkbui
-#  define SharedLibxkbui	HasSharedLibraries
-# endif
-# ifndef NormalLibxkbui
-#  define NormalLibxkbui	(!SharedLibxkbui || ForceNormalLib)
-# endif
-# ifndef DebugLibxkbui
-#  define DebugLibxkbui		NO
-# endif
-# ifndef ProfileLibxkbui
-#  define ProfileLibxkbui	NO
-# endif
-#else
-# ifndef SharedLibxkbui
-#  define SharedLibxkbui	NO
-# endif
-# ifndef NormalLibxkbui
-#  define NormalLibxkbui	NO
-# endif
-# ifndef DebugLibxkbui
-#  define DebugLibxkbui		NO
-# endif
-# ifndef ProfileLibxkbui
-#  define ProfileLibxkbui	NO
-# endif
-#endif
-    XKBUILIBSRC = $(LIBSRC)/xkbui
-#if SharedLibxkbui
-# ifndef SharedxkbuiRev
-#  define SharedxkbuiRev	1.0
-# endif
-SharedLibReferences(XKBUI,NX_xkbui,$(XKBUISRC),SOXKBUIREV, SharedxkbuiRev)
-#else
-ProjectUnsharedLibReferences(XKBUI,NX_xkbui,$(XKBUILIBSRC),XBuildLibDir)
-#endif
-
-#ifndef XkbuiLibs
-# define	XkbuiLibs $(XKBUILIB)
-#endif
-#ifndef XkbuiDepLibs
-# define	XkbuiDepLibs $(DEPXKBFILELIB)
-#endif
 
 #ifndef NeedDefaultDepLibs
 #define NeedDefaultDepLibs YES
