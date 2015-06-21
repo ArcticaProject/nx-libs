@@ -55,27 +55,6 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
  */
 
 /*
- * Which drivers to build.  When building a static server, each of these
- * will be included in it.  When building the loadable server each of these
- * modules will be built.
- *
-#define XF86CardDrivers		mga glint nv tga s3virge sis rendition \
-				neomagic i740 tdfx savage \
-				cirrus vmware tseng trident chips apm \
-				GlideDriver fbdev i128 \
-				ati DevelDrivers ark cyrix \
-				siliconmotion \
-				vesa vga XF86OSCardDrivers XF86ExtraCardDrivers
- */
-
-/*
- * To add third party drivers to the standard driver list, set the
- * following.
- *
-#define XF86ExtraCardDrivers	extradriver1 extradriver2 ...
- */
-
-/*
  * Select the XInput devices you want by uncommenting this.
  *
 #define XInputDrivers		mouse keyboard acecad calcomp citron \

@@ -7,7 +7,7 @@ XCOMM $XFree86: xc/programs/Xserver/include/Imakefile,v 3.21 2001/01/17 22:36:56
 
 HEADERS = os.h misc.h
 
-#if defined(XorgVersion) || defined(XFree86Version) \
+#if defined(XorgVersion) \
 	|| defined(BSDOSArchitecture)
 #if DoLoadableServer
 LinkSourceFile(xf86Module.h,$(XF86COMSRC))

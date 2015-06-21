@@ -29,7 +29,7 @@ XKB_DDXDEFS = XkbServerDefines
 NX_DEFINES = -DNXAGENT_SERVER
 #endif
 
-#if (defined(XF86Server) && XF86Server) || (defined(XorgServer) && XorgServer)
+#if (defined(XorgServer) && XorgServer)
 XF86INCLUDES = -I$(XF86COMSRC) -I$(XF86OSSRC)
    XF86_OBJS = xf86KillSrv.o xf86VT.o xf86Private.o
 #endif
@@ -62,7 +62,7 @@ NormalLibraryTarget(xkb,$(OBJS))
 LintLibraryTarget(xkb,$(SRCS))
 NormalLintTarget($(SRCS))
 
-#if (defined(XF86Server) && XF86Server) || (defined(XorgServer) && XorgServer)
+#if (defined(XorgServer) && XorgServer)
 ObjectFromSpecialSource(xf86KillSrv,ddxKillSrv,-DXF86DDXACTIONS)
 ObjectFromSpecialSource(xf86VT,ddxVT,-DXF86DDXACTIONS)
 ObjectFromSpecialSource(xf86Private,ddxPrivate,-DXF86DDXACTIONS)

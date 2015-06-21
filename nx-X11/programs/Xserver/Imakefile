@@ -34,7 +34,7 @@ XCOMM $XFree86: xc/programs/Xserver/Imakefile,v 3.296 2003/11/23 06:47:00 torrey
 #define dependLib(x)
 #endif
 
-#if (defined (XFree86Version) || defined(XorgVersion))
+#if defined(XorgVersion)
 /* Do not strip server binaries */
 INSTPGMFLAGS = 
 #endif
@@ -89,7 +89,7 @@ INSTPGMFLAGS =
 #if BuildXKB
          XKBEXT = xkb/LibraryTargetName(xkb) dependLib($(OS))
          XKBDIR = xkb
-#if (defined(XFree86Version) || defined(XorgVersion))
+#if defined(XorgVersion)
     XF86XKBOBJS = xkb/xf86KillSrv.o xkb/xf86VT.o xkb/xf86Private.o
 #endif
 #endif
