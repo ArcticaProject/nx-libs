@@ -46,7 +46,7 @@ from The Open Group.
 #include "dixevents.h"
 #include "sleepuntil.h"
 #define _XTEST_SERVER_
-#include <nx-X11/extensions/XTest.h>
+#include <nx-X11/extensions/xtestconst.h>
 #include <nx-X11/extensions/xteststr.h>
 #ifdef XINPUT
 #include <nx-X11/extensions/XI.h>

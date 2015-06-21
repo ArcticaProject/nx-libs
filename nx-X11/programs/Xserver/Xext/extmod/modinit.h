@@ -30,7 +30,7 @@ extern void MITMiscExtensionInit(INITARGS);
 #ifdef XTEST
 extern void XTestExtensionInit(INITARGS);
 #define _XTEST_SERVER_
-#include <nx-X11/extensions/XTest.h>
+#include <nx-X11/extensions/xtestconst.h>
 #include <nx-X11/extensions/xteststr.h>
 #endif
 

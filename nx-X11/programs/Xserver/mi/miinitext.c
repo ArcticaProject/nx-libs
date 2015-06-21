@@ -195,7 +195,7 @@ typedef void (*InitExtension)(INITARGS);
 #endif
 #ifdef XTEST
 #define _XTEST_SERVER_
-#include <nx-X11/extensions/XTest.h>
+#include <nx-X11/extensions/xtestconst.h>
 #endif
 #ifdef XKB
 #include <nx-X11/extensions/XKB.h>

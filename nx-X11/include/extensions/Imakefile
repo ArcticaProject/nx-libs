@@ -91,7 +91,7 @@ HEADERS = Xext.h \
 	bigreqstr.h \
 	extutil.h \
 	XI.h XInput.h XIproto.h \
-	XTest.h xtestext1.h xteststr.h \
+	xtestconst.h xtestext1.h xteststr.h \
 	XKB.h XKBgeom.h XKBproto.h XKBstr.h XKBsrv.h \
 	Xdbe.h Xdbeproto.h \
 	Xag.h Xagstr.h Xagsrv.h \

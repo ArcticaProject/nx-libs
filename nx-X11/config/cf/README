@@ -196,7 +196,6 @@ X11.tmpl provides defaults for the following variables:
 	DebugLibX11		build libX11_d.a
 	DebugLibXau		build libXau_d.a
 	DebugLibXext		build libXext_d.a
-	DebugLibXtst		build libXtst_d.a
 	DebugOldX		build liboldX_d.a
 	DefaultCursorTheme      name of default cursor theme
 	DefaultFontPath		default server font path
@@ -232,14 +231,12 @@ X11.tmpl provides defaults for the following variables:
 	NormalLibX11		build libX11.a
 	NormalLibXau		build libXau.a
 	NormalLibXext		build libXext.a
-	NormalLibXtst		build libXtst.a
 	NormalOldX		build liboldX.a
 	OsNameDefines		If uname(2) unavailable, set to -DOS_NAME=OSName
 	PrimaryScreenResolution	resolution of default server screen
 	ProfileLibX11		build libX11_p.a
 	ProfileLibXau		build libXau_p.a
 	ProfileLibXext		build libXext_p.a
-	ProfileLibXtst		build libXtst_p.a
 	ProfileOldX		build liboldX_p.a
 	ProjectX		version indicating this is the X Window System
 	RemoveTargetProgramByMoving	boolean for rm -f that doesn't
@@ -252,7 +249,6 @@ X11.tmpl provides defaults for the following variables:
 	SharedLibX11		boolean for making sharable libX11.so
 	SharedLibXau		boolean for making sharable libXau.so
 	SharedLibXext		boolean for making sharable libXext.so
-	SharedLibXtst		boolean for making sharable libXtst.so
 	SharedOldX		boolean for making sharable liboldX.so
 	ShmDefines		MIT-SHM define
 	TwmDir			directory in which to install twm config files
@@ -330,8 +326,6 @@ An <os>Lib.tmpl file provides defaults for the following variables:
 	SharedXauRev		version number for libXau.so
 	SharedXextReqs		required libs for libXext.so
 	SharedXextRev		version number for libXext.so
-	SharedXtstReqs		required libs for libXtst.so
-	SharedXtstRev		version number for libXtst.so
 
 Vendor.cf files and/or site/host specific .def files may define the
 following variables:

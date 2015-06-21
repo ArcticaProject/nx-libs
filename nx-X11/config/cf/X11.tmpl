@@ -1463,28 +1463,6 @@ SharedLibReferences(OLDX,NX_oldX,$(OLDXLIBSRC),SOOLDXREV,SharedOldXRev)
 ProjectUnsharedLibReferences(OLDX,NX_oldX,$(OLDXLIBSRC),XBuildLibDir)
 #endif
 
-#ifndef SharedLibXtst
-#define SharedLibXtst HasSharedLibraries
-#endif
-#ifndef NormalLibXtst
-#define NormalLibXtst (!SharedLibXtst | ForceNormalLib)
-#endif
-#ifndef DebugLibXtst
-#define DebugLibXtst		NO	/* debugged Xtst library */
-#endif
-#ifndef ProfileLibXtst
-#define ProfileLibXtst		NO	/* profiled Xtst library */
-#endif
-      XTESTLIBSRC = $(LIBSRC)/Xtst
-#if SharedLibXtst
-#ifndef SharedXtstRev
-#define SharedXtstRev 6.1
-#endif
-SharedLibReferences(XTEST,NX_Xtst,$(XTESTLIBSRC),SOXTESTREV,SharedXtstRev)
-#else
-ProjectUnsharedLibReferences(XTEST,NX_Xtst,$(XTESTLIBSRC),XBuildLibDir)
-#endif
-
 #if HasMotif
 
 #ifndef MotifDir

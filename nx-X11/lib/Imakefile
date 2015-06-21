@@ -37,7 +37,6 @@ XEXTLIBDIR = Xext
 
 #if BuildLibraries
 OLDXLIBDIR = oldX
-XTSTLIBDIR = Xtst
 #endif
 
 
@@ -46,7 +45,6 @@ LINTSUBDIRS = \
 	$(X11LIBDIR) \
 	$(OLDXLIBDIR) \
 	$(XEXTLIBDIR) \
-	$(XTSTLIBDIR) \
 	$(XKBLIBDIR) \
 	$(XINERAMADIR) \
 	$(RENDERLIBDIR) \
