@@ -150,9 +150,6 @@ XORGRELSTRING = XorgManVersionString
 #ifndef BuildLoadableXlibXcursor
 #define BuildLoadableXlibXcursor (HasDlopen && SharedLibX11)
 #endif
-#ifndef BuildXextLib
-#define BuildXextLib		BuildLibraries
-#endif
 #ifndef BuildXauLib
 #define BuildXauLib		(BuildLibraries || BuildLibrariesForXServers)
 #endif
@@ -1500,32 +1497,6 @@ ProjectUnsharedLibReferences(XONLY,NX_X11,$(XLIBSRC),XBuildLibDir)
 #undef  ProfileLibXcomposite
 #define ProfileLibXcomposite	NO
 #endif
-
-#ifndef SharedLibXext
-#define SharedLibXext HasSharedLibraries
-#endif
-#ifndef NormalLibXext
-#define NormalLibXext (!SharedLibXext | ForceNormalLib)
-#endif
-#ifndef DebugLibXext
-#define DebugLibXext		NO	/* debugged Xext library */
-#endif
-#ifndef ProfileLibXext
-#define ProfileLibXext		NO	/* profiled Xext library */
-#endif
-      XEXTLIBSRC = $(LIBSRC)/Xext
-#if SharedLibXext
-#ifndef SharedXextRev
-#define SharedXextRev 6.4
-#endif
-SharedLibReferences(EXTENSION,NX_Xext,$(XEXTLIBSRC),SOXEXTREV,SharedXextRev)
-#else
-ProjectUnsharedLibReferences(EXTENSION,NX_Xext,$(XEXTLIBSRC),XBuildLibDir)
-#endif
-LINTEXTENSIONLIB = $(LINTEXTENSION)
-          DEPXLIB = $(DEPEXTENSIONLIB) $(DEPXONLYLIB)
-             XLIB = $(EXTENSIONLIB) $(XONLYLIB)
-         LINTXLIB = $(LINTXONLYLIB)
 
     XXF86MISCLIBSRC = $(LIBSRC)/Xxf86misc
 #if SharedLibXxf86misc

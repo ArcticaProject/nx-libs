@@ -57,10 +57,6 @@ XAULIBDIR = Xau
 X11LIBDIR = X11
 #endif
 
-#if BuildXextLib
-XEXTLIBDIR = Xext
-#endif
-
 #if BuildLibraries
 OLDXLIBDIR = oldX
 XTSTLIBDIR = Xtst

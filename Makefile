@@ -157,7 +157,6 @@ install-full:
 	# Provide means for Xinerama support in NX/X2Go sessions. This
 	# This also requires three post-install symlinks created by libnx-xinerama1:
 	# $(DESTDIR)$(NXLIBDIR)/X11/Xinerama/libNX_X11.so.6 -> /usr/<libdir>/libX11.so.6
-	# $(DESTDIR)$(NXLIBDIR)/X11/Xinerama/libNX_Xext.so.6 -> /usr/<libdir>/libXext.so.6
 	# $(DESTDIR)$(NXLIBDIR)/X11/Xinerama/libXinerama.so.1 -> /usr/<libdir>/libNX_Xinerama.so.1
 	# Only create the owned directory here for nx-x11-common.
 	$(INSTALL_DIR) $(DESTDIR)$(NXLIBDIR)/X11/Xinerama

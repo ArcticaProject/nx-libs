@@ -207,53 +207,6 @@ then take the contents of that buffer and do whatever they like. The
 off-screen buffer can be automatically merged into the parent window
 or merged by external programs, called compositing managers.
 
-
-%package -n libNX_Xext-devel
-Group:          Development/Libraries
-Summary:        Development files for the NX Common Extensions library
-Requires:       libNX_Xext6%{?_isa} = %{version}-%{release}
-Requires:       libNX_Xau6-devel%{?_isa} = %{version}-%{release}
-Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
-
-%description -n libNX_Xext-devel
-NX is a software suite which implements very efficient compression of
-the X11 protocol. This increases performance when using X
-applications over a network, especially a slow one.
-
-The NX_Xext library contains a handful of X11 extensions:
-- Double Buffer extension (DBE/Xdbe)
-- Display Power Management Signaling (DPMS) extension
-- X11 Nonrectangular Window Shape extension (Xshape)
-- The MIT Shared Memory extension (MIT-SHM/Xshm)
-- TOG-CUP (colormap) protocol extension (Xcup)
-- X Extended Visual Information extension (XEvi)
-- X11 Double-Buffering, Multi-Buffering, and Stereo extension (Xmbuf)
-
-This package contains all necessary include files and libraries
-needed to develop applications that require these.
-
-
-%package -n libNX_Xext6
-Group:          System Environment/Libraries
-Summary:        Common extensions to the NX protocol
-Requires:       %{name}%{?_isa} >= 3.5.0.29
-Obsoletes:      libNX_Xext
-
-%description -n libNX_Xext6
-NX is a software suite which implements very efficient compression of
-the X11 protocol. This increases performance when using X
-applications over a network, especially a slow one.
-
-The NX_Xext library contains a handful of X11 extensions:
-- Double Buffer extension (DBE/Xdbe)
-- Display Power Management Signaling (DPMS) extension
-- X11 Nonrectangular Window Shape extension (Xshape)
-- The MIT Shared Memory extension (MIT-SHM/Xshm)
-- TOG-CUP (colormap) protocol extension (Xcup)
-- X Extended Visual Information extension (XEvi)
-- X11 Double-Buffering, Multi-Buffering, and Stereo extension (Xmbuf)
-
-
 %package -n libNX_Xfixes-devel
 Group:          Development/Libraries
 Summary:        Development files for the NX Xfixes extension library
@@ -421,7 +374,7 @@ Group:          Development/Libraries
 Summary:        Development files for the NX session shadowing library
 Requires:       libXcompshad3%{?_isa} = %{version}-%{release}
 Requires:       libNX_X11-devel%{?_isa} = %{version}-%{release}
-Requires:       libNX_Xext-devel%{?_isa} = %{version}-%{release}
+Requires:       libXext-devel%{?_isa} = %{version}-%{release}
 Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
 Requires:       %{name}-devel%{?_isa} = %{version}-%{release}
 
@@ -452,7 +405,7 @@ Group:          Development/Libraries
 Summary:        Include files and libraries for NX development
 Requires:       libNX_X11-devel%{?_isa} = %{version}-%{release}
 Requires:       libNX_Xau-devel%{?_isa} = %{version}-%{release}
-Requires:       libNX_Xext-devel%{?_isa} = %{version}-%{release}
+Requires:       libXext-devel%{?_isa} = %{version}-%{release}
 Requires:       libNX_Xfixes-devel%{?_isa} = %{version}-%{release}
 Requires:       libNX_Xrender-devel%{?_isa} = %{version}-%{release}
 Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
@@ -620,7 +573,6 @@ rm -r %{buildroot}%{_includedir}/nx/X11/Xtrans
 
 # Needed for Xinerama support
 ln -s -f ../../../../%{_lib}/libX11.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama/libNX_X11.so.6
-ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama/libNX_Xext.so.6
 ln -s -f ../../../../%{_lib}/libNX_Xinerama.so.1 %{buildroot}%{_libdir}/nx/X11/Xinerama/libXinerama.so.1
 
 %if 0%{?fdupes:1}
@@ -631,7 +583,6 @@ ln -s -f ../../../../%{_lib}/libNX_Xinerama.so.1 %{buildroot}%{_libdir}/nx/X11/X
 %post -n libNX_X11-6 -p /sbin/ldconfig
 %post -n libNX_Xau6 -p /sbin/ldconfig
 %post -n libNX_Xcomposite1 -p /sbin/ldconfig
-%post -n libNX_Xext6 -p /sbin/ldconfig
 %post -n libNX_Xfixes3 -p /sbin/ldconfig
 %post -n libNX_Xinerama1 -p /sbin/ldconfig
 %post -n libNX_Xrender1 -p /sbin/ldconfig
@@ -643,7 +594,6 @@ ln -s -f ../../../../%{_lib}/libNX_Xinerama.so.1 %{buildroot}%{_libdir}/nx/X11/X
 %postun -n libNX_X11-6 -p /sbin/ldconfig
 %postun -n libNX_Xau6 -p /sbin/ldconfig
 %postun -n libNX_Xcomposite1 -p /sbin/ldconfig
-%postun -n libNX_Xext6 -p /sbin/ldconfig
 %postun -n libNX_Xfixes3 -p /sbin/ldconfig
 %postun -n libNX_Xinerama1 -p /sbin/ldconfig
 %postun -n libNX_Xrender1 -p /sbin/ldconfig
@@ -662,7 +612,6 @@ ln -s -f ../../../../%{_lib}/libNX_Xinerama.so.1 %{buildroot}%{_libdir}/nx/X11/X
 %{_datadir}/nx/SecurityPolicy
 %dir %{_libdir}/nx/X11/Xinerama/
 %{_libdir}/nx/X11/Xinerama/libNX_X11.so.6
-%{_libdir}/nx/X11/Xinerama/libNX_Xext.so.6
 %{_libdir}/nx/X11/Xinerama/libXinerama.so.1*
 
 %files -n libNX_X11-6
@@ -698,41 +647,6 @@ ln -s -f ../../../../%{_lib}/libNX_Xinerama.so.1 %{buildroot}%{_libdir}/nx/X11/X
 %files -n libNX_Xcomposite1
 %defattr(-,root,root)
 %{_libdir}/libNX_Xcomposite.so.1*
-
-%files -n libNX_Xext-devel
-%defattr(-,root,root)
-%{_libdir}/libNX_Xext.so
-%dir %{_includedir}/nx/X11/extensions
-%{_includedir}/nx/X11/extensions/MITMisc.h
-%{_includedir}/nx/X11/extensions/XEVI.h
-%{_includedir}/nx/X11/extensions/XEVIstr.h
-%{_includedir}/nx/X11/extensions/XLbx.h
-%{_includedir}/nx/X11/extensions/XShm.h
-%{_includedir}/nx/X11/extensions/Xag.h
-%{_includedir}/nx/X11/extensions/Xagsrv.h
-%{_includedir}/nx/X11/extensions/Xagstr.h
-%{_includedir}/nx/X11/extensions/Xcup.h
-%{_includedir}/nx/X11/extensions/Xcupstr.h
-%{_includedir}/nx/X11/extensions/Xdbe.h
-%{_includedir}/nx/X11/extensions/Xdbeproto.h
-%{_includedir}/nx/X11/extensions/Xext.h
-%{_includedir}/nx/X11/extensions/dpms.h
-%{_includedir}/nx/X11/extensions/dpmsstr.h
-%{_includedir}/nx/X11/extensions/extutil.h
-%{_includedir}/nx/X11/extensions/lbxstr.h
-%{_includedir}/nx/X11/extensions/mitmiscstr.h
-%{_includedir}/nx/X11/extensions/multibuf.h
-%{_includedir}/nx/X11/extensions/multibufst.h
-%{_includedir}/nx/X11/extensions/security.h
-%{_includedir}/nx/X11/extensions/securstr.h
-%{_includedir}/nx/X11/extensions/shape.h
-%{_includedir}/nx/X11/extensions/sync.h
-%{_includedir}/nx/X11/extensions/xtestext1.h
-%{_includedir}/nx/X11/extensions/xteststr.h
-
-%files -n libNX_Xext6
-%defattr(-,root,root)
-%{_libdir}/libNX_Xext.so.6*
 
 %files -n libNX_Xfixes-devel
 %defattr(-,root,root)
@@ -871,9 +785,6 @@ ln -s -f ../../../../%{_lib}/libNX_Xinerama.so.1 %{buildroot}%{_libdir}/nx/X11/X
 %{_includedir}/nx/X11/extensions/recordstr.h
 %{_includedir}/nx/X11/extensions/render.h
 %{_includedir}/nx/X11/extensions/renderproto.h
-%{_includedir}/nx/X11/extensions/shapestr.h
-%{_includedir}/nx/X11/extensions/shmstr.h
-%{_includedir}/nx/X11/extensions/syncstr.h
 %{_includedir}/nx/X11/extensions/xcmiscstr.h
 %{_includedir}/nx/X11/extensions/xf86bigfont.h
 %{_includedir}/nx/X11/extensions/xf86bigfstr.h

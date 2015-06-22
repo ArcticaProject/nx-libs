@@ -37,7 +37,6 @@ Files: nx-X11/config/imake/ccimake.c
  nx-X11/include/extensions/Xagstr.h
  nx-X11/include/extensions/Xcup.h
  nx-X11/include/extensions/Xcupstr.h
- nx-X11/include/extensions/Xext.h
  nx-X11/include/extensions/Xinerama.h
  nx-X11/include/extensions/bigreqstr.h
  nx-X11/include/extensions/extutil.h
@@ -47,9 +46,6 @@ Files: nx-X11/config/imake/ccimake.c
  nx-X11/include/extensions/multibufst.h
  nx-X11/include/extensions/security.h
  nx-X11/include/extensions/securstr.h
- nx-X11/include/extensions/shape.h
- nx-X11/include/extensions/shapestr.h
- nx-X11/include/extensions/shmstr.h
  nx-X11/include/extensions/xcmiscstr.h
  nx-X11/include/extensions/xteststr.h
  nx-X11/lib/X11/AllCells.c
@@ -330,15 +326,6 @@ Files: nx-X11/config/imake/ccimake.c
  nx-X11/lib/Xdmcp/WC8.c
  nx-X11/lib/Xdmcp/Whead.c
  nx-X11/lib/Xdmcp/Wrap.c
- nx-X11/lib/Xext/MITMisc.c
- nx-X11/lib/Xext/XAppgroup.c
- nx-X11/lib/Xext/XMultibuf.c
- nx-X11/lib/Xext/XSecurity.c
- nx-X11/lib/Xext/XShape.c
- nx-X11/lib/Xext/XShm.c
- nx-X11/lib/Xext/Xcup.c
- nx-X11/lib/Xext/extutil.c
- nx-X11/lib/Xext/globals.c
  nx-X11/lib/font/Speedo/bics-iso.h
  nx-X11/lib/font/Speedo/useropt.h
  nx-X11/lib/font/Type1/minimain.c
@@ -1460,7 +1447,6 @@ Files: nx-X11/config/util/aminstall.sh
  nx-X11/lib/Xdamage/autogen.sh
  nx-X11/lib/Xdmcp/Wrap.h
  nx-X11/lib/Xdmcp/Wraphelp.c
- nx-X11/lib/Xext/Xext-def.cpp
  nx-X11/lib/Xfixes/Xfixes-def.cpp
  nx-X11/lib/Xfixes/autogen.sh
  nx-X11/lib/Xinerama/Xinerama-def.cpp
@@ -1540,8 +1526,6 @@ Files: nx-X11/include/DECkeysym.h
  nx-X11/include/Xmd.h
  nx-X11/include/Xproto.h
  nx-X11/include/Xprotostr.h
- nx-X11/include/extensions/sync.h
- nx-X11/include/extensions/syncstr.h
  nx-X11/include/keysym.h
  nx-X11/include/keysymdef.h
  nx-X11/lib/X11/ErrDes.c
@@ -1564,7 +1548,6 @@ Files: nx-X11/include/DECkeysym.h
  nx-X11/lib/X11/Xutil.h
  nx-X11/lib/X11/imThaiFlt.c
  nx-X11/lib/X11/poly.h
- nx-X11/lib/Xext/XSync.c
  nx-X11/lib/font/bitmap/bdfread.c
  nx-X11/lib/font/bitmap/bdfutils.c
  nx-X11/lib/font/bitmap/snfread.c
@@ -1795,7 +1778,6 @@ Files: nx-X11/include/extensions/XEVI.h
  nx-X11/lib/X11/XKBleds.c
  nx-X11/lib/X11/XKBlib.h
  nx-X11/lib/X11/XKBlibint.h
- nx-X11/lib/Xext/XEVI.c
  nx-X11/lib/xkbfile/XKBbells.h
  nx-X11/lib/xkbfile/XKBconfig.h
  nx-X11/lib/xkbfile/XKBfile.h
@@ -2782,7 +2764,6 @@ Files: nx-X11/include/extensions/dpms.h
  nx-X11/include/extensions/dpmsstr.h
  nx-X11/include/extensions/panoramiXext.h
  nx-X11/include/extensions/panoramiXproto.h
- nx-X11/lib/Xext/DPMS.c
  nx-X11/lib/Xinerama/Xinerama.c
  nx-X11/programs/Xserver/Xext/dpms.c
  nx-X11/programs/Xserver/Xext/dpmsstubs.c
@@ -2914,7 +2895,6 @@ Files: nx-X11/include/extensions/XLbx.h
  nx-X11/include/extensions/lbxzlib.h
  nx-X11/include/extensions/record.h
  nx-X11/include/extensions/recordstr.h
- nx-X11/lib/Xext/XLbx.c
  nx-X11/lib/font/fc/fsconvert.c
  nx-X11/lib/font/fc/fserve.h
  nx-X11/lib/font/fc/fservestr.h
@@ -2984,7 +2964,6 @@ Files: nx-X11/lib/X11/ConnDis.c
  nx-X11/lib/X11/XlibAsync.c
  nx-X11/lib/X11/XlibInt.c
  nx-X11/lib/X11/Xlibint.h
- nx-X11/programs/Xserver/Xext/security.c
  nx-X11/programs/Xserver/hw/nxagent/X/NXshm.c
  nx-X11/programs/Xserver/os/auth.c
  nx-X11/programs/nxauth/parsedpy.c
@@ -3034,7 +3013,6 @@ License: UNKNOWN
 
 Files: nx-X11/include/extensions/Xdbe.h
  nx-X11/include/extensions/Xdbeproto.h
- nx-X11/lib/Xext/Xdbe.c
  nx-X11/programs/Xserver/dbe/dbe.c
  nx-X11/programs/Xserver/dbe/dbestruct.h
  nx-X11/programs/Xserver/dbe/midbe.c
@@ -3090,7 +3068,6 @@ Files: nx-X11/config/util/cleanlinks.sh
  nx-X11/extras/Mesa/src/mesa/drivers/dri/mga/server/mga_reg.h
  nx-X11/include/extensions/xf86misc.h
  nx-X11/include/extensions/xf86mscstr.h
- nx-X11/programs/Xserver/Xext/xf86misc.c
  nx-X11/programs/Xserver/hw/xfree86/os-support/xf86_ansic.h
 Copyright: 1995-1996, The XFree86 Project, Inc
   1996, The XFree86 Project, Inc
@@ -3176,7 +3153,6 @@ License: Expat
 Files: nx-X11/lib/font/Speedo/module/speedomod.c
  nx-X11/lib/font/Type1/module/type1mod.c
  nx-X11/lib/font/bitmap/module/bitmapmod.c
- nx-X11/programs/Xserver/Xext/sleepuntil.h
  nx-X11/programs/Xserver/fb/fbmodule.c
  nx-X11/programs/Xserver/mi/micoord.h
 Copyright: 1998, The XFree86 Project, Inc.
@@ -3296,7 +3272,6 @@ Files: nx-X11/include/extensions/XRes.h
  nx-X11/include/extensions/XResproto.h
  nx-X11/include/extensions/xf86dga.h
  nx-X11/lib/XRes/XRes.c
- nx-X11/programs/Xserver/Xext/xres.c
 Copyright: 1999, XFree86 Inc
   2002, XFree86 Inc
 License: UNKNOWN
@@ -3347,7 +3322,6 @@ License: Expat
 Files: nx-X11/include/extensions/saver.h
  nx-X11/include/extensions/saverproto.h
  nx-X11/include/extensions/scrnsaver.h
- nx-X11/programs/Xserver/Xext/saver.c
 Copyright: 1992, X Consortium
 License: Expat
  FIXME
@@ -3363,7 +3337,6 @@ License: UNKNOWN
  FIXME
 
 Files: nx-X11/include/extensions/xtestext1.h
- nx-X11/lib/Xext/XTestExt1.c
  nx-X11/programs/Xserver/Xext/xtest1dd.c
  nx-X11/programs/Xserver/Xext/xtest1di.c
 Copyright: 1986-1988, 1998 The Open Group
