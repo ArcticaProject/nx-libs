@@ -70,8 +70,8 @@ typedef struct _miBankInfo
     miBankProcPtr SetDestinationBank;           /* Set pBankB bank number */
     miBankProcPtr SetSourceAndDestinationBanks; /* Set both bank numbers */
 
-    pointer pBankA;     /* First aperture location */
-    pointer pBankB;     /* First or second aperture location */
+    void * pBankA;     /* First aperture location */
+    void * pBankB;     /* First or second aperture location */
 
     /*
      * BankSize is in units of sizeof(char) and is the size of each bank.

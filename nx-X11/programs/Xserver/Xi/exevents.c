@@ -143,7 +143,7 @@ ProcessOtherEvent (xE, other, count)
 	DeviceEventInfoRec eventinfo;
 	eventinfo.events = (xEventPtr) xE;
 	eventinfo.count = count;
-	CallCallbacks(&DeviceEventCallback, (pointer)&eventinfo);
+	CallCallbacks(&DeviceEventCallback, (void *)&eventinfo);
     }
     for (i=1; i<count; i++)
 	if ((++xV)->type == DeviceValuator)
@@ -751,7 +751,7 @@ AddExtensionClient (pWin, client, mask, mskidx)
     others->resource = FakeClientID(client->index);
     others->next = pWin->optional->inputMasks->inputClients;
     pWin->optional->inputMasks->inputClients = others;
-    if (!AddResource(others->resource, RT_INPUTCLIENT, (pointer)pWin))
+    if (!AddResource(others->resource, RT_INPUTCLIENT, (void *)pWin))
 	return BadAlloc;
     return Success;
     }
@@ -846,7 +846,7 @@ InputClientGone(pWin, id)
 		    {
 		    other->resource = FakeClientID(0);
 		    if (!AddResource(other->resource, RT_INPUTCLIENT, 
-			(pointer)pWin))
+			(void *)pWin))
 			return BadAlloc;
 		    }
 		}

@@ -87,17 +87,17 @@ void nxagentValidateGC(GCPtr pGC, unsigned long changes, DrawablePtr pDrawable);
 void nxagentChangeGC(GCPtr pGC, unsigned long mask);
 void nxagentCopyGC(GCPtr pGCSrc, unsigned long mask, GCPtr pGCDst);
 void nxagentDestroyGC(GCPtr pGC);
-void nxagentChangeClip(GCPtr pGC, int type, pointer pValue, int nRects);
+void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects);
 void nxagentDestroyClip(GCPtr pGC);
 void nxagentDestroyClipHelper(GCPtr pGC);
 void nxagentCopyClip(GCPtr pGCDst, GCPtr pGCSrc);
 
-void nxagentDisconnectGC(pointer p0, XID x1, pointer p2);
+void nxagentDisconnectGC(void * p0, XID x1, void * p2);
 Bool nxagentDisconnectAllGCs(void);
 
 Bool nxagentReconnectAllGCs(void *p0);
 
-int nxagentDestroyNewGCResourceType(pointer p, XID id);
+int nxagentDestroyNewGCResourceType(void * p, XID id);
 
 void nxagentFreeGCList(void);
 void nxagentInitGCSafeVector(void);

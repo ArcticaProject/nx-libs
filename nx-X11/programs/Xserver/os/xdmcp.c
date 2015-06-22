@@ -223,14 +223,14 @@ static void timeout(void);
 static void restart(void);
 
 static void XdmcpBlockHandler(
-    pointer /*data*/,
+    void * /*data*/,
     struct timeval ** /*wt*/,
-    pointer /*LastSelectMask*/);
+    void * /*LastSelectMask*/);
 
 static void XdmcpWakeupHandler(
-    pointer /*data*/,
+    void * /*data*/,
     int /*i*/,
-    pointer /*LastSelectMask*/);
+    void * /*LastSelectMask*/);
 
 void XdmcpRegisterManufacturerDisplayID(
     char    * /*name*/,
@@ -623,7 +623,7 @@ XdmcpInit(void)
 	XdmcpRegisterDisplayClass (defaultDisplayClass, strlen (defaultDisplayClass));
 	AccessUsingXdmcp();
 	RegisterBlockAndWakeupHandlers (XdmcpBlockHandler, XdmcpWakeupHandler,
-				        (pointer) 0);
+				        (void *) 0);
     	timeOutRtx = 0;
     	DisplayNumber = (CARD16) atoi(display);
     	get_xdmcp_sock();
@@ -638,7 +638,7 @@ XdmcpReset (void)
     if (state != XDM_OFF)
     {
 	RegisterBlockAndWakeupHandlers (XdmcpBlockHandler, XdmcpWakeupHandler,
-				        (pointer) 0);
+				        (void *) 0);
     	timeOutRtx = 0;
     	send_packet();
     }
@@ -683,9 +683,9 @@ XdmcpCloseDisplay(int sock)
 /*ARGSUSED*/
 static void
 XdmcpBlockHandler(
-    pointer	    data,   /* unused */
+    void *	    data,   /* unused */
     struct timeval  **wt,
-    pointer	    pReadmask)
+    void *	    pReadmask)
 {
     fd_set *LastSelectMask = (fd_set*)pReadmask;
     CARD32 millisToGo;
@@ -714,9 +714,9 @@ XdmcpBlockHandler(
 /*ARGSUSED*/
 static void
 XdmcpWakeupHandler(
-    pointer data,   /* unused */
+    void * data,   /* unused */
     int	    i,
-    pointer pReadmask)
+    void * pReadmask)
 {
     fd_set* LastSelectMask = (fd_set*)pReadmask;
     fd_set   devicesReadable;

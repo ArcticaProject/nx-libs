@@ -534,7 +534,7 @@ RegionPtr nxagentPixmapToRegion(PixmapPtr pPixmap)
 }
 
 Bool nxagentModifyPixmapHeader(PixmapPtr pPixmap, int width, int height, int depth,
-                                   int bitsPerPixel, int devKind, pointer pPixData)
+                                   int bitsPerPixel, int devKind, void * pPixData)
 {
   PixmapPtr pVirtualPixmap;
 
@@ -732,7 +732,7 @@ PixmapPtr nxagentPixmapPtr(Pixmap pixmap)
  * Reconnection stuff.
  */
 
-int nxagentDestroyNewPixmapResourceType(pointer p, XID id)
+int nxagentDestroyNewPixmapResourceType(void * p, XID id)
 {
   /*
    * Address of the destructor is set in Init.c.

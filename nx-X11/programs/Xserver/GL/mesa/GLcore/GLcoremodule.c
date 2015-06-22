@@ -56,9 +56,9 @@ static XF86ModuleVersionInfo VersRec =
 
 XF86ModuleData GLcoreModuleData = { &VersRec, GLcoreSetup, NULL };
 
-static pointer
-GLcoreSetup(pointer module, pointer opts, int *errmaj, int *errmin)
+static void *
+GLcoreSetup(void * module, void * opts, int *errmaj, int *errmin)
 {
     /* Need a non-NULL return value to indicate success */
-    return (pointer)1;
+    return (void *)1;
 }

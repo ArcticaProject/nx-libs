@@ -110,7 +110,7 @@ FreeCursorBits(CursorBitsPtr bits)
  *  \param value must conform to DeleteType
  */
 int
-FreeCursor(pointer value, XID cid)
+FreeCursor(void * value, XID cid)
 {
     int		nscr;
     CursorPtr 	pCurs = (CursorPtr)value;
@@ -452,7 +452,7 @@ CreateRootCursor(char *pfilename, unsigned glyph)
 			 0, 0, 0, ~0, ~0, ~0, &curs, serverClient) != Success)
 	return NullCursor;
 
-    if (!AddResource(FakeClientID(0), RT_CURSOR, (pointer)curs))
+    if (!AddResource(FakeClientID(0), RT_CURSOR, (void *)curs))
 	return NullCursor;
 
     return curs;

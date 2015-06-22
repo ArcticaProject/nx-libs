@@ -93,10 +93,10 @@ void nxagentImageText16(DrawablePtr pDrawable, GCPtr pGC, int x,
                             int y, int count, unsigned short *string);
 
 void nxagentImageGlyphBlt(DrawablePtr pDrawable, GCPtr pGC, int x, int y,
-                              unsigned int nGlyphs, CharInfoPtr *pCharInfo, pointer pGlyphBase);
+                              unsigned int nGlyphs, CharInfoPtr *pCharInfo, void * pGlyphBase);
 
 void nxagentPolyGlyphBlt(DrawablePtr pDrawable, GCPtr pGC, int x, int y,
-                             unsigned int nGlyphs, CharInfoPtr *pCharInfo, pointer pGlyphBase);
+                             unsigned int nGlyphs, CharInfoPtr *pCharInfo, void * pGlyphBase);
 
 void nxagentPushPixels(GCPtr pGC, PixmapPtr pBitmap, DrawablePtr pDrawable,
                            int width, int height, int x, int y);

@@ -68,7 +68,7 @@ typedef struct _CursorMetric *CursorMetricPtr;
 extern CursorPtr rootCursor;
 
 extern int FreeCursor(
-    pointer /*pCurs*/,
+    void * /*pCurs*/,
     XID /*cid*/);
 
 /* Quartz support on Mac OS X pulls in the QuickDraw

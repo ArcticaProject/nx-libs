@@ -93,9 +93,9 @@ compScreenUpdate (ScreenPtr pScreen)
 
 static void
 compBlockHandler (int	    i,
-		  pointer   blockData,
-		  pointer   pTimeout,
-		  pointer   pReadmask)
+		  void      *blockData,
+		  void      *pTimeout,
+		  void      *pReadmask)
 {
     ScreenPtr	    pScreen = screenInfo.screens[i];
     CompScreenPtr   cs = GetCompScreen (pScreen);
@@ -385,6 +385,6 @@ compScreenInit (ScreenPtr pScreen)
     cs->CloseScreen = pScreen->CloseScreen;
     pScreen->CloseScreen = compCloseScreen;
 
-    pScreen->devPrivates[CompScreenPrivateIndex].ptr = (pointer) cs;
+    pScreen->devPrivates[CompScreenPrivateIndex].ptr = (void *) cs;
     return TRUE;
 }

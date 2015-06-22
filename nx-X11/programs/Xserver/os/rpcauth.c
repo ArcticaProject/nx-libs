@@ -132,7 +132,7 @@ static Bool
 CheckNetName (
     unsigned char    *addr,
     short	    len,
-    pointer	    closure
+    void *	    closure
 )
 {
     return (len == strlen ((char *) closure) &&
@@ -176,7 +176,7 @@ int
 SecureRPCAdd (unsigned short data_length, char *data, XID id)
 {
     if (data_length)
-	AddHost ((pointer) 0, FamilyNetname, data_length, data);
+	AddHost ((void *) 0, FamilyNetname, data_length, data);
     rpc_id = id;
     return 1;
 }

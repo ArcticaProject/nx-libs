@@ -61,7 +61,7 @@ extern int ChangeWindowProperty(
     int /*format*/,
     int /*mode*/,
     unsigned long /*len*/,
-    pointer /*value*/,
+    void * /*value*/,
     Bool /*sendevent*/);
 
 extern int DeleteProperty(

@@ -442,7 +442,7 @@ dixChangeGC(ClientPtr client, register GC *pGC, register BITS32 mask, CARD32 *pC
 		if(error == Success)
 		{
 		    (*pGC->funcs->ChangeClip)(pGC, clipType,
-					      (pointer)pPixmap, 0);
+					      (void *)pPixmap, 0);
 		}
 		break;
 	    }
@@ -534,7 +534,7 @@ ChangeGC(register GC *pGC, register BITS32 mask, XID *pval)
    pval contains an appropriate value for each mask.
    fPointer is true if the values for tiles, stipples, fonts or clipmasks
    are pointers instead of IDs.  Note: if you are passing pointers you
-   MUST declare the array of values as type pointer!  Other data types
+   MUST declare the array of values as type void*!  Other data types
    may not be large enough to hold pointers on some machines.  Yes,
    this means you have to cast to (XID *) when you pass the array to
    DoChangeGC.  Similarly, if you are not passing pointers (fPointer = 0) you
@@ -591,11 +591,11 @@ AllocateGC(ScreenPtr pScreen)
 	{
 	    if ( (size = *sizes) )
 	    {
-		ppriv->ptr = (pointer)ptr;
+		ppriv->ptr = (void *)ptr;
 		ptr += size;
 	    }
 	    else
-		ppriv->ptr = (pointer)NULL;
+		ppriv->ptr = (void *)NULL;
 	}
     }
     return pGC;
@@ -651,7 +651,7 @@ CreateGC(DrawablePtr pDrawable, BITS32 mask, XID *pval, int *pStatus)
     pGC->clipOrg.x = 0;
     pGC->clipOrg.y = 0;
     pGC->clientClipType = CT_NONE;
-    pGC->clientClip = (pointer)NULL;
+    pGC->clientClip = (void *)NULL;
     pGC->numInDashList = 2;
     pGC->dash = DefaultDash;
     pGC->dashOffset = 0;
@@ -890,7 +890,7 @@ CopyGC(register GC *pgcSrc, register GC *pgcDst, register BITS32 mask)
  *  \param value  must conform to DeleteType
  */
 int
-FreeGC(pointer value, XID gid)
+FreeGC(void * value, XID gid)
 {
     GCPtr pGC = (GCPtr)value;
 
@@ -1208,7 +1208,7 @@ SetClipRects(GCPtr pGC, int xOrigin, int yOrigin, int nrects,
 
     if (size)
 	memmove((char *)prectsNew, (char *)prects, size);
-    (*pGC->funcs->ChangeClip)(pGC, newct, (pointer)prectsNew, nrects);
+    (*pGC->funcs->ChangeClip)(pGC, newct, (void *)prectsNew, nrects);
     if (pGC->funcs->ChangeGC)
 	(*pGC->funcs->ChangeGC) (pGC, GCClipXOrigin|GCClipYOrigin|GCClipMask);
     return Success;

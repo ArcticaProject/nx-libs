@@ -44,7 +44,7 @@ SOFTWARE.
 # define Bool int
 #endif
 /* xtrapdi.c */
-int XETrapDestroyEnv (pointer value , XID id );
+int XETrapDestroyEnv (void * value , XID id );
 void XETrapCloseDown ( ExtensionEntry *extEntry );
 Bool XETrapRedirectDevices (void );
 void DEC_XTRAPInit (void );

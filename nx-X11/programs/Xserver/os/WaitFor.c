@@ -152,7 +152,7 @@ struct _OsTimerRec {
     OsTimerPtr		next;
     CARD32		expires;
     OsTimerCallback	callback;
-    pointer		arg;
+    void *		arg;
 };
 
 static void DoTimer(OsTimerPtr timer, CARD32 now, OsTimerPtr *prev);
@@ -254,7 +254,7 @@ WaitForSomething(int *pClientsReady)
 	}
 	SmartScheduleIdle = TRUE;
 #endif
-	BlockHandler((pointer)&wt, (pointer)&LastSelectMask);
+	BlockHandler((void *)&wt, (void *)&LastSelectMask);
 	if (NewOutputPending)
 	    FlushAllOutput();
 #ifdef XTESTEXT1
@@ -386,7 +386,7 @@ WaitForSomething(int *pClientsReady)
         }
 #endif
 	selecterr = GetErrno();
-	WakeupHandler(i, (pointer)&LastSelectMask);
+	WakeupHandler(i, (void *)&LastSelectMask);
 #ifdef XTESTEXT1
 	if (playback_on) {
 	    i = XTestProcessInputAction (i, &waittime);
@@ -515,7 +515,7 @@ WaitForSomething(int *pClientsReady)
 	    XFD_ANDSET(&tmp_set, &LastSelectMask, &WellKnownConnections);
 	    if (XFD_ANYSET(&tmp_set))
 		QueueWorkProc(EstablishNewConnections, NULL,
-			      (pointer)&LastSelectMask);
+		              (void *)&LastSelectMask);
 #ifdef DPMSExtension
 	    if (XFD_ANYSET (&devicesReadable) && (DPMSPowerLevel != DPMSModeOn))
 		DPMSSet(DPMSModeOn);
@@ -643,7 +643,7 @@ DoTimer(OsTimerPtr timer, CARD32 now, OsTimerPtr *prev)
 
 OsTimerPtr
 TimerSet(OsTimerPtr timer, int flags, CARD32 millis, 
-    OsTimerCallback func, pointer arg)
+    OsTimerCallback func, void * arg)
 {
     register OsTimerPtr *prev;
     CARD32 now = GetTimeInMillis();
@@ -755,7 +755,7 @@ TimerInit(void)
 }
 
 static CARD32
-ScreenSaverTimeoutExpire(OsTimerPtr timer,CARD32 now,pointer arg)
+ScreenSaverTimeoutExpire(OsTimerPtr timer,CARD32 now,void * arg)
 {
     INT32 timeout = now - lastDeviceEventTime.milliseconds;
 
@@ -805,7 +805,7 @@ static OsTimerPtr DPMSSuspendTimer = NULL;
 static OsTimerPtr DPMSOffTimer = NULL;
 
 static CARD32
-DPMSStandbyTimerExpire(OsTimerPtr timer,CARD32 now,pointer arg)
+DPMSStandbyTimerExpire(OsTimerPtr timer,CARD32 now,void * arg)
 {
     INT32 timeout = now - lastDeviceEventTime.milliseconds;
 
@@ -820,7 +820,7 @@ DPMSStandbyTimerExpire(OsTimerPtr timer,CARD32 now,pointer arg)
 }
 
 static CARD32
-DPMSSuspendTimerExpire(OsTimerPtr timer,CARD32 now,pointer arg)
+DPMSSuspendTimerExpire(OsTimerPtr timer,CARD32 now,void * arg)
 {
     INT32 timeout = now - lastDeviceEventTime.milliseconds;
 
@@ -835,7 +835,7 @@ DPMSSuspendTimerExpire(OsTimerPtr timer,CARD32 now,pointer arg)
 }
 
 static CARD32
-DPMSOffTimerExpire(OsTimerPtr timer,CARD32 now,pointer arg)
+DPMSOffTimerExpire(OsTimerPtr timer,CARD32 now,void * arg)
 {
     INT32 timeout = now - lastDeviceEventTime.milliseconds;
 

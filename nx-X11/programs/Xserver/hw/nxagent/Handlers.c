@@ -161,7 +161,7 @@ struct _DispatchRec nxagentDispatch = { UNDEFINED, 0, 0, 0 };
 
 extern int nxagentSkipImage;
 
-void nxagentBlockHandler(pointer data, struct timeval **timeout, pointer mask)
+void nxagentBlockHandler(void * data, struct timeval **timeout, void * mask)
 {
   /*
    * Zero timeout.
@@ -569,7 +569,7 @@ void nxagentBlockHandler(pointer data, struct timeval **timeout, pointer mask)
   #endif
 }
 
-void nxagentWakeupHandler(pointer data, int count, pointer mask)
+void nxagentWakeupHandler(void * data, int count, void * mask)
 {
   #ifdef BLOCKS
   fprintf(stderr, "[Begin wakeup]\n");
@@ -723,7 +723,7 @@ void nxagentWakeupHandler(pointer data, int count, pointer mask)
   #endif
 }
 
-void nxagentShadowBlockHandler(pointer data, struct timeval **timeout, pointer mask)
+void nxagentShadowBlockHandler(void * data, struct timeval **timeout, void * mask)
 {
   static struct timeval zero;
 
@@ -851,7 +851,7 @@ FIXME: Must queue multiple writes and handle
   #endif
 }
 
-void nxagentShadowWakeupHandler(pointer data, int count, pointer mask)
+void nxagentShadowWakeupHandler(void * data, int count, void * mask)
 {
   #ifdef BLOCKS
   fprintf(stderr, "[Begin wakeup]\n");

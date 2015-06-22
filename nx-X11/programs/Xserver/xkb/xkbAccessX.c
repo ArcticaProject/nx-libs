@@ -47,7 +47,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 int	XkbDfltRepeatDelay=	660;
 int	XkbDfltRepeatInterval=	40;
-pointer	XkbLastRepeatEvent=	NULL;
+void *	XkbLastRepeatEvent=	NULL;
 
 #define	DFLT_TIMEOUT_CTRLS (XkbAX_KRGMask|XkbStickyKeysMask|XkbMouseKeysMask)
 #define	DFLT_TIMEOUT_OPTS  (XkbAX_IndicatorFBMask)
@@ -141,7 +141,7 @@ xEvent		xE;
     if (_XkbIsPressEvent(type))
 	XkbDDXKeyClick(keybd,keyCode,TRUE);
     else if (isRepeat)
-	XkbLastRepeatEvent=	(pointer)&xE;
+	XkbLastRepeatEvent=	(void *)&xE;
     XkbProcessKeyboardEvent(&xE,keybd,1L);
     XkbLastRepeatEvent= NULL;
     return;
@@ -286,7 +286,7 @@ XkbSrvLedInfoPtr	sli;
 } /* AccessXStickyKeysTurnOff */
 
 static CARD32
-AccessXKRGExpire(OsTimerPtr timer,CARD32 now,pointer arg)
+AccessXKRGExpire(OsTimerPtr timer,CARD32 now,void * arg)
 {
 XkbSrvInfoPtr		xkbi= ((DeviceIntPtr)arg)->key->xkbInfo;
 xkbControlsNotify	cn;
@@ -308,7 +308,7 @@ xkbControlsNotify	cn;
 }
 
 static CARD32
-AccessXRepeatKeyExpire(OsTimerPtr timer,CARD32 now,pointer arg)
+AccessXRepeatKeyExpire(OsTimerPtr timer,CARD32 now,void * arg)
 {
 XkbSrvInfoPtr	xkbi= ((DeviceIntPtr)arg)->key->xkbInfo;
 KeyCode		key;
@@ -330,7 +330,7 @@ AccessXCancelRepeatKey(XkbSrvInfoPtr xkbi,KeyCode key)
 }
 
 static CARD32
-AccessXSlowKeyExpire(OsTimerPtr timer,CARD32 now,pointer arg)
+AccessXSlowKeyExpire(OsTimerPtr timer,CARD32 now,void * arg)
 {
 DeviceIntPtr	keybd;
 XkbSrvInfoPtr	xkbi;
@@ -370,7 +370,7 @@ XkbControlsPtr	ctrls;
 		xkbi->repeatKey = xkbi->slowKey;
 		xkbi->repeatKeyTimer= TimerSet(xkbi->repeatKeyTimer,
 					0, ctrls->repeat_delay,
-					AccessXRepeatKeyExpire, (pointer)keybd);
+					AccessXRepeatKeyExpire, (void *)keybd);
 	    }
 	}
     }
@@ -378,7 +378,7 @@ XkbControlsPtr	ctrls;
 }
 
 static CARD32
-AccessXBounceKeyExpire(OsTimerPtr timer,CARD32 now,pointer arg)
+AccessXBounceKeyExpire(OsTimerPtr timer,CARD32 now,void * arg)
 {
 XkbSrvInfoPtr	xkbi= ((DeviceIntPtr)arg)->key->xkbInfo;
 
@@ -387,7 +387,7 @@ XkbSrvInfoPtr	xkbi= ((DeviceIntPtr)arg)->key->xkbInfo;
 }
 
 static CARD32
-AccessXTimeoutExpire(OsTimerPtr timer,CARD32 now,pointer arg)
+AccessXTimeoutExpire(OsTimerPtr timer,CARD32 now,void * arg)
 {
 DeviceIntPtr		dev = (DeviceIntPtr)arg;
 XkbSrvInfoPtr		xkbi= dev->key->xkbInfo;
@@ -466,12 +466,12 @@ KeySym *	sym = XkbKeySymsPtr(xkbi->desc,key);
 	    if (XkbAX_NeedFeedback(ctrls,XkbAX_SlowWarnFBMask)) {
 		xkbi->krgTimerActive = _KRG_WARN_TIMER;
 		xkbi->krgTimer= TimerSet(xkbi->krgTimer, 0, 4000,
-					AccessXKRGExpire, (pointer)keybd);
+					AccessXKRGExpire, (void *)keybd);
 	    }
 	    else {
 		xkbi->krgTimerActive = _KRG_TIMER;
 		xkbi->krgTimer= TimerSet(xkbi->krgTimer, 0, 8000,
-					AccessXKRGExpire, (pointer)keybd);
+					AccessXKRGExpire, (void *)keybd);
 	    }
 	    if (!(ctrls->enabled_ctrls & XkbSlowKeysMask)) {
 		CARD32 now= GetTimeInMillis();
@@ -510,7 +510,7 @@ KeySym *	sym = XkbKeySymsPtr(xkbi->desc,key);
 	xkbi->slowKey= key;
 	xkbi->slowKeysTimer = TimerSet(xkbi->slowKeysTimer,
 				 0, ctrls->slow_keys_delay,
-				 AccessXSlowKeyExpire, (pointer)keybd);
+				 AccessXSlowKeyExpire, (void *)keybd);
 	ignoreKeyEvent = TRUE;
     }
 
@@ -543,7 +543,7 @@ KeySym *	sym = XkbKeySymsPtr(xkbi->desc,key);
 		xkbi->repeatKey = key;
 		xkbi->repeatKeyTimer= TimerSet(xkbi->repeatKeyTimer,
 					0, ctrls->repeat_delay,
-					AccessXRepeatKeyExpire, (pointer)keybd);
+					AccessXRepeatKeyExpire, (void *)keybd);
 	    }
 	}
     }
@@ -604,7 +604,7 @@ Bool		ignoreKeyEvent = FALSE;
 	xkbi->inactiveKey= key;
 	xkbi->bounceKeysTimer= TimerSet(xkbi->bounceKeysTimer, 0,
 					ctrls->debounce_delay,
-					AccessXBounceKeyExpire, (pointer)keybd);
+					AccessXBounceKeyExpire, (void *)keybd);
     }
 
     /* Don't transmit the KeyRelease if SlowKeys is turned on and
@@ -645,7 +645,7 @@ Bool		ignoreKeyEvent = FALSE;
 	xkbi->lastPtrEventTime= 0;
 	xkbi->krgTimer= TimerSet(xkbi->krgTimer, 0, 
 					ctrls->ax_timeout*1000,
-					AccessXTimeoutExpire, (pointer)keybd);
+					AccessXTimeoutExpire, (void *)keybd);
 	xkbi->krgTimerActive= _ALL_TIMEOUT_TIMER;
     }
     else if (xkbi->krgTimerActive!=_OFF_TIMER) {

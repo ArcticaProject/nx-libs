@@ -106,7 +106,7 @@ void nxagentExposeBackgroundPredicate(void *p0, XID x1, void *p2);
  * Imported from NXresource.c
  */
 
-extern int nxagentFindClientResource(int, RESTYPE, pointer);
+extern int nxagentFindClientResource(int, RESTYPE, void *);
 
 unsigned long nxagentGetColor(DrawablePtr pDrawable, int xPixel, int yPixel);
 unsigned long nxagentGetDrawableColor(DrawablePtr pDrawable);
@@ -2391,7 +2391,7 @@ void nxagentFillRemoteRegion(DrawablePtr pDrawable, RegionPtr pRegion)
   }
 }
 
-int nxagentDestroyCorruptedWindowResource(pointer p, XID id)
+int nxagentDestroyCorruptedWindowResource(void * p, XID id)
 {
   #ifdef TEST
   fprintf(stderr, "nxagentDestroyCorruptedWindowResource: Removing corrupted window [%p] from resources.\n",
@@ -2403,7 +2403,7 @@ int nxagentDestroyCorruptedWindowResource(pointer p, XID id)
   return 1;
 }
 
-int nxagentDestroyCorruptedPixmapResource(pointer p, XID id)
+int nxagentDestroyCorruptedPixmapResource(void * p, XID id)
 {
   #ifdef TEST
   fprintf(stderr, "nxagentDestroyCorruptedPixmapResource: Removing corrupted pixmap [%p] from resources.\n",
@@ -2415,7 +2415,7 @@ int nxagentDestroyCorruptedPixmapResource(pointer p, XID id)
   return 1;
 }
 
-int nxagentDestroyCorruptedBackgroundResource(pointer p, XID id)
+int nxagentDestroyCorruptedBackgroundResource(void * p, XID id)
 {
   #ifdef TEST
   fprintf(stderr, "nxagentDestroyCorruptedBackgroundResource: Removing corrupted pixmap background [%p] from resources.\n",
@@ -2842,7 +2842,7 @@ void nxagentAllocateCorruptedResource(DrawablePtr pDrawable, RESTYPE type)
       nxagentWindowPriv((WindowPtr) pDrawable) -> corruptedId = FakeClientID(serverClient -> index);
 
       AddResource(nxagentWindowPriv((WindowPtr) pDrawable) -> corruptedId, RT_NX_CORR_WINDOW,
-                      (pointer) pDrawable);
+                      (void *) pDrawable);
     }
   }
   else if (type == RT_NX_CORR_BACKGROUND)
@@ -2869,7 +2869,7 @@ void nxagentAllocateCorruptedResource(DrawablePtr pDrawable, RESTYPE type)
       nxagentPixmapPriv(pRealPixmap) -> corruptedBackgroundId = FakeClientID(serverClient -> index);
 
       AddResource(nxagentPixmapPriv(pRealPixmap) -> corruptedBackgroundId, RT_NX_CORR_BACKGROUND,
-                      (pointer) pRealPixmap);
+                      (void *) pRealPixmap);
     }
   }
   else if (type == RT_NX_CORR_PIXMAP)
@@ -2896,7 +2896,7 @@ void nxagentAllocateCorruptedResource(DrawablePtr pDrawable, RESTYPE type)
         nxagentPixmapPriv(pRealPixmap) -> corruptedId = FakeClientID(serverClient -> index);
 
         AddResource(nxagentPixmapPriv(pRealPixmap) -> corruptedId, RT_NX_CORR_PIXMAP,
-                        (pointer) pRealPixmap);
+                        (void *) pRealPixmap);
       }
     }
   }
@@ -3204,7 +3204,7 @@ void nxagentExposeBackgroundPredicate(void *p0, XID x1, void *p2)
  * This function is similar to nxagentClipAndSendExpose().
  */
 
-int nxagentClipAndSendClearExpose(WindowPtr pWin, pointer ptr)
+int nxagentClipAndSendClearExpose(WindowPtr pWin, void * ptr)
 {
   RegionPtr exposeRgn;
   RegionPtr remoteExposeRgn;

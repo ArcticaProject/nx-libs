@@ -209,7 +209,7 @@ AddOtherInputDevices ()
 
     DeviceIntPtr dev;
     DeviceProc deviceProc;
-    pointer private;
+    void * private;
 
     dev = (DeviceIntPtr) AddInputDevice(deviceProc, TRUE);
     dev->public.devicePrivate = private;

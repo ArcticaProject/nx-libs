@@ -43,7 +43,7 @@ extern GrabPtr CreateGrab(
 	CursorPtr /* cursor */);
 
 extern int DeletePassiveGrab(
-	pointer /* value */,
+	void * /* value */,
 	XID /* id */);
 
 extern Bool GrabMatchesSecond(

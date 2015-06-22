@@ -100,8 +100,8 @@ Bool nxagentSetCursorPosition(ScreenPtr pScreen, int x, int y,
 extern Bool (*nxagentSetCursorPositionW)(ScreenPtr pScreen, int x, int y,
                                              Bool generateEvent);
 
-void nxagentDisconnectCursor(pointer p0, XID x1, pointer p2);
-void nxagentReconnectCursor(pointer p0, XID x1, pointer p2);
+void nxagentDisconnectCursor(void * p0, XID x1, void * p2);
+void nxagentReconnectCursor(void * p0, XID x1, void * p2);
 void nxagentReDisplayCurrentCursor(void);
 Bool nxagentReconnectAllCursor(void *p0);
 Bool nxagentDisconnectAllCursor(void);

@@ -42,8 +42,8 @@ typedef struct _CompositeClient {
 
 static void
 CompositeClientCallback (CallbackListPtr	*list,
-		      pointer		closure,
-		      pointer		data)
+			 void		*closure,
+			 void		*data)
 {
     NewClientInfoRec	*clientinfo = (NewClientInfoRec *) data;
     ClientPtr		pClient = clientinfo->client;
@@ -59,7 +59,7 @@ CompositeResetProc (ExtensionEntry *extEntry)
 }
     
 static int
-FreeCompositeClientWindow (pointer value, XID ccwid)
+FreeCompositeClientWindow (void * value, XID ccwid)
 {
     WindowPtr	pWin = value;
 
@@ -68,7 +68,7 @@ FreeCompositeClientWindow (pointer value, XID ccwid)
 }
 
 static int
-FreeCompositeClientSubwindows (pointer value, XID ccwid)
+FreeCompositeClientSubwindows (void * value, XID ccwid)
 {
     WindowPtr	pWin = value;
 
@@ -203,7 +203,7 @@ ProcCompositeCreateRegionFromBorderClip (ClientPtr client)
 	return BadAlloc;
     REGION_TRANSLATE (pScreen, pRegion, -pWin->drawable.x, -pWin->drawable.y);
     
-    if (!AddResource (stuff->region, RegionResType, (pointer) pRegion))
+    if (!AddResource (stuff->region, RegionResType, (void *) pRegion))
 	return BadAlloc;
 
     return(client->noClientException);
@@ -237,7 +237,7 @@ ProcCompositeNameWindowPixmap (ClientPtr client)
 
     ++pPixmap->refcnt;
     
-    if (!AddResource (stuff->pixmap, RT_PIXMAP, (pointer) pPixmap))
+    if (!AddResource (stuff->pixmap, RT_PIXMAP, (void *) pPixmap))
 	return BadAlloc;
 
     return(client->noClientException);

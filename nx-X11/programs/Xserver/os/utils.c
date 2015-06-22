@@ -598,7 +598,7 @@ GetTimeInMillis(void)
 #endif
 
 void
-AdjustWaitForDelay (pointer waitTime, unsigned long newdelay)
+AdjustWaitForDelay (void * waitTime, unsigned long newdelay)
 {
     static struct timeval   delay_val;
     struct timeval	    **wt = (struct timeval **) waitTime;
@@ -1299,7 +1299,7 @@ ExpandCommandLine(int *pargc, char ***pargv)
 /* Implement a simple-minded font authorization scheme.  The authorization
    name is "hp-hostname-1", the contents are simply the host name. */
 int
-set_font_authorizations(char **authorizations, int *authlen, pointer client)
+set_font_authorizations(char **authorizations, int *authlen, void * client)
 {
 #define AUTHORIZATION_NAME "hp-hostname-1"
 #if defined(TCPCONN) || defined(STREAMSCONN)
@@ -1380,7 +1380,7 @@ set_font_authorizations(char **authorizations, int *authlen, pointer client)
 void * 
 Xalloc(unsigned long amount)
 {
-    register pointer  ptr;
+    register void *  ptr;
 	
     if ((long)amount <= 0) {
 	return (unsigned long *)NULL;
@@ -1392,7 +1392,7 @@ Xalloc(unsigned long amount)
 	((random() % MEM_FAIL_SCALE) < Memory_fail))
 	return (unsigned long *)NULL;
 #endif
-    if ((ptr = (pointer)malloc(amount))) {
+    if ((ptr = (void *)malloc(amount))) {
 	return (unsigned long *)ptr;
     }
     if (Must_have_memory)
@@ -1408,7 +1408,7 @@ Xalloc(unsigned long amount)
 void *
 XNFalloc(unsigned long amount)
 {
-    register pointer ptr;
+    register void * ptr;
 
     if ((long)amount <= 0)
     {
@@ -1416,7 +1416,7 @@ XNFalloc(unsigned long amount)
     }
     /* aligned extra on long word boundary */
     amount = (amount + (sizeof(long) - 1)) & ~(sizeof(long) - 1);
-    ptr = (pointer)malloc(amount);
+    ptr = (void *)malloc(amount);
     if (!ptr)
     {
         FatalError("Out of memory");
@@ -1461,7 +1461,7 @@ XNFcalloc(unsigned long amount)
  *****************/
 
 void *
-Xrealloc(pointer ptr, unsigned long amount)
+Xrealloc(void * ptr, unsigned long amount)
 {
 #ifdef MEMBUG
     if (!Must_have_memory && Memory_fail &&
@@ -1476,9 +1476,9 @@ Xrealloc(pointer ptr, unsigned long amount)
     }
     amount = (amount + (sizeof(long) - 1)) & ~(sizeof(long) - 1);
     if (ptr)
-        ptr = (pointer)realloc((char *)ptr, amount);
+        ptr = (void *)realloc((char *)ptr, amount);
     else
-	ptr = (pointer)malloc(amount);
+	ptr = (void *)malloc(amount);
     if (ptr)
         return (unsigned long *)ptr;
     if (Must_have_memory)
@@ -1492,9 +1492,9 @@ Xrealloc(pointer ptr, unsigned long amount)
  *****************/
 
 void *
-XNFrealloc(pointer ptr, unsigned long amount)
+XNFrealloc(void * ptr, unsigned long amount)
 {
-    if (( ptr = (pointer)Xrealloc( ptr, amount ) ) == NULL)
+    if (( ptr = (void *)Xrealloc( ptr, amount ) ) == NULL)
     {
 	if ((long)amount > 0)
             FatalError( "Out of memory" );
@@ -1508,7 +1508,7 @@ XNFrealloc(pointer ptr, unsigned long amount)
  *****************/    
 
 void
-Xfree(pointer ptr)
+Xfree(void * ptr)
 {
     if (ptr)
 	free((char *)ptr); 
@@ -1816,7 +1816,7 @@ static struct pid {
     int pid;
 } *pidlist;
 
-pointer
+void *
 Popen(char *command, char *type)
 {
     struct pid *cur;
@@ -1953,7 +1953,7 @@ Popen(char *command, char *type)
 }
 
 /* fopen that drops privileges */
-pointer
+void *
 Fopen(char *file, char *type)
 {
     FILE *iop;
@@ -2047,7 +2047,7 @@ Fopen(char *file, char *type)
 }
 
 int
-Pclose(pointer iop)
+Pclose(void * iop)
 {
     struct pid *cur, *last;
     int pstat;
@@ -2087,7 +2087,7 @@ Pclose(pointer iop)
 }
 
 int 
-Fclose(pointer iop)
+Fclose(void * iop)
 {
 #ifdef HAS_SAVED_IDS_AND_SETEUID
     return fclose(iop);

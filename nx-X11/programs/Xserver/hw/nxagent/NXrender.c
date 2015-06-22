@@ -125,9 +125,9 @@ void nxagentCreateGlyphSet(GlyphSetPtr glyphSet);
 void nxagentReferenceGlyphSet(GlyphSetPtr glyphSet);
 void nxagentFreeGlyphs(GlyphSetPtr glyphSet, CARD32 *gids, int nglyph);
 void nxagentFreeGlyphSet(GlyphSetPtr glyphSet);
-void nxagentSetPictureTransform(PicturePtr pPicture, pointer transform);
+void nxagentSetPictureTransform(PicturePtr pPicture, void * transform);
 void nxagentSetPictureFilter(PicturePtr pPicture, char *filter, int name_size,
-                                 pointer params, int nparams);
+                                 void * params, int nparams);
 void nxagentTrapezoids(CARD8 op, PicturePtr pSrc, PicturePtr pDst, PictFormatPtr maskFormat,
                            INT16 xSrc, INT16 ySrc, int ntrap, xTrapezoid *traps);
 
@@ -334,8 +334,8 @@ typedef struct _RenderClient {
 
 static void
 RenderClientCallback (CallbackListPtr	*list,
-		      pointer		closure,
-		      pointer		data)
+		      void *		closure,
+		      void *		data)
 {
     NewClientInfoRec	*clientinfo = (NewClientInfoRec *) data;
     ClientPtr		pClient = clientinfo->client;
@@ -767,7 +767,7 @@ ProcRenderCreatePicture (ClientPtr client)
 	return error;
     nxagentCreatePicture(pPicture, stuff -> mask);
 
-    if (!AddResource (stuff->pid, PictureType, (pointer)pPicture))
+    if (!AddResource (stuff->pid, PictureType, (void *)pPicture))
 	return BadAlloc;
     return Success;
 }
@@ -1341,7 +1341,7 @@ ProcRenderCreateGlyphSet (ClientPtr client)
     glyphSet = AllocateGlyphSet (f, format);
     if (!glyphSet)
 	return BadAlloc;
-    if (!AddResource (stuff->gsid, GlyphSetType, (pointer)glyphSet))
+    if (!AddResource (stuff->gsid, GlyphSetType, (void *)glyphSet))
 	return BadAlloc;
 
     nxagentCreateGlyphSet(glyphSet);
@@ -1372,7 +1372,7 @@ ProcRenderReferenceGlyphSet (ClientPtr client)
 
     nxagentReferenceGlyphSet(glyphSet);
 
-    if (!AddResource (stuff->gsid, GlyphSetType, (pointer)glyphSet))
+    if (!AddResource (stuff->gsid, GlyphSetType, (void *)glyphSet))
 	return BadAlloc;
     return client->noClientException;
 }
@@ -1953,7 +1953,7 @@ ProcRenderCreateCursor (ClientPtr client)
     {
 	(*pScreen->GetImage) (pSrc->pDrawable,
 			      0, 0, width, height, ZPixmap,
-			      0xffffffff, (pointer) argbbits);
+			      0xffffffff, (void *) argbbits);
     }
     else
     {
@@ -1993,7 +1993,7 @@ ProcRenderCreateCursor (ClientPtr client)
 			  0, 0, 0, 0, 0, 0, width, height);
 	(*pScreen->GetImage) (pPicture->pDrawable,
 			      0, 0, width, height, ZPixmap,
-			      0xffffffff, (pointer) argbbits);
+			      0xffffffff, (void *) argbbits);
 	FreePicture (pPicture, 0);
     }
     /*
@@ -2120,7 +2120,7 @@ ProcRenderCreateCursor (ClientPtr client)
 
     nxagentRenderRealizeCursor(pScreen, pCursor);
 
-    if (AddResource(stuff->cid, RT_CURSOR, (pointer)pCursor))
+    if (AddResource(stuff->cid, RT_CURSOR, (void *)pCursor))
 	return (client->noClientException);
     return BadAlloc;
 }
@@ -2324,7 +2324,7 @@ ProcRenderCreateAnimCursor (ClientPtr client)
       pCursor -> devPriv[i] = NULL;
     }
 
-    if (AddResource (stuff->cid, RT_CURSOR, (pointer)pCursor))
+    if (AddResource (stuff->cid, RT_CURSOR, (void *)pCursor))
 	return client->noClientException;
     return BadAlloc;
 }
@@ -2370,7 +2370,7 @@ static int ProcRenderCreateSolidFill(ClientPtr client)
     nxagentRenderCreateSolidFill(pPicture, &stuff -> color);
 
     /* AGENT SERVER */
-    if (!AddResource (stuff->pid, PictureType, (pointer)pPicture))
+    if (!AddResource (stuff->pid, PictureType, (void *)pPicture))
 	return BadAlloc;
     return Success;
 }
@@ -2407,7 +2407,7 @@ static int ProcRenderCreateLinearGradient (ClientPtr client)
                                           stuff->nStops, stops, colors);
 
     /* AGENT SERVER */
-    if (!AddResource (stuff->pid, PictureType, (pointer)pPicture))
+    if (!AddResource (stuff->pid, PictureType, (void *)pPicture))
 	return BadAlloc;
     return Success;
 }
@@ -2445,7 +2445,7 @@ static int ProcRenderCreateRadialGradient (ClientPtr client)
                                                   stuff->nStops, stops, colors);
 
     /* AGENT SERVER */
-    if (!AddResource (stuff->pid, PictureType, (pointer)pPicture))
+    if (!AddResource (stuff->pid, PictureType, (void *)pPicture))
 	return BadAlloc;
     return Success;
 }
@@ -2481,7 +2481,7 @@ static int ProcRenderCreateConicalGradient (ClientPtr client)
                                                colors);
 
     /* AGENT SERVER */
-    if (!AddResource (stuff->pid, PictureType, (pointer)pPicture))
+    if (!AddResource (stuff->pid, PictureType, (void *)pPicture))
 	return BadAlloc;
     return Success;
 }

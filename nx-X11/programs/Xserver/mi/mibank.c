@@ -111,7 +111,7 @@ typedef struct _miBankScreen
     int           nBanks, maxRects;
     RegionPtr     *pBanks;
 
-    pointer       pbits;
+    void          *pbits;
 
     /*
      * Screen Wrappers
@@ -192,11 +192,11 @@ static unsigned long miBankGeneration = 0;
 #define BANK_GCPRIVATE(pGC) ((miBankGCPtr)(BANK_GCPRIVLVAL(pGC)))
 
 #define PIXMAP_STATUS(_pPix) \
-    pointer pbits = (_pPix)->devPrivate.ptr
+    void * pbits = (_pPix)->devPrivate.ptr
 
 #define PIXMAP_SAVE(_pPix) \
     PIXMAP_STATUS(_pPix); \
-    if (pbits == (pointer)pScreenPriv) \
+    if (pbits == (void *)pScreenPriv) \
         (_pPix)->devPrivate.ptr = pScreenPriv->pbits
 
 #define PIXMAP_RESTORE(_pPix) \
@@ -247,7 +247,7 @@ static unsigned long miBankGeneration = 0;
     (pGC)->funcs          = pGCPriv->unwrappedFuncs
 
 #define IS_BANKED(pDrawable) \
-    ((pbits == (pointer)pScreenPriv) && \
+    ((pbits == (void *)pScreenPriv) && \
      (((DrawablePtr)(pDrawable))->type == DRAWABLE_WINDOW))
 
 #define CLIP_SAVE \
@@ -1267,7 +1267,7 @@ miBankImageGlyphBlt(
     int          y,
     unsigned int nArray,
     CharInfoPtr  *ppci,
-    pointer      pglyphBase
+    void         *pglyphBase
 )
 {
     GCOP_SIMPLE((*pGC->ops->ImageGlyphBlt)(pDrawable, pGC,
@@ -1282,7 +1282,7 @@ miBankPolyGlyphBlt(
     int          y,
     unsigned int nArray,
     CharInfoPtr  *ppci,
-    pointer      pglyphBase
+    void         *pglyphBase
 )
 {
     GCOP_SIMPLE((*pGC->ops->PolyGlyphBlt)(pDrawable, pGC,
@@ -1539,7 +1539,7 @@ static void
 miBankChangeClip(
     GCPtr   pGC,
     int     type,
-    pointer pvalue,
+    void * pvalue,
     int     nrects
 )
 {
@@ -1608,7 +1608,7 @@ miBankCreateScreenResources(
         /* Set screen buffer address to something recognizable */
         pScreenPriv->pScreenPixmap = (*pScreen->GetScreenPixmap)(pScreen);
         pScreenPriv->pbits = pScreenPriv->pScreenPixmap->devPrivate.ptr;
-        pScreenPriv->pScreenPixmap->devPrivate.ptr = (pointer)pScreenPriv;
+        pScreenPriv->pScreenPixmap->devPrivate.ptr = (void *)pScreenPriv;
 
         /* Get shadow pixmap;  width & height of 0 means no pixmap data */
         pScreenPriv->pBankPixmap = (*pScreen->CreatePixmap)(pScreen, 0, 0,
@@ -1657,7 +1657,7 @@ miBankModifyPixmapHeader(
     int       depth,
     int       bitsPerPixel,
     int       devKind,
-    pointer   pPixData
+    void      *pPixData
 )
 {
     Bool retval = FALSE;
@@ -1675,7 +1675,7 @@ miBankModifyPixmapHeader(
 
         SCREEN_WRAP(ModifyPixmapHeader, miBankModifyPixmapHeader);
 
-        if (pbits == (pointer)pScreenPriv)
+        if (pbits == (void *)pScreenPriv)
         {
             pScreenPriv->pbits = pPixmap->devPrivate.ptr;
             pPixmap->devPrivate.ptr = pbits;
@@ -2395,7 +2395,7 @@ miInitializeBanking(
     pScreen->BackingStoreFuncs.SetClipmaskRgn = miBankSetClipmaskRgn;
     ?????????????????????????????????????????????????????????????? */
 
-    BANK_SCRPRIVLVAL = (pointer)pScreenPriv;
+    BANK_SCRPRIVLVAL = (void *)pScreenPriv;
 
     return TRUE;
 }
@@ -2405,7 +2405,7 @@ miInitializeBanking(
 static int
 miBankNewSerialNumber(
     WindowPtr pWin,
-    pointer   unused
+    void      *unused
 )
 {
     pWin->drawable.serialNumber = NEXT_SERIAL_NUMBER;

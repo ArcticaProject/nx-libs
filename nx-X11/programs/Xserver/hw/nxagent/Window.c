@@ -162,19 +162,19 @@ static Bool nxagentSomeWindowsAreMapped(void);
 
 static void nxagentFrameBufferPaintWindow(WindowPtr pWin, RegionPtr pRegion, int what);
 
-static void nxagentTraverseWindow(WindowPtr, void(*)(pointer, XID, pointer), pointer);
+static void nxagentTraverseWindow(WindowPtr, void(*)(void *, XID, void *), void *);
 
-static void nxagentDisconnectWindow(pointer, XID, pointer);
+static void nxagentDisconnectWindow(void *, XID, void *);
 
-static Bool nxagentLoopOverWindows(void(*)(pointer, XID, pointer));
+static Bool nxagentLoopOverWindows(void(*)(void *, XID, void *));
 
-static void nxagentReconfigureWindowCursor(pointer, XID, pointer);
+static void nxagentReconfigureWindowCursor(void *, XID, void *);
 
-static void nxagentReconnectWindow(pointer, XID, pointer);
+static void nxagentReconnectWindow(void *, XID, void *);
 
-static void nxagentReconfigureWindow(pointer, XID, pointer);
+static void nxagentReconfigureWindow(void *, XID, void *);
 
-static int nxagentForceExposure(WindowPtr pWin, pointer ptr);
+static int nxagentForceExposure(WindowPtr pWin, void * ptr);
 
 /* by dimbor */
 typedef struct
@@ -218,7 +218,7 @@ WindowPtr nxagentGetWindowFromID(Window id)
   return NULL;
 }
 
-static int nxagentFindWindowMatch(WindowPtr pWin, pointer ptr)
+static int nxagentFindWindowMatch(WindowPtr pWin, void * ptr)
 {
   WindowMatchRec *match = (WindowMatchRec *) ptr;
 
@@ -245,7 +245,7 @@ WindowPtr nxagentWindowPtr(Window window)
 
   for (i = 0; i < nxagentNumScreens; i++)
   {
-    WalkTree(screenInfo.screens[i], nxagentFindWindowMatch, (pointer) &match);
+    WalkTree(screenInfo.screens[i], nxagentFindWindowMatch, (void *) &match);
 
     if (match.pWin) break;
   }
@@ -2437,7 +2437,7 @@ void nxagentShapeWindow(WindowPtr pWin)
 }
 #endif /* SHAPE */
 
-static int nxagentForceExposure(WindowPtr pWin, pointer ptr)
+static int nxagentForceExposure(WindowPtr pWin, void * ptr)
 {
   RegionPtr exposedRgn;
   BoxRec Box;
@@ -2623,12 +2623,12 @@ Bool nxagentDisconnectAllWindows(void)
 }
 
 /*
- * FIXME: We are giving up reconnecting those pointer
+ * FIXME: We are giving up reconnecting those void *
  * that are not resource, and we are just disconnecting them.
  * perhaps we could do better and reconnect them.
  */
 
-void nxagentDisconnectWindow(pointer p0, XID x1, pointer p2)
+void nxagentDisconnectWindow(void * p0, XID x1, void * p2)
 {
   WindowPtr pWin = (WindowPtr)p0;
   Bool*     pBool = (Bool*)p2;
@@ -2828,8 +2828,8 @@ Bool nxagentSetWindowCursors(void *p0)
 
 static void nxagentTraverseWindow(
   WindowPtr pWin,
-  void (*pF)(pointer, XID, pointer),
-  pointer p)
+  void (*pF)(void *, XID, void *),
+  void * p)
 {
   pF(pWin, 0, p);
 
@@ -2844,7 +2844,7 @@ static void nxagentTraverseWindow(
   }
 }
 
-static Bool nxagentLoopOverWindows(void (*pF)(pointer, XID, pointer))
+static Bool nxagentLoopOverWindows(void (*pF)(void *, XID, void *))
 {
   int i;
   Bool windowSuccess = True;
@@ -2859,7 +2859,7 @@ static Bool nxagentLoopOverWindows(void (*pF)(pointer, XID, pointer))
   return windowSuccess;
 }
 
-static void nxagentReconnectWindow(pointer param0, XID param1, pointer data_buffer)
+static void nxagentReconnectWindow(void * param0, XID param1, void * data_buffer)
 {
   WindowPtr pWin = (WindowPtr)param0;
   Bool *pBool = (Bool*)data_buffer;
@@ -3113,7 +3113,7 @@ FIXME: Do we need to set save unders attribute here?
   }
 }
 
-static void nxagentReconfigureWindowCursor(pointer param0, XID param1, pointer data_buffer)
+static void nxagentReconfigureWindowCursor(void * param0, XID param1, void * data_buffer)
 {
   WindowPtr pWin = (WindowPtr)param0;
   Bool *pBool = (Bool*)data_buffer;
@@ -3164,7 +3164,7 @@ static void nxagentReconfigureWindowCursor(pointer param0, XID param1, pointer d
   }
 }
 
-static void nxagentReconfigureWindow(pointer param0, XID param1, pointer data_buffer)
+static void nxagentReconfigureWindow(void * param0, XID param1, void * data_buffer)
 {
   WindowPtr pWin = (WindowPtr)param0;
   unsigned long mask = 0;
@@ -3732,7 +3732,7 @@ StaticResizedWindowStruct *nxagentFindStaticResizedWindow(unsigned long sequence
   return ret;
 }
 
-void nxagentEmptyBackingStoreRegion(pointer param0, XID param1, pointer data_buffer)
+void nxagentEmptyBackingStoreRegion(void * param0, XID param1, void * data_buffer)
 {
   WindowPtr pWin = (WindowPtr) param0;
 

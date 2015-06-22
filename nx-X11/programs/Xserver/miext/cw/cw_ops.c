@@ -96,10 +96,10 @@ static void cwImageText16(DrawablePtr pDst, GCPtr pGC, int x, int y,
 			  int count, unsigned short *chars);
 static void cwImageGlyphBlt(DrawablePtr pDst, GCPtr pGC, int x, int y,
 			    unsigned int nglyph, CharInfoPtr *ppci,
-			    pointer pglyphBase);
+			    void * pglyphBase);
 static void cwPolyGlyphBlt(DrawablePtr pDst, GCPtr pGC, int x, int y,
 			   unsigned int nglyph, CharInfoPtr *ppci,
-			   pointer pglyphBase);
+			   void * pglyphBase);
 static void cwPushPixels(GCPtr pGC, PixmapPtr pBitMap, DrawablePtr pDst,
 			 int w, int h, int x, int y);
 
@@ -422,7 +422,7 @@ cwImageText16(DrawablePtr pDst, GCPtr pGC, int x, int y, int count,
 
 static void
 cwImageGlyphBlt(DrawablePtr pDst, GCPtr pGC, int x, int y, unsigned int nglyph,
-		CharInfoPtr *ppci, pointer pglyphBase)
+		CharInfoPtr *ppci, void * pglyphBase)
 {
     SETUP_BACKING_DST(pDst, pGC);
 
@@ -438,7 +438,7 @@ cwImageGlyphBlt(DrawablePtr pDst, GCPtr pGC, int x, int y, unsigned int nglyph,
 
 static void
 cwPolyGlyphBlt(DrawablePtr pDst, GCPtr pGC, int x, int y, unsigned int nglyph,
-	       CharInfoPtr *ppci, pointer pglyphBase)
+	       CharInfoPtr *ppci, void * pglyphBase)
 {
     SETUP_BACKING_DST(pDst, pGC);
 

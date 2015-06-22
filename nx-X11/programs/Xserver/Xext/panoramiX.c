@@ -133,7 +133,7 @@ static void XineramaValidateGC(GCPtr, unsigned long, DrawablePtr);
 static void XineramaChangeGC(GCPtr, unsigned long);
 static void XineramaCopyGC(GCPtr, unsigned long, GCPtr);
 static void XineramaDestroyGC(GCPtr);
-static void XineramaChangeClip(GCPtr, int, pointer, int);
+static void XineramaChangeClip(GCPtr, int, void *, int);
 static void XineramaDestroyClip(GCPtr);
 static void XineramaCopyClip(GCPtr, GCPtr);
 
@@ -165,7 +165,7 @@ XineramaCloseScreen (int i, ScreenPtr pScreen)
     if (pScreen->myNum == 0)
 	REGION_UNINIT(pScreen, &PanoramiXScreenRegion);
 
-    xfree ((pointer) pScreenPriv);
+    xfree ((void *) pScreenPriv);
 
     return (*pScreen->CloseScreen) (i, pScreen);
 }
@@ -308,7 +308,7 @@ static void
 XineramaChangeClip (
     GCPtr   pGC,
     int		type,
-    pointer	pvalue,
+    void	*pvalue,
     int		nrects 
 ){
     Xinerama_GC_FUNC_PROLOGUE (pGC);
@@ -335,7 +335,7 @@ XineramaDestroyClip(GCPtr pGC)
 
 
 int
-XineramaDeleteResource(pointer data, XID id)
+XineramaDeleteResource(void * data, XID id)
 {
     xfree(data);
     return 1;
@@ -343,7 +343,7 @@ XineramaDeleteResource(pointer data, XID id)
 
 
 static Bool 
-XineramaFindIDOnAnyScreen(pointer resource, XID id, pointer privdata)
+XineramaFindIDOnAnyScreen(void * resource, XID id, void * privdata)
 {
     PanoramiXRes *res = (PanoramiXRes*)resource;
     int j;
@@ -368,7 +368,7 @@ typedef struct {
 
 
 static Bool 
-XineramaFindIDByScrnum(pointer resource, XID id, pointer privdata)
+XineramaFindIDByScrnum(void * resource, XID id, void * privdata)
 {
     PanoramiXRes *res = (PanoramiXRes*)resource;
     PanoramiXSearchData *data = (PanoramiXSearchData*)privdata;
@@ -541,7 +541,7 @@ void PanoramiXExtensionInit(int argc, char *argv[])
 
 	   pScreenPriv = xalloc(sizeof(PanoramiXScreenRec));
 	   pScreen->devPrivates[PanoramiXScreenIndex].ptr = 
-						(pointer)pScreenPriv;
+						(void *)pScreenPriv;
 	   if(!pScreenPriv) {
 		noPanoramiXExtension = TRUE;
 		return;
@@ -747,9 +747,9 @@ Bool PanoramiXCreateConnectionBlock(void)
     root->mmHeight *= height_mult;
 
     while(ConnectionCallbackList) {
-	pointer tmp;
+	void *tmp;
 
-	tmp = (pointer)ConnectionCallbackList;
+	tmp = (void *)ConnectionCallbackList;
 	(*ConnectionCallbackList->func)();
 	ConnectionCallbackList = ConnectionCallbackList->next;
 	xfree(tmp);

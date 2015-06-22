@@ -36,7 +36,7 @@ typedef enum {
 } VidModeSelectMonitor;
 
 typedef union {
-  pointer ptr;
+  void * ptr;
   int i;
   float f;
 } vidMonitorValue;
@@ -44,31 +44,31 @@ typedef union {
 void XFree86VidModeExtensionInit(void);
 
 Bool VidModeAvailable(int scrnIndex);
-Bool VidModeGetCurrentModeline(int scrnIndex, pointer *mode, int *dotClock);
-Bool VidModeGetFirstModeline(int scrnIndex, pointer *mode, int *dotClock);
-Bool VidModeGetNextModeline(int scrnIndex, pointer *mode, int *dotClock);
-Bool VidModeDeleteModeline(int scrnIndex, pointer mode);
+Bool VidModeGetCurrentModeline(int scrnIndex, void **mode, int *dotClock);
+Bool VidModeGetFirstModeline(int scrnIndex, void **mode, int *dotClock);
+Bool VidModeGetNextModeline(int scrnIndex, void **mode, int *dotClock);
+Bool VidModeDeleteModeline(int scrnIndex, void * mode);
 Bool VidModeZoomViewport(int scrnIndex, int zoom);
 Bool VidModeGetViewPort(int scrnIndex, int *x, int *y);
 Bool VidModeSetViewPort(int scrnIndex, int x, int y);
-Bool VidModeSwitchMode(int scrnIndex, pointer mode);
+Bool VidModeSwitchMode(int scrnIndex, void * mode);
 Bool VidModeLockZoom(int scrnIndex, Bool lock);
-Bool VidModeGetMonitor(int scrnIndex, pointer *monitor);
+Bool VidModeGetMonitor(int scrnIndex, void **monitor);
 int VidModeGetNumOfClocks(int scrnIndex, Bool *progClock);
 Bool VidModeGetClocks(int scrnIndex, int *Clocks);
-ModeStatus VidModeCheckModeForMonitor(int scrnIndex, pointer mode);
-ModeStatus VidModeCheckModeForDriver(int scrnIndex, pointer mode);
-void VidModeSetCrtcForMode(int scrnIndex, pointer mode);
-Bool VidModeAddModeline(int scrnIndex, pointer mode);
+ModeStatus VidModeCheckModeForMonitor(int scrnIndex, void * mode);
+ModeStatus VidModeCheckModeForDriver(int scrnIndex, void * mode);
+void VidModeSetCrtcForMode(int scrnIndex, void * mode);
+Bool VidModeAddModeline(int scrnIndex, void * mode);
 int VidModeGetDotClock(int scrnIndex, int Clock);
 int VidModeGetNumOfModes(int scrnIndex);
 Bool VidModeSetGamma(int scrnIndex, float red, float green, float blue);
 Bool VidModeGetGamma(int scrnIndex, float *red, float *green, float *blue);
-pointer VidModeCreateMode(void);
-void VidModeCopyMode(pointer modefrom, pointer modeto);
-int VidModeGetModeValue(pointer mode, int valtyp);
-void VidModeSetModeValue(pointer mode, int valtyp, int val);
-vidMonitorValue VidModeGetMonitorValue(pointer monitor, int valtyp, int indx);
+void * VidModeCreateMode(void);
+void VidModeCopyMode(void * modefrom, void * modeto);
+int VidModeGetModeValue(void * mode, int valtyp);
+void VidModeSetModeValue(void * mode, int valtyp, int val);
+vidMonitorValue VidModeGetMonitorValue(void * monitor, int valtyp, int indx);
 Bool VidModeSetGammaRamp(int, int, CARD16 *, CARD16 *, CARD16 *);
 Bool VidModeGetGammaRamp(int, int, CARD16 *, CARD16 *, CARD16 *);
 int VidModeGetGammaRampSize(int scrnIndex);

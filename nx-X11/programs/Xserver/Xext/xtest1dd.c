@@ -1613,5 +1613,5 @@ ClientPtr	client;
 	rep.size_return = ACTION_ARRAY_SIZE;
 	WriteReplyToClient(client,
 			   sizeof(xTestQueryInputSizeReply),
-			   (pointer) &rep);		
+			   (void *) &rep);
 }		

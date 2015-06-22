@@ -2042,7 +2042,7 @@ void nxagentImageText16(DrawablePtr pDrawable, GCPtr pGC, int x,
 
 void nxagentImageGlyphBlt(DrawablePtr pDrawable, GCPtr pGC, int x, int y,
                               unsigned int nGlyphs, CharInfoPtr *pCharInfo,
-                                  pointer pGlyphBase)
+                                  void * pGlyphBase)
 {
   if ((pDrawable)->type == DRAWABLE_PIXMAP)
   {
@@ -2061,7 +2061,7 @@ void nxagentImageGlyphBlt(DrawablePtr pDrawable, GCPtr pGC, int x, int y,
 
 void nxagentPolyGlyphBlt(DrawablePtr pDrawable, GCPtr pGC, int x, int y,
                              unsigned int nGlyphs, CharInfoPtr *pCharInfo,
-                                 pointer pGlyphBase)
+                                 void * pGlyphBase)
 {
   if ((pDrawable)->type == DRAWABLE_PIXMAP)
   {

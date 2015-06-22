@@ -92,7 +92,7 @@ extern PixmapPtr GetScratchPixmapHeader(
     int /*depth*/,
     int /*bitsPerPixel*/,
     int /*devKind*/,
-    pointer /*pPixData*/);
+    void * /*pPixData*/);
 
 extern void FreeScratchPixmapHeader(
     PixmapPtr /*pPixmap*/);

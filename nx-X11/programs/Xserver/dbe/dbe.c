@@ -188,11 +188,11 @@ DbeAllocWinPriv(pScreen)
         {
             if ((size = *sizes))
             {
-                ppriv->ptr = (pointer)ptr;
+                ppriv->ptr = (void *)ptr;
                 ptr += size;
             }
             else
-                ppriv->ptr = (pointer)NULL;
+                ppriv->ptr = (void *)NULL;
         }
     }
 
@@ -497,7 +497,7 @@ ProcDbeAllocateBackBufferName(client)
 
         /* Make the window priv a DBE window priv resource. */
         if (!AddResource(stuff->buffer, dbeWindowPrivResType,
-            (pointer)pDbeWindowPriv))
+            (void *)pDbeWindowPriv))
         {
             xfree(pDbeWindowPriv);
             return(BadAlloc);
@@ -524,7 +524,7 @@ ProcDbeAllocateBackBufferName(client)
 
 
         /* Actually connect the window priv to the window. */
-        pWin->devPrivates[dbeWindowPrivIndex].ptr = (pointer)pDbeWindowPriv;
+        pWin->devPrivates[dbeWindowPrivIndex].ptr = (void *)pDbeWindowPriv;
 
     } /* if -- There is no buffer associated with the window. */
 
@@ -592,7 +592,7 @@ ProcDbeAllocateBackBufferName(client)
 
         /* Associate the new ID with an existing window priv. */
         if (!AddResource(stuff->buffer, dbeWindowPrivResType,
-                         (pointer)pDbeWindowPriv))
+                         (void *)pDbeWindowPriv))
         {
             pDbeWindowPriv->IDs[i] = DBE_FREE_ID_ELEMENT;
             return(BadAlloc);
@@ -1490,7 +1490,7 @@ DbeSetupBackgroundPainter(pWin, pGC)
     WindowPtr	pWin;
     GCPtr	pGC;
 {
-    pointer	gcvalues[4];
+    void	*gcvalues[4];
     int		ts_x_origin, ts_y_origin;
     PixUnion	background;
     int		backgroundState;
@@ -1516,16 +1516,16 @@ DbeSetupBackgroundPainter(pWin, pGC)
     switch (backgroundState)
     {
         case BackgroundPixel:
-            gcvalues[0] = (pointer)background.pixel;
-            gcvalues[1] = (pointer)FillSolid;
+            gcvalues[0] = (void *)background.pixel;
+            gcvalues[1] = (void *)FillSolid;
             gcmask = GCForeground|GCFillStyle;
             break;
 
         case BackgroundPixmap:
-            gcvalues[0] = (pointer)FillTiled;
-            gcvalues[1] = (pointer)background.pixmap;
-            gcvalues[2] = (pointer)(long)ts_x_origin;
-            gcvalues[3] = (pointer)(long)ts_y_origin;
+            gcvalues[0] = (void *)FillTiled;
+            gcvalues[1] = (void *)background.pixmap;
+            gcvalues[2] = (void *)(long)ts_x_origin;
+            gcvalues[3] = (void *)(long)ts_y_origin;
             gcmask = GCFillStyle|GCTile|GCTileStipXOrigin|GCTileStipYOrigin;
             break;
 
@@ -1562,7 +1562,7 @@ DbeSetupBackgroundPainter(pWin, pGC)
  *****************************************************************************/
 static int
 DbeDrawableDelete(pDrawable, id)
-    pointer	pDrawable;
+    void	*pDrawable;
     XID		id;
 {
     return(Success);
@@ -1583,7 +1583,7 @@ DbeDrawableDelete(pDrawable, id)
  *****************************************************************************/
 static int
 DbeWindowPrivDelete(pDbeWinPriv, id)
-    pointer	pDbeWinPriv;
+    void	*pDbeWinPriv;
     XID		id;
 {
     DbeScreenPrivPtr	pDbeScreenPriv;
@@ -1668,7 +1668,7 @@ DbeWindowPrivDelete(pDbeWinPriv, id)
     {
         /* Reset the DBE window priv pointer. */
         pDbeWindowPriv->pWindow->devPrivates[dbeWindowPrivIndex].ptr =
-            (pointer)NULL;
+            (void *)NULL;
 
         /* We are done with the window priv. */
         xfree(pDbeWindowPriv);
@@ -1888,7 +1888,7 @@ DbeExtensionInit()
 	    return;
 	}
 
-	pScreen->devPrivates[dbeScreenPrivIndex].ptr = (pointer)pDbeScreenPriv;
+	pScreen->devPrivates[dbeScreenPrivIndex].ptr = (void *)pDbeScreenPriv;
 
         /* Store the DBE priv priv size info for later use when allocating
          * priv privs at the driver level.

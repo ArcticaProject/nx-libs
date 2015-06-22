@@ -1112,7 +1112,7 @@ EnqueueEvent(xEvent *xE, DeviceIntPtr device, int count)
 		WindowTable[sprite.hotPhys.pScreen->myNum]->drawable.id;
 	eventinfo.events = xE;
 	eventinfo.count = count;
-	CallCallbacks(&DeviceEventCallback, (pointer)&eventinfo);
+	CallCallbacks(&DeviceEventCallback, (void *)&eventinfo);
     }
     if (xE->u.u.type == MotionNotify)
     {
@@ -2783,7 +2783,7 @@ CheckPassiveGrabsOnWindow(
 a passive grab to be activated.  If the event is a keyboard event, the
 ancestors of the focus window are traced down and tried to see if they have
 any passive grabs to be activated.  If the focus window itself is reached and
-it's descendants contain they pointer, the ancestors of the window that the
+its descendants contain the pointer, the ancestors of the window that the
 pointer is in are then traced down starting at the focus window, otherwise no
 grabs are activated.  If the event is a pointer event, the ancestors of the
 window that the pointer is in are traced down starting at the root until
@@ -3008,7 +3008,7 @@ drawable.id:0;
 	    DeviceEventInfoRec eventinfo;
 	    eventinfo.events = xE;
 	    eventinfo.count = count;
-	    CallCallbacks(&DeviceEventCallback, (pointer)&eventinfo);
+	    CallCallbacks(&DeviceEventCallback, (void *)&eventinfo);
 	}
     }
 #ifdef XEVIE
@@ -3212,7 +3212,7 @@ ProcessPointerEvent (register xEvent *xE, register DeviceIntPtr mouse, int count
 		    WindowTable[sprite.hotPhys.pScreen->myNum]->drawable.id;
 	    eventinfo.events = xE;
 	    eventinfo.count = count;
-	    CallCallbacks(&DeviceEventCallback, (pointer)&eventinfo);
+	    CallCallbacks(&DeviceEventCallback, (void *)&eventinfo);
 	}
     }
     if (xE->u.u.type != MotionNotify)
@@ -3402,7 +3402,7 @@ RecalculateDeliverableEvents(pWin)
  *  \param value must conform to DeleteType
  */
 int
-OtherClientGone(pointer value, XID id)
+OtherClientGone(void * value, XID id)
 {
     register OtherClientsPtr other, prev;
     register WindowPtr pWin = (WindowPtr)value;
@@ -3497,7 +3497,7 @@ EventSelectForWindow(register WindowPtr pWin, register ClientPtr client, Mask ma
 	others->resource = FakeClientID(client->index);
 	others->next = pWin->optional->otherClients;
 	pWin->optional->otherClients = others;
-	if (!AddResource(others->resource, RT_OTHERCLIENT, (pointer)pWin))
+	if (!AddResource(others->resource, RT_OTHERCLIENT, (void *)pWin))
 	    return BadAlloc;
     }
 maskSet: 
@@ -5029,7 +5029,7 @@ WriteEventsToClient(ClientPtr pClient, int count, xEvent *events)
 	eventinfo.client = pClient;
 	eventinfo.events = events;
 	eventinfo.count = count;
-	CallCallbacks(&EventCallback, (pointer)&eventinfo);
+	CallCallbacks(&EventCallback, (void *)&eventinfo);
     }
     if(pClient->swapped)
     {

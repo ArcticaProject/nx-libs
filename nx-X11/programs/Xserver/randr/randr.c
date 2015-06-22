@@ -84,8 +84,8 @@ int	rrPrivIndex = -1;
 
 static void
 RRClientCallback (CallbackListPtr	*list,
-		  pointer		closure,
-		  pointer		data)
+		  void *		closure,
+		  void *		data)
 {
     NewClientInfoRec	*clientinfo = (NewClientInfoRec *) data;
     ClientPtr		pClient = clientinfo->client;
@@ -304,7 +304,7 @@ Bool RRScreenInit(ScreenPtr pScreen)
 
 /*ARGSUSED*/
 static int
-RRFreeClient (pointer data, XID id)
+RRFreeClient (void * data, XID id)
 {
     RREventPtr   pRREvent;
     WindowPtr	    pWin;
@@ -325,13 +325,13 @@ RRFreeClient (pointer data, XID id)
 	    	*pHead = pRREvent->next;
 	}
     }
-    xfree ((pointer) pRREvent);
+    xfree ((void *) pRREvent);
     return 1;
 }
 
 /*ARGSUSED*/
 static int
-RRFreeEvents (pointer data, XID id)
+RRFreeEvents (void * data, XID id)
 {
     RREventPtr   *pHead, pCur, pNext;
 
@@ -339,9 +339,9 @@ RRFreeEvents (pointer data, XID id)
     for (pCur = *pHead; pCur; pCur = pNext) {
 	pNext = pCur->next;
 	FreeResource (pCur->clientResource, RRClientType);
-	xfree ((pointer) pCur);
+	xfree ((void *) pCur);
     }
-    xfree ((pointer) pHead);
+    xfree ((void *) pHead);
     return 1;
 }
 
@@ -390,7 +390,7 @@ RRExtensionInit (void)
 }
 
 static int
-TellChanged (WindowPtr pWin, pointer value)
+TellChanged (WindowPtr pWin, void * value)
 {
     RREventPtr			*pHead, pRREvent;
     ClientPtr			client;
@@ -452,7 +452,7 @@ RRTellChanged (ScreenPtr pScreen)
 	    pScrPriv->configChanged = FALSE;
 	}
 	pScrPriv->changed = FALSE;
-	WalkTree (pScreen, TellChanged, (pointer) pScreen);
+	WalkTree (pScreen, TellChanged, (void *) pScreen);
 	for (i = 0; i < pScrPriv->numOutputs; i++)
 	    pScrPriv->outputs[i]->changed = FALSE;
 	for (i = 0; i < pScrPriv->numCrtcs; i++)

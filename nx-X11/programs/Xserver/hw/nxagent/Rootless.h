@@ -63,7 +63,7 @@ void nxagentRootlessRestack(unsigned long *toplevel, unsigned int ntoplevel);
 int nxagentExportAllProperty(WindowPtr pWin);
 
 int nxagentExportProperty(WindowPtr pWin, Atom property, Atom type, int format,
-                              int mode, unsigned long nUnits, pointer value);
+                              int mode, unsigned long nUnits, void * value);
 
 #define MAX_RETRIEVED_PROPERTY_SIZE 256 * 1024
 

@@ -53,7 +53,7 @@ extern void miDestroyClip(
 extern void miChangeClip(
     GCPtr   /*pGC*/,
     int     /*type*/,
-    pointer /*pvalue*/,
+    void * /*pvalue*/,
     int     /*nrects*/
 );
 

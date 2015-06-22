@@ -168,7 +168,7 @@ XkbGetRulesDflts(XkbRF_VarDefsPtr defs)
 }
 
 Bool
-XkbWriteRulesProp(ClientPtr client, pointer closure)
+XkbWriteRulesProp(ClientPtr client, void * closure)
 {
 int 			len,out;
 Atom			name;
@@ -296,7 +296,7 @@ XkbSetRulesDflts(char *rulesFile,char *model,char *layout,
 #include "xkbDflts.h"
 
 /* A dummy to keep the compiler quiet */
-pointer xkbBogus = &indicators;
+void * xkbBogus = &indicators;
 
 static Bool
 XkbInitKeyTypes(XkbDescPtr xkb,SrvXkmInfo *file)
@@ -619,7 +619,7 @@ XkbInitKeyboardDeviceStruct(
     void                        (*bellProc)(
         int /*percent*/,
         DeviceIntPtr /*device*/,
-        pointer /*ctrl*/,
+        void * /*ctrl*/,
         int),
     void                        (*ctrlProc)(
         DeviceIntPtr /*device*/,

@@ -168,7 +168,7 @@ miGlyphs (CARD8		op,
 		pPixmap = GetScratchPixmapHeader (pScreen, glyph->info.width, glyph->info.height, 
 						  list->format->depth,
 						  list->format->depth, 
-						  0, (pointer) (glyph + 1));
+						  0, (void *) (glyph + 1));
 		if (!pPixmap)
 		    return;
 		component_alpha = NeedsComponent(list->format->format);
@@ -183,7 +183,7 @@ miGlyphs (CARD8		op,
 	    }
 	    (*pScreen->ModifyPixmapHeader) (pPixmap, 
 					    glyph->info.width, glyph->info.height,
-					    0, 0, -1, (pointer) (glyph + 1));
+					    0, 0, -1, (void *) (glyph + 1));
 	    pPixmap->drawable.serialNumber = NEXT_SERIAL_NUMBER;
 	    if (maskFormat)
 	    {
@@ -219,7 +219,7 @@ miGlyphs (CARD8		op,
 	if (pPicture)
 	{
 	    FreeScratchPixmapHeader (pPixmap);
-	    FreePicture ((pointer) pPicture, 0);
+	    FreePicture ((void *) pPicture, 0);
 	    pPicture = 0;
 	    pPixmap = 0;
 	}
@@ -237,7 +237,7 @@ miGlyphs (CARD8		op,
 			  0, 0,
 			  x, y,
 			  width, height);
-	FreePicture ((pointer) pMask, (XID) 0);
+	FreePicture ((void *) pMask, (XID) 0);
 	(*pScreen->DestroyPixmap) (pMaskPixmap);
     }
 }

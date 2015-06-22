@@ -120,7 +120,7 @@ ProcRRSelectInput (ClientPtr client)
 	     */
 	    clientResource = FakeClientID (client->index);
 	    pRREvent->clientResource = clientResource;
-	    if (!AddResource (clientResource, RRClientType, (pointer)pRREvent))
+	    if (!AddResource (clientResource, RRClientType, (void *)pRREvent))
 		return BadAlloc;
 	    /*
 	     * create a resource to contain a pointer to the list
@@ -132,7 +132,7 @@ ProcRRSelectInput (ClientPtr client)
 	    {
 		pHead = (RREventPtr *) xalloc (sizeof (RREventPtr));
 		if (!pHead ||
-		    !AddResource (pWin->drawable.id, RREventType, (pointer)pHead))
+		    !AddResource (pWin->drawable.id, RREventType, (void *)pHead))
 		{
 		    FreeResource (clientResource, RT_NONE);
 		    return BadAlloc;

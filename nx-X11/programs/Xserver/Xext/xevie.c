@@ -114,15 +114,15 @@ static int              ErrorBase;
 
 static Bool XevieStart(void);
 static void XevieEnd(int clientIndex);
-static void XevieClientStateCallback(CallbackListPtr *pcbl, pointer nulldata,
-                                    pointer calldata);
+static void XevieClientStateCallback(CallbackListPtr *pcbl, void * nulldata,
+                                    void * calldata);
 static void XevieServerGrabStateCallback(CallbackListPtr *pcbl,
-                                         pointer nulldata,
-                                         pointer calldata);
+                                         void * nulldata,
+                                         void * calldata);
 
-static Bool XevieAdd(DeviceIntPtr device, pointer data);
+static Bool XevieAdd(DeviceIntPtr device, void * data);
 static void XevieWrap(DeviceIntPtr device, ProcessInputProc proc);
-static Bool XevieRemove(DeviceIntPtr device, pointer data);
+static Bool XevieRemove(DeviceIntPtr device, void * data);
 static void doSendEvent(xEvent *xE, DeviceIntPtr device);
 static void XeviePointerProcessInputProc(xEvent *xE, DeviceIntPtr dev,
                                          int count);
@@ -570,8 +570,8 @@ XevieEnd(int clientIndex)
 }
 
 static void
-XevieClientStateCallback(CallbackListPtr *pcbl, pointer nulldata,
-                        pointer calldata)
+XevieClientStateCallback(CallbackListPtr *pcbl, void * nulldata,
+                        void * calldata)
 {
     NewClientInfoRec *pci = (NewClientInfoRec *)calldata;
     ClientPtr client = pci->client;
@@ -581,8 +581,8 @@ XevieClientStateCallback(CallbackListPtr *pcbl, pointer nulldata,
 }
 
 static void
-XevieServerGrabStateCallback(CallbackListPtr *pcbl, pointer nulldata,
-                            pointer calldata)
+XevieServerGrabStateCallback(CallbackListPtr *pcbl, void * nulldata,
+                            void * calldata)
 {
     ServerGrabInfoRec *grbinfo = (ServerGrabInfoRec *)calldata;
     if (grbinfo->grabstate == SERVER_GRABBED)
@@ -599,7 +599,7 @@ XevieServerGrabStateCallback(CallbackListPtr *pcbl, pointer nulldata,
     device->unwrapProc = proc;
 
 static void
-xevieUnwrapProc(DeviceIntPtr device, DeviceHandleProc proc, pointer data)
+xevieUnwrapProc(DeviceIntPtr device, DeviceHandleProc proc, void * data)
 {
     xevieDeviceInfoPtr xeviep = XEVIEINFO(device);
     ProcessInputProc tmp = device->public.processInputProc;
@@ -643,7 +643,7 @@ XevieAdd(DeviceIntPtr device, void* data)
 }
 
 static Bool
-XevieRemove(DeviceIntPtr device,pointer data)
+XevieRemove(DeviceIntPtr device,void * data)
 {
     xevieDeviceInfoPtr xeviep = XEVIEINFO(device);
 
@@ -697,7 +697,7 @@ doSendEvent(xEvent *xE, DeviceIntPtr dev)
         dev->key->modifierMap[xE->u.u.detail] = 0;  
 
 	if(dev->key->xkbInfo->repeatKey != 0 && xE->u.u.type != KeyPress)
-            XkbLastRepeatEvent=     (pointer)xE;
+            XkbLastRepeatEvent=     (void *)xE;
         UNWRAP_INPUTPROC(dev,xeviep);
         dev->public.processInputProc(xE,dev,1);
         COND_WRAP_INPUTPROC(dev,xeviep,tmp);

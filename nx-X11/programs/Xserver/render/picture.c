@@ -114,7 +114,7 @@ PictureDestroyWindow (WindowPtr pWindow)
 	SetPictureWindow(pWindow, pPicture->pNext);
 	if (pPicture->id)
 	    FreeResource (pPicture->id, PictureType);
-	FreePicture ((pointer) pPicture, pPicture->id);
+	FreePicture ((void *) pPicture, pPicture->id);
     }
     pScreen->DestroyWindow = ps->DestroyWindow;
     ret = (*pScreen->DestroyWindow) (pWindow);
@@ -653,7 +653,7 @@ PictureInit (ScreenPtr pScreen, PictFormatPtr formats, int nformats)
     }
     for (n = 0; n < nformats; n++)
     {
-	if (!AddResource (formats[n].id, PictFormatType, (pointer) (formats+n)))
+	if (!AddResource (formats[n].id, PictFormatType, (void *) (formats+n)))
 	{
 	    xfree (formats);
 	    return FALSE;
@@ -789,11 +789,11 @@ AllocatePicture (ScreenPtr  pScreen)
     {
 	if ( (size = *sizes) )
 	{
-	    ppriv->ptr = (pointer)ptr;
+	    ppriv->ptr = (void *)ptr;
 	    ptr += size;
 	}
 	else
-	    ppriv->ptr = (pointer)NULL;
+	    ppriv->ptr = (void *)NULL;
     }
     return pPicture;
 }
@@ -1223,7 +1223,7 @@ ChangePicture (PicturePtr	pPicture,
 		    if (pAlpha && pAlpha->pDrawable->type == DRAWABLE_PIXMAP)
 			pAlpha->refcnt++;
 		    if (pPicture->alphaMap)
-			FreePicture ((pointer) pPicture->alphaMap, (XID) 0);
+			FreePicture ((void *) pPicture->alphaMap, (XID) 0);
 		    pPicture->alphaMap = pAlpha;
 		}
 	    }
@@ -1295,7 +1295,7 @@ ChangePicture (PicturePtr	pPicture,
 		    }
 		}
 		error = (*ps->ChangePictureClip)(pPicture, clipType,
-						 (pointer)pPixmap, 0);
+						 (void *)pPixmap, 0);
 		break;
 	    }
 	case CPGraphicsExposure:
@@ -1395,7 +1395,7 @@ SetPictureClipRects (PicturePtr	pPicture,
     if (!clientClip)
 	return BadAlloc;
     result =(*ps->ChangePictureClip) (pPicture, CT_REGION, 
-				      (pointer) clientClip, 0);
+				      (void *) clientClip, 0);
     if (result == Success)
     {
 	pPicture->clipOrigin.x = xOrigin;
@@ -1439,7 +1439,7 @@ SetPictureClipRegion (PicturePtr    pPicture,
     }
 
     result =(*ps->ChangePictureClip) (pPicture, type,
-                                      (pointer) clientClip, 0);
+                                      (void *) clientClip, 0);
     if (result == Success)
     {
         pPicture->clipOrigin.x = xOrigin;
@@ -1511,7 +1511,7 @@ CopyPicture (PicturePtr	pSrc,
 	    if (pSrc->alphaMap && pSrc->alphaMap->pDrawable->type == DRAWABLE_PIXMAP)
 		pSrc->alphaMap->refcnt++;
 	    if (pDst->alphaMap)
-		FreePicture ((pointer) pDst->alphaMap, (XID) 0);
+		FreePicture ((void *) pDst->alphaMap, (XID) 0);
 	    pDst->alphaMap = pSrc->alphaMap;
 	    break;
 	case CPAlphaXOrigin:
@@ -1593,7 +1593,7 @@ ValidatePicture(PicturePtr pPicture)
 }
 
 int
-FreePicture (pointer	value,
+FreePicture (void *	value,
 	     XID	pid)
 {
     PicturePtr	pPicture = (PicturePtr) value;
@@ -1613,7 +1613,7 @@ FreePicture (pointer	value,
             PictureScreenPtr    ps = GetPictureScreen(pScreen);
 	
             if (pPicture->alphaMap)
-                FreePicture ((pointer) pPicture->alphaMap, (XID) 0);
+                FreePicture ((void *) pPicture->alphaMap, (XID) 0);
             (*ps->DestroyPicture) (pPicture);
             (*ps->DestroyPictureClip) (pPicture);
             if (pPicture->pDrawable->type == DRAWABLE_WINDOW)
@@ -1643,7 +1643,7 @@ FreePicture (pointer	value,
 }
 
 int
-FreePictFormat (pointer	pPictFormat,
+FreePictFormat (void *	pPictFormat,
 		XID     pid)
 {
     return Success;

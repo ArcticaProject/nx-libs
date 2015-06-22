@@ -38,11 +38,11 @@ static XF86ModuleVersionInfo VersRec =
  */
 XF86ModuleData dbeModuleData = { &VersRec, dbeSetup, NULL };
 
-static pointer
-dbeSetup(pointer module, pointer opts, int *errmaj, int *errmin)
+static void *
+dbeSetup(void * module, void * opts, int *errmaj, int *errmin)
 {
     LoadExtension(&dbeExt, FALSE);
 
     /* Need a non-NULL return value to indicate success */
-    return (pointer)1;
+    return (void *)1;
 }

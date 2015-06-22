@@ -94,13 +94,13 @@ typedef struct _GlyphSet {
     int		    fdepth;
     GlyphHashRec    hash;
     int             maxPrivate;
-    pointer         *devPrivates;
+    void            **devPrivates;
     CARD32          remoteID;
 } GlyphSetRec, *GlyphSetPtr;
 
 #define GlyphSetGetPrivate(pGlyphSet,n)					\
 	((n) > (pGlyphSet)->maxPrivate ?				\
-	 (pointer) 0 :							\
+	 (void *) 0 :							\
 	 (pGlyphSet)->devPrivates[n])
 
 #define GlyphSetSetPrivate(pGlyphSet,n,ptr)				\
@@ -127,7 +127,7 @@ void
 ResetGlyphSetPrivateIndex (void);
 
 Bool
-_GlyphSetSetNewPrivate (GlyphSetPtr glyphSet, int n, pointer ptr);
+_GlyphSetSetNewPrivate (GlyphSetPtr glyphSet, int n, void * ptr);
 
 Bool
 GlyphInit (ScreenPtr pScreen);
@@ -166,7 +166,7 @@ GlyphSetPtr
 AllocateGlyphSet (int fdepth, PictFormatPtr format);
 
 int
-FreeGlyphSet (pointer   value,
+FreeGlyphSet (void      *value,
 	      XID       gid);
 
 

@@ -87,16 +87,16 @@ extern int CreateColormap(
     int /*client*/);
 
 extern int FreeColormap(
-    pointer /*pmap*/,
+    void * /*pmap*/,
     XID /*mid*/);
 
 extern int TellLostMap(
     WindowPtr /*pwin*/,
-    pointer /* Colormap *pmid */);
+    void * /* Colormap *pmid */);
 
 extern int TellGainedMap(
     WindowPtr /*pwin*/,
-    pointer /* Colormap *pmid */);
+    void * /* Colormap *pmid */);
 
 extern int CopyColormapAndFree(
     Colormap /*mid*/,
@@ -140,7 +140,7 @@ extern int QueryColors(
     xrgb* /*prgbList*/);
 
 extern int FreeClientPixels(
-    pointer /*pcr*/,
+    void * /*pcr*/,
     XID /*fakeid*/);
 
 extern int AllocColorCells(

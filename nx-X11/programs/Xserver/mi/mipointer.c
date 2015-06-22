@@ -103,7 +103,7 @@ miPointerInitialize (pScreen, spriteFuncs, screenFuncs, waitForUpdate)
     pScreenPriv->showTransparent = FALSE;
     pScreenPriv->CloseScreen = pScreen->CloseScreen;
     pScreen->CloseScreen = miPointerCloseScreen;
-    pScreen->devPrivates[miPointerScreenIndex].ptr = (pointer) pScreenPriv;
+    pScreen->devPrivates[miPointerScreenIndex].ptr = (void *) pScreenPriv;
     /*
      * set up screen cursor method table
      */
@@ -145,7 +145,7 @@ miPointerCloseScreen (index, pScreen)
     if (pScreen == miPointer.pSpriteScreen)
 	miPointer.pSpriteScreen = 0;
     pScreen->CloseScreen = pScreenPriv->CloseScreen;
-    xfree ((pointer) pScreenPriv);
+    xfree ((void *) pScreenPriv);
     return (*pScreen->CloseScreen) (index, pScreen);
 }
 
@@ -373,7 +373,7 @@ miPointerUpdate ()
 }
 
 /*
- * miPointerDeltaCursor.  The pointer has moved dx,dy from it's previous
+ * miPointerDeltaCursor.  The void * has moved dx,dy from it's previous
  * position.
  */
 
@@ -406,7 +406,7 @@ miPointerCurrentScreen ()
 }
 
 /*
- * miPointerAbsoluteCursor.  The pointer has moved to x,y
+ * miPointerAbsoluteCursor.  The void * has moved to x,y
  */
 
 void
@@ -465,7 +465,7 @@ miPointerPosition (x, y)
 }
 
 /*
- * miPointerMove.  The pointer has moved to x,y on current screen
+ * miPointerMove.  The void * has moved to x,y on current screen
  */
 
 static void

@@ -75,18 +75,18 @@ miDestroyPictureClip (PicturePtr pPicture)
 int
 miChangePictureClip (PicturePtr    pPicture,
 		     int	   type,
-		     pointer	   value,
+		     void *	   value,
 		     int	   n)
 {
     ScreenPtr		pScreen = pPicture->pDrawable->pScreen;
     PictureScreenPtr    ps = GetPictureScreen(pScreen);
-    pointer		clientClip;
+    void *		clientClip;
     int			clientClipType;
     
     switch (type) {
     case CT_PIXMAP:
 	/* convert the pixmap to a region */
-	clientClip = (pointer) BITMAP_TO_REGION(pScreen, (PixmapPtr) value);
+	clientClip = (void *) BITMAP_TO_REGION(pScreen, (PixmapPtr) value);
 	if (!clientClip)
 	    return BadAlloc;
 	clientClipType = CT_REGION;
@@ -101,7 +101,7 @@ miChangePictureClip (PicturePtr    pPicture,
 	clientClipType = CT_NONE;
 	break;
     default:
-	clientClip = (pointer) RECTS_TO_REGION(pScreen, n,
+	clientClip = (void *) RECTS_TO_REGION(pScreen, n,
 					       (xRectangle *) value,
 					       type);
 	if (!clientClip)

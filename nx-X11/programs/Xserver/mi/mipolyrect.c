@@ -164,7 +164,7 @@ miPolyRectangle(pDraw, pGC, nrects, pRects)
 	    }
 	}
 	(*pGC->ops->PolyFillRect) (pDraw, pGC, t - tmp, tmp);
-	DEALLOCATE_LOCAL ((pointer) tmp);
+	DEALLOCATE_LOCAL ((void *) tmp);
     }
     else
     {

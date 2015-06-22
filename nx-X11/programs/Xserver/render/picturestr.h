@@ -149,7 +149,7 @@ typedef struct _Picture {
     DDXPointRec	    alphaOrigin;
 
     DDXPointRec	    clipOrigin;
-    pointer	    clientClip;
+    void	    *clientClip;
 
     Atom	    dither;
 
@@ -195,7 +195,7 @@ typedef int	(*CreatePictureProcPtr)	    (PicturePtr pPicture);
 typedef void	(*DestroyPictureProcPtr)    (PicturePtr pPicture);
 typedef int	(*ChangePictureClipProcPtr) (PicturePtr	pPicture,
 					     int	clipType,
-					     pointer    value,
+					     void       *value,
 					     int	n);
 typedef void	(*DestroyPictureClipProcPtr)(PicturePtr	pPicture);
 
@@ -374,9 +374,9 @@ extern RESTYPE		GlyphSetType;
 
 #define GetPictureScreen(s) ((PictureScreenPtr) ((s)->devPrivates[PictureScreenPrivateIndex].ptr))
 #define GetPictureScreenIfSet(s) ((PictureScreenPrivateIndex != -1) ? GetPictureScreen(s) : NULL)
-#define SetPictureScreen(s,p) ((s)->devPrivates[PictureScreenPrivateIndex].ptr = (pointer) (p))
+#define SetPictureScreen(s,p) ((s)->devPrivates[PictureScreenPrivateIndex].ptr = (void *) (p))
 #define GetPictureWindow(w) ((PicturePtr) ((w)->devPrivates[PictureWindowPrivateIndex].ptr))
-#define SetPictureWindow(w,p) ((w)->devPrivates[PictureWindowPrivateIndex].ptr = (pointer) (p))
+#define SetPictureWindow(w,p) ((w)->devPrivates[PictureWindowPrivateIndex].ptr = (void *) (p))
 
 #define VERIFY_PICTURE(pPicture, pid, client, mode, err) {\
     pPicture = SecurityLookupIDByType(client, pid, PictureType, mode);\
@@ -516,11 +516,11 @@ void
 ValidatePicture(PicturePtr pPicture);
 
 int
-FreePicture (pointer	pPicture,
+FreePicture (void	*pPicture,
 	     XID	pid);
 
 int
-FreePictFormat (pointer	pPictFormat,
+FreePictFormat (void	*pPictFormat,
 		XID     pid);
 
 void

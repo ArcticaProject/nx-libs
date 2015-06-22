@@ -123,24 +123,24 @@ typedef unsigned long RESTYPE;
 #define BAD_RESOURCE 0xe0000000
 
 typedef int (*DeleteType)(
-    pointer /*value*/,
+    void * /*value*/,
     XID /*id*/);
 
 typedef void (*FindResType)(
-    pointer /*value*/,
+    void * /*value*/,
     XID /*id*/,
-    pointer /*cdata*/);
+    void * /*cdata*/);
 
 typedef void (*FindAllRes)(
-    pointer /*value*/,
+    void * /*value*/,
     XID /*id*/,
     RESTYPE /*type*/,
-    pointer /*cdata*/);
+    void * /*cdata*/);
 
 typedef Bool (*FindComplexResType)(
-    pointer /*value*/,
+    void * /*value*/,
     XID /*id*/,
-    pointer /*cdata*/);
+    void * /*cdata*/);
 
 extern RESTYPE CreateNewResourceType(
     DeleteType /*deleteFunc*/);
@@ -161,7 +161,7 @@ extern XID FakeClientID(
 extern Bool AddResource(
     XID /*id*/,
     RESTYPE /*type*/,
-    pointer /*value*/);
+    void * /*value*/);
 
 extern void FreeResource(
     XID /*id*/,
@@ -175,18 +175,18 @@ extern void FreeResourceByType(
 extern Bool ChangeResourceValue(
     XID /*id*/,
     RESTYPE /*rtype*/,
-    pointer /*value*/);
+    void * /*value*/);
 
 extern void FindClientResourcesByType(
     ClientPtr /*client*/,
     RESTYPE /*type*/,
     FindResType /*func*/,
-    pointer /*cdata*/);
+    void * /*cdata*/);
 
 extern void FindAllClientResources(
     ClientPtr /*client*/,
     FindAllRes /*func*/,
-    pointer /*cdata*/);
+    void * /*cdata*/);
 
 extern void FreeClientNeverRetainResources(
     ClientPtr /*client*/);
@@ -200,19 +200,19 @@ extern Bool LegalNewID(
     XID /*id*/,
     ClientPtr /*client*/);
 
-extern pointer LookupIDByType(
+extern void * LookupIDByType(
     XID /*id*/,
     RESTYPE /*rtype*/);
 
-extern pointer LookupIDByClass(
+extern void * LookupIDByClass(
     XID /*id*/,
     RESTYPE /*classes*/);
 
-extern pointer LookupClientResourceComplex(
+extern void * LookupClientResourceComplex(
     ClientPtr client,
     RESTYPE type,
     FindComplexResType func,
-    pointer cdata);
+    void * cdata);
 
 /* These are the access modes that can be passed in the last parameter
  * to SecurityLookupIDByType/Class.  The Security extension doesn't
@@ -229,13 +229,13 @@ extern pointer LookupClientResourceComplex(
 
 #ifdef XCSECURITY
 
-extern pointer SecurityLookupIDByType(
+extern void * SecurityLookupIDByType(
     ClientPtr /*client*/,
     XID /*id*/,
     RESTYPE /*rtype*/,
     Mask /*access_mode*/);
 
-extern pointer SecurityLookupIDByClass(
+extern void * SecurityLookupIDByClass(
     ClientPtr /*client*/,
     XID /*id*/,
     RESTYPE /*classes*/,

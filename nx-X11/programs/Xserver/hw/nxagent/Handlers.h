@@ -100,8 +100,8 @@ extern struct _TokensRec nxagentTokens;
  * The agent's block and wakeup handlers.
  */
 
-void nxagentBlockHandler(pointer data, struct timeval **timeout, pointer mask);
-void nxagentWakeupHandler(pointer data, int count, pointer mask);
+void nxagentBlockHandler(void * data, struct timeval **timeout, void * mask);
+void nxagentWakeupHandler(void * data, int count, void * mask);
 
 /*
  * Executed after each request processed.
@@ -109,8 +109,8 @@ void nxagentWakeupHandler(pointer data, int count, pointer mask);
 
 void nxagentDispatchHandler(ClientPtr client, int in, int out);
 
-void nxagentShadowBlockHandler(pointer data, struct timeval **timeout, pointer mask);
-void nxagentShadowWakeupHandler(pointer data, int count, pointer mask);
+void nxagentShadowBlockHandler(void * data, struct timeval **timeout, void * mask);
+void nxagentShadowWakeupHandler(void * data, int count, void * mask);
 
 extern GCPtr nxagentShadowGCPtr;
 extern unsigned char nxagentShadowDepth;

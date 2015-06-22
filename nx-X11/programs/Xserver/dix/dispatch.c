@@ -531,7 +531,7 @@ ProcCreateWindow(ClientPtr client)
 	Mask mask = pWin->eventMask;
 
 	pWin->eventMask = 0; /* subterfuge in case AddResource fails */
-	if (!AddResource(stuff->wid, RT_WINDOW, (pointer)pWin))
+	if (!AddResource(stuff->wid, RT_WINDOW, (void *)pWin))
 	    return BadAlloc;
 	pWin->eventMask = mask;
     }
@@ -1171,7 +1171,7 @@ ProcGrabServer(register ClientPtr client)
 	ServerGrabInfoRec grabinfo;
 	grabinfo.client = client;
 	grabinfo.grabstate  = SERVER_GRABBED;
-	CallCallbacks(&ServerGrabCallback, (pointer)&grabinfo);
+	CallCallbacks(&ServerGrabCallback, (void *)&grabinfo);
     }
 
     return(client->noClientException);
@@ -1200,7 +1200,7 @@ UngrabServer(ClientPtr client)
 	ServerGrabInfoRec grabinfo;
 	grabinfo.client = client;
 	grabinfo.grabstate  = SERVER_UNGRABBED;
-	CallCallbacks(&ServerGrabCallback, (pointer)&grabinfo);
+	CallCallbacks(&ServerGrabCallback, (void *)&grabinfo);
     }
 }
 
@@ -1468,7 +1468,7 @@ ProcListFontsWithInfo(register ClientPtr client)
  *  \param value must conform to DeleteType
  */
 int
-dixDestroyPixmap(pointer value, XID pid)
+dixDestroyPixmap(void * value, XID pid)
 {
     PixmapPtr pPixmap = (PixmapPtr)value;
     return (*pPixmap->drawable.pScreen->DestroyPixmap)(pPixmap);
@@ -1527,7 +1527,7 @@ CreatePmap:
     {
 	pMap->drawable.serialNumber = NEXT_SERIAL_NUMBER;
 	pMap->drawable.id = stuff->pid;
-	if (AddResource(stuff->pid, RT_PIXMAP, (pointer)pMap))
+	if (AddResource(stuff->pid, RT_PIXMAP, (void *)pMap))
 	    return(client->noClientException);
     }
     return (BadAlloc);
@@ -1576,7 +1576,7 @@ ProcCreateGC(register ClientPtr client)
 			 (XID *) &stuff[1], &error);
     if (error != Success)
         return error;
-    if (!AddResource(stuff->gc, RT_GC, (pointer)pGC))
+    if (!AddResource(stuff->gc, RT_GC, (void *)pGC))
 	return (BadAlloc);
     return(client->noClientException);
 }
@@ -2250,7 +2250,7 @@ DoGetImage(register ClientPtr client, int format, Drawable drawable,
 				         nlines,
 				         format,
 				         planemask,
-				         (pointer) pBuf);
+				         (void *) pBuf);
 #ifdef XCSECURITY
 	    if (pVisibleRegion)
 		SecurityCensorImage(client, pVisibleRegion, widthBytesLine,
@@ -2291,7 +2291,7 @@ DoGetImage(register ClientPtr client, int format, Drawable drawable,
 				                 nlines,
 				                 format,
 				                 plane,
-				                 (pointer)pBuf);
+				                 (void *)pBuf);
 #ifdef XCSECURITY
 		    if (pVisibleRegion)
 			SecurityCensorImage(client, pVisibleRegion,
@@ -3122,7 +3122,7 @@ ProcCreateCursor (register ClientPtr client)
     /* zeroing the (pad) bits helps some ddx cursor handling */
     bzero((char *)srcbits, n);
     (* src->drawable.pScreen->GetImage)( (DrawablePtr)src, 0, 0, width, height,
-					 XYPixmap, 1, (pointer)srcbits);
+					 XYPixmap, 1, (void *)srcbits);
     if ( msk == (PixmapPtr)NULL)
     {
 	register unsigned char *bits = mskbits;
@@ -3134,7 +3134,7 @@ ProcCreateCursor (register ClientPtr client)
 	/* zeroing the (pad) bits helps some ddx cursor handling */
 	bzero((char *)mskbits, n);
 	(* msk->drawable.pScreen->GetImage)( (DrawablePtr)msk, 0, 0, width,
-					height, XYPixmap, 1, (pointer)mskbits);
+					height, XYPixmap, 1, (void *)mskbits);
     }
     cm.width = width;
     cm.height = height;
@@ -3144,7 +3144,7 @@ ProcCreateCursor (register ClientPtr client)
 	    stuff->foreRed, stuff->foreGreen, stuff->foreBlue,
 	    stuff->backRed, stuff->backGreen, stuff->backBlue);
 
-    if (pCursor && AddResource(stuff->cid, RT_CURSOR, (pointer)pCursor))
+    if (pCursor && AddResource(stuff->cid, RT_CURSOR, (void *)pCursor))
 	    return (client->noClientException);
     return BadAlloc;
 }
@@ -3167,7 +3167,7 @@ ProcCreateGlyphCursor (register ClientPtr client)
 			   &pCursor, client);
     if (res != Success)
 	return res;
-    if (AddResource(stuff->cid, RT_CURSOR, (pointer)pCursor))
+    if (AddResource(stuff->cid, RT_CURSOR, (void *)pCursor))
 	return client->noClientException;
     return BadAlloc;
 }
@@ -3311,10 +3311,10 @@ ProcChangeHosts(register ClientPtr client)
 
     if(stuff->mode == HostInsert)
 	result = AddHost(client, (int)stuff->hostFamily,
-			 stuff->hostLength, (pointer)&stuff[1]);
+			 stuff->hostLength, (void *)&stuff[1]);
     else if (stuff->mode == HostDelete)
 	result = RemoveHost(client, (int)stuff->hostFamily, 
-			    stuff->hostLength, (pointer)&stuff[1]);  
+			    stuff->hostLength, (void *)&stuff[1]);  
     else
     {
 	client->errorValue = stuff->mode;
@@ -3330,7 +3330,7 @@ ProcListHosts(register ClientPtr client)
 {
     xListHostsReply reply;
     int	len, nHosts, result;
-    pointer	pdata;
+    void *	pdata;
     /* REQUEST(xListHostsReq); */
 
     REQUEST_SIZE_MATCH(xListHostsReq);
@@ -3582,7 +3582,7 @@ CloseDownClient(register ClientPtr client)
 		clientinfo.client = client; 
 		clientinfo.prefix = (xConnSetupPrefix *)NULL;  
 		clientinfo.setup = (xConnSetup *) NULL;
-		CallCallbacks((&ClientStateCallback), (pointer)&clientinfo);
+		CallCallbacks((&ClientStateCallback), (void *)&clientinfo);
             } 
 	}
 	client->clientGone = TRUE;  /* so events aren't sent to client */
@@ -3619,7 +3619,7 @@ CloseDownClient(register ClientPtr client)
 	    clientinfo.client = client; 
 	    clientinfo.prefix = (xConnSetupPrefix *)NULL;  
 	    clientinfo.setup = (xConnSetup *) NULL;
-	    CallCallbacks((&ClientStateCallback), (pointer)&clientinfo);
+	    CallCallbacks((&ClientStateCallback), (void *)&clientinfo);
 	} 	    
 	FreeClientResources(client);
 	if (client->index < nextFreeClientID)
@@ -3669,7 +3669,7 @@ CloseDownRetainedResources()
     }
 }
 
-void InitClient(ClientPtr client, int i, pointer ospriv)
+void InitClient(ClientPtr client, int i, void * ospriv)
 {
     client->index = i;
     client->sequence = 0; 
@@ -3759,11 +3759,11 @@ InitClientPrivates(ClientPtr client)
     {
 	if ( (size = *sizes) )
 	{
-	    ppriv->ptr = (pointer)ptr;
+	    ppriv->ptr = (void *)ptr;
 	    ptr += size;
 	}
 	else
-	    ppriv->ptr = (pointer)NULL;
+	    ppriv->ptr = (void *)NULL;
     }
     return 1;
 }
@@ -3775,7 +3775,7 @@ InitClientPrivates(ClientPtr client)
  * Returns NULL if there are no free clients.
  *************************/
 
-ClientPtr NextAvailableClient(pointer ospriv)
+ClientPtr NextAvailableClient(void * ospriv)
 {
     register int i;
     register ClientPtr client;
@@ -3813,7 +3813,7 @@ ClientPtr NextAvailableClient(pointer ospriv)
         clientinfo.client = client; 
         clientinfo.prefix = (xConnSetupPrefix *)NULL;  
         clientinfo.setup = (xConnSetup *) NULL;
-	CallCallbacks((&ClientStateCallback), (pointer)&clientinfo);
+	CallCallbacks((&ClientStateCallback), (void *)&clientinfo);
     } 	
     return(client);
 }
@@ -3948,7 +3948,7 @@ SendConnSetup(register ClientPtr client, char *reason)
         clientinfo.client = client; 
         clientinfo.prefix = lconnSetupPrefix;  
         clientinfo.setup = (xConnSetup *)lConnectionInfo;
-	CallCallbacks((&ClientStateCallback), (pointer)&clientinfo);
+	CallCallbacks((&ClientStateCallback), (void *)&clientinfo);
     } 	
     return (client->noClientException);
 }

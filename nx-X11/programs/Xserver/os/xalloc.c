@@ -466,10 +466,10 @@ Xalloc (unsigned long amount)
  * "no failure" realloc, alternate interface to Xalloc w/o Must_have_memory
  *****************/
 
-pointer
+void *
 XNFalloc (unsigned long amount)
 {
-    register pointer ptr;
+    register void * ptr;
 
     /* zero size requested */
     if (amount == 0) {
@@ -499,10 +499,10 @@ XNFalloc (unsigned long amount)
  * Xcalloc
  *****************/
 
-pointer
+void *
 Xcalloc (unsigned long amount)
 {
-    pointer ret;
+    void * ret;
 
     ret = Xalloc (amount);
     if (ret != 0
@@ -520,7 +520,7 @@ Xcalloc (unsigned long amount)
 void *
 XNFcalloc (unsigned long amount)
 {
-    pointer ret;
+    void * ret;
 
     ret = XNFalloc (amount);
     if (ret != 0
@@ -537,7 +537,7 @@ XNFcalloc (unsigned long amount)
  *****************/
 
 void *
-Xrealloc (pointer ptr, unsigned long amount)
+Xrealloc (void * ptr, unsigned long amount)
 {
     register unsigned long *new_ptr;
 
@@ -614,9 +614,9 @@ Xrealloc (pointer ptr, unsigned long amount)
  *****************/
 
 void *
-XNFrealloc (pointer ptr, unsigned long amount)
+XNFrealloc (void * ptr, unsigned long amount)
 {
-    if (( ptr = (pointer)Xrealloc( ptr, amount ) ) == NULL)
+    if (( ptr = (void *)Xrealloc( ptr, amount ) ) == NULL)
     {
         FatalError( "Out of memory" );
     }
@@ -629,7 +629,7 @@ XNFrealloc (pointer ptr, unsigned long amount)
  *****************/    
 
 void
-Xfree(pointer ptr)
+Xfree(void * ptr)
 {
     unsigned long size;
     unsigned long *pheader;

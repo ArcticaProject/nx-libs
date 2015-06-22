@@ -330,7 +330,7 @@ extern void InitSelections(void);
 extern void FlushClientCaches(XID /*id*/);
 
 extern int dixDestroyPixmap(
-    pointer /*value*/,
+    void * /*value*/,
     XID /*pid*/);
 
 extern void CloseDownRetainedResources(void);
@@ -338,10 +338,10 @@ extern void CloseDownRetainedResources(void);
 extern void InitClient(
     ClientPtr /*client*/,
     int /*i*/,
-    pointer /*ospriv*/);
+    void * /*ospriv*/);
 
 extern ClientPtr NextAvailableClient(
-    pointer /*ospriv*/);
+    void * /*ospriv*/);
 
 extern void SendErrorToClient(
     ClientPtr /*client*/,
@@ -403,7 +403,7 @@ extern WindowPtr SecurityLookupWindow(
     ClientPtr /*client*/,
     Mask /*access_mode*/);
 
-extern pointer SecurityLookupDrawable(
+extern void * SecurityLookupDrawable(
     XID /*rid*/,
     ClientPtr /*client*/,
     Mask /*access_mode*/);
@@ -412,7 +412,7 @@ extern WindowPtr LookupWindow(
     XID /*rid*/,
     ClientPtr /*client*/);
 
-extern pointer LookupDrawable(
+extern void * LookupDrawable(
     XID /*rid*/,
     ClientPtr /*client*/);
 
@@ -422,7 +422,7 @@ extern WindowPtr LookupWindow(
     XID /*rid*/,
     ClientPtr /*client*/);
 
-extern pointer LookupDrawable(
+extern void * LookupDrawable(
     XID /*rid*/,
     ClientPtr /*client*/);
 
@@ -451,27 +451,27 @@ extern void DeleteWindowFromAnySaveSet(
     WindowPtr /*pWin*/);
 
 extern void BlockHandler(
-    pointer /*pTimeout*/,
-    pointer /*pReadmask*/);
+    void * /*pTimeout*/,
+    void * /*pReadmask*/);
 
 extern void WakeupHandler(
     int /*result*/,
-    pointer /*pReadmask*/);
+    void * /*pReadmask*/);
 
 typedef void (* WakeupHandlerProcPtr)(
-    pointer /* blockData */,
+    void * /* blockData */,
     int /* result */,
-    pointer /* pReadmask */);
+    void * /* pReadmask */);
 
 extern Bool RegisterBlockAndWakeupHandlers(
     BlockHandlerProcPtr /*blockHandler*/,
     WakeupHandlerProcPtr /*wakeupHandler*/,
-    pointer /*blockData*/);
+    void * /*blockData*/);
 
 extern void RemoveBlockAndWakeupHandlers(
     BlockHandlerProcPtr /*blockHandler*/,
     WakeupHandlerProcPtr /*wakeupHandler*/,
-    pointer /*blockData*/);
+    void * /*blockData*/);
 
 extern void InitBlockAndWakeupHandlers(void);
 
@@ -482,19 +482,19 @@ extern void ProcessWorkQueueZombies(void);
 extern Bool QueueWorkProc(
     Bool (* /*function*/)(
         ClientPtr /*clientUnused*/,
-        pointer /*closure*/),
+        void * /*closure*/),
     ClientPtr /*client*/,
-    pointer /*closure*/
+    void * /*closure*/
 );
 
 typedef Bool (* ClientSleepProcPtr)(
     ClientPtr /*client*/,
-    pointer /*closure*/);
+    void * /*closure*/);
 
 extern Bool ClientSleep(
     ClientPtr /*client*/,
     ClientSleepProcPtr /* function */,
-    pointer /*closure*/);
+    void * /*closure*/);
 
 #ifndef ___CLIENTSIGNAL_DEFINED___
 #define ___CLIENTSIGNAL_DEFINED___
@@ -634,7 +634,7 @@ extern void RecalculateDeliverableEvents(
     WindowPtr /* pWin */);
 
 extern int OtherClientGone(
-    pointer /* value */,
+    void * /* value */,
     XID /* id */);
 
 extern void DoFocusEvents(
@@ -723,16 +723,16 @@ typedef struct _CallbackList *CallbackListPtr; /* also in misc.h */
 #endif
 
 typedef void (*CallbackProcPtr) (
-    CallbackListPtr *, pointer, pointer);
+    CallbackListPtr *, void *, void *);
 
 typedef Bool (*AddCallbackProcPtr) (
-    CallbackListPtr *, CallbackProcPtr, pointer);
+    CallbackListPtr *, CallbackProcPtr, void *);
 
 typedef Bool (*DeleteCallbackProcPtr) (
-    CallbackListPtr *, CallbackProcPtr, pointer);
+    CallbackListPtr *, CallbackProcPtr, void *);
 
 typedef void (*CallCallbacksProcPtr) (
-    CallbackListPtr *, pointer);
+    CallbackListPtr *, void *);
 
 typedef void (*DeleteCallbackListProcPtr) (
     CallbackListPtr *);
@@ -751,16 +751,16 @@ extern Bool CreateCallbackList(
 extern Bool AddCallback(
     CallbackListPtr * /*pcbl*/,
     CallbackProcPtr /*callback*/,
-    pointer /*data*/);
+    void * /*data*/);
 
 extern Bool DeleteCallback(
     CallbackListPtr * /*pcbl*/,
     CallbackProcPtr /*callback*/,
-    pointer /*data*/);
+    void * /*data*/);
 
 extern void CallCallbacks(
     CallbackListPtr * /*pcbl*/,
-    pointer /*call_data*/);
+    void * /*call_data*/);
 
 extern void DeleteCallbackList(
     CallbackListPtr * /*pcbl*/);

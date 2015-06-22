@@ -579,7 +579,7 @@ miMoveWindow(pWin, x, y, pNextSib, kind)
 static int
 miRecomputeExposures (
     register WindowPtr	pWin,
-    pointer		value) /* must conform to VisitWindowProcPtr */
+    void *		value) /* must conform to VisitWindowProcPtr */
 {
     register ScreenPtr	pScreen;
     RegionPtr	pValid = (RegionPtr)value;
@@ -910,7 +910,7 @@ miSlideAndSizeWindow(pWin, x, y, w, h, pSib)
 		    continue;
 		REGION_INTERSECT(pScreen, pRegion,
 				       &pChild->borderClip, gravitate[g]);
-		TraverseTree (pChild, miRecomputeExposures, (pointer)pRegion);
+		TraverseTree (pChild, miRecomputeExposures, (void *)pRegion);
 	    }
 
 	    /*

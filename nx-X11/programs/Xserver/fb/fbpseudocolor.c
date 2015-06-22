@@ -20,7 +20,7 @@ static void xxValidateGC(GCPtr pGC, unsigned long changes, DrawablePtr pDraw);
 static void xxDestroyGC(GCPtr pGC);
 static void xxChangeGC (GCPtr pGC, unsigned long   mask);
 static void xxCopyGC (GCPtr pGCSrc, unsigned long   mask, GCPtr pGCDst);
-static void xxChangeClip (GCPtr pGC, int type, pointer pvalue, int nrects);
+static void xxChangeClip (GCPtr pGC, int type, void * pvalue, int nrects);
 
 static void xxCopyClip(GCPtr pgcDst, GCPtr pgcSrc);
 static void xxDestroyClip(GCPtr pGC);
@@ -63,10 +63,10 @@ static void xxImageText16(DrawablePtr pDraw, GCPtr pGC, int x, int y,
 			  int count, unsigned short *chars);
 static void xxImageGlyphBlt(DrawablePtr pDraw, GCPtr pGC, int x, int y,
 			    unsigned int nglyph, CharInfoPtr *ppci,
-			    pointer pglyphBase);
+			    void * pglyphBase);
 static void xxPolyGlyphBlt(DrawablePtr pDraw, GCPtr pGC, int x, int y,
 			   unsigned int nglyph, CharInfoPtr *ppci,
-			   pointer pglyphBase);
+			   void * pglyphBase);
 static void xxPushPixels(GCPtr pGC, PixmapPtr pBitMap, DrawablePtr pDraw,
 			 int	dx, int dy, int xOrg, int yOrg);
 static void
@@ -108,7 +108,7 @@ typedef struct {
 #endif    
     PixmapPtr			pPixmap;
     char *			addr;
-    pointer			pBits;
+    void			*pBits;
     RegionRec			region;
     VisualPtr			bVisual;
     RegionRec			bRegion;
@@ -200,7 +200,7 @@ xxUpdateWindowImmediately(WindowPtr pWin)
 	    
     pmap = (ColormapPtr)LookupIDByType(wColormap(pWin),RT_COLORMAP);
     
-    if (pmap && (pCmapPriv = xxGetCmapPriv(pmap)) != (pointer)-1) {
+    if (pmap && (pCmapPriv = xxGetCmapPriv(pmap)) != (void *)-1) {
 	xxCopyPseudocolorRegion(pWin->drawable.pScreen,
 				&pScrPriv->region, pCmapPriv);
     }
@@ -259,7 +259,7 @@ xxCreateScreenResources(ScreenPtr pScreen)
     PixmapPtr		pPixmap;
     BoxRec		box;
     int			depth = pScrPriv->myDepth;
-    pointer		pBits;
+    void		*pBits;
     
     unwrap (pScrPriv,pScreen, CreateScreenResources);
     ret = pScreen->CreateScreenResources(pScreen);
@@ -364,16 +364,16 @@ xxInitColormapPrivate(ColormapPtr pmap)
 {
     xxScrPriv(pmap->pScreen);
     xxCmapPrivPtr	pCmapPriv;
-    pointer		cmap;
+    void		*cmap;
 
-    pmap->devPrivates[xxColormapPrivateIndex].ptr = (pointer) -1;
+    pmap->devPrivates[xxColormapPrivateIndex].ptr = (void *) -1;
     
     if (xxMyVisual(pmap->pScreen,pmap->pVisual->vid)) {
 	DBG("CreateColormap\n");
 	pCmapPriv = (xxCmapPrivPtr) xalloc (sizeof (xxCmapPrivRec));
 	if (!pCmapPriv)
 	    return FALSE;
-	pmap->devPrivates[xxColormapPrivateIndex].ptr = (pointer) pCmapPriv;
+	pmap->devPrivates[xxColormapPrivateIndex].ptr = (void *) pCmapPriv;
 	cmap = xalloc(sizeof (CARD32) * (1 << pScrPriv->myDepth));
 	if (!cmap)
 	return FALSE;
@@ -437,7 +437,7 @@ xxDestroyColormap(ColormapPtr pmap)
     xxScrPriv(pmap->pScreen);
     xxCmapPriv(pmap);
 
-    if (pCmapPriv != (pointer) -1) {
+    if (pCmapPriv != (void *) -1) {
 	xxCmapPrivPtr tmpCmapPriv = pScrPriv->Cmaps;
 	xxCmapPrivPtr *prevCmapPriv = &pScrPriv->Cmaps;
 	int n;
@@ -489,7 +489,7 @@ xxStoreColors(ColormapPtr pmap, int nColors, xColorItem *pColors)
     xxScrPriv(pmap->pScreen);
     xxCmapPriv(pmap);
 
-    if (pCmapPriv != (pointer) -1) {
+    if (pCmapPriv != (void *) -1) {
 
 	xColorItem	*expanddefs;
 	int		i;
@@ -547,7 +547,7 @@ xxInstallColormap(ColormapPtr pmap)
     xxScrPriv(pmap->pScreen);
     xxCmapPriv(pmap);
     
-    if (pCmapPriv != (pointer) -1) {
+    if (pCmapPriv != (void *) -1) {
 	Pixel		*pixels;
 	xrgb		*colors;
 	int		i;
@@ -619,7 +619,7 @@ xxUninstallColormap(ColormapPtr pmap)
     xxScrPriv(pmap->pScreen);
     xxCmapPriv(pmap);
 
-    if (pCmapPriv != (pointer) -1) {
+    if (pCmapPriv != (void *) -1) {
 	int num;
 	
 	if ((num = xxCmapInstalled(pmap)) == -1)
@@ -675,7 +675,7 @@ xxCreateWindow(WindowPtr pWin)
     
     DBG("CreateWindow\n");
 
-    pWin->devPrivates[fbWinPrivateIndex].ptr = (pointer) pScrPriv->pPixmap;
+    pWin->devPrivates[fbWinPrivateIndex].ptr = (void *) pScrPriv->pPixmap;
     PRINT_RECTS(pScrPriv->region);
 	if (!pWin->parent) {
 	REGION_EMPTY (pWin->drawable.pScreen, &pScrPriv->region);
@@ -962,15 +962,15 @@ xxGetWindowRegion(WindowPtr pWin,RegionPtr winreg)
 }
 
 static int
-xxUpdateRegion(WindowPtr pWin, pointer unused)
+xxUpdateRegion(WindowPtr pWin, void * unused)
 {
     ScreenPtr pScreen = pWin->drawable.pScreen;
     xxScrPriv(pScreen);
-    ColormapPtr pmap = (pointer) -1;
+    ColormapPtr pmap = (void *) -1;
     RegionRec		winreg, rgni;
     
     if (pScrPriv->myDepth == pWin->drawable.depth) {
-	xxCmapPrivPtr pCmapPriv = (pointer)-1;
+	xxCmapPrivPtr pCmapPriv = (void *)-1;
 	xxGetWindowRegion(pWin,&winreg);
 
 	if (pScrPriv->colormapDirty) {
@@ -980,7 +980,7 @@ xxUpdateRegion(WindowPtr pWin, pointer unused)
 		goto CONTINUE; /* return ? */
 
 	    pCmapPriv = xxGetCmapPriv(pmap);
-	    if (pCmapPriv == (pointer) -1)
+	    if (pCmapPriv == (void *) -1)
 		return WT_WALKCHILDREN;
 	    if (!pCmapPriv->dirty)
 		goto CONTINUE;
@@ -997,7 +997,7 @@ xxUpdateRegion(WindowPtr pWin, pointer unused)
 	REGION_INTERSECT (pScreen, &rgni, &winreg, &pScrPriv->region);
 	
 	if (REGION_NOTEMPTY (pScreen,&rgni)) {
-	    if (pmap == (pointer) -1) {
+	    if (pmap == (void *) -1) {
 		pmap =
 		    (ColormapPtr)LookupIDByType(wColormap(pWin),RT_COLORMAP);
 		if (!pmap) /* return ? */
@@ -1006,7 +1006,7 @@ xxUpdateRegion(WindowPtr pWin, pointer unused)
 		pCmapPriv = xxGetCmapPriv(pmap);
 	    }
 	    
-	    if (pCmapPriv != (pointer)-1)
+	    if (pCmapPriv != (void *)-1)
 		xxCopyPseudocolorRegion(pScreen,&rgni, pCmapPriv);
 	    REGION_SUBTRACT(pScreen, &pScrPriv->region, &pScrPriv->region,
 			    &rgni);
@@ -1034,13 +1034,13 @@ xxUpdateFb(ScreenPtr pScreen)
     WalkTree(pScreen,xxUpdateRegion,NULL);
 #if 0
     if (REGION_NOTEMPTY (pScreen,&pScrPriv->region)) {
-	ColormapPtr pmap = (pointer) -1;
+	ColormapPtr pmap = (void *) -1;
 	xxCmapPrivPtr pCmapPriv;
 	
 	pmap = (ColormapPtr)LookupIDByType(pScreen->defColormap,
 					   RT_COLORMAP);
 	pCmapPriv = xxGetCmapPriv(pmap);
-	if (pCmapPriv != (pointer)-1)
+	if (pCmapPriv != (void *)-1)
 	    xxCopyPseudocolorRegion(pScreen,&pScrPriv->region, pCmapPriv);
 	REGION_SUBTRACT(pScreen, &pScrPriv->region, &pScrPriv->region,
 			&pScrPriv->region);
@@ -1064,9 +1064,9 @@ xxUpdateFb(ScreenPtr pScreen)
 }
 
 static void
-xxBlockHandler (pointer	data,
+xxBlockHandler (void *	data,
 		OSTimePtr pTimeout,
-		pointer pRead)
+		void * pRead)
 {
     ScreenPtr	pScreen = (ScreenPtr) data;
     xxScrPriv(pScreen);
@@ -1076,7 +1076,7 @@ xxBlockHandler (pointer	data,
 }
 
 static void
-xxWakeupHandler (pointer data, int i, pointer LastSelectMask)
+xxWakeupHandler (void * data, int i, void * LastSelectMask)
 {
 }
 
@@ -1158,7 +1158,7 @@ xxSetup(ScreenPtr pScreen, int myDepth, int baseDepth, char* addr, xxSyncFunc sy
     
     if (!RegisterBlockAndWakeupHandlers (xxBlockHandler,
 					 xxWakeupHandler,
-					 (pointer) pScreen))
+					 (void *) pScreen))
 	return FALSE;
 
     wrap (pScrPriv, pScreen, CloseScreen, xxCloseScreen);
@@ -1184,7 +1184,7 @@ xxSetup(ScreenPtr pScreen, int myDepth, int baseDepth, char* addr, xxSyncFunc sy
     }
 #endif
     pScrPriv->addr = addr;
-    pScreen->devPrivates[xxScrPrivateIndex].ptr = (pointer) pScrPriv;
+    pScreen->devPrivates[xxScrPrivateIndex].ptr = (void *) pScrPriv;
 
     pDefMap = (ColormapPtr) LookupIDByType(pScreen->defColormap, RT_COLORMAP);
     if (!xxInitColormapPrivate(pDefMap))
@@ -1341,7 +1341,7 @@ static void
 xxChangeClip (
     GCPtr   pGC,
     int		type,
-    pointer	pvalue,
+    void *	pvalue,
     int		nrects 
 ){
     XX_GC_FUNC_PROLOGUE (pGC);
@@ -2114,7 +2114,7 @@ xxImageGlyphBlt(
     int x, int y,
     unsigned int nglyph,
     CharInfoPtr *ppci,
-    pointer pglyphBase 
+    void * pglyphBase 
 ){
     XX_GC_OP_PROLOGUE(pGC, pDraw);
     (*pGC->ops->ImageGlyphBlt)(pDraw, pGC, x, y, nglyph, 
@@ -2162,7 +2162,7 @@ xxPolyGlyphBlt(
     int x, int y,
     unsigned int nglyph,
     CharInfoPtr *ppci,
-    pointer pglyphBase 
+    void * pglyphBase 
 ){
     XX_GC_OP_PROLOGUE(pGC, pDraw);
     (*pGC->ops->PolyGlyphBlt)(pDraw, pGC, x, y, nglyph, 

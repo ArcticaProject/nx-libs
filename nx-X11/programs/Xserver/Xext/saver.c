@@ -139,7 +139,7 @@ typedef struct _ScreenSaverEvent {
 } ScreenSaverEventRec;
 
 static int ScreenSaverFreeEvents(
-    pointer /* value */,
+    void * /* value */,
     XID /* id */
 );
 
@@ -179,7 +179,7 @@ typedef struct _ScreenSaverAttr {
 } ScreenSaverAttrRec, *ScreenSaverAttrPtr;
 
 static int ScreenSaverFreeAttr (
-    pointer /* value */,
+    void * /* value */,
     XID /* id */
 );
 
@@ -213,7 +213,7 @@ MakeScreenPrivate (
 static int ScreenPrivateIndex;
 
 #define GetScreenPrivate(s) ((ScreenSaverScreenPrivatePtr)(s)->devPrivates[ScreenPrivateIndex].ptr)
-#define SetScreenPrivate(s,v) ((s)->devPrivates[ScreenPrivateIndex].ptr = (pointer) v);
+#define SetScreenPrivate(s,v) ((s)->devPrivates[ScreenPrivateIndex].ptr = (void *) v);
 #define SetupScreen(s)	ScreenSaverScreenPrivatePtr pPriv = (s ? GetScreenPrivate(s) : NULL)
 
 #define New(t)	((t *) xalloc (sizeof (t)))
@@ -356,7 +356,7 @@ setEventMask (pScreen, client, mask)
     	    pEv->client = client;
     	    pEv->screen = pScreen;
     	    pEv->resource = FakeClientID (client->index);
-	    if (!AddResource (pEv->resource, EventType, (pointer) pEv))
+	    if (!AddResource (pEv->resource, EventType, (void *) pEv))
 		return FALSE;
     	}
 	pEv->mask = mask;
@@ -390,7 +390,7 @@ FreeScreenAttr (pAttr)
 
 static int
 ScreenSaverFreeEvents (value, id)
-    pointer value;
+    void * value;
     XID id;
 {
     ScreenSaverEventPtr	pOld = (ScreenSaverEventPtr)value;
@@ -413,7 +413,7 @@ ScreenSaverFreeEvents (value, id)
 
 static int
 ScreenSaverFreeAttr (value, id)
-    pointer value;
+    void * value;
     XID id;
 {
     ScreenSaverAttrPtr	pOldAttr = (ScreenSaverAttrPtr)value;
@@ -1163,7 +1163,7 @@ ScreenSaverSetAttributes (ClientPtr client)
 	FreeScreenAttr (pPriv->attr);
     pPriv->attr = pAttr;
     pAttr->resource = FakeClientID (client->index);
-    if (!AddResource (pAttr->resource, AttrType, (pointer) pAttr))
+    if (!AddResource (pAttr->resource, AttrType, (void *) pAttr))
 	return BadAlloc;
     return Success;
 PatchUp:

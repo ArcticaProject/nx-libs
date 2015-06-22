@@ -229,7 +229,7 @@ int DoCreateContext(__GLXclientState *cl, GLXContextID gcId,
     /*
     ** Register this context as a resource.
     */
-    if (!AddResource(gcId, __glXContextRes, (pointer)glxc)) {
+    if (!AddResource(gcId, __glXContextRes, (void *)glxc)) {
 	if (!isDirect) {
 	    (*glxc->gc->exports.destroyContext)((__GLcontext *)glxc->gc);
         }
@@ -1760,7 +1760,7 @@ static int __glXBindSwapBarrierSGIX(__GLXclientState *cl, GLbyte *pc)
             if (ret == Success) {
                 if (barrier)
                     /* add source for cleanup when drawable is gone */
-                    AddResource(drawable, __glXSwapBarrierRes, (pointer)screen);
+                    AddResource(drawable, __glXSwapBarrierRes, (void *)screen);
                 else
                     /* delete source */
                     FreeResourceByType(drawable, __glXSwapBarrierRes, FALSE);

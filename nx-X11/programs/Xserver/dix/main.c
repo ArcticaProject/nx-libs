@@ -319,7 +319,7 @@ main(int argc, char *argv[], char *envp[])
 	    serverClient = (ClientPtr)xalloc(sizeof(ClientRec));
 	    if (!serverClient)
 		FatalError("couldn't create server client");
-	    InitClient(serverClient, 0, (pointer)NULL);
+	    InitClient(serverClient, 0, (void *)NULL);
 	}
 	else
 	    ResetWellKnownSockets ();

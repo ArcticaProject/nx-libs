@@ -39,7 +39,7 @@ typedef	void	(*fbOverlayPaintKeyProc) (DrawablePtr, RegionPtr, CARD32, int);
 typedef struct _fbOverlayLayer {
     union {
 	struct {
-	    pointer	pbits;
+	    void *	pbits;
 	    int		width;
 	    int		depth;
 	} init;
@@ -100,8 +100,8 @@ fbOverlayPaintWindow(WindowPtr pWin, RegionPtr pRegion, int what);
 
 Bool
 fbOverlaySetupScreen(ScreenPtr	pScreen,
-		     pointer	pbits1,
-		     pointer	pbits2,
+		     void *	pbits1,
+		     void *	pbits2,
 		     int	xsize,
 		     int	ysize,
 		     int	dpix,
@@ -113,8 +113,8 @@ fbOverlaySetupScreen(ScreenPtr	pScreen,
 
 Bool
 fbOverlayFinishScreenInit(ScreenPtr	pScreen,
-			  pointer	pbits1,
-			  pointer	pbits2,
+			  void *	pbits1,
+			  void *	pbits2,
 			  int		xsize,
 			  int		ysize,
 			  int		dpix,

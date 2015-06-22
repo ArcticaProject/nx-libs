@@ -97,14 +97,14 @@ _fbSetWindowPixmap (WindowPtr pWindow, PixmapPtr pPixmap)
 #ifdef FB_NO_WINDOW_PIXMAPS
     FatalError ("Attempted to set window pixmap without fb support\n");
 #else
-    pWindow->devPrivates[fbWinPrivateIndex].ptr = (pointer) pPixmap;
+    pWindow->devPrivates[fbWinPrivateIndex].ptr = (void *) pPixmap;
 #endif
 }
 #endif
 
 Bool
 fbSetupScreen(ScreenPtr	pScreen, 
-	      pointer	pbits,		/* pointer to screen bitmap */
+	      void *	pbits,		/* pointer to screen bitmap */
 	      int	xsize, 		/* in pixels */
 	      int	ysize,
 	      int	dpix,		/* dots per inch */
@@ -160,7 +160,7 @@ fbSetupScreen(ScreenPtr	pScreen,
 
 Bool
 fbFinishScreenInit(ScreenPtr	pScreen,
-		   pointer	pbits,
+		   void *	pbits,
 		   int		xsize,
 		   int		ysize,
 		   int		dpix,
@@ -261,7 +261,7 @@ fbFinishScreenInit(ScreenPtr	pScreen,
 /* dts * (inch/dot) * (25.4 mm / inch) = mm */
 Bool
 fbScreenInit(ScreenPtr	pScreen,
-	     pointer	pbits,
+	     void *	pbits,
 	     int	xsize,
 	     int	ysize,
 	     int	dpix,

@@ -216,7 +216,7 @@ ProcDamageCreate (ClientPtr client)
 	xfree (pDamageExt);
 	return BadAlloc;
     }
-    if (!AddResource (stuff->damage, DamageExtType, (pointer) pDamageExt))
+    if (!AddResource (stuff->damage, DamageExtType, (void *) pDamageExt))
 	return BadAlloc;
 
     DamageRegister (pDamageExt->pDrawable, pDamageExt->pDamage);
@@ -376,8 +376,8 @@ SProcDamageDispatch (ClientPtr client)
 
 static void
 DamageClientCallback (CallbackListPtr	*list,
-		      pointer		closure,
-		      pointer		data)
+		      void *		closure,
+		      void *		data)
 {
     NewClientInfoRec	*clientinfo = (NewClientInfoRec *) data;
     ClientPtr		pClient = clientinfo->client;
@@ -396,7 +396,7 @@ DamageResetProc (ExtensionEntry *extEntry)
 }
 
 static int
-FreeDamageExt (pointer value, XID did)
+FreeDamageExt (void * value, XID did)
 {
     DamageExtPtr    pDamageExt = (DamageExtPtr) value;
 
@@ -416,7 +416,7 @@ FreeDamageExt (pointer value, XID did)
 }
 
 static int
-FreeDamageExtWin (pointer value, XID wid)
+FreeDamageExtWin (void * value, XID wid)
 {
     DamageExtPtr    pDamageExt = (DamageExtPtr) value;
 

@@ -265,7 +265,7 @@ ProcXF86MiscGetMouseSettings(client)
 {
     xXF86MiscGetMouseSettingsReply rep;
     char *devname;
-    pointer mouse;
+    void * mouse;
     register int n;
 
     DEBUG_P("XF86MiscGetMouseSettings");
@@ -316,7 +316,7 @@ ProcXF86MiscGetKbdSettings(client)
     register ClientPtr client;
 {
     xXF86MiscGetKbdSettingsReply rep;
-    pointer kbd;
+    void * kbd;
     register int n;
 
     DEBUG_P("XF86MiscGetKbdSettings");
@@ -348,7 +348,7 @@ ProcXF86MiscSetMouseSettings(client)
     register ClientPtr client;
 {
     MiscExtReturn ret;
-    pointer mouse;
+    void * mouse;
     char *devname = NULL;
     int major, minor;
     
@@ -369,7 +369,7 @@ ProcXF86MiscSetMouseSettings(client)
 		(int)stuff->resolution, (unsigned long)stuff->flags);
     }
 
-    if ((mouse = MiscExtCreateStruct(MISC_POINTER)) == (pointer) 0)
+    if ((mouse = MiscExtCreateStruct(MISC_POINTER)) == (void *) 0)
 	return BadAlloc;
 
     MiscExtSetMouseValue(mouse, MISC_MSE_PROTO,		stuff->mousetype);
@@ -425,7 +425,7 @@ ProcXF86MiscSetKbdSettings(client)
     register ClientPtr client;
 {
     MiscExtReturn ret;
-    pointer kbd;
+    void * kbd;
     REQUEST(xXF86MiscSetKbdSettingsReq);
 
     DEBUG_P("XF86MiscSetKbdSettings");
@@ -437,7 +437,7 @@ ProcXF86MiscSetKbdSettings(client)
 		(int)stuff->kbdtype, (int)stuff->rate,
 		(int)stuff->delay, stuff->servnumlock);
 
-    if ((kbd = MiscExtCreateStruct(MISC_KEYBOARD)) == (pointer) 0)
+    if ((kbd = MiscExtCreateStruct(MISC_KEYBOARD)) == (void *) 0)
 	return BadAlloc;
 
     MiscExtSetKbdValue(kbd, MISC_KBD_TYPE,		stuff->kbdtype);

@@ -84,9 +84,9 @@ static void	    miSpriteSourceValidate(DrawablePtr pDrawable, int x, int y,
 static void	    miSpriteCopyWindow (WindowPtr pWindow,
 					DDXPointRec ptOldOrg,
 					RegionPtr prgnSrc);
-static void	    miSpriteBlockHandler(int i, pointer blockData,
-					 pointer pTimeout,
-					 pointer pReadMask);
+static void	    miSpriteBlockHandler(int i, void * blockData,
+					 void * pTimeout,
+					 void * pReadMask);
 static void	    miSpriteInstallColormap(ColormapPtr pMap);
 static void	    miSpriteStoreColors(ColormapPtr pMap, int ndef,
 					xColorItem *pdef);
@@ -104,7 +104,7 @@ static void	    miSpriteComputeSaved(ScreenPtr pScreen);
     ((pScreen)->field = wrapper)
 
 /*
- * pointer-sprite method table
+ * void *-sprite method table
  */
 
 static Bool miSpriteRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor);
@@ -182,7 +182,7 @@ miSpriteInitialize (pScreen, cursorFuncs, screenFuncs)
 
     if (!miPointerInitialize (pScreen, &miSpritePointerFuncs, screenFuncs,TRUE))
     {
-	xfree ((pointer) pScreenPriv);
+	xfree ((void *) pScreenPriv);
 	return FALSE;
     }
     for (pVisual = pScreen->visuals;
@@ -221,7 +221,7 @@ miSpriteInitialize (pScreen, cursorFuncs, screenFuncs)
     pScreenPriv->colors[MASK_COLOR].red = 0;
     pScreenPriv->colors[MASK_COLOR].green = 0;
     pScreenPriv->colors[MASK_COLOR].blue = 0;
-    pScreen->devPrivates[miSpriteScreenIndex].ptr = (pointer) pScreenPriv;
+    pScreen->devPrivates[miSpriteScreenIndex].ptr = (void *) pScreenPriv;
     
     pScreen->CloseScreen = miSpriteCloseScreen;
     pScreen->GetImage = miSpriteGetImage;
@@ -270,7 +270,7 @@ miSpriteCloseScreen (i, pScreen)
     miSpriteIsUpFALSE (pScreen, pScreenPriv);
     DamageDestroy (pScreenPriv->pDamage);
     
-    xfree ((pointer) pScreenPriv);
+    xfree ((void *) pScreenPriv);
 
     return (*pScreen->CloseScreen) (i, pScreen);
 }
@@ -402,9 +402,9 @@ miSpriteCopyWindow (WindowPtr pWindow, DDXPointRec ptOldOrg, RegionPtr prgnSrc)
 static void
 miSpriteBlockHandler (i, blockData, pTimeout, pReadmask)
     int	i;
-    pointer	blockData;
-    pointer	pTimeout;
-    pointer	pReadmask;
+    void *	blockData;
+    void *	pTimeout;
+    void *	pReadmask;
 {
     ScreenPtr		pScreen = screenInfo.screens[i];
     miSpriteScreenPtr	pPriv;

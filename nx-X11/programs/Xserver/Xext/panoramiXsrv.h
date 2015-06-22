@@ -22,7 +22,7 @@ extern PanoramiXRes * PanoramiXFindIDByScrnum(RESTYPE, XID, int);
 extern PanoramiXRes * PanoramiXFindIDOnAnyScreen(RESTYPE, XID);
 extern WindowPtr PanoramiXChangeWindow(int, WindowPtr);
 extern Bool XineramaRegisterConnectionBlockCallback(void (*func)(void));
-extern int XineramaDeleteResource(pointer, XID);
+extern int XineramaDeleteResource(void *, XID);
 
 extern void XineramaReinitData(ScreenPtr);
 

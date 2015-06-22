@@ -232,8 +232,8 @@ static XF86ModuleVersionInfo VersRec =
  */
 XF86ModuleData extmodModuleData = { &VersRec, extmodSetup, NULL };
 
-static pointer
-extmodSetup(pointer module, pointer opts, int *errmaj, int *errmin)
+static void *
+extmodSetup(void * module, void * opts, int *errmaj, int *errmin)
 {
     int i;
 
@@ -244,7 +244,7 @@ extmodSetup(pointer module, pointer opts, int *errmaj, int *errmin)
 	    char *s;
 	    s = (char *)xalloc(strlen(extensionModules[i].name) + 5);
 	    if (s) {
-		pointer o;
+		void * o;
 		strcpy(s, "omit");
 		strcat(s, extensionModules[i].name);
 		o = xf86FindOption(opts, s);
@@ -258,7 +258,7 @@ extmodSetup(pointer module, pointer opts, int *errmaj, int *errmin)
 	LoadExtension(&extensionModules[i], FALSE);
     }
     /* Need a non-NULL return */
-    return (pointer)1;
+    return (void *)1;
 }
 
 #endif /* XFree86LOADER */

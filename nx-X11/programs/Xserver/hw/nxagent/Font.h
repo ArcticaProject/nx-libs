@@ -65,7 +65,7 @@ int nxagentFontLookUp(const char *name);
 Bool nxagentFontFind(const char *name, int *pos);
 void nxagentListRemoteAddName(const char *name, int status);
 
-int nxagentDestroyNewFontResourceType(pointer p, XID id);
+int nxagentDestroyNewFontResourceType(void * p, XID id);
 
 Bool nxagentDisconnectAllFonts(void);
 Bool nxagentReconnectAllFonts(void *p0);

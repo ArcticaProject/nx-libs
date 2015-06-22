@@ -571,7 +571,7 @@ fb24_32ReformatTile(PixmapPtr pOldTile, int bitsPerPixel)
 }
 
 typedef struct {
-    pointer pbits; 
+    void * pbits; 
     int width;   
 } miScreenInitParmsRec, *miScreenInitParmsPtr;
 
@@ -603,7 +603,7 @@ fb24_32ModifyPixmapHeader (PixmapPtr   pPixmap,
 			   int         depth,
 			   int         bitsPerPixel,
 			   int         devKind,
-			   pointer     pPixData)
+			   void        *pPixData)
 {
     int	    bpp, w;
 

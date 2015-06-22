@@ -236,23 +236,23 @@ SecurityLookupWindow(XID rid, ClientPtr client, Mask access_mode)
 }
 
 
-pointer
+void *
 SecurityLookupDrawable(XID rid, ClientPtr client, Mask access_mode)
 {
     register DrawablePtr pDraw;
 
     if(rid == INVALID)
-	return (pointer) NULL;
+	return (void *) NULL;
     if (client->trustLevel != XSecurityClientTrusted)
 	return (DrawablePtr)SecurityLookupIDByClass(client, rid, RC_DRAWABLE,
 						    access_mode);
     if (client->lastDrawableID == rid)
-	return ((pointer) client->lastDrawable);
+	return ((void *) client->lastDrawable);
     pDraw = (DrawablePtr)SecurityLookupIDByClass(client, rid, RC_DRAWABLE,
 						 access_mode);
     if (pDraw && (pDraw->type != UNDRAWABLE_WINDOW))
-        return (pointer)pDraw;		
-    return (pointer)NULL;
+        return (void *)pDraw;
+    return (void *)NULL;
 }
 
 /* We can't replace the LookupWindow and LookupDrawable functions with
@@ -265,7 +265,7 @@ LookupWindow(XID rid, ClientPtr client)
     return SecurityLookupWindow(rid, client, SecurityUnknownAccess);
 }
 
-pointer
+void *
 LookupDrawable(XID rid, ClientPtr client)
 {
     return SecurityLookupDrawable(rid, client, SecurityUnknownAccess);
@@ -298,19 +298,19 @@ LookupWindow(XID rid, ClientPtr client)
 }
 
 
-pointer
+void *
 LookupDrawable(XID rid, ClientPtr client)
 {
     register DrawablePtr pDraw;
 
     if(rid == INVALID)
-	return (pointer) NULL;
+	return (void *) NULL;
     if (client->lastDrawableID == rid)
-	return ((pointer) client->lastDrawable);
+	return ((void *) client->lastDrawable);
     pDraw = (DrawablePtr)LookupIDByClass(rid, RC_DRAWABLE);
     if (pDraw && (pDraw->type != UNDRAWABLE_WINDOW))
-        return (pointer)pDraw;		
-    return (pointer)NULL;
+        return (void *)pDraw;
+    return (void *)NULL;
 }
 
 #endif /* XCSECURITY */
@@ -318,7 +318,7 @@ LookupDrawable(XID rid, ClientPtr client)
 ClientPtr
 LookupClient(XID rid, ClientPtr client)
 {
-    pointer pRes = (pointer)SecurityLookupIDByClass(client, rid, RC_ANY,
+    void * pRes = (void *)SecurityLookupIDByClass(client, rid, RC_ANY,
 						    SecurityReadAccess);
     int clientIndex = CLIENT_ID(rid);
 
@@ -343,7 +343,7 @@ AlterSaveSetForClient(ClientPtr client, WindowPtr pWin, unsigned mode,
     if (numnow)
     {
 	pTmp = client->saveSet;
-	while ((j < numnow) && (SaveSetWindow(pTmp[j]) != (pointer)pWin))
+	while ((j < numnow) && (SaveSetWindow(pTmp[j]) != (void *)pWin))
 	    j++;
     }
     if (mode == SetModeInsert)
@@ -413,7 +413,7 @@ NoopDDA(void)
 typedef struct _BlockHandler {
     BlockHandlerProcPtr BlockHandler;
     WakeupHandlerProcPtr WakeupHandler;
-    pointer blockData;
+    void * blockData;
     Bool    deleted;
 } BlockHandlerRec, *BlockHandlerPtr;
 
@@ -429,7 +429,7 @@ static Bool		handlerDeleted;
  *  \param pReadMask  nor how it represents the det of descriptors
  */
 void
-BlockHandler(pointer pTimeout, pointer pReadmask)
+BlockHandler(void * pTimeout, void * pReadmask)
 {
     register int i, j;
     
@@ -463,7 +463,7 @@ BlockHandler(pointer pTimeout, pointer pReadmask)
  *  \param pReadmask the resulting descriptor mask
  */
 void
-WakeupHandler(int result, pointer pReadmask)
+WakeupHandler(int result, void * pReadmask)
 {
     register int i, j;
 
@@ -498,7 +498,7 @@ WakeupHandler(int result, pointer pReadmask)
 Bool
 RegisterBlockAndWakeupHandlers (BlockHandlerProcPtr blockHandler, 
                                 WakeupHandlerProcPtr wakeupHandler, 
-                                pointer blockData)
+                                void * blockData)
 {
     BlockHandlerPtr new;
 
@@ -522,7 +522,7 @@ RegisterBlockAndWakeupHandlers (BlockHandlerProcPtr blockHandler,
 void
 RemoveBlockAndWakeupHandlers (BlockHandlerProcPtr blockHandler, 
                               WakeupHandlerProcPtr wakeupHandler, 
-                              pointer blockData)
+                              void * blockData)
 {
     int	    i;
 
@@ -616,8 +616,8 @@ ProcessWorkQueueZombies(void)
 
 Bool
 QueueWorkProc (
-    Bool (*function)(ClientPtr /* pClient */, pointer /* closure */),
-    ClientPtr client, pointer closure)
+    Bool (*function)(ClientPtr /* pClient */, void * /* closure */),
+    ClientPtr client, void * closure)
 {
     WorkQueuePtr    q;
 
@@ -645,13 +645,13 @@ typedef struct _SleepQueue {
     struct _SleepQueue	*next;
     ClientPtr		client;
     ClientSleepProcPtr  function;
-    pointer		closure;
+    void *		closure;
 } SleepQueueRec, *SleepQueuePtr;
 
 static SleepQueuePtr	sleepQueue = NULL;
 
 Bool
-ClientSleep (ClientPtr client, ClientSleepProcPtr function, pointer closure)
+ClientSleep (ClientPtr client, ClientSleepProcPtr function, void * closure)
 {
     SleepQueuePtr   q;
 
@@ -731,7 +731,7 @@ static Bool
 _AddCallback(
     CallbackListPtr *pcbl,
     CallbackProcPtr callback,
-    pointer         data)
+    void            *data)
 {
     CallbackPtr     cbr;
 
@@ -750,7 +750,7 @@ static Bool
 _DeleteCallback(
     CallbackListPtr *pcbl,
     CallbackProcPtr callback,
-    pointer         data)
+    void            *data)
 {
     CallbackListPtr cbl = *pcbl;
     CallbackPtr     cbr, pcbr;
@@ -785,7 +785,7 @@ _DeleteCallback(
 static void 
 _CallCallbacks(
     CallbackListPtr    *pcbl,
-    pointer	    call_data)
+    void	       *call_data)
 {
     CallbackListPtr cbl = *pcbl;
     CallbackPtr     cbr, pcbr;
@@ -914,7 +914,7 @@ CreateCallbackList(CallbackListPtr *pcbl, CallbackFuncsPtr cbfuncs)
 }
 
 Bool 
-AddCallback(CallbackListPtr *pcbl, CallbackProcPtr callback, pointer data)
+AddCallback(CallbackListPtr *pcbl, CallbackProcPtr callback, void * data)
 {
     if (!pcbl) return FALSE;
     if (!*pcbl)
@@ -926,14 +926,14 @@ AddCallback(CallbackListPtr *pcbl, CallbackProcPtr callback, pointer data)
 }
 
 Bool 
-DeleteCallback(CallbackListPtr *pcbl, CallbackProcPtr callback, pointer data)
+DeleteCallback(CallbackListPtr *pcbl, CallbackProcPtr callback, void * data)
 {
     if (!pcbl || !*pcbl) return FALSE;
     return ((*(*pcbl)->funcs.DeleteCallback) (pcbl, callback, data));
 }
 
 void 
-CallCallbacks(CallbackListPtr *pcbl, pointer call_data)
+CallCallbacks(CallbackListPtr *pcbl, void * call_data)
 {
     if (!pcbl || !*pcbl) return;
     (*(*pcbl)->funcs.CallCallbacks) (pcbl, call_data);

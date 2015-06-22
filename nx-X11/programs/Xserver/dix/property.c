@@ -263,10 +263,10 @@ ProcChangeProperty(ClientPtr client)
 
 #ifdef LBX
     err = LbxChangeWindowProperty(client, pWin, stuff->property, stuff->type,
-	 (int)format, (int)mode, len, TRUE, (pointer)&stuff[1], TRUE, NULL);
+	 (int)format, (int)mode, len, TRUE, (void *)&stuff[1], TRUE, NULL);
 #else
     err = ChangeWindowProperty(pWin, stuff->property, stuff->type, (int)format,
-			       (int)mode, len, (pointer)&stuff[1], TRUE);
+			       (int)mode, len, (void *)&stuff[1], TRUE);
 #endif
     if (err != Success)
 	return err;
@@ -276,7 +276,7 @@ ProcChangeProperty(ClientPtr client)
 
 int
 ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format, 
-                     int mode, unsigned long len, pointer value, 
+                     int mode, unsigned long len, void * value, 
                      Bool sendevent)
 {
 #ifdef LBX
@@ -288,7 +288,7 @@ ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format,
     xEvent event;
     int sizeInBytes;
     int totalSize;
-    pointer data;
+    void * data;
 
     sizeInBytes = format>>3;
     totalSize = len * sizeInBytes;
@@ -309,7 +309,7 @@ ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format,
         pProp = (PropertyPtr)xalloc(sizeof(PropertyRec));
 	if (!pProp)
 	    return(BadAlloc);
-        data = (pointer)xalloc(totalSize);
+        data = (void *)xalloc(totalSize);
 	if (!data && len)
 	{
 	    xfree(pProp);
@@ -340,7 +340,7 @@ ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format,
         {
 	    if (totalSize != pProp->size * (pProp->format >> 3))
 	    {
-	    	data = (pointer)xrealloc(pProp->data, totalSize);
+		data = (void *)xrealloc(pProp->data, totalSize);
 	    	if (!data && len)
 		    return(BadAlloc);
             	pProp->data = data;
@@ -357,7 +357,7 @@ ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format,
 	}
         else if (mode == PropModeAppend)
         {
-	    data = (pointer)xrealloc(pProp->data,
+	    data = (void *)xrealloc(pProp->data,
 				     sizeInBytes * (len + pProp->size));
 	    if (!data)
 		return(BadAlloc);
@@ -369,7 +369,7 @@ ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format,
 	}
         else if (mode == PropModePrepend)
         {
-            data = (pointer)xalloc(sizeInBytes * (len + pProp->size));
+            data = (void *)xalloc(sizeInBytes * (len + pProp->size));
 	    if (!data)
 		return(BadAlloc);
 	    memmove(&((char *)data)[totalSize], (char *)pProp->data, 

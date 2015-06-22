@@ -442,7 +442,7 @@ static int __glXDispatch(ClientPtr client)
 	** with the client so we will be notified when the client dies.
 	*/
 	XID xid = FakeClientID(client->index);
-	if (!AddResource( xid, __glXClientRes, (pointer)(long)client->index)) {
+	if (!AddResource( xid, __glXClientRes, (void *)(long)client->index)) {
 	    return BadAlloc;
 	}
 	ResetClientState(client->index);
@@ -520,7 +520,7 @@ static int __glXSwapDispatch(ClientPtr client)
 	** with the client so we will be notified when the client dies.
 	*/
 	XID xid = FakeClientID(client->index);
-	if (!AddResource( xid, __glXClientRes, (pointer)(long)client->index)) {
+	if (!AddResource( xid, __glXClientRes, (void *)(long)client->index)) {
 	    return BadAlloc;
 	}
 	ResetClientState(client->index);

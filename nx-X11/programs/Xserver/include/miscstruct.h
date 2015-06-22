@@ -61,7 +61,7 @@ typedef struct _Box {
 } BoxRec;
 
 typedef union _DevUnion {
-    pointer		ptr;
+    void *		ptr;
     long		val;
     unsigned long	uval;
     RegionPtr   	(*fptr)(

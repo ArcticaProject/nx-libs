@@ -64,7 +64,7 @@ cwCopyGC(GCPtr pGCSrc, unsigned long mask, GCPtr pGCDst);
 static void
 cwDestroyGC(GCPtr pGC);
 static void
-cwChangeClip(GCPtr pGC, int type, pointer pvalue, int nrects);
+cwChangeClip(GCPtr pGC, int type, void * pvalue, int nrects);
 static void
 cwCopyClip(GCPtr pgcDst, GCPtr pgcSrc);
 static void
@@ -199,7 +199,7 @@ cwValidateGC(GCPtr pGC, unsigned long stateChanges, DrawablePtr pDrawable)
 	 */
 	
 	(*pBackingGC->funcs->ChangeClip) (pBackingGC, CT_REGION,
-					  (pointer) pCompositeClip, 0);
+					  (void *) pCompositeClip, 0);
 	
 	vals[0] = x_off - pDrawable->x;
 	vals[1] = y_off - pDrawable->y;
@@ -273,7 +273,7 @@ cwDestroyGC(GCPtr pGC)
 }
 
 static void
-cwChangeClip(GCPtr pGC, int type, pointer pvalue, int nrects)
+cwChangeClip(GCPtr pGC, int type, void * pvalue, int nrects)
 {
     cwGCPtr	pPriv = (cwGCPtr)(pGC)->devPrivates[cwGCIndex].ptr;
 
@@ -425,7 +425,7 @@ cwFillRegionTiled(DrawablePtr pDrawable, RegionPtr pRegion, PixmapPtr pTile,
     pGC = GetScratchGC(pDrawable->depth, pScreen);
     v[0].val = GXcopy;
     v[1].val = FillTiled;
-    v[2].ptr = (pointer) pTile;
+    v[2].ptr = (void *) pTile;
     v[3].val = x_off;
     v[4].val = y_off;
     dixChangeGC(NullClient, pGC, (GCFunction | GCFillStyle | GCTile |
@@ -645,7 +645,7 @@ miInitializeCompositeWrapper(ScreenPtr pScreen)
     if (!pScreenPriv)
 	return;
 
-    pScreen->devPrivates[cwScreenIndex].ptr = (pointer)pScreenPriv;
+    pScreen->devPrivates[cwScreenIndex].ptr = (void *)pScreenPriv;
     
     SCREEN_EPILOGUE(pScreen, CloseScreen, cwCloseScreen);
     SCREEN_EPILOGUE(pScreen, GetImage, cwGetImage);
@@ -693,7 +693,7 @@ cwCloseScreen (int i, ScreenPtr pScreen)
 	cwFiniRender(pScreen);
 #endif
 
-    xfree((pointer)pScreenPriv);
+    xfree((void *)pScreenPriv);
 
     return (*pScreen->CloseScreen)(i, pScreen);
 }

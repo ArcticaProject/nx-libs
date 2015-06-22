@@ -571,7 +571,7 @@ static char *nxagentXkbGetRules()
   return XKB_DFLT_RULES_FILE;
 }
  
-void nxagentBell(int volume, DeviceIntPtr pDev, pointer ctrl, int cls)
+void nxagentBell(int volume, DeviceIntPtr pDev, void * ctrl, int cls)
 {
   XBell(nxagentDisplay, volume);
 }
@@ -978,7 +978,7 @@ XkbError:
           #endif
 
           XkbSetRulesDflts(rules, model, layout, variants, options);
-          XkbInitKeyboardDeviceStruct((pointer)pDev, &names, &keySyms, modmap,
+          XkbInitKeyboardDeviceStruct((void *)pDev, &names, &keySyms, modmap,
                                           nxagentBell, nxagentChangeKeyboardControl);
 
           if (!nxagentKeyboard ||
@@ -1068,7 +1068,7 @@ XkbError:
           #endif
 
           XkbSetRulesDflts(rules, model, layout, variants, options);
-          XkbInitKeyboardDeviceStruct((pointer)pDev, &names, &keySyms, modmap,
+          XkbInitKeyboardDeviceStruct((void *)pDev, &names, &keySyms, modmap,
                                           nxagentBell, nxagentChangeKeyboardControl);
 
           free(nxagentXkbConfigFilePath);
@@ -1087,9 +1087,9 @@ XkbError:
         #endif
 
         XkbSetRulesDflts(rules, model, layout, variants, options);
-        XkbInitKeyboardDeviceStruct((pointer)pDev, &names, &keySyms, modmap,
+        XkbInitKeyboardDeviceStruct((void *)pDev, &names, &keySyms, modmap,
                                     nxagentBell, nxagentChangeKeyboardControl);
-        XkbDDXChangeControls((pointer)pDev, xkb->ctrls, xkb->ctrls);
+        XkbDDXChangeControls((void *)pDev, xkb->ctrls, xkb->ctrls);
 
 XkbEnd:
 

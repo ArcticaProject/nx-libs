@@ -47,7 +47,7 @@ typedef struct {
 extern int cwGCIndex;
 
 #define getCwGC(pGC)	((cwGCPtr)(pGC)->devPrivates[cwGCIndex].ptr)
-#define setCwGC(pGC,p)	((pGC)->devPrivates[cwGCIndex].ptr = (pointer) (p))
+#define setCwGC(pGC,p)	((pGC)->devPrivates[cwGCIndex].ptr = (void *) (p))
 
 /*
  * One of these structures is allocated per Picture that gets used with a
@@ -61,7 +61,7 @@ typedef struct {
 } cwPictureRec, *cwPicturePtr;
 
 #define getCwPicture(pPicture)	((cwPicturePtr)(pPicture)->devPrivates[cwPictureIndex].ptr)
-#define setCwPicture(pPicture,p) ((pPicture)->devPrivates[cwPictureIndex].ptr = (pointer) (p))
+#define setCwPicture(pPicture,p) ((pPicture)->devPrivates[cwPictureIndex].ptr = (void *) (p))
 
 extern int  cwPictureIndex;
 
@@ -69,7 +69,7 @@ extern int cwWindowIndex;
 
 #define cwWindowPrivate(pWindow)    ((pWindow)->devPrivates[cwWindowIndex].ptr)
 #define getCwPixmap(pWindow)	    ((PixmapPtr) cwWindowPrivate(pWindow))
-#define setCwPixmap(pWindow,pPixmap) (cwWindowPrivate(pWindow) = (pointer) (pPixmap))
+#define setCwPixmap(pWindow,pPixmap) (cwWindowPrivate(pWindow) = (void *) (pPixmap))
 
 #define cwDrawableIsRedirWindow(pDraw)					\
 	((pDraw)->type == DRAWABLE_WINDOW &&				\

@@ -76,7 +76,7 @@ unsigned        ndx;
 	    case XkbKB_Default:
 		if (( xE->u.u.type == KeyPress ) && 
 		    (keyc->down[key>>3] & (1<<(key&7)))) {
-		    XkbLastRepeatEvent=	(pointer)xE;
+		    XkbLastRepeatEvent=	(void *)xE;
 		    xE->u.u.type = KeyRelease;
 		    XkbHandleActions(keybd,keybd,xE,count);
 		    xE->u.u.type = KeyPress;
@@ -86,7 +86,7 @@ unsigned        ndx;
 		}
 		else if ((xE->u.u.type==KeyRelease) &&
 			(!(keyc->down[key>>3]&(1<<(key&7))))) {
-		    XkbLastRepeatEvent=	(pointer)&xE;
+		    XkbLastRepeatEvent=	(void *)&xE;
 		    xE->u.u.type = KeyPress;
 		    XkbHandleActions(keybd,keybd,xE,count);
 		    xE->u.u.type = KeyRelease;

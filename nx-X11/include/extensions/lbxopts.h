@@ -96,8 +96,8 @@ struct iovec {
 typedef void *LbxStreamCompHandle;
 
 typedef struct _LbxStreamOpts {
-    LbxStreamCompHandle	(*streamCompInit)(int fd, pointer arg);
-    pointer		streamCompArg;
+    LbxStreamCompHandle	(*streamCompInit)(int fd, void * arg);
+    void *		streamCompArg;
     int			(*streamCompStuffInput)(
 			    int fd,
 			    unsigned char *buf,
