@@ -185,34 +185,6 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
 #define UseSeparateConfDir NO
  */
 
-/* 
- * To enable building the glide driver, you need to define 
- * HasGlide2 to YES and set the Glide2IncDir variable. 
- * HasGlide2 is per default NO.
- *
-#define HasGlide2 YES
- */
-
-/*
- * Set the path to your Glide include files.
- *
-#define Glide2IncDir /usr/include/glide
- */
-
-/* 
- * Have glide 3?
- *
-#define HasGlide3 YES
- */
-
-/*
- * Set the path to your Glide 3 include files.
- *
-#define Glide3IncDir /usr/include/glide3
- */
-
-
-
 /*
  * Unless you're a developer you shouldn't need to change anything
  * beyond this point.
@@ -439,22 +411,6 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
    || defined(AMD64Architecture)
 #define GlxExtraDefines -D__GLX_ALIGN64
 #endif
-
-/*
- * If you want to build the xf86rush extension, uncomment this line.
- * This isn't recommended.
- *
-#define BuildXF86RushExt	YES
- */
-#define BuildXF86RushExt	NO
-
-/*
- * If you want to build the client library for the xf86rush extension,
- * uncomment this line.  This isn't recommended.
- *
-#define BuildXF86RushLibrary	NO
- */
-#define BuildXF86RushLibrary	NO
 
 #define BuildXKB		YES
 #define BuildXKBlib		YES
