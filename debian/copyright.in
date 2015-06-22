@@ -1456,7 +1456,6 @@ Files: nx-X11/config/util/aminstall.sh
  nx-X11/lib/Xrender/Xrender-def.cpp
  nx-X11/lib/Xrender/autogen.sh
  nx-X11/lib/Xrender/config.h
- nx-X11/lib/Xtst/Xtst-def.cpp
  nx-X11/lib/font/Speedo/adobe-iso.h
  nx-X11/lib/font/Speedo/bics-unicode.h
  nx-X11/lib/font/fontfile/gunzip.c
@@ -3734,15 +3733,6 @@ Copyright: Mark J. Kilgard, 1994-1996, 1998. */
 License: UNKNOWN
  FIXME
 
-Files: nx-X11/lib/Xtst/XRecord.c
- nx-X11/lib/font/fc/fserve.c
-Copyright: 1990, 1998 The Open Group
-  1990, Network Computing Devices
-  1995, 1998 The Open Group
-  1995, Network Computing Devices
-License: UNKNOWN
- FIXME
-
 Files: nx-X11/lib/Xdmcp/Xdmcp.h
  nx-X11/programs/Xserver/os/xdmcp.c
 Copyright: 1989, Network Computing Devices, Inc., Mountain View, California
@@ -4414,12 +4404,6 @@ License: UNKNOWN
 Files: nx-X11/lib/X11/Font.c
 Copyright: 1986, 1998 The Open Group
   2000, The XFree86 Project, Inc
-License: UNKNOWN
- FIXME
-
-Files: nx-X11/lib/Xtst/XTest.c
-Copyright: 1990-1991, UniSoft Group Limited
-  1992-1993, 1998 The Open Group
 License: UNKNOWN
  FIXME
 

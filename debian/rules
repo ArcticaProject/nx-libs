@@ -84,7 +84,6 @@ override_dh_strip:
 	dh_strip -plibnx-xfixes3 --dbg-package=libnx-xfixes3-dbg
 	dh_strip -plibnx-xinerama1 --dbg-package=libnx-xinerama1-dbg
 	dh_strip -plibnx-xrender1 --dbg-package=libnx-xrender1-dbg
-	dh_strip -plibnx-xtst6 --dbg-package=libnx-xtst6-dbg
 	dh_strip -plibxcomp3 --dbg-package=libxcomp3-dbg
 	dh_strip -plibxcompshad3 --dbg-package=libxcompshad3-dbg
 	dh_strip -plibxcompext3 --dbg-package=libxcompext3-dbg

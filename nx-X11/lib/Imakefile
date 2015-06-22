@@ -59,7 +59,6 @@ X11LIBDIR = X11
 
 #if BuildLibraries
 OLDXLIBDIR = oldX
-XTSTLIBDIR = Xtst
 #endif
 
 
