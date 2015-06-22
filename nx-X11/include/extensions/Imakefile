@@ -24,10 +24,6 @@ XF86VIDMODEHEADERS = xf86vmode.h xf86vmstr.h
 #if BuildXF86DGA || BuildXF86DGALibrary
 XF86DGAHEADERS = xf86dga.h xf86dgastr.h xf86dga1.h xf86dga1str.h
 #endif
-#if BuildXextLib
-LBXHEADERS = XLbx.h lbxbuf.h lbxbufstr.h lbxdeltastr.h lbximage.h lbxopts.h \
-	     lbxstr.h lbxzlib.h
-#endif
 #if BuildXvExt
 XVHEADERS = Xv.h Xvlib.h Xvproto.h
 XVMCHEADERS = XvMC.h XvMClib.h XvMCproto.h vldXvMC.h
@@ -77,7 +73,7 @@ EXTRAHEADERS = \
 	$(XRESHEADERS) \
 	$(NULL)
 
-HEADERS = Xext.h \
+HEADERS = \
 	xcmiscstr.h \
 	MITMisc.h mitmiscstr.h \
 	bigreqstr.h \
@@ -87,13 +83,11 @@ HEADERS = Xext.h \
 	XKB.h XKBgeom.h XKBproto.h XKBstr.h XKBsrv.h \
 	Xdbe.h Xdbeproto.h \
 	Xag.h Xagstr.h Xagsrv.h \
-	XShm.h shmstr.h \
+	XShm.h \
 	$(EXTRAHEADERS) \
 	multibuf.h multibufst.h \
 	record.h recordstr.h \
 	security.h securstr.h \
-	shape.h shapestr.h \
-	sync.h syncstr.h \
 	Xcup.h Xcupstr.h \
 	dpms.h dpmsstr.h \
 	XEVI.h XEVIstr.h \

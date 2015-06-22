@@ -403,17 +403,17 @@ $(NXAGENTOBJS) $(NXAGENTLIBS) $(NXAGENTSYSLIBS):: $(NXAGENTDIRS)
 #if defined(SunArchitecture)
 NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext -L ../../../nxcompshad \
                 -lXcomp -lXcompext -lXcompshad -lrt -L/usr/sfw/lib -lNX_Xrender -lNX_Xfixes -lXfont \
-                -L../../../nx-X11/exports/lib -lNX_Xtst -lXrandr -lNX_Xcomposite -lXdmcp \
+                -L../../../nx-X11/exports/lib -lXtst -lXrandr -lNX_Xcomposite -lXdmcp \
 `pkg-config --libs libxml-2.0`
 #elif defined(cygwinArchitecture)
 NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext \
-                -lXcomp -lXcompext -lNX_Xrender -lX11 -lNX_Xext -lNX_Xcomposite -lNX_Xfixes -lXfont \
-                -L ../../../nxcompshad -lXcompshad -L../../../nx-X11/exports/lib -lNX_Xtst -lXdmcp \
+                -lXcomp -lXcompext -lNX_Xrender -lX11 -lXext -lNX_Xcomposite -lNX_Xfixes -lXfont \
+                -L ../../../nxcompshad -lXcompshad -L../../../nx-X11/exports/lib -lXtst -lXdmcp \
 `pkg-config --libs libxml-2.0`
 #else
 NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext -L ../../../nxcompshad \
-                -lXcomp -lXcompext -lXcompshad -lNX_Xrender -lNX_X11 -lNX_Xext -lNX_Xfixes -lXfont \
-                -L../../../nx-X11/exports/lib -lNX_Xtst -lXrandr -lNX_Xcomposite -lNX_Xinerama -lXdmcp \
+                -lXcomp -lXcompext -lXcompshad -lNX_Xrender -lNX_X11 -lXext -lNX_Xfixes -lXfont \
+                -L../../../nx-X11/exports/lib -lXtst -lXrandr -lNX_Xcomposite -lNX_Xinerama -lXdmcp \
 `pkg-config --libs libxml-2.0`
 #endif
 
@@ -468,7 +468,7 @@ nxagent_static_nolibs:  nxagent
 	else exit 0; fi
 	$(CCLINK) -o nxagent_static_nolibs -Wl,-Bstatic $(LDOPTIONS) $(NXAGENTOBJS) \
 	$(NXAGENTLIBS) $(LOADABLEEXTS) $(LIBCWRAPPER) $(LDLIBS) \
-	$(LDPRELIBS) $(SYSLIBS) -Wl,-Bdynamic -lNX_Xext -lNX_X11 $(EXTRA_LOAD_FLAGS)
+	$(LDPRELIBS) $(SYSLIBS) -Wl,-Bdynamic -lXext -lNX_X11 $(EXTRA_LOAD_FLAGS)
 #endif /* NXAgentServer */
 
 #if defined(NXWinServer) && NXWinServer

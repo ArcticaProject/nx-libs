@@ -404,7 +404,7 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
  * the docs that XFree86 has changed or added.
  *
 #define BuildSpecsDocs		YES
-#define SpecsDocDirs		CTEXT GL ICCCM X11 Xext Xmu Xv XvMC i18n
+#define SpecsDocDirs		CTEXT GL ICCCM X11 Xmu Xv XvMC i18n
  */
 
 /*

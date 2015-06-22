@@ -405,18 +405,6 @@ JUMP_STUBS_IMPORT_X11 = $(LIBC_SA)
 JUMP_SIBARS_X11 = jump/libNX_SM.a~ jump/libNX_ICE.a~
 JUMP_LDLIBS_X11 = $(JUMP_SIBARS_X11) $(JUMP_LDLIBS_libc)
 
-XCOMM libXext (part of libXt.so)
-JUMP_ROOT_Xext = $(XEXTLIBSRC)
-JUMP_IS_HOST_Xext = NO
-JUMP_HOST_Xext = $(JUMP_ROOT_Xt)
-JUMP_DIR_Xext = $(JUMP_DIR_Xt)
-
-XCOMM libXtst (part of libXt.so)
-JUMP_ROOT_Xtst = $(XTESTLIBSRC)
-JUMP_IS_HOST_Xtst = NO
-JUMP_HOST_Xtst = $(JUMP_ROOT_Xt)
-JUMP_DIR_Xtst = $(JUMP_DIR_Xt)
-
 # endif /* !UseInstalled */
 
 /*
