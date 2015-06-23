@@ -192,8 +192,6 @@ NX_VERSION_CURRENT_STRING  = nxVersionString
 
 #if BuildXFree86ConfigTools && BuildLibrariesForConfigTools
 #define BuildLibraries		YES
-#define BuildXF86MiscLibrary	YES
-#define BuildXF86VidModeLibrary	YES
 #define BuildXKBlib		YES
 #define BuildXKBfilelib		YES
 #endif
@@ -470,22 +468,6 @@ IPLAN2P8_DEFS = -DUSE_IPLAN2P8
 #if 0
 #ifndef JoystickSupport
 # define JoystickSupport	NO
-#endif
-#endif
-
-#if 0
-/*
- * Build the extra extension libs even when not including the extra extensions
- * in the servers
- */
-#ifndef BuildXF86MiscLibrary
-# define BuildXF86MiscLibrary	YES
-#endif
-#ifndef BuildXF86DGALibrary
-# define BuildXF86DGALibrary	YES
-#endif
-#ifndef BuildXF86VidModeLibrary
-# define BuildXF86VidModeLibrary YES
 #endif
 #endif
 

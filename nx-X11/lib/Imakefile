@@ -15,18 +15,6 @@ NULL =
 XKBLIBDIR = xkbfile
 #endif
 
-#if BuildXF86MiscLibrary
-XF86MISCLIBDIR = Xxf86misc
-#endif
-
-#if BuildXF86VidModeLibrary
-XF86VMLIBDIR = Xxf86vm
-#endif
-
-#if BuildXF86DGALibrary
-XF86DGALIBDIR = Xxf86dga
-#endif
-
 #if BuildXineramaLibrary
 XINERAMADIR=Xinerama
 #endif
@@ -42,12 +30,6 @@ XFIXESLIBDIR = Xfixes
 #if BuildCompositeLibrary
 COMPOSITELIBDIR = Xcomposite
 #endif
-
-XF86EXTLIBS = \
-	$(XF86MISCLIBDIR) \
-	$(XF86VMLIBDIR) \
-	$(XF86DGALIBDIR) \
-	$(NULL)
 
 #if BuildXauLib
 XAULIBDIR = Xau
@@ -72,9 +54,6 @@ LINTSUBDIRS = \
 	$(X11LIBDIR) \
 	$(OLDXLIBDIR) \
 	$(XEXTLIBDIR) \
-	$(XF86MISCLIBDIR) \
-	$(XF86VMLIBDIR) \
-	$(XF86DGALIBDIR) \
 	$(XTSTLIBDIR) \
 	$(XKBLIBDIR) \
 	$(XINERAMADIR) \
