@@ -147,14 +147,3 @@ DependTarget()
 distclean:: clean
 	RemoveFile(Makefile)
 #endif
-
-all:: xrender.pc
-
-xrender.pc: xrender.pc.in
-	RemoveFile($@)
-	sh config-subst $(SUBSTVARS) < xrender.pc.in > $@
-
-InstallNonExecFile(xrender.pc,$(USRLIBDIR)/pkgconfig)
-
-clean::
-	RemoveFile(xrender.pc)

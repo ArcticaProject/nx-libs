@@ -61,15 +61,3 @@ MANSUFFIX=$(LIBMANSUFFIX)
 InstallManPage(Xfixes,$(LIBMANDIR))
 
 DependTarget()
-
-all:: xfixes.pc
-
-xfixes.pc: xfixes.pc.in
-	RemoveFile($@)
-	sh ../Xrender/config-subst $(SUBSTVARS) < xfixes.pc.in > $@
-
-InstallNonExecFile(xfixes.pc,$(USRLIBDIR)/pkgconfig)
-
-clean::
-	RemoveFile(xfixes.pc)
-
