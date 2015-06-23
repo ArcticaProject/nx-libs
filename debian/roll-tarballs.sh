@@ -52,13 +52,13 @@ else
 fi
 
 if [ x"$RELEASE" == "xHEAD" ]; then
-    CHECKOUT="HEAD"
+    CHECKOUT=refs/heads/$(git rev-parse --abbrev-ref HEAD)
 fi
 
 if ! git rev-parse --verify -q "$CHECKOUT" >/dev/null; then
     echo "   '${RELEASE}' is not a valid release number because there is no git tag named ${CHECKOUT}."
     echo "   Please specify one of the following releases:"
-    echo "HEAD"
+    echo "HEAD (on branch `git rev-parse --abbrev-ref HEAD`)"
     git tag -l | grep "^redist" | cut -f2 -d"/" | sort -u
     exit 1
 fi
@@ -72,6 +72,7 @@ trap "rm -f \"${MANIFEST}\"; rm -rf \"${TEMP_DIR}\"" 0
 
 # create local copy of Git project at temp location
 git archive --format=tar "${CHECKOUT}" --prefix="${PROJECT}-${RELEASE}/" | ( cd "$TEMP_DIR"; tar xf - )
+git --no-pager log --after "1972-01-01" --format="%ai %aN (%h) %n%n%x09*%w(68,0,10) %s%d%n" > "${TEMP_DIR}/${PROJECT}-${RELEASE}/ChangeLog"
 
 echo "Created tarball for $CHECKOUT"
 
@@ -81,16 +82,20 @@ mkdir -p "doc/applied-patches"
 
 # prepare patches for lite and full tarball
 if [ "x$MODE" = "xfull" ]; then
-    cat "debian/patches/series" | sort | grep -v '^#' | egrep "([0-9]+_.*\.(full|full\+lite)\.patch)" | while read file
+    cat "debian/patches/series" | sort | grep -v '^#' | egrep "([0-9]+(_|-).*\.(full|full\+lite)\.patch)" | while read file
     do
         cp -v "debian/patches/$file" "doc/applied-patches/"
         echo "${file##*/}" >> "doc/applied-patches/series"
     done
 else
+    rm -f  "bin/"{nxagent,nxauth,x2goagent}
     rm -Rf "nxcompshad"*
     rm -Rf "nxcompext"*
     rm -Rf "nx-X11"*
-    cat "debian/patches/series" | sort | grep -v '^#' | egrep "([0-9]+_.*\.full\+lite\.patch)" | while read file
+    rm -Rf "etc"*
+    rm -Rf "doc/nx-X11_vs_XOrg69_patches"*
+    rm -f  "README.keystrokes"
+    cat "debian/patches/series" | sort | grep -v '^#' | egrep "([0-9]+(_|-).*\.full\+lite\.patch)" | while read file
     do
         cp -v "debian/patches/$file" "doc/applied-patches/"
         echo "${file##*/}" >> "doc/applied-patches/series"
@@ -104,14 +109,18 @@ else
     echo "No patches applied at all. Very old release?"
 fi
 
+# remove folders that we do not want to roll into the tarball
+rm -Rf ".pc/"
+rm -Rf "debian/"
+rm -Rf "nx-libs.spec"
+
+# some file renamings
+mv README.md README.NX-Development
+
 # very old release did not add any README
 for f in $(ls README* 2>/dev/null); do
     mv -v "$f" "doc/";
 done
-
-# remove folders that we do not want to roll into the tarball
-rm -Rf ".pc/"
-rm -Rf "debian/"
 
 # remove files, that we do not want in the tarballs (build cruft)
 rm -Rf nx*/configure nx*/autom4te.cache*
