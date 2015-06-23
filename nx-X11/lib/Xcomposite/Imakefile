@@ -54,15 +54,3 @@ SUBSTVARS=prefix="$(PROJECTROOT)" \
 #include <Library.tmpl>
 
 DependTarget()
-
-all:: xcomposite.pc
-
-xcomposite.pc: xcomposite.pc.in
-	RemoveFile($@)
-	sh ../Xrender/config-subst $(SUBSTVARS) < xcomposite.pc.in > $@
-
-InstallNonExecFile(xcomposite.pc,$(USRLIBDIR)/pkgconfig)
-
-clean::
-	RemoveFile(xcomposite.pc)
-
