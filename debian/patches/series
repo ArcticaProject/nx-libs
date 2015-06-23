@@ -26,6 +26,7 @@
 0029_nxcomp_ppc64.full+lite.patch
 0030_nx-X11_configure-args.full.patch
 0031_nx-X11_parallel-make.full.patch
+0040_nx-X11_Fix-alpha-premultiplication-in-XRenderPa.full.patch
 0051_nxcomp_macos105-fdisset.full+lite.patch
 0052_nxcomp_macos10-nxauth-location.full+lite.patch
 0053_nx-X11_no-xcomp1-install-target.full.patch
