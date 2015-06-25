@@ -40,9 +40,10 @@ mkdir -p "${NX_ROOT}"
 # This should be randlomly generated.
 #
 
-#NX_COOKIE=`xauth list |grep "${HOSTNAME}/unix:\<${NX_PORT}\>" | grep MIT | cut -f 5 -d ' '`
-NX_COOKIE=123efa980d2cba234ef6f73deac810ff
-
+NX_COOKIE=`xauth -n list |grep "${HOSTNAME}/unix:${NX_PORT}" | grep MIT | cut -f 5 -d ' ' | head -n1`
+if [ -z "$NX_COOKIE" ]; then
+	NX_COOKIE=`mcookie`
+fi
 
 #
 # Create the directories for the NX session.
