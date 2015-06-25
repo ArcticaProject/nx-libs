@@ -23,6 +23,7 @@ Build-Depends:
  libxfixes-dev,
  libxtst-dev,
  libxinerama-dev,
+ libxrender-dev,
  autoconf,
  pkg-config,
  x11proto-core-dev,
@@ -747,21 +748,16 @@ Multi-Arch: same
 Pre-Depends:
  ${misc:Pre-Depends},
 Depends:
- ${shlibs:Depends},
  ${misc:Depends},
-Breaks: nxlibs (<= 3.5.1),
-        libnx-x11 (<< 2:3.5.0.29-0x2go2~),
-Description: nx-X11 Rendering Extension client library
+Description: nx-X11 Rendering Extension client library (dummy package)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
  using X applications over a network, especially a slow one.
  .
- The X Rendering Extension (Render) introduces digital image composition
- as the foundation of a new rendering model within the X Window System.
- Rendering geometric figures is accomplished by client-side tessellation
- into either triangles or trapezoids. Text is drawn by loading glyphs
- into the server and rendering sets of them. The Xrender library exposes
- this extension to X clients. 
+ This package removes the obsoleted libNX_Xrender.so.1 library. With
+ recent versions of NX, the system-wide installed libXrender gets used.
+ .
+ This package can be safely removed.
 
 Package: libnx-xrender-dev
 Provides: libnx-xrender1-dev
@@ -769,24 +765,17 @@ Section: libdevel
 Architecture: any
 Multi-Arch: same
 Depends:
- libnx-xrender1 (= ${binary:Version}),
- nx-x11proto-render-dev (= ${binary:Version}),
  ${misc:Depends},
-Breaks: nxlibs (<= 3.5.1),
-        libnx-x11-dev (<< 2:3.5.0.29-0x2go2~),
-Description: nx-X11 Rendering Extension client library (development headers)
+Description: nx-X11 Rendering Extension client library (dummy package)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
  using X applications over a network, especially a slow one.
  .
- The X Rendering Extension (Render) introduces digital image composition
- as the foundation of a new rendering model within the X Window System.
- Rendering geometric figures is accomplished by client-side tessellation
- into either triangles or trapezoids. Text is drawn by loading glyphs
- into the server and rendering sets of them. The Xrender library exposes
- this extension to X clients. 
+ This package removes the obsoleted headers for the libNX_Xrender.so.1
+ library. With recent versions of NX, the system-wide installed libXrender
+ gets used.
  .
- This package contains the development headers for this library.
+ This package can be safely removed.
 
 Package: nx-x11proto-render-dev
 Section: libdevel
@@ -794,16 +783,16 @@ Architecture: any
 Multi-Arch: same
 Depends:
  ${misc:Depends},
-Breaks: nxlibs (<= 3.5.1),
-        libnx-x11-dev (<< 2:3.5.0.29-0x2go2~),
-Description: nx-X11 Render extension wire protocol
+Description: nx-X11 Render extension wire protocol (dummy package)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
  using X applications over a network, especially a slow one.
  .
- This package provides development headers describing the wire protocol
- for the Render extension, used to implement Porter-Duff operations
- within X.
+ This package removes the obsoleted headers for the libNX_Xrender.so.1
+ library. With recent versions of NX, the system-wide installed libXrender
+ gets used.
+ .
+ This package can be safely removed.
 
 Package: libnx-xrender1-dbg
 Architecture: any
@@ -811,23 +800,18 @@ Multi-Arch: same
 Pre-Depends:
  ${misc:Pre-Depends},
 Depends:
- libnx-xrender1 (= ${binary:Version}),
  ${misc:Depends},
 Section: debug
-Breaks: nx-x11-dbg (<< 2:3.5.0.29-0x2go2~),
-Description: nx-X11 Rendering Extension client library (debug package)
+Description: nx-X11 Rendering Extension client library (dummy package)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
  using X applications over a network, especially a slow one.
  .
- The X Rendering Extension (Render) introduces digital image composition
- as the foundation of a new rendering model within the X Window System.
- Rendering geometric figures is accomplished by client-side tessellation
- into either triangles or trapezoids. Text is drawn by loading glyphs
- into the server and rendering sets of them. The Xrender library exposes
- this extension to X clients. 
+ This package removes the obsoleted debug symbols for the libNX_Xrender.so.1
+ library. With recent versions of NX, the system-wide installed libXrender
+ gets used.
  .
- This package contains debug symbols for this library.
+ This package can be safely removed.
 
 Package: libnx-xtst6
 Architecture: any
