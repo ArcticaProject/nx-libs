@@ -26,7 +26,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 +utilized by the X2GoClient GUI and some other NX/X2Go clients.
 +.PP
 +.SH OPTIONS
-+For an insight in \fBnxproxy\fR options use \fBnxproxy \-\-help\fR on the command line.
++For an insight in \fBnxproxy\fR options use \fBnxproxy \-help\fR on the command line.
 +.PP
 +.SH AUTHOR
 +This manual has been written by Mike Gabriel <mike.gabriel@das\-netzwerkteam.de> for the X2Go project

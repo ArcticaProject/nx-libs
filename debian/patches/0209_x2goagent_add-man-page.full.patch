@@ -29,7 +29,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 +
 +.SH OPTIONS
 +.TP
-+.B \--help
++.B \-help
 +Lists all others options that are not listed here.
 +
 +.SH FURTHER READINGS

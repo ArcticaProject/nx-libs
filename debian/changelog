@@ -245,6 +245,23 @@ nx-libs (2:3.5.0.32-0x2go1) UNRELEASED; urgency=low
     Adds:
     - 0040_nx-X11_Fix-alpha-premultiplication-in-XRenderPa.full.patch
 
+  [ Michael DePaulo ]
+  * {nx-X11,nxproxy}: correct manpages: --help -> -help
+    xorg-server does not follow the convention of using 2 dashes.
+    Note that --help does produce the help output. However, it
+    produces this additional output after it:
+    Error: Aborting session with 'Unrecognized option: --help'.
+    Session: Aborting session at 'Sun Jun 28 01:35:35 2015'.
+    Session: Session aborted at 'Sun Jun 28 01:35:35 2015'.
+    It also causes a return code of 1 rather than 0.
+    Therefore, we should instruct users to call -help instead.
+
+    v2: backport to nx-libs 3.5.0.x (Mihai Moldovan)
+    Affects:
+    - 0009_nxagent_add-man-page.full.patch
+    - 0009_nxproxy_add-man-page.full+lite.patch
+    - 0209_x2goagent_add-man-page.full.patch
+
  -- X2Go Release Manager <git-admin@x2go.org>  Tue, 17 Mar 2015 19:19:32 +0100
 
 nx-libs (2:3.5.0.31-0x2go1) unstable; urgency=low
