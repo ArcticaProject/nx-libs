@@ -1,0 +1,27 @@
+commit bd5754f94a9b48c246d115eaed0d0e8bece95aca
+Author: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date:   Mon Jul 9 19:12:42 2012 -0700
+
+    Backport: ProcRRGetScreenInfo: swap configTimestamp as well
+
+    Signed-off-by: Alan Coopersmith <alan.coopersmith@oracle.com>
+    Reviewed-by: Keith Packard <keithp@keithp.com>
+    Tested-by: Daniel Stone <daniel@fooishbar.org>
+
+    Backported from Arctica GH 3.6.x branch.
+
+    v2: backport to nx-libs 3.6.x (Ulrich Sibiller)
+    v3: backport to nx-libs 3.5.0.x (Mihai Moldovan)
+
+diff --git a/nx-X11/programs/Xserver/randr/rrscreen.c b/nx-X11/programs/Xserver/randr/rrscreen.c
+index 20eed11..011b97f 100644
+--- a/nx-X11/programs/Xserver/randr/rrscreen.c
++++ b/nx-X11/programs/Xserver/randr/rrscreen.c
+@@ -745,6 +745,7 @@ ProcRRGetScreenInfo (ClientPtr client)
+ 	swaps(&rep.sequenceNumber, n);
+ 	swapl(&rep.length, n);
+ 	swapl(&rep.timestamp, n);
++        swapl(&rep.configTimestamp, n);
+ 	swaps(&rep.rotation, n);
+ 	swaps(&rep.nSizes, n);
+ 	swaps(&rep.sizeID, n);

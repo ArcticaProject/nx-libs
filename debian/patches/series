@@ -142,6 +142,7 @@
 1253_nx-X11_randr-check-for-virtual-size-limits-befo.full.patch
 1254_nx-X11_randr-fix-server-crash-in-RRGetScreenInf.full.patch
 1255_nx-X11_RRModeCreate-plug-memory-leak-of-newMode.full.patch
+1256_nx-X11_ProcRRGetScreenInfo-swap-configTimestamp.full.patch
 9900-dxpc-license-history.full+lite.patch
 0016_nx-X11_install-location.debian.patch
 0102_xserver-xext_set-securitypolicy-path.debian.patch
