@@ -138,6 +138,7 @@
 1210-CVE-2015-3418-dix-Allow-zero-height-PutImage-re.full.patch
 1250_nx-X11_Bug-51375-Xorg-doesn_t-set-status-for-RR.full.patch
 1251_nx-X11_Drop-a-reference-to-user-mode-after-crea.full.patch
+1252_nx-X11_Free-randr-crtc-and-output-pointer-array.full.patch
 9900-dxpc-license-history.full+lite.patch
 0016_nx-X11_install-location.debian.patch
 0102_xserver-xext_set-securitypolicy-path.debian.patch
