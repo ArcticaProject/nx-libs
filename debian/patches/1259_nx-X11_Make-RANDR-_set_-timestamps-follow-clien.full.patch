@@ -1,0 +1,66 @@
+commit cf660f485eb478bcb7aaef3a538f2791e46662d9
+Author: Keith Packard <keithp@keithp.com>
+Date:   Thu May 28 14:43:27 2009 -0700
+
+    Backport: Make RANDR 'set' timestamps follow client specified time. Bug 21987.
+
+    The lastSetTime value which indicates when the configuration within the
+    server was last changed was not getting set in the appropriate RandR
+    requests.
+
+    Signed-off-by: Keith Packard <keithp@keithp.com>
+
+    Backported from Arctica GH 3.6.x branch.
+
+    v2: backport to nx-libs 3.6.x (Ulrich Sibiller)
+    v3: backport to nx-libs 3.5.0.x (Mihai Moldovan)
+
+diff --git a/nx-X11/programs/Xserver/randr/rrcrtc.c b/nx-X11/programs/Xserver/randr/rrcrtc.c
+index 8a34962..bc1040c 100644
+--- a/nx-X11/programs/Xserver/randr/rrcrtc.c
++++ b/nx-X11/programs/Xserver/randr/rrcrtc.c
+@@ -838,10 +838,8 @@ ProcRRSetCrtcConfig (ClientPtr client)
+ 	rep.status = RRSetConfigFailed;
+ 	goto sendReply;
+     }
+-    #ifdef NXAGENT_SERVER /* Bug 21987 */
+-    pScrPriv->lastSetTime = time;
+-    #endif
+     rep.status = RRSetConfigSuccess;
++    pScrPriv->lastSetTime = time;
+     
+ sendReply:
+     if (outputs)
+@@ -851,11 +849,7 @@ sendReply:
+     /* rep.status has already been filled in */
+     rep.length = 0;
+     rep.sequenceNumber = client->sequence;
+-    #ifndef NXAGENT_SERVER /* Bug 21987 */
+-    rep.newTimestamp = pScrPriv->lastConfigTime.milliseconds;
+-    #else
+     rep.newTimestamp = pScrPriv->lastSetTime.milliseconds;
+-    #endif
+ 
+     if (client->swapped) 
+     {
+diff --git a/nx-X11/programs/Xserver/randr/rrscreen.c b/nx-X11/programs/Xserver/randr/rrscreen.c
+index e0eb076..a3851bd 100644
+--- a/nx-X11/programs/Xserver/randr/rrscreen.c
++++ b/nx-X11/programs/Xserver/randr/rrscreen.c
+@@ -977,15 +977,10 @@ ProcRRSetScreenConfig (ClientPtr client)
+ 
+     if (!RRCrtcSet (crtc, mode, 0, 0, stuff->rotation, 1, &output))
+ 	rep.status = RRSetConfigFailed;
+-    #ifndef NXAGENT_SERVER /* Bug 21987 */
+-    else
+-	rep.status = RRSetConfigSuccess;
+-    #else
+     else {
+-	rep.status = RRSetConfigSuccess;
+ 	pScrPriv->lastSetTime = time;
++	rep.status = RRSetConfigSuccess;
+     }
+-    #endif
+ 
+     /*
+      * XXX Configure other crtcs to mirror as much as possible

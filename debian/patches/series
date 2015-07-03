@@ -145,6 +145,7 @@
 1256_nx-X11_ProcRRGetScreenInfo-swap-configTimestamp.full.patch
 1257_nx-X11_randr-Fix-REQUEST-vs-REQUEST_SIZE_MATCH-.full.patch
 1258_nx-X11_randr-Clean-up-compiler-warnings-about-u.full.patch
+1259_nx-X11_Make-RANDR-_set_-timestamps-follow-clien.full.patch
 9900-dxpc-license-history.full+lite.patch
 0016_nx-X11_install-location.debian.patch
 0102_xserver-xext_set-securitypolicy-path.debian.patch
