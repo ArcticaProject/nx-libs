@@ -1,0 +1,117 @@
+commit 9dbd74793f4b125d56e3d0f63a845b5f7550d3b4
+Author: Keith Packard <keithp@keithp.com>
+Date:   Thu Jun 21 18:42:46 2012 -0700
+
+    Backport: randr: Clean up compiler warnings about unused and shadowing variables
+
+    set but not used variables
+    shadowing a previous local
+
+    A hidden problem was that the VERIFY_RR_* macros define local 'rc'
+    variables, any other local definitions for those would be shadowed and
+    generate warnings from gcc. I've renamed the other locals 'ret'
+    instead of 'rc'.
+
+    Signed-off-by: Keith Packard <keithp@keithp.com>
+
+    Backported from Arctica GH 3.6.x branch.
+
+    v2: backport to nx-libs 3.6.x (Ulrich Sibiller)
+    v3: backport to nx-libs 3.5.0.x (Mihai Moldovan)
+
+diff --git a/nx-X11/programs/Xserver/randr/rrcrtc.c b/nx-X11/programs/Xserver/randr/rrcrtc.c
+index fb82a80..8a34962 100644
+--- a/nx-X11/programs/Xserver/randr/rrcrtc.c
++++ b/nx-X11/programs/Xserver/randr/rrcrtc.c
+@@ -642,7 +642,6 @@ ProcRRSetCrtcConfig (ClientPtr client)
+     int			    numOutputs;
+     RROutputPtr		    *outputs = NULL;
+     RROutput		    *outputIds;
+-    TimeStamp		    configTime;
+     TimeStamp		    time;
+     Rotation		    rotation;
+     int			    i, j;
+@@ -745,7 +744,6 @@ ProcRRSetCrtcConfig (ClientPtr client)
+     pScrPriv = rrGetScrPriv(pScreen);
+     
+     time = ClientTimeToServerTime(stuff->timestamp);
+-    configTime = ClientTimeToServerTime(stuff->configTimestamp);
+     
+     if (!pScrPriv)
+     {
+@@ -754,19 +752,6 @@ ProcRRSetCrtcConfig (ClientPtr client)
+ 	goto sendReply;
+     }
+     
+-#if 0
+-    /*
+-     * if the client's config timestamp is not the same as the last config
+-     * timestamp, then the config information isn't up-to-date and
+-     * can't even be validated
+-     */
+-    if (CompareTimeStamps (configTime, pScrPriv->lastConfigTime) != 0)
+-    {
+-	rep.status = RRSetConfigInvalidConfigTime;
+-	goto sendReply;
+-    }
+-#endif
+-    
+     /*
+      * Validate requested rotation
+      */
+diff --git a/nx-X11/programs/Xserver/randr/rrinfo.c b/nx-X11/programs/Xserver/randr/rrinfo.c
+index 7e77d39..470e1bb 100644
+--- a/nx-X11/programs/Xserver/randr/rrinfo.c
++++ b/nx-X11/programs/Xserver/randr/rrinfo.c
+@@ -83,6 +83,7 @@ RRScanOldConfig (ScreenPtr pScreen, Rotation rotations)
+     int		i;
+     CARD16	minWidth = MAXSHORT, minHeight = MAXSHORT;
+     CARD16	maxWidth = 0, maxHeight = 0;
++    CARD16	width, height;
+     
+     /*
+      * First time through, create a crtc and output and hook
+@@ -153,11 +154,11 @@ RRScanOldConfig (ScreenPtr pScreen, Rotation rotations)
+     /* find size bounds */
+     for (i = 0; i < output->numModes + output->numUserModes; i++) 
+     {
+-	RRModePtr   mode = (i < output->numModes ? 
++	mode = (i < output->numModes ? 
+ 			    output->modes[i] : 
+ 			    output->userModes[i-output->numModes]);
+-        CARD16	    width = mode->mode.width;
+-        CARD16	    height = mode->mode.height;
++        width = mode->mode.width;
++        height = mode->mode.height;
+ 	
+ 	if (width < minWidth) minWidth = width;
+ 	if (width > maxWidth) maxWidth = width;
+diff --git a/nx-X11/programs/Xserver/randr/rrmode.c b/nx-X11/programs/Xserver/randr/rrmode.c
+index 43ffe07..db0af33 100644
+--- a/nx-X11/programs/Xserver/randr/rrmode.c
++++ b/nx-X11/programs/Xserver/randr/rrmode.c
+@@ -194,7 +194,7 @@ RRModesForScreen (ScreenPtr pScreen, int *num_ret)
+     for (o = 0; o < pScrPriv->numOutputs; o++)
+     {
+ 	RROutputPtr	output = pScrPriv->outputs[o];
+-	int		m, n;
++	int		n;
+ 
+ 	for (m = 0; m < output->numModes + output->numUserModes; m++)
+ 	{
+@@ -299,7 +299,6 @@ ProcRRCreateMode (ClientPtr client)
+     xRRCreateModeReply	rep;
+     WindowPtr		pWin;
+     ScreenPtr		pScreen;
+-    rrScrPrivPtr	pScrPriv;
+     xRRModeInfo		*modeInfo;
+     long		units_after;
+     char		*name;
+@@ -317,7 +316,6 @@ ProcRRCreateMode (ClientPtr client)
+ 	return rc;
+ 
+     pScreen = pWin->drawable.pScreen;
+-    pScrPriv = rrGetScrPriv(pScreen);
+     
+     modeInfo = &stuff->modeInfo;
+     name = (char *) (stuff + 1);
