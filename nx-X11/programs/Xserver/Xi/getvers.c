@@ -114,6 +114,7 @@ ProcXGetExtensionVersion (client)
 	return Success;
 	}
 
+    memset(&rep, 0, sizeof(xGetExtensionVersionReply));
     rep.repType = X_Reply;
     rep.RepType = X_GetExtensionVersion;
     rep.length = 0;

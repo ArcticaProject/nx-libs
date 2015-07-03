@@ -1037,6 +1037,7 @@ ProcGetModifierMapping(ClientPtr client)
     register KeyClassPtr keyc = inputInfo.keyboard->key;
 
     REQUEST_SIZE_MATCH(xReq);
+    memset(&rep, 0, sizeof(xGetModifierMappingReply));
     rep.type = X_Reply;
     rep.numKeyPerModifier = keyc->maxKeysPerModifier;
     rep.sequenceNumber = client->sequence;
@@ -1157,6 +1158,7 @@ ProcGetKeyboardMapping(ClientPtr client)
         return BadValue;
     }
 
+    memset(&rep, 0, sizeof(xGetKeyboardMappingReply));
     rep.type = X_Reply;
     rep.sequenceNumber = client->sequence;
     rep.keySymsPerKeyCode = curKeySyms->mapWidth;

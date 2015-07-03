@@ -401,6 +401,7 @@ ProcShmQueryVersion(client)
     register int n;
 
     REQUEST_SIZE_MATCH(xShmQueryVersionReq);
+    memset(&rep, 0, sizeof(xShmQueryVersionReply));
     rep.type = X_Reply;
     rep.length = 0;
     rep.sequenceNumber = client->sequence;

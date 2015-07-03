@@ -3606,6 +3606,7 @@ EnterLeaveEvent(
     }
     if (mask & filters[type])
     {
+	memset(&event, 0, sizeof(xEvent));
 	event.u.u.type = type;
 	event.u.u.detail = detail;
 	event.u.enterLeave.time = currentTime.milliseconds;
@@ -4024,6 +4025,7 @@ ProcGetInputFocus(ClientPtr client)
     FocusClassPtr focus = inputInfo.keyboard->focus;
 
     REQUEST_SIZE_MATCH(xReq);
+    memset(&rep, 0, sizeof(xGetInputFocusReply));
     rep.type = X_Reply;
     rep.length = 0;
     rep.sequenceNumber = client->sequence;
@@ -4104,6 +4106,7 @@ ProcGrabPointer(ClientPtr client)
     }
 	/* at this point, some sort of reply is guaranteed. */
     time = ClientTimeToServerTime(stuff->time);
+    memset(&rep, 0, sizeof(xGrabPointerReply));
     rep.type = X_Reply;
     rep.sequenceNumber = client->sequence;
     rep.length = 0;
@@ -4321,6 +4324,8 @@ ProcGrabKeyboard(ClientPtr client)
     }
     #endif
     REQUEST_SIZE_MATCH(xGrabKeyboardReq);
+    memset(&rep, 0, sizeof(xGrabKeyboardReply));
+
 #ifdef XCSECURITY
     if (!SecurityCheckDeviceAccess(client, inputInfo.keyboard, TRUE))
     {
@@ -4399,6 +4404,7 @@ ProcQueryPointer(ClientPtr client)
 	return BadWindow;
     if (mouse->valuator->motionHintWindow)
 	MaybeStopHint(mouse, client);
+    memset(&rep, 0, sizeof(xQueryPointerReply));
     rep.type = X_Reply;
     rep.sequenceNumber = client->sequence;
     rep.mask = mouse->button->state | inputInfo.keyboard->key->state;

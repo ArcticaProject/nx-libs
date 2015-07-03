@@ -456,6 +456,7 @@ ProcRRGetOutputInfo (ClientPtr client)
     pScrPriv = rrGetScrPriv(pScreen);
 
     rep.type = X_Reply;
+    rep.status = RRSetConfigSuccess;
     rep.sequenceNumber = client->sequence;
     rep.length = OutputInfoExtra >> 2;
     rep.timestamp = pScrPriv->lastSetTime.milliseconds;

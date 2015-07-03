@@ -292,6 +292,7 @@ ProcShapeQueryVersion (client)
     register int		n;
 
     REQUEST_SIZE_MATCH (xShapeQueryVersionReq);
+    memset(&rep, 0, sizeof(xShapeQueryVersionReply));
     rep.type = X_Reply;
     rep.length = 0;
     rep.sequenceNumber = client->sequence;
@@ -717,6 +718,7 @@ ProcShapeQueryExtents (client)
     RegionPtr		region;
 
     REQUEST_SIZE_MATCH (xShapeQueryExtentsReq);
+    memset(&rep, 0, sizeof(xShapeQueryExtentsReply));
     pWin = LookupWindow (stuff->window, client);
     if (!pWin)
 	return BadWindow;

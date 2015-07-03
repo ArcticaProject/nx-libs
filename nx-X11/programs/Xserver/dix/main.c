@@ -534,6 +534,7 @@ CreateConnectionBlock()
     char *pBuf;
 
     
+    memset(&setup, 0, sizeof(xConnSetup));
     /* Leave off the ridBase and ridMask, these must be sent with 
        connection */
 
@@ -574,6 +575,7 @@ CreateConnectionBlock()
     while (--i >= 0)
 	*pBuf++ = 0;
     
+    memset(&format, 0, sizeof(xPixmapFormat));
     for (i=0; i<screenInfo.numPixmapFormats; i++)
     {
 	format.depth = screenInfo.formats[i].depth;
@@ -585,6 +587,8 @@ CreateConnectionBlock()
     }
 
     connBlockScreenStart = sizesofar;
+    memset(&depth, 0, sizeof(xDepth));
+    memset(&visual, 0, sizeof(xVisualType));
     for (i=0; i<screenInfo.numScreens; i++) 
     {
 	ScreenPtr	pScreen;

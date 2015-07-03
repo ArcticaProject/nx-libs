@@ -228,7 +228,7 @@ ProcRRGetScreenSizeRange (ClientPtr client)
     rrScrPrivPtr		pScrPriv;
     int				rc;
     
-    REQUEST_SIZE_MATCH(xRRGetScreenInfoReq);
+    REQUEST_SIZE_MATCH(xRRGetScreenSizeRangeReq);
     #ifndef NXAGENT_SERVER
     rc = dixLookupWindow(&pWin, stuff->window, client, DixReadAccess);
     #else
@@ -677,8 +677,9 @@ ProcRRGetScreenInfo (ClientPtr client)
 	rep.sizeID = pData->size;
 	rep.rate = pData->refresh;
 
-	extraLen = (rep.nSizes * sizeof (xScreenSizes) +
-		    rep.nrateEnts * sizeof (CARD16));
+	extraLen = rep.nSizes * sizeof (xScreenSizes);
+	if (has_rate)
+		extraLen += rep.nrateEnts * sizeof (CARD16);
 
 	if (extraLen)
 	{
@@ -744,6 +745,7 @@ ProcRRGetScreenInfo (ClientPtr client)
 	swaps(&rep.sequenceNumber, n);
 	swapl(&rep.length, n);
 	swapl(&rep.timestamp, n);
+        swapl(&rep.configTimestamp, n);
 	swaps(&rep.rotation, n);
 	swaps(&rep.nSizes, n);
 	swaps(&rep.sizeID, n);
@@ -938,6 +940,18 @@ ProcRRSetScreenConfig (ClientPtr client)
 	width = mode->mode.height;
 	height = mode->mode.width;
     }
+
+    if (width < pScrPriv->minWidth || pScrPriv->maxWidth < width) {
+	client->errorValue = width;
+	free(pData);
+	return BadValue;
+    }
+    if (height < pScrPriv->minHeight || pScrPriv->maxHeight < height) {
+	client->errorValue = height;
+	free(pData);
+	return BadValue;
+    }
+
     if (width != pScreen->width || height != pScreen->height)
     {
 	int	c;
@@ -963,15 +977,10 @@ ProcRRSetScreenConfig (ClientPtr client)
 
     if (!RRCrtcSet (crtc, mode, 0, 0, stuff->rotation, 1, &output))
 	rep.status = RRSetConfigFailed;
-    #ifndef NXAGENT_SERVER /* Bug 21987 */
-    else
-	rep.status = RRSetConfigSuccess;
-    #else
     else {
-	rep.status = RRSetConfigSuccess;
 	pScrPriv->lastSetTime = time;
+	rep.status = RRSetConfigSuccess;
     }
-    #endif
 
     /*
      * XXX Configure other crtcs to mirror as much as possible

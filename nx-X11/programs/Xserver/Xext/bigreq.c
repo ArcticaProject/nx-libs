@@ -94,6 +94,7 @@ ProcBigReqDispatch (client)
 	return BadRequest;
     REQUEST_SIZE_MATCH(xBigReqEnableReq);
     client->big_requests = TRUE;
+    memset(&rep, 0, sizeof(xBigReqEnableReply));
     rep.type = X_Reply;
     rep.length = 0;
     rep.sequenceNumber = client->sequence;

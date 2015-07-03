@@ -114,6 +114,7 @@ ProcXListInputDevices (client)
 
     REQUEST_SIZE_MATCH(xListInputDevicesReq);
 
+    memset(&rep, 0, sizeof(xListInputDevicesReply));
     rep.repType = X_Reply;
     rep.RepType = X_ListInputDevices;
     rep.length = 0;
@@ -128,7 +129,7 @@ ProcXListInputDevices (client)
 	SizeDeviceInfo (d, &namesize, &size);
 
     total_length = numdevs * sizeof (xDeviceInfo) + size + namesize;
-    devbuf = (char *) xalloc (total_length);
+    devbuf = (char *) xcalloc (1, total_length);
     classbuf = devbuf + (numdevs * sizeof (xDeviceInfo));
     namebuf = classbuf + size;
     savbuf = devbuf;

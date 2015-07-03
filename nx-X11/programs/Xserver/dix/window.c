@@ -774,6 +774,7 @@ CreateWindow(Window wid, register WindowPtr pParent, int x, int y, unsigned w,
 
     if (SubSend(pParent))
     {
+	memset(&event, 0, sizeof(xEvent));
 	event.u.u.type = CreateNotify;
 	event.u.createNotify.window = wid;
 	event.u.createNotify.parent = pParent->drawable.id;
@@ -841,6 +842,7 @@ CrushTree(WindowPtr pWin)
 	    pParent = pChild->parent;
 	    if (SubStrSend(pChild, pParent))
 	    {
+		memset(&event, 0, sizeof(xEvent));
 		event.u.u.type = DestroyNotify;
 		event.u.destroyNotify.window = pChild->drawable.id;
 		DeliverEvents(pChild, &event, 1, NullWindow);		
@@ -890,6 +892,7 @@ DeleteWindow(pointer value, XID wid)
     pParent = pWin->parent;
     if (wid && pParent && SubStrSend(pWin, pParent))
     {
+	memset(&event, 0, sizeof(xEvent));
 	event.u.u.type = DestroyNotify;
 	event.u.destroyNotify.window = pWin->drawable.id;
 	DeliverEvents(pWin, &event, 1, NullWindow);		
@@ -2306,6 +2309,7 @@ ConfigureWindow(register WindowPtr pWin, register Mask mask, XID *vlist, ClientP
 #endif
 	))
     {
+	memset(&event, 0, sizeof(xEvent));
 	event.u.u.type = ConfigureRequest;
 	event.u.configureRequest.window = pWin->drawable.id;
 	if (mask & CWSibling)
@@ -2350,6 +2354,7 @@ ConfigureWindow(register WindowPtr pWin, register Mask mask, XID *vlist, ClientP
 	if (size_change && ((pWin->eventMask|wOtherEventMasks(pWin)) & ResizeRedirectMask))
 	{
 	    xEvent eventT;
+	    memset(&eventT, 0, sizeof(xEvent));
 	    eventT.u.u.type = ResizeRequest;
 	    eventT.u.resizeRequest.window = pWin->drawable.id;
 	    eventT.u.resizeRequest.width = w;
@@ -2396,6 +2401,7 @@ ConfigureWindow(register WindowPtr pWin, register Mask mask, XID *vlist, ClientP
 ActuallyDoSomething:
     if (SubStrSend(pWin, pParent))
     {
+	memset(&event, 0, sizeof(xEvent));
 	event.u.u.type = ConfigureNotify;
 	event.u.configureNotify.window = pWin->drawable.id;
 	if (pSib)
@@ -2552,6 +2558,7 @@ ReparentWindow(register WindowPtr pWin, register WindowPtr pParent,
     if (WasMapped)
        UnmapWindow(pWin, FALSE);
 
+    memset(&event, 0, sizeof(xEvent));
     event.u.u.type = ReparentNotify;
     event.u.reparent.window = pWin->drawable.id;
     event.u.reparent.parent = pParent->drawable.id;
@@ -2708,6 +2715,7 @@ MapWindow(register WindowPtr pWin, ClientPtr client)
 #endif
 	))
 	{
+	    memset(&event, 0, sizeof(xEvent));
 	    event.u.u.type = MapRequest;
 	    event.u.mapRequest.window = pWin->drawable.id;
 #ifdef XAPPGROUP
@@ -2730,6 +2738,7 @@ MapWindow(register WindowPtr pWin, ClientPtr client)
 	pWin->mapped = TRUE;
 	if (SubStrSend(pWin, pParent))
 	{
+	    memset(&event, 0, sizeof(xEvent));
 	    event.u.u.type = MapNotify;
 	    event.u.mapNotify.window = pWin->drawable.id;
 	    event.u.mapNotify.override = pWin->overrideRedirect;
@@ -2820,6 +2829,7 @@ MapSubwindows(register WindowPtr pParent, ClientPtr client)
 	{
 	    if (parentRedirect && !pWin->overrideRedirect)
 	    {
+		memset(&event, 0, sizeof(xEvent));
 		event.u.u.type = MapRequest;
 		event.u.mapRequest.window = pWin->drawable.id;
 		event.u.mapRequest.parent = pParent->drawable.id;
@@ -2832,6 +2842,7 @@ MapSubwindows(register WindowPtr pParent, ClientPtr client)
 	    pWin->mapped = TRUE;
 	    if (parentNotify || StrSend(pWin))
 	    {
+		memset(&event, 0, sizeof(xEvent));
 		event.u.u.type = MapNotify;
 		event.u.mapNotify.window = pWin->drawable.id;
 		event.u.mapNotify.override = pWin->overrideRedirect;
@@ -2985,6 +2996,7 @@ UnmapWindow(register WindowPtr pWin, Bool fromConfigure)
 	return(Success);
     if (SubStrSend(pWin, pParent))
     {
+	memset(&event, 0, sizeof(xEvent));
 	event.u.u.type = UnmapNotify;
 	event.u.unmapNotify.window = pWin->drawable.id;
 	event.u.unmapNotify.fromConfigure = fromConfigure;
@@ -3279,6 +3291,7 @@ SendVisibilityNotify(WindowPtr pWin)
     }
 #endif
 
+    memset(&event, 0, sizeof(xEvent));
     event.u.u.type = VisibilityNotify;
     event.u.visibility.window = pWin->drawable.id;
     event.u.visibility.state = visibility;

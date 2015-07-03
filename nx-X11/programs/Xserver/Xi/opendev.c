@@ -141,6 +141,7 @@ ProcXOpenDevice(client)
     if (enableit && dev->inited && dev->startup)
 	(void)EnableDevice(dev);
 
+    memset(&rep, 0, sizeof(xOpenDeviceReply));
     rep.repType = X_Reply;
     rep.RepType = X_OpenDevice;
     rep.sequenceNumber = client->sequence;
