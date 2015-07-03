@@ -262,6 +262,14 @@ nx-libs (2:3.5.0.32-0x2go1) UNRELEASED; urgency=low
     - 0009_nxproxy_add-man-page.full+lite.patch
     - 0209_x2goagent_add-man-page.full.patch
 
+  [ Ulrich Sibiller ]
+  * nx-X11: Bug 51375: Xorg doesn't set status for RRGetOutputInfo
+    Backported from Arctica GH 3.6.x branch.
+    v2: backport to nx-libs 3.6.x (Ulrich Sibiller)
+    v3: backport to nx-libs 3.5.0.x (Mihai Moldovan)
+    Adds:
+    - 1250_nx-X11_Bug-51375-Xorg-doesn_t-set-status-for-RR.full.patch
+
  -- X2Go Release Manager <git-admin@x2go.org>  Tue, 17 Mar 2015 19:19:32 +0100
 
 nx-libs (2:3.5.0.31-0x2go1) unstable; urgency=low

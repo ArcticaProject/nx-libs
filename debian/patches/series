@@ -136,6 +136,7 @@
 1104-xkb-Check-strings-length-against-request-size.full.patch
 1200-CVE-2013-7439-MakeBigReq-don-t-move-the-last-wo.full.patch
 1210-CVE-2015-3418-dix-Allow-zero-height-PutImage-re.full.patch
+1250_nx-X11_Bug-51375-Xorg-doesn_t-set-status-for-RR.full.patch
 9900-dxpc-license-history.full+lite.patch
 0016_nx-X11_install-location.debian.patch
 0102_xserver-xext_set-securitypolicy-path.debian.patch
