@@ -305,6 +305,12 @@ nx-libs (2:3.5.0.32-0x2go1) UNRELEASED; urgency=low
     v3: backport to nx-libs 3.5.0.x (Mihai Moldovan)
     Adds:
     - 1256_nx-X11_ProcRRGetScreenInfo-swap-configTimestamp.full.patch
+  * nx-X11: randr: Fix REQUEST vs. REQUEST_SIZE_MATCH mismatch
+    Backported from Arctica GH 3.6.x branch.
+    v2: backport to nx-libs 3.6.x (Ulrich Sibiller)
+    v3: backport to nx-libs 3.5.0.x (Mihai Moldovan)
+    Adds:
+    - 1257_nx-X11_randr-Fix-REQUEST-vs-REQUEST_SIZE_MATCH-.full.patch
 
  -- X2Go Release Manager <git-admin@x2go.org>  Tue, 17 Mar 2015 19:19:32 +0100
 

@@ -1,0 +1,33 @@
+commit 9e2ac01a4e9bd39e5127b35bc263d5544c6de7a2
+Author: Aaron Plattner <aplattner@nvidia.com>
+Date:   Fri Jun 29 13:33:58 2012 -0700
+
+    Backport: randr: Fix REQUEST vs. REQUEST_SIZE_MATCH mismatch
+
+    ProcRRGetScreenSizeRange uses REQUEST(xRRGetScreenSizeRangeReq) followed by
+    REQUEST_SIZE_MATCH(xRRGetScreenInfoReq).  This happens to work out because both
+    requests have the same size, so this is not a functional change, just a cosmetic
+    one.
+
+    Signed-off-by: Aaron Plattner <aplattner@nvidia.com>
+    Reviewed-by: Alan Coopersmith <alan.coopersmith@oracle.com>
+    Signed-off-by: Keith Packard <keithp@keithp.com>
+
+    Backported from Arctica GH 3.6.x branch.
+
+    v2: backport to nx-libs 3.6.x (Ulrich Sibiller)
+    v3: backport to nx-libs 3.5.0.x (Mihai Moldovan)
+
+diff --git a/nx-X11/programs/Xserver/randr/rrscreen.c b/nx-X11/programs/Xserver/randr/rrscreen.c
+index 011b97f..e0eb076 100644
+--- a/nx-X11/programs/Xserver/randr/rrscreen.c
++++ b/nx-X11/programs/Xserver/randr/rrscreen.c
+@@ -228,7 +228,7 @@ ProcRRGetScreenSizeRange (ClientPtr client)
+     rrScrPrivPtr		pScrPriv;
+     int				rc;
+     
+-    REQUEST_SIZE_MATCH(xRRGetScreenInfoReq);
++    REQUEST_SIZE_MATCH(xRRGetScreenSizeRangeReq);
+     #ifndef NXAGENT_SERVER
+     rc = dixLookupWindow(&pWin, stuff->window, client, DixReadAccess);
+     #else
