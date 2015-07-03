@@ -1,0 +1,42 @@
+commit 0fc419314b3bbafa873207dafa57ce92b4b9e1e1
+Author: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date:   Sat Jul 14 11:21:15 2012 -0700
+
+    Backport: RRModeCreate: plug memory leak of newModes if AddResource fails
+
+    Reported by parfait 1.0:
+
+    Error: Memory leak (CWE 401)
+       Memory leak of pointer 'newModes' allocated with realloc(((char*)modes), ((num_modes + 1) * 8))
+            at line 93 of randr/rrmode.c in function 'RRModeCreate'.
+              pointer allocated at line 82 with realloc(((char*)modes), ((num_modes + 1) * 8)).
+    Error: Memory leak (CWE 401)
+       Memory leak of pointer 'newModes' allocated with malloc(8)
+            at line 93 of randr/rrmode.c in function 'RRModeCreate'.
+              pointer allocated at line 84 with malloc(8).
+
+    Signed-off-by: Alan Coopersmith <alan.coopersmith@oracle.com>
+    Reviewed-by: Keith Packard <keithp@keithp.com>
+
+    Backported from Arctica GH 3.6.x branch.
+
+    v2: backport to nx-libs 3.6.x (Ulrich Sibiller)
+    v3: backport to nx-libs 3.5.0.x (Mihai Moldovan)
+
+diff --git a/nx-X11/programs/Xserver/randr/rrmode.c b/nx-X11/programs/Xserver/randr/rrmode.c
+index 09c0113..43ffe07 100644
+--- a/nx-X11/programs/Xserver/randr/rrmode.c
++++ b/nx-X11/programs/Xserver/randr/rrmode.c
+@@ -98,8 +98,10 @@ RRModeCreate (xRRModeInfo   *modeInfo,
+     }
+ 
+     mode->mode.id = FakeClientID(0);
+-    if (!AddResource (mode->mode.id, RRModeType, (pointer) mode))
+-	return NULL;
++    if (!AddResource(mode->mode.id, RRModeType, (pointer) mode)) {
++        free(newModes);
++        return NULL;
++    }
+     modes = newModes;
+     modes[num_modes++] = mode;
+     
