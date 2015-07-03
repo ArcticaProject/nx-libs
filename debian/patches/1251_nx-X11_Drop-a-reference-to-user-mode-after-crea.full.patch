@@ -1,0 +1,28 @@
+commit f45476100e7d70a51a1513f4d7737addca737bd6
+Author: Keith Packard <keithp@keithp.com>
+Date:   Wed Sep 10 13:11:09 2008 +0800
+
+    Backport: Drop a reference to user mode after create
+
+    User mode has no customer when create until assigned
+    to some output.
+
+    Backported from Arctica GH 3.6.x branch.
+
+    v2: backport to nx-libs 3.6.x (Ulrich Sibiller)
+    v3: backport to nx-libs 3.5.0.x (Mihai Moldovan)
+
+diff --git a/nx-X11/programs/Xserver/randr/rrmode.c b/nx-X11/programs/Xserver/randr/rrmode.c
+index 62c0148..09c0113 100644
+--- a/nx-X11/programs/Xserver/randr/rrmode.c
++++ b/nx-X11/programs/Xserver/randr/rrmode.c
+@@ -342,7 +342,8 @@ ProcRRCreateMode (ClientPtr client)
+ 	swapl(&rep.mode, n);
+     }
+     WriteToClient(client, sizeof(xRRCreateModeReply), (char *)&rep);
+-    
++    /* Drop out reference to this mode */
++    RRModeDestroy (mode);
+     return client->noClientException;
+ }
+ 
