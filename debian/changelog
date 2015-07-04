@@ -10,7 +10,13 @@ nx-libs (2:3.5.99.0-0~build1) UNRELEASED; urgency=medium
 
  -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Sat, 14 Feb 2015 14:27:25 +0100
 
-nx-libs (2:3.5.0.32-0x2go1) UNRELEASED; urgency=low
+nx-libs (2:3.5.0.33-0x2go1) UNRELEASED; urgency=low
+
+  * Continue development
+
+ -- X2Go Release Manager <git-admin@x2go.org>  Sat, 04 Jul 2015 06:29:19 +0200
+
+nx-libs (2:3.5.0.32-0x2go1) unstable; urgency=low
 
   [ Mihai Moldovan ]
   * Only use the first three numbers in the full version for current_version
@@ -274,7 +280,76 @@ nx-libs (2:3.5.0.32-0x2go1) UNRELEASED; urgency=low
     - 0009_nxproxy_add-man-page.full+lite.patch
     - 0209_x2goagent_add-man-page.full.patch
 
- -- X2Go Release Manager <git-admin@x2go.org>  Tue, 17 Mar 2015 19:19:32 +0100
+  [ Ulrich Sibiller ]
+  * nx-X11: Bug 51375: Xorg doesn't set status for RRGetOutputInfo
+    Backported from Arctica GH 3.6.x branch.
+    v2: backport to nx-libs 3.6.x (Ulrich Sibiller)
+    v3: backport to nx-libs 3.5.0.x (Mihai Moldovan)
+    Adds:
+    - 1250_nx-X11_Bug-51375-Xorg-doesn_t-set-status-for-RR.full.patch
+  * nx-X11: Drop a reference to user mode after create
+    Backported from Arctica GH 3.6.x branch.
+    v2: backport to nx-libs 3.6.x (Ulrich Sibiller)
+    v3: backport to nx-libs 3.5.0.x (Mihai Moldovan)
+    Adds:
+    - 1251_nx-X11_Drop-a-reference-to-user-mode-after-crea.full.patch
+  * nx-X11: Free randr crtc and output pointer arrays
+    Backported from Arctica GH 3.6.x branch.
+    v2: backport to nx-libs 3.6.x (Ulrich Sibiller)
+    v3: backport to nx-libs 3.5.0.x (Mihai Moldovan)
+    Adds:
+    - 1252_nx-X11_Free-randr-crtc-and-output-pointer-array.full.patch
+  * nx-X11: randr: check for virtual size limits before set crtc
+    Backported from Arctica GH 3.6.x branch.
+    v2: backport to nx-libs 3.6.x (Ulrich Sibiller)
+    v3: backport to nx-libs 3.5.0.x (Mihai Moldovan)
+    Adds:
+    - 1253_nx-X11_randr-check-for-virtual-size-limits-befo.full.patch
+  * nx-X11: randr: fix server crash in RRGetScreenInfo
+    Backported from Arctica GH 3.6.x branch.
+    v2: backport to nx-libs 3.6.x (Ulrich Sibiller)
+    v3: backport to nx-libs 3.5.0.x (Mihai Moldovan)
+    Adds:
+    - 1254_nx-X11_randr-fix-server-crash-in-RRGetScreenInf.full.patch
+  * nx-X11: RRModeCreate: plug memory leak of newModes if AddResource fails
+    Backported from Arctica GH 3.6.x branch.
+    v2: backport to nx-libs 3.6.x (Ulrich Sibiller)
+    v3: backport to nx-libs 3.5.0.x (Mihai Moldovan)
+    Adds:
+    - 1255_nx-X11_RRModeCreate-plug-memory-leak-of-newMode.full.patch
+  * nx-X11: ProcRRGetScreenInfo: swap configTimestamp as well
+    Backported from Arctica GH 3.6.x branch.
+    v2: backport to nx-libs 3.6.x (Ulrich Sibiller)
+    v3: backport to nx-libs 3.5.0.x (Mihai Moldovan)
+    Adds:
+    - 1256_nx-X11_ProcRRGetScreenInfo-swap-configTimestamp.full.patch
+  * nx-X11: randr: Fix REQUEST vs. REQUEST_SIZE_MATCH mismatch
+    Backported from Arctica GH 3.6.x branch.
+    v2: backport to nx-libs 3.6.x (Ulrich Sibiller)
+    v3: backport to nx-libs 3.5.0.x (Mihai Moldovan)
+    Adds:
+    - 1257_nx-X11_randr-Fix-REQUEST-vs-REQUEST_SIZE_MATCH-.full.patch
+  * nx-X11: randr: Clean up compiler warnings about unused and shadowing
+    variables
+    Backported from Arctica GH 3.6.x branch.
+    v2: backport to nx-libs 3.6.x (Ulrich Sibiller)
+    v3: backport to nx-libs 3.5.0.x (Mihai Moldovan)
+    Adds:
+    - 1258_nx-X11_randr-Clean-up-compiler-warnings-about-u.full.patch
+  * nx-X11: Make RANDR 'set' timestamps follow client specified time. Bug 21987.
+    Backported from Arctica GH 3.6.x branch.
+    v2: backport to nx-libs 3.6.x (Ulrich Sibiller)
+    v3: backport to nx-libs 3.5.0.x (Mihai Moldovan)
+    Adds:
+    - 1259_nx-X11_Make-RANDR-_set_-timestamps-follow-clien.full.patch
+  * nx-X11: xserver: Avoid sending uninitialized padding data over the network
+    Backported from Arctica GH 3.6.x branch.
+    v2: backport to nx-libs 3.6.x (Ulrich Sibiller)
+    v3: backport to nx-libs 3.5.0.x (Mihai Moldovan)
+    Adds:
+    - 1260_nx-X11_xserver-Avoid-sending-uninitialized-padd.full.patch
+
+ -- X2Go Release Manager <git-admin@x2go.org>  Sat, 04 Jul 2015 04:44:00 +0200
 
 nx-libs (2:3.5.0.31-0x2go1) unstable; urgency=low
 
