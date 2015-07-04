@@ -1,0 +1,1055 @@
+commit d088698324d5e71cb93ccd429f084729ba07872c
+Author: Peter Åstrand <astrand@cendio.se>
+Date:   Fri Feb 13 10:23:28 2009 +0100
+
+    Backport: xserver: Avoid sending uninitialized padding data over the network
+
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+
+    Backported from Arctica GH 3.6.x branch.
+
+    v2: backport to nx-libs 3.6.x (Ulrich Sibiller)
+    v3: backport to nx-libs 3.5.0.x (Mihai Moldovan)
+
+--- a/nx-X11/programs/Xserver/Xext/bigreq.c
++++ b/nx-X11/programs/Xserver/Xext/bigreq.c
+@@ -94,6 +94,7 @@ ProcBigReqDispatch (client)
+ 	return BadRequest;
+     REQUEST_SIZE_MATCH(xBigReqEnableReq);
+     client->big_requests = TRUE;
++    memset(&rep, 0, sizeof(xBigReqEnableReply));
+     rep.type = X_Reply;
+     rep.length = 0;
+     rep.sequenceNumber = client->sequence;
+--- a/nx-X11/programs/Xserver/Xext/shape.c
++++ b/nx-X11/programs/Xserver/Xext/shape.c
+@@ -292,6 +292,7 @@ ProcShapeQueryVersion (client)
+     register int		n;
+ 
+     REQUEST_SIZE_MATCH (xShapeQueryVersionReq);
++    memset(&rep, 0, sizeof(xShapeQueryVersionReply));
+     rep.type = X_Reply;
+     rep.length = 0;
+     rep.sequenceNumber = client->sequence;
+@@ -717,6 +718,7 @@ ProcShapeQueryExtents (client)
+     RegionPtr		region;
+ 
+     REQUEST_SIZE_MATCH (xShapeQueryExtentsReq);
++    memset(&rep, 0, sizeof(xShapeQueryExtentsReply));
+     pWin = LookupWindow (stuff->window, client);
+     if (!pWin)
+ 	return BadWindow;
+--- a/nx-X11/programs/Xserver/Xext/shm.c
++++ b/nx-X11/programs/Xserver/Xext/shm.c
+@@ -346,6 +346,7 @@ ProcShmQueryVersion(client)
+     register int n;
+ 
+     REQUEST_SIZE_MATCH(xShmQueryVersionReq);
++    memset(&rep, 0, sizeof(xShmQueryVersionReply));
+     rep.type = X_Reply;
+     rep.length = 0;
+     rep.sequenceNumber = client->sequence;
+--- a/nx-X11/programs/Xserver/Xext/sync.c
++++ b/nx-X11/programs/Xserver/Xext/sync.c
+@@ -1346,6 +1346,7 @@ ProcSyncInitialize(client)
+ 
+     REQUEST_SIZE_MATCH(xSyncInitializeReq);
+ 
++    memset(&rep, 0, sizeof(xSyncInitializeReply));
+     rep.type = X_Reply;
+     rep.sequenceNumber = client->sequence;
+     rep.majorVersion = SYNC_MAJOR_VERSION;
+--- a/nx-X11/programs/Xserver/Xi/getvers.c
++++ b/nx-X11/programs/Xserver/Xi/getvers.c
+@@ -114,6 +114,7 @@ ProcXGetExtensionVersion (client)
+ 	return Success;
+ 	}
+ 
++    memset(&rep, 0, sizeof(xGetExtensionVersionReply));
+     rep.repType = X_Reply;
+     rep.RepType = X_GetExtensionVersion;
+     rep.length = 0;
+--- a/nx-X11/programs/Xserver/Xi/listdev.c
++++ b/nx-X11/programs/Xserver/Xi/listdev.c
+@@ -114,6 +114,7 @@ ProcXListInputDevices (client)
+ 
+     REQUEST_SIZE_MATCH(xListInputDevicesReq);
+ 
++    memset(&rep, 0, sizeof(xListInputDevicesReply));
+     rep.repType = X_Reply;
+     rep.RepType = X_ListInputDevices;
+     rep.length = 0;
+@@ -128,7 +129,7 @@ ProcXListInputDevices (client)
+ 	SizeDeviceInfo (d, &namesize, &size);
+ 
+     total_length = numdevs * sizeof (xDeviceInfo) + size + namesize;
+-    devbuf = (char *) xalloc (total_length);
++    devbuf = (char *) xcalloc (1, total_length);
+     classbuf = devbuf + (numdevs * sizeof (xDeviceInfo));
+     namebuf = classbuf + size;
+     savbuf = devbuf;
+--- a/nx-X11/programs/Xserver/Xi/opendev.c
++++ b/nx-X11/programs/Xserver/Xi/opendev.c
+@@ -141,6 +141,7 @@ ProcXOpenDevice(client)
+     if (enableit && dev->inited && dev->startup)
+ 	(void)EnableDevice(dev);
+ 
++    memset(&rep, 0, sizeof(xOpenDeviceReply));
+     rep.repType = X_Reply;
+     rep.RepType = X_OpenDevice;
+     rep.sequenceNumber = client->sequence;
+--- a/nx-X11/programs/Xserver/dix/devices.c
++++ b/nx-X11/programs/Xserver/dix/devices.c
+@@ -1037,6 +1037,7 @@ ProcGetModifierMapping(ClientPtr client)
+     register KeyClassPtr keyc = inputInfo.keyboard->key;
+ 
+     REQUEST_SIZE_MATCH(xReq);
++    memset(&rep, 0, sizeof(xGetModifierMappingReply));
+     rep.type = X_Reply;
+     rep.numKeyPerModifier = keyc->maxKeysPerModifier;
+     rep.sequenceNumber = client->sequence;
+@@ -1157,6 +1158,7 @@ ProcGetKeyboardMapping(ClientPtr client)
+         return BadValue;
+     }
+ 
++    memset(&rep, 0, sizeof(xGetKeyboardMappingReply));
+     rep.type = X_Reply;
+     rep.sequenceNumber = client->sequence;
+     rep.keySymsPerKeyCode = curKeySyms->mapWidth;
+--- a/nx-X11/programs/Xserver/dix/dispatch.c
++++ b/nx-X11/programs/Xserver/dix/dispatch.c
+@@ -579,6 +579,7 @@ ProcGetWindowAttributes(register ClientP
+ 					   SecurityReadAccess);
+     if (!pWin)
+         return(BadWindow);
++    memset(&wa, 0, sizeof(xGetWindowAttributesReply));
+     GetWindowAttributes(pWin, client, &wa);
+     WriteReplyToClient(client, sizeof(xGetWindowAttributesReply), &wa);
+     return(client->noClientException);
+@@ -834,6 +835,7 @@ ProcGetGeometry(register ClientPtr clien
+     xGetGeometryReply rep;
+     int status;
+ 
++    memset(&rep, 0, sizeof(xGetGeometryReply));
+     if ((status = GetGeometry(client, &rep)) != Success)
+ 	return status;
+ 
+@@ -856,6 +858,7 @@ ProcQueryTree(register ClientPtr client)
+ 					   SecurityReadAccess);
+     if (!pWin)
+         return(BadWindow);
++    memset(&reply, 0, sizeof(xQueryTreeReply));
+     reply.type = X_Reply;
+     reply.root = WindowTable[pWin->drawable.pScreen->myNum]->drawable.id;
+     reply.sequenceNumber = client->sequence;
+@@ -909,6 +912,7 @@ ProcInternAtom(register ClientPtr client
+     if (atom != BAD_RESOURCE)
+     {
+ 	xInternAtomReply reply;
++	memset(&reply, 0, sizeof(xInternAtomReply));
+ 	reply.type = X_Reply;
+ 	reply.length = 0;
+ 	reply.sequenceNumber = client->sequence;
+@@ -932,6 +936,7 @@ ProcGetAtomName(register ClientPtr clien
+     if ( (str = NameForAtom(stuff->id)) )
+     {
+ 	len = strlen(str);
++	memset(&reply, 0, sizeof(xGetAtomNameReply));
+ 	reply.type = X_Reply;
+ 	reply.length = (len + 3) >> 2;
+ 	reply.sequenceNumber = client->sequence;
+@@ -1061,6 +1066,7 @@ ProcGetSelectionOwner(register ClientPtr
+ 	i = 0;
+         while ((i < NumCurrentSelections) && 
+ 	       CurrentSelections[i].selection != stuff->id) i++;
++	memset(&reply, 0, sizeof(xGetSelectionOwnerReply));
+         reply.type = X_Reply;
+ 	reply.length = 0;
+ 	reply.sequenceNumber = client->sequence;
+@@ -1112,6 +1118,7 @@ ProcConvertSelection(register ClientPtr 
+ #endif
+ 	    )
+ 	{        
++	    memset(&event, 0, sizeof(xEvent));
+ 	    event.u.u.type = SelectionRequest;
+ 	    event.u.selectionRequest.time = stuff->time;
+ 	    event.u.selectionRequest.owner = 
+@@ -1125,6 +1132,7 @@ ProcConvertSelection(register ClientPtr 
+ 		NoEventMask /* CantBeFiltered */, NullGrab))
+ 		return (client->noClientException);
+ 	}
++	memset(&event, 0, sizeof(xEvent));
+ 	event.u.u.type = SelectionNotify;
+ 	event.u.selectionNotify.time = stuff->time;
+ 	event.u.selectionNotify.requestor = stuff->requestor;
+@@ -1221,6 +1229,7 @@ ProcTranslateCoords(register ClientPtr c
+ 					   SecurityReadAccess);
+     if (!pDst)
+         return(BadWindow);
++    memset(&rep, 0, sizeof(xTranslateCoordsReply));
+     rep.type = X_Reply;
+     rep.length = 0;
+     rep.sequenceNumber = client->sequence;
+@@ -1370,6 +1379,7 @@ ProcQueryFont(register ClientPtr client)
+ 	    return(BadAlloc);
+ 	}
+ 
++	memset(reply, 0, rlength);
+ 	reply->type = X_Reply;
+ 	reply->length = (rlength - sizeof(xGenericReply)) >> 2;
+ 	reply->sequenceNumber = client->sequence;
+@@ -2112,6 +2122,8 @@ DoGetImage(register ClientPtr client, in
+         return(BadValue);
+     }
+     SECURITY_VERIFY_DRAWABLE(pDraw, drawable, client, SecurityReadAccess);
++
++    memset(&xgi, 0, sizeof(xGetImageReply));
+     if(pDraw->type == DRAWABLE_WINDOW)
+     {
+       if( /* check for being viewable */
+@@ -2165,7 +2177,7 @@ DoGetImage(register ClientPtr client, in
+     xgi.length = length;
+ 
+     if (im_return) {
+-	pBuf = (char *)xalloc(sz_xGetImageReply + length);
++	pBuf = (char *)xcalloc(1, sz_xGetImageReply + length);
+ 	if (!pBuf)
+ 	    return (BadAlloc);
+ 	if (widthBytesLine == 0)
+@@ -2205,6 +2217,7 @@ DoGetImage(register ClientPtr client, in
+ 	}
+ 	if(!(pBuf = (char *) ALLOCATE_LOCAL(length)))
+ 	    return (BadAlloc);
++	memset(pBuf, 0, length);
+ 	WriteReplyToClient(client, sizeof (xGetImageReply), &xgi);
+     }
+ 
+@@ -2973,6 +2986,7 @@ ProcQueryColors(register ClientPtr clien
+ 	prgbs = (xrgb *)ALLOCATE_LOCAL(count * sizeof(xrgb));
+ 	if(!prgbs && count)
+             return(BadAlloc);
++	memset(prgbs, 0, count * sizeof(xrgb));
+ 	if( (retval = QueryColors(pcmp, count, (Pixel *)&stuff[1], prgbs)) )
+ 	{
+    	    if (prgbs) DEALLOCATE_LOCAL(prgbs);
+@@ -2984,6 +2998,8 @@ ProcQueryColors(register ClientPtr clien
+ 	        return (retval);
+ 	    }
+ 	}
++
++	memset(&qcr, 0, sizeof(xQueryColorsReply));
+ 	qcr.type = X_Reply;
+ 	qcr.length = (count * sizeof(xrgb)) >> 2;
+ 	qcr.sequenceNumber = client->sequence;
+@@ -3201,6 +3217,7 @@ ProcQueryBestSize (register ClientPtr cl
+     pScreen = pDraw->pScreen;
+     (* pScreen->QueryBestSize)(stuff->class, &stuff->width,
+ 			       &stuff->height, pScreen);
++    memset(&reply, 0, sizeof(xQueryBestSizeReply));
+     reply.type = X_Reply;
+     reply.length = 0;
+     reply.sequenceNumber = client->sequence;
+@@ -3976,6 +3993,7 @@ SendErrorToClient(ClientPtr client, unsi
+ {
+     xError rep;
+ 
++    memset(&rep, 0, sizeof(xError));
+     rep.type = X_Error;
+     rep.sequenceNumber = client->sequence;
+     rep.errorCode = errorCode;
+--- a/nx-X11/programs/Xserver/dix/dixfonts.c
++++ b/nx-X11/programs/Xserver/dix/dixfonts.c
+@@ -850,6 +850,7 @@ finish:
+     for (i = 0; i < nnames; i++)
+ 	stringLens += (names->length[i] <= 255) ? names->length[i] : 0;
+ 
++    memset(&reply, 0, sizeof(xListFontsReply));
+     reply.type = X_Reply;
+     reply.length = (stringLens + nnames + 3) >> 2;
+     reply.nFonts = nnames;
+@@ -1102,6 +1103,7 @@ doListFontsWithInfo(ClientPtr client, LF
+ 		    err = AllocError;
+ 		    break;
+ 		}
++		memset(reply + c->length, 0, length - c->length);
+ 		c->reply = reply;
+ 		c->length = length;
+ 	    }
+--- a/nx-X11/programs/Xserver/dix/events.c
++++ b/nx-X11/programs/Xserver/dix/events.c
+@@ -3733,6 +3733,7 @@ ProcGetInputFocus(ClientPtr client)
+     FocusClassPtr focus = inputInfo.keyboard->focus;
+ 
+     REQUEST_SIZE_MATCH(xReq);
++    memset(&rep, 0, sizeof(xGetInputFocusReply));
+     rep.type = X_Reply;
+     rep.length = 0;
+     rep.sequenceNumber = client->sequence;
+@@ -3807,6 +3808,7 @@ ProcGrabPointer(ClientPtr client)
+     }
+ 	/* at this point, some sort of reply is guaranteed. */
+     time = ClientTimeToServerTime(stuff->time);
++    memset(&rep, 0, sizeof(xGrabPointerReply));
+     rep.type = X_Reply;
+     rep.sequenceNumber = client->sequence;
+     rep.length = 0;
+@@ -3982,6 +3984,7 @@ ProcGrabKeyboard(ClientPtr client)
+     int result;
+ 
+     REQUEST_SIZE_MATCH(xGrabKeyboardReq);
++    memset(&rep, 0, sizeof(xGrabKeyboardReply));
+ #ifdef XCSECURITY
+     if (!SecurityCheckDeviceAccess(client, inputInfo.keyboard, TRUE))
+     {
+@@ -4036,6 +4039,7 @@ ProcQueryPointer(ClientPtr client)
+ 	return BadWindow;
+     if (mouse->valuator->motionHintWindow)
+ 	MaybeStopHint(mouse, client);
++    memset(&rep, 0, sizeof(xQueryPointerReply));
+     rep.type = X_Reply;
+     rep.sequenceNumber = client->sequence;
+     rep.mask = mouse->button->state | inputInfo.keyboard->key->state;
+--- a/nx-X11/programs/Xserver/dix/extension.c
++++ b/nx-X11/programs/Xserver/dix/extension.c
+@@ -313,6 +313,7 @@ ProcQueryExtension(ClientPtr client)
+ 
+     REQUEST_FIXED_SIZE(xQueryExtensionReq, stuff->nbytes);
+     
++    memset(&reply, 0, sizeof(xQueryExtensionReply));
+     reply.type = X_Reply;
+     reply.length = 0;
+     reply.major_opcode = 0;
+@@ -352,6 +353,7 @@ ProcListExtensions(ClientPtr client)
+ 
+     REQUEST_SIZE_MATCH(xReq);
+ 
++    memset(&reply, 0, sizeof(xListExtensionsReply));
+     reply.type = X_Reply;
+     reply.nExtensions = 0;
+     reply.length = 0;
+--- a/nx-X11/programs/Xserver/dix/main.c
++++ b/nx-X11/programs/Xserver/dix/main.c
+@@ -543,6 +543,7 @@ CreateConnectionBlock()
+     char *pBuf;
+ 
+     
++    memset(&setup, 0, sizeof(xConnSetup));
+     /* Leave off the ridBase and ridMask, these must be sent with 
+        connection */
+ 
+@@ -583,6 +584,7 @@ CreateConnectionBlock()
+     while (--i >= 0)
+ 	*pBuf++ = 0;
+     
++    memset(&format, 0, sizeof(xPixmapFormat));
+     for (i=0; i<screenInfo.numPixmapFormats; i++)
+     {
+ 	format.depth = screenInfo.formats[i].depth;
+@@ -594,6 +596,8 @@ CreateConnectionBlock()
+     }
+ 
+     connBlockScreenStart = sizesofar;
++    memset(&depth, 0, sizeof(xDepth));
++    memset(&visual, 0, sizeof(xVisualType));
+     for (i=0; i<screenInfo.numScreens; i++) 
+     {
+ 	ScreenPtr	pScreen;
+--- a/nx-X11/programs/Xserver/dix/property.c
++++ b/nx-X11/programs/Xserver/dix/property.c
+@@ -531,6 +531,7 @@ ProcGetProperty(ClientPtr client)
+ 	pProp = pProp->next;
+     }
+ 
++    memset(&reply, 0, sizeof(xGetPropertyReply));
+     reply.type = X_Reply;
+     reply.sequenceNumber = client->sequence;
+     if (!pProp) 
+--- a/nx-X11/programs/Xserver/dix/window.c
++++ b/nx-X11/programs/Xserver/dix/window.c
+@@ -774,6 +774,7 @@ CreateWindow(Window wid, register Window
+ 
+     if (SubSend(pParent))
+     {
++	memset(&event, 0, sizeof(xEvent));
+ 	event.u.u.type = CreateNotify;
+ 	event.u.createNotify.window = wid;
+ 	event.u.createNotify.parent = pParent->drawable.id;
+@@ -841,6 +842,7 @@ CrushTree(WindowPtr pWin)
+ 	    pParent = pChild->parent;
+ 	    if (SubStrSend(pChild, pParent))
+ 	    {
++		memset(&event, 0, sizeof(xEvent));
+ 		event.u.u.type = DestroyNotify;
+ 		event.u.destroyNotify.window = pChild->drawable.id;
+ 		DeliverEvents(pChild, &event, 1, NullWindow);		
+@@ -890,6 +892,7 @@ DeleteWindow(pointer value, XID wid)
+     pParent = pWin->parent;
+     if (wid && pParent && SubStrSend(pWin, pParent))
+     {
++	memset(&event, 0, sizeof(xEvent));
+ 	event.u.u.type = DestroyNotify;
+ 	event.u.destroyNotify.window = pWin->drawable.id;
+ 	DeliverEvents(pWin, &event, 1, NullWindow);		
+@@ -2306,6 +2309,7 @@ ConfigureWindow(register WindowPtr pWin,
+ #endif
+ 	))
+     {
++	memset(&event, 0, sizeof(xEvent));
+ 	event.u.u.type = ConfigureRequest;
+ 	event.u.configureRequest.window = pWin->drawable.id;
+ 	if (mask & CWSibling)
+@@ -2350,6 +2354,7 @@ ConfigureWindow(register WindowPtr pWin,
+ 	if (size_change && ((pWin->eventMask|wOtherEventMasks(pWin)) & ResizeRedirectMask))
+ 	{
+ 	    xEvent eventT;
++	    memset(&eventT, 0, sizeof(xEvent));
+ 	    eventT.u.u.type = ResizeRequest;
+ 	    eventT.u.resizeRequest.window = pWin->drawable.id;
+ 	    eventT.u.resizeRequest.width = w;
+@@ -2396,6 +2401,7 @@ ConfigureWindow(register WindowPtr pWin,
+ ActuallyDoSomething:
+     if (SubStrSend(pWin, pParent))
+     {
++	memset(&event, 0, sizeof(xEvent));
+ 	event.u.u.type = ConfigureNotify;
+ 	event.u.configureNotify.window = pWin->drawable.id;
+ 	if (pSib)
+@@ -2552,6 +2558,7 @@ ReparentWindow(register WindowPtr pWin, 
+     if (WasMapped)
+        UnmapWindow(pWin, FALSE);
+ 
++    memset(&event, 0, sizeof(xEvent));
+     event.u.u.type = ReparentNotify;
+     event.u.reparent.window = pWin->drawable.id;
+     event.u.reparent.parent = pParent->drawable.id;
+@@ -2708,6 +2715,7 @@ MapWindow(register WindowPtr pWin, Clien
+ #endif
+ 	))
+ 	{
++	    memset(&event, 0, sizeof(xEvent));
+ 	    event.u.u.type = MapRequest;
+ 	    event.u.mapRequest.window = pWin->drawable.id;
+ #ifdef XAPPGROUP
+@@ -2730,6 +2738,7 @@ MapWindow(register WindowPtr pWin, Clien
+ 	pWin->mapped = TRUE;
+ 	if (SubStrSend(pWin, pParent))
+ 	{
++	    memset(&event, 0, sizeof(xEvent));
+ 	    event.u.u.type = MapNotify;
+ 	    event.u.mapNotify.window = pWin->drawable.id;
+ 	    event.u.mapNotify.override = pWin->overrideRedirect;
+@@ -2820,6 +2829,7 @@ MapSubwindows(register WindowPtr pParent
+ 	{
+ 	    if (parentRedirect && !pWin->overrideRedirect)
+ 	    {
++		memset(&event, 0, sizeof(xEvent));
+ 		event.u.u.type = MapRequest;
+ 		event.u.mapRequest.window = pWin->drawable.id;
+ 		event.u.mapRequest.parent = pParent->drawable.id;
+@@ -2832,6 +2842,7 @@ MapSubwindows(register WindowPtr pParent
+ 	    pWin->mapped = TRUE;
+ 	    if (parentNotify || StrSend(pWin))
+ 	    {
++		memset(&event, 0, sizeof(xEvent));
+ 		event.u.u.type = MapNotify;
+ 		event.u.mapNotify.window = pWin->drawable.id;
+ 		event.u.mapNotify.override = pWin->overrideRedirect;
+@@ -2985,6 +2996,7 @@ UnmapWindow(register WindowPtr pWin, Boo
+ 	return(Success);
+     if (SubStrSend(pWin, pParent))
+     {
++	memset(&event, 0, sizeof(xEvent));
+ 	event.u.u.type = UnmapNotify;
+ 	event.u.unmapNotify.window = pWin->drawable.id;
+ 	event.u.unmapNotify.fromConfigure = fromConfigure;
+@@ -3279,6 +3291,7 @@ SendVisibilityNotify(WindowPtr pWin)
+     }
+ #endif
+ 
++    memset(&event, 0, sizeof(xEvent));
+     event.u.u.type = VisibilityNotify;
+     event.u.visibility.window = pWin->drawable.id;
+     event.u.visibility.state = visibility;
+--- a/nx-X11/programs/Xserver/hw/nxagent/Keyboard.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/Keyboard.c
+@@ -1214,6 +1214,7 @@ void nxagentNotifyKeyboardChanges(int ol
+     dev = inputInfo.keyboard;
+     xkb = dev -> key -> xkbInfo -> desc;
+ 
++    memset(&nkn, 0, sizeof(xkbNewKeyboardNotify));
+     nkn.deviceID = nkn.oldDeviceID = dev -> id;
+     nkn.minKeyCode = 8;
+     nkn.maxKeyCode = 255;
+@@ -1233,6 +1234,7 @@ void nxagentNotifyKeyboardChanges(int ol
+     int i;
+     xEvent event;
+ 
++    memset(&event, 0, sizeof(xEvent));
+     event.u.u.type = MappingNotify;
+     event.u.mappingNotify.request = MappingKeyboard;
+     event.u.mappingNotify.firstKeyCode = inputInfo.keyboard -> key -> curKeySyms.minKeyCode;
+--- a/nx-X11/programs/Xserver/hw/nxagent/NXdispatch.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/NXdispatch.c
+@@ -905,6 +905,7 @@ ProcGetWindowAttributes(client)
+ 					   SecurityReadAccess);
+     if (!pWin)
+         return(BadWindow);
++    memset(&wa, 0, sizeof(xGetWindowAttributesReply));
+     GetWindowAttributes(pWin, client, &wa);
+     WriteReplyToClient(client, sizeof(xGetWindowAttributesReply), &wa);
+     return(client->noClientException);
+@@ -1141,6 +1142,7 @@ GetGeometry(client, rep)
+ 
+     REQUEST_SIZE_MATCH(xResourceReq);
+     SECURITY_VERIFY_GEOMETRABLE (pDraw, stuff->id, client, SecurityReadAccess);
++    memset(rep, 0, sizeof(xGetGeometryReply));
+     rep->type = X_Reply;
+     rep->length = 0;
+     rep->sequenceNumber = client->sequence;
+@@ -1204,6 +1206,7 @@ ProcQueryTree(client)
+ 					   SecurityReadAccess);
+     if (!pWin)
+         return(BadWindow);
++    memset(&reply, 0, sizeof(xQueryTreeReply));
+     reply.type = X_Reply;
+     reply.root = WindowTable[pWin->drawable.pScreen->myNum]->drawable.id;
+     reply.sequenceNumber = client->sequence;
+@@ -1268,6 +1271,7 @@ ProcInternAtom(client)
+     if (atom != BAD_RESOURCE)
+     {
+ 	xInternAtomReply reply;
++	memset(&reply, 0, sizeof(xInternAtomReply));
+ 	reply.type = X_Reply;
+ 	reply.length = 0;
+ 	reply.sequenceNumber = client->sequence;
+@@ -1292,6 +1296,7 @@ ProcGetAtomName(client)
+     if ( (str = NameForAtom(stuff->id)) )
+     {
+ 	len = strlen(str);
++	memset(&reply, 0, sizeof(xGetAtomNameReply));
+ 	reply.type = X_Reply;
+ 	reply.length = (len + 3) >> 2;
+ 	reply.sequenceNumber = client->sequence;
+@@ -1425,6 +1430,7 @@ ProcGetSelectionOwner(client)
+ 	i = 0;
+         while ((i < NumCurrentSelections) && 
+ 	       CurrentSelections[i].selection != stuff->id) i++;
++	memset(&reply, 0, sizeof(xGetSelectionOwnerReply));
+         reply.type = X_Reply;
+ 	reply.length = 0;
+ 	reply.sequenceNumber = client->sequence;
+@@ -1497,7 +1503,9 @@ ProcConvertSelection(client)
+ 					CurrentSelections[i].pWin))
+ #endif
+ 	    )
++
+ 	{        
++	    memset(&event, 0, sizeof(xEvent));
+ 	    event.u.u.type = SelectionRequest;
+ 	    event.u.selectionRequest.time = stuff->time;
+ 	    event.u.selectionRequest.owner = 
+@@ -1511,6 +1519,7 @@ ProcConvertSelection(client)
+ 		NoEventMask /* CantBeFiltered */, NullGrab))
+ 		return (client->noClientException);
+ 	}
++	memset(&event, 0, sizeof(xEvent));
+ 	event.u.u.type = SelectionNotify;
+ 	event.u.selectionNotify.time = stuff->time;
+ 	event.u.selectionNotify.requestor = stuff->requestor;
+@@ -1615,6 +1624,7 @@ ProcTranslateCoords(client)
+ 					   SecurityReadAccess);
+     if (!pDst)
+         return(BadWindow);
++    memset(&rep, 0, sizeof(xTranslateCoordsReply));
+     rep.type = X_Reply;
+     rep.length = 0;
+     rep.sequenceNumber = client->sequence;
+@@ -1840,6 +1850,7 @@ ProcQueryFont(client)
+ 	{
+ 	    return(BadAlloc);
+ 	}
++	memset(reply, 0, rlength);
+ 
+ 	reply->type = X_Reply;
+ 	reply->length = (rlength - sizeof(xGenericReply)) >> 2;
+@@ -2673,6 +2684,7 @@ DoGetImage(client, format, drawable, x, 
+         return(BadValue);
+     }
+     SECURITY_VERIFY_DRAWABLE(pDraw, drawable, client, SecurityReadAccess);
++    memset(&xgi, 0, sizeof(xGetImageReply));
+     if(pDraw->type == DRAWABLE_WINDOW)
+     {
+       if( /* check for being viewable */
+@@ -2726,9 +2738,10 @@ DoGetImage(client, format, drawable, x, 
+     xgi.length = length;
+ 
+     if (im_return) {
+-	pBuf = (char *)xalloc(sz_xGetImageReply + length);
++	pBuf = (char *)xcalloc(1, sz_xGetImageReply + length);
+ 	if (!pBuf)
+ 	    return (BadAlloc);
++
+ 	if (widthBytesLine == 0)
+ 	    linesPerBuf = 0;
+ 	else
+@@ -2766,6 +2779,7 @@ DoGetImage(client, format, drawable, x, 
+ 	}
+ 	if(!(pBuf = (char *) ALLOCATE_LOCAL(length)))
+ 	    return (BadAlloc);
++	memset(pBuf, 0, length);
+ 	WriteReplyToClient(client, sizeof (xGetImageReply), &xgi);
+     }
+ 
+@@ -3552,6 +3566,7 @@ ProcQueryColors(client)
+ 	prgbs = (xrgb *)ALLOCATE_LOCAL(count * sizeof(xrgb));
+ 	if(!prgbs && count)
+             return(BadAlloc);
++	memset(prgbs, 0, count * sizeof(xrgb));
+ 	if( (retval = QueryColors(pcmp, count, (Pixel *)&stuff[1], prgbs)) )
+ 	{
+    	    if (prgbs) DEALLOCATE_LOCAL(prgbs);
+@@ -3563,6 +3578,7 @@ ProcQueryColors(client)
+ 	        return (retval);
+ 	    }
+ 	}
++	memset(&qcr, 0, sizeof(xQueryColorsReply));
+ 	qcr.type = X_Reply;
+ 	qcr.length = (count * sizeof(xrgb)) >> 2;
+ 	qcr.sequenceNumber = client->sequence;
+@@ -3792,6 +3808,7 @@ ProcQueryBestSize   (client)
+     pScreen = pDraw->pScreen;
+     (* pScreen->QueryBestSize)(stuff->class, &stuff->width,
+ 			       &stuff->height, pScreen);
++    memset(&reply, 0, sizeof(xQueryBestSizeReply));
+     reply.type = X_Reply;
+     reply.length = 0;
+     reply.sequenceNumber = client->sequence;
+@@ -4685,6 +4702,7 @@ SendErrorToClient(client, majorCode, min
+ {
+     xError rep;
+ 
++    memset(&rep, 0, sizeof(xError));
+     rep.type = X_Error;
+     rep.sequenceNumber = client->sequence;
+     rep.errorCode = errorCode;
+--- a/nx-X11/programs/Xserver/hw/nxagent/NXdixfonts.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/NXdixfonts.c
+@@ -932,6 +932,7 @@ finish:
+     for (i = 0; i < nnames; i++)
+ 	stringLens += (names->length[i] <= 255) ? names->length[i] : 0;
+ 
++    memset(&reply, 0, sizeof(xListFontsReply));
+     reply.type = X_Reply;
+     reply.length = (stringLens + nnames + 3) >> 2;
+     reply.nFonts = nnames;
+@@ -1231,6 +1232,7 @@ doListFontsWithInfo(client, c)
+ 		    err = AllocError;
+ 		    break;
+ 		}
++		memset(reply + c->length, 0, length - c->length);
+ 		c->reply = reply;
+ 		c->length = length;
+ 	    }
+--- a/nx-X11/programs/Xserver/hw/nxagent/NXevents.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/NXevents.c
+@@ -3348,6 +3348,7 @@ EnterLeaveEvent(type, mode, detail, pWin
+     }
+     if (mask & filters[type])
+     {
++	memset(&event, 0, sizeof(xEvent));
+ 	event.u.u.type = type;
+ 	event.u.u.detail = detail;
+ 	event.u.enterLeave.time = currentTime.milliseconds;
+@@ -3822,6 +3823,7 @@ ProcGetInputFocus(client)
+     FocusClassPtr focus = inputInfo.keyboard->focus;
+ 
+     REQUEST_SIZE_MATCH(xReq);
++    memset(&rep, 0, sizeof(xGetInputFocusReply));
+     rep.type = X_Reply;
+     rep.length = 0;
+     rep.sequenceNumber = client->sequence;
+@@ -3897,6 +3899,7 @@ ProcGrabPointer(client)
+     }
+ 	/* at this point, some sort of reply is guaranteed. */
+     time = ClientTimeToServerTime(stuff->time);
++    memset(&rep, 0, sizeof(xGrabPointerReply));
+     rep.type = X_Reply;
+     rep.sequenceNumber = client->sequence;
+     rep.length = 0;
+@@ -4083,6 +4086,8 @@ ProcGrabKeyboard(client)
+     int result;
+ 
+     REQUEST_SIZE_MATCH(xGrabKeyboardReq);
++    memset(&rep, 0, sizeof(xGrabKeyboardReply));
++
+ #ifdef XCSECURITY
+     if (!SecurityCheckDeviceAccess(client, inputInfo.keyboard, TRUE))
+     {
+@@ -4139,6 +4144,7 @@ ProcQueryPointer(client)
+ 	return BadWindow;
+     if (mouse->valuator->motionHintWindow)
+ 	MaybeStopHint(mouse, client);
++    memset(&rep, 0, sizeof(xQueryPointerReply));
+     rep.type = X_Reply;
+     rep.sequenceNumber = client->sequence;
+     rep.mask = mouse->button->state | inputInfo.keyboard->key->state;
+--- a/nx-X11/programs/Xserver/hw/nxagent/NXextension.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/NXextension.c
+@@ -341,6 +341,7 @@ ProcQueryExtension(client)
+ 
+     REQUEST_FIXED_SIZE(xQueryExtensionReq, stuff->nbytes);
+     
++    memset(&reply, 0, sizeof(xQueryExtensionReply));
+     reply.type = X_Reply;
+     reply.length = 0;
+     reply.major_opcode = 0;
+@@ -388,6 +389,7 @@ ProcListExtensions(client)
+ 
+     REQUEST_SIZE_MATCH(xReq);
+ 
++    memset(&reply, 0, sizeof(xListExtensionsReply));
+     reply.type = X_Reply;
+     reply.nExtensions = 0;
+     reply.length = 0;
+--- a/nx-X11/programs/Xserver/hw/nxagent/NXmiexpose.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/NXmiexpose.c
+@@ -414,6 +414,7 @@ miSendGraphicsExpose (client, pRgn, draw
+     else
+     {
+         xEvent event;
++	memset(&event, 0, sizeof(xEvent));
+ 	event.u.u.type = NoExpose;
+ 	event.u.noExposure.drawable = drawable;
+ 	event.u.noExposure.majorEvent = major;
+@@ -439,7 +440,7 @@ miSendExposures(pWin, pRgn, dx, dy)
+     numRects = REGION_NUM_RECTS(pRgn);
+     if(!(pEvent = (xEvent *) ALLOCATE_LOCAL(numRects * sizeof(xEvent))))
+ 	return;
+-
++    memset(pEvent, 0, numRects * sizeof(xEvent));
+     for (i=numRects, pe = pEvent; --i >= 0; pe++, pBox++)
+     {
+ 	pe->u.u.type = Expose;
+--- a/nx-X11/programs/Xserver/hw/nxagent/NXproperty.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/NXproperty.c
+@@ -599,6 +599,7 @@ ProcGetProperty(client)
+ 	pProp = pProp->next;
+     }
+ 
++    memset(&reply, 0, sizeof(xGetPropertyReply));
+     reply.type = X_Reply;
+     reply.sequenceNumber = client->sequence;
+     if (!pProp) 
+--- a/nx-X11/programs/Xserver/hw/nxagent/NXrender.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/NXrender.c
+@@ -331,6 +331,7 @@ ProcRenderQueryVersion (ClientPtr client
+     pRenderClient->major_version = stuff->majorVersion;
+     pRenderClient->minor_version = stuff->minorVersion;
+ 
++    memset(&rep, 0, sizeof(xRenderQueryVersionReply));
+     rep.type = X_Reply;
+     rep.length = 0;
+     rep.sequenceNumber = client->sequence;
+@@ -455,6 +456,7 @@ ProcRenderQueryPictFormats (ClientPtr cl
+     reply = (xRenderQueryPictFormatsReply *) xalloc (rlength);
+     if (!reply)
+ 	return BadAlloc;
++    memset(reply, 0, rlength);
+     reply->type = X_Reply;
+     reply->sequenceNumber = client->sequence;
+     reply->length = (rlength - sizeof(xGenericReply)) >> 2;
+--- a/nx-X11/programs/Xserver/hw/nxagent/NXshm.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/NXshm.c
+@@ -375,6 +375,7 @@ ProcShmQueryVersion(client)
+     register int n;
+ 
+     REQUEST_SIZE_MATCH(xShmQueryVersionReq);
++    memset(&rep, 0, sizeof(xShmQueryVersionReply));
+     rep.type = X_Reply;
+     rep.length = 0;
+     rep.sequenceNumber = client->sequence;
+--- a/nx-X11/programs/Xserver/hw/nxagent/NXwindow.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/NXwindow.c
+@@ -912,6 +912,7 @@ CreateWindow(wid, pParent, x, y, w, h, b
+ 
+     if (SubSend(pParent))
+     {
++	memset(&event, 0, sizeof(xEvent));
+ 	event.u.u.type = CreateNotify;
+ 	event.u.createNotify.window = wid;
+ 	event.u.createNotify.parent = pParent->drawable.id;
+@@ -987,6 +988,7 @@ CrushTree(pWin)
+ 	    pParent = pChild->parent;
+ 	    if (SubStrSend(pChild, pParent))
+ 	    {
++		memset(&event, 0, sizeof(xEvent));
+ 		event.u.u.type = DestroyNotify;
+ 		event.u.destroyNotify.window = pChild->drawable.id;
+ 		DeliverEvents(pChild, &event, 1, NullWindow);		
+@@ -1039,6 +1041,7 @@ DeleteWindow(value, wid)
+     pParent = pWin->parent;
+     if (wid && pParent && SubStrSend(pWin, pParent))
+     {
++	memset(&event, 0, sizeof(xEvent));
+ 	event.u.u.type = DestroyNotify;
+ 	event.u.destroyNotify.window = pWin->drawable.id;
+ 	DeliverEvents(pWin, &event, 1, NullWindow);		
+@@ -2550,6 +2553,7 @@ ConfigureWindow(pWin, mask, vlist, clien
+ #endif
+ 	))
+     {
++	memset(&event, 0, sizeof(xEvent));
+ 	event.u.u.type = ConfigureRequest;
+ 	event.u.configureRequest.window = pWin->drawable.id;
+ 	if (mask & CWSibling)
+@@ -2594,6 +2598,7 @@ ConfigureWindow(pWin, mask, vlist, clien
+ 	if (size_change && ((pWin->eventMask|wOtherEventMasks(pWin)) & ResizeRedirectMask))
+ 	{
+ 	    xEvent eventT;
++	    memset(&eventT, 0, sizeof(xEvent));
+ 	    eventT.u.u.type = ResizeRequest;
+ 	    eventT.u.resizeRequest.window = pWin->drawable.id;
+ 	    eventT.u.resizeRequest.width = w;
+@@ -2637,6 +2642,7 @@ ConfigureWindow(pWin, mask, vlist, clien
+ ActuallyDoSomething:
+     if (SubStrSend(pWin, pParent))
+     {
++	memset(&event, 0, sizeof(xEvent));
+ 	event.u.u.type = ConfigureNotify;
+ 	event.u.configureNotify.window = pWin->drawable.id;
+ 	if (pSib)
+@@ -2821,6 +2827,7 @@ ReparentWindow(pWin, pParent, x, y, clie
+     if (WasMapped)
+        UnmapWindow(pWin, FALSE);
+ 
++    memset(&event, 0, sizeof(xEvent));
+     event.u.u.type = ReparentNotify;
+     event.u.reparent.window = pWin->drawable.id;
+     event.u.reparent.parent = pParent->drawable.id;
+@@ -2999,6 +3006,7 @@ MapWindow(pWin, client)
+ #endif
+ 	))
+ 	{
++	    memset(&event, 0, sizeof(xEvent));
+ 	    event.u.u.type = MapRequest;
+ 	    event.u.mapRequest.window = pWin->drawable.id;
+ #ifdef XAPPGROUP
+@@ -3021,6 +3029,7 @@ MapWindow(pWin, client)
+ 	pWin->mapped = TRUE;
+ 	if (SubStrSend(pWin, pParent))
+ 	{
++	    memset(&event, 0, sizeof(xEvent));
+ 	    event.u.u.type = MapNotify;
+ 	    event.u.mapNotify.window = pWin->drawable.id;
+ 	    event.u.mapNotify.override = pWin->overrideRedirect;
+@@ -3115,6 +3124,7 @@ MapSubwindows(pParent, client)
+ 	{
+ 	    if (parentRedirect && !pWin->overrideRedirect)
+ 	    {
++		memset(&event, 0, sizeof(xEvent));
+ 		event.u.u.type = MapRequest;
+ 		event.u.mapRequest.window = pWin->drawable.id;
+ 		event.u.mapRequest.parent = pParent->drawable.id;
+@@ -3127,6 +3137,7 @@ MapSubwindows(pParent, client)
+ 	    pWin->mapped = TRUE;
+ 	    if (parentNotify || StrSend(pWin))
+ 	    {
++		memset(&event, 0, sizeof(xEvent));
+ 		event.u.u.type = MapNotify;
+ 		event.u.mapNotify.window = pWin->drawable.id;
+ 		event.u.mapNotify.override = pWin->overrideRedirect;
+@@ -3296,6 +3307,7 @@ UnmapWindow(pWin, fromConfigure)
+ 	return(Success);
+     if (SubStrSend(pWin, pParent))
+     {
++	memset(&event, 0, sizeof(xEvent));
+ 	event.u.u.type = UnmapNotify;
+ 	event.u.unmapNotify.window = pWin->drawable.id;
+ 	event.u.unmapNotify.fromConfigure = fromConfigure;
+@@ -3574,6 +3586,7 @@ SendVisibilityNotify(pWin)
+     }
+ #endif
+ 
++    memset(&event, 0, sizeof(xEvent));
+     event.u.u.type = VisibilityNotify;
+     event.u.visibility.window = pWin->drawable.id;
+     event.u.visibility.state = visibility;
+--- a/nx-X11/programs/Xserver/mi/miexpose.c
++++ b/nx-X11/programs/Xserver/mi/miexpose.c
+@@ -420,6 +420,7 @@ miSendGraphicsExpose (client, pRgn, draw
+     else
+     {
+         xEvent event;
++	memset(&event, 0, sizeof(xEvent));
+ 	event.u.u.type = NoExpose;
+ 	event.u.noExposure.drawable = drawable;
+ 	event.u.noExposure.majorEvent = major;
+@@ -445,6 +446,7 @@ miSendExposures(pWin, pRgn, dx, dy)
+     numRects = REGION_NUM_RECTS(pRgn);
+     if(!(pEvent = (xEvent *) ALLOCATE_LOCAL(numRects * sizeof(xEvent))))
+ 	return;
++    memset(pEvent, 0, numRects * sizeof(xEvent));
+ 
+     for (i=numRects, pe = pEvent; --i >= 0; pe++, pBox++)
+     {
+--- a/nx-X11/programs/Xserver/randr/rrxinerama.c
++++ b/nx-X11/programs/Xserver/randr/rrxinerama.c
+@@ -281,7 +281,8 @@ ProcRRXineramaIsActive(ClientPtr client)
+     xXineramaIsActiveReply	rep;
+ 
+     REQUEST_SIZE_MATCH(xXineramaIsActiveReq);
+-	
++
++    memset(&rep, 0, sizeof(xXineramaIsActiveReply));
+     rep.type = X_Reply;
+     rep.length = 0;
+     rep.sequenceNumber = client->sequence;
+--- a/nx-X11/programs/Xserver/render/render.c
++++ b/nx-X11/programs/Xserver/render/render.c
+@@ -288,6 +288,7 @@ ProcRenderQueryVersion (ClientPtr client
+     pRenderClient->major_version = stuff->majorVersion;
+     pRenderClient->minor_version = stuff->minorVersion;
+ 
++    memset(&rep, 0, sizeof(xRenderQueryVersionReply));
+     rep.type = X_Reply;
+     rep.length = 0;
+     rep.sequenceNumber = client->sequence;
+@@ -410,6 +411,8 @@ ProcRenderQueryPictFormats (ClientPtr cl
+     reply = (xRenderQueryPictFormatsReply *) xalloc (rlength);
+     if (!reply)
+ 	return BadAlloc;
++    memset(reply, 0, rlength);
++
+     reply->type = X_Reply;
+     reply->sequenceNumber = client->sequence;
+     reply->length = (rlength - sizeof(xGenericReply)) >> 2;
+--- a/nx-X11/programs/Xserver/xfixes/select.c
++++ b/nx-X11/programs/Xserver/xfixes/select.c
+@@ -84,6 +84,8 @@ XFixesSelectionCallback (CallbackListPtr
+ 	{
+ 	    xXFixesSelectionNotifyEvent	ev;
+ 
++	    memset(&ev, 0, sizeof(xXFixesSelectionNotifyEvent));
++
+ 	    ev.type = XFixesEventBase + XFixesSelectionNotify;
+ 	    ev.subtype = subtype;
+ 	    ev.sequenceNumber = e->pClient->sequence;
+--- a/nx-X11/programs/Xserver/xfixes/xfixes.c
++++ b/nx-X11/programs/Xserver/xfixes/xfixes.c
+@@ -42,6 +42,7 @@ ProcXFixesQueryVersion(ClientPtr client)
+     REQUEST(xXFixesQueryVersionReq);
+ 
+     REQUEST_SIZE_MATCH(xXFixesQueryVersionReq);
++    memset(&rep, 0, sizeof(xXFixesQueryVersionReply));
+     rep.type = X_Reply;
+     rep.length = 0;
+     rep.sequenceNumber = client->sequence;
+--- a/nx-X11/programs/Xserver/xkb/xkb.c
++++ b/nx-X11/programs/Xserver/xkb/xkb.c
+@@ -192,6 +192,7 @@ ProcXkbUseExtension(ClientPtr client)
+ 					stuff->wantedMajor,stuff->wantedMinor,
+ 					XkbMajorVersion,XkbMinorVersion);
+     }
++    memset(&rep, 0, sizeof(xkbUseExtensionReply));
+     rep.type = X_Reply;
+     rep.supported = supported;
+     rep.length = 0;
+@@ -1313,6 +1314,8 @@ char		*desc,*start;
+     start= desc= (char *)ALLOCATE_LOCAL(len);
+     if (!start)
+ 	return BadAlloc;
++    memset(start, 0, len);
++
+     if ( rep->nTypes>0 )
+ 	desc = XkbWriteKeyTypes(xkb,rep,desc,client);
+     if ( rep->nKeySyms>0 )
+@@ -2381,6 +2384,8 @@ ProcXkbSetMap(ClientPtr client)
+     				(xkb->max_key_code!=stuff->maxKeyCode)) {
+ 	Status			status;
+ 	xkbNewKeyboardNotify	nkn;
++
++	memset(&nkn, 0, sizeof(xkbNewKeyboardNotify));
+ 	nkn.deviceID= nkn.oldDeviceID= dev->id;
+ 	nkn.oldMinKeyCode= xkb->min_key_code;
+ 	nkn.oldMaxKeyCode= xkb->max_key_code;
+@@ -3480,6 +3485,7 @@ ProcXkbGetNames(ClientPtr client)
+     CHK_MASK_LEGAL(0x01,stuff->which,XkbAllNamesMask);
+ 
+     xkb = dev->key->xkbInfo->desc;
++    memset(&rep, 0, sizeof(xkbGetNamesReply));
+     rep.type= X_Reply;
+     rep.sequenceNumber= client->sequence;
+     rep.length = 0;
+@@ -4939,6 +4945,7 @@ ProcXkbSetGeometry(ClientPtr client)
+ 	nn.changed= XkbGeometryNameMask;
+ 	XkbSendNamesNotify(dev,&nn);
+     }
++    memset(&nkn, 0, sizeof(xkbNewKeyboardNotify));
+     nkn.deviceID= nkn.oldDeviceID= dev->id;
+     nkn.minKeyCode= nkn.oldMinKeyCode= xkb->min_key_code;
+     nkn.maxKeyCode= nkn.oldMaxKeyCode= xkb->max_key_code;
+@@ -4969,6 +4976,7 @@ ProcXkbPerClientFlags(ClientPtr client)
+     CHK_MASK_MATCH(0x02,stuff->change,stuff->value);
+ 
+     interest = XkbFindClientResource((DevicePtr)dev,client);
++    memset(&rep, 0, sizeof(xkbPerClientFlagsReply));
+     rep.type= X_Reply;
+     rep.length = 0;
+     rep.sequenceNumber = client->sequence;
+@@ -5463,6 +5471,7 @@ ProcXkbGetKbdByName(ClientPtr client)
+ 	    XkbFreeSrvLedInfo(old_sli);
+ 	}
+ 
++	memset(&nkn, 0, sizeof(xkbNewKeyboardNotify));
+ 	nkn.deviceID= nkn.oldDeviceID= dev->id;
+ 	nkn.minKeyCode= finfo.xkb->min_key_code;
+ 	nkn.maxKeyCode= finfo.xkb->max_key_code;
+--- a/nx-X11/programs/Xserver/xkb/xkbEvents.c
++++ b/nx-X11/programs/Xserver/xkb/xkbEvents.c
+@@ -730,6 +730,7 @@ XkbSrvLedInfoPtr	sli;
+     }
+     if (pChanges->map.changed) {
+ 	xkbMapNotify mn;
++	memset(&mn, 0, sizeof(xkbMapNotify));
+ 	mn.changed= pChanges->map.changed;
+ 	mn.firstType= pChanges->map.first_type;
+ 	mn.nTypes= pChanges->map.num_types;
+@@ -751,6 +752,7 @@ XkbSrvLedInfoPtr	sli;
+     if ((pChanges->ctrls.changed_ctrls)||
+ 	(pChanges->ctrls.enabled_ctrls_changes)) {
+ 	xkbControlsNotify cn;
++	memset(&cn, 0, sizeof(xkbControlsNotify));
+ 	cn.changedControls= pChanges->ctrls.changed_ctrls;
+ 	cn.enabledControlChanges= pChanges->ctrls.enabled_ctrls_changes;
+ 	cn.keycode= cause->kc;
+@@ -763,6 +765,7 @@ XkbSrvLedInfoPtr	sli;
+ 	xkbIndicatorNotify in;
+ 	if (sli==NULL)
+ 	    sli= XkbFindSrvLedInfo(kbd,XkbDfltXIClass,XkbDfltXIId,0);
++	memset(&in, 0, sizeof(xkbIndicatorNotify));
+ 	in.state= sli->effectiveState;
+ 	in.changed= pChanges->indicators.map_changes;
+ 	XkbSendIndicatorNotify(kbd,XkbIndicatorMapNotify,&in);
+@@ -771,12 +774,14 @@ XkbSrvLedInfoPtr	sli;
+ 	xkbIndicatorNotify in;
+ 	if (sli==NULL)
+ 	    sli= XkbFindSrvLedInfo(kbd,XkbDfltXIClass,XkbDfltXIId,0);
++	memset(&in, 0, sizeof(xkbIndicatorNotify));
+ 	in.state= sli->effectiveState;
+ 	in.changed= pChanges->indicators.state_changes;
+ 	XkbSendIndicatorNotify(kbd,XkbIndicatorStateNotify,&in);
+     }
+     if (pChanges->names.changed) {
+ 	xkbNamesNotify nn;
++	memset(&nn, 0, sizeof(xkbNamesNotify));
+ 	nn.changed= pChanges->names.changed;
+ 	nn.firstType= pChanges->names.first_type;
+ 	nn.nTypes= pChanges->names.num_types;
+@@ -789,6 +794,7 @@ XkbSrvLedInfoPtr	sli;
+     }
+     if ((pChanges->compat.changed_groups)||(pChanges->compat.num_si>0)) {
+ 	xkbCompatMapNotify cmn;
++	memset(&cmn, 0, sizeof(xkbCompatMapNotify));
+ 	cmn.changedGroups= pChanges->compat.changed_groups;
+ 	cmn.firstSI= pChanges->compat.first_si;
+ 	cmn.nSI= pChanges->compat.num_si;
