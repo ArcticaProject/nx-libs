@@ -35,7 +35,7 @@ PERFORMANCE OF THIS SOFTWARE.
 #include <config.h>
 #endif
 #include "Xlibint.h"
-#include <X11/keysym.h>
+#include <nx-X11/keysym.h>
 #include "Xlcint.h"
 #include "Ximint.h"
 

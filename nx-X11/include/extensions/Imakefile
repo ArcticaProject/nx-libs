@@ -101,10 +101,10 @@ HEADERS = Xext.h \
 
 all::
 
-BuildIncludes($(HEADERS),X11/extensions,../..)
+BuildIncludes($(HEADERS),nx-X11/extensions,../..)
 
 #if BuildLibraries
-InstallMultipleFlags($(HEADERS),$(INCDIR)/X11/extensions,$(INSTINCFLAGS))
+InstallMultipleFlags($(HEADERS),$(INCDIR)/nx-X11/extensions,$(INSTINCFLAGS))
 #endif
 
 InstallDriverSDKNonExecFile(XI.h,$(DRIVERSDKINCLUDEDIR)/extensions)

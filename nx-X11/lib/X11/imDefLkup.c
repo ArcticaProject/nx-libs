@@ -31,7 +31,7 @@ PERFORMANCE OF THIS SOFTWARE.
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <X11/Xatom.h>
+#include <nx-X11/Xatom.h>
 #define  NEED_EVENTS
 #include "Xlibint.h"
 #include "Xlcint.h"

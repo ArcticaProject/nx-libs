@@ -35,13 +35,13 @@ from The Open Group.
 #include <config.h>
 #endif
 #include "XKBlib.h"
-#include <X11/Xlibint.h>
-#include <X11/Xutil.h>
-#include <X11/keysym.h>
+#include <nx-X11/Xlibint.h>
+#include <nx-X11/Xutil.h>
+#include <nx-X11/keysym.h>
 #include <stdio.h>
 #include <ctype.h>
 
-#include <X11/extensions/XKBproto.h>
+#include <nx-X11/extensions/XKBproto.h>
 #include "XKBlibint.h"
 
 #ifdef USE_OWN_COMPOSE

@@ -57,13 +57,13 @@ from The Open Group.
 #include	<stdio.h>
 #include	<ctype.h>
 #include	"Xlibint.h"
-#include	<X11/Xresource.h>
+#include	<nx-X11/Xresource.h>
 #include	"Xlcint.h"
 #ifdef XTHREADS
 #include	"locking.h"
 #endif
 #include 	"XrmI.h"
-#include	<X11/Xos.h>
+#include	<nx-X11/Xos.h>
 #include "Xresinternal.h"
 #include "Xresource.h"
 

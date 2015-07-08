@@ -68,14 +68,14 @@ SOFTWARE.
 #endif
 
 #ifdef WIN32
-#include <X11/Xwinsock.h>
+#include <nx-X11/Xwinsock.h>
 #endif
-#include <X11/X.h>
-#include <X11/Xproto.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
 #define XSERV_t
 #define TRANS_SERVER
 #define TRANS_REOPEN
-#include <X11/Xtrans/Xtrans.h>
+#include <nx-X11/Xtrans/Xtrans.h>
 #include <errno.h>
 #include <signal.h>
 #include <stdio.h>
@@ -144,15 +144,15 @@ extern __const__ int _nfiles;
 #endif /* WIN32 */
 #include "misc.h"
 #include "osdep.h"
-#include <X11/Xpoll.h>
+#include <nx-X11/Xpoll.h>
 #include "opaque.h"
 #include "dixstruct.h"
 #ifdef XAPPGROUP
-#include <X11/extensions/Xagsrv.h>
+#include <nx-X11/extensions/Xagsrv.h>
 #endif
 #ifdef XCSECURITY
 #define _SECURITY_SERVER
-#include <X11/extensions/security.h>
+#include <nx-X11/extensions/security.h>
 #endif
 #ifdef LBX
 #include "colormapst.h"

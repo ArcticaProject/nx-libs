@@ -31,7 +31,7 @@ in this Software without prior written authorization from The Open Group.
 #ifndef _XMITMISC_H_
 #define _XMITMISC_H_
 
-#include <X11/Xfuncproto.h>
+#include <nx-X11/Xfuncproto.h>
 
 #define X_MITSetBugMode			0
 #define X_MITGetBugMode			1

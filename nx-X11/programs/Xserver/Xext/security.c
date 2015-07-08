@@ -57,19 +57,19 @@ in this Software without prior written authorization from The Open Group.
 #include "colormapst.h"
 #include "propertyst.h"
 #define _SECURITY_SERVER
-#include <X11/extensions/securstr.h>
+#include <nx-X11/extensions/securstr.h>
 #include <assert.h>
 #include <stdarg.h>
 #ifdef LBX
 #define _XLBX_SERVER_
-#include <X11/extensions/XLbx.h>
+#include <nx-X11/extensions/XLbx.h>
 extern unsigned char LbxReqCode;
 #endif
 #ifdef XAPPGROUP
-#include <X11/extensions/Xagsrv.h>
+#include <nx-X11/extensions/Xagsrv.h>
 #endif
 #include <stdio.h>  /* for file reading operations */
-#include <X11/Xatom.h>  /* for XA_STRING */
+#include <nx-X11/Xatom.h>  /* for XA_STRING */
 
 #ifdef NXAGENT_SERVER
 
@@ -91,7 +91,7 @@ extern unsigned char LbxReqCode;
 #endif
 
 #if defined(WIN32) || defined(__CYGWIN__)
-#include <X11/Xos.h>
+#include <nx-X11/Xos.h>
 #undef index
 #endif
 

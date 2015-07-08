@@ -85,7 +85,7 @@ NX_XCOMPEXTCONFIGTARGET = $(NX_XCOMPEXTLIBDIR)/config.status
 #define LibName NX_X11
 #define SoRev SOXLIBREV
 #define HugeLibrary YES
-#define IncSubdir X11
+#define IncSubdir nx-X11
 
 #if BuildLoadableXlibI18n
 SUBDIRS = xlibi18n

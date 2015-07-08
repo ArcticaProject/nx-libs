@@ -55,7 +55,7 @@
 #endif
 #include "Xlibint.h"
 #include "Xcmsint.h"
-#include <X11/Xos.h>
+#include <nx-X11/Xos.h>
 #include <math.h>
 #include "Cv.h"
 

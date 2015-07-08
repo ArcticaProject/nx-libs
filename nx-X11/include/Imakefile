@@ -51,10 +51,10 @@ HEADERS = \
 
 all::
 
-BuildIncludes($(HEADERS),X11,..)
+BuildIncludes($(HEADERS),nx-X11,..)
 
 #if BuildLibraries
-InstallMultipleFlags($(HEADERS),$(INCDIR)/X11,$(INSTINCFLAGS))
+InstallMultipleFlags($(HEADERS),$(INCDIR)/nx-X11,$(INSTINCFLAGS))
 #endif
 MakeSubdirs($(SUBDIRS))
 DependSubdirs($(SUBDIRS))

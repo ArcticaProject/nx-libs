@@ -25,7 +25,7 @@
 #ifndef _COMPOSITE_H_
 #define _COMPOSITE_H_
 
-#include <X11/extensions/xfixeswire.h>
+#include <nx-X11/extensions/xfixeswire.h>
 
 #define COMPOSITE_NAME				"Composite"
 #define COMPOSITE_MAJOR				0

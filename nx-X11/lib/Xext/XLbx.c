@@ -30,11 +30,11 @@
 #include <config.h>
 #endif
 #include <stdio.h>
-#include <X11/Xlibint.h>
-#include <X11/extensions/XLbx.h>
-#include <X11/extensions/lbxstr.h>
-#include <X11/extensions/Xext.h>
-#include <X11/extensions/extutil.h>
+#include <nx-X11/Xlibint.h>
+#include <nx-X11/extensions/XLbx.h>
+#include <nx-X11/extensions/lbxstr.h>
+#include <nx-X11/extensions/Xext.h>
+#include <nx-X11/extensions/extutil.h>
 
 static XExtensionInfo _lbx_info_data;
 static XExtensionInfo *lbx_info = &_lbx_info_data;

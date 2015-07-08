@@ -132,13 +132,13 @@ of the copyright holder.
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
+#include <nx-X11/X.h>
 #include "Xlib.h"
 #include "misc.h"
 #include "resource.h"
 #define NEED_EVENTS
 #define NEED_REPLIES
-#include <X11/Xproto.h>
+#include <nx-X11/Xproto.h>
 #include "windowstr.h"
 #include "inputstr.h"
 #include "scrnintstr.h"
@@ -152,13 +152,13 @@ of the copyright holder.
 #include "globals.h"
 
 #ifdef XKB
-#include <X11/extensions/XKBsrv.h>
+#include <nx-X11/extensions/XKBsrv.h>
 extern Bool XkbFilterEvents(ClientPtr, int, xEvent *);
 #endif
 
 #ifdef XCSECURITY
 #define _SECURITY_SERVER
-#include <X11/extensions/security.h>
+#include <nx-X11/extensions/security.h>
 #endif
 
 #ifdef XEVIE
@@ -175,7 +175,7 @@ int    xeviegrabState = 0;
 xEvent *xeviexE;
 #endif
 
-#include <X11/extensions/XIproto.h>
+#include <nx-X11/extensions/XIproto.h>
 #include "exevents.h"
 #include "extnsionst.h"
 

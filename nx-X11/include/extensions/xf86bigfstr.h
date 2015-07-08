@@ -11,7 +11,7 @@
 #ifndef _XF86BIGFSTR_H_
 #define _XF86BIGFSTR_H_
 
-#include <X11/extensions/xf86bigfont.h>
+#include <nx-X11/extensions/xf86bigfont.h>
 
 #define XF86BIGFONTNAME			"XFree86-Bigfont"
 

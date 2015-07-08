@@ -25,9 +25,9 @@
 #ifndef _XCOMPOSITE_H_
 #define _XCOMPOSITE_H_
 
-#include <X11/extensions/composite.h>
-#include <X11/extensions/Xfixes.h>
-#include <X11/Xfuncproto.h>
+#include <nx-X11/extensions/composite.h>
+#include <nx-X11/extensions/Xfixes.h>
+#include <nx-X11/Xfuncproto.h>
 
 /*
  * This revision number also appears in configure.ac, they have

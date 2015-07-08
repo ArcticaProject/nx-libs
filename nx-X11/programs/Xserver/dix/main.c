@@ -84,9 +84,9 @@ Equipment Corporation.
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
-#include <X11/Xos.h>   /* for unistd.h  */
-#include <X11/Xproto.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xos.h>   /* for unistd.h  */
+#include <nx-X11/Xproto.h>
 #include "scrnintstr.h"
 #include "misc.h"
 #include "os.h"
@@ -113,7 +113,7 @@ Equipment Corporation.
 
 #ifdef DPMSExtension
 #define DPMS_SERVER
-#include <X11/extensions/dpms.h>
+#include <nx-X11/extensions/dpms.h>
 #include "dpmsproc.h"
 #endif
 

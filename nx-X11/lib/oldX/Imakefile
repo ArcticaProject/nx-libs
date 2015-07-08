@@ -12,7 +12,7 @@ XCOMM $XFree86: xc/lib/oldX/Imakefile,v 1.2 1998/12/20 11:57:19 dawes Exp $
 #define DoProfileLib ProfileOldX
 #define LibName NX_oldX
 #define SoRev SOOLDXREV
-#define IncSubdir X11
+#define IncSubdir nx-X11
 
 #ifdef SharedOldXReqs
 REQUIREDLIBS = SharedOldXReqs

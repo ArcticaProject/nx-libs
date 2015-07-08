@@ -39,7 +39,7 @@ in this Software without prior written authorization from The Open Group.
 #ifndef XWDFILE_H
 #define XWDFILE_H
 
-#include <X11/Xmd.h>
+#include <nx-X11/Xmd.h>
 
 #define XWD_FILE_VERSION 7
 #define sz_XWDheader 100

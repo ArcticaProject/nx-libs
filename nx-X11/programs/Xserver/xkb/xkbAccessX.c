@@ -36,11 +36,11 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <limits.h>
 #endif
 #define NEED_EVENTS 1
-#include <X11/X.h>
-#include <X11/Xproto.h>
-#include <X11/keysym.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
+#include <nx-X11/keysym.h>
 #include "inputstr.h"
-#include <X11/extensions/XKBsrv.h>
+#include <nx-X11/extensions/XKBsrv.h>
 #if !defined(WIN32) && !defined(Lynx)
 #include <sys/time.h>
 #endif

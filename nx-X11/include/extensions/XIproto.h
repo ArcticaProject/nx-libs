@@ -50,8 +50,8 @@ SOFTWARE.
 #ifndef _XIPROTO_H
 #define _XIPROTO_H
 
-#include <X11/Xproto.h>
-#include <X11/X.h>
+#include <nx-X11/Xproto.h>
+#include <nx-X11/X.h>
 
 /* make sure types have right sizes for protocol structures. */
 #define Window CARD32

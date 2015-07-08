@@ -37,8 +37,8 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <X11/Xlib.h>
-#include <X11/Xresource.h>
+#include <nx-X11/Xlib.h>
+#include <nx-X11/Xresource.h>
 #include "Xlibint.h"
 #include "XlcPubI.h"
 

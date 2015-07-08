@@ -32,8 +32,8 @@ in this Software without prior written authorization from The Open Group.
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
-#include <X11/Xproto.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
 #include "window.h"
 #include "os.h"
 #include "windowstr.h"
@@ -46,7 +46,7 @@ in this Software without prior written authorization from The Open Group.
 #include "opaque.h"
 #include "sleepuntil.h"
 #define _MULTIBUF_SERVER_	/* don't want Xlib structures */
-#include <X11/extensions/multibufst.h>
+#include <nx-X11/extensions/multibufst.h>
 
 #ifdef EXTMODULE
 #include "xf86_ansic.h"

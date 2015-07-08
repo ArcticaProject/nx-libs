@@ -12,8 +12,8 @@
 
 #define NEED_REPLIES
 #define NEED_EVENTS
-#include <X11/X.h>
-#include <X11/Xproto.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
 #include "misc.h"
 #include "dixstruct.h"
 #include "extnsionst.h"
@@ -22,16 +22,16 @@
 #include "servermd.h"
 #define _XF86MISC_SERVER_
 #undef _XF86MISC_SAVER_COMPAT_
-#include <X11/extensions/xf86mscstr.h>
+#include <nx-X11/extensions/xf86mscstr.h>
 #include "swaprep.h"
 #include "xf86.h"
-#include <X11/Xfuncproto.h>
+#include <nx-X11/Xfuncproto.h>
 #include "xf86miscproc.h"
 
 #if 0
-#include <X11/Xtrans/Xtrans.h>
+#include <nx-X11/Xtrans/Xtrans.h>
 #include "../os/osdep.h"
-#include <X11/Xauth.h>
+#include <nx-X11/Xauth.h>
 #ifndef USL
 #ifndef Lynx
 #include <sys/socket.h>

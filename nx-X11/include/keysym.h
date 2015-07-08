@@ -71,5 +71,5 @@ SOFTWARE.
 #define XK_CURRENCY
 #define XK_MATHEMATICAL
 
-#include <X11/keysymdef.h>
+#include <nx-X11/keysymdef.h>
 

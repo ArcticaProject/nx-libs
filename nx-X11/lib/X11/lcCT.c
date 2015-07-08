@@ -43,7 +43,7 @@
 #endif
 #include "Xlibint.h"
 #include "XlcPubI.h"
-#include <X11/Xos.h>
+#include <nx-X11/Xos.h>
 #include <stdio.h>
 
 

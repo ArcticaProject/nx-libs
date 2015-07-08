@@ -38,11 +38,11 @@
 #include <config.h>
 #endif
 #include <stdio.h>
-#include <X11/Xlibint.h>
-#include <X11/extensions/Xext.h>
-#include <X11/extensions/extutil.h>
+#include <nx-X11/Xlibint.h>
+#include <nx-X11/extensions/Xext.h>
+#include <nx-X11/extensions/extutil.h>
 #define NEED_DBE_PROTOCOL
-#include <X11/extensions/Xdbe.h>
+#include <nx-X11/extensions/Xdbe.h>
 
 static XExtensionInfo _dbe_info_data;
 static XExtensionInfo *dbe_info = &_dbe_info_data;

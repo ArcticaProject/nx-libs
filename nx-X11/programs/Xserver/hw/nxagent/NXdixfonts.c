@@ -73,16 +73,16 @@ Equipment Corporation.
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
-#include <X11/Xmd.h>
-#include <X11/Xproto.h>
+#include <X11/fonts/fontstruct.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xmd.h>
+#include <nx-X11/Xproto.h>
 #include "scrnintstr.h"
 #include "resource.h"
 #include "dixstruct.h"
 #include "cursorstr.h"
 #include "misc.h"
 #include "opaque.h"
-#include <X11/fonts/fontstruct.h>
 #include "dixfontstr.h"
 #include "closestr.h"
 
@@ -172,7 +172,7 @@ _NXGetFontPathError:
 
 #ifdef XF86BIGFONT
 #define _XF86BIGFONT_SERVER_
-#include <X11/extensions/xf86bigfont.h>
+#include <nx-X11/extensions/xf86bigfont.h>
 #endif
 
 #define QUERYCHARINFO(pci, pr)  *(pr) = (pci)->metrics

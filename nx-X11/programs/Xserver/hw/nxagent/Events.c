@@ -66,7 +66,7 @@
 #define Window     XlibWindow
 #define Atom   XlibAtom
 #define Time XlibXID
-#include <X11/extensions/Xfixes.h>
+#include <nx-X11/extensions/Xfixes.h>
 #undef Window
 #undef Atom
 #undef Time
@@ -90,10 +90,10 @@
 #undef  KeySym
 #undef  XID
 
-#include <X11/cursorfont.h>
+#include <nx-X11/cursorfont.h>
 
 #include "Shadow.h"
-#include <X11/extensions/Xrandr.h>
+#include "X11/include/Xrandr_nxagent.h"
 
 #include "NXlib.h"
 

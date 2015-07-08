@@ -4,7 +4,7 @@
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
+#include <nx-X11/X.h>
 #include "scrnintstr.h"
 #include "validate.h"
 #include "windowstr.h"

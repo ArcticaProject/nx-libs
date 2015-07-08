@@ -29,9 +29,9 @@ in this Software without prior written authorization from The Open Group.
 /* $XFree86: xc/programs/xauth/xauth.h,v 1.6 2001/12/14 20:01:15 dawes Exp $ */
 
 #include <stdio.h>
-#include <X11/Xos.h>
-#include <X11/Xauth.h>
-#include <X11/Xfuncs.h>
+#include <nx-X11/Xos.h>
+#include <nx-X11/Xauth.h>
+#include <nx-X11/Xfuncs.h>
 
 #ifndef True
 typedef int Bool;

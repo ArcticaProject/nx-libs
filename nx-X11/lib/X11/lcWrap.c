@@ -61,12 +61,12 @@ from The Open Group.
 #include <stdlib.h>
 #include "Xlibint.h"
 #include "Xlcint.h"
-#include <X11/Xlocale.h>
-#include <X11/Xos.h>
+#include <nx-X11/Xlocale.h>
+#include <nx-X11/Xos.h>
 #ifdef WIN32
 #undef close
 #endif
-#include <X11/Xutil.h>
+#include <nx-X11/Xutil.h>
 #include "XlcPubI.h"
 
 #ifdef XTHREADS

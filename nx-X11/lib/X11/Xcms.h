@@ -31,7 +31,7 @@
 #ifndef _XCMS_H_
 #define _XCMS_H_
 
-#include <X11/Xlib.h>
+#include <nx-X11/Xlib.h>
 
     /*
      * XCMS Status Values

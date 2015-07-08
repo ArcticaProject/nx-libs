@@ -27,7 +27,7 @@
 #ifndef _BUFFERSTR_H_
 #define _BUFFERSTR_H_
 
-#include <X11/extensions/lbxbuf.h>
+#include <nx-X11/extensions/lbxbuf.h>
 
 /*
  * ZLIB Input/Output buffer

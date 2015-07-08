@@ -48,14 +48,14 @@ SOFTWARE.
 #ifndef IN_MODULE
 #include <stdio.h>
 #endif
-#include <X11/X.h>
-#include <X11/Xmd.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xmd.h>
 #ifdef SMT
 #define NEED_EVENTS
 #define NEED_REPLIES
 #endif
-#include <X11/Xproto.h>
-#include <X11/extensions/xtrapbits.h>
+#include <nx-X11/Xproto.h>
+#include <nx-X11/extensions/xtrapbits.h>
 #define XTrapExtName "DEC-XTRAP"
 /* Current Release, Version, and Revision of the XTrap Extension */
 #define XETrapRelease      3L

@@ -29,7 +29,7 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <X11/Xlib.h>
+#include <nx-X11/Xlib.h>
 #include "XlcPublic.h"
 
 /* Don't use <ctype.h> here because it is locale dependent. */

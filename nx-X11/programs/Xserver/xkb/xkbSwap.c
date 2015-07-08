@@ -31,14 +31,14 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #endif
 
 #include "stdio.h"
-#include <X11/X.h>
+#include <nx-X11/X.h>
 #define	NEED_EVENTS
 #define	NEED_REPLIES
-#include <X11/Xproto.h>
+#include <nx-X11/Xproto.h>
 #include "misc.h"
 #include "inputstr.h"
-#include <X11/extensions/XKBsrv.h>
-#include <X11/extensions/XKBstr.h>
+#include <nx-X11/extensions/XKBsrv.h>
+#include <nx-X11/extensions/XKBstr.h>
 #include "extnsionst.h"
 #include "xkb.h"
 

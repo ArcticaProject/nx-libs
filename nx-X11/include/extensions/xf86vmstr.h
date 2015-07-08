@@ -35,7 +35,7 @@ from Kaleb S. KEITHLEY
 #ifndef _XF86VIDMODESTR_H_
 #define _XF86VIDMODESTR_H_
 
-#include <X11/extensions/xf86vmode.h>
+#include <nx-X11/extensions/xf86vmode.h>
 
 #define XF86VIDMODENAME "XFree86-VidModeExtension"
 

@@ -29,7 +29,7 @@ from The Open Group.
 #ifndef _XAG_H_
 #define _XAG_H_
 
-#include <X11/Xfuncproto.h>
+#include <nx-X11/Xfuncproto.h>
 
 #define X_XagQueryVersion		0
 #define X_XagCreate			1

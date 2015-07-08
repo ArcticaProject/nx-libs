@@ -13,7 +13,7 @@ XCOMM $XFree86: xc/lib/xkbfile/Imakefile,v 3.5 2003/10/15 21:23:38 herrb Exp $
 #define HasSharedData	NO
 #define LibName		NX_xkbfile
 #define SoRev		SOXKBFILEREV
-#define IncSubdir	X11
+#define IncSubdir	nx-X11
 #define	IncSubSubdir	extensions
 
 #ifdef SharedxkbfileReqs

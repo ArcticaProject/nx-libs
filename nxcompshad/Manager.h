@@ -18,7 +18,7 @@
 #ifndef UpdateManager_H
 #define UpdateManager_H
 
-#include <X11/Xlib.h>
+#include <nx-X11/Xlib.h>
 
 #include "Updater.h"
 #include "Regions.h"

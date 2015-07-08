@@ -32,7 +32,7 @@ from The Open Group.
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
+#include <nx-X11/X.h>
 #include "servermd.h"
 #include "misc.h"
 #include "mi.h"
@@ -42,7 +42,7 @@ from The Open Group.
 #include "miline.h"
 #ifdef MITSHM
 #define _XSHM_SERVER_
-#include <X11/extensions/XShm.h>
+#include <nx-X11/extensions/XShm.h>
 #endif
 
 /* We use this structure to propogate some information from miScreenInit to

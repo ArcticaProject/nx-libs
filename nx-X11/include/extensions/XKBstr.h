@@ -28,7 +28,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #ifndef _XKBSTR_H_
 #define	_XKBSTR_H_
 
-#include <X11/extensions/XKB.h>
+#include <nx-X11/extensions/XKB.h>
 
 #define	XkbCharToInt(v)		((v)&0x80?(int)((v)|(~0xff)):(int)((v)&0x7f))
 #define	XkbIntTo2Chars(i,h,l)	(((h)=((i>>8)&0xff)),((l)=((i)&0xff)))

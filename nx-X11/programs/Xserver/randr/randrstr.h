@@ -32,8 +32,8 @@
 #ifndef _RANDRSTR_H_
 #define _RANDRSTR_H_
 
-#include <X11/X.h>
-#include <X11/Xproto.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
 #include "misc.h"
 #include "os.h"
 #include "dixstruct.h"
@@ -44,17 +44,17 @@
 #include "extnsionst.h"
 #include "servermd.h"
 #ifndef NXAGENT_SERVER
-#include <X11/extensions/randr.h>
-#include <X11/extensions/randrproto.h>
+#include <nx-X11/extensions/randr.h>
+#include <nx-X11/extensions/randrproto.h>
 #else
 #include "randr.h"
 #include "randrproto.h"
 #endif
 #ifdef RENDER
-#include <X11/extensions/render.h> 	/* we share subpixel order information */
+#include <nx-X11/extensions/render.h> 	/* we share subpixel order information */
 #include "picturestr.h"
 #endif
-#include <X11/Xfuncproto.h>
+#include <nx-X11/Xfuncproto.h>
 
 /* required for ABI compatibility for now */
 #define RANDR_10_INTERFACE 1

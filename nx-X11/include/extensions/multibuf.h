@@ -29,7 +29,7 @@ in this Software without prior written authorization from The Open Group.
 #ifndef _MULTIBUF_H_
 #define _MULTIBUF_H_
 
-#include <X11/Xfuncproto.h>
+#include <nx-X11/Xfuncproto.h>
 
 #define MULTIBUFFER_PROTOCOL_NAME "Multi-Buffering"
 

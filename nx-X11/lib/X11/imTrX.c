@@ -34,7 +34,7 @@ IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <config.h>
 #endif
 #include <string.h>
-#include <X11/Xatom.h>
+#include <nx-X11/Xatom.h>
 #define NEED_EVENTS
 #include "Xlibint.h"
 #include "Xlcint.h"

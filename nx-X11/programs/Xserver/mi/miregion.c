@@ -82,7 +82,7 @@ Equipment Corporation.
 #endif
 
 #include "regionstr.h"
-#include <X11/Xprotostr.h>
+#include <nx-X11/Xprotostr.h>
 #include "gc.h"
 #include "mi.h"
 #include "mispans.h"

@@ -9,7 +9,7 @@
 #ifndef _XF86MISCSTR_H_
 #define _XF86MISCSTR_H_
 
-#include <X11/extensions/xf86misc.h>
+#include <nx-X11/extensions/xf86misc.h>
 
 #define XF86MISCNAME		"XFree86-Misc"
 

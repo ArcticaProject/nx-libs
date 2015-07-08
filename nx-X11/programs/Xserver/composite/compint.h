@@ -50,7 +50,7 @@
 #include "damage.h"
 #include "damageextint.h"
 #include "xfixes.h"
-#include <X11/extensions/compositeproto.h>
+#include <nx-X11/extensions/compositeproto.h>
 #include <assert.h>
 
 /*

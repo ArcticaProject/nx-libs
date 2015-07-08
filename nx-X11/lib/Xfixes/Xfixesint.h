@@ -28,11 +28,11 @@
 #define NEED_EVENTS
 #define NEED_REPLIES
 #include <stdio.h>
-#include <X11/Xlib.h>
-#include <X11/Xlibint.h>
-#include <X11/Xutil.h>
+#include <nx-X11/Xlib.h>
+#include <nx-X11/Xlibint.h>
+#include <nx-X11/Xutil.h>
 #include "Xfixes.h"
-#include <X11/extensions/xfixesproto.h>
+#include <nx-X11/extensions/xfixesproto.h>
 
 extern char XFixesExtensionName[];
 

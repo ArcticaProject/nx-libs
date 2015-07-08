@@ -25,7 +25,7 @@
 #ifndef _XLBX_H_
 #define _XLBX_H_
 
-#include <X11/Xfuncproto.h>
+#include <nx-X11/Xfuncproto.h>
 
 /*
  * NOTE:  any changes or additions to the opcodes needs to be reflected
@@ -128,8 +128,8 @@
 
 #ifndef _XLBX_SERVER_
 
-#include <X11/Xdefs.h>
-#include <X11/Xlib.h>
+#include <nx-X11/Xdefs.h>
+#include <nx-X11/Xlib.h>
 
 _XFUNCPROTOBEGIN
 

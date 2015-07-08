@@ -57,11 +57,11 @@ in this Software without prior written authorization from The Open Group.
 #include <stdint.h>
 #endif
 
-#include <X11/X.h>
+#include <nx-X11/X.h>
 
 /* applications should not depend on these two headers being included! */
-#include <X11/Xfuncproto.h>
-#include <X11/Xosdefs.h>
+#include <nx-X11/Xfuncproto.h>
+#include <nx-X11/Xosdefs.h>
 
 #ifndef X_WCHAR
 #ifdef X_NOT_STDC_ENV

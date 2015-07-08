@@ -32,10 +32,10 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <stdlib.h>
-#include <X11/Xfuncs.h>
-#include <X11/Xlib.h>
-#include <X11/XKBlib.h>
-#include <X11/extensions/XKBgeom.h>
+#include <nx-X11/Xfuncs.h>
+#include <nx-X11/Xlib.h>
+#include <nx-X11/XKBlib.h>
+#include <nx-X11/extensions/XKBgeom.h>
 
 #include "XKMformat.h"
 #include "XKBfileInt.h"

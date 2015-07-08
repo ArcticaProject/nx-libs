@@ -28,9 +28,9 @@
 #ifndef _VLDXVMC_H
 #define _VLDXVMC_H
 
-#include <X11/Xlib.h>
-#include <X11/extensions/XvMC.h>
-#include <X11/extensions/XvMClib.h>
+#include <nx-X11/Xlib.h>
+#include <nx-X11/extensions/XvMC.h>
+#include <nx-X11/extensions/XvMClib.h>
 
 /* 
  * New "Motion compensation type".

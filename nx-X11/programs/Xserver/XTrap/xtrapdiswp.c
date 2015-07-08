@@ -49,12 +49,12 @@ CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
+#include <nx-X11/X.h>
 #define NEED_REPLIES
 #define NEED_EVENTS
-#include <X11/Xproto.h>
-#include <X11/Xprotostr.h>
-#include <X11/extensions/xtrapdi.h>
+#include <nx-X11/Xproto.h>
+#include <nx-X11/Xprotostr.h>
+#include <nx-X11/extensions/xtrapdi.h>
 #include "input.h"          /* Server DevicePtr definitions */
 #include "misc.h"
 #include "dixstruct.h"
@@ -64,8 +64,8 @@ CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 # include "extnsionst.h"        /* Server ExtensionEntry definitions */
 #endif
 # include "swapreq.h"        /* Server SwapColorItem definition */
-#include <X11/extensions/xtrapddmi.h>
-#include <X11/extensions/xtrapproto.h>
+#include <nx-X11/extensions/xtrapddmi.h>
+#include <nx-X11/extensions/xtrapproto.h>
 
 /* In-coming XTrap requests needing to be swapped to native format */
 

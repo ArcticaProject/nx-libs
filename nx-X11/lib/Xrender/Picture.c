@@ -26,7 +26,7 @@
 #include <config.h>
 #endif
 #include "Xrenderint.h"
-#include <X11/Xregion.h>
+#include <nx-X11/Xregion.h>
 
 static void
 _XRenderProcessPictureAttributes (Display		    *dpy,

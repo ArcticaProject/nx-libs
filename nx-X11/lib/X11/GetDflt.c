@@ -52,8 +52,8 @@ SOFTWARE.
 #include <config.h>
 #endif
 #include "Xlibint.h"
-#include <X11/Xos.h>
-#include <X11/Xresource.h>
+#include <nx-X11/Xos.h>
+#include <nx-X11/Xresource.h>
 
 #ifndef X_NOT_POSIX
 #ifdef _POSIX_SOURCE
@@ -80,12 +80,12 @@ SOFTWARE.
 #endif
 
 #ifdef XTHREADS
-#include <X11/Xthreads.h>
+#include <nx-X11/Xthreads.h>
 #endif
 #ifndef WIN32
 #define X_INCLUDE_PWD_H
 #define XOS_USE_XLIB_LOCKING
-#include <X11/Xos_r.h>
+#include <nx-X11/Xos_r.h>
 #endif
 #include <stdio.h>
 #include <ctype.h>

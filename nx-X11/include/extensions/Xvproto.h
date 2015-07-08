@@ -49,7 +49,7 @@ SOFTWARE.
 **
 */
 
-#include <X11/Xmd.h>
+#include <nx-X11/Xmd.h>
 
 /* Symbols: These are undefined at the end of this file to restore the
    values they have in Xv.h */

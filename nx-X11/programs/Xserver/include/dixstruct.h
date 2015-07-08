@@ -31,7 +31,7 @@ SOFTWARE.
 #include "cursor.h"
 #include "gc.h"
 #include "pixmap.h"
-#include <X11/Xmd.h>
+#include <nx-X11/Xmd.h>
 
 /*
  * 	direct-mapped hash table, used by resource manager to store

@@ -33,7 +33,7 @@ from The Open Group.
 #define CLOSESTR_H
 
 #define	NEED_REPLIES
-#include <X11/Xproto.h>
+#include <nx-X11/Xproto.h>
 #include "closure.h"
 #include "dix.h"
 #include "misc.h"

@@ -109,12 +109,13 @@ int ProcInitialConnection();
 #define True 1
 #endif
 
+#include <X11/fonts/fontstruct.h>
+
 #define GC XlibGC
-#include <X11/Xlib.h>
+#include <nx-X11/Xlib.h>
 #undef GC
 
 #include "windowstr.h"
-#include <X11/fonts/fontstruct.h>
 #include "dixfontstr.h"
 #include "gcstruct.h"
 #include "selection.h"
@@ -135,15 +136,15 @@ int ProcInitialConnection();
 #endif
 #ifdef XCSECURITY
 #define _SECURITY_SERVER
-#include <X11/extensions/security.h>
+#include <nx-X11/extensions/security.h>
 #endif
 #ifdef XAPPGROUP
-#include <X11/extensions/Xagsrv.h>
+#include <nx-X11/extensions/Xagsrv.h>
 #endif
 #ifdef XKB
 #define XKB_IN_SERVER
 #include "inputstr.h"
-#include <X11/extensions/XKBsrv.h>
+#include <nx-X11/extensions/XKBsrv.h>
 #endif
 
 #include "Atoms.h"

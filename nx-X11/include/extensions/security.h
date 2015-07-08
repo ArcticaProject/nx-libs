@@ -30,7 +30,7 @@ from The Open Group.
 #define _SECURITY_H
 
 #define _XAUTH_STRUCT_ONLY
-#include <X11/Xauth.h>
+#include <nx-X11/Xauth.h>
 
 /* constants that server, library, and application all need */
 

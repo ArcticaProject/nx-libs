@@ -34,33 +34,33 @@
 
 #include <stdio.h>
 
-#include <X11/Xos.h>
-#include <X11/Xfuncs.h>
+#include <nx-X11/Xos.h>
+#include <nx-X11/Xfuncs.h>
 
 #ifndef XKB_IN_SERVER
 
 #include <stdlib.h>
-#include <X11/Xlib.h>
-#include <X11/keysym.h>
+#include <nx-X11/Xlib.h>
+#include <nx-X11/keysym.h>
 
-#include <X11/XKBlib.h>
+#include <nx-X11/XKBlib.h>
 
-#include <X11/extensions/XKBgeom.h>
+#include <nx-X11/extensions/XKBgeom.h>
 #include "XKMformat.h"
 #include "XKBfileInt.h"
 
 #else
 
-#include <X11/X.h>
+#include <nx-X11/X.h>
 #define	NEED_EVENTS
-#include <X11/Xproto.h>
-#include <X11/keysym.h>
+#include <nx-X11/Xproto.h>
+#include <nx-X11/keysym.h>
 #include "misc.h"
 #include "inputstr.h"
-#include <X11/extensions/XKBstr.h>
+#include <nx-X11/extensions/XKBstr.h>
 #define	 XKBSRV_NEED_FILE_FUNCS
-#include <X11/extensions/XKBsrv.h>
-#include <X11/extensions/XKBgeom.h>
+#include <nx-X11/extensions/XKBsrv.h>
+#include <nx-X11/extensions/XKBgeom.h>
 
 Atom
 XkbInternAtom(Display *dpy,char *str,Bool only_if_exists)

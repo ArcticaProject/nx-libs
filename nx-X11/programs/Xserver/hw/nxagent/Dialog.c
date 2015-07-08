@@ -25,7 +25,7 @@
 #include "scrnintstr.h"
 #include "Agent.h"
 
-#include <X11/Xlib.h>
+#include <nx-X11/Xlib.h>
 
 #include "opaque.h"
 

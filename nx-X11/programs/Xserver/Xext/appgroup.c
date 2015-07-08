@@ -32,8 +32,8 @@ from The Open Group.
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
-#include <X11/Xproto.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
 #include "misc.h"
 #include "dixstruct.h"
 #include "extnsionst.h"
@@ -42,14 +42,14 @@ from The Open Group.
 #include "colormapst.h"
 #include "servermd.h"
 #define _XAG_SERVER_
-#include <X11/extensions/Xagstr.h>
-#include <X11/extensions/Xagsrv.h>
+#include <nx-X11/extensions/Xagstr.h>
+#include <nx-X11/extensions/Xagsrv.h>
 #define _SECURITY_SERVER
-#include <X11/extensions/security.h>
-#include <X11/Xfuncproto.h>
+#include <nx-X11/extensions/security.h>
+#include <nx-X11/Xfuncproto.h>
 
 #define XSERV_t
-#include <X11/Xtrans/Xtrans.h>
+#include <nx-X11/Xtrans/Xtrans.h>
 #include "../os/osdep.h"
 
 #include <stdio.h>

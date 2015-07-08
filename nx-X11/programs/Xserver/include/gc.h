@@ -50,15 +50,15 @@ SOFTWARE.
 #ifndef GC_H
 #define GC_H 
 
-#include <X11/X.h>	/* for GContext, Mask */
+#include <nx-X11/X.h>	/* for GContext, Mask */
 
 #ifndef _XTYPEDEF_POINTER
 /* Don't let Xdefs.h define 'pointer' */
 #define _XTYPEDEF_POINTER       1
 #endif /* _XTYPEDEF_POINTER */
-#include <X11/Xdefs.h>	/* for Bool */
+#include <nx-X11/Xdefs.h>	/* for Bool */
 
-#include <X11/Xproto.h>
+#include <nx-X11/Xproto.h>
 #include "screenint.h"	/* for ScreenPtr */
 #include "pixmap.h"	/* for DrawablePtr */
 

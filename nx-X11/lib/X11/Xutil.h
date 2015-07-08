@@ -52,7 +52,7 @@ SOFTWARE.
 #define _XUTIL_H_
 
 /* You must include <X11/Xlib.h> before including this file */
-#include <X11/Xlib.h>
+#include <nx-X11/Xlib.h>
 
 /* 
  * Bitmask returned by XParseGeometry().  Each bit tells if the corresponding

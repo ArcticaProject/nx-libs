@@ -99,7 +99,7 @@ OR PERFORMANCE OF THIS SOFTWARE.
 #include <dix-config.h>
 #endif
 
-#include <X11/Xos.h>
+#include <nx-X11/Xos.h>
 #include <stdio.h>
 #include <time.h>
 #include <sys/stat.h>

@@ -30,8 +30,8 @@ Equipment Corporation.
 #endif
 
 #include <stdio.h>
-#include <X11/X.h>
-#include <X11/Xproto.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
 #include "misc.h"
 #include "cursor.h"
 #include "cursorstr.h"
@@ -45,10 +45,10 @@ Equipment Corporation.
 #include "pixmapstr.h"
 #if 0
 #include <sys/workstation.h>
-#include <X11/Xserver/ws.h> 
+#include <nx-X11/Xserver/ws.h> 
 #endif
 #include "panoramiX.h"
-#include <X11/extensions/panoramiXproto.h>
+#include <nx-X11/extensions/panoramiXproto.h>
 #include "panoramiXsrv.h"
 #include "globals.h"
 #include "panoramiXh.h"

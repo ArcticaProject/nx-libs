@@ -10,14 +10,14 @@
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
-#include <X11/Xproto.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
 #include "misc.h"
 #include "os.h"
 #include "dixstruct.h"
 #include "extnsionst.h"
 #include "swaprep.h"
-#include <X11/extensions/XResproto.h>
+#include <nx-X11/extensions/XResproto.h>
 #include "pixmapstr.h"
 #include "modinit.h"
 

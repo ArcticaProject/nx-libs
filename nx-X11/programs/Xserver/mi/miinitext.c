@@ -191,35 +191,35 @@ typedef void (*InitExtension)(INITARGS);
 
 #ifdef MITSHM
 #define _XSHM_SERVER_
-#include <X11/extensions/shmstr.h>
+#include <nx-X11/extensions/shmstr.h>
 #endif
 #ifdef XTEST
 #define _XTEST_SERVER_
-#include <X11/extensions/XTest.h>
+#include <nx-X11/extensions/XTest.h>
 #endif
 #ifdef XKB
-#include <X11/extensions/XKB.h>
+#include <nx-X11/extensions/XKB.h>
 #endif
 #ifdef LBX
 #define _XLBX_SERVER_
-#include <X11/extensions/lbxstr.h>
+#include <nx-X11/extensions/lbxstr.h>
 #endif
 #ifdef XAPPGROUP
 #define _XAG_SERVER_
-#include <X11/extensions/Xagstr.h>
+#include <nx-X11/extensions/Xagstr.h>
 #endif
 #ifdef XCSECURITY
 #define _SECURITY_SERVER
-#include <X11/extensions/securstr.h>
+#include <nx-X11/extensions/securstr.h>
 #endif
 #ifdef PANORAMIX
-#include <X11/extensions/panoramiXproto.h>
+#include <nx-X11/extensions/panoramiXproto.h>
 #endif
 #ifdef XF86BIGFONT
-#include <X11/extensions/xf86bigfstr.h>
+#include <nx-X11/extensions/xf86bigfstr.h>
 #endif
 #ifdef RES
-#include <X11/extensions/XResproto.h>
+#include <nx-X11/extensions/XResproto.h>
 #endif
 
 /* FIXME: this whole block of externs should be from the appropriate headers */

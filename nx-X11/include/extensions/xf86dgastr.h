@@ -9,7 +9,7 @@ Copyright (c) 1995  XFree86 Inc.
 #ifndef _XF86DGASTR_H_
 #define _XF86DGASTR_H_
 
-#include <X11/extensions/xf86dga1str.h>
+#include <nx-X11/extensions/xf86dga1str.h>
 
 #define XF86DGANAME "XFree86-DGA"
 

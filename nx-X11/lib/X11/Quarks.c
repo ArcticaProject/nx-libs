@@ -55,7 +55,7 @@ from The Open Group.
 #include <config.h>
 #endif
 #include "Xlibint.h"
-#include <X11/Xresource.h>
+#include <nx-X11/Xresource.h>
 #include "Xresinternal.h"
 
 /* Not cost effective, at least for vanilla MIT clients */

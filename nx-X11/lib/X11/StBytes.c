@@ -29,8 +29,8 @@ in this Software without prior written authorization from The Open Group.
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <X11/Xlibint.h>
-#include <X11/Xatom.h>
+#include <nx-X11/Xlibint.h>
+#include <nx-X11/Xatom.h>
 
 /* insulate predefined atom numbers from cut routines */
 static Atom n_to_atom[8] = { 

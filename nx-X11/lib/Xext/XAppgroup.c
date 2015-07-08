@@ -30,15 +30,15 @@ in this Software without prior written authorization from The Open Group.
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <X11/Xwindows.h>
+#include <nx-X11/Xwindows.h>
 #endif
 
 #define NEED_EVENTS
 #define NEED_REPLIES
-#include <X11/Xlibint.h>
-#include <X11/extensions/Xagstr.h>
-#include <X11/extensions/Xext.h>
-#include <X11/extensions/extutil.h>
+#include <nx-X11/Xlibint.h>
+#include <nx-X11/extensions/Xagstr.h>
+#include <nx-X11/extensions/Xext.h>
+#include <nx-X11/extensions/extutil.h>
 
 #include <stdarg.h>
 

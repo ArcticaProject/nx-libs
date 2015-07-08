@@ -34,18 +34,18 @@ IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <config.h>
 #endif
 #include <stdio.h>
-#include <X11/Xatom.h>
-#include <X11/Xmd.h>
+#include <nx-X11/Xatom.h>
+#include <nx-X11/Xmd.h>
 #define NEED_EVENTS
 #include "Xlibint.h"
-#include <X11/Xtrans/Xtrans.h>
+#include <nx-X11/Xtrans/Xtrans.h>
 #include "Xlcint.h"
 #include "Ximint.h"
 #include "XimTrans.h"
 #include "XimTrInt.h"
 
 #ifdef WIN32
-#include <X11/Xwindows.h>
+#include <nx-X11/Xwindows.h>
 #endif
 
 

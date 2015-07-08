@@ -54,7 +54,7 @@ SOFTWARE.
 #include "misc.h"
 #define ALLOCATE_LOCAL_FALLBACK(_size) Xalloc((unsigned long)(_size))
 #define DEALLOCATE_LOCAL_FALLBACK(_ptr) Xfree((void *)(_ptr))
-#include <X11/Xalloca.h>
+#include <nx-X11/Xalloca.h>
 #ifndef IN_MODULE
 #include <stdarg.h>
 #else

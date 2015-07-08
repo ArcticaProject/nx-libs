@@ -56,10 +56,10 @@ from The Open Group.
 #include <assert.h>
 #define NEED_EVENTS
 #define NEED_REPLIES
-#include <X11/Xlibint.h>
-#include <X11/extensions/Xext.h>
-#include <X11/extensions/extutil.h>
-#include <X11/extensions/recordstr.h>
+#include <nx-X11/Xlibint.h>
+#include <nx-X11/extensions/Xext.h>
+#include <nx-X11/extensions/extutil.h>
+#include <nx-X11/extensions/recordstr.h>
 
 static XExtensionInfo _xrecord_info_data;
 static XExtensionInfo *xrecord_info = &_xrecord_info_data;

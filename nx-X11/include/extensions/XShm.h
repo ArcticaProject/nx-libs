@@ -32,7 +32,7 @@ in this Software without prior written authorization from The Open Group.
 #ifndef _XSHM_H_
 #define _XSHM_H_
 
-#include <X11/Xfuncproto.h>
+#include <nx-X11/Xfuncproto.h>
 
 #define X_ShmQueryVersion		0
 #define X_ShmAttach			1

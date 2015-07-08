@@ -109,15 +109,15 @@ int ProcInitialConnection();
 #endif
 #ifdef XCSECURITY
 #define _SECURITY_SERVER
-#include <X11/extensions/security.h>
+#include <nx-X11/extensions/security.h>
 #endif
 #ifdef XAPPGROUP
-#include <X11/extensions/Xagsrv.h>
+#include <nx-X11/extensions/Xagsrv.h>
 #endif
 #ifdef XKB
 #define XKB_IN_SERVER
 #include "inputstr.h"
-#include <X11/extensions/XKBsrv.h>
+#include <nx-X11/extensions/XKBsrv.h>
 #endif
 #ifdef LBX
 #include "lbxserve.h"

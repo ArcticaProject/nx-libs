@@ -27,12 +27,12 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <X11/Xlibint.h>
-#include <X11/extensions/XEVI.h>
-#include <X11/extensions/XEVIstr.h>
-#include <X11/extensions/Xext.h>
-#include <X11/extensions/extutil.h>
-#include <X11/Xutil.h>
+#include <nx-X11/Xlibint.h>
+#include <nx-X11/extensions/XEVI.h>
+#include <nx-X11/extensions/XEVIstr.h>
+#include <nx-X11/extensions/Xext.h>
+#include <nx-X11/extensions/extutil.h>
+#include <nx-X11/Xutil.h>
 static XExtensionInfo *xevi_info;/* needs to move to globals.c */
 static /* const */ char *xevi_extension_name = EVINAME;
 #define XeviCheckExtension(dpy,i,val) \

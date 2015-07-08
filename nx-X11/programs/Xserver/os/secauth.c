@@ -30,7 +30,7 @@ from The Open Group.
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
+#include <nx-X11/X.h>
 #include "os.h"
 #include "osdep.h"
 #include "dixstruct.h"
@@ -38,7 +38,7 @@ from The Open Group.
 
 #ifdef XCSECURITY
 #define _SECURITY_SERVER
-#include <X11/extensions/security.h>
+#include <nx-X11/extensions/security.h>
 #endif
 
 static char InvalidPolicyReason[] = "invalid policy specification";

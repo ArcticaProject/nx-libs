@@ -49,12 +49,12 @@ in this Software without prior written authorization from The Open Group.
 
 #include <stdio.h>			/* for NULL */
 #include <ctype.h>			/* for isascii() and isdigit() */
-#include <X11/Xos.h>			/* for strchr() and string routines */
-#include <X11/Xlib.h>			/* for Family contants */
+#include <nx-X11/Xos.h>			/* for strchr() and string routines */
+#include <nx-X11/Xlib.h>			/* for Family contants */
 #ifdef hpux
 #include <sys/utsname.h>		/* for struct utsname */
 #endif
-#include <X11/Xauth.h>			/* for FamilyLocal */
+#include <nx-X11/Xauth.h>			/* for FamilyLocal */
 
 #if defined(UNIXCONN) || defined(LOCALCONN)
 #define UNIX_CONNECTION "unix"

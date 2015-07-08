@@ -25,7 +25,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #ifndef _XEVI_H_
 #define _XEVI_H_
-#include <X11/Xfuncproto.h>
+#include <nx-X11/Xfuncproto.h>
 #define X_EVIQueryVersion		0
 #define X_EVIGetVisualInfo		1
 #define XEVI_TRANSPARENCY_NONE		0

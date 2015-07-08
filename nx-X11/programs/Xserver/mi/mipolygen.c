@@ -50,7 +50,7 @@ SOFTWARE.
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
+#include <nx-X11/X.h>
 #include "gcstruct.h"
 #include "miscanfill.h"
 #include "mipoly.h"

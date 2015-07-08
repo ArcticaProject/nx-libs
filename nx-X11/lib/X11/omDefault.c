@@ -35,8 +35,8 @@
 #endif
 #include "Xlibint.h"
 #include "XomGeneric.h"
-#include <X11/Xos.h>
-#include <X11/Xatom.h>
+#include <nx-X11/Xos.h>
+#include <nx-X11/Xatom.h>
 #include <stdio.h>
 
 #define DefineLocalBuf		char local_buf[BUFSIZ]

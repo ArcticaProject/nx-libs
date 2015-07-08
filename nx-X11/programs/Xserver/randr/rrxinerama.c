@@ -88,7 +88,7 @@
 #include "randrstr.h"
 #include "swaprep.h"
 #ifndef NXAGENT_SERVER
-#include <X11/extensions/panoramiXproto.h>
+#include <nx-X11/extensions/panoramiXproto.h>
 #else
 #include "panoramiXproto.h"
 #endif

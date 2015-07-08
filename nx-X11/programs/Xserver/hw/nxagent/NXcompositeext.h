@@ -27,7 +27,7 @@
 
 #ifndef NXAGENT_SERVER
 
-#include <X11/extensions/xfixeswire.h>
+#include <nx-X11/extensions/xfixeswire.h>
 
 #endif
 
