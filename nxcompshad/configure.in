@@ -5,6 +5,9 @@ dnl Prolog
 AC_INIT(Shadow.h)
 AC_PREREQ(2.13)
 
+pkgconfigdir=${libdir}/pkgconfig
+AC_SUBST(pkgconfigdir)
+
 dnl Reset default compilation flags.
 
 CXXFLAGS="$CXXFLAGS -O3"
@@ -281,4 +284,4 @@ if test -z "${MAKEDEPEND}"; then
   fi
 fi
 
-AC_OUTPUT(Makefile)
+AC_OUTPUT(Makefile nxcompshad.pc)
