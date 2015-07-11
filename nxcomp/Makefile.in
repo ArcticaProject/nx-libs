@@ -58,14 +58,15 @@ LIBS        = @LIBS@
 # Other autoconfigured settings, not used at the moment.
 #
 
-srcdir      = @srcdir@
-prefix      = @prefix@
-exec_prefix = @exec_prefix@
-bindir      = @bindir@
-man1dir     = @mandir@/man1
-VPATH       = @srcdir@
-libdir      = @libdir@
-includedir  = @includedir@
+srcdir       = @srcdir@
+prefix       = @prefix@
+exec_prefix  = @exec_prefix@
+bindir       = @bindir@
+man1dir      = @mandir@/man1
+VPATH        = @srcdir@
+libdir       = @libdir@
+includedir   = @includedir@
+pkgconfigdir = @pkgconfigdir@
 
 INSTALL         = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -292,6 +293,7 @@ install.lib: all
 	$(INSTALL_DATA) $(LIBARCHIVE)           $(DESTDIR)${libdir}
 	$(INSTALL_DATA) NX*.h                   $(DESTDIR)${includedir}/nx
 	$(INSTALL_DATA) MD5.h                   $(DESTDIR)${includedir}/nx
+	$(INSTALL_DATA) nxcomp.pc               $(DESTDIR)${pkgconfigdir}
 	echo "Running ldconfig tool, this may take a while..." && ldconfig || true
 
 install.man:
@@ -313,6 +315,7 @@ uninstall.lib:
 	$(RM_FILE) $(DESTDIR)${includedir}/nx/NXrender.h
 	$(RM_FILE) $(DESTDIR)${includedir}/nx/NXvars.h
 	$(RM_FILE) $(DESTDIR)${includedir}/nx/MD5.h
+	$(RM_FILE) $(DESTDIR)${pkgconfigdir}/nxcomp.pc
 	echo "Running ldconfig tool, this may take a while..." && ldconfig || true
 
 uninstall.man:
