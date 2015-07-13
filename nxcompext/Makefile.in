@@ -50,14 +50,15 @@ LIBS        = @LIBS@ -lz -lNX_X11 -lXcomp
 # LIBS = @LIBS@ -lz -ljpeg -lpthread -lNX_X11 -lXcomp
 #
 
-srcdir      = @srcdir@
-prefix      = @prefix@
-exec_prefix = @exec_prefix@
-bindir      = @bindir@
-man1dir     = @mandir@/man1
-VPATH       = @srcdir@
-libdir = @libdir@
-includedir = @includedir@
+srcdir       = @srcdir@
+prefix       = @prefix@
+exec_prefix  = @exec_prefix@
+bindir       = @bindir@
+man1dir      = @mandir@/man1
+VPATH        = @srcdir@
+libdir       = @libdir@
+includedir   = @includedir@
+pkgconfigdir = @pkgconfigdir@
 
 INSTALL         = @INSTALL@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -171,6 +172,7 @@ install.lib: all
 	$(INSTALL_LINK) $(LIBLOAD)              $(DESTDIR)${libdir}
 	$(INSTALL_LINK) $(LIBSHARED)            $(DESTDIR)${libdir}
 	$(INSTALL_DATA) NX*.h                   $(DESTDIR)${includedir}/nx
+	$(INSTALL_DATA) nxcompext.pc            $(DESTDIR)${pkgconfigdir}
 	echo "Running ldconfig tool, this may take a while..." && ldconfig || true
 
 install.man:
@@ -185,6 +187,7 @@ uninstall.lib:
 	$(RM_FILE) $(DESTDIR)${libdir}/$(LIBSHARED)
 	$(RM_FILE) $(DESTDIR)${includedir}/nx/NXlib.h
 	$(RM_FILE) $(DESTDIR)${includedir}/nx/NXlibint.h
+	$(RM_FILE) $(DESTDIR)${pkgconfigdir}/nxcompext.pc
 	echo "Running ldconfig tool, this may take a while..." && ldconfig || true
 
 uninstall.man:

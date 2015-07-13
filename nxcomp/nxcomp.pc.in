@@ -1,0 +1,15 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: nxcomp
+Description: NX Compression Library
+Version: @VERSION@
+#libjepg does not provide a pkgconfig-file, zlib does not provide it for older versions
+#Requires: libjpeg zlib
+Requires: libpng
+Requires.private: x11
+Cflags: -I${includedir} -I${includedir}/nx
+Libs: -L${libdir} -lXcomp
+

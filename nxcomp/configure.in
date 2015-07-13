@@ -5,6 +5,9 @@ dnl Prolog
 AC_INIT(NX.h)
 AC_PREREQ(2.13)
 
+pkgconfigdir=${libdir}/pkgconfig
+AC_SUBST(pkgconfigdir)
+
 dnl Set our default compilation flags.
 
 CXXFLAGS="$CXXFLAGS -O3 -fno-rtti -fno-exceptions"
@@ -387,4 +390,4 @@ else
     ALL="\$(LIBFULL) \$(LIBLOAD) \$(LIBSHARED) \$(LIBARCHIVE)"
 fi
 
-AC_OUTPUT(Makefile)
+AC_OUTPUT(Makefile nxcomp.pc)

@@ -1,0 +1,13 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: nxcompext
+Description: Extension for NX Compression Library
+Version: @VERSION@
+Requires: nxcomp
+Requires.private: x11
+Cflags: -I${includedir} -I${includedir}/nx
+Libs: -L${libdir} -lXcompext
+

@@ -68,14 +68,15 @@ LIBS        = @LIBS@ -lNX_X11
 # LIBS = $(LIBS) -lmpatrol -lbfd -liberty
 #
 
-srcdir      = @srcdir@
-prefix      = @prefix@
-exec_prefix = @exec_prefix@
-bindir      = @bindir@
-man1dir     = @mandir@/man1
-VPATH       = @srcdir@
-libdir      = @libdir@
-includedir  = @includedir@
+srcdir       = @srcdir@
+prefix       = @prefix@
+exec_prefix  = @exec_prefix@
+bindir       = @bindir@
+man1dir      = @mandir@/man1
+VPATH        = @srcdir@
+libdir       = @libdir@
+includedir   = @includedir@
+pkgconfigdir = @pkgconfigdir@
 
 INSTALL         = @INSTALL@
 INSTALL_DIR     = $(INSTALL) -d -o root -g root -m 0755 
@@ -206,6 +207,7 @@ install.lib: all
 	$(INSTALL_LINK) $(LIBSHARED)            $(DESTDIR)${libdir}
 	$(INSTALL_DATA) $(LIBARCHIVE)           $(DESTDIR)${libdir}
 	$(INSTALL_DATA) *.h                     $(DESTDIR)${includedir}/nx
+	$(INSTALL_DATA) nxcompshad.pc           $(DESTDIR)${pkgconfigdir}
 	echo "Running ldconfig tool, this may take a while..." && ldconfig || true
 
 install.man:
@@ -222,6 +224,7 @@ uninstall.lib:
 	for header in *.h; do $(RM_FILE) $(DESTDIR)${includedir}/nx/$$header; done
 	$(RM_DIR) $(DESTDIR)${libdir}/nx/
 	$(RM_DIR) $(DESTDIR)${includedir}/nx/
+	$(RM_FILE) $(DESTDIR)${pkgconfigdir}/nxcompshad.pc
 	echo "Running ldconfig tool, this may take a while..." && ldconfig || true
 
 uninstall.man:
