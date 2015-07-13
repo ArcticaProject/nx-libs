@@ -193,7 +193,7 @@ uninstall.lib:
 uninstall.man:
 
 clean:
-		-rm -f *~ *.o *.bak *.orig *.rej st?????? core core.* *.out.* \
+		-rm -f *~ *.o *.bak *.orig *.rej st?????? core core.* *.out.* *.pc \
 		@ALL@
 
 distclean:	clean
