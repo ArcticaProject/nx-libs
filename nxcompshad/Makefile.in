@@ -230,7 +230,7 @@ uninstall.lib:
 uninstall.man:
 
 clean:
-		-rm -f *~ *.o *.gch *.bak st?????? core core.* *.out.* *.exe.stackdump \
+		-rm -f *~ *.o *.gch *.bak st?????? core core.* *.out.* *.exe.stackdump *.pc \
 		$(LIBFULL) $(LIBLOAD) $(LIBSHARED) $(LIBARCHIVE) $(LIBDLL) $(LIBDLLSTATIC) $(PROGRAM) $(PROGRAM).exe
 
 distclean:	clean
