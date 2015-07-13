@@ -36,7 +36,7 @@ SHELL:=/bin/bash
 	fi
 
 	# clean auto-generated nxversion.def file \
-	if [ "x$@" == "xclean" ]; then \
+	if [ "x$@" == "xclean" ] || [ "x$@" = "xdistclean" ]; then \
 	    rm -f nx-X11/config/cf/nxversion.def; \
 	fi
 
