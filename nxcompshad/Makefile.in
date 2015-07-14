@@ -202,6 +202,7 @@ install.bin:
 install.lib: all
 	$(INSTALL_DIR)                          $(DESTDIR)${libdir}
 	$(INSTALL_DIR)                          $(DESTDIR)${includedir}/nx
+	$(INSTALL_DIR)                          $(DESTDIR)${pkgconfigdir}
 	$(INSTALL_DATA) $(LIBFULL)              $(DESTDIR)${libdir}
 	$(INSTALL_LINK) $(LIBLOAD)              $(DESTDIR)${libdir}
 	$(INSTALL_LINK) $(LIBSHARED)            $(DESTDIR)${libdir}
