@@ -78,6 +78,20 @@ echo "Created tarball for $CHECKOUT"
 
 cd "${TEMP_DIR}/${PROJECT}-${RELEASE}/"
 
+set -x
+# Replace symlinks by copies of the linked target files
+# Note: We don't have symlinked directories!!!
+find . -type l | while read link; do
+	TARGET=$(readlink "$link")
+	cd $(dirname $link)
+	if [ -f "$TARGET" ]; then
+		rm -f $(basename $link)
+		cp ${TARGET} $(basename $link)
+	fi
+	cd - 1>/dev/null
+done
+set +x
+
 mkdir -p "doc/applied-patches"
 
 # prepare patches for lite and full tarball
@@ -95,6 +109,7 @@ else
     rm -Rf "etc"*
     rm -Rf "doc/nx-X11_vs_XOrg69_patches"*
     rm -f  "README.keystrokes"
+    rm -f  "VERSION.x2goagent"
     cat "debian/patches/series" | sort | grep -v '^#' | egrep "([0-9]+(_|-).*\.full\+lite\.patch)" | while read file
     do
         cp -v "debian/patches/$file" "doc/applied-patches/"
@@ -113,9 +128,6 @@ fi
 rm -Rf ".pc/"
 rm -Rf "debian/"
 rm -Rf "nx-libs.spec"
-
-# some file renamings
-mv README.md README.NX-Development
 
 # very old release did not add any README
 for f in $(ls README* 2>/dev/null); do
