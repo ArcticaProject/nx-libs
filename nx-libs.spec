@@ -771,6 +771,7 @@ ln -s -f ../../../../%{_lib}/libNX_Xinerama.so.1 %{buildroot}%{_libdir}/nx/X11/X
 %{_includedir}/nx/NXproto.h
 %{_includedir}/nx/NXrender.h
 %{_includedir}/nx/NXvars.h
+%{_libdir}/pkgconfig/nxcomp.pc
 
 %files -n libXcomp3
 %defattr(-,root,root)
@@ -783,6 +784,7 @@ ln -s -f ../../../../%{_lib}/libNX_Xinerama.so.1 %{buildroot}%{_libdir}/nx/X11/X
 %_libdir/libXcompext.so
 %{_includedir}/nx/NXlib.h
 %{_includedir}/nx/NXlibint.h
+%{_libdir}/pkgconfig/nxcompext.pc
 
 %files -n libXcompext3
 %defattr(-,root,root)
@@ -804,6 +806,7 @@ ln -s -f ../../../../%{_lib}/libNX_Xinerama.so.1 %{buildroot}%{_libdir}/nx/X11/X
 %{_includedir}/nx/Updater.h
 %{_includedir}/nx/Win.h
 %{_includedir}/nx/X11.h
+%{_libdir}/pkgconfig/nxcompshad.pc
 
 %files -n libXcompshad3
 %defattr(-,root,root)
