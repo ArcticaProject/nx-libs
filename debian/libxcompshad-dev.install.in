@@ -10,3 +10,4 @@ usr/include/*/nx/Shadow.h
 usr/include/*/nx/Updater.h
 usr/include/*/nx/Win.h
 usr/include/*/nx/X11.h
+usr/lib/*/pkgconfig/nxcompshad.pc
