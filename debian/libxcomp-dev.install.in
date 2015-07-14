@@ -7,3 +7,4 @@ usr/include/*/nx/NXproto.h
 usr/include/*/nx/NXrender.h
 usr/include/*/nx/NXvars.h
 usr/include/*/nx/MD5.h
+usr/lib/*/pkgconfig/nxcomp.pc
