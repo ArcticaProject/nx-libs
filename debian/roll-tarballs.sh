@@ -78,19 +78,17 @@ echo "Created tarball for $CHECKOUT"
 
 cd "${TEMP_DIR}/${PROJECT}-${RELEASE}/"
 
-set -x
 # Replace symlinks by copies of the linked target files
 # Note: We don't have symlinked directories!!!
 find . -type l | while read link; do
 	TARGET=$(readlink "$link")
-	cd $(dirname $link)
+	cd $(dirname "$link")
 	if [ -f "$TARGET" ]; then
-		rm -f $(basename $link)
-		cp ${TARGET} $(basename $link)
+		rm -f $(basename "$link")
+		cp "${TARGET}" $(basename "$link")
 	fi
 	cd - 1>/dev/null
 done
-set +x
 
 mkdir -p "doc/applied-patches"
 
