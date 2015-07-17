@@ -52,7 +52,7 @@ else
 fi
 
 if [ x"$RELEASE" == "xHEAD" ]; then
-    CHECKOUT=refs/heads/$(git rev-parse --abbrev-ref HEAD)
+    CHECKOUT="refs/heads/$(git rev-parse --abbrev-ref HEAD)"
 fi
 
 if ! git rev-parse --verify -q "$CHECKOUT" >/dev/null; then
@@ -80,14 +80,14 @@ cd "${TEMP_DIR}/${PROJECT}-${RELEASE}/"
 
 # Replace symlinks by copies of the linked target files
 # Note: We don't have symlinked directories!!!
-find . -type l | while read link; do
-	TARGET=$(readlink "$link")
-	cd $(dirname "$link")
-	if [ -f "$TARGET" ]; then
-		rm -f $(basename "$link")
-		cp "${TARGET}" $(basename "$link")
+find . -type "l" | while read link; do
+	TARGET="$(readlink "${link}")"
+	pushd "$(dirname "${link}")" >/dev/null
+	if [ -f "${TARGET}" ]; then
+		rm -f "$(basename "${link}")"
+		cp "${TARGET}" "$(basename "${link}")"
 	fi
-	cd - 1>/dev/null
+	popd >/dev/null
 done
 
 mkdir -p "doc/applied-patches"
