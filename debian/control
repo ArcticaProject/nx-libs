@@ -1008,6 +1008,7 @@ Depends:
  ${misc:Depends},
 Recommends:
  xfonts-base,
+ xkb-data,
 Description: NX agent
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when

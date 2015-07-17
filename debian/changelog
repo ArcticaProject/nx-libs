@@ -1,6 +1,8 @@
 nx-libs (2:3.5.0.33-0x2go1) UNRELEASED; urgency=low
 
-  * Continue development
+  [ Mihai Moldovan ]
+  * debian/control:
+    - Add xkb-data to nxagent's Recommends.
 
  -- X2Go Release Manager <git-admin@x2go.org>  Sat, 04 Jul 2015 06:29:19 +0200
 
