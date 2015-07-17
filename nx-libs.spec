@@ -595,6 +595,10 @@ Provides:       nx%{?_isa} = %{version}-%{release}
 Requires:       xorg-x11-fonts-core
 %endif
 
+# Should be a weak dependency, because this package
+# works without the dependency.
+Requires:       xkeyboard-config
+
 %description -n nxagent
 NX is a software suite which implements very efficient compression of
 the X11 protocol. This increases performance when using X
