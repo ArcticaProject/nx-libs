@@ -3496,7 +3496,7 @@ int _XDefaultIOError(
 #else
         exit(1);
 #endif /* #ifdef NX_TRANS_SOCKET */
-        return(0); /* dummy - function should never return */
+        /*NOTREACHED*/
 }
 
 
@@ -3746,7 +3746,7 @@ _XIOError (
 #else
     exit (1);
 #endif
-    return 0;
+    /*NOTREACHED*/
 }
 
 
