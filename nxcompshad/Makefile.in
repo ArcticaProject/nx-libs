@@ -76,7 +76,7 @@ man1dir      = @mandir@/man1
 VPATH        = @srcdir@
 libdir       = @libdir@
 includedir   = @includedir@
-pkgconfigdir = @pkgconfigdir@
+pkgconfigdir = @libdir@/pkgconfig
 
 INSTALL         = @INSTALL@
 INSTALL_DIR     = $(INSTALL) -d -o root -g root -m 0755 
@@ -201,6 +201,7 @@ install.bin:
 
 install.lib: all
 	$(INSTALL_DIR)                          $(DESTDIR)${libdir}
+	$(INSTALL_DIR)                          $(DESTDIR)${pkgconfigdir}
 	$(INSTALL_DIR)                          $(DESTDIR)${includedir}/nx
 	$(INSTALL_DATA) $(LIBFULL)              $(DESTDIR)${libdir}
 	$(INSTALL_LINK) $(LIBLOAD)              $(DESTDIR)${libdir}

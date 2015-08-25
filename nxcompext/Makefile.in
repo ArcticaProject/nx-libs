@@ -167,6 +167,7 @@ install.bin:
 
 install.lib: all
 	./mkinstalldirs $(DESTDIR)${libdir}
+	./mkinstalldirs $(DESTDIR)${pkgconfigdir}
 	./mkinstalldirs $(DESTDIR)${includedir}/nx
 	$(INSTALL_DATA) $(LIBFULL)              $(DESTDIR)${libdir}
 	$(INSTALL_LINK) $(LIBLOAD)              $(DESTDIR)${libdir}
