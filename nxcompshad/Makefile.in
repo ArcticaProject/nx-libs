@@ -70,6 +70,8 @@ LIBS        = @LIBS@ -lNX_X11
 
 srcdir       = @srcdir@
 prefix       = @prefix@
+datarootdir  = @datarootdir@
+datadir      = @datadir@
 exec_prefix  = @exec_prefix@
 bindir       = @bindir@
 man1dir      = @mandir@/man1
