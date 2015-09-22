@@ -7,6 +7,11 @@ nx-libs (2:3.5.0.33-0x2go1) UNRELEASED; urgency=low
     - Add xkeyboard-config to nxagent's Requires. Should be a weak dependency,
       but RPM doesn't support that too well yet.
 
+  [ Mike Gabriel ]
+  * debian/libxinerama1.postinst.in:
+    + Revert 5a9f829. Make sure libnx-Xinerama1 based Xinerama works
+      again with X2Go on Debian based systems. 
+
  -- X2Go Release Manager <git-admin@x2go.org>  Sat, 04 Jul 2015 06:29:19 +0200
 
 nx-libs (2:3.5.0.32-0x2go1) unstable; urgency=low
