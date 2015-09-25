@@ -955,12 +955,12 @@ ProcRRSetScreenConfig (ClientPtr client)
 
       if (width < pScrPriv->minWidth || pScrPriv->maxWidth < width) {
 	client->errorValue = width;
-	free(pData);
+	xfree (pData);
 	return BadValue;
       }
       if (height < pScrPriv->minHeight || pScrPriv->maxHeight < height) {
 	client->errorValue = height;
-	free(pData);
+	xfree (pData);
 	return BadValue;
       }
     }

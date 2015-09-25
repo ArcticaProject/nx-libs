@@ -101,7 +101,7 @@ RRModeCreate (xRRModeInfo   *modeInfo,
     if (!AddResource (mode->mode.id, RRModeType, (pointer) mode)) {
       /* Backport "RRModeCreate: plug memory leak of newModes if AddResource fails"
 	 http://cgit.freedesktop.org/xorg/xserver/commit/randr/rrmode.c?h=server-1.17-branch&id=c7b7abfaa068042e396d19538215402cfbb4f1e4 */
-      free(newModes);
+      xfree(newModes);
       return NULL;
     }
     modes = newModes;
