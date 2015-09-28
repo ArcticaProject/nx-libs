@@ -1,5 +1,5 @@
 #!/bin/sh
-# postinst script for libnx-x11
+# postinst script for nxagent
 #
 # see: dh_installdeb(1)
 

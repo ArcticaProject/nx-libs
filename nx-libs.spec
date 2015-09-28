@@ -664,10 +664,6 @@ ln -s -f ../../../../%{_lib}/libNX_Xinerama.so.1 %{buildroot}%{_libdir}/nx/X11/X
 %dir %{_libdir}/nx/X11
 %dir %{_datadir}/nx
 %{_datadir}/nx/SecurityPolicy
-%dir %{_libdir}/nx/X11/Xinerama/
-%{_libdir}/nx/X11/Xinerama/libNX_X11.so.6
-%{_libdir}/nx/X11/Xinerama/libNX_Xext.so.6
-%{_libdir}/nx/X11/Xinerama/libXinerama.so.1*
 
 %files -n libNX_X11-6
 %defattr(-,root,root)
@@ -912,6 +908,10 @@ ln -s -f ../../../../%{_lib}/libNX_Xinerama.so.1 %{buildroot}%{_libdir}/nx/X11/X
 %{_datadir}/pixmaps/nxagent.xpm
 %{_datadir}/nx/rgb
 %{_datadir}/man/man1/nxagent.1*
+%dir %{_libdir}/nx/X11/Xinerama/
+%{_libdir}/nx/X11/Xinerama/libNX_X11.so.6
+%{_libdir}/nx/X11/Xinerama/libNX_Xext.so.6
+%{_libdir}/nx/X11/Xinerama/libXinerama.so.1*
 
 %files -n nxauth
 %defattr(-,root,root)

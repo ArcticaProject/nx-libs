@@ -1,5 +1,5 @@
 #!/bin/sh
-# prerm script for libnx-xinerama1
+# prerm script for nxagent
 #
 # see: dh_installdeb(1)
 # summary of how this script can be called:
