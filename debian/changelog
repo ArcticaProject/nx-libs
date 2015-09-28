@@ -1,4 +1,4 @@
-nx-libs (2:3.5.99.0-0~build1) UNRELEASED; urgency=medium
+nx-libs (2:3.5.99.0-0) UNRELEASED; urgency=medium
 
   * Version bump, continuing NX 3.x development..
     Targeting NX 3.6.x.y some time.
