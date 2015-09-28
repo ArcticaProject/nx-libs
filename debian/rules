@@ -34,7 +34,7 @@ override_dh_clean:
 	if [ ! -f replace.sh ] && [ ! -h replace.sh ]; then ln -s debian/Makefile.replace.sh replace.sh; fi
 	. ./replace.sh; set -x; ls debian/*.install.in | while read file; do rm -f $$(string_rep $$file .install.in .install); done
 	rm -fR replace.sh Makefile bin etc/rgb VERSION.x2goagent etc/keystrokes.cfg etc/nxagent.keyboard etc/x2goagent.keyboard
-	rm -f debian/libnx-xinerama1.postinst
+	rm -f debian/nxagent.postinst
 	rm -fR .preserve/
 	if [ -f nxcomp/.VERSION.NoMachine ]; then mv nxcomp/.VERSION.NoMachine nxcomp/VERSION; fi
 	dh_clean
@@ -119,8 +119,8 @@ override_dh_auto_build:
 	ln -sf debian/VERSION VERSION.x2goagent
 	ln -sf ../debian/VERSION nxcomp/VERSION
 
-	# let's prep the libnx-xinerama1.postinst script with the value of the build systems's DEB_BUILD_MULTIARCH variable
-	sed debian/libnx-xinerama1.postinst.in -e 's/#DEB_BUILD_MULTIARCH#/$(DEB_BUILD_MULTIARCH)/' > debian/libnx-xinerama1.postinst
+	# let's prep the nxagent.postinst script with the value of the build systems's DEB_BUILD_MULTIARCH variable
+	sed debian/nxagent.postinst.in -e 's/#DEB_BUILD_MULTIARCH#/$(DEB_BUILD_MULTIARCH)/' > debian/nxagent.postinst
 
 	# make a copy of code to be preserved for build
 	mkdir -p .preserve
