@@ -28,10 +28,12 @@ case "$1" in
 				rm -f /usr/lib/nx/X11/Xinerama/libNX_Xext.so.6
 			fi
 
-
 			if test -e /usr/lib/nx/X11/Xinerama/libXinerama.so.1; then
 				rm -f /usr/lib/nx/X11/Xinerama/libXinerama.so.1
 			fi
+
+			rmdir --ignore-fail-on-non-empty /usr/lib/nx/X11/Xinerama
+
 		fi
 		;;
 	deconfigure|upgrade|failed-upgrade)
