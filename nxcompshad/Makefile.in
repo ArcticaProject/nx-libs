@@ -70,6 +70,8 @@ LIBS        = @LIBS@ -lNX_X11
 
 srcdir       = @srcdir@
 prefix       = @prefix@
+datarootdir  = @datarootdir@
+datadir      = @datadir@
 exec_prefix  = @exec_prefix@
 bindir       = @bindir@
 man1dir      = @mandir@/man1
@@ -201,6 +203,7 @@ install.bin:
 
 install.lib: all
 	$(INSTALL_DIR)                          $(DESTDIR)${libdir}
+	$(INSTALL_DIR)                          $(DESTDIR)${pkgconfigdir}
 	$(INSTALL_DIR)                          $(DESTDIR)${includedir}/nx
 	$(INSTALL_DIR)                          $(DESTDIR)${pkgconfigdir}
 	$(INSTALL_DATA) $(LIBFULL)              $(DESTDIR)${libdir}
