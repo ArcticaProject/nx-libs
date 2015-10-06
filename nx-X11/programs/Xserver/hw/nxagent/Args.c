@@ -103,6 +103,7 @@ extern int _XGetBitsPerPixel(Display *dpy, int depth);
 extern char dispatchExceptionAtReset;
 
 char nxagentDisplayName[1024];
+Bool nxagentSynchronize = False;
 
 char nxagentShadowDisplayName[1024] = {0};
 
@@ -372,6 +373,13 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     }
 
     return 0;
+  }
+
+  if (!strcmp(argv[i], "-sync")) {
+    if (++i < argc) {
+      nxagentSynchronize = True;
+      return 1;
+    }
   }
 
   if (!strcmp(argv[i], "-full")) {

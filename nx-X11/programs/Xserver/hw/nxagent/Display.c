@@ -1217,6 +1217,9 @@ FIXME: The agent should never exit the program with a FatalError()
     FatalError("Unable to open display '%s'.\n", nxagentDisplayName);
   }
 
+  if (nxagentSynchronize)
+    XSynchronize(nxagentDisplay, True);
+
   nxagentXConnectionNumber = XConnectionNumber(nxagentDisplay);
 
   #ifdef TEST
