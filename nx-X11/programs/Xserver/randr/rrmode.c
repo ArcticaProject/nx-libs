@@ -104,11 +104,13 @@ RRModeCreate (xRRModeInfo   *modeInfo,
     }
     modes = newModes;
     modes[num_modes++] = mode;
-    
     /*
      * give the caller a reference to this mode
      */
     ++mode->refcnt;
+#ifdef DEBUG
+    fprintf(stderr, "RRModeCreate: num_modes [%d] new mode [%s] ([%p]) refcnt [%d]\n", num_modes, mode->name, mode, mode->refcnt);
+#endif
     return mode;
 }
 
@@ -144,11 +146,22 @@ RRModeGet (xRRModeInfo	*modeInfo,
 	    !memcmp (name, mode->name, modeInfo->nameLength))
 	{
 	    ++mode->refcnt;
+#ifdef DEBUG
+	    fprintf(stderr, "RRModeGet: return existing mode [%s] ([%p]) refcnt [%d]\n", mode->name, mode, mode->refcnt);
+#endif
 	    return mode;
 	}
     }
 
+#ifdef DEBUG
+    {
+	RRModePtr   mode = RRModeCreate (modeInfo, name, NULL);
+	fprintf(stderr, "RRModeGet: return new mode [%s] ([%p]) refcnt [%d]\n", mode->name, mode, mode->refcnt);
+	return mode;
+    }
+#else
     return RRModeCreate (modeInfo, name, NULL);
+#endif
 }
 
 static RRModePtr
@@ -252,8 +265,12 @@ RRModeDestroy (RRModePtr mode)
 {
     int	m;
     
-    if (--mode->refcnt > 0)
+    if (--mode->refcnt > 0) {
+#ifdef DEBUG
+        fprintf(stderr, "RRModeDestroy: mode [%s] ([%p]) refcnt [%d -> %d]\n", mode->name, mode, mode->refcnt + 1, mode->refcnt);
+#endif
 	return;
+    }
     for (m = 0; m < num_modes; m++)
     {
 	if (modes[m] == mode)
@@ -270,12 +287,18 @@ RRModeDestroy (RRModePtr mode)
 	}
     }
     
+#ifdef DEBUG
+    fprintf(stderr, "RRModeDestroy: destroyed mode [%s] ([%p])\n", mode->name, mode);
+#endif
     xfree (mode);
 }
 
 static int
 RRModeDestroyResource (void * value, XID pid)
 {
+#ifdef DEBUG
+  fprintf(stderr, "RRModeDestroyResource: mode [%s] ([%p]) refcnt [%d]\n", ((RRModePtr)value)->name, (RRModePtr)value, ((RRModePtr)value)->refcnt);
+#endif
     RRModeDestroy ((RRModePtr) value);
     return 1;
 }
