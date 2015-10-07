@@ -27,9 +27,6 @@ IMAKE_CMD = $(IMAKE) -I$(IRULESRC) $(IMAKE_DEFINES)
 MAKE_OPTS = -f xmakefile
 MAKE_CMD = $(MAKE) $(MAKE_OPTS)
 FLAGS = $(MFLAGS) -f Makefile.ini BOOTSTRAPCFLAGS="$(BOOTSTRAPCFLAGS)" CC="$(CC)"
-VERSINC = -Iprograms/Xserver/hw/xfree86
-VERSSRC = $(CONFIGSRC)/util/printver.c
-VERSPROG = $(CONFIGSRC)/util/printver.exe
 
 all:
 	@${MAKE} ${MAKE_OPTS} xmakefile-exists || $(MAKE) all-initial
@@ -43,12 +40,9 @@ all-initial:
 	@echo Do not name your log file make.log or it will be deleted.
 
 World:
-	@-$(RM) $(VERSPROG)
-	@-$(CC) $(VERSINC) -o $(VERSPROG) $(VERSSRC)
 	@echo ""
 	@echo Building $(RELEASE).
 	@echo ""
-	@-$(RM) $(VERSPROG)
 	@case "x$(BOOTSTRAPCFLAGS)" in x) \
 	echo I hope you checked the configuration parameters in $(IRULESRC) ; \
 	echo to see if you need to pass BOOTSTRAPCFLAGS. ; \
@@ -95,10 +89,7 @@ World:
 	@echo ""
 	@date
 	@echo ""
-	@-$(RM) $(VERSPROG)
-	@-$(CC) $(VERSINC) -o $(VERSPROG) $(VERSSRC)
 	@echo Full build of $(RELEASE) complete.
-	@-$(RM) $(VERSPROG)
 	@echo ""
 
 .PRECIOUS: Makefile
