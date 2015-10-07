@@ -5,5 +5,6 @@ usr/share/x2go/rgb
 usr/share/man/man1/x2goagent.1*
 etc/x2go/rgb
 usr/share/x2go/versions/VERSION.x2goagent
+usr/share/x2go/x2gofeature.d/x2goagent.features
 etc/x2go/keystrokes.cfg
 etc/x2go/x2goagent.keyboard

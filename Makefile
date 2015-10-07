@@ -17,6 +17,7 @@ USRLIBDIR   ?= $(LIBDIR)
 INCLUDEDIR  ?= $(PREFIX)/include
 NXLIBDIR    ?= $(PREFIX)/lib/nx
 X2GOLIBDIR  ?= $(PREFIX)/lib/x2go
+X2GODATADIR  ?= $(PREFIX)/share/x2go
 CONFIGURE   ?= ./configure
 
 NX_VERSION_MAJOR=$(shell ./version.sh 1)
@@ -163,6 +164,10 @@ install-full:
 	$(INSTALL_FILE) etc/nxagent.keyboard $(DESTDIR)$(ETCDIR_NX)/
 	$(INSTALL_FILE) etc/x2goagent.keyboard $(DESTDIR)$(ETCDIR_X2GO)/
 
+	# x2goagent.features file for X2Go
+	$(INSTALL_DIR) $(DESTDIR)$(X2GODATADIR)/x2gofeature.d/
+	$(INSTALL_FILE) x2goagent.features $(DESTDIR)$(X2GODATADIR)/x2gofeature.d/
+
 	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/x2go
 	$(INSTALL_SYMLINK) $(ETCDIR_X2GO)/rgb $(DESTDIR)$(PREFIX)/share/x2go/rgb
 
@@ -190,6 +195,10 @@ uninstall-full:
 
 	$(RM_FILE) $(DESTDIR)$(X2GOLIBDIR)/bin/x2goagent
 	$(RM_DIR) $(DESTDIR)$(X2GOLIBDIR)/bin/
+
+	# x2goagent.features file for X2Go
+	$(RM_FILE) $(DESTDIR)$(X2GODATADIR)/x2gofeature.d/x2goagent.features
+	$(RM_DIR)  $(DESTDIR)$(X2GODATADIR)/x2gofeature.d/
 
 	if test -d nx-X11; then \
 	    if test -f nxcompext/Makefile; then ${MAKE} -C nxcompext $@; fi; \
