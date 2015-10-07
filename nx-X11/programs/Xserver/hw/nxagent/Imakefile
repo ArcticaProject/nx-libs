@@ -179,6 +179,7 @@ INCLUDES = -I. -I$(XBUILDINCDIR) \
 # NXAGENT_CLIPBOARD                Enables clipboard cut and paste function between X servers.
 # NXAGENT_FONTEXCLUDE              Exclude some specific font names (only "-ult1mo" at this moment).
 # NXAGENT FULLSCREEN               Fullscreen mode
+# NXAGENT_RANDR_MODE_PREFIX        Use prefixed (i.e., nx_<x>x<y>) RandR modes
 #
 
 #if nxVersion
@@ -203,6 +204,7 @@ DEFINES = -g $(OS_DEFINES) $(EXT_DEFINES) $(NX_DEFINES) \
           -DNXAGENT_ONSTART \
           -DNXAGENT_SPLASH \
           -DNXAGENT_ARTSD \
+          -DNXAGENT_RANDR_MODE_PREFIX \
           -UNX_DEBUG_INPUT \
 	  -DRANDR_10_INTERFACE \
 	  -DRANDR_12_INTERFACE \
