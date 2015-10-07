@@ -701,6 +701,7 @@ void UseMsg(void)
 #ifdef PANORAMIX
     ErrorF("+xinerama              Enable XINERAMA extension\n");
     ErrorF("-xinerama              Disable XINERAMA extension\n");
+    ErrorF("-disablexineramaextension Disable XINERAMA extension\n");
 #endif
 #ifdef SMART_SCHEDULE
     ErrorF("-dumbSched             Disable smart scheduling, enable old behavior\n");
