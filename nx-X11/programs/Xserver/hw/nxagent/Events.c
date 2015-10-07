@@ -3485,7 +3485,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
     }
     else
     {
-      if (X -> xconfigure.window == DefaultRootWindow(nxagentDisplay))
+      if ( (X -> xconfigure.window == DefaultRootWindow(nxagentDisplay)) || nxagentFullscreenWindow )
       {
         #ifdef TEST
         fprintf(stderr, "nxagentHandleConfigureNotify: remote root window has changed: %d,%d %dx%d\n", X -> xconfigure.x, X -> xconfigure.y, X -> xconfigure.width, X -> xconfigure.height);
