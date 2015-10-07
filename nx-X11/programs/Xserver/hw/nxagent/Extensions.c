@@ -35,10 +35,12 @@ static int nxagentRandRScreenSetSize(ScreenPtr pScreen, CARD16 width,
 
 static int nxagentRandRInitSizes(ScreenPtr pScreen);
 
+#if RANDR_12_INTERFACE
 static Bool nxagentRandRCrtcSet (ScreenPtr pScreen, RRCrtcPtr crtc,
 				 RRModePtr mode, int x, int y,
 				 Rotation rotation, int numOutputs,
 				 RROutputPtr *outputs);
+#endif
 
 #ifdef __DARWIN__
 
