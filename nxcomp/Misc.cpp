@@ -306,6 +306,7 @@ clipboard=n\n\
 streaming=n\n\
 backingstore=n\n\
 composite=n\n\
+xinerama=n\n\
 shmem=b\n\
 shpix=b\n\
 kbtype=s\n\

@@ -1113,8 +1113,10 @@ Bool nxagentOpenScreen(int index, ScreenPtr pScreen,
   nxagentChangeOption(ViewportXSpan, nxagentOption(Width) - nxagentOption(RootWidth));
   nxagentChangeOption(ViewportYSpan, nxagentOption(Height) - nxagentOption(RootHeight));
 
-  /* store the user's preference provided via cmdline */
-  nxagentOption(Xinerama) = !noPanoramiXExtension;
+  /* PanoramiXExtension enabled via cmdline, turn on Xinerama in nxagent
+   */
+  if( (!noPanoramiXExtension) && (!PanoramiXExtensionDisabledHack) )
+    nxagentOption(Xinerama) = True;
 
   if (nxagentReconnectTrap == 0)
   {
