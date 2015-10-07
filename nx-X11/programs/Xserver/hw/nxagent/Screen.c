@@ -3925,13 +3925,12 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
 
         memset(&modeInfo, '\0', sizeof(modeInfo));
 
-#ifdef NX_USE_MODE_PREFIX
+#ifdef NXAGENT_RANDR_MODE_PREFIX
         /* avoid collisions with pre-existing default modes by using a
            separate namespace. If we'd simply use XxY we could not
            distinguish between pre-existing modes which should stay
            and our own modes that should be removed after use. */
-        sprintf(name, "nx_%dx%d", new_w, new_h);*/
-        /*sprintf(name, "nx%d", i+1);*/
+        sprintf(name, "nx_%dx%d", new_w, new_h);
 #else
         sprintf(name, "%dx%d", new_w, new_h);
 #endif
