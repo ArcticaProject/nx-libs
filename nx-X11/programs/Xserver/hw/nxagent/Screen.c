@@ -106,8 +106,8 @@ is" without express or implied warranty.
 
 #define PANIC
 #define WARNING
-#undef  TEST
-#undef  DEBUG
+#define  TEST
+#define  DEBUG
 #undef  WATCH
 #undef  DUMP
 
@@ -3640,6 +3640,36 @@ Bool intersect(int ax1, int ay1, unsigned int aw, unsigned int ah,
     return TRUE;
 }
 
+#ifndef NXAGENT_RANDR_XINERAMA_CLIPPING
+/* intersect two rectangles, return aw/ah for w/h if resulting
+   rectangle is (partly) outside of bounding box */
+Bool intersect_bb(int ax1, int ay1, unsigned int aw, unsigned int ah,
+	       int bx1, int by1, unsigned int bw, unsigned int bh,
+	       int bbx1, int bby1, int bbx2, int bby2,
+	       int *x, int *y, unsigned int *w, unsigned int *h)
+{
+  Bool result = intersect(ax1, ay1, aw, ah, bx1, by1, bw, bh, x, y, w, h);
+  if (result == TRUE) {
+    /* check if outside of bounding box */
+    if (ax1 < bbx1 || ax1 + aw > bbx2) {
+        #ifdef DEBUG
+        fprintf(stderr, "intersect: box has parts outside bounding box - width stays unchanged [%d]\n", aw);
+        #endif
+	*w = aw;
+    }
+
+    if (ay1 < bby1 || ay1 + ah > bby2) {
+        #ifdef DEBUG
+        fprintf(stderr, "intersect: box has parts outside bounding box - height stays unchanged [%d]\n", ah);
+        #endif
+	*h = ah;
+    }
+  }
+
+  return result;
+}
+#endif
+
 int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, int mmHeight)
 {
   ScreenPtr    pScreen;
@@ -3783,6 +3813,23 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
     RRGetInfo(pScreen);
 #endif
 
+#ifndef NXAGENT_RANDR_XINERAMA_CLIPPING
+    /* calculate bounding box (outer edges) */
+    int bbx2, bbx1, bby1, bby2;
+    bbx2 = bby2 = 0;
+    bbx1 = bby1 = INT_MAX;
+
+    for (i = 0; i < number; i++) {
+      bbx2 = MAX(bbx2, screeninfo[i].x_org + screeninfo[i].width);
+      bby2 = MAX(bby2, screeninfo[i].y_org + screeninfo[i].height);
+      bbx1 = MIN(bbx1, screeninfo[i].x_org);
+      bby1 = MIN(bby1, screeninfo[i].y_org);
+    }
+    #ifdef DEBUG
+    fprintf(stderr, "nxagentAdjustRandRXinerama: bounding box: left [%d] right [%d] top [%d] bottom[%d]\n", bbx1, bbx2, bby1, bby2);
+    #endif
+#endif
+
     #ifdef DEBUG
     fprintf(stderr, "nxagentAdjustRandRXinerama: numCrtcs [%d], numOutputs [%d]\n", pScrPriv->numCrtcs, pScrPriv->numOutputs);
     #endif
@@ -3873,12 +3920,37 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       int new_x, new_y;
       unsigned int new_w, new_h;
 
+      /*
+      if ((nxagentOption(X) < bbx1 || (nxagentOption(X) + width >= bbx2 )) {
+        #ifdef DEBUG
+        fprintf(stderr, "nxagentAdjustRandRXinerama: output %d: window has parts outside visible area - width stays unchanged [%d]\n", width);
+        #endif
+	new_w = width;
+      }
+
+	if ((nxagentOption(Y) < bby1 || (nxagentOption(Y) + height >= bby2 ) {
+          #ifdef DEBUG
+          fprintf(stderr, "nxagentAdjustRandRXinerama: output %d: window has parts outside visible area - height stays unchanged [%d]\n", height);
+          #endif
+	  new_h = height;
+	}
+      */
+
       /* if there's no intersection disconnect the output */
+#ifdef NXAGENT_RANDR_XINERAMA_CLIPPING
       disable_output = !intersect(nxagentOption(X), nxagentOption(Y),
                                   width, height,
                                   screeninfo[i].x_org, screeninfo[i].y_org,
                                   screeninfo[i].width, screeninfo[i].height,
                                   &new_x, &new_y, &new_w, &new_h);
+#else
+      disable_output = !intersect_bb(nxagentOption(X), nxagentOption(Y),
+                                  width, height,
+                                  screeninfo[i].x_org, screeninfo[i].y_org,
+                                  screeninfo[i].width, screeninfo[i].height,
+	                          bbx1, bby1, bbx2, bby2,
+                                  &new_x, &new_y, &new_w, &new_h);
+#endif
 
       /* save previous mode */
       prevmode = pScrPriv->crtcs[i]->mode;
@@ -3924,6 +3996,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
         #ifdef DEBUG
         fprintf(stderr, "nxagentAdjustRandRXinerama: output %d: intersection is x [%d] y [%d] width [%d] height [%d]\n", i, new_x, new_y, new_w, new_h);
         #endif
+
         RROutputSetConnection(pScrPriv->outputs[i], RR_Connected);
 
         memset(&modeInfo, '\0', sizeof(modeInfo));
@@ -3937,6 +4010,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
 #else
         sprintf(name, "%dx%d", new_w, new_h);
 #endif
+
         modeInfo.width  = new_w;
         modeInfo.height = new_h;
         modeInfo.hTotal = new_w;
