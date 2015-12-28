@@ -36,7 +36,7 @@
  * header which in turn will include <X11/Xlib.h>. However, the headers of
  * the same name from <nx-X11/...> should be used instead.
  *
- * FIXME: Once the nxagent Xserver starts using libXfixes from X.Org, this
+ * FIXME: Once the nxagent Xserver starts using libX11 from X.Org, this
  * hack can be removed.
  *
  * 2015/06/26, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
