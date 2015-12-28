@@ -55,7 +55,7 @@ SOFTWARE.
 #include <config.h>
 #endif
 #include "Xlibint.h"
-#include <X11/Xos.h>
+#include <nx-X11/Xos.h>
 #include "Xresource.h"
 #include <stdio.h>
 

@@ -12,8 +12,8 @@
 
 #define NEED_REPLIES
 #define NEED_EVENTS
-#include <X11/X.h>
-#include <X11/Xproto.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
 #include "misc.h"
 #include "dixstruct.h"
 #include "dixevents.h"
@@ -24,8 +24,8 @@
 #include "scrnintstr.h"
 #include "servermd.h"
 #define _XF86DGA_SERVER_
-#include <X11/extensions/xf86dga.h>
-#include <X11/extensions/xf86dgastr.h>
+#include <nx-X11/extensions/xf86dga.h>
+#include <nx-X11/extensions/xf86dgastr.h>
 #include "swaprep.h"
 #include "dgaproc.h"
 #include "xf86dgaext.h"

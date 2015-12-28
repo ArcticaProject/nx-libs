@@ -38,7 +38,7 @@ in this Software without prior written authorization from The Open Group.
 
 #define xmalloc(s) Xmalloc(s)
 #define xfree(s) Xfree(s)
-#include <X11/Xthreads.h>
+#include <nx-X11/Xthreads.h>
 
 struct _XCVList {
     xcondition_t cv;

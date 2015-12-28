@@ -54,9 +54,9 @@ in this Software without prior written authorization from The Open Group.
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <X11/Xlibint.h>
-#include <X11/Xtrans/Xtrans.h>
-#include <X11/Xauth.h>
+#include <nx-X11/Xlibint.h>
+#include <nx-X11/Xtrans/Xtrans.h>
+#include <nx-X11/Xauth.h>
 #include <X11/Xdmcp.h>
 #include <stdio.h>
 #include <ctype.h>
@@ -68,7 +68,7 @@ in this Software without prior written authorization from The Open Group.
 #include <socket.h>
 #endif
 #else
-#include <X11/Xwindows.h>
+#include <nx-X11/Xwindows.h>
 #endif
 
 #ifndef X_CONNECTION_RETRIES		/* number retries on ECONNREFUSED */

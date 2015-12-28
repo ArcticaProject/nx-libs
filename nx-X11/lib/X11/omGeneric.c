@@ -55,8 +55,8 @@
 #include "Xlibint.h"
 #include "XomGeneric.h"
 #include "XlcGeneric.h"
-#include <X11/Xos.h>
-#include <X11/Xatom.h>
+#include <nx-X11/Xos.h>
+#include <nx-X11/Xatom.h>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>

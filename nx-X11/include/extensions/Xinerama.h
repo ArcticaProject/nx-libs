@@ -29,7 +29,7 @@ in this Software without prior written authorization from The Open Group.
 #ifndef _Xinerama_h
 #define _Xinerama_h
 
-#include <X11/Xlib.h>
+#include <nx-X11/Xlib.h>
 
 typedef struct {
    int   screen_number;

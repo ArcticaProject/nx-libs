@@ -27,12 +27,12 @@
 
 #define NX_CLEANUP
 
-#include <X11/extensions/render.h>
+#include <nx-X11/extensions/render.h>
 
-#include <X11/Xlib.h>
-#include <X11/Xfuncproto.h>
-#include <X11/Xosdefs.h>
-#include <X11/Xutil.h>
+#include <nx-X11/Xlib.h>
+#include <nx-X11/Xfuncproto.h>
+#include <nx-X11/Xosdefs.h>
+#include <nx-X11/Xutil.h>
 
 #ifdef NX_CLEANUP
 #include "renderproto.h"

@@ -36,12 +36,12 @@ in this Software without prior written authorization from The Open Group.
 #include <config.h>
 #endif
 #include <stdio.h>
-#include <X11/Xlibint.h>
-#include <X11/ImUtil.h>
-#include <X11/extensions/XShm.h>
-#include <X11/extensions/shmstr.h>
-#include <X11/extensions/Xext.h>
-#include <X11/extensions/extutil.h>
+#include <nx-X11/Xlibint.h>
+#include <nx-X11/ImUtil.h>
+#include <nx-X11/extensions/XShm.h>
+#include <nx-X11/extensions/shmstr.h>
+#include <nx-X11/extensions/Xext.h>
+#include <nx-X11/extensions/extutil.h>
 
 static XExtensionInfo _shm_info_data;
 static XExtensionInfo *shm_info = &_shm_info_data;

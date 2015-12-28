@@ -50,7 +50,7 @@
 #ifndef _GLYPHSTR_H_
 #define _GLYPHSTR_H_
 
-#include <X11/extensions/renderproto.h>
+#include <nx-X11/extensions/renderproto.h>
 #include "../../render/picture.h"
 #include "screenint.h"
 

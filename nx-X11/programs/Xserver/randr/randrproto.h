@@ -30,7 +30,7 @@
 #ifndef _XRANDRP_H_
 #define _XRANDRP_H_
 
-/*#include <X11/extensions/randr.h>*/
+/*#include <nx-X11/extensions/randr.h>*/
 #include "randr.h"
 
 #define Window CARD32

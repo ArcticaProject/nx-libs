@@ -45,10 +45,10 @@ in this Software without prior written authorization from The Open Group.
 #undef BITS32
 #undef xfree
 
-#include <X11/X.h>
-#include <X11/Xos.h>
-#include <X11/Xmd.h>
-#include <X11/Xfuncs.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xos.h>
+#include <nx-X11/Xmd.h>
+#include <nx-X11/Xfuncs.h>
 
 /*
  * XauKrb5Encode

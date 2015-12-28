@@ -35,9 +35,9 @@ Equipment Corporation.
 
 #define NEED_REPLIES
 #include <stdio.h>
-#include <X11/X.h>
-#include <X11/Xproto.h>
-#include <X11/Xarch.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
+#include <nx-X11/Xarch.h>
 #include "misc.h"
 #include "cursor.h"
 #include "cursorstr.h"
@@ -50,7 +50,7 @@ Equipment Corporation.
 #include "windowstr.h"
 #include "pixmapstr.h"
 #include "panoramiX.h"
-#include <X11/extensions/panoramiXproto.h>
+#include <nx-X11/extensions/panoramiXproto.h>
 #include "panoramiXsrv.h"
 #include "globals.h"
 #include "servermd.h"

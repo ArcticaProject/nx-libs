@@ -79,13 +79,13 @@ OR PERFORMANCE OF THIS SOFTWARE.
 #endif
 
 #if defined(WIN32) && !defined(__CYGWIN__)
-#include <X11/Xwinsock.h>
+#include <nx-X11/Xwinsock.h>
 #endif
-#include <X11/Xos.h>
+#include <nx-X11/Xos.h>
 #include <stdio.h>
 #include "misc.h"
-#include <X11/X.h>
-#include <X11/Xtrans/Xtrans.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xtrans/Xtrans.h>
 #include "input.h"
 #include "dixfont.h"
 #include "osdep.h"
@@ -136,11 +136,11 @@ OR PERFORMANCE OF THIS SOFTWARE.
 #endif
 
 #ifdef XKB
-#include <X11/extensions/XKBsrv.h>
+#include <nx-X11/extensions/XKBsrv.h>
 #endif
 #ifdef XCSECURITY
 #define _SECURITY_SERVER
-#include <X11/extensions/security.h>
+#include <nx-X11/extensions/security.h>
 #endif
 
 #ifdef RENDER
@@ -258,7 +258,7 @@ Bool noXvExtension = FALSE;
 #endif
 
 #define X_INCLUDE_NETDB_H
-#include <X11/Xos_r.h>
+#include <nx-X11/Xos_r.h>
 
 #include <errno.h>
 

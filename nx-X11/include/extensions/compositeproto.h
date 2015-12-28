@@ -25,8 +25,8 @@
 #ifndef _COMPOSITEPROTO_H_
 #define _COMPOSITEPROTO_H_
 
-#include <X11/Xmd.h>
-#include <X11/extensions/composite.h>
+#include <nx-X11/Xmd.h>
+#include <nx-X11/extensions/composite.h>
 
 #define Window CARD32
 #define Region CARD32

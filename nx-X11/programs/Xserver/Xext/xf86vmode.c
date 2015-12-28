@@ -39,15 +39,15 @@ from Kaleb S. KEITHLEY
 
 #define NEED_REPLIES
 #define NEED_EVENTS
-#include <X11/X.h>
-#include <X11/Xproto.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
 #include "misc.h"
 #include "dixstruct.h"
 #include "extnsionst.h"
 #include "scrnintstr.h"
 #include "servermd.h"
 #define _XF86VIDMODE_SERVER_
-#include <X11/extensions/xf86vmstr.h>
+#include <nx-X11/extensions/xf86vmstr.h>
 #include "swaprep.h"
 #include "xf86.h"
 #include "vidmodeproc.h"

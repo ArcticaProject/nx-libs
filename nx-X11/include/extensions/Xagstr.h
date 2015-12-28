@@ -29,7 +29,7 @@ from The Open Group.
 #ifndef _XAGSTR_H_ /* { */
 #define _XAGSTR_H_
 
-#include <X11/extensions/Xag.h>
+#include <nx-X11/extensions/Xag.h>
 
 #define XAppGroup CARD32
 

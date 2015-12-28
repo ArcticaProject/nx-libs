@@ -18,8 +18,8 @@
 #ifndef Region_H
 #define Region_H
 
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
+#include <nx-X11/Xlib.h>
+#include <nx-X11/Xutil.h>
 
 typedef struct {
     short x1, x2, y1, y2;

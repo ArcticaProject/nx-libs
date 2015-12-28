@@ -29,7 +29,7 @@ from The Open Group.
 #ifndef _XAGSRV_H_
 #define _XAGSRV_H_
 
-#include <X11/Xfuncproto.h>
+#include <nx-X11/Xfuncproto.h>
 
 _XFUNCPROTOBEGIN
 

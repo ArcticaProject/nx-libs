@@ -31,7 +31,7 @@ in this Software without prior written authorization from The Open Group.
 #ifndef _XFUNCS_H_
 #define _XFUNCS_H_
 
-#include <X11/Xosdefs.h>
+#include <nx-X11/Xosdefs.h>
 
 /* the old Xfuncs.h, for pre-R6 */
 #if !(defined(XFree86LOADER) && defined(IN_MODULE))

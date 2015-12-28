@@ -31,7 +31,7 @@ in this Software without prior written authorization from The Open Group.
 #include <config.h>
 #endif
 #include "Xlibint.h"
-#include <X11/Xutil.h>		/* for XDestroyImage */
+#include <nx-X11/Xutil.h>		/* for XDestroyImage */
 #include "ImUtil.h"
 
 #define ROUNDUP(nbytes, pad) (((((nbytes) - 1) + (pad)) / (pad)) * (pad))

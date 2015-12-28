@@ -68,7 +68,7 @@ typedef struct {
 
 #ifndef _FONTCACHE_SERVER_
 
-#include <X11/Xlib.h>
+#include <nx-X11/Xlib.h>
 
 _XFUNCPROTOBEGIN
 

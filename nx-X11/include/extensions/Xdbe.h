@@ -38,8 +38,8 @@
 
 /* INCLUDES */
 
-#include <X11/Xfuncproto.h>
-#include <X11/extensions/Xdbeproto.h>
+#include <nx-X11/Xfuncproto.h>
+#include <nx-X11/extensions/Xdbeproto.h>
 
 
 /* DEFINES */

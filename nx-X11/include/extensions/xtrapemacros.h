@@ -43,7 +43,7 @@ SOFTWARE.
  *      specified; however, use of Trap Context convenience
  *      routines is strongly encouraged (XETrapContext.c)
  */
-#include <X11/extensions/xtrapbits.h>
+#include <nx-X11/extensions/xtrapbits.h>
 #include <signal.h>
 
 /* msleep macro to replace msleep() for portability reasons */

@@ -33,7 +33,7 @@
 #include "xf86Module.h"
 #include "xf86Opt.h"
 
-#include <X11/Xproto.h>
+#include <nx-X11/Xproto.h>
 
 #include "modinit.h"
 #include "globals.h"

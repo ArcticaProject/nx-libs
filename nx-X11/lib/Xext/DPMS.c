@@ -36,11 +36,11 @@ Equipment Corporation.
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <X11/Xlibint.h>
-#include <X11/extensions/dpms.h>
-#include <X11/extensions/dpmsstr.h>
-#include <X11/extensions/Xext.h>
-#include <X11/extensions/extutil.h>
+#include <nx-X11/Xlibint.h>
+#include <nx-X11/extensions/dpms.h>
+#include <nx-X11/extensions/dpmsstr.h>
+#include <nx-X11/extensions/Xext.h>
+#include <nx-X11/extensions/extutil.h>
 #include <stdio.h>
 
 static XExtensionInfo _dpms_info_data;

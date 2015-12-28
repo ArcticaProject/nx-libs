@@ -37,7 +37,7 @@ in this Software without prior written authorization from The Open Group.
 #ifndef _XOS_H_
 #define _XOS_H_
 
-#include <X11/Xosdefs.h>
+#include <nx-X11/Xosdefs.h>
 
 /*
  * Get major data types (esp. caddr_t)
@@ -150,7 +150,7 @@ extern int sys_nerr;
 #include <unistd.h>
 #endif
 #ifdef WIN32
-#include <X11/Xw32defs.h>
+#include <nx-X11/Xw32defs.h>
 #else
 #include <sys/file.h>
 #endif
@@ -285,6 +285,6 @@ struct sockaddr_un {
 };
 #endif
 
-#include <X11/Xarch.h>
+#include <nx-X11/Xarch.h>
 
 #endif /* _XOS_H_ */

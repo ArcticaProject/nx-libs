@@ -616,11 +616,11 @@ ln -sf ../../nx/bin/nxagent %{buildroot}%{_libdir}/x2go/bin/x2goagent
 chmod 755  %{buildroot}%{_libdir}/lib*.so*
 
 #Remove extras, GL, and other unneeded headers
-rm -r %{buildroot}%{_includedir}/nx/GL
-rm -r %{buildroot}%{_includedir}/nx/X11/extensions/XInput.h
-rm -r %{buildroot}%{_includedir}/nx/X11/extensions/XK*.h
-rm -r %{buildroot}%{_includedir}/nx/X11/extensions/*Xv*.h
-rm -r %{buildroot}%{_includedir}/nx/X11/Xtrans
+rm -r %{buildroot}%{_includedir}/GL
+rm -r %{buildroot}%{_includedir}/nx-X11/extensions/XInput.h
+rm -r %{buildroot}%{_includedir}/nx-X11/extensions/XK*.h
+rm -r %{buildroot}%{_includedir}/nx-X11/extensions/*Xv*.h
+rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 
 # Needed for Xinerama support
 ln -s -f ../../../../%{_lib}/libX11.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama/libNX_X11.so.6
@@ -673,23 +673,23 @@ ln -s -f ../../../../%{_lib}/libNX_Xinerama.so.1 %{buildroot}%{_libdir}/nx/X11/X
 %defattr(-,root,root)
 %{_libdir}/libNX_X11.so
 %dir %{_includedir}/nx
-%dir %{_includedir}/nx/X11
-%{_includedir}/nx/X11/ImUtil.h
-%{_includedir}/nx/X11/XKBlib.h
-%{_includedir}/nx/X11/Xcms.h
-%{_includedir}/nx/X11/Xlib.h
-%{_includedir}/nx/X11/XlibConf.h
-%{_includedir}/nx/X11/Xlibint.h
-%{_includedir}/nx/X11/Xlocale.h
-%{_includedir}/nx/X11/Xregion.h
-%{_includedir}/nx/X11/Xresource.h
-%{_includedir}/nx/X11/Xutil.h
-%{_includedir}/nx/X11/cursorfont.h
+%dir %{_includedir}/nx-X11
+%{_includedir}/nx-X11/ImUtil.h
+%{_includedir}/nx-X11/XKBlib.h
+%{_includedir}/nx-X11/Xcms.h
+%{_includedir}/nx-X11/Xlib.h
+%{_includedir}/nx-X11/XlibConf.h
+%{_includedir}/nx-X11/Xlibint.h
+%{_includedir}/nx-X11/Xlocale.h
+%{_includedir}/nx-X11/Xregion.h
+%{_includedir}/nx-X11/Xresource.h
+%{_includedir}/nx-X11/Xutil.h
+%{_includedir}/nx-X11/cursorfont.h
 
 %files -n libNX_Xau-devel
 %defattr(-,root,root)
 %{_libdir}/libNX_Xau.so
-%{_includedir}/nx/X11/Xauth.h
+%{_includedir}/nx-X11/Xauth.h
 
 %files -n libNX_Xau6
 %defattr(-,root,root)
@@ -702,33 +702,33 @@ ln -s -f ../../../../%{_lib}/libNX_Xinerama.so.1 %{buildroot}%{_libdir}/nx/X11/X
 %files -n libNX_Xext-devel
 %defattr(-,root,root)
 %{_libdir}/libNX_Xext.so
-%dir %{_includedir}/nx/X11/extensions
-%{_includedir}/nx/X11/extensions/MITMisc.h
-%{_includedir}/nx/X11/extensions/XEVI.h
-%{_includedir}/nx/X11/extensions/XEVIstr.h
-%{_includedir}/nx/X11/extensions/XLbx.h
-%{_includedir}/nx/X11/extensions/XShm.h
-%{_includedir}/nx/X11/extensions/Xag.h
-%{_includedir}/nx/X11/extensions/Xagsrv.h
-%{_includedir}/nx/X11/extensions/Xagstr.h
-%{_includedir}/nx/X11/extensions/Xcup.h
-%{_includedir}/nx/X11/extensions/Xcupstr.h
-%{_includedir}/nx/X11/extensions/Xdbe.h
-%{_includedir}/nx/X11/extensions/Xdbeproto.h
-%{_includedir}/nx/X11/extensions/Xext.h
-%{_includedir}/nx/X11/extensions/dpms.h
-%{_includedir}/nx/X11/extensions/dpmsstr.h
-%{_includedir}/nx/X11/extensions/extutil.h
-%{_includedir}/nx/X11/extensions/lbxstr.h
-%{_includedir}/nx/X11/extensions/mitmiscstr.h
-%{_includedir}/nx/X11/extensions/multibuf.h
-%{_includedir}/nx/X11/extensions/multibufst.h
-%{_includedir}/nx/X11/extensions/security.h
-%{_includedir}/nx/X11/extensions/securstr.h
-%{_includedir}/nx/X11/extensions/shape.h
-%{_includedir}/nx/X11/extensions/sync.h
-%{_includedir}/nx/X11/extensions/xtestext1.h
-%{_includedir}/nx/X11/extensions/xteststr.h
+%dir %{_includedir}/nx-X11/extensions
+%{_includedir}/nx-X11/extensions/MITMisc.h
+%{_includedir}/nx-X11/extensions/XEVI.h
+%{_includedir}/nx-X11/extensions/XEVIstr.h
+%{_includedir}/nx-X11/extensions/XLbx.h
+%{_includedir}/nx-X11/extensions/XShm.h
+%{_includedir}/nx-X11/extensions/Xag.h
+%{_includedir}/nx-X11/extensions/Xagsrv.h
+%{_includedir}/nx-X11/extensions/Xagstr.h
+%{_includedir}/nx-X11/extensions/Xcup.h
+%{_includedir}/nx-X11/extensions/Xcupstr.h
+%{_includedir}/nx-X11/extensions/Xdbe.h
+%{_includedir}/nx-X11/extensions/Xdbeproto.h
+%{_includedir}/nx-X11/extensions/Xext.h
+%{_includedir}/nx-X11/extensions/dpms.h
+%{_includedir}/nx-X11/extensions/dpmsstr.h
+%{_includedir}/nx-X11/extensions/extutil.h
+%{_includedir}/nx-X11/extensions/lbxstr.h
+%{_includedir}/nx-X11/extensions/mitmiscstr.h
+%{_includedir}/nx-X11/extensions/multibuf.h
+%{_includedir}/nx-X11/extensions/multibufst.h
+%{_includedir}/nx-X11/extensions/security.h
+%{_includedir}/nx-X11/extensions/securstr.h
+%{_includedir}/nx-X11/extensions/shape.h
+%{_includedir}/nx-X11/extensions/sync.h
+%{_includedir}/nx-X11/extensions/xtestext1.h
+%{_includedir}/nx-X11/extensions/xteststr.h
 
 %files -n libNX_Xext6
 %defattr(-,root,root)
@@ -737,7 +737,7 @@ ln -s -f ../../../../%{_lib}/libNX_Xinerama.so.1 %{buildroot}%{_libdir}/nx/X11/X
 %files -n libNX_Xfixes-devel
 %defattr(-,root,root)
 %{_libdir}/libNX_Xfixes.so
-%{_includedir}/nx/X11/extensions/Xfixes.h
+%{_includedir}/nx-X11/extensions/Xfixes.h
 
 %files -n libNX_Xfixes3
 %defattr(-,root,root)
@@ -818,83 +818,83 @@ ln -s -f ../../../../%{_lib}/libNX_Xinerama.so.1 %{buildroot}%{_libdir}/nx/X11/X
 %{_libdir}/libNX_Xcomposite.so
 %{_libdir}/libNX_Xinerama.so
 %{_libdir}/libNX_Xtst.so
-%{_includedir}/nx/X11/X10.h
-%dir %{_includedir}/nx/X11/extensions
-%{_includedir}/nx/X11/extensions/XTest.h
-%{_includedir}/nx/X11/extensions/Xcomposite.h
-%{_includedir}/nx/X11/extensions/Xevie.h
-%{_includedir}/nx/X11/extensions/Xinerama.h
-%{_includedir}/nx/X11/extensions/lbxbuf.h
-%{_includedir}/nx/X11/extensions/lbxbufstr.h
-%{_includedir}/nx/X11/extensions/lbxdeltastr.h
-%{_includedir}/nx/X11/extensions/lbximage.h
-%{_includedir}/nx/X11/extensions/lbxopts.h
-%{_includedir}/nx/X11/extensions/lbxzlib.h
-%{_includedir}/nx/X11/extensions/panoramiXext.h
-%{_includedir}/nx/X11/extensions/record.h
-%{_includedir}/nx/X11/extensions/xf86dga1.h
-%{_includedir}/nx/X11/extensions/xf86vmode.h
-%{_includedir}/nx/X11/misc.h
-%{_includedir}/nx/X11/os.h
+%{_includedir}/nx-X11/X10.h
+%dir %{_includedir}/nx-X11/extensions
+%{_includedir}/nx-X11/extensions/XTest.h
+%{_includedir}/nx-X11/extensions/Xcomposite.h
+%{_includedir}/nx-X11/extensions/Xevie.h
+%{_includedir}/nx-X11/extensions/Xinerama.h
+%{_includedir}/nx-X11/extensions/lbxbuf.h
+%{_includedir}/nx-X11/extensions/lbxbufstr.h
+%{_includedir}/nx-X11/extensions/lbxdeltastr.h
+%{_includedir}/nx-X11/extensions/lbximage.h
+%{_includedir}/nx-X11/extensions/lbxopts.h
+%{_includedir}/nx-X11/extensions/lbxzlib.h
+%{_includedir}/nx-X11/extensions/panoramiXext.h
+%{_includedir}/nx-X11/extensions/record.h
+%{_includedir}/nx-X11/extensions/xf86dga1.h
+%{_includedir}/nx-X11/extensions/xf86vmode.h
+%{_includedir}/nx-X11/misc.h
+%{_includedir}/nx-X11/os.h
 
 %files -n nx-proto-devel
 %defattr(-,root,root)
-%dir %{_includedir}/nx/X11
-%{_includedir}/nx/X11/DECkeysym.h
-%{_includedir}/nx/X11/HPkeysym.h
-%{_includedir}/nx/X11/Sunkeysym.h
-%{_includedir}/nx/X11/X.h
-%{_includedir}/nx/X11/XF86keysym.h
-%{_includedir}/nx/X11/XWDFile.h
-%{_includedir}/nx/X11/Xalloca.h
-%{_includedir}/nx/X11/Xarch.h
-%{_includedir}/nx/X11/Xatom.h
-%{_includedir}/nx/X11/Xdefs.h
-%{_includedir}/nx/X11/Xfuncproto.h
-%{_includedir}/nx/X11/Xfuncs.h
-%{_includedir}/nx/X11/Xmd.h
-%{_includedir}/nx/X11/Xos.h
-%{_includedir}/nx/X11/Xos_r.h
-%{_includedir}/nx/X11/Xosdefs.h
-%{_includedir}/nx/X11/Xpoll.h
-%{_includedir}/nx/X11/Xproto.h
-%{_includedir}/nx/X11/Xprotostr.h
-%{_includedir}/nx/X11/Xthreads.h
-%{_includedir}/nx/X11/ap_keysym.h
-%{_includedir}/nx/X11/keysym.h
-%{_includedir}/nx/X11/keysymdef.h
-%{_includedir}/nx/X11/extensions/XI.h
-%{_includedir}/nx/X11/extensions/XIproto.h
-%{_includedir}/nx/X11/extensions/XResproto.h
-%{_includedir}/nx/X11/extensions/Xeviestr.h
-%{_includedir}/nx/X11/extensions/bigreqstr.h
-%{_includedir}/nx/X11/extensions/composite.h
-%{_includedir}/nx/X11/extensions/compositeproto.h
-%{_includedir}/nx/X11/extensions/panoramiXproto.h
-%{_includedir}/nx/X11/extensions/recordstr.h
-%{_includedir}/nx/X11/extensions/render.h
-%{_includedir}/nx/X11/extensions/renderproto.h
-%{_includedir}/nx/X11/extensions/shapestr.h
-%{_includedir}/nx/X11/extensions/shmstr.h
-%{_includedir}/nx/X11/extensions/syncstr.h
-%{_includedir}/nx/X11/extensions/xcmiscstr.h
-%{_includedir}/nx/X11/extensions/xf86bigfont.h
-%{_includedir}/nx/X11/extensions/xf86bigfstr.h
-%{_includedir}/nx/X11/extensions/xf86dga.h
-%{_includedir}/nx/X11/extensions/xf86dga1str.h
-%{_includedir}/nx/X11/extensions/xf86dgastr.h
-%{_includedir}/nx/X11/extensions/xf86misc.h
-%{_includedir}/nx/X11/extensions/xf86mscstr.h
-%{_includedir}/nx/X11/extensions/xf86vmstr.h
-%{_includedir}/nx/X11/extensions/xfixesproto.h
-%{_includedir}/nx/X11/extensions/xfixeswire.h
-%{_includedir}/nx/X11/extensions/xtrapbits.h
-%{_includedir}/nx/X11/extensions/xtrapddmi.h
-%{_includedir}/nx/X11/extensions/xtrapdi.h
-%{_includedir}/nx/X11/extensions/xtrapemacros.h
-%{_includedir}/nx/X11/extensions/xtraplib.h
-%{_includedir}/nx/X11/extensions/xtraplibp.h
-%{_includedir}/nx/X11/extensions/xtrapproto.h
+%dir %{_includedir}/nx-X11
+%{_includedir}/nx-X11/DECkeysym.h
+%{_includedir}/nx-X11/HPkeysym.h
+%{_includedir}/nx-X11/Sunkeysym.h
+%{_includedir}/nx-X11/X.h
+%{_includedir}/nx-X11/XF86keysym.h
+%{_includedir}/nx-X11/XWDFile.h
+%{_includedir}/nx-X11/Xalloca.h
+%{_includedir}/nx-X11/Xarch.h
+%{_includedir}/nx-X11/Xatom.h
+%{_includedir}/nx-X11/Xdefs.h
+%{_includedir}/nx-X11/Xfuncproto.h
+%{_includedir}/nx-X11/Xfuncs.h
+%{_includedir}/nx-X11/Xmd.h
+%{_includedir}/nx-X11/Xos.h
+%{_includedir}/nx-X11/Xos_r.h
+%{_includedir}/nx-X11/Xosdefs.h
+%{_includedir}/nx-X11/Xpoll.h
+%{_includedir}/nx-X11/Xproto.h
+%{_includedir}/nx-X11/Xprotostr.h
+%{_includedir}/nx-X11/Xthreads.h
+%{_includedir}/nx-X11/ap_keysym.h
+%{_includedir}/nx-X11/keysym.h
+%{_includedir}/nx-X11/keysymdef.h
+%{_includedir}/nx-X11/extensions/XI.h
+%{_includedir}/nx-X11/extensions/XIproto.h
+%{_includedir}/nx-X11/extensions/XResproto.h
+%{_includedir}/nx-X11/extensions/Xeviestr.h
+%{_includedir}/nx-X11/extensions/bigreqstr.h
+%{_includedir}/nx-X11/extensions/composite.h
+%{_includedir}/nx-X11/extensions/compositeproto.h
+%{_includedir}/nx-X11/extensions/panoramiXproto.h
+%{_includedir}/nx-X11/extensions/recordstr.h
+%{_includedir}/nx-X11/extensions/render.h
+%{_includedir}/nx-X11/extensions/renderproto.h
+%{_includedir}/nx-X11/extensions/shapestr.h
+%{_includedir}/nx-X11/extensions/shmstr.h
+%{_includedir}/nx-X11/extensions/syncstr.h
+%{_includedir}/nx-X11/extensions/xcmiscstr.h
+%{_includedir}/nx-X11/extensions/xf86bigfont.h
+%{_includedir}/nx-X11/extensions/xf86bigfstr.h
+%{_includedir}/nx-X11/extensions/xf86dga.h
+%{_includedir}/nx-X11/extensions/xf86dga1str.h
+%{_includedir}/nx-X11/extensions/xf86dgastr.h
+%{_includedir}/nx-X11/extensions/xf86misc.h
+%{_includedir}/nx-X11/extensions/xf86mscstr.h
+%{_includedir}/nx-X11/extensions/xf86vmstr.h
+%{_includedir}/nx-X11/extensions/xfixesproto.h
+%{_includedir}/nx-X11/extensions/xfixeswire.h
+%{_includedir}/nx-X11/extensions/xtrapbits.h
+%{_includedir}/nx-X11/extensions/xtrapddmi.h
+%{_includedir}/nx-X11/extensions/xtrapdi.h
+%{_includedir}/nx-X11/extensions/xtrapemacros.h
+%{_includedir}/nx-X11/extensions/xtraplib.h
+%{_includedir}/nx-X11/extensions/xtraplibp.h
+%{_includedir}/nx-X11/extensions/xtrapproto.h
 
 %files -n nxagent
 %defattr(-,root,root)

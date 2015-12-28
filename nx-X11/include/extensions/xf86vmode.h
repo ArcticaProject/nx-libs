@@ -35,8 +35,8 @@ from Kaleb S. KEITHLEY
 #ifndef _XF86VIDMODE_H_
 #define _XF86VIDMODE_H_
 
-#include <X11/Xfuncproto.h>
-#include <X11/Xmd.h>
+#include <nx-X11/Xfuncproto.h>
+#include <nx-X11/Xmd.h>
 
 #define X_XF86VidModeQueryVersion	0
 #define X_XF86VidModeGetModeLine	1

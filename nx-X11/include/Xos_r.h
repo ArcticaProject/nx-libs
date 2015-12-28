@@ -216,7 +216,7 @@ extern void XtProcessUnlock(
  *
  * #define X_INCLUDE_PWD_H
  * #define XOS_USE_..._LOCKING
- * #include <X11/Xos_r.h>
+ * #include <nx-X11/Xos_r.h>
  *
  * typedef ... _Xgetpwparams;
  *
@@ -394,7 +394,7 @@ typedef int _Xgetpwret;
  *
  * #define X_INCLUDE_NETDB_H
  * #define XOS_USE_..._LOCKING
- * #include <X11/Xos_r.h>
+ * #include <nx-X11/Xos_r.h>
  *
  * typedef ... _Xgethostbynameparams;
  * typedef ... _Xgetservbynameparams;
@@ -556,7 +556,7 @@ typedef int _Xgetservbynameparams; /* dummy */
  *
  * #define X_INCLUDE_DIRENT_H
  * #define XOS_USE_..._LOCKING
- * #include <X11/Xos_r.h>
+ * #include <nx-X11/Xos_r.h>
  *
  * typedef ... _Xreaddirparams;
  *
@@ -680,7 +680,7 @@ extern int _Preaddir_r(DIR *, struct dirent *, struct dirent **);
  *
  * #define X_INCLUDE_UNISTD_H
  * #define XOS_USE_..._LOCKING
- * #include <X11/Xos_r.h>
+ * #include <nx-X11/Xos_r.h>
  *
  * typedef ... _Xgetloginparams;
  * typedef ... _Xttynameparams;
@@ -822,7 +822,7 @@ typedef struct {
  *
  * #define X_INCLUDE_STRING_H
  * #define XOS_USE_..._LOCKING
- * #include <X11/Xos_r.h>
+ * #include <nx-X11/Xos_r.h>
  *
  * typedef ... _Xstrtokparams;
  *
@@ -868,7 +868,7 @@ typedef char * _Xstrtokparams;
  *
  * #define X_INCLUDE_TIME_H
  * #define XOS_USE_..._LOCKING
- * #include <X11/Xos_r.h>
+ * #include <nx-X11/Xos_r.h>
  *
  * typedef ... _Xatimeparams;
  * typedef ... _Xctimeparams;
@@ -1036,7 +1036,7 @@ typedef struct tm _Xltimeparams;
  *
  * #define X_INCLUDE_GRP_H
  * #define XOS_USE_..._LOCKING
- * #include <X11/Xos_r.h>
+ * #include <nx-X11/Xos_r.h>
  *
  * typedef ... _Xgetgrparams;
  *

@@ -34,8 +34,8 @@ in this Software without prior written authorization from The Open Group.
 #endif
 
 #include "sleepuntil.h"
-#include <X11/X.h>
-#include <X11/Xmd.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xmd.h>
 #include "misc.h"
 #include "windowstr.h"
 #include "dixstruct.h"

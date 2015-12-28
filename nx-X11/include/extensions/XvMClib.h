@@ -4,9 +4,9 @@
 #ifndef _XVMCLIB_H_
 #define _XVMCLIB_H_
 
-#include <X11/Xfuncproto.h>
-#include <X11/extensions/Xvlib.h>
-#include <X11/extensions/XvMC.h>
+#include <nx-X11/Xfuncproto.h>
+#include <nx-X11/extensions/Xvlib.h>
+#include <nx-X11/extensions/XvMC.h>
 
 _XFUNCPROTOBEGIN
 

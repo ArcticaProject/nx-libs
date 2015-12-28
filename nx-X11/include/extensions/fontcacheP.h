@@ -31,7 +31,7 @@
 #ifndef _FONTCACHEP_H_
 #define _FONTCACHEP_H_
 
-#include <X11/extensions/fontcache.h>
+#include <nx-X11/extensions/fontcache.h>
 
 int	FontCacheChangeSettings(FontCacheSettingsPtr /* cinfo */);
 void	FontCacheGetSettings(FontCacheSettingsPtr /* cinfo */);

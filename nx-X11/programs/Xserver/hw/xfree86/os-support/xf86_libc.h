@@ -45,7 +45,7 @@
 #ifndef	XF86_LIBC_H
 #define XF86_LIBC_H 1
 
-#include <X11/Xfuncs.h>
+#include <nx-X11/Xfuncs.h>
 #include <stddef.h>
 
 /*

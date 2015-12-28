@@ -12,7 +12,7 @@ XCOMM $XFree86: xc/lib/Xau/Imakefile,v 3.5 1999/04/17 09:08:11 dawes Exp $
 #define DoProfileLib ProfileLibXau
 #define LibName NX_Xau
 #define SoRev SOXAUTHREV
-#define IncSubdir X11
+#define IncSubdir nx-X11
 
 #include <Threads.tmpl>
 

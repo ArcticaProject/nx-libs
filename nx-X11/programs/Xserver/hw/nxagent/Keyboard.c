@@ -64,13 +64,13 @@ is" without express or implied warranty.
 #include "property.h"
 #include "Init.h"
 
-#include <X11/extensions/XKB.h>
+#include <nx-X11/extensions/XKB.h>
 
 #define XKBSRV_NEED_FILE_FUNCS
-#include <X11/extensions/XKBsrv.h>
-#include <X11/extensions/XKBconfig.h>
+#include <nx-X11/extensions/XKBsrv.h>
+#include <nx-X11/extensions/XKBconfig.h>
 
-#include "X11/extensions/XKBrules.h"
+#include <nx-X11/extensions/XKBrules.h>
 
 #include "Xatom.h"
 

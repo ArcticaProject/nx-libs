@@ -28,9 +28,9 @@
 #include "config.h"
 #define NEED_EVENTS
 #define NEED_REPLIES
-#include <X11/Xlibint.h>
-#include <X11/Xutil.h>
-#include <X11/extensions/renderproto.h>
+#include <nx-X11/Xlibint.h>
+#include <nx-X11/Xutil.h>
+#include <nx-X11/extensions/renderproto.h>
 #include "Xrender.h"
 
 typedef struct {

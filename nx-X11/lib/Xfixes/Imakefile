@@ -16,7 +16,7 @@ SOXFIXESREV=3.0.0
 
 #define LibName NX_Xfixes
 #define SoRev SOXFIXESREV
-#define IncSubdir X11
+#define IncSubdir nx-X11
 #define IncSubSubdir extensions
 
 #include <Threads.tmpl>

@@ -36,7 +36,7 @@ PERFORMANCE OF THIS SOFTWARE.
 #define _XIMINT_H
 
 #include <stdio.h>
-#include <X11/Xutil.h>
+#include <nx-X11/Xutil.h>
 
 #define Public /**/
 #define Private static

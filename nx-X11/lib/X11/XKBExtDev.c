@@ -34,9 +34,9 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #define NEED_EVENTS
 #define	NEED_MAP_READERS
 #include "Xlibint.h"
-#include <X11/extensions/XKBproto.h>
+#include <nx-X11/extensions/XKBproto.h>
 #include "XKBlibint.h"
-#include <X11/extensions/XI.h>
+#include <nx-X11/extensions/XI.h>
 
 /***====================================================================***/
 

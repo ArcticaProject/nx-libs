@@ -67,8 +67,8 @@ University of California.
 #endif
 
 #include <stdio.h>
-#include <X11/X.h>
-#include <X11/Xproto.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
 #include "misc.h"
 #include "os.h"
 #include "gcstruct.h"   
@@ -76,7 +76,7 @@ University of California.
 #include "dixstruct.h"
 #include "opaque.h"
 #define  XTestSERVER_SIDE
-#include <X11/extensions/xtestext1.h>
+#include <nx-X11/extensions/xtestext1.h>
 #include "modinit.h"
 
 #include "xtest1dd.h"

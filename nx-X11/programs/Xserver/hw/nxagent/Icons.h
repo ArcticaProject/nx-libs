@@ -19,7 +19,7 @@
 #define __Icons_H__
 
 #define Pixel XpmPixel
-#include <X11/xpm.h>
+#include "X11/include/xpm_nxagent.h"
 #undef Pixel
 
 #define NXAGENT_ICON_NAME  "nxagent.xpm"

@@ -75,7 +75,7 @@ from The Open Group.
 
 #ifndef USE_POLL
 
-#include <X11/Xos.h>
+#include <nx-X11/Xos.h>
 
 /* Below is the monster branch from hell.  Basically, most systems will drop to
  * 'the branch below is the fallthrough for halfway modern systems', and include
@@ -104,7 +104,7 @@ from The Open Group.
 # include <unistd.h>
 #endif
 
-#include <X11/Xmd.h>
+#include <nx-X11/Xmd.h>
 
 #ifdef CSRG_BASED
 #include <sys/param.h>
@@ -241,7 +241,7 @@ extern int _XSelect(int maxfds, fd_set *readfds, fd_set *writefds,
 #ifndef FD_SETSIZE
 #define FD_SETSIZE	XFD_SETSIZE
 #endif
-#include <X11/Xwinsock.h>
+#include <nx-X11/Xwinsock.h>
 
 #define Select(n,r,w,e,t) select(0,(fd_set*)r,(fd_set*)w,(fd_set*)e,(struct timeval*)t)
 

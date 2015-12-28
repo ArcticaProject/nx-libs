@@ -50,10 +50,10 @@ in this Software without prior written authorization from The Open Group.
 #include <config.h>
 #endif
 #include "Xlibint.h"
-#include <X11/Xtrans/Xtrans.h>
-#include <X11/Xatom.h>
-#include <X11/Xresource.h>
-#include <X11/extensions/bigreqstr.h>
+#include <nx-X11/Xtrans/Xtrans.h>
+#include <nx-X11/Xatom.h>
+#include <nx-X11/Xresource.h>
+#include <nx-X11/extensions/bigreqstr.h>
 #include <stdio.h>
 #include "Xintconn.h"
 

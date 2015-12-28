@@ -123,7 +123,7 @@ Equipment Corporation.
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
+#include <nx-X11/X.h>
 #include "misc.h"
 #include "os.h"
 #include "resource.h"

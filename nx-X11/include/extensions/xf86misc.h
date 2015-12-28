@@ -9,7 +9,7 @@
 #ifndef _XF86MISC_H_
 #define _XF86MISC_H_
 
-#include <X11/Xfuncproto.h>
+#include <nx-X11/Xfuncproto.h>
 
 #define X_XF86MiscQueryVersion		0
 #ifdef _XF86MISC_SAVER_COMPAT_

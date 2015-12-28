@@ -33,8 +33,8 @@ in this Software without prior written authorization from The Open Group.
 #endif
 
 #include <stdio.h>
-#include <X11/X.h>
-#include <X11/Xproto.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
 #include "misc.h"
 #include "os.h"
 #include "windowstr.h"
@@ -51,7 +51,7 @@ in this Software without prior written authorization from The Open Group.
 
 #define _MULTIBUF_SERVER_	/* don't want Xlib structures */
 #define _MULTIBUF_PIXMAP_
-#include <X11/extensions/multibufst.h>
+#include <nx-X11/extensions/multibufst.h>
 
 
 static Bool NoopDDA_True() { return TRUE; }

@@ -43,7 +43,7 @@ and Jim Haggerty of Metheus.
 #include "dixstruct.h"
 #include "extnsionst.h"
 #define _XRECORD_SERVER_
-#include <X11/extensions/recordstr.h>
+#include <nx-X11/extensions/recordstr.h>
 #include "set.h"
 
 #ifndef XFree86LOADER

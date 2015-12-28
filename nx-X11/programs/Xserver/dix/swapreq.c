@@ -52,10 +52,10 @@ SOFTWARE.
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
+#include <nx-X11/X.h>
 #define NEED_EVENTS
-#include <X11/Xproto.h>
-#include <X11/Xprotostr.h>
+#include <nx-X11/Xproto.h>
+#include <nx-X11/Xprotostr.h>
 #include "misc.h"
 #include "dixstruct.h"
 #include "extnsionst.h"	/* for SendEvent */

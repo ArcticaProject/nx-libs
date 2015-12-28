@@ -30,7 +30,7 @@ in this Software without prior written authorization from The Open Group.
 #ifndef _SHAPE_H_
 #define _SHAPE_H_
 
-#include <X11/Xfuncproto.h>
+#include <nx-X11/Xfuncproto.h>
 
 #define X_ShapeQueryVersion		0
 #define X_ShapeRectangles		1
@@ -59,7 +59,7 @@ in this Software without prior written authorization from The Open Group.
 
 #ifndef _SHAPE_SERVER_
 
-#include <X11/Xutil.h>
+#include <nx-X11/Xutil.h>
 
 typedef struct {
     int	type;		    /* of event */

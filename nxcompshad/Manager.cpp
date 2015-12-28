@@ -15,9 +15,9 @@
 /*                                                                        */
 /**************************************************************************/
 
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <X11/keysym.h>
+#include <nx-X11/Xlib.h>
+#include <nx-X11/Xutil.h>
+#include <nx-X11/keysym.h>
 #include <string.h>
 
 #define PANIC

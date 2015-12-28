@@ -58,9 +58,9 @@ PERFORMANCE OF THIS SOFTWARE.
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
-#include <X11/Xproto.h>
-#include <X11/Xmd.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
+#include <nx-X11/Xmd.h>
 #include "misc.h"
 #include "os.h"
 #include "extnsionst.h"
@@ -68,8 +68,8 @@ PERFORMANCE OF THIS SOFTWARE.
 #include "resource.h"
 #include "opaque.h"
 #define _SYNC_SERVER
-#include <X11/extensions/sync.h>
-#include <X11/extensions/syncstr.h>
+#include <nx-X11/extensions/sync.h>
+#include <nx-X11/extensions/syncstr.h>
 
 #ifdef EXTMODULE
 #include "xf86_ansic.h"

@@ -32,8 +32,8 @@ in this Software without prior written authorization from The Open Group.
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
-#include <X11/Xproto.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
 #include "misc.h"
 #include "dixstruct.h"
 #include "extnsionst.h"
@@ -42,8 +42,8 @@ in this Software without prior written authorization from The Open Group.
 #include "servermd.h"
 #include "swapreq.h"
 #define _XCUP_SERVER_
-#include <X11/extensions/Xcupstr.h>
-#include <X11/Xfuncproto.h>
+#include <nx-X11/extensions/Xcupstr.h>
+#include <nx-X11/Xfuncproto.h>
 
 #ifndef EXTMODULE
 #include "../os/osdep.h"

@@ -35,7 +35,7 @@ of the copyright holder.
 #ifndef _XEVIE_H_
 #define _XEVIE_H_
 
-#include <X11/Xfuncproto.h>
+#include <nx-X11/Xfuncproto.h>
 
 #define XEVIE_UNMODIFIED    0
 #define XEVIE_MODIFIED   1

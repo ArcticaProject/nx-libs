@@ -34,14 +34,14 @@ from The Open Group.
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
-#include <X11/Xproto.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
 #include "misc.h"
 #include "os.h"
 #include "dixstruct.h"
 #include "extnsionst.h"
 #include "swaprep.h"
-#include <X11/extensions/xcmiscstr.h>
+#include <nx-X11/extensions/xcmiscstr.h>
 #include "modinit.h"
 
 #if HAVE_STDINT_H

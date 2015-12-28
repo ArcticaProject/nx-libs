@@ -25,9 +25,9 @@
 #ifndef _XFIXES_H_
 #define _XFIXES_H_
 
-#include <X11/extensions/xfixeswire.h>
+#include <nx-X11/extensions/xfixeswire.h>
 
-#include <X11/Xfuncproto.h>
+#include <nx-X11/Xfuncproto.h>
 
 /*
  * This revision number also appears in configure.ac, they have

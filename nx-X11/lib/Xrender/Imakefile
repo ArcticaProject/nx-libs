@@ -71,7 +71,7 @@ clean::
 #define SoRev SOXRENDERREV
 
 #ifdef XBuildIncDir
-#define IncSubdir X11
+#define IncSubdir nx-X11
 #define IncSubSubdir extensions
 RENDERINCDIR   = $(BUILDINCDIR)
 #else

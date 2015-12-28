@@ -25,7 +25,7 @@
 #ifndef _LBXSTR_H_
 #define _LBXSTR_H_
 
-#include <X11/extensions/XLbx.h>
+#include <nx-X11/extensions/XLbx.h>
 
 #define LBXNAME "LBX"
 

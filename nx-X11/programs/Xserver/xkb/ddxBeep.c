@@ -32,14 +32,14 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #include <stdio.h>
 #define	NEED_EVENTS 1
-#include <X11/X.h>
-#include <X11/Xproto.h>
-#include <X11/keysym.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
+#include <nx-X11/keysym.h>
 #include "inputstr.h"
 #include "scrnintstr.h"
 #include "windowstr.h"
-#include <X11/extensions/XKBsrv.h>
-#include <X11/extensions/XI.h>
+#include <nx-X11/extensions/XKBsrv.h>
+#include <nx-X11/extensions/XI.h>
 
 #if (defined(__osf__) && defined(__alpha))
 #include <sys/sysinfo.h>

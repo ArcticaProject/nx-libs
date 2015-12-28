@@ -58,12 +58,12 @@ CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #ifndef EXTMODULE
 #include <stdio.h>
 #include <errno.h>
-#include <X11/Xos.h>
+#include <nx-X11/Xos.h>
 #else
 #include "xf86_ansic.h"
 #endif
-#include <X11/X.h>
-#include <X11/Xproto.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
 #include "input.h"              /* Server DevicePtr definitions */
 #include "misc.h"               /* Server swapping macros */
 #include "dixstruct.h"          /* Server ClientRec definitions */
@@ -77,9 +77,9 @@ CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #endif
 #include "pixmapstr.h"          /* DrawableRec */
 #include "windowstr.h"          /* Drawable Lookup structures */
-#include <X11/extensions/xtrapdi.h>
-#include <X11/extensions/xtrapddmi.h>
-#include <X11/extensions/xtrapproto.h>
+#include <nx-X11/extensions/xtrapdi.h>
+#include <nx-X11/extensions/xtrapddmi.h>
+#include <nx-X11/extensions/xtrapproto.h>
 #include "colormapst.h"
 #ifdef PANORAMIX
 #include "panoramiX.h"

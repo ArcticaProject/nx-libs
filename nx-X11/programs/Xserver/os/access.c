@@ -62,15 +62,15 @@ SOFTWARE.
 #endif
 
 #ifdef WIN32
-#include <X11/Xwinsock.h>
+#include <nx-X11/Xwinsock.h>
 #endif
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <X11/Xtrans/Xtrans.h>
-#include <X11/Xauth.h>
-#include <X11/X.h>
-#include <X11/Xproto.h>
+#include <nx-X11/Xtrans/Xtrans.h>
+#include <nx-X11/Xauth.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
 #include "misc.h"
 #include "site.h"
 #include <errno.h>
@@ -197,14 +197,14 @@ SOFTWARE.
 #endif
 
 #define X_INCLUDE_NETDB_H
-#include <X11/Xos_r.h>
+#include <nx-X11/Xos_r.h>
 
 #include "dixstruct.h"
 #include "osdep.h"
 
 #ifdef XCSECURITY
 #define _SECURITY_SERVER
-#include <X11/extensions/security.h>
+#include <nx-X11/extensions/security.h>
 #endif
 
 #ifndef PATH_MAX

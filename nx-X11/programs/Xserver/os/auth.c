@@ -57,8 +57,8 @@ from The Open Group.
 #ifdef K5AUTH
 # include   <krb5/krb5.h>
 #endif
-# include   <X11/X.h>
-# include   <X11/Xauth.h>
+# include   <nx-X11/X.h>
+# include   <nx-X11/Xauth.h>
 # include   "misc.h"
 # include   "osdep.h"
 # include   "dixstruct.h"
@@ -66,10 +66,10 @@ from The Open Group.
 # include   <sys/stat.h>
 #ifdef XCSECURITY
 #define _SECURITY_SERVER
-# include   <X11/extensions/security.h>
+# include   <nx-X11/extensions/security.h>
 #endif
 #ifdef WIN32
-#include    <X11/Xw32defs.h>
+#include    <nx-X11/Xw32defs.h>
 #endif
 
 struct protocol {

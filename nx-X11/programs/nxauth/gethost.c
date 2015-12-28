@@ -36,10 +36,10 @@ in this Software without prior written authorization from The Open Group.
 #endif
 
 #ifdef WIN32
-#include <X11/Xwinsock.h>
+#include <nx-X11/Xwinsock.h>
 #define EPROTOTYPE WSAEPROTOTYPE
 #endif
-#include <X11/X.h>
+#include <nx-X11/X.h>
 #include <signal.h>
 #include <setjmp.h>
 #include <ctype.h>

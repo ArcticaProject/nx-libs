@@ -37,8 +37,8 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #define NEED_REPLIES
 #define NEED_MAP_READERS
 #include "Xlibint.h"
-#include <X11/extensions/XKBgeom.h>
-#include <X11/extensions/XKBproto.h>
+#include <nx-X11/extensions/XKBgeom.h>
+#include <nx-X11/extensions/XKBproto.h>
 #include "XKBlibint.h"
 
 #ifndef MINSHORT

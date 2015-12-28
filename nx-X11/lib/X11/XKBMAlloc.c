@@ -38,22 +38,22 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #define NEED_REPLIES
 #define NEED_EVENTS
 #include "Xlibint.h"
-#include <X11/extensions/XKBproto.h>
-#include <X11/keysym.h>
+#include <nx-X11/extensions/XKBproto.h>
+#include <nx-X11/keysym.h>
 #include "XKBlibint.h"
 
 #else 
 
 #include <stdio.h>
-#include <X11/X.h>
+#include <nx-X11/X.h>
 #define	NEED_EVENTS
 #define	NEED_REPLIES
-#include <X11/Xproto.h>
+#include <nx-X11/Xproto.h>
 #include "misc.h"
 #include "inputstr.h"
-#include <X11/keysym.h>
+#include <nx-X11/keysym.h>
 #define	XKBSRV_NEED_FILE_FUNCS
-#include <X11/extensions/XKBsrv.h>
+#include <nx-X11/extensions/XKBsrv.h>
 
 #endif /* XKB_IN_SERVER */
 

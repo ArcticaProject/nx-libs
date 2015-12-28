@@ -77,13 +77,13 @@ is" without express or implied warranty.
 #include "Shadow.h"
 #include "Utils.h"
 
-#include <X11/extensions/Xrandr.h>
+#include "X11/include/Xrandr_nxagent.h"
 
 #define GC     XlibGC
 #define Font   XlibFont
 #define KeySym XlibKeySym
 #define XID    XlibXID
-#include <X11/Xlibint.h>
+#include <nx-X11/Xlibint.h>
 #undef  GC
 #undef  Font
 #undef  KeySym

@@ -15,7 +15,7 @@ Copyright (c) 1995  XFree86 Inc
 #ifndef _XF86DGA1_H_
 #define _XF86DGA1_H_
 
-#include <X11/Xfuncproto.h>
+#include <nx-X11/Xfuncproto.h>
 
 #define X_XF86DGAQueryVersion		0
 #define X_XF86DGAGetVideoLL		1

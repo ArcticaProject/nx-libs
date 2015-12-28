@@ -34,14 +34,14 @@ in this Software without prior written authorization from The Open Group.
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
-#include <X11/Xproto.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
 #include "misc.h"
 #include "os.h"
 #include "dixstruct.h"
 #include "extnsionst.h"
 #define _MITMISC_SERVER_
-#include <X11/extensions/mitmiscstr.h>
+#include <nx-X11/extensions/mitmiscstr.h>
 #include "modinit.h"
 
 extern Bool permitOldBugs;

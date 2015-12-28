@@ -30,8 +30,8 @@ in this Software without prior written authorization from The Open Group.
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <X11/Xauth.h>
-#include <X11/Xos.h>
+#include <nx-X11/Xauth.h>
+#include <nx-X11/Xos.h>
 #include <sys/stat.h>
 #include <errno.h>
 #include <time.h>
@@ -42,7 +42,7 @@ in this Software without prior written authorization from The Open Group.
 #ifndef WIN32
 extern unsigned	sleep ();
 #else
-#include <X11/Xwindows.h>
+#include <nx-X11/Xwindows.h>
 #define link rename
 #endif
 #endif

@@ -29,7 +29,7 @@ in this Software without prior written authorization from The Open Group.
 #ifndef _XCUP_H_
 #define _XCUP_H_
 
-#include <X11/Xfuncproto.h>
+#include <nx-X11/Xfuncproto.h>
 
 #define X_XcupQueryVersion			0
 #define X_XcupGetReservedColormapEntries	1

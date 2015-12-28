@@ -32,8 +32,8 @@ in this Software without prior written authorization from The Open Group.
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <X11/Xlibint.h>
-#include <X11/Xutil.h>
+#include <nx-X11/Xlibint.h>
+#include <nx-X11/Xutil.h>
 #define XK_MISCELLANY
 #define XK_LATIN1
 #define XK_LATIN2
@@ -47,7 +47,7 @@ in this Software without prior written authorization from The Open Group.
 #define XK_CAUCASUS
 #define XK_VIETNAMESE
 #define XK_XKB_KEYS
-#include <X11/keysymdef.h>
+#include <nx-X11/keysymdef.h>
 #include <stdio.h>
 
 #ifdef USE_OWN_COMPOSE

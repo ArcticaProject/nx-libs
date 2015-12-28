@@ -29,7 +29,7 @@ in this Software without prior written authorization from The Open Group.
 #ifndef _XTEST_H_
 #define _XTEST_H_
 
-#include <X11/Xfuncproto.h>
+#include <nx-X11/Xfuncproto.h>
 
 #define X_XTestGetVersion	0
 #define X_XTestCompareCursor	1
@@ -47,7 +47,7 @@ in this Software without prior written authorization from The Open Group.
 
 #ifndef _XTEST_SERVER_
 
-#include <X11/extensions/XInput.h>
+#include <nx-X11/extensions/XInput.h>
 
 _XFUNCPROTOBEGIN
 

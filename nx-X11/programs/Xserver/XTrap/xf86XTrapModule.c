@@ -8,7 +8,7 @@
 
 #include "xf86Module.h"
 
-#include <X11/extensions/xtrapdi.h>
+#include <nx-X11/extensions/xtrapdi.h>
 
 extern void DEC_XTRAPInit(INITARGS);
 

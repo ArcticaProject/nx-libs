@@ -54,11 +54,11 @@ from The Open Group.
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <X11/Xlibint.h>
-#include <X11/Xutil.h>
+#include <nx-X11/Xlibint.h>
+#include <nx-X11/Xutil.h>
 #include "Xatomtype.h"
-#include <X11/Xatom.h>
-#include <X11/Xos.h>
+#include <nx-X11/Xatom.h>
+#include <nx-X11/Xos.h>
 
 void XSetWMSizeHints (dpy, w, hints, prop)
     Display *dpy;

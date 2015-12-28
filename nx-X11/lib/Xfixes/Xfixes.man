@@ -31,7 +31,7 @@
 .SH NAME
 XFixes \- Augmented versions of core protocol requests
 .SH SYNTAX
-\&#include <X11/extensions/Xfixes.h>
+\&#include <nx-X11/extensions/Xfixes.h>
 .nf    
 .sp
 Bool XFixesQueryExtension \^(\^Display *\fIdpy\fP, 

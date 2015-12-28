@@ -149,9 +149,9 @@ install-full:
 
 	. replace.sh; set -x; find nx-X11/.build-exports/include/ -type d | \
 	    while read dirname; do \
-	        $(INSTALL_DIR) "$$(string_rep "$$dirname" nx-X11/.build-exports/include "$(DESTDIR)$(INCLUDEDIR)/nx")"; \
+	        $(INSTALL_DIR) "$$(string_rep "$$dirname" nx-X11/.build-exports/include "$(DESTDIR)$(INCLUDEDIR)/")"; \
 	        $(INSTALL_FILE) $${dirname}/*.h \
-	                        "$$(string_rep "$$dirname" nx-X11/.build-exports/include "$(DESTDIR)$(INCLUDEDIR)/nx")"/ || true; \
+	                        "$$(string_rep "$$dirname" nx-X11/.build-exports/include "$(DESTDIR)$(INCLUDEDIR)/")"/ || true; \
 	    done; \
 
 	# Provide means for Xinerama support in NX/X2Go sessions. This

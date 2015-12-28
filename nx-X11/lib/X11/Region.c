@@ -77,7 +77,7 @@ SOFTWARE.
 #endif
 #include "Xlibint.h"
 #include "Xutil.h"
-#include <X11/Xregion.h>
+#include <nx-X11/Xregion.h>
 #include "poly.h"
 
 #ifdef DEBUG

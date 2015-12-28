@@ -18,7 +18,7 @@
 #ifndef Shadow_H
 #define Shadow_H
 
-#include <X11/Xlib.h>
+#include <nx-X11/Xlib.h>
 
 #define NXShadowCorrectColor(length, buffer) \
 \

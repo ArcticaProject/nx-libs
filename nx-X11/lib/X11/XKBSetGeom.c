@@ -38,8 +38,8 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #define NEED_REPLIES
 #include "Xlibint.h"
 #include "XKBlibint.h"
-#include <X11/extensions/XKBgeom.h>
-#include <X11/extensions/XKBproto.h>
+#include <nx-X11/extensions/XKBgeom.h>
+#include <nx-X11/extensions/XKBproto.h>
 
 #ifndef MINSHORT
 #define	MINSHORT	-32768

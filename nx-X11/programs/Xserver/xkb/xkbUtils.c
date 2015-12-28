@@ -34,16 +34,16 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <ctype.h>
 #include <math.h>
 #define NEED_EVENTS 1
-#include <X11/X.h>
-#include <X11/Xproto.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
 #define	XK_CYRILLIC
-#include <X11/keysym.h>
+#include <nx-X11/keysym.h>
 #include "misc.h"
 #include "inputstr.h"
 
 #define	XKBSRV_NEED_FILE_FUNCS
-#include <X11/extensions/XKBsrv.h>
-#include <X11/extensions/XKBgeom.h>
+#include <nx-X11/extensions/XKBsrv.h>
+#include <nx-X11/extensions/XKBgeom.h>
 #include "xkb.h"
 
 #ifdef MODE_SWITCH

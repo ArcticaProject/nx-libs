@@ -32,11 +32,11 @@ in this Software without prior written authorization from The Open Group.
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <X11/Xlibint.h>
-#include <X11/extensions/MITMisc.h>
-#include <X11/extensions/mitmiscstr.h>
-#include <X11/extensions/Xext.h>
-#include <X11/extensions/extutil.h>
+#include <nx-X11/Xlibint.h>
+#include <nx-X11/extensions/MITMisc.h>
+#include <nx-X11/extensions/mitmiscstr.h>
+#include <nx-X11/extensions/Xext.h>
+#include <nx-X11/extensions/extutil.h>
 
 static XExtensionInfo _mit_info_data;
 static XExtensionInfo *mit_info = &_mit_info_data;

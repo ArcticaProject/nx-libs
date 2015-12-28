@@ -68,10 +68,10 @@ SOFTWARE.
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
+#include <nx-X11/X.h>
 #define NEED_REPLIES
 #define NEED_EVENTS
-#include <X11/Xproto.h>
+#include <nx-X11/Xproto.h>
 #include "windowstr.h"
 #include "propertyst.h"
 #include "dixstruct.h"
@@ -79,7 +79,7 @@ SOFTWARE.
 #include "swaprep.h"
 #ifdef XCSECURITY
 #define _SECURITY_SERVER
-#include <X11/extensions/security.h>
+#include <nx-X11/extensions/security.h>
 #endif
 #ifdef LBX
 #include "lbxserve.h"

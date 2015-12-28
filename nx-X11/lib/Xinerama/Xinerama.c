@@ -27,13 +27,13 @@ Equipment Corporation.
 
 #define NEED_EVENTS
 #define NEED_REPLIES
-#include <X11/Xlibint.h>
-#include <X11/Xutil.h>
-#include <X11/extensions/Xext.h>
-#include <X11/extensions/extutil.h>
-#include <X11/extensions/panoramiXext.h>
-#include <X11/extensions/panoramiXproto.h>
-#include <X11/extensions/Xinerama.h>
+#include <nx-X11/Xlibint.h>
+#include <nx-X11/Xutil.h>
+#include <nx-X11/extensions/Xext.h>
+#include <nx-X11/extensions/extutil.h>
+#include <nx-X11/extensions/panoramiXext.h>
+#include <nx-X11/extensions/panoramiXproto.h>
+#include <nx-X11/extensions/Xinerama.h>
 #include <stdio.h>
 
 static XExtensionInfo _panoramiX_ext_info_data;

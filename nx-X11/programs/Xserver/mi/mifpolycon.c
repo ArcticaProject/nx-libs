@@ -51,7 +51,7 @@ SOFTWARE.
 #endif
 
 #include <math.h>
-#include <X11/X.h>
+#include <nx-X11/X.h>
 #include "gcstruct.h"
 #include "windowstr.h"
 #include "pixmapstr.h"

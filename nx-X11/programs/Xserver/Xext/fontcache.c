@@ -37,8 +37,8 @@
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
-#include <X11/Xproto.h>
+#include <nx-X11/X.h>
+#include <nx-X11/Xproto.h>
 #include "misc.h"
 #include "dixstruct.h"
 #include "extnsionst.h"
@@ -48,7 +48,7 @@
 #define _FONTCACHE_SERVER_
 #include "fontcacheP.h"
 #include "fontcachstr.h"
-#include <X11/Xfuncproto.h>
+#include <nx-X11/Xfuncproto.h>
 
 #include "swaprep.h"
 #include "modinit.h"

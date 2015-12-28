@@ -52,10 +52,10 @@ SOFTWARE.
 #include <dix-config.h>
 #endif
 
-#include <X11/X.h>
+#include <nx-X11/X.h>
 #include "misc.h"
 #define NEED_EVENTS
-#include <X11/Xproto.h>
+#include <nx-X11/Xproto.h>
 #include "windowstr.h"
 #include "inputstr.h"
 #include "cursorstr.h"

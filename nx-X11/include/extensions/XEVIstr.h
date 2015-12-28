@@ -26,7 +26,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #ifndef _EVISTR_H_
 #define _EVISTR_H_
 
-#include <X11/extensions/XEVI.h>
+#include <nx-X11/extensions/XEVI.h>
 
 #define VisualID CARD32
 #define EVINAME "Extended-Visual-Information"

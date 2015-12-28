@@ -36,8 +36,8 @@
 ** compliant with the OpenGL(R) version 1.2.1 Specification.
 */
 
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
+#include <nx-X11/Xlib.h>
+#include <nx-X11/Xutil.h>
 #include <GL/gl.h>
 #include <GL/glxtokens.h>
 

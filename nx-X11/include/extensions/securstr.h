@@ -29,7 +29,7 @@ from The Open Group.
 #ifndef _SECURSTR_H
 #define _SECURSTR_H
 
-#include <X11/extensions/security.h>
+#include <nx-X11/extensions/security.h>
 
 #define SECURITY_EXTENSION_NAME		"SECURITY"
 #define SECURITY_MAJOR_VERSION		1

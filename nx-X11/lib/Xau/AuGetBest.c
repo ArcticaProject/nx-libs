@@ -30,15 +30,15 @@ in this Software without prior written authorization from The Open Group.
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <X11/Xauth.h>
-#include <X11/Xos.h>
+#include <nx-X11/Xauth.h>
+#include <nx-X11/Xos.h>
 #ifdef XTHREADS
-#include <X11/Xthreads.h>
+#include <nx-X11/Xthreads.h>
 #endif
 #ifdef hpux
 #define X_INCLUDE_NETDB_H
 #define XOS_USE_NO_LOCKING
-#include <X11/Xos_r.h>
+#include <nx-X11/Xos_r.h>
 #endif
 
 static int
