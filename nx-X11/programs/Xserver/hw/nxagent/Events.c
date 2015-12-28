@@ -66,7 +66,7 @@
 #define Window     XlibWindow
 #define Atom   XlibAtom
 #define Time XlibXID
-#include <nx-X11/extensions/Xfixes.h>
+#include "X11/include/Xfixes_nxagent.h"
 #undef Window
 #undef Atom
 #undef Time

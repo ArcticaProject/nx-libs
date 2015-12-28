@@ -34,7 +34,7 @@
 #else
 
 #include <nx-X11/extensions/composite.h>
-#include <nx-X11/extensions/Xfixes.h>
+#include "X11/include/Xfixes_nxagent.h"
 
 #endif
 

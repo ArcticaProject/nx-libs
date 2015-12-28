@@ -33,7 +33,7 @@
 
 #include "gcstruct.h"
 #include "xfixeswire.h"
-#include <nx-X11/extensions/Xfixes.h>
+#include "X11/include/Xfixes_nxagent.h"
 
 /*
  * Use asyncronous get property replies.
