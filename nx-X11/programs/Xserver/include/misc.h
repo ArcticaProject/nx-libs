@@ -86,6 +86,15 @@ extern unsigned long serverGeneration;
 /* Don't let Xdefs.h define 'pointer' */
 #define _XTYPEDEF_POINTER       1
 #endif /* _XTYPEDEF_POINTER */
+
+/* FIXME: for building this code against Xlib versions older than apprx. 04/2014
+ * we still have to define the pointer type via Xdefs.h.
+ *
+ * The nx-libs code itself does not require the pointer definition.
+ *
+ */
+#undef _XTYPEDEF_POINTER
+
 #include <nx-X11/Xdefs.h>
 
 #ifndef IN_MODULE
