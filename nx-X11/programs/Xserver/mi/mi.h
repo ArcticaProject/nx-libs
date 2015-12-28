@@ -263,7 +263,7 @@ extern void miPolyGlyphBlt(
     int /*y*/,
     unsigned int /*nglyph*/,
     CharInfoPtr * /*ppci*/,
-    pointer /*pglyphBase*/
+    void * /*pglyphBase*/
 );
 
 extern void miImageGlyphBlt(
@@ -273,7 +273,7 @@ extern void miImageGlyphBlt(
     int /*y*/,
     unsigned int /*nglyph*/,
     CharInfoPtr * /*ppci*/,
-    pointer /*pglyphBase*/
+    void * /*pglyphBase*/
 );
 
 /* mipoly.c */
@@ -438,7 +438,7 @@ extern Bool miModifyPixmapHeader(
     int /*depth*/,
     int /*bitsPerPixel*/,
     int /*devKind*/,
-    pointer /*pPixData*/
+    void * /*pPixData*/
 );
 
 extern Bool miCloseScreen(
@@ -453,12 +453,12 @@ extern Bool miCreateScreenResources(
 extern Bool miScreenDevPrivateInit(
     ScreenPtr /*pScreen*/,
     int /*width*/,
-    pointer /*pbits*/
+    void * /*pbits*/
 );
 
 extern Bool miScreenInit(
     ScreenPtr /*pScreen*/,
-    pointer /*pbits*/,
+    void * /*pbits*/,
     int /*xsize*/,
     int /*ysize*/,
     int /*dpix*/,

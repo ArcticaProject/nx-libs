@@ -91,7 +91,7 @@ struct _rrPropertyValue {
     Atom	    type;       /* ignored by server */
     short	    format;     /* format of data for swapping - 8,16,32 */
     long	    size;	/* size of data in (format/8) bytes */
-    pointer         data;	/* private to client */
+    void            *data;	/* private to client */
 };
 
 struct _rrProperty {
@@ -283,7 +283,7 @@ extern int rrPrivIndex;
 
 #define rrGetScrPriv(pScr)  ((rrScrPrivPtr) (pScr)->devPrivates[rrPrivIndex].ptr)
 #define rrScrPriv(pScr)	rrScrPrivPtr    pScrPriv = rrGetScrPriv(pScr)
-#define SetRRScreen(s,p) ((s)->devPrivates[rrPrivIndex].ptr = (pointer) (p))
+#define SetRRScreen(s,p) ((s)->devPrivates[rrPrivIndex].ptr = (void *) (p))
 
 #endif
 
@@ -785,7 +785,7 @@ RRPostPendingProperties (RROutputPtr output);
 int
 RRChangeOutputProperty (RROutputPtr output, Atom property, Atom type,
 			int format, int mode, unsigned long len,
-			pointer value, Bool sendevent, Bool pending);
+			void * value, Bool sendevent, Bool pending);
 
 int
 RRConfigureOutputProperty (RROutputPtr output, Atom property,

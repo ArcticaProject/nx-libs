@@ -382,7 +382,7 @@ CreateColormap (Colormap mid, ScreenPtr pScreen, VisualPtr pVisual,
 	    pmap->numPixelsBlue[client] = size;
 	}
     }
-    if (!AddResource(mid, RT_COLORMAP, (pointer)pmap))
+    if (!AddResource(mid, RT_COLORMAP, (void *)pmap))
 	return (BadAlloc);
     /* If the device wants a chance to initialize the colormap in any way,
      * this is it.  In specific, if this is a Static colormap, this is the
@@ -422,7 +422,7 @@ CreateColormap (Colormap mid, ScreenPtr pScreen, VisualPtr pVisual,
  * \param value  must conform to DeleteType
  */
 int
-FreeColormap (pointer value, XID mid)
+FreeColormap (void * value, XID mid)
 {
     int		i;
     register EntryPtr pent;
@@ -431,7 +431,7 @@ FreeColormap (pointer value, XID mid)
     if(CLIENT_ID(mid) != SERVER_ID)
     {
         (*pmap->pScreen->UninstallColormap) (pmap);
-        WalkTree(pmap->pScreen, (VisitWindowProcPtr)TellNoMap, (pointer) &mid);
+        WalkTree(pmap->pScreen, (VisitWindowProcPtr)TellNoMap, (void *) &mid);
     }
 
     /* This is the device's chance to undo anything it needs to, especially
@@ -506,7 +506,7 @@ TellNoMap (WindowPtr pwin, Colormap *pmid)
 
 /* Tell window that pmid got uninstalled */
 int
-TellLostMap (WindowPtr pwin, pointer value)
+TellLostMap (WindowPtr pwin, void * value)
 {
     Colormap 	*pmid = (Colormap *)value;
     xEvent 	xE;
@@ -531,7 +531,7 @@ TellLostMap (WindowPtr pwin, pointer value)
 
 /* Tell window that pmid got installed */
 int
-TellGainedMap (WindowPtr pwin, pointer value)
+TellGainedMap (WindowPtr pwin, void * value)
 {
     Colormap 	*pmid = (Colormap *)value;
     xEvent 	xE;
@@ -974,7 +974,7 @@ AllocColor (ColormapPtr pmap,
 	}
 	pcr->mid = pmap->mid;
 	pcr->client = client;
-	if (!AddResource(FakeClientID(client), RT_CMAPENTRY, (pointer)pcr))
+	if (!AddResource(FakeClientID(client), RT_CMAPENTRY, (void *)pcr))
 	    return (BadAlloc);
     }
     return (Success);
@@ -1599,7 +1599,7 @@ FreePixels(register ColormapPtr pmap, register int client)
  *  \unused fakeid
  */
 int
-FreeClientPixels (pointer value, XID fakeid)
+FreeClientPixels (void * value, XID fakeid)
 {
     ColormapPtr pmap;
     colorResource *pcr = (colorResource *)value;
@@ -1674,7 +1674,7 @@ AllocColorCells (int client, ColormapPtr pmap, int colors, int planes,
     {
 	pcr->mid = pmap->mid;
 	pcr->client = client;
-	if (!AddResource(FakeClientID(client), RT_CMAPENTRY, (pointer)pcr))
+	if (!AddResource(FakeClientID(client), RT_CMAPENTRY, (void *)pcr))
 	    ok = BadAlloc;
     } else if (pcr)
 	xfree(pcr);
@@ -1765,7 +1765,7 @@ AllocColorPlanes (int client, ColormapPtr pmap, int colors,
     {
 	pcr->mid = pmap->mid;
 	pcr->client = client;
-	if (!AddResource(FakeClientID(client), RT_CMAPENTRY, (pointer)pcr))
+	if (!AddResource(FakeClientID(client), RT_CMAPENTRY, (void *)pcr))
 	    ok = BadAlloc;
     } else if (pcr)
 	xfree(pcr);

@@ -179,7 +179,7 @@ typedef struct _miArcSlice {
 			       ((slw > 1) || (ine != inxk)))
 
 extern int miFreeArcCache(
-    pointer /*data*/,
+    void * /*data*/,
     XID /*id*/
 );
 

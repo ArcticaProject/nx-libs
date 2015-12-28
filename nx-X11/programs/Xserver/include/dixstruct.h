@@ -93,8 +93,8 @@ typedef struct _Window *SaveSetElt;
 typedef struct _Client {
     int         index;
     Mask        clientAsMask;
-    pointer     requestBuffer;
-    pointer     osPrivate;	/* for OS layer, including scheduler */
+    void        *requestBuffer;
+    void        *osPrivate;	/* for OS layer, including scheduler */
     Bool        swapped;
     ReplySwapPtr pSwapReplyFunc;
     XID         errorValue;
@@ -109,7 +109,7 @@ typedef struct _Client {
     GContext    lastGCID;
     SaveSetElt	*saveSet;
     int         numSaved;
-    pointer     screenPrivate[MAXSCREENS];
+    void        *screenPrivate[MAXSCREENS];
     int         (**requestVector) (
 		ClientPtr /* pClient */);
     CARD32	req_len;		/* length of current request */
@@ -136,12 +136,12 @@ typedef struct _Client {
 #ifdef XCSECURITY
     XID		authId;
     unsigned int trustLevel;
-    pointer (* CheckAccess)(
+    void * (* CheckAccess)(
 	    ClientPtr /*pClient*/,
 	    XID /*id*/,
 	    RESTYPE /*classes*/,
 	    Mask /*access_mode*/,
-	    pointer /*resourceval*/);
+	    void * /*resourceval*/);
 #endif
 #ifdef XAPPGROUP
     struct _AppGroupRec*	appgroup;
@@ -187,10 +187,10 @@ typedef struct _WorkQueue {
     struct _WorkQueue *next;
     Bool        (*function) (
 		ClientPtr	/* pClient */,
-		pointer		/* closure */
+		void *		/* closure */
 );
     ClientPtr   client;
-    pointer     closure;
+    void        *closure;
 }           WorkQueueRec;
 
 extern TimeStamp currentTime;
@@ -204,7 +204,7 @@ extern TimeStamp ClientTimeToServerTime(CARD32 /*c*/);
 
 typedef struct _CallbackRec {
   CallbackProcPtr proc;
-  pointer data;
+  void * data;
   Bool deleted;
   struct _CallbackRec *next;
 } CallbackRec, *CallbackPtr;

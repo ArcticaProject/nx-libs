@@ -121,7 +121,7 @@ RRDeleteOutputProperty (RROutputPtr output, Atom property)
 int
 RRChangeOutputProperty (RROutputPtr output, Atom property, Atom type,
 			int format, int mode, unsigned long len,
-			pointer value, Bool sendevent, Bool pending)
+			void * value, Bool sendevent, Bool pending)
 {
     RRPropertyPtr		    prop;
     xRROutputPropertyNotifyEvent    event;
@@ -167,10 +167,10 @@ RRChangeOutputProperty (RROutputPtr output, Atom property, Atom type,
 
     if (mode == PropModeReplace || len > 0)
     {
-	pointer	    new_data = NULL, old_data = NULL;
+	void *new_data = NULL, *old_data = NULL;
 
 	total_size = total_len * size_in_bytes;
-	new_value.data = (pointer)xalloc (total_size);
+	new_value.data = (void *)xalloc (total_size);
 	if (!new_value.data && total_size)
 	{
 	    if (add)
@@ -187,13 +187,13 @@ RRChangeOutputProperty (RROutputPtr output, Atom property, Atom type,
 	    old_data = NULL;
 	    break;
 	case PropModeAppend:
-	    new_data = (pointer) (((char *) new_value.data) + 
+	    new_data = (void *) (((char *) new_value.data) + 
 				  (prop_value->size * size_in_bytes));
 	    old_data = new_value.data;
 	    break;
 	case PropModePrepend:
 	    new_data = new_value.data;
-	    old_data = (pointer) (((char *) new_value.data) + 
+	    old_data = (void *) (((char *) new_value.data) + 
 				  (prop_value->size * size_in_bytes));
 	    break;
 	}
@@ -534,7 +534,7 @@ ProcRRChangeOutputProperty (ClientPtr client)
 
     err = RRChangeOutputProperty(output, stuff->property,
 				 stuff->type, (int)format,
-				 (int)mode, len, (pointer)&stuff[1], TRUE, TRUE);
+				 (int)mode, len, (void *)&stuff[1], TRUE, TRUE);
     if (err != Success)
 	return err;
     else

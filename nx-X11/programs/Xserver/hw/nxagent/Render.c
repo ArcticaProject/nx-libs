@@ -188,10 +188,10 @@ void nxagentFreeGlyphs(GlyphSetPtr glyphSet, CARD32 *gids, int nglyph);
 
 void nxagentFreeGlyphSet(GlyphSetPtr glyphSet);
 
-void nxagentSetPictureTransform(PicturePtr pPicture, pointer transform);
+void nxagentSetPictureTransform(PicturePtr pPicture, void * transform);
 
 void nxagentSetPictureFilter(PicturePtr pPicture, char *filter, int name_size,
-                                 pointer params, int nparams);
+                                 void * params, int nparams);
 
 Bool nxagentReconnectAllGlyphSet(void *p);
 
@@ -2337,7 +2337,7 @@ void nxagentFreeGlyphs(GlyphSetPtr glyphSet, CARD32 *gids, int nglyph)
   }
 }
 
-void nxagentSetPictureTransform(PicturePtr pPicture, pointer transform)
+void nxagentSetPictureTransform(PicturePtr pPicture, void * transform)
 {
   #ifdef TEST
   fprintf(stderr, "nxagentSetPictureTransform: Going to set transform [%p] to picture at [%p].\n",
@@ -2358,7 +2358,7 @@ FIXME: Is this useful or just a waste of bandwidth?
 }
 
 void nxagentSetPictureFilter(PicturePtr pPicture, char *filter, int name_size,
-                                 pointer params, int nparams)
+                                 void * params, int nparams)
 {
   char *szFilter = Xmalloc(name_size + 1);
 
@@ -2561,7 +2561,7 @@ Bool nxagentReconnectAllGlyphSet(void *p)
   return success;
 }
 
-void nxagentReconnectPicture(pointer p0, XID x1, void *p2)
+void nxagentReconnectPicture(void * p0, XID x1, void *p2)
 {
   PicturePtr pPicture = (PicturePtr) p0;
   Bool *pBool = (Bool *) p2;
@@ -2737,7 +2737,7 @@ Bool nxagentReconnectAllPicture(void *p)
   return True;
 }
 
-void nxagentDisconnectPicture(pointer p0, XID x1, void* p2)
+void nxagentDisconnectPicture(void * p0, XID x1, void* p2)
 {
   PicturePtr pPicture = (PicturePtr) p0;
   Bool *pBool = (Bool *) p2;

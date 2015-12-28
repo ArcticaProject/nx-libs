@@ -128,7 +128,7 @@ miInitOverlay(
     if(!(pScreenPriv = xalloc(sizeof(miOverlayScreenRec))))
 	return FALSE;
 
-    pScreen->devPrivates[miOverlayScreenIndex].ptr = (pointer)pScreenPriv;
+    pScreen->devPrivates[miOverlayScreenIndex].ptr = (void *)pScreenPriv;
 
     pScreenPriv->InOverlay = inOverlayFunc;
     pScreenPriv->MakeTransparent = transFunc;
@@ -1105,7 +1105,7 @@ typedef struct {
 static int
 miOverlayRecomputeExposures (
     WindowPtr	pWin,
-    pointer	value 
+    void *	value 
 ){
     register ScreenPtr pScreen;
     miOverlayTwoRegions	*pValid = (miOverlayTwoRegions*)value;
@@ -1503,7 +1503,7 @@ miOverlayResizeWindow(
 		TwoRegions.under = gravitate2[g];
 
 		TraverseTree (pChild, miOverlayRecomputeExposures, 
-					(pointer)(&TwoRegions));
+					(void *)(&TwoRegions));
 	    }
 
 	    /*

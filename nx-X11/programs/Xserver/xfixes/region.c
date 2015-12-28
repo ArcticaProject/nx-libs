@@ -39,7 +39,7 @@ extern int RenderErrBase;
 RESTYPE	    RegionResType;
 
 static int
-RegionResFree (pointer data, XID id)
+RegionResFree (void * data, XID id)
 {
     RegionPtr    pRegion = (RegionPtr) data;
 
@@ -87,7 +87,7 @@ ProcXFixesCreateRegion (ClientPtr client)
     pRegion = RECTS_TO_REGION(0, things, (xRectangle *) (stuff + 1), CT_UNSORTED);
     if (!pRegion)
 	return BadAlloc;
-    if (!AddResource (stuff->region, RegionResType, (pointer) pRegion))
+    if (!AddResource (stuff->region, RegionResType, (void *) pRegion))
 	return BadAlloc;
     
     return(client->noClientException);
@@ -132,7 +132,7 @@ ProcXFixesCreateRegionFromBitmap (ClientPtr client)
     if (!pRegion)
 	return BadAlloc;
     
-    if (!AddResource (stuff->region, RegionResType, (pointer) pRegion))
+    if (!AddResource (stuff->region, RegionResType, (void *) pRegion))
 	return BadAlloc;
     
     return(client->noClientException);
@@ -196,7 +196,7 @@ ProcXFixesCreateRegionFromWindow (ClientPtr client)
 	pRegion = XFixesRegionCopy (pRegion);
     if (!pRegion)
 	return BadAlloc;
-    if (!AddResource (stuff->region, RegionResType, (pointer) pRegion))
+    if (!AddResource (stuff->region, RegionResType, (void *) pRegion))
 	return BadAlloc;
     
     return(client->noClientException);
@@ -243,7 +243,7 @@ ProcXFixesCreateRegionFromGC (ClientPtr client)
 	return BadImplementation;   /* assume sane server bits */
     }
     
-    if (!AddResource (stuff->region, RegionResType, (pointer) pRegion))
+    if (!AddResource (stuff->region, RegionResType, (void *) pRegion))
 	return BadAlloc;
     
     return(client->noClientException);
@@ -292,7 +292,7 @@ ProcXFixesCreateRegionFromPicture (ClientPtr client)
 	return BadImplementation;   /* assume sane server bits */
     }
     
-    if (!AddResource (stuff->region, RegionResType, (pointer) pRegion))
+    if (!AddResource (stuff->region, RegionResType, (void *) pRegion))
 	return BadAlloc;
     
     return(client->noClientException);
@@ -646,7 +646,7 @@ ProcXFixesSetGCClipRegion (ClientPtr client)
     vals[0] = stuff->xOrigin;
     vals[1] = stuff->yOrigin;
     DoChangeGC (pGC, GCClipXOrigin|GCClipYOrigin, vals, 0);
-    (*pGC->funcs->ChangeClip)(pGC, pRegion ? CT_REGION : CT_NONE, (pointer)pRegion, 0);
+    (*pGC->funcs->ChangeClip)(pGC, pRegion ? CT_REGION : CT_NONE, (void *)pRegion, 0);
 
     return (client->noClientException);
 }

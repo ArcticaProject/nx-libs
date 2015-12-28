@@ -103,7 +103,7 @@ is" without express or implied warranty.
 static int reconnectFlexibility;
 
 static void nxagentCleanCacheAfterReconnect(void);
-static void nxagentFontReconnect(FontPtr, XID, pointer);
+static void nxagentFontReconnect(FontPtr, XID, void *);
 static XFontStruct *nxagentLoadBestQueryFont(Display* dpy, char *fontName, FontPtr pFont);
 static XFontStruct *nxagentLoadQueryFont(register Display *dpy , char *fontName , FontPtr pFont);
 int nxagentFreeFont(XFontStruct *fs);
@@ -486,7 +486,7 @@ Bool nxagentFontLookUp(const char *name)
 
 Bool nxagentRealizeFont(ScreenPtr pScreen, FontPtr pFont)
 {
-  pointer priv;
+  void * priv;
   Atom name_atom, value_atom;
   int nprops;
   FontPropPtr props;
@@ -538,7 +538,7 @@ Bool nxagentRealizeFont(ScreenPtr pScreen, FontPtr pFont)
      name = origName;
   }
 
-  priv = (pointer)xalloc(sizeof(nxagentPrivFont));
+  priv = (void *)xalloc(sizeof(nxagentPrivFont));
   FontSetPrivate(pFont, nxagentFontPrivateIndex, priv);
 
   nxagentFontPriv(pFont) -> mirrorID = 0;
@@ -693,7 +693,7 @@ Bool nxagentUnrealizeFont(ScreenPtr pScreen, FontPtr pFont)
   return True;
 }
 
-int nxagentDestroyNewFontResourceType(pointer p, XID id)
+int nxagentDestroyNewFontResourceType(void * p, XID id)
 {
   #ifdef TEST
   fprintf(stderr, "nxagentDestroyNewFontResourceType: Destroying mirror id [%ld] for font at [%p].\n",
@@ -858,7 +858,7 @@ static XFontStruct *nxagentLoadBestQueryFont(Display* dpy, char *fontName, FontP
   return fontStruct;
 }
 
-static void nxagentFontDisconnect(FontPtr pFont, XID param1, pointer param2)
+static void nxagentFontDisconnect(FontPtr pFont, XID param1, void * param2)
 {
   nxagentPrivFont *privFont;
   Bool *pBool = (Bool*)param2;
@@ -959,7 +959,7 @@ static void nxagentCollectFailedFont(FontPtr fpt, XID id)
   nxagentFailedToReconnectFonts.index++;
 }
 
-static void nxagentFontReconnect(FontPtr pFont, XID param1, pointer param2)
+static void nxagentFontReconnect(FontPtr pFont, XID param1, void * param2)
 {
   int i;
   nxagentPrivFont *privFont;
@@ -1164,7 +1164,7 @@ Bool nxagentReconnectAllFonts(void *p0)
   return fontSuccess;
 }
 
-static void nxagentFailedFontReconnect(FontPtr pFont, XID param1, pointer param2)
+static void nxagentFailedFontReconnect(FontPtr pFont, XID param1, void * param2)
 {
   int i;
   nxagentPrivFont *privFont;

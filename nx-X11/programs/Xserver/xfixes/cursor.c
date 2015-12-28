@@ -76,7 +76,7 @@ typedef struct _CursorScreen {
 
 #define GetCursorScreen(s)	((CursorScreenPtr) ((s)->devPrivates[CursorScreenPrivateIndex].ptr))
 #define GetCursorScreenIfSet(s) ((CursorScreenPrivateIndex != -1) ? GetCursorScreen(s) : NULL)
-#define SetCursorScreen(s,p)	((s)->devPrivates[CursorScreenPrivateIndex].ptr = (pointer) (p))
+#define SetCursorScreen(s,p)	((s)->devPrivates[CursorScreenPrivateIndex].ptr = (void *) (p))
 #define Wrap(as,s,elt,func)	(((as)->elt = (s)->elt), (s)->elt = func)
 #define Unwrap(as,s,elt)	((s)->elt = (as)->elt)
 
@@ -172,13 +172,13 @@ XFixesSelectCursorInput (ClientPtr	pClient,
 	 */
 	if (!LookupIDByType(pWindow->drawable.id, CursorWindowType))
 	    if (!AddResource (pWindow->drawable.id, CursorWindowType,
-			      (pointer) pWindow))
+			      (void *) pWindow))
 	    {
 		xfree (e);
 		return BadAlloc;
 	    }
 
-	if (!AddResource (e->clientResource, CursorClientType, (pointer) e))
+	if (!AddResource (e->clientResource, CursorClientType, (void *) e))
 	    return BadAlloc;
 
 	*prev = e;
@@ -520,13 +520,13 @@ SProcXFixesGetCursorImageAndName (ClientPtr client)
  * whether it should be replaced with a reference to pCursor.
  */
 
-typedef Bool (*TestCursorFunc) (CursorPtr pOld, pointer closure);
+typedef Bool (*TestCursorFunc) (CursorPtr pOld, void * closure);
 
 typedef struct {
     RESTYPE type;
     TestCursorFunc testCursor;
     CursorPtr pNew;
-    pointer closure;
+    void * closure;
 } ReplaceCursorLookupRec, *ReplaceCursorLookupPtr;
 
 static const RESTYPE    CursorRestypes[] = {
@@ -536,7 +536,7 @@ static const RESTYPE    CursorRestypes[] = {
 #define NUM_CURSOR_RESTYPES (sizeof (CursorRestypes) / sizeof (CursorRestypes[0]))
 
 static Bool
-ReplaceCursorLookup (pointer value, XID id, pointer closure)
+ReplaceCursorLookup (void * value, XID id, void * closure)
 {
     ReplaceCursorLookupPtr  rcl = (ReplaceCursorLookupPtr) closure;
     WindowPtr		    pWin;
@@ -583,7 +583,7 @@ ReplaceCursorLookup (pointer value, XID id, pointer closure)
 static void
 ReplaceCursor (CursorPtr pCursor,
 	       TestCursorFunc testCursor,
-	       pointer closure)
+	       void * closure)
 {
     int	clientIndex;
     int resIndex;
@@ -612,7 +612,7 @@ ReplaceCursor (CursorPtr pCursor,
 	    LookupClientResourceComplex (clients[clientIndex], 
 					 rcl.type, 
 					 ReplaceCursorLookup,
-					 (pointer) &rcl);
+					 (void *) &rcl);
 	}
     }
     /* this "knows" that WindowHasNewCursor doesn't depend on it's argument */
@@ -620,7 +620,7 @@ ReplaceCursor (CursorPtr pCursor,
 }
 
 static Bool 
-TestForCursor (CursorPtr pCursor, pointer closure)
+TestForCursor (CursorPtr pCursor, void * closure)
 {
     return (pCursor == (CursorPtr) closure);
 }
@@ -635,7 +635,7 @@ ProcXFixesChangeCursor (ClientPtr client)
     VERIFY_CURSOR (pSource, stuff->source, client, SecurityReadAccess);
     VERIFY_CURSOR (pDestination, stuff->destination, client, SecurityWriteAccess);
 
-    ReplaceCursor (pSource, TestForCursor, (pointer) pDestination);
+    ReplaceCursor (pSource, TestForCursor, (void *) pDestination);
     return (client->noClientException);
 }
 
@@ -653,7 +653,7 @@ SProcXFixesChangeCursor (ClientPtr client)
 }
 
 static Bool
-TestForCursorName (CursorPtr pCursor, pointer closure)
+TestForCursorName (CursorPtr pCursor, void * closure)
 {
     return (pCursor->name == (Atom) closure);
 }
@@ -671,7 +671,7 @@ ProcXFixesChangeCursorByName (ClientPtr client)
     tchar = (char *) &stuff[1];
     name = MakeAtom (tchar, stuff->nbytes, FALSE);
     if (name)
-	ReplaceCursor (pSource, TestForCursorName, (pointer) name);
+	ReplaceCursor (pSource, TestForCursorName, (void *) name);
     return (client->noClientException);
 }
 
@@ -689,7 +689,7 @@ SProcXFixesChangeCursorByName (ClientPtr client)
 }
 
 static int
-CursorFreeClient (pointer data, XID id)
+CursorFreeClient (void * data, XID id)
 {
     CursorEventPtr	old = (CursorEventPtr) data;
     CursorEventPtr	*prev, e;
@@ -707,7 +707,7 @@ CursorFreeClient (pointer data, XID id)
 }
 
 static int
-CursorFreeWindow (pointer data, XID id)
+CursorFreeWindow (void * data, XID id)
 {
     WindowPtr		pWindow = (WindowPtr) data;
     CursorEventPtr	e, next;

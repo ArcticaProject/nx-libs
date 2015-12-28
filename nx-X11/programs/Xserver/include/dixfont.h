@@ -45,9 +45,9 @@ extern void QueueFontWakeup(FontPathElementPtr /*fpe*/);
 
 extern void RemoveFontWakeup(FontPathElementPtr /*fpe*/);
 
-extern void FontWakeup(pointer /*data*/,
+extern void FontWakeup(void * /*data*/,
 		       int /*count*/,
-		       pointer /*LastSelectMask*/);
+		       void * /*LastSelectMask*/);
 
 extern int OpenFont(ClientPtr /*client*/,
 		    XID /*fid*/,
@@ -55,7 +55,7 @@ extern int OpenFont(ClientPtr /*client*/,
 		    unsigned /*lenfname*/,
 		    char * /*pfontname*/);
 
-extern int CloseFont(pointer /*pfont*/,
+extern int CloseFont(void * /*pfont*/,
 		     XID /*fid*/);
 
 typedef struct _xQueryFontReply *xQueryFontReplyPtr;

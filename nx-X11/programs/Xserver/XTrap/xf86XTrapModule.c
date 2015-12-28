@@ -41,11 +41,11 @@ static XF86ModuleVersionInfo xtrapVersRec =
 
 XF86ModuleData xtrapModuleData = { &xtrapVersRec, xtrapSetup, NULL };
 
-static pointer
-xtrapSetup(pointer module, pointer opts, int *errmaj, int *errmin) {
+static void *
+xtrapSetup(void * module, void * opts, int *errmaj, int *errmin) {
     LoadExtension(&xtrapExt, FALSE);
     /* Need a non-NULL return value to indicate success */
-    return (pointer)1;
+    return (void *)1;
 }
 
 #endif /* XFree86LOADER */

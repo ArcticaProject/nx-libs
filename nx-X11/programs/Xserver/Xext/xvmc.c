@@ -66,7 +66,7 @@ typedef struct {
 
 
 static int
-XvMCDestroyContextRes(pointer data, XID id)
+XvMCDestroyContextRes(void * data, XID id)
 {
    XvMCContextPtr pContext = (XvMCContextPtr)data;
    
@@ -82,7 +82,7 @@ XvMCDestroyContextRes(pointer data, XID id)
 }
 
 static int
-XvMCDestroySurfaceRes(pointer data, XID id)
+XvMCDestroySurfaceRes(void * data, XID id)
 {
    XvMCSurfacePtr pSurface = (XvMCSurfacePtr)data;
    XvMCContextPtr pContext = pSurface->context;
@@ -91,14 +91,14 @@ XvMCDestroySurfaceRes(pointer data, XID id)
    (*pScreenPriv->adaptors[pContext->adapt_num].DestroySurface)(pSurface); 
    xfree(pSurface);
 
-   XvMCDestroyContextRes((pointer)pContext, pContext->context_id);
+   XvMCDestroyContextRes((void *)pContext, pContext->context_id);
 
    return Success;
 }
 
 
 static int
-XvMCDestroySubpictureRes(pointer data, XID id)
+XvMCDestroySubpictureRes(void * data, XID id)
 {
    XvMCSubpicturePtr pSubpict = (XvMCSubpicturePtr)data;
    XvMCContextPtr pContext = pSubpict->context;
@@ -107,7 +107,7 @@ XvMCDestroySubpictureRes(pointer data, XID id)
    (*pScreenPriv->adaptors[pContext->adapt_num].DestroySubpicture)(pSubpict); 
    xfree(pSubpict);
 
-   XvMCDestroyContextRes((pointer)pContext, pContext->context_id);
+   XvMCDestroyContextRes((void *)pContext, pContext->context_id);
 
    return Success;
 }
@@ -729,7 +729,7 @@ XvMCScreenInit(ScreenPtr pScreen, int num, XvMCAdaptorPtr pAdapt)
    if(!(pScreenPriv = (XvMCScreenPtr)xalloc(sizeof(XvMCScreenRec))))
 	return BadAlloc;
 
-   pScreen->devPrivates[XvMCScreenIndex].ptr = (pointer)pScreenPriv;
+   pScreen->devPrivates[XvMCScreenIndex].ptr = (void *)pScreenPriv;
 
    pScreenPriv->CloseScreen = pScreen->CloseScreen;
    pScreen->CloseScreen = XvMCCloseScreen;

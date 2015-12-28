@@ -672,7 +672,7 @@ static GCPtr	screenContext[MAXSCREENS];
 /*ARGSUSED*/
 static int
 tossGC (
-    pointer value,
+    void * value,
     XID id)
 {
     GCPtr pGC = (GCPtr)value;
@@ -757,7 +757,7 @@ int what;
 	    gcmask |= GCForeground | GCFillStyle;
 	    break;
 	case BackgroundPixmap:
-	    newValues[TILE].ptr = (pointer)pWin->background.pixmap;
+	    newValues[TILE].ptr = (void *)pWin->background.pixmap;
 	    newValues[FILLSTYLE].val = FillTiled;
 	    gcmask |= GCTile | GCFillStyle | GCTileStipXOrigin | GCTileStipYOrigin;
 	    break;
@@ -773,7 +773,7 @@ int what;
 	}
 	else
 	{
-	    newValues[TILE].ptr = (pointer)pWin->border.pixmap;
+	    newValues[TILE].ptr = (void *)pWin->border.pixmap;
 	    newValues[FILLSTYLE].val = FillTiled;
 	    gcmask |= GCTile | GCFillStyle | GCTileStipXOrigin | GCTileStipYOrigin;
 	}
@@ -846,7 +846,7 @@ int what;
 		return;
 	    numGCs++;
 	    if (!AddResource(FakeClientID(0), ResType,
-			     (pointer)screenContext[i]))
+			     (void *)screenContext[i]))
 	        return;
 	}
 	pGC = screenContext[i];

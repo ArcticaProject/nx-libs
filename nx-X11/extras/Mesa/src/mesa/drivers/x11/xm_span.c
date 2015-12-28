@@ -115,7 +115,7 @@ static unsigned long read_pixel( XMesaDisplay *dpy,
       XMesaDestroyImage( pixel );
    }
 #else
-   (*dpy->GetImage)(d, x, y, 1, 1, ZPixmap, ~0L, (pointer)&p);
+   (*dpy->GetImage)(d, x, y, 1, 1, ZPixmap, ~0L, (void *)&p);
 #endif
    return p;
 }
@@ -3834,7 +3834,7 @@ get_row_ci(GLcontext *ctx, struct gl_renderbuffer *rb,
 #else
       (*xmesa->display->GetImage)(xrb->drawable,
 				  x, y, n, 1, ZPixmap,
-				  ~0L, (pointer)index);
+				  ~0L, (void *)index);
 #endif
    }
    else if (xrb->ximage) {
@@ -3869,7 +3869,7 @@ get_row_rgba(GLcontext *ctx, struct gl_renderbuffer *rb,
       error = (!span->data);
       (*xmesa->display->GetImage)(xrb->drawable,
 				  x, YFLIP(xrb, y), n, 1, ZPixmap,
-				  ~0L, (pointer)span->data);
+				  ~0L, (void *)span->data);
 #else
       int k;
       y = YFLIP(xrb, y);

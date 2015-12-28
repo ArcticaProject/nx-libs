@@ -262,7 +262,7 @@ fbPolyGlyphBlt (DrawablePtr	pDrawable,
 		int		y,
 		unsigned int	nglyph,
 		CharInfoPtr	*ppci,
-		pointer		pglyphBase)
+		void *		pglyphBase)
 {
     FbGCPrivPtr	    pPriv = fbGetGCPrivate (pGC);
     CharInfoPtr	    pci;
@@ -350,7 +350,7 @@ fbImageGlyphBlt (DrawablePtr	pDrawable,
 		 int		y,
 		 unsigned int	nglyph,
 		 CharInfoPtr	*ppciInit,
-		 pointer	pglyphBase)
+		 void *	pglyphBase)
 {
     FbGCPrivPtr	    pPriv = fbGetGCPrivate(pGC);
     CharInfoPtr	    *ppci;

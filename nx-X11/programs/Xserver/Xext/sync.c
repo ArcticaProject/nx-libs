@@ -103,40 +103,40 @@ static SyncCounter **SysCounterList = NULL;
 
 static int
 FreeAlarm(
-    pointer /* addr */,
+    void * /* addr */,
     XID /* id */
 );
 
 static int
 FreeAlarmClient(
-    pointer /* value */,
+    void * /* value */,
     XID /* id */
 );
 
 static int
 FreeAwait(
-    pointer /* addr */,
+    void * /* addr */,
     XID /* id */
 );
 
 static void
 ServertimeBracketValues(
-    pointer /* pCounter */,
+    void * /* pCounter */,
     CARD64 * /* pbracket_less */,
     CARD64 * /* pbracket_greater */
 );
 
 static void
 ServertimeQueryValue(
-    pointer /* pCounter */,
+    void * /* pCounter */,
     CARD64 * /* pValue_return */
 );
 
 static void
 ServertimeWakeupHandler(
-    pointer /* env */,
+    void * /* env */,
     int /* rc */,
-    pointer /* LastSelectMask */
+    void * /* LastSelectMask */
 );
 
 static int 
@@ -161,9 +161,9 @@ SCounterNotifyEvent(
 
 static void
 ServertimeBlockHandler(
-    pointer  /* env */,
+    void *  /* env */,
     struct timeval ** /* wt */,
-    pointer  /* LastSelectMask */
+    void *  /* LastSelectMask */
 );
 
 static int
@@ -449,7 +449,7 @@ SyncInitTrigger(client, pTrigger, counter, changes)
 
     if (IsSystemCounter(pCounter))
     {
-	(*pCounter->pSysCounterInfo->QueryValue) ((pointer) pCounter,
+	(*pCounter->pSysCounterInfo->QueryValue) ((void *) pCounter,
 						  &pCounter->value);
     }
 
@@ -1016,9 +1016,9 @@ SyncCreateCounter(client, id, initialvalue)
     if (!(pCounter = (SyncCounter *) xalloc(sizeof(SyncCounter))))
 	return (SyncCounter *)NULL;
 
-    if (!AddResource(id, RTCounter, (pointer) pCounter))
+    if (!AddResource(id, RTCounter, (void *) pCounter))
     {
-	xfree((pointer) pCounter);
+	xfree((void *) pCounter);
 	return (SyncCounter *)NULL;
     }
 
@@ -1032,7 +1032,7 @@ SyncCreateCounter(client, id, initialvalue)
 }
 
 static int FreeCounter(
-    pointer /*env*/,
+    void * /*env*/,
     XID     /*id*/
 );
 
@@ -1040,7 +1040,7 @@ static int FreeCounter(
  * ***** System Counter utilities
  */
 
-pointer 
+void *
 SyncCreateSystemCounter(name, initial, resolution, counterType,
 			QueryValue, BracketValues)
     char           *name;
@@ -1048,10 +1048,10 @@ SyncCreateSystemCounter(name, initial, resolution, counterType,
     CARD64          resolution;
     SyncCounterType counterType;
     void            (*QueryValue) (
-        pointer /* pCounter */, 
+        void * /* pCounter */, 
         CARD64 * /* pValue_return */);
     void            (*BracketValues) (
-        pointer /* pCounter */,
+        void * /* pCounter */,
         CARD64 * /* pbracket_less */,
         CARD64 * /* pbracket_greater */);
 {
@@ -1060,7 +1060,7 @@ SyncCreateSystemCounter(name, initial, resolution, counterType,
     SysCounterList = (SyncCounter **)xrealloc(SysCounterList,
 			    (SyncNumSystemCounters+1)*sizeof(SyncCounter *));
     if (!SysCounterList)
-	return (pointer)NULL;
+	return (void *)NULL;
 
     /* this function may be called before SYNC has been initialized, so we
      * have to make sure RTCounter is created.
@@ -1070,7 +1070,7 @@ SyncCreateSystemCounter(name, initial, resolution, counterType,
 	RTCounter = CreateNewResourceType(FreeCounter);
 	if (RTCounter == 0)
 	{
-	    return (pointer)NULL;
+	    return (void *)NULL;
 	}
     }
 
@@ -1084,7 +1084,7 @@ SyncCreateSystemCounter(name, initial, resolution, counterType,
 	if (!psci)
 	{
 	    FreeResource(pCounter->id, RT_NONE);
-	    return (pointer) pCounter;
+	    return (void *) pCounter;
 	}
 	pCounter->pSysCounterInfo = psci;
 	psci->name = name;
@@ -1096,12 +1096,12 @@ SyncCreateSystemCounter(name, initial, resolution, counterType,
 	XSyncMinValue(&psci->bracket_less);
 	SysCounterList[SyncNumSystemCounters++] = pCounter;
     }
-    return (pointer) pCounter;
+    return (void *) pCounter;
 }
 
 void
 SyncDestroySystemCounter(pSysCounter)
-    pointer pSysCounter;
+    void * pSysCounter;
 {
     SyncCounter *pCounter = (SyncCounter *)pSysCounter;
     FreeResource(pCounter->id, RT_NONE);
@@ -1186,7 +1186,7 @@ SyncComputeBracketValues(pCounter, startOver)
 
     if (pnewgtval || pnewltval)
     {
-	(*psci->BracketValues)((pointer)pCounter, pnewltval, pnewgtval);
+	(*psci->BracketValues)((void *)pCounter, pnewltval, pnewgtval);
     }
 }
 
@@ -1197,7 +1197,7 @@ SyncComputeBracketValues(pCounter, startOver)
 /* ARGSUSED */
 static int
 FreeAlarm(addr, id)
-    pointer         addr;
+    void            *addr;
     XID             id;
 {
     SyncAlarm      *pAlarm = (SyncAlarm *) addr;
@@ -1224,7 +1224,7 @@ FreeAlarm(addr, id)
 /* ARGSUSED */
 static int
 FreeCounter(env, id)
-    pointer         env;
+    void            *env;
     XID             id;
 {
     SyncCounter     *pCounter = (SyncCounter *) env;
@@ -1276,7 +1276,7 @@ FreeCounter(env, id)
 /* ARGSUSED */
 static int
 FreeAwait(addr, id)
-    pointer         addr;
+    void            *addr;
     XID             id;
 {
     SyncAwaitUnion *pAwaitUnion = (SyncAwaitUnion *) addr;
@@ -1304,7 +1304,7 @@ FreeAwait(addr, id)
 /* loosely based on dix/events.c/OtherClientGone */
 static int
 FreeAlarmClient(value, id)
-    pointer value; /* must conform to DeleteType */
+    void * value; /* must conform to DeleteType */
     XID   id;
 {
     SyncAlarm *pAlarm = (SyncAlarm *)value;
@@ -1778,7 +1778,7 @@ ProcSyncQueryCounter(client)
 
     if (IsSystemCounter(pCounter))
     {
-	(*pCounter->pSysCounterInfo->QueryValue) ((pointer) pCounter,
+	(*pCounter->pSysCounterInfo->QueryValue) ((void *) pCounter,
 						  &pCounter->value);
     }
 
@@ -2406,7 +2406,7 @@ SyncExtensionInit(INITARGS)
 
 
 
-static pointer ServertimeCounter;
+static void * ServertimeCounter;
 static XSyncValue Now;
 static XSyncValue *pnext_time;
 
@@ -2424,9 +2424,9 @@ static XSyncValue *pnext_time;
  */
 /*ARGSUSED*/
 static void ServertimeBlockHandler(env, wt, LastSelectMask)
-pointer env;
+void * env;
 struct timeval **wt;
-pointer LastSelectMask;
+void * LastSelectMask;
 {
     XSyncValue delay;
     unsigned long timeout;
@@ -2455,9 +2455,9 @@ pointer LastSelectMask;
  */
 /*ARGSUSED*/
 static void ServertimeWakeupHandler(env, rc, LastSelectMask)
-pointer env;
+void * env;
 int rc;
-pointer LastSelectMask;
+void * LastSelectMask;
 {
     if (pnext_time)
     {
@@ -2472,7 +2472,7 @@ pointer LastSelectMask;
 
 static void
 ServertimeQueryValue(pCounter, pValue_return)
-    pointer pCounter;
+    void * pCounter;
     CARD64 *pValue_return;
 {
     GetTime();
@@ -2481,7 +2481,7 @@ ServertimeQueryValue(pCounter, pValue_return)
 
 static void
 ServertimeBracketValues(pCounter, pbracket_less, pbracket_greater)
-    pointer pCounter;
+    void * pCounter;
     CARD64 *pbracket_less;
     CARD64 *pbracket_greater;
 {

@@ -795,7 +795,7 @@ fb24_32ModifyPixmapHeader (PixmapPtr   pPixmap,
 			   int         depth,
 			   int         bitsPerPixel,
 			   int         devKind,
-			   pointer     pPixData);
+			   void        *pPixData);
 
 /*
  * fballpriv.c
@@ -1486,7 +1486,7 @@ fbPolyGlyphBlt (DrawablePtr	pDrawable,
 		int		y,
 		unsigned int	nglyph,
 		CharInfoPtr	*ppci,
-		pointer		pglyphBase);
+		void		*pglyphBase);
 
 void
 fbImageGlyphBlt (DrawablePtr	pDrawable,
@@ -1495,7 +1495,7 @@ fbImageGlyphBlt (DrawablePtr	pDrawable,
 		 int		y,
 		 unsigned int	nglyph,
 		 CharInfoPtr	*ppci,
-		 pointer	pglyphBase);
+		 void	        *pglyphBase);
 
 /*
  * fbimage.c
@@ -1732,7 +1732,7 @@ _fbSetWindowPixmap (WindowPtr pWindow, PixmapPtr pPixmap);
 
 Bool
 fbSetupScreen(ScreenPtr	pScreen, 
-	      pointer	pbits,		/* pointer to screen bitmap */
+	      void	*pbits,		/* pointer to screen bitmap */
 	      int	xsize, 		/* in pixels */
 	      int	ysize,
 	      int	dpix,		/* dots per inch */
@@ -1742,7 +1742,7 @@ fbSetupScreen(ScreenPtr	pScreen,
 
 Bool
 fbFinishScreenInit(ScreenPtr	pScreen,
-		   pointer	pbits,
+		   void		*pbits,
 		   int		xsize,
 		   int		ysize,
 		   int		dpix,
@@ -1752,7 +1752,7 @@ fbFinishScreenInit(ScreenPtr	pScreen,
 
 Bool
 fbScreenInit(ScreenPtr	pScreen,
-	     pointer	pbits,
+	     void	*pbits,
 	     int	xsize,
 	     int	ysize,
 	     int	dpix,

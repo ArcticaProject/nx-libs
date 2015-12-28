@@ -38,7 +38,7 @@ fbCreateWindow(WindowPtr pWin)
 {
 #ifndef FB_NO_WINDOW_PIXMAPS
     pWin->devPrivates[fbWinPrivateIndex].ptr = 
-	(pointer) fbGetScreenPixmap(pWin->drawable.pScreen);
+	(void *) fbGetScreenPixmap(pWin->drawable.pScreen);
 #endif
 #ifdef FB_SCREEN_PRIVATE
     if (pWin->drawable.bitsPerPixel == 32)

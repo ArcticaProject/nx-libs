@@ -86,7 +86,7 @@ static void miShmPutImage(XSHM_PUT_IMAGE_ARGS);
 static void fbShmPutImage(XSHM_PUT_IMAGE_ARGS);
 static PixmapPtr fbShmCreatePixmap(XSHM_CREATE_PIXMAP_ARGS);
 static int ShmDetachSegment(
-    pointer		/* value */,
+    void *		/* value */,
     XID			/* shmseg */
     );
 static void ShmResetProc(
@@ -309,7 +309,7 @@ ShmDestroyPixmap (PixmapPtr pPixmap)
 #else
 	char	*base = (char *) pPixmap->devPrivate.ptr;
 	
-	if (base != (pointer) (pPixmap + 1))
+	if (base != (void *) (pPixmap + 1))
 	{
 	    for (shmdesc = Shmsegs; shmdesc; shmdesc = shmdesc->next)
 	    {
@@ -321,7 +321,7 @@ ShmDestroyPixmap (PixmapPtr pPixmap)
 	    shmdesc = 0;
 #endif
 	if (shmdesc)
-	    ShmDetachSegment ((pointer) shmdesc, pPixmap->drawable.id);
+	    ShmDetachSegment ((void *) shmdesc, pPixmap->drawable.id);
     }
     
     pScreen->DestroyPixmap = destroyPixmap[pScreen->myNum];
@@ -465,7 +465,7 @@ ProcShmAttach(client)
 	shmdesc->next = Shmsegs;
 	Shmsegs = shmdesc;
     }
-    if (!AddResource(stuff->shmseg, ShmSegType, (pointer)shmdesc))
+    if (!AddResource(stuff->shmseg, ShmSegType, (void *)shmdesc))
 	return BadAlloc;
     return(client->noClientException);
 }
@@ -473,7 +473,7 @@ ProcShmAttach(client)
 /*ARGSUSED*/
 static int
 ShmDetachSegment(value, shmseg)
-    pointer value; /* must conform to DeleteType */
+    void * value; /* must conform to DeleteType */
     XID shmseg;
 {
     ShmDescPtr shmdesc = (ShmDescPtr)value;
@@ -548,7 +548,7 @@ fbShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
 	PixmapPtr pPixmap;
 
 	pPixmap = GetScratchPixmapHeader(dst->pScreen, w, h, depth,
-		BitsPerPixel(depth), PixmapBytePad(w, depth), (pointer)data);
+		BitsPerPixel(depth), PixmapBytePad(w, depth), (void *)data);
 	if (!pPixmap)
 	    return;
 	if (format == XYBitmap)
@@ -794,12 +794,12 @@ CreatePmap:
 
 	if (pMap) {
 #ifdef PIXPRIV
-            pMap->devPrivates[shmPixmapPrivate].ptr = (pointer) shmdesc;
+            pMap->devPrivates[shmPixmapPrivate].ptr = (void *) shmdesc;
 #endif
             shmdesc->refcnt++;
 	    pMap->drawable.serialNumber = NEXT_SERIAL_NUMBER;
 	    pMap->drawable.id = newPix->info[j].id;
-	    if (!AddResource(newPix->info[j].id, RT_PIXMAP, (pointer)pMap)) {
+	    if (!AddResource(newPix->info[j].id, RT_PIXMAP, (void *)pMap)) {
 		(*pScreen->DestroyPixmap)(pMap);
 		result = BadAlloc;
 		break;
@@ -1062,7 +1062,7 @@ fbShmCreatePixmap (pScreen, width, height, depth, addr)
 	return NullPixmap;
 
     if (!(*pScreen->ModifyPixmapHeader)(pPixmap, width, height, depth,
-	    BitsPerPixel(depth), PixmapBytePad(width, depth), (pointer)addr)) {
+	    BitsPerPixel(depth), PixmapBytePad(width, depth), (void *)addr)) {
 	(*pScreen->DestroyPixmap)(pPixmap);
 	return NullPixmap;
     }
@@ -1129,12 +1129,12 @@ CreatePmap:
     if (pMap)
     {
 #ifdef PIXPRIV
-	pMap->devPrivates[shmPixmapPrivate].ptr = (pointer) shmdesc;
+	pMap->devPrivates[shmPixmapPrivate].ptr = (void *) shmdesc;
 #endif
 	shmdesc->refcnt++;
 	pMap->drawable.serialNumber = NEXT_SERIAL_NUMBER;
 	pMap->drawable.id = stuff->pid;
-	if (AddResource(stuff->pid, RT_PIXMAP, (pointer)pMap))
+	if (AddResource(stuff->pid, RT_PIXMAP, (void *)pMap))
 	{
 	    return(client->noClientException);
 	}

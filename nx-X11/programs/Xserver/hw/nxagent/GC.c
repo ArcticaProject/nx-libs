@@ -75,7 +75,7 @@ void nxagentDisconnectGraphicContexts(void);
 GCPtr nxagentCreateGraphicContext(int depth);
 
 static void nxagentReconnectGC(void*, XID, void*);
-static void nxagentReconnectClip(GCPtr, int, pointer, int);
+static void nxagentReconnectClip(GCPtr, int, void *, int);
 static int  nxagentCompareRegions(RegionPtr, RegionPtr);
 
 struct nxagentGCRec
@@ -198,7 +198,7 @@ Bool nxagentCreateGC(GCPtr pGC)
 
   nxagentGCPriv(pGC) -> pPixmap = NULL;
 
-  AddResource(nxagentGCPriv(pGC) -> mid, RT_NX_GC, (pointer) pGC);
+  AddResource(nxagentGCPriv(pGC) -> mid, RT_NX_GC, (void *) pGC);
 
   return True;
 }
@@ -602,7 +602,7 @@ void nxagentDestroyGC(GCPtr pGC)
   miDestroyGC(pGC);
 }
 
-void nxagentChangeClip(GCPtr pGC, int type, pointer pValue, int nRects)
+void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
 {
   int i, size;
   BoxPtr pBox;
@@ -699,7 +699,7 @@ void nxagentChangeClip(GCPtr pGC, int type, pointer pValue, int nRects)
                          nxagentPixmap((PixmapPtr)pValue));
       }
 
-      pGC->clientClip = (pointer) (*pGC->pScreen->BitmapToRegion)((PixmapPtr) pValue);
+      pGC->clientClip = (void *) (*pGC->pScreen->BitmapToRegion)((PixmapPtr) pValue);
 
       nxagentGCPriv(pGC)->pPixmap = (PixmapPtr)pValue;
 
@@ -768,7 +768,7 @@ void nxagentChangeClip(GCPtr pGC, int type, pointer pValue, int nRects)
        * CT_REGION client clips.
        */
 
-      pGC->clientClip = (pointer) RECTS_TO_REGION(pGC->pScreen, nRects,
+      pGC->clientClip = (void *) RECTS_TO_REGION(pGC->pScreen, nRects,
                                                   (xRectangle *)pValue, type);
       xfree(pValue);
 
@@ -987,7 +987,7 @@ static void nxagentRestoreGCList()
   }
 }
 
-int nxagentDestroyNewGCResourceType(pointer p, XID id)
+int nxagentDestroyNewGCResourceType(void * p, XID id)
 {
   /*
    * Address of the destructor is set in Init.c.
@@ -1003,7 +1003,7 @@ int nxagentDestroyNewGCResourceType(pointer p, XID id)
   return 1;
 }
 
-static void nxagentReconnectGC(void *param0, XID param1, pointer param2)
+static void nxagentReconnectGC(void *param0, XID param1, void * param2)
 {
   XGCValues values;
   unsigned long valuemask;
@@ -1188,7 +1188,7 @@ Bool nxagentReconnectAllGCs(void *p0)
   return GCSuccess;
 }
 
-void nxagentDisconnectGC(pointer p0, XID x1, pointer p2)
+void nxagentDisconnectGC(void * p0, XID x1, void * p2)
 {
   GCPtr pGC = (GCPtr) p0;
   Bool* pBool = (Bool*) p2;
@@ -1255,7 +1255,7 @@ Bool nxagentDisconnectAllGCs()
   return success;
 }
 
-static void nxagentReconnectClip(GCPtr pGC, int type, pointer pValue, int nRects)
+static void nxagentReconnectClip(GCPtr pGC, int type, void * pValue, int nRects)
 {
   int i, size;
   BoxPtr pBox;
@@ -1320,7 +1320,7 @@ static void nxagentReconnectClip(GCPtr pGC, int type, pointer pValue, int nRects
 
       XSetClipOrigin(nxagentDisplay, nxagentGC(pGC), pGC -> clipOrg.x, pGC -> clipOrg.y);
 
-      pGC->clientClip = (pointer) (*pGC->pScreen->BitmapToRegion)((PixmapPtr) pValue);
+      pGC->clientClip = (void *) (*pGC->pScreen->BitmapToRegion)((PixmapPtr) pValue);
 
       nxagentGCPriv(pGC)->pPixmap = (PixmapPtr)pValue;
 
@@ -1370,7 +1370,7 @@ static void nxagentReconnectClip(GCPtr pGC, int type, pointer pValue, int nRects
        * CT_PIXMAP and CT_REGION client clips.
        */
 
-      pGC->clientClip = (pointer) RECTS_TO_REGION(pGC->pScreen, nRects,
+      pGC->clientClip = (void *) RECTS_TO_REGION(pGC->pScreen, nRects,
                                                   (xRectangle *)pValue, type);
       xfree(pValue);
       pValue = pGC->clientClip;

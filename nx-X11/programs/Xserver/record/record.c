@@ -141,7 +141,7 @@ static int numEnabledRCAPs;
 }
 
 static int RecordDeleteContext(
-    pointer /*value*/,
+    void * /*value*/,
     XID /*id*/
 );
 
@@ -242,9 +242,9 @@ RecordFindContextOnAllContexts(pContext)
 static void
 RecordFlushReplyBuffer(
     RecordContextPtr pContext,
-    pointer data1,
+    void * data1,
     int len1,
-    pointer data2,
+    void * data2,
     int len2
 )
 {
@@ -290,7 +290,7 @@ RecordFlushReplyBuffer(
  */
 static void
 RecordAProtocolElement(RecordContextPtr pContext, ClientPtr pClient,
-		       int category, pointer data, int datalen, int futurelen)
+		       int category, void * data, int datalen, int futurelen)
 {
     CARD32 elemHeaderData[2];
     int numElemHeaders = 0;
@@ -404,8 +404,8 @@ RecordAProtocolElement(RecordContextPtr pContext, ClientPtr pClient,
 	}
     }
     else
-	RecordFlushReplyBuffer(pContext, (pointer)elemHeaderData,
-			       numElemHeaders, (pointer)data, datalen);
+	RecordFlushReplyBuffer(pContext, (void *)elemHeaderData,
+			       numElemHeaders, (void *)data, datalen);
 
 } /* RecordAProtocolElement */
 
@@ -487,19 +487,19 @@ RecordABigRequest(pContext, client, stuff)
     /* record the request header */
     bytesLeft = client->req_len << 2;
     RecordAProtocolElement(pContext, client, XRecordFromClient,
-			   (pointer)stuff, SIZEOF(xReq), bytesLeft);
+			   (void *)stuff, SIZEOF(xReq), bytesLeft);
 
     /* reinsert the extended length field that was squished out */
     bigLength = client->req_len + (sizeof(bigLength) >> 2);
     if (client->swapped)
 	swapl(&bigLength, n);
     RecordAProtocolElement(pContext, client, XRecordFromClient,
-		(pointer)&bigLength, sizeof(bigLength), /* continuation */ -1);
+		(void *)&bigLength, sizeof(bigLength), /* continuation */ -1);
     bytesLeft -= sizeof(bigLength);
 
     /* record the rest of the request after the length */
     RecordAProtocolElement(pContext, client, XRecordFromClient,
-		(pointer)(stuff + 1), bytesLeft, /* continuation */ -1);
+		(void *)(stuff + 1), bytesLeft, /* continuation */ -1);
 } /* RecordABigRequest */
 
 
@@ -547,7 +547,7 @@ RecordARequest(client)
 		    RecordABigRequest(pContext, client, stuff);
 		else
 		    RecordAProtocolElement(pContext, client, XRecordFromClient,
-				(pointer)stuff, client->req_len << 2, 0);
+				(void *)stuff, client->req_len << 2, 0);
 	    }
 	    else /* extension, check minor opcode */
 	    {
@@ -570,7 +570,7 @@ RecordARequest(client)
 			    RecordABigRequest(pContext, client, stuff);
 			else
 			    RecordAProtocolElement(pContext, client, 
-					XRecordFromClient, (pointer)stuff,
+					XRecordFromClient, (void *)stuff,
 					client->req_len << 2, 0);
 			break;
 		    }			    
@@ -607,8 +607,8 @@ RecordARequest(client)
 static void
 RecordASkippedRequest(pcbl , nulldata, calldata)
     CallbackListPtr *pcbl;
-    pointer nulldata;
-    pointer calldata;
+    void * nulldata;
+    void * calldata;
 {
     SkippedRequestInfoRec *psi = (SkippedRequestInfoRec *)calldata;
     RecordContextPtr pContext;
@@ -639,7 +639,7 @@ RecordASkippedRequest(pcbl , nulldata, calldata)
 		{ /* core request */
 
 		    RecordAProtocolElement(pContext, client, XRecordFromClient,
-				(pointer)stuff, reqlen, 0);
+				(void *)stuff, reqlen, 0);
 		}
 		else /* extension, check minor opcode */
 		{
@@ -659,7 +659,7 @@ RecordASkippedRequest(pcbl , nulldata, calldata)
 						minorop))
 			{
 			    RecordAProtocolElement(pContext, client, 
-				    XRecordFromClient, (pointer)stuff,
+				    XRecordFromClient, (void *)stuff,
 				    reqlen, 0);
 			    break;
 			}			    
@@ -697,8 +697,8 @@ RecordASkippedRequest(pcbl , nulldata, calldata)
 static void
 RecordAReply(pcbl, nulldata, calldata)
     CallbackListPtr *pcbl;
-    pointer nulldata;
-    pointer calldata;
+    void * nulldata;
+    void * calldata;
 {
     RecordContextPtr pContext;
     RecordClientsAndProtocolPtr pRCAP;
@@ -782,8 +782,8 @@ RecordAReply(pcbl, nulldata, calldata)
 static void
 RecordADeliveredEventOrError(pcbl, nulldata, calldata)
     CallbackListPtr *pcbl;
-    pointer nulldata;
-    pointer calldata;
+    void * nulldata;
+    void * calldata;
 {
     EventInfoRec *pei = (EventInfoRec *)calldata;
     RecordContextPtr pContext;
@@ -851,8 +851,8 @@ RecordADeliveredEventOrError(pcbl, nulldata, calldata)
 static void
 RecordADeviceEvent(pcbl, nulldata, calldata)
     CallbackListPtr *pcbl;
-    pointer nulldata;
-    pointer calldata;
+    void * nulldata;
+    void * calldata;
 {
     DeviceEventInfoRec *pei = (DeviceEventInfoRec *)calldata;
     RecordContextPtr pContext;
@@ -932,8 +932,8 @@ RecordADeviceEvent(pcbl, nulldata, calldata)
 static void
 RecordFlushAllContexts(
     CallbackListPtr *pcbl,
-    pointer nulldata,
-    pointer calldata
+    void * nulldata,
+    void * calldata
 )
 {
     int eci; /* enabled context index */
@@ -1008,7 +1008,7 @@ RecordInstallHooks(pRCAP, oneclient)
 			   sizeof (pClientPriv->recordVector));
 		    pClientPriv->originalVector = pClient->requestVector;
 		    pClient->devPrivates[RecordClientPrivateIndex].ptr =
-			(pointer)pClientPriv;
+			(void *)pClientPriv;
 		    pClient->requestVector = pClientPriv->recordVector;
 		}
 		while ((pIter = RecordIterateSet(pRCAP->pRequestMajorOpSet,
@@ -2061,7 +2061,7 @@ ProcRecordCreateContext(client)
     }
     else
     {
-	RecordDeleteContext((pointer)pContext, pContext->id);
+	RecordDeleteContext((void *)pContext, pContext->id);
 	err = BadAlloc;
     }
 bailout:
@@ -2621,7 +2621,7 @@ ProcRecordDisableContext(client)
  */
 static int
 RecordDeleteContext(value, id)
-    pointer value;
+    void * value;
     XID id;
 {
     int i;
@@ -2755,7 +2755,7 @@ SProcRecordCreateContext(client)
 
     swaps(&stuff->length, n);
     REQUEST_AT_LEAST_SIZE(xRecordCreateContextReq);
-    if ((status = SwapCreateRegister((pointer)stuff)) != Success)
+    if ((status = SwapCreateRegister((void *)stuff)) != Success)
 	return status;
     return ProcRecordCreateContext(client);
 } /* SProcRecordCreateContext */
@@ -2771,7 +2771,7 @@ SProcRecordRegisterClients(client)
 
     swaps(&stuff->length, n);
     REQUEST_AT_LEAST_SIZE(xRecordRegisterClientsReq);
-    if ((status = SwapCreateRegister((pointer)stuff)) != Success)
+    if ((status = SwapCreateRegister((void *)stuff)) != Success)
 	return status;
     return ProcRecordRegisterClients(client);
 } /* SProcRecordRegisterClients */
@@ -2908,7 +2908,7 @@ RecordConnectionSetupInfo(pContext, pci)
 	SwapConnSetupPrefix(pci->prefix, pConnSetup);
 	SwapConnSetupInfo(pci->setup, pConnSetup + prefixsize);
 	RecordAProtocolElement(pContext, pci->client, XRecordClientStarted,
-			       (pointer)pConnSetup, prefixsize + restsize, 0);
+			       (void *)pConnSetup, prefixsize + restsize, 0);
 	DEALLOCATE_LOCAL(pConnSetup);
     }
     else
@@ -2917,9 +2917,9 @@ RecordConnectionSetupInfo(pContext, pci)
 	 * data in two pieces
 	 */
 	RecordAProtocolElement(pContext, pci->client, XRecordClientStarted,
-			(pointer)pci->prefix, prefixsize, restsize);
+			(void *)pci->prefix, prefixsize, restsize);
 	RecordAProtocolElement(pContext, pci->client, XRecordClientStarted,
-			(pointer)pci->setup, restsize, /* continuation */ -1);
+			(void *)pci->setup, restsize, /* continuation */ -1);
     }
 } /* RecordConnectionSetupInfo */
 
@@ -2950,8 +2950,8 @@ RecordConnectionSetupInfo(pContext, pci)
 static void
 RecordAClientStateChange(pcbl, nulldata, calldata)
     CallbackListPtr *pcbl;
-    pointer nulldata;
-    pointer calldata;
+    void * nulldata;
+    void * calldata;
 {
     NewClientInfoRec *pci = (NewClientInfoRec *)calldata;
     int i;

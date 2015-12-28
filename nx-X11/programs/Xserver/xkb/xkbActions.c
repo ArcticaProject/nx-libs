@@ -48,7 +48,7 @@ int xkbDevicePrivateIndex = -1;
 
 void
 xkbUnwrapProc(DeviceIntPtr device, DeviceHandleProc proc,
-                   pointer data)
+                   void * data)
 {
     xkbDeviceInfoPtr xkbPrivPtr = XKBDEVICEINFO(device);
     ProcessInputProc tmp = device->public.processInputProc;
@@ -533,7 +533,7 @@ _XkbFilterISOLock(	XkbSrvInfoPtr	xkbi,
 
 
 static CARD32
-_XkbPtrAccelExpire(OsTimerPtr timer,CARD32 now,pointer arg)
+_XkbPtrAccelExpire(OsTimerPtr timer,CARD32 now,void * arg)
 {
 XkbSrvInfoPtr	xkbi= (XkbSrvInfoPtr)arg;
 XkbControlsPtr	ctrls= xkbi->desc->ctrls;
@@ -602,7 +602,7 @@ Bool	accel;
 	xkbi->mouseKeysDY= XkbPtrActionY(&pAction->ptr);
 	xkbi->mouseKeyTimer= TimerSet(xkbi->mouseKeyTimer, 0,
 				xkbi->desc->ctrls->mk_delay,
-				_XkbPtrAccelExpire,(pointer)xkbi);
+				_XkbPtrAccelExpire,(void *)xkbi);
     }
     else if (filter->keycode==keycode) {
 	filter->active = 0;

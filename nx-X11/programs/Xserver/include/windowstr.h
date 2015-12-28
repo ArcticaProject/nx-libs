@@ -114,7 +114,7 @@ typedef struct _Window {
     Mask		eventMask;
     PixUnion		background;
     PixUnion		border;
-    pointer		backStorage;	/* null when BS disabled */
+    void *		backStorage;	/* null when BS disabled */
     WindowOptPtr	optional;
     unsigned		backgroundState:2; /* None, Relative, Pixel, Pixmap */
     unsigned		borderIsPixel:1;

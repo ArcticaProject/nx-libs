@@ -124,7 +124,7 @@ pixMultibufferInit(pScreen, pMBScreen)
 	xfree(pInfo);
 	return (FALSE);
     }
-    pMBScreen->devPrivate.ptr = (pointer) pMBPriv;
+    pMBScreen->devPrivate.ptr = (void *) pMBPriv;
     pMBPriv->PositionWindow = NULL;
     pMBPriv->funcsWrapped = 0;
 
@@ -162,7 +162,7 @@ pixCreateImageBuffers (pWin, nbuf, ids, action, hint)
 	    break;
 
 	if (!AddResource (ids[i], MultibufferDrawableResType,
-			  (pointer) pMBBuffer->pDrawable))
+			  (void *) pMBBuffer->pDrawable))
 	{
 	    (*pScreen->DestroyPixmap) ((PixmapPtr) pMBBuffer->pDrawable);
 	    break;
@@ -570,7 +570,7 @@ pixPositionWindow (pWin, x, y)
 	{
 	    ChangeResourceValue (pPixmap->drawable.id,
 				 MultibufferDrawableResType,
-				 (pointer) pPixmap);
+				 (void *) pPixmap);
 	}
     }
     FreeScratchGC (pGC);

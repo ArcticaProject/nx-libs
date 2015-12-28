@@ -444,7 +444,7 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
     Atom        property, type;
     int         format, mode;
     unsigned long nUnits;
-    pointer     value;
+    void        *value;
 {
   char *propertyS, *typeS;
   Atom propertyX, typeX;

@@ -53,7 +53,7 @@ SOFTWARE.
 
 #include "misc.h"
 #define ALLOCATE_LOCAL_FALLBACK(_size) Xalloc((unsigned long)(_size))
-#define DEALLOCATE_LOCAL_FALLBACK(_ptr) Xfree((pointer)(_ptr))
+#define DEALLOCATE_LOCAL_FALLBACK(_ptr) Xfree((void *)(_ptr))
 #include <X11/Xalloca.h>
 #ifndef IN_MODULE
 #include <stdarg.h>
@@ -75,19 +75,19 @@ SOFTWARE.
 #define MAX_BIG_REQUEST_SIZE 4194303
 #endif
 
-typedef pointer	FID;
+typedef void *	FID;
 typedef struct _FontPathRec *FontPathPtr;
 typedef struct _NewClientRec *NewClientPtr;
 
 #ifndef xalloc
 #define xnfalloc(size) XNFalloc((unsigned long)(size))
 #define xnfcalloc(_num, _size) XNFcalloc((unsigned long)(_num)*(unsigned long)(_size))
-#define xnfrealloc(ptr, size) XNFrealloc((pointer)(ptr), (unsigned long)(size))
+#define xnfrealloc(ptr, size) XNFrealloc((void *)(ptr), (unsigned long)(size))
 
 #define xalloc(size) Xalloc((unsigned long)(size))
 #define xcalloc(_num, _size) Xcalloc((unsigned long)(_num)*(unsigned long)(_size))
-#define xrealloc(ptr, size) Xrealloc((pointer)(ptr), (unsigned long)(size))
-#define xfree(ptr) Xfree((pointer)(ptr))
+#define xrealloc(ptr, size) Xrealloc((void *)(ptr), (unsigned long)(size))
+#define xfree(ptr) Xfree((void *)(ptr))
 #define xstrdup(s) Xstrdup(s)
 #define xnfstrdup(s) XNFstrdup(s)
 #endif
@@ -158,7 +158,7 @@ extern char *ClientAuthorized(
 
 extern Bool EstablishNewConnections(
     ClientPtr /*clientUnused*/,
-    pointer /*closure*/);
+    void * /*closure*/);
 
 extern void CheckConnections(void);
 
@@ -189,7 +189,7 @@ extern void AvailableClientInput(ClientPtr /* client */);
 extern CARD32 GetTimeInMillis(void);
 
 extern void AdjustWaitForDelay(
-    pointer /*waitTime*/,
+    void * /*waitTime*/,
     unsigned long /*newdelay*/);
 
 typedef	struct _OsTimerRec *OsTimerPtr;
@@ -197,7 +197,7 @@ typedef	struct _OsTimerRec *OsTimerPtr;
 typedef CARD32 (*OsTimerCallback)(
     OsTimerPtr /* timer */,
     CARD32 /* time */,
-    pointer /* arg */);
+    void * /* arg */);
 
 extern void TimerInit(void);
 
@@ -211,7 +211,7 @@ extern OsTimerPtr TimerSet(
     int /* flags */,
     CARD32 /* millis */,
     OsTimerCallback /* func */,
-    pointer /* arg */);
+    void * /* arg */);
 
 extern void TimerCheck(void);
 extern void TimerCancel(OsTimerPtr /* pTimer */);
@@ -238,19 +238,19 @@ extern void ProcessCommandLine(int /*argc*/, char* /*argv*/[]);
 extern int set_font_authorizations(
     char ** /* authorizations */, 
     int * /*authlen */, 
-    pointer /* client */);
+    void * /* client */);
 
 #ifndef _HAVE_XALLOC_DECLS
 #define _HAVE_XALLOC_DECLS
-extern pointer Xalloc(unsigned long /*amount*/);
-extern pointer Xcalloc(unsigned long /*amount*/);
-extern pointer Xrealloc(pointer /*ptr*/, unsigned long /*amount*/);
-extern void Xfree(pointer /*ptr*/);
+extern void * Xalloc(unsigned long /*amount*/);
+extern void * Xcalloc(unsigned long /*amount*/);
+extern void * Xrealloc(void * /*ptr*/, unsigned long /*amount*/);
+extern void Xfree(void * /*ptr*/);
 #endif
 
-extern pointer XNFalloc(unsigned long /*amount*/);
-extern pointer XNFcalloc(unsigned long /*amount*/);
-extern pointer XNFrealloc(pointer /*ptr*/, unsigned long /*amount*/);
+extern void * XNFalloc(unsigned long /*amount*/);
+extern void * XNFcalloc(unsigned long /*amount*/);
+extern void * XNFrealloc(void * /*ptr*/, unsigned long /*amount*/);
 
 extern void OsInitAllocator(void);
 
@@ -296,10 +296,10 @@ void OsReleaseSignals (void);
 
 #if !defined(WIN32) && !defined(__UNIXOS2__)
 extern int System(char *);
-extern pointer Popen(char *, char *);
-extern int Pclose(pointer);
-extern pointer Fopen(char *, char *);
-extern int Fclose(pointer);
+extern void * Popen(char *, char *);
+extern int Pclose(void *);
+extern void * Fopen(char *, char *);
+extern int Fclose(void *);
 #else
 #define System(a) system(a)
 #define Popen(a,b) popen(a,b)
@@ -315,24 +315,24 @@ extern int AddHost(
     ClientPtr	/*client*/,
     int         /*family*/,
     unsigned    /*length*/,
-    pointer     /*pAddr*/);
+    void *     /*pAddr*/);
 
 extern Bool ForEachHostInFamily (
     int	    /*family*/,
     Bool    (* /*func*/ )(
             unsigned char * /* addr */,
             short           /* len */,
-            pointer         /* closure */),
-    pointer /*closure*/);
+            void *         /* closure */),
+    void * /*closure*/);
 
 extern int RemoveHost(
     ClientPtr	/*client*/,
     int         /*family*/,
     unsigned    /*length*/,
-    pointer     /*pAddr*/);
+    void *     /*pAddr*/);
 
 extern int GetHosts(
-    pointer * /*data*/,
+    void ** /*data*/,
     int	    * /*pnHosts*/,
     int	    * /*pLen*/,
     BOOL    * /*pEnabled*/);
@@ -362,7 +362,7 @@ extern void AccessUsingXdmcp(void);
 
 extern void DefineSelf(int /*fd*/);
 
-extern void AugmentSelf(pointer /*from*/, int /*len*/);
+extern void AugmentSelf(void * /*from*/, int /*len*/);
 
 extern void InitAuthorization(char * /*filename*/);
 
@@ -467,7 +467,7 @@ typedef struct {
 extern CallbackListPtr ReplyCallback;
 typedef struct {
     ClientPtr client;
-    pointer replyData;
+    void * replyData;
     unsigned long dataLenBytes;
     unsigned long bytesRemaining;
     Bool startOfReply;

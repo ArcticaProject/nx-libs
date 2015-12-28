@@ -106,7 +106,7 @@ ProcXResQueryClients (ClientPtr client)
 
 
 static void
-ResFindAllRes (pointer value, XID id, RESTYPE type, pointer cdata)
+ResFindAllRes (void * value, XID id, RESTYPE type, void * cdata)
 {
     int *counts = (int *)cdata;
 
@@ -186,7 +186,7 @@ ProcXResQueryClientResources (ClientPtr client)
 }
 
 static void 
-ResFindPixmaps (pointer value, XID id, pointer cdata)
+ResFindPixmaps (void * value, XID id, void * cdata)
 {
    unsigned long *bytes = (unsigned long *)cdata;
    PixmapPtr pix = (PixmapPtr)value;
@@ -216,7 +216,7 @@ ProcXResQueryClientPixmapBytes (ClientPtr client)
     bytes = 0;
 
     FindClientResourcesByType(clients[clientID], RT_PIXMAP, ResFindPixmaps, 
-                              (pointer)(&bytes));
+                              (void *)(&bytes));
 
     rep.type = X_Reply;
     rep.sequenceNumber = client->sequence;

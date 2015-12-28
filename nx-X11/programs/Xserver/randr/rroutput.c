@@ -100,7 +100,7 @@ RROutputCreate (ScreenPtr   pScreen,
     output->changed = FALSE;
     output->devPrivate = devPrivate;
     
-    if (!AddResource (output->id, RROutputType, (pointer) output))
+    if (!AddResource (output->id, RROutputType, (void *) output))
 	return NULL;
 
     pScrPriv->outputs[pScrPriv->numOutputs++] = output;
@@ -369,7 +369,7 @@ RROutputDestroy (RROutputPtr output)
 }
 
 static int
-RROutputDestroyResource (pointer value, XID pid)
+RROutputDestroyResource (void * value, XID pid)
 {
     RROutputPtr	output = (RROutputPtr) value;
     ScreenPtr	pScreen = output->pScreen;

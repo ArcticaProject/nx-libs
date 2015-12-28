@@ -114,14 +114,14 @@ void
 miChangeClip(pGC, type, pvalue, nrects)
     GCPtr           pGC;
     int             type;
-    pointer         pvalue;
+    void            *pvalue;
     int             nrects;
 {
     (*pGC->funcs->DestroyClip) (pGC);
     if (type == CT_PIXMAP)
     {
 	/* convert the pixmap to a region */
-	pGC->clientClip = (pointer) BITMAP_TO_REGION(pGC->pScreen,
+	pGC->clientClip = (void *) BITMAP_TO_REGION(pGC->pScreen,
 							(PixmapPtr) pvalue);
 	(*pGC->pScreen->DestroyPixmap) (pvalue);
     }
@@ -132,7 +132,7 @@ miChangeClip(pGC, type, pvalue, nrects)
     }
     else if (type != CT_NONE)
     {
-	pGC->clientClip = (pointer) RECTS_TO_REGION(pGC->pScreen, nrects,
+	pGC->clientClip = (void *) RECTS_TO_REGION(pGC->pScreen, nrects,
 						      (xRectangle *) pvalue,
 								    type);
 	xfree(pvalue);
@@ -160,7 +160,7 @@ miCopyClip(pgcDst, pgcSrc)
 	prgnNew = REGION_CREATE(pgcSrc->pScreen, NULL, 1);
 	REGION_COPY(pgcDst->pScreen, prgnNew,
 					(RegionPtr) (pgcSrc->clientClip));
-	(*pgcDst->funcs->ChangeClip) (pgcDst, CT_REGION, (pointer) prgnNew, 0);
+	(*pgcDst->funcs->ChangeClip) (pgcDst, CT_REGION, (void *) prgnNew, 0);
 	break;
     }
 }

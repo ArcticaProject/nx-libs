@@ -211,7 +211,7 @@ RegionRec nxagentShadowUpdateRegion;
  * but we need it here.
  */
 
-int TellChanged(WindowPtr pWin, pointer value);
+int TellChanged(WindowPtr pWin, void * value);
 
 int nxagentBitsPerPixel(int depth)
 {
@@ -664,7 +664,7 @@ void nxagentInitViewportFrame(ScreenPtr pScreen, WindowPtr pRootWin)
                                                       pRootWin -> drawable.depth,
                                                           serverClient, visual, &error);
 
-  AddResource(xid, RT_WINDOW, (pointer) nxagentViewportFrameLeft);
+  AddResource(xid, RT_WINDOW, (void *) nxagentViewportFrameLeft);
 
   if (error != Success)
   {
@@ -689,7 +689,7 @@ void nxagentInitViewportFrame(ScreenPtr pScreen, WindowPtr pRootWin)
                                                                serverClient, visual,
                                                                    &error);
 
-  AddResource(xid, RT_WINDOW, (pointer) nxagentViewportFrameRight);
+  AddResource(xid, RT_WINDOW, (void *) nxagentViewportFrameRight);
 
   if (error != Success)
   {
@@ -714,7 +714,7 @@ void nxagentInitViewportFrame(ScreenPtr pScreen, WindowPtr pRootWin)
                                                                serverClient, visual,
                                                                    &error);
 
-  AddResource(xid, RT_WINDOW, (pointer) nxagentViewportFrameAbove);
+  AddResource(xid, RT_WINDOW, (void *) nxagentViewportFrameAbove);
 
   if (error != Success)
   {
@@ -739,7 +739,7 @@ void nxagentInitViewportFrame(ScreenPtr pScreen, WindowPtr pRootWin)
                                                                pRootWin -> drawable.depth,
                                                                    serverClient, visual, &error);
 
-  AddResource(xid, RT_WINDOW, (pointer) nxagentViewportFrameBelow);
+  AddResource(xid, RT_WINDOW, (void *) nxagentViewportFrameBelow);
 
   if (error != Success)
   {
@@ -835,7 +835,7 @@ Bool nxagentOpenScreen(int index, ScreenPtr pScreen,
   VisualID defaultVisual;
   int rootDepth;
 
-  pointer pFrameBufferBits;
+  void * pFrameBufferBits;
   int bitsPerPixel;
   int sizeInBytes;
 
@@ -2423,7 +2423,7 @@ FIXME: We should try to restore the previously
   nxagentMoveViewport(pScreen, 0, 0);
 
   /*
-   * Update pointer bounds.
+   * Update void * bounds.
    */
 
   ScreenRestructured(pScreen);
@@ -2773,11 +2773,11 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
 
   accessPixmapID = FakeClientID(serverClient -> index);
 
-  AddResource(accessPixmapID, RT_PIXMAP, (pointer)nxagentShadowPixmapPtr);
+  AddResource(accessPixmapID, RT_PIXMAP, (void *)nxagentShadowPixmapPtr);
 
   accessWindowID = FakeClientID(serverClient -> index);
 
-  AddResource(accessWindowID, RT_WINDOW, (pointer)nxagentShadowWindowPtr);
+  AddResource(accessWindowID, RT_WINDOW, (void *)nxagentShadowWindowPtr);
 
   nxagentResizeScreen(pScreen, nxagentShadowWidth, nxagentShadowHeight, pScreen -> mmWidth, pScreen -> mmHeight);
 
@@ -2847,7 +2847,7 @@ int nxagentShadowCreateMainWindow(ScreenPtr pScreen, WindowPtr pWin, int width, 
 
   if (nxagentShadowPixmapPtr)
   {
-    ChangeResourceValue(accessPixmapID, RT_PIXMAP, (pointer) nxagentShadowPixmapPtr);
+    ChangeResourceValue(accessPixmapID, RT_PIXMAP, (void *) nxagentShadowPixmapPtr);
     nxagentShadowPixmapPtr -> drawable.id = accessPixmapID;
 
     #ifdef TEST
@@ -2933,7 +2933,7 @@ int nxagentShadowCreateMainWindow(ScreenPtr pScreen, WindowPtr pWin, int width, 
 
     #endif
 
-    ChangeResourceValue(accessWindowID, RT_WINDOW, (pointer) nxagentShadowWindowPtr);
+    ChangeResourceValue(accessWindowID, RT_WINDOW, (void *) nxagentShadowWindowPtr);
   }
   else
   {

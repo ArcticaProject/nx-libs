@@ -56,7 +56,7 @@ from The Open Group.
 
 typedef struct
 {
-    pointer pbits; /* pointer to framebuffer */
+    void * pbits; /* pointer to framebuffer */
     int width;    /* delta to add to a framebuffer addr to move one row down */
 } miScreenInitParmsRec, *miScreenInitParmsPtr;
 
@@ -71,7 +71,7 @@ miModifyPixmapHeader(pPixmap, width, height, depth, bitsPerPixel, devKind,
     int		depth;
     int		bitsPerPixel;
     int		devKind;
-    pointer     pPixData;
+    void        *pPixData;
 {
     if (!pPixmap)
 	return FALSE;
@@ -150,7 +150,7 @@ miCreateScreenResources(pScreen)
     ScreenPtr pScreen;
 {
     miScreenInitParmsPtr pScrInitParms;
-    pointer value;
+    void * value;
 
     pScrInitParms = (miScreenInitParmsPtr)pScreen->devPrivate;
 
@@ -174,7 +174,7 @@ miCreateScreenResources(pScreen)
 		    PixmapBytePad(pScrInitParms->width, pScreen->rootDepth),
 		    pScrInitParms->pbits))
 	    return FALSE;
-	value = (pointer)pPixmap;
+	value = (void *)pPixmap;
     }
     else
     {
@@ -189,7 +189,7 @@ Bool
 miScreenDevPrivateInit(pScreen, width, pbits)
     register ScreenPtr pScreen;
     int width;
-    pointer pbits;
+    void * pbits;
 {
     miScreenInitParmsPtr pScrInitParms;
 
@@ -202,7 +202,7 @@ miScreenDevPrivateInit(pScreen, width, pbits)
 	return FALSE;
     pScrInitParms->pbits = pbits;
     pScrInitParms->width = width;
-    pScreen->devPrivate = (pointer)pScrInitParms;
+    pScreen->devPrivate = (void *)pScrInitParms;
     return TRUE;
 }
 
@@ -210,7 +210,7 @@ Bool
 miScreenInit(pScreen, pbits, xsize, ysize, dpix, dpiy, width,
 	     rootDepth, numDepths, depths, rootVisual, numVisuals, visuals)
     register ScreenPtr pScreen;
-    pointer pbits;		/* pointer to screen bits */
+    void * pbits;		/* pointer to screen bits */
     int xsize, ysize;		/* in pixels */
     int dpix, dpiy;		/* dots per inch */
     int width;			/* pixel width of frame buffer */
@@ -296,8 +296,8 @@ miScreenInit(pScreen, pbits, xsize, ysize, dpix, dpiy, width,
     pScreen->SendGraphicsExpose = miSendGraphicsExpose;
     pScreen->BlockHandler = (ScreenBlockHandlerProcPtr)NoopDDA;
     pScreen->WakeupHandler = (ScreenWakeupHandlerProcPtr)NoopDDA;
-    pScreen->blockData = (pointer)0;
-    pScreen->wakeupData = (pointer)0;
+    pScreen->blockData = (void *)0;
+    pScreen->wakeupData = (void *)0;
     pScreen->MarkWindow = miMarkWindow;
     pScreen->MarkOverlappedWindows = miMarkOverlappedWindows;
     pScreen->ChangeSaveUnder = miChangeSaveUnder;
@@ -368,5 +368,5 @@ miSetScreenPixmap(pPix)
     PixmapPtr pPix;
 {
     if (pPix)
-	pPix->drawable.pScreen->devPrivate = (pointer)pPix;
+	pPix->drawable.pScreen->devPrivate = (void *)pPix;
 }

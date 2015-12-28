@@ -60,7 +60,7 @@ miDestroyPictureClip (PicturePtr pPicture);
 int
 miChangePictureClip (PicturePtr    pPicture,
 		     int	   type,
-		     pointer	   value,
+		     void *	   value,
 		     int	   n);
 
 void

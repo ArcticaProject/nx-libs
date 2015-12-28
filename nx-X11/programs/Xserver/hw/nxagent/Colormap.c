@@ -77,7 +77,7 @@ Bool nxagentCreateColormap(ColormapPtr pCmap)
   pVisual = pCmap->pVisual;
   ncolors = pVisual->ColormapEntries;
 
-  pCmap->devPriv = (pointer)xalloc(sizeof(nxagentPrivColormap));
+  pCmap->devPriv = (void *)xalloc(sizeof(nxagentPrivColormap));
 
   if (((visual = nxagentVisual(pVisual))) == NULL)
   {
@@ -174,7 +174,7 @@ void nxagentDestroyColormap(ColormapPtr pCmap)
 #define SEARCH_PREDICATE \
   (nxagentWindow(pWin) != None && wColormap(pWin) == icws->cmapIDs[i])
 
-static int nxagentCountInstalledColormapWindows(WindowPtr pWin, pointer ptr)
+static int nxagentCountInstalledColormapWindows(WindowPtr pWin, void * ptr)
 {
   nxagentInstalledColormapWindows *icws = (nxagentInstalledColormapWindows *) ptr;
 
@@ -189,7 +189,7 @@ static int nxagentCountInstalledColormapWindows(WindowPtr pWin, pointer ptr)
   return WT_WALKCHILDREN;
 }
 
-static int nxagentGetInstalledColormapWindows(WindowPtr pWin, pointer ptr)
+static int nxagentGetInstalledColormapWindows(WindowPtr pWin, void * ptr)
 {
   nxagentInstalledColormapWindows *icws = (nxagentInstalledColormapWindows *)ptr;
   int i;
@@ -233,11 +233,11 @@ void nxagentSetInstalledColormapWindows(ScreenPtr pScreen)
 				    sizeof(Colormap));
   icws.numCmapIDs = nxagentListInstalledColormaps(pScreen, icws.cmapIDs);
   icws.numWindows = 0;
-  WalkTree(pScreen, nxagentCountInstalledColormapWindows, (pointer)&icws);
+  WalkTree(pScreen, nxagentCountInstalledColormapWindows, (void *)&icws);
   if (icws.numWindows) {
     icws.windows = (Window *)xalloc((icws.numWindows + 1) * sizeof(Window));
     icws.index = 0;
-    WalkTree(pScreen, nxagentGetInstalledColormapWindows, (pointer)&icws);
+    WalkTree(pScreen, nxagentGetInstalledColormapWindows, (void *)&icws);
     icws.windows[icws.numWindows] = nxagentDefaultWindows[pScreen->myNum];
     numWindows = icws.numWindows + 1;
   }
@@ -388,10 +388,10 @@ void nxagentInstallColormap(ColormapPtr pCmap)
 
       /* Uninstall pInstalledMap. Notify all interested parties. */
       if(pOldCmap != (ColormapPtr)None)
-	WalkTree(pCmap->pScreen, TellLostMap, (pointer)&pOldCmap->mid);
+	WalkTree(pCmap->pScreen, TellLostMap, (void *)&pOldCmap->mid);
 
       InstalledMaps[index] = pCmap;
-      WalkTree(pCmap->pScreen, TellGainedMap, (pointer)&pCmap->mid);
+      WalkTree(pCmap->pScreen, TellGainedMap, (void *)&pCmap->mid);
 
       nxagentSetInstalledColormapWindows(pCmap->pScreen);
       nxagentDirectInstallColormaps(pCmap->pScreen);
@@ -542,7 +542,7 @@ Bool nxagentCreateDefaultColormap(ScreenPtr pScreen)
   return True;
 }
 
-static void nxagentReconnectColormap(pointer p0, XID x1, pointer p2)
+static void nxagentReconnectColormap(void * p0, XID x1, void * p2)
 {
   ColormapPtr pCmap = (ColormapPtr)p0;
   Bool* pBool = (Bool*)p2;

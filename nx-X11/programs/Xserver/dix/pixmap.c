@@ -53,7 +53,7 @@ from The Open Group.
 /* callable by ddx */
 PixmapPtr
 GetScratchPixmapHeader(ScreenPtr pScreen, int width, int height, int depth, 
-                       int bitsPerPixel, int devKind, pointer pPixData)
+                       int bitsPerPixel, int devKind, void * pPixData)
 {
     PixmapPtr pPixmap = pScreen->pScratchPixmap;
 
@@ -139,11 +139,11 @@ AllocatePixmap(ScreenPtr pScreen, int pixDataSize)
     {
         if ((size = *sizes) != 0)
         {
-	    ppriv->ptr = (pointer)ptr;
+	    ppriv->ptr = (void *)ptr;
 	    ptr += size;
         }
         else
-	    ppriv->ptr = (pointer)NULL;
+	    ppriv->ptr = (void *)NULL;
     }
 #else
     pPixmap = (PixmapPtr)xalloc(sizeof(PixmapRec) + pixDataSize);

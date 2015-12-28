@@ -230,7 +230,7 @@ bufMultibufferInit(pScreen, pMBScreen)
     if (!pMBPriv)
 	return (FALSE);
 
-    pMBScreen->devPrivate.ptr = (pointer) pMBPriv;
+    pMBScreen->devPrivate.ptr = (void *) pMBPriv;
     pMBPriv->frameBuffer  = bufFrameBuffer[pScreen->myNum];
     pMBPriv->selectPlane = bufselectPlane[pScreen->myNum];
 
@@ -374,7 +374,7 @@ bufCreateImageBuffers (pWin, nbuf, ids, action, hint)
     pMBScreen = MB_SCREEN_PRIV(pScreen);
     pMBWindow = MB_WINDOW_PRIV(pWin);
 
-    pMBWindow->devPrivate.ptr = (pointer) REGION_CREATE(pScreen, 0,0);
+    pMBWindow->devPrivate.ptr = (void *) REGION_CREATE(pScreen, 0,0);
     if (!pMBWindow->devPrivate.ptr)
 	return(0);
     REGION_COPY(pScreen, (RegionPtr) pMBWindow->devPrivate.ptr,
@@ -389,7 +389,7 @@ bufCreateImageBuffers (pWin, nbuf, ids, action, hint)
 	    break;
 
 	if (!AddResource (ids[i], MultibufferDrawableResType,
-			  (pointer) pMBBuffer->pDrawable))
+			  (void *) pMBBuffer->pDrawable))
 	{
 	    bufDestroyBuffer((BufferPtr) pMBBuffer->pDrawable);
 	    break;

@@ -151,10 +151,10 @@ typedef struct _connectionOutput {
 #ifdef K5AUTH
 typedef struct _k5_state {
     int		stageno;	/* current stage of auth protocol */
-    pointer	srvcreds;	/* server credentials */
-    pointer	srvname;	/* server principal name */
-    pointer	ktname;		/* key table: principal-key pairs */
-    pointer	skey;		/* session key */
+    void	*srvcreds;	/* server credentials */
+    void	*srvname;	/* server principal name */
+    void	*ktname;	/* key table: principal-key pairs */
+    void	*skey;		/* session key */
 }           k5_state;
 #endif
 

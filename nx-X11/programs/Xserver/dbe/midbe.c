@@ -214,7 +214,7 @@ miDbeAllocBackBufferName(pWin, bufId, swapAction)
 
         /* Make the back pixmap a DBE drawable resource. */
         if (!AddResource(bufId, dbeDrawableResType,
-            (pointer)pDbeWindowPrivPriv->pBackBuffer))
+            (void *)pDbeWindowPrivPriv->pBackBuffer))
         {
             /* free the buffer and the drawable resource */
             FreeResource(bufId, RT_NONE);
@@ -224,7 +224,7 @@ miDbeAllocBackBufferName(pWin, bufId, swapAction)
 
         /* Attach the priv priv to the priv. */
 	pDbeWindowPriv->devPrivates[miDbeWindowPrivPrivIndex].ptr =
-            (pointer)pDbeWindowPrivPriv;
+            (void *)pDbeWindowPrivPriv;
 
 
         /* Clear the back buffer. */
@@ -252,7 +252,7 @@ miDbeAllocBackBufferName(pWin, bufId, swapAction)
         /* Associate the new ID with an existing pixmap. */
         pDbeWindowPrivPriv = MI_DBE_WINDOW_PRIV_PRIV(pDbeWindowPriv);
         if (!AddResource(bufId, dbeDrawableResType,
-                         (pointer)pDbeWindowPrivPriv->pBackBuffer))
+                         (void *)pDbeWindowPrivPriv->pBackBuffer))
         {
             return(BadAlloc);
         }
@@ -286,7 +286,7 @@ miDbeAliasBuffers(pDbeWindowPriv)
     for (i = 0; i < pDbeWindowPriv->nBufferIDs; i++)
     {
         ChangeResourceValue(pDbeWindowPriv->IDs[i], dbeDrawableResType,
-                            (pointer)pDbeWindowPrivPriv->pBackBuffer);
+                            (void *)pDbeWindowPrivPriv->pBackBuffer);
     }
 
 } /* miDbeAliasBuffers() */

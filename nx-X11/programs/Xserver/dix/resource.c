@@ -139,7 +139,7 @@ typedef struct _Resource {
     struct _Resource	*next;
     XID			id;
     RESTYPE		type;
-    pointer		value;
+    void *		value;
 } ResourceRec, *ResourcePtr;
 #define NullResource ((ResourcePtr)NULL)
 
@@ -423,7 +423,7 @@ FakeClientID(register int client)
 }
 
 Bool
-AddResource(XID id, RESTYPE type, pointer value)
+AddResource(XID id, RESTYPE type, void * value)
 {
     int client;
     register ClientResourceRec *rrec;
@@ -595,7 +595,7 @@ FreeResourceByType(XID id, RESTYPE type, Bool skipFree)
  */
 
 Bool
-ChangeResourceValue (XID id, RESTYPE rtype, pointer value)
+ChangeResourceValue (XID id, RESTYPE rtype, void * value)
 {
     int    cid;
     register    ResourcePtr res;
@@ -627,7 +627,7 @@ FindClientResourcesByType(
     ClientPtr client,
     RESTYPE type,
     FindResType func,
-    pointer cdata
+    void * cdata
 ){
     register ResourcePtr *resources;
     register ResourcePtr this, next;
@@ -658,7 +658,7 @@ void
 FindAllClientResources(
     ClientPtr client,
     FindAllRes func,
-    pointer cdata
+    void * cdata
 ){
     register ResourcePtr *resources;
     register ResourcePtr this, next;
@@ -684,12 +684,12 @@ FindAllClientResources(
 }
 
 
-pointer
+void *
 LookupClientResourceComplex(
     ClientPtr client,
     RESTYPE type,
     FindComplexResType func,
-    pointer cdata
+    void * cdata
 ){
     ResourcePtr *resources;
     ResourcePtr this;
@@ -831,12 +831,12 @@ LegalNewID(XID id, register ClientPtr client)
  * else NULL is returned.
  */
 
-pointer
+void *
 SecurityLookupIDByType(ClientPtr client, XID id, RESTYPE rtype, Mask mode)
 {
     int    cid;
     register    ResourcePtr res;
-    pointer retval = NULL;
+    void * retval = NULL;
 
     assert(client == NullClient ||
      (client->index <= currentMaxClients && clients[client->index] == client));
@@ -860,12 +860,12 @@ SecurityLookupIDByType(ClientPtr client, XID id, RESTYPE rtype, Mask mode)
 }
 
 
-pointer
+void *
 SecurityLookupIDByClass(ClientPtr client, XID id, RESTYPE classes, Mask mode)
 {
     int    cid;
     register ResourcePtr res = NULL;
-    pointer retval = NULL;
+    void * retval = NULL;
 
     assert(client == NullClient ||
      (client->index <= currentMaxClients && clients[client->index] == client));
@@ -892,14 +892,14 @@ SecurityLookupIDByClass(ClientPtr client, XID id, RESTYPE classes, Mask mode)
  * macros because of compatibility with loadable servers.
  */
 
-pointer
+void *
 LookupIDByType(XID id, RESTYPE rtype)
 {
     return SecurityLookupIDByType(NullClient, id, rtype,
 				  SecurityUnknownAccess);
 }
 
-pointer
+void *
 LookupIDByClass(XID id, RESTYPE classes)
 {
     return SecurityLookupIDByClass(NullClient, id, classes,
@@ -911,7 +911,7 @@ LookupIDByClass(XID id, RESTYPE classes)
 /*
  *  LookupIDByType returns the object with the given id and type, else NULL.
  */ 
-pointer
+void *
 LookupIDByType(XID id, RESTYPE rtype)
 {
     int    cid;
@@ -926,14 +926,14 @@ LookupIDByType(XID id, RESTYPE rtype)
 	    if ((res->id == id) && (res->type == rtype))
 		return res->value;
     }
-    return (pointer)NULL;
+    return (void *)NULL;
 }
 
 /*
  *  LookupIDByClass returns the object with the given id and any one of the
  *  given classes, else NULL.
  */ 
-pointer
+void *
 LookupIDByClass(XID id, RESTYPE classes)
 {
     int    cid;
@@ -948,7 +948,7 @@ LookupIDByClass(XID id, RESTYPE classes)
 	    if ((res->id == id) && (res->type & classes))
 		return res->value;
     }
-    return (pointer)NULL;
+    return (void *)NULL;
 }
 
 #endif /* XCSECURITY */

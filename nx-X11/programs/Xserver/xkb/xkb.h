@@ -51,7 +51,7 @@ extern Bool XkbApplyLEDChangeToKeyboard(
     Bool                    on,
     XkbChangesPtr           change);
 
-extern Bool XkbWriteRulesProp(ClientPtr client, pointer closure);
+extern Bool XkbWriteRulesProp(ClientPtr client, void * closure);
 
 extern XkbAction XkbGetButtonAction(DeviceIntPtr kbd, DeviceIntPtr dev, int button);
 

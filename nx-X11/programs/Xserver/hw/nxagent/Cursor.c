@@ -231,7 +231,7 @@ Bool nxagentRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor)
   bg_color.green = pCursor->backGreen;
   bg_color.blue = pCursor->backBlue;
 
-  pCursor->devPriv[pScreen->myNum] = (pointer) xalloc(sizeof(nxagentPrivCursor));
+  pCursor->devPriv[pScreen->myNum] = (void *) xalloc(sizeof(nxagentPrivCursor));
 
   nxagentCursorPriv(pCursor, pScreen)->cursor =
          XCreatePixmapCursor(nxagentDisplay, source, mask, &fg_color,
@@ -311,7 +311,7 @@ Bool nxagentSetCursorPosition(ScreenPtr pScreen, int x, int y,
   }
 }
 
-void nxagentReconnectCursor(pointer p0, XID x1, pointer p2)
+void nxagentReconnectCursor(void * p0, XID x1, void * p2)
 {
   Bool* pBool = (Bool*)p2;
   CursorPtr pCursor = (CursorPtr) p0;
@@ -433,7 +433,7 @@ Bool nxagentReconnectAllCursor(void *p0)
   return r;
 }
 
-void nxagentDisconnectCursor(pointer p0, XID x1, pointer p2)
+void nxagentDisconnectCursor(void * p0, XID x1, void * p2)
 {
   Bool* pBool = (Bool *) p2;
   CursorPtr pCursor = (CursorPtr) p0;

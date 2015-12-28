@@ -59,7 +59,7 @@ static DISPATCH_PROC(ProcXDGACreateColormap);
 
 static void XDGAResetProc(ExtensionEntry *extEntry);
 
-static void DGAClientStateChange (CallbackListPtr*, pointer, pointer);
+static void DGAClientStateChange (CallbackListPtr*, void *, void *);
 
 static ClientPtr DGAClients[MAXSCREENS];
 
@@ -291,8 +291,8 @@ ProcXDGAQueryModes(ClientPtr client)
 static void 
 DGAClientStateChange (
     CallbackListPtr* pcbl,
-    pointer nulldata,
-    pointer calldata
+    void * nulldata,
+    void * calldata
 ){
     NewClientInfoRec* pci = (NewClientInfoRec*) calldata;
     ClientPtr client = NULL;
@@ -370,7 +370,7 @@ ProcXDGASetMode(ClientPtr client)
     DGAClients[stuff->screen] = client;
 
     if(pPix) {
-	if(AddResource(stuff->pid, RT_PIXMAP, (pointer)(pPix))) {
+	if(AddResource(stuff->pid, RT_PIXMAP, (void *)(pPix))) {
 	    pPix->drawable.id = (int)stuff->pid;
 	    rep.flags = DGA_PIXMAP_AVAILABLE;
 	}

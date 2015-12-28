@@ -35,12 +35,12 @@ static XF86ModuleVersionInfo VersRec = {
 
 XF86ModuleData recordModuleData = { &VersRec, recordSetup, NULL };
 
-static pointer
-recordSetup(pointer module, pointer opts, int *errmaj, int *errmin)
+static void *
+recordSetup(void * module, void * opts, int *errmaj, int *errmin)
 {
     LoadExtension(&recordExt, FALSE);
 
     /* Need a non-NULL return value to indicate success */
-    return (pointer)1;
+    return (void *)1;
 }
 

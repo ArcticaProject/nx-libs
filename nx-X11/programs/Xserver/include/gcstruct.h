@@ -85,7 +85,7 @@ typedef struct _GCFuncs {
     void	(* ChangeClip)(
 		GCPtr /*pGC*/,
 		int /*type*/,
-		pointer /*pvalue*/,
+		void * /*pvalue*/,
 		int /*nrects*/);
 
     void	(* DestroyClip)(
@@ -244,7 +244,7 @@ typedef struct _GCOps {
 		int /*y*/,
 		unsigned int /*nglyph*/,
 		CharInfoPtr * /*ppci*/,
-		pointer /*pglyphBase*/);
+		void * /*pglyphBase*/);
 
     void	(* PolyGlyphBlt)(
 		DrawablePtr /*pDrawable*/,
@@ -253,7 +253,7 @@ typedef struct _GCOps {
 		int /*y*/,
 		unsigned int /*nglyph*/,
 		CharInfoPtr * /*ppci*/,
-		pointer /*pglyphBase*/);
+		void * /*pglyphBase*/);
 
     void	(* PushPixels)(
 		GCPtr /*pGC*/,
@@ -309,7 +309,7 @@ typedef struct _GC {
     struct _Font	*font;
     DDXPointRec		clipOrg;
     DDXPointRec		lastWinOrg;	/* position of window last validated */
-    pointer		clientClip;
+    void *		clientClip;
     unsigned long	stateChanges;	/* masked with GC_<kind> */
     unsigned long       serialNumber;
     GCFuncs		*funcs;

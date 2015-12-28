@@ -195,7 +195,7 @@ static void GetSendColorPlanesRep (ClientPtr client , xResourceReq *req );
  *      client would be reset here.
  *
  */
-int XETrapDestroyEnv(pointer value, XID id)
+int XETrapDestroyEnv(void * value, XID id)
 {
     xXTrapReq request;
     XETrapEnv *penv = XETenv[(long)value];
@@ -251,7 +251,7 @@ void XETrapCloseDown(ExtensionEntry *extEntry)
     {
         if (XETenv[i] != NULL)
         {
-            XETrapDestroyEnv((pointer)i,0L);
+            XETrapDestroyEnv((void *)i,0L);
         }
     }
     ignore_grabs = False;
@@ -508,7 +508,7 @@ int XETrapCreateEnv(ClientPtr client)
         penv->protocol = 31;    /* default to backwards compatibility */
         /* prep for client's departure (for memory dealloc, cleanup) */
         AddResource(FakeClientID(client->index),XETrapType,
-            (pointer)(long)(client->index));
+            (void *)(long)(client->index));
         if (XETrapRedirectDevices() == False)
         {
             status = XETrapErrorBase + BadDevices;

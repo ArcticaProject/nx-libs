@@ -152,7 +152,7 @@ static void	SEventXTestDispatch(
 	);
 
 static int	XTestCurrentClientGone(
-	pointer			/* value */,
+	void *			/* value */,
 	XID			/* id */
 	);
 
@@ -752,7 +752,7 @@ XTestResetProc(unused)
 /*ARGSUSED*/
 static int
 XTestCurrentClientGone(value, id)
-	pointer	value;
+	void *	value;
 	XID	id;
 {
 	/*

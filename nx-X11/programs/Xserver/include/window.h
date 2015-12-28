@@ -73,17 +73,17 @@ typedef struct _Window *WindowPtr;
 
 typedef int (*VisitWindowProcPtr)(
     WindowPtr /*pWin*/,
-    pointer /*data*/);
+    void * /*data*/);
 
 extern int TraverseTree(
     WindowPtr /*pWin*/,
     VisitWindowProcPtr /*func*/,
-    pointer /*data*/);
+    void * /*data*/);
 
 extern int WalkTree(
     ScreenPtr /*pScreen*/,
     VisitWindowProcPtr /*func*/,
-    pointer /*data*/);
+    void * /*data*/);
 
 extern WindowPtr AllocateWindow(
     ScreenPtr /*pScreen*/);
@@ -122,7 +122,7 @@ extern WindowPtr CreateWindow(
     int* /*error*/);
 
 extern int DeleteWindow(
-    pointer /*pWin*/,
+    void * /*pWin*/,
     XID /*wid*/);
 
 extern void DestroySubwindows(

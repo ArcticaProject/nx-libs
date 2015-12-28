@@ -132,8 +132,8 @@ void OsVendorEndRedirectErrorFFunction();
  */
 
 
-static void nxagentGrabServerCallback(CallbackListPtr *callbacks, pointer data,
-                                   pointer args);
+static void nxagentGrabServerCallback(CallbackListPtr *callbacks, void *data,
+                                   void *args);
 
 void ddxInitGlobals(void)
 {
@@ -398,7 +398,7 @@ void InitInput(argc, argv)
      int argc;
      char *argv[];
 {
-  pointer ptr, kbd;
+  void *ptr, *kbd;
 
   ptr = AddInputDevice(nxagentPointerProc, True);
   kbd = AddInputDevice(nxagentKeyboardProc, True);
@@ -530,8 +530,8 @@ int SelectWaitTime = 10000; /* usec */
 
 ServerGrabInfoRec nxagentGrabServerInfo;
 
-static void nxagentGrabServerCallback(CallbackListPtr *callbacks, pointer data,
-                                   pointer args)
+static void nxagentGrabServerCallback(CallbackListPtr *callbacks, void *data,
+                                   void *args)
 {
     ServerGrabInfoRec *grab = (ServerGrabInfoRec*)args;
 

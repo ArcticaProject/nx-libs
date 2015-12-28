@@ -288,7 +288,7 @@ SecurityAudit(char *format, ...)
 
 static int
 SecurityDeleteAuthorization(
-    pointer value,
+    void * value,
     XID id)
 {
     SecurityAuthorizationPtr pAuth = (SecurityAuthorizationPtr)value;
@@ -347,7 +347,7 @@ SecurityDeleteAuthorization(
 /* resource delete function for RTEventClient */
 static int
 SecurityDeleteAuthorizationEventClient(
-    pointer value,
+    void * value,
     XID id)
 {
     OtherClientsPtr pEventClient, prev = NULL;
@@ -432,7 +432,7 @@ static CARD32
 SecurityAuthorizationExpired(
     OsTimerPtr timer,
     CARD32 time,
-    pointer pval)
+    void * pval)
 {
     SecurityAuthorizationPtr pAuth = (SecurityAuthorizationPtr)pval;
 
@@ -538,7 +538,7 @@ SecurityEventSelectForAuthorization(
     pEventClient->resource = FakeClientID(client->index);
     pEventClient->next = pAuth->eventClients;
     if (!AddResource(pEventClient->resource, RTEventClient,
-		     (pointer)pAuth))
+		     (void *)pAuth))
     {
 	xfree(pEventClient);
 	return BadAlloc;
@@ -624,7 +624,7 @@ ProcSecurityGenerateAuthorization(
 	    SecurityValidateGroupInfoRec vgi;
 	    vgi.group = group;
 	    vgi.valid = FALSE;
-	    CallCallbacks(&SecurityValidateGroupCallback, (pointer)&vgi);
+	    CallCallbacks(&SecurityValidateGroupCallback, (void *)&vgi);
 
 	    /* if nobody said they recognized it, it's an error */
 
@@ -1065,7 +1065,7 @@ SecurityCheckDeviceAccess(client, dev, fromRequest)
  *	resource access.
  */
 
-static pointer
+static void *
 SecurityAuditResourceIDAccess(
     ClientPtr client,
     XID id)
@@ -1119,13 +1119,13 @@ SecurityAuditResourceIDAccess(
  *	Disallowed resource accesses are audited.
  */
 
-static pointer
+static void *
 SecurityCheckResourceIDAccess(
     ClientPtr client,
     XID id,
     RESTYPE rtype,
     Mask access_mode,
-    pointer rval)
+    void * rval)
 {
     int cid = CLIENT_ID(id);
     int reqtype = ((xReq *)client->requestBuffer)->reqType;
@@ -1288,8 +1288,8 @@ SecurityCheckResourceIDAccess(
 static void
 SecurityClientStateCallback(
     CallbackListPtr *pcbl,
-    pointer nulldata,
-    pointer calldata)
+    void * nulldata,
+    void * calldata)
 {
     NewClientInfoRec *pci = (NewClientInfoRec *)calldata;
     ClientPtr client = pci->client;
@@ -1445,7 +1445,7 @@ SecurityCensorImage(client, pVisibleRegion, widthBytesLine, pDraw, x, y, w, h,
 
 	pPix = GetScratchPixmapHeader(pDraw->pScreen, w, h,
 		    depth, bitsPerPixel,
-		    widthBytesLine, (pointer)pBuf);
+		    widthBytesLine, (void *)pBuf);
 	if (!pPix)
 	{
 	    failed = TRUE;

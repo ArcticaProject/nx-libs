@@ -81,6 +81,11 @@ extern unsigned long serverGeneration;
 #include <X11/Xfuncproto.h>
 #include <X11/Xmd.h>
 #include <X11/X.h>
+
+#ifndef _XTYPEDEF_POINTER
+/* Don't let Xdefs.h define 'pointer' */
+#define _XTYPEDEF_POINTER       1
+#endif /* _XTYPEDEF_POINTER */
 #include <X11/Xdefs.h>
 
 #ifndef IN_MODULE

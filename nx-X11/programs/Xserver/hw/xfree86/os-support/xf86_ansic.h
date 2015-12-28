@@ -268,7 +268,7 @@ extern int xf86vsnprintf(char*,xf86size_t,const char*,va_list);
 extern int xf86open(const char*, int,...);
 extern int xf86close(int);
 extern long xf86lseek(int, long, int);
-extern int xf86ioctl(int, unsigned long, pointer);
+extern int xf86ioctl(int, unsigned long, void *);
 extern xf86ssize_t xf86read(int, void *, xf86size_t);
 extern xf86ssize_t xf86write(int, const void *, xf86size_t);
 extern void* xf86mmap(void*, xf86size_t, int, int, int, xf86size_t /* off_t */);
@@ -306,7 +306,7 @@ unsigned int xf86sleep(unsigned int seconds);
 extern int xf86shmget(xf86key_t key, int size, int xf86shmflg);
 extern char * xf86shmat(int id, char *addr, int xf86shmflg);
 extern int xf86shmdt(char *addr);
-extern int xf86shmctl(int id, int xf86cmd, pointer buf);
+extern int xf86shmctl(int id, int xf86cmd, void * buf);
 
 extern int xf86setjmp(xf86jmp_buf env);
 extern int xf86setjmp0(xf86jmp_buf env);

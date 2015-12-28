@@ -67,7 +67,7 @@ typedef struct _ExtensionEntry {
     int errorLast;
     int num_aliases;
     char **aliases;
-    pointer extPrivate;
+    void * extPrivate;
     unsigned short (* MinorOpcode)(	/* called for errors */
 	ClientPtr /* client */);
 #ifdef XCSECURITY

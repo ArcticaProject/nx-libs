@@ -79,7 +79,7 @@ static char kerror[256];
  * extract session key from a credentials struct
  */
 krb5_error_code tgt_keyproc(keyprocarg, principal, vno, key)
-    krb5_pointer keyprocarg;
+    krb5_void * keyprocarg;
     krb5_principal principal;
     krb5_kvno vno;
     krb5_keyblock **key;
@@ -237,15 +237,15 @@ XID K5Check(data_length, data, client, reason)
     client->clientState = ClientStateAuthenticating;
     if (ccname)
     {
-	((OsCommPtr)client->osPrivate)->authstate.srvcreds = (pointer)creds; /* save tgt creds */
+	((OsCommPtr)client->osPrivate)->authstate.srvcreds = (void *)creds; /* save tgt creds */
 	((OsCommPtr)client->osPrivate)->authstate.ktname = NULL;
 	((OsCommPtr)client->osPrivate)->authstate.srvname = NULL;
     }
     if (srvname)
     {
 	((OsCommPtr)client->osPrivate)->authstate.srvcreds = NULL;
-	((OsCommPtr)client->osPrivate)->authstate.ktname = (pointer)ktname;
-	((OsCommPtr)client->osPrivate)->authstate.srvname = (pointer)srvname;
+	((OsCommPtr)client->osPrivate)->authstate.ktname = (void *)ktname;
+	((OsCommPtr)client->osPrivate)->authstate.srvname = (void *)srvname;
     }
     ((OsCommPtr)client->osPrivate)->authstate.stageno = 1; /* next stage is 1 */
     return krb5_id;
@@ -476,7 +476,7 @@ int k5_stage1(client)
     /*
      * Now check to see if the principal we got is one that we want to let in
      */
-    if (ForEachHostInFamily(FamilyKrb5Principal, k5_cmpenc, (pointer)&buf))
+    if (ForEachHostInFamily(FamilyKrb5Principal, k5_cmpenc, (void *)&buf))
     {
 	free(buf.data);
 	/*

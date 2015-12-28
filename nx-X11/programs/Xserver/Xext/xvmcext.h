@@ -32,15 +32,15 @@ typedef struct {
   unsigned short height;
   CARD32 flags;
   int refcnt;
-  pointer port_priv;
-  pointer driver_priv;
+  void * port_priv;
+  void * driver_priv;
 } XvMCContextRec, *XvMCContextPtr;
 
 typedef struct {
   XID surface_id;
   int surface_type_id;
   XvMCContextPtr context;
-  pointer driver_priv;
+  void * driver_priv;
 } XvMCSurfaceRec, *XvMCSurfacePtr;
 
 
@@ -53,7 +53,7 @@ typedef struct {
   int entry_bytes;
   char component_order[4];
   XvMCContextPtr context;
-  pointer driver_priv;
+  void * driver_priv;
 } XvMCSubpictureRec, *XvMCSubpicturePtr;
 
 typedef int (*XvMCCreateContextProcPtr) (

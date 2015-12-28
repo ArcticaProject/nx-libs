@@ -511,7 +511,7 @@ ReadRequestFromClient(ClientPtr client)
 	client->req_len -= (sizeof(xBigReq) - sizeof(xReq)) >> 2;
     }
 #endif
-    client->requestBuffer = (pointer)oci->bufptr;
+    client->requestBuffer = (void *)oci->bufptr;
 #ifdef DEBUG_COMMUNICATION
     {
 	xReq *req = client->requestBuffer;
@@ -998,7 +998,7 @@ WriteToClient (ClientPtr who, int count, char *buf)
 	    who->replyBytesRemaining -= count + padBytes;
 	    replyinfo.startOfReply = FALSE;
 	    replyinfo.bytesRemaining = who->replyBytesRemaining;
-	    CallCallbacks((&ReplyCallback), (pointer)&replyinfo);
+	    CallCallbacks((&ReplyCallback), (void *)&replyinfo);
 	}
 	else if (who->clientState == ClientStateRunning
 		 && buf[0] == X_Reply)
@@ -1013,7 +1013,7 @@ WriteToClient (ClientPtr who, int count, char *buf)
 	    bytesleft = (replylen * 4) + SIZEOF(xReply) - count - padBytes;
 	    replyinfo.startOfReply = TRUE;
 	    replyinfo.bytesRemaining = who->replyBytesRemaining = bytesleft;
-	    CallCallbacks((&ReplyCallback), (pointer)&replyinfo);
+	    CallCallbacks((&ReplyCallback), (void *)&replyinfo);
 	} 	                      
     }
 #ifdef DEBUG_COMMUNICATION

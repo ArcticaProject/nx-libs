@@ -435,7 +435,7 @@ static RESTYPE cacheType;
 /*ARGSUSED*/
 int
 miFreeArcCache (data, id)
-    pointer	    data;
+    void *	    data;
     XID		    id;
 {
     int k;
@@ -1691,7 +1691,7 @@ miGetArcPts(
     count++;
 
     cdt = 2 * miDcos(dt);
-    if (!(poly = (SppPointPtr) xrealloc((pointer)*ppPts,
+    if (!(poly = (SppPointPtr) xrealloc((void *)*ppPts,
 					(cpt + count) * sizeof(SppPointRec))))
 	return(0);
     *ppPts = poly;

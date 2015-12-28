@@ -218,7 +218,7 @@ RegionPtr nxagentRemoteExposeRegion = NULL;
 
 static void nxagentForwardRemoteExpose(void);
 
-static int nxagentClipAndSendExpose(WindowPtr pWin, pointer ptr);
+static int nxagentClipAndSendExpose(WindowPtr pWin, void * ptr);
 
 /*
  * This is from NXproperty.c.
@@ -778,7 +778,7 @@ void nxagentGetEventMask(WindowPtr pWin, Mask *mask_return)
   *mask_return = mask;
 }
 
-static int nxagentChangeMapPrivate(WindowPtr pWin, pointer ptr)
+static int nxagentChangeMapPrivate(WindowPtr pWin, void * ptr)
 {
   if (pWin && nxagentWindowPriv(pWin))
   {
@@ -788,7 +788,7 @@ static int nxagentChangeMapPrivate(WindowPtr pWin, pointer ptr)
   return WT_WALKCHILDREN;
 }
 
-static int nxagentChangeVisibilityPrivate(WindowPtr pWin, pointer ptr)
+static int nxagentChangeVisibilityPrivate(WindowPtr pWin, void * ptr)
 {
   if (pWin && nxagentWindowPriv(pWin))
   {
@@ -4276,7 +4276,7 @@ void nxagentAddRectToRemoteExposeRegion(BoxPtr rect)
   REGION_UNINIT(nxagentDefaultScreen, &exposeRegion);
 }
 
-int nxagentClipAndSendExpose(WindowPtr pWin, pointer ptr)
+int nxagentClipAndSendExpose(WindowPtr pWin, void * ptr)
 {
   RegionPtr exposeRgn;
   RegionPtr remoteExposeRgn;

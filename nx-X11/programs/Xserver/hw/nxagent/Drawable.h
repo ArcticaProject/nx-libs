@@ -182,9 +182,9 @@ extern void nxagentFillRemoteRegion(DrawablePtr pDrawable, RegionPtr pRegion);
 
 extern void nxagentAllocateCorruptedResource(DrawablePtr pDrawable, RESTYPE type);
 extern void nxagentDestroyCorruptedResource(DrawablePtr pDrawable, RESTYPE type);
-extern int nxagentDestroyCorruptedBackgroundResource(pointer p, XID id);
-extern int nxagentDestroyCorruptedWindowResource(pointer p, XID id);
-extern int nxagentDestroyCorruptedPixmapResource(pointer p, XID id);
+extern int nxagentDestroyCorruptedBackgroundResource(void * p, XID id);
+extern int nxagentDestroyCorruptedWindowResource(void * p, XID id);
+extern int nxagentDestroyCorruptedPixmapResource(void * p, XID id);
 
 extern void nxagentCreateDrawableBitmap(DrawablePtr pDrawable);
 extern void nxagentDestroyDrawableBitmap(DrawablePtr pDrawable);

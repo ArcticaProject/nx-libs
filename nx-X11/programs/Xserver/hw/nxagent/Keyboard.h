@@ -89,7 +89,7 @@ extern char *nxagentKeyboard;
  * and utility functions.
  */
 
-void nxagentBell(int volume, DeviceIntPtr pDev, pointer ctrl, int cls);
+void nxagentBell(int volume, DeviceIntPtr pDev, void * ctrl, int cls);
 
 int nxagentKeyboardProc(DeviceIntPtr pDev, int onoff);
 

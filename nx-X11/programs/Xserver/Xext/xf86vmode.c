@@ -155,7 +155,7 @@ typedef struct _XF86VidModeScreenPrivate {
 static int ScreenPrivateIndex;
 
 #define GetScreenPrivate(s) ((ScreenSaverScreenPrivatePtr)(s)->devPrivates[ScreenPrivateIndex].ptr)
-#define SetScreenPrivate(s,v) ((s)->devPrivates[ScreenPrivateIndex].ptr = (pointer) v);
+#define SetScreenPrivate(s,v) ((s)->devPrivates[ScreenPrivateIndex].ptr = (void *) v);
 #define SetupScreen(s)  ScreenSaverScreenPrivatePtr pPriv = GetScreenPrivate(s)
 
 #define New(t)  (xalloc (sizeof (t)))
@@ -338,7 +338,7 @@ setEventMask (ScreenPtr pScreen, ClientPtr client, unsigned long mask)
 }
 
 static int
-XF86VidModeFreeEvents(pointer value, XID id)
+XF86VidModeFreeEvents(void * value, XID id)
 {
     XF86VidModeEventPtr	pOld = (XF86VidModeEventPtr)value;
     ScreenPtr pScreen = pOld->screen;
@@ -437,7 +437,7 @@ ProcXF86VidModeGetModeLine(ClientPtr client)
     REQUEST(xXF86VidModeGetModeLineReq);
     xXF86VidModeGetModeLineReply rep;
     xXF86OldVidModeGetModeLineReply oldrep;
-    pointer mode;
+    void * mode;
     register int n;
     int dotClock;
     int ver;
@@ -539,7 +539,7 @@ ProcXF86VidModeGetAllModeLines(ClientPtr client)
     xXF86VidModeGetAllModeLinesReply rep;
     xXF86VidModeModeInfo mdinf;
     xXF86OldVidModeModeInfo oldmdinf;
-    pointer mode;
+    void * mode;
     int modecount, dotClock;
     register int n;
     int ver;
@@ -645,7 +645,7 @@ ProcXF86VidModeAddModeLine(ClientPtr client)
     xXF86OldVidModeAddModeLineReq *oldstuff =
 			(xXF86OldVidModeAddModeLineReq *)client->requestBuffer;
     xXF86VidModeAddModeLineReq newstuff;
-    pointer mode;
+    void * mode;
     int len;
     int dotClock;
     int ver;
@@ -805,7 +805,7 @@ ProcXF86VidModeDeleteModeLine(ClientPtr client)
     xXF86OldVidModeDeleteModeLineReq *oldstuff =
 		(xXF86OldVidModeDeleteModeLineReq *)client->requestBuffer;
     xXF86VidModeDeleteModeLineReq newstuff;
-    pointer mode;
+    void * mode;
     int len, dotClock;
     int ver;
 
@@ -922,7 +922,7 @@ ProcXF86VidModeModModeLine(ClientPtr client)
     xXF86OldVidModeModModeLineReq *oldstuff =
 			(xXF86OldVidModeModModeLineReq *)client->requestBuffer;
     xXF86VidModeModModeLineReq newstuff;
-    pointer mode, modetmp;
+    void * mode, modetmp;
     int len, dotClock;
     int ver;
 
@@ -1047,7 +1047,7 @@ ProcXF86VidModeValidateModeLine(ClientPtr client)
 		(xXF86OldVidModeValidateModeLineReq *)client->requestBuffer;
     xXF86VidModeValidateModeLineReq newstuff;
     xXF86VidModeValidateModeLineReply rep;
-    pointer mode, modetmp = NULL;
+    void * mode, modetmp = NULL;
     int len, status, dotClock;
     int ver;
 
@@ -1181,7 +1181,7 @@ ProcXF86VidModeSwitchToMode(ClientPtr client)
     xXF86OldVidModeSwitchToModeReq *oldstuff =
 		(xXF86OldVidModeSwitchToModeReq *)client->requestBuffer;
     xXF86VidModeSwitchToModeReq newstuff;
-    pointer mode;
+    void * mode;
     int len, dotClock;
     int ver;
 
@@ -1297,7 +1297,7 @@ ProcXF86VidModeGetMonitor(ClientPtr client)
     register int n;
     CARD32 *hsyncdata, *vsyncdata;
     int i, nHsync, nVrefresh;
-    pointer monitor;
+    void * monitor;
     
     DEBUG_P("XF86VidModeGetMonitor");
 

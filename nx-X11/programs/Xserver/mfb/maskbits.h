@@ -534,7 +534,7 @@ extern PixelType mfbGetmask(int);
 #endif
 
 #if GETLEFTBITS_ALIGNMENT == 1
-#define getleftbits(psrc, w, dst)	dst = *((CARD32 *)(pointer) psrc)
+#define getleftbits(psrc, w, dst)	dst = *((CARD32 *)(void *) psrc)
 #endif /* GETLEFTBITS_ALIGNMENT == 1 */
 
 #if GETLEFTBITS_ALIGNMENT == 2

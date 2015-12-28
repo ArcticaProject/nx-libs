@@ -85,8 +85,8 @@ typedef struct _Depth {
 
 
 /*
- *  There is a typedef for each screen function pointer so that code that
- *  needs to declare a screen function pointer (e.g. in a screen private
+ *  There is a typedef for each screen function void * so that code that
+ *  needs to declare a screen function void * (e.g. in a screen private
  *  or as a local variable) can easily do so and retain full type checking.
  */
 
@@ -431,15 +431,15 @@ typedef    void (* SendGraphicsExposeProcPtr)(
 
 typedef    void (* ScreenBlockHandlerProcPtr)(
 	int /*screenNum*/,
-	pointer /*blockData*/,
-	pointer /*pTimeout*/,
-	pointer /*pReadmask*/);
+	void * /*blockData*/,
+	void * /*pTimeout*/,
+	void * /*pReadmask*/);
 
 typedef    void (* ScreenWakeupHandlerProcPtr)(
 	 int /*screenNum*/,
-	 pointer /*wakeupData*/,
+	 void * /*wakeupData*/,
 	 unsigned long /*result*/,
-	 pointer /*pReadMask*/);
+	 void * /*pReadMask*/);
 
 typedef    Bool (* CreateScreenResourcesProcPtr)(
 	ScreenPtr /*pScreen*/);
@@ -451,7 +451,7 @@ typedef    Bool (* ModifyPixmapHeaderProcPtr)(
 	int /*depth*/,
 	int /*bitsPerPixel*/,
 	int /*devKind*/,
-	pointer /*pPixData*/);
+	void * /*pPixData*/);
 
 typedef    PixmapPtr (* GetWindowPixmapProcPtr)(
 	WindowPtr /*pWin*/);
@@ -546,7 +546,7 @@ typedef struct _Screen {
 			   a standard one.
 			*/
     PixmapPtr		PixmapPerDepth[1];
-    pointer		devPrivate;
+    void *		devPrivate;
     short       	numVisuals;
     VisualPtr		visuals;
     int			WindowPrivateLen;
@@ -668,8 +668,8 @@ typedef struct _Screen {
     ScreenBlockHandlerProcPtr	BlockHandler;
     ScreenWakeupHandlerProcPtr	WakeupHandler;
 
-    pointer blockData;
-    pointer wakeupData;
+    void * blockData;
+    void * wakeupData;
 
     /* anybody can get a piece of this array */
     DevUnion	*devPrivates;

@@ -58,11 +58,11 @@ typedef	RegionPtr (*CreateDftPtr)(
 	);
 
 static int ShapeFreeClient(
-	pointer /* data */,
+	void * /* data */,
 	XID /* id */
 	);
 static int ShapeFreeEvents(
-	pointer /* data */,
+	void * /* data */,
 	XID /* id */
 	);
 static void ShapeResetProc(
@@ -774,7 +774,7 @@ ProcShapeQueryExtents (client)
 /*ARGSUSED*/
 static int
 ShapeFreeClient (data, id)
-    pointer	    data;
+    void	    *data;
     XID		    id;
 {
     ShapeEventPtr   pShapeEvent;
@@ -796,14 +796,14 @@ ShapeFreeClient (data, id)
 	    	*pHead = pShapeEvent->next;
 	}
     }
-    xfree ((pointer) pShapeEvent);
+    xfree ((void *) pShapeEvent);
     return 1;
 }
 
 /*ARGSUSED*/
 static int
 ShapeFreeEvents (data, id)
-    pointer	    data;
+    void	    *data;
     XID		    id;
 {
     ShapeEventPtr   *pHead, pCur, pNext;
@@ -812,9 +812,9 @@ ShapeFreeEvents (data, id)
     for (pCur = *pHead; pCur; pCur = pNext) {
 	pNext = pCur->next;
 	FreeResource (pCur->clientResource, ClientType);
-	xfree ((pointer) pCur);
+	xfree ((void *) pCur);
     }
-    xfree ((pointer) pHead);
+    xfree ((void *) pHead);
     return 1;
 }
 
@@ -861,7 +861,7 @@ ProcShapeSelectInput (client)
      	 */
    	clientResource = FakeClientID (client->index);
     	pNewShapeEvent->clientResource = clientResource;
-    	if (!AddResource (clientResource, ClientType, (pointer)pNewShapeEvent))
+	if (!AddResource (clientResource, ClientType, (void *)pNewShapeEvent))
 	    return BadAlloc;
     	/*
      	 * create a resource to contain a pointer to the list
@@ -873,7 +873,7 @@ ProcShapeSelectInput (client)
     	{
 	    pHead = (ShapeEventPtr *) xalloc (sizeof (ShapeEventPtr));
 	    if (!pHead ||
-	    	!AddResource (pWin->drawable.id, EventType, (pointer)pHead))
+		!AddResource (pWin->drawable.id, EventType, (void *)pHead))
 	    {
 	    	FreeResource (clientResource, RT_NONE);
 	    	return BadAlloc;

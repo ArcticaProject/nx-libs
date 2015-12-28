@@ -92,7 +92,7 @@ extern int connBlockScreenStart;
 
 static 
 int XagAppGroupFree(
-    pointer what,
+    void * what,
     XID id) /* unused */
 {
     int i;
@@ -126,8 +126,8 @@ int XagAppGroupFree(
 /* static */
 void XagClientStateChange(
     CallbackListPtr* pcbl,
-    pointer nulldata,
-    pointer calldata)
+    void * nulldata,
+    void * calldata)
 {
     SecurityAuthorizationPtr pAuth;
     NewClientInfoRec* pci = (NewClientInfoRec*) calldata;
@@ -262,7 +262,7 @@ void XagResetProc(
 {
     DeleteCallback (&ClientStateCallback, XagClientStateChange, NULL);
     XagCallbackRefCount = 0;
-    while (appGrpList) XagAppGroupFree ((pointer) appGrpList, 0);
+    while (appGrpList) XagAppGroupFree ((void *) appGrpList, 0);
 }
 
 static 
@@ -476,7 +476,7 @@ int ProcXagCreate (
 	return BadAlloc;
     ret = AttrValidate (client, stuff->attrib_mask, pAppGrp);
     if (ret != Success) {
-	XagAppGroupFree ((pointer)pAppGrp, (XID)0);
+	XagAppGroupFree ((void *)pAppGrp, (XID)0);
 	return ret;
     }
     if (pAppGrp->single_screen) {
@@ -484,7 +484,7 @@ int ProcXagCreate (
 	if (!pAppGrp->ConnectionInfo)
 	    return BadAlloc;
     }
-    if (!AddResource (stuff->app_group, RT_APPGROUP, (pointer)pAppGrp))
+    if (!AddResource (stuff->app_group, RT_APPGROUP, (void *)pAppGrp))
 	return BadAlloc;
     if (XagCallbackRefCount++ == 0)
 	(void) AddCallback (&ClientStateCallback, XagClientStateChange, NULL);
@@ -824,6 +824,6 @@ void XagCallClientStateChange(
 	NewClientInfoRec clientinfo;
 
 	clientinfo.client = client;
-	XagClientStateChange (NULL, NULL, (pointer)&clientinfo);
+	XagClientStateChange (NULL, NULL, (void *)&clientinfo);
     }
 }

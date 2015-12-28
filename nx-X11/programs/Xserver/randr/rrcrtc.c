@@ -107,7 +107,7 @@ RRCrtcCreate (ScreenPtr pScreen, void *devPrivate)
     crtc->changed = FALSE;
     crtc->devPrivate = devPrivate;
 
-    if (!AddResource (crtc->id, RRCrtcType, (pointer) crtc))
+    if (!AddResource (crtc->id, RRCrtcType, (void *) crtc))
 	return NULL;
 
     /* attach the screen and crtc together */
@@ -385,7 +385,7 @@ RRCrtcDestroy (RRCrtcPtr crtc)
 }
 
 static int
-RRCrtcDestroyResource (pointer value, XID pid)
+RRCrtcDestroyResource (void * value, XID pid)
 {
     RRCrtcPtr	crtc = (RRCrtcPtr) value;
     ScreenPtr	pScreen = crtc->pScreen;

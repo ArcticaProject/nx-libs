@@ -32,7 +32,7 @@
 
 Bool
 fb24_32FinishScreenInit(ScreenPtr    pScreen,
-			pointer      pbits,
+			void         *pbits,
 			int          xsize,
 			int          ysize,
 			int          dpix,
@@ -42,7 +42,7 @@ fb24_32FinishScreenInit(ScreenPtr    pScreen,
 
 Bool
 fb24_32ScreenInit(ScreenPtr  pScreen,
-		  pointer    pbits,
+		  void       *pbits,
 		  int        xsize,
 		  int        ysize,
 		  int        dpix,

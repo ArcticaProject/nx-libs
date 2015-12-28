@@ -144,7 +144,7 @@ _NXGetFontPathError:
 
 #define QUERYCHARINFO(pci, pr)  *(pr) = (pci)->metrics
 
-extern pointer fosNaturalParams;
+extern void * fosNaturalParams;
 extern FontPtr defaultFont;
 
 static FontPathElementPtr *font_path_elements = (FontPathElementPtr *) 0;
@@ -258,7 +258,7 @@ RemoveFontWakeup(FontPathElementPtr fpe)
 }
 
 void
-FontWakeup(pointer data, int count, pointer LastSelectMask)
+FontWakeup(void * data, int count, void * LastSelectMask)
 {
     int         i;
     FontPathElementPtr fpe;
@@ -338,7 +338,7 @@ doOpenFont(ClientPtr client, OFclosurePtr c)
 	if (c->current_fpe < c->num_fpes)
 	{
 	    fpe = c->fpe_list[c->current_fpe];
-	    (*fpe_functions[fpe->type].client_died) ((pointer) client, fpe);
+	    (*fpe_functions[fpe->type].client_died) ((void *) client, fpe);
 	}
 	err = Successful;
 	goto bail;
@@ -346,7 +346,7 @@ doOpenFont(ClientPtr client, OFclosurePtr c)
     while (c->current_fpe < c->num_fpes) {
 	fpe = c->fpe_list[c->current_fpe];
 	err = (*fpe_functions[fpe->type].open_font)
-	    ((pointer) client, fpe, c->flags,
+	    ((void *) client, fpe, c->flags,
 	     c->fontname, c->fnamelen, FontFormat,
 	     BitmapFormatMaskByte |
 	     BitmapFormatMaskBit |
@@ -380,7 +380,7 @@ doOpenFont(ClientPtr client, OFclosurePtr c)
 	if (err == Suspended) {
 	    if (!c->slept) {
 		c->slept = TRUE;
-		ClientSleep(client, (ClientSleepProcPtr)doOpenFont, (pointer) c);
+		ClientSleep(client, (ClientSleepProcPtr)doOpenFont, (void *) c);
 	    }
 	    return TRUE;
 	}
@@ -418,7 +418,7 @@ doOpenFont(ClientPtr client, OFclosurePtr c)
 	    }
 	}
     }
-    if (!AddResource(c->fontid, RT_FONT, (pointer) pfont)) {
+    if (!AddResource(c->fontid, RT_FONT, (void *) pfont)) {
 	err = AllocError;
 	goto bail;
     }
@@ -481,7 +481,7 @@ OpenFont(ClientPtr client, XID fid, Mask flags, unsigned lenfname, char *pfontna
 	cached = FindCachedFontPattern(patternCache, pfontname, lenfname);
 	if (cached && cached->info.cachable)
 	{
-	    if (!AddResource(fid, RT_FONT, (pointer) cached))
+	    if (!AddResource(fid, RT_FONT, (void *) cached))
 		return BadAlloc;
 	    cached->refcnt++;
 	    return Success;
@@ -532,7 +532,7 @@ OpenFont(ClientPtr client, XID fid, Mask flags, unsigned lenfname, char *pfontna
  *  \param value must conform to DeleteType
  */
 int
-CloseFont(pointer value, XID fid)
+CloseFont(void * value, XID fid)
 {
     int         nscr;
     ScreenPtr   pscr;
@@ -660,7 +660,7 @@ doListFontsAndAliases(ClientPtr client, LFclosurePtr c)
 	if (c->current.current_fpe < c->num_fpes)
 	{
 	    fpe = c->fpe_list[c->current.current_fpe];
-	    (*fpe_functions[fpe->type].client_died) ((pointer) client, fpe);
+	    (*fpe_functions[fpe->type].client_died) ((void *) client, fpe);
 	}
 	err = Successful;
 	goto bail;
@@ -678,7 +678,7 @@ doListFontsAndAliases(ClientPtr client, LFclosurePtr c)
 	    /* This FPE doesn't support/require list_fonts_and_aliases */
 
 	    err = (*fpe_functions[fpe->type].list_fonts)
-		((pointer) c->client, fpe, c->current.pattern,
+		((void *) c->client, fpe, c->current.pattern,
 		 c->current.patlen, c->current.max_names - c->names->nnames,
 		 c->names);
 
@@ -687,7 +687,7 @@ doListFontsAndAliases(ClientPtr client, LFclosurePtr c)
 		    c->slept = TRUE;
 		    ClientSleep(client,
 			(ClientSleepProcPtr)doListFontsAndAliases,
-			(pointer) c);
+			(void *) c);
 		}
 		return TRUE;
 	    }
@@ -707,14 +707,14 @@ doListFontsAndAliases(ClientPtr client, LFclosurePtr c)
 
 	    if (!c->current.list_started) {
 		err = (*fpe_functions[fpe->type].start_list_fonts_and_aliases)
-		    ((pointer) c->client, fpe, c->current.pattern,
+		    ((void *) c->client, fpe, c->current.pattern,
 		     c->current.patlen, c->current.max_names - c->names->nnames,
 		     &c->current.private);
 		if (err == Suspended) {
 		    if (!c->slept) {
 			ClientSleep(client,
 				    (ClientSleepProcPtr)doListFontsAndAliases,
-				    (pointer) c);
+				    (void *) c);
 			c->slept = TRUE;
 		    }
 		    return TRUE;
@@ -726,13 +726,13 @@ doListFontsAndAliases(ClientPtr client, LFclosurePtr c)
 		char    *tmpname;
 		name = 0;
 		err = (*fpe_functions[fpe->type].list_next_font_or_alias)
-		    ((pointer) c->client, fpe, &name, &namelen, &tmpname,
+		    ((void *) c->client, fpe, &name, &namelen, &tmpname,
 		     &resolvedlen, c->current.private);
 		if (err == Suspended) {
 		    if (!c->slept) {
 			ClientSleep(client,
 				    (ClientSleepProcPtr)doListFontsAndAliases,
-				    (pointer) c);
+				    (void *) c);
 			c->slept = TRUE;
 		    }
 		    return TRUE;
@@ -780,7 +780,7 @@ doListFontsAndAliases(ClientPtr client, LFclosurePtr c)
 
 		    tmpname = 0;
 		    (void) (*fpe_functions[fpe->type].list_next_font_or_alias)
-			((pointer) c->client, fpe, &tmpname, &tmpnamelen,
+			((void *) c->client, fpe, &tmpname, &tmpnamelen,
 			 &tmpname, &tmpnamelen, c->current.private);
 		    if (--aliascount <= 0)
 		    {
@@ -968,7 +968,7 @@ doListFontsWithInfo(ClientPtr client, LFWIclosurePtr c)
 	if (c->current.current_fpe < c->num_fpes)
  	{
 	    fpe = c->fpe_list[c->current.current_fpe];
-	    (*fpe_functions[fpe->type].client_died) ((pointer) client, fpe);
+	    (*fpe_functions[fpe->type].client_died) ((void *) client, fpe);
 	}
 	err = Successful;
 	goto bail;
@@ -1237,7 +1237,7 @@ doPolyText(ClientPtr client, register PTclosurePtr c)
     if (client->clientGone)
     {
 	fpe = c->pGC->font->fpe;
-	(*fpe_functions[fpe->type].client_died) ((pointer) client, fpe);
+	(*fpe_functions[fpe->type].client_died) ((void *) client, fpe);
 
 	if (c->slept)
 	{
@@ -1265,7 +1265,7 @@ doPolyText(ClientPtr client, register PTclosurePtr c)
 	   the FPE code to clean up after client and avoid further
 	   rendering while we clean up after ourself.  */
 	fpe = c->pGC->font->fpe;
-	(*fpe_functions[fpe->type].client_died) ((pointer) client, fpe);
+	(*fpe_functions[fpe->type].client_died) ((void *) client, fpe);
 	c->pDraw = (DrawablePtr)0;
     }
 
@@ -1429,7 +1429,7 @@ doPolyText(ClientPtr client, register PTclosurePtr c)
 		    c->slept = TRUE;
 		    ClientSleep(client,
 		    	     (ClientSleepProcPtr)doPolyText,
-			     (pointer) c);
+			     (void *) c);
 
 		    /* Set up to perform steps 3 and 4 */
 		    client_state = START_SLEEP;
@@ -1535,7 +1535,7 @@ doImageText(ClientPtr client, register ITclosurePtr c)
     if (client->clientGone)
     {
 	fpe = c->pGC->font->fpe;
-	(*fpe_functions[fpe->type].client_died) ((pointer) client, fpe);
+	(*fpe_functions[fpe->type].client_died) ((void *) client, fpe);
 	err = Success;
 	goto bail;
     }
@@ -1549,7 +1549,7 @@ doImageText(ClientPtr client, register ITclosurePtr c)
 	/* Our drawable has disappeared.  Treat like client died... ask
 	   the FPE code to clean up after client. */
 	fpe = c->pGC->font->fpe;
-	(*fpe_functions[fpe->type].client_died) ((pointer) client, fpe);
+	(*fpe_functions[fpe->type].client_died) ((void *) client, fpe);
 	err = Success;
 	goto bail;
     }
@@ -1616,7 +1616,7 @@ doImageText(ClientPtr client, register ITclosurePtr c)
 	    ValidateGC(c->pDraw, c->pGC);
 
 	    c->slept = TRUE;
-            ClientSleep(client, (ClientSleepProcPtr)doImageText, (pointer) c);
+            ClientSleep(client, (ClientSleepProcPtr)doImageText, (void *) c);
         }
         return TRUE;
     }
@@ -1966,7 +1966,7 @@ DeleteClientFontStuff(ClientPtr client)
     {
 	fpe = font_path_elements[i];
 	if (fpe_functions[fpe->type].client_died)
-	    (*fpe_functions[fpe->type].client_died) ((pointer) client, fpe);
+	    (*fpe_functions[fpe->type].client_died) ((void *) client, fpe);
     }
 }
 
@@ -2106,7 +2106,7 @@ GetNewFontClientID()
 int
 StoreFontClientFont(FontPtr pfont, Font id)
 {
-    return AddResource(id, RT_NONE, (pointer) pfont);
+    return AddResource(id, RT_NONE, (void *) pfont);
 }
 
 void
@@ -2139,7 +2139,7 @@ init_fs_handlers(FontPathElementPtr fpe, BlockHandlerProcPtr block_handler)
 #endif
 
 	if (!RegisterBlockAndWakeupHandlers(block_handler,
-					    FontWakeup, (pointer) 0))
+					    FontWakeup, (void *) 0))
 	    return AllocError;
 	fs_handlers_installed++;
     }
@@ -2159,7 +2159,7 @@ remove_fs_handlers(FontPathElementPtr fpe, BlockHandlerProcPtr block_handler, Bo
 #endif
 
 	    RemoveBlockAndWakeupHandlers(block_handler, FontWakeup,
-					 (pointer) 0);
+					 (void *) 0);
 	}
     }
     RemoveFontWakeup(fpe);
@@ -2190,7 +2190,7 @@ dump_char_ascii(CharInfoPtr cip)
 
     bpr = GLYPH_SIZE(cip, 4);
     for (r = 0; r < (cip->metrics.ascent + cip->metrics.descent); r++) {
-	pointer     row = (pointer) cip->bits + r * bpr;
+	void *     row = (void *) cip->bits + r * bpr;
 
 	byte = 0;
 	for (l = 0; l <= (cip->metrics.rightSideBearing -

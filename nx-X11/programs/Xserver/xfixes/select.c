@@ -52,7 +52,7 @@ typedef struct _SelectionEvent {
 static SelectionEventPtr	selectionEvents;
 
 static void
-XFixesSelectionCallback (CallbackListPtr *callbacks, pointer data, pointer args)
+XFixesSelectionCallback (CallbackListPtr *callbacks, void * data, void * args)
 {
     SelectionEventPtr	e;
     SelectionInfoRec	*info = (SelectionInfoRec *) args;
@@ -172,13 +172,13 @@ XFixesSelectSelectionInput (ClientPtr	pClient,
 	 */
 	if (!LookupIDByType(pWindow->drawable.id, SelectionWindowType))
 	    if (!AddResource (pWindow->drawable.id, SelectionWindowType,
-			      (pointer) pWindow))
+			      (void *) pWindow))
 	    {
 		xfree (e);
 		return BadAlloc;
 	    }
 
-	if (!AddResource (e->clientResource, SelectionClientType, (pointer) e))
+	if (!AddResource (e->clientResource, SelectionClientType, (void *) e))
 	    return BadAlloc;
 
 	*prev = e;
@@ -240,7 +240,7 @@ SXFixesSelectionNotifyEvent (xXFixesSelectionNotifyEvent *from,
 }
 
 static int
-SelectionFreeClient (pointer data, XID id)
+SelectionFreeClient (void * data, XID id)
 {
     SelectionEventPtr	old = (SelectionEventPtr) data;
     SelectionEventPtr	*prev, e;
@@ -259,7 +259,7 @@ SelectionFreeClient (pointer data, XID id)
 }
 
 static int
-SelectionFreeWindow (pointer data, XID id)
+SelectionFreeWindow (void * data, XID id)
 {
     WindowPtr		pWindow = (WindowPtr) data;
     SelectionEventPtr	e, next;

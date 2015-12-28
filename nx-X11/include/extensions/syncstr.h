@@ -396,11 +396,11 @@ typedef struct _SysCounterInfo {
     CARD64	bracket_less;
     SyncCounterType counterType;  /* how can this counter change */
     void        (*QueryValue)(
-			      pointer /*pCounter*/,
+			      void * /*pCounter*/,
 			      CARD64 * /*freshvalue*/
 );
     void	(*BracketValues)(
-				 pointer /*pCounter*/,
+				 void * /*pCounter*/,
 				 CARD64 * /*lessthan*/,
 				 CARD64 * /*greaterthan*/
 );
@@ -465,16 +465,16 @@ typedef union {
 } SyncAwaitUnion;
 
 
-extern pointer SyncCreateSystemCounter(
+extern void * SyncCreateSystemCounter(
     char *	/* name */,
     CARD64  	/* inital_value */,
     CARD64  	/* resolution */,
     SyncCounterType /* change characterization */,
     void        (* /*QueryValue*/ ) (
-        pointer /* pCounter */,
+        void * /* pCounter */,
         CARD64 * /* pValue_return */), /* XXX prototype */
     void        (* /*BracketValues*/) (
-        pointer /* pCounter */, 
+        void * /* pCounter */,
         CARD64 * /* pbracket_less */,
         CARD64 * /* pbracket_greater */)
 );
@@ -485,7 +485,7 @@ extern void SyncChangeCounter(
 );
 
 extern void SyncDestroySystemCounter(
-    pointer pCounter
+    void * pCounter
 );
 extern void InitServertime(void);
 

@@ -203,7 +203,7 @@ PrintWindowTree()
 #endif
 
 int
-TraverseTree(register WindowPtr pWin, VisitWindowProcPtr func, pointer data)
+TraverseTree(register WindowPtr pWin, VisitWindowProcPtr func, void * data)
 {
     register int result;
     register WindowPtr pChild;
@@ -238,7 +238,7 @@ TraverseTree(register WindowPtr pWin, VisitWindowProcPtr func, pointer data)
  *****/
 
 int
-WalkTree(ScreenPtr pScreen, VisitWindowProcPtr func, pointer data)
+WalkTree(ScreenPtr pScreen, VisitWindowProcPtr func, void * data)
 {
     return(TraverseTree(WindowTable[pScreen->myNum], func, data));
 }
@@ -264,7 +264,7 @@ SetWindowToDefaults(register WindowPtr pWin)
 
     pWin->backingStore = NotUseful;
     pWin->DIXsaveUnder = FALSE;
-    pWin->backStorage = (pointer) NULL;
+    pWin->backStorage = (void *) NULL;
 
     pWin->mapped = FALSE;	    /* off */
     pWin->realized = FALSE;	/* off */
@@ -356,11 +356,11 @@ AllocateWindow(ScreenPtr pScreen)
 	{
 	    if ( (size = *sizes) )
 	    {
-		ppriv->ptr = (pointer)ptr;
+		ppriv->ptr = (void *)ptr;
 		ptr += size;
 	    }
 	    else
-		ppriv->ptr = (pointer)NULL;
+		ppriv->ptr = (void *)NULL;
 	}
     }
     return pWin;
@@ -454,7 +454,7 @@ CreateRootWindow(ScreenPtr pScreen)
     pWin->border.pixel = pScreen->blackPixel;
     pWin->borderWidth = 0;
 
-    if (!AddResource(pWin->drawable.id, RT_WINDOW, (pointer)pWin))
+    if (!AddResource(pWin->drawable.id, RT_WINDOW, (void *)pWin))
 	return FALSE;
 
     if (disableBackingStore)
@@ -879,7 +879,7 @@ CrushTree(WindowPtr pWin)
  *****/
 
 int
-DeleteWindow(pointer value, XID wid)
+DeleteWindow(void * value, XID wid)
  {
     register WindowPtr pParent;
     register WindowPtr pWin = (WindowPtr)value;
@@ -2525,7 +2525,7 @@ CirculateWindow(WindowPtr pParent, int direction, ClientPtr client)
 static int
 CompareWIDs(
     WindowPtr pWin,
-    pointer   value) /* must conform to VisitWindowProcPtr */
+    void *   value) /* must conform to VisitWindowProcPtr */
 {
     Window *wid = (Window *)value;
 
@@ -2550,7 +2550,7 @@ ReparentWindow(register WindowPtr pWin, register WindowPtr pParent,
     register ScreenPtr pScreen;
 
     pScreen = pWin->drawable.pScreen;
-    if (TraverseTree(pWin, CompareWIDs, (pointer)&pParent->drawable.id) == WT_STOPWALKING)
+    if (TraverseTree(pWin, CompareWIDs, (void *)&pParent->drawable.id) == WT_STOPWALKING)
 	return(BadMatch);		
     if (!MakeWindowOptional(pWin))
 	return(BadAlloc);
@@ -3483,7 +3483,7 @@ TileScreenSaver(int i, int kind)
 	if (cursor)
 	{
 	    cursorID = FakeClientID(0);
-	    if (AddResource (cursorID, RT_CURSOR, (pointer) cursor))
+	    if (AddResource (cursorID, RT_CURSOR, (void *) cursor))
 	    {
 		attributes[attri] = cursorID;
 		mask |= CWCursor;
@@ -3514,7 +3514,7 @@ TileScreenSaver(int i, int kind)
 	return FALSE;
 
     if (!AddResource(pWin->drawable.id, RT_WINDOW,
-		     (pointer)savedScreenInfo[i].pWindow))
+		     (void *)savedScreenInfo[i].pWindow))
 	return FALSE;
 
     if (mask & CWBackPixmap)

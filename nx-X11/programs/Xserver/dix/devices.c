@@ -1449,7 +1449,7 @@ ProcBell(ClientPtr client)
 	else
 #endif
     (*keybd->kbdfeed->BellProc)(newpercent, keybd,
-				(pointer) &keybd->kbdfeed->ctrl, 0);
+				(void *) &keybd->kbdfeed->ctrl, 0);
     return Success;
 } 
 

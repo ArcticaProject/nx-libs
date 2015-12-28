@@ -147,30 +147,30 @@ ResetGlyphSetPrivateIndex (void)
 }
 
 Bool
-_GlyphSetSetNewPrivate (GlyphSetPtr glyphSet, int n, pointer ptr)
+_GlyphSetSetNewPrivate (GlyphSetPtr glyphSet, int n, void * ptr)
 {
-    pointer *new;
+    void **new;
 
     if (n > glyphSet->maxPrivate) {
 	if (glyphSet->devPrivates &&
-	    glyphSet->devPrivates != (pointer)(&glyphSet[1])) {
-	    new = (pointer *) xrealloc (glyphSet->devPrivates,
-					(n + 1) * sizeof (pointer));
+	    glyphSet->devPrivates != (void *)(&glyphSet[1])) {
+	    new = (void **) xrealloc (glyphSet->devPrivates,
+					(n + 1) * sizeof (void *));
 	    if (!new)
 		return FALSE;
 	} else {
-	    new = (pointer *) xalloc ((n + 1) * sizeof (pointer));
+	    new = (void **) xalloc ((n + 1) * sizeof (void *));
 	    if (!new)
 		return FALSE;
 	    if (glyphSet->devPrivates)
 		memcpy (new,
 			glyphSet->devPrivates,
-			(glyphSet->maxPrivate + 1) * sizeof (pointer));
+			(glyphSet->maxPrivate + 1) * sizeof (void *));
 	}
 	glyphSet->devPrivates = new;
 	/* Zero out new, uninitialize privates */
 	while (++glyphSet->maxPrivate < n)
-	    glyphSet->devPrivates[glyphSet->maxPrivate] = (pointer)0;
+	    glyphSet->devPrivates[glyphSet->maxPrivate] = (void *)0;
     }
     glyphSet->devPrivates[n] = ptr;
     return TRUE;
@@ -522,14 +522,14 @@ AllocateGlyphSet (int fdepth, PictFormatPtr format)
     }
 
     size = (sizeof (GlyphSetRec) +
-	    (sizeof (pointer) * _GlyphSetPrivateAllocateIndex));
+	    (sizeof (void *) * _GlyphSetPrivateAllocateIndex));
     glyphSet = xalloc (size);
     if (!glyphSet)
 	return FALSE;
     bzero((char *)glyphSet, size);
     glyphSet->maxPrivate = _GlyphSetPrivateAllocateIndex - 1;
     if (_GlyphSetPrivateAllocateIndex)
-	glyphSet->devPrivates = (pointer)(&glyphSet[1]);
+	glyphSet->devPrivates = (void *)(&glyphSet[1]);
 
     if (!AllocateGlyphHash (&glyphSet->hash, &glyphHashSets[0]))
     {
@@ -543,7 +543,7 @@ AllocateGlyphSet (int fdepth, PictFormatPtr format)
 }
 
 int
-FreeGlyphSet (pointer	value,
+FreeGlyphSet (void *	value,
 	      XID       gid)
 {
     GlyphSetPtr	glyphSet = (GlyphSetPtr) value;
@@ -571,7 +571,7 @@ FreeGlyphSet (pointer	value,
 	xfree (table);
 
 	if (glyphSet->devPrivates &&
-	    glyphSet->devPrivates != (pointer)(&glyphSet[1]))
+	    glyphSet->devPrivates != (void *)(&glyphSet[1]))
 	    xfree(glyphSet->devPrivates);
 
 	xfree (glyphSet);

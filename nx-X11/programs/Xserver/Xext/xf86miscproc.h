@@ -50,17 +50,17 @@ typedef enum {
 
 void XFree86MiscExtensionInit(void);
 
-Bool MiscExtGetMouseSettings(pointer *mouse, char **devname);
-int  MiscExtGetMouseValue(pointer mouse, MiscExtMseValType valtype);
-Bool MiscExtSetMouseValue(pointer mouse, MiscExtMseValType valtype, int value);
-Bool MiscExtGetKbdSettings(pointer *kbd);
-int  MiscExtGetKbdValue(pointer kbd, MiscExtKbdValType valtype);
-Bool MiscExtSetKbdValue(pointer kbd, MiscExtKbdValType valtype, int value);
+Bool MiscExtGetMouseSettings(void **mouse, char **devname);
+int  MiscExtGetMouseValue(void * mouse, MiscExtMseValType valtype);
+Bool MiscExtSetMouseValue(void * mouse, MiscExtMseValType valtype, int value);
+Bool MiscExtGetKbdSettings(void **kbd);
+int  MiscExtGetKbdValue(void * kbd, MiscExtKbdValType valtype);
+Bool MiscExtSetKbdValue(void * kbd, MiscExtKbdValType valtype, int value);
 int MiscExtSetGrabKeysState(ClientPtr client, int enable);
-pointer MiscExtCreateStruct(MiscExtStructType mse_or_kbd);
-void    MiscExtDestroyStruct(pointer structure, MiscExtStructType mse_or_kbd);
-MiscExtReturn MiscExtApply(pointer structure, MiscExtStructType mse_or_kbd);
-Bool MiscExtSetMouseDevice(pointer mouse, char* device);
+void * MiscExtCreateStruct(MiscExtStructType mse_or_kbd);
+void    MiscExtDestroyStruct(void * structure, MiscExtStructType mse_or_kbd);
+MiscExtReturn MiscExtApply(void * structure, MiscExtStructType mse_or_kbd);
+Bool MiscExtSetMouseDevice(void * mouse, char* device);
 Bool MiscExtGetFilePaths(const char **configfile, const char **modulepath,
 			 const char **logfile);
 int  MiscExtPassMessage(int scrn, const char *msgtype, const char *msgval,

@@ -115,7 +115,7 @@ Bool nxagentDestroyPixmap(PixmapPtr pPixmap);
 RegionPtr nxagentPixmapToRegion(PixmapPtr pPixmap);
 
 Bool nxagentModifyPixmapHeader(PixmapPtr pPixmap, int width, int height, int depth,
-                                   int bitsPerPixel, int devKind, pointer pPixData);
+                                   int bitsPerPixel, int devKind, void * pPixData);
 
 RegionPtr nxagentCreateRegion(DrawablePtr pDrawable, GCPtr pGC, int x, int y,
                                   int width, int height);
@@ -125,7 +125,7 @@ Bool nxagentReconnectAllPixmaps(void *p0);
 void nxagentDisconnectPixmap(void *p0, XID x1, void* p2);
 Bool nxagentDisconnectAllPixmaps(void);
 
-int nxagentDestroyNewPixmapResourceType(pointer p, XID id);
+int nxagentDestroyNewPixmapResourceType(void * p, XID id);
 
 void nxagentSynchronizeShmPixmap(DrawablePtr pDrawable, int xPict, int yPict,
                                      int wPict, int hPict);

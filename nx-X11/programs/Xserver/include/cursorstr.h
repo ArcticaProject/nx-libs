@@ -65,7 +65,7 @@ typedef struct _CursorBits {
     Bool emptyMask;				/* all zeros mask */
     unsigned short width, height, xhot, yhot;	/* metrics */
     int refcnt;					/* can be shared */
-    pointer devPriv[MAXSCREENS];		/* set by pScr->RealizeCursor*/
+    void * devPriv[MAXSCREENS];		/* set by pScr->RealizeCursor*/
 #ifdef ARGB_CURSOR
     CARD32 *argb;				/* full-color alpha blended */
 #endif
@@ -76,7 +76,7 @@ typedef struct _Cursor {
     unsigned short foreRed, foreGreen, foreBlue; /* device-independent color */
     unsigned short backRed, backGreen, backBlue; /* device-independent color */
     int refcnt;
-    pointer devPriv[MAXSCREENS];		/* set by pScr->RealizeCursor*/
+    void * devPriv[MAXSCREENS];		/* set by pScr->RealizeCursor*/
 #ifdef XFIXES
     CARD32 serialNumber;
     Atom name;

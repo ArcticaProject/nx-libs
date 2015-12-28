@@ -107,7 +107,7 @@ static int		EventSelectForMultibuffer(
  */
 RESTYPE			MultibufferDrawableResType;
 static int		MultibufferDrawableDelete (
-				pointer /* value */,
+				void * /* value */,
 				XID /* id */
 				);
 /*
@@ -117,7 +117,7 @@ static int		MultibufferDrawableDelete (
  */
 static RESTYPE		MultibufferResType;
 static int		MultibufferDelete (
-				pointer /* value */,
+				void * /* value */,
 				XID /* id */
 				);
 
@@ -127,7 +127,7 @@ static int		MultibufferDelete (
  */
 static RESTYPE		MultibuffersResType;
 static int		MultibuffersDelete (
-				pointer /* value */,
+				void * /* value */,
 				XID /* id */
 				);
 
@@ -137,7 +137,7 @@ static int		MultibuffersDelete (
  */
 static RESTYPE		OtherClientResType;
 static int		OtherClientDelete (
-				pointer /* value */,
+				void * /* value */,
 				XID /* id */
 				);
 
@@ -229,7 +229,7 @@ MultibufferExtensionInit()
 		xfree (screenInfo.screens[j]->devPrivates[MultibufferScreenIndex].ptr);
 	    return;
 	}
-	pScreen->devPrivates[MultibufferScreenIndex].ptr = (pointer) pMultibufferScreen;
+	pScreen->devPrivates[MultibufferScreenIndex].ptr = (void *) pMultibufferScreen;
 	/*
  	 * wrap PositionWindow to resize the pixmap when the window
 	 * changes size
@@ -312,7 +312,7 @@ SetupBackgroundPainter (pWin, pGC)
     WindowPtr	pWin;
     GCPtr	pGC;
 {
-    pointer	    gcvalues[4];
+    void	    *gcvalues[4];
     int		    ts_x_origin, ts_y_origin;
     PixUnion	    background;
     int		    backgroundState;
@@ -337,21 +337,21 @@ SetupBackgroundPainter (pWin, pGC)
     switch (backgroundState)
     {
     case BackgroundPixel:
-	gcvalues[0] = (pointer) background.pixel;
-	gcvalues[1] = (pointer) FillSolid;
+	gcvalues[0] = (void *) background.pixel;
+	gcvalues[1] = (void *) FillSolid;
 	gcmask = GCForeground|GCFillStyle;
 	break;
 
     case BackgroundPixmap:
-	gcvalues[0] = (pointer) FillTiled;
-	gcvalues[1] = (pointer) background.pixmap;
-	gcvalues[2] = (pointer)(long) ts_x_origin;
-	gcvalues[3] = (pointer)(long) ts_y_origin;
+	gcvalues[0] = (void *) FillTiled;
+	gcvalues[1] = (void *) background.pixmap;
+	gcvalues[2] = (void *)(long) ts_x_origin;
+	gcvalues[3] = (void *)(long) ts_y_origin;
 	gcmask = GCFillStyle|GCTile|GCTileStipXOrigin|GCTileStipYOrigin;
 	break;
 
     default:
-	gcvalues[0] = (pointer) GXnoop;
+	gcvalues[0] = (void *) GXnoop;
 	gcmask = GCFunction;
     }
     DoChangeGC(pGC, gcmask, (XID *)gcvalues, TRUE);
@@ -381,7 +381,7 @@ CreateImageBuffers (pWin, nbuf, ids, action, hint)
     pMultibuffers->pWindow = pWin;
     pMultibuffers->buffers = (MultibufferPtr) (pMultibuffers + 1);
     pMultibuffers->refcnt = pMultibuffers->numMultibuffer = 0;
-    if (!AddResource (pWin->drawable.id, MultibuffersResType, (pointer) pMultibuffers))
+    if (!AddResource (pWin->drawable.id, MultibuffersResType, (void *) pMultibuffers))
 	return BadAlloc;
     width = pWin->drawable.width;
     height = pWin->drawable.height;
@@ -407,12 +407,12 @@ CreateImageBuffers (pWin, nbuf, ids, action, hint)
 	pMultibuffer->side = MultibufferSideMono;
 	pMultibuffer->clobber = MultibufferUnclobbered;
 	pMultibuffer->pMultibuffers = pMultibuffers;
-	if (!AddResource (ids[i], MultibufferResType, (pointer) pMultibuffer))
+	if (!AddResource (ids[i], MultibufferResType, (void *) pMultibuffer))
 	    break;
 	pMultibuffer->pPixmap = (*pScreen->CreatePixmap) (pScreen, width, height, depth);
 	if (!pMultibuffer->pPixmap)
 	    break;
-	if (!AddResource (ids[i], MultibufferDrawableResType, (pointer) pMultibuffer->pPixmap))
+	if (!AddResource (ids[i], MultibufferDrawableResType, (void *) pMultibuffer->pPixmap))
 	{
 	    FreeResource (ids[i], MultibufferResType);
 	    (*pScreen->DestroyPixmap) (pMultibuffer->pPixmap);
@@ -439,7 +439,7 @@ CreateImageBuffers (pWin, nbuf, ids, action, hint)
     pMultibuffers->lastUpdate.milliseconds = 0;
     pMultibuffers->width = width;
     pMultibuffers->height = height;
-    pWin->devPrivates[MultibufferWindowIndex].ptr = (pointer) pMultibuffers;
+    pWin->devPrivates[MultibufferWindowIndex].ptr = (void *) pMultibuffers;
     if (pClearGC) FreeScratchGC(pClearGC);
     return Success;
 }
@@ -693,7 +693,7 @@ ProcGetMBufferAttributes (client)
 		   (char *)&rep);
     WriteToClient (client, (int)(pMultibuffers->numMultibuffer * sizeof (XID)),
 		   (char *)ids);
-    DEALLOCATE_LOCAL((pointer) ids);
+    DEALLOCATE_LOCAL((void *) ids);
     return client->noClientException;
 }
 
@@ -842,9 +842,9 @@ ProcGetBufferInfo (client)
 	    k++;
 	}
     }
-    WriteToClient (client, sizeof (xMbufGetBufferInfoReply), (pointer) &rep);
-    WriteToClient (client, (int) nInfo * sizeof (xMbufBufferInfo), (pointer) pInfo);
-    DEALLOCATE_LOCAL ((pointer) pInfo);
+    WriteToClient (client, sizeof (xMbufGetBufferInfoReply), (void *) &rep);
+    WriteToClient (client, (int) nInfo * sizeof (xMbufBufferInfo), (void *) pInfo);
+    DEALLOCATE_LOCAL ((void *) pInfo);
     return client->noClientException;
 }
 
@@ -1463,7 +1463,7 @@ AliasMultibuffer (pMultibuffers, i)
 	pMultibuffer = &pMultibuffers->buffers[pMultibuffers->displayedMultibuffer];
 	ChangeResourceValue (pMultibuffer->pPixmap->drawable.id,
 			     MultibufferDrawableResType,
- 			     (pointer) pMultibuffer->pPixmap);
+			     (void *) pMultibuffer->pPixmap);
     }
     /*
      * make the new association
@@ -1471,7 +1471,7 @@ AliasMultibuffer (pMultibuffers, i)
     pMultibuffer = &pMultibuffers->buffers[i];
     ChangeResourceValue (pMultibuffer->pPixmap->drawable.id,
 			 MultibufferDrawableResType,
-			 (pointer) pMultibuffers->pWindow);
+			 (void *) pMultibuffers->pWindow);
     pMultibuffers->displayedMultibuffer = i;
 }
 
@@ -1608,7 +1608,7 @@ MultibufferPositionWindow (pWin, x, y)
 	{
 	    ChangeResourceValue (pPixmap->drawable.id,
 				 MultibufferDrawableResType,
-				 (pointer) pPixmap);
+				 (void *) pPixmap);
 	}
     }
     FreeScratchGC (pGC);
@@ -1619,7 +1619,7 @@ MultibufferPositionWindow (pWin, x, y)
 /*ARGSUSED*/
 static int
 MultibufferDrawableDelete (value, id)
-    pointer	value;
+    void	*value;
     XID		id;
 {
     DrawablePtr	pDrawable = (DrawablePtr)value;
@@ -1645,7 +1645,7 @@ MultibufferDrawableDelete (value, id)
 /*ARGSUSED*/
 static int
 MultibufferDelete (value, id)
-    pointer	value;
+    void	*value;
     XID		id;
 {
     MultibufferPtr	pMultibuffer = (MultibufferPtr)value;
@@ -1665,7 +1665,7 @@ MultibufferDelete (value, id)
 /*ARGSUSED*/
 static int
 MultibuffersDelete (value, id)
-    pointer	value;
+    void	*value;
     XID		id;
 {
     MultibuffersPtr	pMultibuffers = (MultibuffersPtr)value;
@@ -1682,7 +1682,7 @@ MultibuffersDelete (value, id)
 /* Resource delete func for OtherClientResType */
 static int
 OtherClientDelete (value, id)
-    pointer	value;
+    void	*value;
     XID		id;
 {
     MultibufferPtr	pMultibuffer = (MultibufferPtr)value;
@@ -1745,7 +1745,7 @@ EventSelectForMultibuffer (pMultibuffer, client, mask)
 		return BadAlloc;
 	    other->mask = mask;
 	    other->resource = FakeClientID (client->index);
-	    if (!AddResource (other->resource, OtherClientResType, (pointer) pMultibuffer))
+	    if (!AddResource (other->resource, OtherClientResType, (void *) pMultibuffer))
 	    {
 		xfree (other);
 		return BadAlloc;

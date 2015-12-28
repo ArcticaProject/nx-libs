@@ -2,8 +2,8 @@
 
 void XagClientStateChange(
     CallbackListPtr* pcbl,
-    pointer nulldata,
-    pointer calldata);
+    void * nulldata,
+    void * calldata);
 int ProcXagCreate (
     register ClientPtr client);
 int ProcXagDestroy(

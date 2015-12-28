@@ -327,7 +327,7 @@ static void damageValidateGC(GCPtr, unsigned long, DrawablePtr);
 static void damageChangeGC(GCPtr, unsigned long);
 static void damageCopyGC(GCPtr, unsigned long, GCPtr);
 static void damageDestroyGC(GCPtr);
-static void damageChangeClip(GCPtr, int, pointer, int);
+static void damageChangeClip(GCPtr, int, void *, int);
 static void damageDestroyClip(GCPtr);
 static void damageCopyClip(GCPtr, GCPtr);
 
@@ -440,7 +440,7 @@ damageCopyGC (GCPtr	    pGCSrc,
 static void
 damageChangeClip (GCPtr	    pGC,
 		  int	    type,
-		  pointer   pvalue,
+		  void      *pvalue,
 		  int	    nrects)
 {
     DAMAGE_GC_FUNC_PROLOGUE (pGC);
@@ -1453,7 +1453,7 @@ damageImageGlyphBlt(DrawablePtr	    pDrawable,
 		    int		    y,
 		    unsigned int    nglyph,
 		    CharInfoPtr	    *ppci,
-		    pointer	    pglyphBase)
+		    void *	    pglyphBase)
 {
     DAMAGE_GC_OP_PROLOGUE(pGC, pDrawable);
     damageDamageChars (pDrawable, pGC->font, x + pDrawable->x, y + pDrawable->y,
@@ -1470,7 +1470,7 @@ damagePolyGlyphBlt(DrawablePtr	pDrawable,
 		   int		y,
 		   unsigned int	nglyph,
 		   CharInfoPtr	*ppci,
-		   pointer	pglyphBase)
+		   void *	pglyphBase)
 {
     DAMAGE_GC_OP_PROLOGUE(pGC, pDrawable);
     damageDamageChars (pDrawable, pGC->font, x + pDrawable->x, y + pDrawable->y,
@@ -1801,7 +1801,7 @@ DamageSetup (ScreenPtr pScreen)
     }
 #endif
 
-    pScreen->devPrivates[damageScrPrivateIndex].ptr = (pointer) pScrPriv;
+    pScreen->devPrivates[damageScrPrivateIndex].ptr = (void *) pScrPriv;
     return TRUE;
 }
 

@@ -100,8 +100,8 @@ int nxagentRenderRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor);
 void nxagentAddGlyphs(GlyphSetPtr glyphSet, Glyph *gids, xGlyphInfo *gi,
                                   int nglyphs, CARD8 *images, int sizeImages);
 
-void nxagentReconnectPicture(pointer p0, XID x1, void *p2);
-void nxagentDisconnectPicture(pointer p0, XID x1, void* p2);
+void nxagentReconnectPicture(void * p0, XID x1, void *p2);
+void nxagentDisconnectPicture(void * p0, XID x1, void* p2);
 
 void nxagentReconnectGlyphSet(void* p0, XID x1, void *p2);
 

@@ -228,7 +228,7 @@ static void miBSValidateGC(GCPtr pGC, unsigned long stateChanges,
 static void miBSCopyGC(GCPtr pGCSrc, unsigned long mask, GCPtr pGCDst);
 static void miBSDestroyGC(GCPtr pGC);
 static void miBSChangeGC(GCPtr pGC, unsigned long mask);
-static void miBSChangeClip(GCPtr pGC, int type, pointer pvalue, int nrects);
+static void miBSChangeClip(GCPtr pGC, int type, void * pvalue, int nrects);
 static void miBSDestroyClip(GCPtr pGC);
 static void miBSCopyClip(GCPtr pgcDst, GCPtr pgcSrc);
 
@@ -286,10 +286,10 @@ static void	    miBSImageText16(DrawablePtr pDrawable, GCPtr pGC,
 				    unsigned short *chars);
 static void	    miBSImageGlyphBlt(DrawablePtr pDrawable, GCPtr pGC,
 				      int x, int y, unsigned int nglyph,
-				      CharInfoPtr *ppci, pointer pglyphBase);
+				      CharInfoPtr *ppci, void * pglyphBase);
 static void	    miBSPolyGlyphBlt(DrawablePtr pDrawable, GCPtr pGC,
 				     int x, int y, unsigned int nglyph,
-				     CharInfoPtr *ppci, pointer pglyphBase);
+				     CharInfoPtr *ppci, void * pglyphBase);
 static void	    miBSPushPixels(GCPtr pGC, PixmapPtr pBitMap,
 				   DrawablePtr pDst, int w, int h,
 				   int x, int y);
@@ -330,7 +330,7 @@ static void miBSCheapValidateGC(GCPtr pGC, unsigned long stateChanges,
 static void miBSCheapCopyGC(GCPtr pGCSrc, unsigned long mask, GCPtr pGCDst);
 static void miBSCheapDestroyGC(GCPtr pGC);
 static void miBSCheapChangeGC(GCPtr pGC, unsigned long mask);
-static void miBSCheapChangeClip(GCPtr pGC, int type, pointer pvalue,
+static void miBSCheapChangeClip(GCPtr pGC, int type, void * pvalue,
 				int nrects);
 static void miBSCheapDestroyClip(GCPtr pGC);
 static void miBSCheapCopyClip(GCPtr pgcDst, GCPtr pgcSrc);
@@ -398,7 +398,7 @@ miInitializeBackingStore (pScreen)
     pScreen->ClearBackingStore = miBSClearBackingStore;
     pScreen->DrawGuarantee = miBSDrawGuarantee;
 
-    pScreen->devPrivates[miBSScreenIndex].ptr = (pointer) pScreenPriv;
+    pScreen->devPrivates[miBSScreenIndex].ptr = (void *) pScreenPriv;
 }
 
 /*
@@ -433,7 +433,7 @@ miBSCloseScreen (i, pScreen)
     pScreen->ChangeWindowAttributes = pScreenPriv->ChangeWindowAttributes;
     pScreen->CreateGC = pScreenPriv->CreateGC;
 
-    xfree ((pointer) pScreenPriv);
+    xfree ((void *) pScreenPriv);
 
     return (*pScreen->CloseScreen) (i, pScreen);
 }
@@ -765,7 +765,7 @@ miBSCreateGC (pGC)
     
     if ( (ret = (*pScreen->CreateGC) (pGC)) )
     {
-    	pGC->devPrivates[miBSGCIndex].ptr = (pointer) pGC->funcs;
+	pGC->devPrivates[miBSGCIndex].ptr = (void *) pGC->funcs;
     	pGC->funcs = &miBSCheapGCFuncs;
     }
 
@@ -816,7 +816,7 @@ miBSCheapValidateGC (pGC, stateChanges, pDrawable)
 	(*pGC->funcs->ValidateGC) (pGC, stateChanges, pDrawable);
 
 	/* rewrap funcs as Validate may have changed them */
-	pGC->devPrivates[miBSGCIndex].ptr = (pointer) pGC->funcs;
+	pGC->devPrivates[miBSGCIndex].ptr = (void *) pGC->funcs;
 
 	CHEAP_FUNC_EPILOGUE (pGC);
     }
@@ -861,7 +861,7 @@ static void
 miBSCheapChangeClip (pGC, type, pvalue, nrects)
     GCPtr   pGC;
     int		type;
-    pointer	pvalue;
+    void *	pvalue;
     int		nrects;
 {
     CHEAP_FUNC_PROLOGUE (pGC);
@@ -914,7 +914,7 @@ miBSCreateGCPrivate (pGC)
     pPriv->wrapFuncs = pGC->funcs;
     pGC->funcs = &miBSGCFuncs;
     pGC->ops = &miBSGCOps;
-    pGC->devPrivates[miBSGCIndex].ptr = (pointer) pPriv;
+    pGC->devPrivates[miBSGCIndex].ptr = (void *) pPriv;
     return TRUE;
 }
 
@@ -926,12 +926,12 @@ miBSDestroyGCPrivate (GCPtr pGC)
     pPriv = (miBSGCRec *) pGC->devPrivates[miBSGCIndex].ptr;
     if (pPriv)
     {
-	pGC->devPrivates[miBSGCIndex].ptr = (pointer) pPriv->wrapFuncs;
+	pGC->devPrivates[miBSGCIndex].ptr = (void *) pPriv->wrapFuncs;
 	pGC->funcs = &miBSCheapGCFuncs;
 	pGC->ops = pPriv->wrapOps;
 	if (pPriv->pBackingGC)
 	    FreeGC (pPriv->pBackingGC, (GContext) 0);
-	xfree ((pointer) pPriv);
+	xfree ((void *) pPriv);
     }
 }
 
@@ -2157,7 +2157,7 @@ miBSImageGlyphBlt(pDrawable, pGC, x, y, nglyph, ppci, pglyphBase)
     int 	x, y;
     unsigned int nglyph;
     CharInfoPtr *ppci;		/* array of character info */
-    pointer 	pglyphBase;	/* start of array of glyphs */
+    void * 	pglyphBase;	/* start of array of glyphs */
 {
     SETUP_BACKING (pDrawable, pGC);
     PROLOGUE(pGC);
@@ -2189,7 +2189,7 @@ miBSPolyGlyphBlt(pDrawable, pGC, x, y, nglyph, ppci, pglyphBase)
     int 	x, y;
     unsigned int nglyph;
     CharInfoPtr *ppci;		/* array of character info */
-    pointer	pglyphBase;	/* start of array of glyphs */
+    void *	pglyphBase;	/* start of array of glyphs */
 {
     SETUP_BACKING (pDrawable, pGC);
     PROLOGUE(pGC);
@@ -2287,7 +2287,7 @@ miBSClearBackingStore(pWin, x, y, w, h, generateExposures)
     GCPtr   	  	pGC;
     int	    	  	ts_x_origin,
 			ts_y_origin;
-    pointer    	  	gcvalues[4];
+    void    	  	*gcvalues[4];
     unsigned long 	gcmask;
     xRectangle	  	*rects;
     BoxPtr  	  	pBox;
@@ -2373,18 +2373,18 @@ miBSClearBackingStore(pWin, x, y, w, h, generateExposures)
 	    
 		if (backgroundState == BackgroundPixel)
 		{
-		    gcvalues[0] = (pointer) background.pixel;
-		    gcvalues[1] = (pointer)FillSolid;
+		    gcvalues[0] = (void *) background.pixel;
+		    gcvalues[1] = (void *)FillSolid;
 		    gcmask = GCForeground|GCFillStyle;
 		}
 		else
 		{
-		    gcvalues[0] = (pointer)FillTiled;
-		    gcvalues[1] = (pointer) background.pixmap;
+		    gcvalues[0] = (void *)FillTiled;
+		    gcvalues[1] = (void *) background.pixmap;
 		    gcmask = GCFillStyle|GCTile;
 		}
-		gcvalues[2] = (pointer)(long)(ts_x_origin - pBackingStore->x);
-		gcvalues[3] = (pointer)(long)(ts_y_origin - pBackingStore->y);
+		gcvalues[2] = (void *)(long)(ts_x_origin - pBackingStore->x);
+		gcvalues[3] = (void *)(long)(ts_y_origin - pBackingStore->y);
 		gcmask |= GCTileStipXOrigin|GCTileStipYOrigin;
 		DoChangeGC(pGC, gcmask, (XID *)gcvalues, TRUE);
 		ValidateGC((DrawablePtr)pBackingStore->pBackingPixmap, pGC);
@@ -2477,7 +2477,7 @@ miBSFillVirtualBits (pDrawable, pGC, pRgn, x, y, state, pixunion, planeMask)
 {
     int		i;
     BITS32	gcmask;
-    pointer	gcval[5];
+    void *	gcval[5];
     xRectangle	*pRect;
     BoxPtr	pBox;
     WindowPtr	pWin;
@@ -2498,18 +2498,18 @@ miBSFillVirtualBits (pDrawable, pGC, pRgn, x, y, state, pixunion, planeMask)
     }
     i = 0;
     gcmask = 0;
-    gcval[i++] = (pointer)planeMask;
+    gcval[i++] = (void *)planeMask;
     gcmask |= GCPlaneMask;
     if (state == BackgroundPixel)
     {
 	if (pGC->fgPixel != pixunion.pixel)
 	{
-	    gcval[i++] = (pointer)pixunion.pixel;
+	    gcval[i++] = (void *)pixunion.pixel;
 	    gcmask |= GCForeground;
 	}
 	if (pGC->fillStyle != FillSolid)
 	{
-	    gcval[i++] = (pointer)FillSolid;
+	    gcval[i++] = (void *)FillSolid;
 	    gcmask |= GCFillStyle;
 	}
     }
@@ -2517,22 +2517,22 @@ miBSFillVirtualBits (pDrawable, pGC, pRgn, x, y, state, pixunion, planeMask)
     {
 	if (pGC->fillStyle != FillTiled)
 	{
-	    gcval[i++] = (pointer)FillTiled;
+	    gcval[i++] = (void *)FillTiled;
 	    gcmask |= GCFillStyle;
 	}
 	if (pGC->tileIsPixel || pGC->tile.pixmap != pixunion.pixmap)
 	{
-	    gcval[i++] = (pointer)pixunion.pixmap;
+	    gcval[i++] = (void *)pixunion.pixmap;
 	    gcmask |= GCTile;
 	}
 	if (pGC->patOrg.x != x)
 	{
-	    gcval[i++] = (pointer)(long)x;
+	    gcval[i++] = (void *)(long)x;
 	    gcmask |= GCTileStipXOrigin;
 	}
 	if (pGC->patOrg.y != y)
 	{
-	    gcval[i++] = (pointer)(long)y;
+	    gcval[i++] = (void *)(long)y;
 	    gcmask |= GCTileStipYOrigin;
 	}
     }
@@ -2592,7 +2592,7 @@ miBSAllocate(pWin)
 	pBackingStore->viewable = (char)pWin->viewable;
 	pBackingStore->status = StatusNoPixmap;
 	pBackingStore->backgroundState = None;
-	pWin->backStorage = (pointer) pBackingStore;
+	pWin->backStorage = (void *) pBackingStore;
     }
 	
     /*
@@ -3622,7 +3622,7 @@ static void
 miBSChangeClip(pGC, type, pvalue, nrects)
     GCPtr	pGC;
     int		type;
-    pointer	pvalue;
+    void *	pvalue;
     int		nrects;
 {
     miBSGCPtr	pPriv = (miBSGCPtr) (pGC)->devPrivates[miBSGCIndex].ptr;

@@ -383,7 +383,7 @@ XkbHandleBell(	BOOL		 force,
 		BOOL		 eventOnly,
 		DeviceIntPtr	 kbd,
 		CARD8		 percent,
-		pointer		 pCtrl,
+		void *		 pCtrl,
 		CARD8		 class,
 		Atom		 name,
 		WindowPtr	 pWin,
@@ -402,7 +402,7 @@ XID		winID = 0;
 
     if ((force||(xkbi->desc->ctrls->enabled_ctrls&XkbAudibleBellMask))&&
 							(!eventOnly)) {
-	(*kbd->kbdfeed->BellProc)(percent,kbd,(pointer)pCtrl,class);
+	(*kbd->kbdfeed->BellProc)(percent,kbd,(void *)pCtrl,class);
     }
     interest = kbd->xkb_interest;
     if ((!interest)||(force))
@@ -822,7 +822,7 @@ XkbSrvInfoPtr	xkbi;
 	    ErrorF("   Event state= 0x%04x\n",xE[0].u.keyButtonPointer.state);
 	    ErrorF("   XkbLastRepeatEvent!=xE (0x%x!=0x%x) %s\n",
 			XkbLastRepeatEvent,xE,
-			((XkbLastRepeatEvent!=(pointer)xE)?"True":"False"));
+			((XkbLastRepeatEvent!=(void *)xE)?"True":"False"));
 	    ErrorF("   (xkbClientEventsFlags&XWDA)==0 (0x%x) %s\n",
 		pClient->xkbClientFlags,
 		(_XkbWantsDetectableAutoRepeat(pClient)?"True":"False"));
@@ -830,7 +830,7 @@ XkbSrvInfoPtr	xkbi;
 			(!_XkbIsReleaseEvent(xE[0].u.u.type))?"True":"False");
 	}
 #endif /* DEBUG */
-	if (	(XkbLastRepeatEvent==(pointer)xE) &&
+	if (	(XkbLastRepeatEvent==(void *)xE) &&
 	     	(_XkbWantsDetectableAutoRepeat(pClient)) &&
 	     	(_XkbIsReleaseEvent(xE[0].u.u.type)) ) {
 	    return False;

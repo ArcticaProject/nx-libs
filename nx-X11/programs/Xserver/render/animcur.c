@@ -95,7 +95,7 @@ int	AnimCurGeneration;
 #define GetAnimCur(c)	    ((AnimCurPtr) ((c) + 1))
 #define GetAnimCurScreen(s) ((AnimCurScreenPtr) ((s)->devPrivates[AnimCurScreenPrivateIndex].ptr))
 #define GetAnimCurScreenIfSet(s) ((AnimCurScreenPrivateIndex != -1) ? GetAnimCurScreen(s) : NULL)
-#define SetAnimCurScreen(s,p) ((s)->devPrivates[AnimCurScreenPrivateIndex].ptr = (pointer) (p))
+#define SetAnimCurScreen(s,p) ((s)->devPrivates[AnimCurScreenPrivateIndex].ptr = (void *) (p))
 
 #define Wrap(as,s,elt,func) (((as)->elt = (s)->elt), (s)->elt = func)
 #define Unwrap(as,s,elt)    ((s)->elt = (as)->elt)
@@ -164,9 +164,9 @@ AnimCurCursorLimits (ScreenPtr pScreen,
 
 static void
 AnimCurScreenBlockHandler (int screenNum,
-			   pointer blockData,
-			   pointer pTimeout,
-			   pointer pReadmask)
+			   void * blockData,
+			   void * pTimeout,
+			   void * pReadmask)
 {
     ScreenPtr		pScreen = screenInfo.screens[screenNum];
     AnimCurScreenPtr    as = GetAnimCurScreen(pScreen);

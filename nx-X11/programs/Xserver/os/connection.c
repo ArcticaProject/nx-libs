@@ -142,7 +142,7 @@ extern __const__ int _nfiles;
 #endif
 #endif
 #endif /* WIN32 */
-#include "misc.h"		/* for typedef of pointer */
+#include "misc.h"
 #include "osdep.h"
 #include <X11/Xpoll.h>
 #include "opaque.h"
@@ -874,7 +874,7 @@ AllocNewConnection (XtransConnInfo trans_conn, int fd, CARD32 conn_time)
     oc->Close = Close;
     oc->largereq = (ConnectionInputPtr) NULL;
 #endif
-    if (!(client = NextAvailableClient((pointer)oc)))
+    if (!(client = NextAvailableClient((void *)oc)))
     {
 	xfree (oc);
 	return NullClient;
@@ -950,7 +950,7 @@ LbxProxyConnection (ClientPtr client, LbxProxyPtr proxy)
 
 /*ARGSUSED*/
 Bool
-EstablishNewConnections(ClientPtr clientUnused, pointer closure)
+EstablishNewConnections(ClientPtr clientUnused, void * closure)
 {
     fd_set  readyconnections;     /* set of listeners that are ready */
     int curconn;                  /* fd of listener that's ready */
@@ -1215,7 +1215,7 @@ CloseDownConnection(ClientPtr client)
     FreeOsBuffers(oc);
     xfree(oc);
 #endif
-    client->osPrivate = (pointer)NULL;
+    client->osPrivate = (void *)NULL;
     if (auditTrailLevel > 1)
 	AuditF("client %d disconnected\n", client->index);
 }
