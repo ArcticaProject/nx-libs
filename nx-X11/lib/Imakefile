@@ -27,10 +27,6 @@ RENDERLIBDIR = Xrender
 XFIXESLIBDIR = Xfixes
 #endif
 
-#if BuildCompositeLibrary
-COMPOSITELIBDIR = Xcomposite
-#endif
-
 #if BuildXauLib
 XAULIBDIR = Xau
 #endif
@@ -59,7 +55,6 @@ LINTSUBDIRS = \
 	$(XINERAMADIR) \
 	$(RENDERLIBDIR) \
 	$(XFIXESLIBDIR) \
-	$(COMPOSITELIBDIR) \
 	$(NULL)
 
 SUBDIRS = xtrans $(LINTSUBDIRS)

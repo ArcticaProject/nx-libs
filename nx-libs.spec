@@ -35,6 +35,7 @@ BuildRequires:  pkgconfig(xpm)
 BuildRequires:  pkgconfig(xfont)
 BuildRequires:  pkgconfig(xdmcp)
 BuildRequires:  pkgconfig(xdamage)
+BuildRequires:  pkgconfig(xcomposite)
 BuildRequires:  pkgconfig(xrandr)
 %else
 BuildRequires:  libexpat-devel
@@ -46,6 +47,7 @@ BuildRequires:  xorg-x11-libXpm-devel
 BuildRequires:  xorg-x11-libXfont-devel
 BuildRequires:  xorg-x11-libXdmcp-devel
 BuildRequires:  xorg-x11-libXdamage-devel
+BuildRequires:  xorg-x11-libXcomposite-devel
 BuildRequires:  xorg-x11-libXrandr-devel
 %endif
 BuildRequires:  xorg-x11-util-devel
@@ -57,7 +59,7 @@ BuildRequires:  libpng-devel
 BuildRequires:  libxml2-devel
 BuildRequires:  libXfont-devel
 BuildRequires:  libXdmcp-devel
-BuildRequires:  libXdamage-devel
+BuildRequires:  libXcomposite-devel
 BuildRequires:  libXrandr-devel
 %endif
 
@@ -188,24 +190,6 @@ System display. It uses existing core protocol and library hooks for
 specifying authorization data in the connection setup block to
 restrict use of the display to only those clients that show that they
 know a server-specific key called a "magic cookie".
-
-
-%package -n libNX_Xcomposite1
-Group:          System Environment/Libraries
-Summary:        NX protocol Composite extension client library
-Requires:       %{name}%{?_isa} >= 3.5.0.29
-Obsoletes:      libNX_Xcomposite
-
-%description -n libNX_Xcomposite1
-NX is a software suite which implements very efficient compression of
-the X11 protocol. This increases performance when using X
-applications over a network, especially a slow one.
-
-The Composite extension causes a entire sub-tree of the window
-hierarchy to be rendered to an off-screen buffer. Applications can
-then take the contents of that buffer and do whatever they like. The
-off-screen buffer can be automatically merged into the parent window
-or merged by external programs, called compositing managers.
 
 
 %package -n libNX_Xext-devel
@@ -634,7 +618,6 @@ ln -s -f ../../../../%{_lib}/libNX_Xinerama.so.1 %{buildroot}%{_libdir}/nx/X11/X
 %post -p /sbin/ldconfig
 %post -n libNX_X11-6 -p /sbin/ldconfig
 %post -n libNX_Xau6 -p /sbin/ldconfig
-%post -n libNX_Xcomposite1 -p /sbin/ldconfig
 %post -n libNX_Xext6 -p /sbin/ldconfig
 %post -n libNX_Xfixes3 -p /sbin/ldconfig
 %post -n libNX_Xinerama1 -p /sbin/ldconfig
@@ -646,7 +629,6 @@ ln -s -f ../../../../%{_lib}/libNX_Xinerama.so.1 %{buildroot}%{_libdir}/nx/X11/X
 %postun -p /sbin/ldconfig
 %postun -n libNX_X11-6 -p /sbin/ldconfig
 %postun -n libNX_Xau6 -p /sbin/ldconfig
-%postun -n libNX_Xcomposite1 -p /sbin/ldconfig
 %postun -n libNX_Xext6 -p /sbin/ldconfig
 %postun -n libNX_Xfixes3 -p /sbin/ldconfig
 %postun -n libNX_Xinerama1 -p /sbin/ldconfig
@@ -694,10 +676,6 @@ ln -s -f ../../../../%{_lib}/libNX_Xinerama.so.1 %{buildroot}%{_libdir}/nx/X11/X
 %files -n libNX_Xau6
 %defattr(-,root,root)
 %{_libdir}/libNX_Xau.so.6*
-
-%files -n libNX_Xcomposite1
-%defattr(-,root,root)
-%{_libdir}/libNX_Xcomposite.so.1*
 
 %files -n libNX_Xext-devel
 %defattr(-,root,root)
@@ -815,13 +793,11 @@ ln -s -f ../../../../%{_lib}/libNX_Xinerama.so.1 %{buildroot}%{_libdir}/nx/X11/X
 
 %files devel
 %defattr(-,root,root)
-%{_libdir}/libNX_Xcomposite.so
 %{_libdir}/libNX_Xinerama.so
 %{_libdir}/libNX_Xtst.so
 %{_includedir}/nx-X11/X10.h
 %dir %{_includedir}/nx-X11/extensions
 %{_includedir}/nx-X11/extensions/XTest.h
-%{_includedir}/nx-X11/extensions/Xcomposite.h
 %{_includedir}/nx-X11/extensions/Xevie.h
 %{_includedir}/nx-X11/extensions/Xinerama.h
 %{_includedir}/nx-X11/extensions/lbxbuf.h

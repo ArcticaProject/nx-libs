@@ -1396,30 +1396,6 @@ ProjectUnsharedLibReferences(XONLY,NX_X11,$(XLIBSRC),XBuildLibDir)
 #define ProfileLibXfixes	NO
 #endif
 
-#if BuildCompositeLibrary
-#ifndef SharedLibXcomposite
-#define SharedLibXcomposite	HasSharedLibraries
-#endif
-#ifndef NormalLibXcomposite
-#define NormalLibXcomposite	(!SharedLibXcomposite || ForceNormalLib)
-#endif
-#ifndef DebugLibXcomposite
-#define DebugLibXcomposite	NO
-#endif
-#ifndef ProfileLibXcomposite
-#define ProfileLibXcomposite	NO
-#endif
-#else
-#undef  SharedLibXcomposite
-#define SharedLibXcomposite	NO
-#undef  NormalLibXcomposite
-#define NormalLibXcomposite	NO
-#undef  DebugLibXcomposite
-#define DebugLibXcomposite	NO
-#undef  ProfileLibXcomposite
-#define ProfileLibXcomposite	NO
-#endif
-
 #ifndef SharedLibXext
 #define SharedLibXext HasSharedLibraries
 #endif
@@ -1474,16 +1450,6 @@ ProjectUnsharedLibReferences(XRENDER,NX_Xrender,$(XRENDERLIBSRC),XBuildLibDir)
 SharedLibReferences(XFIXES,NX_Xfixes,$(XFIXESLIBSRC),SOXFIXESREV,SharedXfixesRev)
 #else
 ProjectUnsharedLibReferences(XFIXES,NX_Xfixes,$(XFIXESLIBSRC),XBuildLibDir)
-#endif
-
-XCOMPOSITELIBSRC = $(LIBSRC)/Xcomposite
-#if SharedLibXcomposite
-#ifndef SharedXcompositeRev
-#define SharedXcompositeRev 1.0
-#endif
-SharedLibReferences(XCOMPOSITE,NX_Xcomposite,$(XCOMPOSITELIBSRC),SOXCOMPOSITEREV,SharedXcompositeRev)
-#else
-ProjectUnsharedLibReferences(XCOMPOSITE,NX_Xcomposite,$(XCOMPOSITELIBSRC),XBuildLibDir)
 #endif
 
 #ifndef SharedLibXau
