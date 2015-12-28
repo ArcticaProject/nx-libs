@@ -41,7 +41,7 @@ XINERAMAHEADERS = Xinerama.h panoramiXext.h panoramiXproto.h
 #if BuildRender
 RENDERHEADERS = render.h renderproto.h
 #endif
-#if BuildXfixes || BuildXfixesLibrary
+#if BuildXfixes
 XFIXESHEADERS = xfixeswire.h xfixesproto.h
 #endif
 #if BuildComposite

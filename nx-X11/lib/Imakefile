@@ -23,10 +23,6 @@ XINERAMADIR=Xinerama
 RENDERLIBDIR = Xrender
 #endif
 
-#if BuildXfixesLibrary
-XFIXESLIBDIR = Xfixes
-#endif
-
 #if BuildXauLib
 XAULIBDIR = Xau
 #endif
@@ -54,7 +50,6 @@ LINTSUBDIRS = \
 	$(XKBLIBDIR) \
 	$(XINERAMADIR) \
 	$(RENDERLIBDIR) \
-	$(XFIXESLIBDIR) \
 	$(NULL)
 
 SUBDIRS = xtrans $(LINTSUBDIRS)
