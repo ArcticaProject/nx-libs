@@ -38,6 +38,9 @@ FONTCACHEHEADERS = fontcache.h fontcacheP.h fontcachstr.h
 #if BuildXinerama || BuildXineramaLibrary
 XINERAMAHEADERS = Xinerama.h panoramiXext.h panoramiXproto.h
 #endif
+#if BuildRandR
+RANDRHEADERS = randr.h randrproto.h
+#endif
 #if BuildRender
 RENDERHEADERS = render.h renderproto.h
 #endif
@@ -46,6 +49,9 @@ XFIXESHEADERS = xfixeswire.h xfixesproto.h
 #endif
 #if BuildComposite
 COMPOSITEHEADERS = composite.h compositeproto.h
+#endif
+#if BuildDamage
+DAMAGEHEADERS = damagewire.h damageproto.h
 #endif
 #if BuildXTrap
 XTRAPHEADERS = xtrapbits.h xtrapddmi.h xtrapdi.h xtrapemacros.h xtraplib.h \
@@ -69,9 +75,11 @@ EXTRAHEADERS = \
 	$(XVHEADERS) \
 	$(XVMCHEADERS) \
 	$(FONTCACHEHEADERS) \
+	$(RANDRHEADERS) \
 	$(RENDERHEADERS) \
 	$(XFIXESHEADERS) \
 	$(COMPOSITEHEADERS) \
+	$(DAMAGEHEADERS) \
 	$(XEVIEHEADERS) \
 	$(XTRAPHEADERS) \
 	$(XRESHEADERS) \

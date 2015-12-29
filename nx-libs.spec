@@ -803,7 +803,11 @@ ln -s -f ../../../../%{_lib}/libNX_Xinerama.so.1 %{buildroot}%{_libdir}/nx/X11/X
 %{_includedir}/nx-X11/extensions/bigreqstr.h
 %{_includedir}/nx-X11/extensions/composite.h
 %{_includedir}/nx-X11/extensions/compositeproto.h
+%{_includedir}/nx-X11/extensions/damagewire.h
+%{_includedir}/nx-X11/extensions/damageproto.h
 %{_includedir}/nx-X11/extensions/panoramiXproto.h
+%{_includedir}/nx-X11/extensions/randr.h
+%{_includedir}/nx-X11/extensions/randrproto.h
 %{_includedir}/nx-X11/extensions/recordstr.h
 %{_includedir}/nx-X11/extensions/render.h
 %{_includedir}/nx-X11/extensions/renderproto.h
