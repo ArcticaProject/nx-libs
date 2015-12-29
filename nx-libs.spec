@@ -39,6 +39,7 @@ BuildRequires:  pkgconfig(xcomposite)
 BuildRequires:  pkgconfig(xrandr)
 BuildRequires:  pkgconfig(xfixes)
 BuildRequires:  pkgconfig(xtst)
+BuildRequires:  pkgconfig(xinerama)
 %else
 BuildRequires:  libexpat-devel
 BuildRequires:  libpng-devel
@@ -53,6 +54,7 @@ BuildRequires:  xorg-x11-libXcomposite-devel
 BuildRequires:  xorg-x11-libXrandr-devel
 BuildRequires:  xorg-x11-libXfixes-devel
 BuildRequires:  xorg-x11-libXtst-devel
+BuildRequires:  xorg-x11-libXinerama-devel
 %endif
 BuildRequires:  xorg-x11-util-devel
 %endif
@@ -67,6 +69,7 @@ BuildRequires:  libXcomposite-devel
 BuildRequires:  libXrandr-devel
 BuildRequires:  libXfixes-devel
 BuildRequires:  libXtst-devel
+BuildRequires:  libXinerama-devel
 %endif
 
 # For imake
@@ -83,20 +86,6 @@ Obsoletes:      nx < 3.5.0-19
 Provides:       nx = %{version}-%{release}
 Obsoletes:      nx%{?_isa} < 3.5.0-19
 Provides:       nx%{?_isa} = %{version}-%{release}
-
-# for Xinerama in NX to work:
-%if 0%{?suse_version}
-%if 0%{?suse_version} < 1140
-Requires:       xorg-x11-libX11%{?_isa}
-Requires:       xorg-x11-libXext%{?_isa}
-%else
-Requires:       libX11-6%{?_isa}
-Requires:       libXext6%{?_isa}
-%endif
-%else
-Requires:       libX11%{?_isa}
-Requires:       libXext%{?_isa}
-%endif
 
 %if 0%{?el5}
 # For compatibility with EPEL5
@@ -242,22 +231,6 @@ The NX_Xext library contains a handful of X11 extensions:
 - TOG-CUP (colormap) protocol extension (Xcup)
 - X Extended Visual Information extension (XEvi)
 - X11 Double-Buffering, Multi-Buffering, and Stereo extension (Xmbuf)
-
-
-%package -n libNX_Xinerama1
-Group:          System Environment/Libraries
-Summary:        Xinerama extension to the NX Protocol
-Requires:       %{name}%{?_isa} >= 3.5.0.29
-Obsoletes:      libNX_Xinerama
-
-%description -n libNX_Xinerama1
-NX is a software suite which implements very efficient compression of
-the X11 protocol. This increases performance when using X
-applications over a network, especially a slow one.
-
-Xinerama is an extension to the X Window System which enables
-multi-headed X applications and window managers to use two or more
-physical displays as one large virtual display.
 
 
 %package -n libNX_Xrender-devel
@@ -553,11 +526,6 @@ rm -r %{buildroot}%{_includedir}/nx-X11/extensions/XK*.h
 rm -r %{buildroot}%{_includedir}/nx-X11/extensions/*Xv*.h
 rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 
-# Needed for Xinerama support
-ln -s -f ../../../../%{_lib}/libX11.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama/libNX_X11.so.6
-ln -s -f ../../../../%{_lib}/libXext.so.6 %{buildroot}%{_libdir}/nx/X11/Xinerama/libNX_Xext.so.6
-ln -s -f ../../../../%{_lib}/libNX_Xinerama.so.1 %{buildroot}%{_libdir}/nx/X11/Xinerama/libXinerama.so.1
-
 %if 0%{?fdupes:1}
 %fdupes %buildroot/%_prefix
 %endif
@@ -566,7 +534,6 @@ ln -s -f ../../../../%{_lib}/libNX_Xinerama.so.1 %{buildroot}%{_libdir}/nx/X11/X
 %post -n libNX_X11-6 -p /sbin/ldconfig
 %post -n libNX_Xau6 -p /sbin/ldconfig
 %post -n libNX_Xext6 -p /sbin/ldconfig
-%post -n libNX_Xinerama1 -p /sbin/ldconfig
 %post -n libNX_Xrender1 -p /sbin/ldconfig
 %post -n libXcomp3 -p /sbin/ldconfig
 %post -n libXcompext3 -p /sbin/ldconfig
@@ -575,7 +542,6 @@ ln -s -f ../../../../%{_lib}/libNX_Xinerama.so.1 %{buildroot}%{_libdir}/nx/X11/X
 %postun -n libNX_X11-6 -p /sbin/ldconfig
 %postun -n libNX_Xau6 -p /sbin/ldconfig
 %postun -n libNX_Xext6 -p /sbin/ldconfig
-%postun -n libNX_Xinerama1 -p /sbin/ldconfig
 %postun -n libNX_Xrender1 -p /sbin/ldconfig
 %postun -n libXcomp3 -p /sbin/ldconfig
 %postun -n libXcompext3 -p /sbin/ldconfig
@@ -654,10 +620,6 @@ ln -s -f ../../../../%{_lib}/libNX_Xinerama.so.1 %{buildroot}%{_libdir}/nx/X11/X
 %defattr(-,root,root)
 %{_libdir}/libNX_Xext.so.6*
 
-%files -n libNX_Xinerama1
-%defattr(-,root,root)
-%{_libdir}/libNX_Xinerama.so.1*
-
 %files -n libNX_Xrender-devel
 %defattr(-,root,root)
 %{_libdir}/libNX_Xrender.so
@@ -722,7 +684,6 @@ ln -s -f ../../../../%{_lib}/libNX_Xinerama.so.1 %{buildroot}%{_libdir}/nx/X11/X
 
 %files devel
 %defattr(-,root,root)
-%{_libdir}/libNX_Xinerama.so
 %{_includedir}/nx-X11/X10.h
 %dir %{_includedir}/nx-X11/extensions
 %{_includedir}/nx-X11/extensions/Xevie.h

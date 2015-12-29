@@ -79,6 +79,10 @@ is" without express or implied warranty.
 
 #include "X11/include/Xrandr_nxagent.h"
 
+#include <nx-X11/Xlib.h>
+#include "X11/include/Xinerama_nxagent.h"
+
+
 #define GC     XlibGC
 #define Font   XlibFont
 #define KeySym XlibKeySym
@@ -102,8 +106,8 @@ is" without express or implied warranty.
 
 #define PANIC
 #define WARNING
-#undef  TEST
-#undef  DEBUG
+#define  TEST
+#define  DEBUG
 #undef  WATCH
 #undef  DUMP
 
@@ -128,14 +132,6 @@ extern Bool nxagentIpaq;
 extern Pixmap nxagentIconPixmap;
 extern Pixmap nxagentIconShape;
 extern Bool useXpmIcon;
-
-/*
- * From randr/randr.c.
- */
-
-extern Bool RRGetInfo(ScreenPtr pScreen);
-extern void RRSendConfigNotify(ScreenPtr pScreen);
-extern void RREditConnectionInfo(ScreenPtr pScreen);
 
 Window nxagentDefaultWindows[MAXSCREENS];
 Window nxagentInputWindows[MAXSCREENS];
@@ -319,7 +315,7 @@ void nxagentMaximizeToFullScreen(ScreenPtr pScreen)
     XUnmapWindow(nxagentDisplay, nxagentIconWindow);
 */
 /*
-FIXME: We'll chech for ReparentNotify and LeaveNotify events after XReparentWindow()
+FIXME: We'll check for ReparentNotify and LeaveNotify events after XReparentWindow()
        in order to avoid the session window is iconified.
        We could avoid the sesssion window is iconified when a LeaveNotify event is received,
        so this check would be unnecessary.
@@ -1117,6 +1113,11 @@ Bool nxagentOpenScreen(int index, ScreenPtr pScreen,
   nxagentChangeOption(ViewportXSpan, nxagentOption(Width) - nxagentOption(RootWidth));
   nxagentChangeOption(ViewportYSpan, nxagentOption(Height) - nxagentOption(RootHeight));
 
+  /* PanoramiXExtension enabled via cmdline, turn on Xinerama in nxagent
+   */
+  if( (!noPanoramiXExtension) && (!PanoramiXExtensionDisabledHack) )
+    nxagentOption(Xinerama) = True;
+
   if (nxagentReconnectTrap == 0)
   {
     if (nxagentOption(Persistent))
@@ -1781,7 +1782,9 @@ N/A
         XSetClassHint(nxagentDisplay,nxagentDefaultWindows[pScreen->myNum],&hint);
         free(hint.res_name);
         free(hint.res_class);
-      } else {
+      }
+      else
+      {
         #ifdef TEST
         fprintf(stderr, "nxagentOpenScreen: Setting WM_CLASS and WM_NAME for window withid [%ld].\n",
                 nxagentDefaultWindows[pScreen->myNum]);
@@ -2035,6 +2038,9 @@ N/A
 
   nxagentCompositeExtensionInit();
 
+  /* We use this to get informed about RandR changes on the real display.
+     FIXME: It would probably be better to use an RRScreenChangeNotifyEvent here. */
+  XSelectInput(nxagentDisplay, DefaultRootWindow(nxagentDisplay), StructureNotifyMask);
 
   #ifdef NXAGENT_TIMESTAMP
 
@@ -2070,6 +2076,10 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 Bool nxagentCloseScreen(int index, ScreenPtr pScreen)
 {
   int i;
+
+  #ifdef DEBUG
+  fprintf(stderr, "running nxagentCloseScreen()\n");
+  #endif
 
   for (i = 0; i < pScreen->numDepths; i++)
   {
@@ -2240,7 +2250,7 @@ static void nxagentSetRootClip (ScreenPtr pScreen, Bool enable)
     if (pWin->realized)
         WindowsRestructured ();
     FlushAllOutput ();
-}   
+}
 
 Bool nxagentResizeScreen(ScreenPtr pScreen, int width, int height,
                              int mmWidth, int mmHeight)
@@ -3585,21 +3595,91 @@ Bool nxagentReconnectScreen(void *p0)
   return True;  
 }
 
-RRModePtr    nxagentRRCustomMode = NULL;
+/* FIXME: there must be such macros somewhere already...*/
+#define MAX(a,b) ((a) > (b)) ? (a) : (b);
+#define MIN(a,b) ((a) < (b)) ? (a) : (b);
+
+/* intersect two rectangles */
+Bool intersect(int ax1, int ay1, unsigned int aw, unsigned int ah,
+	       int bx1, int by1, unsigned int bw, unsigned int bh,
+	       int *x, int *y, unsigned int *w, unsigned int *h)
+{
+    int tx1, ty1, tx2, ty2, ix, iy;
+    unsigned int iw, ih;
+
+    int ax2 = ax1 + aw;
+    int ay2 = ay1 + ah;
+    int bx2 = bx1 + bw;
+    int by2 = by1 + bh;
+
+    /* thanks to http://silentmatt.com/rectangle-intersection */
+
+    /* check if there's any intersection at all */
+    if (ax2 < bx1 || bx2 < ax1 || ay2 < by1 || by2 < ay1) {
+        return FALSE;
+    }
+
+    tx1 = MAX(ax1, bx1);
+    ty1 = MAX(ay1, by1);
+    tx2 = MIN(ax2, bx2);
+    ty2 = MIN(ay2, by2);
+
+    ix = tx1 - ax1;
+    iy = ty1 - ay1;
+    iw = tx2 - tx1;
+    ih = ty2 - ty1;
+
+    /* check if the resulting rectangle is feasible */
+    if (iw <= 0 || ih <= 0) {
+        return FALSE;
+    }
+    *x = ix;
+    *y = iy;
+    *w = iw;
+    *h = ih;
+    return TRUE;
+}
+
+#ifndef NXAGENT_RANDR_XINERAMA_CLIPPING
+/* intersect two rectangles, return aw/ah for w/h if resulting
+   rectangle is (partly) outside of bounding box */
+Bool intersect_bb(int ax1, int ay1, unsigned int aw, unsigned int ah,
+	       int bx1, int by1, unsigned int bw, unsigned int bh,
+	       int bbx1, int bby1, int bbx2, int bby2,
+	       int *x, int *y, unsigned int *w, unsigned int *h)
+{
+  Bool result = intersect(ax1, ay1, aw, ah, bx1, by1, bw, bh, x, y, w, h);
+  if (result == TRUE) {
+    /* check if outside of bounding box */
+    if (ax1 < bbx1 || ax1 + aw > bbx2) {
+        #ifdef DEBUG
+        fprintf(stderr, "intersect: box has parts outside bounding box - width stays unchanged [%d]\n", aw);
+        #endif
+	*w = aw;
+    }
+
+    if (ay1 < bby1 || ay1 + ah > bby2) {
+        #ifdef DEBUG
+        fprintf(stderr, "intersect: box has parts outside bounding box - height stays unchanged [%d]\n", ah);
+        #endif
+	*h = ah;
+    }
+  }
+
+  return result;
+}
+#endif
 
 int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, int mmHeight)
 {
   ScreenPtr    pScreen;
-  rrScrPrivPtr pScrPriv;
-  RROutputPtr  output;
-  RRCrtcPtr    crtc;
-  RRModePtr    mode;
-  xRRModeInfo  modeInfo;
-  char         name[100];
-  int          r, c, m;
-  int          refresh = 60;
-  int          doNotify = 1;
+  /* FIXME: when is this needed? */
+  int          doNotify = TRUE;
+  int          r;
 
+  #ifdef TEST
+  fprintf(stderr, "nxagentChangeScreenConfig: WindowTable[%d] is %p\n", screen, WindowTable[screen]);
+  #endif
   if (WindowTable[screen] == NULL)
   {
     return 0;
@@ -3607,16 +3687,17 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
 
   UpdateCurrentTime();
 
-  if (nxagentGrabServerInfo.grabstate == SERVER_GRABBED)
+  if (nxagentGrabServerInfo.grabstate == SERVER_GRABBED && nxagentGrabServerInfo.client != NULL)
   {
     /*
-     * If any client grabbed the server it won't expect that screen
+     * If any client grabbed the server it won't expect screen
      * configuration changes until it releases the grab. That could
-     * get an X error because available modes are chanded meanwhile.
+     * lead to an X error because available modes are changed
+     * in the meantime.
      */
 
     #ifdef TEST
-    fprintf(stderr, "nxagentChangeScreenConfig: Cancel with grabbed server.\n");
+    fprintf(stderr, "nxagentChangeScreenConfig: Cancel with grabbed server (grab held by %p).\n", nxagentGrabServerInfo.client);
     #endif
 
     return 0;
@@ -3632,76 +3713,398 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
 
   if (r != 0)
   {
-    pScrPriv = rrGetScrPriv(pScreen);
-
-    if (pScrPriv)
-    {
-      output = RRFirstOutput(pScreen);
-
-      if (output && output -> crtc)
-      {
-        crtc = output -> crtc;
-
-        for (c = 0; c < pScrPriv -> numCrtcs; c++)
-        {
-          RRCrtcSet(pScrPriv -> crtcs[c], NULL, 0, 0, RR_Rotate_0, 0, NULL);
-        }
-
-        memset(&modeInfo, '\0', sizeof(modeInfo));
-        sprintf(name, "%dx%d", width, height);
-
-        modeInfo.width  = width;
-        modeInfo.height = height;
-        modeInfo.hTotal = width;
-        modeInfo.vTotal = height;
-        modeInfo.dotClock = ((CARD32) width * (CARD32) height *
-                                (CARD32) refresh);
-        modeInfo.nameLength = strlen(name);
-
-        if (nxagentRRCustomMode != NULL)
-        {
-          RROutputDeleteUserMode(output, nxagentRRCustomMode);
-          FreeResource(nxagentRRCustomMode -> mode.id, 0);
-
-          if (crtc != NULL && crtc -> mode == nxagentRRCustomMode)
-          {
-            RRCrtcSet(crtc, NULL, 0, 0, RR_Rotate_0, 0, NULL);
-          }
-
-          #ifdef TEST
-          fprintf(stderr, "nxagentChangeScreenConfig: "
-                      "Going to destroy mode %p with refcnt %d.\n",
-                          nxagentRRCustomMode, nxagentRRCustomMode->refcnt);
-          #endif
-
-          RRModeDestroy(nxagentRRCustomMode);
-        }
-
-        nxagentRRCustomMode = RRModeGet(&modeInfo, name);
-
-        RROutputAddUserMode(output, nxagentRRCustomMode);
-
-        RRCrtcSet(crtc, nxagentRRCustomMode, 0, 0, RR_Rotate_0, 1, &output);
-
-        RROutputChanged(output, 1);
-
-        doNotify = 0;
-      }
-
-      pScrPriv -> lastSetTime = currentTime;
-
-      pScrPriv->changed = 1;
-      pScrPriv->configChanged = 1;
-    }
-
-    if (doNotify
-)
-    {
-      RRScreenSizeNotify(pScreen);
-    }
+    nxagentAdjustRandRXinerama(pScreen);
   }
 
+  if (doNotify)
+  {
+    RRScreenSizeNotify(pScreen);
+  }
+
+#ifdef DEBUG
+  fprintf(stderr, "nxagentChangeScreenConfig: Geometry: %d,%d %dx%d\n", nxagentOption(X), nxagentOption(Y),nxagentOption(Width),nxagentOption(Height));
+  fprintf(stderr, "nxagentChangeScreenConfig: return %d\n", r);
+#endif
+
   return r;
+}
+
+int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
+{
+  rrScrPrivPtr pScrPriv;
+  RROutputPtr  output;
+  xRRModeInfo  modeInfo;
+  char         name[100];
+  int          refresh = 60;
+  int          width = nxagentOption(Width);
+  int          height = nxagentOption(Height);
+
+  pScrPriv = rrGetScrPriv(pScreen);
+
+  if (pScrPriv)
+  {
+    int i, j;
+    int number = 0;
+
+    XineramaScreenInfo *screeninfo = NULL;
+
+    if (nxagentOption(Xinerama)) {
+      screeninfo = XineramaQueryScreens(nxagentDisplay, &number);
+#ifdef DEBUG
+      if (number) {
+        fprintf(stderr, "nxagentAdjustRandRXinerama: XineramaQueryScreens() returned %d screens\n", number);
+      }
+      else
+      {
+        fprintf(stderr, "nxagentAdjustRandRXinerama: XineramaQueryScreens() failed - continuing without Xinerama\n");
+      }
+    }
+    else
+    {
+      fprintf(stderr, "nxagentAdjustRandRXinerama: Xinerama is disabled\n");
+#endif
+    }
+
+    /*
+     * if there's no xinerama on the real server or xinerama is
+     * disabled in nxagent we only report one big screen. Clients
+     * still see xinerama enabled but it will report only one (big)
+     * screen. This is consistent with the way rrxinerama always
+     * behaved. The single PanoramiX/Xinerama extension however
+     * disables xinerama if only one screen exists.
+     */
+    if (number == 0) {
+      #ifdef DEBUG
+      fprintf(stderr, "nxagentAdjustRandRXinerama: faking xinerama\n" );
+      #endif
+      number = 1;
+
+      if (screeninfo) {
+	xfree(screeninfo);
+      }
+      if (!(screeninfo = xalloc(sizeof(XineramaScreenInfo)))) {
+	return FALSE;
+      }
+
+      /* fake a xinerama screeninfo that covers the whole screen */
+      screeninfo->x_org = nxagentOption(X);
+      screeninfo->y_org = nxagentOption(Y);
+      screeninfo->width = nxagentOption(Width);
+      screeninfo->height = nxagentOption(Height);
+    }
+
+#ifdef DEBUG
+    fprintf(stderr, "nxagentAdjustRandRXinerama: numCrtcs [%d], numOutputs [%d]\n", pScrPriv->numCrtcs, pScrPriv->numOutputs);
+    {
+      Bool rrgetinfo;
+
+      /*
+       * Convert old RANDR 1.0 data (if any) to current structure. This
+       * is needed once at the first run of this function. If we don't
+       * do this here it will be done implicitely later and add mode(s) to
+       * our crtc(s)!
+       */
+      rrgetinfo = RRGetInfo(pScreen);
+
+      fprintf(stderr, "nxagentAdjustRandRXinerama: RRGetInfo returned [%d]\n", rrgetinfo);
+    }
+#else
+    /* we are not interested in the return code */
+    RRGetInfo(pScreen);
+#endif
+
+#ifndef NXAGENT_RANDR_XINERAMA_CLIPPING
+    /* calculate bounding box (outer edges) */
+    int bbx2, bbx1, bby1, bby2;
+    bbx2 = bby2 = 0;
+    bbx1 = bby1 = INT_MAX;
+
+    for (i = 0; i < number; i++) {
+      bbx2 = MAX(bbx2, screeninfo[i].x_org + screeninfo[i].width);
+      bby2 = MAX(bby2, screeninfo[i].y_org + screeninfo[i].height);
+      bbx1 = MIN(bbx1, screeninfo[i].x_org);
+      bby1 = MIN(bby1, screeninfo[i].y_org);
+    }
+    #ifdef DEBUG
+    fprintf(stderr, "nxagentAdjustRandRXinerama: bounding box: left [%d] right [%d] top [%d] bottom[%d]\n", bbx1, bbx2, bby1, bby2);
+    #endif
+#endif
+
+    #ifdef DEBUG
+    fprintf(stderr, "nxagentAdjustRandRXinerama: numCrtcs [%d], numOutputs [%d]\n", pScrPriv->numCrtcs, pScrPriv->numOutputs);
+    #endif
+
+    /* adjust the number of CRTCs to match the number of reported
+       xinerama screens on the real server */
+    while (number != pScrPriv->numCrtcs) {
+      if (number < pScrPriv->numCrtcs) {
+        #ifdef DEBUG
+        fprintf(stderr, "nxagentAdjustRandRXinerama: destroying crtc\n");
+        #endif
+        RRCrtcDestroy(pScrPriv->crtcs[pScrPriv->numCrtcs - 1]);
+      }
+      else
+      {
+        #ifdef DEBUG
+        fprintf(stderr, "nxagentAdjustRandRXinerama: adding crtc\n");
+        #endif
+        RRCrtcCreate(pScreen, NULL);
+      }
+    }
+
+    #ifdef DEBUG
+    fprintf(stderr, "nxagentAdjustRandRXinerama: numCrtcs [%d], numOutputs [%d]\n", pScrPriv->numCrtcs, pScrPriv->numOutputs);
+    #endif
+
+    /* set gamma. Currently the only reason for doing this is
+       preventing the xrandr command from complaining about missing
+       gamma. */
+    for (i = 0; i < pScrPriv->numCrtcs; i++) {
+      if (pScrPriv->crtcs[i]->gammaSize == 0) {
+	CARD16 gamma = 0;
+	RRCrtcGammaSetSize(pScrPriv->crtcs[i], 1);
+	RRCrtcGammaSet(pScrPriv->crtcs[i], &gamma, &gamma, &gamma);
+	RRCrtcGammaNotify(pScrPriv->crtcs[i]);
+      }
+    }
+
+    /* delete superfluous non-NX outputs */
+    for (i = pScrPriv->numOutputs - 1; i >= 0; i--) {
+      if (strncmp(pScrPriv->outputs[i]->name, "NX", 2)) {
+        #ifdef DEBUG
+        fprintf(stderr, "nxagentAdjustRandRXinerama: destroying output [%s]\n", pScrPriv->outputs[i]->name);
+        #endif
+        RROutputDestroy(pScrPriv->outputs[i]);
+      }
+    }
+
+    /* at this stage only NX outputs are left - we delete the superfluous ones */
+    for (i = pScrPriv->numOutputs - 1; i >= number; i--) {
+      #ifdef DEBUG
+      fprintf(stderr, "nxagentAdjustRandRXinerama: destroying output [%s]\n", pScrPriv->outputs[i]->name);
+      #endif
+      RROutputDestroy(pScrPriv->outputs[i]);
+    }
+
+    /* add and init outputs */
+    for (i = 0; i < number; i++) {
+      if (i >= pScrPriv->numOutputs) {
+        sprintf(name, "NX%d", i+1);
+        output = RROutputCreate(pScreen, name, strlen(name), NULL);
+	/* will be done later
+	RROutputSetConnection(output, RR_Disconnected); 
+	*/
+        #ifdef DEBUG
+        fprintf(stderr, "nxagentAdjustRandRXinerama: created new output [%s]\n", name);
+        #endif
+      }
+      else
+      {
+        output = pScrPriv->outputs[i];
+      }
+      #ifdef DEBUG
+      fprintf(stderr, "nxagentAdjustRandRXinerama: adjusting output [%s]\n",  pScrPriv->outputs[i]->name);
+      #endif
+      RROutputSetCrtcs(output, &(pScrPriv->crtcs[i]), 1);
+      /* FIXME: Isn't there a function for setting this? */
+      output->crtc = pScrPriv->crtcs[i];
+      /* FIXME: get SubPixelOrder from real X server */
+      RROutputSetSubpixelOrder(output, SubPixelUnknown);
+      /* FIXME: What is the correct physical size here? */
+      RROutputSetPhysicalSize(output, 0, 0);
+    }
+
+    for (i = 0; i < pScrPriv->numOutputs; i++ ) {
+      Bool disable_output = FALSE;
+      RRModePtr mymode, prevmode;
+      int new_x, new_y;
+      unsigned int new_w, new_h;
+
+      /*
+      if ((nxagentOption(X) < bbx1 || (nxagentOption(X) + width >= bbx2 )) {
+        #ifdef DEBUG
+        fprintf(stderr, "nxagentAdjustRandRXinerama: output %d: window has parts outside visible area - width stays unchanged [%d]\n", width);
+        #endif
+	new_w = width;
+      }
+
+	if ((nxagentOption(Y) < bby1 || (nxagentOption(Y) + height >= bby2 ) {
+          #ifdef DEBUG
+          fprintf(stderr, "nxagentAdjustRandRXinerama: output %d: window has parts outside visible area - height stays unchanged [%d]\n", height);
+          #endif
+	  new_h = height;
+	}
+      */
+
+      /* if there's no intersection disconnect the output */
+#ifdef NXAGENT_RANDR_XINERAMA_CLIPPING
+      disable_output = !intersect(nxagentOption(X), nxagentOption(Y),
+                                  width, height,
+                                  screeninfo[i].x_org, screeninfo[i].y_org,
+                                  screeninfo[i].width, screeninfo[i].height,
+                                  &new_x, &new_y, &new_w, &new_h);
+#else
+      disable_output = !intersect_bb(nxagentOption(X), nxagentOption(Y),
+                                  width, height,
+                                  screeninfo[i].x_org, screeninfo[i].y_org,
+                                  screeninfo[i].width, screeninfo[i].height,
+	                          bbx1, bby1, bbx2, bby2,
+                                  &new_x, &new_y, &new_w, &new_h);
+#endif
+
+      /* save previous mode */
+      prevmode = pScrPriv->crtcs[i]->mode;
+      #ifdef DEBUG
+      if (prevmode) {
+        fprintf(stderr, "nxagentAdjustRandRXinerama: output %d: prevmode [%s] ([%p]) refcnt [%d]\n", i, prevmode->name, prevmode, prevmode->refcnt);
+      } else {
+        fprintf(stderr, "nxagentAdjustRandRXinerama: output %d: no prevmode\n", i);
+      }
+      #endif
+
+      RROutputSetCrtcs(pScrPriv->outputs[i], &(pScrPriv->crtcs[i]), 1);
+
+      if (disable_output) {
+        #ifdef DEBUG
+        fprintf(stderr, "nxagentAdjustRandRXinerama: output %d: no (valid) intersection - disconnecting\n", i);
+        #endif
+        RROutputSetConnection(pScrPriv->outputs[i], RR_Disconnected);
+
+        /*
+         * Tests revealed that some window managers (e.g. LXDE) also
+         * take disconnected outputs into account when calculating
+         * stuff like wallpaper tile size and maximum window
+         * size. This is problematic when a disconnected output is
+         * smaller than any of the connected ones. Solution: unset the
+         * mode of the output's crtc. This also leads to xinerama not
+         * showing the disconnected head anymore.
+         */
+        if (prevmode) {
+          #ifdef DEBUG
+          fprintf(stderr, "nxagentAdjustRandRXinerama: removing mode from output %d\n", i);
+          #endif
+          RROutputSetModes(pScrPriv->outputs[i], NULL, 0, 0);
+
+          #ifdef DEBUG
+          fprintf(stderr, "nxagentAdjustRandRXinerama: removing mode from ctrc %d\n", i);
+          #endif
+          RRCrtcSet(pScrPriv->crtcs[i], NULL, 0, 0, RR_Rotate_0, 1, &(pScrPriv->outputs[i]));
+        }
+      }
+      else
+      {
+        #ifdef DEBUG
+        fprintf(stderr, "nxagentAdjustRandRXinerama: output %d: intersection is x [%d] y [%d] width [%d] height [%d]\n", i, new_x, new_y, new_w, new_h);
+        #endif
+
+        RROutputSetConnection(pScrPriv->outputs[i], RR_Connected);
+
+        memset(&modeInfo, '\0', sizeof(modeInfo));
+
+#ifdef NXAGENT_RANDR_MODE_PREFIX
+        /* avoid collisions with pre-existing default modes by using a
+           separate namespace. If we'd simply use XxY we could not
+           distinguish between pre-existing modes which should stay
+           and our own modes that should be removed after use. */
+        sprintf(name, "nx_%dx%d", new_w, new_h);
+#else
+        sprintf(name, "%dx%d", new_w, new_h);
+#endif
+
+        modeInfo.width  = new_w;
+        modeInfo.height = new_h;
+        modeInfo.hTotal = new_w;
+        modeInfo.vTotal = new_h;
+        modeInfo.dotClock = ((CARD32) new_w * (CARD32) new_h * (CARD32) refresh);
+        modeInfo.nameLength = strlen(name);
+
+        mymode = RRModeGet(&modeInfo, name);
+
+#ifdef DEBUG
+        if (mymode) {
+          fprintf(stderr, "nxagentAdjustRandRXinerama: output %d: mode [%s] ([%p]) created/received, refcnt [%d]\n", i, name, mymode, mymode->refcnt);
+        }
+        else
+        {
+	  /* FIXME: what is the correct behaviour in this case? */
+          fprintf(stderr, "nxagentAdjustRandRXinerama: output %d: mode [%s] creation failed!\n", i, name);
+        }
+#endif
+	if (prevmode && mymode == prevmode) {
+          #ifdef DEBUG
+          fprintf(stderr, "nxagentAdjustRandRXinerama: mymode [%s] ([%p]) == prevmode [%s] ([%p])\n", mymode->name, mymode, prevmode->name, prevmode);
+          #endif
+
+          /* if they are the same RRModeGet() has increased the
+	     refcnt by 1. We decrease it again by calling only
+	     RRModeDestroy() and forget about prevmode */
+	  RRModeDestroy(mymode);
+        }
+        else
+	{ 
+          #ifdef DEBUG
+          fprintf(stderr, "nxagentAdjustRandRXinerama: setting mode [%s] ([%p]) refcnt [%d] for output %d\n", mymode->name, mymode, mymode->refcnt, i);
+          #endif
+          RROutputSetModes(pScrPriv->outputs[i], &mymode, 1, 0);
+
+          #ifdef DEBUG
+          fprintf(stderr, "nxagentAdjustRandRXinerama: setting mode [%s] ([%p]) refcnt [%d] for crtc %d\n", mymode->name, mymode, mymode->refcnt, i);
+          #endif
+          RRCrtcSet(pScrPriv->crtcs[i], mymode, new_x, new_y, RR_Rotate_0, 1, &(pScrPriv->outputs[i]));
+
+        }
+      } /* if disable_output */
+
+      /* throw away the mode if otherwise unused. We do not need it
+         anymore. We call FreeResource() to ensure the system will not
+         try to free it again on shutdown */
+
+      if (prevmode && prevmode->refcnt == 1) {
+        #ifdef DEBUG
+        fprintf(stderr, "nxagentAdjustRandRXinerama: destroying prevmode [%s]\n", prevmode->name);
+        #endif
+	FreeResource(prevmode->mode.id, 0);
+      }
+
+      RROutputChanged(pScrPriv->outputs[i], TRUE);
+      RRCrtcChanged(pScrPriv->crtcs[i], TRUE);
+    }
+
+    /* release allocated memory */
+    if (screeninfo) {
+      xfree(screeninfo);
+      screeninfo = NULL;
+    }
+
+#ifdef DEBUG
+    for (i = 0; i < pScrPriv->numCrtcs; i++) {
+      RRModePtr mode = pScrPriv->crtcs[i]->mode;
+      if (mode) {
+        fprintf(stderr, "nxagentAdjustRandRXinerama: crtc %d has mode [%s] ([%p]), refcnt [%d] and %d outputs\n", i, pScrPriv->crtcs[i]->mode->name, pScrPriv->crtcs[i]->mode, pScrPriv->crtcs[i]->mode->refcnt, pScrPriv->crtcs[i]->numOutputs);
+      }
+      else
+      {
+        fprintf(stderr, "nxagentAdjustRandRXinerama: crtc %d has no mode and %d outputs\n", i, pScrPriv->crtcs[i]->numOutputs);
+      }
+
+      if (pScrPriv->crtcs[i]->numOutputs > 0)
+	fprintf(stderr, "                            output[%d]->crtc=[%p]\n", i, pScrPriv->outputs[i]->crtc);
+    }
+#endif
+
+    pScrPriv -> lastSetTime = currentTime;
+
+    pScrPriv->changed = TRUE;
+    pScrPriv->configChanged = TRUE;
+  }
+
+  /* FIXME: adjust maximum screen size according to remote randr/xinerama setup */
+
+  #ifdef DEBUG
+  fprintf(stderr, "nxagentAdjustRandRXinerama: Min %dx%d, Max %dx%d \n", pScrPriv->minWidth,pScrPriv->minHeight,pScrPriv->maxWidth,pScrPriv->maxHeight);
+  #endif
+
+  return TRUE;
 }
 
 void nxagentSaveAreas(PixmapPtr pPixmap, RegionPtr prgnSave, int xorg, int yorg, WindowPtr pWin)

@@ -42,6 +42,7 @@ is" without express or implied warranty.
 #include "screenint.h"
 #include "input.h"
 #include "misc.h"
+#include "globals.h"
 #include "scrnintstr.h"
 #include "dixstruct.h"
 #include "servermd.h"
@@ -1200,6 +1201,36 @@ static void nxagentParseOptions(char *name, char *value)
                   validateString(value));
     }
 
+    return;
+  }
+  else if (!strcmp(name, "xinerama"))
+  {
+#ifdef PANORAMIX
+    if (!PanoramiXExtensionDisabledHack)
+    {
+      if (!strcmp(value, "1"))
+      {
+        nxagentChangeOption(Xinerama, 1);
+      }
+      else if (!strcmp(value, "0"))
+      {
+        nxagentChangeOption(Xinerama, 0);
+      }
+      else
+      {
+        fprintf(stderr, "Warning: Ignoring bad value '%s' for option 'xinerama'.\n",
+                    validateString(value));
+      }
+    }
+    else
+    {
+      nxagentChangeOption(Xinerama, 0);
+      fprintf(stderr, "Warning: Xinerama extension has been disabled via -disablexineramaextension cmdline switch.\n");
+    }
+#else
+    nxagentChangeOption(Xinerama, 0);
+    fprintf(stderr, "Warning: No Xinerama support compiled into nxagent.\n")
+#endif /* of PANORAMIX */
     return;
   }
   else if (!strcmp(name, "resize"))

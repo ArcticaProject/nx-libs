@@ -15,10 +15,6 @@ NULL =
 XKBLIBDIR = xkbfile
 #endif
 
-#if BuildXineramaLibrary
-XINERAMADIR=Xinerama
-#endif
-
 #if BuildRenderLibrary
 RENDERLIBDIR = Xrender
 #endif
