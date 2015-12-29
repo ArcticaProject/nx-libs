@@ -36,7 +36,7 @@
 #include "os.h"
 #include "dixstruct.h"
 #include "extnsionst.h"
-#include <X11/extensions/damageproto.h>
+#include <nx-X11/extensions/damageproto.h>
 #include "windowstr.h"
 #include "selection.h"
 #include "scrnintstr.h"

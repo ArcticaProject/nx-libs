@@ -176,7 +176,7 @@ Win32System(const char *cmdline)
 # define TRANS_SERVER
 # define PRMSG(lvl,x,a,b,c) \
 	if (lvl <= 1) { LogMessage(X_ERROR,x,a,b,c); } else ((void)0)
-# include <X11/Xtrans/Xtransutil.c>
+# include <nx-X11/Xtrans/Xtransutil.c>
 # ifndef XKM_OUTPUT_DIR_MODE
 #  define XKM_OUTPUT_DIR_MODE 0755
 # endif

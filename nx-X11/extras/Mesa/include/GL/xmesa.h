@@ -75,8 +75,8 @@ extern "C" {
 #ifdef XFree86Server
 #include "xmesa_xf86.h"
 #else
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
+#include <nx-X11/Xlib.h>
+#include <nx-X11/Xutil.h>
 #include "xmesa_x.h"
 #endif
 #include "GL/gl.h"

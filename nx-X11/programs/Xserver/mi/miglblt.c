@@ -52,9 +52,9 @@ SOFTWARE.
 #include <dix-config.h>
 #endif
 
-#include	<X11/X.h>
-#include	<X11/Xmd.h>
-#include	<X11/Xproto.h>
+#include	<nx-X11/X.h>
+#include	<nx-X11/Xmd.h>
+#include	<nx-X11/Xproto.h>
 #include	"misc.h"
 #include	<X11/fonts/fontstruct.h>
 #include	"dixfontstr.h"

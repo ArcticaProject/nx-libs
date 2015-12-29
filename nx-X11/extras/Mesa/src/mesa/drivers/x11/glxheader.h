@@ -43,12 +43,12 @@
 
 #else
 
-# include <X11/Xlib.h>
-# include <X11/Xutil.h>
+# include <nx-X11/Xlib.h>
+# include <nx-X11/Xutil.h>
 # ifdef USE_XSHM  /* was SHM */
 #  include <sys/ipc.h>
 #  include <sys/shm.h>
-#  include <X11/extensions/XShm.h>
+#  include <nx-X11/extensions/XShm.h>
 # endif
 # include <GL/glx.h>
 

@@ -37,7 +37,7 @@ in this Software without prior written authorization from The Open Group.
 #endif
 
 #define NEED_EVENTS
-# include   <X11/X.h>
+# include   <nx-X11/X.h>
 # include   "misc.h"
 # include   "input.h"
 # include   "cursorstr.h"

@@ -68,7 +68,7 @@ from The Open Group.
 #undef Status
 #define Status int
 #undef BOOL
-#include <X11/Xw32defs.h>
+#include <nx-X11/Xw32defs.h>
 #undef close
 #define close closesocket
 #endif /* WIN32 */

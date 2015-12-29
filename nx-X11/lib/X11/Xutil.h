@@ -51,7 +51,7 @@ SOFTWARE.
 #ifndef _XUTIL_H_
 #define _XUTIL_H_
 
-/* You must include <X11/Xlib.h> before including this file */
+/* You must include <nx-X11/Xlib.h> before including this file */
 #include <nx-X11/Xlib.h>
 
 /* 

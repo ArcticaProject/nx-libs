@@ -72,8 +72,8 @@ in this Software without prior written authorization from The Open Group.
 #ifndef _XOS_R_H_
 # define _XOS_R_H_
 
-# include <X11/Xos.h>
-# include <X11/Xfuncs.h>
+# include <nx-X11/Xos.h>
+# include <nx-X11/Xfuncs.h>
 
 # ifndef X_NOT_POSIX
 #  ifdef _POSIX_SOURCE
@@ -107,7 +107,7 @@ extern LockInfoPtr _Xglobal_lock;
 #  endif
 #  if defined(XTHREADS_WARN) || defined(XTHREADS_FILE_LINE)
 #   ifndef XAllocIDs /* Xlibint.h does not have multiple include protection */
-#    include <X11/Xfuncproto.h>	/* for NeedFunctionPrototypes */
+#    include <nx-X11/Xfuncproto.h>	/* for NeedFunctionPrototypes */
 extern void (*_XLockMutex_fn)(
 #    if NeedFunctionPrototypes
     LockInfoPtr	/* lock */, char * /* file */, int /* line */
@@ -129,7 +129,7 @@ extern void (*_XUnlockMutex_fn)(
 #   endif
 #  else
 #   ifndef XAllocIDs /* Xlibint.h does not have multiple include protection */
-#    include <X11/Xfuncproto.h>	/* for NeedFunctionPrototypes */
+#    include <nx-X11/Xfuncproto.h>	/* for NeedFunctionPrototypes */
 extern void (*_XLockMutex_fn)(
 #    if NeedFunctionPrototypes
     LockInfoPtr	/* lock */
@@ -155,7 +155,7 @@ extern void (*_XUnlockMutex_fn)(
 extern void (*_XtProcessLock)(void);
 #  endif
 #  ifndef _XtintrinsicP_h
-#   include <X11/Xfuncproto.h>	/* for NeedFunctionPrototypes */
+#   include <nx-X11/Xfuncproto.h>	/* for NeedFunctionPrototypes */
 extern void XtProcessLock(
 #   if NeedFunctionPrototypes
     void

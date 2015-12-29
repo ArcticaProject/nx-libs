@@ -39,7 +39,7 @@
 # include "imports.h"
 # define __glXMemset  memset
 #else
-# include <X11/X.h>
+# include <nx-X11/X.h>
 # include <GL/glx.h>
 # include "GL/glxint.h"
 
@@ -51,7 +51,7 @@ extern void __glXFree( void * ptr );
 #  define _mesa_malloc(b) __glXMalloc(b)
 #  define _mesa_free(m)   __glXFree(m)
 # else
-#  include <X11/Xlibint.h>
+#  include <nx-X11/Xlibint.h>
 #  define __glXMemset  memset
 #  define _mesa_malloc(b) Xmalloc(b)
 #  define _mesa_free(m) Xfree(m)
