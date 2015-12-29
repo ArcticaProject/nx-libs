@@ -55,15 +55,15 @@ Visual *XDefaultVisual(dpy, scr)
     Display *dpy; int scr;
 	{	return (DefaultVisual(dpy, scr)); }
 
-GC XDefaultGC(dpy, scr) 
+GC XDefaultGC(dpy, scr)
     Display *dpy; int scr;
 	{	return (DefaultGC(dpy,scr)); }
 
-unsigned long XBlackPixel(dpy, scr) 
+unsigned long XBlackPixel(dpy, scr)
     Display *dpy; int scr; 
 	{	return (BlackPixel(dpy, scr)); }
 
-unsigned long XWhitePixel(dpy, scr) 
+unsigned long XWhitePixel(dpy, scr)
     Display *dpy; int scr; 
 	{	return (WhitePixel(dpy,scr)); }
 
@@ -107,7 +107,7 @@ int XVendorRelease(dpy)  Display *dpy; { return (VendorRelease(dpy)); }
 
 char *XDisplayString(dpy)  Display *dpy; { return (DisplayString(dpy)); }
 
-int XDefaultDepth(dpy, scr) 
+int XDefaultDepth(dpy, scr)
     Display *dpy; int scr;
 	{ return(DefaultDepth(dpy, scr)); }
 
