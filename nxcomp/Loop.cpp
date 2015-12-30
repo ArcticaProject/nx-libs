@@ -8951,7 +8951,8 @@ int ParseEnvironmentOptions(const char *env, int force)
                                  strcasecmp(name, "shadow") == 0 ||
                                      strcasecmp(name, "shadowuid") == 0 ||
                                          strcasecmp(name, "shadowmode") == 0 ||
-                                             strcasecmp(name, "clients") == 0)
+                                             strcasecmp(name, "clients") == 0 ||
+                                                 strcasecmp(name, "xinerama") == 0)
     {
       #ifdef DEBUG
       *logofs << "Loop: Ignoring agent option '" << name
