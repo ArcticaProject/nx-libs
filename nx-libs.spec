@@ -556,7 +556,6 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %doc COPYING
 %doc nx-X11/README
 %dir %{_libdir}/nx
-%dir %{_libdir}/nx/X11
 %dir %{_datadir}/nx
 %{_datadir}/nx/SecurityPolicy
 
@@ -627,7 +626,7 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %files -n libNX_Xrender-devel
 %defattr(-,root,root)
 %{_libdir}/libNX_Xrender.so
-%{_includedir}/nx/X11/extensions/Xrender.h
+%{_includedir}/nx-X11/extensions/Xrender.h
 
 %files -n libNX_Xrender1
 %defattr(-,root,root)
@@ -782,7 +781,6 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %{_datadir}/pixmaps/nxagent.xpm
 %{_datadir}/nx/rgb
 %{_datadir}/man/man1/nxagent.1*
-%dir %{_libdir}/nx/X11/Xinerama/
 %{_libdir}/nx/X11/Xinerama/libNX_X11.so.6
 %{_libdir}/nx/X11/Xinerama/libNX_Xext.so.6
 %{_libdir}/nx/X11/Xinerama/libXinerama.so.1*
