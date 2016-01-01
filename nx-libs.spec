@@ -65,6 +65,7 @@ BuildRequires:  libpng-devel
 BuildRequires:  libxml2-devel
 BuildRequires:  libXfont-devel
 BuildRequires:  libXdmcp-devel
+BuildRequires:  libXdamage-devel
 BuildRequires:  libXcomposite-devel
 BuildRequires:  libXrandr-devel
 BuildRequires:  libXfixes-devel
