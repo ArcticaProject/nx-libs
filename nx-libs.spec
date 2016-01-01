@@ -690,7 +690,6 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %{_includedir}/nx-X11/X10.h
 %dir %{_includedir}/nx-X11/extensions
 %{_includedir}/nx-X11/extensions/Xevie.h
-%{_includedir}/nx-X11/extensions/Xinerama.h
 %{_includedir}/nx-X11/extensions/lbxbuf.h
 %{_includedir}/nx-X11/extensions/lbxbufstr.h
 %{_includedir}/nx-X11/extensions/lbxdeltastr.h
@@ -781,9 +780,6 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %{_datadir}/pixmaps/nxagent.xpm
 %{_datadir}/nx/rgb
 %{_datadir}/man/man1/nxagent.1*
-%{_libdir}/nx/X11/Xinerama/libNX_X11.so.6
-%{_libdir}/nx/X11/Xinerama/libNX_Xext.so.6
-%{_libdir}/nx/X11/Xinerama/libXinerama.so.1*
 
 %files -n nxauth
 %defattr(-,root,root)
