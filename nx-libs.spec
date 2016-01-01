@@ -63,6 +63,8 @@ BuildRequires:  xorg-x11-util-devel
 BuildRequires:  expat-devel
 BuildRequires:  libpng-devel
 BuildRequires:  libxml2-devel
+BuildRequires:  libX11-devel
+BuildRequires:  libXext-devel
 BuildRequires:  libXpm-devel
 BuildRequires:  libXfont-devel
 BuildRequires:  libXdmcp-devel
