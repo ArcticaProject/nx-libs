@@ -66,3 +66,29 @@ TheQVD developers via the project's Github issue tracker.
 
 thanks+light+love, 20150531
 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+
+## Building Under Fedora or EPEL using Mock
+
+Assuming:
+
+1. The branch you are building is 3.6.x
+2. The current version is 3.5.99.0 (specified in the .spec file)
+3. The current release is 0.0build1 (specified in the .spec file)
+4. You wish for the RPM files and the mock build logs to be under ~/result
+
+Prerequisites:
+
+1. Install package "mock"
+2. Add your user account to the "mock" group (recommended)
+3. cd to the nx-libs directory that you cloned using git
+
+```
+mkdir -p ~/result
+git archive -o ../nx-libs-3.5.99.0.tar.gz --prefix=nx-libs-3.5.99.0/ 3.6.x
+cp --preserve=time nx-libs.spec ../
+cd ..
+mock --buildsrpm --spec ./nx-libs.spec --sources ./nx-libs-3.5.99.0.tar.gz --resultdir ~/result
+mock --rebuild ~/result/nx-libs-3.5.99.0-0.0build1.fc23.src.rpm --resultdir ~/result
+```
+
+The end result is RPMs under ~/result that you can install (or upgrade to) using yum or dnf, which will resolve their dependencies.
