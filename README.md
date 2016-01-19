@@ -37,9 +37,8 @@ Scheduled for end of Q2/2016.
 Release goals (phase 1) for nx-libs release series 3.6.0.x:
 
 * CVE security audit (complete)
-* remove unused code (+/- complete)
-* no bundled non-X11 libraries anymore (done)
-* no bundled Mesa library anymore (todo)
+* remove unused code (work in progress)
+* no bundled non-X11 libraries anymore (complete)
 * complete imake cleanup (work in progress)
 * replace as many libNX_X* libraries by X.org's libX* libraries
   (work in progress)
@@ -47,18 +46,30 @@ Release goals (phase 1) for nx-libs release series 3.6.0.x:
 * Unix file socket communication for nxproxy -C <-> nxproxy -S connections
   (todo)
 * allow Unix file sockets as channel endpoints (work in progress)
-* allow embedding of nxproxy into other windows
+* allow embedding of nxproxy into other windows (work in progress)
+* new RandR based Xinerama extension (+/- complete, more QA needed)
+* Fix Xcomposite extension in Xserver (todo)
+* Rename project to Xccc or similar (todo, to be discussed)
+* KDE5 support: Add minimal XInput2 support, patch KDE5, or similar (todo)
+* nxcomp protocol clean-up (todo)
+* nxcomp logging clean-up (todo)
+* optimizing documentation: how to tune NX connections (todo)
  
+
 ## Release series 3.7.0.x
 
 Scheduled for end of Q2/2017.
 
 Release goals (phase 2) for nx-libs release series 3.7.0.x (not branched-off, yet):
 
-* provide support for latest X11 extensions
+* rebase Xserver code against latest X.Org server (work in progress)
 * event FIFO sockets for attaching external applications
-  (todo)
-* support for multimedia
+  (todo, to be discussed)
+* enable/support XV extension (todo)
+* software cursor for shadow sessions (todo)
+* no bundled Mesa library anymore (todo, to be discussed)
+* use recent MesaGL (todo, to-be-discussed)
+
 
 If you have any questions about this NX development or want to file a bug
 report, please contact the Arctica developers, the X2Go developers or the
