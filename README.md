@@ -93,3 +93,22 @@ mock --rebuild ~/result/nx-libs-3.5.99.0-0.0build1.fc23.src.rpm --resultdir ~/re
 ```
 
 The end result is RPMs under ~/result that you can install (or upgrade to) using yum or dnf, which will resolve their dependencies.
+
+## Building Under Debian or Ubuntu using debuild
+
+Assuming:
+
+1. The current version is 3.5.99* (specified in debian/changelog)
+
+Prerequisites:
+
+1. Install package "devscripts"
+2. Install the build dependencies. `dpkg-checkbuilddeps` can help you identify them.
+
+```
+git clone <url> nx-libs
+cd nx-libs
+debuild -uc -us
+cd ..
+sudo dpkg -i *3.5.99*.deb
+```
