@@ -64,8 +64,9 @@ If you have any questions about this NX development or want to file a bug
 report, please contact the Arctica developers, the X2Go developers or the
 TheQVD developers via the project's Github issue tracker.
 
-thanks+light+love, 20150531
-Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+*Sincerely,*
+
+*The nx-libs developers (a combined effort of ArcticaProject / TheQVD / X2Go)*
 
 ## Building Under Fedora or EPEL using Mock
 
