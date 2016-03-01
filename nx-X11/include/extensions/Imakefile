@@ -12,28 +12,12 @@ NULL =
 SCREENSAVERHEADERS = saver.h saverproto.h scrnsaver.h
 #endif
 
-#if BuildXF86MiscExt
-XF86MISCHEADERS = xf86misc.h xf86mscstr.h
-#endif
 #if BuildXF86BigfontExt
 XF86BIGFONTHEADERS = xf86bigfont.h xf86bigfstr.h
-#endif
-#if BuildXF86VidModeExt
-XF86VIDMODEHEADERS = xf86vmode.h xf86vmstr.h
-#endif
-#if BuildXF86DGA
-XF86DGAHEADERS = xf86dga.h xf86dgastr.h xf86dga1.h xf86dga1str.h
-#endif
-#if BuildXextLib
-LBXHEADERS = XLbx.h lbxbuf.h lbxbufstr.h lbxdeltastr.h lbximage.h lbxopts.h \
-	     lbxstr.h lbxzlib.h
 #endif
 #if BuildXvExt
 XVHEADERS = Xv.h Xvlib.h Xvproto.h
 XVMCHEADERS = XvMC.h XvMClib.h XvMCproto.h vldXvMC.h
-#endif
-#if BuildFontCache
-FONTCACHEHEADERS = fontcache.h fontcacheP.h fontcachstr.h
 #endif
 #if BuildXinerama
 XINERAMAHEADERS = panoramiXext.h panoramiXproto.h
@@ -53,58 +37,39 @@ COMPOSITEHEADERS = composite.h compositeproto.h
 #if BuildDamage
 DAMAGEHEADERS = damagewire.h damageproto.h
 #endif
-#if BuildXTrap
-XTRAPHEADERS = xtrapbits.h xtrapddmi.h xtrapdi.h xtrapemacros.h xtraplib.h \
-	xtraplibp.h xtrapproto.h
-#endif
 #if BuildXResExt
 XRESHEADERS = XResproto.h
-#endif
-#if BuildXevie
-XEVIEHEADERS = Xevie.h Xeviestr.h
 #endif
 
 EXTRAHEADERS = \
 	$(SCREENSAVERHEADERS) \
-	$(XF86MISCHEADERS) \
-	$(XF86BIGFONTHEADERS) \
-	$(XF86VIDMODEHEADERS) \
-	$(XF86DGAHEADERS) \
 	$(XINERAMAHEADERS) \
-	$(LBXHEADERS) \
+	$(XF86BIGFONTHEADERS) \
 	$(XVHEADERS) \
 	$(XVMCHEADERS) \
-	$(FONTCACHEHEADERS) \
 	$(RANDRHEADERS) \
 	$(RENDERHEADERS) \
 	$(XFIXESHEADERS) \
 	$(COMPOSITEHEADERS) \
 	$(DAMAGEHEADERS) \
-	$(XEVIEHEADERS) \
-	$(XTRAPHEADERS) \
 	$(XRESHEADERS) \
 	$(NULL)
 
 HEADERS = Xext.h \
 	xcmiscstr.h \
-	MITMisc.h mitmiscstr.h \
 	bigreqstr.h \
 	extutil.h \
 	XI.h XInput.h XIproto.h \
 	xtestconst.h xtestext1.h xteststr.h \
 	XKB.h XKBgeom.h XKBproto.h XKBstr.h XKBsrv.h \
-	Xdbe.h Xdbeproto.h \
-	Xag.h Xagstr.h Xagsrv.h \
+	Xdbeproto.h \
 	XShm.h shmstr.h \
 	$(EXTRAHEADERS) \
-	multibuf.h multibufst.h \
 	record.h recordstr.h \
 	security.h securstr.h \
 	shape.h shapestr.h \
 	sync.h syncstr.h \
-	Xcup.h Xcupstr.h \
 	dpms.h dpmsstr.h \
-	XEVI.h XEVIstr.h \
 	$(NULL)
 
 all::
@@ -120,9 +85,6 @@ InstallDriverSDKNonExecFile(XIproto.h,$(DRIVERSDKINCLUDEDIR)/extensions)
 InstallDriverSDKNonExecFile(Xv.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(Xvproto.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(dpms.h,$(DRIVERSDKINCLUDEDIR)/extensions)
-InstallDriverSDKNonExecFile(xf86dga1str.h,$(DRIVERSDKINCLUDEDIR))
-InstallDriverSDKNonExecFile(xf86dgastr.h,$(DRIVERSDKINCLUDEDIR)/extensions)
-InstallDriverSDKNonExecFile(xf86misc.h,$(DRIVERSDKINCLUDEDIR)/extensions)
 InstallDriverSDKNonExecFile(renderproto.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(Xv.h,$(DRIVERSDKINCLUDEDIR)/extensions)
 InstallDriverSDKNonExecFile(XvMC.h,$(DRIVERSDKINCLUDEDIR))

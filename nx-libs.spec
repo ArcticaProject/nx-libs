@@ -207,13 +207,9 @@ the X11 protocol. This increases performance when using X
 applications over a network, especially a slow one.
 
 The NX_Xext library contains a handful of X11 extensions:
-- Double Buffer extension (DBE/Xdbe)
 - Display Power Management Signaling (DPMS) extension
 - X11 Nonrectangular Window Shape extension (Xshape)
 - The MIT Shared Memory extension (MIT-SHM/Xshm)
-- TOG-CUP (colormap) protocol extension (Xcup)
-- X Extended Visual Information extension (XEvi)
-- X11 Double-Buffering, Multi-Buffering, and Stereo extension (Xmbuf)
 
 This package contains all necessary include files and libraries
 needed to develop applications that require these.
@@ -563,26 +559,11 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %defattr(-,root,root)
 %{_libdir}/libNX_Xext.so
 %dir %{_includedir}/nx-X11/extensions
-%{_includedir}/nx-X11/extensions/MITMisc.h
-%{_includedir}/nx-X11/extensions/XEVI.h
-%{_includedir}/nx-X11/extensions/XEVIstr.h
-%{_includedir}/nx-X11/extensions/XLbx.h
 %{_includedir}/nx-X11/extensions/XShm.h
-%{_includedir}/nx-X11/extensions/Xag.h
-%{_includedir}/nx-X11/extensions/Xagsrv.h
-%{_includedir}/nx-X11/extensions/Xagstr.h
-%{_includedir}/nx-X11/extensions/Xcup.h
-%{_includedir}/nx-X11/extensions/Xcupstr.h
-%{_includedir}/nx-X11/extensions/Xdbe.h
-%{_includedir}/nx-X11/extensions/Xdbeproto.h
 %{_includedir}/nx-X11/extensions/Xext.h
 %{_includedir}/nx-X11/extensions/dpms.h
 %{_includedir}/nx-X11/extensions/dpmsstr.h
 %{_includedir}/nx-X11/extensions/extutil.h
-%{_includedir}/nx-X11/extensions/lbxstr.h
-%{_includedir}/nx-X11/extensions/mitmiscstr.h
-%{_includedir}/nx-X11/extensions/multibuf.h
-%{_includedir}/nx-X11/extensions/multibufst.h
 %{_includedir}/nx-X11/extensions/security.h
 %{_includedir}/nx-X11/extensions/securstr.h
 %{_includedir}/nx-X11/extensions/shape.h
@@ -650,17 +631,8 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %defattr(-,root,root)
 %{_includedir}/nx-X11/X10.h
 %dir %{_includedir}/nx-X11/extensions
-%{_includedir}/nx-X11/extensions/Xevie.h
-%{_includedir}/nx-X11/extensions/lbxbuf.h
-%{_includedir}/nx-X11/extensions/lbxbufstr.h
-%{_includedir}/nx-X11/extensions/lbxdeltastr.h
-%{_includedir}/nx-X11/extensions/lbximage.h
-%{_includedir}/nx-X11/extensions/lbxopts.h
-%{_includedir}/nx-X11/extensions/lbxzlib.h
 %{_includedir}/nx-X11/extensions/panoramiXext.h
 %{_includedir}/nx-X11/extensions/record.h
-%{_includedir}/nx-X11/extensions/xf86dga1.h
-%{_includedir}/nx-X11/extensions/xf86vmode.h
 %{_includedir}/nx-X11/misc.h
 %{_includedir}/nx-X11/os.h
 
@@ -690,10 +662,10 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %{_includedir}/nx-X11/ap_keysym.h
 %{_includedir}/nx-X11/keysym.h
 %{_includedir}/nx-X11/keysymdef.h
+%{_includedir}/nx-X11/extensions/Xdbeproto.h
 %{_includedir}/nx-X11/extensions/XI.h
 %{_includedir}/nx-X11/extensions/XIproto.h
 %{_includedir}/nx-X11/extensions/XResproto.h
-%{_includedir}/nx-X11/extensions/Xeviestr.h
 %{_includedir}/nx-X11/extensions/bigreqstr.h
 %{_includedir}/nx-X11/extensions/composite.h
 %{_includedir}/nx-X11/extensions/compositeproto.h
@@ -711,23 +683,10 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %{_includedir}/nx-X11/extensions/xcmiscstr.h
 %{_includedir}/nx-X11/extensions/xf86bigfont.h
 %{_includedir}/nx-X11/extensions/xf86bigfstr.h
-%{_includedir}/nx-X11/extensions/xf86dga.h
-%{_includedir}/nx-X11/extensions/xf86dga1str.h
-%{_includedir}/nx-X11/extensions/xf86dgastr.h
-%{_includedir}/nx-X11/extensions/xf86misc.h
-%{_includedir}/nx-X11/extensions/xf86mscstr.h
-%{_includedir}/nx-X11/extensions/xf86vmstr.h
 %{_includedir}/nx-X11/extensions/xfixesproto.h
 %{_includedir}/nx-X11/extensions/xfixeswire.h
 %{_includedir}/nx-X11/extensions/xtestconst.h
 %{_includedir}/nx-X11/extensions/xteststr.h
-%{_includedir}/nx-X11/extensions/xtrapbits.h
-%{_includedir}/nx-X11/extensions/xtrapddmi.h
-%{_includedir}/nx-X11/extensions/xtrapdi.h
-%{_includedir}/nx-X11/extensions/xtrapemacros.h
-%{_includedir}/nx-X11/extensions/xtraplib.h
-%{_includedir}/nx-X11/extensions/xtraplibp.h
-%{_includedir}/nx-X11/extensions/xtrapproto.h
 
 %files -n nxagent
 %defattr(-,root,root)

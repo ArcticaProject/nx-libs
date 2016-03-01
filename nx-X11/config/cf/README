@@ -172,15 +172,10 @@ X11.tmpl provides defaults for the following variables:
 	BDFTOSNFFILT		command to run bdftosnf
 	BaseExtensionDefines	universal extensions to use
 	BinDir			directory in which to install programs
-	BuildAppgroup		build AppGroup extension in server
-	BuildCup		build Colormap Utilization extension in server
 	BuildDBE		build DOUBLE-BUFFER extension
-	BuildDmx		build Distributed Multihead X server and extension
 	BuildDPMS		build Display Power Management Signaling extension
 	BuildIncRoot		relative path to location of headers in build
 	BuildIncTop		path from build includes directory to top
-	BuildEVI		build EVI server extension
-	BuildMultibuffer	build Multibuffer extension (obsolete)
 	BuildPlugin		build xrx plug-in for web browsers
 	BuildRECORD		Build RECORD extension
 	BuildServer		build X server

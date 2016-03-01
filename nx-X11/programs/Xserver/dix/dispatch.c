@@ -104,23 +104,17 @@ int ProcInitialConnection();
 #include "swaprep.h"
 #include "swapreq.h"
 #ifdef PANORAMIX
-#include "panoramiX.h"
-#include "panoramiXsrv.h"
+#include "../Xext/panoramiX.h"
+#include "../Xext/panoramiXsrv.h"
 #endif
 #ifdef XCSECURITY
 #define _SECURITY_SERVER
 #include <nx-X11/extensions/security.h>
 #endif
-#ifdef XAPPGROUP
-#include <nx-X11/extensions/Xagsrv.h>
-#endif
 #ifdef XKB
 #define XKB_IN_SERVER
 #include "inputstr.h"
 #include <nx-X11/extensions/XKBsrv.h>
-#endif
-#ifdef LBX
-#include "lbxserve.h"
 #endif
 
 #define mskcnt ((MAXCLIENTS + 31) / 32)
