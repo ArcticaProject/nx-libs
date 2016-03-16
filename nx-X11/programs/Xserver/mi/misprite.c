@@ -136,7 +136,7 @@ miSpriteReportDamage (DamagePtr pDamage, RegionPtr pRegion, void *closure)
     pScreenPriv = (miSpriteScreenPtr) pScreen->devPrivates[miSpriteScreenIndex].ptr;
     
     if (pScreenPriv->isUp &&
-	RECT_IN_REGION (pScreen, pRegion, &pScreenPriv->saved) != rgnOUT)
+	RegionContainsRect(pRegion, &pScreenPriv->saved) != rgnOUT)
     {
 	SPRITE_DEBUG(("Damage remove\n"));
 	miSpriteRemoveCursor (pScreen);
@@ -389,7 +389,7 @@ miSpriteCopyWindow (WindowPtr pWindow, DDXPointRec ptOldOrg, RegionPtr prgnSrc)
      * Damage will take care of destination check
      */
     if (pScreenPriv->isUp &&
-	RECT_IN_REGION (pScreen, prgnSrc, &pScreenPriv->saved) != rgnOUT)
+	RegionContainsRect(prgnSrc, &pScreenPriv->saved) != rgnOUT)
     {
 	SPRITE_DEBUG (("CopyWindow remove\n"));
 	miSpriteRemoveCursor (pScreen);
@@ -589,7 +589,7 @@ miSpriteSaveDoomedAreas (pWin, pObscured, dx, dy)
 	    cursorBox.x2 += dx;
 	    cursorBox.y2 += dy;
 	}
-	if (RECT_IN_REGION( pScreen, pObscured, &cursorBox) != rgnOUT)
+	if (RegionContainsRect(pObscured, &cursorBox) != rgnOUT)
 	    miSpriteRemoveCursor (pScreen);
     }
 

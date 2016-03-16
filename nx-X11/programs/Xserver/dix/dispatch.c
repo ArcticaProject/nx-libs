@@ -1266,11 +1266,11 @@ ProcTranslateCoords(register ClientPtr client)
 		 * borderSize
 		 */
 		&& (!wBoundingShape(pWin) ||
-		    POINT_IN_REGION(pWin->drawable.pScreen, 
+		    RegionContainsPoint(
 					&pWin->borderSize, x, y, &box))
 		
 		&& (!wInputShape(pWin) ||
-		    POINT_IN_REGION(pWin->drawable.pScreen,
+		    RegionContainsPoint(
 				    wInputShape(pWin),
 				    x - pWin->drawable.x,
 				    y - pWin->drawable.y, &box))
@@ -1758,7 +1758,7 @@ ProcCopyArea(register ClientPtr client)
 	(*pDst->pScreen->SendGraphicsExpose)
  		(client, pRgn, stuff->dstDrawable, X_CopyArea, 0);
 	if (pRgn)
-	    REGION_DESTROY(pDst->pScreen, pRgn);
+	    RegionDestroy(pRgn);
     }
 
     return(client->noClientException);
@@ -1806,7 +1806,7 @@ ProcCopyPlane(register ClientPtr client)
 	(*pdstDraw->pScreen->SendGraphicsExpose)
  		(client, pRgn, stuff->dstDrawable, X_CopyPlane, 0);
 	if (pRgn)
-	    REGION_DESTROY(pdstDraw->pScreen, pRgn);
+	    RegionDestroy(pRgn);
     }
     return(client->noClientException);
 }
@@ -2228,7 +2228,7 @@ DoGetImage(register ClientPtr client, int format, Drawable drawable,
 	pVisibleRegion = NotClippedByChildren((WindowPtr)pDraw);
 	if (pVisibleRegion)
 	{
-	    REGION_TRANSLATE(pDraw->pScreen, pVisibleRegion, -pDraw->x, -pDraw->y);
+	    RegionTranslate(pVisibleRegion, -pDraw->x, -pDraw->y);
 	}
     }
 #endif
@@ -2322,7 +2322,7 @@ DoGetImage(register ClientPtr client, int format, Drawable drawable,
     }
 #ifdef XCSECURITY
     if (pVisibleRegion)
-	REGION_DESTROY(pDraw->pScreen, pVisibleRegion);
+	RegionDestroy(pVisibleRegion);
 #endif
     if (!im_return)
 	DEALLOCATE_LOCAL(pBuf);

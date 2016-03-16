@@ -160,11 +160,11 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width,
     box.x2 = width;
     box.y2 = height;
 
-    pPixmapPriv -> corruptedRegion = REGION_CREATE(pPixmap -> drawable.pScreen, &box, 1);
+    pPixmapPriv -> corruptedRegion = RegionCreate(&box, 1);
   }
   else
   {
-    pPixmapPriv -> corruptedRegion = REGION_CREATE(pPixmap -> drawable.pScreen, (BoxRec *) NULL, 1);
+    pPixmapPriv -> corruptedRegion = RegionCreate((BoxRec *) NULL, 1);
   }
 
   pPixmapPriv -> corruptedBackground = 0;
@@ -269,7 +269,7 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width,
   pVirtualPriv -> isVirtual = True;
   pVirtualPriv -> isShared = nxagentShmPixmapTrap;
 
-  pVirtualPriv -> corruptedRegion = REGION_CREATE(pVirtual -> drawable.pScreen, (BoxRec *) NULL, 1);
+  pVirtualPriv -> corruptedRegion = RegionCreate((BoxRec *) NULL, 1);
 
   pVirtualPriv -> corruptedBackground = 0;
 
@@ -444,7 +444,7 @@ Bool nxagentDestroyPixmap(PixmapPtr pPixmap)
 
   if (pPixmapPriv -> corruptedRegion != NullRegion)
   {
-    REGION_DESTROY(pPixmap -> drawable.pScreen, pPixmapPriv -> corruptedRegion);
+    RegionDestroy(pPixmapPriv -> corruptedRegion);
 
     pPixmapPriv -> corruptedRegion = NullRegion;
   }
@@ -512,7 +512,7 @@ Bool nxagentDestroyVirtualPixmap(PixmapPtr pPixmap)
 
     if (pVirtualPriv -> corruptedRegion != NullRegion)
     {
-      REGION_DESTROY(pVirtual -> drawable.pScreen, pVirtualPriv -> corruptedRegion);
+      RegionDestroy(pVirtualPriv -> corruptedRegion);
 
       pVirtualPriv -> corruptedRegion = NullRegion;
     }

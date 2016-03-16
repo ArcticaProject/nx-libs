@@ -107,7 +107,7 @@ enum SynchronizationPredicate
             nxagentWindowCorruptedRegion((WindowPtr) pDrawable))
 
 #define nxagentDrawableStatus(pDrawable) \
-    (REGION_NIL(nxagentCorruptedRegion(pDrawable)) ? \
+    (RegionNil(nxagentCorruptedRegion(pDrawable)) ? \
         Synchronized : NotSynchronized)
 
 #define nxagentDrawableContainGlyphs(pDrawable) \
@@ -155,7 +155,7 @@ extern RegionPtr nxagentCreateRegion(DrawablePtr pDrawable, GCPtr pGC, int x, in
                                   int width, int height);
 
 #define nxagentFreeRegion(pDrawable, pRegion) \
-    REGION_DESTROY((pDrawable) -> pScreen, pRegion);
+    RegionDestroy(pRegion);
 
 extern void nxagentMarkCorruptedRegion(DrawablePtr pDrawable, RegionPtr pRegion);
 extern void nxagentUnmarkCorruptedRegion(DrawablePtr pDrawable, RegionPtr pRegion);
@@ -204,8 +204,8 @@ do \
     break; \
   } \
 \
-  numRects = REGION_NUM_RECTS(pRegion); \
-  pBox = REGION_RECTS(pRegion); \
+  numRects = RegionNumRects(pRegion); \
+  pBox = RegionRects(pRegion); \
 \
   fprintf(stderr, "printRegionBoxes:: Region " strRegion " at [%p] has [%d] boxes:\n", \
               (void *) (pRegion), numRects); \

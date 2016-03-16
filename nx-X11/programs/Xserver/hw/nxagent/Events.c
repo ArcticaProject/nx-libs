@@ -2414,7 +2414,7 @@ int nxagentHandleExposeEvent(XEvent *X)
 
   if (pWin != NULL)
   {
-    REGION_INIT(pWin -> drawable.pScreen, &sum, (BoxRec *) NULL, 1);
+    RegionInit(&sum, (BoxRec *) NULL, 1);
 /*
 FIXME: This can be maybe optimized by consuming the
        events that do not match the predicate.
@@ -2445,11 +2445,11 @@ FIXME: This can be maybe optimized by consuming the
       box.x2 = box.x1 + X -> xexpose.width;
       box.y2 = box.y1 + X -> xexpose.height;
 
-      REGION_INIT(pWin -> drawable.pScreen, &add, &box, 1);
+      RegionInit(&add, &box, 1);
 
-      REGION_APPEND(pWin -> drawable.pScreen, &sum, &add);
+      RegionAppend(&sum, &add);
 
-      REGION_UNINIT(pWin -> drawable.pScreen, &add);
+      RegionUninit(&add);
 
       if (X -> xexpose.count == 0)
       {
@@ -2459,9 +2459,9 @@ FIXME: This can be maybe optimized by consuming the
     while (nxagentCheckEvents(nxagentDisplay, X, nxagentExposurePredicate,
                                   (XPointer) &window) == 1);
 
-    REGION_VALIDATE(pWin -> drawable.pScreen, &sum, &overlap);
+    RegionValidate(&sum, &overlap);
 
-    REGION_INTERSECT(pWin->drawable.pScreen, &sum, &sum,
+    RegionIntersect(&sum, &sum,
                          &WindowTable[pWin->drawable.pScreen->myNum]->winSize);
 
     #ifdef DEBUG
@@ -2482,14 +2482,14 @@ FIXME: This can be maybe optimized by consuming the
     }
     else
     {
-      REGION_TRANSLATE(pWin -> drawable.pScreen, &sum, -pWin -> drawable.x, -pWin -> drawable.y);
+      RegionTranslate(&sum, -pWin -> drawable.x, -pWin -> drawable.y);
 
       if (nxagentExposeQueue.exposures[index].remoteRegion == NullRegion)
       {
-        nxagentExposeQueue.exposures[index].remoteRegion = REGION_CREATE(pwin -> drawable.pScreen, NULL, 1);
+        nxagentExposeQueue.exposures[index].remoteRegion = RegionCreate(NULL, 1);
       }
 
-      REGION_UNION(pWin -> drawable.pScreen, nxagentExposeQueue.exposures[index].remoteRegion,
+      RegionUnion(nxagentExposeQueue.exposures[index].remoteRegion,
                        nxagentExposeQueue.exposures[index].remoteRegion, &sum);
 
       #ifdef TEST
@@ -2521,7 +2521,7 @@ FIXME: This can be maybe optimized by consuming the
       }
     }
 
-    REGION_UNINIT(pWin -> drawable.pScreen, &sum);
+    RegionUninit(&sum);
   }
 
   return 1;
@@ -2593,7 +2593,7 @@ int nxagentHandleGraphicsExposeEvent(XEvent *X)
   rect.x2 = rect.x1 + X -> xgraphicsexpose.width;
   rect.y2 = rect.y1 + X -> xgraphicsexpose.height;
 
-  exposeRegion = REGION_CREATE(pScreen, &rect, 0);
+  exposeRegion = RegionCreate(&rect, 0);
 
   if (drawableType == DRAWABLE_PIXMAP)
   {
@@ -2610,7 +2610,7 @@ int nxagentHandleGraphicsExposeEvent(XEvent *X)
      * window.
      */
 
-    REGION_TRANSLATE(pScreen, exposeRegion, pStoringPixmapRec -> backingStoreX,
+    RegionTranslate(exposeRegion, pStoringPixmapRec -> backingStoreX,
                          pStoringPixmapRec -> backingStoreY);
 
     /*
@@ -2618,7 +2618,7 @@ int nxagentHandleGraphicsExposeEvent(XEvent *X)
      * affected by the GraphicsExpose event.
      */
 
-    REGION_SUBTRACT(pScreen, &(pBSwindow -> SavedRegion), &(pBSwindow -> SavedRegion),
+    RegionSubtract(&(pBSwindow -> SavedRegion), &(pBSwindow -> SavedRegion),
                         exposeRegion);
   }
 
@@ -2628,11 +2628,11 @@ int nxagentHandleGraphicsExposeEvent(XEvent *X)
    * must be relative to the screen.
    */
 
-  REGION_TRANSLATE(pScreen, exposeRegion, pWin -> drawable.x, pWin -> drawable.y);
+  RegionTranslate(exposeRegion, pWin -> drawable.x, pWin -> drawable.y);
 
-  REGION_UNION(pScreen, nxagentRemoteExposeRegion, nxagentRemoteExposeRegion, exposeRegion);
+  RegionUnion(nxagentRemoteExposeRegion, nxagentRemoteExposeRegion, exposeRegion);
 
-  REGION_DESTROY(pScreen, exposeRegion);
+  RegionDestroy(exposeRegion);
 
   return 1;
 }
@@ -4091,30 +4091,30 @@ void nxagentSynchronizeExpose(void)
   {
     if ((nxagentExposeQueueHead.localRegion) != NullRegion)
     {
-      REGION_TRANSLATE(pWin -> drawable.pScreen, (nxagentExposeQueueHead.localRegion),
+      RegionTranslate((nxagentExposeQueueHead.localRegion),
                            pWin -> drawable.x, pWin -> drawable.y);
     }
 
     if ((nxagentExposeQueueHead.remoteRegion) != NullRegion)
     {
-      REGION_TRANSLATE(pWin -> drawable.pScreen, (nxagentExposeQueueHead.remoteRegion),
+      RegionTranslate((nxagentExposeQueueHead.remoteRegion),
                            pWin -> drawable.x, pWin -> drawable.y);
     }
 
     if ((nxagentExposeQueueHead.localRegion) != NullRegion &&
              (nxagentExposeQueueHead.remoteRegion) != NullRegion)
     {
-      REGION_SUBTRACT(pWin -> drawable.pScreen, (nxagentExposeQueueHead.remoteRegion),
+      RegionSubtract((nxagentExposeQueueHead.remoteRegion),
                           (nxagentExposeQueueHead.remoteRegion),
                               (nxagentExposeQueueHead.localRegion));
 
-      if (REGION_NIL(nxagentExposeQueueHead.remoteRegion) == 0 &&
+      if (RegionNil(nxagentExposeQueueHead.remoteRegion) == 0 &&
              ((pWin -> eventMask|wOtherEventMasks(pWin)) & ExposureMask))
       {
         #ifdef TEST
         fprintf(stderr, "nxagentSynchronizeExpose: Going to call miWindowExposures"
                     " for window [%ld] - rects [%ld].\n", nxagentWindow(pWin),
-                        REGION_NUM_RECTS(nxagentExposeQueueHead.remoteRegion));
+                        RegionNumRects(nxagentExposeQueueHead.remoteRegion));
         #endif
 
         miWindowExposures(pWin, nxagentExposeQueueHead.remoteRegion, NullRegion);
@@ -4126,14 +4126,14 @@ void nxagentSynchronizeExpose(void)
 
   if (nxagentExposeQueueHead.localRegion != NullRegion)
   {
-    REGION_DESTROY(nxagentDefaultScreen, nxagentExposeQueueHead.localRegion);
+    RegionDestroy(nxagentExposeQueueHead.localRegion);
   }
 
   nxagentExposeQueueHead.localRegion = NullRegion;
 
   if (nxagentExposeQueueHead.remoteRegion != NullRegion)
   {
-    REGION_DESTROY(nxagentDefaultScreen, nxagentExposeQueueHead.remoteRegion);
+    RegionDestroy(nxagentExposeQueueHead.remoteRegion);
   }
 
   nxagentExposeQueueHead.remoteRegion = NullRegion;
@@ -4260,7 +4260,7 @@ void nxagentInitRemoteExposeRegion(void)
 {
   if (nxagentRemoteExposeRegion == NULL)
   {
-    nxagentRemoteExposeRegion = REGION_CREATE(pWin -> drawable.pScreen, NULL, 1);
+    nxagentRemoteExposeRegion = RegionCreate(NULL, 1);
 
     if (nxagentRemoteExposeRegion == NULL)
     {
@@ -4273,7 +4273,7 @@ void nxagentInitRemoteExposeRegion(void)
 
 void nxagentForwardRemoteExpose(void)
 {
-  if (REGION_NOTEMPTY(WindowTable[0] -> drawable.pScreen, nxagentRemoteExposeRegion))
+  if (RegionNotEmpty(nxagentRemoteExposeRegion))
   {
     #ifdef DEBUG
     fprintf(stderr, "nxagentForwardRemoteExpose: Going to forward events.\n");
@@ -4285,7 +4285,7 @@ void nxagentForwardRemoteExpose(void)
      * Now this region should be empty.
      */
 
-    REGION_EMPTY(WindowTable[0] -> drawable.pScreen, nxagentRemoteExposeRegion);
+    RegionEmpty(nxagentRemoteExposeRegion);
   }
 }
 
@@ -4298,12 +4298,12 @@ void nxagentAddRectToRemoteExposeRegion(BoxPtr rect)
     return;
   }
 
-  REGION_INIT(nxagentDefaultScreen, &exposeRegion, rect, 1);
+  RegionInit(&exposeRegion, rect, 1);
 
-  REGION_UNION(nxagentDefaultScreen, nxagentRemoteExposeRegion,
+  RegionUnion(nxagentRemoteExposeRegion,
                    nxagentRemoteExposeRegion, &exposeRegion);
 
-  REGION_UNINIT(nxagentDefaultScreen, &exposeRegion);
+  RegionUninit(&exposeRegion);
 }
 
 int nxagentClipAndSendExpose(WindowPtr pWin, void * ptr)
@@ -4320,25 +4320,25 @@ int nxagentClipAndSendExpose(WindowPtr pWin, void * ptr)
 
   if (pWin -> drawable.class != InputOnly)
   {
-    exposeRgn = REGION_CREATE(pWin -> drawable.pScreen, NULL, 1);
+    exposeRgn = RegionCreate(NULL, 1);
 
-    box = *REGION_EXTENTS(pWin->drawable.pScreen, remoteExposeRgn);
+    box = *RegionExtents(remoteExposeRgn);
 
     #ifdef DEBUG
     fprintf(stderr, "nxagentClipAndSendExpose: Root expose extents: [%d] [%d] [%d] [%d].\n",
                 box.x1, box.y1, box.x2, box.y2);
     #endif
 
-    box = *REGION_EXTENTS(pWin->drawable.pScreen, &pWin -> clipList);
+    box = *RegionExtents(&pWin -> clipList);
 
     #ifdef DEBUG
     fprintf(stderr, "nxagentClipAndSendExpose: Clip list extents for window at [%p]: [%d] [%d] [%d] [%d].\n",
                 pWin, box.x1, box.y1, box.x2, box.y2);
     #endif
 
-    REGION_INTERSECT(pWin -> drawable.pScreen, exposeRgn, remoteExposeRgn, &pWin -> clipList);
+    RegionIntersect(exposeRgn, remoteExposeRgn, &pWin -> clipList);
 
-    if (REGION_NOTEMPTY(pWin -> drawable.pScreen, exposeRgn))
+    if (RegionNotEmpty(exposeRgn))
     {
       #ifdef DEBUG
       fprintf(stderr, "nxagentClipAndSendExpose: Forwarding expose to window at [%p] pWin.\n",
@@ -4351,15 +4351,15 @@ int nxagentClipAndSendExpose(WindowPtr pWin, void * ptr)
        * ration must be done before calling it.
        */
 
-      REGION_SUBTRACT(pWin -> drawable.pScreen, remoteExposeRgn, remoteExposeRgn, exposeRgn);
+      RegionSubtract(remoteExposeRgn, remoteExposeRgn, exposeRgn);
 
       miWindowExposures(pWin, exposeRgn, NullRegion);
     }
 
-    REGION_DESTROY(pWin -> drawable.pScreen, exposeRgn);
+    RegionDestroy(exposeRgn);
   }
 
-  if (REGION_NOTEMPTY(pWin -> drawable.pScreen, remoteExposeRgn))
+  if (RegionNotEmpty(remoteExposeRgn))
   {
     #ifdef DEBUG
     fprintf(stderr, "nxagentClipAndSendExpose: Region not empty. Walk children.\n");

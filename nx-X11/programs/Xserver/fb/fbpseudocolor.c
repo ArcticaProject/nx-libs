@@ -166,10 +166,10 @@ int xxGeneration;
 # define PRINT_RECTS(rec) {\
        int i;\
        BoxPtr box;\
-       ErrorF("RECTS: %i\n",REGION_NUM_RECTS(&rec));\
-       if (REGION_NUM_RECTS(&rec) > 1)  { \
-          for (i = 0; i < REGION_NUM_RECTS(&rec); i++ ) {\
-             box = REGION_BOX(&rec,i);\
+       ErrorF("RECTS: %i\n",RegionNumRects(&rec));\
+       if (RegionNumRects(&rec) > 1)  { \
+          for (i = 0; i < RegionNumRects(&rec); i++ ) {\
+             box = RegionBox(&rec,i);\
 	     ErrorF("x1: %hi x2: %hi y1: %hi y2: %hi\n", \
              box->x1,box->x2,box->y1,box->y2);\
           }\
@@ -308,8 +308,8 @@ xxCreateScreenResources(ScreenPtr pScreen)
     box.y1 = 0;
     box.x2 = pScreen->width;
     box.y2 = pScreen->height;
-    REGION_NULL(pScreen, &pScrPriv->region);
-    REGION_INIT(pScreen, &pScrPriv->bRegion, &box, 0);
+    RegionNull(&pScrPriv->region);
+    RegionInit(&pScrPriv->bRegion, &box, 0);
     
     return TRUE;
 }
@@ -323,7 +323,7 @@ xxCloseScreen (int iScreen, ScreenPtr pScreen)
     (*pScreen->DestroyPixmap)(pScrPriv->pPixmap);
     /* We don't need to free the baseColormap as FreeClientResourcess
        will have taken care of it. */
-    REGION_UNINIT (pScreen, &pScrPriv->region);
+    RegionUninit(&pScrPriv->region);
     
     unwrap (pScrPriv,pScreen, CloseScreen);
     ret = pScreen->CloseScreen(iScreen,pScreen);
@@ -678,7 +678,7 @@ xxCreateWindow(WindowPtr pWin)
     pWin->devPrivates[fbWinPrivateIndex].ptr = (void *) pScrPriv->pPixmap;
     PRINT_RECTS(pScrPriv->region);
 	if (!pWin->parent) {
-	REGION_EMPTY (pWin->drawable.pScreen, &pScrPriv->region);
+	RegionEmpty(&pScrPriv->region);
     }
     PRINT_RECTS(pScrPriv->region);
     
@@ -694,11 +694,11 @@ xxWalkChildren(WindowPtr pWin, RegionPtr pReg, PixmapPtr pPixmap)
     do {
 	if (fbGetWindowPixmap(pCurWin) == pPixmap) {
 	    DBG("WalkWindow Add\n");
-	    REGION_UNION(pWin->drawable.pScreen,pReg,pReg,
+	    RegionUnion(pReg,pReg,
 			 &pCurWin->borderClip);
 	} else {
 	    DBG("WalkWindow Sub\n");
-	    REGION_SUBTRACT(pWin->drawable.pScreen,pReg,pReg,
+	    RegionSubtract(pReg,pReg,
 			    &pCurWin->borderClip);
 	}
 	if (pCurWin->lastChild)
@@ -713,7 +713,7 @@ xxPickMyWindows(WindowPtr pWin, RegionPtr pRgn)
     xxScrPriv(pScreen);
 
     if (fbGetWindowPixmap(pWin) == pScrPriv->pPixmap) {
-	REGION_UNION(pWin->drawable.pScreen,pRgn,pRgn,&pWin->borderClip);
+	RegionUnion(pRgn,pRgn,&pWin->borderClip);
     }
     if (pWin->lastChild)
 	xxWalkChildren(pWin->lastChild,pRgn,pScrPriv->pPixmap);
@@ -736,11 +736,11 @@ xxCopyWindow(WindowPtr	pWin,
     dx = ptOldOrg.x - pWin->drawable.x;
     dy = ptOldOrg.y - pWin->drawable.y;
 
-    REGION_NULL(pScreen, &rgn_new);
-    REGION_UNION(pScreen, &rgn_new,&rgn_new,prgnSrc);
-    REGION_TRANSLATE(pScreen,&rgn_new,-dx,-dy);
+    RegionNull(&rgn_new);
+    RegionUnion(&rgn_new,&rgn_new,prgnSrc);
+    RegionTranslate(&rgn_new,-dx,-dy);
 
-    REGION_NULL(pScreen, &rgn);
+    RegionNull(&rgn);
     xxPickMyWindows(pWin,&rgn);
 
     unwrap (pScrPriv, pScreen, CopyWindow);
@@ -749,19 +749,19 @@ xxCopyWindow(WindowPtr	pWin,
     pWin->devPrivates[fbWinPrivateIndex].ptr = pPixmap;
     wrap(pScrPriv, pScreen, CopyWindow, xxCopyWindow);
 
-    REGION_INTERSECT(pScreen,&rgn,&rgn,&rgn_new);
-    if (REGION_NOTEMPTY (pScreen,&rgn)) {
+    RegionIntersect(&rgn,&rgn,&rgn_new);
+    if (RegionNotEmpty(&rgn)) {
 	fbCopyRegion(&pScrPriv->pPixmap->drawable,&pScrPriv->pPixmap->drawable,
 		     0,&rgn,dx,dy,fbCopyWindowProc,0,(void*)0);
-	REGION_TRANSLATE(pScreen,&rgn,dx,dy);
-	REGION_INTERSECT(pScreen,&rgn_new,&pScrPriv->region,&rgn);
-	REGION_SUBTRACT(pScreen,&pScrPriv->region,&pScrPriv->region,&rgn);
-	REGION_TRANSLATE(pScreen,&rgn_new,-dx,-dy);
-	REGION_UNION(pScreen,&pScrPriv->region,&pScrPriv->region,&rgn_new);
+	RegionTranslate(&rgn,dx,dy);
+	RegionIntersect(&rgn_new,&pScrPriv->region,&rgn);
+	RegionSubtract(&pScrPriv->region,&pScrPriv->region,&rgn);
+	RegionTranslate(&rgn_new,-dx,-dy);
+	RegionUnion(&pScrPriv->region,&pScrPriv->region,&rgn_new);
     }
 #if 1
-    REGION_UNINIT(pScreen,&rgn_new);
-    REGION_UNINIT(pScreen,&rgn);
+    RegionUninit(&rgn_new);
+    RegionUninit(&rgn);
 #endif
 }
 
@@ -775,14 +775,14 @@ xxWindowExposures (WindowPtr	pWin,
     if (fbGetWindowPixmap(pWin) == pScrPriv->pPixmap) {
 	DBG("WindowExposures\n");
 	PRINT_RECTS(pScrPriv->region);
-	REGION_UNION(pWin->drawable.pScreen,&pScrPriv->region,
+	RegionUnion(&pScrPriv->region,
 		     &pScrPriv->region,
 		     prgn);
 	PRINT_RECTS(pScrPriv->region);
     } else {
 	DBG("WindowExposures NonPseudo\n");
 	PRINT_RECTS(pScrPriv->region);
-	REGION_SUBTRACT(pWin->drawable.pScreen,&pScrPriv->region,
+	RegionSubtract(&pScrPriv->region,
 		     &pScrPriv->region,
 		     prgn);
 	PRINT_RECTS(pScrPriv->region);
@@ -800,23 +800,23 @@ xxPaintWindow(WindowPtr pWin, RegionPtr pRegion, int what)
 
     DBG("xxPaintWindow\n");
 
-    REGION_NULL (pWin->drawable.pScreen, &rgni);
+    RegionNull(&rgni);
 #if 0
-    REGION_UNION (pWin->drawable.pScreen, &rgni, &rgni, &pWin->borderClip);
-    REGION_INTERSECT(pWin->drawable.pScreen, &rgni, &rgni, pRegion);
+    RegionUnion(&rgni, &rgni, &pWin->borderClip);
+    RegionIntersect(&rgni, &rgni, pRegion);
 #else
-    REGION_UNION (pWin->drawable.pScreen, &rgni, &rgni, pRegion);
+    RegionUnion(&rgni, &rgni, pRegion);
 #endif
     switch (what) {
     case PW_BORDER:
-	REGION_SUBTRACT (pWin->drawable.pScreen, &rgni, &rgni, &pWin->winSize);
+	RegionSubtract(&rgni, &rgni, &pWin->winSize);
 	if (fbGetWindowPixmap(pWin) == pScrPriv->pPixmap) {
 	    DBG("PaintWindowBorder\n");
-	    REGION_UNION (pWin->drawable.pScreen, &pScrPriv->region,
+	    RegionUnion(&pScrPriv->region,
 			  &pScrPriv->region, &rgni);
 	} else {
 	    DBG("PaintWindowBorder NoOverlay\n");
-	    REGION_SUBTRACT (pWin->drawable.pScreen, &pScrPriv->region,
+	    RegionSubtract(&pScrPriv->region,
 			     &pScrPriv->region, &rgni);	
 	}
 	unwrap (pScrPriv, pWin->drawable.pScreen, PaintWindowBorder);
@@ -829,15 +829,15 @@ xxPaintWindow(WindowPtr pWin, RegionPtr pRegion, int what)
 	case None:
 	    break;
 	default:
-	    REGION_INTERSECT (pWin->drawable.pScreen, &rgni,
+	    RegionIntersect(&rgni,
 			      &rgni,&pWin->winSize);
 	    if (fbGetWindowPixmap(pWin) == pScrPriv->pPixmap) {
 		DBG("PaintWindowBackground\n");
-		REGION_UNION (pWin->drawable.pScreen, &pScrPriv->region,
+		RegionUnion(&pScrPriv->region,
 			      &pScrPriv->region, &rgni);
 	    } else {
 		DBG("PaintWindowBackground NoOverlay\n");
-		REGION_SUBTRACT (pWin->drawable.pScreen, &pScrPriv->region,
+		RegionSubtract(&pScrPriv->region,
 				 &pScrPriv->region, &rgni);	
 	    }
 	    break;
@@ -852,7 +852,7 @@ xxPaintWindow(WindowPtr pWin, RegionPtr pRegion, int what)
     PRINT_RECTS(rgni);
     PRINT_RECTS(pScrPriv->region);
 #if 1
-    REGION_UNINIT(pWin->drawable.pScreen,&rgni);
+    RegionUninit(&rgni);
 #endif
 }
 
@@ -862,8 +862,8 @@ xxCopyPseudocolorRegion(ScreenPtr pScreen, RegionPtr pReg,
 {
     xxScrPriv(pScreen);
     CARD32		mask = (1 << pScrPriv->myDepth) - 1;
-    int			num = REGION_NUM_RECTS(pReg);
-    BoxPtr		pbox = REGION_RECTS(pReg);
+    int			num = RegionNumRects(pReg);
+    BoxPtr		pbox = RegionRects(pReg);
     int			width, height;
     CARD8		*src;
     CARD16		*dst, *dst_base;
@@ -905,8 +905,8 @@ xxUpdateCmapPseudocolorRegion(ScreenPtr pScreen, RegionPtr pReg,
 {
     xxScrPriv(pScreen);
     CARD32		mask = (1 << pScrPriv->myDepth) - 1;
-    int			num = REGION_NUM_RECTS(pReg);
-    BoxPtr		pbox = REGION_RECTS(pReg);
+    int			num = RegionNumRects(pReg);
+    BoxPtr		pbox = RegionRects(pReg);
     int			width, height;
     CARD8		*src;
     CARD16		*dst, *dst_base;
@@ -950,14 +950,14 @@ xxUpdateCmapPseudocolorRegion(ScreenPtr pScreen, RegionPtr pReg,
 static void
 xxGetWindowRegion(WindowPtr pWin,RegionPtr winreg)
 {
-    REGION_NULL(pWin->drawable.pScreen,winreg);
+    RegionNull(winreg);
     /* get visible part of the border ...Argh */
-    REGION_SUBTRACT(pWin->drawable.pScreen,winreg,&pWin->borderSize,
+    RegionSubtract(winreg,&pWin->borderSize,
 		    &pWin->winSize);
-    REGION_INTERSECT(pWin->drawable.pScreen,winreg,winreg,
+    RegionIntersect(winreg,winreg,
 		     &pWin->borderClip);
     /* add window interior excluding children */
-    REGION_UNION(pWin->drawable.pScreen,winreg,winreg,
+    RegionUnion(winreg,winreg,
 		 &pWin->clipList);
 }
 
@@ -985,18 +985,18 @@ xxUpdateRegion(WindowPtr pWin, void * unused)
 	    if (!pCmapPriv->dirty)
 		goto CONTINUE;
 
-	    REGION_NULL (pScreen, &rgni);
+	    RegionNull(&rgni);
 	    /* This will be taken care of when damaged regions are updated */
-	    REGION_SUBTRACT(pScreen, &rgni, &winreg, &pScrPriv->region);
-	    if (REGION_NOTEMPTY (pScreen,&rgni))
+	    RegionSubtract(&rgni, &winreg, &pScrPriv->region);
+	    if (RegionNotEmpty(&rgni))
 		xxUpdateCmapPseudocolorRegion(pScreen,&rgni, pCmapPriv);
 	}
     CONTINUE:
 
-	REGION_NULL (pScreen, &rgni);
-	REGION_INTERSECT (pScreen, &rgni, &winreg, &pScrPriv->region);
+	RegionNull(&rgni);
+	RegionIntersect(&rgni, &winreg, &pScrPriv->region);
 	
-	if (REGION_NOTEMPTY (pScreen,&rgni)) {
+	if (RegionNotEmpty(&rgni)) {
 	    if (pmap == (void *) -1) {
 		pmap =
 		    (ColormapPtr)LookupIDByType(wColormap(pWin),RT_COLORMAP);
@@ -1008,12 +1008,12 @@ xxUpdateRegion(WindowPtr pWin, void * unused)
 	    
 	    if (pCmapPriv != (void *)-1)
 		xxCopyPseudocolorRegion(pScreen,&rgni, pCmapPriv);
-	    REGION_SUBTRACT(pScreen, &pScrPriv->region, &pScrPriv->region,
+	    RegionSubtract(&pScrPriv->region, &pScrPriv->region,
 			    &rgni);
 	}
 #if 1
-	REGION_UNINIT(pScreen,&rgni);
-	REGION_UNINIT(pScreen,&winreg);
+	RegionUninit(&rgni);
+	RegionUninit(&winreg);
 #endif
     }
     return WT_WALKCHILDREN;
@@ -1033,7 +1033,7 @@ xxUpdateFb(ScreenPtr pScreen)
     
     WalkTree(pScreen,xxUpdateRegion,NULL);
 #if 0
-    if (REGION_NOTEMPTY (pScreen,&pScrPriv->region)) {
+    if (RegionNotEmpty(&pScrPriv->region)) {
 	ColormapPtr pmap = (void *) -1;
 	xxCmapPrivPtr pCmapPriv;
 	
@@ -1042,7 +1042,7 @@ xxUpdateFb(ScreenPtr pScreen)
 	pCmapPriv = xxGetCmapPriv(pmap);
 	if (pCmapPriv != (void *)-1)
 	    xxCopyPseudocolorRegion(pScreen,&pScrPriv->region, pCmapPriv);
-	REGION_SUBTRACT(pScreen, &pScrPriv->region, &pScrPriv->region,
+	RegionSubtract(&pScrPriv->region, &pScrPriv->region,
 			&pScrPriv->region);
     }
 #endif
@@ -1071,7 +1071,7 @@ xxBlockHandler (void *	data,
     ScreenPtr	pScreen = (ScreenPtr) data;
     xxScrPriv(pScreen);
 
-    if (REGION_NOTEMPTY (pScreen,&pScrPriv->region) || pScrPriv->colormapDirty)
+    if (RegionNotEmpty(&pScrPriv->region) || pScrPriv->colormapDirty)
 	xxUpdateFb (pScreen);
 }
 
@@ -1241,15 +1241,15 @@ GCOps xxGCOps = {
     if (BOX_NOT_EMPTY(box)) { \
        RegionRec region; \
        ScreenPtr pScreen = pGC->pScreen;\
-       REGION_INIT (pScreen, &region, &box, 1); \
-       REGION_INTERSECT(pScreen,&region,&region,\
+       RegionInit(&region, &box, 1); \
+       RegionIntersect(&region,&region,\
                                  (pGC)->pCompositeClip);\
-       if (REGION_NOTEMPTY(pScreen,&region)) { \
+       if (RegionNotEmpty(&region)) { \
            xxScrPriv(pScreen);\
 	   PRINT_RECTS(pScrPriv->region);\
-           REGION_UNION(pScreen,&pScrPriv->region,&pScrPriv->region,&region);\
+           RegionUnion(&pScrPriv->region,&pScrPriv->region,&region);\
 	   PRINT_RECTS(pScrPriv->region);\
-           REGION_UNINIT(pScreen,&region);\
+           RegionUninit(&region);\
        }\
    }\
 }
@@ -2234,11 +2234,11 @@ xxPushPixels(
        RegionRec region; \
        xxScrPriv(pScreen);\
        ScreenPtr pScreen = pScreen;\
-       REGION_INIT (pScreen, &region, &box, 1); \
+       RegionInit(&region, &box, 1); \
        PRINT_RECTS(pScrPriv->region);\
-       REGION_UNION(pScreen,&pScrPriv->region,&pScrPriv->region,&region);\
+       RegionUnion(&pScrPriv->region,&pScrPriv->region,&region);\
        PRINT_RECTS(pScrPriv->region);\
-       REGION_UNINIT(pScreen,&region);\
+       RegionUninit(&region);\
    }\
 }
 

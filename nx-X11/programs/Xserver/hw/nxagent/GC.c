@@ -633,11 +633,11 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
     case CT_YXSORTED:
     case CT_YXBANDED:
     {
-      RegionPtr pReg = RECTS_TO_REGION(pGC->pScreen, nRects, (xRectangle *)pValue, type);
+      RegionPtr pReg = RegionFromRects(nRects, (xRectangle *)pValue, type);
 
       clipsMatch = nxagentCompareRegions(pGC -> clientClip, pReg);
 
-      REGION_DESTROY(pGC->pScreen, pReg);
+      RegionDestroy(pReg);
 
       break;
     }
@@ -671,10 +671,10 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
     {
       if (clipsMatch == 0 && nxagentGCTrap == 0)
       {
-        nRects = REGION_NUM_RECTS((RegionPtr)pValue);
+        nRects = RegionNumRects((RegionPtr)pValue);
         size = nRects * sizeof(*pRects);
         pRects = (XRectangle *) xalloc(size);
-        pBox = REGION_RECTS((RegionPtr)pValue);
+        pBox = RegionRects((RegionPtr)pValue);
 
         for (i = nRects; i-- > 0;)
         {
@@ -768,7 +768,7 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
        * CT_REGION client clips.
        */
 
-      pGC->clientClip = (void *) RECTS_TO_REGION(pGC->pScreen, nRects,
+      pGC->clientClip = (void *) RegionFromRects(nRects,
                                                   (xRectangle *)pValue, type);
       xfree(pValue);
 
@@ -820,7 +820,7 @@ void nxagentDestroyClipHelper(GCPtr pGC)
     case CT_NONE:
       break;
     case CT_REGION:
-      REGION_DESTROY(pGC->pScreen, pGC->clientClip);
+      RegionDestroy(pGC->clientClip);
       break;
     case CT_PIXMAP:
       nxagentDestroyPixmap((PixmapPtr)pGC->clientClip);
@@ -848,8 +848,8 @@ void nxagentCopyClip(GCPtr pGCDst, GCPtr pGCSrc)
     case CT_REGION:
       if (nxagentGCPriv(pGCSrc)->pPixmap == NULL)
       {
-        pRgn = REGION_CREATE(pGCDst->pScreen, NULL, 1);
-        REGION_COPY(pGCDst->pScreen, pRgn, pGCSrc->clientClip);
+        pRgn = RegionCreate(NULL, 1);
+        RegionCopy(pRgn, pGCSrc->clientClip);
         nxagentChangeClip(pGCDst, CT_REGION, pRgn, 0);
       }
       else
@@ -1281,10 +1281,10 @@ static void nxagentReconnectClip(GCPtr pGC, int type, void * pValue, int nRects)
     case CT_REGION:
       if (nxagentGCPriv(pGC)->pPixmap == NULL)
       {
-        nRects = REGION_NUM_RECTS((RegionPtr)pValue);
+        nRects = RegionNumRects((RegionPtr)pValue);
         size = nRects * sizeof(*pRects);
         pRects = (XRectangle *) xalloc(size);
-        pBox = REGION_RECTS((RegionPtr)pValue);
+        pBox = RegionRects((RegionPtr)pValue);
         for (i = nRects; i-- > 0;) {
           pRects[i].x = pBox[i].x1;
           pRects[i].y = pBox[i].y1;
@@ -1370,7 +1370,7 @@ static void nxagentReconnectClip(GCPtr pGC, int type, void * pValue, int nRects)
        * CT_PIXMAP and CT_REGION client clips.
        */
 
-      pGC->clientClip = (void *) RECTS_TO_REGION(pGC->pScreen, nRects,
+      pGC->clientClip = (void *) RegionFromRects(nRects,
                                                   (xRectangle *)pValue, type);
       xfree(pValue);
       pValue = pGC->clientClip;
@@ -1403,26 +1403,26 @@ static int nxagentCompareRegions(RegionPtr r1, RegionPtr r2)
     return 0;
   }
 
-  if (REGION_NUM_RECTS(r1) !=  REGION_NUM_RECTS(r2))
+  if (RegionNumRects(r1) !=  RegionNumRects(r2))
   {
     return 0;
   }
-  else if (REGION_NUM_RECTS(r1) == 0)
+  else if (RegionNumRects(r1) == 0)
   {
     return 1;
   }
-  else if ((*REGION_EXTENTS(pScreen, r1)).x1 !=  (*REGION_EXTENTS(pScreen, r2)).x1) return 0;
-  else if ((*REGION_EXTENTS(pScreen, r1)).x2 !=  (*REGION_EXTENTS(pScreen, r2)).x2) return 0;
-  else if ((*REGION_EXTENTS(pScreen, r1)).y1 !=  (*REGION_EXTENTS(pScreen, r2)).y1) return 0;
-  else if ((*REGION_EXTENTS(pScreen, r1)).y2 !=  (*REGION_EXTENTS(pScreen, r2)).y2) return 0;
+  else if ((*RegionExtents(r1)).x1 !=  (*RegionExtents(r2)).x1) return 0;
+  else if ((*RegionExtents(r1)).x2 !=  (*RegionExtents(r2)).x2) return 0;
+  else if ((*RegionExtents(r1)).y1 !=  (*RegionExtents(r2)).y1) return 0;
+  else if ((*RegionExtents(r1)).y2 !=  (*RegionExtents(r2)).y2) return 0;
   else
   {
-    for (i = 0; i < REGION_NUM_RECTS(r1); i++)
+    for (i = 0; i < RegionNumRects(r1); i++)
     {
-      if (REGION_RECTS(r1)[i].x1 !=  REGION_RECTS(r2)[i].x1) return 0;
-      else if (REGION_RECTS(r1)[i].x2 !=  REGION_RECTS(r2)[i].x2) return 0;
-      else if (REGION_RECTS(r1)[i].y1 !=  REGION_RECTS(r2)[i].y1) return 0;
-      else if (REGION_RECTS(r1)[i].y2 !=  REGION_RECTS(r2)[i].y2) return 0;
+      if (RegionRects(r1)[i].x1 !=  RegionRects(r2)[i].x1) return 0;
+      else if (RegionRects(r1)[i].x2 !=  RegionRects(r2)[i].x2) return 0;
+      else if (RegionRects(r1)[i].y1 !=  RegionRects(r2)[i].y1) return 0;
+      else if (RegionRects(r1)[i].y2 !=  RegionRects(r2)[i].y2) return 0;
     }
   }
 

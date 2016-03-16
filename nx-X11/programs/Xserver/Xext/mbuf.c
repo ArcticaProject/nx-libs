@@ -903,9 +903,9 @@ ProcClearImageBufferArea (client)
 	box.y1 = clearRect.y;
 	box.x2 = clearRect.x + clearRect.width;
 	box.y2 = clearRect.y + clearRect.height;
-	REGION_INIT(pScreen, &region, &box, 1);
+	RegionInit(&region, &box, 1);
 	MultibufferExpose(pMultibuffer, &region);
-	REGION_UNINIT(pScreen, &region);
+	RegionUninit(&region);
     }
     return Success;
 }
@@ -1202,13 +1202,13 @@ PerformDisplayRequest (ppMultibuffers, pMultibuffer, nbuf)
 		     * window-relative so that region ops involving
 		     * pExposed and pWinSize behave sensibly.
 		     */
-		    REGION_TRANSLATE(pWin->drawable.pScreen, pWinSize,
+		    RegionTranslate(pWinSize,
 				     -pWin->drawable.x, -pWin->drawable.y);
-		    REGION_INTERSECT(pWin->drawable.pScreen, pExposed,
+		    RegionIntersect(pExposed,
 				     pExposed, pWinSize);
-		    REGION_DESTROY(pWin->drawable.pScreen, pWinSize);
+		    RegionDestroy(pWinSize);
 	    	    MultibufferExpose (pPrevMultibuffer, pExposed);
-	    	    REGION_DESTROY(pWin->drawable.pScreen, pExposed);
+		    RegionDestroy(pExposed);
 	    	}
 	    	graphicsExpose = FALSE;
 	    	DoChangeGC (pGC, GCGraphicsExposures, &graphicsExpose, FALSE);
@@ -1371,7 +1371,7 @@ MultibufferExpose (pMultibuffer, pRegion)
     MultibufferPtr	pMultibuffer;
     RegionPtr	pRegion;
 {
-    if (pRegion && !REGION_NIL(pRegion))
+    if (pRegion && !RegionNil(pRegion))
     {
 	xEvent *pEvent;
 	PixmapPtr   pPixmap;
@@ -1381,11 +1381,11 @@ MultibufferExpose (pMultibuffer, pRegion)
 	int numRects;
 
 	pPixmap = pMultibuffer->pPixmap;
-	REGION_TRANSLATE(pPixmap->drawable.pScreen, pRegion,
+	RegionTranslate(pRegion,
 		    -pPixmap->drawable.x, -pPixmap->drawable.y);
 	/* XXX MultibufferExpose "knows" the region representation */
-	numRects = REGION_NUM_RECTS(pRegion);
-	pBox = REGION_RECTS(pRegion);
+	numRects = RegionNumRects(pRegion);
+	pBox = RegionRects(pRegion);
 
 	pEvent = (xEvent *) ALLOCATE_LOCAL(numRects * sizeof(xEvent));
 	if (pEvent) {
