@@ -339,11 +339,7 @@ SetWindowToDefaults(register WindowPtr pWin)
 
 void nxagentClearSplash(WindowPtr pW)
 {
-    int w, h;
     ScreenPtr pScreen;
-
-    w = pW->drawable.width;
-    h = pW->drawable.height;
 
     pScreen = pW->drawable.pScreen;
 
