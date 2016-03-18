@@ -81,6 +81,8 @@ Equipment Corporation.
 #include <dix-config.h>
 #endif
 
+#include <pixman.h>
+
 #include "regionstr.h"
 #include <nx-X11/Xprotostr.h>
 #include "gc.h"
@@ -219,7 +221,7 @@ if (((numRects) < ((reg)->data->size >> 1)) && ((reg)->data->size > 50)) \
 }
 
 
-BoxRec miEmptyBox = {0, 0, 0, 0};
+pixman_box16_t miEmptyBox = {0, 0, 0, 0};
 RegDataRec miEmptyData = {0, 0};
 
 RegDataRec  miBrokenData = {0, 0};
