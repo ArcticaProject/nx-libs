@@ -752,11 +752,11 @@ void nxagentDisconnectPixmap(void *p0, XID x1, void *p2)
 {
   PixmapPtr pPixmap = (PixmapPtr) p0;
 
+  #ifdef TEST
   Bool *pBool;
 
   pBool = (Bool*) p2;
 
-  #ifdef TEST
   fprintf(stderr, "nxagentDisconnectPixmap: Called with bool [%d] and pixmap at [%p].\n",
               *pBool, (void *) pPixmap);
 
