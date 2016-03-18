@@ -2176,7 +2176,6 @@ void nxagentWindowExposures(WindowPtr pWin, RegionPtr pRgn, RegionPtr other_expo
 
       if (nxagentExposeQueue.length < EXPOSED_SIZE)
       {
-        XWindowChanges changes;
         int index;
 
         index = (nxagentExposeQueue.start + nxagentExposeQueue.length) % EXPOSED_SIZE;
@@ -2211,9 +2210,6 @@ void nxagentWindowExposures(WindowPtr pWin, RegionPtr pRgn, RegionPtr other_expo
         }
 
         nxagentExposeSerial = (nxagentExposeSerial - 1) % EXPOSED_SIZE;
-
-        changes.x = nxagentExposeSerial;
-        changes.y = -2;
 
         nxagentExposeQueue.exposures[index].serial = nxagentExposeSerial;
 
