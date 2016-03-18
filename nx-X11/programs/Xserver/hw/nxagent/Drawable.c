@@ -647,7 +647,7 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
 
     if (length == 0)
     {
-      fprintf(stderr, "nxagentSynchronizeRegion: Drawable [%s] at [%p] with region geometry [%ld][%d,%d,%d,%d].\n",
+      fprintf(stderr, "nxagentSynchronizeRegion: Drawable [%s] at [%p] with region geometry [%d][%d,%d,%d,%d].\n",
                   nxagentDrawableType(pDrawable), (void *) pDrawable, RegionNumRects(clipRegion),
                       clipRegion -> extents.x1, clipRegion -> extents.y1,
                           clipRegion -> extents.x2, clipRegion -> extents.y2);
