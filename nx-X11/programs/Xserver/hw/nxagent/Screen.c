@@ -3595,10 +3595,6 @@ Bool nxagentReconnectScreen(void *p0)
   return True;  
 }
 
-/* FIXME: there must be such macros somewhere already...*/
-#define MAX(a,b) ((a) > (b)) ? (a) : (b);
-#define MIN(a,b) ((a) < (b)) ? (a) : (b);
-
 /* intersect two rectangles */
 Bool intersect(int ax1, int ay1, unsigned int aw, unsigned int ah,
 	       int bx1, int by1, unsigned int bw, unsigned int bh,
