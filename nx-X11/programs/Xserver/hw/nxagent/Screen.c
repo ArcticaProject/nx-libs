@@ -3545,10 +3545,7 @@ Bool nxagentReconnectScreen(void *p0)
 {
   CARD16 w, h;
   PixmapPtr pPixmap = (PixmapPtr)nxagentDefaultScreen->devPrivate;
-  int flexibility;
   Mask mask;
-
-  flexibility = *(int*)p0;
 
 #if defined(NXAGENT_RECONNECT_DEBUG) || defined(NXAGENT_RECONNECT_SCREEN_DEBUG)
   fprintf(stderr, "nxagentReconnectScreen\n");
@@ -3740,7 +3737,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
 
   if (pScrPriv)
   {
-    int i, j;
+    int i;
     int number = 0;
 
     XineramaScreenInfo *screeninfo = NULL;
@@ -4110,7 +4107,6 @@ void nxagentSaveAreas(PixmapPtr pPixmap, RegionPtr prgnSave, int xorg, int yorg,
   nxagentPrivPixmapPtr pPrivPixmap;
   XlibGC gc;
   XGCValues values;
-  DrawablePtr pDrawable;
   int i;
   int xSrc, ySrc, xDst, yDst, w, h;
   int nRects;
@@ -4130,8 +4126,6 @@ void nxagentSaveAreas(PixmapPtr pPixmap, RegionPtr prgnSave, int xorg, int yorg,
 
   fbCopyWindowProc(&pWin -> drawable, &pVirtualPixmap -> drawable, 0, RegionRects(prgnSave),
                        RegionNumRects(prgnSave), xorg, yorg, FALSE, FALSE, 0, 0);
-
-  pDrawable = &pWin -> drawable;
 
   values.subwindow_mode = IncludeInferiors;
 
@@ -4230,7 +4224,6 @@ void nxagentRestoreAreas(PixmapPtr pPixmap, RegionPtr prgnRestore, int xorg,
   RegionPtr clipRegion;
   XlibGC gc;
   XGCValues values;
-  DrawablePtr pDrawable;
   int i;
   int xSrc, ySrc, xDst, yDst, w, h;
   int nRects;
@@ -4254,8 +4247,6 @@ void nxagentRestoreAreas(PixmapPtr pPixmap, RegionPtr prgnRestore, int xorg,
 
   fbCopyWindowProc(&pVirtualPixmap -> drawable, &pWin -> drawable, 0, RegionRects(prgnRestore),
                        RegionNumRects(prgnRestore), -xorg, -yorg, FALSE, FALSE, 0, 0);
-
-  pDrawable = &pVirtualPixmap -> drawable;
 
   values.subwindow_mode = ClipByChildren;
 
