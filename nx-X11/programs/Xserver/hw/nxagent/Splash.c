@@ -165,7 +165,6 @@ int nxagentShowSplashWindow(Window parentWindow)
 void nxagentPaintLogo(Window win, GC gc, int scale, int width, int height)
 {
   XPoint    rect[4];
-  XPoint    m[12];
   int w, h, c, w2, h2;
 
   /*
