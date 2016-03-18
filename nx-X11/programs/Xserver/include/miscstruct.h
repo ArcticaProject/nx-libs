@@ -50,15 +50,15 @@ SOFTWARE.
 #ifndef MISCSTRUCT_H
 #define MISCSTRUCT_H 1
 
+#include <pixman.h>
+
 #include "misc.h"
 #include <nx-X11/Xprotostr.h>
 #include "gc.h"
 
 typedef xPoint DDXPointRec;
 
-typedef struct _Box {
-    short x1, y1, x2, y2;
-} BoxRec;
+typedef struct pixman_box16 BoxRec;
 
 typedef union _DevUnion {
     void *		ptr;
