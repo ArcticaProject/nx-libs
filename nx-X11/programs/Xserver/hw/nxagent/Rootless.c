@@ -772,7 +772,7 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
       {
         #ifdef WARNING
         fprintf(stderr, "nxagentExportProperty: WARNING! "
-                    "Property [%lu] too long.\n", propertyX);
+                    "Property [%lu] too long.\n", (long unsigned int)propertyX);
         #endif
 
         goto nxagentExportPropertyError;
