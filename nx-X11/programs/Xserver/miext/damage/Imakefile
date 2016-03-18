@@ -11,7 +11,8 @@ OBJS = damage.o
 
    INCLUDES = -I. -I../shadow -I../../mi -I../../fb -I../../include -I$(XINCLUDESRC) \
 	      -I$(XF86SRC)/common $(EXTRAINCLUDES) \
-	      -I../../render -I../cw -I$(EXTINCSRC)
+	      -I../../render -I../cw -I$(EXTINCSRC) \
+	      `pkg-config --cflags-only-I pixman-1`
    LINTLIBS = ../../dix/llib-ldix.ln ../../os/llib-los.ln \
 	     ../../mi/llib-lmi.ln
 

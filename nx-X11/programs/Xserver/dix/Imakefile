@@ -25,7 +25,8 @@ OBJS = atom.o colormap.o cursor.o devices.o dispatch.o dixutils.o events.o \
 	tables.o window.o initatoms.o dixfonts.o privates.o pixmap.o $(FFS_OBJ)
 
     INCLUDES = -I../include -I$(XINCLUDESRC) -I$(EXTINCSRC) \
-	       -I$(SERVERSRC)/Xext -I$(SERVERSRC)/lbx
+	       -I$(SERVERSRC)/Xext -I$(SERVERSRC)/lbx \
+	       `pkg-config --cflags-only-I pixman-1`
     LINTLIBS = ../os/llib-los.ln
 
 /*

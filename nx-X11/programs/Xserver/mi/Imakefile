@@ -90,7 +90,8 @@ EXT_DEFINES = ExtensionDefines -UXINPUT -UXF86VIDMODE -UXFreeXDGA -UXF86MISC \
 
 INCLUDES = -I. -I../include -I../render \
 	    -I../xfixes -I../damageext -I../miext/damage \
-           -I$(XINCLUDESRC) -I$(EXTINCSRC) -I$(SERVERSRC)/Xext
+           -I$(XINCLUDESRC) -I$(EXTINCSRC) -I$(SERVERSRC)/Xext \
+           `pkg-config --cflags-only-I pixman-1`
 LINTLIBS = ../dix/llib-ldix.ln ../os/llib-los.ln
 DEFINES  = $(FFS_DEFINES)
 

@@ -28,6 +28,8 @@ if test -d "../nx-X11/include" ; then
     LDFLAGS="$LDFLAGS -L../nx-X11/exports/lib"
 fi
 
+X_CFLAGS=`pkg-config --cflags-only-I pixman-1`
+
 dnl Check for programs.
 
 AC_PROG_CXX

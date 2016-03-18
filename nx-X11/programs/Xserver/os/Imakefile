@@ -158,7 +158,8 @@ BOOTSTRAPCFLAGS =
 		  $(RANDOM_DEFINES) $(BUGMSG) $(XTRANS_FAILDEFINES) $(NX_DEFINES)
        INCLUDES = -I. -I../include -I$(XINCLUDESRC) -I$(EXTINCSRC) \
 		  -I$(SERVERSRC)/Xext -I$(SERVERSRC)/render \
-		  -I$(TOP)/lib/Xau Krb5Includes $(NX_INCLUDES)
+		  -I$(TOP)/lib/Xau Krb5Includes $(NX_INCLUDES) \
+		  `pkg-config --cflags-only-I pixman-1`
  DEPEND_DEFINES = $(DBM_DEFINES) $(XDMCP_DEFINES) $(EXT_DEFINES) \
 		  $(TRANS_INCLUDES) $(CONNECTION_FLAGS) $(GETPEER_DEFINES) \
 		  DependDefines

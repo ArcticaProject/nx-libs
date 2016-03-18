@@ -29,6 +29,7 @@ BuildRequires:  fdupes
 BuildRequires:  pkgconfig(expat)
 BuildRequires:  pkgconfig(libpng)
 BuildRequires:  pkgconfig(libxml-2.0)
+BuildRequires:  pkgconfig(pixman-1)
 BuildRequires:  pkgconfig(x11)
 BuildRequires:  pkgconfig(xext)
 BuildRequires:  pkgconfig(xpm)
@@ -44,6 +45,7 @@ BuildRequires:  pkgconfig(xinerama)
 BuildRequires:  libexpat-devel
 BuildRequires:  libpng-devel
 BuildRequires:  libxml2-devel
+BuildRequires:  pixman-devel
 BuildRequires:  xorg-x11-libX11-devel
 BuildRequires:  xorg-x11-libXext-devel
 BuildRequires:  xorg-x11-libXpm-devel
@@ -63,6 +65,7 @@ BuildRequires:  xorg-x11-util-devel
 BuildRequires:  expat-devel
 BuildRequires:  libpng-devel
 BuildRequires:  libxml2-devel
+BuildRequires:  pixman-devel
 BuildRequires:  libX11-devel
 BuildRequires:  libXext-devel
 BuildRequires:  libXpm-devel

@@ -161,7 +161,8 @@ XF86INCLUDES = -I$(XF86COMSRC)
 #endif
     INCLUDES = -I. -I../include -I$(XINCLUDESRC) -I$(EXTINCSRC) \
 		$(PNRXINCLUDES) $(XF86INCLUDES) \
-		$(FONTCACHEINCLUDES) $(DMXINCLUDES)
+		$(FONTCACHEINCLUDES) $(DMXINCLUDES) \
+		`pkg-config --cflags-only-I pixman-1`
     LINTLIBS = ../dix/llib-ldix.ln ../os/llib-los.ln
 
 #if defined(NXAgentServer) && NXAgentServer

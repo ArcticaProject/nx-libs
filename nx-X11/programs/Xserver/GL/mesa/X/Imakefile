@@ -39,7 +39,8 @@ LinkSourceFile(compsize.c,$(MESASRCDIR)/src/glx/x11)
 		-I$(SERVERSRC)/include -I$(SERVERSRC)/GL/include \
 		-I$(SERVERSRC)/GL/glx \
 		-I$(XF86OSSRC) \
-		-I$(DRMSRCDIR)/shared-core
+		-I$(DRMSRCDIR)/shared-core \
+		`pkg-config --cflags-only-I pixman-1`
 
       DEFINES = $(GLX_DEFINES) $(GLXSRV_DEFINES) -DNXAGENT_SERVER /*-DUSE_X86_ASM*/ /*-DUSE_SPARC_ASM*/
 

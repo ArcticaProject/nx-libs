@@ -43,7 +43,8 @@ LinkSourceFile(indirect_size.h, $(MESASRCDIR)/src/glx/x11)
      INCLUDES = -I$(SERVERSRC)/GL/glx -I$(SERVERSRC)/GL/include -I$(SERVERSRC)/include -I$(INCLUDESRC) -I$(MESASRCDIR)/include \
                 -I$(XINCLUDESRC) -I$(SERVERSRC)/mi \
                 -I$(EXTINCSRC) -I$(LIBSRC)/GL/include \
-                -I$(XF86SRC)
+                -I$(XF86SRC) \
+                `pkg-config --cflags-only-I pixman-1`
 
 #if defined(DarwinArchitecture) && ((OSMajorVersion == 6 && OSMinorVersion < 3) || OSMajorVersion < 6)
   NO_EXT_DEFS = -DMISSING_GL_EXTS
