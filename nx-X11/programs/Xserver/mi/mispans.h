@@ -101,7 +101,7 @@ extern void miDisposeSpanGroup(
     SpanGroup * /*spanGroup*/
 );
 
-extern int miClipSpans(
+extern int RegionClipSpans(
     RegionPtr /*prgnDst*/,
     DDXPointPtr /*ppt*/,
     int * /*pwidth*/,

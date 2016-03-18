@@ -33,6 +33,7 @@ from The Open Group.
 #include <dix-config.h>
 #endif
 
+#include "regionstr.h"
 #include "scrnintstr.h"
 #include "gcstruct.h"
 #include "pixmapstr.h"

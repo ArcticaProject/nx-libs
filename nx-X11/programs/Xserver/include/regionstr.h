@@ -74,16 +74,16 @@ typedef struct pixman_region16 RegionRec, *RegionPtr;
 
 typedef struct pixman_region16_data RegDataRec, *RegDataPtr;
 
-extern BoxRec miEmptyBox;
-extern RegDataRec miEmptyData;
-extern RegDataRec miBrokenData;
+extern BoxRec RegionEmptyBox;
+extern RegDataRec RegionEmptyData;
+extern RegDataRec RegionBrokenData;
 
 static inline Bool RegionNil(RegionPtr reg) {
     return ((reg)->data && !(reg)->data->numRects);
 }
 
 static inline Bool RegionNar(RegionPtr reg) {
-    return ((reg)->data == &miBrokenData);
+    return ((reg)->data == &RegionBrokenData);
 }
 
 static inline int RegionNumRects(RegionPtr reg) {
@@ -127,7 +127,7 @@ static inline void RegionInit(RegionPtr _pReg, BoxPtr _rect, int _size)
     }
     else
     {
-        (_pReg)->extents = miEmptyBox;
+        (_pReg)->extents = RegionEmptyBox;
         if (((_size) > 1) && ((_pReg)->data =
                              (RegDataPtr)malloc(RegionSizeof(_size))))
         {
@@ -135,7 +135,7 @@ static inline void RegionInit(RegionPtr _pReg, BoxPtr _rect, int _size)
             (_pReg)->data->numRects = 0;
         }
         else
-            (_pReg)->data = &miEmptyData;
+            (_pReg)->data = &RegionEmptyData;
     }
 }
 
@@ -167,7 +167,7 @@ static inline void RegionEmpty(RegionPtr _pReg)
     RegionUninit(_pReg);
     (_pReg)->extents.x2 = (_pReg)->extents.x1;
     (_pReg)->extents.y2 = (_pReg)->extents.y1;
-    (_pReg)->data = &miEmptyData;
+    (_pReg)->data = &RegionEmptyData;
 }
 
 static inline BoxPtr RegionExtents(RegionPtr _pReg)
@@ -177,8 +177,8 @@ static inline BoxPtr RegionExtents(RegionPtr _pReg)
 
 static inline void RegionNull(RegionPtr _pReg)
 {
-    (_pReg)->extents = miEmptyBox;
-    (_pReg)->data = &miEmptyData;
+    (_pReg)->extents = RegionEmptyBox;
+    (_pReg)->data = &RegionEmptyData;
 }
 
 static inline Bool
@@ -285,91 +285,91 @@ RegionEqual(RegionPtr reg1, RegionPtr reg2)
     return pixman_region_equal (reg1, reg2);
 }
 
-extern RegionPtr miRegionCreate(
+extern RegionPtr RegionCreate(
     BoxPtr /*rect*/,
     int /*size*/);
 
-extern void miRegionInit(
+extern void RegionInit(
     RegionPtr /*pReg*/,
     BoxPtr /*rect*/,
     int /*size*/);
 
-extern void miRegionDestroy(
+extern void RegionDestroy(
     RegionPtr /*pReg*/);
 
-extern void miRegionUninit(
+extern void RegionUninit(
     RegionPtr /*pReg*/);
 
-extern Bool miRegionCopy(
+extern Bool RegionCopy(
     RegionPtr /*dst*/,
     RegionPtr /*src*/);
 
-extern Bool miIntersect(
+extern Bool RegionIntersect(
     RegionPtr /*newReg*/,
     RegionPtr /*reg1*/,
     RegionPtr /*reg2*/);
 
-extern Bool miUnion(
+extern Bool RegionUnion(
     RegionPtr /*newReg*/,
     RegionPtr /*reg1*/,
     RegionPtr /*reg2*/);
 
-extern Bool miRegionAppend(
+extern Bool RegionAppend(
     RegionPtr /*dstrgn*/,
     RegionPtr /*rgn*/);
 
-extern Bool miRegionValidate(
+extern Bool RegionValidate(
     RegionPtr /*badreg*/,
     Bool * /*pOverlap*/);
 
-extern RegionPtr miRectsToRegion(
+extern RegionPtr RegionFromRects(
     int /*nrects*/,
     xRectanglePtr /*prect*/,
     int /*ctype*/);
 
-extern Bool miSubtract(
+extern Bool RegionSubtract(
     RegionPtr /*regD*/,
     RegionPtr /*regM*/,
     RegionPtr /*regS*/);
 
-extern Bool miInverse(
+extern Bool RegionInverse(
     RegionPtr /*newReg*/,
     RegionPtr /*reg1*/,
     BoxPtr /*invRect*/);
 
-extern int miRectIn(
+extern int RegionContainsRect(
     RegionPtr /*region*/,
     BoxPtr /*prect*/);
 
-extern void miTranslateRegion(
+extern void RegionTranslate(
     RegionPtr /*pReg*/,
     int /*x*/,
     int /*y*/);
 
-extern void miRegionReset(
+extern void RegionReset(
     RegionPtr /*pReg*/,
     BoxPtr /*pBox*/);
 
-extern Bool miRegionBreak(
+extern Bool RegionBreak(
     RegionPtr /*pReg*/);
 
-extern Bool miPointInRegion(
+extern Bool RegionContainsPoint(
     RegionPtr /*pReg*/,
     int /*x*/,
     int /*y*/,
     BoxPtr /*box*/);
 
-extern Bool miRegionEqual(
+extern Bool RegionEqual(
     RegionPtr /*pReg1*/,
     RegionPtr /*pReg2*/);
 
-extern Bool miRegionNotEmpty(
+extern Bool RegionNotEmpty(
     RegionPtr /*pReg*/);
 
-extern void miRegionEmpty(
+extern void RegionEmpty(
     RegionPtr /*pReg*/);
 
-extern BoxPtr miRegionExtents(
+extern BoxPtr RegionExtents(
     RegionPtr /*pReg*/);
 
 #endif /* REGIONSTRUCT_H */

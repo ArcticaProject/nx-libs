@@ -403,16 +403,14 @@ extern void miPushPixels(
     int /*yOrg*/
 );
 
-/* miregion.c */
-
 /* see also region.h */
 
-extern Bool miRectAlloc(
+extern Bool RegionRectAlloc(
     RegionPtr /*pRgn*/,
     int /*n*/
 );
 
-extern void miSetExtents(
+extern void RegionSetExtents(
     RegionPtr /*pReg*/
 );
 
@@ -421,13 +419,12 @@ extern int miFindMaxBand(
 );
 
 #ifdef DEBUG
-extern Bool miValidRegion(
+extern Bool RegionIsValid(
     RegionPtr /*prgn*/
 );
 #endif
 
-extern Bool miRegionDataCopy(RegionPtr dst, RegionPtr src);
-extern Bool miRegionBroken(RegionPtr pReg);
+extern Bool RegionBroken(RegionPtr pReg);
 
 /* miscrinit.c */
 
