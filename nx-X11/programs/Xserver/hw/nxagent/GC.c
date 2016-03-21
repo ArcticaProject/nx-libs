@@ -1151,11 +1151,8 @@ static void nxagentReconnectGC(void *param0, XID param1, void * param2)
 
 Bool nxagentReconnectAllGCs(void *p0)
 {
-  int flexibility;
   int cid;
   Bool GCSuccess = True;
-
-  flexibility = *(int*)p0;
 
   #ifdef DEBUG
   fprintf(stderr, "nxagentReconnectAllGCs\n");
