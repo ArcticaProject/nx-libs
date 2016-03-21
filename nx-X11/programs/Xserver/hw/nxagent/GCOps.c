@@ -594,8 +594,6 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
   unsigned int format;
   unsigned long planeMask = 0xffffffff;
 
-  int oldDstxyValue;
-
   RegionPtr pDstRegion;
 
   int skip = 0;
@@ -650,8 +648,6 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
       return NullRegion;
     }
   }
-
-    oldDstxyValue = dsty;
 
   if (dsty + pDstDrawable->y + height > 32767)
   {
