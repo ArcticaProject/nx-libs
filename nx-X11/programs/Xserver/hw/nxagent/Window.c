@@ -3385,7 +3385,7 @@ void nxagentSetTopLevelEventMask(pWin)
   if (nxagentOption(Rootless) && nxagentWindowTopLevel(pWin))
   {
     /* Assume that the mask fits in int... broken on Big Endian 64bit systems. */
-    Mask tmp_mask = attributes.event_mask;
+    Mask tmp_mask = attributes.event_mask = NoEventMask;
     nxagentGetEventMask(pWin, &tmp_mask);
     attributes.event_mask = (int)tmp_mask;
 
