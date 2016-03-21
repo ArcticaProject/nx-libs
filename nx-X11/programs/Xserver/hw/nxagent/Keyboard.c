@@ -1208,11 +1208,9 @@ void nxagentNotifyKeyboardChanges(int oldMinKeycode, int oldMaxKeycode)
   if (!noXkbExtension)
   {
     DeviceIntPtr dev;
-    XkbDescPtr xkb;
     xkbNewKeyboardNotify nkn;
 
     dev = inputInfo.keyboard;
-    xkb = dev -> key -> xkbInfo -> desc;
 
     memset(&nkn, 0, sizeof(xkbNewKeyboardNotify));
     nkn.deviceID = nkn.oldDeviceID = dev -> id;
