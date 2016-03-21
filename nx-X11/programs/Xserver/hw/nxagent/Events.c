@@ -2538,7 +2538,6 @@ int nxagentHandleGraphicsExposeEvent(XEvent *X)
   RegionPtr exposeRegion;
   BoxRec rect;
   WindowPtr pWin;
-  ScreenPtr pScreen;
   StoringPixmapPtr pStoringPixmapRec = NULL;
   miBSWindowPtr pBSwindow = NULL;
   int drawableType;
@@ -2580,8 +2579,6 @@ int nxagentHandleGraphicsExposeEvent(XEvent *X)
 
     pWin = pStoringPixmapRec -> pSavedWindow;
   }
-
-  pScreen = pWin -> drawable.pScreen;
 
   /*
    * Rectangle affected by GraphicsExpose
@@ -2639,7 +2636,6 @@ int nxagentHandleGraphicsExposeEvent(XEvent *X)
 
 int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
 {
-  ScreenPtr pScreen;
   WindowPtr pWin;
   xEvent x;
 
@@ -2757,8 +2753,6 @@ int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
 
         if (X -> xclient.window == nxagentIconWindow)
         {
-          pScreen = nxagentScreen(X -> xmap.window);
-
           XMapRaised(nxagentDisplay, nxagentFullscreenWindow);
 
           XIconifyWindow(nxagentDisplay, nxagentIconWindow,

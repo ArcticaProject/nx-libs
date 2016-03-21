@@ -2313,7 +2313,6 @@ WindowsRestructured()
  * compute correctly. */
 void ReinitializeRootWindow(WindowPtr win, int xoff, int yoff)
 {
-    ScreenPtr pScreen = win->drawable.pScreen;
     GrabPtr   grab;
 
     if (noPanoramiXExtension) return;
@@ -2461,7 +2460,6 @@ XineramaPointInWindowIsVisible(
     int y
 )
 {
-    ScreenPtr pScreen = pWin->drawable.pScreen;
     BoxRec box;
     int i, xoff, yoff;
 
@@ -2477,7 +2475,6 @@ XineramaPointInWindowIsVisible(
 
     for(i = 1; i < PanoramiXNumScreens; i++) {
 	pWin = sprite.windows[i];
-	pScreen = pWin->drawable.pScreen;
 	x = xoff - panoramiXdataPtr[i].x;
 	y = yoff - panoramiXdataPtr[i].y;
 

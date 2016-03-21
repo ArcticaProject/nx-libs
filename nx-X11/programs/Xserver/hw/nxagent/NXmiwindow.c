@@ -292,14 +292,12 @@ miChangeSaveUnder(pWin, first)
 					 * Used when pWin was restacked */
 {
     RegionRec	rgn;	/* Area obscured by saveUnder windows */
-    register ScreenPtr pScreen;
     Bool	res;
 
     if (!deltaSaveUndersViewable && !numSaveUndersViewable)
 	return FALSE;
     numSaveUndersViewable += deltaSaveUndersViewable;
     deltaSaveUndersViewable = 0;
-    pScreen = pWin->drawable.pScreen;
     RegionNull(&rgn);
     res = miCheckSubSaveUnder (pWin->parent,
 			       pWin->saveUnder ? first : pWin->nextSib,
@@ -385,9 +383,6 @@ miMarkOverlappedWindows(pWin, pFirst, ppLayerWin)
     register WindowPtr pChild, pLast;
     Bool anyMarked = FALSE;
     MarkWindowProcPtr MarkWindow = pWin->drawable.pScreen->MarkWindow;
-    ScreenPtr pScreen;
-
-    pScreen = pWin->drawable.pScreen;
 
     /* single layered systems are easy */
     if (ppLayerWin) *ppLayerWin = pWin;
@@ -470,10 +465,7 @@ miHandleValidateExposures(pWin)
 {
     register WindowPtr pChild;
     register ValidatePtr val;
-    ScreenPtr pScreen;
     WindowExposuresProcPtr WindowExposures;
-
-    pScreen = pWin->drawable.pScreen;
 
     pChild = pWin;
     WindowExposures = pChild->drawable.pScreen->WindowExposures;
@@ -598,12 +590,10 @@ miRecomputeExposures (
     register WindowPtr	pWin,
     void *		value) /* must conform to VisitWindowProcPtr */
 {
-    register ScreenPtr	pScreen;
     RegionPtr	pValid = (RegionPtr)value;
 
     if (pWin->valdata)
     {
-	pScreen = pWin->drawable.pScreen;
 	/*
 	 * compute exposed regions of this window
 	 */
@@ -1206,10 +1196,7 @@ miMarkUnrealizedWindow(pChild, pWin, fromConfigure)
 void
 miSegregateChildren(WindowPtr pWin, RegionPtr pReg, int depth)
 {
-    ScreenPtr pScreen;
     WindowPtr pChild;
-
-    pScreen = pWin->drawable.pScreen;
 
     for (pChild = pWin->firstChild; pChild; pChild = pChild->nextSib)
     {
