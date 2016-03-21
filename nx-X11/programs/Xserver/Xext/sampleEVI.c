@@ -37,11 +37,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "EVIstruct.h"
 #include "scrnintstr.h"
 
-#if HAVE_STDINT_H
 #include <stdint.h>
-#elif !defined(UINT32_MAX)
-#define UINT32_MAX 0xffffffffU
-#endif
 
 static int sampleGetVisualInfo(
     VisualID32 *visual,
