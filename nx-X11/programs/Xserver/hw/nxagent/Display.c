@@ -2446,7 +2446,6 @@ Bool nxagentReconnectDisplay(void *p0)
 {
   int i;
   int flexibility = *(int*)p0;
-  int packMethod, packQuality;
 
   #if defined(NXAGENT_RECONNECT_DEBUG) || defined(NXAGENT_RECONNECT_DISPLAY_DEBUG)
   fprintf(stderr, "nxagentReconnectDisplay\n");
@@ -2463,9 +2462,6 @@ Bool nxagentReconnectDisplay(void *p0)
   /*
    * Reset the values to their defaults.
    */
-
-  packMethod  = nxagentPackMethod;
-  packQuality = nxagentPackQuality;
 
   nxagentPackMethod     = -1;
   nxagentPackQuality    = -1;
