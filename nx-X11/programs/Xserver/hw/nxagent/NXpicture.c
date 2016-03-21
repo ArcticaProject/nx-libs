@@ -2144,12 +2144,6 @@ Bool nxagentReconnectAllPictFormat(void *p)
 
 void nxagentReconnectPictFormat(void *p0, XID x1, void *p2)
 {
-  PictFormatPtr pFormat;
-  Bool *pBool;
-
-  pFormat = (PictFormatPtr)p0;
-  pBool = (Bool*)p2;
-
   #if defined(NXAGENT_RECONNECT_DEBUG) || defined(NXAGENT_RECONNECT_PICTFORMAT_DEBUG)
   fprintf(stderr, "nxagentReconnectPictFormat.\n");
   #endif
