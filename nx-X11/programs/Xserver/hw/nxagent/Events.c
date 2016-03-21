@@ -2687,7 +2687,9 @@ int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
 
     if (message_type == MakeAtom("WM_PROTOCOLS", strlen("WM_PROTOCOLS"), False))
     {
+      #ifdef TEST
       char *message_data;
+      #endif
 
       x.u.u.type = ClientMessage;
       x.u.u.detail = X -> xclient.format;
@@ -2706,12 +2708,12 @@ int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
 
         return 0;
       }
+      #ifdef TEST
       else
       {
         message_data = validateString(NameForAtom(x.u.clientMessage.u.l.longs0));
       }
 
-      #ifdef TEST
       fprintf(stderr, "nxagentHandleClientMessageEvent: Sent client message of type WM_PROTOCOLS "
                   "and value [%s].\n", message_data);
       #endif
@@ -3118,28 +3120,6 @@ int nxagentCheckWindowConfiguration(XConfigureEvent* X)
   XlibWindow *children_return = NULL;
   unsigned int nchildren_return = 0;
   Status result;
-
-  WindowPtr pWin;
-
-  pWin = nxagentWindowPtr(X -> window);
-
-  /*
-   * This optimization has some problems to
-   * work in rootless mode inside NXWin. To 
-   * verify this you can launch xterm and
-   * another application, f.e. firefox. By
-   * raising xterm above firefox, the stack
-   * order seems to become incoherent showing
-   * the underneath window content in the
-   * overlapping area when the mouse botton is
-   * pressed with the pointer inside of such area.
-   *
-   *  if ((pWin != NULL) && X -> override_redirect == 0)
-   *  {
-   *    return 1;
-   *  }
-   *
-   */
 
   if (win == X -> window)
   {
@@ -4304,7 +4284,10 @@ int nxagentClipAndSendExpose(WindowPtr pWin, void * ptr)
 {
   RegionPtr exposeRgn;
   RegionPtr remoteExposeRgn;
+
+  #ifdef DEBUG
   BoxRec box;
+  #endif
 
   #ifdef DEBUG
   fprintf(stderr, "nxagentClipAndSendExpose: Called.\n");
@@ -4316,16 +4299,16 @@ int nxagentClipAndSendExpose(WindowPtr pWin, void * ptr)
   {
     exposeRgn = RegionCreate(NULL, 1);
 
+    #ifdef DEBUG
     box = *RegionExtents(remoteExposeRgn);
 
-    #ifdef DEBUG
     fprintf(stderr, "nxagentClipAndSendExpose: Root expose extents: [%d] [%d] [%d] [%d].\n",
                 box.x1, box.y1, box.x2, box.y2);
     #endif
 
+    #ifdef DEBUG
     box = *RegionExtents(&pWin -> clipList);
 
-    #ifdef DEBUG
     fprintf(stderr, "nxagentClipAndSendExpose: Clip list extents for window at [%p]: [%d] [%d] [%d] [%d].\n",
                 pWin, box.x1, box.y1, box.x2, box.y2);
     #endif
