@@ -708,7 +708,7 @@ int what;
 #define COUNT_BITS	8
 
     ChangeGCVal gcval[7];
-    ChangeGCVal newValues [COUNT_BITS];
+    ChangeGCVal newValues [COUNT_BITS] = {{ 0 }};
 
     BITS32 gcmask, index, mask;
     RegionRec prgnWin;
