@@ -450,11 +450,11 @@ extern void NXTransCleanup(void) __attribute__((noreturn));
  */
 extern void NXTransCleanupForReconnect(void);
 
-extern const char* NXVersion();
-extern int NXMajorVersion();
-extern int NXMinorVersion();
-extern int NXPatchVersion();
-extern int NXMaintenancePatchVersion();
+extern const char* NXVersion(void);
+extern int NXMajorVersion(void);
+extern int NXMinorVersion(void);
+extern int NXPatchVersion(void);
+extern int NXMaintenancePatchVersion(void);
 
 #ifdef __cplusplus
 }
