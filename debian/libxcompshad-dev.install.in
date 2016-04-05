@@ -1,13 +1,3 @@
 usr/lib/*/libXcompshad.so
-usr/include/*/nx/Core.h
-usr/include/*/nx/Input.h
-usr/include/*/nx/Logger.h
-usr/include/*/nx/Manager.h
-usr/include/*/nx/Misc.h
-usr/include/*/nx/Poller.h
-usr/include/*/nx/Regions.h
 usr/include/*/nx/Shadow.h
-usr/include/*/nx/Updater.h
-usr/include/*/nx/Win.h
-usr/include/*/nx/X11.h
 usr/lib/*/pkgconfig/nxcompshad.pc

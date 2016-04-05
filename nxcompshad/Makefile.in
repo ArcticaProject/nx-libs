@@ -210,7 +210,7 @@ install.lib: all
 	$(INSTALL_LINK) $(LIBLOAD)              $(DESTDIR)${libdir}
 	$(INSTALL_LINK) $(LIBSHARED)            $(DESTDIR)${libdir}
 	$(INSTALL_DATA) $(LIBARCHIVE)           $(DESTDIR)${libdir}
-	$(INSTALL_DATA) *.h                     $(DESTDIR)${includedir}/nx
+	$(INSTALL_DATA) Shadow.h                $(DESTDIR)${includedir}/nx
 	$(INSTALL_DATA) nxcompshad.pc           $(DESTDIR)${pkgconfigdir}
 	echo "Running ldconfig tool, this may take a while..." && ldconfig || true
 

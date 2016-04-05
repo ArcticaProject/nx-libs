@@ -609,17 +609,7 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %files -n libXcompshad-devel
 %defattr(-,root,root)
 %_libdir/libXcompshad.so
-%{_includedir}/nx/Core.h
-%{_includedir}/nx/Input.h
-%{_includedir}/nx/Logger.h
-%{_includedir}/nx/Manager.h
-%{_includedir}/nx/Misc.h
-%{_includedir}/nx/Poller.h
-%{_includedir}/nx/Regions.h
 %{_includedir}/nx/Shadow.h
-%{_includedir}/nx/Updater.h
-%{_includedir}/nx/Win.h
-%{_includedir}/nx/X11.h
 %{_libdir}/pkgconfig/nxcompshad.pc
 
 %files -n libXcompshad3
