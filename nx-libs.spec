@@ -580,10 +580,8 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %{_includedir}/nx/MD5.h
 %{_includedir}/nx/NX.h
 %{_includedir}/nx/NXalert.h
-%{_includedir}/nx/NXmitshm.h
 %{_includedir}/nx/NXpack.h
 %{_includedir}/nx/NXproto.h
-%{_includedir}/nx/NXrender.h
 %{_includedir}/nx/NXvars.h
 %{_libdir}/pkgconfig/nxcomp.pc
 
