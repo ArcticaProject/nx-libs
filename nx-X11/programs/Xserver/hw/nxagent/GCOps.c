@@ -50,7 +50,7 @@ is" without express or implied warranty.
 #include "Args.h"
 #include "Screen.h"
 
-#include "NXlib.h"
+#include <nx/NXlib.h>
 
 /*
  * Set here the required log level.

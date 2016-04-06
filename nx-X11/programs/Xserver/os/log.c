@@ -117,7 +117,7 @@ OR PERFORMANCE OF THIS SOFTWARE.
 
 #ifdef NX_TRANS_SOCKET
 
-#include "NX.h"
+#include <nx/NX.h>
 
 #endif
 

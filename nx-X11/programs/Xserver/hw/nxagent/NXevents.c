@@ -183,7 +183,7 @@ xEvent *xeviexE;
 #include "dixgrabs.h"
 #include "../../dix/dispatch.h"
 
-#include "NXlib.h"
+#include <nx/NXlib.h>
 
 #include "Events.h"
 #include "Windows.h"

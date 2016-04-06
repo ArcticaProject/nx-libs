@@ -30,7 +30,7 @@
 #include "Atoms.h"
 #include "Trap.h"
 
-#include "NXlib.h"
+#include <nx/NXlib.h>
 
 /*
  * Set here the required log level.

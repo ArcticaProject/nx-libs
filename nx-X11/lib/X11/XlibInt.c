@@ -118,12 +118,12 @@ xthread_t (*_Xthread_self_fn)(void) = NULL;
 
 #endif /* XTHREADS else */ 
 
-#include "NX.h"
+#include <nx/NX.h>
 
 #ifdef NX_TRANS_SOCKET
 
-#include "NX.h"
-#include "NXvars.h"
+#include <nx/NX.h>
+#include <nx/NXvars.h>
 
 static struct timeval retry;
 

@@ -26,7 +26,7 @@
 #include "Events.h"
 #include "GCs.h"
 
-#include "NXlib.h"
+#include <nx/NXlib.h>
 
 
 /*

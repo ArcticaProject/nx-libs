@@ -52,7 +52,7 @@ is" without express or implied warranty.
 #include "unistd.h"
 #endif
 
-#include "NXalert.h"
+#include <nx/NXalert.h>
 
 #include "Agent.h"
 #include "Display.h"
@@ -77,8 +77,8 @@ is" without express or implied warranty.
 #include "Screen.h"
 #include "Handlers.h"
 
-#include "NX.h"
-#include "NXlib.h"
+#include <nx/NX.h>
+#include <nx/NXlib.h>
 
 #include NXAGENT_ICON_NAME
 #include X2GOAGENT_ICON_NAME

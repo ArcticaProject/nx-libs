@@ -20,7 +20,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "NX.h"
+#include <nx/NX.h>
 
 #include "Binder.h"
 #include "Options.h"

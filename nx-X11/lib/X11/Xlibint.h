@@ -64,7 +64,7 @@ from The Open Group.
 
 #ifdef NX_TRANS_SOCKET
 
-#include "NXvars.h"
+#include <nx/NXvars.h>
 
 #define _XGetIOError(dpy) \
     (dpy -> flags & XlibDisplayIOError)

@@ -67,8 +67,8 @@ is" without express or implied warranty.
  * NX includes and definitions.
  */
 
-#include "NXlib.h"
-#include "NXpack.h"
+#include <nx/NXlib.h>
+#include <nx/NXpack.h>
 
 /*
  * Set here the required log level.
