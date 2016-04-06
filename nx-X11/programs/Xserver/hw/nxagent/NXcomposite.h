@@ -25,18 +25,9 @@
 #ifndef _XCOMPOSITE_H_
 #define _XCOMPOSITE_H_
 
-#ifdef NXAGENT_SERVER
-
 #define XserverRegion XID
 
-#include "NXcompositeext.h"
-
-#else
-
 #include <nx-X11/extensions/composite.h>
-#include "X11/include/Xfixes_nxagent.h"
-
-#endif
 
 #include <nx-X11/Xfuncproto.h>
 
