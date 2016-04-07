@@ -187,7 +187,9 @@ INSTPGMFLAGS =
 		  cfb24/ModuleLibraryTargetName(cfb24)
           CFB32 = cfb/ModuleLibraryTargetName(cfb) \
 		  cfb32/ModuleLibraryTargetName(cfb32)
+#if (!(defined(NXAgentServer) && NXAgentServer))
          DAMAGE = miext/damage/ModuleLibraryTargetName(damage)
+#endif
          SHADOW = miext/shadow/ModuleLibraryTargetName(shadow)
           LAYER = miext/layer/ModuleLibraryTargetName(layer) 
 #else 
@@ -212,7 +214,9 @@ INSTPGMFLAGS =
 		  cfb/LibraryTargetName(cfb)
           CFB32 = cfb32/LibraryTargetName(cfb32) \
 		  cfb/LibraryTargetName(cfb)
+#if (!(defined(NXAgentServer) && NXAgentServer))
          DAMAGE = miext/damage/LibraryTargetName(damage)
+#endif
          SHADOW = miext/shadow/LibraryTargetName(shadow)
           LAYER = miext/layer/LibraryTargetName(layer) 
 #endif

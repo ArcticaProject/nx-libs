@@ -5,6 +5,7 @@
 DEFINES = -DROOTLESS_WORKAROUND
 #endif
 
+#if (!(defined(NXAgentServer) && NXAgentServer))
 SRCS = damage.c
 
 OBJS = damage.o
@@ -21,6 +22,7 @@ NormalLibraryTarget(damage,$(OBJS))
 LintLibraryTarget(damage,$(SRCS))
 
 NormalLintTarget($(SRCS))
+#endif
 
 DependTarget()
 
