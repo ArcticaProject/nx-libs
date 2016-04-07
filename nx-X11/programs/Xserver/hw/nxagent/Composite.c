@@ -24,7 +24,7 @@
 #include "Options.h"
 #include "Windows.h"
 
-#include "NXcomposite.h"
+#include "X11/include/Xcomposite_nxagent.h"
 
 /*
  * Set here the required log level.
