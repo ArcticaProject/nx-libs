@@ -18,6 +18,7 @@
 #ifndef __Pixmap_H__
 #define __Pixmap_H__
 
+#include "resource.h"
 #include "Split.h"
 
 extern RESTYPE RT_NX_PIXMAP;
