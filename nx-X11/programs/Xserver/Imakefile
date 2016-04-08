@@ -360,7 +360,6 @@ NXAGENTOBJS = hw/nxagent/miinitext.o     \
               hw/nxagent/NXmiglyph.o     \
               hw/nxagent/NXmiexpose.o    \
               hw/nxagent/NXresource.o    \
-              hw/nxagent/NXmiwindow.o    \
               hw/nxagent/NXdamage.o
 #elif !defined(LynxOSArchitecture) && \
       !defined(Win32Architecture) && \
@@ -381,7 +380,6 @@ NXAGENTOBJS = hw/nxagent/miinitext.o     \
               hw/nxagent/NXmiglyph.o     \
               hw/nxagent/NXmiexpose.o    \
               hw/nxagent/NXresource.o    \
-              hw/nxagent/NXmiwindow.o    \
               hw/nxagent/NXdamage.o
 #else
 NXAGENTOBJS = hw/nxagent/miinitext.o     \
@@ -400,7 +398,6 @@ NXAGENTOBJS = hw/nxagent/miinitext.o     \
               hw/nxagent/NXmiglyph.o     \
               hw/nxagent/NXmiexpose.o    \
               hw/nxagent/NXresource.o    \
-              hw/nxagent/NXmiwindow.o    \
               hw/nxagent/NXdamage.o      \
               dix/main.o
 #endif
