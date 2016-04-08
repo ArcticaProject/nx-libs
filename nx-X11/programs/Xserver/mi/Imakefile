@@ -38,6 +38,15 @@ MIINITEXTSRC = miinitext.c
 MIINITEXTOBJ = miinitext.o
 #endif
 
+#if (!(defined(NXAgentServer) && NXAgentServer))
+NXAGENT_SKIP_SRCS =                     \
+                    miexpose.c          \
+                    $(NULL)
+NXAGENT_SKIP_OBJS =                     \
+                    miexpose.o          \
+                    $(NULL)
+#endif
+
 SRCS =  $(CBRT_SRC)             \
         mivaltree.c             \
         mipolyseg.c             \
@@ -58,7 +67,6 @@ SRCS =  $(CBRT_SRC)             \
         mibitblt.c              \
         mipolypnt.c             \
         mipushpxl.c             \
-        miexpose.c              \
         miglblt.c               \
         mizerline.c             \
         mizerclip.c             \
@@ -76,6 +84,7 @@ SRCS =  $(CBRT_SRC)             \
         migc.c                  \
         micmap.c                \
         mioverlay.c             \
+        $(NXAGENT_SKIP_SRCS)    \
         $(NULL)
 
 OBJS =  $(CBRT_OBJ)             \
@@ -98,7 +107,6 @@ OBJS =  $(CBRT_OBJ)             \
         mibitblt.o              \
         mipolypnt.o             \
         mipushpxl.o             \
-        miexpose.o              \
         miglblt.o               \
         mizerline.o             \
         mizerclip.o             \
@@ -116,6 +124,7 @@ OBJS =  $(CBRT_OBJ)             \
         migc.o                  \
         micmap.o                \
         mioverlay.o             \
+        $(NXAGENT_SKIP_OBJS)    \
         $(NULL)
 
 #if defined(XorgVersion)
