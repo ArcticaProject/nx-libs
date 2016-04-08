@@ -6,9 +6,11 @@ NULL =
 
 #if (!(defined(NXAgentServer) && NXAgentServer))
 NXAGENT_SKIP_SRCS =             \
+                    miglyph.c   \
                     mitrap.c    \
                     $(NULL)
 NXAGENT_SKIP_OBJS =             \
+                    miglyph.o   \
                     mitrap.o    \
                     $(NULL)
 #endif
@@ -17,7 +19,6 @@ NXAGENT_SKIP_OBJS =             \
                 filter.c \
                 glyph.c \
                 matrix.c \
-                miglyph.c \
                 miindex.c \
                 mipict.c \
                 mirect.c \
@@ -32,7 +33,6 @@ NXAGENT_SKIP_OBJS =             \
                 filter.o \
                 glyph.o \
                 matrix.o \
-                miglyph.o \
                 miindex.o \
                 mipict.o \
                 mirect.o \

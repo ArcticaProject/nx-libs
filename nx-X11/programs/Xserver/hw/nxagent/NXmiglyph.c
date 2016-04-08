@@ -40,77 +40,9 @@
  * Author:  Keith Packard, SuSE, Inc.
  */
 
-#ifdef HAVE_DIX_CONFIG_H
-#include <dix-config.h>
-#endif
-
-#include "scrnintstr.h"
-#include "gcstruct.h"
-#include "pixmapstr.h"
-#include "windowstr.h"
-#include "mi.h"
-#include "picturestr.h"
-#include "mipict.h"
-
-#ifdef NXAGENT_SERVER
-
 #include "Render.h"
 
-#endif
-
-void
-miGlyphExtents (int		nlist,
-		GlyphListPtr	list,
-		GlyphPtr	*glyphs,
-		BoxPtr		extents)
-{
-    int		x1, x2, y1, y2;
-    int		n;
-    GlyphPtr	glyph;
-    int		x, y;
- 
-    x = 0;
-    y = 0;
-    extents->x1 = MAXSHORT;
-    extents->x2 = MINSHORT;
-    extents->y1 = MAXSHORT;
-    extents->y2 = MINSHORT;
-    while (nlist--)
-    {
-	x += list->xOff;
-	y += list->yOff;
-	n = list->len;
-	list++;
-	while (n--)
-	{
-	    glyph = *glyphs++;
-	    x1 = x - glyph->info.x;
-	    if (x1 < MINSHORT)
-		x1 = MINSHORT;
-	    y1 = y - glyph->info.y;
-	    if (y1 < MINSHORT)
-		y1 = MINSHORT;
-	    x2 = x1 + glyph->info.width;
-	    if (x2 > MAXSHORT)
-		x2 = MAXSHORT;
-	    y2 = y1 + glyph->info.height;
-	    if (y2 > MAXSHORT)
-		y2 = MAXSHORT;
-	    if (x1 < extents->x1)
-		extents->x1 = x1;
-	    if (x2 > extents->x2)
-		extents->x2 = x2;
-	    if (y1 < extents->y1)
-		extents->y1 = y1;
-	    if (y2 > extents->y2)
-		extents->y2 = y2;
-	    x += glyph->info.xOff;
-	    y += glyph->info.yOff;
-	}
-    }
-}
-
-#define NeedsComponent(f) (PICT_FORMAT_A(f) != 0 && PICT_FORMAT_RGB(f) != 0)
+#include "../../render/miglyph.c"
 
 void
 miGlyphs (CARD8		op,
@@ -137,8 +69,6 @@ miGlyphs (CARD8		op,
     BoxRec	extents;
     CARD32	component_alpha;
 
-    #ifdef NXAGENT_SERVER
-
     /*
      * Get rid of the warning.
      */
@@ -146,14 +76,10 @@ miGlyphs (CARD8		op,
     extents.x1 = 0;
     extents.y1 = 0;
 
-    #endif
-
     if (maskFormat)
     {
 	GCPtr	    pGC;
 	xRectangle  rect;
-
-        #ifdef NXAGENT_SERVER
 
         if (nxagentGlyphsExtents != NullBox)
         {
@@ -167,12 +93,6 @@ miGlyphs (CARD8		op,
 
           memcpy(nxagentGlyphsExtents, &extents, sizeof(BoxRec));
         }
-
-        #else
-
-        miGlyphExtents (nlist, list, glyphs, &extents);
-
-        #endif
 
 	if (extents.x2 <= extents.x1 || extents.y2 <= extents.y1)
 	    return;
@@ -242,8 +162,6 @@ miGlyphs (CARD8		op,
 					    glyph->info.width, glyph->info.height,
 					    0, 0, -1, (void *) (glyph + 1));
 
-            #ifdef NXAGENT_SERVER
-
             /*
              * The following line fixes a problem with glyphs that appeared
              * as clipped. It was a side effect due the validate function
@@ -253,8 +171,6 @@ miGlyphs (CARD8		op,
              */
 
             pPicture->pDrawable->serialNumber = NEXT_SERIAL_NUMBER;
-
-            #endif
 
 	    pPixmap->drawable.serialNumber = NEXT_SERIAL_NUMBER;
 	    if (maskFormat)
