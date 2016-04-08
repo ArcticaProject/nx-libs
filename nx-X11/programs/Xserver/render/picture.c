@@ -40,7 +40,10 @@
 #include "dixstruct.h"
 #include "gcstruct.h"
 #include "servermd.h"
+
+#ifndef NXAGENT_SERVER
 #include "picturestr.h"
+#endif
 
 int		PictureScreenPrivateIndex = -1;
 int		PictureWindowPrivateIndex;
@@ -212,6 +215,7 @@ addFormat (FormatInitRec    formats[256],
 
 #define Mask(n)	((n) == 32 ? 0xffffffff : ((1 << (n))-1))
 
+#ifndef NXAGENT_SERVER
 PictFormatPtr
 PictureCreateDefaultFormats (ScreenPtr pScreen, int *nformatp)
 {
@@ -431,6 +435,7 @@ PictureCreateDefaultFormats (ScreenPtr pScreen, int *nformatp)
     *nformatp = nformats;
     return pFormats;
 }
+#endif
 
 static VisualPtr
 PictureFindVisual (ScreenPtr pScreen, VisualID visual)
@@ -767,6 +772,7 @@ SetPictureToDefaults (PicturePtr    pPicture)
     pPicture->pSourcePict = 0;
 }
 
+#ifndef NXAGENT_SERVER
 PicturePtr
 AllocatePicture (ScreenPtr  pScreen)
 {
@@ -847,6 +853,7 @@ CreatePicture (Picture		pid,
     }
     return pPicture;
 }
+#endif
 
 static CARD32 xRenderColorToCard32(xRenderColor c)
 {
@@ -969,6 +976,7 @@ static void initGradient(SourcePictPtr pGradient, int stopCount,
     initGradientColorTable(pGradient, error);
 }
 
+#ifndef NXAGENT_SERVER
 static PicturePtr createSourcePicture(void)
 {
     PicturePtr pPicture;
@@ -1002,6 +1010,7 @@ CreateSolidPicture (Picture pid, xRenderColor *color, int *error)
     pPicture->pSourcePict->solidFill.color = xRenderColorToCard32(*color);
     return pPicture;
 }
+#endif
 
 PicturePtr
 CreateLinearGradientPicture (Picture pid, xPointFixed *p1, xPointFixed *p2,
@@ -1592,6 +1601,7 @@ ValidatePicture(PicturePtr pPicture)
 	ValidateOnePicture (pPicture->alphaMap);
 }
 
+#ifndef NXAGENT_SERVER
 int
 FreePicture (void *	value,
 	     XID	pid)
@@ -1641,6 +1651,7 @@ FreePicture (void *	value,
     }
     return Success;
 }
+#endif
 
 int
 FreePictFormat (void *	pPictFormat,

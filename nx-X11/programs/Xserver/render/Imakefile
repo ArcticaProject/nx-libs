@@ -8,10 +8,12 @@ NULL =
 NXAGENT_SKIP_SRCS =             \
                     miglyph.c   \
                     mitrap.c    \
+                    picture.c   \
                     $(NULL)
 NXAGENT_SKIP_OBJS =             \
                     miglyph.o   \
                     mitrap.o    \
+                    picture.o   \
                     $(NULL)
 #endif
 
@@ -23,7 +25,6 @@ NXAGENT_SKIP_OBJS =             \
                 mipict.c \
                 mirect.c \
                 mitri.c \
-                picture.c \
                 render.c \
                 renderedge.c \
                 $(NXAGENT_SKIP_SRCS) \
@@ -37,7 +38,6 @@ NXAGENT_SKIP_OBJS =             \
                 mipict.o \
                 mirect.o \
                 mitri.o \
-                picture.o \
                 render.o \
                 renderedge.o \
                 $(NXAGENT_SKIP_OBJS) \
