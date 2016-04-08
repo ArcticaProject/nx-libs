@@ -19,6 +19,7 @@
 #define __Render_H__
 
 #include "screenint.h"
+#include "cursor.h"
 #include "picture.h"
 #include "renderproto.h"
 
