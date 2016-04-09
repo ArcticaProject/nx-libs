@@ -48,7 +48,10 @@ XF86BIGFOBJS = xf86bigfont.o
 #endif
 #endif
 
-#if BuildXvExt
+#if BuildXvExt && ( (defined(NXAgentServer) && NXAgentServer) && !defined(SunArchitecture) && !defined(cygwinArchitecture) )
+      XVSRCS = xvmain.c xvmc.c
+      XVOBJS = xvmain.o xvmc.o
+#elif BuildXvExt
       XVSRCS = xvmain.c xvdisp.c xvmc.c
       XVOBJS = xvmain.o xvdisp.o xvmc.o
 #endif
