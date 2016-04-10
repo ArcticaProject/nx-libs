@@ -390,6 +390,8 @@ __GLXcontext *__glXForceCurrent(__GLXclientState *cl, GLXContextTag tag,
 
 /************************************************************************/
 
+#ifndef NXAGENT_SERVER
+
 /*
 ** Top level dispatcher; all commands are executed from here down.
 */
@@ -492,6 +494,9 @@ static int __glXSwapDispatch(ClientPtr client)
     proc = __glXSwapSingleTable[opcode];
     return (*proc)(cl, (GLbyte *) stuff);
 }
+
+#endif /* NXAGENT_SERVER */
+
 
 int __glXNoSuchSingleOpcode(__GLXclientState *cl, GLbyte *pc)
 {

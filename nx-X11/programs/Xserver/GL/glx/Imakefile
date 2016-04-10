@@ -24,11 +24,19 @@ LinkSourceFile(glcontextmodes.h, $(MESASRCDIR)/src/mesa/drivers/dri/common)
 LinkSourceFile(indirect_size.c, $(MESASRCDIR)/src/glx/x11)
 LinkSourceFile(indirect_size.h, $(MESASRCDIR)/src/glx/x11)
 
+#if (!(defined(NXAgentServer) && NXAgentServer))
+NXAGENT_SKIP_SRCS =                     \
+                glxext.c                \
+                $(NULL)
+NXAGENT_SKIP_OBJS =                     \
+                glxext.o                \
+                $(NULL)
+#endif
+
          SRCS = global.c                \
                 glxbuf.c                \
                 glxcmds.c               \
                 glxcmdsswap.c           \
-                glxext.c                \
                 glxfb.c                 \
                 glximports.c            \
                 glxmem.c                \
@@ -56,13 +64,13 @@ LinkSourceFile(indirect_size.h, $(MESASRCDIR)/src/glx/x11)
                 glcontextmodes. c       \
                 indirect_size.c         \
                 $(MSRCS)                \
+                $(NXAGENT_SKIP_SRCS)    \
                 $(NULL)
 
          OBJS = global.o                \
                 glxbuf.o                \
                 glxcmds.o               \
                 glxcmdsswap.o           \
-                glxext.o                \
                 glxfb.o                 \
                 glximports.o            \
                 glxmem.o                \
@@ -90,6 +98,7 @@ LinkSourceFile(indirect_size.h, $(MESASRCDIR)/src/glx/x11)
                 glcontextmodes.o        \
                 indirect_size.o         \
                 $(MOBJS)                \
+                $(NXAGENT_SKIP_OBJS)    \
                 $(NULL)
 
      INCLUDES = -I$(SERVERSRC)/GL/glx                   \
