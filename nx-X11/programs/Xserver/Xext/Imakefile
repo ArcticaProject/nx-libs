@@ -30,7 +30,7 @@ XCOMM $XFree86: xc/programs/Xserver/Xext/Imakefile,v 3.43 2003/04/21 18:56:48 sv
 SUBDIRS = extmod
 #endif
 
-#if HasShm
+#if HasShm && (!(defined(NXAgentServer) && NXAgentServer))
   SHMSRCS = shm.c
   SHMOBJS = shm.o
 #endif
