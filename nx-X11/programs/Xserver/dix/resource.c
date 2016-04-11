@@ -422,6 +422,7 @@ FakeClientID(register int client)
     return id;
 }
 
+#ifndef NXAGENT_SERVER
 Bool
 AddResource(XID id, RESTYPE type, void * value)
 {
@@ -457,6 +458,7 @@ AddResource(XID id, RESTYPE type, void * value)
 	rrec->expectID = id + 1;
     return TRUE;
 }
+#endif /* NXAGENT_SERVER */
 
 static void
 RebuildTable(int client)
@@ -507,6 +509,7 @@ RebuildTable(int client)
     clientTable[client].resources = resources;
 }
 
+#ifndef NXAGENT_SERVER
 void
 FreeResource(XID id, RESTYPE skipDeleteFuncType)
 {
@@ -573,6 +576,7 @@ FreeResourceByType(XID id, RESTYPE type, Bool skipFree)
         }
     }
 }
+#endif /* NXAGENT_SERVER */
 
 /*
  * Change the value associated with a resource id.  Caller
@@ -606,6 +610,7 @@ ChangeResourceValue (XID id, RESTYPE rtype, void * value)
  * add and delete an equal number of resources!
  */
 
+#ifndef NXAGENT_SERVER
 void
 FindClientResourcesByType(
     ClientPtr client,
@@ -693,6 +698,7 @@ LookupClientResourceComplex(
     }
     return NULL;
 }
+#endif /* NXAGENT_SERVER */
 
 
 void
