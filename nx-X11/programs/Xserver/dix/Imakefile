@@ -16,9 +16,11 @@ FFS_OBJ = ffs.o
 #if (!(defined(NXAgentServer) && NXAgentServer))
 NXAGENT_SKIP_SRCS =                  \
                     extension.c      \
+                    window.c         \
                     $(NULL)
 NXAGENT_SKIP_OBJS =                  \
                     extension.o      \
+                    window.o         \
                     $(NULL)
 #endif
 
@@ -42,7 +44,6 @@ SRCS =                          \
        swaprep.c                \
        swapreq.c                \
        tables.c                 \
-       window.c                 \
        initatoms.c              \
        dixfonts.c               \
        privates.c               \
@@ -70,7 +71,6 @@ OBJS =                          \
        swaprep.o                \
        swapreq.o                \
        tables.o                 \
-       window.o                 \
        initatoms.o              \
        dixfonts.o               \
        privates.o               \
