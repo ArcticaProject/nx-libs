@@ -113,20 +113,6 @@ MessageStore::MessageStore(StaticCompressor *compressor)
   lastAction  = is_discarded;
 
   //
-  // This is used only for compatibility
-  // with older proxies.
-  //
-
-  if (control -> isProtoStep7() == 1)
-  {
-    lastResize = -1;
-  }
-  else
-  {
-    lastResize = 0;
-  }
-
-  //
   // Private members.
   //
 

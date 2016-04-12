@@ -37,7 +37,6 @@
 #define GETPROPERTYREPLY_ENABLE_CACHE                       1
 #define GETPROPERTYREPLY_ENABLE_DATA                        1
 #define GETPROPERTYREPLY_ENABLE_SPLIT                       0
-#define GETPROPERTYREPLY_ENABLE_COMPRESS                    1
 
 #define GETPROPERTYREPLY_DATA_LIMIT                         1048576 - 32
 #define GETPROPERTYREPLY_DATA_OFFSET                        32

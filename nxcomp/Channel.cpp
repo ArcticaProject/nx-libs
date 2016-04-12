@@ -386,16 +386,14 @@ int Channel::handleDecode(DecodeBuffer &decodeBuffer, ChannelCache *channelCache
 
     if (store -> enableSplit == 1)
     {
-      if (control -> isProtoStep7() == 1)
-      {
-        #ifdef DEBUG
-        *logofs << "handleDecode: " << store -> name() 
-                << ": Checking if the message was split.\n" 
-                << logofs_flush;
-        #endif
+      // Since ProtoStep7 (#issue 108)
+      #ifdef DEBUG
+      *logofs << "handleDecode: " << store -> name()
+              << ": Checking if the message was split.\n"
+              << logofs_flush;
+      #endif
 
-        decodeBuffer.decodeBoolValue(split);
-      }
+      decodeBuffer.decodeBoolValue(split);
 
       if (split == 1)
       {
@@ -537,16 +535,9 @@ int Channel::handleEncodeCached(EncodeBuffer &encodeBuffer, ChannelCache *channe
   if (control -> LocalDeltaCompression == 0 ||
           enableCache_ ==  0 || store -> enableCache == 0)
   {
-    if (control -> isProtoStep7() == 1)
-    {
-      encodeBuffer.encodeActionValue(is_discarded,
-                         store -> lastActionCache);
-    }
-    else
-    {
-      encodeBuffer.encodeActionValueCompat(is_discarded,
-                         store -> lastActionCacheCompat);
-    }
+    // Since ProtoStep7 (#issue 108)
+    encodeBuffer.encodeActionValue(is_discarded,
+                       store -> lastActionCache);
 
     store -> lastAction = is_discarded;
 
@@ -601,19 +592,9 @@ int Channel::handleEncodeCached(EncodeBuffer &encodeBuffer, ChannelCache *channe
 
     store -> lastRemoved = position;
 
-    if (control -> isProtoStep7() == 1)
-    {
-      encodeBuffer.encodeActionValue(is_removed, store -> lastRemoved,
-                         store -> lastActionCache);
-    }
-    else
-    {
-      encodeBuffer.encodeActionValueCompat(is_removed,
-                         store -> lastActionCacheCompat);
-
-      encodeBuffer.encodePositionValueCompat(store -> lastRemoved,
-                         store -> lastRemovedCacheCompat);
-    }
+    // Since ProtoStep7 (#issue 108)
+    encodeBuffer.encodeActionValue(is_removed, store -> lastRemoved,
+                       store -> lastActionCache);
 
     #ifdef DEBUG
     *logofs << "handleEncodeCached: " << store -> name() << ": Going to "
@@ -679,16 +660,9 @@ int Channel::handleEncodeCached(EncodeBuffer &encodeBuffer, ChannelCache *channe
             << logofs_flush;
     #endif
 
-    if (control -> isProtoStep7() == 1)
-    {
-      encodeBuffer.encodeActionValue(is_discarded,
-                         store -> lastActionCache);
-    }
-    else
-    {
-      encodeBuffer.encodeActionValueCompat(is_discarded,
-                         store -> lastActionCacheCompat);
-    }
+    // Since ProtoStep7 (#issue 108)
+    encodeBuffer.encodeActionValue(is_discarded,
+                       store -> lastActionCache);
 
     store -> lastAction = is_discarded;
 
@@ -759,16 +733,9 @@ int Channel::handleEncodeCached(EncodeBuffer &encodeBuffer, ChannelCache *channe
             << logofs_flush;
     #endif
 
-    if (control -> isProtoStep7() == 1)
-    {
-      encodeBuffer.encodeActionValue(is_discarded,
-                         store -> lastActionCache);
-    }
-    else
-    {
-      encodeBuffer.encodeActionValueCompat(is_discarded,
-                         store -> lastActionCacheCompat);
-    }
+    // Since ProtoStep7 (#issue 108)
+    encodeBuffer.encodeActionValue(is_discarded,
+                       store -> lastActionCache);
 
     store -> lastAction = is_discarded;
 
@@ -793,16 +760,9 @@ int Channel::handleEncodeCached(EncodeBuffer &encodeBuffer, ChannelCache *channe
     cerr << "Warning" << ": Message of size " << store -> plainSize(position)
          << " at position " << position << " is locked.\n";
 
-    if (control -> isProtoStep7() == 1)
-    {
-      encodeBuffer.encodeActionValue(is_discarded,
-                         store -> lastActionCache);
-    }
-    else
-    {
-      encodeBuffer.encodeActionValueCompat(is_discarded,
-                         store -> lastActionCacheCompat);
-    }
+    // Since ProtoStep7 (#issue 108)
+    encodeBuffer.encodeActionValue(is_discarded,
+                       store -> lastActionCache);
 
     store -> lastAction = is_discarded;
 
@@ -843,20 +803,9 @@ int Channel::handleEncodeCached(EncodeBuffer &encodeBuffer, ChannelCache *channe
 
     store -> lastAdded = position;
 
-    if (control -> isProtoStep7() == 1)
-    {
-      encodeBuffer.encodeActionValue(IS_ADDED, store -> lastAdded,
-                         store -> lastActionCache);
-
-    }
-    else
-    {
-      encodeBuffer.encodeActionValueCompat(IS_ADDED,
-                         store -> lastActionCacheCompat);
-
-      encodeBuffer.encodePositionValueCompat(store -> lastAdded,
-                         store -> lastAddedCacheCompat);
-    }
+    // Since ProtoStep7 (#issue 108)
+    encodeBuffer.encodeActionValue(IS_ADDED, store -> lastAdded,
+                       store -> lastActionCache);
 
     return 0;
   }
@@ -898,19 +847,9 @@ int Channel::handleEncodeCached(EncodeBuffer &encodeBuffer, ChannelCache *channe
 
     store -> lastHit = position;
 
-    if (control -> isProtoStep7() == 1)
-    {
-      encodeBuffer.encodeActionValue(IS_HIT, store -> lastHit,
-                         store -> lastActionCache);
-    }
-    else
-    {
-      encodeBuffer.encodeActionValueCompat(IS_HIT,
-                         store -> lastActionCacheCompat);
-
-      encodeBuffer.encodePositionValueCompat(store -> lastHit,
-                         store -> lastHitCacheCompat);
-    }
+    // Since ProtoStep7 (#issue 108)
+    encodeBuffer.encodeActionValue(IS_HIT, store -> lastHit,
+                       store -> lastActionCache);
 
     //
     // Send the field by field differences in
@@ -997,16 +936,9 @@ int Channel::handleDecodeCached(DecodeBuffer &decodeBuffer, ChannelCache *channe
   unsigned char action;
   unsigned short int position;
 
-  if (control -> isProtoStep7() == 1)
-  {
-    decodeBuffer.decodeActionValue(action, position,
-                       store -> lastActionCache);
-  }
-  else
-  {
-    decodeBuffer.decodeActionValueCompat(action,
-                       store -> lastActionCacheCompat);
-  }
+  // Since ProtoStep7 (#issue 108)
+  decodeBuffer.decodeActionValue(action, position,
+                     store -> lastActionCache);
 
   //
   // Clean operations must always come 
@@ -1015,15 +947,8 @@ int Channel::handleDecodeCached(DecodeBuffer &decodeBuffer, ChannelCache *channe
 
   while (action == is_removed)
   {
-    if (control -> isProtoStep7() == 1)
-    {
-      store -> lastRemoved = position;
-    }
-    else
-    {
-      decodeBuffer.decodePositionValueCompat(store -> lastRemoved,
-                         store -> lastRemovedCacheCompat);
-    }
+    // Since ProtoStep7 (#issue 108)
+    store -> lastRemoved = position;
 
     #ifdef DEBUG
 
@@ -1046,16 +971,9 @@ int Channel::handleDecodeCached(DecodeBuffer &decodeBuffer, ChannelCache *channe
 
     store -> remove(store -> lastRemoved, discard_checksum, use_data);
 
-    if (control -> isProtoStep7() == 1)
-    {
-      decodeBuffer.decodeActionValue(action, position,
-                         store -> lastActionCache);
-    }
-    else
-    {
-      decodeBuffer.decodeActionValueCompat(action,
-                         store -> lastActionCacheCompat);
-    }
+    // Since ProtoStep7 (#issue 108)
+    decodeBuffer.decodeActionValue(action, position,
+                       store -> lastActionCache);
   }
 
   //
@@ -1065,15 +983,8 @@ int Channel::handleDecodeCached(DecodeBuffer &decodeBuffer, ChannelCache *channe
 
   if ((T_store_action) action == IS_HIT)
   {
-    if (control -> isProtoStep7() == 1)
-    {
-      store -> lastHit = position;
-    }
-    else
-    {
-      decodeBuffer.decodePositionValueCompat(store -> lastHit,
-                         store -> lastHitCacheCompat);
-    }
+    // Since ProtoStep7 (#issue 108)
+    store -> lastHit = position;
 
     //
     // Get data from the cache at given position.
@@ -1139,15 +1050,8 @@ int Channel::handleDecodeCached(DecodeBuffer &decodeBuffer, ChannelCache *channe
   }
   else if ((T_store_action) action == IS_ADDED)
   {
-    if (control -> isProtoStep7() == 1)
-    {
-      store -> lastAdded = position;
-    }
-    else
-    {
-      decodeBuffer.decodePositionValueCompat(store -> lastAdded,
-                         store -> lastAddedCacheCompat);
-    }
+    // Since ProtoStep7 (#issue 108)
+    store -> lastAdded = position;
 
     #ifdef DEBUG
     *logofs << "handleDecodeCached: " << store -> name() 
@@ -2037,12 +1941,10 @@ Split *Channel::handleSplitCommitRemove(int request, int resource, int position)
           << ".\n" << logofs_flush;
   #endif
 
-  if ((control -> isProtoStep7() == 1 &&
-          (resource != split -> getResource() ||
-               request != split -> getRequest() ||
-                   position != split -> getPosition())) ||
-                       (request != split -> getRequest() ||
-                           position != split -> getPosition()))
+  // Since ProtoStep7 (#issue 108)
+  if (resource != split -> getResource() ||
+           request != split -> getRequest() ||
+               position != split -> getPosition())
   {
     #ifdef PANIC
     *logofs << "handleSplitCommitRemove: PANIC! The data in "

@@ -85,7 +85,6 @@ class ClientCache : public ChannelCache
   IntCache changePropertyPropertyCache;
   IntCache changePropertyTypeCache;
   IntCache changePropertyData32Cache;
-  TextCompressor changePropertyTextCompressor;
 
   //
   // ClearArea request.
@@ -188,19 +187,6 @@ class ClientCache : public ChannelCache
   unsigned int imageTextLastY;
   IntCache imageTextCacheX;
   IntCache imageTextCacheY;
-  TextCompressor imageTextTextCompressor;
-
-  //
-  // InternAtom request.
-  //
-
-  TextCompressor internAtomTextCompressor;
-
-  //
-  // OpenFont request.
-  //
-
-  TextCompressor openFontTextCompressor;
 
   //
   // PolyFillRectangle request.
@@ -251,7 +237,6 @@ class ClientCache : public ChannelCache
   IntCache polyTextCacheY;
   IntCache polyTextFontCache;
   CharCache polyTextDeltaCache;
-  TextCompressor polyTextTextCompressor;
 
   //
   // PutImage request.

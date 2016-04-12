@@ -36,7 +36,6 @@
 
 #define PUTPACKEDIMAGE_ENABLE_CACHE                            1
 #define PUTPACKEDIMAGE_ENABLE_DATA                             1
-#define PUTPACKEDIMAGE_ENABLE_SPLIT                            1
 #define PUTPACKEDIMAGE_ENABLE_COMPRESS                         0
 
 //

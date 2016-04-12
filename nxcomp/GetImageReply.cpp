@@ -43,12 +43,9 @@ GetImageReplyStore::GetImageReplyStore(StaticCompressor *compressor)
   enableCache    = GETIMAGEREPLY_ENABLE_CACHE;
   enableData     = GETIMAGEREPLY_ENABLE_DATA;
   enableSplit    = GETIMAGEREPLY_ENABLE_SPLIT;
-  enableCompress = GETIMAGEREPLY_ENABLE_COMPRESS;
 
-  if (control -> isProtoStep7() == 1)
-  {
-    enableCompress = GETIMAGEREPLY_ENABLE_COMPRESS_IF_PROTO_STEP_7;
-  }
+  // Since ProtoStep7 (#issue 108)
+  enableCompress = GETIMAGEREPLY_ENABLE_COMPRESS_IF_PROTO_STEP_7;
 
   dataLimit  = GETIMAGEREPLY_DATA_LIMIT;
   dataOffset = GETIMAGEREPLY_DATA_OFFSET;

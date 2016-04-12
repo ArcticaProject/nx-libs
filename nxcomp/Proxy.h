@@ -767,11 +767,6 @@ class Proxy
                handleSplitEvent(encodeBuffer_, split);
   }
 
-  int handleAsyncInit()
-  {
-    return handleFlush();
-  }
-
   int handleAsyncPriority()
   {
     if (control -> FlushPriority == 1)

@@ -36,7 +36,6 @@
 #define QUERYFONTREPLY_ENABLE_CACHE                       1
 #define QUERYFONTREPLY_ENABLE_DATA                        1
 #define QUERYFONTREPLY_ENABLE_SPLIT                       0
-#define QUERYFONTREPLY_ENABLE_COMPRESS                    1
 
 #define QUERYFONTREPLY_DATA_LIMIT                         1048576 - 32
 #define QUERYFONTREPLY_DATA_OFFSET                        8

@@ -84,14 +84,8 @@ class ClientProxy : public Proxy
 
   virtual int checkLocalChannelMap(int channelId)
   {
-    if (control -> isProtoStep7() == 1)
-    {
-      return ((channelId & control -> ChannelMask) != 0);
-    }
-    else
-    {
-      return 1;
-    }
+    // Since ProtoStep7 (#issue 108)
+    return ((channelId & control -> ChannelMask) != 0);
   }
 
   //

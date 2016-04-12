@@ -748,27 +748,8 @@ int SplitStore::start(DecodeBuffer &decodeBuffer)
       // Get the compressed size.
       //
 
-      if (control -> isProtoStep7() == 1)
-      {
-        decodeBuffer.decodeValue(compressedSize, 32, 14);
-      }
-      else
-      {
-        //
-        // As we can't refuse to handle the decoding
-        // of the split message when connected to an
-        // old proxy version, we need to decode this
-        // in a way that is compatible.
-        //
-
-        unsigned int diffSize;
-
-        decodeBuffer.decodeValue(diffSize, 32, 14);
-
-        split -> store_ -> lastResize += diffSize;
-
-        compressedSize = split -> store_ -> lastResize;
-      }
+      // Since ProtoStep7 (#issue 108)
+      decodeBuffer.decodeValue(compressedSize, 32, 14);
 
       split -> store_ -> validateSize(split -> d_size_, compressedSize);
 

@@ -21,25 +21,8 @@
 
 PositionCacheCompat::PositionCacheCompat()
 {
-  if (control -> isProtoStep7() == 0)
-  {
-    for (int i = 0; i < 32; i++)
-    {
-      base_[i] = new IntCache(8);
-    }
-
-    slot_ = 0;
-    last_ = 0;
-  }
 }
 
 PositionCacheCompat::~PositionCacheCompat()
 {
-  if (control -> isProtoStep7() == 0)
-  {
-    for (int i = 0; i < 32; i++)
-    {
-      delete base_[i];
-    }
-  }
 }

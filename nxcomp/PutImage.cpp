@@ -44,13 +44,9 @@ PutImageStore::PutImageStore(StaticCompressor *compressor)
 {
   enableCache    = PUTIMAGE_ENABLE_CACHE;
   enableData     = PUTIMAGE_ENABLE_DATA;
-  enableSplit    = PUTIMAGE_ENABLE_SPLIT;
-  enableCompress = PUTIMAGE_ENABLE_COMPRESS;
 
-  if (control -> isProtoStep7() == 1)
-  {
-    enableCompress = PUTIMAGE_ENABLE_COMPRESS_IF_PROTO_STEP_7;
-  }
+  // Since ProtoStep7 (#issue 108)
+  enableCompress = PUTIMAGE_ENABLE_COMPRESS_IF_PROTO_STEP_7;
 
   dataLimit  = PUTIMAGE_DATA_LIMIT;
   dataOffset = PUTIMAGE_DATA_OFFSET;
@@ -59,10 +55,8 @@ PutImageStore::PutImageStore(StaticCompressor *compressor)
   cacheThreshold      = PUTIMAGE_CACHE_THRESHOLD;
   cacheLowerThreshold = PUTIMAGE_CACHE_LOWER_THRESHOLD;
 
-  if (control -> isProtoStep8() == 1)
-  {
-    enableSplit = PUTIMAGE_ENABLE_SPLIT_IF_PROTO_STEP_8;
-  }
+  // Since ProtoStep8 (#issue 108)
+  enableSplit = PUTIMAGE_ENABLE_SPLIT_IF_PROTO_STEP_8;
 
   messages_ -> resize(cacheSlots);
 

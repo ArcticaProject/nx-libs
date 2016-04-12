@@ -45,12 +45,9 @@ ShapeExtensionStore::ShapeExtensionStore(StaticCompressor *compressor)
   enableCache    = SHAPEEXTENSION_ENABLE_CACHE;
   enableData     = SHAPEEXTENSION_ENABLE_DATA;
   enableSplit    = SHAPEEXTENSION_ENABLE_SPLIT;
-  enableCompress = SHAPEEXTENSION_ENABLE_COMPRESS;
 
-  if (control -> isProtoStep7() == 1)
-  {
-    enableCompress = SHAPEEXTENSION_ENABLE_COMPRESS_IF_PROTO_STEP_7;
-  }
+  // Since ProtoStep7 (#issue 108)
+  enableCompress = SHAPEEXTENSION_ENABLE_COMPRESS_IF_PROTO_STEP_7;
 
   dataLimit  = SHAPEEXTENSION_DATA_LIMIT;
   dataOffset = SHAPEEXTENSION_DATA_OFFSET;

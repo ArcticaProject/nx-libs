@@ -199,18 +199,18 @@ T_buffer;
 // received at the decoding side.
 //
 
+// Since ProtoStep8 (#issue 108)
 enum T_store_action
 {
   is_hit,
   is_added,
   is_discarded,
-  is_removed,
-  is_added_compat = 0,
-  is_hit_compat = 1
+  is_removed
 };
 
-#define IS_HIT   (control -> isProtoStep8() == 1 ? is_hit   : is_hit_compat)
-#define IS_ADDED (control -> isProtoStep8() == 1 ? is_added : is_added_compat)
+// Since ProtoStep8 (#issue 108)
+#define IS_HIT is_hit
+#define IS_ADDED is_added
 
 enum T_checksum_action
 {

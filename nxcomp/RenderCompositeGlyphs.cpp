@@ -102,26 +102,14 @@ MESSAGE_BEGIN_ENCODE_MESSAGE
   unsigned int src_x = GetUINT(buffer + 24, bigEndian);
   unsigned int src_y = GetUINT(buffer + 26, bigEndian);
 
-  if (control -> isProtoStep8() == 1)
-  {
-    encodeBuffer.encodeDiffCachedValue(src_x,
-                       clientCache -> renderGlyphX, 16,
-                           clientCache -> renderGlyphXCache, 11);
+  // Since ProtoStep8 (#issue 108)
+  encodeBuffer.encodeDiffCachedValue(src_x,
+                     clientCache -> renderGlyphX, 16,
+                         clientCache -> renderGlyphXCache, 11);
 
-    encodeBuffer.encodeDiffCachedValue(src_y,
-                       clientCache -> renderGlyphY, 16,
-                           clientCache -> renderGlyphYCache, 11);
-  }
-  else
-  {
-    encodeBuffer.encodeDiffCachedValue(src_x,
-                       clientCache -> renderLastX, 16,
-                           clientCache -> renderXCache, 11);
-
-    encodeBuffer.encodeDiffCachedValue(src_y,
-                       clientCache -> renderLastY, 16,
-                           clientCache -> renderYCache, 11);
-  }
+  encodeBuffer.encodeDiffCachedValue(src_y,
+                     clientCache -> renderGlyphY, 16,
+                         clientCache -> renderGlyphYCache, 11);
 
   #ifdef TEST
   *logofs << name() << ": Encoded source X "
@@ -147,8 +135,8 @@ MESSAGE_BEGIN_ENCODE_MESSAGE
   // tive to the first offset coordinates.
   //
 
-  if (control -> isProtoStep8() == 1 &&
-          size >= MESSAGE_OFFSET_IF_PROTO_STEP_8)
+  // Since ProtoStep8 (#issue 108)
+  if (size >= MESSAGE_OFFSET_IF_PROTO_STEP_8)
   {
     unsigned int numGlyphs = *(buffer + 28);
 
@@ -232,32 +220,20 @@ MESSAGE_BEGIN_DECODE_MESSAGE
   unsigned int src_x;
   unsigned int src_y;
 
-  if (control -> isProtoStep8() == 1)
-  {
-    decodeBuffer.decodeDiffCachedValue(src_x,
-                       clientCache -> renderGlyphX, 16,
-                           clientCache -> renderGlyphXCache, 11);
+  // Since ProtoStep8 (#issue 108)
+  decodeBuffer.decodeDiffCachedValue(src_x,
+                     clientCache -> renderGlyphX, 16,
+                         clientCache -> renderGlyphXCache, 11);
 
-    decodeBuffer.decodeDiffCachedValue(src_y,
-                       clientCache -> renderGlyphY, 16,
-                           clientCache -> renderGlyphYCache, 11);
-  }
-  else
-  {
-    decodeBuffer.decodeDiffCachedValue(src_x,
-                       clientCache -> renderLastX, 16,
-                           clientCache -> renderXCache, 11);
-
-    decodeBuffer.decodeDiffCachedValue(src_y,
-                       clientCache -> renderLastY, 16,
-                           clientCache -> renderYCache, 11);
-  }
+  decodeBuffer.decodeDiffCachedValue(src_y,
+                     clientCache -> renderGlyphY, 16,
+                         clientCache -> renderGlyphYCache, 11);
 
   PutUINT(src_x, buffer + 24, bigEndian);
   PutUINT(src_y, buffer + 26, bigEndian);
 
-  if (control -> isProtoStep8() == 1 &&
-          size >= MESSAGE_OFFSET_IF_PROTO_STEP_8)
+  // Since ProtoStep8 (#issue 108)
+  if (size >= MESSAGE_OFFSET_IF_PROTO_STEP_8)
   {
     decodeBuffer.decodeCachedValue(value, 8,
                        clientCache -> renderNumGlyphsCache);
@@ -297,8 +273,8 @@ MESSAGE_END_DECODE_MESSAGE
 
 MESSAGE_BEGIN_ENCODE_DATA
 {
-  if (control -> isProtoStep8() == 1 &&
-          size >= MESSAGE_OFFSET_IF_PROTO_STEP_8)
+  // Since ProtoStep8 (#issue 108)
+  if (size >= MESSAGE_OFFSET_IF_PROTO_STEP_8)
   {
     encodeCharData(encodeBuffer, buffer, MESSAGE_OFFSET_IF_PROTO_STEP_8,
                        size, bigEndian, channelCache);
@@ -318,8 +294,8 @@ MESSAGE_END_ENCODE_DATA
 
 MESSAGE_BEGIN_DECODE_DATA
 {
-  if (control -> isProtoStep8() == 1 &&
-          size >= MESSAGE_OFFSET_IF_PROTO_STEP_8)
+  // Since ProtoStep8 (#issue 108)
+  if (size >= MESSAGE_OFFSET_IF_PROTO_STEP_8)
   {
     decodeCharData(decodeBuffer, buffer, MESSAGE_OFFSET_IF_PROTO_STEP_8,
                        size, bigEndian, channelCache);
@@ -353,8 +329,8 @@ MESSAGE_BEGIN_PARSE_IDENTITY
   renderExtension -> data.composite_glyphs.src_x = GetUINT(buffer + 24, bigEndian);
   renderExtension -> data.composite_glyphs.src_y = GetUINT(buffer + 26, bigEndian);
 
-  if (control -> isProtoStep8() == 1 &&
-          size >= MESSAGE_OFFSET_IF_PROTO_STEP_8)
+  // Since ProtoStep8 (#issue 108)
+  if (size >= MESSAGE_OFFSET_IF_PROTO_STEP_8)
   {
     renderExtension -> data.composite_glyphs.num_elm = *(buffer + 28);
 
@@ -387,8 +363,8 @@ MESSAGE_BEGIN_UNPARSE_IDENTITY
   PutUINT(renderExtension -> data.composite_glyphs.src_x, buffer + 24, bigEndian);
   PutUINT(renderExtension -> data.composite_glyphs.src_y, buffer + 26, bigEndian);
 
-  if (control -> isProtoStep8() == 1 &&
-          size >= MESSAGE_OFFSET_IF_PROTO_STEP_8)
+  // Since ProtoStep8 (#issue 108)
+  if (size >= MESSAGE_OFFSET_IF_PROTO_STEP_8)
   {
     *(buffer + 28) = renderExtension -> data.composite_glyphs.num_elm;
 
@@ -426,8 +402,8 @@ MESSAGE_BEGIN_IDENTITY_CHECKSUM
   // first string.
   //
 
-  if (control -> isProtoStep8() == 1 &&
-          size >= MESSAGE_OFFSET_IF_PROTO_STEP_8)
+  // Since ProtoStep8 (#issue 108)
+  if (size >= MESSAGE_OFFSET_IF_PROTO_STEP_8)
   {
     md5_append(md5_state, buffer + 28, 1);
   }
@@ -470,42 +446,22 @@ MESSAGE_BEGIN_ENCODE_UPDATE
   unsigned int value;
   unsigned int previous;
 
-  if (control -> isProtoStep8() == 1)
-  {
-    value    = renderExtension -> data.composite_glyphs.src_x;
-    previous = cachedRenderExtension -> data.composite_glyphs.src_x;
+  // Since ProtoStep8 (#issue 108)
+  value    = renderExtension -> data.composite_glyphs.src_x;
+  previous = cachedRenderExtension -> data.composite_glyphs.src_x;
 
-    encodeBuffer.encodeDiffCachedValue(value, previous, 16,
-                       clientCache -> renderGlyphXCache, 11);
+  encodeBuffer.encodeDiffCachedValue(value, previous, 16,
+                     clientCache -> renderGlyphXCache, 11);
 
-    cachedRenderExtension -> data.composite_glyphs.src_x = value;
+  cachedRenderExtension -> data.composite_glyphs.src_x = value;
 
-    value    = renderExtension -> data.composite_glyphs.src_y;
-    previous = cachedRenderExtension -> data.composite_glyphs.src_y;
+  value    = renderExtension -> data.composite_glyphs.src_y;
+  previous = cachedRenderExtension -> data.composite_glyphs.src_y;
 
-    encodeBuffer.encodeDiffCachedValue(value, previous, 16,
-                       clientCache -> renderGlyphYCache, 11);
+  encodeBuffer.encodeDiffCachedValue(value, previous, 16,
+                     clientCache -> renderGlyphYCache, 11);
 
-    cachedRenderExtension -> data.composite_glyphs.src_y = value;
-  }
-  else
-  {
-    value    = renderExtension -> data.composite_glyphs.src_x;
-    previous = cachedRenderExtension -> data.composite_glyphs.src_x;
-
-    encodeBuffer.encodeDiffCachedValue(value, previous, 16,
-                       clientCache -> renderXCache, 11);
-
-    cachedRenderExtension -> data.composite_glyphs.src_x = value;
-
-    value    = renderExtension -> data.composite_glyphs.src_y;
-    previous = cachedRenderExtension -> data.composite_glyphs.src_y;
-
-    encodeBuffer.encodeDiffCachedValue(value, previous, 16,
-                       clientCache -> renderYCache, 11);
-
-    cachedRenderExtension -> data.composite_glyphs.src_y = value;
-  }
+  cachedRenderExtension -> data.composite_glyphs.src_y = value;
 
   #ifdef TEST
   *logofs << name() << ": Encoded source X "
@@ -514,8 +470,8 @@ MESSAGE_BEGIN_ENCODE_UPDATE
           << logofs_flush;
   #endif
 
-  if (control -> isProtoStep8() == 1 &&
-          renderExtension -> size_ >= MESSAGE_OFFSET_IF_PROTO_STEP_8)
+  // Since ProtoStep8 (#issue 108)
+  if (renderExtension -> size_ >= MESSAGE_OFFSET_IF_PROTO_STEP_8)
   {
     //
     // Offset X and Y.
@@ -601,41 +557,23 @@ MESSAGE_BEGIN_DECODE_UPDATE
   unsigned int value;
   unsigned int previous;
 
-  if (control -> isProtoStep8() == 1)
-  {
-    previous = renderExtension -> data.composite_glyphs.src_x;
+  // Since ProtoStep8 (#issue 108)
+  previous = renderExtension -> data.composite_glyphs.src_x;
 
-    decodeBuffer.decodeDiffCachedValue(value, previous, 16,
-                       clientCache -> renderGlyphXCache, 11);
+  decodeBuffer.decodeDiffCachedValue(value, previous, 16,
+                     clientCache -> renderGlyphXCache, 11);
 
-    renderExtension -> data.composite_glyphs.src_x = value;
+  renderExtension -> data.composite_glyphs.src_x = value;
 
-    previous = renderExtension -> data.composite_glyphs.src_y;
+  previous = renderExtension -> data.composite_glyphs.src_y;
 
-    decodeBuffer.decodeDiffCachedValue(value, previous, 16,
-                       clientCache -> renderGlyphYCache, 11);
+  decodeBuffer.decodeDiffCachedValue(value, previous, 16,
+                     clientCache -> renderGlyphYCache, 11);
 
-    renderExtension -> data.composite_glyphs.src_y = value;
-  }
-  else
-  {
-    previous = renderExtension -> data.composite_glyphs.src_x;
+  renderExtension -> data.composite_glyphs.src_y = value;
 
-    decodeBuffer.decodeDiffCachedValue(value, previous, 16,
-                       clientCache -> renderXCache, 11);
-
-    renderExtension -> data.composite_glyphs.src_x = value;
-
-    previous = renderExtension -> data.composite_glyphs.src_y;
-
-    decodeBuffer.decodeDiffCachedValue(value, previous, 16,
-                       clientCache -> renderYCache, 11);
-
-    renderExtension -> data.composite_glyphs.src_y = value;
-  }
-
-  if (control -> isProtoStep8() == 1 &&
-          renderExtension -> size_ >= MESSAGE_OFFSET_IF_PROTO_STEP_8)
+  // Since ProtoStep8 (#issue 108)
+  if (renderExtension -> size_ >= MESSAGE_OFFSET_IF_PROTO_STEP_8)
   {
     //
     // Offset X and Y.

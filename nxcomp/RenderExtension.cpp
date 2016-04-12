@@ -42,13 +42,6 @@
 #include "RenderTrapezoids.h"
 #include "RenderTriangles.h"
 
-#include "RenderCreatePictureCompat.h"
-#include "RenderFreePictureCompat.h"
-#include "RenderPictureClipCompat.h"
-#include "RenderCreateGlyphSetCompat.h"
-#include "RenderCompositeCompat.h"
-#include "RenderCompositeGlyphsCompat.h"
-
 //
 // Set the verbosity level.
 //
@@ -82,46 +75,27 @@ RenderExtensionStore::RenderExtensionStore(StaticCompressor *compressor)
   minors_[X_RenderFillRectangles] = new RenderFillRectanglesStore();
   minors_[X_RenderAddGlyphs]      = new RenderAddGlyphsStore();
 
-  if (control -> isProtoStep7() == 1)
-  {
-    minors_[X_RenderCreatePicture]            = new RenderCreatePictureStore();
-    minors_[X_RenderFreePicture]              = new RenderFreePictureStore();
-    minors_[X_RenderSetPictureClipRectangles] = new RenderPictureClipStore();
-    minors_[X_RenderCreateGlyphSet]           = new RenderCreateGlyphSetStore();
-    minors_[X_RenderComposite]                = new RenderCompositeStore();
-    minors_[X_RenderCompositeGlyphs8]         = new RenderCompositeGlyphsStore();
-    minors_[X_RenderCompositeGlyphs16]        = new RenderCompositeGlyphsStore();
-    minors_[X_RenderCompositeGlyphs32]        = new RenderCompositeGlyphsStore();
+  // Since ProtoStep7 (#issue 108)
+  minors_[X_RenderCreatePicture]            = new RenderCreatePictureStore();
+  minors_[X_RenderFreePicture]              = new RenderFreePictureStore();
+  minors_[X_RenderSetPictureClipRectangles] = new RenderPictureClipStore();
+  minors_[X_RenderCreateGlyphSet]           = new RenderCreateGlyphSetStore();
+  minors_[X_RenderComposite]                = new RenderCompositeStore();
+  minors_[X_RenderCompositeGlyphs8]         = new RenderCompositeGlyphsStore();
+  minors_[X_RenderCompositeGlyphs16]        = new RenderCompositeGlyphsStore();
+  minors_[X_RenderCompositeGlyphs32]        = new RenderCompositeGlyphsStore();
 
-    minors_[X_RenderSetPictureTransform] = new RenderPictureTransformStore();
-    minors_[X_RenderSetPictureFilter]    = new RenderPictureFilterStore();
-    minors_[X_RenderFreeGlyphSet]        = new RenderFreeGlyphSetStore();
-    minors_[X_RenderTrapezoids]          = new RenderTrapezoidsStore();
-    minors_[X_RenderTriangles]           = new RenderTrianglesStore();
-  }
-  else
-  {
-    minors_[X_RenderCreatePicture]            = new RenderCreatePictureCompatStore();
-    minors_[X_RenderFreePicture]              = new RenderFreePictureCompatStore();
-    minors_[X_RenderSetPictureClipRectangles] = new RenderPictureClipCompatStore();
-    minors_[X_RenderCreateGlyphSet]           = new RenderCreateGlyphSetCompatStore();
-    minors_[X_RenderComposite]                = new RenderCompositeCompatStore();
-    minors_[X_RenderCompositeGlyphs8]         = new RenderCompositeGlyphsCompatStore();
-    minors_[X_RenderCompositeGlyphs16]        = new RenderCompositeGlyphsCompatStore();
-    minors_[X_RenderCompositeGlyphs32]        = new RenderCompositeGlyphsCompatStore();
-  }
+  minors_[X_RenderSetPictureTransform] = new RenderPictureTransformStore();
+  minors_[X_RenderSetPictureFilter]    = new RenderPictureFilterStore();
+  minors_[X_RenderFreeGlyphSet]        = new RenderFreeGlyphSetStore();
+  minors_[X_RenderTrapezoids]          = new RenderTrapezoidsStore();
+  minors_[X_RenderTriangles]           = new RenderTrianglesStore();
 
   dataLimit  = RENDEREXTENSION_DATA_LIMIT;
   dataOffset = RENDEREXTENSION_DATA_OFFSET;
 
-  if (control -> isProtoStep7() == 1)
-  {
-    cacheSlots = RENDEREXTENSION_CACHE_SLOTS_IF_PROTO_STEP_7;
-  }
-  else
-  {
-    cacheSlots = RENDEREXTENSION_CACHE_SLOTS;
-  }
+  // Since ProtoStep7 (#issue 108)
+  cacheSlots = RENDEREXTENSION_CACHE_SLOTS_IF_PROTO_STEP_7;
 
   cacheThreshold      = RENDEREXTENSION_CACHE_THRESHOLD;
   cacheLowerThreshold = RENDEREXTENSION_CACHE_LOWER_THRESHOLD;
@@ -268,204 +242,78 @@ void RenderMinorExtensionStore::encodeLongData(EncodeBuffer &encodeBuffer, const
                                                    unsigned int offset, unsigned int size, int bigEndian,
                                                        ChannelCache *channelCache) const
 {
-  if (control -> isProtoStep7() == 1)
-  {
-    encodeBuffer.encodeLongData(buffer + offset, size - offset);
+  // Since ProtoStep7 (#issue 108)
+  encodeBuffer.encodeLongData(buffer + offset, size - offset);
 
-    #ifdef TEST
-    *logofs << name() << ": Encoded " << size - offset
-            << " bytes of long data.\n" << logofs_flush;
-    #endif
-
-    return;
-  }
-
-  ClientCache *clientCache = (ClientCache *) channelCache;
-
-  for (unsigned int i = offset, c = (offset - 4) % 16; i < size; i += 4)
-  {
-    #ifdef DEBUG
-    *logofs << name() << ": Encoding int with i = " << i << " c = "
-            << c << ".\n" << logofs_flush;
-    #endif
-
-    encodeBuffer.encodeCachedValue(GetULONG(buffer + i, bigEndian), 32,
-                       *clientCache -> renderDataCache[c]);
-
-    if (++c == 16) c = 0;
-  }
+  #ifdef TEST
+  *logofs << name() << ": Encoded " << size - offset
+          << " bytes of long data.\n" << logofs_flush;
+  #endif
 }
 
 void RenderMinorExtensionStore::encodeIntData(EncodeBuffer &encodeBuffer, const unsigned char *buffer,
                                                   unsigned int offset, unsigned int size, int bigEndian,
                                                       ChannelCache *channelCache) const
 {
-  if (control -> isProtoStep7() == 1)
-  {
-    encodeBuffer.encodeIntData(buffer + offset, size - offset);
+  // Since ProtoStep7 (#issue 108)
+  encodeBuffer.encodeIntData(buffer + offset, size - offset);
 
-    #ifdef TEST
-    *logofs << name() << ": Encoded " << size - offset
-            << " bytes of int data.\n" << logofs_flush;
-    #endif
-
-    return;
-  }
-
-  ClientCache *clientCache = (ClientCache *) channelCache;
-
-  for (unsigned int i = offset, c = (offset - 4) % 16; i < size; i += 2)
-  {
-    #ifdef DEBUG
-    *logofs << name() << ": Encoding int with i = " << i << " c = "
-            << c << ".\n" << logofs_flush;
-    #endif
-
-    encodeBuffer.encodeCachedValue(GetUINT(buffer + i, bigEndian), 16,
-                       *clientCache -> renderDataCache[c]);
-
-    if (++c == 16) c = 0;
-  }
+  #ifdef TEST
+  *logofs << name() << ": Encoded " << size - offset
+          << " bytes of int data.\n" << logofs_flush;
+  #endif
 }
 
 void RenderMinorExtensionStore::encodeCharData(EncodeBuffer &encodeBuffer, const unsigned char *buffer,
                                                    unsigned int offset, unsigned int size, int bigEndian,
                                                        ChannelCache *channelCache) const
 {
-  if (control -> isProtoStep7() == 1)
-  {
-    encodeBuffer.encodeTextData(buffer + offset, size - offset);
+  // Since ProtoStep7 (#issue 108)
+  encodeBuffer.encodeTextData(buffer + offset, size - offset);
 
-    #ifdef TEST
-    *logofs << name() << ": Encoded " << size - offset
-            << " bytes of text data.\n" << logofs_flush;
-    #endif
-
-    return;
-  }
-
-  ClientCache *clientCache = (ClientCache *) channelCache;
-
-  clientCache -> renderTextCompressor.reset();
-
-  const unsigned char *next = buffer + offset;
-
-  for (unsigned int i = offset; i < size; i++)
-  {
-    #ifdef DEBUG
-    *logofs << name() << ": Encoding char with i = " << i
-            << ".\n" << logofs_flush;
-    #endif
-
-    clientCache -> renderTextCompressor.
-          encodeChar(*next++, encodeBuffer);
-  }
+  #ifdef TEST
+  *logofs << name() << ": Encoded " << size - offset
+          << " bytes of text data.\n" << logofs_flush;
+  #endif
 }
 
 void RenderMinorExtensionStore::decodeLongData(DecodeBuffer &decodeBuffer, unsigned char *buffer,
                                                    unsigned int offset, unsigned int size, int bigEndian,
                                                        ChannelCache *channelCache) const
 {
-  if (control -> isProtoStep7() == 1)
-  {
-    decodeBuffer.decodeLongData(buffer + offset, size - offset);
+  // Since ProtoStep7 (#issue 108)
+  decodeBuffer.decodeLongData(buffer + offset, size - offset);
 
-    #ifdef TEST
-    *logofs << name() << ": Decoded " << size - offset
-            << " bytes of long data.\n" << logofs_flush;
-    #endif
-
-    return;
-  }
-
-  ClientCache *clientCache = (ClientCache *) channelCache;
-
-  unsigned int value;
-
-  for (unsigned int i = offset, c = (offset - 4) % 16; i < size; i += 4)
-  {
-    #ifdef DEBUG
-    *logofs << name() << ": Decoding int with i = " << i << " c = "
-            << c << ".\n" << logofs_flush;
-    #endif
-
-    decodeBuffer.decodeCachedValue(value, 32,
-                       *clientCache -> renderDataCache[c]);
-
-    PutULONG(value, buffer + i, bigEndian);
-
-    if (++c == 16) c = 0;
-  }
+  #ifdef TEST
+  *logofs << name() << ": Decoded " << size - offset
+          << " bytes of long data.\n" << logofs_flush;
+  #endif
 }
 
 void RenderMinorExtensionStore::decodeIntData(DecodeBuffer &decodeBuffer, unsigned char *buffer,
                                                   unsigned int offset, unsigned int size, int bigEndian,
                                                       ChannelCache *channelCache) const
 {
-  if (control -> isProtoStep7() == 1)
-  {
-    decodeBuffer.decodeIntData(buffer + offset, size - offset);
+  // Since ProtoStep7 (#issue 108)
+  decodeBuffer.decodeIntData(buffer + offset, size - offset);
 
-    #ifdef TEST
-    *logofs << name() << ": Decoded " << size - offset
-            << " bytes of int data.\n" << logofs_flush;
-    #endif
-
-    return;
-  }
-
-  ClientCache *clientCache = (ClientCache *) channelCache;
-
-  unsigned int value;
-
-  for (unsigned int i = offset, c = (offset - 4) % 16; i < size; i += 2)
-  {
-    #ifdef DEBUG
-    *logofs << name() << ": Decoding int with i = " << i << " c = "
-            << c << ".\n" << logofs_flush;
-    #endif
-
-    decodeBuffer.decodeCachedValue(value, 16,
-                       *clientCache -> renderDataCache[c]);
-
-    PutUINT(value, buffer + i, bigEndian);
-
-    if (++c == 16) c = 0;
-  }
+  #ifdef TEST
+  *logofs << name() << ": Decoded " << size - offset
+          << " bytes of int data.\n" << logofs_flush;
+  #endif
 }
 
 void RenderMinorExtensionStore::decodeCharData(DecodeBuffer &decodeBuffer, unsigned char *buffer,
                                                    unsigned int offset, unsigned int size, int bigEndian,
                                                        ChannelCache *channelCache) const
 {
-  if (control -> isProtoStep7() == 1)
-  {
-    decodeBuffer.decodeTextData(buffer + offset, size - offset);
+  // Since ProtoStep7 (#issue 108)
+  decodeBuffer.decodeTextData(buffer + offset, size - offset);
 
-    #ifdef TEST
-    *logofs << name() << ": Decoded " << size - offset
-            << " bytes of text data.\n" << logofs_flush;
-    #endif
-
-    return;
-  }
-
-  ClientCache *clientCache = (ClientCache *) channelCache;
-
-  clientCache -> renderTextCompressor.reset();
-
-  unsigned char *next = buffer + offset;
-
-  for (unsigned int i = offset; i < size; i++)
-  {
-    #ifdef DEBUG
-    *logofs << name() << ": Decoding char with i = " << i
-            << ".\n" << logofs_flush;
-    #endif
-
-    *next++ = clientCache -> renderTextCompressor.
-                    decodeChar(decodeBuffer);
-  }
+  #ifdef TEST
+  *logofs << name() << ": Decoded " << size - offset
+          << " bytes of text data.\n" << logofs_flush;
+  #endif
 }
 
 void RenderMinorExtensionStore::parseIntData(const Message *message, const unsigned char *buffer,

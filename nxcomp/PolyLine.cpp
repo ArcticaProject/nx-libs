@@ -93,10 +93,8 @@ void PolyLineStore::dumpIdentity(const Message *message) const
 void PolyLineStore::identityChecksum(const Message *message, const unsigned char *buffer,
                                          unsigned int size, int bigEndian) const
 {
-  if (control -> isProtoStep8() == 1)
-  {
-    md5_append(md5_state_, buffer + 1, 1);
-  }
+  // Since ProtoStep8 (#issue 108)
+  md5_append(md5_state_, buffer + 1, 1);
 }
 
 void PolyLineStore::updateIdentity(EncodeBuffer &encodeBuffer, const Message *message,
@@ -107,11 +105,6 @@ void PolyLineStore::updateIdentity(EncodeBuffer &encodeBuffer, const Message *me
   PolyLineMessage *cachedPolyLine = (PolyLineMessage *) cachedMessage;
 
   ClientCache *clientCache = (ClientCache *) channelCache;
-
-  if (control -> isProtoStep8() == 0)
-  {
-    encodeBuffer.encodeBoolValue((unsigned int) polyLine -> mode);
-  }
 
   #ifdef TEST
   *logofs << name() << ": Encoding value " << polyLine -> drawable
@@ -140,13 +133,6 @@ void PolyLineStore::updateIdentity(DecodeBuffer &decodeBuffer, const Message *me
   ClientCache *clientCache = (ClientCache *) channelCache;
 
   unsigned int value;
-
-  if (control -> isProtoStep8() == 0)
-  {
-    decodeBuffer.decodeBoolValue(value);
-
-    polyLine -> mode = value;
-  }
 
   decodeBuffer.decodeXidValue(value, clientCache -> drawableCache);
 

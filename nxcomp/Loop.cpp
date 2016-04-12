@@ -4466,32 +4466,16 @@ int SetupServiceSockets()
   else
   {
     //
-    // Disable the font server connections if
-    // they are not supported by the remote
-    // proxy.
+    // Get ready to listen for the font server connections
     //
 
     if (useFontSocket)
     {
-      if (control -> isProtoStep7() == 1)
+      // Since ProtoStep7 (#issue 108)
+      int port = atoi(fontPort);
+
+      if ((fontFD = ListenConnection(port, "font")) < 0)
       {
-        int port = atoi(fontPort);
-
-        if ((fontFD = ListenConnection(port, "font")) < 0)
-        {
-          useFontSocket = 0;
-        }
-      }
-      else
-      {
-        #ifdef WARNING
-        *logofs << "Loop: WARNING! Font server connections not supported "
-                << "by the remote proxy.\n" << logofs_flush;
-        #endif
-
-        cerr << "Warning" << ": Font server connections not supported "
-             << "by the remote proxy.\n";
-
         useFontSocket = 0;
       }
     }
@@ -4510,23 +4494,9 @@ int SetupServiceSockets()
 
   if (useSlaveSocket)
   {
-    if (control -> isProtoStep7() == 1)
+    // Since ProtoStep7 (#issue 108)
+    if ((slaveFD = ListenConnection(slavePort, "slave")) < 0)
     {
-      if ((slaveFD = ListenConnection(slavePort, "slave")) < 0)
-      {
-        useSlaveSocket = 0;
-      }
-    }
-    else
-    {
-      #ifdef WARNING
-      *logofs << "Loop: WARNING! Slave connections not supported "
-                << "by the remote proxy.\n" << logofs_flush;
-      #endif
-
-      cerr << "Warning" << ": Slave connections not supported "
-           << "by the remote proxy.\n";
-
       useSlaveSocket = 0;
     }
   }
@@ -7226,8 +7196,11 @@ int SendProxyOptions(int fd)
   // value and ignore the second.
   //
 
-  sprintf(options, "NXPROXY-1.5.0-%i.%i.%i", control -> LocalVersionMajor,
-              control -> LocalVersionMinor, control -> LocalVersionPatch);
+  sprintf(options, "NXPROXY-%s-%i.%i.%i",
+              control -> NXPROXY_COMPATIBILITY_VERSION,
+                  control -> LocalVersionMajor,
+                      control -> LocalVersionMinor,
+                          control -> LocalVersionPatch);
 
   //
   // If you want to send options from proxy
@@ -7306,8 +7279,8 @@ int SendProxyOptions(int fd)
     // Add the 'strict' option, if needed.
     //
 
-    if (control -> isProtoStep7() == 1 &&
-            useStrict != -1)
+    // Since ProtoStep7 (#issue 108)
+    if (useStrict != -1)
     {
       sprintf(options + strlen(options), "strict=%d,", useStrict);
     }
@@ -7317,8 +7290,8 @@ int SendProxyOptions(int fd)
     // memory segment.
     //
 
-    if (control -> isProtoStep7() == 1 &&
-            *shsegSizeName != '\0')
+    // Since ProtoStep7 (#issue 108)
+    if (*shsegSizeName != '\0')
     {
       sprintf(options + strlen(options), "shseg=%s,", shsegSizeName);
     }
@@ -12064,9 +12037,12 @@ int SetSession()
     // to the agent.
     //
 
-    if (*sessionType != '\0' &&
-            (control -> isProtoStep8() == 1 ||
-                strncmp(sessionType, "unix-", strlen("unix-")) != 0))
+    //
+    // Since ProtoStep8 (#issue 108) and also
+    // with older "unix-" sessions
+    //
+
+    if (*sessionType != '\0')
     {
       #ifdef WARNING
       *logofs << "Loop: WARNING! Unrecognized session type '"
@@ -12599,36 +12575,17 @@ int SetVersion()
   }
 
   //
-  // Handle the 1.5.0 versions. The protocol
-  // step 6 is the minimum supported version.
+  // Handle versions from 3.5.0. The protocol
+  // step 10 is the minimum supported version.
   //
 
   int step = 0;
 
-  if (major == 1)
+  if (major == 3)
   {
-    if (minor == 5)
-    {
-      step = 6;
-    }
-  }
-  else if (major == 2)
-  {
-    step = 7;
-  }
-  else if (major == 3)
-  {
-    if (minor >= 2)
+    if (minor >= 5)
     {
       step = 10;
-    }
-    else if (minor > 0 || patch > 0)
-    {
-      step = 9;
-    }
-    else
-    {
-      step = 8;
     }
   }
   else if (major > 3)
@@ -12638,6 +12595,16 @@ int SetVersion()
 
   if (step == 0)
   {
+    #ifdef PANIC
+    *logofs << "Loop: PANIC! Unable to set the protocol step value from "
+         << "the negotiated protocol version " << major << "." << minor
+         << "." << patch << ".\n" << logofs_flush;
+    #endif
+
+    cerr << "Error" << ": Unable to set the protocol step value from "
+         << "the negotiated protocol version " << major << "." << minor
+         << "." << patch << ".\n";
+
     #ifdef PANIC
     *logofs << "Loop: PANIC! Incompatible remote version "
             << control -> RemoteVersionMajor << "." << control -> RemoteVersionMinor
@@ -12702,97 +12669,21 @@ int SetVersion()
 
   if (control -> ProxyMode == proxy_client)
   {
-    if (control -> isProtoStep8() == 0)
-    {
-      if (strncmp(sessionType, "shadow", strlen("shadow")) == 0 ||
-              strncmp(sessionType, "application", strlen("application")) == 0 ||
-                  strncmp(sessionType, "console", strlen("console")) == 0 ||
-                      strncmp(sessionType, "default", strlen("default")) == 0 ||
-                          strncmp(sessionType, "gnome", strlen("gnome")) == 0 ||
-                              strncmp(sessionType, "kde", strlen("kde")) == 0 ||
-                                  strncmp(sessionType, "cde", strlen("cde")) == 0 ||
-                                      strncmp(sessionType, "xdm", strlen("xdm")) == 0)
-
-      {
-        #if defined(TEST) || defined(INFO)
-        *logofs << "Loop: WARNING! Prepending 'unix-' to the "
-                << "name of the session.\n" << logofs_flush;
-        #endif
-
-        char buffer[DEFAULT_STRING_LENGTH];
-
-        snprintf(buffer, DEFAULT_STRING_LENGTH - 1, "unix-%s", sessionType);
-
-        strcpy(sessionType, buffer);
-      }
-    }
-
     //
-    // Check if the remote is able to handle
-    // the selected pack method.
+    // Since ProtoStep8 (#issue 108)
+    //
+    // Now it's assumed that the remote is
+    // able to handle the selected pack
+    // method
     //
 
-    if (control -> isProtoStep8() == 0)
-    {
-      if (packMethod == PACK_ADAPTIVE || packMethod == PACK_LOSSY)
-      {
-        #ifdef TEST
-        *logofs << "Loop: WARNING! Assuming a lossy encoding with "
-                << "an old proxy version.\n" << logofs_flush;
-        #endif
-
-        packMethod = PACK_JPEG_16M_COLORS;
-      }
-      else if (packMethod == PACK_LOSSLESS)
-      {
-        #ifdef TEST
-        *logofs << "Loop: WARNING! Assuming a lossless encoding with "
-                << "an old proxy version.\n" << logofs_flush;
-        #endif
-
-        if (control -> isProtoStep7() == 1)
-        {
-          packMethod = PACK_RLE_16M_COLORS;
-        }
-        else
-        {
-          packMethod = PACK_PNG_16M_COLORS;
-        }
-      }
-    }
-
-    //
-    // If the remote doesn't support the
-    // selected method use something that
-    // is compatible.
-    //
-
-    if ((packMethod == PACK_RGB_16M_COLORS ||
-            packMethod == PACK_RLE_16M_COLORS ||
-                packMethod == PACK_BITMAP_16M_COLORS) &&
-                    control -> isProtoStep7() == 0)
-    {
-      #ifdef TEST
-      *logofs << "Loop: WARNING! Setting the pack method to '"
-              << PACK_PNG_16M_COLORS << "' with '" << packMethod
-              << "' unsupported.\n" << logofs_flush;
-      #endif
-
-      packMethod  = PACK_PNG_16M_COLORS;
-      packQuality = 9;
-    }
-    else if (packMethod == PACK_BITMAP_16M_COLORS &&
-                 control -> isProtoStep8() == 0)
-    {
-      #ifdef TEST
-      *logofs << "Loop: WARNING! Setting the pack method to '"
-              << PACK_RLE_16M_COLORS << "' with '" << packMethod
-              << "' unsupported.\n" << logofs_flush;
-      #endif
-
-      packMethod  = PACK_RLE_16M_COLORS;
-      packQuality = 9;
-    }
+    #ifdef TEST
+    *logofs << __FILE__ << " : " << __LINE__ << " - "
+            << "step = " << control -> getProtoStep()
+            << " packMethod = " << packMethod
+            << " packQuality = " << packQuality
+            << ".\n"  << logofs_flush;
+    #endif
 
     //
     // Update the pack method name.
@@ -12803,29 +12694,32 @@ int SetVersion()
 
   //
   // At the moment the image cache is not used by the
-  // agent but we need to take care of the compatibi-
-  // lity with old versions. Proxy versions older than
-  // the 3.0.0 assume that it is enabled and will send
-  // specific bits as part of the encoding. Conversely,
-  // it is advisable to disable the cache right now.
-  // By not enabling the image cache, the house-keep-
-  // ing process will only take care of cleaning up
-  // the "cache-" directories.
+  // agent. Proxy versions older than 3.0.0 assumed
+  // that it was enabled and sent specific bits as part
+  // of the encoding. Conversely, it is advisable to
+  // disable the cache right now. By not enabling the
+  // the image cache, the house-keeping process will
+  // only take care of cleaning up the "cache-" direc-
+  // tories.
   //
 
-  if (control -> isProtoStep8() == 1)
-  {
-    #ifdef TEST
-    *logofs << "Loop: Disabling image cache with protocol "
-            << "step '" << control -> getProtoStep()
-            << "'.\n"  << logofs_flush;
-    #endif
+  //
+  // Considering that compatibility with older versions
+  // has been set to cover as far as 3.5.0, the cache can
+  // be disabled at this point without any concern
+  //
 
-    sprintf(imagesSizeName, "0");
+  // Since ProtoStep8 (#issue 108)
+  #ifdef TEST
+  *logofs << "Loop: Disabling image cache with protocol "
+          << "step '" << control -> getProtoStep()
+          << "'.\n"  << logofs_flush;
+  #endif
 
-    control -> ImageCacheEnableLoad = 0;
-    control -> ImageCacheEnableSave = 0;
-  }
+  sprintf(imagesSizeName, "0");
+
+  control -> ImageCacheEnableLoad = 0;
+  control -> ImageCacheEnableSave = 0;
 
   return 1;
 }
@@ -15805,22 +15699,14 @@ static void handleAlertInLoop()
     return;
   }
 
-  if (lastAlert.local == 0 &&
-          (lastAlert.code > LAST_PROTO_STEP_6_ALERT &&
-               control -> isProtoStep7() == 0))
-  {
-    //
-    // The remote proxy would be unable
-    // to handle the alert.
-    //
+  //
+  // Since ProtoStep7 (#issue 108)
+  //
+  // Now the remote proxy should always
+  // be able to handle the alert
+  //
 
-    #ifdef WARNING
-    *logofs << "Loop: WARNING! Ignoring unsupported alert "
-            << "with code '" << lastAlert.code << "'.\n"
-            << logofs_flush;
-    #endif
-  }
-  else if (lastAlert.local == 0)
+  if (lastAlert.local == 0)
   {
     if (proxy != NULL)
     {

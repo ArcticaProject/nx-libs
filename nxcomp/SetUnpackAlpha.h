@@ -36,18 +36,14 @@
 
 #define SETUNPACKALPHA_ENABLE_CACHE                       1
 #define SETUNPACKALPHA_ENABLE_DATA                        1
-#define SETUNPACKALPHA_ENABLE_SPLIT                       0
-#define SETUNPACKALPHA_ENABLE_COMPRESS                    1
 
 #define SETUNPACKALPHA_DATA_LIMIT                         16384
-#define SETUNPACKALPHA_DATA_OFFSET                        8
 
 #define SETUNPACKALPHA_CACHE_SLOTS                        2000
 #define SETUNPACKALPHA_CACHE_THRESHOLD                    10
 #define SETUNPACKALPHA_CACHE_LOWER_THRESHOLD              5
 
 #define SETUNPACKALPHA_DATA_OFFSET_IF_PROTO_STEP_7        16
-#define SETUNPACKALPHA_ENABLE_SPLIT_IF_PROTO_STEP_7       1
 #define SETUNPACKALPHA_ENABLE_COMPRESS_IF_PROTO_STEP_7    0
 
 #define SETUNPACKALPHA_ENABLE_SPLIT_IF_PROTO_STEP_8       0

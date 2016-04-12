@@ -36,8 +36,6 @@
 
 #define PUTIMAGE_ENABLE_CACHE                            1
 #define PUTIMAGE_ENABLE_DATA                             1
-#define PUTIMAGE_ENABLE_SPLIT                            1
-#define PUTIMAGE_ENABLE_COMPRESS                         1
 
 #define PUTIMAGE_DATA_LIMIT                              262144 - 24
 #define PUTIMAGE_DATA_OFFSET                             24

@@ -80,9 +80,8 @@ class MESSAGE_STORE : public MESSAGE_CLASS
   virtual int identitySize(const unsigned char *buffer,
                                unsigned int size)
   {
-    unsigned int offset = (control -> isProtoStep8() == 1 ?
-                               MESSAGE_OFFSET_IF_PROTO_STEP_8 :
-                                   MESSAGE_OFFSET);
+    // Since ProtoStep8 (#issue 108)
+    unsigned int offset = MESSAGE_OFFSET_IF_PROTO_STEP_8;
 
     return (size >= offset ? offset : size);
   }

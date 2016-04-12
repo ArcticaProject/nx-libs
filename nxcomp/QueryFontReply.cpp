@@ -39,12 +39,9 @@ QueryFontReplyStore::QueryFontReplyStore(StaticCompressor *compressor)
   enableCache    = QUERYFONTREPLY_ENABLE_CACHE;
   enableData     = QUERYFONTREPLY_ENABLE_DATA;
   enableSplit    = QUERYFONTREPLY_ENABLE_SPLIT;
-  enableCompress = QUERYFONTREPLY_ENABLE_COMPRESS;
 
-  if (control -> isProtoStep7() == 1)
-  {
-    enableCompress = QUERYFONTREPLY_ENABLE_COMPRESS_IF_PROTO_STEP_7;
-  }
+  // Since ProtoStep7 (#issue 108)
+  enableCompress = QUERYFONTREPLY_ENABLE_COMPRESS_IF_PROTO_STEP_7;
 
   dataLimit  = QUERYFONTREPLY_DATA_LIMIT;
   dataOffset = QUERYFONTREPLY_DATA_OFFSET;

@@ -261,47 +261,14 @@ void EncodeBuffer::encodeCachedValue(unsigned int value, unsigned int numBits,
     // Avoid to encode the additional bool.
     //
 
-    if (control -> isProtoStep8() == 1)
-    {
-      #ifdef DUMP
-      *logofs << "EncodeBuffer: Encoded missed int using "
-              << diffBits() << " bits out of " << numBits
-              << ".\n" << logofs_flush;
-      #endif
+    // Since ProtoStep8 (#issue 108)
+    #ifdef DUMP
+    *logofs << "EncodeBuffer: Encoded missed int using "
+            << diffBits() << " bits out of " << numBits
+            << ".\n" << logofs_flush;
+    #endif
 
-      encodeValue(value, numBits, blockSize);
-    }
-    else
-    {
-      if (sameDiff)
-      {
-        #ifdef DUMP
-        *logofs << "EncodeBuffer: Matched difference with block size "
-                << cache.getBlockSize(blockSize) << ".\n"
-                << logofs_flush;
-        #endif
-
-        encodeBoolValue(1);
-      }
-      else
-      {
-        #ifdef DUMP
-        *logofs << "EncodeBuffer: Missed difference with block size "
-                << cache.getBlockSize(blockSize) << ".\n"
-                << logofs_flush;
-        #endif
-
-        encodeBoolValue(0);
-
-        encodeValue(value, numBits, blockSize);
-      }
-
-      #ifdef DUMP
-      *logofs << "EncodeBuffer: Encoded missed int using "
-              << diffBits() << " bits out of " << numBits
-              << ".\n" << logofs_flush;
-      #endif
-    }
+    encodeValue(value, numBits, blockSize);
   }
 }
 
@@ -454,7 +421,8 @@ unsigned int EncodeBuffer::getLength() const
     length++;
   }
 
-  if (length > 0 && control -> isProtoStep7() == 1)
+  // Since ProtoStep7 (#issue 108)
+  if (length > 0)
   {
     return length + ENCODE_BUFFER_POSTFIX_SIZE;
   }
@@ -640,21 +608,4 @@ void EncodeBuffer::encodeXidValue(unsigned int value, XidCache &cache)
 void EncodeBuffer::encodeFreeXidValue(unsigned int value, FreeCache &cache)
 {
   encodeCachedValue(value, 29, cache);
-}
-
-void EncodeBuffer::encodePositionValueCompat(short int value, PositionCacheCompat &cache)
-{
-  unsigned int t = (value - cache.last_);
-
-  encodeCachedValue(t, 13, *(cache.base_[cache.slot_]));
-
-  cache.last_ = value;
-
-  #ifdef DEBUG
-  *logofs << "EncodeBuffer: Encoded position "
-          << value << " with base " << cache.slot_
-          << ".\n" << logofs_flush;
-  #endif
-
-  cache.slot_ = (value & 0x1f);
 }

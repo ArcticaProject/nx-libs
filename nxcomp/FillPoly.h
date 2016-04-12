@@ -40,7 +40,6 @@
 #define FILLPOLY_ENABLE_COMPRESS            0
 
 #define FILLPOLY_DATA_LIMIT                 512
-#define FILLPOLY_DATA_OFFSET                16
 
 #define FILLPOLY_CACHE_SLOTS                2000
 #define FILLPOLY_CACHE_THRESHOLD            3
@@ -98,12 +97,9 @@ class FillPolyStore : public MessageStore
     enableCompress = FILLPOLY_ENABLE_COMPRESS;
 
     dataLimit  = FILLPOLY_DATA_LIMIT;
-    dataOffset = FILLPOLY_DATA_OFFSET;
 
-    if (control -> isProtoStep8() == 1)
-    {
-      dataOffset = FILLPOLY_DATA_OFFSET_IF_PROTO_STEP_8;
-    }
+    // Since ProtoStep8 (#issue 108)
+    dataOffset = FILLPOLY_DATA_OFFSET_IF_PROTO_STEP_8;
 
     cacheSlots          = FILLPOLY_CACHE_SLOTS;
     cacheThreshold      = FILLPOLY_CACHE_THRESHOLD;
@@ -169,11 +165,9 @@ class FillPolyStore : public MessageStore
 
   virtual int identitySize(const unsigned char *buffer, unsigned int size)
   {
-    unsigned int offset = (control -> isProtoStep8() == 1 ?
-                               FILLPOLY_DATA_OFFSET_IF_PROTO_STEP_8 :
-                                   FILLPOLY_DATA_OFFSET);
-
-    return (size >= offset ? offset : size);
+    // Since ProtoStep8 (#issue 108)
+    return (size >= FILLPOLY_DATA_OFFSET_IF_PROTO_STEP_8 ?
+                        FILLPOLY_DATA_OFFSET_IF_PROTO_STEP_8 : size);
   }
 
   virtual int parseIdentity(Message *message, const unsigned char *buffer,

@@ -27,9 +27,6 @@
 #include "OpcodeCache.h"
 #include "ActionCache.h"
 
-#include "ActionCacheCompat.h"
-#include "PositionCacheCompat.h"
-
 #define DECODE_BUFFER_OVERFLOW_SIZE        4194304
 
 #define DECODE_BUFFER_POSTFIX_SIZE         1
@@ -98,15 +95,6 @@ class DecodeBuffer
   void decodeXidValue(unsigned int &value, XidCache &cache);
 
   void decodeFreeXidValue(unsigned int &value, FreeCache &cache);
-
-  void decodeActionValueCompat(unsigned char &value, ActionCacheCompat &cache)
-  {
-    decodeCachedValue(value, 2, cache.base_[cache.slot_]);
-
-    cache.slot_ = value;
-  }
-
-  void decodePositionValueCompat(short int &value, PositionCacheCompat &cache);
 
   void decodeTextData(unsigned char *buffer, unsigned int numBytes)
   {

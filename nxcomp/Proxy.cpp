@@ -244,22 +244,6 @@ Proxy::Proxy(int fd)
   clientStore_ = new ClientStore(compressor_);
   serverStore_ = new ServerStore(compressor_);
 
-  //
-  // Older proxies will refuse to store
-  // messages bigger than 262144 bytes.
-  //
-
-  if (control -> isProtoStep7() == 0)
-  {
-    #ifdef TEST
-    *logofs << "Proxy: WARNING! Limiting the maximum "
-            << "message size to " << 262144 << ".\n"
-            << logofs_flush;
-    #endif
-
-    control -> MaximumMessageSize = 262144;
-  }
-
   clientCache_ = new ClientCache();
   serverCache_ = new ServerCache();
 
@@ -3049,30 +3033,18 @@ int Proxy::handleCloseAllXConnections()
 
 int Proxy::handleCloseAllListeners()
 {
-  if (control -> isProtoStep7() == 1)
-  {
-    if (finish_ == 0)
-    {
-      #ifdef TEST
-      *logofs << "Proxy: Closing down all remote listeners.\n"
-              << logofs_flush;
-      #endif
-
-      if (handleControl(code_finish_listeners) < 0)
-      {
-        return -1;
-      }
-
-      finish_ = 1;
-    }
-  }
-  else
+  // Since ProtoStep7 (#issue 108)
+  if (finish_ == 0)
   {
     #ifdef TEST
-    *logofs << "Proxy: WARNING! Not sending unsupported "
-            << "'code_finish_listeners' message.\n"
+    *logofs << "Proxy: Closing down all remote listeners.\n"
             << logofs_flush;
     #endif
+
+    if (handleControl(code_finish_listeners) < 0)
+    {
+      return -1;
+    }
 
     finish_ = 1;
   }
@@ -4546,15 +4518,8 @@ int Proxy::addTokenCodes(T_proxy_token &token)
 
   int count = 0;
 
-  if (control -> isProtoStep7() == 1)
-  {
-    count = token.bytes / token.size;
-
-    if (count > 255)
-    {
-      count = 255;
-    }
-  }
+  // Since ProtoStep7 (#issue 108)
+  count = token.bytes / token.size;
 
   //
   // Force a count of 1, for example
@@ -4569,6 +4534,12 @@ int Proxy::addTokenCodes(T_proxy_token &token)
   }
   else
   {
+    // Since ProtoStep7 (#issue 108)
+    if (count > 255)
+    {
+      count = 255;
+    }
+
     //
     // Let the next token account for the
     // remaining bytes.
@@ -4609,73 +4580,52 @@ int Proxy::handleToken(T_frame_type type)
 
   if (type == frame_data)
   {
-    if (control -> isProtoStep7() == 1)
+    //
+    // Since ProtoStep7 (#issue 108)
+    //
+
+    // Send a distinct token for each data type.
+    // We don't want to slow down the sending of
+    // the X events, X replies and split confir-
+    // mation events on the X server side, so
+    // take care only of the generic data token.
+    //
+
+    if (control -> ProxyMode == proxy_client)
     {
-      //
-      // Send a distinct token for each data type.
-      // We don't want to slow down the sending of
-      // the X events, X replies and split confir-
-      // mation events on the X server side, so
-      // take care only of the generic data token.
-      //
+      statistics -> updateControlToken(tokens_[token_control].bytes);
 
-      if (control -> ProxyMode == proxy_client)
+      if (tokens_[token_control].bytes > tokens_[token_control].size)
       {
-        statistics -> updateControlToken(tokens_[token_control].bytes);
-
-        if (tokens_[token_control].bytes > tokens_[token_control].size)
-        {
-          if (addTokenCodes(tokens_[token_control]) < 0)
-          {
-            return -1;
-          }
-
-          #if defined(TEST) || defined(INFO) || defined(TOKEN)
-
-          T_proxy_token &token = tokens_[token_control];
-
-          *logofs << "Proxy: TOKEN! Token class ["
-                  << DumpToken(token.type) << "] has now "
-                  << token.bytes << " bytes accumulated and "
-                  << token.remaining << " tokens remaining.\n"
-                  << logofs_flush;
-          #endif
-        }
-
-        statistics -> updateSplitToken(tokens_[token_split].bytes);
-
-        if (tokens_[token_split].bytes > tokens_[token_split].size)
-        {
-          if (addTokenCodes(tokens_[token_split]) < 0)
-          {
-            return -1;
-          }
-
-          #if defined(TEST) || defined(INFO) || defined(TOKEN)
-
-          T_proxy_token &token = tokens_[token_split];
-
-          *logofs << "Proxy: TOKEN! Token class ["
-                  << DumpToken(token.type) << "] has now "
-                  << token.bytes << " bytes accumulated and "
-                  << token.remaining << " tokens remaining.\n"
-                  << logofs_flush;
-          #endif
-        }
-      }
-
-      statistics -> updateDataToken(tokens_[token_data].bytes);
-
-      if (tokens_[token_data].bytes > tokens_[token_data].size)
-      {
-        if (addTokenCodes(tokens_[token_data]) < 0)
+        if (addTokenCodes(tokens_[token_control]) < 0)
         {
           return -1;
         }
 
         #if defined(TEST) || defined(INFO) || defined(TOKEN)
 
-        T_proxy_token &token = tokens_[token_data];
+        T_proxy_token &token = tokens_[token_control];
+
+        *logofs << "Proxy: TOKEN! Token class ["
+                << DumpToken(token.type) << "] has now "
+                << token.bytes << " bytes accumulated and "
+                << token.remaining << " tokens remaining.\n"
+                << logofs_flush;
+        #endif
+      }
+
+      statistics -> updateSplitToken(tokens_[token_split].bytes);
+
+      if (tokens_[token_split].bytes > tokens_[token_split].size)
+      {
+        if (addTokenCodes(tokens_[token_split]) < 0)
+        {
+          return -1;
+        }
+
+        #if defined(TEST) || defined(INFO) || defined(TOKEN)
+
+        T_proxy_token &token = tokens_[token_split];
 
         *logofs << "Proxy: TOKEN! Token class ["
                 << DumpToken(token.type) << "] has now "
@@ -4685,37 +4635,26 @@ int Proxy::handleToken(T_frame_type type)
         #endif
       }
     }
-    else
+
+    statistics -> updateDataToken(tokens_[token_data].bytes);
+
+    if (tokens_[token_data].bytes > tokens_[token_data].size)
     {
-      //
-      // Sum everything to the control token.
-      //
-
-      if (control -> ProxyMode == proxy_client)
+      if (addTokenCodes(tokens_[token_data]) < 0)
       {
-        statistics -> updateControlToken(tokens_[token_control].bytes);
-        statistics -> updateSplitToken(tokens_[token_control].bytes);
-        statistics -> updateDataToken(tokens_[token_control].bytes);
-
-        if (tokens_[token_control].bytes > tokens_[token_control].size)
-        {
-          if (addTokenCodes(tokens_[token_control]) < 0)
-          {
-            return -1;
-          }
-
-          #if defined(TEST) || defined(INFO) || defined(TOKEN)
-
-          T_proxy_token &token = tokens_[token_control];
-
-          *logofs << "Proxy: TOKEN! Token class ["
-                  << DumpToken(token.type) << "] has now "
-                  << token.bytes << " bytes accumulated and "
-                  << token.remaining << " tokens remaining.\n"
-                  << logofs_flush;
-          #endif
-        }
+        return -1;
       }
+
+      #if defined(TEST) || defined(INFO) || defined(TOKEN)
+
+      T_proxy_token &token = tokens_[token_data];
+
+      *logofs << "Proxy: TOKEN! Token class ["
+              << DumpToken(token.type) << "] has now "
+              << token.bytes << " bytes accumulated and "
+              << token.remaining << " tokens remaining.\n"
+              << logofs_flush;
+      #endif
     }
   }
   else
@@ -4777,21 +4716,10 @@ int Proxy::handleTokenFromProxy(T_proxy_token &token, int count)
           << count << ".\n" << logofs_flush;
   #endif
 
-  if (control -> isProtoStep7() == 0)
-  {
-    if (control -> ProxyMode == proxy_client ||
-            token.request != code_control_token_request)
-    {
-      #ifdef PANIC
-      *logofs << "Proxy: PANIC! Invalid token request received from remote.\n"
-              << logofs_flush;
-      #endif
-
-      cerr << "Error" << ": Invalid token request received from remote.\n";
-
-      HandleCleanup();
-    }
-  }
+  //
+  // Since ProtoStep7 (#issue 108) with no limitations
+  // concerning invalid token requests at this point
+  //
 
   //
   // Add our token reply.
@@ -4815,25 +4743,13 @@ int Proxy::handleTokenReplyFromProxy(T_proxy_token &token, int count)
   #endif
 
   //
-  // Increment the available tokens.
+  // Since ProtoStep7 (#issue 108) with no limitations
+  // concerning invalid token requests at this point
   //
 
-  if (control -> isProtoStep7() == 0)
-  {
-    if (token.reply != code_control_token_reply)
-    {
-      #ifdef PANIC
-      *logofs << "Proxy: PANIC! Invalid token reply received from remote.\n"
-              << logofs_flush;
-      #endif
-
-      cerr << "Error" << ": Invalid token reply received from remote.\n";
-
-      HandleCleanup();
-    }
-
-    count = 1;
-  }
+  //
+  // Increment the available tokens.
+  //
 
   token.remaining += count;
 
@@ -4924,24 +4840,10 @@ void Proxy::handleFailOnLoad(const char *fullName, const char *failContext) cons
 int Proxy::handleSaveVersion(unsigned char *buffer, int &major,
                                  int &minor, int &patch) const
 {
-  if (control -> isProtoStep8() == 1)
-  {
-    major = 3;
-    minor = 0;
-    patch = 0;
-  }
-  else if (control -> isProtoStep7() == 1)
-  {
-    major = 2;
-    minor = 0;
-    patch = 0;
-  }
-  else
-  {
-    major = 1;
-    minor = 4;
-    patch = 0;
-  }
+  // Since ProtoStep8 (#issue 108)
+  major = 3;
+  minor = 0;
+  patch = 0;
 
   *(buffer + 0) = major;
   *(buffer + 1) = minor;
@@ -4964,26 +4866,10 @@ int Proxy::handleLoadVersion(const unsigned char *buffer, int &major,
   // incompatible caches.
   // 
 
-  if (control -> isProtoStep8() == 1)
+  // Since ProtoStep8 (#issue 108)
+  if (major < 3)
   {
-    if (major < 3)
-    {
-      return -1;
-    }
-  }
-  else if (control -> isProtoStep7() == 1)
-  {
-    if (major < 2)
-    {
-      return -1;
-    }
-  }
-  else
-  {
-    if (major != 1 && minor != 4)
-    {
-      return -1;
-    }
+    return -1;
   }
 
   return 1;
@@ -6109,20 +5995,8 @@ int Proxy::handleNewGenericConnection(int clientFd, T_channel_type type, const c
 
 int Proxy::handleNewSlaveConnection(int clientFd)
 {
-  if (control -> isProtoStep7() == 1)
-  {
-    return handleNewGenericConnection(clientFd, channel_slave, "slave");
-  }
-  else
-  {
-    #ifdef TEST
-    *logofs << "Proxy: WARNING! Not sending unsupported "
-            << "'code_new_slave_connection' message.\n"
-            << logofs_flush;
-    #endif
-
-    return -1;
-  }
+  // Since ProtoStep7 (#issue 108)
+  return handleNewGenericConnection(clientFd, channel_slave, "slave");
 }
 
 int Proxy::handleNewGenericConnectionFromProxy(int channelId, T_channel_type type,

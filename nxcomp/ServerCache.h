@@ -215,7 +215,6 @@ class ServerCache : public ChannelCache
 
   CharCache getPropertyFormatCache;
   IntCache getPropertyTypeCache;
-  TextCompressor getPropertyTextCompressor;
   static BlockCache xResources;
 
   //
@@ -271,13 +270,6 @@ class ServerCache : public ChannelCache
   //
 
   IntCache queryTreeWindowCache;
-
-  //
-  // GetAtomName reply in protocol
-  // versions >= 3.
-  //
-
-  TextCompressor getAtomNameTextCompressor;
 
   //
   // Generic reply. Use short data

@@ -37,7 +37,6 @@
 #define LISTFONTSREPLY_ENABLE_CACHE                       1
 #define LISTFONTSREPLY_ENABLE_DATA                        1
 #define LISTFONTSREPLY_ENABLE_SPLIT                       0
-#define LISTFONTSREPLY_ENABLE_COMPRESS                    1
 
 #define LISTFONTSREPLY_DATA_LIMIT                         1048576 - 32
 #define LISTFONTSREPLY_DATA_OFFSET                        32

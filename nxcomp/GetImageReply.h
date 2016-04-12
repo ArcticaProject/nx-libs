@@ -37,7 +37,6 @@
 #define GETIMAGEREPLY_ENABLE_CACHE                       1
 #define GETIMAGEREPLY_ENABLE_DATA                        1
 #define GETIMAGEREPLY_ENABLE_SPLIT                       0
-#define GETIMAGEREPLY_ENABLE_COMPRESS                    1
 
 #define GETIMAGEREPLY_DATA_LIMIT                         1048576 - 32
 #define GETIMAGEREPLY_DATA_OFFSET                        32

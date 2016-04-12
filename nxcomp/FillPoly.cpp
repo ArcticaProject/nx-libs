@@ -51,8 +51,8 @@ int FillPolyStore::parseIdentity(Message *message, const unsigned char *buffer,
   fillPoly -> shape = *(buffer + 12);
   fillPoly -> mode  = *(buffer + 13);
 
-  if (control -> isProtoStep8() == 1 &&
-          size >= (unsigned int) dataOffset)
+  // Since ProtoStep8 (#issue 108)
+  if (size >= (unsigned int) dataOffset)
   {
     fillPoly -> x_origin = GetUINT(buffer + 16, bigEndian);
     fillPoly -> y_origin = GetUINT(buffer + 18, bigEndian);
@@ -85,8 +85,8 @@ int FillPolyStore::unparseIdentity(const Message *message, unsigned char *buffer
   *(buffer + 12) = fillPoly -> shape;
   *(buffer + 13) = fillPoly -> mode;
 
-  if (control -> isProtoStep8() == 1 &&
-          size >= (unsigned int) dataOffset)
+  // Since ProtoStep8 (#issue 108)
+  if (size >= (unsigned int) dataOffset)
   {
     PutUINT(fillPoly -> x_origin, buffer + 16, bigEndian);
     PutUINT(fillPoly -> y_origin, buffer + 18, bigEndian);
@@ -151,8 +151,8 @@ void FillPolyStore::updateIdentity(EncodeBuffer &encodeBuffer, const Message *me
 
   cachedFillPoly -> gcontext = fillPoly -> gcontext;
 
-  if (control -> isProtoStep8() == 1 &&
-          fillPoly -> size_ >= dataOffset)
+  // Since ProtoStep8 (#issue 108)
+  if (fillPoly -> size_ >= dataOffset)
   {
     #ifdef TEST
     *logofs << name() << ": Encoding value " << fillPoly -> x_origin
@@ -197,8 +197,8 @@ void FillPolyStore::updateIdentity(DecodeBuffer &decodeBuffer, const Message *me
           << " as gcontext field.\n" << logofs_flush;
   #endif
 
-  if (control -> isProtoStep8() == 1 &&
-          fillPoly -> size_ >= dataOffset)
+  // Since ProtoStep8 (#issue 108)
+  if (fillPoly -> size_ >= dataOffset)
   {
     unsigned int value;
 

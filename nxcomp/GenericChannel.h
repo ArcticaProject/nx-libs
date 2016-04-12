@@ -209,11 +209,7 @@ class CupsChannel : public GenericChannel
 
   virtual int isCompressed()
   {
-    if (control -> isProtoStep8() == 0)
-    {
-      return 1;
-    }
-
+    // Since ProtoStep8 (#issue 108)
     return 0;
   }
 
@@ -252,11 +248,7 @@ class SmbChannel : public GenericChannel
 
   virtual int isCompressed()
   {
-    if (control -> isProtoStep8() == 0)
-    {
-      return 1;
-    }
-
+    // Since ProtoStep8 (#issue 108)
     return 0;
   }
 
@@ -344,11 +336,7 @@ class HttpChannel : public GenericChannel
 
   virtual int isCompressed()
   {
-    if (control -> isProtoStep8() == 0)
-    {
-      return 1;
-    }
-
+    // Since ProtoStep8 (#issue 108)
     return 0;
   }
 
@@ -387,11 +375,7 @@ class FontChannel : public GenericChannel
 
   virtual int isCompressed()
   {
-    if (control -> isProtoStep8() == 0)
-    {
-      return 1;
-    }
-
+    // Since ProtoStep8 (#issue 108)
     return 0;
   }
 
