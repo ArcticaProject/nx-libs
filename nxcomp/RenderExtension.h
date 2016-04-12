@@ -82,13 +82,6 @@ class RenderExtensionMessage : public Message
   friend class RenderTrapezoidsStore;
   friend class RenderTrianglesStore;
 
-  friend class RenderCreatePictureCompatStore;
-  friend class RenderFreePictureCompatStore;
-  friend class RenderPictureClipCompatStore;
-  friend class RenderCreateGlyphSetCompatStore;
-  friend class RenderCompositeCompatStore;
-  friend class RenderCompositeGlyphsCompatStore;
-
   public:
 
   RenderExtensionMessage()
