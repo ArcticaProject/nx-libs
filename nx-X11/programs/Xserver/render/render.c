@@ -275,6 +275,7 @@ RenderResetProc (ExtensionEntry *extEntry)
     ResetGlyphSetPrivateIndex();
 }
 
+#ifndef NXAGENT_SERVER
 static int
 ProcRenderQueryVersion (ClientPtr client)
 {
@@ -303,6 +304,7 @@ ProcRenderQueryVersion (ClientPtr client)
     WriteToClient(client, sizeof(xRenderQueryVersionReply), (char *)&rep);
     return (client->noClientException);
 }
+#endif /* NXAGENT_SERVER */
 
 #if 0
 static int
@@ -341,6 +343,7 @@ findVisual (ScreenPtr pScreen, VisualID vid)
 
 extern char *ConnectionInfo;
 
+#ifndef NXAGENT_SERVER
 static int
 ProcRenderQueryPictFormats (ClientPtr client)
 {
@@ -550,6 +553,7 @@ ProcRenderQueryPictFormats (ClientPtr client)
     xfree (reply);
     return client->noClientException;
 }
+#endif /* NXAGENT_SERVER */
 
 static int
 ProcRenderQueryPictIndexValues (ClientPtr client)
@@ -621,6 +625,7 @@ ProcRenderQueryDithers (ClientPtr client)
     return BadImplementation;
 }
 
+#ifndef NXAGENT_SERVER
 static int
 ProcRenderCreatePicture (ClientPtr client)
 {
@@ -710,6 +715,7 @@ ProcRenderSetPictureClipRectangles (ClientPtr client)
     else
         return(result);
 }
+#endif /* NXAGENT_SERVER */
 
 static int
 ProcRenderFreePicture (ClientPtr client)
@@ -737,6 +743,7 @@ PictOpValid (CARD8 op)
     return FALSE;
 }
 
+#ifndef NXAGENT_SERVER
 static int
 ProcRenderComposite (ClientPtr client)
 {
@@ -774,6 +781,7 @@ ProcRenderComposite (ClientPtr client)
 		      stuff->height);
     return Success;
 }
+#endif /* NXAGENT_SERVER */
 
 static int
 ProcRenderScale (ClientPtr client)
@@ -781,6 +789,7 @@ ProcRenderScale (ClientPtr client)
     return BadImplementation;
 }
 
+#ifndef NXAGENT_SERVER
 static int
 ProcRenderTrapezoids (ClientPtr client)
 {
@@ -827,6 +836,7 @@ ProcRenderTrapezoids (ClientPtr client)
 			     ntraps, (xTrapezoid *) &stuff[1]);
     return client->noClientException;
 }
+#endif /* NXAGENT_SERVER */
 
 static int
 ProcRenderTriangles (ClientPtr client)
@@ -987,6 +997,7 @@ ProcRenderTransform (ClientPtr client)
     return BadImplementation;
 }
 
+#ifndef NXAGENT_SERVER
 static int
 ProcRenderCreateGlyphSet (ClientPtr client)
 {
@@ -1060,10 +1071,12 @@ ProcRenderReferenceGlyphSet (ClientPtr client)
 	return BadAlloc;
     return client->noClientException;
 }
+#endif /* NXAGENT_SERVER */
 
 #define NLOCALDELTA	64
 #define NLOCALGLYPH	256
 
+#ifndef NXAGENT_SERVER
 static int
 ProcRenderFreeGlyphSet (ClientPtr client)
 {
@@ -1083,6 +1096,7 @@ ProcRenderFreeGlyphSet (ClientPtr client)
     FreeResource (stuff->glyphset, RT_NONE);
     return client->noClientException;
 }
+#endif /* NXAGENT_SERVER */
 
 typedef struct _GlyphNew {
     Glyph	id;
@@ -1096,7 +1110,7 @@ ProcRenderAddGlyphs (ClientPtr client)
     REQUEST(xRenderAddGlyphsReq);
     GlyphNewRec	    glyphsLocal[NLOCALGLYPH];
     GlyphNewPtr	    glyphsBase, glyphs;
-    GlyphPtr	    glyph;
+    GlyphPtr	    glyph = NULL;
     int		    remain, nglyphs;
     CARD32	    *gids;
     xGlyphInfo	    *gi;
@@ -1199,6 +1213,7 @@ ProcRenderAddGlyphsFromPicture (ClientPtr client)
     return BadImplementation;
 }
 
+#ifndef NXAGENT_SERVER
 static int
 ProcRenderFreeGlyphs (ClientPtr client)
 {
@@ -1454,6 +1469,7 @@ ProcRenderFillRectangles (ClientPtr client)
     
     return client->noClientException;
 }
+#endif /* NXAGENT_SERVER */
 
 static void
 SetBit (unsigned char *line, int x, int bit)
@@ -1481,6 +1497,7 @@ static CARD32 orderedDither[DITHER_DIM][DITHER_DIM] = {
 
 #define DITHER_SIZE  ((sizeof orderedDither / sizeof orderedDither[0][0]) + 1)
 
+#ifndef NXAGENT_SERVER
 static int
 ProcRenderCreateCursor (ClientPtr client)
 {
@@ -1694,6 +1711,7 @@ ProcRenderSetPictureTransform (ClientPtr client)
     else
         return(result);
 }
+#endif /* NXAGENT_SERVER */
 
 static int
 ProcRenderQueryFilters (ClientPtr client)
@@ -1804,6 +1822,7 @@ ProcRenderQueryFilters (ClientPtr client)
     return(client->noClientException);
 }
 
+#ifndef NXAGENT_SERVER
 static int
 ProcRenderSetPictureFilter (ClientPtr client)
 {
@@ -1868,6 +1887,7 @@ ProcRenderCreateAnimCursor (ClientPtr client)
 	return client->noClientException;
     return BadAlloc;
 }
+#endif /* NXAGENT_SERVER */
 
 static int
 ProcRenderAddTraps (ClientPtr client)
@@ -1892,6 +1912,7 @@ ProcRenderAddTraps (ClientPtr client)
     return client->noClientException;
 }
 
+#ifndef NXAGENT_SERVER
 static int ProcRenderCreateSolidFill(ClientPtr client)
 {
     PicturePtr	    pPicture;
@@ -2011,6 +2032,7 @@ ProcRenderDispatch (ClientPtr client)
     else
 	return BadRequest;
 }
+#endif /* NXAGENT_SERVER */
 
 static int
 SProcRenderQueryVersion (ClientPtr client)
@@ -2611,6 +2633,7 @@ SProcRenderCreateConicalGradient (ClientPtr client)
     return (*ProcRenderVector[stuff->renderReqType]) (client);
 }
 
+#ifndef NXAGENT_SERVER
 static int
 SProcRenderDispatch (ClientPtr client)
 {
@@ -2621,6 +2644,7 @@ SProcRenderDispatch (ClientPtr client)
     else
 	return BadRequest;
 }
+#endif /* NXAGENT_SERVER */
 
 #ifdef PANORAMIX
 #include "panoramiX.h"

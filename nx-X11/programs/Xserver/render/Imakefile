@@ -9,11 +9,13 @@ NXAGENT_SKIP_SRCS =             \
                     miglyph.c   \
                     mitrap.c    \
                     picture.c   \
+                    render.c    \
                     $(NULL)
 NXAGENT_SKIP_OBJS =             \
                     miglyph.o   \
                     mitrap.o    \
                     picture.o   \
+                    render.o    \
                     $(NULL)
 #else
           DEFINES = -DNXAGENT_SERVER
@@ -27,7 +29,6 @@ NXAGENT_SKIP_OBJS =             \
                 mipict.c \
                 mirect.c \
                 mitri.c \
-                render.c \
                 renderedge.c \
                 $(NXAGENT_SKIP_SRCS) \
                 $(NULL)
@@ -40,7 +41,6 @@ NXAGENT_SKIP_OBJS =             \
                 mipict.o \
                 mirect.o \
                 mitri.o \
-                render.o \
                 renderedge.o \
                 $(NXAGENT_SKIP_OBJS) \
                 $(NULL)
