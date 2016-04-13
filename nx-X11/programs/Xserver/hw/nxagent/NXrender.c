@@ -71,8 +71,8 @@
 #define UINT32_MAX 0xffffffffU
 #endif
 
-#include "NXpicturestr.h"
-#include "NXglyphstr.h"
+#include "picturestr.h"
+#include "glyphstr.h"
 
 #include "Trap.h"
 

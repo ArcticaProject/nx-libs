@@ -23,7 +23,7 @@
 #include "picture.h"
 #include "renderproto.h"
 
-#include "NXglyphstr.h"
+#include "glyphstr.h"
 
 #include "Agent.h"
 

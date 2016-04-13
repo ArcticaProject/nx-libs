@@ -60,8 +60,7 @@
 
 #ifdef NXAGENT_SERVER
 
-#include "NXpicturestr.h"
-#include "NXglyphstr.h"
+#include "picturestr.h"
 #include "Render.h"
 
 #define PANIC
@@ -72,9 +71,10 @@
 #else
 
 #include "picturestr.h"
-#include "glyphstr.h"
 
 #endif
+
+#include "glyphstr.h"
 
 #include <stdint.h>
 

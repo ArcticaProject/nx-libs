@@ -40,53 +40,10 @@
  * Author:  Keith Packard, SuSE, Inc.
  */
 
-/*
- * This must keep the same symbol as the original glyphstr.h
- * or symbols  will be redefined. The code here adds a field
- * to _GlyphSet. This should be done by defining a new type
- * and casting when appropriate.
- */
+/* this header file gets included into Xserver/render/glyphstr.h */
 
-#ifndef _GLYPHSTR_H_
-#define _GLYPHSTR_H_
-
-#include <nx-X11/extensions/renderproto.h>
-#include "../../render/picture.h"
-#include "screenint.h"
-
-#define GlyphFormat1	0
-#define GlyphFormat4	1
-#define GlyphFormat8	2
-#define GlyphFormat16	3
-#define GlyphFormat32	4
-#define GlyphFormatNum	5
-
-typedef struct _Glyph {
-    CARD32	refcnt;
-    CARD32	size;	/* info + bitmap */
-    xGlyphInfo	info;
-    /* bits follow */
-} GlyphRec, *GlyphPtr;
-
-typedef struct _GlyphRef {
-    CARD32	signature;
-    GlyphPtr	glyph;
-    CARD16      corruptedGlyph;
-} GlyphRefRec, *GlyphRefPtr;
-
-#define DeletedGlyph	((GlyphPtr) 1)
-
-typedef struct _GlyphHashSet {
-    CARD32	entries;
-    CARD32	size;
-    CARD32	rehash;
-} GlyphHashSetRec, *GlyphHashSetPtr;
-
-typedef struct _GlyphHash {
-    GlyphRefPtr	    table;
-    GlyphHashSetPtr hashSet;
-    CARD32	    tableEntries;
-} GlyphHashRec, *GlyphHashPtr;
+#ifndef NX_GLYPHSTR_GLYPHSET_H
+#define NX_GLYPHSTR_GLYPHSET_H 1
 
 typedef struct _GlyphSet {
     CARD32	    refcnt;
@@ -98,77 +55,4 @@ typedef struct _GlyphSet {
     CARD32          remoteID;
 } GlyphSetRec, *GlyphSetPtr;
 
-#define GlyphSetGetPrivate(pGlyphSet,n)					\
-	((n) > (pGlyphSet)->maxPrivate ?				\
-	 (void *) 0 :							\
-	 (pGlyphSet)->devPrivates[n])
-
-#define GlyphSetSetPrivate(pGlyphSet,n,ptr)				\
-	((n) > (pGlyphSet)->maxPrivate ?				\
-	 _GlyphSetSetNewPrivate(pGlyphSet, n, ptr) :			\
-	 ((((pGlyphSet)->devPrivates[n] = (ptr)) != 0) || TRUE))
-
-typedef struct _GlyphList {
-    INT16	    xOff;
-    INT16	    yOff;
-    CARD8	    len;
-    PictFormatPtr   format;
-} GlyphListRec, *GlyphListPtr;
-
-extern GlyphHashRec	globalGlyphs[GlyphFormatNum];
-
-GlyphHashSetPtr
-FindGlyphHashSet (CARD32 filled);
-
-int
-AllocateGlyphSetPrivateIndex (void);
-
-void
-ResetGlyphSetPrivateIndex (void);
-
-Bool
-_GlyphSetSetNewPrivate (GlyphSetPtr glyphSet, int n, void * ptr);
-
-Bool
-GlyphInit (ScreenPtr pScreen);
-
-GlyphRefPtr
-FindGlyphRef (GlyphHashPtr hash, CARD32 signature, Bool match, GlyphPtr compare);
-
-CARD32
-HashGlyph (GlyphPtr glyph);
-
-void
-FreeGlyph (GlyphPtr glyph, int format);
-
-void
-AddGlyph (GlyphSetPtr glyphSet, GlyphPtr glyph, Glyph id);
-
-Bool
-DeleteGlyph (GlyphSetPtr glyphSet, Glyph id);
-
-GlyphPtr
-FindGlyph (GlyphSetPtr glyphSet, Glyph id);
-
-GlyphPtr
-AllocateGlyph (xGlyphInfo *gi, int format);
-
-Bool
-AllocateGlyphHash (GlyphHashPtr hash, GlyphHashSetPtr hashSet);
-
-Bool
-ResizeGlyphHash (GlyphHashPtr hash, CARD32 change, Bool global);
-
-Bool
-ResizeGlyphSet (GlyphSetPtr glyphSet, CARD32 change);
-
-GlyphSetPtr
-AllocateGlyphSet (int fdepth, PictFormatPtr format);
-
-int
-FreeGlyphSet (void      *value,
-	      XID       gid);
-
-
-
-#endif /* _GLYPHSTR_H_ */
+#endif /* NX_GLYPHSTR_GLYPHSET_H */

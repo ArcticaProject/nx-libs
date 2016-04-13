@@ -40,7 +40,7 @@
  * Author:  Keith Packard, SuSE, Inc.
  */
 
-#include "NXpicturestr.h"
+#include "picturestr.h"
 
 #include "Screen.h"
 #include "Pixmaps.h"
