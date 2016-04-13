@@ -28,7 +28,7 @@
 #include <nx-X11/Xlibint.h>
 #include <nx-X11/Xutil.h>
 #include <nx-X11/extensions/renderproto.h>
-#include "X11/include/Xrender_nxagent.h"
+#include "Xrender_nxagent.h"
 
 typedef struct {
     Visual		*visual;
