@@ -26,8 +26,6 @@
 #include "XidCache.h"
 #include "FreeCache.h"
 
-#include "TextCompressor.h"
-
 #include "ChannelCache.h"
 
 class ClientCache : public ChannelCache
@@ -61,7 +59,6 @@ class ClientCache : public ChannelCache
   // General-purpose caches.
   //
 
-  CharCache textCache[CLIENT_TEXT_CACHE_SIZE];
   IntCache cursorCache;
   IntCache colormapCache;
   IntCache visualCache;
@@ -382,8 +379,6 @@ class ClientCache : public ChannelCache
   unsigned int renderLastId;
 
   IntCache *renderDataCache[16];
-
-  TextCompressor renderTextCompressor;
 
   IntCache renderGlyphXCache;
   IntCache renderGlyphYCache;

@@ -100,8 +100,6 @@ ClientCache::ClientCache() :
 
   renderLastId(0),
 
-  renderTextCompressor(textCache, CLIENT_TEXT_CACHE_SIZE),
-
   renderGlyphXCache(16), renderGlyphYCache(16),
   renderGlyphX(0), renderGlyphY(0),
 

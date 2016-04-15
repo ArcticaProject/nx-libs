@@ -1131,8 +1131,6 @@ Files: nx-X11/extras/Mesa/src/mesa/main/WSDrawBuffer.h
  nxcomp/StaticCompressor.h
  nxcomp/Statistics.cpp
  nxcomp/Statistics.h
- nxcomp/TextCompressor.cpp
- nxcomp/TextCompressor.h
  nxcomp/Timestamp.cpp
  nxcomp/Timestamp.h
  nxcomp/TranslateCoords.cpp

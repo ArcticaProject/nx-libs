@@ -19,13 +19,6 @@
 #define ChannelCache_H
 
 //
-// Elements in array of caches used in TextCompressor.
-//
-
-const unsigned int CLIENT_TEXT_CACHE_SIZE = 9999;
-const unsigned int SERVER_TEXT_CACHE_SIZE = 9999;
-
-//
 // Sizes of optional fields for ConfigureWindow
 // request.
 //

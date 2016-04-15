@@ -165,7 +165,6 @@ CXXSRC = Loop.cpp 				\
 	 BlockCache.cpp				\
 	 BlockCacheSet.cpp			\
 	 StaticCompressor.cpp			\
-	 TextCompressor.cpp			\
 	 Unpack.cpp				\
 	 Alpha.cpp				\
 	 Colormap.cpp				\
