@@ -6,12 +6,14 @@ NULL =
 
 #if (!(defined(NXAgentServer) && NXAgentServer))
 NXAGENT_SKIP_SRCS =             \
+                    glyph.c     \
                     miglyph.c   \
                     mitrap.c    \
                     picture.c   \
                     render.c    \
                     $(NULL)
 NXAGENT_SKIP_OBJS =             \
+                    glyph.o     \
                     miglyph.o   \
                     mitrap.o    \
                     picture.o   \
