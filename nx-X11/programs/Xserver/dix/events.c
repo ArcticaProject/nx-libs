@@ -1218,6 +1218,7 @@ CheckGrabForSyncs(register DeviceIntPtr thisDev, Bool thisMode, Bool otherMode)
     ComputeFreezes();
 }
 
+#ifndef NXAGENT_SERVER
 void
 ActivatePointerGrab(register DeviceIntPtr mouse, register GrabPtr grab, 
                     TimeStamp time, Bool autoGrab)
@@ -1269,6 +1270,7 @@ DeactivatePointerGrab(register DeviceIntPtr mouse)
 	FreeCursor(grab->cursor, (Cursor)0);
     ComputeFreezes();
 }
+#endif /* NXAGENT_SERVER */
 
 void
 ActivateKeyboardGrab(register DeviceIntPtr keybd, GrabPtr grab, TimeStamp time, Bool passive)
@@ -1914,6 +1916,7 @@ PointInBorderSize(WindowPtr pWin, int x, int y)
     return FALSE;
 }
 
+#ifndef NXAGENT_SERVER
 static WindowPtr 
 XYToWindow(int x, int y)
 {
@@ -1961,6 +1964,7 @@ XYToWindow(int x, int y)
     }
     return spriteTrace[spriteTraceGood-1];
 }
+#endif /* NXAGENT_SERVER */
 
 static Bool
 CheckMotion(xEvent *xE)
@@ -2072,6 +2076,7 @@ void ReinitializeRootWindow(WindowPtr win, int xoff, int yoff)
 }
 #endif
 
+#ifndef NXAGENT_SERVER
 void
 DefineInitialRootWindow(register WindowPtr win)
 {
@@ -2113,6 +2118,7 @@ DefineInitialRootWindow(register WindowPtr win)
     }
 #endif
 }
+#endif /* NXAGENT_SERVER */
 
 /*
  * This does not take any shortcuts, and even ignores its argument, since
@@ -3140,6 +3146,7 @@ EnterLeaveEvent(
     }
     if (mask & filters[type])
     {
+	memset(&event, 0, sizeof(xEvent));
 	event.u.u.type = type;
 	event.u.u.detail = detail;
 	event.u.enterLeave.time = currentTime.milliseconds;
@@ -3966,6 +3973,7 @@ CloseDownEvents(void)
   spriteTraceSize = 0;
 }
 
+#ifndef NXAGENT_SERVER
 int
 ProcSendEvent(ClientPtr client)
 {
@@ -4053,6 +4061,7 @@ ProcSendEvent(ClientPtr client)
 				    NullGrab, 0);
     return Success;
 }
+#endif /* NXAGENT_SERVER */
 
 int
 ProcUngrabKey(ClientPtr client)

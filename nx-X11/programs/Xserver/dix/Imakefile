@@ -15,12 +15,14 @@ FFS_OBJ = ffs.o
 
 #if (!(defined(NXAgentServer) && NXAgentServer))
 NXAGENT_SKIP_SRCS =                  \
+                    events.c         \
                     extension.c      \
                     glyphcurs.c      \
                     resource.c       \
                     window.c         \
                     $(NULL)
 NXAGENT_SKIP_OBJS =                  \
+                    events.o         \
                     extension.o      \
                     glyphcurs.o      \
                     resource.o       \
@@ -36,7 +38,6 @@ SRCS =                          \
        devices.c                \
        dispatch.c               \
        dixutils.c               \
-       events.c                 \
        gc.c                     \
        globals.c                \
        grabs.c                  \
@@ -61,7 +62,6 @@ OBJS =                          \
        devices.o                \
        dispatch.o               \
        dixutils.o               \
-       events.o                 \
        gc.o                     \
        globals.o                \
        grabs.o                  \
