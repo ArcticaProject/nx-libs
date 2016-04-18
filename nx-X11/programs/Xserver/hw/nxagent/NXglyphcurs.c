@@ -64,20 +64,7 @@ SOFTWARE.
 
 /* $Xorg: glyphcurs.c,v 1.4 2001/02/09 02:04:40 xorgcvs Exp $ */
 
-#ifdef HAVE_DIX_CONFIG_H
-#include <dix-config.h>
-#endif
-
-#include "misc.h"
-#include <X11/fonts/fontstruct.h>
-#include "dixfontstr.h"
-#include "scrnintstr.h"
-#include "gcstruct.h"
-#include "resource.h"
-#include "dix.h"
-#include "cursorstr.h"
-#include "opaque.h"
-#include "servermd.h"
+#include "../../dix/glyphcurs.c"
 
 #include "../../fb/fb.h"
 #include "Pixmaps.h"
@@ -182,58 +169,4 @@ ServerBitsFromGlyph(FontPtr pfont, unsigned ch, register CursorMetricPtr cm, uns
     #endif
 
     return Success;
-}
-
-
-Bool
-CursorMetricsFromGlyph(register FontPtr pfont, unsigned ch, register CursorMetricPtr cm)
-{
-    CharInfoPtr 	pci;
-    unsigned long	nglyphs;
-    CARD8		chs[2];
-    FontEncoding	encoding;
-
-    chs[0] = ch >> 8;
-    chs[1] = ch;
-    encoding = (FONTLASTROW(pfont) == 0) ? Linear16Bit : TwoD16Bit;
-    if (encoding == Linear16Bit)
-    {
-	if (ch < pfont->info.firstCol || pfont->info.lastCol < ch)
-	    return FALSE;
-    }
-    else
-    {
-	if (chs[0] < pfont->info.firstRow || pfont->info.lastRow < chs[0])
-	    return FALSE;
-	if (chs[1] < pfont->info.firstCol || pfont->info.lastCol < chs[1])
-	    return FALSE;
-    }
-    (*pfont->get_glyphs) (pfont, 1, chs, encoding, &nglyphs, &pci);
-    if (nglyphs == 0)
-	return FALSE;
-    cm->width = pci->metrics.rightSideBearing - pci->metrics.leftSideBearing;
-    cm->height = pci->metrics.descent + pci->metrics.ascent;
-    if (pci->metrics.leftSideBearing > 0)
-    {
-	cm->width += pci->metrics.leftSideBearing;
-	cm->xhot = 0;
-    }
-    else
-    {
-	cm->xhot = -pci->metrics.leftSideBearing;
-	if (pci->metrics.rightSideBearing < 0)
-	    cm->width -= pci->metrics.rightSideBearing;
-    }
-    if (pci->metrics.ascent < 0)
-    {
-	cm->height -= pci->metrics.ascent;
-	cm->yhot = 0;
-    }
-    else
-    {
-	cm->yhot = pci->metrics.ascent;
-	if (pci->metrics.descent < 0)
-	    cm->height -= pci->metrics.descent;
-    }
-    return TRUE;
 }

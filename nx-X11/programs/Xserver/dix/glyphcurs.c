@@ -74,6 +74,7 @@ the first one we find.
 cursor metrics.
 */
 
+#ifndef NXAGENT_SERVER
 int
 ServerBitsFromGlyph(FontPtr pfont, unsigned ch, register CursorMetricPtr cm, unsigned char **ppbits)
 {
@@ -138,7 +139,7 @@ ServerBitsFromGlyph(FontPtr pfont, unsigned ch, register CursorMetricPtr cm, uns
     (*pScreen->DestroyPixmap)(ppix);
     return Success;
 }
-
+#endif /* NXAGENT_SERVER */
 
 Bool
 CursorMetricsFromGlyph(register FontPtr pfont, unsigned ch, register CursorMetricPtr cm)
