@@ -74,9 +74,6 @@ SOFTWARE.
 #define _SECURITY_SERVER
 #include <nx-X11/extensions/security.h>
 #endif
-#ifdef LBX
-#include "lbxserve.h"
-#endif
 
 #include "dispatch.h"
 #include "swaprep.h"
@@ -961,9 +958,6 @@ ProcSetModifierMapping(ClientPtr client)
 	return BadAccess;
 #endif 
 
-#ifdef LBX
-    LbxFlushModifierMapTag();
-#endif
     rep.type = X_Reply;
     rep.length = 0;
     rep.sequenceNumber = client->sequence;
@@ -1088,9 +1082,6 @@ ProcChangeKeyboardMapping(ClientPtr client)
     keysyms.map = (KeySym *)&stuff[1];
     if (!SetKeySymsMap(curKeySyms, &keysyms))
 	return BadAlloc;
-#ifdef LBX
-    LbxFlushKeyboardMapTag();
-#endif
     SendMappingNotify(MappingKeyboard, stuff->firstKeyCode, stuff->keyCodes,
 									client);
     return client->noClientException;

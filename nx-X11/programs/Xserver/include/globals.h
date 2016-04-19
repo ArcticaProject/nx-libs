@@ -77,10 +77,6 @@ extern Bool noDPMSExtension;
 extern Bool noGlxExtension;
 #endif
 
-#ifdef LBX
-extern Bool noLbxExtension;
-#endif
-
 #ifdef SCREENSAVER
 extern Bool noScreenSaverExtension;
 #endif

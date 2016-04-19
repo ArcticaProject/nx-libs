@@ -157,10 +157,6 @@ extern Bool SecurityCheckDeviceAccess(ClientPtr client, DeviceIntPtr dev,
 
 extern void SecurityAudit(char *format, ...);
 
-#ifdef LBX
-extern Bool SecuritySameLevel(ClientPtr client, XID authId);
-#endif
-
 extern int XSecurityOptions(int argc, char **argv, int i);
 
 /* Give this value or higher to the -audit option to get security messages */

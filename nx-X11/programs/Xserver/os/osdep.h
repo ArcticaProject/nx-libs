@@ -143,9 +143,6 @@ typedef struct _connectionOutput {
     int size;
     unsigned char *buf;
     int count;
-#ifdef LBX
-    Bool nocompress;
-#endif
 } ConnectionOutput, *ConnectionOutputPtr;
 
 #ifdef K5AUTH
@@ -156,10 +153,6 @@ typedef struct _k5_state {
     void	*ktname;	/* key table: principal-key pairs */
     void	*skey;		/* session key */
 }           k5_state;
-#endif
-
-#ifdef LBX
-typedef struct _LbxProxy *OsProxyPtr;
 #endif
 
 struct _osComm;
@@ -202,33 +195,14 @@ typedef struct _osComm {
 #endif
     CARD32 conn_time;		/* timestamp if not established, else 0  */
     struct _XtransConnInfo *trans_conn; /* transport connection object */
-#ifdef LBX
-    OsProxyPtr proxy;
-    ConnectionInputPtr largereq;
-    OsCloseFunc Close;
-    OsFlushFunc Flush;
-#endif
 } OsCommRec, *OsCommPtr;
 
-#ifdef LBX
-#define FlushClient(who, oc, extraBuf, extraCount) \
-    (*(oc)->Flush)(who, oc, extraBuf, extraCount)
-extern int StandardFlushClient(
-    ClientPtr /*who*/,
-    OsCommPtr /*oc*/,
-    char* /*extraBuf*/,
-    int /*extraCount*/
-);
-extern int LbxFlushClient(ClientPtr /*who*/, OsCommPtr /*oc*/, 
-    char * /*extraBuf*/, int /*extraCount*/);
-#else
 extern int FlushClient(
     ClientPtr /*who*/,
     OsCommPtr /*oc*/,
     char* /*extraBuf*/,
     int /*extraCount*/
 );
-#endif
 
 extern void FreeOsBuffers(
     OsCommPtr /*oc*/

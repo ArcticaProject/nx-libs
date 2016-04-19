@@ -171,9 +171,6 @@ Bool noDPMSExtension = FALSE;
 #ifdef GLXEXT
 Bool noGlxExtension = FALSE;
 #endif
-#ifdef LBX
-Bool noLbxExtension = FALSE;
-#endif
 #ifdef SCREENSAVER
 Bool noScreenSaverExtension = FALSE;
 #endif

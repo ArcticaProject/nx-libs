@@ -133,10 +133,6 @@ _NXGetFontPathError:
 #include "panoramiX.h"
 #endif
 
-#ifdef LBX
-#include "lbxserve.h"
-#endif
-
 #ifdef XF86BIGFONT
 #define _XF86BIGFONT_SERVER_
 #include <nx-X11/extensions/xf86bigfont.h>
@@ -557,9 +553,6 @@ CloseFont(void * value, XID fid)
 	}
 	if (pfont == defaultFont)
 	    defaultFont = NULL;
-#ifdef LBX
-	LbxFreeFontTag(pfont);
-#endif
 #ifdef XF86BIGFONT
 	XF86BigfontFreeFontShm(pfont);
 #endif

@@ -2611,15 +2611,6 @@ ProcAllocColor (register ClientPtr client)
 					RT_COLORMAP, SecurityWriteAccess);
     if (pmap)
     {
-#ifdef LBX
-	/*
-	 * If the colormap is grabbed by a proxy, the server will have
-	 * to regain control over the colormap.  This AllocColor request
-	 * will be handled after the server gets back the colormap control.
-	 */
-	if (LbxCheckColorRequest (client, pmap, (xReq *) stuff))
-	    return Success;
-#endif
 	acr.type = X_Reply;
 	acr.length = 0;
 	acr.sequenceNumber = client->sequence;
@@ -2664,15 +2655,6 @@ ProcAllocNamedColor (register ClientPtr client)
 
 	xAllocNamedColorReply ancr;
 
-#ifdef LBX
-	/*
-	 * If the colormap is grabbed by a proxy, the server will have
-	 * to regain control over the colormap.  This AllocNamedColor request
-	 * will be handled after the server gets back the colormap control.
-	 */
-	if (LbxCheckColorRequest (client, pcmp, (xReq *) stuff))
-	    return Success;
-#endif
 	ancr.type = X_Reply;
 	ancr.length = 0;
 	ancr.sequenceNumber = client->sequence;
@@ -2726,15 +2708,6 @@ ProcAllocColorCells (register ClientPtr client)
 	long			length;
 	Pixel			*ppixels, *pmasks;
 
-#ifdef LBX
-	/*
-	 * If the colormap is grabbed by a proxy, the server will have
-	 * to regain control over the colormap.  This AllocColorCells request
-	 * will be handled after the server gets back the colormap control.
-	 */
-	if (LbxCheckColorRequest (client, pcmp, (xReq *) stuff))
-	    return Success;
-#endif
 	npixels = stuff->colors;
 	if (!npixels)
 	{
@@ -2801,15 +2774,6 @@ ProcAllocColorPlanes(register ClientPtr client)
 	long			length;
 	Pixel			*ppixels;
 
-#ifdef LBX
-	/*
-	 * If the colormap is grabbed by a proxy, the server will have
-	 * to regain control over the colormap.  This AllocColorPlanes request
-	 * will be handled after the server gets back the colormap control.
-	 */
-	if (LbxCheckColorRequest (client, pcmp, (xReq *) stuff))
-	    return Success;
-#endif
 	npixels = stuff->colors;
 	if (!npixels)
 	{
@@ -3583,9 +3547,6 @@ CloseDownClient(register ClientPtr client)
 	if (ClientIsAsleep(client))
 	    ClientSignal (client);
 	ProcessWorkQueueZombies();
-#ifdef LBX
-	ProcessQTagZombies();
-#endif
 	CloseDownConnection(client);
 
 	/* If the client made it to the Running stage, nClients has
@@ -3703,9 +3664,6 @@ void InitClient(ClientPtr client, int i, void * ospriv)
     }
 #endif
     client->replyBytesRemaining = 0;
-#ifdef LBX
-    client->readRequest = StandardReadRequestFromClient;
-#endif
 #ifdef XCSECURITY
     client->trustLevel = XSecurityClientTrusted;
     client->CheckAccess = NULL;
@@ -3835,14 +3793,6 @@ ProcInitialConnection(register ClientPtr client)
     ResetCurrentRequest(client);
     return (client->noClientException);
 }
-
-#ifdef LBX
-void
-IncrementClientCount()
-{
-    nClients++;
-}
-#endif
 
 int
 SendConnSetup(register ClientPtr client, char *reason)
