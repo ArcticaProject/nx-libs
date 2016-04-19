@@ -1834,9 +1834,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was
       {
         #ifdef DEBUG
         fprintf(stderr, "nxagentDispatchEvents: Going to handle new Expose event.\n");
-        #endif
 
-        #ifdef DEBUG
         fprintf(stderr, "nxagentDispatchEvents: WARNING! Received Expose event "
                     "for drawable [%lx] geometry [%d, %d, %d, %d] count [%d].\n",
                         X.xexpose.window, X.xexpose.x, X.xexpose.y, X.xexpose.width,
@@ -1851,9 +1849,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was
       {
         #ifdef DEBUG
         fprintf(stderr, "nxagentDispatchEvents: Going to handle new GraphicsExpose event.\n");
-        #endif
 
-        #ifdef DEBUG
         fprintf(stderr, "nxagentDispatchEvents: WARNING! Received GraphicsExpose event "
                     "for drawable [%lx] geometry [%d, %d, %d, %d] count [%d].\n",
                         X.xgraphicsexpose.drawable, X.xgraphicsexpose.x, X.xgraphicsexpose.y,
@@ -1869,9 +1865,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was
       {
         #ifdef DEBUG
         fprintf(stderr, "nxagentDispatchEvents: Going to handle new NoExpose event.\n");
-        #endif
 
-        #ifdef DEBUG
         fprintf(stderr, "nxagentDispatchEvents: WARNING! Received NoExpose event for "
                     "drawable [%lx].\n", X.xnoexpose.drawable);
         #endif
@@ -2401,9 +2395,7 @@ int nxagentHandleExposeEvent(XEvent *X)
 
   #ifdef DEBUG
   fprintf(stderr, "nxagentHandleExposeEvent: Checking remote expose events.\n");
-  #endif
 
-  #ifdef DEBUG
   fprintf(stderr, "nxagentHandleExposeEvent: Looking for window id [%ld].\n",
               X -> xexpose.window);
   #endif
@@ -4287,9 +4279,7 @@ int nxagentClipAndSendExpose(WindowPtr pWin, void * ptr)
 
   #ifdef DEBUG
   BoxRec box;
-  #endif
 
-  #ifdef DEBUG
   fprintf(stderr, "nxagentClipAndSendExpose: Called.\n");
   #endif
 
@@ -4304,9 +4294,7 @@ int nxagentClipAndSendExpose(WindowPtr pWin, void * ptr)
 
     fprintf(stderr, "nxagentClipAndSendExpose: Root expose extents: [%d] [%d] [%d] [%d].\n",
                 box.x1, box.y1, box.x2, box.y2);
-    #endif
 
-    #ifdef DEBUG
     box = *RegionExtents(&pWin -> clipList);
 
     fprintf(stderr, "nxagentClipAndSendExpose: Clip list extents for window at [%p]: [%d] [%d] [%d] [%d].\n",
