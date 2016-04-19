@@ -168,9 +168,6 @@ Bool noDPSExtension = FALSE;
 #ifdef DPMSExtension
 Bool noDPMSExtension = FALSE;
 #endif
-#ifdef EVI
-Bool noEVIExtension = FALSE;
-#endif
 #ifdef GLXEXT
 Bool noGlxExtension = FALSE;
 #endif

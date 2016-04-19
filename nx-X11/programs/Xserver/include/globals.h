@@ -73,10 +73,6 @@ extern Bool noDPSExtension;
 extern Bool noDPMSExtension;
 #endif
 
-#ifdef EVI
-extern Bool noEVIExtension;
-#endif
-
 #ifdef GLXEXT
 extern Bool noGlxExtension;
 #endif

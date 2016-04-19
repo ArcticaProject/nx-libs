@@ -93,9 +93,6 @@ extern Bool noDPSExtension;
 #ifdef DPMSExtension
 extern Bool noDPMSExtension;
 #endif
-#ifdef EVI
-extern Bool noEVIExtension;
-#endif
 #ifdef GLXEXT
 extern Bool noGlxExtension;
 #endif
@@ -212,9 +209,6 @@ extern void XTestExtension1Init(INITARGS);
 #endif
 #ifdef SHAPE
 extern void ShapeExtensionInit(INITARGS);
-#endif
-#ifdef EVI
-extern void EVIExtensionInit(INITARGS);
 #endif
 #ifdef MITSHM
 extern void ShmExtensionInit(INITARGS);
@@ -352,9 +346,6 @@ static ExtensionToggle ExtensionToggleList[] =
 #ifdef DPMSExtension
     { "DPMS", &noDPMSExtension },
 #endif
-#ifdef EVI
-    { "Extended-Visual-Information", &noEVIExtension },
-#endif
 #ifdef GLXEXT
     { "GLX", &noGlxExtension },
 #endif
@@ -474,9 +465,6 @@ InitExtensions(argc, argv)
 #endif
 #ifdef MITSHM
     if (!noMITShmExtension) ShmExtensionInit();
-#endif
-#ifdef EVI
-    if (!noEVIExtension) EVIExtensionInit();
 #endif
 #ifdef MULTIBUFFER
     if (!noMultibufferExtension) MultibufferExtensionInit();
