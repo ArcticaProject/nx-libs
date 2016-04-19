@@ -65,9 +65,6 @@ in this Software without prior written authorization from The Open Group.
 #include <nx-X11/extensions/XLbx.h>
 extern unsigned char LbxReqCode;
 #endif
-#ifdef XAPPGROUP
-#include <nx-X11/extensions/Xagsrv.h>
-#endif
 #include <stdio.h>  /* for file reading operations */
 #include <nx-X11/Xatom.h>  /* for XA_STRING */
 
@@ -1165,10 +1162,6 @@ SecurityCheckResourceIDAccess(
       * use app groups.  dpw
       */
 	if (client->trustLevel == clients[cid]->trustLevel
-#ifdef XAPPGROUP
-	    || (RT_COLORMAP == rtype && 
-		XagDefaultColormap (client) == (Colormap) id)
-#endif
 	)
 	    return rval;
 	else

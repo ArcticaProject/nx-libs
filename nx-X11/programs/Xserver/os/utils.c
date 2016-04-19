@@ -213,9 +213,6 @@ Bool noXcupExtension = FALSE;
 #ifdef RES
 Bool noResExtension = FALSE;
 #endif
-#ifdef XAPPGROUP
-Bool noXagExtension = FALSE;
-#endif
 #ifdef XCMISC
 Bool noXCMiscExtension = FALSE;
 #endif

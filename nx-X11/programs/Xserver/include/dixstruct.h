@@ -143,9 +143,6 @@ typedef struct _Client {
 	    Mask /*access_mode*/,
 	    void * /*resourceval*/);
 #endif
-#ifdef XAPPGROUP
-    struct _AppGroupRec*	appgroup;
-#endif
     struct _FontResolution * (*fontResFunc) (    /* no need for font.h */
 		ClientPtr	/* pClient */,
 		int *		/* num */);

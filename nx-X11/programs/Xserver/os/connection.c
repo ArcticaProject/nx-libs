@@ -147,9 +147,6 @@ extern __const__ int _nfiles;
 #include <nx-X11/Xpoll.h>
 #include "opaque.h"
 #include "dixstruct.h"
-#ifdef XAPPGROUP
-#include <nx-X11/extensions/Xagsrv.h>
-#endif
 #ifdef XCSECURITY
 #define _SECURITY_SERVER
 #include <nx-X11/extensions/security.h>
@@ -814,10 +811,6 @@ ClientAuthorized(ClientPtr client,
     /* indicate to Xdmcp protocol that we've opened new client */
     XdmcpOpenDisplay(priv->fd);
 #endif /* XDMCP */
-#ifdef XAPPGROUP
-    if (ClientStateCallback)
-        XagCallClientStateChange (client);
-#endif
     /* At this point, if the client is authorized to change the access control
      * list, we should getpeername() information, and add the client to
      * the selfhosts list.  It's not really the host machine, but the

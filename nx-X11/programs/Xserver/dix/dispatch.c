@@ -3711,9 +3711,6 @@ void InitClient(ClientPtr client, int i, void * ospriv)
     client->CheckAccess = NULL;
     client->authId = 0;
 #endif
-#ifdef XAPPGROUP
-    client->appgroup = NULL;
-#endif
     client->fontResFunc = NULL;
 #ifdef SMART_SCHEDULE
     client->smart_priority = 0;
@@ -3886,9 +3883,6 @@ SendConnSetup(register ClientPtr client, char *reason)
 
     client->requestVector = client->swapped ? SwappedProcVector : ProcVector;
     client->sequence = 0;
-#ifdef XAPPGROUP
-    XagConnectionInfo (client, &lconnSetupPrefix, &lConnectionInfo, &numScreens);
-#endif
     ((xConnSetup *)lConnectionInfo)->ridBase = client->clientAsMask;
     ((xConnSetup *)lConnectionInfo)->ridMask = RESOURCE_ID_MASK;
 #ifdef MATCH_CLIENT_ENDIAN
