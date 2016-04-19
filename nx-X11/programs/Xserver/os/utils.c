@@ -204,9 +204,6 @@ Bool noXFree86BigfontExtension = FALSE;
 #ifdef XF86DRI
 Bool noXFree86DRIExtension = FALSE;
 #endif
-#ifdef XF86MISC
-Bool noXFree86MiscExtension = FALSE;
-#endif
 #ifdef XFIXES
 Bool noXFixesExtension = FALSE;
 #endif

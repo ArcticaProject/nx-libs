@@ -132,9 +132,6 @@ extern Bool noXFree86DGAExtension;
 #ifdef XF86DRI
 extern Bool noXFree86DRIExtension;
 #endif
-#ifdef XF86MISC
-extern Bool noXFree86MiscExtension;
-#endif
 #ifdef XFIXES
 extern Bool noXFixesExtension;
 #endif
@@ -242,9 +239,6 @@ extern void SecurityExtensionInit(INITARGS);
 #endif
 #ifdef XF86BIGFONT
 extern void XFree86BigfontExtensionInit(INITARGS);
-#endif
-#ifdef XF86MISC
-extern void XFree86MiscExtensionInit(INITARGS);
 #endif
 #ifdef XFreeXDGA
 extern void XFree86DGAExtensionInit(INITARGS);
@@ -356,9 +350,6 @@ static ExtensionToggle ExtensionToggleList[] =
 #endif
 #ifdef XF86DRI
     { "XFree86-DRI", &noXFree86DRIExtension },
-#endif
-#ifdef XF86MISC
-    { "XFree86-Misc", &noXFree86MiscExtension },
 #endif
 #ifdef XFIXES
     { "XFIXES", &noXFixesExtension },
@@ -475,9 +466,6 @@ InitExtensions(argc, argv)
     if (!noXFree86BigfontExtension) XFree86BigfontExtensionInit();
 #endif
 #if !defined(PRINT_ONLY_SERVER) && !defined(NO_HW_ONLY_EXTS)
-#if defined(XF86MISC)
-    if (!noXFree86MiscExtension) XFree86MiscExtensionInit();
-#endif
 #if defined(XFreeXDGA)
     if (!noXFree86DGAExtension) XFree86DGAExtensionInit();
 #endif

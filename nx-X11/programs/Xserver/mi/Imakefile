@@ -76,12 +76,12 @@ OBJS =	$(CBRT_OBJ) mivaltree.o mipolyseg.o mipolyrect.o \
  * don't use the XF86 module loader.
  */
 
-EXT_DEFINES = ExtensionDefines -UXFreeXDGA -UXF86MISC \
+EXT_DEFINES = ExtensionDefines -UXFreeXDGA \
 	-UXFree86LOADER
 
 #else
 
-EXT_DEFINES = ExtensionDefines -UXINPUT -UXFreeXDGA -UXF86MISC \
+EXT_DEFINES = ExtensionDefines -UXINPUT -UXFreeXDGA \
 	-UXFree86LOADER
 
 #endif
