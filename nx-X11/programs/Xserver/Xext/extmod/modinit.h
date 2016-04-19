@@ -85,13 +85,6 @@ extern void DPMSExtensionInit(INITARGS);
 #include <nx-X11/extensions/dpmsstr.h>
 #endif
 
-#ifdef FONTCACHE
-extern void FontCacheExtensionInit(INITARGS);
-#define _FONTCACHE_SERVER_
-#include "fontcacheP.h"
-#include "fontcachstr.h"
-#endif
-
 #ifdef XV
 extern void XvExtensionInit(INITARGS);
 extern void XvMCExtensionInit(INITARGS);

@@ -171,9 +171,6 @@ Bool noDPMSExtension = FALSE;
 #ifdef EVI
 Bool noEVIExtension = FALSE;
 #endif
-#ifdef FONTCACHE
-Bool noFontCacheExtension = FALSE;
-#endif
 #ifdef GLXEXT
 Bool noGlxExtension = FALSE;
 #endif

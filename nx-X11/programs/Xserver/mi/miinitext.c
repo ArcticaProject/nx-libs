@@ -96,9 +96,6 @@ extern Bool noDPMSExtension;
 #ifdef EVI
 extern Bool noEVIExtension;
 #endif
-#ifdef FONTCACHE
-extern Bool noFontCacheExtension;
-#endif
 #ifdef GLXEXT
 extern Bool noGlxExtension;
 #endif
@@ -304,9 +301,6 @@ extern void DPMSExtensionInit(INITARGS);
 #ifdef DPSEXT
 extern void DPSExtensionInit(INITARGS);
 #endif
-#ifdef FONTCACHE
-extern void FontCacheExtensionInit(INITARGS);
-#endif
 #ifdef RENDER
 extern void RenderExtensionInit(INITARGS);
 #endif
@@ -360,9 +354,6 @@ static ExtensionToggle ExtensionToggleList[] =
 #endif
 #ifdef EVI
     { "Extended-Visual-Information", &noEVIExtension },
-#endif
-#ifdef FONTCACHE
-    { "FontCache", &noFontCacheExtension },
 #endif
 #ifdef GLXEXT
     { "GLX", &noGlxExtension },
@@ -540,9 +531,6 @@ InitExtensions(argc, argv)
 #endif
 #if defined(DPMSExtension) && !defined(NO_HW_ONLY_EXTS)
     if (!noDPMSExtension) DPMSExtensionInit();
-#endif
-#ifdef FONTCACHE
-    if (!noFontCacheExtension) FontCacheExtensionInit();
 #endif
 #ifdef XF86BIGFONT
     if (!noXFree86BigfontExtension) XFree86BigfontExtensionInit();
