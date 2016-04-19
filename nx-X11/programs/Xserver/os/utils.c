@@ -221,9 +221,6 @@ Bool noXevieExtension = TRUE;
 #ifdef XF86BIGFONT
 Bool noXFree86BigfontExtension = FALSE;
 #endif
-#ifdef XFreeXDGA
-Bool noXFree86DGAExtension = FALSE;
-#endif
 #ifdef XF86DRI
 Bool noXFree86DRIExtension = FALSE;
 #endif
