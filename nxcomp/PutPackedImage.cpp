@@ -44,7 +44,6 @@ PutPackedImageStore::PutPackedImageStore(StaticCompressor *compressor)
 {
   enableCache    = PUTPACKEDIMAGE_ENABLE_CACHE;
   enableData     = PUTPACKEDIMAGE_ENABLE_DATA;
-  enableSplit    = PUTPACKEDIMAGE_ENABLE_SPLIT;
   enableCompress = PUTPACKEDIMAGE_ENABLE_COMPRESS;
 
   dataLimit  = PUTPACKEDIMAGE_DATA_LIMIT;
@@ -54,10 +53,8 @@ PutPackedImageStore::PutPackedImageStore(StaticCompressor *compressor)
   cacheThreshold      = PUTPACKEDIMAGE_CACHE_THRESHOLD;
   cacheLowerThreshold = PUTPACKEDIMAGE_CACHE_LOWER_THRESHOLD;
 
-  if (control -> isProtoStep8() == 1)
-  {
-    enableSplit = PUTPACKEDIMAGE_ENABLE_SPLIT_IF_PROTO_STEP_8;
-  }
+  // Since ProtoStep8 (#issue 108)
+  enableSplit = PUTPACKEDIMAGE_ENABLE_SPLIT_IF_PROTO_STEP_8;
 
   messages_ -> resize(cacheSlots);
 

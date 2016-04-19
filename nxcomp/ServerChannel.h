@@ -312,21 +312,6 @@ class ServerChannel : public Channel
 
   int handleSplitChecksum(DecodeBuffer &decodeBuffer, T_checksum &checksum);
 
-  void handleSplitEnable()
-  {
-    if (control -> isProtoStep7() == 0)
-    {
-      #if defined(TEST) || defined(SPLIT)
-      *logofs << "handleSplitEnable: WARNING! Disabling load "
-              << "and save with an old proxy version.\n"
-              << logofs_flush;
-      #endif
-
-      splitState_.save = 0;
-      splitState_.load = 0;
-    }
-  }
-
   //
   // Allocate and free the shared memory
   // support resources.

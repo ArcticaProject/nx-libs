@@ -71,7 +71,6 @@ ServerCache::ServerCache() :
   getKeyboardMappingKeysymCache(8),
 
   getPropertyTypeCache(8),
-  getPropertyTextCompressor(textCache, SERVER_TEXT_CACHE_SIZE),
 
   getSelectionOwnerCache(8),
 
@@ -85,9 +84,7 @@ ServerCache::ServerCache() :
   translateCoordsChildCache(8), translateCoordsXCache(8),
   translateCoordsYCache(8),
 
-  queryTreeWindowCache(8),
-
-  getAtomNameTextCompressor(textCache, SERVER_TEXT_CACHE_SIZE)
+  queryTreeWindowCache(8)
 
 {
   unsigned int i;

@@ -165,7 +165,6 @@ CXXSRC = Loop.cpp 				\
 	 BlockCache.cpp				\
 	 BlockCacheSet.cpp			\
 	 StaticCompressor.cpp			\
-	 TextCompressor.cpp			\
 	 Unpack.cpp				\
 	 Alpha.cpp				\
 	 Colormap.cpp				\
@@ -226,18 +225,7 @@ CXXSRC = Loop.cpp 				\
 	 RenderCompositeGlyphs.cpp		\
 	 RenderFillRectangles.cpp		\
 	 RenderTrapezoids.cpp			\
-	 RenderTriangles.cpp			\
-	 PositionCacheCompat.cpp		\
-	 ChangeGCCompat.cpp			\
-	 CreatePixmapCompat.cpp			\
-	 SetUnpackColormapCompat.cpp		\
-	 SetUnpackAlphaCompat.cpp		\
-	 RenderCreatePictureCompat.cpp		\
-	 RenderFreePictureCompat.cpp		\
-	 RenderPictureClipCompat.cpp		\
-	 RenderCreateGlyphSetCompat.cpp		\
-	 RenderCompositeCompat.cpp		\
-	 RenderCompositeGlyphsCompat.cpp
+	 RenderTriangles.cpp
 
 MOBJ   = $(MSRC:.c=.o)
 COBJ   = $(CSRC:.c=.o)

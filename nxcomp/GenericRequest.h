@@ -37,7 +37,6 @@
 #define GENERICREQUEST_ENABLE_CACHE                      1
 #define GENERICREQUEST_ENABLE_DATA                       1
 #define GENERICREQUEST_ENABLE_SPLIT                      0
-#define GENERICREQUEST_ENABLE_COMPRESS                   1
 
 #define GENERICREQUEST_DATA_LIMIT                        262144 - 20
 #define GENERICREQUEST_DATA_OFFSET                       20

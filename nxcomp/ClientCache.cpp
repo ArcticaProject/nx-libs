@@ -25,7 +25,6 @@ ClientCache::ClientCache() :
 
   changePropertyPropertyCache(16), changePropertyTypeCache(16),
   changePropertyData32Cache(16),
-  changePropertyTextCompressor(textCache, CLIENT_TEXT_CACHE_SIZE),
 
   configureWindowBitmaskCache(4),
 
@@ -53,17 +52,11 @@ ClientCache::ClientCache() :
   imageTextLengthCache(8),
   imageTextLastX(0), imageTextLastY(0),
   imageTextCacheX(8), imageTextCacheY(8),
-  imageTextTextCompressor(textCache, CLIENT_TEXT_CACHE_SIZE),
-
-  internAtomTextCompressor(textCache, CLIENT_TEXT_CACHE_SIZE),
-
-  openFontTextCompressor(textCache, CLIENT_TEXT_CACHE_SIZE),
 
   polySegmentCacheX(8), polySegmentCacheY(8), polySegmentCacheIndex(0),
 
   polyTextLastX(0), polyTextLastY(0), polyTextCacheX(8),
   polyTextCacheY(8), polyTextFontCache(8),
-  polyTextTextCompressor(textCache, CLIENT_TEXT_CACHE_SIZE),
 
   putImageWidthCache(8), putImageHeightCache(8), putImageLastX(0),
   putImageLastY(0), putImageXCache(8), putImageYCache(8),
@@ -106,8 +99,6 @@ ClientCache::ClientCache() :
   renderWidthCache(16), renderHeightCache(16),
 
   renderLastId(0),
-
-  renderTextCompressor(textCache, CLIENT_TEXT_CACHE_SIZE),
 
   renderGlyphXCache(16), renderGlyphYCache(16),
   renderGlyphX(0), renderGlyphY(0),

@@ -23,7 +23,6 @@
 #include "IntCache.h"
 #include "CharCache.h"
 #include "OpcodeCache.h"
-#include "TextCompressor.h"
 #include "BlockCache.h"
 #include "BlockCacheSet.h"
 
@@ -47,7 +46,6 @@ class ServerCache : public ChannelCache
   // General-purpose caches.
   //
 
-  CharCache textCache[SERVER_TEXT_CACHE_SIZE];
   IntCache replySequenceCache;
   IntCache eventSequenceCache;
   unsigned int lastTimestamp;
@@ -215,7 +213,6 @@ class ServerCache : public ChannelCache
 
   CharCache getPropertyFormatCache;
   IntCache getPropertyTypeCache;
-  TextCompressor getPropertyTextCompressor;
   static BlockCache xResources;
 
   //
@@ -271,13 +268,6 @@ class ServerCache : public ChannelCache
   //
 
   IntCache queryTreeWindowCache;
-
-  //
-  // GetAtomName reply in protocol
-  // versions >= 3.
-  //
-
-  TextCompressor getAtomNameTextCompressor;
 
   //
   // Generic reply. Use short data

@@ -349,6 +349,14 @@
 #define FILE_SIZE_CHECK_TIMEOUT                  60000
 
 //
+// Protocol version compatibility values
+//
+
+const int Control::NX_MIN_PROTO_STEP = 10;
+const int Control::NX_MAX_PROTO_STEP = 10;
+const char* const Control::NXPROXY_COMPATIBILITY_VERSION = "3.5.0";
+
+//
 // Set defaults for control. They should be what
 // you get in case of 'local' connection.
 //
@@ -633,11 +641,7 @@ Control::Control()
   // time the session is negotiated.
   //
 
-  protoStep6_  = 0;
-  protoStep7_  = 0;
-  protoStep8_  = 0;
-  protoStep9_  = 0;
-  protoStep10_ = 0;
+  protoStep_ = 0;
 }
 
 Control::~Control()
@@ -705,92 +709,27 @@ Control::~Control()
 
 void Control::setProtoStep(int step)
 {
-  switch (step)
+  if (isValidProtoStep(step))
   {
-    case 6:
-    {
-      protoStep6_  = 1;
-      protoStep7_  = 0;
-      protoStep8_  = 0;
-      protoStep9_  = 0;
-      protoStep10_ = 0;
+    protoStep_ = step;
+  }
+  else
+  {
+    #ifdef PANIC
+    *logofs << "Control: PANIC! Invalid protocol step "
+            << "with value " << step << ".\n"
+            << logofs_flush;
+    #endif
 
-      break;
-    }
-    case 7:
-    {
-      protoStep6_  = 1;
-      protoStep7_  = 1;
-      protoStep8_  = 0;
-      protoStep9_  = 0;
-      protoStep10_ = 0;
-
-      break;
-    }
-    case 8:
-    {
-      protoStep6_  = 1;
-      protoStep7_  = 1;
-      protoStep8_  = 1;
-      protoStep9_  = 0;
-      protoStep10_ = 0;
-
-      break;
-    }
-    case 9:
-    {
-      protoStep6_  = 1;
-      protoStep7_  = 1;
-      protoStep8_  = 1;
-      protoStep9_  = 1;
-      protoStep10_ = 0;
-
-      break;
-    }
-    case 10:
-    {
-      protoStep6_  = 1;
-      protoStep7_  = 1;
-      protoStep8_  = 1;
-      protoStep9_  = 1;
-      protoStep10_ = 1;
-
-      break;
-    }
-    default:
-    {
-      #ifdef PANIC
-      *logofs << "Control: PANIC! Invalid protocol step "
-              << "with value " << step << ".\n"
-              << logofs_flush;
-      #endif
-
-      HandleCleanup();
-    }
+    HandleCleanup();
   }
 }
 
 int Control::getProtoStep()
 {
-  if (protoStep10_ == 1)
+  if (isValidProtoStep(protoStep_))
   {
-    return 10;
-  }
-  else if (protoStep9_ == 1)
-  {
-    return 9;
-  }
-  else if (protoStep8_ == 1)
-  {
-    return 8;
-  }
-  else if (protoStep7_ == 1)
-  {
-    return 7;
-  }
-  else if (protoStep6_ == 1)
-  {
-    return 6;
+    return protoStep_;
   }
   else
   {

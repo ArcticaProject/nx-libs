@@ -155,13 +155,6 @@ ClientChannel::ClientChannel(Transport *transport, StaticCompressor *compressor)
   splitState_.mode     = split_none;
 
   //
-  // Disable image streaming if the remote
-  // doesn't support our proxy version.
-  //
-
-  handleSplitEnable();
-
-  //
   // Number of outstanding tainted replies.
   //
 
@@ -342,10 +335,8 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
       // previous versions.
       //
 
-      if (control -> isProtoStep7() == 1)
-      {
-        encodeBuffer.encodeValue(inputLength, 8);
-      }
+      // Since ProtoStep7 (#issue 108)
+      encodeBuffer.encodeValue(inputLength, 8);
 
       for (unsigned int i = 0; i < inputLength; i++)
       {
@@ -364,20 +355,6 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
       #endif
 
       priority_++;
-
-      //
-      // Due to the way the loop was implemented
-      // we can't encode multiple messages if we
-      // are encoding the first request.
-      //
-
-      if (control -> isProtoStep7() == 0)
-      {
-        if (proxy -> handleAsyncInit() < 0)
-        {
-          return -1;
-        }
-      }
     }
     else
     {
@@ -512,17 +489,8 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
           const unsigned char *nextSrc = inputMessage + 24;
           if (format == 8)
           {
-            if (control -> isProtoStep7() == 1)
-            {
-              encodeBuffer.encodeTextData(nextSrc, dataLength);
-            }
-            else
-            {
-              clientCache_ -> changePropertyTextCompressor.reset();
-              for (unsigned int i = 0; i < dataLength; i++)
-                clientCache_ -> changePropertyTextCompressor.
-                                      encodeChar(*nextSrc++, encodeBuffer);
-            }
+            // Since ProtoStep7 (#issue 108)
+            encodeBuffer.encodeTextData(nextSrc, dataLength);
           }
           else if (format == 32)
           {
@@ -872,18 +840,11 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
             break;
           }
 
-          if (control -> isProtoStep7() == 1)
-          {
-            encodeBuffer.encodeNewXidValue(GetULONG(inputMessage + 4, bigEndian_),
-                               clientCache_ -> lastId, clientCache_ -> lastIdCache,
-                                   clientCache_ -> gcCache,
-                                       clientCache_ -> freeGCCache);
-          }
-          else
-          {
-            encodeBuffer.encodeXidValue(GetULONG(inputMessage + 4,
-                               bigEndian_), clientCache_ -> gcCache);
-          }
+          // Since ProtoStep7 (#issue 108)
+          encodeBuffer.encodeNewXidValue(GetULONG(inputMessage + 4, bigEndian_),
+                             clientCache_ -> lastId, clientCache_ -> lastIdCache,
+                                 clientCache_ -> gcCache,
+                                     clientCache_ -> freeGCCache);
 
           const unsigned char *nextSrc = inputMessage + 8;
           encodeBuffer.encodeXidValue(GetULONG(inputMessage + 8,
@@ -1059,18 +1020,12 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
           encodeBuffer.encodeXidValue(GetULONG(inputMessage + 8, bigEndian_),
                              clientCache_ -> windowCache);
 
-          if (control -> isProtoStep7() == 1)
-          {
-            encodeBuffer.encodeNewXidValue(GetULONG(inputMessage + 4, bigEndian_),
-                               clientCache_ -> lastId, clientCache_ -> lastIdCache,
-                                   clientCache_ -> windowCache,
-                                       clientCache_ -> freeWindowCache);
-          }
-          else
-          {
-            encodeBuffer.encodeXidValue(GetULONG(inputMessage + 4, bigEndian_),
-                               clientCache_ -> windowCache);
-          }
+          // Since ProtoStep7 (#issue 108)
+          encodeBuffer.encodeNewXidValue(GetULONG(inputMessage + 4, bigEndian_),
+                             clientCache_ -> lastId, clientCache_ -> lastIdCache,
+                                 clientCache_ -> windowCache,
+                                     clientCache_ -> freeWindowCache);
+
           const unsigned char *nextSrc = inputMessage + 12;
           for (unsigned int i = 0; i < 6; i++)
           {
@@ -1140,16 +1095,9 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
 
           unsigned int numPoints = ((inputLength - 16) >> 2);
 
-          if (control -> isProtoStep10() == 1)
-          {
-            encodeBuffer.encodeCachedValue(numPoints, 16,
-                               clientCache_ -> fillPolyNumPointsCache, 4);
-          }
-          else
-          {
-            encodeBuffer.encodeCachedValue(numPoints, 14,
-                               clientCache_ -> fillPolyNumPointsCache, 4);
-          }
+          // Since ProtoStep10 (#issue 108)
+          encodeBuffer.encodeCachedValue(numPoints, 16,
+                             clientCache_ -> fillPolyNumPointsCache, 4);
 
           encodeBuffer.encodeXidValue(GetULONG(inputMessage + 4, bigEndian_),
                              clientCache_ -> drawableCache);
@@ -1270,16 +1218,9 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
 
           #endif
 
-          if (control -> isProtoStep7() == 1)
-          {
-            encodeBuffer.encodeFreeXidValue(GetULONG(inputMessage + 4, bigEndian_),
-                               clientCache_ -> freeGCCache);
-          }
-          else
-          {
-            encodeBuffer.encodeXidValue(GetULONG(inputMessage + 4, bigEndian_),
-                               clientCache_ -> gcCache);
-          }
+          // Since ProtoStep7 (#issue 108)
+          encodeBuffer.encodeFreeXidValue(GetULONG(inputMessage + 4, bigEndian_),
+                             clientCache_ -> freeGCCache);
         }
         break;
       case X_FreePixmap:
@@ -1294,26 +1235,9 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
 
           #endif
 
-          if (control -> isProtoStep7() == 1)
-          {
-            encodeBuffer.encodeFreeXidValue(GetULONG(inputMessage + 4, bigEndian_),
-                               clientCache_ -> freeDrawableCache);
-          }
-          else
-          {
-            unsigned int pixmap = GetULONG(inputMessage + 4, bigEndian_);
-            unsigned int diff = pixmap - clientCache_ -> createPixmapLastId;
-            if (diff == 0)
-            {
-              encodeBuffer.encodeBoolValue(1);
-            }
-            else
-            {
-              encodeBuffer.encodeBoolValue(0);
-              clientCache_ -> createPixmapLastId = pixmap;
-              encodeBuffer.encodeValue(diff, 29, 4);
-            }
-          }
+          // Since ProtoStep7 (#issue 108)
+          encodeBuffer.encodeFreeXidValue(GetULONG(inputMessage + 4, bigEndian_),
+                             clientCache_ -> freeDrawableCache);
         }
         break;
       case X_GetAtomName:
@@ -1536,18 +1460,9 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
               encodeBuffer.encodeCachedValue(*nextSrc++, 8,
                                  clientCache_ -> polyTextDeltaCache);
 
-              if (control -> isProtoStep7() == 1)
-              {
-                encodeBuffer.encodeTextData(nextSrc, textLength);
-
-                nextSrc += textLength;
-              }
-              else
-              {
-                clientCache_ -> polyTextTextCompressor.reset();
-                for (unsigned int i = 0; i < textLength; i++)
-                  clientCache_ -> polyTextTextCompressor.encodeChar(*nextSrc++, encodeBuffer);
-              }
+              // Since ProtoStep7 (#issue 108)
+              encodeBuffer.encodeTextData(nextSrc, textLength);
+              nextSrc += textLength;
             }
           }
           encodeBuffer.encodeBoolValue(0);
@@ -1620,18 +1535,9 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
               encodeBuffer.encodeCachedValue(*nextSrc++, 8,
                                  clientCache_ -> polyTextDeltaCache);
 
-              if (control -> isProtoStep7() == 1)
-              {
-                encodeBuffer.encodeTextData(nextSrc, textLength * 2);
-
-                nextSrc += textLength * 2;
-              }
-              else
-              {
-                clientCache_ -> polyTextTextCompressor.reset();
-                for (unsigned int i = 0; i < textLength * 2; i++)
-                  clientCache_ -> polyTextTextCompressor.encodeChar(*nextSrc++, encodeBuffer);
-              }
+              // Since ProtoStep7 (#issue 108)
+              encodeBuffer.encodeTextData(nextSrc, textLength * 2);
+              nextSrc += textLength * 2;
             }
           }
           encodeBuffer.encodeBoolValue(0);
@@ -1692,16 +1598,8 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
                              clientCache_ -> imageTextCacheY);
           const unsigned char *nextSrc = inputMessage + 16;
 
-          if (control -> isProtoStep7() == 1)
-          {
-            encodeBuffer.encodeTextData(nextSrc, textLength);
-          }
-          else
-          {
-            clientCache_ -> imageTextTextCompressor.reset();
-            for (unsigned int j = 0; j < textLength; j++)
-              clientCache_ -> imageTextTextCompressor.encodeChar(*nextSrc++, encodeBuffer);
-          }
+          // Since ProtoStep7 (#issue 108)
+          encodeBuffer.encodeTextData(nextSrc, textLength);
         }
         break;
       case X_ImageText16:
@@ -1759,16 +1657,8 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
                              clientCache_ -> imageTextCacheY);
           const unsigned char *nextSrc = inputMessage + 16;
 
-          if (control -> isProtoStep7() == 1)
-          {
-            encodeBuffer.encodeTextData(nextSrc, textLength * 2);
-          }
-          else
-          {
-            clientCache_ -> imageTextTextCompressor.reset();
-            for (unsigned int j = 0; j < textLength * 2; j++)
-              clientCache_ -> imageTextTextCompressor.encodeChar(*nextSrc++, encodeBuffer);
-          }
+          // Since ProtoStep7 (#issue 108)
+          encodeBuffer.encodeTextData(nextSrc, textLength * 2);
         }
         break;
       case X_InternAtom:
@@ -1800,18 +1690,8 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
           encodeBuffer.encodeBoolValue((unsigned int) inputMessage[1]);
           const unsigned char *nextSrc = inputMessage + 8;
 
-          if (control -> isProtoStep7() == 1)
-          {
-            encodeBuffer.encodeTextData(nextSrc, nameLength);
-          }
-          else
-          {
-            clientCache_ -> internAtomTextCompressor.reset();
-            for (unsigned int i = 0; i < nameLength; i++)
-            {
-              clientCache_ -> internAtomTextCompressor.encodeChar(*nextSrc++, encodeBuffer);
-            }
-          }
+          // Since ProtoStep7 (#issue 108)
+          encodeBuffer.encodeTextData(nextSrc, nameLength);
 
           sequenceQueue_.push(clientSequence_, inputOpcode);
 
@@ -1832,18 +1712,8 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
           encodeBuffer.encodeValue(GetUINT(inputMessage + 4, bigEndian_), 16, 6);
           const unsigned char* nextSrc = inputMessage + 8;
 
-          if (control -> isProtoStep7() == 1)
-          {
-            encodeBuffer.encodeTextData(nextSrc, textLength);
-          }
-          else
-          {
-            clientCache_ -> polyTextTextCompressor.reset();
-            for (unsigned int i = 0; i < textLength; i++)
-            {
-              clientCache_ -> polyTextTextCompressor.encodeChar(*nextSrc++, encodeBuffer);
-            }
-          }
+          // Since ProtoStep7 (#issue 108)
+          encodeBuffer.encodeTextData(nextSrc, textLength);
 
           sequenceQueue_.push(clientSequence_, inputOpcode);
 
@@ -1859,18 +1729,8 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
                                          29, clientCache_ -> colormapCache);
           const unsigned char *nextSrc = inputMessage + 12;
 
-          if (control -> isProtoStep7() == 1)
-          {
-            encodeBuffer.encodeTextData(nextSrc, textLength);
-          }
-          else
-          {
-            clientCache_ -> polyTextTextCompressor.reset();
-            for (unsigned int i = 0; i < textLength; i++)
-            {
-              clientCache_ -> polyTextTextCompressor.encodeChar(*nextSrc++, encodeBuffer);
-            }
-          }
+          // Since ProtoStep7 (#issue 108)
+          encodeBuffer.encodeTextData(nextSrc, textLength);
 
           sequenceQueue_.push(clientSequence_, inputOpcode);
 
@@ -1900,8 +1760,9 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
 
           #endif
 
-          if (inputOpcode == X_DestroyWindow && control -> isProtoStep7() == 1)
+          if (inputOpcode == X_DestroyWindow)
           {
+            // Since ProtoStep7 (#issue 108)
             encodeBuffer.encodeFreeXidValue(GetULONG(inputMessage + 4, bigEndian_),
                                clientCache_ -> freeWindowCache);
           }
@@ -1930,19 +1791,8 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
           clientCache_ -> lastFont = font;
           const unsigned char *nextSrc = inputMessage + 12;
 
-          if (control -> isProtoStep7() == 1)
-          {
-            encodeBuffer.encodeTextData(nextSrc, nameLength);
-          }
-          else
-          {
-            clientCache_ -> openFontTextCompressor.reset();
-            for (; nameLength; nameLength--)
-            {
-              clientCache_ -> openFontTextCompressor.
-                    encodeChar(*nextSrc++, encodeBuffer);
-            }
-          }
+          // Since ProtoStep7 (#issue 108)
+          encodeBuffer.encodeTextData(nextSrc, nameLength);
         }
         break;
       case X_PolyFillRectangle:
@@ -2638,14 +2488,8 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
 
           unsigned int numRectangles = ((inputLength - 12) >> 3);
 
-          if (control -> isProtoStep9() == 1)
-          {
-            encodeBuffer.encodeValue(numRectangles, 15, 4);
-          }
-          else
-          {
-            encodeBuffer.encodeValue(numRectangles, 13, 4);
-          }
+          // Since ProtoStep9 (#issue 108)
+          encodeBuffer.encodeValue(numRectangles, 15, 4);
 
           encodeBuffer.encodeValue((unsigned int) inputMessage[1], 2);
           encodeBuffer.encodeXidValue(GetULONG(inputMessage + 4, bigEndian_),
@@ -3544,19 +3388,8 @@ int ClientChannel::handleWrite(const unsigned char *message, unsigned int length
               PutUINT(nameLength, outputMessage + 8, bigEndian_);
               unsigned char* nextDest = outputMessage + 32;
 
-              if (control -> isProtoStep7() == 1)
-              {
-                decodeBuffer.decodeTextData(nextDest, nameLength);
-              }
-              else
-              {
-                serverCache_ -> getAtomNameTextCompressor.reset();
-                for (unsigned int i = 0; i < nameLength; i++)
-                {
-                  *nextDest++ = serverCache_ -> getAtomNameTextCompressor.
-                                      decodeChar(decodeBuffer);
-                }
-              }
+              // Since ProtoStep7 (#issue 108)
+              decodeBuffer.decodeTextData(nextDest, nameLength);
             }
             break;
           case X_GetGeometry:
@@ -3814,21 +3647,9 @@ int ClientChannel::handleWrite(const unsigned char *message, unsigned int length
                   decodeBuffer.decodeValue(length, 8);
                   *nextDest++ = (unsigned char)length;
 
-                  if (control -> isProtoStep7() == 1)
-                  {
-                    decodeBuffer.decodeTextData(nextDest, length);
-
-                    nextDest += length;
-                  }
-                  else
-                  {
-                    serverCache_ -> getPropertyTextCompressor.reset();
-                    for (; length; length--)
-                    {
-                      *nextDest++ = serverCache_ -> getPropertyTextCompressor.
-                                                       decodeChar(decodeBuffer);
-                    }
-                  }
+                  // Since ProtoStep7 (#issue 108)
+                  decodeBuffer.decodeTextData(nextDest, length);
+                  nextDest += length;
                 }
 
                 handleSave(messageStore, outputMessage, outputLength);
@@ -4243,35 +4064,11 @@ int ClientChannel::handleWrite(const unsigned char *message, unsigned int length
                                  serverCache_ -> visualCache);
               PutULONG(visual, outputMessage + 8, bigEndian_);
 
-              if (control -> isProtoStep8() == 0)
-              {
-                const unsigned char *compressedData = NULL;
-                unsigned int compressedDataSize = 0;
+              // Since ProtoStep8 (#issue 108)
+              handleCopy(decodeBuffer, requestOpcode, messageStore ->
+                             dataOffset, outputMessage, outputLength);
 
-                int decompressed = handleDecompress(decodeBuffer, requestOpcode, messageStore -> dataOffset,
-                                                        outputMessage, outputLength, compressedData,
-                                                            compressedDataSize);
-                if (decompressed < 0)
-                {
-                  return -1;
-                }
-                else if (decompressed > 0)
-                {
-                  handleSave(messageStore, outputMessage, outputLength,
-                                 compressedData, compressedDataSize);
-                }
-                else
-                {
-                  handleSave(messageStore, outputMessage, outputLength);
-                }
-              }
-              else
-              {
-                handleCopy(decodeBuffer, requestOpcode, messageStore ->
-                               dataOffset, outputMessage, outputLength);
-
-                handleSave(messageStore, outputMessage, outputLength);
-              }
+              handleSave(messageStore, outputMessage, outputLength);
             }
             break;
           case X_GetPointerMapping:
@@ -5090,40 +4887,23 @@ int ClientChannel::handleSplit(EncodeBuffer &encodeBuffer, MessageStore *store,
 {
   #if defined(TEST) || defined(SPLIT)
 
-  if (control -> isProtoStep8() == 1)
-  {
-    *logofs << "handleSplit: PANIC! SPLIT! Split should "
-            << "not be enabled for message " << "OPCODE#"
-            << (unsigned int) store -> opcode() << ".\n"
-            << logofs_flush;
+  // Since ProtoStep8 (#issue 108)
+  *logofs << "handleSplit: PANIC! SPLIT! Split should "
+          << "not be enabled for message " << "OPCODE#"
+          << (unsigned int) store -> opcode() << ".\n"
+          << logofs_flush;
 
-    HandleCleanup();
-  }
+  HandleCleanup();
 
   #endif
 
   //
-  // Never split the message if connected to
-  // an old proxy version. Also refuse the
-  // split if we it is not introduced by a
-  // start split.
+  // Refuse the split if it is not introduced
+  // by a start split.
   //
 
-  if (control -> isProtoStep7() == 0)
-  {
-    #if defined(TEST) || defined(SPLIT)
-    *logofs << "handleSplit: SPLIT! Ignoring the split with "
-            << "an old proxy version.\n" << logofs_flush;
-    #endif
-
-    if (action == IS_ADDED || action == is_discarded)
-    {
-      encodeBuffer.encodeBoolValue(0);
-    }
-
-    return 0;
-  }
-  else if (splitState_.resource == nothing || enableSplit_ == 0)
+  // Since ProtoStep7 (#issue 108)
+  if (splitState_.resource == nothing || enableSplit_ == 0)
   {
     #if defined(TEST) || defined(SPLIT)
     *logofs << "handleSplit: SPLIT! Nothing to do for message "
@@ -5875,16 +5655,7 @@ int ClientChannel::handleSplitEvent(DecodeBuffer &decodeBuffer)
           << strMsTimestamp() << ".\n" << logofs_flush;
   #endif
 
-  if (control -> isProtoStep7() == 0)
-  {
-    #ifdef PANIC
-    *logofs << "handleSplitEvent: PANIC! The split can't "
-            << "be aborted when connected to an old "
-            << "proxy version.\n" << logofs_flush;
-    #endif
-
-    HandleCleanup();
-  }
+  // Since ProtoStep7 (#issue 108)
 
   //
   // Decode the information about the
@@ -6508,146 +6279,6 @@ int ClientChannel::handleRestart(T_sequence_mode mode, int resource)
 
     #endif
   }
-
-  return 1;
-}
-
-int ClientChannel::handleTaintCacheRequest(unsigned char &opcode, const unsigned char *&buffer,
-                                               unsigned int &size)
-{
-  #ifdef TEST
-  *logofs << "handleTaintCacheRequest: Tainting cache request "
-          << "for FD#" << fd_ << ".\n" << logofs_flush;
-  #endif
-
-  //
-  // The save and load flags would affect
-  // the decoding side but the decoding
-  // side doesn't support the request.
-  //
-
-  enableCache_ = *(buffer + 4);
-  enableSplit_ = *(buffer + 5);
-
-  handleSplitEnable();
-
-  #ifdef TEST
-  *logofs << "handleTaintCacheRequest: Set cache parameters to "
-          << "cache " << enableCache_ << " split " << enableSplit_
-          << " load " << enableLoad_ << " save " << enableSave_
-          << ".\n" << logofs_flush;
-  #endif
-
-  //
-  // Taint the request to a X_NoOperation.
-  //
-
-  opcode = X_NoOperation;
-
-  return 0;
-}
-
-int ClientChannel::handleTaintFontRequest(unsigned char &opcode, const unsigned char *&buffer,
-                                              unsigned int &size)
-{
-  //
-  // The remote end doesn't support this
-  // request so generate an empty reply
-  // at the local side.
-  //
-
-  #ifdef TEST
-  *logofs << "handleTaintFontRequest: Suppressing font "
-          << "request for FD#" << fd_ << ".\n"
-          << logofs_flush;
-  #endif
-
-  //
-  // The client sequence number has not
-  // been incremented yet in the loop.
-  //
-
-  unsigned int sequence = (clientSequence_ + 1) & 0xffff;
-
-  #ifdef TEST
-  *logofs << "handleTaintFontRequest: Opcode is " << (unsigned) opcode
-          << " expected client sequence is " << sequence
-          << ".\n" << logofs_flush;
-  #endif
-
-  unsigned char *reply = writeBuffer_.addMessage(36);
-
-  *(reply + 0) = X_Reply;
-
-  PutUINT(sequence, reply + 2, bigEndian_);
-
-  PutULONG(1, reply + 4, bigEndian_);
-
-  //
-  // Set the length of the returned
-  // path to 0.
-  //
-
-  *(reply + 32) = 0;
-
-  //
-  // Save the sequence number, not incremented
-  // yet, we used to auto-generate this reply.
-  //
-
-  lastSequence_ = clientSequence_ + 1;
-
-  #ifdef TEST
-  *logofs << "handleTaintFontRequest: Registered " << lastSequence_
-          << " as last auto-generated sequence number.\n"
-          << logofs_flush;
-  #endif
-
-  //
-  // Taint the request to a X_NoOperation.
-  //
-
-  opcode = X_NoOperation;
-
-  if (handleFlush(flush_if_any) < 0)
-  {
-    return -1;
-  }
-
-  return 1;
-}
-
-int ClientChannel::handleTaintSplitRequest(unsigned char &opcode, const unsigned char *&buffer,
-                                               unsigned int &size)
-{
-  #ifdef TEST
-
-  if (opcode == opcodeStore_ -> abortSplit)
-  {
-    *logofs << "handleTaintSplitRequest: Tainting abort split "
-            << "request for FD#" << fd_ << ".\n"
-            << logofs_flush;
-  }
-  else if (opcode == opcodeStore_ -> finishSplit)
-  {
-    *logofs << "handleTaintSplitRequest: Tainting finish split "
-            << "request for FD#" << fd_ << ".\n"
-            << logofs_flush;
-  }
-  else
-  {
-    *logofs << "handleTaintSplitRequest: Tainting free split "
-            << "request for FD#" << fd_ << ".\n"
-            << logofs_flush;
-  }
-
-  #endif
-
-  //
-  // Taint the request to a X_NoOperation.
-  //
-
-  opcode = X_NoOperation;
 
   return 1;
 }
@@ -7485,12 +7116,12 @@ int ClientChannel::handleFastReadRequest(EncodeBuffer &encodeBuffer, const unsig
   // All the NX requests are handled in the
   // main message loop. The X_PutImage can
   // be handled here only if the split was
-  // not requested.
+  // not requested (since ProtoStep7 #issue 108).
   //
 
   if ((opcode >= X_NXFirstOpcode && opcode <= X_NXLastOpcode) ||
-           (control -> isProtoStep7() == 1 && opcode == X_PutImage &&
-               splitState_.resource != nothing) || opcode == X_ListExtensions ||
+           (opcode == X_PutImage && splitState_.resource != nothing) ||
+               opcode == X_ListExtensions ||
                    opcode == X_QueryExtension)
   {
     return 0;
@@ -7977,8 +7608,6 @@ int ClientChannel::handleCacheRequest(EncodeBuffer &encodeBuffer, const unsigned
   enableSave_  = *(buffer + 6);
   enableLoad_  = *(buffer + 7);
 
-  handleSplitEnable();
-
   #ifdef TEST
   *logofs << "handleCacheRequest: Set cache parameters to "
           << " cache " << enableCache_ << " split " << enableSplit_
@@ -8068,11 +7697,9 @@ int ClientChannel::handleStartSplitRequest(EncodeBuffer &encodeBuffer, const uns
   // Send the selected resource to the remote.
   //
 
-  if (control -> isProtoStep7() == 1)
-  {
-    encodeBuffer.encodeCachedValue(splitState_.resource, 8,
-                       clientCache_ -> resourceCache);
-  }
+  // Since ProtoStep7 (#issue 108)
+  encodeBuffer.encodeCachedValue(splitState_.resource, 8,
+                     clientCache_ -> resourceCache);
 
   splitState_.mode = (T_split_mode) *(buffer + 4);
 
@@ -8157,11 +7784,9 @@ int ClientChannel::handleEndSplitRequest(EncodeBuffer &encodeBuffer, const unsig
   // Send the selected resource to the remote.
   //
 
-  if (control -> isProtoStep7() == 1)
-  {
-    encodeBuffer.encodeCachedValue(splitState_.resource, 8,
-                       clientCache_ -> resourceCache);
-  }
+  // Since ProtoStep7 (#issue 108)
+  encodeBuffer.encodeCachedValue(splitState_.resource, 8,
+                     clientCache_ -> resourceCache);
 
   //
   // Send the split notification events

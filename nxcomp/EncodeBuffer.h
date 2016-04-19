@@ -25,9 +25,6 @@
 #include "OpcodeCache.h"
 #include "ActionCache.h"
 
-#include "ActionCacheCompat.h"
-#include "PositionCacheCompat.h"
-
 #define ENCODE_BUFFER_DEFAULT_SIZE        16384
 
 //
@@ -116,15 +113,6 @@ class EncodeBuffer
   void encodeXidValue(unsigned int value, XidCache &cache);
 
   void encodeFreeXidValue(unsigned int value, FreeCache &cache);
-
-  void encodeActionValueCompat(unsigned char value, ActionCacheCompat &cache)
-  {
-    encodeCachedValue(value, 2, cache.base_[cache.slot_]);
-
-    cache.slot_ = value;
-  }
-
-  void encodePositionValueCompat(short int value, PositionCacheCompat &cache);
 
   void encodeTextData(const unsigned char *buffer, unsigned int numBytes)
   {

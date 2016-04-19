@@ -34,10 +34,8 @@ DecodeBuffer::DecodeBuffer(const unsigned char *data, unsigned int length)
 
   : buffer_(data), end_(buffer_ + length), nextSrc_(buffer_), srcMask_(0x80)
 {
-  if (control -> isProtoStep7() == 1)
-  {
-    end_ = buffer_ + length - DECODE_BUFFER_POSTFIX_SIZE;
-  }
+  // Since ProtoStep7 (#issue 108)
+  end_ = buffer_ + length - DECODE_BUFFER_POSTFIX_SIZE;
 }
 
 int DecodeBuffer::decodeValue(unsigned int &value, unsigned int numBits,
@@ -277,63 +275,25 @@ int DecodeBuffer::decodeCachedValue(unsigned int &value, unsigned int numBits,
 
   if (index == 2)
   {
-    if (control -> isProtoStep8() == 1)
+    // Since ProtoStep8 (#issue 108)
+    blockSize = cache.getBlockSize(blockSize);
+
+    if (decodeValue(value, numBits, blockSize, endOkay))
     {
-      blockSize = cache.getBlockSize(blockSize);
+      cache.insert(value, IntMask[numBits]);
 
-      if (decodeValue(value, numBits, blockSize, endOkay))
-      {
-        cache.insert(value, IntMask[numBits]);
-
-        return 1;
-      }
-
-      #ifdef PANIC
-      *logofs << "DecodeBuffer: PANIC! Assertion failed. Error [H] "
-              << "in decodeCacheValue() with no value found.\n"
-              << logofs_flush;
-      #endif
-
-      cerr << "Error" << ": Failure decoding data in context [H].\n";
-
-      HandleAbort();
+      return 1;
     }
-    else
-    {
-      unsigned int sameDiff;
 
-      decodeBoolValue(sameDiff);
+    #ifdef PANIC
+    *logofs << "DecodeBuffer: PANIC! Assertion failed. Error [H] "
+            << "in decodeCacheValue() with no value found.\n"
+            << logofs_flush;
+    #endif
 
-      if (sameDiff)
-      {
-        value = cache.getLastDiff(IntMask[numBits]);
+    cerr << "Error" << ": Failure decoding data in context [H].\n";
 
-        cache.insert(value, IntMask[numBits]);
-
-        return 1;
-      }
-      else
-      {
-        blockSize = cache.getBlockSize(blockSize);
-
-        if (decodeValue(value, numBits, blockSize, endOkay))
-        {
-          cache.insert(value, IntMask[numBits]);
-
-          return 1;
-        }
-
-        #ifdef PANIC
-        *logofs << "DecodeBuffer: PANIC! Assertion failed. Error [H] "
-                << "in decodeCacheValue() with no value found.\n"
-                << logofs_flush;
-        #endif
-
-        cerr << "Error" << ": Failure decoding data in context [H].\n";
-
-        HandleAbort();
-      }
-    }
+    HandleAbort();
   }
   else
   {
@@ -665,28 +625,3 @@ void DecodeBuffer::decodeFreeXidValue(unsigned int &value, FreeCache &cache)
   decodeCachedValue(value, 29, cache);
 }
 
-void DecodeBuffer::decodePositionValueCompat(short int &value, PositionCacheCompat &cache)
-{
-  unsigned int t;
-
-  decodeCachedValue(t, 13, *(cache.base_[cache.slot_]));
-
-  cache.last_ += t;
-  cache.last_ &= 0x1fff;
-
-  value = cache.last_;
-
-  #ifdef DEBUG
-  *logofs << "DecodeBuffer: Decoded position "
-          << value << " with base " << cache.slot_
-          << ".\n" << logofs_flush;
-  #endif
-
-  #ifdef DEBUG
-  *logofs << "DecodeBuffer: Position block prediction is "
-          << (*(cache.base_[cache.slot_])).getBlockSize(13)
-          << ".\n" << logofs_flush;
-  #endif
-
-  cache.slot_ = (value & 0x1f);
-}

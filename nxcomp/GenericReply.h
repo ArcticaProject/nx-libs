@@ -37,7 +37,6 @@
 #define GENERICREPLY_ENABLE_CACHE                       1
 #define GENERICREPLY_ENABLE_DATA                        1
 #define GENERICREPLY_ENABLE_SPLIT                       0
-#define GENERICREPLY_ENABLE_COMPRESS                    1
 
 #define GENERICREPLY_DATA_LIMIT                         1048576 - 32
 #define GENERICREPLY_DATA_OFFSET                        32

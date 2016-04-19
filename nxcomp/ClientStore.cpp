@@ -54,11 +54,6 @@
 #include "PutPackedImage.h"
 #include "GenericRequest.h"
 
-#include "ChangeGCCompat.h"
-#include "CreatePixmapCompat.h"
-#include "SetUnpackColormapCompat.h"
-#include "SetUnpackAlphaCompat.h"
-
 //
 // Set the verbosity level.
 //
@@ -111,20 +106,11 @@ ClientStore::ClientStore(StaticCompressor *compressor)
   requests_[X_NXSetUnpackGeometry]       = new SetUnpackGeometryStore(compressor);
   requests_[X_NXPutPackedImage]          = new PutPackedImageStore(compressor);
 
-  if (control -> isProtoStep7() == 1)
-  {
-    requests_[X_ChangeGC]            = new ChangeGCStore();
-    requests_[X_CreatePixmap]        = new CreatePixmapStore();
-    requests_[X_NXSetUnpackColormap] = new SetUnpackColormapStore(compressor);
-    requests_[X_NXSetUnpackAlpha]    = new SetUnpackAlphaStore(compressor);
-  }
-  else
-  {
-    requests_[X_ChangeGC]            = new ChangeGCCompatStore();
-    requests_[X_CreatePixmap]        = new CreatePixmapCompatStore();
-    requests_[X_NXSetUnpackColormap] = new SetUnpackColormapCompatStore(compressor);
-    requests_[X_NXSetUnpackAlpha]    = new SetUnpackAlphaCompatStore(compressor);
-  }
+  // Since ProtoStep7 (#issue 108)
+  requests_[X_ChangeGC]            = new ChangeGCStore();
+  requests_[X_CreatePixmap]        = new CreatePixmapStore();
+  requests_[X_NXSetUnpackColormap] = new SetUnpackColormapStore(compressor);
+  requests_[X_NXSetUnpackAlpha]    = new SetUnpackAlphaStore(compressor);
 
   for (int i = 0; i < CHANNEL_STORE_RESOURCE_LIMIT; i++)
   {

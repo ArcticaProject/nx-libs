@@ -44,7 +44,6 @@ SetUnpackAlphaStore::SetUnpackAlphaStore(StaticCompressor *compressor)
 {
   enableCache    = SETUNPACKALPHA_ENABLE_CACHE;
   enableData     = SETUNPACKALPHA_ENABLE_DATA;
-  enableSplit    = SETUNPACKALPHA_ENABLE_SPLIT_IF_PROTO_STEP_7;
   enableCompress = SETUNPACKALPHA_ENABLE_COMPRESS_IF_PROTO_STEP_7;
 
   dataLimit  = SETUNPACKALPHA_DATA_LIMIT;
@@ -54,10 +53,8 @@ SetUnpackAlphaStore::SetUnpackAlphaStore(StaticCompressor *compressor)
   cacheThreshold      = SETUNPACKALPHA_CACHE_THRESHOLD;
   cacheLowerThreshold = SETUNPACKALPHA_CACHE_LOWER_THRESHOLD;
 
-  if (control -> isProtoStep8() == 1)
-  {
-    enableSplit = SETUNPACKALPHA_ENABLE_SPLIT_IF_PROTO_STEP_8;
-  }
+  // Since ProtoStep8 (#issue 108)
+  enableSplit    = SETUNPACKALPHA_ENABLE_SPLIT_IF_PROTO_STEP_8;
 
   messages_ -> resize(cacheSlots);
 

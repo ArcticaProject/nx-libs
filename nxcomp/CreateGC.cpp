@@ -146,39 +146,17 @@ void CreateGCStore::updateIdentity(EncodeBuffer &encodeBuffer, const Message *me
 
   ClientCache *clientCache = (ClientCache *) channelCache;
 
-  if (control -> isProtoStep7() == 1)
-  {
-    #ifdef TEST
-    *logofs << name() << ": Encoding value " << createGC -> gcontext
-            << " as gcontext field.\n" << logofs_flush;
-    #endif
+  // Since ProtoStep7 (#issue 108)
+  #ifdef TEST
+  *logofs << name() << ": Encoding value " << createGC -> gcontext
+          << " as gcontext field.\n" << logofs_flush;
+  #endif
 
-    encodeBuffer.encodeNewXidValue(createGC -> gcontext, clientCache -> lastId,
-                       clientCache -> lastIdCache, clientCache -> gcCache,
-                           clientCache -> freeGCCache);
+  encodeBuffer.encodeNewXidValue(createGC -> gcontext, clientCache -> lastId,
+                     clientCache -> lastIdCache, clientCache -> gcCache,
+                         clientCache -> freeGCCache);
 
-    cachedCreateGC -> gcontext = createGC -> gcontext;
-  }
-  else
-  {
-    #ifdef TEST
-    *logofs << name() << ": Encoding value " << createGC -> drawable
-            << " as drawable field.\n" << logofs_flush;
-    #endif
-
-    encodeBuffer.encodeXidValue(createGC -> drawable, clientCache -> drawableCache);
-
-    cachedCreateGC -> drawable = createGC -> drawable;
-
-    #ifdef TEST
-    *logofs << name() << ": Encoding value " << createGC -> gcontext
-            << " as gcontext field.\n" << logofs_flush;
-    #endif
-
-    encodeBuffer.encodeXidValue(createGC -> gcontext, clientCache -> gcCache);
-
-    cachedCreateGC -> gcontext = createGC -> gcontext;
-  }
+  cachedCreateGC -> gcontext = createGC -> gcontext;
 }
 
 void CreateGCStore::updateIdentity(DecodeBuffer &decodeBuffer, const Message *message,
@@ -190,37 +168,15 @@ void CreateGCStore::updateIdentity(DecodeBuffer &decodeBuffer, const Message *me
 
   unsigned int value;
 
-  if (control -> isProtoStep7() == 1)
-  {
-    decodeBuffer.decodeNewXidValue(value, clientCache -> lastId,
-                       clientCache -> lastIdCache, clientCache -> gcCache,
-                           clientCache -> freeGCCache);
+  // Since ProtoStep7 (#issue 108)
+  decodeBuffer.decodeNewXidValue(value, clientCache -> lastId,
+                     clientCache -> lastIdCache, clientCache -> gcCache,
+                         clientCache -> freeGCCache);
 
-    createGC -> gcontext = value;
+  createGC -> gcontext = value;
 
-    #ifdef TEST
-    *logofs << name() << ": Decoded value " << createGC -> gcontext
-            << " as gcontext field.\n" << logofs_flush;
-    #endif
-  }
-  else
-  {
-    decodeBuffer.decodeXidValue(value, clientCache -> drawableCache);
-
-    createGC -> drawable = value;
-
-    #ifdef TEST
-    *logofs << name() << ": Decoded value " << createGC -> drawable
-            << " as drawable field.\n" << logofs_flush;
-    #endif
-
-    decodeBuffer.decodeXidValue(value, clientCache -> gcCache);
-
-    createGC -> gcontext = value;
-
-    #ifdef TEST
-    *logofs << name() << ": Decoded value " << createGC -> gcontext
-            << " as gcontext field.\n" << logofs_flush;
-    #endif
-  }
+  #ifdef TEST
+  *logofs << name() << ": Decoded value " << createGC -> gcontext
+          << " as gcontext field.\n" << logofs_flush;
+  #endif
 }

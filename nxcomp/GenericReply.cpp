@@ -45,12 +45,9 @@ GenericReplyStore::GenericReplyStore(StaticCompressor *compressor)
   enableCache    = GENERICREPLY_ENABLE_CACHE;
   enableData     = GENERICREPLY_ENABLE_DATA;
   enableSplit    = GENERICREPLY_ENABLE_SPLIT;
-  enableCompress = GENERICREPLY_ENABLE_COMPRESS;
 
-  if (control -> isProtoStep7() == 1)
-  {
-    enableCompress = GENERICREPLY_ENABLE_COMPRESS_IF_PROTO_STEP_7;
-  }
+  // Since ProtoStep7 (#issue 108)
+  enableCompress = GENERICREPLY_ENABLE_COMPRESS_IF_PROTO_STEP_7;
 
   dataLimit  = GENERICREPLY_DATA_LIMIT;
   dataOffset = GENERICREPLY_DATA_OFFSET;

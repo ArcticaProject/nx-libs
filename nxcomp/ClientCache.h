@@ -26,8 +26,6 @@
 #include "XidCache.h"
 #include "FreeCache.h"
 
-#include "TextCompressor.h"
-
 #include "ChannelCache.h"
 
 class ClientCache : public ChannelCache
@@ -61,7 +59,6 @@ class ClientCache : public ChannelCache
   // General-purpose caches.
   //
 
-  CharCache textCache[CLIENT_TEXT_CACHE_SIZE];
   IntCache cursorCache;
   IntCache colormapCache;
   IntCache visualCache;
@@ -85,7 +82,6 @@ class ClientCache : public ChannelCache
   IntCache changePropertyPropertyCache;
   IntCache changePropertyTypeCache;
   IntCache changePropertyData32Cache;
-  TextCompressor changePropertyTextCompressor;
 
   //
   // ClearArea request.
@@ -188,19 +184,6 @@ class ClientCache : public ChannelCache
   unsigned int imageTextLastY;
   IntCache imageTextCacheX;
   IntCache imageTextCacheY;
-  TextCompressor imageTextTextCompressor;
-
-  //
-  // InternAtom request.
-  //
-
-  TextCompressor internAtomTextCompressor;
-
-  //
-  // OpenFont request.
-  //
-
-  TextCompressor openFontTextCompressor;
 
   //
   // PolyFillRectangle request.
@@ -251,7 +234,6 @@ class ClientCache : public ChannelCache
   IntCache polyTextCacheY;
   IntCache polyTextFontCache;
   CharCache polyTextDeltaCache;
-  TextCompressor polyTextTextCompressor;
 
   //
   // PutImage request.
@@ -397,8 +379,6 @@ class ClientCache : public ChannelCache
   unsigned int renderLastId;
 
   IntCache *renderDataCache[16];
-
-  TextCompressor renderTextCompressor;
 
   IntCache renderGlyphXCache;
   IntCache renderGlyphYCache;

@@ -45,12 +45,9 @@ GetPropertyReplyStore::GetPropertyReplyStore(StaticCompressor *compressor)
   enableCache    = GETPROPERTYREPLY_ENABLE_CACHE;
   enableData     = GETPROPERTYREPLY_ENABLE_DATA;
   enableSplit    = GETPROPERTYREPLY_ENABLE_SPLIT;
-  enableCompress = GETPROPERTYREPLY_ENABLE_COMPRESS;
 
-  if (control -> isProtoStep7() == 1)
-  {
-    enableCompress = GETPROPERTYREPLY_ENABLE_COMPRESS_IF_PROTO_STEP_7;
-  }
+  // Since ProtoStep7 (#issue 108)
+  enableCompress = GETPROPERTYREPLY_ENABLE_COMPRESS_IF_PROTO_STEP_7;
 
   dataLimit  = GETPROPERTYREPLY_DATA_LIMIT;
   dataOffset = GETPROPERTYREPLY_DATA_OFFSET;

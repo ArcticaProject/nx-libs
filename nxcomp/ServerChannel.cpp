@@ -199,8 +199,6 @@ ServerChannel::ServerChannel(Transport *transport, StaticCompressor *compressor)
   splitState_.load     = 1;
   splitState_.commit   = 0;
 
-  handleSplitEnable();
-
   //
   // It will be eventually set by
   // the server proxy.
@@ -394,19 +392,6 @@ int ServerChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
 
       priority_++;
 
-      //
-      // Due to the way the loop was implemented
-      // we can't encode multiple messages if we
-      // are encoding the first request.
-      //
-
-      if (control -> isProtoStep7() == 0)
-      {
-        if (proxy -> handleAsyncInit() < 0)
-        {
-          return -1;
-        }
-      }
     }
     else
     {
@@ -545,19 +530,8 @@ int ServerChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
               encodeBuffer.encodeValue(nameLength, 16, 6);
               const unsigned char *nextSrc = inputMessage + 32;
 
-              if (control -> isProtoStep7() == 1)
-              {
-                encodeBuffer.encodeTextData(nextSrc, nameLength);
-              }
-              else
-              {
-                serverCache_ -> getAtomNameTextCompressor.reset();
-                for (unsigned int i = 0; i < nameLength; i++)
-                {
-                  serverCache_ -> getAtomNameTextCompressor.
-                        encodeChar(*nextSrc++, encodeBuffer);
-                }
-              }
+              // Since ProtoStep7 (#issue 108)
+              encodeBuffer.encodeTextData(nextSrc, nameLength);
 
               priority_++;
             }
@@ -930,21 +904,10 @@ int ServerChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
                 unsigned int length = (unsigned int) (*nextSrc++);
                 encodeBuffer.encodeValue(length, 8);
 
-                if (control -> isProtoStep7() == 1)
-                {
-                  encodeBuffer.encodeTextData(nextSrc, length);
+                // Since ProtoStep7 (#issue 108)
+                encodeBuffer.encodeTextData(nextSrc, length);
 
-                  nextSrc += length;
-                }
-                else
-                {
-                  serverCache_ -> getPropertyTextCompressor.reset();
-                  for (; length; length--)
-                  {
-                    serverCache_ -> getPropertyTextCompressor.encodeChar(
-                                       *nextSrc++, encodeBuffer);
-                  }
-                }
+                nextSrc += length;
               }
 
               priority_++;
@@ -1253,33 +1216,9 @@ int ServerChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
               encodeBuffer.encodeCachedValue(GetULONG(inputMessage + 8, bigEndian_), 29,
                                  serverCache_ -> visualCache);
 
-              if (control -> isProtoStep8() == 0)
-              {
-                unsigned int compressedDataSize = 0;
-                unsigned char *compressedData   = NULL;
-
-                int compressed = handleCompress(encodeBuffer, requestOpcode, messageStore -> dataOffset,
-                                                    inputMessage, inputLength, compressedData,
-                                                        compressedDataSize);
-                if (compressed < 0)
-                {
-                  return -1;
-                }
-                else if (compressed > 0)
-                {
-                  //
-                  // Update size according to result of image compression.
-                  //
-
-                  handleUpdate(messageStore, inputLength - messageStore ->
-                                   dataOffset, compressedDataSize);
-                }
-              }
-              else
-              {
-                handleCopy(encodeBuffer, requestOpcode, messageStore ->
-                              dataOffset, inputMessage, inputLength);
-              }
+              // Since ProtoStep8 (#issue 108)
+              handleCopy(encodeBuffer, requestOpcode, messageStore ->
+                            dataOffset, inputMessage, inputLength);
 
               priority_++;
             }
@@ -2069,10 +2008,8 @@ int ServerChannel::handleWrite(const unsigned char *message, unsigned int length
     // encoding is used.
     //
 
-    if (control -> isProtoStep7() == 1)
-    {
-      decodeBuffer.decodeValue(length, 8);
-    }
+    // Since ProtoStep7 (#issue 108)
+    decodeBuffer.decodeValue(length, 8);
 
     unsigned int nextByte;
     unsigned char *outputMessage = writeBuffer_.addMessage(length);
@@ -2285,19 +2222,8 @@ int ServerChannel::handleWrite(const unsigned char *message, unsigned int length
 
           if (format == 8)
           {
-            if (control -> isProtoStep7() == 1)
-            {
-              decodeBuffer.decodeTextData(nextDest, dataLength);
-            }
-            else
-            {
-              clientCache_ -> changePropertyTextCompressor.reset();
-              for (unsigned int i = 0; i < dataLength; i++)
-              {
-                *nextDest++ = clientCache_ -> changePropertyTextCompressor.
-                                                    decodeChar(decodeBuffer);
-              }
-            }
+            // Since ProtoStep7 (#issue 108)
+            decodeBuffer.decodeTextData(nextDest, dataLength);
           }
           else if (format == 32)
           {
@@ -2584,16 +2510,10 @@ int ServerChannel::handleWrite(const unsigned char *message, unsigned int length
           outputMessage = writeBuffer_.addMessage(outputLength);
           writeBuffer_.registerPointer(&outputMessage);
 
-          if (control -> isProtoStep7() == 1)
-          {
-            decodeBuffer.decodeNewXidValue(value, clientCache_ -> lastId,
-                               clientCache_ -> lastIdCache, clientCache_ -> gcCache,
-                                   clientCache_ -> freeGCCache);
-          }
-          else
-          {
-            decodeBuffer.decodeXidValue(value, clientCache_ -> gcCache);
-          }
+          // Since ProtoStep7 (#issue 108)
+          decodeBuffer.decodeNewXidValue(value, clientCache_ -> lastId,
+                             clientCache_ -> lastIdCache, clientCache_ -> gcCache,
+                                 clientCache_ -> freeGCCache);
 
           PutULONG(value, outputMessage + 4, bigEndian_);
           unsigned int offset = 8;
@@ -2688,16 +2608,10 @@ int ServerChannel::handleWrite(const unsigned char *message, unsigned int length
           decodeBuffer.decodeXidValue(value, clientCache_ -> windowCache);
           PutULONG(value, outputMessage + 8, bigEndian_);
 
-          if (control -> isProtoStep7() == 1)
-          {
-            decodeBuffer.decodeNewXidValue(value, clientCache_ -> lastId,
-                               clientCache_ -> lastIdCache, clientCache_ -> windowCache,
-                                   clientCache_ -> freeWindowCache);
-          }
-          else
-          {
-            decodeBuffer.decodeXidValue(value, clientCache_ -> windowCache);
-          }
+          // Since ProtoStep7 (#issue 108)
+          decodeBuffer.decodeNewXidValue(value, clientCache_ -> lastId,
+                             clientCache_ -> lastIdCache, clientCache_ -> windowCache,
+                                 clientCache_ -> freeWindowCache);
 
           PutULONG(value, outputMessage + 4, bigEndian_);
           unsigned char *nextDest = outputMessage + 12;
@@ -2754,16 +2668,9 @@ int ServerChannel::handleWrite(const unsigned char *message, unsigned int length
 
           unsigned int numPoints;
 
-          if (control -> isProtoStep10() == 1)
-          {
-            decodeBuffer.decodeCachedValue(numPoints, 16,
-                               clientCache_ -> fillPolyNumPointsCache, 4);
-          }
-          else
-          {
-            decodeBuffer.decodeCachedValue(numPoints, 14,
-                               clientCache_ -> fillPolyNumPointsCache, 4);
-          }
+          // Since ProtoStep10 (#issue 108)
+          decodeBuffer.decodeCachedValue(numPoints, 16,
+                             clientCache_ -> fillPolyNumPointsCache, 4);
 
           outputLength = 16 + (numPoints << 2);
           outputMessage = writeBuffer_.addMessage(outputLength);
@@ -2859,14 +2766,8 @@ int ServerChannel::handleWrite(const unsigned char *message, unsigned int length
           outputLength = 8;
           outputMessage = writeBuffer_.addMessage(outputLength);
 
-          if (control -> isProtoStep7() == 1)
-          {
-            decodeBuffer.decodeFreeXidValue(value, clientCache_ -> freeGCCache);
-          }
-          else
-          {
-            decodeBuffer.decodeXidValue(value, clientCache_ -> gcCache);
-          }
+          // Since ProtoStep7 (#issue 108)
+          decodeBuffer.decodeFreeXidValue(value, clientCache_ -> freeGCCache);
 
           PutULONG(value, outputMessage + 4, bigEndian_);
         }
@@ -2876,23 +2777,10 @@ int ServerChannel::handleWrite(const unsigned char *message, unsigned int length
           outputLength = 8;
           outputMessage = writeBuffer_.addMessage(outputLength);
 
-          if (control -> isProtoStep7() == 1)
-          {
-            decodeBuffer.decodeFreeXidValue(value, clientCache_ -> freeDrawableCache);
+          // Since ProtoStep7 (#issue 108)
+          decodeBuffer.decodeFreeXidValue(value, clientCache_ -> freeDrawableCache);
 
-            PutULONG(value, outputMessage + 4, bigEndian_);
-          }
-          else
-          {
-            decodeBuffer.decodeBoolValue(value);
-            if (!value)
-            {
-              decodeBuffer.decodeValue(value, 29, 4);
-              clientCache_ -> createPixmapLastId += value;
-              clientCache_ -> createPixmapLastId &= 0x1fffffff;
-            }
-            PutULONG(clientCache_ -> createPixmapLastId, outputMessage + 4, bigEndian_);
-          }
+          PutULONG(value, outputMessage + 4, bigEndian_);
         }
         break;
       case X_GetAtomName:
@@ -3125,21 +3013,10 @@ int ServerChannel::handleWrite(const unsigned char *message, unsigned int length
                                  clientCache_ -> polyTextDeltaCache);
               *nextDest++ = cValue;
 
-              if (control -> isProtoStep7() == 1)
-              {
-                decodeBuffer.decodeTextData(nextDest, textLength);
+              // Since ProtoStep7 (#issue 108)
+              decodeBuffer.decodeTextData(nextDest, textLength);
 
-                nextDest += textLength;
-              }
-              else
-              {
-                clientCache_ -> polyTextTextCompressor.reset();
-                while (textLength)
-                {
-                  *nextDest++ = clientCache_ -> polyTextTextCompressor.decodeChar(decodeBuffer);
-                  textLength--;
-                }
-              }
+              nextDest += textLength;
             }
           }
           outputLength += addedLength;
@@ -3211,23 +3088,10 @@ int ServerChannel::handleWrite(const unsigned char *message, unsigned int length
               decodeBuffer.decodeCachedValue(cValue, 8, clientCache_ -> polyTextDeltaCache);
               *nextDest++ = cValue;
 
-              if (control -> isProtoStep7() == 1)
-              {
-                decodeBuffer.decodeTextData(nextDest, textLength * 2);
+              // Since ProtoStep7 (#issue 108)
+              decodeBuffer.decodeTextData(nextDest, textLength * 2);
 
-                nextDest += textLength * 2;
-              }
-              else
-              {
-                clientCache_ -> polyTextTextCompressor.reset();
-                textLength <<= 1;
-                while (textLength)
-                {
-                  *nextDest++ =
-                    clientCache_ -> polyTextTextCompressor.decodeChar(decodeBuffer);
-                  textLength--;
-                }
-              }
+              nextDest += textLength * 2;
             }
           }
           outputLength += addedLength;
@@ -3279,16 +3143,8 @@ int ServerChannel::handleWrite(const unsigned char *message, unsigned int length
           PutUINT(clientCache_ -> imageTextLastY, outputMessage + 14, bigEndian_);
           unsigned char *nextDest = outputMessage + 16;
 
-          if (control -> isProtoStep7() == 1)
-          {
-            decodeBuffer.decodeTextData(nextDest, textLength);
-          }
-          else
-          {
-            clientCache_ -> imageTextTextCompressor.reset();
-            for (unsigned int j = 0; j < textLength; j++)
-              *nextDest++ = clientCache_ -> imageTextTextCompressor.decodeChar(decodeBuffer);
-          }
+          // Since ProtoStep7 (#issue 108)
+          decodeBuffer.decodeTextData(nextDest, textLength);
 
           handleSave(messageStore, outputMessage, outputLength);
         }
@@ -3326,16 +3182,8 @@ int ServerChannel::handleWrite(const unsigned char *message, unsigned int length
           PutUINT(clientCache_ -> imageTextLastY, outputMessage + 14, bigEndian_);
           unsigned char *nextDest = outputMessage + 16;
 
-          if (control -> isProtoStep7() == 1)
-          {
-            decodeBuffer.decodeTextData(nextDest, textLength * 2);
-          }
-          else
-          {
-            clientCache_ -> imageTextTextCompressor.reset();
-            for (unsigned int j = 0; j < textLength * 2; j++)
-              *nextDest++ = clientCache_ -> imageTextTextCompressor.decodeChar(decodeBuffer);
-          }
+          // Since ProtoStep7 (#issue 108)
+          decodeBuffer.decodeTextData(nextDest, textLength * 2);
 
           handleSave(messageStore, outputMessage, outputLength);
         }
@@ -3362,18 +3210,8 @@ int ServerChannel::handleWrite(const unsigned char *message, unsigned int length
           outputMessage[1] = (unsigned char) value;
           unsigned char *nextDest = outputMessage + 8;
 
-          if (control -> isProtoStep7() == 1)
-          {
-            decodeBuffer.decodeTextData(nextDest, nameLength);
-          }
-          else
-          {
-            clientCache_ -> internAtomTextCompressor.reset();
-            for (unsigned int i = 0; i < nameLength; i++)
-            {
-              *nextDest++ = clientCache_ -> internAtomTextCompressor.decodeChar(decodeBuffer);
-            }
-          }
+          // Since ProtoStep7 (#issue 108)
+          decodeBuffer.decodeTextData(nextDest, nameLength);
 
           sequenceQueue_.push(clientSequence_, outputOpcode);
 
@@ -3399,18 +3237,8 @@ int ServerChannel::handleWrite(const unsigned char *message, unsigned int length
           PutUINT(value, outputMessage + 4, bigEndian_);
           unsigned char* nextDest = outputMessage + 8;
 
-          if (control -> isProtoStep7() == 1)
-          {
-            decodeBuffer.decodeTextData(nextDest, textLength);
-          }
-          else
-          {
-            clientCache_ -> polyTextTextCompressor.reset();
-            for (unsigned int i = 0; i < textLength; i++)
-            {
-              *nextDest++ = clientCache_ -> polyTextTextCompressor.decodeChar(decodeBuffer);
-            }
-          }
+          // Since ProtoStep7 (#issue 108)
+          decodeBuffer.decodeTextData(nextDest, textLength);
 
           sequenceQueue_.push(clientSequence_, outputOpcode);
         }
@@ -3428,18 +3256,8 @@ int ServerChannel::handleWrite(const unsigned char *message, unsigned int length
           PutUINT(textLength, outputMessage + 8, bigEndian_);
           unsigned char *nextDest = outputMessage + 12;
 
-          if (control -> isProtoStep7() == 1)
-          {
-            decodeBuffer.decodeTextData(nextDest, textLength);
-          }
-          else
-          {
-            clientCache_ -> polyTextTextCompressor.reset();
-            for (unsigned int i = 0; i < textLength; i++)
-            {
-              *nextDest++ = clientCache_ -> polyTextTextCompressor.decodeChar(decodeBuffer);
-            }
-          }
+          // Since ProtoStep7 (#issue 108)
+          decodeBuffer.decodeTextData(nextDest, textLength);
 
           sequenceQueue_.push(clientSequence_, outputOpcode);
         }
@@ -3456,7 +3274,7 @@ int ServerChannel::handleWrite(const unsigned char *message, unsigned int length
           outputLength = 8;
           outputMessage = writeBuffer_.addMessage(outputLength);
 
-          if (outputOpcode == X_DestroyWindow && control -> isProtoStep7() == 1)
+          if (outputOpcode == X_DestroyWindow) // Since ProtoStep7 (#issue 108)
           {
             decodeBuffer.decodeFreeXidValue(value, clientCache_ -> freeWindowCache);
           }
@@ -3487,19 +3305,8 @@ int ServerChannel::handleWrite(const unsigned char *message, unsigned int length
           PutULONG(clientCache_ -> lastFont, outputMessage + 4, bigEndian_);
           unsigned char *nextDest = outputMessage + 12;
 
-          if (control -> isProtoStep7() == 1)
-          {
-            decodeBuffer.decodeTextData(nextDest, nameLength);
-          }
-          else
-          {
-            clientCache_ -> openFontTextCompressor.reset();
-            for (; nameLength; nameLength--)
-            {
-              *nextDest++ = clientCache_ -> openFontTextCompressor.
-                                  decodeChar(decodeBuffer);
-            }
-          }
+          // Since ProtoStep7 (#issue 108)
+          decodeBuffer.decodeTextData(nextDest, nameLength);
         }
         break;
       case X_PolyFillRectangle:
@@ -4137,14 +3944,8 @@ int ServerChannel::handleWrite(const unsigned char *message, unsigned int length
 
           unsigned int numRectangles;
 
-          if (control -> isProtoStep9() == 1)
-          {
-            decodeBuffer.decodeValue(numRectangles, 15, 4);
-          }
-          else
-          {
-            decodeBuffer.decodeValue(numRectangles, 13, 4);
-          }
+          // Since ProtoStep9 (#issue 108)
+          decodeBuffer.decodeValue(numRectangles, 15, 4);
 
           outputLength = (numRectangles << 3) + 12;
           outputMessage = writeBuffer_.addMessage(outputLength);
@@ -4669,10 +4470,8 @@ int ServerChannel::handleSplit(DecodeBuffer &decodeBuffer, MessageStore *store,
                                    T_store_action action, int position, unsigned char &opcode,
                                        unsigned char *&buffer, unsigned int &size)
 {
-  if (control -> isProtoStep7() == 1)
-  {
-    splitState_.current = splitState_.resource;
-  }
+  // Since ProtoStep7 (#issue 108)
+  splitState_.current = splitState_.resource;
 
   handleSplitStoreAlloc(&splitResources_, splitState_.current);
 
@@ -4707,14 +4506,12 @@ int ServerChannel::handleSplit(DecodeBuffer &decodeBuffer, MessageStore *store,
                                       action, checksum, buffer, size);
 
   //
-  // If we are connected to an old proxy
-  // version or the encoding side didn't
-  // provide a checksum, then don't send
-  // the split report.
+  // If the encoding side didn't provide
+  // a checksum, then don't send the split
+  // report.
   //
 
-  if (control -> isProtoStep7() == 0 ||
-          checksum == NULL)
+  if (checksum == NULL)
   {
     if (action == IS_HIT)
     {
@@ -4735,8 +4532,6 @@ int ServerChannel::handleSplit(DecodeBuffer &decodeBuffer, MessageStore *store,
     clientStore_ -> dumpSplitStore(splitState_.current);
 
     #endif
-
-    delete [] checksum;
 
     return 1;
   }
@@ -4829,13 +4624,11 @@ int ServerChannel::handleSplit(DecodeBuffer &decodeBuffer)
 
   unsigned char resource;
 
-  if (control -> isProtoStep7() == 1)
-  {
-    decodeBuffer.decodeCachedValue(resource, 8,
-                       clientCache_ -> resourceCache);
+  // Since ProtoStep7 (#issue 108)
+  decodeBuffer.decodeCachedValue(resource, 8,
+                     clientCache_ -> resourceCache);
 
-    splitState_.current = resource;
-  }
+  splitState_.current = resource;
 
   handleSplitStoreAlloc(&splitResources_, splitState_.current);
 
@@ -5391,8 +5184,11 @@ int ServerChannel::handleColormap(unsigned char &opcode, unsigned char *&buffer,
   // data in compressed form.
   //
 
-  if (control -> isProtoStep7() == 1)
-  {
+  //
+  // Since ProtoStep7 (#issue 108)
+  //
+
+  { // An anonymous block is used here to limit the scope of local variables
     unsigned int packed   = GetULONG(buffer + 8, bigEndian_);
     unsigned int unpacked = GetULONG(buffer + 12, bigEndian_);
 
@@ -5486,85 +5282,7 @@ int ServerChannel::handleColormap(unsigned char &opcode, unsigned char *&buffer,
     }
 
     #endif
-  }
-  else
-  {
-    unsigned int entries = GetULONG(buffer + 4, bigEndian_);
-
-    if (size == entries * 4 + 8)
-    {
-      if (unpackState_[resource] -> colormap -> entries != entries &&
-              unpackState_[resource] -> colormap -> data != NULL)
-      {
-        #ifdef TEST
-        *logofs << "handleColormap: Freeing previously "
-                << "allocated unpack colormap.\n"
-                << logofs_flush;
-        #endif
-
-        delete [] unpackState_[resource] -> colormap -> data;
-
-        unpackState_[resource] -> colormap -> data    = NULL;
-        unpackState_[resource] -> colormap -> entries = 0;
-      }
-
-      if (entries > 0)
-      {
-        if (unpackState_[resource] -> colormap -> data == NULL)
-        {
-          unpackState_[resource] ->
-                colormap -> data = new unsigned int[entries];
-        }
-
-        if (unpackState_[resource] -> colormap -> data != NULL)
-        {
-          unpackState_[resource] -> colormap -> entries = entries;
-
-          #ifdef DEBUG
-          *logofs << "handleColormap: Size of new colormap "
-                  << "data is " << (entries << 2) << ".\n"
-                  << logofs_flush;
-          #endif
-
-          memcpy((unsigned char *) unpackState_[resource] ->
-                     colormap -> data, buffer + 8, entries << 2);
-
-          #if defined(DEBUG) && defined(DUMP)
-
-          *logofs << "handleColormap: Dumping colormap entries:\n"
-                  << logofs_flush;
-
-          const unsigned int *p = (unsigned int *) buffer + 8;
-
-          for (unsigned int i = 0; i < entries; i++)
-          {
-            *logofs << "handleColormap: [" << i << "] ["
-                    << (void *) p[i] << "].\n"
-                    << logofs_flush;
-          }
-
-          #endif
-        }
-        else
-        {
-          #ifdef PANIC
-          *logofs << "handleColormap: PANIC! Can't allocate "
-                  << entries << " entries for unpack colormap "
-                  << "for FD#" << fd_ << ".\n" << logofs_flush;
-          #endif
-        }
-      }
-    }
-    else
-    {
-      #ifdef PANIC
-      *logofs << "handleColormap: PANIC! Bad size " << size
-              << " for set unpack colormap message for FD#"
-              << fd_ << " with " << entries << " entries.\n"
-              << logofs_flush;
-      #endif
-    }
-  }
+  } // end anonymous block
 
 handleColormapEnd:
 
@@ -5593,8 +5311,11 @@ int ServerChannel::handleAlpha(unsigned char &opcode, unsigned char *&buffer,
   // data in compressed form.
   //
 
-  if (control -> isProtoStep7() == 1)
-  {
+  //
+  // Since ProtoStep7 (#issue 108)
+  //
+
+  {  // An anonymous block is used here to limit the scope of local variables
     unsigned int packed   = GetULONG(buffer + 8, bigEndian_);
     unsigned int unpacked = GetULONG(buffer + 12, bigEndian_);
 
@@ -5687,82 +5408,7 @@ int ServerChannel::handleAlpha(unsigned char &opcode, unsigned char *&buffer,
     }
 
     #endif
-  }
-  else
-  {
-    unsigned int entries = GetULONG(buffer + 4, bigEndian_);
-
-    if (size == RoundUp4(entries) + 8)
-    {
-      if (unpackState_[resource] -> alpha -> entries != entries &&
-              unpackState_[resource] -> alpha -> data != NULL)
-      {
-        #ifdef TEST
-        *logofs << "handleAlpha: Freeing previously allocated "
-                << "unpack alpha data.\n" << logofs_flush;
-        #endif
-
-        delete [] unpackState_[resource] -> alpha -> data;
-
-        unpackState_[resource] -> alpha -> data    = NULL;
-        unpackState_[resource] -> alpha -> entries = 0;
-      }
-
-      if (entries > 0)
-      {
-        if (unpackState_[resource] -> alpha -> data == NULL)
-        {
-          unpackState_[resource] -> alpha -> data = new unsigned char[entries];
-        }
-
-        if (unpackState_[resource] -> alpha -> data != NULL)
-        {
-          unpackState_[resource] -> alpha -> entries = entries;
-
-          #ifdef DEBUG
-          *logofs << "handleAlpha: Size of new alpha data is "
-                  << entries << ".\n" << logofs_flush;
-          #endif
-
-          memcpy((unsigned char *) unpackState_[resource] ->
-                     alpha -> data, buffer + 8, entries);
-
-          #if defined(DEBUG) && defined(DUMP)
-
-          *logofs << "handleAlpha: Dumping alpha entries:\n"
-                  << logofs_flush;
-
-          const unsigned char *p = buffer + 8;
-
-          for (unsigned int i = 0; i < entries; i++)
-          {
-            *logofs << "handleAlpha: [" << i << "] ["
-                    << (void *) ((int) p[i]) << "].\n"
-                    << logofs_flush;
-          }
-
-          #endif
-        }
-        else
-        {
-          #ifdef PANIC
-          *logofs << "handleAlpha: PANIC! Can't allocate "
-                  << entries << " entries for unpack alpha data "
-                  << "for FD#" << fd_ << ".\n" << logofs_flush;
-          #endif
-        }
-      }
-    }
-    #ifdef PANIC
-    else
-    {
-      *logofs << "handleAlpha: PANIC! Bad size " << size
-              << " for set unpack alpha message for FD#"
-              << fd_ << " with " << entries << " entries.\n"
-              << logofs_flush;
-    }
-    #endif
-  }
+  } //end anonymous block
 
 handleAlphaEnd:
 
@@ -6680,15 +6326,20 @@ int ServerChannel::handleFastWriteRequest(DecodeBuffer &decodeBuffer, unsigned c
 {
   //
   // All the NX requests are handled in the
-  // main message loop. The X_PutImage can
-  // be handled here only if a split was
-  // not requested.
+  // main message loop.
+  //
+
+  //
+  // Since ProtoStep7 (#issue 108)
+  //
+  // The X_PutImage can be handled here only
+  // if a split was not requested.
   //
 
   if ((opcode >= X_NXFirstOpcode && opcode <= X_NXLastOpcode) ||
-          (control -> isProtoStep7() == 1 && opcode == X_PutImage &&
-               splitState_.resource != nothing) || opcode == X_ListExtensions ||
-                   opcode == X_QueryExtension)
+          (opcode == X_PutImage && splitState_.resource != nothing) ||
+              opcode == X_ListExtensions ||
+                  opcode == X_QueryExtension)
   {
     return 0;
   }
@@ -7896,14 +7547,6 @@ int ServerChannel::handleCacheRequest(DecodeBuffer &decodeBuffer, unsigned char 
   splitState_.save = (mask >> 8) & 0xff;
   splitState_.load = mask & 0xff;
 
-  //
-  // Just to be sure. We should never
-  // receive this request if connected
-  // to an old proxy version.
-  //
-
-  handleSplitEnable();
-
   #ifdef TEST
   *logofs << "handleCacheRequest: Set cache parameters to "
           << "save " << splitState_.save << " load "
@@ -7920,34 +7563,24 @@ int ServerChannel::handleStartSplitRequest(DecodeBuffer &decodeBuffer, unsigned 
 {
   //
   // Prepare for the split for the selected
-  // resource. Old proxy versions only use
+  // resource. Old proxy versions only used
   // the split store at position 0.
   //
 
-  if (control -> isProtoStep7() == 1)
-  {
-    unsigned char resource;
+  // Since ProtoStep7 (#issue 108)
+  unsigned char resource;
 
-    decodeBuffer.decodeCachedValue(resource, 8,
-                       clientCache_ -> resourceCache);
+  decodeBuffer.decodeCachedValue(resource, 8,
+                     clientCache_ -> resourceCache);
 
-    splitState_.resource = resource;
+  splitState_.resource = resource;
 
-    splitState_.current = splitState_.resource;
+  splitState_.current = splitState_.resource;
 
-    #if defined(TEST) || defined(SPLIT)
-    *logofs << "handleStartSplitRequest: SPLIT! Registered id "
-            << splitState_.resource << " as resource "
-            << "waiting for a split.\n" << logofs_flush;
-    #endif
-  }
   #if defined(TEST) || defined(SPLIT)
-  else
-  {
-    *logofs << "handleStartSplitRequest: SPLIT! Assuming fake id "
-            << splitState_.current << " as resource "
-            << "waiting for a split.\n" << logofs_flush;
-  }
+  *logofs << "handleStartSplitRequest: SPLIT! Registered id "
+          << splitState_.resource << " as resource "
+          << "waiting for a split.\n" << logofs_flush;
   #endif
 
   handleNullRequest(opcode, buffer, size);
@@ -7962,39 +7595,37 @@ int ServerChannel::handleEndSplitRequest(DecodeBuffer &decodeBuffer, unsigned ch
   // Verify that the agent resource matches.
   //
 
-  if (control -> isProtoStep7() == 1)
+  // Since ProtoStep7 (#issue 108)
+  unsigned char resource;
+
+  decodeBuffer.decodeCachedValue(resource, 8,
+                     clientCache_ -> resourceCache);
+
+  #ifdef TEST
+
+  if (splitState_.resource == nothing)
   {
-    unsigned char resource;
-
-    decodeBuffer.decodeCachedValue(resource, 8,
-                       clientCache_ -> resourceCache);
-
-    #ifdef TEST
-
-    if (splitState_.resource == nothing)
-    {
-      #ifdef PANIC
-      *logofs << "handleEndSplitRequest: PANIC! SPLIT! Received an end of "
-              << "split for resource id " << (unsigned int) *(buffer + 1)
-              << " without a previous start.\n"
-              << logofs_flush;
-      #endif
-
-      HandleCleanup();
-    }
-    else if (resource != splitState_.resource)
-    {
-      #ifdef PANIC
-      *logofs << "handleEndSplitRequest: PANIC! SPLIT! Invalid resource id "
-              << resource << " received while waiting for resource id "
-              << splitState_.resource << ".\n" << logofs_flush;
-      #endif
-
-      HandleCleanup();
-    }
-
+    #ifdef PANIC
+    *logofs << "handleEndSplitRequest: PANIC! SPLIT! Received an end of "
+            << "split for resource id " << (unsigned int) *(buffer + 1)
+            << " without a previous start.\n"
+            << logofs_flush;
     #endif
+
+    HandleCleanup();
   }
+  else if (resource != splitState_.resource)
+  {
+    #ifdef PANIC
+    *logofs << "handleEndSplitRequest: PANIC! SPLIT! Invalid resource id "
+            << resource << " received while waiting for resource id "
+            << splitState_.resource << ".\n" << logofs_flush;
+    #endif
+
+    HandleCleanup();
+  }
+
+  #endif
 
   #if defined(TEST) || defined(SPLIT)
   *logofs << "handleEndSplitRequest: SPLIT! Reset id "
@@ -8013,15 +7644,8 @@ int ServerChannel::handleSplitChecksum(DecodeBuffer &decodeBuffer, T_checksum &c
 {
   unsigned int receive;
 
-  if (control -> isProtoStep7() == 1)
-  {
-    decodeBuffer.decodeBoolValue(receive);
-  }
-  else
-  {
-    receive = (control -> ImageCacheEnableLoad == 1 ||
-                   control -> ImageCacheEnableSave == 1);
-  }
+  // Since ProtoStep7 (#issue 108)
+  decodeBuffer.decodeBoolValue(receive);
 
   if (receive == 1)
   {

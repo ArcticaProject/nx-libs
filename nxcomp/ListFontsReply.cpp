@@ -39,12 +39,9 @@ ListFontsReplyStore::ListFontsReplyStore(StaticCompressor *compressor)
   enableCache    = LISTFONTSREPLY_ENABLE_CACHE;
   enableData     = LISTFONTSREPLY_ENABLE_DATA;
   enableSplit    = LISTFONTSREPLY_ENABLE_SPLIT;
-  enableCompress = LISTFONTSREPLY_ENABLE_COMPRESS;
 
-  if (control -> isProtoStep7() == 1)
-  {
-    enableCompress = LISTFONTSREPLY_ENABLE_COMPRESS_IF_PROTO_STEP_7;
-  }
+  // Since ProtoStep7 (#issue 108)
+  enableCompress = LISTFONTSREPLY_ENABLE_COMPRESS_IF_PROTO_STEP_7;
 
   dataLimit  = LISTFONTSREPLY_DATA_LIMIT;
   dataOffset = LISTFONTSREPLY_DATA_OFFSET;

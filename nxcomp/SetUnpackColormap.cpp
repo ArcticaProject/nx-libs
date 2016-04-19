@@ -44,7 +44,6 @@ SetUnpackColormapStore::SetUnpackColormapStore(StaticCompressor *compressor)
 {
   enableCache    = SETUNPACKCOLORMAP_ENABLE_CACHE;
   enableData     = SETUNPACKCOLORMAP_ENABLE_DATA;
-  enableSplit    = SETUNPACKCOLORMAP_ENABLE_SPLIT;
   enableCompress = SETUNPACKCOLORMAP_ENABLE_COMPRESS_IF_PROTO_STEP_7;
 
   dataLimit  = SETUNPACKCOLORMAP_DATA_LIMIT;
@@ -54,10 +53,8 @@ SetUnpackColormapStore::SetUnpackColormapStore(StaticCompressor *compressor)
   cacheThreshold      = SETUNPACKCOLORMAP_CACHE_THRESHOLD;
   cacheLowerThreshold = SETUNPACKCOLORMAP_CACHE_LOWER_THRESHOLD;
 
-  if (control -> isProtoStep8() == 1)
-  {
-    enableSplit = SETUNPACKCOLORMAP_ENABLE_SPLIT_IF_PROTO_STEP_8;
-  }
+  // Since ProtoStep8 (#issue 108)
+  enableSplit = SETUNPACKCOLORMAP_ENABLE_SPLIT_IF_PROTO_STEP_8;
 
   messages_ -> resize(cacheSlots);
 

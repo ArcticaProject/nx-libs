@@ -321,6 +321,12 @@ class Control
   int CompatVersionMaintenancePatch;
 
   //
+  // Compatibility version for the proxy
+  //
+
+  static const char* const NXPROXY_COMPATIBILITY_VERSION;
+
+  //
   // Which unpack methods are implemented in proxy?
   //
 
@@ -713,26 +719,6 @@ class Control
 
   int getProtoStep();
 
-  int isProtoStep7()
-  {
-    return protoStep7_;
-  }
-
-  int isProtoStep8()
-  {
-    return protoStep8_;
-  }
-
-  int isProtoStep9()
-  {
-    return protoStep9_;
-  }
-
-  int isProtoStep10()
-  {
-    return protoStep10_;
-  }
-
   private:
 
   //
@@ -746,11 +732,25 @@ class Control
   // to the protocol version.
   //
 
-  int protoStep6_;
-  int protoStep7_;
-  int protoStep8_;
-  int protoStep9_;
-  int protoStep10_;
+  int protoStep_;
+
+  //
+  // Min and max values allowed for protocol step
+  // depending on protocol version compatibility
+  //
+
+  static const int NX_MIN_PROTO_STEP;
+  static const int NX_MAX_PROTO_STEP;
+
+  //
+  // Check the validity of protocol step
+  //
+
+  bool isValidProtoStep(int step)
+  {
+    return ((step >= NX_MIN_PROTO_STEP) && (step <= NX_MAX_PROTO_STEP));
+  }
+
 };
 
 #endif /* Control_H */

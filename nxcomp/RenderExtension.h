@@ -44,7 +44,6 @@
 #define RENDEREXTENSION_DATA_LIMIT                 6144
 #define RENDEREXTENSION_DATA_OFFSET                36
 
-#define RENDEREXTENSION_CACHE_SLOTS                6000
 #define RENDEREXTENSION_CACHE_THRESHOLD            20
 #define RENDEREXTENSION_CACHE_LOWER_THRESHOLD      10
 
@@ -82,13 +81,6 @@ class RenderExtensionMessage : public Message
   friend class RenderFillRectanglesStore;
   friend class RenderTrapezoidsStore;
   friend class RenderTrianglesStore;
-
-  friend class RenderCreatePictureCompatStore;
-  friend class RenderFreePictureCompatStore;
-  friend class RenderPictureClipCompatStore;
-  friend class RenderCreateGlyphSetCompatStore;
-  friend class RenderCompositeCompatStore;
-  friend class RenderCompositeGlyphsCompatStore;
 
   public:
 

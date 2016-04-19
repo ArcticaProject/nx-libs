@@ -158,23 +158,6 @@ class ClientChannel : public Channel
   int handleTaintRequest(unsigned char &opcode, const unsigned char *&buffer,
                              unsigned int &size)
   {
-    if (control -> isProtoStep7() == 0)
-    {
-      if (opcode == X_NXFreeSplit || opcode == X_NXAbortSplit ||
-              opcode == X_NXFinishSplit)
-      {
-        return handleTaintSplitRequest(opcode, buffer, size);
-      }
-      else if (opcode == X_NXSetCacheParameters)
-      {
-        return handleTaintCacheRequest(opcode, buffer, size);
-      }
-      else if (opcode == X_NXGetFontParameters)
-      {
-        return handleTaintFontRequest(opcode, buffer, size);
-      }
-    }
-
     if (control -> TaintReplies > 0 &&
             opcode == X_GetInputFocus)
     {
@@ -189,15 +172,6 @@ class ClientChannel : public Channel
 
     return 0;
   }
-
-  int handleTaintCacheRequest(unsigned char &opcode, const unsigned char *&buffer,
-                                  unsigned int &size);
-
-  int handleTaintFontRequest(unsigned char &opcode, const unsigned char *&buffer,
-                                 unsigned int &size);
-
-  int handleTaintSplitRequest(unsigned char &opcode, const unsigned char *&buffer,
-                                  unsigned int &size);
 
   int handleTaintLameRequest(unsigned char &opcode, const unsigned char *&buffer,
                                  unsigned int &size);
@@ -260,20 +234,6 @@ class ClientChannel : public Channel
   Split *handleSplitFind(T_checksum checksum, int resource);
 
   int handleSplitChecksum(EncodeBuffer &encodeBuffer, T_checksum checksum);
-
-  void handleSplitEnable()
-  {
-    if (control -> isProtoStep7() == 0)
-    {
-      #if defined(TEST) || defined(SPLIT)
-      *logofs << "handleSplitEnable: WARNING! Disabling split "
-              << "with an old proxy version.\n"
-              << logofs_flush;
-      #endif
-
-      enableSplit_ = 0;
-    }
-  }
 
   void handleSplitPending(int resource)
   {

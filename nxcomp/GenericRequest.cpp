@@ -45,14 +45,9 @@ GenericRequestStore::GenericRequestStore(StaticCompressor *compressor)
   enableCache    = GENERICREQUEST_ENABLE_CACHE;
   enableData     = GENERICREQUEST_ENABLE_DATA;
   enableSplit    = GENERICREQUEST_ENABLE_SPLIT;
-  enableCompress = GENERICREQUEST_ENABLE_COMPRESS;
 
-  if (control -> isProtoStep7() == 1)
-  {
-    enableCompress = GENERICREQUEST_ENABLE_COMPRESS_IF_PROTO_STEP_7;
-
-    enableCompress = 0;
-  }
+  // Since ProtoStep7 (#issue 108)
+  enableCompress = GENERICREQUEST_ENABLE_COMPRESS_IF_PROTO_STEP_7;
 
   dataLimit  = GENERICREQUEST_DATA_LIMIT;
   dataOffset = GENERICREQUEST_DATA_OFFSET;

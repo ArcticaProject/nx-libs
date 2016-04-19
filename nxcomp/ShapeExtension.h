@@ -37,7 +37,6 @@
 #define SHAPEEXTENSION_ENABLE_CACHE                       1
 #define SHAPEEXTENSION_ENABLE_DATA                        1
 #define SHAPEEXTENSION_ENABLE_SPLIT                       0
-#define SHAPEEXTENSION_ENABLE_COMPRESS                    1
 
 #define SHAPEEXTENSION_DATA_LIMIT                         3200
 #define SHAPEEXTENSION_DATA_OFFSET                        20

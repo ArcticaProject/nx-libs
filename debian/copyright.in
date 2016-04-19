@@ -923,7 +923,6 @@ Files: nx-X11/extras/Mesa/src/mesa/main/WSDrawBuffer.h
  nx-X11/programs/Xserver/hw/nxagent/Windows.h
  nxcomp/ActionCache.cpp
  nxcomp/ActionCache.h
- nxcomp/ActionCacheCompat.h
  nxcomp/Agent.cpp
  nxcomp/Agent.h
  nxcomp/Alpha.cpp
@@ -938,8 +937,6 @@ Files: nx-X11/extras/Mesa/src/mesa/main/WSDrawBuffer.h
  nxcomp/BlockCacheSet.h
  nxcomp/ChangeGC.cpp
  nxcomp/ChangeGC.h
- nxcomp/ChangeGCCompat.cpp
- nxcomp/ChangeGCCompat.h
  nxcomp/ChangeProperty.cpp
  nxcomp/ChangeProperty.h
  nxcomp/Channel.cpp
@@ -974,8 +971,6 @@ Files: nx-X11/extras/Mesa/src/mesa/main/WSDrawBuffer.h
  nxcomp/CreateGC.h
  nxcomp/CreatePixmap.cpp
  nxcomp/CreatePixmap.h
- nxcomp/CreatePixmapCompat.cpp
- nxcomp/CreatePixmapCompat.h
  nxcomp/DecodeBuffer.cpp
  nxcomp/DecodeBuffer.h
  nxcomp/EncodeBuffer.cpp
@@ -1053,8 +1048,6 @@ Files: nx-X11/extras/Mesa/src/mesa/main/WSDrawBuffer.h
  nxcomp/PolyText16.h
  nxcomp/PolyText8.cpp
  nxcomp/PolyText8.h
- nxcomp/PositionCacheCompat.cpp
- nxcomp/PositionCacheCompat.h
  nxcomp/Proxy.cpp
  nxcomp/Proxy.h
  nxcomp/ProxyReadBuffer.cpp
@@ -1073,20 +1066,12 @@ Files: nx-X11/extras/Mesa/src/mesa/main/WSDrawBuffer.h
  nxcomp/RenderChangePicture.h
  nxcomp/RenderComposite.cpp
  nxcomp/RenderComposite.h
- nxcomp/RenderCompositeCompat.cpp
- nxcomp/RenderCompositeCompat.h
  nxcomp/RenderCompositeGlyphs.cpp
  nxcomp/RenderCompositeGlyphs.h
- nxcomp/RenderCompositeGlyphsCompat.cpp
- nxcomp/RenderCompositeGlyphsCompat.h
  nxcomp/RenderCreateGlyphSet.cpp
  nxcomp/RenderCreateGlyphSet.h
- nxcomp/RenderCreateGlyphSetCompat.cpp
- nxcomp/RenderCreateGlyphSetCompat.h
  nxcomp/RenderCreatePicture.cpp
  nxcomp/RenderCreatePicture.h
- nxcomp/RenderCreatePictureCompat.cpp
- nxcomp/RenderCreatePictureCompat.h
  nxcomp/RenderExtension.cpp
  nxcomp/RenderExtension.h
  nxcomp/RenderFillRectangles.cpp
@@ -1095,8 +1080,6 @@ Files: nx-X11/extras/Mesa/src/mesa/main/WSDrawBuffer.h
  nxcomp/RenderFreeGlyphSet.h
  nxcomp/RenderFreePicture.cpp
  nxcomp/RenderFreePicture.h
- nxcomp/RenderFreePictureCompat.cpp
- nxcomp/RenderFreePictureCompat.h
  nxcomp/RenderGenericRequest.cpp
  nxcomp/RenderGenericRequest.h
  nxcomp/RenderMinorExtensionHeaders.h
@@ -1104,8 +1087,6 @@ Files: nx-X11/extras/Mesa/src/mesa/main/WSDrawBuffer.h
  nxcomp/RenderMinorExtensionTags.h
  nxcomp/RenderPictureClip.cpp
  nxcomp/RenderPictureClip.h
- nxcomp/RenderPictureClipCompat.cpp
- nxcomp/RenderPictureClipCompat.h
  nxcomp/RenderPictureFilter.cpp
  nxcomp/RenderPictureFilter.h
  nxcomp/RenderPictureTransform.cpp
@@ -1136,12 +1117,8 @@ Files: nx-X11/extras/Mesa/src/mesa/main/WSDrawBuffer.h
  nxcomp/SetClipRectangles.h
  nxcomp/SetUnpackAlpha.cpp
  nxcomp/SetUnpackAlpha.h
- nxcomp/SetUnpackAlphaCompat.cpp
- nxcomp/SetUnpackAlphaCompat.h
  nxcomp/SetUnpackColormap.cpp
  nxcomp/SetUnpackColormap.h
- nxcomp/SetUnpackColormapCompat.cpp
- nxcomp/SetUnpackColormapCompat.h
  nxcomp/SetUnpackGeometry.cpp
  nxcomp/SetUnpackGeometry.h
  nxcomp/ShapeExtension.cpp
@@ -1154,8 +1131,6 @@ Files: nx-X11/extras/Mesa/src/mesa/main/WSDrawBuffer.h
  nxcomp/StaticCompressor.h
  nxcomp/Statistics.cpp
  nxcomp/Statistics.h
- nxcomp/TextCompressor.cpp
- nxcomp/TextCompressor.h
  nxcomp/Timestamp.cpp
  nxcomp/Timestamp.h
  nxcomp/TranslateCoords.cpp

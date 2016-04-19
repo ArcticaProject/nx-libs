@@ -30,9 +30,6 @@
 
 #include "ActionCache.h"
 
-#include "ActionCacheCompat.h"
-#include "PositionCacheCompat.h"
-
 #include "StaticCompressor.h"
 
 //
@@ -346,29 +343,11 @@ class MessageStore
   ActionCache lastActionCache;
 
   //
-  // Used in old protocol versions.
-  //
-
-  ActionCacheCompat lastActionCacheCompat;
-
-  PositionCacheCompat lastAddedCacheCompat;
-  PositionCacheCompat lastHitCacheCompat;
-  PositionCacheCompat lastRemovedCacheCompat;
-
-  //
   // Position in cache where next insertion
   // is going to take place.
   //
 
   short int lastRated;
-
-  //
-  // Size of data part of last split message
-  // once compressed. This is used only for
-  // compatibility with older proxies.
-  //
-
-  int lastResize;
 
   //
   // Constructors and destructors.
