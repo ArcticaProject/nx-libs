@@ -132,9 +132,6 @@ extern Bool noSecurityExtension;
 #ifdef XSYNC
 extern Bool noSyncExtension;
 #endif
-#ifdef TOGCUP
-extern Bool noXcupExtension;
-#endif
 #ifdef RES
 extern Bool noResExtension;
 #endif
@@ -304,9 +301,6 @@ extern void DarwinGlxWrapInitVisuals(miInitVisualsProcPtr *);
 #ifdef XF86DRI
 extern void XFree86DRIExtensionInit(INITARGS);
 #endif
-#ifdef TOGCUP
-extern void XcupExtensionInit(INITARGS);
-#endif
 #ifdef DPMSExtension
 extern void DPMSExtensionInit(INITARGS);
 #endif
@@ -408,9 +402,6 @@ static ExtensionToggle ExtensionToggleList[] =
 #endif
 #ifdef XSYNC
     { "SYNC", &noSyncExtension },
-#endif
-#ifdef TOGCUP
-    { "TOG-CUP", &noXcupExtension },
 #endif
 #ifdef RES
     { "X-Resource", &noResExtension },
@@ -555,9 +546,6 @@ InitExtensions(argc, argv)
 #endif
 #ifdef XCSECURITY
     if (!noSecurityExtension) SecurityExtensionInit();
-#endif
-#ifdef TOGCUP
-    if (!noXcupExtension) XcupExtensionInit();
 #endif
 #if defined(DPMSExtension) && !defined(NO_HW_ONLY_EXTS)
     if (!noDPMSExtension) DPMSExtensionInit();

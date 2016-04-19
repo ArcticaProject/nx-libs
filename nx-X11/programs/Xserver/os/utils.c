@@ -207,9 +207,6 @@ Bool noSecurityExtension = FALSE;
 #ifdef XSYNC
 Bool noSyncExtension = FALSE;
 #endif
-#ifdef TOGCUP
-Bool noXcupExtension = FALSE;
-#endif
 #ifdef RES
 Bool noResExtension = FALSE;
 #endif
