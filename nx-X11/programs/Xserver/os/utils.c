@@ -210,9 +210,6 @@ Bool noXFree86DRIExtension = FALSE;
 #ifdef XF86MISC
 Bool noXFree86MiscExtension = FALSE;
 #endif
-#ifdef XF86VIDMODE
-Bool noXFree86VidModeExtension = FALSE;
-#endif
 #ifdef XFIXES
 Bool noXFixesExtension = FALSE;
 #endif

@@ -138,9 +138,6 @@ extern Bool noXFree86DRIExtension;
 #ifdef XF86MISC
 extern Bool noXFree86MiscExtension;
 #endif
-#ifdef XF86VIDMODE
-extern Bool noXFree86VidModeExtension;
-#endif
 #ifdef XFIXES
 extern Bool noXFixesExtension;
 #endif
@@ -251,9 +248,6 @@ extern void SecurityExtensionInit(INITARGS);
 #endif
 #ifdef XF86BIGFONT
 extern void XFree86BigfontExtensionInit(INITARGS);
-#endif
-#ifdef XF86VIDMODE
-extern void XFree86VidModeExtensionInit(INITARGS);
 #endif
 #ifdef XF86MISC
 extern void XFree86MiscExtensionInit(INITARGS);
@@ -375,9 +369,6 @@ static ExtensionToggle ExtensionToggleList[] =
 #ifdef XF86MISC
     { "XFree86-Misc", &noXFree86MiscExtension },
 #endif
-#ifdef XF86VIDMODE
-    { "XFree86-VidModeExtension", &noXFree86VidModeExtension },
-#endif
 #ifdef XFIXES
     { "XFIXES", &noXFixesExtension },
 #endif
@@ -496,9 +487,6 @@ InitExtensions(argc, argv)
     if (!noXFree86BigfontExtension) XFree86BigfontExtensionInit();
 #endif
 #if !defined(PRINT_ONLY_SERVER) && !defined(NO_HW_ONLY_EXTS)
-#if defined(XF86VIDMODE)
-    if (!noXFree86VidModeExtension) XFree86VidModeExtensionInit();
-#endif
 #if defined(XF86MISC)
     if (!noXFree86MiscExtension) XFree86MiscExtensionInit();
 #endif

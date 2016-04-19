@@ -54,12 +54,6 @@ extern void XCMiscExtensionInit(INITARGS);
 #include <nx-X11/extensions/xcmiscstr.h>
 #endif
 
-#ifdef XF86VIDMODE
-extern void	XFree86VidModeExtensionInit(INITARGS);
-#define _XF86VIDMODE_SERVER_
-#include <nx-X11/extensions/xf86vmstr.h>
-#endif
-
 #ifdef XF86MISC
 extern void XFree86MiscExtensionInit(INITARGS);
 #define _XF86MISC_SERVER_
