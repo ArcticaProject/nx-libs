@@ -213,11 +213,6 @@ Bool noResExtension = FALSE;
 #ifdef XCMISC
 Bool noXCMiscExtension = FALSE;
 #endif
-#ifdef XEVIE
-/* Xevie is disabled by default for now until the
- * interface is stable */
-Bool noXevieExtension = TRUE;
-#endif
 #ifdef XF86BIGFONT
 Bool noXFree86BigfontExtension = FALSE;
 #endif

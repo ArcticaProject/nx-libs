@@ -133,10 +133,6 @@ extern Bool noResExtension;
 extern Bool noXCMiscExtension;
 #endif
 
-#ifdef XEVIE
-extern Bool noXevieExtension;
-#endif
-
 #ifdef XF86BIGFONT
 extern Bool noXFree86BigfontExtension;
 #endif

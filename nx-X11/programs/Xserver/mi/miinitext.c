@@ -138,9 +138,6 @@ extern Bool noResExtension;
 #ifdef XCMISC
 extern Bool noXCMiscExtension;
 #endif
-#ifdef XEVIE
-extern Bool noXevieExtension;
-#endif
 #ifdef XF86BIGFONT
 extern Bool noXFree86BigfontExtension;
 #endif
@@ -322,9 +319,6 @@ extern void ResExtensionInit(INITARGS);
 #ifdef DMXEXT
 extern void DMXExtensionInit(INITARGS);
 #endif
-#ifdef XEVIE
-extern void XevieExtensionInit(INITARGS);
-#endif
 #ifdef XFIXES
 extern void XFixesExtensionInit(INITARGS);
 #endif
@@ -408,9 +402,6 @@ static ExtensionToggle ExtensionToggleList[] =
 #endif
 #ifdef XCMISC
     { "XC-MISC", &noXCMiscExtension },
-#endif
-#ifdef XEVIE
-    { "XEVIE", &noXevieExtension },
 #endif
 #ifdef XF86BIGFONT
     { "XFree86-Bigfont", &noXFree86BigfontExtension },
@@ -593,9 +584,6 @@ InitExtensions(argc, argv)
 #ifdef DMXEXT
     DMXExtensionInit(); /* server-specific extension, cannot be disabled */
 #endif
-#ifdef XEVIE
-    if (!noXevieExtension) XevieExtensionInit();
-#endif
 #ifdef COMPOSITE
     if (!noCompositeExtension) CompositeExtensionInit();
 #endif
@@ -666,9 +654,6 @@ static ExtensionModule staticExtensions[] = {
 #ifdef DAMAGE
     { DamageExtensionInit, "DAMAGE", &noDamageExtension, NULL },
 #endif
-#ifdef XEVIE
-    { XevieExtensionInit, "XEVIE", &noXevieExtension, NULL },
-#endif 
     { NULL, NULL, NULL, NULL, NULL }
 };
     
