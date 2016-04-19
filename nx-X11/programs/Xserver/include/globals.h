@@ -117,10 +117,6 @@ extern Bool noXCMiscExtension;
 extern Bool noXFree86BigfontExtension;
 #endif
 
-#ifdef XFreeXDGA
-extern Bool noXFree86DGAExtension;
-#endif
-
 #ifdef XF86DRI
 extern Bool noXFree86DRIExtension;
 #endif

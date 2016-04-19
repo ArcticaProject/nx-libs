@@ -48,13 +48,6 @@ extern void XCMiscExtensionInit(INITARGS);
 #include <nx-X11/extensions/xcmiscstr.h>
 #endif
 
-#ifdef XFreeXDGA
-extern void XFree86DGAExtensionInit(INITARGS);
-extern void XFree86DGARegister(INITARGS);
-#define _XF86DGA_SERVER_
-#include <nx-X11/extensions/xf86dgastr.h>
-#endif
-
 #ifdef DPMSExtension
 extern void DPMSExtensionInit(INITARGS);
 #include <nx-X11/extensions/dpmsstr.h>
