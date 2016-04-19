@@ -102,9 +102,6 @@ extern Bool noScreenSaverExtension;
 #ifdef MITSHM
 extern Bool noMITShmExtension;
 #endif
-#ifdef MITMISC
-extern Bool noMITMiscExtension;
-#endif
 #ifdef RANDR
 extern Bool noRRExtension;
 #endif
@@ -211,9 +208,6 @@ extern void XTestExtensionInit(INITARGS);
 #endif
 #ifdef BIGREQS
 extern void BigReqExtensionInit(INITARGS);
-#endif
-#ifdef MITMISC
-extern void MITMiscExtensionInit(INITARGS);
 #endif
 #ifdef XIDLE
 extern void XIdleExtensionInit(INITARGS);
@@ -333,9 +327,6 @@ static ExtensionToggle ExtensionToggleList[] =
 #ifdef MITSHM
     { SHMNAME, &noMITShmExtension },
 #endif
-#ifdef MITMISC
-    { "MIT-SUNDRY-NONSTANDARD", &noMITMiscExtension },
-#endif
 #ifdef RANDR
     { "RANDR", &noRRExtension },
 #endif
@@ -443,9 +434,6 @@ InitExtensions(argc, argv)
 #endif
 #ifdef BIGREQS
     if (!noBigReqExtension) BigReqExtensionInit();
-#endif
-#ifdef MITMISC
-    if (!noMITMiscExtension) MITMiscExtensionInit();
 #endif
 #ifdef XIDLE
     if (!noXIdleExtension) XIdleExtensionInit();

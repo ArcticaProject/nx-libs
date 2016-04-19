@@ -177,9 +177,6 @@ Bool noScreenSaverExtension = FALSE;
 #ifdef MITSHM
 Bool noMITShmExtension = FALSE;
 #endif
-#ifdef MITMISC
-Bool noMITMiscExtension = FALSE;
-#endif
 #ifdef RANDR
 Bool noRRExtension = FALSE;
 #endif

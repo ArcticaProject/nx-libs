@@ -15,12 +15,6 @@ extern void ShapeExtensionInit(INITARGS);
 #include <nx-X11/extensions/shapestr.h>
 #endif
 
-#ifdef MITMISC
-extern void MITMiscExtensionInit(INITARGS);
-#define _MITMISC_SERVER_
-#include <nx-X11/extensions/mitmiscstr.h>
-#endif
-
 #ifdef XTEST
 extern void XTestExtensionInit(INITARGS);
 #define _XTEST_SERVER_

@@ -85,10 +85,6 @@ extern Bool noScreenSaverExtension;
 extern Bool noMITShmExtension;
 #endif
 
-#ifdef MITMISC
-extern Bool noMITMiscExtension;
-#endif
-
 #ifdef RANDR
 extern Bool noRRExtension;
 #endif
