@@ -105,9 +105,6 @@ extern Bool noMITShmExtension;
 #ifdef MITMISC
 extern Bool noMITMiscExtension;
 #endif
-#ifdef MULTIBUFFER
-extern Bool noMultibufferExtension;
-#endif
 #ifdef RANDR
 extern Bool noRRExtension;
 #endif
@@ -205,9 +202,6 @@ extern void ShapeExtensionInit(INITARGS);
 #endif
 #ifdef MITSHM
 extern void ShmExtensionInit(INITARGS);
-#endif
-#ifdef MULTIBUFFER
-extern void MultibufferExtensionInit(INITARGS);
 #endif
 #ifdef PANORAMIX
 extern void PanoramiXExtensionInit(INITARGS);
@@ -348,9 +342,6 @@ static ExtensionToggle ExtensionToggleList[] =
 #ifdef MITMISC
     { "MIT-SUNDRY-NONSTANDARD", &noMITMiscExtension },
 #endif
-#ifdef MULTIBUFFER
-    { "Multi-Buffering", &noMultibufferExtension },
-#endif
 #ifdef RANDR
     { "RANDR", &noRRExtension },
 #endif
@@ -452,9 +443,6 @@ InitExtensions(argc, argv)
 #endif
 #ifdef MITSHM
     if (!noMITShmExtension) ShmExtensionInit();
-#endif
-#ifdef MULTIBUFFER
-    if (!noMultibufferExtension) MultibufferExtensionInit();
 #endif
 #if defined(XINPUT) && !defined(NO_HW_ONLY_EXTS)
     if (!noXInputExtension) XInputExtensionInit();

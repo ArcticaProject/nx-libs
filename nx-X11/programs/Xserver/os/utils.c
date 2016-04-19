@@ -180,9 +180,6 @@ Bool noMITShmExtension = FALSE;
 #ifdef MITMISC
 Bool noMITMiscExtension = FALSE;
 #endif
-#ifdef MULTIBUFFER
-Bool noMultibufferExtension = FALSE;
-#endif
 #ifdef RANDR
 Bool noRRExtension = FALSE;
 #endif

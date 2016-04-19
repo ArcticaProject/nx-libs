@@ -89,10 +89,6 @@ extern Bool noMITShmExtension;
 extern Bool noMITMiscExtension;
 #endif
 
-#ifdef MULTIBUFFER
-extern Bool noMultibufferExtension;
-#endif
-
 #ifdef RANDR
 extern Bool noRRExtension;
 #endif

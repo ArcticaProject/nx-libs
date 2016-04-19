@@ -15,12 +15,6 @@ extern void ShapeExtensionInit(INITARGS);
 #include <nx-X11/extensions/shapestr.h>
 #endif
 
-#ifdef MULTIBUFFER
-extern void MultibufferExtensionInit(INITARGS);
-#define _MULTIBUF_SERVER_	/* don't want Xlib structures */
-#include <nx-X11/extensions/multibufst.h>
-#endif
-
 #ifdef MITMISC
 extern void MITMiscExtensionInit(INITARGS);
 #define _MITMISC_SERVER_
