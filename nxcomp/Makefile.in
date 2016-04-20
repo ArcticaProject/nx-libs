@@ -149,6 +149,7 @@ CXXSRC = Loop.cpp 				\
 	 ClientChannel.cpp			\
 	 ServerChannel.cpp			\
 	 GenericChannel.cpp			\
+	 ChannelEndPoint.cpp			\
 	 ReadBuffer.cpp				\
 	 ProxyReadBuffer.cpp			\
 	 ClientReadBuffer.cpp			\

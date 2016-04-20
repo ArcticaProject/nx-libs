@@ -32,6 +32,7 @@
 #include "Transport.h"
 #include "EncodeBuffer.h"
 #include "ProxyReadBuffer.h"
+#include "ChannelEndPoint.h"
 
 //
 // Forward declaration as we
@@ -258,8 +259,11 @@ class Proxy
   virtual void handleDisplayConfiguration(const char *xServerDisplay, int xServerAddrFamily,
                                               sockaddr * xServerAddr, unsigned int xServerAddrLength) = 0;
 
-  virtual void handlePortConfiguration(int cupsServerPort, int smbServerPort, int mediaServerPort,
-                                           int httpServerPort, const char *fontServerPort) = 0;
+  virtual void handlePortConfiguration(ChannelEndPoint &cupsServerPort,
+                                       ChannelEndPoint &smbServerPort,
+                                       ChannelEndPoint &mediaServerPort,
+                                       ChannelEndPoint &httpServerPort,
+                                       const char *fontServerPort) = 0;
 
   //
   // Create new tunneled channels.
@@ -278,10 +282,13 @@ class Proxy
   int handleNewGenericConnection(int clientFd, T_channel_type type, const char *label);
 
   int handleNewGenericConnectionFromProxy(int channelId, T_channel_type type,
-                                              const char *hostname, int port, const char *label);
+                                          ChannelEndPoint &endpoint, const char *label);
 
-  int handleNewGenericConnectionFromProxy(int channelId, T_channel_type type,
-                                              const char *hostname, const char *path, const char *label);
+  int handleNewGenericConnectionFromProxyUnix(int channelId, T_channel_type type,
+                                              const char *path, const char *label);
+
+  int handleNewGenericConnectionFromProxyTCP(int channelId, T_channel_type type,
+                                             const char *hostname, long port, const char *label);
 
   int handleNewSlaveConnection(int clientFd);
 

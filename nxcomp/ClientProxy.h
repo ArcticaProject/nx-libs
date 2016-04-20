@@ -38,8 +38,11 @@ class ClientProxy : public Proxy
   virtual void handleDisplayConfiguration(const char *xServerDisplay, int xServerAddrFamily,
                                               sockaddr *xServerAddr, unsigned int xServerAddrLength);
 
-  virtual void handlePortConfiguration(int cupsServerPort, int smbServerPort, int mediaServerPort,
-                                           int httpServerPort, const char *fontServerPort);
+  virtual void handlePortConfiguration(ChannelEndPoint &cupsServerPort,
+                                       ChannelEndPoint &smbServerPort,
+                                       ChannelEndPoint &mediaServerPort,
+                                       ChannelEndPoint &httpServerPort,
+                                       const char *fontServerPort);
 
   protected:
 

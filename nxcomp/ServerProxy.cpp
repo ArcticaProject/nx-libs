@@ -1,6 +1,7 @@
 /**************************************************************************/
 /*                                                                        */
 /* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2015 Qindel Formacion y Servicios S.L.                   */
 /*                                                                        */
 /* NXCOMP, NX protocol compression and NX extensions to this software     */
 /* are copyright of NoMachine. Redistribution and use of the present      */
@@ -51,10 +52,10 @@ ServerProxy::ServerProxy(int proxyFd) : Proxy(proxyFd)
   xServerAddr_    = NULL;
   xServerDisplay_ = NULL;
 
-  cupsServerPort_  = -1;
-  smbServerPort_   = -1;
-  mediaServerPort_ = -1;
-  httpServerPort_  = -1;
+  cupsServerPort_  = NULL;
+  smbServerPort_   = NULL;
+  mediaServerPort_ = NULL;
+  httpServerPort_  = NULL;
 
   fontServerPort_ = NULL;
 
@@ -101,8 +102,11 @@ void ServerProxy::handleDisplayConfiguration(const char *xServerDisplay, int xSe
   #endif
 }
 
-void ServerProxy::handlePortConfiguration(int cupsServerPort, int smbServerPort, int mediaServerPort,
-                                              int httpServerPort, const char *fontServerPort)
+void ServerProxy::handlePortConfiguration(ChannelEndPoint &cupsServerPort,
+                                          ChannelEndPoint &smbServerPort,
+                                          ChannelEndPoint &mediaServerPort,
+                                          ChannelEndPoint &httpServerPort,
+                                          const char *fontServerPort)
 {
   cupsServerPort_  = cupsServerPort;
   smbServerPort_   = smbServerPort;
@@ -161,22 +165,23 @@ int ServerProxy::handleNewConnectionFromProxy(T_channel_type type, int channelId
     }
     case channel_cups:
     {
-      return handleNewGenericConnectionFromProxy(channelId, channel_cups, "localhost",
+      return handleNewGenericConnectionFromProxy(channelId, channel_cups,
                                                      cupsServerPort_, "CUPS");
     }
     case channel_smb:
     {
-      return handleNewGenericConnectionFromProxy(channelId, channel_smb, getComputerName(),
+      smbServerPort_.setDefaultTCPInterface(1);
+      return handleNewGenericConnectionFromProxy(channelId, channel_smb,
                                                      smbServerPort_, "SMB");
     }
     case channel_media:
     {
-      return handleNewGenericConnectionFromProxy(channelId, channel_media, "localhost",
+      return handleNewGenericConnectionFromProxy(channelId, channel_media,
                                                      mediaServerPort_, "media");
     }
     case channel_http:
     {
-      return handleNewGenericConnectionFromProxy(channelId, channel_http, getComputerName(),
+      return handleNewGenericConnectionFromProxy(channelId, channel_http,
                                                      httpServerPort_, "HTTP");
     }
     case channel_slave:
