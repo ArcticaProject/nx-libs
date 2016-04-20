@@ -1,31 +1,22 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (C) 2014 Qindel http://qindel.com and QVD http://theqvd.com  */
+/* Copyright (c) 2015 Qindel Formacion y Servicios SL.                    */
 /*                                                                        */
 /* This program is free software; you can redistribute it and/or modify   */
-/* it under the terms of the GNU General Public License as published by   */
-/* the Free Software Foundation; either version 3 of the License, or (at  */
-/* your option) any later version.                                        */
+/* it under the terms of the GNU General Public License Version 2, as     */
+/* published by the Free Software Foundation.                             */
 /*                                                                        */
 /* This program is distributed in the hope that it will be useful, but    */
-/* WITHOUT ANY WARRANTY; without even the implied warranty of             */
-/* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.                   */
-/* See the GNU General Public License for more details.                   */
+/* WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTA-  */
+/* BILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General       */
+/* Public License for more details.                                       */
 /*                                                                        */
 /* You should have received a copy of the GNU General Public License      */
-/* along with this program; if not, see <http://www.gnu.org/licenses>.    */
+/* along with this program; if not, you can request a copy from Qindel    */
+/* or write to the Free Software Foundation, Inc., 51 Franklin Street,    */
+/* Fifth Floor, Boston, MA 02110-1301 USA.                                */
 /*                                                                        */
-/* Additional permission under GNU GPL version 3 section 7                */
-/*                                                                        */
-/* If you modify this Program, or any covered work, by linking or         */
-/* combining it with [name of library] (or a modified version of that     */
-/* library), containing parts covered by the terms of [name of library's  */
-/* license], the licensors of this Program grant you additional           */
-/* permission to convey the resulting work. {Corresponding Source for a   */
-/* non-source form of such a combination shall include the source code    */
-/* for the parts of [name of library] used as well as that of the covered */
-/* work.}                                                                 */
-/*                                                                        */
+/* All rights reserved.                                                   */
 /*                                                                        */
 /**************************************************************************/
 
