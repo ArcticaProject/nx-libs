@@ -4374,6 +4374,24 @@ int ServerChannel::handleWrite(const unsigned char *message, unsigned int length
       } // End of switch on opcode.
 
       //
+      // TODO: at the moment the variable hit was being set
+      // but no used, so to avoid the corresponding warning
+      // it has been added this block with a logging command.
+      // This code will be probably optimized away when none
+      // of the defines is set, but if there is no additional
+      // use for the hit variable in the future, then maybe
+      // it could be removed completely.
+      //
+
+      if (hit)
+      {
+        #if defined(TEST) || defined(OPCODES)
+        *logofs << "handleWrite: Cached flag enabled in handled request.\n"
+                << logofs_flush;
+        #endif
+      }
+
+      //
       // A packed image request can generate more than just
       // a single X_PutImage. Write buffer is handled inside
       // handleUnpack(). Cannot simply assume that the final

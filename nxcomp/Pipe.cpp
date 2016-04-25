@@ -237,8 +237,14 @@ FILE *Popen(char * const parameters[], const char *type)
 
       struct passwd *pwent = getpwuid(getuid());
       if (pwent) initgroups(pwent->pw_name,getgid());
-      setgid(getgid());
-      setuid(getuid());
+      if (setgid(getgid()) == -1)
+      {
+        _exit(127);
+      }
+      if (setuid(getuid()) == -1)
+      {
+        _exit(127);
+      }
 
       if (*type == 'r')
       {

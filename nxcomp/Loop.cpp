@@ -9393,12 +9393,7 @@ int ParseRemoteOptions(char *opts)
   int hasDelta  = 0;
   int hasStream = 0;
   int hasData   = 0;
-  int hasLimit  = 0;
-  int hasRender = 0;
-  int hasTaint  = 0;
   int hasType   = 0;
-  int hasStrict = 0;
-  int hasShseg  = 0;
 
   //
   // Get rid of the terminating space.
@@ -9623,7 +9618,6 @@ int ParseRemoteOptions(char *opts)
         }
       }
 
-      hasLimit = 1;
     }
     else if (strcasecmp(name, "render") == 0)
     {
@@ -9636,7 +9630,6 @@ int ParseRemoteOptions(char *opts)
         useRender = ValidateArg("remote", name, value);
       }
 
-      hasRender = 1;
     }
     else if (strcasecmp(name, "taint") == 0)
     {
@@ -9649,7 +9642,6 @@ int ParseRemoteOptions(char *opts)
         useTaint = ValidateArg("remote", name, value);
       }
 
-      hasTaint = 1;
     }
     else if (strcasecmp(name, "type") == 0)
     {
@@ -9682,7 +9674,6 @@ int ParseRemoteOptions(char *opts)
         useStrict = ValidateArg("remote", name, value);
       }
 
-      hasStrict = 1;
     }
     else if (strcasecmp(name, "shseg") == 0)
     {
@@ -9704,7 +9695,6 @@ int ParseRemoteOptions(char *opts)
         return -1;
       }
 
-      hasShseg = 1;
     }
     else if (strcasecmp(name, "delta") == 0)
     {

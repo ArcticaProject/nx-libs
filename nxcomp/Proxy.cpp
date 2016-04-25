@@ -18,6 +18,7 @@
 #include <cstdio>
 #include <unistd.h>
 #include <cstdlib>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #ifdef ANDROID
@@ -4194,6 +4195,12 @@ int Proxy::handleSaveStores()
 
   char *cacheToAdopt = NULL;
 
+  //
+  // Set to false the indicator for cumulative store
+  // size too small
+  //
+  bool isTooSmall = false;
+
   if (control -> PersistentCacheEnableSave)
   {
     #ifdef TEST
@@ -4201,7 +4208,7 @@ int Proxy::handleSaveStores()
             << logofs_flush;
     #endif
 
-    cacheToAdopt = handleSaveAllStores(control -> PersistentCachePath);
+    cacheToAdopt = handleSaveAllStores(control -> PersistentCachePath, isTooSmall);
   }
   #ifdef TEST
   else
@@ -4253,21 +4260,28 @@ int Proxy::handleSaveStores()
 
     return 1;
   }
-  #ifdef TEST
   else
   {
-    *logofs << "Proxy: No cache file produced from message stores.\n"
-            << logofs_flush;
+    #ifdef TEST
+      *logofs << "Proxy: No cache file produced from message stores.\n"
+              << logofs_flush;
+    #endif
+
+    //
+    // It can be that we didn't generate a new cache
+    // because store was too small or persistent cache
+    // was disabled. This is not an error.
+    //
+
+    if (control -> PersistentCacheEnableSave && !isTooSmall)
+    {
+      return -1;
+    }
+    else
+    {
+      return 0;
+    }
   }
-  #endif
-
-  //
-  // It can be that we didn't generate a new cache
-  // because store was too small or persistent cache
-  // was disabled. This is not an error.
-  //
-
-  return 0;
 }
 
 int Proxy::handleLoadStores()
@@ -4875,8 +4889,10 @@ int Proxy::handleLoadVersion(const unsigned char *buffer, int &major,
   return 1;
 }
 
-char *Proxy::handleSaveAllStores(const char *savePath) const
+char *Proxy::handleSaveAllStores(const char *savePath, bool & isTooSmall) const
 {
+  isTooSmall = false;
+
   int cumulativeSize = MessageStore::getCumulativeTotalStorageSize();
 
   if (cumulativeSize < control -> PersistentCacheThreshold)
@@ -4887,6 +4903,13 @@ char *Proxy::handleSaveAllStores(const char *savePath) const
             << control -> PersistentCacheThreshold
             << ".\n" << logofs_flush;
     #endif
+
+    //
+    // Cumulative store size is smaller than threshold
+    // so the indicator is set to true
+    //
+
+    isTooSmall = true;
 
     return NULL;
   }
@@ -4923,20 +4946,28 @@ char *Proxy::handleSaveAllStores(const char *savePath) const
   md5_state_t *md5StateClient = NULL;
   md5_byte_t  *md5DigestClient = NULL;
 
-  char *tempName = NULL;
-
   char md5String[MD5_LENGTH * 2 + 2];
 
   char fullName[strlen(savePath) + MD5_LENGTH * 2 + 4];
 
-  if (control -> ProxyMode == proxy_client)
-  {
-    tempName = tempnam(savePath, "Z-C-");
-  }
-  else
-  {
-    tempName = tempnam(savePath, "Z-S-");
-  }
+  //
+  // Prepare the template for the temporary file
+  //
+
+  const char* const uniqueTemplate = "XXXXXX";
+  char tempName[strlen(savePath) + strlen("/") + 4 + strlen(uniqueTemplate) + 1];
+
+  snprintf(tempName, sizeof tempName, "%s/%s%s",
+               savePath,
+               control -> ProxyMode == proxy_client ?
+                   "Z-C-" :
+                   "Z-S-",
+               uniqueTemplate);
+
+  #ifdef TEST
+  *logofs << "Proxy: Generating temporary file with template '"
+          << tempName << "'.\n" << logofs_flush;
+  #endif
 
   //
   // Change the mask to make the file only
@@ -4946,34 +4977,67 @@ char *Proxy::handleSaveAllStores(const char *savePath) const
 
   mode_t fileMode = umask(0077);
 
-  cachefs = new ofstream(tempName, ios::out | ios::binary);
+  //
+  // Generate a unique temporary filename from tempName
+  // and then create and open the file
+  //
 
-  umask(fileMode);
-
-  if (tempName == NULL || cachefs == NULL)
+  int fdTemp = mkstemp(tempName);
+  if (fdTemp == -1)
   {
     #ifdef PANIC
     *logofs << "Proxy: PANIC! Can't create temporary file in '"
-            << savePath << "'.\n" << logofs_flush;
+            << savePath << "'. Cause = " << strerror(errno) << ".\n" << logofs_flush;
     #endif
 
     cerr << "Error" << ": Can't create temporary file in '"
-         << savePath << "'.\n";
+         << savePath << "'. Cause = " << strerror(errno) << ".\n";
 
-    if (tempName != NULL)
-    {
-      free(tempName);
-    }
-
-    if (cachefs != NULL)
-    {
-      delete cachefs;
-    }
+    umask(fileMode);
 
     EnableSignals();
 
     return NULL;
   }
+
+  #ifdef TEST
+  *logofs << "Proxy: Saving cache to file '"
+          << tempName << "'.\n" << logofs_flush;
+  #endif
+
+  //
+  // Create and open the output stream for the new temporary
+  // file
+  //
+
+  cachefs = new (std::nothrow) ofstream(tempName, ios::out | ios::binary);
+  if ((cachefs == NULL) || cachefs->fail())
+  {
+    #ifdef PANIC
+    *logofs << "Proxy: PANIC! Can't create stream for temporary file '"
+            << tempName << "'.\n" << logofs_flush;
+    #endif
+
+    cerr << "Error" << ": Can't create stream for temporary file '"
+         << tempName << "'.\n";
+
+    close(fdTemp);
+    unlink(tempName);
+
+    umask(fileMode);
+
+    EnableSignals();
+
+    return NULL;
+  }
+
+  //
+  // Close the file descriptor returned by mkstemp
+  // and restore the old mask
+  //
+
+  close(fdTemp);
+  umask(fileMode);
 
   md5StateStream  = new md5_state_t();
   md5DigestStream = new md5_byte_t[MD5_LENGTH];
@@ -5007,8 +5071,6 @@ char *Proxy::handleSaveAllStores(const char *savePath) const
     delete md5StateStream;
     delete [] md5DigestStream;
 
-    free(tempName);
-
     EnableSignals();
 
     return NULL;
@@ -5028,8 +5090,6 @@ char *Proxy::handleSaveAllStores(const char *savePath) const
 
     delete md5StateStream;
     delete [] md5DigestStream;
-
-    free(tempName);
 
     EnableSignals();
 
@@ -5086,7 +5146,7 @@ char *Proxy::handleSaveAllStores(const char *savePath) const
 
   #endif
 
-  if (allSaved == 0)
+  if (allSaved == -1)
   {
     handleFailOnSave(tempName, "C");
 
@@ -5097,8 +5157,6 @@ char *Proxy::handleSaveAllStores(const char *savePath) const
 
     delete md5StateClient;
     delete [] md5DigestClient;
-
-    free(tempName);
 
     EnableSignals();
 
@@ -5139,8 +5197,6 @@ char *Proxy::handleSaveAllStores(const char *savePath) const
     delete md5StateClient;
     delete [] md5DigestClient;
 
-    free(tempName);
-
     EnableSignals();
 
     return NULL;
@@ -5180,8 +5236,6 @@ char *Proxy::handleSaveAllStores(const char *savePath) const
 
   delete md5StateClient;
   delete [] md5DigestClient;
-
-  free(tempName);
 
   //
   // Restore the original handlers.
