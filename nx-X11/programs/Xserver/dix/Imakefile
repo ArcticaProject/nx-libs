@@ -18,6 +18,7 @@ NXAGENT_SKIP_SRCS =                  \
                     events.c         \
                     extension.c      \
                     glyphcurs.c      \
+                    property.c       \
                     resource.c       \
                     window.c         \
                     $(NULL)
@@ -25,6 +26,7 @@ NXAGENT_SKIP_OBJS =                  \
                     events.o         \
                     extension.o      \
                     glyphcurs.o      \
+                    property.o       \
                     resource.o       \
                     window.o         \
                     $(NULL)
@@ -42,7 +44,6 @@ SRCS =                          \
        globals.c                \
        grabs.c                  \
        main.c                   \
-       property.c               \
        region.c                 \
        swaprep.c                \
        swapreq.c                \
@@ -66,7 +67,6 @@ OBJS =                          \
        globals.o                \
        grabs.o                  \
        main.o                   \
-       property.o               \
        region.o                 \
        swaprep.o                \
        swapreq.o                \

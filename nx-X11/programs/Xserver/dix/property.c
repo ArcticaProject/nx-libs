@@ -188,6 +188,7 @@ found:
     return Success;
 }
 
+#ifndef NXAGENT_SERVER
 int 
 ProcChangeProperty(ClientPtr client)
 {	      
@@ -368,6 +369,7 @@ ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format,
     }
     return(Success);
 }
+#endif /* NXAGENT_SERVER */
 
 int
 DeleteProperty(WindowPtr pWin, Atom propName)
@@ -445,6 +447,8 @@ NullPropertyReply(
     WriteReplyToClient(client, sizeof(xGenericReply), reply);
     return(client->noClientException);
 }
+
+#ifndef NXAGENT_SERVER
 
 /*****************
  * GetProperty
@@ -600,6 +604,7 @@ ProcGetProperty(ClientPtr client)
     }
     return(client->noClientException);
 }
+#endif /* NXAGENT_SERVER */
 
 int
 ProcListProperties(ClientPtr client)
