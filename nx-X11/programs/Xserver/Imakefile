@@ -402,17 +402,17 @@ $(NXAGENTOBJS) $(NXAGENTLIBS) $(NXAGENTSYSLIBS):: $(NXAGENTDIRS)
 
 #if defined(SunArchitecture)
 NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext -L ../../../nxcompshad \
-                -lXcomp -lXcompext -lXcompshad -lrt -L/usr/sfw/lib -lNX_Xrender -lXfixes -lXfont \
+                -lXcomp -lXcompext -lXcompshad -lrt -L/usr/sfw/lib -lXrender -lXfixes -lXfont \
                 -L../../../nx-X11/exports/lib -lXtst -lXrandr -lXcomposite -lXdmcp \
 `pkg-config --libs libxml-2.0`
 #elif defined(cygwinArchitecture)
 NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext \
-                -lXcomp -lXcompext -lNX_Xrender -lX11 -lNX_Xext -lXcomposite -lXfixes -lXfont \
+                -lXcomp -lXcompext -lXrender -lX11 -lNX_Xext -lXcomposite -lXfixes -lXfont \
                 -L ../../../nxcompshad -lXcompshad -L../../../nx-X11/exports/lib -lXtst -lXdmcp \
 `pkg-config --libs libxml-2.0`
 #else
 NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext -L ../../../nxcompshad \
-                -lXcomp -lXcompext -lXcompshad -lNX_Xrender -lNX_X11 -lNX_Xext -lXfixes -lXfont \
+                -lXcomp -lXcompext -lXcompshad -lXrender -lNX_X11 -lNX_Xext -lXfixes -lXfont \
                 -L../../../nx-X11/exports/lib -lXtst -lXrandr -lXcomposite -lXinerama -lXdmcp \
 `pkg-config --libs libxml-2.0`
 #endif

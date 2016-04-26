@@ -16,7 +16,7 @@
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL SuSE
  * BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
  * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN 
+ * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
  * Author:  Keith Packard, SuSE, Inc.
@@ -25,18 +25,12 @@
 #ifndef _XRENDER_H_
 #define _XRENDER_H_
 
-#define NX_CLEANUP
-
-#include <nx-X11/extensions/render.h>
-
 #include <nx-X11/Xlib.h>
 #include <nx-X11/Xfuncproto.h>
 #include <nx-X11/Xosdefs.h>
 #include <nx-X11/Xutil.h>
 
-#ifdef NX_CLEANUP
-#include "renderproto.h"
-#endif
+#include <nx-X11/extensions/render.h>
 
 typedef struct {
     short   red;
@@ -226,7 +220,7 @@ XRenderFindFormat (Display			*dpy,
 		   unsigned long		mask,
 		   _Xconst XRenderPictFormat	*templ,
 		   int				count);
-    
+
 #define PictStandardARGB32  0
 #define PictStandardRGB24   1
 #define PictStandardA8	    2
@@ -301,16 +295,6 @@ XRenderReferenceGlyphSet (Display *dpy, GlyphSet existing);
 
 void
 XRenderFreeGlyphSet (Display *dpy, GlyphSet glyphset);
-
-#ifdef NX_CLEANUP
-
-void XRenderCleanGlyphs (xGlyphInfo  *gi,
-                         int         nglyphs,
-                         CARD8       *images,
-                         int         depth,
-                         Display     *dpy);
-
-#endif /* #ifdef NX_CLEANUP */
 
 void
 XRenderAddGlyphs (Display		*dpy,
@@ -484,7 +468,7 @@ XRenderCompositeDoublePoly (Display		    *dpy,
 			    int			    npoints,
 			    int			    winding);
 Status
-XRenderParseColor(Display	*dpy, 
+XRenderParseColor(Display	*dpy,
 		  char		*spec,
 		  XRenderColor	*def);
 
@@ -500,7 +484,7 @@ XRenderQueryFilters (Display *dpy, Drawable drawable);
 void
 XRenderSetPictureFilter (Display    *dpy,
 			 Picture    picture,
-			 char	    *filter,
+			 const char *filter,
 			 XFixed	    *params,
 			 int	    nparams);
 

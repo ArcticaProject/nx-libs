@@ -15,10 +15,6 @@ NULL =
 XKBLIBDIR = xkbfile
 #endif
 
-#if BuildRenderLibrary
-RENDERLIBDIR = Xrender
-#endif
-
 #if BuildXauLib
 XAULIBDIR = Xau
 #endif
@@ -43,7 +39,6 @@ LINTSUBDIRS = \
 	$(XEXTLIBDIR) \
 	$(XKBLIBDIR) \
 	$(XINERAMADIR) \
-	$(RENDERLIBDIR) \
 	$(NULL)
 
 SUBDIRS = xtrans $(LINTSUBDIRS)

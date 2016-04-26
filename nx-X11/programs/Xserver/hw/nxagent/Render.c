@@ -39,7 +39,7 @@
 
 #define Atom   XlibAtom
 #define Pixmap XlibPixmap
-#include "../../../../lib/Xrender/Xrenderint.h"
+#include "NXrenderint.h"
 #undef  Atom
 #undef  Pixmap
 
@@ -2272,8 +2272,6 @@ void nxagentAddGlyphs(GlyphSetPtr glyphSet, Glyph *gids, xGlyphInfo *gi,
   {
     normalizedImages = images;
   }
-
-  XRenderCleanGlyphs(gi, nglyphs, normalizedImages, glyphDepths[glyphSet -> fdepth], nxagentDisplay);
 
   XRenderAddGlyphs(nxagentDisplay,
                    glyphSet -> remoteID,

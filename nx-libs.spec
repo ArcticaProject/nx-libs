@@ -236,39 +236,9 @@ The NX_Xext library contains a handful of X11 extensions:
 - X Extended Visual Information extension (XEvi)
 - X11 Double-Buffering, Multi-Buffering, and Stereo extension (Xmbuf)
 
-
-%package -n libNX_Xrender-devel
-Group:          Development/Libraries
-Summary:        Development files for the NX Render Extension library
-Requires:       libNX_Xrender1%{?_isa} = %{version}-%{release}
-Requires:       libNX_X11-devel%{?_isa} = %{version}-%{release}
-Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
-
-%description -n libNX_Xrender-devel
 NX is a software suite which implements very efficient compression of
 the X11 protocol. This increases performance when using X
 applications over a network, especially a slow one.
-
-The Xrender library is designed as a lightweight library interface to
-the Render extension.
-
-This package contains all necessary include files and libraries
-needed to develop applications that require these.
-
-
-%package -n libNX_Xrender1
-Group:          System Environment/Libraries
-Summary:        NX Rendering Extension library
-Requires:       %{name}%{?_isa} >= 3.5.0.29
-Obsoletes:      libNX_Xrender
-
-%description -n libNX_Xrender1
-NX is a software suite which implements very efficient compression of
-the X11 protocol. This increases performance when using X
-applications over a network, especially a slow one.
-
-The Xrender library is designed as a lightweight library interface to
-the Render extension.
 
 
 %package -n libXcomp-devel
@@ -366,7 +336,6 @@ Summary:        Include files and libraries for NX development
 Requires:       libNX_X11-devel%{?_isa} = %{version}-%{release}
 Requires:       libNX_Xau-devel%{?_isa} = %{version}-%{release}
 Requires:       libNX_Xext-devel%{?_isa} = %{version}-%{release}
-Requires:       libNX_Xrender-devel%{?_isa} = %{version}-%{release}
 Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 
@@ -538,7 +507,6 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %post -n libNX_X11-6 -p /sbin/ldconfig
 %post -n libNX_Xau6 -p /sbin/ldconfig
 %post -n libNX_Xext6 -p /sbin/ldconfig
-%post -n libNX_Xrender1 -p /sbin/ldconfig
 %post -n libXcomp3 -p /sbin/ldconfig
 %post -n libXcompext3 -p /sbin/ldconfig
 %post -n libXcompshad3 -p /sbin/ldconfig
@@ -546,7 +514,6 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %postun -n libNX_X11-6 -p /sbin/ldconfig
 %postun -n libNX_Xau6 -p /sbin/ldconfig
 %postun -n libNX_Xext6 -p /sbin/ldconfig
-%postun -n libNX_Xrender1 -p /sbin/ldconfig
 %postun -n libXcomp3 -p /sbin/ldconfig
 %postun -n libXcompext3 -p /sbin/ldconfig
 %postun -n libXcompshad3 -p /sbin/ldconfig
@@ -622,15 +589,6 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %files -n libNX_Xext6
 %defattr(-,root,root)
 %{_libdir}/libNX_Xext.so.6*
-
-%files -n libNX_Xrender-devel
-%defattr(-,root,root)
-%{_libdir}/libNX_Xrender.so
-%{_includedir}/nx-X11/extensions/Xrender.h
-
-%files -n libNX_Xrender1
-%defattr(-,root,root)
-%{_libdir}/libNX_Xrender.so.1*
 
 %files -n libXcomp-devel
 %defattr(-,root,root)

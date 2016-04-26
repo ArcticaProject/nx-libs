@@ -16,7 +16,7 @@
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL SuSE
  * BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
  * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN 
+ * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
  * Author:  Keith Packard, SuSE, Inc.
@@ -25,13 +25,10 @@
 #ifndef _XRENDERINT_H_
 #define _XRENDERINT_H_
 
-#include "config.h"
-#define NEED_EVENTS
-#define NEED_REPLIES
 #include <nx-X11/Xlibint.h>
 #include <nx-X11/Xutil.h>
 #include <nx-X11/extensions/renderproto.h>
-#include "Xrender.h"
+#include "X11/include/Xrender_nxagent.h"
 
 typedef struct {
     Visual		*visual;
@@ -101,9 +98,14 @@ XRenderFindDisplay (Display *dpy);
 
 /*
  * Xlib uses long for 32-bit values.  Xrender uses int.  This
- * matters on alpha.  Note that this macro assumes that int is 32 bits.
+ * matters on alpha.  Note that this macro assumes that int is 32 bits
+ * except on WORD64 machines where it is 64 bits.
  */
 
+#ifdef WORD64
+#define DataInt32(dpy,d,len)	Data32(dpy,(long *) (d),len)
+#else
 #define DataInt32(dpy,d,len)	Data(dpy,(char *) (d),len)
+#endif
 
 #endif /* _XRENDERINT_H_ */
