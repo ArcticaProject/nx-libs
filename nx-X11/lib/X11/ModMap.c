@@ -39,7 +39,7 @@ XGetModifierMapping(register Display *dpy)
     XModifierKeymap *res;
 
     LockDisplay(dpy);
-    GetEmptyReq(GetModifierMapping, req);
+    GetEmptyReq(GetModifierMapping, req); // Never used ?
     (void) _XReply (dpy, (xReply *)&rep, 0, xFalse);
 
     if (rep.length < (INT_MAX >> 2) &&
@@ -84,7 +84,7 @@ XSetModifierMapping(
     req->length += mapSize >> 2;
     req->numKeyPerModifier = modifier_map->max_keypermod;
 
-    Data(dpy, modifier_map->modifiermap, mapSize);
+    Data(dpy, (const char *)modifier_map->modifiermap, mapSize);
 
     (void) _XReply(dpy, (xReply *) & rep,
 	(SIZEOF(xSetModifierMappingReply) - SIZEOF(xReply)) >> 2, xTrue);
