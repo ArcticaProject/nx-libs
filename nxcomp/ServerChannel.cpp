@@ -4375,9 +4375,9 @@ int ServerChannel::handleWrite(const unsigned char *message, unsigned int length
 
       //
       // TODO: at the moment the variable hit was being set
-      // but no used, so to avoid the corresponding warning
-      // it has been added this block with a logging command.
-      // This code will be probably optimized away when none
+      // but not used, so to avoid the corresponding warning
+      // this logging block has been added.
+      // This code will probably be optimized away when none
       // of the defines is set, but if there is no additional
       // use for the hit variable in the future, then maybe
       // it could be removed completely.
