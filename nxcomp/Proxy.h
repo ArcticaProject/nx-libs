@@ -985,7 +985,7 @@ class Proxy
   int handleLoadStores();
   int handleSaveStores();
 
-  char *handleSaveAllStores(const char *savePath) const;
+  char *handleSaveAllStores(const char *savePath, bool & isTooSmall) const;
 
   virtual int handleSaveAllStores(ostream *cachefs, md5_state_t *md5StateStream,
                                       md5_state_t *md5StateClient) const = 0;
