@@ -36,7 +36,7 @@
 #include <sys/wait.h>
 #include <sys/resource.h>
 #include <sys/utsname.h>
-
+#include <sys/un.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -89,6 +89,7 @@ typedef int socklen_t;
 #include "ServerProxy.h"
 
 #include "Message.h"
+#include "ChannelEndPoint.h"
 
 //
 // System specific defines.
@@ -437,7 +438,10 @@ static int SetupDisplaySocket(int &xServerAddrFamily, sockaddr *&xServerAddr,
 // a new connection.
 //
 
-static int ListenConnection(int port, const char *label);
+static int ListenConnection(ChannelEndPoint &endPoint, const char *label);
+static int ListenConnectionTCP(const char *host, long port, const char *label);
+static int ListenConnectionUnix(const char *unixPath, const char *label);
+static int ListenConnectionAny(sockaddr *addr, socklen_t addrlen, const char *label);
 static int AcceptConnection(int fd, int domain, const char *label);
 
 //
@@ -475,6 +479,8 @@ static const char *GetArg(int &argi, int argc, const char **argv);
 static int CheckArg(const char *type, const char *name, const char *value);
 static int ParseArg(const char *type, const char *name, const char *value);
 static int ValidateArg(const char *type, const char *name, const char *value);
+static void SetAndValidateChannelEndPointArg(const char *type, const char *name, const char *value,
+                                             ChannelEndPoint &endPoint);
 static int LowercaseArg(const char *type, const char *name, char *value);
 static int CheckSignal(int signal);
 
@@ -978,12 +984,12 @@ static int connectPort = -1;
 // Helper channels are disabled by default.
 //
 
-static int cupsPort  = -1;
-static int auxPort   = -1;
-static int smbPort   = -1;
-static int mediaPort = -1;
-static int httpPort  = -1;
-static int slavePort = -1;
+static ChannelEndPoint cupsPort;
+static ChannelEndPoint auxPort;
+static ChannelEndPoint smbPort;
+static ChannelEndPoint mediaPort;
+static ChannelEndPoint httpPort;
+static ChannelEndPoint slavePort;
 
 //
 // Can be either a port number or a Unix
@@ -4474,7 +4480,7 @@ int SetupServiceSockets()
       // Since ProtoStep7 (#issue 108)
       int port = atoi(fontPort);
 
-      if ((fontFD = ListenConnection(port, "font")) < 0)
+      if ((fontFD = ListenConnectionTCP("localhost", port, "font")) < 0)
       {
         useFontSocket = 0;
       }
@@ -4504,56 +4510,41 @@ int SetupServiceSockets()
   return 1;
 }
 
-int ListenConnection(int port, const char *label)
+int ListenConnectionAny(sockaddr *addr, socklen_t addrlen, const char *label)
 {
-  sockaddr_in tcpAddr;
-
-  unsigned int portTCP = port;
-
-  int newFD = socket(AF_INET, SOCK_STREAM, PF_UNSPEC);
+  int newFD = socket(addr->sa_family, SOCK_STREAM, PF_UNSPEC);
 
   if (newFD == -1)
   {
     #ifdef PANIC
     *logofs << "Loop: PANIC! Call to socket failed for " << label
-            << " TCP socket. Error is " << EGET() << " '"
+            << " socket. Error is " << EGET() << " '"
             << ESTR() << "'.\n" << logofs_flush;
     #endif
 
     cerr << "Error" << ": Call to socket failed for " << label
-         << " TCP socket. Error is " << EGET() << " '"
+         << " socket. Error is " << EGET() << " '"
          << ESTR() << "'.\n";
 
     goto SetupSocketError;
   }
-  else if (SetReuseAddress(newFD) < 0)
+  if (SetReuseAddress(newFD) < 0)
   {
+    // SetReuseAddress already warns with an error
     goto SetupSocketError;
   }
 
-  tcpAddr.sin_family = AF_INET;
-  tcpAddr.sin_port = htons(portTCP);
-  if ( loopbackBind )
-  {
-    tcpAddr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-  }
-  else
-  {
-    tcpAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-  }
-
-  if (bind(newFD, (sockaddr *) &tcpAddr, sizeof(tcpAddr)) == -1)
+  if (bind(newFD, addr, addrlen) == -1)
   {
     #ifdef PANIC
     *logofs << "Loop: PANIC! Call to bind failed for " << label
-            << " TCP port " << port << ". Error is " << EGET()
+            << ". Error is " << EGET()
             << " '" << ESTR() << "'.\n" << logofs_flush;
     #endif
 
     cerr << "Error" << ": Call to bind failed for " << label
-         << " TCP port " << port << ". Error is " << EGET()
+         << ". Error is " << EGET()
          << " '" << ESTR() << "'.\n";
-
     goto SetupSocketError;
   }
 
@@ -4561,12 +4552,12 @@ int ListenConnection(int port, const char *label)
   {
     #ifdef PANIC
     *logofs << "Loop: PANIC! Call to bind failed for " << label
-            << " TCP port " << port << ". Error is " << EGET()
+            << ". Error is " << EGET()
             << " '" << ESTR() << "'.\n" << logofs_flush;
     #endif
 
     cerr << "Error" << ": Call to bind failed for " << label
-         << " TCP port " << port << ". Error is " << EGET()
+         << ". Error is " << EGET()
          << " '" << ESTR() << "'.\n";
 
     goto SetupSocketError;
@@ -4590,6 +4581,82 @@ SetupSocketError:
   //
 
   HandleCleanup();
+  return -1;
+}
+
+int ListenConnectionUnix(const char *path, const char *label)
+{
+
+  sockaddr_un unixAddr;
+  unixAddr.sun_family = AF_UNIX;
+#ifdef UNIX_PATH_MAX
+  if (strlen(path) >= UNIX_PATH_MAX)
+#else
+  if (strlen(path) >= sizeof(unixAddr.sun_path))
+#endif
+  {
+    #ifdef PANIC
+    *logofs << "Loop: PANIC! Socket path \"" << path << "\" for "
+            << label << " is too long.\n" << logofs_flush;
+    #endif
+
+    cerr << "Error" << ": Socket path \"" << path << "\" for "
+         << label << " is too long.\n";
+
+    HandleCleanup();
+    return -1;
+  }
+
+  strcpy(unixAddr.sun_path, path);
+  return ListenConnectionAny((sockaddr *)&unixAddr, sizeof(unixAddr), label);
+}
+
+int ListenConnectionTCP(const char *host, long port, const char *label)
+{
+  sockaddr_in tcpAddr;
+  tcpAddr.sin_family = AF_INET;
+  tcpAddr.sin_port = htons(port);
+
+  if (loopbackBind ||
+      !host ||
+      !strcmp(host, "") ||
+      !strcmp(host, "localhost")) {
+    tcpAddr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+  }
+  else if(strcmp(host, "*") == 0) {
+    tcpAddr.sin_addr.s_addr = htonl(INADDR_ANY);
+  }
+  else {
+    int ip = tcpAddr.sin_addr.s_addr = GetHostAddress(host);
+    if (ip == 0)
+    {
+      #ifdef PANIC
+      *logofs << "Loop: PANIC! Unknown " << label << " host '" << host
+              << "'.\n" << logofs_flush;
+      #endif
+
+      cerr << "Error" << ": Unknown " << label << " host '" << host
+           << "'.\n";
+
+      HandleCleanup();
+      return -1;
+    }
+  }
+
+  return ListenConnectionAny((sockaddr *)&tcpAddr, sizeof(tcpAddr), label);
+}
+
+int ListenConnection(ChannelEndPoint &endpoint, const char *label)
+{
+  char *unixPath, *host;
+  long port;
+  if (endpoint.getUnixPath(&unixPath)) {
+    return ListenConnectionUnix(unixPath, label);
+  }
+  else if (endpoint.getTCPHostAndPort(&host, &port)) {
+    return ListenConnectionTCP(host, port, label);
+  }
+  return -1;
 }
 
 static int AcceptConnection(int fd, int domain, const char *label)
@@ -5521,12 +5588,12 @@ void CleanupLocal()
   listenPort  = -1;
   connectPort = -1;
 
-  cupsPort  = -1;
-  auxPort   = -1;
-  smbPort   = -1;
-  mediaPort = -1;
-  httpPort  = -1;
-  slavePort = -1;
+  cupsPort.disable();
+  auxPort.disable();
+  smbPort.disable();
+  mediaPort.disable();
+  httpPort.disable();
+  slavePort.disable();
 
   *fontPort = '\0';
 
@@ -8070,6 +8137,35 @@ int ReadRemoteData(int fd, char *buffer, int size, char stop)
   return -1;
 }
 
+static int
+hexval(char c) {
+  if ((c >= '0') && (c <= '9'))
+    return c - '0';
+  if ((c >= 'a') && (c <= 'f'))
+    return c - 'a' + 10;
+  if ((c >= 'A') && (c <= 'F'))
+    return c - 'A' + 10;
+  return -1;
+}
+
+static void
+URLDecodeInPlace(char *str) {
+  if (str) {
+    char *to = str;
+    while (str[0]) {
+      if ((str[0] == '%') &&
+          (hexval(str[1]) >= 0) &&
+          (hexval(str[2]) >= 0)) {
+        *(to++) = hexval(str[1]) * 16 + hexval(str[2]);
+        str += 3;
+      }
+      else
+        *(to++) = *(str++);
+    }
+    *to = '\0';
+  }
+}
+
 int WriteLocalData(int fd, const char *buffer, int size)
 {
   int position = 0;
@@ -8357,6 +8453,7 @@ int ParseEnvironmentOptions(const char *env, int force)
   while (name)
   {
     value = strtok(NULL, ",");
+    URLDecodeInPlace(value);
 
     if (CheckArg("environment", name, value) < 0)
     {
@@ -8750,7 +8847,7 @@ int ParseEnvironmentOptions(const char *env, int force)
     }
     else if (strcasecmp(name, "cups") == 0)
     {
-      cupsPort = ValidateArg("local", name, value);
+      SetAndValidateChannelEndPointArg("local", name, value, cupsPort);
     }
     else if (strcasecmp(name, "sync") == 0)
     {
@@ -8762,25 +8859,25 @@ int ParseEnvironmentOptions(const char *env, int force)
       cerr << "Warning" << ": No 'sync' channel in current version. "
            << "Assuming 'cups' channel.\n";
 
-      cupsPort = ValidateArg("local", name, value);
+      SetAndValidateChannelEndPointArg("local", name, value, cupsPort);
     }
     else if (strcasecmp(name, "keybd") == 0 ||
                  strcasecmp(name, "aux") == 0)
     {
-      auxPort = ValidateArg("local", name, value);
+      SetAndValidateChannelEndPointArg("local", name, value, auxPort);
     }
     else if (strcasecmp(name, "samba") == 0 ||
                  strcasecmp(name, "smb") == 0)
     {
-      smbPort = ValidateArg("local", name, value);
+      SetAndValidateChannelEndPointArg("local", name, value, smbPort);
     }
     else if (strcasecmp(name, "media") == 0)
     {
-      mediaPort = ValidateArg("local", name, value);
+      SetAndValidateChannelEndPointArg("local", name, value, mediaPort);
     }
     else if (strcasecmp(name, "http") == 0)
     {
-      httpPort = ValidateArg("local", name, value);
+      SetAndValidateChannelEndPointArg("local", name, value, httpPort);
     }
     else if (strcasecmp(name, "font") == 0)
     {
@@ -8788,7 +8885,7 @@ int ParseEnvironmentOptions(const char *env, int force)
     }
     else if (strcasecmp(name, "slave") == 0)
     {
-      slavePort = ValidateArg("local", name, value);
+      SetAndValidateChannelEndPointArg("local", name, value, slavePort);
     }
     else if (strcasecmp(name, "mask") == 0)
     {
@@ -11515,236 +11612,104 @@ int SetPorts()
   // ing, causing a loop.
   //
 
-  if (cupsPort <= 0)
-  {
-    #ifdef TEST
-    *logofs << "Loop: Disabling cups connections.\n"
-            << logofs_flush;
-    #endif
-
-    cupsPort = 0;
-
-    useCupsSocket = 0;
-  }
-  else
-  {
-    if (control -> ProxyMode == proxy_client)
-    {
-      if (cupsPort == 1)
-      {
-        cupsPort = DEFAULT_NX_CUPS_PORT_OFFSET + proxyPort;
-      }
-
+  useCupsSocket = 0;
+  if (cupsPort.enabled()) {
+    if (control -> ProxyMode == proxy_client) {
+      cupsPort.setDefaultTCPPort(DEFAULT_NX_CUPS_PORT_OFFSET + proxyPort);
       useCupsSocket = 1;
     }
     else
-    {
-      if (cupsPort == 1)
-      {
-        //
-        // Use the well-known 631/tcp port of the
-        // Internet Printing Protocol.
-        //
-
-        cupsPort = 631;
-      }
-
-      useCupsSocket = 0;
-    }
-
-    #ifdef TEST
-    *logofs << "Loop: Using cups port '" << cupsPort
-            << "'.\n" << logofs_flush;
-    #endif
+      cupsPort.setDefaultTCPPort(631);
   }
 
-  if (auxPort <= 0)
-  {
-    #ifdef TEST
-    *logofs << "Loop: Disabling auxiliary X11 connections.\n"
+#ifdef TEST
+  *logofs << "Loop: cups port: " << cupsPort->getDebugSpec() << "\n"
             << logofs_flush;
-    #endif
+#endif
 
-    auxPort = 0;
-
-    useAuxSocket = 0;
-  }
-  else
-  {
-    if (control -> ProxyMode == proxy_client)
-    {
-      if (auxPort == 1)
-      {
-        auxPort = DEFAULT_NX_AUX_PORT_OFFSET + proxyPort;
-      }
-
+  useAuxSocket = 0;
+  if (auxPort.enabled()) {
+    if (control -> ProxyMode == proxy_client) {
+      auxPort.setDefaultTCPPort(DEFAULT_NX_AUX_PORT_OFFSET + proxyPort);
       useAuxSocket = 1;
     }
-    else
-    {
-      //
-      // Auxiliary X connections are always forwarded
-      // to the display where the session is running.
-      // The only value accepted is 1.
-      //
+    else {
+      auxPort.setDefaultTCPPort(1);
 
-      if (auxPort != 1)
-      {
-        #ifdef WARNING
+      if (auxPort.getTCPPort() != 1) {
+
+#ifdef WARNING
         *logofs << "Loop: WARNING! Overriding auxiliary X11 "
                 << "port with new value '" << 1 << "'.\n"
                 << logofs_flush;
-        #endif
+#endif
 
         cerr << "Warning" << ": Overriding auxiliary X11 "
              << "port with new value '" << 1 << "'.\n";
 
-        auxPort = 1;
+	auxPort.setSpec("1");
       }
-
-      useAuxSocket = 0;
     }
-
-    #ifdef TEST
-    *logofs << "Loop: Using auxiliary X11 port '" << auxPort
-            << "'.\n" << logofs_flush;
-    #endif
   }
 
-  if (smbPort <= 0)
-  {
-    #ifdef TEST
-    *logofs << "Loop: Disabling SMB connections.\n"
-            << logofs_flush;
-    #endif
+#ifdef TEST
+  *logofs << "Loop: aux port: " << auxPort->getDebugSpec() << "\n"
+	  << logofs_flush;
+#endif
 
-    smbPort = 0;
-
-    useSmbSocket = 0;
-  }
-  else
-  {
-    if (control -> ProxyMode == proxy_client)
-    {
-      if (smbPort == 1)
-      {
-        smbPort = DEFAULT_NX_SMB_PORT_OFFSET + proxyPort;
-      }
-
-      useSmbSocket = 1;
+  useSmbSocket = 0;
+  if (smbPort.enabled()) {
+    if (control -> ProxyMode == proxy_client) {
+      auxPort.setDefaultTCPPort(DEFAULT_NX_SMB_PORT_OFFSET + proxyPort);
+      useAuxSocket = 1;
     }
     else
-    {
-      if (smbPort == 1)
-      {
-        //
-        // Assume the 139/tcp port used for SMB
-        // over NetBIOS over TCP.
-        //
-
-        smbPort = 139;
-      }
-
-      useSmbSocket = 0;
-    }
-
-    #ifdef TEST
-    *logofs << "Loop: Using SMB port '" << smbPort
-            << "'.\n" << logofs_flush;
-    #endif
+      auxPort.setDefaultTCPPort(139);
   }
 
-  if (mediaPort <= 0)
-  {
-    #ifdef TEST
-    *logofs << "Loop: Disabling multimedia connections.\n"
-            << logofs_flush;
-    #endif
 
-    mediaPort = 0;
+#ifdef TEST
+  *logofs << "Loop: smb port: " << smbPort->getDebugSpec() << "\n"
+	  << logofs_flush;
+#endif
 
-    useMediaSocket = 0;
-  }
-  else
-  {
-    if (control -> ProxyMode == proxy_client)
-    {
-      if (mediaPort == 1)
-      {
-        mediaPort = DEFAULT_NX_MEDIA_PORT_OFFSET + proxyPort;
-      }
-
+  useMediaSocket = 0;
+  if (mediaPort.enabled()) {
+    if (control -> ProxyMode == proxy_client) {
+      mediaPort.setDefaultTCPPort(DEFAULT_NX_MEDIA_PORT_OFFSET + proxyPort);
       useMediaSocket = 1;
     }
-    else
-    {
-      if (mediaPort == 1)
-      {
-        //
-        // We don't have a well-known port to
-        // be used for media connections.
-        //
+    else if (mediaPort.getTCPPort() == 1) {
+#ifdef PANIC
+      *logofs << "Loop: PANIC! No port specified for multimedia connections.\n"
+              << logofs_flush;
+#endif
 
-        #ifdef PANIC
-        *logofs << "Loop: PANIC! No port specified for multimedia connections.\n"
-                << logofs_flush;
-        #endif
+      cerr << "Error" << ": No port specified for multimedia connections.\n";
 
-        cerr << "Error" << ": No port specified for multimedia connections.\n";
-
-        HandleCleanup();
-      }
-
-      useMediaSocket = 0;
+      HandleCleanup();
     }
-
-    #ifdef TEST
-    *logofs << "Loop: Using multimedia port '" << mediaPort
-            << "'.\n" << logofs_flush;
-    #endif
   }
 
-  if (httpPort <= 0)
-  {
-    #ifdef TEST
-    *logofs << "Loop: Disabling HTTP connections.\n"
-            << logofs_flush;
-    #endif
+#ifdef TEST
+  *logofs << "Loop: Using multimedia port '" << mediaPort->getDebugSpec()
+	  << "'.\n" << logofs_flush;
+#endif
 
-    httpPort = 0;
-
-    useHttpSocket = 0;
-  }
-  else
-  {
-    if (control -> ProxyMode == proxy_client)
-    {
-      if (httpPort == 1)
-      {
-        httpPort = DEFAULT_NX_HTTP_PORT_OFFSET + proxyPort;
-      }
-
+  useHttpSocket = 0;
+  if (httpPort.enabled()) {
+    if (control -> ProxyMode == proxy_client) {
+      httpPort.setDefaultTCPPort(DEFAULT_NX_HTTP_PORT_OFFSET + proxyPort);
       useHttpSocket = 1;
     }
     else
-    {
-      if (httpPort == 1)
-      {
-        //
-        // Use the well-known 80/tcp port.
-        //
-
-        httpPort = 80;
-      }
-
-      useHttpSocket = 0;
-    }
-
-    #ifdef TEST
-    *logofs << "Loop: Using HTTP port '" << httpPort
-            << "'.\n" << logofs_flush;
-    #endif
+      httpPort.setDefaultTCPPort(80);
   }
+
+#ifdef TEST
+  *logofs << "Loop: Using HTTP port '" << httpPort->getDebugSpec()
+	  << "'.\n" << logofs_flush;
+#endif
 
   if (ParseFontPath(fontPort) <= 0)
   {
@@ -11781,43 +11746,19 @@ int SetPorts()
     #endif
   }
 
-  if (slavePort <= 0)
-  {
-    #ifdef TEST
-    *logofs << "Loop: Disabling slave connections.\n"
-            << logofs_flush;
-    #endif
-
-    slavePort = 0;
-
-    useSlaveSocket = 0;
-  }
-  else
-  {
-    //
-    // File transfer connections can
-    // be originated by both sides.
-    //
-
-    if (slavePort == 1)
-    {
-      if (control -> ProxyMode == proxy_client)
-      {
-        slavePort = DEFAULT_NX_SLAVE_PORT_CLIENT_OFFSET + proxyPort;
-      }
-      else
-      {
-        slavePort = DEFAULT_NX_SLAVE_PORT_SERVER_OFFSET + proxyPort;
-      }
-    }
-
+  useSlaveSocket = 0;
+  if (slavePort.enabled()) {
     useSlaveSocket = 1;
-
-    #ifdef TEST
-    *logofs << "Loop: Using slave port '" << slavePort
-            << "'.\n" << logofs_flush;
-    #endif
+    if (control -> ProxyMode == proxy_client)
+      slavePort.setDefaultTCPPort(DEFAULT_NX_SLAVE_PORT_CLIENT_OFFSET + proxyPort);
+    else
+      slavePort.setDefaultTCPPort(DEFAULT_NX_SLAVE_PORT_SERVER_OFFSET + proxyPort);
   }
+
+#ifdef TEST
+  *logofs << "Loop: Using slave port '" << slavePort->getDebugSpec()
+	  << "'.\n" << logofs_flush;
+#endif
 
   return 1;
 }
@@ -14109,65 +14050,65 @@ void PrintConnectionInfo()
   }
 
   if (control -> ProxyMode == proxy_client &&
-          useCupsSocket > 0 && cupsPort > 0)
+      useCupsSocket > 0 && cupsPort.enabled())
   {
     cerr << "Info" << ": Listening to CUPS connections "
          << "on port '" << cupsPort << "'.\n";
   }
   else if (control -> ProxyMode == proxy_server &&
-               cupsPort > 0)
+           cupsPort.enabled())
   {
     cerr << "Info" << ": Forwarding CUPS connections "
          << "to port '" << cupsPort << "'.\n";
   }
 
   if (control -> ProxyMode == proxy_client &&
-          useAuxSocket > 0 && auxPort > 0)
+      useAuxSocket > 0 && auxPort.enabled())
   {
     cerr << "Info" << ": Listening to auxiliary X11 connections "
          << "on port '" << auxPort << "'.\n";
   }
   else if (control -> ProxyMode == proxy_server &&
-               auxPort > 0)
+           auxPort.enabled())
   {
     cerr << "Info" << ": Forwarding auxiliary X11 connections "
          << "to display '" << displayHost << "'.\n";
   }
 
   if (control -> ProxyMode == proxy_client &&
-          useSmbSocket > 0 && smbPort > 0)
+      useSmbSocket > 0 && smbPort.enabled())
   {
     cerr << "Info" << ": Listening to SMB connections "
          << "on port '" << smbPort << "'.\n";
   }
   else if (control -> ProxyMode == proxy_server &&
-               smbPort > 0)
+           smbPort.enabled())
   {
     cerr << "Info" << ": Forwarding SMB connections "
          << "to port '" << smbPort << "'.\n";
   }
 
   if (control -> ProxyMode == proxy_client &&
-          useMediaSocket > 0 && mediaPort > 0)
+      useMediaSocket > 0 && mediaPort.enabled())
   {
     cerr << "Info" << ": Listening to multimedia connections "
          << "on port '" << mediaPort << "'.\n";
   }
   else if (control -> ProxyMode == proxy_server &&
-               mediaPort > 0)
+           mediaPort.enabled())
   {
     cerr << "Info" << ": Forwarding multimedia connections "
          << "to port '" << mediaPort << "'.\n";
   }
 
   if (control -> ProxyMode == proxy_client &&
-          useHttpSocket > 0 && httpPort > 0)
+      useHttpSocket > 0 && httpPort.enabled())
   {
     cerr << "Info" << ": Listening to HTTP connections "
          << "on port '" << httpPort << "'.\n";
   }
   else if (control -> ProxyMode == proxy_server &&
-               httpPort > 0)
+           httpPort.enabled())
   {
     cerr << "Info" << ": Forwarding HTTP connections "
          << "to port '" << httpPort << "'.\n";
@@ -14186,7 +14127,7 @@ void PrintConnectionInfo()
          << "to port '" << fontPort << "'.\n";
   }
 
-  if (useSlaveSocket > 0 && slavePort > 0)
+  if (useSlaveSocket > 0 && slavePort.enabled())
   {
     cerr << "Info" << ": Listening to slave connections "
          << "on port '" << slavePort << "'.\n";
@@ -14442,6 +14383,25 @@ int ParseArg(const char *type, const char *name, const char *value)
 
   return (int) result;
 }
+
+void SetAndValidateChannelEndPointArg(const char *type, const char *name, const char *value,
+                                      ChannelEndPoint &endPoint) {
+  endPoint.setSpec(value);
+  if (!endPoint.validateSpec()) {
+    #ifdef PANIC
+    *logofs << "Loop: PANIC! Invalid " << type
+            << " option '" << name << "' with value '"
+            << value << "'.\n" << logofs_flush;
+    #endif
+
+    cerr << "Error" << ": Invalid " << type
+         << " option '" << name << "' with value '"
+         << value << "'.\n";
+
+    HandleCleanup();
+  }
+}
+
 
 int ValidateArg(const char *type, const char *name, const char *value)
 {

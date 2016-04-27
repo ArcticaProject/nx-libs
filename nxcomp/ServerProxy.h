@@ -24,6 +24,7 @@
 #include "Proxy.h"
 
 #include "Misc.h"
+#include "ChannelEndPoint.h"
 
 //
 // Set the verbosity level.
@@ -43,8 +44,11 @@ class ServerProxy : public Proxy
   virtual void handleDisplayConfiguration(const char *xServerDisplay, int xServerAddrFamily,
                                               sockaddr *xServerAddr, unsigned int xServerAddrLength);
 
-  virtual void handlePortConfiguration(int cupsServerPort, int smbServerPort, int mediaServerPort,
-                                           int httpServerPort, const char *fontServerPort);
+  virtual void handlePortConfiguration(ChannelEndPoint &cupsServerPort,
+                                       ChannelEndPoint &smbServerPort,
+                                       ChannelEndPoint &mediaServerPort,
+                                       ChannelEndPoint &httpServerPort,
+                                       const char *fontServerPort);
 
   protected:
 
@@ -108,6 +112,7 @@ class ServerProxy : public Proxy
 
   private:
 
+  // FIXME: Use a ChannelEndPoint object also for the X server!
   int xServerAddrFamily_;
   sockaddr *xServerAddr_;
   unsigned int xServerAddrLength_;
@@ -124,10 +129,10 @@ class ServerProxy : public Proxy
   // TCP connections.
   //
 
-  int cupsServerPort_;
-  int smbServerPort_;
-  int mediaServerPort_;
-  int httpServerPort_;
+  ChannelEndPoint cupsServerPort_;
+  ChannelEndPoint smbServerPort_;
+  ChannelEndPoint mediaServerPort_;
+  ChannelEndPoint httpServerPort_;
 
   //
   // It will have to be passed to the channel

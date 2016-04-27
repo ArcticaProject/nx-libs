@@ -65,6 +65,7 @@ struct sockaddr_un
 #include "ClientChannel.h"
 #include "ServerChannel.h"
 #include "GenericChannel.h"
+#include "ChannelEndPoint.h"
 
 //
 // We need to adjust some values related
@@ -6053,8 +6054,36 @@ int Proxy::handleNewSlaveConnection(int clientFd)
   return handleNewGenericConnection(clientFd, channel_slave, "slave");
 }
 
+
+
 int Proxy::handleNewGenericConnectionFromProxy(int channelId, T_channel_type type,
-                                                   const char *hostname, int port, const char *label)
+                                               ChannelEndPoint &endPoint, const char *label)
+{
+  char *unixPath, *host;
+  long port;
+
+  if (endPoint.getUnixPath(&unixPath)) {
+    return handleNewGenericConnectionFromProxyUnix(channelId, type, unixPath, label);
+  }
+
+  if (endPoint.getTCPHostAndPort(&host, &port)) {
+    return handleNewGenericConnectionFromProxyTCP(channelId, type, host, port, label);
+  }
+
+  #ifdef WARNING
+  *logofs << "Proxy: WARNING! Refusing attempted connection "
+      << "to " << label << " server.\n" << logofs_flush;
+  #endif
+
+  cerr << "Warning" << ": Refusing attempted connection "
+      << "to " << label << " server.\n";
+
+  return -1;
+}
+
+int Proxy::handleNewGenericConnectionFromProxyTCP(int channelId, T_channel_type type,
+                                                  const char *hostname, long port, const char *label)
+
 {
   if (port <= 0)
   {
@@ -6173,8 +6202,8 @@ int Proxy::handleNewGenericConnectionFromProxy(int channelId, T_channel_type typ
   return 1;
 }
 
-int Proxy::handleNewGenericConnectionFromProxy(int channelId, T_channel_type type,
-                                                   const char *hostname, const char *path, const char *label)
+int Proxy::handleNewGenericConnectionFromProxyUnix(int channelId, T_channel_type type,
+                                                   const char *path, const char *label)
 {
   if (path == NULL || *path == '\0' )
   {

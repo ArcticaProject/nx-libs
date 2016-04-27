@@ -68,8 +68,11 @@ void ClientProxy::handleDisplayConfiguration(const char *xServerDisplay, int xSe
   #endif
 }
 
-void ClientProxy::handlePortConfiguration(int cupsServerPort, int smbServerPort, int mediaServerPort,
-                                              int httpServerPort, const char *fontServerPort)
+void ClientProxy::handlePortConfiguration(ChannelEndPoint &cupsServerPort,
+                                          ChannelEndPoint &smbServerPort,
+                                          ChannelEndPoint &mediaServerPort,
+                                          ChannelEndPoint &httpServerPort,
+                                          const char *fontServerPort)
 {
   delete [] fontServerPort_;
 
@@ -141,8 +144,8 @@ int ClientProxy::handleNewConnectionFromProxy(T_channel_type type, int channelId
         // Connect on the TCP port number.
         //
 
-        return handleNewGenericConnectionFromProxy(channelId, channel_font, "localhost",
-                                                       port, "font");
+        return handleNewGenericConnectionFromProxyTCP(channelId, channel_font, "localhost",
+                                                      port, "font");
       }
       else
       {
@@ -150,7 +153,7 @@ int ClientProxy::handleNewConnectionFromProxy(T_channel_type type, int channelId
         // Connect to the Unix path.
         //
 
-        return handleNewGenericConnectionFromProxy(channelId, channel_font, "localhost",
+        return handleNewGenericConnectionFromProxyUnix(channelId, channel_font,
                                                        fontServerPort_, "font");
       }
     }
