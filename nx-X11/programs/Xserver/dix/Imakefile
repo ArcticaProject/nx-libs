@@ -16,6 +16,7 @@ FFS_OBJ = ffs.o
 #if (!(defined(NXAgentServer) && NXAgentServer))
 NXAGENT_SKIP_SRCS =                  \
                     dispatch.c       \
+                    dixfonts.c       \
                     events.c         \
                     extension.c      \
                     glyphcurs.c      \
@@ -25,6 +26,7 @@ NXAGENT_SKIP_SRCS =                  \
                     $(NULL)
 NXAGENT_SKIP_OBJS =                  \
                     dispatch.o       \
+                    dixfonts.o       \
                     events.o         \
                     extension.o      \
                     glyphcurs.o      \
@@ -50,7 +52,6 @@ SRCS =                          \
        swapreq.c                \
        tables.c                 \
        initatoms.c              \
-       dixfonts.c               \
        privates.c               \
        pixmap.c                 \
        $(NXAGENT_SKIP_SRCS)     \
@@ -72,7 +73,6 @@ OBJS =                          \
        swapreq.o                \
        tables.o                 \
        initatoms.o              \
-       dixfonts.o               \
        privates.o               \
        pixmap.o                 \
        $(NXAGENT_SKIP_OBJS)     \
