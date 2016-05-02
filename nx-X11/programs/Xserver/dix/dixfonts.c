@@ -1884,7 +1884,7 @@ GetFontPath(int *count, int *length)
     if (c == NULL) {
 	free(font_path_string);
 	font_path_string = NULL;
-	return BadAlloc;
+	return NULL;
     }
 
     font_path_string = c;
