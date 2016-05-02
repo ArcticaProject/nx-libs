@@ -1280,9 +1280,6 @@ CloseDownClient(register ClientPtr client)
 	if (ClientIsAsleep(client))
 	    ClientSignal (client);
 	ProcessWorkQueueZombies();
-#ifdef LBX
-	ProcessQTagZombies();
-#endif
 	CloseDownConnection(client);
 
 	/* If the client made it to the Running stage, nClients has

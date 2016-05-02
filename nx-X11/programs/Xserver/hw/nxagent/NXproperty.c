@@ -163,13 +163,8 @@ ProcChangeProperty(ClientPtr client)
     }
 #endif
 
-#ifdef LBX
-    err = LbxChangeWindowProperty(client, pWin, stuff->property, stuff->type,
-	 (int)format, (int)mode, len, TRUE, (void *)&stuff[1], TRUE, NULL);
-#else
     err = ChangeWindowProperty(pWin, stuff->property, stuff->type, (int)format,
 			       (int)mode, len, (void *)&stuff[1], TRUE);
-#endif
     if (err != Success)
 	return err;
     else
@@ -197,11 +192,6 @@ ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format,
                      int mode, unsigned long len, void * value, 
                      Bool sendevent)
 {
-#ifdef LBX
-    return LbxChangeWindowProperty(NULL, pWin, property, type,
-				   format, mode, len, TRUE, value,
-				   sendevent, NULL);
-#else
     PropertyPtr pProp;
     xEvent event;
     int sizeInBytes;
@@ -321,7 +311,6 @@ ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format,
 	DeliverEvents(pWin, &event, 1, (WindowPtr)NULL);
     }
     return(Success);
-#endif
 }
 
 /*****************
@@ -475,13 +464,6 @@ ProcGetProperty(ClientPtr client)
 	WriteReplyToClient(client, sizeof(xGenericReply), &reply);
 	return(Success);
     }
-#ifdef LBX
-    /* make sure we have the current value */                       
-    if (pProp->tag_id && pProp->owner_pid) {
-	LbxStallPropRequest(client, pProp);
-	return client->noClientException;
-    }                                              
-#endif
 
 /*
  *  Return type, format, value to client
@@ -532,10 +514,6 @@ ProcGetProperty(ClientPtr client)
 
     if (stuff->delete && (reply.bytesAfter == 0))
     { /* delete the Property */
-#ifdef LBX
-	if (pProp->tag_id)
-	    TagDeleteTag(pProp->tag_id);
-#endif
 	if (prevProp == (PropertyPtr)NULL) /* takes care of head */
 	{
 	    if (!(pWin->optional->userProps = pProp->next))
@@ -651,10 +629,6 @@ GetWindowProperty(pWin, property, longOffset, longLength, delete,
 
     if (delete && (*bytesAfter == 0))
     { /* delete the Property */
-#ifdef LBX
-	if (pProp->tag_id)
-	    TagDeleteTag(pProp->tag_id);
-#endif
 	if (prevProp == (PropertyPtr)NULL) /* takes care of head */
 	{
 	    if (!(pWin->optional->userProps = pProp->next))

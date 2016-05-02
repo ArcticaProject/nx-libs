@@ -393,33 +393,15 @@ XYToWindow(int x, int y)
 // 	    sprite.hot.pScreen = sprite.hotPhys.pScreen;
 // 	    ROOT = sprite.hot.pScreen->root;
 // 	}
-#ifdef XEVIE
-// 	xeviehot.x =
-#endif
 // 	sprite.hot.x = XE_KBPTR.rootX;
-#ifdef XEVIE
-// 	xeviehot.y =
-#endif
 // 	sprite.hot.y = XE_KBPTR.rootY;
 // 	if (sprite.hot.x < sprite.physLimits.x1)
-#ifdef XEVIE
-// 	    xeviehot.x =
-#endif
 // 	    sprite.hot.x = sprite.physLimits.x1;
 // 	else if (sprite.hot.x >= sprite.physLimits.x2)
-#ifdef XEVIE
-// 	    xeviehot.x =
-#endif
 // 	    sprite.hot.x = sprite.physLimits.x2 - 1;
 // 	if (sprite.hot.y < sprite.physLimits.y1)
-#ifdef XEVIE
-// 	    xeviehot.y =
-#endif
 // 	    sprite.hot.y = sprite.physLimits.y1;
 // 	else if (sprite.hot.y >= sprite.physLimits.y2)
-#ifdef XEVIE
-// 	    xeviehot.y =
-#endif
 // 	    sprite.hot.y = sprite.physLimits.y2 - 1;
 #ifdef SHAPE
 // 	if (sprite.hotShape)
@@ -446,9 +428,6 @@ XYToWindow(int x, int y)
 // 	XE_KBPTR.rootY = sprite.hot.y;
 //     }
 // 
-#ifdef XEVIE
-//     xeviewin =
-#endif
 //     sprite.win = XYToWindow(sprite.hot.x, sprite.hot.y);
 #ifdef notyet
 //     if (!(sprite.win->deliverableEvents &
@@ -486,9 +465,6 @@ DefineInitialRootWindow(register WindowPtr win)
     sprite.hot = sprite.hotPhys;
     sprite.hotLimits.x2 = pScreen->width;
     sprite.hotLimits.y2 = pScreen->height;
-#ifdef XEVIE
-    xeviewin =
-#endif
     sprite.win = win;
     sprite.current = wCursor (win);
     sprite.current->refcnt++;
