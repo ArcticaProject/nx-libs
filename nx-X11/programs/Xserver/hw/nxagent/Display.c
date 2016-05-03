@@ -1938,7 +1938,7 @@ Bool nxagentMakeIcon(Display *display, Pixmap *nxIcon, Pixmap *nxMask)
   XlibPixmap IconPixmap;
   XlibPixmap IconShape;
   char* agent_icon_name;
-  char* agentIconData;
+  char** agentIconData;
 
   /*
    * selecting x2go icon when running as X2Go agent
