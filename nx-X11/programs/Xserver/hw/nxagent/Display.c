@@ -62,7 +62,11 @@ is" without express or implied warranty.
 #include "Init.h"
 #include "Args.h"
 #include "Image.h"
+
+#define Pixmap XlibPixmap
 #include "Icons.h"
+#undef Pixmap
+
 #include "Render.h"
 #include "Font.h"
 #include "Reconnect.h"
