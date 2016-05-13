@@ -384,10 +384,12 @@ NXAGENTOBJS = hw/nxagent/miinitext.o     \
               dix/main.o
 #endif
 
-XPMLIB =  -lXpm
+XPMLIB    =  -lXpm
+XMLLIB    =  `pkg-config --libs libxml-2.0`
+PIXMANLIB =  `pkg-config --libs pixman-1`
 NXAGENT = hw/nxagent/LibraryTargetName(nxagent)
 NXAGENTLIBS = PreFbLibs $(NXAGENT) FbPostFbLibs $(NXAGENT) $(MI)
-NXAGENTSYSLIBS = $(LDPRELIBS) $(XLIB) $(SYSLIBS) $(XPMLIB)
+NXAGENTSYSLIBS = $(LDPRELIBS) $(XLIB) $(SYSLIBS) $(XPMLIB) $(XMLLIB) $(PIXMANLIB)
 #if HasParallelMake
 MakeMutex($(NXAGENTDIRS) $(NXAGENTOBJS) $(NXAGENTLIBS) $(NXAGENTSYSLIBS))
 #endif
@@ -403,18 +405,15 @@ $(NXAGENTOBJS) $(NXAGENTLIBS) $(NXAGENTSYSLIBS):: $(NXAGENTDIRS)
 #if defined(SunArchitecture)
 NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext -L ../../../nxcompshad \
                 -lXcomp -lXcompext -lXcompshad -lrt -L/usr/sfw/lib -lXrender -lXfixes -lXfont \
-                -L../../../nx-X11/exports/lib -lXtst -lXrandr -lXcomposite -lXdmcp \
-`pkg-config --libs libxml-2.0`
+                -L../../../nx-X11/exports/lib -lXtst -lXrandr -lXcomposite -lXdmcp
 #elif defined(cygwinArchitecture)
 NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext \
                 -lXcomp -lXcompext -lXrender -lX11 -lNX_Xext -lXcomposite -lXfixes -lXfont \
-                -L ../../../nxcompshad -lXcompshad -L../../../nx-X11/exports/lib -lXtst -lXdmcp \
-`pkg-config --libs libxml-2.0`
+                -L ../../../nxcompshad -lXcompshad -L../../../nx-X11/exports/lib -lXtst -lXdmcp
 #else
 NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext -L ../../../nxcompshad \
                 -lXcomp -lXcompext -lXcompshad -lXrender -lNX_X11 -lNX_Xext -lXfixes -lXfont \
-                -L../../../nx-X11/exports/lib -lXtst -lXrandr -lXcomposite -lXinerama -lXdmcp \
-`pkg-config --libs libxml-2.0`
+                -L../../../nx-X11/exports/lib -lXtst -lXrandr -lXcomposite -lXinerama -lXdmcp
 #endif
 
 #endif

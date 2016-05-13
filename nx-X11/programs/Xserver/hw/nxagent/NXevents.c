@@ -379,14 +379,14 @@ XineramaSetCursorPosition(
     x += panoramiXdataPtr[0].x;
     y += panoramiXdataPtr[0].y;
 
-    if(!POINT_IN_REGION(pScreen, &XineramaScreenRegions[pScreen->myNum],
+    if(!RegionContainsPoint(&XineramaScreenRegions[pScreen->myNum],
 								x, y, &box)) 
     {
 	FOR_NSCREENS(i) 
 	{
 	    if(i == pScreen->myNum) 
 		continue;
-	    if(POINT_IN_REGION(pScreen, &XineramaScreenRegions[i], x, y, &box))
+	    if(RegionContainsPoint(&XineramaScreenRegions[i], x, y, &box))
 	    {
 		pScreen = screenInfo.screens[i];
 		break;
@@ -516,7 +516,7 @@ XineramaCheckVirtualMotion(
 
 	i = PanoramiXNumScreens - 1;
 	
-	REGION_COPY(sprite.screen, &sprite.Reg2, 
+	RegionCopy(&sprite.Reg2,
 					&sprite.windows[i]->borderSize); 
 	off_x = panoramiXdataPtr[i].x;
 	off_y = panoramiXdataPtr[i].y;
@@ -526,16 +526,16 @@ XineramaCheckVirtualMotion(
 	    y = off_y - panoramiXdataPtr[i].y;
 
 	    if(x || y)
-		REGION_TRANSLATE(sprite.screen, &sprite.Reg2, x, y);
+		RegionTranslate(&sprite.Reg2, x, y);
 		
-	    REGION_UNION(sprite.screen, &sprite.Reg2, &sprite.Reg2, 
+	    RegionUnion(&sprite.Reg2, &sprite.Reg2,
 					&sprite.windows[i]->borderSize);
 
 	    off_x = panoramiXdataPtr[i].x;
 	    off_y = panoramiXdataPtr[i].y;
 	}
 
-	lims = *REGION_EXTENTS(sprite.screen, &sprite.Reg2);
+	lims = *RegionExtents(&sprite.Reg2);
 
         if (sprite.hot.x < lims.x1)
 #ifdef XEVIE
@@ -558,7 +558,7 @@ XineramaCheckVirtualMotion(
 #endif
             sprite.hot.y = lims.y2 - 1;
 
-	if (REGION_NUM_RECTS(&sprite.Reg2) > 1) 
+	if (RegionNumRects(&sprite.Reg2) > 1) 
 	    ConfineToShape(&sprite.Reg2, &sprite.hot.x, &sprite.hot.y);
 
 	if (qe)
@@ -665,7 +665,7 @@ XineramaConfineCursorToWindow(WindowPtr pWin, Bool generateEvents)
 
 	i = PanoramiXNumScreens - 1;
 	
-	REGION_COPY(sprite.screen, &sprite.Reg1, 
+	RegionCopy(&sprite.Reg1,
 					&sprite.windows[i]->borderSize); 
 	off_x = panoramiXdataPtr[i].x;
 	off_y = panoramiXdataPtr[i].y;
@@ -675,18 +675,18 @@ XineramaConfineCursorToWindow(WindowPtr pWin, Bool generateEvents)
 	    y = off_y - panoramiXdataPtr[i].y;
 
 	    if(x || y)
-		REGION_TRANSLATE(sprite.screen, &sprite.Reg1, x, y);
+		RegionTranslate(&sprite.Reg1, x, y);
 		
-	    REGION_UNION(sprite.screen, &sprite.Reg1, &sprite.Reg1, 
+	    RegionUnion(&sprite.Reg1, &sprite.Reg1,
 					&sprite.windows[i]->borderSize);
 
 	    off_x = panoramiXdataPtr[i].x;
 	    off_y = panoramiXdataPtr[i].y;
 	}
 
-	sprite.hotLimits = *REGION_EXTENTS(sprite.screen, &sprite.Reg1);
+	sprite.hotLimits = *RegionExtents(&sprite.Reg1);
 
-	if(REGION_NUM_RECTS(&sprite.Reg1) > 1)
+	if(RegionNumRects(&sprite.Reg1) > 1)
 	   sprite.hotShape = &sprite.Reg1;
 	else
 	   sprite.hotShape = NullRegion;
@@ -765,9 +765,9 @@ ConfineToShape(RegionPtr shape, int *px, int *py)
     int x = *px, y = *py;
     int incx = 1, incy = 1;
 
-    if (POINT_IN_REGION(sprite.hot.pScreen, shape, x, y, &box))
+    if (RegionContainsPoint(shape, x, y, &box))
 	return;
-    box = *REGION_EXTENTS(sprite.hot.pScreen, shape);
+    box = *RegionExtents(shape);
     /* this is rather crude */
     do {
 	x += incx;
@@ -789,7 +789,7 @@ ConfineToShape(RegionPtr shape, int *px, int *py)
 	    else if (y < box.y1)
 		return; /* should never get here! */
 	}
-    } while (!POINT_IN_REGION(sprite.hot.pScreen, shape, x, y, &box));
+    } while (!RegionContainsPoint(shape, x, y, &box));
     *px = x;
     *py = y;
 }
@@ -877,7 +877,7 @@ CheckVirtualMotion(
 #endif
 	    sprite.hot.x = sprite.hot.y = 0;
 	}
-	lims = *REGION_EXTENTS(pWin->drawable.pScreen, &pWin->borderSize);
+	lims = *RegionExtents(&pWin->borderSize);
 	if (sprite.hot.x < lims.x1)
 #ifdef XEVIE
 	    xeviehot.x =
@@ -931,7 +931,7 @@ ConfineCursorToWindow(WindowPtr pWin, Bool generateEvents, Bool confineToScreen)
     }
     else
     {
-	sprite.hotLimits = *REGION_EXTENTS( pScreen, &pWin->borderSize);
+	sprite.hotLimits = *RegionExtents(&pWin->borderSize);
 #ifdef SHAPE
 	sprite.hotShape = wBoundingShape(pWin) ? &pWin->borderSize
 					       : NullRegion;
@@ -2117,7 +2117,7 @@ PointInBorderSize(WindowPtr pWin, int x, int y)
 {
     BoxRec box;
 
-    if(POINT_IN_REGION(pWin->drawable.pScreen, &pWin->borderSize, x, y, &box))
+    if(RegionContainsPoint(&pWin->borderSize, x, y, &box))
 	return TRUE;
 
 #ifdef PANORAMIX
@@ -2125,7 +2125,7 @@ PointInBorderSize(WindowPtr pWin, int x, int y)
 	int i;
 
 	for(i = 1; i < PanoramiXNumScreens; i++) {
-	   if(POINT_IN_REGION(sprite.screen, 
+	   if(RegionContainsPoint(
 			&sprite.windows[i]->borderSize, 
 			x + panoramiXdataPtr[0].x - panoramiXdataPtr[i].x, 
 			y + panoramiXdataPtr[0].y - panoramiXdataPtr[i].y, 
@@ -2180,7 +2180,7 @@ XYToWindow(int x, int y)
 	     */
 	    && (!wBoundingShape(pWin) || PointInBorderSize(pWin, x, y))
 	    && (!wInputShape(pWin) ||
-		POINT_IN_REGION(pWin->drawable.pScreen,
+		RegionContainsPoint(
 				wInputShape(pWin),
 				x - pWin->drawable.x,
 				y - pWin->drawable.y, &box))
@@ -2313,7 +2313,6 @@ WindowsRestructured()
  * compute correctly. */
 void ReinitializeRootWindow(WindowPtr win, int xoff, int yoff)
 {
-    ScreenPtr pScreen = win->drawable.pScreen;
     GrabPtr   grab;
 
     if (noPanoramiXExtension) return;
@@ -2329,10 +2328,10 @@ void ReinitializeRootWindow(WindowPtr win, int xoff, int yoff)
     sprite.hotLimits.x2 -= xoff;
     sprite.hotLimits.y2 -= yoff;
 
-    if (REGION_NOTEMPTY(sprite.screen, &sprite.Reg1))
-        REGION_TRANSLATE(sprite.screen, &sprite.Reg1,    xoff, yoff);
-    if (REGION_NOTEMPTY(sprite.screen, &sprite.Reg2))
-        REGION_TRANSLATE(sprite.screen, &sprite.Reg2,    xoff, yoff);
+    if (RegionNotEmpty(&sprite.Reg1))
+        RegionTranslate(&sprite.Reg1,    xoff, yoff);
+    if (RegionNotEmpty(&sprite.Reg2))
+        RegionTranslate(&sprite.Reg2,    xoff, yoff);
 
     /* FIXME: if we call ConfineCursorToWindow, must we do anything else? */
     if ((grab = inputInfo.pointer->grab) && grab->confineTo) {
@@ -2388,8 +2387,8 @@ DefineInitialRootWindow(register WindowPtr win)
 #endif
 	sprite.screen = pScreen;
 	/* gotta UNINIT these someplace */
-	REGION_NULL(pScreen, &sprite.Reg1);
-	REGION_NULL(pScreen, &sprite.Reg2);
+	RegionNull(&sprite.Reg1);
+	RegionNull(&sprite.Reg2);
     }
 #endif
 
@@ -2461,13 +2460,12 @@ XineramaPointInWindowIsVisible(
     int y
 )
 {
-    ScreenPtr pScreen = pWin->drawable.pScreen;
     BoxRec box;
     int i, xoff, yoff;
 
     if (!pWin->realized) return FALSE;
 
-    if (POINT_IN_REGION(pScreen, &pWin->borderClip, x, y, &box))
+    if (RegionContainsPoint(&pWin->borderClip, x, y, &box))
         return TRUE;
     
     if(!XineramaSetWindowPntrs(pWin)) return FALSE;
@@ -2477,13 +2475,12 @@ XineramaPointInWindowIsVisible(
 
     for(i = 1; i < PanoramiXNumScreens; i++) {
 	pWin = sprite.windows[i];
-	pScreen = pWin->drawable.pScreen;
 	x = xoff - panoramiXdataPtr[i].x;
 	y = yoff - panoramiXdataPtr[i].y;
 
-	if(POINT_IN_REGION(pScreen, &pWin->borderClip, x, y, &box)
+	if(RegionContainsPoint(&pWin->borderClip, x, y, &box)
 	   && (!wInputShape(pWin) ||
-	       POINT_IN_REGION(pWin->drawable.pScreen,
+	       RegionContainsPoint(
 			       wInputShape(pWin),
 			       x - pWin->drawable.x, 
 			       y - pWin->drawable.y, &box)))
@@ -2659,7 +2656,7 @@ ProcWarpPointer(ClientPtr client)
 static Bool 
 BorderSizeNotEmpty(WindowPtr pWin)
 {
-     if(REGION_NOTEMPTY(sprite.hotPhys.pScreen, &pWin->borderSize))
+     if(RegionNotEmpty(&pWin->borderSize))
 	return TRUE;
 
 #ifdef PANORAMIX
@@ -2667,7 +2664,7 @@ BorderSizeNotEmpty(WindowPtr pWin)
 	int i;
 
 	for(i = 1; i < PanoramiXNumScreens; i++) {
-	    if(REGION_NOTEMPTY(sprite.screen, &sprite.windows[i]->borderSize))
+	    if(RegionNotEmpty(&sprite.windows[i]->borderSize))
 		return TRUE;
 	}
      }

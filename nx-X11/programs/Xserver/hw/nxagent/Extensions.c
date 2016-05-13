@@ -156,7 +156,6 @@ int nxagentRandRGetInfo(ScreenPtr pScreen, Rotation *pRotations)
 static int nxagentRandRInitSizes(ScreenPtr pScreen)
 {
   RRScreenSizePtr pSize;
-  rrScrPrivPtr pRandRScrPriv = rrGetScrPriv(pScreen);
 
   int width;
   int height;
@@ -260,7 +259,6 @@ int nxagentRandRSetConfig(ScreenPtr pScreen, Rotation rotation,
                               int rate, RRScreenSizePtr pSize)
 {
   int r;
-  rrScrPrivPtr pRandRScrPriv;
 
   UpdateCurrentTime();
 
@@ -319,7 +317,6 @@ int nxagentRandRScreenSetSize(ScreenPtr pScreen, CARD16 width, CARD16 height,
                                    CARD32 mmWidth, CARD32 mmHeight)
 {
   int result;
-  rrScrPrivPtr pRandRScrPriv;
 
   UpdateCurrentTime();
 

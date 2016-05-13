@@ -269,7 +269,9 @@ void nxagentClearSelection(XEvent *X)
 
 void nxagentRequestSelection(XEvent *X)
 {
+  #ifdef DEBUG
   int result;
+  #endif
   int i = 0;
   XSelectionEvent eventSelection;
 
@@ -311,7 +313,7 @@ FIXME: Do we need this?
     if (X->xselectionrequest.target == serverTARGETS)
     {
       Atom xa_STRING = XA_STRING;
-      result = XChangeProperty (nxagentDisplay,
+      XChangeProperty (nxagentDisplay,
                                 X->xselectionrequest.requestor,
                                 X->xselectionrequest.property,
                                 XInternAtom(nxagentDisplay, "ATOM", 0),
@@ -329,7 +331,7 @@ FIXME: Do we need this?
 
       if (i < NumCurrentSelections)
       {
-        result = XChangeProperty(nxagentDisplay,
+        XChangeProperty(nxagentDisplay,
                                  X->xselectionrequest.requestor,
                                  X->xselectionrequest.property,
                                  X->xselectionrequest.target,
@@ -349,7 +351,10 @@ FIXME: Do we need this?
     eventSelection.target = X->xselectionrequest.target;
     eventSelection.time = X->xselectionrequest.time;
 
-    result = XSendEvent(nxagentDisplay,
+    #ifdef DEBUG
+    result =
+    #endif
+    XSendEvent(nxagentDisplay,
                         eventSelection.requestor,
                         False,
                         0L,
@@ -463,7 +468,10 @@ FIXME: Do we need this?
         eventSelection.property = None;
         eventSelection.time = X->xselectionrequest.time;
 
-        result = XSendEvent(nxagentDisplay,
+        #ifdef DEBUG
+        result =
+        #endif
+        XSendEvent(nxagentDisplay,
                             eventSelection.requestor,
                             False,
                             0L,

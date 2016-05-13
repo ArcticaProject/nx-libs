@@ -83,7 +83,7 @@ XCOMM $XFree86: xc/programs/Xserver/Xi/Imakefile,v 3.2 1999/04/17 09:08:22 dawes
 		ungrdev.o \
 		ungrdevb.o \
 		ungrdevk.o 
-   INCLUDES = -I../include -I$(EXTINCSRC) -I$(XINCLUDESRC)
+   INCLUDES = -I../include -I$(EXTINCSRC) -I$(XINCLUDESRC) `pkg-config --cflags-only-I pixman-1`
    LINTLIBS = ../dix/llib-ldix.ln ../os/llib-los.ln
 
 NormalLibraryTarget(xinput,$(OBJS))

@@ -119,7 +119,7 @@ fbPolyLine (DrawablePtr	pDrawable,
 #ifndef FBNOPIXADDR
 	if (pGC->fillStyle == FillSolid &&
 	    pGC->lineStyle == LineSolid &&
-	    REGION_NUM_RECTS (fbGetCompositeClip(pGC)) == 1)
+	    RegionNumRects (fbGetCompositeClip(pGC)) == 1)
 	{
 	    switch (pDrawable->bitsPerPixel) {
 	    case 8:  line = fbPolyline8; break;
@@ -156,7 +156,7 @@ fbPolySegment (DrawablePtr  pDrawable,
 #ifndef FBNOPIXADDR
 	if (pGC->fillStyle == FillSolid &&
 	    pGC->lineStyle == LineSolid &&
-	    REGION_NUM_RECTS (fbGetCompositeClip(pGC)) == 1)
+	    RegionNumRects (fbGetCompositeClip(pGC)) == 1)
 	{
 	    switch (pDrawable->bitsPerPixel) {
 	    case 8:  seg = fbPolySegment8; break;

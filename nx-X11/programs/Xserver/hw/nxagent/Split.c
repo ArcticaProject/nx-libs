@@ -502,7 +502,7 @@ void nxagentReleaseSplit(DrawablePtr pDrawable)
                 (void *) pDrawable);
     #endif
 
-    REGION_DESTROY(pDrawable -> pScreen, pResource -> region);
+    RegionDestroy(pResource -> region);
 
     pResource -> region = NullRegion;
   }
@@ -623,11 +623,11 @@ void nxagentValidateSplit(DrawablePtr pDrawable, RegionPtr pRegion)
      * streamed.
      */
 
-    REGION_INIT(pDrawable -> pScreen, &tmpRegion, NullBox, 1);
+    RegionInit(&tmpRegion, NullBox, 1);
 
-    REGION_INTERSECT(pDrawable -> pScreen, &tmpRegion, pResource -> region, pRegion);
+    RegionIntersect(&tmpRegion, pResource -> region, pRegion);
 
-    if (REGION_NIL(&tmpRegion) == 0)
+    if (RegionNil(&tmpRegion) == 0)
     {
       #ifdef TEST
       fprintf(stderr, "nxagentValidateSplit: Marking the overlapping commits as invalid "
@@ -644,7 +644,7 @@ void nxagentValidateSplit(DrawablePtr pDrawable, RegionPtr pRegion)
     }
     #endif
 
-    REGION_UNINIT(pDrawable -> pScreen, &tmpRegion);
+    RegionUninit(&tmpRegion);
   }
 }
 
@@ -1097,9 +1097,9 @@ void nxagentHandleEndSplitEvent(int resource)
       if (pResource -> drawable != NULL &&
               pResource -> region != NullRegion)
       {
-        if (REGION_NIL(pResource -> region) == 0)
+        if (RegionNil(pResource -> region) == 0)
         {
-          REGION_SUBTRACT(pResource -> drawable -> pScreen,
+          RegionSubtract(
                               nxagentCorruptedRegion(pResource -> drawable),
                                   nxagentCorruptedRegion(pResource -> drawable),
                                       pResource -> region);

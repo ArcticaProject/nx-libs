@@ -5,7 +5,8 @@
        OBJS =	cursor.o region.o saveset.o select.o xfixes.o
 
    INCLUDES =   -I. -I../include -I../Xext -I../fixes  -I../render \
-		-I$(EXTINCSRC) -I$(XINCLUDESRC)
+		-I$(EXTINCSRC) -I$(XINCLUDESRC) \
+		`pkg-config --cflags-only-I pixman-1`
 
    LINTLIBS = ../dix/llib-ldix.ln ../os/llib-los.ln
 

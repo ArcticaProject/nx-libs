@@ -729,7 +729,6 @@ void nxagentShadowBlockHandler(void * data, struct timeval **timeout, void * mas
 
   int changed;
   int suspended = 0;
-  int result;
   int width_, height_;
 
   #ifdef BLOCKS
@@ -796,7 +795,7 @@ void nxagentShadowBlockHandler(void * data, struct timeval **timeout, void * mas
   nxagentShadowPoll(nxagentShadowPixmapPtr, nxagentShadowGCPtr, nxagentShadowDepth, nxagentShadowWidth,
                         nxagentShadowHeight, nxagentShadowBuffer, &changed, &suspended);
 
-  result = nxagentShadowSendUpdates(&suspended);
+  nxagentShadowSendUpdates(&suspended);
 
   if (nxagentBlocking == 0)
   {

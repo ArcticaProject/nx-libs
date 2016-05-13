@@ -211,7 +211,7 @@ fbValidateGC(GCPtr pGC, unsigned long changes, DrawablePtr pDrawable)
 	)
     {
 	miComputeCompositeClip (pGC, pDrawable);
-	pPriv->oneRect = REGION_NUM_RECTS(fbGetCompositeClip(pGC)) == 1;
+	pPriv->oneRect = RegionNumRects(fbGetCompositeClip(pGC)) == 1;
     }
     
 #ifdef FB_24_32BIT    

@@ -171,7 +171,7 @@ ISOLatin1ToLower (unsigned char source)
 
 
 void
-CopyISOLatin1Lowered(unsigned char *dest, unsigned char *source, int length)
+CopyISOLatin1Lowered(char *dest, const char *source, int length)
 {
     register int i;
 

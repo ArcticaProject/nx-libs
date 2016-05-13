@@ -161,9 +161,9 @@ XineramaCloseScreen (int i, ScreenPtr pScreen)
     pScreen->CloseScreen = pScreenPriv->CloseScreen;
     pScreen->CreateGC = pScreenPriv->CreateGC;
 
-    REGION_UNINIT(pScreen, &XineramaScreenRegions[pScreen->myNum]);
+    RegionUninit(&XineramaScreenRegions[pScreen->myNum]);
     if (pScreen->myNum == 0)
-	REGION_UNINIT(pScreen, &PanoramiXScreenRegion);
+	RegionUninit(&PanoramiXScreenRegion);
 
     xfree ((void *) pScreenPriv);
 
@@ -434,7 +434,7 @@ static void XineramaInitData(ScreenPtr pScreen)
 {
     int i, w, h;
 
-    REGION_NULL(pScreen, &PanoramiXScreenRegion)
+    RegionNull(&PanoramiXScreenRegion);
     for (i = 0; i < PanoramiXNumScreens; i++) {
 	BoxRec TheBox;
 
@@ -450,8 +450,8 @@ static void XineramaInitData(ScreenPtr pScreen)
 	TheBox.y1 = panoramiXdataPtr[i].y;
 	TheBox.y2 = TheBox.y1 + panoramiXdataPtr[i].height;
 
-	REGION_INIT(pScreen, &XineramaScreenRegions[i], &TheBox, 1);
-	REGION_UNION(pScreen, &PanoramiXScreenRegion, &PanoramiXScreenRegion,
+	RegionInit(&XineramaScreenRegions[i], &TheBox, 1);
+	RegionUnion(&PanoramiXScreenRegion, &PanoramiXScreenRegion,
 		     &XineramaScreenRegions[i]);
     }
 
@@ -473,9 +473,9 @@ void XineramaReinitData(ScreenPtr pScreen)
 {
     int i;
 
-    REGION_UNINIT(pScreen, &PanoramiXScreenRegion);
+    RegionUninit(&PanoramiXScreenRegion);
     for (i = 0; i < PanoramiXNumScreens; i++)
-	REGION_UNINIT(pScreen, &XineramaScreenRegions[i]);
+	RegionUninit(&XineramaScreenRegions[i]);
 
     XineramaInitData(pScreen);
 }
@@ -1182,15 +1182,15 @@ XineramaGetImageData(
     SrcBox.x2 = SrcBox.x1 + width;
     SrcBox.y2 = SrcBox.y1 + height;
     
-    REGION_INIT(pScreen, &SrcRegion, &SrcBox, 1);
-    REGION_NULL(pScreen, &GrabRegion);
+    RegionInit(&SrcRegion, &SrcBox, 1);
+    RegionNull(&GrabRegion);
 
     depth = (format == XYPixmap) ? 1 : pDraw->depth;
 
     for(i = 0; i < PanoramiXNumScreens; i++) {
 	pDraw = pDrawables[i];
 
-	inOut = RECT_IN_REGION(pScreen,&XineramaScreenRegions[i],&SrcBox);
+	inOut = RegionContainsRect(&XineramaScreenRegions[i],&SrcBox);
 
 	if(inOut == rgnIN) {	   
 	    (*pDraw->pScreen->GetImage)(pDraw, 
@@ -1201,13 +1201,13 @@ XineramaGetImageData(
 	} else if (inOut == rgnOUT)
 	    continue;
 
-	REGION_INTERSECT(pScreen, &GrabRegion, &SrcRegion, 
+	RegionIntersect(&GrabRegion, &SrcRegion,
 					&XineramaScreenRegions[i]);
 
-	nbox = REGION_NUM_RECTS(&GrabRegion);
+	nbox = RegionNumRects(&GrabRegion);
 
 	if(nbox) {
-	    pbox = REGION_RECTS(&GrabRegion);
+	    pbox = RegionRects(&GrabRegion);
 
 	    while(nbox--) {
 		w = pbox->x2 - pbox->x1;
@@ -1284,8 +1284,8 @@ XineramaGetImageData(
 		pbox++;
 	    }
 
-	    REGION_SUBTRACT(pScreen, &SrcRegion, &SrcRegion, &GrabRegion);
-	    if(!REGION_NOTEMPTY(pScreen, &SrcRegion))
+	    RegionSubtract(&SrcRegion, &SrcRegion, &GrabRegion);
+	    if(!RegionNotEmpty(&SrcRegion))
 		break;
 	}
 	
@@ -1294,6 +1294,6 @@ XineramaGetImageData(
     if(ScratchMem)
 	xfree(ScratchMem);
 
-    REGION_UNINIT(pScreen, &SrcRegion);
-    REGION_UNINIT(pScreen, &GrabRegion);
+    RegionUninit(&SrcRegion);
+    RegionUninit(&GrabRegion);
 }

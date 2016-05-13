@@ -195,7 +195,7 @@ cwCopyArea(DrawablePtr pSrc, DrawablePtr pDst, GCPtr pGC, int srcx, int srcy,
 					   dstx, dsty);
 
     if (exposed != NULL)
-	REGION_TRANSLATE(pDst->pScreen, exposed, odstx - dstx, odsty - dsty);
+	RegionTranslate(exposed, odstx - dstx, odsty - dsty);
 
     EPILOGUE(pGC);
 
@@ -223,7 +223,7 @@ cwCopyPlane(DrawablePtr pSrc, DrawablePtr pDst, GCPtr pGC, int srcx, int srcy,
 					    dstx, dsty, plane);
 
     if (exposed != NULL)
-	REGION_TRANSLATE(pDst->pScreen, exposed, odstx - dstx, odsty - dsty);
+	RegionTranslate(exposed, odstx - dstx, odsty - dsty);
 
     EPILOGUE(pGC);
 

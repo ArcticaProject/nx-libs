@@ -118,8 +118,8 @@ if (((rx1) < (rx2)) && ((ry1) < (ry2)) &&			\
 {								\
     if ((reg)->data->numRects == (reg)->data->size)		\
     {								\
-	miRectAlloc(reg, 1);					\
-	fr = REGION_BOXPTR(reg);				\
+	RegionRectAlloc(reg, 1);					\
+	fr = RegionBoxptr(reg);				\
 	r = fr + (reg)->data->numRects;				\
     }								\
     r->x1 = (rx1);						\
@@ -156,10 +156,10 @@ fbPixmapToRegion(PixmapPtr pPix)
     FbBits		*pwLine;
     int			nWidth;
     
-    pReg = REGION_CREATE(pPix->drawable.pScreen, NULL, 1);
+    pReg = RegionCreate(NULL, 1);
     if(!pReg)
 	return NullRegion;
-    FirstRect = REGION_BOXPTR(pReg);
+    FirstRect = RegionBoxptr(pReg);
     rects = FirstRect;
 
     pwLine = (FbBits *) pPix->devPrivate.ptr;
@@ -305,8 +305,8 @@ fbPixmapToRegion(PixmapPtr pPix)
 	pReg->extents.x1 = pReg->extents.x2 = 0;
     else
     {
-	pReg->extents.y1 = REGION_BOXPTR(pReg)->y1;
-	pReg->extents.y2 = REGION_END(pReg)->y2;
+	pReg->extents.y1 = RegionBoxptr(pReg)->y1;
+	pReg->extents.y2 = RegionEnd(pReg)->y2;
 	if (pReg->data->numRects == 1)
 	{
 	    xfree(pReg->data);
@@ -314,7 +314,7 @@ fbPixmapToRegion(PixmapPtr pPix)
 	}
     }
 #ifdef DEBUG
-    if (!miValidRegion(pReg))
+    if (!RegionIsValid(pReg))
 	FatalError("Assertion failed file %s, line %d: expr\n", __FILE__, __LINE__);
 #endif
     return(pReg);

@@ -168,7 +168,7 @@ static int read_binding_from_xmlnode(xmlNode *node, struct nxagentSpecialKeystro
     /* ignore attributes without data (which should never happen anyways) */
     if (attr->children->content == NULL)
     {
-      char *aname = (attr->name)?(attr->name):"unknown";
+      char *aname = (attr->name)?((char *)attr->name):"unknown";
       fprintf(stderr, "attribute %s with NULL value", aname);
       continue;
     }

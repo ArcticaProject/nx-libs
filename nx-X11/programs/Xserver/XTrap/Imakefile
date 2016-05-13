@@ -11,7 +11,7 @@ XCOMM $XFree86: xc/programs/Xserver/XTrap/Imakefile,v 1.1 2001/11/02 23:29:29 da
 #endif
          SRCS = xtrapddmi.c xtrapdi.c xtrapdiswp.c xtrapditbl.c
          OBJS = xtrapddmi.o xtrapdi.o xtrapdiswp.o xtrapditbl.o
-     INCLUDES = -I../include -I$(EXTINCSRC) -I$(XINCLUDESRC) -I$(SERVERSRC)/Xext
+     INCLUDES = -I../include -I$(EXTINCSRC) -I$(XINCLUDESRC) -I$(SERVERSRC)/Xext `pkg-config --cflags-only-I pixman-1`
 
 NormalLibraryTarget(xtrap,$(OBJS))
 LintLibraryTarget(xtrap,$(SRCS))

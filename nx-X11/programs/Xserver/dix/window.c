@@ -180,7 +180,7 @@ PrintChildren(WindowPtr p1, int indent)
 	p2 = p1->firstChild;
 	for (i=0; i<indent; i++) ErrorF( " ");
 	ErrorF( "%x\n", p1->drawable.id);
-	miPrintRegion(&p1->clipList);
+	RegionPrint(&p1->clipList);
 	PrintChildren(p2, indent+4);
 	p1 = p1->nextSib;
     }
@@ -195,7 +195,7 @@ PrintWindowTree()
     {
 	ErrorF( "WINDOW %d\n", i);
 	pWin = WindowTable[i];
-	miPrintRegion(&pWin->clipList);
+	RegionPrint(&pWin->clipList);
 	p1 = pWin->firstChild;
 	PrintChildren(p1, 4);
     }
@@ -439,10 +439,10 @@ CreateRootWindow(ScreenPtr pScreen)
     box.y1 = 0;
     box.x2 = pScreen->width;
     box.y2 = pScreen->height;
-    REGION_INIT(pScreen, &pWin->clipList, &box, 1);
-    REGION_INIT(pScreen, &pWin->winSize, &box, 1);
-    REGION_INIT(pScreen, &pWin->borderSize, &box, 1);
-    REGION_INIT(pScreen, &pWin->borderClip, &box, 1);
+    RegionInit(&pWin->clipList, &box, 1);
+    RegionInit(&pWin->winSize, &box, 1);
+    RegionInit(&pWin->borderSize, &box, 1);
+    RegionInit(&pWin->borderClip, &box, 1);
 
     pWin->drawable.class = InputOutput;
     pWin->optional->visual = pScreen->rootVisual;
@@ -515,7 +515,7 @@ ClippedRegionFromBox(register WindowPtr pWin, RegionPtr Rgn,
     ScreenPtr pScreen = pWin->drawable.pScreen;
     BoxRec box;
 
-    box = *(REGION_EXTENTS(pScreen, &pWin->winSize));
+    box = *(RegionExtents(&pWin->winSize));
     /* we do these calculations to avoid overflows */
     if (x > box.x1)
 	box.x1 = x;
@@ -531,8 +531,8 @@ ClippedRegionFromBox(register WindowPtr pWin, RegionPtr Rgn,
 	box.x2 = box.x1;
     if (box.y1 > box.y2)
 	box.y2 = box.y1;
-    REGION_RESET(pScreen, Rgn, &box);
-    REGION_INTERSECT(pScreen, Rgn, Rgn, &pWin->winSize);
+    RegionReset(Rgn, &box);
+    RegionIntersect(Rgn, Rgn, &pWin->winSize);
 }
 
 WindowPtr
@@ -713,10 +713,10 @@ CreateWindow(Window wid, register WindowPtr pParent, int x, int y, unsigned w,
     pWin->drawable.y = pParent->drawable.y + y + (int)bw;
 
 	/* set up clip list correctly for unobscured WindowPtr */
-    REGION_NULL(pScreen, &pWin->clipList);
-    REGION_NULL(pScreen, &pWin->borderClip);
-    REGION_NULL(pScreen, &pWin->winSize);
-    REGION_NULL(pScreen, &pWin->borderSize);
+    RegionNull(&pWin->clipList);
+    RegionNull(&pWin->borderClip);
+    RegionNull(&pWin->winSize);
+    RegionNull(&pWin->borderSize);
 
     pHead = RealChildHead(pParent);
     if (pHead)
@@ -797,17 +797,17 @@ FreeWindowResources(register WindowPtr pWin)
     DeleteWindowFromAnySaveSet(pWin);
     DeleteWindowFromAnySelections(pWin);
     DeleteWindowFromAnyEvents(pWin, TRUE);
-    REGION_UNINIT(pScreen, &pWin->clipList);
-    REGION_UNINIT(pScreen, &pWin->winSize);
-    REGION_UNINIT(pScreen, &pWin->borderClip);
-    REGION_UNINIT(pScreen, &pWin->borderSize);
+    RegionUninit(&pWin->clipList);
+    RegionUninit(&pWin->winSize);
+    RegionUninit(&pWin->borderClip);
+    RegionUninit(&pWin->borderSize);
 #ifdef SHAPE
     if (wBoundingShape (pWin))
-	REGION_DESTROY(pScreen, wBoundingShape (pWin));
+	RegionDestroy(wBoundingShape (pWin));
     if (wClipShape (pWin))
-	REGION_DESTROY(pScreen, wClipShape (pWin));
+	RegionDestroy(wClipShape (pWin));
     if (wInputShape (pWin))
-	REGION_DESTROY(pScreen, wInputShape (pWin));
+	RegionDestroy(wInputShape (pWin));
 #endif
     if (pWin->borderIsPixel == FALSE)
 	(*pScreen->DestroyPixmap)(pWin->border.pixmap);
@@ -1467,10 +1467,10 @@ PatchUp:
     {
 	RegionRec exposed;
 
-	REGION_NULL(pScreen, &exposed);
-	REGION_SUBTRACT(pScreen, &exposed, &pWin->borderClip, &pWin->winSize);
+	RegionNull(&exposed);
+	RegionSubtract(&exposed, &pWin->borderClip, &pWin->winSize);
 	(*pWin->drawable.pScreen->PaintWindowBorder)(pWin, &exposed, PW_BORDER);
-	REGION_UNINIT(pScreen, &exposed);
+	RegionUninit(&exposed);
     }
     return error;
 }
@@ -1611,18 +1611,18 @@ CreateUnclippedWinSize (register WindowPtr pWin)
     box.y1 = pWin->drawable.y;
     box.x2 = pWin->drawable.x + (int) pWin->drawable.width;
     box.y2 = pWin->drawable.y + (int) pWin->drawable.height;
-    pRgn = REGION_CREATE(pWin->drawable.pScreen, &box, 1);
+    pRgn = RegionCreate(&box, 1);
 #ifdef SHAPE
     if (wBoundingShape (pWin) || wClipShape (pWin)) {
 	ScreenPtr pScreen = pWin->drawable.pScreen;
 
-	REGION_TRANSLATE(pScreen, pRgn, - pWin->drawable.x,
+	RegionTranslate(pRgn, - pWin->drawable.x,
 			 - pWin->drawable.y);
 	if (wBoundingShape (pWin))
-	    REGION_INTERSECT(pScreen, pRgn, pRgn, wBoundingShape (pWin));
+	    RegionIntersect(pRgn, pRgn, wBoundingShape (pWin));
 	if (wClipShape (pWin))
-	    REGION_INTERSECT(pScreen, pRgn, pRgn, wClipShape (pWin));
-	REGION_TRANSLATE(pScreen, pRgn, pWin->drawable.x, pWin->drawable.y);
+	    RegionIntersect(pRgn, pRgn, wClipShape (pWin));
+	RegionTranslate(pRgn, pWin->drawable.x, pWin->drawable.y);
     }
 #endif
     return pRgn;
@@ -1640,7 +1640,7 @@ SetWinSize (register WindowPtr pWin)
 	box.y1 = pWin->drawable.y;
 	box.x2 = pWin->drawable.x + pWin->drawable.width;
 	box.y2 = pWin->drawable.y + pWin->drawable.height;
-	REGION_RESET (pScreen, &pWin->winSize, &box);
+	RegionReset(&pWin->winSize, &box);
     }
     else
 #endif
@@ -1652,15 +1652,15 @@ SetWinSize (register WindowPtr pWin)
     if (wBoundingShape (pWin) || wClipShape (pWin)) {
 	ScreenPtr pScreen = pWin->drawable.pScreen;
 
-	REGION_TRANSLATE(pScreen, &pWin->winSize, - pWin->drawable.x,
+	RegionTranslate(&pWin->winSize, - pWin->drawable.x,
 			 - pWin->drawable.y);
 	if (wBoundingShape (pWin))
-	    REGION_INTERSECT(pScreen, &pWin->winSize, &pWin->winSize,
+	    RegionIntersect(&pWin->winSize, &pWin->winSize,
 			     wBoundingShape (pWin));
 	if (wClipShape (pWin))
-	    REGION_INTERSECT(pScreen, &pWin->winSize, &pWin->winSize,
+	    RegionIntersect(&pWin->winSize, &pWin->winSize,
 			     wClipShape (pWin));
-	REGION_TRANSLATE(pScreen, &pWin->winSize, pWin->drawable.x,
+	RegionTranslate(&pWin->winSize, pWin->drawable.x,
 			 pWin->drawable.y);
     }
 #endif
@@ -1682,7 +1682,7 @@ SetBorderSize (register WindowPtr pWin)
 	    box.y1 = pWin->drawable.y - bw;
 	    box.x2 = pWin->drawable.x + pWin->drawable.width + bw;
 	    box.y2 = pWin->drawable.y + pWin->drawable.height + bw;
-	    REGION_RESET (pScreen, &pWin->borderSize, &box);
+	    RegionReset(&pWin->borderSize, &box);
 	}
 	else
 #endif
@@ -1694,18 +1694,18 @@ SetBorderSize (register WindowPtr pWin)
 	if (wBoundingShape (pWin)) {
 	    ScreenPtr pScreen = pWin->drawable.pScreen;
 
-	    REGION_TRANSLATE(pScreen, &pWin->borderSize, - pWin->drawable.x,
+	    RegionTranslate(&pWin->borderSize, - pWin->drawable.x,
 			     - pWin->drawable.y);
-	    REGION_INTERSECT(pScreen, &pWin->borderSize, &pWin->borderSize,
+	    RegionIntersect(&pWin->borderSize, &pWin->borderSize,
 			     wBoundingShape (pWin));
-	    REGION_TRANSLATE(pScreen, &pWin->borderSize, pWin->drawable.x,
+	    RegionTranslate(&pWin->borderSize, pWin->drawable.x,
 			     pWin->drawable.y);
-	    REGION_UNION(pScreen, &pWin->borderSize, &pWin->borderSize,
+	    RegionUnion(&pWin->borderSize, &pWin->borderSize,
 			 &pWin->winSize);
 	}
 #endif
     } else {
-	REGION_COPY(pWin->drawable.pScreen, &pWin->borderSize,
+	RegionCopy(&pWin->borderSize,
 					       &pWin->winSize);
     }
 }
@@ -1905,12 +1905,12 @@ MakeBoundingRegion (
     RegionPtr	pRgn;
     ScreenPtr   pScreen = pWin->drawable.pScreen;
 
-    pRgn = REGION_CREATE(pScreen, pBox, 1);
+    pRgn = RegionCreate(pBox, 1);
     if (wBoundingShape (pWin)) {
-	    REGION_TRANSLATE(pScreen, pRgn, -pWin->origin.x,
+	    RegionTranslate(pRgn, -pWin->origin.x,
 						  -pWin->origin.y);
-	    REGION_INTERSECT(pScreen, pRgn, pRgn, wBoundingShape (pWin));
-	    REGION_TRANSLATE(pScreen, pRgn, pWin->origin.x,
+	    RegionIntersect(pRgn, pRgn, wBoundingShape (pWin));
+	    RegionTranslate(pRgn, pWin->origin.x,
 						  pWin->origin.y);
     }
     return pRgn;
@@ -1932,10 +1932,10 @@ ShapeOverlap (
     pScreen = pWin->drawable.pScreen;
     pWinRgn = MakeBoundingRegion (pWin, pWinBox);
     pSibRgn = MakeBoundingRegion (pSib, pSibBox);
-    REGION_INTERSECT(pScreen, pWinRgn, pWinRgn, pSibRgn);
-    ret = REGION_NOTEMPTY(pScreen, pWinRgn);
-    REGION_DESTROY(pScreen, pWinRgn);
-    REGION_DESTROY(pScreen, pSibRgn);
+    RegionIntersect(pWinRgn, pWinRgn, pSibRgn);
+    ret = RegionNotEmpty(pWinRgn);
+    RegionDestroy(pWinRgn);
+    RegionDestroy(pSibRgn);
     return ret;
 }
 #endif
@@ -2066,7 +2066,7 @@ WhereDoIGoInTheStack(
 	else if (pSib)
 	{
 	    if ((IsSiblingAboveMe(pWin, pSib) == Above) &&
-		(RECT_IN_REGION(pScreen, &pSib->borderSize, &box) != rgnOUT))
+		(RegionContainsRect(&pSib->borderSize, &box) != rgnOUT))
 		return(pFirst);
 	    else
 		return(pWin->nextSib);
@@ -2081,7 +2081,7 @@ WhereDoIGoInTheStack(
 	else if (pSib)
 	{
 	    if ((IsSiblingAboveMe(pWin, pSib) == Below) &&
-		(RECT_IN_REGION(pScreen, &pSib->borderSize, &box) != rgnOUT))
+		(RegionContainsRect(&pSib->borderSize, &box) != rgnOUT))
 		return NullWindow;
 	    else
 		return(pWin->nextSib);
@@ -2095,7 +2095,7 @@ WhereDoIGoInTheStack(
 	    return(pWin->nextSib);
 	else if (pSib)
 	{
-	    if (RECT_IN_REGION(pScreen, &pSib->borderSize, &box) != rgnOUT)
+	    if (RegionContainsRect(&pSib->borderSize, &box) != rgnOUT)
 	    {
 		if (IsSiblingAboveMe(pWin, pSib) == Above)
 		    return(pFirst);
@@ -2785,10 +2785,10 @@ MapWindow(register WindowPtr pWin, ClientPtr client)
 	    (*pScreen->ClipNotify) (pWin, 0, 0);
 	if (pScreen->PostValidateTree)
 	    (*pScreen->PostValidateTree)(NullWindow, pWin, VTMap);
-	REGION_NULL(pScreen, &temp);
-	REGION_COPY(pScreen, &temp, &pWin->clipList);
+	RegionNull(&temp);
+	RegionCopy(&temp, &pWin->clipList);
 	(*pScreen->WindowExposures) (pWin, &temp, NullRegion);
-	REGION_UNINIT(pScreen, &temp);
+	RegionUninit(&temp);
     }
 
     return(Success);
@@ -3184,7 +3184,7 @@ VisibleBoundingBoxFromPoint(register WindowPtr pWin, int x, int y, BoxPtr box)
 {
     if (!pWin->realized)
 	return (FALSE);
-    if (POINT_IN_REGION(pWin->drawable.pScreen, &pWin->clipList, x, y, box))
+    if (RegionContainsPoint(&pWin->clipList, x, y, box))
 	return(TRUE);
     return(FALSE);
 }
@@ -3200,10 +3200,10 @@ PointInWindowIsVisible(register WindowPtr pWin, int x, int y)
 
     if (!pWin->realized)
 	return (FALSE);
-    if (POINT_IN_REGION(pWin->drawable.pScreen, &pWin->borderClip,
+    if (RegionContainsPoint(&pWin->borderClip,
 						  x, y, &box)
 	&& (!wInputShape(pWin) ||
-	    POINT_IN_REGION(pWin->drawable.pScreen,
+	    RegionContainsPoint(
 			    wInputShape(pWin),
 			    x - pWin->drawable.x, 
 			    y - pWin->drawable.y, &box)))
@@ -3219,12 +3219,12 @@ NotClippedByChildren(register WindowPtr pWin)
     RegionPtr pReg;
 
     pScreen = pWin->drawable.pScreen;
-    pReg = REGION_CREATE(pScreen, NullBox, 1);
+    pReg = RegionCreate(NullBox, 1);
     if (pWin->parent ||
 	screenIsSaved != SCREEN_SAVER_ON ||
 	!HasSaverWindow (pWin->drawable.pScreen->myNum))
     {
-	REGION_INTERSECT(pScreen, pReg, &pWin->borderClip, &pWin->winSize);
+	RegionIntersect(pReg, &pWin->borderClip, &pWin->winSize);
     }
     return(pReg);
 }

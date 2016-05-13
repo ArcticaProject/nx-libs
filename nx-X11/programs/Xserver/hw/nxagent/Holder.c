@@ -23,6 +23,7 @@
 #include "scrnintstr.h"
 #include "Agent.h"
 #define GC XlibGC
+#define Pixmap XlibPixmap
 #define PIXEL_ALREADY_TYPEDEFED
 
 #endif /* _XSERVER64 */

@@ -572,10 +572,8 @@ static void nxagentReconnectColormap(void * p0, XID x1, void * p2)
 
 Bool nxagentReconnectAllColormap(void *p0)
 {
-  int flexibility;
   int cid;
   Bool success = True;
-  flexibility = *(int*)p0;
 
   #if defined(NXAGENT_RECONNECT_DEBUG) || defined(NXAGENT_RECONNECT_COLORMAP_DEBUG)
   fprintf(stderr, "nxagentReconnectAllColormap\n");

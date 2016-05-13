@@ -132,15 +132,15 @@ fbCopyWindow(WindowPtr	    pWin,
 
     dx = ptOldOrg.x - pWin->drawable.x;
     dy = ptOldOrg.y - pWin->drawable.y;
-    REGION_TRANSLATE(pWin->drawable.pScreen, prgnSrc, -dx, -dy);
+    RegionTranslate(prgnSrc, -dx, -dy);
 
-    REGION_NULL (pWin->drawable.pScreen, &rgnDst);
+    RegionNull(&rgnDst);
     
-    REGION_INTERSECT(pWin->drawable.pScreen, &rgnDst, &pWin->borderClip, prgnSrc);
+    RegionIntersect(&rgnDst, &pWin->borderClip, prgnSrc);
 
 #ifdef COMPOSITE
     if (pPixmap->screen_x || pPixmap->screen_y)
-	REGION_TRANSLATE (pWin->drawable.pScreen, &rgnDst, 
+	RegionTranslate(&rgnDst,
 			  -pPixmap->screen_x, -pPixmap->screen_y);
 #endif
 
@@ -148,7 +148,7 @@ fbCopyWindow(WindowPtr	    pWin,
 		  0,
 		  &rgnDst, dx, dy, fbCopyWindowProc, 0, 0);
     
-    REGION_UNINIT(pWin->drawable.pScreen, &rgnDst);
+    RegionUninit(&rgnDst);
     fbValidateDrawable (&pWin->drawable);
 }
 
@@ -215,8 +215,8 @@ fbFillRegionSolid (DrawablePtr	pDrawable,
     FbStride	dstStride;
     int		dstBpp;
     int		dstXoff, dstYoff;
-    int		n = REGION_NUM_RECTS(pRegion);
-    BoxPtr	pbox = REGION_RECTS(pRegion);
+    int		n = RegionNumRects(pRegion);
+    BoxPtr	pbox = RegionRects(pRegion);
 
     fbGetDrawable (pDrawable, dst, dstStride, dstBpp, dstXoff, dstYoff);
     
@@ -253,8 +253,8 @@ fbFillRegionTiled (DrawablePtr	pDrawable,
     int		tileBpp;
     int		tileXoff, tileYoff; /* XXX assumed to be zero */
     int		tileWidth, tileHeight;
-    int		n = REGION_NUM_RECTS(pRegion);
-    BoxPtr	pbox = REGION_RECTS(pRegion);
+    int		n = RegionNumRects(pRegion);
+    BoxPtr	pbox = RegionRects(pRegion);
     int		xRot = pDrawable->x;
     int		yRot = pDrawable->y;
     

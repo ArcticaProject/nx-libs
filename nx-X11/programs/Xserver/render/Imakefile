@@ -29,7 +29,8 @@ XCOMM $XFree86: xc/programs/Xserver/render/Imakefile,v 1.10 2002/11/23 02:38:15 
 
    INCLUDES = -I. -I../include -I../mi \
                 -I../fb -I../hw/kdrive -I$(EXTINCSRC) -I$(XINCLUDESRC) \
-                -I../Xext
+                -I../Xext \
+                `pkg-config --cflags-only-I pixman-1`
    LINTLIBS = ../dix/llib-ldix.ln ../os/llib-los.ln
 
 NormalLibraryTarget(render,$(OBJS))

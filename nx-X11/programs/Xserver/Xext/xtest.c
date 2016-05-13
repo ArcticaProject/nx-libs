@@ -402,11 +402,11 @@ ProcXTestFakeInput(client)
 	    int       i;
 	    int       x = ev->u.keyButtonPointer.rootX + panoramiXdataPtr[0].x;
 	    int       y = ev->u.keyButtonPointer.rootY + panoramiXdataPtr[0].y;
-	    if (!POINT_IN_REGION(pScreen, &XineramaScreenRegions[pScreen->myNum],
+	    if (!RegionContainsPoint(&XineramaScreenRegions[pScreen->myNum],
 				 x, y, &box)) {
 		FOR_NSCREENS(i) {
 		    if (i == pScreen->myNum) continue;
-		    if (POINT_IN_REGION(pScreen,
+		    if (RegionContainsPoint(
 					&XineramaScreenRegions[i],
 					x, y, &box)) {
 			root = WindowTable[i];

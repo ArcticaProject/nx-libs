@@ -102,6 +102,8 @@ Bool nxagentResizeScreen(ScreenPtr pScreen, int width, int height,
 
 int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, int mmHeight);
 
+int nxagentAdjustRandRXinerama(ScreenPtr pScreen);
+
 extern Bool nxagentReconnectScreen(void *p0);
 
 void nxagentSaveAreas(PixmapPtr pPixmap, RegionPtr prgnSave, int xorg, int yorg, WindowPtr pWin);

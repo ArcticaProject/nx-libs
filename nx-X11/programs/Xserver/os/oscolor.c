@@ -98,8 +98,8 @@ int rgb_dbm = 0;
 #endif
 
 extern void CopyISOLatin1Lowered(
-    unsigned char * /*dest*/,
-    unsigned char * /*source*/,
+    char * /*dest*/,
+    const char * /*source*/,
     int /*length*/);
 
 int
@@ -191,8 +191,8 @@ typedef struct _dbEntry {
 
 
 extern void CopyISOLatin1Lowered(
-    unsigned char * /*dest*/,
-    unsigned char * /*source*/,
+    char * /*dest*/,
+    const char * /*source*/,
     int /*length*/);
 
 static dbEntryPtr hashTab[HASHSIZE];
@@ -354,7 +354,7 @@ lookup(char *name, int len, Bool create)
   char         *str = name;
 
   if (!(name = (char*)ALLOCATE_LOCAL(len +1))) return NULL;
-  CopyISOLatin1Lowered((unsigned char *)name, (unsigned char *)str, len);
+  CopyISOLatin1Lowered(name, str, len);
   name[len] = '\0';
 
   for(str = name; *str; str++) {

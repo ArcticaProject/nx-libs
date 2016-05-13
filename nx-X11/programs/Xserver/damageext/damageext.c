@@ -99,10 +99,10 @@ DamageExtReport (DamagePtr pDamage, RegionPtr pRegion, void *closure)
     switch (pDamageExt->level) {
     case DamageReportRawRegion:
     case DamageReportDeltaRegion:
-	DamageExtNotify (pDamageExt, REGION_RECTS(pRegion), REGION_NUM_RECTS(pRegion));
+	DamageExtNotify (pDamageExt, RegionRects(pRegion), RegionNumRects(pRegion));
 	break;
     case DamageReportBoundingBox:
-	DamageExtNotify (pDamageExt, REGION_EXTENTS(prScreen, pRegion), 1);
+	DamageExtNotify (pDamageExt, RegionExtents(pRegion), 1);
 	break;
     case DamageReportNonEmpty:
 	DamageExtNotify (pDamageExt, NullBox, 0);
@@ -261,14 +261,14 @@ ProcDamageSubtract (ClientPtr client)
 	if (pRepair)
 	{
 	    if (pParts)
-		REGION_INTERSECT (prScreen, pParts, DamageRegion (pDamage), pRepair);
+		RegionIntersect(pParts, DamageRegion (pDamage), pRepair);
 	    if (DamageSubtract (pDamage, pRepair))
 		DamageExtReport (pDamage, DamageRegion (pDamage), (void *) pDamageExt);
 	}
 	else
 	{
 	    if (pParts)
-		REGION_COPY (prScreen, pParts, DamageRegion (pDamage));
+		RegionCopy(pParts, DamageRegion (pDamage));
 	    DamageEmpty (pDamage);
 	}
     }

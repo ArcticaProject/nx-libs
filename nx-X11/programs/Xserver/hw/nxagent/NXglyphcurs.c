@@ -106,7 +106,6 @@ ServerBitsFromGlyph(FontPtr pfont, unsigned ch, register CursorMetricPtr cm, uns
     PixmapPtr ppix;
     long nby;
     char *pbits;
-    ChangeGCVal gcval[3];
     unsigned char char2b[2];
 
     /* turn glyph index into a protocol-format char2b */
@@ -165,7 +164,6 @@ ServerBitsFromGlyph(FontPtr pfont, unsigned ch, register CursorMetricPtr cm, uns
     fbPolyFillRect((DrawablePtr)ppix, pGC, 1, &rect);
 
     /* draw the glyph */
-    gcval[0].val = 1;
     pGC->fgPixel = 1;
 
     pGC->stateChanges |= GCForeground;

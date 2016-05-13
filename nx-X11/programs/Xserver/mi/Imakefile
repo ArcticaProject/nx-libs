@@ -44,7 +44,7 @@ SRCS =  $(CBRT_SRC) mivaltree.c mipolyseg.c mipolyrect.c \
 	mipoly.c mipolycon.c mipolygen.c mipolyutil.c \
 	mifillrct.c miwideline.c mispans.c \
 	miarc.c mizerarc.c mifillarc.c \
-	miwindow.c micursor.c miregion.c \
+	miwindow.c micursor.c \
 	mipolytext.c mibitblt.c mipolypnt.c mipushpxl.c \
 	miexpose.c miglblt.c mizerline.c mizerclip.c mifpolycon.c \
 	midash.c mibstore.c mibank.c $(MIINITEXTSRC) mieq.c \
@@ -55,7 +55,7 @@ OBJS =	$(CBRT_OBJ) mivaltree.o mipolyseg.o mipolyrect.o \
 	mipoly.o mipolycon.o mipolygen.o mipolyutil.o \
 	mifillrct.o miwideline.o mispans.o \
 	miarc.o mizerarc.o mifillarc.o \
-	miwindow.o micursor.o miregion.o \
+	miwindow.o micursor.o \
 	mipolytext.o mibitblt.o mipolypnt.o mipushpxl.o \
 	miexpose.o miglblt.o mizerline.o mizerclip.o mifpolycon.o \
 	midash.o mibstore.o mibank.o $(MIINITEXTOBJ) mieq.o \
@@ -90,7 +90,8 @@ EXT_DEFINES = ExtensionDefines -UXINPUT -UXF86VIDMODE -UXFreeXDGA -UXF86MISC \
 
 INCLUDES = -I. -I../include -I../render \
 	    -I../xfixes -I../damageext -I../miext/damage \
-           -I$(XINCLUDESRC) -I$(EXTINCSRC) -I$(SERVERSRC)/Xext
+           -I$(XINCLUDESRC) -I$(EXTINCSRC) -I$(SERVERSRC)/Xext \
+           `pkg-config --cflags-only-I pixman-1`
 LINTLIBS = ../dix/llib-ldix.ln ../os/llib-los.ln
 DEFINES  = $(FFS_DEFINES)
 

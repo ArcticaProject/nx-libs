@@ -621,7 +621,7 @@ int PanoramiXTranslateCoords(ClientPtr client)
 		 * borderSize
 		 */
 		&& (!wBoundingShape(pWin) ||
-		    POINT_IN_REGION(pWin->drawable.pScreen, 
+		    RegionContainsPoint(
 					wBoundingShape(pWin), 
 					x - pWin->drawable.x, 
 					y - pWin->drawable.y, &box))
@@ -1109,21 +1109,21 @@ int PanoramiXCopyArea(ClientPtr client)
 	    RegionRec totalReg;
 	    Bool overlap;
 
-	    REGION_NULL(pScreen, &totalReg);
+	    RegionNull(&totalReg);
 	    FOR_NSCREENS_BACKWARD(j) {
 		if(pRgn[j]) {
 		   if(srcIsRoot) {
-		       REGION_TRANSLATE(pScreen, pRgn[j], 
+		       RegionTranslate(pRgn[j],
 				panoramiXdataPtr[j].x, panoramiXdataPtr[j].y);
 		   }
-		   REGION_APPEND(pScreen, &totalReg, pRgn[j]);
-		   REGION_DESTROY(pScreen, pRgn[j]);
+		   RegionAppend(&totalReg, pRgn[j]);
+		   RegionDestroy(pRgn[j]);
 		}
 	    }
-	    REGION_VALIDATE(pScreen, &totalReg, &overlap);
+	    RegionValidate(&totalReg, &overlap);
 	    (*pScreen->SendGraphicsExpose)(
 		client, &totalReg, stuff->dstDrawable, X_CopyArea, 0);
-	    REGION_UNINIT(pScreen, &totalReg);
+	    RegionUninit(&totalReg);
 	}
 	
 	result = client->noClientException;
@@ -1220,17 +1220,17 @@ int PanoramiXCopyPlane(ClientPtr client)
 	RegionRec totalReg;
 	Bool overlap;
 
-	REGION_NULL(pScreen, &totalReg);
+	RegionNull(&totalReg);
 	FOR_NSCREENS_BACKWARD(j) {
 	    if(pRgn[j]) {
-		REGION_APPEND(pScreen, &totalReg, pRgn[j]);
-		REGION_DESTROY(pScreen, pRgn[j]);
+		RegionAppend(&totalReg, pRgn[j]);
+		RegionDestroy(pRgn[j]);
 	    }
 	}
-	REGION_VALIDATE(pScreen, &totalReg, &overlap);
+	RegionValidate(&totalReg, &overlap);
 	(*pScreen->SendGraphicsExpose)(
 		client, &totalReg, stuff->dstDrawable, X_CopyPlane, 0);
-	REGION_UNINIT(pScreen, &totalReg);
+	RegionUninit(&totalReg);
     }
 
     return (client->noClientException);

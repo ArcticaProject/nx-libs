@@ -171,6 +171,7 @@ WindowPtr nxagentViewportFrameBelow;
 Bool nxagentCreateScreenResources(ScreenPtr pScreen);
 void nxagentPrintAgentGeometry(char *hdrMessage, char *prefix);
 
+
 /*
  * These variables are for shadowing feature.
  */
@@ -390,8 +391,8 @@ Window nxagentCreateIconWindow()
                                         valuemask, &attributes);
 
   #ifdef TEST
-  fprintf(stderr, "nxagentCreateIconWindow: Created new icon window with id [%ld].\n",
-              nxagentIconWindow);
+  fprintf(stderr, "nxagentCreateIconWindow: Created new icon window with id [%lu].\n",
+              (long unsigned int)nxagentIconWindow);
   #endif
 
   /*
@@ -453,7 +454,7 @@ void nxagentSetScreenSaverTime(void)
 {
   #ifdef TEST
   fprintf(stderr, "nxagentSetScreenSaverTime: ScreenSaverTime was [%lu], ScreenSaverInterval was [%lu].\n",
-                  ScreenSaverTime, ScreenSaverInterval);
+                  (long unsigned int)ScreenSaverTime, (long unsigned int)ScreenSaverInterval);
   #endif
 
   /*
@@ -473,7 +474,7 @@ void nxagentSetScreenSaverTime(void)
 
   #ifdef TEST
   fprintf(stderr, "nxagentSetScreenSaverTime: ScreenSaverTime now is [%lu], ScreenSaverInterval now is [%lu].\n",
-                  ScreenSaverTime, ScreenSaverInterval);
+                  (long unsigned int)ScreenSaverTime, (long unsigned int)ScreenSaverInterval);
   #endif
 }
 
@@ -1231,7 +1232,7 @@ Bool nxagentOpenScreen(int index, ScreenPtr pScreen,
 
       #if defined(DEBUG) || defined(DEBUG_COLORMAP)
       fprintf(stderr, "Debug: Added visual [%lu].\n" ,
-                  visuals[numVisuals].vid); 
+                  (long unsigned int)visuals[numVisuals].vid); 
       #endif
 
       for (j = 0; j < numDepths; j++)
@@ -1270,7 +1271,7 @@ Bool nxagentOpenScreen(int index, ScreenPtr pScreen,
 
       #if defined(DEBUG) || defined(DEBUG_COLORMAP)
       fprintf(stderr, "Debug: Registered visual [%lu] for depth [%d (%d)].\n" ,
-                  visuals[numVisuals].vid, depthIndex,
+                  (long unsigned int)visuals[numVisuals].vid, depthIndex,
                       depths[depthIndex].depth); 
       #endif
 
@@ -1279,7 +1280,7 @@ Bool nxagentOpenScreen(int index, ScreenPtr pScreen,
 
     #if defined(DEBUG) || defined(DEBUG_COLORMAP)
     fprintf(stderr, "Debug: Setting default visual [%d (%lu)].\n",
-                defaultVisualIndex, visuals[defaultVisualIndex].vid);
+                defaultVisualIndex, (long unsigned int)visuals[defaultVisualIndex].vid);
 
     fprintf(stderr, "Debug: Setting root depth [%d].\n",
                 visuals[defaultVisualIndex].nplanes); 
@@ -1315,8 +1316,8 @@ Bool nxagentOpenScreen(int index, ScreenPtr pScreen,
 
     #if defined(DEBUG) || defined(DEBUG_COLORMAP)
     fprintf(stderr, "nxagentOpenScreen: Before fbScreenInit numVisuals [%d] numDepths [%d] "
-              "rootDepth [%d] defaultVisual [%ld].\n", numVisuals, numDepths,
-                  rootDepth, defaultVisual);
+              "rootDepth [%d] defaultVisual [%lu].\n", numVisuals, numDepths,
+                  rootDepth, (long unsigned int)defaultVisual);
     #endif
 
     if (monitorResolution < 1)
@@ -1332,8 +1333,8 @@ Bool nxagentOpenScreen(int index, ScreenPtr pScreen,
 
     #if defined(DEBUG) || defined(DEBUG_COLORMAP)
     fprintf(stderr, "nxagentOpenScreen: After fbScreenInit numVisuals [%d] numDepths [%d] "
-              "rootDepth [%d] defaultVisual [%ld].\n", numVisuals, numDepths,
-                  rootDepth, defaultVisual);
+              "rootDepth [%d] defaultVisual [%lu].\n", numVisuals, numDepths,
+                  rootDepth, (long unsigned int)defaultVisual);
     #endif
 
     /*
@@ -1344,8 +1345,8 @@ Bool nxagentOpenScreen(int index, ScreenPtr pScreen,
 
     #if defined(DEBUG) || defined(DEBUG_COLORMAP)
     fprintf(stderr, "nxagentOpenScreen: Before GLX numVisuals [%d] numDepths [%d] "
-              "rootDepth [%d] defaultVisual [%ld].\n", numVisuals, numDepths,
-                  rootDepth, defaultVisual);
+              "rootDepth [%d] defaultVisual [%lu].\n", numVisuals, numDepths,
+                  rootDepth, (long unsigned int)defaultVisual);
     #endif
 
     nxagentInitGlxExtension(&visuals, &depths, &numVisuals, &numDepths,
@@ -1353,8 +1354,8 @@ Bool nxagentOpenScreen(int index, ScreenPtr pScreen,
 
     #if defined(DEBUG) || defined(DEBUG_COLORMAP)
     fprintf(stderr, "nxagentOpenScreen: After GLX numVisuals [%d] numDepths [%d] "
-              "rootDepth [%d] defaultVisual [%ld].\n", numVisuals, numDepths,
-                  rootDepth, defaultVisual);
+              "rootDepth [%d] defaultVisual [%lu].\n", numVisuals, numDepths,
+                  rootDepth, (long unsigned int)defaultVisual);
     #endif
 
     /*
@@ -1720,7 +1721,7 @@ N/A
 
         #ifdef TEST
         fprintf(stderr, "nxagentOpenScreen: Using root window id [%ld].\n",
-                    nxagentDefaultWindows[pScreen->myNum]);
+                    (long int)nxagentDefaultWindows[pScreen->myNum]);
         #endif
       }
 
@@ -1760,7 +1761,7 @@ N/A
 
       #ifdef TEST
       fprintf(stderr, "nxagentOpenScreen: Created new default window with id [%ld].\n",
-                  nxagentDefaultWindows[pScreen->myNum]);
+                  (long int)nxagentDefaultWindows[pScreen->myNum]);
       #endif
 
       /*
@@ -1772,7 +1773,7 @@ N/A
       {
         #ifdef TEST
         fprintf(stderr, "nxagentOpenScreen: Setting WM_CLASS and WM_NAME for window withid [%ld].\n",
-                nxagentDefaultWindows[pScreen->myNum]);
+                (long int)nxagentDefaultWindows[pScreen->myNum]);
         #endif
         XClassHint hint;
         hint.res_name=malloc(strlen("X2GoAgent")+1);
@@ -1787,7 +1788,7 @@ N/A
       {
         #ifdef TEST
         fprintf(stderr, "nxagentOpenScreen: Setting WM_CLASS and WM_NAME for window withid [%ld].\n",
-                nxagentDefaultWindows[pScreen->myNum]);
+                (long int)nxagentDefaultWindows[pScreen->myNum]);
         #endif
 
         XClassHint hint;
@@ -2147,8 +2148,8 @@ static void nxagentSetRootClip (ScreenPtr pScreen, Bool enable)
             {
                 RegionPtr       borderVisible;
 
-                borderVisible = REGION_CREATE(pScreen, NullBox, 1);
-                REGION_SUBTRACT(pScreen, borderVisible,
+                borderVisible = RegionCreate(NullBox, 1);
+                RegionSubtract(borderVisible,
                                 &pWin->borderClip, &pWin->winSize);
                 pWin->valdata->before.borderVisible = borderVisible;
             }
@@ -2167,18 +2168,18 @@ static void nxagentSetRootClip (ScreenPtr pScreen, Bool enable)
         box.y1 = 0;
         box.x2 = pScreen->width;
         box.y2 = pScreen->height;
-        REGION_INIT (pScreen, &pWin->winSize, &box, 1);
-        REGION_INIT (pScreen, &pWin->borderSize, &box, 1);
+        RegionInit(&pWin->winSize, &box, 1);
+        RegionInit(&pWin->borderSize, &box, 1);
         if (WasViewable)
-            REGION_RESET(pScreen, &pWin->borderClip, &box);
+            RegionReset(&pWin->borderClip, &box);
         pWin->drawable.width = pScreen->width;
         pWin->drawable.height = pScreen->height;
-        REGION_BREAK (pWin->drawable.pScreen, &pWin->clipList);
+        RegionBreak(&pWin->clipList);
     }
     else
     {
-        REGION_EMPTY(pScreen, &pWin->borderClip);
-        REGION_BREAK (pWin->drawable.pScreen, &pWin->clipList);
+        RegionEmpty(&pWin->borderClip);
+        RegionBreak(&pWin->clipList);
     }
 
     ResizeChildrenWinSize (pWin, 0, 0, 0, 0);
@@ -2187,8 +2188,8 @@ static void nxagentSetRootClip (ScreenPtr pScreen, Bool enable)
     {
         if (pWin->backStorage)
         {
-            pOldClip = REGION_CREATE(pScreen, NullBox, 1);
-            REGION_COPY(pScreen, pOldClip, &pWin->clipList);
+            pOldClip = RegionCreate(NullBox, 1);
+            RegionCopy(pOldClip, &pWin->clipList);
         }
 
         if (pWin->firstChild)
@@ -2223,7 +2224,7 @@ static void nxagentSetRootClip (ScreenPtr pScreen, Bool enable)
                              (pWin, 0, 0, pOldClip,
                               pWin->drawable.x, pWin->drawable.y);
         if (WasViewable)
-            REGION_DESTROY(pScreen, pOldClip);
+            RegionDestroy(pOldClip);
         if (bsExposed)
         {
             RegionPtr   valExposed = NullRegion;
@@ -2232,8 +2233,8 @@ static void nxagentSetRootClip (ScreenPtr pScreen, Bool enable)
                 valExposed = &pWin->valdata->after.exposed;
             (*pScreen->WindowExposures) (pWin, valExposed, bsExposed);
             if (valExposed)
-                REGION_EMPTY(pScreen, valExposed);
-            REGION_DESTROY(pScreen, bsExposed);
+                RegionEmpty(valExposed);
+            RegionDestroy(bsExposed);
         }
     }
     if (WasViewable)
@@ -2418,10 +2419,10 @@ FIXME: We should try to restore the previously
   WindowTable[pScreen -> myNum] -> drawable.x = 0;
   WindowTable[pScreen -> myNum] -> drawable.y = 0;
 
-  REGION_INIT(pScreen, &WindowTable[pScreen -> myNum] -> borderSize, &box, 1);
-  REGION_INIT(pScreen, &WindowTable[pScreen -> myNum] -> winSize, &box, 1);
-  REGION_INIT(pScreen, &WindowTable[pScreen -> myNum] -> clipList, &box, 1);
-  REGION_INIT(pScreen, &WindowTable[pScreen -> myNum] -> borderClip, &box, 1);
+  RegionInit(&WindowTable[pScreen -> myNum] -> borderSize, &box, 1);
+  RegionInit(&WindowTable[pScreen -> myNum] -> winSize, &box, 1);
+  RegionInit(&WindowTable[pScreen -> myNum] -> clipList, &box, 1);
+  RegionInit(&WindowTable[pScreen -> myNum] -> borderClip, &box, 1);
 
   (*pScreen -> PositionWindow)(WindowTable[pScreen -> myNum], 0, 0);
 
@@ -2819,7 +2820,7 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
 
   XFreeGC(nxagentDisplay, gc);
 
-  REGION_INIT(pScreen, &nxagentShadowUpdateRegion, (BoxRec*)NULL, 1);
+  RegionInit(&nxagentShadowUpdateRegion, (BoxRec*)NULL, 1);
 
   return 0;
 }
@@ -2973,14 +2974,14 @@ int nxagentShadowSendUpdates(int *suspended)
 {
   *suspended = 0;
 
-  if (REGION_NIL(&nxagentShadowUpdateRegion) == 1)
+  if (RegionNil(&nxagentShadowUpdateRegion) == 1)
   {
     return 0;
   }
 
   nxagentMarkCorruptedRegion((DrawablePtr)nxagentShadowPixmapPtr, &nxagentShadowUpdateRegion);
 
-  REGION_EMPTY(nxagentShadowPixmapPtr -> drawable.pScreen, &nxagentShadowUpdateRegion);
+  RegionEmpty(&nxagentShadowUpdateRegion);
 
   return 1;
 }
@@ -3002,9 +3003,9 @@ int nxagentShadowPoll(PixmapPtr nxagentShadowPixmapPtr, GCPtr nxagentShadowGCPtr
   int overlap;
 
 
-  REGION_NULL(pScreen, &updateRegion);
+  RegionNull(&updateRegion);
 
-  REGION_NULL(pScreen, &tempRegion);
+  RegionNull(&tempRegion);
 
 #ifdef __CYGWIN32__
 
@@ -3116,15 +3117,15 @@ int nxagentShadowPoll(PixmapPtr nxagentShadowPixmapPtr, GCPtr nxagentShadowGCPtr
       box.y1 = y;
       box.y2 = y + height;
 
-      REGION_INIT(pScreen, &tempRegion, &box, 1);
+      RegionInit(&tempRegion, &box, 1);
 
-      REGION_APPEND(pScreen, &updateRegion, &tempRegion);
+      RegionAppend(&updateRegion, &tempRegion);
 
-      REGION_UNINIT(pScreen, &tempRegion);
+      RegionUninit(&tempRegion);
 
-      REGION_VALIDATE(pScreen, &updateRegion, &overlap);
+      RegionValidate(&updateRegion, &overlap);
 
-      REGION_UNION(pScreen, &nxagentShadowUpdateRegion, &nxagentShadowUpdateRegion, &updateRegion);
+      RegionUnion(&nxagentShadowUpdateRegion, &nxagentShadowUpdateRegion, &updateRegion);
     }
 
     if (tBuffer)
@@ -3132,7 +3133,7 @@ int nxagentShadowPoll(PixmapPtr nxagentShadowPixmapPtr, GCPtr nxagentShadowGCPtr
       xfree(tBuffer);
     }
 
-    REGION_UNINIT(pScreen, &updateRegion);
+    RegionUninit(&updateRegion);
   }
   else if (result == -1)
   {
@@ -3185,7 +3186,7 @@ void nxagentShadowAdaptDepth(unsigned int width, unsigned int height,
   }
 
   #ifdef TEST
-  fprintf(stderr, "nxagentCorrectDepthShadow: Shadow redMask [%x] greenMask[%x] blueMask[%x].\n",
+  fprintf(stderr, "nxagentCorrectDepthShadow: Shadow redMask [%lu] greenMask[%lu] blueMask[%lu].\n",
              pVisual -> red_mask, pVisual -> green_mask, pVisual -> blue_mask);
   #endif
 
@@ -3194,7 +3195,7 @@ void nxagentShadowAdaptDepth(unsigned int width, unsigned int height,
   blueMask = nxagentShadowDisplay -> screens[0].root_visual[0].blue_mask;
 
   #ifdef TEST
-  fprintf(stderr, "nxagentCorrectDepthShadow: Master redMask [%x] greenMask[%x] blueMask[%x].\n",
+  fprintf(stderr, "nxagentCorrectDepthShadow: Master redMask [%lu] greenMask[%lu] blueMask[%lu].\n",
               redMask, greenMask, blueMask);
   #endif
 
@@ -3544,10 +3545,7 @@ Bool nxagentReconnectScreen(void *p0)
 {
   CARD16 w, h;
   PixmapPtr pPixmap = (PixmapPtr)nxagentDefaultScreen->devPrivate;
-  int flexibility;
   Mask mask;
-
-  flexibility = *(int*)p0;
 
 #if defined(NXAGENT_RECONNECT_DEBUG) || defined(NXAGENT_RECONNECT_SCREEN_DEBUG)
   fprintf(stderr, "nxagentReconnectScreen\n");
@@ -3594,10 +3592,6 @@ Bool nxagentReconnectScreen(void *p0)
 
   return True;  
 }
-
-/* FIXME: there must be such macros somewhere already...*/
-#define MAX(a,b) ((a) > (b)) ? (a) : (b);
-#define MIN(a,b) ((a) < (b)) ? (a) : (b);
 
 /* intersect two rectangles */
 Bool intersect(int ax1, int ay1, unsigned int aw, unsigned int ah,
@@ -3743,7 +3737,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
 
   if (pScrPriv)
   {
-    int i, j;
+    int i;
     int number = 0;
 
     XineramaScreenInfo *screeninfo = NULL;
@@ -4113,7 +4107,6 @@ void nxagentSaveAreas(PixmapPtr pPixmap, RegionPtr prgnSave, int xorg, int yorg,
   nxagentPrivPixmapPtr pPrivPixmap;
   XlibGC gc;
   XGCValues values;
-  DrawablePtr pDrawable;
   int i;
   int xSrc, ySrc, xDst, yDst, w, h;
   int nRects;
@@ -4131,10 +4124,8 @@ void nxagentSaveAreas(PixmapPtr pPixmap, RegionPtr prgnSave, int xorg, int yorg,
 
   pPrivPixmap -> isBackingPixmap = 1;
 
-  fbCopyWindowProc(&pWin -> drawable, &pVirtualPixmap -> drawable, 0, REGION_RECTS(prgnSave),
-                       REGION_NUM_RECTS(prgnSave), xorg, yorg, FALSE, FALSE, 0, 0);
-
-  pDrawable = &pWin -> drawable;
+  fbCopyWindowProc(&pWin -> drawable, &pVirtualPixmap -> drawable, 0, RegionRects(prgnSave),
+                       RegionNumRects(prgnSave), xorg, yorg, FALSE, FALSE, 0, 0);
 
   values.subwindow_mode = IncludeInferiors;
 
@@ -4145,34 +4136,34 @@ void nxagentSaveAreas(PixmapPtr pPixmap, RegionPtr prgnSave, int xorg, int yorg,
    * Coordinates are relative to the window.
    */
 
-  REGION_INIT(pWin -> pScreen, &cleanRegion, NullBox, 1);
+  RegionInit(&cleanRegion, NullBox, 1);
 
-  REGION_COPY(pWin -> pScreen, &cleanRegion, nxagentCorruptedRegion((DrawablePtr) pWin));
+  RegionCopy(&cleanRegion, nxagentCorruptedRegion((DrawablePtr) pWin));
 
   /*
    * Subtract the corrupted region from the saved region.
    */
 
-  REGION_SUBTRACT(pWin -> pScreen, &pBackingStore -> SavedRegion, &pBackingStore -> SavedRegion, &cleanRegion);
+  RegionSubtract(&pBackingStore -> SavedRegion, &pBackingStore -> SavedRegion, &cleanRegion);
 
   /*
    * Translate the corrupted region. Coordinates
    * are relative to the backing store pixmap.
    */
 
-  REGION_TRANSLATE(pWin -> pScreen, &cleanRegion, -pBackingStore -> x, -pBackingStore -> y);
+  RegionTranslate(&cleanRegion, -pBackingStore -> x, -pBackingStore -> y);
 
   /*
    * Compute the clean region to be saved: subtract
    * the corrupted region from the region to be saved.
    */
 
-  REGION_SUBTRACT(pWin -> pScreen, &cleanRegion, prgnSave, &cleanRegion);
+  RegionSubtract(&cleanRegion, prgnSave, &cleanRegion);
 
-  nRects = REGION_NUM_RECTS(&cleanRegion);
+  nRects = RegionNumRects(&cleanRegion);
   size = nRects * sizeof(*pRects);
   pRects = (XRectangle *) xalloc(size);
-  pBox = REGION_RECTS(&cleanRegion);
+  pBox = RegionRects(&cleanRegion);
 
   for (i = nRects; i-- > 0;)
   {
@@ -4186,9 +4177,9 @@ void nxagentSaveAreas(PixmapPtr pPixmap, RegionPtr prgnSave, int xorg, int yorg,
 
   xfree((char *) pRects);
 
-  extents = *REGION_EXTENTS(pWin -> pScreen, &cleanRegion);
+  extents = *RegionExtents(&cleanRegion);
 
-  REGION_UNINIT(pWin -> pScreen, &cleanRegion);
+  RegionUninit(&cleanRegion);
 
   xDst = extents.x1;
   yDst = extents.y1;
@@ -4233,7 +4224,6 @@ void nxagentRestoreAreas(PixmapPtr pPixmap, RegionPtr prgnRestore, int xorg,
   RegionPtr clipRegion;
   XlibGC gc;
   XGCValues values;
-  DrawablePtr pDrawable;
   int i;
   int xSrc, ySrc, xDst, yDst, w, h;
   int nRects;
@@ -4248,17 +4238,15 @@ void nxagentRestoreAreas(PixmapPtr pPixmap, RegionPtr prgnRestore, int xorg,
    * root window size.
    */
 
-  REGION_INTERSECT(pWin -> pScreen, prgnRestore, prgnRestore,
+  RegionIntersect(prgnRestore, prgnRestore,
                        &WindowTable[pWin -> drawable.pScreen -> myNum] -> winSize);
 
   pBackingStore = (miBSWindowPtr) pWin -> backStorage;
 
   pVirtualPixmap = nxagentVirtualPixmap(pPixmap);
 
-  fbCopyWindowProc(&pVirtualPixmap -> drawable, &pWin -> drawable, 0, REGION_RECTS(prgnRestore),
-                       REGION_NUM_RECTS(prgnRestore), -xorg, -yorg, FALSE, FALSE, 0, 0);
-
-  pDrawable = &pVirtualPixmap -> drawable;
+  fbCopyWindowProc(&pVirtualPixmap -> drawable, &pWin -> drawable, 0, RegionRects(prgnRestore),
+                       RegionNumRects(prgnRestore), -xorg, -yorg, FALSE, FALSE, 0, 0);
 
   values.subwindow_mode = ClipByChildren;
 
@@ -4268,7 +4256,7 @@ void nxagentRestoreAreas(PixmapPtr pPixmap, RegionPtr prgnRestore, int xorg,
    * Translate the reference point to the origin of the window.
    */
 
-  REGION_TRANSLATE(pWin -> drawable.pScreen, prgnRestore,
+  RegionTranslate(prgnRestore,
                        -pWin -> drawable.x - pWin -> borderWidth,
                            -pWin -> drawable.y - pWin -> borderWidth);
 
@@ -4276,26 +4264,26 @@ void nxagentRestoreAreas(PixmapPtr pPixmap, RegionPtr prgnRestore, int xorg,
 
   if (nxagentDrawableStatus((DrawablePtr) pPixmap) == NotSynchronized)
   {
-    clipRegion = REGION_CREATE(pPixmap -> drawable -> pScreen, NullBox, 1);
+    clipRegion = RegionCreate(NullBox, 1);
 
-    REGION_COPY(pPixmap -> drawable -> pScreen, clipRegion,
+    RegionCopy(clipRegion,
                         nxagentCorruptedRegion((DrawablePtr) pPixmap));
 
     /*
      * Translate the reference point to the origin of the window.
      */
 
-    REGION_TRANSLATE(pPixmap -> drawable -> pScreen, clipRegion,
+    RegionTranslate(clipRegion,
                          pBackingStore -> x, pBackingStore -> y);
 
-    REGION_INTERSECT(pPixmap -> drawable -> pScreen, clipRegion, prgnRestore, clipRegion);
+    RegionIntersect(clipRegion, prgnRestore, clipRegion);
 
     /*
      * Subtract the corrupted region from the saved areas.
      * miBSRestoreAreas will return the exposure region.
      */
 
-    REGION_SUBTRACT(pPixmap -> drawable -> pScreen, &pBackingStore->SavedRegion,
+    RegionSubtract(&pBackingStore->SavedRegion,
                         &pBackingStore->SavedRegion, clipRegion);
 
     /*
@@ -4304,24 +4292,24 @@ void nxagentRestoreAreas(PixmapPtr pPixmap, RegionPtr prgnRestore, int xorg,
 
     if (nxagentRemoteExposeRegion != NULL)
     {
-      REGION_TRANSLATE(pPixmap -> drawable -> pScreen, clipRegion, pWin -> drawable.x, pWin -> drawable.y);
+      RegionTranslate(clipRegion, pWin -> drawable.x, pWin -> drawable.y);
 
-      REGION_UNION(pScreen, nxagentRemoteExposeRegion, nxagentRemoteExposeRegion, clipRegion);
+      RegionUnion(nxagentRemoteExposeRegion, nxagentRemoteExposeRegion, clipRegion);
 
-      REGION_TRANSLATE(pPixmap -> drawable -> pScreen, clipRegion, -pWin -> drawable.x, -pWin -> drawable.y);
+      RegionTranslate(clipRegion, -pWin -> drawable.x, -pWin -> drawable.y);
     }
 
     /*
      * Compute the region to be restored.
      */
 
-    REGION_SUBTRACT(pPixmap -> drawable -> pScreen, clipRegion, prgnRestore, clipRegion);
+    RegionSubtract(clipRegion, prgnRestore, clipRegion);
   }
 
-  nRects = REGION_NUM_RECTS(clipRegion);
+  nRects = RegionNumRects(clipRegion);
   size = nRects * sizeof(*pRects);
   pRects = (XRectangle *) xalloc(size);
-  pBox = REGION_RECTS(clipRegion);
+  pBox = RegionRects(clipRegion);
 
   for (i = nRects; i-- > 0;)
   {
@@ -4335,7 +4323,7 @@ void nxagentRestoreAreas(PixmapPtr pPixmap, RegionPtr prgnRestore, int xorg,
 
   xfree(pRects);
 
-  extents = *REGION_EXTENTS(pWin -> pScreen, clipRegion);
+  extents = *RegionExtents(clipRegion);
 
   xDst = extents.x1;
   yDst = extents.y1;
@@ -4355,14 +4343,14 @@ void nxagentRestoreAreas(PixmapPtr pPixmap, RegionPtr prgnRestore, int xorg,
 
   if (clipRegion != NULL && clipRegion != prgnRestore)
   {
-    REGION_DESTROY(pPixmap -> drawable -> pScreen, clipRegion);
+    RegionDestroy(clipRegion);
   }
 
   /*
    * Restore the reference point to the origin of the screen.
    */
 
-  REGION_TRANSLATE(pWin -> drawable.pScreen, prgnRestore,
+  RegionTranslate(prgnRestore,
                        pWin -> drawable.x - pWin -> borderWidth,
                            pWin -> drawable.y + pWin -> borderWidth);
 
@@ -4437,11 +4425,11 @@ void nxagentShadowAdaptToRatio(void)
   box.x2 = nxagentShadowPixmapPtr -> drawable.width;
   box.y2 = nxagentShadowPixmapPtr -> drawable.height;
 
-  REGION_INIT(pScreen, &region, &box, 1);
+  RegionInit(&region, &box, 1);
 
   nxagentMarkCorruptedRegion((DrawablePtr)nxagentShadowPixmapPtr, &region);
 
-  REGION_UNINIT(pScreen, &region);
+  RegionUninit(&region);
 }
 
 void nxagentPrintGeometry()

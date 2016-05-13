@@ -144,6 +144,8 @@ _NXGetFontPathError:
 
 #define QUERYCHARINFO(pci, pr)  *(pr) = (pci)->metrics
 
+extern void register_fpe_functions(void);
+
 extern void * fosNaturalParams;
 extern FontPtr defaultFont;
 

@@ -245,9 +245,9 @@ bufMultibufferInit(pScreen, pMBScreen)
     box.y2 = pScreen->height;
 
     pMBPriv->rgnChanged = TRUE;
-    REGION_INIT(pScreen, &pMBPriv->backBuffer, &box, 1);
-    REGION_INIT(pScreen, &pMBPriv->subtractRgn, &box, 1);
-    REGION_NULL(pScreen, &pMBPriv->unionRgn);
+    RegionInit(&pMBPriv->backBuffer, &box, 1);
+    RegionInit(&pMBPriv->subtractRgn, &box, 1);
+    RegionNull(&pMBPriv->unionRgn);
 
     /* Misc functions */
     pMBPriv->CopyBufferBits  = bufCopyBufferBitsFunc[pScreen->myNum];
@@ -374,10 +374,10 @@ bufCreateImageBuffers (pWin, nbuf, ids, action, hint)
     pMBScreen = MB_SCREEN_PRIV(pScreen);
     pMBWindow = MB_WINDOW_PRIV(pWin);
 
-    pMBWindow->devPrivate.ptr = (void *) REGION_CREATE(pScreen, 0,0);
+    pMBWindow->devPrivate.ptr = (void *) RegionCreate(0,0);
     if (!pMBWindow->devPrivate.ptr)
 	return(0);
-    REGION_COPY(pScreen, (RegionPtr) pMBWindow->devPrivate.ptr,
+    RegionCopy((RegionPtr) pMBWindow->devPrivate.ptr,
 			    &pWin->clipList);
 
     for (i = 0; i < nbuf; i++)
@@ -429,7 +429,7 @@ bufDestroyImageBuffers(pWin)
 	if (pWin->realized && (pMBWindow->displayedMultibuffer == BACK_BUFFER))
 	{
 	    (* pMBPriv->CopyBufferBits)(pMBWindow, BACK_BUFFER, FRONT_BUFFER);
-	    REGION_SUBTRACT(pScreen, &pMBPriv->backBuffer,
+	    RegionSubtract(&pMBPriv->backBuffer,
 				  &pMBPriv->backBuffer, &pWin->clipList);
 	    (* pMBPriv->DrawSelectPlane)(pScreen, pMBPriv->selectPlane,
 			    &pWin->clipList, FRONT_BUFFER);
@@ -439,7 +439,7 @@ bufDestroyImageBuffers(pWin)
 	pWin->devPrivates[frameWindowPrivateIndex] =
 	    pMBPriv->frameBuffer[FRONT_BUFFER];
 
-	REGION_DESTROY(pScreen, (RegionPtr) pMBWindow->devPrivate.ptr);
+	RegionDestroy((RegionPtr) pMBWindow->devPrivate.ptr);
 	pMBWindow->devPrivate.ptr = NULL;
     }
 }
@@ -506,7 +506,7 @@ bufClearImageBufferArea(pMBBuffer, x,y, w,h, generateExposures)
     box.y2 = y2;
 
     pScreen = pBuffer->drawable.pScreen;
-    REGION_INIT(pScreen, &reg, &box, 1);
+    RegionInit(&reg, &box, 1);
     if (pBuffer->backStorage)
     {
 	/*
@@ -520,7 +520,7 @@ bufClearImageBufferArea(pMBBuffer, x,y, w,h, generateExposures)
 						 generateExposures);
     }
 
-    REGION_INTERSECT(pScreen, &reg, &reg, &pBuffer->clipList);
+    RegionIntersect(&reg, &reg, &pBuffer->clipList);
     if (pBuffer->backgroundState != None)
 	(*pScreen->PaintWindowBackground)(pBuffer, &reg, PW_BACKGROUND);
     if (generateExposures)
@@ -537,9 +537,9 @@ bufClearImageBufferArea(pMBBuffer, x,y, w,h, generateExposures)
     else if (pBuffer->backgroundState != None)
         (*pScreen->PaintWindowBackground)(pBuffer, &reg, PW_BACKGROUND);
 #endif
-    REGION_UNINIT(pScreen, &reg);
+    RegionUninit(&reg);
     if (pBSReg)
-	REGION_DESTROY(pScreen, pBSReg);
+	RegionDestroy(pBSReg);
 }
 
 static void
@@ -567,9 +567,9 @@ bufResetProc(pScreen)
      * whoever called RegisterDoubleBufferHardware
      */
 
-    REGION_UNINIT(pScreen, &pMBPriv->backBuffer);
-    REGION_UNINIT(pScreen, &pMBPriv->subtractRgn);
-    REGION_UNINIT(pScreen, &pMBPriv->unionRgn);
+    RegionUninit(&pMBPriv->backBuffer);
+    RegionUninit(&pMBPriv->subtractRgn);
+    RegionUninit(&pMBPriv->unionRgn);
     xfree(pMBPriv);
 }
 
@@ -624,7 +624,7 @@ bufDrawSelectPlane(pScreen, selectPlane, prgn, bufferNum)
     int numRects;
     XID	value;
 
-    if (REGION_NUM_RECTS(prgn) == 0)
+    if (RegionNumRects(prgn) == 0)
 	return;
 
     pDrawable = (DrawablePtr) selectPlane.ptr;
@@ -632,7 +632,7 @@ bufDrawSelectPlane(pScreen, selectPlane, prgn, bufferNum)
     if (!pGC)
 	return;
 
-    prect = (xRectangle *)ALLOCATE_LOCAL(REGION_NUM_RECTS(prgn) *
+    prect = (xRectangle *)ALLOCATE_LOCAL(RegionNumRects(prgn) *
 					 sizeof(xRectangle));
     if (!prect)
     {
@@ -644,8 +644,8 @@ bufDrawSelectPlane(pScreen, selectPlane, prgn, bufferNum)
     DoChangeGC(pGC, GCForeground, &value, 0);
     ValidateGC(pDrawable, pGC);
 
-    numRects = REGION_NUM_RECTS(prgn);
-    pbox = REGION_RECTS(prgn);
+    numRects = RegionNumRects(prgn);
+    pbox = RegionRects(prgn);
     for (i= numRects; --i >= 0; pbox++, prect++)
     {
 	prect->x = pbox->x1;
@@ -697,10 +697,10 @@ bufDisplayImageBuffers(pScreen, ppMBWindow, ppMBBuffer, nbuf)
 			    &pWin->clipList, number);
 
 	    if (number == BACK_BUFFER)
-		REGION_UNION(pScreen, backBuffer, backBuffer,
+		RegionUnion(backBuffer, backBuffer,
 				   &pWin->clipList);
 	    else
-		REGION_SUBTRACT(pScreen, backBuffer, backBuffer,
+		RegionSubtract(backBuffer, backBuffer,
 				   &pWin->clipList);
 
 	    /* Switch which framebuffer the window draws into */
@@ -764,36 +764,36 @@ bufPostValidateTree(pParent, pChild, kind)
 
 	pSubtractRgn = &pMBPriv->subtractRgn;
 	pUnionRgn    = &pMBPriv->unionRgn;
-	REGION_VALIDATE(pScreen, pSubtractRgn, &overlap);
+	RegionValidate(pSubtractRgn, &overlap);
 #ifdef DEBUG
 	if (overlap)
 	    FatalError("bufPostValidateTree: subtractRgn overlaps");
 #endif
-	REGION_VALIDATE(pScreen, pUnionRgn, &overlap);
+	RegionValidate(pUnionRgn, &overlap);
 #ifdef DEBUG
 	if (overlap)
 	    FatalError("bufPostValidateTree: unionRgn overlaps");
 #endif
 
 	/* Update backBuffer: subtract must come before union */
-	REGION_SUBTRACT(pScreen, &pMBPriv->backBuffer, &pMBPriv->backBuffer,
+	RegionSubtract(&pMBPriv->backBuffer, &pMBPriv->backBuffer,
 			      pSubtractRgn);
-	REGION_UNION(pScreen, &pMBPriv->backBuffer, &pMBPriv->backBuffer,
+	RegionUnion(&pMBPriv->backBuffer, &pMBPriv->backBuffer,
 			      pUnionRgn);
 
 	/* Paint gained and lost backbuffer areas in select plane */
-	REGION_NULL(pScreen, &exposed);
-	REGION_SUBTRACT(pScreen, &exposed, pSubtractRgn, pUnionRgn);
+	RegionNull(&exposed);
+	RegionSubtract(&exposed, pSubtractRgn, pUnionRgn);
 	(* pMBPriv->DrawSelectPlane)(pScreen, pMBPriv->selectPlane,
 				     &exposed, FRONT_BUFFER);
 
-	REGION_SUBTRACT(pScreen, &exposed, pUnionRgn, pSubtractRgn);
+	RegionSubtract(&exposed, pUnionRgn, pSubtractRgn);
 	(* pMBPriv->DrawSelectPlane)(pScreen, pMBPriv->selectPlane,
 				    &exposed, BACK_BUFFER);
 	
-	REGION_UNINIT(pScreen, &exposed);
-	REGION_EMPTY(pScreen, pSubtractRgn);
-	REGION_EMPTY(pScreen, pUnionRgn);
+	RegionUninit(&exposed);
+	RegionEmpty(pSubtractRgn);
+	RegionEmpty(pUnionRgn);
     }
 }
 
@@ -826,16 +826,16 @@ bufClipNotify(pWin, dx,dy)
     {
 	RegionPtr pOldClipList = (RegionPtr) pMBWindow->devPrivate.ptr;
 
-	if (! REGION_EQUAL(pScreen, pOldClipList, &pWin->clipList))
+	if (! RegionEqual(pOldClipList, &pWin->clipList))
 	{
 	    if (pMBWindow->displayedMultibuffer == BACK_BUFFER)
 	    {
 		pMBPriv->rgnChanged = TRUE;
-		REGION_APPEND(pScreen, &pMBPriv->subtractRgn, pOldClipList);
-		REGION_APPEND(pScreen, &pMBPriv->unionRgn, &pWin->clipList);
+		RegionAppend(&pMBPriv->subtractRgn, pOldClipList);
+		RegionAppend(&pMBPriv->unionRgn, &pWin->clipList);
 	    }
 
-	    REGION_COPY(pScreen, pOldClipList,&pWin->clipList);
+	    RegionCopy(pOldClipList,&pWin->clipList);
 	}
 
 	/* Update buffer x,y,w,h, and clipList */
@@ -912,13 +912,13 @@ bufWindowExposures(pWin, prgn, other_exposed)
 
     handleBuffers = (!pMBPriv->inClearToBackground) &&
 	(pWin->drawable.type == DRAWABLE_WINDOW) &&
-	pMBWindow && (prgn && !REGION_NIL(prgn));
+	pMBWindow && (prgn && !RegionNil(prgn));
 
     /* miWindowExposures munges prgn and other_exposed. */
     if (handleBuffers)
     {
-	REGION_NULL(pScreen, &tmp_rgn);
-	REGION_COPY(pScreen, &tmp_rgn, prgn);
+	RegionNull(&tmp_rgn);
+	RegionCopy(&tmp_rgn, prgn);
     }
 
     UNWRAP_SCREEN_FUNC(pScreen, pMBPriv, void, WindowExposures);
@@ -950,7 +950,7 @@ bufWindowExposures(pWin, prgn, other_exposed)
 	    MultibufferExpose(pMBBuffer, &tmp_rgn);
     }
 
-    REGION_UNINIT(pScreen, &tmp_rgn);
+    RegionUninit(&tmp_rgn);
 }
 
 /*
@@ -1018,7 +1018,7 @@ bufCopyWindow(pWin, ptOldOrg, prgnSrc)
      */
 
     /* CopyWindow translates prgnSrc... translate it back for 2nd call. */
-    REGION_TRANSLATE(pScreen, prgnSrc,
+    RegionTranslate(prgnSrc,
 				  ptOldOrg.x - pWin->drawable.x,
 				  ptOldOrg.y - pWin->drawable.y);
     pwinroot->devPrivates[frameWindowPrivateIndex] =

@@ -62,7 +62,11 @@ is" without express or implied warranty.
 #include "Init.h"
 #include "Args.h"
 #include "Image.h"
+
+#define Pixmap XlibPixmap
 #include "Icons.h"
+#undef Pixmap
+
 #include "Render.h"
 #include "Font.h"
 #include "Reconnect.h"
@@ -1934,7 +1938,7 @@ Bool nxagentMakeIcon(Display *display, Pixmap *nxIcon, Pixmap *nxMask)
   XlibPixmap IconPixmap;
   XlibPixmap IconShape;
   char* agent_icon_name;
-  char* agentIconData;
+  char** agentIconData;
 
   /*
    * selecting x2go icon when running as X2Go agent
@@ -2446,7 +2450,6 @@ Bool nxagentReconnectDisplay(void *p0)
 {
   int i;
   int flexibility = *(int*)p0;
-  int packMethod, packQuality;
 
   #if defined(NXAGENT_RECONNECT_DEBUG) || defined(NXAGENT_RECONNECT_DISPLAY_DEBUG)
   fprintf(stderr, "nxagentReconnectDisplay\n");
@@ -2463,9 +2466,6 @@ Bool nxagentReconnectDisplay(void *p0)
   /*
    * Reset the values to their defaults.
    */
-
-  packMethod  = nxagentPackMethod;
-  packQuality = nxagentPackQuality;
 
   nxagentPackMethod     = -1;
   nxagentPackQuality    = -1;

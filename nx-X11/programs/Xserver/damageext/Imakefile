@@ -5,7 +5,8 @@
        OBJS =	damageext.o
 
    INCLUDES =   -I../include -I../Xext -I../render -I../xfixes -I../miext/damage \
-		-I$(EXTINCSRC) -I$(XINCLUDESRC)
+		-I$(EXTINCSRC) -I$(XINCLUDESRC) \
+		`pkg-config --cflags-only-I pixman-1`
 
    LINTLIBS = ../dix/llib-ldix.ln ../os/llib-los.ln
 

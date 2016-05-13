@@ -16,7 +16,7 @@ XCOMM $XFree86: xc/programs/Xserver/record/Imakefile,v 1.12 2001/11/02 23:29:34 
 #endif
        SRCS = record.c set.c
        OBJS = record.o set.o
-   INCLUDES = -I../include -I$(XINCLUDESRC) -I$(EXTINCSRC) -I$(SERVERSRC)/Xext
+   INCLUDES = -I../include -I$(XINCLUDESRC) -I$(EXTINCSRC) -I$(SERVERSRC)/Xext `pkg-config --cflags-only-I pixman-1`
    LINTLIBS = ../dix/llib-ldix.ln
     DEFINES = -DNDEBUG
 

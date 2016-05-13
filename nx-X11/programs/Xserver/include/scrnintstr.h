@@ -709,6 +709,10 @@ typedef struct _Screen {
 
 } ScreenRec;
 
+static inline RegionPtr BitmapToRegion(ScreenPtr _pScreen, PixmapPtr pPix) {
+    return (*(_pScreen)->BitmapToRegion)(pPix); /* no mi version?! */
+}
+
 typedef struct _ScreenInfo {
     int		imageByteOrder;
     int		bitmapScanlineUnit;

@@ -607,8 +607,8 @@ miBankCopy(
             if (!pScreenPriv->pBanks[ns])
                 continue;
 
-            nBox = REGION_NUM_RECTS(pScreenPriv->pBanks[ns]);
-            pBox = REGION_RECTS(pScreenPriv->pBanks[ns]);
+            nBox = RegionNumRects(pScreenPriv->pBanks[ns]);
+            pBox = RegionRects(pScreenPriv->pBanks[ns]);
 
             for (;  nBox--;  pBox++)
             {
@@ -668,8 +668,8 @@ miBankCopy(
              * It's faster to let the lower-level CopyArea do the clipping
              * within each bank.
              */
-            nBox = REGION_NUM_RECTS(pScreenPriv->pBanks[nd]);
-            pBox = REGION_RECTS(pScreenPriv->pBanks[nd]);
+            nBox = RegionNumRects(pScreenPriv->pBanks[nd]);
+            pBox = RegionRects(pScreenPriv->pBanks[nd]);
 
             for (;  nBox--;  pBox++)
             {
@@ -775,10 +775,10 @@ miBankCopy(
         }
         else
         {
-            REGION_INIT(pScreen, &rgnDst, &fastBox, 1);
-            REGION_INTERSECT(pScreen, &rgnDst, &rgnDst, prgnSrcClip);
-            pBox = REGION_RECTS(&rgnDst);
-            nBox = REGION_NUM_RECTS(&rgnDst);
+            RegionInit(&rgnDst, &fastBox, 1);
+            RegionIntersect(&rgnDst, &rgnDst, prgnSrcClip);
+            pBox = RegionRects(&rgnDst);
+            nBox = RegionNumRects(&rgnDst);
         }
 
         /*
@@ -804,8 +804,8 @@ miBankCopy(
                     if (!pScreenPriv->pBanks[ns])
                         continue;
 
-                    nBoxClipSrc = REGION_NUM_RECTS(pScreenPriv->pBanks[ns]);
-                    pBoxClipSrc = REGION_RECTS(pScreenPriv->pBanks[ns]);
+                    nBoxClipSrc = RegionNumRects(pScreenPriv->pBanks[ns]);
+                    pBoxClipSrc = RegionRects(pScreenPriv->pBanks[ns]);
 
                     for (;  nBoxClipSrc--;  pBoxClipSrc++)
                     {
@@ -836,9 +836,9 @@ miBankCopy(
                              * so use the bank clips here instead.
                              */
                             nBoxClipDst =
-                                REGION_NUM_RECTS(pScreenPriv->pBanks[nd]);
+                                RegionNumRects(pScreenPriv->pBanks[nd]);
                             pBoxClipDst =
-                                REGION_RECTS(pScreenPriv->pBanks[nd]);
+                                RegionRects(pScreenPriv->pBanks[nd]);
 
                             for (;  nBoxClipDst--;  pBoxClipDst++)
                             {
@@ -878,7 +878,7 @@ miBankCopy(
                                       pScreenPriv->nPixelsPerScanlinePadUnit) ||
                                      (ccBox.x2 %
                                       pScreenPriv->nPixelsPerScanlinePadUnit) ||
-                                     (RECT_IN_REGION(pScreen,
+                                     (RegionContainsRect(
                                        pGCPriv->pBankedClips[nd], &ccBox) !=
                                       rgnIN)))
                                     pQueue->fastBlit = FALSE;
@@ -892,9 +892,9 @@ miBankCopy(
 
         if (!fastClip)
         {
-            REGION_UNINIT(pScreen, &rgnDst);
+            RegionUninit(&rgnDst);
             if (freeSrcClip)
-                REGION_DESTROY(pScreen, prgnSrcClip);
+                RegionDestroy(prgnSrcClip);
         }
 
         pQueueNew = pQueue;
@@ -1405,16 +1405,16 @@ miBankValidateGC(
                     continue;
 
                 if (!(prgnClip = pGCPriv->pBankedClips[i]))
-                    prgnClip = REGION_CREATE(pScreen, NULL, 1);
+                    prgnClip = RegionCreate(NULL, 1);
 
-                REGION_INTERSECT(pScreen, prgnClip,
+                RegionIntersect(prgnClip,
                     pScreenPriv->pBanks[i], pGC->pCompositeClip);
 
-                if ((REGION_NUM_RECTS(prgnClip) <= 1) &&
+                if ((RegionNumRects(prgnClip) <= 1) &&
                     ((prgnClip->extents.x1 == prgnClip->extents.x2) ||
                      (prgnClip->extents.y1 == prgnClip->extents.y2)))
                 {
-                    REGION_DESTROY(pScreen, prgnClip);
+                    RegionDestroy(prgnClip);
                     pGCPriv->pBankedClips[i] = NULL;
                 }
                 else
@@ -1469,7 +1469,7 @@ miBankValidateGC(
                 if (!pGCPriv->pBankedClips[i])
                     continue;
 
-                REGION_DESTROY(pScreen, pGCPriv->pBankedClips[i]);
+                RegionDestroy(pGCPriv->pBankedClips[i]);
                 pGCPriv->pBankedClips[i] = NULL;
             }
         }
@@ -1528,7 +1528,7 @@ miBankDestroyGC(
         if (!pGCPriv->pBankedClips[i])
             continue;
 
-        REGION_DESTROY(pScreen, pGCPriv->pBankedClips[i]);
+        RegionDestroy(pGCPriv->pBankedClips[i]);
         pGCPriv->pBankedClips[i] = NULL;
     }
 
@@ -1707,7 +1707,7 @@ miBankCloseScreen(
     /* Delete bank clips */
     for (i = 0;  i < pScreenPriv->nBanks;  i++)
         if (pScreenPriv->pBanks[i])
-            REGION_DESTROY(pScreen, pScreenPriv->pBanks[i]);
+            RegionDestroy(pScreenPriv->pBanks[i]);
 
     Xfree(pScreenPriv->pBanks);
 
@@ -1915,17 +1915,17 @@ miBankPaintWindow(
     }
     else
     {
-        REGION_NULL(pScreen, &tmpReg);
+        RegionNull(&tmpReg);
 
         for (i = 0;  i < pScreenPriv->nBanks;  i++)
         {
             if (!pScreenPriv->pBanks[i])
                 continue;
 
-            REGION_INTERSECT(pScreen, &tmpReg, pRegion,
+            RegionIntersect(&tmpReg, pRegion,
                 pScreenPriv->pBanks[i]);
 
-            if (REGION_NIL(&tmpReg))
+            if (RegionNil(&tmpReg))
                 continue;
 
             SET_SINGLE_BANK(pScreenPriv->pScreenPixmap, -1, -1, i);
@@ -1933,7 +1933,7 @@ miBankPaintWindow(
             (*PaintWindow)(pWin, &tmpReg, what);
         }
 
-        REGION_UNINIT(pScreen, &tmpReg);
+        RegionUninit(&tmpReg);
     }
 
     if (what == PW_BORDER)
@@ -1968,15 +1968,15 @@ miBankCopyWindow(
     ChangeGC(pGC, GCSubwindowMode, &subWindowMode);
     ValidateGC(pDrawable, pGC);
 
-    pRgnDst = REGION_CREATE(pScreen, NULL, 1);
+    pRgnDst = RegionCreate(NULL, 1);
 
     dx = ptOldOrg.x - pWindow->drawable.x;
     dy = ptOldOrg.y - pWindow->drawable.y;
-    REGION_TRANSLATE(pScreen, pRgnSrc, -dx, -dy);
-    REGION_INTERSECT(pScreen, pRgnDst, &pWindow->borderClip, pRgnSrc);
+    RegionTranslate(pRgnSrc, -dx, -dy);
+    RegionIntersect(pRgnDst, &pWindow->borderClip, pRgnSrc);
 
-    pBox = REGION_RECTS(pRgnDst);
-    nBox = REGION_NUM_RECTS(pRgnDst);
+    pBox = RegionRects(pRgnDst);
+    nBox = RegionNumRects(pRgnDst);
 
     pBoxNew1 = NULL;
     pBoxNew2 = NULL;
@@ -2052,7 +2052,7 @@ miBankCopyWindow(
 
     FreeScratchGC(pGC);
 
-    REGION_DESTROY(pScreen, pRgnDst);
+    RegionDestroy(pRgnDst);
 
     DEALLOCATE_LOCAL(pBoxNew2);
     DEALLOCATE_LOCAL(pBoxNew1);
@@ -2086,30 +2086,30 @@ miBankSaveAreas(
     }
     else
     {
-        REGION_NULL(pScreen, &rgnClipped);
-        REGION_TRANSLATE(pScreen, prgnSave, xorg, yorg);
+        RegionNull(&rgnClipped);
+        RegionTranslate(prgnSave, xorg, yorg);
 
         for (i = 0;  i < pScreenPriv->nBanks;  i++)
         {
             if (!pScreenPriv->pBanks[i])
                 continue;
 
-            REGION_INTERSECT(pScreen, &rgnClipped,
+            RegionIntersect(&rgnClipped,
                 prgnSave, pScreenPriv->pBanks[i]);
 
-            if (REGION_NIL(&rgnClipped))
+            if (RegionNil(&rgnClipped))
                 continue;
 
             SET_SINGLE_BANK(pScreenPriv->pScreenPixmap, -1, -1, i);
 
-            REGION_TRANSLATE(pScreen, &rgnClipped, -xorg, -yorg);
+            RegionTranslate(&rgnClipped, -xorg, -yorg);
 
             (*pScreen->BackingStoreFuncs.SaveAreas)(pPixmap, &rgnClipped,
                 xorg, yorg, pWin);
         }
 
-        REGION_TRANSLATE(pScreen, prgnSave, -xorg, -yorg);
-        REGION_UNINIT(pScreen, &rgnClipped);
+        RegionTranslate(prgnSave, -xorg, -yorg);
+        RegionUninit(&rgnClipped);
     }
 
     SCREEN_WRAP(BackingStoreFuncs.SaveAreas, miBankSaveAreas);
@@ -2140,17 +2140,17 @@ miBankRestoreAreas(
     }
     else
     {
-        REGION_NULL(pScreen, &rgnClipped);
+        RegionNull(&rgnClipped);
 
         for (i = 0;  i < pScreenPriv->nBanks;  i++)
         {
             if (!pScreenPriv->pBanks[i])
                 continue;
 
-            REGION_INTERSECT(pScreen, &rgnClipped,
+            RegionIntersect(&rgnClipped,
                 prgnRestore, pScreenPriv->pBanks[i]);
 
-            if (REGION_NIL(&rgnClipped))
+            if (RegionNil(&rgnClipped))
                 continue;
 
             SET_SINGLE_BANK(pScreenPriv->pScreenPixmap, -1, -1, i);
@@ -2159,7 +2159,7 @@ miBankRestoreAreas(
                 xorg, yorg, pWin);
         }
 
-        REGION_UNINIT(pScreen, &rgnClipped);
+        RegionUninit(&rgnClipped);
     }
 
     SCREEN_WRAP(BackingStoreFuncs.RestoreAreas, miBankRestoreAreas);
@@ -2345,9 +2345,9 @@ miInitializeBanking(
         }
 
         pScreenPriv->pBanks[iBank] =
-            RECTS_TO_REGION(pScreen, pRect - pRects, pRects, 0);
+            RegionFromRects(pRect - pRects, pRects, 0);
         if (!pScreenPriv->pBanks[iBank] ||
-            REGION_NAR(pScreenPriv->pBanks[iBank]))
+            RegionNar(pScreenPriv->pBanks[iBank]))
         {
             we = 1;
             break;
@@ -2358,7 +2358,7 @@ miInitializeBanking(
     {
         for (i = iBank;  i >= 0;  i--)
             if (pScreenPriv->pBanks[i])
-                REGION_DESTROY(pScreen, pScreenPriv->pBanks[i]);
+                RegionDestroy(pScreenPriv->pBanks[i]);
 
         Xfree(pScreenPriv->pBanks);
         Xfree(pScreenPriv);

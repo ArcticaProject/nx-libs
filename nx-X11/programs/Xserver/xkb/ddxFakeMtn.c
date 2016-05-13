@@ -64,12 +64,12 @@ ScreenPtr	   pScreen, oldScreen;
 	BoxRec box;
 	int i;
 
-	if(!POINT_IN_REGION(pScreen, &XineramaScreenRegions[pScreen->myNum],
+	if(!RegionContainsPoint(&XineramaScreenRegions[pScreen->myNum],
 							    oldX, oldY, &box)) {
 	    FOR_NSCREENS(i) {
 		if(i == pScreen->myNum)
 		    continue;
-		if(POINT_IN_REGION(pScreen, &XineramaScreenRegions[i],
+		if(RegionContainsPoint(&XineramaScreenRegions[i],
 				   oldX, oldY, &box)) {
 		    pScreen = screenInfo.screens[i];
 		    break;
@@ -85,12 +85,12 @@ ScreenPtr	   pScreen, oldScreen;
 	     oldY=  y;
 	else oldY+= y;
 
-	if(!POINT_IN_REGION(pScreen, &XineramaScreenRegions[pScreen->myNum],
+	if(!RegionContainsPoint(&XineramaScreenRegions[pScreen->myNum],
 							    oldX, oldY, &box)) {
 	    FOR_NSCREENS(i) {
 		if(i == pScreen->myNum)
 		    continue;
-		if(POINT_IN_REGION(pScreen, &XineramaScreenRegions[i],
+		if(RegionContainsPoint(&XineramaScreenRegions[i],
 				   oldX, oldY, &box)) {
 		    pScreen = screenInfo.screens[i];
 		    break;

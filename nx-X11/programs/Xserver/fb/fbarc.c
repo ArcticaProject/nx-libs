@@ -101,7 +101,7 @@ fbPolyArc (DrawablePtr	pDrawable,
 		    y2 = box.y1 + (int)parcs->height + 1;
 		    box.y2 = y2;
 		    if ( (x2 <= MAXSHORT) && (y2 <= MAXSHORT) &&
-			(RECT_IN_REGION(pDrawable->pScreen, cclip, &box) == rgnIN) )
+			(RegionContainsRect(cclip, &box) == rgnIN) )
 			(*arc) (dst, dstStride, dstBpp, 
 				parcs, pDrawable->x + dstXoff, pDrawable->y + dstYoff, 
 				pPriv->and, pPriv->xor);

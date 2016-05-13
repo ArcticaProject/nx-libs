@@ -685,7 +685,9 @@ int nxagentKeyboardProc(DeviceIntPtr pDev, int onoff)
   int free_model = 0, free_layout = 0;
   XkbDescPtr xkb = NULL;
 
+  #ifdef TEST
   int ret;
+  #endif
 
   switch (onoff)
   {
@@ -842,7 +844,10 @@ XkbError:
       memmove((char *) defaultKeyboardControl.autoRepeats,
              (char *) values.auto_repeats, sizeof(values.auto_repeats));
 
-      ret = InitKeyboardDeviceStruct((DevicePtr) pDev, &keySyms, modmap,
+      #ifdef TEST
+      ret =
+      #endif
+      InitKeyboardDeviceStruct((DevicePtr) pDev, &keySyms, modmap,
                                nxagentBell, nxagentChangeKeyboardControl);
 
       #ifdef TEST
@@ -1208,11 +1213,9 @@ void nxagentNotifyKeyboardChanges(int oldMinKeycode, int oldMaxKeycode)
   if (!noXkbExtension)
   {
     DeviceIntPtr dev;
-    XkbDescPtr xkb;
     xkbNewKeyboardNotify nkn;
 
     dev = inputInfo.keyboard;
-    xkb = dev -> key -> xkbInfo -> desc;
 
     memset(&nkn, 0, sizeof(xkbNewKeyboardNotify));
     nkn.deviceID = nkn.oldDeviceID = dev -> id;

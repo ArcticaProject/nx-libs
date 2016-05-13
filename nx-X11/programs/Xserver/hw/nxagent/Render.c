@@ -1240,7 +1240,7 @@ void nxagentGlyphs(CARD8 op, PicturePtr pSrc, PicturePtr pDst,
     pRegion = nxagentCreateRegion(pDst -> pDrawable, NULL, glyphBox.x1, glyphBox.y1,
                                       glyphBox.x2 - glyphBox.x1, glyphBox.y2 - glyphBox.y1);
     
-    if (REGION_NIL(pRegion) == 1)
+    if (RegionNil(pRegion) == 1)
     {
       #ifdef TEST
       fprintf(stderr, "nxagentGlyphs: WARNING! Glyphs prevented on hidden window at [%p].\n",
@@ -1602,24 +1602,24 @@ void nxagentCompositeRects(CARD8 op, PicturePtr pDst, xRenderColor *color,
           (op == PictOpSrc ||
                (op == PictOpOver && color -> alpha == 0xffff)))
   {
-    rectRegion = RECTS_TO_REGION(pDst -> pDrawable -> pScreen, nRect, rects, CT_REGION);
+    rectRegion = RegionFromRects(nRect, rects, CT_REGION);
 
     if (pDst -> clientClipType != CT_NONE)
     {
       RegionRec tmpRegion;
 
-      REGION_INIT(pDst -> pDrawable -> pScreen, &tmpRegion, NullBox, 1);
+      RegionInit(&tmpRegion, NullBox, 1);
 
-      REGION_COPY(pDst -> pDrawable -> pScreen, &tmpRegion, (RegionPtr) pDst -> clientClip);
+      RegionCopy(&tmpRegion, (RegionPtr) pDst -> clientClip);
 
       if (pDst -> clipOrigin.x != 0 || pDst -> clipOrigin.y != 0)
       {
-        REGION_TRANSLATE(pDst -> pDrawable -> pScreen, &tmpRegion, pDst -> clipOrigin.x, pDst -> clipOrigin.y);
+        RegionTranslate(&tmpRegion, pDst -> clipOrigin.x, pDst -> clipOrigin.y);
       }
 
-      REGION_INTERSECT(pDst -> pDrawable -> pScreen, rectRegion, rectRegion, &tmpRegion);
+      RegionIntersect(rectRegion, rectRegion, &tmpRegion);
 
-      REGION_UNINIT(pDst -> pDrawable -> pScreen, &tmpRegion);      
+      RegionUninit(&tmpRegion);
     }
 
     #ifdef TEST
@@ -1629,7 +1629,7 @@ void nxagentCompositeRects(CARD8 op, PicturePtr pDst, xRenderColor *color,
 
     nxagentUnmarkCorruptedRegion(pDst -> pDrawable, rectRegion);
 
-    REGION_DESTROY(pDrawable -> pScreen, rectRegion);
+    RegionDestroy(rectRegion);
   }
 
   XRenderFillRectangles(nxagentDisplay,
@@ -1716,7 +1716,7 @@ FIXME: Is this useful or just a waste of bandwidth?
    */
 
   if (nxagentDrawableStatus(pDst -> pDrawable) == NotSynchronized &&
-          RECT_IN_REGION(pDst -> pDrawable -> pScreen, nxagentCorruptedRegion(pDst -> pDrawable),
+          RegionContainsRect(nxagentCorruptedRegion(pDst -> pDrawable),
                              nxagentTrapezoidExtents) == rgnIN)
   {
     #ifdef TEST

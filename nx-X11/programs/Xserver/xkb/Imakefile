@@ -51,7 +51,8 @@ XF86INCLUDES = -I$(XF86COMSRC) -I$(XF86OSSRC)
 	    XKBMisc.o XKBMAlloc.o XKBAlloc.o XKBGAlloc.o \
 	    $(XKBXI_OBJS) $(DDX_OBJS)
    INCLUDES = -I../include -I$(XINCLUDESRC) -I$(EXTINCSRC) -I$(SERVERSRC)/Xext \
-	      -I$(SERVERSRC)/mi $(XF86INCLUDES)
+	      -I$(SERVERSRC)/mi $(XF86INCLUDES) \
+	      `pkg-config --cflags-only-I pixman-1`
    LINTLIBS = ../dix/llib-ldix.ln ../os/llib-los.ln
 
 DEFINES = -DXKB_IN_SERVER $(EXTRA_ALLOC_DEFINES) $(XKB_DDXDEFS) $(NX_DEFINES)

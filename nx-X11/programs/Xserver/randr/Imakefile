@@ -23,7 +23,9 @@ XCOMM $XFree86: xc/programs/Xserver/randr/Imakefile,v 1.1 2001/05/23 03:29:44 ke
 
    INCLUDES = -I../include -I../mi \
 		-I../fb -I../hw/kdrive -I$(EXTINCSRC) -I$(XINCLUDESRC) \
-		-I../render
+		-I../render \
+		`pkg-config --cflags-only-I pixman-1`
+
    LINTLIBS = ../dix/llib-ldix.ln ../os/llib-los.ln
 
     DEFINES = -DNXAGENT_SERVER
