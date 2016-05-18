@@ -135,9 +135,6 @@ struct _XtransConnInfo {
 
 #define XTRANS_OPEN_COTS_CLIENT       1
 #define XTRANS_OPEN_COTS_SERVER       2
-#define XTRANS_OPEN_CLTS_CLIENT       3
-#define XTRANS_OPEN_CLTS_SERVER       4
-
 
 typedef struct _Xtransport {
     char	*TransName;
@@ -165,38 +162,9 @@ typedef struct _Xtransport {
 
 #endif /* TRANS_SERVER */
 
-#ifdef TRANS_CLIENT
-
-    XtransConnInfo (*OpenCLTSClient)(
-	struct _Xtransport *,	/* transport */
-	char *,			/* protocol */
-	char *,			/* host */
-	char *			/* port */
-    );
-
-#endif /* TRANS_CLIENT */
-
-#ifdef TRANS_SERVER
-
-    XtransConnInfo (*OpenCLTSServer)(
-	struct _Xtransport *,	/* transport */
-	char *,			/* protocol */
-	char *,			/* host */
-	char *			/* port */
-    );
-
-#endif /* TRANS_SERVER */
-
-
 #ifdef TRANS_REOPEN
 
     XtransConnInfo (*ReopenCOTSServer)(
-	struct _Xtransport *,	/* transport */
-        int,			/* fd */
-        char *			/* port */
-    );
-
-    XtransConnInfo (*ReopenCLTSServer)(
 	struct _Xtransport *,	/* transport */
         int,			/* fd */
         char *			/* port */

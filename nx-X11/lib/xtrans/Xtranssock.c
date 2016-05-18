@@ -1079,120 +1079,6 @@ TRANS(SocketOpenCOTSServer) (Xtransport *thistrans, char *protocol,
 #endif /* TRANS_SERVER */
 
 
-#ifdef TRANS_CLIENT
-
-static XtransConnInfo
-TRANS(SocketOpenCLTSClient) (Xtransport *thistrans, char *protocol,
-			     char *host, char *port)
-
-{
-    XtransConnInfo	ciptr;
-    int			i = -1;
-
-    prmsg (2,"SocketOpenCLTSClient(%s,%s,%s)\n", protocol, host, port);
-
-    SocketInitOnce();
-
-    while ((i = TRANS(SocketSelectFamily) (i, thistrans->TransName)) >= 0) {
-
-#if defined(NX_TRANS_SOCKET) && defined(TRANS_CLIENT)
-
-        if ((!strcmp(protocol, "local") || !strcmp(protocol, "nx")) &&
-                (!strcasecmp(host, "nx") || !strncasecmp(host, "nx,", 3)))
-        {
-            ciptr = TRANS(SocketCreateConnInfo) ();
-
-            if (ciptr == NULL)
-            {
-                prmsg (1, "SocketOpenCLTSClient: Unable to create the NX connection info for %s.\n",
-                           thistrans->TransName);
-
-                return NULL;
-            }
-
-            ciptr->index = i;
-
-            return ciptr;
-        }
-
-#endif /* #if defined(NX_TRANS_SOCKET) && defined(TRANS_CLIENT) */
-
-	if ((ciptr = TRANS(SocketOpen) (
-		 i, Sockettrans2devtab[i].devcotsname)) != NULL)
-	    break;
-    }
-    if (i < 0) {
-	if (i == -1)
-	    prmsg (1,"SocketOpenCLTSClient: Unable to open socket for %s\n",
-		   thistrans->TransName);
-	else
-	    prmsg (1,"SocketOpenCLTSClient: Unable to determine socket type for %s\n",
-		   thistrans->TransName);
-	return NULL;
-    }
-
-#if defined(NX_TRANS_SOCKET) && defined(TRANS_CLIENT)
-
-    ciptr->priv = NULL;
-
-#endif /* #if defined(NX_TRANS_SOCKET) && defined(TRANS_CLIENT) */
-
-    /* Save the index for later use */
-
-    ciptr->index = i;
-
-    return ciptr;
-}
-
-#endif /* TRANS_CLIENT */
-
-
-#ifdef TRANS_SERVER
-
-static XtransConnInfo
-TRANS(SocketOpenCLTSServer) (Xtransport *thistrans, char *protocol,
-			     char *host, char *port)
-
-{
-    XtransConnInfo	ciptr;
-    int	i = -1;
-
-    prmsg (2,"SocketOpenCLTSServer(%s,%s,%s)\n", protocol, host, port);
-
-    SocketInitOnce();
-
-    while ((i = TRANS(SocketSelectFamily) (i, thistrans->TransName)) >= 0) {
-	if ((ciptr = TRANS(SocketOpen) (
-		 i, Sockettrans2devtab[i].devcotsname)) != NULL)
-	    break;
-    }
-    if (i < 0) {
-	if (i == -1)
-	    prmsg (1,"SocketOpenCLTSServer: Unable to open socket for %s\n",
-		   thistrans->TransName);
-	else
-	    prmsg (1,"SocketOpenCLTSServer: Unable to determine socket type for %s\n",
-		   thistrans->TransName);
-	return NULL;
-    }
-
-#ifdef IPV6_V6ONLY
-    if (Sockettrans2devtab[i].family == AF_INET6)
-    {
-	int one = 1;
-	setsockopt(ciptr->fd, IPPROTO_IPV6, IPV6_V6ONLY, &one, sizeof(int));
-    }
-#endif
-    /* Save the index for later use */
-
-    ciptr->index = i;
-
-    return ciptr;
-}
-
-#endif /* TRANS_SERVER */
-
-
 #ifdef TRANS_REOPEN
 
 static XtransConnInfo
@@ -1218,40 +1104,6 @@ TRANS(SocketReopenCOTSServer) (Xtransport *thistrans, int fd, char *port)
 		   thistrans->TransName);
 	else
 	    prmsg (1,"SocketReopenCOTSServer: Unable to determine socket type for %s\n",
-		   thistrans->TransName);
-	return NULL;
-    }
-
-    /* Save the index for later use */
-
-    ciptr->index = i;
-
-    return ciptr;
-}
-
-static XtransConnInfo
-TRANS(SocketReopenCLTSServer) (Xtransport *thistrans, int fd, char *port)
-
-{
-    XtransConnInfo	ciptr;
-    int			i = -1;
-
-    prmsg (2,
-	"SocketReopenCLTSServer(%d, %s)\n", fd, port);
-
-    SocketInitOnce();
-
-    while ((i = TRANS(SocketSelectFamily) (i, thistrans->TransName)) >= 0) {
-	if ((ciptr = TRANS(SocketReopen) (
-		 i, Sockettrans2devtab[i].devcotsname, fd, port)) != NULL)
-	    break;
-    }
-    if (i < 0) {
-	if (i == -1)
-	    prmsg (1,"SocketReopenCLTSServer: Unable to open socket for %s\n",
-		   thistrans->TransName);
-	else
-	    prmsg (1,"SocketReopenCLTSServer: Unable to determine socket type for %s\n",
 		   thistrans->TransName);
 	return NULL;
     }
@@ -2998,15 +2850,8 @@ Xtransport	TRANS(SocketTCPFuncs) = {
 	tcp_nolisten,
 	TRANS(SocketOpenCOTSServer),
 #endif /* TRANS_SERVER */
-#ifdef TRANS_CLIENT
-	TRANS(SocketOpenCLTSClient),
-#endif /* TRANS_CLIENT */
-#ifdef TRANS_SERVER
-	TRANS(SocketOpenCLTSServer),
-#endif /* TRANS_SERVER */
 #ifdef TRANS_REOPEN
 	TRANS(SocketReopenCOTSServer),
-	TRANS(SocketReopenCLTSServer),
 #endif
 	TRANS(SocketSetOption),
 #ifdef TRANS_SERVER
@@ -3038,15 +2883,8 @@ Xtransport	TRANS(SocketINETFuncs) = {
 	NULL,
 	TRANS(SocketOpenCOTSServer),
 #endif /* TRANS_SERVER */
-#ifdef TRANS_CLIENT
-	TRANS(SocketOpenCLTSClient),
-#endif /* TRANS_CLIENT */
-#ifdef TRANS_SERVER
-	TRANS(SocketOpenCLTSServer),
-#endif /* TRANS_SERVER */
 #ifdef TRANS_REOPEN
 	TRANS(SocketReopenCOTSServer),
-	TRANS(SocketReopenCLTSServer),
 #endif
 	TRANS(SocketSetOption),
 #ifdef TRANS_SERVER
@@ -3079,15 +2917,8 @@ Xtransport     TRANS(SocketINET6Funcs) = {
 	NULL,
 	TRANS(SocketOpenCOTSServer),
 #endif /* TRANS_SERVER */
-#ifdef TRANS_CLIENT
-	TRANS(SocketOpenCLTSClient),
-#endif /* TRANS_CLIENT */
-#ifdef TRANS_SERVER
-	TRANS(SocketOpenCLTSServer),
-#endif /* TRANS_SERVER */
 #ifdef TRANS_REOPEN
 	TRANS(SocketReopenCOTSServer),
-	TRANS(SocketReopenCLTSServer),
 #endif
 	TRANS(SocketSetOption),
 #ifdef TRANS_SERVER
@@ -3127,15 +2958,8 @@ Xtransport	TRANS(SocketLocalFuncs) = {
 	NULL,
 	TRANS(SocketOpenCOTSServer),
 #endif /* TRANS_SERVER */
-#ifdef TRANS_CLIENT
-	TRANS(SocketOpenCLTSClient),
-#endif /* TRANS_CLIENT */
-#ifdef TRANS_SERVER
-	TRANS(SocketOpenCLTSServer),
-#endif /* TRANS_SERVER */
 #ifdef TRANS_REOPEN
 	TRANS(SocketReopenCOTSServer),
-	TRANS(SocketReopenCLTSServer),
 #endif
 	TRANS(SocketSetOption),
 #ifdef TRANS_SERVER
@@ -3181,15 +3005,8 @@ Xtransport	TRANS(SocketUNIXFuncs) = {
 #endif
 	TRANS(SocketOpenCOTSServer),
 #endif /* TRANS_SERVER */
-#ifdef TRANS_CLIENT
-	TRANS(SocketOpenCLTSClient),
-#endif /* TRANS_CLIENT */
-#ifdef TRANS_SERVER
-	TRANS(SocketOpenCLTSServer),
-#endif /* TRANS_SERVER */
 #ifdef TRANS_REOPEN
 	TRANS(SocketReopenCOTSServer),
-	TRANS(SocketReopenCLTSServer),
 #endif
 	TRANS(SocketSetOption),
 #ifdef TRANS_SERVER

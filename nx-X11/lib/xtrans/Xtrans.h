@@ -277,31 +277,9 @@ XtransConnInfo TRANS(OpenCOTSServer)(
 
 #endif /* TRANS_SERVER */
 
-#ifdef TRANS_CLIENT
-
-XtransConnInfo TRANS(OpenCLTSClient)(
-    char *		/* address */
-);
-
-#endif /* TRANS_CLIENT */
-
-#ifdef TRANS_SERVER
-
-XtransConnInfo TRANS(OpenCLTSServer)(
-    char *		/* address */
-);
-
-#endif /* TRANS_SERVER */
-
 #ifdef TRANS_REOPEN
 
 XtransConnInfo TRANS(ReopenCOTSServer)(
-    int,		/* trans_id */
-    int,		/* fd */
-    char *		/* port */
-);
-
-XtransConnInfo TRANS(ReopenCLTSServer)(
     int,		/* trans_id */
     int,		/* fd */
     char *		/* port */
@@ -421,13 +399,6 @@ int TRANS(GetConnectionNumber)(
 #ifdef TRANS_SERVER
 
 int TRANS(MakeAllCOTSServerListeners)(
-    char *,		/* port */
-    int *,		/* partial */
-    int *,		/* count_ret */
-    XtransConnInfo **	/* ciptrs_ret */
-);
-
-int TRANS(MakeAllCLTSServerListeners)(
     char *,		/* port */
     int *,		/* partial */
     int *,		/* count_ret */
