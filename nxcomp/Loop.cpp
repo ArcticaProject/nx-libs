@@ -11621,7 +11621,7 @@ int SetPorts()
   }
 
 #ifdef TEST
-  *logofs << "Loop: cups port: " << cupsPort->getDebugSpec() << "\n"
+  *logofs << "Loop: cups port: " << cupsPort << "\n"
             << logofs_flush;
 #endif
 
@@ -11651,7 +11651,7 @@ int SetPorts()
   }
 
 #ifdef TEST
-  *logofs << "Loop: aux port: " << auxPort->getDebugSpec() << "\n"
+  *logofs << "Loop: aux port: " << auxPort << "\n"
 	  << logofs_flush;
 #endif
 
@@ -11667,7 +11667,7 @@ int SetPorts()
 
 
 #ifdef TEST
-  *logofs << "Loop: smb port: " << smbPort->getDebugSpec() << "\n"
+  *logofs << "Loop: smb port: " << smbPort << "\n"
 	  << logofs_flush;
 #endif
 
@@ -11690,7 +11690,7 @@ int SetPorts()
   }
 
 #ifdef TEST
-  *logofs << "Loop: Using multimedia port '" << mediaPort->getDebugSpec()
+  *logofs << "Loop: Using multimedia port '" << mediaPort
 	  << "'.\n" << logofs_flush;
 #endif
 
@@ -11705,7 +11705,7 @@ int SetPorts()
   }
 
 #ifdef TEST
-  *logofs << "Loop: Using HTTP port '" << httpPort->getDebugSpec()
+  *logofs << "Loop: Using HTTP port '" << httpPort
 	  << "'.\n" << logofs_flush;
 #endif
 
@@ -11754,7 +11754,7 @@ int SetPorts()
   }
 
 #ifdef TEST
-  *logofs << "Loop: Using slave port '" << slavePort->getDebugSpec()
+  *logofs << "Loop: Using slave port '" << slavePort
 	  << "'.\n" << logofs_flush;
 #endif
 
