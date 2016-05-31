@@ -7508,7 +7508,6 @@ int ReadProxyVersion(int fd)
                        &(control -> RemoteVersionPatch));
   }
 
-  #ifdef TEST
   *logofs << "Loop: Identified remote version '" << control -> RemoteVersionMajor
           << "." << control -> RemoteVersionMinor << "." << control -> RemoteVersionPatch
           << "'.\n" << logofs_flush;
@@ -7520,7 +7519,6 @@ int ReadProxyVersion(int fd)
   *logofs << "Loop: Local version '" << control -> LocalVersionMajor
           << "." << control -> LocalVersionMinor << "." << control -> LocalVersionPatch
           << "'.\n" << logofs_flush;
-  #endif
 
   if (SetVersion() < 0)
   {

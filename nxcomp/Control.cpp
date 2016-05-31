@@ -618,7 +618,8 @@ Control::Control()
   #ifdef TEST
   *logofs << "Control: Major version is " << LocalVersionMajor
           << " minor is " << LocalVersionMinor << " patch is "
-          << LocalVersionPatch << ".\n" << logofs_flush;
+          << LocalVersionPatch << " Maintenance version is "
+	  << LocalVersionMaintenancePatch << ".\n" << logofs_flush;
   #endif
 
   //
