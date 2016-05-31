@@ -17,9 +17,35 @@
 XCOMM $XFree86: xc/programs/Xserver/randr/Imakefile,v 1.1 2001/05/23 03:29:44 keithp Exp $
 #include <Server.tmpl>
 
-       SRCS =	mirandr.c randr.c rrcrtc.c rrdispatch.c rrinfo.c rrmode.c rroutput.c rrpointer.c rrproperty.c rrscreen.c rrsdispatch.c rrxinerama.c
+       NULL =
 
-       OBJS =	mirandr.o randr.o rrcrtc.o rrdispatch.o rrinfo.o rrmode.o rroutput.o rrpointer.o rrproperty.o rrscreen.o rrsdispatch.o rrxinerama.o
+       SRCS =	mirandr.c		\
+		randr.c			\
+		rrcrtc.c		\
+		rrdispatch.c		\
+		rrinfo.c		\
+		rrmode.c		\
+		rroutput.c		\
+		rrpointer.c		\
+		rrproperty.c		\
+		rrscreen.c		\
+		rrsdispatch.c		\
+		rrxinerama.c		\
+		$(NULL)
+
+       OBJS =	mirandr.o		\
+		randr.o			\
+		rrcrtc.o		\
+		rrdispatch.o		\
+		rrinfo.o		\
+		rrmode.o		\
+		rroutput.o		\
+		rrpointer.o		\
+		rrproperty.o		\
+		rrscreen.o		\
+		rrsdispatch.o		\
+		rrxinerama.o		\
+		$(NULL)
 
    INCLUDES = -I../include -I../mi \
 		-I../fb -I../hw/kdrive -I$(EXTINCSRC) -I$(XINCLUDESRC) \
