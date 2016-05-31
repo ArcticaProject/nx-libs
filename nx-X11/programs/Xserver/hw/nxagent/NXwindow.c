@@ -717,6 +717,14 @@ ClippedRegionFromBox(register WindowPtr pWin, RegionPtr Rgn,
     RegionIntersect(Rgn, Rgn, &pWin->winSize);
 }
 
+static RealChildHeadProc realChildHeadProc = NULL;
+
+void
+RegisterRealChildHeadProc (RealChildHeadProc proc)
+{
+    realChildHeadProc = proc;
+}
+
 WindowPtr
 RealChildHead(register WindowPtr pWin)
 {
