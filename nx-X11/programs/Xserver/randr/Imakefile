@@ -19,8 +19,7 @@ XCOMM $XFree86: xc/programs/Xserver/randr/Imakefile,v 1.1 2001/05/23 03:29:44 ke
 
        NULL =
 
-       SRCS =	mirandr.c		\
-		randr.c			\
+       SRCS =	randr.c			\
 		rrcrtc.c		\
 		rrdispatch.c		\
 		rrinfo.c		\
@@ -33,8 +32,7 @@ XCOMM $XFree86: xc/programs/Xserver/randr/Imakefile,v 1.1 2001/05/23 03:29:44 ke
 		rrxinerama.c		\
 		$(NULL)
 
-       OBJS =	mirandr.o		\
-		randr.o			\
+       OBJS =	randr.o			\
 		rrcrtc.o		\
 		rrdispatch.o		\
 		rrinfo.o		\
