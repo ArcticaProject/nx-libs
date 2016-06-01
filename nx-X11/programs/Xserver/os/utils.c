@@ -168,29 +168,14 @@ Bool noDPSExtension = FALSE;
 #ifdef DPMSExtension
 Bool noDPMSExtension = FALSE;
 #endif
-#ifdef EVI
-Bool noEVIExtension = FALSE;
-#endif
-#ifdef FONTCACHE
-Bool noFontCacheExtension = FALSE;
-#endif
 #ifdef GLXEXT
 Bool noGlxExtension = FALSE;
-#endif
-#ifdef LBX
-Bool noLbxExtension = FALSE;
 #endif
 #ifdef SCREENSAVER
 Bool noScreenSaverExtension = FALSE;
 #endif
 #ifdef MITSHM
 Bool noMITShmExtension = FALSE;
-#endif
-#ifdef MITMISC
-Bool noMITMiscExtension = FALSE;
-#endif
-#ifdef MULTIBUFFER
-Bool noMultibufferExtension = FALSE;
 #endif
 #ifdef RANDR
 Bool noRRExtension = FALSE;
@@ -207,37 +192,17 @@ Bool noSecurityExtension = FALSE;
 #ifdef XSYNC
 Bool noSyncExtension = FALSE;
 #endif
-#ifdef TOGCUP
-Bool noXcupExtension = FALSE;
-#endif
 #ifdef RES
 Bool noResExtension = FALSE;
-#endif
-#ifdef XAPPGROUP
-Bool noXagExtension = FALSE;
 #endif
 #ifdef XCMISC
 Bool noXCMiscExtension = FALSE;
 #endif
-#ifdef XEVIE
-/* Xevie is disabled by default for now until the
- * interface is stable */
-Bool noXevieExtension = TRUE;
-#endif
 #ifdef XF86BIGFONT
 Bool noXFree86BigfontExtension = FALSE;
 #endif
-#ifdef XFreeXDGA
-Bool noXFree86DGAExtension = FALSE;
-#endif
 #ifdef XF86DRI
 Bool noXFree86DRIExtension = FALSE;
-#endif
-#ifdef XF86MISC
-Bool noXFree86MiscExtension = FALSE;
-#endif
-#ifdef XF86VIDMODE
-Bool noXFree86VidModeExtension = FALSE;
 #endif
 #ifdef XFIXES
 Bool noXFixesExtension = FALSE;

@@ -33,10 +33,10 @@ Equipment Corporation.
 #endif
 
 #include <stdio.h>
-#include <nx-X11/X.h>
+#include <X11/X.h>
 #define NEED_REPLIES
 #define NEED_EVENTS
-#include <nx-X11/Xproto.h>
+#include <X11/Xproto.h>
 #include "windowstr.h"
 #include "dixfontstr.h"
 #include "gcstruct.h"
@@ -1113,7 +1113,7 @@ int PanoramiXCopyArea(ClientPtr client)
 	    FOR_NSCREENS_BACKWARD(j) {
 		if(pRgn[j]) {
 		   if(srcIsRoot) {
-		       RegionTranslate(pRgn[j],
+		       RegionTranslate(pRgn[j], 
 				panoramiXdataPtr[j].x, panoramiXdataPtr[j].y);
 		   }
 		   RegionAppend(&totalReg, pRgn[j]);

@@ -15,18 +15,6 @@ extern void ShapeExtensionInit(INITARGS);
 #include <nx-X11/extensions/shapestr.h>
 #endif
 
-#ifdef MULTIBUFFER
-extern void MultibufferExtensionInit(INITARGS);
-#define _MULTIBUF_SERVER_	/* don't want Xlib structures */
-#include <nx-X11/extensions/multibufst.h>
-#endif
-
-#ifdef MITMISC
-extern void MITMiscExtensionInit(INITARGS);
-#define _MITMISC_SERVER_
-#include <nx-X11/extensions/mitmiscstr.h>
-#endif
-
 #ifdef XTEST
 extern void XTestExtensionInit(INITARGS);
 #define _XTEST_SERVER_
@@ -60,48 +48,9 @@ extern void XCMiscExtensionInit(INITARGS);
 #include <nx-X11/extensions/xcmiscstr.h>
 #endif
 
-#ifdef XF86VIDMODE
-extern void	XFree86VidModeExtensionInit(INITARGS);
-#define _XF86VIDMODE_SERVER_
-#include <nx-X11/extensions/xf86vmstr.h>
-#endif
-
-#ifdef XF86MISC
-extern void XFree86MiscExtensionInit(INITARGS);
-#define _XF86MISC_SERVER_
-#define _XF86MISC_SAVER_COMPAT_
-#include <nx-X11/extensions/xf86mscstr.h>
-#endif
-
-#ifdef XFreeXDGA
-extern void XFree86DGAExtensionInit(INITARGS);
-extern void XFree86DGARegister(INITARGS);
-#define _XF86DGA_SERVER_
-#include <nx-X11/extensions/xf86dgastr.h>
-#endif
-
 #ifdef DPMSExtension
 extern void DPMSExtensionInit(INITARGS);
 #include <nx-X11/extensions/dpmsstr.h>
-#endif
-
-#ifdef FONTCACHE
-extern void FontCacheExtensionInit(INITARGS);
-#define _FONTCACHE_SERVER_
-#include "fontcacheP.h"
-#include "fontcachstr.h"
-#endif
-
-#ifdef TOGCUP
-extern void XcupExtensionInit(INITARGS);
-#define _XCUP_SERVER_
-#include <nx-X11/extensions/Xcupstr.h>
-#endif
-
-#ifdef EVI
-extern void EVIExtensionInit(INITARGS);
-#define _XEVI_SERVER_
-#include <nx-X11/extensions/XEVIstr.h>
 #endif
 
 #ifdef XV

@@ -53,24 +53,6 @@ ExtensionModule extensionModules[] = {
 	NULL
     },
 #endif
-#ifdef MULTIBUFFER
-    {
-	MultibufferExtensionInit,
-	MULTIBUFFER_PROTOCOL_NAME,
-	&noMultibufferExtension,
-	NULL,
-	NULL
-    },
-#endif
-#ifdef MITMISC
-    {
-	MITMiscExtensionInit,
-	MITMISCNAME,
-	&noMITMiscExtension,
-	NULL,
-	NULL
-    },
-#endif
 #ifdef notyet
     {
 	XTestExtensionInit,
@@ -107,74 +89,11 @@ ExtensionModule extensionModules[] = {
 	NULL
     },
 #endif
-#ifdef XCMISC
-    {
-	XCMiscExtensionInit,
-	XCMiscExtensionName,
-	&noXCMiscExtension,
-	NULL,
-	NULL
-    },
-#endif
-#ifdef XF86VIDMODE
-    {
-	XFree86VidModeExtensionInit,
-	XF86VIDMODENAME,
-	&noXFree86VidModeExtension,
-	NULL,
-	NULL
-    },
-#endif
-#ifdef XF86MISC
-    {
-	XFree86MiscExtensionInit,
-	XF86MISCNAME,
-	&noXFree86MiscExtension,
-	NULL,
-	NULL
-    },
-#endif
-#ifdef XFreeXDGA
-    {
-	XFree86DGAExtensionInit,
-	XF86DGANAME,
-	&noXFree86DGAExtension,
-	XFree86DGARegister,
-	NULL
-    },
-#endif
 #ifdef DPMSExtension
     {
 	DPMSExtensionInit,
 	DPMSExtensionName,
 	&noDPMSExtension,
-	NULL,
-	NULL
-    },
-#endif
-#ifdef FONTCACHE
-    {
-	FontCacheExtensionInit,
-	FONTCACHENAME,
-	&noFontCacheExtension,
-	NULL,
-	NULL
-    },
-#endif
-#ifdef TOGCUP
-    {
-	XcupExtensionInit,
-	XCUPNAME,
-	&noXcupExtension,
-	NULL,
-	NULL
-    },
-#endif
-#ifdef EVI
-    {
-	EVIExtensionInit,
-	EVINAME,
-	&noEVIExtension,
 	NULL,
 	NULL
     },

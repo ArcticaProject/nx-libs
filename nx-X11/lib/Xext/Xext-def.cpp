@@ -1,9 +1,6 @@
 LIBRARY XEXT
 VERSION LIBRARY_VERSION
 EXPORTS
- XMITMiscGetBugMode
- XMITMiscQueryExtension
- XMITMiscSetBugMode
  XMissingExtension
  XSetExtensionErrorHandler
  XShapeCombineMask
@@ -76,46 +73,11 @@ EXPORTS
  XextDestroyExtension
  XextFindDisplay
  XextRemoveDisplay
- XmbufChangeBufferAttributes
- XmbufChangeWindowAttributes
- XmbufClearBufferArea
- XmbufCreateBuffers
- XmbufCreateStereoWindow
- XmbufDestroyBuffers
- XmbufDisplayBuffers
- XmbufGetBufferAttributes
- XmbufGetScreenInfo
- XmbufGetVersion
- XmbufGetWindowAttributes
- XmbufQueryExtension
- XdbeQueryExtension
- XdbeAllocateBackBufferName
- XdbeDeallocateBackBufferName
- XdbeSwapBuffers
- XdbeBeginIdiom
- XdbeEndIdiom
- XdbeGetVisualInfo
- XdbeFreeVisualInfo
- XdbeGetBackBufferAttributes
  XSecurityQueryExtension
  XSecurityAllocXauth
  XSecurityFreeXauth
  XSecurityGenerateAuthorization
  XSecurityRevokeAuthorization
- XagQueryVersion
- XagCreateAssociation
- XagCreateEmbeddedApplicationGroup
- XagCreateNonembeddedApplicationGroup
- XagDestroyApplicationGroup
- XagDestroyAssociation
- XagGetApplicationGroupAttributes
- XagQueryApplicationGroup
- XLbxQueryExtension
- XLbxGetEventBase
- XLbxQueryVersion
- XcupGetReservedColormapEntries
- XcupQueryVersion
- XcupStoreColors
 #if !defined(__CYGWIN__) && !defined(__UNIXOS2__)
  XPanoramiXQueryVersion
  XPanoramiXAllocInfo
@@ -133,8 +95,5 @@ EXPORTS
  DPMSDisable
  DPMSForceLevel
  DPMSInfo
- XeviQueryExtension
- XeviQueryVersion
- XeviGetVisualInfo
 /* $Xorg: Xext-def.cpp,v 1.3 2000/08/17 19:45:53 cpqbld Exp $ */
 /* $XFree86: xc/lib/Xext/Xext-def.cpp,v 1.8 2001/05/06 10:35:51 alanh Exp $ */

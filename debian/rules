@@ -45,17 +45,8 @@ override_dh_install:
 	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/extensions/XInput.h
 	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/extensions/XK*.h
 	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/extensions/*Xv*.h
-	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/extensions/xtrap*.h
 	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/extensions/XRes*.h
 	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/extensions/record*.h
-	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/extensions/xf86vmode.h
-	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/extensions/xf86vmstr.h
-	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/extensions/xf86misc.h
-	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/extensions/xf86dga1.h
-	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/extensions/xf86dgastr.h
-	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/extensions/xf86dga.h
-	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/extensions/xf86dga1str.h
-	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/extensions/xf86mscstr.h
 	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/extensions/bigreqstr.h
 	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/extensions/xcmiscstr.h
 	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/extensions/XIproto.h

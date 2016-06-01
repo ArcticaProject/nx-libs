@@ -143,20 +143,6 @@ extern Bool XkbFilterEvents(ClientPtr, int, xEvent *);
 #include <nx-X11/extensions/security.h>
 #endif
 
-#ifdef XEVIE
-extern WindowPtr *WindowTable;
-extern int       xevieFlag;
-extern int       xevieClientIndex;
-extern DeviceIntPtr     xeviemouse;
-extern DeviceIntPtr     xeviekb;
-extern Mask      xevieMask;
-extern Mask      xevieFilters[128];
-extern int       xevieEventSent;
-extern int       xevieKBEventSent;
-int    xeviegrabState = 0;
-xEvent *xeviexE;
-#endif
-
 #include <nx-X11/extensions/XIproto.h>
 #include "exevents.h"
 #include "extnsionst.h"
@@ -252,11 +238,6 @@ static  struct {
     WindowPtr	confineWin;	/* confine window */ 
 #endif
 } sprite;			/* info about the cursor sprite */
-
-#ifdef XEVIE
-WindowPtr xeviewin;
-HotSpot xeviehot;
-#endif
 
 static void DoEnterLeaveEvents(
     WindowPtr fromWin,
@@ -462,13 +443,7 @@ XineramaCheckVirtualMotion(
     if (qe)
     {
 	sprite.hot.pScreen = qe->pScreen;  /* should always be Screen 0 */
-#ifdef XEVIE
-	xeviehot.x =
-#endif
 	sprite.hot.x = qe->event->u.keyButtonPointer.rootX;
-#ifdef XEVIE
-	xeviehot.y =
-#endif
 	sprite.hot.y = qe->event->u.keyButtonPointer.rootY;
 	pWin = inputInfo.pointer->grab ? inputInfo.pointer->grab->confineTo :
 					 NullWindow;
@@ -505,24 +480,12 @@ XineramaCheckVirtualMotion(
 	lims = *RegionExtents(&sprite.Reg2);
 
         if (sprite.hot.x < lims.x1)
-#ifdef XEVIE
-	    xeviehot.x =
-#endif
             sprite.hot.x = lims.x1;
         else if (sprite.hot.x >= lims.x2)
-#ifdef XEVIE
-	    xeviehot.x =
-#endif
             sprite.hot.x = lims.x2 - 1;
         if (sprite.hot.y < lims.y1)
-#ifdef XEVIE
-	    xeviehot.y =
-#endif
             sprite.hot.y = lims.y1;
         else if (sprite.hot.y >= lims.y2)
-#ifdef XEVIE
-	    xeviehot.y =
-#endif
             sprite.hot.y = lims.y2 - 1;
 
 	if (RegionNumRects(&sprite.Reg2) > 1) 
@@ -552,33 +515,15 @@ XineramaCheckMotion(xEvent *xE)
 			  panoramiXdataPtr[0].x;
 	XE_KBPTR.rootY += panoramiXdataPtr[sprite.screen->myNum].y -
 			  panoramiXdataPtr[0].y;
-#ifdef XEVIE
-	xeviehot.x =
-#endif
 	sprite.hot.x = XE_KBPTR.rootX;
-#ifdef XEVIE
-	xeviehot.y =
-#endif
 	sprite.hot.y = XE_KBPTR.rootY;
 	if (sprite.hot.x < sprite.physLimits.x1)
-#ifdef XEVIE
-	    xeviehot.x =
-#endif
 	    sprite.hot.x = sprite.physLimits.x1;
 	else if (sprite.hot.x >= sprite.physLimits.x2)
-#ifdef XEVIE
-	    xeviehot.x =
-#endif
 	    sprite.hot.x = sprite.physLimits.x2 - 1;
 	if (sprite.hot.y < sprite.physLimits.y1)
-#ifdef XEVIE
-	    xeviehot.y =
-#endif
 	    sprite.hot.y = sprite.physLimits.y1;
 	else if (sprite.hot.y >= sprite.physLimits.y2)
-#ifdef XEVIE
-	    xeviehot.y =
-#endif
 	    sprite.hot.y = sprite.physLimits.y2 - 1;
 
 	if (sprite.hotShape) 
@@ -595,9 +540,6 @@ XineramaCheckMotion(xEvent *xE)
 	XE_KBPTR.rootY = sprite.hot.y;
     }
 
-#ifdef XEVIE
-    xeviewin =
-#endif
     sprite.win = XYToWindow(sprite.hot.x, sprite.hot.y);
 
     if (sprite.win != prevSpriteWin)
@@ -821,13 +763,7 @@ CheckVirtualMotion(
     if (qe)
     {
 	sprite.hot.pScreen = qe->pScreen;
-#ifdef XEVIE
-	xeviehot.x =
-#endif
 	sprite.hot.x = qe->event->u.keyButtonPointer.rootX;
-#ifdef XEVIE
-	xeviehot.y =
-#endif
 	sprite.hot.y = qe->event->u.keyButtonPointer.rootY;
 	pWin = inputInfo.pointer->grab ? inputInfo.pointer->grab->confineTo :
 					 NullWindow;
@@ -839,31 +775,16 @@ CheckVirtualMotion(
 	if (sprite.hot.pScreen != pWin->drawable.pScreen)
 	{
 	    sprite.hot.pScreen = pWin->drawable.pScreen;
-#ifdef XEVIE
-	    xeviehot.x = xeviehot.y = 0;
-#endif
 	    sprite.hot.x = sprite.hot.y = 0;
 	}
 	lims = *RegionExtents(&pWin->borderSize);
 	if (sprite.hot.x < lims.x1)
-#ifdef XEVIE
-	    xeviehot.x =
-#endif
 	    sprite.hot.x = lims.x1;
 	else if (sprite.hot.x >= lims.x2)
-#ifdef XEVIE
-	    xeviehot.x =
-#endif
 	    sprite.hot.x = lims.x2 - 1;
 	if (sprite.hot.y < lims.y1)
-#ifdef XEVIE
-	    xeviehot.y =
-#endif
 	    sprite.hot.y = lims.y1;
 	else if (sprite.hot.y >= lims.y2)
-#ifdef XEVIE
-	    xeviehot.y =
-#endif
 	    sprite.hot.y = lims.y2 - 1;
 #ifdef SHAPE
 	if (wBoundingShape(pWin))
@@ -2057,33 +1978,15 @@ CheckMotion(xEvent *xE)
 	    sprite.hot.pScreen = sprite.hotPhys.pScreen;
 	    ROOT = WindowTable[sprite.hot.pScreen->myNum];
 	}
-#ifdef XEVIE
-	xeviehot.x =
-#endif
 	sprite.hot.x = XE_KBPTR.rootX;
-#ifdef XEVIE
-	xeviehot.y =
-#endif
 	sprite.hot.y = XE_KBPTR.rootY;
 	if (sprite.hot.x < sprite.physLimits.x1)
-#ifdef XEVIE
-	    xeviehot.x =
-#endif
 	    sprite.hot.x = sprite.physLimits.x1;
 	else if (sprite.hot.x >= sprite.physLimits.x2)
-#ifdef XEVIE
-	    xeviehot.x =
-#endif
 	    sprite.hot.x = sprite.physLimits.x2 - 1;
 	if (sprite.hot.y < sprite.physLimits.y1)
-#ifdef XEVIE
-	    xeviehot.y =
-#endif
 	    sprite.hot.y = sprite.physLimits.y1;
 	else if (sprite.hot.y >= sprite.physLimits.y2)
-#ifdef XEVIE
-	    xeviehot.y =
-#endif
 	    sprite.hot.y = sprite.physLimits.y2 - 1;
 #ifdef SHAPE
 	if (sprite.hotShape)
@@ -2101,9 +2004,6 @@ CheckMotion(xEvent *xE)
 	XE_KBPTR.rootY = sprite.hot.y;
     }
 
-#ifdef XEVIE
-    xeviewin =
-#endif
     sprite.win = XYToWindow(sprite.hot.x, sprite.hot.y);
 #ifdef notyet
     if (!(sprite.win->deliverableEvents &
@@ -2183,9 +2083,6 @@ DefineInitialRootWindow(register WindowPtr win)
     sprite.hot = sprite.hotPhys;
     sprite.hotLimits.x2 = pScreen->width;
     sprite.hotLimits.y2 = pScreen->height;
-#ifdef XEVIE
-    xeviewin =
-#endif
     sprite.win = win;
     sprite.current = wCursor (win);
     sprite.current->refcnt++;
@@ -2764,45 +2661,6 @@ ProcessKeyboardEvent (register xEvent *xE, register DeviceIntPtr keybd, int coun
     GrabPtr         grab = keybd->grab;
     Bool            deactivateGrab = FALSE;
     register KeyClassPtr keyc = keybd->key;
-#ifdef XEVIE
-    static Window           rootWin = 0;
-
-    if(!xeviegrabState && xevieFlag && clients[xevieClientIndex] &&
-          (xevieMask & xevieFilters[xE->u.u.type])) {
-      key = xE->u.u.detail;
-      kptr = &keyc->down[key >> 3];
-      bit = 1 << (key & 7);
-      if((xE->u.u.type == KeyPress &&  (*kptr & bit)) ||
-         (xE->u.u.type == KeyRelease && !(*kptr & bit)))
-      {} else {
-#ifdef XKB
-        if(!noXkbExtension)
-	    xevieKBEventSent = 1;
-#endif
-        if(!xevieKBEventSent)
-        {
-          xeviekb = keybd;
-          if(!rootWin) {
-	      rootWin = GetCurrentRootWindow()->drawable.id;
-          }
-          xE->u.keyButtonPointer.event = xeviewin->drawable.id;
-          xE->u.keyButtonPointer.root = rootWin;
-          xE->u.keyButtonPointer.child = (xeviewin->firstChild) ? xeviewin->firstChild->
-drawable.id:0;
-          xE->u.keyButtonPointer.rootX = xeviehot.x;
-          xE->u.keyButtonPointer.rootY = xeviehot.y;
-          xE->u.keyButtonPointer.state = keyc->state;
-          WriteToClient(clients[xevieClientIndex], sizeof(xEvent), (char *)xE);
-#ifdef XKB
-          if(noXkbExtension)
-#endif
-            return;
-        } else {
-	    xevieKBEventSent = 0;
-        }
-      }
-    }
-#endif
 
     if (!syncEvents.playingEvents)
     {
@@ -2815,15 +2673,6 @@ drawable.id:0;
 	    CallCallbacks(&DeviceEventCallback, (void *)&eventinfo);
 	}
     }
-#ifdef XEVIE
-    /* fix for bug5094030: don't change the state bit if the event is from XEvIE client */
-    if(!(!xeviegrabState && xevieFlag && clients[xevieClientIndex] &&
-	 (xevieMask & xevieFilters[xE->u.u.type]
-#ifdef XKB
-	  && !noXkbExtension
-#endif
-    )))
-#endif
     XE_KBPTR.state = (keyc->state | inputInfo.pointer->button->state);
     XE_KBPTR.rootX = sprite.hot.x;
     XE_KBPTR.rootY = sprite.hot.y;
@@ -2831,16 +2680,6 @@ drawable.id:0;
     kptr = &keyc->down[key >> 3];
     bit = 1 << (key & 7);
     modifiers = keyc->modifierMap[key];
-#if defined(XKB) && defined(XEVIE)
-    if(!noXkbExtension && !xeviegrabState &&
-       xevieFlag && clients[xevieClientIndex] &&
-       (xevieMask & xevieFilters[xE->u.u.type])) {
-	switch(xE->u.u.type) {
-	  case KeyPress: *kptr &= ~bit; break;
-	  case KeyRelease: *kptr |= bit; break;
-	}
-    }
-#endif
 
 #ifdef DEBUG
     if ((xkbDebugFlags&0x4)&&
@@ -2962,18 +2801,6 @@ ProcessPointerEvent (register xEvent *xE, register DeviceIntPtr mouse, int count
     register ButtonClassPtr butc = mouse->button;
 #ifdef XKB
     XkbSrvInfoPtr xkbi= inputInfo.keyboard->key->xkbInfo;
-#endif
-#ifdef XEVIE
-    if(xevieFlag && clients[xevieClientIndex] && !xeviegrabState &&
-       (xevieMask & xevieFilters[xE->u.u.type])) {
-      if(xevieEventSent)
-        xevieEventSent = 0;
-      else {
-        xeviemouse = mouse;
-        WriteToClient(clients[xevieClientIndex], sizeof(xEvent), (char *)xE);
-        return;
-      }
-    }
 #endif
 
     if (!syncEvents.playingEvents)
@@ -4104,9 +3931,6 @@ InitEvents()
     spriteTraceGood = 0;
     lastEventMask = OwnerGrabButtonMask;
     filters[MotionNotify] = PointerMotionMask;
-#ifdef XEVIE
-    xeviewin =
-#endif
     sprite.win = NullWindow;
     sprite.current = NullCursor;
     sprite.hotLimits.x1 = 0;

@@ -944,10 +944,6 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 # endif
 #endif
 
-#ifndef BuildDmx
-#define BuildDmx	YES
-#endif
-
 #include <lnxLib.rules>
 # include <xorg.cf>
 

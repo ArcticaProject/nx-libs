@@ -1390,10 +1390,6 @@ Bool LocalClient(ClientPtr client)
 	return FALSE;
     }
 #endif
-#ifdef LBX
-    if (!((OsCommPtr)client->osPrivate)->trans_conn)
-	return FALSE;
-#endif
     if (!_XSERVTransGetPeerAddr (((OsCommPtr)client->osPrivate)->trans_conn,
 	&notused, &alen, &from))
     {

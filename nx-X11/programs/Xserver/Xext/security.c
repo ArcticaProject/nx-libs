@@ -60,14 +60,6 @@ in this Software without prior written authorization from The Open Group.
 #include <nx-X11/extensions/securstr.h>
 #include <assert.h>
 #include <stdarg.h>
-#ifdef LBX
-#define _XLBX_SERVER_
-#include <nx-X11/extensions/XLbx.h>
-extern unsigned char LbxReqCode;
-#endif
-#ifdef XAPPGROUP
-#include <nx-X11/extensions/Xagsrv.h>
-#endif
 #include <stdio.h>  /* for file reading operations */
 #include <nx-X11/Xatom.h>  /* for XA_STRING */
 
@@ -1165,10 +1157,6 @@ SecurityCheckResourceIDAccess(
       * use app groups.  dpw
       */
 	if (client->trustLevel == clients[cid]->trustLevel
-#ifdef XAPPGROUP
-	    || (RT_COLORMAP == rtype && 
-		XagDefaultColormap (client) == (Colormap) id)
-#endif
 	)
 	    return rval;
 	else
@@ -1231,18 +1219,6 @@ SecurityCheckResourceIDAccess(
 
 		default:
 		{
-#ifdef LBX
-		    /* XXX really need per extension dispatching */
-		    if (reqtype == LbxReqCode) {
-			switch (((xReq *)client->requestBuffer)->data) {
-			case X_LbxGetProperty:
-			case X_LbxChangeProperty:
-			    return rval;
-			default:
-			    break;
-			}
-		    }
-#endif
 		    /* others not allowed */
 		    return SecurityAuditResourceIDAccess(client, id);
 		}
@@ -1342,22 +1318,6 @@ SecurityClientStateCallback(
 	default: break; 
     }
 } /* SecurityClientStateCallback */
-
-#ifdef LBX
-Bool
-SecuritySameLevel(client, authId)
-    ClientPtr client;
-    XID authId;
-{
-    SecurityAuthorizationPtr pAuth;
-
-    pAuth = (SecurityAuthorizationPtr)LookupIDByType(authId,
-						SecurityAuthorizationResType);
-    if (pAuth)
-	return client->trustLevel == pAuth->trustLevel;
-    return client->trustLevel == XSecurityClientTrusted;
-}
-#endif
 
 /* SecurityCensorImage
  *

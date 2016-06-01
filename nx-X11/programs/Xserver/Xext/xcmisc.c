@@ -34,8 +34,8 @@ from The Open Group.
 #include <dix-config.h>
 #endif
 
-#include <nx-X11/X.h>
-#include <nx-X11/Xproto.h>
+#include <X11/X.h>
+#include <X11/Xproto.h>
 #include "misc.h"
 #include "os.h"
 #include "dixstruct.h"
@@ -44,7 +44,11 @@ from The Open Group.
 #include <nx-X11/extensions/xcmiscstr.h>
 #include "modinit.h"
 
+#if HAVE_STDINT_H
 #include <stdint.h>
+#elif !defined(UINT32_MAX)
+#define UINT32_MAX 0xffffffffU
+#endif
 
 #if 0
 static unsigned char XCMiscCode;

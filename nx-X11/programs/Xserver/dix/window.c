@@ -104,9 +104,6 @@ Equipment Corporation.
 #include "dixevents.h"
 #include "globals.h"
 
-#ifdef XAPPGROUP
-#include <nx-X11/extensions/Xagsrv.h>
-#endif
 #ifdef XCSECURITY
 #define _SECURITY_SERVER
 #include <nx-X11/extensions/security.h>
@@ -607,14 +604,6 @@ CreateWindow(Window wid, register WindowPtr pParent, int x, int y, unsigned w,
     if (!ancwopt)
 	ancwopt = FindWindowWithOptional(pParent)->optional;
     if (visual == CopyFromParent) {
-#ifdef XAPPGROUP
-	VisualID ag_visual;
-
-	if (client->appgroup && !pParent->parent &&
-	    (ag_visual = XagRootVisual (client)))
-	    visual = ag_visual;
-	else
-#endif
 	visual = ancwopt->visual;
     }
 
@@ -1276,22 +1265,6 @@ ChangeWindowAttributes(register WindowPtr pWin, Mask vmask, XID *vlist, ClientPt
 	    pVlist++;
 	    if (cmap == CopyFromParent)
 	    {
-#ifdef XAPPGROUP
-		Colormap ag_colormap;
-		ClientPtr win_owner;
-
-		/*
-		 * win_owner == client for CreateWindow, other clients
-		 * can ChangeWindowAttributes
-		 */
-		win_owner = clients[CLIENT_ID(pWin->drawable.id)];
-
-		if ( win_owner && win_owner->appgroup &&
-		    !pWin->parent->parent &&
-		    (ag_colormap = XagDefaultColormap (win_owner)))
-		    cmap = ag_colormap;
-		else
-#endif
 		if (pWin->parent &&
 		    (!pWin->optional ||
 		     pWin->optional->visual == wVisual (pWin->parent)))
@@ -2208,10 +2181,6 @@ ConfigureWindow(register WindowPtr pWin, register Mask mask, XID *vlist, ClientP
 		   h = pWin->drawable.height,
 		   bw = pWin->borderWidth;
     int action, smode = Above;
-#ifdef XAPPGROUP
-    ClientPtr win_owner;
-    ClientPtr ag_leader = NULL;
-#endif
     xEvent event;
 
     if ((pWin->drawable.class == InputOnly) && (mask & IllegalInputOnlyConfigureMask))
@@ -2308,17 +2277,8 @@ ConfigureWindow(register WindowPtr pWin, register Mask mask, XID *vlist, ClientP
     else
 	pSib = pWin->nextSib;
 
-#ifdef XAPPGROUP
-    win_owner = clients[CLIENT_ID(pWin->drawable.id)];
-    ag_leader = XagLeader (win_owner);
-#endif
-
     if ((!pWin->overrideRedirect) && 
 	(RedirectSend(pParent)
-#ifdef XAPPGROUP
-	|| (win_owner->appgroup && ag_leader && 
-	    XagIsControlledRoot (client, pParent))
-#endif
 	))
     {
 	memset(&event, 0, sizeof(xEvent));
@@ -2344,16 +2304,6 @@ ConfigureWindow(register WindowPtr pWin, register Mask mask, XID *vlist, ClientP
 	event.u.configureRequest.height = h;
 	event.u.configureRequest.borderWidth = bw;
 	event.u.configureRequest.valueMask = mask;
-#ifdef XAPPGROUP
-	/* make sure if the ag_leader maps the window it goes to the wm */
-	if (ag_leader && ag_leader != client && 
-	    XagIsControlledRoot (client, pParent)) {
-	    event.u.configureRequest.parent = XagId (win_owner);
-	    (void) TryClientEvents (ag_leader, &event, 1,
-				    NoEventMask, NoEventMask, NullGrab);
-	    return Success;
-	}
-#endif
 	event.u.configureRequest.parent = pParent->drawable.id;
 	if (MaybeDeliverEventsToClient(pParent, &event, 1,
 		SubstructureRedirectMask, client) == 1)
@@ -2714,32 +2664,14 @@ MapWindow(register WindowPtr pWin, ClientPtr client)
     {
 	xEvent event;
 	Bool anyMarked;
-#ifdef XAPPGROUP
-	ClientPtr win_owner = clients[CLIENT_ID(pWin->drawable.id)];
-	ClientPtr ag_leader = XagLeader (win_owner);
-#endif
 
 	if ((!pWin->overrideRedirect) && 
 	    (RedirectSend(pParent)
-#ifdef XAPPGROUP
-	    || (win_owner->appgroup && ag_leader &&
-		XagIsControlledRoot (client, pParent))
-#endif
 	))
 	{
 	    memset(&event, 0, sizeof(xEvent));
 	    event.u.u.type = MapRequest;
 	    event.u.mapRequest.window = pWin->drawable.id;
-#ifdef XAPPGROUP
-	    /* make sure if the ag_leader maps the window it goes to the wm */
-	    if (ag_leader && ag_leader != client &&
-		XagIsControlledRoot (client, pParent)) {
-		event.u.mapRequest.parent = XagId (win_owner);
-		(void) TryClientEvents (ag_leader, &event, 1,
-					NoEventMask, NoEventMask, NullGrab);
-		return Success;
-	    }
-#endif
 	    event.u.mapRequest.parent = pParent->drawable.id;
 
 	    if (MaybeDeliverEventsToClient(pParent, &event, 1,

@@ -31,12 +31,12 @@ ALLOC_DEFINES = Malloc0ReturnsNullDefines
 
       DEFINES = $(ALLOC_DEFINES)
      INCLUDES = -I$(XLIBSRC)
-         SRCS = globals.c extutil.c XMultibuf.c XShape.c $(SHMSRCS)  \
-		MITMisc.c XTestExt1.c XSync.c Xdbe.c XLbx.c \
-		XSecurity.c XAppgroup.c Xcup.c DPMS.c XEVI.c
-         OBJS = globals.o extutil.o XMultibuf.o XShape.o $(SHMOBJS) \
-		MITMisc.o XTestExt1.o XSync.o Xdbe.o XLbx.o \
-		XSecurity.o XAppgroup.o Xcup.o DPMS.o XEVI.o
+         SRCS = globals.c extutil.c XShape.c $(SHMSRCS)  \
+		XTestExt1.c XSync.c \
+		XSecurity.c DPMS.c
+         OBJS = globals.o extutil.o XShape.o $(SHMOBJS) \
+		XTestExt1.o XSync.o \
+		XSecurity.o DPMS.o
      LINTLIBS = $(LINTXLIB)
 
 #include <Library.tmpl>

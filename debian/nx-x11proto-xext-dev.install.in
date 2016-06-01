@@ -3,3 +3,4 @@ usr/include/*/nx-X11/extensions/xtestconst.h
 usr/include/*/nx-X11/extensions/shapestr.h
 usr/include/*/nx-X11/extensions/shmstr.h
 usr/include/*/nx-X11/extensions/syncstr.h
+usr/include/*/nx-X11/extensions/Xdbeproto.h

@@ -472,32 +472,10 @@ IPLAN2P8_DEFS = -DUSE_IPLAN2P8
 #endif
 
 /*
- * Build the XFree86-VidMode extension
- */
-#ifndef BuildXF86VidModeExt
-# define BuildXF86VidModeExt		YES
-#endif
-
-/* Don't build this now because the interface hasn't been done yet */
-/*
- * Build the XFree86-Misc extension
- */
-#ifndef BuildXF86MiscExt
-# define BuildXF86MiscExt		YES
-#endif
-
-/*
  * Build the XFree86-Bigfont extension
  */
 #ifndef BuildXF86BigfontExt
 # define BuildXF86BigfontExt		YES
-#endif
-
-/*
- * Build the XFree86 DGA support
- */
-#ifndef BuildXF86DGA
-# define BuildXF86DGA			YES
 #endif
 
 /*
@@ -576,12 +554,6 @@ IPLAN2P8_DEFS = -DUSE_IPLAN2P8
 #define InstallJapaneseDocs	NO
 #endif
 
-#if BuildXF86DGA
-# define XFree86DGADefines	-DXFreeXDGA
-#else
-# define XFree86DGADefines	/**/
-#endif
-
 #if BuildXvExt
 # define XFree86XvDefines	-DXvExtension
 #else
@@ -643,9 +615,8 @@ IPLAN2P8_DEFS = -DUSE_IPLAN2P8
 /* Server defines required for all OSs */
 #ifndef XFree86ServerDefines
 # define XFree86ServerDefines	-DAVOID_GLYPHBLT -DPIXPRIV -DSINGLEDEPTH \
-				XFree86DGADefines XFree86XvDefines \
+				XFree86XvDefines \
 				XFree86LoaderDefines -DXFree86Server \
-				VidModeExtensionDefines \
 				XFree86XvMCDefines \
 				SmartScheduleDefines \
 				DebugDefines XFree86XResDefines \

@@ -93,29 +93,14 @@ extern Bool noDPSExtension;
 #ifdef DPMSExtension
 extern Bool noDPMSExtension;
 #endif
-#ifdef EVI
-extern Bool noEVIExtension;
-#endif
-#ifdef FONTCACHE
-extern Bool noFontCacheExtension;
-#endif
 #ifdef GLXEXT
 extern Bool noGlxExtension;
-#endif
-#ifdef LBX
-extern Bool noLbxExtension;
 #endif
 #ifdef SCREENSAVER
 extern Bool noScreenSaverExtension;
 #endif
 #ifdef MITSHM
 extern Bool noMITShmExtension;
-#endif
-#ifdef MITMISC
-extern Bool noMITMiscExtension;
-#endif
-#ifdef MULTIBUFFER
-extern Bool noMultibufferExtension;
 #endif
 #ifdef RANDR
 extern Bool noRRExtension;
@@ -132,35 +117,17 @@ extern Bool noSecurityExtension;
 #ifdef XSYNC
 extern Bool noSyncExtension;
 #endif
-#ifdef TOGCUP
-extern Bool noXcupExtension;
-#endif
 #ifdef RES
 extern Bool noResExtension;
-#endif
-#ifdef XAPPGROUP
-extern Bool noXagExtension;
 #endif
 #ifdef XCMISC
 extern Bool noXCMiscExtension;
 #endif
-#ifdef XEVIE
-extern Bool noXevieExtension;
-#endif
 #ifdef XF86BIGFONT
 extern Bool noXFree86BigfontExtension;
 #endif
-#ifdef XFreeXDGA
-extern Bool noXFree86DGAExtension;
-#endif
 #ifdef XF86DRI
 extern Bool noXFree86DRIExtension;
-#endif
-#ifdef XF86MISC
-extern Bool noXFree86MiscExtension;
-#endif
-#ifdef XF86VIDMODE
-extern Bool noXFree86VidModeExtension;
 #endif
 #ifdef XFIXES
 extern Bool noXFixesExtension;
@@ -200,14 +167,6 @@ typedef void (*InitExtension)(INITARGS);
 #ifdef XKB
 #include <nx-X11/extensions/XKB.h>
 #endif
-#ifdef LBX
-#define _XLBX_SERVER_
-#include <nx-X11/extensions/lbxstr.h>
-#endif
-#ifdef XAPPGROUP
-#define _XAG_SERVER_
-#include <nx-X11/extensions/Xagstr.h>
-#endif
 #ifdef XCSECURITY
 #define _SECURITY_SERVER
 #include <nx-X11/extensions/securstr.h>
@@ -229,14 +188,8 @@ extern void XTestExtension1Init(INITARGS);
 #ifdef SHAPE
 extern void ShapeExtensionInit(INITARGS);
 #endif
-#ifdef EVI
-extern void EVIExtensionInit(INITARGS);
-#endif
 #ifdef MITSHM
 extern void ShmExtensionInit(INITARGS);
-#endif
-#ifdef MULTIBUFFER
-extern void MultibufferExtensionInit(INITARGS);
 #endif
 #ifdef PANORAMIX
 extern void PanoramiXExtensionInit(INITARGS);
@@ -250,14 +203,8 @@ extern void XTestExtensionInit(INITARGS);
 #ifdef BIGREQS
 extern void BigReqExtensionInit(INITARGS);
 #endif
-#ifdef MITMISC
-extern void MITMiscExtensionInit(INITARGS);
-#endif
 #ifdef XIDLE
 extern void XIdleExtensionInit(INITARGS);
-#endif
-#ifdef XTRAP
-extern void DEC_XTRAPInit(INITARGS);
 #endif
 #ifdef SCREENSAVER
 extern void ScreenSaverExtensionInit (INITARGS);
@@ -278,29 +225,14 @@ extern void XCMiscExtensionInit(INITARGS);
 #ifdef XRECORD
 extern void RecordExtensionInit(INITARGS);
 #endif
-#ifdef LBX
-extern void LbxExtensionInit(INITARGS);
-#endif
 #ifdef DBE
 extern void DbeExtensionInit(INITARGS);
-#endif
-#ifdef XAPPGROUP
-extern void XagExtensionInit(INITARGS);
 #endif
 #ifdef XCSECURITY
 extern void SecurityExtensionInit(INITARGS);
 #endif
 #ifdef XF86BIGFONT
 extern void XFree86BigfontExtensionInit(INITARGS);
-#endif
-#ifdef XF86VIDMODE
-extern void XFree86VidModeExtensionInit(INITARGS);
-#endif
-#ifdef XF86MISC
-extern void XFree86MiscExtensionInit(INITARGS);
-#endif
-#ifdef XFreeXDGA
-extern void XFree86DGAExtensionInit(INITARGS);
 #endif
 #ifdef GLXEXT
 #ifndef __DARWIN__
@@ -314,17 +246,11 @@ extern void DarwinGlxWrapInitVisuals(miInitVisualsProcPtr *);
 #ifdef XF86DRI
 extern void XFree86DRIExtensionInit(INITARGS);
 #endif
-#ifdef TOGCUP
-extern void XcupExtensionInit(INITARGS);
-#endif
 #ifdef DPMSExtension
 extern void DPMSExtensionInit(INITARGS);
 #endif
 #ifdef DPSEXT
 extern void DPSExtensionInit(INITARGS);
-#endif
-#ifdef FONTCACHE
-extern void FontCacheExtensionInit(INITARGS);
 #endif
 #ifdef RENDER
 extern void RenderExtensionInit(INITARGS);
@@ -337,9 +263,6 @@ extern void ResExtensionInit(INITARGS);
 #endif
 #ifdef DMXEXT
 extern void DMXExtensionInit(INITARGS);
-#endif
-#ifdef XEVIE
-extern void XevieExtensionInit(INITARGS);
 #endif
 #ifdef XFIXES
 extern void XFixesExtensionInit(INITARGS);
@@ -380,29 +303,14 @@ static ExtensionToggle ExtensionToggleList[] =
 #ifdef DPMSExtension
     { "DPMS", &noDPMSExtension },
 #endif
-#ifdef EVI
-    { "Extended-Visual-Information", &noEVIExtension },
-#endif
-#ifdef FONTCACHE
-    { "FontCache", &noFontCacheExtension },
-#endif
 #ifdef GLXEXT
     { "GLX", &noGlxExtension },
-#endif
-#ifdef LBX
-    { "LBX", &noLbxExtension },
 #endif
 #ifdef SCREENSAVER
     { "MIT-SCREEN-SAVER", &noScreenSaverExtension },
 #endif
 #ifdef MITSHM
     { SHMNAME, &noMITShmExtension },
-#endif
-#ifdef MITMISC
-    { "MIT-SUNDRY-NONSTANDARD", &noMITMiscExtension },
-#endif
-#ifdef MULTIBUFFER
-    { "Multi-Buffering", &noMultibufferExtension },
 #endif
 #ifdef RANDR
     { "RANDR", &noRRExtension },
@@ -419,35 +327,17 @@ static ExtensionToggle ExtensionToggleList[] =
 #ifdef XSYNC
     { "SYNC", &noSyncExtension },
 #endif
-#ifdef TOGCUP
-    { "TOG-CUP", &noXcupExtension },
-#endif
 #ifdef RES
     { "X-Resource", &noResExtension },
-#endif
-#ifdef XAPPGROUP
-    { "XC-APPGROUP", &noXagExtension },
 #endif
 #ifdef XCMISC
     { "XC-MISC", &noXCMiscExtension },
 #endif
-#ifdef XEVIE
-    { "XEVIE", &noXevieExtension },
-#endif
 #ifdef XF86BIGFONT
     { "XFree86-Bigfont", &noXFree86BigfontExtension },
 #endif
-#ifdef XFreeXDGA
-    { "XFree86-DGA", &noXFree86DGAExtension },
-#endif
 #ifdef XF86DRI
     { "XFree86-DRI", &noXFree86DRIExtension },
-#endif
-#ifdef XF86MISC
-    { "XFree86-Misc", &noXFree86MiscExtension },
-#endif
-#ifdef XF86VIDMODE
-    { "XFree86-VidModeExtension", &noXFree86VidModeExtension },
 #endif
 #ifdef XFIXES
     { "XFIXES", &noXFixesExtension },
@@ -515,12 +405,6 @@ InitExtensions(argc, argv)
 #ifdef MITSHM
     if (!noMITShmExtension) ShmExtensionInit();
 #endif
-#ifdef EVI
-    if (!noEVIExtension) EVIExtensionInit();
-#endif
-#ifdef MULTIBUFFER
-    if (!noMultibufferExtension) MultibufferExtensionInit();
-#endif
 #if defined(XINPUT) && !defined(NO_HW_ONLY_EXTS)
     if (!noXInputExtension) XInputExtensionInit();
 #endif
@@ -530,14 +414,8 @@ InitExtensions(argc, argv)
 #ifdef BIGREQS
     if (!noBigReqExtension) BigReqExtensionInit();
 #endif
-#ifdef MITMISC
-    if (!noMITMiscExtension) MITMiscExtensionInit();
-#endif
 #ifdef XIDLE
     if (!noXIdleExtension) XIdleExtensionInit();
-#endif
-#ifdef XTRAP
-    if (!noTestExtensions) DEC_XTRAPInit();
 #endif
 #if defined(SCREENSAVER) && !defined(PRINT_ONLY_SERVER)
     if (!noScreenSaverExtension) ScreenSaverExtensionInit ();
@@ -560,40 +438,19 @@ InitExtensions(argc, argv)
 #ifdef XRECORD
     if (!noTestExtensions) RecordExtensionInit(); 
 #endif
-#ifdef LBX
-    if (!noLbxExtension) LbxExtensionInit();
-#endif
 #ifdef DBE
     if (!noDbeExtension) DbeExtensionInit();
-#endif
-#ifdef XAPPGROUP
-    if (!noXagExtension) XagExtensionInit();
 #endif
 #ifdef XCSECURITY
     if (!noSecurityExtension) SecurityExtensionInit();
 #endif
-#ifdef TOGCUP
-    if (!noXcupExtension) XcupExtensionInit();
-#endif
 #if defined(DPMSExtension) && !defined(NO_HW_ONLY_EXTS)
     if (!noDPMSExtension) DPMSExtensionInit();
-#endif
-#ifdef FONTCACHE
-    if (!noFontCacheExtension) FontCacheExtensionInit();
 #endif
 #ifdef XF86BIGFONT
     if (!noXFree86BigfontExtension) XFree86BigfontExtensionInit();
 #endif
 #if !defined(PRINT_ONLY_SERVER) && !defined(NO_HW_ONLY_EXTS)
-#if defined(XF86VIDMODE)
-    if (!noXFree86VidModeExtension) XFree86VidModeExtensionInit();
-#endif
-#if defined(XF86MISC)
-    if (!noXFree86MiscExtension) XFree86MiscExtensionInit();
-#endif
-#if defined(XFreeXDGA)
-    if (!noXFree86DGAExtension) XFree86DGAExtensionInit();
-#endif
 #ifdef XF86DRI
     if (!noXFree86DRIExtension) XFree86DRIExtensionInit();
 #endif
@@ -620,9 +477,6 @@ InitExtensions(argc, argv)
 #endif
 #ifdef DMXEXT
     DMXExtensionInit(); /* server-specific extension, cannot be disabled */
-#endif
-#ifdef XEVIE
-    if (!noXevieExtension) XevieExtensionInit();
 #endif
 #ifdef COMPOSITE
     if (!noCompositeExtension) CompositeExtensionInit();
@@ -666,12 +520,6 @@ static ExtensionModule staticExtensions[] = {
 #ifdef XKB
     { XkbExtensionInit, XkbName, &noXkbExtension, NULL, NULL },
 #endif
-#ifdef LBX
-    { LbxExtensionInit, LBXNAME, &noLbxExtension, NULL, NULL },
-#endif
-#ifdef XAPPGROUP
-    { XagExtensionInit, XAGNAME, &noXagExtension, NULL, NULL },
-#endif
 #ifdef XCSECURITY
     { SecurityExtensionInit, SECURITY_EXTENSION_NAME, &noSecurityExtension, NULL, NULL },
 #endif
@@ -697,9 +545,6 @@ static ExtensionModule staticExtensions[] = {
 #ifdef DAMAGE
     { DamageExtensionInit, "DAMAGE", &noDamageExtension, NULL },
 #endif
-#ifdef XEVIE
-    { XevieExtensionInit, "XEVIE", &noXevieExtension, NULL },
-#endif 
     { NULL, NULL, NULL, NULL, NULL }
 };
     

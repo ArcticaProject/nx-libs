@@ -105,10 +105,6 @@ INSTPGMFLAGS =
 #if BuildRECORD || BuildRECORDlib
       RECORDDIR = record
 #endif
-#if BuildXTrap
-       XTRAPEXT = XTrap/LibraryTargetName(xtrap)
-       XTRAPDIR = XTrap
-#endif
 #ifdef SiteExtensionLibs
        SITEEXTS = SiteExtensionLibs
 #endif
@@ -153,7 +149,7 @@ INSTPGMFLAGS =
 #if DoLoadableServer
      EXTENSIONS = $(COMPOSITELIB) $(DAMAGELIB) $(DAMAGE) $(FIXESLIB) $(CW) \
 		  $(OTHEREXTS) $(RANDRLIB) $(RENDERLIB)
-   LOADABLEEXTS = $(MISCEXT) $(DBEEXT) $(RECORDEXT) $(GLXEXT) $(XTRAPEXT)
+   LOADABLEEXTS = $(MISCEXT) $(DBEEXT) $(RECORDEXT) $(GLXEXT)
         MISCEXT = Xext/LibraryTargetName(ext)
       OTHEREXTS = Xext/LibraryTargetName(exts) $(XKBEXT) $(XINPUTEXT) \
                   $(SITEEXTS)
@@ -161,11 +157,11 @@ INSTPGMFLAGS =
      EXTENSIONS = $(COMPOSITELIB) $(DAMAGELIB) $(DAMAGE) $(FIXESLIB) $(CW) \
 		  $(OTHEREXTS) $(GLXEXT) $(RANDRLIB) $(RENDERLIB)
       OTHEREXTS = Xext/LibraryTargetName(ext) $(XKBEXT) $(XINPUTEXT) \
-                  $(DBEEXT) $(RECORDEXT) $(SITEEXTS) $(XTRAPEXT)
+                  $(DBEEXT) $(RECORDEXT) $(SITEEXTS)
 #endif
         EXTDIRS = Xext $(XKBDIR) $(XIDIR) $(GLXDIR) \
                   $(DBEDIR) $(RECORDDIR) $(SITEEXTDIRS) \
-                  $(RANDRDIR) $(RENDERDIR) $(XTRAPDIR) $(XPCONFIGDIR) \
+                  $(RANDRDIR) $(RENDERDIR) $(XPCONFIGDIR) \
 		  $(FIXESDIR) $(DAMAGEDIR) $(CWDIR) $(COMPOSITEDIR)
              OS = os/LibraryTargetName(os) $(DEPXAUTHLIB)
         BSDEMUL = $(DEPXBSDLIB)
