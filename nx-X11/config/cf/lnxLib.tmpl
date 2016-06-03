@@ -9,15 +9,7 @@ XCOMM $XFree86: xc/config/cf/lnxLib.tmpl,v 3.19 2003/10/15 22:47:48 herrb Exp $
 #define SharedXlibi18nReqs $(LDPRELIB) $(XONLYLIB)
 #define SharedOldXReqs	  $(LDPRELIB) $(XONLYLIB)
 #define SharedXextReqs	  $(LDPRELIB) $(XONLYLIB)
-#define SharedXrenderReqs $(LDPRELIB) $(XLIB)
-#define SharedXtstReqs	  $(LDPRELIB) $(XLIB)
 
-#define SharedGLReqs	  $(LDPRELIB) $(XLIB) -ldl
-
-#define SharedXineramaReqs	$(LDPRELIB) $(XLIB)
 #define SharedxkbfileReqs	$(LDPRELIB) $(XONLYLIB)
-#define SharedXfixesReqs	$(LDPRELIB) $(XLIB)
-#define SharedXdamageReqs	$(LDPRELIB) $(XLIB)
-#define SharedXcompositeReqs	$(LDPRELIB) $(XDAMAGELIB) $(XFIXESLIB) $(XLIB)
 
 #define NoMessageCatalog
