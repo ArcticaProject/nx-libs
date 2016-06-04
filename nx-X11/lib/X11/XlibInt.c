@@ -874,7 +874,7 @@ void _XSeqSyncFunction(
     register Display *dpy)
 {
     xGetInputFocusReply rep;
-    register xReq *req;
+    _X_UNUSED register xReq *req;
 
 #ifdef NX_TRANS_SOCKET
 #ifdef NX_TRANS_DEBUG

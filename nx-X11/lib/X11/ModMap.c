@@ -34,12 +34,12 @@ XModifierKeymap *
 XGetModifierMapping(register Display *dpy)
 {
     xGetModifierMappingReply rep;
-    register xReq *req;
+    _X_UNUSED register xReq *req;
     unsigned long nbytes;
     XModifierKeymap *res;
 
     LockDisplay(dpy);
-    GetEmptyReq(GetModifierMapping, req); // Never used ?
+    GetEmptyReq(GetModifierMapping, req);
     (void) _XReply (dpy, (xReply *)&rep, 0, xFalse);
 
     if (rep.length < (INT_MAX >> 2) &&
