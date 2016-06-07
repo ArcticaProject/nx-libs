@@ -62,7 +62,7 @@ SProcRRSetScreenConfig (ClientPtr client)
     {
 	REQUEST_SIZE_MATCH (xRR1_0SetScreenConfigReq);
     }
-    
+
     swaps(&stuff->length, n);
     swapl(&stuff->drawable, n);
     swapl(&stuff->timestamp, n);
@@ -208,7 +208,7 @@ SProcRRDeleteOutputProperty (ClientPtr client)
 {
     int n;
     REQUEST(xRRDeleteOutputPropertyReq);
-    
+
     REQUEST_SIZE_MATCH(xRRDeleteOutputPropertyReq);
     swaps(&stuff->length, n);
     swapl(&stuff->output, n);

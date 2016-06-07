@@ -55,7 +55,7 @@ RRCrtcChanged (RRCrtcPtr crtc, Bool layoutChanged)
     if (pScreen)
     {
 	rrScrPriv(pScreen);
-    
+
 	pScrPriv->changed = TRUE;
 	/*
 	 * Send ConfigureNotify on any layout change
@@ -77,19 +77,19 @@ RRCrtcCreate (ScreenPtr pScreen, void *devPrivate)
 
     if (!RRInit())
 	return NULL;
-    
+
     pScrPriv = rrGetScrPriv(pScreen);
 
     /* make space for the crtc pointer */
     if (pScrPriv->numCrtcs)
-	crtcs = xrealloc (pScrPriv->crtcs, 
+	crtcs = xrealloc (pScrPriv->crtcs,
 			  (pScrPriv->numCrtcs + 1) * sizeof (RRCrtcPtr));
     else
 	crtcs = xalloc (sizeof (RRCrtcPtr));
     if (!crtcs)
 	return FALSE;
     pScrPriv->crtcs = crtcs;
-    
+
     crtc = xcalloc (1, sizeof (RRCrtcRec));
     if (!crtc)
 	return NULL;
@@ -113,7 +113,7 @@ RRCrtcCreate (ScreenPtr pScreen, void *devPrivate)
     /* attach the screen and crtc together */
     crtc->pScreen = pScreen;
     pScrPriv->crtcs[pScrPriv->numCrtcs++] = crtc;
-    
+
     return crtc;
 }
 
@@ -140,7 +140,7 @@ RRCrtcNotify (RRCrtcPtr	    crtc,
 	      RROutputPtr   *outputs)
 {
     int	    i, j;
-    
+
     /*
      * Check to see if any of the new outputs were
      * not in the old list and mark them as changed
@@ -241,7 +241,7 @@ RRDeliverCrtcEvent (ClientPtr client, WindowPtr pWin, RRCrtcPtr crtc)
     rrScrPriv (pScreen);
     xRRCrtcChangeNotifyEvent	ce;
     RRModePtr	mode = crtc->mode;
-    
+
     ce.type = RRNotify + RREventBase;
     ce.subCode = RRNotify_CrtcChange;
     ce.sequenceNumber = client->sequence;
@@ -316,7 +316,7 @@ RRCrtcSet (RRCrtcPtr    crtc,
 #if RANDR_12_INTERFACE
 	if (pScrPriv->rrCrtcSet)
 	{
-	    ret = (*pScrPriv->rrCrtcSet) (pScreen, crtc, mode, x, y, 
+	    ret = (*pScrPriv->rrCrtcSet) (pScreen, crtc, mode, x, y,
 					  rotation, numOutputs, outputs);
 	}
 	else
@@ -394,7 +394,7 @@ RRCrtcDestroyResource (void * value, XID pid)
     {
 	rrScrPriv(pScreen);
 	int		i;
-    
+
 	for (i = 0; i < pScrPriv->numCrtcs; i++)
 	{
 	    if (pScrPriv->crtcs[i] == crtc)
@@ -428,7 +428,7 @@ RRCrtcGammaSet (RRCrtcPtr   crtc,
 #if RANDR_12_INTERFACE
     ScreenPtr	pScreen = crtc->pScreen;
 #endif
-    
+
     memcpy (crtc->gammaRed, red, crtc->gammaSize * sizeof (CARD16));
     memcpy (crtc->gammaGreen, green, crtc->gammaSize * sizeof (CARD16));
     memcpy (crtc->gammaBlue, blue, crtc->gammaSize * sizeof (CARD16));
@@ -538,7 +538,7 @@ ProcRRGetCrtcInfo (ClientPtr client)
     RROutput			*possible;
     int				i, j, k, n;
     int				width, height;
-    
+
     REQUEST_SIZE_MATCH(xRRGetCrtcInfoReq);
     crtc = LookupCrtc(client, stuff->crtc, DixReadAccess);
 
@@ -552,7 +552,7 @@ ProcRRGetCrtcInfo (ClientPtr client)
     pScrPriv = rrGetScrPriv(pScreen);
 
     mode = crtc->mode;
-    
+
     rep.type = X_Reply;
     rep.status = RRSetConfigSuccess;
     rep.sequenceNumber = client->sequence;
@@ -573,7 +573,7 @@ ProcRRGetCrtcInfo (ClientPtr client)
 	    if (pScrPriv->outputs[i]->crtcs[j] == crtc)
 		k++;
     rep.nPossibleOutput = k;
-    
+
     rep.length = rep.nOutput + rep.nPossibleOutput;
 
     extraLen = rep.length << 2;
@@ -588,7 +588,7 @@ ProcRRGetCrtcInfo (ClientPtr client)
 
     outputs = (RROutput *) extra;
     possible = (RROutput *) (outputs + rep.nOutput);
-    
+
     for (i = 0; i < crtc->numOutputs; i++)
     {
 	outputs[i] = crtc->outputs[i]->id;
@@ -605,7 +605,7 @@ ProcRRGetCrtcInfo (ClientPtr client)
 		    swapl (&possible[k], n);
 		k++;
 	    }
-    
+
     if (client->swapped) {
 	swaps(&rep.sequenceNumber, n);
 	swapl(&rep.length, n);
@@ -626,7 +626,7 @@ ProcRRGetCrtcInfo (ClientPtr client)
 	WriteToClient (client, extraLen, (char *) extra);
 	xfree (extra);
     }
-    
+
     return client->noClientException;
 }
 
@@ -645,10 +645,10 @@ ProcRRSetCrtcConfig (ClientPtr client)
     TimeStamp		    time;
     Rotation		    rotation;
     int			    i, j;
-    
+
     REQUEST_AT_LEAST_SIZE(xRRSetCrtcConfigReq);
     numOutputs = (stuff->length - (SIZEOF (xRRSetCrtcConfigReq) >> 2));
-    
+
     crtc = LookupIDByType (stuff->crtc, RRCrtcType);
     if (!crtc)
     {
@@ -680,7 +680,7 @@ ProcRRSetCrtcConfig (ClientPtr client)
     }
     else
 	outputs = NULL;
-    
+
     outputIds = (RROutput *) (stuff + 1);
     for (i = 0; i < numOutputs; i++)
     {
@@ -705,7 +705,7 @@ ProcRRSetCrtcConfig (ClientPtr client)
 	/* validate mode for this output */
 	for (j = 0; j < outputs[i]->numModes + outputs[i]->numUserModes; j++)
 	{
-	    RRModePtr	m = (j < outputs[i]->numModes ? 
+	    RRModePtr	m = (j < outputs[i]->numModes ?
 			     outputs[i]->modes[j] :
 			     outputs[i]->userModes[j - outputs[i]->numModes]);
 	    if (m == mode)
@@ -742,16 +742,16 @@ ProcRRSetCrtcConfig (ClientPtr client)
 
     pScreen = crtc->pScreen;
     pScrPriv = rrGetScrPriv(pScreen);
-    
+
     time = ClientTimeToServerTime(stuff->timestamp);
-    
+
     if (!pScrPriv)
     {
 	time = currentTime;
 	rep.status = RRSetConfigFailed;
 	goto sendReply;
     }
-    
+
     /*
      * Validate requested rotation
      */
@@ -786,7 +786,7 @@ ProcRRSetCrtcConfig (ClientPtr client)
 		xfree (outputs);
 	    return BadMatch;
 	}
-    
+
 #ifdef RANDR_12_INTERFACE
 	/*
 	 * Check screen size bounds if the DDX provides a 1.2 interface
@@ -810,7 +810,7 @@ ProcRRSetCrtcConfig (ClientPtr client)
 		    xfree (outputs);
 		return BadValue;
 	    }
-	    
+	
 	    if (stuff->y + source_height > pScreen->height)
 	    {
 		client->errorValue = stuff->y;
@@ -821,7 +821,7 @@ ProcRRSetCrtcConfig (ClientPtr client)
 	}
 #endif
     }
-    
+
     /*
      * Make sure the requested set-time is not older than
      * the last set-time
@@ -840,18 +840,18 @@ ProcRRSetCrtcConfig (ClientPtr client)
     }
     rep.status = RRSetConfigSuccess;
     pScrPriv->lastSetTime = time;
-    
+
 sendReply:
     if (outputs)
 	xfree (outputs);
-    
+
     rep.type = X_Reply;
     /* rep.status has already been filled in */
     rep.length = 0;
     rep.sequenceNumber = client->sequence;
     rep.newTimestamp = pScrPriv->lastSetTime.milliseconds;
 
-    if (client->swapped) 
+    if (client->swapped)
     {
 	int n;
     	swaps(&rep.sequenceNumber, n);
@@ -859,7 +859,7 @@ sendReply:
 	swapl(&rep.newTimestamp, n);
     }
     WriteToClient(client, sizeof(xRRSetCrtcConfigReply), (char *)&rep);
-    
+
     return client->noClientException;
 }
 
@@ -875,7 +875,7 @@ ProcRRGetCrtcGammaSize (ClientPtr client)
     crtc = LookupCrtc (client, stuff->crtc, DixReadAccess);
     if (!crtc)
 	return RRErrorBase + BadRRCrtc;
-    
+
     reply.type = X_Reply;
     reply.sequenceNumber = client->sequence;
     reply.length = 0;
@@ -898,14 +898,14 @@ ProcRRGetCrtcGamma (ClientPtr client)
     int				n;
     unsigned long		len;
     char			*extra;
-    
+
     REQUEST_SIZE_MATCH(xRRGetCrtcGammaReq);
     crtc = LookupCrtc (client, stuff->crtc, DixReadAccess);
     if (!crtc)
 	return RRErrorBase + BadRRCrtc;
-    
+
     len = crtc->gammaSize * 3 * 2;
-    
+
     if (crtc->gammaSize) {
 	extra = xalloc(len);
 	if (!extra)
@@ -939,23 +939,23 @@ ProcRRSetCrtcGamma (ClientPtr client)
     RRCrtcPtr			crtc;
     unsigned long		len;
     CARD16			*red, *green, *blue;
-    
+
     REQUEST_AT_LEAST_SIZE(xRRSetCrtcGammaReq);
     crtc = LookupCrtc (client, stuff->crtc, DixWriteAccess);
     if (!crtc)
 	return RRErrorBase + BadRRCrtc;
-    
+
     len = client->req_len - (sizeof (xRRSetCrtcGammaReq) >> 2);
     if (len < (stuff->size * 3 + 1) >> 1)
 	return BadLength;
 
     if (stuff->size != crtc->gammaSize)
 	return BadMatch;
-    
+
     red = (CARD16 *) (stuff + 1);
     green = red + crtc->gammaSize;
     blue = green + crtc->gammaSize;
-    
+
     RRCrtcGammaSet (crtc, red, green, blue);
 
     return Success;

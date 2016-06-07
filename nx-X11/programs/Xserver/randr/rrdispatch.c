@@ -90,13 +90,13 @@ ProcRRSelectInput (ClientPtr client)
 
     if (stuff->enable & (RRScreenChangeNotifyMask|
 			 RRCrtcChangeNotifyMask|
-			 RROutputChangeNotifyMask)) 
+			 RROutputChangeNotifyMask))
     {
 	ScreenPtr	pScreen = pWin->drawable.pScreen;
 	rrScrPriv	(pScreen);
 
 	pRREvent = NULL;
-	if (pHead) 
+	if (pHead)
 	{
 	    /* check for existing entry. */
 	    for (pRREvent = *pHead; pRREvent; pRREvent = pRREvent->next)
@@ -148,16 +148,16 @@ ProcRRSelectInput (ClientPtr client)
 	if (pScrPriv && (pRREvent->mask & RRScreenChangeNotifyMask))
 	{
 	    pTimes = &((RRTimesPtr) (pRRClient + 1))[pScreen->myNum];
-	    if (CompareTimeStamps (pTimes->setTime, 
+	    if (CompareTimeStamps (pTimes->setTime,
 				   pScrPriv->lastSetTime) != 0 ||
-		CompareTimeStamps (pTimes->configTime, 
+		CompareTimeStamps (pTimes->configTime,
 				   pScrPriv->lastConfigTime) != 0)
 	    {
 		RRDeliverScreenEvent (client, pWin, pScreen);
 	    }
 	}
     }
-    else if (stuff->enable == 0) 
+    else if (stuff->enable == 0)
     {
 	/* delete the interest */
 	if (pHead) {
@@ -177,7 +177,7 @@ ProcRRSelectInput (ClientPtr client)
 	    }
 	}
     }
-    else 
+    else
     {
 	client->errorValue = stuff->enable;
 	return BadValue;

@@ -32,7 +32,7 @@ void
 RROutputChanged (RROutputPtr output, Bool configChanged)
 {
     ScreenPtr	pScreen = output->pScreen;
-    
+
     output->changed = TRUE;
     if (pScreen)
     {
@@ -59,11 +59,11 @@ RROutputCreate (ScreenPtr   pScreen,
 
     if (!RRInit())
 	return NULL;
-    
+
     pScrPriv = rrGetScrPriv(pScreen);
 
     if (pScrPriv->numOutputs)
-	outputs = xrealloc (pScrPriv->outputs, 
+	outputs = xrealloc (pScrPriv->outputs,
 			    (pScrPriv->numOutputs + 1) * sizeof (RROutputPtr));
     else
 	outputs = xalloc (sizeof (RROutputPtr));
@@ -71,7 +71,7 @@ RROutputCreate (ScreenPtr   pScreen,
 	return FALSE;
 
     pScrPriv->outputs = outputs;
-    
+
     output = xalloc (sizeof (RROutputRec) + nameLength + 1);
     if (!output)
 	return NULL;
@@ -99,7 +99,7 @@ RROutputCreate (ScreenPtr   pScreen,
     output->pendingProperties = FALSE;
     output->changed = FALSE;
     output->devPrivate = devPrivate;
-    
+
     if (!AddResource (output->id, RROutputType, (void *) output))
 	return NULL;
 
@@ -232,7 +232,7 @@ RROutputDeleteUserMode (RROutputPtr output,
 			RRModePtr   mode)
 {
     int		m;
-    
+
     /* Find this mode in the user mode list */
     for (m = 0; m < output->numUserModes; m++)
     {
@@ -334,7 +334,7 @@ RRDeliverOutputEvent(ClientPtr client, WindowPtr pWin, RROutputPtr output)
     xRROutputChangeNotifyEvent	oe;
     RRCrtcPtr	crtc = output->crtc;
     RRModePtr	mode = crtc ? crtc->mode : 0;
-    
+
     oe.type = RRNotify + RREventBase;
     oe.subCode = RRNotify_OutputChange;
     oe.sequenceNumber = client->sequence;
@@ -379,7 +379,7 @@ RROutputDestroyResource (void * value, XID pid)
     {
 	rrScrPriv(pScreen);
 	int		i;
-    
+
 	for (i = 0; i < pScrPriv->numOutputs; i++)
 	{
 	    if (pScrPriv->outputs[i] == output)
@@ -397,7 +397,7 @@ RROutputDestroyResource (void * value, XID pid)
 	    RRModeDestroy (output->modes[m]);
 	xfree (output->modes);
     }
-    
+
     for (m = 0; m < output->numUserModes; m++)
 	RRModeDestroy (output->userModes[m]);
     if (output->userModes)
@@ -442,7 +442,7 @@ ProcRRGetOutputInfo (ClientPtr client)
     RROutput			*clones;
     char			*name;
     int				i, n;
-    
+
     REQUEST_SIZE_MATCH(xRRGetOutputInfoReq);
     output = LookupOutput(client, stuff->output, DixReadAccess);
 
@@ -470,8 +470,8 @@ ProcRRGetOutputInfo (ClientPtr client)
     rep.nPreferred = output->numPreferred;
     rep.nClones = output->numClones;
     rep.nameLength = output->nameLength;
-    
-    extraLen = ((output->numCrtcs + 
+
+    extraLen = ((output->numCrtcs +
 		 output->numModes + output->numUserModes +
 		 output->numClones +
 		 ((rep.nameLength + 3) >> 2)) << 2);
@@ -490,7 +490,7 @@ ProcRRGetOutputInfo (ClientPtr client)
     modes = (RRMode *) (crtcs + output->numCrtcs);
     clones = (RROutput *) (modes + output->numModes + output->numUserModes);
     name = (char *) (clones + output->numClones);
-    
+
     for (i = 0; i < output->numCrtcs; i++)
     {
 	crtcs[i] = output->crtcs[i]->id;
@@ -531,6 +531,6 @@ ProcRRGetOutputInfo (ClientPtr client)
 	WriteToClient (client, extraLen, (char *) extra);
 	xfree (extra);
     }
-    
+
     return client->noClientException;
 }

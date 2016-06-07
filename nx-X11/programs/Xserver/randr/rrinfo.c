@@ -33,10 +33,10 @@ RROldModeAdd (RROutputPtr output, RRScreenSizePtr size, int refresh)
     RRModePtr	mode;
     int		i;
     RRModePtr   *modes;
-    
+
     memset (&modeInfo, '\0', sizeof (modeInfo));
     sprintf (name, "%dx%d", size->width, size->height);
-    
+
     modeInfo.width = size->width;
     modeInfo.height = size->height;
     modeInfo.hTotal = size->width;
@@ -53,9 +53,9 @@ RROldModeAdd (RROutputPtr output, RRScreenSizePtr size, int refresh)
 	    RRModeDestroy (mode);
 	    return mode;
 	}
-    
+
     if (output->numModes)
-	modes = xrealloc (output->modes, 
+	modes = xrealloc (output->modes,
 			  (output->numModes + 1) * sizeof (RRModePtr));
     else
 	modes = xalloc (sizeof (RRModePtr));
@@ -84,7 +84,7 @@ RRScanOldConfig (ScreenPtr pScreen, Rotation rotations)
     CARD16	minWidth = MAXSHORT, minHeight = MAXSHORT;
     CARD16	maxWidth = 0, maxHeight = 0;
     CARD16	width, height;
-    
+
     /*
      * First time through, create a crtc and output and hook
      * them together
@@ -131,7 +131,7 @@ RRScanOldConfig (ScreenPtr pScreen, Rotation rotations)
 	    for (r = 0; r < size->nRates; r++)
 	    {
 		mode = RROldModeAdd (output, size, size->pRates[r].rate);
-		if (i == pScrPriv->size && 
+		if (i == pScrPriv->size &&
 		    size->pRates[r].rate == pScrPriv->rate)
 		{
 		    newMode = mode;
@@ -150,12 +150,12 @@ RRScanOldConfig (ScreenPtr pScreen, Rotation rotations)
 	xfree (pScrPriv->pSizes);
     pScrPriv->pSizes = NULL;
     pScrPriv->nSizes = 0;
-	    
+	
     /* find size bounds */
-    for (i = 0; i < output->numModes + output->numUserModes; i++) 
+    for (i = 0; i < output->numModes + output->numUserModes; i++)
     {
-	mode = (i < output->numModes ? 
-			    output->modes[i] : 
+	mode = (i < output->numModes ?
+			    output->modes[i] :
 			    output->userModes[i-output->numModes]);
         width = mode->mode.width;
         height = mode->mode.height;
@@ -189,11 +189,11 @@ RRGetInfo (ScreenPtr pScreen)
 	pScrPriv->outputs[i]->changed = FALSE;
     for (i = 0; i < pScrPriv->numCrtcs; i++)
 	pScrPriv->crtcs[i]->changed = FALSE;
-    
+
     rotations = 0;
     pScrPriv->changed = FALSE;
     pScrPriv->configChanged = FALSE;
-    
+
     if (!(*pScrPriv->rrGetInfo) (pScreen, &rotations))
 	return FALSE;
 
@@ -251,7 +251,7 @@ RRScreenSizeMatches (RRScreenSizePtr  a,
 
 RRScreenSizePtr
 RRRegisterSize (ScreenPtr	    pScreen,
-		short		    width, 
+		short		    width,
 		short		    height,
 		short		    mmWidth,
 		short		    mmHeight)
@@ -263,7 +263,7 @@ RRRegisterSize (ScreenPtr	    pScreen,
 
     if (!pScrPriv)
 	return 0;
-    
+
     tmp.id = 0;
     tmp.width = width;
     tmp.height= height;
@@ -293,7 +293,7 @@ Bool RRRegisterRate (ScreenPtr		pScreen,
 
     if (!pScrPriv)
 	return FALSE;
-    
+
     for (i = 0; i < pSize->nRates; i++)
 	if (pSize->pRates[i].rate == rate)
 	    return TRUE;

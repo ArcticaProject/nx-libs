@@ -46,7 +46,7 @@ typedef struct _PanoramiXQueryVersion {
 	CARD16	length B16;
 	CARD8	clientMajor;
 	CARD8	clientMinor;
-	CARD16	unused B16;           
+	CARD16	unused B16;
 } xPanoramiXQueryVersionReq;
 
 #define sz_xPanoramiXQueryVersionReq	8
@@ -189,4 +189,4 @@ typedef struct {
 } xXineramaScreenInfo;
 #define sz_XineramaScreenInfo 8
 
-#endif 
+#endif

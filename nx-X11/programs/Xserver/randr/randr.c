@@ -112,7 +112,7 @@ static void
 RRResetProc (ExtensionEntry *extEntry)
 {
 }
-    
+
 static Bool
 RRCloseScreen (int i, ScreenPtr pScreen)
 {
@@ -124,12 +124,12 @@ RRCloseScreen (int i, ScreenPtr pScreen)
 	RRCrtcDestroy (pScrPriv->crtcs[j]);
     for (j = pScrPriv->numOutputs - 1; j >= 0; j--)
 	RROutputDestroy (pScrPriv->outputs[j]);
-    
+
     xfree (pScrPriv->crtcs);
     xfree (pScrPriv->outputs);
     xfree (pScrPriv);
     RRNScreens -= 1;	/* ok, one fewer screen with RandR running */
-    return (*pScreen->CloseScreen) (i, pScreen);    
+    return (*pScreen->CloseScreen) (i, pScreen);
 }
 
 static void
@@ -261,7 +261,7 @@ Bool RRScreenInit(ScreenPtr pScreen)
     pScrPriv->rrGetInfo = 0;
     pScrPriv->maxWidth = pScrPriv->minWidth = pScreen->width;
     pScrPriv->maxHeight = pScrPriv->minHeight = pScreen->height;
-    
+
     pScrPriv->width = pScreen->width;
     pScrPriv->height = pScreen->height;
     pScrPriv->mmWidth = pScreen->mmWidth;
@@ -271,7 +271,7 @@ Bool RRScreenInit(ScreenPtr pScreen)
     pScrPriv->rrCrtcSet = NULL;
     pScrPriv->rrCrtcSetGamma = NULL;
 #endif
-#if RANDR_10_INTERFACE    
+#if RANDR_10_INTERFACE
     pScrPriv->rrSetConfig = 0;
     pScrPriv->rotations = RR_Rotate_0;
     pScrPriv->reqWidth = pScreen->width;
@@ -282,7 +282,7 @@ Bool RRScreenInit(ScreenPtr pScreen)
     pScrPriv->rate = 0;
     pScrPriv->size = 0;
 #endif
-    
+
     /*
      * This value doesn't really matter -- any client must call
      * GetScreenInfo before reading it which will automatically update
@@ -290,14 +290,14 @@ Bool RRScreenInit(ScreenPtr pScreen)
      */
     pScrPriv->lastSetTime = currentTime;
     pScrPriv->lastConfigTime = currentTime;
-    
+
     wrap (pScrPriv, pScreen, CloseScreen, RRCloseScreen);
 
     pScrPriv->numOutputs = 0;
     pScrPriv->outputs = NULL;
     pScrPriv->numCrtcs = 0;
     pScrPriv->crtcs = NULL;
-    
+
     RRNScreens += 1;	/* keep count of screens that implement randr */
     return TRUE;
 }
@@ -380,7 +380,7 @@ RRExtensionInit (void)
 	return;
     RRErrorBase = extEntry->errorBase;
     RREventBase = extEntry->eventBase;
-    EventSwapVector[RREventBase + RRScreenChangeNotify] = (EventSwapPtr) 
+    EventSwapVector[RREventBase + RRScreenChangeNotify] = (EventSwapPtr)
 	SRRScreenChangeNotifyEvent;
     EventSwapVector[RREventBase + RRNotify] = (EventSwapPtr)
 	SRRNotifyEvent;
@@ -402,7 +402,7 @@ TellChanged (WindowPtr pWin, void * value)
     if (!pHead)
 	return WT_WALKCHILDREN;
 
-    for (pRREvent = *pHead; pRREvent; pRREvent = pRREvent->next) 
+    for (pRREvent = *pHead; pRREvent; pRREvent = pRREvent->next)
     {
 	client = pRREvent->client;
 	if (client == serverClient || client->clientGone)
@@ -442,7 +442,7 @@ RRTellChanged (ScreenPtr pScreen)
 {
     rrScrPriv (pScreen);
     int i;
-    
+
     if (pScrPriv->changed)
     {
 	UpdateCurrentTime ();
@@ -476,7 +476,7 @@ RRFirstOutput (ScreenPtr pScreen)
     rrScrPriv(pScreen);
     RROutputPtr		    output;
     int	i, j;
-    
+
     for (i = 0; i < pScrPriv->numCrtcs; i++)
     {
 	RRCrtcPtr   crtc = pScrPriv->crtcs[i];
