@@ -31,19 +31,19 @@
  */
 
 static Bool
-RRCrtcContainsPosition (RRCrtcPtr crtc, int x, int y)
+RRCrtcContainsPosition(RRCrtcPtr crtc, int x, int y)
 {
-    RRModePtr   mode = crtc->mode;
-    int		scan_width, scan_height;
+    RRModePtr mode = crtc->mode;
+    int scan_width, scan_height;
 
     if (!mode)
-	return FALSE;
+        return FALSE;
 
-    RRCrtcGetScanoutSize (crtc, &scan_width, &scan_height);
+    RRCrtcGetScanoutSize(crtc, &scan_width, &scan_height);
 
     if (crtc->x <= x && x < crtc->x + scan_width &&
-	crtc->y <= y && y < crtc->y + scan_height)
-	return TRUE;
+        crtc->y <= y && y < crtc->y + scan_height)
+        return TRUE;
     return FALSE;
 }
 
@@ -51,80 +51,76 @@ RRCrtcContainsPosition (RRCrtcPtr crtc, int x, int y)
  * Find the CRTC nearest the specified position, ignoring 'skip'
  */
 static void
-RRPointerToNearestCrtc (ScreenPtr pScreen, int x, int y, RRCrtcPtr skip)
+RRPointerToNearestCrtc(ScreenPtr pScreen, int x, int y, RRCrtcPtr skip)
 {
-    rrScrPriv (pScreen);
-    int		c;
-    RRCrtcPtr	nearest = NULL;
-    int		best = 0;
-    int		best_dx = 0, best_dy = 0;
+    rrScrPriv(pScreen);
+    int c;
+    RRCrtcPtr nearest = NULL;
+    int best = 0;
+    int best_dx = 0, best_dy = 0;
 
-    for (c = 0; c < pScrPriv->numCrtcs; c++)
-    {
-	RRCrtcPtr   crtc = pScrPriv->crtcs[c];
-	RRModePtr   mode = crtc->mode;
-	int	    dx, dy;
-	int	    dist;
-	int	    scan_width, scan_height;
+    for (c = 0; c < pScrPriv->numCrtcs; c++) {
+        RRCrtcPtr crtc = pScrPriv->crtcs[c];
+        RRModePtr mode = crtc->mode;
+        int dx, dy;
+        int dist;
+        int scan_width, scan_height;
 
-	if (!mode)
-	    continue;
-	if (crtc == skip)
-	    continue;
+        if (!mode)
+            continue;
+        if (crtc == skip)
+            continue;
 
-	RRCrtcGetScanoutSize (crtc, &scan_width, &scan_height);
+        RRCrtcGetScanoutSize(crtc, &scan_width, &scan_height);
 
-	if (x < crtc->x)
-	    dx = crtc->x - x;
-	else if (x > crtc->x + scan_width)
-	    dx = x - (crtc->x + scan_width);
-	else
-	    dx = 0;
-	if (y < crtc->y)
-	    dy = crtc->y - x;
-	else if (y > crtc->y + scan_height)
-	    dy = y - (crtc->y + scan_height);
-	else
-	    dy = 0;
-	dist = dx + dy;
-	if (!nearest || dist < best)
-	{
-	    nearest = crtc;
-	    best_dx = dx;
-	    best_dy = dy;
-	}
+        if (x < crtc->x)
+            dx = crtc->x - x;
+        else if (x > crtc->x + scan_width)
+            dx = x - (crtc->x + scan_width);
+        else
+            dx = 0;
+        if (y < crtc->y)
+            dy = crtc->y - x;
+        else if (y > crtc->y + scan_height)
+            dy = y - (crtc->y + scan_height);
+        else
+            dy = 0;
+        dist = dx + dy;
+        if (!nearest || dist < best) {
+            nearest = crtc;
+            best_dx = dx;
+            best_dy = dy;
+        }
     }
     if (best_dx || best_dy)
-	(*pScreen->SetCursorPosition) (pScreen, x + best_dx, y + best_dy, TRUE);
+        (*pScreen->SetCursorPosition) (pScreen, x + best_dx, y + best_dy, TRUE);
     pScrPriv->pointerCrtc = nearest;
 }
 
 void
-RRPointerMoved (ScreenPtr pScreen, int x, int y)
+RRPointerMoved(ScreenPtr pScreen, int x, int y)
 {
-    rrScrPriv (pScreen);
-    RRCrtcPtr	pointerCrtc = pScrPriv->pointerCrtc;
-    int	c;
+    rrScrPriv(pScreen);
+    RRCrtcPtr pointerCrtc = pScrPriv->pointerCrtc;
+    int c;
 
     /* Check last known CRTC */
-    if (pointerCrtc && RRCrtcContainsPosition (pointerCrtc, x, y))
-	return;
+    if (pointerCrtc && RRCrtcContainsPosition(pointerCrtc, x, y))
+        return;
 
     /* Check all CRTCs */
-    for (c = 0; c < pScrPriv->numCrtcs; c++)
-    {
-	RRCrtcPtr   crtc = pScrPriv->crtcs[c];
-	
-	if (RRCrtcContainsPosition (crtc, x, y))
-	{
-	    /* Remember containing CRTC */
-	    pScrPriv->pointerCrtc = crtc;
-	    return;
-	}
+    for (c = 0; c < pScrPriv->numCrtcs; c++) {
+        RRCrtcPtr crtc = pScrPriv->crtcs[c];
+
+        if (RRCrtcContainsPosition(crtc, x, y)) {
+            /* Remember containing CRTC */
+            pScrPriv->pointerCrtc = crtc;
+            return;
+        }
     }
 
     /* None contain pointer, find nearest */
-    RRPointerToNearestCrtc (pScreen, x, y, pointerCrtc);
+    RRPointerToNearestCrtc(pScreen, x, y, pointerCrtc);
 }
 
 /*
@@ -132,14 +128,14 @@ RRPointerMoved (ScreenPtr pScreen, int x, int y)
  * CRTC
  */
 void
-RRPointerScreenConfigured (ScreenPtr pScreen)
+RRPointerScreenConfigured(ScreenPtr pScreen)
 {
-    WindowPtr	pRoot = GetCurrentRootWindow ();
-    ScreenPtr	pCurrentScreen = pRoot ? pRoot->drawable.pScreen : NULL;
-    int		x, y;
+    WindowPtr pRoot = GetCurrentRootWindow();
+    ScreenPtr pCurrentScreen = pRoot ? pRoot->drawable.pScreen : NULL;
+    int x, y;
 
     if (pScreen != pCurrentScreen)
-	return;
-    GetSpritePosition (&x, &y);
-    RRPointerToNearestCrtc (pScreen, x, y, NULL);
+        return;
+    GetSpritePosition(&x, &y);
+    RRPointerToNearestCrtc(pScreen, x, y, NULL);
 }

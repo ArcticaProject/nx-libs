@@ -56,7 +56,7 @@
 #endif
 
 #define RR_VALIDATE
-static int	RRNScreens;
+static int RRNScreens;
 
 #define wrap(priv,real,mem,func) {\
     priv->mem = real->mem; \
@@ -67,74 +67,72 @@ static int	RRNScreens;
     real->mem = priv->mem; \
 }
 
-static int ProcRRDispatch (ClientPtr pClient);
-static int SProcRRDispatch (ClientPtr pClient);
+static int ProcRRDispatch(ClientPtr pClient);
+static int SProcRRDispatch(ClientPtr pClient);
 
-int	RREventBase;
-int	RRErrorBase;
-RESTYPE RRClientType, RREventType; /* resource types for event masks */
+int RREventBase;
+int RRErrorBase;
+RESTYPE RRClientType, RREventType;      /* resource types for event masks */
 
 #ifndef NXAGENT_SERVER
 DevPrivateKey RRClientPrivateKey = &RRClientPrivateKey;
 DevPrivateKey rrPrivKey = &rrPrivKey;
 #else
-int	RRClientPrivateIndex;
-int	rrPrivIndex = -1;
+int RRClientPrivateIndex;
+int rrPrivIndex = -1;
 #endif
 
 static void
-RRClientCallback (CallbackListPtr	*list,
-		  void *		closure,
-		  void *		data)
+RRClientCallback(CallbackListPtr *list, void *closure, void *data)
 {
-    NewClientInfoRec	*clientinfo = (NewClientInfoRec *) data;
-    ClientPtr		pClient = clientinfo->client;
+    NewClientInfoRec *clientinfo = (NewClientInfoRec *) data;
+    ClientPtr pClient = clientinfo->client;
+
     rrClientPriv(pClient);
-    RRTimesPtr		pTimes = (RRTimesPtr) (pRRClient + 1);
-    int			i;
+    RRTimesPtr pTimes = (RRTimesPtr) (pRRClient + 1);
+    int i;
 
     pRRClient->major_version = 0;
     pRRClient->minor_version = 0;
-    for (i = 0; i < screenInfo.numScreens; i++)
-    {
-	ScreenPtr   pScreen = screenInfo.screens[i];
-	rrScrPriv(pScreen);
+    for (i = 0; i < screenInfo.numScreens; i++) {
+        ScreenPtr pScreen = screenInfo.screens[i];
 
-	if (pScrPriv)
-	{
-	    pTimes[i].setTime = pScrPriv->lastSetTime;
-	    pTimes[i].configTime = pScrPriv->lastConfigTime;
-	}
+        rrScrPriv(pScreen);
+
+        if (pScrPriv) {
+            pTimes[i].setTime = pScrPriv->lastSetTime;
+            pTimes[i].configTime = pScrPriv->lastConfigTime;
+        }
     }
 }
 
 static void
-RRResetProc (ExtensionEntry *extEntry)
+RRResetProc(ExtensionEntry * extEntry)
 {
 }
 
 static Bool
-RRCloseScreen (int i, ScreenPtr pScreen)
+RRCloseScreen(int i, ScreenPtr pScreen)
 {
     rrScrPriv(pScreen);
-    int		    j;
+    int j;
 
-    unwrap (pScrPriv, pScreen, CloseScreen);
+    unwrap(pScrPriv, pScreen, CloseScreen);
     for (j = pScrPriv->numCrtcs - 1; j >= 0; j--)
-	RRCrtcDestroy (pScrPriv->crtcs[j]);
+        RRCrtcDestroy(pScrPriv->crtcs[j]);
     for (j = pScrPriv->numOutputs - 1; j >= 0; j--)
-	RROutputDestroy (pScrPriv->outputs[j]);
+        RROutputDestroy(pScrPriv->outputs[j]);
 
-    xfree (pScrPriv->crtcs);
-    xfree (pScrPriv->outputs);
-    xfree (pScrPriv);
-    RRNScreens -= 1;	/* ok, one fewer screen with RandR running */
+    xfree(pScrPriv->crtcs);
+    xfree(pScrPriv->outputs);
+    xfree(pScrPriv);
+    RRNScreens -= 1;            /* ok, one fewer screen with RandR running */
     return (*pScreen->CloseScreen) (i, pScreen);
 }
 
 static void
-SRRScreenChangeNotifyEvent(xRRScreenChangeNotifyEvent *from,
-			   xRRScreenChangeNotifyEvent *to)
+SRRScreenChangeNotifyEvent(xRRScreenChangeNotifyEvent * from,
+                           xRRScreenChangeNotifyEvent * to)
 {
     to->type = from->type;
     to->rotation = from->rotation;
@@ -152,8 +150,8 @@ SRRScreenChangeNotifyEvent(xRRScreenChangeNotifyEvent *from,
 }
 
 static void
-SRRCrtcChangeNotifyEvent(xRRCrtcChangeNotifyEvent *from,
-			 xRRCrtcChangeNotifyEvent *to)
+SRRCrtcChangeNotifyEvent(xRRCrtcChangeNotifyEvent * from,
+                         xRRCrtcChangeNotifyEvent * to)
 {
     to->type = from->type;
     to->subCode = from->subCode;
@@ -171,8 +169,8 @@ SRRCrtcChangeNotifyEvent(xRRCrtcChangeNotifyEvent *from,
 }
 
 static void
-SRROutputChangeNotifyEvent(xRROutputChangeNotifyEvent *from,
-			   xRROutputChangeNotifyEvent *to)
+SRROutputChangeNotifyEvent(xRROutputChangeNotifyEvent * from,
+                           xRROutputChangeNotifyEvent * to)
 {
     to->type = from->type;
     to->subCode = from->subCode;
@@ -187,8 +185,8 @@ SRROutputChangeNotifyEvent(xRROutputChangeNotifyEvent *from,
 }
 
 static void
-SRROutputPropertyNotifyEvent(xRROutputPropertyNotifyEvent *from,
-			     xRROutputPropertyNotifyEvent *to)
+SRROutputPropertyNotifyEvent(xRROutputPropertyNotifyEvent * from,
+                             xRROutputPropertyNotifyEvent * to)
 {
     to->type = from->type;
     to->subCode = from->subCode;
@@ -200,58 +198,58 @@ SRROutputPropertyNotifyEvent(xRROutputPropertyNotifyEvent *from,
 }
 
 static void
-SRRNotifyEvent (xEvent *from,
-		xEvent *to)
+SRRNotifyEvent(xEvent *from, xEvent *to)
 {
     switch (from->u.u.detail) {
     case RRNotify_CrtcChange:
-	SRRCrtcChangeNotifyEvent ((xRRCrtcChangeNotifyEvent *) from,
-				  (xRRCrtcChangeNotifyEvent *) to);
-	break;
+        SRRCrtcChangeNotifyEvent((xRRCrtcChangeNotifyEvent *) from,
+                                 (xRRCrtcChangeNotifyEvent *) to);
+        break;
     case RRNotify_OutputChange:
-	SRROutputChangeNotifyEvent ((xRROutputChangeNotifyEvent *) from,
-				    (xRROutputChangeNotifyEvent *) to);
-	break;
+        SRROutputChangeNotifyEvent((xRROutputChangeNotifyEvent *) from,
+                                   (xRROutputChangeNotifyEvent *) to);
+        break;
     case RRNotify_OutputProperty:
-	SRROutputPropertyNotifyEvent ((xRROutputPropertyNotifyEvent *) from,
-				      (xRROutputPropertyNotifyEvent *) to);
-	break;
+        SRROutputPropertyNotifyEvent((xRROutputPropertyNotifyEvent *) from,
+                                     (xRROutputPropertyNotifyEvent *) to);
+        break;
     default:
-	break;
+        break;
     }
 }
 
 static int RRGeneration;
 
-Bool RRInit (void)
+Bool
+RRInit(void)
 {
-    if (RRGeneration != serverGeneration)
-    {
-        #ifdef NXAGENT_SERVER
-	if ((rrPrivIndex = AllocateScreenPrivateIndex()) < 0)
-	    return FALSE;
-        #endif
-	if (!RRModeInit ())
-	    return FALSE;
-	if (!RRCrtcInit ())
-	    return FALSE;
-	if (!RROutputInit ())
-	    return FALSE;
-	RRGeneration = serverGeneration;
+    if (RRGeneration != serverGeneration) {
+#ifdef NXAGENT_SERVER
+        if ((rrPrivIndex = AllocateScreenPrivateIndex()) < 0)
+            return FALSE;
+#endif
+        if (!RRModeInit())
+            return FALSE;
+        if (!RRCrtcInit())
+            return FALSE;
+        if (!RROutputInit())
+            return FALSE;
+        RRGeneration = serverGeneration;
     }
     return TRUE;
 }
 
-Bool RRScreenInit(ScreenPtr pScreen)
+Bool
+RRScreenInit(ScreenPtr pScreen)
 {
-    rrScrPrivPtr   pScrPriv;
+    rrScrPrivPtr pScrPriv;
 
-    if (!RRInit ())
-	return FALSE;
+    if (!RRInit())
+        return FALSE;
 
-    pScrPriv = (rrScrPrivPtr) xcalloc (1, sizeof (rrScrPrivRec));
+    pScrPriv = (rrScrPrivPtr) xcalloc(1, sizeof(rrScrPrivRec));
     if (!pScrPriv)
-	return FALSE;
+        return FALSE;
 
     SetRRScreen(pScreen, pScrPriv);
 
@@ -291,145 +289,141 @@ Bool RRScreenInit(ScreenPtr pScreen)
     pScrPriv->lastSetTime = currentTime;
     pScrPriv->lastConfigTime = currentTime;
 
-    wrap (pScrPriv, pScreen, CloseScreen, RRCloseScreen);
+    wrap(pScrPriv, pScreen, CloseScreen, RRCloseScreen);
 
     pScrPriv->numOutputs = 0;
     pScrPriv->outputs = NULL;
     pScrPriv->numCrtcs = 0;
     pScrPriv->crtcs = NULL;
 
-    RRNScreens += 1;	/* keep count of screens that implement randr */
+    RRNScreens += 1;            /* keep count of screens that implement randr */
     return TRUE;
 }
 
-/*ARGSUSED*/
-static int
-RRFreeClient (void * data, XID id)
+ /*ARGSUSED*/ static int
+RRFreeClient(void *data, XID id)
 {
-    RREventPtr   pRREvent;
-    WindowPtr	    pWin;
-    RREventPtr   *pHead, pCur, pPrev;
+    RREventPtr pRREvent;
+    WindowPtr pWin;
+    RREventPtr *pHead, pCur, pPrev;
 
     pRREvent = (RREventPtr) data;
     pWin = pRREvent->window;
     pHead = (RREventPtr *) LookupIDByType(pWin->drawable.id, RREventType);
     if (pHead) {
-	pPrev = 0;
-	for (pCur = *pHead; pCur && pCur != pRREvent; pCur=pCur->next)
-	    pPrev = pCur;
-	if (pCur)
-	{
-	    if (pPrev)
-	    	pPrev->next = pRREvent->next;
-	    else
-	    	*pHead = pRREvent->next;
-	}
+        pPrev = 0;
+        for (pCur = *pHead; pCur && pCur != pRREvent; pCur = pCur->next)
+            pPrev = pCur;
+        if (pCur) {
+            if (pPrev)
+                pPrev->next = pRREvent->next;
+            else
+                *pHead = pRREvent->next;
+        }
     }
-    xfree ((void *) pRREvent);
+    xfree((void *) pRREvent);
     return 1;
 }
 
-/*ARGSUSED*/
-static int
-RRFreeEvents (void * data, XID id)
+ /*ARGSUSED*/ static int
+RRFreeEvents(void *data, XID id)
 {
-    RREventPtr   *pHead, pCur, pNext;
+    RREventPtr *pHead, pCur, pNext;
 
     pHead = (RREventPtr *) data;
     for (pCur = *pHead; pCur; pCur = pNext) {
-	pNext = pCur->next;
-	FreeResource (pCur->clientResource, RRClientType);
-	xfree ((void *) pCur);
+        pNext = pCur->next;
+        FreeResource(pCur->clientResource, RRClientType);
+        xfree((void *) pCur);
     }
-    xfree ((void *) pHead);
+    xfree((void *) pHead);
     return 1;
 }
 
 void
-RRExtensionInit (void)
+RRExtensionInit(void)
 {
     ExtensionEntry *extEntry;
 
-    if (RRNScreens == 0) return;
+    if (RRNScreens == 0)
+        return;
 
-    #ifndef NXAGENT_SERVER
+#ifndef NXAGENT_SERVER
     if (!dixRequestPrivate(RRClientPrivateKey,
-				sizeof (RRClientRec) +
-				screenInfo.numScreens * sizeof (RRTimesRec)))
-	return;
-    #else
-    RRClientPrivateIndex = AllocateClientPrivateIndex ();
-    if (!AllocateClientPrivate (RRClientPrivateIndex,
-				sizeof (RRClientRec) +
-				screenInfo.numScreens * sizeof (RRTimesRec)))
-	return;
-    #endif
-    if (!AddCallback (&ClientStateCallback, RRClientCallback, 0))
-	return;
+                           sizeof(RRClientRec) +
+                           screenInfo.numScreens * sizeof(RRTimesRec)))
+        return;
+#else
+    RRClientPrivateIndex = AllocateClientPrivateIndex();
+    if (!AllocateClientPrivate(RRClientPrivateIndex,
+                               sizeof(RRClientRec) +
+                               screenInfo.numScreens * sizeof(RRTimesRec)))
+        return;
+#endif
+    if (!AddCallback(&ClientStateCallback, RRClientCallback, 0))
+        return;
 
     RRClientType = CreateNewResourceType(RRFreeClient);
     if (!RRClientType)
-	return;
+        return;
     RREventType = CreateNewResourceType(RRFreeEvents);
     if (!RREventType)
-	return;
-    extEntry = AddExtension (RANDR_NAME, RRNumberEvents, RRNumberErrors,
-			     ProcRRDispatch, SProcRRDispatch,
-			     RRResetProc, StandardMinorOpcode);
+        return;
+    extEntry = AddExtension(RANDR_NAME, RRNumberEvents, RRNumberErrors,
+                            ProcRRDispatch, SProcRRDispatch,
+                            RRResetProc, StandardMinorOpcode);
     if (!extEntry)
-	return;
+        return;
     RRErrorBase = extEntry->errorBase;
     RREventBase = extEntry->eventBase;
     EventSwapVector[RREventBase + RRScreenChangeNotify] = (EventSwapPtr)
-	SRRScreenChangeNotifyEvent;
+        SRRScreenChangeNotifyEvent;
     EventSwapVector[RREventBase + RRNotify] = (EventSwapPtr)
-	SRRNotifyEvent;
+        SRRNotifyEvent;
 #ifdef PANORAMIX
     RRXineramaExtensionInit();
 #endif
 }
 
 static int
-TellChanged (WindowPtr pWin, void * value)
+TellChanged(WindowPtr pWin, void *value)
 {
-    RREventPtr			*pHead, pRREvent;
-    ClientPtr			client;
-    ScreenPtr			pScreen = pWin->drawable.pScreen;
+    RREventPtr *pHead, pRREvent;
+    ClientPtr client;
+    ScreenPtr pScreen = pWin->drawable.pScreen;
+
     rrScrPriv(pScreen);
-    int				i;
+    int i;
 
-    pHead = (RREventPtr *) LookupIDByType (pWin->drawable.id, RREventType);
+    pHead = (RREventPtr *) LookupIDByType(pWin->drawable.id, RREventType);
     if (!pHead)
-	return WT_WALKCHILDREN;
+        return WT_WALKCHILDREN;
 
-    for (pRREvent = *pHead; pRREvent; pRREvent = pRREvent->next)
-    {
-	client = pRREvent->client;
-	if (client == serverClient || client->clientGone)
-	    continue;
+    for (pRREvent = *pHead; pRREvent; pRREvent = pRREvent->next) {
+        client = pRREvent->client;
+        if (client == serverClient || client->clientGone)
+            continue;
 
-	if (pRREvent->mask & RRScreenChangeNotifyMask)
-	    RRDeliverScreenEvent (client, pWin, pScreen);
-	
-	if (pRREvent->mask & RRCrtcChangeNotifyMask)
-	{
-	    for (i = 0; i < pScrPriv->numCrtcs; i++)
-	    {
-		RRCrtcPtr   crtc = pScrPriv->crtcs[i];
-		if (crtc->changed)
-		    RRDeliverCrtcEvent (client, pWin, crtc);
-	    }
-	}
-	
-	if (pRREvent->mask & RROutputChangeNotifyMask)
-	{
-	    for (i = 0; i < pScrPriv->numOutputs; i++)
-	    {
-		RROutputPtr   output = pScrPriv->outputs[i];
-		if (output->changed)
-		    RRDeliverOutputEvent (client, pWin, output);
-	    }
-	}
+        if (pRREvent->mask & RRScreenChangeNotifyMask)
+            RRDeliverScreenEvent(client, pWin, pScreen);
+
+        if (pRREvent->mask & RRCrtcChangeNotifyMask) {
+            for (i = 0; i < pScrPriv->numCrtcs; i++) {
+                RRCrtcPtr crtc = pScrPriv->crtcs[i];
+
+                if (crtc->changed)
+                    RRDeliverCrtcEvent(client, pWin, crtc);
+            }
+        }
+
+        if (pRREvent->mask & RROutputChangeNotifyMask) {
+            for (i = 0; i < pScrPriv->numOutputs; i++) {
+                RROutputPtr output = pScrPriv->outputs[i];
+
+                if (output->changed)
+                    RRDeliverOutputEvent(client, pWin, output);
+            }
+        }
     }
     return WT_WALKCHILDREN;
 }
@@ -438,31 +432,28 @@ TellChanged (WindowPtr pWin, void * value)
  * Something changed; send events and adjust pointer position
  */
 void
-RRTellChanged (ScreenPtr pScreen)
+RRTellChanged(ScreenPtr pScreen)
 {
-    rrScrPriv (pScreen);
+    rrScrPriv(pScreen);
     int i;
 
-    if (pScrPriv->changed)
-    {
-	UpdateCurrentTime ();
-	if (pScrPriv->configChanged)
-	{
-	    pScrPriv->lastConfigTime = currentTime;
-	    pScrPriv->configChanged = FALSE;
-	}
-	pScrPriv->changed = FALSE;
-	WalkTree (pScreen, TellChanged, (void *) pScreen);
-	for (i = 0; i < pScrPriv->numOutputs; i++)
-	    pScrPriv->outputs[i]->changed = FALSE;
-	for (i = 0; i < pScrPriv->numCrtcs; i++)
-	    pScrPriv->crtcs[i]->changed = FALSE;
-	if (pScrPriv->layoutChanged)
-	{
-	    pScrPriv->layoutChanged = FALSE;
-	    RRPointerScreenConfigured (pScreen);
-	    RRSendConfigNotify (pScreen);
-	}
+    if (pScrPriv->changed) {
+        UpdateCurrentTime();
+        if (pScrPriv->configChanged) {
+            pScrPriv->lastConfigTime = currentTime;
+            pScrPriv->configChanged = FALSE;
+        }
+        pScrPriv->changed = FALSE;
+        WalkTree(pScreen, TellChanged, (void *) pScreen);
+        for (i = 0; i < pScrPriv->numOutputs; i++)
+            pScrPriv->outputs[i]->changed = FALSE;
+        for (i = 0; i < pScrPriv->numCrtcs; i++)
+            pScrPriv->crtcs[i]->changed = FALSE;
+        if (pScrPriv->layoutChanged) {
+            pScrPriv->layoutChanged = FALSE;
+            RRPointerScreenConfigured(pScreen);
+            RRSendConfigNotify(pScreen);
+        }
     }
 }
 
@@ -471,53 +462,52 @@ RRTellChanged (ScreenPtr pScreen)
  * Used in emulating 1.0 behaviour
  */
 RROutputPtr
-RRFirstOutput (ScreenPtr pScreen)
+RRFirstOutput(ScreenPtr pScreen)
 {
     rrScrPriv(pScreen);
-    RROutputPtr		    output;
-    int	i, j;
+    RROutputPtr output;
+    int i, j;
 
-    for (i = 0; i < pScrPriv->numCrtcs; i++)
-    {
-	RRCrtcPtr   crtc = pScrPriv->crtcs[i];
-	for (j = 0; j < pScrPriv->numOutputs; j++)
-	{
-	    output = pScrPriv->outputs[j];
-	    if (output->crtc == crtc)
-		return output;
-	}
+    for (i = 0; i < pScrPriv->numCrtcs; i++) {
+        RRCrtcPtr crtc = pScrPriv->crtcs[i];
+
+        for (j = 0; j < pScrPriv->numOutputs; j++) {
+            output = pScrPriv->outputs[j];
+            if (output->crtc == crtc)
+                return output;
+        }
     }
     return NULL;
 }
 
 CARD16
-RRVerticalRefresh (xRRModeInfo *mode)
+RRVerticalRefresh(xRRModeInfo * mode)
 {
-    CARD32  refresh;
-    CARD32  dots = mode->hTotal * mode->vTotal;
+    CARD32 refresh;
+    CARD32 dots = mode->hTotal * mode->vTotal;
+
     if (!dots)
-	return 0;
-    refresh = (mode->dotClock + dots/2) / dots;
+        return 0;
+    refresh = (mode->dotClock + dots / 2) / dots;
     if (refresh > 0xffff)
-	refresh = 0xffff;
+        refresh = 0xffff;
     return (CARD16) refresh;
 }
 
 static int
-ProcRRDispatch (ClientPtr client)
+ProcRRDispatch(ClientPtr client)
 {
     REQUEST(xReq);
     if (stuff->data >= RRNumberRequests || !ProcRandrVector[stuff->data])
-	return BadRequest;
+        return BadRequest;
     return (*ProcRandrVector[stuff->data]) (client);
 }
 
 static int
-SProcRRDispatch (ClientPtr client)
+SProcRRDispatch(ClientPtr client)
 {
     REQUEST(xReq);
     if (stuff->data >= RRNumberRequests || !ProcRandrVector[stuff->data])
-	return BadRequest;
+        return BadRequest;
     return (*SProcRandrVector[stuff->data]) (client);
 }
-
