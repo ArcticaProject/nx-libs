@@ -390,12 +390,12 @@ typedef struct _AgentOptions
   int NoRootlessExit;
 
  /*
-  * Store if the user wants Xinerama. There's a variable called
-  * noPanoramiXExtension in os/utils.c but we cannot rely on that
-  * because RandR and Panoramix change its value when trying to
-  * initialize. So we use this variable to save the user preference
-  * provided by the -/+xinerama parameter before initalizing those
-  * extensions.
+  * Store if the user wants Xinerama. There are variables called
+  * noPanoramiXExtension noRRXineramaExtensison in os/utils.c but
+  * we cannot rely on them because RandR and PanoramiX change their
+  * values when trying to initialize. So we use this variable to
+  * save the user preference provided by the -/+(rr)xinerama parameter(s)
+  * before initalizing those extensions.
   */
 
   int Xinerama;
