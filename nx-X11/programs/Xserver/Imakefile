@@ -409,7 +409,7 @@ NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext \
 #else
 NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext -L ../../../nxcompshad \
                 -lXcomp -lXcompext -lXcompshad -lXrender -lNX_X11 -lNX_Xext -lXfixes -lXfont \
-                -L../../../nx-X11/exports/lib -lXcomposite -lXinerama -lXdmcp
+                -L../../../nx-X11/exports/lib -lXcomposite -lXdmcp
 #endif
 
 #endif
