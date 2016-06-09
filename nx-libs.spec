@@ -40,7 +40,6 @@ BuildRequires:  pkgconfig(xcomposite)
 BuildRequires:  pkgconfig(xrandr)
 BuildRequires:  pkgconfig(xfixes)
 BuildRequires:  pkgconfig(xtst)
-BuildRequires:  pkgconfig(xinerama)
 %else
 BuildRequires:  libexpat-devel
 BuildRequires:  libpng-devel
@@ -56,7 +55,6 @@ BuildRequires:  xorg-x11-libXcomposite-devel
 BuildRequires:  xorg-x11-libXrandr-devel
 BuildRequires:  xorg-x11-libXfixes-devel
 BuildRequires:  xorg-x11-libXtst-devel
-BuildRequires:  xorg-x11-libXinerama-devel
 %endif
 BuildRequires:  xorg-x11-util-devel
 %endif
@@ -76,7 +74,6 @@ BuildRequires:  libXcomposite-devel
 BuildRequires:  libXrandr-devel
 BuildRequires:  libXfixes-devel
 BuildRequires:  libXtst-devel
-BuildRequires:  libXinerama-devel
 %endif
 
 # For imake

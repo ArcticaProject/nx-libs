@@ -22,7 +22,6 @@ Build-Depends:
  libxrandr-dev,
  libxfixes-dev,
  libxtst-dev,
- libxinerama-dev,
  libxrender-dev,
  autoconf,
  pkg-config,
