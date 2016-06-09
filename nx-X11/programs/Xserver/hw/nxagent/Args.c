@@ -1229,7 +1229,7 @@ static void nxagentParseOptions(char *name, char *value)
     }
 #else
     nxagentChangeOption(Xinerama, 0);
-    fprintf(stderr, "Warning: No Xinerama support compiled into nxagent.\n")
+    fprintf(stderr, "Warning: No Xinerama support compiled into nxagent.\n");
 #endif /* of PANORAMIX */
     return;
   }
