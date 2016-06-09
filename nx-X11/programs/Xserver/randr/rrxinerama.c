@@ -107,6 +107,8 @@ static int ProcRRXineramaIsActive(ClientPtr client);
 static int ProcRRXineramaQueryScreens(ClientPtr client);
 static int SProcRRXineramaDispatch(ClientPtr client);
 
+extern Bool noRRXineramaExtension;
+
 /* Proc */
 
 int

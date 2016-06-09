@@ -179,6 +179,7 @@ Bool noMITShmExtension = FALSE;
 #endif
 #ifdef RANDR
 Bool noRRExtension = FALSE;
+Bool noRRXineramaExtension = FALSE;
 #endif
 #ifdef RENDER
 Bool noRenderExtension = FALSE;
@@ -664,9 +665,13 @@ void UseMsg(void)
     ErrorF("-x string              loads named extension at init time \n");
     ErrorF("-maxbigreqsize         set maximal bigrequest size \n");
 #ifdef PANORAMIX
-    ErrorF("+xinerama              Enable XINERAMA extension\n");
-    ErrorF("-xinerama              Disable XINERAMA extension\n");
+    ErrorF("+xinerama              Enable XINERAMA (PanoramiX) extension\n");
+    ErrorF("-xinerama              Disable XINERAMA (PanoramiX) extension (default)\n");
     ErrorF("-disablexineramaextension Disable XINERAMA extension\n");
+#endif
+#ifdef RANDR
+    ErrorF("+rrxinerama            Enable XINERAMA (via RandR) extension (default)\n");
+    ErrorF("-rrxinerama            Disable XINERAMA (via RandR) extension\n");
 #endif
 #ifdef SMART_SCHEDULE
     ErrorF("-dumbSched             Disable smart scheduling, enable old behavior\n");
@@ -1035,6 +1040,14 @@ ProcessCommandLine(int argc, char *argv[])
 	}
 	else if ( strcmp( argv[i], "-disablexineramaextension") == 0){
 	    PanoramiXExtensionDisabledHack = TRUE;
+	}
+#endif
+#ifdef RANDR
+	else if ( strcmp( argv[i], "+rrxinerama") == 0){
+	    noRRXineramaExtension = FALSE;
+	}
+	else if ( strcmp( argv[i], "-rrxinerama") == 0){
+	    noRRXineramaExtension = TRUE;
 	}
 #endif
 	else if ( strcmp( argv[i], "-x") == 0)

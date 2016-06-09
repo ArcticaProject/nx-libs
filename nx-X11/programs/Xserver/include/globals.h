@@ -87,6 +87,7 @@ extern Bool noMITShmExtension;
 
 #ifdef RANDR
 extern Bool noRRExtension;
+extern Bool noRRXineramaExtension;
 #endif
 
 #ifdef RENDER
