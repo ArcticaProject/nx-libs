@@ -1252,7 +1252,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was
                     X.xbutton.subwindow == None))
         {
           x.u.u.type = ButtonPress;
-          x.u.u.detail = inputInfo.pointer -> button -> map[nxagentReversePointerMap[X.xbutton.button - 1]];
+          x.u.u.detail = inputInfo.pointer -> button -> map[nxagentReversePointerMap[X.xbutton.button]];
           x.u.keyButtonPointer.time = nxagentLastEventTime = GetTimeInMillis();
 
           if (nxagentOption(Rootless))
@@ -1325,7 +1325,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was
         if (minimize != True)
         {
           x.u.u.type = ButtonRelease;
-          x.u.u.detail = inputInfo.pointer -> button -> map[nxagentReversePointerMap[X.xbutton.button - 1]];
+          x.u.u.detail = inputInfo.pointer -> button -> map[nxagentReversePointerMap[X.xbutton.button]];
           x.u.keyButtonPointer.time = nxagentLastEventTime = GetTimeInMillis();
 
           if (nxagentOption(Rootless))
