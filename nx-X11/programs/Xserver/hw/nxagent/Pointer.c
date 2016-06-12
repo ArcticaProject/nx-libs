@@ -186,6 +186,6 @@ void nxagentInitPointerMap(void)
 
   for (i = 1; i <= numButtons; i++)
   {
-    nxagentReversePointerMap[pointerMap[i - 1] - 1] = i;
+    nxagentReversePointerMap[pointerMap[i - 1]] = i;
   }
 }
