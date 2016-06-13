@@ -32,7 +32,10 @@
 #include "Screen.h"
 #include "Millis.h"
 
+#define Window XlibWindow
 #include <nx/NXlib.h>
+#undef Window
+
 #include <nx/Shadow.h>
 
 /*
@@ -956,7 +959,24 @@ void nxagentShadowWakeupHandler(void * data, int count, void * mask)
 
 void nxagentHandleCollectInputFocusEvent(int resource)
 {
-  Window window;
+  /*
+   * While we don't even need window or revert_to later on, a discrepancy in
+   * data type sizes between the X server (Window being a 32bit ID) and
+   * the Xlib (Window being a 64bit ID) will lead to stack corruption here.
+   * Calling functions from nxcompext from nxagent sounds like a very bad idea
+   * to begin with, but let's assume that's necessary for now and work around
+   * the corruption issue.
+   *
+   * Even though the NXlib header shows that the function expects a Window-sized
+   * parameter, it's not the Window type as defined and used within the X.Org
+   * Server, but an Xlib type. Hence, we'll be using the "XlibWindow" type here
+   * and to avoid compiler warnings, "rewrite" the NXlib.h header file via
+   * overriding the original "Window" type with the XlibWindow type, including
+   * the header file and undefining the macro again, essentially unshadowing
+   * the original type.
+   */
+  XlibWindow window;
+
   int revert_to;
 
   if (NXGetCollectedInputFocus(nxagentDisplay, resource, &window, &revert_to) == 0)
