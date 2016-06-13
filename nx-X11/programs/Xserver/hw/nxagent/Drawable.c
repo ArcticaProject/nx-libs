@@ -34,7 +34,7 @@
 #include "Reconnect.h"
 #include "GCOps.h"
 
-#include "NXlib.h"
+#include <nx/NXlib.h>
 
 #include "mibstorest.h"
 

@@ -10,6 +10,6 @@ Version: @VERSION@
 #Requires: libjpeg zlib
 Requires: libpng
 Requires.private: x11
-Cflags: -I${includedir} -I${includedir}/nx
+Cflags: -I${includedir}
 Libs: -L${libdir} -lXcomp
 

@@ -23,7 +23,7 @@
 #include <time.h>
 #include <errno.h>
 
-#include "NX.h"
+#include <nx/NX.h>
 
 #include "Xatom.h"
 #include "dixstruct.h"
@@ -49,7 +49,7 @@
  * definition of GC in Agent.h.
  */
 
-#include "NXlib.h"
+#include <nx/NXlib.h>
 
 /*
  * Set here the required log level.

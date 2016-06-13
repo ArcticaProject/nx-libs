@@ -26,7 +26,7 @@
 #include "scrnintstr.h"
 #include "resource.h"
 
-#include "NXpack.h"
+#include <nx/NXpack.h>
 
 #include "Atoms.h"
 #include "Args.h"

@@ -283,8 +283,12 @@ install.lib: all
 	$(INSTALL_LINK) $(LIBLOAD)              $(DESTDIR)${libdir}
 	$(INSTALL_LINK) $(LIBSHARED)            $(DESTDIR)${libdir}
 	$(INSTALL_DATA) $(LIBARCHIVE)           $(DESTDIR)${libdir}
-	$(INSTALL_DATA) NX*.h                   $(DESTDIR)${includedir}/nx
 	$(INSTALL_DATA) MD5.h                   $(DESTDIR)${includedir}/nx
+	$(INSTALL_DATA) NX.h                    $(DESTDIR)${includedir}/nx
+	$(INSTALL_DATA) NXalert.h               $(DESTDIR)${includedir}/nx
+	$(INSTALL_DATA) NXpack.h                $(DESTDIR)${includedir}/nx
+	$(INSTALL_DATA) NXproto.h               $(DESTDIR)${includedir}/nx
+	$(INSTALL_DATA) NXvars.h                $(DESTDIR)${includedir}/nx
 	$(INSTALL_DATA) nxcomp.pc               $(DESTDIR)${pkgconfigdir}
 	echo "Running ldconfig tool, this may take a while..." && ldconfig || true
 
@@ -301,10 +305,8 @@ uninstall.lib:
 	$(RM_FILE) $(DESTDIR)${libdir}/$(LIBARCHIVE)
 	$(RM_FILE) $(DESTDIR)${includedir}/nx/NXalert.h
 	$(RM_FILE) $(DESTDIR)${includedir}/nx/NX.h
-	$(RM_FILE) $(DESTDIR)${includedir}/nx/NXmitshm.h
 	$(RM_FILE) $(DESTDIR)${includedir}/nx/NXpack.h
 	$(RM_FILE) $(DESTDIR)${includedir}/nx/NXproto.h
-	$(RM_FILE) $(DESTDIR)${includedir}/nx/NXrender.h
 	$(RM_FILE) $(DESTDIR)${includedir}/nx/NXvars.h
 	$(RM_FILE) $(DESTDIR)${includedir}/nx/MD5.h
 	$(RM_FILE) $(DESTDIR)${pkgconfigdir}/nxcomp.pc

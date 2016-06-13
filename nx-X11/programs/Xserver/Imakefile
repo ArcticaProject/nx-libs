@@ -318,6 +318,27 @@ NXAGENTDDXDIR = hw
 
 NXAGENTDIRS = $(STDDIRS) $(MFBDIR) $(FBDIR) $(MIDAMAGEDIR) $(NXAGENTDDXDIR) $(DEPDIRS)
 
+NX_XCOMP_HEADERS = \
+              ../../../nxcomp/NXalert.h         \
+              ../../../nxcomp/NX.h              \
+              ../../../nxcomp/NXpack.h          \
+              ../../../nxcomp/NXproto.h         \
+              ../../../nxcomp/NXvars.h
+
+NX_XCOMPEXT_HEADERS =                           \
+              ../../../nxcompext/NXlib.h        \
+              ../../../nxcompext/NXlibint.h
+
+NX_XCOMPSHAD_HEADERS =                          \
+              ../../../nxcompshad/Shadow.h
+
+NX_HEADERS =                                    \
+             $(NX_XCOMP_HEADERS)                \
+             $(NX_XCOMPEXT_HEADERS)             \
+             $(NX_XCOMPSHAD_HEADERS)
+
+BuildIncludes($(NX_HEADERS),nx,..)
+
 #if defined(SunArchitecture) || \
     defined(SparcArchitecture)
 NXAGENTOBJS = hw/nxagent/miinitext.o     \

@@ -54,7 +54,7 @@
 #include "Pixels.h"
 #include "Handlers.h"
 
-#include "NXproto.h"
+#include <nx/NXproto.h>
 
 #define MAX_FORMATS 255
 

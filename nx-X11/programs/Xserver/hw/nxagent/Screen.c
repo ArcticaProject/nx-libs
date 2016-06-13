@@ -74,7 +74,7 @@ is" without express or implied warranty.
 #include "Pointer.h"
 #include "Reconnect.h"
 #include "Composite.h"
-#include "Shadow.h"
+#include <nx/Shadow.h>
 #include "Utils.h"
 
 #include "X11/include/Xrandr_nxagent.h"
@@ -96,7 +96,7 @@ is" without express or implied warranty.
 #include "Xatom.h"
 #include "Xproto.h"
 
-#include "NXlib.h"
+#include <nx/NXlib.h>
 
 #include "mibstorest.h"
 

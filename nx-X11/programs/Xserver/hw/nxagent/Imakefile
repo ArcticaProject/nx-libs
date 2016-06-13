@@ -133,7 +133,7 @@ OBJS =  NXwindow.o \
 
 VFBINCLUDES = -I../../fb -I../../mfb -I../../render
 
-INCLUDES = -I. -I../../../../../nxcomp -I../../../../../nxcompext -I../../../../../nxcompshad \
+INCLUDES = -I. \
            -I../../../../extras/Mesa/include \
 	   -I$(XBUILDINCDIR) \
 	   -I../../mi -I../../include -I../../os \
@@ -144,7 +144,7 @@ INCLUDES = -I. -I../../../../../nxcomp -I../../../../../nxcompext -I../../../../
            `pkg-config --cflags-only-I libxml-2.0` \
            `pkg-config --cflags-only-I pixman-1`
 #ifdef SunArchitecture
-INCLUDES = -I. -I../../../../../nxcomp -I../../../../../nxcompext -I../../../../../nxcompshad \
+INCLUDES = -I. \
            -I../../../../extras/Mesa/include \
 	   -I$(XBUILDINCDIR) \
 	   -I/usr/sfw/include \

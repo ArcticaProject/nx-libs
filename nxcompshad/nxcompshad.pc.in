@@ -8,6 +8,6 @@ Description: Shadow Session Support for NX Compression Library
 Version: @VERSION@
 Requires: nxcomp
 Requires.private: x11
-Cflags: -I${includedir} -I${includedir}/nx
+Cflags: -I${includedir}
 Libs: -L${libdir} -lXcompshad
 

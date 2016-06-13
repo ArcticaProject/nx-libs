@@ -20,7 +20,7 @@
 
 #include "Windows.h"
 #include "X11/Xdmcp.h"
-#include "NXalert.h"
+#include <nx/NXalert.h>
 
 #define XDM_TIMEOUT       20000
 
