@@ -5,7 +5,7 @@ set -e
 #/**************************************************************************/
 #/*                                                                        */
 #/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
-#/* Copyright (c) 2015 Mike Gabriel <mike.gabriel@das-netzwerkteam.de      */
+#/* Copyright (c) 2015-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
 #/*                                                                        */
 #/* NXSCRIPTS, NX protocol compression and NX extensions to this software  */
 #/* are copyright of NoMachine. Redistribution and use of the present      */
