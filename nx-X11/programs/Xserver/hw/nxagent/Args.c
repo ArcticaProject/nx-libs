@@ -1339,6 +1339,44 @@ static void nxagentParseOptions(char *name, char *value)
       nxagentChangeOption(Clipboard, ClipboardBoth);
     }
   }
+  else if (!strcmp(name, "sleep"))
+  {
+    long sleep_parse = 0;
+
+    errno = 0;
+    sleep_parse = strtol(value, NULL, 10);
+
+    if ((errno) && (0 == sleep_parse))
+    {
+      fprintf(stderr, "nxagentParseOptions: Unable to convert value [%s] of option [%s]. "
+                      "Ignoring option.\n",
+                      validateString(value), validateString(name));
+
+      return;
+    }
+
+    if ((long) UINT_MAX < sleep_parse)
+    {
+      sleep_parse = UINT_MAX;
+
+      fprintf(stderr, "nxagentParseOptions: Warning: value [%s] of option [%s] "
+                      "out of range, clamped to [%u].\n",
+                      validateString(value), validateString(name), sleep_parse);
+    }
+
+    if (0 > sleep_parse)
+    {
+      sleep_parse = 0;
+
+      fprintf(stderr, "nxagentParseOptions: Warning: value [%s] of option [%s] "
+                      "out of range, clamped to [%u].\n",
+                      validateString(value), validateString(name), sleep_parse);
+    }
+
+    nxagentChangeOption(SleepTime, sleep_parse);
+
+    return;
+  }
   else
   {
     #ifdef DEBUG
