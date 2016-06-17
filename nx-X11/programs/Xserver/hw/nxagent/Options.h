@@ -28,6 +28,7 @@
 
 #define UNDEFINED -1
 #define COPY_UNLIMITED -1
+#define DEFAULT_SLEEP_TIME 50
 
 extern unsigned int nxagentPrintGeometryFlags;
 
@@ -398,6 +399,12 @@ typedef struct _AgentOptions
   */
 
   int Xinerama;
+
+  /*
+   * Sleep delay in microseconds.
+   */
+
+  unsigned int SleepTime;
 
 } AgentOptionsRec;
 

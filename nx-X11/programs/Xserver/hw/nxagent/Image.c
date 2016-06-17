@@ -69,15 +69,6 @@
 #define IMAGE_UNIQUE_RATIO   10
 
 /*
- * Introduce a small delay after each image
- * operation if the session is down. Value
- * is in microseconds and is multiplied by
- * the image data size in kilobytes.
- */
-
-#define IMAGE_DELAY_IF_DOWN  250
-
-/*
  * Preferred pack and split parameters we
  * got from the NX transport.
  */
@@ -521,11 +512,12 @@ void nxagentPutImage(DrawablePtr pDrawable, GCPtr pGC, int depth,
   length = nxagentImageLength(dstWidth, dstHeight, format, leftPad, depth);
 
   if (nxagentShadowCounter == 0 &&
-          NXDisplayError(nxagentDisplay) == 1)
+          NXDisplayError(nxagentDisplay) == 1 &&
+              nxagentOption(SleepTime) > 0)
   {
     int us;
 
-    us = IMAGE_DELAY_IF_DOWN * (length / 1024);
+    us = nxagentOption(SleepTime) * 4 * (length / 1024);
 
     us = (us < 10000 ? 10000 : (us > 1000000 ? 1000000 : us));
 

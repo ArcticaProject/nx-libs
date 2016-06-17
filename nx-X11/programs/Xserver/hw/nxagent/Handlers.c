@@ -63,14 +63,6 @@
 #define FLUSH_AFTER_MULTIPLE_READS
 
 /*
- * Introduce a small delay after each
- * loop if the session is down. The
- * value is in milliseconds.
- */
-
-#define LOOP_DELAY_IF_DOWN       50
-
-/*
  * The soft limit should roughly match
  * the size of the Xlib I/O buffer.
  */
@@ -246,12 +238,21 @@ void nxagentBlockHandler(void * data, struct timeval **timeout, void * mask)
    * not connected to a valid display.
    */
 
-  if (NXDisplayError(nxagentDisplay) == 1 && nxagentShadowCounter == 0)
+  if (NXDisplayError(nxagentDisplay) == 1 && nxagentShadowCounter == 0 && nxagentOption(SleepTime) > 0)
   {
-    usleep(LOOP_DELAY_IF_DOWN * 1000);
+#ifdef TEST
+    fprintf(stderr, "nxagentBlockHandler: sleeping for %d milliseconds for slowdown.\n",
+                    nxagentOption(SleepTime));
+#endif
+    usleep(nxagentOption(SleepTime) * 1000);
 
     now = GetTimeInMillis();
   }
+#ifdef TEST
+  else if (0 == nxagentOption(SleepTime)) {
+    fprintf(stderr, "nxagentBlockHandler: not sleeping for slowdown.\n");
+  }
+#endif
 
   /*
    * Update the shadow display. This is
@@ -743,9 +744,17 @@ void nxagentShadowBlockHandler(void * data, struct timeval **timeout, void * mas
     nxagentHandleConnectionChanges();
   }
 
-  if (nxagentSessionState == SESSION_DOWN)
+  if (nxagentSessionState == SESSION_DOWN && nxagentOption(SleepTime) > 0)
   {
-    usleep(50 * 1000);
+#ifdef TEST
+    fprintf(stderr, "nxagentBlockHandler: sleeping for %d milliseconds for slowdown.\n",
+                    nxagentOption(SleepTime));
+#endif
+    usleep(nxagentOption(SleepTime) * 1000);
+  }
+#ifdef TEST
+  else if (0 == nxagentOption(SleepTime)) {
+    fprintf(stderr, "nxagentBlockHandler: not sleeping for slowdown.\n");
   }
 
   #ifndef __CYGWIN32__
@@ -826,7 +835,18 @@ FIXME: Must queue multiple writes and handle
 
   #ifdef __CYGWIN32__
 
-  usleep(50 * 1000);
+  if (nxagentOption(SleepTime) > 0) {
+#ifdef TEST
+    fprintf(stderr, "nxagentShadowBlockHandler: sleeping for %d milliseconds for slowdown.\n",
+                    nxagentOption(SleepTime));
+#endif
+    usleep(nxagentOption(SleepTime) * 1000);
+  }
+#ifdef TEST
+  else if (0 == nxagentOption(SleepTime)) {
+    fprintf(stderr, "nxagentShadowBlockHandler: not sleeping for slowdown.\n");
+  }
+#endif
 
   (*timeout) -> tv_sec  = 0;
   (*timeout) -> tv_usec = 50 * 1000;
