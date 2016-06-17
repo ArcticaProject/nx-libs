@@ -78,10 +78,7 @@ is" without express or implied warranty.
 #include "Utils.h"
 
 #include "X11/include/Xrandr_nxagent.h"
-
 #include <nx-X11/Xlib.h>
-#include "X11/include/Xinerama_nxagent.h"
-
 
 #define GC     XlibGC
 #define Font   XlibFont
@@ -154,6 +151,20 @@ Atom mcop_local_atom = None;
 unsigned char fromHexNibble(char c);
 void nxagentPropagateArtsdProperties(ScreenPtr pScreen, char *port);
 
+#endif
+
+#ifdef PANORAMIX
+
+/*
+ * taken from Xinerama.h (libXinerama)
+ */
+typedef struct {
+    int   screen_number;
+    short x_org;
+    short y_org;
+    short width;
+    short height;
+} XineramaScreenInfo;
 #endif
 
 Window nxagentIconWindow = None;
@@ -1114,10 +1125,12 @@ Bool nxagentOpenScreen(int index, ScreenPtr pScreen,
   nxagentChangeOption(ViewportXSpan, nxagentOption(Width) - nxagentOption(RootWidth));
   nxagentChangeOption(ViewportYSpan, nxagentOption(Height) - nxagentOption(RootHeight));
 
+#ifdef PANORAMIX
   /* PanoramiXExtension enabled via cmdline, turn on Xinerama in nxagent
    */
   if( (!noPanoramiXExtension) && (!PanoramiXExtensionDisabledHack) )
-    nxagentOption(Xinerama) = True;
+    nxagentChangeOption(Xinerama, 1);
+#endif
 
   if (nxagentReconnectTrap == 0)
   {
@@ -3705,10 +3718,13 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
 
   r = nxagentResizeScreen(pScreen, width, height, mmWidth, mmHeight);
 
+#ifdef PANORAMIX
   if (r != 0)
   {
-    nxagentAdjustRandRXinerama(pScreen);
+    if (nxagentOption(Xinerama))
+      nxagentAdjustRandRXinerama(pScreen);
   }
+#endif
 
   if (doNotify)
   {
@@ -3723,6 +3739,7 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
   return r;
 }
 
+#ifdef PANORAMIX
 int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
 {
   rrScrPrivPtr pScrPriv;
@@ -3742,23 +3759,6 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
 
     XineramaScreenInfo *screeninfo = NULL;
 
-    if (nxagentOption(Xinerama)) {
-      screeninfo = XineramaQueryScreens(nxagentDisplay, &number);
-#ifdef DEBUG
-      if (number) {
-        fprintf(stderr, "nxagentAdjustRandRXinerama: XineramaQueryScreens() returned %d screens\n", number);
-      }
-      else
-      {
-        fprintf(stderr, "nxagentAdjustRandRXinerama: XineramaQueryScreens() failed - continuing without Xinerama\n");
-      }
-    }
-    else
-    {
-      fprintf(stderr, "nxagentAdjustRandRXinerama: Xinerama is disabled\n");
-#endif
-    }
-
     /*
      * if there's no xinerama on the real server or xinerama is
      * disabled in nxagent we only report one big screen. Clients
@@ -3767,25 +3767,21 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
      * behaved. The single PanoramiX/Xinerama extension however
      * disables xinerama if only one screen exists.
      */
-    if (number == 0) {
-      #ifdef DEBUG
-      fprintf(stderr, "nxagentAdjustRandRXinerama: faking xinerama\n" );
-      #endif
-      number = 1;
 
-      if (screeninfo) {
-	xfree(screeninfo);
-      }
-      if (!(screeninfo = xalloc(sizeof(XineramaScreenInfo)))) {
-	return FALSE;
-      }
+    #ifdef DEBUG
+    fprintf(stderr, "nxagentAdjustRandRXinerama: faking xinerama\n" );
+    #endif
+    number = 1;
 
-      /* fake a xinerama screeninfo that covers the whole screen */
-      screeninfo->x_org = nxagentOption(X);
-      screeninfo->y_org = nxagentOption(Y);
-      screeninfo->width = nxagentOption(Width);
-      screeninfo->height = nxagentOption(Height);
+    if (!(screeninfo = xalloc(sizeof(XineramaScreenInfo)))) {
+      return FALSE;
     }
+
+    /* fake a xinerama screeninfo that covers the whole screen */
+    screeninfo->x_org = nxagentOption(X);
+    screeninfo->y_org = nxagentOption(Y);
+    screeninfo->width = nxagentOption(Width);
+    screeninfo->height = nxagentOption(Height);
 
 #ifdef DEBUG
     fprintf(stderr, "nxagentAdjustRandRXinerama: numCrtcs [%d], numOutputs [%d]\n", pScrPriv->numCrtcs, pScrPriv->numOutputs);
@@ -4100,6 +4096,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
 
   return TRUE;
 }
+#endif /* defined(PANORAMIX) */
 
 void nxagentSaveAreas(PixmapPtr pPixmap, RegionPtr prgnSave, int xorg, int yorg, WindowPtr pWin)
 {
