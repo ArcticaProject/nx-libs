@@ -316,7 +316,8 @@ shadowuid=n\n\
 shadowmode=s\n\
 defer=n\n\
 tile=s\n\
-menu=n         These options are interpreted by the NX agent. They\n\
+menu=n\n\
+sleep=n        These options are interpreted by the NX agent. They\n\
                are ignored by the proxy.\n\
 \n\
   Environment:\n\
