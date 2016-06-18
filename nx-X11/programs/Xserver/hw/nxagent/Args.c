@@ -86,6 +86,18 @@ is" without express or implied warranty.
 
 #endif
 
+#ifdef PANORAMIX
+  #define PANORAMIX_DISABLED_COND (noPanoramiXExtension || PanoramiXExtensionDisabledHack)
+#else
+  #define PANORAMIX_DISABLED_COND TRUE
+#endif
+
+#ifdef RANDR
+  #define RRXINERAMA_DISABLED_COND noRRXineramaExtension
+#else
+  #define RRXINERAMA_DISABLED_COND TRUE
+#endif
+
 /*
  * Define this to force the dispatcher
  * to always use the dumb scheduler.
@@ -102,6 +114,8 @@ int nxagentUserDefinedFontPath = 0;
 extern int _XGetBitsPerPixel(Display *dpy, int depth);
 
 extern char dispatchExceptionAtReset;
+
+extern const char *__progname;
 
 char nxagentDisplayName[1024];
 Bool nxagentSynchronize = False;
@@ -1047,6 +1061,13 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     return 0;
   }
 
+  /*
+   * Disable Xinerama (i.e. fake it in Screen.c) if somehow Xinerama support
+   * has been disabled on the cmdline.
+   */
+  if (PANORAMIX_DISABLED_COND && RRXINERAMA_DISABLED_COND)
+    nxagentChangeOption(Xinerama, 0);
+
   return 0;
 }
 
@@ -1205,33 +1226,32 @@ static void nxagentParseOptions(char *name, char *value)
   }
   else if (!strcmp(name, "xinerama"))
   {
-#ifdef PANORAMIX
-    if (!PanoramiXExtensionDisabledHack)
+#if !defined(PANORAMIX) && !defined(RANDR)
+    nxagentChangeOption(Xinerama, 0);
+    fprintf(stderr, "Warning: No Xinerama support compiled into %s.\n", __progname);
+    return;
+#else
+    if (PANORAMIX_DISABLED_COND && RRXINERAMA_DISABLED_COND)
+      nxagentChangeOption(Xinerama, 0);
+      fprintf(stderr, "Warning: XINERAMA extension has been disabled on %s startup.\n", __progname);
+      return;
+
+    if (!strcmp(value, "1"))
     {
-      if (!strcmp(value, "1"))
-      {
-        nxagentChangeOption(Xinerama, 1);
-      }
-      else if (!strcmp(value, "0"))
-      {
-        nxagentChangeOption(Xinerama, 0);
-      }
-      else
-      {
-        fprintf(stderr, "Warning: Ignoring bad value '%s' for option 'xinerama'.\n",
-                    validateString(value));
-      }
+      nxagentChangeOption(Xinerama, 1);
+      return;
+    }
+    else if (!strcmp(value, "0"))
+    {
+      nxagentChangeOption(Xinerama, 0);
     }
     else
     {
-      nxagentChangeOption(Xinerama, 0);
-      fprintf(stderr, "Warning: Xinerama extension has been disabled via -disablexineramaextension cmdline switch.\n");
+      fprintf(stderr, "Warning: Ignoring bad value '%s' for option 'xinerama'.\n",
+              validateString(value));
     }
-#else
-    nxagentChangeOption(Xinerama, 0);
-    fprintf(stderr, "Warning: No Xinerama support compiled into nxagent.\n");
-#endif /* of PANORAMIX */
     return;
+#endif
   }
   else if (!strcmp(name, "resize"))
   {
