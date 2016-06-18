@@ -391,7 +391,7 @@ typedef struct _AgentOptions
 
  /*
   * Store if the user wants Xinerama. There are variables called
-  * noPanoramiXExtension noRRXineramaExtensison in os/utils.c but
+  * noPanoramiXExtension and noRRXineramaExtensison in os/utils.c but
   * we cannot rely on them because RandR and PanoramiX change their
   * values when trying to initialize. So we use this variable to
   * save the user preference provided by the -/+(rr)xinerama parameter(s)
