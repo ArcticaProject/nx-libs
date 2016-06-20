@@ -193,12 +193,14 @@ typedef struct _Picture {
     SourcePictPtr   pSourcePict;
 } PictureRec;
 
-typedef Bool (*PictFilterValidateParamsProcPtr) (PicturePtr pPicture, int id,
-						 xFixed *params, int nparams);
+typedef Bool (*PictFilterValidateParamsProcPtr) (ScreenPtr pScreen, int id,
+						 xFixed *params, int nparams,
+                                                 int *width, int *height);
 typedef struct {
     char			    *name;
     int				    id;
     PictFilterValidateParamsProcPtr ValidateParams;
+    int width, height;
 } PictFilterRec, *PictFilterPtr;
 
 #define PictFilterNearest	0
