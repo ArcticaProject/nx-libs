@@ -78,13 +78,10 @@ typedef struct _PictFormat {
     IndexFormatRec  index;
 } PictFormatRec;
 
-typedef struct _PictVector {
-    xFixed	    vector[3];
-} PictVector, *PictVectorPtr;
+typedef struct pixman_vector PictVector, *PictVectorPtr;
+typedef struct pixman_transform PictTransform, *PictTransformPtr;
 
-typedef struct _PictTransform {
-    xFixed	    matrix[3][3];
-} PictTransform, *PictTransformPtr;
+#define pict_f_transform pixman_f_transform
 
 #define PICT_GRADIENT_STOPTABLE_SIZE 1024
 #define SourcePictTypeSolidFill 0
