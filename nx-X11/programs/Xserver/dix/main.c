@@ -121,7 +121,6 @@ extern int InitClientPrivates(ClientPtr client);
 
 extern void Dispatch(void);
 
-char *ConnectionInfo;
 xConnSetupPrefix connSetupPrefix;
 
 extern FontPtr defaultFont;

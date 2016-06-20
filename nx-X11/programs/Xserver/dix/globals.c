@@ -161,3 +161,5 @@ int	argcGlobal;
 char	**argvGlobal;
 
 DDXPointRec dixScreenOrigins[MAXSCREENS];
+
+char *ConnectionInfo;
