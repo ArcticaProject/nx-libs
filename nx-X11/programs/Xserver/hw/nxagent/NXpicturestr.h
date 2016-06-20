@@ -687,4 +687,22 @@ void PanoramiXRenderInit (void);
 void PanoramiXRenderReset (void);
 #endif
 
+/*
+ * matrix.c
+ */
+
+extern _X_EXPORT void
+PictTransform_from_xRenderTransform(PictTransformPtr pict,
+                                    xRenderTransform * render);
+
+extern _X_EXPORT void
+xRenderTransform_from_PictTransform(xRenderTransform * render,
+                                    PictTransformPtr pict);
+
+extern _X_EXPORT Bool
+ PictureTransformPoint(PictTransformPtr transform, PictVectorPtr vector);
+
+extern _X_EXPORT Bool
+ PictureTransformPoint3d(PictTransformPtr transform, PictVectorPtr vector);
+
 #endif /* _PICTURESTR_H_ */

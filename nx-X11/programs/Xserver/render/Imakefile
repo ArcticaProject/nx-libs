@@ -4,6 +4,7 @@ XCOMM $XFree86: xc/programs/Xserver/render/Imakefile,v 1.10 2002/11/23 02:38:15 
        SRCS =   animcur.c \
                 filter.c \
                 glyph.c \
+                matrix.c \
                 miglyph.c \
                 miindex.c \
                 mipict.c \
@@ -17,6 +18,7 @@ XCOMM $XFree86: xc/programs/Xserver/render/Imakefile,v 1.10 2002/11/23 02:38:15 
        OBJS =   animcur.o \
                 filter.o \
                 glyph.o \
+                matrix.o \
                 miglyph.o \
                 miindex.o \
                 mipict.o \
