@@ -46,6 +46,7 @@ in this Software without prior written authorization from The Open Group.
 # include   "mipointrst.h"
 # include   "cursorstr.h"
 # include   "dixstruct.h"
+# include   <nx-X11/extensions/XI.h>
 
 int  miPointerScreenIndex;
 static unsigned long miPointerGeneration = 0;
@@ -224,6 +225,10 @@ miPointerSetCursorPosition(pScreen, x, y, generateEvent)
     SetupScreen (pScreen);
 
     GenerateEvent = generateEvent;
+
+    if (pScreen->ConstrainCursorHarder)
+        pScreen->ConstrainCursorHarder(pScreen, Absolute, &x, &y);
+
     /* device dependent - must pend signal and call miPointerWarpCursor */
     (*pScreenPriv->screenFuncs->WarpCursor) (pScreen, x, y);
     if (!generateEvent)
