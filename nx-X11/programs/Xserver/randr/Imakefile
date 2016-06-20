@@ -24,11 +24,15 @@ XCOMM $XFree86: xc/programs/Xserver/randr/Imakefile,v 1.1 2001/05/23 03:29:44 ke
 		rrdispatch.c		\
 		rrinfo.c		\
 		rrmode.c		\
+		rrmonitor.c		\
 		rroutput.c		\
 		rrpointer.c		\
 		rrproperty.c		\
+		rrprovider.c		\
+		rrproviderproperty.c	\
 		rrscreen.c		\
 		rrsdispatch.c		\
+		rrtransform.c		\
 		rrxinerama.c		\
 		$(NULL)
 
@@ -37,11 +41,15 @@ XCOMM $XFree86: xc/programs/Xserver/randr/Imakefile,v 1.1 2001/05/23 03:29:44 ke
 		rrdispatch.o		\
 		rrinfo.o		\
 		rrmode.o		\
+		rrmonitor.o		\
 		rroutput.o		\
 		rrpointer.o		\
 		rrproperty.o		\
+		rrprovider.o		\
+		rrproviderproperty.o	\
 		rrscreen.o		\
 		rrsdispatch.o		\
+		rrtransform.o		\
 		rrxinerama.o		\
 		$(NULL)
 
@@ -50,9 +58,20 @@ XCOMM $XFree86: xc/programs/Xserver/randr/Imakefile,v 1.1 2001/05/23 03:29:44 ke
 		-I../render \
 		`pkg-config --cflags-only-I pixman-1`
 
+#if defined(BuildXinerama)
+    PNRX_DEFINES = -DXINERAMA -DPANORAMIX
+#endif
+
+#if defined(NXAgentServer)
+    NX_DEFINES = -DNXAGENT_SERVER
+#endif
+
    LINTLIBS = ../dix/llib-ldix.ln ../os/llib-los.ln
 
-    DEFINES = -DNXAGENT_SERVER
+    DEFINES = 				\
+		$(PNRX_DEFINES)		\
+		$(NX_DEFINES)		\
+		$(NULL)
 
 NormalLibraryTarget(randr,$(OBJS))
 NormalLibraryObjectRule()

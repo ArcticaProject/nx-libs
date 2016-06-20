@@ -21,6 +21,7 @@
  */
 
 #include "randrstr.h"
+#include "inputstr.h"
 
 /*
  * When the pointer moves, check to see if the specified position is outside
@@ -51,7 +52,11 @@ RRCrtcContainsPosition(RRCrtcPtr crtc, int x, int y)
  * Find the CRTC nearest the specified position, ignoring 'skip'
  */
 static void
-RRPointerToNearestCrtc(ScreenPtr pScreen, int x, int y, RRCrtcPtr skip)
+RRPointerToNearestCrtc(
+#ifndef NXAGENT_SERVER
+                          DeviceIntPtr pDev,
+#endif                          /* !defined(NXAGENT_SERVER) */
+                          ScreenPtr pScreen, int x, int y, RRCrtcPtr skip)
 {
     rrScrPriv(pScreen);
     int c;
@@ -75,25 +80,31 @@ RRPointerToNearestCrtc(ScreenPtr pScreen, int x, int y, RRCrtcPtr skip)
 
         if (x < crtc->x)
             dx = crtc->x - x;
-        else if (x > crtc->x + scan_width)
-            dx = x - (crtc->x + scan_width);
+        else if (x > crtc->x + scan_width - 1)
+            dx = crtc->x + (scan_width - 1) - x;
         else
             dx = 0;
         if (y < crtc->y)
-            dy = crtc->y - x;
-        else if (y > crtc->y + scan_height)
-            dy = y - (crtc->y + scan_height);
+            dy = crtc->y - y;
+        else if (y > crtc->y + scan_height - 1)
+            dy = crtc->y + (scan_height - 1) - y;
         else
             dy = 0;
-        dist = dx + dy;
+        dist = dx * dx + dy * dy;
         if (!nearest || dist < best) {
             nearest = crtc;
             best_dx = dx;
             best_dy = dy;
+            best = dist;
         }
     }
     if (best_dx || best_dy)
-        (*pScreen->SetCursorPosition) (pScreen, x + best_dx, y + best_dy, TRUE);
+        (*pScreen->SetCursorPosition) (
+#ifndef NXAGENT_SERVER
+                                          pDev,
+#endif                          /* !defined(NXAGENT_SERVER) */
+                                          pScreen, x + best_dx, y + best_dy,
+                                          TRUE);
     pScrPriv->pointerCrtc = nearest;
 }
 
@@ -120,22 +131,52 @@ RRPointerMoved(ScreenPtr pScreen, int x, int y)
     }
 
     /* None contain pointer, find nearest */
-    RRPointerToNearestCrtc(pScreen, x, y, pointerCrtc);
+    ErrorF("RRPointerMoved: Untested, may cause \"bogus pointer event\"\n");
+    RRPointerToNearestCrtc(
+#ifndef NXAGENT_SERVER
+                              inputInfo.pointer,
+#endif                          /* !defined(NXAGENT_SERVER) */
+                              pScreen, x, y, pointerCrtc);
 }
 
 /*
- * When the screen is reconfigured, move the pointer to the nearest
+ * When the screen is reconfigured, move all pointers to the nearest
  * CRTC
  */
 void
 RRPointerScreenConfigured(ScreenPtr pScreen)
 {
-    WindowPtr pRoot = GetCurrentRootWindow();
-    ScreenPtr pCurrentScreen = pRoot ? pRoot->drawable.pScreen : NULL;
+    WindowPtr pRoot;
+    ScreenPtr pCurrentScreen;
     int x, y;
 
-    if (pScreen != pCurrentScreen)
-        return;
-    GetSpritePosition(&x, &y);
-    RRPointerToNearestCrtc(pScreen, x, y, NULL);
+#ifndef NXAGENT_SERVER
+    DeviceIntPtr pDev;
+
+    for (pDev = inputInfo.devices; pDev; pDev = pDev->next) {
+        if (IsPointerDevice(pDev)) {
+#endif                          /* NXAGENT_SERVER */
+            pRoot = GetCurrentRootWindow(
+#ifndef NXAGENT_SERVER
+                                            pDev
+#endif                          /* NXAGENT_SERVER */
+                );
+            pCurrentScreen = pRoot ? pRoot->drawable.pScreen : NULL;
+
+            if (pScreen == pCurrentScreen) {
+                GetSpritePosition(
+#ifndef NXAGENT_SERVER
+                                     pDev,
+#endif                          /* NXAGENT_SERVER */
+                                     &x, &y);
+                RRPointerToNearestCrtc(
+#ifndef NXAGENT_SERVER
+                                          pDev,
+#endif                          /* NXAGENT_SERVER */
+                                          pScreen, x, y, NULL);
+#ifndef NXAGENT_SERVER
+            }
+        }
+#endif                          /* NXAGENT_SERVER */
+    }
 }

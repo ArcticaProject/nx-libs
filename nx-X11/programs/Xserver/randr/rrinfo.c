@@ -36,7 +36,7 @@ RROldModeAdd(RROutputPtr output, RRScreenSizePtr size, int refresh)
     RRModePtr *modes;
 
     memset(&modeInfo, '\0', sizeof(modeInfo));
-    sprintf(name, "%dx%d", size->width, size->height);
+    snprintf(name, sizeof(name), "%dx%d", size->width, size->height);
 
     modeInfo.width = size->width;
     modeInfo.height = size->height;
@@ -55,8 +55,13 @@ RROldModeAdd(RROutputPtr output, RRScreenSizePtr size, int refresh)
         }
 
     if (output->numModes)
+#ifndef NXAGENT_SERVER
+        modes = reallocarray(output->modes,
+                             output->numModes + 1, sizeof(RRModePtr));
+#else                           /* !defined(NXAGENT_SERVER) */
         modes = xrealloc(output->modes,
                          (output->numModes + 1) * sizeof(RRModePtr));
+#endif                          /* !defined(NXAGENT_SERVER) */
     else
         modes = xalloc(sizeof(RRModePtr));
     if (!modes) {
@@ -97,9 +102,7 @@ RRScanOldConfig(ScreenPtr pScreen, Rotation rotations)
             return;
         RROutputSetCrtcs(output, &crtc, 1);
         RROutputSetConnection(output, RR_Connected);
-#ifdef RENDER
         RROutputSetSubpixelOrder(output, PictureGetSubpixelOrder(pScreen));
-#endif
     }
 
     output = pScrPriv->outputs[0];
@@ -145,7 +148,8 @@ RRScanOldConfig(ScreenPtr pScreen, Rotation rotations)
     /* find size bounds */
     for (i = 0; i < output->numModes + output->numUserModes; i++) {
         mode = (i < output->numModes ?
-                output->modes[i] : output->userModes[i - output->numModes]);
+                          output->modes[i] :
+                          output->userModes[i - output->numModes]);
         width = mode->mode.width;
         height = mode->mode.height;
 
@@ -163,7 +167,7 @@ RRScanOldConfig(ScreenPtr pScreen, Rotation rotations)
 
     /* notice current mode */
     if (newMode)
-        RRCrtcNotify(crtc, newMode, 0, 0, pScrPriv->rotation, 1, &output);
+        RRCrtcNotify(crtc, newMode, 0, 0, pScrPriv->rotation, NULL, 1, &output);
 }
 #endif
 
@@ -171,11 +175,19 @@ RRScanOldConfig(ScreenPtr pScreen, Rotation rotations)
  * Poll the driver for changed information
  */
 Bool
-RRGetInfo(ScreenPtr pScreen)
+RRGetInfo(ScreenPtr pScreen, Bool force_query)
 {
     rrScrPriv(pScreen);
     Rotation rotations;
     int i;
+
+    /* Return immediately if we don't need to re-query and we already have the
+     * information.
+     */
+    if (!force_query) {
+        if (pScrPriv->numCrtcs != 0 || pScrPriv->numOutputs != 0)
+            return TRUE;
+    }
 
     for (i = 0; i < pScrPriv->numOutputs; i++)
         pScrPriv->outputs[i]->changed = FALSE;
@@ -218,7 +230,7 @@ RRScreenSetSizeRange(ScreenPtr pScreen,
     pScrPriv->minHeight = minHeight;
     pScrPriv->maxWidth = maxWidth;
     pScrPriv->maxHeight = maxHeight;
-    pScrPriv->changed = TRUE;
+    RRSetChanged(pScreen);
     pScrPriv->configChanged = TRUE;
 }
 
@@ -259,8 +271,13 @@ RRRegisterSize(ScreenPtr pScreen,
     for (i = 0; i < pScrPriv->nSizes; i++)
         if (RRScreenSizeMatches(&tmp, &pScrPriv->pSizes[i]))
             return &pScrPriv->pSizes[i];
+#ifndef NXAGENT_SERVER
+    pNew = reallocarray(pScrPriv->pSizes,
+                        pScrPriv->nSizes + 1, sizeof(RRScreenSize));
+#else                           /* !defined(NXAGENT_SERVER) */
     pNew = xrealloc(pScrPriv->pSizes,
                     (pScrPriv->nSizes + 1) * sizeof(RRScreenSize));
+#endif                          /* !defined(NXAGENT_SERVER) */
     if (!pNew)
         return 0;
     pNew[pScrPriv->nSizes++] = tmp;
@@ -282,7 +299,11 @@ RRRegisterRate(ScreenPtr pScreen, RRScreenSizePtr pSize, int rate)
         if (pSize->pRates[i].rate == rate)
             return TRUE;
 
+#ifndef NXAGENT_SERVER
+    pNew = reallocarray(pSize->pRates, pSize->nRates + 1, sizeof(RRScreenRate));
+#else                           /* !defined(NXAGENT_SERVER) */
     pNew = xrealloc(pSize->pRates, (pSize->nRates + 1) * sizeof(RRScreenRate));
+#endif                          /* !defined(NXAGENT_SERVER) */
     if (!pNew)
         return FALSE;
     pRate = &pNew[pSize->nRates++];

@@ -38,7 +38,6 @@
 /**************************************************************************/
 
 #include "randrstr.h"
-#include "registry.h"
 
 RESTYPE RRModeType;
 
@@ -97,7 +96,12 @@ RRModeCreate(xRRModeInfo * modeInfo, const char *name, ScreenPtr userScreen)
     mode->userScreen = userScreen;
 
     if (num_modes)
+#ifndef NXAGENT_SERVER
+        newModes = reallocarray(modes, num_modes + 1, sizeof(RRModePtr));
+#else                           /* !defined(NXAGENT_SERVER) */
         newModes = xrealloc(modes, (num_modes + 1) * sizeof(RRModePtr));
+#endif                          /* !defined(NXAGENT_SERVER) */
+
     else
         newModes = xalloc(sizeof(RRModePtr));
 
@@ -113,6 +117,7 @@ RRModeCreate(xRRModeInfo * modeInfo, const char *name, ScreenPtr userScreen)
     }
     modes = newModes;
     modes[num_modes++] = mode;
+
     /*
      * give the caller a reference to this mode
      */
@@ -203,7 +208,11 @@ RRModesForScreen(ScreenPtr pScreen, int *num_ret)
     RRModePtr *screen_modes;
     int num_screen_modes = 0;
 
+#ifndef NXAGENT_SERVER
+    screen_modes = xallocarray((num_modes ? num_modes : 1), sizeof(RRModePtr));
+#else                           /* !defined(NXAGENT_SERVER) */
     screen_modes = xalloc((num_modes ? num_modes : 1) * sizeof(RRModePtr));
+#endif                          /* !defined(NXAGENT_SERVER) */
     if (!screen_modes)
         return NULL;
 
@@ -268,13 +277,8 @@ RRModeDestroy(RRModePtr mode)
 {
     int m;
 
-    if (--mode->refcnt > 0) {
-#ifdef DEBUG
-        fprintf(stderr, "RRModeDestroy: mode [%s] ([%p]) refcnt [%d -> %d]\n",
-                mode->name, mode, mode->refcnt + 1, mode->refcnt);
-#endif
+    if (--mode->refcnt > 0)
         return;
-    }
     for (m = 0; m < num_modes; m++) {
         if (modes[m] == mode) {
             memmove(modes + m, modes + m + 1,
@@ -288,35 +292,44 @@ RRModeDestroy(RRModePtr mode)
         }
     }
 
-#ifdef DEBUG
-    fprintf(stderr, "RRModeDestroy: destroyed mode [%s] ([%p])\n", mode->name,
-            mode);
-#endif
     xfree(mode);
 }
 
 static int
 RRModeDestroyResource(void *value, XID pid)
 {
-#ifdef DEBUG
-    fprintf(stderr, "RRModeDestroyResource: mode [%s] ([%p]) refcnt [%d]\n",
-            ((RRModePtr) value)->name, (RRModePtr) value,
-            ((RRModePtr) value)->refcnt);
-#endif
     RRModeDestroy((RRModePtr) value);
     return 1;
 }
 
+/*
+ * Initialize mode type
+ */
 Bool
 RRModeInit(void)
 {
     assert(num_modes == 0);
     assert(modes == NULL);
-    RRModeType = CreateNewResourceType(RRModeDestroyResource);
+    RRModeType = CreateNewResourceType(RRModeDestroyResource
+#ifndef NXAGENT_SERVER
+                                       , "MODE"
+#endif
+        );
     if (!RRModeType)
         return FALSE;
-    RegisterResourceName(RRModeType, "MODE");
+
     return TRUE;
+}
+
+/*
+ * Initialize mode type error value
+ */
+void
+RRModeInitErrorValue(void)
+{
+#ifndef NXAGENT_SERVER
+    SetResourceTypeErrorValue(RRModeType, RRErrorBase + BadRRMode);
+#endif
 }
 
 int
@@ -331,10 +344,11 @@ ProcRRCreateMode(ClientPtr client)
     char *name;
     int error, rc;
     RRModePtr mode;
+    int n;
 
     REQUEST_AT_LEAST_SIZE(xRRCreateModeReq);
 #ifndef NXAGENT_SERVER
-    rc = dixLookupWindow(&pWin, stuff->window, client, DixReadAccess);
+    rc = dixLookupWindow(&pWin, stuff->window, client, DixGetAttrAccess);
 #else
     pWin = SecurityLookupWindow(stuff->window, client, SecurityReadAccess);
     rc = pWin ? Success : BadWindow;
@@ -346,24 +360,23 @@ ProcRRCreateMode(ClientPtr client)
 
     modeInfo = &stuff->modeInfo;
     name = (char *) (stuff + 1);
-    units_after = (stuff->length - (sizeof(xRRCreateModeReq) >> 2));
+    units_after = (stuff->length - bytes_to_int32(sizeof(xRRCreateModeReq)));
 
     /* check to make sure requested name fits within the data provided */
-    if ((int) (modeInfo->nameLength + 3) >> 2 > units_after)
+    if (bytes_to_int32(modeInfo->nameLength) > units_after)
         return BadLength;
 
     mode = RRModeCreateUser(pScreen, modeInfo, name, &error);
     if (!mode)
         return error;
 
-    rep.type = X_Reply;
-    rep.pad0 = 0;
-    rep.sequenceNumber = client->sequence;
-    rep.length = 0;
-    rep.mode = mode->mode.id;
+    rep = (xRRCreateModeReply) {
+        .type = X_Reply,
+        .sequenceNumber = client->sequence,
+        .length = 0,
+        .mode = mode->mode.id
+    };
     if (client->swapped) {
-        int n;
-
         swaps(&rep.sequenceNumber, n);
         swapl(&rep.length, n);
         swapl(&rep.mode, n);
@@ -371,7 +384,7 @@ ProcRRCreateMode(ClientPtr client)
     WriteToClient(client, sizeof(xRRCreateModeReply), (char *) &rep);
     /* Drop out reference to this mode */
     RRModeDestroy(mode);
-    return client->noClientException;
+    return Success;
 }
 
 int
@@ -381,11 +394,8 @@ ProcRRDestroyMode(ClientPtr client)
     RRModePtr mode;
 
     REQUEST_SIZE_MATCH(xRRDestroyModeReq);
-    mode = LookupIDByType(stuff->mode, RRModeType);
-    if (!mode) {
-        client->errorValue = stuff->mode;
-        return RRErrorBase + BadRRMode;
-    }
+    VERIFY_RR_MODE(stuff->mode, mode, DixDestroyAccess);
+
     if (!mode->userScreen)
         return BadMatch;
     if (mode->refcnt > 1)
@@ -402,18 +412,8 @@ ProcRRAddOutputMode(ClientPtr client)
     RROutputPtr output;
 
     REQUEST_SIZE_MATCH(xRRAddOutputModeReq);
-    output = LookupOutput(client, stuff->output, DixReadAccess);
-
-    if (!output) {
-        client->errorValue = stuff->output;
-        return RRErrorBase + BadRROutput;
-    }
-
-    mode = LookupIDByType(stuff->mode, RRModeType);
-    if (!mode) {
-        client->errorValue = stuff->mode;
-        return RRErrorBase + BadRRMode;
-    }
+    VERIFY_RR_OUTPUT(stuff->output, output, DixReadAccess);
+    VERIFY_RR_MODE(stuff->mode, mode, DixUseAccess);
 
     return RROutputAddUserMode(output, mode);
 }
@@ -426,18 +426,8 @@ ProcRRDeleteOutputMode(ClientPtr client)
     RROutputPtr output;
 
     REQUEST_SIZE_MATCH(xRRDeleteOutputModeReq);
-    output = LookupOutput(client, stuff->output, DixReadAccess);
-
-    if (!output) {
-        client->errorValue = stuff->output;
-        return RRErrorBase + BadRROutput;
-    }
-
-    mode = LookupIDByType(stuff->mode, RRModeType);
-    if (!mode) {
-        client->errorValue = stuff->mode;
-        return RRErrorBase + BadRRMode;
-    }
+    VERIFY_RR_OUTPUT(stuff->output, output, DixReadAccess);
+    VERIFY_RR_MODE(stuff->mode, mode, DixUseAccess);
 
     return RROutputDeleteUserMode(output, mode);
 }

@@ -35,6 +35,32 @@ static int nxagentRandRScreenSetSize(ScreenPtr pScreen, CARD16 width,
 
 static int nxagentRandRInitSizes(ScreenPtr pScreen);
 
+#if RANDR_14_INTERFACE
+static Bool
+nxagentRandRReplaceScanoutPixmap(DrawablePtr pDrawable,
+				 PixmapPtr pPixmap,
+				 Bool enable);
+#endif
+
+#if RANDR_13_INTERFACE
+static Bool
+nxagentRandROutputGetProperty(ScreenPtr pScreen,
+                              RROutputPtr output,
+                              Atom property);
+static Bool
+nxagentRandRGetPanning(ScreenPtr pScrn,
+                       RRCrtcPtr crtc,
+                       BoxPtr totalArea,
+                       BoxPtr trackingArea,
+                       INT16 *border);
+static Bool
+nxagentRandRSetPanning(ScreenPtr pScrn,
+                       RRCrtcPtr crtc,
+                       BoxPtr totalArea,
+                       BoxPtr trackingArea,
+                       INT16 *border);
+#endif
+
 #if RANDR_12_INTERFACE
 static Bool nxagentRandRCrtcSet (ScreenPtr pScreen, RRCrtcPtr crtc,
 				 RRModePtr mode, int x, int y,
@@ -104,6 +130,29 @@ void nxagentInitRandRExtension(ScreenPtr pScreen)
 
   pRandRScrPriv -> rrGetInfo   = nxagentRandRGetInfo;
 
+  #if RANDR_15_INTERFACE
+  /* nothing to be assigned here, so far */
+  #endif
+
+  #if RANDR_14_INTERFACE
+  /* no pixmap sharing in nx-X11 */
+  pScreen->ReplaceScanoutPixmap = nxagentRandRReplaceScanoutPixmap;
+  pRandRScrPriv -> rrCrtcSetScanoutPixmap = NULL;
+
+  /* only fake provider support in nx-X11, so far */
+  pRandRScrPriv -> provider = RRProviderCreate(pScreen, "default", 7);
+  pRandRScrPriv -> rrProviderSetOutputSource = NULL;
+  pRandRScrPriv -> rrProviderSetOffloadSink;
+  pRandRScrPriv -> rrProviderGetProperty;
+  pRandRScrPriv -> rrProviderSetProperty;
+  #endif
+
+  #if RANDR_13_INTERFACE
+  pRandRScrPriv -> rrOutputGetProperty = nxagentRandROutputGetProperty;
+  pRandRScrPriv -> rrGetPanning = nxagentRandRGetPanning;
+  pRandRScrPriv -> rrSetPanning = nxagentRandRSetPanning;
+  #endif
+
   #if RANDR_12_INTERFACE
   pRandRScrPriv -> rrScreenSetSize = nxagentRandRScreenSetSize;
   pRandRScrPriv -> rrCrtcSet = nxagentRandRCrtcSet;
@@ -114,13 +163,70 @@ void nxagentInitRandRExtension(ScreenPtr pScreen)
   #endif
 }
 
-void
-RRResetProc (ExtensionEntry *extEntry)
+#if RANDR_14_INTERFACE
+static Bool
+nxagentRandRReplaceScanoutPixmap(DrawablePtr pDrawable,
+				 PixmapPtr pPixmap,
+				 Bool enable)
 {
-  fprintf(stderr, "RANDR going down - NX version\n");
+  /* FALSE means: not supported */
+#ifdef DEBUG
+  fprintf(stderr, "nxagentRandRReplaceScanoutPixmap: NX's RANDR does not support scan-out pixmaps.\n");
+#endif
+  return FALSE;
+}
+#endif
+
+#if RANDR_13_INTERFACE
+static Bool
+nxagentRandROutputGetProperty(ScreenPtr pScreen,
+			      RROutputPtr output,
+			      Atom property)
+{
+  /* FALSE means: no property required to be modified on the fly here */
+  return FALSE;
 }
 
+static Bool
+nxagentRandRGetPanning(ScreenPtr pScrn,
+                       RRCrtcPtr crtc,
+                       BoxPtr totalArea,
+                       BoxPtr trackingArea,
+                       INT16 *border)
+{
+  /* FALSE means: no, panning is not supported at the moment...
+   *              Panning requires several modes to be available for
+   *              the NX<n> output(s).
+   *
+   * FIXME: Add more modes per output than the current window size.
+   *        At least when in fullscreen mode.
+   */
+#ifdef DEBUG
+  fprintf(stderr, "nxagentRandRGetPanning: RANDR Panning is currently not supported.\n");
+#endif
+  return FALSE;
+}
 
+static Bool
+nxagentRandRSetPanning(ScreenPtr pScrn,
+                       RRCrtcPtr crtc,
+                       BoxPtr totalArea,
+                       BoxPtr trackingArea,
+                       INT16 *border)
+{
+  /* FALSE means: no, panning is not supported at the moment...
+   *              Panning requires several modes to be available for
+   *              the NX<n> output(s).
+   *
+   * FIXME: Add more modes per output than the current window size.
+   *        At least when in fullscreen mode.
+   */
+#ifdef DEBUG
+  fprintf(stderr, "nxagentRandRSetPanning: RANDR Panning is currently not supported.\n");
+#endif
+  return FALSE;
+}
+#endif
 
 #if RANDR_12_INTERFACE
 /*
@@ -137,7 +243,7 @@ nxagentRandRCrtcSet (ScreenPtr   pScreen,
 		     int         numOutputs,
 		     RROutputPtr *outputs)
 {
-  return RRCrtcNotify(crtc, mode, x, y, rotation, numOutputs, outputs);
+  return RRCrtcNotify(crtc, mode, x, y, rotation, NULL, numOutputs, outputs);
 }
 #endif
 

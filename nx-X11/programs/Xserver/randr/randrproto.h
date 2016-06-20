@@ -2,6 +2,7 @@
  * Copyright © 2000 Compaq Computer Corporation
  * Copyright © 2002 Hewlett-Packard Company
  * Copyright © 2006 Intel Corporation
+ * Copyright © 2008 Red Hat, Inc.
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
  * documentation for any purpose is hereby granted without fee, provided that
@@ -30,8 +31,8 @@
 #ifndef _XRANDRP_H_
 #define _XRANDRP_H_
 
-/*#include <nx-X11/extensions/randr.h>*/
 #include "randr.h"
+#include <nx-X11/extensions/renderproto.h>
 
 #define Window CARD32
 #define Drawable CARD32
@@ -47,7 +48,9 @@
 #define RROutput CARD32
 #define RRMode CARD32
 #define RRCrtc CARD32
+#define RRProvider CARD32
 #define RRModeFlags CARD32
+#define Atom CARD32
 
 #define Rotation CARD16
 #define SizeID CARD16
@@ -602,6 +605,296 @@ typedef struct {
 #define sz_xRRSetCrtcGammaReq		12
 
 /*
+ * Additions for V1.3
+ */
+
+typedef xRRGetScreenResourcesReq xRRGetScreenResourcesCurrentReq;
+
+#define sz_xRRGetScreenResourcesCurrentReq sz_xRRGetScreenResourcesReq
+
+typedef xRRGetScreenResourcesReply xRRGetScreenResourcesCurrentReply;
+
+#define sz_xRRGetScreenResourcesCurrentReply	sz_xRRGetScreenResourcesReply
+
+typedef struct {
+    CARD8 reqType;
+    CARD8 randrReqType;
+    CARD16 length B16;
+    RRCrtc crtc B32;
+    xRenderTransform transform;
+    CARD16 nbytesFilter;        /* number of bytes in filter name */
+    CARD16 pad B16;
+} xRRSetCrtcTransformReq;
+
+#define sz_xRRSetCrtcTransformReq	48
+
+typedef struct {
+    CARD8 reqType;
+    CARD8 randrReqType;
+    CARD16 length B16;
+    RRCrtc crtc B32;
+} xRRGetCrtcTransformReq;
+
+#define sz_xRRGetCrtcTransformReq	8
+
+typedef struct {
+    BYTE type;
+    CARD8 status;
+    CARD16 sequenceNumber B16;
+    CARD32 length B32;
+    xRenderTransform pendingTransform;
+    BYTE hasTransforms;
+    CARD8 pad0;
+    CARD16 pad1 B16;
+    xRenderTransform currentTransform;
+    CARD32 pad2 B32;
+    CARD16 pendingNbytesFilter B16;     /* number of bytes in filter name */
+    CARD16 pendingNparamsFilter B16;    /* number of filter params */
+    CARD16 currentNbytesFilter B16;     /* number of bytes in filter name */
+    CARD16 currentNparamsFilter B16;    /* number of filter params */
+} xRRGetCrtcTransformReply;
+
+#define sz_xRRGetCrtcTransformReply	96
+
+typedef struct {
+    CARD8 reqType;
+    CARD8 randrReqType;
+    CARD16 length B16;
+    Window window B32;
+    RROutput output B32;
+} xRRSetOutputPrimaryReq;
+
+#define sz_xRRSetOutputPrimaryReq	12
+
+typedef struct {
+    CARD8 reqType;
+    CARD8 randrReqType;
+    CARD16 length B16;
+    Window window B32;
+} xRRGetOutputPrimaryReq;
+
+#define sz_xRRGetOutputPrimaryReq	8
+
+typedef struct {
+    BYTE type;
+    CARD8 pad;
+    CARD16 sequenceNumber B16;
+    CARD32 length B32;
+    RROutput output B32;
+    CARD32 pad1 B32;
+    CARD32 pad2 B32;
+    CARD32 pad3 B32;
+    CARD32 pad4 B32;
+    CARD32 pad5 B32;
+} xRRGetOutputPrimaryReply;
+
+#define sz_xRRGetOutputPrimaryReply	32
+
+/*
+ * Additions for V1.4
+ */
+
+typedef struct {
+    CARD8 reqType;
+    CARD8 randrReqType;
+    CARD16 length B16;
+    Window window B32;
+} xRRGetProvidersReq;
+
+#define sz_xRRGetProvidersReq 8
+
+typedef struct {
+    BYTE type;
+    CARD8 pad;
+    CARD16 sequenceNumber B16;
+    CARD32 length B32;
+    Time timestamp B32;
+    CARD16 nProviders;
+    CARD16 pad1 B16;
+    CARD32 pad2 B32;
+    CARD32 pad3 B32;
+    CARD32 pad4 B32;
+    CARD32 pad5 B32;
+} xRRGetProvidersReply;
+
+#define sz_xRRGetProvidersReply 32
+
+typedef struct {
+    CARD8 reqType;
+    CARD8 randrReqType;
+    CARD16 length B16;
+    RRProvider provider B32;
+    Time configTimestamp B32;
+} xRRGetProviderInfoReq;
+
+#define sz_xRRGetProviderInfoReq 12
+
+typedef struct {
+    BYTE type;
+    CARD8 status;
+    CARD16 sequenceNumber B16;
+    CARD32 length B32;
+    Time timestamp B32;
+    CARD32 capabilities B32;
+    CARD16 nCrtcs B16;
+    CARD16 nOutputs B16;
+    CARD16 nAssociatedProviders B16;
+    CARD16 nameLength B16;
+    CARD32 pad1 B32;
+    CARD32 pad2 B32;
+} xRRGetProviderInfoReply;
+
+#define sz_xRRGetProviderInfoReply 32
+
+typedef struct {
+    CARD8 reqType;
+    CARD8 randrReqType;
+    CARD16 length B16;
+    RRProvider provider B32;
+    RRProvider source_provider B32;
+    Time configTimestamp B32;
+} xRRSetProviderOutputSourceReq;
+
+#define sz_xRRSetProviderOutputSourceReq 16
+
+typedef struct {
+    CARD8 reqType;
+    CARD8 randrReqType;
+    CARD16 length B16;
+    RRProvider provider B32;
+    RRProvider sink_provider B32;
+    Time configTimestamp B32;
+} xRRSetProviderOffloadSinkReq;
+
+#define sz_xRRSetProviderOffloadSinkReq 16
+
+typedef struct {
+    CARD8 reqType;
+    CARD8 randrReqType;
+    CARD16 length B16;
+    RRProvider provider B32;
+} xRRListProviderPropertiesReq;
+
+#define sz_xRRListProviderPropertiesReq	8
+
+typedef struct {
+    BYTE type;
+    CARD8 pad0;
+    CARD16 sequenceNumber B16;
+    CARD32 length B32;
+    CARD16 nAtoms B16;
+    CARD16 pad1 B16;
+    CARD32 pad2 B32;
+    CARD32 pad3 B32;
+    CARD32 pad4 B32;
+    CARD32 pad5 B32;
+    CARD32 pad6 B32;
+} xRRListProviderPropertiesReply;
+
+#define sz_xRRListProviderPropertiesReply	32
+
+typedef struct {
+    CARD8 reqType;
+    CARD8 randrReqType;
+    CARD16 length B16;
+    RRProvider provider B32;
+    Atom property B32;
+} xRRQueryProviderPropertyReq;
+
+#define sz_xRRQueryProviderPropertyReq	12
+
+typedef struct {
+    BYTE type;
+    BYTE pad0;
+    CARD16 sequenceNumber B16;
+    CARD32 length B32;
+    BOOL pending;
+    BOOL range;
+    BOOL immutable;
+    BYTE pad1;
+    CARD32 pad2 B32;
+    CARD32 pad3 B32;
+    CARD32 pad4 B32;
+    CARD32 pad5 B32;
+    CARD32 pad6 B32;
+} xRRQueryProviderPropertyReply;
+
+#define sz_xRRQueryProviderPropertyReply	32
+
+typedef struct {
+    CARD8 reqType;
+    CARD8 randrReqType;
+    CARD16 length B16;
+    RRProvider provider B32;
+    Atom property B32;
+    BOOL pending;
+    BOOL range;
+    CARD16 pad B16;
+} xRRConfigureProviderPropertyReq;
+
+#define sz_xRRConfigureProviderPropertyReq	16
+
+typedef struct {
+    CARD8 reqType;
+    CARD8 randrReqType;
+    CARD16 length B16;
+    RRProvider provider B32;
+    Atom property B32;
+    Atom type B32;
+    CARD8 format;
+    CARD8 mode;
+    CARD16 pad;
+    CARD32 nUnits B32;
+} xRRChangeProviderPropertyReq;
+
+#define sz_xRRChangeProviderPropertyReq	24
+
+typedef struct {
+    CARD8 reqType;
+    CARD8 randrReqType;
+    CARD16 length B16;
+    RRProvider provider B32;
+    Atom property B32;
+} xRRDeleteProviderPropertyReq;
+
+#define sz_xRRDeleteProviderPropertyReq	12
+
+typedef struct {
+    CARD8 reqType;
+    CARD8 randrReqType;
+    CARD16 length B16;
+    RRProvider provider B32;
+    Atom property B32;
+    Atom type B32;
+    CARD32 longOffset B32;
+    CARD32 longLength B32;
+#ifdef __cplusplus
+    BOOL _delete;
+#else
+    BOOL delete;
+#endif
+    BOOL pending;
+    CARD16 pad1 B16;
+} xRRGetProviderPropertyReq;
+
+#define sz_xRRGetProviderPropertyReq	28
+
+typedef struct {
+    BYTE type;
+    CARD8 format;
+    CARD16 sequenceNumber B16;
+    CARD32 length B32;
+    Atom propertyType B32;
+    CARD32 bytesAfter B32;
+    CARD32 nItems B32;
+    CARD32 pad1 B32;
+    CARD32 pad2 B32;
+    CARD32 pad3 B32;
+} xRRGetProviderPropertyReply;
+
+#define sz_xRRGetProviderPropertyReply	32
+
+/*
  * event
  */
 typedef struct {
@@ -644,8 +937,8 @@ typedef struct {
     CARD8 type;                 /* always evBase + RRNotify */
     CARD8 subCode;              /* RRNotify_OutputChange */
     CARD16 sequenceNumber B16;
-    Time timestamp B32;         /* time crtc was changed */
-    Time configTimestamp B32;   /* time crtc was changed */
+    Time timestamp B32;         /* time output was changed */
+    Time configTimestamp B32;   /* time config was changed */
     Window window B32;          /* window requesting notification */
     RROutput output B32;        /* affected output */
     RRCrtc crtc B32;            /* current crtc */
@@ -674,12 +967,190 @@ typedef struct {
 
 #define sz_xRROutputPropertyNotifyEvent	32
 
+typedef struct {
+    CARD8 type;                 /* always evBase + RRNotify */
+    CARD8 subCode;              /* RRNotify_ProviderChange */
+    CARD16 sequenceNumber B16;
+    Time timestamp B32;         /* time provider was changed */
+    Window window B32;          /* window requesting notification */
+    RRProvider provider B32;    /* affected provider */
+    CARD32 pad1 B32;
+    CARD32 pad2 B32;
+    CARD32 pad3 B32;
+    CARD32 pad4 B32;
+} xRRProviderChangeNotifyEvent;
+
+#define sz_xRRProviderChangeNotifyEvent	32
+
+typedef struct {
+    CARD8 type;                 /* always evBase + RRNotify */
+    CARD8 subCode;              /* RRNotify_ProviderProperty */
+    CARD16 sequenceNumber B16;
+    Window window B32;          /* window requesting notification */
+    RRProvider provider B32;    /* affected provider */
+    Atom atom B32;              /* property name */
+    Time timestamp B32;         /* time provider was changed */
+    CARD8 state;                /* NewValue or Deleted */
+    CARD8 pad1;
+    CARD16 pad2 B16;
+    CARD32 pad3 B32;
+    CARD32 pad4 B32;
+} xRRProviderPropertyNotifyEvent;
+
+#define sz_xRRProviderPropertyNotifyEvent	32
+
+typedef struct {
+    CARD8 type;                 /* always evBase + RRNotify */
+    CARD8 subCode;              /* RRNotify_ResourceChange */
+    CARD16 sequenceNumber B16;
+    Time timestamp B32;         /* time resource was changed */
+    Window window B32;          /* window requesting notification */
+    CARD32 pad1 B32;
+    CARD32 pad2 B32;
+    CARD32 pad3 B32;
+    CARD32 pad4 B32;
+    CARD32 pad5 B32;
+} xRRResourceChangeNotifyEvent;
+
+#define sz_xRRResourceChangeNotifyEvent	32
+
+typedef struct {
+    CARD8 reqType;
+    CARD8 randrReqType;
+    CARD16 length B16;
+    RRCrtc crtc B32;
+} xRRGetPanningReq;
+
+#define sz_xRRGetPanningReq		8
+
+typedef struct {
+    BYTE type;
+    CARD8 status;
+    CARD16 sequenceNumber B16;
+    CARD32 length B32;
+    Time timestamp B32;
+    CARD16 left B16;
+    CARD16 top B16;
+    CARD16 width B16;
+    CARD16 height B16;
+    CARD16 track_left B16;
+    CARD16 track_top B16;
+    CARD16 track_width B16;
+    CARD16 track_height B16;
+    INT16 border_left B16;
+    INT16 border_top B16;
+    INT16 border_right B16;
+    INT16 border_bottom B16;
+} xRRGetPanningReply;
+
+#define sz_xRRGetPanningReply		36
+
+typedef struct {
+    CARD8 reqType;
+    CARD8 randrReqType;
+    CARD16 length B16;
+    RRCrtc crtc B32;
+    Time timestamp B32;
+    CARD16 left B16;
+    CARD16 top B16;
+    CARD16 width B16;
+    CARD16 height B16;
+    CARD16 track_left B16;
+    CARD16 track_top B16;
+    CARD16 track_width B16;
+    CARD16 track_height B16;
+    INT16 border_left B16;
+    INT16 border_top B16;
+    INT16 border_right B16;
+    INT16 border_bottom B16;
+} xRRSetPanningReq;
+
+#define sz_xRRSetPanningReq		36
+
+typedef struct {
+    BYTE type;
+    CARD8 status;
+    CARD16 sequenceNumber B16;
+    CARD32 length B32;
+    Time newTimestamp B32;
+    CARD32 pad1 B32;
+    CARD32 pad2 B32;
+    CARD32 pad3 B32;
+    CARD32 pad4 B32;
+    CARD32 pad5 B32;
+} xRRSetPanningReply;
+
+#define sz_xRRSetPanningReply	32
+
+typedef struct {
+    Atom name B32;
+    BOOL primary;
+    BOOL automatic;
+    CARD16 noutput B16;
+    INT16 x B16;
+    INT16 y B16;
+    CARD16 width B16;
+    CARD16 height B16;
+    CARD32 widthInMillimeters B32;
+    CARD32 heightInMillimeters B32;
+} xRRMonitorInfo;
+
+#define sz_xRRMonitorInfo	24
+
+typedef struct {
+    CARD8 reqType;
+    CARD8 randrReqType;
+    CARD16 length B16;
+    Window window B32;
+    BOOL get_active;
+    CARD8 pad;
+    CARD16 pad2;
+} xRRGetMonitorsReq;
+
+#define sz_xRRGetMonitorsReq	12
+
+typedef struct {
+    BYTE type;
+    CARD8 status;
+    CARD16 sequenceNumber B16;
+    CARD32 length B32;
+    Time timestamp B32;
+    CARD32 nmonitors B32;
+    CARD32 noutputs B32;
+    CARD32 pad1 B32;
+    CARD32 pad2 B32;
+    CARD32 pad3 B32;
+} xRRGetMonitorsReply;
+
+#define sz_xRRGetMonitorsReply	32
+
+typedef struct {
+    CARD8 reqType;
+    CARD8 randrReqType;
+    CARD16 length B16;
+    Window window B32;
+    xRRMonitorInfo monitor;
+} xRRSetMonitorReq;
+
+#define sz_xRRSetMonitorReq	32
+
+typedef struct {
+    CARD8 reqType;
+    CARD8 randrReqType;
+    CARD16 length B16;
+    Window window B32;
+    Atom name B32;
+} xRRDeleteMonitorReq;
+
+#define sz_xRRDeleteMonitorReq	12
+
 #undef RRModeFlags
 #undef RRCrtc
 #undef RRMode
 #undef RROutput
 #undef RRMode
 #undef RRCrtc
+#undef RRProvider
 #undef Drawable
 #undef Window
 #undef Font
@@ -694,5 +1165,6 @@ typedef struct {
 #undef Rotation
 #undef SizeID
 #undef SubpixelOrder
+#undef Atom
 
 #endif                          /* _XRANDRP_H_ */

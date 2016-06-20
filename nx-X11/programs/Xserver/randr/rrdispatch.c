@@ -21,48 +21,62 @@
  */
 
 #include "randrstr.h"
-
-#define SERVER_RANDR_MAJOR	1
-#define SERVER_RANDR_MINOR	2
+#ifndef NXAGENT_SERVER
+#include "protocol-versions.h"
+#else
+#define SERVER_RANDR_MAJOR_VERSION     1
+#define SERVER_RANDR_MINOR_VERSION     5
+#endif
 
 Bool
 RRClientKnowsRates(ClientPtr pClient)
 {
     rrClientPriv(pClient);
 
-    return (pRRClient->major_version > 1 ||
-            (pRRClient->major_version == 1 && pRRClient->minor_version >= 1));
+    return version_compare(pRRClient->major_version, pRRClient->minor_version,
+                           1, 1) >= 0;
 }
 
 static int
 ProcRRQueryVersion(ClientPtr client)
 {
-    xRRQueryVersionReply rep;
-    register int n;
+    int n;
 
+    xRRQueryVersionReply rep = {
+        .type = X_Reply,
+        .sequenceNumber = client->sequence,
+        .length = 0
+    };
     REQUEST(xRRQueryVersionReq);
     rrClientPriv(client);
 
     REQUEST_SIZE_MATCH(xRRQueryVersionReq);
     pRRClient->major_version = stuff->majorVersion;
     pRRClient->minor_version = stuff->minorVersion;
-    rep.type = X_Reply;
-    rep.length = 0;
-    rep.sequenceNumber = client->sequence;
-    /*
-     * Report the current version; the current
-     * spec says they're all compatible after 1.0
-     */
-    rep.majorVersion = SERVER_RANDR_MAJOR;
-    rep.minorVersion = SERVER_RANDR_MINOR;
+
+    if (version_compare(stuff->majorVersion, stuff->minorVersion,
+                        SERVER_RANDR_MAJOR_VERSION,
+                        SERVER_RANDR_MINOR_VERSION) < 0) {
+        rep.majorVersion = stuff->majorVersion;
+        rep.minorVersion = stuff->minorVersion;
+    }
+    else {
+        rep.majorVersion = SERVER_RANDR_MAJOR_VERSION;
+        rep.minorVersion = SERVER_RANDR_MINOR_VERSION;
+    }
+
     if (client->swapped) {
         swaps(&rep.sequenceNumber, n);
         swapl(&rep.length, n);
         swapl(&rep.majorVersion, n);
         swapl(&rep.minorVersion, n);
     }
+#ifndef NXAGENT_SERVER
+    WriteToClient(client, sizeof(xRRQueryVersionReply), &rep);
+#else
     WriteToClient(client, sizeof(xRRQueryVersionReply), (char *) &rep);
-    return (client->noClientException);
+#endif
+    return Success;
 }
 
 static int
@@ -78,19 +92,30 @@ ProcRRSelectInput(ClientPtr client)
 
     REQUEST_SIZE_MATCH(xRRSelectInputReq);
 #ifndef NXAGENT_SERVER
-    rc = dixLookupWindow(&pWin, stuff->window, client, DixWriteAccess);
+    rc = dixLookupWindow(&pWin, stuff->window, client, DixReceiveAccess);
 #else
     pWin = SecurityLookupWindow(stuff->window, client, SecurityWriteAccess);
     rc = pWin ? Success : BadWindow;
 #endif
     if (rc != Success)
         return rc;
-    pHead = (RREventPtr *) SecurityLookupIDByType(client,
-                                                  pWin->drawable.id,
-                                                  RREventType, DixWriteAccess);
+#ifndef NXAGENT_SERVER
+    rc = dixLookupResourceByType((void **) &pHead, pWin->drawable.id,
+                                 RREventType, client, DixWriteAccess);
+#else                           /* !defined(NXAGENT_SERVER) */
+    pHead = (RREventPtr *) LookupIDByType(pWin->drawable.id, RREventType);
+#endif                          /* !defined(NXAGENT_SERVER) */
+
+    if (rc != Success && rc != BadValue)
+        return rc;
 
     if (stuff->enable & (RRScreenChangeNotifyMask |
-                         RRCrtcChangeNotifyMask | RROutputChangeNotifyMask)) {
+                         RRCrtcChangeNotifyMask |
+                         RROutputChangeNotifyMask |
+                         RROutputPropertyNotifyMask |
+                         RRProviderChangeNotifyMask |
+                         RRProviderPropertyNotifyMask |
+                         RRResourceChangeNotifyMask)) {
         ScreenPtr pScreen = pWin->drawable.pScreen;
 
         rrScrPriv(pScreen);
@@ -142,13 +167,37 @@ ProcRRSelectInput(ClientPtr client)
         /*
          * Now see if the client needs an event
          */
-        if (pScrPriv && (pRREvent->mask & RRScreenChangeNotifyMask)) {
+        if (pScrPriv) {
             pTimes = &((RRTimesPtr) (pRRClient + 1))[pScreen->myNum];
             if (CompareTimeStamps(pTimes->setTime,
                                   pScrPriv->lastSetTime) != 0 ||
                 CompareTimeStamps(pTimes->configTime,
                                   pScrPriv->lastConfigTime) != 0) {
-                RRDeliverScreenEvent(client, pWin, pScreen);
+                if (pRREvent->mask & RRScreenChangeNotifyMask) {
+                    RRDeliverScreenEvent(client, pWin, pScreen);
+                }
+
+                if (pRREvent->mask & RRCrtcChangeNotifyMask) {
+                    int i;
+
+                    for (i = 0; i < pScrPriv->numCrtcs; i++) {
+                        RRDeliverCrtcEvent(client, pWin, pScrPriv->crtcs[i]);
+                    }
+                }
+
+                if (pRREvent->mask & RROutputChangeNotifyMask) {
+                    int i;
+
+                    for (i = 0; i < pScrPriv->numOutputs; i++) {
+                        RRDeliverOutputEvent(client, pWin,
+                                             pScrPriv->outputs[i]);
+                    }
+                }
+
+                /* We don't check for RROutputPropertyNotifyMask, as randrproto.txt doesn't
+                 * say if there ought to be notifications of changes to output properties
+                 * if those changes occurred before the time RRSelectInput is called.
+                 */
             }
         }
     }
@@ -209,4 +258,26 @@ int (*ProcRandrVector[RRNumberRequests]) (ClientPtr) = {
         ProcRRGetCrtcGammaSize, /* 22 */
         ProcRRGetCrtcGamma,     /* 23 */
         ProcRRSetCrtcGamma,     /* 24 */
+/* V1.3 additions */
+        ProcRRGetScreenResourcesCurrent,        /* 25 */
+        ProcRRSetCrtcTransform, /* 26 */
+        ProcRRGetCrtcTransform, /* 27 */
+        ProcRRGetPanning,       /* 28 */
+        ProcRRSetPanning,       /* 29 */
+        ProcRRSetOutputPrimary, /* 30 */
+        ProcRRGetOutputPrimary, /* 31 */
+/* V1.4 additions */
+        ProcRRGetProviders,     /* 32 */
+        ProcRRGetProviderInfo,  /* 33 */
+        ProcRRSetProviderOffloadSink,   /* 34 */
+        ProcRRSetProviderOutputSource,  /* 35 */
+        ProcRRListProviderProperties,   /* 36 */
+        ProcRRQueryProviderProperty,    /* 37 */
+        ProcRRConfigureProviderProperty,        /* 38 */
+        ProcRRChangeProviderProperty,   /* 39 */
+        ProcRRDeleteProviderProperty,   /* 40 */
+        ProcRRGetProviderProperty,      /* 41 */
+        ProcRRGetMonitors,      /* 42 */
+        ProcRRSetMonitor,       /* 43 */
+        ProcRRDeleteMonitor,    /* 44 */
 };
