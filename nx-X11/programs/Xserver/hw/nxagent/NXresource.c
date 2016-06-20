@@ -685,8 +685,6 @@ FreeResource(XID id, RESTYPE skipDeleteFuncType)
                 #ifdef NXAGENT_SERVER
                 nxagentResChangedFlag = 1;
                 #endif
-		if (rtype & RC_CACHED)
-		    FlushClientCaches(res->id);
 		if (rtype != skipDeleteFuncType)
 		    (*DeleteFuncs[rtype & TypeMask])(res->value, res->id);
 		xfree(res);
@@ -697,11 +695,6 @@ FreeResource(XID id, RESTYPE skipDeleteFuncType)
 	    else
 		prev = &res->next;
         }
-	if(clients[cid] && (id == clients[cid]->lastDrawableID))
-	{
-	    clients[cid]->lastDrawable = (DrawablePtr)screenInfo.screens[0]->root;
-	    clients[cid]->lastDrawableID = screenInfo.screens[0]->root->drawable.id;
-	}
     }
     if (!gotOne)
 	ErrorF("Freeing resource id=%lX which isn't there.\n",
@@ -728,8 +721,6 @@ FreeResourceByType(XID id, RESTYPE type, Bool skipFree)
                 #ifdef NXAGENT_SERVER
                 nxagentResChangedFlag = 1;
                 #endif
-		if (type & RC_CACHED)
-		    FlushClientCaches(res->id);
 		if (!skipFree)
 		    (*DeleteFuncs[type & TypeMask])(res->value, res->id);
 		xfree(res);
@@ -738,11 +729,6 @@ FreeResourceByType(XID id, RESTYPE type, Bool skipFree)
 	    else
 		prev = &res->next;
         }
-	if(clients[cid] && (id == clients[cid]->lastDrawableID))
-	{
-	    clients[cid]->lastDrawable = (DrawablePtr)screenInfo.screens[0]->root;
-	    clients[cid]->lastDrawableID = screenInfo.screens[0]->root->drawable.id;
-	}
     }
 }
 
@@ -765,8 +751,6 @@ ChangeResourceValue (XID id, RESTYPE rtype, void * value)
 	for (; res; res = res->next)
 	    if ((res->id == id) && (res->type == rtype))
 	    {
-		if (rtype & RC_CACHED)
-		    FlushClientCaches(res->id);
 		res->value = value;
 		return TRUE;
 	    }
@@ -1027,8 +1011,6 @@ FreeClientNeverRetainResources(ClientPtr client)
 	    if (rtype & RC_NEVERRETAIN)
 	    {
 		*prev = this->next;
-		if (rtype & RC_CACHED)
-		    FlushClientCaches(this->id);
 		(*DeleteFuncs[rtype & TypeMask])(this->value, this->id);
 		xfree(this);	    
 	    }
@@ -1073,8 +1055,6 @@ FreeClientResources(ClientPtr client)
 	{
 	    RESTYPE rtype = this->type;
 	    *head = this->next;
-	    if (rtype & RC_CACHED)
-		FlushClientCaches(this->id);
 	    (*DeleteFuncs[rtype & TypeMask])(this->value, this->id);
 	    xfree(this);	    
 	}
