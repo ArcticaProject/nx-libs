@@ -20,7 +20,6 @@ extern Bool loadableFonts;
 extern int defaultColorVisualClass;
 
 extern Bool Must_have_memory;
-extern WindowPtr *WindowTable;
 extern int GrabInProgress;
 extern char *ConnectionInfo;
 extern Bool noTestExtensions;

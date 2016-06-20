@@ -468,7 +468,7 @@ miSendExposures(pWin, pRgn, dx, dy)
 	if(!pWin->parent) {
 	    x = panoramiXdataPtr[scrnum].x;
 	    y = panoramiXdataPtr[scrnum].y;
-	    pWin = WindowTable[0];
+	    pWin = screenInfo.screens[0]->root;
 	    realWin = pWin->drawable.id;
 	} else if (scrnum) {
 	    PanoramiXRes *win;
@@ -715,7 +715,7 @@ int what;
     gcmask |= GCFunction | GCClipMask;
 
     i = pScreen->myNum;
-    pRoot = WindowTable[i];
+    pRoot = screenInfo.screens[i]->root;
 
     pBgWin = pWin;
     if (what == PW_BORDER)

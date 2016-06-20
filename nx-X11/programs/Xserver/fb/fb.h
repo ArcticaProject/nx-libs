@@ -582,8 +582,7 @@ extern const GCFuncs	fbGCFuncs;
 #endif
 
 #ifdef FB_OLD_SCREEN
-# define FB_OLD_MISCREENINIT	/* miScreenInit requires 14 args, not 13 */
-extern WindowPtr    *WindowTable;
+# define FB_OLD_MISCREENINIT   /* miScreenInit requires 14 args, not 13 */
 #endif
 
 #ifdef FB_24_32BIT
@@ -704,7 +703,7 @@ typedef struct {
 
 #define fbWindowEnabled(pWin) \
     RegionNotEmpty(\
-		    &WindowTable[(pWin)->drawable.pScreen->myNum]->borderClip)
+		    &(pWin)->drawable.pScreen->root->borderClip)
 
 #define fbDrawableEnabled(pDrawable) \
     ((pDrawable)->type == DRAWABLE_PIXMAP ? \

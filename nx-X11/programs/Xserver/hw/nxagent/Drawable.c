@@ -3292,7 +3292,7 @@ void nxagentSendDeferredBackgroundExposures(void)
     fprintf(stderr, "nxagentSendDeferredBackgroundExposures: Going to send deferred exposures to the root window.\n");
     #endif
 
-    TraverseTree(WindowTable[0], nxagentClipAndSendClearExpose, (void *) nxagentDeferredBackgroundExposures);
+    TraverseTree(screenInfo.screens[0]->root, nxagentClipAndSendClearExpose, (void *) nxagentDeferredBackgroundExposures);
 
     RegionEmpty(nxagentDeferredBackgroundExposures);
   }

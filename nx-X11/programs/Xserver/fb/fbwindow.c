@@ -262,7 +262,7 @@ fbFillRegionTiled (DrawablePtr	pDrawable,
     if(!noPanoramiXExtension) 
     {
 	int index = pDrawable->pScreen->myNum;
-	if(&WindowTable[index]->drawable == pDrawable) 
+	if(&screenInfo.screens[index]->root->drawable == pDrawable)
 	{
 	    xRot -= panoramiXdataPtr[index].x;
 	    yRot -= panoramiXdataPtr[index].y;

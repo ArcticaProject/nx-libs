@@ -32,7 +32,7 @@ static void
 compScreenUpdate(ScreenPtr pScreen)
 {
     compCheckTree(pScreen);
-    compPaintChildrenToWindow(pScreen, WindowTable[pScreen->myNum]);
+    compPaintChildrenToWindow(pScreen, pScreen->root);
 }
 
 static void

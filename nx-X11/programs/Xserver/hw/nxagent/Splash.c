@@ -396,15 +396,15 @@ void nxagentRemoveSplashWindow(WindowPtr pWin)
     XDestroyWindow(nxagentDisplay, nxagentSplashWindow);
 
     nxagentSplashWindow = None;
-    nxagentRefreshWindows(WindowTable[0]);
+    nxagentRefreshWindows(screenInfo.screens[0]->root);
 
     #ifdef TEST
     fprintf(stderr, "nxagentRemoveSplashWindow: setting the ownership of %s (%d) on window 0x%lx\n",
-                "NX_CUT_BUFFER_SERVER", (int)serverCutProperty, nxagentWindow(WindowTable[0]));
+                "NX_CUT_BUFFER_SERVER", (int)serverCutProperty, nxagentWindow(screenInfo.screens[0]->root));
     #endif
 
     XSetSelectionOwner(nxagentDisplay, serverCutProperty,
-                           nxagentWindow(WindowTable[0]), CurrentTime);
+                           nxagentWindow(screenInfo.screens[0]->root), CurrentTime);
   }
 
   if (nxagentPixmapLogo)

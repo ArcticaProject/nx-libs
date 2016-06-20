@@ -234,8 +234,8 @@ FlushClientCaches(XID id)
 	{
             if (client->lastDrawableID == id)
 	    {
-		client->lastDrawableID = WindowTable[0]->drawable.id;
-		client->lastDrawable = (DrawablePtr)WindowTable[0];
+		client->lastDrawableID = screenInfo.screens[0]->root->drawable.id;
+		client->lastDrawable = (DrawablePtr)screenInfo.screens[0]->root;
 	    }
             else if (client->lastGCID == id)
 	    {
@@ -793,7 +793,7 @@ GetGeometry(register ClientPtr client, xGetGeometryReply *rep)
     rep->type = X_Reply;
     rep->length = 0;
     rep->sequenceNumber = client->sequence;
-    rep->root = WindowTable[pDraw->pScreen->myNum]->drawable.id;
+    rep->root = pDraw->pScreen->root->drawable.id;
     rep->depth = pDraw->depth;
     rep->width = pDraw->width;
     rep->height = pDraw->height;
@@ -854,7 +854,7 @@ ProcQueryTree(register ClientPtr client)
         return(BadWindow);
     memset(&reply, 0, sizeof(xQueryTreeReply));
     reply.type = X_Reply;
-    reply.root = WindowTable[pWin->drawable.pScreen->myNum]->drawable.id;
+    reply.root = pWin->drawable.pScreen->root->drawable.id;
     reply.sequenceNumber = client->sequence;
     if (pWin->parent)
 	reply.parent = pWin->parent->drawable.id;
@@ -3633,8 +3633,8 @@ void InitClient(ClientPtr client, int i, void * ospriv)
     if (i)
     {
 	client->closeDownMode = DestroyAll;
-	client->lastDrawable = (DrawablePtr)WindowTable[0];
-	client->lastDrawableID = WindowTable[0]->drawable.id;
+	client->lastDrawable = (DrawablePtr)screenInfo.screens[0]->root;
+	client->lastDrawableID = screenInfo.screens[0]->root->drawable.id;
     }
     else
     {
@@ -3853,8 +3853,8 @@ SendConnSetup(register ClientPtr client, char *reason)
 	register unsigned int j;
 	register xDepth *pDepth;
 
-        root->currentInputMask = WindowTable[i]->eventMask |
-			         wOtherEventMasks (WindowTable[i]);
+        root->currentInputMask = screenInfo.screens[i]->root->eventMask |
+			         wOtherEventMasks (screenInfo.screens[i]->root);
 	pDepth = (xDepth *)(root + 1);
 	for (j = 0; j < root->nDepths; j++)
 	{

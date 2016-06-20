@@ -22,6 +22,7 @@
 #include "Xatom.h"
 #include "selection.h"
 #include "windowstr.h"
+#include "scrnintstr.h"
 
 #include "Windows.h"
 #include "Atoms.h"
@@ -255,7 +256,7 @@ void nxagentClearSelection(XEvent *X)
                              NullGrab);
     }
 
-    CurrentSelections[i].window = WindowTable[0]->drawable.id;
+    CurrentSelections[i].window = screenInfo.screens[0]->root->drawable.id;
     CurrentSelections[i].client = NullClient;
 
     lastSelectionOwner[i].client = NULL;
@@ -424,7 +425,7 @@ FIXME: Do we need this?
          * Fictitious window.
          */
 
-        x.u.selectionRequest.requestor = WindowTable[0]->drawable.id;
+        x.u.selectionRequest.requestor = screenInfo.screens[0]->root->drawable.id;
 
         /*
          * Don't send the same window, some programs are
@@ -1502,13 +1503,13 @@ int nxagentInitClipboard(WindowPtr pWin)
 
   lastSelectionOwner[nxagentPrimarySelection].selection = XA_PRIMARY;
   lastSelectionOwner[nxagentPrimarySelection].client = NullClient;
-  lastSelectionOwner[nxagentPrimarySelection].window = WindowTable[0]->drawable.id;
+  lastSelectionOwner[nxagentPrimarySelection].window = screenInfo.screens[0]->root->drawable.id;
   lastSelectionOwner[nxagentPrimarySelection].windowPtr = NULL;
   lastSelectionOwner[nxagentPrimarySelection].lastTimeChanged = GetTimeInMillis();
 
   lastSelectionOwner[nxagentClipboardSelection].selection = nxagentClipboardAtom;
   lastSelectionOwner[nxagentClipboardSelection].client = NullClient;
-  lastSelectionOwner[nxagentClipboardSelection].window = WindowTable[0]->drawable.id;
+  lastSelectionOwner[nxagentClipboardSelection].window = screenInfo.screens[0]->root->drawable.id;
   lastSelectionOwner[nxagentClipboardSelection].windowPtr = NULL;
   lastSelectionOwner[nxagentClipboardSelection].lastTimeChanged = GetTimeInMillis();
 

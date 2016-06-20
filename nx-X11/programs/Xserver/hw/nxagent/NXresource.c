@@ -699,8 +699,8 @@ FreeResource(XID id, RESTYPE skipDeleteFuncType)
         }
 	if(clients[cid] && (id == clients[cid]->lastDrawableID))
 	{
-	    clients[cid]->lastDrawable = (DrawablePtr)WindowTable[0];
-	    clients[cid]->lastDrawableID = WindowTable[0]->drawable.id;
+	    clients[cid]->lastDrawable = (DrawablePtr)screenInfo.screens[0]->root;
+	    clients[cid]->lastDrawableID = screenInfo.screens[0]->root->drawable.id;
 	}
     }
     if (!gotOne)
@@ -740,8 +740,8 @@ FreeResourceByType(XID id, RESTYPE type, Bool skipFree)
         }
 	if(clients[cid] && (id == clients[cid]->lastDrawableID))
 	{
-	    clients[cid]->lastDrawable = (DrawablePtr)WindowTable[0];
-	    clients[cid]->lastDrawableID = WindowTable[0]->drawable.id;
+	    clients[cid]->lastDrawable = (DrawablePtr)screenInfo.screens[0]->root;
+	    clients[cid]->lastDrawableID = screenInfo.screens[0]->root->drawable.id;
 	}
     }
 }

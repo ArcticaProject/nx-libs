@@ -549,6 +549,7 @@ typedef struct _Screen {
     void *		devPrivate;
     short       	numVisuals;
     VisualPtr		visuals;
+    WindowPtr		root;
     int			WindowPrivateLen;
     unsigned		*WindowPrivateSizes;
     unsigned		totalWindowSize;

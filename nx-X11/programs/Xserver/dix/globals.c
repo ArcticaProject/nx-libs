@@ -86,8 +86,6 @@ ClientPtr  serverClient;
 int  currentMaxClients;   /* current size of clients array */
 long maxBigRequestSize = MAX_BIG_REQUEST_SIZE;
 
-WindowPtr *WindowTable;
-
 unsigned long globalSerialNumber = 0;
 unsigned long serverGeneration = 0;
 

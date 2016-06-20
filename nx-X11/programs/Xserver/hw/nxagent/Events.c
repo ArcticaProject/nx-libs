@@ -629,8 +629,8 @@ void nxagentShadowSwitchResizeMode(ScreenPtr pScreen)
   {
     nxagentShadowSetRatio(1.0, 1.0);
 
-    nxagentShadowCreateMainWindow(screenInfo.screens[DefaultScreen(nxagentDisplay)], WindowTable[0],
-                                      WindowTable[0] -> drawable.width, WindowTable[0] -> drawable.height);
+    nxagentShadowCreateMainWindow(screenInfo.screens[DefaultScreen(nxagentDisplay)], screenInfo.screens[0]->root,
+                                      screenInfo.screens[0]->root -> drawable.width, screenInfo.screens[0]->root -> drawable.height);
 
     sizeHints.max_width = nxagentOption(RootWidth);
     sizeHints.max_height = nxagentOption(RootHeight);
@@ -640,13 +640,13 @@ void nxagentShadowSwitchResizeMode(ScreenPtr pScreen)
   else
   {
     nxagentShadowSetRatio(nxagentOption(Width) * 1.0 /
-                              WindowTable[0] -> drawable.width, 
+                              screenInfo.screens[0]->root -> drawable.width,
                                   nxagentOption(Height) * 1.0 /
-                                      WindowTable[0] -> drawable.height);
+                                      screenInfo.screens[0]->root -> drawable.height);
 
     nxagentShadowCreateMainWindow(screenInfo.screens[DefaultScreen(nxagentDisplay)],
-                                      WindowTable[0], WindowTable[0] -> drawable.width,
-                                          WindowTable[0] -> drawable.height);
+                                      screenInfo.screens[0]->root, screenInfo.screens[0]->root -> drawable.width,
+                                          screenInfo.screens[0]->root -> drawable.height);
 
     sizeHints.max_width = WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
     sizeHints.max_height = HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
@@ -963,10 +963,10 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
           case doDebugTree:
           {
             fprintf(stderr, "\n ========== nxagentRemoteWindowsTree ==========\n");
-            nxagentRemoteWindowsTree(nxagentWindow(WindowTable[0]), 0);
+            nxagentRemoteWindowsTree(nxagentWindow(screenInfo.screens[0]->root), 0);
 
             fprintf(stderr, "\n========== nxagentInternalWindowsTree ==========\n");
-            nxagentInternalWindowsTree(WindowTable[0], 0);
+            nxagentInternalWindowsTree(screenInfo.screens[0]->root, 0);
 
             break;
           }
@@ -1405,7 +1405,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was
                   (X.xmotion.y_root < nxagentLastEnteredTopLevelWindow -> drawable.y + 4))
           {
             if (pWin && nxagentClientIsDialog(wClient(pWin)) == 0 &&
-                    nxagentLastEnteredTopLevelWindow -> parent == WindowTable[0] &&
+                    nxagentLastEnteredTopLevelWindow -> parent == screenInfo.screens[0]->root &&
                         nxagentLastEnteredTopLevelWindow -> overrideRedirect == False &&
                             X.xmotion.x_root > (nxagentLastEnteredTopLevelWindow -> drawable.x +
                                 (nxagentLastEnteredTopLevelWindow -> drawable.width >> 1) - 50) &&
@@ -1625,7 +1625,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was
           if (pWin != NULL)
           {
             for (pTLWin = pWin;
-                     pTLWin -> parent != WindowTable[pTLWin -> drawable.pScreen -> myNum];
+                     pTLWin -> parent != pTLWin -> drawable.pScreen -> root;
                          pTLWin = pTLWin -> parent);
           }
 
@@ -2454,7 +2454,7 @@ FIXME: This can be maybe optimized by consuming the
     RegionValidate(&sum, &overlap);
 
     RegionIntersect(&sum, &sum,
-                         &WindowTable[pWin->drawable.pScreen->myNum]->winSize);
+                         &pWin->drawable.pScreen->root->winSize);
 
     #ifdef DEBUG
     fprintf(stderr, "nxagentHandleExposeEvent: Sending events for window id [%ld].\n",
@@ -3147,7 +3147,7 @@ int nxagentCheckWindowConfiguration(XConfigureEvent* X)
     fprintf(stderr, "nxagentCheckWindowConfiguration: Before restacking top level window [%p]\n",
                 (void *) nxagentWindowPtr(X -> window));
 
-    for (pSib = WindowTable[0] -> firstChild; pSib; pSib = pSib -> nextSib)
+    for (pSib = screenInfo.screens[0]->root -> firstChild; pSib; pSib = pSib -> nextSib)
     {
       fprintf(stderr, "nxagentCheckWindowConfiguration: Top level window: [%p].\n",
                   (void *) pSib);
@@ -3431,7 +3431,7 @@ int nxagentHandleConfigureNotify(XEvent* X)
           nxagentUpdateViewportFrame(0, 0, nxagentOption(RootWidth),
                                          nxagentOption(RootHeight));
 
-          XMoveWindow(nxagentDisplay, nxagentWindow(WindowTable[pScreen -> myNum]),
+          XMoveWindow(nxagentDisplay, nxagentWindow(pScreen->root),
                           nxagentOption(RootX), nxagentOption(RootY));
         }
 
@@ -4245,7 +4245,7 @@ void nxagentForwardRemoteExpose(void)
     fprintf(stderr, "nxagentForwardRemoteExpose: Going to forward events.\n");
     #endif
 
-    TraverseTree(WindowTable[0], nxagentClipAndSendExpose, (void *)nxagentRemoteExposeRegion);
+    TraverseTree(screenInfo.screens[0]->root, nxagentClipAndSendExpose, (void *)nxagentRemoteExposeRegion);
 
     /*
      * Now this region should be empty.
@@ -4420,7 +4420,7 @@ int nxagentHandleRRScreenChangeNotify(XEvent *X)
   nxagentResizeScreen(screenInfo.screens[DefaultScreen(nxagentDisplay)], Xr -> width, Xr -> height,
                           Xr -> mwidth, Xr -> mheight);
 
-  nxagentShadowCreateMainWindow(screenInfo.screens[DefaultScreen(nxagentDisplay)], WindowTable[0],
+  nxagentShadowCreateMainWindow(screenInfo.screens[DefaultScreen(nxagentDisplay)], screenInfo.screens[0]->root,
                                 Xr -> width, Xr -> height);
 
   nxagentShadowSetWindowsSize();

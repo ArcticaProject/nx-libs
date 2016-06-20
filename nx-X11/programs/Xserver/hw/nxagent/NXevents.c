@@ -162,7 +162,6 @@ extern Bool XkbFilterEvents(ClientPtr, int, xEvent *);
 #endif
 
 #ifdef XEVIE
-extern WindowPtr *WindowTable;
 extern int       xevieFlag;
 extern int       xevieClientIndex;
 extern DeviceIntPtr     xeviemouse;
@@ -465,9 +464,10 @@ XineramaCheckPhysLimits(
 static Bool
 XineramaSetWindowPntrs(WindowPtr pWin)
 {
-    if(pWin == WindowTable[0]) {
-	    memcpy(sprite.windows, WindowTable, 
-				PanoramiXNumScreens*sizeof(WindowPtr));
+    if(pWin == screenInfo.screens[0]->root) {
+	int i;
+	for (i = 0; i < PanoramiXNumScreens; i++)
+	    sprite.windows[i] = screenInfo.screens[i]->root;
     } else {
 	PanoramiXRes *win;
 	int i;
@@ -692,7 +692,7 @@ XineramaConfineCursorToWindow(WindowPtr pWin, Bool generateEvents)
 	   sprite.hotShape = NullRegion;
 	
 	sprite.confined = FALSE;
-	sprite.confineWin = (pWin == WindowTable[0]) ? NullWindow : pWin;
+	sprite.confineWin = (pWin == screenInfo.screens[0]->root) ? NullWindow : pWin;
 
 	XineramaCheckPhysLimits(sprite.current, generateEvents);
     }
@@ -909,7 +909,7 @@ CheckVirtualMotion(
 	    qe->event->u.keyButtonPointer.rootY = sprite.hot.y;
 	}
     }
-    ROOT = WindowTable[sprite.hot.pScreen->myNum];
+    ROOT = sprite.hot.pScreen->root;
 }
 
 static void
@@ -1109,7 +1109,7 @@ EnqueueEvent(xEvent *xE, DeviceIntPtr device, int count)
 	 */
 	if (xE->u.u.type == MotionNotify)
 	    XE_KBPTR.root =
-		WindowTable[sprite.hotPhys.pScreen->myNum]->drawable.id;
+		sprite.hotPhys.pScreen->root->drawable.id;
 	eventinfo.events = xE;
 	eventinfo.count = count;
 	CallCallbacks(&DeviceEventCallback, (void *)&eventinfo);
@@ -1272,7 +1272,7 @@ playmore:
 	ConfineCursorToWindow(grab->confineTo, TRUE, TRUE);
     }
     else
-	ConfineCursorToWindow(WindowTable[sprite.hotPhys.pScreen->myNum],
+	ConfineCursorToWindow(sprite.hotPhys.pScreen->root,
 			      TRUE, FALSE);
     PostNewCursor();
 }
@@ -1290,7 +1290,7 @@ ScreenRestructured (ScreenPtr pScreen)
 	ConfineCursorToWindow(grab->confineTo, TRUE, TRUE);
     }
     else
-	ConfineCursorToWindow(WindowTable[sprite.hotPhys.pScreen->myNum],
+	ConfineCursorToWindow(sprite.hotPhys.pScreen->root,
 			      TRUE, FALSE);
 }
 #endif
@@ -2219,7 +2219,7 @@ CheckMotion(xEvent *xE)
 	if (sprite.hot.pScreen != sprite.hotPhys.pScreen)
 	{
 	    sprite.hot.pScreen = sprite.hotPhys.pScreen;
-	    ROOT = WindowTable[sprite.hot.pScreen->myNum];
+	    ROOT = sprite.hot.pScreen->root;
 	}
 #ifdef XEVIE
 	xeviehot.x =
@@ -2307,9 +2307,9 @@ WindowsRestructured()
 
 #ifdef PANORAMIX
 /* This was added to support reconfiguration under Xdmx.  The problem is
- * that if the 0th screen (i.e., WindowTable[0]) is moved to an origin
- * other than 0,0, the information in the private sprite structure must
- * be updated accordingly, or XYToWindow (and other routines) will not
+ * that if the 0th screen (i.e., screenInfo.screens[0]->root) is moved to
+ * an origin other than 0,0, the information in the private sprite structure
+ * must be updated accordingly, or XYToWindow (and other routines) will not
  * compute correctly. */
 void ReinitializeRootWindow(WindowPtr win, int xoff, int yoff)
 {
@@ -2339,7 +2339,7 @@ void ReinitializeRootWindow(WindowPtr win, int xoff, int yoff)
 	    sprite.hotPhys.x = sprite.hotPhys.y = 0;
 	ConfineCursorToWindow(grab->confineTo, TRUE, TRUE);
     } else
-	ConfineCursorToWindow(WindowTable[sprite.hotPhys.pScreen->myNum],
+	ConfineCursorToWindow(sprite.hotPhys.pScreen->root,
 			      TRUE, FALSE);
 }
 #endif
@@ -2435,7 +2435,7 @@ NewCurrentScreen(ScreenPtr newScreen, int x, int y)
 	    if(sprite.confineWin)
 		XineramaConfineCursorToWindow(sprite.confineWin, TRUE);
 	    else
-		XineramaConfineCursorToWindow(WindowTable[0], TRUE);
+		XineramaConfineCursorToWindow(screenInfo.screens[0]->root, TRUE);
 	    /* if the pointer wasn't confined, the DDX won't get 
 	       told of the pointer warp so we reposition it here */
 	    if(!syncEvents.playingEvents)
@@ -2448,7 +2448,7 @@ NewCurrentScreen(ScreenPtr newScreen, int x, int y)
     } else 
 #endif
     if (newScreen != sprite.hotPhys.pScreen)
-	ConfineCursorToWindow(WindowTable[newScreen->myNum], TRUE, FALSE);
+	ConfineCursorToWindow(newScreen->root, TRUE, FALSE);
 }
 
 #ifdef PANORAMIX
@@ -2520,7 +2520,7 @@ XineramaWarpPointer(ClientPtr client)
 
 	winX = source->drawable.x;
 	winY = source->drawable.y;
-	if(source == WindowTable[0]) {
+	if(source == screenInfo.screens[0]->root) {
 	    winX -= panoramiXdataPtr[0].x;
 	    winY -= panoramiXdataPtr[0].y;
 	}
@@ -2536,7 +2536,7 @@ XineramaWarpPointer(ClientPtr client)
     if (dest) {
 	x = dest->drawable.x;
 	y = dest->drawable.y;
-	if(dest == WindowTable[0]) {
+	if(dest == screenInfo.screens[0]->root) {
 	    x -= panoramiXdataPtr[0].x;
 	    y -= panoramiXdataPtr[0].y;
 	}
@@ -3206,7 +3206,7 @@ ProcessPointerEvent (register xEvent *xE, register DeviceIntPtr mouse, int count
 	    /* see comment in EnqueueEvents regarding the next three lines */
 	    if (xE->u.u.type == MotionNotify)
 		XE_KBPTR.root =
-		    WindowTable[sprite.hotPhys.pScreen->myNum]->drawable.id;
+		    sprite.hotPhys.pScreen->root->drawable.id;
 	    eventinfo.events = xE;
 	    eventinfo.count = count;
 	    CallCallbacks(&DeviceEventCallback, (void *)&eventinfo);
@@ -3818,11 +3818,11 @@ DoFocusEvents(DeviceIntPtr dev, WindowPtr fromWin, WindowPtr toWin, int mode)
 	    /* Notify all the roots */
 #ifdef PANORAMIX
  	    if ( !noPanoramiXExtension )
-	        FocusEvent(dev, FocusOut, mode, out, WindowTable[0]);
+	        FocusEvent(dev, FocusOut, mode, out, screenInfo.screens[0]->root);
 	    else 
 #endif
 	        for (i=0; i<screenInfo.numScreens; i++)
-	            FocusEvent(dev, FocusOut, mode, out, WindowTable[i]);
+	            FocusEvent(dev, FocusOut, mode, out, screenInfo.screens[i]->root);
 	}
 	else
 	{
@@ -3837,11 +3837,11 @@ DoFocusEvents(DeviceIntPtr dev, WindowPtr fromWin, WindowPtr toWin, int mode)
 	/* Notify all the roots */
 #ifdef PANORAMIX
 	if ( !noPanoramiXExtension )
-	    FocusEvent(dev, FocusIn, mode, in, WindowTable[0]);
+	    FocusEvent(dev, FocusIn, mode, in, screenInfo.screens[0]->root);
 	else 
 #endif
 	    for (i=0; i<screenInfo.numScreens; i++)
-	        FocusEvent(dev, FocusIn, mode, in, WindowTable[i]);
+	        FocusEvent(dev, FocusIn, mode, in, screenInfo.screens[i]->root);
 	if (toWin == PointerRootWin)
 	    (void)FocusInEvents(dev, ROOT, sprite.win, NullWindow, mode,
 				NotifyPointer, TRUE);
@@ -3855,11 +3855,11 @@ DoFocusEvents(DeviceIntPtr dev, WindowPtr fromWin, WindowPtr toWin, int mode)
 			       TRUE);
 #ifdef PANORAMIX
  	    if ( !noPanoramiXExtension )
-	        FocusEvent(dev, FocusOut, mode, out, WindowTable[0]);
+	        FocusEvent(dev, FocusOut, mode, out, screenInfo.screens[0]->root);
 	    else 
 #endif
 	        for (i=0; i<screenInfo.numScreens; i++)
-	            FocusEvent(dev, FocusOut, mode, out, WindowTable[i]);
+	            FocusEvent(dev, FocusOut, mode, out, screenInfo.screens[i]->root);
 	    if (toWin->parent != NullWindow)
 	      (void)FocusInEvents(dev, ROOT, toWin, toWin, mode,
 				  NotifyNonlinearVirtual, TRUE);

@@ -332,9 +332,6 @@ main(int argc, char *argv[], char *envp[])
 	screenInfo.arraySize = MAXSCREENS;
 	screenInfo.numScreens = 0;
 	screenInfo.numVideoScreens = -1;
-	WindowTable = (WindowPtr *)xalloc(MAXSCREENS * sizeof(WindowPtr));
-	if (!WindowTable)
-	    FatalError("couldn't create root window table");
 
 	/*
 	 * Just in case the ddx doesnt supply a format for depth 1 (like qvss).
@@ -419,8 +416,8 @@ main(int argc, char *argv[], char *envp[])
 #endif
 
 	for (i = 0; i < screenInfo.numScreens; i++)
-	    InitRootWindow(WindowTable[i]);
-	DefineInitialRootWindow(WindowTable[0]);
+	    InitRootWindow(screenInfo.screens[i]->root);
+	DefineInitialRootWindow(screenInfo.screens[0]->root);
 	SaveScreens(SCREEN_SAVER_FORCER, ScreenSaverReset);
 #ifdef DPMSExtension
 	SetDPMSTimers();
@@ -456,7 +453,11 @@ main(int argc, char *argv[], char *envp[])
 	FreeAllResources();
 #endif
 
+	for (i = 0; i < screenInfo.numScreens; i++)
+	   screenInfo.screens[i]->root = NullWindow;
 	CloseDownDevices();
+	CloseDownEvents();
+
 	for (i = screenInfo.numScreens - 1; i >= 0; i--)
 	{
 	    FreeScratchPixmapsForScreen(i);
@@ -466,9 +467,6 @@ main(int argc, char *argv[], char *envp[])
 	    FreeScreen(screenInfo.screens[i]);
 	    screenInfo.numScreens = i;
 	}
-  	CloseDownEvents();
-	xfree(WindowTable);
-	WindowTable = NULL;
 	FreeFonts();
 
 #ifdef DPMSExtension
@@ -595,7 +593,7 @@ CreateConnectionBlock()
 	VisualPtr	pVisual;
 
 	pScreen = screenInfo.screens[i];
-	root.windowId = WindowTable[i]->drawable.id;
+	root.windowId = screenInfo.screens[i]->root->drawable.id;
 	root.defaultColormap = pScreen->defColormap;
 	root.whitePixel = pScreen->whitePixel;
 	root.blackPixel = pScreen->blackPixel;
@@ -769,7 +767,6 @@ AddScreen(
        multiple screens. 
     */ 
     pScreen->rgf = ~0L;  /* there are no scratch GCs yet*/
-    WindowTable[i] = NullWindow;
     screenInfo.screens[i] = pScreen;
     screenInfo.numScreens++;
     if (!(*pfnInit)(i, pScreen, argc, argv))
@@ -784,6 +781,7 @@ AddScreen(
 static void
 FreeScreen(ScreenPtr pScreen)
 {
+    pScreen->root = NullWindow;
     xfree(pScreen->WindowPrivateSizes);
     xfree(pScreen->GCPrivateSizes);
 #ifdef PIXPRIV
