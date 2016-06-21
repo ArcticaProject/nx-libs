@@ -29,7 +29,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * not be a stack variable.
  */
 void RegisterResourceName(RESTYPE type, char *name);
-void RegisterExtensionNames(ExtensionEntry *ext);
+void RegisterExtensionNames(ExtensionEntry * ext);
 
 /*
  * Lookup functions.  The returned string must not be modified or freed.
@@ -45,7 +45,7 @@ const char *LookupResourceName(RESTYPE rtype);
  */
 void dixResetRegistry(void);
 
-#else /* XREGISTRY */
+#else                           /* XREGISTRY */
 
 /* Define calls away when the registry is not being built. */
 
@@ -60,5 +60,5 @@ void dixResetRegistry(void);
 
 #define dixResetRegistry() { ; }
 
-#endif /* XREGISTRY */
-#endif /* DIX_REGISTRY_H */
+#endif                          /* XREGISTRY */
+#endif                          /* DIX_REGISTRY_H */

@@ -2,6 +2,7 @@
  * Copyright © 2000 Compaq Computer Corporation
  * Copyright © 2002 Hewlett Packard Company
  * Copyright © 2006 Intel Corporation
+ * Copyright © 2008 Red Hat, Inc.
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
  * documentation for any purpose is hereby granted without fee, provided that
@@ -28,22 +29,22 @@
 #ifndef _RANDR_H_
 #define _RANDR_H_
 
-typedef unsigned short	Rotation;
-typedef unsigned short	SizeID;
-typedef unsigned short	SubpixelOrder;
-typedef unsigned short	Connection;
-typedef unsigned short	XRandrRotation;
-typedef unsigned short	XRandrSizeID;
-typedef unsigned short	XRandrSubpixelOrder;
-typedef unsigned long	XRandrModeFlags;
+typedef unsigned short Rotation;
+typedef unsigned short SizeID;
+typedef unsigned short SubpixelOrder;
+typedef unsigned short Connection;
+typedef unsigned short XRandrRotation;
+typedef unsigned short XRandrSizeID;
+typedef unsigned short XRandrSubpixelOrder;
+typedef unsigned long XRandrModeFlags;
 
 #define RANDR_NAME		"RANDR"
 #define RANDR_MAJOR		1
-#define RANDR_MINOR		2
+#define RANDR_MINOR		5
 
-#define RRNumberErrors		3
+#define RRNumberErrors		4
 #define RRNumberEvents		2
-#define RRNumberRequests	25
+#define RRNumberRequests	45
 
 #define X_RRQueryVersion	0
 /* we skip 1 to make old clients fail pretty immediately */
@@ -77,12 +78,47 @@ typedef unsigned long	XRandrModeFlags;
 #define X_RRGetCrtcGamma	    23
 #define X_RRSetCrtcGamma	    24
 
+/* V1.3 additions */
+#define X_RRGetScreenResourcesCurrent	25
+#define X_RRSetCrtcTransform	    26
+#define X_RRGetCrtcTransform	    27
+#define X_RRGetPanning		    28
+#define X_RRSetPanning		    29
+#define X_RRSetOutputPrimary	    30
+#define X_RRGetOutputPrimary	    31
+
+#define RRTransformUnit		    (1L << 0)
+#define RRTransformScaleUp	    (1L << 1)
+#define RRTransformScaleDown	    (1L << 2)
+#define RRTransformProjective	    (1L << 3)
+
+/* v1.4 */
+#define X_RRGetProviders	      32
+#define X_RRGetProviderInfo	      33
+#define X_RRSetProviderOffloadSink    34
+#define X_RRSetProviderOutputSource   35
+#define X_RRListProviderProperties    36
+#define X_RRQueryProviderProperty     37
+#define X_RRConfigureProviderProperty 38
+#define X_RRChangeProviderProperty    39
+#define X_RRDeleteProviderProperty    40
+#define X_RRGetProviderProperty	      41
+
+/* v1.5 */
+#define X_RRGetMonitors		      42
+#define X_RRSetMonitor		      43
+#define X_RRDeleteMonitor	      44
+
 /* Event selection bits */
 #define RRScreenChangeNotifyMask  (1L << 0)
 /* V1.2 additions */
 #define RRCrtcChangeNotifyMask	    (1L << 1)
 #define RROutputChangeNotifyMask    (1L << 2)
 #define RROutputPropertyNotifyMask  (1L << 3)
+/* V1.4 additions */
+#define RRProviderChangeNotifyMask   (1L << 4)
+#define RRProviderPropertyNotifyMask (1L << 5)
+#define RRResourceChangeNotifyMask   (1L << 6)
 
 /* Event codes */
 #define RRScreenChangeNotify	0
@@ -92,7 +128,9 @@ typedef unsigned long	XRandrModeFlags;
 #define  RRNotify_CrtcChange	    0
 #define  RRNotify_OutputChange	    1
 #define  RRNotify_OutputProperty    2
-
+#define  RRNotify_ProviderChange    3
+#define  RRNotify_ProviderProperty  4
+#define  RRNotify_ResourceChange    5
 /* used in the rotation field; rotation and reflection in 0.1 proto. */
 #define RR_Rotate_0		1
 #define RR_Rotate_90		2
@@ -133,9 +171,28 @@ typedef unsigned long	XRandrModeFlags;
 #define BadRROutput		0
 #define BadRRCrtc		1
 #define BadRRMode		2
+#define BadRRProvider		3
 
 /* Conventional RandR output properties */
 
-#define RR_PROPERTY_RANDR_EDID		"RANDR_EDID"
+#define RR_PROPERTY_BACKLIGHT		"Backlight"
+#define RR_PROPERTY_RANDR_EDID		"EDID"
+#define RR_PROPERTY_SIGNAL_FORMAT	"SignalFormat"
+#define RR_PROPERTY_SIGNAL_PROPERTIES	"SignalProperties"
+#define RR_PROPERTY_CONNECTOR_TYPE	"ConnectorType"
+#define RR_PROPERTY_CONNECTOR_NUMBER	"ConnectorNumber"
+#define RR_PROPERTY_COMPATIBILITY_LIST	"CompatibilityList"
+#define RR_PROPERTY_CLONE_LIST		"CloneList"
+#define RR_PROPERTY_BORDER		"Border"
+#define RR_PROPERTY_BORDER_DIMENSIONS	"BorderDimensions"
+#define RR_PROPERTY_GUID		"GUID"
+#define RR_PROPERTY_RANDR_TILE		"TILE"
 
-#endif	/* _RANDR_H_ */
+/* roles this device can carry out */
+#define RR_Capability_None 0
+#define RR_Capability_SourceOutput 1
+#define RR_Capability_SinkOutput 2
+#define RR_Capability_SourceOffload 4
+#define RR_Capability_SinkOffload 8
+
+#endif                          /* _RANDR_H_ */

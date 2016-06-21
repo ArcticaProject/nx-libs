@@ -523,6 +523,17 @@ typedef    void (* MarkUnrealizedWindowProcPtr)(
 	WindowPtr /*pWin*/,
 	Bool /*fromConfigure*/);
 
+typedef    void (*ConstrainCursorHarderProcPtr)(
+	ScreenPtr, /*pScreen*/
+	int, /*mode*/
+	int *, /*x*/
+	int *  /*y*/);
+
+typedef     Bool (*ReplaceScanoutPixmapProcPtr)(
+	DrawablePtr, /*pDrawable*/
+	PixmapPtr, /*pPixmap*/
+	Bool /*enable*/);
+
 typedef struct _Screen {
     int			myNum;	/* index of this instance in Screens[] */
     ATOM		id;
@@ -549,6 +560,7 @@ typedef struct _Screen {
     void *		devPrivate;
     short       	numVisuals;
     VisualPtr		visuals;
+    WindowPtr		root;
     int			WindowPrivateLen;
     unsigned		*WindowPrivateSizes;
     unsigned		totalWindowSize;
@@ -611,6 +623,7 @@ typedef struct _Screen {
     /* Cursor Procedures */
 
     ConstrainCursorProcPtr	ConstrainCursor;
+    ConstrainCursorHarderProcPtr	ConstrainCursorHarder;
     CursorLimitsProcPtr		CursorLimits;
     DisplayCursorProcPtr	DisplayCursor;
     RealizeCursorProcPtr	RealizeCursor;
@@ -707,6 +720,7 @@ typedef struct _Screen {
     ChangeBorderWidthProcPtr	ChangeBorderWidth;
     MarkUnrealizedWindowProcPtr	MarkUnrealizedWindow;
 
+    ReplaceScanoutPixmapProcPtr ReplaceScanoutPixmap;
 } ScreenRec;
 
 static inline RegionPtr BitmapToRegion(ScreenPtr _pScreen, PixmapPtr pPix) {

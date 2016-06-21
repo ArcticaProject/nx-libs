@@ -125,7 +125,7 @@ void nxagentRedirectDefaultWindows()
 
   for (i = 0; i < screenInfo.numScreens; i++)
   {
-    WindowPtr pWin = WindowTable[i];
+    WindowPtr pWin = screenInfo.screens[i]->root;
 
     ScreenPtr pScreen = pWin -> drawable.pScreen;
 

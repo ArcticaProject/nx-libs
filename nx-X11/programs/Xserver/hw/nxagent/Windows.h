@@ -167,7 +167,7 @@ extern int nxagentWindowPrivateIndex;
 #define nxagentRefreshScreen() \
 do\
 {\
-  nxagentRefreshWindows(WindowTable[0]);\
+  nxagentRefreshWindows(screenInfo.screens[0]->root);\
 } while (0)
 
 WindowPtr nxagentWindowPtr(Window window);

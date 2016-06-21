@@ -1449,7 +1449,7 @@ Bool nxagentFbOnShadowDisplay()
   XGCValues value;
   XImage *image;
   Visual *pVisual;
-  WindowPtr pWin = WindowTable[0];
+  WindowPtr pWin = screenInfo.screens[0]->root;
   unsigned int format;
   int depth, width, height, length;
   char *data = NULL;

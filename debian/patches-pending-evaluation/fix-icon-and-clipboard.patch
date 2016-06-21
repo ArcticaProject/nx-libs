@@ -323,7 +323,7 @@ index 862f75a..5405568 100644
        x.u.u.type = SelectionRequest;
        x.u.selectionRequest.time = GetTimeInMillis();
        x.u.selectionRequest.owner = lastOwnerWindow;
-       x.u.selectionRequest.requestor = WindowTable[0]->drawable.id;
+       x.u.selectionRequest.requestor = screenInfo.screens[0]->root->drawable.id;
 -      x.u.selectionRequest.selection = XA_PRIMARY;
 +/* My changes */
 +/*

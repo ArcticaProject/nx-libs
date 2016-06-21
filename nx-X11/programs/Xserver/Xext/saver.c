@@ -473,7 +473,7 @@ SendScreenSaverNotify (pScreen, state, forced)
 	ev.state = state;
 	ev.sequenceNumber = client->sequence;
 	ev.timestamp = currentTime.milliseconds;
-	ev.root = WindowTable[pScreen->myNum]->drawable.id;
+	ev.root = pScreen->root->drawable.id;
 	ev.window = savedScreenInfo[pScreen->myNum].wid;
 	ev.kind = kind;
 	ev.forced = forced;
@@ -549,7 +549,7 @@ CreateSaverWindow (pScreen)
     if (GrabInProgress && GrabInProgress != pAttr->client->index)
 	return FALSE;
 
-    pWin = CreateWindow (pSaver->wid, WindowTable[pScreen->myNum],
+    pWin = CreateWindow (pSaver->wid, pScreen->root,
 			 pAttr->x, pAttr->y, pAttr->width, pAttr->height,
 			 pAttr->borderWidth, pAttr->class, 
 			 pAttr->mask, (XID *)pAttr->values, 
@@ -830,7 +830,7 @@ ScreenSaverSetAttributes (ClientPtr client)
     if (!pDraw)
 	return BadDrawable;
     pScreen = pDraw->pScreen;
-    pParent = WindowTable[pScreen->myNum];
+    pParent = pScreen->root;
 
     len = stuff->length -  (sizeof(xScreenSaverSetAttributesReq) >> 2);
     if (Ones(stuff->mask) != len)
