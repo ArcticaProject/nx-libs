@@ -756,6 +756,7 @@ void nxagentShadowBlockHandler(void * data, struct timeval **timeout, void * mas
   else if (0 == nxagentOption(SleepTime)) {
     fprintf(stderr, "nxagentBlockHandler: not sleeping for slowdown.\n");
   }
+#endif
 
   #ifndef __CYGWIN32__
 
