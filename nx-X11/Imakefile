@@ -105,11 +105,6 @@ Everything::
 	@echo ""
 	@date
 	@echo ""
-	cd $(IMAKESRC) && if [ -f Makefile ]; then \
-	    $(MAKE) $(MFLAGS) BOOTSTRAPCFLAGS="$(BOOTSTRAPCFLAGS)"; \
-	else \
-	    $(MAKE) $(MFLAGS) -f Makefile.ini BOOTSTRAPCFLAGS="$(BOOTSTRAPCFLAGS)"; \
-	fi
 	-$(RM) xmakefile.bak; $(MV) xmakefile xmakefile.bak
 	$(MAKE) $(MFLAGS) xmakefile
 	$(MAKE) $(MFLAGS) $(MAKE_OPTS) Makefiles
@@ -149,9 +144,6 @@ Everything::
 	@echo Rebuilding $(RELEASE) of the X Window System.
 	@echo :
 	@echo :
-	cd $(IMAKESRC)
-	$(MAKE) $(MFLAGS) -f Makefile.ini imake.exe
-	cd ..\..
 	RMoveToBakFile(xmakefile)
 	$(MAKE) $(MFLAGS) xmakefile
 	$(MAKE) $(MFLAGS) $(MAKE_OPTS) Makefiles
@@ -186,7 +178,3 @@ xmakefile-exists::
 #ifndef MakeHtmlManIndex
 #define MakeHtmlManIndex YES	/* install.man generates HTML man page index */
 #endif
-
-#undef BootstrapCleanSubdirs
-#define BootstrapCleanSubdirs BOOTSTRAPSUBDIRS="$(BOOTSTRAPSUBDIRS)"
-BOOTSTRAPSUBDIRS = imake makedepend

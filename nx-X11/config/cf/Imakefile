@@ -30,14 +30,12 @@ xorgversion.def \
 nxversion.def
 
 RULEFILES = \
-Imake.rules \
 X11.rules \
 lnxLib.rules \
 noop.rules \
 xf86.rules
 
 TMPLFILES = \
-Imake.tmpl \
 Library.tmpl \
 Server.tmpl \
 ServerLib.tmpl \
@@ -47,7 +45,6 @@ lnxLib.tmpl \
 xorg.tmpl
 
 CFFILES = \
-Imake.cf \
 linux.cf \
 xorg.cf
 
