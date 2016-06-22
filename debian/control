@@ -29,7 +29,7 @@ Build-Depends:
  expat,
  libpixman-1-dev (>= 0.13.2),
  xutils-dev,
-Standards-Version: 3.9.6
+Standards-Version: 3.9.8
 Homepage: https://github.com/ArcticaProject/nx-libs/
 Vcs-Git: https://github.com/ArcticaProject/nx-libs/
 Vcs-Browser: https://github.com/ArcticaProject/nx-libs/
