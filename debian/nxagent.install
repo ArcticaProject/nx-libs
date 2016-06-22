@@ -1,6 +1,7 @@
 etc/nxagent/keystrokes.cfg
 etc/nxagent/rgb
 usr/share/nx/rgb
+usr/share/nx/VERSION.nxagent
 usr/share/man/man1/nxagent.1*
 usr/lib/nx/bin/nxagent
 usr/bin/nxagent

@@ -100,14 +100,13 @@ if [ "x$MODE" = "xfull" ]; then
         echo "${file##*/}" >> "doc/applied-patches/series"
     done
 else
-    rm -f  "bin/"{nxagent,nxauth,x2goagent}
+    rm -f  "bin/"{nxagent,nxauth}
     rm -Rf "nxcompshad"*
     rm -Rf "nxcompext"*
     rm -Rf "nx-X11"*
     rm -Rf "etc"*
     rm -Rf "doc/nx-X11_vs_XOrg69_patches"*
     rm -f  "README.keystrokes"
-    rm -f  "VERSION.x2goagent"
     cat "debian/patches/series" | sort | grep -v '^#' | egrep "([0-9]+(_|-).*\.full\+lite\.patch)" | while read file
     do
         cp -v "debian/patches/$file" "doc/applied-patches/"
