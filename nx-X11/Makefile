@@ -75,55 +75,6 @@ xmakefile: Imakefile
 	@rm -f $(IRULESRC)/date.def; echo "" > $(IRULESRC)/date.def;
 	$(IMAKE_CMD) -s xmakefile -DTOPDIR=$(TOP) -DCURDIR=$(CURRENT_DIR)
 
-World.Win32:
-	@echo :
-	@echo Building $(RELEASE).
-	@echo :
-	@echo :
-	-@if not exist $(IRULESRC)\host.def echo > $(IRULESRC)\host.def
-	cd $(IMAKESRC)
-	$(MAKE) -f Makefile.ini clean.Win32
-	$(MAKE) -f Makefile.ini imake.exe
-	cd ..\..
-	-if exist xmakefile.bak del xmakefile.bak
-	-if exist xmakefile ren xmakefile xmakefile.bak
-	$(IMAKE:/=\) -s xmakefile -I$(IRULESRC) $(IMAKE_DEFINES) -DTOPDIR=$(TOP) -DCURDIR=$(CURRENT_DIR)
-	${MAKE} ${MAKE_OPTS} $(MFLAGS) VerifyOS
-	${MAKE} ${MAKE_OPTS} $(MFLAGS) Makefiles
-	${MAKE} ${MAKE_OPTS} $(MFLAGS) clean
-	cd $(CONFIGSRC)\util
-	$(MAKE) mkdirhier.exe
-	cd ..\..
-	${MAKE} ${MAKE_OPTS} $(MFLAGS) includes
-	${MAKE} ${MAKE_OPTS} $(MFLAGS) depend
-	${MAKE} ${MAKE_OPTS} $(MFLAGS) $(WIN32WORLDOPTS)
-	@echo :
-	@echo :
-	@echo Full build of $(RELEASE) complete.
-	@echo :
-
-World.OS2:
-	@echo :
-	@echo Building $(RELEASE) on OS/2.
-	@echo :
-	@echo :
-	-@if not exist $(IRULESRC)\host.def echo > $(IRULESRC)\host.def
-	\indir $(IMAKESRC) $(MAKE) SHELL= -f Makefile.ini clean.os2
-	\indir $(IMAKESRC) $(MAKE) SHELL= CC=gcc -f Makefile.ini imake.os2
-	-if exist Makefile.bak del Makefile.bak
-	-if exist Makefile ren Makefile Makefile.bak
-	$(subst /,\,$(IMAKE)) -I$(IRULESRC) $(IMAKE_DEFINES) -DTOPDIR=$(TOP) -DCURDIR=$(CURRENT_DIR)
-	$(MAKE) $(MFLAGS) VerifyOS
-	$(MAKE) $(MFLAGS) Makefiles
-	$(MAKE) $(MFLAGS) clean
-	$(MAKE) $(MFLAGS) includes
-	$(MAKE) $(MFLAGS) depend
-	$(MAKE) $(MFLAGS)
-	@echo :
-	@echo :
-	@echo Full build of $(RELEASE) on OS/2 complete.
-	@echo :
-
 # don't allow any default rules in this Makefile
 .SUFFIXES:
 # quiet "make" programs that display a message if suffix list empty
