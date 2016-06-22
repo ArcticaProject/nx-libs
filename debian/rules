@@ -19,7 +19,6 @@ override_dh_auto_clean:
 
 override_dh_clean:
 	rm -f nx*/configure
-	rm -fR .preserve/
 	dh_clean
 
 override_dh_install:
