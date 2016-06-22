@@ -19,22 +19,10 @@ override_dh_auto_clean:
 
 override_dh_clean:
 	rm -f nx*/configure
-	. ./replace.sh; set -x; ls debian/*.install.in | while read file; do rm -f $$(string_rep $$file .install.in .install); done
 	rm -fR .preserve/
 	dh_clean
 
 override_dh_install:
-
-	# handle builds for Debian squeeze (non multi-arch)
-	. ./replace.sh; set -x; if [ -z "$(DEB_BUILD_MULTIARCH)" ]; then \
-	    find debian/*.install.in | while read file; do \
-	        cat $$file | sed -e 's#/\*/#/#g' > $$(string_rep $$file .install.in .install); \
-	    done; \
-	else \
-	    find debian/*.install.in | while read file; do \
-	        cat $$file > $$(string_rep $$file .install.in .install); \
-	    done; \
-	fi
 
 	# remove static libs
 	rm debian/tmp/usr/lib/$(DEB_BUILD_MULTIARCH)/libXcomp.a
