@@ -106,6 +106,7 @@ else
     rm -Rf "nx-X11"*
     rm -Rf "etc"*
     rm -Rf "doc/nx-X11_vs_XOrg69_patches"*
+    rm -Rf "doc/X11-symbols"*
     rm -f  "README.keystrokes"
     cat "debian/patches/series" | sort | grep -v '^#' | egrep "([0-9]+(_|-).*\.full\+lite\.patch)" | while read file
     do
