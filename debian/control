@@ -6,7 +6,7 @@ Uploaders:
  Mike Gabriel <sunweaver@debian.org>,
  Mihai Moldovan <ionic@ionic.de>
 Build-Depends:
- debhelper (>= 7.0.50~),
+ debhelper (>= 9),
  libpng-dev,
  libjpeg-dev,
  zlib1g-dev,
