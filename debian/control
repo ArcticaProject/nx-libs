@@ -430,6 +430,10 @@ Depends:
 Recommends:
  xfonts-base,
  xkb-data,
+Breaks:
+ nxauth,
+Replaces:
+ nxauth,
 Description: NX agent
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -473,12 +477,16 @@ Description: NX agent (debug package)
 
 Package: nxproxy
 Architecture: any
-Breaks: qvd-nxproxy
-Replaces: qvd-nxproxy
 Multi-Arch: foreign
 Depends:
  ${shlibs:Depends},
  ${misc:Depends},
+Breaks:
+ qvd-nxproxy,
+ nxauth,
+Replaces:
+ qvd-nxproxy,
+ nxauth,
 Description: NX proxy
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -502,38 +510,6 @@ Description: NX proxy (debug package)
  using X applications over a network, especially a slow one.
  .
  This package provides the NX proxy (client) binary.
- .
- This package contains detached debug symbols that help generating more
- helpful backtraces. You can safely remove it if you do not intend to
- debug NX packages on this system.
-
-Package: nxauth
-Architecture: any
-Multi-Arch: foreign
-Depends:
- ${shlibs:Depends},
- ${misc:Depends},
-Description: NX xauth
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package provides the NX xauth binary.
-
-Package: nxauth-dbg
-Section: debug
-Architecture: any
-Multi-Arch: foreign
-Depends:
- nxauth (= ${binary:Version}),
- ${misc:Depends},
-Breaks: nx-x11-dbg (<< 2:3.5.0.29-1~),
-Description: NX auth (debug package) 
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package provides the NX auth binary.
  .
  This package contains detached debug symbols that help generating more
  helpful backtraces. You can safely remove it if you do not intend to

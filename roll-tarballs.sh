@@ -100,7 +100,7 @@ if [ "x$MODE" = "xfull" ]; then
         echo "${file##*/}" >> "doc/applied-patches/series"
     done
 else
-    rm -f  "bin/"{nxagent,nxauth}
+    rm -f  "bin/nxagent"
     rm -Rf "nxcompshad"*
     rm -Rf "nxcompext"*
     rm -Rf "nx-X11"*

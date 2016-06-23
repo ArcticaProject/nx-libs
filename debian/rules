@@ -63,5 +63,4 @@ override_dh_strip:
 	dh_strip -plibxcompext3 --dbg-package=libxcompext3-dbg
 	dh_strip -pnxagent --dbg-package=nxagent-dbg
 	dh_strip -pnxproxy --dbg-package=nxproxy-dbg
-	dh_strip -pnxauth --dbg-package=nxauth-dbg
 

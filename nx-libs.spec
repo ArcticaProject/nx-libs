@@ -391,18 +391,6 @@ related requests locally, ensuring that the most common source of
 round-trips are nearly reduced to zero.
 
 
-%package -n nxauth
-Group:          Applications/System
-Summary:        NX Auth
-
-%description -n nxauth
-NX is a software suite which implements very efficient compression of
-the X11 protocol. This increases performance when using X
-applications over a network, especially a slow one.
-
-This package provides the NX xauth binary.
-
-
 %package -n nxproxy
 Group:          Applications/System
 Summary:        NX Proxy
@@ -668,13 +656,6 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %{_datadir}/pixmaps/nxagent.xpm
 %{_datadir}/nx/rgb
 %{_datadir}/man/man1/nxagent.1*
-
-%files -n nxauth
-%defattr(-,root,root)
-%{_bindir}/nxauth
-%dir %{_libdir}/nx/bin
-%{_libdir}/nx/bin/nxauth
-%{_datadir}/man/man1/nxauth.1*
 
 %files -n nxproxy
 %defattr(-,root,root)
