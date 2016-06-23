@@ -16,6 +16,8 @@ GLXDIR = GL
 
 SUBDIRS = extensions $(GLXDIR)
 
+AU_HEADERS = Xauth.h
+
 #ifdef Win32Architecture
 EXTRA_HEADERS = Xw32defs.h Xwinsock.h Xwindows.h
 #elif defined(cygwinArchitecture)
@@ -46,6 +48,7 @@ HEADERS = \
 	ap_keysym.h \
 	keysym.h \
 	keysymdef.h \
+	$(AU_HEADERS) \
 	$(EXTRA_HEADERS) \
 	$(NULL)
 

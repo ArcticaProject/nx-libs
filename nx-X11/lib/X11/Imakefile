@@ -1104,15 +1104,6 @@ InstallNonExecFile(XErrorDB,$(LIBDIR))
 InstallNonExecFile(XKeysymDB,$(LIBDIR))
 InstallLintLibrary(X11,$(LINTLIBDIR))
 
-
-LinkSourceFile(AuDispose.c,$(XAUTHSRC))
-LinkSourceFile(AuGetBest.c,$(XAUTHSRC))
-LinkSourceFile(AuFileName.c,$(XAUTHSRC))
-LinkSourceFile(AuRead.c,$(XAUTHSRC))
-#if HasKrb5
-LinkSourceFile(k5encode.c,$(XAUTHSRC))
-#endif
-
 #ifdef QNX4Architecture
 LOCAL_LDFLAGS=-F
 #endif

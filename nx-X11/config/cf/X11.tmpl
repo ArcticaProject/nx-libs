@@ -153,10 +153,6 @@ XORGRELSTRING = XorgManVersionString
 #ifndef BuildXextLib
 #define BuildXextLib		BuildLibraries
 #endif
-#ifndef BuildXauLib
-#define BuildXauLib		(BuildLibraries || BuildLibrariesForXServers)
-#endif
-#define UseInstalledXauLib	(defined(UseInstalled) || !BuildXauLib)
 #ifndef BuildTestExt
 #define BuildTestExt		YES
 #endif
@@ -1237,31 +1233,6 @@ LINTEXTENSIONLIB = $(LINTEXTENSION)
           DEPXLIB = $(DEPEXTENSIONLIB) $(DEPXONLYLIB)
              XLIB = $(EXTENSIONLIB) $(XONLYLIB)
          LINTXLIB = $(LINTXONLYLIB)
-#ifndef SharedLibXau
-#define SharedLibXau		YES
-#endif
-#ifndef NormalLibXau
-#define NormalLibXau (!SharedLibXau | ForceNormalLib)
-#endif
-#ifndef DebugLibXau
-#define DebugLibXau		NO	/* debugged auth library */
-#endif
-#ifndef ProfileLibXau
-#define ProfileLibXau		NO	/* profiled auth library */
-#endif
-         XAUTHSRC = $(LIBSRC)/Xau
-#if SharedLibXau
-#ifndef SharedXauRev
-#define SharedXauRev 6.0
-#endif
-SharedLibReferences(XAUTH,NX_Xau,$(XAUTHSRC),SOXAUTHREV,SharedXauRev)
-#else
-#if !UseInstalledXauLib
-ProjectUnsharedLibReferences(XAUTH,NX_Xau,$(XAUTHSRC),XBuildLibDir)
-#else
-ProjectUnsharedLibReferences(XAUTH,NX_Xau,$(XAUTHSRC),$(USRLIBDIR))
-#endif
-#endif
 
 #if HasMotif
 

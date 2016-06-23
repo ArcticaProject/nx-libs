@@ -1,9 +1,0 @@
-libNX_Xau.so.6 libnx-xau6 #MINVER#
- XauDisposeAuth@Base 3.5.0.29
- XauFileName@Base 3.5.0.29
- XauGetAuthByAddr@Base 3.5.0.29
- XauGetBestAuthByAddr@Base 3.5.0.29
- XauLockAuth@Base 3.5.0.29
- XauReadAuth@Base 3.5.0.29
- XauUnlockAuth@Base 3.5.0.29
- XauWriteAuth@Base 3.5.0.29

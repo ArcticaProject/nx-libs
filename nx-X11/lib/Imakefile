@@ -15,10 +15,6 @@ NULL =
 XKBLIBDIR = xkbfile
 #endif
 
-#if BuildXauLib
-XAULIBDIR = Xau
-#endif
-
 #if BuildX11Lib
 X11LIBDIR = X11
 #endif
@@ -29,7 +25,6 @@ XEXTLIBDIR = Xext
 
 
 LINTSUBDIRS = \
-	$(XAULIBDIR) \
 	$(X11LIBDIR) \
 	$(XEXTLIBDIR) \
 	$(XKBLIBDIR) \

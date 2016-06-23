@@ -53,7 +53,6 @@ typedef struct xauth {
 # define FamilyLocal (256)	/* not part of X standard (i.e. X.h) */
 # define FamilyWild  (65535)
 # define FamilyNetname    (254)   /* not part of X standard */
-# define FamilyKrb5Principal (253) /* Kerberos 5 principal name */
 # define FamilyLocalHost (252)	/* for local non-net authentication */
 
 
@@ -63,22 +62,6 @@ char *XauFileName(void);
 
 Xauth *XauReadAuth(
 FILE*	/* auth_file */
-);
-
-int XauLockAuth(
-_Xconst char*	/* file_name */,
-int		/* retries */,
-int		/* timeout */,
-long		/* dead */
-);
-
-int XauUnlockAuth(
-_Xconst char*	/* file_name */
-);
-
-int XauWriteAuth(
-FILE*		/* auth_file */,
-Xauth*		/* auth */
 );
 
 Xauth *XauGetAuthByName(
@@ -132,30 +115,7 @@ void XauDisposeAuth(
 Xauth*		/* auth */
 );
 
-#ifdef K5AUTH
-#include <krb5/krb5.h>
-/* 9/93: krb5.h leaks some symbols */
-#undef BITS32
-#undef xfree
-
-int XauKrb5Encode(
-     krb5_principal	/* princ */,
-     krb5_data *	/* outbuf */
-);
-
-int XauKrb5Decode(
-     krb5_data		/* inbuf */,
-     krb5_principal *	/* princ */
-);
-#endif /* K5AUTH */
-
 _XFUNCPROTOEND
-
-/* Return values from XauLockAuth */
-
-# define LOCK_SUCCESS	0	/* lock succeeded */
-# define LOCK_ERROR	1	/* lock unexpectely failed, check errno */
-# define LOCK_TIMEOUT	2	/* lock failed, timeouts expired */
 
 #endif /* _XAUTH_STRUCT_ONLY */
 

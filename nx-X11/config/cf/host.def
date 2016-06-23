@@ -411,8 +411,6 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
 #define BuildXKB		YES
 #define BuildXKBlib		YES
 
-#define SharedLibXau		YES
-
 /*
  * If you are running NetBSD 0.9C or later, and have the aperture driver
  * installed, uncomment this.
@@ -562,8 +560,6 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
  *
 #define X86EMU_LIBPATH /usr/local/lib
  */ 
-
-#define SharedLibXau           YES
 
 #define BuildRman NO
 #define BuildLoadableXlibI18n NO
