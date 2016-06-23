@@ -7,6 +7,7 @@ Uploaders:
  Mihai Moldovan <ionic@ionic.de>
 Build-Depends:
  debhelper (>= 9),
+ dpkg-dev (>= 1.16.1.1),
  libpng-dev,
  libjpeg-dev,
  zlib1g-dev,
