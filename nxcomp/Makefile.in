@@ -41,6 +41,8 @@ CXXFLAGS    = @CXXFLAGS@ @X_CFLAGS@ @DEFS@ \
 CXXINCLUDES =
 CXXDEFINES  =
 
+CPPFLAGS    = @CPPFLAGS@
+
 #
 # C programs have their own CFLAGS.
 # 
@@ -87,9 +89,9 @@ DEPENDINCLUDES = -I/usr/include/c++ -I/usr/include/g++ -I/usr/include/g++-3
 .SUFFIXES: .cpp.c
 
 .cpp.o:
-	$(CXX) -c $(CXXFLAGS) $(CXXINCLUDES) $(CXXDEFINES) $<
+	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $(CXXINCLUDES) $(CXXDEFINES) $<
 .c.o:
-	$(CC) -c $(CCFLAGS) $(CCINCLUDES) $(CCDEFINES) $<
+	$(CC) -c $(CPPFLAGS) $(CCFLAGS) $(CCINCLUDES) $(CCDEFINES) $<
 
 LIBRARY = Xcomp
 

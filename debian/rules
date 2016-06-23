@@ -66,7 +66,7 @@ override_dh_auto_install:
 
 override_dh_auto_build:
 
-	LOCAL_LDFLAGS="$(LDFLAGS)" SHLIBGLOBALSFLAGS="$(LDFLAGS)" SHLIBDIR="$(LIBDIR)" PREFIX=/usr dh_auto_build --parallel
+	PREFIX=/usr dh_auto_build --parallel -- CDEBUGFLAGS="$(CPPFLAGS) $(CFLAGS)" LOCAL_LDFLAGS="$(LDFLAGS)" SHLIBGLOBALSFLAGS="$(LDFLAGS)" SHLIBDIR="$(LIBDIR)"
 
 override_dh_strip:
 	dh_strip -plibnx-x11-6 --dbg-package=libnx-x11-6-dbg
