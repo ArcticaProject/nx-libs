@@ -15,10 +15,6 @@ XCOMM $XFree86: xc/config/cf/lnxLib.rules,v 3.52 2003/10/31 20:49:03 herrb Exp $
 #define UseRpath NO
 #endif
 
-#ifndef SharedOldX
-# define SharedOldX NO
-#endif
-
 #if UseElfFormat
 
 # if (LinuxCLibMajorVersion >= 5 && LinuxCLibMinorVersion >= 4) || LinuxCLibMajorVersion >= 6

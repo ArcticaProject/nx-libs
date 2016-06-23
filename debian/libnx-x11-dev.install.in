@@ -12,4 +12,3 @@ usr/include/*/nx-X11/Xutil.h
 usr/include/*/nx-X11/cursorfont.h
 usr/include/*/nx-X11/misc.h
 usr/include/*/nx-X11/os.h
-usr/include/*/nx-X11/X10.h
