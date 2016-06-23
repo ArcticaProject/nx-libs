@@ -1768,7 +1768,7 @@ miBankGetImage(
                     pBankImage);
 
                 (*pScreenPriv->pBankGC->ops->CopyArea)(
-                    (DrawablePtr)WindowTable[pScreen->myNum],
+                    (DrawablePtr)pScreen->root,
                     (DrawablePtr)pScreenPriv->pBankPixmap,
                     pScreenPriv->pBankGC,
                     sx + pDrawable->x, sy + pDrawable->y, w, h, 0, 0);
@@ -1835,7 +1835,7 @@ miBankGetSpans(
                         continue;
 
                     (*pScreenPriv->pBankGC->ops->CopyArea)(
-                        (DrawablePtr)WindowTable[pScreen->myNum],
+                        (DrawablePtr)pScreen->root,
                         (DrawablePtr)pScreenPriv->pBankPixmap,
                         pScreenPriv->pBankGC,
                         ppt->x, ppt->y, *pwidth, 1, 0, 0);
@@ -1958,7 +1958,7 @@ miBankCopyWindow(
     ScreenPtr   pScreen = pWindow->drawable.pScreen;
     GCPtr       pGC;
     int         dx, dy, nBox;
-    DrawablePtr pDrawable = (DrawablePtr)WindowTable[pScreen->myNum];
+    DrawablePtr pDrawable = (DrawablePtr)pScreen->root;
     RegionPtr   pRgnDst;
     BoxPtr      pBox, pBoxTmp, pBoxNext, pBoxBase, pBoxNew1, pBoxNew2;
     XID         subWindowMode = IncludeInferiors;

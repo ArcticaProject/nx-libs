@@ -54,13 +54,10 @@ typedef struct _PictFormat {
     IndexFormatRec  index;
 } PictFormatRec;
 
-typedef struct _PictVector {
-    xFixed	    vector[3];
-} PictVector, *PictVectorPtr;
+typedef struct pixman_vector PictVector, *PictVectorPtr;
+typedef struct pixman_transform PictTransform, *PictTransformPtr;
 
-typedef struct _PictTransform {
-    xFixed	    matrix[3][3];
-} PictTransform, *PictTransformPtr;
+#define pict_f_transform pixman_f_transform
 
 #define PICT_GRADIENT_STOPTABLE_SIZE 1024
 #define SourcePictTypeSolidFill 0
@@ -168,12 +165,14 @@ typedef struct _Picture {
     SourcePictPtr   pSourcePict;
 } PictureRec;
 
-typedef Bool (*PictFilterValidateParamsProcPtr) (PicturePtr pPicture, int id,
-						 xFixed *params, int nparams);
+typedef Bool (*PictFilterValidateParamsProcPtr) (ScreenPtr pScreen, int id,
+						 xFixed *params, int nparams,
+                                                 int *width, int *height);
 typedef struct {
     char			    *name;
     int				    id;
     PictFilterValidateParamsProcPtr ValidateParams;
+    int width, height;
 } PictFilterRec, *PictFilterPtr;
 
 #define PictFilterNearest	0
@@ -457,7 +456,12 @@ PictFilterPtr
 PictureFindFilter (ScreenPtr pScreen, char *name, int len);
 
 int
-SetPictureFilter (PicturePtr pPicture, char *name, int len, xFixed *params, int nparams);
+SetPicturePictFilter (PicturePtr pPicture, PictFilterPtr pFilter,
+		      xFixed *params, int nparams);
+
+int
+SetPictureFilter (PicturePtr pPicture, char *name, int len,
+		  xFixed *params, int nparams);
 
 Bool
 PictureFinishInit (void);
@@ -656,5 +660,23 @@ CreateConicalGradientPicture (Picture pid,
 void PanoramiXRenderInit (void);
 void PanoramiXRenderReset (void);
 #endif
+
+/*
+ * matrix.c
+ */
+
+extern _X_EXPORT void
+PictTransform_from_xRenderTransform(PictTransformPtr pict,
+                                    xRenderTransform * render);
+
+extern _X_EXPORT void
+xRenderTransform_from_PictTransform(xRenderTransform * render,
+                                    PictTransformPtr pict);
+
+extern _X_EXPORT Bool
+ PictureTransformPoint(PictTransformPtr transform, PictVectorPtr vector);
+
+extern _X_EXPORT Bool
+ PictureTransformPoint3d(PictTransformPtr transform, PictVectorPtr vector);
 
 #endif /* _PICTURESTR_H_ */

@@ -49,6 +49,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "inputstr.h"
 #include "opaque.h"
 #include "property.h"
+#include "scrnintstr.h"
 #define	XKBSRV_NEED_FILE_FUNCS
 #include <nx-X11/extensions/XKBsrv.h>
 #include <nx-X11/extensions/XKBgeom.h>
@@ -230,7 +231,7 @@ char *			pval;
 	ErrorF("Internal Error! bad size (%d!=%d) for _XKB_RULES_NAMES\n",
 								out,len);
     }
-    ChangeWindowProperty(WindowTable[0],name,XA_STRING,8,PropModeReplace,
+    ChangeWindowProperty(screenInfo.screens[0]->root,name,XA_STRING,8,PropModeReplace,
 							len,pval,True);
     DEALLOCATE_LOCAL(pval);
     return True;

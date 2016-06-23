@@ -477,7 +477,7 @@ miDCPutUpCursor (pScreen, pCursor, x, y, source, mask)
 	    return FALSE;
     }
     pScreenPriv = (miDCScreenPtr) pScreen->devPrivates[miDCScreenIndex].ptr;
-    pWin = WindowTable[pScreen->myNum];
+    pWin = pScreen->root;
 #ifdef ARGB_CURSOR
     if (pPriv->pPicture)
     {
@@ -523,7 +523,7 @@ miDCSaveUnderCursor (pScreen, x, y, w, h)
 
     pScreenPriv = (miDCScreenPtr) pScreen->devPrivates[miDCScreenIndex].ptr;
     pSave = pScreenPriv->pSave;
-    pWin = WindowTable[pScreen->myNum];
+    pWin = pScreen->root;
     if (!pSave || pSave->drawable.width < w || pSave->drawable.height < h)
     {
 	if (pSave)
@@ -555,7 +555,7 @@ miDCRestoreUnderCursor (pScreen, x, y, w, h)
 
     pScreenPriv = (miDCScreenPtr) pScreen->devPrivates[miDCScreenIndex].ptr;
     pSave = pScreenPriv->pSave;
-    pWin = WindowTable[pScreen->myNum];
+    pWin = pScreen->root;
     if (!pSave)
 	return FALSE;
     if (!EnsureGC(pScreenPriv->pRestoreGC, pWin))
@@ -581,7 +581,7 @@ miDCChangeSave (pScreen, x, y, w, h, dx, dy)
 
     pScreenPriv = (miDCScreenPtr) pScreen->devPrivates[miDCScreenIndex].ptr;
     pSave = pScreenPriv->pSave;
-    pWin = WindowTable[pScreen->myNum];
+    pWin = pScreen->root;
     /*
      * restore the bits which are about to get trashed
      */
@@ -723,7 +723,7 @@ miDCMoveCursor (pScreen, pCursor, x, y, w, h, dx, dy, source, mask)
 	    return FALSE;
     }
     pScreenPriv = (miDCScreenPtr) pScreen->devPrivates[miDCScreenIndex].ptr;
-    pWin = WindowTable[pScreen->myNum];
+    pWin = pScreen->root;
     pTemp = pScreenPriv->pTemp;
     if (!pTemp ||
 	pTemp->drawable.width != pScreenPriv->pSave->drawable.width ||

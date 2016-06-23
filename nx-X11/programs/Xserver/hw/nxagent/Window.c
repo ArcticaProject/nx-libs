@@ -196,7 +196,7 @@ static Bool nxagentCheckWindowIntegrity(WindowPtr pWin);
 
 WindowPtr nxagentGetWindowFromID(Window id)
 {
-  WindowPtr pWin = WindowTable[0];
+  WindowPtr pWin = screenInfo.screens[0]->root;
 
   while (pWin && nxagentWindowPriv(pWin))
   {
@@ -508,7 +508,7 @@ FIXME: Do all the windows for which nxagentWindowTopLevel(pWin)
 
 Bool nxagentSomeWindowsAreMapped()
 {
-  WindowPtr pWin = WindowTable[0] -> firstChild;
+  WindowPtr pWin = screenInfo.screens[0]->root -> firstChild;
 
   while (pWin)
   {
@@ -884,7 +884,7 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
 
       nxagentUpdateViewportFrame(0, 0, nxagentOption(RootWidth), nxagentOption(RootHeight));
 
-      XMoveWindow(nxagentDisplay, nxagentWindow(WindowTable[pScreen -> myNum]),
+      XMoveWindow(nxagentDisplay, nxagentWindow(pScreen->root),
                       nxagentOption(RootX), nxagentOption(RootY));
 
       /*
@@ -995,7 +995,7 @@ void nxagentSwitchAllScreens(ScreenPtr pScreen, Bool switchOn)
 
     nxagentUpdateViewportFrame(0, 0, nxagentOption(Width), nxagentOption(Height));
 
-    XMoveWindow(nxagentDisplay, nxagentWindow(WindowTable[pScreen -> myNum]), 0, 0);
+    XMoveWindow(nxagentDisplay, nxagentWindow(pScreen->root), 0, 0);
     XMapWindow(nxagentDisplay, w);
 
     nxagentChangeOption(RootX, 0);
@@ -1156,11 +1156,11 @@ void nxagentMoveViewport(ScreenPtr pScreen, int hShift, int vShift)
                         -nxagentOption(RootY) + nxagentOption(Height));
 
     fprintf(stderr, "nxagentMoveViewport: Root geometry x=[%d] y=[%d]\n",
-                WindowTable[pScreen -> myNum] -> drawable.x,
-                    WindowTable[pScreen -> myNum] -> drawable.y );
+                pScreen->root -> drawable.x,
+                    pScreen->root -> drawable.y );
     #endif
 
-    XMoveWindow(nxagentDisplay, nxagentWindow(WindowTable[pScreen -> myNum]),
+    XMoveWindow(nxagentDisplay, nxagentWindow(pScreen->root),
                     nxagentOption(RootX), nxagentOption(RootY));
 
     if (nxagentOption(ClientOs) == ClientOsWinnt)
@@ -2437,7 +2437,7 @@ static int nxagentForceExposure(WindowPtr pWin, void * ptr)
 {
   RegionPtr exposedRgn;
   BoxRec Box;
-  WindowPtr pRoot = WindowTable[pWin->drawable.pScreen->myNum];
+  WindowPtr pRoot = pWin->drawable.pScreen->root;
 
   if (pWin -> drawable.class != InputOnly)
   {
@@ -2491,7 +2491,7 @@ void nxagentMapDefaultWindows()
 
   for (i = 0; i < screenInfo.numScreens; i++)
   {
-    WindowPtr pWin = WindowTable[i];
+    WindowPtr pWin = screenInfo.screens[i]->root;
 
     ScreenPtr pScreen = pWin -> drawable.pScreen;
 
@@ -2606,7 +2606,7 @@ Bool nxagentDisconnectAllWindows(void)
 
   for (i = 0; i < screenInfo.numScreens; i++)
   {
-    pWin = WindowTable[i];
+    pWin = screenInfo.screens[i]->root;
     nxagentTraverseWindow( pWin, nxagentDisconnectWindow, &succeded);
     nxagentDefaultWindows[i] = None;
   }
@@ -2684,16 +2684,16 @@ Bool nxagentReconnectAllWindows(void *p0)
   fprintf(stderr, "nxagentReconnectAllWindows\n");
   #endif
 
-  if (WindowTable[0] -> backgroundState == BackgroundPixmap &&
-          WindowTable[0] -> background.pixmap == NULL)
+  if (screenInfo.screens[0]->root -> backgroundState == BackgroundPixmap &&
+          screenInfo.screens[0]->root -> background.pixmap == NULL)
   {
     FatalError("nxagentReconnectAllWindows: correct the FIXME\n");
   }
 
   if (nxagentOption(Fullscreen))
   {
-    WindowTable[0] -> origin.x = nxagentOption(RootX);
-    WindowTable[0] -> origin.y = nxagentOption(RootY);
+    screenInfo.screens[0]->root -> origin.x = nxagentOption(RootX);
+    screenInfo.screens[0]->root -> origin.y = nxagentOption(RootY);
   }
 
   if (!nxagentLoopOverWindows(nxagentReconnectWindow))
@@ -2739,8 +2739,8 @@ Bool nxagentReconnectAllWindows(void *p0)
 
   if (nxagentOption(Fullscreen))
   {
-    WindowTable[0] -> origin.x = 0;
-    WindowTable[0] -> origin.y = 0;
+    screenInfo.screens[0]->root -> origin.x = 0;
+    screenInfo.screens[0]->root -> origin.y = 0;
   }
 
   #ifdef NXAGENT_RECONNECT_WINDOW_DEBUG
@@ -2751,7 +2751,7 @@ Bool nxagentReconnectAllWindows(void *p0)
 
   #endif
 
-  if (nxagentInitClipboard(WindowTable[0]) == -1)
+  if (nxagentInitClipboard(screenInfo.screens[0]->root) == -1)
   {
     #ifdef WARNING
     fprintf(stderr, "nxagentReconnectAllWindows: WARNING! Couldn't initialize the clipboard.\n");
@@ -2848,7 +2848,7 @@ static Bool nxagentLoopOverWindows(void (*pF)(void *, XID, void *))
 
   for (i = 0; i < screenInfo.numScreens; i++)
   {
-    pWin = WindowTable[i];
+    pWin = screenInfo.screens[i]->root;
     nxagentTraverseWindow(pWin, pF, &windowSuccess);
   }
 
@@ -2995,7 +2995,7 @@ FIXME: Do we need to set save unders attribute here?
    * if a client handles this.
    */
 
-  if (nxagentOption(Rootless) && (pWin != WindowTable[0]))
+  if (nxagentOption(Rootless) && (pWin != screenInfo.screens[0]->root))
   {
     if (nxagentWindowTopLevel(pWin))
     {
@@ -3196,7 +3196,7 @@ static void nxagentReconfigureWindow(void * param0, XID param1, void * data_buff
   nxagentShapeWindow(pWin);
 #endif
 
-  if (pWin != WindowTable[0])
+  if (pWin != screenInfo.screens[0]->root)
   {
     if (pWin->realized)
     {
@@ -3238,7 +3238,7 @@ Bool nxagentCheckIllegalRootMonitoring(WindowPtr pWin, Mask mask)
   Mask invalidMask = SubstructureRedirectMask | ResizeRedirectMask | ButtonPressMask;
 
   if (nxagentOption(Rootless) &&
-        pWin == WindowTable[0] &&
+        pWin == screenInfo.screens[0]->root &&
           (mask & invalidMask))
   {
     return True;

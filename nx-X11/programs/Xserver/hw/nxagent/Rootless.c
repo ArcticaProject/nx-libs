@@ -20,6 +20,7 @@
 #include "../../include/window.h"
 #include "windowstr.h"
 #include "colormapst.h"
+#include "scrnintstr.h"
 #include "propertyst.h"
 
 #include "Agent.h"
@@ -242,7 +243,7 @@ Bool nxagentRootlessTreesMatch()
   Window *children_return;
   unsigned int nChildrenReturn;
   WindowPtr pW;
-  WindowPtr pTestWin = WindowTable[0] -> firstChild;
+  WindowPtr pTestWin = screenInfo.screens[0]->root -> firstChild;
   Bool treesMatch = True;
   Status result;
 
@@ -267,7 +268,7 @@ Bool nxagentRootlessTreesMatch()
       pW = nxagentRootlessTopLevelWindow(children_return[nChildrenReturn]);
     }
 
-    if (pW && pW != WindowTable[0])
+    if (pW && pW != screenInfo.screens[0]->root)
     {
       if (treesMatch && pTestWin && pTestWin == pW)
       {
@@ -316,7 +317,7 @@ void nxagentRootlessRestack(unsigned long children[], unsigned int nchildren)
       pWin = nxagentRootlessTopLevelWindow(children[i]);
     }
 
-    if (pWin && pWin != WindowTable[0])
+    if (pWin && pWin != screenInfo.screens[0]->root)
     {
       toplevel[ntoplevel++] = pWin;
     }
@@ -338,14 +339,14 @@ void nxagentRootlessRestack(unsigned long children[], unsigned int nchildren)
 
   fprintf(stderr, "nxagentRootlessRestack: Internal top level windows before restack:");
 
-  for (pWin = WindowTable[0] -> firstChild; pWin != NULL; pWin = pWin -> nextSib)
+  for (pWin = screenInfo.screens[0]->root -> firstChild; pWin != NULL; pWin = pWin -> nextSib)
   {
     fprintf(stderr, "[%p]\n", pWin);
   }
 
   #endif
 
-  pWin = WindowTable[0] -> firstChild;
+  pWin = screenInfo.screens[0]->root -> firstChild;
 
   values[1] = (XID) Above;
 
@@ -381,7 +382,7 @@ void nxagentRootlessRestack(unsigned long children[], unsigned int nchildren)
 
   fprintf(stderr, "nxagentRootlessRestack: Internal top level windows after restack:");
 
-  for (pWin = WindowTable[0] -> firstChild; pWin != NULL; pWin = pWin -> nextSib)
+  for (pWin = screenInfo.screens[0]->root -> firstChild; pWin != NULL; pWin = pWin -> nextSib)
   {
     fprintf(stderr, "[%p]\n", pWin);
   }

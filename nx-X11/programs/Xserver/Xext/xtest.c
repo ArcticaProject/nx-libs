@@ -409,7 +409,7 @@ ProcXTestFakeInput(client)
 		    if (RegionContainsPoint(
 					&XineramaScreenRegions[i],
 					x, y, &box)) {
-			root = WindowTable[i];
+			root = screenInfo.screens[i]->root;
 			x   -= panoramiXdataPtr[i].x;
 			y   -= panoramiXdataPtr[i].y;
 			ev->u.keyButtonPointer.rootX = x;

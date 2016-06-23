@@ -89,7 +89,7 @@ AddExtension(char *name, int NumEvents, int NumErrors,
     int i;
     register ExtensionEntry *ext, **newexts;
 
-    if (!MainProc || !SwappedMainProc || !CloseDownProc || !MinorOpcodeProc)
+    if (!MainProc || !SwappedMainProc || !MinorOpcodeProc)
         return((ExtensionEntry *) NULL);
     if ((lastEvent + NumEvents > LAST_EVENT) || 
 	        (unsigned)(lastError + NumErrors > LAST_ERROR))
@@ -260,7 +260,8 @@ CloseDownExtensions()
 
     for (i = NumExtensions - 1; i >= 0; i--)
     {
-	(* extensions[i]->CloseDown)(extensions[i]);
+	if (extensions[i]->CloseDown)
+	    (* extensions[i]->CloseDown)(extensions[i]);
 	NumExtensions = i;
 	xfree(extensions[i]->name);
 	for (j = extensions[i]->num_aliases; --j >= 0;)

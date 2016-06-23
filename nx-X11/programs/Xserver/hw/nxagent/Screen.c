@@ -2116,7 +2116,7 @@ Bool nxagentCloseScreen(int index, ScreenPtr pScreen)
 
 static void nxagentSetRootClip (ScreenPtr pScreen, Bool enable)
 {
-    WindowPtr   pWin = WindowTable[pScreen->myNum];
+    WindowPtr   pWin = pScreen->root;
     WindowPtr   pChild;
     Bool        WasViewable = (Bool)(pWin->viewable);
     Bool        anyMarked = FALSE;
@@ -2409,21 +2409,21 @@ FIXME: We should try to restore the previously
   box.x2 = width;
   box.y2 = height;
 
-  WindowTable[pScreen -> myNum] -> drawable.width = width;
-  WindowTable[pScreen -> myNum] -> drawable.height = height;
-  WindowTable[pScreen -> myNum] -> drawable.x = 0;
-  WindowTable[pScreen -> myNum] -> drawable.y = 0;
+  pScreen->root -> drawable.width = width;
+  pScreen->root -> drawable.height = height;
+  pScreen->root -> drawable.x = 0;
+  pScreen->root -> drawable.y = 0;
 
-  RegionInit(&WindowTable[pScreen -> myNum] -> borderSize, &box, 1);
-  RegionInit(&WindowTable[pScreen -> myNum] -> winSize, &box, 1);
-  RegionInit(&WindowTable[pScreen -> myNum] -> clipList, &box, 1);
-  RegionInit(&WindowTable[pScreen -> myNum] -> borderClip, &box, 1);
+  RegionInit(&pScreen->root -> borderSize, &box, 1);
+  RegionInit(&pScreen->root -> winSize, &box, 1);
+  RegionInit(&pScreen->root -> clipList, &box, 1);
+  RegionInit(&pScreen->root -> borderClip, &box, 1);
 
-  (*pScreen -> PositionWindow)(WindowTable[pScreen -> myNum], 0, 0);
+  (*pScreen -> PositionWindow)(pScreen->root, 0, 0);
 
   nxagentSetRootClip(pScreen, 1);
 
-  XMoveWindow(nxagentDisplay, nxagentWindow(WindowTable[0]),
+  XMoveWindow(nxagentDisplay, nxagentWindow(screenInfo.screens[0]->root),
                   nxagentOption(RootX), nxagentOption(RootY));
 
   nxagentMoveViewport(pScreen, 0, 0);
@@ -3522,7 +3522,7 @@ FIXME: The port information is not used at the moment and produces a
       {
         mcop_local_atom = MakeAtom(mcop_atom, strlen(mcop_atom), 1);
 
-        ChangeWindowProperty(WindowTable[pScreen->myNum],
+        ChangeWindowProperty(pScreen->root,
                              mcop_local_atom,
                              XA_STRING,
                              iReturnFormat, PropModeReplace,
@@ -3667,9 +3667,9 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
   int          r;
 
   #ifdef TEST
-  fprintf(stderr, "nxagentChangeScreenConfig: WindowTable[%d] is %p\n", screen, WindowTable[screen]);
+  fprintf(stderr, "nxagentChangeScreenConfig: screenInfo.screens[%d]->root is %p\n", screen, screenInfo.screens[screen]);
   #endif
-  if (WindowTable[screen] == NULL)
+  if (screenInfo.screens[screen]->root == NULL)
   {
     return 0;
   }
@@ -3692,7 +3692,7 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
     return 0;
   }
 
-  pScreen = WindowTable[screen] -> drawable.pScreen;
+  pScreen = screenInfo.screens[screen] -> root -> drawable.pScreen;
 
   #ifdef TEST
   fprintf(stderr, "nxagentChangeScreenConfig: Changing config to %dx%d.\n", width, height);
@@ -3793,7 +3793,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
        * do this here it will be done implicitely later and add mode(s) to
        * our crtc(s)!
        */
-      rrgetinfo = RRGetInfo(pScreen);
+      rrgetinfo = RRGetInfo(pScreen, FALSE);
 
       fprintf(stderr, "nxagentAdjustRandRXinerama: RRGetInfo returned [%d]\n", rrgetinfo);
     }
@@ -4124,7 +4124,7 @@ void nxagentSaveAreas(PixmapPtr pPixmap, RegionPtr prgnSave, int xorg, int yorg,
 
   values.subwindow_mode = IncludeInferiors;
 
-  gc = XCreateGC(nxagentDisplay, nxagentWindow(WindowTable[0]), GCSubwindowMode, &values);
+  gc = XCreateGC(nxagentDisplay, nxagentWindow(screenInfo.screens[0]->root), GCSubwindowMode, &values);
 
   /*
    * Initialize to the corrupted region.
@@ -4234,7 +4234,7 @@ void nxagentRestoreAreas(PixmapPtr pPixmap, RegionPtr prgnRestore, int xorg,
    */
 
   RegionIntersect(prgnRestore, prgnRestore,
-                       &WindowTable[pWin -> drawable.pScreen -> myNum] -> winSize);
+                       &pWin -> drawable.pScreen -> root -> winSize);
 
   pBackingStore = (miBSWindowPtr) pWin -> backStorage;
 
@@ -4245,7 +4245,7 @@ void nxagentRestoreAreas(PixmapPtr pPixmap, RegionPtr prgnRestore, int xorg,
 
   values.subwindow_mode = ClipByChildren;
 
-  gc = XCreateGC(nxagentDisplay, nxagentWindow(WindowTable[0]), GCSubwindowMode, &values);
+  gc = XCreateGC(nxagentDisplay, nxagentWindow(screenInfo.screens[0]->root), GCSubwindowMode, &values);
 
   /*
    * Translate the reference point to the origin of the window.
@@ -4406,7 +4406,7 @@ void nxagentShadowAdaptToRatio(void)
   nxagentShadowSetRatio(nxagentOption(Width) * 1.0 / nxagentShadowWidth,
                             nxagentOption(Height) * 1.0 / nxagentShadowHeight);
 
-  nxagentShadowCreateMainWindow(pScreen, WindowTable[0], nxagentShadowWidth, nxagentShadowHeight);
+  nxagentShadowCreateMainWindow(pScreen, screenInfo.screens[0]->root, nxagentShadowWidth, nxagentShadowHeight);
 
   sizeHints.max_width = WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
   sizeHints.max_height = HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
@@ -4456,7 +4456,7 @@ void nxagentShowPixmap(PixmapPtr pPixmap, int x, int y, int width, int height)
   XlibGC gc;
   XGCValues value;
   XImage *image;
-  WindowPtr pWin = WindowTable[0];
+  WindowPtr pWin = screenInfo.screens[0]->root;
   unsigned int format;
   int depth, pixmapWidth, pixmapHeight, length;
   char *data;
@@ -4668,7 +4668,7 @@ FIXME
   value.fill_style = FillSolid;
   value.function = GXcopy;
 
-  gc = XCreateGC(shadow, nxagentWindow(WindowTable[0]), GCBackground |
+  gc = XCreateGC(shadow, nxagentWindow(screenInfo.screens[0]->root), GCBackground |
                      GCForeground | GCFillStyle | GCPlaneMask | GCFunction, &value);
 
   NXCleanImage(image);
