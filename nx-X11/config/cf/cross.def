@@ -14,7 +14,7 @@
 #define ServerCDebugFlags	-O2
 #undef StandardDefines
 #define StandardDefines 	-Dlinux -D__arm__ -D_POSIX_SOURCE \
-				-D_BSD_SOURCE -D_GNU_SOURCE -DX_LOCALE
+				-D_DEFAULT_SOURCE -D_GNU_SOURCE -DX_LOCALE
 #undef CcCmd
 #define StdIncDir /opt/Embedix/tools/arm-linux/include
 #define PreIncDir 
