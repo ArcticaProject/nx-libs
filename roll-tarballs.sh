@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (C) 2011 by Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+# Copyright (C) 2011-2016 by Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 # Copyright (C) 2012 by Reinhard Tartler <siretart@tauware.de>
 #
 # This is free software; you can redistribute it and/or modify
