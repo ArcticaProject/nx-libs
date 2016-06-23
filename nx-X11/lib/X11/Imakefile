@@ -1139,44 +1139,6 @@ includes:: ks_tables.h
 
 CONFIGURE ?= ./configure
 
-#if NXLibraries
-
-$(NX_XCOMPCONFIGTARGET):
-	cd ../../../nxcomp && \
-	${CONFIGURE}
-
-$(NX_XCOMPEXTCONFIGTARGET):
-	cd ../../../nxcompext && \
-	${CONFIGURE}
-
-#ifdef SunArchitecture
-$(NX_XCOMPLIBTARGET): $(NX_XCOMPCONFIGTARGET)
-	${MAKE} -C $(NX_XCOMPLIBDIR)
-
-$(NX_XCOMPEXTLIBTARGET): $(NX_XCOMPEXTCONFIGTARGET)
-	${MAKE} -C ../../../nxcompext
-
-#else
-$(NX_XCOMPLIBTARGET): $(NX_XCOMPCONFIGTARGET)
-	${MAKE} -C $(NX_XCOMPLIBDIR)
-
-$(NX_XCOMPEXTLIBTARGET): $(NX_XCOMPEXTCONFIGTARGET) $(NX_XCOMPLIBTARGET) lib$(LIBNAME).so.$(SOXLIBREV)
-	${MAKE} -C ../../../nxcompext
-
-#endif
-
-depend::
-
-lib$(LIBNAME).so.$(SOXLIBREV): $(NX_XCOMPLIBTARGET)
-
-all:: $(NX_XCOMPLIBTARGET)
-
-depend:: $(NX_XCOMPLIBTARGET)
-
-all:: $(NX_XCOMPEXTLIBTARGET)
-
-#endif
-
 depend:: ks_tables.h
 
 clean::

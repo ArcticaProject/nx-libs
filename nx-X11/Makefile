@@ -39,6 +39,15 @@ World:
 	@echo ""
 	@date
 	@echo ""
+	if [ ! -f xmakefile ]; then ${MAKE} ${MFLAGS} BuildEnv; fi
+	${MAKE} ${MAKE_OPTS} $(MFLAGS) $(WORLDOPTS) World
+	@echo ""
+	@date
+	@echo ""
+	@echo Full build of $(RELEASE) complete.
+	@echo ""
+
+BuildEnv:
 	@if [ -f xmakefile ]; then \
 	    ${MAKE} ${MAKE_OPTS} -k distclean || \
 	    ${MAKE} ${MAKE_OPTS} -k clean || \
@@ -52,12 +61,7 @@ World:
 	${MAKE} ${MAKE_OPTS} $(MFLAGS) BOOTSTRAPSUBDIRS= clean
 	${MAKE} ${MAKE_OPTS} $(MFLAGS) includes
 	${MAKE} ${MAKE_OPTS} $(MFLAGS) depend
-	${MAKE} ${MAKE_OPTS} $(MFLAGS) $(WORLDOPTS) World
-	@echo ""
-	@date
-	@echo ""
-	@echo Full build of $(RELEASE) complete.
-	@echo ""
+
 
 .PRECIOUS: Makefile
 

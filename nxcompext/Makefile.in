@@ -34,6 +34,8 @@ CXXFLAGS    = @CXXFLAGS@ @X_CFLAGS@ @DEFS@ \
 CXXINCLUDES = -I. -I../nxcomp
 CXXDEFINES  =
 
+CPPFLAGS    = @CPPFLAGS@
+
 CC          = @CC@
 CCFLAGS     = @CFLAGS@ @X_CFLAGS@ @DEFS@ \
               -Wall -Wpointer-arith -Wstrict-prototypes -Wmissing-prototypes \
@@ -78,9 +80,9 @@ DEPENDINCLUDES =  -I/usr/include/c++ -I/usr/include/g++ -I/usr/include/g++-3
 .SUFFIXES: .cpp.c
 
 .cpp.o:
-	$(CXX) -c $(CXXFLAGS) $(CXXINCLUDES) $<
+	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $(CXXINCLUDES) $<
 .c.o:
-	$(CC) -c $(CCFLAGS) $(CCINCLUDES) $<
+	$(CC) -c $(CPPFLAGS) $(CCFLAGS) $(CCINCLUDES) $<
 
 LIBRARY = Xcompext
 
