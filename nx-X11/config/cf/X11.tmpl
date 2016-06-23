@@ -739,20 +739,6 @@ FCHOWN_DEFINES = -DHAS_FCHOWN
 #ifndef ServerOSDefines
 #define ServerOSDefines /**/
 #endif
-#if HasKrbIV
-#ifndef KrbIVDefines
-#define KrbIVDefines -DKERBEROS
-#endif
-#else
-#define KrbIVDefines /**/
-#endif
-#if HasKrb5
-#ifndef Krb5Defines
-#define Krb5Defines -DK5AUTH
-#endif
-#else
-#define Krb5Defines /**/
-#endif
 #ifndef ServerExtraDefines
 #define ServerExtraDefines /* -DPIXPRIV */
 #endif

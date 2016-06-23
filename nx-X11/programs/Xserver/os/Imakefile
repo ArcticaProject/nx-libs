@@ -78,11 +78,6 @@ RPCOBJS =
 RPCSRCS =
 #endif
 
-#if HasKrb5
-KRB5OBJS = k5auth.o k5encode.o
-KRB5SRCS = k5auth.c k5encode.c
-#endif
-
 #if HasBSD44Sockets
    SOCK_DEFINES = -DBSD44SOCKETS
 #endif
@@ -122,12 +117,12 @@ GETPEER_DEFINES = -DHAS_GETPEEREID
 BOOTSTRAPCFLAGS = 
            SRCS = WaitFor.c access.c connection.c io.c $(COLOR_SRCS) \
                   osinit.c utils.c log.c auth.c mitauth.c secauth.c \
-                  $(XDMAUTHSRCS) $(RPCSRCS) $(KRB5SRCS) xdmcp.c OtherSources \
+                  $(XDMAUTHSRCS) $(RPCSRCS) xdmcp.c OtherSources \
                   transport.c $(SNPRINTF_SRCS) $(STRLCAT_SRCS) \
 		  $(MALLOC_SRCS) xprintf.c
            OBJS = WaitFor.o access.o connection.o io.o $(COLOR_OBJS) \
                   osinit.o utils.o log.o auth.o mitauth.o secauth.o \
-                  $(XDMAUTHOBJS) $(RPCOBJS) $(KRB5OBJS) xdmcp.o OtherObjects \
+                  $(XDMAUTHOBJS) $(RPCOBJS) xdmcp.o OtherObjects \
                   transport.o $(SNPRINTF_OBJS) $(STRLCAT_OBJS) \
 		  $(MALLOC_OBJS) xprintf.o
 
@@ -146,7 +141,6 @@ BOOTSTRAPCFLAGS =
     DBM_DEFINES = NdbmDefines
     ADM_DEFINES = -DADMPATH=\"$(ADMDIR)/X\%smsgs\"
   XDMCP_DEFINES = ServerXdmcpDefines
-   KRB5_DEFINES = Krb5Defines
  XALLOC_DEFINES = XallocDefines
   ERROR_DEFINES = ServerErrorDefines
 #if HasPam && HasPamMisc
@@ -154,11 +148,11 @@ BOOTSTRAPCFLAGS =
 #endif
         DEFINES = -DXSERV_t -DTRANS_SERVER $(CONNECTION_FLAGS) $(MEM_DEFINES) \
 		  $(XDMAUTHDEFS) $(RPCDEFS) $(SIGNAL_DEFINES) $(OS_DEFINES) \
-		  $(KRB5_DEFINES) $(RGB_DEFINES) $(GETPEER_DEFINES) \
+		  $(RGB_DEFINES) $(GETPEER_DEFINES) \
 		  $(RANDOM_DEFINES) $(BUGMSG) $(XTRANS_FAILDEFINES) $(NX_DEFINES)
        INCLUDES = -I. -I../include -I$(XINCLUDESRC) -I$(EXTINCSRC) \
 		  -I$(SERVERSRC)/Xext -I$(SERVERSRC)/render \
-		  -I$(TOP)/lib/Xau Krb5Includes $(NX_INCLUDES) \
+		  -I$(TOP)/lib/Xau $(NX_INCLUDES) \
 		  `pkg-config --cflags-only-I pixman-1`
  DEPEND_DEFINES = $(DBM_DEFINES) $(XDMCP_DEFINES) $(EXT_DEFINES) \
 		  $(TRANS_INCLUDES) $(CONNECTION_FLAGS) $(GETPEER_DEFINES) \
@@ -202,10 +196,6 @@ oscolor.o: oscolor.c $(ICONFIGFILES)
 	cc -c $(DBM_DEFINES) $(CDEBUGFLAGS) $(ALLDEFINES) $*.c
 #else
 SpecialCObjectRule(oscolor,$(ICONFIGFILES),$(DBM_DEFINES))
-#endif
-
-#if HasKrb5
-LinkSourceFile(k5encode.c,$(XAUTHSRC))
 #endif
 
 #if !HasSnprintf

@@ -68,8 +68,6 @@ Imake.tmpl provides defaults for the following variables:
 	HasGnuMake		use the GNU make program?
         HasGhostPCL             boolean for system has GhostPCL
         HasGhostScript          boolean for system has GhostScript
-	HasKrbIV		system has Kerberos version IV support?
-	HasKrb5			system has Kerberos version 5 support?
 	HasLargeTmp		boolean for system has /tmp space
 	HasLatex		system has LaTeX document preparation software
 	HasLibCrypt		boolean for system has libcrypt
@@ -105,10 +103,6 @@ Imake.tmpl provides defaults for the following variables:
 	InstPgmFlags		install flags for normal programs
 	InstUidFlags		install flags for xterm to chown /dev/ptys
 	InstallCmd		command to install files
-	KrbIVIncludes		where to include KerberosIV header files from
-	KrbIVLibraries		where to load KerberosIV libraries from
-	Krb5Includes		where to include Kerberos header files from
-	Krb5Libraries		where to load Kerberos libraries from
 	LdCmd			command to run loader
 	LdCombineFlags		flags for incremental loading
 	LexCmd			command to run lex
@@ -207,7 +201,6 @@ X11.tmpl provides defaults for the following variables:
 					needs Wraphelp.c, see Release Notes
 	InstallLibManPages	boolean for installing library man pages
 	InstallSecurityConfig	install server security policy file over old?
-	KrbIVDefines		defines for use with KerberosIV
 	LibDir			directory in which to install X11 support files
 	LibManSuffix		man suffix for library pages
 	LibmanDir		directory in which to install library man pages

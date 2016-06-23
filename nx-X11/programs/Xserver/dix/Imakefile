@@ -126,10 +126,6 @@ VENDORRELEASE = XVendorRelease
    VENDOR_RELEASE = -DVENDOR_RELEASE="$(VENDORRELEASE)"
 #endif
 
-#if HasKrb5
-         K5DEFS = Krb5Defines
-#endif
-
 #ifdef DarwinArchitecture
 #if DarwinQuartzSupport
     QUARTZ_DEFINES = -DDARWIN_WITH_QUARTZ
@@ -146,8 +142,6 @@ LintLibraryTarget(dix,$(SRCS) $(XPSRC))
 NormalLintTarget($(SRCS) $(XPSRC))
 
 SpecialCObjectRule(globals,$(ICONFIGFILES),$(SITE_DEFINES))
-SpecialCObjectRule(tables,$(ICONFIGFILES),$(K5DEFS))
-SpecialCObjectRule(dispatch,$(ICONFIGFILES),$(K5DEFS))
 SpecialCObjectRule(main,$(ICONFIGFILES),$(VENDOR_DEFINES))
 SpecialCObjectRule(pixmap,$(ICONFIGFILES),$(_NOOP_))
 SpecialCObjectRule(privates,$(ICONFIGFILES),$(_NOOP_))

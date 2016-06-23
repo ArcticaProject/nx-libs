@@ -172,12 +172,6 @@ EXTRA_LIBRARIES = /**/
   SETID_DEFINES = -DHASGETRESUID
 #endif
     XLC_DEFINES = -DXLOCALEDIR=\"$(XLOCALEDIR)\"
-#if HasKrb5
-         K5OBJS = k5encode.o
-         K5SRCS = k5encode.c
-         K5INCL = Krb5Includes
-         K5DEFS = Krb5Defines
-#endif
 #if (defined(FreeBSDArchitecture) && OSRelVersion < 500016) || \
 	defined(OpenBSDArchitecture)
 THRSTUBSRCS = UIThrStubs.c
@@ -1081,9 +1075,6 @@ SpecialCLibObjectRule(XKBCvt,$(_NOOP_),$(RCONST_DEFINES))
 SpecialCLibObjectRule(KeyBind,$(ICONFIGFILES),$(XKB_DEFINES))
 SpecialCLibObjectRule(XKBBind,$(ICONFIGFILES),$(XKB_DEFINES))
 SpecialCLibObjectRule(imConv,$(ICONFIGFILES),$(XKB_DEFINES))
-#endif
-#if HasKrb5
-SpecialCLibObjectRule(k5encode,$(_NOOP_),$(K5INCL))
 #endif
 #if BuildLoadableXlibI18n
 SpecialCLibObjectRuleSeparateOpts(lcInit,$(ICONFIGFILES),$(_NOOP_),$(LC_DYNDEFINES))

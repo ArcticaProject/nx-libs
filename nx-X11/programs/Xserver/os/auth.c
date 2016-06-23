@@ -54,9 +54,6 @@ from The Open Group.
 #include <dix-config.h>
 #endif
 
-#ifdef K5AUTH
-# include   <krb5/krb5.h>
-#endif
 # include   <nx-X11/X.h>
 # include   <nx-X11/Xauth.h>
 # include   "misc.h"
@@ -107,15 +104,6 @@ static struct protocol   protocols[] = {
 {   (unsigned short) 9,    "SUN-DES-1",
 		SecureRPCAdd,	SecureRPCCheck,	SecureRPCReset,
 		SecureRPCToID,	SecureRPCFromID,SecureRPCRemove,
-#ifdef XCSECURITY
-		NULL
-#endif
-},
-#endif
-#ifdef K5AUTH
-{   (unsigned short) 14, "MIT-KERBEROS-5",
-		K5Add, K5Check, K5Reset,
-		K5ToID, K5FromID, K5Remove,
 #ifdef XCSECURITY
 		NULL
 #endif

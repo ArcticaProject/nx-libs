@@ -246,7 +246,7 @@ INSTPGMFLAGS =
 #if !(SystemV4 || defined(SGIArchitecture) || UseRgbTxt)
        DBMLIBS = DBMLibrary
 #endif
-        SYSLIBS = $(ZLIB) MathLibrary Krb5Libraries $(DBMLIBS) $(USB) \
+        SYSLIBS = $(ZLIB) MathLibrary $(DBMLIBS) $(USB) \
 		  $(PAMLIBS)  $(EXTRASYSLIBS)
 #if !HasCbrt
            CBRT = mi/LibraryTargetName(cbrt)

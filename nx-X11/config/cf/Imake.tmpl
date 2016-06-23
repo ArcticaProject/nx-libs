@@ -566,12 +566,6 @@ X_BYTE_ORDER = ByteOrder
 #ifndef HasSecureRPC
 #define HasSecureRPC		NO	/* if you have Secure RPC */
 #endif
-#ifndef HasKrbIV
-#define HasKrbIV		NO	/* if you have Kerberos IV */
-#endif
-#ifndef HasKrb5
-#define HasKrb5			NO      /* if you have Kerberos V5 */
-#endif
 #ifndef HasLatex
 #define HasLatex		NO
 #endif
@@ -590,27 +584,6 @@ X_BYTE_ORDER = ByteOrder
 #endif
 #ifndef GzipLibrary	/* if OS config didn't define it, assume it's -lz */
 #define GzipLibrary -lz
-#endif
-#if HasKrbIV
-#ifndef KrbIVIncludes
-#define KrbIVIncludes /**/
-#endif
-#ifndef KrbIVLibraries
-#define KrbIVLibraries -lkrb -ldes
-#endif
-#endif
-#if HasKrb5
-#ifndef Krb5Includes
-#define Krb5Includes -I/krb5/include
-#endif
-#ifndef Krb5Libraries
-#define Krb5Libraries -L/krb5/lib -L/usr/isode/lib -lkrb5 -lcrypto -lisode -lcom_err -ldbm
-#endif
-#else
-#undef Krb5Includes
-#define Krb5Includes /**/
-#undef Krb5Libraries
-#define Krb5Libraries /**/
 #endif
 #ifndef UseGnuMalloc
 #define UseGnuMalloc		NO
@@ -1878,7 +1851,7 @@ MODLDCOMBINEFLAGS = ModuleLdCombineFlags
       STD_DEFINES = StandardDefines $(PROJECT_DEFINES)
  EXTRA_LOAD_FLAGS = ExtraLoadFlags
   EXTRA_LDOPTIONS = ExtraLoadOptions
-  EXTRA_LIBRARIES = MallocLibraries ExtraLibraries Krb5Libraries
+  EXTRA_LIBRARIES = MallocLibraries ExtraLibraries
              TAGS = TagsCmd
 #if ConstructMFLAGS
            MFLAGS = -$(MAKEFLAGS)
