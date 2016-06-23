@@ -27,15 +27,10 @@ X11LIBDIR = X11
 XEXTLIBDIR = Xext
 #endif
 
-#if BuildLibraries
-OLDXLIBDIR = oldX
-#endif
-
 
 LINTSUBDIRS = \
 	$(XAULIBDIR) \
 	$(X11LIBDIR) \
-	$(OLDXLIBDIR) \
 	$(XEXTLIBDIR) \
 	$(XKBLIBDIR) \
 	$(NULL)

@@ -1263,28 +1263,6 @@ ProjectUnsharedLibReferences(XAUTH,NX_Xau,$(XAUTHSRC),$(USRLIBDIR))
 #endif
 #endif
 
-#ifndef SharedOldX
-#define SharedOldX HasSharedLibraries
-#endif
-#ifndef NormalOldX
-#define NormalOldX (!SharedOldX | ForceNormalLib)
-#endif
-#ifndef DebugOldX
-#define DebugOldX		NO	/* debugged old X library */
-#endif
-#ifndef ProfileOldX
-#define ProfileOldX		NO	/* profiled old X library */
-#endif
-       OLDXLIBSRC = $(LIBSRC)/oldX
-#if SharedOldX
-#ifndef SharedOldXRev
-#define SharedOldXRev 6.0
-#endif
-SharedLibReferences(OLDX,NX_oldX,$(OLDXLIBSRC),SOOLDXREV,SharedOldXRev)
-#else
-ProjectUnsharedLibReferences(OLDX,NX_oldX,$(OLDXLIBSRC),XBuildLibDir)
-#endif
-
 #if HasMotif
 
 #ifndef MotifDir
