@@ -79,5 +79,11 @@ XWindowEvent (dpy, w, mask, event)
 	    if (prev && prev->qserial_num != qe_serial)
 		/* another thread has snatched this event */
 		prev = NULL;
+#ifdef NX_TRANS_SOCKET
+	    if (_XGetIOError(dpy)) {
+	      UnlockDisplay(dpy);
+	      return 0;
+	    }
+#endif
 	}
 }

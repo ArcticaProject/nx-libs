@@ -48,6 +48,12 @@ XNextEvent (dpy, event)
 	
 	if (dpy->head == NULL)
 	    _XReadEvents(dpy);
+#ifdef NX_TRANS_SOCKET
+	if (_XGetIOError(dpy)) {
+	    UnlockDisplay(dpy);
+	    return 0;
+	}
+#endif
 	qelt = dpy->head;
 	*event = qelt->event;
 	_XDeq(dpy, NULL, qelt);
