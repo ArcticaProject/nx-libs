@@ -46,6 +46,12 @@ XPeekEvent (dpy, event)
 	LockDisplay(dpy);
 	if (dpy->head == NULL)
 	    _XReadEvents(dpy);
+#ifdef NX_TRANS_SOCKET
+	if (_XGetIOError(dpy)) {
+	    UnlockDisplay(dpy);
+	    return 1;
+	}
+#endif
 	*event = (dpy->head)->event;
 	UnlockDisplay(dpy);
 	return 1;

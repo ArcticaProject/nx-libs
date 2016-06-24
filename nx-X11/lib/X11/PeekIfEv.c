@@ -73,6 +73,7 @@ XPeekIfEvent (dpy, event, predicate, arg)
 		prev = NULL;
 #ifdef NX_TRANS_SOCKET
             if (_XGetIOError(dpy)) {
+                UnlockDisplay(dpy);
                 return 0;
             }
 #endif
