@@ -104,10 +104,10 @@ is" without express or implied warranty.
  * Set here the required log level.
  */
 
-#define PANIC
-#define WARNING
-#define  TEST
-#define  DEBUG
+#undef  PANIC
+#undef  WARNING
+#undef  TEST
+#undef  DEBUG
 #undef  WATCH
 #undef  DUMP
 
