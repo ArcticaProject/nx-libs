@@ -3799,7 +3799,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
     }
 #else
     /* we are not interested in the return code */
-    RRGetInfo(pScreen);
+    RRGetInfo(pScreen, FALSE);
 #endif
 
 #ifndef NXAGENT_RANDR_XINERAMA_CLIPPING
