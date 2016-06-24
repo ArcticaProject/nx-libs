@@ -104,10 +104,10 @@ is" without express or implied warranty.
  * Set here the required log level.
  */
 
-#define PANIC
-#define WARNING
-#define  TEST
-#define  DEBUG
+#undef  PANIC
+#undef  WARNING
+#undef  TEST
+#undef  DEBUG
 #undef  WATCH
 #undef  DUMP
 
@@ -3799,7 +3799,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
     }
 #else
     /* we are not interested in the return code */
-    RRGetInfo(pScreen);
+    RRGetInfo(pScreen, FALSE);
 #endif
 
 #ifndef NXAGENT_RANDR_XINERAMA_CLIPPING
