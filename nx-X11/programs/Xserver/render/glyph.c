@@ -268,6 +268,7 @@ FreeGlyph (GlyphPtr glyph, int format)
     }
 }
 
+#ifndef NXAGENT_SERVER
 void
 AddGlyph (GlyphSetPtr glyphSet, GlyphPtr glyph, Glyph id)
 {
@@ -301,6 +302,7 @@ AddGlyph (GlyphSetPtr glyphSet, GlyphPtr glyph, Glyph id)
     gr->signature = id;
     CheckDuplicates (&globalGlyphs[glyphSet->fdepth], "AddGlyph bottom");
 }
+#endif /* NXAGENT_SERVER */
 
 Bool
 DeleteGlyph (GlyphSetPtr glyphSet, Glyph id)
@@ -320,6 +322,7 @@ DeleteGlyph (GlyphSetPtr glyphSet, Glyph id)
     return FALSE;
 }
 
+#ifndef NXAGENT_SERVER
 GlyphPtr
 FindGlyph (GlyphSetPtr glyphSet, Glyph id)
 {
@@ -330,6 +333,7 @@ FindGlyph (GlyphSetPtr glyphSet, Glyph id)
 	glyph = 0;
     return glyph;
 }
+#endif /* NXAGENT_SERVER */
 
 GlyphPtr
 AllocateGlyph (xGlyphInfo *gi, int fdepth)
@@ -363,6 +367,8 @@ AllocateGlyphHash (GlyphHashPtr hash, GlyphHashSetPtr hashSet)
     return TRUE;
 }
 
+
+#ifndef NXAGENT_SERVER
 Bool
 ResizeGlyphHash (GlyphHashPtr hash, CARD32 change, Bool global)
 {
@@ -405,6 +411,7 @@ ResizeGlyphHash (GlyphHashPtr hash, CARD32 change, Bool global)
 	CheckDuplicates (hash, "ResizeGlyphHash bottom");
     return TRUE;
 }
+#endif /* NXAGENT_SERVER */
 
 Bool
 ResizeGlyphSet (GlyphSetPtr glyphSet, CARD32 change)

@@ -32,6 +32,8 @@ is" without express or implied warranty.
 #ifndef __Screen_H__
 #define __Screen_H__
 
+#include "scrnintstr.h"
+
 #define MIN_NXAGENT_WIDTH  80
 #define MIN_NXAGENT_HEIGHT 60
 #define NXAGENT_FRAME_WIDTH 2000

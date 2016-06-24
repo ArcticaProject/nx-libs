@@ -128,6 +128,7 @@ miTrapezoidBounds (int ntrap, xTrapezoid *traps, BoxPtr box)
     }
 }
 
+#ifndef NXAGENT_SERVER
 void
 miTrapezoids (CARD8	    op,
 	      PicturePtr    pSrc,
@@ -188,3 +189,4 @@ miTrapezoids (CARD8	    op,
 	    miTrapezoids (op, pSrc, pDst, maskFormat, xSrc, ySrc, 1, traps);
     }
 }
+#endif

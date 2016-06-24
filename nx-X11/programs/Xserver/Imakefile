@@ -187,7 +187,9 @@ INSTPGMFLAGS =
 		  cfb24/ModuleLibraryTargetName(cfb24)
           CFB32 = cfb/ModuleLibraryTargetName(cfb) \
 		  cfb32/ModuleLibraryTargetName(cfb32)
+#if (!(defined(NXAgentServer) && NXAgentServer))
          DAMAGE = miext/damage/ModuleLibraryTargetName(damage)
+#endif
          SHADOW = miext/shadow/ModuleLibraryTargetName(shadow)
           LAYER = miext/layer/ModuleLibraryTargetName(layer) 
 #else 
@@ -212,7 +214,9 @@ INSTPGMFLAGS =
 		  cfb/LibraryTargetName(cfb)
           CFB32 = cfb32/LibraryTargetName(cfb32) \
 		  cfb/LibraryTargetName(cfb)
+#if (!(defined(NXAgentServer) && NXAgentServer))
          DAMAGE = miext/damage/LibraryTargetName(damage)
+#endif
          SHADOW = miext/shadow/LibraryTargetName(shadow)
           LAYER = miext/layer/LibraryTargetName(layer) 
 #endif
@@ -356,7 +360,6 @@ NXAGENTOBJS = hw/nxagent/miinitext.o     \
               hw/nxagent/NXmiglyph.o     \
               hw/nxagent/NXmiexpose.o    \
               hw/nxagent/NXresource.o    \
-              hw/nxagent/NXmiwindow.o    \
               hw/nxagent/NXdamage.o
 #elif !defined(LynxOSArchitecture) && \
       !defined(Win32Architecture) && \
@@ -377,7 +380,6 @@ NXAGENTOBJS = hw/nxagent/miinitext.o     \
               hw/nxagent/NXmiglyph.o     \
               hw/nxagent/NXmiexpose.o    \
               hw/nxagent/NXresource.o    \
-              hw/nxagent/NXmiwindow.o    \
               hw/nxagent/NXdamage.o
 #else
 NXAGENTOBJS = hw/nxagent/miinitext.o     \
@@ -396,7 +398,6 @@ NXAGENTOBJS = hw/nxagent/miinitext.o     \
               hw/nxagent/NXmiglyph.o     \
               hw/nxagent/NXmiexpose.o    \
               hw/nxagent/NXresource.o    \
-              hw/nxagent/NXmiwindow.o    \
               hw/nxagent/NXdamage.o      \
               dix/main.o
 #endif

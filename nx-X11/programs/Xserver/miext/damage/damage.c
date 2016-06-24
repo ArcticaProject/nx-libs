@@ -1324,6 +1324,8 @@ damageDamageChars (DrawablePtr	pDrawable,
 #define TT_POLY16  2
 #define TT_IMAGE16 3
 
+#ifndef NXAGENT_SERVER
+
 static int 
 damageText (DrawablePtr	    pDrawable,
 	    GCPtr	    pGC,
@@ -1445,6 +1447,7 @@ damageImageText16(DrawablePtr	pDrawable,
     DAMAGE_GC_OP_EPILOGUE(pGC, pDrawable);
 }
 
+#endif /* NXAGENT_SERVER */
 
 static void
 damageImageGlyphBlt(DrawablePtr	    pDrawable,

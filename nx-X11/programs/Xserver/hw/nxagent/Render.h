@@ -19,10 +19,11 @@
 #define __Render_H__
 
 #include "screenint.h"
+#include "cursor.h"
 #include "picture.h"
 #include "renderproto.h"
 
-#include "NXglyphstr.h"
+#include "glyphstr.h"
 
 #include "Agent.h"
 

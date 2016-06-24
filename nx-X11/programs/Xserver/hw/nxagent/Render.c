@@ -15,8 +15,8 @@
 /*                                                                        */
 /**************************************************************************/
 
-#include "NXpicturestr.h"
-#include "NXglyphstr.h"
+#include "picturestr.h"
+#include "glyphstr.h"
 
 #include "Render.h"
 
@@ -39,7 +39,7 @@
 
 #define Atom   XlibAtom
 #define Pixmap XlibPixmap
-#include "NXrenderint.h"
+#include "X11/include/Xrenderint_nxagent.h"
 #undef  Atom
 #undef  Pixmap
 

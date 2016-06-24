@@ -209,6 +209,7 @@ UpdateCurrentTimeIf()
 	currentTime = systime;
 }
 
+#ifndef NXAGENT_SERVER
 void
 InitSelections()
 {
@@ -217,6 +218,7 @@ InitSelections()
     CurrentSelections = (Selection *)NULL;
     NumCurrentSelections = 0;
 }
+#endif /* NXAGENT_SERVER */
 
 void 
 FlushClientCaches(XID id)
@@ -349,6 +351,7 @@ SmartScheduleClient (int *clientReady, int nready)
 }
 #endif
 
+#ifndef NXAGENT_SERVER
 #define MAJOROP ((xReq *)client->requestBuffer)->reqType
 
 void
@@ -485,6 +488,7 @@ Dispatch(void)
 }
 
 #undef MAJOROP
+#endif /* NXAGENT_SERVER */
 
 int
 ProcBadRequest(ClientPtr client)
@@ -639,6 +643,7 @@ ProcChangeSaveSet(register ClientPtr client)
     }
 }
 
+#ifndef NXAGENT_SERVER
 int
 ProcReparentWindow(register ClientPtr client)
 {
@@ -673,6 +678,7 @@ ProcReparentWindow(register ClientPtr client)
     else 
         return (BadMatch);
 }
+#endif /* NXAGENT_SERVER */
 
 int
 ProcMapWindow(register ClientPtr client)
@@ -790,6 +796,7 @@ GetGeometry(register ClientPtr client, xGetGeometryReply *rep)
 
     REQUEST_SIZE_MATCH(xResourceReq);
     SECURITY_VERIFY_GEOMETRABLE (pDraw, stuff->id, client, SecurityReadAccess);
+    memset(rep, 0, sizeof(xGetGeometryReply));
     rep->type = X_Reply;
     rep->length = 0;
     rep->sequenceNumber = client->sequence;
@@ -829,7 +836,6 @@ ProcGetGeometry(register ClientPtr client)
     xGetGeometryReply rep;
     int status;
 
-    memset(&rep, 0, sizeof(xGetGeometryReply));
     if ((status = GetGeometry(client, &rep)) != Success)
 	return status;
 
@@ -838,6 +844,7 @@ ProcGetGeometry(register ClientPtr client)
 }
 
 
+#ifndef NXAGENT_SERVER
 int
 ProcQueryTree(register ClientPtr client)
 {
@@ -887,6 +894,8 @@ ProcQueryTree(register ClientPtr client)
 
     return(client->noClientException);
 }
+#endif /* NXAGENT_SERVER */
+
 
 int
 ProcInternAtom(register ClientPtr client)
@@ -950,6 +959,7 @@ ProcGetAtomName(register ClientPtr client)
 extern int k5_bad();
 #endif
 
+#ifndef NXAGENT_SERVER
 int
 ProcSetSelectionOwner(register ClientPtr client)
 {
@@ -1045,6 +1055,7 @@ ProcSetSelectionOwner(register ClientPtr client)
         return (BadAtom);
     }
 }
+#endif /* NXAGENT_SERVER */
 
 int
 ProcGetSelectionOwner(register ClientPtr client)
@@ -1078,6 +1089,7 @@ ProcGetSelectionOwner(register ClientPtr client)
     }
 }
 
+#ifndef NXAGENT_SERVER
 int
 ProcConvertSelection(register ClientPtr client)
 {
@@ -1143,6 +1155,7 @@ ProcConvertSelection(register ClientPtr client)
         return (BadAtom);
     }
 }
+#endif /* NXAGENT_SERVER */
 
 int
 ProcGrabServer(register ClientPtr client)
@@ -1285,6 +1298,7 @@ ProcTranslateCoords(register ClientPtr client)
     return(client->noClientException);
 }
 
+#ifndef NXAGENT_SERVER
 int
 ProcOpenFont(register ClientPtr client)
 {
@@ -1324,6 +1338,7 @@ ProcCloseFont(register ClientPtr client)
         return (BadFont);
     }
 }
+#endif /* NXAGENT_SERVER */
 
 int
 ProcQueryFont(register ClientPtr client)
@@ -1335,6 +1350,7 @@ ProcQueryFont(register ClientPtr client)
 
     REQUEST_SIZE_MATCH(xResourceReq);
     client->errorValue = stuff->id;		/* EITHER font or gc */
+
     pFont = (FontPtr)SecurityLookupIDByType(client, stuff->id, RT_FONT,
 					    SecurityReadAccess);
     if (!pFont)
@@ -1367,6 +1383,7 @@ ProcQueryFont(register ClientPtr client)
 	rlength = sizeof(xQueryFontReply) +
 	             FONTINFONPROPS(FONTCHARSET(pFont)) * sizeof(xFontProp)  +
 		     nprotoxcistructs * sizeof(xCharInfo);
+
 	reply = (xQueryFontReply *)ALLOCATE_LOCAL(rlength);
 	if(!reply)
 	{
@@ -1435,6 +1452,7 @@ ProcQueryTextExtents(register ClientPtr client)
     return(client->noClientException);
 }
 
+#ifndef NXAGENT_SERVER
 int
 ProcListFonts(register ClientPtr client)
 {
@@ -1456,6 +1474,7 @@ ProcListFontsWithInfo(register ClientPtr client)
     return StartListFontsWithInfo(client, stuff->nbytes,
 				  (unsigned char *) &stuff[1], stuff->maxNames);
 }
+#endif /* NXAGENT_SERVER */
 
 /**
  *
@@ -1527,6 +1546,7 @@ CreatePmap:
     return (BadAlloc);
 }
 
+#ifndef NXAGENT_SERVER
 int
 ProcFreePixmap(register ClientPtr client)
 {
@@ -1548,6 +1568,7 @@ ProcFreePixmap(register ClientPtr client)
 	return (BadPixmap);
     }
 }
+#endif /* NXAGENT_SERVER */
 
 int
 ProcCreateGC(register ClientPtr client)
@@ -3186,6 +3207,7 @@ ProcQueryBestSize (register ClientPtr client)
 }
 
 
+#ifndef NXAGENT_SERVER
 int
 ProcSetScreenSaver (register ClientPtr client)
 {
@@ -3241,6 +3263,7 @@ ProcSetScreenSaver (register ClientPtr client)
     SetScreenSaverTimer();
     return (client->noClientException);
 }
+#endif /* NXAGENT_SERVER */
 
 int
 ProcGetScreenSaver(register ClientPtr client)
@@ -3446,6 +3469,7 @@ ProcChangeCloseDownMode(register ClientPtr client)
     }
 }
 
+#ifndef NXAGENT_SERVER
 int ProcForceScreenSaver(register ClientPtr client)
 {    
     REQUEST(xForceScreenSaverReq);
@@ -3461,6 +3485,7 @@ int ProcForceScreenSaver(register ClientPtr client)
     SaveScreens(SCREEN_SAVER_FORCER, (int)stuff->mode);
     return client->noClientException;
 }
+#endif /* NXAGENT_SERVER */
 
 int ProcNoOperation(register ClientPtr client)
 {
@@ -3495,6 +3520,7 @@ InitProcVectors(void)
     
 }
 
+
 /**********************
  * CloseDownClient
  *
@@ -3502,6 +3528,7 @@ InitProcVectors(void)
  *  then killed again, the client is really destroyed.
  *********************/
 
+#ifndef NXAGENT_SERVER
 char dispatchExceptionAtReset = DE_RESET;
 
 void
@@ -3589,6 +3616,7 @@ CloseDownClient(register ClientPtr client)
 	    currentMaxClients--;
     }
 }
+#endif /* NXAGENT_SERVER */
 
 static void
 KillAllClients()
@@ -3682,6 +3710,7 @@ extern int clientPrivateLen;
 extern unsigned *clientPrivateSizes;
 extern unsigned totalClientSize;
 
+#ifndef NXAGENT_SERVER
 int
 InitClientPrivates(ClientPtr client)
 {
@@ -3716,6 +3745,7 @@ InitClientPrivates(ClientPtr client)
     }
     return 1;
 }
+#endif /* NXAGENT_SERVER */
 
 /************************
  * int NextAvailableClient(ospriv)

@@ -224,6 +224,8 @@ static int SWriteImageFormatInfo(ClientPtr, xvImageFormatInfo*);
 **
 */
 
+#if !defined(NXAGENT_SERVER) || defined(__sun) || defined(__CYGWIN__)
+
 int
 ProcXvDispatch(ClientPtr client)
 {
@@ -351,6 +353,8 @@ SProcXvDispatch(ClientPtr client)
 	}
     }
 }
+#endif /* !defined(NXAGENT_SERVER) || defined(__sun) || defined(__CYGWIN__) */
+
 
 static int
 ProcXvQueryExtension(ClientPtr client)

@@ -202,6 +202,7 @@ static Bool CheckForShmSyscall()
 
 #endif
 
+#ifndef NXAGENT_SERVER
 void
 ShmExtensionInit(INITARGS)
 {
@@ -265,6 +266,7 @@ ShmExtensionInit(INITARGS)
 	EventSwapVector[ShmCompletionCode] = (EventSwapPtr) SShmCompletionEvent;
     }
 }
+#endif /* NXAGENT_SERVER */
 
 /*ARGSUSED*/
 static void
@@ -502,6 +504,7 @@ ProcShmDetach(client)
     return(client->noClientException);
 }
 
+#ifndef NXAGENT_SERVER
 static void
 miShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
     DrawablePtr dst;
@@ -563,6 +566,7 @@ fbShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
 	miShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy,
 		      data);
 }
+#endif /* NXAGENT_SERVER */
 
 
 #ifdef PANORAMIX
@@ -824,6 +828,7 @@ CreatePmap:
 
 #endif
 
+#ifndef NXAGENT_SERVER
 static int
 ProcShmPutImage(client)
     register ClientPtr client;
@@ -934,7 +939,7 @@ ProcShmPutImage(client)
 
     return (client->noClientException);
 }
-
+#endif /* NXAGENT_SERVER */
 
 
 static int
@@ -1047,6 +1052,7 @@ ProcShmGetImage(client)
     return(client->noClientException);
 }
 
+#ifndef NXAGENT_SERVER
 static PixmapPtr
 fbShmCreatePixmap (pScreen, width, height, depth, addr)
     ScreenPtr	pScreen;
@@ -1068,6 +1074,7 @@ fbShmCreatePixmap (pScreen, width, height, depth, addr)
     }
     return pPixmap;
 }
+#endif /* NXAGENT_SERVER */
 
 static int
 ProcShmCreatePixmap(client)
@@ -1142,6 +1149,7 @@ CreatePmap:
     return (BadAlloc);
 }
 
+#ifndef NXAGENT_SERVER
 static int
 ProcShmDispatch (client)
     register ClientPtr	client;
@@ -1177,6 +1185,7 @@ ProcShmDispatch (client)
 	return BadRequest;
     }
 }
+#endif /* NXAGENT_SERVER */
 
 static void
 SShmCompletionEvent(from, to)
@@ -1286,6 +1295,7 @@ SProcShmCreatePixmap(client)
     return ProcShmCreatePixmap(client);
 }
 
+#ifndef NXAGENT_SERVER
 static int
 SProcShmDispatch (client)
     register ClientPtr	client;
@@ -1309,3 +1319,4 @@ SProcShmDispatch (client)
 	return BadRequest;
     }
 }
+#endif /* NXAGENT_SERVER */

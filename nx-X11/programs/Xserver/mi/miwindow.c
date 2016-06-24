@@ -1048,7 +1048,25 @@ miSetShape(pWin)
 	bsExposed = (*pScreen->TranslateBackingStore)
 			     (pWin, 0, 0, pOldClip,
 			      pWin->drawable.x, pWin->drawable.y);
-	if (WasViewable)
+
+	/*
+	 * Applies to NXAGENT_SERVER builds:
+	 *
+	 * We got a few, rare, segfaults here after having
+	 * started using the backing store. It may be a
+	 * different bug but miChangeSaveUnder() calls mi-
+	 * CheckSubSaveUnder() that, in turn, can change
+	 * the backing store attribute of the window. This
+	 * means that we may try to destroy the region
+	 * even if it was not created at the beginning of
+	 * this function as, at the time, the backing store
+	 * was off. miCheckSubSaveUnder() appear to get a
+	 * pointer to the parent, so maybe doesn't change
+	 * the attribute of the window itself. This is to
+	 * be better investigated.
+	 */
+
+	if (WasViewable && pOldClip)
 	    RegionDestroy(pOldClip);
 	if (bsExposed)
 	{

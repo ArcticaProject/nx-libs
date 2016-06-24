@@ -287,7 +287,7 @@ CloseDownExtensions()
     }
 }
 
-
+#ifndef NXAGENT_SERVER
 int
 ProcQueryExtension(ClientPtr client)
 {
@@ -392,7 +392,7 @@ ProcListExtensions(ClientPtr client)
     }
     return(client->noClientException);
 }
-
+#endif
 
 ExtensionLookupProc 
 LookupProc(char *name, GCPtr pGC)

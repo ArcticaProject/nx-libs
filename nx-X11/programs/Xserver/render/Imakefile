@@ -1,33 +1,51 @@
 XCOMM $XFree86: xc/programs/Xserver/render/Imakefile,v 1.10 2002/11/23 02:38:15 keithp Exp $
+
+NULL =
+
 #include <Server.tmpl>
+
+#if (!(defined(NXAgentServer) && NXAgentServer))
+NXAGENT_SKIP_SRCS =             \
+                    glyph.c     \
+                    miglyph.c   \
+                    mitrap.c    \
+                    picture.c   \
+                    render.c    \
+                    $(NULL)
+NXAGENT_SKIP_OBJS =             \
+                    glyph.o     \
+                    miglyph.o   \
+                    mitrap.o    \
+                    picture.o   \
+                    render.o    \
+                    $(NULL)
+#else
+          DEFINES = -DNXAGENT_SERVER
+#endif
 
        SRCS =   animcur.c \
                 filter.c \
                 glyph.c \
                 matrix.c \
-                miglyph.c \
                 miindex.c \
                 mipict.c \
                 mirect.c \
-                mitrap.c \
                 mitri.c \
-                picture.c \
-                render.c \
-		renderedge.c
+                renderedge.c \
+                $(NXAGENT_SKIP_SRCS) \
+                $(NULL)
 
        OBJS =   animcur.o \
                 filter.o \
                 glyph.o \
                 matrix.o \
-                miglyph.o \
                 miindex.o \
                 mipict.o \
                 mirect.o \
-                mitrap.o \
                 mitri.o \
-                picture.o \
-                render.o \
-		renderedge.o
+                renderedge.o \
+                $(NXAGENT_SKIP_OBJS) \
+                $(NULL)
 
    INCLUDES = -I. -I../include -I../mi \
                 -I../fb -I../hw/kdrive -I$(EXTINCSRC) -I$(XINCLUDESRC) \
@@ -46,4 +64,3 @@ InstallDriverSDKNonExecFile(glyphstr.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(mipict.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(picture.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(picturestr.h,$(DRIVERSDKINCLUDEDIR))
-
