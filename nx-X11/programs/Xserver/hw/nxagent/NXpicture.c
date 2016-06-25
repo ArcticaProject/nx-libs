@@ -284,7 +284,7 @@ CreateSolidPicture (Picture pid, xRenderColor *color, int *error)
     pPicture->pSourcePict = (SourcePictPtr) xalloc(sizeof(PictSolidFill));
     if (!pPicture->pSourcePict) {
         *error = BadAlloc;
-        xfree(pPicture);
+        free(pPicture);
         return 0;
     }
     pPicture->pSourcePict->type = SourcePictTypeSolidFill;
@@ -361,12 +361,12 @@ FreePicture (void *	value,
         nxagentDestroyPicture(pPicture);
 
 	if (pPicture->transform)
-	    xfree (pPicture->transform);
+	    free (pPicture->transform);
         if (!pPicture->pDrawable) {
             if (pPicture->pSourcePict) {
                 if (pPicture->pSourcePict->type != SourcePictTypeSolidFill)
-                    xfree(pPicture->pSourcePict->linear.stops);
-                xfree(pPicture->pSourcePict);
+                    free(pPicture->pSourcePict->linear.stops);
+                free(pPicture->pSourcePict);
             }
         } else {
             ScreenPtr	    pScreen = pPicture->pDrawable->pScreen;
@@ -397,7 +397,7 @@ FreePicture (void *	value,
                 (*pScreen->DestroyPixmap) ((PixmapPtr)pPicture->pDrawable);
             }
         }
-	xfree (pPicture);
+	free (pPicture);
     }
     return Success;
 }
@@ -502,7 +502,7 @@ Bool nxagentReconnectAllPictFormat(void *p)
     }
   }
 
-  xfree(formats);
+  free(formats);
 
   /* TODO: Perhaps do i have to do PictureFinishInit ?. */
   /* TODO: We have to check for new Render protocol version. */

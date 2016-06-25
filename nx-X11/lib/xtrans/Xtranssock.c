@@ -619,7 +619,7 @@ static XtransConnInfo TRANS(SocketCreateConnInfo) ()
     if (socketpair(PF_LOCAL, SOCK_STREAM, 0, fds) < 0)
     {
         PRMSG (1, "SocketCreateConnInfo: socketpair() failed.\n", 0, 0, 0);
-        xfree ((char *) ciptr);
+        free ((char *) ciptr);
         return NULL;
     }
 
@@ -643,7 +643,7 @@ static XtransConnInfo TRANS(SocketCreateConnInfo) ()
     {
         PRMSG (1, "SocketCreateConnInfo: No space for a new _NXProxyConnInfo for [%d].\n",
                   ciptr->fd, 0, 0);
-        xfree ((char *) ciptr);
+        free ((char *) ciptr);
         return NULL;
     }
     else if (_NXProxyConnInfoTab[ciptr->fd] != NULL)
@@ -658,7 +658,7 @@ static XtransConnInfo TRANS(SocketCreateConnInfo) ()
     if (_NXProxyConnInfoTab[ciptr->fd] == NULL)
     {
         PRMSG (1, "SocketCreateConnInfo: Alloc of _NXProxyConnInfo failed.\n", 0, 0, 0);
-        xfree ((char *) ciptr);
+        free ((char *) ciptr);
         return NULL;
     }
 
@@ -812,7 +812,7 @@ static void TRANS(SocketCloseConnInfo) (XtransConnInfo ciptr)
                 ciptr->fd);
 #endif
 
-    xfree((char *) _NXProxyConnInfoTab[ciptr->fd]);
+    free((char *) _NXProxyConnInfoTab[ciptr->fd]);
 
     _NXProxyConnInfoTab[ciptr->fd] = NULL;
 
@@ -1084,7 +1084,7 @@ TRANS(SocketOpen) (int i, int type)
 	PRMSG (2, "SocketOpen: socket() failed for %s\n",
 	    Sockettrans2devtab[i].transname, 0, 0);
 
-	xfree ((char *) ciptr);
+	free ((char *) ciptr);
 	return NULL;
     }
 
@@ -1968,7 +1968,7 @@ TRANS(SocketINETAccept) (XtransConnInfo ciptr, int *status)
 	errno = WSAGetLastError();
 #endif
 	PRMSG (1, "SocketINETAccept: accept() failed\n", 0, 0, 0);
-	xfree (newciptr);
+	free (newciptr);
 	*status = TRANS_ACCEPT_FAILED;
 	return NULL;
     }
@@ -1996,7 +1996,7 @@ TRANS(SocketINETAccept) (XtransConnInfo ciptr, int *status)
 	    "SocketINETAccept: ...SocketINETGetAddr() failed:\n",
 	    0, 0, 0);
 	close (newciptr->fd);
-	xfree (newciptr);
+	free (newciptr);
 	*status = TRANS_ACCEPT_MISC_ERROR;
         return NULL;
     }
@@ -2007,8 +2007,8 @@ TRANS(SocketINETAccept) (XtransConnInfo ciptr, int *status)
 	  "SocketINETAccept: ...SocketINETGetPeerAddr() failed:\n",
 		0, 0, 0);
 	close (newciptr->fd);
-	if (newciptr->addr) xfree (newciptr->addr);
-	xfree (newciptr);
+	if (newciptr->addr) free (newciptr->addr);
+	free (newciptr);
 	*status = TRANS_ACCEPT_MISC_ERROR;
         return NULL;
     }
@@ -2048,7 +2048,7 @@ TRANS(SocketUNIXAccept) (XtransConnInfo ciptr, int *status)
 	(struct sockaddr *) &sockname, (void *)&namelen)) < 0)
     {
 	PRMSG (1, "SocketUNIXAccept: accept() failed\n", 0, 0, 0);
-	xfree (newciptr);
+	free (newciptr);
 	*status = TRANS_ACCEPT_FAILED;
 	return NULL;
     }
@@ -2064,7 +2064,7 @@ TRANS(SocketUNIXAccept) (XtransConnInfo ciptr, int *status)
         "SocketUNIXAccept: Can't allocate space for the addr\n",
 	      0, 0, 0);
 	close (newciptr->fd);
-	xfree (newciptr);
+	free (newciptr);
 	*status = TRANS_ACCEPT_BAD_MALLOC;
         return NULL;
     }
@@ -2084,8 +2084,8 @@ TRANS(SocketUNIXAccept) (XtransConnInfo ciptr, int *status)
 	      "SocketUNIXAccept: Can't allocate space for the addr\n",
 	      0, 0, 0);
 	close (newciptr->fd);
-	if (newciptr->addr) xfree (newciptr->addr);
-	xfree (newciptr);
+	if (newciptr->addr) free (newciptr->addr);
+	free (newciptr);
 	*status = TRANS_ACCEPT_BAD_MALLOC;
         return NULL;
     }
@@ -2263,7 +2263,7 @@ TRANS(SocketINETConnect) (XtransConnInfo ciptr, char *host, char *port)
 					" socketfor IPv4 address\n", 0,0,0);
 			}
 			if (newciptr)
-			    xfree(newciptr);
+			    free(newciptr);
 		    } else {
 			socketaddr = NULL;
 			PRMSG (4,"SocketINETConnect Skipping IPv4 address\n",
@@ -2301,7 +2301,7 @@ TRANS(SocketINETConnect) (XtransConnInfo ciptr, char *host, char *port)
 				   "socket for IPv6 address\n", 0,0,0);
 			}
 			if (newciptr)
-			    xfree(newciptr);
+			    free(newciptr);
 		    }
 		    else
 		    {

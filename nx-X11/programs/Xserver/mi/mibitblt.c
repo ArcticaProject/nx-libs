@@ -258,7 +258,7 @@ miCopyArea(pSrcDrawable, pDstDrawable,
 
 	    (*pGC->ops->SetSpans)(pDstDrawable, pGC, (char *)pbits, pptFirst,
 				  (int *)pwidthFirst, height, TRUE);
-	    xfree(pbits);
+	    free(pbits);
 	}
     }
     prgnExposed = miHandleExposures(pSrcDrawable, pDstDrawable, pGC, xIn, yIn,
@@ -622,7 +622,7 @@ miCopyPlane(pSrcDrawable, pDstDrawable,
 	    miOpqStipDrawable(pDstDrawable, pGC, prgnSrc, ptile, 0,
 			      box.x2 - box.x1, box.y2 - box.y1,
 			      dstx + box.x1 - srcx, dsty + box.y1 - srcy);
-	    xfree(ptile);
+	    free(ptile);
 	}
     }
     prgnExposed = miHandleExposures(pSrcDrawable, pDstDrawable, pGC, srcx, srcy,

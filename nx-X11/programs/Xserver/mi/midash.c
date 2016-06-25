@@ -269,7 +269,7 @@ CheckDashStorage(
 				       (*pnsegMax)*sizeof(miDashRec));
 	if (!newppseg)
 	{
-	    xfree(*ppseg);
+	    free(*ppseg);
 	    return (miDashPtr)NULL;
 	}
 	*ppseg = newppseg;

@@ -146,7 +146,7 @@ miPointerCloseScreen (index, pScreen)
     if (pScreen == miPointer.pSpriteScreen)
 	miPointer.pSpriteScreen = 0;
     pScreen->CloseScreen = pScreenPriv->CloseScreen;
-    xfree ((void *) pScreenPriv);
+    free ((void *) pScreenPriv);
     return (*pScreen->CloseScreen) (index, pScreen);
 }
 

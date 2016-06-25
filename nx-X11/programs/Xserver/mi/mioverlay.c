@@ -178,7 +178,7 @@ miOverlayCloseScreen(int i, ScreenPtr pScreen)
    pScreen->UnrealizeWindow = pScreenPriv->UnrealizeWindow;
    pScreen->RealizeWindow = pScreenPriv->RealizeWindow;
 
-   xfree(pScreenPriv);
+   free(pScreenPriv);
 
    return (*pScreen->CloseScreen)(i, pScreen);
 }
@@ -224,7 +224,7 @@ miOverlayCreateWindow(WindowPtr pWin)
 		RegionInit(&(pTree->borderClip), &fullBox, 1);
 		RegionInit(&(pTree->clipList), &fullBox, 1);
 	    }
-	} else xfree(pTree);
+	} else free(pTree);
     }
 
     return TRUE;
@@ -252,7 +252,7 @@ miOverlayDestroyWindow(WindowPtr pWin)
 
 	RegionUninit(&(pTree->borderClip));
 	RegionUninit(&(pTree->clipList));
-	xfree(pTree);
+	free(pTree);
     }
 
     if(pScreenPriv->DestroyWindow) {
@@ -874,7 +874,7 @@ miOverlayHandleExposures(WindowPtr pWin)
 		    (*WindowExposures)(pTree->pWin,&mival->exposed,NullRegion);
 		    RegionUninit(&mival->exposed);
 		}
-		xfree(mival);
+		free(mival);
 		pTree->valdata = NULL;
 		if (pTree->firstChild) {
 		    pTree = pTree->firstChild;
@@ -912,7 +912,7 @@ miOverlayHandleExposures(WindowPtr pWin)
 	    }
 	    RegionUninit(&val->after.borderExposed);
 	    RegionUninit(&val->after.exposed);
-	    xfree(val);
+	    free(val);
 	    pChild->valdata = (ValidatePtr)NULL;
 	    if (pChild->firstChild)
 	    {

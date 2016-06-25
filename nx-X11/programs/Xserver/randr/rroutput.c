@@ -154,7 +154,7 @@ RROutputSetClones(RROutputPtr output, RROutputPtr * clones, int numClones)
     }
     else
         newClones = NULL;
-    xfree(output->clones);
+    free(output->clones);
     memcpy(newClones, clones, numClones * sizeof(RROutputPtr));
     output->clones = newClones;
     output->numClones = numClones;
@@ -194,7 +194,7 @@ RROutputSetModes(RROutputPtr output,
     if (output->modes) {
         for (i = 0; i < output->numModes; i++)
             RRModeDestroy(output->modes[i]);
-        xfree(output->modes);
+        free(output->modes);
     }
     memcpy(newModes, modes, numModes * sizeof(RRModePtr));
     output->modes = newModes;
@@ -299,7 +299,7 @@ RROutputSetCrtcs(RROutputPtr output, RRCrtcPtr * crtcs, int numCrtcs)
     }
     else
         newCrtcs = NULL;
-    xfree(output->crtcs);
+    free(output->crtcs);
     memcpy(newCrtcs, crtcs, numCrtcs * sizeof(RRCrtcPtr));
     output->crtcs = newCrtcs;
     output->numCrtcs = numCrtcs;
@@ -404,17 +404,17 @@ RROutputDestroyResource(void *value, XID pid)
     if (output->modes) {
         for (m = 0; m < output->numModes; m++)
             RRModeDestroy(output->modes[m]);
-        xfree(output->modes);
+        free(output->modes);
     }
 
     for (m = 0; m < output->numUserModes; m++)
         RRModeDestroy(output->userModes[m]);
-    xfree(output->userModes);
+    free(output->userModes);
 
-    xfree(output->crtcs);
-    xfree(output->clones);
+    free(output->crtcs);
+    free(output->clones);
     RRDeleteAllOutputProperties(output);
-    xfree(output);
+    free(output);
     return 1;
 }
 
@@ -541,7 +541,7 @@ ProcRRGetOutputInfo(ClientPtr client)
     WriteToClient(client, sizeof(xRRGetOutputInfoReply), (char *) &rep);
     if (extraLen) {
         WriteToClient(client, extraLen, (char *) extra);
-        xfree(extra);
+        free(extra);
     }
 
     return Success;

@@ -336,7 +336,7 @@ DeleteWindow(void * value, XID wid)
       nxagentSetInstalledColormapWindows(pWin -> drawable.pScreen);
     }
 
-    xfree(pWin);
+    free(pWin);
     return Success;
 }
 

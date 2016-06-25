@@ -1138,7 +1138,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
       #endif
 
 #ifdef _XSERVER64
-      xfree(keymap);
+      free(keymap);
 #else
       XFree(keymap);
 #endif
@@ -1473,17 +1473,17 @@ static int nxagentFreeKeyboardDeviceData(DeviceIntPtr dev)
       }
       #endif
 
-      xfree(dev->key->curKeySyms.map);
-      xfree(dev->key->modifierKeyMap);
-      xfree(dev->key);
+      free(dev->key->curKeySyms.map);
+      free(dev->key->modifierKeyMap);
+      free(dev->key);
 
       dev->key=NULL;
   }
 
   if (dev->focus)
   {
-      xfree(dev->focus->trace);
-      xfree(dev->focus);
+      free(dev->focus->trace);
+      free(dev->focus);
       dev->focus=NULL;
   }
 
@@ -1494,7 +1494,7 @@ static int nxagentFreeKeyboardDeviceData(DeviceIntPtr dev)
       if (k->xkb_sli)
           XkbFreeSrvLedInfo(k->xkb_sli);
       #endif
-      xfree(k);
+      free(k);
   }
 
   #ifdef DEBUG

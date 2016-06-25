@@ -171,7 +171,7 @@ TRANS(FillAddrInfo)(XtransConnInfo ciptr, char *sun_path, char *peer_sun_path)
 	PRMSG(1,
 	   "FillAddrInfo: failed to allocate memory for peer addr\n",
 									0,0,0);
-	xfree ((char *) sunaddr);
+	free ((char *) sunaddr);
 	ciptr->addr = NULL;
 
 	return 0;
@@ -610,7 +610,7 @@ TRANS(PTSAccept)(XtransConnInfo ciptr, XtransConnInfo newciptr, int *status)
     if( (sunaddr=(struct sockaddr_un *)xalloc(newciptr->peeraddrlen)) == NULL ) {
 	PRMSG(1,"PTSAccept: failed to allocate memory for peer addr\n",
 									0,0,0);
-	xfree(newciptr->addr);
+	free(newciptr->addr);
 	close(newfd);
 	*status = TRANS_ACCEPT_BAD_MALLOC;
 	return -1;
@@ -834,7 +834,7 @@ TRANS(NAMEDAccept)(XtransConnInfo ciptr, XtransConnInfo newciptr, int *status)
 	PRMSG(1,
 	"NAMEDAccept: failed to allocate memory for peer addr\n",
 									0,0,0);
-	xfree(newciptr->addr);
+	free(newciptr->addr);
 	close(str.fd);
 	*status = TRANS_ACCEPT_BAD_MALLOC;
 	return -1;
@@ -1178,7 +1178,7 @@ TRANS(ISCAccept)(XtransConnInfo ciptr, XtransConnInfo newciptr, int *status)
 	PRMSG(1,
 	      "ISCAccept: failed to allocate memory for peer addr\n",
 	      0,0,0);
-	xfree(newciptr->addr);
+	free(newciptr->addr);
 	close(str.fd);
 	*status = TRANS_ACCEPT_BAD_MALLOC;
 	return -1;
@@ -1455,7 +1455,7 @@ TRANS(SCOAccept)(XtransConnInfo ciptr, XtransConnInfo newciptr, int *status)
 	PRMSG(1,
 	      "SCOAccept: failed to allocate memory for peer addr\n",
 	      0,0,0);
-	xfree(newciptr->addr);
+	free(newciptr->addr);
 	close(fd);
 	*status = TRANS_ACCEPT_BAD_MALLOC;
 	return -1;
@@ -1913,7 +1913,7 @@ TRANS(LocalEndTransports)(void)
 
 {
     PRMSG(3,"LocalEndTransports()\n", 0,0,0 );
-    xfree(freeXLOCAL);
+    free(freeXLOCAL);
 }
 
 #define TYPEBUFSIZE	32
@@ -2080,7 +2080,7 @@ TRANS(LocalOpenClient)(int type, char *protocol, char *host, char *port)
 
     if( ciptr->fd < 0 )
     {
-	xfree(ciptr);
+	free(ciptr);
 	return NULL;
     }
 
@@ -2150,7 +2150,7 @@ TRANS(LocalOpenServer)(int type, char *protocol, char *host, char *port)
 	}
     }
 
-    xfree(ciptr);
+    free(ciptr);
     return NULL;
 }
 
@@ -2197,7 +2197,7 @@ TRANS(LocalReopenServer)(int type, int index, int fd, char *port)
 	return ciptr;
     }
 
-    xfree(ciptr);
+    free(ciptr);
     return NULL;
 }
 
@@ -2396,7 +2396,7 @@ TRANS(LocalAccept)(XtransConnInfo ciptr, int *status)
 
     if( newciptr->fd < 0 )
     {
-	xfree(newciptr);
+	free(newciptr);
 	return NULL;
     }
 

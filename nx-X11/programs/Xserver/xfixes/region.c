@@ -608,7 +608,7 @@ ProcXFixesFetchRegion (ClientPtr client)
     }
     (void) WriteToClient(client, sizeof (xXFixesFetchRegionReply) +
 			 nBox * sizeof (xRectangle), (char *) reply);
-    xfree (reply);
+    free (reply);
     return (client->noClientException);
 }
 

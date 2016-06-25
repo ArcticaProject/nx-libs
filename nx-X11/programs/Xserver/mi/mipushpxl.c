@@ -252,7 +252,7 @@ miPushPixels(pGC, pBitMap, pDrawable, dx, dy, xOrg, yOrg)
 	    }
 	}
     }
-    xfree(pwLineStart);
+    free(pwLineStart);
     /* Flush any remaining spans */
     if (ipt)
     {

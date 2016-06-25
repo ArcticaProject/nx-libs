@@ -175,7 +175,7 @@ ProcXCMiscGetXIDList(client)
     	client->pSwapReplyFunc = (ReplySwapPtr) Swap32Write;
 	WriteSwappedDataToClient(client, count * sizeof(XID), pids);
     }
-    Xfree(pids);
+    free(pids);
     return(client->noClientException);
 }
 

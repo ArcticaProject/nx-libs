@@ -264,7 +264,7 @@ FreeGlyph (GlyphPtr glyph, int format)
 	    gr->signature = 0;
 	    globalGlyphs[format].tableEntries--;
 	}
-	xfree (glyph);
+	free (glyph);
     }
 }
 
@@ -281,7 +281,7 @@ AddGlyph (GlyphSetPtr glyphSet, GlyphPtr glyph, Glyph id)
     gr = FindGlyphRef (&globalGlyphs[glyphSet->fdepth], hash, TRUE, glyph);
     if (gr->glyph && gr->glyph != DeletedGlyph)
     {
-	xfree (glyph);
+	free (glyph);
 	glyph = gr->glyph;
     }
     else
@@ -404,7 +404,7 @@ ResizeGlyphHash (GlyphHashPtr hash, CARD32 change, Bool global)
 		++newHash.tableEntries;
 	    }
 	}
-	xfree (hash->table);
+	free (hash->table);
     }
     *hash = newHash;
     if (global)
@@ -444,7 +444,7 @@ AllocateGlyphSet (int fdepth, PictFormatPtr format)
 
     if (!AllocateGlyphHash (&glyphSet->hash, &glyphHashSets[0]))
     {
-	xfree (glyphSet);
+	free (glyphSet);
 	return FALSE;
     }
     glyphSet->refcnt = 1;
@@ -473,19 +473,19 @@ FreeGlyphSet (void	*value,
 	}
 	if (!globalGlyphs[glyphSet->fdepth].tableEntries)
 	{
-	    xfree (globalGlyphs[glyphSet->fdepth].table);
+	    free (globalGlyphs[glyphSet->fdepth].table);
 	    globalGlyphs[glyphSet->fdepth].table = 0;
 	    globalGlyphs[glyphSet->fdepth].hashSet = 0;
 	}
 	else
 	    ResizeGlyphHash (&globalGlyphs[glyphSet->fdepth], 0, TRUE);
-	xfree (table);
+	free (table);
 
 	if (glyphSet->devPrivates &&
 	    glyphSet->devPrivates != (void *)(&glyphSet[1]))
-	    xfree(glyphSet->devPrivates);
+	    free(glyphSet->devPrivates);
 
-	xfree (glyphSet);
+	free (glyphSet);
     }
     return Success;
 }

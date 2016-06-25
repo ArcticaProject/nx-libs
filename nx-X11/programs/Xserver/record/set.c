@@ -73,7 +73,6 @@ typedef int Bool;
 typedef unsigned short CARD16;
 
 #define xalloc malloc
-#define xfree free
 #define ALLOCATE_LOCAL malloc
 #define DEALLOCATE_LOCAL free
 
@@ -135,7 +134,7 @@ static void
 BitVectorDestroySet(pSet)
     RecordSetPtr pSet;
 {
-    xfree(pSet);
+    free(pSet);
 }
 
 static unsigned long
@@ -295,7 +294,7 @@ static void
 IntervalListDestroySet(pSet)
     RecordSetPtr pSet;
 {
-    xfree(pSet);
+    free(pSet);
 }
 
 static unsigned long
@@ -702,7 +701,7 @@ int main(argc, argv)
 
 	if (testcount & 1)
 	{
-	    xfree(bs);
+	    free(bs);
 	}
     }
 }

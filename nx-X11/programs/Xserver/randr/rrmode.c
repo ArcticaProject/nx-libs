@@ -106,13 +106,13 @@ RRModeCreate(xRRModeInfo * modeInfo, const char *name, ScreenPtr userScreen)
         newModes = xalloc(sizeof(RRModePtr));
 
     if (!newModes) {
-        xfree(mode);
+        free(mode);
         return NULL;
     }
 
     mode->mode.id = FakeClientID(0);
     if (!AddResource(mode->mode.id, RRModeType, (void *) mode)) {
-        xfree(newModes);
+        free(newModes);
         return NULL;
     }
     modes = newModes;
@@ -285,14 +285,14 @@ RRModeDestroy(RRModePtr mode)
                     (num_modes - m - 1) * sizeof(RRModePtr));
             num_modes--;
             if (!num_modes) {
-                xfree(modes);
+                free(modes);
                 modes = NULL;
             }
             break;
         }
     }
 
-    xfree(mode);
+    free(mode);
 }
 
 static int

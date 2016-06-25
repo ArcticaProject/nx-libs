@@ -36,12 +36,12 @@ fbCloseScreen (int index, ScreenPtr pScreen)
     DepthPtr	depths = pScreen->allowedDepths;
 
     for (d = 0; d < pScreen->numDepths; d++)
-	xfree (depths[d].vids);
-    xfree (depths);
-    xfree (pScreen->visuals);
-    xfree (pScreen->devPrivate);
+	free (depths[d].vids);
+    free (depths);
+    free (pScreen->visuals);
+    free (pScreen->devPrivate);
 #ifdef FB_SCREEN_PRIVATE
-    xfree (pScreen->devPrivates[fbScreenPrivateIndex].ptr);
+    free (pScreen->devPrivates[fbScreenPrivateIndex].ptr);
 #endif
     return TRUE;
 }

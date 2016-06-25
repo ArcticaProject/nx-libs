@@ -208,29 +208,29 @@ CloseDevice(register DeviceIntPtr dev)
 
     if (dev->inited)
 	(void)(*dev->deviceProc)(dev, DEVICE_CLOSE);
-    xfree(dev->name);
+    free(dev->name);
     if (dev->key)
     {
 #ifdef XKB
 	if (dev->key->xkbInfo)
 	    XkbFreeInfo(dev->key->xkbInfo);
 #endif
-	xfree(dev->key->curKeySyms.map);
-	xfree(dev->key->modifierKeyMap);
-	xfree(dev->key);
+	free(dev->key->curKeySyms.map);
+	free(dev->key->modifierKeyMap);
+	free(dev->key);
     }
-    xfree(dev->valuator);
+    free(dev->valuator);
 #ifdef XKB
     if ((dev->button)&&(dev->button->xkb_acts))
-	xfree(dev->button->xkb_acts);
+	free(dev->button->xkb_acts);
 #endif
-    xfree(dev->button);
+    free(dev->button);
     if (dev->focus)
     {
-	xfree(dev->focus->trace);
-	xfree(dev->focus);
+	free(dev->focus->trace);
+	free(dev->focus);
     }
-    xfree(dev->proximity);
+    free(dev->proximity);
     for (k=dev->kbdfeed; k; k=knext)
     {
 	knext = k->next;
@@ -238,29 +238,29 @@ CloseDevice(register DeviceIntPtr dev)
 	if (k->xkb_sli)
 	    XkbFreeSrvLedInfo(k->xkb_sli);
 #endif
-	xfree(k);
+	free(k);
     }
     for (p=dev->ptrfeed; p; p=pnext)
     {
 	pnext = p->next;
-	xfree(p);
+	free(p);
     }
     for (i=dev->intfeed; i; i=inext)
     {
 	inext = i->next;
-	xfree(i);
+	free(i);
     }
     for (s=dev->stringfeed; s; s=snext)
     {
 	snext = s->next;
-	xfree(s->ctrl.symbols_supported);
-	xfree(s->ctrl.symbols_displayed);
-	xfree(s);
+	free(s->ctrl.symbols_supported);
+	free(s->ctrl.symbols_displayed);
+	free(s);
     }
     for (b=dev->bell; b; b=bnext)
     {
 	bnext = b->next;
-	xfree(b);
+	free(b);
     }
     for (l=dev->leds; l; l=lnext)
     {
@@ -269,15 +269,15 @@ CloseDevice(register DeviceIntPtr dev)
 	if (l->xkb_sli)
 	    XkbFreeSrvLedInfo(l->xkb_sli);
 #endif
-	xfree(l);
+	free(l);
     }
 #ifdef XKB
     while (dev->xkb_interest) {
 	XkbRemoveResourceClient((DevicePtr)dev,dev->xkb_interest->resource);
     }
 #endif
-    xfree(dev->sync.event);
-    xfree(dev);
+    free(dev->sync.event);
+    free(dev);
 }
 
 void
@@ -471,7 +471,7 @@ SetKeySymsMap(register KeySymsPtr dst, register KeySymsPtr src)
 		memmove((char *)&map[i*src->mapWidth],
 			(char *)&dst->map[i*dst->mapWidth],
 		      dst->mapWidth * sizeof(KeySym));
-	    xfree(dst->map);
+	    free(dst->map);
 	}
 	dst->mapWidth = src->mapWidth;
 	dst->map = map;
@@ -550,9 +550,9 @@ InitKeyClassDeviceStruct(DeviceIntPtr dev, KeySymsPtr pKeySyms, CARD8 pModifiers
 	keyc->modifierKeyCount[i] = 0;
     if (!SetKeySymsMap(&keyc->curKeySyms, pKeySyms) || !InitModMap(keyc))
     {
-	xfree(keyc->curKeySyms.map);
-	xfree(keyc->modifierKeyMap);
-	xfree(keyc);
+	free(keyc->curKeySyms.map);
+	free(keyc->modifierKeyMap);
+	free(keyc);
 	return FALSE;
     }
     dev->key = keyc;
@@ -722,10 +722,10 @@ InitStringFeedbackClassDeviceStruct (
     if (!feedc->ctrl.symbols_supported || !feedc->ctrl.symbols_displayed)
     {
 	if (feedc->ctrl.symbols_supported)
-	    xfree(feedc->ctrl.symbols_supported);
+	    free(feedc->ctrl.symbols_supported);
 	if (feedc->ctrl.symbols_displayed)
-	    xfree(feedc->ctrl.symbols_displayed);
-	xfree(feedc);
+	    free(feedc->ctrl.symbols_displayed);
+	free(feedc);
 	return FALSE;
     }
     for (i=0; i<num_symbols_supported; i++)
@@ -1001,7 +1001,7 @@ ProcSetModifierMapping(ClientPtr client)
 	if (!map && inputMapLen)
 	    return BadAlloc;
 	if (keyc->modifierKeyMap)
-	    xfree(keyc->modifierKeyMap);
+	    free(keyc->modifierKeyMap);
 	keyc->modifierKeyMap = map;
 	memmove((char *)map, (char *)inputMap, inputMapLen);
 

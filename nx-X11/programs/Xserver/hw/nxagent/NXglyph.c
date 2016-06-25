@@ -65,7 +65,7 @@ AddGlyph (GlyphSetPtr glyphSet, GlyphPtr glyph, Glyph id)
     gr = FindGlyphRef (&globalGlyphs[glyphSet->fdepth], hash, TRUE, glyph);
     if (gr->glyph && gr->glyph != DeletedGlyph)
     {
-	xfree (glyph);
+	free (glyph);
 	glyph = gr->glyph;
     }
     else
@@ -175,7 +175,7 @@ ResizeGlyphHash (GlyphHashPtr hash, CARD32 change, Bool global)
 		++newHash.tableEntries;
 	    }
 	}
-	xfree (hash->table);
+	free (hash->table);
     }
     *hash = newHash;
     if (global)

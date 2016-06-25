@@ -222,8 +222,8 @@ ReadRequestFromClient(ClientPtr client)
 	    register ConnectionInputPtr aci = AvailableInput->input;
 	    if (aci->size > BUFWATERMARK)
 	    {
-		xfree(aci->buffer);
-		xfree(aci);
+		free(aci->buffer);
+		free(aci);
 	    }
 	    else
 	    {
@@ -504,8 +504,8 @@ InsertFakeRequest(ClientPtr client, char *data, int count)
 	    ConnectionInputPtr aci = AvailableInput->input;
 	    if (aci->size > BUFWATERMARK)
 	    {
-		xfree(aci->buffer);
-		xfree(aci);
+		free(aci->buffer);
+		free(aci);
 	    }
 	    else
 	    {
@@ -1154,8 +1154,8 @@ FlushClient(ClientPtr who, OsCommPtr oc, char *extraBuf, int extraCount)
     }
     if (oco->size > BUFWATERMARK)
     {
-	xfree(oco->buf);
-	xfree(oco);
+	free(oco->buf);
+	free(oco);
     }
     else
     {
@@ -1177,7 +1177,7 @@ AllocateInputBuffer(void)
     oci->buffer = (char *)xalloc(BUFSIZE);
     if (!oci->buffer)
     {
-	xfree(oci);
+	free(oci);
 	return (ConnectionInputPtr)NULL;
     }
     oci->size = BUFSIZE;
@@ -1198,7 +1198,7 @@ AllocateOutputBuffer(void)
     oco->buf = (unsigned char *) xalloc(BUFSIZE);
     if (!oco->buf)
     {
-	xfree(oco);
+	free(oco);
 	return (ConnectionOutputPtr)NULL;
     }
     oco->size = BUFSIZE;
@@ -1218,8 +1218,8 @@ FreeOsBuffers(OsCommPtr oc)
     {
 	if (FreeInputs)
 	{
-	    xfree(oci->buffer);
-	    xfree(oci);
+	    free(oci->buffer);
+	    free(oci);
 	}
 	else
 	{
@@ -1234,8 +1234,8 @@ FreeOsBuffers(OsCommPtr oc)
     {
 	if (FreeOutputs)
 	{
-	    xfree(oco->buf);
-	    xfree(oco);
+	    free(oco->buf);
+	    free(oco);
 	}
 	else
 	{
@@ -1255,13 +1255,13 @@ ResetOsBuffers(void)
     while ((oci = FreeInputs))
     {
 	FreeInputs = oci->next;
-	xfree(oci->buffer);
-	xfree(oci);
+	free(oci->buffer);
+	free(oci);
     }
     while ((oco = FreeOutputs))
     {
 	FreeOutputs = oco->next;
-	xfree(oco->buf);
-	xfree(oco);
+	free(oco->buf);
+	free(oco);
     }
 }

@@ -159,7 +159,7 @@ compRedirectWindow(ClientPtr pClient, WindowPtr pWin, int update)
 	cw = xalloc (sizeof (CompWindowRec));
 	if (!cw)
 	{
-	    xfree (ccw);
+	    free (ccw);
 	    return BadAlloc;
 	}
 	cw->damage = DamageCreate (compReportDamage,
@@ -170,8 +170,8 @@ compRedirectWindow(ClientPtr pClient, WindowPtr pWin, int update)
 				   pWin);
 	if (!cw->damage)
 	{
-	    xfree (ccw);
-	    xfree (cw);
+	    free (ccw);
+	    free (cw);
 	    return BadAlloc;
 	}
 
@@ -269,7 +269,7 @@ compFreeClientWindow (WindowPtr pWin, XID id)
 	    *prev = ccw->next;
 	    if (ccw->update == CompositeRedirectManual)
 		cw->update = CompositeRedirectAutomatic;
-	    xfree (ccw);
+	    free (ccw);
 	    break;
 	}
     }
@@ -288,7 +288,7 @@ compFreeClientWindow (WindowPtr pWin, XID id)
 	RegionUninit(&cw->borderClip);
     
         FAKE_DIX_SET_WINDOW_PRIVATE(pWin, NULL);
-	xfree (cw);
+	free (cw);
     }
     else if (cw->update == CompositeRedirectAutomatic &&
 	     !cw->damageRegistered && pWin->redirectDraw != RedirectDrawNone)
@@ -368,7 +368,7 @@ compRedirectSubwindows (ClientPtr pClient, WindowPtr pWin, int update)
 	csw = xalloc (sizeof (CompSubwindowsRec));
 	if (!csw)
 	{
-	    xfree (ccw);
+	    free (ccw);
 	    return BadAlloc;
 	}
 	csw->update = CompositeRedirectAutomatic;
@@ -387,10 +387,10 @@ compRedirectSubwindows (ClientPtr pClient, WindowPtr pWin, int update)
 		(void) compUnredirectWindow (pClient, pChild, update);
 	    if (!csw->clients)
 	    {
-		xfree (csw);
+		free (csw);
                 FAKE_DIX_SET_SUBWINDOWS_PRIVATE(pWin, NULL);
 	    }
-	    xfree (ccw);
+	    free (ccw);
 	    return ret;
 	}
     }
@@ -451,7 +451,7 @@ compFreeClientSubwindows (WindowPtr pWin, XID id)
 	    for (pChild = pWin->lastChild; pChild; pChild = pChild->prevSib)
 		(void) compUnredirectWindow (pClient, pChild, ccw->update);
 
-	    xfree (ccw);
+	    free (ccw);
 	    break;
 	}
     }
@@ -462,7 +462,7 @@ compFreeClientSubwindows (WindowPtr pWin, XID id)
     if (!csw->clients)
     {
         FAKE_DIX_SET_SUBWINDOWS_PRIVATE(pWin, NULL);
-	xfree (csw);
+	free (csw);
     }
 }
 

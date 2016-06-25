@@ -81,10 +81,10 @@ FreeCursorBits(CursorBitsPtr bits)
 {
     if (--bits->refcnt > 0)
 	return;
-    xfree(bits->source);
-    xfree(bits->mask);
+    free(bits->source);
+    free(bits->mask);
 #ifdef ARGB_CURSOR
-    xfree(bits->argb);
+    free(bits->argb);
 #endif
     if (bits->refcnt == 0)
     {
@@ -98,9 +98,9 @@ FreeCursorBits(CursorBitsPtr bits)
 	{
 	    *prev = this->next;
 	    CloseFont(this->font, (Font)0);
-	    xfree(this);
+	    free(this);
 	}
-	xfree(bits);
+	free(bits);
     }
 }
 
@@ -126,7 +126,7 @@ FreeCursor(void * value, XID cid)
 	(void)( *pscr->UnrealizeCursor)( pscr, pCurs);
     }
     FreeCursorBits(pCurs->bits);
-    xfree( pCurs);
+    free( pCurs);
     return(Success);
 }
 
@@ -177,8 +177,8 @@ AllocCursorARGB(unsigned char *psrcbits, unsigned char *pmaskbits, CARD32 *argb,
     pCurs = (CursorPtr)xalloc(sizeof(CursorRec) + sizeof(CursorBits));
     if (!pCurs)
     {
-	xfree(psrcbits);
-	xfree(pmaskbits);
+	free(psrcbits);
+	free(pmaskbits);
 	return (CursorPtr)NULL;
     }
     bits = (CursorBitsPtr)((char *)pCurs + sizeof(CursorRec));
@@ -223,7 +223,7 @@ AllocCursorARGB(unsigned char *psrcbits, unsigned char *pmaskbits, CARD32 *argb,
 		( *pscr->UnrealizeCursor)( pscr, pCurs);
 	    }
 	    FreeCursorBits(bits);
-	    xfree(pCurs);
+	    free(pCurs);
 	    return (CursorPtr)NULL;
 	}
     }
@@ -329,7 +329,7 @@ AllocGlyphCursor(Font source, unsigned sourceChar, Font mask, unsigned maskChar,
 	}
 	if ((res = ServerBitsFromGlyph(sourcefont, sourceChar, &cm, &srcbits)) != 0)
 	{
-	    xfree(mskbits);
+	    free(mskbits);
 	    return res;
 	}
 	if (sourcefont != maskfont)
@@ -350,9 +350,9 @@ AllocGlyphCursor(Font source, unsigned sourceChar, Font mask, unsigned maskChar,
 	}
 	if (!bits)
 	{
-	    xfree(pCurs);
-	    xfree(mskbits);
-	    xfree(srcbits);
+	    free(pCurs);
+	    free(mskbits);
+	    free(srcbits);
 	    return BadAlloc;
 	}
 	bits->source = srcbits;
@@ -414,7 +414,7 @@ AllocGlyphCursor(Font source, unsigned sourceChar, Font mask, unsigned maskChar,
 		( *pscr->UnrealizeCursor)( pscr, pCurs);
 	    }
 	    FreeCursorBits(pCurs->bits);
-	    xfree(pCurs);
+	    free(pCurs);
 	    return BadAlloc;
 	}
     }

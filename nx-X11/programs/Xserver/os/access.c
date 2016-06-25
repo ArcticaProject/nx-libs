@@ -261,7 +261,7 @@ typedef struct _host {
 			   (h)->addr=(unsigned char *) ((h) + 1);\
 			   (h)->requested = FALSE; \
 			}
-#define FreeHost(h)	xfree(h)
+#define FreeHost(h)	free(h)
 static HOST *selfhosts = NULL;
 static HOST *validhosts = NULL;
 static int AccessEnabled = DEFAULT_ACCESS_CONTROL;
@@ -1376,12 +1376,12 @@ Bool LocalClient(ClientPtr client)
 	    &alen, (void **)&addr);
 	if (family == -1)
 	{
-	    xfree ((char *) from);
+	    free ((char *) from);
 	    return FALSE;
 	}
 	if (family == FamilyLocal)
 	{
-	    xfree ((char *) from);
+	    free ((char *) from);
 	    return TRUE;
 	}
 	for (host = selfhosts; host; host = host->next)
@@ -1389,7 +1389,7 @@ Bool LocalClient(ClientPtr client)
 	    if (addrEqual (family, addr, alen, host))
 		return TRUE;
 	}
-	xfree ((char *) from);
+	free ((char *) from);
     }
     return FALSE;
 }
@@ -2327,7 +2327,7 @@ siLocalCredGetId(const char *addr, int len, siLocalCredPrivPtr lcPriv, int *id)
 	}
     }
 
-    xfree(addrbuf);
+    free(addrbuf);
     return parsedOK;
 }
 
@@ -2360,11 +2360,11 @@ siLocalCredAddrMatch(int family, void * addr, int len,
 
 	    for (i = 0 ; i < connNumSuppGids; i++) {
 		if (connSuppGids[i] == siAddrId) {
-		    xfree(connSuppGids);
+		    free(connSuppGids);
 		    return TRUE;
 		}
 	    }
-	    xfree(connSuppGids);
+	    free(connSuppGids);
 	}
     }
     return FALSE;

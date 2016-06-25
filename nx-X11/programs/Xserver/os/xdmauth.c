@@ -240,7 +240,7 @@ XdmClientAuthTimeout (long now)
 		prev->next = next;
 	    else
 		xdmClients = next;
-	    xfree (client);
+	    free (client);
 	}
 	else
 	    prev = client;
@@ -266,14 +266,14 @@ XdmAuthorizationValidate (unsigned char *plain, int length,
     XdmClientAuthDecode (plain, client);
     if (!XdmcpCompareKeys (&client->rho, rho))
     {
-	xfree (client);
+	free (client);
 	if (reason)
 	    *reason = "Invalid XDM-AUTHORIZATION-1 key (failed key comparison)";
 	return NULL;
     }
     for (i = 18; i < 24; i++)
 	if (plain[i] != 0) {
-	    xfree (client);
+	    free (client);
 	    if (reason)
 		*reason = "Invalid XDM-AUTHORIZATION-1 key (failed NULL check)";
 	    return NULL;
@@ -288,15 +288,15 @@ XdmAuthorizationValidate (unsigned char *plain, int length,
 #if defined(TCPCONN) || defined(STREAMSCONN)
 	    if (family == FamilyInternet &&
 		memcmp((char *)addr, client->client, 4) != 0) {
-		xfree (client);
-		xfree (addr);
+		free (client);
+		free (addr);
 		if (reason)
 		    *reason = "Invalid XDM-AUTHORIZATION-1 key (failed address comparison)";
 		return NULL;
 
 	    }
 #endif
-	    xfree (addr);
+	    free (addr);
 	}
     }
     now = time(0);
@@ -309,7 +309,7 @@ XdmAuthorizationValidate (unsigned char *plain, int length,
     XdmClientAuthTimeout (now);
     if (abs (client->time - now) > TwentyMinutes)
     {
-	xfree (client);
+	free (client);
 	if (reason)
 	    *reason = "Excessive XDM-AUTHORIZATION-1 time offset";
 	return NULL;
@@ -318,7 +318,7 @@ XdmAuthorizationValidate (unsigned char *plain, int length,
     {
 	if (XdmClientAuthCompare (existing, client))
 	{
-	    xfree (client);
+	    free (client);
 	    if (reason)
 		*reason = "XDM authorization key matches an existing client!";
 	    return NULL;
@@ -395,11 +395,11 @@ XdmCheckCookie (unsigned short cookie_length, char *cookie,
 	{
 	    client->next = xdmClients;
 	    xdmClients = client;
-	    xfree (plain);
+	    free (plain);
 	    return auth->id;
 	}
     }
-    xfree (plain);
+    free (plain);
     return (XID) -1;
 }
 
@@ -412,13 +412,13 @@ XdmResetCookie (void)
     for (auth = xdmAuth; auth; auth=next_auth)
     {
 	next_auth = auth->next;
-	xfree (auth);
+	free (auth);
     }
     xdmAuth = 0;
     for (client = xdmClients; client; client=next_client)
     {
 	next_client = client->next;
-	xfree (client);
+	free (client);
     }
     xdmClients = (XdmClientAuthPtr) 0;
     return 1;
@@ -438,12 +438,12 @@ XdmToID (unsigned short cookie_length, char *cookie)
 	XdmcpUnwrap (cookie, (unsigned char *)&auth->key, plain, cookie_length);
 	if ((client = XdmAuthorizationValidate (plain, cookie_length, &auth->rho, NULL, NULL)) != NULL)
 	{
-	    xfree (client);
-	    xfree (cookie);
+	    free (client);
+	    free (cookie);
 	    return auth->id;
 	}
     }
-    xfree (cookie);
+    free (cookie);
     return (XID) -1;
 }
 
@@ -492,7 +492,7 @@ XdmRemoveCookie (unsigned short data_length, char *data)
 		prev->next = auth->next;
 	    else
 		xdmAuth = auth->next;
-	    xfree (auth);
+	    free (auth);
 	    return 1;
 	}
     }

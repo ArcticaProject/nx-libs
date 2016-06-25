@@ -76,7 +76,7 @@ compCloseScreen (int index, ScreenPtr pScreen)
     pScreen->GetSpans = cs->GetSpans;
     pScreen->SourceValidate = cs->SourceValidate;
 
-    xfree (cs);
+    free (cs);
     FAKE_DIX_SET_SCREEN_PRIVATE(pScreen, NULL);
     ret = (*pScreen->CloseScreen) (index, pScreen);
     return ret;
@@ -422,7 +422,7 @@ compScreenInit (ScreenPtr pScreen)
 
     if (!compAddAlternateVisuals (pScreen, cs))
     {
-	xfree (cs);
+	free (cs);
 	return FALSE;
     }
 

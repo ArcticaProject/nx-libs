@@ -152,7 +152,7 @@ OsLookupColor(int screen, char *name, unsigned int len,
 #endif
 
     if (len >= sizeof(buf))
-	xfree(lowername);
+	free(lowername);
 
     if(dbent.dptr)
     {

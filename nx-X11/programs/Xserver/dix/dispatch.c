@@ -214,7 +214,7 @@ void
 InitSelections()
 {
     if (CurrentSelections)
-	xfree(CurrentSelections);
+	free(CurrentSelections);
     CurrentSelections = (Selection *)NULL;
     NumCurrentSelections = 0;
 }
@@ -3090,7 +3090,7 @@ ProcCreateCursor (register ClientPtr client)
     mskbits = (unsigned char *)xalloc(n);
     if (!mskbits)
     {
-	xfree(srcbits);
+	free(srcbits);
 	return (BadAlloc);
     }
 
@@ -3332,7 +3332,7 @@ ProcListHosts(register ClientPtr client)
 	client->pSwapReplyFunc = (ReplySwapPtr) SLHostsExtend;
 	WriteSwappedDataToClient(client, len, pdata);
     }
-    xfree(pdata);
+    free(pdata);
     return (client->noClientException);
 }
 
@@ -3600,7 +3600,7 @@ CloseDownClient(register ClientPtr client)
 #ifdef SMART_SCHEDULE
 	SmartLastClient = NullClient;
 #endif
-	xfree(client);
+	free(client);
 
 	while (!clients[currentMaxClients-1])
 	    currentMaxClients--;
@@ -3760,7 +3760,7 @@ ClientPtr NextAvailableClient(void * ospriv)
     InitClientPrivates(client);
     if (!InitClientResources(client))
     {
-	xfree(client);
+	free(client);
 	return (ClientPtr)NULL;
     }
     data.reqType = 1;
@@ -3768,7 +3768,7 @@ ClientPtr NextAvailableClient(void * ospriv)
     if (!InsertFakeRequest(client, (char *)&data, sz_xReq))
     {
 	FreeClientResources(client);
-	xfree(client);
+	free(client);
 	return (ClientPtr)NULL;
     }
     if (i == currentMaxClients)

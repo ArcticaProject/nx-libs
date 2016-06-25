@@ -145,15 +145,15 @@ TRANS(FreeConnInfo) (XtransConnInfo ciptr)
     PRMSG (3,"FreeConnInfo(%p)\n", ciptr, 0, 0);
 
     if (ciptr->addr)
-	xfree (ciptr->addr);
+	free (ciptr->addr);
 
     if (ciptr->peeraddr)
-	xfree (ciptr->peeraddr);
+	free (ciptr->peeraddr);
 
     if (ciptr->port)
-	xfree (ciptr->port);
+	free (ciptr->port);
 
-    xfree ((char *) ciptr);
+    free ((char *) ciptr);
 }
 
 
@@ -238,7 +238,7 @@ TRANS(ParseAddress) (char *address, char **protocol, char **host, char **port)
 	*protocol = NULL;
 	*host = NULL;
 	*port = NULL;
-	xfree (tmpptr);
+	free (tmpptr);
 	return 0;
     }
 
@@ -288,7 +288,7 @@ TRANS(ParseAddress) (char *address, char **protocol, char **host, char **port)
 	*protocol = NULL;
 	*host = NULL;
 	*port = NULL;
-	xfree (tmpptr);
+	free (tmpptr);
 	return 0;
     }
 
@@ -368,7 +368,7 @@ TRANS(ParseAddress) (char *address, char **protocol, char **host, char **port)
 	*port = NULL;
 	*host = NULL;
 	*protocol = NULL;
-	xfree (tmpptr);
+	free (tmpptr);
 	return 0;
     }
     else
@@ -379,9 +379,9 @@ TRANS(ParseAddress) (char *address, char **protocol, char **host, char **port)
 	/* Malloc failed */
 	*port = NULL;
 	*host = NULL;
-	xfree (*protocol);
+	free (*protocol);
 	*protocol = NULL;
-	xfree (tmpptr);
+	free (tmpptr);
 	return 0;
 	}
     else
@@ -391,17 +391,17 @@ TRANS(ParseAddress) (char *address, char **protocol, char **host, char **port)
     {
 	/* Malloc failed */
 	*port = NULL;
-	xfree (*host);
+	free (*host);
 	*host = NULL;
-	xfree (*protocol);
+	free (*protocol);
 	*protocol = NULL;
-	xfree (tmpptr);
+	free (tmpptr);
 	return 0;
     }
     else
         strcpy (*port, _port);
 
-    xfree (tmpptr);
+    free (tmpptr);
 
     return 1;
 }
@@ -446,9 +446,9 @@ TRANS(Open) (int type, char *address)
 	PRMSG (1,"Open: Unable to find transport for %s\n",
 	       protocol, 0, 0);
 
-	xfree (protocol);
-	xfree (host);
-	xfree (port);
+	free (protocol);
+	free (host);
+	free (port);
 	return NULL;
     }
 
@@ -487,17 +487,17 @@ TRANS(Open) (int type, char *address)
 	    PRMSG (1,"Open: transport open failed for %s/%s:%s\n",
 	           protocol, host, port);
 	}
-	xfree (protocol);
-	xfree (host);
-	xfree (port);
+	free (protocol);
+	free (host);
+	free (port);
 	return NULL;
     }
 
     ciptr->transptr = thistrans;
     ciptr->port = port;			/* We need this for TRANS(Reopen) */
 
-    xfree (protocol);
-    xfree (host);
+    free (protocol);
+    free (host);
 
     return ciptr;
 }
@@ -859,16 +859,16 @@ TRANS(Connect) (XtransConnInfo ciptr, char *address)
     {
 	PRMSG (1,"Connect: Missing port specification in %s\n",
 	      address, 0, 0);
-	if (protocol) xfree (protocol);
-	if (host) xfree (host);
+	if (protocol) free (protocol);
+	if (host) free (host);
 	return -1;
     }
 
     ret = ciptr->transptr->Connect (ciptr, host, port);
 
-    if (protocol) xfree (protocol);
-    if (host) xfree (host);
-    if (port) xfree (port);
+    if (protocol) free (protocol);
+    if (host) free (host);
+    if (port) free (port);
     
     return ret;
 }

@@ -190,7 +190,7 @@ ProcXQueryDeviceState(client)
     WriteReplyToClient (client, sizeof(xQueryDeviceStateReply), &rep);
     if (total_length > 0)
 	WriteToClient (client, total_length, savbuf);
-    xfree (savbuf);
+    free (savbuf);
     return Success;
     }
 

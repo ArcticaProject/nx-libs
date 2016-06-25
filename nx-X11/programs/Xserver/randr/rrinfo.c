@@ -132,7 +132,7 @@ RRScanOldConfig(ScreenPtr pScreen, Rotation rotations)
                     newMode = mode;
                 }
             }
-            xfree(size->pRates);
+            free(size->pRates);
         }
         else {
             mode = RROldModeAdd(output, size, 0);
@@ -141,7 +141,7 @@ RRScanOldConfig(ScreenPtr pScreen, Rotation rotations)
         }
     }
     if (pScrPriv->nSizes)
-        xfree(pScrPriv->pSizes);
+        free(pScrPriv->pSizes);
     pScrPriv->pSizes = NULL;
     pScrPriv->nSizes = 0;
 

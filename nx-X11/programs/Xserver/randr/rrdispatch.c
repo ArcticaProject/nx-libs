@@ -212,7 +212,7 @@ ProcRRSelectInput(ClientPtr client)
                     pNewRREvent->next = pRREvent->next;
                 else
                     *pHead = pRREvent->next;
-                xfree(pRREvent);
+                free(pRREvent);
             }
         }
     }

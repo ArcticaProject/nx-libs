@@ -103,7 +103,7 @@ AddExtension(char *name, int NumEvents, int NumErrors,
     ext->aliases = (char **)NULL;
     if (!ext->name)
     {
-	xfree(ext);
+	free(ext);
 	return((ExtensionEntry *) NULL);
     }
     strcpy(ext->name,  name);
@@ -112,8 +112,8 @@ AddExtension(char *name, int NumEvents, int NumErrors,
 					   (i + 1) * sizeof(ExtensionEntry *));
     if (!newexts)
     {
-	xfree(ext->name);
-	xfree(ext);
+	free(ext->name);
+	free(ext);
 	return((ExtensionEntry *) NULL);
     }
     NumExtensions++;
@@ -263,13 +263,13 @@ CloseDownExtensions()
 	if (extensions[i]->CloseDown)
 	    (* extensions[i]->CloseDown)(extensions[i]);
 	NumExtensions = i;
-	xfree(extensions[i]->name);
+	free(extensions[i]->name);
 	for (j = extensions[i]->num_aliases; --j >= 0;)
-	    xfree(extensions[i]->aliases[j]);
-	xfree(extensions[i]->aliases);
-	xfree(extensions[i]);
+	    free(extensions[i]->aliases[j]);
+	free(extensions[i]->aliases);
+	free(extensions[i]);
     }
-    xfree(extensions);
+    free(extensions);
     extensions = (ExtensionEntry **)NULL;
     lastEvent = EXTENSION_EVENT_BASE;
     lastError = FirstExtensionError;
@@ -280,9 +280,9 @@ CloseDownExtensions()
 	while (spentry->num)
 	{
 	    spentry->num--;
-	    xfree(spentry->procList[spentry->num].name);
+	    free(spentry->procList[spentry->num].name);
 	}
-	xfree(spentry->procList);
+	free(spentry->procList);
 	spentry->procList = (ProcEntryPtr)NULL;
     }
 }
@@ -446,7 +446,7 @@ RegisterScreenProc(char *name, ScreenPtr pScreen, ExtensionLookupProc proc)
 				     sizeof(ProcEntryRec) * (spentry->num+1));
 	if (!procEntry)
 	{
-	    xfree(newname);
+	    free(newname);
 	    return FALSE;
 	}
 	spentry->procList = procEntry;

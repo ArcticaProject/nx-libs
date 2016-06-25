@@ -180,7 +180,7 @@ miCreateScreenResources(pScreen)
     {
 	value = pScrInitParms->pbits;
     }
-    xfree(pScreen->devPrivate); /* freeing miScreenInitParmsRec */
+    free(pScreen->devPrivate); /* freeing miScreenInitParmsRec */
     pScreen->devPrivate = value; /* pPixmap or pbits */
     return TRUE;
 }

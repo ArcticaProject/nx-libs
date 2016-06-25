@@ -433,7 +433,7 @@ miBSCloseScreen (i, pScreen)
     pScreen->ChangeWindowAttributes = pScreenPriv->ChangeWindowAttributes;
     pScreen->CreateGC = pScreenPriv->CreateGC;
 
-    xfree ((void *) pScreenPriv);
+    free ((void *) pScreenPriv);
 
     return (*pScreen->CloseScreen) (i, pScreen);
 }
@@ -931,7 +931,7 @@ miBSDestroyGCPrivate (GCPtr pGC)
 	pGC->ops = pPriv->wrapOps;
 	if (pPriv->pBackingGC)
 	    FreeGC (pPriv->pBackingGC, (GContext) 0);
-	xfree ((void *) pPriv);
+	free ((void *) pPriv);
     }
 }
 
@@ -2685,7 +2685,7 @@ miBSFree(pWin)
 
 	RegionUninit(&pBackingStore->SavedRegion);
 
-	xfree(pBackingStore);
+	free(pBackingStore);
 	pWin->backStorage = NULL;
     }
 }
@@ -3615,7 +3615,7 @@ miBSDestroyGC (pGC)
 
     FUNC_EPILOGUE (pGC, pPriv);
 
-    xfree(pPriv);
+    free(pPriv);
 }
 
 static void

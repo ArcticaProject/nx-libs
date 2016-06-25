@@ -279,7 +279,7 @@ void ClearConnectionTranslation(void)
         {
             struct _ct_node *temp = node;
             node = node->next;
-            xfree(temp);
+            free(temp);
         }
     }
 }
@@ -713,7 +713,7 @@ ClientAuthorized(ClientPtr client,
 			proto_n, auth_proto, auth_id);
 	    }
 
-	    xfree ((char *) from);
+	    free ((char *) from);
 	}
 
 	if (auth_id == (XID) ~0L) {
@@ -731,7 +731,7 @@ ClientAuthorized(ClientPtr client,
 	    AuthAudit(client, TRUE, (struct sockaddr *) from, fromlen,
 		      proto_n, auth_proto, auth_id);
 
-	    xfree ((char *) from);
+	    free ((char *) from);
 	}
     }
     priv->auth_id = auth_id;
@@ -775,7 +775,7 @@ AllocNewConnection (XtransConnInfo trans_conn, int fd, CARD32 conn_time)
     oc->conn_time = conn_time;
     if (!(client = NextAvailableClient((void *)oc)))
     {
-	xfree (oc);
+	free (oc);
 	return NullClient;
     }
     {
@@ -962,7 +962,7 @@ CloseDownFileDescriptor(OsCommPtr oc)
 	_XSERVTransClose(oc->trans_conn);
     }
     FreeOsBuffers(oc);
-    xfree(oc);
+    free(oc);
 #ifndef WIN32
     ConnectionTranslation[connection] = 0;
 #else

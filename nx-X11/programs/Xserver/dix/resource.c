@@ -231,7 +231,7 @@ InitClientResources(ClientPtr client)
 	lastResourceClass = RC_LASTPREDEF;
 	TypeMask = RC_LASTPREDEF - 1;
 	if (DeleteFuncs)
-	    xfree(DeleteFuncs);
+	    free(DeleteFuncs);
 	DeleteFuncs = (DeleteType *)xalloc((lastResourceType + 1) *
 					   sizeof(DeleteType));
 	if (!DeleteFuncs)
@@ -249,7 +249,7 @@ InitClientResources(ClientPtr client)
 
 #ifdef XResExtension
         if(ResourceNames)
-            xfree(ResourceNames);
+            free(ResourceNames);
         ResourceNames = xalloc((lastResourceType + 1) * sizeof(Atom));
         if(!ResourceNames)
            return FALSE;
@@ -505,7 +505,7 @@ RebuildTable(int client)
     }
     DEALLOCATE_LOCAL(tails);
     clientTable[client].buckets *= 2;
-    xfree(clientTable[client].resources);
+    free(clientTable[client].resources);
     clientTable[client].resources = resources;
 }
 
@@ -535,7 +535,7 @@ FreeResource(XID id, RESTYPE skipDeleteFuncType)
 		elements = --*eltptr;
 		if (rtype != skipDeleteFuncType)
 		    (*DeleteFuncs[rtype & TypeMask])(res->value, res->id);
-		xfree(res);
+		free(res);
 		if (*eltptr != elements)
 		    prev = head; /* prev may no longer be valid */
 		gotOne = TRUE;
@@ -568,7 +568,7 @@ FreeResourceByType(XID id, RESTYPE type, Bool skipFree)
 		*prev = res->next;
 		if (!skipFree)
 		    (*DeleteFuncs[type & TypeMask])(res->value, res->id);
-		xfree(res);
+		free(res);
 		break;
 	    }
 	    else
@@ -723,7 +723,7 @@ FreeClientNeverRetainResources(ClientPtr client)
 	    {
 		*prev = this->next;
 		(*DeleteFuncs[rtype & TypeMask])(this->value, this->id);
-		xfree(this);	    
+		free(this);	    
 	    }
 	    else
 		prev = &this->next;
@@ -767,10 +767,10 @@ FreeClientResources(ClientPtr client)
 	    RESTYPE rtype = this->type;
 	    *head = this->next;
 	    (*DeleteFuncs[rtype & TypeMask])(this->value, this->id);
-	    xfree(this);	    
+	    free(this);	    
 	}
     }
-    xfree(clientTable[client->index].resources);
+    free(clientTable[client->index].resources);
     clientTable[client->index].resources = NULL;
     clientTable[client->index].buckets = 0;
 }

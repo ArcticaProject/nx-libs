@@ -224,7 +224,7 @@ TRANS(DNETOpenCOTSServer) (Xtransport *thistrans, char *protocol,
 
     if ((ciptr->fd = socket (AF_DECnet, SOCK_STREAM, 0)) < 0)
     {
-	xfree ((char *) ciptr);
+	free ((char *) ciptr);
 	return NULL;
     }
 
@@ -406,7 +406,7 @@ TRANS(DNETAccept) (XtransConnInfo ciptr, int *status)
     {
 	PRMSG (1, "DNETAccept: accept() failed\n", 0, 0, 0);
 
-	xfree (newciptr);
+	free (newciptr);
 	*status = TRANS_ACCEPT_FAILED;
 	return NULL;
     }
@@ -421,7 +421,7 @@ TRANS(DNETAccept) (XtransConnInfo ciptr, int *status)
 	PRMSG(1,
 	"DNETAccept: ...DNETGetAddr() failed:\n", 0, 0, 0);
 	close (newciptr->fd);
-	xfree (newciptr);
+	free (newciptr);
 	*status = TRANS_ACCEPT_MISC_ERROR;
         return NULL;
     }
@@ -432,8 +432,8 @@ TRANS(DNETAccept) (XtransConnInfo ciptr, int *status)
 	"DNETAccept: ...DNETGetPeerAddr() failed:\n", 0, 0, 0);
 
 	close (newciptr->fd);
-	if (newciptr->addr) xfree (newciptr->addr);
-	xfree (newciptr);
+	if (newciptr->addr) free (newciptr->addr);
+	free (newciptr);
 	*status = TRANS_ACCEPT_MISC_ERROR;
         return NULL;
     }

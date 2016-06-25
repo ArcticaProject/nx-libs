@@ -171,7 +171,7 @@ TRANS(TLIGetAddr)(XtransConnInfo ciptr)
      */
     
     if( ciptr->addr )
-	xfree(ciptr->addr);
+	free(ciptr->addr);
     
     if( (ciptr->addr=(char *)xalloc(netbuf.len)) == NULL )
     {
@@ -221,7 +221,7 @@ TRANS(TLIGetPeerAddr)(XtransConnInfo ciptr)
      */
     
     if( ciptr->peeraddr )
-	xfree(ciptr->peeraddr);
+	free(ciptr->peeraddr);
     
     if( (ciptr->peeraddr=(char *)xalloc(netbuf.len)) == NULL )
     {
@@ -457,7 +457,7 @@ TRANS(TLIOpenCOTSClient)(Xtransport *thistrans, char *protocol,
 	      "TLIOpenCOTSClient: ...TLITLIBindLocal() failed: %d\n",
 	      errno, 0,0 );
 	t_close(ciptr->fd);
-	xfree(ciptr);
+	free(ciptr);
 	return NULL;
     }
     
@@ -467,7 +467,7 @@ TRANS(TLIOpenCOTSClient)(Xtransport *thistrans, char *protocol,
 	      "TLIOpenCOTSClient: ...TLIGetAddr() failed: %d\n",
 	      errno, 0,0 );
 	t_close(ciptr->fd);
-	xfree(ciptr);
+	free(ciptr);
 	return NULL;
     }
     
@@ -557,7 +557,7 @@ TRANS(TLIOpenCLTSClient)(Xtransport *thistrans, char *protocol,
 	      "TLIOpenCLTSClient: ...TLITLIBindLocal() failed: %d\n",
 	      errno, 0,0 );
 	t_close(ciptr->fd);
-	xfree(ciptr);
+	free(ciptr);
 	return NULL;
     }
     
@@ -567,7 +567,7 @@ TRANS(TLIOpenCLTSClient)(Xtransport *thistrans, char *protocol,
 	      "TLIOpenCLTSClient: ...TLIGetPeerAddr() failed: %d\n",
 	      errno, 0,0 );
 	t_close(ciptr->fd);
-	xfree(ciptr);
+	free(ciptr);
 	return NULL;
     }
     
@@ -917,7 +917,7 @@ TRANS(TLIAccept)(XtransConnInfo ciptr, int *status)
 	      errno, 0,0 );
 	t_free((char *)call,T_CALL);
 	t_close(newciptr->fd);
-	xfree(newciptr);
+	free(newciptr);
 	*status = TRANS_ACCEPT_MISC_ERROR;
 	return NULL;
     }
@@ -961,7 +961,7 @@ TRANS(TLIAccept)(XtransConnInfo ciptr, int *status)
 	      "TLIAccept: TRANS(TLIGetPeerAddr)() failed: %d\n",
 	      errno, 0,0 );
 	t_close(newciptr->fd);
-	xfree(newciptr);
+	free(newciptr);
 	*status = TRANS_ACCEPT_MISC_ERROR;
 	return NULL;
     }
@@ -972,8 +972,8 @@ TRANS(TLIAccept)(XtransConnInfo ciptr, int *status)
 	      "TLIAccept: TRANS(TLIGetPeerAddr)() failed: %d\n",
 	      errno, 0,0 );
 	t_close(newciptr->fd);
-	xfree(newciptr->addr);
-	xfree(newciptr);
+	free(newciptr->addr);
+	free(newciptr);
 	*status = TRANS_ACCEPT_MISC_ERROR;
 	return NULL;
     }
@@ -983,8 +983,8 @@ TRANS(TLIAccept)(XtransConnInfo ciptr, int *status)
 	PRMSG(1, "TLIAccept() ioctl(I_POP, \"timod\") failed %d\n",
 	      errno,0,0 );
 	t_close(newciptr->fd);
-	xfree(newciptr->addr);
-	xfree(newciptr);
+	free(newciptr->addr);
+	free(newciptr);
 	*status = TRANS_ACCEPT_MISC_ERROR;
 	return NULL;
     }
@@ -994,8 +994,8 @@ TRANS(TLIAccept)(XtransConnInfo ciptr, int *status)
 	PRMSG(1, "TLIAccept() ioctl(I_PUSH,\"tirdwr\") failed %d\n",
 	      errno,0,0 );
 	t_close(newciptr->fd);
-	xfree(newciptr->addr);
-	xfree(newciptr);
+	free(newciptr->addr);
+	free(newciptr);
 	*status = TRANS_ACCEPT_MISC_ERROR;
 	return NULL;
     }

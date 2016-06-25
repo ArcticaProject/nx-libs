@@ -274,7 +274,7 @@ CheckScreenPrivate (pScreen)
     if (!pPriv->attr && !pPriv->events &&
 	!pPriv->hasWindow && pPriv->installedMap == None)
     {
-	xfree (pPriv);
+	free (pPriv);
 	SetScreenPrivate (pScreen, NULL);
 	savedScreenInfo[pScreen->myNum].ExternalScreenSaver = NULL;
     }
@@ -340,7 +340,7 @@ setEventMask (pScreen, client, mask)
     {
 	FreeResource (pEv->resource, EventType);
 	*pPrev = pEv->next;
-	xfree (pEv);
+	free (pEv);
 	CheckScreenPrivate (pScreen);
     }
     else
@@ -386,8 +386,8 @@ FreeScreenAttr (pAttr)
     ScreenSaverAttrPtr	pAttr;
 {
     FreeAttrs (pAttr);
-    xfree (pAttr->values);
-    xfree (pAttr);
+    free (pAttr->values);
+    free (pAttr);
 }
 
 static int
@@ -408,7 +408,7 @@ ScreenSaverFreeEvents (value, id)
     if (!pEv)
 	return TRUE;
     *pPrev = pEv->next;
-    xfree (pEv);
+    free (pEv);
     CheckScreenPrivate (pScreen);
     return TRUE;
 }
@@ -1172,8 +1172,8 @@ PatchUp:
     FreeAttrs (pAttr);
 bail:
     CheckScreenPrivate (pScreen);
-    if (pAttr) xfree (pAttr->values);
-    xfree (pAttr);
+    if (pAttr) free (pAttr->values);
+    free (pAttr);
     return ret;
 }
 

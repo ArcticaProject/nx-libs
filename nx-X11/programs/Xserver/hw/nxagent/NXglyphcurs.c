@@ -115,7 +115,7 @@ ServerBitsFromGlyph(FontPtr pfont, unsigned ch, register CursorMetricPtr cm, uns
 	    fbDestroyPixmap(ppix);
 	if (pGC)
 	    FreeScratchGC(pGC);
-	xfree(pbits);
+	free(pbits);
 	return BadAlloc;
     }
 

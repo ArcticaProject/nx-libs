@@ -124,7 +124,7 @@ CursorCloseScreen (int index, ScreenPtr pScreen)
     Unwrap (cs, pScreen, CloseScreen);
     Unwrap (cs, pScreen, DisplayCursor);
     ret = (*pScreen->CloseScreen) (index, pScreen);
-    xfree (cs);
+    free (cs);
     if (index == 0)
 	CursorScreenPrivateIndex = -1;
     return ret;
@@ -174,7 +174,7 @@ XFixesSelectCursorInput (ClientPtr	pClient,
 	    if (!AddResource (pWindow->drawable.id, CursorWindowType,
 			      (void *) pWindow))
 	    {
-		xfree (e);
+		free (e);
 		return BadAlloc;
 	    }
 
@@ -346,7 +346,7 @@ ProcXFixesGetCursorImage (ClientPtr client)
     }
     (void) WriteToClient(client, sizeof (xXFixesGetCursorImageReply) +
 			 (npixels << 2), (char *) rep);
-    xfree (rep);
+    free (rep);
     return client->noClientException;
 }
 
@@ -502,7 +502,7 @@ ProcXFixesGetCursorImageAndName (ClientPtr client)
     }
     (void) WriteToClient(client, sizeof (xXFixesGetCursorImageAndNameReply) +
 			 (npixels << 2) + nbytesRound, (char *) rep);
-    xfree (rep);
+    free (rep);
     return client->noClientException;
 }
 
@@ -699,7 +699,7 @@ CursorFreeClient (void * data, XID id)
 	if (e == old)
 	{
 	    *prev = e->next;
-	    xfree (e);
+	    free (e);
 	    break;
 	}
     }

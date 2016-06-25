@@ -85,7 +85,7 @@ miDestroyGCOps(ops)
     GCOpsPtr        ops;
 {
     if (ops->devPrivate.val)
-	xfree(ops);
+	free(ops);
 }
 
 
@@ -136,7 +136,7 @@ miChangeClip(pGC, type, pvalue, nrects)
 	pGC->clientClip = (void *) RegionFromRects(nrects,
 						      (xRectangle *) pvalue,
 								    type);
-	xfree(pvalue);
+	free(pvalue);
     }
     pGC->clientClipType = (type != CT_NONE && pGC->clientClip) ? CT_REGION : CT_NONE;
     pGC->stateChanges |= GCClipMask;

@@ -1726,7 +1726,7 @@ damageCloseScreen (int i, ScreenPtr pScreen)
     unwrap (pScrPriv, pScreen, CopyWindow);
     unwrap (pScrPriv, pScreen, CloseScreen);
     unwrap (pScrPriv, pScreen, BackingStoreFuncs.RestoreAreas);
-    xfree (pScrPriv);
+    free (pScrPriv);
     return (*pScreen->CloseScreen) (i, pScreen);
 }
 
@@ -1913,7 +1913,7 @@ DamageDestroy (DamagePtr    pDamage)
     if (pDamage->damageDestroy)
 	(*pDamage->damageDestroy) (pDamage, pDamage->closure);
     RegionUninit(&pDamage->damage);
-    xfree (pDamage);
+    free (pDamage);
 }
 
 Bool

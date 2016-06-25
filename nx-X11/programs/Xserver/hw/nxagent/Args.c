@@ -355,7 +355,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
 
       if (nxagentOptionFile != NULL)
       {
-        xfree(nxagentOptionFile);
+        free(nxagentOptionFile);
 
         nxagentOptionFile = NULL;
       }
@@ -719,7 +719,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
 
       if (nxagentKeyboard != NULL)
       {
-        xfree(nxagentKeyboard);
+        free(nxagentKeyboard);
 
         nxagentKeyboard = NULL;
       }
@@ -1591,7 +1591,7 @@ nxagentProcessOptionsFileFree:
 
   if (data != NULL)
   {
-    Xfree(data);
+    free(data);
   }
 
 nxagentProcessOptionsFileClose:

@@ -457,7 +457,7 @@ dixChangeGC(ClientPtr client, register GC *pGC, register BITS32 mask, CARD32 *pC
 		{
 		    if (pGC->dash != DefaultDash)
 		    {
-			xfree(pGC->dash);
+			free(pGC->dash);
 			pGC->numInDashList = 2;
 			pGC->dash = DefaultDash;
 		    }
@@ -470,7 +470,7 @@ dixChangeGC(ClientPtr client, register GC *pGC, register BITS32 mask, CARD32 *pC
 		    if (dash)
 		    {
 			if (pGC->dash != DefaultDash)
-			    xfree(pGC->dash);
+			    free(pGC->dash);
 			pGC->numInDashList = 2;
 			pGC->dash = dash;
 			dash[0] = newdash;
@@ -838,7 +838,7 @@ CopyGC(register GC *pgcSrc, register GC *pgcDst, register BITS32 mask)
 		{
 		    if (pgcDst->dash != DefaultDash)
 		    {
-			xfree(pgcDst->dash);
+			free(pgcDst->dash);
 			pgcDst->numInDashList = pgcSrc->numInDashList;
 			pgcDst->dash = pgcSrc->dash;
 		    }
@@ -853,7 +853,7 @@ CopyGC(register GC *pgcSrc, register GC *pgcDst, register BITS32 mask)
 		    if (dash)
 		    {
 			if (pgcDst->dash != DefaultDash)
-			    xfree(pgcDst->dash);
+			    free(pgcDst->dash);
 			pgcDst->numInDashList = pgcSrc->numInDashList;
 			pgcDst->dash = dash;
 			for (i=0; i<pgcSrc->numInDashList; i++)
@@ -904,8 +904,8 @@ FreeGC(void * value, XID gid)
 
     (*pGC->funcs->DestroyGC) (pGC);
     if (pGC->dash != DefaultDash)
-	xfree(pGC->dash);
-    xfree(pGC);
+	free(pGC->dash);
+    free(pGC);
     return(Success);
 }
 
@@ -1113,7 +1113,7 @@ SetDashes(register GCPtr pGC, unsigned offset, unsigned ndash, unsigned char *pd
     }
 
     if (pGC->dash != DefaultDash)
-	xfree(pGC->dash);
+	free(pGC->dash);
     pGC->numInDashList = ndash;
     pGC->dash = p;
     if (ndash & 1)

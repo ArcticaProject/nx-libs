@@ -515,7 +515,7 @@ DeviceFocusEvent(dev, type, mode, detail, pWin)
 
 	(void) DeliverEventsToWindow(pWin, (xEvent *)sev, evcount,
 	    DeviceStateNotifyMask, NullGrab, dev->id);
-	xfree (sev);
+	free (sev);
         }
     }
 
@@ -830,17 +830,17 @@ InputClientGone(pWin, id)
 	    if (prev)
 		{
 		prev->next = other->next;
-		xfree(other);
+		free(other);
 		}
 	    else if (!(other->next))
 		{
 	        if (ShouldFreeInputMasks(pWin, TRUE))
 		    {
 		    wOtherInputMasks(pWin)->inputClients = other->next;
-		    xfree(wOtherInputMasks(pWin));
+		    free(wOtherInputMasks(pWin));
 		    pWin->optional->inputMasks = (OtherInputMasks *) NULL;
 		    CheckWindowOptionalNeed (pWin);
-		    xfree(other);
+		    free(other);
 		    }
 		else
 		    {
@@ -853,7 +853,7 @@ InputClientGone(pWin, id)
 	    else
 		{
 		wOtherInputMasks(pWin)->inputClients = other->next;
-		xfree(other);
+		free(other);
 		}
 	    RecalculateDeviceDeliverableEvents(pWin);
 	    return(Success);
@@ -1032,7 +1032,7 @@ SetModifierMapping(client, dev, len, rlen, numKeyPerModifier, inputMap, k)
             return BadAlloc;
     }
     if ((*k)->modifierKeyMap)
-        xfree((*k)->modifierKeyMap);
+        free((*k)->modifierKeyMap);
     if (inputMapLen) {
         (*k)->modifierKeyMap = map;
         memmove((char *)(*k)->modifierKeyMap, (char *)inputMap, inputMapLen);

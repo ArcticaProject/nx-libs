@@ -693,7 +693,7 @@ cwCloseScreen (int i, ScreenPtr pScreen)
 	cwFiniRender(pScreen);
 #endif
 
-    xfree((void *)pScreenPriv);
+    free((void *)pScreenPriv);
 
     return (*pScreen->CloseScreen)(i, pScreen);
 }

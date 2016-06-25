@@ -447,7 +447,7 @@ ProcShmAttach(client)
 	if ((shmdesc->addr == ((char *)-1)) ||
 	    shmctl(stuff->shmid, IPC_STAT, &buf))
 	{
-	    xfree(shmdesc);
+	    free(shmdesc);
 	    return BadAccess;
 	}
 
@@ -457,7 +457,7 @@ ProcShmAttach(client)
 
 	if (shm_access(client, &(buf.shm_perm), stuff->readOnly) == -1) {
 	    shmdt(shmdesc->addr);
-	    xfree(shmdesc);
+	    free(shmdesc);
 	    return BadAccess;
 	}
 
@@ -488,7 +488,7 @@ ShmDetachSegment(value, shmseg)
     for (prev = &Shmsegs; *prev != shmdesc; prev = &(*prev)->next)
 	;
     *prev = shmdesc->next;
-    xfree(shmdesc);
+    free(shmdesc);
     return Success;
 }
 
@@ -820,7 +820,7 @@ CreatePmap:
 	    (*pScreen->DestroyPixmap)(pMap);
 	    FreeResource(newPix->info[j].id, RT_NONE);
 	}
-	xfree(newPix);
+	free(newPix);
     } else 
 	AddResource(stuff->pid, XRT_PIXMAP, newPix);
 

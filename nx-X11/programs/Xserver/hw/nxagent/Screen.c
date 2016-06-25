@@ -1358,8 +1358,8 @@ Bool nxagentOpenScreen(int index, ScreenPtr pScreen,
      * by fbScreenInit with our own.
      */
 
-    xfree(pScreen -> visuals);
-    xfree(pScreen -> allowedDepths);
+    free(pScreen -> visuals);
+    free(pScreen -> allowedDepths);
 
     pScreen -> visuals = visuals;
     pScreen -> allowedDepths = depths;
@@ -2079,18 +2079,18 @@ Bool nxagentCloseScreen(int index, ScreenPtr pScreen)
 
   for (i = 0; i < pScreen->numDepths; i++)
   {
-    xfree(pScreen->allowedDepths[i].vids);
+    free(pScreen->allowedDepths[i].vids);
   }
 
   /*
    * Free the frame buffer.
    */
 
-  xfree(((PixmapPtr)pScreen -> devPrivate) -> devPrivate.ptr);
+  free(((PixmapPtr)pScreen -> devPrivate) -> devPrivate.ptr);
 
-  xfree(pScreen->allowedDepths);
-  xfree(pScreen->visuals);
-  xfree(pScreen->devPrivate);
+  free(pScreen->allowedDepths);
+  free(pScreen->visuals);
+  free(pScreen->devPrivate);
 
   /*
    * Reset the geometry and alpha information
@@ -3065,7 +3065,7 @@ int nxagentShadowPoll(PixmapPtr nxagentShadowPixmapPtr, GCPtr nxagentShadowGCPtr
 
       if (tBuffer)
       {
-        xfree(tBuffer);
+        free(tBuffer);
       }
 
       tBuffer = xalloc(length);
@@ -3125,7 +3125,7 @@ int nxagentShadowPoll(PixmapPtr nxagentShadowPixmapPtr, GCPtr nxagentShadowGCPtr
 
     if (tBuffer)
     {
-      xfree(tBuffer);
+      free(tBuffer);
     }
 
     RegionUninit(&updateRegion);
@@ -3346,7 +3346,7 @@ void nxagentShadowAdaptDepth(unsigned int width, unsigned int height,
 
   if (cBuffer != NULL)
   {
-    xfree(cBuffer);
+    free(cBuffer);
   }
 }
 
@@ -3529,7 +3529,7 @@ FIXME: The port information is not used at the moment and produces a
                              strlen(local_buf), local_buf, 1);
       }
 
-      xfree(local_buf);
+      free(local_buf);
     }
   }
 }
@@ -3769,7 +3769,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       number = 1;
 
       if (screeninfo) {
-	xfree(screeninfo);
+	free(screeninfo);
       }
       if (!(screeninfo = xalloc(sizeof(XineramaScreenInfo)))) {
 	return FALSE;
@@ -4061,7 +4061,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
 
     /* release allocated memory */
     if (screeninfo) {
-      xfree(screeninfo);
+      free(screeninfo);
       screeninfo = NULL;
     }
 
@@ -4170,7 +4170,7 @@ void nxagentSaveAreas(PixmapPtr pPixmap, RegionPtr prgnSave, int xorg, int yorg,
 
   XSetClipRectangles(nxagentDisplay, gc, 0, 0, pRects, nRects, Unsorted);
 
-  xfree((char *) pRects);
+  free((char *) pRects);
 
   extents = *RegionExtents(&cleanRegion);
 
@@ -4316,7 +4316,7 @@ void nxagentRestoreAreas(PixmapPtr pPixmap, RegionPtr prgnRestore, int xorg,
 
   XSetClipRectangles(nxagentDisplay, gc, 0, 0, pRects, nRects, Unsorted);
 
-  xfree(pRects);
+  free(pRects);
 
   extents = *RegionExtents(clipRegion);
 
@@ -4537,7 +4537,7 @@ FIXME
 
     if (data)
     {
-      xfree(data);
+      free(data);
     }
 
     return;
@@ -4573,7 +4573,7 @@ FIXME
 
   if (data != NULL)
   {
-    xfree(data);
+    free(data);
   }
 
 /*
@@ -4628,7 +4628,7 @@ void nxagentFbRestoreArea(PixmapPtr pPixmap, WindowPtr pWin, int xSrc, int ySrc,
 
     if (data)
     {
-      xfree(data);
+      free(data);
     }
 
     return;
@@ -4691,7 +4691,7 @@ FIXME
 FIXME
   if (data)
   {
-    xfree(data);
+    free(data);
   }
 */
 }

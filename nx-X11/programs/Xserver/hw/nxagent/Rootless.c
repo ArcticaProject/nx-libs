@@ -389,7 +389,7 @@ void nxagentRootlessRestack(unsigned long children[], unsigned int nchildren)
 
   #endif
 
-  xfree(toplevel);
+  free(toplevel);
 
   return;
 }
@@ -797,7 +797,7 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
 
   if (freeMem)
   {
-    xfree(output);
+    free(output);
   }
 
   return export;
@@ -1104,7 +1104,7 @@ void nxagentImportProperty(Window window,
 
   if (freeMem)
   {
-    xfree(output);
+    free(output);
   }
 
   return;
@@ -1156,7 +1156,7 @@ void nxagentRemovePropertyFromList()
       nxagentPropertyList.last = NULL;
     }
 
-    xfree(tmp);
+    free(tmp);
   }
 }
 

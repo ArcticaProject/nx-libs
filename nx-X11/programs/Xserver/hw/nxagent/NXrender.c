@@ -362,7 +362,7 @@ ProcRenderQueryPictFormats (ClientPtr client)
 	swapl (&reply->numSubpixel, n);
     }
     WriteToClient(client, rlength, (char *) reply);
-    xfree (reply);
+    free (reply);
     return client->noClientException;
 }
 
@@ -730,7 +730,7 @@ ProcRenderTrapezoids (ClientPtr client)
 
       if (nxagentTrapezoidExtents != NullBox)
       {
-        xfree(nxagentTrapezoidExtents);
+        free(nxagentTrapezoidExtents);
 
         nxagentTrapezoidExtents = NullBox;
       }
@@ -1132,7 +1132,7 @@ ProcRenderCompositeGlyphs (ClientPtr client)
                       glyphsBase);
     }
 
-    xfree(nxagentGlyphsExtents);
+    free(nxagentGlyphsExtents);
     nxagentGlyphsExtents = NullBox;
 
     if (glyphsBase != glyphsLocal)
@@ -1140,7 +1140,7 @@ ProcRenderCompositeGlyphs (ClientPtr client)
     if (listsBase != listsLocal)
 	DEALLOCATE_LOCAL (listsBase);
     
-    xfree(elementsBase);
+    free(elementsBase);
 
     return client->noClientException;
 }
@@ -1228,14 +1228,14 @@ ProcRenderCreateCursor (ClientPtr client)
     srcbits = (unsigned char *)xalloc(nbytes_mono);
     if (!srcbits)
     {
-	xfree (argbbits);
+	free (argbbits);
 	return (BadAlloc);
     }
     mskbits = (unsigned char *)xalloc(nbytes_mono);
     if (!mskbits)
     {
-	xfree(argbbits);
-	xfree(srcbits);
+	free(argbbits);
+	free(srcbits);
 	return (BadAlloc);
     }
     bzero ((char *) mskbits, nbytes_mono);
@@ -1257,26 +1257,26 @@ ProcRenderCreateCursor (ClientPtr client)
 	pFormat = PictureMatchFormat (pScreen, 32, PICT_a8r8g8b8);
 	if (!pFormat)
 	{
-	    xfree (argbbits);
-	    xfree (srcbits);
-	    xfree (mskbits);
+	    free (argbbits);
+	    free (srcbits);
+	    free (mskbits);
 	    return (BadImplementation);
 	}
 	pPixmap = (*pScreen->CreatePixmap) (pScreen, width, height, 32);
 	if (!pPixmap)
 	{
-	    xfree (argbbits);
-	    xfree (srcbits);
-	    xfree (mskbits);
+	    free (argbbits);
+	    free (srcbits);
+	    free (mskbits);
 	    return (BadAlloc);
 	}
 	pPicture = CreatePicture (0, &pPixmap->drawable, pFormat, 0, 0, 
 				  client, &error);
 	if (!pPicture)
 	{
-	    xfree (argbbits);
-	    xfree (srcbits);
-	    xfree (mskbits);
+	    free (argbbits);
+	    free (srcbits);
+	    free (mskbits);
 	    return error;
 	}
 	(*pScreen->DestroyPixmap) (pPixmap);
@@ -1360,7 +1360,7 @@ ProcRenderCreateCursor (ClientPtr client)
     }
     else
     {
-	xfree (argbbits);
+	free (argbbits);
 	argbbits = 0;
     }
     
@@ -1488,7 +1488,7 @@ ProcRenderCreateAnimCursor (ClientPtr client)
 						       RT_CURSOR, SecurityReadAccess);
 	if (!cursors[i])
 	{
-	    xfree (cursors);
+	    free (cursors);
 	    client->errorValue = elt->cursor;
 	    return BadCursor;
 	}
@@ -1496,7 +1496,7 @@ ProcRenderCreateAnimCursor (ClientPtr client)
 	elt++;
     }
     ret = AnimCursorCreate (cursors, deltas, ncursor, &pCursor);
-    xfree (cursors);
+    free (cursors);
     if (ret != Success)
 	return ret;
 

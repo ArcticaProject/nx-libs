@@ -277,7 +277,7 @@ xxCreateScreenResources(ScreenPtr pScreen)
     
     pPixmap = (*pScreen->CreatePixmap)(pScreen, 0, 0, depth);
     if (!pPixmap) {
-	xfree(pBits);
+	free(pBits);
 	return FALSE;
     }
     if (!(*pScreen->ModifyPixmapHeader)(pPixmap, pScreen->width,
@@ -285,7 +285,7 @@ xxCreateScreenResources(ScreenPtr pScreen)
 					BitsPerPixel(depth),
 					PixmapBytePad(pScreen->width, depth),
 					pBits)) {
-	xfree(pBits);
+	free(pBits);
 	return FALSE;
     }
     if (pScreen->rootDepth == pScrPriv->myDepth) {
@@ -295,7 +295,7 @@ xxCreateScreenResources(ScreenPtr pScreen)
 					    PixmapBytePad(pScreen->width,
 							  pScrPriv->depth),
 					    0)) {
-	    xfree(pBits);
+	    free(pBits);
 	    return FALSE;
 	}
     }
@@ -328,9 +328,9 @@ xxCloseScreen (int iScreen, ScreenPtr pScreen)
     unwrap (pScrPriv,pScreen, CloseScreen);
     ret = pScreen->CloseScreen(iScreen,pScreen);
 
-    xfree(pScrPriv->pBits);
-    xfree(pScrPriv->InstalledCmaps);
-    xfree(pScrPriv);
+    free(pScrPriv->pBits);
+    free(pScrPriv->InstalledCmaps);
+    free(pScrPriv);
     
     return TRUE;
 }
@@ -456,8 +456,8 @@ xxDestroyColormap(ColormapPtr pmap)
 	    tmpCmapPriv = tmpCmapPriv->next;
 	}
 	
-	xfree(pCmapPriv->cmap);
-	xfree(pCmapPriv);
+	free(pCmapPriv->cmap);
+	free(pCmapPriv);
     }
 
     unwrap(pScrPriv,pmap->pScreen, DestroyColormap);

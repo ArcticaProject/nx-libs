@@ -169,7 +169,7 @@ char	tmpname[PATH_MAX];
 	if ((list->pattern[what][0]=='*')&&(list->pattern[what][1]=='\0')) {
 	    buf = Xprintf("%s/%s.dir",XkbBaseDirectory,componentDirs[what]);
 	    in= fopen(buf,"r");
-	    xfree (buf);
+	    free (buf);
 	    buf = NULL;
 	}
 	if (!in) {
@@ -186,7 +186,7 @@ char	tmpname[PATH_MAX];
 	if ((list->pattern[what][0]=='*')&&(list->pattern[what][1]=='\0')) {
 	    buf = Xprintf("%s.dir",componentDirs[what]);
 	    in= fopen(buf,"r");
-	    xfree (buf);
+	    free (buf);
 	    buf = NULL;
 	}
 	if (!in) {
@@ -217,7 +217,7 @@ char	tmpname[PATH_MAX];
     if (!in)
     {
         if (buf != NULL)
-	    xfree (buf);
+	    free (buf);
 #ifdef WIN32
 	unlink(tmpname);
 #endif
@@ -277,7 +277,7 @@ char	tmpname[PATH_MAX];
     unlink(tmpname);
 #endif
     if (buf != NULL)
-        xfree (buf);
+        free (buf);
     return status;
 }
 

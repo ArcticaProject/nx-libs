@@ -393,7 +393,7 @@ miClearVisualTypes()
 
     while ((v = miVisuals)) {
 	miVisuals = v->next;
-	xfree(v);
+	free(v);
     }
 }
 
@@ -565,9 +565,9 @@ miDoInitVisuals(VisualPtr *visualp, DepthPtr *depthp, int *nvisualp,
     preferredCVCs = (int *)xalloc(ndepth * sizeof(int));
     if (!depth || !visual || !preferredCVCs)
     {
-	xfree (depth);
-	xfree (visual);
-	xfree (preferredCVCs);
+	free (depth);
+	free (visual);
+	free (preferredCVCs);
 	return FALSE;
     }
     *depthp = depth;
@@ -628,7 +628,7 @@ miDoInitVisuals(VisualPtr *visualp, DepthPtr *depthp, int *nvisualp,
 	    vid++;
 	    visual++;
 	}
-	xfree (visuals);
+	free (visuals);
     }
     miVisuals = NULL;
     visual = *visualp;
@@ -684,7 +684,7 @@ miDoInitVisuals(VisualPtr *visualp, DepthPtr *depthp, int *nvisualp,
     }
     *rootDepthp = depth[i].depth;
     *defaultVisp = depth[i].vids[j];
-    xfree(preferredCVCs);
+    free(preferredCVCs);
 
     return TRUE;
 }

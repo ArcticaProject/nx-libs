@@ -1126,7 +1126,7 @@ RecordUninstallHooks(pRCAP, oneclient)
 		{ /* nobody needs it, so free it */
 		    pClient->requestVector = pClientPriv->originalVector;
 		    pClient->devPrivates[RecordClientPrivateIndex].ptr = NULL;
-		    xfree(pClientPriv);
+		    free(pClientPriv);
 		}
 	    } /* end if this RCAP specifies any requests */
 	} /* end if not future clients */
@@ -1197,8 +1197,8 @@ RecordDeleteClientFromRCAP(pRCAP, position)
 	}
 	/* free the RCAP */
 	if (pRCAP->clientIDsSeparatelyAllocated)
-	    xfree(pRCAP->pClientIDs);
-	xfree(pRCAP);
+	    free(pRCAP->pClientIDs);
+	free(pRCAP);
     }
 } /* RecordDeleteClientFromRCAP */
 
@@ -1979,11 +1979,11 @@ bailout:
     {
 	for (i = 0; i < maxSets; i++)
 	    if (si[i].intervals)
-		xfree(si[i].intervals);
+		free(si[i].intervals);
 	DEALLOCATE_LOCAL(si);
     }
     if (pCanonClients && pCanonClients != (XID *)&stuff[1])
-	xfree(pCanonClients);
+	free(pCanonClients);
     return err;
 } /* RecordRegisterClients */
 
@@ -2068,7 +2068,7 @@ ProcRecordCreateContext(client)
     }
 bailout:
     if (pContext)
-	xfree(pContext);
+	free(pContext);
     return err;
 } /* ProcRecordCreateContext */
 
@@ -2119,7 +2119,7 @@ ProcRecordUnregisterClients(client)
 	RecordDeleteClientFromContext(pContext, pCanonClients[i]);
     }
     if (pCanonClients != (XID *)&stuff[1])
-	xfree(pCanonClients);
+	free(pCanonClients);
     return Success;
 } /* ProcRecordUnregisterClients */
 
@@ -2471,7 +2471,7 @@ ProcRecordGetContext(client)
 bailout:
     for (i = 0; i < nRCAPs; i++)
     {
-	if (pRangeInfo[i].pRanges) xfree(pRangeInfo[i].pRanges);
+	if (pRangeInfo[i].pRanges) free(pRangeInfo[i].pRanges);
     }
     DEALLOCATE_LOCAL(pRangeInfo);
     return err;
@@ -2646,7 +2646,7 @@ RecordDeleteContext(value, id)
 	}
     }
 
-    xfree(pContext);
+    free(pContext);
 
     /* remove context from AllContexts list */
 
@@ -2655,7 +2655,7 @@ RecordDeleteContext(value, id)
 	ppAllContexts[i] = ppAllContexts[numContexts - 1];
 	if (--numContexts == 0)
 	{
-	    xfree(ppAllContexts);
+	    free(ppAllContexts);
 	    ppAllContexts = NULL;
 	}
     }

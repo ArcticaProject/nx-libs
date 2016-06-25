@@ -236,7 +236,7 @@ LogInit(const char *fname, const char *backup)
      * needed.
      */
     if (saveBuffer && bufferSize > 0) {
-	free(saveBuffer);	/* Must be free(), not xfree() */
+	free(saveBuffer);	/* Must be free(), not free() */
 	saveBuffer = NULL;
 	bufferSize = 0;
     }

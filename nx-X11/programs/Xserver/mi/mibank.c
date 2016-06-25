@@ -1709,7 +1709,7 @@ miBankCloseScreen(
         if (pScreenPriv->pBanks[i])
             RegionDestroy(pScreenPriv->pBanks[i]);
 
-    Xfree(pScreenPriv->pBanks);
+    free(pScreenPriv->pBanks);
 
     SCREEN_UNWRAP(CreateScreenResources);
     SCREEN_UNWRAP(ModifyPixmapHeader);
@@ -1722,7 +1722,7 @@ miBankCloseScreen(
     SCREEN_UNWRAP(CopyWindow);
     SCREEN_UNWRAP(BackingStoreFuncs);
 
-    Xfree(pScreenPriv);
+    free(pScreenPriv);
     return (*pScreen->CloseScreen)(nIndex, pScreen);
 }
 
@@ -2249,7 +2249,7 @@ miInitializeBanking(
     if (!(pScreenPriv->pBanks =                 /* Allocate and clear */
         (RegionPtr *)Xcalloc(nBanks * sizeof(RegionPtr))))
     {
-        Xfree(pScreenPriv);
+        free(pScreenPriv);
         return FALSE;
     }
 
@@ -2360,8 +2360,8 @@ miInitializeBanking(
             if (pScreenPriv->pBanks[i])
                 RegionDestroy(pScreenPriv->pBanks[i]);
 
-        Xfree(pScreenPriv->pBanks);
-        Xfree(pScreenPriv);
+        free(pScreenPriv->pBanks);
+        free(pScreenPriv);
 
         return FALSE;
     }

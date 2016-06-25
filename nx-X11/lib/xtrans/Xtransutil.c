@@ -211,7 +211,7 @@ TRANS(ConvertAddress)(int *familyp, int *addrlenp, Xtransaddr **addrp)
 	if (len > 0) {
 	    if (*addrp && *addrlenp < (len + 1))
 	    {
-		xfree ((char *) *addrp);
+		free ((char *) *addrp);
 		*addrp = NULL;
 	    }
 	    if (!*addrp)
@@ -226,7 +226,7 @@ TRANS(ConvertAddress)(int *familyp, int *addrlenp, Xtransaddr **addrp)
 	else
 	{
 	    if (*addrp)
-		xfree ((char *) *addrp);
+		free ((char *) *addrp);
 	    *addrp = NULL;
 	    *addrlenp = 0;
 	}

@@ -267,7 +267,7 @@ miInitIndexed (ScreenPtr	pScreen,
     pFormat->index.pValues = xalloc (num * sizeof (xIndexValue));
     if (!pFormat->index.pValues)
     {
-	xfree (pIndexed);
+	free (pIndexed);
 	return FALSE;
     }
     
@@ -323,12 +323,12 @@ miCloseIndexed (ScreenPtr	pScreen,
 {
     if (pFormat->index.devPrivate)
     {
-	xfree (pFormat->index.devPrivate);
+	free (pFormat->index.devPrivate);
 	pFormat->index.devPrivate = 0;
     }
     if (pFormat->index.pValues)
     {
-	xfree (pFormat->index.pValues);
+	free (pFormat->index.pValues);
 	pFormat->index.pValues = 0;
     }
 }

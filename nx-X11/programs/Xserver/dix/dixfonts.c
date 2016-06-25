@@ -226,8 +226,8 @@ FreeFPE (FontPathElementPtr fpe)
     fpe->refcount--;
     if (fpe->refcount == 0) {
 	(*fpe_functions[fpe->type].free_fpe) (fpe);
-	xfree(fpe->name);
-	xfree(fpe);
+	free(fpe->name);
+	free(fpe);
     }
 }
 
@@ -377,9 +377,9 @@ bail:
     for (i = 0; i < c->num_fpes; i++) {
 	FreeFPE(c->fpe_list[i]);
     }
-    xfree(c->fpe_list);
-    xfree(c->fontname);
-    xfree(c);
+    free(c->fpe_list);
+    free(c->fontname);
+    free(c);
     return TRUE;
 }
 #endif /* NXAGENT_SERVER */
@@ -397,7 +397,7 @@ OpenFont(ClientPtr client, XID fid, Mask flags, unsigned lenfname, char *pfontna
     memmove(f, pfontname, lenfname);
     f[lenfname] = '\0';
     ErrorF("OpenFont: fontname is \"%s\"\n", f);
-    xfree(f);
+    free(f);
 #endif
     if (!lenfname || lenfname > XLFDMAXFONTNAMELEN)
 	return BadName;
@@ -437,7 +437,7 @@ OpenFont(ClientPtr client, XID fid, Mask flags, unsigned lenfname, char *pfontna
     c->origFontName = pfontname;
     c->origFontNameLen = lenfname;
     if (!c->fontname) {
-	xfree(c);
+	free(c);
 	return BadAlloc;
     }
     /*
@@ -447,8 +447,8 @@ OpenFont(ClientPtr client, XID fid, Mask flags, unsigned lenfname, char *pfontna
     c->fpe_list = (FontPathElementPtr *)
 	xalloc(sizeof(FontPathElementPtr) * num_fpes);
     if (!c->fpe_list) {
-	xfree(c->fontname);
-	xfree(c);
+	free(c->fontname);
+	free(c);
 	return BadAlloc;
     }
     memmove(c->fontname, pfontname, lenfname);
@@ -679,7 +679,7 @@ doListFontsAndAliases(ClientPtr client, LFclosurePtr c)
 		    return TRUE;
 		}
 		if (err == FontNameAlias) {
-		    if (resolved) xfree(resolved);
+		    if (resolved) free(resolved);
 		    resolved = (char *) xalloc(resolvedlen + 1);
 		    if (resolved)
 			memmove(resolved, tmpname, resolvedlen + 1);
@@ -734,7 +734,7 @@ doListFontsAndAliases(ClientPtr client, LFclosurePtr c)
 		    c->saved = c->current;
 		    c->haveSaved = TRUE;
 		    if (c->savedName)
-			xfree(c->savedName);
+			free(c->savedName);
 		    c->savedName = (char *)xalloc(namelen + 1);
 		    if (c->savedName)
 			memmove(c->savedName, name, namelen + 1);
@@ -829,11 +829,11 @@ bail:
 	ClientWakeup(client);
     for (i = 0; i < c->num_fpes; i++)
 	FreeFPE(c->fpe_list[i]);
-    xfree(c->fpe_list);
-    if (c->savedName) xfree(c->savedName);
+    free(c->fpe_list);
+    if (c->savedName) free(c->savedName);
     FreeFontNames(names);
-    xfree(c);
-    if (resolved) xfree(resolved);
+    free(c);
+    if (resolved) free(resolved);
     return TRUE;
 }
 
@@ -858,14 +858,14 @@ ListFonts(ClientPtr client, unsigned char *pattern, unsigned length,
     c->fpe_list = (FontPathElementPtr *)
 	xalloc(sizeof(FontPathElementPtr) * num_fpes);
     if (!c->fpe_list) {
-	xfree(c);
+	free(c);
 	return BadAlloc;
     }
     c->names = MakeFontNamesRecord(max_names < 100 ? max_names : 100);
     if (!c->names)
     {
-	xfree(c->fpe_list);
-	xfree(c);
+	free(c->fpe_list);
+	free(c);
 	return BadAlloc;
     }
     memmove( c->current.pattern, pattern, length);
@@ -994,7 +994,7 @@ doListFontsWithInfo(ClientPtr client, LFWIclosurePtr c)
 		c->haveSaved = TRUE;
 		c->savedNumFonts = numFonts;
 		if (c->savedName)
-		  xfree(c->savedName);
+		  free(c->savedName);
 		c->savedName = (char *)xalloc(namelen + 1);
 		if (c->savedName)
 		  memmove(c->savedName, name, namelen + 1);
@@ -1084,8 +1084,8 @@ doListFontsWithInfo(ClientPtr client, LFWIclosurePtr c)
 	    (void) WriteToClient(client, namelen, name);
 	    if (pFontInfo == &fontInfo)
  	    {
-		xfree(fontInfo.props);
-		xfree(fontInfo.isStringProp);
+		free(fontInfo.props);
+		free(fontInfo.isStringProp);
 	    }
 	    --c->current.max_names;
 	}
@@ -1103,10 +1103,10 @@ bail:
 	ClientWakeup(client);
     for (i = 0; i < c->num_fpes; i++)
 	FreeFPE(c->fpe_list[i]);
-    xfree(c->reply);
-    xfree(c->fpe_list);
-    if (c->savedName) xfree(c->savedName);
-    xfree(c);
+    free(c->reply);
+    free(c->fpe_list);
+    if (c->savedName) free(c->savedName);
+    free(c);
     return TRUE;
 }
 #endif /* NXAGENT_SERVER */
@@ -1133,7 +1133,7 @@ StartListFontsWithInfo(ClientPtr client, int length, unsigned char *pattern,
 	xalloc(sizeof(FontPathElementPtr) * num_fpes);
     if (!c->fpe_list)
     {
-	xfree(c);
+	free(c);
 	goto badAlloc;
     }
     memmove(c->current.pattern, pattern, length);
@@ -1330,7 +1330,7 @@ doPolyText(ClientPtr client, register PTclosurePtr c)
 		    c->data = (unsigned char *)xalloc(len);
 		    if (!c->data)
 		    {
-			xfree(c);
+			free(c);
 			err = BadAlloc;
 			goto bail;
 		    }
@@ -1343,8 +1343,8 @@ doPolyText(ClientPtr client, register PTclosurePtr c)
 		    pGC = GetScratchGC(c->pGC->depth, c->pGC->pScreen);
 		    if (!pGC)
 		    {
-			xfree(c->data);
-			xfree(c);
+			free(c->data);
+			free(c);
 			err = BadAlloc;
 			goto bail;
 		    }
@@ -1366,8 +1366,8 @@ doPolyText(ClientPtr client, register PTclosurePtr c)
 				      Success)
 		    {
 			FreeScratchGC(pGC);
-			xfree(c->data);
-			xfree(c);
+			free(c->data);
+			free(c);
 			err = BadAlloc;
 			goto bail;
 		    }
@@ -1434,8 +1434,8 @@ bail:
 	c->pGC->font = NullFont;
 
 	FreeScratchGC(c->pGC);
-	xfree(c->data);
-	xfree(c);
+	free(c->data);
+	free(c);
     }
     return TRUE;
 }
@@ -1530,7 +1530,7 @@ doImageText(ClientPtr client, register ITclosurePtr c)
 	    data = (unsigned char *)xalloc(c->nChars * c->itemSize);
 	    if (!data)
 	    {
-		xfree(c);
+		free(c);
 		c = old_closure;
 		err = BadAlloc;
 		goto bail;
@@ -1541,8 +1541,8 @@ doImageText(ClientPtr client, register ITclosurePtr c)
 	    pGC = GetScratchGC(c->pGC->depth, c->pGC->pScreen);
 	    if (!pGC)
 	    {
-		xfree(c->data);
-		xfree(c);
+		free(c->data);
+		free(c);
 		c = old_closure;
 		err = BadAlloc;
 		goto bail;
@@ -1562,8 +1562,8 @@ doImageText(ClientPtr client, register ITclosurePtr c)
 			      GCClipYOrigin | GCClipMask)) != Success)
 	    {
 		FreeScratchGC(pGC);
-		xfree(c->data);
-		xfree(c);
+		free(c->data);
+		free(c);
 		c = old_closure;
 		err = BadAlloc;
 		goto bail;
@@ -1602,8 +1602,8 @@ bail:
 	c->pGC->font = NullFont;
 
 	FreeScratchGC(c->pGC);
-	xfree(c->data);
-	xfree(c);
+	free(c->data);
+	free(c);
     }
     return TRUE;
 }
@@ -1677,7 +1677,7 @@ FreeFontPath(FontPathElementPtr *list, int n, Bool force)
 	}
 	FreeFPE(list[i]);
     }
-    xfree((char *) list);
+    free((char *) list);
 }
 
 static FontPathElementPtr
@@ -1754,7 +1754,7 @@ SetFontPathElements(int npaths, unsigned char *paths, int *bad, Bool persist)
 		fpe->name = (char *) xalloc(len + 1);
 		if (!fpe->name) 
 		{
-		    xfree(fpe);
+		    free(fpe);
 		    err = BadAlloc;
 		    goto bail;
 		}
@@ -1777,8 +1777,8 @@ SetFontPathElements(int npaths, unsigned char *paths, int *bad, Bool persist)
 			       fpe->name);
 		    }
 #endif /* NXAGENT_SERVER */
-		    xfree (fpe->name);
-		    xfree (fpe);
+		    free (fpe->name);
+		    free (fpe);
 		}
 	    }
 	}
@@ -1805,7 +1805,7 @@ bail:
     *bad = i;
     while (--valid_paths >= 0)
 	FreeFPE(fplist[valid_paths]);
-    xfree(fplist);
+    free(fplist);
     return FontToXError(err);
 }
 
@@ -2037,7 +2037,7 @@ FreeFonts()
     FreeFontPath(font_path_elements, num_fpes, TRUE);
     font_path_elements = 0;
     num_fpes = 0;
-    xfree(fpe_functions);
+    free(fpe_functions);
     num_fpe_types = 0;
     fpe_functions = (FPEFunctions *) 0;
 }

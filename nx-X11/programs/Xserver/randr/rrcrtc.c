@@ -215,7 +215,7 @@ RRCrtcNotify(RRCrtcPtr crtc,
                 return FALSE;
         }
         else {
-            xfree(crtc->outputs);
+            free(crtc->outputs);
             newoutputs = NULL;
         }
         crtc->outputs = newoutputs;
@@ -391,7 +391,7 @@ RRComputeContiguity(ScreenPtr pScreen)
     discontiguous = FALSE;
 
  out:
-    xfree(reachable);
+    free(reachable);
     pScrPriv->discontiguous = discontiguous;
 }
 
@@ -778,10 +778,10 @@ RRCrtcDestroyResource(void *value, XID pid)
 
     if (crtc->scanout_pixmap)
         RRCrtcDetachScanoutPixmap(crtc);
-    xfree(crtc->gammaRed);
+    free(crtc->gammaRed);
     if (crtc->mode)
         RRModeDestroy(crtc->mode);
-    xfree(crtc);
+    free(crtc);
     return 1;
 }
 
@@ -899,7 +899,7 @@ RRCrtcGammaSetSize(RRCrtcPtr crtc, int size)
     }
     else
         gamma = NULL;
-    xfree(crtc->gammaRed);
+    free(crtc->gammaRed);
     crtc->gammaRed = gamma;
     crtc->gammaGreen = gamma + size;
     crtc->gammaBlue = gamma + size * 2;
@@ -1089,7 +1089,7 @@ ProcRRGetCrtcInfo(ClientPtr client)
     WriteToClient(client, sizeof(xRRGetCrtcInfoReply), (char *) &rep);
     if (extraLen) {
         WriteToClient(client, extraLen, (char *) extra);
-        xfree(extra);
+        free(extra);
     }
 
     return Success;
@@ -1151,7 +1151,7 @@ ProcRRSetCrtcConfig(ClientPtr client)
                                       RROutputType, client, DixSetAttrAccess);
 
         if (ret != Success) {
-            xfree(outputs);
+            free(outputs);
             return ret;
         }
 #else                           /* !defined(NXAGENT_SERVER) */
@@ -1159,7 +1159,7 @@ ProcRRSetCrtcConfig(ClientPtr client)
         if (!outputs[i]) {
             client->errorValue = outputIds[i];
             if (outputs)
-                xfree(outputs);
+                free(outputs);
             return RRErrorBase + BadRROutput;
         }
 #endif                          /* !defined(NXAGENT_SERVER) */
@@ -1168,7 +1168,7 @@ ProcRRSetCrtcConfig(ClientPtr client)
             if (outputs[i]->crtcs[j] == crtc)
                 break;
         if (j == outputs[i]->numCrtcs) {
-            xfree(outputs);
+            free(outputs);
             return BadMatch;
         }
         /* validate mode for this output */
@@ -1180,7 +1180,7 @@ ProcRRSetCrtcConfig(ClientPtr client)
                 break;
         }
         if (j == outputs[i]->numModes + outputs[i]->numUserModes) {
-            xfree(outputs);
+            free(outputs);
             return BadMatch;
         }
     }
@@ -1196,7 +1196,7 @@ ProcRRSetCrtcConfig(ClientPtr client)
                     break;
             }
             if (k == outputs[i]->numClones) {
-                xfree(outputs);
+                free(outputs);
                 return BadMatch;
             }
         }
@@ -1230,7 +1230,7 @@ ProcRRSetCrtcConfig(ClientPtr client)
          * Invalid rotation
          */
         client->errorValue = stuff->rotation;
-        xfree(outputs);
+        free(outputs);
         return BadValue;
     }
 
@@ -1240,7 +1240,7 @@ ProcRRSetCrtcConfig(ClientPtr client)
              * requested rotation or reflection not supported by screen
              */
             client->errorValue = stuff->rotation;
-            xfree(outputs);
+            free(outputs);
             return BadMatch;
         }
 
@@ -1282,13 +1282,13 @@ ProcRRSetCrtcConfig(ClientPtr client)
                                  &source_height);
             if (stuff->x + source_width > width) {
                 client->errorValue = stuff->x;
-                xfree(outputs);
+                free(outputs);
                 return BadValue;
             }
 
             if (stuff->y + source_height > height) {
                 client->errorValue = stuff->y;
-                xfree(outputs);
+                free(outputs);
                 return BadValue;
             }
         }
@@ -1304,7 +1304,7 @@ ProcRRSetCrtcConfig(ClientPtr client)
     pScrPriv->lastSetTime = time;
 
  sendReply:
-    xfree(outputs);
+    free(outputs);
 
     rep = (xRRSetCrtcConfigReply) {
         .type = X_Reply,
@@ -1535,7 +1535,7 @@ ProcRRGetCrtcGamma(ClientPtr client)
         memcpy(extra, crtc->gammaRed, len);
         client->pSwapReplyFunc = (ReplySwapPtr) CopySwap16Write;
         WriteSwappedDataToClient(client, len, extra);
-        xfree(extra);
+        free(extra);
     }
     return Success;
 }
@@ -1700,7 +1700,7 @@ ProcRRGetCrtcTransform(ClientPtr client)
     }
     WriteToClient(client, sizeof(xRRGetCrtcTransformReply) + nextra,
                   (char *) reply);
-    xfree(reply);
+    free(reply);
     return Success;
 }
 
@@ -1894,7 +1894,7 @@ RRReplaceScanoutPixmap(DrawablePtr pDrawable, PixmapPtr pPixmap, Bool enable)
         else
             crtc->scanout_pixmap = saved_scanout_pixmap[i];
     }
-    xfree(saved_scanout_pixmap);
+    free(saved_scanout_pixmap);
 
     return ret;
 }

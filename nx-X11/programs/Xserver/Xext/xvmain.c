@@ -325,7 +325,7 @@ XvCloseScreen(
 
   (* pxvs->ddCloseScreen)(ii, pScreen); 
 
-  xfree(pxvs);
+  free(pxvs);
 
   pScreen->devPrivates[XvScreenIndex].ptr = (void *)NULL;
 
@@ -522,7 +522,7 @@ XvdiDestroyVideoNotifyList(void * pn, XID id)
     {
       npn = cpn->next;
       if (cpn->client) FreeResource(cpn->id, XvRTVideoNotify);
-      xfree(cpn);
+      free(cpn);
       cpn = npn;
     }
   return Success;
@@ -946,7 +946,7 @@ XvdiSelectVideoNotify(
       tpn->next = (XvVideoNotifyPtr)NULL;
       if (!AddResource(pDraw->id, XvRTVideoNotifyList, tpn))
 	{
-	  xfree(tpn);
+	  free(tpn);
 	  return BadAlloc;
 	}
     }

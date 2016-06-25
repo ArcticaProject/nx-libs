@@ -128,7 +128,7 @@ AnimCurCloseScreen (int index, ScreenPtr pScreen)
     Unwrap(as, pScreen, RecolorCursor);
     SetAnimCurScreen(pScreen,0);
     ret = (*pScreen->CloseScreen) (index, pScreen);
-    xfree (as);
+    free (as);
     if (index == 0)
 	AnimCurScreenPrivateIndex = -1;
     return ret;

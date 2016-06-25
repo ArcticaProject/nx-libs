@@ -1814,13 +1814,13 @@ void nxagentCloseDisplay()
    * traffic
    */
 
-  xfree(nxagentDefaultColormaps);
+  free(nxagentDefaultColormaps);
   nxagentDefaultColormaps = NULL;
 
   XFree(nxagentVisuals);
   nxagentVisuals = NULL;
 
-  xfree(nxagentDepths);
+  free(nxagentDepths);
   nxagentDepths = NULL;
 
   XFree(nxagentPixmapFormats);
@@ -2060,7 +2060,7 @@ void nxagentBackupDisplayInfo(void)
   nxagentNumVisualsRecBackup = nxagentNumVisuals;
   if (nxagentVisualHasBeenIgnored)
   {
-    xfree(nxagentVisualHasBeenIgnored);
+    free(nxagentVisualHasBeenIgnored);
     nxagentVisualHasBeenIgnored = NULL;
   }
   nxagentVisualHasBeenIgnored = xalloc(nxagentNumVisuals * sizeof(Bool));
@@ -2074,17 +2074,17 @@ void nxagentBackupDisplayInfo(void)
 
 void nxagentCleanupBackupDisplayInfo(void)
 {
-  xfree(nxagentDepthsRecBackup);
+  free(nxagentDepthsRecBackup);
   nxagentNumDepthsRecBackup = 0;
 
   nxagentNumDefaultColormapsRecBackup = 0;
 
-  xfree(nxagentVisualsRecBackup);
+  free(nxagentVisualsRecBackup);
   nxagentNumVisualsRecBackup = 0;
 
   if (nxagentVisualHasBeenIgnored)
   {
-    xfree(nxagentVisualHasBeenIgnored);
+    free(nxagentVisualHasBeenIgnored);
     nxagentVisualHasBeenIgnored = NULL;
   }
 
@@ -2107,7 +2107,7 @@ void nxagentCleanupBackupDisplayInfo(void)
     }
     else
     {
-      xfree(nxagentBitmapGCBackup);
+      free(nxagentBitmapGCBackup);
     }
 
     nxagentBitmapGCBackup = NULL;

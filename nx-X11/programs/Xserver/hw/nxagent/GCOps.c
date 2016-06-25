@@ -779,7 +779,7 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
                    srcx, srcy, width, height);
     #endif
 
-    xfree(data);
+    free(data);
 
     /*
      * If the source is a shared memory pixmap, the
@@ -999,7 +999,7 @@ RegionPtr nxagentCopyPlane(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
                    srcx, srcy, width, height);
     #endif
 
-    xfree(data);
+    free(data);
 
     /*
      * If the source is a shared memory pixmap, the
@@ -1539,7 +1539,7 @@ void nxagentFillPolygon(DrawablePtr pDrawable, GCPtr pGC, int shape,
 
   if (newPoints != NULL)
   {
-    xfree(newPoints);
+    free(newPoints);
   }
 }
 

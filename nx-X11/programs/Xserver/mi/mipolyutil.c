@@ -395,7 +395,7 @@ miFreeStorage(pSLLBlock)
     while (pSLLBlock) 
     {
         tmpSLLBlock = pSLLBlock->next;
-        xfree(pSLLBlock);
+        free(pSLLBlock);
         pSLLBlock = tmpSLLBlock;
     }
 }

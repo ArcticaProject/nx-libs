@@ -170,7 +170,7 @@ int PanoramiXCreateWindow(ClientPtr client)
     if (result == Success)
         AddResource(newWin->info[0].id, XRT_WINDOW, newWin);
     else 
-        xfree(newWin);
+        free(newWin);
 
     return (result);
 }
@@ -679,7 +679,7 @@ int PanoramiXCreatePixmap(ClientPtr client)
     if (result == Success)
 	AddResource(newPix->info[0].id, XRT_PIXMAP, newPix);
     else 
-	xfree(newPix);
+	free(newPix);
 
     return (result);
 }
@@ -784,7 +784,7 @@ int PanoramiXCreateGC(ClientPtr client)
     if (result == Success)
         AddResource(newGC->info[0].id, XRT_GC, newGC);
     else 
-        xfree(newGC);
+        free(newGC);
 
     return (result);
 }
@@ -1049,7 +1049,7 @@ int PanoramiXCopyArea(ClientPtr client)
 
 	    if(drawables[0]->depth != pDst->depth) {
 		client->errorValue = stuff->dstDrawable;
-		xfree(data);
+		free(data);
 		return (BadMatch);
 	    }
 
@@ -1060,7 +1060,7 @@ int PanoramiXCopyArea(ClientPtr client)
 	    if(dstShared) break;
 	}
 
-	xfree(data);
+	free(data);
 
 	result = Success;
     } else {
@@ -1890,7 +1890,7 @@ int PanoramiXGetImage(ClientPtr client)
             }
 	}
     }
-    xfree(pBuf);
+    free(pBuf);
     return (client->noClientException);
 }
 
@@ -2092,7 +2092,7 @@ int PanoramiXCreateColormap(ClientPtr client)
     if (result == Success)
         AddResource(newCmap->info[0].id, XRT_COLORMAP, newCmap);
     else 
-        xfree(newCmap);
+        free(newCmap);
 
     return (result);
 }
@@ -2159,7 +2159,7 @@ PanoramiXCopyColormapAndFree(ClientPtr client)
     if (result == Success)
         AddResource(newCmap->info[0].id, XRT_COLORMAP, newCmap);
     else 
-        xfree(newCmap);
+        free(newCmap);
 
     return (result);
 }

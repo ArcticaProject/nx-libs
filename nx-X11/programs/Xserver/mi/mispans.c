@@ -216,15 +216,15 @@ void miAppendSpans(spanGroup, otherGroup, spans)
     }
     else
     {
-	xfree (spans->points);
-	xfree (spans->widths);
+	free (spans->points);
+	free (spans->widths);
     }
 } /* AppendSpans */
 
 void miFreeSpanGroup(spanGroup)
     SpanGroup   *spanGroup;
 {
-    if (spanGroup->group != NULL) xfree(spanGroup->group);
+    if (spanGroup->group != NULL) free(spanGroup->group);
 }
 
 static void QuickSortSpansX(
@@ -376,8 +376,8 @@ miDisposeSpanGroup (spanGroup)
     for (i = 0; i < spanGroup->count; i++)
     {
 	spans = spanGroup->group + i;
-	xfree (spans->points);
-	xfree (spans->widths);
+	free (spans->points);
+	free (spans->widths);
     }
 }
 
@@ -404,8 +404,8 @@ void miFillUniqueSpanGroup(pDraw, pGC, spanGroup)
 	spans = spanGroup->group;
 	(*pGC->ops->FillSpans)
 	    (pDraw, pGC, spans->count, spans->points, spans->widths, TRUE);
-	xfree(spans->points);
-	xfree(spans->widths);
+	free(spans->points);
+	free(spans->widths);
     }
     else
     {
@@ -424,9 +424,9 @@ void miFillUniqueSpanGroup(pDraw, pGC, spanGroup)
 	if (!yspans || !ysizes)
 	{
 	    if (yspans)
-		xfree (yspans);
+		free (yspans);
 	    if (ysizes)
-		xfree (ysizes);
+		free (ysizes);
 	    miDisposeSpanGroup (spanGroup);
 	    return;
 	}
@@ -468,11 +468,11 @@ void miFillUniqueSpanGroup(pDraw, pGC, spanGroup)
 
 			    for (i = 0; i < ylength; i++)
 			    {
-				xfree (yspans[i].points);
-				xfree (yspans[i].widths);
+				free (yspans[i].points);
+				free (yspans[i].widths);
 			    }
-			    xfree (yspans);
-			    xfree (ysizes);
+			    free (yspans);
+			    free (ysizes);
 			    miDisposeSpanGroup (spanGroup);
 			    return;
 			}
@@ -485,9 +485,9 @@ void miFillUniqueSpanGroup(pDraw, pGC, spanGroup)
 		} /* if y value of span in range */
 	    } /* for j through spans */
 	    count += spans->count;
-	    xfree(spans->points);
+	    free(spans->points);
 	    spans->points = NULL;
-	    xfree(spans->widths);
+	    free(spans->widths);
 	    spans->widths = NULL;
 	} /* for i thorough Spans */
 
@@ -500,15 +500,15 @@ void miFillUniqueSpanGroup(pDraw, pGC, spanGroup)
 
 	    for (i = 0; i < ylength; i++)
 	    {
-		xfree (yspans[i].points);
-		xfree (yspans[i].widths);
+		free (yspans[i].points);
+		free (yspans[i].widths);
 	    }
-	    xfree (yspans);
-	    xfree (ysizes);
+	    free (yspans);
+	    free (ysizes);
 	    if (points)
-		xfree (points);
+		free (points);
 	    if (widths)
-		xfree (widths);
+		free (widths);
 	    return;
 	}
 	count = 0;
@@ -524,16 +524,16 @@ void miFillUniqueSpanGroup(pDraw, pGC, spanGroup)
 		    widths[count] = yspans[i].widths[0];
 		    count++;
 		}
-		xfree(yspans[i].points);
-		xfree(yspans[i].widths);
+		free(yspans[i].points);
+		free(yspans[i].widths);
 	    }
 	}
 
 	(*pGC->ops->FillSpans) (pDraw, pGC, count, points, widths, TRUE);
-	xfree(points);
-	xfree(widths);
-	xfree(yspans);
-	xfree(ysizes);		/* use (DE)ALLOCATE_LOCAL for these? */
+	free(points);
+	free(widths);
+	free(yspans);
+	free(ysizes);		/* use (DE)ALLOCATE_LOCAL for these? */
     }
 
     spanGroup->count = 0;
@@ -553,8 +553,8 @@ void miFillSpanGroup(pDraw, pGC, spanGroup)
     for (i = 0, spans = spanGroup->group; i != spanGroup->count; i++, spans++) {
 	(*pGC->ops->FillSpans)
 	    (pDraw, pGC, spans->count, spans->points, spans->widths, TRUE);
-	xfree(spans->points);
-	xfree(spans->widths);
+	free(spans->points);
+	free(spans->widths);
     }
 
     spanGroup->count = 0;

@@ -239,7 +239,7 @@ fbShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
           fbGetImage((DrawablePtr) pPixmap, sx, sy, sw, sh, format, AllPlanes, newdata);
           (*pGC->ops->PutImage)(dst, pGC, depth, dx, dy, sw, sh, 0, format, newdata);
 
-          xfree(newdata);
+          free(newdata);
         }
         else
         {

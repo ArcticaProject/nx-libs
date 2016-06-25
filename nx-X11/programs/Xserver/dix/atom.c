@@ -120,7 +120,7 @@ MakeAtom(const char *string, unsigned len, Bool makeit)
 	{
 	    nd->string = (char *) xalloc(len + 1);
 	    if (!nd->string) {
-		xfree(nd);
+		free(nd);
 		return BAD_RESOURCE;
 	    }
 	    strncpy(nd->string, string, (int)len);
@@ -133,8 +133,8 @@ MakeAtom(const char *string, unsigned len, Bool makeit)
 					 tableLength * (2 * sizeof(NodePtr)));
 	    if (!table) {
 		if (nd->string != string)
-		    xfree(nd->string);
-		xfree(nd);
+		    free(nd->string);
+		free(nd);
 		return BAD_RESOURCE;
 	    }
 	    tableLength <<= 1;
@@ -180,8 +180,8 @@ FreeAtom(NodePtr patom)
     if(patom->right)
 	FreeAtom(patom->right);
     if (patom->a > XA_LAST_PREDEFINED)
-	xfree(patom->string);
-    xfree(patom);
+	free(patom->string);
+    free(patom);
 }
 
 void
@@ -191,7 +191,7 @@ FreeAllAtoms()
 	return;
     FreeAtom(atomRoot);
     atomRoot = (NodePtr)NULL;
-    xfree(nodeTable);
+    free(nodeTable);
     nodeTable = (NodePtr *)NULL;
     lastAtom = None;
 }

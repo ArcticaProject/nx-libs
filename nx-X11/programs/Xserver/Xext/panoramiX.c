@@ -165,7 +165,7 @@ XineramaCloseScreen (int i, ScreenPtr pScreen)
     if (pScreen->myNum == 0)
 	RegionUninit(&PanoramiXScreenRegion);
 
-    xfree ((void *) pScreenPriv);
+    free ((void *) pScreenPriv);
 
     return (*pScreen->CloseScreen) (i, pScreen);
 }
@@ -337,7 +337,7 @@ XineramaDestroyClip(GCPtr pGC)
 int
 XineramaDeleteResource(void * data, XID id)
 {
-    xfree(data);
+    free(data);
     return 1;
 }
 
@@ -727,10 +727,10 @@ Bool PanoramiXCreateConnectionBlock(void)
 
     connSetupPrefix.length = length >> 2;
 
-    xfree(PanoramiXVisuals);
+    free(PanoramiXVisuals);
     for (i = 0; i < PanoramiXNumDepths; i++)
-	xfree(PanoramiXDepths[i].vids);
-    xfree(PanoramiXDepths);
+	free(PanoramiXDepths[i].vids);
+    free(PanoramiXDepths);
 
     /*
      *  OK, change some dimensions so it looks as if it were one big screen
@@ -752,7 +752,7 @@ Bool PanoramiXCreateConnectionBlock(void)
 	tmp = (void *)ConnectionCallbackList;
 	(*ConnectionCallbackList->func)();
 	ConnectionCallbackList = ConnectionCallbackList->next;
-	xfree(tmp);
+	free(tmp);
     }
 
     return TRUE;
@@ -927,7 +927,7 @@ static void PanoramiXResetProc(ExtensionEntry* extEntry)
     for (i = 256; i--; )
 	ProcVector[i] = SavedProcVector[i];
 
-    Xfree(panoramiXdataPtr);    
+    free(panoramiXdataPtr);
 }
 
 
@@ -1292,7 +1292,7 @@ XineramaGetImageData(
     }
 
     if(ScratchMem)
-	xfree(ScratchMem);
+	free(ScratchMem);
 
     RegionUninit(&SrcRegion);
     RegionUninit(&GrabRegion);

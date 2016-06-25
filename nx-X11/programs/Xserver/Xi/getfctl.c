@@ -190,7 +190,7 @@ ProcXGetFeedbackControl(client)
     rep.length = (total_length+3) >> 2;
     WriteReplyToClient(client, sizeof(xGetFeedbackControlReply), &rep);
     WriteToClient(client, total_length, savbuf);
-    xfree (savbuf);
+    free (savbuf);
     return Success;
     }
 

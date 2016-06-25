@@ -1812,7 +1812,7 @@ Popen(char *command, char *type)
 	return NULL;
 
     if (pipe(pdes) < 0) {
-	xfree(cur);
+	free(cur);
 	return NULL;
     }
 
@@ -1826,7 +1826,7 @@ Popen(char *command, char *type)
     case -1: 	/* error */
 	close(pdes[0]);
 	close(pdes[1]);
-	xfree(cur);
+	free(cur);
 #ifdef NX_TRANS_EXIT
 	if (OsVendorEndRedirectErrorFProc != NULL) {
 	    OsVendorEndRedirectErrorFProc();
@@ -1950,7 +1950,7 @@ Fopen(char *file, char *type)
 	return NULL;
 
     if (pipe(pdes) < 0) {
-	xfree(cur);
+	free(cur);
 	return NULL;
     }
 
@@ -1958,7 +1958,7 @@ Fopen(char *file, char *type)
     case -1: 	/* error */
 	close(pdes[0]);
 	close(pdes[1]);
-	xfree(cur);
+	free(cur);
 	return NULL;
     case 0:	/* child */
 	if (setgid(getgid()) == -1)
@@ -2052,7 +2052,7 @@ Pclose(void * iop)
 	pidlist = cur->next;
     else
 	last->next = cur->next;
-    xfree(cur);
+    free(cur);
 
     /* allow EINTR again */
     OsReleaseSignals ();

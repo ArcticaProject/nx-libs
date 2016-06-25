@@ -450,7 +450,7 @@ miFreeArcCache (data, id)
 	{
 	    cent->lrustamp = 0;
 	    cent->lw = 0;
-	    xfree(cent->spdata);
+	    free(cent->spdata);
 	    cent->spdata = NULL;
 	}
     }
@@ -911,7 +911,7 @@ miComputeWideEllipse(
     if (!spdata || spdata->k != k)
     {
 	if (spdata)
-	    xfree(spdata);
+	    free(spdata);
 	spdata = (miArcSpanData *)xalloc(sizeof(miArcSpanData) +
 					 sizeof(miArcSpan) * (k + 2));
 	lruent->spdata = spdata;
@@ -1054,7 +1054,7 @@ miFillWideEllipse(
 	}
     }
     if (mustFree)
-	xfree(spdata);
+	free(spdata);
     (*pGC->ops->FillSpans)(pDraw, pGC, pts - points, points, widths, FALSE);
 
     DEALLOCATE_LOCAL(widths);
@@ -1412,7 +1412,7 @@ miArcJoin(DrawablePtr pDraw, GCPtr pGC, miArcFacePtr pLeft,
 			 * rest of the line */
 			miFillSppPoly(pDraw, pGC, cpt, pArcPts, xOrg, yOrg, xFtrans, yFtrans);
 		}
-		xfree(pArcPts);
+		free(pArcPts);
 		return;
 	case JoinMiter:
 		/*
@@ -1543,7 +1543,7 @@ miRoundCap(
 	 * rest of the line */
 	miFillSppPoly(pDraw, pGC, cpt, pArcPts, -xOrg, -yOrg, xFtrans, yFtrans);
     }
-    xfree(pArcPts);
+    free(pArcPts);
 }
 
 /*
@@ -1840,13 +1840,13 @@ miFreeArcs(
 	     iphase--)
 	{
 	    if (arcs[iphase].narcs > 0)
-		xfree(arcs[iphase].arcs);
+		free(arcs[iphase].arcs);
 	    if (arcs[iphase].njoins > 0)
-		xfree(arcs[iphase].joins);
+		free(arcs[iphase].joins);
 	    if (arcs[iphase].ncaps > 0)
-		xfree(arcs[iphase].caps);
+		free(arcs[iphase].caps);
 	}
-	xfree(arcs);
+	free(arcs);
 }
 
 /*
@@ -3169,11 +3169,11 @@ disposeFinalSpans (void)
 
 	for (chunk = chunks; chunk; chunk = next) {
 		next = chunk->next;
-		xfree (chunk);
+		free (chunk);
 	}
 	chunks = 0;
 	freeFinalSpans = 0;
-	xfree(finalSpans);
+	free(finalSpans);
 	finalSpans = 0;
 }
 
@@ -3265,7 +3265,7 @@ realFindSpan (int y)
 			memmove(((char *) newSpans) + (finalMiny-newMiny) * sizeof (struct finalSpan *),
 				(char *) finalSpans,
 			       finalSize * sizeof (struct finalSpan *));
-			xfree (finalSpans);
+			free (finalSpans);
 		}
 		if ((i = finalMiny - newMiny) > 0)
 			bzero ((char *)newSpans, i * sizeof (struct finalSpan *));
@@ -3610,7 +3610,7 @@ drawArc (
 		}
 	}
 	if (mustFree)
-	    xfree(spdata);
+	    free(spdata);
 }
 
 static void

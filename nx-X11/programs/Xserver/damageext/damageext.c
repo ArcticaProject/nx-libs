@@ -214,7 +214,7 @@ ProcDamageCreate (ClientPtr client)
 					pDamageExt);
     if (!pDamageExt->pDamage)
     {
-	xfree (pDamageExt);
+	free (pDamageExt);
 	return BadAlloc;
     }
     if (!AddResource (stuff->damage, DamageExtType, (void *) pDamageExt))
@@ -412,7 +412,7 @@ FreeDamageExt (void * value, XID did)
 	DamageUnregister (pDamageExt->pDrawable, pDamageExt->pDamage);
 	DamageDestroy (pDamageExt->pDamage);
     }
-    xfree (pDamageExt);
+    free (pDamageExt);
     return Success;
 }
 

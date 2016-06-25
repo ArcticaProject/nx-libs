@@ -282,7 +282,7 @@ fbCopyNto1 (DrawablePtr	pSrcDrawable,
     
 		      pPriv->and, pPriv->xor,
 		      pPriv->bgand, pPriv->bgxor);
-	    xfree (tmp);
+	    free (tmp);
 	}
 	pbox++;
     }

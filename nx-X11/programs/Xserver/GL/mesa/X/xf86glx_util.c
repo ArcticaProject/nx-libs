@@ -70,7 +70,7 @@ void XMesaDestroyImage(XMesaImage *image)
 {
     if (image->data)
 	free(image->data);
-    xfree(image);
+    free(image);
 }
 
 unsigned long XMesaGetPixel(XMesaImage *image, int x, int y)

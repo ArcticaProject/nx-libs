@@ -730,7 +730,7 @@ TimerFree(OsTimerPtr timer)
     if (!timer)
 	return;
     TimerCancel(timer);
-    xfree(timer);
+    free(timer);
 }
 
 void
@@ -750,7 +750,7 @@ TimerInit(void)
     while ((timer = timers))
     {
 	timers = timer->next;
-	xfree(timer);
+	free(timer);
     }
 }
 

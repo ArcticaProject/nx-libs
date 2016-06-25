@@ -81,7 +81,7 @@ void *__glXImpCalloc(__GLcontext *gc, size_t numElements, size_t elementSize)
 void __glXImpFree(__GLcontext *gc, void *addr)
 {
     if (addr) {
-	xfree(addr);
+	free(addr);
     }
 }
 
@@ -91,7 +91,7 @@ void *__glXImpRealloc(__GLcontext *gc, void *addr, size_t newSize)
 
     if (addr) {
 	if (newSize == 0) {
-	    xfree(addr);
+	    free(addr);
 	    return NULL;
 	}
 	newAddr = xrealloc(addr, newSize);

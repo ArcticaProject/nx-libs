@@ -1076,7 +1076,7 @@ PlayReleasedEvents(void)
 #endif
 	    (*qe->device->public.processInputProc)(qe->event, qe->device,
 						   qe->evcount);
-	    xfree(qe);
+	    free(qe);
 	    for (dev = inputInfo.devices; dev && dev->sync.frozen; dev = dev->next)
 		;
 	    if (!dev)
@@ -2959,7 +2959,7 @@ OtherClientGone(void * value, XID id)
 		if (!(pWin->optional->otherClients = other->next))
 		    CheckWindowOptionalNeed (pWin);
 	    }
-	    xfree(other);
+	    free(other);
 	    RecalculateDeliverableEvents(pWin);
 	    return(Success);
 	}
@@ -3948,7 +3948,7 @@ InitEvents()
     while (syncEvents.pending)
     {
 	QdEventPtr next = syncEvents.pending->next;
-	xfree(syncEvents.pending);
+	free(syncEvents.pending);
 	syncEvents.pending = next;
     }
     syncEvents.pendtail = &syncEvents.pending;
@@ -3968,7 +3968,7 @@ InitEvents()
 void
 CloseDownEvents(void)
 {
-  xfree(spriteTrace);
+  free(spriteTrace);
   spriteTrace = NULL;
   spriteTraceSize = 0;
 }

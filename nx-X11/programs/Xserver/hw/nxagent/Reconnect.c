@@ -444,7 +444,7 @@ Bool nxagentReconnectSession(void)
 
   if (nxagentKeyboard)
   {
-    xfree(nxagentKeyboard);
+    free(nxagentKeyboard);
 
     nxagentKeyboard = NULL;
   }
@@ -609,7 +609,7 @@ Bool nxagentReconnectSession(void)
 
   if (nxagentOldKeyboard != NULL)
   {
-    xfree(nxagentOldKeyboard);
+    free(nxagentOldKeyboard);
 
     nxagentOldKeyboard = NULL;
   }
@@ -734,7 +734,7 @@ nxagentReconnectError:
 
   if (nxagentOldKeyboard != NULL)
   {
-    xfree(nxagentOldKeyboard);
+    free(nxagentOldKeyboard);
 
     nxagentOldKeyboard = NULL;
   }

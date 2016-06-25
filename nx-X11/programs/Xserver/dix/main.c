@@ -474,7 +474,7 @@ main(int argc, char *argv[], char *envp[])
 #endif
 	FreeAuditTimer();
 
-	xfree(serverClient->devPrivates);
+	free(serverClient->devPrivates);
 	serverClient->devPrivates = NULL;
 
 	if (dispatchException & DE_TERMINATE)
@@ -490,7 +490,7 @@ main(int argc, char *argv[], char *envp[])
 	    break;
 	}
 
-	xfree(ConnectionInfo);
+	free(ConnectionInfo);
 	ConnectionInfo = NULL;
     }
     return(0);
@@ -621,7 +621,7 @@ CreateConnectionBlock()
 	    pBuf = (char *)xrealloc(ConnectionInfo, lenofblock);
 	    if (!pBuf)
 	    {
-		xfree(ConnectionInfo);
+		free(ConnectionInfo);
 		return FALSE;
 	    }
 	    ConnectionInfo = pBuf;
@@ -697,7 +697,7 @@ AddScreen(
 						screenPrivateCount);
     if (!pScreen->devPrivates && screenPrivateCount)
     {
-	xfree(pScreen);
+	free(pScreen);
 	return -1;
     }
     pScreen->myNum = i;
@@ -782,11 +782,11 @@ static void
 FreeScreen(ScreenPtr pScreen)
 {
     pScreen->root = NullWindow;
-    xfree(pScreen->WindowPrivateSizes);
-    xfree(pScreen->GCPrivateSizes);
+    free(pScreen->WindowPrivateSizes);
+    free(pScreen->GCPrivateSizes);
 #ifdef PIXPRIV
-    xfree(pScreen->PixmapPrivateSizes);
+    free(pScreen->PixmapPrivateSizes);
 #endif
-    xfree(pScreen->devPrivates);
-    xfree(pScreen);
+    free(pScreen->devPrivates);
+    free(pScreen);
 }

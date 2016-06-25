@@ -1281,7 +1281,7 @@ ProcXvQueryImageAttributes(ClientPtr client)
     SwapLongs((CARD32*)offsets, rep.length);
   WriteToClient(client, rep.length << 2, (char*)offsets);
 
-  xfree(offsets);
+  free(offsets);
 
   return Success;
 }

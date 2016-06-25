@@ -133,7 +133,7 @@ miFillPolyHelper (pDrawable, pGC, pixel, spanData, y, overall_height,
 	spanRec.widths = (int *) xalloc (overall_height * sizeof (int));
 	if (!spanRec.widths)
 	{
-	    xfree (spanRec.points);
+	    free (spanRec.points);
 	    return;
 	}
 	ppt = spanRec.points;
@@ -237,7 +237,7 @@ miFillRectPolyHelper (
 	spanRec.widths = (int *) xalloc (h * sizeof (int));
 	if (!spanRec.widths)
 	{
-	    xfree (spanRec.points);
+	    free (spanRec.points);
 	    return;
 	}
 	ppt = spanRec.points;
@@ -1082,7 +1082,7 @@ miLineArc (
 	widths = (int *) xalloc (pGC->lineWidth * sizeof (int));
 	if (!widths)
 	{
-	    xfree (points);
+	    free (points);
 	    return;
 	}
 	spanRec.points = points;

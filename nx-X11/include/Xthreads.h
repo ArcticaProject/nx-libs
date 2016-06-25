@@ -36,9 +36,6 @@ in this Software without prior written authorization from The Open Group.
 #ifndef xmalloc
 #define xmalloc malloc
 #endif
-#ifndef xfree
-#define xfree free
-#endif
 
 #ifdef CTHREADS
 #include <cthreads.h>
@@ -285,13 +282,13 @@ typedef xmutex_rec *xmutex_t;
 #define xcondition_malloc() (xcondition_t)xmalloc(sizeof(xcondition_rec))
 #endif
 #ifndef xcondition_free
-#define xcondition_free(c) xfree((char *)c)
+#define xcondition_free(c) free((char *)c)
 #endif
 #ifndef xmutex_malloc
 #define xmutex_malloc() (xmutex_t)xmalloc(sizeof(xmutex_rec))
 #endif
 #ifndef xmutex_free
-#define xmutex_free(m) xfree((char *)m)
+#define xmutex_free(m) free((char *)m)
 #endif
 #ifndef xthread_have_id
 #define xthread_have_id(id) id

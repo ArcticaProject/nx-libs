@@ -154,7 +154,7 @@ ProcXGetDeviceDontPropagateList (client)
 	{
 	client->pSwapReplyFunc = (ReplySwapPtr)Swap32Write;
 	WriteSwappedDataToClient( client, count * sizeof(XEventClass), buf);
-	xfree (buf);
+	free (buf);
 	}
     return Success;
     }

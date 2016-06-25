@@ -487,7 +487,7 @@ Bool nxagentDestroyPixmap(PixmapPtr pPixmap)
     FreeResource(pPixmapPriv -> mid, RT_NONE);
   }
 
-  xfree(pPixmap);
+  free(pPixmap);
 
   return True;
 }
@@ -1259,7 +1259,7 @@ void nxagentSynchronizeShmPixmap(DrawablePtr pDrawable, int xPict, int yPict,
       nxagentPutImage(pDrawable, pGC, depth, xPict, yPict,
                           width, height, 0, format, data);
 
-      xfree(data);
+      free(data);
     }
     #ifdef WARNING
     else
@@ -1409,7 +1409,7 @@ FIXME: If the pixmap has a different depth from the window, the
 
     if (data != NULL)
     {
-      xfree(data);
+      free(data);
     }
 
     return False;
@@ -1571,7 +1571,7 @@ Bool nxagentFbOnShadowDisplay()
 
     if (data)
     {
-      xfree(data);
+      free(data);
     }
 
     return False;

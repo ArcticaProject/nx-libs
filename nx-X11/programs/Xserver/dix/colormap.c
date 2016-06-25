@@ -306,7 +306,7 @@ CreateColormap (Colormap mid, ScreenPtr pScreen, VisualPtr pVisual,
 	ppix = (Pixel *)xalloc(size * sizeof(Pixel));
 	if (!ppix)
 	{
-	    xfree(pmap);
+	    free(pmap);
 	    return (BadAlloc);
 	}
 	pmap->clientPixelsRed[client] = ppix;
@@ -352,8 +352,8 @@ CreateColormap (Colormap mid, ScreenPtr pScreen, VisualPtr pVisual,
 	    ppix = (Pixel *) xalloc(size * sizeof(Pixel));
 	    if (!ppix)
 	    {
-		xfree(pmap->clientPixelsRed[client]);
-		xfree(pmap);
+		free(pmap->clientPixelsRed[client]);
+		free(pmap);
 		return(BadAlloc);
 	    }
 	    pmap->clientPixelsGreen[client] = ppix;
@@ -368,9 +368,9 @@ CreateColormap (Colormap mid, ScreenPtr pScreen, VisualPtr pVisual,
 	    ppix = (Pixel *) xalloc(size * sizeof(Pixel));
 	    if (!ppix)
 	    {
-		xfree(pmap->clientPixelsGreen[client]);
-		xfree(pmap->clientPixelsRed[client]);
-		xfree(pmap);
+		free(pmap->clientPixelsGreen[client]);
+		free(pmap->clientPixelsRed[client]);
+		free(pmap);
 		return(BadAlloc);
 	    }
 	    pmap->clientPixelsBlue[client] = ppix;
@@ -438,7 +438,7 @@ FreeColormap (void * value, XID mid)
     if(pmap->clientPixelsRed)
     {
 	for(i = 0; i < MAXCLIENTS; i++)
-	    xfree(pmap->clientPixelsRed[i]);
+	    free(pmap->clientPixelsRed[i]);
     }
 
     if ((pmap->class == PseudoColor) || (pmap->class == GrayScale))
@@ -450,11 +450,11 @@ FreeColormap (void * value, XID mid)
 	    if(pent->fShared)
 	    {
 		if (--pent->co.shco.red->refcnt == 0)
-		    xfree(pent->co.shco.red);
+		    free(pent->co.shco.red);
 		if (--pent->co.shco.green->refcnt == 0)
-		    xfree(pent->co.shco.green);
+		    free(pent->co.shco.green);
 		if (--pent->co.shco.blue->refcnt == 0)
-		    xfree(pent->co.shco.blue);
+		    free(pent->co.shco.blue);
 	    }
 	}
     }
@@ -462,15 +462,15 @@ FreeColormap (void * value, XID mid)
     {
         for(i = 0; i < MAXCLIENTS; i++)
 	{
-            xfree(pmap->clientPixelsGreen[i]);
-            xfree(pmap->clientPixelsBlue[i]);
+            free(pmap->clientPixelsGreen[i]);
+            free(pmap->clientPixelsBlue[i]);
         }
     }
 
     if (pmap->devPrivates)
-	xfree(pmap->devPrivates);
+	free(pmap->devPrivates);
 
-    xfree(pmap);
+    free(pmap);
     return(Success);
 }
 
@@ -721,11 +721,11 @@ FreeCell (ColormapPtr pmap, Pixel i, int channel)
         if (pent->fShared)
 	{
 	    if(--pent->co.shco.red->refcnt == 0)
-		xfree(pent->co.shco.red);
+		free(pent->co.shco.red);
 	    if(--pent->co.shco.green->refcnt == 0)
-		xfree(pent->co.shco.green);
+		free(pent->co.shco.green);
 	    if(--pent->co.shco.blue->refcnt == 0)
-		xfree(pent->co.shco.blue);
+		free(pent->co.shco.blue);
 	    pent->fShared = FALSE;
 	}
 	pent->refcnt = 0;
@@ -1518,7 +1518,7 @@ FreePixels(register ColormapPtr pmap, register int client)
 	}
     }
 
-    xfree(ppixStart);
+    free(ppixStart);
     pmap->clientPixelsRed[client] = (Pixel *) NULL;
     pmap->numPixelsRed[client] = 0;
     if ((class | DynamicClass) == DirectColor) 
@@ -1527,7 +1527,7 @@ FreePixels(register ColormapPtr pmap, register int client)
 	if (class & DynamicClass)
 	    for (ppix = ppixStart, n = pmap->numPixelsGreen[client]; --n >= 0;)
 		FreeCell(pmap, *ppix++, GREENMAP);
-	xfree(ppixStart);
+	free(ppixStart);
 	pmap->clientPixelsGreen[client] = (Pixel *) NULL;
 	pmap->numPixelsGreen[client] = 0;
 
@@ -1535,7 +1535,7 @@ FreePixels(register ColormapPtr pmap, register int client)
 	if (class & DynamicClass)
 	    for (ppix = ppixStart, n = pmap->numPixelsBlue[client]; --n >= 0; )
 		FreeCell(pmap, *ppix++, BLUEMAP);
-	xfree(ppixStart);
+	free(ppixStart);
 	pmap->clientPixelsBlue[client] = (Pixel *) NULL;
 	pmap->numPixelsBlue[client] = 0;
     }
@@ -1556,7 +1556,7 @@ FreeClientPixels (void * value, XID fakeid)
     pmap = (ColormapPtr) LookupIDByType(pcr->mid, RT_COLORMAP);
     if (pmap)
 	FreePixels(pmap, pcr->client);
-    xfree(pcr);
+    free(pcr);
     return Success;
 }
 
@@ -1626,7 +1626,7 @@ AllocColorCells (int client, ColormapPtr pmap, int colors, int planes,
 	if (!AddResource(FakeClientID(client), RT_CMAPENTRY, (void *)pcr))
 	    ok = BadAlloc;
     } else if (pcr)
-	xfree(pcr);
+	free(pcr);
 
     return (ok);
 }
@@ -1717,7 +1717,7 @@ AllocColorPlanes (int client, ColormapPtr pmap, int colors,
 	if (!AddResource(FakeClientID(client), RT_CMAPENTRY, (void *)pcr))
 	    ok = BadAlloc;
     } else if (pcr)
-	xfree(pcr);
+	free(pcr);
 
     return (ok);
 }
@@ -2092,7 +2092,7 @@ AllocShared (ColormapPtr pmap, Pixel *ppix, int c, int r, int g, int b,
 	if (!(ppshared[z] = (SHAREDCOLOR *)xalloc(sizeof(SHAREDCOLOR))))
 	{
 	    for (z++ ; z < npixShared; z++)
-		xfree(ppshared[z]);
+		free(ppshared[z]);
 	    return FALSE;
 	}
     }
@@ -2372,7 +2372,7 @@ FreeCo (ColormapPtr pmap, int client, int color, int npixIn, Pixel *ppixIn, Pixe
 	else
 	{
 	    npixClient = 0;
-	    xfree(ppixClient);
+	    free(ppixClient);
     	    ppixClient = (Pixel *)NULL;
 	}
 	switch(color)

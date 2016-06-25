@@ -73,7 +73,7 @@ PictureGetFilterId (char *filter, int len, Bool makeit)
 	names = xalloc (sizeof (char *));
     if (!names)
     {
-	xfree (name);
+	free (name);
 	return -1;
     }
     filterNames = names;
@@ -119,8 +119,8 @@ PictureFreeFilterIds (void)
     int	    i;
 
     for (i = 0; i < nfilterNames; i++)
-	xfree (filterNames[i]);
-    xfree (filterNames);
+	free (filterNames[i]);
+    free (filterNames);
     nfilterNames = 0;
     filterNames = 0;
 }
@@ -272,8 +272,8 @@ PictureResetFilters (ScreenPtr pScreen)
 {
     PictureScreenPtr    ps = GetPictureScreen(pScreen);
 
-    xfree (ps->filters);
-    xfree (ps->filterAliases);
+    free (ps->filters);
+    free (ps->filterAliases);
     PictureFreeFilterIds ();
 }
 
@@ -340,7 +340,7 @@ SetPicturePictFilter (PicturePtr pPicture, PictFilterPtr pFilter,
 
         if (!new_params && nparams)
             return BadAlloc;
-        xfree (pPicture->filter_params);
+        free (pPicture->filter_params);
         pPicture->filter_params = new_params;
         pPicture->filter_nparams = nparams;
     }

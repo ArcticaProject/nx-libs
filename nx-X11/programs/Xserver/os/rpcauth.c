@@ -121,7 +121,7 @@ authdes_ezdecode(char *inmsg, int len)
     return (((struct authdes_cred *) r.rq_clntcred)->adc_fullname.name); 
 
 bad2:
-    xfree(r.rq_clntcred);
+    free(r.rq_clntcred);
 bad1:
     return ((char *)0); /* ((struct authdes_cred *) NULL); */
 }

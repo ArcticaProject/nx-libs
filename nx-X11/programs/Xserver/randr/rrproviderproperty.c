@@ -60,10 +60,10 @@ RRDeliverPropertyEvent(ScreenPtr pScreen, xEvent *event)
 static void
 RRDestroyProviderProperty(RRPropertyPtr prop)
 {
-    xfree(prop->valid_values);
-    xfree(prop->current.data);
-    xfree(prop->pending.data);
-    xfree(prop);
+    free(prop->valid_values);
+    free(prop->current.data);
+    free(prop->pending.data);
+    free(prop);
 }
 
 static void
@@ -222,10 +222,10 @@ RRChangeProviderProperty(RRProviderPtr provider, Atom property, Atom type,
                                              prop->propertyName, &new_value)) {
             if (add)
                 RRDestroyProviderProperty(prop);
-            xfree(new_value.data);
+            free(new_value.data);
             return BadValue;
         }
-        xfree(prop_value->data);
+        free(prop_value->data);
         *prop_value = new_value;
     }
 
@@ -373,7 +373,7 @@ RRConfigureProviderProperty(RRProviderPtr provider, Atom property,
      * loses any pending values
      */
     if (prop->is_pending && !pending) {
-        xfree(prop->pending.data);
+        free(prop->pending.data);
         RRInitProviderPropertyValue(&prop->pending);
     }
 
@@ -381,7 +381,7 @@ RRConfigureProviderProperty(RRProviderPtr provider, Atom property,
     prop->range = range;
     prop->immutable = immutable;
     prop->num_valid = num_values;
-    xfree(prop->valid_values);
+    free(prop->valid_values);
     prop->valid_values = new_values;
 
     if (add) {
@@ -437,7 +437,7 @@ ProcRRListProviderProperties(ClientPtr client)
     if (numProps) {
         client->pSwapReplyFunc = (ReplySwapPtr) Swap32Write;
         WriteSwappedDataToClient(client, numProps * sizeof(Atom), pAtoms);
-        xfree(pAtoms);
+        free(pAtoms);
     }
     return Success;
 }
@@ -487,7 +487,7 @@ ProcRRQueryProviderProperty(ClientPtr client)
         client->pSwapReplyFunc = (ReplySwapPtr) Swap32Write;
         WriteSwappedDataToClient(client, prop->num_valid * sizeof(INT32),
                                  extra);
-        xfree(extra);
+        free(extra);
     }
     return Success;
 }
@@ -741,7 +741,7 @@ ProcRRGetProviderProperty(ClientPtr client)
             break;
         }
         WriteSwappedDataToClient(client, len, extra);
-        xfree(extra);
+        free(extra);
     }
 
     if (stuff->delete && (reply.bytesAfter == 0)) {     /* delete the Property */

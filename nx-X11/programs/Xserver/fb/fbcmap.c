@@ -491,8 +491,8 @@ fbInitVisuals (VisualPtr    *visualp,
     visual = (VisualPtr) xalloc (nvisual * sizeof (VisualRec));
     if (!depth || !visual)
     {
-	xfree (depth);
-	xfree (visual);
+	free (depth);
+	free (visual);
 	return FALSE;
     }
     *depthp = depth;
@@ -549,7 +549,7 @@ fbInitVisuals (VisualPtr    *visualp,
 	    vid++;
 	    visual++;
 	}
-	xfree (visuals);
+	free (visuals);
     }
     fbVisuals = NULL;
     visual = *visualp;

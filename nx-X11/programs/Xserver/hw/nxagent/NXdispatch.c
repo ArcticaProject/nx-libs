@@ -197,7 +197,7 @@ void
 InitSelections()
 {
     if (CurrentSelections)
-	xfree(CurrentSelections);
+	free(CurrentSelections);
     CurrentSelections = (Selection *)NULL;
     NumCurrentSelections = 0;
 
@@ -1316,7 +1316,7 @@ CloseDownClient(register ClientPtr client)
 #ifdef SMART_SCHEDULE
 	SmartLastClient = NullClient;
 #endif
-	xfree(client);
+	free(client);
 
 	while (!clients[currentMaxClients-1])
 	    currentMaxClients--;

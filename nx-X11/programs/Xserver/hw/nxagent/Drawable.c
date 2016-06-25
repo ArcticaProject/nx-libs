@@ -359,7 +359,7 @@ nxagentSynchronizeDrawableDataFree:
 
   if (data != NULL)
   {
-    xfree(data);
+    free(data);
   }
 
 nxagentSynchronizeDrawableDataEnd:
@@ -860,7 +860,7 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
 
             if (cmpData != NULL)
             {
-              xfree(cmpData);
+              free(cmpData);
             }
           }
         }
@@ -1060,7 +1060,7 @@ nxagentSynchronizeRegionFree:
 
   if (data != NULL)
   {
-    xfree(data);
+    free(data);
   }
 
   RegionUninit(&exposeRegion);
@@ -2161,7 +2161,7 @@ unsigned long nxagentGetColor(DrawablePtr pDrawable, int xPixel, int yPixel)
     fprintf(stderr, "nxagentGetColor: WARNING! Failed to create the XImage.\n");
     #endif
 
-    xfree(data);
+    free(data);
 
     return -1;
   }
@@ -2387,7 +2387,7 @@ void nxagentFillRemoteRegion(DrawablePtr pDrawable, RegionPtr pRegion)
     XFillRectangles(nxagentDisplay, nxagentDrawable(pDrawable), nxagentGC(pGC),
                         pRects, nrects);
 
-    xfree(pRects);
+    free(pRects);
   }
 }
 

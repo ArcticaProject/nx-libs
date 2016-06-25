@@ -75,7 +75,7 @@ XvMCDestroyContextRes(void * data, XID id)
    if(!pContext->refcnt) {
   	 XvMCScreenPtr pScreenPriv = XVMC_GET_PRIVATE(pContext->pScreen);
 	(*pScreenPriv->adaptors[pContext->adapt_num].DestroyContext)(pContext);
-	xfree(pContext);
+	free(pContext);
    }	   
 
    return Success;
@@ -89,7 +89,7 @@ XvMCDestroySurfaceRes(void * data, XID id)
    XvMCScreenPtr pScreenPriv = XVMC_GET_PRIVATE(pContext->pScreen);
 
    (*pScreenPriv->adaptors[pContext->adapt_num].DestroySurface)(pSurface); 
-   xfree(pSurface);
+   free(pSurface);
 
    XvMCDestroyContextRes((void *)pContext, pContext->context_id);
 
@@ -105,7 +105,7 @@ XvMCDestroySubpictureRes(void * data, XID id)
    XvMCScreenPtr pScreenPriv = XVMC_GET_PRIVATE(pContext->pScreen);
 
    (*pScreenPriv->adaptors[pContext->adapt_num].DestroySubpicture)(pSubpict); 
-   xfree(pSubpict);
+   free(pSubpict);
 
    XvMCDestroyContextRes((void *)pContext, pContext->context_id);
 
@@ -259,7 +259,7 @@ ProcXvMCCreateContext(ClientPtr client)
     result = (*adaptor->CreateContext)(pPort, pContext, &dwords, &data);
 
     if(result != Success) {
-	xfree(pContext);
+	free(pContext);
 	return result;
     }
 
@@ -276,7 +276,7 @@ ProcXvMCCreateContext(ClientPtr client)
     AddResource(pContext->context_id, XvMCRTContext, pContext);
 
     if(data)
-	xfree(data);
+	free(data);
 
     return Success;
 }
@@ -324,7 +324,7 @@ ProcXvMCCreateSurface(ClientPtr client)
                 pSurface, &dwords, &data);
 
     if(result != Success) {
-        xfree(pSurface);
+        free(pSurface);
         return result;
     }
 
@@ -338,7 +338,7 @@ ProcXvMCCreateSurface(ClientPtr client)
     AddResource(pSurface->surface_id, XvMCRTSurface, pSurface);
 
     if(data)
-        xfree(data);
+        free(data);
 
     pContext->refcnt++;
 
@@ -427,7 +427,7 @@ ProcXvMCCreateSubpicture(ClientPtr client)
                 pSubpicture, &dwords, &data);
 
     if(result != Success) {
-        xfree(pSubpicture);
+        free(pSubpicture);
         return result;
     }
 
@@ -449,7 +449,7 @@ ProcXvMCCreateSubpicture(ClientPtr client)
     AddResource(pSubpicture->subpicture_id, XvMCRTSubpicture, pSubpicture);
 
     if(data)
-        xfree(data);
+        free(data);
 
     pContext->refcnt++;
 
@@ -708,7 +708,7 @@ XvMCCloseScreen (int i, ScreenPtr pScreen)
 
     pScreen->CloseScreen = pScreenPriv->CloseScreen;
 
-    xfree(pScreenPriv);
+    free(pScreenPriv);
 
     return (*pScreen->CloseScreen)(i, pScreen);
 }

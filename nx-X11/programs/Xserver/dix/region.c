@@ -172,7 +172,7 @@ Equipment Corporation.
         ((r1)->y1 <= (r2)->y1) && \
         ((r1)->y2 >= (r2)->y2) )
 
-#define xfreeData(reg) if ((reg)->data && (reg)->data->size) xfree((reg)->data)
+#define xfreeData(reg) if ((reg)->data && (reg)->data->size) free((reg)->data)
 
 #define RECTALLOC_BAIL(pReg,n,bail) \
 if (!(pReg)->data || (((pReg)->data->numRects + (n)) > (pReg)->data->size)) \
@@ -342,7 +342,7 @@ RegionDestroy(pReg)
     good(pReg);
     xfreeData(pReg);
     if (pReg != &RegionBrokenRegion)
-	xfree(pReg);
+	free(pReg);
 }
 
 Bool
@@ -795,7 +795,7 @@ RegionOp(
     }
 
     if (oldData)
-	xfree(oldData);
+	free(oldData);
 
     if (!(numRects = newReg->data->numRects))
     {
@@ -1355,13 +1355,13 @@ NextRect: ;
 	numRI -= half;
     }
     *badreg = ri[0].reg;
-    xfree(ri);
+    free(ri);
     good(badreg);
     return ret;
 bail:
     for (i = 0; i < numRI; i++)
 	xfreeData(&ri[i].reg);
-    xfree (ri);
+    free (ri);
     return RegionBreak (badreg);
 }
 
@@ -1443,7 +1443,7 @@ RegionFromRects(nrects, prect, ctype)
     }
     else
     {
-	xfree (pData);
+	free (pData);
     }
     return pRgn;
 }

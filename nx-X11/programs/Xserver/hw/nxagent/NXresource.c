@@ -313,7 +313,7 @@ FreeResource(XID id, RESTYPE skipDeleteFuncType)
                 #endif
 		if (rtype != skipDeleteFuncType)
 		    (*DeleteFuncs[rtype & TypeMask])(res->value, res->id);
-		xfree(res);
+		free(res);
 		if (*eltptr != elements)
 		    prev = head; /* prev may no longer be valid */
 		gotOne = TRUE;
@@ -349,7 +349,7 @@ FreeResourceByType(XID id, RESTYPE type, Bool skipFree)
                 #endif
 		if (!skipFree)
 		    (*DeleteFuncs[type & TypeMask])(res->value, res->id);
-		xfree(res);
+		free(res);
 		break;
 	    }
 	    else

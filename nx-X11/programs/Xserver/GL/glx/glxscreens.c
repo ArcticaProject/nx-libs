@@ -366,9 +366,9 @@ void __glXScreenReset(void)
       __glXFree(__glXActiveScreens[i].GLXextensions);
       __glXFree(__glXActiveScreens[i].GLextensions);
   }
-  xfree(__glXActiveScreens);
-  xfree(__glXHyperpipeFuncs);
-  xfree(__glXSwapBarrierFuncs);
+  free(__glXActiveScreens);
+  free(__glXHyperpipeFuncs);
+  free(__glXSwapBarrierFuncs);
   __glXNumHyperpipeFuncs = 0;
   __glXNumSwapBarrierFuncs = 0;
   __glXHyperpipeFuncs = NULL;

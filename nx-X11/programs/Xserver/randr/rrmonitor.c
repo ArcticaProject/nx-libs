@@ -298,7 +298,7 @@ RRMonitorInitList(ScreenPtr screen, RRMonitorListPtr mon_list, Bool get_active)
 static void
 RRMonitorFiniList(RRMonitorListPtr list)
 {
-    xfree(list->server_crtc);
+    free(list->server_crtc);
 }
 
 /* Construct a complete list of protocol-visible monitors, including
@@ -401,7 +401,7 @@ RRMonitorCountList(ScreenPtr screen)
 void
 RRMonitorFree(RRMonitorPtr monitor)
 {
-    xfree(monitor);
+    free(monitor);
 }
 
 RRMonitorPtr
@@ -573,8 +573,8 @@ RRMonitorFreeList(RRMonitorPtr monitors, int nmon)
     int m;
 
     for (m = 0; m < nmon; m++)
-        xfree(monitors[m].outputs);
-    xfree(monitors);
+        free(monitors[m].outputs);
+    free(monitors);
 }
 
 void
@@ -600,7 +600,7 @@ RRMonitorClose(ScreenPtr screen)
 
     for (m = 0; m < pScrPriv->numMonitors; m++)
         RRMonitorFree(pScrPriv->monitors[m]);
-    xfree(pScrPriv->monitors);
+    free(pScrPriv->monitors);
     pScrPriv->monitors = NULL;
     pScrPriv->numMonitors = 0;
 }

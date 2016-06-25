@@ -167,7 +167,7 @@ extmodSetup(void * module, void * opts, int *errmaj, int *errmin)
 		strcpy(s, "omit");
 		strcat(s, extensionModules[i].name);
 		o = xf86FindOption(opts, s);
-		xfree(s);
+		free(s);
 		if (o) {
 		    xf86MarkOptionUsed(o);
 		    continue;
