@@ -218,7 +218,7 @@ static int ScreenPrivateIndex;
 #define SetScreenPrivate(s,v) ((s)->devPrivates[ScreenPrivateIndex].ptr = (void *) v);
 #define SetupScreen(s)	ScreenSaverScreenPrivatePtr pPriv = (s ? GetScreenPrivate(s) : NULL)
 
-#define New(t)	((t *) xalloc (sizeof (t)))
+#define New(t)	((t *) malloc (sizeof (t)))
 
 /****************
  * ScreenSaverExtensionInit
@@ -939,7 +939,7 @@ ScreenSaverSetAttributes (ClientPtr client)
 	goto bail;
     }
     /* over allocate for override redirect */
-    values = (unsigned long *) xalloc ((len + 1) * sizeof (unsigned long));
+    values = (unsigned long *) malloc ((len + 1) * sizeof (unsigned long));
     if (!values)
     {
 	ret = BadAlloc;

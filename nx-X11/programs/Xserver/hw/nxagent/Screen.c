@@ -1149,13 +1149,13 @@ Bool nxagentOpenScreen(int index, ScreenPtr pScreen,
      * Initialize the depths.
      */
 
-    depths = (DepthPtr) xalloc(nxagentNumDepths * sizeof(DepthRec));
+    depths = (DepthPtr) malloc(nxagentNumDepths * sizeof(DepthRec));
 
     for (i = 0; i < nxagentNumDepths; i++)
     {
       depths[i].depth = nxagentDepths[i];
       depths[i].numVids = 0;
-      depths[i].vids = (VisualID *) xalloc(MAXVISUALSPERDEPTH * sizeof(VisualID));
+      depths[i].vids = (VisualID *) malloc(MAXVISUALSPERDEPTH * sizeof(VisualID));
     }
 
     /*
@@ -1170,7 +1170,7 @@ Bool nxagentOpenScreen(int index, ScreenPtr pScreen,
     numVisuals = 0;
     numDepths = nxagentNumDepths;
 
-    visuals = (VisualPtr) xalloc(nxagentNumVisuals * sizeof(VisualRec));
+    visuals = (VisualPtr) malloc(nxagentNumVisuals * sizeof(VisualRec));
 
     for (i = 0; i < nxagentNumVisuals; i++)
     {
@@ -1250,7 +1250,7 @@ Bool nxagentOpenScreen(int index, ScreenPtr pScreen,
 
         depths[depthIndex].depth = nxagentVisuals[i].depth;
         depths[depthIndex].numVids = 0;
-        depths[depthIndex].vids = (VisualID *) xalloc(MAXVISUALSPERDEPTH * sizeof(VisualID));
+        depths[depthIndex].vids = (VisualID *) malloc(MAXVISUALSPERDEPTH * sizeof(VisualID));
 
         numDepths++;
       }
@@ -1302,7 +1302,7 @@ Bool nxagentOpenScreen(int index, ScreenPtr pScreen,
                 "[%d] bitsPerPixel [%d] sizeInBytes [%d]\n", rootDepth, bitsPerPixel, sizeInBytes);
     #endif
 
-    pFrameBufferBits = (char *) Xalloc(sizeInBytes);
+    pFrameBufferBits = (char *) malloc(sizeInBytes);
 
     if (!pFrameBufferBits)
     {
@@ -3068,12 +3068,12 @@ int nxagentShadowPoll(PixmapPtr nxagentShadowPixmapPtr, GCPtr nxagentShadowGCPtr
         free(tBuffer);
       }
 
-      tBuffer = xalloc(length);
+      tBuffer = malloc(length);
 
       if (tBuffer == NULL)
       {
         #ifdef PANIC
-        fprintf(stderr, "nxagentShadowPoll: xalloc failed.\n");
+        fprintf(stderr, "nxagentShadowPoll: malloc failed.\n");
         #endif
 
         return -1;
@@ -3166,7 +3166,7 @@ void nxagentShadowAdaptDepth(unsigned int width, unsigned int height,
 
   length = nxagentImageLength(width, height, ZPixmap, 0, nxagentShadowDepth);
 
-  cBuffer = xalloc(length);
+  cBuffer = malloc(length);
   icBuffer = cBuffer;
 
   pVisual = nxagentImageVisual((DrawablePtr) nxagentShadowPixmapPtr, nxagentShadowDepth);
@@ -3423,7 +3423,7 @@ FIXME: The port information is not used at the moment and produces a
 
     #endif
 
-    local_buf = (char *) xalloc(strlen((char*)pszReturnData) + 100);
+    local_buf = (char *) malloc(strlen((char*)pszReturnData) + 100);
 
     if (local_buf)
     {
@@ -3771,7 +3771,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       if (screeninfo) {
 	free(screeninfo);
       }
-      if (!(screeninfo = xalloc(sizeof(XineramaScreenInfo)))) {
+      if (!(screeninfo = malloc(sizeof(XineramaScreenInfo)))) {
 	return FALSE;
       }
 
@@ -4157,7 +4157,7 @@ void nxagentSaveAreas(PixmapPtr pPixmap, RegionPtr prgnSave, int xorg, int yorg,
 
   nRects = RegionNumRects(&cleanRegion);
   size = nRects * sizeof(*pRects);
-  pRects = (XRectangle *) xalloc(size);
+  pRects = (XRectangle *) malloc(size);
   pBox = RegionRects(&cleanRegion);
 
   for (i = nRects; i-- > 0;)
@@ -4303,7 +4303,7 @@ void nxagentRestoreAreas(PixmapPtr pPixmap, RegionPtr prgnRestore, int xorg,
 
   nRects = RegionNumRects(clipRegion);
   size = nRects * sizeof(*pRects);
-  pRects = (XRectangle *) xalloc(size);
+  pRects = (XRectangle *) malloc(size);
   pBox = RegionRects(clipRegion);
 
   for (i = nRects; i-- > 0;)
@@ -4511,10 +4511,10 @@ void nxagentShowPixmap(PixmapPtr pPixmap, int x, int y, int width, int height)
 
   length = nxagentImageLength(width, height, format, 0, depth);
 
-  if ((data = xalloc(length)) == NULL)
+  if ((data = malloc(length)) == NULL)
   {
     #ifdef WARNING
-    fprintf(stderr, "nxagentShowPixmap: xalloc failed.\n");
+    fprintf(stderr, "nxagentShowPixmap: malloc failed.\n");
     #endif
 
     return;
@@ -4607,10 +4607,10 @@ void nxagentFbRestoreArea(PixmapPtr pPixmap, WindowPtr pWin, int xSrc, int ySrc,
 
   length = nxagentImageLength(width, height, format, 0, depth);
 
-  if ((data = xalloc(length)) == NULL)
+  if ((data = malloc(length)) == NULL)
   {
     #ifdef WARNING
-    fprintf(stderr, "nxagentFbRestoreArea: xalloc failed.\n");
+    fprintf(stderr, "nxagentFbRestoreArea: malloc failed.\n");
     #endif
 
     return;

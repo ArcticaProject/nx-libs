@@ -121,7 +121,7 @@ ProcRRGetProviders(ClientPtr client)
         };
         extraLen = rep.length << 2;
         if (extraLen) {
-            extra = xalloc(extraLen);
+            extra = malloc(extraLen);
             if (!extra)
                 return BadAlloc;
         } else
@@ -217,7 +217,7 @@ ProcRRGetProviderInfo(ClientPtr client)
 
     extraLen = rep.length << 2;
     if (extraLen) {
-        extra = xalloc(extraLen);
+        extra = malloc(extraLen);
         if (!extra)
             return BadAlloc;
     }

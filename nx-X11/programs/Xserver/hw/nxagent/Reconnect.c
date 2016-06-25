@@ -329,17 +329,17 @@ void nxagentInitReconnector(void)
 {
   nxagentReconnectTrap = 0;
 
-  reconnectLossyLevel[DISPLAY_STEP]    = xalloc(sizeof(int));
-  reconnectLossyLevel[SCREEN_STEP]     = xalloc(sizeof(int));
-  reconnectLossyLevel[FONT_STEP]       = xalloc(sizeof(int));
-  reconnectLossyLevel[PIXMAP_STEP]     = xalloc(sizeof(int));
-  reconnectLossyLevel[GC_STEP]         = xalloc(sizeof(int));
-  reconnectLossyLevel[CURSOR_STEP]     = xalloc(sizeof(int));
-  reconnectLossyLevel[COLORMAP_STEP]   = xalloc(sizeof(int));
-  reconnectLossyLevel[WINDOW_STEP]     = xalloc(sizeof(int));
-  reconnectLossyLevel[GLYPHSET_STEP]   = xalloc(sizeof(int));
-  reconnectLossyLevel[PICTFORMAT_STEP] = xalloc(sizeof(int));
-  reconnectLossyLevel[PICTURE_STEP]    = xalloc(sizeof(int));
+  reconnectLossyLevel[DISPLAY_STEP]    = malloc(sizeof(int));
+  reconnectLossyLevel[SCREEN_STEP]     = malloc(sizeof(int));
+  reconnectLossyLevel[FONT_STEP]       = malloc(sizeof(int));
+  reconnectLossyLevel[PIXMAP_STEP]     = malloc(sizeof(int));
+  reconnectLossyLevel[GC_STEP]         = malloc(sizeof(int));
+  reconnectLossyLevel[CURSOR_STEP]     = malloc(sizeof(int));
+  reconnectLossyLevel[COLORMAP_STEP]   = malloc(sizeof(int));
+  reconnectLossyLevel[WINDOW_STEP]     = malloc(sizeof(int));
+  reconnectLossyLevel[GLYPHSET_STEP]   = malloc(sizeof(int));
+  reconnectLossyLevel[PICTFORMAT_STEP] = malloc(sizeof(int));
+  reconnectLossyLevel[PICTURE_STEP]    = malloc(sizeof(int));
 }
 
 void nxagentDisconnectSession(void)
@@ -434,7 +434,7 @@ Bool nxagentReconnectSession(void)
 
     size = strlen(nxagentKeyboard);
 
-    if ((nxagentOldKeyboard = xalloc(size + 1)) != NULL)
+    if ((nxagentOldKeyboard = malloc(size + 1)) != NULL)
     {
       strncpy(nxagentOldKeyboard, nxagentKeyboard, size);
 

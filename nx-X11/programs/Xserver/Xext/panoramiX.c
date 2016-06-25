@@ -420,7 +420,7 @@ XineramaRegisterConnectionBlockCallback(void (*func)(void))
 {
     XineramaConnectionCallbackList *newlist;
 
-    if(!(newlist = xalloc(sizeof(XineramaConnectionCallbackList))))
+    if(!(newlist = malloc(sizeof(XineramaConnectionCallbackList))))
 	return FALSE;
 
     newlist->next = ConnectionCallbackList;
@@ -539,7 +539,7 @@ void PanoramiXExtensionInit(int argc, char *argv[])
 		return;
 	   }
 
-	   pScreenPriv = xalloc(sizeof(PanoramiXScreenRec));
+	   pScreenPriv = malloc(sizeof(PanoramiXScreenRec));
 	   pScreen->devPrivates[PanoramiXScreenIndex].ptr = 
 						(void *)pScreenPriv;
 	   if(!pScreenPriv) {
@@ -805,7 +805,7 @@ void PanoramiXConsolidate(void)
             PanoramiXDepths[PanoramiXNumDepths].numVids = 0;
             if(pDepth->numVids)
                 PanoramiXDepths[PanoramiXNumDepths].vids = 
-                      xalloc(sizeof(VisualID) * pDepth->numVids);      
+                      malloc(sizeof(VisualID) * pDepth->numVids);      
             else
                 PanoramiXDepths[PanoramiXNumDepths].vids = NULL;
             PanoramiXNumDepths++;
@@ -887,11 +887,11 @@ void PanoramiXConsolidate(void)
     } 
 
 
-    root = (PanoramiXRes *) xalloc(sizeof(PanoramiXRes));
+    root = (PanoramiXRes *) malloc(sizeof(PanoramiXRes));
     root->type = XRT_WINDOW;
-    defmap = (PanoramiXRes *) xalloc(sizeof(PanoramiXRes));
+    defmap = (PanoramiXRes *) malloc(sizeof(PanoramiXRes));
     defmap->type = XRT_COLORMAP;
-    saver = (PanoramiXRes *) xalloc(sizeof(PanoramiXRes));
+    saver = (PanoramiXRes *) malloc(sizeof(PanoramiXRes));
     saver->type = XRT_WINDOW;
 
 

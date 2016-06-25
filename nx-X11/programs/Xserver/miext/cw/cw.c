@@ -641,7 +641,7 @@ miInitializeCompositeWrapper(ScreenPtr pScreen)
     if (!AllocatePicturePrivate(pScreen, cwPictureIndex, 0))
 	return;
 #endif
-    pScreenPriv = (cwScreenPtr)xalloc(sizeof(cwScreenRec));
+    pScreenPriv = (cwScreenPtr)malloc(sizeof(cwScreenRec));
     if (!pScreenPriv)
 	return;
 

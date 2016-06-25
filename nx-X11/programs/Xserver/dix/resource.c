@@ -232,7 +232,7 @@ InitClientResources(ClientPtr client)
 	TypeMask = RC_LASTPREDEF - 1;
 	if (DeleteFuncs)
 	    free(DeleteFuncs);
-	DeleteFuncs = (DeleteType *)xalloc((lastResourceType + 1) *
+	DeleteFuncs = (DeleteType *)malloc((lastResourceType + 1) *
 					   sizeof(DeleteType));
 	if (!DeleteFuncs)
 	    return FALSE;
@@ -250,13 +250,13 @@ InitClientResources(ClientPtr client)
 #ifdef XResExtension
         if(ResourceNames)
             free(ResourceNames);
-        ResourceNames = xalloc((lastResourceType + 1) * sizeof(Atom));
+        ResourceNames = malloc((lastResourceType + 1) * sizeof(Atom));
         if(!ResourceNames)
            return FALSE;
 #endif
     }
     clientTable[i = client->index].resources =
-	(ResourcePtr *)xalloc(INITBUCKETS*sizeof(ResourcePtr));
+	(ResourcePtr *)malloc(INITBUCKETS*sizeof(ResourcePtr));
     if (!clientTable[i].resources)
 	return FALSE;
     clientTable[i].buckets = INITBUCKETS;
@@ -442,7 +442,7 @@ AddResource(XID id, RESTYPE type, void * value)
 	(rrec->hashsize < MAXHASHSIZE))
 	RebuildTable(client);
     head = &rrec->resources[Hash(client, id)];
-    res = (ResourcePtr)xalloc(sizeof(ResourceRec));
+    res = (ResourcePtr)malloc(sizeof(ResourceRec));
     if (!res)
     {
 	(*DeleteFuncs[type & TypeMask])(value, id);
@@ -477,7 +477,7 @@ RebuildTable(int client)
     tails = (ResourcePtr **)ALLOCATE_LOCAL(j * sizeof(ResourcePtr *));
     if (!tails)
 	return;
-    resources = (ResourcePtr *)xalloc(j * sizeof(ResourcePtr));
+    resources = (ResourcePtr *)malloc(j * sizeof(ResourcePtr));
     if (!resources)
     {
 	DEALLOCATE_LOCAL(tails);

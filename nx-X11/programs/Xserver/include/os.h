@@ -52,7 +52,7 @@ SOFTWARE.
 #define OS_H
 
 #include "misc.h"
-#define ALLOCATE_LOCAL_FALLBACK(_size) Xalloc((unsigned long)(_size))
+#define ALLOCATE_LOCAL_FALLBACK(_size) malloc((unsigned long)(_size))
 #define DEALLOCATE_LOCAL_FALLBACK(_ptr) free((void *)(_ptr))
 #include <nx-X11/Xalloca.h>
 #ifndef IN_MODULE

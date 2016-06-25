@@ -62,7 +62,7 @@ PictureGetFilterId (char *filter, int len, Bool makeit)
 	    return i;
     if (!makeit)
 	return -1;
-    name = xalloc (len + 1);
+    name = malloc (len + 1);
     if (!name)
 	return -1;
     memcpy (name, filter, len);
@@ -70,7 +70,7 @@ PictureGetFilterId (char *filter, int len, Bool makeit)
     if (filterNames)
 	names = xrealloc (filterNames, (nfilterNames + 1) * sizeof (char *));
     else
-	names = xalloc (sizeof (char *));
+	names = malloc (sizeof (char *));
     if (!names)
     {
 	free (name);
@@ -146,7 +146,7 @@ PictureAddFilter (ScreenPtr			    pScreen,
     if (ps->filters)
 	filters = xrealloc (ps->filters, (ps->nfilters + 1) * sizeof (PictFilterRec));
     else
-	filters = xalloc (sizeof (PictFilterRec));
+	filters = malloc (sizeof (PictFilterRec));
     if (!filters)
 	return -1;
     ps->filters = filters;
@@ -179,7 +179,7 @@ PictureSetFilterAlias (ScreenPtr pScreen, char *filter, char *alias)
 				(ps->nfilterAliases + 1) *
 				sizeof (PictFilterAliasRec));
 	else
-	    aliases = xalloc (sizeof (PictFilterAliasRec));
+	    aliases = malloc (sizeof (PictFilterAliasRec));
 	if (!aliases)
 	    return FALSE;
 	ps->filterAliases = aliases;
@@ -336,7 +336,7 @@ SetPicturePictFilter (PicturePtr pPicture, PictFilterPtr pFilter,
     }
 
     if (nparams != pPicture->filter_nparams) {
-        xFixed *new_params = xalloc (nparams * sizeof (xFixed));
+        xFixed *new_params = malloc (nparams * sizeof (xFixed));
 
         if (!new_params && nparams)
             return BadAlloc;

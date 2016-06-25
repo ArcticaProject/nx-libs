@@ -1272,7 +1272,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
   nxagentInitVisuals();
 
   nxagentNumDefaultColormaps = nxagentNumVisuals;
-  nxagentDefaultColormaps = (Colormap *)xalloc(nxagentNumDefaultColormaps *
+  nxagentDefaultColormaps = (Colormap *)malloc(nxagentNumDefaultColormaps *
                                              sizeof(Colormap));
 
   for (i = 0; i < nxagentNumDefaultColormaps; i++)
@@ -1651,7 +1651,7 @@ void nxagentInitPixmapFormats()
 XXX: Some X server doesn't list 1 among available depths...
 */
 
-  nxagentPixmapFormats = xalloc((nxagentNumDepths + 1) * sizeof(XPixmapFormatValues));
+  nxagentPixmapFormats = malloc((nxagentNumDepths + 1) * sizeof(XPixmapFormatValues));
 
   for (i = 1; i <= MAXDEPTH; i++)
   {
@@ -2063,7 +2063,7 @@ void nxagentBackupDisplayInfo(void)
     free(nxagentVisualHasBeenIgnored);
     nxagentVisualHasBeenIgnored = NULL;
   }
-  nxagentVisualHasBeenIgnored = xalloc(nxagentNumVisuals * sizeof(Bool));
+  nxagentVisualHasBeenIgnored = malloc(nxagentNumVisuals * sizeof(Bool));
   nxagentDefaultDepthRecBackup = DefaultDepth(nxagentDisplay, DefaultScreen(nxagentDisplay));
   nxagentDisplayWidthRecBackup = DisplayWidth(nxagentDisplay, DefaultScreen(nxagentDisplay));
   nxagentDisplayHeightRecBackup = DisplayHeight(nxagentDisplay, DefaultScreen(nxagentDisplay));

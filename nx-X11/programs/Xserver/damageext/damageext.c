@@ -199,7 +199,7 @@ ProcDamageCreate (ClientPtr client)
 	return BadValue;
     }
     
-    pDamageExt = xalloc (sizeof (DamageExtRec));
+    pDamageExt = malloc (sizeof (DamageExtRec));
     if (!pDamageExt)
 	return BadAlloc;
     pDamageExt->id = stuff->damage;

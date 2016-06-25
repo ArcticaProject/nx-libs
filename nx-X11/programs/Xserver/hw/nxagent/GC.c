@@ -673,7 +673,7 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
       {
         nRects = RegionNumRects((RegionPtr)pValue);
         size = nRects * sizeof(*pRects);
-        pRects = (XRectangle *) xalloc(size);
+        pRects = (XRectangle *) malloc(size);
         pBox = RegionRects((RegionPtr)pValue);
 
         for (i = nRects; i-- > 0;)
@@ -1280,7 +1280,7 @@ static void nxagentReconnectClip(GCPtr pGC, int type, void * pValue, int nRects)
       {
         nRects = RegionNumRects((RegionPtr)pValue);
         size = nRects * sizeof(*pRects);
-        pRects = (XRectangle *) xalloc(size);
+        pRects = (XRectangle *) malloc(size);
         pBox = RegionRects((RegionPtr)pValue);
         for (i = nRects; i-- > 0;) {
           pRects[i].x = pBox[i].x1;

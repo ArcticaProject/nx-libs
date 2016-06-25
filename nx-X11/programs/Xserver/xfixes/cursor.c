@@ -157,7 +157,7 @@ XFixesSelectCursorInput (ClientPtr	pClient,
     }
     if (!e)
     {
-	e = (CursorEventPtr) xalloc (sizeof (CursorEventRec));
+	e = (CursorEventPtr) malloc (sizeof (CursorEventRec));
 	if (!e)
 	    return BadAlloc;
 
@@ -312,7 +312,7 @@ ProcXFixesGetCursorImage (ClientPtr client)
     width = pCursor->bits->width;
     height = pCursor->bits->height;
     npixels = width * height;
-    rep = xalloc (sizeof (xXFixesGetCursorImageReply) +
+    rep = malloc (sizeof (xXFixesGetCursorImageReply) +
 		  npixels * sizeof (CARD32));
     if (!rep)
 	return BadAlloc;
@@ -463,7 +463,7 @@ ProcXFixesGetCursorImageAndName (ClientPtr client)
     name = pCursor->name ? NameForAtom (pCursor->name) : "";
     nbytes = strlen (name);
     nbytesRound = (nbytes + 3) & ~3;
-    rep = xalloc (sizeof (xXFixesGetCursorImageAndNameReply) +
+    rep = malloc (sizeof (xXFixesGetCursorImageAndNameReply) +
 		  npixels * sizeof (CARD32) + nbytesRound);
     if (!rep)
 	return BadAlloc;
@@ -740,7 +740,7 @@ XFixesCursorInit (void)
 	ScreenPtr	pScreen = screenInfo.screens[i];
 	CursorScreenPtr	cs;
 
-	cs = (CursorScreenPtr) xalloc (sizeof (CursorScreenRec));
+	cs = (CursorScreenPtr) malloc (sizeof (CursorScreenRec));
 	if (!cs)
 	    return FALSE;
 	Wrap (cs, pScreen, CloseScreen, CursorCloseScreen);

@@ -169,7 +169,7 @@ miSpriteInitialize (pScreen, cursorFuncs, screenFuncs)
 	miSpriteGeneration = serverGeneration;
     }
     
-    pScreenPriv = (miSpriteScreenPtr) xalloc (sizeof (miSpriteScreenRec));
+    pScreenPriv = (miSpriteScreenPtr) malloc (sizeof (miSpriteScreenRec));
     if (!pScreenPriv)
 	return FALSE;
     

@@ -849,7 +849,7 @@ ProcShapeSelectInput (client)
 
 	/* build the entry */
     	pNewShapeEvent = (ShapeEventPtr)
-			    xalloc (sizeof (ShapeEventRec));
+			    malloc (sizeof (ShapeEventRec));
     	if (!pNewShapeEvent)
 	    return BadAlloc;
     	pNewShapeEvent->next = 0;
@@ -871,7 +871,7 @@ ProcShapeSelectInput (client)
      	 */
     	if (!pHead)
     	{
-	    pHead = (ShapeEventPtr *) xalloc (sizeof (ShapeEventPtr));
+	    pHead = (ShapeEventPtr *) malloc (sizeof (ShapeEventPtr));
 	    if (!pHead ||
 		!AddResource (pWin->drawable.id, EventType, (void *)pHead))
 	    {

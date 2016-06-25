@@ -72,7 +72,6 @@ typedef int Bool;
 
 typedef unsigned short CARD16;
 
-#define xalloc malloc
 #define ALLOCATE_LOCAL malloc
 #define DEALLOCATE_LOCAL free
 
@@ -424,7 +423,7 @@ IntervalListCreateSet(pIntervals, nIntervals, pMem, memsize)
     else
     {
 	prls = (IntervalListSetPtr)
-	    xalloc(sizeof(IntervalListSet) + nIntervals * sizeof(RecordSetInterval));
+	    malloc(sizeof(IntervalListSet) + nIntervals * sizeof(RecordSetInterval));
 	if (!prls) goto bailout;
 	prls->baseSet.ops = &IntervalListSetOperations;
     }
@@ -611,7 +610,7 @@ int main(argc, argv)
 	    _RecordForceSetImplementation(IntervalListImplementation);
 	    rsize = RecordSetMemoryRequirements(intervals, nIntervals, &ralign);
 	    pad = (ralign - (bsize & (ralign - 1))) & (ralign - 1);
-	    bs = (RecordSetPtr)xalloc(bsize + pad + rsize );
+	    bs = (RecordSetPtr)malloc(bsize + pad + rsize );
 	    if (!bs)
 	    {
 		fprintf(stderr, "%d: failed to alloc memory for  sets\n",

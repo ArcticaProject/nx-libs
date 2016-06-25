@@ -362,7 +362,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
 
       if ((size = strlen(argv[i])) < 1024)
       {
-        if ((nxagentOptionFile = xalloc(size + 1)) == NULL)
+        if ((nxagentOptionFile = malloc(size + 1)) == NULL)
         {
           FatalError("malloc failed");
         }
@@ -726,7 +726,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
 
       if ((size = strlen(argv[i])) < 256)
       {
-        if ((nxagentKeyboard = xalloc(size + 1)) == NULL)
+        if ((nxagentKeyboard = malloc(size + 1)) == NULL)
         {
           FatalError("malloc failed");
         }
@@ -1537,7 +1537,7 @@ void nxagentProcessOptionsFile()
     goto nxagentProcessOptionsFileClose;
   }
 
-  if ((data = xalloc(sizeOfFile + 1)) == NULL)
+  if ((data = malloc(sizeOfFile + 1)) == NULL)
   {
     fprintf(stderr, "Warning: Memory allocation failed processing file '%s'.\n",
                 validateString(nxagentOptionFile));

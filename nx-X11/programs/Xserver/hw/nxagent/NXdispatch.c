@@ -204,7 +204,7 @@ InitSelections()
 #ifdef NXAGENT_CLIPBOARD
     {
       Selection *newsels;
-      newsels = (Selection *)xalloc(2 * sizeof(Selection));
+      newsels = (Selection *)malloc(2 * sizeof(Selection));
       if (!newsels)
         return;
       NumCurrentSelections += 2;
@@ -750,7 +750,7 @@ ProcSetSelectionOwner(register ClientPtr client)
 	    Selection *newsels;
 
 	    if (i == 0)
-		newsels = (Selection *)xalloc(sizeof(Selection));
+		newsels = (Selection *)malloc(sizeof(Selection));
 	    else
 		newsels = (Selection *)xrealloc(CurrentSelections,
 			    (NumCurrentSelections + 1) * sizeof(Selection));
@@ -1338,7 +1338,7 @@ InitClientPrivates(ClientPtr client)
 	ppriv = (DevUnion *)(client + 1);
     else
     {
-	ppriv = (DevUnion *)xalloc(totalClientSize - sizeof(ClientRec));
+	ppriv = (DevUnion *)malloc(totalClientSize - sizeof(ClientRec));
 	if (!ppriv)
 	    return 0;
     }

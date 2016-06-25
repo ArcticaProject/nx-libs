@@ -575,7 +575,7 @@ ProcXFixesFetchRegion (ClientPtr client)
     pBox = RegionRects (pRegion);
     nBox = RegionNumRects (pRegion);
     
-    reply = xalloc (sizeof (xXFixesFetchRegionReply) +
+    reply = malloc (sizeof (xXFixesFetchRegionReply) +
 		    nBox * sizeof (xRectangle));
     if (!reply)
 	return BadAlloc;
@@ -822,7 +822,7 @@ ProcXFixesExpandRegion (ClientPtr client)
     pSrc = RegionRects(pSource);
     if (nBoxes)
     {
-	pTmp = xalloc (nBoxes * sizeof (BoxRec));
+	pTmp = malloc (nBoxes * sizeof (BoxRec));
 	if (!pTmp)
 	    return BadAlloc;
 	for (i = 0; i < nBoxes; i++)

@@ -130,7 +130,7 @@ int PanoramiXCreateWindow(ClientPtr client)
 	}
     }
 
-    if(!(newWin = (PanoramiXRes *) xalloc(sizeof(PanoramiXRes))))
+    if(!(newWin = (PanoramiXRes *) malloc(sizeof(PanoramiXRes))))
         return BadAlloc;
 
     newWin->type = XRT_WINDOW;
@@ -660,7 +660,7 @@ int PanoramiXCreatePixmap(ClientPtr client)
 		client, stuff->drawable, XRC_DRAWABLE, SecurityReadAccess)))
 	return BadDrawable;
 
-    if(!(newPix = (PanoramiXRes *) xalloc(sizeof(PanoramiXRes))))
+    if(!(newPix = (PanoramiXRes *) malloc(sizeof(PanoramiXRes))))
 	return BadAlloc;
 
     newPix->type = XRT_PIXMAP;
@@ -760,7 +760,7 @@ int PanoramiXCreateGC(ClientPtr client)
 	}
     }
 
-    if(!(newGC = (PanoramiXRes *) xalloc(sizeof(PanoramiXRes))))
+    if(!(newGC = (PanoramiXRes *) malloc(sizeof(PanoramiXRes))))
         return BadAlloc;
 
     newGC->type = XRT_GC;
@@ -1844,7 +1844,7 @@ int PanoramiXGetImage(ClientPtr client)
 	    linesPerBuf = h;
     }
     length = linesPerBuf * widthBytesLine;
-    if(!(pBuf = xalloc(length)))
+    if(!(pBuf = malloc(length)))
 	return (BadAlloc);
 
     WriteReplyToClient(client, sizeof (xGetImageReply), &xgi);
@@ -2072,7 +2072,7 @@ int PanoramiXCreateColormap(ClientPtr client)
     if(!stuff->visual || (stuff->visual > 255)) 
 	return BadValue;
 
-    if(!(newCmap = (PanoramiXRes *) xalloc(sizeof(PanoramiXRes))))
+    if(!(newCmap = (PanoramiXRes *) malloc(sizeof(PanoramiXRes))))
         return BadAlloc;
 
     newCmap->type = XRT_COLORMAP;
@@ -2141,7 +2141,7 @@ PanoramiXCopyColormapAndFree(ClientPtr client)
 		SecurityReadAccess | SecurityWriteAccess)))
         return BadColor;
 
-    if(!(newCmap = (PanoramiXRes *) xalloc(sizeof(PanoramiXRes))))
+    if(!(newCmap = (PanoramiXRes *) malloc(sizeof(PanoramiXRes))))
         return BadAlloc;
 
     newCmap->type = XRT_COLORMAP;

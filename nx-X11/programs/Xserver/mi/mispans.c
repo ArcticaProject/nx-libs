@@ -418,8 +418,8 @@ void miFillUniqueSpanGroup(pDraw, pGC, spanGroup)
 	ylength = spanGroup->ymax - ymin + 1;
 
 	/* Allocate Spans for y buckets */
-	yspans = (Spans *) xalloc(ylength * sizeof(Spans));
-	ysizes = (int *) xalloc(ylength * sizeof (int));
+	yspans = (Spans *) malloc(ylength * sizeof(Spans));
+	ysizes = (int *) malloc(ylength * sizeof (int));
 
 	if (!yspans || !ysizes)
 	{
@@ -492,8 +492,8 @@ void miFillUniqueSpanGroup(pDraw, pGC, spanGroup)
 	} /* for i thorough Spans */
 
 	/* Now sort by x and uniquify each bucket into the final array */
-	points = (DDXPointPtr) xalloc(count * sizeof(DDXPointRec));
-	widths = (int *)       xalloc(count * sizeof(int));
+	points = (DDXPointPtr) malloc(count * sizeof(DDXPointRec));
+	widths = (int *)       malloc(count * sizeof(int));
 	if (!points || !widths)
 	{
 	    int	i;

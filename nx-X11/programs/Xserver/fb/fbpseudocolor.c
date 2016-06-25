@@ -271,7 +271,7 @@ xxCreateScreenResources(ScreenPtr pScreen)
     if (pScrPriv->addr)
 	pBits = pScrPriv->addr;
     else
-	pBits = xalloc(pScreen->width * pScreen->height
+	pBits = malloc(pScreen->width * pScreen->height
 		       * (BitsPerPixel(depth) >> 3));
     if (!pBits) return FALSE;
     
@@ -370,11 +370,11 @@ xxInitColormapPrivate(ColormapPtr pmap)
     
     if (xxMyVisual(pmap->pScreen,pmap->pVisual->vid)) {
 	DBG("CreateColormap\n");
-	pCmapPriv = (xxCmapPrivPtr) xalloc (sizeof (xxCmapPrivRec));
+	pCmapPriv = (xxCmapPrivPtr) malloc (sizeof (xxCmapPrivRec));
 	if (!pCmapPriv)
 	    return FALSE;
 	pmap->devPrivates[xxColormapPrivateIndex].ptr = (void *) pCmapPriv;
-	cmap = xalloc(sizeof (CARD32) * (1 << pScrPriv->myDepth));
+	cmap = malloc(sizeof (CARD32) * (1 << pScrPriv->myDepth));
 	if (!cmap)
 	return FALSE;
 
@@ -1109,7 +1109,7 @@ xxSetup(ScreenPtr pScreen, int myDepth, int baseDepth, char* addr, xxSyncFunc sy
     if (!AllocateGCPrivate (pScreen, xxGCPrivateIndex, sizeof (xxGCPrivRec)))
 	return FALSE;
 
-    pScrPriv = (xxScrPrivPtr) xalloc (sizeof (xxScrPrivRec));
+    pScrPriv = (xxScrPrivPtr) malloc (sizeof (xxScrPrivRec));
     if (!pScrPriv)
 	return FALSE;
     

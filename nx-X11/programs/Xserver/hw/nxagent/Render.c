@@ -270,11 +270,11 @@ void nxagentRenderExtensionInit()
 
 int nxagentCursorSaveRenderInfo(ScreenPtr pScreen, CursorPtr pCursor)
 {
-  pCursor -> devPriv[pScreen -> myNum] = xalloc(sizeof(nxagentPrivCursor));
+  pCursor -> devPriv[pScreen -> myNum] = malloc(sizeof(nxagentPrivCursor));
 
   if (nxagentCursorPriv(pCursor, pScreen) == NULL)
   {
-    FatalError("xalloc failed");
+    FatalError("malloc failed");
   }
 
   nxagentCursorUsesRender(pCursor, pScreen) = 1;
@@ -2249,7 +2249,7 @@ void nxagentAddGlyphs(GlyphSetPtr glyphSet, Glyph *gids, xGlyphInfo *gi,
 
   if (sizeImages > 0)
   {
-    normalizedImages = xalloc(sizeImages);
+    normalizedImages = malloc(sizeImages);
 
     if (normalizedImages != NULL)
     {

@@ -302,7 +302,7 @@ InitProximityClassDeviceStruct( DeviceIntPtr dev)
 {
     register ProximityClassPtr proxc;
 
-    proxc = (ProximityClassPtr)xalloc(sizeof(ProximityClassRec));
+    proxc = (ProximityClassPtr)malloc(sizeof(ProximityClassRec));
     if (!proxc)
 	return FALSE;
     dev->proximity = proxc;
@@ -460,7 +460,7 @@ DeviceFocusEvent(dev, type, mode, detail, pWin)
 	    }
 	}
 
-	sev = ev = (deviceStateNotify *) xalloc(evcount * sizeof(xEvent));
+	sev = ev = (deviceStateNotify *) malloc(evcount * sizeof(xEvent));
 	FixDeviceStateNotify (dev, ev, NULL, NULL, NULL, first);
 
 	if (b != NULL) {
@@ -741,7 +741,7 @@ AddExtensionClient (pWin, client, mask, mskidx)
 
     if (!pWin->optional && !MakeWindowOptional (pWin))
 	return BadAlloc;
-    others = (InputClients *) xalloc(sizeof(InputClients));
+    others = (InputClients *) malloc(sizeof(InputClients));
     if (!others)
 	return BadAlloc;
     if (!pWin->optional->inputMasks && !MakeInputMasks (pWin))
@@ -763,7 +763,7 @@ MakeInputMasks (pWin)
     struct _OtherInputMasks *imasks;
 
     imasks = (struct _OtherInputMasks *) 
-	xalloc (sizeof (struct _OtherInputMasks));
+	malloc (sizeof (struct _OtherInputMasks));
     if (!imasks)
 	return FALSE;
     bzero((char *) imasks, sizeof (struct _OtherInputMasks));
@@ -1027,7 +1027,7 @@ SetModifierMapping(client, dev, len, rlen, numKeyPerModifier, inputMap, k)
      *	list of keycodes.
      */
     if (inputMapLen) {
-	map = (KeyCode *)xalloc(inputMapLen);
+	map = (KeyCode *)malloc(inputMapLen);
         if (!map)
             return BadAlloc;
     }

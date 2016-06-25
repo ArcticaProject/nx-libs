@@ -1770,7 +1770,7 @@ DamageSetup (ScreenPtr pScreen)
     if (!AllocateWindowPrivate (pScreen, damageWinPrivateIndex, 0))
 	return FALSE;
 
-    pScrPriv = (DamageScrPrivPtr) xalloc (sizeof (DamageScrPrivRec));
+    pScrPriv = (DamageScrPrivPtr) malloc (sizeof (DamageScrPrivRec));
     if (!pScrPriv)
 	return FALSE;
 
@@ -1818,7 +1818,7 @@ DamageCreate (DamageReportFunc  damageReport,
 {
     DamagePtr	pDamage;
 
-    pDamage = xalloc (sizeof (DamageRec));
+    pDamage = malloc (sizeof (DamageRec));
     if (!pDamage)
 	return 0;
     pDamage->pNext = 0;

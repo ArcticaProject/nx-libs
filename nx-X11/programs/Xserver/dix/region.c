@@ -311,7 +311,7 @@ RegionCreate(rect, size)
 {
     register RegionPtr pReg;
     size_t newSize;
-    pReg = (RegionPtr)xalloc(sizeof(RegionRec));
+    pReg = (RegionPtr)malloc(sizeof(RegionRec));
     if (!pReg)
 	return &RegionBrokenRegion;
     if (rect)
@@ -324,7 +324,7 @@ RegionCreate(rect, size)
 	pReg->extents = RegionEmptyBox;
 	newSize = RegionSizeof(size);
 	if ((size > 1) && (newSize > 0) &&
-	    (pReg->data = xalloc(newSize)))
+	    (pReg->data = malloc(newSize)))
 	{
 	    pReg->data->size = size;
 	    pReg->data->numRects = 0;
@@ -367,7 +367,7 @@ RegionRectAlloc(
     {
 	n++;
 	rgnSize = RegionSizeof(n);
-	pRgn->data = (rgnSize > 0) ? xalloc(rgnSize) : NULL;
+	pRgn->data = (rgnSize > 0) ? malloc(rgnSize) : NULL;
 	if (!pRgn->data)
 	    return RegionBreak (pRgn);
 	pRgn->data->numRects = 1;
@@ -376,7 +376,7 @@ RegionRectAlloc(
     else if (!pRgn->data->size)
     {
 	rgnSize = RegionSizeof(n);
-	pRgn->data = (rgnSize > 0) ? xalloc(rgnSize) : NULL;
+	pRgn->data = (rgnSize > 0) ? malloc(rgnSize) : NULL;
 	if (!pRgn->data)
 	    return RegionBreak (pRgn);
 	pRgn->data->numRects = 0;
@@ -1235,7 +1235,7 @@ RegionValidate(badreg, pOverlap)
 
     /* Set up the first region to be the first rectangle in badreg */
     /* Note that step 2 code will never overflow the ri[0].reg rects array */
-    ri = (RegionInfo *) xalloc(4 * sizeof(RegionInfo));
+    ri = (RegionInfo *) malloc(4 * sizeof(RegionInfo));
     if (!ri)
 	return RegionBreak (badreg);
     sizeRI = 4;
@@ -1402,7 +1402,7 @@ RegionFromRects(nrects, prect, ctype)
 	return pRgn;
     }
     newSize = RegionSizeof(nrects);
-    pData = newSize > 0 ? xalloc(newSize) : NULL;
+    pData = newSize > 0 ? malloc(newSize) : NULL;
     if (!pData)
     {
 	RegionBreak (pRgn);
@@ -1469,7 +1469,7 @@ miRegionDataCopy(
     {
 	size_t newSize = RegionSizeof(src->data->numRects);
 	xfreeData(dst);
-	dst->data = newSize > 0 ? xalloc(newSize) : NULL;
+	dst->data = newSize > 0 ? malloc(newSize) : NULL;
 	if (!dst->data)
 	    return RegionBreak (dst);
     }

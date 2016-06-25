@@ -1251,7 +1251,7 @@ void nxagentSynchronizeShmPixmap(DrawablePtr pDrawable, int xPict, int yPict,
 
     nxagentFBTrap = 1;
 
-    if ((data = xalloc(length)) != NULL)
+    if ((data = malloc(length)) != NULL)
     {
       fbGetImage(nxagentVirtualDrawable(pDrawable), xPict, yPict,
                      width, height, format, 0xffffffff, data);
@@ -1373,7 +1373,7 @@ FIXME: If the pixmap has a different depth from the window, the
 
   length = nxagentImageLength(width, height, format, 0, depth);
 
-  if ((data = xalloc(length)) == NULL)
+  if ((data = malloc(length)) == NULL)
   {
     #ifdef WARNING
     fprintf(stderr, "nxagentPixmapOnShadowDisplay: WARNING! Failed to allocate memory for the operation.\n");
@@ -1535,7 +1535,7 @@ Bool nxagentFbOnShadowDisplay()
 
   length = nxagentImageLength(width, height, format, 0, depth);
 
-  if ((data = xalloc(length)) == NULL)
+  if ((data = malloc(length)) == NULL)
   {
     #ifdef WARNING
     fprintf(stderr, "nxagentFbOnShadowDisplay: WARNING! Failed to allocate memory for the operation.\n");

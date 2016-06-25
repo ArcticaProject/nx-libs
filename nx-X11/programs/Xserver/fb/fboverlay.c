@@ -363,7 +363,7 @@ fbOverlayFinishScreenInit(ScreenPtr	pScreen,
 	fbOverlayGeneration = serverGeneration;
     }
 
-    pScrPriv = xalloc (sizeof (FbOverlayScrPrivRec));
+    pScrPriv = malloc (sizeof (FbOverlayScrPrivRec));
     if (!pScrPriv)
 	return FALSE;
  

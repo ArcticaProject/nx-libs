@@ -111,7 +111,7 @@ RRCreateOutputProperty(Atom property)
 {
     RRPropertyPtr prop;
 
-    prop = (RRPropertyPtr) xalloc(sizeof(RRPropertyRec));
+    prop = (RRPropertyPtr) malloc(sizeof(RRPropertyRec));
     if (!prop)
         return NULL;
     prop->next = NULL;
@@ -189,7 +189,7 @@ RRChangeOutputProperty(RROutputPtr output, Atom property, Atom type,
 #ifndef NXAGENT_SERVER
         new_value.data = xallocarray(total_len, size_in_bytes);
 #else                           /* !defined(NXAGENT_SERVER) */
-        new_value.data = xalloc(total_len * size_in_bytes);
+        new_value.data = malloc(total_len * size_in_bytes);
 #endif                          /* !defined(NXAGENT_SERVER) */
         if (!new_value.data && total_len && size_in_bytes) {
             if (add)
@@ -362,7 +362,7 @@ RRConfigureOutputProperty(RROutputPtr output, Atom property,
 #ifndef NXAGENT_SERVER
     new_values = xallocarray(num_values, sizeof(INT32));
 #else                           /* !defined(NXAGENT_SERVER) */
-    new_values = xalloc(num_values * sizeof(INT32));
+    new_values = malloc(num_values * sizeof(INT32));
 #endif                          /* !defined(NXAGENT_SERVER) */
     if (!new_values && num_values) {
         if (add)
@@ -417,7 +417,7 @@ ProcRRListOutputProperties(ClientPtr client)
 #ifndef NXAGENT_SERVER
         if (!(pAtoms = xallocarray(numProps, sizeof(Atom))))
 #else                           /* !defined(NXAGENT_SERVER) */
-        if (!(pAtoms = xalloc(numProps * sizeof(Atom))))
+        if (!(pAtoms = malloc(numProps * sizeof(Atom))))
 #endif                          /* !defined(NXAGENT_SERVER) */
             return BadAlloc;
 
@@ -469,7 +469,7 @@ ProcRRQueryOutputProperty(ClientPtr client)
 #ifndef NXAGENT_SERVER
         extra = xallocarray(prop->num_valid, sizeof(INT32));
 #else                           /* !defined(NXAGENT_SERVER) */
-        extra = xalloc(prop->num_valid * sizeof(INT32));
+        extra = malloc(prop->num_valid * sizeof(INT32));
 #endif                          /* !defined(NXAGENT_SERVER) */
         if (!extra)
             return BadAlloc;
@@ -702,7 +702,7 @@ ProcRRGetOutputProperty(ClientPtr client)
     len = min(n - ind, 4 * stuff->longLength);
 
     if (len) {
-        extra = xalloc(len);
+        extra = malloc(len);
         if (!extra)
             return BadAlloc;
     }

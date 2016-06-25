@@ -274,7 +274,7 @@ CreateColormap (Colormap mid, ScreenPtr pScreen, VisualPtr pVisual,
     if ((class | DynamicClass) == DirectColor)
 	sizebytes *= 3;
     sizebytes += sizeof(ColormapRec);
-    pmap = (ColormapPtr) xalloc(sizebytes);
+    pmap = (ColormapPtr) malloc(sizebytes);
     if (!pmap)
 	return (BadAlloc);
     pmap->red = (EntryPtr)((char *)pmap + sizeof(ColormapRec));    
@@ -303,7 +303,7 @@ CreateColormap (Colormap mid, ScreenPtr pScreen, VisualPtr pVisual,
 	for (pent = &pmap->red[size - 1]; pent >= pmap->red; pent--)
 	    pent->refcnt = AllocPrivate;
 	pmap->freeRed = 0;
-	ppix = (Pixel *)xalloc(size * sizeof(Pixel));
+	ppix = (Pixel *)malloc(size * sizeof(Pixel));
 	if (!ppix)
 	{
 	    free(pmap);
@@ -349,7 +349,7 @@ CreateColormap (Colormap mid, ScreenPtr pScreen, VisualPtr pVisual,
 	    for(pent = &pmap->green[size-1]; pent >= pmap->green; pent--)
 		pent->refcnt = AllocPrivate;
 	    pmap->freeGreen = 0;
-	    ppix = (Pixel *) xalloc(size * sizeof(Pixel));
+	    ppix = (Pixel *) malloc(size * sizeof(Pixel));
 	    if (!ppix)
 	    {
 		free(pmap->clientPixelsRed[client]);
@@ -365,7 +365,7 @@ CreateColormap (Colormap mid, ScreenPtr pScreen, VisualPtr pVisual,
 	    for(pent = &pmap->blue[size-1]; pent >= pmap->blue; pent--)
 		pent->refcnt = AllocPrivate;
 	    pmap->freeBlue = 0;
-	    ppix = (Pixel *) xalloc(size * sizeof(Pixel));
+	    ppix = (Pixel *) malloc(size * sizeof(Pixel));
 	    if (!ppix)
 	    {
 		free(pmap->clientPixelsGreen[client]);
@@ -963,7 +963,7 @@ AllocColor (ColormapPtr pmap,
     {
 	colorResource	*pcr;
 
-	pcr = (colorResource *) xalloc(sizeof(colorResource));
+	pcr = (colorResource *) malloc(sizeof(colorResource));
 	if (!pcr)
 	{
 	    (void)FreeColors(pmap, client, 1, pPix, (Pixel)0);
@@ -1578,7 +1578,7 @@ AllocColorCells (int client, ColormapPtr pmap, int colors, int planes,
 	oldcount += pmap->numPixelsGreen[client] + pmap->numPixelsBlue[client];
     if (!oldcount && (CLIENT_ID(pmap->mid) != client))
     {
-	pcr = (colorResource *) xalloc(sizeof(colorResource));
+	pcr = (colorResource *) malloc(sizeof(colorResource));
 	if (!pcr)
 	    return (BadAlloc);
     }
@@ -1653,7 +1653,7 @@ AllocColorPlanes (int client, ColormapPtr pmap, int colors,
 	oldcount += pmap->numPixelsGreen[client] + pmap->numPixelsBlue[client];
     if (!oldcount && (CLIENT_ID(pmap->mid) != client))
     {
-	pcr = (colorResource *) xalloc(sizeof(colorResource));
+	pcr = (colorResource *) malloc(sizeof(colorResource));
 	if (!pcr)
 	    return (BadAlloc);
     }
@@ -2089,7 +2089,7 @@ AllocShared (ColormapPtr pmap, Pixel *ppix, int c, int r, int g, int b,
     ppshared = psharedList;
     for (z = npixShared; --z >= 0; )
     {
-	if (!(ppshared[z] = (SHAREDCOLOR *)xalloc(sizeof(SHAREDCOLOR))))
+	if (!(ppshared[z] = (SHAREDCOLOR *)malloc(sizeof(SHAREDCOLOR))))
 	{
 	    for (z++ ; z < npixShared; z++)
 		free(ppshared[z]);

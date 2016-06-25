@@ -259,12 +259,12 @@ miInitIndexed (ScreenPtr	pScreen,
 	    pixels[p] = p;
     }
     
-    pIndexed = xalloc (sizeof (miIndexedRec));
+    pIndexed = malloc (sizeof (miIndexedRec));
     if (!pIndexed)
 	return FALSE;
     
     pFormat->index.nvalues = num;
-    pFormat->index.pValues = xalloc (num * sizeof (xIndexValue));
+    pFormat->index.pValues = malloc (num * sizeof (xIndexValue));
     if (!pFormat->index.pValues)
     {
 	free (pIndexed);

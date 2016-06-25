@@ -63,7 +63,7 @@ RROldModeAdd(RROutputPtr output, RRScreenSizePtr size, int refresh)
                          (output->numModes + 1) * sizeof(RRModePtr));
 #endif                          /* !defined(NXAGENT_SERVER) */
     else
-        modes = xalloc(sizeof(RRModePtr));
+        modes = malloc(sizeof(RRModePtr));
     if (!modes) {
         RRModeDestroy(mode);
         FreeResource(mode->mode.id, 0);

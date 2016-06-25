@@ -234,7 +234,7 @@ fbShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
 
         length = nxagentImageLength(sw, sh, format, 0, depth);
 
-        if ((newdata = xalloc(length)) != NULL)
+        if ((newdata = malloc(length)) != NULL)
         {
           fbGetImage((DrawablePtr) pPixmap, sx, sy, sw, sh, format, AllPlanes, newdata);
           (*pGC->ops->PutImage)(dst, pGC, depth, dx, dy, sw, sh, 0, format, newdata);

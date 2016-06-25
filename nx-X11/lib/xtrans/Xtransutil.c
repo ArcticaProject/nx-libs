@@ -215,7 +215,7 @@ TRANS(ConvertAddress)(int *familyp, int *addrlenp, Xtransaddr **addrp)
 		*addrp = NULL;
 	    }
 	    if (!*addrp)
-		*addrp = (Xtransaddr *) xalloc (len + 1);
+		*addrp = (Xtransaddr *) malloc (len + 1);
 	    if (*addrp) {
 		strcpy ((char *) *addrp, hostnamebuf);
 		*addrlenp = len;
@@ -262,7 +262,7 @@ TRANS(GetMyNetworkId) (XtransConnInfo ciptr)
     case AF_UNIX:
     {
 	struct sockaddr_un *saddr = (struct sockaddr_un *) addr;
-	networkId = (char *) xalloc (3 + strlen (transName) +
+	networkId = (char *) malloc (3 + strlen (transName) +
 	    strlen (hostnamebuf) + strlen (saddr->sun_path));
 	sprintf (networkId, "%s/%s:%s", transName,
 	    hostnamebuf, saddr->sun_path);
@@ -292,7 +292,7 @@ TRANS(GetMyNetworkId) (XtransConnInfo ciptr)
 	    portnum = ntohs (saddr->sin_port);
 
 	sprintf (portnumbuf, "%d", portnum);
-	networkId = (char *) xalloc (3 + strlen (transName) +
+	networkId = (char *) malloc (3 + strlen (transName) +
 	    strlen (hostnamebuf) + strlen (portnumbuf));
 	sprintf (networkId, "%s/%s:%s", transName, hostnamebuf, portnumbuf);
 	break;
@@ -304,7 +304,7 @@ TRANS(GetMyNetworkId) (XtransConnInfo ciptr)
     {
 	struct sockaddr_dn *saddr = (struct sockaddr_dn *) addr;
 
-	networkId = (char *) xalloc (
+	networkId = (char *) malloc (
 	    13 + strlen (hostnamebuf) + saddr->sdn_objnamel);
 	sprintf (networkId, "dnet/%s::%s",
 	    hostnamebuf, saddr->sdn_objname);
@@ -453,7 +453,7 @@ TRANS(GetPeerNetworkId) (XtransConnInfo ciptr)
     }
 
 
-    hostname = (char *) xalloc (
+    hostname = (char *) malloc (
 	strlen (ciptr->transptr->TransName) + strlen (addr) + 2);
     strcpy (hostname, ciptr->transptr->TransName);
     strcat (hostname, "/");

@@ -373,7 +373,7 @@ miInitializeBackingStore (pScreen)
     }
     if (!AllocateGCPrivate(pScreen, miBSGCIndex, 0))
 	return;
-    pScreenPriv = (miBSScreenPtr) xalloc (sizeof (miBSScreenRec));
+    pScreenPriv = (miBSScreenPtr) malloc (sizeof (miBSScreenRec));
     if (!pScreenPriv)
 	return;
 
@@ -903,7 +903,7 @@ miBSCreateGCPrivate (pGC)
 {
     miBSGCRec	*pPriv;
 
-    pPriv = (miBSGCRec *) xalloc (sizeof (miBSGCRec));
+    pPriv = (miBSGCRec *) malloc (sizeof (miBSGCRec));
     if (!pPriv)
 	return FALSE;
     pPriv->pBackingGC = NULL;
@@ -2581,7 +2581,7 @@ miBSAllocate(pWin)
     if (!(pBackingStore = (miBSWindowPtr)pWin->backStorage))
     {
 
-	pBackingStore = (miBSWindowPtr)xalloc(sizeof(miBSWindowRec));
+	pBackingStore = (miBSWindowPtr)malloc(sizeof(miBSWindowRec));
 	if (!pBackingStore)
 	    return;
 

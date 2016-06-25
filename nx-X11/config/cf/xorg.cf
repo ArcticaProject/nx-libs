@@ -512,10 +512,6 @@ IPLAN2P8_DEFS = -DUSE_IPLAN2P8
 # endif
 #endif
 
-#ifndef UseInternalMalloc
-# define UseInternalMalloc	NO
-#endif
-
 #ifndef HasDlsymBug
 # define HasDlsymBug		NO
 #endif

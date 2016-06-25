@@ -912,7 +912,7 @@ miComputeWideEllipse(
     {
 	if (spdata)
 	    free(spdata);
-	spdata = (miArcSpanData *)xalloc(sizeof(miArcSpanData) +
+	spdata = (miArcSpanData *)malloc(sizeof(miArcSpanData) +
 					 sizeof(miArcSpan) * (k + 2));
 	lruent->spdata = spdata;
 	if (!spdata)
@@ -1396,7 +1396,7 @@ miArcJoin(DrawablePtr pDraw, GCPtr pGC, miArcFacePtr pLeft,
 		arc.height = width;
 		arc.angle1 = -miDatan2 (corner.y - center.y, corner.x - center.x);
 		arc.angle2 = a;
-		pArcPts = (SppPointPtr) xalloc (3 * sizeof (SppPointRec));
+		pArcPts = (SppPointPtr) malloc (3 * sizeof (SppPointRec));
 		if (!pArcPts)
 		    return;
 		pArcPts[0].x = otherCorner.x;
@@ -1641,10 +1641,10 @@ miDatan2 (double dy, double dx)
  * This procedure allocates the space necessary to fit the arc points.
  * Sometimes it's convenient for those points to be at the end of an existing
  * array. (For example, if we want to leave a spare point to make sectors
- * instead of segments.)  So we pass in the xalloc()ed chunk that contains the
+ * instead of segments.)  So we pass in the malloc()ed chunk that contains the
  * array and an index saying where we should start stashing the points.
  * If there isn't an array already, we just pass in a null pointer and 
- * count on xrealloc() to handle the null pointer correctly.
+ * count on realloc() to handle the null pointer correctly.
  */
 static int
 miGetArcPts(
@@ -1691,7 +1691,7 @@ miGetArcPts(
     count++;
 
     cdt = 2 * miDcos(dt);
-    if (!(poly = (SppPointPtr) xrealloc((void *)*ppPts,
+    if (!(poly = (SppPointPtr) realloc((void *)*ppPts,
 					(cpt + count) * sizeof(SppPointRec))))
 	return(0);
     *ppPts = poly;
@@ -1933,7 +1933,7 @@ miComputeArcs (
 	data = (struct arcData *) ALLOCATE_LOCAL (narcs * sizeof (struct arcData));
 	if (!data)
 	    return (miPolyArcPtr)NULL;
-	arcs = (miPolyArcPtr) xalloc (sizeof (*arcs) * (isDoubleDash ? 2 : 1));
+	arcs = (miPolyArcPtr) malloc (sizeof (*arcs) * (isDoubleDash ? 2 : 1));
 	if (!arcs)
 	{
 	    DEALLOCATE_LOCAL(data);
@@ -3146,7 +3146,7 @@ realAllocSpan ()
 	register struct finalSpan	*span;
 	register int			i;
 
-	newChunk = (struct finalSpanChunk *) xalloc (sizeof (struct finalSpanChunk));
+	newChunk = (struct finalSpanChunk *) malloc (sizeof (struct finalSpanChunk));
 	if (!newChunk)
 		return (struct finalSpan *) NULL;
 	newChunk->next = chunks;
@@ -3251,7 +3251,7 @@ realFindSpan (int y)
 		else
 			change = SPAN_REALLOC;
 		newSize = finalSize + change;
-		newSpans = (struct finalSpan **) xalloc
+		newSpans = (struct finalSpan **) malloc
  					(newSize * sizeof (struct finalSpan *));
 		if (!newSpans)
 		    return (struct finalSpan **)NULL;

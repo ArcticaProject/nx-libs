@@ -407,7 +407,7 @@ XdmcpRegisterAuthentication (
 				     AuthenticationNames.length + 1) &&
 	  XdmcpReallocARRAYofARRAY8 (&AuthenticationDatas,
 				     AuthenticationDatas.length + 1) &&
-	  (newFuncs = (AuthenticationFuncsPtr) xalloc (
+	  (newFuncs = (AuthenticationFuncsPtr) malloc (
 			(AuthenticationNames.length + 1) * sizeof (AuthenticationFuncsRec)))))
     {
 	XdmcpDisposeARRAY8 (&AuthenticationName);
@@ -507,7 +507,7 @@ XdmcpRegisterConnection (
 	    return;
 	}
     }
-    newAddress = (CARD8 *) xalloc (addrlen * sizeof (CARD8));
+    newAddress = (CARD8 *) malloc (addrlen * sizeof (CARD8));
     if (!newAddress)
 	return;
     if (!XdmcpReallocARRAY16 (&ConnectionTypes, ConnectionTypes.length + 1))
@@ -548,7 +548,7 @@ XdmcpRegisterAuthorization (char *name, int namelen)
     ARRAY8  authName;
     int	    i;
 
-    authName.data = (CARD8 *) xalloc (namelen * sizeof (CARD8));
+    authName.data = (CARD8 *) malloc (namelen * sizeof (CARD8));
     if (!authName.data)
 	return;
     if (!XdmcpReallocARRAYofARRAY8 (&AuthorizationNames, AuthorizationNames.length +1))

@@ -310,12 +310,12 @@ main(int argc, char *argv[], char *envp[])
 	{
 	    CreateWellKnownSockets();
 	    InitProcVectors();
-	    clients = (ClientPtr *)xalloc(MAXCLIENTS * sizeof(ClientPtr));
+	    clients = (ClientPtr *)malloc(MAXCLIENTS * sizeof(ClientPtr));
 	    if (!clients)
 		FatalError("couldn't create client array");
 	    for (i=1; i<MAXCLIENTS; i++) 
 		clients[i] = NullClient;
-	    serverClient = (ClientPtr)xalloc(sizeof(ClientRec));
+	    serverClient = (ClientPtr)malloc(sizeof(ClientRec));
 	    if (!serverClient)
 		FatalError("couldn't create server client");
 	    InitClient(serverClient, 0, (void *)NULL);
@@ -556,7 +556,7 @@ CreateConnectionBlock()
             ((setup.nbytesVendor + 3) & ~3) +
 	    (setup.numFormats * sizeof(xPixmapFormat)) +
             (setup.numRoots * sizeof(xWindowRoot));
-    ConnectionInfo = (char *) xalloc(lenofblock);
+    ConnectionInfo = (char *) malloc(lenofblock);
     if (!ConnectionInfo)
 	return FALSE;
 

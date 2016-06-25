@@ -456,7 +456,7 @@ rrGetMultiScreenResources(ClientPtr client, Bool query, ScreenPtr pScreen)
 
     extraLen = rep.length << 2;
     if (extraLen) {
-        extra = xalloc(extraLen);
+        extra = malloc(extraLen);
         if (!extra) {
             return BadAlloc;
         }
@@ -595,7 +595,7 @@ rrGetScreenResources(ClientPtr client, Bool query)
 
         extraLen = rep.length << 2;
         if (extraLen) {
-            extra = xalloc(extraLen);
+            extra = malloc(extraLen);
             if (!extra) {
                 free(modes);
                 return BadAlloc;
@@ -714,7 +714,7 @@ RR10GetData(ScreenPtr pScreen, RROutputPtr output)
     Bool *used;
 
     /* Make sure there is plenty of space for any combination */
-    data = xalloc(sizeof(RR10DataRec) +
+    data = malloc(sizeof(RR10DataRec) +
                   sizeof(RRScreenSize) * nmode +
                   sizeof(RRScreenRate) * nmode + sizeof(Bool) * nmode);
     if (!data)
@@ -874,7 +874,7 @@ ProcRRGetScreenInfo(ClientPtr client)
             extraLen += rep.nrateEnts * sizeof(CARD16);
 
         if (extraLen) {
-            extra = (CARD8 *) xalloc(extraLen);
+            extra = (CARD8 *) malloc(extraLen);
             if (!extra) {
                 free(pData);
                 return BadAlloc;

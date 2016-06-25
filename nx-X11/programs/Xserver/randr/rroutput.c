@@ -83,13 +83,13 @@ RROutputCreate(ScreenPtr pScreen,
                            (pScrPriv->numOutputs + 1) * sizeof(RROutputPtr));
 #endif                          /* !defined(NXAGENT_SERVER) */
     else
-        outputs = xalloc(sizeof(RROutputPtr));
+        outputs = malloc(sizeof(RROutputPtr));
     if (!outputs)
         return FALSE;
 
     pScrPriv->outputs = outputs;
 
-    output = xalloc(sizeof(RROutputRec) + nameLength + 1);
+    output = malloc(sizeof(RROutputRec) + nameLength + 1);
     if (!output)
         return NULL;
     output->id = FakeClientID(0);
@@ -147,7 +147,7 @@ RROutputSetClones(RROutputPtr output, RROutputPtr * clones, int numClones)
 #ifndef NXAGENT_SERVER
         newClones = xallocarray(numClones, sizeof(RROutputPtr));
 #else                           /* !defined(NXAGENT_SERVER) */
-        newClones = xalloc(numClones * sizeof(RROutputPtr));
+        newClones = malloc(numClones * sizeof(RROutputPtr));
 #endif                          /* !defined(NXAGENT_SERVER) */
         if (!newClones)
             return FALSE;
@@ -184,7 +184,7 @@ RROutputSetModes(RROutputPtr output,
 #ifndef NXAGENT_SERVER
         newModes = xallocarray(numModes, sizeof(RRModePtr));
 #else                           /* !defined(NXAGENT_SERVER) */
-        newModes = xalloc(numModes * sizeof(RRModePtr));
+        newModes = malloc(numModes * sizeof(RRModePtr));
 #endif                          /* !defined(NXAGENT_SERVER) */
         if (!newModes)
             return FALSE;
@@ -236,7 +236,7 @@ RROutputAddUserMode(RROutputPtr output, RRModePtr mode)
                             (output->numUserModes + 1) * sizeof(RRModePtr));
 #endif                          /* !defined(NXAGENT_SERVER) */
     else
-        newModes = xalloc(sizeof(RRModePtr));
+        newModes = malloc(sizeof(RRModePtr));
     if (!newModes)
         return BadAlloc;
 
@@ -292,7 +292,7 @@ RROutputSetCrtcs(RROutputPtr output, RRCrtcPtr * crtcs, int numCrtcs)
 #ifndef NXAGENT_SERVER
         newCrtcs = xallocarray(numCrtcs, sizeof(RRCrtcPtr));
 #else                           /* !defined(NXAGENT_SERVER) */
-        newCrtcs = xalloc(numCrtcs * sizeof(RRCrtcPtr));
+        newCrtcs = malloc(numCrtcs * sizeof(RRCrtcPtr));
 #endif                          /* !defined(NXAGENT_SERVER) */
         if (!newCrtcs)
             return FALSE;
@@ -494,7 +494,7 @@ ProcRRGetOutputInfo(ClientPtr client)
 
     if (extraLen) {
         rep.length += bytes_to_int32(extraLen);
-        extra = xalloc(extraLen);
+        extra = malloc(extraLen);
         if (!extra)
             return BadAlloc;
     }

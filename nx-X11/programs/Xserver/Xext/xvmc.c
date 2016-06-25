@@ -242,7 +242,7 @@ ProcXvMCCreateContext(ClientPtr client)
        (stuff->height > surface->max_height))
         return BadValue;
 
-    if(!(pContext = xalloc(sizeof(XvMCContextRec)))) {
+    if(!(pContext = malloc(sizeof(XvMCContextRec)))) {
 	return BadAlloc;
     }
 
@@ -313,7 +313,7 @@ ProcXvMCCreateSurface(ClientPtr client)
 
     pScreenPriv = XVMC_GET_PRIVATE(pContext->pScreen);
 
-    if(!(pSurface = xalloc(sizeof(XvMCSurfaceRec)))) 
+    if(!(pSurface = malloc(sizeof(XvMCSurfaceRec)))) 
         return BadAlloc;
 
     pSurface->surface_id = stuff->surface_id;
@@ -408,7 +408,7 @@ ProcXvMCCreateSubpicture(ClientPtr client)
        (stuff->height > surface->subpicture_max_height))
 	return BadValue;
 
-    if(!(pSubpicture = xalloc(sizeof(XvMCSubpictureRec))))
+    if(!(pSubpicture = malloc(sizeof(XvMCSubpictureRec))))
         return BadAlloc;
 
     pSubpicture->subpicture_id = stuff->subpicture_id;
@@ -726,7 +726,7 @@ XvMCScreenInit(ScreenPtr pScreen, int num, XvMCAdaptorPtr pAdapt)
 	XvMCGeneration = serverGeneration;
    }
 
-   if(!(pScreenPriv = (XvMCScreenPtr)xalloc(sizeof(XvMCScreenRec))))
+   if(!(pScreenPriv = (XvMCScreenPtr)malloc(sizeof(XvMCScreenRec))))
 	return BadAlloc;
 
    pScreen->devPrivates[XvMCScreenIndex].ptr = (void *)pScreenPriv;

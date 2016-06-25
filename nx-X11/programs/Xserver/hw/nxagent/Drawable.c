@@ -223,7 +223,7 @@ int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask
 
     length = nxagentImageLength(width, height, format, leftPad, depth);
 
-    if ((data = xalloc(length)) == NULL)
+    if ((data = malloc(length)) == NULL)
     {
       #ifdef WARNING
       fprintf(stderr, "nxagentSynchronizeDrawableData: WARNING! Failed to allocate memory for the operation.\n");
@@ -2129,7 +2129,7 @@ unsigned long nxagentGetColor(DrawablePtr pDrawable, int xPixel, int yPixel)
   format = (depth == 1) ? XYPixmap : ZPixmap;
   length = nxagentImageLength(1, 1, format, leftPad, depth);
 
-  if ((data = xalloc(length)) == NULL)
+  if ((data = malloc(length)) == NULL)
   {
     #ifdef WARNING
     fprintf(stderr, "nxagentGetColor: WARNING! Failed to allocate memory for the operation.\n");
@@ -2374,7 +2374,7 @@ void nxagentFillRemoteRegion(DrawablePtr pDrawable, RegionPtr pRegion)
   {
     pBox = RegionRects(pRegion);
 
-    pRects = xalloc(nrects * sizeof(XRectangle));
+    pRects = malloc(nrects * sizeof(XRectangle));
 
     for (i = 0; i < nrects; i++)
     {

@@ -330,9 +330,9 @@ void nxagentListRemoteAddName(const char *name, int status)
                     (nxagentRemoteFontList.length - pos) * sizeof(nxagentFontRecPtr));
   }
 
-  if ((nxagentRemoteFontList.list[pos] = xalloc(sizeof(nxagentFontRec))))
+  if ((nxagentRemoteFontList.list[pos] = malloc(sizeof(nxagentFontRec))))
   {
-    nxagentRemoteFontList.list[pos]->name = xalloc(strlen(name) +1);
+    nxagentRemoteFontList.list[pos]->name = malloc(strlen(name) +1);
     if (nxagentRemoteFontList.list[pos]->name == NULL)
     {
        fprintf(stderr, "Font: remote list name memory allocation failed!.\n");
@@ -538,7 +538,7 @@ Bool nxagentRealizeFont(ScreenPtr pScreen, FontPtr pFont)
      name = origName;
   }
 
-  priv = (void *)xalloc(sizeof(nxagentPrivFont));
+  priv = (void *)malloc(sizeof(nxagentPrivFont));
   FontSetPrivate(pFont, nxagentFontPrivateIndex, priv);
 
   nxagentFontPriv(pFont) -> mirrorID = 0;
@@ -579,14 +579,14 @@ Bool nxagentRealizeFont(ScreenPtr pScreen, FontPtr pFont)
         CACHE_SIZE += 100;
      }
 
-     CACHE_ENTRY(CACHE_INDEX) = xalloc(sizeof(nxCacheFontEntryRec));
+     CACHE_ENTRY(CACHE_INDEX) = malloc(sizeof(nxCacheFontEntryRec));
 
      if (CACHE_ENTRY(CACHE_INDEX) == NULL)
      {
         return False;
      }
 
-     CACHE_NAME(CACHE_INDEX) = xalloc(strlen(name) + 1);
+     CACHE_NAME(CACHE_INDEX) = malloc(strlen(name) + 1);
 
      if (CACHE_NAME(CACHE_INDEX) == NULL)
      {
@@ -753,7 +753,7 @@ static XFontStruct *nxagentLoadBestQueryFont(Display* dpy, char *fontName, FontP
   fprintf(stderr, "nxagentLoadBestQueryFont: Searching font '%s' .\n", fontName);
   #endif
 
-  substFontBuf = (char *) xalloc(sizeof(char) * 512);
+  substFontBuf = (char *) malloc(sizeof(char) * 512);
 
 
   numFontFields = nxagentSplitString(fontName, fontNameFields, FIELDS + 1, "-");
@@ -1666,7 +1666,7 @@ XFontStruct* nxagentLoadQueryFont(register Display *dpy, char *name, FontPtr pFo
     register long nbytes;
 
     nbytes = pFont -> info.nprops * sizeof(XFontProp);
-    fs -> properties = (XFontProp *) Xalloc((unsigned) nbytes);
+    fs -> properties = (XFontProp *) malloc((unsigned) nbytes);
 
     if (fs -> properties == NULL)
     {

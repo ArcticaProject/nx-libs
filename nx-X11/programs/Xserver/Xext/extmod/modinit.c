@@ -161,7 +161,7 @@ extmodSetup(void * module, void * opts, int *errmaj, int *errmin)
     for (i = 0; extensionModules[i].name != NULL; i++) {
 	if (opts) {
 	    char *s;
-	    s = (char *)xalloc(strlen(extensionModules[i].name) + 5);
+	    s = (char *)malloc(strlen(extensionModules[i].name) + 5);
 	    if (s) {
 		void * o;
 		strcpy(s, "omit");

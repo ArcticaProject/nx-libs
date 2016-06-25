@@ -115,7 +115,7 @@ miDbeGetVisualInfo(pScreen, pScrVisInfo)
     }
 
     /* Allocate an array of XdbeVisualInfo items. */
-    if (!(visInfo = (XdbeVisualInfo *)xalloc(count * sizeof(XdbeVisualInfo))))
+    if (!(visInfo = (XdbeVisualInfo *)malloc(count * sizeof(XdbeVisualInfo))))
     {
         return(FALSE); /* memory alloc failure */
     }

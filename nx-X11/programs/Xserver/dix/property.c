@@ -284,10 +284,10 @@ ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format,
     {
 	if (!pWin->optional && !MakeWindowOptional (pWin))
 	    return(BadAlloc);
-        pProp = (PropertyPtr)xalloc(sizeof(PropertyRec));
+        pProp = (PropertyPtr)malloc(sizeof(PropertyRec));
 	if (!pProp)
 	    return(BadAlloc);
-        data = (void *)xalloc(totalSize);
+        data = (void *)malloc(totalSize);
 	if (!data && len)
 	{
 	    free(pProp);
@@ -347,7 +347,7 @@ ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format,
 	}
         else if (mode == PropModePrepend)
         {
-            data = (void *)xalloc(sizeInBytes * (len + pProp->size));
+            data = (void *)malloc(sizeInBytes * (len + pProp->size));
 	    if (!data)
 		return(BadAlloc);
 	    memmove(&((char *)data)[totalSize], (char *)pProp->data, 

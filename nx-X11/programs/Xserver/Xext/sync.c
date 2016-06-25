@@ -345,7 +345,7 @@ SyncAddTriggerToCounter(pTrigger)
 	    return Success;
     }
 
-    if (!(pCur = (SyncTriggerList *)xalloc(sizeof(SyncTriggerList))))
+    if (!(pCur = (SyncTriggerList *)malloc(sizeof(SyncTriggerList))))
 	return BadAlloc;
 
     pCur->pTrigger = pTrigger;
@@ -879,7 +879,7 @@ SyncEventSelectForAlarm(pAlarm, client, wantevents)
 
     /* add new client to pAlarm->pEventClients */
 
-    pClients = (SyncAlarmClientList *) xalloc(sizeof(SyncAlarmClientList));
+    pClients = (SyncAlarmClientList *) malloc(sizeof(SyncAlarmClientList));
     if (!pClients)
 	return BadAlloc;
 
@@ -1014,7 +1014,7 @@ SyncCreateCounter(client, id, initialvalue)
 {
     SyncCounter *pCounter;
 
-    if (!(pCounter = (SyncCounter *) xalloc(sizeof(SyncCounter))))
+    if (!(pCounter = (SyncCounter *) malloc(sizeof(SyncCounter))))
 	return (SyncCounter *)NULL;
 
     if (!AddResource(id, RTCounter, (void *) pCounter))
@@ -1081,7 +1081,7 @@ SyncCreateSystemCounter(name, initial, resolution, counterType,
     {
 	SysCounterInfo *psci;
 
-	psci = (SysCounterInfo *)xalloc(sizeof(SysCounterInfo));
+	psci = (SysCounterInfo *)malloc(sizeof(SysCounterInfo));
 	if (!psci)
 	{
 	    FreeResource(pCounter->id, RT_NONE);
@@ -1670,7 +1670,7 @@ ProcSyncAwait(client)
     /*  all the memory for the entire await list is allocated 
      *  here in one chunk
      */
-    pAwaitUnion = (SyncAwaitUnion *)xalloc((items+1) * sizeof(SyncAwaitUnion));
+    pAwaitUnion = (SyncAwaitUnion *)malloc((items+1) * sizeof(SyncAwaitUnion));
     if (!pAwaitUnion)
 	return BadAlloc;
 
@@ -1821,7 +1821,7 @@ ProcSyncCreateAlarm(client)
     if (len != (Ones(vmask) + Ones(vmask & (XSyncCAValue|XSyncCADelta))))
 	return BadLength;
 
-    if (!(pAlarm = (SyncAlarm *) xalloc(sizeof(SyncAlarm))))
+    if (!(pAlarm = (SyncAlarm *) malloc(sizeof(SyncAlarm))))
     {
 	return BadAlloc;
     }

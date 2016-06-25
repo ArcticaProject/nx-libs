@@ -176,7 +176,7 @@ DbeAllocWinPriv(pScreen)
     register int		i;
 
     pDbeScreenPriv = DBE_SCREEN_PRIV(pScreen);
-    pDbeWindowPriv = (DbeWindowPrivPtr)xalloc(pDbeScreenPriv->totalWinPrivSize);
+    pDbeWindowPriv = (DbeWindowPrivPtr)malloc(pDbeScreenPriv->totalWinPrivSize);
 
     if (pDbeWindowPriv)
     {
@@ -746,7 +746,7 @@ ProcDbeSwapBuffers(client)
     dbeSwapInfo = (xDbeSwapInfo *)&stuff[1];
 
     /* Allocate array to record swap information. */ 
-    swapInfo = (DbeSwapInfoPtr)Xalloc(nStuff * sizeof(DbeSwapInfoRec));
+    swapInfo = (DbeSwapInfoPtr)malloc(nStuff * sizeof(DbeSwapInfoRec));
     if (swapInfo == NULL)
     {
         return(BadAlloc);
@@ -912,7 +912,7 @@ ProcDbeGetVisualInfo(client)
     /* Make sure any specified drawables are valid. */
     if (stuff->n != 0)
     {
-        if (!(pDrawables = (DrawablePtr *)Xalloc(stuff->n *
+        if (!(pDrawables = (DrawablePtr *)malloc(stuff->n *
                                                  sizeof(DrawablePtr))))
         {
             return(BadAlloc);
@@ -932,7 +932,7 @@ ProcDbeGetVisualInfo(client)
     }
 
     count = (stuff->n == 0) ? screenInfo.numScreens : stuff->n;
-    if (!(pScrVisInfo = (XdbeScreenVisualInfo *)xalloc(count *
+    if (!(pScrVisInfo = (XdbeScreenVisualInfo *)malloc(count *
                         sizeof(XdbeScreenVisualInfo))))
     {
         if (pDrawables)

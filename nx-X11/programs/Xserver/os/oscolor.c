@@ -134,11 +134,11 @@ OsLookupColor(int screen, char *name, unsigned int len,
     if(!rgb_dbm)
 	return(0);
 
-    /* we use xalloc here so that we can compile with cc without alloca
+    /* we use malloc here so that we can compile with cc without alloca
      * when otherwise using gcc */
     if (len < sizeof(buf))
 	lowername = buf;
-    else if (!(lowername = (char *)xalloc(len + 1)))
+    else if (!(lowername = (char *)malloc(len + 1)))
 	return(0);
     CopyISOLatin1Lowered ((unsigned char *) lowername, (unsigned char *) name,
 			  (int)len);
@@ -372,7 +372,7 @@ lookup(char *name, int len, Bool create)
   else
     prev = &(hashTab[h]);
 
-  if (!entry && create && (entry = (dbEntryPtr)xalloc(sizeof(dbEntry) +len)))
+  if (!entry && create && (entry = (dbEntryPtr)malloc(sizeof(dbEntry) +len)))
     {
       *prev = entry;
       entry->link = NULL;

@@ -650,7 +650,7 @@ TimerSet(OsTimerPtr timer, int flags, CARD32 millis,
 
     if (!timer)
     {
-	timer = (OsTimerPtr)xalloc(sizeof(struct _OsTimerRec));
+	timer = (OsTimerPtr)malloc(sizeof(struct _OsTimerRec));
 	if (!timer)
 	    return NULL;
     }

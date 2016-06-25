@@ -1,5 +1,5 @@
 /* 
- * printf routines which xalloc their buffer
+ * printf routines which malloc their buffer
  */ 
 /*
  * Copyright (c) 2004 Alexander Gottwald
@@ -111,7 +111,7 @@ Xvprintf(const char *format, va_list va)
     size = vsnprintf(NULL, 0, format, va2);
     va_end(va2);
 
-    ret = (char *)Xalloc(size + 1);
+    ret = (char *)malloc(size + 1);
     if (ret == NULL)
         return NULL;
 

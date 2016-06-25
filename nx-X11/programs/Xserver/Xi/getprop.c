@@ -137,7 +137,7 @@ ProcXGetDeviceDontPropagateList (client)
 	if (count)
 	    {
 	    rep.count = count;
-	    buf = (XEventClass *) xalloc (rep.count * sizeof(XEventClass));
+	    buf = (XEventClass *) malloc (rep.count * sizeof(XEventClass));
 	    rep.length = (rep.count * sizeof (XEventClass) + 3) >> 2;
 
 	    tbuf = buf;

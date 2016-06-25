@@ -524,7 +524,7 @@ SecurityEventSelectForAuthorization(
 	}
     }
     
-    pEventClient = (OtherClients *) xalloc(sizeof(OtherClients));
+    pEventClient = (OtherClients *) malloc(sizeof(OtherClients));
     if (!pEventClient)
 	return BadAlloc;
     pEventClient->mask = mask;
@@ -662,7 +662,7 @@ ProcSecurityGenerateAuthorization(
 
     /* associate additional information with this auth ID */
 
-    pAuth = (SecurityAuthorizationPtr)xalloc(sizeof(SecurityAuthorizationRec));
+    pAuth = (SecurityAuthorizationPtr)malloc(sizeof(SecurityAuthorizationRec));
     if (!pAuth)
     {
 	err = BadAlloc;
@@ -1643,7 +1643,7 @@ SecurityParsePropertyAccessRule(
      */
     if (mustHaveValue)
 	size += strlen(mustHaveValue) + 1;
-    pacl = (PropertyAccessPtr)Xalloc(size);
+    pacl = (PropertyAccessPtr)malloc(size);
     if (!pacl)
 	return FALSE;
 
@@ -1716,7 +1716,7 @@ SecurityParseSitePolicy(
     if (!policyStr)
 	return FALSE;
 
-    copyPolicyStr = (char *)Xalloc(strlen(policyStr) + 1);
+    copyPolicyStr = (char *)malloc(strlen(policyStr) + 1);
     if (!copyPolicyStr)
 	return TRUE;
     strcpy(copyPolicyStr, policyStr);

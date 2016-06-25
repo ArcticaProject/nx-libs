@@ -2138,7 +2138,7 @@ int __glXQueryServerString(__GLXclientState *cl, GLbyte *pc)
     reply.length = length;
     reply.n = n;
 
-    if ((buf = (char *) Xalloc(length << 2)) == NULL) {
+    if ((buf = (char *) malloc(length << 2)) == NULL) {
         return BadAlloc;
     }
     __glXStrncpy(buf, ptr, n);

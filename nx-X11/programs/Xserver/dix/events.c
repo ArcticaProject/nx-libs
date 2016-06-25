@@ -1027,7 +1027,7 @@ EnqueueEvent(xEvent *xE, DeviceIntPtr device, int count)
 	    return;
 	}
     }
-    qe = (QdEventPtr)xalloc(sizeof(QdEventRec) + (count * sizeof(xEvent)));
+    qe = (QdEventPtr)malloc(sizeof(QdEventRec) + (count * sizeof(xEvent)));
     if (!qe)
 	return;
     qe->next = (QdEventPtr)NULL;
@@ -3030,7 +3030,7 @@ EventSelectForWindow(register WindowPtr pWin, register ClientPtr client, Mask ma
 	check = 0;
 	if (!pWin->optional && !MakeWindowOptional (pWin))
 	    return BadAlloc;
-	others = (OtherClients *) xalloc(sizeof(OtherClients));
+	others = (OtherClients *) malloc(sizeof(OtherClients));
 	if (!others)
 	    return BadAlloc;
 	others->mask = mask;
@@ -3929,7 +3929,7 @@ InitEvents()
     if (spriteTraceSize == 0)
     {
 	spriteTraceSize = 32;
-	spriteTrace = (WindowPtr *)xalloc(32*sizeof(WindowPtr));
+	spriteTrace = (WindowPtr *)malloc(32*sizeof(WindowPtr));
 	if (!spriteTrace)
 	    FatalError("failed to allocate spriteTrace");
     }

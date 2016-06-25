@@ -261,12 +261,6 @@ int SyncOn  = 0;
 extern int SelectWaitTime;
 #endif
 
-#ifdef DEBUG
-#ifndef SPECIAL_MALLOC
-#define MEMBUG
-#endif
-#endif
-
 #if defined(SVR4) || defined(__linux__) || defined(CSRG_BASED)
 #define HAS_SAVED_IDS_AND_SETEUID
 #endif
@@ -1186,7 +1180,7 @@ InsertFileIntoCommandLine(
 
     fstat(fileno(f), &st);
 
-    buf = (char *) xalloc((unsigned) st.st_size + 1);
+    buf = (char *) malloc((unsigned) st.st_size + 1);
     if (!buf)
 	FatalError("Out of Memory\n");
 
@@ -1231,7 +1225,7 @@ InsertFileIntoCommandLine(
 	FatalError("Out of memory reallocing option buf\n");
 
     *resargc = prefix_argc + insert_argc + suffix_argc;
-    *resargv = (char **) xalloc((*resargc + 1) * sizeof(char *));
+    *resargv = (char **) malloc((*resargc + 1) * sizeof(char *));
     if (!*resargv)
 	FatalError("Out of Memory\n");
 
@@ -1316,7 +1310,7 @@ set_font_authorizations(char **authorizations, int *authlen, void * client)
 #endif
 
 	len = strlen(hnameptr) + 1;
-	result = xalloc(len + sizeof(AUTHORIZATION_NAME) + 4);
+	result = malloc(len + sizeof(AUTHORIZATION_NAME) + 4);
 
 	p = result;
         *p++ = sizeof(AUTHORIZATION_NAME) >> 8;
@@ -1517,7 +1511,7 @@ Xstrdup(const char *s)
     if (s == NULL)
 	return NULL;
 
-    sd = (char *)Xalloc(strlen(s) + 1);
+    sd = (char *)malloc(strlen(s) + 1);
     if (sd != NULL)
 	strcpy(sd, s);
     return sd;
@@ -1808,7 +1802,7 @@ Popen(char *command, char *type)
     if ((*type != 'r' && *type != 'w') || type[1])
 	return NULL;
 
-    if ((cur = (struct pid *)xalloc(sizeof(struct pid))) == NULL)
+    if ((cur = (struct pid *)malloc(sizeof(struct pid))) == NULL)
 	return NULL;
 
     if (pipe(pdes) < 0) {
@@ -1946,7 +1940,7 @@ Fopen(char *file, char *type)
     if ((*type != 'r' && *type != 'w') || type[1])
 	return NULL;
 
-    if ((cur = (struct pid *)xalloc(sizeof(struct pid))) == NULL)
+    if ((cur = (struct pid *)malloc(sizeof(struct pid))) == NULL)
 	return NULL;
 
     if (pipe(pdes) < 0) {

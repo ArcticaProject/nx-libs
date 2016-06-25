@@ -1021,7 +1021,7 @@ ProcSetSelectionOwner(register ClientPtr client)
 	    Selection *newsels;
 
 	    if (i == 0)
-		newsels = (Selection *)xalloc(sizeof(Selection));
+		newsels = (Selection *)malloc(sizeof(Selection));
 	    else
 		newsels = (Selection *)xrealloc(CurrentSelections,
 			    (NumCurrentSelections + 1) * sizeof(Selection));
@@ -3084,10 +3084,10 @@ ProcCreateCursor (register ClientPtr client)
 	return (BadMatch);
 
     n = BitmapBytePad(width)*height;
-    srcbits = (unsigned char *)xalloc(n);
+    srcbits = (unsigned char *)malloc(n);
     if (!srcbits)
 	return (BadAlloc);
-    mskbits = (unsigned char *)xalloc(n);
+    mskbits = (unsigned char *)malloc(n);
     if (!mskbits)
     {
 	free(srcbits);
@@ -3716,7 +3716,7 @@ InitClientPrivates(ClientPtr client)
 	ppriv = (DevUnion *)(client + 1);
     else
     {
-	ppriv = (DevUnion *)xalloc(totalClientSize - sizeof(ClientRec));
+	ppriv = (DevUnion *)malloc(totalClientSize - sizeof(ClientRec));
 	if (!ppriv)
 	    return 0;
     }
@@ -3753,7 +3753,7 @@ ClientPtr NextAvailableClient(void * ospriv)
     i = nextFreeClientID;
     if (i == MAXCLIENTS)
 	return (ClientPtr)NULL;
-    clients[i] = client = (ClientPtr)xalloc(totalClientSize);
+    clients[i] = client = (ClientPtr)malloc(totalClientSize);
     if (!client)
 	return (ClientPtr)NULL;
     InitClient(client, i, ospriv);

@@ -256,7 +256,7 @@ typedef struct _host {
 	int		requested;
 } HOST;
 
-#define MakeHost(h,l)	(h)=(HOST *) xalloc(sizeof *(h)+(l));\
+#define MakeHost(h,l)	(h)=(HOST *) malloc(sizeof *(h)+(l));\
 			if (h) { \
 			   (h)->addr=(unsigned char *) ((h) + 1);\
 			   (h)->requested = FALSE; \
@@ -782,7 +782,7 @@ DefineSelf (int fd)
         Error ("Getting interface count");    
     if (len < (ifn.lifn_count * sizeof(struct lifreq))) {
 	len = ifn.lifn_count * sizeof(struct lifreq);
-	bufptr = xalloc(len);
+	bufptr = malloc(len);
     }
 #endif
     
@@ -1477,7 +1477,7 @@ LocalClientCredAndGroups(ClientPtr client, int *pUid, int *pGid,
 	const gid_t *gids;
 	*nSuppGids = ucred_getgroups(peercred, &gids);
 	if (*nSuppGids > 0) {
-	    *pSuppGids = xalloc(sizeof(int) * (*nSuppGids));
+	    *pSuppGids = malloc(sizeof(int) * (*nSuppGids));
 	    if (*pSuppGids == NULL) {
 		*nSuppGids = 0;
 	    } else {
@@ -1691,7 +1691,7 @@ GetHosts (
     }
     if (n)
     {
-        *data = ptr = (void *) xalloc (n);
+        *data = ptr = (void *) malloc (n);
 	if (!ptr)
 	{
 	    return(BadAlloc);
@@ -1951,7 +1951,7 @@ siTypeAdd(const char *typeName, siAddrMatchFunc addrMatch,
 	}
     }
 
-    s = (struct siType *) xalloc(sizeof(struct siType));
+    s = (struct siType *) malloc(sizeof(struct siType));
     if (s == NULL)
 	return BadAlloc;
 
@@ -2293,7 +2293,7 @@ static Bool
 siLocalCredGetId(const char *addr, int len, siLocalCredPrivPtr lcPriv, int *id)
 {
     Bool parsedOK = FALSE;
-    char *addrbuf = xalloc(len + 1);
+    char *addrbuf = malloc(len + 1);
 
     if (addrbuf == NULL) {
 	return FALSE;

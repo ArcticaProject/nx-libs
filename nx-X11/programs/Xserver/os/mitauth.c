@@ -57,10 +57,10 @@ MitAddCookie (
 {
     struct auth	*new;
 
-    new = (struct auth *) xalloc (sizeof (struct auth));
+    new = (struct auth *) malloc (sizeof (struct auth));
     if (!new)
 	return 0;
-    new->data = (char *) xalloc ((unsigned) data_length);
+    new->data = (char *) malloc ((unsigned) data_length);
     if (!new->data) {
 	free(new);
 	return 0;

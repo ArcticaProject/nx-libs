@@ -957,7 +957,7 @@ TRANS(SocketINETGetAddr) (XtransConnInfo ciptr)
      * Everything looks good: fill in the XtransConnInfo structure.
      */
 
-    if ((ciptr->addr = (char *) xalloc (namelen)) == NULL)
+    if ((ciptr->addr = (char *) malloc (namelen)) == NULL)
     {
         PRMSG (1,
 	    "SocketINETGetAddr: Can't allocate space for the addr\n",
@@ -1032,7 +1032,7 @@ TRANS(SocketINETGetPeerAddr) (XtransConnInfo ciptr)
      * Everything looks good: fill in the XtransConnInfo structure.
      */
 
-    if ((ciptr->peeraddr = (char *) xalloc (namelen)) == NULL)
+    if ((ciptr->peeraddr = (char *) malloc (namelen)) == NULL)
     {
         PRMSG (1,
 	   "SocketINETGetPeerAddr: Can't allocate space for the addr\n",
@@ -1834,7 +1834,7 @@ TRANS(SocketUNIXCreateListener) (XtransConnInfo ciptr, char *port,
 
     namelen = sizeof (sockname); /* this will always make it the same size */
 
-    if ((ciptr->addr = (char *) xalloc (namelen)) == NULL)
+    if ((ciptr->addr = (char *) malloc (namelen)) == NULL)
     {
         PRMSG (1,
         "SocketUNIXCreateListener: Can't allocate space for the addr\n",
@@ -2058,7 +2058,7 @@ TRANS(SocketUNIXAccept) (XtransConnInfo ciptr, int *status)
      * since this is unix domain.
      */
 
-    if ((newciptr->addr = (char *) xalloc (ciptr->addrlen)) == NULL)
+    if ((newciptr->addr = (char *) malloc (ciptr->addrlen)) == NULL)
     {
         PRMSG (1,
         "SocketUNIXAccept: Can't allocate space for the addr\n",
@@ -2078,7 +2078,7 @@ TRANS(SocketUNIXAccept) (XtransConnInfo ciptr, int *status)
     newciptr->addrlen = ciptr->addrlen;
     memcpy (newciptr->addr, ciptr->addr, newciptr->addrlen);
 
-    if ((newciptr->peeraddr = (char *) xalloc (ciptr->addrlen)) == NULL)
+    if ((newciptr->peeraddr = (char *) malloc (ciptr->addrlen)) == NULL)
     {
         PRMSG (1,
 	      "SocketUNIXAccept: Can't allocate space for the addr\n",
@@ -2827,8 +2827,8 @@ SocketUNIXConnectPost:
      * since this is unix domain.
      */
 
-    if ((ciptr->addr = (char *) xalloc(namelen)) == NULL ||
-       (ciptr->peeraddr = (char *) xalloc(namelen)) == NULL)
+    if ((ciptr->addr = (char *) malloc(namelen)) == NULL ||
+       (ciptr->peeraddr = (char *) malloc(namelen)) == NULL)
     {
         PRMSG (1,
 	"SocketUNIXCreateListener: Can't allocate space for the addr\n",

@@ -466,7 +466,7 @@ dixChangeGC(ClientPtr client, register GC *pGC, register BITS32 mask, CARD32 *pC
  		{
 		    unsigned char *dash;
 
-		    dash = (unsigned char *)xalloc(2 * sizeof(unsigned char));
+		    dash = (unsigned char *)malloc(2 * sizeof(unsigned char));
 		    if (dash)
 		    {
 			if (pGC->dash != DefaultDash)
@@ -580,7 +580,7 @@ AllocateGC(ScreenPtr pScreen)
     register unsigned size;
     register int i;
 
-    pGC = (GCPtr)xalloc(pScreen->totalGCSize);
+    pGC = (GCPtr)malloc(pScreen->totalGCSize);
     if (pGC)
     {
 	ppriv = (DevUnion *)(pGC + 1);
@@ -848,7 +848,7 @@ CopyGC(register GC *pgcSrc, register GC *pgcDst, register BITS32 mask)
 		    unsigned char *dash;
 		    unsigned int i;
 
-		    dash = (unsigned char *)xalloc(pgcSrc->numInDashList *
+		    dash = (unsigned char *)malloc(pgcSrc->numInDashList *
 						   sizeof(unsigned char));
 		    if (dash)
 		    {
@@ -1098,9 +1098,9 @@ SetDashes(register GCPtr pGC, unsigned offset, unsigned ndash, unsigned char *pd
     }
 
     if (ndash & 1)
-	p = (unsigned char *)xalloc(2 * ndash * sizeof(unsigned char));
+	p = (unsigned char *)malloc(2 * ndash * sizeof(unsigned char));
     else
-	p = (unsigned char *)xalloc(ndash * sizeof(unsigned char));
+	p = (unsigned char *)malloc(ndash * sizeof(unsigned char));
     if (!p)
 	return BadAlloc;
 
@@ -1195,7 +1195,7 @@ SetClipRects(GCPtr pGC, int xOrigin, int yOrigin, int nrects,
     if (newct < 0)
 	return(BadMatch);
     size = nrects * sizeof(xRectangle);
-    prectsNew = (xRectangle *) xalloc(size);
+    prectsNew = (xRectangle *) malloc(size);
     if (!prectsNew && size)
 	return BadAlloc;
 

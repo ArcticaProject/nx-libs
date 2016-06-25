@@ -74,7 +74,7 @@ cwCreatePicturePrivate (PicturePtr pPicture)
     int		    error;
     cwPicturePtr    pPicturePrivate;
 
-    pPicturePrivate = xalloc (sizeof (cwPictureRec));
+    pPicturePrivate = malloc (sizeof (cwPictureRec));
     if (!pPicturePrivate)
 	return NULL;
     

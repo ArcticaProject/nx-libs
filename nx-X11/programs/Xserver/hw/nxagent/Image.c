@@ -1808,7 +1808,7 @@ char *nxagentAllocateImageData(int width, int height, int depth, int *length, in
 
   data = NULL;
 
-  if ((data = xalloc(*length)) == NULL)
+  if ((data = malloc(*length)) == NULL)
   {
     #ifdef WARNING
     fprintf(stderr, "nxagentAllocateImageData: WARNING! Failed to allocate [%d] bytes of memory.\n", *length);

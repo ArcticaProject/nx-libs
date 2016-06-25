@@ -442,7 +442,7 @@ doListFontsAndAliases(ClientPtr client, LFclosurePtr c)
 		}
 		if (err == FontNameAlias) {
 		    if (resolved) free(resolved);
-		    resolved = (char *) xalloc(resolvedlen + 1);
+		    resolved = (char *) malloc(resolvedlen + 1);
 		    if (resolved)
 			memmove(resolved, tmpname, resolvedlen + 1);
 		}
@@ -497,7 +497,7 @@ doListFontsAndAliases(ClientPtr client, LFclosurePtr c)
 		    c->haveSaved = TRUE;
 		    if (c->savedName)
 			free(c->savedName);
-		    c->savedName = (char *)xalloc(namelen + 1);
+		    c->savedName = (char *)malloc(namelen + 1);
 		    if (c->savedName)
 			memmove(c->savedName, name, namelen + 1);
 		    c->savedNameLen = namelen;
@@ -638,10 +638,10 @@ ListFonts(ClientPtr client, unsigned char *pattern, unsigned length,
     if (length > XLFDMAXFONTNAMELEN)
 	return BadAlloc;
 
-    if (!(c = (LFclosurePtr) xalloc(sizeof *c)))
+    if (!(c = (LFclosurePtr) malloc(sizeof *c)))
 	return BadAlloc;
     c->fpe_list = (FontPathElementPtr *)
-	xalloc(sizeof(FontPathElementPtr) * num_fpes);
+	malloc(sizeof(FontPathElementPtr) * num_fpes);
     if (!c->fpe_list) {
 	free(c);
 	return BadAlloc;
@@ -786,7 +786,7 @@ doListFontsWithInfo(ClientPtr client, LFWIclosurePtr c)
 		c->savedNumFonts = numFonts;
 		if (c->savedName)
 		  free(c->savedName);
-		c->savedName = (char *)xalloc(namelen + 1);
+		c->savedName = (char *)malloc(namelen + 1);
 		if (c->savedName)
 		  memmove(c->savedName, name, namelen + 1);
 		aliascount = 20;
@@ -1086,7 +1086,7 @@ nxdoListFontsAndAliases(client, fss)
 		}
 		if (err == FontNameAlias) {
 		    if (resolved) free(resolved);
-		    resolved = (char *) xalloc(resolvedlen + 1);
+		    resolved = (char *) malloc(resolvedlen + 1);
 		    if (resolved)
                     {
                         memmove(resolved, tmpname, resolvedlen);
@@ -1155,7 +1155,7 @@ nxdoListFontsAndAliases(client, fss)
 		    c->haveSaved = TRUE;
 		    if (c->savedName)
 			free(c->savedName);
-		    c->savedName = (char *)xalloc(namelen + 1);
+		    c->savedName = (char *)malloc(namelen + 1);
 		    if (c->savedName)
                     {
                         memmove(c->savedName, name, namelen);
@@ -1275,7 +1275,7 @@ nxOpenFont(client, fid, flags, lenfname, pfontname)
 
 #ifdef FONTDEBUG
     char *f;
-    f = (char *)xalloc(lenfname + 1);
+    f = (char *)malloc(lenfname + 1);
     memmove(f, pfontname, lenfname);
     f[lenfname] = '\0';
     ErrorF("OpenFont: fontname is \"%s\"\n", f);
@@ -1312,16 +1312,16 @@ nxOpenFont(client, fid, flags, lenfname, pfontname)
 	    return Success;
 	}
     }
-    if (!(fss = (nxFsPtr) xalloc(sizeof(nxFs))))
+    if (!(fss = (nxFsPtr) malloc(sizeof(nxFs))))
         return BadAlloc;
 
-    if (!(c = (LFclosurePtr) xalloc(sizeof *c)))
+    if (!(c = (LFclosurePtr) malloc(sizeof *c)))
     {
 	free(fss);
 	return BadAlloc;
     }
         c->fpe_list = (FontPathElementPtr *)
-	xalloc(sizeof(FontPathElementPtr) * num_fpes);
+	malloc(sizeof(FontPathElementPtr) * num_fpes);
     if (!c->fpe_list) {
 	free(c);
 	free(fss);
@@ -1351,7 +1351,7 @@ nxOpenFont(client, fid, flags, lenfname, pfontname)
     c->slept = FALSE;
     c->savedName = 0;
 
-    oc = (OFclosurePtr) xalloc(sizeof(OFclosureRec));
+    oc = (OFclosurePtr) malloc(sizeof(OFclosureRec));
     if (!oc)
     {
       for (i = 0; i < c->num_fpes; i++)
@@ -1361,7 +1361,7 @@ nxOpenFont(client, fid, flags, lenfname, pfontname)
       free(fss);
       return BadAlloc;
     }
-    oc->fontname = (char *) xalloc(256);/* I don't want to deal with future reallocs errors */
+    oc->fontname = (char *) malloc(256);/* I don't want to deal with future reallocs errors */
     oc->origFontName = pfontname;
     oc->origFontNameLen = lenfname;
     if (!oc->fontname) {
@@ -1378,7 +1378,7 @@ nxOpenFont(client, fid, flags, lenfname, pfontname)
      * while we're blocking, the request still appears atomic
      */
     oc->fpe_list = (FontPathElementPtr *)
-	xalloc(sizeof(FontPathElementPtr) * num_fpes);
+	malloc(sizeof(FontPathElementPtr) * num_fpes);
     if (!oc->fpe_list) {
 	free(oc->fontname);
 	free(oc);

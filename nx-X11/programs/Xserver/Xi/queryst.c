@@ -135,7 +135,7 @@ ProcXQueryDeviceState(client)
 			(v->numAxes * sizeof(int)));
 	num_classes++;
 	}
-    buf = (char *) xalloc (total_length);
+    buf = (char *) malloc (total_length);
     if (!buf)
 	{
 	SendErrorToClient(client, IReqCode, X_QueryDeviceState, 0, 

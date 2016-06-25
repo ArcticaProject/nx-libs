@@ -146,7 +146,7 @@ compRedirectWindow(ClientPtr pClient, WindowPtr pWin, int update)
      * The client *could* allocate multiple, but while supported,
      * it is not expected to be common
      */
-    ccw = xalloc (sizeof (CompClientWindowRec));
+    ccw = malloc (sizeof (CompClientWindowRec));
     if (!ccw)
 	return BadAlloc;
     ccw->id = FakeClientID (pClient->index);
@@ -156,7 +156,7 @@ compRedirectWindow(ClientPtr pClient, WindowPtr pWin, int update)
      */
     if (!cw)
     {
-	cw = xalloc (sizeof (CompWindowRec));
+	cw = malloc (sizeof (CompWindowRec));
 	if (!cw)
 	{
 	    free (ccw);
@@ -355,7 +355,7 @@ compRedirectSubwindows (ClientPtr pClient, WindowPtr pWin, int update)
      * The client *could* allocate multiple, but while supported,
      * it is not expected to be common
      */
-    ccw = xalloc (sizeof (CompClientWindowRec));
+    ccw = malloc (sizeof (CompClientWindowRec));
     if (!ccw)
 	return BadAlloc;
     ccw->id = FakeClientID (pClient->index);
@@ -365,7 +365,7 @@ compRedirectSubwindows (ClientPtr pClient, WindowPtr pWin, int update)
      */
     if (!csw)
     {
-	csw = xalloc (sizeof (CompSubwindowsRec));
+	csw = malloc (sizeof (CompSubwindowsRec));
 	if (!csw)
 	{
 	    free (ccw);

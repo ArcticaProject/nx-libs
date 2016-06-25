@@ -406,7 +406,7 @@ miSetVisualTypesAndMasks(int depth, int visuals, int bitsPerRGB,
     miVisualsPtr   new, *prev, v;
     int		    count;
 
-    new = (miVisualsPtr) xalloc (sizeof *new);
+    new = (miVisualsPtr) malloc (sizeof *new);
     if (!new)
 	return FALSE;
     if (!redMask || !greenMask || !blueMask)
@@ -560,9 +560,9 @@ miDoInitVisuals(VisualPtr *visualp, DepthPtr *depthp, int *nvisualp,
 	ndepth++;
 	nvisual += visuals->count;
     }
-    depth = (DepthPtr) xalloc (ndepth * sizeof (DepthRec));
-    visual = (VisualPtr) xalloc (nvisual * sizeof (VisualRec));
-    preferredCVCs = (int *)xalloc(ndepth * sizeof(int));
+    depth = (DepthPtr) malloc (ndepth * sizeof (DepthRec));
+    visual = (VisualPtr) malloc (nvisual * sizeof (VisualRec));
+    preferredCVCs = (int *)malloc(ndepth * sizeof(int));
     if (!depth || !visual || !preferredCVCs)
     {
 	free (depth);
@@ -586,7 +586,7 @@ miDoInitVisuals(VisualPtr *visualp, DepthPtr *depthp, int *nvisualp,
 	vid = NULL;
 	if (nvtype)
 	{
-	    vid = (VisualID *) xalloc (nvtype * sizeof (VisualID));
+	    vid = (VisualID *) malloc (nvtype * sizeof (VisualID));
 	    if (!vid)
 		return FALSE;
 	}

@@ -126,7 +126,7 @@ miDCInitialize (pScreen, screenFuncs)
 	    return FALSE;
 	miDCGeneration = serverGeneration;
     }
-    pScreenPriv = (miDCScreenPtr) xalloc (sizeof (miDCScreenRec));
+    pScreenPriv = (miDCScreenPtr) malloc (sizeof (miDCScreenRec));
     if (!pScreenPriv)
 	return FALSE;
 
@@ -250,7 +250,7 @@ miDCRealize (
     GCPtr	    pGC;
     XID		    gcvals[3];
 
-    pPriv = (miDCCursorPtr) xalloc (sizeof (miDCCursorRec));
+    pPriv = (miDCCursorPtr) malloc (sizeof (miDCCursorRec));
     if (!pPriv)
 	return (miDCCursorPtr)NULL;
 #ifdef ARGB_CURSOR

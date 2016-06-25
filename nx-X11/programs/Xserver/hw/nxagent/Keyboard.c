@@ -757,7 +757,7 @@ N/A
         }
 
         len = (max_keycode - min_keycode + 1) * mapWidth;
-        keymap = (KeySym *)xalloc(len * sizeof(KeySym));
+        keymap = (KeySym *)malloc(len * sizeof(KeySym));
         for(i = 0; i < len; ++i)
           keymap[i] = keymap64[i];
         XFree(keymap64);
@@ -1296,7 +1296,7 @@ int nxagentResetKeyboard(void)
               savedBellPercent, savedBellPitch, savedBellDuration);
   #endif
 
-  devBackup = xalloc(sizeof(DeviceIntRec));
+  devBackup = malloc(sizeof(DeviceIntRec));
 
   if (devBackup == NULL)
   {

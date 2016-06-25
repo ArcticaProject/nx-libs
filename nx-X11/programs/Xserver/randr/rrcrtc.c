@@ -90,7 +90,7 @@ RRCrtcCreate(ScreenPtr pScreen, void *devPrivate)
                          (pScrPriv->numCrtcs + 1) * sizeof(RRCrtcPtr));
 #endif                          /* !defined(NXAGENT_SERVER) */
     else
-        crtcs = xalloc(sizeof(RRCrtcPtr));
+        crtcs = malloc(sizeof(RRCrtcPtr));
     if (!crtcs)
         return FALSE;
     pScrPriv->crtcs = crtcs;
@@ -209,7 +209,7 @@ RRCrtcNotify(RRCrtcPtr crtc,
 #ifndef NXAGENT_SERVER
                 newoutputs = xallocarray(numOutputs, sizeof(RROutputPtr));
 #else                           /* !defined(NXAGENT_SERVER) */
-                newoutputs = xalloc(numOutputs * sizeof(RROutputPtr));
+                newoutputs = malloc(numOutputs * sizeof(RROutputPtr));
 #endif                          /* !defined(NXAGENT_SERVER) */
             if (!newoutputs)
                 return FALSE;
@@ -892,7 +892,7 @@ RRCrtcGammaSetSize(RRCrtcPtr crtc, int size)
 #ifndef NXAGENT_SERVER
         gamma = xallocarray(size, 3 * sizeof(CARD16));
 #else                           /* !defined(NXAGENT_SERVER) */
-        gamma = xalloc(size * 3 * sizeof(CARD16));
+        gamma = malloc(size * 3 * sizeof(CARD16));
 #endif                          /* !defined(NXAGENT_SERVER) */
         if (!gamma)
             return FALSE;
@@ -1047,7 +1047,7 @@ ProcRRGetCrtcInfo(ClientPtr client)
 
     extraLen = rep.length << 2;
     if (extraLen) {
-        extra = xalloc(extraLen);
+        extra = malloc(extraLen);
         if (!extra)
             return BadAlloc;
     }
@@ -1136,7 +1136,7 @@ ProcRRSetCrtcConfig(ClientPtr client)
 #ifndef NXAGENT_SERVER
         outputs = xallocarray(numOutputs, sizeof(RROutputPtr));
 #else                           /* !defined(NXAGENT_SERVER) */
-        outputs = xalloc(numOutputs * sizeof(RROutputPtr));
+        outputs = malloc(numOutputs * sizeof(RROutputPtr));
 #endif                          /* !defined(NXAGENT_SERVER) */
         if (!outputs)
             return BadAlloc;
@@ -1514,7 +1514,7 @@ ProcRRGetCrtcGamma(ClientPtr client)
     len = crtc->gammaSize * 3 * 2;
 
     if (crtc->gammaSize) {
-        extra = xalloc(len);
+        extra = malloc(len);
         if (!extra)
             return BadAlloc;
     }
@@ -1825,7 +1825,7 @@ RRReplaceScanoutPixmap(DrawablePtr pDrawable, PixmapPtr pPixmap, Bool enable)
     PixmapPtr *saved_scanout_pixmap;
     int i;
 
-    saved_scanout_pixmap = xalloc(sizeof(PixmapPtr) * pScrPriv->numCrtcs);
+    saved_scanout_pixmap = malloc(sizeof(PixmapPtr) * pScrPriv->numCrtcs);
     if (saved_scanout_pixmap == NULL)
         return FALSE;
 

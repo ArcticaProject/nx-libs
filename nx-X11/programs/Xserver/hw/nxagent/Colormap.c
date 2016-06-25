@@ -77,7 +77,7 @@ Bool nxagentCreateColormap(ColormapPtr pCmap)
   pVisual = pCmap->pVisual;
   ncolors = pVisual->ColormapEntries;
 
-  pCmap->devPriv = (void *)xalloc(sizeof(nxagentPrivColormap));
+  pCmap->devPriv = (void *)malloc(sizeof(nxagentPrivColormap));
 
   if (((visual = nxagentVisual(pVisual))) == NULL)
   {
@@ -103,7 +103,7 @@ Bool nxagentCreateColormap(ColormapPtr pCmap)
 
   switch (class) {
   case StaticGray: /* read only */
-    colors = (XColor *)xalloc(ncolors * sizeof(XColor));
+    colors = (XColor *)malloc(ncolors * sizeof(XColor));
     for (i = 0; i < ncolors; i++)
       colors[i].pixel = i;
     XQueryColors(nxagentDisplay, nxagentColormap(pCmap), colors, ncolors);
@@ -116,7 +116,7 @@ Bool nxagentCreateColormap(ColormapPtr pCmap)
     break;
 
   case StaticColor: /* read only */
-    colors = (XColor *)xalloc(ncolors * sizeof(XColor));
+    colors = (XColor *)malloc(ncolors * sizeof(XColor));
     for (i = 0; i < ncolors; i++)
       colors[i].pixel = i;
     XQueryColors(nxagentDisplay, nxagentColormap(pCmap), colors, ncolors);
@@ -129,7 +129,7 @@ Bool nxagentCreateColormap(ColormapPtr pCmap)
     break;
 
   case TrueColor: /* read only */
-    colors = (XColor *)xalloc(ncolors * sizeof(XColor));
+    colors = (XColor *)malloc(ncolors * sizeof(XColor));
     red = green = blue = 0L;
     redInc = lowbit(pVisual->redMask);
     greenInc = lowbit(pVisual->greenMask);
@@ -229,13 +229,13 @@ void nxagentSetInstalledColormapWindows(ScreenPtr pScreen)
   nxagentInstalledColormapWindows icws;
   int numWindows;
 
-  icws.cmapIDs = (Colormap *)xalloc(pScreen->maxInstalledCmaps *
+  icws.cmapIDs = (Colormap *)malloc(pScreen->maxInstalledCmaps *
 				    sizeof(Colormap));
   icws.numCmapIDs = nxagentListInstalledColormaps(pScreen, icws.cmapIDs);
   icws.numWindows = 0;
   WalkTree(pScreen, nxagentCountInstalledColormapWindows, (void *)&icws);
   if (icws.numWindows) {
-    icws.windows = (Window *)xalloc((icws.numWindows + 1) * sizeof(Window));
+    icws.windows = (Window *)malloc((icws.numWindows + 1) * sizeof(Window));
     icws.index = 0;
     WalkTree(pScreen, nxagentGetInstalledColormapWindows, (void *)&icws);
     icws.windows[icws.numWindows] = nxagentDefaultWindows[pScreen->myNum];
@@ -255,7 +255,7 @@ void nxagentSetInstalledColormapWindows(ScreenPtr pScreen)
 #ifdef _XSERVER64
     {
       int i;
-      Window64 *windows = (Window64 *)xalloc(numWindows * sizeof(Window64));
+      Window64 *windows = (Window64 *)malloc(numWindows * sizeof(Window64));
 
       for(i = 0; i < numWindows; ++i)
 	  windows[i] = icws.windows[i];
@@ -437,7 +437,7 @@ void nxagentStoreColors(ColormapPtr pCmap, int nColors, xColorItem *pColors)
 #ifdef _XSERVER64
   {
     int i;
-    XColor *pColors64 = (XColor *)xalloc(nColors * sizeof(XColor) );
+    XColor *pColors64 = (XColor *)malloc(nColors * sizeof(XColor) );
 
     for(i = 0; i < nColors; ++i)
     {

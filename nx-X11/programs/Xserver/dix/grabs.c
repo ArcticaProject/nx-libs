@@ -84,7 +84,7 @@ CreateGrab(
 {
     GrabPtr grab;
 
-    grab = (GrabPtr)xalloc(sizeof(GrabRec));
+    grab = (GrabPtr)malloc(sizeof(GrabRec));
     if (!grab)
 	return (GrabPtr)NULL;
     grab->resource = FakeClientID(client);
@@ -158,7 +158,7 @@ DeleteDetailFromMask(Mask *pDetailMask, unsigned short detail)
     register Mask *mask;
     register int i;
 
-    mask = (Mask *)xalloc(sizeof(Mask) * MasksPerDetailMask);
+    mask = (Mask *)malloc(sizeof(Mask) * MasksPerDetailMask);
     if (mask)
     {
 	if (pDetailMask)

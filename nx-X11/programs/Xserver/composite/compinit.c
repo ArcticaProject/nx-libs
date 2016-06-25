@@ -405,7 +405,7 @@ compScreenInit (ScreenPtr pScreen)
 
     if (GetCompScreen (pScreen))
 	return TRUE;
-    cs = (CompScreenPtr) xalloc (sizeof (CompScreenRec));
+    cs = (CompScreenPtr) malloc (sizeof (CompScreenRec));
     if (!cs)
 	return FALSE;
 

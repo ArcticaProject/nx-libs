@@ -516,7 +516,7 @@ RRMonitorAdd(ClientPtr client, ScreenPtr screen, RRMonitorPtr monitor)
                             (pScrPriv->numMonitors + 1) * sizeof(RRMonitorPtr));
 #endif                          /* !defined(NXAGENT_SERVER) */
     else
-        monitors = xalloc(sizeof(RRMonitorPtr));
+        monitors = malloc(sizeof(RRMonitorPtr));
 
     if (!monitors)
         return BadAlloc;

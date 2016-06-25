@@ -224,7 +224,7 @@ ProcRenderQueryPictFormats (ClientPtr client)
 	       ndepth * sizeof (xPictDepth) +
 	       nvisual * sizeof (xPictVisual) +
 	       numSubpixel * sizeof (CARD32));
-    reply = (xRenderQueryPictFormatsReply *) xalloc (rlength);
+    reply = (xRenderQueryPictFormatsReply *) malloc (rlength);
     if (!reply)
 	return BadAlloc;
     memset(reply, 0, rlength);
@@ -712,7 +712,7 @@ ProcRenderTrapezoids (ClientPtr client)
     {
       if (pFormat != NULL)
       {
-        nxagentTrapezoidExtents = (BoxPtr) xalloc(sizeof(BoxRec));
+        nxagentTrapezoidExtents = (BoxPtr) malloc(sizeof(BoxRec));
 
         miTrapezoidBounds (ntraps, (xTrapezoid *) &stuff[1], nxagentTrapezoidExtents);
       }
@@ -996,7 +996,7 @@ ProcRenderCompositeGlyphs (ClientPtr client)
 	    return BadAlloc;
     }
 
-    elementsBase = xalloc(nlist * sizeof(XGlyphElt8));
+    elementsBase = malloc(nlist * sizeof(XGlyphElt8));
     if (!elementsBase)
       return BadAlloc;
 
@@ -1098,7 +1098,7 @@ ProcRenderCompositeGlyphs (ClientPtr client)
      * after the X requests.
      */
 
-    nxagentGlyphsExtents = (BoxPtr) xalloc(sizeof(BoxRec));
+    nxagentGlyphsExtents = (BoxPtr) malloc(sizeof(BoxRec));
 
     miGlyphExtents(nlist, listsBase, glyphsBase, nxagentGlyphsExtents);
 
@@ -1219,19 +1219,19 @@ ProcRenderCreateCursor (ClientPtr client)
     if ( stuff->x > width 
       || stuff->y > height )
 	return (BadMatch);
-    argbbits = xalloc (width * height * sizeof (CARD32));
+    argbbits = malloc (width * height * sizeof (CARD32));
     if (!argbbits)
 	return (BadAlloc);
     
     stride = BitmapBytePad(width);
     nbytes_mono = stride*height;
-    srcbits = (unsigned char *)xalloc(nbytes_mono);
+    srcbits = (unsigned char *)malloc(nbytes_mono);
     if (!srcbits)
     {
 	free (argbbits);
 	return (BadAlloc);
     }
-    mskbits = (unsigned char *)xalloc(nbytes_mono);
+    mskbits = (unsigned char *)malloc(nbytes_mono);
     if (!mskbits)
     {
 	free(argbbits);
@@ -1477,7 +1477,7 @@ ProcRenderCreateAnimCursor (ClientPtr client)
     if (client->req_len & 1)
 	return BadLength;
     ncursor = (client->req_len - (SIZEOF(xRenderCreateAnimCursorReq) >> 2)) >> 1;
-    cursors = xalloc (ncursor * (sizeof (CursorPtr) + sizeof (CARD32)));
+    cursors = malloc (ncursor * (sizeof (CursorPtr) + sizeof (CARD32)));
     if (!cursors)
 	return BadAlloc;
     deltas = (CARD32 *) (cursors + ncursor);

@@ -173,7 +173,7 @@ TRANS(TLIGetAddr)(XtransConnInfo ciptr)
     if( ciptr->addr )
 	free(ciptr->addr);
     
-    if( (ciptr->addr=(char *)xalloc(netbuf.len)) == NULL )
+    if( (ciptr->addr=(char *)malloc(netbuf.len)) == NULL )
     {
 	PRMSG(1, "TLIGetAddr: Can't allocate space for the addr\n",
 	      0,0,0);
@@ -223,7 +223,7 @@ TRANS(TLIGetPeerAddr)(XtransConnInfo ciptr)
     if( ciptr->peeraddr )
 	free(ciptr->peeraddr);
     
-    if( (ciptr->peeraddr=(char *)xalloc(netbuf.len)) == NULL )
+    if( (ciptr->peeraddr=(char *)malloc(netbuf.len)) == NULL )
     {
 	PRMSG(1,
 	      "TLIGetPeerAddr: Can't allocate space for the addr\n",
@@ -730,7 +730,7 @@ TRANS(TLICreateListener)(XtransConnInfo ciptr, struct t_bind *req)
      * Everything looks good: fill in the XtransConnInfo structure.
      */
     
-    if( (ciptr->addr=(char *)xalloc(ret->addr.len)) == NULL )
+    if( (ciptr->addr=(char *)malloc(ret->addr.len)) == NULL )
     {
 	PRMSG(1,
 	      "TLICreateListener: Unable to allocate space for the address\n",

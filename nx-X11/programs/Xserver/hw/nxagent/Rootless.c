@@ -305,7 +305,7 @@ void nxagentRootlessRestack(unsigned long children[], unsigned int nchildren)
   XID values[2];
   Mask mask;
 
-  toplevel = xalloc(sizeof(WindowPtr) * nchildren);
+  toplevel = malloc(sizeof(WindowPtr) * nchildren);
   ntoplevel = 0;
 
   for(i = 0; i < nchildren; i++)

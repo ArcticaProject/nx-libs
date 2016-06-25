@@ -121,7 +121,7 @@ TRANS(DNETGetAddr) (XtransConnInfo ciptr)
      * Everything looks good: fill in the XtransConnInfo structure.
      */
 
-    if ((ciptr->addr = (char *) xalloc (namelen)) == NULL)
+    if ((ciptr->addr = (char *) malloc (namelen)) == NULL)
     {
         PRMSG (1, "DNETGetAddr: Can't allocate space for the addr\n",
 	       0, 0, 0);
@@ -161,7 +161,7 @@ TRANS(DNETGetPeerAddr) (XtransConnInfo ciptr)
      * Everything looks good: fill in the XtransConnInfo structure.
      */
 
-    if ((ciptr->peeraddr = (char *) xalloc (namelen)) == NULL)
+    if ((ciptr->peeraddr = (char *) malloc (namelen)) == NULL)
     {
         PRMSG (1,
 	      "DNETGetPeerAddr: Can't allocate space for the addr\n",

@@ -221,7 +221,7 @@ TRANS(ParseAddress) (char *address, char **protocol, char **host, char **port)
 
     /* Copy the string so it can be changed */
 
-    tmpptr = mybuf = (char *) xalloc (strlen (address) + 1);
+    tmpptr = mybuf = (char *) malloc (strlen (address) + 1);
     strcpy (mybuf, address);
 
     /* Parse the string to get each component */
@@ -362,7 +362,7 @@ TRANS(ParseAddress) (char *address, char **protocol, char **host, char **port)
      * string space for them.
      */
 
-    if ((*protocol = (char *) xalloc(strlen (_protocol) + 1)) == NULL)
+    if ((*protocol = (char *) malloc(strlen (_protocol) + 1)) == NULL)
     {
 	/* Malloc failed */
 	*port = NULL;
@@ -374,7 +374,7 @@ TRANS(ParseAddress) (char *address, char **protocol, char **host, char **port)
     else
         strcpy (*protocol, _protocol);
 
-    if ((*host = (char *) xalloc (strlen (_host) + 1)) == NULL)
+    if ((*host = (char *) malloc (strlen (_host) + 1)) == NULL)
     {
 	/* Malloc failed */
 	*port = NULL;
@@ -387,7 +387,7 @@ TRANS(ParseAddress) (char *address, char **protocol, char **host, char **port)
     else
         strcpy (*host, _host);
 
-    if ((*port = (char *) xalloc (strlen (_port) + 1)) == NULL)
+    if ((*port = (char *) malloc (strlen (_port) + 1)) == NULL)
     {
 	/* Malloc failed */
 	*port = NULL;
@@ -539,7 +539,7 @@ TRANS(Reopen) (int type, int trans_id, int fd, char *port)
 	return NULL;
     }
 
-    if ((save_port = (char *) xalloc (strlen (port) + 1)) == NULL)
+    if ((save_port = (char *) malloc (strlen (port) + 1)) == NULL)
     {
 	PRMSG (1,"Reopen: Unable to malloc port string\n", 0, 0, 0);
 
@@ -668,7 +668,7 @@ TRANS(GetReopenInfo) (XtransConnInfo ciptr,
 	    *trans_id = Xtransports[i].transport_id;
 	    *fd = ciptr->fd;
 
-	    if ((*port = (char *) xalloc (strlen (ciptr->port) + 1)) == NULL)
+	    if ((*port = (char *) malloc (strlen (ciptr->port) + 1)) == NULL)
 		return 0;
 	    else
 	    {
@@ -966,7 +966,7 @@ TRANS(GetMyAddr) (XtransConnInfo ciptr, int *familyp, int *addrlenp,
     *familyp = ciptr->family;
     *addrlenp = ciptr->addrlen;
 
-    if ((*addrp = (Xtransaddr *) xalloc (ciptr->addrlen)) == NULL)
+    if ((*addrp = (Xtransaddr *) malloc (ciptr->addrlen)) == NULL)
     {
 	PRMSG (1,"GetMyAddr: malloc failed\n", 0, 0, 0);
 	return -1;
@@ -986,7 +986,7 @@ TRANS(GetPeerAddr) (XtransConnInfo ciptr, int *familyp, int *addrlenp,
     *familyp = ciptr->family;
     *addrlenp = ciptr->peeraddrlen;
 
-    if ((*addrp = (Xtransaddr *) xalloc (ciptr->peeraddrlen)) == NULL)
+    if ((*addrp = (Xtransaddr *) malloc (ciptr->peeraddrlen)) == NULL)
     {
 	PRMSG (1,"GetPeerAddr: malloc failed\n", 0, 0, 0);
 	return -1;
@@ -1141,7 +1141,7 @@ TRANS(MakeAllCOTSServerListeners) (char *port, int *partial, int *count_ret,
 
     if (*count_ret > 0)
     {
-	if ((*ciptrs_ret = (XtransConnInfo *) xalloc (
+	if ((*ciptrs_ret = (XtransConnInfo *) malloc (
 	    *count_ret * sizeof (XtransConnInfo))) == NULL)
 	{
 	    return -1;
@@ -1239,7 +1239,7 @@ TRANS(MakeAllCLTSServerListeners) (char *port, int *partial, int *count_ret,
 
     if (*count_ret > 0)
     {
-	if ((*ciptrs_ret = (XtransConnInfo *) xalloc (
+	if ((*ciptrs_ret = (XtransConnInfo *) malloc (
 	    *count_ret * sizeof (XtransConnInfo))) == NULL)
 	{
 	    return -1;

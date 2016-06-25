@@ -125,7 +125,7 @@ miInitOverlay(
 				sizeof(miOverlayWindowRec)))
 	return FALSE;
 
-    if(!(pScreenPriv = xalloc(sizeof(miOverlayScreenRec))))
+    if(!(pScreenPriv = malloc(sizeof(miOverlayScreenRec))))
 	return FALSE;
 
     pScreen->devPrivates[miOverlayScreenIndex].ptr = (void *)pScreenPriv;

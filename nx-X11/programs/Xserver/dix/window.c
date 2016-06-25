@@ -344,7 +344,7 @@ AllocateWindow(ScreenPtr pScreen)
     register unsigned size;
     register int i;
 
-    pWin = (WindowPtr)xalloc(pScreen->totalWindowSize);
+    pWin = (WindowPtr)malloc(pScreen->totalWindowSize);
     if (pWin)
     {
 	ppriv = (DevUnion *)(pWin + 1);
@@ -403,7 +403,7 @@ CreateRootWindow(ScreenPtr pScreen)
     pWin->parent = NullWindow;
     SetWindowToDefaults(pWin);
 
-    pWin->optional = (WindowOptRec *) xalloc (sizeof (WindowOptRec));
+    pWin->optional = (WindowOptRec *) malloc (sizeof (WindowOptRec));
     if (!pWin->optional)
         return FALSE;
 
@@ -3445,8 +3445,8 @@ TileScreenSaver(int i, int kind)
     cm.height=16;
     cm.xhot=8;
     cm.yhot=8;
-    srcbits = (unsigned char *)xalloc( BitmapBytePad(32)*16);
-    mskbits = (unsigned char *)xalloc( BitmapBytePad(32)*16);
+    srcbits = (unsigned char *)malloc( BitmapBytePad(32)*16);
+    mskbits = (unsigned char *)malloc( BitmapBytePad(32)*16);
     if (!srcbits || !mskbits)
     {
 	free(srcbits);
@@ -3595,7 +3595,7 @@ MakeWindowOptional (register WindowPtr pWin)
 
     if (pWin->optional)
 	return TRUE;
-    optional = (WindowOptPtr) xalloc (sizeof (WindowOptRec));
+    optional = (WindowOptPtr) malloc (sizeof (WindowOptRec));
     if (!optional)
 	return FALSE;
     optional->dontPropagateMask = DontPropagateMasks[pWin->dontPropagate];

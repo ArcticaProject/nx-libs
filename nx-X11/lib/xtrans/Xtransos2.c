@@ -202,7 +202,7 @@ TRANS(Os2OpenClient)(Xtransport *thistrans, char *protocol,
            }
 
         namelen=sizeof(struct sockaddr);
-        if ((ciptr->addr = (char *) xalloc (namelen)) == NULL)
+        if ((ciptr->addr = (char *) malloc (namelen)) == NULL)
           {
                 PRMSG (1, "Os2OpenClient: Can't allocate space for the addr\n",
 	        0, 0, 0);
@@ -214,7 +214,7 @@ TRANS(Os2OpenClient)(Xtransport *thistrans, char *protocol,
         ((struct sockaddr *)ciptr->addr)->sa_family = AF_UNIX;
         strcpy(((struct sockaddr *)ciptr->addr)->sa_data, "local");
 
-        if ((ciptr->peeraddr = (char *) xalloc (namelen)) == NULL)
+        if ((ciptr->peeraddr = (char *) malloc (namelen)) == NULL)
           {
                 PRMSG (1, "Os2OpenCLient: Can't allocate space for the addr\n",
 	        0, 0, 0);
@@ -316,7 +316,7 @@ TRANS(Os2OpenServer)(Xtransport *thistrans, char *protocol,
 /*** Put in info ***/
 
         namelen=sizeof(struct sockaddr);
-        if ((ciptr->addr = (char *) xalloc (namelen)) == NULL)
+        if ((ciptr->addr = (char *) malloc (namelen)) == NULL)
           {
                 PRMSG (1, "Os2OpenServer: Can't allocate space for the addr\n",
 	        0, 0, 0);
@@ -328,7 +328,7 @@ TRANS(Os2OpenServer)(Xtransport *thistrans, char *protocol,
         ((struct sockaddr *)ciptr->addr)->sa_family = AF_UNIX;
         strcpy (((struct sockaddr *)ciptr->addr)->sa_data, "local");
 
-        if ((ciptr->peeraddr = (char *) xalloc (namelen)) == NULL)
+        if ((ciptr->peeraddr = (char *) malloc (namelen)) == NULL)
           {
                 PRMSG (1, "Os2OpenServer: Can't allocate space for the addr\n",
 	        0, 0, 0);
@@ -441,7 +441,7 @@ TRANS(Os2ReopenCOTSServer)(Xtransport *thistrans, int fd, char *port)
 
         strcpy(addr_name,"local");
         namelen=sizeof(addr_name);
-        if ((ciptr->addr = (char *) xalloc (namelen)) == NULL)
+        if ((ciptr->addr = (char *) malloc (namelen)) == NULL)
           {
                 PRMSG (1, "Os2ReopenCOTSServer: Can't allocate space for the addr\n",
 	        0, 0, 0);
@@ -451,7 +451,7 @@ TRANS(Os2ReopenCOTSServer)(Xtransport *thistrans, int fd, char *port)
 
         ciptr->addrlen = namelen;
         memcpy (ciptr->addr, addr_name, ciptr->addrlen);
-        if ((ciptr->peeraddr = (char *) xalloc (namelen)) == NULL)
+        if ((ciptr->peeraddr = (char *) malloc (namelen)) == NULL)
           {
                 PRMSG (1, "Os2ReopenCOTSServer: Can't allocate space for the addr\n",
 	        0, 0, 0);
@@ -605,7 +605,7 @@ TRANS(Os2Accept)(XtransConnInfo ciptr, int *status)
 /* And finally fill-in info in newciptr */
 
         namelen=sizeof(struct sockaddr);
-        if ((newciptr->addr = (char *) xalloc (namelen)) == NULL)
+        if ((newciptr->addr = (char *) malloc (namelen)) == NULL)
           {
                 PRMSG (1, "Os2Accept: Can't allocate space for the addr\n",
 	        0, 0, 0);
@@ -618,7 +618,7 @@ TRANS(Os2Accept)(XtransConnInfo ciptr, int *status)
         ((struct sockaddr *)newciptr->addr)->sa_family = AF_UNIX;
         strcpy (((struct sockaddr *)newciptr->addr)->sa_data, "local");
 
-        if ((newciptr->peeraddr = (char *) xalloc (namelen)) == NULL)
+        if ((newciptr->peeraddr = (char *) malloc (namelen)) == NULL)
           {
                 PRMSG (1, "Os2Accept: Can't allocate space for the addr\n",
 	        0, 0, 0);

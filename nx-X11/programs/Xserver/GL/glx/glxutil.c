@@ -68,7 +68,7 @@ __glXMalloc(size_t size)
     if (size == 0) {
 	return NULL;
     }
-    addr = (void *) xalloc(size);
+    addr = (void *) malloc(size);
     if (addr == NULL) {
 	/* XXX: handle out of memory error */
 	return NULL;
@@ -86,7 +86,7 @@ __glXCalloc(size_t numElements, size_t elementSize)
 	return NULL;
     }
     size = numElements * elementSize;
-    addr = (void *) xalloc(size);
+    addr = (void *) malloc(size);
     if (addr == NULL) {
 	/* XXX: handle out of memory error */
 	return NULL;
@@ -111,7 +111,7 @@ __glXRealloc(void *addr, size_t newSize)
 	if (newSize == 0) {
 	    return NULL;
 	} else {
-	    newAddr = xalloc(newSize);
+	    newAddr = malloc(newSize);
 	}
     }
     if (newAddr == NULL) {

@@ -87,7 +87,7 @@ miGlyphs (CARD8		op,
         }
         else
         {
-          nxagentGlyphsExtents = (BoxPtr) xalloc(sizeof(BoxRec));
+          nxagentGlyphsExtents = (BoxPtr) malloc(sizeof(BoxRec));
 
           miGlyphExtents (nlist, list, glyphs, &extents);
 

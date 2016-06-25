@@ -17,17 +17,6 @@ XCOMM $XFree86: xc/config/cf/lnxLib.rules,v 3.52 2003/10/31 20:49:03 herrb Exp $
 
 #if UseElfFormat
 
-# if (LinuxCLibMajorVersion >= 5 && LinuxCLibMinorVersion >= 4) || LinuxCLibMajorVersion >= 6
-#  ifndef SpecialMalloc
-#   define SpecialMalloc NO
-#  endif
-#if 0
-#  ifndef UseInternalMalloc
-#   define UseInternalMalloc NO
-#  endif
-#endif
-# endif
-
 # if LinuxCLibMajorVersion <= 5
 /*
  *	#define BaseShLibReqs	-lc

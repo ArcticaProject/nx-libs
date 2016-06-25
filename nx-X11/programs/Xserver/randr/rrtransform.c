@@ -73,7 +73,7 @@ RRTransformSetFilter(RRTransformPtr dst,
 #ifndef NXAGENT_SERVER
         new_params = xallocarray(nparams, sizeof(xFixed));
 #else                           /* !defined(NXAGENT_SERVER) */
-        new_params = xalloc(nparams * sizeof(xFixed));
+        new_params = malloc(nparams * sizeof(xFixed));
 #endif                          /* !defined(NXAGENT_SERVER) */
         if (!new_params)
             return FALSE;

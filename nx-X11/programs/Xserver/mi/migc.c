@@ -71,7 +71,7 @@ miCreateGCOps(prototype)
     GCOpsPtr        ret;
 
      /* XXX */ Must_have_memory = TRUE;
-    ret = (GCOpsPtr) xalloc(sizeof(GCOps));
+    ret = (GCOpsPtr) malloc(sizeof(GCOps));
      /* XXX */ Must_have_memory = FALSE;
     if (!ret)
 	return 0;

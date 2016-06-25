@@ -291,12 +291,6 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
  */
 
 /*
- * To enable the internal Xserver malloc, uncomment this
- *
-#define UseInternalMalloc	YES
- */
-
-/*
  * Some Linux releases don't have a libtermcap.  In this case you may need
  * to uncomment the following
  *

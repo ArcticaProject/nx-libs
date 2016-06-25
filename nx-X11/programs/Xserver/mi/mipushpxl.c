@@ -113,7 +113,7 @@ miPushPixels(pGC, pBitMap, pDrawable, dx, dy, xOrg, yOrg)
             LONG2CHARSDIFFORDER((MiBits)(-1) >> 1);
 #endif
 
-    pwLineStart = (MiBits *)xalloc(BitmapBytePad(dx));
+    pwLineStart = (MiBits *)malloc(BitmapBytePad(dx));
     if (!pwLineStart)
 	return;
     ipt = 0;
