@@ -265,7 +265,7 @@ CheckDashStorage(
 	miDashPtr newppseg;
 
 	*pnsegMax += NSEGDELTA;
-	newppseg = (miDashPtr)xrealloc(*ppseg,
+	newppseg = (miDashPtr)realloc(*ppseg,
 				       (*pnsegMax)*sizeof(miDashRec));
 	if (!newppseg)
 	{

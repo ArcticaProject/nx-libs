@@ -1754,7 +1754,7 @@ addCap (
 	if (*ncapsp == *sizep)
 	{
 	    newsize = *sizep + ADD_REALLOC_STEP;
-	    cap = (miArcCapPtr) xrealloc (*capsp,
+	    cap = (miArcCapPtr) realloc (*capsp,
 					  newsize * sizeof (**capsp));
 	    if (!cap)
 		return;
@@ -1785,7 +1785,7 @@ addJoin (
 	if (*njoinsp == *sizep)
 	{
 	    newsize = *sizep + ADD_REALLOC_STEP;
-	    join = (miArcJoinPtr) xrealloc (*joinsp,
+	    join = (miArcJoinPtr) realloc (*joinsp,
 					    newsize * sizeof (**joinsp));
 	    if (!join)
 		return;
@@ -1815,7 +1815,7 @@ addArc (
 	if (*narcsp == *sizep)
 	{
 	    newsize = *sizep + ADD_REALLOC_STEP;
-	    arc = (miArcDataPtr) xrealloc (*arcsp,
+	    arc = (miArcDataPtr) realloc (*arcsp,
 					   newsize * sizeof (**arcsp));
 	    if (!arc)
 		return (miArcDataPtr)NULL;

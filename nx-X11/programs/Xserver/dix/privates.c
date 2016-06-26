@@ -89,7 +89,7 @@ AllocateClientPrivate(int index2, unsigned amount)
     if (index2 >= clientPrivateLen)
     {
 	unsigned *nsizes;
-	nsizes = (unsigned *)xrealloc(clientPrivateSizes,
+	nsizes = (unsigned *)realloc(clientPrivateSizes,
 				      (index2 + 1) * sizeof(unsigned));
 	if (!nsizes)
 	    return FALSE;
@@ -136,7 +136,7 @@ AllocateScreenPrivateIndex()
     for (i = 0; i < screenInfo.numScreens; i++)
     {
 	pScreen = screenInfo.screens[i];
-	nprivs = (DevUnion *)xrealloc(pScreen->devPrivates,
+	nprivs = (DevUnion *)realloc(pScreen->devPrivates,
 				      screenPrivateCount * sizeof(DevUnion));
 	if (!nprivs)
 	{
@@ -180,7 +180,7 @@ AllocateWindowPrivate(register ScreenPtr pScreen, int index2, unsigned amount)
     if (index2 >= pScreen->WindowPrivateLen)
     {
 	unsigned *nsizes;
-	nsizes = (unsigned *)xrealloc(pScreen->WindowPrivateSizes,
+	nsizes = (unsigned *)realloc(pScreen->WindowPrivateSizes,
 				      (index2 + 1) * sizeof(unsigned));
 	if (!nsizes)
 	    return FALSE;
@@ -230,7 +230,7 @@ AllocateGCPrivate(register ScreenPtr pScreen, int index2, unsigned amount)
     if (index2 >= pScreen->GCPrivateLen)
     {
 	unsigned *nsizes;
-	nsizes = (unsigned *)xrealloc(pScreen->GCPrivateSizes,
+	nsizes = (unsigned *)realloc(pScreen->GCPrivateSizes,
 				      (index2 + 1) * sizeof(unsigned));
 	if (!nsizes)
 	    return FALSE;
@@ -280,7 +280,7 @@ AllocatePixmapPrivate(register ScreenPtr pScreen, int index2, unsigned amount)
     if (index2 >= pScreen->PixmapPrivateLen)
     {
 	unsigned *nsizes;
-	nsizes = (unsigned *)xrealloc(pScreen->PixmapPrivateSizes,
+	nsizes = (unsigned *)realloc(pScreen->PixmapPrivateSizes,
 				      (index2 + 1) * sizeof(unsigned));
 	if (!nsizes)
 	    return FALSE;
@@ -345,7 +345,7 @@ AllocateColormapPrivateIndex (InitCmapPrivFunc initPrivFunc)
 
 	if (pColormap)
 	{
-	    privs = (DevUnion *) xrealloc (pColormap->devPrivates,
+	    privs = (DevUnion *) realloc (pColormap->devPrivates,
 		colormapPrivateCount * sizeof(DevUnion));
 	    if (!privs) {
 		colormapPrivateCount--;
@@ -380,7 +380,7 @@ Bool
 AllocateDevicePrivate(DeviceIntPtr device, int index)
 {
     if (device->nPrivates < ++index) {
-	DevUnion *nprivs = (DevUnion *) xrealloc(device->devPrivates,
+	DevUnion *nprivs = (DevUnion *) realloc(device->devPrivates,
 						 index * sizeof(DevUnion));
 	if (!nprivs)
 	    return FALSE;

@@ -512,7 +512,7 @@ RRMonitorAdd(ClientPtr client, ScreenPtr screen, RRMonitorPtr monitor)
                                 pScrPriv->numMonitors + 1,
                                 sizeof(RRMonitorPtr));
 #else                           /* !defined(NXAGENT_SERVER) */
-        monitors = xrealloc(pScrPriv->monitors,
+        monitors = realloc(pScrPriv->monitors,
                             (pScrPriv->numMonitors + 1) * sizeof(RRMonitorPtr));
 #endif                          /* !defined(NXAGENT_SERVER) */
     else

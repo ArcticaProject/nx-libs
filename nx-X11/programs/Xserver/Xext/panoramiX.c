@@ -1217,7 +1217,7 @@ XineramaGetImageData(
 
 		if(sizeNeeded > size) {
 		    char *tmpdata = ScratchMem;
-		    ScratchMem = xrealloc(ScratchMem, sizeNeeded);
+		    ScratchMem = realloc(ScratchMem, sizeNeeded);
 		    if(ScratchMem)
 			size = sizeNeeded;
 		    else {

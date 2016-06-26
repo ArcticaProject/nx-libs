@@ -227,7 +227,7 @@ doOpenFont(ClientPtr client, OFclosurePtr c)
 
 	if (err == FontNameAlias && alias) {
 	    newlen = strlen(alias);
-	    newname = (char *) xrealloc(c->fontname, newlen);
+	    newname = (char *) realloc(c->fontname, newlen);
 	    if (!newname) {
 		err = AllocError;
 		break;
@@ -846,7 +846,7 @@ doListFontsWithInfo(ClientPtr client, LFWIclosurePtr c)
 	    reply = c->reply;
 	    if (c->length < length)
  	    {
-		reply = (xListFontsWithInfoReply *) xrealloc(c->reply, length);
+		reply = (xListFontsWithInfoReply *) realloc(c->reply, length);
 		if (!reply)
  		{
 		    err = AllocError;

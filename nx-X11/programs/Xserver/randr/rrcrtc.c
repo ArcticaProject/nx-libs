@@ -86,7 +86,7 @@ RRCrtcCreate(ScreenPtr pScreen, void *devPrivate)
         crtcs = reallocarray(pScrPriv->crtcs,
                              pScrPriv->numCrtcs + 1, sizeof(RRCrtcPtr));
 #else                           /* !defined(NXAGENT_SERVER) */
-        crtcs = xrealloc(pScrPriv->crtcs,
+        crtcs = realloc(pScrPriv->crtcs,
                          (pScrPriv->numCrtcs + 1) * sizeof(RRCrtcPtr));
 #endif                          /* !defined(NXAGENT_SERVER) */
     else
@@ -202,7 +202,7 @@ RRCrtcNotify(RRCrtcPtr crtc,
                 newoutputs = reallocarray(crtc->outputs,
                                           numOutputs, sizeof(RROutputPtr));
 #else                           /* !defined(NXAGENT_SERVER) */
-                newoutputs = xrealloc(crtc->outputs,
+                newoutputs = realloc(crtc->outputs,
                                       numOutputs * sizeof(RROutputPtr));
 #endif                          /* !defined(NXAGENT_SERVER) */
             else

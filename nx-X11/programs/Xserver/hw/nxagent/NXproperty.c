@@ -261,7 +261,7 @@ ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format,
         {
 	    if (totalSize != pProp->size * (pProp->format >> 3))
 	    {
-	    	data = (void *)xrealloc(pProp->data, totalSize);
+	    	data = (void *)realloc(pProp->data, totalSize);
 	    	if (!data && len)
 		    return(BadAlloc);
             	pProp->data = data;
@@ -278,7 +278,7 @@ ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format,
 	}
         else if (mode == PropModeAppend)
         {
-	    data = (void *)xrealloc(pProp->data,
+	    data = (void *)realloc(pProp->data,
 				     sizeInBytes * (len + pProp->size));
 	    if (!data)
 		return(BadAlloc);

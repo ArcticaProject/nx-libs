@@ -68,7 +68,7 @@ PictureGetFilterId (char *filter, int len, Bool makeit)
     memcpy (name, filter, len);
     name[len] = '\0';
     if (filterNames)
-	names = xrealloc (filterNames, (nfilterNames + 1) * sizeof (char *));
+	names = realloc (filterNames, (nfilterNames + 1) * sizeof (char *));
     else
 	names = malloc (sizeof (char *));
     if (!names)
@@ -144,7 +144,7 @@ PictureAddFilter (ScreenPtr			    pScreen,
 	if (ps->filters[i].id == id)
 	    return -1;
     if (ps->filters)
-	filters = xrealloc (ps->filters, (ps->nfilters + 1) * sizeof (PictFilterRec));
+	filters = realloc (ps->filters, (ps->nfilters + 1) * sizeof (PictFilterRec));
     else
 	filters = malloc (sizeof (PictFilterRec));
     if (!filters)
@@ -175,7 +175,7 @@ PictureSetFilterAlias (ScreenPtr pScreen, char *filter, char *alias)
 	PictFilterAliasPtr  aliases;
 
 	if (ps->filterAliases)
-	    aliases = xrealloc (ps->filterAliases,
+	    aliases = realloc (ps->filterAliases,
 				(ps->nfilterAliases + 1) *
 				sizeof (PictFilterAliasRec));
 	else

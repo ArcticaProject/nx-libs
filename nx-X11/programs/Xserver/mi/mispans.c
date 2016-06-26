@@ -155,12 +155,12 @@ void miSubtractSpans (spanGroup, sub)
 				int	    *newwid;
 
 #define EXTRA 8
-				newPt = (DDXPointPtr) xrealloc (spans->points, (spans->count + EXTRA) * sizeof (DDXPointRec));
+				newPt = (DDXPointPtr) realloc (spans->points, (spans->count + EXTRA) * sizeof (DDXPointRec));
 				if (!newPt)
 				    break;
 				spansPt = newPt + (spansPt - spans->points);
 				spans->points = newPt;
-				newwid = (int *) xrealloc (spans->widths, (spans->count + EXTRA) * sizeof (int));
+				newwid = (int *) realloc (spans->widths, (spans->count + EXTRA) * sizeof (int));
 				if (!newwid)
 				    break;
 				spansWid = newwid + (spansWid - spans->widths);
@@ -198,7 +198,7 @@ void miAppendSpans(spanGroup, otherGroup, spans)
 	if (spanGroup->size == spanGroup->count) {
 	    spanGroup->size = (spanGroup->size + 8) * 2;
 	    spanGroup->group = (Spans *)
-		xrealloc(spanGroup->group, sizeof(Spans) * spanGroup->size);
+		realloc(spanGroup->group, sizeof(Spans) * spanGroup->size);
 	 }
 
 	spanGroup->group[spanGroup->count] = *spans;
@@ -456,10 +456,10 @@ void miFillUniqueSpanGroup(pDraw, pGC, spanGroup)
 			DDXPointPtr newpoints;
 			int	    *newwidths;
 			ysizes[index] = (ysizes[index] + 8) * 2;
-			newpoints = (DDXPointPtr) xrealloc(
+			newpoints = (DDXPointPtr) realloc(
 			    newspans->points,
 			    ysizes[index] * sizeof(DDXPointRec));
-			newwidths = (int *) xrealloc(
+			newwidths = (int *) realloc(
 			    newspans->widths,
 			    ysizes[index] * sizeof(int));
 			if (!newpoints || !newwidths)

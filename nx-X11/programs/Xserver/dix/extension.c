@@ -108,7 +108,7 @@ AddExtension(char *name, int NumEvents, int NumErrors,
     }
     strcpy(ext->name,  name);
     i = NumExtensions;
-    newexts = (ExtensionEntry **) xrealloc(extensions,
+    newexts = (ExtensionEntry **) realloc(extensions,
 					   (i + 1) * sizeof(ExtensionEntry *));
     if (!newexts)
     {
@@ -159,7 +159,7 @@ Bool AddExtensionAlias(char *alias, ExtensionEntry *ext)
     char *name;
     char **aliases;
 
-    aliases = (char **)xrealloc(ext->aliases,
+    aliases = (char **)realloc(ext->aliases,
 				(ext->num_aliases + 1) * sizeof(char *));
     if (!aliases)
 	return FALSE;
@@ -442,7 +442,7 @@ RegisterScreenProc(char *name, ScreenPtr pScreen, ExtensionLookupProc proc)
 	if (!newname)
 	    return FALSE;
 	procEntry = (ProcEntryPtr)
-			    xrealloc(spentry->procList,
+			    realloc(spentry->procList,
 				     sizeof(ProcEntryRec) * (spentry->num+1));
 	if (!procEntry)
 	{

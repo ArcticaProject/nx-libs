@@ -841,7 +841,7 @@ AllocColor (ColormapPtr pmap,
 	*pgreen = pmap->red[pixR].co.local.green;
 	*pblue = pmap->red[pixR].co.local.blue;
 	npix = pmap->numPixelsRed[client];
-	ppix = (Pixel *) xrealloc(pmap->clientPixelsRed[client],
+	ppix = (Pixel *) realloc(pmap->clientPixelsRed[client],
 				  (npix + 1) * sizeof(Pixel));
 	if (!ppix)
 	    return (BadAlloc);
@@ -864,21 +864,21 @@ AllocColor (ColormapPtr pmap,
 	*pgreen = pmap->green[pixG].co.local.green;
 	*pblue = pmap->blue[pixB].co.local.blue;
 	npix = pmap->numPixelsRed[client];
-	ppix = (Pixel *) xrealloc(pmap->clientPixelsRed[client],
+	ppix = (Pixel *) realloc(pmap->clientPixelsRed[client],
 				  (npix + 1) * sizeof(Pixel));
 	if (!ppix)
 	    return (BadAlloc);
 	ppix[npix] = pixR;
 	pmap->clientPixelsRed[client] = ppix;
 	npix = pmap->numPixelsGreen[client];
-	ppix = (Pixel *) xrealloc(pmap->clientPixelsGreen[client],
+	ppix = (Pixel *) realloc(pmap->clientPixelsGreen[client],
 				  (npix + 1) * sizeof(Pixel));
 	if (!ppix)
 	    return (BadAlloc);
 	ppix[npix] = pixG;
 	pmap->clientPixelsGreen[client] = ppix;
 	npix = pmap->numPixelsBlue[client];
-	ppix = (Pixel *) xrealloc(pmap->clientPixelsBlue[client],
+	ppix = (Pixel *) realloc(pmap->clientPixelsBlue[client],
 				  (npix + 1) * sizeof(Pixel));
 	if (!ppix)
 	    return (BadAlloc);
@@ -1348,7 +1348,7 @@ gotit:
 	break;
     }
     npix = nump[client];
-    ppix = (Pixel *) xrealloc (pixp[client], (npix + 1) * sizeof(Pixel));
+    ppix = (Pixel *) realloc (pixp[client], (npix + 1) * sizeof(Pixel));
     if (!ppix)
     {
 	pent->refcnt--;
@@ -1762,17 +1762,17 @@ AllocDirect (int client, ColormapPtr pmap, int c, int r, int g, int b, Bool cont
 
     if (okR && okG && okB)
     {
-	rpix = (Pixel *) xrealloc(pmap->clientPixelsRed[client],
+	rpix = (Pixel *) realloc(pmap->clientPixelsRed[client],
 				  (pmap->numPixelsRed[client] + (c << r)) *
 				  sizeof(Pixel));
 	if (rpix)
 	    pmap->clientPixelsRed[client] = rpix;
-	gpix = (Pixel *) xrealloc(pmap->clientPixelsGreen[client],
+	gpix = (Pixel *) realloc(pmap->clientPixelsGreen[client],
 				  (pmap->numPixelsGreen[client] + (c << g)) *
 				  sizeof(Pixel));
 	if (gpix)
 	    pmap->clientPixelsGreen[client] = gpix;
-	bpix = (Pixel *) xrealloc(pmap->clientPixelsBlue[client],
+	bpix = (Pixel *) realloc(pmap->clientPixelsBlue[client],
 				  (pmap->numPixelsBlue[client] + (c << b)) *
 				  sizeof(Pixel));
 	if (bpix)
@@ -1861,7 +1861,7 @@ AllocPseudo (int client, ColormapPtr pmap, int c, int r, Bool contig,
 
 	/* all the allocated pixels are added to the client pixel list,
 	 * but only the unique ones are returned to the client */
-	ppix = (Pixel *)xrealloc(pmap->clientPixelsRed[client],
+	ppix = (Pixel *)realloc(pmap->clientPixelsRed[client],
 			 (pmap->numPixelsRed[client] + npix) * sizeof(Pixel));
 	if (!ppix)
 	{
@@ -2364,7 +2364,7 @@ FreeCo (ColormapPtr pmap, int client, int color, int npixIn, Pixel *ppixIn, Pixe
 		    npix++;
     	        }
     	    }
-	    pptr = (Pixel *)xrealloc(ppixClient, npixNew * sizeof(Pixel));
+	    pptr = (Pixel *)realloc(ppixClient, npixNew * sizeof(Pixel));
 	    if (pptr)
 		ppixClient = pptr;
 	    npixClient = npixNew;
@@ -2729,7 +2729,7 @@ ResizeVisualArray(ScreenPtr pScreen, int new_visual_count, DepthPtr depth)
     vids = reallocarray(depth->vids, depth->numVids + new_visual_count,
                         sizeof(XID));
 #else
-    vids = xrealloc(depth->vids, sizeof(XID) *
+    vids = realloc(depth->vids, sizeof(XID) *
                     (depth->numVids + new_visual_count));
 #endif
     if (!vids)
@@ -2742,7 +2742,7 @@ ResizeVisualArray(ScreenPtr pScreen, int new_visual_count, DepthPtr depth)
 #if 0 /* !defined(NXAGENT_SERVER) */
     visuals = reallocarray(pScreen->visuals, numVisuals, sizeof(VisualRec));
 #else
-    visuals = xrealloc(pScreen->visuals, sizeof(VisualRec) * numVisuals);
+    visuals = realloc(pScreen->visuals, sizeof(VisualRec) * numVisuals);
 #endif
     if (!visuals) {
         return FALSE;

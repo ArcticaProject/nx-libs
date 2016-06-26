@@ -60,7 +60,6 @@ from The Open Group.
 #else
 #include <stdlib.h>
 #define xcalloc(_num,_size)	calloc(_num,_size)
-#define xrealloc(_ptr,_size)	realloc(_ptr,_size)
 #endif
 
 #include "Xtransint.h"

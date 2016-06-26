@@ -2549,7 +2549,7 @@ Bool nxagentReconnectDisplay(void *p0)
 
   nxagentNumDefaultColormaps = nxagentNumVisuals;
 
-  nxagentDefaultColormaps = (Colormap *) xrealloc(nxagentDefaultColormaps,
+  nxagentDefaultColormaps = (Colormap *) realloc(nxagentDefaultColormaps,
                                 nxagentNumDefaultColormaps * sizeof(Colormap));
 
   if (nxagentDefaultColormaps == NULL)

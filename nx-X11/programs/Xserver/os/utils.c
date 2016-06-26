@@ -1220,7 +1220,7 @@ InsertFileIntoCommandLine(
 	}
     }
 
-    buf = (char *) xrealloc(buf, q - buf);
+    buf = (char *) realloc(buf, q - buf);
     if (!buf)
 	FatalError("Out of memory reallocing option buf\n");
 

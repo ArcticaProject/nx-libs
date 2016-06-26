@@ -618,7 +618,7 @@ CreateConnectionBlock()
 	{
 	    lenofblock += sizeof(xDepth) + 
 		    (pDepth->numVids * sizeof(xVisualType));
-	    pBuf = (char *)xrealloc(ConnectionInfo, lenofblock);
+	    pBuf = (char *)realloc(ConnectionInfo, lenofblock);
 	    if (!pBuf)
 	    {
 		free(ConnectionInfo);

@@ -1952,7 +1952,7 @@ XYToWindow(int x, int y)
 	    {
 		spriteTraceSize += 10;
 		Must_have_memory = TRUE; /* XXX */
-		spriteTrace = (WindowPtr *)xrealloc(
+		spriteTrace = (WindowPtr *)realloc(
 		    spriteTrace, spriteTraceSize*sizeof(WindowPtr));
 		Must_have_memory = FALSE; /* XXX */
 	    }
@@ -2467,7 +2467,7 @@ CheckPassiveGrabsOnWindow(
 		if (device->sync.evcount < count)
 		{
 		    Must_have_memory = TRUE; /* XXX */
-		    device->sync.event = (xEvent *)xrealloc(device->sync.event,
+		    device->sync.event = (xEvent *)realloc(device->sync.event,
 							    count*
 							    sizeof(xEvent));
 		    Must_have_memory = FALSE; /* XXX */
@@ -2639,7 +2639,7 @@ DeliverGrabbedEvent(register xEvent *xE, register DeviceIntPtr thisDev,
 	    if (thisDev->sync.evcount < count)
 	    {
 		Must_have_memory = TRUE; /* XXX */
-		thisDev->sync.event = (xEvent *)xrealloc(thisDev->sync.event,
+		thisDev->sync.event = (xEvent *)realloc(thisDev->sync.event,
 							 count*sizeof(xEvent));
 		Must_have_memory = FALSE; /* XXX */
 	    }
@@ -3530,7 +3530,7 @@ SetInputFocus(
         {
 	    focus->traceSize = depth+1;
 	    Must_have_memory = TRUE; /* XXX */
-	    focus->trace = (WindowPtr *)xrealloc(focus->trace,
+	    focus->trace = (WindowPtr *)realloc(focus->trace,
 						 focus->traceSize *
 						 sizeof(WindowPtr));
 	    Must_have_memory = FALSE; /* XXX */

@@ -1228,7 +1228,7 @@ RecordAddClientToRCAP(pRCAP, clientspec)
     {
 	if (pRCAP->clientIDsSeparatelyAllocated)
 	{
-	    XID *pNewIDs = (XID *)xrealloc(pRCAP->pClientIDs,
+	    XID *pNewIDs = (XID *)realloc(pRCAP->pClientIDs,
 			(pRCAP->sizeClients + CLIENT_ARRAY_GROWTH_INCREMENT) *
 								sizeof(XID));
 	    if (!pNewIDs)
@@ -2037,7 +2037,7 @@ ProcRecordCreateContext(client)
     /* make sure there is room in ppAllContexts to store the new context */
 
     ppNewAllContexts = (RecordContextPtr *)
-	xrealloc(ppAllContexts, sizeof(RecordContextPtr) * (numContexts + 1));
+	realloc(ppAllContexts, sizeof(RecordContextPtr) * (numContexts + 1));
     if (!ppNewAllContexts)
 	goto bailout;
     ppAllContexts = ppNewAllContexts;
@@ -2162,7 +2162,7 @@ RecordAllocRanges(pri, nRanges)
 #define SZINCR 8
 
     newsize = max(pri->size + SZINCR, nRanges);
-    pNewRange = (xRecordRange *)xrealloc(pri->pRanges,
+    pNewRange = (xRecordRange *)realloc(pri->pRanges,
 			 newsize * sizeof(xRecordRange));
     if (!pNewRange)
 	return BadAlloc;

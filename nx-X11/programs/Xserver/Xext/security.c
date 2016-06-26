@@ -1720,7 +1720,7 @@ SecurityParseSitePolicy(
     if (!copyPolicyStr)
 	return TRUE;
     strcpy(copyPolicyStr, policyStr);
-    newStrings = (char **)Xrealloc(SecurityPolicyStrings,
+    newStrings = (char **)realloc(SecurityPolicyStrings,
 			  sizeof (char *) * (nSecurityPolicyStrings + 1));
     if (!newStrings)
     {

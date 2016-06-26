@@ -1613,7 +1613,7 @@ GCPtr nxagentCreateGraphicContext(int depth)
    * to spread the list and add a new GC.
    */
 
-  nxagentGCs = xrealloc(nxagentGraphicContexts, (nxagentGraphicContextsSize + 1) * sizeof(nxagentGraphicContextsRec));
+  nxagentGCs = realloc(nxagentGraphicContexts, (nxagentGraphicContextsSize + 1) * sizeof(nxagentGraphicContextsRec));
    
   if (nxagentGCs == NULL)
   {

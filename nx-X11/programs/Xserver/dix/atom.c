@@ -129,7 +129,7 @@ MakeAtom(const char *string, unsigned len, Bool makeit)
 	if ((lastAtom + 1) >= tableLength) {
 	    NodePtr *table;
 
-	    table = (NodePtr *) xrealloc(nodeTable,
+	    table = (NodePtr *) realloc(nodeTable,
 					 tableLength * (2 * sizeof(NodePtr)));
 	    if (!table) {
 		if (nd->string != string)

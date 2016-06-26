@@ -82,7 +82,7 @@ AllocatePicturePrivate (ScreenPtr pScreen, int index2, unsigned int amount)
     {
 	unsigned int *nsizes;
 
-	nsizes = (unsigned int *)xrealloc(ps->PicturePrivateSizes,
+	nsizes = (unsigned int *)realloc(ps->PicturePrivateSizes,
 					  (index2 + 1) * sizeof(unsigned int));
 	if (!nsizes)
 	    return FALSE;

@@ -117,7 +117,7 @@ _GlyphSetSetNewPrivate (GlyphSetPtr glyphSet, int n, void * ptr)
     if (n > glyphSet->maxPrivate) {
 	if (glyphSet->devPrivates &&
 	    glyphSet->devPrivates != (void *)(&glyphSet[1])) {
-	    new = (void **) xrealloc (glyphSet->devPrivates,
+	    new = (void **) realloc (glyphSet->devPrivates,
 					(n + 1) * sizeof (void *));
 	    if (!new)
 		return FALSE;

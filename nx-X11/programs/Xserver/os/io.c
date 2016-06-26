@@ -321,7 +321,7 @@ ReadRequestFromClient(ClientPtr client)
 		/* make buffer bigger to accomodate request */
 		char *ibuf;
 
-		ibuf = (char *)xrealloc(oci->buffer, needed);
+		ibuf = (char *)realloc(oci->buffer, needed);
 		if (!ibuf)
 		{
 		    YieldControlDeath();
@@ -371,7 +371,7 @@ ReadRequestFromClient(ClientPtr client)
 	{
 	    char *ibuf;
 
-	    ibuf = (char *)xrealloc(oci->buffer, BUFSIZE);
+	    ibuf = (char *)realloc(oci->buffer, BUFSIZE);
 	    if (ibuf)
 	    {
 		oci->size = BUFSIZE;
@@ -531,7 +531,7 @@ InsertFakeRequest(ClientPtr client, char *data, int count)
     {
 	char *ibuf;
 
-	ibuf = (char *)xrealloc(oci->buffer, gotnow + count);
+	ibuf = (char *)realloc(oci->buffer, gotnow + count);
 	if (!ibuf)
 	    return(FALSE);
 	oci->size = gotnow + count;
@@ -1097,7 +1097,7 @@ FlushClient(ClientPtr who, OsCommPtr oc, char *extraBuf, int extraCount)
 	    {
 		unsigned char *obuf;
 
-		obuf = (unsigned char *)xrealloc(oco->buf,
+		obuf = (unsigned char *)realloc(oco->buf,
 						 notWritten + BUFSIZE);
 		if (!obuf)
 		{

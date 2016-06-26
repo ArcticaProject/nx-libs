@@ -170,7 +170,7 @@ QueueFontWakeup(FontPathElementPtr fpe)
     }
     if (num_slept_fpes == size_slept_fpes) {
 	new = (FontPathElementPtr *)
-	    xrealloc(slept_fpes,
+	    realloc(slept_fpes,
 		     sizeof(FontPathElementPtr) * (size_slept_fpes + 4));
 	if (!new)
 	    return;
@@ -302,7 +302,7 @@ doOpenFont(ClientPtr client, OFclosurePtr c)
 
 	if (err == FontNameAlias && alias) {
 	    newlen = strlen(alias);
-	    newname = (char *) xrealloc(c->fontname, newlen);
+	    newname = (char *) realloc(c->fontname, newlen);
 	    if (!newname) {
 		err = AllocError;
 		break;
@@ -1038,7 +1038,7 @@ doListFontsWithInfo(ClientPtr client, LFWIclosurePtr c)
 	    reply = c->reply;
 	    if (c->length < length)
  	    {
-		reply = (xListFontsWithInfoReply *) xrealloc(c->reply, length);
+		reply = (xListFontsWithInfoReply *) realloc(c->reply, length);
 		if (!reply)
  		{
 		    err = AllocError;
@@ -1998,7 +1998,7 @@ RegisterFPEFunctions(NameCheckFunc name_func,
     FPEFunctions *new;
 
     /* grow the list */
-    new = (FPEFunctions *) xrealloc(fpe_functions,
+    new = (FPEFunctions *) realloc(fpe_functions,
 				 (num_fpe_types + 1) * sizeof(FPEFunctions));
     if (!new)
 	return -1;

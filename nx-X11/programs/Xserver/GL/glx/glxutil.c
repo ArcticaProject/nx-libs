@@ -105,7 +105,7 @@ __glXRealloc(void *addr, size_t newSize)
 	    free(addr);
 	    return NULL;
 	} else {
-	    newAddr = xrealloc(addr, newSize);
+	    newAddr = realloc(addr, newSize);
 	}
     } else {
 	if (newSize == 0) {

@@ -351,7 +351,7 @@ AlterSaveSetForClient(ClientPtr client, WindowPtr pWin, unsigned mode,
 	if (j < numnow)         /* duplicate */
 	   return(Success);
 	numnow++;
-	pTmp = (SaveSetElt *)xrealloc(client->saveSet, sizeof(*pTmp) * numnow);
+	pTmp = (SaveSetElt *)realloc(client->saveSet, sizeof(*pTmp) * numnow);
 	if (!pTmp)
 	    return(BadAlloc);
 	client->saveSet = pTmp;
@@ -371,7 +371,7 @@ AlterSaveSetForClient(ClientPtr client, WindowPtr pWin, unsigned mode,
 	numnow--;
         if (numnow)
 	{
-	    pTmp = (SaveSetElt *)xrealloc(client->saveSet, sizeof(*pTmp) * numnow);
+	    pTmp = (SaveSetElt *)realloc(client->saveSet, sizeof(*pTmp) * numnow);
 	    if (pTmp)
 		client->saveSet = pTmp;
 	}
@@ -504,7 +504,7 @@ RegisterBlockAndWakeupHandlers (BlockHandlerProcPtr blockHandler,
 
     if (numHandlers >= sizeHandlers)
     {
-    	new = (BlockHandlerPtr) xrealloc (handlers, (numHandlers + 1) *
+    	new = (BlockHandlerPtr) realloc (handlers, (numHandlers + 1) *
 				      	  sizeof (BlockHandlerRec));
     	if (!new)
 	    return FALSE;

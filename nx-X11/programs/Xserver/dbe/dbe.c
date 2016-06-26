@@ -268,7 +268,7 @@ DbeAllocWinPrivPriv(pScreen, index, amount)
     if (index >= pDbeScreenPriv->winPrivPrivLen)
     {
 	unsigned *nsizes;
-	nsizes = (unsigned *)xrealloc(pDbeScreenPriv->winPrivPrivSizes,
+	nsizes = (unsigned *)realloc(pDbeScreenPriv->winPrivPrivSizes,
 				      (index + 1) * sizeof(unsigned));
 	if (!nsizes)
         {
@@ -564,7 +564,7 @@ ProcDbeAllocateBackBufferName(client)
             }
 
             /* malloc/realloc a new array and initialize all elements to 0. */
-            pDbeWindowPriv->IDs = (XID *)xrealloc(pIDs,
+            pDbeWindowPriv->IDs = (XID *)realloc(pIDs,
                 (pDbeWindowPriv->maxAvailableIDs+DBE_INCR_MAX_IDS)*sizeof(XID));
             if (!pDbeWindowPriv->IDs)
             {

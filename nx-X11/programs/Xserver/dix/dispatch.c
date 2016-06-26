@@ -1023,7 +1023,7 @@ ProcSetSelectionOwner(register ClientPtr client)
 	    if (i == 0)
 		newsels = (Selection *)malloc(sizeof(Selection));
 	    else
-		newsels = (Selection *)xrealloc(CurrentSelections,
+		newsels = (Selection *)realloc(CurrentSelections,
 			    (NumCurrentSelections + 1) * sizeof(Selection));
 	    if (!newsels)
 		return BadAlloc;

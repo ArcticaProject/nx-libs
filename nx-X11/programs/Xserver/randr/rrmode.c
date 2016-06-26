@@ -99,7 +99,7 @@ RRModeCreate(xRRModeInfo * modeInfo, const char *name, ScreenPtr userScreen)
 #ifndef NXAGENT_SERVER
         newModes = reallocarray(modes, num_modes + 1, sizeof(RRModePtr));
 #else                           /* !defined(NXAGENT_SERVER) */
-        newModes = xrealloc(modes, (num_modes + 1) * sizeof(RRModePtr));
+        newModes = realloc(modes, (num_modes + 1) * sizeof(RRModePtr));
 #endif                          /* !defined(NXAGENT_SERVER) */
 
     else

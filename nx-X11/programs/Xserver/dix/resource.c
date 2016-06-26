@@ -178,7 +178,7 @@ CreateNewResourceType(DeleteType deleteFunc)
 
     if (next & lastResourceClass)
 	return 0;
-    funcs = (DeleteType *)xrealloc(DeleteFuncs,
+    funcs = (DeleteType *)realloc(DeleteFuncs,
 				   (next + 1) * sizeof(DeleteType));
     if (!funcs)
 	return 0;
@@ -186,7 +186,7 @@ CreateNewResourceType(DeleteType deleteFunc)
 #ifdef XResExtension
     {
        Atom *newnames;
-       newnames = xrealloc(ResourceNames, (next + 1) * sizeof(Atom));
+       newnames = realloc(ResourceNames, (next + 1) * sizeof(Atom));
        if(!newnames)
            return 0;
        ResourceNames = newnames;

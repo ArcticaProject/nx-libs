@@ -168,7 +168,7 @@ ProcXChangeKeyboardDevice (client)
 	if (df->traceSize != xf->traceSize)
 	    {
 	    Must_have_memory = TRUE; /* XXX */
-	    df->trace = (WindowPtr *) xrealloc(df->trace, 
+	    df->trace = (WindowPtr *) realloc(df->trace, 
 		xf->traceSize * sizeof(WindowPtr));
 	    Must_have_memory = FALSE; /* XXX */
 	    }

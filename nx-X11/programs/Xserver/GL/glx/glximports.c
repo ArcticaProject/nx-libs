@@ -94,7 +94,7 @@ void *__glXImpRealloc(__GLcontext *gc, void *addr, size_t newSize)
 	    free(addr);
 	    return NULL;
 	}
-	newAddr = xrealloc(addr, newSize);
+	newAddr = realloc(addr, newSize);
     } else {
 	if (newSize == 0) {
 	    return NULL;

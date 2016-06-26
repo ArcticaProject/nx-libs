@@ -306,7 +306,7 @@ void nxagentListRemoteAddName(const char *name, int status)
 
   if (nxagentRemoteFontList.length == nxagentRemoteFontList.listSize)
   {
-     nxagentRemoteFontList.list = xrealloc(nxagentRemoteFontList.list, sizeof(nxagentFontRecPtr)
+     nxagentRemoteFontList.list = realloc(nxagentRemoteFontList.list, sizeof(nxagentFontRecPtr)
                                                * (nxagentRemoteFontList.listSize + 1000));
 
      if (nxagentRemoteFontList.list == NULL)
@@ -569,7 +569,7 @@ Bool nxagentRealizeFont(ScreenPtr pScreen, FontPtr pFont)
 
       if (CACHE_INDEX == CACHE_SIZE)
       {
-        CACHE_ENTRY_PTR = xrealloc(CACHE_ENTRY_PTR, sizeof(nxCacheFontEntryRecPtr) * (CACHE_SIZE + 100));
+        CACHE_ENTRY_PTR = realloc(CACHE_ENTRY_PTR, sizeof(nxCacheFontEntryRecPtr) * (CACHE_SIZE + 100));
 
         if (CACHE_ENTRY_PTR == NULL)
         {

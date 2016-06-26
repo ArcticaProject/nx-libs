@@ -210,7 +210,7 @@ if (((numRects) < ((reg)->data->size >> 1)) && ((reg)->data->size > 50)) \
 {									 \
     size_t NewSize = RegionSizeof(numRects);				 \
     RegDataPtr NewData =						 \
-	(NewSize > 0) ? (RegDataPtr)xrealloc((reg)->data, NewSize) : NULL;	 \
+	(NewSize > 0) ? (RegDataPtr)realloc((reg)->data, NewSize) : NULL;	 \
     if (NewData)							 \
     {									 \
 	NewData->size = (numRects);					 \
@@ -391,7 +391,7 @@ RegionRectAlloc(
 	}
 	n += pRgn->data->numRects;
 	rgnSize = RegionSizeof(n);
-	data = (rgnSize > 0) ? xrealloc(pRgn->data, rgnSize) : NULL;
+	data = (rgnSize > 0) ? realloc(pRgn->data, rgnSize) : NULL;
 	if (!data)
 	    return RegionBreak (pRgn);
 	pRgn->data = data;
@@ -1299,7 +1299,7 @@ RegionValidate(badreg, pOverlap)
 	{
 	    /* Oops, allocate space for new region information */
 	    sizeRI <<= 1;
-	    rit = (RegionInfo *) xrealloc(ri, sizeRI * sizeof(RegionInfo));
+	    rit = (RegionInfo *) realloc(ri, sizeRI * sizeof(RegionInfo));
 	    if (!rit)
 		goto bail;
 	    ri = rit;

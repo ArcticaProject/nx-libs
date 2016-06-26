@@ -1058,7 +1058,7 @@ SyncCreateSystemCounter(name, initial, resolution, counterType,
 {
     SyncCounter    *pCounter;
 
-    SysCounterList = (SyncCounter **)xrealloc(SysCounterList,
+    SysCounterList = (SyncCounter **)realloc(SysCounterList,
 			    (SyncNumSystemCounters+1)*sizeof(SyncCounter *));
     if (!SysCounterList)
 	return (void *)NULL;
