@@ -6,6 +6,7 @@ Uploaders:
  Reinhard Tartler <siretart@tauware.de>,
  Mike Gabriel <mike.gabriel@das-netzwerkteam.de>,
  Oleksandr Shneyder <oleksandr.shneyder@obviously-nice.de>,
+ Mihai Moldovan <ionic@ionic.de>,
 Build-Depends:
  debhelper (>= 7.0.50~),
  libpng-dev,
