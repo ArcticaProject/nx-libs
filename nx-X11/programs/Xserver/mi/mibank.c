@@ -2243,11 +2243,11 @@ miInitializeBanking(
             (sizeof(miBankGCRec) - sizeof(RegionPtr))))
         return FALSE;
 
-    if (!(pScreenPriv = (miBankScreenPtr)Xcalloc(sizeof(miBankScreenRec))))
+    if (!(pScreenPriv = (miBankScreenPtr)calloc(1, sizeof(miBankScreenRec))))
         return FALSE;
 
     if (!(pScreenPriv->pBanks =                 /* Allocate and clear */
-        (RegionPtr *)Xcalloc(nBanks * sizeof(RegionPtr))))
+        (RegionPtr *)calloc(1, nBanks * sizeof(RegionPtr))))
     {
         free(pScreenPriv);
         return FALSE;

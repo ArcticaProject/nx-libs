@@ -565,7 +565,7 @@ diff -u ./nx-X11/programs/Xserver/randr.X.original/randr.c ./nx-X11/programs/Xse
 +	return FALSE;
  
 -    pScrPriv = (rrScrPrivPtr) xalloc (sizeof (rrScrPrivRec));
-+    pScrPriv = (rrScrPrivPtr) xcalloc (1, sizeof (rrScrPrivRec));
++    pScrPriv = (rrScrPrivPtr) calloc (1, sizeof (rrScrPrivRec));
      if (!pScrPriv)
  	return FALSE;
  

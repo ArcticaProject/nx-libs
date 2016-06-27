@@ -689,11 +689,11 @@ AddScreen(
     if (i == MAXSCREENS)
 	return -1;
 
-    pScreen = (ScreenPtr) xcalloc(1, sizeof(ScreenRec));
+    pScreen = (ScreenPtr) calloc(1, sizeof(ScreenRec));
     if (!pScreen)
 	return -1;
 
-    pScreen->devPrivates = (DevUnion *)xcalloc(sizeof(DevUnion),
+    pScreen->devPrivates = (DevUnion *)calloc(sizeof(DevUnion),
 						screenPrivateCount);
     if (!pScreen->devPrivates && screenPrivateCount)
     {

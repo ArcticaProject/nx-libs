@@ -525,7 +525,7 @@ void PanoramiXExtensionInit(int argc, char *argv[])
 	 */
 
 	panoramiXdataPtr = (PanoramiXData *) 
-		xcalloc(PanoramiXNumScreens, sizeof(PanoramiXData));
+		calloc(PanoramiXNumScreens, sizeof(PanoramiXData));
 
         BREAK_IF(!panoramiXdataPtr);
 	BREAK_IF((PanoramiXGCIndex = AllocateGCPrivateIndex()) < 0);
@@ -769,16 +769,16 @@ void PanoramiXConsolidate(void)
     Bool        foundDepth, missingDepth;
 
     if(!PanoramiXVisualTable)
-	PanoramiXVisualTable = xcalloc(256 * MAXSCREENS, sizeof(XID));
+	PanoramiXVisualTable = calloc(256 * MAXSCREENS, sizeof(XID));
 
     pScreen = screenInfo.screens[0];
     pVisual = pScreen->visuals; 
     pDepth  = pScreen->allowedDepths;
 
     PanoramiXNumDepths = 0;
-    PanoramiXDepths = xcalloc(pScreen->numDepths,sizeof(DepthRec));
+    PanoramiXDepths = calloc(pScreen->numDepths,sizeof(DepthRec));
     PanoramiXNumVisuals = 0;
-    PanoramiXVisuals = xcalloc(pScreen->numVisuals,sizeof(VisualRec));
+    PanoramiXVisuals = calloc(pScreen->numVisuals,sizeof(VisualRec));
 
     for (i = 0; i < pScreen->numDepths; i++, pDepth++) {
         missingDepth = FALSE;

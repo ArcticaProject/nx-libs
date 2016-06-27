@@ -196,7 +196,7 @@ miOverlayCreateWindow(WindowPtr pWin)
     pWinPriv->tree = NULL;
 
     if(!pWin->parent || !((*pScreenPriv->InOverlay)(pWin))) {
-	if(!(pTree = (miOverlayTreePtr)xcalloc(1, sizeof(miOverlayTreeRec))))
+	if(!(pTree = (miOverlayTreePtr)calloc(1, sizeof(miOverlayTreeRec))))
 	   return FALSE;
     }
 

@@ -321,7 +321,7 @@ RRScreenInit(ScreenPtr pScreen)
     if (!RRInit())
         return FALSE;
 
-    pScrPriv = (rrScrPrivPtr) xcalloc(1, sizeof(rrScrPrivRec));
+    pScrPriv = (rrScrPrivPtr) calloc(1, sizeof(rrScrPrivRec));
     if (!pScrPriv)
         return FALSE;
 

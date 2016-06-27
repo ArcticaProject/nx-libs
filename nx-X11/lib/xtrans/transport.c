@@ -59,7 +59,6 @@ from The Open Group.
 #include "os.h"
 #else
 #include <stdlib.h>
-#define xcalloc(_num,_size)	calloc(_num,_size)
 #endif
 
 #include "Xtransint.h"

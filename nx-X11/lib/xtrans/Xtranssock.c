@@ -601,7 +601,7 @@ static XtransConnInfo TRANS(SocketCreateConnInfo) ()
     fprintf(stderr, "SocketCreateConnInfo: Going to create the NX connection info.\n");
 #endif
 
-    if ((ciptr = (XtransConnInfo) xcalloc (1, sizeof(struct _XtransConnInfo))) == NULL)
+    if ((ciptr = (XtransConnInfo) calloc (1, sizeof(struct _XtransConnInfo))) == NULL)
     {
         PRMSG (1, "SocketCreateConnInfo: malloc failed\n", 0, 0, 0);
         return NULL;
@@ -653,7 +653,7 @@ static XtransConnInfo TRANS(SocketCreateConnInfo) ()
         exit(1);
     }
 
-    _NXProxyConnInfoTab[ciptr->fd] = (_NXProxyConnInfo *) xcalloc(1, sizeof(_NXProxyConnInfo));
+    _NXProxyConnInfoTab[ciptr->fd] = (_NXProxyConnInfo *) calloc(1, sizeof(_NXProxyConnInfo));
 
     if (_NXProxyConnInfoTab[ciptr->fd] == NULL)
     {
@@ -1063,7 +1063,7 @@ TRANS(SocketOpen) (int i, int type)
 	return NULL;
 #endif
 
-    if ((ciptr = (XtransConnInfo) xcalloc (
+    if ((ciptr = (XtransConnInfo) calloc (
 	1, sizeof(struct _XtransConnInfo))) == NULL)
     {
 	PRMSG (1, "SocketOpen: malloc failed\n", 0, 0, 0);
@@ -1119,7 +1119,7 @@ TRANS(SocketReopen) (int i, int type, int fd, char *port)
 
     PRMSG (3,"SocketReopen(%d,%d,%s)\n", type, fd, port);
 
-    if ((ciptr = (XtransConnInfo) xcalloc (
+    if ((ciptr = (XtransConnInfo) calloc (
 	1, sizeof(struct _XtransConnInfo))) == NULL)
     {
 	PRMSG (1, "SocketReopen: malloc failed\n", 0, 0, 0);
@@ -1953,7 +1953,7 @@ TRANS(SocketINETAccept) (XtransConnInfo ciptr, int *status)
 
     PRMSG (2, "SocketINETAccept(%p,%d)\n", ciptr, ciptr->fd, 0);
 
-    if ((newciptr = (XtransConnInfo) xcalloc (
+    if ((newciptr = (XtransConnInfo) calloc (
 	1, sizeof(struct _XtransConnInfo))) == NULL)
     {
 	PRMSG (1, "SocketINETAccept: malloc failed\n", 0, 0, 0);
@@ -2036,7 +2036,7 @@ TRANS(SocketUNIXAccept) (XtransConnInfo ciptr, int *status)
 
     PRMSG (2, "SocketUNIXAccept(%p,%d)\n", ciptr, ciptr->fd, 0);
 
-    if ((newciptr = (XtransConnInfo) xcalloc (
+    if ((newciptr = (XtransConnInfo) calloc (
 	1, sizeof(struct _XtransConnInfo))) == NULL)
     {
 	PRMSG (1, "SocketUNIXAccept: malloc() failed\n", 0, 0, 0);

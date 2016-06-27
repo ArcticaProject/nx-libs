@@ -1036,7 +1036,7 @@ int PanoramiXCopyArea(ClientPtr client)
 	    VERIFY_DRAWABLE(drawables[j], src->info[j].id, client);
 
 	pitch = PixmapBytePad(stuff->width, drawables[0]->depth); 
-	if(!(data = xcalloc(1, stuff->height * pitch)))
+	if(!(data = calloc(1, stuff->height * pitch)))
 	    return BadAlloc;
 
 	XineramaGetImageData(drawables, srcx, srcy, 

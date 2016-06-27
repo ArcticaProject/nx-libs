@@ -95,7 +95,7 @@ RRCrtcCreate(ScreenPtr pScreen, void *devPrivate)
         return FALSE;
     pScrPriv->crtcs = crtcs;
 
-    crtc = xcalloc(1, sizeof(RRCrtcRec));
+    crtc = calloc(1, sizeof(RRCrtcRec));
     if (!crtc)
         return NULL;
     crtc->id = FakeClientID(0);
@@ -370,7 +370,7 @@ RRComputeContiguity(ScreenPtr pScreen)
     Bool discontiguous = TRUE;
     int i, n = pScrPriv->numCrtcs;
 
-    int *reachable = xcalloc(n, sizeof(int));
+    int *reachable = calloc(n, sizeof(int));
 
     if (!reachable)
         goto out;
@@ -1673,7 +1673,7 @@ ProcRRGetCrtcTransform(ClientPtr client)
     nextra = (transform_filter_length(pending) +
               transform_filter_length(current));
 
-    reply = xcalloc(1, sizeof(xRRGetCrtcTransformReply) + nextra);
+    reply = calloc(1, sizeof(xRRGetCrtcTransformReply) + nextra);
     if (!reply)
         return BadAlloc;
 

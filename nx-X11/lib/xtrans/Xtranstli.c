@@ -320,7 +320,7 @@ TRANS(TLIOpen)(char *device)
     
     PRMSG(3,"TLIOpen(%s)\n", device, 0,0 );
     
-    if( (ciptr=(XtransConnInfo)xcalloc(1,sizeof(struct _XtransConnInfo))) == NULL )
+    if( (ciptr=(XtransConnInfo)calloc(1,sizeof(struct _XtransConnInfo))) == NULL )
     {
 	PRMSG(1, "TLIOpen: calloc failed\n", 0,0,0 );
 	return NULL;
@@ -353,7 +353,7 @@ TRANS(TLIReopen)(char *device, int fd, char *port)
 	return NULL;
     }
 
-    if( (ciptr=(XtransConnInfo)xcalloc(1,sizeof(struct _XtransConnInfo))) == NULL )
+    if( (ciptr=(XtransConnInfo)calloc(1,sizeof(struct _XtransConnInfo))) == NULL )
     {
 	PRMSG(1, "TLIReopen: calloc failed\n", 0,0,0 );
 	return NULL;

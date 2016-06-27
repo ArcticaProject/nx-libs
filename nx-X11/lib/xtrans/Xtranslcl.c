@@ -2038,7 +2038,7 @@ TRANS(LocalOpenClient)(int type, char *protocol, char *host, char *port)
      */
 #endif /* X11_t */
 
-    if( (ciptr=(XtransConnInfo)xcalloc(1,sizeof(struct _XtransConnInfo))) == NULL )
+    if( (ciptr=(XtransConnInfo)calloc(1,sizeof(struct _XtransConnInfo))) == NULL )
     {
 	PRMSG(1,"LocalOpenClient: calloc(1,%d) failed\n",
 	      sizeof(struct _XtransConnInfo),0,0 );
@@ -2113,7 +2113,7 @@ TRANS(LocalOpenServer)(int type, char *protocol, char *host, char *port)
      */
 #endif /* X11_t */
 
-    if( (ciptr=(XtransConnInfo)xcalloc(1,sizeof(struct _XtransConnInfo))) == NULL )
+    if( (ciptr=(XtransConnInfo)calloc(1,sizeof(struct _XtransConnInfo))) == NULL )
     {
 	PRMSG(1,"LocalOpenServer: calloc(1,%d) failed\n",
 	      sizeof(struct _XtransConnInfo),0,0 );
@@ -2168,7 +2168,7 @@ TRANS(LocalReopenServer)(int type, int index, int fd, char *port)
 
     PRMSG(2,"LocalReopenServer(%d,%d,%d)\n", type, index, fd);
 
-    if( (ciptr=(XtransConnInfo)xcalloc(1,sizeof(struct _XtransConnInfo))) == NULL )
+    if( (ciptr=(XtransConnInfo)calloc(1,sizeof(struct _XtransConnInfo))) == NULL )
     {
 	PRMSG(1,"LocalReopenServer: calloc(1,%d) failed\n",
 	      sizeof(struct _XtransConnInfo),0,0 );
@@ -2384,7 +2384,7 @@ TRANS(LocalAccept)(XtransConnInfo ciptr, int *status)
 
     transptr=(LOCALtrans2dev *)ciptr->priv;
 
-    if( (newciptr=(XtransConnInfo)xcalloc(1,sizeof(struct _XtransConnInfo)))==NULL )
+    if( (newciptr=(XtransConnInfo)calloc(1,sizeof(struct _XtransConnInfo)))==NULL )
     {
 	PRMSG(1,"LocalAccept: calloc(1,%d) failed\n",
 	      sizeof(struct _XtransConnInfo),0,0 );

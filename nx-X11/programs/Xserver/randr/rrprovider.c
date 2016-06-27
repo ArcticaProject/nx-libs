@@ -380,7 +380,7 @@ RRProviderCreate(ScreenPtr pScreen, const char *name,
 
     pScrPriv = rrGetScrPriv(pScreen);
 
-    provider = xcalloc(1, sizeof(RRProviderRec) + nameLength + 1);
+    provider = calloc(1, sizeof(RRProviderRec) + nameLength + 1);
     if (!provider)
         return NULL;
 

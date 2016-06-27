@@ -75,14 +75,6 @@ typedef unsigned short CARD16;
 #define ALLOCATE_LOCAL malloc
 #define DEALLOCATE_LOCAL free
 
-void *Xcalloc(size)
-    int size;
-{
-    void *p = malloc(size);
-    if (p) memset(p, 0, size);
-    return p;
-}
-
 #ifndef max
 #define max(_a, _b) ( ((_a) > (_b)) ? (_a) : (_b) )
 #endif
@@ -258,7 +250,7 @@ BitVectorCreateSet(pIntervals, nIntervals, pMem, memsize)
     }
     else
     {
-	pbvs = (BitVectorSetPtr)Xcalloc(memsize);
+	pbvs = (BitVectorSetPtr)calloc(1, memsize);
 	if (!pbvs) return NULL;
 	pbvs->baseSet.ops = &BitVectorSetOperations;
     }

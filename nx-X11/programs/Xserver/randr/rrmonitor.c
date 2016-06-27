@@ -95,7 +95,7 @@ RRMonitorSetFromServer(RRCrtcPtr crtc, RRMonitorPtr monitor)
     monitor->name = RRMonitorCrtcName(crtc);
     monitor->pScreen = crtc->pScreen;
     monitor->numOutputs = crtc->numOutputs;
-    monitor->outputs = xcalloc(crtc->numOutputs, sizeof(RRCrtc));
+    monitor->outputs = calloc(crtc->numOutputs, sizeof(RRCrtc));
     if (!monitor->outputs)
         return FALSE;
     for (o = 0; o < crtc->numOutputs; o++)
@@ -173,7 +173,7 @@ RRMonitorSetFromClient(RRMonitorPtr client_monitor, RRMonitorPtr monitor)
     monitor->name = client_monitor->name;
     monitor->pScreen = client_monitor->pScreen;
     monitor->numOutputs = client_monitor->numOutputs;
-    monitor->outputs = xcalloc(client_monitor->numOutputs, sizeof(RROutput));
+    monitor->outputs = calloc(client_monitor->numOutputs, sizeof(RROutput));
     if (!monitor->outputs && client_monitor->numOutputs)
         return FALSE;
     memcpy(monitor->outputs, client_monitor->outputs, client_monitor->numOutputs * sizeof(RROutput));
@@ -216,7 +216,7 @@ RRMonitorInitList(ScreenPtr screen, RRMonitorListPtr mon_list, Bool get_active)
 #endif
     mon_list->num_crtcs = numCrtcs;
 
-    mon_list->server_crtc = xcalloc(numCrtcs * 2, sizeof(RRCrtcPtr));
+    mon_list->server_crtc = calloc(numCrtcs * 2, sizeof(RRCrtcPtr));
     if (!mon_list->server_crtc)
         return FALSE;
 
@@ -321,7 +321,7 @@ RRMonitorMakeList(ScreenPtr screen, Bool get_active, RRMonitorPtr * monitors_ret
     if (!RRMonitorInitList(screen, &list, get_active))
         return FALSE;
 
-    monitors = xcalloc(list.num_client + list.num_server, sizeof(RRMonitorRec));
+    monitors = calloc(list.num_client + list.num_server, sizeof(RRMonitorRec));
     if (!monitors) {
         RRMonitorFiniList(&list);
         return FALSE;
@@ -409,7 +409,7 @@ RRMonitorAlloc(int noutput)
 {
     RRMonitorPtr monitor;
 
-    monitor = xcalloc(1, sizeof(RRMonitorRec) + noutput * sizeof(RROutput));
+    monitor = calloc(1, sizeof(RRMonitorRec) + noutput * sizeof(RROutput));
     if (!monitor)
         return NULL;
     monitor->numOutputs = noutput;

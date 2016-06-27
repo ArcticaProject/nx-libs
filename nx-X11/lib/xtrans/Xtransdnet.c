@@ -187,7 +187,7 @@ TRANS(DNETOpenCOTSClient) (Xtransport *thistrans, char *protocol,
 
     PRMSG (2,"DNETOpenCOTSClient(%s,%s,%s)\n", protocol, host, port);
 
-    if ((ciptr = (XtransConnInfo) xcalloc (
+    if ((ciptr = (XtransConnInfo) calloc (
 	1, sizeof(struct _XtransConnInfo))) == NULL)
     {
 	PRMSG (1, "DNETOpenCOTSClient: malloc failed\n", 0, 0, 0);
@@ -215,7 +215,7 @@ TRANS(DNETOpenCOTSServer) (Xtransport *thistrans, char *protocol,
 
     PRMSG (2,"DNETOpenCOTSServer(%s,%s,%s)\n", protocol, host, port);
 
-    if ((ciptr = (XtransConnInfo) xcalloc (
+    if ((ciptr = (XtransConnInfo) calloc (
 	1, sizeof(struct _XtransConnInfo))) == NULL)
     {
 	PRMSG (1, "DNETOpenCOTSServer: malloc failed\n", 0, 0, 0);
@@ -247,7 +247,7 @@ TRANS(DNETOpenCLTSClient) (Xtransport *thistrans, char *protocol,
 
     PRMSG (2,"DNETOpenCLTSClient(%s,%s,%s)\n", protocol, host, port);
 
-    if ((ciptr = (XtransConnInfo) xcalloc (
+    if ((ciptr = (XtransConnInfo) calloc (
 	1, sizeof (struct _XtransConnInfo))) == NULL)
     {
 	PRMSG (1, "DNETOpenCLTSClient: malloc failed\n", 0, 0, 0);
@@ -290,7 +290,7 @@ TRANS(DNETReopenCOTSServer) (Xtransport *thistrans, int fd, char *port)
 
     PRMSG (2,"DNETReopenCOTSServer(%d,%s)\n", fd, port, 0);
 
-    if ((ciptr = (XtransConnInfo) xcalloc (
+    if ((ciptr = (XtransConnInfo) calloc (
 	1, sizeof(struct _XtransConnInfo))) == NULL)
     {
 	PRMSG (1, "DNETReopenCOTSServer: malloc failed\n", 0, 0, 0);
@@ -311,7 +311,7 @@ TRANS(DNETReopenCLTSServer) (Xtransport *thistrans, int fd, char *port)
 
     PRMSG (2,"DNETReopenCLTSServer(%d,%s)\n", fd, port, 0);
 
-    if ((ciptr = (XtransConnInfo) xcalloc (
+    if ((ciptr = (XtransConnInfo) calloc (
 	1, sizeof(struct _XtransConnInfo))) == NULL)
     {
 	PRMSG (1, "DNETReopenCLTSServer: malloc failed\n", 0, 0, 0);
@@ -393,7 +393,7 @@ TRANS(DNETAccept) (XtransConnInfo ciptr, int *status)
 
     PRMSG (2, "DNETAccept(%x,%d)\n", ciptr, ciptr->fd, 0);
 
-    if ((newciptr = (XtransConnInfo) xcalloc(
+    if ((newciptr = (XtransConnInfo) calloc(
 	1, sizeof (struct _XtransConnInfo))) == NULL)
     {
 	PRMSG (1, "DNETAccept: malloc failed\n", 0, 0, 0);

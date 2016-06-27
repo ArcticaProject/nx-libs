@@ -90,7 +90,7 @@ TRANS(Os2OpenClient)(Xtransport *thistrans, char *protocol,
     PRMSG(5, "Os2OpenClient: Creating pipe %s\n",pipename, 0,0 );
 
 	/* make a connection entry */	
-	if( (ciptr=(XtransConnInfo)xcalloc(1,sizeof(struct _XtransConnInfo))) == NULL ) {
+	if( (ciptr=(XtransConnInfo)calloc(1,sizeof(struct _XtransConnInfo))) == NULL ) {
 		PRMSG(1,"Os2OpenClient: calloc(1,%d) failed\n",
 			sizeof(struct _XtransConnInfo),0,0 );
 		return NULL;
@@ -268,9 +268,9 @@ TRANS(Os2OpenServer)(Xtransport *thistrans, char *protocol,
 
     PRMSG(2,"Os2OpenServer(%s,%s,%s)\n",protocol,host,port);
 
-   if( (ciptr=(XtransConnInfo)xcalloc(1,sizeof(struct _XtransConnInfo))) == NULL )
+   if( (ciptr=(XtransConnInfo)calloc(1,sizeof(struct _XtransConnInfo))) == NULL )
     {
-	PRMSG(1,"Os2OpenServer: xcalloc(1,%d) failed\n",
+	PRMSG(1,"Os2OpenServer: calloc(1,%d) failed\n",
 	      sizeof(struct _XtransConnInfo),0,0 );
 	return NULL;
     }
@@ -432,9 +432,9 @@ TRANS(Os2ReopenCOTSServer)(Xtransport *thistrans, int fd, char *port)
 
     PRMSG(2,"Os2ReopenCOTSServer(%d,%s)\n", fd, port, 0);
 
-    if( (ciptr=(XtransConnInfo)xcalloc(1,sizeof(struct _XtransConnInfo))) == NULL )
+    if( (ciptr=(XtransConnInfo)calloc(1,sizeof(struct _XtransConnInfo))) == NULL )
     {
-	PRMSG(1,"Os2ReopenCOTSServer: xcalloc(1,%d) failed\n",
+	PRMSG(1,"Os2ReopenCOTSServer: calloc(1,%d) failed\n",
 	      sizeof(struct _XtransConnInfo),0,0 );
 	return NULL;
     }
@@ -508,9 +508,9 @@ TRANS(Os2Accept)(XtransConnInfo ciptr, int *status)
 
 
     PRMSG(2,"Os2Accept(%x->%d)\n", ciptr, ciptr->fd,0);
-    if( (newciptr=(XtransConnInfo)xcalloc(1,sizeof(struct _XtransConnInfo)))==NULL )
+    if( (newciptr=(XtransConnInfo)calloc(1,sizeof(struct _XtransConnInfo)))==NULL )
     {
-	PRMSG(1,"Os2Accept: xcalloc(1,%d) failed\n",
+	PRMSG(1,"Os2Accept: calloc(1,%d) failed\n",
 	      sizeof(struct _XtransConnInfo),0,0 );
 	*status = TRANS_ACCEPT_BAD_MALLOC;
 	return NULL;

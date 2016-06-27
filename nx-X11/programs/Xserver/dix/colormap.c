@@ -395,7 +395,7 @@ CreateColormap (Colormap mid, ScreenPtr pScreen, VisualPtr pVisual,
 	pmap->devPrivates = NULL;
     else
     {
-	pmap->devPrivates = (DevUnion *) xcalloc (
+	pmap->devPrivates = (DevUnion *) calloc (
 	    sizeof(DevUnion), colormapPrivateCount);
 	if (!pmap->devPrivates)
 	{

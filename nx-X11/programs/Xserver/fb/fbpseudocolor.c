@@ -1150,7 +1150,7 @@ xxSetup(ScreenPtr pScreen, int myDepth, int baseDepth, char* addr, xxSyncFunc sy
     pScrPriv->sync = sync;
     
     pScreen->maxInstalledCmaps += MAX_NUM_XX_INSTALLED_CMAPS;
-    pScrPriv->InstalledCmaps = xcalloc(MAX_NUM_XX_INSTALLED_CMAPS,
+    pScrPriv->InstalledCmaps = calloc(MAX_NUM_XX_INSTALLED_CMAPS,
 				       sizeof(ColormapPtr));
     if (!pScrPriv->InstalledCmaps)
 	return FALSE;

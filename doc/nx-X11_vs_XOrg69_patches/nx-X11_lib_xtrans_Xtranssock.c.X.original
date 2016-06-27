@@ -312,7 +312,7 @@
 +    fprintf(stderr, "SocketCreateConnInfo: Going to create the NX connection info.\n");
 +#endif
 +
-+    if ((ciptr = (XtransConnInfo) xcalloc (1, sizeof(struct _XtransConnInfo))) == NULL)
++    if ((ciptr = (XtransConnInfo) calloc (1, sizeof(struct _XtransConnInfo))) == NULL)
 +    {
 +        PRMSG (1, "SocketCreateConnInfo: malloc failed\n", 0, 0, 0);
 +        return NULL;

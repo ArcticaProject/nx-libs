@@ -2188,7 +2188,7 @@ DoGetImage(register ClientPtr client, int format, Drawable drawable,
     xgi.length = length;
 
     if (im_return) {
-	pBuf = (char *)xcalloc(1, sz_xGetImageReply + length);
+	pBuf = (char *)calloc(1, sz_xGetImageReply + length);
 	if (!pBuf)
 	    return (BadAlloc);
 	if (widthBytesLine == 0)
