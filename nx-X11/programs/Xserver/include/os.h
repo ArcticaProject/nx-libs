@@ -79,15 +79,11 @@ typedef void *	FID;
 typedef struct _FontPathRec *FontPathPtr;
 typedef struct _NewClientRec *NewClientPtr;
 
-#ifndef xalloc
+#ifndef xnfalloc
 #define xnfalloc(size) XNFalloc((unsigned long)(size))
 #define xnfcalloc(_num, _size) XNFcalloc((unsigned long)(_num)*(unsigned long)(_size))
 #define xnfrealloc(ptr, size) XNFrealloc((void *)(ptr), (unsigned long)(size))
 
-#define xalloc(size) Xalloc((unsigned long)(size))
-#define xcalloc(_num, _size) Xcalloc((unsigned long)(_num)*(unsigned long)(_size))
-#define xrealloc(ptr, size) Xrealloc((void *)(ptr), (unsigned long)(size))
-#define xfree(ptr) Xfree((void *)(ptr))
 #define xstrdup(s) Xstrdup(s)
 #define xnfstrdup(s) XNFstrdup(s)
 #endif
@@ -228,14 +224,6 @@ extern int set_font_authorizations(
     char ** /* authorizations */, 
     int * /*authlen */, 
     void * /* client */);
-
-#ifndef _HAVE_XALLOC_DECLS
-#define _HAVE_XALLOC_DECLS
-extern void * Xalloc(unsigned long /*amount*/);
-extern void * Xcalloc(unsigned long /*amount*/);
-extern void * Xrealloc(void * /*ptr*/, unsigned long /*amount*/);
-extern void Xfree(void * /*ptr*/);
-#endif
 
 extern void * XNFalloc(unsigned long /*amount*/);
 extern void * XNFcalloc(unsigned long /*amount*/);
