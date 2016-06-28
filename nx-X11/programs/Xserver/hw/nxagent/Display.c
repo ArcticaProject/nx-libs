@@ -45,6 +45,7 @@ is" without express or implied warranty.
 #include <unistd.h>
 #include <time.h>
 #include <errno.h>
+#include <stdbool.h>
 
 #include <nx-X11/X.h>
 #include <nx-X11/Xproto.h>
@@ -178,7 +179,7 @@ static void nxagentInitDepths(void);
 static void nxagentInitPixmapFormats(void);
 
 static int nxagentCheckForDefaultDepthCompatibility(void);
-static int nxagentCheckForDepthsCompatibility(int flexibility);
+static int nxagentCheckForDepthsCompatibility(void);
 static int nxagentCheckForPixmapFormatsCompatibility(void);
 static int nxagentInitAndCheckVisuals(int flexibility);
 static int nxagentCheckForColormapsCompatibility(int flexibility);
@@ -2240,69 +2241,162 @@ static int nxagentCheckForDefaultDepthCompatibility()
   }
 }
 
-static int nxagentCheckForDepthsCompatibility(int flexibility)
+static int nxagentCheckForDepthsCompatibility()
 {
-  int i, j;
-  int matched;
-  int compatible;
+  /*
+   * Depending on the (reconnect) tolerance checks value, this
+   * function checks stricter or looser:
+   *   - Strict means that the number of old and new depths must
+   *     match exactly and every old depth value must be
+   *     available in the new depth array.
+   *   - Safe means that the number of depths might diverge,
+   *     but all former depth must also be included in the
+   *     new depth array. This is recommended, because
+   *     it allows clients with more depths to still
+   *     connect, but not lose functionality.
+   *   - Risky means that the new depths array is allowed to be
+   *     smaller than the old depths array, but at least
+   *     one depth value must be included in both.
+   *     This is potentially unsafe.
+   *   - Bypass or higher means that all of these checks are
+   *     essentially deactivated. This is a very bad idea.
+   */
 
-  if (nxagentNumDepths != nxagentNumDepthsRecBackup)
+  const unsigned int tolerance = nxagentOption(ReconnectTolerance);
+
+  if (ToleranceChecksBypass <= tolerance)
   {
     #ifdef WARNING
-    fprintf(stderr, "nxagentCheckForDepthsCompatibility: WARNING! Number of new available depths [%d] "
-                "doesn't match with old depths [%d].\n", nxagentNumDepths,
-                    nxagentNumDepthsRecBackup);
+    fprintf(stderr, "nxagentCheckForDepthsCompatibility: WARNING! Not proceeding with any checks, "
+                    "because tolerance [%u] higher than or equal [%u]. Number of newly available depths "
+                    "is [%d], number of old depths is [%d].\n", tolerance, ToleranceChecksBypass,
+            nxagentNumDepths, nxagentNumDepthsRecBackup);
+    #endif
+
+    return 1;
+  }
+
+  if ((ToleranceChecksStrict == tolerance) && (nxagentNumDepths != nxagentNumDepthsRecBackup))
+  {
+    #ifdef WARNING
+    fprintf(stderr, "nxagentCheckForDepthsCompatibility: WARNING! No tolerance allowed and "
+                    "number of new available depths [%d] doesn't match with number of old "
+                    "depths [%d].\n", nxagentNumDepths,
+            nxagentNumDepthsRecBackup);
     #endif
 
     return 0;
   }
 
-  compatible = 1;
-
-  for (i = 0; i < nxagentNumDepths; i++)
+  if ((ToleranceChecksSafe == tolerance) && (nxagentNumDepths < nxagentNumDepthsRecBackup))
   {
-    matched = 0;
+    #ifdef WARNING
+    fprintf(stderr, "nxagentCheckForDepthsCompatibility: WARNING! Tolerance [%u] not "
+                    "high enough and number of new available depths [%d] "
+                    "lower than number of old depths [%d].\n", tolerance,
+            nxagentNumDepths, nxagentNumDepthsRecBackup);
+    #endif
 
-    for (j = 0; j < nxagentNumDepthsRecBackup; j++)
+    return 0;
+  }
+
+  /*
+   * By now the tolerance is either:
+   *   - Strict and both depth numbers match
+   *   - Safe and:
+   *     o the number of old and new depths matches exactly, or
+   *     o the number of old depths is lower than the number
+   *       of new depths
+   *   - Risky
+   */
+
+  bool compatible = true;
+  bool one_match = false;
+  bool matched = false;
+  int total_matches = 0;
+
+  /*
+   * FIXME: within this loop, we try to match all "new" depths
+   *        against the "old" depths. Depending upon the flexibility
+   *        value, either all "new" depths must have a corresponding
+   *        counterpart in the "old" array, or at least one value
+   *        must be included in both.
+   *        Is this safe enough though?
+   *        Shouldn't we better try to match entries in the "old"
+   *        depths array against the "new" depths array, such that
+   *        we know that all "old" values are covered by "new"
+   *        values? Or is it more important that "new" values are
+   *        covered by "old" ones, with potentially more "old"
+   *        values lingering around that cannot be displayed by the
+   *        connected client?
+   *
+   * This section probably needs a revisit at some point in time.
+   */
+  for (int i = 0; i < nxagentNumDepths; ++i)
+  {
+    matched = false;
+
+    for (int j = 0; j < nxagentNumDepthsRecBackup; ++j)
     {
       if (nxagentDepths[i] == nxagentDepthsRecBackup[j])
       {
-        matched = 1;
+        matched = true;
+        one_match = true;
+        ++total_matches;
 
         break;
       }
     }
 
-    if (matched == 0)
+    if ((ToleranceChecksRisky > tolerance) && (!matched))
     {
       #ifdef WARNING
-      fprintf(stderr, "nxagentCheckForDepthsCompatibility: WARNING! Failed to match available depth [%d].\n",
-                  nxagentDepths[i]);
+      fprintf(stderr, "nxagentCheckForDepthsCompatibility: WARNING! Tolerance [%u] too low and "
+                      "failed to match available depth [%d].\n", tolerance, nxagentDepths[i]);
       #endif
 
-      compatible = 0;
+      compatible = false;
 
       break;
     }
   }
 
+  /*
+   * At Risky tolerance, only one match is necessary to be "compatible".
+   */
+  if (ToleranceChecksRisky == tolerance)
+  {
+    compatible = one_match;
+  }
 
-  if (compatible == 1)
+  int ret = (!(!compatible));
+
+  if (compatible)
   {
     #ifdef TEST
     fprintf(stderr, "nxagentCheckForDepthsCompatibility: Internal depths match with "
-                "remote depths.\n");
+                "remote depths at tolerance [%u].\n", tolerance);
     #endif
+
+    if (total_matches != nxagentNumDepths)
+    {
+      #ifdef WARNING
+      fprintf(stderr, "nxagentCheckForDepthsCompatibility: only some [%d] of the new depths [%d] "
+                  "match with old depths [%d] at tolerance [%u].\n", total_matches, nxagentNumDepths,
+              nxagentNumDepthsRecBackup, tolerance);
+      #endif
+    }
   }
   else
   {
     #ifdef WARNING
-    fprintf(stderr, "nxagentCheckForDepthsCompatibility: WARNING! New available depths don't match with "
-                "old depths.\n");
+    fprintf(stderr, "nxagentCheckForDepthsCompatibility: WARNING! New available depths [%d] don't match "
+                    "with old depths [%d] at tolerance [%u]. Only [%d] depth values matched.\n",
+            nxagentNumDepths, nxagentNumDepthsRecBackup, tolerance, total_matches);
     #endif
   }
 
-  return compatible;
+  return (ret);
 }
 
 static int nxagentCheckForPixmapFormatsCompatibility()
@@ -2633,7 +2727,7 @@ Bool nxagentReconnectDisplay(void *p0)
 
   reconnectDisplayState = GOT_DEPTH_LIST;
 
-  if (nxagentCheckForDepthsCompatibility(flexibility) == 0)
+  if (nxagentCheckForDepthsCompatibility() == 0)
   {
     nxagentSetReconnectError(FAILED_RESUME_DEPTHS_ALERT,
                                  "Couldn't restore all the required depths.");
