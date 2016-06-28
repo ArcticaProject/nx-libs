@@ -45,6 +45,7 @@ in this Software without prior written authorization from The Open Group.
 #include "resource.h"
 #include "opaque.h"
 #include <X11/extensions/shapeproto.h>
+#include "protocol-versions.h"
 #include "regionstr.h"
 #include "gcstruct.h"
 #ifdef EXTMODULE
@@ -295,8 +296,8 @@ ProcShapeQueryVersion (client)
     rep.type = X_Reply;
     rep.length = 0;
     rep.sequenceNumber = client->sequence;
-    rep.majorVersion = SHAPE_MAJOR_VERSION;
-    rep.minorVersion = SHAPE_MINOR_VERSION;
+    rep.majorVersion = SERVER_SHAPE_MAJOR_VERSION;
+    rep.minorVersion = SERVER_SHAPE_MINOR_VERSION;
     if (client->swapped) {
     	swaps(&rep.sequenceNumber, n);
     	swapl(&rep.length, n);

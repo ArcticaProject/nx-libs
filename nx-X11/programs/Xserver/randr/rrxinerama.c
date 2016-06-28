@@ -88,12 +88,7 @@
 #include "randrstr.h"
 #include "swaprep.h"
 #include "panoramiXproto.h"
-#ifndef NXAGENT_SERVER
 #include "protocol-versions.h"
-#else
-#define SERVER_RRXINERAMA_MAJOR_VERSION     1
-#define SERVER_RRXINERAMA_MINOR_VERSION     1
-#endif
 
 /* Xinerama is not multi-screen capable; just report about screen 0 */
 #define RR_XINERAMA_SCREEN  0

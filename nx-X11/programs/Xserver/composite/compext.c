@@ -29,15 +29,8 @@
 #include "compint.h"
 #include "XI.h"
 #include "XIproto.h"
+#include "protocol-versions.h"
 #include "extinit.h"
-
-#ifndef SERVER_COMPOSITE_MAJOR_VERSION
-#define SERVER_COMPOSITE_MAJOR_VERSION 0
-#endif
-
-#ifndef SERVER_COMPOSITE_MINOR_VERSION
-#define SERVER_COMPOSITE_MINOR_VERSION 4
-#endif
 
 static CARD8	CompositeReqCode;
 

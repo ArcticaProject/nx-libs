@@ -21,12 +21,7 @@
  */
 
 #include "randrstr.h"
-#ifndef NXAGENT_SERVER
 #include "protocol-versions.h"
-#else
-#define SERVER_RANDR_MAJOR_VERSION     1
-#define SERVER_RANDR_MINOR_VERSION     5
-#endif
 
 Bool
 RRClientKnowsRates(ClientPtr pClient)
