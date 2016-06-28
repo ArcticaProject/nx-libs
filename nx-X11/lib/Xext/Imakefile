@@ -33,26 +33,16 @@ ALLOC_DEFINES = Malloc0ReturnsNullDefines
                 extutil.c	\
                 XShape.c	\
                 $(SHMSRCS)	\
-                XTestExt1.c	\
-                XSync.c		\
-                XSecurity.c	\
-                DPMS.c		\
                 $(NULL)
 
          OBJS = globals.o	\
                 extutil.o	\
                 XShape.o	\
                 $(SHMOBJS)	\
-                XTestExt1.o	\
-                XSync.o		\
-                XSecurity.o	\
-                DPMS.o		\
                 $(NULL)
 
      LINTLIBS = $(LINTXLIB)
 
 #include <Library.tmpl>
-
-LinkFile(ImUtil.h,$(XLIBSRC)/ImUtil.h)
 
 DependTarget()

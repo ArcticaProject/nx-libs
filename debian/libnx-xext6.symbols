@@ -1,25 +1,25 @@
 libNX_Xext.so.6 libnx-xext6 #MINVER#
- DPMSCapable@Base 3.5.0.29
- DPMSDisable@Base 3.5.0.29
- DPMSEnable@Base 3.5.0.29
- DPMSForceLevel@Base 3.5.0.29
- DPMSGetTimeouts@Base 3.5.0.29
- DPMSGetVersion@Base 3.5.0.29
- DPMSInfo@Base 3.5.0.29
- DPMSQueryExtension@Base 3.5.0.29
- DPMSSetTimeouts@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# DPMSCapable@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# DPMSDisable@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# DPMSEnable@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# DPMSForceLevel@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# DPMSGetTimeouts@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# DPMSGetVersion@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# DPMSInfo@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# DPMSQueryExtension@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# DPMSSetTimeouts@Base 3.5.0.29
 #MISSING: 2:3.5.99.0-0# XLbxGetEventBase@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0#  XLbxQueryExtension@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0#  XLbxQueryVersion@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0#  XMITMiscGetBugMode@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0#  XMITMiscQueryExtension@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0#  XMITMiscSetBugMode@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XLbxQueryExtension@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XLbxQueryVersion@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XMITMiscGetBugMode@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XMITMiscQueryExtension@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XMITMiscSetBugMode@Base 3.5.0.29
  XMissingExtension@Base 3.5.0.29
- XSecurityAllocXauth@Base 3.5.0.29
- XSecurityFreeXauth@Base 3.5.0.29
- XSecurityGenerateAuthorization@Base 3.5.0.29
- XSecurityQueryExtension@Base 3.5.0.29
- XSecurityRevokeAuthorization@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XSecurityAllocXauth@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XSecurityFreeXauth@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XSecurityGenerateAuthorization@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XSecurityQueryExtension@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XSecurityRevokeAuthorization@Base 3.5.0.29
  XSetExtensionErrorHandler@Base 3.5.0.29
  XShapeCombineMask@Base 3.5.0.29
  XShapeCombineRectangles@Base 3.5.0.29
@@ -42,69 +42,69 @@ libNX_Xext.so.6 libnx-xext6 #MINVER#
  XShmPutImage@Base 3.5.0.29
  XShmQueryExtension@Base 3.5.0.29
  XShmQueryVersion@Base 3.5.0.29
- XSyncAwait@Base 3.5.0.29
- XSyncChangeAlarm@Base 3.5.0.29
- XSyncChangeCounter@Base 3.5.0.29
- XSyncCreateAlarm@Base 3.5.0.29
- XSyncCreateCounter@Base 3.5.0.29
- XSyncDestroyAlarm@Base 3.5.0.29
- XSyncDestroyCounter@Base 3.5.0.29
- XSyncFreeSystemCounterList@Base 3.5.0.29
- XSyncGetPriority@Base 3.5.0.29
- XSyncInitialize@Base 3.5.0.29
- XSyncIntToValue@Base 3.5.0.29
- XSyncIntsToValue@Base 3.5.0.29
- XSyncListSystemCounters@Base 3.5.0.29
- XSyncMaxValue@Base 3.5.0.29
- XSyncMinValue@Base 3.5.0.29
- XSyncQueryAlarm@Base 3.5.0.29
- XSyncQueryCounter@Base 3.5.0.29
- XSyncQueryExtension@Base 3.5.0.29
- XSyncSetCounter@Base 3.5.0.29
- XSyncSetPriority@Base 3.5.0.29
- XSyncValueAdd@Base 3.5.0.29
- XSyncValueEqual@Base 3.5.0.29
- XSyncValueGreaterOrEqual@Base 3.5.0.29
- XSyncValueGreaterThan@Base 3.5.0.29
- XSyncValueHigh32@Base 3.5.0.29
- XSyncValueIsNegative@Base 3.5.0.29
- XSyncValueIsPositive@Base 3.5.0.29
- XSyncValueIsZero@Base 3.5.0.29
- XSyncValueLessOrEqual@Base 3.5.0.29
- XSyncValueLessThan@Base 3.5.0.29
- XSyncValueLow32@Base 3.5.0.29
- XSyncValueSubtract@Base 3.5.0.29
- XTestFakeAckType@Base 3.5.0.29
- XTestFakeInput@Base 3.5.0.29
- XTestFlush@Base 3.5.0.29
- XTestGetInput@Base 3.5.0.29
- XTestInputActionType@Base 3.5.0.29
- XTestMovePointer@Base 3.5.0.29
- XTestPressButton@Base 3.5.0.29
- XTestPressKey@Base 3.5.0.29
- XTestQueryInputSize@Base 3.5.0.29
- XTestReset@Base 3.5.0.29
- XTestStopInput@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0#  XagCreateAssociation@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0#  XagCreateEmbeddedApplicationGroup@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0#  XagCreateNonembeddedApplicationGroup@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0#  XagDestroyApplicationGroup@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0#  XagDestroyAssociation@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0#  XagGetApplicationGroupAttributes@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0#  XagQueryApplicationGroup@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0#  XagQueryVersion@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XSyncAwait@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XSyncChangeAlarm@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XSyncChangeCounter@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XSyncCreateAlarm@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XSyncCreateCounter@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XSyncDestroyAlarm@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XSyncDestroyCounter@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XSyncFreeSystemCounterList@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XSyncGetPriority@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XSyncInitialize@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XSyncIntToValue@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XSyncIntsToValue@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XSyncListSystemCounters@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XSyncMaxValue@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XSyncMinValue@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XSyncQueryAlarm@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XSyncQueryCounter@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XSyncQueryExtension@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XSyncSetCounter@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XSyncSetPriority@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XSyncValueAdd@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XSyncValueEqual@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XSyncValueGreaterOrEqual@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XSyncValueGreaterThan@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XSyncValueHigh32@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XSyncValueIsNegative@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XSyncValueIsPositive@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XSyncValueIsZero@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XSyncValueLessOrEqual@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XSyncValueLessThan@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XSyncValueLow32@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XSyncValueSubtract@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XTestFakeAckType@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XTestFakeInput@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XTestFlush@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XTestGetInput@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XTestInputActionType@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XTestMovePointer@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XTestPressButton@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XTestPressKey@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XTestQueryInputSize@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XTestReset@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XTestStopInput@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XagCreateAssociation@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XagCreateEmbeddedApplicationGroup@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XagCreateNonembeddedApplicationGroup@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XagDestroyApplicationGroup@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XagDestroyAssociation@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XagGetApplicationGroupAttributes@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XagQueryApplicationGroup@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XagQueryVersion@Base 3.5.0.29
 #MISSING: 2:3.5.99.0-0# XcupGetReservedColormapEntries@Base 3.5.0.29
 #MISSING: 2:3.5.99.0-0# XcupQueryVersion@Base 3.5.0.29
 #MISSING: 2:3.5.99.0-0# XcupStoreColors@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0#  XdbeAllocateBackBufferName@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0#  XdbeBeginIdiom@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0#  XdbeDeallocateBackBufferName@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0#  XdbeEndIdiom@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0#  XdbeFreeVisualInfo@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0#  XdbeGetBackBufferAttributes@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0#  XdbeGetVisualInfo@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0#  XdbeQueryExtension@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0#  XdbeSwapBuffers@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XdbeAllocateBackBufferName@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XdbeBeginIdiom@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XdbeDeallocateBackBufferName@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XdbeEndIdiom@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XdbeFreeVisualInfo@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XdbeGetBackBufferAttributes@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XdbeGetVisualInfo@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XdbeQueryExtension@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XdbeSwapBuffers@Base 3.5.0.29
 #MISSING: 2:3.5.99.0-0# XeviGetVisualInfo@Base 3.5.0.29
 #MISSING: 2:3.5.99.0-0# XeviQueryExtension@Base 3.5.0.29
 #MISSING: 2:3.5.99.0-0# XeviQueryVersion@Base 3.5.0.29
@@ -113,16 +113,16 @@ libNX_Xext.so.6 libnx-xext6 #MINVER#
  XextDestroyExtension@Base 3.5.0.29
  XextFindDisplay@Base 3.5.0.29
  XextRemoveDisplay@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0#  XmbufChangeBufferAttributes@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0#  XmbufChangeWindowAttributes@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0#  XmbufClearBufferArea@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0#  XmbufCreateBuffers@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0#  XmbufCreateStereoWindow@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0#  XmbufDestroyBuffers@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0#  XmbufDisplayBuffers@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0#  XmbufGetBufferAttributes@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0#  XmbufGetScreenInfo@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0#  XmbufGetVersion@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0#  XmbufGetWindowAttributes@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0#  XmbufQueryExtension@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XmbufChangeBufferAttributes@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XmbufChangeWindowAttributes@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XmbufClearBufferArea@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XmbufCreateBuffers@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XmbufCreateStereoWindow@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XmbufDestroyBuffers@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XmbufDisplayBuffers@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XmbufGetBufferAttributes@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XmbufGetScreenInfo@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XmbufGetVersion@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XmbufGetWindowAttributes@Base 3.5.0.29
+#MISSING: 2:3.5.99.0-0# XmbufQueryExtension@Base 3.5.0.29
  _XExtensionErrorFunction@Base 3.5.0.29
