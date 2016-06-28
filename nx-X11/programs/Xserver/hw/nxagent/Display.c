@@ -2175,9 +2175,39 @@ void nxagentDisconnectDisplay(void)
 
 static int nxagentCheckForDefaultDepthCompatibility()
 {
+  /*
+   * Depending on the (reconnect) tolerance checks value, this
+   * function checks stricter or looser:
+   *   - Strict means that the old and new default depth values
+   *     must match exactly.
+   *   - Safe or Risky means that the default depth values might differ,
+   *     but the new default depth value must be at least as
+   *     high as the former default depth value. This is
+   *     recommended, because it allows clients with a
+   *     higher default depth value to still connect, but
+   *     not lose functionality.
+   *   - Bypass or higher means that all of these checks are
+   *     essentially deactivated. This is probably a very
+   *     bad idea.
+   */
+
   int dDepth;
 
   dDepth = DefaultDepth(nxagentDisplay, DefaultScreen(nxagentDisplay));
+
+  const unsigned int tolerance = nxagentOption(ReconnectTolerance);
+
+  if (ToleranceChecksBypass <= tolerance)
+  {
+    #ifdef WARNING
+    fprintf(stderr, "nxagentCheckForDefaultDepthCompatibility: WARNING! Not proceeding with any checks, "
+                    "because tolerance [%u] higher than or equal [%u]. New default depth value "
+                    "is [%d], former default depth value is [%d].\n", tolerance,
+            ToleranceChecksBypass, dDepth, nxagentDefaultDepthRecBackup);
+    #endif
+
+    return 1;
+  }
 
   if (nxagentDefaultDepthRecBackup == dDepth)
   {
@@ -2188,11 +2218,22 @@ static int nxagentCheckForDefaultDepthCompatibility()
 
     return 1;
   }
+  else if ((ToleranceChecksSafe <= tolerance) && (nxagentDefaultDepthRecBackup < dDepth))
+  {
+    #ifdef WARNING
+    fprintf(stderr, "nxagentCheckForDefaultDepthCompatibility: WARNING! New default depth [%d] "
+                    "higher than the old default depth [%d] at tolerance [%u].\n", dDepth,
+            nxagentDefaultDepthRecBackup, tolerance);
+    #endif
+
+    return 1;
+  }
   else
   {
     #ifdef WARNING
     fprintf(stderr, "nxagentCheckForDefaultDepthCompatibility: WARNING! New default depth [%d] "
-                "doesn't match with old default depth [%d].\n", dDepth, nxagentDefaultDepthRecBackup);
+                "doesn't match with old default depth [%d] at tolerance [%u].\n", dDepth,
+            nxagentDefaultDepthRecBackup, tolerance);
     #endif
 
     return 0;
