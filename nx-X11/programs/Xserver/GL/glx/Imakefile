@@ -31,6 +31,8 @@ NXAGENT_SKIP_SRCS =                     \
 NXAGENT_SKIP_OBJS =                     \
                 glxext.o                \
                 $(NULL)
+#else
+       NX_DEFINES = -DNXAGENT_SERVER
 #endif
 
          SRCS = global.c                \
@@ -124,8 +126,12 @@ NXAGENT_SKIP_OBJS =                     \
 
 XCOMM If you add "-DDEBUG" in DEFINES, then make sure you also
 XCOMM add DEBUG to the define in ../mesa/src/X/xf86glx.c
-      DEFINES = $(GLX_DEFINES) $(NO_EXT_DEFS) $(APIENTRY_DEFS)
-
+      DEFINES = 			\
+                $(GLX_DEFINES)		\
+                $(NO_EXT_DEFS)		\
+                $(APIENTRY_DEFS)	\
+                $(NX_DEFINES)		\
+                $(NULL)
 
 #ifdef IHaveModules
 ModuleObjectRule()

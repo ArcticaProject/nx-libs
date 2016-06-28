@@ -26,7 +26,7 @@ XKB_DISABLE = -DXKB_DFLT_DISABLED=0
 XKB_DDXDEFS = XkbServerDefines
 
 #if defined(NXAgentServer) && NXAgentServer
-NX_DEFINES = -DNXAGENT_SERVER
+ NX_DEFINES = -DNXAGENT_SERVER
 #endif
 
 #if (defined(XorgServer) && XorgServer)
