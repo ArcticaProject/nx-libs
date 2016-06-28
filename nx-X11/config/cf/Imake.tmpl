@@ -759,6 +759,25 @@ TCLIBDIR = TclLibDir
 #define AlternateUsrLibDir YES
 #endif
 #endif
+
+#ifndef UsrDataDir
+#ifdef ProjectRoot
+#define UsrDataDir Concat4(ProjectRoot,/,share,/nx)
+#ifndef AlternateUsrDataDir
+#define AlternateUsrDataDir YES
+#endif
+#else
+#define UsrDataDir Concat4(/usr/local,/,share,/nx)
+#ifndef AlternateUsrDataDir
+#define AlternateUsrDataDir NO
+#endif
+#endif
+#else
+#ifndef AlternateUsrDataDir
+#define AlternateUsrDataDir YES
+#endif
+#endif
+
 #ifndef VarDirectory
 #ifdef ProjectVar
 #define VarDirectory ProjectVar
@@ -1656,6 +1675,7 @@ TCLIBDIR = TclLibDir
 
           INCROOT = IncRoot		/* base of where to put header files */
         USRLIBDIR = UsrLibDir		/* nonshared libraries */
+       USRDATADIR = UsrDataDir		/* arch-indep files (XErrorDB, etc.) */
            VARDIR = VarDirectory	/* usually /var */
         VARLIBDIR = VarLibDir		/* xdm runtime files */
   SYSTEMUSRLIBDIR = SystemUsrLibDir	/* system's "/usr/lib" */
