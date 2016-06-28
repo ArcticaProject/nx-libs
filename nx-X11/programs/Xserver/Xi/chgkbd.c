@@ -85,10 +85,8 @@ int
 SProcXChangeKeyboardDevice(client)
     register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xChangeKeyboardDeviceReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xChangeKeyboardDeviceReq);
     return(ProcXChangeKeyboardDevice(client));
     }
@@ -208,9 +206,7 @@ SRepXChangeKeyboardDevice (client, size, rep)
     int		size;
     xChangeKeyboardDeviceReply	*rep;
     {
-    register char n;
-
-    swaps(&rep->sequenceNumber, n);
-    swapl(&rep->length, n);
+    swaps(&rep->sequenceNumber);
+    swapl(&rep->length);
     WriteToClient(client, size, (char *)rep);
     }

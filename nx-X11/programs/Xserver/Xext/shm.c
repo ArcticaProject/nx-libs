@@ -346,7 +346,6 @@ ProcShmQueryVersion(client)
     register ClientPtr client;
 {
     xShmQueryVersionReply rep;
-    register int n;
 
     REQUEST_SIZE_MATCH(xShmQueryVersionReq);
     memset(&rep, 0, sizeof(xShmQueryVersionReply));
@@ -360,12 +359,12 @@ ProcShmQueryVersion(client)
     rep.uid = geteuid();
     rep.gid = getegid();
     if (client->swapped) {
-    	swaps(&rep.sequenceNumber, n);
-    	swapl(&rep.length, n);
-	swaps(&rep.majorVersion, n);
-	swaps(&rep.minorVersion, n);
-	swaps(&rep.uid, n);
-	swaps(&rep.gid, n);
+	swaps(&rep.sequenceNumber);
+	swapl(&rep.length);
+	swaps(&rep.majorVersion);
+	swaps(&rep.minorVersion);
+	swaps(&rep.uid);
+	swaps(&rep.gid);
     }
     WriteToClient(client, sizeof(xShmQueryVersionReply), (char *)&rep);
     return (client->noClientException);
@@ -712,11 +711,10 @@ ProcPanoramiXShmGetImage(ClientPtr client)
     }
     
     if (client->swapped) {
-	register int n;
-    	swaps(&xgi.sequenceNumber, n);
-    	swapl(&xgi.length, n);
-	swapl(&xgi.visual, n);
-	swapl(&xgi.size, n);
+	swaps(&xgi.sequenceNumber);
+	swapl(&xgi.length);
+	swapl(&xgi.visual);
+	swapl(&xgi.size);
     }
     WriteToClient(client, sizeof(xShmGetImageReply), (char *)&xgi);
 
@@ -952,7 +950,6 @@ ProcShmGetImage(client)
     Mask		plane = 0;
     xShmGetImageReply	xgi;
     ShmDescPtr		shmdesc;
-    int			n;
 
     REQUEST(xShmGetImageReq);
 
@@ -1043,10 +1040,10 @@ ProcShmGetImage(client)
     }
     
     if (client->swapped) {
-    	swaps(&xgi.sequenceNumber, n);
-    	swapl(&xgi.length, n);
-	swapl(&xgi.visual, n);
-	swapl(&xgi.size, n);
+	swaps(&xgi.sequenceNumber);
+	swapl(&xgi.length);
+	swapl(&xgi.visual);
+	swapl(&xgi.size);
     }
     WriteToClient(client, sizeof(xShmGetImageReply), (char *)&xgi);
 
@@ -1205,10 +1202,9 @@ static int
 SProcShmQueryVersion(client)
     register ClientPtr	client;
 {
-    register int n;
     REQUEST(xShmQueryVersionReq);
 
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     return ProcShmQueryVersion(client);
 }
 
@@ -1216,12 +1212,11 @@ static int
 SProcShmAttach(client)
     ClientPtr client;
 {
-    register int n;
     REQUEST(xShmAttachReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xShmAttachReq);
-    swapl(&stuff->shmseg, n);
-    swapl(&stuff->shmid, n);
+    swapl(&stuff->shmseg);
+    swapl(&stuff->shmid);
     return ProcShmAttach(client);
 }
 
@@ -1229,11 +1224,10 @@ static int
 SProcShmDetach(client)
     ClientPtr client;
 {
-    register int n;
     REQUEST(xShmDetachReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xShmDetachReq);
-    swapl(&stuff->shmseg, n);
+    swapl(&stuff->shmseg);
     return ProcShmDetach(client);
 }
 
@@ -1241,22 +1235,21 @@ static int
 SProcShmPutImage(client)
     ClientPtr client;
 {
-    register int n;
     REQUEST(xShmPutImageReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xShmPutImageReq);
-    swapl(&stuff->drawable, n);
-    swapl(&stuff->gc, n);
-    swaps(&stuff->totalWidth, n);
-    swaps(&stuff->totalHeight, n);
-    swaps(&stuff->srcX, n);
-    swaps(&stuff->srcY, n);
-    swaps(&stuff->srcWidth, n);
-    swaps(&stuff->srcHeight, n);
-    swaps(&stuff->dstX, n);
-    swaps(&stuff->dstY, n);
-    swapl(&stuff->shmseg, n);
-    swapl(&stuff->offset, n);
+    swapl(&stuff->drawable);
+    swapl(&stuff->gc);
+    swaps(&stuff->totalWidth);
+    swaps(&stuff->totalHeight);
+    swaps(&stuff->srcX);
+    swaps(&stuff->srcY);
+    swaps(&stuff->srcWidth);
+    swaps(&stuff->srcHeight);
+    swaps(&stuff->dstX);
+    swaps(&stuff->dstY);
+    swapl(&stuff->shmseg);
+    swapl(&stuff->offset);
     return ProcShmPutImage(client);
 }
 
@@ -1264,18 +1257,17 @@ static int
 SProcShmGetImage(client)
     ClientPtr client;
 {
-    register int n;
     REQUEST(xShmGetImageReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xShmGetImageReq);
-    swapl(&stuff->drawable, n);
-    swaps(&stuff->x, n);
-    swaps(&stuff->y, n);
-    swaps(&stuff->width, n);
-    swaps(&stuff->height, n);
-    swapl(&stuff->planeMask, n);
-    swapl(&stuff->shmseg, n);
-    swapl(&stuff->offset, n);
+    swapl(&stuff->drawable);
+    swaps(&stuff->x);
+    swaps(&stuff->y);
+    swaps(&stuff->width);
+    swaps(&stuff->height);
+    swapl(&stuff->planeMask);
+    swapl(&stuff->shmseg);
+    swapl(&stuff->offset);
     return ProcShmGetImage(client);
 }
 
@@ -1283,16 +1275,15 @@ static int
 SProcShmCreatePixmap(client)
     ClientPtr client;
 {
-    register int n;
     REQUEST(xShmCreatePixmapReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xShmCreatePixmapReq);
-    swapl(&stuff->pid, n);
-    swapl(&stuff->drawable, n);
-    swaps(&stuff->width, n);
-    swaps(&stuff->height, n);
-    swapl(&stuff->shmseg, n);
-    swapl(&stuff->offset, n);
+    swapl(&stuff->pid);
+    swapl(&stuff->drawable);
+    swaps(&stuff->width);
+    swaps(&stuff->height);
+    swapl(&stuff->shmseg);
+    swapl(&stuff->offset);
     return ProcShmCreatePixmap(client);
 }
 

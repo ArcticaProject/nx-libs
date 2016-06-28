@@ -83,10 +83,8 @@ int
 SProcXListInputDevices(client)
     register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xListInputDevicesReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     return(ProcXListInputDevices(client));
     }
 
@@ -254,7 +252,6 @@ CopySwapDevice (client, d, num_classes, buf)
     int			num_classes;
     char 		**buf;
     {
-    register char 	n;
     xDeviceInfoPtr dev;
 
     dev = (xDeviceInfoPtr) *buf;
@@ -270,7 +267,7 @@ CopySwapDevice (client, d, num_classes, buf)
 	dev->use = IsXExtensionDevice;
     if (client->swapped)
 	{
-	swapl(&dev->type, n);	/* macro - braces are required */
+	swapl(&dev->type);	/* macro - braces are required */
 	}
     *buf += sizeof (xDeviceInfo);
     }
@@ -287,7 +284,6 @@ CopySwapKeyClass (client, k, buf)
     KeyClassPtr 	k;
     char 		**buf;
     {
-    register char 	n;
     xKeyInfoPtr 	k2;
 
     k2 = (xKeyInfoPtr) *buf;
@@ -298,7 +294,7 @@ CopySwapKeyClass (client, k, buf)
     k2->num_keys = k2->max_keycode - k2->min_keycode + 1;
     if (client->swapped)
 	{
-	swaps(&k2->num_keys,n);
+	swaps(&k2->num_keys);
 	}
     *buf += sizeof (xKeyInfo);
     }
@@ -315,7 +311,6 @@ CopySwapButtonClass (client, b, buf)
     ButtonClassPtr 	b;
     char 		**buf;
     {
-    register char 	n;
     xButtonInfoPtr 	b2;
 
     b2 = (xButtonInfoPtr) *buf;
@@ -324,7 +319,7 @@ CopySwapButtonClass (client, b, buf)
     b2->num_buttons = b->numButtons;
     if (client->swapped)
 	{
-	swaps(&b2->num_buttons,n);	/* macro - braces are required */
+	swaps(&b2->num_buttons);	/* macro - braces are required */
 	}
     *buf += sizeof (xButtonInfo);
     }
@@ -348,7 +343,6 @@ CopySwapValuatorClass (client, v, buf)
     char 		**buf;
 {
     int			i, j, axes, t_axes;
-    register char 	n;
     xValuatorInfoPtr 	v2;
     AxisInfo 		*a;
     xAxisInfoPtr 	a2;
@@ -365,7 +359,7 @@ CopySwapValuatorClass (client, v, buf)
 	v2->motion_buffer_size  = v->numMotionEvents;
 	if (client->swapped)
 	    {
-	    swapl(&v2->motion_buffer_size,n);
+	    swapl(&v2->motion_buffer_size);
 	    }
 	*buf += sizeof (xValuatorInfo);
 	a = v->axes + (VPC * i);
@@ -375,9 +369,9 @@ CopySwapValuatorClass (client, v, buf)
 	    a2->max_value = a->max_value;
 	    a2->resolution = a->resolution;
 	    if (client->swapped) {
-		swapl(&a2->min_value,n);
-		swapl(&a2->max_value,n);
-		swapl(&a2->resolution,n);
+		swapl(&a2->min_value);
+		swapl(&a2->max_value);
+		swapl(&a2->resolution);
 	    }
 	    a2++;
 	    a++;
@@ -400,9 +394,7 @@ SRepXListInputDevices (client, size, rep)
     int		size;
     xListInputDevicesReply	*rep;
     {
-    register char n;
-
-    swaps(&rep->sequenceNumber, n);
-    swapl(&rep->length, n);
+    swaps(&rep->sequenceNumber);
+    swapl(&rep->length);
     WriteToClient(client, size, (char *)rep);
     }

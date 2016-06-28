@@ -86,13 +86,11 @@ int
 SProcXUngrabDeviceKey(client)
     register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xUngrabDeviceKeyReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xUngrabDeviceKeyReq);
-    swapl(&stuff->grabWindow, n);
-    swaps(&stuff->modifiers, n);
+    swapl(&stuff->grabWindow);
+    swaps(&stuff->modifiers);
     return(ProcXUngrabDeviceKey(client));
     }
 

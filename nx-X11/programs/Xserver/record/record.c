@@ -297,7 +297,6 @@ RecordAProtocolElement(RecordContextPtr pContext, ClientPtr pClient,
     CARD32 elemHeaderData[2];
     int numElemHeaders = 0;
     Bool recordingClientSwapped = pContext->pRecordingClient->swapped;
-    int n;
     CARD32 serverTime = 0;
     Bool gotServerTime = FALSE;
     int replylen;
@@ -341,11 +340,11 @@ RecordAProtocolElement(RecordContextPtr pContext, ClientPtr pClient,
 
 	    if (recordingClientSwapped)
 	    {
-		swaps(&pRep->sequenceNumber, n);
-		swapl(&pRep->length, n);
-		swapl(&pRep->idBase, n);
-		swapl(&pRep->serverTime, n);
-		swapl(&pRep->recordedSequenceNumber, n);
+		swaps(&pRep->sequenceNumber);
+		swapl(&pRep->length);
+		swapl(&pRep->idBase);
+		swapl(&pRep->serverTime);
+		swapl(&pRep->recordedSequenceNumber);
 	    }
 	    pContext->numBufBytes = SIZEOF(xRecordEnableContextReply);
 	}
@@ -363,7 +362,7 @@ RecordAProtocolElement(RecordContextPtr pContext, ClientPtr pClient,
 	    else
 		elemHeaderData[numElemHeaders] = GetTimeInMillis();
 	    if (recordingClientSwapped)
-		swapl(&elemHeaderData[numElemHeaders], n);
+		swapl(&elemHeaderData[numElemHeaders]);
 	    numElemHeaders++;
 	}
 
@@ -373,16 +372,16 @@ RecordAProtocolElement(RecordContextPtr pContext, ClientPtr pClient,
 	{
 	    elemHeaderData[numElemHeaders] = pClient->sequence;
 	    if (recordingClientSwapped)
-		swapl(&elemHeaderData[numElemHeaders], n);
+		swapl(&elemHeaderData[numElemHeaders]);
 	    numElemHeaders++;
 	}
 
 	/* adjust reply length */
 
 	replylen = pRep->length;
-	if (recordingClientSwapped) swapl(&replylen, n);
+	if (recordingClientSwapped) swapl(&replylen);
 	replylen += numElemHeaders + (datalen >> 2) + (futurelen >> 2);
-	if (recordingClientSwapped) swapl(&replylen, n);
+	if (recordingClientSwapped) swapl(&replylen);
 	pRep->length = replylen;
     } /* end if not continued reply */
 
@@ -477,7 +476,6 @@ RecordABigRequest(pContext, client, stuff)
     xReq *stuff;
 {
     CARD32 bigLength;
-    char n;
     int bytesLeft;
 
     /* note: client->req_len has been frobbed by ReadRequestFromClient
@@ -494,7 +492,7 @@ RecordABigRequest(pContext, client, stuff)
     /* reinsert the extended length field that was squished out */
     bigLength = client->req_len + (sizeof(bigLength) >> 2);
     if (client->swapped)
-	swapl(&bigLength, n);
+	swapl(&bigLength);
     RecordAProtocolElement(pContext, client, XRecordFromClient,
 		(void *)&bigLength, sizeof(bigLength), /* continuation */ -1);
     bytesLeft -= sizeof(bigLength);
@@ -1998,7 +1996,6 @@ ProcRecordQueryVersion(client)
 {
     /* REQUEST(xRecordQueryVersionReq); */
     xRecordQueryVersionReply 	rep;
-    int 		n;
 
     REQUEST_SIZE_MATCH(xRecordQueryVersionReq);
     rep.type        	= X_Reply;
@@ -2008,9 +2005,9 @@ ProcRecordQueryVersion(client)
     rep.minorVersion  	= SERVER_RECORD_MINOR_VERSION;
     if(client->swapped)
     {
-    	swaps(&rep.sequenceNumber, n);
-	swaps(&rep.majorVersion, n);
-	swaps(&rep.minorVersion, n);
+	swaps(&rep.sequenceNumber);
+	swaps(&rep.majorVersion);
+	swaps(&rep.minorVersion);
     }
     (void)WriteToClient(client, sizeof(xRecordQueryVersionReply),
 			(char *)&rep);
@@ -2320,13 +2317,12 @@ RecordSwapRanges(pRanges, nRanges)
     int nRanges;
 {
     int i;
-    register char n;
     for (i = 0; i < nRanges; i++, pRanges++)
     {
-	swaps(&pRanges->extRequestsMinorFirst, n);
-	swaps(&pRanges->extRequestsMinorLast, n);
-	swaps(&pRanges->extRepliesMinorFirst, n);
-	swaps(&pRanges->extRepliesMinorLast, n);
+	swaps(&pRanges->extRequestsMinorFirst);
+	swaps(&pRanges->extRequestsMinorLast);
+	swaps(&pRanges->extRepliesMinorFirst);
+	swaps(&pRanges->extRepliesMinorLast);
     }
 } /* RecordSwapRanges */
 
@@ -2338,7 +2334,6 @@ ProcRecordGetContext(client)
     RecordContextPtr pContext;
     REQUEST(xRecordGetContextReq);
     xRecordGetContextReply rep;
-    int n;
     RecordClientsAndProtocolPtr pRCAP;
     int nRCAPs = 0;
     GetContextRangeInfoPtr pRangeInfo;
@@ -2437,9 +2432,9 @@ ProcRecordGetContext(client)
     rep.elementHeader = pContext->elemHeaders;
     if(client->swapped)
     {
-    	swaps(&rep.sequenceNumber, n);
-    	swapl(&rep.length, n);
-    	swapl(&rep.nClients, n);
+	swaps(&rep.sequenceNumber);
+	swapl(&rep.length);
+	swapl(&rep.nClients);
     }
     (void)WriteToClient(client, sizeof(xRecordGetContextReply),
 			(char *)&rep);
@@ -2454,13 +2449,13 @@ ProcRecordGetContext(client)
 	rci.nRanges = pri->nRanges;
 	if (client->swapped)
 	{
-	    swapl(&rci.nRanges, n);
+	    swapl(&rci.nRanges);
 	    RecordSwapRanges(pri->pRanges, pri->nRanges);
 	}
 	for (i = 0; i < pRCAP->numClients; i++)
 	{
 	    rci.clientResource = pRCAP->pClientIDs[i];
-	    if (client->swapped) swapl(&rci.clientResource, n);
+	    if (client->swapped) swapl(&rci.clientResource);
 	    WriteToClient(client, sizeof(xRecordClientInfo), (char *)&rci);
 	    WriteToClient(client, sizeof(xRecordRange) * pri->nRanges,
 			  (char *)pri->pRanges);
@@ -2712,12 +2707,11 @@ SProcRecordQueryVersion(client)
     ClientPtr client;
 {
     REQUEST(xRecordQueryVersionReq);
-    register char 	n;
 
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xRecordQueryVersionReq);
-    swaps(&stuff->majorVersion, n);
-    swaps(&stuff->minorVersion,n);
+    swaps(&stuff->majorVersion);
+    swaps(&stuff->minorVersion);
     return ProcRecordQueryVersion(client);
 } /* SProcRecordQueryVersion */
 
@@ -2725,19 +2719,18 @@ SProcRecordQueryVersion(client)
 static int
 SwapCreateRegister(xRecordRegisterClientsReq *stuff)
 {
-    register char n;
     int i;
     XID *pClientID;
 
-    swapl(&stuff->context, n);
-    swapl(&stuff->nClients, n);
-    swapl(&stuff->nRanges, n);
+    swapl(&stuff->context);
+    swapl(&stuff->nClients);
+    swapl(&stuff->nRanges);
     pClientID = (XID *)&stuff[1];
     if (stuff->nClients > stuff->length - (sz_xRecordRegisterClientsReq >> 2))
 	return BadLength;
     for (i = 0; i < stuff->nClients; i++, pClientID++)
     {
-	swapl(pClientID, n);
+	swapl(pClientID);
     }
     if (stuff->nRanges > stuff->length - (sz_xRecordRegisterClientsReq >> 2)
 	- stuff->nClients)
@@ -2753,9 +2746,8 @@ SProcRecordCreateContext(client)
 {
     REQUEST(xRecordCreateContextReq);
     int			status;
-    register char 	n;
 
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_AT_LEAST_SIZE(xRecordCreateContextReq);
     if ((status = SwapCreateRegister((void *)stuff)) != Success)
 	return status;
@@ -2769,9 +2761,8 @@ SProcRecordRegisterClients(client)
 {
     REQUEST(xRecordRegisterClientsReq);
     int			status;
-    register char 	n;
 
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_AT_LEAST_SIZE(xRecordRegisterClientsReq);
     if ((status = SwapCreateRegister((void *)stuff)) != Success)
 	return status;
@@ -2784,12 +2775,11 @@ SProcRecordUnregisterClients(client)
     ClientPtr client;
 {
     REQUEST(xRecordUnregisterClientsReq);
-    register char 	n;
 
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_AT_LEAST_SIZE(xRecordUnregisterClientsReq);
-    swapl(&stuff->context, n);
-    swapl(&stuff->nClients, n);
+    swapl(&stuff->context);
+    swapl(&stuff->nClients);
     SwapRestL(stuff);
     return ProcRecordUnregisterClients(client);
 } /* SProcRecordUnregisterClients */
@@ -2800,11 +2790,10 @@ SProcRecordGetContext(client)
     ClientPtr client;
 {
     REQUEST(xRecordGetContextReq);
-    register char 	n;
 
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xRecordGetContextReq);
-    swapl(&stuff->context, n);
+    swapl(&stuff->context);
     return ProcRecordGetContext(client);
 } /* SProcRecordGetContext */
 
@@ -2813,11 +2802,10 @@ SProcRecordEnableContext(client)
     ClientPtr client;
 {
     REQUEST(xRecordEnableContextReq);
-    register char 	n;
 
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xRecordEnableContextReq);
-    swapl(&stuff->context, n);
+    swapl(&stuff->context);
     return ProcRecordEnableContext(client);
 } /* SProcRecordEnableContext */
 
@@ -2827,11 +2815,10 @@ SProcRecordDisableContext(client)
     ClientPtr client;
 {
     REQUEST(xRecordDisableContextReq);
-    register char 	n;
 
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xRecordDisableContextReq);
-    swapl(&stuff->context, n);
+    swapl(&stuff->context);
     return ProcRecordDisableContext(client);
 } /* SProcRecordDisableContext */
 
@@ -2841,11 +2828,10 @@ SProcRecordFreeContext(client)
     ClientPtr client;
 {
     REQUEST(xRecordFreeContextReq);
-    register char 	n;
 
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xRecordFreeContextReq);
-    swapl(&stuff->context, n);
+    swapl(&stuff->context);
     return ProcRecordFreeContext(client);
 } /* SProcRecordFreeContext */
 

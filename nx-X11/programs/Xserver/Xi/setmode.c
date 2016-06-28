@@ -81,10 +81,8 @@ int
 SProcXSetDeviceMode(client)
     register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xSetDeviceModeReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     return(ProcXSetDeviceMode(client));
     }
 
@@ -150,9 +148,7 @@ SRepXSetDeviceMode (client, size, rep)
     int		size;
     xSetDeviceModeReply	*rep;
     {
-    register char n;
-
-    swaps(&rep->sequenceNumber, n);
-    swapl(&rep->length, n);
+    swaps(&rep->sequenceNumber);
+    swapl(&rep->length);
     WriteToClient(client, size, (char *)rep);
     }

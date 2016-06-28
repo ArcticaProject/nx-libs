@@ -490,9 +490,9 @@ SScreenSaverNotifyEvent (from, to)
     to->type = from->type;
     to->state = from->state;
     cpswaps (from->sequenceNumber, to->sequenceNumber);
-    cpswapl (from->timestamp, to->timestamp);    
-    cpswapl (from->root, to->root);    
-    cpswapl (from->window, to->window);    
+    cpswapl (from->timestamp, to->timestamp);
+    cpswapl (from->root, to->root);
+    cpswapl (from->window, to->window);
     to->kind = from->kind;
     to->forced = from->forced;
 }
@@ -704,8 +704,8 @@ ProcScreenSaverQueryVersion (client)
     rep.majorVersion = SERVER_SAVER_MAJOR_VERSION;
     rep.minorVersion = SERVER_SAVER_MINOR_VERSION;
     if (client->swapped) {
-    	swaps(&rep.sequenceNumber, n);
-    	swapl(&rep.length, n);
+	swaps(&rep.sequenceNumber);
+	swapl(&rep.length);
     }
     WriteToClient(client, sizeof (xScreenSaverQueryVersionReply), (char *)&rep);
     return (client->noClientException);
@@ -772,12 +772,12 @@ ProcScreenSaverQueryInfo (client)
 	rep.kind = ScreenSaverInternal;
     if (client->swapped)
     {
-	swaps (&rep.sequenceNumber, n);
-	swapl (&rep.length, n);
-	swapl (&rep.window, n);
-	swapl (&rep.tilOrSince, n);
-	swapl (&rep.idle, n);
-	swapl (&rep.eventMask, n);
+	swaps (&rep.sequenceNumber);
+	swapl (&rep.length);
+	swapl (&rep.window);
+	swapl (&rep.tilOrSince);
+	swapl (&rep.idle);
+	swapl (&rep.eventMask);
     }
     WriteToClient(client, sizeof (xScreenSaverQueryInfoReply), (char *)&rep);
     return (client->noClientException);
@@ -1331,7 +1331,7 @@ SProcScreenSaverQueryVersion (client)
     REQUEST(xScreenSaverQueryVersionReq);
     int	    n;
 
-    swaps (&stuff->length, n);
+    swaps (&stuff->length);
     REQUEST_SIZE_MATCH(xScreenSaverQueryVersionReq);
     return ProcScreenSaverQueryVersion (client);
 }
@@ -1343,9 +1343,9 @@ SProcScreenSaverQueryInfo (client)
     REQUEST(xScreenSaverQueryInfoReq);
     int	    n;
 
-    swaps (&stuff->length, n);
+    swaps (&stuff->length);
     REQUEST_SIZE_MATCH(xScreenSaverQueryInfoReq);
-    swapl (&stuff->drawable, n);
+    swapl (&stuff->drawable);
     return ProcScreenSaverQueryInfo (client);
 }
 
@@ -1356,10 +1356,10 @@ SProcScreenSaverSelectInput (client)
     REQUEST(xScreenSaverSelectInputReq);
     int	    n;
 
-    swaps (&stuff->length, n);
+    swaps (&stuff->length);
     REQUEST_SIZE_MATCH(xScreenSaverSelectInputReq);
-    swapl (&stuff->drawable, n);
-    swapl (&stuff->eventMask, n);
+    swapl (&stuff->drawable);
+    swapl (&stuff->eventMask);
     return ProcScreenSaverSelectInput (client);
 }
 
@@ -1370,16 +1370,16 @@ SProcScreenSaverSetAttributes (client)
     REQUEST(xScreenSaverSetAttributesReq);
     int	    n;
 
-    swaps (&stuff->length, n);
+    swaps (&stuff->length);
     REQUEST_AT_LEAST_SIZE(xScreenSaverSetAttributesReq);
-    swapl (&stuff->drawable, n);
-    swaps (&stuff->x, n);
-    swaps (&stuff->y, n);
-    swaps (&stuff->width, n);
-    swaps (&stuff->height, n);
-    swaps (&stuff->borderWidth, n);
-    swapl (&stuff->visualID, n);
-    swapl (&stuff->mask, n);
+    swapl (&stuff->drawable);
+    swaps (&stuff->x);
+    swaps (&stuff->y);
+    swaps (&stuff->width);
+    swaps (&stuff->height);
+    swaps (&stuff->borderWidth);
+    swapl (&stuff->visualID);
+    swapl (&stuff->mask);
     SwapRestL(stuff);
     return ProcScreenSaverSetAttributes (client);
 }
@@ -1391,9 +1391,9 @@ SProcScreenSaverUnsetAttributes (client)
     REQUEST(xScreenSaverUnsetAttributesReq);
     int	    n;
 
-    swaps (&stuff->length, n);
+    swaps (&stuff->length);
     REQUEST_SIZE_MATCH(xScreenSaverUnsetAttributesReq);
-    swapl (&stuff->drawable, n);
+    swapl (&stuff->drawable);
     return ProcScreenSaverUnsetAttributes (client);
 }
 

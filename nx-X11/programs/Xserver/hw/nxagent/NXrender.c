@@ -131,7 +131,6 @@ ProcRenderQueryVersion (ClientPtr client)
 {
     RenderClientPtr pRenderClient = GetRenderClient (client);
     xRenderQueryVersionReply rep;
-    register int n;
     REQUEST(xRenderQueryVersionReq);
 
     REQUEST_SIZE_MATCH(xRenderQueryVersionReq);
@@ -146,10 +145,10 @@ ProcRenderQueryVersion (ClientPtr client)
     rep.majorVersion = nxagentRenderVersionMajor;
     rep.minorVersion = nxagentRenderVersionMinor;
     if (client->swapped) {
-    	swaps(&rep.sequenceNumber, n);
-    	swapl(&rep.length, n);
-	swapl(&rep.majorVersion, n);
-	swapl(&rep.minorVersion, n);
+	swaps(&rep.sequenceNumber);
+	swapl(&rep.length);
+	swapl(&rep.majorVersion);
+	swapl(&rep.minorVersion);
     }
     WriteToClient(client, sizeof(xRenderQueryVersionReply), (char *)&rep);
     return (client->noClientException);
@@ -176,7 +175,6 @@ ProcRenderQueryPictFormats (ClientPtr client)
     int				    nvisual;
     int				    rlength;
     int				    s;
-    int				    n;
     int				    numScreens;
     int				    numSubpixel;
 
@@ -266,16 +264,16 @@ ProcRenderQueryPictFormats (ClientPtr client)
 		    pictForm->colormap = None;
 		if (client->swapped)
 		{
-		    swapl (&pictForm->id, n);
-		    swaps (&pictForm->direct.red, n);
-		    swaps (&pictForm->direct.redMask, n);
-		    swaps (&pictForm->direct.green, n);
-		    swaps (&pictForm->direct.greenMask, n);
-		    swaps (&pictForm->direct.blue, n);
-		    swaps (&pictForm->direct.blueMask, n);
-		    swaps (&pictForm->direct.alpha, n);
-		    swaps (&pictForm->direct.alphaMask, n);
-		    swapl (&pictForm->colormap, n);
+		    swapl (&pictForm->id);
+		    swaps (&pictForm->direct.red);
+		    swaps (&pictForm->direct.redMask);
+		    swaps (&pictForm->direct.green);
+		    swaps (&pictForm->direct.greenMask);
+		    swaps (&pictForm->direct.blue);
+		    swaps (&pictForm->direct.blueMask);
+		    swaps (&pictForm->direct.alpha);
+		    swaps (&pictForm->direct.alphaMask);
+		    swapl (&pictForm->colormap);
 		}
 		pictForm++;
 	    }
@@ -305,8 +303,8 @@ ProcRenderQueryPictFormats (ClientPtr client)
 		    pictVisual->format = pFormat->id;
 		    if (client->swapped)
 		    {
-			swapl (&pictVisual->visual, n);
-			swapl (&pictVisual->format, n);
+			swapl (&pictVisual->visual);
+			swapl (&pictVisual->format);
 		    }
 		    pictVisual++;
 		    nvisual++;
@@ -316,7 +314,7 @@ ProcRenderQueryPictFormats (ClientPtr client)
 	    pictDepth->nPictVisuals = nvisual;
 	    if (client->swapped)
 	    {
-		swaps (&pictDepth->nPictVisuals, n);
+		swaps (&pictDepth->nPictVisuals);
 	    }
 	    ndepth++;
 	    pictDepth = (xPictDepth *) pictVisual;
@@ -329,8 +327,8 @@ ProcRenderQueryPictFormats (ClientPtr client)
 	    pictScreen->fallback = 0;
 	if (client->swapped)
 	{
-	    swapl (&pictScreen->nDepth, n);
-	    swapl (&pictScreen->fallback, n);
+	    swapl (&pictScreen->nDepth);
+	    swapl (&pictScreen->fallback);
 	}
 	pictScreen = (xPictScreen *) pictDepth;
     }
@@ -346,20 +344,20 @@ ProcRenderQueryPictFormats (ClientPtr client)
 	    *pictSubpixel = SubPixelUnknown;
 	if (client->swapped)
 	{
-	    swapl (pictSubpixel, n);
+	    swapl (pictSubpixel);
 	}
 	++pictSubpixel;
     }
     
     if (client->swapped)
     {
-	swaps (&reply->sequenceNumber, n);
-	swapl (&reply->length, n);
-	swapl (&reply->numFormats, n);
-	swapl (&reply->numScreens, n);
-	swapl (&reply->numDepths, n);
-	swapl (&reply->numVisuals, n);
-	swapl (&reply->numSubpixel, n);
+	swaps (&reply->sequenceNumber);
+	swapl (&reply->length);
+	swapl (&reply->numFormats);
+	swapl (&reply->numScreens);
+	swapl (&reply->numDepths);
+	swapl (&reply->numVisuals);
+	swapl (&reply->numSubpixel);
     }
     WriteToClient(client, rlength, (char *) reply);
     free (reply);

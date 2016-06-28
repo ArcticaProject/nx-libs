@@ -82,12 +82,10 @@ int
 SProcXAllowDeviceEvents(client)
     register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xAllowDeviceEventsReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xAllowDeviceEventsReq);
-    swapl(&stuff->time, n);
+    swapl(&stuff->time);
     return(ProcXAllowDeviceEvents(client));
     }
 

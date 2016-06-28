@@ -82,10 +82,8 @@ int
 SProcXGetDeviceKeyMapping(client)
     register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xGetDeviceKeyMappingReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     return(ProcXGetDeviceKeyMapping(client));
     }
 
@@ -169,10 +167,8 @@ SRepXGetDeviceKeyMapping (client, size, rep)
     int		size;
     xGetDeviceKeyMappingReply	*rep;
     {
-    register char n;
-
-    swaps(&rep->sequenceNumber, n);
-    swapl(&rep->length, n);
+    swaps(&rep->sequenceNumber);
+    swapl(&rep->length);
     WriteToClient(client, size, (char *)rep);
     }
 

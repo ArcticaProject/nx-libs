@@ -215,14 +215,13 @@ ProcXFixesSelectSelectionInput (ClientPtr client)
 int
 SProcXFixesSelectSelectionInput (ClientPtr client)
 {
-    register int n;
     REQUEST(xXFixesSelectSelectionInputReq);
 
     REQUEST_SIZE_MATCH(xXFixesSelectSelectionInputReq);
-    swaps(&stuff->length, n);
-    swapl(&stuff->window, n);
-    swapl(&stuff->selection, n);
-    swapl(&stuff->eventMask, n);
+    swaps(&stuff->length);
+    swapl(&stuff->window);
+    swapl(&stuff->selection);
+    swapl(&stuff->eventMask);
     return ProcXFixesSelectSelectionInput(client);
 }
     

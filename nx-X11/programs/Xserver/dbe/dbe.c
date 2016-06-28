@@ -362,8 +362,6 @@ ProcDbeGetVersion(client)
 {
     /* REQUEST(xDbeGetVersionReq); */
     xDbeGetVersionReply	rep;
-    register int	n;
-
 
     REQUEST_SIZE_MATCH(xDbeGetVersionReq);
 
@@ -375,7 +373,7 @@ ProcDbeGetVersion(client)
 
     if (client->swapped)
     {
-        swaps(&rep.sequenceNumber, n);
+        swaps(&rep.sequenceNumber);
     }
 
     WriteToClient(client, sizeof(xDbeGetVersionReply), (char *)&rep);
@@ -898,7 +896,7 @@ ProcDbeGetVisualInfo(client)
     xDbeGetVisualInfoReply	rep;
     Drawable			*drawables;
     DrawablePtr			*pDrawables = NULL;
-    register int		i, j, n;
+    register int		i, j;
     register int		count;  /* number of visual infos in reply */
     register int		length; /* length of reply */
     ScreenPtr			pScreen;
@@ -984,9 +982,9 @@ ProcDbeGetVisualInfo(client)
 
     if (client->swapped)
     {
-        swaps(&rep.sequenceNumber, n);
-        swapl(&rep.length, n);
-        swapl(&rep.m, n);
+        swaps(&rep.sequenceNumber);
+        swapl(&rep.length);
+        swapl(&rep.m);
     }
 
     /* Send off reply. */
@@ -1003,7 +1001,7 @@ ProcDbeGetVisualInfo(client)
 
         if (client->swapped)
         {
-            swapl(&data32, n);
+            swapl(&data32);
         }
 
         WriteToClient(client, sizeof(CARD32), (char *)&data32);
@@ -1024,7 +1022,7 @@ ProcDbeGetVisualInfo(client)
 
             if (client->swapped)
             {
-                swapl(&visInfo.visualID, n);
+                swapl(&visInfo.visualID);
 
                 /* We do not need to swap depth and perfLevel since they are
                  * already 1 byte quantities.
@@ -1075,8 +1073,6 @@ ProcDbeGetBackBufferAttributes(client)
     REQUEST(xDbeGetBackBufferAttributesReq);
     xDbeGetBackBufferAttributesReply	rep;
     DbeWindowPrivPtr			pDbeWindowPriv;
-    int					n;
-
 
     REQUEST_SIZE_MATCH(xDbeGetBackBufferAttributesReq);
 
@@ -1096,9 +1092,9 @@ ProcDbeGetBackBufferAttributes(client)
     
     if (client->swapped)
     {
-        swaps(&rep.sequenceNumber, n);
-        swapl(&rep.length, n);
-        swapl(&rep.attributes, n);
+        swaps(&rep.sequenceNumber);
+        swapl(&rep.length);
+        swapl(&rep.attributes);
     }
 
     WriteToClient(client, sizeof(xDbeGetBackBufferAttributesReply),
@@ -1179,10 +1175,8 @@ SProcDbeGetVersion(client)
     ClientPtr client;
 {
     REQUEST(xDbeGetVersionReq);
-    register int	n;
 
-
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     return(ProcDbeGetVersion(client));
 
 } /* SProcDbeGetVersion() */
@@ -1216,13 +1210,12 @@ SProcDbeAllocateBackBufferName(client)
     ClientPtr client;
 {
     REQUEST(xDbeAllocateBackBufferNameReq);
-    register int	n;
 
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xDbeAllocateBackBufferNameReq);
 
-    swapl(&stuff->window, n);
-    swapl(&stuff->buffer, n);
+    swapl(&stuff->window);
+    swapl(&stuff->buffer);
     /* stuff->swapAction is a byte.  We do not need to swap this field. */
 
     return(ProcDbeAllocateBackBufferName(client));
@@ -1252,13 +1245,11 @@ SProcDbeDeallocateBackBufferName(client)
     ClientPtr client;
 {
     REQUEST (xDbeDeallocateBackBufferNameReq);
-    register int	n;
 
-
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xDbeDeallocateBackBufferNameReq);
 
-    swapl(&stuff->buffer, n);
+    swapl(&stuff->buffer);
 
     return(ProcDbeDeallocateBackBufferName(client));
 
@@ -1291,14 +1282,14 @@ SProcDbeSwapBuffers(client)
     ClientPtr client;
 {
     REQUEST(xDbeSwapBuffersReq);
-    unsigned int	i, n;
+    unsigned int	i;
     xDbeSwapInfo	*pSwapInfo;
 
 
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_AT_LEAST_SIZE(xDbeSwapBuffersReq);
 
-    swapl(&stuff->n, n);
+    swapl(&stuff->n);
     if (stuff->n > UINT32_MAX / sizeof(DbeSwapInfoRec))
         return BadAlloc;
     REQUEST_FIXED_SIZE(xDbeSwapBuffersReq, stuff->n * sizeof(xDbeSwapInfo));
@@ -1313,7 +1304,7 @@ SProcDbeSwapBuffers(client)
          */
         for (i = 0; i < stuff->n; i++)
         {
-            swapl(&pSwapInfo->window, n);
+            swapl(&pSwapInfo->window);
         }
     }
 
@@ -1343,9 +1334,8 @@ SProcDbeBeginIdiom(client)
     ClientPtr client;
 {
     REQUEST(xDbeBeginIdiomReq);
-    register int	n;
 
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     return(ProcDbeBeginIdiom(client));
 
 } /* SProcDbeBeginIdiom() */
@@ -1373,13 +1363,11 @@ SProcDbeGetVisualInfo(client)
     ClientPtr client;
 {
     REQUEST(xDbeGetVisualInfoReq);
-    register int	n;
 
-
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_AT_LEAST_SIZE(xDbeGetVisualInfoReq);
 
-    swapl(&stuff->n, n);
+    swapl(&stuff->n);
     SwapRestL(stuff);
 
     return(ProcDbeGetVisualInfo(client));
@@ -1408,12 +1396,11 @@ SProcDbeGetBackBufferAttributes(client)
     ClientPtr client;
 {
     REQUEST (xDbeGetBackBufferAttributesReq);
-    register int	n;
 
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xDbeGetBackBufferAttributesReq);
 
-    swapl(&stuff->buffer, n);
+    swapl(&stuff->buffer);
 
     return(ProcDbeGetBackBufferAttributes(client));
 

@@ -344,7 +344,6 @@ ProcRRCreateMode(ClientPtr client)
     char *name;
     int error, rc;
     RRModePtr mode;
-    int n;
 
     REQUEST_AT_LEAST_SIZE(xRRCreateModeReq);
 #ifndef NXAGENT_SERVER
@@ -377,9 +376,9 @@ ProcRRCreateMode(ClientPtr client)
         .mode = mode->mode.id
     };
     if (client->swapped) {
-        swaps(&rep.sequenceNumber, n);
-        swapl(&rep.length, n);
-        swapl(&rep.mode, n);
+        swaps(&rep.sequenceNumber);
+        swapl(&rep.length);
+        swapl(&rep.mode);
     }
     WriteToClient(client, sizeof(xRRCreateModeReply), (char *) &rep);
     /* Drop out reference to this mode */

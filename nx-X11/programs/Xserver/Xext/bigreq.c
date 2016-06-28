@@ -85,10 +85,9 @@ ProcBigReqDispatch (client)
 {
     REQUEST(xBigReqEnableReq);
     xBigReqEnableReply rep;
-    register int n;
 
     if (client->swapped) {
-	swaps(&stuff->length, n);
+	swaps(&stuff->length);
     }
     if (stuff->brReqType != X_BigReqEnable)
 	return BadRequest;
@@ -100,8 +99,8 @@ ProcBigReqDispatch (client)
     rep.sequenceNumber = client->sequence;
     rep.max_request_size = maxBigRequestSize;
     if (client->swapped) {
-    	swaps(&rep.sequenceNumber, n);
-	swapl(&rep.max_request_size, n);
+	swaps(&rep.sequenceNumber);
+	swapl(&rep.max_request_size);
     }
     WriteToClient(client, sizeof(xBigReqEnableReply), (char *)&rep);
     return(client->noClientException);

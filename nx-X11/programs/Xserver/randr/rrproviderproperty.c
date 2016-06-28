@@ -401,7 +401,6 @@ ProcRRListProviderProperties(ClientPtr client)
     int numProps = 0;
     RRProviderPtr provider;
     RRPropertyPtr prop;
-    int n;
 
     REQUEST_SIZE_MATCH(xRRListProviderPropertiesReq);
 
@@ -424,9 +423,9 @@ ProcRRListProviderProperties(ClientPtr client)
         .nAtoms = numProps
     };
     if (client->swapped) {
-        swaps(&rep.sequenceNumber, n);
-        swapl(&rep.length, n);
-        swaps(&rep.nAtoms, n);
+        swaps(&rep.sequenceNumber);
+        swapl(&rep.length);
+        swaps(&rep.nAtoms);
     }
     temppAtoms = pAtoms;
     for (prop = provider->properties; prop; prop = prop->next)
@@ -450,7 +449,6 @@ ProcRRQueryProviderProperty(ClientPtr client)
     RRProviderPtr provider;
     RRPropertyPtr prop;
     char *extra = NULL;
-    int n;
 
     REQUEST_SIZE_MATCH(xRRQueryProviderPropertyReq);
 
@@ -478,8 +476,8 @@ ProcRRQueryProviderProperty(ClientPtr client)
         .immutable = prop->immutable
     };
     if (client->swapped) {
-        swaps(&rep.sequenceNumber, n);
-        swapl(&rep.length, n);
+        swaps(&rep.sequenceNumber);
+        swapl(&rep.length);
     }
     WriteToClient(client, sizeof(xRRQueryProviderPropertyReply), (char *) &rep);
     if (prop->num_valid) {
@@ -637,11 +635,11 @@ ProcRRGetProviderProperty(ClientPtr client)
         reply.propertyType = None;
         reply.format = 0;
         if (client->swapped) {
-            swaps(&reply.sequenceNumber, n);
-            swapl(&reply.length, n);
-            swapl(&reply.propertyType, n);
-            swapl(&reply.bytesAfter, n);
-            swapl(&reply.nItems, n);
+            swaps(&reply.sequenceNumber);
+            swapl(&reply.length);
+            swapl(&reply.propertyType);
+            swapl(&reply.bytesAfter);
+            swapl(&reply.nItems);
         }
         WriteToClient(client, sizeof(xRRGetProviderPropertyReply),
                       (char *) &reply);
@@ -666,11 +664,11 @@ ProcRRGetProviderProperty(ClientPtr client)
         reply.nItems = 0;
         reply.propertyType = prop_value->type;
         if (client->swapped) {
-            swaps(&reply.sequenceNumber, n);
-            swapl(&reply.length, n);
-            swapl(&reply.propertyType, n);
-            swapl(&reply.bytesAfter, n);
-            swapl(&reply.nItems, n);
+            swaps(&reply.sequenceNumber);
+            swapl(&reply.length);
+            swapl(&reply.propertyType);
+            swapl(&reply.bytesAfter);
+            swapl(&reply.nItems);
         }
         WriteToClient(client, sizeof(xRRGetProviderPropertyReply),
                       (char *) &reply);
@@ -720,11 +718,11 @@ ProcRRGetProviderProperty(ClientPtr client)
     }
 
     if (client->swapped) {
-        swaps(&reply.sequenceNumber, n);
-        swapl(&reply.length, n);
-        swapl(&reply.propertyType, n);
-        swapl(&reply.bytesAfter, n);
-        swapl(&reply.nItems, n);
+        swaps(&reply.sequenceNumber);
+        swapl(&reply.length);
+        swapl(&reply.propertyType);
+        swapl(&reply.bytesAfter);
+        swapl(&reply.nItems);
     }
     WriteToClient(client, sizeof(xGenericReply), (char *) &reply);
     if (len) {

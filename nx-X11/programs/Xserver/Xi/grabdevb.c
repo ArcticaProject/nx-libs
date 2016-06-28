@@ -83,14 +83,12 @@ int
 SProcXGrabDeviceButton(client)
     register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xGrabDeviceButtonReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_AT_LEAST_SIZE(xGrabDeviceButtonReq);
-    swapl(&stuff->grabWindow, n);
-    swaps(&stuff->modifiers, n);
-    swaps(&stuff->event_count, n);
+    swapl(&stuff->grabWindow);
+    swaps(&stuff->modifiers);
+    swaps(&stuff->event_count);
     REQUEST_FIXED_SIZE(xGrabDeviceButtonReq,
                       stuff->event_count * sizeof(CARD32));
     SwapLongs((CARD32 *) (&stuff[1]), stuff->event_count);

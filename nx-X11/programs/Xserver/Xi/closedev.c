@@ -83,10 +83,8 @@ int
 SProcXCloseDevice(client)
     register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xCloseDeviceReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xCloseDeviceReq);
     return(ProcXCloseDevice(client));
     }

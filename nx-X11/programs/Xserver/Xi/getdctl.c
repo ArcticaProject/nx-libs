@@ -81,12 +81,10 @@ int
 SProcXGetDeviceControl(client)
     register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xGetDeviceControlReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xGetDeviceControlReq);
-    swaps(&stuff->control, n);
+    swaps(&stuff->control);
     return(ProcXGetDeviceControl(client));
     }
 
@@ -178,7 +176,6 @@ CopySwapDeviceResolution (client, v, buf, length)
     char 		*buf;
     int			length;
     {
-    register char 	n;
     AxisInfoPtr	a;
     xDeviceResolutionState *r;
     int i, *iptr;
@@ -197,13 +194,13 @@ CopySwapDeviceResolution (client, v, buf, length)
 	*iptr++ = a->max_resolution;
     if (client->swapped)
 	{
-	swaps (&r->control,n);
-	swaps (&r->length,n);
-	swapl (&r->num_valuators,n);
+	swaps (&r->control);
+	swaps (&r->length);
+	swapl (&r->num_valuators);
 	iptr = (int *) buf;
 	for (i=0; i < (3 * v->numAxes); i++,iptr++)
 	    {
-	    swapl (iptr,n);
+	    swapl (iptr);
 	    }
 	}
     }
@@ -221,10 +218,8 @@ SRepXGetDeviceControl (client, size, rep)
     int		size;
     xGetDeviceControlReply	*rep;
     {
-    register char n;
-
-    swaps(&rep->sequenceNumber, n);
-    swapl(&rep->length, n);
+    swaps(&rep->sequenceNumber);
+    swapl(&rep->length);
     WriteToClient(client, size, (char *)rep);
     }
 

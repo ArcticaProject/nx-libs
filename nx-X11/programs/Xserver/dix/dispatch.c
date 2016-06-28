@@ -3808,7 +3808,7 @@ ProcInitialConnection(register ClientPtr client)
 		     ((prefix->nbytesAuthString + (unsigned)3) >> 2);
     if (client->swapped)
     {
-	swaps(&stuff->length, whichbyte);
+	swaps(&stuff->length);
     }
     ResetCurrentRequest(client);
     return (client->noClientException);

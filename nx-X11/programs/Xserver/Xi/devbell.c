@@ -81,10 +81,8 @@ int
 SProcXDeviceBell(client)
     register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xDeviceBellReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     return(ProcXDeviceBell(client));
     }
 

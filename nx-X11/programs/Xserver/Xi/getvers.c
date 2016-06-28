@@ -82,12 +82,10 @@ int
 SProcXGetExtensionVersion(client)
     register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xGetExtensionVersionReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_AT_LEAST_SIZE(xGetExtensionVersionReq);
-    swaps(&stuff->nbytes, n);
+    swaps(&stuff->nbytes);
     return(ProcXGetExtensionVersion(client));
     }
 
@@ -148,11 +146,9 @@ SRepXGetExtensionVersion (client, size, rep)
     int		size;
     xGetExtensionVersionReply	*rep;
     {
-    register char n;
-
-    swaps(&rep->sequenceNumber, n);
-    swapl(&rep->length, n);
-    swaps(&rep->major_version, n);
-    swaps(&rep->minor_version, n);
+    swaps(&rep->sequenceNumber);
+    swapl(&rep->length);
+    swaps(&rep->major_version);
+    swaps(&rep->minor_version);
     WriteToClient(client, size, (char *)rep);
     }

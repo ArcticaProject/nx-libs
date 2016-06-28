@@ -83,12 +83,10 @@ int
 SProcXGetSelectedExtensionEvents(client)
     register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xGetSelectedExtensionEventsReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xGetSelectedExtensionEventsReq);
-    swapl(&stuff->window, n);
+    swapl(&stuff->window);
     return(ProcXGetSelectedExtensionEvents(client));
     }
 
@@ -186,11 +184,9 @@ SRepXGetSelectedExtensionEvents (client, size, rep)
     int		size;
     xGetSelectedExtensionEventsReply	*rep;
     {
-    register char n;
-
-    swaps(&rep->sequenceNumber, n);
-    swapl(&rep->length, n);
-    swaps(&rep->this_client_count, n);
-    swaps(&rep->all_clients_count, n);
+    swaps(&rep->sequenceNumber);
+    swapl(&rep->length);
+    swaps(&rep->this_client_count);
+    swaps(&rep->all_clients_count);
     WriteToClient(client, size, (char *)rep);
     }
