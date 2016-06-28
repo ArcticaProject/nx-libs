@@ -3,6 +3,8 @@ nx-libs (2:3.5.0.33-0x2go1) UNRELEASED; urgency=low
   [ Mihai Moldovan ]
   * debian/control:
     - Add xkb-data to nxagent's Recommends.
+    - Uploaders: add myself. Also, force a rebuild due to the changed
+      versioning.
   * nx-libs.spec:
     - Add xkeyboard-config to nxagent's Requires. Should be a weak dependency,
       but RPM doesn't support that too well yet.
