@@ -421,19 +421,32 @@ $(NXAGENTOBJS) $(NXAGENTLIBS) $(NXAGENTSYSLIBS):: $(NXAGENTDIRS)
  */
 
 #if defined(SunArchitecture)
-NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext -L ../../../nxcompshad \
-                -lXcomp -lXcompext -lXcompshad -lrt -L/usr/sfw/lib -lXrender -lXfixes -lXfont \
-                -L../../../nx-X11/exports/lib -lXcomposite -lXdmcp
+NXAGENTNXLIBS = -L/usr/sfw/lib \
+                -L ../../../nxcomp  \
+                -L../../../nx-X11/exports/lib \
+                -L ../../../nxcompext -L ../../../nxcompshad \
+                -lrt \
+                -lXcomp \
+                -lXcompext -lXcompshad \
+                -lXrender -lXfixes -lXfont -lXcomposite -lXinerama -lXdmcp \
+                -lNX_X11 -lNX_Xext
 #elif defined(cygwinArchitecture)
-NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext \
-                -lXcomp -lXcompext -lXrender -lX11 -lNX_Xext -lXcomposite -lXfixes -lXfont \
-                -L ../../../nxcompshad -lXcompshad -L../../../nx-X11/exports/lib -lXdmcp
+NXAGENTNXLIBS = -L ../../../nxcomp  \
+                -L../../../nx-X11/exports/lib \
+                -L ../../../nxcompext -L ../../../nxcompshad \
+                -lXcomp \
+                -lXcompext -lXcompshad \
+                -lXrender -lXfixes -lXfont -lXcomposite -lXdmcp \
+                -lNX_X11 -lNX_Xext
 #else
-NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext -L ../../../nxcompshad \
-                -lXcomp -lXcompext -lXcompshad -lXrender -lNX_X11 -lNX_Xext -lXfixes -lXfont \
-                -L../../../nx-X11/exports/lib -lXcomposite -lXinerama -lXdmcp
+NXAGENTNXLIBS = -L ../../../nxcomp  \
+                -L../../../nx-X11/exports/lib \
+                -L ../../../nxcompext -L ../../../nxcompshad \
+                -lXcomp \
+                -lXcompext -lXcompshad \
+                -lXrender -lXfixes -lXfont -lXcomposite -lXinerama -lXdmcp \
+                -lNX_X11 -lNX_Xext
 #endif
-
 #endif
 
 #ifdef cygwinArchitecture
