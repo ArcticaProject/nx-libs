@@ -444,6 +444,7 @@ Depends:
  ${misc:Depends},
 Breaks: nxlibs (<= 3.5.1),
         libnx-x11-dev (<< 2:3.5.0.29-0x2go2~),
+        libnx-xext-dev (<< 2:3.5.99.0~),
 Description: nx-X11 miscellaneous extension wire protocol
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
