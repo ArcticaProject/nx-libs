@@ -2751,6 +2751,25 @@ void _XEatData(
 #undef SCRATCHSIZE
 }
 
+/*
+ * Read and discard "n" 32-bit words of data
+ * Matches the units of the length field in X protocol replies, and provides
+ * a single implementation of overflow checking to avoid having to replicate
+ * those checks in every caller.
+ */
+#ifndef HAVE__XEATDATAWORDS
+#include <X11/Xmd.h>  /* for LONG64 on 64-bit platforms */
+#include <limits.h>
+
+static inline void _XEatDataWords(Display *dpy, unsigned long n)
+{
+# ifndef LONG64
+    if (n >= (ULONG_MAX >> 2))
+        _XIOError(dpy);
+# endif
+    _XEatData (dpy, n << 2);
+}
+#endif
 
 /*
  * _XEnq - Place event packets on the display's queue.
@@ -3732,6 +3751,36 @@ Screen *_XScreenOfWindow (dpy, w)
     return NULL;
 }
 
+/*
+ * WARNING: This implementation's pre-conditions and post-conditions
+ * must remain compatible with the old macro-based implementations of
+ * GetReq, GetReqExtra, GetResReq, and GetEmptyReq. The portions of the
+ * Display structure affected by those macros are part of libX11's
+ * ABI.
+ */
+void *_XGetRequest(Display *dpy, CARD8 type, size_t len)
+{
+    xReq *req;
+
+    WORD64ALIGN
+
+    if (dpy->bufptr + len > dpy->bufmax)
+      _XFlush(dpy);
+
+    if (len % 4)
+      fprintf(stderr,
+	      "Xlib: request %d length %zd not a multiple of 4.\n",
+	      type, len);
+
+    dpy->last_req = dpy->bufptr;
+
+    req = (xReq*)dpy->bufptr;
+    req->reqType = type;
+    req->length = len / 4;
+    dpy->bufptr += len;
+    dpy->request++;
+    return req;
+}
 
 #if defined(WIN32)
 
