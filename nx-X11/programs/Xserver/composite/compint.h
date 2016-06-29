@@ -56,10 +56,8 @@
 
 /*
  *  enable this for debugging
- 
-    #define COMPOSITE_DEBUG
- */
 #define COMPOSITE_DEBUG
+ */
 
 typedef struct _CompClientWindow {
     struct _CompClientWindow	*next;
