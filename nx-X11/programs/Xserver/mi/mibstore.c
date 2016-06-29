@@ -2573,11 +2573,9 @@ miBSAllocate(pWin)
     WindowPtr 	  pWin;
 {
     register miBSWindowPtr  pBackingStore;
-    register ScreenPtr 	    pScreen;
 	
     if (pWin->drawable.pScreen->backingStoreSupport == NotUseful)
 	return;
-    pScreen = pWin->drawable.pScreen;
     if (!(pBackingStore = (miBSWindowPtr)pWin->backStorage))
     {
 
@@ -2674,9 +2672,6 @@ miBSFree(pWin)
     WindowPtr pWin;
 {
     miBSWindowPtr 	pBackingStore;
-    register ScreenPtr	pScreen;
-
-    pScreen = pWin->drawable.pScreen;
 
     pBackingStore = (miBSWindowPtr)pWin->backStorage;
     if (pBackingStore)
