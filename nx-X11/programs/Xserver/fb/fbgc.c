@@ -170,7 +170,7 @@ fbCanEvenStipple (PixmapPtr pStipple, int bpp)
     FbBits  *bits;
     int	    stride;
     int	    stip_bpp;
-    int	    stipXoff, stipYoff;
+    _X_UNUSED int	    stipXoff, stipYoff;
     int	    h;
 
     /* can't even stipple 24bpp drawables */
