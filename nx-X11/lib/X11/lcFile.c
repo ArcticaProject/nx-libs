@@ -437,8 +437,7 @@ _XlcFileName(
 	char buf[PATH_MAX], *name;
 
 	name = NULL;
-	if ((5 + (args[i] ? strlen (args[i]) : 0) +
-	    (cat ? strlen (cat) : 0)) < PATH_MAX) {
+	if ((5 + (args[i] ? strlen (args[i]) : 0) + strlen(cat)) < PATH_MAX) {
 	    sprintf(buf, "%s/%s.dir", args[i], cat);
 	    name = resolve_name(siname, buf, RtoL);
 	}
