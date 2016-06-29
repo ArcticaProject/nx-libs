@@ -107,6 +107,7 @@ OR PERFORMANCE OF THIS SOFTWARE.
 #include <stdlib.h>	/* for malloc() */
 #include <errno.h>
 
+#include "input.h"
 #include "site.h"
 #include "opaque.h"
 
