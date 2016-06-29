@@ -142,9 +142,9 @@ void nxagentInitRandRExtension(ScreenPtr pScreen)
   /* only fake provider support in nx-X11, so far */
   pRandRScrPriv -> provider = RRProviderCreate(pScreen, "default", 7);
   pRandRScrPriv -> rrProviderSetOutputSource = NULL;
-  pRandRScrPriv -> rrProviderSetOffloadSink;
-  pRandRScrPriv -> rrProviderGetProperty;
-  pRandRScrPriv -> rrProviderSetProperty;
+  pRandRScrPriv -> rrProviderSetOffloadSink = NULL;
+  pRandRScrPriv -> rrProviderGetProperty = NULL;
+  pRandRScrPriv -> rrProviderSetProperty = NULL;
   #endif
 
   #if RANDR_13_INTERFACE
