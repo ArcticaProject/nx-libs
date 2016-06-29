@@ -2751,6 +2751,30 @@ void _XEatData(
 #undef SCRATCHSIZE
 }
 
+/*
+   Port from libXfixes commit
+   b031e3b60fa1af9e49449f23d4a84395868be3ab We need this here to
+   enable linking of current libXrender against libNX_X11 instead of
+   the system's libX11
+
+   The original implementation of this function (libX11 commit
+   9f5d83706543696fc944c1835a403938c06f2cc5) uses xcb stuff which we
+   do not have in libNX_X11. So we take a workaround from another
+   lib. This workaround had been implemented temporarily in a couple
+   of X libs, see e.g. https://lists.x.org/archives/xorg-devel/2013-July/036763.html.
+*/
+#include <X11/Xmd.h>  /* for LONG64 on 64-bit platforms */
+#include <limits.h>
+
+void _XEatDataWords(Display *dpy, unsigned long n)
+{
+#ifndef LONG64
+    if (n >= (ULONG_MAX >> 2))
+        _XIOError(dpy);
+#endif
+    _XEatData (dpy, n << 2);
+}
+
 
 /*
  * _XEnq - Place event packets on the display's queue.
