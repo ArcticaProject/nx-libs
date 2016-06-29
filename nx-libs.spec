@@ -496,6 +496,10 @@ rm -r %{buildroot}%{_includedir}/GL
 rm -r %{buildroot}%{_includedir}/nx-X11/extensions/XInput.h
 rm -r %{buildroot}%{_includedir}/nx-X11/extensions/XK*.h
 rm -r %{buildroot}%{_includedir}/nx-X11/extensions/*Xv*.h
+rm -r %{buildroot}%{_includedir}/nx-X11/extensions/dpms.h
+rm -r %{buildroot}%{_includedir}/nx-X11/extensions/security.h
+rm -r %{buildroot}%{_includedir}/nx-X11/extensions/sync.h
+rm -r %{buildroot}%{_includedir}/nx-X11/extensions/xtestext1.h
 rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 
 %if 0%{?fdupes:1}
@@ -561,14 +565,8 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %dir %{_includedir}/nx-X11/extensions
 %{_includedir}/nx-X11/extensions/XShm.h
 %{_includedir}/nx-X11/extensions/Xext.h
-%{_includedir}/nx-X11/extensions/dpms.h
-%{_includedir}/nx-X11/extensions/dpmsstr.h
 %{_includedir}/nx-X11/extensions/extutil.h
-%{_includedir}/nx-X11/extensions/security.h
-%{_includedir}/nx-X11/extensions/securstr.h
 %{_includedir}/nx-X11/extensions/shape.h
-%{_includedir}/nx-X11/extensions/sync.h
-%{_includedir}/nx-X11/extensions/xtestext1.h
 
 %files -n libNX_Xext6
 %defattr(-,root,root)
@@ -659,12 +657,14 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %{_includedir}/nx-X11/extensions/compositeproto.h
 %{_includedir}/nx-X11/extensions/damagewire.h
 %{_includedir}/nx-X11/extensions/damageproto.h
+%{_includedir}/nx-X11/extensions/dpmsstr.h
 %{_includedir}/nx-X11/extensions/panoramiXproto.h
 %{_includedir}/nx-X11/extensions/randr.h
 %{_includedir}/nx-X11/extensions/randrproto.h
 %{_includedir}/nx-X11/extensions/recordstr.h
 %{_includedir}/nx-X11/extensions/render.h
 %{_includedir}/nx-X11/extensions/renderproto.h
+%{_includedir}/nx-X11/extensions/securstr.h
 %{_includedir}/nx-X11/extensions/shapestr.h
 %{_includedir}/nx-X11/extensions/shmstr.h
 %{_includedir}/nx-X11/extensions/syncstr.h
