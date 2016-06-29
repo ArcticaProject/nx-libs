@@ -2401,60 +2401,139 @@ static int nxagentCheckForDepthsCompatibility()
 
 static int nxagentCheckForPixmapFormatsCompatibility()
 {
-  int i, j;
-  int matched;
-  int compatible;
+  /*
+   * Depending on the (reconnect) tolerance checks value, this
+   * function checks stricter or looser:
+   *   - Strict means that the number of internal and external
+   *     pixmap formats must match exactly and every
+   *     internal pixmap format must be available in the
+   *     external pixmap format array.
+   *   - Safe means that the number of pixmap formats might
+   *     diverge, but all internal pixmap formats must
+   *     also be included in the external pixmap formats
+   *     array. This is recommended, because it allows
+   *     clients with more pixmap formats to still connect,
+   *     but not lose functionality.
+   *   - Risky means that the internal pixmap formats array is
+   *     allowed to be smaller than the external pixmap
+   *     formats array, but at least one pixmap format must
+   *     be included in both. This is potentially unsafe.
+   *   - Bypass or higher means that all of these checks are
+   *     essentially deactivated. This is a very bad idea.
+   */
 
-  compatible = 1;
+  const unsigned int tolerance = nxagentOption(ReconnectTolerance);
 
-  if (nxagentNumPixmapFormats != nxagentRemoteNumPixmapFormats)
+  if (ToleranceChecksBypass <= tolerance)
   {
-    #ifdef DEBUG
-    fprintf(stderr, "nxagentCheckForPixmapFormatsCompatibility: WARNING! Number of internal pixmap formats [%d] "
-                "doesn't match with remote formats [%d].\n", nxagentNumPixmapFormats,
-                    nxagentRemoteNumPixmapFormats);
+    #ifdef WARNING
+    fprintf(stderr, "nxagentCheckForPixmapFormatsCompatibility: WARNING! Not proceeding with any checks, "
+                    "because tolerance [%u] higher than or equal [%u]. Number of internally available "
+                    "pixmap formats is [%d], number of externally available pixmap formats is [%d].\n",
+            tolerance, ToleranceChecksBypass, nxagentNumPixmapFormats, nxagentRemoteNumPixmapFormats);
     #endif
+
+    return 1;
   }
 
-  for (i = 0; i < nxagentNumPixmapFormats; i++)
+  if ((ToleranceChecksStrict == tolerance) && (nxagentNumPixmapFormats != nxagentRemoteNumPixmapFormats))
   {
-    matched = 0;
+    #ifdef DEBUG
+    fprintf(stderr, "nxagentCheckForPixmapFormatsCompatibility: WARNING! No tolerance allowed and number "
+                    "of internal pixmap formats [%d] doesn't match with number of remote formats [%d].\n",
+            nxagentNumPixmapFormats, nxagentRemoteNumPixmapFormats);
+    #endif
 
-    for (j = 0; j < nxagentRemoteNumPixmapFormats; j++)
+    return 0;
+  }
+
+  if ((ToleranceChecksSafe == tolerance) && (nxagentNumPixmapFormats > nxagentRemoteNumPixmapFormats))
+  {
+    #ifdef DEBUG
+    fprintf(stderr, "nxagentCheckForPixmapFormatsCompatibility: WARNING! Tolerance [%u] too low "
+                    "and number of internal pixmap formats [%d] higher than number of external formats [%d].\n",
+            tolerance, nxagentNumPixmapFormats, nxagentRemoteNumPixmapFormats);
+    #endif
+
+    return 0;
+  }
+
+  /*
+   * By now the tolerance is either:
+   *   - Strict
+   *   - Safe and:
+   *     o the number of internal and external pixmap formats
+   *       matches exactly, or
+   *     o the number of external pixmap formats is higher than
+   *       the number of internal pixmap formats,
+   *   - Risky
+   */
+
+  bool compatible = true;
+  bool one_match = false;
+  bool matched = false;
+  int total_matches = 0;
+
+  for (int i = 0; i < nxagentNumPixmapFormats; ++i)
+  {
+    matched = false;
+
+    for (int j = 0; j < nxagentRemoteNumPixmapFormats; ++j)
     {
       if (nxagentPixmapFormats[i].depth == nxagentRemotePixmapFormats[j].depth &&
           nxagentPixmapFormats[i].bits_per_pixel == nxagentRemotePixmapFormats[j].bits_per_pixel &&
           nxagentPixmapFormats[i].scanline_pad == nxagentRemotePixmapFormats[j].scanline_pad)
       {
-        matched = 1;
+        matched = true;
+        one_match = true;
+        ++total_matches;
 
         break;
       }
     }
 
-    if (matched == 0)
+    if ((ToleranceChecksRisky > tolerance) && (!matched))
     {
       #ifdef WARNING
-      fprintf(stderr, "nxagentCheckForPixmapFormatsCompatibility: WARNING! Failed to match internal "
-                  "pixmap format depth [%d] bpp [%d] pad [%d].\n", nxagentPixmapFormats[i].depth,
-                      nxagentPixmapFormats[i].bits_per_pixel, nxagentPixmapFormats[i].scanline_pad);
+      fprintf(stderr, "nxagentCheckForPixmapFormatsCompatibility: WARNING! Tolerance [%u] too low "
+                      "and failed to match internal pixmap format (depth [%d] bpp [%d] pad [%d]).\n",
+              tolerance, nxagentPixmapFormats[i].depth, nxagentPixmapFormats[i].bits_per_pixel,
+              nxagentPixmapFormats[i].scanline_pad);
       #endif
 
-      compatible = 0;
+      compatible = false;
     }
   }
 
-  #ifdef TEST
+  int ret = !(!(compatible));
 
-  if (compatible == 1)
+  if (compatible)
   {
+    #ifdef TEST
     fprintf(stderr, "nxagentCheckForPixmapFormatsCompatibility: Internal pixmap formats match with "
-                "remote pixmap formats.\n");
+                    "remote pixmap formats at tolerance [%u].\n", tolerance);
+    #endif
+
+    if (total_matches != nxagentNumPixmapFormats)
+    {
+      #ifdef WARNING
+      fprintf(stderr, "nxagentCheckForPixmapFormatsCompatibility: Only some [%d] of the internal "
+                      "pixmap formats [%d] match with external pixmap formats [%d] at tolerance [%u].\n",
+              total_matches, nxagentNumPixmapFormats, nxagentRemoteNumPixmapFormats, tolerance);
+      #endif
+    }
+  }
+  else
+  {
+    #ifdef WARNING
+    fprintf(stderr, "nxagentCheckForPixmapFormatsCompatibility: WARNING! Internally available "
+                    "pixmap formats [%d] don't match with external pixmap formats [%d] "
+                    "at tolerance [%u]. Only [%d] depth values matched.\n",
+            nxagentNumPixmapFormats, nxagentRemoteNumPixmapFormats, tolerance, total_matches);
+    #endif
   }
 
-  #endif
-
-  return compatible;
+  return (ret);
 }
 
 static int nxagentInitAndCheckVisuals(int flexibility)
@@ -2759,6 +2838,9 @@ Bool nxagentReconnectDisplay(void *p0)
    * formats are supported.
    */
 
+  /*
+   * FIXME: add an actual check here (and pass check value through nxagentInitPixmapFormats().)
+   */
   nxagentInitPixmapFormats();
 
   reconnectDisplayState = GOT_PIXMAP_FORMAT_LIST;
