@@ -11,7 +11,7 @@ License:        GPL-2.0+
 %else
 License:        GPLv2+
 %endif
-URL:            http://x2go.org/
+URL:            http://github.com/ArcticaProject/nx-libs/
 Source0:        %{name}-%{version}.tar.gz
 
 BuildRequires:  autoconf >= 2.13
@@ -419,21 +419,6 @@ applications over a network, especially a slow one.
 This package provides the NX proxy (client) binary.
 
 
-%package -n x2goagent
-Group:          Applications/System
-Summary:        X2Go Agent
-Requires:       nxagent
-
-%description -n x2goagent
-X2Go Agent functionality has been completely incorporated into
-nxagent's code base. If the nxagent binary is executed under the name
-of "x2goagent", the X2Go functionalities get activated.
-
-The x2goagent package is a wrapper that activates X2Go branding in
-nxagent. Please refer to the nxagent package's description for more
-information on NX.
-
-
 %prep
 %setup -q
 # remove build cruft that is in Git (also taken from roll-tarball.sh)
@@ -446,7 +431,6 @@ sed -i -e 's#-O3#%{optflags}#' nx-X11/config/cf/host.def
 # We're installing binaries into %%{_libdir}/nx/bin rather than %%{_libexedir}/nx
 # because upstream expects libraries and binaries in the same directory
 sed -i -e 's,/lib/nx,/%{_lib}/nx,' Makefile nx-X11/config/cf/X11.tmpl
-sed -i -e 's,/lib/x2go,/%{_lib}/x2go,' Makefile
 sed -i -e 's,/usr/lib/,/usr/%{_lib}/,' bin/*
 # Fix FSF address
 find -name LICENSE | xargs sed -i \
@@ -483,10 +467,6 @@ make install \
 
 # Remove static libs (they don't exist on SLES, so using -f here)
 rm -f %{buildroot}%{_libdir}/*.a
-
-# Make sure x2goagent is linked relative and on 64-bit
-mkdir -p %{buildroot}%{_libdir}/x2go/bin
-ln -sf ../../nx/bin/nxagent %{buildroot}%{_libdir}/x2go/bin/x2goagent
 
 # Fix permissions on shared libraries
 chmod 755  %{buildroot}%{_libdir}/lib*.so*
@@ -703,21 +683,6 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %{_datadir}/man/man1/nxproxy.1*
 %dir %{_libdir}/nx/bin
 %{_libdir}/nx/bin/nxproxy
-
-%files -n x2goagent
-%defattr(-,root,root)
-#%%{_sysconfdir}/x2go is owned by x2goserver, which this requires
-%dir %{_sysconfdir}/x2go
-%dir %{_libdir}/x2go
-%dir %{_libdir}/x2go/bin
-%config(noreplace) %{_sysconfdir}/x2go/keystrokes.cfg
-%config(noreplace) %{_sysconfdir}/x2go/x2goagent.keyboard
-%config(noreplace) %{_sysconfdir}/x2go/rgb
-%{_bindir}/x2goagent
-%{_libdir}/x2go/bin/x2goagent
-%{_datadir}/pixmaps/x2go.xpm
-%{_datadir}/x2go/
-%{_datadir}/man/man1/x2goagent.1*
 
 
 %changelog

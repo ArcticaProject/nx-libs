@@ -1,0 +1,3 @@
+version=3
+opts=filenamemangle=s/.*\/.*?([\d\.-]+)\.tar\.gz/nx-libs-$1.tar.gz/ \
+https://github.com/ArcticaProject/nx-libs/tags .*/archive/.*?([\d\.]+).tar.gz

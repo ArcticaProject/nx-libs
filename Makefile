@@ -9,15 +9,12 @@ RM_FILE=rm -f
 RM_DIR=rmdir -p --ignore-fail-on-non-empty
 
 ETCDIR_NX   ?= /etc/nxagent
-ETCDIR_X2GO ?= /etc/x2go
 PREFIX      ?= /usr/local
 BINDIR      ?= $(PREFIX)/bin
 LIBDIR      ?= $(PREFIX)/lib
 USRLIBDIR   ?= $(LIBDIR)
 INCLUDEDIR  ?= $(PREFIX)/include
 NXLIBDIR    ?= $(PREFIX)/lib/nx
-X2GOLIBDIR  ?= $(PREFIX)/lib/x2go
-X2GODATADIR  ?= $(PREFIX)/share/x2go
 CONFIGURE   ?= ./configure
 
 NX_VERSION_MAJOR=$(shell ./version.sh 1)
@@ -98,30 +95,22 @@ install-lite:
 	gzip $(DESTDIR)$(PREFIX)/share/man/man1/*.1
 
 install-full:
-	for f in nxagent nxauth x2goagent; do \
+	for f in nxagent nxauth; do \
 	   $(INSTALL_PROGRAM) bin/$$f $(DESTDIR)$(BINDIR); done
 	for d in nxcompext nxcompshad; do \
 	   $(MAKE) -C $$d install; done
 
-	$(INSTALL_DIR) $(DESTDIR)$(X2GOLIBDIR)/bin/
-	cd $(DESTDIR)$(X2GOLIBDIR)/bin/ && ln -sf $(NXLIBDIR)/bin/nxagent x2goagent
-
 	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/pixmaps
-	$(INSTALL_FILE) nx-X11/programs/Xserver/hw/nxagent/x2go.xpm $(DESTDIR)$(PREFIX)/share/pixmaps
 	$(INSTALL_FILE) nx-X11/programs/Xserver/hw/nxagent/nxagent.xpm $(DESTDIR)$(PREFIX)/share/pixmaps
 
 	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/nx
 	$(INSTALL_FILE) nx-X11/programs/Xserver/Xext/SecurityPolicy $(DESTDIR)$(PREFIX)/share/nx
-
-	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/x2go/versions
-	$(INSTALL_FILE) VERSION.x2goagent $(DESTDIR)$(PREFIX)/share/x2go/versions
 
 	$(INSTALL_DIR) $(DESTDIR)$(NXLIBDIR)/bin
 	$(INSTALL_PROGRAM) nx-X11/programs/nxauth/nxauth $(DESTDIR)$(NXLIBDIR)/bin
 	$(INSTALL_PROGRAM) nx-X11/programs/Xserver/nxagent $(DESTDIR)$(NXLIBDIR)/bin
 
 	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/man/man1/
-	$(INSTALL_FILE) nx-X11/programs/Xserver/hw/nxagent/man/x2goagent.1 $(DESTDIR)$(PREFIX)/share/man/man1/
 	$(INSTALL_FILE) nx-X11/programs/Xserver/hw/nxagent/man/nxagent.1 $(DESTDIR)$(PREFIX)/share/man/man1/
 	$(INSTALL_FILE) nx-X11/programs/nxauth/nxauth.man $(DESTDIR)$(PREFIX)/share/man/man1/
 	mv -f $(DESTDIR)$(PREFIX)/share/man/man1/nxauth.man $(DESTDIR)$(PREFIX)/share/man/man1/nxauth.1
@@ -156,23 +145,14 @@ install-full:
 	    done; \
 
 	$(INSTALL_DIR) $(DESTDIR)/$(ETCDIR_NX)
-	$(INSTALL_DIR) $(DESTDIR)/$(ETCDIR_X2GO)
 	$(INSTALL_FILE) etc/keystrokes.cfg $(DESTDIR)/$(ETCDIR_NX)/
-	$(INSTALL_FILE) etc/keystrokes.cfg $(DESTDIR)/$(ETCDIR_X2GO)/
-	$(INSTALL_FILE) etc/rgb $(DESTDIR)$(ETCDIR_X2GO)/
 	$(INSTALL_FILE) etc/rgb $(DESTDIR)$(ETCDIR_NX)/
 	$(INSTALL_FILE) etc/nxagent.keyboard $(DESTDIR)$(ETCDIR_NX)/
-	$(INSTALL_FILE) etc/x2goagent.keyboard $(DESTDIR)$(ETCDIR_X2GO)/
-
-	# x2goagent.features file for X2Go
-	$(INSTALL_DIR) $(DESTDIR)$(X2GODATADIR)/x2gofeature.d/
-	$(INSTALL_FILE) x2goagent.features $(DESTDIR)$(X2GODATADIR)/x2gofeature.d/
-
-	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/x2go
-	$(INSTALL_SYMLINK) $(ETCDIR_X2GO)/rgb $(DESTDIR)$(PREFIX)/share/x2go/rgb
 
 	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/nx
 	$(INSTALL_SYMLINK) $(ETCDIR_NX)/rgb $(DESTDIR)$(PREFIX)/share/nx/rgb
+	$(INSTALL_FILE) VERSION $(DESTDIR)$(PREFIX)/share/nx/VERSION.nxagent
+	$(INSTALL_FILE) VERSION $(DESTDIR)$(PREFIX)/share/nx/VERSION.nxproxy
 
 uninstall:
 	$(MAKE) uninstall-lite
@@ -188,17 +168,15 @@ uninstall-lite:
 	$(RM_FILE) $(DESTDIR)$(NXLIBDIR)/bin/nxproxy
 	$(RM_DIR) $(DESTDIR)$(NXLIBDIR)/bin/
 	$(RM_FILE) $(DESTDIR)$(PREFIX)/share/man/man1/*.1
+	$(RM_FILE) $(DESTDIR)$(PREFIX)/share/nx/VERSION.nxproxy
+	$(RM_DIR) $(DESTDIR)$(NXLIBDIR)/share/nx/
 
 uninstall-full:
-	for f in nxagent nxauth x2goagent; do \
+	for f in nxagent nxauth; do \
 	    $(RM_FILE) $(DESTDIR)$(BINDIR)/$$f; done
 
-	$(RM_FILE) $(DESTDIR)$(X2GOLIBDIR)/bin/x2goagent
-	$(RM_DIR) $(DESTDIR)$(X2GOLIBDIR)/bin/
-
-	# x2goagent.features file for X2Go
-	$(RM_FILE) $(DESTDIR)$(X2GODATADIR)/x2gofeature.d/x2goagent.features
-	$(RM_DIR)  $(DESTDIR)$(X2GODATADIR)/x2gofeature.d/
+	$(RM_FILE) $(DESTDIR)$(PREFIX)/share/nx/VERSION.nxagent
+	$(RM_DIR) $(DESTDIR)$(NXLIBDIR)/share/nx/
 
 	if test -d nx-X11; then \
 	    if test -f nxcompext/Makefile; then ${MAKE} -C nxcompext $@; fi; \

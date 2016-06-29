@@ -1,11 +1,10 @@
 Source: nx-libs
 Section: x11
 Priority: extra
-Maintainer: X2Go Developers <x2go-dev@lists.berlios.de>
+Maintainer: Artica Project <devs@lists.arctica-project.org>
 Uploaders:
- Reinhard Tartler <siretart@tauware.de>,
  Mike Gabriel <mike.gabriel@das-netzwerkteam.de>,
- Oleksandr Shneyder <oleksandr.shneyder@obviously-nice.de>,
+ Mihai Moldovan <ionic@ionic.de>
 Build-Depends:
  debhelper (>= 7.0.50~),
  libpng-dev,
@@ -30,9 +29,9 @@ Build-Depends:
  expat,
  libpixman-1-dev (>= 0.13.2),
 Standards-Version: 3.9.6
-Homepage: http://code.x2go.org/gitweb?p=nx-libs.git;a=summary
-Vcs-Git: git://code.x2go.org/nx-libs.git
-Vcs-Browser: http://code.x2go.org/gitweb?p=nx-libs.git;a=summary
+Homepage: https://github.com/ArcticaProject/nx-libs/
+Vcs-Git: https://github.com/ArcticaProject/nx-libs/
+Vcs-Browser: https://github.com/ArcticaProject/nx-libs/
 
 Package: nx-x11-common
 Architecture: all
@@ -40,8 +39,8 @@ Multi-Arch: foreign
 Depends:
  ${misc:Depends},
 Breaks: nxlibs (<= 3.5.1),
-        libnx-x11 (<< 2:3.5.0.29-0x2go2~),
-        nxagent (<< 2:3.5.0.29-0x2go2~),
+        libnx-x11 (<< 2:3.5.0.29-1~),
+        nxagent (<< 2:3.5.0.29-1~),
 Description: nx-X11 (common files)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -55,7 +54,7 @@ Architecture: any
 Depends:
  ${misc:Depends},
 Breaks: nxlibs (<= 3.5.1),
-        libnx-x11-dev (<< 2:3.5.0.29-0x2go2~),
+        libnx-x11-dev (<< 2:3.5.0.29-1~),
 Description: nx-X11 core wire protocol and auxiliary headers
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -89,7 +88,7 @@ Depends:
  ${misc:Depends},
  nx-x11-common (>= ${source:Version}), nx-x11-common (<< ${source:Version}.1), 
 Breaks: nxlibs (<= 3.5.1),
-        libnx-x11 (<< 2:3.5.0.29-0x2go2~),
+        libnx-x11 (<< 2:3.5.0.29-1~),
 Replaces: nxlibs,
 Description: nx-X11 client-side library
  NX is a software suite which implements very efficient
@@ -125,7 +124,7 @@ Depends:
  libnx-x11-6 (= ${binary:Version}),
  ${misc:Depends},
 Section: debug
-Breaks: nx-x11-dbg (<< 2:3.5.0.29-0x2go2~),
+Breaks: nx-x11-dbg (<< 2:3.5.0.29-1~),
 Replaces: nx-x11-dbg,
 Description: nx-X11 client-side library (debug package)
  NX is a software suite which implements very efficient
@@ -144,7 +143,7 @@ Depends:
  ${shlibs:Depends},
  ${misc:Depends},
 Breaks: nxlibs (<= 3.5.1),
-        libnx-x11 (<< 2:3.5.0.29-0x2go2~),
+        libnx-x11 (<< 2:3.5.0.29-1~),
 Description: nx-X11 authorisation library
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -163,7 +162,7 @@ Depends:
  libnx-xau6 (= ${binary:Version}),
  ${misc:Depends},
 Breaks: nxlibs (<= 3.5.1),
-        libnx-x11-dev (<< 2:3.5.0.29-0x2go2~),
+        libnx-x11-dev (<< 2:3.5.0.29-1~),
 Description: nx-X11 authorisation library (development headers)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -184,7 +183,7 @@ Depends:
  libnx-xau6 (= ${binary:Version}),
  ${misc:Depends},
 Section: debug
-Breaks: nx-x11-dbg (<< 2:3.5.0.29-0x2go2~),
+Breaks: nx-x11-dbg (<< 2:3.5.0.29-1~),
 Description: nx-X11 authorisation library (debug package)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -239,7 +238,7 @@ Multi-Arch: same
 Depends:
  ${misc:Depends},
 Breaks: nxlibs (<= 3.5.1),
-        libnx-x11-dev (<< 2:3.5.0.29-0x2go2~),
+        libnx-x11-dev (<< 2:3.5.0.29-1~),
 Description: nx-X11 Composite extension wire protocol
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -402,7 +401,7 @@ Depends:
  ${shlibs:Depends},
  ${misc:Depends},
 Breaks: nxlibs (<= 3.5.1),
-        libnx-x11 (<< 2:3.5.0.29-0x2go2~),
+        libnx-x11 (<< 2:3.5.0.29-1~),
 Description: nx-X11 miscellaneous extension library
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -424,7 +423,7 @@ Depends:
  nx-x11proto-xext-dev (= ${binary:Version}),
  ${misc:Depends},
 Breaks: nxlibs (<= 3.5.1),
-        libnx-x11-dev (<< 2:3.5.0.29-0x2go2~),
+        libnx-x11-dev (<< 2:3.5.0.29-1~),
 Description: nx-X11 miscellaneous extension library (development headers)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -443,7 +442,7 @@ Depends:
  libnx-xext6 (= ${binary:Version}),
  ${misc:Depends},
 Breaks: nxlibs (<= 3.5.1),
-        libnx-x11-dev (<< 2:3.5.0.29-0x2go2~),
+        libnx-x11-dev (<< 2:3.5.0.29-1~),
         libnx-xext-dev (<< 2:3.5.99.0~),
 Description: nx-X11 miscellaneous extension wire protocol
  NX is a software suite which implements very efficient
@@ -463,7 +462,7 @@ Depends:
  libnx-xext6 (= ${binary:Version}),
  ${misc:Depends},
 Section: debug
-Breaks: nx-x11-dbg (<< 2:3.5.0.29-0x2go2~),
+Breaks: nx-x11-dbg (<< 2:3.5.0.29-1~),
 Description: nx-X11 miscellaneous extension library (debug package)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -516,7 +515,7 @@ Multi-Arch: same
 Depends:
  ${misc:Depends},
 Breaks: nxlibs (<= 3.5.1),
-        libnx-x11-dev (<< 2:3.5.0.29-0x2go2~),
+        libnx-x11-dev (<< 2:3.5.0.29-1~),
 Description: nx-X11 'xfixes' extension wire protocol
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -604,7 +603,7 @@ Depends:
  libnx-xinerama1 (= ${binary:Version}),
  ${misc:Depends},
 Section: debug
-Breaks: nx-x11-dbg (<< 2:3.5.0.29-0x2go2~),
+Breaks: nx-x11-dbg (<< 2:3.5.0.29-1~),
 Description: nx-X11 Xinerama extension library (debug package)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -661,7 +660,7 @@ Pre-Depends:
 Depends:
  ${misc:Depends},
 Section: debug
-Breaks: nx-x11-dbg (<< 2:3.5.0.29-0x2go2~),
+Breaks: nx-x11-dbg (<< 2:3.5.0.29-1~),
 Description: nx-X11 pixmap library (debug package, dummy package)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -919,7 +918,7 @@ Multi-Arch: foreign
 Depends:
  nxagent (= ${binary:Version}),
  ${misc:Depends},
-Breaks: nx-x11-dbg (<< 2:3.5.0.29-0x2go2~),
+Breaks: nx-x11-dbg (<< 2:3.5.0.29-1~),
 Description: NX agent (debug package)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -933,28 +932,6 @@ Description: NX agent (debug package)
  This package contains detached debug symbols that help generating more
  helpful backtraces. You can safely remove it if you do not intend to
  debug NX packages on this system.
-
-Package: x2goagent
-Architecture: all
-Depends:
- nxagent (>= ${source:Version}), nxagent (<< ${source:Version}.1),
- ${misc:Depends},
-Suggests:
- x2goserver
-Description: X2Go agent
- X2Go is a software suite that uses NX technology for remote desktop
- computing.
- .
- NX technology implements a very efficient compression of the X11 protocol.
- This increases performance when using X applications over a network,
- especially a slow one.
- .
- X2Go agent functionality has been completely incorporated into NX agent's
- code base. If the nxagent binary is executed under the name of `x2goagent',
- the X2Go functionalities get activated.
- .
- The x2goagent package is a wrapper that activates X2Go branding in nxagent.
- Please refer to the nxagent package's description for more information on NX.
 
 Package: nxproxy
 Architecture: any
@@ -980,7 +957,7 @@ Depends:
  ${misc:Depends},
 Suggests:
  libxcomp3-dbg,
-Breaks: nx-x11-dbg (<< 2:3.5.0.29-0x2go2~),
+Breaks: nx-x11-dbg (<< 2:3.5.0.29-1~),
 Description: NX proxy (debug package)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -1012,7 +989,7 @@ Multi-Arch: foreign
 Depends:
  nxauth (= ${binary:Version}),
  ${misc:Depends},
-Breaks: nx-x11-dbg (<< 2:3.5.0.29-0x2go2~),
+Breaks: nx-x11-dbg (<< 2:3.5.0.29-1~),
 Description: NX auth (debug package) 
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -1070,7 +1047,7 @@ Depends:
  libxcomp3 (= ${binary:Version}),
  ${misc:Depends},
 Section: debug
-Breaks: nx-x11-dbg (<< 2:3.5.0.29-0x2go2~),
+Breaks: nx-x11-dbg (<< 2:3.5.0.29-1~),
 Description: nx-X11 compression library (debug package)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -1125,7 +1102,7 @@ Depends:
  libxcompext3 (= ${binary:Version}),
  ${misc:Depends},
 Section: debug
-Breaks: nx-x11-dbg (<< 2:3.5.0.29-0x2go2~),
+Breaks: nx-x11-dbg (<< 2:3.5.0.29-1~),
 Description: nx-X11 protocol compression extensions library (debug package)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -1179,7 +1156,7 @@ Depends:
  libxcompshad3 (= ${binary:Version}),
  ${misc:Depends},
 Section: debug
-Breaks: nx-x11-dbg (<< 2:3.5.0.29-0x2go2~),
+Breaks: nx-x11-dbg (<< 2:3.5.0.29-1~),
 Description: nx-X11 shadowing library (debug package)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
