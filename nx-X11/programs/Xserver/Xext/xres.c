@@ -25,7 +25,6 @@
 static int
 ProcXResQueryVersion (ClientPtr client)
 {
-    REQUEST(xXResQueryVersionReq);
     xXResQueryVersionReply rep;
 
     REQUEST_SIZE_MATCH (xXResQueryVersionReq);
