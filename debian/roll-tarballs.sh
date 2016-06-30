@@ -91,6 +91,7 @@ if [ "x$MODE" = "xfull" ]; then
     cp -v "debian/rgb" "./etc/"
     cp -v "debian/nxagent.keyboard" "./etc/"
     cp -v "debian/x2goagent.keyboard" "./etc/"
+    cp -v "debian/x2goagent.options" "./etc/"
     cp -v "debian/VERSION" "./VERSION.x2goagent"
 else
     rm -Rf "nxcompshad"*
