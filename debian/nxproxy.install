@@ -1,4 +1,4 @@
-usr/lib/nx/bin/nxproxy
+usr/lib/*/nx/bin/nxproxy
 usr/bin/nxproxy
 usr/share/man/man1/nxproxy.1*
 usr/share/nx/VERSION.nxproxy

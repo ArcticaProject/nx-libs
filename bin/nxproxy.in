@@ -15,15 +15,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see http://www.gnu.org/licenses/.
 
-NXAPP=nxagent
-NX_LIBS=/usr/lib/nx
-NX_LOCAL_LIBS=/usr/local/lib/nx
+NX_LIBS=@@NXLIBDIR@@
 
 # make sure nxagent starts properly with pam_tmpdir.so being in use
 NX_TEMP=${NX_TEMP:-/tmp}
 export NX_TEMP
 
-test -x $NX_LOCAL_LIBS/bin/$NXAPP && export NX_LIBS=$NX_LOCAL_LIBS
-test -x $NX_LIBS/bin/$NXAPP && export NX_LIBS=$NX_LIBS
-
-exec $NX_LIBS/bin/$NXAPP "$@"
+exec $NX_LIBS/bin/${NXAPP:="nxproxy"} "$@"

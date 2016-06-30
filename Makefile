@@ -14,7 +14,7 @@ BINDIR      ?= $(PREFIX)/bin
 LIBDIR      ?= $(PREFIX)/lib
 USRLIBDIR   ?= $(LIBDIR)
 INCLUDEDIR  ?= $(PREFIX)/include
-NXLIBDIR    ?= $(PREFIX)/lib/nx
+NXLIBDIR    ?= $(LIBDIR)/nx
 CONFIGURE   ?= ./configure
 
 NX_VERSION_MAJOR=$(shell ./version.sh 1)
@@ -36,6 +36,8 @@ SHELL:=/bin/bash
 	# clean auto-generated nxversion.def file \
 	if [ "x$@" == "xclean" ] || [ "x$@" = "xdistclean" ]; then \
 	    rm -f nx-X11/config/cf/nxversion.def; \
+	    rm -f bin/nxagent; \
+	    rm -f bin/nxproxy; \
 	fi
 
 all: build
@@ -91,6 +93,7 @@ install-lite:
 
 	# install nxproxy wrapper script
 	$(INSTALL_DIR) $(DESTDIR)$(BINDIR)
+	sed -e 's|@@NXLIBDIR@@|$(NXLIBDIR)|g' bin/nxproxy.in > bin/nxproxy
 	$(INSTALL_PROGRAM) bin/nxproxy $(DESTDIR)$(BINDIR)
 
 	# FIXME: the below install logic should work via nxproxy/Makefile.in
@@ -103,8 +106,11 @@ install-lite:
 	gzip $(DESTDIR)$(PREFIX)/share/man/man1/*.1
 
 install-full:
-	for f in nxagent; do \
-	   $(INSTALL_PROGRAM) bin/$$f $(DESTDIR)$(BINDIR); done
+	# install nxagent wrapper script
+	$(INSTALL_DIR) $(DESTDIR)$(BINDIR)
+	sed -e 's|@@NXLIBDIR@@|$(NXLIBDIR)|g' bin/nxagent.in > bin/nxagent
+	$(INSTALL_PROGRAM) bin/nxagent $(DESTDIR)$(BINDIR)
+
 	for d in nxcompext nxcompshad; do \
 	   $(MAKE) -C $$d install; done
 
@@ -141,6 +147,9 @@ install-full:
 
 	$(INSTALL_DIR) $(DESTDIR)$(USRLIBDIR)
 	$(COPY_SYMLINK) nx-X11/.build-exports/lib/*.so* $(DESTDIR)$(USRLIBDIR)/
+	$(INSTALL_DIR) $(DESTDIR)$(USRLIBDIR)/nx-X11
+	$(INSTALL_SYMLINK) ../libNX_X11.so $(DESTDIR)$(USRLIBDIR)/nx-X11/libX11.so
+	$(INSTALL_SYMLINK) ../libNX_X11.so.6.2 $(DESTDIR)$(USRLIBDIR)/nx-X11/libX11.so.6.2
 
 	. replace.sh; set -x; find nx-X11/.build-exports/include/ -type d | \
 	    while read dirname; do \

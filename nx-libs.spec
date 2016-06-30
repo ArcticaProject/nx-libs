@@ -329,8 +329,7 @@ sed -i -e 's#-O3#%{optflags}#' nx-X11/config/cf/host.def
 # Use multilib dirs
 # We're installing binaries into %%{_libdir}/nx/bin rather than %%{_libexedir}/nx
 # because upstream expects libraries and binaries in the same directory
-sed -i -e 's,/lib/nx,/%{_lib}/nx,' Makefile nx-X11/config/cf/X11.tmpl
-sed -i -e 's,/usr/lib/,/usr/%{_lib}/,' bin/*
+sed -i -e 's,/lib/nx,/%{_lib}/nx,' nx-X11/config/cf/X11.tmpl
 # Fix FSF address
 find -name LICENSE | xargs sed -i \
   -e 's/59 Temple Place/51 Franklin Street/' -e 's/Suite 330/Fifth Floor/' \
