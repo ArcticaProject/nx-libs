@@ -67,7 +67,6 @@ HEADERS = Xext.h \
 	$(EXTRAHEADERS) \
 	record.h recordstr.h \
 	security.h securstr.h \
-	shape.h shapestr.h \
 	sync.h syncstr.h \
 	dpms.h dpmsstr.h \
 	$(NULL)
