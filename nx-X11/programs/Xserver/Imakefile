@@ -429,7 +429,7 @@ NXAGENTNXLIBS = -L/usr/sfw/lib \
                 -lXcomp \
                 -lXcompext -lXcompshad \
                 -lXrender -lXfixes -lXfont -lXcomposite -lXinerama -lXdmcp \
-                -lNX_X11 -lNX_Xext
+                -lNX_X11 -lNX_Xext -Xext
 #elif defined(cygwinArchitecture)
 NXAGENTNXLIBS = -L ../../../nxcomp  \
                 -L../../../nx-X11/exports/lib \
@@ -437,7 +437,7 @@ NXAGENTNXLIBS = -L ../../../nxcomp  \
                 -lXcomp \
                 -lXcompext -lXcompshad \
                 -lXrender -lXfixes -lXfont -lXcomposite -lXdmcp \
-                -lNX_X11 -lNX_Xext
+                -lNX_X11 -lNX_Xext -lXext
 #else
 NXAGENTNXLIBS = -L ../../../nxcomp  \
                 -L../../../nx-X11/exports/lib \
@@ -445,7 +445,7 @@ NXAGENTNXLIBS = -L ../../../nxcomp  \
                 -lXcomp \
                 -lXcompext -lXcompshad \
                 -lXrender -lXfixes -lXfont -lXcomposite -lXinerama -lXdmcp \
-                -lNX_X11 -lNX_Xext
+                -lNX_X11 -lNX_Xext -lXext
 #endif
 #endif
 
@@ -478,7 +478,7 @@ nxagent_static_nolibs:  nxagent
 	else exit 0; fi
 	$(CCLINK) -o nxagent_static_nolibs -Wl,-Bstatic $(LDOPTIONS) $(NXAGENTOBJS) \
 	$(NXAGENTLIBS) $(LOADABLEEXTS) $(LIBCWRAPPER) $(LDLIBS) \
-	$(LDPRELIBS) $(SYSLIBS) -Wl,-Bdynamic -lNX_Xext -lNX_X11 $(EXTRA_LOAD_FLAGS)
+	$(LDPRELIBS) $(SYSLIBS) -Wl,-Bdynamic -lNX_Xext -lNX_X11 -lXext $(EXTRA_LOAD_FLAGS)
 #endif /* NXAgentServer */
 
 #if defined(NXWinServer) && NXWinServer

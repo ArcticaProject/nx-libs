@@ -166,9 +166,7 @@ NX is a software suite which implements very efficient compression of
 the X11 protocol. This increases performance when using X
 applications over a network, especially a slow one.
 
-The NX_Xext library contains a handful of X11 extensions:
-- Display Power Management Signaling (DPMS) extension
-- X11 Nonrectangular Window Shape extension (Xshape)
+The NX_Xext library contains only one X11 extension:
 - The MIT Shared Memory extension (MIT-SHM/Xshm)
 
 This package contains all necessary include files and libraries
@@ -186,14 +184,8 @@ NX is a software suite which implements very efficient compression of
 the X11 protocol. This increases performance when using X
 applications over a network, especially a slow one.
 
-The NX_Xext library contains a handful of X11 extensions:
-- Double Buffer extension (DBE/Xdbe)
-- Display Power Management Signaling (DPMS) extension
-- X11 Nonrectangular Window Shape extension (Xshape)
+The NX_Xext library contains only one X11 extension:
 - The MIT Shared Memory extension (MIT-SHM/Xshm)
-- TOG-CUP (colormap) protocol extension (Xcup)
-- X Extended Visual Information extension (XEvi)
-- X11 Double-Buffering, Multi-Buffering, and Stereo extension (Xmbuf)
 
 NX is a software suite which implements very efficient compression of
 the X11 protocol. This increases performance when using X
@@ -483,7 +475,6 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %{_includedir}/nx-X11/extensions/XShm.h
 %{_includedir}/nx-X11/extensions/Xext.h
 %{_includedir}/nx-X11/extensions/extutil.h
-%{_includedir}/nx-X11/extensions/shape.h
 
 %files -n libNX_Xext6
 %defattr(-,root,root)
@@ -581,7 +572,6 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %{_includedir}/nx-X11/extensions/render.h
 %{_includedir}/nx-X11/extensions/renderproto.h
 %{_includedir}/nx-X11/extensions/securstr.h
-%{_includedir}/nx-X11/extensions/shapestr.h
 %{_includedir}/nx-X11/extensions/shmstr.h
 %{_includedir}/nx-X11/extensions/syncstr.h
 %{_includedir}/nx-X11/extensions/xcmiscstr.h

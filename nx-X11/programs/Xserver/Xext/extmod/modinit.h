@@ -11,8 +11,7 @@
 
 #ifdef SHAPE
 extern void ShapeExtensionInit(INITARGS);
-#define _SHAPE_SERVER_  /* don't want Xlib structures */
-#include <nx-X11/extensions/shapestr.h>
+#include <X11/extensions/shapeproto.h>
 #endif
 
 #ifdef XTEST
