@@ -48,8 +48,9 @@ SOFTWARE.
 ******************************************************************/
 /* $XFree86: xc/lib/X11/Xutil.h,v 3.6 2003/04/13 19:22:20 dawes Exp $ */
 
-#ifndef _XUTIL_H_
+#if !defined(_XUTIL_H_) && !defined(_X11_XUTIL_H_)
 #define _XUTIL_H_
+#define _X11_XUTIL_H_
 
 /* You must include <nx-X11/Xlib.h> before including this file */
 #include <nx-X11/Xlib.h>
