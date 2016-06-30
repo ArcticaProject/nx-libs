@@ -33,7 +33,7 @@ override_dh_clean:
 	rm -f nx-X11/programs/nxauth/changelog
 	if [ ! -f replace.sh ] && [ ! -h replace.sh ]; then ln -s debian/Makefile.replace.sh replace.sh; fi
 	. ./replace.sh; set -x; ls debian/*.install.in | while read file; do rm -f $$(string_rep $$file .install.in .install); done
-	rm -fR replace.sh Makefile bin etc/rgb VERSION.x2goagent etc/keystrokes.cfg etc/nxagent.keyboard etc/x2goagent.keyboard
+	rm -fR replace.sh Makefile bin etc/rgb VERSION.x2goagent etc/keystrokes.cfg etc/nxagent.keyboard etc/x2goagent.keyboard etc/x2goagent.options
 	rm -f debian/nxagent.postinst
 	rm -fR .preserve/
 	if [ -f nxcomp/.VERSION.NoMachine ]; then mv nxcomp/.VERSION.NoMachine nxcomp/VERSION; fi
@@ -114,6 +114,7 @@ override_dh_auto_build:
 	ln -s ../debian/rgb etc/rgb
 	ln -s ../debian/nxagent.keyboard etc/nxagent.keyboard
 	ln -s ../debian/x2goagent.keyboard etc/x2goagent.keyboard
+	ln -s ../debian/x2goagent.options etc/x2goagent.options
 	mkdir -p doc/
 	ln -s ../debian/changelog doc/changelog
 	ln -sf debian/VERSION VERSION.x2goagent

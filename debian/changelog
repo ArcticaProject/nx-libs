@@ -14,6 +14,9 @@ nx-libs (2:3.5.0.33-0x2go1) UNRELEASED; urgency=low
     - Copy new debian/x2goagent.options file into real tarball environment.
   * debian/Makefile.nx-libs:
     - Install/destroot new x2goagent.options file.
+  * debian/rules:
+    - Symlink and remove new debian/x2goagent.options file into/from build
+      environment.
 
   [ Mike Gabriel ]
   * debian/libxinerama1.postinst.in:
