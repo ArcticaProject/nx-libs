@@ -675,6 +675,7 @@ cp -v debian/Makefile.replace.sh replace.sh
 cp -v debian/rgb etc/rgb
 cp -v debian/nxagent.keyboard etc/nxagent.keyboard
 cp -v debian/x2goagent.keyboard etc/x2goagent.keyboard
+cp -v debian/x2goagent.options etc/x2goagent.options
 cp -v debian/VERSION VERSION.x2goagent
 cp -v debian/VERSION nxcomp/VERSION
 
