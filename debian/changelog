@@ -12,6 +12,7 @@ nx-libs (2:3.5.0.33-0x2go1) UNRELEASED; urgency=low
       to what debian/roll-tarballs.sh does.
     - Add new x2goagent.options file to installed file list of x2goagent
       package.
+    - Let x2goagent package satisfy x2goagent-virtual.
   * debian/:
     - Add x2goagent.options file for compatibility with x2goserver nightly.
   * debian/roll-tarballs.sh:
