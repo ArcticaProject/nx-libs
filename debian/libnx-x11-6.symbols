@@ -825,6 +825,7 @@ libNX_X11.so.6 libnx-x11-6 #MINVER#
  _XDeqAsyncHandler@Base 3.5.0.29
  _XDisconnectDisplay@Base 3.5.0.29
  _XEatData@Base 3.5.0.29
+ _XEatDataWords@Base 3.5.99.0
  _XEnq@Base 3.5.0.29
  _XError@Base 3.5.0.29
  _XErrorFunction@Base 3.5.0.29
@@ -845,6 +846,7 @@ libNX_X11.so.6 libnx-x11-6 #MINVER#
  _XGetBitsPerPixel@Base 3.5.0.29
  _XGetHostname@Base 3.5.0.29
  _XGetLCValues@Base 3.5.0.29
+ _XGetRequest@Base 3.5.99.0
  _XGetScanlinePad@Base 3.5.0.29
  _XGetWindowAttributes@Base 3.5.0.29
  _XHeadOfDisplayList@Base 3.5.0.29
