@@ -153,6 +153,7 @@ install-full:
 	$(INSTALL_FILE) etc/rgb $(DESTDIR)$(ETCDIR_NX)/
 	$(INSTALL_FILE) etc/nxagent.keyboard $(DESTDIR)$(ETCDIR_NX)/
 	$(INSTALL_FILE) etc/x2goagent.keyboard $(DESTDIR)$(ETCDIR_X2GO)/
+	$(INSTALL_FILE) etc/x2goagent.options $(DESTDIR)$(ETCDIR_X2GO)/
 
 	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/x2go
 	$(INSTALL_SYMLINK) $(ETCDIR_X2GO)/rgb $(DESTDIR)$(PREFIX)/share/x2go/rgb
