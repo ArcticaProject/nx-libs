@@ -31,13 +31,11 @@ ALLOC_DEFINES = Malloc0ReturnsNullDefines
      INCLUDES = -I$(XLIBSRC)
          SRCS = globals.c	\
                 extutil.c	\
-                XShape.c	\
                 $(SHMSRCS)	\
                 $(NULL)
 
          OBJS = globals.o	\
                 extutil.o	\
-                XShape.o	\
                 $(SHMOBJS)	\
                 $(NULL)
 
