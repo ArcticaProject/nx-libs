@@ -47,8 +47,6 @@ Files: nx-X11/config/imake/ccimake.c
  nx-X11/include/extensions/multibufst.h
  nx-X11/include/extensions/security.h
  nx-X11/include/extensions/securstr.h
- nx-X11/include/extensions/shape.h
- nx-X11/include/extensions/shapestr.h
  nx-X11/include/extensions/shmstr.h
  nx-X11/include/extensions/xcmiscstr.h
  nx-X11/include/extensions/xteststr.h
