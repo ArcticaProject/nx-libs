@@ -1146,6 +1146,7 @@ ln -s -f ../../../../%{_lib}/libNX_Xinerama.so.1 %{buildroot}%{_libdir}/nx/X11/X
 %dir %{_libdir}/x2go/bin
 %config(noreplace) %{_sysconfdir}/x2go/keystrokes.cfg
 %config(noreplace) %{_sysconfdir}/x2go/x2goagent.keyboard
+%config(noreplace) %{_sysconfdir}/x2go/x2goagent.options
 %config(noreplace) %{_sysconfdir}/x2go/rgb
 %{_bindir}/x2goagent
 %{_libdir}/x2go/bin/x2goagent
