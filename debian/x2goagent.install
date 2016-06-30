@@ -7,3 +7,4 @@ etc/x2go/rgb
 usr/share/x2go/versions/VERSION.x2goagent
 etc/x2go/keystrokes.cfg
 etc/x2go/x2goagent.keyboard
+etc/x2go/x2goagent.options
