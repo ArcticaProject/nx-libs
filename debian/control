@@ -28,6 +28,7 @@ Build-Depends:
  x11proto-core-dev,
  expat,
  libpixman-1-dev (>= 0.13.2),
+ xutils-dev,
 Standards-Version: 3.9.6
 Homepage: https://github.com/ArcticaProject/nx-libs/
 Vcs-Git: https://github.com/ArcticaProject/nx-libs/

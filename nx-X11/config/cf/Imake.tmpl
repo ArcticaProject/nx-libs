@@ -1386,35 +1386,13 @@ TCLIBDIR = TclLibDir
 #define LoaderLibPrefix /**/
 #endif
 #ifndef ImakeCmd
-#ifdef UseInstalled		/* assume BINDIR in path */
 #define ImakeCmd imake
-#else
-#define ImakeCmd $(IMAKESRC)/imake
-#endif
 #endif
 #ifndef ImakeWarningFlags
 #define ImakeWarningFlags	/* Nothing */
 #endif
 #ifndef DependCmd
-#if UseGccMakeDepend
-#ifdef UseInstalled		/* assume BINDIR in path */
-#define DependCmd gccmakedep
-#else
-#define DependCmd $(DEPENDSRC)/gccmakedep
-#endif
-#elif UseCCMakeDepend
-#ifdef UseInstalled		/* assume BINDIR in path */
-#define DependCmd ccmakedep
-#else
-#define DependCmd $(DEPENDSRC)/ccmakedep
-#endif
-#else
-#ifdef UseInstalled		/* assume BINDIR in path */
 #define DependCmd makedepend
-#else
-#define DependCmd $(DEPENDSRC)/makedepend
-#endif
-#endif
 #endif
 #ifndef DependDefines
 # if UseCCMakeDepend || UseGccMakeDepend

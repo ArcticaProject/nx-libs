@@ -1930,9 +1930,7 @@ DependDependencyStatement()						@@\
 NoCmpScript(ProgramTargetName($(DEPEND)))				@@\
 									@@\
 ProgramTargetName($(DEPEND)):						@@\
-	@echo "checking $@ over in $(DEPENDSRC) first..."; \		@@\
-	cd $(DEPENDSRC) && $(MAKE) makedependonly; \			@@\
-	echo "okay, continuing in $(CURRENT_DIR)"
+	echo "using system-wide depend, continuing in $(CURRENT_DIR)"
 
 #endif /* UseInstalled */
 #endif /* DependDependency */
@@ -2025,11 +2023,7 @@ target:: ProgramTargetName($(IMAKE))					@@\
 NoCmpScript(ProgramTargetName($(IMAKE)) $(IMAKE).Osuf)			@@\
 									@@\
 ProgramTargetName($(IMAKE)) $(IMAKE).Osuf:				@@\
-	-@(cd $(IMAKESRC) && if [ -f Makefile ]; then \			@@\
-	echo "checking $@ in $(IMAKESRC) first..."; $(MAKE) imakeonly; else \	@@\
-	echo "bootstrapping $@ from Makefile.ini in $(IMAKESRC) first..."; \	@@\
-	$(MAKE) -f Makefile.ini BOOTSTRAPCFLAGS="$(BOOTSTRAPCFLAGS)"; fi; \	@@\
-	echo "okay, continuing in $(CURRENT_DIR)")
+	echo "using system-wide imake, continuing in $(CURRENT_DIR)"
 #endif /* UseInstalled */
 #endif /* ImakeDependency */
 
@@ -3226,12 +3220,8 @@ target::								@@\
 		fi; \							@@\
 	done
 
-#ifdef UseInstalled
-#define ImakeSubCmdHelper $(IMAKE_CMD)
-#else
-#define ImakeSubCmdHelper $(IMAKEPREFIX)$(IMAKE) -I$(IMAKEPREFIX)$(IRULESRC) \
+#define ImakeSubCmdHelper $(IMAKE_CMD) -I$(IMAKEPREFIX)$(IRULESRC) \
 			  $(IMAKE_DEFINES) $(IMAKE_WARNINGS)
-#endif
 
 #endif /* MakeMakeSubdirs */
 
