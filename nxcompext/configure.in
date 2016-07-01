@@ -10,8 +10,12 @@ AC_SUBST(pkgconfigdir)
 
 dnl Reset default compilation flags.
 
-CXXFLAGS="$CXXFLAGS -O3"
-CFLAGS="$CFLAGS -O3"
+if test "x$CXXFLAGS" = "x"; then
+  CXXFLAGS="-O3"
+fi
+if test "x$CFLAGS" == "x"; then
+  CFLAGS="-O3"
+fi
 
 dnl Reset default linking directives.
 

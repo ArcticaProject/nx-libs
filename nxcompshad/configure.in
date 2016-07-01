@@ -10,8 +10,12 @@ AC_SUBST(pkgconfigdir)
 
 dnl Reset default compilation flags.
 
-CXXFLAGS="$CXXFLAGS -O3"
-CPPFLAGS="$CPPFLAGS -O3"
+if test "x$CXXFLAGS" == "x"; then
+  CXXFLAGS="-O3"
+fi
+if test "x$CPPFLAGS" == "x"; then
+  CPPFLAGS="-O3"
+fi
 
 dnl Reset default linking directives.
 
@@ -80,8 +84,8 @@ case "${gcc_version}" in
 
      *)
         AC_MSG_RESULT([yes])
-        CXXFLAGS="$CXXFLAGS -Wmissing-declarations -Wnested-externs"
-        CPPFLAGS="$CPPFLAGS -Wmissing-declarations -Wnested-externs"
+        CXXFLAGS="$CXXFLAGS -Wmissing-declarations"
+        CPPFLAGS="$CPPFLAGS -Wmissing-declarations"
         ;;
 esac
 
