@@ -596,7 +596,6 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 
 %files devel
 %defattr(-,root,root)
-%{_includedir}/nx-X11/X10.h
 %dir %{_includedir}/nx-X11/extensions
 %{_includedir}/nx-X11/extensions/panoramiXext.h
 %{_includedir}/nx-X11/extensions/record.h
