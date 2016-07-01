@@ -3,10 +3,11 @@ Section: x11
 Priority: extra
 Maintainer: Artica Project <devs@lists.arctica-project.org>
 Uploaders:
- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>,
+ Mike Gabriel <sunweaver@debian.org>,
  Mihai Moldovan <ionic@ionic.de>
 Build-Depends:
- debhelper (>= 7.0.50~),
+ debhelper (>= 9),
+ dpkg-dev (>= 1.16.1.1),
  libpng-dev,
  libjpeg-dev,
  zlib1g-dev,
@@ -29,7 +30,7 @@ Build-Depends:
  expat,
  libpixman-1-dev (>= 0.13.2),
  xutils-dev,
-Standards-Version: 3.9.6
+Standards-Version: 3.9.8
 Homepage: https://github.com/ArcticaProject/nx-libs/
 Vcs-Git: https://github.com/ArcticaProject/nx-libs/
 Vcs-Browser: https://github.com/ArcticaProject/nx-libs/
@@ -65,32 +66,34 @@ Description: nx-X11 core wire protocol and auxiliary headers
  for the core nx-X11 protocol, and also provides a number of utility headers,
  used to abstract OS-specific functions.
 
-Package: libnx-x11
-Architecture: any
-Multi-Arch: same
-Depends:
- ${misc:Depends},
- libnx-x11-6 (>= ${source:Version}), libnx-x11-6 (<< ${source:Version}.1), 
-Description: nx-X11 client-side library (transitional dummy package)
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package is a transitional dummy package and can be safely removed
- (inducing transition of libnx-x11 to libnx-x11-6).
-
 Package: libnx-x11-6
 Architecture: any
 Multi-Arch: same
-Pre-Depends:
- ${misc:Pre-Depends},
 Depends:
  ${shlibs:Depends},
  ${misc:Depends},
  nx-x11-common (>= ${source:Version}), nx-x11-common (<< ${source:Version}.1), 
 Breaks: nxlibs (<= 3.5.1),
         libnx-x11 (<< 2:3.5.0.29-1~),
+        libnx-xcomposite1 (<< 2:3.6.0.0),
+        libnx-xdamage1 (<< 2:3.6.0.0),
+        libnx-xdmcp6 (<< 2:3.6.0.0),
+        libnx-xfixes3 (<< 2:3.6.0.0),
+        libnx-xinerama1 (<< 2:3.6.0.0),
+        libnx-xpm4 (<< 2:3.6.0.0),
+        libnx-xrandr2 (<< 2:3.6.0.0),
+        libnx-xrender1 (<< 2:3.6.0.0),
+        libnx-xtst6 (<< 2:3.6.0.0),
 Replaces: nxlibs,
+          libnx-xcomposite1,
+          libnx-xdamage1,
+          libnx-xdmcp6,
+          libnx-xfixes3,
+          libnx-xinerama1,
+          libnx-xpm4,
+          libnx-xrandr2,
+          libnx-xrender1,
+          libnx-xtst6,
 Description: nx-X11 client-side library
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -104,7 +107,25 @@ Provides: libnx-x11-6-dev
 Section: libdevel
 Architecture: any
 Breaks: nxlibs-dev (<=3.5.1),
+        libnx-xcomposite-dev (<< 2:3.6.0.0),
+        libnx-xdamage-dev (<< 2:3.6.0.0),
+        libnx-xdmcp-dev (<< 2:3.6.0.0),
+        libnx-xfixes-dev (<< 2:3.6.0.0),
+        libnx-xinerama-dev (<< 2:3.6.0.0),
+        libnx-xpm-dev (<< 2:3.6.0.0),
+        libnx-xrandr-dev (<< 2:3.6.0.0),
+        libnx-xrender-dev (<< 2:3.6.0.0),
+        libnx-xtst-dev (<< 2:3.6.0.0),
 Replaces: nxlibs-dev,
+          libnx-xcomposite-dev,
+          libnx-xdamage-dev,
+          libnx-xdmcp-dev,
+          libnx-xfixes-dev,
+          libnx-xinerama-dev,
+          libnx-xpm-dev,
+          libnx-xrandr-dev,
+          libnx-xrender-dev,
+          libnx-xtst-dev,
 Depends:
  libnx-x11-6 (= ${binary:Version}),
  ${misc:Depends},
@@ -119,14 +140,30 @@ Description: nx-X11 client-side library (development headers)
 Package: libnx-x11-6-dbg
 Architecture: any
 Multi-Arch: same
-Pre-Depends:
- ${misc:Pre-Depends},
 Depends:
  libnx-x11-6 (= ${binary:Version}),
  ${misc:Depends},
 Section: debug
 Breaks: nx-x11-dbg (<< 2:3.5.0.29-1~),
+        libnx-xcomposite1-dbg (<< 2:3.6.0.0),
+        libnx-xdamage1-dbg (<< 2:3.6.0.0),
+        libnx-xdmcp6-dbg (<< 2:3.6.0.0),
+        libnx-xfixes3-dbg (<< 2:3.6.0.0),
+        libnx-xinerama1-dbg (<< 2:3.6.0.0),
+        libnx-xpm4-dbg (<< 2:3.6.0.0),
+        libnx-xrandr2-dbg (<< 2:3.6.0.0),
+        libnx-xrender1-dbg (<< 2:3.6.0.0),
+        libnx-xtst6-dbg (<< 2:3.6.0.0),
 Replaces: nx-x11-dbg,
+          libnx-xcomposite1-dbg,
+          libnx-xdamage1-dbg,
+          libnx-xdmcp6-dbg,
+          libnx-xfixes3-dbg,
+          libnx-xinerama1-dbg,
+          libnx-xpm4-dbg,
+          libnx-xrandr2-dbg,
+          libnx-xrender1-dbg,
+          libnx-xtst6-dbg,
 Description: nx-X11 client-side library (debug package)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -138,8 +175,6 @@ Description: nx-X11 client-side library (debug package)
 Package: libnx-xau6
 Architecture: any
 Multi-Arch: same
-Pre-Depends:
- ${misc:Pre-Depends},
 Depends:
  ${shlibs:Depends},
  ${misc:Depends},
@@ -178,8 +213,6 @@ Description: nx-X11 authorisation library (development headers)
 Package: libnx-xau6-dbg
 Architecture: any
 Multi-Arch: same
-Pre-Depends:
- ${misc:Pre-Depends},
 Depends:
  libnx-xau6 (= ${binary:Version}),
  ${misc:Depends},
@@ -195,42 +228,6 @@ Description: nx-X11 authorisation library (debug package)
  server-side.
  .
  This package contains debug symbols for this library.
-
-Package: libnx-xcomposite1
-Architecture: any
-Multi-Arch: same
-Pre-Depends:
- ${misc:Pre-Depends},
-Depends:
- ${misc:Depends},
-Description: nx-X11 Composite extension library (dummy package)
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package removes the obsoleted libNX_Xcomposite.so.1 library. With
- recent versions of NX, the system-wide installed libXcomposite gets
- used.
- .
- This package can be safely removed.
-
-Package: libnx-xcomposite-dev
-Provides: libnx-xcomposite1-dev
-Section: libdevel
-Architecture: any
-Multi-Arch: same
-Depends:
- ${misc:Depends},
-Description: nx-X11 Composite extension library (dummy package)
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package removes the obsoleted headers for the libNX_Xcomposite.so.1
- library. With recent versions of NX, the system-wide installed
- libXcomposite gets used.
- .
- This package can be safely removed.
 
 Package: nx-x11proto-composite-dev
 Section: libdevel
@@ -249,60 +246,6 @@ Description: nx-X11 Composite extension wire protocol
  for the Composite extension in nx-X11, used to let arbitrary client
  programs control drawing of the final image.
 
-Package: libnx-xcomposite1-dbg
-Architecture: any
-Multi-Arch: same
-Pre-Depends:
- ${misc:Pre-Depends},
-Depends:
- ${misc:Depends},
-Section: debug
-Description: nx-X11 Composite extension library (dummy package)
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package removes the debug symbols for the obsoleted
- libNX_Xcomposite.so.1 library. With recent versions of NX, the
- system-wide installed libXcomposite gets used.
- .
- This package can be safely removed.
-
-Package: libnx-xdamage1
-Architecture: any
-Multi-Arch: same
-Pre-Depends:
- ${misc:Pre-Depends},
-Depends:
- ${misc:Depends},
-Description: nx-X11 damaged region extension library (dummy package)
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package removes the obsoleted libNX_Xdamage.so.1 library. With
- recent versions of NX, the system-wide installed libXdamage gets used.
- .
- This package can be safely removed.
-
-Package: libnx-xdamage-dev
-Provides: libnx-xdamage1-dev
-Section: libdevel
-Architecture: any
-Multi-Arch: same
-Depends:
- ${misc:Depends},
-Description: nx-X11 damaged region extension library (dummy package)
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package removes the obsoleted headers for the libNX_Xdamage.so.1
- library. With recent versions of NX, the system-wide installed libXdamage
- gets used.
- .
- This package can be safely removed.
-
 Package: nx-x11proto-damage-dev
 Section: libdevel
 Architecture: any
@@ -320,84 +263,9 @@ Description: nx-X11 Damage extension wire protocol (dummy package)
  .
  This package can be safely removed.
 
-Package: libnx-xdamage1-dbg
-Architecture: any
-Multi-Arch: same
-Pre-Depends:
- ${misc:Pre-Depends},
-Depends:
- ${misc:Depends},
-Section: debug
-Description: nx-X11 damaged region extension library (dummy package)
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package removes the obsoleted debug symbols for the
- libNX_Xdamage.so.1 library. With recent versions of NX, the system-wide
- installed libXdamage gets used.
- .
- This package can be safely removed.
-
-Package: libnx-xdmcp6
-Architecture: any
-Multi-Arch: same
-Pre-Depends:
- ${misc:Pre-Depends},
-Depends:
- ${misc:Depends},
-Description: nx-X11 Display Manager Control Protocol library (dummy package)
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package removes the obsoleted libNX_Xdmcp.so.6 library. With
- recent versions of NX, the system-wide installed libXdmcp gets used.
- .
- This package can be safely removed.
-
-Package: libnx-xdmcp-dev
-Provides: libnx-xdmcp6-dev
-Section: libdevel
-Architecture: any
-Multi-Arch: same
-Depends:
- ${misc:Depends},
-Description: nx-X11 Display Manager Control Protocol library (dummy package)
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package removes the obsoleted headers for the libNX_Xdmcp.so.6
- library. With recent versions of NX, the system-wide installed libXdmcp
- gets used.
- .
- This package can be safely removed.
-
-Package: libnx-xdmcp6-dbg
-Architecture: any
-Multi-Arch: same
-Pre-Depends:
- ${misc:Pre-Depends},
-Depends:
- ${misc:Depends},
-Section: debug
-Description: nx-X11 Display Manager Control Protocol library (dummy package)
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package removes the obsoleted debug symbols for the libNX_Xdmcp.so.6
- library. With recent versions of NX, the system-wide installed libXdmcp
- gets used.
- .
- This package can be safely removed.
-
 Package: libnx-xext6
 Architecture: any
 Multi-Arch: same
-Pre-Depends:
- ${misc:Pre-Depends},
 Depends:
  ${shlibs:Depends},
  ${misc:Depends},
@@ -457,8 +325,6 @@ Description: nx-X11 miscellaneous extension wire protocol
 Package: libnx-xext6-dbg
 Architecture: any
 Multi-Arch: same
-Pre-Depends:
- ${misc:Pre-Depends},
 Depends:
  libnx-xext6 (= ${binary:Version}),
  ${misc:Depends},
@@ -473,41 +339,6 @@ Description: nx-X11 miscellaneous extension library (debug package)
  extensions to the X protocol.
  .
  This package contains debug symbols for this library.
-
-Package: libnx-xfixes3
-Architecture: any
-Multi-Arch: same
-Pre-Depends:
- ${misc:Pre-Depends},
-Depends:
- ${misc:Depends},
-Description: nx-X11 miscellaneous 'fixes' extension library (dummy package)
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package removes the obsoleted libNX_Xfixes.so.3 library. With
- recent versions of NX, the system-wide installed libXfixes gets used.
- .
- This package can be safely removed.
- 
-Package: libnx-xfixes-dev
-Provides: libnx-xfixes3-dev
-Section: libdevel
-Architecture: any
-Multi-Arch: same
-Depends:
- ${misc:Depends},
-Description: nx-X11 miscellaneous 'fixes' extension library (dummy package)
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package removes the obsoleted headers for the libNX_Xfixes.so.3
- library. With recent versions of NX, the system-wide installed
- libXfixes gets used.
- .
- This package can be safely removed.
 
 Package: nx-x11proto-xfixes-dev
 Section: libdevel
@@ -525,60 +356,6 @@ Description: nx-X11 'xfixes' extension wire protocol
  This package provides development headers describing the wire protocol
  for the XFIXES extension.
 
-Package: libnx-xfixes3-dbg
-Architecture: any
-Multi-Arch: same
-Pre-Depends:
- ${misc:Pre-Depends},
-Depends:
- ${misc:Depends},
-Section: debug
-Description: nx-X11 miscellaneous 'fixes' extension library (dummy package)
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package removes the obsoleted debug symbols for the libNX_Xfixes.so.3
- library. With recent versions of NX, the system-wide installed libXfixes
- gets used.
- .
- This package can be safely removed.
-
-Package: libnx-xinerama1
-Architecture: any
-Multi-Arch: same
-Pre-Depends:
- ${misc:Pre-Depends},
-Depends:
- ${misc:Depends},
-Description: nx-X11 Xinerama extension library
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package removes the obsoleted libNX_Xinerama.so.1 library.
- Xinerama support in NX has been moved into nxagent whereas X-Clients
- can now use the libXinerama library shipped with X.Org.
- .
- This package can be safely removed.
-
-Package: libnx-xinerama-dev
-Provides: libnx-xinerama1-dev
-Section: libdevel
-Architecture: any
-Multi-Arch: same
-Depends:
- ${misc:Depends},
-Description: nx-X11 Xinerama extension library (development headers)
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package removes the obsoleted headers for the libNX_Xinerama.so.1
- library.
- .
- This package can be safely removed.
-
 Package: nx-x11proto-xinerama-dev
 Section: libdevel
 Architecture: any
@@ -592,119 +369,6 @@ Description: nx-X11 Xinerama extension wire protocol
  .
  This package removes the obsoleted headers for the libNX_Xinerama.so.1
  library.
- .
- This package can be safely removed.
-
-Package: libnx-xinerama1-dbg
-Architecture: any
-Multi-Arch: same
-Pre-Depends:
- ${misc:Pre-Depends},
-Depends:
- libnx-xinerama1 (= ${binary:Version}),
- ${misc:Depends},
-Section: debug
-Breaks: nx-x11-dbg (<< 2:3.5.0.29-1~),
-Description: nx-X11 Xinerama extension library (debug package)
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- libNX_Xinerama provides an X Window System client interface to the XINERAMA
- extension to the X protocol.
- .
- This package removes the obsoleted debug symbols for the libNX_Xinerama.so.1
- library.
- .
- This package can be safely removed.
-
-Package: libnx-xpm4
-Architecture: any
-Multi-Arch: same
-Pre-Depends:
- ${misc:Pre-Depends},
-Depends:
- ${misc:Depends},
-Description: nx-X11 pixmap library (dummy package)
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package removes the obsoleted libNX_Xpm.so.4 library. With
- recent versions of NX, the system-wide installed libXpm gets used.
- .
- This package can be safely removed.
-
-Package: libnx-xpm-dev
-Provides: libnx-xpm4-dev
-Section: libdevel
-Architecture: any
-Multi-Arch: same
-Depends:
- ${misc:Depends},
-Description: nx-X11 pixmap library (development headers, dummy package)
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package removes the obsoleted headers for the libNX_Xpm.so.4
- library. With recent versions of NX, the system-wide installed libXpm
- gets used.
- .
- This package can be safely removed.
-
-Package: libnx-xpm4-dbg
-Architecture: any
-Multi-Arch: same
-Pre-Depends:
- ${misc:Pre-Depends},
-Depends:
- ${misc:Depends},
-Section: debug
-Breaks: nx-x11-dbg (<< 2:3.5.0.29-1~),
-Description: nx-X11 pixmap library (debug package, dummy package)
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package removes the obsoleted debug symbols for the libNX_Xpm.so.4
- library. With recent versions of NX, the system-wide installed libXpm
- gets used.
- .
- This package can be safely removed.
-
-Package: libnx-xrandr2
-Architecture: any
-Multi-Arch: same
-Pre-Depends:
- ${misc:Pre-Depends},
-Depends:
- ${misc:Depends},
-Description: nx-X11 RandR extension library (dummy package)
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package removes the obsoleted libNX_Xrandr.so.2 library. With
- recent versions of NX, the system-wide installed libXrandr gets used.
- .
- This package can be safely removed.
-
-Package: libnx-xrandr-dev
-Provides: libnx-xrandr2-dev
-Section: libdevel
-Architecture: any
-Multi-Arch: same
-Depends:
- ${misc:Depends},
-Description: nx-X11 RandR extension library (dummy package)
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package removes the obsoleted headers for the libNX_Xrandr.so.2
- library. With recent versions of NX, the system-wide installed libXrandr
- gets used.
  .
  This package can be safely removed.
 
@@ -725,60 +389,6 @@ Description: nx-X11 RandR extension wire protocol (dummy package)
  .
  This package can be safely removed.
 
-Package: libnx-xrandr2-dbg
-Architecture: any
-Multi-Arch: same
-Pre-Depends:
- ${misc:Pre-Depends},
-Depends:
- ${misc:Depends},
-Section: debug
-Description: nx-X11 RandR extension library (dummy package)
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package removes the obsoleted debug symbols for the libNX_Xrandr.so.2
- library. With recent versions of NX, the system-wide installed libXrandr
- gets used.
- .
- This package can be safely removed.
-
-Package: libnx-xrender1
-Architecture: any
-Multi-Arch: same
-Pre-Depends:
- ${misc:Pre-Depends},
-Depends:
- ${misc:Depends},
-Description: nx-X11 Rendering Extension client library (dummy package)
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package removes the obsoleted libNX_Xrender.so.1 library. With
- recent versions of NX, the system-wide installed libXrender gets used.
- .
- This package can be safely removed.
-
-Package: libnx-xrender-dev
-Provides: libnx-xrender1-dev
-Section: libdevel
-Architecture: any
-Multi-Arch: same
-Depends:
- ${misc:Depends},
-Description: nx-X11 Rendering Extension client library (dummy package)
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package removes the obsoleted headers for the libNX_Xrender.so.1
- library. With recent versions of NX, the system-wide installed libXrender
- gets used.
- .
- This package can be safely removed.
-
 Package: nx-x11proto-render-dev
 Section: libdevel
 Architecture: any
@@ -793,79 +403,6 @@ Description: nx-X11 Render extension wire protocol (dummy package)
  This package removes the obsoleted headers for the libNX_Xrender.so.1
  library. With recent versions of NX, the system-wide installed libXrender
  gets used.
- .
- This package can be safely removed.
-
-Package: libnx-xrender1-dbg
-Architecture: any
-Multi-Arch: same
-Pre-Depends:
- ${misc:Pre-Depends},
-Depends:
- ${misc:Depends},
-Section: debug
-Description: nx-X11 Rendering Extension client library (dummy package)
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package removes the obsoleted debug symbols for the libNX_Xrender.so.1
- library. With recent versions of NX, the system-wide installed libXrender
- gets used.
- .
- This package can be safely removed.
-
-Package: libnx-xtst6
-Architecture: any
-Multi-Arch: same
-Pre-Depends:
- ${misc:Pre-Depends},
-Depends:
- ${misc:Depends},
-Description: nx-X11 Testing -- Record extension library (dummy package)
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package removes the obsoleted libNX_Xtst.so.6 library. With
- recent versions of NX, the system-wide installed libXtst gets used.
- .
- This package can be safely removed.
-
-Package: libnx-xtst-dev
-Provides: libnx-xtst6-dev
-Section: libdevel
-Architecture: any
-Multi-Arch: same
-Depends:
- ${misc:Depends},
-Description: nx-X11 Testing -- Record extension library (dummy package)
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package removes the obsoleted headers for the libNX_Xtst.so.6
- library. With recent versions of NX, the system-wide installed libXtst
- gets used.
- .
- This package can be safely removed.
-
-Package: libnx-xtst6-dbg
-Architecture: any
-Multi-Arch: same
-Pre-Depends:
- ${misc:Pre-Depends},
-Depends:
- ${misc:Depends},
-Section: debug
-Description: nx-X11 Testing -- Record extension library (dummy package)
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package removes the obsoleted wire protocol headers for the
- libNX_Xtst.so.6 library. With recent versions of NX, the system-wide
- installed libXtst gets used.
  .
  This package can be safely removed.
 
@@ -1005,8 +542,6 @@ Description: NX auth (debug package)
 Package: libxcomp3
 Architecture: any
 Multi-Arch: same
-Pre-Depends:
- ${misc:Pre-Depends},
 Depends:
  ${shlibs:Depends},
  ${misc:Depends},
@@ -1042,8 +577,6 @@ Description: nx-X11 compression library (development headers)
 Package: libxcomp3-dbg
 Architecture: any
 Multi-Arch: same
-Pre-Depends:
- ${misc:Pre-Depends},
 Depends:
  libxcomp3 (= ${binary:Version}),
  ${misc:Depends},
@@ -1061,8 +594,6 @@ Description: nx-X11 compression library (debug package)
 Package: libxcompext3
 Architecture: any
 Multi-Arch: same
-Pre-Depends:
- ${misc:Pre-Depends},
 Depends:
  ${shlibs:Depends},
  ${misc:Depends},
@@ -1097,8 +628,6 @@ Description: nx-X11 protocol compression extensions library (development headers
 Package: libxcompext3-dbg
 Architecture: any
 Multi-Arch: same
-Pre-Depends:
- ${misc:Pre-Depends},
 Depends:
  libxcompext3 (= ${binary:Version}),
  ${misc:Depends},
@@ -1116,8 +645,6 @@ Description: nx-X11 protocol compression extensions library (debug package)
 Package: libxcompshad3
 Architecture: any
 Multi-Arch: same
-Pre-Depends:
- ${misc:Pre-Depends},
 Depends:
  ${shlibs:Depends},
  ${misc:Depends},
@@ -1151,8 +678,6 @@ Description: nx-X11 shadowing library (development headers)
 Package: libxcompshad3-dbg
 Architecture: any
 Multi-Arch: same
-Pre-Depends:
- ${misc:Pre-Depends},
 Depends:
  libxcompshad3 (= ${binary:Version}),
  ${misc:Depends},

@@ -97,8 +97,8 @@
  *
  *    Cosmetic Stuff
  *    -----------------------------------------------------
- * 	- remove any leftover unused grammer.c stuff (dict_ ?)
- * 	- fix grammer.c error handling so its not static
+ * 	- remove any leftover unused grammar.c stuff (dict_ ?)
+ * 	- fix grammar.c error handling so its not static
  * 	- #ifdef around stuff pertaining to extentions
  *
  *    Outstanding Questions:
@@ -3979,7 +3979,7 @@ _mesa_parse_arb_program (GLcontext * ctx, const GLubyte * str, GLsizei len,
       grammar_get_last_error ((GLubyte *) error_msg, 300, &error_pos);
       _mesa_set_program_error (ctx, error_pos, error_msg);
       _mesa_error (ctx, GL_INVALID_OPERATION,
-                   "Error loading grammer rule set");
+                   "Error loading grammar rule set");
       return GL_FALSE;
    }
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (C) 2011 by Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+# Copyright (C) 2011-2016 by Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 # Copyright (C) 2012 by Reinhard Tartler <siretart@tauware.de>
 #
 # This is free software; you can redistribute it and/or modify
@@ -106,6 +106,7 @@ else
     rm -Rf "nx-X11"*
     rm -Rf "etc"*
     rm -Rf "doc/nx-X11_vs_XOrg69_patches"*
+    rm -Rf "doc/X11-symbols"*
     rm -f  "README.keystrokes"
     cat "debian/patches/series" | sort | grep -v '^#' | egrep "([0-9]+(_|-).*\.full\+lite\.patch)" | while read file
     do

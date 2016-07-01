@@ -2,10 +2,9 @@
 
 NULL =
 
-export CPPFLAGS:=$(shell dpkg-buildflags --get CPPFLAGS)
-export CFLAGS:=$(shell dpkg-buildflags --get CFLAGS)
-export CXXFLAGS:=$(shell dpkg-buildflags --get CXXFLAGS)
-export LDFLAGS:=$(shell dpkg-buildflags --get LDFLAGS)
+export DEB_BUILD_MAINT_OPTIONS = hardening=+bindnow
+DPKG_EXPORT_BUILDFLAGS = 1
+include /usr/share/dpkg/buildflags.mk
 
 export LIBDIR = "/usr/lib/$(shell dpkg-architecture -qDEB_BUILD_MULTIARCH)"
 export INCLUDEDIR = "/usr/include/$(shell dpkg-architecture -qDEB_BUILD_MULTIARCH)"
@@ -19,22 +18,9 @@ override_dh_auto_clean:
 
 override_dh_clean:
 	rm -f nx*/configure
-	. ./replace.sh; set -x; ls debian/*.install.in | while read file; do rm -f $$(string_rep $$file .install.in .install); done
-	rm -fR .preserve/
 	dh_clean
 
 override_dh_install:
-
-	# handle builds for Debian squeeze (non multi-arch)
-	. ./replace.sh; set -x; if [ -z "$(DEB_BUILD_MULTIARCH)" ]; then \
-	    find debian/*.install.in | while read file; do \
-	        cat $$file | sed -e 's#/\*/#/#g' > $$(string_rep $$file .install.in .install); \
-	    done; \
-	else \
-	    find debian/*.install.in | while read file; do \
-	        cat $$file > $$(string_rep $$file .install.in .install); \
-	    done; \
-	fi
 
 	# remove static libs
 	rm debian/tmp/usr/lib/$(DEB_BUILD_MULTIARCH)/libXcomp.a
