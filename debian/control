@@ -18,6 +18,7 @@ Build-Depends:
  libxfont-dev,
  libxdmcp-dev,
  libxdamage-dev,
+ libxext-dev,
  libxcomposite-dev,
  libxrandr-dev,
  libxfixes-dev,
@@ -75,6 +76,7 @@ Depends:
  nx-x11-common (>= ${source:Version}), nx-x11-common (<< ${source:Version}.1), 
 Breaks: nxlibs (<= 3.5.1),
         libnx-x11 (<< 2:3.5.0.29-1~),
+        libnx-xext6 (<< 2:3.6.0.0),
         libnx-xau6 (<< 2:3.6.0.0),
         libnx-xcomposite1 (<< 2:3.6.0.0),
         libnx-xdamage1 (<< 2:3.6.0.0),
@@ -86,6 +88,7 @@ Breaks: nxlibs (<= 3.5.1),
         libnx-xrender1 (<< 2:3.6.0.0),
         libnx-xtst6 (<< 2:3.6.0.0),
 Replaces: nxlibs,
+          libnx-xext6,
           libnx-xau6,
           libnx-xcomposite1,
           libnx-xdamage1,
@@ -109,6 +112,7 @@ Provides: libnx-x11-6-dev
 Section: libdevel
 Architecture: any
 Breaks: nxlibs-dev (<=3.5.1),
+        libnx-xext-dev (<< 2:3.6.0.0),
         libnx-xau-dev (<< 2:3.6.0.0),
         libnx-xcomposite-dev (<< 2:3.6.0.0),
         libnx-xdamage-dev (<< 2:3.6.0.0),
@@ -120,6 +124,7 @@ Breaks: nxlibs-dev (<=3.5.1),
         libnx-xrender-dev (<< 2:3.6.0.0),
         libnx-xtst-dev (<< 2:3.6.0.0),
 Replaces: nxlibs-dev,
+          libnx-xext-dev,
           libnx-xau-dev,
           libnx-xcomposite-dev,
           libnx-xdamage-dev,
@@ -149,6 +154,7 @@ Depends:
  ${misc:Depends},
 Section: debug
 Breaks: nx-x11-dbg (<< 2:3.5.0.29-1~),
+        libnx-xext6-dbg (<< 2:3.6.0.0),
         libnx-xau6-dbg (<< 2:3.6.0.0),
         libnx-xcomposite1-dbg (<< 2:3.6.0.0),
         libnx-xdamage1-dbg (<< 2:3.6.0.0),
@@ -160,6 +166,7 @@ Breaks: nx-x11-dbg (<< 2:3.5.0.29-1~),
         libnx-xrender1-dbg (<< 2:3.6.0.0),
         libnx-xtst6-dbg (<< 2:3.6.0.0),
 Replaces: nx-x11-dbg,
+          libnx-xext6-dbg,
           libnx-xau6-dbg,
           libnx-xcomposite1-dbg,
           libnx-xdamage1-dbg,
@@ -177,6 +184,24 @@ Description: nx-X11 client-side library (debug package)
  .
  This package contains debug symbols for the core nx-X11 libraries
  customized for nxagent.
+
+Package: nx-x11proto-xext-dev
+Section: libdevel
+Architecture: any
+Multi-Arch: same
+Depends:
+ ${misc:Depends},
+Breaks: nxlibs (<= 3.5.1),
+        libnx-x11-dev (<< 2:3.5.0.29-1~),
+        libnx-xext-dev (<< 2:3.5.99.0~),
+Description: nx-X11 miscellaneous extension wire protocol
+ NX is a software suite which implements very efficient
+ compression of the X11 protocol. This increases performance when
+ using X applications over a network, especially a slow one.
+ .
+ This package provides development headers describing the wire protocol
+ for various extensions, the client-side libraries of which are provided
+ in the Xext library.
 
 Package: nx-x11proto-composite-dev
 Section: libdevel
@@ -211,83 +236,6 @@ Description: nx-X11 Damage extension wire protocol (dummy package)
  installed libXdamage gets used.
  .
  This package can be safely removed.
-
-Package: libnx-xext6
-Architecture: any
-Multi-Arch: same
-Depends:
- ${shlibs:Depends},
- ${misc:Depends},
-Breaks: nxlibs (<= 3.5.1),
-        libnx-x11 (<< 2:3.5.0.29-1~),
-Description: nx-X11 miscellaneous extension library
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- libNX_Xext provides an X Window System client interface to several
- extensions to the X protocol.
- .
- libnx_Xext also provides a small set of utility functions to aid authors
- of client APIs for X protocol extensions.
-
-Package: libnx-xext-dev
-Provides: libnx-xext6-dev
-Section: libdevel
-Architecture: any
-Multi-Arch: same
-Depends:
- libnx-xext6 (= ${binary:Version}),
- nx-x11proto-xext-dev (= ${binary:Version}),
- ${misc:Depends},
-Breaks: nxlibs (<= 3.5.1),
-        libnx-x11-dev (<< 2:3.5.0.29-1~),
-Description: nx-X11 miscellaneous extension library (development headers)
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- libNX_Xext provides an X Window System client interface to several
- extensions to the X protocol.
- .
- This package contains the development headers for this library.
-
-Package: nx-x11proto-xext-dev
-Section: libdevel
-Architecture: any
-Multi-Arch: same
-Depends:
- libnx-xext6 (= ${binary:Version}),
- ${misc:Depends},
-Breaks: nxlibs (<= 3.5.1),
-        libnx-x11-dev (<< 2:3.5.0.29-1~),
-        libnx-xext-dev (<< 2:3.5.99.0~),
-Description: nx-X11 miscellaneous extension wire protocol
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package provides development headers describing the wire protocol
- for various extensions, the client-side libraries of which are provided
- in the Xext library.
-
-Package: libnx-xext6-dbg
-Architecture: any
-Multi-Arch: same
-Depends:
- libnx-xext6 (= ${binary:Version}),
- ${misc:Depends},
-Section: debug
-Breaks: nx-x11-dbg (<< 2:3.5.0.29-1~),
-Description: nx-X11 miscellaneous extension library (debug package)
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- libNX_Xext provides an X Window System client interface to several
- extensions to the X protocol.
- .
- This package contains debug symbols for this library.
 
 Package: nx-x11proto-xfixes-dev
 Section: libdevel

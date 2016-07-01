@@ -1,4 +1,0 @@
-usr/lib/*/libNX_Xext.so
-usr/include/*/nx-X11/extensions/XShm.h
-usr/include/*/nx-X11/extensions/Xext.h
-usr/include/*/nx-X11/extensions/extutil.h

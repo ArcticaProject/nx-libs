@@ -44,7 +44,7 @@
 #undef  Pixmap
 
 #include "region.h"
-#include "extutil.h"
+#include <X11/extensions/extutil.h>
 
 #include "Display.h"
 #include "Pixmaps.h"

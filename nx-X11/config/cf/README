@@ -183,7 +183,6 @@ X11.tmpl provides defaults for the following variables:
 	ConnectionFlags		-D's for supported transports
 	ContribDir		location of user-contributed sources
 	DebugLibX11		build libX11_d.a
-	DebugLibXext		build libXext_d.a
 	DefaultCursorTheme      name of default cursor theme
 	DefaultFontPath		default server font path
 	DefaultRGBDatabase	default server rgb color database
@@ -215,11 +214,9 @@ X11.tmpl provides defaults for the following variables:
 	NeedDefaultDepLibs	boolean for enabling default DEPLIBS
 	NlsDir			directory in which to install nls files
 	NormalLibX11		build libX11.a
-	NormalLibXext		build libXext.a
 	OsNameDefines		If uname(2) unavailable, set to -DOS_NAME=OSName
 	PrimaryScreenResolution	resolution of default server screen
 	ProfileLibX11		build libX11_p.a
-	ProfileLibXext		build libXext_p.a
 	ProjectX		version indicating this is the X Window System
 	RemoveTargetProgramByMoving	boolean for rm -f that doesn't
 	SHELLPATH		-D for /bin/sh
@@ -229,7 +226,6 @@ X11.tmpl provides defaults for the following variables:
 	ServerOSDefines		OS -D's for server
 	ServerAssertDefines	-DNDEBUG for no assertions, /**/ for assertions
 	SharedLibX11		boolean for making sharable libX11.so
-	SharedLibXext		boolean for making sharable libXext.so
 	ShmDefines		MIT-SHM define
 	TwmDir			directory in which to install twm config files
 	UseCCMakeDepend		boolean for using alternate makedepend script

@@ -19,14 +19,8 @@ XKBLIBDIR = xkbfile
 X11LIBDIR = X11
 #endif
 
-#if BuildXextLib
-XEXTLIBDIR = Xext
-#endif
-
-
 LINTSUBDIRS = \
 	$(X11LIBDIR) \
-	$(XEXTLIBDIR) \
 	$(XKBLIBDIR) \
 	$(NULL)
 
