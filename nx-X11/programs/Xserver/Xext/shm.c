@@ -60,7 +60,7 @@ in this Software without prior written authorization from The Open Group.
 #include "extnsionst.h"
 #include "servermd.h"
 #define _XSHM_SERVER_
-#include <nx-X11/extensions/shmstr.h>
+#include <X11/extensions/shmstr.h>
 #include <nx-X11/Xfuncproto.h>
 #ifdef EXTMODULE
 #include "xf86_ansic.h"

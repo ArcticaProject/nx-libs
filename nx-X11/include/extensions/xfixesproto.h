@@ -28,7 +28,7 @@
 #include <nx-X11/Xmd.h>
 #include <nx-X11/extensions/xfixeswire.h>
 #define _SHAPE_SERVER_
-#include <nx-X11/extensions/shape.h>
+#include <X11/extensions/shape.h>
 #undef _SHAPE_SERVER_
 
 #define Window CARD32

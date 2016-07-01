@@ -19,7 +19,7 @@
 #define X11Poller_H
 
 #include <nx-X11/Xlib.h>
-#include <nx-X11/extensions/XShm.h>
+#include <X11/extensions/XShm.h>
 #include "X11/include/Xdamage_nxcompshad.h"
 #include "X11/include/Xrandr_nxcompshad.h"
 

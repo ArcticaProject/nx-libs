@@ -154,52 +154,6 @@ stream connection.
 This package contains all necessary include files and libraries
 needed to develop applications that require these.
 
-
-%package -n libNX_Xext-devel
-Group:          Development/Libraries
-Summary:        Development files for the NX Common Extensions library
-Requires:       libNX_Xext6%{?_isa} = %{version}-%{release}
-Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
-
-%description -n libNX_Xext-devel
-NX is a software suite which implements very efficient compression of
-the X11 protocol. This increases performance when using X
-applications over a network, especially a slow one.
-
-The NX_Xext library contains a handful of X11 extensions:
-- Display Power Management Signaling (DPMS) extension
-- X11 Nonrectangular Window Shape extension (Xshape)
-- The MIT Shared Memory extension (MIT-SHM/Xshm)
-
-This package contains all necessary include files and libraries
-needed to develop applications that require these.
-
-
-%package -n libNX_Xext6
-Group:          System Environment/Libraries
-Summary:        Common extensions to the NX protocol
-Requires:       %{name}%{?_isa} >= 3.5.0.29
-Obsoletes:      libNX_Xext
-
-%description -n libNX_Xext6
-NX is a software suite which implements very efficient compression of
-the X11 protocol. This increases performance when using X
-applications over a network, especially a slow one.
-
-The NX_Xext library contains a handful of X11 extensions:
-- Double Buffer extension (DBE/Xdbe)
-- Display Power Management Signaling (DPMS) extension
-- X11 Nonrectangular Window Shape extension (Xshape)
-- The MIT Shared Memory extension (MIT-SHM/Xshm)
-- TOG-CUP (colormap) protocol extension (Xcup)
-- X Extended Visual Information extension (XEvi)
-- X11 Double-Buffering, Multi-Buffering, and Stereo extension (Xmbuf)
-
-NX is a software suite which implements very efficient compression of
-the X11 protocol. This increases performance when using X
-applications over a network, especially a slow one.
-
-
 %package -n libXcomp-devel
 Group:          Development/Libraries
 Summary:        Development files for the NX differential compression library
@@ -263,7 +217,6 @@ Group:          Development/Libraries
 Summary:        Development files for the NX session shadowing library
 Requires:       libXcompshad3%{?_isa} = %{version}-%{release}
 Requires:       libNX_X11-devel%{?_isa} = %{version}-%{release}
-Requires:       libNX_Xext-devel%{?_isa} = %{version}-%{release}
 Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
 Requires:       %{name}-devel%{?_isa} = %{version}-%{release}
 
@@ -293,7 +246,6 @@ This package provides the session shadowing library.
 Group:          Development/Libraries
 Summary:        Include files and libraries for NX development
 Requires:       libNX_X11-devel%{?_isa} = %{version}-%{release}
-Requires:       libNX_Xext-devel%{?_isa} = %{version}-%{release}
 Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 
@@ -436,13 +388,11 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 
 %post -p /sbin/ldconfig
 %post -n libNX_X11-6 -p /sbin/ldconfig
-%post -n libNX_Xext6 -p /sbin/ldconfig
 %post -n libXcomp3 -p /sbin/ldconfig
 %post -n libXcompext3 -p /sbin/ldconfig
 %post -n libXcompshad3 -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 %postun -n libNX_X11-6 -p /sbin/ldconfig
-%postun -n libNX_Xext6 -p /sbin/ldconfig
 %postun -n libXcomp3 -p /sbin/ldconfig
 %postun -n libXcompext3 -p /sbin/ldconfig
 %postun -n libXcompshad3 -p /sbin/ldconfig
@@ -475,19 +425,6 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %{_includedir}/nx-X11/Xresource.h
 %{_includedir}/nx-X11/Xutil.h
 %{_includedir}/nx-X11/cursorfont.h
-
-%files -n libNX_Xext-devel
-%defattr(-,root,root)
-%{_libdir}/libNX_Xext.so
-%dir %{_includedir}/nx-X11/extensions
-%{_includedir}/nx-X11/extensions/XShm.h
-%{_includedir}/nx-X11/extensions/Xext.h
-%{_includedir}/nx-X11/extensions/extutil.h
-%{_includedir}/nx-X11/extensions/shape.h
-
-%files -n libNX_Xext6
-%defattr(-,root,root)
-%{_libdir}/libNX_Xext.so.6*
 
 %files -n libXcomp-devel
 %defattr(-,root,root)
@@ -581,8 +518,6 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %{_includedir}/nx-X11/extensions/render.h
 %{_includedir}/nx-X11/extensions/renderproto.h
 %{_includedir}/nx-X11/extensions/securstr.h
-%{_includedir}/nx-X11/extensions/shapestr.h
-%{_includedir}/nx-X11/extensions/shmstr.h
 %{_includedir}/nx-X11/extensions/syncstr.h
 %{_includedir}/nx-X11/extensions/xcmiscstr.h
 %{_includedir}/nx-X11/extensions/xf86bigfont.h

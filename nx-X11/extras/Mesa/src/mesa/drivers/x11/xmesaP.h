@@ -31,7 +31,7 @@
 # include "GL/xf86glx.h"
 # include "xf86glx_util.h"
 #elif defined(USE_XSHM)
-# include <nx-X11/extensions/XShm.h>
+# include <X11/extensions/XShm.h>
 #endif
 #include "GL/xmesa.h"
 #include "mtypes.h"

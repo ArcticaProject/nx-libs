@@ -68,7 +68,7 @@ SOFTWARE.
 #include "xvdix.h"
 #ifdef MITSHM
 #define _XSHM_SERVER_
-#include <nx-X11/extensions/shmstr.h>
+#include <X11/extensions/shmproto.h>
 #endif
 
 #ifdef EXTMODULE
