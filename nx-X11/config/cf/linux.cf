@@ -199,7 +199,7 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 #if LinuxCLibMajorVersion >= 6
 # define LinuxSourceDefines	-D_POSIX_C_SOURCE=199309L \
 				-D_POSIX_SOURCE -D_XOPEN_SOURCE \
-				-D_BSD_SOURCE -D_SVID_SOURCE \
+				-D_DEFAULT_SOURCE \
                                 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 \
 				LinuxAdditionalIncludes LinuxGnuSourceDefines \
 				LinuxLocaleDefines
