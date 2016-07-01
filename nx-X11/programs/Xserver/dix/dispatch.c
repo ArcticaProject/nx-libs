@@ -955,10 +955,6 @@ ProcGetAtomName(register ClientPtr client)
     }
 }
 
-#ifdef K5AUTH
-extern int k5_bad();
-#endif
-
 #ifndef NXAGENT_SERVER
 int
 ProcSetSelectionOwner(register ClientPtr client)
@@ -3506,12 +3502,6 @@ InitProcVectors(void)
             ProcVector[i] = SwappedProcVector[i] = ProcBadRequest;
 	    ReplySwapVector[i] = ReplyNotSwappd;
 	}
-#ifdef K5AUTH
-	if (!k5_Vector[i])
-	{
-	    k5_Vector[i] = k5_bad;
-	}
-#endif
     }
     for(i = LASTEvent; i < 128; i++)
     {

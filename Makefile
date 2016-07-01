@@ -103,7 +103,7 @@ install-lite:
 	gzip $(DESTDIR)$(PREFIX)/share/man/man1/*.1
 
 install-full:
-	for f in nxagent nxauth; do \
+	for f in nxagent; do \
 	   $(INSTALL_PROGRAM) bin/$$f $(DESTDIR)$(BINDIR); done
 	for d in nxcompext nxcompshad; do \
 	   $(MAKE) -C $$d install; done
@@ -115,13 +115,10 @@ install-full:
 	$(INSTALL_FILE) nx-X11/programs/Xserver/Xext/SecurityPolicy $(DESTDIR)$(PREFIX)/share/nx
 
 	$(INSTALL_DIR) $(DESTDIR)$(NXLIBDIR)/bin
-	$(INSTALL_PROGRAM) nx-X11/programs/nxauth/nxauth $(DESTDIR)$(NXLIBDIR)/bin
 	$(INSTALL_PROGRAM) nx-X11/programs/Xserver/nxagent $(DESTDIR)$(NXLIBDIR)/bin
 
 	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/man/man1/
 	$(INSTALL_FILE) nx-X11/programs/Xserver/hw/nxagent/man/nxagent.1 $(DESTDIR)$(PREFIX)/share/man/man1/
-	$(INSTALL_FILE) nx-X11/programs/nxauth/nxauth.man $(DESTDIR)$(PREFIX)/share/man/man1/
-	mv -f $(DESTDIR)$(PREFIX)/share/man/man1/nxauth.man $(DESTDIR)$(PREFIX)/share/man/man1/nxauth.1
 	gzip $(DESTDIR)$(PREFIX)/share/man/man1/*.1
 
 	# create a clean nx-X11/.build-exports space
@@ -180,7 +177,7 @@ uninstall-lite:
 	$(RM_DIR) $(DESTDIR)$(NXLIBDIR)/share/nx/
 
 uninstall-full:
-	for f in nxagent nxauth; do \
+	for f in nxagent; do \
 	    $(RM_FILE) $(DESTDIR)$(BINDIR)/$$f; done
 
 	$(RM_FILE) $(DESTDIR)$(PREFIX)/share/nx/VERSION.nxagent

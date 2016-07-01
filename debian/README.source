@@ -10,7 +10,7 @@ This package originally pulled in 7 source tarballs from NoMachine:
 
   nx-X11
   nxagent
-  nxauth
+  nxauth (discontinued in nx-libs)
   nxcomp
   nxcompshad
   nxcompext

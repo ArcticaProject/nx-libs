@@ -155,50 +155,10 @@ This package contains all necessary include files and libraries
 needed to develop applications that require these.
 
 
-%package -n libNX_Xau-devel
-Group:          Development/Libraries
-Summary:        Development files for the NX authorization protocol library
-Requires:       libNX_Xau6%{?_isa} = %{version}-%{release}
-Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
-
-%description -n libNX_Xau-devel
-NX is a software suite which implements very efficient compression of
-the X11 protocol. This increases performance when using X
-applications over a network, especially a slow one.
-
-libNX_Xau provides mechanisms for individual access to an nx-X11 Window
-System display. It uses existing core protocol and library hooks for
-specifying authorization data in the connection setup block to restrict
-use of the display to only those clients that show that they know a
-server-specific key called a "magic cookie".
-
-This package contains all necessary include files and libraries
-needed to develop applications that require these.
-
-
-%package -n libNX_Xau6
-Group:          System Environment/Libraries
-Summary:        NX authorization protocol library
-Requires:       %{name}%{?_isa} >= 3.5.0.29
-Obsoletes:      libNX_Xau
-
-%description -n libNX_Xau6
-NX is a software suite which implements very efficient compression of
-the X11 protocol. This increases performance when using X
-applications over a network, especially a slow one.
-
-libNX_Xau provides mechanisms for individual access to an X Window
-System display. It uses existing core protocol and library hooks for
-specifying authorization data in the connection setup block to
-restrict use of the display to only those clients that show that they
-know a server-specific key called a "magic cookie".
-
-
 %package -n libNX_Xext-devel
 Group:          Development/Libraries
 Summary:        Development files for the NX Common Extensions library
 Requires:       libNX_Xext6%{?_isa} = %{version}-%{release}
-Requires:       libNX_Xau6-devel%{?_isa} = %{version}-%{release}
 Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
 
 %description -n libNX_Xext-devel
@@ -333,7 +293,6 @@ This package provides the session shadowing library.
 Group:          Development/Libraries
 Summary:        Include files and libraries for NX development
 Requires:       libNX_X11-devel%{?_isa} = %{version}-%{release}
-Requires:       libNX_Xau-devel%{?_isa} = %{version}-%{release}
 Requires:       libNX_Xext-devel%{?_isa} = %{version}-%{release}
 Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
 Requires:       %{name}%{?_isa} = %{version}-%{release}
@@ -389,18 +348,6 @@ itself, this is demanded of nxagent.
 Being an X server, nxagent is able to resolve all the property/atoms
 related requests locally, ensuring that the most common source of
 round-trips are nearly reduced to zero.
-
-
-%package -n nxauth
-Group:          Applications/System
-Summary:        NX Auth
-
-%description -n nxauth
-NX is a software suite which implements very efficient compression of
-the X11 protocol. This increases performance when using X
-applications over a network, especially a slow one.
-
-This package provides the NX xauth binary.
 
 
 %package -n nxproxy
@@ -489,14 +436,12 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 
 %post -p /sbin/ldconfig
 %post -n libNX_X11-6 -p /sbin/ldconfig
-%post -n libNX_Xau6 -p /sbin/ldconfig
 %post -n libNX_Xext6 -p /sbin/ldconfig
 %post -n libXcomp3 -p /sbin/ldconfig
 %post -n libXcompext3 -p /sbin/ldconfig
 %post -n libXcompshad3 -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 %postun -n libNX_X11-6 -p /sbin/ldconfig
-%postun -n libNX_Xau6 -p /sbin/ldconfig
 %postun -n libNX_Xext6 -p /sbin/ldconfig
 %postun -n libXcomp3 -p /sbin/ldconfig
 %postun -n libXcompext3 -p /sbin/ldconfig
@@ -530,15 +475,6 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %{_includedir}/nx-X11/Xresource.h
 %{_includedir}/nx-X11/Xutil.h
 %{_includedir}/nx-X11/cursorfont.h
-
-%files -n libNX_Xau-devel
-%defattr(-,root,root)
-%{_libdir}/libNX_Xau.so
-%{_includedir}/nx-X11/Xauth.h
-
-%files -n libNX_Xau6
-%defattr(-,root,root)
-%{_libdir}/libNX_Xau.so.6*
 
 %files -n libNX_Xext-devel
 %defattr(-,root,root)
@@ -668,13 +604,6 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %{_datadir}/pixmaps/nxagent.xpm
 %{_datadir}/nx/rgb
 %{_datadir}/man/man1/nxagent.1*
-
-%files -n nxauth
-%defattr(-,root,root)
-%{_bindir}/nxauth
-%dir %{_libdir}/nx/bin
-%{_libdir}/nx/bin/nxauth
-%{_datadir}/man/man1/nxauth.1*
 
 %files -n nxproxy
 %defattr(-,root,root)

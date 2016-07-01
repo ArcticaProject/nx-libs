@@ -1,5 +1,6 @@
 usr/lib/*/libNX_X11.so
 usr/include/*/nx-X11/ImUtil.h
+usr/include/*/nx-X11/Xauth.h
 usr/include/*/nx-X11/XKBlib.h
 usr/include/*/nx-X11/Xcms.h
 usr/include/*/nx-X11/Xlib.h

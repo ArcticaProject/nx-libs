@@ -163,7 +163,7 @@ INSTPGMFLAGS =
                   $(DBEDIR) $(RECORDDIR) $(SITEEXTDIRS) \
                   $(RANDRDIR) $(RENDERDIR) $(XPCONFIGDIR) \
 		  $(FIXESDIR) $(DAMAGEDIR) $(CWDIR) $(COMPOSITEDIR)
-             OS = os/LibraryTargetName(os) $(DEPXAUTHLIB)
+             OS = os/LibraryTargetName(os)
         BSDEMUL = $(DEPXBSDLIB)
 #if DoLoadableServer
             MFB = mfb/ModuleLibraryTargetName(mfb)
@@ -246,7 +246,7 @@ INSTPGMFLAGS =
 #if !(SystemV4 || defined(SGIArchitecture) || UseRgbTxt)
        DBMLIBS = DBMLibrary
 #endif
-        SYSLIBS = $(ZLIB) MathLibrary Krb5Libraries $(DBMLIBS) $(USB) \
+        SYSLIBS = $(ZLIB) MathLibrary $(DBMLIBS) $(USB) \
 		  $(PAMLIBS)  $(EXTRASYSLIBS)
 #if !HasCbrt
            CBRT = mi/LibraryTargetName(cbrt)

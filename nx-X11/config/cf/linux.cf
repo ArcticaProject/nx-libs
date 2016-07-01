@@ -609,7 +609,6 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 #   define AsCmd		CcCmd -c -x assembler
 #   define LdCmd		CcCmd -nostdlib
 #   define AsmDefines		-D__ELF__
-#   define SharedLibXau		YES
 #  endif /* HPArchitecture */
 #  ifdef i386Architecture
 #   define CcCmd		gcc -b i486-linux

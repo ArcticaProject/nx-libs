@@ -56,12 +56,9 @@ override_dh_auto_build:
 
 override_dh_strip:
 	dh_strip -plibnx-x11-6 --dbg-package=libnx-x11-6-dbg
-	dh_strip -plibnx-xau6 --dbg-package=libnx-xau6-dbg
 	dh_strip -plibnx-xext6 --dbg-package=libnx-xext6-dbg
 	dh_strip -plibxcomp3 --dbg-package=libxcomp3-dbg
 	dh_strip -plibxcompshad3 --dbg-package=libxcompshad3-dbg
 	dh_strip -plibxcompext3 --dbg-package=libxcompext3-dbg
 	dh_strip -pnxagent --dbg-package=nxagent-dbg
 	dh_strip -pnxproxy --dbg-package=nxproxy-dbg
-	dh_strip -pnxauth --dbg-package=nxauth-dbg
-

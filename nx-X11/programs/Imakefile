@@ -22,11 +22,7 @@
         XSSRCDIR = Xserver
 #endif
 
-#if defined(NXEmbeddedXServer)
 SUBDIRS = $(XSSRCDIR) 
-#else
-SUBDIRS = $(XSSRCDIR) nxauth
-#endif
 
 MakeSubdirs($(SUBDIRS))
 DependSubdirs($(SUBDIRS))

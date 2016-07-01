@@ -75,6 +75,7 @@ Depends:
  nx-x11-common (>= ${source:Version}), nx-x11-common (<< ${source:Version}.1), 
 Breaks: nxlibs (<= 3.5.1),
         libnx-x11 (<< 2:3.5.0.29-1~),
+        libnx-xau6 (<< 2:3.6.0.0),
         libnx-xcomposite1 (<< 2:3.6.0.0),
         libnx-xdamage1 (<< 2:3.6.0.0),
         libnx-xdmcp6 (<< 2:3.6.0.0),
@@ -85,6 +86,7 @@ Breaks: nxlibs (<= 3.5.1),
         libnx-xrender1 (<< 2:3.6.0.0),
         libnx-xtst6 (<< 2:3.6.0.0),
 Replaces: nxlibs,
+          libnx-xau6,
           libnx-xcomposite1,
           libnx-xdamage1,
           libnx-xdmcp6,
@@ -107,6 +109,7 @@ Provides: libnx-x11-6-dev
 Section: libdevel
 Architecture: any
 Breaks: nxlibs-dev (<=3.5.1),
+        libnx-xau-dev (<< 2:3.6.0.0),
         libnx-xcomposite-dev (<< 2:3.6.0.0),
         libnx-xdamage-dev (<< 2:3.6.0.0),
         libnx-xdmcp-dev (<< 2:3.6.0.0),
@@ -117,6 +120,7 @@ Breaks: nxlibs-dev (<=3.5.1),
         libnx-xrender-dev (<< 2:3.6.0.0),
         libnx-xtst-dev (<< 2:3.6.0.0),
 Replaces: nxlibs-dev,
+          libnx-xau-dev,
           libnx-xcomposite-dev,
           libnx-xdamage-dev,
           libnx-xdmcp-dev,
@@ -145,6 +149,7 @@ Depends:
  ${misc:Depends},
 Section: debug
 Breaks: nx-x11-dbg (<< 2:3.5.0.29-1~),
+        libnx-xau6-dbg (<< 2:3.6.0.0),
         libnx-xcomposite1-dbg (<< 2:3.6.0.0),
         libnx-xdamage1-dbg (<< 2:3.6.0.0),
         libnx-xdmcp6-dbg (<< 2:3.6.0.0),
@@ -155,6 +160,7 @@ Breaks: nx-x11-dbg (<< 2:3.5.0.29-1~),
         libnx-xrender1-dbg (<< 2:3.6.0.0),
         libnx-xtst6-dbg (<< 2:3.6.0.0),
 Replaces: nx-x11-dbg,
+          libnx-xau6-dbg,
           libnx-xcomposite1-dbg,
           libnx-xdamage1-dbg,
           libnx-xdmcp6-dbg,
@@ -171,63 +177,6 @@ Description: nx-X11 client-side library (debug package)
  .
  This package contains debug symbols for the core nx-X11 libraries
  customized for nxagent.
-
-Package: libnx-xau6
-Architecture: any
-Multi-Arch: same
-Depends:
- ${shlibs:Depends},
- ${misc:Depends},
-Breaks: nxlibs (<= 3.5.1),
-        libnx-x11 (<< 2:3.5.0.29-1~),
-Description: nx-X11 authorisation library
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package provides the main interface to the nx-X11 authorisation handling,
- which controls authorisation for X connections, both client-side and
- server-side.
-
-Package: libnx-xau-dev
-Provides: libnx-xau6-dev
-Section: libdevel
-Architecture: any
-Multi-Arch: same
-Depends:
- libnx-xau6 (= ${binary:Version}),
- ${misc:Depends},
-Breaks: nxlibs (<= 3.5.1),
-        libnx-x11-dev (<< 2:3.5.0.29-1~),
-Description: nx-X11 authorisation library (development headers)
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package provides the main interface to the nx-X11 authorisation handling,
- which controls authorisation for X connections, both client-side and
- server-side.
- .
- This package contains the development headers for this library.
-
-Package: libnx-xau6-dbg
-Architecture: any
-Multi-Arch: same
-Depends:
- libnx-xau6 (= ${binary:Version}),
- ${misc:Depends},
-Section: debug
-Breaks: nx-x11-dbg (<< 2:3.5.0.29-1~),
-Description: nx-X11 authorisation library (debug package)
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package provides the main interface to the nx-X11 authorisation handling,
- which controls authorisation for X connections, both client-side and
- server-side.
- .
- This package contains debug symbols for this library.
 
 Package: nx-x11proto-composite-dev
 Section: libdevel
@@ -430,6 +379,10 @@ Depends:
 Recommends:
  xfonts-base,
  xkb-data,
+Breaks:
+ nxauth,
+Replaces:
+ nxauth,
 Description: NX agent
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -473,12 +426,16 @@ Description: NX agent (debug package)
 
 Package: nxproxy
 Architecture: any
-Breaks: qvd-nxproxy
-Replaces: qvd-nxproxy
 Multi-Arch: foreign
 Depends:
  ${shlibs:Depends},
  ${misc:Depends},
+Breaks:
+ qvd-nxproxy,
+ nxauth,
+Replaces:
+ qvd-nxproxy,
+ nxauth,
 Description: NX proxy
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -502,38 +459,6 @@ Description: NX proxy (debug package)
  using X applications over a network, especially a slow one.
  .
  This package provides the NX proxy (client) binary.
- .
- This package contains detached debug symbols that help generating more
- helpful backtraces. You can safely remove it if you do not intend to
- debug NX packages on this system.
-
-Package: nxauth
-Architecture: any
-Multi-Arch: foreign
-Depends:
- ${shlibs:Depends},
- ${misc:Depends},
-Description: NX xauth
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package provides the NX xauth binary.
-
-Package: nxauth-dbg
-Section: debug
-Architecture: any
-Multi-Arch: foreign
-Depends:
- nxauth (= ${binary:Version}),
- ${misc:Depends},
-Breaks: nx-x11-dbg (<< 2:3.5.0.29-1~),
-Description: NX auth (debug package) 
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package provides the NX auth binary.
  .
  This package contains detached debug symbols that help generating more
  helpful backtraces. You can safely remove it if you do not intend to
