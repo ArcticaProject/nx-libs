@@ -67,7 +67,7 @@ extern void ResExtensionInit(INITARGS);
 
 #ifdef SHM
 extern void ShmExtensionInit(INITARGS);
-#include <nx-X11/extensions/shmstr.h>
+#include <X11/extensions/shmproto.h>
 extern void ShmSetPixmapFormat(
     ScreenPtr pScreen,
     int format);

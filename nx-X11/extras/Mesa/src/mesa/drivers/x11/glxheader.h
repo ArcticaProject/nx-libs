@@ -48,7 +48,7 @@
 # ifdef USE_XSHM  /* was SHM */
 #  include <sys/ipc.h>
 #  include <sys/shm.h>
-#  include <nx-X11/extensions/XShm.h>
+#  include <X11/extensions/XShm.h>
 # endif
 # include <GL/glx.h>
 
