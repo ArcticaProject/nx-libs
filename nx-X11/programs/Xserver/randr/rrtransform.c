@@ -37,7 +37,7 @@ RRTransformInit(RRTransformPtr transform)
 void
 RRTransformFini(RRTransformPtr transform)
 {
-    xfree(transform->params);
+    free(transform->params);
 }
 
 Bool
@@ -73,7 +73,7 @@ RRTransformSetFilter(RRTransformPtr dst,
 #ifndef NXAGENT_SERVER
         new_params = xallocarray(nparams, sizeof(xFixed));
 #else                           /* !defined(NXAGENT_SERVER) */
-        new_params = xalloc(nparams * sizeof(xFixed));
+        new_params = malloc(nparams * sizeof(xFixed));
 #endif                          /* !defined(NXAGENT_SERVER) */
         if (!new_params)
             return FALSE;
@@ -81,7 +81,7 @@ RRTransformSetFilter(RRTransformPtr dst,
     }
     else
         new_params = NULL;
-    xfree(dst->params);
+    free(dst->params);
     dst->filter = filter;
     dst->params = new_params;
     dst->nparams = nparams;

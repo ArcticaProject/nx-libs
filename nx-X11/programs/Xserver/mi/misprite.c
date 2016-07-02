@@ -169,7 +169,7 @@ miSpriteInitialize (pScreen, cursorFuncs, screenFuncs)
 	miSpriteGeneration = serverGeneration;
     }
     
-    pScreenPriv = (miSpriteScreenPtr) xalloc (sizeof (miSpriteScreenRec));
+    pScreenPriv = (miSpriteScreenPtr) malloc (sizeof (miSpriteScreenRec));
     if (!pScreenPriv)
 	return FALSE;
     
@@ -182,7 +182,7 @@ miSpriteInitialize (pScreen, cursorFuncs, screenFuncs)
 
     if (!miPointerInitialize (pScreen, &miSpritePointerFuncs, screenFuncs,TRUE))
     {
-	xfree ((void *) pScreenPriv);
+	free ((void *) pScreenPriv);
 	return FALSE;
     }
     for (pVisual = pScreen->visuals;
@@ -270,7 +270,7 @@ miSpriteCloseScreen (i, pScreen)
     miSpriteIsUpFALSE (pScreen, pScreenPriv);
     DamageDestroy (pScreenPriv->pDamage);
     
-    xfree ((void *) pScreenPriv);
+    free ((void *) pScreenPriv);
 
     return (*pScreen->CloseScreen) (i, pScreen);
 }

@@ -127,13 +127,13 @@ miFillPolyHelper (pDrawable, pGC, pixel, spanData, y, overall_height,
     }
     else
     {
-	spanRec.points = (DDXPointPtr) xalloc (overall_height * sizeof (*ppt));
+	spanRec.points = (DDXPointPtr) malloc (overall_height * sizeof (*ppt));
 	if (!spanRec.points)
 	    return;
-	spanRec.widths = (int *) xalloc (overall_height * sizeof (int));
+	spanRec.widths = (int *) malloc (overall_height * sizeof (int));
 	if (!spanRec.widths)
 	{
-	    xfree (spanRec.points);
+	    free (spanRec.points);
 	    return;
 	}
 	ppt = spanRec.points;
@@ -231,13 +231,13 @@ miFillRectPolyHelper (
     }
     else
     {
-	spanRec.points = (DDXPointPtr) xalloc (h * sizeof (*ppt));
+	spanRec.points = (DDXPointPtr) malloc (h * sizeof (*ppt));
 	if (!spanRec.points)
 	    return;
-	spanRec.widths = (int *) xalloc (h * sizeof (int));
+	spanRec.widths = (int *) malloc (h * sizeof (int));
 	if (!spanRec.widths)
 	{
-	    xfree (spanRec.points);
+	    free (spanRec.points);
 	    return;
 	}
 	ppt = spanRec.points;
@@ -1076,13 +1076,13 @@ miLineArc (
     }
     else
     {
-	points = (DDXPointPtr) xalloc (pGC->lineWidth * sizeof (DDXPointRec));
+	points = (DDXPointPtr) malloc (pGC->lineWidth * sizeof (DDXPointRec));
 	if (!points)
 	    return;
-	widths = (int *) xalloc (pGC->lineWidth * sizeof (int));
+	widths = (int *) malloc (pGC->lineWidth * sizeof (int));
 	if (!widths)
 	{
-	    xfree (points);
+	    free (points);
 	    return;
 	}
 	spanRec.points = points;

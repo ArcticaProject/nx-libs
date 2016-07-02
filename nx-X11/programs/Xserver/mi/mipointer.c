@@ -88,7 +88,7 @@ miPointerInitialize (pScreen, spriteFuncs, screenFuncs, waitForUpdate)
 	    return FALSE;
 	miPointerGeneration = serverGeneration;
     }
-    pScreenPriv = (miPointerScreenPtr) xalloc (sizeof (miPointerScreenRec));
+    pScreenPriv = (miPointerScreenPtr) malloc (sizeof (miPointerScreenRec));
     if (!pScreenPriv)
 	return FALSE;
     pScreenPriv->spriteFuncs = spriteFuncs;
@@ -146,7 +146,7 @@ miPointerCloseScreen (index, pScreen)
     if (pScreen == miPointer.pSpriteScreen)
 	miPointer.pSpriteScreen = 0;
     pScreen->CloseScreen = pScreenPriv->CloseScreen;
-    xfree ((void *) pScreenPriv);
+    free ((void *) pScreenPriv);
     return (*pScreen->CloseScreen) (index, pScreen);
 }
 

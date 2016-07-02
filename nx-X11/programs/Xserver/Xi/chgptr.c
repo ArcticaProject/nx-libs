@@ -185,8 +185,8 @@ void
 DeleteFocusClassDeviceStruct(dev)
     DeviceIntPtr dev;
     {
-    xfree(dev->focus->trace);
-    xfree(dev->focus);
+    free(dev->focus->trace);
+    free(dev->focus);
     dev->focus = NULL;
     }
 

@@ -90,7 +90,7 @@ TRANS(Os2OpenClient)(Xtransport *thistrans, char *protocol,
     PRMSG(5, "Os2OpenClient: Creating pipe %s\n",pipename, 0,0 );
 
 	/* make a connection entry */	
-	if( (ciptr=(XtransConnInfo)xcalloc(1,sizeof(struct _XtransConnInfo))) == NULL ) {
+	if( (ciptr=(XtransConnInfo)calloc(1,sizeof(struct _XtransConnInfo))) == NULL ) {
 		PRMSG(1,"Os2OpenClient: calloc(1,%d) failed\n",
 			sizeof(struct _XtransConnInfo),0,0 );
 		return NULL;
@@ -111,7 +111,7 @@ TRANS(Os2OpenClient)(Xtransport *thistrans, char *protocol,
 			0,0,0 );
 		PRMSG(1,"\tor the DISPLAY variable is set incorrectly.\n",
 			0,0,0 );
-		xfree(ciptr);
+		free(ciptr);
 		return NULL;
 	    }
        try ++;
@@ -133,7 +133,7 @@ TRANS(Os2OpenClient)(Xtransport *thistrans, char *protocol,
         pipe_len=0;
         DosWrite(hServer,&pipe_len,1,&byteWritten);
         DosClose(hServer);
-        xfree(ciptr);
+        free(ciptr);
 	return(NULL);
     }
 
@@ -145,7 +145,7 @@ TRANS(Os2OpenClient)(Xtransport *thistrans, char *protocol,
         PRMSG(1, "Os2OpenClient: Unable to connect to pipe %s\n", pipename,0,0 );
         DosClose (hfd);
         DosClose(hServer);
-        xfree(ciptr);
+        free(ciptr);
         return (NULL);
     }
 
@@ -158,7 +158,7 @@ TRANS(Os2OpenClient)(Xtransport *thistrans, char *protocol,
                 hServer,rc,byteWritten );
            DosClose(hServer);
            DosClose(hfd);
-           xfree(ciptr);
+           free(ciptr);
            return(NULL);
            }
 
@@ -182,7 +182,7 @@ TRANS(Os2OpenClient)(Xtransport *thistrans, char *protocol,
            PRMSG(1, "\tor the XServer is too busy to respond.\n",0,0,0 );
            DosClose(hServer);
            DosClose(hfd);
-           xfree(ciptr);
+           free(ciptr);
            return(NULL);
            }
 
@@ -197,30 +197,30 @@ TRANS(Os2OpenClient)(Xtransport *thistrans, char *protocol,
            PRMSG(1, "Os2OpenClient: Client pipe does not appear connected. rc=%d, h=%d\n",rc,hfd,0 );
            PRMSG(1, "\tProbable cause: the XServer has just exited.\n",0,0,0 );
            DosClose(hfd);
-           xfree(ciptr);
+           free(ciptr);
            return(NULL);
            }
 
         namelen=sizeof(struct sockaddr);
-        if ((ciptr->addr = (char *) xalloc (namelen)) == NULL)
+        if ((ciptr->addr = (char *) malloc (namelen)) == NULL)
           {
                 PRMSG (1, "Os2OpenClient: Can't allocate space for the addr\n",
 	        0, 0, 0);
                 DosClose(hfd);
-                xfree(ciptr);
+                free(ciptr);
                 return(NULL);
            }
         ciptr->addrlen = namelen;
         ((struct sockaddr *)ciptr->addr)->sa_family = AF_UNIX;
         strcpy(((struct sockaddr *)ciptr->addr)->sa_data, "local");
 
-        if ((ciptr->peeraddr = (char *) xalloc (namelen)) == NULL)
+        if ((ciptr->peeraddr = (char *) malloc (namelen)) == NULL)
           {
                 PRMSG (1, "Os2OpenCLient: Can't allocate space for the addr\n",
 	        0, 0, 0);
                 DosClose(hfd);
-                xfree(ciptr->addr);
-                xfree(ciptr);
+                free(ciptr->addr);
+                free(ciptr);
                 return(NULL);
            }
        ciptr->peeraddrlen = namelen;
@@ -237,9 +237,9 @@ TRANS(Os2OpenClient)(Xtransport *thistrans, char *protocol,
            PRMSG(1, "Os2OpenClient: Could not import the pipe handle into EMX\n",0,0,0 );
            PRMSG(1, "\tProbable cause: EMX has run out of free file handles.\n",0,0,0 );
            DosClose(hfd);
-           xfree(ciptr->addr);
-           xfree(ciptr->peeraddr);
-           xfree(ciptr);
+           free(ciptr->addr);
+           free(ciptr->peeraddr);
+           free(ciptr);
            return(NULL);
            }
     PRMSG(5, "Os2OpenClient: pipe handle %d EMX handle %d\n",ciptr->index,ciptr->fd,0 );
@@ -268,9 +268,9 @@ TRANS(Os2OpenServer)(Xtransport *thistrans, char *protocol,
 
     PRMSG(2,"Os2OpenServer(%s,%s,%s)\n",protocol,host,port);
 
-   if( (ciptr=(XtransConnInfo)xcalloc(1,sizeof(struct _XtransConnInfo))) == NULL )
+   if( (ciptr=(XtransConnInfo)calloc(1,sizeof(struct _XtransConnInfo))) == NULL )
     {
-	PRMSG(1,"Os2OpenServer: xcalloc(1,%d) failed\n",
+	PRMSG(1,"Os2OpenServer: calloc(1,%d) failed\n",
 	      sizeof(struct _XtransConnInfo),0,0 );
 	return NULL;
     }
@@ -296,7 +296,7 @@ TRANS(Os2OpenServer)(Xtransport *thistrans, char *protocol,
         PRMSG(1, "Os2OpenServer: Unable to create pipe %s, rc=%d\n", pipename,rc,0 );
         PRMSG(1, "\tProbable cause: there is already another XServer running on display :%s\n",port,0,0 );
 	DosClose(hfd);
-        xfree(ciptr);
+        free(ciptr);
 	return(NULL);
     }
 
@@ -307,7 +307,7 @@ TRANS(Os2OpenServer)(Xtransport *thistrans, char *protocol,
     {
         PRMSG(1, "Os2OpenServer: Unable to connect to pipe %s\n", pipename,0,0 );
         DosClose (hfd);
-        xfree(ciptr);
+        free(ciptr);
         return (NULL);
     }
 
@@ -316,25 +316,25 @@ TRANS(Os2OpenServer)(Xtransport *thistrans, char *protocol,
 /*** Put in info ***/
 
         namelen=sizeof(struct sockaddr);
-        if ((ciptr->addr = (char *) xalloc (namelen)) == NULL)
+        if ((ciptr->addr = (char *) malloc (namelen)) == NULL)
           {
                 PRMSG (1, "Os2OpenServer: Can't allocate space for the addr\n",
 	        0, 0, 0);
                 DosClose(hfd);
-                xfree(ciptr);
+                free(ciptr);
                 return(NULL);
            }
         ciptr->addrlen = namelen;
         ((struct sockaddr *)ciptr->addr)->sa_family = AF_UNIX;
         strcpy (((struct sockaddr *)ciptr->addr)->sa_data, "local");
 
-        if ((ciptr->peeraddr = (char *) xalloc (namelen)) == NULL)
+        if ((ciptr->peeraddr = (char *) malloc (namelen)) == NULL)
           {
                 PRMSG (1, "Os2OpenServer: Can't allocate space for the addr\n",
 	        0, 0, 0);
                 DosClose(hfd);
-                xfree(ciptr->addr);
-                xfree(ciptr);
+                free(ciptr->addr);
+                free(ciptr);
                 return(NULL);
            }
 
@@ -351,9 +351,9 @@ TRANS(Os2OpenServer)(Xtransport *thistrans, char *protocol,
 
     if((ciptr->fd=_imphandle(hfd))<0){
        DosClose(hfd);
-       xfree(ciptr->addr);
-       xfree(ciptr->peeraddr);
-       xfree(ciptr);
+       free(ciptr->addr);
+       free(ciptr->peeraddr);
+       free(ciptr);
        return(NULL);
        }
     PRMSG(5, "Os2OpenServer: Pipe handle %d EMX handle %d",ciptr->index,ciptr->fd,0 );
@@ -365,9 +365,9 @@ TRANS(Os2OpenServer)(Xtransport *thistrans, char *protocol,
         PRMSG(1, "Os2OpenCOTSServer: Could not attach sem %d to pipe %d, rc=%d\n",
                  hPipeSem,ciptr->fd,rc);
         DosClose(ciptr->fd);
-        xfree(ciptr->addr);
-        xfree(ciptr->peeraddr);
-        xfree(ciptr);
+        free(ciptr->addr);
+        free(ciptr->peeraddr);
+        free(ciptr);
          return(NULL);
         }
 #endif
@@ -432,30 +432,30 @@ TRANS(Os2ReopenCOTSServer)(Xtransport *thistrans, int fd, char *port)
 
     PRMSG(2,"Os2ReopenCOTSServer(%d,%s)\n", fd, port, 0);
 
-    if( (ciptr=(XtransConnInfo)xcalloc(1,sizeof(struct _XtransConnInfo))) == NULL )
+    if( (ciptr=(XtransConnInfo)calloc(1,sizeof(struct _XtransConnInfo))) == NULL )
     {
-	PRMSG(1,"Os2ReopenCOTSServer: xcalloc(1,%d) failed\n",
+	PRMSG(1,"Os2ReopenCOTSServer: calloc(1,%d) failed\n",
 	      sizeof(struct _XtransConnInfo),0,0 );
 	return NULL;
     }
 
         strcpy(addr_name,"local");
         namelen=sizeof(addr_name);
-        if ((ciptr->addr = (char *) xalloc (namelen)) == NULL)
+        if ((ciptr->addr = (char *) malloc (namelen)) == NULL)
           {
                 PRMSG (1, "Os2ReopenCOTSServer: Can't allocate space for the addr\n",
 	        0, 0, 0);
-                xfree(ciptr);
+                free(ciptr);
                 return(NULL);
            }
 
         ciptr->addrlen = namelen;
         memcpy (ciptr->addr, addr_name, ciptr->addrlen);
-        if ((ciptr->peeraddr = (char *) xalloc (namelen)) == NULL)
+        if ((ciptr->peeraddr = (char *) malloc (namelen)) == NULL)
           {
                 PRMSG (1, "Os2ReopenCOTSServer: Can't allocate space for the addr\n",
 	        0, 0, 0);
-                xfree(ciptr);
+                free(ciptr);
                 return(NULL);
            }
 
@@ -508,9 +508,9 @@ TRANS(Os2Accept)(XtransConnInfo ciptr, int *status)
 
 
     PRMSG(2,"Os2Accept(%x->%d)\n", ciptr, ciptr->fd,0);
-    if( (newciptr=(XtransConnInfo)xcalloc(1,sizeof(struct _XtransConnInfo)))==NULL )
+    if( (newciptr=(XtransConnInfo)calloc(1,sizeof(struct _XtransConnInfo)))==NULL )
     {
-	PRMSG(1,"Os2Accept: xcalloc(1,%d) failed\n",
+	PRMSG(1,"Os2Accept: calloc(1,%d) failed\n",
 	      sizeof(struct _XtransConnInfo),0,0 );
 	*status = TRANS_ACCEPT_BAD_MALLOC;
 	return NULL;
@@ -521,7 +521,7 @@ TRANS(Os2Accept)(XtransConnInfo ciptr, int *status)
         PRMSG(2,"Os2Accept: Error reading incoming connection, in=%d, error=%d\n",
 	      in,errno,0 );
 	*status = TRANS_ACCEPT_MISC_ERROR;
-        xfree(newciptr);
+        free(newciptr);
         rc = DosDisConnectNPipe(ciptr->fd);
         rc = DosConnectNPipe (ciptr->fd);
         if (rc != 0 && rc != ERROR_PIPE_NOT_CONNECTED)
@@ -540,7 +540,7 @@ TRANS(Os2Accept)(XtransConnInfo ciptr, int *status)
         PRMSG(2,"Os2Accept: Error reading incoming connection, in=%d, error=%d\n",
 	      in,errno,0 );
 	*status = TRANS_ACCEPT_MISC_ERROR;
-        xfree(newciptr);
+        free(newciptr);
         rc = DosDisConnectNPipe(ciptr->fd);
         rc = DosConnectNPipe (ciptr->fd);
         if (rc != 0 && rc != ERROR_PIPE_NOT_CONNECTED)
@@ -566,7 +566,7 @@ TRANS(Os2Accept)(XtransConnInfo ciptr, int *status)
 	    PRMSG(1,"Os2Accept: Open pipe %s to client failed, rc=%d\n",
 	    clientname,rc,0 );
             PRMSG(1, "\tProbable cause: the client has exited or timed-out.\n",0,0,0 );
-            xfree(newciptr);
+            free(newciptr);
             rc = DosDisConnectNPipe(ciptr->fd);
             rc = DosConnectNPipe (ciptr->fd);
             if (rc != 0 && rc != ERROR_PIPE_NOT_CONNECTED)
@@ -581,7 +581,7 @@ TRANS(Os2Accept)(XtransConnInfo ciptr, int *status)
         {
             PRMSG(1,"Os2Accept: Could not set pipe %s to non-blocking mode, rc=%d\n",
 	    hClient,rc,0 );
-            xfree(newciptr);
+            free(newciptr);
             rc = DosDisConnectNPipe(ciptr->fd);
             rc = DosConnectNPipe (ciptr->fd);
             if (rc != 0 && rc != ERROR_PIPE_NOT_CONNECTED)
@@ -605,12 +605,12 @@ TRANS(Os2Accept)(XtransConnInfo ciptr, int *status)
 /* And finally fill-in info in newciptr */
 
         namelen=sizeof(struct sockaddr);
-        if ((newciptr->addr = (char *) xalloc (namelen)) == NULL)
+        if ((newciptr->addr = (char *) malloc (namelen)) == NULL)
           {
                 PRMSG (1, "Os2Accept: Can't allocate space for the addr\n",
 	        0, 0, 0);
                 DosClose(hClient);
-                xfree(newciptr);
+                free(newciptr);
                 return(NULL);
            }
 
@@ -618,13 +618,13 @@ TRANS(Os2Accept)(XtransConnInfo ciptr, int *status)
         ((struct sockaddr *)newciptr->addr)->sa_family = AF_UNIX;
         strcpy (((struct sockaddr *)newciptr->addr)->sa_data, "local");
 
-        if ((newciptr->peeraddr = (char *) xalloc (namelen)) == NULL)
+        if ((newciptr->peeraddr = (char *) malloc (namelen)) == NULL)
           {
                 PRMSG (1, "Os2Accept: Can't allocate space for the addr\n",
 	        0, 0, 0);
                 DosClose(hClient);
-                xfree(ciptr->addr);
-                xfree(newciptr);
+                free(ciptr->addr);
+                free(newciptr);
                 return(NULL);
            }
 
@@ -643,9 +643,9 @@ TRANS(Os2Accept)(XtransConnInfo ciptr, int *status)
            hClient,errno,0 );
            PRMSG(1, "\tProbable cause: EMX has run out of file handles.\n",0,0,0 );
            DosClose(hClient);
-           xfree(newciptr->addr);
-           xfree(newciptr->peeraddr);
-           xfree(newciptr);
+           free(newciptr->addr);
+           free(newciptr->peeraddr);
+           free(newciptr);
            return(NULL);
            }
     PRMSG(5, "Os2Accept: Pipe handle %d EMX handle %d",newciptr->index,newciptr->fd,0 );
@@ -657,9 +657,9 @@ TRANS(Os2Accept)(XtransConnInfo ciptr, int *status)
         PRMSG(1, "Os2OpenCOTSServer: Could not attach sem %d to pipe %d, rc=%d\n",
                  hPipeSem,newciptr->fd,rc);
         DosClose(newciptr->fd);
-        xfree(newciptr->addr);
-        xfree(newciptr->peeraddr);
-        xfree(newciptr);
+        free(newciptr->addr);
+        free(newciptr->peeraddr);
+        free(newciptr);
          return(NULL);
         }
 #endif

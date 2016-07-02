@@ -121,7 +121,7 @@ ProcRRGetProviders(ClientPtr client)
         };
         extraLen = rep.length << 2;
         if (extraLen) {
-            extra = xalloc(extraLen);
+            extra = malloc(extraLen);
             if (!extra)
                 return BadAlloc;
         } else
@@ -152,7 +152,7 @@ ProcRRGetProviders(ClientPtr client)
     if (extraLen)
     {
         WriteToClient(client, extraLen, (char *) extra);
-        xfree(extra);
+        free(extra);
     }
     return Success;
 }
@@ -217,7 +217,7 @@ ProcRRGetProviderInfo(ClientPtr client)
 
     extraLen = rep.length << 2;
     if (extraLen) {
-        extra = xalloc(extraLen);
+        extra = malloc(extraLen);
         if (!extra)
             return BadAlloc;
     }
@@ -295,7 +295,7 @@ ProcRRGetProviderInfo(ClientPtr client)
     if (extraLen)
     {
         WriteToClient(client, extraLen, (char *) extra);
-        xfree(extra);
+        free(extra);
     }
     return Success;
 }
@@ -380,7 +380,7 @@ RRProviderCreate(ScreenPtr pScreen, const char *name,
 
     pScrPriv = rrGetScrPriv(pScreen);
 
-    provider = xcalloc(1, sizeof(RRProviderRec) + nameLength + 1);
+    provider = calloc(1, sizeof(RRProviderRec) + nameLength + 1);
     if (!provider)
         return NULL;
 
@@ -427,7 +427,7 @@ RRProviderDestroyResource(void *value, XID pid)
             (*pScrPriv->rrProviderDestroy) (pScreen, provider);
         pScrPriv->provider = NULL;
     }
-    xfree(provider);
+    free(provider);
     return 1;
 }
 

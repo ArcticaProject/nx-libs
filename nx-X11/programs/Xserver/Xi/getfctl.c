@@ -165,7 +165,7 @@ ProcXGetFeedbackControl(client)
 	return Success;
 	}
 
-    buf = (char *) xalloc (total_length);
+    buf = (char *) malloc (total_length);
     if (!buf)
 	{
 	SendErrorToClient(client, IReqCode, X_GetFeedbackControl, 0, 
@@ -190,7 +190,7 @@ ProcXGetFeedbackControl(client)
     rep.length = (total_length+3) >> 2;
     WriteReplyToClient(client, sizeof(xGetFeedbackControlReply), &rep);
     WriteToClient(client, total_length, savbuf);
-    xfree (savbuf);
+    free (savbuf);
     return Success;
     }
 

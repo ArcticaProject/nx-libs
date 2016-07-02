@@ -1002,7 +1002,7 @@ RecordInstallHooks(pRCAP, oneclient)
 		    RecordClientPrivatePtr pClientPriv;
 		    /* no Record proc vector; allocate one */
 		    pClientPriv = (RecordClientPrivatePtr)
-				xalloc(sizeof(RecordClientPrivateRec));
+				malloc(sizeof(RecordClientPrivateRec));
 		    if (!pClientPriv)
 			return BadAlloc;
 		    /* copy old proc vector to new */
@@ -1126,7 +1126,7 @@ RecordUninstallHooks(pRCAP, oneclient)
 		{ /* nobody needs it, so free it */
 		    pClient->requestVector = pClientPriv->originalVector;
 		    pClient->devPrivates[RecordClientPrivateIndex].ptr = NULL;
-		    xfree(pClientPriv);
+		    free(pClientPriv);
 		}
 	    } /* end if this RCAP specifies any requests */
 	} /* end if not future clients */
@@ -1197,8 +1197,8 @@ RecordDeleteClientFromRCAP(pRCAP, position)
 	}
 	/* free the RCAP */
 	if (pRCAP->clientIDsSeparatelyAllocated)
-	    xfree(pRCAP->pClientIDs);
-	xfree(pRCAP);
+	    free(pRCAP->pClientIDs);
+	free(pRCAP);
     }
 } /* RecordDeleteClientFromRCAP */
 
@@ -1228,7 +1228,7 @@ RecordAddClientToRCAP(pRCAP, clientspec)
     {
 	if (pRCAP->clientIDsSeparatelyAllocated)
 	{
-	    XID *pNewIDs = (XID *)xrealloc(pRCAP->pClientIDs,
+	    XID *pNewIDs = (XID *)realloc(pRCAP->pClientIDs,
 			(pRCAP->sizeClients + CLIENT_ARRAY_GROWTH_INCREMENT) *
 								sizeof(XID));
 	    if (!pNewIDs)
@@ -1238,7 +1238,7 @@ RecordAddClientToRCAP(pRCAP, clientspec)
 	}
 	else
 	{
-	    XID *pNewIDs = (XID *)xalloc((pRCAP->sizeClients +
+	    XID *pNewIDs = (XID *)malloc((pRCAP->sizeClients +
 				CLIENT_ARRAY_GROWTH_INCREMENT) * sizeof(XID));
 	    if (!pNewIDs)
 		return;
@@ -1345,7 +1345,7 @@ RecordSanityCheckClientSpecifiers(clientspecs, nspecs, errorspec)
  *	  - XRecordCurrentClients expanded to a list of all currently
  *	    connected clients - excludespec (if non-zero)
  *	The returned array may be the passed array modified in place, or
- *	it may be an Xalloc'ed array.  The caller should keep a pointer to the
+ *	it may be an malloc'ed array.  The caller should keep a pointer to the
  *	original array and free the returned array if it is different.
  *
  *	*pNumClientspecs is set to the number of elements in the returned
@@ -1380,7 +1380,7 @@ RecordCanonicalizeClientSpecifiers(pClientspecs, pNumClientspecs, excludespec)
 	    pClientspecs[i] == XRecordCurrentClients)
 	{ /* expand All/Current */
 	    int j, nc;
-	    XID *pCanon = (XID *)xalloc(sizeof(XID) * (currentMaxClients + 1));
+	    XID *pCanon = (XID *)malloc(sizeof(XID) * (currentMaxClients + 1));
 	    if (!pCanon) return NULL;
 	    for (nc = 0, j = 1; j < currentMaxClients; j++)
 	    {
@@ -1599,7 +1599,7 @@ RecordAllocIntervals(psi, nIntervals)
 {
     assert(!psi->intervals);
     psi->intervals = (RecordSetInterval *)
-			xalloc(nIntervals * sizeof(RecordSetInterval));
+			malloc(nIntervals * sizeof(RecordSetInterval));
     if (!psi->intervals)
 	return BadAlloc;
     bzero(psi->intervals, nIntervals * sizeof(RecordSetInterval));
@@ -1865,7 +1865,7 @@ RecordRegisterClients(pContext, client, stuff)
 
     /* allocate memory for the whole RCAP */
 
-    pRCAP = (RecordClientsAndProtocolPtr)xalloc(totRCAPsize);
+    pRCAP = (RecordClientsAndProtocolPtr)malloc(totRCAPsize);
     if (!pRCAP) 
     {
 	err = BadAlloc;
@@ -1979,11 +1979,11 @@ bailout:
     {
 	for (i = 0; i < maxSets; i++)
 	    if (si[i].intervals)
-		xfree(si[i].intervals);
+		free(si[i].intervals);
 	DEALLOCATE_LOCAL(si);
     }
     if (pCanonClients && pCanonClients != (XID *)&stuff[1])
-	xfree(pCanonClients);
+	free(pCanonClients);
     return err;
 } /* RecordRegisterClients */
 
@@ -2030,14 +2030,14 @@ ProcRecordCreateContext(client)
     REQUEST_AT_LEAST_SIZE(xRecordCreateContextReq);
     LEGAL_NEW_RESOURCE(stuff->context, client);
 
-    pContext = (RecordContextPtr)xalloc(sizeof(RecordContextRec));
+    pContext = (RecordContextPtr)malloc(sizeof(RecordContextRec));
     if (!pContext)
 	goto bailout;
 
     /* make sure there is room in ppAllContexts to store the new context */
 
     ppNewAllContexts = (RecordContextPtr *)
-	xrealloc(ppAllContexts, sizeof(RecordContextPtr) * (numContexts + 1));
+	realloc(ppAllContexts, sizeof(RecordContextPtr) * (numContexts + 1));
     if (!ppNewAllContexts)
 	goto bailout;
     ppAllContexts = ppNewAllContexts;
@@ -2068,7 +2068,7 @@ ProcRecordCreateContext(client)
     }
 bailout:
     if (pContext)
-	xfree(pContext);
+	free(pContext);
     return err;
 } /* ProcRecordCreateContext */
 
@@ -2119,7 +2119,7 @@ ProcRecordUnregisterClients(client)
 	RecordDeleteClientFromContext(pContext, pCanonClients[i]);
     }
     if (pCanonClients != (XID *)&stuff[1])
-	xfree(pCanonClients);
+	free(pCanonClients);
     return Success;
 } /* ProcRecordUnregisterClients */
 
@@ -2162,7 +2162,7 @@ RecordAllocRanges(pri, nRanges)
 #define SZINCR 8
 
     newsize = max(pri->size + SZINCR, nRanges);
-    pNewRange = (xRecordRange *)xrealloc(pri->pRanges,
+    pNewRange = (xRecordRange *)realloc(pri->pRanges,
 			 newsize * sizeof(xRecordRange));
     if (!pNewRange)
 	return BadAlloc;
@@ -2471,7 +2471,7 @@ ProcRecordGetContext(client)
 bailout:
     for (i = 0; i < nRCAPs; i++)
     {
-	if (pRangeInfo[i].pRanges) xfree(pRangeInfo[i].pRanges);
+	if (pRangeInfo[i].pRanges) free(pRangeInfo[i].pRanges);
     }
     DEALLOCATE_LOCAL(pRangeInfo);
     return err;
@@ -2646,7 +2646,7 @@ RecordDeleteContext(value, id)
 	}
     }
 
-    xfree(pContext);
+    free(pContext);
 
     /* remove context from AllContexts list */
 
@@ -2655,7 +2655,7 @@ RecordDeleteContext(value, id)
 	ppAllContexts[i] = ppAllContexts[numContexts - 1];
 	if (--numContexts == 0)
 	{
-	    xfree(ppAllContexts);
+	    free(ppAllContexts);
 	    ppAllContexts = NULL;
 	}
     }

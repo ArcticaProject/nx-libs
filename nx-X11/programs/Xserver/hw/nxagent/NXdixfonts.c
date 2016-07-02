@@ -227,7 +227,7 @@ doOpenFont(ClientPtr client, OFclosurePtr c)
 
 	if (err == FontNameAlias && alias) {
 	    newlen = strlen(alias);
-	    newname = (char *) xrealloc(c->fontname, newlen);
+	    newname = (char *) realloc(c->fontname, newlen);
 	    if (!newname) {
 		err = AllocError;
 		break;
@@ -326,9 +326,9 @@ bail:
     for (i = 0; i < c->num_fpes; i++) {
 	FreeFPE(c->fpe_list[i]);
     }
-    xfree(c->fpe_list);
-    xfree(c->fontname);
-    xfree(c);
+    free(c->fpe_list);
+    free(c->fontname);
+    free(c);
     return TRUE;
 }
 
@@ -441,8 +441,8 @@ doListFontsAndAliases(ClientPtr client, LFclosurePtr c)
 		    return TRUE;
 		}
 		if (err == FontNameAlias) {
-		    if (resolved) xfree(resolved);
-		    resolved = (char *) xalloc(resolvedlen + 1);
+		    if (resolved) free(resolved);
+		    resolved = (char *) malloc(resolvedlen + 1);
 		    if (resolved)
 			memmove(resolved, tmpname, resolvedlen + 1);
 		}
@@ -496,8 +496,8 @@ doListFontsAndAliases(ClientPtr client, LFclosurePtr c)
 		    c->saved = c->current;
 		    c->haveSaved = TRUE;
 		    if (c->savedName)
-			xfree(c->savedName);
-		    c->savedName = (char *)xalloc(namelen + 1);
+			free(c->savedName);
+		    c->savedName = (char *)malloc(namelen + 1);
 		    if (c->savedName)
 			memmove(c->savedName, name, namelen + 1);
 		    c->savedNameLen = namelen;
@@ -614,11 +614,11 @@ bail:
     }
     for (i = 0; i < c->num_fpes; i++)
 	FreeFPE(c->fpe_list[i]);
-    xfree(c->fpe_list);
-    if (c->savedName) xfree(c->savedName);
+    free(c->fpe_list);
+    if (c->savedName) free(c->savedName);
     FreeFontNames(names);
-    xfree(c);
-    if (resolved) xfree(resolved);
+    free(c);
+    if (resolved) free(resolved);
     return TRUE;
 }
 
@@ -638,19 +638,19 @@ ListFonts(ClientPtr client, unsigned char *pattern, unsigned length,
     if (length > XLFDMAXFONTNAMELEN)
 	return BadAlloc;
 
-    if (!(c = (LFclosurePtr) xalloc(sizeof *c)))
+    if (!(c = (LFclosurePtr) malloc(sizeof *c)))
 	return BadAlloc;
     c->fpe_list = (FontPathElementPtr *)
-	xalloc(sizeof(FontPathElementPtr) * num_fpes);
+	malloc(sizeof(FontPathElementPtr) * num_fpes);
     if (!c->fpe_list) {
-	xfree(c);
+	free(c);
 	return BadAlloc;
     }
     c->names = MakeFontNamesRecord(max_names < nxagentMaxFontNames ? max_names : nxagentMaxFontNames);
     if (!c->names)
     {
-	xfree(c->fpe_list);
-	xfree(c);
+	free(c->fpe_list);
+	free(c);
 	return BadAlloc;
     }
     memmove( c->current.pattern, pattern, length);
@@ -785,8 +785,8 @@ doListFontsWithInfo(ClientPtr client, LFWIclosurePtr c)
 		c->haveSaved = TRUE;
 		c->savedNumFonts = numFonts;
 		if (c->savedName)
-		  xfree(c->savedName);
-		c->savedName = (char *)xalloc(namelen + 1);
+		  free(c->savedName);
+		c->savedName = (char *)malloc(namelen + 1);
 		if (c->savedName)
 		  memmove(c->savedName, name, namelen + 1);
 		aliascount = 20;
@@ -846,7 +846,7 @@ doListFontsWithInfo(ClientPtr client, LFWIclosurePtr c)
 	    reply = c->reply;
 	    if (c->length < length)
  	    {
-		reply = (xListFontsWithInfoReply *) xrealloc(c->reply, length);
+		reply = (xListFontsWithInfoReply *) realloc(c->reply, length);
 		if (!reply)
  		{
 		    err = AllocError;
@@ -886,8 +886,8 @@ doListFontsWithInfo(ClientPtr client, LFWIclosurePtr c)
 	    (void) WriteToClient(client, namelen, name);
 	    if (pFontInfo == &fontInfo)
  	    {
-		xfree(fontInfo.props);
-		xfree(fontInfo.isStringProp);
+		free(fontInfo.props);
+		free(fontInfo.isStringProp);
 	    }
 	    --c->current.max_names;
 	}
@@ -910,10 +910,10 @@ bail:
     }
     for (i = 0; i < c->num_fpes; i++)
 	FreeFPE(c->fpe_list[i]);
-    xfree(c->reply);
-    xfree(c->fpe_list);
-    if (c->savedName) xfree(c->savedName);
-    xfree(c);
+    free(c->reply);
+    free(c->fpe_list);
+    if (c->savedName) free(c->savedName);
+    free(c);
     return TRUE;
 }
 
@@ -1085,8 +1085,8 @@ nxdoListFontsAndAliases(client, fss)
 		    return TRUE;
 		}
 		if (err == FontNameAlias) {
-		    if (resolved) xfree(resolved);
-		    resolved = (char *) xalloc(resolvedlen + 1);
+		    if (resolved) free(resolved);
+		    resolved = (char *) malloc(resolvedlen + 1);
 		    if (resolved)
                     {
                         memmove(resolved, tmpname, resolvedlen);
@@ -1154,8 +1154,8 @@ nxdoListFontsAndAliases(client, fss)
 		    c->saved = c->current;
 		    c->haveSaved = TRUE;
 		    if (c->savedName)
-			xfree(c->savedName);
-		    c->savedName = (char *)xalloc(namelen + 1);
+			free(c->savedName);
+		    c->savedName = (char *)malloc(namelen + 1);
 		    if (c->savedName)
                     {
                         memmove(c->savedName, name, namelen);
@@ -1249,12 +1249,12 @@ finish:
     }
     for (i = 0; i < c->num_fpes; i++)
 	FreeFPE(c->fpe_list[i]);
-    xfree(c->fpe_list);
-    if (c->savedName) xfree(c->savedName);
+    free(c->fpe_list);
+    if (c->savedName) free(c->savedName);
     FreeFontNames(c->names);
-    xfree(c);
-    xfree(fss);
-    if (resolved) xfree(resolved);
+    free(c);
+    free(fss);
+    if (resolved) free(resolved);
 
     return doOpenFont(client, oc);
 }
@@ -1275,11 +1275,11 @@ nxOpenFont(client, fid, flags, lenfname, pfontname)
 
 #ifdef FONTDEBUG
     char *f;
-    f = (char *)xalloc(lenfname + 1);
+    f = (char *)malloc(lenfname + 1);
     memmove(f, pfontname, lenfname);
     f[lenfname] = '\0';
     ErrorF("OpenFont: fontname is \"%s\"\n", f);
-    xfree(f);
+    free(f);
 #endif
     if (!lenfname || lenfname > XLFDMAXFONTNAMELEN)
 	return BadName;
@@ -1312,27 +1312,27 @@ nxOpenFont(client, fid, flags, lenfname, pfontname)
 	    return Success;
 	}
     }
-    if (!(fss = (nxFsPtr) xalloc(sizeof(nxFs))))
+    if (!(fss = (nxFsPtr) malloc(sizeof(nxFs))))
         return BadAlloc;
 
-    if (!(c = (LFclosurePtr) xalloc(sizeof *c)))
+    if (!(c = (LFclosurePtr) malloc(sizeof *c)))
     {
-	xfree(fss);
+	free(fss);
 	return BadAlloc;
     }
         c->fpe_list = (FontPathElementPtr *)
-	xalloc(sizeof(FontPathElementPtr) * num_fpes);
+	malloc(sizeof(FontPathElementPtr) * num_fpes);
     if (!c->fpe_list) {
-	xfree(c);
-	xfree(fss);
+	free(c);
+	free(fss);
 	return BadAlloc;
     }
     c->names = MakeFontNamesRecord(100);
     if (!c->names)
     {
-	xfree(c->fpe_list);
-	xfree(c);
-	xfree(fss);
+	free(c->fpe_list);
+	free(c);
+	free(fss);
 	return BadAlloc;
     }
     memmove( c->current.pattern, pfontname, lenfname);
@@ -1351,26 +1351,26 @@ nxOpenFont(client, fid, flags, lenfname, pfontname)
     c->slept = FALSE;
     c->savedName = 0;
 
-    oc = (OFclosurePtr) xalloc(sizeof(OFclosureRec));
+    oc = (OFclosurePtr) malloc(sizeof(OFclosureRec));
     if (!oc)
     {
       for (i = 0; i < c->num_fpes; i++)
         FreeFPE(c->fpe_list[i]);
-      xfree(c->fpe_list);
-      xfree(c);
-      xfree(fss);
+      free(c->fpe_list);
+      free(c);
+      free(fss);
       return BadAlloc;
     }
-    oc->fontname = (char *) xalloc(256);/* I don't want to deal with future reallocs errors */
+    oc->fontname = (char *) malloc(256);/* I don't want to deal with future reallocs errors */
     oc->origFontName = pfontname;
     oc->origFontNameLen = lenfname;
     if (!oc->fontname) {
       for (i = 0; i < c->num_fpes; i++)
         FreeFPE(c->fpe_list[i]);
-      xfree(c->fpe_list);
-      xfree(c);
-      xfree(oc);
-      xfree(fss);
+      free(c->fpe_list);
+      free(c);
+      free(oc);
+      free(fss);
       return BadAlloc;
     }
     /*
@@ -1378,15 +1378,15 @@ nxOpenFont(client, fid, flags, lenfname, pfontname)
      * while we're blocking, the request still appears atomic
      */
     oc->fpe_list = (FontPathElementPtr *)
-	xalloc(sizeof(FontPathElementPtr) * num_fpes);
+	malloc(sizeof(FontPathElementPtr) * num_fpes);
     if (!oc->fpe_list) {
-	xfree(oc->fontname);
-	xfree(oc);
+	free(oc->fontname);
+	free(oc);
       for (i = 0; i < c->num_fpes; i++)
          FreeFPE(c->fpe_list[i]);
-       xfree(c->fpe_list);
-       xfree(c);
-       xfree(fss);
+       free(c->fpe_list);
+       free(c);
+       free(fss);
        return BadAlloc;
     }
     memmove(oc->fontname, pfontname, lenfname);

@@ -75,7 +75,7 @@ XkbSetExtension(DeviceIntPtr device, ProcessInputProc proc)
     if (!AllocateDevicePrivate(device, xkbDevicePrivateIndex))
 	return;
 
-    xkbPrivPtr = (xkbDeviceInfoPtr) xalloc(sizeof(xkbDeviceInfoRec));
+    xkbPrivPtr = (xkbDeviceInfoPtr) malloc(sizeof(xkbDeviceInfoRec));
     if (!xkbPrivPtr)
 	return;
     xkbPrivPtr->unwrapProc = NULL;

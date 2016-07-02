@@ -796,7 +796,7 @@ ShapeFreeClient (data, id)
 	    	*pHead = pShapeEvent->next;
 	}
     }
-    xfree ((void *) pShapeEvent);
+    free ((void *) pShapeEvent);
     return 1;
 }
 
@@ -812,9 +812,9 @@ ShapeFreeEvents (data, id)
     for (pCur = *pHead; pCur; pCur = pNext) {
 	pNext = pCur->next;
 	FreeResource (pCur->clientResource, ClientType);
-	xfree ((void *) pCur);
+	free ((void *) pCur);
     }
-    xfree ((void *) pHead);
+    free ((void *) pHead);
     return 1;
 }
 
@@ -849,7 +849,7 @@ ProcShapeSelectInput (client)
 
 	/* build the entry */
     	pNewShapeEvent = (ShapeEventPtr)
-			    xalloc (sizeof (ShapeEventRec));
+			    malloc (sizeof (ShapeEventRec));
     	if (!pNewShapeEvent)
 	    return BadAlloc;
     	pNewShapeEvent->next = 0;
@@ -871,7 +871,7 @@ ProcShapeSelectInput (client)
      	 */
     	if (!pHead)
     	{
-	    pHead = (ShapeEventPtr *) xalloc (sizeof (ShapeEventPtr));
+	    pHead = (ShapeEventPtr *) malloc (sizeof (ShapeEventPtr));
 	    if (!pHead ||
 		!AddResource (pWin->drawable.id, EventType, (void *)pHead))
 	    {
@@ -898,7 +898,7 @@ ProcShapeSelectInput (client)
 		    pNewShapeEvent->next = pShapeEvent->next;
 		else
 		    *pHead = pShapeEvent->next;
-		xfree (pShapeEvent);
+		free (pShapeEvent);
 	    }
 	}
 	break;

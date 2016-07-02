@@ -84,7 +84,7 @@ CreateGrab(
 {
     GrabPtr grab;
 
-    grab = (GrabPtr)xalloc(sizeof(GrabRec));
+    grab = (GrabPtr)malloc(sizeof(GrabRec));
     if (!grab)
 	return (GrabPtr)NULL;
     grab->resource = FakeClientID(client);
@@ -116,15 +116,15 @@ static void
 FreeGrab(GrabPtr pGrab)
 {
     if (pGrab->modifiersDetail.pMask != NULL)
-	xfree(pGrab->modifiersDetail.pMask);
+	free(pGrab->modifiersDetail.pMask);
 
     if (pGrab->detail.pMask != NULL)
-	xfree(pGrab->detail.pMask);
+	free(pGrab->detail.pMask);
 
     if (pGrab->cursor)
 	FreeCursor(pGrab->cursor, (Cursor)0);
 
-    xfree(pGrab);
+    free(pGrab);
 }
 
 int
@@ -158,7 +158,7 @@ DeleteDetailFromMask(Mask *pDetailMask, unsigned short detail)
     register Mask *mask;
     register int i;
 
-    mask = (Mask *)xalloc(sizeof(Mask) * MasksPerDetailMask);
+    mask = (Mask *)malloc(sizeof(Mask) * MasksPerDetailMask);
     if (mask)
     {
 	if (pDetailMask)
@@ -410,7 +410,7 @@ DeletePassiveGrabFromList(GrabPtr pMinuendGrab)
 	for (i = 0; i < nadds; i++)
 	    FreeResource(adds[i]->resource, RT_NONE);
 	for (i = 0; i < nups; i++)
-	    xfree(details[i]);
+	    free(details[i]);
     }
     else
     {
@@ -424,7 +424,7 @@ DeletePassiveGrabFromList(GrabPtr pMinuendGrab)
 	}
 	for (i = 0; i < nups; i++)
 	{
-	    xfree(*updates[i]);
+	    free(*updates[i]);
 	    *updates[i] = details[i];
 	}
     }

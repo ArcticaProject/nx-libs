@@ -57,12 +57,12 @@ MitAddCookie (
 {
     struct auth	*new;
 
-    new = (struct auth *) xalloc (sizeof (struct auth));
+    new = (struct auth *) malloc (sizeof (struct auth));
     if (!new)
 	return 0;
-    new->data = (char *) xalloc ((unsigned) data_length);
+    new->data = (char *) malloc ((unsigned) data_length);
     if (!new->data) {
-	xfree(new);
+	free(new);
 	return 0;
     }
     new->next = mit_auth;
@@ -98,8 +98,8 @@ MitResetCookie (void)
 
     for (auth = mit_auth; auth; auth=next) {
 	next = auth->next;
-	xfree (auth->data);
-	xfree (auth);
+	free (auth->data);
+	free (auth);
     }
     mit_auth = 0;
     return 0;
@@ -154,8 +154,8 @@ MitRemoveCookie (
 		prev->next = auth->next;
 	    else
 		mit_auth = auth->next;
-	    xfree (auth->data);
-	    xfree (auth);
+	    free (auth->data);
+	    free (auth);
 	    return 1;
 	}
     }

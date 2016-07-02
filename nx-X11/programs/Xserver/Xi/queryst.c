@@ -135,7 +135,7 @@ ProcXQueryDeviceState(client)
 			(v->numAxes * sizeof(int)));
 	num_classes++;
 	}
-    buf = (char *) xalloc (total_length);
+    buf = (char *) malloc (total_length);
     if (!buf)
 	{
 	SendErrorToClient(client, IReqCode, X_QueryDeviceState, 0, 
@@ -190,7 +190,7 @@ ProcXQueryDeviceState(client)
     WriteReplyToClient (client, sizeof(xQueryDeviceStateReply), &rep);
     if (total_length > 0)
 	WriteToClient (client, total_length, savbuf);
-    xfree (savbuf);
+    free (savbuf);
     return Success;
     }
 

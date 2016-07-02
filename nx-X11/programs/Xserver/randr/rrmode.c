@@ -85,7 +85,7 @@ RRModeCreate(xRRModeInfo * modeInfo, const char *name, ScreenPtr userScreen)
     if (!RRInit())
         return NULL;
 
-    mode = xalloc(sizeof(RRModeRec) + modeInfo->nameLength + 1);
+    mode = malloc(sizeof(RRModeRec) + modeInfo->nameLength + 1);
     if (!mode)
         return NULL;
     mode->refcnt = 1;
@@ -99,20 +99,20 @@ RRModeCreate(xRRModeInfo * modeInfo, const char *name, ScreenPtr userScreen)
 #ifndef NXAGENT_SERVER
         newModes = reallocarray(modes, num_modes + 1, sizeof(RRModePtr));
 #else                           /* !defined(NXAGENT_SERVER) */
-        newModes = xrealloc(modes, (num_modes + 1) * sizeof(RRModePtr));
+        newModes = realloc(modes, (num_modes + 1) * sizeof(RRModePtr));
 #endif                          /* !defined(NXAGENT_SERVER) */
 
     else
-        newModes = xalloc(sizeof(RRModePtr));
+        newModes = malloc(sizeof(RRModePtr));
 
     if (!newModes) {
-        xfree(mode);
+        free(mode);
         return NULL;
     }
 
     mode->mode.id = FakeClientID(0);
     if (!AddResource(mode->mode.id, RRModeType, (void *) mode)) {
-        xfree(newModes);
+        free(newModes);
         return NULL;
     }
     modes = newModes;
@@ -211,7 +211,7 @@ RRModesForScreen(ScreenPtr pScreen, int *num_ret)
 #ifndef NXAGENT_SERVER
     screen_modes = xallocarray((num_modes ? num_modes : 1), sizeof(RRModePtr));
 #else                           /* !defined(NXAGENT_SERVER) */
-    screen_modes = xalloc((num_modes ? num_modes : 1) * sizeof(RRModePtr));
+    screen_modes = malloc((num_modes ? num_modes : 1) * sizeof(RRModePtr));
 #endif                          /* !defined(NXAGENT_SERVER) */
     if (!screen_modes)
         return NULL;
@@ -285,14 +285,14 @@ RRModeDestroy(RRModePtr mode)
                     (num_modes - m - 1) * sizeof(RRModePtr));
             num_modes--;
             if (!num_modes) {
-                xfree(modes);
+                free(modes);
                 modes = NULL;
             }
             break;
         }
     }
 
-    xfree(mode);
+    free(mode);
 }
 
 static int

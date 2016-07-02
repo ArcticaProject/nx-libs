@@ -101,7 +101,7 @@ ServerBitsFromGlyph(FontPtr pfont, unsigned ch, register CursorMetricPtr cm, uns
 
     pScreen = screenInfo.screens[0];
     nby = BitmapBytePad(cm->width) * (long)cm->height;
-    pbits = (char *)xalloc(nby);
+    pbits = (char *)malloc(nby);
     if (!pbits)
 	return BadAlloc;
     /* zeroing the (pad) bits seems to help some ddx cursor handling */
@@ -115,7 +115,7 @@ ServerBitsFromGlyph(FontPtr pfont, unsigned ch, register CursorMetricPtr cm, uns
 	    fbDestroyPixmap(ppix);
 	if (pGC)
 	    FreeScratchGC(pGC);
-	xfree(pbits);
+	free(pbits);
 	return BadAlloc;
     }
 

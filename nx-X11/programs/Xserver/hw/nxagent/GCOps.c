@@ -754,7 +754,7 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
 
     length = nxagentImageLength(width, height, format, leftPad, depth);
 
-    if ((data = xalloc(length)) == NULL)
+    if ((data = malloc(length)) == NULL)
     {
       #ifdef WARNING
       fprintf(stderr, "nxagentCopyArea: WARNING! Failed to allocate memory for the operation.\n");
@@ -779,7 +779,7 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
                    srcx, srcy, width, height);
     #endif
 
-    xfree(data);
+    free(data);
 
     /*
      * If the source is a shared memory pixmap, the
@@ -974,7 +974,7 @@ RegionPtr nxagentCopyPlane(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
 
     length = nxagentImageLength(width, height, format, leftPad, depth);
 
-    if ((data = xalloc(length)) == NULL)
+    if ((data = malloc(length)) == NULL)
     {
       #ifdef DEBUG
       fprintf(stderr, "nxagentCopyPlane: WARNING! Failed to allocate memory for the operation.\n");
@@ -999,7 +999,7 @@ RegionPtr nxagentCopyPlane(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
                    srcx, srcy, width, height);
     #endif
 
-    xfree(data);
+    free(data);
 
     /*
      * If the source is a shared memory pixmap, the
@@ -1467,7 +1467,7 @@ void nxagentFillPolygon(DrawablePtr pDrawable, GCPtr pGC, int shape,
 
     mode = CoordModePrevious;
 
-    newPoints = xalloc(nPoints * sizeof(xPoint));
+    newPoints = malloc(nPoints * sizeof(xPoint));
 
     /*
      * The first point is always relative
@@ -1539,7 +1539,7 @@ void nxagentFillPolygon(DrawablePtr pDrawable, GCPtr pGC, int shape,
 
   if (newPoints != NULL)
   {
-    xfree(newPoints);
+    free(newPoints);
   }
 }
 

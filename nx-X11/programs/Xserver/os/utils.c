@@ -261,12 +261,6 @@ int SyncOn  = 0;
 extern int SelectWaitTime;
 #endif
 
-#ifdef DEBUG
-#ifndef SPECIAL_MALLOC
-#define MEMBUG
-#endif
-#endif
-
 #if defined(SVR4) || defined(__linux__) || defined(CSRG_BASED)
 #define HAS_SAVED_IDS_AND_SETEUID
 #endif
@@ -1186,7 +1180,7 @@ InsertFileIntoCommandLine(
 
     fstat(fileno(f), &st);
 
-    buf = (char *) xalloc((unsigned) st.st_size + 1);
+    buf = (char *) malloc((unsigned) st.st_size + 1);
     if (!buf)
 	FatalError("Out of Memory\n");
 
@@ -1226,12 +1220,12 @@ InsertFileIntoCommandLine(
 	}
     }
 
-    buf = (char *) xrealloc(buf, q - buf);
+    buf = (char *) realloc(buf, q - buf);
     if (!buf)
 	FatalError("Out of memory reallocing option buf\n");
 
     *resargc = prefix_argc + insert_argc + suffix_argc;
-    *resargv = (char **) xalloc((*resargc + 1) * sizeof(char *));
+    *resargv = (char **) malloc((*resargc + 1) * sizeof(char *));
     if (!*resargv)
 	FatalError("Out of Memory\n");
 
@@ -1316,7 +1310,7 @@ set_font_authorizations(char **authorizations, int *authlen, void * client)
 #endif
 
 	len = strlen(hnameptr) + 1;
-	result = xalloc(len + sizeof(AUTHORIZATION_NAME) + 4);
+	result = malloc(len + sizeof(AUTHORIZATION_NAME) + 4);
 
 	p = result;
         *p++ = sizeof(AUTHORIZATION_NAME) >> 8;
@@ -1342,80 +1336,20 @@ set_font_authorizations(char **authorizations, int *authlen, void * client)
 #endif /* TCPCONN */
 }
 
-/* XALLOC -- X's internal memory allocator.  Why does it return unsigned
- * long * instead of the more common char *?  Well, if you read K&R you'll
- * see they say that alloc must return a pointer "suitable for conversion"
- * to whatever type you really want.  In a full-blown generic allocator
- * there's no way to solve the alignment problems without potentially
- * wasting lots of space.  But we have a more limited problem. We know
- * we're only ever returning pointers to structures which will have to
- * be long word aligned.  So we are making a stronger guarantee.  It might
- * have made sense to make Xalloc return char * to conform with people's
- * expectations of malloc, but this makes lint happier.
- */
-
-#ifndef INTERNAL_MALLOC
-
-void * 
-Xalloc(unsigned long amount)
-{
-    register void *  ptr;
-	
-    if ((long)amount <= 0) {
-	return (unsigned long *)NULL;
-    }
-    /* aligned extra on long word boundary */
-    amount = (amount + (sizeof(long) - 1)) & ~(sizeof(long) - 1);
-#ifdef MEMBUG
-    if (!Must_have_memory && Memory_fail &&
-	((random() % MEM_FAIL_SCALE) < Memory_fail))
-	return (unsigned long *)NULL;
-#endif
-    if ((ptr = (void *)malloc(amount))) {
-	return (unsigned long *)ptr;
-    }
-    if (Must_have_memory)
-	FatalError("Out of memory");
-    return (unsigned long *)NULL;
-}
-
 /*****************
  * XNFalloc 
- * "no failure" realloc, alternate interface to Xalloc w/o Must_have_memory
+ * "no failure" alloc
  *****************/
 
 void *
 XNFalloc(unsigned long amount)
 {
-    register void * ptr;
-
-    if ((long)amount <= 0)
-    {
-        return (unsigned long *)NULL;
-    }
-    /* aligned extra on long word boundary */
-    amount = (amount + (sizeof(long) - 1)) & ~(sizeof(long) - 1);
-    ptr = (void *)malloc(amount);
+    void *ptr = malloc(amount);
     if (!ptr)
     {
         FatalError("Out of memory");
     }
-    return ((unsigned long *)ptr);
-}
-
-/*****************
- * Xcalloc
- *****************/
-
-void *
-Xcalloc(unsigned long amount)
-{
-    unsigned long   *ret;
-
-    ret = Xalloc (amount);
-    if (ret)
-	bzero ((char *) ret, (int) amount);
-    return ret;
+    return ptr;
 }
 
 /*****************
@@ -1425,72 +1359,24 @@ Xcalloc(unsigned long amount)
 void *
 XNFcalloc(unsigned long amount)
 {
-    unsigned long   *ret;
-
-    ret = Xalloc (amount);
-    if (ret)
-	bzero ((char *) ret, (int) amount);
-    else if ((long)amount > 0)
-        FatalError("Out of memory");
+    void *ret = calloc(1, amount);
+    if (!ret)
+	FatalError("XNFcalloc: Out of memory");
     return ret;
 }
 
 /*****************
- * Xrealloc
- *****************/
-
-void *
-Xrealloc(void * ptr, unsigned long amount)
-{
-#ifdef MEMBUG
-    if (!Must_have_memory && Memory_fail &&
-	((random() % MEM_FAIL_SCALE) < Memory_fail))
-	return (unsigned long *)NULL;
-#endif
-    if ((long)amount <= 0)
-    {
-	if (ptr && !amount)
-	    free(ptr);
-	return (unsigned long *)NULL;
-    }
-    amount = (amount + (sizeof(long) - 1)) & ~(sizeof(long) - 1);
-    if (ptr)
-        ptr = (void *)realloc((char *)ptr, amount);
-    else
-	ptr = (void *)malloc(amount);
-    if (ptr)
-        return (unsigned long *)ptr;
-    if (Must_have_memory)
-	FatalError("Out of memory");
-    return (unsigned long *)NULL;
-}
-                    
-/*****************
  * XNFrealloc 
- * "no failure" realloc, alternate interface to Xrealloc w/o Must_have_memory
+ * "no failure" realloc
  *****************/
 
 void *
 XNFrealloc(void * ptr, unsigned long amount)
 {
-    if (( ptr = (void *)Xrealloc( ptr, amount ) ) == NULL)
-    {
-	if ((long)amount > 0)
-            FatalError( "Out of memory" );
-    }
-    return ((unsigned long *)ptr);
-}
-
-/*****************
- *  Xfree
- *    calls free 
- *****************/    
-
-void
-Xfree(void * ptr)
-{
-    if (ptr)
-	free((char *)ptr); 
+    void *ret = realloc(ptr, amount);
+    if (!ret)
+       FatalError("XNFrealloc: Out of memory");
+    return ret;
 }
 
 void
@@ -1506,35 +1392,28 @@ OsInitAllocator (void)
 	been_here = 1;
 #endif
 }
-#endif /* !INTERNAL_MALLOC */
-
 
 char *
 Xstrdup(const char *s)
 {
-    char *sd;
-
     if (s == NULL)
 	return NULL;
-
-    sd = (char *)Xalloc(strlen(s) + 1);
-    if (sd != NULL)
-	strcpy(sd, s);
-    return sd;
+    return strdup(s);
 }
 
 
 char *
 XNFstrdup(const char *s)
 {
-    char *sd;
+    char *ret;
 
     if (s == NULL)
 	return NULL;
 
-    sd = (char *)XNFalloc(strlen(s) + 1);
-    strcpy(sd, s);
-    return sd;
+    ret = strdup(s);
+    if (!ret)
+       FatalError("XNFstrdup: Out of memory");
+    return ret;
 }
 
 #ifdef SMART_SCHEDULE
@@ -1808,11 +1687,11 @@ Popen(char *command, char *type)
     if ((*type != 'r' && *type != 'w') || type[1])
 	return NULL;
 
-    if ((cur = (struct pid *)xalloc(sizeof(struct pid))) == NULL)
+    if ((cur = (struct pid *)malloc(sizeof(struct pid))) == NULL)
 	return NULL;
 
     if (pipe(pdes) < 0) {
-	xfree(cur);
+	free(cur);
 	return NULL;
     }
 
@@ -1826,7 +1705,7 @@ Popen(char *command, char *type)
     case -1: 	/* error */
 	close(pdes[0]);
 	close(pdes[1]);
-	xfree(cur);
+	free(cur);
 #ifdef NX_TRANS_EXIT
 	if (OsVendorEndRedirectErrorFProc != NULL) {
 	    OsVendorEndRedirectErrorFProc();
@@ -1946,11 +1825,11 @@ Fopen(char *file, char *type)
     if ((*type != 'r' && *type != 'w') || type[1])
 	return NULL;
 
-    if ((cur = (struct pid *)xalloc(sizeof(struct pid))) == NULL)
+    if ((cur = (struct pid *)malloc(sizeof(struct pid))) == NULL)
 	return NULL;
 
     if (pipe(pdes) < 0) {
-	xfree(cur);
+	free(cur);
 	return NULL;
     }
 
@@ -1958,7 +1837,7 @@ Fopen(char *file, char *type)
     case -1: 	/* error */
 	close(pdes[0]);
 	close(pdes[1]);
-	xfree(cur);
+	free(cur);
 	return NULL;
     case 0:	/* child */
 	if (setgid(getgid()) == -1)
@@ -2052,7 +1931,7 @@ Pclose(void * iop)
 	pidlist = cur->next;
     else
 	last->next = cur->next;
-    xfree(cur);
+    free(cur);
 
     /* allow EINTR again */
     OsReleaseSignals ();

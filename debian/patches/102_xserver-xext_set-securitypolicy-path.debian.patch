@@ -8,7 +8,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 Last-Update: 2012-01-12
 --- a/nx-X11/programs/Xserver/Xext/security.c
 +++ b/nx-X11/programs/Xserver/Xext/security.c
-@@ -78,7 +78,7 @@
+@@ -79,7 +79,7 @@
  
  #ifdef NXAGENT_SERVER
  

@@ -413,7 +413,7 @@ ProcRenderQueryPictFormats (ClientPtr client)
 	       ndepth * sizeof (xPictDepth) +
 	       nvisual * sizeof (xPictVisual) +
 	       numSubpixel * sizeof (CARD32));
-    reply = (xRenderQueryPictFormatsReply *) xalloc (rlength);
+    reply = (xRenderQueryPictFormatsReply *) malloc (rlength);
     if (!reply)
 	return BadAlloc;
     memset(reply, 0, rlength);
@@ -552,7 +552,7 @@ ProcRenderQueryPictFormats (ClientPtr client)
 	swapl (&reply->numSubpixel, n);
     }
     WriteToClient(client, rlength, (char *) reply);
-    xfree (reply);
+    free (reply);
     return client->noClientException;
 }
 #endif /* NXAGENT_SERVER */
@@ -588,7 +588,7 @@ ProcRenderQueryPictIndexValues (ClientPtr client)
     num = pFormat->index.nvalues;
     rlength = (sizeof (xRenderQueryPictIndexValuesReply) + 
 	       num * sizeof(xIndexValue));
-    reply = (xRenderQueryPictIndexValuesReply *) xalloc (rlength);
+    reply = (xRenderQueryPictIndexValuesReply *) malloc (rlength);
     if (!reply)
 	return BadAlloc;
 
@@ -617,7 +617,7 @@ ProcRenderQueryPictIndexValues (ClientPtr client)
     }
 
     WriteToClient(client, rlength, (char *) reply);
-    xfree(reply);
+    free(reply);
     return (client->noClientException);
 }
 
@@ -1139,7 +1139,7 @@ ProcRenderAddGlyphs (ClientPtr client)
 	glyphsBase = glyphsLocal;
     else
     {
-	glyphsBase = (GlyphNewPtr) Xalloc (nglyphs * sizeof (GlyphNewRec));
+	glyphsBase = (GlyphNewPtr) malloc (nglyphs * sizeof (GlyphNewRec));
 	if (!glyphsBase)
 	    return BadAlloc;
     }
@@ -1196,16 +1196,16 @@ ProcRenderAddGlyphs (ClientPtr client)
     }
 
     if (glyphsBase != glyphsLocal)
-	Xfree (glyphsBase);
+	free (glyphsBase);
     return client->noClientException;
 bail:
     while (glyphs != glyphsBase)
     {
 	--glyphs;
-	xfree (glyphs->glyph);
+	free (glyphs->glyph);
     }
     if (glyphsBase != glyphsLocal)
-	Xfree (glyphsBase);
+	free (glyphsBase);
     return err;
 }
 
@@ -1533,23 +1533,23 @@ ProcRenderCreateCursor (ClientPtr client)
     if ( stuff->x > width 
       || stuff->y > height )
 	return (BadMatch);
-    argbbits = xalloc (width * height * sizeof (CARD32));
+    argbbits = malloc (width * height * sizeof (CARD32));
     if (!argbbits)
 	return (BadAlloc);
     
     stride = BitmapBytePad(width);
     nbytes_mono = stride*height;
-    srcbits = (unsigned char *)xalloc(nbytes_mono);
+    srcbits = (unsigned char *)malloc(nbytes_mono);
     if (!srcbits)
     {
-	xfree (argbbits);
+	free (argbbits);
 	return (BadAlloc);
     }
-    mskbits = (unsigned char *)xalloc(nbytes_mono);
+    mskbits = (unsigned char *)malloc(nbytes_mono);
     if (!mskbits)
     {
-	xfree(argbbits);
-	xfree(srcbits);
+	free(argbbits);
+	free(srcbits);
 	return (BadAlloc);
     }
     bzero ((char *) mskbits, nbytes_mono);
@@ -1571,26 +1571,26 @@ ProcRenderCreateCursor (ClientPtr client)
 	pFormat = PictureMatchFormat (pScreen, 32, PICT_a8r8g8b8);
 	if (!pFormat)
 	{
-	    xfree (argbbits);
-	    xfree (srcbits);
-	    xfree (mskbits);
+	    free (argbbits);
+	    free (srcbits);
+	    free (mskbits);
 	    return (BadImplementation);
 	}
 	pPixmap = (*pScreen->CreatePixmap) (pScreen, width, height, 32);
 	if (!pPixmap)
 	{
-	    xfree (argbbits);
-	    xfree (srcbits);
-	    xfree (mskbits);
+	    free (argbbits);
+	    free (srcbits);
+	    free (mskbits);
 	    return (BadAlloc);
 	}
 	pPicture = CreatePicture (0, &pPixmap->drawable, pFormat, 0, 0, 
 				  client, &error);
 	if (!pPicture)
 	{
-	    xfree (argbbits);
-	    xfree (srcbits);
-	    xfree (mskbits);
+	    free (argbbits);
+	    free (srcbits);
+	    free (mskbits);
 	    return error;
 	}
 	(*pScreen->DestroyPixmap) (pPixmap);
@@ -1674,7 +1674,7 @@ ProcRenderCreateCursor (ClientPtr client)
     }
     else
     {
-	xfree (argbbits);
+	free (argbbits);
 	argbbits = 0;
     }
     
@@ -1748,7 +1748,7 @@ ProcRenderQueryFilters (ClientPtr client)
     }
     len = ((nnames + 1) >> 1) + ((nbytesName + 3) >> 2);
     total_bytes = sizeof (xRenderQueryFiltersReply) + (len << 2);
-    reply = (xRenderQueryFiltersReply *) xalloc (total_bytes);
+    reply = (xRenderQueryFiltersReply *) malloc (total_bytes);
     if (!reply)
 	return BadAlloc;
     aliases = (INT16 *) (reply + 1);
@@ -1819,7 +1819,7 @@ ProcRenderQueryFilters (ClientPtr client)
 	swapl(&reply->numFilters, n);
     }
     WriteToClient(client, total_bytes, (char *) reply);
-    xfree (reply);
+    free (reply);
     
     return(client->noClientException);
 }
@@ -1862,7 +1862,7 @@ ProcRenderCreateAnimCursor (ClientPtr client)
     if (client->req_len & 1)
 	return BadLength;
     ncursor = (client->req_len - (SIZEOF(xRenderCreateAnimCursorReq) >> 2)) >> 1;
-    cursors = xalloc (ncursor * (sizeof (CursorPtr) + sizeof (CARD32)));
+    cursors = malloc (ncursor * (sizeof (CursorPtr) + sizeof (CARD32)));
     if (!cursors)
 	return BadAlloc;
     deltas = (CARD32 *) (cursors + ncursor);
@@ -1873,7 +1873,7 @@ ProcRenderCreateAnimCursor (ClientPtr client)
 						       RT_CURSOR, SecurityReadAccess);
 	if (!cursors[i])
 	{
-	    xfree (cursors);
+	    free (cursors);
 	    client->errorValue = elt->cursor;
 	    return BadCursor;
 	}
@@ -1881,7 +1881,7 @@ ProcRenderCreateAnimCursor (ClientPtr client)
 	elt++;
     }
     ret = AnimCursorCreate (cursors, deltas, ncursor, &pCursor);
-    xfree (cursors);
+    free (cursors);
     if (ret != Success)
 	return ret;
     
@@ -2681,7 +2681,7 @@ PanoramiXRenderCreatePicture (ClientPtr client)
     if(!(refDraw = (PanoramiXRes *)SecurityLookupIDByClass(
 		client, stuff->drawable, XRC_DRAWABLE, SecurityWriteAccess)))
 	return BadDrawable;
-    if(!(newPict = (PanoramiXRes *) xalloc(sizeof(PanoramiXRes))))
+    if(!(newPict = (PanoramiXRes *) malloc(sizeof(PanoramiXRes))))
 	return BadAlloc;
     newPict->type = XRT_PICTURE;
     newPict->info[0].id = stuff->pid;
@@ -2707,7 +2707,7 @@ PanoramiXRenderCreatePicture (ClientPtr client)
     if (result == Success)
 	AddResource(newPict->info[0].id, XRT_PICTURE, newPict);
     else 
-	xfree(newPict);
+	free(newPict);
 
     return (result);
 }

@@ -156,7 +156,7 @@ XFixesSelectSelectionInput (ClientPtr	pClient,
     }
     if (!e)
     {
-	e = (SelectionEventPtr) xalloc (sizeof (SelectionEventRec));
+	e = (SelectionEventPtr) malloc (sizeof (SelectionEventRec));
 	if (!e)
 	    return BadAlloc;
 
@@ -174,7 +174,7 @@ XFixesSelectSelectionInput (ClientPtr	pClient,
 	    if (!AddResource (pWindow->drawable.id, SelectionWindowType,
 			      (void *) pWindow))
 	    {
-		xfree (e);
+		free (e);
 		return BadAlloc;
 	    }
 
@@ -250,7 +250,7 @@ SelectionFreeClient (void * data, XID id)
 	if (e == old)
 	{
 	    *prev = e->next;
-	    xfree (e);
+	    free (e);
 	    CheckSelectionCallback ();
 	    break;
 	}

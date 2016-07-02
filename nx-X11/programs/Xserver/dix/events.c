@@ -1027,7 +1027,7 @@ EnqueueEvent(xEvent *xE, DeviceIntPtr device, int count)
 	    return;
 	}
     }
-    qe = (QdEventPtr)xalloc(sizeof(QdEventRec) + (count * sizeof(xEvent)));
+    qe = (QdEventPtr)malloc(sizeof(QdEventRec) + (count * sizeof(xEvent)));
     if (!qe)
 	return;
     qe->next = (QdEventPtr)NULL;
@@ -1076,7 +1076,7 @@ PlayReleasedEvents(void)
 #endif
 	    (*qe->device->public.processInputProc)(qe->event, qe->device,
 						   qe->evcount);
-	    xfree(qe);
+	    free(qe);
 	    for (dev = inputInfo.devices; dev && dev->sync.frozen; dev = dev->next)
 		;
 	    if (!dev)
@@ -1952,7 +1952,7 @@ XYToWindow(int x, int y)
 	    {
 		spriteTraceSize += 10;
 		Must_have_memory = TRUE; /* XXX */
-		spriteTrace = (WindowPtr *)xrealloc(
+		spriteTrace = (WindowPtr *)realloc(
 		    spriteTrace, spriteTraceSize*sizeof(WindowPtr));
 		Must_have_memory = FALSE; /* XXX */
 	    }
@@ -2467,7 +2467,7 @@ CheckPassiveGrabsOnWindow(
 		if (device->sync.evcount < count)
 		{
 		    Must_have_memory = TRUE; /* XXX */
-		    device->sync.event = (xEvent *)xrealloc(device->sync.event,
+		    device->sync.event = (xEvent *)realloc(device->sync.event,
 							    count*
 							    sizeof(xEvent));
 		    Must_have_memory = FALSE; /* XXX */
@@ -2639,7 +2639,7 @@ DeliverGrabbedEvent(register xEvent *xE, register DeviceIntPtr thisDev,
 	    if (thisDev->sync.evcount < count)
 	    {
 		Must_have_memory = TRUE; /* XXX */
-		thisDev->sync.event = (xEvent *)xrealloc(thisDev->sync.event,
+		thisDev->sync.event = (xEvent *)realloc(thisDev->sync.event,
 							 count*sizeof(xEvent));
 		Must_have_memory = FALSE; /* XXX */
 	    }
@@ -2959,7 +2959,7 @@ OtherClientGone(void * value, XID id)
 		if (!(pWin->optional->otherClients = other->next))
 		    CheckWindowOptionalNeed (pWin);
 	    }
-	    xfree(other);
+	    free(other);
 	    RecalculateDeliverableEvents(pWin);
 	    return(Success);
 	}
@@ -3030,7 +3030,7 @@ EventSelectForWindow(register WindowPtr pWin, register ClientPtr client, Mask ma
 	check = 0;
 	if (!pWin->optional && !MakeWindowOptional (pWin))
 	    return BadAlloc;
-	others = (OtherClients *) xalloc(sizeof(OtherClients));
+	others = (OtherClients *) malloc(sizeof(OtherClients));
 	if (!others)
 	    return BadAlloc;
 	others->mask = mask;
@@ -3530,7 +3530,7 @@ SetInputFocus(
         {
 	    focus->traceSize = depth+1;
 	    Must_have_memory = TRUE; /* XXX */
-	    focus->trace = (WindowPtr *)xrealloc(focus->trace,
+	    focus->trace = (WindowPtr *)realloc(focus->trace,
 						 focus->traceSize *
 						 sizeof(WindowPtr));
 	    Must_have_memory = FALSE; /* XXX */
@@ -3929,7 +3929,7 @@ InitEvents()
     if (spriteTraceSize == 0)
     {
 	spriteTraceSize = 32;
-	spriteTrace = (WindowPtr *)xalloc(32*sizeof(WindowPtr));
+	spriteTrace = (WindowPtr *)malloc(32*sizeof(WindowPtr));
 	if (!spriteTrace)
 	    FatalError("failed to allocate spriteTrace");
     }
@@ -3948,7 +3948,7 @@ InitEvents()
     while (syncEvents.pending)
     {
 	QdEventPtr next = syncEvents.pending->next;
-	xfree(syncEvents.pending);
+	free(syncEvents.pending);
 	syncEvents.pending = next;
     }
     syncEvents.pendtail = &syncEvents.pending;
@@ -3968,7 +3968,7 @@ InitEvents()
 void
 CloseDownEvents(void)
 {
-  xfree(spriteTrace);
+  free(spriteTrace);
   spriteTrace = NULL;
   spriteTraceSize = 0;
 }

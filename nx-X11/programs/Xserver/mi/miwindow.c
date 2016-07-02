@@ -471,7 +471,7 @@ miHandleValidateExposures(pWin)
 	    RegionUninit(&val->after.borderExposed);
 	    (*WindowExposures)(pChild, &val->after.exposed, NullRegion);
 	    RegionUninit(&val->after.exposed);
-	    xfree(val);
+	    free(val);
 	    pChild->valdata = (ValidatePtr)NULL;
 	    if (pChild->firstChild)
 	    {

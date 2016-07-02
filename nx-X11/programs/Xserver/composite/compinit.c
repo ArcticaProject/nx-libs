@@ -76,7 +76,7 @@ compCloseScreen (int index, ScreenPtr pScreen)
     pScreen->GetSpans = cs->GetSpans;
     pScreen->SourceValidate = cs->SourceValidate;
 
-    xfree (cs);
+    free (cs);
     FAKE_DIX_SET_SCREEN_PRIVATE(pScreen, NULL);
     ret = (*pScreen->CloseScreen) (index, pScreen);
     return ret;
@@ -230,7 +230,7 @@ compRegisterAlternateVisuals(CompScreenPtr cs, VisualID * vids, int nVisuals)
     p = reallocarray(cs->alternateVisuals,
                      cs->numAlternateVisuals + nVisuals, sizeof(VisualID));
 #else
-    p = xrealloc(cs->alternateVisuals,
+    p = realloc(cs->alternateVisuals,
 		 sizeof(VisualID) * (cs->numAlternateVisuals + nVisuals));
 #endif
     if (p == NULL)
@@ -265,7 +265,7 @@ CompositeRegisterImplicitRedirectionException(ScreenPtr pScreen,
     p = reallocarray(cs->implicitRedirectExceptions,
                      cs->numImplicitRedirectExceptions + 1, sizeof(p[0]));
 #else
-    p = xrealloc(cs->implicitRedirectExceptions,
+    p = realloc(cs->implicitRedirectExceptions,
                  sizeof(p[0]) * (cs->numImplicitRedirectExceptions + 1));
 #endif
     if (p == NULL)
@@ -405,7 +405,7 @@ compScreenInit (ScreenPtr pScreen)
 
     if (GetCompScreen (pScreen))
 	return TRUE;
-    cs = (CompScreenPtr) xalloc (sizeof (CompScreenRec));
+    cs = (CompScreenPtr) malloc (sizeof (CompScreenRec));
     if (!cs)
 	return FALSE;
 
@@ -422,7 +422,7 @@ compScreenInit (ScreenPtr pScreen)
 
     if (!compAddAlternateVisuals (pScreen, cs))
     {
-	xfree (cs);
+	free (cs);
 	return FALSE;
     }
 

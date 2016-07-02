@@ -214,7 +214,7 @@ void
 InitSelections()
 {
     if (CurrentSelections)
-	xfree(CurrentSelections);
+	free(CurrentSelections);
     CurrentSelections = (Selection *)NULL;
     NumCurrentSelections = 0;
 }
@@ -1021,9 +1021,9 @@ ProcSetSelectionOwner(register ClientPtr client)
 	    Selection *newsels;
 
 	    if (i == 0)
-		newsels = (Selection *)xalloc(sizeof(Selection));
+		newsels = (Selection *)malloc(sizeof(Selection));
 	    else
-		newsels = (Selection *)xrealloc(CurrentSelections,
+		newsels = (Selection *)realloc(CurrentSelections,
 			    (NumCurrentSelections + 1) * sizeof(Selection));
 	    if (!newsels)
 		return BadAlloc;
@@ -2188,7 +2188,7 @@ DoGetImage(register ClientPtr client, int format, Drawable drawable,
     xgi.length = length;
 
     if (im_return) {
-	pBuf = (char *)xcalloc(1, sz_xGetImageReply + length);
+	pBuf = (char *)calloc(1, sz_xGetImageReply + length);
 	if (!pBuf)
 	    return (BadAlloc);
 	if (widthBytesLine == 0)
@@ -3084,13 +3084,13 @@ ProcCreateCursor (register ClientPtr client)
 	return (BadMatch);
 
     n = BitmapBytePad(width)*height;
-    srcbits = (unsigned char *)xalloc(n);
+    srcbits = (unsigned char *)malloc(n);
     if (!srcbits)
 	return (BadAlloc);
-    mskbits = (unsigned char *)xalloc(n);
+    mskbits = (unsigned char *)malloc(n);
     if (!mskbits)
     {
-	xfree(srcbits);
+	free(srcbits);
 	return (BadAlloc);
     }
 
@@ -3332,7 +3332,7 @@ ProcListHosts(register ClientPtr client)
 	client->pSwapReplyFunc = (ReplySwapPtr) SLHostsExtend;
 	WriteSwappedDataToClient(client, len, pdata);
     }
-    xfree(pdata);
+    free(pdata);
     return (client->noClientException);
 }
 
@@ -3600,7 +3600,7 @@ CloseDownClient(register ClientPtr client)
 #ifdef SMART_SCHEDULE
 	SmartLastClient = NullClient;
 #endif
-	xfree(client);
+	free(client);
 
 	while (!clients[currentMaxClients-1])
 	    currentMaxClients--;
@@ -3716,7 +3716,7 @@ InitClientPrivates(ClientPtr client)
 	ppriv = (DevUnion *)(client + 1);
     else
     {
-	ppriv = (DevUnion *)xalloc(totalClientSize - sizeof(ClientRec));
+	ppriv = (DevUnion *)malloc(totalClientSize - sizeof(ClientRec));
 	if (!ppriv)
 	    return 0;
     }
@@ -3753,14 +3753,14 @@ ClientPtr NextAvailableClient(void * ospriv)
     i = nextFreeClientID;
     if (i == MAXCLIENTS)
 	return (ClientPtr)NULL;
-    clients[i] = client = (ClientPtr)xalloc(totalClientSize);
+    clients[i] = client = (ClientPtr)malloc(totalClientSize);
     if (!client)
 	return (ClientPtr)NULL;
     InitClient(client, i, ospriv);
     InitClientPrivates(client);
     if (!InitClientResources(client))
     {
-	xfree(client);
+	free(client);
 	return (ClientPtr)NULL;
     }
     data.reqType = 1;
@@ -3768,7 +3768,7 @@ ClientPtr NextAvailableClient(void * ospriv)
     if (!InsertFakeRequest(client, (char *)&data, sz_xReq))
     {
 	FreeClientResources(client);
-	xfree(client);
+	free(client);
 	return (ClientPtr)NULL;
     }
     if (i == currentMaxClients)

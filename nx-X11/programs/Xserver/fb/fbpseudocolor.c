@@ -271,13 +271,13 @@ xxCreateScreenResources(ScreenPtr pScreen)
     if (pScrPriv->addr)
 	pBits = pScrPriv->addr;
     else
-	pBits = xalloc(pScreen->width * pScreen->height
+	pBits = malloc(pScreen->width * pScreen->height
 		       * (BitsPerPixel(depth) >> 3));
     if (!pBits) return FALSE;
     
     pPixmap = (*pScreen->CreatePixmap)(pScreen, 0, 0, depth);
     if (!pPixmap) {
-	xfree(pBits);
+	free(pBits);
 	return FALSE;
     }
     if (!(*pScreen->ModifyPixmapHeader)(pPixmap, pScreen->width,
@@ -285,7 +285,7 @@ xxCreateScreenResources(ScreenPtr pScreen)
 					BitsPerPixel(depth),
 					PixmapBytePad(pScreen->width, depth),
 					pBits)) {
-	xfree(pBits);
+	free(pBits);
 	return FALSE;
     }
     if (pScreen->rootDepth == pScrPriv->myDepth) {
@@ -295,7 +295,7 @@ xxCreateScreenResources(ScreenPtr pScreen)
 					    PixmapBytePad(pScreen->width,
 							  pScrPriv->depth),
 					    0)) {
-	    xfree(pBits);
+	    free(pBits);
 	    return FALSE;
 	}
     }
@@ -328,9 +328,9 @@ xxCloseScreen (int iScreen, ScreenPtr pScreen)
     unwrap (pScrPriv,pScreen, CloseScreen);
     ret = pScreen->CloseScreen(iScreen,pScreen);
 
-    xfree(pScrPriv->pBits);
-    xfree(pScrPriv->InstalledCmaps);
-    xfree(pScrPriv);
+    free(pScrPriv->pBits);
+    free(pScrPriv->InstalledCmaps);
+    free(pScrPriv);
     
     return TRUE;
 }
@@ -370,11 +370,11 @@ xxInitColormapPrivate(ColormapPtr pmap)
     
     if (xxMyVisual(pmap->pScreen,pmap->pVisual->vid)) {
 	DBG("CreateColormap\n");
-	pCmapPriv = (xxCmapPrivPtr) xalloc (sizeof (xxCmapPrivRec));
+	pCmapPriv = (xxCmapPrivPtr) malloc (sizeof (xxCmapPrivRec));
 	if (!pCmapPriv)
 	    return FALSE;
 	pmap->devPrivates[xxColormapPrivateIndex].ptr = (void *) pCmapPriv;
-	cmap = xalloc(sizeof (CARD32) * (1 << pScrPriv->myDepth));
+	cmap = malloc(sizeof (CARD32) * (1 << pScrPriv->myDepth));
 	if (!cmap)
 	return FALSE;
 
@@ -456,8 +456,8 @@ xxDestroyColormap(ColormapPtr pmap)
 	    tmpCmapPriv = tmpCmapPriv->next;
 	}
 	
-	xfree(pCmapPriv->cmap);
-	xfree(pCmapPriv);
+	free(pCmapPriv->cmap);
+	free(pCmapPriv);
     }
 
     unwrap(pScrPriv,pmap->pScreen, DestroyColormap);
@@ -1109,7 +1109,7 @@ xxSetup(ScreenPtr pScreen, int myDepth, int baseDepth, char* addr, xxSyncFunc sy
     if (!AllocateGCPrivate (pScreen, xxGCPrivateIndex, sizeof (xxGCPrivRec)))
 	return FALSE;
 
-    pScrPriv = (xxScrPrivPtr) xalloc (sizeof (xxScrPrivRec));
+    pScrPriv = (xxScrPrivPtr) malloc (sizeof (xxScrPrivRec));
     if (!pScrPriv)
 	return FALSE;
     
@@ -1150,7 +1150,7 @@ xxSetup(ScreenPtr pScreen, int myDepth, int baseDepth, char* addr, xxSyncFunc sy
     pScrPriv->sync = sync;
     
     pScreen->maxInstalledCmaps += MAX_NUM_XX_INSTALLED_CMAPS;
-    pScrPriv->InstalledCmaps = xcalloc(MAX_NUM_XX_INSTALLED_CMAPS,
+    pScrPriv->InstalledCmaps = calloc(MAX_NUM_XX_INSTALLED_CMAPS,
 				       sizeof(ColormapPtr));
     if (!pScrPriv->InstalledCmaps)
 	return FALSE;

@@ -71,7 +71,7 @@ miCreateGCOps(prototype)
     GCOpsPtr        ret;
 
      /* XXX */ Must_have_memory = TRUE;
-    ret = (GCOpsPtr) xalloc(sizeof(GCOps));
+    ret = (GCOpsPtr) malloc(sizeof(GCOps));
      /* XXX */ Must_have_memory = FALSE;
     if (!ret)
 	return 0;
@@ -85,7 +85,7 @@ miDestroyGCOps(ops)
     GCOpsPtr        ops;
 {
     if (ops->devPrivate.val)
-	xfree(ops);
+	free(ops);
 }
 
 
@@ -136,7 +136,7 @@ miChangeClip(pGC, type, pvalue, nrects)
 	pGC->clientClip = (void *) RegionFromRects(nrects,
 						      (xRectangle *) pvalue,
 								    type);
-	xfree(pvalue);
+	free(pvalue);
     }
     pGC->clientClipType = (type != CT_NONE && pGC->clientClip) ? CT_REGION : CT_NONE;
     pGC->stateChanges |= GCClipMask;

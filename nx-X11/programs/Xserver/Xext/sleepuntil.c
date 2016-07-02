@@ -98,7 +98,7 @@ ClientSleepUntil (client, revive, notifyFunc, closure)
 	SertafiedGeneration = serverGeneration;
 	BlockHandlerRegistered = FALSE;
     }
-    pRequest = (SertafiedPtr) xalloc (sizeof (SertafiedRec));
+    pRequest = (SertafiedPtr) malloc (sizeof (SertafiedRec));
     if (!pRequest)
 	return FALSE;
     pRequest->pClient = client;
@@ -111,7 +111,7 @@ ClientSleepUntil (client, revive, notifyFunc, closure)
 					     SertafiedWakeupHandler,
 					     (void *) 0))
 	{
-	    xfree (pRequest);
+	    free (pRequest);
 	    return FALSE;
 	}
 	BlockHandlerRegistered = TRUE;
@@ -169,7 +169,7 @@ SertafiedDelete (value, id)
 	}
     if (pRequest->notifyFunc)
 	(*pRequest->notifyFunc) (pRequest->pClient, pRequest->closure);
-    xfree (pRequest);
+    free (pRequest);
     return TRUE;
 }
 

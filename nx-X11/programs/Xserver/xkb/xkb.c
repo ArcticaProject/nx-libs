@@ -4823,16 +4823,16 @@ char *		wire;
 	    return status;
 	status = _GetCountedString(&wire, client, &val);
 	if (status != Success) {
-            xfree(name);
+            free(name);
             return status;
         }
 	if (XkbAddGeomProperty(geom,name,val)==NULL) {
-            xfree(name);
-            xfree(val);
+            free(name);
+            free(val);
 	    return BadAlloc;
         }
-        xfree(name);
-        xfree(val);
+        free(name);
+        free(val);
     }
 
     if (req->nColors<2) {
@@ -4860,10 +4860,10 @@ char *		wire;
 	if (status != Success)
 	    return status;
         if (!XkbAddGeomColor(geom,name,geom->num_colors)) {
-            xfree(name);
+            free(name);
 	    return BadAlloc;
         }
-        xfree(name);
+        free(name);
     }
     if (req->nColors!=geom->num_colors) {
 	client->errorValue= _XkbErrCode3(0x05,req->nColors,geom->num_colors);

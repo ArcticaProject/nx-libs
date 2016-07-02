@@ -222,8 +222,8 @@ ReadRequestFromClient(ClientPtr client)
 	    register ConnectionInputPtr aci = AvailableInput->input;
 	    if (aci->size > BUFWATERMARK)
 	    {
-		xfree(aci->buffer);
-		xfree(aci);
+		free(aci->buffer);
+		free(aci);
 	    }
 	    else
 	    {
@@ -321,7 +321,7 @@ ReadRequestFromClient(ClientPtr client)
 		/* make buffer bigger to accomodate request */
 		char *ibuf;
 
-		ibuf = (char *)xrealloc(oci->buffer, needed);
+		ibuf = (char *)realloc(oci->buffer, needed);
 		if (!ibuf)
 		{
 		    YieldControlDeath();
@@ -371,7 +371,7 @@ ReadRequestFromClient(ClientPtr client)
 	{
 	    char *ibuf;
 
-	    ibuf = (char *)xrealloc(oci->buffer, BUFSIZE);
+	    ibuf = (char *)realloc(oci->buffer, BUFSIZE);
 	    if (ibuf)
 	    {
 		oci->size = BUFSIZE;
@@ -504,8 +504,8 @@ InsertFakeRequest(ClientPtr client, char *data, int count)
 	    ConnectionInputPtr aci = AvailableInput->input;
 	    if (aci->size > BUFWATERMARK)
 	    {
-		xfree(aci->buffer);
-		xfree(aci);
+		free(aci->buffer);
+		free(aci);
 	    }
 	    else
 	    {
@@ -531,7 +531,7 @@ InsertFakeRequest(ClientPtr client, char *data, int count)
     {
 	char *ibuf;
 
-	ibuf = (char *)xrealloc(oci->buffer, gotnow + count);
+	ibuf = (char *)realloc(oci->buffer, gotnow + count);
 	if (!ibuf)
 	    return(FALSE);
 	oci->size = gotnow + count;
@@ -1097,7 +1097,7 @@ FlushClient(ClientPtr who, OsCommPtr oc, char *extraBuf, int extraCount)
 	    {
 		unsigned char *obuf;
 
-		obuf = (unsigned char *)xrealloc(oco->buf,
+		obuf = (unsigned char *)realloc(oco->buf,
 						 notWritten + BUFSIZE);
 		if (!obuf)
 		{
@@ -1154,8 +1154,8 @@ FlushClient(ClientPtr who, OsCommPtr oc, char *extraBuf, int extraCount)
     }
     if (oco->size > BUFWATERMARK)
     {
-	xfree(oco->buf);
-	xfree(oco);
+	free(oco->buf);
+	free(oco);
     }
     else
     {
@@ -1171,13 +1171,13 @@ AllocateInputBuffer(void)
 {
     ConnectionInputPtr oci;
 
-    oci = (ConnectionInputPtr)xalloc(sizeof(ConnectionInput));
+    oci = (ConnectionInputPtr)malloc(sizeof(ConnectionInput));
     if (!oci)
 	return (ConnectionInputPtr)NULL;
-    oci->buffer = (char *)xalloc(BUFSIZE);
+    oci->buffer = (char *)malloc(BUFSIZE);
     if (!oci->buffer)
     {
-	xfree(oci);
+	free(oci);
 	return (ConnectionInputPtr)NULL;
     }
     oci->size = BUFSIZE;
@@ -1192,13 +1192,13 @@ AllocateOutputBuffer(void)
 {
     ConnectionOutputPtr oco;
 
-    oco = (ConnectionOutputPtr)xalloc(sizeof(ConnectionOutput));
+    oco = (ConnectionOutputPtr)malloc(sizeof(ConnectionOutput));
     if (!oco)
 	return (ConnectionOutputPtr)NULL;
-    oco->buf = (unsigned char *) xalloc(BUFSIZE);
+    oco->buf = (unsigned char *) malloc(BUFSIZE);
     if (!oco->buf)
     {
-	xfree(oco);
+	free(oco);
 	return (ConnectionOutputPtr)NULL;
     }
     oco->size = BUFSIZE;
@@ -1218,8 +1218,8 @@ FreeOsBuffers(OsCommPtr oc)
     {
 	if (FreeInputs)
 	{
-	    xfree(oci->buffer);
-	    xfree(oci);
+	    free(oci->buffer);
+	    free(oci);
 	}
 	else
 	{
@@ -1234,8 +1234,8 @@ FreeOsBuffers(OsCommPtr oc)
     {
 	if (FreeOutputs)
 	{
-	    xfree(oco->buf);
-	    xfree(oco);
+	    free(oco->buf);
+	    free(oco);
 	}
 	else
 	{
@@ -1255,13 +1255,13 @@ ResetOsBuffers(void)
     while ((oci = FreeInputs))
     {
 	FreeInputs = oci->next;
-	xfree(oci->buffer);
-	xfree(oci);
+	free(oci->buffer);
+	free(oci);
     }
     while ((oco = FreeOutputs))
     {
 	FreeOutputs = oco->next;
-	xfree(oco->buf);
-	xfree(oco);
+	free(oco->buf);
+	free(oco);
     }
 }

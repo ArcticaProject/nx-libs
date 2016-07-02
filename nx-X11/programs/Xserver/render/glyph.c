@@ -117,12 +117,12 @@ _GlyphSetSetNewPrivate (GlyphSetPtr glyphSet, int n, void * ptr)
     if (n > glyphSet->maxPrivate) {
 	if (glyphSet->devPrivates &&
 	    glyphSet->devPrivates != (void *)(&glyphSet[1])) {
-	    new = (void **) xrealloc (glyphSet->devPrivates,
+	    new = (void **) realloc (glyphSet->devPrivates,
 					(n + 1) * sizeof (void *));
 	    if (!new)
 		return FALSE;
 	} else {
-	    new = (void **) xalloc ((n + 1) * sizeof (void *));
+	    new = (void **) malloc ((n + 1) * sizeof (void *));
 	    if (!new)
 		return FALSE;
 	    if (glyphSet->devPrivates)
@@ -264,7 +264,7 @@ FreeGlyph (GlyphPtr glyph, int format)
 	    gr->signature = 0;
 	    globalGlyphs[format].tableEntries--;
 	}
-	xfree (glyph);
+	free (glyph);
     }
 }
 
@@ -281,7 +281,7 @@ AddGlyph (GlyphSetPtr glyphSet, GlyphPtr glyph, Glyph id)
     gr = FindGlyphRef (&globalGlyphs[glyphSet->fdepth], hash, TRUE, glyph);
     if (gr->glyph && gr->glyph != DeletedGlyph)
     {
-	xfree (glyph);
+	free (glyph);
 	glyph = gr->glyph;
     }
     else
@@ -346,7 +346,7 @@ AllocateGlyph (xGlyphInfo *gi, int fdepth)
     if (gi->height && padded_width > (UINT32_MAX - sizeof(GlyphRec))/gi->height)
 	return 0;
     size = gi->height * padded_width;
-    glyph = (GlyphPtr) xalloc (size + sizeof (GlyphRec));
+    glyph = (GlyphPtr) malloc (size + sizeof (GlyphRec));
     if (!glyph)
 	return 0;
     glyph->refcnt = 0;
@@ -358,7 +358,7 @@ AllocateGlyph (xGlyphInfo *gi, int fdepth)
 Bool
 AllocateGlyphHash (GlyphHashPtr hash, GlyphHashSetPtr hashSet)
 {
-    hash->table = (GlyphRefPtr) xalloc (hashSet->size * sizeof (GlyphRefRec));
+    hash->table = (GlyphRefPtr) malloc (hashSet->size * sizeof (GlyphRefRec));
     if (!hash->table)
 	return FALSE;
     memset (hash->table, 0, hashSet->size * sizeof (GlyphRefRec));
@@ -404,7 +404,7 @@ ResizeGlyphHash (GlyphHashPtr hash, CARD32 change, Bool global)
 		++newHash.tableEntries;
 	    }
 	}
-	xfree (hash->table);
+	free (hash->table);
     }
     *hash = newHash;
     if (global)
@@ -434,7 +434,7 @@ AllocateGlyphSet (int fdepth, PictFormatPtr format)
 
     size = (sizeof (GlyphSetRec) +
 	    (sizeof (void *) * _GlyphSetPrivateAllocateIndex));
-    glyphSet = xalloc (size);
+    glyphSet = malloc (size);
     if (!glyphSet)
 	return FALSE;
     bzero((char *)glyphSet, size);
@@ -444,7 +444,7 @@ AllocateGlyphSet (int fdepth, PictFormatPtr format)
 
     if (!AllocateGlyphHash (&glyphSet->hash, &glyphHashSets[0]))
     {
-	xfree (glyphSet);
+	free (glyphSet);
 	return FALSE;
     }
     glyphSet->refcnt = 1;
@@ -473,19 +473,19 @@ FreeGlyphSet (void	*value,
 	}
 	if (!globalGlyphs[glyphSet->fdepth].tableEntries)
 	{
-	    xfree (globalGlyphs[glyphSet->fdepth].table);
+	    free (globalGlyphs[glyphSet->fdepth].table);
 	    globalGlyphs[glyphSet->fdepth].table = 0;
 	    globalGlyphs[glyphSet->fdepth].hashSet = 0;
 	}
 	else
 	    ResizeGlyphHash (&globalGlyphs[glyphSet->fdepth], 0, TRUE);
-	xfree (table);
+	free (table);
 
 	if (glyphSet->devPrivates &&
 	    glyphSet->devPrivates != (void *)(&glyphSet[1]))
-	    xfree(glyphSet->devPrivates);
+	    free(glyphSet->devPrivates);
 
-	xfree (glyphSet);
+	free (glyphSet);
     }
     return Success;
 }

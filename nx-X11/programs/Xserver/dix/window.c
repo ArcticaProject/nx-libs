@@ -344,7 +344,7 @@ AllocateWindow(ScreenPtr pScreen)
     register unsigned size;
     register int i;
 
-    pWin = (WindowPtr)xalloc(pScreen->totalWindowSize);
+    pWin = (WindowPtr)malloc(pScreen->totalWindowSize);
     if (pWin)
     {
 	ppriv = (DevUnion *)(pWin + 1);
@@ -403,7 +403,7 @@ CreateRootWindow(ScreenPtr pScreen)
     pWin->parent = NullWindow;
     SetWindowToDefaults(pWin);
 
-    pWin->optional = (WindowOptRec *) xalloc (sizeof (WindowOptRec));
+    pWin->optional = (WindowOptRec *) malloc (sizeof (WindowOptRec));
     if (!pWin->optional)
         return FALSE;
 
@@ -682,7 +682,7 @@ CreateWindow(Window wid, register WindowPtr pParent, int x, int y, unsigned w,
     {
 	if (!MakeWindowOptional (pWin))
 	{
-	    xfree (pWin);
+	    free (pWin);
 	    *error = BadAlloc;
 	    return NullWindow;
 	}
@@ -864,7 +864,7 @@ CrushTree(WindowPtr pWin)
 		(*UnrealizeWindow)(pChild);
 	    }
 	    FreeWindowResources(pChild);
-	    xfree(pChild);
+	    free(pChild);
 	    if ( (pChild = pSib) )
 		break;
 	    pChild = pParent;
@@ -916,7 +916,7 @@ DeleteWindow(void * value, XID wid)
 	if (pWin->prevSib)
 	    pWin->prevSib->nextSib = pWin->nextSib;
     }
-    xfree(pWin);
+    free(pWin);
     return Success;
 }
 #endif /* NXAGENT_SERVER */
@@ -3147,7 +3147,7 @@ HandleSaveSet(register ClientPtr client)
 		MapWindow(pWin, client);
 	}
     }
-    xfree(client->saveSet);
+    free(client->saveSet);
     client->numSaved = 0;
     client->saveSet = (SaveSetElt *)NULL;
 }
@@ -3445,12 +3445,12 @@ TileScreenSaver(int i, int kind)
     cm.height=16;
     cm.xhot=8;
     cm.yhot=8;
-    srcbits = (unsigned char *)xalloc( BitmapBytePad(32)*16);
-    mskbits = (unsigned char *)xalloc( BitmapBytePad(32)*16);
+    srcbits = (unsigned char *)malloc( BitmapBytePad(32)*16);
+    mskbits = (unsigned char *)malloc( BitmapBytePad(32)*16);
     if (!srcbits || !mskbits)
     {
-	xfree(srcbits);
-	xfree(mskbits);
+	free(srcbits);
+	free(mskbits);
 	cursor = 0;
     }
     else
@@ -3471,8 +3471,8 @@ TileScreenSaver(int i, int kind)
 	}
 	else
 	{
-	    xfree (srcbits);
-	    xfree (mskbits);
+	    free (srcbits);
+	    free (mskbits);
 	}
     }
 
@@ -3595,7 +3595,7 @@ MakeWindowOptional (register WindowPtr pWin)
 
     if (pWin->optional)
 	return TRUE;
-    optional = (WindowOptPtr) xalloc (sizeof (WindowOptRec));
+    optional = (WindowOptPtr) malloc (sizeof (WindowOptRec));
     if (!optional)
 	return FALSE;
     optional->dontPropagateMask = DontPropagateMasks[pWin->dontPropagate];
@@ -3660,7 +3660,7 @@ DisposeWindowOptional (register WindowPtr pWin)
     }
     else
 	pWin->cursorIsNone = TRUE;
-    xfree (pWin->optional);
+    free (pWin->optional);
     pWin->optional = NULL;
 }
 

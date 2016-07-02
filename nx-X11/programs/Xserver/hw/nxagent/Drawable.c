@@ -223,7 +223,7 @@ int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask
 
     length = nxagentImageLength(width, height, format, leftPad, depth);
 
-    if ((data = xalloc(length)) == NULL)
+    if ((data = malloc(length)) == NULL)
     {
       #ifdef WARNING
       fprintf(stderr, "nxagentSynchronizeDrawableData: WARNING! Failed to allocate memory for the operation.\n");
@@ -359,7 +359,7 @@ nxagentSynchronizeDrawableDataFree:
 
   if (data != NULL)
   {
-    xfree(data);
+    free(data);
   }
 
 nxagentSynchronizeDrawableDataEnd:
@@ -860,7 +860,7 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
 
             if (cmpData != NULL)
             {
-              xfree(cmpData);
+              free(cmpData);
             }
           }
         }
@@ -1060,7 +1060,7 @@ nxagentSynchronizeRegionFree:
 
   if (data != NULL)
   {
-    xfree(data);
+    free(data);
   }
 
   RegionUninit(&exposeRegion);
@@ -2129,7 +2129,7 @@ unsigned long nxagentGetColor(DrawablePtr pDrawable, int xPixel, int yPixel)
   format = (depth == 1) ? XYPixmap : ZPixmap;
   length = nxagentImageLength(1, 1, format, leftPad, depth);
 
-  if ((data = xalloc(length)) == NULL)
+  if ((data = malloc(length)) == NULL)
   {
     #ifdef WARNING
     fprintf(stderr, "nxagentGetColor: WARNING! Failed to allocate memory for the operation.\n");
@@ -2161,7 +2161,7 @@ unsigned long nxagentGetColor(DrawablePtr pDrawable, int xPixel, int yPixel)
     fprintf(stderr, "nxagentGetColor: WARNING! Failed to create the XImage.\n");
     #endif
 
-    xfree(data);
+    free(data);
 
     return -1;
   }
@@ -2374,7 +2374,7 @@ void nxagentFillRemoteRegion(DrawablePtr pDrawable, RegionPtr pRegion)
   {
     pBox = RegionRects(pRegion);
 
-    pRects = xalloc(nrects * sizeof(XRectangle));
+    pRects = malloc(nrects * sizeof(XRectangle));
 
     for (i = 0; i < nrects; i++)
     {
@@ -2387,7 +2387,7 @@ void nxagentFillRemoteRegion(DrawablePtr pDrawable, RegionPtr pRegion)
     XFillRectangles(nxagentDisplay, nxagentDrawable(pDrawable), nxagentGC(pGC),
                         pRects, nrects);
 
-    xfree(pRects);
+    free(pRects);
   }
 }
 

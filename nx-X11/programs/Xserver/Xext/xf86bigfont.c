@@ -248,7 +248,7 @@ shmalloc(
     if (size < 3500)
 	return (ShmDescPtr) NULL;
 
-    pDesc = (ShmDescRec *) xalloc(sizeof(ShmDescRec));
+    pDesc = (ShmDescRec *) malloc(sizeof(ShmDescRec));
     if (!pDesc)
 	return (ShmDescPtr) NULL;
 
@@ -257,7 +257,7 @@ shmalloc(
     if (shmid == -1) {
 	ErrorF(XF86BIGFONTNAME " extension: shmget() failed, size = %u, errno = %d\n",
 	       size, errno);
-	xfree(pDesc);
+	free(pDesc);
 	return (ShmDescPtr) NULL;
     }
 
@@ -265,7 +265,7 @@ shmalloc(
 	ErrorF(XF86BIGFONTNAME " extension: shmat() failed, size = %u, errno = %d\n",
 	       size, errno);
 	shmctl(shmid, IPC_RMID, (void *) 0);
-	xfree(pDesc);
+	free(pDesc);
 	return (ShmDescPtr) NULL;
     }
 
@@ -294,7 +294,7 @@ shmdealloc(
 
     if (pDesc->next) pDesc->next->prev = pDesc->prev;
     *pDesc->prev = pDesc->next;
-    xfree(pDesc);
+    free(pDesc);
 }
 
 #endif

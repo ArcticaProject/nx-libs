@@ -129,7 +129,7 @@ ProcXListInputDevices (client)
 	SizeDeviceInfo (d, &namesize, &size);
 
     total_length = numdevs * sizeof (xDeviceInfo) + size + namesize;
-    devbuf = (char *) xcalloc (1, total_length);
+    devbuf = (char *) calloc (1, total_length);
     classbuf = devbuf + (numdevs * sizeof (xDeviceInfo));
     namebuf = classbuf + size;
     savbuf = devbuf;
@@ -144,7 +144,7 @@ ProcXListInputDevices (client)
     rep.length = (total_length + 3) >> 2;
     WriteReplyToClient (client, sizeof (xListInputDevicesReply), &rep);
     WriteToClient(client, total_length, savbuf);
-    xfree (savbuf);
+    free (savbuf);
     return Success;
     }
 

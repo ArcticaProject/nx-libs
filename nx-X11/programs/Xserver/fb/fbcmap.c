@@ -390,7 +390,7 @@ fbSetVisualTypesAndMasks (int depth, int visuals, int bitsPerRGB,
 {
     fbVisualsPtr   new, *prev, v;
 
-    new = (fbVisualsPtr) xalloc (sizeof *new);
+    new = (fbVisualsPtr) malloc (sizeof *new);
     if (!new)
 	return FALSE;
     if (!redMask || !greenMask || !blueMask)
@@ -487,12 +487,12 @@ fbInitVisuals (VisualPtr    *visualp,
 	ndepth++;
 	nvisual += visuals->count;
     }
-    depth = (DepthPtr) xalloc (ndepth * sizeof (DepthRec));
-    visual = (VisualPtr) xalloc (nvisual * sizeof (VisualRec));
+    depth = (DepthPtr) malloc (ndepth * sizeof (DepthRec));
+    visual = (VisualPtr) malloc (nvisual * sizeof (VisualRec));
     if (!depth || !visual)
     {
-	xfree (depth);
-	xfree (visual);
+	free (depth);
+	free (visual);
 	return FALSE;
     }
     *depthp = depth;
@@ -508,7 +508,7 @@ fbInitVisuals (VisualPtr    *visualp,
 	vid = NULL;
 	if (nvtype)
 	{
-	    vid = (VisualID *) xalloc (nvtype * sizeof (VisualID));
+	    vid = (VisualID *) malloc (nvtype * sizeof (VisualID));
 	    if (!vid)
 		return FALSE;
 	}
@@ -549,7 +549,7 @@ fbInitVisuals (VisualPtr    *visualp,
 	    vid++;
 	    visual++;
 	}
-	xfree (visuals);
+	free (visuals);
     }
     fbVisuals = NULL;
     visual = *visualp;

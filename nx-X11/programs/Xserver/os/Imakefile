@@ -91,11 +91,6 @@ COLOR_SRCS=oscolor.c
 COLOR_OBJS=oscolor.o
 #endif
 
-#if UseInternalMalloc
-MALLOC_SRCS=xalloc.c
-MALLOC_OBJS=xalloc.o
-#endif
-
 #if !HasSnprintf
 SNPRINTF_SRCS = snprintf.c
 SNPRINTF_OBJS = snprintf.o
@@ -119,19 +114,13 @@ BOOTSTRAPCFLAGS =
                   osinit.c utils.c log.c auth.c mitauth.c secauth.c \
                   $(XDMAUTHSRCS) $(RPCSRCS) xdmcp.c OtherSources \
                   transport.c $(SNPRINTF_SRCS) $(STRLCAT_SRCS) \
-		  $(MALLOC_SRCS) xprintf.c
+		  xprintf.c
            OBJS = WaitFor.o access.o connection.o io.o $(COLOR_OBJS) \
                   osinit.o utils.o log.o auth.o mitauth.o secauth.o \
                   $(XDMAUTHOBJS) $(RPCOBJS) xdmcp.o OtherObjects \
                   transport.o $(SNPRINTF_OBJS) $(STRLCAT_OBJS) \
-		  $(MALLOC_OBJS) xprintf.o
+		  xprintf.o
 
-#if SpecialMalloc
-     MEM_DEFINES = -DSPECIAL_MALLOC
-#endif /* SpecialMalloc */
-#if UseInternalMalloc
-     MEM_DEFINES = -DINTERNAL_MALLOC
-#endif
 #if UseMemLeak
      MEM_DEFINES = -DMEMBUG
 #endif
@@ -141,7 +130,6 @@ BOOTSTRAPCFLAGS =
     DBM_DEFINES = NdbmDefines
     ADM_DEFINES = -DADMPATH=\"$(ADMDIR)/X\%smsgs\"
   XDMCP_DEFINES = ServerXdmcpDefines
- XALLOC_DEFINES = XallocDefines
   ERROR_DEFINES = ServerErrorDefines
 #if HasPam && HasPamMisc
     PAM_DEFINES = -DUSE_PAM
@@ -189,7 +177,6 @@ SpecialCObjectRule(osinit,$(ICONFIGFILES),$(ADM_DEFINES))
 SpecialCObjectRule(WaitFor,$(ICONFIGFILES),$(EXT_DEFINES))
 SpecialCObjectRule(io,$(ICONFIGFILES),$(EXT_DEFINES))
 SpecialCObjectRule(utils,$(ICONFIGFILES),$(XDMCP_DEFINES) $(EXT_DEFINES) $(ERROR_DEFINES) $(PAM_DEFINES))
-SpecialCObjectRule(xalloc,$(ICONFIGFILES),$(XALLOC_DEFINES))
 #if defined(SparcArchitecture) && HasGcc && !HasGcc2
 oscolor.o: oscolor.c $(ICONFIGFILES)
 	$(RM) $@

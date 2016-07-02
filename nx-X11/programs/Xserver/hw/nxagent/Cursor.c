@@ -231,7 +231,7 @@ Bool nxagentRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor)
   bg_color.green = pCursor->backGreen;
   bg_color.blue = pCursor->backBlue;
 
-  pCursor->devPriv[pScreen->myNum] = (void *) xalloc(sizeof(nxagentPrivCursor));
+  pCursor->devPriv[pScreen->myNum] = (void *) malloc(sizeof(nxagentPrivCursor));
 
   nxagentCursorPriv(pCursor, pScreen)->cursor =
          XCreatePixmapCursor(nxagentDisplay, source, mask, &fg_color,
@@ -267,7 +267,7 @@ Bool nxagentUnrealizeCursor(ScreenPtr pScreen, CursorPtr pCursor)
     nxagentCursor(pCursor, pScreen) = None;
   }
 
-  xfree(nxagentCursorPriv(pCursor, pScreen));
+  free(nxagentCursorPriv(pCursor, pScreen));
 
   return True;
 }
@@ -366,7 +366,7 @@ void nxagentReconnectCursor(void * p0, XID x1, void * p2)
     }
     else
     {
-      xfree(nxagentCursorPriv(pCursor, nxagentDefaultScreen));
+      free(nxagentCursorPriv(pCursor, nxagentDefaultScreen));
       if (!nxagentRealizeCursor(nxagentDefaultScreen, pCursor))
       {
         fprintf(stderr, "nxagentReconnectCursor: nxagentRealizeCursor failed\n");

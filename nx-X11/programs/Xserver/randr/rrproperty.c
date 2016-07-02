@@ -63,10 +63,10 @@ RRDeliverPropertyEvent(ScreenPtr pScreen, xEvent *event)
 static void
 RRDestroyOutputProperty(RRPropertyPtr prop)
 {
-    xfree(prop->valid_values);
-    xfree(prop->current.data);
-    xfree(prop->pending.data);
-    xfree(prop);
+    free(prop->valid_values);
+    free(prop->current.data);
+    free(prop->pending.data);
+    free(prop);
 }
 
 static void
@@ -111,7 +111,7 @@ RRCreateOutputProperty(Atom property)
 {
     RRPropertyPtr prop;
 
-    prop = (RRPropertyPtr) xalloc(sizeof(RRPropertyRec));
+    prop = (RRPropertyPtr) malloc(sizeof(RRPropertyRec));
     if (!prop)
         return NULL;
     prop->next = NULL;
@@ -189,7 +189,7 @@ RRChangeOutputProperty(RROutputPtr output, Atom property, Atom type,
 #ifndef NXAGENT_SERVER
         new_value.data = xallocarray(total_len, size_in_bytes);
 #else                           /* !defined(NXAGENT_SERVER) */
-        new_value.data = xalloc(total_len * size_in_bytes);
+        new_value.data = malloc(total_len * size_in_bytes);
 #endif                          /* !defined(NXAGENT_SERVER) */
         if (!new_value.data && total_len && size_in_bytes) {
             if (add)
@@ -225,12 +225,12 @@ RRChangeOutputProperty(RROutputPtr output, Atom property, Atom type,
         if (pending && pScrPriv->rrOutputSetProperty &&
             !pScrPriv->rrOutputSetProperty(output->pScreen, output,
                                            prop->propertyName, &new_value)) {
-            xfree(new_value.data);
+            free(new_value.data);
             if (add)
                 RRDestroyOutputProperty(prop);
             return BadValue;
         }
-        xfree(prop_value->data);
+        free(prop_value->data);
         *prop_value = new_value;
     }
 
@@ -362,7 +362,7 @@ RRConfigureOutputProperty(RROutputPtr output, Atom property,
 #ifndef NXAGENT_SERVER
     new_values = xallocarray(num_values, sizeof(INT32));
 #else                           /* !defined(NXAGENT_SERVER) */
-    new_values = xalloc(num_values * sizeof(INT32));
+    new_values = malloc(num_values * sizeof(INT32));
 #endif                          /* !defined(NXAGENT_SERVER) */
     if (!new_values && num_values) {
         if (add)
@@ -377,7 +377,7 @@ RRConfigureOutputProperty(RROutputPtr output, Atom property,
      * loses any pending values
      */
     if (prop->is_pending && !pending) {
-        xfree(prop->pending.data);
+        free(prop->pending.data);
         RRInitOutputPropertyValue(&prop->pending);
     }
 
@@ -385,7 +385,7 @@ RRConfigureOutputProperty(RROutputPtr output, Atom property,
     prop->range = range;
     prop->immutable = immutable;
     prop->num_valid = num_values;
-    xfree(prop->valid_values);
+    free(prop->valid_values);
     prop->valid_values = new_values;
 
     if (add) {
@@ -417,7 +417,7 @@ ProcRRListOutputProperties(ClientPtr client)
 #ifndef NXAGENT_SERVER
         if (!(pAtoms = xallocarray(numProps, sizeof(Atom))))
 #else                           /* !defined(NXAGENT_SERVER) */
-        if (!(pAtoms = xalloc(numProps * sizeof(Atom))))
+        if (!(pAtoms = malloc(numProps * sizeof(Atom))))
 #endif                          /* !defined(NXAGENT_SERVER) */
             return BadAlloc;
 
@@ -442,7 +442,7 @@ ProcRRListOutputProperties(ClientPtr client)
 
         client->pSwapReplyFunc = (ReplySwapPtr) Swap32Write;
         WriteSwappedDataToClient(client, numProps * sizeof(Atom), pAtoms);
-        xfree(pAtoms);
+        free(pAtoms);
     }
     return Success;
 }
@@ -469,7 +469,7 @@ ProcRRQueryOutputProperty(ClientPtr client)
 #ifndef NXAGENT_SERVER
         extra = xallocarray(prop->num_valid, sizeof(INT32));
 #else                           /* !defined(NXAGENT_SERVER) */
-        extra = xalloc(prop->num_valid * sizeof(INT32));
+        extra = malloc(prop->num_valid * sizeof(INT32));
 #endif                          /* !defined(NXAGENT_SERVER) */
         if (!extra)
             return BadAlloc;
@@ -493,7 +493,7 @@ ProcRRQueryOutputProperty(ClientPtr client)
         client->pSwapReplyFunc = (ReplySwapPtr) Swap32Write;
         WriteSwappedDataToClient(client, prop->num_valid * sizeof(INT32),
                                  extra);
-        xfree(extra);
+        free(extra);
     }
     return Success;
 }
@@ -702,7 +702,7 @@ ProcRRGetOutputProperty(ClientPtr client)
     len = min(n - ind, 4 * stuff->longLength);
 
     if (len) {
-        extra = xalloc(len);
+        extra = malloc(len);
         if (!extra)
             return BadAlloc;
     }
@@ -749,7 +749,7 @@ ProcRRGetOutputProperty(ClientPtr client)
             break;
         }
         WriteSwappedDataToClient(client, len, extra);
-        xfree(extra);
+        free(extra);
     }
 
     if (stuff->delete && (reply.bytesAfter == 0)) {     /* delete the Property */

@@ -149,7 +149,7 @@ ProcXGetSelectedExtensionEvents(client)
 	total_length = (rep.all_clients_count + rep.this_client_count) * 
 	    sizeof (XEventClass);
 	rep.length = (total_length + 3) >> 2;
-	buf = (XEventClass *) xalloc (total_length);
+	buf = (XEventClass *) malloc (total_length);
 
 	tclient = buf;
 	aclient = buf + rep.this_client_count;
@@ -168,7 +168,7 @@ ProcXGetSelectedExtensionEvents(client)
 	{
 	client->pSwapReplyFunc = (ReplySwapPtr) Swap32Write;
 	WriteSwappedDataToClient( client, total_length, buf);
-	xfree (buf);
+	free (buf);
 	}
     return Success;
     }

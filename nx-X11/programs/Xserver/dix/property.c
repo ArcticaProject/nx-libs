@@ -284,13 +284,13 @@ ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format,
     {
 	if (!pWin->optional && !MakeWindowOptional (pWin))
 	    return(BadAlloc);
-        pProp = (PropertyPtr)xalloc(sizeof(PropertyRec));
+        pProp = (PropertyPtr)malloc(sizeof(PropertyRec));
 	if (!pProp)
 	    return(BadAlloc);
-        data = (void *)xalloc(totalSize);
+        data = (void *)malloc(totalSize);
 	if (!data && len)
 	{
-	    xfree(pProp);
+	    free(pProp);
 	    return(BadAlloc);
 	}
         pProp->propertyName = property;
@@ -318,7 +318,7 @@ ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format,
         {
 	    if (totalSize != pProp->size * (pProp->format >> 3))
 	    {
-		data = (void *)xrealloc(pProp->data, totalSize);
+		data = (void *)realloc(pProp->data, totalSize);
 	    	if (!data && len)
 		    return(BadAlloc);
             	pProp->data = data;
@@ -335,7 +335,7 @@ ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format,
 	}
         else if (mode == PropModeAppend)
         {
-	    data = (void *)xrealloc(pProp->data,
+	    data = (void *)realloc(pProp->data,
 				     sizeInBytes * (len + pProp->size));
 	    if (!data)
 		return(BadAlloc);
@@ -347,13 +347,13 @@ ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format,
 	}
         else if (mode == PropModePrepend)
         {
-            data = (void *)xalloc(sizeInBytes * (len + pProp->size));
+            data = (void *)malloc(sizeInBytes * (len + pProp->size));
 	    if (!data)
 		return(BadAlloc);
 	    memmove(&((char *)data)[totalSize], (char *)pProp->data, 
 		  (int)(pProp->size * sizeInBytes));
             memmove((char *)data, (char *)value, totalSize);
-	    xfree(pProp->data);
+	    free(pProp->data);
             pProp->data = data;
             pProp->size += len;
 	}
@@ -404,8 +404,8 @@ DeleteProperty(WindowPtr pWin, Atom propName)
         event.u.property.atom = pProp->propertyName;
 	event.u.property.time = currentTime.milliseconds;
 	DeliverEvents(pWin, &event, 1, (WindowPtr)NULL);
-	xfree(pProp->data);
-        xfree(pProp);
+	free(pProp->data);
+        free(pProp);
     }
     return(Success);
 }
@@ -426,8 +426,8 @@ DeleteAllWindowProperties(WindowPtr pWin)
 	event.u.property.time = currentTime.milliseconds;
 	DeliverEvents(pWin, &event, 1, (WindowPtr)NULL);
 	pNextProp = pProp->next;
-        xfree(pProp->data);
-        xfree(pProp);
+        free(pProp->data);
+        free(pProp);
 	pProp = pNextProp;
     }
 }
@@ -599,8 +599,8 @@ ProcGetProperty(ClientPtr client)
 	}
 	else
 	    prevProp->next = pProp->next;
-	xfree(pProp->data);
-	xfree(pProp);
+	free(pProp->data);
+	free(pProp);
     }
     return(client->noClientException);
 }

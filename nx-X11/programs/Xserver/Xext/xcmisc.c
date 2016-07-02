@@ -154,7 +154,7 @@ ProcXCMiscGetXIDList(client)
     if (stuff->count > UINT32_MAX / sizeof(XID))
 	    return BadAlloc;
 
-    pids = (XID *)Xalloc(stuff->count * sizeof(XID));
+    pids = (XID *)malloc(stuff->count * sizeof(XID));
     if (!pids)
     {
 	return BadAlloc;
@@ -175,7 +175,7 @@ ProcXCMiscGetXIDList(client)
     	client->pSwapReplyFunc = (ReplySwapPtr) Swap32Write;
 	WriteSwappedDataToClient(client, count * sizeof(XID), pids);
     }
-    Xfree(pids);
+    free(pids);
     return(client->noClientException);
 }
 

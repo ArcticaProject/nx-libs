@@ -244,7 +244,7 @@ fbCopyNto1 (DrawablePtr	pSrcDrawable,
 	    height = pbox->y2 - pbox->y1;
 	    
 	    tmpStride = ((width + FB_STIP_MASK) >> FB_STIP_SHIFT);
-	    tmp = xalloc (tmpStride * height * sizeof (FbStip));
+	    tmp = malloc (tmpStride * height * sizeof (FbStip));
 	    if (!tmp)
 		return;
 	    
@@ -282,7 +282,7 @@ fbCopyNto1 (DrawablePtr	pSrcDrawable,
     
 		      pPriv->and, pPriv->xor,
 		      pPriv->bgand, pPriv->bgxor);
-	    xfree (tmp);
+	    free (tmp);
 	}
 	pbox++;
     }

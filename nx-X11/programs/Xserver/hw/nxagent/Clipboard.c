@@ -745,7 +745,7 @@ void nxagentCollectPropertyEvent(int resource)
 
         if (pszReturnData != NULL)
         {
-          Xfree(pszReturnData);
+          free(pszReturnData);
         }
 
         return;
@@ -787,7 +787,7 @@ void nxagentCollectPropertyEvent(int resource)
 
         if (pszReturnData != NULL)
         {
-          Xfree(pszReturnData);
+          free(pszReturnData);
         }
 
         return;
@@ -1487,11 +1487,11 @@ int nxagentInitClipboard(WindowPtr pWin)
 
   if (lastSelectionOwner != NULL)
   {
-    xfree(lastSelectionOwner);
+    free(lastSelectionOwner);
     lastSelectionOwner = NULL;
   }
 
-  lastSelectionOwner = (SelectionOwner *) xalloc(2 * sizeof(SelectionOwner));
+  lastSelectionOwner = (SelectionOwner *) malloc(2 * sizeof(SelectionOwner));
 
   if (lastSelectionOwner == NULL)
   {

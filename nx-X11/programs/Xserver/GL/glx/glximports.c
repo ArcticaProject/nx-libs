@@ -50,7 +50,7 @@ void *__glXImpMalloc(__GLcontext *gc, size_t size)
     if (size == 0) {
 	return NULL;
     }
-    addr = xalloc(size);
+    addr = malloc(size);
     if (addr == NULL) {
 	/* XXX: handle out of memory error */
 	return NULL;
@@ -67,7 +67,7 @@ void *__glXImpCalloc(__GLcontext *gc, size_t numElements, size_t elementSize)
 	return NULL;
     }
     size = numElements * elementSize;
-    addr = xalloc(size);
+    addr = malloc(size);
     if (addr == NULL) {
 	/* XXX: handle out of memory error */
 	return NULL;
@@ -81,7 +81,7 @@ void *__glXImpCalloc(__GLcontext *gc, size_t numElements, size_t elementSize)
 void __glXImpFree(__GLcontext *gc, void *addr)
 {
     if (addr) {
-	xfree(addr);
+	free(addr);
     }
 }
 
@@ -91,15 +91,15 @@ void *__glXImpRealloc(__GLcontext *gc, void *addr, size_t newSize)
 
     if (addr) {
 	if (newSize == 0) {
-	    xfree(addr);
+	    free(addr);
 	    return NULL;
 	}
-	newAddr = xrealloc(addr, newSize);
+	newAddr = realloc(addr, newSize);
     } else {
 	if (newSize == 0) {
 	    return NULL;
 	}
-	newAddr = xalloc(newSize);
+	newAddr = malloc(newSize);
     }
     if (newAddr == NULL) {
 	return NULL;	/* XXX: out of memory error */

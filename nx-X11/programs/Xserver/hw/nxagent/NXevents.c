@@ -363,7 +363,7 @@ XYToWindow(int x, int y)
 	    {
 		spriteTraceSize += 10;
 		Must_have_memory = TRUE; /* XXX */
-		spriteTrace = (WindowPtr *)xrealloc(
+		spriteTrace = (WindowPtr *)realloc(
 		    spriteTrace, spriteTraceSize*sizeof(WindowPtr));
 		Must_have_memory = FALSE; /* XXX */
 	    }

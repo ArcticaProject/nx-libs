@@ -93,7 +93,7 @@ extern xGLXSingleReply __glXReply;
     else if ((size) > sizeof(answerBuffer)) {				 \
 	int bump;							 \
 	if ((cl)->returnBufSize < (size)+(align)) {			 \
-	    (cl)->returnBuf = (GLbyte*)Xrealloc((cl)->returnBuf,	 \
+	    (cl)->returnBuf = (GLbyte*)realloc((cl)->returnBuf,	 \
 						(size)+(align));         \
 	    if (!(cl)->returnBuf) {					 \
 		return BadAlloc;					 \

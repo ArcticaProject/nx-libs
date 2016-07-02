@@ -331,7 +331,7 @@ SecurityDeleteAuthorization(
     }
 
     SecurityAudit("revoked authorization ID %d\n", pAuth->id);
-    xfree(pAuth);
+    free(pAuth);
     return Success;
 
 } /* SecurityDeleteAuthorization */
@@ -356,7 +356,7 @@ SecurityDeleteAuthorizationEventClient(
 		prev->next = pEventClient->next;
 	    else
 		pAuth->eventClients = pEventClient->next;
-	    xfree(pEventClient);
+	    free(pEventClient);
 	    return(Success);
 	}
 	prev = pEventClient;
@@ -524,7 +524,7 @@ SecurityEventSelectForAuthorization(
 	}
     }
     
-    pEventClient = (OtherClients *) xalloc(sizeof(OtherClients));
+    pEventClient = (OtherClients *) malloc(sizeof(OtherClients));
     if (!pEventClient)
 	return BadAlloc;
     pEventClient->mask = mask;
@@ -533,7 +533,7 @@ SecurityEventSelectForAuthorization(
     if (!AddResource(pEventClient->resource, RTEventClient,
 		     (void *)pAuth))
     {
-	xfree(pEventClient);
+	free(pEventClient);
 	return BadAlloc;
     }
     pAuth->eventClients = pEventClient;
@@ -662,7 +662,7 @@ ProcSecurityGenerateAuthorization(
 
     /* associate additional information with this auth ID */
 
-    pAuth = (SecurityAuthorizationPtr)xalloc(sizeof(SecurityAuthorizationRec));
+    pAuth = (SecurityAuthorizationPtr)malloc(sizeof(SecurityAuthorizationRec));
     if (!pAuth)
     {
 	err = BadAlloc;
@@ -734,7 +734,7 @@ bailout:
     if (removeAuth)
 	RemoveAuthorization(stuff->nbytesAuthProto, protoname,
 			    authdata_len, pAuthdata);
-    if (pAuth) xfree(pAuth);
+    if (pAuth) free(pAuth);
     return err;
 
 } /* ProcSecurityGenerateAuthorization */
@@ -1486,7 +1486,7 @@ SecurityFreePropertyAccessList(void)
     {
 	PropertyAccessPtr freeit = PropertyAccessList;
 	PropertyAccessList = PropertyAccessList->next;
-	xfree(freeit);
+	free(freeit);
     }
 } /* SecurityFreePropertyAccessList */
 
@@ -1643,14 +1643,14 @@ SecurityParsePropertyAccessRule(
      */
     if (mustHaveValue)
 	size += strlen(mustHaveValue) + 1;
-    pacl = (PropertyAccessPtr)Xalloc(size);
+    pacl = (PropertyAccessPtr)malloc(size);
     if (!pacl)
 	return FALSE;
 
     pacl->name = MakeAtom(propname, strlen(propname), TRUE);
     if (pacl->name == BAD_RESOURCE)
     {
-	Xfree(pacl);
+	free(pacl);
 	return FALSE;
     }
     if (mustHaveProperty)
@@ -1659,7 +1659,7 @@ SecurityParsePropertyAccessRule(
 					  strlen(mustHaveProperty), TRUE);
 	if (pacl->mustHaveProperty == BAD_RESOURCE)
 	{
-	    Xfree(pacl);
+	    free(pacl);
 	    return FALSE;
 	}
     }
@@ -1716,15 +1716,15 @@ SecurityParseSitePolicy(
     if (!policyStr)
 	return FALSE;
 
-    copyPolicyStr = (char *)Xalloc(strlen(policyStr) + 1);
+    copyPolicyStr = (char *)malloc(strlen(policyStr) + 1);
     if (!copyPolicyStr)
 	return TRUE;
     strcpy(copyPolicyStr, policyStr);
-    newStrings = (char **)Xrealloc(SecurityPolicyStrings,
+    newStrings = (char **)realloc(SecurityPolicyStrings,
 			  sizeof (char *) * (nSecurityPolicyStrings + 1));
     if (!newStrings)
     {
-	Xfree(copyPolicyStr);
+	free(copyPolicyStr);
 	return TRUE;
     }
 
@@ -1752,9 +1752,9 @@ SecurityFreeSitePolicyStrings(void)
 	assert(nSecurityPolicyStrings);
 	while (nSecurityPolicyStrings--)
 	{
-	    Xfree(SecurityPolicyStrings[nSecurityPolicyStrings]);
+	    free(SecurityPolicyStrings[nSecurityPolicyStrings]);
 	}
-	Xfree(SecurityPolicyStrings);
+	free(SecurityPolicyStrings);
 	SecurityPolicyStrings = NULL;
 	nSecurityPolicyStrings = 0;
     }

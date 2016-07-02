@@ -1272,7 +1272,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
   nxagentInitVisuals();
 
   nxagentNumDefaultColormaps = nxagentNumVisuals;
-  nxagentDefaultColormaps = (Colormap *)xalloc(nxagentNumDefaultColormaps *
+  nxagentDefaultColormaps = (Colormap *)malloc(nxagentNumDefaultColormaps *
                                              sizeof(Colormap));
 
   for (i = 0; i < nxagentNumDefaultColormaps; i++)
@@ -1651,7 +1651,7 @@ void nxagentInitPixmapFormats()
 XXX: Some X server doesn't list 1 among available depths...
 */
 
-  nxagentPixmapFormats = xalloc((nxagentNumDepths + 1) * sizeof(XPixmapFormatValues));
+  nxagentPixmapFormats = malloc((nxagentNumDepths + 1) * sizeof(XPixmapFormatValues));
 
   for (i = 1; i <= MAXDEPTH; i++)
   {
@@ -1814,13 +1814,13 @@ void nxagentCloseDisplay()
    * traffic
    */
 
-  xfree(nxagentDefaultColormaps);
+  free(nxagentDefaultColormaps);
   nxagentDefaultColormaps = NULL;
 
   XFree(nxagentVisuals);
   nxagentVisuals = NULL;
 
-  xfree(nxagentDepths);
+  free(nxagentDepths);
   nxagentDepths = NULL;
 
   XFree(nxagentPixmapFormats);
@@ -2060,10 +2060,10 @@ void nxagentBackupDisplayInfo(void)
   nxagentNumVisualsRecBackup = nxagentNumVisuals;
   if (nxagentVisualHasBeenIgnored)
   {
-    xfree(nxagentVisualHasBeenIgnored);
+    free(nxagentVisualHasBeenIgnored);
     nxagentVisualHasBeenIgnored = NULL;
   }
-  nxagentVisualHasBeenIgnored = xalloc(nxagentNumVisuals * sizeof(Bool));
+  nxagentVisualHasBeenIgnored = malloc(nxagentNumVisuals * sizeof(Bool));
   nxagentDefaultDepthRecBackup = DefaultDepth(nxagentDisplay, DefaultScreen(nxagentDisplay));
   nxagentDisplayWidthRecBackup = DisplayWidth(nxagentDisplay, DefaultScreen(nxagentDisplay));
   nxagentDisplayHeightRecBackup = DisplayHeight(nxagentDisplay, DefaultScreen(nxagentDisplay));
@@ -2074,17 +2074,17 @@ void nxagentBackupDisplayInfo(void)
 
 void nxagentCleanupBackupDisplayInfo(void)
 {
-  xfree(nxagentDepthsRecBackup);
+  free(nxagentDepthsRecBackup);
   nxagentNumDepthsRecBackup = 0;
 
   nxagentNumDefaultColormapsRecBackup = 0;
 
-  xfree(nxagentVisualsRecBackup);
+  free(nxagentVisualsRecBackup);
   nxagentNumVisualsRecBackup = 0;
 
   if (nxagentVisualHasBeenIgnored)
   {
-    xfree(nxagentVisualHasBeenIgnored);
+    free(nxagentVisualHasBeenIgnored);
     nxagentVisualHasBeenIgnored = NULL;
   }
 
@@ -2107,7 +2107,7 @@ void nxagentCleanupBackupDisplayInfo(void)
     }
     else
     {
-      xfree(nxagentBitmapGCBackup);
+      free(nxagentBitmapGCBackup);
     }
 
     nxagentBitmapGCBackup = NULL;
@@ -2549,7 +2549,7 @@ Bool nxagentReconnectDisplay(void *p0)
 
   nxagentNumDefaultColormaps = nxagentNumVisuals;
 
-  nxagentDefaultColormaps = (Colormap *) xrealloc(nxagentDefaultColormaps,
+  nxagentDefaultColormaps = (Colormap *) realloc(nxagentDefaultColormaps,
                                 nxagentNumDefaultColormaps * sizeof(Colormap));
 
   if (nxagentDefaultColormaps == NULL)

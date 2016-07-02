@@ -151,7 +151,7 @@ Win32System(const char *cmdline)
 	    LocalFree(buffer);
 	}
 
-	xfree(cmd);
+	free(cmd);
 	return -1;
     }
     /* Wait until child process exits. */
@@ -162,7 +162,7 @@ Win32System(const char *cmdline)
     /* Close process and thread handles. */
     CloseHandle( pi.hProcess );
     CloseHandle( pi.hThread );
-    xfree(cmd);
+    free(cmd);
 
     return dwExitCode;
 }
@@ -620,7 +620,7 @@ char 	*cmd = NULL,file[PATH_MAX],xkm_output_dir[PATH_MAX],*map,*outFile;
 	if (outFile!=NULL)
 	    _XkbFree(outFile);
         if (cmd!=NULL)
-            xfree(cmd);
+            free(cmd);
 	return True;
     } 
 #ifdef DEBUG
@@ -629,7 +629,7 @@ char 	*cmd = NULL,file[PATH_MAX],xkm_output_dir[PATH_MAX],*map,*outFile;
     if (outFile!=NULL)
 	_XkbFree(outFile);
     if (cmd!=NULL)
-        xfree(cmd);
+        free(cmd);
     return False;
 }
 
@@ -802,7 +802,7 @@ char tmpname[PATH_MAX];
 	    }
 #endif
             if (buf != NULL)
-                xfree (buf);
+                free (buf);
 	    return True;
 	}
 #ifdef DEBUG
@@ -826,7 +826,7 @@ char tmpname[PATH_MAX];
     if (nameRtrn)
 	nameRtrn[0]= '\0';
     if (buf != NULL)
-        xfree (buf);
+        free (buf);
     return False;
 }
 

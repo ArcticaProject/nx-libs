@@ -87,7 +87,7 @@ PictureCreateDefaultFormats (ScreenPtr pScreen, int *nformatp)
 
     nxagentPictureCreateDefaultFormats(pScreen, formats, &nformats);
 
-    pFormats = (PictFormatPtr) xalloc (nformats * sizeof (PictFormatRec));
+    pFormats = (PictFormatPtr) malloc (nformats * sizeof (PictFormatRec));
     if (!pFormats)
 	return 0;
     memset (pFormats, '\0', nformats * sizeof (PictFormatRec));
@@ -190,7 +190,7 @@ AllocatePicture (ScreenPtr  pScreen)
     unsigned int    	size;
     int			i;
 
-    pPicture = (PicturePtr) xalloc (ps->totalPictureSize);
+    pPicture = (PicturePtr) malloc (ps->totalPictureSize);
     if (!pPicture)
 	return 0;
     ppriv = (DevUnion *)(pPicture + 1);
@@ -281,10 +281,10 @@ CreateSolidPicture (Picture pid, xRenderColor *color, int *error)
     }
 
     pPicture->id = pid;
-    pPicture->pSourcePict = (SourcePictPtr) xalloc(sizeof(PictSolidFill));
+    pPicture->pSourcePict = (SourcePictPtr) malloc(sizeof(PictSolidFill));
     if (!pPicture->pSourcePict) {
         *error = BadAlloc;
-        xfree(pPicture);
+        free(pPicture);
         return 0;
     }
     pPicture->pSourcePict->type = SourcePictTypeSolidFill;
@@ -318,7 +318,7 @@ static PicturePtr createSourcePicture(void)
                            picturePrivateCount * sizeof(DevUnion) +
                                sizeof(nxagentPrivPictureRec);
 
-    pPicture = (PicturePtr) xalloc(totalPictureSize);
+    pPicture = (PicturePtr) malloc(totalPictureSize);
 
     if (pPicture != NULL)
     {
@@ -361,12 +361,12 @@ FreePicture (void *	value,
         nxagentDestroyPicture(pPicture);
 
 	if (pPicture->transform)
-	    xfree (pPicture->transform);
+	    free (pPicture->transform);
         if (!pPicture->pDrawable) {
             if (pPicture->pSourcePict) {
                 if (pPicture->pSourcePict->type != SourcePictTypeSolidFill)
-                    xfree(pPicture->pSourcePict->linear.stops);
-                xfree(pPicture->pSourcePict);
+                    free(pPicture->pSourcePict->linear.stops);
+                free(pPicture->pSourcePict);
             }
         } else {
             ScreenPtr	    pScreen = pPicture->pDrawable->pScreen;
@@ -397,7 +397,7 @@ FreePicture (void *	value,
                 (*pScreen->DestroyPixmap) ((PixmapPtr)pPicture->pDrawable);
             }
         }
-	xfree (pPicture);
+	free (pPicture);
     }
     return Success;
 }
@@ -502,7 +502,7 @@ Bool nxagentReconnectAllPictFormat(void *p)
     }
   }
 
-  xfree(formats);
+  free(formats);
 
   /* TODO: Perhaps do i have to do PictureFinishInit ?. */
   /* TODO: We have to check for new Render protocol version. */

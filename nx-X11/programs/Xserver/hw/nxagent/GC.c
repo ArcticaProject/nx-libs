@@ -673,7 +673,7 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
       {
         nRects = RegionNumRects((RegionPtr)pValue);
         size = nRects * sizeof(*pRects);
-        pRects = (XRectangle *) xalloc(size);
+        pRects = (XRectangle *) malloc(size);
         pBox = RegionRects((RegionPtr)pValue);
 
         for (i = nRects; i-- > 0;)
@@ -686,7 +686,7 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
 
         XSetClipRectangles(nxagentDisplay, nxagentGC(pGC), pGC -> clipOrg.x, pGC -> clipOrg.y,
                                pRects, nRects, Unsorted);
-        xfree((char *) pRects);
+        free((char *) pRects);
       }
 
       break;
@@ -770,7 +770,7 @@ void nxagentChangeClip(GCPtr pGC, int type, void * pValue, int nRects)
 
       pGC->clientClip = (void *) RegionFromRects(nRects,
                                                   (xRectangle *)pValue, type);
-      xfree(pValue);
+      free(pValue);
 
       pValue = pGC->clientClip;
 
@@ -904,7 +904,7 @@ static void nxagentFreeGCRec(struct nxagentGCRec *t)
               (void *) t, (void *) t -> gc);
   #endif
 
-  xfree(t -> gc);
+  free(t -> gc);
 
   free(t);
 }
@@ -918,7 +918,7 @@ static void nxagentRestoreGCRec(struct nxagentGCRec *t)
 
   if (nxagentGC(t -> pGC))
   {
-    xfree(nxagentGC(t -> pGC));
+    free(nxagentGC(t -> pGC));
   }
 
   nxagentGC(t -> pGC) = t -> gc;
@@ -1280,7 +1280,7 @@ static void nxagentReconnectClip(GCPtr pGC, int type, void * pValue, int nRects)
       {
         nRects = RegionNumRects((RegionPtr)pValue);
         size = nRects * sizeof(*pRects);
-        pRects = (XRectangle *) xalloc(size);
+        pRects = (XRectangle *) malloc(size);
         pBox = RegionRects((RegionPtr)pValue);
         for (i = nRects; i-- > 0;) {
           pRects[i].x = pBox[i].x1;
@@ -1298,7 +1298,7 @@ static void nxagentReconnectClip(GCPtr pGC, int type, void * pValue, int nRects)
 
         XSetClipRectangles(nxagentDisplay, nxagentGC(pGC), pGC -> clipOrg.x, pGC -> clipOrg.y,
                            pRects, nRects, Unsorted);
-        xfree((char *) pRects);
+        free((char *) pRects);
       }
       else
       {
@@ -1369,7 +1369,7 @@ static void nxagentReconnectClip(GCPtr pGC, int type, void * pValue, int nRects)
 
       pGC->clientClip = (void *) RegionFromRects(nRects,
                                                   (xRectangle *)pValue, type);
-      xfree(pValue);
+      free(pValue);
       pValue = pGC->clientClip;
       type = CT_REGION;
 
@@ -1613,7 +1613,7 @@ GCPtr nxagentCreateGraphicContext(int depth)
    * to spread the list and add a new GC.
    */
 
-  nxagentGCs = xrealloc(nxagentGraphicContexts, (nxagentGraphicContextsSize + 1) * sizeof(nxagentGraphicContextsRec));
+  nxagentGCs = realloc(nxagentGraphicContexts, (nxagentGraphicContextsSize + 1) * sizeof(nxagentGraphicContextsRec));
    
   if (nxagentGCs == NULL)
   {

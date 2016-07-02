@@ -178,7 +178,7 @@ CreateNewResourceType(DeleteType deleteFunc)
 
     if (next & lastResourceClass)
 	return 0;
-    funcs = (DeleteType *)xrealloc(DeleteFuncs,
+    funcs = (DeleteType *)realloc(DeleteFuncs,
 				   (next + 1) * sizeof(DeleteType));
     if (!funcs)
 	return 0;
@@ -186,7 +186,7 @@ CreateNewResourceType(DeleteType deleteFunc)
 #ifdef XResExtension
     {
        Atom *newnames;
-       newnames = xrealloc(ResourceNames, (next + 1) * sizeof(Atom));
+       newnames = realloc(ResourceNames, (next + 1) * sizeof(Atom));
        if(!newnames)
            return 0;
        ResourceNames = newnames;
@@ -231,8 +231,8 @@ InitClientResources(ClientPtr client)
 	lastResourceClass = RC_LASTPREDEF;
 	TypeMask = RC_LASTPREDEF - 1;
 	if (DeleteFuncs)
-	    xfree(DeleteFuncs);
-	DeleteFuncs = (DeleteType *)xalloc((lastResourceType + 1) *
+	    free(DeleteFuncs);
+	DeleteFuncs = (DeleteType *)malloc((lastResourceType + 1) *
 					   sizeof(DeleteType));
 	if (!DeleteFuncs)
 	    return FALSE;
@@ -249,14 +249,14 @@ InitClientResources(ClientPtr client)
 
 #ifdef XResExtension
         if(ResourceNames)
-            xfree(ResourceNames);
-        ResourceNames = xalloc((lastResourceType + 1) * sizeof(Atom));
+            free(ResourceNames);
+        ResourceNames = malloc((lastResourceType + 1) * sizeof(Atom));
         if(!ResourceNames)
            return FALSE;
 #endif
     }
     clientTable[i = client->index].resources =
-	(ResourcePtr *)xalloc(INITBUCKETS*sizeof(ResourcePtr));
+	(ResourcePtr *)malloc(INITBUCKETS*sizeof(ResourcePtr));
     if (!clientTable[i].resources)
 	return FALSE;
     clientTable[i].buckets = INITBUCKETS;
@@ -442,7 +442,7 @@ AddResource(XID id, RESTYPE type, void * value)
 	(rrec->hashsize < MAXHASHSIZE))
 	RebuildTable(client);
     head = &rrec->resources[Hash(client, id)];
-    res = (ResourcePtr)xalloc(sizeof(ResourceRec));
+    res = (ResourcePtr)malloc(sizeof(ResourceRec));
     if (!res)
     {
 	(*DeleteFuncs[type & TypeMask])(value, id);
@@ -477,7 +477,7 @@ RebuildTable(int client)
     tails = (ResourcePtr **)ALLOCATE_LOCAL(j * sizeof(ResourcePtr *));
     if (!tails)
 	return;
-    resources = (ResourcePtr *)xalloc(j * sizeof(ResourcePtr));
+    resources = (ResourcePtr *)malloc(j * sizeof(ResourcePtr));
     if (!resources)
     {
 	DEALLOCATE_LOCAL(tails);
@@ -505,7 +505,7 @@ RebuildTable(int client)
     }
     DEALLOCATE_LOCAL(tails);
     clientTable[client].buckets *= 2;
-    xfree(clientTable[client].resources);
+    free(clientTable[client].resources);
     clientTable[client].resources = resources;
 }
 
@@ -535,7 +535,7 @@ FreeResource(XID id, RESTYPE skipDeleteFuncType)
 		elements = --*eltptr;
 		if (rtype != skipDeleteFuncType)
 		    (*DeleteFuncs[rtype & TypeMask])(res->value, res->id);
-		xfree(res);
+		free(res);
 		if (*eltptr != elements)
 		    prev = head; /* prev may no longer be valid */
 		gotOne = TRUE;
@@ -568,7 +568,7 @@ FreeResourceByType(XID id, RESTYPE type, Bool skipFree)
 		*prev = res->next;
 		if (!skipFree)
 		    (*DeleteFuncs[type & TypeMask])(res->value, res->id);
-		xfree(res);
+		free(res);
 		break;
 	    }
 	    else
@@ -723,7 +723,7 @@ FreeClientNeverRetainResources(ClientPtr client)
 	    {
 		*prev = this->next;
 		(*DeleteFuncs[rtype & TypeMask])(this->value, this->id);
-		xfree(this);	    
+		free(this);	    
 	    }
 	    else
 		prev = &this->next;
@@ -767,10 +767,10 @@ FreeClientResources(ClientPtr client)
 	    RESTYPE rtype = this->type;
 	    *head = this->next;
 	    (*DeleteFuncs[rtype & TypeMask])(this->value, this->id);
-	    xfree(this);	    
+	    free(this);	    
 	}
     }
-    xfree(clientTable[client->index].resources);
+    free(clientTable[client->index].resources);
     clientTable[client->index].resources = NULL;
     clientTable[client->index].buckets = 0;
 }

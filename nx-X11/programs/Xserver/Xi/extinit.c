@@ -872,7 +872,7 @@ AssignTypeAndName (dev, type, name)
     char *name;
 {
     dev->type = type;
-    dev->name = (char *) xalloc(strlen(name)+1);
+    dev->name = (char *) malloc(strlen(name)+1);
     strcpy (dev->name, name);
     }
 

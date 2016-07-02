@@ -407,7 +407,7 @@ XdmcpRegisterAuthentication (
 				     AuthenticationNames.length + 1) &&
 	  XdmcpReallocARRAYofARRAY8 (&AuthenticationDatas,
 				     AuthenticationDatas.length + 1) &&
-	  (newFuncs = (AuthenticationFuncsPtr) xalloc (
+	  (newFuncs = (AuthenticationFuncsPtr) malloc (
 			(AuthenticationNames.length + 1) * sizeof (AuthenticationFuncsRec)))))
     {
 	XdmcpDisposeARRAY8 (&AuthenticationName);
@@ -419,7 +419,7 @@ XdmcpRegisterAuthentication (
     newFuncs[AuthenticationNames.length-1].Validator = Validator;
     newFuncs[AuthenticationNames.length-1].Generator = Generator;
     newFuncs[AuthenticationNames.length-1].AddAuth = AddAuth;
-    xfree (AuthenticationFuncsList);
+    free (AuthenticationFuncsList);
     AuthenticationFuncsList = newFuncs;
     AuthenticationNames.data[AuthenticationNames.length-1] = AuthenticationName;
     AuthenticationDatas.data[AuthenticationDatas.length-1] = AuthenticationData;
@@ -507,18 +507,18 @@ XdmcpRegisterConnection (
 	    return;
 	}
     }
-    newAddress = (CARD8 *) xalloc (addrlen * sizeof (CARD8));
+    newAddress = (CARD8 *) malloc (addrlen * sizeof (CARD8));
     if (!newAddress)
 	return;
     if (!XdmcpReallocARRAY16 (&ConnectionTypes, ConnectionTypes.length + 1))
     {
-	xfree (newAddress);
+	free (newAddress);
 	return;
     }
     if (!XdmcpReallocARRAYofARRAY8 (&ConnectionAddresses,
 				    ConnectionAddresses.length +  1))
     {
-	xfree (newAddress);
+	free (newAddress);
 	return;
     }
     ConnectionTypes.data[ConnectionTypes.length - 1] = (CARD16) type;
@@ -548,12 +548,12 @@ XdmcpRegisterAuthorization (char *name, int namelen)
     ARRAY8  authName;
     int	    i;
 
-    authName.data = (CARD8 *) xalloc (namelen * sizeof (CARD8));
+    authName.data = (CARD8 *) malloc (namelen * sizeof (CARD8));
     if (!authName.data)
 	return;
     if (!XdmcpReallocARRAYofARRAY8 (&AuthorizationNames, AuthorizationNames.length +1))
     {
-	xfree (authName.data);
+	free (authName.data);
 	return;
     }
     for (i = 0; i < namelen; i++)

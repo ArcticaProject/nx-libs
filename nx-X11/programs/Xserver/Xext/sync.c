@@ -319,7 +319,7 @@ SyncDeleteTriggerFromCounter(pTrigger)
 		pPrev->next = pCur->next;
 	    else
 		pTrigger->pCounter->pTriglist = pCur->next;
-	    xfree(pCur);
+	    free(pCur);
 	    break;
 	}
     }
@@ -345,7 +345,7 @@ SyncAddTriggerToCounter(pTrigger)
 	    return Success;
     }
 
-    if (!(pCur = (SyncTriggerList *)xalloc(sizeof(SyncTriggerList))))
+    if (!(pCur = (SyncTriggerList *)malloc(sizeof(SyncTriggerList))))
 	return BadAlloc;
 
     pCur->pTrigger = pTrigger;
@@ -879,7 +879,7 @@ SyncEventSelectForAlarm(pAlarm, client, wantevents)
 
     /* add new client to pAlarm->pEventClients */
 
-    pClients = (SyncAlarmClientList *) xalloc(sizeof(SyncAlarmClientList));
+    pClients = (SyncAlarmClientList *) malloc(sizeof(SyncAlarmClientList));
     if (!pClients)
 	return BadAlloc;
 
@@ -890,7 +890,7 @@ SyncEventSelectForAlarm(pAlarm, client, wantevents)
     pClients->delete_id = FakeClientID(client->index);
     if (!AddResource(pClients->delete_id, RTAlarmClient, pAlarm))
     {
-	xfree(pClients);
+	free(pClients);
 	return BadAlloc;
     }
 
@@ -1014,12 +1014,12 @@ SyncCreateCounter(client, id, initialvalue)
 {
     SyncCounter *pCounter;
 
-    if (!(pCounter = (SyncCounter *) xalloc(sizeof(SyncCounter))))
+    if (!(pCounter = (SyncCounter *) malloc(sizeof(SyncCounter))))
 	return (SyncCounter *)NULL;
 
     if (!AddResource(id, RTCounter, (void *) pCounter))
     {
-	xfree((void *) pCounter);
+	free((void *) pCounter);
 	return (SyncCounter *)NULL;
     }
 
@@ -1058,7 +1058,7 @@ SyncCreateSystemCounter(name, initial, resolution, counterType,
 {
     SyncCounter    *pCounter;
 
-    SysCounterList = (SyncCounter **)xrealloc(SysCounterList,
+    SysCounterList = (SyncCounter **)realloc(SysCounterList,
 			    (SyncNumSystemCounters+1)*sizeof(SyncCounter *));
     if (!SysCounterList)
 	return (void *)NULL;
@@ -1081,7 +1081,7 @@ SyncCreateSystemCounter(name, initial, resolution, counterType,
     {
 	SysCounterInfo *psci;
 
-	psci = (SysCounterInfo *)xalloc(sizeof(SysCounterInfo));
+	psci = (SysCounterInfo *)malloc(sizeof(SysCounterInfo));
 	if (!psci)
 	{
 	    FreeResource(pCounter->id, RT_NONE);
@@ -1214,7 +1214,7 @@ FreeAlarm(addr, id)
 
     SyncDeleteTriggerFromCounter(&pAlarm->trigger);
 
-    xfree(pAlarm);
+    free(pAlarm);
     return Success;
 }
 
@@ -1237,13 +1237,13 @@ FreeCounter(env, id)
     {
 	(*ptl->pTrigger->CounterDestroyed)(ptl->pTrigger);
 	pnext = ptl->next;
-	xfree(ptl); /* destroy the trigger list as we go */
+	free(ptl); /* destroy the trigger list as we go */
     }
     if (IsSystemCounter(pCounter))
     {
 	int i, found = 0;
 
-	xfree(pCounter->pSysCounterInfo);
+	free(pCounter->pSysCounterInfo);
 
 	/* find the counter in the list of system counters and remove it */
 
@@ -1267,7 +1267,7 @@ FreeCounter(env, id)
 	}
 	SyncNumSystemCounters--;
     }
-    xfree(pCounter);
+    free(pCounter);
     return Success;
 }
 
@@ -1298,7 +1298,7 @@ FreeAwait(addr, id)
 	if (pCounter && !pCounter->beingDestroyed)
 	    SyncDeleteTriggerFromCounter(&pAwait->trigger);
     }
-    xfree(pAwaitUnion);
+    free(pAwaitUnion);
     return Success;
 }
 
@@ -1321,7 +1321,7 @@ FreeAlarmClient(value, id)
 		pPrev->next = pCur->next;
 	    else
 		pAlarm->pEventClients = pCur->next;
-	    xfree(pCur);
+	    free(pCur);
 	    return(Success);
 	}
     }
@@ -1670,7 +1670,7 @@ ProcSyncAwait(client)
     /*  all the memory for the entire await list is allocated 
      *  here in one chunk
      */
-    pAwaitUnion = (SyncAwaitUnion *)xalloc((items+1) * sizeof(SyncAwaitUnion));
+    pAwaitUnion = (SyncAwaitUnion *)malloc((items+1) * sizeof(SyncAwaitUnion));
     if (!pAwaitUnion)
 	return BadAlloc;
 
@@ -1679,7 +1679,7 @@ ProcSyncAwait(client)
     pAwaitUnion->header.delete_id = FakeClientID(client->index);
     if (!AddResource(pAwaitUnion->header.delete_id, RTAwait, pAwaitUnion))
     {
-	xfree(pAwaitUnion);
+	free(pAwaitUnion);
 	return BadAlloc;
     }
 
@@ -1821,7 +1821,7 @@ ProcSyncCreateAlarm(client)
     if (len != (Ones(vmask) + Ones(vmask & (XSyncCAValue|XSyncCADelta))))
 	return BadLength;
 
-    if (!(pAlarm = (SyncAlarm *) xalloc(sizeof(SyncAlarm))))
+    if (!(pAlarm = (SyncAlarm *) malloc(sizeof(SyncAlarm))))
     {
 	return BadAlloc;
     }
@@ -1838,7 +1838,7 @@ ProcSyncCreateAlarm(client)
     status = SyncInitTrigger(client, pTrigger, None, XSyncCAAllTrigger);
     if (status != Success)
     {
-	xfree(pAlarm);
+	free(pAlarm);
 	return status;
     }
 
@@ -1852,13 +1852,13 @@ ProcSyncCreateAlarm(client)
 				       (CARD32 *)&stuff[1]);
     if (status != Success)
     {
-	xfree(pAlarm);
+	free(pAlarm);
 	return status;
     }
 
     if (!AddResource(stuff->id, RTAlarm, pAlarm))
     {
-	xfree(pAlarm);
+	free(pAlarm);
 	return BadAlloc;
     }
 
@@ -2346,7 +2346,7 @@ static void
 SyncResetProc(extEntry)
     ExtensionEntry *extEntry;
 {
-    xfree(SysCounterList);
+    free(SysCounterList);
     SysCounterList = NULL;
     RTCounter = 0;
 }

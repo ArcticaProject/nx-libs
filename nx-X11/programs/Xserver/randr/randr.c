@@ -131,9 +131,9 @@ RRCloseScreen(
 
     RRMonitorClose(pScreen);
 
-    xfree(pScrPriv->crtcs);
-    xfree(pScrPriv->outputs);
-    xfree(pScrPriv);
+    free(pScrPriv->crtcs);
+    free(pScrPriv->outputs);
+    free(pScrPriv);
     RRNScreens -= 1;            /* ok, one fewer screen with RandR running */
     return (*pScreen->CloseScreen) (i, pScreen);
 }
@@ -321,7 +321,7 @@ RRScreenInit(ScreenPtr pScreen)
     if (!RRInit())
         return FALSE;
 
-    pScrPriv = (rrScrPrivPtr) xcalloc(1, sizeof(rrScrPrivRec));
+    pScrPriv = (rrScrPrivPtr) calloc(1, sizeof(rrScrPrivRec));
     if (!pScrPriv)
         return FALSE;
 
@@ -405,7 +405,7 @@ RRFreeClient(void *data, XID id)
                 *pHead = pRREvent->next;
         }
     }
-    xfree((void *) pRREvent);
+    free((void *) pRREvent);
     return 1;
 }
 
@@ -418,9 +418,9 @@ RRFreeEvents(void *data, XID id)
     for (pCur = *pHead; pCur; pCur = pNext) {
         pNext = pCur->next;
         FreeResource(pCur->clientResource, RRClientType);
-        xfree((void *) pCur);
+        free((void *) pCur);
     }
-    xfree((void *) pHead);
+    free((void *) pHead);
     return 1;
 }
 

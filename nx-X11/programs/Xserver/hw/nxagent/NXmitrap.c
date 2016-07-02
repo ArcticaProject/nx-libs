@@ -80,7 +80,7 @@ miTrapezoids (CARD8	    op,
         }
         else
         {
-          nxagentTrapezoidExtents = (BoxPtr) xalloc(sizeof(BoxRec));
+          nxagentTrapezoidExtents = (BoxPtr) malloc(sizeof(BoxRec));
 
           miTrapezoidBounds (ntrap, traps, &bounds);
 

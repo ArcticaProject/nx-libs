@@ -439,7 +439,7 @@ ProcShmAttach(client)
     }
     else
     {
-	shmdesc = (ShmDescPtr) xalloc(sizeof(ShmDescRec));
+	shmdesc = (ShmDescPtr) malloc(sizeof(ShmDescRec));
 	if (!shmdesc)
 	    return BadAlloc;
 	shmdesc->addr = shmat(stuff->shmid, 0,
@@ -447,7 +447,7 @@ ProcShmAttach(client)
 	if ((shmdesc->addr == ((char *)-1)) ||
 	    shmctl(stuff->shmid, IPC_STAT, &buf))
 	{
-	    xfree(shmdesc);
+	    free(shmdesc);
 	    return BadAccess;
 	}
 
@@ -457,7 +457,7 @@ ProcShmAttach(client)
 
 	if (shm_access(client, &(buf.shm_perm), stuff->readOnly) == -1) {
 	    shmdt(shmdesc->addr);
-	    xfree(shmdesc);
+	    free(shmdesc);
 	    return BadAccess;
 	}
 
@@ -488,7 +488,7 @@ ShmDetachSegment(value, shmseg)
     for (prev = &Shmsegs; *prev != shmdesc; prev = &(*prev)->next)
 	;
     *prev = shmdesc->next;
-    xfree(shmdesc);
+    free(shmdesc);
     return Success;
 }
 
@@ -779,7 +779,7 @@ CreatePmap:
 
     VERIFY_SHMSIZE(shmdesc, stuff->offset, size, client);
 
-    if(!(newPix = (PanoramiXRes *) xalloc(sizeof(PanoramiXRes))))
+    if(!(newPix = (PanoramiXRes *) malloc(sizeof(PanoramiXRes))))
 	return BadAlloc;
 
     newPix->type = XRT_PIXMAP;
@@ -820,7 +820,7 @@ CreatePmap:
 	    (*pScreen->DestroyPixmap)(pMap);
 	    FreeResource(newPix->info[j].id, RT_NONE);
 	}
-	xfree(newPix);
+	free(newPix);
     } else 
 	AddResource(stuff->pid, XRT_PIXMAP, newPix);
 

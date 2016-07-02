@@ -106,7 +106,7 @@ miInsertEdgeInET(ET, ETE, scanline, SLLBlock, iSLLBlock)
         if (*iSLLBlock > SLLSPERBLOCK-1) 
         {
             tmpSLLBlock = 
-		  (ScanLineListBlock *)xalloc(sizeof(ScanLineListBlock));
+		  (ScanLineListBlock *)malloc(sizeof(ScanLineListBlock));
 	    if (!tmpSLLBlock)
 		return FALSE;
             (*SLLBlock)->next = tmpSLLBlock;
@@ -395,7 +395,7 @@ miFreeStorage(pSLLBlock)
     while (pSLLBlock) 
     {
         tmpSLLBlock = pSLLBlock->next;
-        xfree(pSLLBlock);
+        free(pSLLBlock);
         pSLLBlock = tmpSLLBlock;
     }
 }

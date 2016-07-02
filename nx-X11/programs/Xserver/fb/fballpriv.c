@@ -83,7 +83,7 @@ fbAllocatePrivates(ScreenPtr pScreen, int *pGCIndex)
     {
 	FbScreenPrivPtr	pScreenPriv;
 
-	pScreenPriv = (FbScreenPrivPtr) xalloc (sizeof (FbScreenPrivRec));
+	pScreenPriv = (FbScreenPrivPtr) malloc (sizeof (FbScreenPrivRec));
 	if (!pScreenPriv)
 	    return FALSE;
 	pScreen->devPrivates[fbScreenPrivateIndex].ptr = (void *) pScreenPriv;

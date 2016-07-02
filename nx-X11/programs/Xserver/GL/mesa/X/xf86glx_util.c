@@ -52,7 +52,7 @@ XMesaImage *XMesaCreateImage(int bitsPerPixel, int width, int height, char *data
 {
     XMesaImage *image;
 
-    image = (XMesaImage *)xalloc(sizeof(XMesaImage));
+    image = (XMesaImage *)malloc(sizeof(XMesaImage));
 
     if (image) {
 	image->width = width;
@@ -70,7 +70,7 @@ void XMesaDestroyImage(XMesaImage *image)
 {
     if (image->data)
 	free(image->data);
-    xfree(image);
+    free(image);
 }
 
 unsigned long XMesaGetPixel(XMesaImage *image, int x, int y)

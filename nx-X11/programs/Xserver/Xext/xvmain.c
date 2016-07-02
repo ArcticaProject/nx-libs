@@ -288,7 +288,7 @@ XvScreenInit(ScreenPtr pScreen)
 
   /* ALLOCATE SCREEN PRIVATE RECORD */
   
-  pxvs = (XvScreenPtr) xalloc (sizeof (XvScreenRec));
+  pxvs = (XvScreenPtr) malloc (sizeof (XvScreenRec));
   if (!pxvs)
     {
       ErrorF("XvScreenInit: Unable to allocate screen private structure\n");
@@ -325,7 +325,7 @@ XvCloseScreen(
 
   (* pxvs->ddCloseScreen)(ii, pScreen); 
 
-  xfree(pxvs);
+  free(pxvs);
 
   pScreen->devPrivates[XvScreenIndex].ptr = (void *)NULL;
 
@@ -522,7 +522,7 @@ XvdiDestroyVideoNotifyList(void * pn, XID id)
     {
       npn = cpn->next;
       if (cpn->client) FreeResource(cpn->id, XvRTVideoNotify);
-      xfree(cpn);
+      free(cpn);
       cpn = npn;
     }
   return Success;
@@ -941,12 +941,12 @@ XvdiSelectVideoNotify(
 
   if (!pn) 
     {
-      if (!(tpn = (XvVideoNotifyPtr)xalloc(sizeof(XvVideoNotifyRec))))
+      if (!(tpn = (XvVideoNotifyPtr)malloc(sizeof(XvVideoNotifyRec))))
 	return BadAlloc;
       tpn->next = (XvVideoNotifyPtr)NULL;
       if (!AddResource(pDraw->id, XvRTVideoNotifyList, tpn))
 	{
-	  xfree(tpn);
+	  free(tpn);
 	  return BadAlloc;
 	}
     }
@@ -979,7 +979,7 @@ XvdiSelectVideoNotify(
 	}
       else
 	{
-	  if (!(tpn = (XvVideoNotifyPtr)xalloc(sizeof(XvVideoNotifyRec))))
+	  if (!(tpn = (XvVideoNotifyPtr)malloc(sizeof(XvVideoNotifyRec))))
 	    return BadAlloc;
 	  tpn->next = pn->next;
 	  pn->next = tpn;
@@ -1037,7 +1037,7 @@ XvdiSelectPortNotify(
 
   if (!tpn)
     {
-      if (!(tpn = (XvPortNotifyPtr)xalloc(sizeof(XvPortNotifyRec))))
+      if (!(tpn = (XvPortNotifyPtr)malloc(sizeof(XvPortNotifyRec))))
 	return BadAlloc;
       tpn->next = pPort->pNotify;
       pPort->pNotify = tpn;

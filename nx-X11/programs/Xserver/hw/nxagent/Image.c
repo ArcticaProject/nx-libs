@@ -447,7 +447,7 @@ FIXME: Here the split trap is always set and so the caching of
 
     if (nxagentUnpackAlpha[resource] != NULL)
     {
-      Xfree(nxagentUnpackAlpha[resource] -> data);
+      free(nxagentUnpackAlpha[resource] -> data);
     }
     else if ((nxagentUnpackAlpha[resource] = Xmalloc(sizeof(UnpackAlphaRec))) == NULL)
     {
@@ -455,7 +455,7 @@ FIXME: Here the split trap is always set and so the caching of
       fprintf(stderr, "nxagentSetUnpackAlpha: PANIC! Can't allocate data for the alpha structure.\n");
       #endif
 
-      Xfree(data);
+      free(data);
 
       return;
     }
@@ -475,7 +475,7 @@ FIXME: Here the split trap is always set and so the caching of
                 resource, size);
     #endif
 
-    Xfree(data);
+    free(data);
   }
 }
 
@@ -1561,7 +1561,7 @@ nxagentPutSubImageEnd:
 
   if (packedChecksum != NULL)
   {
-    Xfree(packedChecksum);
+    free(packedChecksum);
   }
 
   if (packedImage != NULL)
@@ -1569,13 +1569,13 @@ nxagentPutSubImageEnd:
     if (packedImage -> data != NULL &&
             packedImage -> data != plainImage -> data)
     {
-      Xfree(packedImage -> data);
+      free(packedImage -> data);
     }
 
-    Xfree(packedImage);
+    free(packedImage);
   }
 
-  Xfree(plainImage);
+  free(plainImage);
 }
 
 void nxagentGetImage(DrawablePtr pDrawable, int x, int y, int w, int h,
@@ -1629,9 +1629,9 @@ void nxagentResetAlphaCache()
   {
     if (nxagentUnpackAlpha[i])
     {
-      Xfree(nxagentUnpackAlpha[i] -> data);
+      free(nxagentUnpackAlpha[i] -> data);
 
-      Xfree(nxagentUnpackAlpha[i]);
+      free(nxagentUnpackAlpha[i]);
 
       nxagentUnpackAlpha[i] = NULL;
     }
@@ -1711,7 +1711,7 @@ int nxagentScaleImage(int x, int y, unsigned xRatio, unsigned yRatio,
 
   if (newImage -> data == NULL)
   {
-    Xfree(newImage);
+    free(newImage);
     
     #ifdef PANIC
     fprintf(stderr, "nxagentScaleImage: PANIC! Failed to create the target image data.\n");
@@ -1781,10 +1781,10 @@ int nxagentScaleImage(int x, int y, unsigned xRatio, unsigned yRatio,
 
   if (image -> obdata != NULL)
   {
-    Xfree((char *) image -> obdata);
+    free((char *) image -> obdata);
   }
 
-  Xfree((char *) image);
+  free((char *) image);
 
   *pImage = newImage;
 
@@ -1808,7 +1808,7 @@ char *nxagentAllocateImageData(int width, int height, int depth, int *length, in
 
   data = NULL;
 
-  if ((data = xalloc(*length)) == NULL)
+  if ((data = malloc(*length)) == NULL)
   {
     #ifdef WARNING
     fprintf(stderr, "nxagentAllocateImageData: WARNING! Failed to allocate [%d] bytes of memory.\n", *length);

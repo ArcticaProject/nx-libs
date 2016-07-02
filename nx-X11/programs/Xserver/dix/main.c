@@ -310,12 +310,12 @@ main(int argc, char *argv[], char *envp[])
 	{
 	    CreateWellKnownSockets();
 	    InitProcVectors();
-	    clients = (ClientPtr *)xalloc(MAXCLIENTS * sizeof(ClientPtr));
+	    clients = (ClientPtr *)malloc(MAXCLIENTS * sizeof(ClientPtr));
 	    if (!clients)
 		FatalError("couldn't create client array");
 	    for (i=1; i<MAXCLIENTS; i++) 
 		clients[i] = NullClient;
-	    serverClient = (ClientPtr)xalloc(sizeof(ClientRec));
+	    serverClient = (ClientPtr)malloc(sizeof(ClientRec));
 	    if (!serverClient)
 		FatalError("couldn't create server client");
 	    InitClient(serverClient, 0, (void *)NULL);
@@ -474,7 +474,7 @@ main(int argc, char *argv[], char *envp[])
 #endif
 	FreeAuditTimer();
 
-	xfree(serverClient->devPrivates);
+	free(serverClient->devPrivates);
 	serverClient->devPrivates = NULL;
 
 	if (dispatchException & DE_TERMINATE)
@@ -490,7 +490,7 @@ main(int argc, char *argv[], char *envp[])
 	    break;
 	}
 
-	xfree(ConnectionInfo);
+	free(ConnectionInfo);
 	ConnectionInfo = NULL;
     }
     return(0);
@@ -556,7 +556,7 @@ CreateConnectionBlock()
             ((setup.nbytesVendor + 3) & ~3) +
 	    (setup.numFormats * sizeof(xPixmapFormat)) +
             (setup.numRoots * sizeof(xWindowRoot));
-    ConnectionInfo = (char *) xalloc(lenofblock);
+    ConnectionInfo = (char *) malloc(lenofblock);
     if (!ConnectionInfo)
 	return FALSE;
 
@@ -618,10 +618,10 @@ CreateConnectionBlock()
 	{
 	    lenofblock += sizeof(xDepth) + 
 		    (pDepth->numVids * sizeof(xVisualType));
-	    pBuf = (char *)xrealloc(ConnectionInfo, lenofblock);
+	    pBuf = (char *)realloc(ConnectionInfo, lenofblock);
 	    if (!pBuf)
 	    {
-		xfree(ConnectionInfo);
+		free(ConnectionInfo);
 		return FALSE;
 	    }
 	    ConnectionInfo = pBuf;
@@ -689,15 +689,15 @@ AddScreen(
     if (i == MAXSCREENS)
 	return -1;
 
-    pScreen = (ScreenPtr) xcalloc(1, sizeof(ScreenRec));
+    pScreen = (ScreenPtr) calloc(1, sizeof(ScreenRec));
     if (!pScreen)
 	return -1;
 
-    pScreen->devPrivates = (DevUnion *)xcalloc(sizeof(DevUnion),
+    pScreen->devPrivates = (DevUnion *)calloc(sizeof(DevUnion),
 						screenPrivateCount);
     if (!pScreen->devPrivates && screenPrivateCount)
     {
-	xfree(pScreen);
+	free(pScreen);
 	return -1;
     }
     pScreen->myNum = i;
@@ -782,11 +782,11 @@ static void
 FreeScreen(ScreenPtr pScreen)
 {
     pScreen->root = NullWindow;
-    xfree(pScreen->WindowPrivateSizes);
-    xfree(pScreen->GCPrivateSizes);
+    free(pScreen->WindowPrivateSizes);
+    free(pScreen->GCPrivateSizes);
 #ifdef PIXPRIV
-    xfree(pScreen->PixmapPrivateSizes);
+    free(pScreen->PixmapPrivateSizes);
 #endif
-    xfree(pScreen->devPrivates);
-    xfree(pScreen);
+    free(pScreen->devPrivates);
+    free(pScreen);
 }

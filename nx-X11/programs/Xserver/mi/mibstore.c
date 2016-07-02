@@ -373,7 +373,7 @@ miInitializeBackingStore (pScreen)
     }
     if (!AllocateGCPrivate(pScreen, miBSGCIndex, 0))
 	return;
-    pScreenPriv = (miBSScreenPtr) xalloc (sizeof (miBSScreenRec));
+    pScreenPriv = (miBSScreenPtr) malloc (sizeof (miBSScreenRec));
     if (!pScreenPriv)
 	return;
 
@@ -433,7 +433,7 @@ miBSCloseScreen (i, pScreen)
     pScreen->ChangeWindowAttributes = pScreenPriv->ChangeWindowAttributes;
     pScreen->CreateGC = pScreenPriv->CreateGC;
 
-    xfree ((void *) pScreenPriv);
+    free ((void *) pScreenPriv);
 
     return (*pScreen->CloseScreen) (i, pScreen);
 }
@@ -903,7 +903,7 @@ miBSCreateGCPrivate (pGC)
 {
     miBSGCRec	*pPriv;
 
-    pPriv = (miBSGCRec *) xalloc (sizeof (miBSGCRec));
+    pPriv = (miBSGCRec *) malloc (sizeof (miBSGCRec));
     if (!pPriv)
 	return FALSE;
     pPriv->pBackingGC = NULL;
@@ -931,7 +931,7 @@ miBSDestroyGCPrivate (GCPtr pGC)
 	pGC->ops = pPriv->wrapOps;
 	if (pPriv->pBackingGC)
 	    FreeGC (pPriv->pBackingGC, (GContext) 0);
-	xfree ((void *) pPriv);
+	free ((void *) pPriv);
     }
 }
 
@@ -2581,7 +2581,7 @@ miBSAllocate(pWin)
     if (!(pBackingStore = (miBSWindowPtr)pWin->backStorage))
     {
 
-	pBackingStore = (miBSWindowPtr)xalloc(sizeof(miBSWindowRec));
+	pBackingStore = (miBSWindowPtr)malloc(sizeof(miBSWindowRec));
 	if (!pBackingStore)
 	    return;
 
@@ -2685,7 +2685,7 @@ miBSFree(pWin)
 
 	RegionUninit(&pBackingStore->SavedRegion);
 
-	xfree(pBackingStore);
+	free(pBackingStore);
 	pWin->backStorage = NULL;
     }
 }
@@ -3615,7 +3615,7 @@ miBSDestroyGC (pGC)
 
     FUNC_EPILOGUE (pGC, pPriv);
 
-    xfree(pPriv);
+    free(pPriv);
 }
 
 static void

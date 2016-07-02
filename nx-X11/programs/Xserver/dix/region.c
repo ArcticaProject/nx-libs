@@ -172,7 +172,7 @@ Equipment Corporation.
         ((r1)->y1 <= (r2)->y1) && \
         ((r1)->y2 >= (r2)->y2) )
 
-#define xfreeData(reg) if ((reg)->data && (reg)->data->size) xfree((reg)->data)
+#define xfreeData(reg) if ((reg)->data && (reg)->data->size) free((reg)->data)
 
 #define RECTALLOC_BAIL(pReg,n,bail) \
 if (!(pReg)->data || (((pReg)->data->numRects + (n)) > (pReg)->data->size)) \
@@ -210,7 +210,7 @@ if (((numRects) < ((reg)->data->size >> 1)) && ((reg)->data->size > 50)) \
 {									 \
     size_t NewSize = RegionSizeof(numRects);				 \
     RegDataPtr NewData =						 \
-	(NewSize > 0) ? (RegDataPtr)xrealloc((reg)->data, NewSize) : NULL;	 \
+	(NewSize > 0) ? (RegDataPtr)realloc((reg)->data, NewSize) : NULL;	 \
     if (NewData)							 \
     {									 \
 	NewData->size = (numRects);					 \
@@ -311,7 +311,7 @@ RegionCreate(rect, size)
 {
     register RegionPtr pReg;
     size_t newSize;
-    pReg = (RegionPtr)xalloc(sizeof(RegionRec));
+    pReg = (RegionPtr)malloc(sizeof(RegionRec));
     if (!pReg)
 	return &RegionBrokenRegion;
     if (rect)
@@ -324,7 +324,7 @@ RegionCreate(rect, size)
 	pReg->extents = RegionEmptyBox;
 	newSize = RegionSizeof(size);
 	if ((size > 1) && (newSize > 0) &&
-	    (pReg->data = xalloc(newSize)))
+	    (pReg->data = malloc(newSize)))
 	{
 	    pReg->data->size = size;
 	    pReg->data->numRects = 0;
@@ -342,7 +342,7 @@ RegionDestroy(pReg)
     good(pReg);
     xfreeData(pReg);
     if (pReg != &RegionBrokenRegion)
-	xfree(pReg);
+	free(pReg);
 }
 
 Bool
@@ -367,7 +367,7 @@ RegionRectAlloc(
     {
 	n++;
 	rgnSize = RegionSizeof(n);
-	pRgn->data = (rgnSize > 0) ? xalloc(rgnSize) : NULL;
+	pRgn->data = (rgnSize > 0) ? malloc(rgnSize) : NULL;
 	if (!pRgn->data)
 	    return RegionBreak (pRgn);
 	pRgn->data->numRects = 1;
@@ -376,7 +376,7 @@ RegionRectAlloc(
     else if (!pRgn->data->size)
     {
 	rgnSize = RegionSizeof(n);
-	pRgn->data = (rgnSize > 0) ? xalloc(rgnSize) : NULL;
+	pRgn->data = (rgnSize > 0) ? malloc(rgnSize) : NULL;
 	if (!pRgn->data)
 	    return RegionBreak (pRgn);
 	pRgn->data->numRects = 0;
@@ -391,7 +391,7 @@ RegionRectAlloc(
 	}
 	n += pRgn->data->numRects;
 	rgnSize = RegionSizeof(n);
-	data = (rgnSize > 0) ? xrealloc(pRgn->data, rgnSize) : NULL;
+	data = (rgnSize > 0) ? realloc(pRgn->data, rgnSize) : NULL;
 	if (!data)
 	    return RegionBreak (pRgn);
 	pRgn->data = data;
@@ -795,7 +795,7 @@ RegionOp(
     }
 
     if (oldData)
-	xfree(oldData);
+	free(oldData);
 
     if (!(numRects = newReg->data->numRects))
     {
@@ -1235,7 +1235,7 @@ RegionValidate(badreg, pOverlap)
 
     /* Set up the first region to be the first rectangle in badreg */
     /* Note that step 2 code will never overflow the ri[0].reg rects array */
-    ri = (RegionInfo *) xalloc(4 * sizeof(RegionInfo));
+    ri = (RegionInfo *) malloc(4 * sizeof(RegionInfo));
     if (!ri)
 	return RegionBreak (badreg);
     sizeRI = 4;
@@ -1299,7 +1299,7 @@ RegionValidate(badreg, pOverlap)
 	{
 	    /* Oops, allocate space for new region information */
 	    sizeRI <<= 1;
-	    rit = (RegionInfo *) xrealloc(ri, sizeRI * sizeof(RegionInfo));
+	    rit = (RegionInfo *) realloc(ri, sizeRI * sizeof(RegionInfo));
 	    if (!rit)
 		goto bail;
 	    ri = rit;
@@ -1355,13 +1355,13 @@ NextRect: ;
 	numRI -= half;
     }
     *badreg = ri[0].reg;
-    xfree(ri);
+    free(ri);
     good(badreg);
     return ret;
 bail:
     for (i = 0; i < numRI; i++)
 	xfreeData(&ri[i].reg);
-    xfree (ri);
+    free (ri);
     return RegionBreak (badreg);
 }
 
@@ -1402,7 +1402,7 @@ RegionFromRects(nrects, prect, ctype)
 	return pRgn;
     }
     newSize = RegionSizeof(nrects);
-    pData = newSize > 0 ? xalloc(newSize) : NULL;
+    pData = newSize > 0 ? malloc(newSize) : NULL;
     if (!pData)
     {
 	RegionBreak (pRgn);
@@ -1443,7 +1443,7 @@ RegionFromRects(nrects, prect, ctype)
     }
     else
     {
-	xfree (pData);
+	free (pData);
     }
     return pRgn;
 }
@@ -1469,7 +1469,7 @@ miRegionDataCopy(
     {
 	size_t newSize = RegionSizeof(src->data->numRects);
 	xfreeData(dst);
-	dst->data = newSize > 0 ? xalloc(newSize) : NULL;
+	dst->data = newSize > 0 ? malloc(newSize) : NULL;
 	if (!dst->data)
 	    return RegionBreak (dst);
     }
