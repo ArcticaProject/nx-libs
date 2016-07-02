@@ -56,6 +56,7 @@ in this Software without prior written authorization from The Open Group.
 #include "gcstruct.h"
 #include "colormapst.h"
 #include "propertyst.h"
+#include "protocol-versions.h"
 #define _SECURITY_SERVER
 #include <nx-X11/extensions/securstr.h>
 #include <assert.h>
@@ -486,8 +487,8 @@ ProcSecurityQueryVersion(
     rep.type        	= X_Reply;
     rep.sequenceNumber 	= client->sequence;
     rep.length         	= 0;
-    rep.majorVersion  	= SECURITY_MAJOR_VERSION;
-    rep.minorVersion  	= SECURITY_MINOR_VERSION;
+    rep.majorVersion  	= SERVER_SECURITY_MAJOR_VERSION;
+    rep.minorVersion  	= SERVER_SECURITY_MINOR_VERSION;
     if(client->swapped)
     {
 	register char n;

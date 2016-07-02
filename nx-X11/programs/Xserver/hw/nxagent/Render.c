@@ -31,6 +31,7 @@
 #include "mipict.h"
 #include "fbpict.h"
 #include "dixstruct.h"
+#include "protocol-versions.h"
 
 #include "Agent.h"
 #include "Drawable.h"
@@ -217,26 +218,26 @@ void nxagentRenderExtensionInit()
      + two versions.
      */
 
-    if (major_version > RENDER_MAJOR || 
-            (major_version == RENDER_MAJOR &&
-                 minor_version > RENDER_MINOR))
+    if (major_version > SERVER_RENDER_MAJOR_VERSION ||
+            (major_version == SERVER_RENDER_MAJOR_VERSION &&
+                 minor_version > SERVER_RENDER_MINOR_VERSION))
     {
       #ifdef TEST
       fprintf(stderr, "nxagentRenderExtensionInit: Using render version [%d.%d] with "
-                  "remote version [%d.%d].\n", RENDER_MAJOR, RENDER_MINOR,
+                  "remote version [%d.%d].\n", SERVER_RENDER_MAJOR_VERSION, SERVER_RENDER_MINOR_VERSION,
                       major_version, minor_version);
       #endif
 
-      nxagentRenderVersionMajor = RENDER_MAJOR;
-      nxagentRenderVersionMinor = RENDER_MINOR;
+      nxagentRenderVersionMajor = SERVER_RENDER_MAJOR_VERSION;
+      nxagentRenderVersionMinor = SERVER_RENDER_MINOR_VERSION;
     }
-    else if (major_version < RENDER_MAJOR ||
-                 (major_version == RENDER_MAJOR &&
-                      minor_version < RENDER_MINOR))
+    else if (major_version < SERVER_RENDER_MAJOR_VERSION ||
+                 (major_version == SERVER_RENDER_MAJOR_VERSION &&
+                      minor_version < SERVER_RENDER_MINOR_VERSION))
     {
       #ifdef TEST
       fprintf(stderr, "Info: Local render version %d.%d is higher "
-                  "than remote version %d.%d.\n", RENDER_MAJOR, RENDER_MINOR,
+                  "than remote version %d.%d.\n", SERVER_RENDER_MAJOR_VERSION, SERVER_RENDER_MINOR_VERSION,
                       major_version, minor_version);
 
       fprintf(stderr, "Info: Lowering the render version reported to clients.\n");
@@ -249,7 +250,7 @@ void nxagentRenderExtensionInit()
     {
       #ifdef TEST
       fprintf(stderr, "nxagentRenderExtensionInit: Local render version %d.%d "
-                  "matches remote version %d.%d.\n", RENDER_MAJOR, RENDER_MINOR,
+                  "matches remote version %d.%d.\n", SERVER_RENDER_MAJOR_VERSION, SERVER_RENDER_MINOR_VERSION,
                       major_version, minor_version);
       #endif
 

@@ -70,6 +70,7 @@ PERFORMANCE OF THIS SOFTWARE.
 #define _SYNC_SERVER
 #include <nx-X11/extensions/sync.h>
 #include <nx-X11/extensions/syncstr.h>
+#include "protocol-versions.h"
 
 #ifdef EXTMODULE
 #include "xf86_ansic.h"
@@ -1349,8 +1350,8 @@ ProcSyncInitialize(client)
     memset(&rep, 0, sizeof(xSyncInitializeReply));
     rep.type = X_Reply;
     rep.sequenceNumber = client->sequence;
-    rep.majorVersion = SYNC_MAJOR_VERSION;
-    rep.minorVersion = SYNC_MINOR_VERSION;
+    rep.majorVersion = SERVER_SYNC_MAJOR_VERSION;
+    rep.minorVersion = SERVER_SYNC_MINOR_VERSION;
     rep.length = 0;
 
     if (client->swapped)

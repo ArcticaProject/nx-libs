@@ -27,6 +27,7 @@
 #endif
 
 #include "xfixesint.h"
+#include "protocol-versions.h"
 
 unsigned char	XFixesReqCode;
 int		XFixesEventBase;
@@ -46,16 +47,16 @@ ProcXFixesQueryVersion(ClientPtr client)
     rep.type = X_Reply;
     rep.length = 0;
     rep.sequenceNumber = client->sequence;
-    if (stuff->majorVersion < XFIXES_MAJOR) {
-	rep.majorVersion = stuff->majorVersion;
-	rep.minorVersion = stuff->minorVersion;
+    if (stuff->majorVersion < SERVER_XFIXES_MAJOR_VERSION) {
+        rep.majorVersion = stuff->majorVersion;
+        rep.minorVersion = stuff->minorVersion;
     } else {
-	rep.majorVersion = XFIXES_MAJOR;
-	if (stuff->majorVersion == XFIXES_MAJOR && 
-	    stuff->minorVersion < XFIXES_MINOR)
-	    rep.minorVersion = stuff->minorVersion;
-	else
-	    rep.minorVersion = XFIXES_MINOR;
+        rep.majorVersion = SERVER_XFIXES_MAJOR_VERSION;
+        if (stuff->majorVersion == SERVER_XFIXES_MAJOR_VERSION &&
+            stuff->minorVersion < SERVER_XFIXES_MINOR_VERSION)
+            rep.minorVersion = stuff->minorVersion;
+        else
+            rep.minorVersion = SERVER_XFIXES_MINOR_VERSION;
     }
     pXFixesClient->major_version = rep.majorVersion;
     pXFixesClient->minor_version = rep.minorVersion;

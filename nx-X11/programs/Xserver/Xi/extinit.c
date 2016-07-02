@@ -74,6 +74,7 @@ SOFTWARE.
 #include "extinit.h"
 #include "exglobals.h"
 #include "swaprep.h"
+#include "protocol-versions.h"
 
 /* modules local to Xi */
 #include "allowev.h"
@@ -204,8 +205,9 @@ Mask	PropagateMask[MAX_DEVICES];
 
 static	XExtensionVersion	thisversion = 
 					{XI_Present, 
-					 XI_Add_XChangeDeviceControl_Major, 
-					 XI_Add_XChangeDeviceControl_Minor};
+					 SERVER_XI_MAJOR_VERSION,
+					 SERVER_XI_MINOR_VERSION,
+					};
 
 /**********************************************************************
  *

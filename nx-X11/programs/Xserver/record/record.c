@@ -60,6 +60,8 @@ and Jim Haggerty of Metheus.
 #include "cursor.h"
 #endif
 
+#include "protocol-versions.h"
+
 static RESTYPE RTContext;   /* internal resource type for Record contexts */
 static int RecordErrorBase; /* first Record error number */
 
@@ -2002,8 +2004,8 @@ ProcRecordQueryVersion(client)
     rep.type        	= X_Reply;
     rep.sequenceNumber 	= client->sequence;
     rep.length         	= 0;
-    rep.majorVersion  	= RECORD_MAJOR_VERSION;
-    rep.minorVersion  	= RECORD_MINOR_VERSION;
+    rep.majorVersion  	= SERVER_RECORD_MAJOR_VERSION;
+    rep.minorVersion  	= SERVER_RECORD_MINOR_VERSION;
     if(client->swapped)
     {
     	swaps(&rep.sequenceNumber, n);

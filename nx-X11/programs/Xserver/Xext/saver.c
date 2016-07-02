@@ -65,6 +65,8 @@ in this Software without prior written authorization from the X Consortium.
 
 #include "modinit.h"
 
+#include "protocol-versions.h"
+
 #if 0
 static unsigned char ScreenSaverReqCode = 0;
 #endif
@@ -699,8 +701,8 @@ ProcScreenSaverQueryVersion (client)
     rep.type = X_Reply;
     rep.length = 0;
     rep.sequenceNumber = client->sequence;
-    rep.majorVersion = ScreenSaverMajorVersion;
-    rep.minorVersion = ScreenSaverMinorVersion;
+    rep.majorVersion = SERVER_SAVER_MAJOR_VERSION;
+    rep.minorVersion = SERVER_SAVER_MINOR_VERSION;
     if (client->swapped) {
     	swaps(&rep.sequenceNumber, n);
     	swapl(&rep.length, n);

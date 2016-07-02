@@ -1,5 +1,7 @@
 #include <Server.tmpl>
 
+       NULL =
+
        SRCS =	compalloc.c compext.c compinit.c compoverlay.c compwindow.c
 
        OBJS =	compalloc.o compext.o compinit.o compoverlay.o compwindow.o
@@ -11,7 +13,13 @@
 
    LINTLIBS = ../dix/llib-ldix.ln ../os/llib-los.ln
 
-   DEFINES = -DNXAGENT_SERVER
+#if defined(NXAgentServer) && NXAgentServer
+ NX_DEFINES = -DNXAGENT_SERVER
+#endif
+
+    DEFINES = 			\
+              $(NX_DEFINES)	\
+              $(NULL)
 
 NormalLibraryTarget(composite,$(OBJS))
 NormalLibraryObjectRule()

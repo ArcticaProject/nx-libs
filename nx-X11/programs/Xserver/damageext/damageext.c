@@ -27,6 +27,7 @@
 #endif
 
 #include "damageextint.h"
+#include "protocol-versions.h"
 
 unsigned char	DamageReqCode;
 int		DamageEventBase;
@@ -143,16 +144,16 @@ ProcDamageQueryVersion(ClientPtr client)
     rep.type = X_Reply;
     rep.length = 0;
     rep.sequenceNumber = client->sequence;
-    if (stuff->majorVersion < DAMAGE_MAJOR) {
+    if (stuff->majorVersion < SERVER_DAMAGE_MAJOR_VERSION) {
 	rep.majorVersion = stuff->majorVersion;
 	rep.minorVersion = stuff->minorVersion;
     } else {
-	rep.majorVersion = DAMAGE_MAJOR;
-	if (stuff->majorVersion == DAMAGE_MAJOR && 
-	    stuff->minorVersion < DAMAGE_MINOR)
+	rep.majorVersion = SERVER_DAMAGE_MAJOR_VERSION;
+	if (stuff->majorVersion == SERVER_DAMAGE_MAJOR_VERSION &&
+	    stuff->minorVersion < SERVER_DAMAGE_MINOR_VERSION)
 	    rep.minorVersion = stuff->minorVersion;
 	else
-	    rep.minorVersion = DAMAGE_MINOR;
+	    rep.minorVersion = SERVER_DAMAGE_MINOR_VERSION;
     }
     pDamageClient->major_version = rep.majorVersion;
     pDamageClient->minor_version = rep.minorVersion;

@@ -52,6 +52,8 @@
 #include "xf86_ansic.h"
 #endif
 
+#include "protocol-versions.h"
+
 #if !defined(UINT32_MAX)
 #define UINT32_MAX 0xffffffffU
 #endif
@@ -293,8 +295,8 @@ ProcRenderQueryVersion (ClientPtr client)
     rep.type = X_Reply;
     rep.length = 0;
     rep.sequenceNumber = client->sequence;
-    rep.majorVersion = RENDER_MAJOR;
-    rep.minorVersion = RENDER_MINOR;
+    rep.majorVersion = SERVER_RENDER_MAJOR_VERSION;
+    rep.minorVersion = SERVER_RENDER_MINOR_VERSION;
     if (client->swapped) {
     	swaps(&rep.sequenceNumber, n);
     	swapl(&rep.length, n);

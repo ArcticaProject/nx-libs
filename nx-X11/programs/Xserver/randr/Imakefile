@@ -62,7 +62,7 @@ XCOMM $XFree86: xc/programs/Xserver/randr/Imakefile,v 1.1 2001/05/23 03:29:44 ke
     PNRX_DEFINES = -DXINERAMA -DPANORAMIX
 #endif
 
-#if defined(NXAgentServer)
+#if defined(NXAgentServer) && NXAgentServer
     NX_DEFINES = -DNXAGENT_SERVER
 #endif
 

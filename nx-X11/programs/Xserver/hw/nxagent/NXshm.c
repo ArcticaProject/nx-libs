@@ -47,7 +47,6 @@ in this Software without prior written authorization from The Open Group.
 /* $Xorg: shm.c,v 1.4 2001/02/09 02:04:33 xorgcvs Exp $ */
 
 #include <nx-X11/X.h>
-
 #include "Trap.h"
 #include "Agent.h"
 
