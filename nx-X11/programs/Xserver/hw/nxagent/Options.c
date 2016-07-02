@@ -166,6 +166,8 @@ void nxagentInitOptions()
   nxagentOptions.Xinerama = 1;
 
   nxagentOptions.SleepTime = DEFAULT_SLEEP_TIME;
+
+  nxagentOptions.ReconnectTolerance = DEFAULT_TOLERANCE;
 }
 
 /*

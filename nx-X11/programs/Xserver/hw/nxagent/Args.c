@@ -1405,6 +1405,82 @@ static void nxagentParseOptions(char *name, char *value)
 
     return;
   }
+  else if (!strcmp(name, "tolerancechecks"))
+  {
+    if (strcmp(value, "strict") == 0)
+    {
+      nxagentChangeOption(ReconnectTolerance, ToleranceChecksStrict);
+    }
+    else if (strcmp(value, "safe") == 0)
+    {
+      nxagentChangeOption(ReconnectTolerance, ToleranceChecksSafe);
+    }
+    else if (strcmp(value, "risky") == 0)
+    {
+      nxagentChangeOption(ReconnectTolerance, ToleranceChecksRisky);
+    }
+    else if (strcmp(value, "none") == 0)
+    {
+      nxagentChangeOption(ReconnectTolerance, ToleranceChecksBypass);
+    }
+    else
+    {
+      /*
+       * Check for a matching integer. Or any integer, really.
+       */
+      long tolerance_parse = 0;
+
+      errno = 0;
+      tolerance_parse = strtol(value, NULL, 10);
+
+      if ((errno) && (0 == tolerance_parse))
+      {
+        fprintf(stderr, "nxagentParseOptions: Unable to convert value [%s] of option [%s]. "
+                        "Ignoring option.\n",
+                        validateString(value), validateString(name));
+
+        return;
+      }
+
+      if ((long) UINT_MAX < tolerance_parse)
+      {
+        tolerance_parse = UINT_MAX;
+
+        fprintf(stderr, "nxagentParseOptions: Warning: value [%s] of option [%s] "
+                        "out of range, clamped to [%u].\n",
+                        validateString(value), validateString(name), tolerance_parse);
+      }
+
+      if (0 > tolerance_parse)
+      {
+        tolerance_parse = 0;
+
+        fprintf(stderr, "nxagentParseOptions: Warning: value [%s] of option [%s] "
+                        "out of range, clamped to [%u].\n",
+                        validateString(value), validateString(name), tolerance_parse);
+      }
+
+      #ifdef TEST
+      switch (tolerance_parse) {
+        case ToleranceChecksStrict:
+        case ToleranceChecksSafe:
+        case ToleranceChecksRisky:
+        case ToleranceChecksBypass:
+                               break;
+        default:
+                               fprintf(stderr, "nxagentParseOptions: Warning: value [%s] of "
+                                               "option [%s] unknown, will be mapped to "
+                                               "\"Bypass\" [%u] value internally.\n",
+                                       validateString(value), validateString(name),
+                                       (unsigned int)ToleranceChecksBypass);
+      }
+      #endif
+
+      nxagentChangeOption(ReconnectTolerance, tolerance_parse);
+    }
+
+    return;
+  }
   else
   {
     #ifdef DEBUG

@@ -9063,7 +9063,8 @@ int ParseEnvironmentOptions(const char *env, int force)
                                  strcasecmp(name, "clipboard") == 0 ||
                                      strcasecmp(name, "streaming") == 0 ||
                                          strcasecmp(name, "backingstore") == 0 ||
-                                             strcasecmp(name, "sleep") == 0)
+                                             strcasecmp(name, "sleep") == 0 ||
+                                                 strcasecmp(name, "tolerancechecks") == 0)
     {
       #ifdef DEBUG
       *logofs << "Loop: Ignoring agent option '" << name
