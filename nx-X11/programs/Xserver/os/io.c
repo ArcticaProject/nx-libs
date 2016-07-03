@@ -859,14 +859,16 @@ SetCriticalOutputPending(void)
 int
 WriteToClient (ClientPtr who, int count, char *buf)
 {
-    OsCommPtr oc = (OsCommPtr)who->osPrivate;
-    ConnectionOutputPtr oco = oc->output;
+    OsCommPtr oc;
+    ConnectionOutputPtr oco;
     int padBytes;
 #ifdef DEBUG_COMMUNICATION
     Bool multicount = FALSE;
 #endif
-    if (!count)
+    if (!count || !who || who == serverClient || who->clientGone)
 	return(0);
+    oc = who->osPrivate;
+    oco = oc->output;
 #ifdef DEBUG_COMMUNICATION
     {
 	char info[128];

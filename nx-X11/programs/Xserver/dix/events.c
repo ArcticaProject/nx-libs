@@ -4439,6 +4439,9 @@ WriteEventsToClient(ClientPtr pClient, int count, xEvent *events)
     xEvent    eventTo, *eventFrom;
     int       i;
 
+    if (!pClient || pClient == serverClient || pClient->clientGone)
+	return;
+
 #ifdef XKB
     if ((!noXkbExtension)&&(!XkbFilterEvents(pClient, count, events)))
 	return;

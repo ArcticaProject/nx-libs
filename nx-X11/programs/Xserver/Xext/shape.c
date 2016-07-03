@@ -969,8 +969,6 @@ SendShapeNotify (pWin, which)
     }
     for (pShapeEvent = *pHead; pShapeEvent; pShapeEvent = pShapeEvent->next) {
 	client = pShapeEvent->client;
-	if (client == serverClient || client->clientGone)
-	    continue;
 	se.type = ShapeNotify + ShapeEventBase;
 	se.kind = which;
 	se.window = pWin->drawable.id;
