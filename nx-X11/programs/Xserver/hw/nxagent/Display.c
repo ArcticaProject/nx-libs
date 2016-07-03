@@ -2537,6 +2537,7 @@ static int nxagentCheckForPixmapFormatsCompatibility()
 
 static int nxagentInitAndCheckVisuals(int flexibility)
 {
+  /* FIXME: does this also need work? */
   XVisualInfo viTemplate;
   XVisualInfo *viList;
   XVisualInfo *newVisuals;
