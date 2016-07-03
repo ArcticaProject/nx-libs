@@ -2647,6 +2647,7 @@ FIXME: Should the visual be ignored in this case?
 
 static int nxagentCheckForColormapsCompatibility(int flexibility)
 {
+  /* FIXME: does this also need work? */
   if (nxagentNumDefaultColormaps == nxagentNumDefaultColormapsRecBackup)
   {
     #ifdef TEST
