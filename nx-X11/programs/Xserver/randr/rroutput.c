@@ -351,9 +351,6 @@ RRDeliverOutputEvent(ClientPtr client, WindowPtr pWin, RROutputPtr output)
     xRROutputChangeNotifyEvent oe = {
         .type = RRNotify + RREventBase,
         .subCode = RRNotify_OutputChange,
-#ifdef NXAGENT_SERVER
-        .sequenceNumber = client->sequence,
-#endif
         .timestamp = pScrPriv->lastSetTime.milliseconds,
         .configTimestamp = pScrPriv->lastConfigTime.milliseconds,
         .window = pWin->drawable.id,

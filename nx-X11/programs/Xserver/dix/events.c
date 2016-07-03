@@ -1546,14 +1546,6 @@ TryClientEvents (ClientPtr client, xEvent *pEvents, int count, Mask mask,
 		return 1;
 	}
 #endif
-	type &= 0177;
-	if (type != KeymapNotify)
-	{
-	    /* all extension events must have a sequence number */
-	    for (i = 0; i < count; i++)
-		pEvents[i].u.u.sequenceNumber = client->sequence;
-	}
-
 	if (BitIsOn(criticalEvents, type))
 	{
 #ifdef SMART_SCHEDULE
@@ -4441,6 +4433,10 @@ WriteEventsToClient(ClientPtr pClient, int count, xEvent *events)
 
     if (!pClient || pClient == serverClient || pClient->clientGone)
 	return;
+
+    for (i = 0; i < count; i++)
+	if ((events[i].u.u.type & 0x7f) != KeymapNotify)
+	    events[i].u.u.sequenceNumber = pClient->sequence;
 
 #ifdef XKB
     if ((!noXkbExtension)&&(!XkbFilterEvents(pClient, count, events)))
