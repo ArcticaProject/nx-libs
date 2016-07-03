@@ -397,7 +397,7 @@ void __glXSwapMakeCurrentReply(ClientPtr client, xGLXMakeCurrentReply *reply)
     __GLX_SWAP_SHORT(&reply->sequenceNumber);
     __GLX_SWAP_INT(&reply->length);
     __GLX_SWAP_INT(&reply->contextTag);
-    WriteToClient(client, sz_xGLXMakeCurrentReply, (char *)reply);
+    WriteToClient(client, sz_xGLXMakeCurrentReply, reply);
 }
 
 void __glXSwapIsDirectReply(ClientPtr client, xGLXIsDirectReply *reply)
@@ -405,7 +405,7 @@ void __glXSwapIsDirectReply(ClientPtr client, xGLXIsDirectReply *reply)
     __GLX_DECLARE_SWAP_VARIABLES;
     __GLX_SWAP_SHORT(&reply->sequenceNumber);
     __GLX_SWAP_INT(&reply->length);
-    WriteToClient(client, sz_xGLXIsDirectReply, (char *)reply);
+    WriteToClient(client, sz_xGLXIsDirectReply, reply);
 }
 
 void __glXSwapQueryVersionReply(ClientPtr client, xGLXQueryVersionReply *reply)
@@ -415,7 +415,7 @@ void __glXSwapQueryVersionReply(ClientPtr client, xGLXQueryVersionReply *reply)
     __GLX_SWAP_INT(&reply->length);
     __GLX_SWAP_INT(&reply->majorVersion);
     __GLX_SWAP_INT(&reply->minorVersion);
-    WriteToClient(client, sz_xGLXQueryVersionReply, (char *)reply);
+    WriteToClient(client, sz_xGLXQueryVersionReply, reply);
 }
 
 void glxSwapQueryExtensionsStringReply(ClientPtr client,
@@ -427,7 +427,7 @@ void glxSwapQueryExtensionsStringReply(ClientPtr client,
     __GLX_SWAP_SHORT(&reply->sequenceNumber);
     __GLX_SWAP_INT(&reply->length);
     __GLX_SWAP_INT(&reply->n);
-    WriteToClient(client, sz_xGLXQueryExtensionsStringReply, (char *)reply);
+    WriteToClient(client, sz_xGLXQueryExtensionsStringReply, reply);
     __GLX_SWAP_INT_ARRAY((int *)buf, length);
     WriteToClient(client, length << 2, buf);
 }
@@ -440,7 +440,7 @@ void glxSwapQueryServerStringReply(ClientPtr client,
     __GLX_SWAP_SHORT(&reply->sequenceNumber);
     __GLX_SWAP_INT(&reply->length);
     __GLX_SWAP_INT(&reply->n);
-    WriteToClient(client, sz_xGLXQueryServerStringReply, (char *)reply);
+    WriteToClient(client, sz_xGLXQueryServerStringReply, reply);
     /** no swap is needed for an array of chars **/
     /* __GLX_SWAP_INT_ARRAY((int *)buf, length); */
     WriteToClient(client, length << 2, buf);
@@ -454,9 +454,9 @@ void __glXSwapQueryContextInfoEXTReply(ClientPtr client, xGLXQueryContextInfoEXT
     __GLX_SWAP_SHORT(&reply->sequenceNumber);
     __GLX_SWAP_INT(&reply->length);
     __GLX_SWAP_INT(&reply->n);
-    WriteToClient(client, sz_xGLXQueryContextInfoEXTReply, (char *)reply);
+    WriteToClient(client, sz_xGLXQueryContextInfoEXTReply, reply);
     __GLX_SWAP_INT_ARRAY((int *)buf, length);
-    WriteToClient(client, length << 2, (char *)buf);
+    WriteToClient(client, length << 2, buf);
 }
 
 

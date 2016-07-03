@@ -179,7 +179,7 @@ ProcXOpenDevice(client)
     rep.length = (j * sizeof (xInputClassInfo) + 3) >> 2;
     rep.num_classes = j;
     WriteReplyToClient (client, sizeof (xOpenDeviceReply), &rep);
-    WriteToClient(client, j * sizeof (xInputClassInfo), (char *)evbase);
+    WriteToClient(client, j * sizeof (xInputClassInfo), evbase);
     return (Success);
     }
 
@@ -198,5 +198,5 @@ SRepXOpenDevice (client, size, rep)
     {
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);
-    WriteToClient(client, size, (char *)rep);
+    WriteToClient(client, size, rep);
     }

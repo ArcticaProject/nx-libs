@@ -339,7 +339,7 @@ ProcXFixesGetCursorImage (ClientPtr client)
 	swapl(&rep->cursorSerial);
 	SwapLongs(image, npixels);
     }
-    (void) WriteToClient(client, sizeof (xXFixesGetCursorImageReply) +
+    WriteToClient(client, sizeof (xXFixesGetCursorImageReply) +
 			 (npixels << 2), (char *) rep);
     free (rep);
     return client->noClientException;
@@ -413,7 +413,7 @@ ProcXFixesGetCursorName (ClientPtr client)
 	swaps(&reply.nbytes);
     }
     WriteReplyToClient(client, sizeof(xXFixesGetCursorNameReply), &reply);
-    (void)WriteToClient(client, len, str);
+    WriteToClient(client, len, str);
     
     return(client->noClientException);
 }
@@ -488,7 +488,7 @@ ProcXFixesGetCursorImageAndName (ClientPtr client)
 	swaps(&rep->nbytes);
 	SwapLongs(image, npixels);
     }
-    (void) WriteToClient(client, sizeof (xXFixesGetCursorImageAndNameReply) +
+    WriteToClient(client, sizeof (xXFixesGetCursorImageAndNameReply) +
 			 (npixels << 2) + nbytesRound, (char *) rep);
     free (rep);
     return client->noClientException;

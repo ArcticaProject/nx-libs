@@ -131,7 +131,7 @@ ProcXGetDeviceModifierMapping(client)
     WriteReplyToClient(client, sizeof(xGetDeviceModifierMappingReply), &rep);
 
     /* Reply with the (modified by DDX) map that SetModifierMapping passed in */
-    WriteToClient(client, 8*maxkeys, (char *)kp->modifierKeyMap);
+    WriteToClient(client, 8*maxkeys, kp->modifierKeyMap);
     return Success;
     }
 
@@ -150,5 +150,5 @@ SRepXGetDeviceModifierMapping (client, size, rep)
     {
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);
-    WriteToClient(client, size, (char *)rep);
+    WriteToClient(client, size, rep);
     }

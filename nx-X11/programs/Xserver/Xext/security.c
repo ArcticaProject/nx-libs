@@ -489,8 +489,8 @@ ProcSecurityQueryVersion(
 	swaps(&rep.majorVersion);
 	swaps(&rep.minorVersion);
     }
-    (void)WriteToClient(client, SIZEOF(xSecurityQueryVersionReply),
-			(char *)&rep);
+    WriteToClient(client, SIZEOF(xSecurityQueryVersionReply),
+			&rep);
     return (client->noClientException);
 } /* ProcSecurityQueryVersion */
 
@@ -709,7 +709,7 @@ ProcSecurityGenerateAuthorization(
     }
 
     WriteToClient(client, SIZEOF(xSecurityGenerateAuthorizationReply),
-		  (char *)&rep);
+		  &rep);
     WriteToClient(client, authdata_len, pAuthdata);
 
     SecurityAudit("client %d generated authorization %d trust %d timeout %d group %d events %d\n",

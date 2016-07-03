@@ -150,7 +150,7 @@ ProcRenderQueryVersion (ClientPtr client)
 	swapl(&rep.majorVersion);
 	swapl(&rep.minorVersion);
     }
-    WriteToClient(client, sizeof(xRenderQueryVersionReply), (char *)&rep);
+    WriteToClient(client, sizeof(xRenderQueryVersionReply), &rep);
     return (client->noClientException);
 }
 
@@ -359,7 +359,7 @@ ProcRenderQueryPictFormats (ClientPtr client)
 	swapl (&reply->numVisuals);
 	swapl (&reply->numSubpixel);
     }
-    WriteToClient(client, rlength, (char *) reply);
+    WriteToClient(client, rlength, reply);
     free (reply);
     return client->noClientException;
 }

@@ -592,8 +592,8 @@ ProcXFixesFetchRegion (ClientPtr client)
 	swaps(&reply->height);
 	SwapShorts((INT16 *) pRect, nBox * 4);
     }
-    (void) WriteToClient(client, sizeof (xXFixesFetchRegionReply) +
-			 nBox * sizeof (xRectangle), (char *) reply);
+    WriteToClient(client, sizeof (xXFixesFetchRegionReply) +
+			 nBox * sizeof (xRectangle), reply);
     free (reply);
     return (client->noClientException);
 }

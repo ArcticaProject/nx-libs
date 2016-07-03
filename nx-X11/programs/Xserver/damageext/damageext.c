@@ -160,7 +160,7 @@ ProcDamageQueryVersion(ClientPtr client)
 	swapl(&rep.majorVersion);
 	swapl(&rep.minorVersion);
     }
-    WriteToClient(client, sizeof(xDamageQueryVersionReply), (char *)&rep);
+    WriteToClient(client, sizeof(xDamageQueryVersionReply), &rep);
     return(client->noClientException);
 }
 

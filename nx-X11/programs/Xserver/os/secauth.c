@@ -181,7 +181,7 @@ AuthSecurityCheck (
     if (client->swapped)
 	WriteSConnSetupPrefix(client, &csp);
     else
-	(void)WriteToClient(client, sz_xConnSetupPrefix, (char *) &csp);
+	WriteToClient(client, sz_xConnSetupPrefix, &csp);
 
     /*
      * Next time the client sends the real auth data, we want

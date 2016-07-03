@@ -147,10 +147,10 @@ ProcRRGetProviders(ClientPtr client)
         swapl(&rep.timestamp);
         swaps(&rep.nProviders);
     }
-    WriteToClient(client, sizeof(xRRGetProvidersReply), (char *) &rep);
+    WriteToClient(client, sizeof(xRRGetProvidersReply), &rep);
     if (extraLen)
     {
-        WriteToClient(client, extraLen, (char *) extra);
+        WriteToClient(client, extraLen, extra);
         free(extra);
     }
     return Success;
@@ -289,10 +289,10 @@ ProcRRGetProviderInfo(ClientPtr client)
         swaps(&rep.nOutputs);
         swaps(&rep.nameLength);
     }
-    WriteToClient(client, sizeof(xRRGetProviderInfoReply), (char *) &rep);
+    WriteToClient(client, sizeof(xRRGetProviderInfoReply), &rep);
     if (extraLen)
     {
-        WriteToClient(client, extraLen, (char *) extra);
+        WriteToClient(client, extraLen, extra);
         free(extra);
     }
     return Success;

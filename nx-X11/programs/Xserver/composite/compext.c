@@ -132,7 +132,7 @@ ProcCompositeQueryVersion (ClientPtr client)
 	swapl(&rep.majorVersion);
 	swapl(&rep.minorVersion);
     }
-    WriteToClient(client, sizeof(xCompositeQueryVersionReply), (char *)&rep);
+    WriteToClient(client, sizeof(xCompositeQueryVersionReply), &rep);
     return Success;
 }
 
@@ -405,7 +405,7 @@ ProcCompositeGetOverlayWindow(ClientPtr client)
         swapl(&rep.length);
         swapl(&rep.overlayWin);
     }
-    WriteToClient(client, sz_xCompositeGetOverlayWindowReply, (char *)&rep);
+    WriteToClient(client, sz_xCompositeGetOverlayWindowReply, &rep);
 
     return Success;
 }

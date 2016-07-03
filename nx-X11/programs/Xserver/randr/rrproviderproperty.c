@@ -432,7 +432,7 @@ ProcRRListProviderProperties(ClientPtr client)
         *temppAtoms++ = prop->propertyName;
 
     WriteToClient(client, sizeof(xRRListProviderPropertiesReply),
-                  (char *) &rep);
+                  &rep);
     if (numProps) {
         client->pSwapReplyFunc = (ReplySwapPtr) Swap32Write;
         WriteSwappedDataToClient(client, numProps * sizeof(Atom), pAtoms);
@@ -479,7 +479,7 @@ ProcRRQueryProviderProperty(ClientPtr client)
         swaps(&rep.sequenceNumber);
         swapl(&rep.length);
     }
-    WriteToClient(client, sizeof(xRRQueryProviderPropertyReply), (char *) &rep);
+    WriteToClient(client, sizeof(xRRQueryProviderPropertyReply), &rep);
     if (prop->num_valid) {
         memcpy(extra, prop->valid_values, prop->num_valid * sizeof(INT32));
         client->pSwapReplyFunc = (ReplySwapPtr) Swap32Write;
@@ -642,7 +642,7 @@ ProcRRGetProviderProperty(ClientPtr client)
             swapl(&reply.nItems);
         }
         WriteToClient(client, sizeof(xRRGetProviderPropertyReply),
-                      (char *) &reply);
+                      &reply);
         return Success;
     }
 
@@ -671,7 +671,7 @@ ProcRRGetProviderProperty(ClientPtr client)
             swapl(&reply.nItems);
         }
         WriteToClient(client, sizeof(xRRGetProviderPropertyReply),
-                      (char *) &reply);
+                      &reply);
         return Success;
     }
 
@@ -724,7 +724,7 @@ ProcRRGetProviderProperty(ClientPtr client)
         swapl(&reply.bytesAfter);
         swapl(&reply.nItems);
     }
-    WriteToClient(client, sizeof(xGenericReply), (char *) &reply);
+    WriteToClient(client, sizeof(xGenericReply), &reply);
     if (len) {
         memcpy(extra, (char *) prop_value->data + ind, len);
         switch (reply.format) {

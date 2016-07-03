@@ -221,5 +221,5 @@ SRepXGrabDevice (client, size, rep)
     {
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);
-    WriteToClient(client, size, (char *)rep);
+    WriteToClient(client, size, rep);
     }

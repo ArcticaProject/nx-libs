@@ -366,7 +366,7 @@ ProcShmQueryVersion(client)
 	swaps(&rep.uid);
 	swaps(&rep.gid);
     }
-    WriteToClient(client, sizeof(xShmQueryVersionReply), (char *)&rep);
+    WriteToClient(client, sizeof(xShmQueryVersionReply), &rep);
     return (client->noClientException);
 }
 
@@ -716,7 +716,7 @@ ProcPanoramiXShmGetImage(ClientPtr client)
 	swapl(&xgi.visual);
 	swapl(&xgi.size);
     }
-    WriteToClient(client, sizeof(xShmGetImageReply), (char *)&xgi);
+    WriteToClient(client, sizeof(xShmGetImageReply), &xgi);
 
     return(client->noClientException);
 }
@@ -1044,7 +1044,7 @@ ProcShmGetImage(client)
 	swapl(&xgi.visual);
 	swapl(&xgi.size);
     }
-    WriteToClient(client, sizeof(xShmGetImageReply), (char *)&xgi);
+    WriteToClient(client, sizeof(xShmGetImageReply), &xgi);
 
     return(client->noClientException);
 }

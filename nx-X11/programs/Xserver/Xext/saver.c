@@ -702,7 +702,7 @@ ProcScreenSaverQueryVersion (client)
 	swaps(&rep.sequenceNumber);
 	swapl(&rep.length);
     }
-    WriteToClient(client, sizeof (xScreenSaverQueryVersionReply), (char *)&rep);
+    WriteToClient(client, sizeof (xScreenSaverQueryVersionReply), &rep);
     return (client->noClientException);
 }
 
@@ -774,7 +774,7 @@ ProcScreenSaverQueryInfo (client)
 	swapl (&rep.idle);
 	swapl (&rep.eventMask);
     }
-    WriteToClient(client, sizeof (xScreenSaverQueryInfoReply), (char *)&rep);
+    WriteToClient(client, sizeof (xScreenSaverQueryInfoReply), &rep);
     return (client->noClientException);
 }
 

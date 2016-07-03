@@ -40,7 +40,7 @@ ProcXResQueryVersion (ClientPtr client)
         swaps(&rep.server_major);
         swaps(&rep.server_minor);
     }
-    WriteToClient(client, sizeof (xXResQueryVersionReply), (char *)&rep);
+    WriteToClient(client, sizeof (xXResQueryVersionReply), &rep);
     return (client->noClientException);
 }
 
@@ -73,7 +73,7 @@ ProcXResQueryClients (ClientPtr client)
         swapl (&rep.length);
         swapl (&rep.num_clients);
     }   
-    WriteToClient (client, sizeof (xXResQueryClientsReply), (char *) &rep);
+    WriteToClient (client, sizeof (xXResQueryClientsReply), &rep);
 
     if(num_clients) {
         xXResClient scratch;
@@ -86,7 +86,7 @@ ProcXResQueryClients (ClientPtr client)
                 swapl (&scratch.resource_base);
                 swapl (&scratch.resource_mask);
             }
-            WriteToClient (client, sz_xXResClient, (char *) &scratch);
+            WriteToClient (client, sz_xXResClient, &scratch);
         }
     }
 
@@ -144,7 +144,7 @@ ProcXResQueryClientResources (ClientPtr client)
         swapl (&rep.length);
         swapl (&rep.num_types);
     }   
-    WriteToClient (client,sizeof(xXResQueryClientResourcesReply),(char*)&rep);
+    WriteToClient (client,sizeof(xXResQueryClientResourcesReply),&rep);
 
     if(num_types) {
         xXResType scratch;
@@ -165,7 +165,7 @@ ProcXResQueryClientResources (ClientPtr client)
                 swapl (&scratch.resource_type);
                 swapl (&scratch.count);
             }
-            WriteToClient (client, sz_xXResType, (char *) &scratch);
+            WriteToClient (client, sz_xXResType, &scratch);
         }
     }
 
@@ -222,7 +222,7 @@ ProcXResQueryClientPixmapBytes (ClientPtr client)
         swapl (&rep.bytes);
         swapl (&rep.bytes_overflow);
     }
-    WriteToClient (client,sizeof(xXResQueryClientPixmapBytesReply),(char*)&rep);
+    WriteToClient (client,sizeof(xXResQueryClientPixmapBytesReply),&rep);
 
     return (client->noClientException);
 }

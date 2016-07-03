@@ -376,7 +376,7 @@ ProcDbeGetVersion(client)
         swaps(&rep.sequenceNumber);
     }
 
-    WriteToClient(client, sizeof(xDbeGetVersionReply), (char *)&rep);
+    WriteToClient(client, sizeof(xDbeGetVersionReply), &rep);
 
     return(client->noClientException);
 
@@ -988,7 +988,7 @@ ProcDbeGetVisualInfo(client)
     }
 
     /* Send off reply. */
-    WriteToClient(client, sizeof(xDbeGetVisualInfoReply), (char *)&rep);
+    WriteToClient(client, sizeof(xDbeGetVisualInfoReply), &rep);
 
     for (i = 0; i < count; i++)
     {
@@ -1004,7 +1004,7 @@ ProcDbeGetVisualInfo(client)
             swapl(&data32);
         }
 
-        WriteToClient(client, sizeof(CARD32), (char *)&data32);
+        WriteToClient(client, sizeof(CARD32), &data32);
 
         /* Now send off visual info items. */
         for (j = 0; j < pScrVisInfo[i].count; j++)
@@ -1030,7 +1030,7 @@ ProcDbeGetVisualInfo(client)
             }
 
             /* Write visualID(32), depth(8), perfLevel(8), and pad(16). */
-            WriteToClient(client, 2*sizeof(CARD32), (char *)&visInfo.visualID);
+            WriteToClient(client, 2*sizeof(CARD32), &visInfo.visualID);
         }
     }
 
@@ -1098,7 +1098,7 @@ ProcDbeGetBackBufferAttributes(client)
     }
 
     WriteToClient(client, sizeof(xDbeGetBackBufferAttributesReply),
-                  (char *)&rep);
+                  &rep);
     return(client->noClientException);
 
 } /* ProcDbeGetbackBufferAttributes() */

@@ -303,7 +303,7 @@ ProcRenderQueryVersion (ClientPtr client)
 	swapl(&rep.majorVersion);
 	swapl(&rep.minorVersion);
     }
-    WriteToClient(client, sizeof(xRenderQueryVersionReply), (char *)&rep);
+    WriteToClient(client, sizeof(xRenderQueryVersionReply), &rep);
     return (client->noClientException);
 }
 #endif /* NXAGENT_SERVER */
@@ -551,7 +551,7 @@ ProcRenderQueryPictFormats (ClientPtr client)
 	swapl (&reply->numVisuals);
 	swapl (&reply->numSubpixel);
     }
-    WriteToClient(client, rlength, (char *) reply);
+    WriteToClient(client, rlength, reply);
     free (reply);
     return client->noClientException;
 }
@@ -616,7 +616,7 @@ ProcRenderQueryPictIndexValues (ClientPtr client)
 	swapl (&reply->numIndexValues);
     }
 
-    WriteToClient(client, rlength, (char *) reply);
+    WriteToClient(client, rlength, reply);
     free(reply);
     return (client->noClientException);
 }
@@ -1816,7 +1816,7 @@ ProcRenderQueryFilters (ClientPtr client)
 	swapl(&reply->numAliases);
 	swapl(&reply->numFilters);
     }
-    WriteToClient(client, total_bytes, (char *) reply);
+    WriteToClient(client, total_bytes, reply);
     free (reply);
     
     return(client->noClientException);

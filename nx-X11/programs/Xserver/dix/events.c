@@ -4494,11 +4494,11 @@ WriteEventsToClient(ClientPtr pClient, int count, xEvent *events)
 	       this event was sent with "SendEvent." */
 	    (*EventSwapVector[eventFrom->u.u.type & 0177])
 		(eventFrom, &eventTo);
-	    (void)WriteToClient(pClient, sizeof(xEvent), (char *)&eventTo);
+	    WriteToClient(pClient, sizeof(xEvent), &eventTo);
 	}
     }
     else
     {
-	(void)WriteToClient(pClient, count * sizeof(xEvent), (char *) events);
+	WriteToClient(pClient, count * sizeof(xEvent), events);
     }
 }

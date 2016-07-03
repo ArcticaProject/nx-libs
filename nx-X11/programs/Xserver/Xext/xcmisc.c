@@ -110,7 +110,7 @@ ProcXCMiscGetVersion(client)
 	swaps(&rep.majorVersion);
 	swaps(&rep.minorVersion);
     }
-    WriteToClient(client, sizeof(xXCMiscGetVersionReply), (char *)&rep);
+    WriteToClient(client, sizeof(xXCMiscGetVersionReply), &rep);
     return(client->noClientException);
 }
 
@@ -133,7 +133,7 @@ ProcXCMiscGetXIDRange(client)
 	swapl(&rep.start_id);
 	swapl(&rep.count);
     }
-    WriteToClient(client, sizeof(xXCMiscGetXIDRangeReply), (char *)&rep);
+    WriteToClient(client, sizeof(xXCMiscGetXIDRangeReply), &rep);
     return(client->noClientException);
 }
 
@@ -166,7 +166,7 @@ ProcXCMiscGetXIDList(client)
 	swapl(&rep.length);
 	swapl(&rep.count);
     }
-    WriteToClient(client, sizeof(xXCMiscGetXIDListReply), (char *)&rep);
+    WriteToClient(client, sizeof(xXCMiscGetXIDListReply), &rep);
     if (count)
     {
     	client->pSwapReplyFunc = (ReplySwapPtr) Swap32Write;

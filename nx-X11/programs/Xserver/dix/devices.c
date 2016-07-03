@@ -1041,7 +1041,7 @@ ProcGetModifierMapping(ClientPtr client)
     WriteReplyToClient(client, sizeof(xGetModifierMappingReply), &rep);
 
     /* Use the (modified by DDX) map that SetModifierMapping passed in */
-    (void)WriteToClient(client, (int)(keyc->maxKeysPerModifier << 3),
+    WriteToClient(client, (int)(keyc->maxKeysPerModifier << 3),
 			(char *)keyc->modifierKeyMap);
     return client->noClientException;
 }
@@ -1178,7 +1178,7 @@ ProcGetPointerMapping(ClientPtr client)
     rep.nElts = butc->numButtons;
     rep.length = ((unsigned)rep.nElts + (4-1))/4;
     WriteReplyToClient(client, sizeof(xGetPointerMappingReply), &rep);
-    (void)WriteToClient(client, (int)rep.nElts, (char *)&butc->map[1]);
+    WriteToClient(client, (int)rep.nElts, &butc->map[1]);
     return Success;    
 }
 
