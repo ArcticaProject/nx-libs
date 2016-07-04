@@ -290,6 +290,8 @@ Obsoletes:      nx < 3.5.0-19
 Provides:       nx = %{version}-%{release}
 Obsoletes:      nx%{?_isa} < 3.5.0-19
 Provides:       nx%{?_isa} = %{version}-%{release}
+Conflicts:      nxauth < 3.5.99.1
+Conflicts:      nxauth%{?_isa} < 3.5.99.1
 %if 0%{?suse_version}
 Requires:       xorg-x11-fonts-core
 %endif
