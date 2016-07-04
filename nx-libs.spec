@@ -403,6 +403,9 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %dir %{_libdir}/nx
 %dir %{_datadir}/nx
 %{_datadir}/nx/SecurityPolicy
+%{_datadir}/nx/XErrorDB
+%{_datadir}/nx/XKeysymDB
+%{_datadir}/nx/Xcms.txt
 
 %files -n libNX_X11-6
 %defattr(-,root,root)

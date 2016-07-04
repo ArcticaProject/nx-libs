@@ -1,5 +1,3 @@
-! $Xorg: XErrorDB,v 1.3 2000/08/17 19:44:59 cpqbld Exp $
-! $XdotOrg: xc/lib/X11/XErrorDB,v 1.4 2005/10/21 18:44:24 ajax Exp $
 !
 ! Copyright 1993, 1995, 1998  The Open Group
 
@@ -25,7 +23,6 @@
 ! other dealings in this Software without prior written authorization
 ! from The Open Group.
 !
-! $XFree86: xc/lib/X11/XErrorDB,v 3.40 2002/12/21 17:51:42 dawes Exp $
 !
 ! these are used in XGetErrorMessage.
 XlibMessage.XError: X Error of failed request
@@ -235,6 +232,20 @@ XRequest.XInputExtension.32:X_DeviceBell
 XRequest.XInputExtension.33:X_SetDeviceValuators
 XRequest.XInputExtension.34:X_GetDeviceControl
 XRequest.XInputExtension.35:X_ChangeDeviceControl
+XRequest.XInputExtension.36: X_ListDeviceProperties
+XRequest.XInputExtension.37: X_ChangeDeviceProperty
+XRequest.XInputExtension.38: X_DeleteDeviceProperty
+XRequest.XInputExtension.39: X_GetDeviceProperty
+XProtoError.XInputExtension.0: XI_BadDevice (invalid Device parameter)
+XlibMessage.XInputExtension.0: Device id in failed request: 0x%lx
+XProtoError.XInputExtension.1: XI_BadEvent (invalid Event parameter)
+XlibMessage.XInputExtension.1: Event id in failed request: 0x%lx
+XProtoError.XInputExtension.2: XI_BadMode (invalid Mode parameter)
+XlibMessage.XInputExtension.2: Mode id in failed request: 0x%lx
+XProtoError.XInputExtension.3: XI_DeviceBusy
+XlibMessage.XInputExtension.3: Device id in failed request: 0x%lx
+XProtoError.XInputExtension.4: XI_BadClass (invalid Class parameter)
+XlibMessage.XInputExtension.4: Class id in failed request: 0x%lx
 ! MIT-SHM extension, experimental, not an X Consortium standard
 XRequest.MIT-SHM.0: X_ShmQueryVersion
 XRequest.MIT-SHM.1: X_ShmAttach
@@ -386,6 +397,7 @@ XlibMessage.X3D-PEX.14: Resource id in failed request:  0x%lx
 XRequest.XTEST.0: X_XTestGetVersion
 XRequest.XTEST.1: X_XTestCompareCursor
 XRequest.XTEST.2: X_XTestFakeInput
+XRequest.XTEST.3: X_XTestGrabControl
 ! BIG-REQUESTS extension, an X Consortium standard
 XRequest.BIG-REQUESTS.0: X_BigReqEnable
 ! XIE extension, an X Consortium standard
@@ -498,6 +510,18 @@ XRequest.GLX.17: X_GLXVendorPrivateWithReply
 XRequest.GLX.18: X_GLXQueryExtensionsString
 XRequest.GLX.19: X_GLXQueryServerString
 XRequest.GLX.20: X_GLXClientInfo
+XRequest.GLX.21: X_GLXGetFBConfigs
+XRequest.GLX.22: X_GLXCreatePixmap
+XRequest.GLX.23: X_GLXDestroyPixmap
+XRequest.GLX.24: X_GLXCreateNewContext
+XRequest.GLX.25: X_GLXQueryContext
+XRequest.GLX.26: X_GLXMakeContextCurrent
+XRequest.GLX.27: X_GLXCreatePbuffer
+XRequest.GLX.28: X_GLXDestroyPbuffer
+XRequest.GLX.29: X_GLXGetDrawableAttributes
+XRequest.GLX.30: X_GLXChangeDrawableAttributes
+XRequest.GLX.31: X_GLXCreateWindow
+XRequest.GLX.32: X_GLXDestroyWindow
 ! GL Non-rendering Commands
 XRequest.GLX.103: X_GLXDeleteLists
 XRequest.GLX.102: X_GLXEndList
@@ -555,6 +579,11 @@ XProtoError.GLX.5: GLXBadCurrentWindow
 XProtoError.GLX.6: GLXBadRenderRequest
 XProtoError.GLX.7: GLXBadLargeRequest
 XProtoError.GLX.8: GLXUnsupportedPrivateRequest
+XProtoError.GLX.9: GLXBadFBConfig
+XProtoError.GLX.10: GLXBadPbuffer
+XProtoError.GLX.11: GLXBadCurrentDrawable
+XProtoError.GLX.12: GLXBadWindow
+XProtoError.GLX.13: GLXBadProfileARB
 ! XC-MISC extension, an X Consortium standard
 XRequest.XC-MISC.0: XCMiscGetVersion
 XRequest.XC-MISC.1: XCMiscGetXIDRange
@@ -618,7 +647,7 @@ XProtoError.XFree86-Misc.5: XF86MiscModInDevDisabled
 XProtoError.XFree86-Misc.6: XF86MiscModInDevClientNotLocal
 XProtoError.XFree86-Misc.7: XF86MiscNoModule
 ! XFree86-DGA  -- not an X Consortium standard
-XRequest.XFree86-DGA.0: XDGAQueryVersion
+XRequest.XFree86-DGA.0: XF86DGAQueryVersion
 XRequest.XFree86-DGA.1: XF86DGAGetVideoLL
 XRequest.XFree86-DGA.2: XF86DGADirectVideo
 XRequest.XFree86-DGA.3: XF86DGAGetViewPortSize
@@ -843,6 +872,50 @@ XRequest.RANDR.2: RRSetScreenConfig
 XRequest.RANDR.3: RROldScreenChangeSelectInput
 XRequest.RANDR.4: RRSelectInput
 XRequest.RANDR.5: RRGetScreenInfo
+XRequest.RANDR.6: RRGetScreenSizeRange
+XRequest.RANDR.7: RRSetScreenSize
+XRequest.RANDR.8: RRGetScreenResources
+XRequest.RANDR.9: RRGetOutputInfo
+XRequest.RANDR.10: RRListOutputProperties
+XRequest.RANDR.11: RRQueryOutputProperty
+XRequest.RANDR.12: RRConfigureOutputProperty
+XRequest.RANDR.13: RRChangeOutputProperty
+XRequest.RANDR.14: RRDeleteOutputProperty
+XRequest.RANDR.15: RRGetOutputProperty
+XRequest.RANDR.16: RRCreateMode
+XRequest.RANDR.17: RRDestroyMode
+XRequest.RANDR.18: RRAddOutputMode
+XRequest.RANDR.19: RRDeleteOutputMode
+XRequest.RANDR.20: RRGetCrtcInfo
+XRequest.RANDR.21: RRSetCrtcConfig
+XRequest.RANDR.22: RRGetCrtcGammaSize
+XRequest.RANDR.23: RRGetCrtcGamma
+XRequest.RANDR.24: RRSetCrtcGamma
+XRequest.RANDR.25: RRGetScreenResourcesCurrent
+XRequest.RANDR.26: RRSetCrtcTransform
+XRequest.RANDR.27: RRGetCrtcTransform
+XRequest.RANDR.28: RRGetPanning
+XRequest.RANDR.29: RRSetPanning
+XRequest.RANDR.30: RRSetOutputPrimary
+XRequest.RANDR.31: RRGetOutputPrimary
+XRequest.RANDR.32: RRGetProviders
+XRequest.RANDR.33: RRGetProviderInfo
+XRequest.RANDR.34: RRSetProviderOffloadSink
+XRequest.RANDR.35: RRSetProviderOutputSource
+XRequest.RANDR.36: RRListProviderProperties
+XRequest.RANDR.37: RRQueryProviderProperty
+XRequest.RANDR.38: RRConfigureProviderProperty
+XRequest.RANDR.39: RRChangeProviderProperty
+XRequest.RANDR.40: RRDeleteProviderProperty
+XRequest.RANDR.41: RRGetProviderProperty
+XProtoError.RANDR.0: BadRROutput (invalid Output parameter)
+XlibMessage.RANDR.0: Output id in failed request: 0x%lx
+XProtoError.RANDR.1: BadRRCrtc (invalid Crtc parameter)
+XlibMessage.RANDR.1: Crtc id in failed request: 0x%lx
+XProtoError.RANDR.2: BadRRMode (invalid Mode parameter)
+XlibMessage.RANDR.2: Mode id in failed request: 0x%lx
+XProtoError.RANDR.3: BadRRProvider (invalid Provider parameter)
+XlibMessage.RANDR.3: Provider id in failed request: 0x%lx
 ! RENDER
 XRequest.RENDER.0: RenderQueryVersion
 XRequest.RENDER.1: RenderQueryPictFormats
@@ -875,6 +948,12 @@ XRequest.RENDER.27: RenderCreateCursor
 XRequest.RENDER.28: RenderSetPictureTransform
 XRequest.RENDER.29: RenderQueryFilters
 XRequest.RENDER.30: RenderSetPictureFilter
+XRequest.RENDER.31: RenderCreateAnimCursor
+XRequest.RENDER.32: RenderAddTraps
+XRequest.RENDER.33: RenderCreateSolidFill
+XRequest.RENDER.34: RenderCreateLinearGradient
+XRequest.RENDER.35: RenderCreateRadialGradient
+XRequest.RENDER.36: RenderCreateConicalGradient
 XProtoError.RENDER.0: RenderBadFormat (invalid PictFormat parameter)
 XlibMessage.RENDER.0: PictFormat id in failed request: 0x%lx
 XProtoError.RENDER.1: RenderBadPicture (invalid Picture parameter)
@@ -915,6 +994,8 @@ XRequest.XFIXES.25: XFixesGetCursorImageAndName
 XRequest.XFIXES.26: XFixesChangeCursor
 XRequest.XFIXES.27: XFixesChangeCursorByName
 XRequest.XFIXES.28: XFixesExpandRegion
+XRequest.XFIXES.29: XFixesHideCursor
+XRequest.XFIXES.30: XFixesShowCursor
 XProtoError.XFIXES.0: BadRegion (invalid Region parameter)
 XlibMessage.XFIXES.0: Region id in failed request:  0x%lx
 ! DAMAGE extension
@@ -922,3 +1003,20 @@ XRequest.DAMAGE.0: XDamageQueryVersion
 XRequest.DAMAGE.1: XDamageCreate
 XRequest.DAMAGE.2: XDamageDestroy
 XRequest.DAMAGE.3: XDamageSubtract
+XRequest.DAMAGE.4: XDamageAdd
+XProtoError.DAMAGE.0: BadDamage (invalid Damage parameter)
+XlibMessage.DAMAGE.0: Damage id in failed request: 0x%lx
+! DRI2 extension
+XRequest.DRI2.0: DRI2QueryVersion
+XRequest.DRI2.1: DRI2Connect
+XRequest.DRI2.2: DRI2Authenticate
+XRequest.DRI2.3: DRI2CreateDrawable
+XRequest.DRI2.4: DRI2DestroyDrawable
+XRequest.DRI2.5: DRI2GetBuffers
+XRequest.DRI2.6: DRI2CopyRegion
+XRequest.DRI2.7: DRI2GetBuffersWithFormat
+XRequest.DRI2.8: DRI2SwapBuffers
+XRequest.DRI2.9: DRI2GetMSC
+XRequest.DRI2.10: DRI2WaitMSC
+XRequest.DRI2.11: DRI2WaitSBC
+XRequest.DRI2.12: DRI2SwapInterval
