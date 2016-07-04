@@ -32,7 +32,6 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #include <stdio.h>
 #include <ctype.h>
-#define	NEED_EVENTS 1
 #include <nx-X11/X.h>
 #include <nx-X11/Xos.h>
 #include <nx-X11/Xproto.h>

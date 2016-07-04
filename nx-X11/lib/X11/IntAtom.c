@@ -28,7 +28,6 @@ from The Open Group.
 */
 /* $XFree86: xc/lib/X11/IntAtom.c,v 1.6 2001/12/14 19:54:02 dawes Exp $ */
 
-#define NEED_REPLIES
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif

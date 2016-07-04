@@ -34,7 +34,6 @@ is" without express or implied warranty.
 #include <string.h>
 #include <stdlib.h>
 
-#define NEED_EVENTS
 #include "X.h"
 #include "Xproto.h"
 #include "keysym.h"

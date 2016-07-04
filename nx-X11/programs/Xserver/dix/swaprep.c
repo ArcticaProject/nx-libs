@@ -53,8 +53,6 @@ SOFTWARE.
 #endif
 
 #include <nx-X11/X.h>
-#define NEED_REPLIES
-#define NEED_EVENTS
 #include <nx-X11/Xproto.h>
 #include "misc.h"
 #include "dixstruct.h"

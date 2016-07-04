@@ -52,8 +52,6 @@ PERFORMANCE OF THIS SOFTWARE.
 */
 /* $XFree86: xc/programs/Xserver/Xext/sync.c,v 3.13 2003/09/02 18:19:01 tsi Exp $ */
 
-#define NEED_REPLIES
-#define NEED_EVENTS
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif

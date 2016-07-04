@@ -29,7 +29,6 @@
 #ifndef _DAMAGEEXTINT_H_
 #define _DAMAGEEXTINT_H_
 
-#define NEED_EVENTS
 #include <nx-X11/X.h>
 #include <nx-X11/Xproto.h>
 #include "misc.h"

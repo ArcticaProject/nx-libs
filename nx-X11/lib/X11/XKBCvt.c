@@ -37,7 +37,6 @@ from The Open Group.
 
 #include <nx-X11/X.h>
 #include <nx-X11/Xlib.h>
-#define NEED_EVENTS
 #include "Xlibint.h"
 #include "Xlcint.h"
 #include "XlcPubI.h"

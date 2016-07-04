@@ -32,8 +32,6 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #include <stdio.h>
 #include <nx-X11/X.h>
-#define	NEED_EVENTS
-#define	NEED_REPLIES
 #include <nx-X11/Xproto.h>
 #include "misc.h"
 #include "inputstr.h"

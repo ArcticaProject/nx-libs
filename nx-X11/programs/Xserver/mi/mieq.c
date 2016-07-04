@@ -34,7 +34,6 @@ in this Software without prior written authorization from The Open Group.
  *
  */
 
-# define NEED_EVENTS
 # include   <nx-X11/X.h>
 # include   <nx-X11/Xmd.h>
 # include   <nx-X11/Xproto.h>

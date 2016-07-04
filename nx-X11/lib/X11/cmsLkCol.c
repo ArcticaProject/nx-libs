@@ -34,7 +34,6 @@
  */
 /* $XFree86: xc/lib/X11/cmsLkCol.c,v 1.5 2003/04/13 19:22:20 dawes Exp $ */
 
-#define NEED_REPLIES
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif

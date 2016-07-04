@@ -18,7 +18,6 @@
 #include "X.h"
 #include "signal.h"
 #include "unistd.h"
-#define NEED_EVENTS
 #include "Xproto.h"
 #include "screenint.h"
 #include "input.h"

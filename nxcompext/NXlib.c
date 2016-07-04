@@ -26,8 +26,6 @@
 #include "dix.h"
 #include "os.h"
 
-#define NEED_REPLIES
-
 /*
  * Needed to enable definition of the callback
  * functions.

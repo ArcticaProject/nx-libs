@@ -52,7 +52,6 @@
 #else
 
 #include <nx-X11/X.h>
-#define	NEED_EVENTS
 #include <nx-X11/Xproto.h>
 #include <nx-X11/keysym.h>
 #include "misc.h"

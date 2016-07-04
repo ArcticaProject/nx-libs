@@ -33,7 +33,6 @@ Equipment Corporation.
 #include <dmx-config.h>
 #endif
 
-#define NEED_REPLIES
 #include <stdio.h>
 #include <nx-X11/X.h>
 #include <nx-X11/Xproto.h>

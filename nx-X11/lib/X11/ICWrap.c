@@ -66,7 +66,6 @@ from The Open Group.
 */
 /* $XFree86: xc/lib/X11/ICWrap.c,v 1.10 2003/04/25 14:12:38 tsi Exp $ */
 
-#define NEED_EVENTS
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif

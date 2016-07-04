@@ -26,8 +26,6 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 ********************************************************/
 /* $XFree86: xc/lib/X11/XKBleds.c,v 1.4 2003/04/13 19:22:18 dawes Exp $ */
 
-#define NEED_REPLIES
-#define NEED_EVENTS
 #define NEED_MAP_READERS
 #ifdef HAVE_CONFIG_H
 #include <config.h>

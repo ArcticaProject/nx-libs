@@ -32,7 +32,6 @@ from The Open Group.
 #ifndef CLOSESTR_H
 #define CLOSESTR_H
 
-#define	NEED_REPLIES
 #include <nx-X11/Xproto.h>
 #include "closure.h"
 #include "dix.h"
