@@ -111,7 +111,10 @@ applications over a network, especially a slow one.
 Group:          System Environment/Libraries
 Summary:        Core NX protocol client library
 Requires:       %{name}%{?_isa} >= 3.5.0.29
-Obsoletes:      libNX_X11
+Obsoletes:      libNX_X11 < 3.5.0.30
+Provides:       libNX_X11 = %{version}-%{release}
+Obsoletes:      libNX_X11%{?_isa} < 3.5.0.30
+Provides:       libNX_X11%{?_isa} = %{version}-%{release}
 %if 0%{?suse_version}
 Requires:       xorg-x11-fonts-core
 %endif
@@ -172,7 +175,10 @@ The NX differential compression library's development files.
 Group:          System Environment/Libraries
 Summary:        NX differential compression library
 Requires:       %{name}%{?_isa} >= 3.5.0.29
-Obsoletes:      libXcomp
+Obsoletes:      libXcomp <= 3.5.1
+Provides:       libXcomp = %{version}-%{release}
+Obsoletes:      libXcomp%{?_isa} <= 3.5.1
+Provides:       libXcomp%{?_isa} = %{version}-%{release}
 
 %description -n libXcomp3
 NX is a software suite from NoMachine which implements very efficient
@@ -201,7 +207,10 @@ The NX compression extensions library's development files.
 Group:          System Environment/Libraries
 Summary:        NX protocol compression extensions library
 Requires:       %{name}%{?_isa} >= 3.5.0.29
-Obsoletes:      libXcompext
+Obsoletes:      libXcompext <= 3.5.1
+Provides:       libXcompext = %{version}-%{release}
+Obsoletes:      libXcompext%{?_isa} <= 3.5.1
+Provides:       libXcompext%{?_isa} = %{version}-%{release}
 
 %description -n libXcompext3
 NX is a software suite from NoMachine which implements very efficient
@@ -232,7 +241,10 @@ The NX session shadowing library's development files.
 Group:          System Environment/Libraries
 Summary:        NX session shadowing Library
 Requires:       %{name}%{?_isa} >= 3.5.0.29
-Obsoletes:      libXcompshad
+Obsoletes:      libXcompshad <= 3.5.1
+Provides:       libXcompshad = %{version}-%{release}
+Obsoletes:      libXcompshad%{?_isa} <= 3.5.1
+Provides:       libXcompshad%{?_isa} = %{version}-%{release}
 
 %description -n libXcompshad3
 NX is a software suite from NoMachine which implements very efficient
