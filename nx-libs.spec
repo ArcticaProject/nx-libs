@@ -115,6 +115,8 @@ Obsoletes:      libNX_X11 < 3.5.0.30
 Provides:       libNX_X11 = %{version}-%{release}
 Obsoletes:      libNX_X11%{?_isa} < 3.5.0.30
 Provides:       libNX_X11%{?_isa} = %{version}-%{release}
+Conflicts:      libNX_Xau6 < 3.5.99.1
+Conflicts:      libNX_Xau6%{?_isa} < 3.5.99.1
 %if 0%{?suse_version}
 Requires:       xorg-x11-fonts-core
 %endif
@@ -139,6 +141,8 @@ Group:          Development/Libraries
 Summary:        Development files for the Core NX protocol library
 Requires:       libNX_X11-6%{?_isa} = %{version}-%{release}
 Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
+Conflicts:      libNX_Xau-devel < 3.5.99.1
+Conflicts:      libNX_Xau-devel%{?_isa} < 3.5.99.1
 
 %description -n libNX_X11-devel
 NX is a software suite which implements very efficient compression of
