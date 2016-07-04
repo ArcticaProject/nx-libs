@@ -86,14 +86,12 @@ int
 SProcXGrabDevice(client)
     register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xGrabDeviceReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_AT_LEAST_SIZE(xGrabDeviceReq);
-    swapl(&stuff->grabWindow, n);
-    swapl(&stuff->time, n);
-    swaps(&stuff->event_count, n);
+    swapl(&stuff->grabWindow);
+    swapl(&stuff->time);
+    swaps(&stuff->event_count);
 
     if (stuff->length != (sizeof(xGrabDeviceReq) >> 2) + stuff->event_count)
        return BadLength;
@@ -221,9 +219,7 @@ SRepXGrabDevice (client, size, rep)
     int		size;
     xGrabDeviceReply	*rep;
     {
-    register char n;
-
-    swaps(&rep->sequenceNumber, n);
-    swapl(&rep->length, n);
+    swaps(&rep->sequenceNumber);
+    swapl(&rep->length);
     WriteToClient(client, size, (char *)rep);
     }

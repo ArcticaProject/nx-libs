@@ -225,12 +225,11 @@ GetBit (unsigned char *line, int x)
 int
 SProcXFixesSelectCursorInput (ClientPtr client)
 {
-    register int n;
     REQUEST(xXFixesSelectCursorInputReq);
 
-    swaps(&stuff->length, n);
-    swapl(&stuff->window, n);
-    swapl(&stuff->eventMask, n);
+    swaps(&stuff->length);
+    swapl(&stuff->window);
+    swapl(&stuff->eventMask);
     return (*ProcXFixesVector[stuff->xfixesReqType]) (client);
 }
     
@@ -329,20 +328,18 @@ ProcXFixesGetCursorImage (ClientPtr client)
     rep->cursorSerial = pCursor->serialNumber;
 
     image = (CARD32 *) (rep + 1);
-    CopyCursorToImage (pCursor, image);
-    if (client->swapped)
-    {
-	int n;
-	swaps (&rep->sequenceNumber, n);
-	swapl (&rep->length, n);
-	swaps (&rep->x, n);
-	swaps (&rep->y, n);
-	swaps (&rep->width, n);
-	swaps (&rep->height, n);
-	swaps (&rep->xhot, n);
-	swaps (&rep->yhot, n);
-	swapl (&rep->cursorSerial, n);
-	SwapLongs (image, npixels);
+    CopyCursorToImage(pCursor, image);
+    if (client->swapped) {
+	swaps(&rep->sequenceNumber);
+	swapl(&rep->length);
+	swaps(&rep->x);
+	swaps(&rep->y);
+	swaps(&rep->width);
+	swaps(&rep->height);
+	swaps(&rep->xhot);
+	swaps(&rep->yhot);
+	swapl(&rep->cursorSerial);
+	SwapLongs(image, npixels);
     }
     (void) WriteToClient(client, sizeof (xXFixesGetCursorImageReply) +
 			 (npixels << 2), (char *) rep);
@@ -353,9 +350,8 @@ ProcXFixesGetCursorImage (ClientPtr client)
 int
 SProcXFixesGetCursorImage (ClientPtr client)
 {
-    int n;
     REQUEST(xXFixesGetCursorImageReq);
-    swaps (&stuff->length, n);
+    swaps(&stuff->length);
     return (*ProcXFixesVector[stuff->xfixesReqType]) (client);
 }
 
@@ -381,13 +377,12 @@ ProcXFixesSetCursorName (ClientPtr client)
 int
 SProcXFixesSetCursorName (ClientPtr client)
 {
-    int n;
     REQUEST(xXFixesSetCursorNameReq);
 
-    swaps (&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_AT_LEAST_SIZE(xXFixesSetCursorNameReq);
-    swapl (&stuff->cursor, n);
-    swaps (&stuff->nbytes, n);
+    swapl(&stuff->cursor);
+    swaps(&stuff->nbytes);
     return (*ProcXFixesVector[stuff->xfixesReqType]) (client);
 }
 
@@ -413,13 +408,11 @@ ProcXFixesGetCursorName (ClientPtr client)
     reply.sequenceNumber = client->sequence;
     reply.atom = pCursor->name;
     reply.nbytes = len;
-    if (client->swapped)
-    {
-	int n;
-	swaps (&reply.sequenceNumber, n);
-	swapl (&reply.length, n);
-	swapl (&reply.atom, n);
-	swaps (&reply.nbytes, n);
+    if (client->swapped) {
+	swaps(&reply.sequenceNumber);
+	swapl(&reply.length);
+	swapl(&reply.atom);
+	swaps(&reply.nbytes);
     }
     WriteReplyToClient(client, sizeof(xXFixesGetCursorNameReply), &reply);
     (void)WriteToClient(client, len, str);
@@ -430,12 +423,11 @@ ProcXFixesGetCursorName (ClientPtr client)
 int
 SProcXFixesGetCursorName (ClientPtr client)
 {
-    int n;
     REQUEST(xXFixesSetCursorNameReq);
 
-    swaps (&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xXFixesGetCursorNameReq);
-    swapl (&stuff->cursor, n);
+    swapl(&stuff->cursor);
     return (*ProcXFixesVector[stuff->xfixesReqType]) (client);
 }
 
@@ -482,23 +474,21 @@ ProcXFixesGetCursorImageAndName (ClientPtr client)
     rep->nbytes = nbytes;
 
     image = (CARD32 *) (rep + 1);
-    CopyCursorToImage (pCursor, image);
-    memcpy ((image + npixels), name, nbytes);
-    if (client->swapped)
-    {
-	int n;
-	swaps (&rep->sequenceNumber, n);
-	swapl (&rep->length, n);
-	swaps (&rep->x, n);
-	swaps (&rep->y, n);
-	swaps (&rep->width, n);
-	swaps (&rep->height, n);
-	swaps (&rep->xhot, n);
-	swaps (&rep->yhot, n);
-	swapl (&rep->cursorSerial, n);
-	swapl (&rep->cursorName, n);
-	swaps (&rep->nbytes, n);
-	SwapLongs (image, npixels);
+    CopyCursorToImage(pCursor, image);
+    memcpy((image + npixels), name, nbytes);
+    if (client->swapped) {
+	swaps(&rep->sequenceNumber);
+	swapl(&rep->length);
+	swaps(&rep->x);
+	swaps(&rep->y);
+	swaps(&rep->width);
+	swaps(&rep->height);
+	swaps(&rep->xhot);
+	swaps(&rep->yhot);
+	swapl(&rep->cursorSerial);
+	swapl(&rep->cursorName);
+	swaps(&rep->nbytes);
+	SwapLongs(image, npixels);
     }
     (void) WriteToClient(client, sizeof (xXFixesGetCursorImageAndNameReply) +
 			 (npixels << 2) + nbytesRound, (char *) rep);
@@ -509,9 +499,8 @@ ProcXFixesGetCursorImageAndName (ClientPtr client)
 int
 SProcXFixesGetCursorImageAndName (ClientPtr client)
 {
-    int n;
     REQUEST(xXFixesGetCursorImageAndNameReq);
-    swaps (&stuff->length, n);
+    swaps(&stuff->length);
     return (*ProcXFixesVector[stuff->xfixesReqType]) (client);
 }
 
@@ -642,13 +631,12 @@ ProcXFixesChangeCursor (ClientPtr client)
 int
 SProcXFixesChangeCursor (ClientPtr client)
 {
-    int n;
     REQUEST(xXFixesChangeCursorReq);
 
-    swaps (&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xXFixesChangeCursorReq);
-    swapl (&stuff->source, n);
-    swapl (&stuff->destination, n);
+    swapl(&stuff->source);
+    swapl(&stuff->destination);
     return (*ProcXFixesVector[stuff->xfixesReqType]) (client);
 }
 
@@ -678,13 +666,12 @@ ProcXFixesChangeCursorByName (ClientPtr client)
 int
 SProcXFixesChangeCursorByName (ClientPtr client)
 {
-    int n;
     REQUEST(xXFixesChangeCursorByNameReq);
 
-    swaps (&stuff->length, n);
-    REQUEST_AT_LEAST_SIZE (xXFixesChangeCursorByNameReq);
-    swapl (&stuff->source, n);
-    swaps (&stuff->nbytes, n);
+    swaps(&stuff->length);
+    REQUEST_AT_LEAST_SIZE(xXFixesChangeCursorByNameReq);
+    swapl(&stuff->source);
+    swaps(&stuff->nbytes);
     return (*ProcXFixesVector[stuff->xfixesReqType]) (client);
 }
 

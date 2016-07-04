@@ -629,7 +629,7 @@ ProcRRGetMonitors(ClientPtr client)
     RRMonitorPtr monitors;
     int nmonitors;
     int noutputs;
-    int m, n;
+    int m;
     Bool get_active;
 
     REQUEST_SIZE_MATCH(xRRGetMonitorsReq);
@@ -661,11 +661,11 @@ ProcRRGetMonitors(ClientPtr client)
     rep.noutputs = noutputs;
 
     if (client->swapped) {
-        swaps(&rep.sequenceNumber, n);
-        swapl(&rep.length, n);
-        swapl(&rep.timestamp, n);
-        swapl(&rep.nmonitors, n);
-        swapl(&rep.noutputs, n);
+        swaps(&rep.sequenceNumber);
+        swapl(&rep.length);
+        swapl(&rep.timestamp);
+        swapl(&rep.nmonitors);
+        swapl(&rep.noutputs);
     }
     WriteToClient(client, sizeof(xRRGetMonitorsReply), (char *) &rep);
 
@@ -686,14 +686,14 @@ ProcRRGetMonitors(ClientPtr client)
             .heightInMillimeters = monitor->geometry.mmHeight,
         };
         if (client->swapped) {
-            swapl(&info.name, n);
-            swaps(&info.noutput, n);
-            swaps(&info.x, n);
-            swaps(&info.y, n);
-            swaps(&info.width, n);
-            swaps(&info.height, n);
-            swapl(&info.widthInMillimeters, n);
-            swapl(&info.heightInMillimeters, n);
+            swapl(&info.name);
+            swaps(&info.noutput);
+            swaps(&info.x);
+            swaps(&info.y);
+            swaps(&info.width);
+            swaps(&info.height);
+            swapl(&info.widthInMillimeters);
+            swapl(&info.heightInMillimeters);
         }
 
         WriteToClient(client, sizeof(xRRMonitorInfo), (char *) &info);

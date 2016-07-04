@@ -80,12 +80,10 @@ int
 SProcXUngrabDevice(client)
 register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xUngrabDeviceReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xUngrabDeviceReq);
-    swapl(&stuff->time, n);
+    swapl(&stuff->time);
     return(ProcXUngrabDevice(client));
     }
 

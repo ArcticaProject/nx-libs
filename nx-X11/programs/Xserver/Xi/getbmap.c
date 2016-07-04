@@ -80,10 +80,8 @@ int
 SProcXGetDeviceButtonMapping(client)
     register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xGetDeviceButtonMappingReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     return(ProcXGetDeviceButtonMapping(client));
     }
 
@@ -146,9 +144,7 @@ SRepXGetDeviceButtonMapping (client, size, rep)
     int		size;
     xGetDeviceButtonMappingReply	*rep;
     {
-    register char n;
-
-    swaps(&rep->sequenceNumber, n);
-    swapl(&rep->length, n);
+    swaps(&rep->sequenceNumber);
+    swapl(&rep->length);
     WriteToClient(client, size, (char *)rep);
     }

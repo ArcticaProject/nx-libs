@@ -81,10 +81,8 @@ int
 SProcXSetDeviceValuators(client)
     register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xSetDeviceValuatorsReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     return(ProcXSetDeviceValuators(client));
     }
 
@@ -166,9 +164,7 @@ SRepXSetDeviceValuators (client, size, rep)
     int		size;
     xSetDeviceValuatorsReply	*rep;
     {
-    register char n;
-
-    swaps(&rep->sequenceNumber, n);
-    swapl(&rep->length, n);
+    swaps(&rep->sequenceNumber);
+    swapl(&rep->length);
     WriteToClient(client, size, (char *)rep);
     }

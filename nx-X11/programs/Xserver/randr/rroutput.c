@@ -463,7 +463,6 @@ ProcRRGetOutputInfo(ClientPtr client)
     RROutput *clones;
     char *name;
     int i;
-    int n;
 
     REQUEST_SIZE_MATCH(xRRGetOutputInfoReq);
     VERIFY_RR_OUTPUT(stuff->output, output, DixReadAccess);
@@ -509,7 +508,7 @@ ProcRRGetOutputInfo(ClientPtr client)
     for (i = 0; i < output->numCrtcs; i++) {
         crtcs[i] = output->crtcs[i]->id;
         if (client->swapped)
-            swapl(&crtcs[i], n);
+            swapl(&crtcs[i]);
     }
     for (i = 0; i < output->numModes + output->numUserModes; i++) {
         if (i < output->numModes)
@@ -517,26 +516,26 @@ ProcRRGetOutputInfo(ClientPtr client)
         else
             modes[i] = output->userModes[i - output->numModes]->mode.id;
         if (client->swapped)
-            swapl(&modes[i], n);
+            swapl(&modes[i]);
     }
     for (i = 0; i < output->numClones; i++) {
         clones[i] = output->clones[i]->id;
         if (client->swapped)
-            swapl(&clones[i], n);
+            swapl(&clones[i]);
     }
     memcpy(name, output->name, output->nameLength);
     if (client->swapped) {
-        swaps(&rep.sequenceNumber, n);
-        swapl(&rep.length, n);
-        swapl(&rep.timestamp, n);
-        swapl(&rep.crtc, n);
-        swapl(&rep.mmWidth, n);
-        swapl(&rep.mmHeight, n);
-        swaps(&rep.nCrtcs, n);
-        swaps(&rep.nModes, n);
-        swaps(&rep.nPreferred, n);
-        swaps(&rep.nClones, n);
-        swaps(&rep.nameLength, n);
+        swaps(&rep.sequenceNumber);
+        swapl(&rep.length);
+        swapl(&rep.timestamp);
+        swapl(&rep.crtc);
+        swapl(&rep.mmWidth);
+        swapl(&rep.mmHeight);
+        swaps(&rep.nCrtcs);
+        swaps(&rep.nModes);
+        swaps(&rep.nPreferred);
+        swaps(&rep.nClones);
+        swaps(&rep.nameLength);
     }
     WriteToClient(client, sizeof(xRRGetOutputInfoReply), (char *) &rep);
     if (extraLen) {
@@ -639,7 +638,6 @@ ProcRRGetOutputPrimary(ClientPtr client)
     xRRGetOutputPrimaryReply rep;
     RROutputPtr primary = NULL;
     int rc;
-    int n;
 
     REQUEST_SIZE_MATCH(xRRGetOutputPrimaryReq);
 
@@ -663,8 +661,8 @@ ProcRRGetOutputPrimary(ClientPtr client)
         .output = primary ? primary->id : None
     };
     if (client->swapped) {
-        swaps(&rep.sequenceNumber, n);
-        swapl(&rep.output, n);
+        swaps(&rep.sequenceNumber);
+        swapl(&rep.output);
     }
 
     WriteToClient(client, sizeof(xRRGetOutputPrimaryReply), (char *) &rep);

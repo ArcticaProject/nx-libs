@@ -63,10 +63,8 @@ int
 SProcXQueryDeviceState(client)
     register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xQueryDeviceStateReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     return(ProcXQueryDeviceState(client));
     }
 
@@ -80,7 +78,6 @@ int
 ProcXQueryDeviceState(client)
     register ClientPtr client;
     {
-    register char 		n;
     int 			i;
     int 			num_classes = 0;
     int 			total_length = 0;
@@ -179,7 +176,7 @@ ProcXQueryDeviceState(client)
 	    *((int *) buf) = *values++;
 	    if (client->swapped)
 		{
-		swapl ((int *) buf, n);/* macro - braces needed */
+		swapl ((int *) buf);/* macro - braces needed */
 		}
 	    buf += sizeof(int);
 	    }
@@ -207,9 +204,7 @@ SRepXQueryDeviceState (client, size, rep)
     int		size;
     xQueryDeviceStateReply	*rep;
     {
-    register char n;
-
-    swaps(&rep->sequenceNumber, n);
-    swapl(&rep->length, n);
+    swaps(&rep->sequenceNumber);
+    swapl(&rep->length);
     WriteToClient(client, size, (char *)rep);
     }

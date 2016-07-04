@@ -85,12 +85,10 @@ int
 SProcXGetDeviceDontPropagateList(client)
     register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xGetDeviceDontPropagateListReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xGetDeviceDontPropagateListReq);
-    swapl(&stuff->window, n);
+    swapl(&stuff->window);
     return(ProcXGetDeviceDontPropagateList(client));
     }
 
@@ -206,10 +204,8 @@ SRepXGetDeviceDontPropagateList (client, size, rep)
     int		size;
     xGetDeviceDontPropagateListReply	*rep;
     {
-    register char n;
-
-    swaps(&rep->sequenceNumber, n);
-    swapl(&rep->length, n);
-    swaps(&rep->count, n);
+    swaps(&rep->sequenceNumber);
+    swapl(&rep->length);
+    swaps(&rep->count);
     WriteToClient(client, size, (char *)rep);
     }

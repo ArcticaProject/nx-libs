@@ -83,12 +83,10 @@ int
 SProcXChangeDeviceControl(client)
     register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xChangeDeviceControlReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_AT_LEAST_EXTRA_SIZE(xChangeDeviceControlReq, sizeof(xDeviceCtl));
-    swaps(&stuff->control, n);
+    swaps(&stuff->control);
     return(ProcXChangeDeviceControl(client));
     }
 
@@ -210,10 +208,8 @@ SRepXChangeDeviceControl (client, size, rep)
     int		size;
     xChangeDeviceControlReply	*rep;
     {
-    register char n;
-
-    swaps(&rep->sequenceNumber, n);
-    swapl(&rep->length, n);
+    swaps(&rep->sequenceNumber);
+    swapl(&rep->length);
     WriteToClient(client, size, (char *)rep);
     }
 

@@ -35,8 +35,6 @@ RRClientKnowsRates(ClientPtr pClient)
 static int
 ProcRRQueryVersion(ClientPtr client)
 {
-    int n;
-
     xRRQueryVersionReply rep = {
         .type = X_Reply,
         .sequenceNumber = client->sequence,
@@ -61,10 +59,10 @@ ProcRRQueryVersion(ClientPtr client)
     }
 
     if (client->swapped) {
-        swaps(&rep.sequenceNumber, n);
-        swapl(&rep.length, n);
-        swapl(&rep.majorVersion, n);
-        swapl(&rep.minorVersion, n);
+        swaps(&rep.sequenceNumber);
+        swapl(&rep.length);
+        swapl(&rep.majorVersion);
+        swapl(&rep.minorVersion);
     }
 #ifndef NXAGENT_SERVER
     WriteToClient(client, sizeof(xRRQueryVersionReply), &rep);

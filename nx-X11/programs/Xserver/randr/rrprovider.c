@@ -43,7 +43,7 @@ RRProviderInitErrorValue(void)
     if (pScrPriv->provider) {                                   \
         providers[count_providers] = pScrPriv->provider->id;    \
         if (client->swapped)                                    \
-            swapl(&providers[count_providers], n);                 \
+            swapl(&providers[count_providers]);                 \
         count_providers++;                                      \
     }                                                           \
     } while(0)
@@ -64,7 +64,6 @@ ProcRRGetProviders(ClientPtr client)
 #ifndef NXAGENT_SERVER
     ScreenPtr iter;
 #endif
-    int n;
 
     REQUEST_SIZE_MATCH(xRRGetProvidersReq);
 #ifndef NXAGENT_SERVER
@@ -143,10 +142,10 @@ ProcRRGetProviders(ClientPtr client)
     }
 
     if (client->swapped) {
-        swaps(&rep.sequenceNumber, n);
-        swapl(&rep.length, n);
-        swapl(&rep.timestamp, n);
-        swaps(&rep.nProviders, n);
+        swaps(&rep.sequenceNumber);
+        swapl(&rep.length);
+        swapl(&rep.timestamp);
+        swaps(&rep.nProviders);
     }
     WriteToClient(client, sizeof(xRRGetProvidersReply), (char *) &rep);
     if (extraLen)
@@ -179,7 +178,6 @@ ProcRRGetProviderInfo(ClientPtr client)
 #endif
     RRProvider *providers;
     uint32_t *prov_cap;
-    int n;
 
     REQUEST_SIZE_MATCH(xRRGetProviderInfoReq);
     VERIFY_RR_PROVIDER(stuff->provider, provider, DixReadAccess);
@@ -233,31 +231,31 @@ ProcRRGetProviderInfo(ClientPtr client)
     for (i = 0; i < pScrPriv->numCrtcs; i++) {
         crtcs[i] = pScrPriv->crtcs[i]->id;
         if (client->swapped)
-            swapl(&crtcs[i], n);
+            swapl(&crtcs[i]);
     }
 
     for (i = 0; i < pScrPriv->numOutputs; i++) {
         outputs[i] = pScrPriv->outputs[i]->id;
         if (client->swapped)
-            swapl(&outputs[i], n);
+            swapl(&outputs[i]);
     }
 
     i = 0;
     if (provider->offload_sink) {
         providers[i] = provider->offload_sink->id;
         if (client->swapped)
-            swapl(&providers[i], n);
+            swapl(&providers[i]);
         prov_cap[i] = RR_Capability_SinkOffload;
         if (client->swapped)
-            swapl(&prov_cap[i], n);
+            swapl(&prov_cap[i]);
         i++;
     }
     if (provider->output_source) {
         providers[i] = provider->output_source->id;
         if (client->swapped)
-            swapl(&providers[i], n);
+            swapl(&providers[i]);
         prov_cap[i] = RR_Capability_SourceOutput;
-        swapl(&prov_cap[i], n);
+        swapl(&prov_cap[i]);
         i++;
     }
 #ifndef NXAGENT_SERVER
@@ -284,12 +282,12 @@ ProcRRGetProviderInfo(ClientPtr client)
 #endif
     memcpy(name, provider->name, rep.nameLength);
     if (client->swapped) {
-        swaps(&rep.sequenceNumber, n);
-        swapl(&rep.length, n);
-        swapl(&rep.capabilities, n);
-        swaps(&rep.nCrtcs, n);
-        swaps(&rep.nOutputs, n);
-        swaps(&rep.nameLength, n);
+        swaps(&rep.sequenceNumber);
+        swapl(&rep.length);
+        swapl(&rep.capabilities);
+        swaps(&rep.nCrtcs);
+        swaps(&rep.nOutputs);
+        swaps(&rep.nameLength);
     }
     WriteToClient(client, sizeof(xRRGetProviderInfoReply), (char *) &rep);
     if (extraLen)

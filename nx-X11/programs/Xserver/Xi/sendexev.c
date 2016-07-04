@@ -86,7 +86,6 @@ int
 SProcXSendExtensionEvent(client)
     register ClientPtr client;
     {
-    register char n;
     CARD32 *p;
     register int i;
     xEvent eventT;
@@ -94,10 +93,10 @@ SProcXSendExtensionEvent(client)
     EventSwapPtr proc;
 
     REQUEST(xSendExtensionEventReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_AT_LEAST_SIZE(xSendExtensionEventReq);
-    swapl(&stuff->destination, n);
-    swaps(&stuff->count, n);
+    swapl(&stuff->destination);
+    swaps(&stuff->count);
 
     if (stuff->length != (sizeof(xSendExtensionEventReq) >> 2) + stuff->count +
        (stuff->num_events * (sizeof(xEvent) >> 2)))
@@ -153,6 +152,8 @@ ProcXSendExtensionEvent (client)
 		BadDevice);
 	return Success;
 	}
+
+    // FIXME: ret is not initialized and should not be returned...
 
     if (stuff->num_events == 0)
         return ret;

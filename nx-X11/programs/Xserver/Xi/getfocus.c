@@ -81,10 +81,8 @@ int
 SProcXGetDeviceFocus(client)
     register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xGetDeviceFocusReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     return(ProcXGetDeviceFocus(client));
     }
 
@@ -147,11 +145,9 @@ SRepXGetDeviceFocus (client, size, rep)
     int		size;
     xGetDeviceFocusReply	*rep;
     {
-    register char n;
-
-    swaps(&rep->sequenceNumber, n);
-    swapl(&rep->length, n);
-    swapl(&rep->focus, n);
-    swapl(&rep->time, n);
+    swaps(&rep->sequenceNumber);
+    swapl(&rep->length);
+    swapl(&rep->focus);
+    swapl(&rep->time);
     WriteToClient(client, size, (char *)rep);
     }
