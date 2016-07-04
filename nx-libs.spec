@@ -353,13 +353,13 @@ chmod a+x my_configure;
 export SHLIBGLOBALSFLAGS="%{__global_ldflags}"
 export LOCAL_LDFLAGS="%{__global_ldflags}"
 export CDEBUGFLAGS="%{__global_cppflags} %{__global_cflags}"
-make %{?_smp_mflags} CONFIGURE="$PWD/my_configure" PREFIX=%{_prefix} USRLIBDIR=%{_libdir} SHLIBDIR=%{_libdir}
+make %{?_smp_mflags} CONFIGURE="$PWD/my_configure" PREFIX=%{_prefix} LIBDIR=%{_libdir} SHLIBDIR=%{_libdir}
 
 %install
 make install \
         DESTDIR=%{buildroot} \
         PREFIX=%{_prefix} \
-        USRLIBDIR=%{_libdir} SHLIBDIR=%{_libdir} \
+        LIBDIR=%{_libdir} SHLIBDIR=%{_libdir} \
         INSTALL_DIR="install -dm0755" \
         INSTALL_FILE="install -pm0644" \
         INSTALL_PROGRAM="install -pm0755"
@@ -417,6 +417,7 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %dir %{_includedir}/nx
 %dir %{_includedir}/nx-X11
 %{_includedir}/nx-X11/ImUtil.h
+%{_includedir}/nx-X11/Xauth.h
 %{_includedir}/nx-X11/XKBlib.h
 %{_includedir}/nx-X11/Xcms.h
 %{_includedir}/nx-X11/Xlib.h
@@ -538,8 +539,12 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %{_bindir}/nxagent
 %dir %{_libdir}/nx/bin
 %{_libdir}/nx/bin/nxagent
+%dir %{_libdir}/nx-X11
+%{_libdir}/nx-X11/libX11.so*
 %{_datadir}/pixmaps/nxagent.xpm
+%dir %{_datadir}/nx
 %{_datadir}/nx/rgb
+%{_datadir}/nx/VERSION.nxagent
 %{_datadir}/man/man1/nxagent.1*
 
 %files -n nxproxy
@@ -549,6 +554,8 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %{_datadir}/man/man1/nxproxy.1*
 %dir %{_libdir}/nx/bin
 %{_libdir}/nx/bin/nxproxy
+%dir %{_datadir}/nx
+%{_datadir}/nx/VERSION.nxproxy
 
 
 %changelog
