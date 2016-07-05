@@ -2147,7 +2147,7 @@ XSecurityOptions(argc, argv, i)
  */
 
 void
-SecurityExtensionInit(INITARGS)
+SecurityExtensionInit(void)
 {
     ExtensionEntry	*extEntry;
     int i;

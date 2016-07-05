@@ -251,7 +251,7 @@ fbFillRegionTiled (DrawablePtr	pDrawable,
     FbBits	*tile;
     FbStride	tileStride;
     int		tileBpp;
-    int		tileXoff, tileYoff; /* XXX assumed to be zero */
+    _X_UNUSED int		tileXoff, tileYoff; /* XXX assumed to be zero */
     int		tileWidth, tileHeight;
     int		n = RegionNumRects(pRegion);
     BoxPtr	pbox = RegionRects(pRegion);

@@ -54,7 +54,7 @@ static void BigReqResetProc(
 static DISPATCH_PROC(ProcBigReqDispatch);
 
 void
-BigReqExtensionInit(INITARGS)
+BigReqExtensionInit(void)
 {
 #if 0
     ExtensionEntry *extEntry;

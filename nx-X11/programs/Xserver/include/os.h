@@ -457,6 +457,13 @@ extern void AbortDDX(void);
 extern void ddxGiveUp(void);
 extern int TimeSinceLastInputEvent(void);
 
+#ifndef HAVE_STRLCPY
+extern _X_EXPORT size_t
+strlcpy(char *dst, const char *src, size_t siz);
+extern _X_EXPORT size_t
+strlcat(char *dst, const char *src, size_t siz);
+#endif
+
 /* Logging. */
 typedef enum _LogParameter {
     XLOG_FLUSH,

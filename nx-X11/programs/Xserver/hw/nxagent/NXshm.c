@@ -76,7 +76,7 @@ extern void fbPutImage (DrawablePtr pDrawable, GCPtr pGC, int depth,
                                 char *pImage);
 
 void
-ShmExtensionInit(INITARGS)
+ShmExtensionInit(void)
 {
     ExtensionEntry *extEntry;
     int i;

@@ -25,7 +25,6 @@
 static int
 ProcXResQueryVersion (ClientPtr client)
 {
-    REQUEST(xXResQueryVersionReq);
     xXResQueryVersionReply rep;
 
     REQUEST_SIZE_MATCH (xXResQueryVersionReq);
@@ -301,7 +300,7 @@ SProcResDispatch (ClientPtr client)
 }
 
 void
-ResExtensionInit(INITARGS)
+ResExtensionInit(void)
 {
     (void) AddExtension(XRES_NAME, 0, 0,
                             ProcResDispatch, SProcResDispatch,

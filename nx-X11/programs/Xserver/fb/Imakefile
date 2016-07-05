@@ -91,7 +91,6 @@ SRCS =	$(XFMODSRC) \
 	fb24_32.c \
 	fbpict.c \
 	fbmmx.c \
-	fbpseudocolor.c
 
 OBJS =	$(XFMODOBJ) \
 	fbarc.o \
@@ -128,7 +127,6 @@ OBJS =	$(XFMODOBJ) \
 	fb24_32.o \
 	fbpict.o \
 	fbmmx.o \
-	fbpseudocolor.o
 
    INCLUDES = -I$(SERVERSRC)/fb -I$(SERVERSRC)/mi -I$(SERVERSRC)/include \
 	      -I$(XINCLUDESRC) \

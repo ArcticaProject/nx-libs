@@ -9,7 +9,7 @@
 
 static MODULESETUPPROTO(dbeSetup);
 
-extern void DbeExtensionInit(INITARGS);
+extern void DbeExtensionInit(void);
 
 ExtensionModule dbeExt = {
     DbeExtensionInit,

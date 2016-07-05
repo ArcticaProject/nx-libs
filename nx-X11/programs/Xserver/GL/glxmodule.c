@@ -43,7 +43,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 static MODULESETUPPROTO(glxSetup);
 
-extern void GlxExtensionInit(INITARGS);
+extern void GlxExtensionInit(void);
 extern void GlxWrapInitVisuals(miInitVisualsProcPtr *);
 extern void InitGlxWrapInitVisuals(void (*f)(miInitVisualsProcPtr *));
 

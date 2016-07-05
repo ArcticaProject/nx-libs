@@ -97,4 +97,11 @@ in this Software without prior written authorization from The Open Group.
 # define _X_DEPRECATED
 #endif
 
+/* requires xproto >= 7.0.22 */
+#if defined(__GNUC__) &&  ((__GNUC__ * 100 + __GNUC_MINOR__) >= 205)
+#define _X_UNUSED  __attribute__((__unused__))
+#else
+#define _X_UNUSED  /* */
+#endif
+
 #endif /* _XFUNCPROTO_H_ */

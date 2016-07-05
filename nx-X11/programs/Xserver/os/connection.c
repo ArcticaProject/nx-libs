@@ -72,9 +72,15 @@ SOFTWARE.
 #endif
 #include <nx-X11/X.h>
 #include <nx-X11/Xproto.h>
-#define XSERV_t
-#define TRANS_SERVER
-#define TRANS_REOPEN
+#ifndef XSERV_t
+# define XSERV_t
+#endif
+#ifndef TRANS_SERVER
+# define TRANS_SERVER
+#endif
+#ifndef TRANS_REOPEN
+# define TRANS_REOPEN
+#endif
 #include <nx-X11/Xtrans/Xtrans.h>
 #include <errno.h>
 #include <signal.h>
@@ -682,7 +688,6 @@ ClientAuthorized(ClientPtr client,
     XID	 		auth_id;
     char	 	*reason = NULL;
     XtransConnInfo	trans_conn;
-    int			restore_trans_conn = 0;
 
     priv = (OsCommPtr)client->osPrivate;
     trans_conn = priv->trans_conn;

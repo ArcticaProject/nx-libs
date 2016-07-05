@@ -93,7 +93,7 @@ static DISPATCH_PROC(SProcXTestGetVersion);
 static DISPATCH_PROC(SProcXTestGrabControl);
 
 void
-XTestExtensionInit(INITARGS)
+XTestExtensionInit(void)
 {
 #if 0
     ExtensionEntry *extEntry;
