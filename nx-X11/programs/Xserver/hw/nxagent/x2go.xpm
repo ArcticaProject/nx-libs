@@ -1,3 +1,18 @@
+/**************************************************************************/
+/*                                                                        */
+/* Copyright 2008 Heinz-M. Graesing <heinz-m.graesing@obviously-nice.de>  */
+/*                                                                        */
+/* NXAGENT, NX protocol compression and NX extensions to this software    */
+/* are copyright of the aforementioned persons and companies.             */
+/*                                                                        */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
+/*                                                                        */
+/* All rights reserved.                                                   */
+/*                                                                        */
+/**************************************************************************/
+
 /* XPM */
 static char  *x2goagentIconData[]={
 "128 128 17 1",
