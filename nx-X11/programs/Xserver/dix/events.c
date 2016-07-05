@@ -1501,7 +1501,6 @@ int
 TryClientEvents (ClientPtr client, xEvent *pEvents, int count, Mask mask, 
                  Mask filter, GrabPtr grab)
 {
-    int i;
     int type;
 
 #ifdef DEBUG
