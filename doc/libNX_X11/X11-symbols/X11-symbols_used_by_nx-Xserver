@@ -1,0 +1,1481 @@
+### CREATION DATE: 20160315, Git reference: b8c5f677c7f56024a14db457f99eda12d8e809fb
+
+::: KeySymToUcs4 ::: 
+::: XActivateScreenSaver ::: 
+::: XAddConnectionWatch ::: 
+::: XAddExtension ::: 
+::: XAddHost ::: 
+::: XAddHosts ::: 
+::: XAddPixel ::: 
+::: XAddToExtensionList ::: 
+::: XAddToSaveSet ::: 
+::: XAllPlanes ::: 
+::: XAllocClassHint ::: 
+::: XAllocColor ::: nx-X11/programs/Xserver/dix/BuiltInAtoms  nx-X11/programs/Xserver/hw/nxagent/X11/include/xpm_nxagent.h  nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XAllocColorCells ::: nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XAllocColorPlanes ::: nx-X11/programs/Xserver/dix/BuiltInAtoms  nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XAllocIconSize ::: 
+::: XAllocNamedColor ::: nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XAllocSizeHints ::: 
+::: XAllocStandardColormap ::: 
+::: XAllocWMHints ::: 
+::: XAllowEvents ::: nx-X11/programs/Xserver/hw/nxagent/NXevents.c 
+
+::: XAutoRepeatOff ::: 
+::: XAutoRepeatOn ::: 
+::: XBaseFontNameListOfFontSet ::: 
+::: XBell ::: nx-X11/programs/Xserver/hw/nxagent/Keyboard.c 
+
+::: XBitmapBitOrder ::: 
+::: XBitmapPad ::: 
+::: XBitmapUnit ::: 
+::: XBlackPixel ::: 
+::: XBlackPixelOfScreen ::: 
+::: XCellsOfScreen ::: 
+::: XChangeActivePointerGrab ::: 
+::: XChangeGC ::: nx-X11/programs/Xserver/hw/nxagent/CHANGELOG  nx-X11/programs/Xserver/hw/nxagent/Cursor.c  nx-X11/programs/Xserver/hw/nxagent/GC.c  nx-X11/programs/Xserver/hw/nxagent/Holder.c  nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XChangeKeyboardControl ::: nx-X11/programs/Xserver/hw/nxagent/Keyboard.c 
+
+::: XChangeKeyboardMapping ::: 
+::: XChangePointerControl ::: nx-X11/programs/Xserver/hw/nxagent/Pointer.c 
+
+::: XChangeProperty ::: nx-X11/programs/Xserver/hw/nxagent/Clipboard.c  nx-X11/programs/Xserver/hw/nxagent/Rootless.c  nx-X11/programs/Xserver/hw/nxagent/Screen.c 
+
+::: XChangeSaveSet ::: nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XChangeWindowAttributes ::: nx-X11/programs/Xserver/hw/nxagent/Splash.c  nx-X11/programs/Xserver/hw/nxagent/Window.c  nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XCheckIfEvent ::: nx-X11/programs/Xserver/hw/nxagent/CHANGELOG  nx-X11/programs/Xserver/hw/nxagent/Events.h 
+
+::: XCheckMaskEvent ::: 
+::: XCheckTypedEvent ::: 
+::: XCheckTypedWindowEvent ::: nx-X11/programs/Xserver/hw/nxagent/Events.c  nx-X11/programs/Xserver/hw/nxagent/Screen.c  nx-X11/programs/Xserver/hw/nxagent/Window.c 
+
+::: XCheckWindowEvent ::: 
+::: XCirculateSubwindows ::: nx-X11/programs/Xserver/hw/nxagent/Rootless.c 
+
+::: XCirculateSubwindowsDown ::: 
+::: XCirculateSubwindowsUp ::: 
+::: XClearArea ::: nx-X11/programs/Xserver/hw/nxagent/CHANGELOG  nx-X11/programs/Xserver/hw/nxagent/Drawable.c  nx-X11/programs/Xserver/hw/nxagent/Window.c 
+
+::: XClearWindow ::: nx-X11/programs/Xserver/hw/nxagent/Events.c  nx-X11/programs/Xserver/hw/nxagent/Pixmap.c  nx-X11/programs/Xserver/hw/nxagent/Screen.c  nx-X11/programs/Xserver/hw/nxagent/Window.c 
+
+::: XClipBox ::: 
+::: XCloseDisplay ::: nx-X11/programs/Xserver/hw/nxagent/CHANGELOG  nx-X11/programs/Xserver/hw/nxagent/Display.c 
+
+::: XCloseIM ::: 
+::: XCloseOM ::: 
+::: XConfigureWindow ::: nx-X11/programs/Xserver/hw/nxagent/Pixmap.c  nx-X11/programs/Xserver/hw/nxagent/Rootless.c  nx-X11/programs/Xserver/hw/nxagent/Screen.c  nx-X11/programs/Xserver/hw/nxagent/Splash.c  nx-X11/programs/Xserver/hw/nxagent/Window.c  nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XConnectionNumber ::: nx-X11/programs/Xserver/hw/nxagent/Display.c  nx-X11/programs/Xserver/hw/nxagent/Display.h  nx-X11/programs/Xserver/hw/nxagent/Handlers.c  nx-X11/programs/Xserver/hw/nxagent/Screen.c 
+
+::: XContextDependentDrawing ::: 
+::: XContextualDrawing ::: 
+::: XConvertCase ::: 
+::: XConvertSelection ::: nx-X11/programs/Xserver/hw/nxagent/Clipboard.c 
+
+::: XCopyArea ::: nx-X11/programs/Xserver/hw/nxagent/CHANGELOG  nx-X11/programs/Xserver/hw/nxagent/GCOps.c  nx-X11/programs/Xserver/hw/nxagent/Holder.c  nx-X11/programs/Xserver/hw/nxagent/Screen.c  nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XCopyColormapAndFree ::: nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XCopyGC ::: nx-X11/programs/Xserver/hw/nxagent/GC.c  nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XCopyPlane ::: nx-X11/programs/Xserver/hw/nxagent/GCOps.c  nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XCreateBitmapFromData ::: 
+::: XCreateColormap ::: nx-X11/programs/Xserver/hw/nxagent/Colormap.c  nx-X11/programs/Xserver/hw/nxagent/Display.c  nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XCreateFontCursor ::: nx-X11/programs/Xserver/hw/nxagent/Events.c 
+
+::: XCreateFontSet ::: 
+::: XCreateGC ::: nx-X11/programs/Xserver/hw/nxagent/Display.c  nx-X11/programs/Xserver/hw/nxagent/Drawable.c  nx-X11/programs/Xserver/hw/nxagent/GC.c  nx-X11/programs/Xserver/hw/nxagent/Holder.c  nx-X11/programs/Xserver/hw/nxagent/Pixmap.c  nx-X11/programs/Xserver/hw/nxagent/Screen.c  nx-X11/programs/Xserver/hw/nxagent/Splash.c  nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XCreateGlyphCursor ::: 
+::: XCreateIC ::: 
+::: XCreateImage ::: nx-X11/programs/Xserver/hw/nxagent/CHANGELOG  nx-X11/programs/Xserver/hw/nxagent/Cursor.c  nx-X11/programs/Xserver/hw/nxagent/Drawable.c  nx-X11/programs/Xserver/hw/nxagent/Image.c  nx-X11/programs/Xserver/hw/nxagent/Pixmap.c  nx-X11/programs/Xserver/hw/nxagent/Screen.c 
+
+::: XCreateOC ::: 
+::: XCreatePixmap ::: nx-X11/programs/Xserver/GL/glx/g_disptab.c  nx-X11/programs/Xserver/GL/glx/g_disptab.h  nx-X11/programs/Xserver/GL/glx/glxcmds.c  nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c  nx-X11/programs/Xserver/hw/nxagent/CHANGELOG  nx-X11/programs/Xserver/hw/nxagent/Cursor.c  nx-X11/programs/Xserver/hw/nxagent/Display.c  nx-X11/programs/Xserver/hw/nxagent/Pixmap.c  nx-X11/programs/Xserver/hw/nxagent/Screen.c  nx-X11/programs/Xserver/hw/nxagent/Splash.c  nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XCreatePixmapCursor ::: nx-X11/programs/Xserver/hw/nxagent/Cursor.c 
+
+::: XCreatePixmapFromBitmapData ::: 
+::: XCreateRegion ::: nx-X11/programs/Xserver/hw/nxagent/Render.c  nx-X11/programs/Xserver/hw/nxagent/Window.c 
+
+::: XCreateSimpleWindow ::: nx-X11/programs/Xserver/hw/nxagent/Pixmap.c  nx-X11/programs/Xserver/hw/nxagent/Screen.c  nx-X11/programs/Xserver/hw/nxagent/Splash.c 
+
+::: XCreateWindow ::: nx-X11/programs/Xserver/GL/glx/g_disptab.c  nx-X11/programs/Xserver/hw/nxagent/Display.c  nx-X11/programs/Xserver/hw/nxagent/Screen.c  nx-X11/programs/Xserver/hw/nxagent/Window.c  nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XDefaultColormap ::: 
+::: XDefaultColormapOfScreen ::: 
+::: XDefaultDepth ::: 
+::: XDefaultDepthOfScreen ::: 
+::: XDefaultGC ::: 
+::: XDefaultGCOfScreen ::: 
+::: XDefaultRootWindow ::: 
+::: XDefaultScreen ::: 
+::: XDefaultScreenOfDisplay ::: 
+::: XDefaultString ::: 
+::: XDefaultVisual ::: 
+::: XDefaultVisualOfScreen ::: 
+::: XDefineCursor ::: nx-X11/programs/Xserver/hw/nxagent/Cursor.c  nx-X11/programs/Xserver/hw/nxagent/Window.c 
+
+::: XDeleteContext ::: 
+::: XDeleteModifiermapEntry ::: 
+::: XDeleteProperty ::: nx-X11/programs/Xserver/hw/nxagent/Rootless.c 
+
+::: XDestroyIC ::: 
+::: XDestroyImage ::: nx-X11/programs/Xserver/hw/nxagent/Drawable.c  nx-X11/programs/Xserver/hw/nxagent/Image.c  nx-X11/programs/Xserver/hw/nxagent/Pixmap.c  nx-X11/programs/Xserver/hw/nxagent/Screen.c  nx-X11/programs/Xserver/hw/nxagent/Window.c 
+
+::: XDestroyOC ::: 
+::: XDestroyRegion ::: nx-X11/programs/Xserver/hw/nxagent/Render.c  nx-X11/programs/Xserver/hw/nxagent/Window.c 
+
+::: XDestroySubwindows ::: nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XDestroyWindow ::: nx-X11/programs/Xserver/GL/glx/g_disptab.c  nx-X11/programs/Xserver/hw/nxagent/Screen.c  nx-X11/programs/Xserver/hw/nxagent/Splash.c  nx-X11/programs/Xserver/hw/nxagent/Window.c  nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XDirectionalDependentDrawing ::: 
+::: XDisableAccessControl ::: 
+::: XDisplayCells ::: 
+::: XDisplayHeight ::: 
+::: XDisplayHeightMM ::: 
+::: XDisplayKeycodes ::: nx-X11/programs/Xserver/hw/nxagent/Keyboard.c 
+
+::: XDisplayMotionBufferSize ::: 
+::: XDisplayName ::: nx-X11/programs/Xserver/hw/nxagent/Display.c 
+
+::: XDisplayOfIM ::: 
+::: XDisplayOfOM ::: 
+::: XDisplayOfScreen ::: 
+::: XDisplayPlanes ::: 
+::: XDisplayString ::: 
+::: XDisplayWidth ::: 
+::: XDisplayWidthMM ::: 
+::: XDoesBackingStore ::: nx-X11/programs/Xserver/hw/nxagent/Init.c 
+
+::: XDoesSaveUnders ::: nx-X11/programs/Xserver/hw/nxagent/Init.c 
+
+::: XDrawArc ::: nx-X11/programs/Xserver/hw/nxagent/GCOps.c 
+
+::: XDrawArcs ::: nx-X11/programs/Xserver/hw/nxagent/GCOps.c 
+
+::: XDrawImageString16 ::: nx-X11/programs/Xserver/hw/nxagent/GCOps.c 
+
+::: XDrawImageString ::: nx-X11/programs/Xserver/hw/nxagent/GCOps.c 
+
+::: XDrawLine ::: nx-X11/programs/Xserver/hw/nxagent/GCOps.c  nx-X11/programs/Xserver/hw/nxagent/Holder.c 
+
+::: XDrawLines ::: nx-X11/programs/Xserver/hw/nxagent/GCOps.c  nx-X11/programs/Xserver/hw/nxagent/Holder.c 
+
+::: XDrawPoint ::: nx-X11/programs/Xserver/hw/nxagent/GCOps.c 
+
+::: XDrawPoints ::: nx-X11/programs/Xserver/hw/nxagent/GCOps.c 
+
+::: XDrawRectangle ::: nx-X11/programs/Xserver/hw/nxagent/Drawable.c  nx-X11/programs/Xserver/hw/nxagent/GCOps.c 
+
+::: XDrawRectangles ::: nx-X11/programs/Xserver/hw/nxagent/GCOps.c 
+
+::: XDrawSegments ::: nx-X11/programs/Xserver/hw/nxagent/GCOps.c 
+
+::: XDrawString16 ::: nx-X11/programs/Xserver/hw/nxagent/GCOps.c 
+
+::: XDrawString ::: nx-X11/programs/Xserver/hw/nxagent/GCOps.c 
+
+::: XDrawText16 ::: 
+::: XDrawText ::: 
+::: XEHeadOfExtensionList ::: 
+::: XESetBeforeFlush ::: 
+::: XESetCloseDisplay ::: 
+::: XESetCopyEventCookie ::: 
+::: XESetCopyGC ::: 
+::: XESetCreateFont ::: 
+::: XESetCreateGC ::: 
+::: XESetError ::: 
+::: XESetErrorString ::: 
+::: XESetEventToWire ::: 
+::: XESetFlushGC ::: 
+::: XESetFreeFont ::: 
+::: XESetFreeGC ::: 
+::: XESetPrintErrorValues ::: 
+::: XESetWireToError ::: 
+::: XESetWireToEvent ::: 
+::: XESetWireToEventCookie ::: 
+::: XEmptyRegion ::: 
+::: XEnableAccessControl ::: 
+::: XEqualRegion ::: 
+::: XEventMaskOfScreen ::: 
+::: XEventsQueued ::: nx-X11/programs/Xserver/hw/nxagent/CHANGELOG  nx-X11/programs/Xserver/hw/nxagent/Events.h 
+
+::: XExtendedMaxRequestSize ::: 
+::: XExtentsOfFontSet ::: 
+::: XFetchBuffer ::: 
+::: XFetchBytes ::: 
+::: XFetchName ::: nx-X11/programs/Xserver/hw/nxagent/Events.c 
+
+::: XFillArc ::: nx-X11/programs/Xserver/hw/nxagent/GCOps.c 
+
+::: XFillArcs ::: nx-X11/programs/Xserver/hw/nxagent/GCOps.c 
+
+::: XFillPolygon ::: nx-X11/programs/Xserver/hw/nxagent/GCOps.c  nx-X11/programs/Xserver/hw/nxagent/Splash.c 
+
+::: XFillRectangle ::: nx-X11/programs/Xserver/hw/nxagent/CHANGELOG  nx-X11/programs/Xserver/hw/nxagent/Drawable.c  nx-X11/programs/Xserver/hw/nxagent/GCOps.c  nx-X11/programs/Xserver/hw/nxagent/Holder.c  nx-X11/programs/Xserver/hw/nxagent/Screen.c 
+
+::: XFillRectangles ::: nx-X11/programs/Xserver/hw/nxagent/CHANGELOG  nx-X11/programs/Xserver/hw/nxagent/Drawable.c  nx-X11/programs/Xserver/hw/nxagent/GCOps.c 
+
+::: XFilterEvent ::: 
+::: XFindContext ::: 
+::: XFindOnExtensionList ::: 
+::: XFlush ::: nx-X11/programs/Xserver/GL/glx/glx-def.cpp  nx-X11/programs/Xserver/GL/glx/glxext.c  nx-X11/programs/Xserver/GL/glx/glxext.h  nx-X11/programs/Xserver/hw/nxagent/CHANGELOG  nx-X11/programs/Xserver/hw/nxagent/Client.c  nx-X11/programs/Xserver/hw/nxagent/Events.c  nx-X11/programs/Xserver/hw/nxagent/Handlers.c  nx-X11/programs/Xserver/hw/nxagent/NXglxext.c  nx-X11/programs/Xserver/hw/nxagent/Reconnect.c  nx-X11/programs/Xserver/hw/nxagent/Screen.c  nx-X11/programs/Xserver/hw/nxagent/Split.c  nx-X11/programs/Xserver/hw/nxagent/Window.c 
+
+::: XFlushGC ::: 
+::: XFontsOfFontSet ::: 
+::: XForceScreenSaver ::: 
+::: XFree ::: nx-X11/programs/Xserver/dbe/dbe.c  nx-X11/programs/Xserver/dbe/dbemodule.c  nx-X11/programs/Xserver/dbe/dbestruct.h  nx-X11/programs/Xserver/dbe/Imakefile  nx-X11/programs/Xserver/dbe/midbe.c  nx-X11/programs/Xserver/dbe/midbe.h  nx-X11/programs/Xserver/dbe/module/Imakefile  nx-X11/programs/Xserver/dix/atom.c  nx-X11/programs/Xserver/dix/colormap.c  nx-X11/programs/Xserver/dix/cursor.c  nx-X11/programs/Xserver/dix/devices.c  nx-X11/programs/Xserver/dix/dispatch.c  nx-X11/programs/Xserver/dix/dispatch.h  nx-X11/programs/Xserver/dix/dixfonts.c  nx-X11/programs/Xserver/dix/dixutils.c  nx-X11/programs/Xserver/dix/events.c  nx-X11/programs/Xserver/dix/extension.c  nx-X11/programs/Xserver/dix/gc.c  nx-X11/programs/Xserver/dix/globals.c  nx-X11/programs/Xserver/dix/grabs.c  nx-X11/programs/Xserver/dix/Imakefile  nx-X11/programs/Xserver/dix/main.c  nx-X11/programs/Xserver/dix/pixmap.c  nx-X11/programs/Xserver/dix/privates.c  nx-X11/programs/Xserver/dix/property.c  nx-X11/programs/Xserver/dix/resource.c  nx-X11/programs/Xserver/dix/swaprep.c  nx-X11/programs/Xserver/dix/swapreq.c  nx-X11/programs/Xserver/dix/tables.c  nx-X11/programs/Xserver/dix/window.c  nx-X11/programs/Xserver/dix/xpstubs.c  nx-X11/programs/Xserver/fb/fb24_32.c  nx-X11/programs/Xserver/fb/fb24_32.h  nx-X11/programs/Xserver/fb/fballpriv.c  nx-X11/programs/Xserver/fb/fbarc.c  nx-X11/programs/Xserver/fb/fbbits.c  nx-X11/programs/Xserver/fb/fbbits.h  nx-X11/programs/Xserver/fb/fbblt.c  nx-X11/programs/Xserver/fb/fbbltone.c  nx-X11/programs/Xserver/fb/fbbstore.c  nx-X11/programs/Xserver/fb/fbcmap.c  nx-X11/programs/Xserver/fb/fbcompose.c  nx-X11/programs/Xserver/fb/fbcopy.c  nx-X11/programs/Xserver/fb/fbfill.c  nx-X11/programs/Xserver/fb/fbfillrect.c  nx-X11/programs/Xserver/fb/fbfillsp.c  nx-X11/programs/Xserver/fb/fbgc.c  nx-X11/programs/Xserver/fb/fbgetsp.c  nx-X11/programs/Xserver/fb/fbglyph.c  nx-X11/programs/Xserver/fb/fb.h  nx-X11/programs/Xserver/fb/fbimage.c  nx-X11/programs/Xserver/fb/fbline.c  nx-X11/programs/Xserver/fb/fbmodule.c  nx-X11/programs/Xserver/fb/fboverlay.c  nx-X11/programs/Xserver/fb/fboverlay.h  nx-X11/programs/Xserver/fb/fbpict.c  nx-X11/programs/Xserver/fb/fbpict.h  nx-X11/programs/Xserver/fb/fbpixmap.c  nx-X11/programs/Xserver/fb/fbpoint.c  nx-X11/programs/Xserver/fb/fbpush.c  nx-X11/programs/Xserver/fb/fbrop.h  nx-X11/programs/Xserver/fb/fbscreen.c  nx-X11/programs/Xserver/fb/fbseg.c  nx-X11/programs/Xserver/fb/fbsetsp.c  nx-X11/programs/Xserver/fb/fbsolid.c  nx-X11/programs/Xserver/fb/fbstipple.c  nx-X11/programs/Xserver/fb/fbtile.c  nx-X11/programs/Xserver/fb/fbutil.c  nx-X11/programs/Xserver/fb/fbwindow.c  nx-X11/programs/Xserver/fb/Imakefile  nx-X11/programs/Xserver/fb/module/Imakefile  nx-X11/programs/Xserver/GL/glx/g_disptab.c  nx-X11/programs/Xserver/GL/glx/g_disptab_EXT.c  nx-X11/programs/Xserver/GL/glx/g_disptab_EXT.h  nx-X11/programs/Xserver/GL/glx/g_disptab.h  nx-X11/programs/Xserver/GL/glx/global.c  nx-X11/programs/Xserver/GL/glx/glxbuf.c  nx-X11/programs/Xserver/GL/glx/glxbuf.h  nx-X11/programs/Xserver/GL/glx/glxcmds.c  nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c  nx-X11/programs/Xserver/GL/glx/glxcontext.h  nx-X11/programs/Xserver/GL/glx/glx-def.cpp  nx-X11/programs/Xserver/GL/glx/glxdrawable.h  nx-X11/programs/Xserver/GL/glx/glxerror.h  nx-X11/programs/Xserver/GL/glx/glxext.c  nx-X11/programs/Xserver/GL/glx/glxext.h  nx-X11/programs/Xserver/GL/glx/glxfb.c  nx-X11/programs/Xserver/GL/glx/glxfb.h  nx-X11/programs/Xserver/GL/glx/glximports.c  nx-X11/programs/Xserver/GL/glx/glximports.h  nx-X11/programs/Xserver/GL/glx/glxmem.c  nx-X11/programs/Xserver/GL/glx/glxmem.h  nx-X11/programs/Xserver/GL/glx/glxpix.c  nx-X11/programs/Xserver/GL/glx/glxpix.h  nx-X11/programs/Xserver/GL/glx/glxscreens.c  nx-X11/programs/Xserver/GL/glx/glxscreens.h  nx-X11/programs/Xserver/GL/glx/glxserver.h  nx-X11/programs/Xserver/GL/glx/glxutil.c  nx-X11/programs/Xserver/GL/glx/glxutil.h  nx-X11/programs/Xserver/GL/glx/g_render.c  nx-X11/programs/Xserver/GL/glx/g_renderswap.c  nx-X11/programs/Xserver/GL/glx/g_single.c  nx-X11/programs/Xserver/GL/glx/g_singleswap.c  nx-X11/programs/Xserver/GL/glx/Imakefile  nx-X11/programs/Xserver/GL/glx/impsize.h  nx-X11/programs/Xserver/GL/glxmodule.c  nx-X11/programs/Xserver/GL/glx/render2.c  nx-X11/programs/Xserver/GL/glx/render2swap.c  nx-X11/programs/Xserver/GL/glx/renderpix.c  nx-X11/programs/Xserver/GL/glx/renderpixswap.c  nx-X11/programs/Xserver/GL/glx/rensize.c  nx-X11/programs/Xserver/GL/glx/rensizetab.c  nx-X11/programs/Xserver/GL/glx/single2.c  nx-X11/programs/Xserver/GL/glx/single2swap.c  nx-X11/programs/Xserver/GL/glx/singlepix.c  nx-X11/programs/Xserver/GL/glx/singlepixswap.c  nx-X11/programs/Xserver/GL/glx/singlesize.c  nx-X11/programs/Xserver/GL/glx/singlesize.h  nx-X11/programs/Xserver/GL/glx/unpack.h  nx-X11/programs/Xserver/GL/glx/xfont.c  nx-X11/programs/Xserver/GL/Imakefile  nx-X11/programs/Xserver/GL/include/GL/glx_ansic.h  nx-X11/programs/Xserver/GL/include/GL/xf86glx.h  nx-X11/programs/Xserver/GL/mesa/array_cache/Imakefile  nx-X11/programs/Xserver/GL/mesa/array_cache/Imakefile.inc  nx-X11/programs/Xserver/GL/mesa/GLcore/GLcore-def.cpp  nx-X11/programs/Xserver/GL/mesa/GLcore/GLcoremodule.c  nx-X11/programs/Xserver/GL/mesa/GLcore/Imakefile  nx-X11/programs/Xserver/GL/mesa/Imakefile  nx-X11/programs/Xserver/GL/mesa/Imakefile.inc  nx-X11/programs/Xserver/GL/mesa/main/Imakefile  nx-X11/programs/Xserver/GL/mesa/main/Imakefile.inc  nx-X11/programs/Xserver/GL/mesa/math/Imakefile  nx-X11/programs/Xserver/GL/mesa/math/Imakefile.inc  nx-X11/programs/Xserver/GL/mesa/shader/grammar/Imakefile.inc  nx-X11/programs/Xserver/GL/mesa/shader/Imakefile.inc  nx-X11/programs/Xserver/GL/mesa/shader/slang/Imakefile.inc  nx-X11/programs/Xserver/GL/mesa/shader/slang/library/Imakefile.inc  nx-X11/programs/Xserver/GL/mesa/swrast/Imakefile  nx-X11/programs/Xserver/GL/mesa/swrast/Imakefile.inc  nx-X11/programs/Xserver/GL/mesa/swrast_setup/Imakefile  nx-X11/programs/Xserver/GL/mesa/swrast_setup/Imakefile.inc  nx-X11/programs/Xserver/GL/mesa/tnl/Imakefile  nx-X11/programs/Xserver/GL/mesa/tnl/Imakefile.inc  nx-X11/programs/Xserver/GL/mesa/X/Imakefile  nx-X11/programs/Xserver/GL/mesa/X/Imakefile.inc  nx-X11/programs/Xserver/GL/mesa/X/xf86glx.c  nx-X11/programs/Xserver/GL/mesa/X/xf86glxint.h  nx-X11/programs/Xserver/GL/mesa/X/xf86glx_util.c  nx-X11/programs/Xserver/GL/mesa/X/xf86glx_util.h  nx-X11/programs/Xserver/hw/nxagent/Args.c  nx-X11/programs/Xserver/hw/nxagent/Atoms.c  nx-X11/programs/Xserver/hw/nxagent/CHANGELOG  nx-X11/programs/Xserver/hw/nxagent/Clipboard.c  nx-X11/programs/Xserver/hw/nxagent/Colormap.c  nx-X11/programs/Xserver/hw/nxagent/Cursor.c  nx-X11/programs/Xserver/hw/nxagent/Display.c  nx-X11/programs/Xserver/hw/nxagent/Drawable.c  nx-X11/programs/Xserver/hw/nxagent/Events.c  nx-X11/programs/Xserver/hw/nxagent/Font.c  nx-X11/programs/Xserver/hw/nxagent/GC.c  nx-X11/programs/Xserver/hw/nxagent/Holder.c  nx-X11/programs/Xserver/hw/nxagent/Imakefile  nx-X11/programs/Xserver/hw/nxagent/Keyboard.c  nx-X11/programs/Xserver/hw/nxagent/LICENSE  nx-X11/programs/Xserver/hw/nxagent/NXdispatch.c  nx-X11/programs/Xserver/hw/nxagent/NXdixfonts.c  nx-X11/programs/Xserver/hw/nxagent/NXevents.c  nx-X11/programs/Xserver/hw/nxagent/NXextension.c  nx-X11/programs/Xserver/hw/nxagent/NXglxext.c  nx-X11/programs/Xserver/hw/nxagent/NXglyph.c  nx-X11/programs/Xserver/hw/nxagent/NXglyphstr.h  nx-X11/programs/Xserver/hw/nxagent/NXmiexpose.c  nx-X11/programs/Xserver/hw/nxagent/NXmiglyph.c  nx-X11/programs/Xserver/hw/nxagent/NXmitrap.c  nx-X11/programs/Xserver/hw/nxagent/NXmiwindow.c  nx-X11/programs/Xserver/hw/nxagent/NXpicture.c  nx-X11/programs/Xserver/hw/nxagent/NXproperty.c  nx-X11/programs/Xserver/hw/nxagent/NXrender.c  nx-X11/programs/Xserver/hw/nxagent/NXresource.c  nx-X11/programs/Xserver/hw/nxagent/NXshm.c  nx-X11/programs/Xserver/hw/nxagent/NXwindow.c  nx-X11/programs/Xserver/hw/nxagent/NXxvdisp.c  nx-X11/programs/Xserver/hw/nxagent/Pixels.h  nx-X11/programs/Xserver/hw/nxagent/Pixmap.c  nx-X11/programs/Xserver/hw/nxagent/Rootless.c  nx-X11/programs/Xserver/hw/nxagent/Screen.c  nx-X11/programs/Xserver/hw/nxagent/Splash.c  nx-X11/programs/Xserver/hw/nxagent/Split.c  nx-X11/programs/Xserver/hw/nxagent/Window.c  nx-X11/programs/Xserver/hw/nxagent/X11/include/Xfixes_nxagent.h  nx-X11/programs/Xserver/hw/nxagent/X11/include/Xinerama_nxagent.h  nx-X11/programs/Xserver/hw/xfree86/common/compiler.h  nx-X11/programs/Xserver/hw/xfree86/os-support/xf86_ansic.h  nx-X11/programs/Xserver/hw/xfree86/os-support/xf86_libc.h  nx-X11/programs/Xserver/hw/xfree86/xf86Version.h  nx-X11/programs/Xserver/Imakefile  nx-X11/programs/Xserver/include/bstore.h  nx-X11/programs/Xserver/include/bstorestr.h  nx-X11/programs/Xserver/include/closestr.h  nx-X11/programs/Xserver/include/colormap.h  nx-X11/programs/Xserver/include/cursor.h  nx-X11/programs/Xserver/include/cursorstr.h  nx-X11/programs/Xserver/include/dixevents.h  nx-X11/programs/Xserver/include/dixfont.h  nx-X11/programs/Xserver/include/dixgrabs.h  nx-X11/programs/Xserver/include/dix.h  nx-X11/programs/Xserver/include/dixstruct.h  nx-X11/programs/Xserver/include/exevents.h  nx-X11/programs/Xserver/include/extension.h  nx-X11/programs/Xserver/include/extinit.h  nx-X11/programs/Xserver/include/extnsionst.h  nx-X11/programs/Xserver/include/gc.h  nx-X11/programs/Xserver/include/gcstruct.h  nx-X11/programs/Xserver/include/globals.h  nx-X11/programs/Xserver/include/Imakefile  nx-X11/programs/Xserver/include/input.h  nx-X11/programs/Xserver/include/inputstr.h  nx-X11/programs/Xserver/include/misc.h  nx-X11/programs/Xserver/include/miscstruct.h  nx-X11/programs/Xserver/include/opaque.h  nx-X11/programs/Xserver/include/os.h  nx-X11/programs/Xserver/include/pixmap.h  nx-X11/programs/Xserver/include/pixmapstr.h  nx-X11/programs/Xserver/include/property.h  nx-X11/programs/Xserver/include/propertyst.h  nx-X11/programs/Xserver/include/regionstr.h  nx-X11/programs/Xserver/include/resource.h  nx-X11/programs/Xserver/include/screenint.h  nx-X11/programs/Xserver/include/scrnintstr.h  nx-X11/programs/Xserver/include/servermd.h  nx-X11/programs/Xserver/include/site.h  nx-X11/programs/Xserver/include/swaprep.h  nx-X11/programs/Xserver/include/swapreq.h  nx-X11/programs/Xserver/include/validate.h  nx-X11/programs/Xserver/include/window.h  nx-X11/programs/Xserver/include/windowstr.h  nx-X11/programs/Xserver/include/XIstubs.h  nx-X11/programs/Xserver/mfb/maskbits.h  nx-X11/programs/Xserver/mi/cbrt.c  nx-X11/programs/Xserver/mi/Imakefile  nx-X11/programs/Xserver/mi/miarc.c  nx-X11/programs/Xserver/mi/mibank.c  nx-X11/programs/Xserver/mi/mibank.h  nx-X11/programs/Xserver/mi/mibitblt.c  nx-X11/programs/Xserver/mi/mibstore.c  nx-X11/programs/Xserver/mi/mibstore.h  nx-X11/programs/Xserver/mi/mibstorest.h  nx-X11/programs/Xserver/mi/miclipn.c  nx-X11/programs/Xserver/mi/micmap.c  nx-X11/programs/Xserver/mi/micmap.h  nx-X11/programs/Xserver/mi/micoord.h  nx-X11/programs/Xserver/mi/micursor.c  nx-X11/programs/Xserver/mi/midash.c  nx-X11/programs/Xserver/mi/midispcur.c  nx-X11/programs/Xserver/mi/mieq.c  nx-X11/programs/Xserver/mi/miexpose.c  nx-X11/programs/Xserver/mi/mifillarc.c  nx-X11/programs/Xserver/mi/mifillarc.h  nx-X11/programs/Xserver/mi/mifillrct.c  nx-X11/programs/Xserver/mi/mifpolycon.c  nx-X11/programs/Xserver/mi/mifpoly.h  nx-X11/programs/Xserver/mi/migc.c  nx-X11/programs/Xserver/mi/migc.h  nx-X11/programs/Xserver/mi/miglblt.c  nx-X11/programs/Xserver/mi/mi.h  nx-X11/programs/Xserver/mi/miinitext.c  nx-X11/programs/Xserver/mi/miline.h  nx-X11/programs/Xserver/mi/mioverlay.c  nx-X11/programs/Xserver/mi/mioverlay.h  nx-X11/programs/Xserver/mi/mipointer.c  nx-X11/programs/Xserver/mi/mipointer.h  nx-X11/programs/Xserver/mi/mipointrst.h  nx-X11/programs/Xserver/mi/mipoly.c  nx-X11/programs/Xserver/mi/mipolycon.c  nx-X11/programs/Xserver/mi/mipolygen.c  nx-X11/programs/Xserver/mi/mipoly.h  nx-X11/programs/Xserver/mi/mipolypnt.c  nx-X11/programs/Xserver/mi/mipolyrect.c  nx-X11/programs/Xserver/mi/mipolyseg.c  nx-X11/programs/Xserver/mi/mipolytext.c  nx-X11/programs/Xserver/mi/mipolyutil.c  nx-X11/programs/Xserver/mi/mipushpxl.c  nx-X11/programs/Xserver/mi/miregion.c  nx-X11/programs/Xserver/mi/miscrinit.c  nx-X11/programs/Xserver/mi/mispans.c  nx-X11/programs/Xserver/mi/mispans.h  nx-X11/programs/Xserver/mi/misprite.c  nx-X11/programs/Xserver/mi/misprite.h  nx-X11/programs/Xserver/mi/mispritest.h  nx-X11/programs/Xserver/mi/mistruct.h  nx-X11/programs/Xserver/mi/mivalidate.h  nx-X11/programs/Xserver/mi/mivaltree.c  nx-X11/programs/Xserver/mi/miwideline.c  nx-X11/programs/Xserver/mi/miwideline.h  nx-X11/programs/Xserver/mi/miwindow.c  nx-X11/programs/Xserver/mi/mizerarc.c  nx-X11/programs/Xserver/mi/mizerarc.h  nx-X11/programs/Xserver/mi/mizerclip.c  nx-X11/programs/Xserver/mi/mizerline.c  nx-X11/programs/Xserver/os/access.c  nx-X11/programs/Xserver/os/auth.c  nx-X11/programs/Xserver/os/connection.c  nx-X11/programs/Xserver/os/Imakefile  nx-X11/programs/Xserver/os/io.c  nx-X11/programs/Xserver/os/k5auth.c  nx-X11/programs/Xserver/os/log.c  nx-X11/programs/Xserver/os/mitauth.c  nx-X11/programs/Xserver/os/oscolor.c  nx-X11/programs/Xserver/os/osdep.h  nx-X11/programs/Xserver/os/osinit.c  nx-X11/programs/Xserver/os/rpcauth.c  nx-X11/programs/Xserver/os/secauth.c  nx-X11/programs/Xserver/os/utils.c  nx-X11/programs/Xserver/os/WaitFor.c  nx-X11/programs/Xserver/os/xalloc.c  nx-X11/programs/Xserver/os/xdmauth.c  nx-X11/programs/Xserver/os/xdmcp.c  nx-X11/programs/Xserver/randr/Imakefile  nx-X11/programs/Xserver/randr/panoramiXproto.h  nx-X11/programs/Xserver/record/Imakefile  nx-X11/programs/Xserver/record/module/Imakefile  nx-X11/programs/Xserver/record/record.c  nx-X11/programs/Xserver/record/recordmod.c  nx-X11/programs/Xserver/record/set.c  nx-X11/programs/Xserver/record/set.h  nx-X11/programs/Xserver/render/animcur.c  nx-X11/programs/Xserver/render/glyph.c  nx-X11/programs/Xserver/render/glyphstr.h  nx-X11/programs/Xserver/render/Imakefile  nx-X11/programs/Xserver/render/miglyph.c  nx-X11/programs/Xserver/render/miindex.c  nx-X11/programs/Xserver/render/mipict.c  nx-X11/programs/Xserver/render/mipict.h  nx-X11/programs/Xserver/render/mirect.c  nx-X11/programs/Xserver/render/mitrap.c  nx-X11/programs/Xserver/render/mitri.c  nx-X11/programs/Xserver/render/picture.c  nx-X11/programs/Xserver/render/picture.h  nx-X11/programs/Xserver/render/render.c  nx-X11/programs/Xserver/Xext/appgroup.c  nx-X11/programs/Xserver/Xext/appgroup.h  nx-X11/programs/Xserver/Xext/bigreq.c  nx-X11/programs/Xserver/Xext/cup.c  nx-X11/programs/Xserver/Xext/dgaproc.h  nx-X11/programs/Xserver/Xext/dpms.c  nx-X11/programs/Xserver/Xext/dpmsproc.h  nx-X11/programs/Xserver/Xext/dpmsstubs.c  nx-X11/programs/Xserver/Xext/EVI.c  nx-X11/programs/Xserver/Xext/EVIstruct.h  nx-X11/programs/Xserver/Xext/extmod/Imakefile  nx-X11/programs/Xserver/Xext/extmod/modinit.c  nx-X11/programs/Xserver/Xext/extmod/modinit.h  nx-X11/programs/Xserver/Xext/fontcache.c  nx-X11/programs/Xserver/Xext/Imakefile  nx-X11/programs/Xserver/Xext/mbufbf.c  nx-X11/programs/Xserver/Xext/mbuf.c  nx-X11/programs/Xserver/Xext/mbufpx.c  nx-X11/programs/Xserver/Xext/mitmisc.c  nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiX.h  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c  nx-X11/programs/Xserver/Xext/panoramiXsrv.h  nx-X11/programs/Xserver/Xext/panoramiXSwap.c  nx-X11/programs/Xserver/Xext/sampleEVI.c  nx-X11/programs/Xserver/Xext/saver.c  nx-X11/programs/Xserver/Xext/security.c  nx-X11/programs/Xserver/Xext/shape.c  nx-X11/programs/Xserver/Xext/shm.c  nx-X11/programs/Xserver/Xext/sleepuntil.c  nx-X11/programs/Xserver/Xext/sleepuntil.h  nx-X11/programs/Xserver/Xext/sync.c  nx-X11/programs/Xserver/Xext/vidmodeproc.h  nx-X11/programs/Xserver/Xext/xcmisc.c  nx-X11/programs/Xserver/Xext/xf86bigfont.c  nx-X11/programs/Xserver/Xext/xf86dga2.c  nx-X11/programs/Xserver/Xext/xf86dga.c  nx-X11/programs/Xserver/Xext/xf86dgaext.h  nx-X11/programs/Xserver/Xext/xf86misc.c  nx-X11/programs/Xserver/Xext/xf86miscproc.h  nx-X11/programs/Xserver/Xext/xf86vmode.c  nx-X11/programs/Xserver/Xext/xres.c  nx-X11/programs/Xserver/Xext/xtest1dd.c  nx-X11/programs/Xserver/Xext/xtest1dd.h  nx-X11/programs/Xserver/Xext/xtest1di.c  nx-X11/programs/Xserver/Xext/xtest.c  nx-X11/programs/Xserver/Xext/xvdisp.c  nx-X11/programs/Xserver/Xext/xvdisp.h  nx-X11/programs/Xserver/Xext/xvdix.h  nx-X11/programs/Xserver/Xext/xvmain.c  nx-X11/programs/Xserver/Xext/xvmc.c  nx-X11/programs/Xserver/Xext/xvmcext.h  nx-X11/programs/Xserver/Xext/xvmod.c  nx-X11/programs/Xserver/Xext/xvmodproc.h  nx-X11/programs/Xserver/Xi/allowev.c  nx-X11/programs/Xserver/Xi/allowev.h  nx-X11/programs/Xserver/Xi/chgdctl.c  nx-X11/programs/Xserver/Xi/chgdctl.h  nx-X11/programs/Xserver/Xi/chgfctl.c  nx-X11/programs/Xserver/Xi/chgfctl.h  nx-X11/programs/Xserver/Xi/chgkbd.c  nx-X11/programs/Xserver/Xi/chgkbd.h  nx-X11/programs/Xserver/Xi/chgkmap.c  nx-X11/programs/Xserver/Xi/chgkmap.h  nx-X11/programs/Xserver/Xi/chgprop.c  nx-X11/programs/Xserver/Xi/chgprop.h  nx-X11/programs/Xserver/Xi/chgptr.c  nx-X11/programs/Xserver/Xi/chgptr.h  nx-X11/programs/Xserver/Xi/closedev.c  nx-X11/programs/Xserver/Xi/closedev.h  nx-X11/programs/Xserver/Xi/devbell.c  nx-X11/programs/Xserver/Xi/devbell.h  nx-X11/programs/Xserver/Xi/exevents.c  nx-X11/programs/Xserver/Xi/exglobals.h  nx-X11/programs/Xserver/Xi/extinit.c  nx-X11/programs/Xserver/Xi/getbmap.c  nx-X11/programs/Xserver/Xi/getbmap.h  nx-X11/programs/Xserver/Xi/getdctl.c  nx-X11/programs/Xserver/Xi/getdctl.h  nx-X11/programs/Xserver/Xi/getfctl.c  nx-X11/programs/Xserver/Xi/getfctl.h  nx-X11/programs/Xserver/Xi/getfocus.c  nx-X11/programs/Xserver/Xi/getfocus.h  nx-X11/programs/Xserver/Xi/getkmap.c  nx-X11/programs/Xserver/Xi/getkmap.h  nx-X11/programs/Xserver/Xi/getmmap.c  nx-X11/programs/Xserver/Xi/getmmap.h  nx-X11/programs/Xserver/Xi/getprop.c  nx-X11/programs/Xserver/Xi/getprop.h  nx-X11/programs/Xserver/Xi/getselev.c  nx-X11/programs/Xserver/Xi/getselev.h  nx-X11/programs/Xserver/Xi/getvers.c  nx-X11/programs/Xserver/Xi/getvers.h  nx-X11/programs/Xserver/Xi/grabdevb.c  nx-X11/programs/Xserver/Xi/grabdevb.h  nx-X11/programs/Xserver/Xi/grabdev.c  nx-X11/programs/Xserver/Xi/grabdev.h  nx-X11/programs/Xserver/Xi/grabdevk.c  nx-X11/programs/Xserver/Xi/grabdevk.h  nx-X11/programs/Xserver/Xi/gtmotion.c  nx-X11/programs/Xserver/Xi/gtmotion.h  nx-X11/programs/Xserver/Xi/Imakefile  nx-X11/programs/Xserver/Xi/listdev.c  nx-X11/programs/Xserver/Xi/listdev.h  nx-X11/programs/Xserver/Xi/opendev.c  nx-X11/programs/Xserver/Xi/opendev.h  nx-X11/programs/Xserver/Xi/queryst.c  nx-X11/programs/Xserver/Xi/queryst.h  nx-X11/programs/Xserver/Xi/selectev.c  nx-X11/programs/Xserver/Xi/selectev.h  nx-X11/programs/Xserver/Xi/sendexev.c  nx-X11/programs/Xserver/Xi/sendexev.h  nx-X11/programs/Xserver/Xi/setbmap.c  nx-X11/programs/Xserver/Xi/setbmap.h  nx-X11/programs/Xserver/Xi/setdval.c  nx-X11/programs/Xserver/Xi/setdval.h  nx-X11/programs/Xserver/Xi/setfocus.c  nx-X11/programs/Xserver/Xi/setfocus.h  nx-X11/programs/Xserver/Xi/setmmap.c  nx-X11/programs/Xserver/Xi/setmmap.h  nx-X11/programs/Xserver/Xi/setmode.c  nx-X11/programs/Xserver/Xi/setmode.h  nx-X11/programs/Xserver/Xi/stubs.c  nx-X11/programs/Xserver/Xi/ungrdevb.c  nx-X11/programs/Xserver/Xi/ungrdevb.h  nx-X11/programs/Xserver/Xi/ungrdev.c  nx-X11/programs/Xserver/Xi/ungrdev.h  nx-X11/programs/Xserver/Xi/ungrdevk.c  nx-X11/programs/Xserver/Xi/ungrdevk.h  nx-X11/programs/Xserver/xkb/ddxBeep.c  nx-X11/programs/Xserver/xkb/ddxConfig.c  nx-X11/programs/Xserver/xkb/ddxCtrls.c  nx-X11/programs/Xserver/xkb/ddxDevBtn.c  nx-X11/programs/Xserver/xkb/ddxFakeBtn.c  nx-X11/programs/Xserver/xkb/ddxFakeMtn.c  nx-X11/programs/Xserver/xkb/ddxInit.c  nx-X11/programs/Xserver/xkb/ddxKeyClick.c  nx-X11/programs/Xserver/xkb/ddxKillSrv.c  nx-X11/programs/Xserver/xkb/ddxLEDs.c  nx-X11/programs/Xserver/xkb/ddxList.c  nx-X11/programs/Xserver/xkb/ddxLoad.c  nx-X11/programs/Xserver/xkb/ddxPrivate.c  nx-X11/programs/Xserver/xkb/ddxVT.c  nx-X11/programs/Xserver/xkb/Imakefile  nx-X11/programs/Xserver/xkb/xkbAccessX.c  nx-X11/programs/Xserver/xkb/xkbActions.c  nx-X11/programs/Xserver/xkb/xkb.c  nx-X11/programs/Xserver/xkb/xkbDflts.h  nx-X11/programs/Xserver/xkb/xkbEvents.c  nx-X11/programs/Xserver/xkb/xkb.h  nx-X11/programs/Xserver/xkb/xkbInit.c  nx-X11/programs/Xserver/xkb/xkbLEDs.c  nx-X11/programs/Xserver/xkb/xkbPrKeyEv.c  nx-X11/programs/Xserver/xkb/xkbPrOtherEv.c  nx-X11/programs/Xserver/xkb/xkbSwap.c  nx-X11/programs/Xserver/xkb/xkbUtils.c  nx-X11/programs/Xserver/Xserver.man  nx-X11/programs/Xserver/XTrap/Imakefile  nx-X11/programs/Xserver/XTrap/module/Imakefile  nx-X11/programs/Xserver/XTrap/xf86XTrapModule.c  nx-X11/programs/Xserver/XTrap/xtrapddmi.c  nx-X11/programs/Xserver/XTrap/xtrapdi.c  nx-X11/programs/Xserver/XTrap/xtrapdiswp.c  nx-X11/programs/Xserver/XTrap/xtrapditbl.c 
+
+::: XFreeColormap ::: nx-X11/programs/Xserver/hw/nxagent/Colormap.c  nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XFreeColors ::: nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XFreeCursor ::: nx-X11/programs/Xserver/hw/nxagent/Cursor.c  nx-X11/programs/Xserver/hw/nxagent/Events.c 
+
+::: XFreeEventData ::: 
+::: XFreeExtensionList ::: 
+::: XFreeFont ::: nx-X11/programs/Xserver/hw/nxagent/Font.c 
+
+::: XFreeFontInfo ::: 
+::: XFreeFontNames ::: nx-X11/programs/Xserver/hw/nxagent/Font.c 
+
+::: XFreeFontPath ::: nx-X11/programs/Xserver/hw/nxagent/Font.c 
+
+::: XFreeFontSet ::: 
+::: XFreeGC ::: nx-X11/programs/Xserver/hw/nxagent/Display.c  nx-X11/programs/Xserver/hw/nxagent/Drawable.c  nx-X11/programs/Xserver/hw/nxagent/GC.c  nx-X11/programs/Xserver/hw/nxagent/Holder.c  nx-X11/programs/Xserver/hw/nxagent/Pixmap.c  nx-X11/programs/Xserver/hw/nxagent/Screen.c  nx-X11/programs/Xserver/hw/nxagent/Splash.c  nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XFreeModifiermap ::: nx-X11/programs/Xserver/hw/nxagent/Keyboard.c 
+
+::: XFreePixmap ::: nx-X11/programs/Xserver/hw/nxagent/Cursor.c  nx-X11/programs/Xserver/hw/nxagent/Pixmap.c  nx-X11/programs/Xserver/hw/nxagent/Screen.c  nx-X11/programs/Xserver/hw/nxagent/Splash.c  nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XFreeStringList ::: nx-X11/programs/Xserver/hw/nxagent/Events.c 
+
+::: XGContextFromGC ::: 
+::: XGeometry ::: 
+::: XGetAtomName ::: nx-X11/programs/Xserver/hw/nxagent/Atoms.c  nx-X11/programs/Xserver/hw/nxagent/Clipboard.c  nx-X11/programs/Xserver/hw/nxagent/Events.c 
+
+::: XGetAtomNames ::: 
+::: XGetClassHint ::: 
+::: XGetCommand ::: 
+::: XGetDefault ::: 
+::: XGetErrorDatabaseText ::: nx-X11/programs/Xserver/hw/nxagent/Error.c 
+
+::: XGetErrorText ::: nx-X11/programs/Xserver/hw/nxagent/Error.c 
+
+::: XGetEventData ::: 
+::: XGetFontPath ::: nx-X11/programs/Xserver/dix/dixfonts.c  nx-X11/programs/Xserver/hw/nxagent/Font.c  nx-X11/programs/Xserver/hw/nxagent/NXdixfonts.c 
+
+::: XGetFontProperty ::: 
+::: XGetGCValues ::: 
+::: XGetGeometry ::: nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XGetICValues ::: 
+::: XGetIMValues ::: 
+::: XGetIconName ::: 
+::: XGetIconSizes ::: 
+::: XGetImage ::: nx-X11/programs/Xserver/hw/nxagent/CHANGELOG  nx-X11/programs/Xserver/hw/nxagent/Pixmap.c  nx-X11/programs/Xserver/hw/nxagent/Screen.c  nx-X11/programs/Xserver/hw/nxagent/Window.c  nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XGetInputFocus ::: 
+::: XGetKeyboardControl ::: nx-X11/programs/Xserver/hw/nxagent/Keyboard.c 
+
+::: XGetKeyboardMapping ::: nx-X11/programs/Xserver/hw/nxagent/Keyboard.c 
+
+::: XGetModifierMapping ::: nx-X11/programs/Xserver/hw/nxagent/Keyboard.c 
+
+::: XGetMotionEvents ::: 
+::: XGetNormalHints ::: 
+::: XGetOCValues ::: 
+::: XGetOMValues ::: 
+::: XGetPixel ::: nx-X11/programs/Xserver/hw/nxagent/Drawable.c  nx-X11/programs/Xserver/hw/nxagent/Image.c 
+
+::: XGetPointerControl ::: 
+::: XGetPointerMapping ::: nx-X11/programs/Xserver/hw/nxagent/Pointer.c 
+
+::: XGetRGBColormaps ::: 
+::: XGetScreenSaver ::: 
+::: XGetSelectionOwner ::: nx-X11/programs/Xserver/hw/nxagent/Clipboard.c 
+
+::: XGetSizeHints ::: 
+::: XGetStandardColormap ::: 
+::: XGetSubImage ::: 
+::: XGetTextProperty ::: 
+::: XGetTransientForHint ::: 
+::: XGetVisualInfo ::: nx-X11/programs/Xserver/hw/nxagent/Display.c 
+
+::: XGetWMClientMachine ::: 
+::: XGetWMColormapWindows ::: 
+::: XGetWMHints ::: 
+::: XGetWMIconName ::: 
+::: XGetWMName ::: nx-X11/programs/Xserver/hw/nxagent/Events.c 
+
+::: XGetWMNormalHints ::: 
+::: XGetWMProtocols ::: 
+::: XGetWMSizeHints ::: 
+::: XGetWindowAttributes ::: nx-X11/programs/Xserver/hw/nxagent/Events.c  nx-X11/programs/Xserver/hw/nxagent/Screen.c  nx-X11/programs/Xserver/hw/nxagent/Splash.c 
+
+::: XGetWindowProperty ::: nx-X11/programs/Xserver/hw/nxagent/CHANGELOG  nx-X11/programs/Xserver/hw/nxagent/Keyboard.c  nx-X11/programs/Xserver/hw/nxagent/Screen.c 
+
+::: XGetZoomHints ::: 
+::: XGrabButton ::: 
+::: XGrabKey ::: nx-X11/programs/Xserver/hw/nxagent/CHANGELOG  nx-X11/programs/Xserver/hw/nxagent/Events.c  nx-X11/programs/Xserver/hw/nxagent/Screen.c 
+
+::: XGrabKeyboard ::: nx-X11/programs/Xserver/hw/nxagent/CHANGELOG  nx-X11/programs/Xserver/hw/nxagent/Events.c  nx-X11/programs/Xserver/hw/nxagent/Screen.c 
+
+::: XGrabPointer ::: nx-X11/programs/Xserver/hw/nxagent/CHANGELOG 
+
+::: XGrabServer ::: 
+::: XHeightMMOfScreen ::: 
+::: XHeightOfScreen ::: 
+::: XIMOfIC ::: 
+::: XIconifyWindow ::: nx-X11/programs/Xserver/hw/nxagent/Events.c  nx-X11/programs/Xserver/hw/nxagent/Screen.c  nx-X11/programs/Xserver/hw/nxagent/Window.c 
+
+::: XIfEvent ::: nx-X11/programs/Xserver/hw/nxagent/CHANGELOG  nx-X11/programs/Xserver/hw/nxagent/Split.c 
+
+::: XImageByteOrder ::: 
+::: XInitExtension ::: 
+::: XInitImage ::: 
+::: XInitThreads ::: 
+::: XInsertModifiermapEntry ::: 
+::: XInstallColormap ::: nx-X11/programs/Xserver/hw/nxagent/Colormap.c  nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XInternAtom ::: nx-X11/programs/Xserver/hw/nxagent/Atoms.c  nx-X11/programs/Xserver/hw/nxagent/CHANGELOG  nx-X11/programs/Xserver/hw/nxagent/Clipboard.c  nx-X11/programs/Xserver/hw/nxagent/Keyboard.c  nx-X11/programs/Xserver/hw/nxagent/Screen.c  nx-X11/programs/Xserver/xkb/xkbDflts.h 
+
+::: XInternAtoms ::: nx-X11/programs/Xserver/hw/nxagent/Atoms.c 
+
+::: XInternalConnectionNumbers ::: 
+::: XIntersectRegion ::: 
+::: XKeycodeToKeysym ::: nx-X11/programs/Xserver/hw/nxagent/Events.c  nx-X11/programs/Xserver/hw/nxagent/Keystroke.c 
+
+::: XKeysymToKeycode ::: nx-X11/programs/Xserver/hw/nxagent/Keyboard.c 
+
+::: XKeysymToString ::: nx-X11/programs/Xserver/hw/nxagent/Events.c 
+
+::: XKillClient ::: 
+::: XLastKnownRequestProcessed ::: 
+::: XListDepths ::: nx-X11/programs/Xserver/hw/nxagent/Display.c 
+
+::: XListExtensions ::: 
+::: XListFonts ::: nx-X11/programs/Xserver/hw/nxagent/CHANGELOG  nx-X11/programs/Xserver/hw/nxagent/Font.c 
+
+::: XListFontsWithInfo ::: 
+::: XListHosts ::: 
+::: XListInstalledColormaps ::: 
+::: XListPixmapFormats ::: nx-X11/programs/Xserver/hw/nxagent/Display.c 
+
+::: XListProperties ::: 
+::: XLoadFont ::: nx-X11/programs/Xserver/hw/nxagent/Font.c 
+
+::: XLoadQueryFont ::: nx-X11/programs/Xserver/Xext/xf86bigfont.c 
+
+::: XLocaleOfFontSet ::: 
+::: XLocaleOfIM ::: 
+::: XLocaleOfOM ::: 
+::: XLockDisplay ::: 
+::: XLookupColor ::: 
+::: XLookupKeysym ::: 
+::: XLookupString ::: 
+::: XLowerWindow ::: nx-X11/programs/Xserver/hw/nxagent/Window.c 
+
+::: XMapRaised ::: nx-X11/programs/Xserver/hw/nxagent/Events.c  nx-X11/programs/Xserver/hw/nxagent/Screen.c  nx-X11/programs/Xserver/hw/nxagent/Splash.c  nx-X11/programs/Xserver/hw/nxagent/Window.c 
+
+::: XMapSubwindows ::: nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XMapWindow ::: nx-X11/programs/Xserver/hw/nxagent/CHANGELOG  nx-X11/programs/Xserver/hw/nxagent/Pixmap.c  nx-X11/programs/Xserver/hw/nxagent/Screen.c  nx-X11/programs/Xserver/hw/nxagent/Window.c  nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XMaskEvent ::: 
+::: XMatchVisualInfo ::: 
+::: XMaxCmapsOfScreen ::: 
+::: XMaxRequestSize ::: 
+::: XMinCmapsOfScreen ::: 
+::: XMoveResizeWindow ::: nx-X11/programs/Xserver/hw/nxagent/Events.c  nx-X11/programs/Xserver/hw/nxagent/Extensions.c  nx-X11/programs/Xserver/hw/nxagent/Screen.c  nx-X11/programs/Xserver/hw/nxagent/Window.c 
+
+::: XMoveWindow ::: nx-X11/programs/Xserver/hw/nxagent/Events.c  nx-X11/programs/Xserver/hw/nxagent/Screen.c  nx-X11/programs/Xserver/hw/nxagent/Window.c 
+
+::: XNewModifiermap ::: 
+::: XNextEvent ::: nx-X11/programs/Xserver/hw/nxagent/Screen.c 
+
+::: XNextRequest ::: nx-X11/programs/Xserver/hw/nxagent/Window.c 
+
+::: XNoOp ::: 
+::: XOMOfOC ::: 
+::: XOffsetRegion ::: 
+::: XOpenDisplay ::: nx-X11/programs/Xserver/hw/nxagent/Display.c  nx-X11/programs/Xserver/hw/nxagent/Pixmap.c  nx-X11/programs/Xserver/hw/nxagent/Screen.c 
+
+::: XOpenIM ::: 
+::: XOpenOM ::: 
+::: XParseColor ::: 
+::: XParseGeometry ::: nx-X11/programs/Xserver/hw/nxagent/Args.c  nx-X11/programs/Xserver/hw/nxagent/CHANGELOG 
+
+::: XPeekEvent ::: nx-X11/programs/Xserver/hw/nxagent/Events.c 
+
+::: XPeekIfEvent ::: 
+::: XPending ::: 
+::: XPlanesOfScreen ::: 
+::: XPointInRegion ::: 
+::: XPolygonRegion ::: 
+::: XProcessInternalConnection ::: 
+::: XProtocolRevision ::: 
+::: XProtocolVersion ::: 
+::: XPutBackEvent ::: nx-X11/programs/Xserver/hw/nxagent/Events.c 
+
+::: XPutImage ::: nx-X11/programs/Xserver/hw/nxagent/Cursor.c  nx-X11/programs/Xserver/hw/nxagent/Image.c  nx-X11/programs/Xserver/hw/nxagent/Pixmap.c  nx-X11/programs/Xserver/hw/nxagent/Screen.c  nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XPutPixel ::: nx-X11/programs/Xserver/hw/nxagent/Image.c 
+
+::: XQLength ::: nx-X11/programs/Xserver/hw/nxagent/CHANGELOG  nx-X11/programs/Xserver/hw/nxagent/Events.c  nx-X11/programs/Xserver/hw/nxagent/Events.h 
+
+::: XQueryBestCursor ::: 
+::: XQueryBestSize ::: 
+::: XQueryBestStipple ::: 
+::: XQueryBestTile ::: 
+::: XQueryColor ::: nx-X11/programs/Xserver/hw/nxagent/Colormap.c 
+
+::: XQueryColors ::: nx-X11/programs/Xserver/hw/nxagent/Colormap.c 
+
+::: XQueryExtension ::: nx-X11/programs/Xserver/GL/glx/g_disptab.c  nx-X11/programs/Xserver/GL/glx/g_disptab.h  nx-X11/programs/Xserver/GL/glx/glxcmds.c  nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c  nx-X11/programs/Xserver/GL/glx/glx-def.cpp  nx-X11/programs/Xserver/GL/glx/glxserver.h  nx-X11/programs/Xserver/GL/glxmodule.c  nx-X11/programs/Xserver/hw/nxagent/CHANGELOG  nx-X11/programs/Xserver/hw/nxagent/Clipboard.c 
+
+::: XQueryFont ::: nx-X11/programs/Xserver/Xext/xf86bigfont.c 
+
+::: XQueryKeymap ::: 
+::: XQueryPointer ::: 
+::: XQueryTextExtents16 ::: 
+::: XQueryTextExtents ::: 
+::: XQueryTree ::: nx-X11/programs/Xserver/hw/nxagent/CHANGELOG  nx-X11/programs/Xserver/hw/nxagent/Events.c  nx-X11/programs/Xserver/hw/nxagent/Rootless.c  nx-X11/programs/Xserver/hw/nxagent/Window.c 
+
+::: XRaiseWindow ::: nx-X11/programs/Xserver/hw/nxagent/Screen.c  nx-X11/programs/Xserver/hw/nxagent/Window.c 
+
+::: XReadBitmapFile ::: 
+::: XReadBitmapFileData ::: 
+::: XRebindKeysym ::: 
+::: XRecolorCursor ::: nx-X11/programs/Xserver/hw/nxagent/Cursor.c 
+
+::: XReconfigureWMWindow ::: 
+::: XRectInRegion ::: 
+::: XRefreshKeyboardMapping ::: 
+::: XRegisterIMInstantiateCallback ::: 
+::: XRemoveConnectionWatch ::: 
+::: XRemoveFromSaveSet ::: 
+::: XRemoveHost ::: 
+::: XRemoveHosts ::: 
+::: XReparentWindow ::: nx-X11/programs/Xserver/hw/nxagent/CHANGELOG  nx-X11/programs/Xserver/hw/nxagent/Screen.c  nx-X11/programs/Xserver/hw/nxagent/Window.c  nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XResetScreenSaver ::: 
+::: XResizeWindow ::: nx-X11/programs/Xserver/hw/nxagent/Extensions.c  nx-X11/programs/Xserver/hw/nxagent/Screen.c 
+
+::: XResourceManagerString ::: 
+::: XRestackWindows ::: nx-X11/programs/Xserver/hw/nxagent/Window.c 
+
+::: XRootWindow ::: 
+::: XRootWindowOfScreen ::: 
+::: XRotateBuffers ::: 
+::: XRotateWindowProperties ::: 
+::: XSaveContext ::: 
+::: XScreenCount ::: 
+::: XScreenNumberOfScreen ::: 
+::: XScreenOfDisplay ::: 
+::: XScreenResourceString ::: 
+::: XSelectInput ::: nx-X11/programs/Xserver/hw/nxagent/Atoms.c  nx-X11/programs/Xserver/hw/nxagent/Events.c  nx-X11/programs/Xserver/hw/nxagent/Screen.c 
+
+::: XSendEvent ::: nx-X11/programs/Xserver/hw/nxagent/Clipboard.c  nx-X11/programs/Xserver/hw/nxagent/Window.c 
+
+::: XServerVendor ::: nx-X11/programs/Xserver/GL/glx/glxscreens.c 
+
+::: XSetAccessControl ::: 
+::: XSetAfterFunction ::: 
+::: XSetArcMode ::: 
+::: XSetAuthorization ::: 
+::: XSetBackground ::: nx-X11/programs/Xserver/hw/nxagent/Splash.c 
+
+::: XSetClassHint ::: nx-X11/programs/Xserver/hw/nxagent/Screen.c 
+
+::: XSetClipMask ::: nx-X11/programs/Xserver/hw/nxagent/GC.c 
+
+::: XSetClipOrigin ::: nx-X11/programs/Xserver/hw/nxagent/GC.c 
+
+::: XSetClipRectangles ::: nx-X11/programs/Xserver/hw/nxagent/CHANGELOG  nx-X11/programs/Xserver/hw/nxagent/GC.c  nx-X11/programs/Xserver/hw/nxagent/GCOps.c  nx-X11/programs/Xserver/hw/nxagent/Screen.c  nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XSetCloseDownMode ::: 
+::: XSetCommand ::: 
+::: XSetDashes ::: nx-X11/programs/Xserver/hw/nxagent/GC.c  nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XSetErrorHandler ::: nx-X11/programs/Xserver/hw/nxagent/Atoms.c  nx-X11/programs/Xserver/hw/nxagent/Display.c 
+
+::: XSetFillRule ::: 
+::: XSetFillStyle ::: nx-X11/programs/Xserver/hw/nxagent/Splash.c 
+
+::: XSetFont ::: nx-X11/programs/Xserver/hw/nxagent/Font.c 
+
+::: XSetFontPath ::: nx-X11/programs/Xserver/hw/nxagent/Font.c 
+
+::: XSetForeground ::: nx-X11/programs/Xserver/hw/nxagent/Splash.c 
+
+::: XSetFunction ::: nx-X11/programs/Xserver/hw/nxagent/Splash.c 
+
+::: XSetGraphicsExposures ::: 
+::: XSetICFocus ::: 
+::: XSetICValues ::: 
+::: XSetIMValues ::: 
+::: XSetIOErrorHandler ::: nx-X11/programs/Xserver/hw/nxagent/Display.c 
+
+::: XSetIconName ::: 
+::: XSetIconSizes ::: 
+::: XSetInputFocus ::: nx-X11/programs/Xserver/hw/nxagent/CHANGELOG  nx-X11/programs/Xserver/hw/nxagent/Events.c  nx-X11/programs/Xserver/hw/nxagent/Window.c 
+
+::: XSetLineAttributes ::: 
+::: XSetLocaleModifiers ::: 
+::: XSetModifierMapping ::: 
+::: XSetNormalHints ::: 
+::: XSetOCValues ::: 
+::: XSetOMValues ::: 
+::: XSetPlaneMask ::: 
+::: XSetPointerMapping ::: 
+::: XSetRGBColormaps ::: 
+::: XSetRegion ::: 
+::: XSetScreenSaver ::: nx-X11/programs/Xserver/hw/nxagent/Screen.c  nx-X11/programs/Xserver/hw/nxagent/Window.c 
+
+::: XSetSelectionOwner ::: nx-X11/programs/Xserver/hw/nxagent/CHANGELOG  nx-X11/programs/Xserver/hw/nxagent/Clipboard.c  nx-X11/programs/Xserver/hw/nxagent/Splash.c  nx-X11/programs/Xserver/hw/nxagent/Window.c 
+
+::: XSetSizeHints ::: 
+::: XSetStandardColormap ::: 
+::: XSetStandardProperties ::: nx-X11/programs/Xserver/hw/nxagent/Screen.c 
+
+::: XSetState ::: 
+::: XSetStipple ::: 
+::: XSetSubwindowMode ::: 
+::: XSetTSOrigin ::: 
+::: XSetTextProperty ::: 
+::: XSetTile ::: 
+::: XSetTransientForHint ::: 
+::: XSetWMClientMachine ::: 
+::: XSetWMColormapWindows ::: nx-X11/programs/Xserver/hw/nxagent/Colormap.c 
+
+::: XSetWMHints ::: nx-X11/programs/Xserver/hw/nxagent/Screen.c 
+
+::: XSetWMIconName ::: 
+::: XSetWMName ::: 
+::: XSetWMNormalHints ::: nx-X11/programs/Xserver/hw/nxagent/Events.c  nx-X11/programs/Xserver/hw/nxagent/Screen.c  nx-X11/programs/Xserver/hw/nxagent/Window.c 
+
+::: XSetWMProperties ::: nx-X11/programs/Xserver/hw/nxagent/Screen.c 
+
+::: XSetWMProtocols ::: nx-X11/programs/Xserver/hw/nxagent/Screen.c  nx-X11/programs/Xserver/hw/nxagent/Window.c 
+
+::: XSetWMSizeHints ::: 
+::: XSetWindowBackground ::: nx-X11/programs/Xserver/hw/nxagent/Splash.c 
+
+::: XSetWindowBackgroundPixmap ::: nx-X11/programs/Xserver/hw/nxagent/Splash.c 
+
+::: XSetWindowBorder ::: 
+::: XSetWindowBorderPixmap ::: 
+::: XSetWindowBorderWidth ::: 
+::: XSetWindowColormap ::: nx-X11/programs/Xserver/hw/nxagent/CHANGELOG  nx-X11/programs/Xserver/hw/nxagent/Colormap.c 
+
+::: XSetZoomHints ::: 
+::: XShrinkRegion ::: 
+::: XStoreBuffer ::: 
+::: XStoreBytes ::: 
+::: XStoreColor ::: nx-X11/programs/Xserver/hw/nxagent/Colormap.c  nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XStoreColors ::: nx-X11/programs/Xserver/hw/nxagent/Colormap.c  nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XStoreName ::: nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XStoreNamedColor ::: nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XStringListToTextProperty ::: nx-X11/programs/Xserver/hw/nxagent/Screen.c 
+
+::: XStringToKeysym ::: nx-X11/programs/Xserver/hw/nxagent/Keystroke.c 
+
+::: XSubImage ::: 
+::: XSubtractRegion ::: 
+::: XSupportsLocale ::: 
+::: XSync ::: nx-X11/programs/Xserver/hw/nxagent/Atoms.c  nx-X11/programs/Xserver/hw/nxagent/CHANGELOG  nx-X11/programs/Xserver/hw/nxagent/Display.c  nx-X11/programs/Xserver/hw/nxagent/Events.c  nx-X11/programs/Xserver/hw/nxagent/GC.c  nx-X11/programs/Xserver/hw/nxagent/Handlers.c  nx-X11/programs/Xserver/hw/nxagent/Render.c  nx-X11/programs/Xserver/hw/nxagent/Screen.c  nx-X11/programs/Xserver/hw/nxagent/Window.c  nx-X11/programs/Xserver/Xext/sync.c 
+
+::: XSynchronize ::: nx-X11/programs/Xserver/hw/nxagent/Display.c 
+
+::: XTextExtents16 ::: 
+::: XTextExtents ::: 
+::: XTextPropertyToStringList ::: 
+::: XTextWidth16 ::: nx-X11/programs/Xserver/hw/nxagent/GCOps.c 
+
+::: XTextWidth ::: nx-X11/programs/Xserver/hw/nxagent/GCOps.c 
+
+::: XTranslateCoordinates ::: nx-X11/programs/Xserver/hw/nxagent/Events.c 
+
+::: XUndefineCursor ::: 
+::: XUngrabButton ::: 
+::: XUngrabKey ::: nx-X11/programs/Xserver/hw/nxagent/Events.c 
+
+::: XUngrabKeyboard ::: nx-X11/programs/Xserver/hw/nxagent/Events.c 
+
+::: XUngrabPointer ::: nx-X11/programs/Xserver/hw/nxagent/Events.c  nx-X11/programs/Xserver/hw/nxagent/NXevents.c 
+
+::: XUngrabServer ::: 
+::: XUninstallColormap ::: nx-X11/programs/Xserver/hw/nxagent/Colormap.c  nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XUnionRectWithRegion ::: nx-X11/programs/Xserver/hw/nxagent/Render.c  nx-X11/programs/Xserver/hw/nxagent/Window.c 
+
+::: XUnionRegion ::: 
+::: XUnloadFont ::: 
+::: XUnlockDisplay ::: 
+::: XUnmapSubwindows ::: nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XUnmapWindow ::: nx-X11/programs/Xserver/hw/nxagent/Screen.c  nx-X11/programs/Xserver/hw/nxagent/Window.c  nx-X11/programs/Xserver/Xext/panoramiX.c  nx-X11/programs/Xserver/Xext/panoramiXh.h  nx-X11/programs/Xserver/Xext/panoramiXprocs.c 
+
+::: XUnregisterIMInstantiateCallback ::: 
+::: XUnsetICFocus ::: 
+::: XVaCreateNestedList ::: 
+::: XVendorRelease ::: nx-X11/programs/Xserver/dix/Imakefile 
+
+::: XVisualIDFromVisual ::: nx-X11/programs/Xserver/hw/nxagent/Display.c 
+
+::: XWMGeometry ::: 
+::: XWarpPointer ::: 
+::: XWhitePixel ::: 
+::: XWhitePixelOfScreen ::: 
+::: XWidthMMOfScreen ::: 
+::: XWidthOfScreen ::: 
+::: XWindowEvent ::: 
+::: XWithdrawWindow ::: 
+::: XWriteBitmapFile ::: 
+::: XXorRegion ::: 
+::: XcmsAddColorSpace ::: 
+::: XcmsAddFunctionSet ::: 
+::: XcmsAllocColor ::: 
+::: XcmsAllocNamedColor ::: 
+::: XcmsCCCOfColormap ::: 
+::: XcmsCIELabClipL ::: 
+::: XcmsCIELabClipLab ::: 
+::: XcmsCIELabClipab ::: 
+::: XcmsCIELabColorSpace ::: 
+::: XcmsCIELabQueryMaxC ::: 
+::: XcmsCIELabQueryMaxL ::: 
+::: XcmsCIELabQueryMaxLC ::: 
+::: XcmsCIELabQueryMinL ::: 
+::: XcmsCIELabToCIEXYZ ::: 
+::: XcmsCIELabWhiteShiftColors ::: 
+::: XcmsCIELuvClipL ::: 
+::: XcmsCIELuvClipLuv ::: 
+::: XcmsCIELuvClipuv ::: 
+::: XcmsCIELuvColorSpace ::: 
+::: XcmsCIELuvQueryMaxC ::: 
+::: XcmsCIELuvQueryMaxL ::: 
+::: XcmsCIELuvQueryMaxLC ::: 
+::: XcmsCIELuvQueryMinL ::: 
+::: XcmsCIELuvToCIEuvY ::: 
+::: XcmsCIELuvWhiteShiftColors ::: 
+::: XcmsCIEXYZColorSpace ::: 
+::: XcmsCIEXYZToCIELab ::: 
+::: XcmsCIEXYZToCIEuvY ::: 
+::: XcmsCIEXYZToCIExyY ::: 
+::: XcmsCIEXYZToRGBi ::: 
+::: XcmsCIEuvYColorSpace ::: 
+::: XcmsCIEuvYToCIELuv ::: 
+::: XcmsCIEuvYToCIEXYZ ::: 
+::: XcmsCIEuvYToTekHVC ::: 
+::: XcmsCIExyYColorSpace ::: 
+::: XcmsCIExyYToCIEXYZ ::: 
+::: XcmsClientWhitePointOfCCC ::: 
+::: XcmsConvertColors ::: 
+::: XcmsCreateCCC ::: 
+::: XcmsDefaultCCC ::: 
+::: XcmsDisplayOfCCC ::: 
+::: XcmsFormatOfPrefix ::: 
+::: XcmsFreeCCC ::: 
+::: XcmsLinearRGBFunctionSet ::: 
+::: XcmsLookupColor ::: 
+::: XcmsPrefixOfFormat ::: 
+::: XcmsQueryBlack ::: 
+::: XcmsQueryBlue ::: 
+::: XcmsQueryColor ::: 
+::: XcmsQueryColors ::: 
+::: XcmsQueryGreen ::: 
+::: XcmsQueryRed ::: 
+::: XcmsQueryWhite ::: 
+::: XcmsRGBColorSpace ::: 
+::: XcmsRGBToRGBi ::: 
+::: XcmsRGBiColorSpace ::: 
+::: XcmsRGBiToCIEXYZ ::: 
+::: XcmsRGBiToRGB ::: 
+::: XcmsScreenNumberOfCCC ::: 
+::: XcmsScreenWhitePointOfCCC ::: 
+::: XcmsSetCCCOfColormap ::: 
+::: XcmsSetCompressionProc ::: 
+::: XcmsSetWhiteAdjustProc ::: 
+::: XcmsSetWhitePoint ::: 
+::: XcmsStoreColor ::: 
+::: XcmsStoreColors ::: 
+::: XcmsTekHVCClipC ::: 
+::: XcmsTekHVCClipV ::: 
+::: XcmsTekHVCClipVC ::: 
+::: XcmsTekHVCColorSpace ::: 
+::: XcmsTekHVCQueryMaxC ::: 
+::: XcmsTekHVCQueryMaxV ::: 
+::: XcmsTekHVCQueryMaxVC ::: 
+::: XcmsTekHVCQueryMaxVSamples ::: 
+::: XcmsTekHVCQueryMinV ::: 
+::: XcmsTekHVCToCIEuvY ::: 
+::: XcmsTekHVCWhiteShiftColors ::: 
+::: XcmsUNDEFINEDColorSpace ::: 
+::: XcmsVisualOfCCC ::: 
+::: XkbAddDeviceLedInfo ::: 
+::: XkbAddGeomColor ::: nx-X11/programs/Xserver/xkb/xkb.c 
+
+::: XkbAddGeomDoodad ::: nx-X11/programs/Xserver/xkb/xkb.c 
+
+::: XkbAddGeomKey ::: nx-X11/programs/Xserver/xkb/xkb.c 
+
+::: XkbAddGeomKeyAlias ::: nx-X11/programs/Xserver/xkb/xkb.c 
+
+::: XkbAddGeomOutline ::: nx-X11/programs/Xserver/xkb/xkb.c 
+
+::: XkbAddGeomOverlay ::: nx-X11/programs/Xserver/xkb/xkb.c 
+
+::: XkbAddGeomOverlayKey ::: nx-X11/programs/Xserver/xkb/xkb.c 
+
+::: XkbAddGeomOverlayRow ::: nx-X11/programs/Xserver/xkb/xkb.c 
+
+::: XkbAddGeomProperty ::: nx-X11/programs/Xserver/xkb/xkb.c 
+
+::: XkbAddGeomRow ::: nx-X11/programs/Xserver/xkb/xkb.c 
+
+::: XkbAddGeomSection ::: nx-X11/programs/Xserver/xkb/xkb.c 
+
+::: XkbAddGeomShape ::: nx-X11/programs/Xserver/xkb/xkb.c 
+
+::: XkbAddKeyType ::: 
+::: XkbAllocClientMap ::: nx-X11/programs/Xserver/xkb/xkb.c  nx-X11/programs/Xserver/xkb/xkbInit.c 
+
+::: XkbAllocCompatMap ::: nx-X11/programs/Xserver/xkb/xkbInit.c 
+
+::: XkbAllocControls ::: nx-X11/programs/Xserver/xkb/xkbInit.c 
+
+::: XkbAllocDeviceInfo ::: 
+::: XkbAllocGeomColors ::: 
+::: XkbAllocGeomDoodads ::: 
+::: XkbAllocGeomKeyAliases ::: 
+::: XkbAllocGeomKeys ::: 
+::: XkbAllocGeomOutlines ::: 
+::: XkbAllocGeomOverlayKeys ::: 
+::: XkbAllocGeomOverlayRows ::: 
+::: XkbAllocGeomOverlays ::: 
+::: XkbAllocGeomPoints ::: 
+::: XkbAllocGeomProps ::: 
+::: XkbAllocGeomRows ::: 
+::: XkbAllocGeomSectionDoodads ::: 
+::: XkbAllocGeomSections ::: 
+::: XkbAllocGeomShapes ::: 
+::: XkbAllocGeometry ::: nx-X11/programs/Xserver/xkb/xkb.c 
+
+::: XkbAllocIndicatorMaps ::: nx-X11/programs/Xserver/xkb/xkbInit.c 
+
+::: XkbAllocKeyboard ::: nx-X11/programs/Xserver/xkb/xkbInit.c 
+
+::: XkbAllocNames ::: nx-X11/programs/Xserver/xkb/xkb.c  nx-X11/programs/Xserver/xkb/xkbInit.c 
+
+::: XkbAllocServerMap ::: nx-X11/programs/Xserver/xkb/xkbInit.c 
+
+::: XkbApplyCompatMapToKey ::: nx-X11/programs/Xserver/xkb/xkbUtils.c 
+
+::: XkbApplyVirtualModChanges ::: nx-X11/programs/Xserver/xkb/xkbUtils.c 
+
+::: XkbBell ::: nx-X11/programs/Xserver/xkb/xkb.c  nx-X11/programs/Xserver/xkb/xkbEvents.c  nx-X11/programs/Xserver/xkb/xkb.h  nx-X11/programs/Xserver/xkb/xkbSwap.c 
+
+::: XkbBellEvent ::: 
+::: XkbChangeDeviceInfo ::: 
+::: XkbChangeEnabledControls ::: 
+::: XkbChangeKeycodeRange ::: nx-X11/programs/Xserver/xkb/xkb.c 
+
+::: XkbChangeMap ::: 
+::: XkbChangeNames ::: 
+::: XkbChangeTypesOfKey ::: nx-X11/programs/Xserver/xkb/xkbUtils.c 
+
+::: XkbComputeEffectiveMap ::: 
+::: XkbComputeRowBounds ::: 
+::: XkbComputeSectionBounds ::: 
+::: XkbComputeShapeBounds ::: 
+::: XkbComputeShapeTop ::: 
+::: XkbCopyKeyType ::: nx-X11/programs/Xserver/xkb/xkbInit.c 
+
+::: XkbCopyKeyTypes ::: nx-X11/programs/Xserver/xkb/xkbInit.c 
+
+::: XkbDeviceBell ::: 
+::: XkbDeviceBellEvent ::: 
+::: XkbFindOverlayForKey ::: 
+::: XkbForceBell ::: 
+::: XkbForceDeviceBell ::: 
+::: XkbFreeClientMap ::: 
+::: XkbFreeCompatMap ::: 
+::: XkbFreeComponentList ::: 
+::: XkbFreeControls ::: 
+::: XkbFreeDeviceInfo ::: 
+::: XkbFreeGeomColors ::: 
+::: XkbFreeGeomDoodads ::: 
+::: XkbFreeGeomKeyAliases ::: 
+::: XkbFreeGeomKeys ::: 
+::: XkbFreeGeomOutlines ::: 
+::: XkbFreeGeomOverlayKeys ::: 
+::: XkbFreeGeomOverlayRows ::: 
+::: XkbFreeGeomOverlays ::: 
+::: XkbFreeGeomPoints ::: 
+::: XkbFreeGeomProperties ::: 
+::: XkbFreeGeomRows ::: 
+::: XkbFreeGeomSections ::: 
+::: XkbFreeGeomShapes ::: 
+::: XkbFreeGeometry ::: nx-X11/programs/Xserver/xkb/xkb.c 
+
+::: XkbFreeIndicatorMaps ::: 
+::: XkbFreeKeyboard ::: nx-X11/programs/Xserver/hw/nxagent/Keyboard.c  nx-X11/programs/Xserver/xkb/xkb.c  nx-X11/programs/Xserver/xkb/xkbInit.c 
+
+::: XkbFreeNames ::: 
+::: XkbFreeServerMap ::: 
+::: XkbGetAutoRepeatRate ::: 
+::: XkbGetAutoResetControls ::: 
+::: XkbGetCompatMap ::: nx-X11/programs/Xserver/xkb/xkb.c  nx-X11/programs/Xserver/xkb/xkb.h  nx-X11/programs/Xserver/xkb/xkbSwap.c 
+
+::: XkbGetControls ::: nx-X11/programs/Xserver/hw/nxagent/Keyboard.c  nx-X11/programs/Xserver/xkb/xkb.c  nx-X11/programs/Xserver/xkb/xkb.h  nx-X11/programs/Xserver/xkb/xkbSwap.c 
+
+::: XkbGetDetectableAutoRepeat ::: 
+::: XkbGetDeviceButtonActions ::: 
+::: XkbGetDeviceInfo ::: nx-X11/programs/Xserver/xkb/xkb.c  nx-X11/programs/Xserver/xkb/xkb.h  nx-X11/programs/Xserver/xkb/xkbSwap.c 
+
+::: XkbGetDeviceInfoChanges ::: 
+::: XkbGetDeviceLedInfo ::: 
+::: XkbGetGeometry ::: nx-X11/programs/Xserver/xkb/xkb.c  nx-X11/programs/Xserver/xkb/xkb.h  nx-X11/programs/Xserver/xkb/xkbSwap.c 
+
+::: XkbGetIndicatorMap ::: nx-X11/programs/Xserver/xkb/xkb.c  nx-X11/programs/Xserver/xkb/xkb.h  nx-X11/programs/Xserver/xkb/xkbSwap.c 
+
+::: XkbGetIndicatorState ::: nx-X11/programs/Xserver/hw/nxagent/CHANGELOG  nx-X11/programs/Xserver/hw/nxagent/Events.c  nx-X11/programs/Xserver/xkb/xkb.c  nx-X11/programs/Xserver/xkb/xkb.h  nx-X11/programs/Xserver/xkb/xkbSwap.c 
+
+::: XkbGetKeyActions ::: 
+::: XkbGetKeyBehaviors ::: 
+::: XkbGetKeyExplicitComponents ::: 
+::: XkbGetKeyModifierMap ::: 
+::: XkbGetKeySyms ::: 
+::: XkbGetKeyTypes ::: 
+::: XkbGetKeyVirtualModMap ::: 
+::: XkbGetKeyboard ::: nx-X11/programs/Xserver/hw/nxagent/Keyboard.c 
+
+::: XkbGetKeyboardByName ::: 
+::: XkbGetMap ::: nx-X11/programs/Xserver/xkb/xkb.c  nx-X11/programs/Xserver/xkb/xkb.h  nx-X11/programs/Xserver/xkb/xkbSwap.c 
+
+::: XkbGetMapChanges ::: 
+::: XkbGetNamedDeviceIndicator ::: 
+::: XkbGetNamedGeometry ::: 
+::: XkbGetNamedIndicator ::: nx-X11/programs/Xserver/xkb/xkb.c  nx-X11/programs/Xserver/xkb/xkb.h  nx-X11/programs/Xserver/xkb/xkbSwap.c 
+
+::: XkbGetNames ::: nx-X11/programs/Xserver/hw/nxagent/Keyboard.c  nx-X11/programs/Xserver/xkb/xkb.c  nx-X11/programs/Xserver/xkb/xkb.h  nx-X11/programs/Xserver/xkb/xkbSwap.c 
+
+::: XkbGetPerClientControls ::: 
+::: XkbGetState ::: nx-X11/programs/Xserver/xkb/xkb.c  nx-X11/programs/Xserver/xkb/xkb.h  nx-X11/programs/Xserver/xkb/xkbSwap.c 
+
+::: XkbGetUpdatedMap ::: 
+::: XkbGetVirtualMods ::: 
+::: XkbGetXlibControls ::: 
+::: XkbIgnoreExtension ::: 
+::: XkbInitCanonicalKeyTypes ::: 
+::: XkbKeyTypesForCoreSymbols ::: nx-X11/programs/Xserver/xkb/xkbUtils.c 
+
+::: XkbKeycodeToKeysym ::: 
+::: XkbKeysymToModifiers ::: 
+::: XkbLatchGroup ::: nx-X11/programs/Xserver/xkb/xkbActions.c  nx-X11/programs/Xserver/xkb/xkb.c  nx-X11/programs/Xserver/xkb/xkbLEDs.c 
+
+::: XkbLatchModifiers ::: nx-X11/programs/Xserver/xkb/xkbAccessX.c  nx-X11/programs/Xserver/xkb/xkbActions.c  nx-X11/programs/Xserver/xkb/xkb.c  nx-X11/programs/Xserver/xkb/xkbLEDs.c 
+
+::: XkbLibraryVersion ::: 
+::: XkbListComponents ::: nx-X11/programs/Xserver/xkb/xkb.c  nx-X11/programs/Xserver/xkb/xkb.h  nx-X11/programs/Xserver/xkb/xkbSwap.c 
+
+::: XkbLockGroup ::: 
+::: XkbLockModifiers ::: 
+::: XkbLookupKeyBinding ::: 
+::: XkbLookupKeySym ::: 
+::: XkbNoteControlsChanges ::: 
+::: XkbNoteDeviceChanges ::: 
+::: XkbNoteMapChanges ::: 
+::: XkbNoteNameChanges ::: 
+::: XkbOpenDisplay ::: 
+::: XkbQueryExtension ::: nx-X11/programs/Xserver/hw/nxagent/Keyboard.c 
+
+::: XkbRefreshKeyboardMapping ::: 
+::: XkbResizeDeviceButtonActions ::: 
+::: XkbResizeKeyActions ::: nx-X11/programs/Xserver/xkb/xkb.c 
+
+::: XkbResizeKeySyms ::: nx-X11/programs/Xserver/xkb/xkb.c 
+
+::: XkbResizeKeyType ::: nx-X11/programs/Xserver/xkb/xkb.c 
+
+::: XkbSelectEventDetails ::: 
+::: XkbSelectEvents ::: nx-X11/programs/Xserver/hw/nxagent/Events.c  nx-X11/programs/Xserver/xkb/xkb.c  nx-X11/programs/Xserver/xkb/xkb.h  nx-X11/programs/Xserver/xkb/xkbSwap.c 
+
+::: XkbSetAtomFuncs ::: 
+::: XkbSetAutoRepeatRate ::: 
+::: XkbSetAutoResetControls ::: 
+::: XkbSetCompatMap ::: nx-X11/programs/Xserver/xkb/xkb.c  nx-X11/programs/Xserver/xkb/xkb.h  nx-X11/programs/Xserver/xkb/xkbSwap.c 
+
+::: XkbSetControls ::: nx-X11/programs/Xserver/xkb/xkb.c  nx-X11/programs/Xserver/xkb/xkb.h  nx-X11/programs/Xserver/xkb/xkbSwap.c 
+
+::: XkbSetDebuggingFlags ::: nx-X11/programs/Xserver/xkb/xkb.c  nx-X11/programs/Xserver/xkb/xkb.h  nx-X11/programs/Xserver/xkb/xkbSwap.c 
+
+::: XkbSetDetectableAutoRepeat ::: 
+::: XkbSetDeviceButtonActions ::: 
+::: XkbSetDeviceInfo ::: nx-X11/programs/Xserver/xkb/xkb.c  nx-X11/programs/Xserver/xkb/xkb.h  nx-X11/programs/Xserver/xkb/xkbSwap.c 
+
+::: XkbSetDeviceLedInfo ::: 
+::: XkbSetGeometry ::: nx-X11/programs/Xserver/xkb/xkb.c  nx-X11/programs/Xserver/xkb/xkb.h  nx-X11/programs/Xserver/xkb/xkbSwap.c 
+
+::: XkbSetIgnoreLockMods ::: 
+::: XkbSetIndicatorMap ::: nx-X11/programs/Xserver/xkb/xkb.c  nx-X11/programs/Xserver/xkb/xkb.h  nx-X11/programs/Xserver/xkb/xkbSwap.c 
+
+::: XkbSetMap ::: nx-X11/programs/Xserver/xkb/xkb.c  nx-X11/programs/Xserver/xkb/xkb.h  nx-X11/programs/Xserver/xkb/xkbSwap.c 
+
+::: XkbSetNamedDeviceIndicator ::: 
+::: XkbSetNamedIndicator ::: nx-X11/programs/Xserver/xkb/xkb.c  nx-X11/programs/Xserver/xkb/xkb.h  nx-X11/programs/Xserver/xkb/xkbSwap.c 
+
+::: XkbSetNames ::: nx-X11/programs/Xserver/xkb/xkb.c  nx-X11/programs/Xserver/xkb/xkb.h  nx-X11/programs/Xserver/xkb/xkbSwap.c 
+
+::: XkbSetPerClientControls ::: 
+::: XkbSetServerInternalMods ::: 
+::: XkbSetXlibControls ::: 
+::: XkbToControl ::: 
+::: XkbTranslateKey ::: 
+::: XkbTranslateKeyCode ::: 
+::: XkbTranslateKeySym ::: 
+::: XkbUpdateActionVirtualMods ::: nx-X11/programs/Xserver/xkb/xkbLEDs.c 
+
+::: XkbUpdateKeyTypeVirtualMods ::: 
+::: XkbUpdateMapFromCore ::: 
+::: XkbUseExtension ::: nx-X11/programs/Xserver/xkb/xkb.c  nx-X11/programs/Xserver/xkb/xkb.h  nx-X11/programs/Xserver/xkb/xkbSwap.c 
+
+::: XkbVirtualModsToReal ::: nx-X11/programs/Xserver/xkb/xkbActions.c 
+
+::: XkbXlibControlsImplemented ::: 
+::: XmbDrawImageString ::: 
+::: XmbDrawString ::: 
+::: XmbDrawText ::: 
+::: XmbLookupString ::: 
+::: XmbResetIC ::: 
+::: XmbSetWMProperties ::: 
+::: XmbTextEscapement ::: 
+::: XmbTextExtents ::: 
+::: XmbTextListToTextProperty ::: 
+::: XmbTextPerCharExtents ::: 
+::: XmbTextPropertyToTextList ::: nx-X11/programs/Xserver/hw/nxagent/Events.c 
+
+::: Xpermalloc ::: 
+::: XrmCombineDatabase ::: 
+::: XrmCombineFileDatabase ::: 
+::: XrmDestroyDatabase ::: 
+::: XrmEnumerateDatabase ::: 
+::: XrmGetDatabase ::: 
+::: XrmGetFileDatabase ::: 
+::: XrmGetResource ::: 
+::: XrmGetStringDatabase ::: 
+::: XrmInitialize ::: 
+::: XrmLocaleOfDatabase ::: 
+::: XrmMergeDatabases ::: 
+::: XrmParseCommand ::: 
+::: XrmPermStringToQuark ::: 
+::: XrmPutFileDatabase ::: 
+::: XrmPutLineResource ::: 
+::: XrmPutResource ::: 
+::: XrmPutStringResource ::: 
+::: XrmQGetResource ::: 
+::: XrmQGetSearchList ::: 
+::: XrmQGetSearchResource ::: 
+::: XrmQPutResource ::: 
+::: XrmQPutStringResource ::: 
+::: XrmQuarkToString ::: 
+::: XrmSetDatabase ::: 
+::: XrmStringToBindingQuarkList ::: 
+::: XrmStringToQuark ::: 
+::: XrmStringToQuarkList ::: 
+::: XrmUniqueQuark ::: 
+::: Xutf8DrawImageString ::: 
+::: Xutf8DrawString ::: 
+::: Xutf8DrawText ::: 
+::: Xutf8LookupString ::: 
+::: Xutf8ResetIC ::: 
+::: Xutf8SetWMProperties ::: 
+::: Xutf8TextEscapement ::: 
+::: Xutf8TextExtents ::: 
+::: Xutf8TextListToTextProperty ::: 
+::: Xutf8TextPerCharExtents ::: 
+::: Xutf8TextPropertyToTextList ::: 
+::: XwcDrawImageString ::: 
+::: XwcDrawString ::: 
+::: XwcDrawText ::: 
+::: XwcFreeStringList ::: 
+::: XwcLookupString ::: 
+::: XwcResetIC ::: 
+::: XwcTextEscapement ::: 
+::: XwcTextExtents ::: 
+::: XwcTextListToTextProperty ::: 
+::: XwcTextPerCharExtents ::: 
+::: XwcTextPropertyToTextList ::: 
+::: _Utf8GetConvByName ::: 
+::: _XAllocID ::: 
+::: _XAllocIDs ::: 
+::: _XAllocScratch ::: 
+::: _XAllocTemp ::: 
+::: _XAsyncErrorHandler ::: 
+::: _XCloseLC ::: 
+::: _XColor_to_XcmsRGB ::: 
+::: _XConnectXCB ::: 
+::: _XCopyEventCookie ::: 
+::: _XCopyToArg ::: 
+::: _XCreateMutex_fn ::: 
+::: _XData32 ::: 
+::: _XDefaultError ::: 
+::: _XDefaultIOError ::: 
+::: _XDefaultOpenIM ::: 
+::: _XDefaultOpenOM ::: 
+::: _XDefaultWireError ::: 
+::: _XDeq ::: nx-X11/programs/Xserver/hw/nxagent/Events.c 
+
+::: _XDeqAsyncHandler ::: 
+::: _XEatData ::: 
+::: _XEatDataWords ::: 
+::: _XEnq ::: 
+::: _XError ::: 
+::: _XErrorFunction ::: 
+::: _XEventToWire ::: 
+::: _XEventsQueued ::: 
+::: _XF86BigfontFreeFontMetrics ::: nx-X11/programs/Xserver/hw/nxagent/Font.c 
+
+::: _XF86LoadQueryLocaleFont ::: 
+::: _XFetchEventCookie ::: 
+::: _XFlush ::: 
+::: _XFlushGCCache ::: 
+::: _XFreeAtomTable ::: 
+::: _XFreeDisplayLock_fn ::: 
+::: _XFreeDisplayStructure ::: 
+::: _XFreeEventCookies ::: 
+::: _XFreeExtData ::: 
+::: _XFreeMutex_fn ::: 
+::: _XFreeTemp ::: 
+::: _XFreeX11XCBStructure ::: 
+::: _XGetAsyncData ::: 
+::: _XGetAsyncReply ::: 
+::: _XGetBitsPerPixel ::: nx-X11/programs/Xserver/hw/nxagent/Args.c 
+
+::: _XGetHostname ::: 
+::: _XGetLCValues ::: 
+::: _XGetRequest ::: 
+::: _XGetScanlinePad ::: 
+::: _XGetWindowAttributes ::: 
+::: _XHeadOfDisplayList ::: 
+::: _XIMCompileResourceList ::: 
+::: _XIOError ::: 
+::: _XIOErrorFunction ::: 
+::: _XInitDisplayLock_fn ::: 
+::: _XInitIM ::: 
+::: _XInitImageFuncPtrs ::: 
+::: _XInitKeysymDB ::: 
+::: _XInitOM ::: 
+::: _XIsEventCookie ::: 
+::: _XKeyInitialize ::: 
+::: _XKeycodeToKeysym ::: 
+::: _XKeysymToKeycode ::: 
+::: _XKeysymToModifiers ::: 
+::: _XLockMutex_fn ::: 
+::: _XLookupKeysym ::: 
+::: _XLookupString ::: 
+::: _XNoticeCreateBitmap ::: 
+::: _XNoticePutBitmap ::: 
+::: _XOpenLC ::: 
+::: _XParseBaseFontNameList ::: 
+::: _XPollfdCacheAdd ::: 
+::: _XPollfdCacheDel ::: 
+::: _XPollfdCacheInit ::: 
+::: _XProcessInternalConnection ::: 
+::: _XProcessWindowAttributes ::: 
+::: _XPutBackEvent ::: 
+::: _XRead32 ::: 
+::: _XRead ::: 
+::: _XReadEvents ::: 
+::: _XReadPad ::: 
+::: _XRefreshKeyboardMapping ::: 
+::: _XRegisterFilterByMask ::: 
+::: _XRegisterFilterByType ::: 
+::: _XRegisterInternalConnection ::: 
+::: _XReply ::: 
+::: _XReverse_Bytes ::: 
+::: _XScreenOfWindow ::: 
+::: _XSend ::: 
+::: _XSetClipRectangles ::: 
+::: _XSetImage ::: 
+::: _XSetLastRequestRead ::: 
+::: _XStoreEventCookie ::: 
+::: _XTextHeight16 ::: 
+::: _XTextHeight ::: 
+::: _XTranslateKey ::: 
+::: _XTranslateKeySym ::: 
+::: _XTryShapeBitmapCursor ::: 
+::: _XUnknownCopyEventCookie ::: 
+::: _XUnknownNativeEvent ::: 
+::: _XUnknownWireEvent ::: 
+::: _XUnknownWireEventCookie ::: 
+::: _XUnlockMutex_fn ::: 
+::: _XUnregisterFilter ::: 
+::: _XUnregisterInternalConnection ::: 
+::: _XUnresolveColor ::: 
+::: _XUpdateAtomCache ::: 
+::: _XUpdateGCCache ::: 
+::: _XVIDtoVisual ::: 
+::: _XWireToEvent ::: 
+::: _XcmsAddCmapRec ::: 
+::: _XcmsArcTangent ::: 
+::: _XcmsCIELabQueryMaxLCRGB ::: 
+::: _XcmsCIELab_prefix ::: 
+::: _XcmsCIELuvQueryMaxLCRGB ::: 
+::: _XcmsCIELuv_prefix ::: 
+::: _XcmsCIEXYZ_ValidSpec ::: 
+::: _XcmsCIEXYZ_prefix ::: 
+::: _XcmsCIEuvY_ValidSpec ::: 
+::: _XcmsCIEuvY_prefix ::: 
+::: _XcmsCIExyY_prefix ::: 
+::: _XcmsConvertColorsWithWhitePt ::: 
+::: _XcmsCopyCmapRecAndFree ::: 
+::: _XcmsCopyISOLatin1Lowered ::: 
+::: _XcmsCopyPointerArray ::: 
+::: _XcmsCosine ::: 
+::: _XcmsCubeRoot ::: 
+::: _XcmsDDColorSpaces ::: 
+::: _XcmsDDColorSpacesInit ::: 
+::: _XcmsDDConvertColors ::: 
+::: _XcmsDIColorSpaces ::: 
+::: _XcmsDIColorSpacesInit ::: 
+::: _XcmsDIConvertColors ::: 
+::: _XcmsDeleteCmapRec ::: 
+::: _XcmsEqualWhitePts ::: 
+::: _XcmsFreeIntensityMaps ::: 
+::: _XcmsFreePointerArray ::: 
+::: _XcmsGetElement ::: 
+::: _XcmsGetIntensityMap ::: 
+::: _XcmsGetProperty ::: 
+::: _XcmsInitDefaultCCCs ::: 
+::: _XcmsInitScrnInfo ::: 
+::: _XcmsLRGB_InitScrnDefault ::: 
+::: _XcmsPushPointerArray ::: 
+::: _XcmsRGB_prefix ::: 
+::: _XcmsRGB_to_XColor ::: 
+::: _XcmsRGBi_prefix ::: 
+::: _XcmsRegColorSpaces ::: 
+::: _XcmsRegFormatOfPrefix ::: 
+::: _XcmsResolveColor ::: 
+::: _XcmsResolveColorString ::: 
+::: _XcmsSCCFuncSets ::: 
+::: _XcmsSCCFuncSetsInit ::: 
+::: _XcmsSetGetColor ::: 
+::: _XcmsSetGetColors ::: 
+::: _XcmsSine ::: 
+::: _XcmsSquareRoot ::: 
+::: _XcmsTekHVCQueryMaxVCRGB ::: 
+::: _XcmsTekHVC_CheckModify ::: 
+::: _XcmsTekHVC_prefix ::: 
+::: _XcmsUnresolveColor ::: 
+::: _Xdebug ::: 
+::: _Xevent_to_mask ::: 
+::: _Xglobal_lock ::: 
+::: _Xi18n_lock ::: 
+::: _XimCbDispatch ::: 
+::: _XimCheckCreateICValues ::: 
+::: _XimCheckDataSize ::: 
+::: _XimCheckICMode ::: 
+::: _XimCheckIMMode ::: 
+::: _XimCheckIfLocalProcessing ::: 
+::: _XimCheckIfThaiProcessing ::: 
+::: _XimCheckLocalInputStyle ::: 
+::: _XimCommitCallback ::: 
+::: _XimConnect ::: 
+::: _XimDecodeICATTRIBUTE ::: 
+::: _XimDecodeIMATTRIBUTE ::: 
+::: _XimDecodeLocalICAttr ::: 
+::: _XimDecodeLocalIMAttr ::: 
+::: _XimDestroyIMStructureList ::: 
+::: _XimDispatchInit ::: 
+::: _XimEncodeICATTRIBUTE ::: 
+::: _XimEncodeIMATTRIBUTE ::: 
+::: _XimEncodeLocalICAttr ::: 
+::: _XimEncodeLocalIMAttr ::: 
+::: _XimError ::: 
+::: _XimErrorCallback ::: 
+::: _XimExtension ::: 
+::: _XimFilterWaitEvent ::: 
+::: _XimFlush ::: 
+::: _XimForwardEvent ::: 
+::: _XimForwardEventCallback ::: 
+::: _XimFreeCommitInfo ::: 
+::: _XimFreeProtoIntrCallback ::: 
+::: _XimFreeTransIntrCallback ::: 
+::: _XimGetAttributeID ::: 
+::: _XimGetCharCode ::: 
+::: _XimGetCurrentICValues ::: 
+::: _XimGetCurrentIMValues ::: 
+::: _XimGetICValueData ::: 
+::: _XimGetIMValueData ::: 
+::: _XimGetLocaleCode ::: 
+::: _XimGetMyEndian ::: 
+::: _XimGetResourceListRec ::: 
+::: _XimGetResourceListRecByQuark ::: 
+::: _XimGetWindowEventmask ::: 
+::: _XimICOfXICID ::: 
+::: _XimImSportRec ::: 
+::: _XimInitialResourceInfo ::: 
+::: _XimLcctstombs ::: 
+::: _XimLcctstoutf8 ::: 
+::: _XimLcctstowcs ::: 
+::: _XimLocalCreateIC ::: 
+::: _XimLocalFilter ::: 
+::: _XimLocalGetICValues ::: 
+::: _XimLocalGetIMValues ::: 
+::: _XimLocalIMFree ::: 
+::: _XimLocalMbLookupString ::: 
+::: _XimLocalOpenIM ::: 
+::: _XimLocalSetICValues ::: 
+::: _XimLocalSetIMValues ::: 
+::: _XimLocalUtf8LookupString ::: 
+::: _XimLocalWcLookupString ::: 
+::: _XimLookupMBText ::: 
+::: _XimLookupUTF8Text ::: 
+::: _XimLookupWCText ::: 
+::: _XimMakeICAttrIDList ::: 
+::: _XimMakeIMAttrIDList ::: 
+::: _XimOpenIM ::: 
+::: _XimParseStringFile ::: 
+::: _XimProcError ::: 
+::: _XimProcSyncReply ::: 
+::: _XimProtoCreateIC ::: 
+::: _XimProtoEventToWire ::: 
+::: _XimProtoIMFree ::: 
+::: _XimProtoMbLookupString ::: 
+::: _XimProtoOpenIM ::: 
+::: _XimProtoUtf8LookupString ::: 
+::: _XimProtoWcLookupString ::: 
+::: _XimProtoWireToEvent ::: 
+::: _XimRead ::: 
+::: _XimRegProtoIntrCallback ::: 
+::: _XimRegisterDispatcher ::: 
+::: _XimRegisterFilter ::: 
+::: _XimRegisterIMInstantiateCallback ::: 
+::: _XimRegisterServerFilter ::: 
+::: _XimRegisterTriggerKeysCallback ::: 
+::: _XimReregisterFilter ::: 
+::: _XimResetIMInstantiateCallback ::: 
+::: _XimRespSyncReply ::: 
+::: _XimServerDestroy ::: 
+::: _XimSetCurrentICValues ::: 
+::: _XimSetCurrentIMValues ::: 
+::: _XimSetEventMaskCallback ::: 
+::: _XimSetHeader ::: 
+::: _XimSetICDefaults ::: 
+::: _XimSetICMode ::: 
+::: _XimSetICResourceList ::: 
+::: _XimSetICValueData ::: 
+::: _XimSetIMMode ::: 
+::: _XimSetIMResourceList ::: 
+::: _XimSetIMValueData ::: 
+::: _XimSetInnerICResourceList ::: 
+::: _XimSetInnerIMResourceList ::: 
+::: _XimSetLocalIMDefaults ::: 
+::: _XimShutdown ::: 
+::: _XimSync ::: 
+::: _XimSyncCallback ::: 
+::: _XimThaiCloseIM ::: 
+::: _XimThaiCreateIC ::: 
+::: _XimThaiFilter ::: 
+::: _XimThaiIMFree ::: 
+::: _XimThaiOpenIM ::: 
+::: _XimTransCallDispatcher ::: 
+::: _XimTransConf ::: 
+::: _XimTransFilterWaitEvent ::: 
+::: _XimTransFlush ::: 
+::: _XimTransInternalConnection ::: 
+::: _XimTransRead ::: 
+::: _XimTransRegisterDispatcher ::: 
+::: _XimTransWrite ::: 
+::: _XimTransportRec ::: 
+::: _XimTriggerNotify ::: 
+::: _XimUnRegisterIMInstantiateCallback ::: 
+::: _XimUnregisterFilter ::: 
+::: _XimUnregisterServerFilter ::: 
+::: _XimWrite ::: 
+::: _XimXConf ::: 
+::: _XimXTransBytesReadable ::: 
+::: _XimXTransClose ::: 
+::: _XimXTransCloseForCloning ::: 
+::: _XimXTransConnect ::: 
+::: _XimXTransDisconnect ::: 
+::: _XimXTransFreeConnInfo ::: 
+::: _XimXTransGetConnectionNumber ::: 
+::: _XimXTransGetHostname ::: 
+::: _XimXTransGetMyAddr ::: 
+::: _XimXTransGetPeerAddr ::: 
+::: _XimXTransIsLocal ::: 
+::: _XimXTransOpenCLTSClient ::: 
+::: _XimXTransOpenCOTSClient ::: 
+::: _XimXTransRead ::: 
+::: _XimXTransReadv ::: 
+::: _XimXTransSetOption ::: 
+::: _XimXTransSocketINET6Funcs ::: 
+::: _XimXTransSocketINETFuncs ::: 
+::: _XimXTransSocketLocalFuncs ::: 
+::: _XimXTransSocketTCPFuncs ::: 
+::: _XimXTransSocketUNIXFuncs ::: 
+::: _XimXTransWrite ::: 
+::: _XimXTransWritev ::: 
+::: _Ximctstombs ::: 
+::: _Ximctstoutf8 ::: 
+::: _Ximctstowcs ::: 
+::: _XkbCopyFromReadBuffer ::: 
+::: _XkbFreeReadBuffer ::: 
+::: _XkbGetAtomNameFunc ::: 
+::: _XkbGetCharset ::: 
+::: _XkbGetConverters ::: 
+::: _XkbGetReadBufferCountedString ::: 
+::: _XkbGetReadBufferPtr ::: 
+::: _XkbInitReadBuffer ::: 
+::: _XkbInternAtomFunc ::: 
+::: _XkbNoteCoreMapChanges ::: 
+::: _XkbPeekAtReadBuffer ::: 
+::: _XkbReadBufferCopy32 ::: 
+::: _XkbReadBufferCopyKeySyms ::: 
+::: _XkbReadCopyData32 ::: 
+::: _XkbReadCopyKeySyms ::: 
+::: _XkbReadGetCompatMapReply ::: 
+::: _XkbReadGetGeometryReply ::: 
+::: _XkbReadGetIndicatorMapReply ::: 
+::: _XkbReadGetMapReply ::: 
+::: _XkbReadGetNamesReply ::: 
+::: _XkbReloadDpy ::: 
+::: _XkbSkipReadBufferData ::: 
+::: _XkbWriteCopyData32 ::: 
+::: _XkbWriteCopyKeySyms ::: 
+::: _XkeyTable ::: 
+::: _XlcAddCT ::: 
+::: _XlcAddCharSet ::: 
+::: _XlcAddGB18030LocaleConverters ::: 
+::: _XlcAddLoader ::: 
+::: _XlcAddUtf8Converters ::: 
+::: _XlcAddUtf8LocaleConverters ::: 
+::: _XlcCloseConverter ::: 
+::: _XlcCompareISOLatin1 ::: 
+::: _XlcCompileResourceList ::: 
+::: _XlcConvert ::: 
+::: _XlcCopyFromArg ::: 
+::: _XlcCopyToArg ::: 
+::: _XlcCountVaList ::: 
+::: _XlcCreateDefaultCharSet ::: 
+::: _XlcCreateLC ::: 
+::: _XlcCreateLocaleDataBase ::: 
+::: _XlcCurrentLC ::: 
+::: _XlcDbg_printValue ::: 
+::: _XlcDeInitLoader ::: 
+::: _XlcDefaultLoader ::: 
+::: _XlcDefaultMapModifiers ::: 
+::: _XlcDestroyLC ::: 
+::: _XlcDestroyLocaleDataBase ::: 
+::: _XlcFileName ::: 
+::: _XlcGenericLoader ::: 
+::: _XlcGenericMethods ::: 
+::: _XlcGetCSValues ::: 
+::: _XlcGetCharSet ::: 
+::: _XlcGetCharSetWithSide ::: 
+::: _XlcGetLocaleDataBase ::: 
+::: _XlcGetResource ::: 
+::: _XlcGetValues ::: 
+::: _XlcInitCTInfo ::: 
+::: _XlcInitLoader ::: 
+::: _XlcLocaleDirName ::: 
+::: _XlcLocaleLibDirName ::: 
+::: _XlcMapOSLocaleName ::: 
+::: _XlcNCompareISOLatin1 ::: 
+::: _XlcOpenConverter ::: 
+::: _XlcParseCharSet ::: 
+::: _XlcParse_scopemaps ::: 
+::: _XlcPublicMethods ::: 
+::: _XlcRemoveLoader ::: 
+::: _XlcResetConverter ::: 
+::: _XlcResolveI18NPath ::: 
+::: _XlcResolveLocaleName ::: 
+::: _XlcSetConverter ::: 
+::: _XlcSetValues ::: 
+::: _XlcUtf8Loader ::: 
+::: _XlcVaToArgList ::: 
+::: _XlcValidModSyntax ::: 
+::: _Xlcmbstoutf8 ::: 
+::: _Xlcmbstowcs ::: 
+::: _Xlcmbtowc ::: 
+::: _Xlcwcstombs ::: 
+::: _Xlcwctomb ::: 
+::: _XmbDefaultDrawImageString ::: 
+::: _XmbDefaultDrawString ::: 
+::: _XmbDefaultTextEscapement ::: 
+::: _XmbDefaultTextExtents ::: 
+::: _XmbDefaultTextPerCharExtents ::: 
+::: _XmbGenericDrawImageString ::: 
+::: _XmbGenericDrawString ::: 
+::: _XmbGenericTextEscapement ::: 
+::: _XmbGenericTextExtents ::: 
+::: _XmbGenericTextPerCharExtents ::: 
+::: _XmbTextListToTextProperty ::: 
+::: _XmbTextPropertyToTextList ::: 
+::: _Xmblen ::: 
+::: _Xmbstoutf8 ::: 
+::: _Xmbstowcs ::: 
+::: _Xmbtowc ::: 
+::: _XomConvert ::: 
+::: _XomGenericDrawString ::: 
+::: _XomGenericOpenOM ::: 
+::: _XomGenericTextExtents ::: 
+::: _XomGetFontDataFromFontSet ::: 
+::: _XomInitConverter ::: 
+::: _XrmDefaultInitParseInfo ::: 
+::: _XrmInitParseInfo ::: 
+::: _XrmInternalStringToQuark ::: 
+::: _Xthread_self_fn ::: 
+::: _Xutf8DefaultDrawImageString ::: 
+::: _Xutf8DefaultDrawString ::: 
+::: _Xutf8DefaultTextEscapement ::: 
+::: _Xutf8DefaultTextExtents ::: 
+::: _Xutf8DefaultTextPerCharExtents ::: 
+::: _Xutf8GenericDrawImageString ::: 
+::: _Xutf8GenericDrawString ::: 
+::: _Xutf8GenericTextEscapement ::: 
+::: _Xutf8GenericTextExtents ::: 
+::: _Xutf8GenericTextPerCharExtents ::: 
+::: _Xutf8TextListToTextProperty ::: 
+::: _Xutf8TextPropertyToTextList ::: 
+::: _XwcDefaultDrawImageString ::: 
+::: _XwcDefaultDrawString ::: 
+::: _XwcDefaultTextEscapement ::: 
+::: _XwcDefaultTextExtents ::: 
+::: _XwcDefaultTextPerCharExtents ::: 
+::: _XwcFreeStringList ::: 
+::: _XwcGenericDrawImageString ::: 
+::: _XwcGenericDrawString ::: 
+::: _XwcGenericTextEscapement ::: 
+::: _XwcGenericTextExtents ::: 
+::: _XwcGenericTextPerCharExtents ::: 
+::: _XwcTextListToTextProperty ::: 
+::: _XwcTextPropertyToTextList ::: 
+::: _Xwcscmp ::: 
+::: _Xwcscpy ::: 
+::: _Xwcslen ::: 
+::: _Xwcsncmp ::: 
+::: _Xwcsncpy ::: 
+::: _Xwcstombs ::: 
+::: _Xwctomb ::: 
+::: _qfree ::: 
+::: read_EncodingInfo ::: 
+::: xlocaledir ::: 
