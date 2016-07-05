@@ -15,8 +15,6 @@
 /*                                                                        */
 /**************************************************************************/
 
-#define NEED_EVENTS
-
 #include "X.h"
 #include "Xproto.h"
 #include "Xatom.h"

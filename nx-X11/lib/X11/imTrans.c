@@ -36,7 +36,6 @@ IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <stdio.h>
 #include <nx-X11/Xatom.h>
 #include <nx-X11/Xmd.h>
-#define NEED_EVENTS
 #include "Xlibint.h"
 #include <nx-X11/Xtrans/Xtrans.h>
 #include "Xlcint.h"

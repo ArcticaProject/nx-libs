@@ -44,8 +44,6 @@ in this Software without prior written authorization from The Open Group.
 
 /* $XFree86: xc/lib/X11/OpenDis.c,v 3.16 2003/07/04 16:24:23 eich Exp $ */
 
-#define NEED_REPLIES
-#define NEED_EVENTS
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif

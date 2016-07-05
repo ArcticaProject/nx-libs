@@ -79,7 +79,6 @@ Equipment Corporation.
 
 /* $TOG: main.c /main/86 1998/02/09 14:20:03 kaleb $ */
 
-#define NEED_EVENTS
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif

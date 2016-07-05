@@ -28,8 +28,6 @@ from The Open Group.
 */
 /* $XFree86: xc/programs/Xserver/Xext/xcmisc.c,v 3.7 2003/10/28 23:08:43 tsi Exp $ */
 
-#define NEED_EVENTS
-#define NEED_REPLIES
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif

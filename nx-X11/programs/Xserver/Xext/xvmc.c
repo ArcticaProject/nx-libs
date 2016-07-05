@@ -1,7 +1,5 @@
 /* $XFree86: xc/programs/Xserver/Xext/xvmc.c,v 1.8 2003/07/16 01:38:31 dawes Exp $ */
 
-#define NEED_REPLIES
-#define NEED_EVENTS
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif

@@ -28,7 +28,6 @@ from The Open Group.
 */
 /* $XFree86: xc/programs/Xserver/Xext/bigreq.c,v 3.8 2003/10/28 23:08:43 tsi Exp $ */
 
-#define NEED_EVENTS
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif

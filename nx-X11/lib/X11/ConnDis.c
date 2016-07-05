@@ -49,8 +49,6 @@ in this Software without prior written authorization from The Open Group.
  * This file contains operating system dependencies.
  */
 
-#define NEED_EVENTS
-
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif

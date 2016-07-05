@@ -53,7 +53,6 @@ SOFTWARE.
 #endif
 
 #include <nx-X11/X.h>
-#define NEED_EVENTS
 #include <nx-X11/Xproto.h>
 #include <nx-X11/Xprotostr.h>
 #include "misc.h"

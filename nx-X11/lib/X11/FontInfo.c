@@ -26,7 +26,6 @@ in this Software without prior written authorization from The Open Group.
 */
 /* $XFree86: xc/lib/X11/FontInfo.c,v 1.6 2001/12/14 19:54:00 dawes Exp $ */
 
-#define NEED_REPLIES
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif

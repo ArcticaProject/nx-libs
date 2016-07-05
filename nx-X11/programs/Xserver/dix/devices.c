@@ -57,8 +57,6 @@ SOFTWARE.
 #include <nx-X11/X.h>
 #include "misc.h"
 #include "resource.h"
-#define NEED_EVENTS
-#define NEED_REPLIES
 #include <nx-X11/Xproto.h>
 #include "windowstr.h"
 #include "inputstr.h"

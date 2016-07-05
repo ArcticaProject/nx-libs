@@ -35,7 +35,6 @@ and Jim Haggerty of Metheus.
 */
 /* $XFree86: xc/programs/Xserver/record/record.c,v 1.11 2003/11/03 05:12:01 tsi Exp $ */
 
-#define NEED_EVENTS
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif

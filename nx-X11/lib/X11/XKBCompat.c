@@ -30,8 +30,6 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <config.h>
 #endif
 #include <stdio.h>
-#define NEED_REPLIES
-#define NEED_EVENTS
 #define	NEED_MAP_READERS
 #include "Xlibint.h"
 #include <nx-X11/extensions/XKBproto.h>

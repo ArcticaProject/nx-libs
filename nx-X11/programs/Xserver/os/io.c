@@ -77,7 +77,6 @@ SOFTWARE.
 #endif
 #endif
 #include <nx-X11/X.h>
-#define NEED_REPLIES
 #include <nx-X11/Xproto.h>
 #include "os.h"
 #include "osdep.h"

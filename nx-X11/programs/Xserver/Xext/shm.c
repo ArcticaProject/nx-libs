@@ -45,8 +45,6 @@ in this Software without prior written authorization from The Open Group.
 #endif
 #include <unistd.h>
 #include <sys/stat.h>
-#define NEED_REPLIES
-#define NEED_EVENTS
 #include <nx-X11/X.h>
 #include <nx-X11/Xproto.h>
 #include "misc.h"
