@@ -647,8 +647,6 @@ ForceSubdirs($(DEPDIRS) $(SUBDIRS))
 DEFAULTFONTPATH = DefaultFontPath
 EXTRAMANDEFS = -D__default_font_path__="`echo $(DEFAULTFONTPATH) | sed -e 's/,/, /g'`"
 
-InstallManPage(Xserver,$(MANDIR))
-
 #if MakeDllModules && DoLoadableServer && \
         (defined(SunArchitecture) && defined(SVR4Architecture))
 XCOMM Hackery for building dlopen-able .so modules on Solaris
