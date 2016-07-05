@@ -1,5 +1,3 @@
-/* $XdotOrg: xc/programs/Xserver/dix/dispatch.c,v 1.13 2005/09/13 01:33:19 daniels Exp $ */
-/* $Xorg: dispatch.c,v 1.5 2001/02/09 02:04:40 xorgcvs Exp $ */
 /************************************************************
 
 Copyright 1987, 1989, 1998  The Open Group
@@ -76,7 +74,6 @@ Equipment Corporation.
 
 ******************************************************************/
 
-/* $XFree86: xc/programs/Xserver/dix/dispatch.c,v 3.32 2003/11/10 18:21:45 tsi Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>

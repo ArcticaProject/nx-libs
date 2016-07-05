@@ -1,4 +1,3 @@
-/* $XdotOrg: xc/programs/Xserver/Xext/saver.c,v 1.10 2005/07/03 08:53:36 daniels Exp $ */
 /*
  * $XConsortium: saver.c,v 1.12 94/04/17 20:59:36 dpw Exp $
  *
@@ -28,7 +27,6 @@ in this Software without prior written authorization from the X Consortium.
  * Author:  Keith Packard, MIT X Consortium
  */
 
-/* $XFree86: xc/programs/Xserver/Xext/saver.c,v 3.7 2003/10/28 23:08:43 tsi Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>

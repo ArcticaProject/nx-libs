@@ -1,4 +1,3 @@
-/* $Xorg: stubs.c,v 1.4 2001/02/09 02:04:35 xorgcvs Exp $ */
 
 /************************************************************
 
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/Xi/stubs.c,v 3.4 2001/12/14 19:58:59 dawes Exp $ */
 
 /*
  * stubs.c -- stub routines for the X server side of the XINPUT

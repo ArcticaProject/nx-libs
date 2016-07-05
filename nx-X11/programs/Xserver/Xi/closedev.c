@@ -1,4 +1,3 @@
-/* $Xorg: closedev.c,v 1.4 2001/02/09 02:04:33 xorgcvs Exp $ */
 
 /************************************************************
 
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/Xi/closedev.c,v 3.3 2001/08/23 14:56:19 alanh Exp $ */
 
 /***********************************************************************
  *

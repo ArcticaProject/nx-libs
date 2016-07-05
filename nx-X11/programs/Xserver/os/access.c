@@ -1,5 +1,3 @@
-/* $Xorg: access.c,v 1.5 2001/02/09 02:05:23 xorgcvs Exp $ */
-/* $XdotOrg: xc/programs/Xserver/os/access.c,v 1.13 2005/11/08 06:33:30 jkj Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -55,7 +53,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $XFree86: xc/programs/Xserver/os/access.c,v 3.53 2004/01/02 18:23:19 tsi Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>

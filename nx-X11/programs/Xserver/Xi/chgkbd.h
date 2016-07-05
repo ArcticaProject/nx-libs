@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/Xi/chgkbd.h,v 3.1 1996/04/15 11:18:27 dawes Exp $ */
 /************************************************************
 
 Copyright 1996 by Thomas E. Dickey <dickey@clark.net>

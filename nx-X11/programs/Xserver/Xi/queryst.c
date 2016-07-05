@@ -1,4 +1,3 @@
-/* $Xorg: queryst.c,v 1.4 2001/02/09 02:04:34 xorgcvs Exp $ */
 /*
 
 Copyright 1998, 1998  The Open Group
@@ -26,7 +25,6 @@ other dealings in this Software without prior written authorization
 from The Open Group.
 
 */
-/* $XFree86: xc/programs/Xserver/Xi/queryst.c,v 3.4 2001/01/17 22:13:26 dawes Exp $ */
 
 /***********************************************************************
  *

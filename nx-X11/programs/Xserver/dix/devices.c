@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/dix/devices.c,v 3.20 2001/12/14 19:59:30 dawes Exp $ */
 /************************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -47,8 +46,6 @@ SOFTWARE.
 ********************************************************/
 
 
-/* $Xorg: devices.c,v 1.4 2001/02/09 02:04:39 xorgcvs Exp $ */
-/* $XdotOrg: xc/programs/Xserver/dix/devices.c,v 1.8 2005/07/03 08:53:38 daniels Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>

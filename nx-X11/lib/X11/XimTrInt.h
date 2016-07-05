@@ -1,4 +1,3 @@
-/* $Xorg: XimTrInt.h,v 1.3 2000/08/17 19:45:05 cpqbld Exp $ */
 /******************************************************************
 
               Copyright 1992 by Sun Microsystems, Inc.

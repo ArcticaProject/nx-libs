@@ -1,4 +1,3 @@
-/* $Xorg: XI.h,v 1.4 2001/02/09 02:03:23 xorgcvs Exp $ */
 
 /************************************************************
 
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/include/extensions/XI.h,v 1.4 2001/01/17 17:53:16 dawes Exp $ */
 
 /* Definitions used by the server, library and client */
 

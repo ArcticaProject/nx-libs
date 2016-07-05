@@ -1,4 +1,3 @@
-/* $Xorg: extinit.c,v 1.4 2001/02/09 02:04:34 xorgcvs Exp $ */
 
 /************************************************************
 
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/Xi/extinit.c,v 3.6 2001/12/14 19:58:55 dawes Exp $ */
 
 /********************************************************************
  *

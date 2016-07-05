@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/GL/mesa/src/GLcoremodule.c,v 1.5 2000/02/23 04:46:55 martin Exp $ */
 /**************************************************************************
 
 Copyright 1998-1999 Precision Insight, Inc., Cedar Park, Texas.

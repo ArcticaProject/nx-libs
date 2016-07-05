@@ -23,8 +23,6 @@
 /*                                                                        */
 /**************************************************************************/
 
-/* $XdotOrg: xc/programs/Xserver/dix/window.c,v 1.12 2005/07/03 08:53:38 daniels Exp $ */
-/* $Xorg: window.c,v 1.4 2001/02/09 02:04:41 xorgcvs Exp $ */
 /*
 
 Copyright 1987, 1998  The Open Group
@@ -103,7 +101,6 @@ Equipment Corporation.
 
 ******************************************************************/
 
-/* $XFree86: xc/programs/Xserver/dix/window.c,v 3.36 2003/11/14 23:52:50 torrey Exp $ */
 
 #include "selection.h"
 

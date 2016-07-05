@@ -1,5 +1,3 @@
-/* $XdotOrg: xc/programs/Xserver/record/record.c,v 1.5 2005/07/03 07:02:08 daniels Exp $ */
-/* $Xorg: record.c,v 1.4 2001/02/09 02:05:27 xorgcvs Exp $ */
 
 /*
 
@@ -33,7 +31,6 @@ This work benefited from earlier work done by Martha Zimet of NCD
 and Jim Haggerty of Metheus.
 
 */
-/* $XFree86: xc/programs/Xserver/record/record.c,v 1.11 2003/11/03 05:12:01 tsi Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>

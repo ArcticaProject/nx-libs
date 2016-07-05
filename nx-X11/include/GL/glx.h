@@ -1,7 +1,6 @@
 #ifndef __GLX_glx_h__
 #define __GLX_glx_h__
 
-/* $XFree86: xc/include/GL/glx.h,v 1.10 2002/10/30 08:52:36 alanh Exp $ */
 /*
 ** License Applicability. Except to the extent portions of this file are
 ** made subject to an alternative license as permitted in the SGI Free

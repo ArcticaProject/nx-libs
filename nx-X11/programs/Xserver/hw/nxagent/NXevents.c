@@ -23,8 +23,6 @@
 /*                                                                        */
 /**************************************************************************/
 
-/* $XdotOrg: xc/programs/Xserver/dix/events.c,v 1.17 2005/08/25 22:11:04 anholt Exp $ */
-/* $XFree86: xc/programs/Xserver/dix/events.c,v 3.51 2004/01/12 17:04:52 tsi Exp $ */
 /************************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -134,7 +132,6 @@ of the copyright holder.
 
 ******************************************************************/
 
-/* $Xorg: events.c,v 1.4 2001/02/09 02:04:40 xorgcvs Exp $ */
 
 #include <nx-X11/Xlib.h>
 

@@ -1,5 +1,3 @@
-/* $Xorg: Xos_r.h,v 1.4 2001/02/09 02:03:22 xorgcvs Exp $ */
-/* $XdotOrg: xc/include/Xos_r.h,v 1.5 2005/07/13 07:23:56 keithp Exp $ */
 /*
 Copyright 1996, 1998  The Open Group
 
@@ -23,7 +21,6 @@ Except as contained in this notice, the name of The Open Group shall not be
 used in advertising or otherwise to promote the sale, use or other dealings
 in this Software without prior written authorization from The Open Group.
 */
-/* $XFree86: xc/include/Xos_r.h,v 1.18tsi Exp $ */
 
 /*
  * Various and sundry Thread-Safe functions used by X11, Motif, and CDE.

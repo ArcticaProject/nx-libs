@@ -1,5 +1,3 @@
-/* $XdotOrg: xc/programs/Xserver/Xext/xtest1di.c,v 1.6 2005/07/03 08:53:36 daniels Exp $ */
-/* $Xorg: xtest1di.c,v 1.4 2001/02/09 02:04:33 xorgcvs Exp $ */
 /*
  *	File:  xtest1di.c
  *
@@ -53,7 +51,6 @@ Telephone and Telegraph Company or of the Regents of the
 University of California.
 
 */
-/* $XFree86: xc/programs/Xserver/Xext/xtest1di.c,v 3.5 2003/09/13 21:33:03 dawes Exp $ */
 
 /*****************************************************************************
  * include files

@@ -49,7 +49,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $XFree86: xc/lib/X11/ErrDes.c,v 3.11 2003/08/06 14:03:59 eich Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>

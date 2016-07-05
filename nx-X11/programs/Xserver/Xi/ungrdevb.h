@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/Xi/ungrdevb.h,v 3.1 1996/04/15 11:19:10 dawes Exp $ */
 /************************************************************
 
 Copyright 1996 by Thomas E. Dickey <dickey@clark.net>

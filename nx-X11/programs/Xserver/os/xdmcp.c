@@ -1,5 +1,3 @@
-/* $XdotOrg: xc/programs/Xserver/os/xdmcp.c,v 1.10 2005/07/03 08:53:52 daniels Exp $ */
-/* $Xorg: xdmcp.c,v 1.4 2001/01/31 13:37:19 pookie Exp $ */
 /*
  * Copyright 1989 Network Computing Devices, Inc., Mountain View, California.
  *
@@ -14,7 +12,6 @@
  * without express or implied warranty.
  *
  */
-/* $XFree86: xc/programs/Xserver/os/xdmcp.c,v 3.31 2003/12/30 21:24:32 herrb Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
