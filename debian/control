@@ -74,6 +74,7 @@ Depends:
  ${shlibs:Depends},
  ${misc:Depends},
  nx-x11-common (>= ${source:Version}), nx-x11-common (<< ${source:Version}.1), 
+ libxcomp3 (= ${binary:Version}),
 Breaks: nxlibs (<= 3.5.1),
         libnx-x11 (<< 2:3.5.0.29-1~),
         libnx-xext6 (<< 2:3.6.0.0),
@@ -324,6 +325,10 @@ Multi-Arch: foreign
 Depends:
  ${shlibs:Depends},
  ${misc:Depends},
+ libxcomp3 (= ${binary:Version}),
+ libxcompext3 (= ${binary:Version}),
+ libxcompshad3 (= ${binary:Version}),
+ libnx-x11-6 (= ${binary:Version}),
 Recommends:
  xfonts-base,
  xkb-data,
@@ -378,6 +383,7 @@ Multi-Arch: foreign
 Depends:
  ${shlibs:Depends},
  ${misc:Depends},
+ libxcomp3 (= ${binary:Version}),
 Breaks:
  qvd-nxproxy,
  nxauth,
@@ -470,6 +476,7 @@ Multi-Arch: same
 Depends:
  ${shlibs:Depends},
  ${misc:Depends},
+ libnx-x11-6 (= ${binary:Version}),
 Breaks: nxcompext (<=3.5.1)
 Replaces: nxcompext
 Description: nx-X11 protocol compression extensions library
@@ -521,6 +528,7 @@ Multi-Arch: same
 Depends:
  ${shlibs:Depends},
  ${misc:Depends},
+ libnx-x11-6 (= ${binary:Version}),
 Breaks: nxcompshad (<=3.5.1)
 Replaces: nxcompshad
 Description: nx-X11 shadowing library
