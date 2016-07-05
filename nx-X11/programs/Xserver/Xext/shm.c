@@ -205,7 +205,7 @@ static Bool CheckForShmSyscall()
 
 #ifndef NXAGENT_SERVER
 void
-ShmExtensionInit(INITARGS)
+ShmExtensionInit(void)
 {
     ExtensionEntry *extEntry;
     int i;

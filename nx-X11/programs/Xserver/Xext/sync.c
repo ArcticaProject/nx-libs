@@ -2336,7 +2336,7 @@ SyncResetProc(extEntry)
  * ** Initialise the extension.
  */
 void 
-SyncExtensionInit(INITARGS)
+SyncExtensionInit(void)
 {
     ExtensionEntry *extEntry;
 

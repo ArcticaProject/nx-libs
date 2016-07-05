@@ -147,7 +147,7 @@ typedef struct _ShapeEvent {
  ****************/
 
 void
-ShapeExtensionInit(INITARGS)
+ShapeExtensionInit(void)
 {
     ExtensionEntry *extEntry;
 

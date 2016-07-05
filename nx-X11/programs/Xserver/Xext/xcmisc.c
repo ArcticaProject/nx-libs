@@ -68,7 +68,7 @@ static DISPATCH_PROC(SProcXCMiscGetXIDList);
 static DISPATCH_PROC(SProcXCMiscGetXIDRange);
 
 void
-XCMiscExtensionInit(INITARGS)
+XCMiscExtensionInit(void)
 {
 #if 0
     ExtensionEntry *extEntry;

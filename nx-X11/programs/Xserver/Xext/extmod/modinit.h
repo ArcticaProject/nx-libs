@@ -5,68 +5,64 @@
 #include <dix-config.h>
 #endif
 
-#ifndef INITARGS
-#define INITARGS void
-#endif
-
 #ifdef SHAPE
-extern void ShapeExtensionInit(INITARGS);
+extern void ShapeExtensionInit(void);
 #include <X11/extensions/shapeproto.h>
 #endif
 
 #ifdef XTEST
-extern void XTestExtensionInit(INITARGS);
+extern void XTestExtensionInit(void);
 #define _XTEST_SERVER_
 #include <nx-X11/extensions/xtestconst.h>
 #include <nx-X11/extensions/xteststr.h>
 #endif
 
 #if 1
-extern void XTestExtension1Init(INITARGS);
+extern void XTestExtension1Init(void);
 #endif
 
 #ifdef BIGREQS
-extern void BigReqExtensionInit(INITARGS);
+extern void BigReqExtensionInit(void);
 #include <nx-X11/extensions/bigreqstr.h>
 #endif
 
 #ifdef XSYNC
-extern void SyncExtensionInit(INITARGS);
+extern void SyncExtensionInit(void);
 #define _SYNC_SERVER
 #include <nx-X11/extensions/sync.h>
 #include <nx-X11/extensions/syncstr.h>
 #endif
 
 #ifdef SCREENSAVER
-extern void ScreenSaverExtensionInit (INITARGS);
+extern void ScreenSaverExtensionInit (void);
 #include <nx-X11/extensions/saver.h>
 #endif
 
 #ifdef XCMISC
-extern void XCMiscExtensionInit(INITARGS);
+extern void XCMiscExtensionInit(void);
 #include <nx-X11/extensions/xcmiscstr.h>
 #endif
 
 #ifdef DPMSExtension
-extern void DPMSExtensionInit(INITARGS);
+extern void DPMSExtensionInit(void);
 #include <nx-X11/extensions/dpmsstr.h>
 #endif
 
 #ifdef XV
-extern void XvExtensionInit(INITARGS);
-extern void XvMCExtensionInit(INITARGS);
-extern void XvRegister(INITARGS);
+extern void XvExtensionInit(void);
+extern void XvMCExtensionInit(void);
+extern void XvRegister(void);
 #include <nx-X11/extensions/Xv.h>
 #include <nx-X11/extensions/XvMC.h>
 #endif
 
 #ifdef RES
-extern void ResExtensionInit(INITARGS);
+extern void ResExtensionInit(void);
 #include <nx-X11/extensions/XResproto.h>
 #endif
 
 #ifdef SHM
-extern void ShmExtensionInit(INITARGS);
+extern void ShmExtensionInit(void);
 #include <X11/extensions/shmproto.h>
 extern void ShmSetPixmapFormat(
     ScreenPtr pScreen,
@@ -77,15 +73,15 @@ extern void ShmRegisterFuncs(
 #endif
 
 #if 1
-extern void SecurityExtensionInit(INITARGS);
+extern void SecurityExtensionInit(void);
 #endif
 
 #if 1
-extern void XagExtensionInit(INITARGS);
+extern void XagExtensionInit(void);
 #endif
 
 #if 1
-extern void XpExtensionInit(INITARGS);
+extern void XpExtensionInit(void);
 #endif
 
 #if 1
@@ -93,5 +89,5 @@ extern void PanoramiXExtensionInit(int argc, char *argv[]);
 #endif
 
 #if 1
-extern void XkbExtensionInit(INITARGS);
+extern void XkbExtensionInit(void);
 #endif

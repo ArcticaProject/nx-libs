@@ -167,7 +167,7 @@ static int	XTestCurrentClientGone(
  *	(other than the core errors).
  */
 void
-XTestExtension1Init(INITARGS)
+XTestExtension1Init(void)
 {
 	/*
 	 * holds the pointer to the extension entry structure

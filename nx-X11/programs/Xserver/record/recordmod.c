@@ -10,7 +10,7 @@ extern Bool noTestExtensions;
 
 static MODULESETUPPROTO(recordSetup);
 
-extern void RecordExtensionInit(INITARGS);
+extern void RecordExtensionInit(void);
 
 ExtensionModule recordExt = {
     RecordExtensionInit,
