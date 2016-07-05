@@ -1,0 +1,146 @@
+#!/bin/bash
+
+#/**************************************************************************/
+#/*                                                                        */
+#/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+#/* Copyright (c) 2015-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+#/*                                                                        */
+#/* NXSCRIPTS, NX protocol compression and NX extensions to this software  */
+#/* are copyright of NoMachine. Redistribution and use of the present      */
+#/* software is allowed according to terms specified in the file LICENSE   */
+#/* which comes in the source distribution.                                */
+#/*                                                                        */
+#/* Check http://www.nomachine.com/licensing.html for applicability.       */
+#/*                                                                        */
+#/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+#/*                                                                        */
+#/* All rights reserved.                                                   */
+#/*                                                                        */
+#/**************************************************************************/
+
+#
+# Uncomment this to enable echo.
+#
+#set -x
+#
+
+ulimit -c unlimited
+
+NXPROXYBIN=nxproxy
+NXAGENTBIN=nxagent
+
+
+NX_PORT=7
+
+NX_SYSTEM=${HOME}/.nx
+
+NX_ROOT=${HOME}/.nx
+
+#
+# This should be randlomly generated.
+#
+#NX_COOKIE=`xauth list |grep "${HOSTNAME}/unix:\<${NX_PORT}\>" | grep MIT | cut -f 5 -d ' '`
+NX_COOKIE=123efa980d2cba234ef6f73deac810ff
+
+#
+# Create the directories for the NX session.
+#
+
+rm -rf ${NX_ROOT}/C-${NX_PORT} || exit
+mkdir -p ${NX_ROOT}/C-${NX_PORT} || exit
+
+rm -rf ${HOME}/.nx/S-${NX_PORT} || exit
+mkdir -p ${HOME}/.nx/S-${NX_PORT} || exit
+
+#
+# Set the path to libraries and NX executables.
+#
+
+LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${HOME}/NX/nxcomp:${HOME}/NX/nxcompext:${HOME}/NX/nx-X11/exports/lib"
+export LD_LIBRARY_PATH
+
+PATH="${PATH}:${HOME}/NX/nxclient/nxclient:${HOME}/NX/nx-X11/programs/Xserver/"
+export PATH
+
+#
+# Create the fake cookie for this display.
+#
+
+echo -ne "Creating the X authorization cookie.\n"
+
+xauth add ${HOSTNAME}/unix:${NX_PORT} MIT-MAGIC-COOKIE-1 ${NX_COOKIE}
+xauth add ${HOSTNAME}:${NX_PORT} MIT-MAGIC-COOKIE-1 ${NX_COOKIE}
+
+function urlencode() {
+
+  echo "$(perl -MURI::Escape -e 'print uri_escape($ARGV[0]);' "$1")"
+
+}
+
+#
+# Options are written in a file 'options' in the session
+# directory. The agent will use the DISPLAY settings, so
+# we pass in the DISPLAY the name of the options file.
+#
+# cache=8M,images=32M,link=modem,type=unix-kde,cleanup=0,
+# accept=62.98.198.1,cookie=$NX_COOKIE,
+# id=giulietta.nomachine.com-1098-6A4649FD0FCA57FAC275AF3F1C45B10F,
+# media=1:1098
+#
+
+NX_HOST=nx/nx,cache=8192k,link=modem,menu=1,keybd=1,samba=0,cups=0,limit=0,\
+listen=$(urlencode "unix:${NX_SYSTEM}/C-${NX_PORT}/proxy.socket"),cookie=$NX_COOKIE,errors=${NX_ROOT}/C-${NX_PORT}/session
+
+echo "${NX_HOST}:${NX_PORT}" >${NX_ROOT}/C-${NX_PORT}/options
+
+#
+# Run the agent. if you don't have a font server running,
+# remove the argument "-fp unix/:7100"
+#
+
+NX_AGENT=:${NX_PORT}
+
+echo -ne "Running the X client side NX agent.\n"
+
+SAVED_DISPLAY=$DISPLAY
+
+DISPLAY=nx/nx,options=${NX_ROOT}/C-${NX_PORT}/options:${NX_PORT} 
+export DISPLAY
+
+#valgrind -v --num-callers=8 --error-limit=no --trace-children=no \
+#valgrind --num-callers=8 --tool=memcheck --leak-check=yes --show-reachable=yes --track-fds=yes \
+#ldd ${NXAGENTBIN}
+${NXAGENTBIN} -name 'NX' -geometry 800x600+100+100 "$@" \
+${NX_AGENT} 2>>${NX_ROOT}/C-${NX_PORT}/session &
+
+#
+# The X server side proxy will forward the connection
+# to the original DISPLAY.
+#
+
+DISPLAY=$SAVED_DISPLAY
+export DISPLAY
+
+#
+# These are the nxproxy options used to run a typical session.
+#
+# cookie=$NX_COOKIE,root=/home/pinzari/.nx,media=32824,
+# session=kde_on_giulietta,id=giulietta.nomachine.com-1098-6A4649FD0FCA57FAC275AF3F1C45B10F,
+# connect=giulietta.nomachine.com:1098
+#
+
+#NX_HOST=nx/nx,keybd=1,samba=1,cups=1,connect=localhost,cookie=$NX_COOKIE,errors=${NX_ROOT}/S-${NX_PORT}/session
+NX_HOST=nx/nx,keybd=1,samba=0,cups=0,connect=$(urlencode "unix:${NX_SYSTEM}/C-${NX_PORT}/proxy.socket"),cookie=$NX_COOKIE,errors=${NX_ROOT}/S-${NX_PORT}/session
+
+echo "${NX_HOST}:${NX_PORT}" >${NX_ROOT}/S-${NX_PORT}/options
+
+echo -ne "Running the X server side NX proxy.\n"
+
+#valgrind -v --num-callers=8 --error-limit=no --trace-children=no \
+#valgrind --num-callers=8 --tool=memcheck --leak-check=yes --show-reachable=yes --track-fds=yes \
+#ldd ${NXPROXYBIN}
+${NXPROXYBIN} -S nx/nx,options=${NX_ROOT}/S-${NX_PORT}/options:${NX_PORT} \
+2>>${HOME}/.nx/S-${NX_PORT}/session &
+
+echo -ne "Session running on display :$NX_PORT.\n"
+

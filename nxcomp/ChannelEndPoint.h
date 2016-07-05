@@ -33,25 +33,32 @@ class ChannelEndPoint
   int defaultTCPInterface_; // 0=localhost, otherwise IP of public interface.
   char *defaultUnixPath_;
   char *spec_;
+  bool isUnix_;
+  bool isTCP_;
 
-  bool specIsPort(long *port = NULL) const;
+  bool getPort(long *port = NULL) const;
 
  public:
   ChannelEndPoint(const char *spec = NULL);
+  ~ChannelEndPoint();
   ChannelEndPoint &operator=(const ChannelEndPoint &other);
 
   bool enabled() const;
   bool disabled() { return !enabled(); }
   void disable();
   void setSpec(const char *spec);
-  void setSpec(int port);
+  void setSpec(long port);
+  void setSpec(const char *hostName, long port);
+  bool getSpec(char **socketUri) const;
   void setDefaultTCPPort(long port);
   void setDefaultTCPInterface(int publicInterface);
   void setDefaultUnixPath(char *path);
 
   bool getUnixPath(char **path = NULL) const;
+  bool isUnixSocket() const;
   bool getTCPHostAndPort(char **hostname = NULL, long *port = NULL) const;
   long getTCPPort() const;
+  bool isTCPSocket() const;
 
   bool validateSpec();
 };
