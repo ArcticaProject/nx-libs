@@ -1,9 +1,14 @@
-Copyright (c) 2001,2010 NoMachine - http://www.nomachine.com/.
+Copyright (c) 2001,2010 NoMachine (http://www.nomachine.com)
 Copyright (c) 2000,2003 Gian Filippo Pinzari
+Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>
+Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>
+Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)
 
-NXCOMP library and NX extensions to X are copyright of NoMachine.
-Redistribution and use of this software is allowed according to the
-following terms:
+NXCOMP library and NX extensions to X are copyright of the aforementioned
+copyright holders. Redistribution and use of this software is allowed
+according to the following terms:
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License Version 2, and
@@ -16,8 +21,8 @@ Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program; if not, you can request a copy to NoMachine
-or write to the Free Software Foundation, Inc., 59 Temple Place, Suite
-330, Boston, MA  02111-1307 USA
+or write to the Free Software Foundation, Inc., 51 Franklin Street, Suite
+330, Boston, MA  02110-1301 USA
 
 ==============================================================================
 
@@ -45,8 +50,8 @@ Update 2015-05-21 on the nature of the original DXPC license: The
 original DXPC code used to be available under a license which failed to
 explicitly grant the permission to modify, but was later retroactively
 re-licensed under the 2-clause BSD license (see
-README.on-retroactive-DXPC-license for the copyright owners' statements;
-see <https://bugs.debian.org/784565> for more details).
+doc/nxcomp/README.on-retroactive-DXPC-license for the copyright owners'
+statements; also see <https://bugs.debian.org/784565> for more details).
 
 In the course of discussion, it also became evident that Gian Filippo
 Pinzari never participated in any of the official DXPC releases, but
