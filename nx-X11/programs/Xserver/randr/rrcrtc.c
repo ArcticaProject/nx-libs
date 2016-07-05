@@ -274,9 +274,6 @@ RRDeliverCrtcEvent(ClientPtr client, WindowPtr pWin, RRCrtcPtr crtc)
     xRRCrtcChangeNotifyEvent ce = {
         .type = RRNotify + RREventBase,
         .subCode = RRNotify_CrtcChange,
-#ifdef NXAGENT_SERVER
-        .sequenceNumber = client->sequence,
-#endif
         .timestamp = pScrPriv->lastSetTime.milliseconds,
         .window = pWin->drawable.id,
         .crtc = crtc->id,

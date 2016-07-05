@@ -96,13 +96,11 @@ CursorDisplayCursor (ScreenPtr pScreen,
 	CursorCurrent = pCursor;
 	for (e = cursorEvents; e; e = e->next)
 	{
-	    if ((e->eventMask & XFixesDisplayCursorNotifyMask) &&
-		!e->pClient->clientGone)
+	    if ((e->eventMask & XFixesDisplayCursorNotifyMask))
 	    {
 		xXFixesCursorNotifyEvent	ev;
 		ev.type = XFixesEventBase + XFixesCursorNotify;
 		ev.subtype = XFixesDisplayCursorNotify;
-		ev.sequenceNumber = e->pClient->sequence;
 		ev.window = e->pWindow->drawable.id;
 		ev.cursorSerial = pCursor->serialNumber;
 		ev.timestamp = currentTime.milliseconds;

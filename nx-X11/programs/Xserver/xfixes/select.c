@@ -79,8 +79,7 @@ XFixesSelectionCallback (CallbackListPtr *callbacks, void * data, void * args)
     for (e = selectionEvents; e; e = e->next)
     {
 	if (e->selection == selection->selection && 
-	    (e->eventMask & eventMask) &&
-	    !e->pClient->clientGone)
+	    (e->eventMask & eventMask))
 	{
 	    xXFixesSelectionNotifyEvent	ev;
 
@@ -88,7 +87,6 @@ XFixesSelectionCallback (CallbackListPtr *callbacks, void * data, void * args)
 
 	    ev.type = XFixesEventBase + XFixesSelectionNotify;
 	    ev.subtype = subtype;
-	    ev.sequenceNumber = e->pClient->sequence;
 	    ev.window = e->pWindow->drawable.id;
 	    if (subtype == XFixesSetSelectionOwnerNotify)
 		ev.owner = selection->window;

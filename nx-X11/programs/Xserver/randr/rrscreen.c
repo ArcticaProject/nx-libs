@@ -111,9 +111,6 @@ RRDeliverScreenEvent(ClientPtr client, WindowPtr pWin, ScreenPtr pScreen)
 
     xRRScreenChangeNotifyEvent se = {
         .type = RRScreenChangeNotify + RREventBase,
-#ifdef NXAGENT_SERVER
-        .sequenceNumber = client->sequence,
-#endif
         .rotation = (CARD8) (crtc ? crtc->rotation : RR_Rotate_0),
         .timestamp = pScrPriv->lastSetTime.milliseconds,
         .configTimestamp = pScrPriv->lastConfigTime.milliseconds,

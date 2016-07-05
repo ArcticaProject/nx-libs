@@ -43,9 +43,6 @@ DeliverPropertyEvent(WindowPtr pWin, void *value)
         if (!(pRREvent->mask & RROutputPropertyNotifyMask))
             continue;
 
-#ifdef NXAGENT_SERVER
-        event->sequenceNumber = pRREvent->client->sequence;
-#endif
         event->window = pRREvent->window->drawable.id;
         WriteEventsToClient(pRREvent->client, 1, (xEvent *) event);
     }
