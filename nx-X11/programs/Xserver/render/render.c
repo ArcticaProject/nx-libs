@@ -1,4 +1,3 @@
-/* $XdotOrg: xc/programs/Xserver/render/render.c,v 1.12 2005/08/28 19:47:39 ajax Exp $ */
 /*
  * $XFree86: xc/programs/Xserver/render/render.c,v 1.27tsi Exp $
  *

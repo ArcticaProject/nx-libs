@@ -1,4 +1,3 @@
-/* $Xorg: XKBCompat.c,v 1.3 2000/08/17 19:45:00 cpqbld Exp $ */
 /************************************************************
 Copyright (c) 1993 by Silicon Graphics Computer Systems, Inc.
 

@@ -1,5 +1,3 @@
-/* $Xorg: LiHosts.c,v 1.4 2001/02/09 02:03:34 xorgcvs Exp $ */
-/* $XdotOrg: xc/lib/X11/LiHosts.c,v 1.4 2005/07/03 07:00:55 daniels Exp $ */
 /*
 
 Copyright 1986, 1998  The Open Group

@@ -1,5 +1,3 @@
-/* $XdotOrg: xc/include/extensions/XvMClib.h,v 1.3 2004/11/13 11:09:23 unichrome Exp $ */
-/* $XFree86: xc/include/extensions/XvMClib.h,v 1.6 2001/11/14 21:54:37 mvojkovi Exp $ */
 
 #ifndef _XVMCLIB_H_
 #define _XVMCLIB_H_

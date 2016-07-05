@@ -1,5 +1,3 @@
-/* $XdotOrg: xc/lib/xtrans/Xtrans.c,v 1.6 2005/11/08 06:33:26 jkj Exp $ */
-/* $Xorg: Xtrans.c,v 1.4 2001/02/09 02:04:06 xorgcvs Exp $ */
 /*
 
 Copyright 1993, 1994, 1998  The Open Group
@@ -27,7 +25,6 @@ other dealings in this Software without prior written authorization
 from The Open Group.
 
 */
-/* $XFree86: xc/lib/xtrans/Xtrans.c,v 3.33 2003/08/11 17:41:29 eich Exp $ */
 
 /* Copyright 1993, 1994 NCR Corporation - Dayton, Ohio, USA
  *

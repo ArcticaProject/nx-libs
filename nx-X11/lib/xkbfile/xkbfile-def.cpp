@@ -94,4 +94,3 @@ EXPORTS
  _XkbKSCheckCase
 #endif
 
-/* $XFree86: xc/lib/xkbfile/xkbfile-def.cpp,v 1.1 2003/10/15 21:18:50 herrb Exp $ */

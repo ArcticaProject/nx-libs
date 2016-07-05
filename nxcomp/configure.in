@@ -1,3 +1,29 @@
+dnl /**************************************************************************/
+dnl /*                                                                        */
+dnl /* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+dnl /* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+dnl /* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+dnl /* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+dnl /* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+dnl /* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
+dnl /*                                                                        */
+dnl /* NXCOMP, NX protocol compression and NX extensions to this software     */
+dnl /* are copyright of the aforementioned persons and companies.             */
+dnl /*                                                                        */
+dnl /* Redistribution and use of the present software is allowed according    */
+dnl /* to terms specified in the file LICENSE.nxcomp which comes in the       */
+dnl /* source distribution.                                                   */
+dnl /*                                                                        */
+dnl /* All rights reserved.                                                   */
+dnl /*                                                                        */
+dnl /* NOTE: This software has received contributions from various other      */
+dnl /* contributors, only the core maintainers and supporters are listed as   */
+dnl /* copyright holders. Please contact us, if you feel you should be listed */
+dnl /* as copyright holder, as well.                                          */
+dnl /*                                                                        */
+dnl /**************************************************************************/
+
+
 dnl Process this file with autoconf to produce a configure script.
 
 dnl Prolog

@@ -64,7 +64,6 @@ other dealings in this Software without prior written authorization
 from The Open Group.
 
 */
-/* $XFree86: xc/lib/X11/ICWrap.c,v 1.10 2003/04/25 14:12:38 tsi Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>

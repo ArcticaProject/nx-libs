@@ -1,4 +1,3 @@
-/* $Xorg: dpmsstr.h,v 1.3 2000/08/18 04:05:45 coskrey Exp $ */
 /*****************************************************************
 
 Copyright (c) 1996 Digital Equipment Corporation, Maynard, Massachusetts.

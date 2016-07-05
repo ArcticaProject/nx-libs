@@ -1,4 +1,3 @@
-/* $XFree86: xc/config/cf/cross.def,v 1.1 2000/12/08 22:09:34 keithp Exp $ */
 /*
  * This file contains redefinitions of some symbols to enable
  * cross compilation: e.g. paths for include files and paths to

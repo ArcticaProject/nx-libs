@@ -1,4 +1,3 @@
-/* $Xorg: exevents.c,v 1.4 2001/02/09 02:04:33 xorgcvs Exp $ */
 /************************************************************
 
 Copyright 1989, 1998  The Open Group
@@ -44,7 +43,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/Xi/exevents.c,v 3.10 2001/12/14 19:58:55 dawes Exp $ */
 
 /********************************************************************
  *

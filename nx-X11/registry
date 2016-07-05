@@ -1,5 +1,3 @@
-/* $Xorg: registry,v 1.7 2001/06/01 18:55:58 coskrey Exp $ */
-/* $XdotOrg: xc/registry,v 1.3 2005/09/02 23:06:40 alanc Exp $ */
 
 				  X Registry
 
@@ -1710,5 +1708,4 @@ REFERENCES
 [135]	X.Org Foundation source implementation
 	See Reference [8]
 
-/* $XFree86: xc/registry,v 1.8 2003/07/09 15:27:23 tsi Exp $ */
 

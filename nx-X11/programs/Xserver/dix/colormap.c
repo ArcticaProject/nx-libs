@@ -1,5 +1,3 @@
-/* $XdotOrg: xc/programs/Xserver/dix/colormap.c,v 1.11 2005/09/05 07:40:50 daniels Exp $ */
-/* $XFree86: xc/programs/Xserver/dix/colormap.c,v 3.11 2003/11/03 05:10:59 tsi Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -47,7 +45,6 @@ SOFTWARE.
 
 ******************************************************************/
 
-/* $Xorg: colormap.c,v 1.4 2001/02/09 02:04:39 xorgcvs Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>

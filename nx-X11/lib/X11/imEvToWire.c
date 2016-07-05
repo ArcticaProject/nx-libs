@@ -1,4 +1,3 @@
-/* $Xorg: imEvToWire.c,v 1.3 2000/08/17 19:45:12 cpqbld Exp $ */
 /***********************************************************
 Copyright 1993 by Digital Equipment Corporation, Maynard, Massachusetts,
 

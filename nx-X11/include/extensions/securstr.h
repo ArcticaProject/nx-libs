@@ -1,4 +1,3 @@
-/* $Xorg: securstr.h,v 1.4 2001/02/09 02:03:24 xorgcvs Exp $ */
 /*
 Copyright 1996, 1998  The Open Group
 
@@ -24,7 +23,6 @@ not be used in advertising or otherwise to promote the sale, use or
 other dealings in this Software without prior written authorization
 from The Open Group.
 */
-/* $XFree86: xc/include/extensions/securstr.h,v 1.2 2001/08/01 00:44:35 tsi Exp $ */
 
 #ifndef _SECURSTR_H
 #define _SECURSTR_H

@@ -1,8 +1,6 @@
 /*
    Copyright (c) 2002  XFree86 Inc
 */
-/* $XFree86: xc/programs/Xserver/Xext/xres.c,v 1.7tsi Exp $ */
-/* $XdotOrg: xc/programs/Xserver/Xext/xres.c,v 1.7 2005/07/03 08:53:36 daniels Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>

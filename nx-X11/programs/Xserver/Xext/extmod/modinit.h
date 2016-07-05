@@ -1,5 +1,3 @@
-/* $XdotOrg: xc/programs/Xserver/Xext/extmod/modinit.h,v 1.5 2005/07/03 07:01:06 daniels Exp $ */
-/* $XFree86: xc/programs/Xserver/Xext/extmod/modinit.h,v 1.1 2003/07/16 01:38:33 dawes Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>

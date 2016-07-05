@@ -1,4 +1,3 @@
-/* $Xorg: panoramiXext.h,v 1.4 2000/08/18 04:05:45 coskrey Exp $ */
 /*****************************************************************
 Copyright (c) 1991, 1997 Digital Equipment Corporation, Maynard, Massachusetts.
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -26,7 +25,6 @@ Equipment Corporation.
 /*  
  *	PanoramiX definitions
  */
-/* $XFree86: xc/include/extensions/panoramiXext.h,v 3.6 2001/01/17 17:53:22 dawes Exp $ */
 
 /* THIS IS NOT AN X PROJECT TEAM SPECIFICATION */
 

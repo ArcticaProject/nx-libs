@@ -1,4 +1,3 @@
-/* $XFree86: xc/include/GL/glu.h,v 1.2 2001/04/03 02:18:39 dawes Exp $ */
 
 /*
 ** License Applicability. Except to the extent portions of this file are

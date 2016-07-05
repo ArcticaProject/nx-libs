@@ -1,4 +1,3 @@
-/* $Xorg: getbmap.c,v 1.4 2001/02/09 02:04:34 xorgcvs Exp $ */
 
 /************************************************************
 
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/Xi/getbmap.c,v 3.2 2001/01/17 22:13:24 dawes Exp $ */
 
 /***********************************************************************
  *

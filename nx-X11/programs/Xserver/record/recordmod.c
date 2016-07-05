@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/record/recordmod.c,v 1.5 1999/01/26 05:54:21 dawes Exp $ */
 
 #ifdef HAVE_XORG_CONFIG_H
 #include <xorg-config.h>
