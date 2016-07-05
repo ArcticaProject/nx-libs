@@ -111,7 +111,32 @@ applications over a network, especially a slow one.
 Group:          System Environment/Libraries
 Summary:        Core NX protocol client library
 Requires:       %{name}%{?_isa} >= 3.5.0.29
-Obsoletes:      libNX_X11
+Obsoletes:      libNX_X11 < 3.5.0.30
+Provides:       libNX_X11 = %{version}-%{release}
+Obsoletes:      libNX_X11%{?_isa} < 3.5.0.30
+Provides:       libNX_X11%{?_isa} = %{version}-%{release}
+Conflicts:      libNX_Xau6 < 3.5.99.1
+Conflicts:      libNX_Xau6%{?_isa} < 3.5.99.1
+Conflicts:      libNX_Xcomposite1 < 3.5.99.1
+Conflicts:      libNX_Xcomposite1%{?_isa} < 3.5.99.1
+Conflicts:      libNX_Xdamage1 < 3.5.99.1
+Conflicts:      libNX_Xdamage1%{?_isa} < 3.5.99.1
+Conflicts:      libNX_Xdmcp6 < 3.5.99.1
+Conflicts:      libNX_Xdmcp6%{?_isa} < 3.5.99.1
+Conflicts:      libNX_Xext6 < 3.5.99.1
+Conflicts:      libNX_Xext6%{?_isa} < 3.5.99.1
+Conflicts:      libNX_Xfixes3 < 3.5.99.1
+Conflicts:      libNX_Xfixes3%{?_isa} < 3.5.99.1
+Conflicts:      libNX_Xinerama1 < 3.5.99.1
+Conflicts:      libNX_Xinerama1%{?_isa} < 3.5.99.1
+Conflicts:      libNX_Xpm4 < 3.5.99.1
+Conflicts:      libNX_Xpm4%{?_isa} < 3.5.99.1
+Conflicts:      libNX_Xrandr2 < 3.5.99.1
+Conflicts:      libNX_Xrandr2%{?_isa} < 3.5.99.1
+Conflicts:      libNX_Xrender1 < 3.5.99.1
+Conflicts:      libNX_Xrender1%{?_isa} < 3.5.99.1
+Conflicts:      libNX_Xtst6 < 3.5.99.1
+Conflicts:      libNX_Xtst6%{?_isa} < 3.5.99.1
 %if 0%{?suse_version}
 Requires:       xorg-x11-fonts-core
 %endif
@@ -136,6 +161,8 @@ Group:          Development/Libraries
 Summary:        Development files for the Core NX protocol library
 Requires:       libNX_X11-6%{?_isa} = %{version}-%{release}
 Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
+Conflicts:      libNX_Xau-devel < 3.5.99.1
+Conflicts:      libNX_Xau-devel%{?_isa} < 3.5.99.1
 
 %description -n libNX_X11-devel
 NX is a software suite which implements very efficient compression of
@@ -172,7 +199,10 @@ The NX differential compression library's development files.
 Group:          System Environment/Libraries
 Summary:        NX differential compression library
 Requires:       %{name}%{?_isa} >= 3.5.0.29
-Obsoletes:      libXcomp
+Obsoletes:      libXcomp <= 3.5.1
+Provides:       libXcomp = %{version}-%{release}
+Obsoletes:      libXcomp%{?_isa} <= 3.5.1
+Provides:       libXcomp%{?_isa} = %{version}-%{release}
 
 %description -n libXcomp3
 NX is a software suite from NoMachine which implements very efficient
@@ -201,7 +231,10 @@ The NX compression extensions library's development files.
 Group:          System Environment/Libraries
 Summary:        NX protocol compression extensions library
 Requires:       %{name}%{?_isa} >= 3.5.0.29
-Obsoletes:      libXcompext
+Obsoletes:      libXcompext <= 3.5.1
+Provides:       libXcompext = %{version}-%{release}
+Obsoletes:      libXcompext%{?_isa} <= 3.5.1
+Provides:       libXcompext%{?_isa} = %{version}-%{release}
 
 %description -n libXcompext3
 NX is a software suite from NoMachine which implements very efficient
@@ -232,7 +265,10 @@ The NX session shadowing library's development files.
 Group:          System Environment/Libraries
 Summary:        NX session shadowing Library
 Requires:       %{name}%{?_isa} >= 3.5.0.29
-Obsoletes:      libXcompshad
+Obsoletes:      libXcompshad <= 3.5.1
+Provides:       libXcompshad = %{version}-%{release}
+Obsoletes:      libXcompshad%{?_isa} <= 3.5.1
+Provides:       libXcompshad%{?_isa} = %{version}-%{release}
 
 %description -n libXcompshad3
 NX is a software suite from NoMachine which implements very efficient
@@ -278,6 +314,8 @@ Obsoletes:      nx < 3.5.0-19
 Provides:       nx = %{version}-%{release}
 Obsoletes:      nx%{?_isa} < 3.5.0-19
 Provides:       nx%{?_isa} = %{version}-%{release}
+Conflicts:      nxauth < 3.5.99.1
+Conflicts:      nxauth%{?_isa} < 3.5.99.1
 %if 0%{?suse_version}
 Requires:       xorg-x11-fonts-core
 %endif
@@ -353,13 +391,13 @@ chmod a+x my_configure;
 export SHLIBGLOBALSFLAGS="%{__global_ldflags}"
 export LOCAL_LDFLAGS="%{__global_ldflags}"
 export CDEBUGFLAGS="%{__global_cppflags} %{__global_cflags}"
-make %{?_smp_mflags} CONFIGURE="$PWD/my_configure" PREFIX=%{_prefix} USRLIBDIR=%{_libdir} SHLIBDIR=%{_libdir}
+make %{?_smp_mflags} CONFIGURE="$PWD/my_configure" PREFIX=%{_prefix} LIBDIR=%{_libdir} SHLIBDIR=%{_libdir}
 
 %install
 make install \
         DESTDIR=%{buildroot} \
         PREFIX=%{_prefix} \
-        USRLIBDIR=%{_libdir} SHLIBDIR=%{_libdir} \
+        LIBDIR=%{_libdir} SHLIBDIR=%{_libdir} \
         INSTALL_DIR="install -dm0755" \
         INSTALL_FILE="install -pm0644" \
         INSTALL_PROGRAM="install -pm0755"
@@ -417,6 +455,7 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %dir %{_includedir}/nx
 %dir %{_includedir}/nx-X11
 %{_includedir}/nx-X11/ImUtil.h
+%{_includedir}/nx-X11/Xauth.h
 %{_includedir}/nx-X11/XKBlib.h
 %{_includedir}/nx-X11/Xcms.h
 %{_includedir}/nx-X11/Xlib.h
@@ -538,8 +577,12 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %{_bindir}/nxagent
 %dir %{_libdir}/nx/bin
 %{_libdir}/nx/bin/nxagent
+%dir %{_libdir}/nx-X11
+%{_libdir}/nx-X11/libX11.so*
 %{_datadir}/pixmaps/nxagent.xpm
+%dir %{_datadir}/nx
 %{_datadir}/nx/rgb
+%{_datadir}/nx/VERSION.nxagent
 %{_datadir}/man/man1/nxagent.1*
 
 %files -n nxproxy
@@ -549,6 +592,8 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %{_datadir}/man/man1/nxproxy.1*
 %dir %{_libdir}/nx/bin
 %{_libdir}/nx/bin/nxproxy
+%dir %{_datadir}/nx
+%{_datadir}/nx/VERSION.nxproxy
 
 
 %changelog
