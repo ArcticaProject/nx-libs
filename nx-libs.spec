@@ -437,7 +437,6 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %files
 %defattr(-,root,root)
 %doc COPYING
-%doc nx-X11/README
 %dir %{_libdir}/nx
 %dir %{_datadir}/nx
 %{_datadir}/nx/SecurityPolicy
@@ -481,7 +480,8 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %files -n libXcomp3
 %defattr(-,root,root)
 %doc COPYING
-%doc nxcomp/README
+%doc doc/nxcomp/README.on-retroactive-DXPC-license
+%doc doc/nxcomp/nxcomp-3.6-drops-compat-code-3.4.x-testing.pdf
 %_libdir/libXcomp.so.3*
 
 %files -n libXcompext-devel
@@ -494,7 +494,6 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %files -n libXcompext3
 %defattr(-,root,root)
 %doc COPYING
-%doc nxcompext/README
 %_libdir/libXcompext.so.3*
 
 %files -n libXcompshad-devel
@@ -587,6 +586,7 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 
 %files -n nxproxy
 %defattr(-,root,root)
+%doc doc/nxproxy/README-VALGRIND
 %{_bindir}/nxproxy
 %{_mandir}/man1/nxproxy.1*
 %{_datadir}/man/man1/nxproxy.1*
