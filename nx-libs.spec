@@ -117,6 +117,26 @@ Obsoletes:      libNX_X11%{?_isa} < 3.5.0.30
 Provides:       libNX_X11%{?_isa} = %{version}-%{release}
 Conflicts:      libNX_Xau6 < 3.5.99.1
 Conflicts:      libNX_Xau6%{?_isa} < 3.5.99.1
+Conflicts:      libNX_Xcomposite1 < 3.5.99.1
+Conflicts:      libNX_Xcomposite1%{?_isa} < 3.5.99.1
+Conflicts:      libNX_Xdamage1 < 3.5.99.1
+Conflicts:      libNX_Xdamage1%{?_isa} < 3.5.99.1
+Conflicts:      libNX_Xdmcp6 < 3.5.99.1
+Conflicts:      libNX_Xdmcp6%{?_isa} < 3.5.99.1
+Conflicts:      libNX_Xext6 < 3.5.99.1
+Conflicts:      libNX_Xext6%{?_isa} < 3.5.99.1
+Conflicts:      libNX_Xfixes3 < 3.5.99.1
+Conflicts:      libNX_Xfixes3%{?_isa} < 3.5.99.1
+Conflicts:      libNX_Xinerama1 < 3.5.99.1
+Conflicts:      libNX_Xinerama1%{?_isa} < 3.5.99.1
+Conflicts:      libNX_Xpm4 < 3.5.99.1
+Conflicts:      libNX_Xpm4%{?_isa} < 3.5.99.1
+Conflicts:      libNX_Xrandr2 < 3.5.99.1
+Conflicts:      libNX_Xrandr2%{?_isa} < 3.5.99.1
+Conflicts:      libNX_Xrender1 < 3.5.99.1
+Conflicts:      libNX_Xrender1%{?_isa} < 3.5.99.1
+Conflicts:      libNX_Xtst6 < 3.5.99.1
+Conflicts:      libNX_Xtst6%{?_isa} < 3.5.99.1
 %if 0%{?suse_version}
 Requires:       xorg-x11-fonts-core
 %endif
