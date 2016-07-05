@@ -132,7 +132,7 @@ ProcXTestGetVersion(client)
 	swaps(&rep.sequenceNumber);
 	swaps(&rep.minorVersion);
     }
-    WriteToClient(client, sizeof(xXTestGetVersionReply), (char *)&rep);
+    WriteToClient(client, sizeof(xXTestGetVersionReply), &rep);
     return(client->noClientException);
 }
 
@@ -168,7 +168,7 @@ ProcXTestCompareCursor(client)
     if (client->swapped) {
 	swaps(&rep.sequenceNumber);
     }
-    WriteToClient(client, sizeof(xXTestCompareCursorReply), (char *)&rep);
+    WriteToClient(client, sizeof(xXTestCompareCursorReply), &rep);
     return(client->noClientException);
 }
 

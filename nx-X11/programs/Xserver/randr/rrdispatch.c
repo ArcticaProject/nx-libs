@@ -67,7 +67,7 @@ ProcRRQueryVersion(ClientPtr client)
 #ifndef NXAGENT_SERVER
     WriteToClient(client, sizeof(xRRQueryVersionReply), &rep);
 #else
-    WriteToClient(client, sizeof(xRRQueryVersionReply), (char *) &rep);
+    WriteToClient(client, sizeof(xRRQueryVersionReply), &rep);
 #endif
     return Success;
 }

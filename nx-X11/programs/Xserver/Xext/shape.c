@@ -303,7 +303,7 @@ ProcShapeQueryVersion (client)
 	swaps(&rep.majorVersion);
 	swaps(&rep.minorVersion);
     }
-    WriteToClient(client, sizeof (xShapeQueryVersionReply), (char *)&rep);
+    WriteToClient(client, sizeof (xShapeQueryVersionReply), &rep);
     return (client->noClientException);
 }
 
@@ -763,7 +763,7 @@ ProcShapeQueryExtents (client)
 	swaps(&rep.widthClipShape);
 	swaps(&rep.heightClipShape);
     }
-    WriteToClient(client, sizeof (xShapeQueryExtentsReply), (char *)&rep);
+    WriteToClient(client, sizeof (xShapeQueryExtentsReply), &rep);
     return (client->noClientException);
 }
 
@@ -1016,7 +1016,7 @@ ProcShapeInputSelected (client)
 	swaps (&rep.sequenceNumber);
 	swapl (&rep.length);
     }
-    WriteToClient (client, sizeof (xShapeInputSelectedReply), (char *) &rep);
+    WriteToClient (client, sizeof (xShapeInputSelectedReply), &rep);
     return (client->noClientException);
 }
 
@@ -1099,8 +1099,8 @@ ProcShapeGetRectangles (client)
 	swapl (&rep.nrects);
 	SwapShorts ((short *)rects, (unsigned long)nrects * 4);
     }
-    WriteToClient (client, sizeof (rep), (char *) &rep);
-    WriteToClient (client, nrects * sizeof (xRectangle), (char *) rects);
+    WriteToClient (client, sizeof (rep), &rep);
+    WriteToClient (client, nrects * sizeof (xRectangle), rects);
     DEALLOCATE_LOCAL (rects);
     return client->noClientException;
 }

@@ -1349,7 +1349,7 @@ ProcSyncInitialize(client)
     {
 	swaps(&rep.sequenceNumber);
     }
-    WriteToClient(client, sizeof(rep), (char *) &rep);
+    WriteToClient(client, sizeof(rep), &rep);
     return (client->noClientException);
 }
 
@@ -1419,10 +1419,10 @@ ProcSyncListSystemCounters(client)
 				((sz_xSyncSystemCounter + namelen + 3) & ~3));
     }
 
-    WriteToClient(client, sizeof(rep), (char *) &rep);
+    WriteToClient(client, sizeof(rep), &rep);
     if (len) 
     {
-	WriteToClient(client, len, (char *) list);
+	WriteToClient(client, len, list);
 	DEALLOCATE_LOCAL(list);
     }
 
@@ -1495,7 +1495,7 @@ ProcSyncGetPriority(client)
 	swapl(&rep.priority);
     }
 
-    WriteToClient(client, sizeof(xSyncGetPriorityReply), (char *) &rep);
+    WriteToClient(client, sizeof(xSyncGetPriorityReply), &rep);
 
     return (client->noClientException);
 }
@@ -1780,7 +1780,7 @@ ProcSyncQueryCounter(client)
 	swapl(&rep.value_hi);
 	swapl(&rep.value_lo);
     }
-    WriteToClient(client, sizeof(xSyncQueryCounterReply), (char *) &rep);
+    WriteToClient(client, sizeof(xSyncQueryCounterReply), &rep);
     return (client->noClientException);
 }
 
@@ -1966,7 +1966,7 @@ ProcSyncQueryAlarm(client)
 	swapl(&rep.delta_lo);
     }
 
-    WriteToClient(client, sizeof(xSyncQueryAlarmReply), (char *) &rep);
+    WriteToClient(client, sizeof(xSyncQueryAlarmReply), &rep);
     return (client->noClientException);
 }
 

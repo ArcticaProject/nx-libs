@@ -534,9 +534,9 @@ ProcRRGetOutputInfo(ClientPtr client)
         swaps(&rep.nClones);
         swaps(&rep.nameLength);
     }
-    WriteToClient(client, sizeof(xRRGetOutputInfoReply), (char *) &rep);
+    WriteToClient(client, sizeof(xRRGetOutputInfoReply), &rep);
     if (extraLen) {
-        WriteToClient(client, extraLen, (char *) extra);
+        WriteToClient(client, extraLen, extra);
         free(extra);
     }
 
@@ -662,7 +662,7 @@ ProcRRGetOutputPrimary(ClientPtr client)
         swapl(&rep.output);
     }
 
-    WriteToClient(client, sizeof(xRRGetOutputPrimaryReply), (char *) &rep);
+    WriteToClient(client, sizeof(xRRGetOutputPrimaryReply), &rep);
 
     return Success;
 }

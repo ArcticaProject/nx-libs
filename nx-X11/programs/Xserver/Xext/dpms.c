@@ -118,7 +118,7 @@ ProcDPMSGetVersion(client)
 	swaps(&rep.majorVersion);
 	swaps(&rep.minorVersion);
     }
-    WriteToClient(client, sizeof(xDPMSGetVersionReply), (char *)&rep);
+    WriteToClient(client, sizeof(xDPMSGetVersionReply), &rep);
     return(client->noClientException);
 }
 
@@ -138,7 +138,7 @@ ProcDPMSCapable(register ClientPtr client)
     if (client->swapped) {
 	swaps(&rep.sequenceNumber);
     }
-    WriteToClient(client, sizeof(xDPMSCapableReply), (char *)&rep);
+    WriteToClient(client, sizeof(xDPMSCapableReply), &rep);
     return(client->noClientException);
 }
 
@@ -164,7 +164,7 @@ ProcDPMSGetTimeouts(client)
 	swaps(&rep.suspend);
 	swaps(&rep.off);
     }
-    WriteToClient(client, sizeof(xDPMSGetTimeoutsReply), (char *)&rep);
+    WriteToClient(client, sizeof(xDPMSGetTimeoutsReply), &rep);
     return(client->noClientException);
 }
 
@@ -275,7 +275,7 @@ ProcDPMSInfo(register ClientPtr client)
 	swaps(&rep.sequenceNumber);
 	swaps(&rep.power_level);
     }
-    WriteToClient(client, sizeof(xDPMSInfoReply), (char *)&rep);
+    WriteToClient(client, sizeof(xDPMSInfoReply), &rep);
     return(client->noClientException);
 }
 

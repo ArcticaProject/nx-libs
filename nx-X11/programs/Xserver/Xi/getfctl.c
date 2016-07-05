@@ -408,5 +408,5 @@ SRepXGetFeedbackControl (client, size, rep)
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);
     swaps(&rep->num_feedbacks);
-    WriteToClient(client, size, (char *)rep);
+    WriteToClient(client, size, rep);
     }

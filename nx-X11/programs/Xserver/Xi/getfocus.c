@@ -149,5 +149,5 @@ SRepXGetDeviceFocus (client, size, rep)
     swapl(&rep->length);
     swapl(&rep->focus);
     swapl(&rep->time);
-    WriteToClient(client, size, (char *)rep);
+    WriteToClient(client, size, rep);
     }

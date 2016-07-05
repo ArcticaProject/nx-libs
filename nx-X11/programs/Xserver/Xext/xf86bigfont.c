@@ -384,7 +384,7 @@ ProcXF86BigfontQueryVersion(
 	swapl(&reply.signature);
     }
     WriteToClient(client,
-		  sizeof(xXF86BigfontQueryVersionReply), (char *)&reply);
+		  sizeof(xXF86BigfontQueryVersionReply), &reply);
     return client->noClientException;
 }
 
@@ -718,7 +718,7 @@ ProcXF86BigfontQueryFont(
 		}
 	    }
 	}
-	WriteToClient(client, rlength, (char *)reply);
+	WriteToClient(client, rlength, reply);
 	DEALLOCATE_LOCAL(reply);
 	if (nCharInfos > 0) {
 	    if (shmid == -1) DEALLOCATE_LOCAL(pIndex2UniqIndex);

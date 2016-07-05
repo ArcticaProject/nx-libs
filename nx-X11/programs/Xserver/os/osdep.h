@@ -187,7 +187,7 @@ typedef struct _osComm {
 extern int FlushClient(
     ClientPtr /*who*/,
     OsCommPtr /*oc*/,
-    char* /*extraBuf*/,
+    const void * /*__extraBuf*/,
     int /*extraCount*/
 );
 

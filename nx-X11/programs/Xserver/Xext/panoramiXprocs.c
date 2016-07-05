@@ -1863,7 +1863,7 @@ int PanoramiXGetImage(ClientPtr client)
 	    XineramaGetImageData(drawables, x, y + linesDone, w, nlines,
 			format, planemask, pBuf, widthBytesLine, isRoot);
 
-		(void)WriteToClient(client,
+		WriteToClient(client,
 				    (int)(nlines * widthBytesLine),
 				    pBuf);
 	    linesDone += nlines;
@@ -1881,7 +1881,7 @@ int PanoramiXGetImage(ClientPtr client)
 					nlines, format, plane, pBuf,
 					widthBytesLine, isRoot);
 
-		    (void)WriteToClient(client,
+		    WriteToClient(client,
 				    (int)(nlines * widthBytesLine),
 				    pBuf);
 

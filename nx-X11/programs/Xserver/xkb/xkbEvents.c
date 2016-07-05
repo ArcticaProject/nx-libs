@@ -71,7 +71,7 @@ CARD16		changed;
 		    swapl(&pNKN->time);
 		    swaps(&pNKN->changed);
 		}
-		WriteToClient(clients[i],sizeof(xEvent),(char *)pNKN);
+		WriteToClient(clients[i],sizeof(xEvent), pNKN);
 		if (changed&XkbNKN_KeycodesMask) {
 		    clients[i]->minKC= pNKN->minKeyCode;
 		    clients[i]->maxKC= pNKN->maxKeyCode;
@@ -88,9 +88,9 @@ CARD16		changed;
 	    if (clients[i]->swapped) {
 		swaps(&event.u.u.sequenceNumber);
 	    }
-	    WriteToClient(clients[i],SIZEOF(xEvent), (char *)&event);
+	    WriteToClient(clients[i],SIZEOF(xEvent), &event);
 	    event.u.mappingNotify.request= MappingModifier;
-	    WriteToClient(clients[i],SIZEOF(xEvent), (char *)&event);
+	    WriteToClient(clients[i],SIZEOF(xEvent), &event);
 	}
     }
     return;
@@ -149,7 +149,7 @@ register CARD16	changed,bState;
 		swaps(&pSN->changed);
 		swaps(&pSN->ptrBtnState);
 	    }
-	    WriteToClient(interest->client, sizeof(xEvent), (char *)pSN);
+	    WriteToClient(interest->client, sizeof(xEvent), pSN);
 	}
 	interest= interest->next;
     }
@@ -193,7 +193,7 @@ CARD16		changed;
 		swapl(&pMN->time);
 		swaps(&pMN->changed);
 	    }
-	    WriteToClient(clients[i],sizeof(xEvent),(char *)pMN);
+	    WriteToClient(clients[i],sizeof(xEvent), pMN);
 	}
     }
     return;
@@ -317,7 +317,7 @@ Time 		 	time = 0;
 		swapl(&pCN->enabledControlChanges);
 		swapl(&pCN->time);
 	    }
-	    WriteToClient(interest->client, sizeof(xEvent), (char *)pCN);
+	    WriteToClient(interest->client, sizeof(xEvent), pCN);
 	}
 	interest= interest->next;
     }
@@ -364,7 +364,7 @@ CARD32		state,changed;
 		swapl(&pEv->changed);
 		swapl(&pEv->state);
 	    }
-	    WriteToClient(interest->client, sizeof(xEvent), (char *)pEv);
+	    WriteToClient(interest->client, sizeof(xEvent), pEv);
 	}
 	interest= interest->next;
     }
@@ -448,7 +448,7 @@ XID		winID = 0;
 		swapl(&bn.name);
 		swapl(&bn.window);
 	    }
-	    WriteToClient(interest->client, sizeof(xEvent), (char *)&bn);
+	    WriteToClient(interest->client, sizeof(xEvent), &bn);
 	}
 	interest= interest->next;
     }
@@ -492,7 +492,7 @@ CARD16		sk_delay,db_delay;
 		swaps(&pEv->slowKeysDelay);
 		swaps(&pEv->debounceDelay);
 	    }
-	    WriteToClient(interest->client, sizeof(xEvent), (char *)pEv);
+	    WriteToClient(interest->client, sizeof(xEvent), pEv);
 	}
 	interest= interest->next;
     }
@@ -540,7 +540,7 @@ CARD32		changedIndicators;
 		swapl(&pEv->changedIndicators);
 		swaps(&pEv->changedVirtualMods);
 	    }
-	    WriteToClient(interest->client, sizeof(xEvent), (char *)pEv);
+	    WriteToClient(interest->client, sizeof(xEvent), pEv);
 	}
 	interest= interest->next;
     }
@@ -587,7 +587,7 @@ CARD16		firstSI = 0, nSI = 0, nTotalSI = 0;
 		swaps(&pEv->nSI);
 		swaps(&pEv->nTotalSI);
 	    }
-	    WriteToClient(interest->client, sizeof(xEvent), (char *)pEv);
+	    WriteToClient(interest->client, sizeof(xEvent), pEv);
 	}
 	interest= interest->next;
     }
@@ -629,7 +629,7 @@ Time 		 time = 0;
 		swaps(&pEv->sequenceNumber);
 		swapl(&pEv->time);
 	    }
-	    WriteToClient(interest->client, sizeof(xEvent), (char *)pEv);
+	    WriteToClient(interest->client, sizeof(xEvent), pEv);
 	}
 	interest= interest->next;
     }
@@ -692,7 +692,7 @@ CARD16		 reason, supported = 0;
 		swaps(&pEv->reason);
 		swaps(&pEv->supported);
 	    }
-	    WriteToClient(interest->client, sizeof(xEvent), (char *)pEv);
+	    WriteToClient(interest->client, sizeof(xEvent), pEv);
 	}
 	interest= interest->next;
     }

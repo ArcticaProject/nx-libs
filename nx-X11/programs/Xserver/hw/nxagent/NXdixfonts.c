@@ -601,7 +601,7 @@ finish:
     reply.length = (stringLens + nnames + 3) >> 2;
     client->pSwapReplyFunc = ReplySwapVector[X_ListFonts];
     WriteSwappedDataToClient(client, sizeof(xListFontsReply), &reply);
-    (void) WriteToClient(client, stringLens + nnames, bufferStart);
+    WriteToClient(client, stringLens + nnames, bufferStart);
     DEALLOCATE_LOCAL(bufferStart);
 
 bail:
@@ -883,7 +883,7 @@ doListFontsWithInfo(ClientPtr client, LFWIclosurePtr c)
 		pFP++;
 	    }
 	    WriteSwappedDataToClient(client, length, reply);
-	    (void) WriteToClient(client, namelen, name);
+	    WriteToClient(client, namelen, name);
 	    if (pFontInfo == &fontInfo)
  	    {
 		free(fontInfo.props);

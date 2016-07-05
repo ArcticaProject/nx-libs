@@ -123,7 +123,7 @@ ProcRRXineramaQueryVersion(ClientPtr client)
         swaps(&rep.majorVersion);
         swaps(&rep.minorVersion);
     }
-    WriteToClient(client, sizeof(xPanoramiXQueryVersionReply), (char *) &rep);
+    WriteToClient(client, sizeof(xPanoramiXQueryVersionReply), &rep);
     return Success;
 }
 
@@ -168,7 +168,7 @@ ProcRRXineramaGetState(ClientPtr client)
         swapl(&rep.length);
         swapl(&rep.window);
     }
-    WriteToClient(client, sizeof(xPanoramiXGetStateReply), (char *) &rep);
+    WriteToClient(client, sizeof(xPanoramiXGetStateReply), &rep);
     return Success;
 }
 
@@ -215,7 +215,7 @@ ProcRRXineramaGetScreenCount(ClientPtr client)
         swapl(&rep.length);
         swapl(&rep.window);
     }
-    WriteToClient(client, sizeof(xPanoramiXGetScreenCountReply), (char *) &rep);
+    WriteToClient(client, sizeof(xPanoramiXGetScreenCountReply), &rep);
     return Success;
 }
 
@@ -259,7 +259,7 @@ ProcRRXineramaGetScreenSize(ClientPtr client)
         swapl(&rep.window);
         swapl(&rep.screen);
     }
-    WriteToClient(client, sizeof(xPanoramiXGetScreenSizeReply), (char *) &rep);
+    WriteToClient(client, sizeof(xPanoramiXGetScreenSizeReply), &rep);
     return Success;
 }
 
@@ -281,7 +281,7 @@ ProcRRXineramaIsActive(ClientPtr client)
         swapl(&rep.length);
         swapl(&rep.state);
     }
-    WriteToClient(client, sizeof(xXineramaIsActiveReply), (char *) &rep);
+    WriteToClient(client, sizeof(xXineramaIsActiveReply), &rep);
     return Success;
 }
 
@@ -295,7 +295,7 @@ RRXineramaWriteMonitor(ClientPtr client, RRMonitorPtr monitor)
     scratch.width = monitor->geometry.box.x2 - monitor->geometry.box.x1;
     scratch.height = monitor->geometry.box.y2 - monitor->geometry.box.y1;
 
-    WriteToClient(client, sz_XineramaScreenInfo, (char *) &scratch);
+    WriteToClient(client, sz_XineramaScreenInfo, &scratch);
 }
 
 int
@@ -326,7 +326,7 @@ ProcRRXineramaQueryScreens(ClientPtr client)
         swapl(&rep.length);
         swapl(&rep.number);
     }
-    WriteToClient(client, sizeof(xXineramaQueryScreensReply), (char *) &rep);
+    WriteToClient(client, sizeof(xXineramaQueryScreensReply), &rep);
 
     for (m = 0; m < nmonitors; m++)
         RRXineramaWriteMonitor(client, &monitors[m]);

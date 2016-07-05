@@ -180,7 +180,7 @@ ProcXGetDeviceMotionEvents(client)
 		bufptr++;
 		}
 	    }
-	WriteToClient(client, length * 4, (char *)coords);
+	WriteToClient(client, length * 4, coords);
         }
     if (coords)
 	DEALLOCATE_LOCAL(coords);
@@ -203,5 +203,5 @@ SRepXGetDeviceMotionEvents (client, size, rep)
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);
     swapl(&rep->nEvents);
-    WriteToClient(client, size, (char *)rep);
+    WriteToClient(client, size, rep);
     }

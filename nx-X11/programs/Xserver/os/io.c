@@ -857,11 +857,12 @@ SetCriticalOutputPending(void)
  *****************/
 
 int
-WriteToClient (ClientPtr who, int count, char *buf)
+WriteToClient (ClientPtr who, int count, const void *__buf)
 {
     OsCommPtr oc;
     ConnectionOutputPtr oco;
     int padBytes;
+    const char *buf = __buf;
 #ifdef DEBUG_COMMUNICATION
     Bool multicount = FALSE;
 #endif
@@ -999,13 +1000,14 @@ WriteToClient (ClientPtr who, int count, char *buf)
  **********************/
 
 int
-FlushClient(ClientPtr who, OsCommPtr oc, char *extraBuf, int extraCount)
+FlushClient(ClientPtr who, OsCommPtr oc, const void *__extraBuf, int extraCount)
 {
     ConnectionOutputPtr oco = oc->output;
     int connection = oc->fd;
     XtransConnInfo trans_conn = oc->trans_conn;
     struct iovec iov[3];
     static char padBuffer[3];
+    const char *extraBuf = __extraBuf;
     long written;
     long padsize;
     long notWritten;
@@ -1051,7 +1053,7 @@ FlushClient(ClientPtr who, OsCommPtr oc, char *extraBuf, int extraCount)
 	}
 
 	InsertIOV ((char *)oco->buf, oco->count)
-	InsertIOV (extraBuf, extraCount)
+	InsertIOV ((char *)extraBuf, extraCount)
 	InsertIOV (padBuffer, padsize)
 
 	errno = 0;
