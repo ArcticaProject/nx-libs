@@ -3,7 +3,7 @@
 This source tree started as a re-distribution of those NX packages needed
 to setup FreeNX and/or X2Go on a Linux server.
 
-The NX re-distribution (3.5.0.x) has been maintained by the X2Go Project:
+In the past, the NX re-distribution (3.5.0.x) had been maintained by the X2Go Project:
 http://wiki.x2go.org
 
 In 2014, [the QVD project](http://theqvd.com) run by the company Qindel
@@ -37,24 +37,22 @@ Scheduled for end of Q2/2016.
 Release goals (phase 1) for nx-libs release series 3.6.0.x:
 
 * CVE security audit (complete)
-* remove unused code (work in progress)
+* remove unused code (+/- complete)
 * no bundled non-X11 libraries anymore (complete)
-* complete imake cleanup (work in progress)
+* complete imake cleanup (+/- complete)
 * replace as many libNX_X* libraries by X.org's libX* libraries
-  (work in progress)
+  (complete, only remaining library: libNX_X11)
 * support for iOS (nxproxy, complete)
 * Unix file socket communication for nxproxy -C <-> nxproxy -S connections
-  (todo)
-* allow Unix file sockets as channel endpoints (work in progress)
-* allow embedding of nxproxy into other windows (work in progress)
+  (complete)
+* allow Unix file sockets as channel endpoints (complete)
+* allow embedding of nxproxy into other windows (work pending)
 * new RandR based Xinerama extension (+/- complete, more QA needed)
-* Fix Xcomposite extension in Xserver (todo)
-* Rename project to Xccc or similar (todo, to be discussed)
-* KDE5 support: Add minimal XInput2 support, patch KDE5, or similar (todo)
-* nxcomp protocol clean-up (todo)
-* nxcomp logging clean-up (todo)
-* optimizing documentation: how to tune NX connections (todo)
- 
+* Fix Xcomposite extension in Xserver (work pending)
+* nxcomp protocol clean-up (complete)
+* nxcomp logging clean-up (work pending)
+* optimizing documentation: how to tune NX connections (work pending)
+
 
 ## Release series 3.7.0.x
 
