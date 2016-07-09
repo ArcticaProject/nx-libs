@@ -1347,6 +1347,7 @@ FIXME: Use of nxagentParentWindow is strongly deprecated.
   nxagentInitDepths();
 
   nxagentInitPixmapFormats();
+  (void) nxagentCheckForPixmapFormatsCompatibility();
 
   /*
    * Create a pixmap for each depth matching the
@@ -1727,8 +1728,6 @@ XXX: Some X server doesn't list 1 among available depths...
     }
   }
   #endif
-
-  nxagentCheckForPixmapFormatsCompatibility();
 }
 
 void nxagentSetDefaultDrawables()
@@ -2838,10 +2837,15 @@ Bool nxagentReconnectDisplay(void *p0)
    * formats are supported.
    */
 
-  /*
-   * FIXME: add an actual check here (and pass check value through nxagentInitPixmapFormats().)
-   */
   nxagentInitPixmapFormats();
+
+  if (nxagentCheckForPixmapFormatsCompatibility() == 0)
+  {
+    nxagentSetReconnectError(FAILED_RESUME_PIXMAPS_ALERT,
+                                 "Couldn't restore all the required pixmap formats.");
+
+    return False;
+  }
 
   reconnectDisplayState = GOT_PIXMAP_FORMAT_LIST;
 
