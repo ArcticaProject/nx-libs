@@ -18,7 +18,7 @@
 #endif
 
 #ifdef WIN32
-#include <nx-X11/Xwinsock.h>
+#include <X11/Xwinsock.h>
 #endif
 
 #include <nx-X11/Xos.h>
