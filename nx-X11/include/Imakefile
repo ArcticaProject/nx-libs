@@ -19,7 +19,6 @@ SUBDIRS = extensions $(GLXDIR)
 AU_HEADERS = Xauth.h
 
 HEADERS = \
-	XWDFile.h \
 	Xfuncproto.h \
 	Xfuncs.h \
 	Xos.h \
