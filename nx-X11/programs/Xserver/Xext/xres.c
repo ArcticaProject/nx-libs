@@ -13,7 +13,7 @@
 #include "dixstruct.h"
 #include "extnsionst.h"
 #include "swaprep.h"
-#include <nx-X11/extensions/XResproto.h>
+#include <X11/extensions/XResproto.h>
 #include "pixmapstr.h"
 #include "modinit.h"
 #include "protocol-versions.h"

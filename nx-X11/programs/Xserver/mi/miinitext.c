@@ -175,7 +175,7 @@ typedef void (*InitExtension)(void);
 #include <X11/extensions/xf86bigfproto.h>
 #endif
 #ifdef RES
-#include <nx-X11/extensions/XResproto.h>
+#include <X11/extensions/XResproto.h>
 #endif
 
 /* FIXME: this whole block of externs should be from the appropriate headers */

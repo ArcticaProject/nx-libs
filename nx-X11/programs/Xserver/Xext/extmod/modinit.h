@@ -55,7 +55,7 @@ extern void XvRegister(void);
 
 #ifdef RES
 extern void ResExtensionInit(void);
-#include <nx-X11/extensions/XResproto.h>
+#include <X11/extensions/XResproto.h>
 #endif
 
 #ifdef SHM
