@@ -34,9 +34,6 @@ XFIXESHEADERS = xfixeswire.h xfixesproto.h
 #if BuildComposite
 COMPOSITEHEADERS = composite.h compositeproto.h
 #endif
-#if BuildDamage
-DAMAGEHEADERS = damagewire.h damageproto.h
-#endif
 #if BuildXResExt
 XRESHEADERS = XResproto.h
 #endif
@@ -51,7 +48,6 @@ EXTRAHEADERS = \
 	$(RENDERHEADERS) \
 	$(XFIXESHEADERS) \
 	$(COMPOSITEHEADERS) \
-	$(DAMAGEHEADERS) \
 	$(XRESHEADERS) \
 	$(NULL)
 
