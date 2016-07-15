@@ -39,7 +39,7 @@ char *malloc();
 
 typedef unsigned long Signature;
 
-#define KTNUM 3000
+#define KTNUM 4000
 
 static struct info {
     char	*name;
@@ -153,6 +153,11 @@ main(int argc, char *argv[])
 next1:	;
     }
 
+    if (best_z == 0) {
+	fprintf(stderr, "makekeys: best_z not found for name"
+	  " ksnum=%i KTNUM=%i\n", ksnum, KTNUM);
+	exit(1);
+    }
     z = best_z;
     printf("#ifdef NEEDKTABLE\n");
     printf("const unsigned char _XkeyTable[] = {\n");
@@ -233,6 +238,11 @@ skip1:	;
 next2:	;
     }
 
+    if (best_z == 0) {
+	fprintf(stderr, "makekeys: best_z not found for val"
+	  " ksnum=%i KTNUM=%i\n", ksnum, KTNUM);
+	exit(1);
+    }
     z = best_z;
     for (i = z; --i >= 0;)
 	offsets[i] = 0;
