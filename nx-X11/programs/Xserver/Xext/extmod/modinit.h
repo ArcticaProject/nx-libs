@@ -21,7 +21,7 @@ extern void XTestExtension1Init(void);
 
 #ifdef BIGREQS
 extern void BigReqExtensionInit(void);
-#include <nx-X11/extensions/bigreqstr.h>
+#include <X11/extensions/bigreqsproto.h>
 #endif
 
 #ifdef XSYNC

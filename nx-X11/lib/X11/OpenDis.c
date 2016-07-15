@@ -56,7 +56,7 @@ in this Software without prior written authorization from The Open Group.
 #include <nx-X11/Xtrans/Xtrans.h>
 #include <nx-X11/Xatom.h>
 #include <nx-X11/Xresource.h>
-#include <nx-X11/extensions/bigreqstr.h>
+#include <X11/extensions/bigreqsproto.h>
 #include <stdio.h>
 #include "Xintconn.h"
 
