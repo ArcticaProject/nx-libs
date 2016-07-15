@@ -35,7 +35,7 @@
 #include "os.h"
 #include "dixstruct.h"
 #include "extnsionst.h"
-#include <nx-X11/extensions/xfixesproto.h>
+#include <X11/extensions/xfixesproto.h>
 #include "windowstr.h"
 #include "selection.h"
 #include "xfixes.h"

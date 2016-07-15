@@ -39,7 +39,7 @@
 #include "Clipboard.h"
 
 #include "gcstruct.h"
-#include "xfixeswire.h"
+#include <X11/extensions/xfixeswire.h>
 #include "X11/include/Xfixes_nxagent.h"
 
 /*

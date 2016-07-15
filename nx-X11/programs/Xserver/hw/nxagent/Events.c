@@ -69,7 +69,7 @@
 #include <nx/NXvars.h>
 #include <nx/NXproto.h>
 
-#include "xfixesproto.h"
+#include <X11/extensions/xfixesproto.h>
 #define Window     XlibWindow
 #define Atom   XlibAtom
 #define Time XlibXID
