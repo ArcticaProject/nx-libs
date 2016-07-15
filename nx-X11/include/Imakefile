@@ -25,11 +25,7 @@ EXTRA_HEADERS = Xwindows.h
 #endif
 
 HEADERS = \
-	DECkeysym.h \
-	HPkeysym.h \
-	Sunkeysym.h \
 	X.h \
-	XF86keysym.h \
 	XWDFile.h \
 	Xalloca.h \
 	Xarch.h \
@@ -44,9 +40,6 @@ HEADERS = \
 	Xpoll.h \
 	Xproto.h \
 	Xprotostr.h \
-	ap_keysym.h \
-	keysym.h \
-	keysymdef.h \
 	$(AU_HEADERS) \
 	$(EXTRA_HEADERS) \
 	$(NULL)
@@ -72,11 +65,10 @@ InstallDriverSDKNonExecFile(Xmd.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(Xosdefs.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(Xproto.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(Xprotostr.h,$(DRIVERSDKINCLUDEDIR))
-InstallDriverSDKNonExecFile(keysym.h,$(DRIVERSDKINCLUDEDIR))
 
 /* _XOPEN_SOURCE is defined where needed to move __fds_bits to fds_bits. */
 USE_FDS_BITS = fds_bits
-	
+
 Xpoll.h: Xpoll.h.in
 	sed -e "s/@USE_FDS_BITS@/$(USE_FDS_BITS)/;" < Xpoll.h.in > Xpoll.h
 

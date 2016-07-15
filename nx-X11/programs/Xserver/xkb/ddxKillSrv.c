@@ -35,7 +35,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <stdio.h>
 #include <nx-X11/X.h>
 #include <nx-X11/Xproto.h>
-#include <nx-X11/keysym.h>
+#include <X11/keysym.h>
 #include "inputstr.h"
 #include "scrnintstr.h"
 #include "windowstr.h"

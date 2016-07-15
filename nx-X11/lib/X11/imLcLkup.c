@@ -36,7 +36,7 @@ PERFORMANCE OF THIS SOFTWARE.
 #include <nx-X11/Xatom.h>
 #include <nx-X11/Xos.h>
 #include <nx-X11/Xlib.h>
-#include <nx-X11/keysym.h>
+#include <X11/keysym.h>
 #include <nx-X11/Xutil.h>
 #include "Xlibint.h"
 #include "Xlcint.h"

@@ -44,7 +44,7 @@ is" without express or implied warranty.
 
 #include "X.h"
 #include "Xproto.h"
-#include "keysym.h"
+#include <X11/keysym.h>
 #include "screenint.h"
 #include "inputstr.h"
 #include "misc.h"

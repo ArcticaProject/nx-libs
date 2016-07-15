@@ -36,7 +36,7 @@
 #include "servermd.h"
 #include "mi.h"
 #include "selection.h"
-#include "keysym.h"
+#include <X11/keysym.h>
 #include "fb.h"
 #include "mibstorest.h"
 #include "osdep.h"

@@ -43,7 +43,7 @@ from The Open Group.
 #include <nx-X11/Xmd.h>
 #define XK_LATIN1
 #define XK_PUBLISHING
-#include <nx-X11/keysym.h>
+#include <X11/keysym.h>
 #include <nx-X11/extensions/XKBproto.h>
 #include "XKBlibint.h"
 #include <nx-X11/Xlocale.h>

@@ -34,7 +34,7 @@ from The Open Group.
 #include "XKBlib.h"
 #include <nx-X11/Xlibint.h>
 #include <nx-X11/Xutil.h>
-#include <nx-X11/keysym.h>
+#include <X11/keysym.h>
 #include <stdio.h>
 #include <ctype.h>
 

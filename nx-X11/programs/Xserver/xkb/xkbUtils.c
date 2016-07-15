@@ -34,7 +34,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <nx-X11/X.h>
 #include <nx-X11/Xproto.h>
 #define	XK_CYRILLIC
-#include <nx-X11/keysym.h>
+#include <X11/keysym.h>
 #include "misc.h"
 #include "inputstr.h"
 

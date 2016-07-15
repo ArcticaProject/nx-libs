@@ -41,7 +41,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #define XK_LATIN1
-#include <nx-X11/keysymdef.h>
+#include <X11/keysymdef.h>
 #include "Cv.h"
 
 /* forwards/locals */

@@ -31,7 +31,7 @@ in this Software without prior written authorization from The Open Group.
 #include <nx-X11/Xauth.h>
 #include <nx-X11/Xos.h>
 #ifdef XTHREADS
-#include <nx-X11/Xthreads.h>
+#include <X11/Xthreads.h>
 #endif
 #ifdef hpux
 #define X_INCLUDE_NETDB_H

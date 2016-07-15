@@ -25,7 +25,7 @@
 
 #include <nx-X11/Xlib.h>
 #include <nx-X11/Xutil.h>
-#include <nx-X11/keysym.h>
+#include <X11/keysym.h>
 #include <string.h>
 
 #define PANIC

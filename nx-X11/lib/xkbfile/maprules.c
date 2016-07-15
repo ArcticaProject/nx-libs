@@ -45,7 +45,7 @@
 #include <nx-X11/Xos.h>
 #include <nx-X11/Xfuncs.h>
 #include <nx-X11/Xatom.h>
-#include <nx-X11/keysym.h>
+#include <X11/keysym.h>
 #include <nx-X11/XKBlib.h>
 #include <nx-X11/extensions/XKBgeom.h>
 #include "XKMformat.h"
@@ -59,7 +59,7 @@
 #include <nx-X11/Xos.h>
 #include <nx-X11/Xfuncs.h>
 #include <nx-X11/Xatom.h>
-#include <nx-X11/keysym.h>
+#include <X11/keysym.h>
 #include "misc.h"
 #include "inputstr.h"
 #include "dix.h"
