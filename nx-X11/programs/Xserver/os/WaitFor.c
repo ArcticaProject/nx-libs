@@ -88,7 +88,7 @@ SOFTWARE.
 #include <nx-X11/Xos.h>			/* for strings, fcntl, time */
 #include <errno.h>
 #include <stdio.h>
-#include <nx-X11/X.h>
+#include <X11/X.h>
 #include "misc.h"
 
 #ifdef __UNIXOS2__

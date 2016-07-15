@@ -27,7 +27,7 @@ in this Software without prior written authorization from The Open Group.
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <nx-X11/X.h>
+#include <X11/X.h>
 
 /*
  * This array can be used given an event type to determine the mask bits

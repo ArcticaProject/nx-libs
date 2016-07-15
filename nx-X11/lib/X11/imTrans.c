@@ -33,7 +33,7 @@ IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #endif
 #include <stdio.h>
 #include <nx-X11/Xatom.h>
-#include <nx-X11/Xmd.h>
+#include <X11/Xmd.h>
 #include "Xlibint.h"
 #include <nx-X11/Xtrans/Xtrans.h>
 #include "Xlcint.h"

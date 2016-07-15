@@ -33,8 +33,8 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #endif
 
 #include <stdio.h>
-#include <nx-X11/X.h>
-#include <nx-X11/Xproto.h>
+#include <X11/X.h>
+#include <X11/Xproto.h>
 #include <X11/keysym.h>
 #include "inputstr.h"
 #include "scrnintstr.h"

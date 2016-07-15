@@ -103,7 +103,7 @@ from The Open Group.
 # include <unistd.h>
 #endif
 
-#include <nx-X11/Xmd.h>
+#include <X11/Xmd.h>
 
 #ifdef CSRG_BASED
 #include <sys/param.h>

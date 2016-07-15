@@ -23,10 +23,10 @@
 /*                                                                        */
 /**************************************************************************/
 
-#include "X.h"
+#include <X11/X.h>
 #include "signal.h"
 #include "unistd.h"
-#include "Xproto.h"
+#include <X11/Xproto.h>
 #include "screenint.h"
 #include "input.h"
 #include "dix.h"

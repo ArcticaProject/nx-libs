@@ -30,7 +30,7 @@
 extern "C" {
 #endif
 
-#include <nx-X11/X.h>
+#include <X11/X.h>
 #include <nx-X11/Xlib.h>
 
 #include "NX.h"

@@ -50,8 +50,8 @@ SOFTWARE.
 #include <dix-config.h>
 #endif
 
-#include <nx-X11/X.h>
-#include <nx-X11/Xprotostr.h>
+#include <X11/X.h>
+#include <X11/Xprotostr.h>
 
 #include "misc.h"
 #include "gcstruct.h"
@@ -60,7 +60,7 @@ SOFTWARE.
 #include "scrnintstr.h"
 #include "mi.h"
 #include "regionstr.h"
-#include <nx-X11/Xmd.h>
+#include <X11/Xmd.h>
 #include "servermd.h"
 
 #ifndef HAS_FFS

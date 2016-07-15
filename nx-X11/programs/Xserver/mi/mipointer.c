@@ -32,9 +32,9 @@ in this Software without prior written authorization from The Open Group.
 #include <dix-config.h>
 #endif
 
-# include   <nx-X11/X.h>
-# include   <nx-X11/Xmd.h>
-# include   <nx-X11/Xproto.h>
+# include   <X11/X.h>
+# include   <X11/Xmd.h>
+# include   <X11/Xproto.h>
 # include   "misc.h"
 # include   "windowstr.h"
 # include   "pixmapstr.h"

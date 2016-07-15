@@ -26,7 +26,7 @@
 #ifndef _XRENDERP_H_
 #define _XRENDERP_H_
 
-#include <nx-X11/Xmd.h>
+#include <X11/Xmd.h>
 #include <nx-X11/extensions/render.h>
 
 #define Window CARD32

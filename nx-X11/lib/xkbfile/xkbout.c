@@ -46,9 +46,9 @@
 
 #else
 
-#include <nx-X11/X.h>
+#include <X11/X.h>
 #include <X11/keysym.h>
-#include <nx-X11/Xproto.h>
+#include <X11/Xproto.h>
 #include "misc.h"
 #include "inputstr.h"
 #include "dix.h"

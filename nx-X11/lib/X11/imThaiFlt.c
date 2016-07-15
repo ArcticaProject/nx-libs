@@ -67,7 +67,7 @@ SOFTWARE.
 #endif
 #include <stdio.h>
 #include <nx-X11/Xlib.h>
-#include <nx-X11/Xmd.h>
+#include <X11/Xmd.h>
 #include <X11/keysym.h>
 #include <nx-X11/Xutil.h>
 #include "Xlibint.h"

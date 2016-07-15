@@ -26,7 +26,7 @@
 #ifndef __Events_H__
 #define __Events_H__
 
-#include <nx-X11/Xmd.h>
+#include <X11/Xmd.h>
 
 #define ProcessedExpose (LASTEvent + 1)
 #define ProcessedNotify (LASTEvent + 2)

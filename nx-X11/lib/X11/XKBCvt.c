@@ -33,14 +33,14 @@ from The Open Group.
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include <nx-X11/X.h>
+#include <X11/X.h>
 #include <nx-X11/Xlib.h>
 #include "Xlibint.h"
 #include "Xlcint.h"
 #include "XlcPubI.h"
 #include "Ximint.h"
 #include <nx-X11/Xutil.h>
-#include <nx-X11/Xmd.h>
+#include <X11/Xmd.h>
 #define XK_LATIN1
 #define XK_PUBLISHING
 #include <X11/keysym.h>

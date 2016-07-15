@@ -65,7 +65,7 @@ SOFTWARE.
 #endif
 #include <stdio.h>
 #include <nx-X11/Xtrans/Xtrans.h>
-#include <nx-X11/Xmd.h>
+#include <X11/Xmd.h>
 #include <errno.h>
 #if !defined(__UNIXOS2__) && !defined(WIN32)
 #ifndef Lynx
@@ -74,8 +74,8 @@ SOFTWARE.
 #include <uio.h>
 #endif
 #endif
-#include <nx-X11/X.h>
-#include <nx-X11/Xproto.h>
+#include <X11/X.h>
+#include <X11/Xproto.h>
 #include "os.h"
 #include "osdep.h"
 #include <nx-X11/Xpoll.h>

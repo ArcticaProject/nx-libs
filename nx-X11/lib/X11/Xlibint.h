@@ -63,7 +63,7 @@ from The Open Group.
  */
 
 #include <nx-X11/Xlib.h>
-#include <nx-X11/Xproto.h>		/* to declare xEvent */
+#include <X11/Xproto.h>		/* to declare xEvent */
 #include <nx-X11/XlibConf.h>	/* for configured options like XTHREADS */
 
 #ifdef NX_TRANS_SOCKET
@@ -234,7 +234,7 @@ typedef struct _XSQEvent
 #ifdef XTHREADS			/* for xReply */
 #endif
 
-#include <nx-X11/Xproto.h>
+#include <X11/Xproto.h>
 #ifdef __sgi
 #define _SGI_MP_SOURCE  /* turn this on to get MP safe errno */
 #endif

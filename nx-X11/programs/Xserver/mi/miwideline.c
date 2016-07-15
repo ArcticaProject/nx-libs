@@ -45,7 +45,7 @@ from The Open Group.
 #include <math.h>
 #undef _XOPEN_SOURCE
 #endif
-#include <nx-X11/X.h>
+#include <X11/X.h>
 #include "windowstr.h"
 #include "gcstruct.h"
 #include "regionstr.h"

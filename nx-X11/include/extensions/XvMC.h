@@ -2,7 +2,7 @@
 #ifndef _XVMC_H_
 #define _XVMC_H_
 
-#include <nx-X11/X.h>
+#include <X11/X.h>
 #include <nx-X11/extensions/Xv.h>
 
 #define XvMCName "XVideo-MotionCompensation"

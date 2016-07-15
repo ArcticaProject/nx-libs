@@ -28,7 +28,7 @@
 #ifndef Win32Poller_H
 #define Win32Poller_H
 
-//#include <nx-X11/X.h>
+//#include <X11/X.h>
 
 #include <Windows.h>
 #include <wingdi.h>

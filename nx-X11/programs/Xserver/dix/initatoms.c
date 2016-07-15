@@ -7,7 +7,7 @@
 #include <dix-config.h>
 #endif
 
-#include <nx-X11/X.h>
+#include <X11/X.h>
 #include <nx-X11/Xatom.h>
 #include "misc.h"
 #include "dix.h"

@@ -31,7 +31,7 @@ PERFORMANCE OF THIS SOFTWARE.
 #endif
 #include <stdio.h>
 #include <nx-X11/Xlib.h>
-#include <nx-X11/Xmd.h>
+#include <X11/Xmd.h>
 #include "Xlibint.h"
 #include "Xlcint.h"
 #include "Ximint.h"

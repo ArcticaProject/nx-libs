@@ -37,8 +37,8 @@ is" without express or implied warranty.
 
 */
 
-#include <nx-X11/X.h>
-#include <nx-X11/Xproto.h>
+#include <X11/X.h>
+#include <X11/Xproto.h>
 #include <nx-X11/Xlib.h>
 #undef Bool
 #include "screenint.h"

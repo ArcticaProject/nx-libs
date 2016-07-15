@@ -47,7 +47,7 @@ SOFTWARE.
 
 #ifndef MI_H
 #define MI_H
-#include <nx-X11/X.h>
+#include <X11/X.h>
 #include "region.h"
 #include "validate.h"
 #include "window.h"

@@ -52,7 +52,7 @@ in this Software without prior written authorization from The Open Group.
 /* THIS IS NOT AN X CONSORTIUM STANDARD OR AN X PROJECT TEAM SPECIFICATION */
 
 
-#include <nx-X11/X.h>
+#include <X11/X.h>
 #include "Trap.h"
 #include "Agent.h"
 

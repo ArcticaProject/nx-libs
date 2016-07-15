@@ -39,7 +39,7 @@
 # include "imports.h"
 # define __glXMemset  memset
 #else
-# include <nx-X11/X.h>
+# include <X11/X.h>
 # include <GL/glx.h>
 # include "GL/glxint.h"
 

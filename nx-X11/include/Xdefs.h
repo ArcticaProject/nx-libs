@@ -30,7 +30,7 @@ authorization from The XFree86 Project Inc..
 #define _XDEFS_H
 
 #ifdef _XSERVER64
-#include <nx-X11/Xmd.h>
+#include <X11/Xmd.h>
 #endif 
 
 #ifndef _XTYPEDEF_ATOM

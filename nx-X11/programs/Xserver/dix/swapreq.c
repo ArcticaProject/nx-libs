@@ -50,9 +50,9 @@ SOFTWARE.
 #include <dix-config.h>
 #endif
 
-#include <nx-X11/X.h>
-#include <nx-X11/Xproto.h>
-#include <nx-X11/Xprotostr.h>
+#include <X11/X.h>
+#include <X11/Xproto.h>
+#include <X11/Xprotostr.h>
 #include "misc.h"
 #include "dixstruct.h"
 #include "extnsionst.h"	/* for SendEvent */

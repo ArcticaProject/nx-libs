@@ -49,8 +49,8 @@ SOFTWARE.
 #include <dix-config.h>
 #endif
 
-#include <nx-X11/X.h>
-#include <nx-X11/Xprotostr.h>
+#include <X11/X.h>
+#include <X11/Xprotostr.h>
 #include "gcstruct.h"
 #include "windowstr.h"
 #include "pixmap.h"

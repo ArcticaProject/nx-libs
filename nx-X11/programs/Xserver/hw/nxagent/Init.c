@@ -46,8 +46,8 @@ is" without express or implied warranty.
 #include <unistd.h>
 #include <stdarg.h>
 
-#include "X.h"
-#include "Xproto.h"
+#include <X11/X.h>
+#include <X11/Xproto.h>
 #include "screenint.h"
 #include "input.h"
 #include "misc.h"

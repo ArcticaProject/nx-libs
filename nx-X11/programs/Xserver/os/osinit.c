@@ -50,7 +50,7 @@ SOFTWARE.
 #endif
 
 #include <stdio.h>
-#include <nx-X11/X.h>
+#include <X11/X.h>
 #include "os.h"
 #include "osdep.h"
 #include <nx-X11/Xos.h>

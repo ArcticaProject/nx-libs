@@ -25,8 +25,8 @@
 
 #include <unistd.h>
 
-#include "X.h"
-#include "Xproto.h"
+#include <X11/X.h>
+#include <X11/Xproto.h>
 #include "gcstruct.h"
 #include "../../include/window.h"
 #include "windowstr.h"

@@ -25,7 +25,7 @@
 #ifndef _XFIXESPROTO_H_
 #define _XFIXESPROTO_H_
 
-#include <nx-X11/Xmd.h>
+#include <X11/Xmd.h>
 #include <nx-X11/extensions/xfixeswire.h>
 #define _SHAPE_SERVER_
 #include <X11/extensions/shape.h>

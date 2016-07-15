@@ -26,7 +26,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "Xmd.h"
+#include <X11/Xmd.h>
 #include "Xlib.h"
 
 #define PANIC
