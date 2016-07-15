@@ -30,7 +30,7 @@
 #include <nx-X11/Xosdefs.h>
 #include <nx-X11/Xutil.h>
 
-#include <nx-X11/extensions/render.h>
+#include <X11/extensions/render.h>
 
 typedef struct {
     short   red;

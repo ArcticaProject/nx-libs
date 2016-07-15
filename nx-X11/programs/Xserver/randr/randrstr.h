@@ -51,7 +51,7 @@
 #include "rrtransform.h"
 #include "randr.h"
 #include "randrproto.h"
-#include <nx-X11/extensions/render.h>   /* we share subpixel order information */
+#include <X11/extensions/render.h>   /* we share subpixel order information */
 #include "picturestr.h"
 #include <nx-X11/Xfuncproto.h>
 

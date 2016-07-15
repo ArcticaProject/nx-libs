@@ -39,8 +39,8 @@
 #include "colormapst.h"
 #include "extnsionst.h"
 #include "servermd.h"
-#include <nx-X11/extensions/render.h>
-#include <nx-X11/extensions/renderproto.h>
+#include <X11/extensions/render.h>
+#include <X11/extensions/renderproto.h>
 #include "picturestr.h"
 #include "glyphstr.h"
 #include <nx-X11/Xfuncproto.h>

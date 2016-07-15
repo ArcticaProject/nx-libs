@@ -18,9 +18,6 @@ XINERAMAHEADERS = panoramiXext.h panoramiXproto.h
 #if BuildRandR
 RANDRHEADERS = randr.h randrproto.h
 #endif
-#if BuildRender
-RENDERHEADERS = render.h renderproto.h
-#endif
 #if BuildXfixes
 XFIXESHEADERS = xfixeswire.h xfixesproto.h
 #endif
@@ -36,7 +33,6 @@ EXTRAHEADERS = \
 	$(XVHEADERS) \
 	$(XVMCHEADERS) \
 	$(RANDRHEADERS) \
-	$(RENDERHEADERS) \
 	$(XFIXESHEADERS) \
 	$(COMPOSITEHEADERS) \
 	$(XRESHEADERS) \
@@ -66,7 +62,6 @@ InstallDriverSDKNonExecFile(XIproto.h,$(DRIVERSDKINCLUDEDIR)/extensions)
 InstallDriverSDKNonExecFile(Xv.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(Xvproto.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(dpms.h,$(DRIVERSDKINCLUDEDIR)/extensions)
-InstallDriverSDKNonExecFile(renderproto.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(Xv.h,$(DRIVERSDKINCLUDEDIR)/extensions)
 InstallDriverSDKNonExecFile(XvMC.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(vldXvMC.h,$(DRIVERSDKINCLUDEDIR))

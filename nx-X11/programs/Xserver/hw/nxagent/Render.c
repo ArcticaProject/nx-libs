@@ -31,8 +31,8 @@
 #include <X11/X.h>
 #include <X11/Xproto.h>
 
-#include "render.h"
-#include "renderproto.h"
+#include <X11/extensions/render.h>
+#include <X11/extensions/renderproto.h>
 
 #include "mi.h"
 #include "fb.h"
