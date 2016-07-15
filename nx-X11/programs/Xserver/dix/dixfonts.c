@@ -73,8 +73,7 @@ Equipment Corporation.
 #endif
 
 #ifdef XF86BIGFONT
-#define _XF86BIGFONT_SERVER_
-#include <nx-X11/extensions/xf86bigfont.h>
+#include "xf86bigfontsrv.h"
 #endif
 
 #define QUERYCHARINFO(pci, pr)  *(pr) = (pci)->metrics

@@ -8,9 +8,6 @@ XCOMM $XFree86: xc/include/extensions/Imakefile,v 3.55 2003/04/21 12:32:06 sven 
 
 NULL =
 
-#if BuildXF86BigfontExt
-XF86BIGFONTHEADERS = xf86bigfont.h xf86bigfstr.h
-#endif
 #if BuildXvExt
 XVHEADERS = Xv.h Xvlib.h Xvproto.h
 XVMCHEADERS = XvMC.h XvMClib.h XvMCproto.h vldXvMC.h
@@ -36,7 +33,6 @@ XRESHEADERS = XResproto.h
 
 EXTRAHEADERS = \
 	$(XINERAMAHEADERS) \
-	$(XF86BIGFONTHEADERS) \
 	$(XVHEADERS) \
 	$(XVMCHEADERS) \
 	$(RANDRHEADERS) \

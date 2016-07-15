@@ -128,6 +128,10 @@ OR PERFORMANCE OF THIS SOFTWARE.
 
 #endif
 
+#ifdef XF86BIGFONT
+#include "xf86bigfontsrv.h"
+#endif
+
 #ifdef DDXOSVERRORF
 void (*OsVendorVErrorFProc)(const char *, va_list args) = NULL;
 #ifdef NX_TRANS_EXIT

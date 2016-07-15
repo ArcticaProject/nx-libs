@@ -74,7 +74,8 @@
 #include "protocol-versions.h"
 
 #define _XF86BIGFONT_SERVER_
-#include <nx-X11/extensions/xf86bigfstr.h>
+#include <X11/extensions/xf86bigfproto.h>
+#include "xf86bigfontsrv.h"
 
 static void XF86BigfontResetProc(
     ExtensionEntry *	/* extEntry */

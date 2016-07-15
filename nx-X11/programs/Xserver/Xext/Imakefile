@@ -41,7 +41,7 @@ SUBDIRS = extmod
 #endif
 
 #if BuildXF86BigfontExt
-XF86BIGFSRCS = xf86bigfont.c
+XF86BIGFSRCS = xf86bigfont.c xf86bigfontsrv.h
 XF86BIGFOBJS = xf86bigfont.o
 #if HasShm
  SHM_DEFINES = -DHAS_SHM
