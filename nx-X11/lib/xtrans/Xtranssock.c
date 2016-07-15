@@ -89,7 +89,7 @@ from the copyright holders.
 
 #include <ctype.h>
 #ifdef XTHREADS
-#include <nx-X11/Xthreads.h>
+#include <X11/Xthreads.h>
 #endif
 
 #ifndef WIN32

@@ -78,7 +78,7 @@ SOFTWARE.
 #endif
 
 #ifdef XTHREADS
-#include <nx-X11/Xthreads.h>
+#include <X11/Xthreads.h>
 #endif
 #ifndef WIN32
 #define X_INCLUDE_PWD_H
