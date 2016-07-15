@@ -70,7 +70,7 @@ in this Software without prior written authorization from The Open Group.
 #include <socket.h>
 #endif
 #else
-#include <nx-X11/Xwindows.h>
+#include <X11/Xwindows.h>
 #endif
 
 #ifndef X_CONNECTION_RETRIES		/* number retries on ECONNREFUSED */

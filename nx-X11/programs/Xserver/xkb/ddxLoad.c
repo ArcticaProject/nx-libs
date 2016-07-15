@@ -91,7 +91,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #ifdef WIN32
 
-#include <nx-X11/Xwindows.h>
+#include <X11/Xwindows.h>
 const char* 
 Win32TempDir()
 {

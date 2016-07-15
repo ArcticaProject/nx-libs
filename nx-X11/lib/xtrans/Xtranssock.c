@@ -148,7 +148,7 @@ from the copyright holders.
 #else /* !WIN32 */
 
 #include <X11/Xwinsock.h>
-#include <nx-X11/Xwindows.h>
+#include <X11/Xwindows.h>
 #include <X11/Xw32defs.h>
 #undef close
 #define close closesocket

@@ -18,12 +18,6 @@ SUBDIRS = extensions $(GLXDIR)
 
 AU_HEADERS = Xauth.h
 
-#ifdef Win32Architecture
-EXTRA_HEADERS = Xwindows.h
-#elif defined(cygwinArchitecture)
-EXTRA_HEADERS = Xwindows.h
-#endif
-
 HEADERS = \
 	XWDFile.h \
 	Xalloca.h \
@@ -34,7 +28,6 @@ HEADERS = \
 	Xosdefs.h \
 	Xpoll.h \
 	$(AU_HEADERS) \
-	$(EXTRA_HEADERS) \
 	$(NULL)
 
 all::
