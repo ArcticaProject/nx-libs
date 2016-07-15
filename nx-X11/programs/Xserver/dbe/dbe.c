@@ -43,7 +43,6 @@
 #include "extnsionst.h"
 #include "gcstruct.h"
 #include "dixstruct.h"
-#define NEED_DBE_PROTOCOL
 #include "dbestruct.h"
 #include "midbe.h"
 

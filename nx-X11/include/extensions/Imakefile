@@ -26,7 +26,6 @@ HEADERS = \
 	xcmiscstr.h \
 	XI.h XInput.h XIproto.h \
 	XKB.h XKBgeom.h XKBproto.h XKBstr.h XKBsrv.h \
-	Xdbeproto.h \
 	$(EXTRAHEADERS) \
 	security.h securstr.h \
 	sync.h syncstr.h \
