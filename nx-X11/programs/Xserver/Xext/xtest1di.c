@@ -70,7 +70,8 @@ University of California.
 #include "dixstruct.h"
 #include "opaque.h"
 #define  XTestSERVER_SIDE
-#include <nx-X11/extensions/xtestext1.h>
+#include <X11/extensions/xtestext1proto.h>
+#include <X11/extensions/xtestext1const.h>
 #include "modinit.h"
 
 #include "xtest1dd.h"

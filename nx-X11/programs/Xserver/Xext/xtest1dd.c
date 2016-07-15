@@ -68,7 +68,9 @@ University of California.
 #include "misc.h"
 #include "dixstruct.h"
 #define  XTestSERVER_SIDE
-#include <nx-X11/extensions/xtestext1.h>	
+#include <X11/Xlib.h>
+#include <X11/extensions/xtestext1proto.h>	
+#include <X11/extensions/xtestext1.h>	
 
 #include "xtest1dd.h"
 

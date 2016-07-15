@@ -11,8 +11,7 @@ extern void ShapeExtensionInit(void);
 #ifdef XTEST
 extern void XTestExtensionInit(void);
 #define _XTEST_SERVER_
-#include <nx-X11/extensions/xtestconst.h>
-#include <nx-X11/extensions/xteststr.h>
+#include <X11/extensions/xtestproto.h>
 #endif
 
 #if 1
