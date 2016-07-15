@@ -49,8 +49,8 @@
 #include "extnsionst.h"
 #include "servermd.h"
 #include "rrtransform.h"
-#include "randr.h"
-#include "randrproto.h"
+#include <X11/extensions/randr.h>
+#include <X11/extensions/randrproto.h>
 #include <X11/extensions/render.h>   /* we share subpixel order information */
 #include "picturestr.h"
 #include <nx-X11/Xfuncproto.h>

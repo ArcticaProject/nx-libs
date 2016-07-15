@@ -15,9 +15,6 @@ XVMCHEADERS = XvMC.h XvMClib.h XvMCproto.h vldXvMC.h
 #if BuildXinerama
 XINERAMAHEADERS = panoramiXext.h panoramiXproto.h
 #endif
-#if BuildRandR
-RANDRHEADERS = randr.h randrproto.h
-#endif
 #if BuildXfixes
 XFIXESHEADERS = xfixeswire.h xfixesproto.h
 #endif
@@ -32,7 +29,6 @@ EXTRAHEADERS = \
 	$(XINERAMAHEADERS) \
 	$(XVHEADERS) \
 	$(XVMCHEADERS) \
-	$(RANDRHEADERS) \
 	$(XFIXESHEADERS) \
 	$(COMPOSITEHEADERS) \
 	$(XRESHEADERS) \

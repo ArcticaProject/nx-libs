@@ -23,7 +23,7 @@
 #ifndef _RRTRANSFORM_H_
 #define _RRTRANSFORM_H_
 
-#include "randr.h"
+#include <X11/extensions/randr.h>
 #include "picturestr.h"
 
 typedef struct _rrTransform RRTransformRec, *RRTransformPtr;
