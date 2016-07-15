@@ -35,7 +35,7 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <nx-X11/Xatom.h>
+#include <X11/Xatom.h>
 #include "Xlibint.h"
 #include "Xcmsint.h"
 #include "Cv.h"

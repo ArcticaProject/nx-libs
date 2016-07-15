@@ -67,7 +67,7 @@
 #include <nx/NX.h>
 #include <nx/NXlib.h>
 
-#include "Xatom.h"
+#include <X11/Xatom.h>
 
 /*
  * Used to register the window's privates.

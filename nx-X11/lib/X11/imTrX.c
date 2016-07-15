@@ -32,7 +32,7 @@ IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <config.h>
 #endif
 #include <string.h>
-#include <nx-X11/Xatom.h>
+#include <X11/Xatom.h>
 #include "Xlibint.h"
 #include "Xlcint.h"
 #include "Ximint.h"

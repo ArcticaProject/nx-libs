@@ -79,7 +79,7 @@ is" without express or implied warranty.
 
 #include <nx-X11/extensions/XKBrules.h>
 
-#include "Xatom.h"
+#include <X11/Xatom.h>
 
 #include <errno.h>
 

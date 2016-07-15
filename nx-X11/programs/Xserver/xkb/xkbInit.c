@@ -40,7 +40,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <X11/X.h>
 #include <X11/Xproto.h>
 #include <X11/keysym.h>
-#include <nx-X11/Xatom.h>
+#include <X11/Xatom.h>
 #include "misc.h"
 #include "inputstr.h"
 #include "opaque.h"

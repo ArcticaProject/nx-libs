@@ -94,7 +94,7 @@ extern unsigned long serverGeneration;
  */
 #undef _XTYPEDEF_POINTER
 
-#include <nx-X11/Xdefs.h>
+#include <X11/Xdefs.h>
 
 #ifndef IN_MODULE
 #ifndef NULL

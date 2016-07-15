@@ -33,7 +33,7 @@ PERFORMANCE OF THIS SOFTWARE.
 #include <config.h>
 #endif
 #include <stdio.h>
-#include <nx-X11/Xatom.h>
+#include <X11/Xatom.h>
 #include <nx-X11/Xos.h>
 #include <nx-X11/Xlib.h>
 #include <X11/keysym.h>

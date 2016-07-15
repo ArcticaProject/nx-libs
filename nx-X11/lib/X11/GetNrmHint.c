@@ -55,7 +55,7 @@ from The Open Group.
 #include <config.h>
 #endif
 #include <nx-X11/Xlibint.h>
-#include <nx-X11/Xatom.h>
+#include <X11/Xatom.h>
 #include "Xatomtype.h"
 #include <nx-X11/Xutil.h>
 #include <stdio.h>

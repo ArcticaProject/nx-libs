@@ -28,8 +28,6 @@ HEADERS = \
 	XWDFile.h \
 	Xalloca.h \
 	Xarch.h \
-	Xatom.h \
-	Xdefs.h \
 	Xfuncproto.h \
 	Xfuncs.h \
 	Xos.h \
@@ -52,8 +50,6 @@ DependSubdirs($(SUBDIRS))
 
 InstallDriverSDKNonExecFile(Xalloca.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(Xarch.h,$(DRIVERSDKINCLUDEDIR))
-InstallDriverSDKNonExecFile(Xdefs.h,$(DRIVERSDKINCLUDEDIR))
-InstallDriverSDKNonExecFile(Xdefs.h,$(DRIVERSDKINCLUDEDIR)/X11)
 InstallDriverSDKNonExecFile(Xfuncproto.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(Xfuncs.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(Xosdefs.h,$(DRIVERSDKINCLUDEDIR))

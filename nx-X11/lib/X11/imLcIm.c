@@ -40,7 +40,7 @@ THIS SOFTWARE.
 #include <nx-X11/Xlib.h>
 */
 #include <X11/Xmd.h>
-#include <nx-X11/Xatom.h>
+#include <X11/Xatom.h>
 #include <nx-X11/Xos.h>
 #include "Xlibint.h"
 #include "Xlcint.h"

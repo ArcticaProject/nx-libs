@@ -62,7 +62,7 @@ SOFTWARE.
  */
 #undef _XTYPEDEF_POINTER
 
-#include <nx-X11/Xdefs.h>	/* for Bool */
+#include <X11/Xdefs.h>	/* for Bool */
 
 #include <X11/Xproto.h>
 #include "screenint.h"	/* for ScreenPtr */
