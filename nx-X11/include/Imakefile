@@ -19,7 +19,7 @@ SUBDIRS = extensions $(GLXDIR)
 AU_HEADERS = Xauth.h
 
 #ifdef Win32Architecture
-EXTRA_HEADERS = Xw32defs.h Xwinsock.h Xwindows.h
+EXTRA_HEADERS = Xwinsock.h Xwindows.h
 #elif defined(cygwinArchitecture)
 EXTRA_HEADERS = Xwindows.h
 #endif

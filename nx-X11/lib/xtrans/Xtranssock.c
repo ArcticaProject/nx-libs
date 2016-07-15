@@ -149,7 +149,7 @@ from the copyright holders.
 
 #include <nx-X11/Xwinsock.h>
 #include <nx-X11/Xwindows.h>
-#include <nx-X11/Xw32defs.h>
+#include <X11/Xw32defs.h>
 #undef close
 #define close closesocket
 #define ECONNREFUSED WSAECONNREFUSED

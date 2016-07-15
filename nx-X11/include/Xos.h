@@ -149,7 +149,7 @@ extern int sys_nerr;
 #include <unistd.h>
 #endif
 #ifdef WIN32
-#include <nx-X11/Xw32defs.h>
+#include <X11/Xw32defs.h>
 #else
 #include <sys/file.h>
 #endif
