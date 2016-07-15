@@ -284,6 +284,6 @@ struct sockaddr_un {
 };
 #endif
 
-#include <nx-X11/Xarch.h>
+#include <X11/Xarch.h>
 
 #endif /* _XOS_H_ */

@@ -27,7 +27,6 @@ EXTRA_HEADERS = Xwindows.h
 HEADERS = \
 	XWDFile.h \
 	Xalloca.h \
-	Xarch.h \
 	Xfuncproto.h \
 	Xfuncs.h \
 	Xos.h \
@@ -49,7 +48,6 @@ MakeSubdirs($(SUBDIRS))
 DependSubdirs($(SUBDIRS))
 
 InstallDriverSDKNonExecFile(Xalloca.h,$(DRIVERSDKINCLUDEDIR))
-InstallDriverSDKNonExecFile(Xarch.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(Xfuncproto.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(Xfuncs.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(Xosdefs.h,$(DRIVERSDKINCLUDEDIR))
