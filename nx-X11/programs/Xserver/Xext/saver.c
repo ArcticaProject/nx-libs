@@ -43,7 +43,7 @@ in this Software without prior written authorization from the X Consortium.
 #include "dixstruct.h"
 #include "resource.h"
 #include "opaque.h"
-#include <nx-X11/extensions/saverproto.h>
+#include <X11/extensions/saverproto.h>
 #include "gcstruct.h"
 #include "cursorstr.h"
 #include "colormapst.h"

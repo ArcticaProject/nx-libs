@@ -32,7 +32,7 @@ extern void SyncExtensionInit(void);
 
 #ifdef SCREENSAVER
 extern void ScreenSaverExtensionInit (void);
-#include <nx-X11/extensions/saver.h>
+#include <X11/extensions/saver.h>
 #endif
 
 #ifdef XCMISC

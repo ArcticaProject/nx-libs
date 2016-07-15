@@ -8,10 +8,6 @@ XCOMM $XFree86: xc/include/extensions/Imakefile,v 3.55 2003/04/21 12:32:06 sven 
 
 NULL =
 
-#if BuildScreenSaverExt
-SCREENSAVERHEADERS = saver.h saverproto.h scrnsaver.h
-#endif
-
 #if BuildXF86BigfontExt
 XF86BIGFONTHEADERS = xf86bigfont.h xf86bigfstr.h
 #endif
@@ -39,7 +35,6 @@ XRESHEADERS = XResproto.h
 #endif
 
 EXTRAHEADERS = \
-	$(SCREENSAVERHEADERS) \
 	$(XINERAMAHEADERS) \
 	$(XF86BIGFONTHEADERS) \
 	$(XVHEADERS) \
