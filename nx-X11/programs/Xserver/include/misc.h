@@ -76,7 +76,7 @@ extern unsigned long globalSerialNumber;
 extern unsigned long serverGeneration;
 
 #include <nx-X11/Xosdefs.h>
-#include <nx-X11/Xfuncproto.h>
+#include <X11/Xfuncproto.h>
 #include <X11/Xmd.h>
 #include <X11/X.h>
 #include <stdint.h>

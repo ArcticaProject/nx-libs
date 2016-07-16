@@ -51,7 +51,7 @@ PERFORMANCE OF THIS SOFTWARE.
 #ifndef _SYNC_H_
 #define _SYNC_H_
 
-#include <nx-X11/Xfuncproto.h>
+#include <X11/Xfuncproto.h>
 
 _XFUNCPROTOBEGIN
 

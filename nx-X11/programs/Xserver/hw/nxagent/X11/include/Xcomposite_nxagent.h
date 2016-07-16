@@ -68,7 +68,7 @@
 #define _XCOMPOSITE_H_
 
 #include <X11/extensions/composite.h>
-#include <nx-X11/Xfuncproto.h>
+#include <X11/Xfuncproto.h>
 
 /*
  * This revision number also appears in configure.ac, they have

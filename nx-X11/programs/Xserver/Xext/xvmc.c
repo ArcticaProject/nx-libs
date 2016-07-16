@@ -12,7 +12,7 @@
 #include "scrnintstr.h"
 #include "extnsionst.h"
 #include "servermd.h"
-#include <nx-X11/Xfuncproto.h>
+#include <X11/Xfuncproto.h>
 #include "xvdix.h"
 #include <nx-X11/extensions/XvMC.h>
 #include <nx-X11/extensions/Xvproto.h>

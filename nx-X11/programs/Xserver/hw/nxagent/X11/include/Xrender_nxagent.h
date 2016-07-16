@@ -26,7 +26,7 @@
 #define _XRENDER_H_
 
 #include <nx-X11/Xlib.h>
-#include <nx-X11/Xfuncproto.h>
+#include <X11/Xfuncproto.h>
 #include <nx-X11/Xosdefs.h>
 #include <nx-X11/Xutil.h>
 

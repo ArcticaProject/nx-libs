@@ -29,7 +29,7 @@ from The Open Group.
 #ifndef _XLOCALE_H_
 #define _XLOCALE_H_
 
-#include <nx-X11/Xfuncproto.h>
+#include <X11/Xfuncproto.h>
 #include <nx-X11/Xosdefs.h>
 
 #ifndef X_LOCALE

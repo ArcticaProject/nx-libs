@@ -251,7 +251,7 @@ typedef struct _XSQEvent
 #include <stdlib.h>
 #include <string.h>
 
-#include <nx-X11/Xfuncproto.h>
+#include <X11/Xfuncproto.h>
 
 _XFUNCPROTOBEGIN
 

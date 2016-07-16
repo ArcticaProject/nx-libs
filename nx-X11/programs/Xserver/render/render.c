@@ -43,7 +43,7 @@
 #include <X11/extensions/renderproto.h>
 #include "picturestr.h"
 #include "glyphstr.h"
-#include <nx-X11/Xfuncproto.h>
+#include <X11/Xfuncproto.h>
 #include "cursorstr.h"
 #ifdef EXTMODULE
 #include "xf86_ansic.h"

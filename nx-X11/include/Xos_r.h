@@ -104,7 +104,7 @@ extern LockInfoPtr _Xglobal_lock;
 #  endif
 #  if defined(XTHREADS_WARN) || defined(XTHREADS_FILE_LINE)
 #   ifndef XAllocIDs /* Xlibint.h does not have multiple include protection */
-#    include <nx-X11/Xfuncproto.h>	/* for NeedFunctionPrototypes */
+#    include <X11/Xfuncproto.h>	/* for NeedFunctionPrototypes */
 extern void (*_XLockMutex_fn)(
 #    if NeedFunctionPrototypes
     LockInfoPtr	/* lock */, char * /* file */, int /* line */
@@ -126,7 +126,7 @@ extern void (*_XUnlockMutex_fn)(
 #   endif
 #  else
 #   ifndef XAllocIDs /* Xlibint.h does not have multiple include protection */
-#    include <nx-X11/Xfuncproto.h>	/* for NeedFunctionPrototypes */
+#    include <X11/Xfuncproto.h>	/* for NeedFunctionPrototypes */
 extern void (*_XLockMutex_fn)(
 #    if NeedFunctionPrototypes
     LockInfoPtr	/* lock */
@@ -152,7 +152,7 @@ extern void (*_XUnlockMutex_fn)(
 extern void (*_XtProcessLock)(void);
 #  endif
 #  ifndef _XtintrinsicP_h
-#   include <nx-X11/Xfuncproto.h>	/* for NeedFunctionPrototypes */
+#   include <X11/Xfuncproto.h>	/* for NeedFunctionPrototypes */
 extern void XtProcessLock(
 #   if NeedFunctionPrototypes
     void

@@ -19,7 +19,6 @@ SUBDIRS = extensions $(GLXDIR)
 AU_HEADERS = Xauth.h
 
 HEADERS = \
-	Xfuncproto.h \
 	Xfuncs.h \
 	Xos.h \
 	Xos_r.h \
@@ -38,7 +37,6 @@ InstallMultipleFlags($(HEADERS),$(INCDIR)/nx-X11,$(INSTINCFLAGS))
 MakeSubdirs($(SUBDIRS))
 DependSubdirs($(SUBDIRS))
 
-InstallDriverSDKNonExecFile(Xfuncproto.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(Xfuncs.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(Xosdefs.h,$(DRIVERSDKINCLUDEDIR))
 

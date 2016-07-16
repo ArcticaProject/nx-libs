@@ -53,7 +53,7 @@
 #include <X11/extensions/randrproto.h>
 #include <X11/extensions/render.h>   /* we share subpixel order information */
 #include "picturestr.h"
-#include <nx-X11/Xfuncproto.h>
+#include <X11/Xfuncproto.h>
 
 /* required for ABI compatibility for now */
 #define RANDR_10_INTERFACE 1

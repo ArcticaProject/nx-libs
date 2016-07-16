@@ -69,7 +69,7 @@ SOFTWARE.
 #include "mifpoly.h"
 #include "mi.h"
 #include "mifillarc.h"
-#include <nx-X11/Xfuncproto.h>
+#include <X11/Xfuncproto.h>
 
 static double miDsin(double a);
 static double miDcos(double a);
