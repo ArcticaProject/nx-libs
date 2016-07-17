@@ -8,7 +8,7 @@
 #include "scrnintstr.h"
 #include "gc.h"
 #include <X11/extensions/Xv.h>
-#include <nx-X11/extensions/Xvproto.h>
+#include <X11/extensions/Xvproto.h>
 #include "xvdix.h"
 #include "xvmodproc.h"
 

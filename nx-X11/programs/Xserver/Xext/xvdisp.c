@@ -62,7 +62,7 @@ SOFTWARE.
 #include "opaque.h"
 
 #include <X11/extensions/Xv.h>
-#include <nx-X11/extensions/Xvproto.h>
+#include <X11/extensions/Xvproto.h>
 #include "xvdix.h"
 #ifdef MITSHM
 #define _XSHM_SERVER_
