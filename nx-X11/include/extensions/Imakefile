@@ -20,7 +20,7 @@ HEADERS = \
 	XInput.h \
 	XKBsrv.h \
 	$(EXTRAHEADERS) \
-	security.h securstr.h \
+	security.h \
 	sync.h syncstr.h \
 	$(NULL)
 

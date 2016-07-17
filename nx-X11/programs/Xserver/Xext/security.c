@@ -63,7 +63,8 @@ in this Software without prior written authorization from The Open Group.
 #include "propertyst.h"
 #include "protocol-versions.h"
 #define _SECURITY_SERVER
-#include <nx-X11/extensions/securstr.h>
+#include <nx-X11/extensions/security.h>
+#include <X11/extensions/securproto.h>
 #include <assert.h>
 #include <stdarg.h>
 #include <stdio.h>  /* for file reading operations */

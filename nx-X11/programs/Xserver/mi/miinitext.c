@@ -166,7 +166,7 @@ typedef void (*InitExtension)(void);
 #endif
 #ifdef XCSECURITY
 #define _SECURITY_SERVER
-#include <nx-X11/extensions/securstr.h>
+#include <X11/extensions/securproto.h>
 #endif
 #ifdef PANORAMIX
 #include <X11/extensions/panoramiXproto.h>
