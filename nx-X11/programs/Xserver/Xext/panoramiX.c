@@ -47,7 +47,7 @@ Equipment Corporation.
 #include "windowstr.h"
 #include "pixmapstr.h"
 #include "panoramiX.h"
-#include <nx-X11/extensions/panoramiXproto.h>
+#include <X11/extensions/panoramiXproto.h>
 #include "panoramiXsrv.h"
 #include "globals.h"
 #include "servermd.h"

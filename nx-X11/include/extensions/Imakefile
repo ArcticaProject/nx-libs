@@ -11,12 +11,8 @@ NULL =
 #if BuildXvExt
 XVMCHEADERS = vldXvMC.h
 #endif
-#if BuildXinerama
-XINERAMAHEADERS = panoramiXext.h panoramiXproto.h
-#endif
 
 EXTRAHEADERS = \
-	$(XINERAMAHEADERS) \
 	$(XVMCHEADERS) \
 	$(NULL)
 

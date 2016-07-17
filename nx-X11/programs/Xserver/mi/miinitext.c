@@ -169,7 +169,7 @@ typedef void (*InitExtension)(void);
 #include <nx-X11/extensions/securstr.h>
 #endif
 #ifdef PANORAMIX
-#include <nx-X11/extensions/panoramiXproto.h>
+#include <X11/extensions/panoramiXproto.h>
 #endif
 #ifdef XF86BIGFONT
 #include <X11/extensions/xf86bigfproto.h>
