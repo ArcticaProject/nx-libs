@@ -64,8 +64,8 @@ PERFORMANCE OF THIS SOFTWARE.
 #include "resource.h"
 #include "opaque.h"
 #define _SYNC_SERVER
-#include <nx-X11/extensions/sync.h>
-#include <nx-X11/extensions/syncstr.h>
+#include <X11/extensions/syncproto.h>
+#include "syncsrv.h"
 #include "protocol-versions.h"
 
 #ifdef EXTMODULE

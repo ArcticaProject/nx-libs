@@ -26,8 +26,7 @@ extern void BigReqExtensionInit(void);
 #ifdef XSYNC
 extern void SyncExtensionInit(void);
 #define _SYNC_SERVER
-#include <nx-X11/extensions/sync.h>
-#include <nx-X11/extensions/syncstr.h>
+#include <X11/extensions/syncproto.h>
 #endif
 
 #ifdef SCREENSAVER

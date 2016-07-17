@@ -21,7 +21,6 @@ HEADERS = \
 	XKBsrv.h \
 	$(EXTRAHEADERS) \
 	security.h \
-	sync.h syncstr.h \
 	$(NULL)
 
 all::
