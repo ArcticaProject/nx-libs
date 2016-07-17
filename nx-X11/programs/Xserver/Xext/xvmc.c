@@ -14,9 +14,9 @@
 #include "servermd.h"
 #include <X11/Xfuncproto.h>
 #include "xvdix.h"
-#include <nx-X11/extensions/XvMC.h>
+#include <X11/extensions/XvMC.h>
 #include <X11/extensions/Xvproto.h>
-#include <nx-X11/extensions/XvMCproto.h>
+#include <X11/extensions/XvMCproto.h>
 #include "xvmcext.h"
 
 #ifdef HAS_XVMCSHM

@@ -50,7 +50,7 @@ extern void XvExtensionInit(void);
 extern void XvMCExtensionInit(void);
 extern void XvRegister(void);
 #include <X11/extensions/Xv.h>
-#include <nx-X11/extensions/XvMC.h>
+#include <X11/extensions/XvMC.h>
 #endif
 
 #ifdef RES
