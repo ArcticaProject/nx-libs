@@ -39,7 +39,7 @@
 
 #include <GL/gl.h>
 #include "glxserver.h"
-#include "GL/glxproto.h"
+#include <GL/glxproto.h>
 #include "unpack.h"
 #include "impsize.h"
 
