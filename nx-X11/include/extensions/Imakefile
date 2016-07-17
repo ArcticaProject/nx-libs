@@ -18,7 +18,7 @@ EXTRAHEADERS = \
 
 HEADERS = \
 	XInput.h \
-	XKBproto.h XKBsrv.h \
+	XKBsrv.h \
 	$(EXTRAHEADERS) \
 	security.h securstr.h \
 	sync.h syncstr.h \

@@ -38,7 +38,7 @@ from The Open Group.
 #include <stdio.h>
 #include <ctype.h>
 
-#include <nx-X11/extensions/XKBproto.h>
+#include <X11/extensions/XKBproto.h>
 #include "XKBlibint.h"
 
 #ifdef USE_OWN_COMPOSE

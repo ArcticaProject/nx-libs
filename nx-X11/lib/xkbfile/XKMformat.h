@@ -29,7 +29,7 @@
 #define	_XKMFORMAT_H_ 1
 
 #include <X11/extensions/XKB.h>
-#include <nx-X11/extensions/XKBproto.h>
+#include <X11/extensions/XKBproto.h>
 #include <nx-X11/extensions/XKM.h>
 
 typedef	struct _xkmFileInfo {

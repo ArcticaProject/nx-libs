@@ -44,7 +44,7 @@ from The Open Group.
 #define XK_LATIN1
 #define XK_PUBLISHING
 #include <X11/keysym.h>
-#include <nx-X11/extensions/XKBproto.h>
+#include <X11/extensions/XKBproto.h>
 #include "XKBlibint.h"
 #include <nx-X11/Xlocale.h>
 #include <ctype.h>
