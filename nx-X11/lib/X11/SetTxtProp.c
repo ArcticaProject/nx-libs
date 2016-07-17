@@ -54,7 +54,7 @@ from The Open Group.
 #include <nx-X11/Xlibint.h>
 #include <X11/Xatom.h>
 #include <nx-X11/Xutil.h>
-#include <nx-X11/Xos.h>
+#include <X11/Xos.h>
 #include <stdio.h>
 
 void XSetTextProperty (dpy, w, tp, property)

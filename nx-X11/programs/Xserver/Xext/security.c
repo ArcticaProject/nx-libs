@@ -89,7 +89,7 @@ in this Software without prior written authorization from The Open Group.
 #endif
 
 #if defined(WIN32) || defined(__CYGWIN__)
-#include <nx-X11/Xos.h>
+#include <X11/Xos.h>
 #undef index
 #endif
 

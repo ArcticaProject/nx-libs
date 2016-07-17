@@ -50,7 +50,7 @@ SOFTWARE.
 #include <config.h>
 #endif
 #include "Xlibint.h"
-#include <nx-X11/Xos.h>
+#include <X11/Xos.h>
 #include <nx-X11/Xresource.h>
 
 #ifndef X_NOT_POSIX

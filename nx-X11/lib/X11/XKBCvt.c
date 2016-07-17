@@ -48,7 +48,7 @@ from The Open Group.
 #include "XKBlibint.h"
 #include <nx-X11/Xlocale.h>
 #include <ctype.h>
-#include <nx-X11/Xos.h>
+#include <X11/Xos.h>
 
 #ifdef __sgi_not_xconsortium
 #define	XKB_EXTEND_LOOKUP_STRING

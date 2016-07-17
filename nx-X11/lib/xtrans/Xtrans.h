@@ -53,7 +53,7 @@ from The Open Group.
 #define _XTRANS_H_
 
 #include <X11/Xfuncproto.h>
-#include <nx-X11/Xos.h>
+#include <X11/Xos.h>
 
 #ifndef WIN32
 #ifndef Lynx

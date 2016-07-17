@@ -40,7 +40,7 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <nx-X11/Xos.h>
+#include <X11/Xos.h>
 #include <stdio.h> /* sscanf */
 #include "Xlibint.h"
 #include "Xcmsint.h"

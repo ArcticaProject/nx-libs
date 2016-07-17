@@ -20,7 +20,6 @@ AU_HEADERS = Xauth.h
 
 HEADERS = \
 	Xfuncs.h \
-	Xos.h \
 	Xos_r.h \
 	Xpoll.h \
 	$(AU_HEADERS) \

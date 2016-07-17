@@ -45,7 +45,7 @@ from The Open Group.
 #include <config.h>
 #endif
 #include "Xlibint.h"
-#include <nx-X11/Xos.h>
+#include <X11/Xos.h>
 #include "Xutil.h"
 #include <stdio.h>
 #include <ctype.h>

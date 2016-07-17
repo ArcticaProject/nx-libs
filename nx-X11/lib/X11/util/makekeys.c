@@ -29,7 +29,7 @@ from The Open Group.
 /* Constructs hash tables for XStringToKeysym and XKeysymToString. */
 
 #include <X11/X.h>
-#include <nx-X11/Xos.h>
+#include <X11/Xos.h>
 #include <X11/keysymdef.h>
 #include <stdio.h>
 #include <stdlib.h>

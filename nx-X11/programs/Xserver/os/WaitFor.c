@@ -85,7 +85,7 @@ SOFTWARE.
 #ifdef WIN32
 #include <X11/Xwinsock.h>
 #endif
-#include <nx-X11/Xos.h>			/* for strings, fcntl, time */
+#include <X11/Xos.h>			/* for strings, fcntl, time */
 #include <errno.h>
 #include <stdio.h>
 #include <X11/X.h>

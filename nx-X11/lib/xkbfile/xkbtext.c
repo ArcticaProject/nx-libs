@@ -34,7 +34,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 
-#include <nx-X11/Xos.h>
+#include <X11/Xos.h>
 
 #ifndef XKB_IN_SERVER
 

@@ -60,7 +60,7 @@ from The Open Group.
 #include "Xlibint.h"
 #include "Xlcint.h"
 #include <nx-X11/Xlocale.h>
-#include <nx-X11/Xos.h>
+#include <X11/Xos.h>
 #ifdef WIN32
 #undef close
 #endif

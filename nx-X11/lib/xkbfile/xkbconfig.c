@@ -40,7 +40,7 @@
 
 #ifndef XKB_IN_SERVER
 
-#include <nx-X11/Xos.h>
+#include <X11/Xos.h>
 #include <nx-X11/Xlib.h>
 #include <X11/keysym.h>
 #include <nx-X11/XKBlib.h>

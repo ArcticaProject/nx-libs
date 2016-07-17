@@ -61,7 +61,7 @@ from The Open Group.
 #include	"locking.h"
 #endif
 #include 	"XrmI.h"
-#include	<nx-X11/Xos.h>
+#include	<X11/Xos.h>
 #include "Xresinternal.h"
 #include "Xresource.h"
 

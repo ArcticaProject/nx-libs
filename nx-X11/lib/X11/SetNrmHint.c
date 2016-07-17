@@ -57,7 +57,7 @@ from The Open Group.
 #include <nx-X11/Xutil.h>
 #include "Xatomtype.h"
 #include <X11/Xatom.h>
-#include <nx-X11/Xos.h>
+#include <X11/Xos.h>
 
 void XSetWMSizeHints (dpy, w, hints, prop)
     Display *dpy;

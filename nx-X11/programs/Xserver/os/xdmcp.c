@@ -21,7 +21,7 @@
 #include <X11/Xwinsock.h>
 #endif
 
-#include <nx-X11/Xos.h>
+#include <X11/Xos.h>
 
 #if !defined(WIN32)
 #ifndef Lynx

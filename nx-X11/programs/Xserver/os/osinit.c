@@ -53,7 +53,7 @@ SOFTWARE.
 #include <X11/X.h>
 #include "os.h"
 #include "osdep.h"
-#include <nx-X11/Xos.h>
+#include <X11/Xos.h>
 
 #ifdef SMART_SCHEDULE
 #include "dixstruct.h"

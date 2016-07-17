@@ -29,7 +29,7 @@ in this Software without prior written authorization from The Open Group.
 #endif
 #include <nx-X11/Xlibint.h>
 #include <X11/Xatom.h>
-#include <nx-X11/Xos.h>
+#include <X11/Xos.h>
 #include <stdio.h>
 
 

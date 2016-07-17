@@ -29,7 +29,7 @@ in this Software without prior written authorization from The Open Group.
 #include <config.h>
 #endif
 #include <nx-X11/Xauth.h>
-#include <nx-X11/Xos.h>
+#include <X11/Xos.h>
 #ifdef XTHREADS
 #include <X11/Xthreads.h>
 #endif

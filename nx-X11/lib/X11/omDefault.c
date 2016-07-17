@@ -33,7 +33,7 @@
 #endif
 #include "Xlibint.h"
 #include "XomGeneric.h"
-#include <nx-X11/Xos.h>
+#include <X11/Xos.h>
 #include <X11/Xatom.h>
 #include <stdio.h>
 

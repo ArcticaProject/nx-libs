@@ -26,7 +26,7 @@
 #include <time.h>
 #include <stdio.h>
 
-#include "Xos.h"
+#include <X11/Xos.h>
 #include "Millis.h"
 
 #ifdef DDXTIME
