@@ -49,7 +49,7 @@ extern void DPMSExtensionInit(void);
 extern void XvExtensionInit(void);
 extern void XvMCExtensionInit(void);
 extern void XvRegister(void);
-#include <nx-X11/extensions/Xv.h>
+#include <X11/extensions/Xv.h>
 #include <nx-X11/extensions/XvMC.h>
 #endif
 

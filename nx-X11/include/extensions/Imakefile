@@ -9,7 +9,7 @@ XCOMM $XFree86: xc/include/extensions/Imakefile,v 3.55 2003/04/21 12:32:06 sven 
 NULL =
 
 #if BuildXvExt
-XVHEADERS = Xv.h Xvlib.h Xvproto.h
+XVHEADERS = Xvlib.h Xvproto.h
 XVMCHEADERS = XvMC.h XvMClib.h XvMCproto.h vldXvMC.h
 #endif
 #if BuildXinerama
@@ -42,12 +42,9 @@ InstallMultipleFlags($(HEADERS),$(INCDIR)/nx-X11/extensions,$(INSTINCFLAGS))
 
 InstallDriverSDKNonExecFile(XI.h,$(DRIVERSDKINCLUDEDIR)/extensions)
 InstallDriverSDKNonExecFile(XIproto.h,$(DRIVERSDKINCLUDEDIR)/extensions)
-InstallDriverSDKNonExecFile(Xv.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(Xvproto.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(dpms.h,$(DRIVERSDKINCLUDEDIR)/extensions)
-InstallDriverSDKNonExecFile(Xv.h,$(DRIVERSDKINCLUDEDIR)/extensions)
 InstallDriverSDKNonExecFile(XvMC.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(vldXvMC.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(Xvlib.h,$(DRIVERSDKINCLUDEDIR)/extensions)
-InstallDriverSDKNonExecFile(Xv.h,$(DRIVERSDKINCLUDEDIR)/X11/extensions)
 InstallDriverSDKNonExecFile(Xvlib.h,$(DRIVERSDKINCLUDEDIR)/X11/extensions)

@@ -93,7 +93,7 @@ SOFTWARE.
 
 #define GLOBAL
 
-#include <nx-X11/extensions/Xv.h>
+#include <X11/extensions/Xv.h>
 #include <nx-X11/extensions/Xvproto.h>
 #include "xvdix.h"
 

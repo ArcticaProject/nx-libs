@@ -53,7 +53,7 @@ SOFTWARE.
 */
 
 #include <X11/Xfuncproto.h>
-#include <nx-X11/extensions/Xv.h>
+#include <X11/extensions/Xv.h
 
 typedef struct {
   int numerator;
