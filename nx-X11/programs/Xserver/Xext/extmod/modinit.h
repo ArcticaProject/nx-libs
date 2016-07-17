@@ -42,7 +42,7 @@ extern void XCMiscExtensionInit(void);
 
 #ifdef DPMSExtension
 extern void DPMSExtensionInit(void);
-#include <nx-X11/extensions/dpmsstr.h>
+#include <X11/extensions/dpmsproto.h>
 #endif
 
 #ifdef XV

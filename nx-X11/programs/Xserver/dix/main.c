@@ -109,7 +109,7 @@ Equipment Corporation.
 
 #ifdef DPMSExtension
 #define DPMS_SERVER
-#include <nx-X11/extensions/dpms.h>
+#include <X11/extensions/dpms.h>
 #include "dpmsproc.h"
 #endif
 

@@ -26,7 +26,6 @@ HEADERS = \
 	$(EXTRAHEADERS) \
 	security.h securstr.h \
 	sync.h syncstr.h \
-	dpms.h dpmsstr.h \
 	$(NULL)
 
 all::
@@ -37,6 +36,5 @@ BuildIncludes($(HEADERS),nx-X11/extensions,../..)
 InstallMultipleFlags($(HEADERS),$(INCDIR)/nx-X11/extensions,$(INSTINCFLAGS))
 #endif
 
-InstallDriverSDKNonExecFile(dpms.h,$(DRIVERSDKINCLUDEDIR)/extensions)
 InstallDriverSDKNonExecFile(vldXvMC.h,$(DRIVERSDKINCLUDEDIR))
 
