@@ -65,7 +65,7 @@ from The Open Group.
 #include "Xlibint.h"
 #include <nx-X11/Xpoll.h>
 #include <nx-X11/Xtrans/Xtrans.h>
-#include <nx-X11/extensions/xcmiscstr.h>
+#include <X11/extensions/xcmiscstr.h>
 #include <stdio.h>
 #ifdef WIN32
 #include <direct.h>

@@ -21,7 +21,6 @@ EXTRAHEADERS = \
 	$(NULL)
 
 HEADERS = \
-	xcmiscstr.h \
 	XI.h XInput.h XIproto.h \
 	XKB.h XKBgeom.h XKBproto.h XKBstr.h XKBsrv.h \
 	$(EXTRAHEADERS) \

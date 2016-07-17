@@ -37,7 +37,7 @@ extern void ScreenSaverExtensionInit (void);
 
 #ifdef XCMISC
 extern void XCMiscExtensionInit(void);
-#include <nx-X11/extensions/xcmiscstr.h>
+#include <X11/extensions/xcmiscstr.h>
 #endif
 
 #ifdef DPMSExtension
