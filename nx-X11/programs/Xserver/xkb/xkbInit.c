@@ -48,7 +48,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "scrnintstr.h"
 #define	XKBSRV_NEED_FILE_FUNCS
 #include <nx-X11/extensions/XKBsrv.h>
-#include <nx-X11/extensions/XKBgeom.h>
+#include <X11/extensions/XKBgeom.h>
 #include <nx-X11/extensions/XKMformat.h>
 #include <nx-X11/extensions/XKBfile.h>
 #include "xkb.h"

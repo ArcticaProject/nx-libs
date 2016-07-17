@@ -43,7 +43,7 @@
 
 #include <nx-X11/XKBlib.h>
 
-#include <nx-X11/extensions/XKBgeom.h>
+#include <X11/extensions/XKBgeom.h>
 #include "XKMformat.h"
 #include "XKBfileInt.h"
 
@@ -57,7 +57,7 @@
 #include <X11/extensions/XKBstr.h>
 #define	 XKBSRV_NEED_FILE_FUNCS
 #include <nx-X11/extensions/XKBsrv.h>
-#include <nx-X11/extensions/XKBgeom.h>
+#include <X11/extensions/XKBgeom.h>
 
 Atom
 XkbInternAtom(Display *dpy,char *str,Bool only_if_exists)

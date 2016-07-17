@@ -47,7 +47,7 @@
 #include <X11/Xatom.h>
 #include <X11/keysym.h>
 #include <nx-X11/XKBlib.h>
-#include <nx-X11/extensions/XKBgeom.h>
+#include <X11/extensions/XKBgeom.h>
 #include "XKMformat.h"
 #include "XKBfileInt.h"
 #include "XKBrules.h"
