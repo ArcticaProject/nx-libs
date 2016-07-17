@@ -83,7 +83,7 @@ SOFTWARE.
 #ifndef WIN32
 #define X_INCLUDE_PWD_H
 #define XOS_USE_XLIB_LOCKING
-#include <nx-X11/Xos_r.h>
+#include <X11/Xos_r.h>
 #endif
 #include <stdio.h>
 #include <ctype.h>

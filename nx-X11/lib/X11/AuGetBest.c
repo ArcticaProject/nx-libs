@@ -36,7 +36,7 @@ in this Software without prior written authorization from The Open Group.
 #ifdef hpux
 #define X_INCLUDE_NETDB_H
 #define XOS_USE_NO_LOCKING
-#include <nx-X11/Xos_r.h>
+#include <X11/Xos_r.h>
 #endif
 
 static int

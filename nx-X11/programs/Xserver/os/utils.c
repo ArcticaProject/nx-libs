@@ -229,7 +229,7 @@ Bool noXvExtension = FALSE;
 #endif
 
 #define X_INCLUDE_NETDB_H
-#include <nx-X11/Xos_r.h>
+#include <X11/Xos_r.h>
 
 #include <errno.h>
 

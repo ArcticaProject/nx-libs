@@ -36,7 +36,7 @@
 
 #define X_INCLUDE_STRING_H
 #define XOS_USE_NO_LOCKING
-#include <nx-X11/Xos_r.h>
+#include <X11/Xos_r.h>
 
 #ifndef XKB_IN_SERVER
 
