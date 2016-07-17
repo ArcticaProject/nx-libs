@@ -27,7 +27,7 @@
 
 #include <nx-X11/Xlib.h>
 #include <X11/Xfuncproto.h>
-#include <nx-X11/Xosdefs.h>
+#include <X11/Xosdefs.h>
 #include <nx-X11/Xutil.h>
 
 #include <X11/extensions/render.h>

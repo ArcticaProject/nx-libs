@@ -22,7 +22,6 @@ HEADERS = \
 	Xfuncs.h \
 	Xos.h \
 	Xos_r.h \
-	Xosdefs.h \
 	Xpoll.h \
 	$(AU_HEADERS) \
 	$(NULL)
@@ -38,7 +37,6 @@ MakeSubdirs($(SUBDIRS))
 DependSubdirs($(SUBDIRS))
 
 InstallDriverSDKNonExecFile(Xfuncs.h,$(DRIVERSDKINCLUDEDIR))
-InstallDriverSDKNonExecFile(Xosdefs.h,$(DRIVERSDKINCLUDEDIR))
 
 /* _XOPEN_SOURCE is defined where needed to move __fds_bits to fds_bits. */
 USE_FDS_BITS = fds_bits

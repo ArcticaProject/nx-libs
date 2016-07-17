@@ -241,7 +241,7 @@ typedef struct _XSQEvent
 #include <errno.h>
 #define _XBCOPYFUNC _Xbcopy
 #include <nx-X11/Xfuncs.h>
-#include <nx-X11/Xosdefs.h>
+#include <X11/Xosdefs.h>
 
 /* Utek leaves kernel macros around in include files (bleah) */
 #ifdef dirty

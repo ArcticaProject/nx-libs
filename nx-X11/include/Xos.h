@@ -36,7 +36,7 @@ in this Software without prior written authorization from The Open Group.
 #ifndef _XOS_H_
 #define _XOS_H_
 
-#include <nx-X11/Xosdefs.h>
+#include <X11/Xosdefs.h>
 
 /*
  * Get major data types (esp. caddr_t)
