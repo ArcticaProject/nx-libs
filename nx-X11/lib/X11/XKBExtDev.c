@@ -32,7 +32,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "Xlibint.h"
 #include <nx-X11/extensions/XKBproto.h>
 #include "XKBlibint.h"
-#include <nx-X11/extensions/XI.h>
+#include <X11/extensions/XI.h>
 
 /***====================================================================***/
 

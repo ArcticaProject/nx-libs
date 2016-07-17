@@ -43,7 +43,7 @@ in this Software without prior written authorization from The Open Group.
 # include   "mipointrst.h"
 # include   "cursorstr.h"
 # include   "dixstruct.h"
-# include   <nx-X11/extensions/XI.h>
+# include   <X11/extensions/XI.h>
 
 int  miPointerScreenIndex;
 static unsigned long miPointerGeneration = 0;

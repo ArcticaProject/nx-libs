@@ -59,7 +59,7 @@ SOFTWARE.
 #include <X11/Xproto.h>			/* Request macro     */
 #include "inputstr.h"			/* DeviceIntPtr	     */
 #include "windowstr.h"			/* window structure  */
-#include <nx-X11/extensions/XIproto.h>
+#include <X11/extensions/XIproto.h>
 #include "extnsionst.h"
 #include "extinit.h"			/* LookupDeviceIntRec */
 #include "exglobals.h"

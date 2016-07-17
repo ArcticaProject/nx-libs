@@ -59,8 +59,8 @@ SOFTWARE.
 #include <X11/Xproto.h>			/* Request macro     */
 #include "windowstr.h"			/* focus struct      */
 #include "inputstr.h"			/* DeviceIntPtr	     */
-#include <nx-X11/extensions/XI.h>
-#include <nx-X11/extensions/XIproto.h>
+#include <X11/extensions/XI.h>
+#include <X11/extensions/XIproto.h>
 
 #include "dixevents.h"
 

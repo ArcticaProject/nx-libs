@@ -27,8 +27,8 @@
 #endif
 
 #include "compint.h"
-#include "XI.h"
-#include "XIproto.h"
+#include <X11/extensions/XI.h>
+#include <X11/extensions/XIproto.h>
 #include "protocol-versions.h"
 #include "extinit.h"
 

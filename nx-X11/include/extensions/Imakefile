@@ -21,7 +21,7 @@ EXTRAHEADERS = \
 	$(NULL)
 
 HEADERS = \
-	XI.h XInput.h XIproto.h \
+	XInput.h \
 	XKB.h XKBgeom.h XKBproto.h XKBstr.h XKBsrv.h \
 	$(EXTRAHEADERS) \
 	security.h securstr.h \
@@ -37,8 +37,6 @@ BuildIncludes($(HEADERS),nx-X11/extensions,../..)
 InstallMultipleFlags($(HEADERS),$(INCDIR)/nx-X11/extensions,$(INSTINCFLAGS))
 #endif
 
-InstallDriverSDKNonExecFile(XI.h,$(DRIVERSDKINCLUDEDIR)/extensions)
-InstallDriverSDKNonExecFile(XIproto.h,$(DRIVERSDKINCLUDEDIR)/extensions)
 InstallDriverSDKNonExecFile(dpms.h,$(DRIVERSDKINCLUDEDIR)/extensions)
 InstallDriverSDKNonExecFile(vldXvMC.h,$(DRIVERSDKINCLUDEDIR))
 

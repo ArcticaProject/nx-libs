@@ -138,7 +138,7 @@ extern Bool XkbFilterEvents(ClientPtr, int, xEvent *);
 #include <nx-X11/extensions/security.h>
 #endif
 
-#include <nx-X11/extensions/XIproto.h>
+#include <X11/extensions/XIproto.h>
 #include "exevents.h"
 #include "extnsionst.h"
 

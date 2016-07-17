@@ -51,7 +51,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "windowstr.h"
 #define	XKBSRV_NEED_FILE_FUNCS
 #include <nx-X11/extensions/XKBsrv.h>
-#include <nx-X11/extensions/XI.h>
+#include <X11/extensions/XI.h>
 #include "xkb.h"
 
 #if defined(CSRG_BASED) || defined(linux) || defined(__sgi) || defined(AIXV3) || defined(__osf__) || defined(__GNU__)

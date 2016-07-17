@@ -38,8 +38,8 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "inputstr.h"
 #include <nx-X11/extensions/XKBsrv.h>
 
-#include <nx-X11/extensions/XI.h>
-#include <nx-X11/extensions/XIproto.h>
+#include <X11/extensions/XI.h>
+#include <X11/extensions/XIproto.h>
 
 extern	void	ProcessOtherEvent(
     xEvent *		/* xE */,

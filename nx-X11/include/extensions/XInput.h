@@ -51,7 +51,7 @@ SOFTWARE.
 #define _XINPUT_H_
 
 #include <nx-X11/Xlib.h>
-#include <nx-X11/extensions/XI.h>
+#include <X11/extensions/XI.h>
 
 #define _deviceKeyPress		0
 #define _deviceKeyRelease	1

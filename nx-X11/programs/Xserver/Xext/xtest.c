@@ -44,8 +44,8 @@ from The Open Group.
 #define _XTEST_SERVER_
 #include <X11/extensions/xtestproto.h>
 #ifdef XINPUT
-#include <nx-X11/extensions/XI.h>
-#include <nx-X11/extensions/XIproto.h>
+#include <X11/extensions/XI.h>
+#include <X11/extensions/XIproto.h>
 #define EXTENSION_EVENT_BASE	64
 #include "extinit.h"		/* LookupDeviceIntRec */
 #endif /* XINPUT */

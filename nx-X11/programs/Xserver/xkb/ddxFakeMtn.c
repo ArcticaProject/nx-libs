@@ -36,7 +36,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "scrnintstr.h"
 #include "windowstr.h"
 #include <nx-X11/extensions/XKBsrv.h>
-#include <nx-X11/extensions/XI.h>
+#include <X11/extensions/XI.h>
 
 #ifdef PANORAMIX
 #include "panoramiX.h"

@@ -58,8 +58,8 @@ SOFTWARE.
 #include <X11/X.h>				/* for inputstr.h    */
 #include <X11/Xproto.h>			/* Request macro     */
 #include "inputstr.h"			/* DeviceIntPtr	     */
-#include <nx-X11/extensions/XI.h>
-#include <nx-X11/extensions/XIproto.h>			/* control constants */
+#include <X11/extensions/XI.h>
+#include <X11/extensions/XIproto.h>			/* control constants */
 
 #include "extnsionst.h"
 #include "extinit.h"			/* LookupDeviceIntRec */
