@@ -71,7 +71,7 @@ is" without express or implied warranty.
 #include "property.h"
 #include "Init.h"
 
-#include <nx-X11/extensions/XKB.h>
+#include <X11/extensions/XKB.h>
 
 #define XKBSRV_NEED_FILE_FUNCS
 #include <nx-X11/extensions/XKBsrv.h>

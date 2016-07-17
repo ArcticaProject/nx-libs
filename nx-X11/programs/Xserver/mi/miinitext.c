@@ -162,7 +162,7 @@ typedef void (*InitExtension)(void);
 #include <X11/extensions/xtestconst.h>
 #endif
 #ifdef XKB
-#include <nx-X11/extensions/XKB.h>
+#include <X11/extensions/XKB.h>
 #endif
 #ifdef XCSECURITY
 #define _SECURITY_SERVER
