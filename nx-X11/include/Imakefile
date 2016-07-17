@@ -19,7 +19,6 @@ SUBDIRS = extensions $(GLXDIR)
 AU_HEADERS = Xauth.h
 
 HEADERS = \
-	Xfuncs.h \
 	Xos_r.h \
 	Xpoll.h \
 	$(AU_HEADERS) \
@@ -34,8 +33,6 @@ InstallMultipleFlags($(HEADERS),$(INCDIR)/nx-X11,$(INSTINCFLAGS))
 #endif
 MakeSubdirs($(SUBDIRS))
 DependSubdirs($(SUBDIRS))
-
-InstallDriverSDKNonExecFile(Xfuncs.h,$(DRIVERSDKINCLUDEDIR))
 
 /* _XOPEN_SOURCE is defined where needed to move __fds_bits to fds_bits. */
 USE_FDS_BITS = fds_bits

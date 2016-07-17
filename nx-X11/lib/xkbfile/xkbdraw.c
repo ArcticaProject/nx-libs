@@ -32,7 +32,7 @@
 #include <stdlib.h>
 
 #include <X11/Xos.h>
-#include <nx-X11/Xfuncs.h>
+#include <X11/Xfuncs.h>
 #include <nx-X11/Xlib.h>
 #include <X11/keysym.h>
 #include <nx-X11/XKBlib.h>

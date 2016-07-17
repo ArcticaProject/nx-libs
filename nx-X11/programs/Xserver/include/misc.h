@@ -129,7 +129,7 @@ typedef struct _xReq *xReqPtr;
 
 #include "os.h" 	/* for ALLOCATE_LOCAL and DEALLOCATE_LOCAL */
 #ifndef IN_MODULE
-#include <nx-X11/Xfuncs.h> /* for bcopy, bzero, and bcmp */
+#include <X11/Xfuncs.h> /* for bcopy, bzero, and bcmp */
 #endif
 
 #define NullBox ((BoxPtr)0)

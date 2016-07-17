@@ -44,7 +44,7 @@ typedef struct xauth {
 #ifndef _XAUTH_STRUCT_ONLY
 
 # include   <X11/Xfuncproto.h>
-# include   <nx-X11/Xfuncs.h>
+# include   <X11/Xfuncs.h>
 
 # include   <stdio.h>
 

@@ -33,7 +33,7 @@
 #include <stdio.h>
 
 #include <X11/Xos.h>
-#include <nx-X11/Xfuncs.h>
+#include <X11/Xfuncs.h>
 
 #ifndef XKB_IN_SERVER
 

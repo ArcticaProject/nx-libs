@@ -30,7 +30,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <stdlib.h>
-#include <nx-X11/Xfuncs.h>
+#include <X11/Xfuncs.h>
 #include <nx-X11/Xlib.h>
 #include <nx-X11/XKBlib.h>
 #include <nx-X11/extensions/XKBgeom.h>

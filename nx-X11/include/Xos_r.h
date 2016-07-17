@@ -70,7 +70,7 @@ in this Software without prior written authorization from The Open Group.
 # define _XOS_R_H_
 
 # include <X11/Xos.h>
-# include <nx-X11/Xfuncs.h>
+# include <X11/Xfuncs.h>
 
 # ifndef X_NOT_POSIX
 #  ifdef _POSIX_SOURCE
