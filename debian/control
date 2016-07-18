@@ -31,6 +31,12 @@ Build-Depends:
  expat,
  libpixman-1-dev (>= 0.13.2),
  xutils-dev,
+ x11proto-xf86bigfont-dev,
+ x11proto-bigreqs-dev,
+ x11proto-xcmisc-dev,
+ x11proto-resource-dev,
+ x11proto-video-dev,
+ x11proto-gl-dev,
 Standards-Version: 3.9.8
 Homepage: https://github.com/ArcticaProject/nx-libs/
 Vcs-Git: https://github.com/ArcticaProject/nx-libs/
@@ -58,6 +64,20 @@ Depends:
  ${misc:Depends},
 Breaks: nxlibs (<= 3.5.1),
         libnx-x11-dev (<< 2:3.5.0.29-1~),
+        nx-x11proto-composite-dev.install (<< 2:3.5.99.1),
+        nx-x11proto-damage-dev.install (<< 2:3.5.99.1),
+        nx-x11proto-randr-dev.install (<< 2:3.5.99.1),
+        nx-x11proto-render-dev.install (<< 2:3.5.99.1),
+        nx-x11proto-xext-dev.install (<< 2:3.5.99.1),
+        nx-x11proto-xfixes-dev.install (<< 2:3.5.99.1),
+        nx-x11proto-xinerama-dev.install (<< 2:3.5.99.1),
+Replaces: nx-x11proto-composite-dev,
+        nx-x11proto-damage-dev,
+        nx-x11proto-randr-dev,
+        nx-x11proto-render-dev,
+        nx-x11proto-xext-dev,
+        nx-x11proto-xfixes-dev,
+        nx-x11proto-xinerama-dev,
 Description: nx-X11 core wire protocol and auxiliary headers
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when

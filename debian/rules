@@ -30,6 +30,12 @@ override_dh_install:
 	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/GL/
 	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/extensions/XInput.h
 	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/extensions/XKBsrv.h
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/extensions/XKBbells.h
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/extensions/XKBrules.h
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/extensions/XKBconfig.h
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/extensions/XKMformat.h
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/extensions/XKM.h
+	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/extensions/XKBfile.h
 	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/extensions/vldXvMC.h
 	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/extensions/security.h
 	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/Xtrans/
