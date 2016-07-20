@@ -107,12 +107,6 @@ Bool
 miPictureInit (ScreenPtr pScreen, PictFormatPtr formats, int nformats);
 
 void
-miGlyphExtents (int		nlist,
-		GlyphListPtr	list,
-		GlyphPtr	*glyphs,
-		BoxPtr		extents);
-
-void
 miGlyphs (CARD8		op,
 	  PicturePtr	pSrc,
 	  PicturePtr	pDst,

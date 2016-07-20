@@ -100,7 +100,6 @@ typedef struct {
     ValidatePictureProcPtr	ValidatePicture;
 
     CompositeProcPtr		Composite;
-    GlyphsProcPtr		Glyphs;
     CompositeRectsProcPtr	CompositeRects;
 
     TrapezoidsProcPtr		Trapezoids;

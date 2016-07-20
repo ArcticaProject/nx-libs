@@ -72,11 +72,11 @@
 #endif
 
 /*
- * From NXmiglyph.c.
+ * From NXglyph.c.
  */
 
 extern
-void miGlyphExtents(int nlist, GlyphListPtr list,
+void GlyphExtents(int nlist, GlyphListPtr list,
                         GlyphPtr *glyphs, BoxPtr extents);
 
 /*
@@ -1104,7 +1104,7 @@ ProcRenderCompositeGlyphs (ClientPtr client)
 
     nxagentGlyphsExtents = (BoxPtr) malloc(sizeof(BoxRec));
 
-    miGlyphExtents(nlist, listsBase, glyphsBase, nxagentGlyphsExtents);
+    GlyphExtents(nlist, listsBase, glyphsBase, nxagentGlyphsExtents);
 
     nxagentGlyphs(stuff -> op,
                   pSrc,

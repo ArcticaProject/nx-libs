@@ -190,3 +190,192 @@ ResizeGlyphHash (GlyphHashPtr hash, CARD32 change, Bool global)
 	CheckDuplicates (hash, "ResizeGlyphHash bottom");
     return TRUE;
 }
+
+void
+miGlyphs (CARD8		op,
+	  PicturePtr	pSrc,
+	  PicturePtr	pDst,
+	  PictFormatPtr	maskFormat,
+	  INT16		xSrc,
+	  INT16		ySrc,
+	  int		nlist,
+	  GlyphListPtr	list,
+	  GlyphPtr	*glyphs)
+{
+    PixmapPtr	pPixmap = 0;
+    PicturePtr	pPicture;
+    PixmapPtr   pMaskPixmap = 0;
+    PicturePtr  pMask;
+    ScreenPtr   pScreen = pDst->pDrawable->pScreen;
+    int		width = 0, height = 0;
+    int		x, y;
+    int		xDst = list->xOff, yDst = list->yOff;
+    int		n;
+    GlyphPtr	glyph;
+    int		error;
+    BoxRec	extents;
+    CARD32	component_alpha;
+
+    /*
+     * Get rid of the warning.
+     */
+
+    extents.x1 = 0;
+    extents.y1 = 0;
+
+    if (maskFormat)
+    {
+	GCPtr	    pGC;
+	xRectangle  rect;
+
+        if (nxagentGlyphsExtents != NullBox)
+        {
+          memcpy(&extents, nxagentGlyphsExtents, sizeof(BoxRec));
+        }
+        else
+        {
+          nxagentGlyphsExtents = (BoxPtr) malloc(sizeof(BoxRec));
+
+          GlyphExtents (nlist, list, glyphs, &extents);
+
+          memcpy(nxagentGlyphsExtents, &extents, sizeof(BoxRec));
+        }
+
+	if (extents.x2 <= extents.x1 || extents.y2 <= extents.y1)
+	    return;
+	width = extents.x2 - extents.x1;
+	height = extents.y2 - extents.y1;
+	pMaskPixmap = (*pScreen->CreatePixmap) (pScreen, width, height, maskFormat->depth);
+
+	if (!pMaskPixmap)
+	    return;
+
+	component_alpha = NeedsComponent(maskFormat->format);
+	pMask = CreatePicture (0, &pMaskPixmap->drawable,
+			       maskFormat, CPComponentAlpha, &component_alpha,
+			       serverClient, &error);
+
+	if (!pMask)
+	{
+	    (*pScreen->DestroyPixmap) (pMaskPixmap);
+	    return;
+	}
+	pGC = GetScratchGC (pMaskPixmap->drawable.depth, pScreen);
+	ValidateGC (&pMaskPixmap->drawable, pGC);
+	rect.x = 0;
+	rect.y = 0;
+	rect.width = width;
+	rect.height = height;
+	(*pGC->ops->PolyFillRect) (&pMaskPixmap->drawable, pGC, 1, &rect);
+	FreeScratchGC (pGC);
+	x = -extents.x1;
+	y = -extents.y1;
+    }
+    else
+    {
+	pMask = pDst;
+	x = 0;
+	y = 0;
+    }
+    pPicture = 0;
+    while (nlist--)
+    {
+	x += list->xOff;
+	y += list->yOff;
+	n = list->len;
+
+	while (n--)
+	{
+	    glyph = *glyphs++;
+	    if (!pPicture)
+	    {
+		pPixmap = GetScratchPixmapHeader (pScreen, glyph->info.width, glyph->info.height, 
+						  list->format->depth,
+						  list->format->depth, 
+						  0, (void *) (glyph + 1));
+		if (!pPixmap)
+		    return;
+		component_alpha = NeedsComponent(list->format->format);
+		pPicture = CreatePicture (0, &pPixmap->drawable, list->format,
+					  CPComponentAlpha, &component_alpha, 
+					  serverClient, &error);
+		if (!pPicture)
+		{
+		    FreeScratchPixmapHeader (pPixmap);
+		    return;
+		}
+	    }
+	    (*pScreen->ModifyPixmapHeader) (pPixmap, 
+					    glyph->info.width, glyph->info.height,
+					    0, 0, -1, (void *) (glyph + 1));
+
+            /*
+             * The following line fixes a problem with glyphs that appeared
+             * as clipped. It was a side effect due the validate function
+             * "ValidatePicture" that makes a check on the Drawable serial
+             * number instead of the picture serial number, failing thus
+             * the clip mask update.
+             */
+
+            pPicture->pDrawable->serialNumber = NEXT_SERIAL_NUMBER;
+
+	    pPixmap->drawable.serialNumber = NEXT_SERIAL_NUMBER;
+	    if (maskFormat)
+	    {
+		CompositePicture (PictOpAdd,
+				  pPicture,
+				  None,
+				  pMask,
+				  0, 0,
+				  0, 0,
+				  x - glyph->info.x,
+				  y - glyph->info.y,
+				  glyph->info.width,
+				  glyph->info.height);
+	    }
+	    else
+	    {
+		CompositePicture (op,
+				  pSrc,
+				  pPicture,
+				  pDst,
+				  xSrc + (x - glyph->info.x) - xDst,
+				  ySrc + (y - glyph->info.y) - yDst,
+				  0, 0,
+				  x - glyph->info.x,
+				  y - glyph->info.y,
+				  glyph->info.width,
+				  glyph->info.height);
+	    }
+	    x += glyph->info.xOff;
+	    y += glyph->info.yOff;
+	}
+
+	list++;
+	if (pPicture)
+	{
+	    FreeScratchPixmapHeader (pPixmap);
+	    FreePicture ((void *) pPicture, 0);
+	    pPicture = 0;
+	    pPixmap = 0;
+	}
+    }
+    if (maskFormat)
+    {
+	x = extents.x1;
+	y = extents.y1;
+	CompositePicture (op,
+			  pSrc,
+			  pMask,
+			  pDst,
+			  xSrc + x - xDst,
+			  ySrc + y - yDst,
+			  0, 0,
+			  x, y,
+			  width, height);
+
+	FreePicture ((void *) pMask, (XID) 0);
+	(*pScreen->DestroyPixmap) (pMaskPixmap);
+    }
+
+}
