@@ -413,10 +413,7 @@ rm -r %{buildroot}%{_includedir}/GL
 rm -r %{buildroot}%{_includedir}/nx-X11/extensions/XInput.h
 rm -r %{buildroot}%{_includedir}/nx-X11/extensions/XK*.h
 rm -r %{buildroot}%{_includedir}/nx-X11/extensions/*Xv*.h
-rm -r %{buildroot}%{_includedir}/nx-X11/extensions/dpms.h
 rm -r %{buildroot}%{_includedir}/nx-X11/extensions/security.h
-rm -r %{buildroot}%{_includedir}/nx-X11/extensions/sync.h
-rm -r %{buildroot}%{_includedir}/nx-X11/extensions/xtestext1.h
 rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 
 %if 0%{?fdupes:1}
@@ -510,62 +507,13 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %files devel
 %defattr(-,root,root)
 %dir %{_includedir}/nx-X11/extensions
-%{_includedir}/nx-X11/extensions/panoramiXext.h
-%{_includedir}/nx-X11/extensions/record.h
 %{_includedir}/nx-X11/misc.h
 %{_includedir}/nx-X11/os.h
 
 %files -n nx-proto-devel
 %defattr(-,root,root)
 %dir %{_includedir}/nx-X11
-%{_includedir}/nx-X11/DECkeysym.h
-%{_includedir}/nx-X11/HPkeysym.h
-%{_includedir}/nx-X11/Sunkeysym.h
-%{_includedir}/nx-X11/X.h
-%{_includedir}/nx-X11/XF86keysym.h
-%{_includedir}/nx-X11/XWDFile.h
-%{_includedir}/nx-X11/Xalloca.h
-%{_includedir}/nx-X11/Xarch.h
-%{_includedir}/nx-X11/Xatom.h
-%{_includedir}/nx-X11/Xdefs.h
-%{_includedir}/nx-X11/Xfuncproto.h
-%{_includedir}/nx-X11/Xfuncs.h
-%{_includedir}/nx-X11/Xmd.h
-%{_includedir}/nx-X11/Xos.h
-%{_includedir}/nx-X11/Xos_r.h
-%{_includedir}/nx-X11/Xosdefs.h
 %{_includedir}/nx-X11/Xpoll.h
-%{_includedir}/nx-X11/Xproto.h
-%{_includedir}/nx-X11/Xprotostr.h
-%{_includedir}/nx-X11/Xthreads.h
-%{_includedir}/nx-X11/ap_keysym.h
-%{_includedir}/nx-X11/keysym.h
-%{_includedir}/nx-X11/keysymdef.h
-%{_includedir}/nx-X11/extensions/Xdbeproto.h
-%{_includedir}/nx-X11/extensions/XI.h
-%{_includedir}/nx-X11/extensions/XIproto.h
-%{_includedir}/nx-X11/extensions/XResproto.h
-%{_includedir}/nx-X11/extensions/bigreqstr.h
-%{_includedir}/nx-X11/extensions/composite.h
-%{_includedir}/nx-X11/extensions/compositeproto.h
-%{_includedir}/nx-X11/extensions/damagewire.h
-%{_includedir}/nx-X11/extensions/damageproto.h
-%{_includedir}/nx-X11/extensions/dpmsstr.h
-%{_includedir}/nx-X11/extensions/panoramiXproto.h
-%{_includedir}/nx-X11/extensions/randr.h
-%{_includedir}/nx-X11/extensions/randrproto.h
-%{_includedir}/nx-X11/extensions/recordstr.h
-%{_includedir}/nx-X11/extensions/render.h
-%{_includedir}/nx-X11/extensions/renderproto.h
-%{_includedir}/nx-X11/extensions/securstr.h
-%{_includedir}/nx-X11/extensions/syncstr.h
-%{_includedir}/nx-X11/extensions/xcmiscstr.h
-%{_includedir}/nx-X11/extensions/xf86bigfont.h
-%{_includedir}/nx-X11/extensions/xf86bigfstr.h
-%{_includedir}/nx-X11/extensions/xfixesproto.h
-%{_includedir}/nx-X11/extensions/xfixeswire.h
-%{_includedir}/nx-X11/extensions/xtestconst.h
-%{_includedir}/nx-X11/extensions/xteststr.h
 
 %files -n nxagent
 %defattr(-,root,root)
