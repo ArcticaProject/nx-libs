@@ -1,28 +1,3 @@
-/**************************************************************************/
-/*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
-/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
-/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
-/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
-/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
-/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
-/*                                                                        */
-/* nx-X11, NX protocol compression and NX extensions to this software     */
-/* are copyright of the aforementioned persons and companies.             */
-/*                                                                        */
-/* Redistribution and use of the present software is allowed according    */
-/* to terms specified in the file LICENSE which comes in the source       */
-/* distribution.                                                          */
-/*                                                                        */
-/* All rights reserved.                                                   */
-/*                                                                        */
-/* NOTE: This software has received contributions from various other      */
-/* contributors, only the core maintainers and supporters are listed as   */
-/* copyright holders. Please contact us, if you feel you should be listed */
-/* as copyright holder, as well.                                          */
-/*                                                                        */
-/**************************************************************************/
-
 /*
 
 Copyright 1992, 1998  The Open Group
@@ -59,12 +34,12 @@ from The Open Group.
 
 /*ARGSUSED*/
 Bool
-_XAsyncErrorHandler(dpy, rep, buf, len, data)
-    register Display *dpy;
-    register xReply *rep;
-    char *buf;
-    int len;
-    XPointer data;
+_XAsyncErrorHandler(
+    register Display *dpy,
+    register xReply *rep,
+    char *buf,
+    int len,
+    XPointer data)
 {
     register _XAsyncErrorState *state;
 
@@ -87,9 +62,9 @@ _XAsyncErrorHandler(dpy, rep, buf, len, data)
     return False;
 }
 
-void _XDeqAsyncHandler(dpy, handler)
-    Display *dpy;
-    register _XAsyncHandler *handler;
+void _XDeqAsyncHandler(
+    Display *dpy,
+    register _XAsyncHandler *handler)
 {
     register _XAsyncHandler **prev;
     register _XAsyncHandler *async;
@@ -103,14 +78,14 @@ void _XDeqAsyncHandler(dpy, handler)
 }
 
 char *
-_XGetAsyncReply(dpy, replbuf, rep, buf, len, extra, discard)
-    register Display *dpy;
-    register char *replbuf;	/* data is read into this buffer */
-    register xReply *rep;	/* value passed to calling handler */
-    char *buf;			/* value passed to calling handler */
-    int len;			/* value passed to calling handler */
-    int extra;			/* extra words to read, ala _XReply */
-    Bool discard;		/* discard after extra?, ala _XReply */
+_XGetAsyncReply(
+    register Display *dpy,
+    register char *replbuf,	/* data is read into this buffer */
+    register xReply *rep,	/* value passed to calling handler */
+    char *buf,			/* value passed to calling handler */
+    int len,			/* value passed to calling handler */
+    int extra,			/* extra words to read, ala _XReply */
+    Bool discard)		/* discard after extra?, ala _XReply */
 {
     if (extra == 0) {
 	if (discard && (rep->generic.length << 2) > len)
@@ -125,6 +100,11 @@ _XGetAsyncReply(dpy, replbuf, rep, buf, len, extra, discard)
 	    _XRead(dpy, replbuf + len, size - len);
 	    buf = replbuf;
 	    len = size;
+#ifdef MUSTCOPY
+	} else {
+	    memcpy(replbuf, buf, size);
+	    buf = replbuf;
+#endif
 	}
 
 	if (discard && rep->generic.length > extra &&
@@ -133,9 +113,9 @@ _XGetAsyncReply(dpy, replbuf, rep, buf, len, extra, discard)
 
 	return buf;
     }
-    /* 
+    /*
      *if we get here, then extra > rep->generic.length--meaning we
-     * read a reply that's shorter than we expected.  This is an 
+     * read a reply that's shorter than we expected.  This is an
      * error,  but we still need to figure out how to handle it...
      */
     if ((rep->generic.length << 2) > len)
@@ -153,15 +133,15 @@ _XGetAsyncReply(dpy, replbuf, rep, buf, len, extra, discard)
 }
 
 void
-_XGetAsyncData(dpy, data, buf, len, skip, datalen, discardtotal)
-    Display *dpy;
-    char *data;			/* data is read into this buffer */
-    char *buf;			/* value passed to calling handler */
-    int len;			/* value passed to calling handler */
-    int skip;			/* number of bytes already read in previous
+_XGetAsyncData(
+    Display *dpy,
+    char *data,			/* data is read into this buffer */
+    char *buf,			/* value passed to calling handler */
+    int len,			/* value passed to calling handler */
+    int skip,			/* number of bytes already read in previous
 				   _XGetAsyncReply or _XGetAsyncData calls */
-    int datalen;		/* size of data buffer in bytes */
-    int discardtotal;		/* min. bytes to consume (after skip) */
+    int datalen,		/* size of data buffer in bytes */
+    int discardtotal)		/* min. bytes to consume (after skip) */
 {
     buf += skip;
     len -= skip;
