@@ -29,20 +29,23 @@ in this Software without prior written authorization from The Open Group.
 #endif
 #include "Xlibint.h"
 
-/* 
+/*
  * Return next event in queue, or if none, flush output and wait for
  * events.
  */
 
 int
-XNextEvent (dpy, event)
-	register Display *dpy;
-	register XEvent *event;
+XNextEvent (
+	register Display *dpy,
+	register XEvent *event)
 {
 	register _XQEvent *qelt;
-	
+
 	LockDisplay(dpy);
-	
+
+	/* Delete unclaimed cookies */
+	_XFreeEventCookies(dpy);
+
 	if (dpy->head == NULL)
 	    _XReadEvents(dpy);
 #ifdef NX_TRANS_SOCKET
@@ -54,6 +57,7 @@ XNextEvent (dpy, event)
 	qelt = dpy->head;
 	*event = qelt->event;
 	_XDeq(dpy, NULL, qelt);
+	_XStoreEventCookie(dpy, event);
 	UnlockDisplay(dpy);
 	return 0;
 }

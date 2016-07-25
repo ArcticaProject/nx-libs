@@ -139,7 +139,7 @@ struct _XDisplay
 	int nscreens;		/* number of screens on this server*/
 	Screen *screens;	/* pointer to list of screens */
 	unsigned long motion_buffer;	/* size of motion buffer */
-	unsigned long flags;	   /* internal connection flags */
+	volatile unsigned long flags;	   /* internal connection flags */
 	int min_keycode;	/* minimum defined keycode */
 	int max_keycode;	/* maximum defined keycode */
 	KeySym *keysyms;	/* This server's keysyms */
@@ -152,7 +152,7 @@ struct _XDisplay
 	struct _XExten *ext_procs; /* extensions initialized on this display */
 	/*
 	 * the following can be fixed size, as the protocol defines how
-	 * much address space is available. 
+	 * much address space is available.
 	 * While this could be done using the extension vector, there
 	 * may be MANY events processed, so a search through the extension
 	 * list to find the right procedure for each event might be
@@ -215,9 +215,31 @@ struct _XDisplay
 	int xcmisc_opcode;	/* major opcode for XC-MISC */
 	struct _XkbInfoRec *xkb_info; /* XKB info */
 	struct _XtransConnInfo *trans_conn; /* transport connection object */
+	struct _X11XCBPrivate *xcb; /* XCB glue private data */
+
+	/* Generic event cookie handling */
+	unsigned int next_cookie; /* next event cookie */
+	/* vector for wire to generic event, index is (extension - 128) */
+	Bool (*generic_event_vec[128])(
+		Display *	/* dpy */,
+		XGenericEventCookie *	/* Xlib event */,
+		xEvent *	/* wire event */);
+	/* vector for event copy, index is (extension - 128) */
+	Bool (*generic_event_copy_vec[128])(
+		Display *	/* dpy */,
+		XGenericEventCookie *	/* in */,
+		XGenericEventCookie *   /* out*/);
+	void *cookiejar;  /* cookie events returned but not claimed */
 };
 
 #define XAllocIDs(dpy,ids,n) (*(dpy)->idlist_alloc)(dpy,ids,n)
+
+/*
+ * define the following if you want the Data macro to be a procedure instead
+ */
+#ifdef CRAY
+#define DataRoutineIsProcedure
+#endif /* CRAY */
 
 #ifndef _XEVENT_
 /*
@@ -229,9 +251,6 @@ typedef struct _XSQEvent
     XEvent event;
     unsigned long qserial_num;	/* so multi-threaded code can find new ones */
 } _XQEvent;
-#endif
-
-#ifdef XTHREADS			/* for xReply */
 #endif
 
 #include <nx-X11/Xproto.h>
@@ -420,25 +439,30 @@ extern LockInfoPtr _Xglobal_lock;
  * X Protocol packetizing macros.
  */
 
-/* Leftover from CRAY support - was defined empty on all non-Cray systems */
-#define WORD64ALIGN
-
-/**
- * Return a len-sized request buffer for the request type. This function may
- * flush the output queue.
- *
- * @param dpy The display connection
- * @param type The request type
- * @param len Length of the request in bytes
- *
- * @returns A pointer to the request buffer with a few default values
- * initialized.
+/*   Need to start requests on 64 bit word boundaries
+ *   on a CRAY computer so add a NoOp (127) if needed.
+ *   A character pointer on a CRAY computer will be non-zero
+ *   after shifting right 61 bits of it is not pointing to
+ *   a word boundary.
  */
-extern void *_XGetRequest(Display *dpy, CARD8 type, size_t len);
+#ifdef WORD64
+#define WORD64ALIGN if ((long)dpy->bufptr >> 61) {\
+           dpy->last_req = dpy->bufptr;\
+           *(dpy->bufptr)   = X_NoOperation;\
+           *(dpy->bufptr+1) =  0;\
+           *(dpy->bufptr+2) =  0;\
+           *(dpy->bufptr+3) =  1;\
+             dpy->request++;\
+             dpy->bufptr += 4;\
+         }
+#else /* else does not require alignment on 64-bit boundaries */
+#define WORD64ALIGN
+#endif /* WORD64 */
+
 
 /*
  * GetReq - Get the next available X request packet in the buffer and
- * return it. 
+ * return it.
  *
  * "name" is the name of the request, e.g. CreatePixmap, OpenFont, etc.
  * "req" is the name of the request pointer.
@@ -447,10 +471,25 @@ extern void *_XGetRequest(Display *dpy, CARD8 type, size_t len);
 
 #if !defined(UNIXCPP) || defined(ANSICPP)
 #define GetReq(name, req) \
-        req = (x##name##Req *) _XGetRequest(dpy, X_##name, SIZEOF(x##name##Req))
+        WORD64ALIGN\
+	if ((dpy->bufptr + SIZEOF(x##name##Req)) > dpy->bufmax)\
+		_XFlush(dpy);\
+	req = (x##name##Req *)(dpy->last_req = dpy->bufptr);\
+	req->reqType = X_##name;\
+	req->length = (SIZEOF(x##name##Req))>>2;\
+	dpy->bufptr += SIZEOF(x##name##Req);\
+	dpy->request++
+
 #else  /* non-ANSI C uses empty comment instead of "##" for token concatenation */
 #define GetReq(name, req) \
-        req = (x/**/name/**/Req *) _XGetRequest(dpy, X_/**/name, SIZEOF(x/**/name/**/Req))
+        WORD64ALIGN\
+	if ((dpy->bufptr + SIZEOF(x/**/name/**/Req)) > dpy->bufmax)\
+		_XFlush(dpy);\
+	req = (x/**/name/**/Req *)(dpy->last_req = dpy->bufptr);\
+	req->reqType = X_/**/name;\
+	req->length = (SIZEOF(x/**/name/**/Req))>>2;\
+	dpy->bufptr += SIZEOF(x/**/name/**/Req);\
+	dpy->request++
 #endif
 
 /* GetReqExtra is the same as GetReq, but allocates "n" additional
@@ -458,21 +497,36 @@ extern void *_XGetRequest(Display *dpy, CARD8 type, size_t len);
 
 #if !defined(UNIXCPP) || defined(ANSICPP)
 #define GetReqExtra(name, n, req) \
-        req = (x##name##Req *) _XGetRequest(dpy, X_##name, SIZEOF(x##name##Req) + n)
+        WORD64ALIGN\
+	if ((dpy->bufptr + SIZEOF(x##name##Req) + n) > dpy->bufmax)\
+		_XFlush(dpy);\
+	req = (x##name##Req *)(dpy->last_req = dpy->bufptr);\
+	req->reqType = X_##name;\
+	req->length = (SIZEOF(x##name##Req) + n)>>2;\
+	dpy->bufptr += SIZEOF(x##name##Req) + n;\
+	dpy->request++
 #else
 #define GetReqExtra(name, n, req) \
-        req = (x/**/name/**/Req *) _XGetRequest(dpy, X_/**/name, SIZEOF(x/**/name/**/Req) + n)
+        WORD64ALIGN\
+	if ((dpy->bufptr + SIZEOF(x/**/name/**/Req) + n) > dpy->bufmax)\
+		_XFlush(dpy);\
+	req = (x/**/name/**/Req *)(dpy->last_req = dpy->bufptr);\
+	req->reqType = X_/**/name;\
+	req->length = (SIZEOF(x/**/name/**/Req) + n)>>2;\
+	dpy->bufptr += SIZEOF(x/**/name/**/Req) + n;\
+	dpy->request++
 #endif
 
 
 /*
- * GetResReq is for those requests that have a resource ID 
+ * GetResReq is for those requests that have a resource ID
  * (Window, Pixmap, GContext, etc.) as their single argument.
- * "rid" is the name of the resource. 
+ * "rid" is the name of the resource.
  */
 
 #if !defined(UNIXCPP) || defined(ANSICPP)
 #define GetResReq(name, rid, req) \
+        WORD64ALIGN\
 	if ((dpy->bufptr + SIZEOF(xResourceReq)) > dpy->bufmax)\
 	    _XFlush(dpy);\
 	req = (xResourceReq *) (dpy->last_req = dpy->bufptr);\
@@ -483,6 +537,7 @@ extern void *_XGetRequest(Display *dpy, CARD8 type, size_t len);
 	dpy->request++
 #else
 #define GetResReq(name, rid, req) \
+        WORD64ALIGN\
 	if ((dpy->bufptr + SIZEOF(xResourceReq)) > dpy->bufmax)\
 	    _XFlush(dpy);\
 	req = (xResourceReq *) (dpy->last_req = dpy->bufptr);\
@@ -495,10 +550,11 @@ extern void *_XGetRequest(Display *dpy, CARD8 type, size_t len);
 
 /*
  * GetEmptyReq is for those requests that have no arguments
- * at all. 
+ * at all.
  */
 #if !defined(UNIXCPP) || defined(ANSICPP)
 #define GetEmptyReq(name, req) \
+        WORD64ALIGN\
 	if ((dpy->bufptr + SIZEOF(xReq)) > dpy->bufmax)\
 	    _XFlush(dpy);\
 	req = (xReq *) (dpy->last_req = dpy->bufptr);\
@@ -508,6 +564,7 @@ extern void *_XGetRequest(Display *dpy, CARD8 type, size_t len);
 	dpy->request++
 #else
 #define GetEmptyReq(name, req) \
+        WORD64ALIGN\
 	if ((dpy->bufptr + SIZEOF(xReq)) > dpy->bufmax)\
 	    _XFlush(dpy);\
 	req = (xReq *) (dpy->last_req = dpy->bufptr);\
@@ -517,14 +574,18 @@ extern void *_XGetRequest(Display *dpy, CARD8 type, size_t len);
 	dpy->request++
 #endif
 
-/*
- * MakeBigReq sets the CARD16 "req->length" to 0 and inserts a new CARD32
- * length, after req->length, before the data in the request. The new length
- * includes the "n" extra 32-bit words.
- *
- * Do not use MakeBigReq if there is no data already in the request.
- * req->length must already be >= 2.
- */
+#ifdef WORD64
+#define MakeBigReq(req,n) \
+    { \
+    char _BRdat[4]; \
+    unsigned long _BRlen = req->length - 1; \
+    req->length = 0; \
+    memcpy(_BRdat, ((char *)req) + (_BRlen << 2), 4); \
+    memmove(((char *)req) + 8, ((char *)req) + 4, _BRlen << 2); \
+    memcpy(((char *)req) + 4, _BRdat, 4); \
+    Data32(dpy, (long *)&_BRdat, 4); \
+    }
+#else
 #ifdef LONG64
 #define MakeBigReq(req,n) \
     { \
@@ -532,7 +593,7 @@ extern void *_XGetRequest(Display *dpy, CARD8 type, size_t len);
     CARD32 _BRlen = req->length - 1; \
     req->length = 0; \
     _BRdat = ((CARD32 *)req)[_BRlen]; \
-    memmove(((char *)req) + 8, ((char *)req) + 4, (_BRlen - 1) << 2); \
+    memmove(((char *)req) + 8, ((char *)req) + 4, _BRlen << 2); \
     ((CARD32 *)req)[1] = _BRlen + n + 2; \
     Data32(dpy, &_BRdat, 4); \
     }
@@ -543,19 +604,13 @@ extern void *_XGetRequest(Display *dpy, CARD8 type, size_t len);
     CARD32 _BRlen = req->length - 1; \
     req->length = 0; \
     _BRdat = ((CARD32 *)req)[_BRlen]; \
-    memmove(((char *)req) + 8, ((char *)req) + 4, (_BRlen - 1) << 2); \
+    memmove(((char *)req) + 8, ((char *)req) + 4, _BRlen << 2); \
     ((CARD32 *)req)[1] = _BRlen + n + 2; \
     Data32(dpy, &_BRdat, 4); \
     }
 #endif
+#endif
 
-/*
- * SetReqLen increases the count of 32-bit words in the request by "n",
- * or by "badlen" if "n" is too large.
- *
- * Do not use SetReqLen if "req" does not already have data after the
- * xReq header. req->length must already be >= 2.
- */
 #define SetReqLen(req,n,badlen) \
     if ((req->length + n) > (unsigned)65535) { \
 	if (dpy->bigreq_size) { \
@@ -601,7 +656,7 @@ extern void _XFlushGCCache(Display *dpy, GC gc);
  * "ptr" is the pointer being assigned to.
  * "n" is the number of bytes to allocate.
  *
- * Example: 
+ * Example:
  *    xTextElt *elt;
  *    BufAlloc (xTextElt *, elt, nbytes)
  */
@@ -613,6 +668,10 @@ extern void _XFlushGCCache(Display *dpy, GC gc);
     (void)ptr; \
     dpy->bufptr += (n);
 
+#ifdef WORD64
+#define Data16(dpy, data, len) _XData16(dpy, (short *)data, len)
+#define Data32(dpy, data, len) _XData32(dpy, (long *)data, len)
+#else
 #define Data16(dpy, data, len) Data((dpy), (char *)(data), (len))
 #define _XRead16Pad(dpy, data, len) _XReadPad((dpy), (char *)(data), (len))
 #define _XRead16(dpy, data, len) _XRead((dpy), (char *)(data), (len))
@@ -632,6 +691,7 @@ extern void _XRead32(
 #define Data32(dpy, data, len) Data((dpy), (char *)(data), (len))
 #define _XRead32(dpy, data, len) _XRead((dpy), (char *)(data), (len))
 #endif
+#endif /* not WORD64 */
 
 #define PackData16(dpy,data,len) Data16 (dpy, data, len)
 #define PackData32(dpy,data,len) Data32 (dpy, data, len)
@@ -646,7 +706,7 @@ extern void _XRead32(
 			     (((cs)->rbearing|(cs)->lbearing| \
 			       (cs)->ascent|(cs)->descent) == 0))
 
-/* 
+/*
  * CI_GET_CHAR_INFO_1D - return the charinfo struct for the indicated 8bit
  * character.  If the character is in the column and exists, then return the
  * appropriate metrics (note that fonts with common per-character metrics will
@@ -672,7 +732,7 @@ extern void _XRead32(
 
 
 /*
- * CI_GET_CHAR_INFO_2D - return the charinfo struct for the indicated row and 
+ * CI_GET_CHAR_INFO_2D - return the charinfo struct for the indicated row and
  * column.  This is used for fonts that have more than row zero.
  */
 #define CI_GET_CHAR_INFO_2D(fs,row,col,def,cs) \
@@ -700,9 +760,19 @@ extern void _XRead32(
 }
 
 
+#ifdef MUSTCOPY
+
+/* for when 32-bit alignment is not good enough */
+#define OneDataCard32(dpy,dstaddr,srcvar) \
+  { dpy->bufptr -= 4; Data32 (dpy, (char *) &(srcvar), 4); }
+
+#else
+
 /* srcvar must be a variable for large architecture version */
 #define OneDataCard32(dpy,dstaddr,srcvar) \
   { *(CARD32 *)(dstaddr) = (srcvar); }
+
+#endif /* MUSTCOPY */
 
 typedef struct _XInternalAsync {
     struct _XInternalAsync *next;
@@ -881,8 +951,8 @@ extern void _XEatData(
     unsigned long	/* n */
 );
 extern void _XEatDataWords(
-    Display*            /* dpy */,
-    unsigned long       /* n */
+    Display*		/* dpy */,
+    unsigned long	/* n */
 );
 extern char *_XAllocScratch(
     Display*		/* dpy */,
@@ -984,6 +1054,19 @@ extern Bool _XUnknownWireEvent(
     XEvent*	/* re */,
     xEvent*	/* event */
 );
+
+extern Bool _XUnknownWireEventCookie(
+    Display*	/* dpy */,
+    XGenericEventCookie*	/* re */,
+    xEvent*	/* event */
+);
+
+extern Bool _XUnknownCopyEventCookie(
+    Display*	/* dpy */,
+    XGenericEventCookie*	/* in */,
+    XGenericEventCookie*	/* out */
+);
+
 extern Status _XUnknownNativeEvent(
     Display*	/* dpy */,
     XEvent*	/* re */,
@@ -1021,7 +1104,7 @@ extern int (*XESetCopyGC(
 	      Display*			/* display */,
               GC			/* gc */,
               XExtCodes*		/* codes */
-            )		/* proc */	      
+            )		/* proc */
 ))(
     Display*, GC, XExtCodes*
 );
@@ -1033,7 +1116,7 @@ extern int (*XESetFlushGC(
 	      Display*			/* display */,
               GC			/* gc */,
               XExtCodes*		/* codes */
-            )		/* proc */	     
+            )		/* proc */
 ))(
     Display*, GC, XExtCodes*
 );
@@ -1045,7 +1128,7 @@ extern int (*XESetFreeGC(
 	      Display*			/* display */,
               GC			/* gc */,
               XExtCodes*		/* codes */
-            )		/* proc */	     
+            )		/* proc */
 ))(
     Display*, GC, XExtCodes*
 );
@@ -1057,7 +1140,7 @@ extern int (*XESetCreateFont(
 	      Display*			/* display */,
               XFontStruct*		/* fs */,
               XExtCodes*		/* codes */
-            )		/* proc */    
+            )		/* proc */
 ))(
     Display*, XFontStruct*, XExtCodes*
 );
@@ -1069,10 +1152,10 @@ extern int (*XESetFreeFont(
 	      Display*			/* display */,
               XFontStruct*		/* fs */,
               XExtCodes*		/* codes */
-            )		/* proc */    
+            )		/* proc */
 ))(
     Display*, XFontStruct*, XExtCodes*
-); 
+);
 
 extern int (*XESetCloseDisplay(
     Display*		/* display */,
@@ -1080,7 +1163,7 @@ extern int (*XESetCloseDisplay(
     int (*) (
 	      Display*			/* display */,
               XExtCodes*		/* codes */
-            )		/* proc */    
+            )		/* proc */
 ))(
     Display*, XExtCodes*
 );
@@ -1093,7 +1176,7 @@ extern int (*XESetError(
               xError*			/* err */,
               XExtCodes*		/* codes */,
               int*			/* ret_code */
-            )		/* proc */    
+            )		/* proc */
 ))(
     Display*, xError*, XExtCodes*, int*
 );
@@ -1107,7 +1190,7 @@ extern char* (*XESetErrorString(
                 XExtCodes*		/* codes */,
                 char*			/* buffer */,
                 int			/* nbytes */
-              )		/* proc */	       
+              )		/* proc */
 ))(
     Display*, int, XExtCodes*, char*, int
 );
@@ -1131,10 +1214,35 @@ extern Bool (*XESetWireToEvent(
 	       Display*			/* display */,
                XEvent*			/* re */,
                xEvent*			/* event */
-             )		/* proc */    
+             )		/* proc */
 ))(
     Display*, XEvent*, xEvent*
 );
+
+extern Bool (*XESetWireToEventCookie(
+    Display*		/* display */,
+    int			/* extension */,
+    Bool (*) (
+	       Display*			/* display */,
+               XGenericEventCookie*	/* re */,
+               xEvent*			/* event */
+             )		/* proc */
+))(
+    Display*, XGenericEventCookie*, xEvent*
+);
+
+extern Bool (*XESetCopyEventCookie(
+    Display*		/* display */,
+    int			/* extension */,
+    Bool (*) (
+	       Display*			/* display */,
+               XGenericEventCookie*	/* in */,
+               XGenericEventCookie*	/* out */
+             )		/* proc */
+))(
+    Display*, XGenericEventCookie*, XGenericEventCookie*
+);
+
 
 extern Status (*XESetEventToWire(
     Display*		/* display */,
@@ -1143,7 +1251,7 @@ extern Status (*XESetEventToWire(
 	      Display*			/* display */,
               XEvent*			/* re */,
               xEvent*			/* event */
-            )		/* proc */   
+            )		/* proc */
 ))(
     Display*, XEvent*, xEvent*
 );
@@ -1155,7 +1263,7 @@ extern Bool (*XESetWireToError(
 	       Display*			/* display */,
 	       XErrorEvent*		/* he */,
 	       xError*			/* we */
-            )		/* proc */   
+            )		/* proc */
 ))(
     Display*, XErrorEvent*, xError*
 );
@@ -1168,7 +1276,7 @@ extern void (*XESetBeforeFlush(
 	       XExtCodes*		/* codes */,
 	       _Xconst char*		/* data */,
 	       long			/* len */
-            )		/* proc */   
+            )		/* proc */
 ))(
     Display*, XExtCodes*, _Xconst char*, long
 );
@@ -1192,6 +1300,11 @@ extern Status _XRegisterInternalConnection(
 extern void _XUnregisterInternalConnection(
     Display*			/* dpy */,
     int				/* fd */
+);
+
+extern void _XProcessInternalConnection(
+    Display*			/* dpy */,
+    struct _XConnectionInfo*	/* conn_info */
 );
 
 /* Display structure has pointers to these */
@@ -1235,6 +1348,12 @@ extern int _XOpenFile(
     int			/* flags */
 );
 
+extern int _XOpenFileMode(
+    _Xconst char*	/* path */,
+    int			/* flags */,
+    mode_t              /* mode */
+);
+
 extern void* _XFopenFile(
     _Xconst char*	/* path */,
     _Xconst char*	/* mode */
@@ -1245,6 +1364,7 @@ extern int _XAccessFile(
 );
 #else
 #define _XOpenFile(path,flags) open(path,flags)
+#define _XOpenFileMode(path,flags,mode) open(path,flags,mode)
 #define _XFopenFile(path,mode) fopen(path,mode)
 #endif
 
@@ -1285,8 +1405,35 @@ Status _XGetWindowAttributes(
     XWindowAttributes *attr);
 
 int _XPutBackEvent (
-    register Display *dpy, 
+    register Display *dpy,
     register XEvent *event);
+
+extern Bool _XIsEventCookie(
+        Display *dpy,
+        XEvent *ev);
+
+extern void _XFreeEventCookies(
+        Display *dpy);
+
+extern void _XStoreEventCookie(
+        Display *dpy,
+        XEvent *ev);
+
+extern Bool _XFetchEventCookie(
+        Display *dpy,
+        XGenericEventCookie *ev);
+
+extern Bool _XCopyEventCookie(
+        Display *dpy,
+        XGenericEventCookie *in,
+        XGenericEventCookie *out);
+
+/* lcFile.c */
+
+extern void xlocaledir(
+    char *buf,
+    int buf_len
+);
 
 _XFUNCPROTOEND
 
