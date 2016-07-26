@@ -170,7 +170,7 @@ EXTRA_LIBRARIES = /**/
 #elif HasGetresuid
   SETID_DEFINES = -DHASGETRESUID
 #endif
-    XLC_DEFINES = -DXLOCALEDIR=\"$(XLOCALEDIR)\"
+    XLC_DEFINES = -DXLOCALEDIR=\"$(XLOCALEDIR)\" -DXLOCALELIBDIR=\"$(XLOCALELIBDIR)\"
 #if (defined(FreeBSDArchitecture) && OSRelVersion < 500016) || \
 	defined(OpenBSDArchitecture)
 THRSTUBSRCS = UIThrStubs.c
