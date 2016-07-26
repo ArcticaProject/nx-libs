@@ -1053,6 +1053,7 @@ XCOMM X Window System make variables; these need to be coordinated with rules
            XSMDIR = XsmDir		/* xsm config files */
            NLSDIR = NlsDir		/* nls files */
        XLOCALEDIR = XLocaleDir		/* locale files */
+    XLOCALELIBDIR = XlocaleDir          /* FIXME: For now take XLOCALEDIR, unsure about the correct setting */
   PROXYMANAGERDIR = ProxyManagerDir	/* proxy manager config files */
       XAPPLOADDIR = XAppLoadDir		/* application default resource dir */
 
@@ -1129,6 +1130,7 @@ VENDORSUPPORTDEFS = VendorSupportDefines
   SYSTEMENVLIBDIR = SystemBuildLibPath
 # endif
 #define XlocaleClientSetup Concat3(XLOCALEDIR,=,BuildI18NDir)
+       Concat3(XLOCALELIBDIR,=,BuildI18NDir)
        XENVLIBDIR = X11BuildLibPath
    CLIENTENVSETUP = Concat3(BuildLibPathVar,=,BuildLibPath) XlocaleClientSetup
 #else
