@@ -51,8 +51,9 @@ from The Open Group.
 
 */
 
-#ifndef _XLIBINT_H_
+#if !defined(_XLIBINT_H_) && !defined(_X11_XLIBINT_H_)
 #define _XLIBINT_H_ 1
+#define _X11_XLIBINT_H_ 1
 
 /*
  *	Xlibint.h - Header definition and support file for the internal

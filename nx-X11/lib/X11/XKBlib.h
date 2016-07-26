@@ -24,8 +24,9 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ********************************************************/
 
-#ifndef _XKBLIB_H_
+#if !defined(_XKBLIB_H_) && !defined(_X11_XKBLIB_H)
 #define _XKBLIB_H_
+#define _X11_XKBLIB_H_
 
 #include <nx-X11/Xlib.h>
 #include <nx-X11/extensions/XKBstr.h>
