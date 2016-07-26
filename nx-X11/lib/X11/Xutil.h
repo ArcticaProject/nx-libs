@@ -46,9 +46,9 @@ SOFTWARE.
 
 ******************************************************************/
 
-#if !defined(_XUTIL_H_) && !defined(_X11_XUTIL_H_)
-#define _XUTIL_H_
+#if !defined(_X11_XUTIL_H_) && !defined(_XUTIL_H_)
 #define _X11_XUTIL_H_
+#define _XUTIL_H_
 
 /* You must include <nx-X11/Xlib.h> before including this file */
 #include <nx-X11/Xlib.h>
@@ -823,4 +823,4 @@ extern int XXorRegion(
 
 _XFUNCPROTOEND
 
-#endif /* _XUTIL_H_ */
+#endif /* !defined(_X11_XUTIL_H_) && !defined(_XUTIL_H_) */

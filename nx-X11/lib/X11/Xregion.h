@@ -45,7 +45,8 @@ SOFTWARE.
 
 ************************************************************************/
 
-#ifndef _XREGION_H
+#if !defined(_X11_XREGION_H_) && !defined(_XREGION_H)
+#define _X11_XREGION_H_
 #define _XREGION_H
 
 typedef struct {
@@ -186,4 +187,4 @@ typedef struct _POINTBLOCK {
     struct _POINTBLOCK *next;
 } POINTBLOCK;
 
-#endif
+#endif /* !defined(_X11_XREGION_H_) && !defined(_XREGION_H) */

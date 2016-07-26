@@ -46,7 +46,8 @@ SOFTWARE.
 
 ******************************************************************/
 
-#ifndef _XRESOURCE_H_
+#if !defined(_X11_XRESOURCE_H_) && !defined(_XRESOURCE_H_)
+#define _X11_XRESOURCE_H_
 #define _XRESOURCE_H_
 
 #ifndef _XP_PRINT_SERVER_
@@ -354,5 +355,5 @@ extern void XrmParseCommand(
 
 _XFUNCPROTOEND
 
-#endif /* _XRESOURCE_H_ */
+#endif /* !defined(_X11_XRESOURCE_H_) && !defined(_XRESOURCE_H_) */
 /* DON'T ADD STUFF AFTER THIS #endif */

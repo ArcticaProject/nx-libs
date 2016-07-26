@@ -26,7 +26,8 @@
  *	DESCRIPTION
  *		Public include file for X Color Management System
  */
-#ifndef _XCMS_H_
+#if !defined(_X11_XCMS_H_) && !defined(_XCMS_H_)
+#define _X11_XCMS_H_
 #define _XCMS_H_
 
 #include <nx-X11/Xlib.h>
@@ -800,4 +801,4 @@ extern Visual *XcmsVisualOfCCC (
 
 _XFUNCPROTOEND
 
-#endif /* _XCMS_H_ */
+#endif /* !defined(_X11_XCMS_H_) && !defined(_XCMS_H_) */
