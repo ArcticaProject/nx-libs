@@ -505,6 +505,32 @@ support pulldown menu in nx-X11 Agent session (only available on proxy <-> agent
 .B sleep=<int>
 delay X server operations when suspended (provided in msec), set to \fI0\fR to keep nx-X11 Agent session
 fully functional when suspended (e.g. useful when mirroring nx-X11 Agent session via VNC)
+.TP 8
+.B reconnectchecks=<string>
+
+.BR strict|safe|risky|bypass
+.RS 8
+.TP 8
+.I strict
+means that the number of internal and external pixmap formats must
+match exactly and every internal pixmap format must be available in the
+external pixmap format array.
+.TP 8
+.I safe
+means that the number of pixmap formats might diverge, but all
+internal pixmap formats must also be included in the external pixmap
+formats array. This is recommended, because it allows clients with more
+pixmap formats to still connect, but not lose functionality.
+.TP 8
+.I risky
+means that the internal pixmap formats array is allowed to be
+smaller than the external pixmap formats array, but at least one pixmap
+format must be included in both. This is potentially unsafe.
+.TP 8
+.I bypass
+means that all of these checks are essentially
+deactivated. This is a very bad idea.
+.RE
 
 .SH XDMCP OPTIONS
 X servers that support XDMCP have the following options.
