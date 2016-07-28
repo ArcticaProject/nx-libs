@@ -1419,7 +1419,7 @@ static void nxagentParseOptions(char *name, char *value)
     {
       nxagentChangeOption(ReconnectTolerance, ToleranceChecksRisky);
     }
-    else if (strcmp(value, "none") == 0)
+    else if (strcmp(value, "bypass") == 0)
     {
       nxagentChangeOption(ReconnectTolerance, ToleranceChecksBypass);
     }
