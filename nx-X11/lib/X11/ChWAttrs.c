@@ -36,11 +36,11 @@ in this Software without prior written authorization from The Open Group.
 		     CWDontPropagate|CWColormap|CWCursor)
 
 int
-XChangeWindowAttributes (dpy, w, valuemask, attributes)
-    register Display *dpy;
-    Window w;
-    unsigned long valuemask;
-    XSetWindowAttributes *attributes;
+XChangeWindowAttributes (
+    register Display *dpy,
+    Window w,
+    unsigned long valuemask,
+    XSetWindowAttributes *attributes)
 {
     register xChangeWindowAttributesReq *req;
 

@@ -118,9 +118,7 @@ xthread_t (*_Xthread_self_fn)(void) = NULL;
 #define UnlockNextEventReader(d)
 #endif /* !USE_XCB */
 
-#endif /* XTHREADS else */ 
-
-#include <nx/NX.h>
+#endif /* XTHREADS else */
 
 #ifdef NX_TRANS_SOCKET
 
@@ -141,9 +139,7 @@ static struct timeval retry;
  */
 
 #ifdef NX_TRANS_CHANGE
-
 extern int _X11TransSocketCongestionChange(XtransConnInfo, int *);
-
 #endif
 
 #endif /* #ifdef NX_TRANS_SOCKET */
@@ -170,20 +166,16 @@ extern int _X11TransSocketCongestionChange(XtransConnInfo, int *);
 #endif /* WIN32 */
 
 #ifdef WIN32
-#  define ECHECK(err) (WSAGetLastError() == err)
-#  define ESET(val) WSASetLastError(val)
+#define ECHECK(err) (WSAGetLastError() == err)
+#define ESET(val) WSASetLastError(val)
 #else
-#  ifdef __UNIXOS2__
-#    define ECHECK(err) (errno == err)
-#    define ESET(val)
-#  else
-#    ifdef ISC
-#      define ECHECK(err) ((errno == err) || ETEST())
-#    else
-#      define ECHECK(err) (errno == err)
-#    endif
-#    define ESET(val) errno = val
-#  endif
+#ifdef __UNIXOS2__
+#define ECHECK(err) (errno == err)
+#define ESET(val)
+#else
+#define ECHECK(err) (errno == err)
+#define ESET(val) errno = val
+#endif
 #endif
 
 #if defined(LOCALCONN) || defined(LACHMAN)
@@ -383,16 +375,13 @@ _XWaitForWritable(
 #endif
     int nfound;
 
+#ifdef NX_TRANS_SOCKET
 #if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_CHANGE)
     int congestion;
 #endif
-
-#ifdef NX_TRANS_SOCKET
-
     if (_XGetIOError(dpy)) {
         return;
     }
-
 #endif
 
 #ifdef USE_POLL
@@ -431,28 +420,57 @@ _XWaitForWritable(
 #endif
 
 #ifndef NX_TRANS_SOCKET
-#  ifdef USE_POLL
+#ifdef USE_POLL
 	    filedes.events = POLLIN;
 	filedes.events |= POLLOUT;
-#  else
+#else
 	FD_SET(dpy->fd, &r_mask);
         FD_SET(dpy->fd, &w_mask);
-#  endif
+#endif
 #endif /* #ifndef NX_TRANS_SOCKET */
 
 	do {
+#ifdef NX_TRANS_SOCKET
+            /*
+             * Give a chance to the registered client to perform
+             * any needed operation before entering the select.
+             */
+
+#ifdef NX_TRANS_TEST
+            fprintf(stderr, "_XWaitForWritable: WAIT! Waiting for the display to become writable.\n");
+#endif
+            NXTransFlush(dpy->fd);
+
+            if (_NXDisplayBlockFunction != NULL) {
+                    (*_NXDisplayBlockFunction)(dpy, NXBlockWrite);
+            }
+
+            /*
+             * Need to set again the descriptors as we could have
+             * run multiple selects before having the possibility
+             * to read or write to the X connection.
+             */
+
+#ifdef USE_POLL
+            filedes.events = POLLIN;
+            filedes.events |= POLLOUT;
+#else
+            FD_SET(dpy->fd, &r_mask);
+            FD_SET(dpy->fd, &w_mask);
+#endif
+#endif /* #ifdef NX_TRANS_SOCKET */
 	    UnlockDisplay(dpy);
 #ifdef USE_POLL
-#  if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
+#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
             fprintf(stderr, "_XWaitForWritable: Calling poll().\n");
-#  endif
+#endif
 	    nfound = poll (&filedes, 1, -1);
 #else /* USE_POLL */
-#  if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
+#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
             fprintf(stderr, "_XWaitForWritable: Calling select() after [%ld] ms.\n",
                         NXTransTime());
-#  endif /* defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG) */
-#  ifdef NX_TRANS_SOCKET
+#endif /* defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG) */
+#ifdef NX_TRANS_SOCKET
             /*
              * Give a chance to the callback to detect
              * the failure of the display even if we
@@ -466,10 +484,10 @@ _XWaitForWritable(
             } else {
                 nfound = Select (dpy->fd + 1, &r_mask, &w_mask, NULL, NULL);
             }
-#  else /* NX_TRANS_SOCKET */
+#else /* NX_TRANS_SOCKET */
 	    nfound = Select (dpy->fd + 1, &r_mask, &w_mask, NULL, NULL);
-#  endif /* NX_TRANS_SOCKET */
-#  if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
+#endif /* NX_TRANS_SOCKET */
+#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
             fprintf(stderr, "_XWaitForWritable: Out of select() with [%d] after [%ld] ms.\n",
                         nfound, NXTransTime());
 
@@ -488,17 +506,16 @@ _XWaitForWritable(
               fprintf(stderr, "_XWaitForWritable: Descriptor [%d] has become writable.\n\n",
                           dpy->fd);
             }
-#  endif /* defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG) */
+#endif /* defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG) */
 #endif /* USE_POLL */
 	    InternalLockDisplay(dpy, cv != NULL);
+#ifdef NX_TRANS_SOCKET
 #if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_CHANGE)
             if (_NXDisplayCongestionFunction != NULL &&
                     _X11TransSocketCongestionChange(dpy->trans_conn, &congestion) == 1) {
                 (*_NXDisplayCongestionFunction)(dpy, congestion);
             }
 #endif /* defined(NX_TRANS_SOCKET) && defined(NX_TRANS_CHANGE) */
-
-#ifdef NX_TRANS_SOCKET
             if (nfound <= 0) {
 	      if ((nfound == -1 && !(ECHECK(EINTR) || ETEST())) ||
                         (_NXDisplayErrorFunction != NULL &&
@@ -772,10 +789,27 @@ _XWaitForReadable(
                     result, (result < 0 ? errno : 0));
 #endif
 	InternalLockDisplay(dpy, dpy->flags & XlibDisplayReply);
+#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_CHANGE)
+        if (_NXDisplayCongestionFunction != NULL &&
+                _X11TransSocketCongestionChange(dpy->trans_conn, &congestion) == 1) {
+            (*_NXDisplayCongestionFunction)(dpy, congestion);
+        }
+#endif
+#ifdef NX_TRANS_SOCKET
+        if (result <= 0) {
+	  if ((result == -1 && !(ECHECK(EINTR) || ETEST())) ||
+                    (_NXDisplayErrorFunction != NULL &&
+                        (*_NXDisplayErrorFunction)(dpy, _XGetIOError(dpy)))) {
+                _XIOError(dpy);
+                return -1;
+            }
+            continue;
+        }
+#else
 	if (result == -1 && !(ECHECK(EINTR) || ETEST())) _XIOError(dpy);
 	if (result <= 0)
 	    continue;
-
+#endif
 #ifdef USE_POLL
 	if (filedes[0].revents & (POLLIN|POLLHUP|POLLERR))
 #else
@@ -869,7 +903,6 @@ void _XSeqSyncFunction(
         return;
     }
 #endif /* NX_TRANS_SOCKET */
-
     if ((dpy->request - dpy->last_request_read) >= (65535 - BUFSIZE/SIZEOF(xReq))) {
 	GetEmptyReq(GetInputFocus, req);
 	(void) _XReply (dpy, (xReply *)&rep, 0, xTrue);
@@ -1234,7 +1267,6 @@ _XEventsQueued(
 	    {
 		UnlockNextEventReader(dpy);
 	    }
-
 #if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
             fprintf(stderr, "_XEventsQueued: Returning [%d].\n", dpy->qlen);
 #endif
@@ -1373,15 +1405,12 @@ void _XReadEvents(
 #endif /* XTHREADS */
 	    /* find out how much data can be read */
 	    if (_X11TransBytesReadable(dpy->trans_conn, &pend) < 0)
-#ifdef NX_TRANS_SOCKET
             {
                 _XIOError(dpy);
-
+#ifdef NX_TRANS_SOCKET
                 return;
-            }
-#else
-	    _XIOError(dpy);
 #endif
+            }
 	    len = pend;
 
 	    /* must read at least one xEvent; if none is pending, then
@@ -2204,31 +2233,20 @@ _XSetLastRequestRead(
     if (newseq < lastseq) {
 	newseq += 0x10000;
 	if (newseq > dpy->request) {
-
 #ifdef NX_TRANS_SOCKET
-
 	    if (_NXLostSequenceFunction != NULL)
             {
                 (*_NXLostSequenceFunction)(dpy, newseq, dpy->request,
                                                (unsigned int) rep->type);
             }
             else
+#endif /* #ifdef NX_TRANS_SOCKET */
             {
                 (void) fprintf (stderr, 
                 "Xlib: sequence lost (0x%lx > 0x%lx) in reply type 0x%x!\n",
                                 newseq, dpy->request, 
                                 (unsigned int) rep->type);
             }
-
-#else /* #ifdef NX_TRANS_SOCKET */
-
-	    (void) fprintf (stderr, 
-	    "Xlib: sequence lost (0x%lx > 0x%lx) in reply type 0x%x!\n",
-			    newseq, dpy->request,
-			    (unsigned int) rep->type);
-
-#endif /* #ifdef NX_TRANS_SOCKET */
-
 	    newseq -= 0x10000;
 	}
     }
@@ -2316,7 +2334,6 @@ _XReply (
 #ifdef NX_TRANS_TEST
     fprintf(stderr, "_XReply: Requesting a flush of the NX transport.\n");
 #endif
-
     NXTransFlush(dpy->fd);
 #endif
 
@@ -2592,7 +2609,6 @@ _XRegisterInternalConnection(
 #if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
     fprintf(stderr, "_XRegisterInternalConnection: Got called.\n");
 #endif
-
     new_conni = (struct _XConnectionInfo*)Xmalloc(sizeof(struct _XConnectionInfo));
     if (!new_conni)
 	return 0;
@@ -2643,7 +2659,6 @@ _XUnregisterInternalConnection(
 #if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
     fprintf(stderr, "_XUnregisterInternalConnection: Got called.\n");
 #endif
-
     for (prev = &dpy->im_fd_info; (info_list = *prev);
 	 prev = &info_list->next) {
 	if (info_list->fd == fd) {
@@ -2686,7 +2701,6 @@ XInternalConnectionNumbers(
 #if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
     fprintf(stderr, "XInternalConnectionNumbers: Got called.\n");
 #endif
-
     LockDisplay(dpy);
     count = 0;
     for (info_list=dpy->im_fd_info; info_list; info_list=info_list->next)
@@ -2780,7 +2794,6 @@ XAddConnectionWatch(
 #if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
     fprintf(stderr, "XAddConnectionWatch: Got called.\n");
 #endif
-
     LockDisplay(dpy);
 
     /* allocate new watch data */
@@ -2840,7 +2853,6 @@ XRemoveConnectionWatch(
 #if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
     fprintf(stderr, "XRemoveConnectionWatch: Got called.\n");
 #endif
-
     LockDisplay(dpy);
     for (watch=dpy->conn_watchers; watch; watch=watch->next) {
 	if (watch->fn == callback  &&  watch->client_data == client_data) {
@@ -2889,6 +2901,30 @@ void _XEatData(
 	n -= bytes_read;
     }
 #undef SCRATCHSIZE
+}
+
+/*
+   Port from libXfixes commit
+   b031e3b60fa1af9e49449f23d4a84395868be3ab We need this here to
+   enable linking of current libXrender against libNX_X11 instead of
+   the system's libX11
+
+   The original implementation of this function (libX11 commit
+   9f5d83706543696fc944c1835a403938c06f2cc5) uses xcb stuff which we
+   do not have in libNX_X11. So we take a workaround from another
+   lib. This workaround had been implemented temporarily in a couple
+   of X libs, see e.g. https://lists.x.org/archives/xorg-devel/2013-July/036763.html.
+*/
+#include <nx-X11/Xmd.h>  /* for LONG64 on 64-bit platforms */
+#include <limits.h>
+
+void _XEatDataWords(Display *dpy, unsigned long n)
+{
+#ifndef LONG64
+    if (n >= (ULONG_MAX >> 2))
+        _XIOError(dpy);
+#endif
+    _XEatData (dpy, n << 2);
 }
 #endif /* !USE_XCB */
 
@@ -3592,7 +3628,6 @@ int _XDefaultIOError(
 #else
         exit(1);
 #endif /* #ifdef NX_TRANS_SOCKET */
-
         return(0); /* dummy - function should never return */
 }
 
@@ -4178,6 +4213,36 @@ Screen *_XScreenOfWindow(Display *dpy, Window w)
     return NULL;
 }
 
+/*
+ * WARNING: This implementation's pre-conditions and post-conditions
+ * must remain compatible with the old macro-based implementations of
+ * GetReq, GetReqExtra, GetResReq, and GetEmptyReq. The portions of the
+ * Display structure affected by those macros are part of libX11's
+ * ABI.
+ */
+void *_XGetRequest(Display *dpy, CARD8 type, size_t len)
+{
+    xReq *req;
+
+    WORD64ALIGN
+
+    if (dpy->bufptr + len > dpy->bufmax)
+       _XFlush(dpy);
+
+    if (len % 4)
+       fprintf(stderr,
+               "Xlib: request %d length %zd not a multiple of 4.\n",
+               type, len);
+
+    dpy->last_req = dpy->bufptr;
+
+    req = (xReq*)dpy->bufptr;
+    req->reqType = type;
+    req->length = len / 4;
+    dpy->bufptr += len;
+    dpy->request++;
+    return req;
+}
 
 #if defined(WIN32)
 

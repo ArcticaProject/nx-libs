@@ -29,12 +29,13 @@ in this Software without prior written authorization from The Open Group.
 #endif
 #include "Xlibint.h"
 
-XTimeCoord *XGetMotionEvents(dpy, w, start, stop, nEvents)
-    register Display *dpy;
-    Time start, stop;
-    Window w;
-    int *nEvents;  /* RETURN */
-{       
+XTimeCoord *XGetMotionEvents(
+    register Display *dpy,
+    Window w,
+    Time start,
+    Time stop,
+    int *nEvents)  /* RETURN */
+{
     xGetMotionEventsReply rep;
     register xGetMotionEventsReq *req;
     XTimeCoord *tc = NULL;
@@ -50,10 +51,10 @@ XTimeCoord *XGetMotionEvents(dpy, w, start, stop, nEvents)
         SyncHandle();
 	return (NULL);
 	}
-    
+
     if (rep.nEvents) {
 	if (! (tc = (XTimeCoord *)
-	       Xmalloc( (unsigned) 
+	       Xmalloc( (unsigned)
 		       (nbytes = (long) rep.nEvents * sizeof(XTimeCoord))))) {
 	    _XEatData (dpy, (unsigned long) nbytes);
 	    UnlockDisplay(dpy);

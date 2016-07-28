@@ -30,11 +30,11 @@ in this Software without prior written authorization from The Open Group.
 #include "Xlibint.h"
 
 int
-XRestackWindows (dpy, windows, n)
-    register Display *dpy;
-    register Window *windows;
-    int n;
-    {
+XRestackWindows (
+    register Display *dpy,
+    register Window *windows,
+    int n)
+{
     int i = 0;
 
     LockDisplay(dpy);
@@ -50,12 +50,10 @@ XRestackWindows (dpy, windows, n)
 	    *values++ = *(windows-1);
 	    *values   = Below;
 	}
-    }
+	}
     UnlockDisplay(dpy);
     SyncHandle();
     return 1;
     }
 
-    
 
-    

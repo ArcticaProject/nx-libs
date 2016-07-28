@@ -30,19 +30,19 @@ in this Software without prior written authorization from The Open Group.
 #include "Xlibint.h"
 
 int
-XGetWindowProperty(dpy, w, property, offset, length, delete, 
-	req_type, actual_type, actual_format, nitems, bytesafter, prop)
-    register Display *dpy;
-    Window w;
-    Atom property;
-    Bool delete;
-    Atom req_type;
-    Atom *actual_type;		/* RETURN */
-    int *actual_format;  	/* RETURN  8, 16, or 32 */
-    long offset, length;
-    unsigned long *nitems; 	/* RETURN  # of 8-, 16-, or 32-bit entities */
-    unsigned long *bytesafter;	/* RETURN */
-    unsigned char **prop;	/* RETURN */
+XGetWindowProperty(
+    register Display *dpy,
+    Window w,
+    Atom property,
+    long offset,
+    long length,
+    Bool delete,
+    Atom req_type,
+    Atom *actual_type,		/* RETURN */
+    int *actual_format,  	/* RETURN  8, 16, or 32 */
+    unsigned long *nitems, 	/* RETURN  # of 8-, 16-, or 32-bit entities */
+    unsigned long *bytesafter,	/* RETURN */
+    unsigned char **prop)	/* RETURN */
 {
     xGetPropertyReply reply;
     register xGetPropertyReq *req;
@@ -57,22 +57,22 @@ XGetWindowProperty(dpy, w, property, offset, length, delete,
     req->longOffset = offset;
     req->longLength = length;
     error.sequenceNumber = dpy->request;
-    
+
     if (!_XReply (dpy, (xReply *) &reply, 0, xFalse)) {
 	UnlockDisplay(dpy);
 	SyncHandle();
 	return (1);	/* not Success */
-	}	
+	}
 
     *prop = (unsigned char *) NULL;
     if (reply.propertyType != None) {
 	long nbytes, netbytes;
 	switch (reply.format) {
-      /* 
+      /*
        * One extra byte is malloced than is needed to contain the property
-       * data, but this last byte is null terminated and convenient for 
-       * returning string properties, so the client doesn't then have to 
-       * recopy the string to make it null terminated. 
+       * data, but this last byte is null terminated and convenient for
+       * returning string properties, so the client doesn't then have to
+       * recopy the string to make it null terminated.
        */
 	  case 8:
 	    nbytes = netbytes = reply.nItems;
@@ -101,7 +101,7 @@ XGetWindowProperty(dpy, w, property, offset, length, delete,
 	    /*
 	     * This part of the code should never be reached.  If it is,
 	     * the server sent back a property with an invalid format.
-	     * This is a BadImplementation error. 
+	     * This is a BadImplementation error.
 	     */
 	    {
 		/* sequence number stored above */

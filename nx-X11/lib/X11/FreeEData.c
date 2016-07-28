@@ -30,12 +30,11 @@ in this Software without prior written authorization from The Open Group.
 #include "Xlibint.h"
 
 int
-_XFreeExtData (extension)
-     XExtData *extension;
+_XFreeExtData (XExtData *extension)
 {
 	XExtData *temp;
 	while (extension) {
-		if (extension->free_private) 
+		if (extension->free_private)
 		    (*extension->free_private)(extension);
 		else Xfree ((char *)extension->private_data);
 		temp = extension->next;

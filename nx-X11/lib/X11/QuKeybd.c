@@ -34,17 +34,16 @@ struct kmap {
 };
 
 int
-XQueryKeymap(dpy, keys)
-    register Display *dpy;
-    char keys[32];
-
-{       
+XQueryKeymap(
+    register Display *dpy,
+    char keys[32])
+{
     xQueryKeymapReply rep;
     register xReq *req;
 
     LockDisplay(dpy);
     GetEmptyReq(QueryKeymap, req);
-    (void) _XReply(dpy, (xReply *)&rep, 
+    (void) _XReply(dpy, (xReply *)&rep,
        (SIZEOF(xQueryKeymapReply) - SIZEOF(xReply)) >> 2, xTrue);
     *(struct kmap *) keys = *(struct kmap *)rep.map;  /* faster than memcpy */
     UnlockDisplay(dpy);
