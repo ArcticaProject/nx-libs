@@ -4,20 +4,20 @@ Copyright 1987 by Digital Equipment Corporation, Maynard, Massachusetts,
 
                         All Rights Reserved
 
-Permission to use, copy, modify, and distribute this software and its 
-documentation for any purpose and without fee is hereby granted, 
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
 provided that the above copyright notice appear in all copies and that
-both that copyright notice and this permission notice appear in 
+both that copyright notice and this permission notice appear in
 supporting documentation, and that the name Digital not be
 used in advertising or publicity pertaining to distribution of the
-software without specific, written prior permission.  
+software without specific, written prior permission.
 
-DIGITAL AND WYSE DISCLAIM ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, 
-INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO 
-EVENT SHALL DIGITAL OR WYSE BE LIABLE FOR ANY SPECIAL, INDIRECT OR 
-CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF 
-USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR 
-OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR 
+DIGITAL AND WYSE DISCLAIM ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
+INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO
+EVENT SHALL DIGITAL OR WYSE BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
 
 ******************************************************************/
@@ -60,12 +60,12 @@ from The Open Group.
 #include <nx-X11/Xutil.h>
 #include <stdio.h>
 
-Status XGetWMSizeHints (dpy, w, hints, supplied, property)
-    Display *dpy;
-    Window w;
-    XSizeHints *hints;
-    long *supplied;
-    Atom property;
+Status XGetWMSizeHints (
+    Display *dpy,
+    Window w,
+    XSizeHints *hints,
+    long *supplied,
+    Atom property)
 {
     xPropSizeHints *prop = NULL;
     Atom actual_type;
@@ -73,10 +73,10 @@ Status XGetWMSizeHints (dpy, w, hints, supplied, property)
     unsigned long leftover;
     unsigned long nitems;
 
-    if (XGetWindowProperty (dpy, w, property, 0L, 
+    if (XGetWindowProperty (dpy, w, property, 0L,
 			    (long)NumPropSizeElements,
 			    False, XA_WM_SIZE_HINTS, &actual_type,
-			    &actual_format, &nitems, &leftover, 
+			    &actual_format, &nitems, &leftover,
 			    (unsigned char **)&prop)
 	!= Success)
       return False;
@@ -117,11 +117,11 @@ Status XGetWMSizeHints (dpy, w, hints, supplied, property)
 }
 
 
-Status XGetWMNormalHints (dpy, w, hints, supplied)
-    Display *dpy;
-    Window w;
-    XSizeHints *hints;
-    long *supplied;
+Status XGetWMNormalHints (
+    Display *dpy,
+    Window w,
+    XSizeHints *hints,
+    long *supplied)
 {
     return (XGetWMSizeHints (dpy, w, hints, supplied, XA_WM_NORMAL_HINTS));
 }

@@ -44,7 +44,7 @@ XSetPointerMapping (
     req->nElts = nmaps;
     req->length += (nmaps + 3)>>2;
     Data (dpy, (char *)map, (long) nmaps);
-    if (_XReply (dpy, (xReply *)&rep, 0, xFalse) == 0) 
+    if (_XReply (dpy, (xReply *)&rep, 0, xFalse) == 0)
 	rep.success = MappingSuccess;
     UnlockDisplay(dpy);
     SyncHandle();
@@ -52,14 +52,13 @@ XSetPointerMapping (
     }
 
 int
-XChangeKeyboardMapping (dpy, first_keycode, keysyms_per_keycode, 
-		     keysyms, nkeycodes)
-    register Display *dpy;
-    int first_keycode;
-    int keysyms_per_keycode;
-    KeySym *keysyms;
-    int nkeycodes;
-    {
+XChangeKeyboardMapping (
+    register Display *dpy,
+    int first_keycode,
+    int keysyms_per_keycode,
+    KeySym *keysyms,
+    int nkeycodes)
+{
     register long nbytes;
     register xChangeKeyboardMappingReq *req;
 
@@ -68,7 +67,6 @@ XChangeKeyboardMapping (dpy, first_keycode, keysyms_per_keycode,
     req->firstKeyCode = first_keycode;
     req->keyCodes = nkeycodes;
     req->keySymsPerKeyCode = keysyms_per_keycode;
-    req->firstKeyCode = first_keycode;
     req->length += nkeycodes * keysyms_per_keycode;
     nbytes = keysyms_per_keycode * nkeycodes * 4;
     Data32 (dpy, (long *)keysyms, nbytes);
@@ -76,4 +74,3 @@ XChangeKeyboardMapping (dpy, first_keycode, keysyms_per_keycode,
     SyncHandle();
     return 0;
     }
-    

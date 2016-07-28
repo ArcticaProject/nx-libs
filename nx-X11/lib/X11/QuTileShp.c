@@ -29,12 +29,14 @@ in this Software without prior written authorization from The Open Group.
 #endif
 #include "Xlibint.h"
 
-Status XQueryBestTile(dpy, drawable, width, height, ret_width, ret_height)
-     register Display *dpy;
-     Drawable drawable;
-     unsigned int width, height;
-     unsigned int *ret_width, *ret_height;
-{       
+Status XQueryBestTile(
+     register Display *dpy,
+     Drawable drawable,
+     unsigned int width,
+     unsigned int height,
+     unsigned int *ret_width,
+     unsigned int *ret_height)
+{
     xQueryBestSizeReply rep;
     register xQueryBestSizeReq *req;
 

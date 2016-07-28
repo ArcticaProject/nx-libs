@@ -123,9 +123,9 @@ XFontStruct *XLoadQueryFont(
     return font_result;
 }
 
-XFontStruct *XQueryFont (dpy, fid)
-    register Display *dpy;
-    Font fid;
+XFontStruct *XQueryFont (
+    register Display *dpy,
+    Font fid)
 {
     XFontStruct *font_result;
 #ifdef USE_XF86BIGFONT
@@ -147,10 +147,10 @@ XFontStruct *XQueryFont (dpy, fid)
 }
 
 int
-XFreeFont(dpy, fs)
-    register Display *dpy;
-    XFontStruct *fs;
-{ 
+XFreeFont(
+    register Display *dpy,
+    XFontStruct *fs)
+{
     register xResourceReq *req;
     register _XExtension *ext;
 
@@ -177,10 +177,10 @@ XFreeFont(dpy, fs)
 
 
 static XFontStruct *
-_XQueryFont (dpy, fid, seq)
-    register Display *dpy;
-    Font fid;
-    unsigned long seq;
+_XQueryFont (
+    register Display *dpy,
+    Font fid,
+    unsigned long seq)
 {
     register XFontStruct *fs;
     register long nbytes;
@@ -227,13 +227,13 @@ _XQueryFont (dpy, fid, seq)
     fs->all_chars_exist 	= reply.allCharsExist;
     fs->ascent 			= cvtINT16toInt (reply.fontAscent);
     fs->descent 		= cvtINT16toInt (reply.fontDescent);
-    
+
     /* XXX the next two statements won't work if short isn't 16 bits */
     fs->min_bounds = * (XCharStruct *) &reply.minBounds;
     fs->max_bounds = * (XCharStruct *) &reply.maxBounds;
 
     fs->n_properties = reply.nFontProps;
-    /* 
+    /*
      * if no properties defined for the font, then it is bad
      * font, but shouldn't try to read nothing.
      */
@@ -384,11 +384,11 @@ _XF86BigfontFreeNop (
 }
 
 static XFontStruct *
-_XF86BigfontQueryFont (dpy, extcodes, fid, seq)
-    register Display *dpy;
-    XF86BigfontCodes *extcodes;
-    Font fid;
-    unsigned long seq;
+_XF86BigfontQueryFont (
+    register Display *dpy,
+    XF86BigfontCodes *extcodes,
+    Font fid,
+    unsigned long seq)
 {
     register XFontStruct *fs;
     register long nbytes;
@@ -470,7 +470,7 @@ _XF86BigfontQueryFont (dpy, extcodes, fid, seq)
     fs->max_bounds = * (XCharStruct *) &reply.maxBounds;
 
     fs->n_properties = reply.nFontProps;
-    /* 
+    /*
      * if no properties defined for the font, then it is bad
      * font, but shouldn't try to read nothing.
      */
@@ -554,7 +554,7 @@ _XF86BigfontQueryFont (dpy, extcodes, fid, seq)
 	       signature. Then we set the CAP_VerifiedLocal bit to indicate
 	       the verification was successful. */
 
-	    if ((addr = shmat(reply.shmid, 0, SHM_RDONLY)) == (char *)-1) {
+	    if ((addr = shmat(reply.shmid, NULL, SHM_RDONLY)) == (char *)-1) {
 		if (extcodes->serverCapabilities & CAP_VerifiedLocal)
 		    fprintf(stderr, "_XF86BigfontQueryFont: could not attach shm segment\n");
 	        Xfree((char *) pData);
@@ -606,8 +606,7 @@ _XF86BigfontQueryFont (dpy, extcodes, fid, seq)
 }
 
 void
-_XF86BigfontFreeFontMetrics (fs)
-    XFontStruct *fs;
+_XF86BigfontFreeFontMetrics (XFontStruct *fs)
 {
 #ifdef HAS_SHM
     XExtData *pData;
@@ -633,7 +632,7 @@ int _XF86LoadQueryLocaleFont(
    Font *fidp)
 {
     int l;
-    char *charset, *p;
+    const char *charset, *p;
     char buf[256];
     XFontStruct *fs;
     XLCd lcd;
@@ -643,7 +642,7 @@ int _XF86LoadQueryLocaleFont(
     l = strlen(name);
     if (l < 2 || name[l - 1] != '*' || name[l - 2] != '-')
 	return 0;
-    charset = 0;
+    charset = NULL;
     /* next three lines stolen from _XkbGetCharset() */
     lcd = _XlcCurrentLC();
     if ((lcd = _XlcCurrentLC()) != 0)

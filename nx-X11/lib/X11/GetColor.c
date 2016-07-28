@@ -48,6 +48,7 @@ XColor *exact_def) /* RETURN */
     XcmsColor cmsColor_exact;
     Status ret;
 
+#ifdef XCMS
     /*
      * Let's Attempt to use Xcms and i18n approach to Parse Color
      */
@@ -73,6 +74,7 @@ XColor *exact_def) /* RETURN */
 	    break;
 	}
     }
+#endif
 
     /*
      * Xcms and i18n approach failed.

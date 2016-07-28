@@ -30,14 +30,14 @@ in this Software without prior written authorization from The Open Group.
 #include "Xlibint.h"
 
 int
-XFillPolygon(dpy, d, gc, points, n_points, shape, mode)
-register Display *dpy;
-Drawable d;
-GC gc;
-XPoint *points;
-int n_points;
-int shape;
-int mode;
+XFillPolygon(
+    register Display *dpy,
+    Drawable d,
+    GC gc,
+    XPoint *points,
+    int n_points,
+    int shape,
+    int mode)
 {
     register xFillPolyReq *req;
     register long nbytes;
@@ -56,7 +56,7 @@ int mode;
     /* shift (mult. by 4) before passing to the (possible) macro */
 
     nbytes = n_points << 2;
-    
+
     Data16 (dpy, (short *) points, nbytes);
     UnlockDisplay(dpy);
     SyncHandle();

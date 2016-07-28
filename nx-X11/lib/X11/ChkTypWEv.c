@@ -29,23 +29,27 @@ in this Software without prior written authorization from The Open Group.
 #endif
 #include "Xlibint.h"
 
-/* 
+/*
  * Check existing events in queue to find if any match.  If so, return.
  * If not, flush buffer and see if any more events are readable. If one
  * matches, return.  If all else fails, tell the user no events found.
  */
 
-Bool XCheckTypedWindowEvent (dpy, w, type, event)
-        register Display *dpy;
-	Window w;		/* Selected window. */
-	int type;		/* Selected event type. */
-	register XEvent *event;	/* XEvent to be filled in. */
+Bool XCheckTypedWindowEvent (
+	register Display *dpy,
+	Window w,		/* Selected window. */
+	int type,		/* Selected event type. */
+	register XEvent *event)	/* XEvent to be filled in. */
 {
 	register _XQEvent *prev, *qelt;
 	unsigned long qe_serial = 0;
 	int n;			/* time through count */
 
         LockDisplay(dpy);
+
+	/* Delete unclaimed cookies */
+	_XFreeEventCookies(dpy);
+
 	prev = NULL;
 	for (n = 3; --n >= 0;) {
 	    for (qelt = prev ? prev->next : dpy->head;

@@ -3,13 +3,13 @@ Copyright 1988 by Wyse Technology, Inc., San Jose, Ca.,
 
                         All Rights Reserved
 
-Permission to use, copy, modify, and distribute this software and its 
-documentation for any purpose and without fee is hereby granted, 
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
 provided that the above copyright notice appear in all copies and that
-both that copyright notice and this permission notice appear in 
+both that copyright notice and this permission notice appear in
 supporting documentation, and that the name Wyse not be
 used in advertising or publicity pertaining to distribution of the
-software without specific, written prior permission.  
+software without specific, written prior permission.
 
 WYSE DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
 ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
@@ -57,11 +57,11 @@ from The Open Group.
 #include <nx-X11/Xos.h>
 #include <stdio.h>
 
-Status XGetTextProperty (display, window, tp, property)
-    Display *display;
-    Window window;
-    XTextProperty *tp;
-    Atom property;
+Status XGetTextProperty (
+    Display *display,
+    Window window,
+    XTextProperty *tp,
+    Atom property)
 {
     Atom actual_type;
     int actual_format = 0;
@@ -87,26 +87,26 @@ Status XGetTextProperty (display, window, tp, property)
     return False;
 }
 
-Status XGetWMName (dpy, w, tp)
-    Display *dpy;
-    Window w;
-    XTextProperty *tp;
+Status XGetWMName (
+    Display *dpy,
+    Window w,
+    XTextProperty *tp)
 {
     return (XGetTextProperty (dpy, w, tp, XA_WM_NAME));
 }
 
-Status XGetWMIconName (dpy, w, tp)
-    Display *dpy;
-    Window w;
-    XTextProperty *tp;
+Status XGetWMIconName (
+    Display *dpy,
+    Window w,
+    XTextProperty *tp)
 {
     return (XGetTextProperty (dpy, w, tp, XA_WM_ICON_NAME));
 }
 
-Status XGetWMClientMachine (dpy, w, tp)
-    Display *dpy;
-    Window w;
-    XTextProperty *tp;
+Status XGetWMClientMachine (
+    Display *dpy,
+    Window w,
+    XTextProperty *tp)
 {
     return (XGetTextProperty (dpy, w, tp, XA_WM_CLIENT_MACHINE));
 }
