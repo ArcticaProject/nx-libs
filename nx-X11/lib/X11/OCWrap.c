@@ -61,8 +61,7 @@ XCreateOC(XOM om, ...)
 }
 
 void
-XDestroyOC(oc)
-    XOC oc;
+XDestroyOC(XOC oc)
 {
     XOC prev, oc_list;
 
@@ -83,8 +82,7 @@ XDestroyOC(oc)
 }
 
 XOM
-XOMOfOC(oc)
-    XOC oc;
+XOMOfOC(XOC oc)
 {
     return oc->core.om;
 }

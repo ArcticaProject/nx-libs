@@ -30,17 +30,17 @@ in this Software without prior written authorization from The Open Group.
 #include "Xlibint.h"
 
 int
-XStoreColors(dpy, cmap, defs, ncolors)
-register Display *dpy;
-Colormap cmap;
-XColor *defs;
-int ncolors;
+XStoreColors(
+    register Display *dpy,
+    Colormap cmap,
+    XColor *defs,
+    int ncolors)
 {
     register int i;
     xColorItem citem;
     register xStoreColorsReq *req;
 
-    LockDisplay(dpy);    
+    LockDisplay(dpy);
     GetReq(StoreColors, req);
 
     req->cmap = cmap;
@@ -56,7 +56,7 @@ int ncolors;
 
 	/* note that xColorItem doesn't contain all 16-bit quantities, so
 	   we can't use Data16 */
-	Data(dpy, (char *)&citem, (long) SIZEOF(xColorItem)); 
+	Data(dpy, (char *)&citem, (long) SIZEOF(xColorItem));
 			/* assume size is 4*n */
     }
     UnlockDisplay(dpy);

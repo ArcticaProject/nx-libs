@@ -30,9 +30,9 @@ in this Software without prior written authorization from The Open Group.
 #include "Xlibint.h"
 
 int
-XKillClient(dpy, resource)
-	register Display *dpy;
-	XID resource;
+XKillClient(
+	register Display *dpy,
+	XID resource)
 {
 	register xResourceReq *req;
 	LockDisplay(dpy);

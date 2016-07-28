@@ -1,4 +1,3 @@
-/* $TOG: imConv.c /main/20 1998/06/17 15:46:41 kaleb $ */
 /******************************************************************
 
               Copyright 1991, 1992 by Fuji Xerox Co.,Ltd.
@@ -44,9 +43,9 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "XlcPubI.h"
 
 #ifdef XKB
-/* 
- * rather than just call _XLookupString (i.e. the pre-XKB XLookupString) 
- * do this because with XKB the event may have some funky modifiers that 
+/*
+ * rather than just call _XLookupString (i.e. the pre-XKB XLookupString)
+ * do this because with XKB the event may have some funky modifiers that
  * _XLookupString doesn't grok.
  */
 #include "XKBlib.h"
@@ -65,11 +64,11 @@ typedef int (*ucstocsConvProc)(
 );
 
 struct SubstRec {
-    char*  encoding_name;
-    char*  charset_name;
+    const char encoding_name[8];
+    const char charset_name[12];
 };
 
-static struct SubstRec SubstTable[] = {
+static const struct SubstRec SubstTable[] = {
     {"STRING", "ISO8859-1"},
     {"TIS620", "TIS620-0"},
     {"UTF-8",  "ISO10646-1"}
@@ -105,7 +104,7 @@ _XimGetLocaleCode (
  * locale
  */
 /*ARGSUSED*/
-int 
+int
 _XimGetCharCode (
     XPointer            ucs_conv,
     KeySym 		keysym,
@@ -144,7 +143,7 @@ static int lookup_string(
 {
     int ret;
     unsigned ctrls = XkbGetXlibControls (event->display);
-    XkbSetXlibControls (event->display, 
+    XkbSetXlibControls (event->display,
 			XkbLC_ForceLatin1Lookup, XkbLC_ForceLatin1Lookup);
     ret = XLookupString(event, (char *)buffer, nbytes, keysym, status);
     XkbSetXlibControls (event->display,
@@ -156,13 +155,13 @@ static int lookup_string(
 #define BUF_SIZE (20)
 
 int
-_XimLookupMBText(ic, event, buffer, nbytes, keysym, status)
-    Xic			 ic;
-    XKeyEvent*		event;
-    char*		buffer;
-    int			nbytes;
-    KeySym*		keysym;
-    XComposeStatus*	status;
+_XimLookupMBText(
+    Xic			 ic,
+    XKeyEvent*		event,
+    char*		buffer,
+    int			nbytes,
+    KeySym*		keysym,
+    XComposeStatus*	status)
 {
     int count;
     KeySym symbol;
@@ -181,11 +180,11 @@ _XimLookupMBText(ic, event, buffer, nbytes, keysym, status)
 	memcpy(look, (char *)buffer,count);
 	look[count] = '\0';
 	if ((count = im->methods->ctstombs(ic->core.im,
-				(char*) look, count, 
+				(char*) look, count,
 				buffer, nbytes, &dummy)) < 0) {
 	    count = 0;
 	}
-    } else if ((count == 0) || 
+    } else if ((count == 0) ||
 	       (count == 1 && (symbol > 0x7f && symbol < 0xff00))) {
 
         XPointer from = (XPointer) &ucs4;
@@ -227,13 +226,13 @@ _XimLookupMBText(ic, event, buffer, nbytes, keysym, status)
 }
 
 int
-_XimLookupWCText(ic, event, buffer, nbytes, keysym, status)
-    Xic			 ic;
-    XKeyEvent*		event;
-    wchar_t*		buffer;
-    int			nbytes;
-    KeySym*		keysym;
-    XComposeStatus*	status;
+_XimLookupWCText(
+    Xic			 ic,
+    XKeyEvent*		event,
+    wchar_t*		buffer,
+    int			nbytes,
+    KeySym*		keysym,
+    XComposeStatus*	status)
 {
     int count;
     KeySym symbol;
@@ -250,7 +249,7 @@ _XimLookupWCText(ic, event, buffer, nbytes, keysym, status)
 
     if (count > 1) {
 	if ((count = im->methods->ctstowcs(ic->core.im,
-				(char*) look, count, 
+				(char*) look, count,
 				buffer, nbytes, &dummy)) < 0) {
 	    count = 0;
 	}
@@ -299,13 +298,13 @@ _XimLookupWCText(ic, event, buffer, nbytes, keysym, status)
 }
 
 int
-_XimLookupUTF8Text(ic, event, buffer, nbytes, keysym, status)
-    Xic			 ic;
-    XKeyEvent*		event;
-    char*		buffer;
-    int			nbytes;
-    KeySym*		keysym;
-    XComposeStatus*	status;
+_XimLookupUTF8Text(
+    Xic			 ic,
+    XKeyEvent*		event,
+    char*		buffer,
+    int			nbytes,
+    KeySym*		keysym,
+    XComposeStatus*	status)
 {
     int count;
     KeySym symbol;
@@ -324,11 +323,11 @@ _XimLookupUTF8Text(ic, event, buffer, nbytes, keysym, status)
 	memcpy(look, (char *)buffer,count);
 	look[count] = '\0';
 	if ((count = im->methods->ctstoutf8(ic->core.im,
-				(char*) look, count, 
+				(char*) look, count,
 				buffer, nbytes, &dummy)) < 0) {
 	    count = 0;
 	}
-    } else if ((count == 0) || 
+    } else if ((count == 0) ||
 	       (count == 1 && (symbol > 0x7f && symbol < 0xff00))) {
 
         XPointer from = (XPointer) &ucs4;

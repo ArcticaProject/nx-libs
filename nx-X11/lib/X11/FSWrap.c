@@ -17,15 +17,15 @@
  * OPEN SOFTWARE FOUNDATION DISCLAIMS ALL WARRANTIES WITH REGARD TO
  * THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS, IN NO EVENT SHALL OPEN SOFTWARE FOUNDATIONN BE
- * LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES 
+ * LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
  * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- * 
- *		 M. Collins		OSF  
+ *
+ *		 M. Collins		OSF
  *
  *		 Katsuhisa Yano		TOSHIBA Corp.
- */				
+ */
 
 /*
 
@@ -179,13 +179,13 @@ XCreateFontSet (
     om = XOpenOM(dpy, NULL, NULL, NULL);
     if (om == NULL)
 	return (XFontSet) NULL;
-    
+
     if ((oc = XCreateOC(om, XNBaseFontName, base_font_name_list, NULL))) {
 	list = &oc->core.missing_list;
 	oc->core.om_automatic = True;
     } else
 	list = &om->core.required_charset;
-    
+
     *missing_charset_list = copy_string_list(list->charset_list,
 					     list->charset_count);
     *missing_charset_count = list->charset_count;
@@ -198,7 +198,7 @@ XCreateFontSet (
 	if (!*def_string)
 	    *def_string = "";
     }
-    
+
     if (oc == NULL)
 	XCloseOM(om);
 
@@ -206,10 +206,10 @@ XCreateFontSet (
 }
 
 int
-XFontsOfFontSet(font_set, font_struct_list, font_name_list)
-    XFontSet        font_set;
-    XFontStruct  ***font_struct_list;
-    char         ***font_name_list;
+XFontsOfFontSet(
+    XFontSet        font_set,
+    XFontStruct  ***font_struct_list,
+    char         ***font_name_list)
 {
     *font_name_list   = font_set->core.font_info.font_name_list;
     *font_struct_list = font_set->core.font_info.font_struct_list;
@@ -217,50 +217,47 @@ XFontsOfFontSet(font_set, font_struct_list, font_name_list)
 }
 
 char *
-XBaseFontNameListOfFontSet(font_set)
-    XFontSet        font_set;
+XBaseFontNameListOfFontSet(XFontSet font_set)
 {
     return font_set->core.base_name_list;
 }
 
 char *
-XLocaleOfFontSet(font_set)
-    XFontSet        font_set;
+XLocaleOfFontSet(XFontSet font_set)
 {
     return font_set->core.om->core.lcd->core->name;
 }
 
-extern Bool XContextDependentDrawing(font_set)
-    XFontSet        font_set;
+Bool
+XContextDependentDrawing(XFontSet font_set)
 {
     return font_set->core.om->core.context_dependent;
 }
 
 Bool
-XDirectionalDependentDrawing(font_set)
-    XFontSet        font_set;
+XDirectionalDependentDrawing(XFontSet font_set)
 {
     return font_set->core.om->core.directional_dependent;
 }
 
 Bool
-XContextualDrawing(font_set)
-    XFontSet        font_set;
+XContextualDrawing(XFontSet font_set)
 {
     return font_set->core.om->core.contextual_drawing;
 }
 
 XFontSetExtents *
-XExtentsOfFontSet(font_set)
-    XFontSet        font_set;
+XExtentsOfFontSet(XFontSet font_set)
 {
+    if (!font_set)
+	return NULL;
     return &font_set->core.font_set_extents;
 }
 
 void
-XFreeFontSet(dpy, font_set)
-    Display        *dpy;
-    XFontSet        font_set;
+XFreeFontSet(
+    Display        *dpy,
+    XFontSet        font_set)
 {
     XCloseOM(font_set->core.om);
 }

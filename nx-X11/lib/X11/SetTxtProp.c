@@ -3,13 +3,13 @@ Copyright 1988 by Wyse Technology, Inc., San Jose, Ca.
 
                         All Rights Reserved
 
-Permission to use, copy, modify, and distribute this software and its 
-documentation for any purpose and without fee is hereby granted, 
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
 provided that the above copyright notice appear in all copies and that
-both that copyright notice and this permission notice appear in 
+both that copyright notice and this permission notice appear in
 supporting documentation, and that the name of Wyse not be
 used in advertising or publicity pertaining to distribution of the
-software without specific, written prior permission.  
+software without specific, written prior permission.
 
 WYSE DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
 ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
@@ -57,36 +57,36 @@ from The Open Group.
 #include <nx-X11/Xos.h>
 #include <stdio.h>
 
-void XSetTextProperty (dpy, w, tp, property)
-    Display *dpy;
-    Window w;
-    Atom property;
-    XTextProperty *tp;
+void XSetTextProperty (
+    Display *dpy,
+    Window w,
+    XTextProperty *tp,
+    Atom property)
 {
     XChangeProperty (dpy, w, property, tp->encoding, tp->format,
 		     PropModeReplace, tp->value, tp->nitems);
 }
 
-void XSetWMName (dpy, w, tp)
-    Display *dpy;
-    Window w;
-    XTextProperty *tp;
+void XSetWMName (
+    Display *dpy,
+    Window w,
+    XTextProperty *tp)
 {
     XSetTextProperty (dpy, w, tp, XA_WM_NAME);
 }
 
-void XSetWMIconName (dpy, w, tp)
-    Display *dpy;
-    Window w;
-    XTextProperty *tp;
+void XSetWMIconName (
+    Display *dpy,
+    Window w,
+    XTextProperty *tp)
 {
     XSetTextProperty (dpy, w, tp, XA_WM_ICON_NAME);
 }
 
-void XSetWMClientMachine (dpy, w, tp)
-    Display *dpy;
-    Window w;
-    XTextProperty *tp;
+void XSetWMClientMachine (
+    Display *dpy,
+    Window w,
+    XTextProperty *tp)
 {
     XSetTextProperty (dpy, w, tp, XA_WM_CLIENT_MACHINE);
 }

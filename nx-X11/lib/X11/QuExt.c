@@ -23,7 +23,6 @@ used in advertising or otherwise to promote the sale, use or other dealings
 in this Software without prior written authorization from The Open Group.
 
 */
-/* $XFree86$ */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -37,7 +36,7 @@ XQueryExtension(
     int *major_opcode,  /* RETURN */
     int *first_event,   /* RETURN */
     int *first_error)	/* RETURN */
-{       
+{
     xQueryExtensionReply rep;
     register xQueryExtensionReq *req;
 
