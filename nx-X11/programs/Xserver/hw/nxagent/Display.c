@@ -2186,9 +2186,8 @@ static int nxagentCheckForDefaultDepthCompatibility()
    *     recommended, because it allows clients with a
    *     higher default depth value to still connect, but
    *     not lose functionality.
-   *   - Bypass or higher means that all of these checks are
-   *     essentially deactivated. This is probably a very
-   *     bad idea.
+   *   - Bypass means that all of these checks are essentially
+   *     deactivated. This is probably a very bad idea.
    */
 
   int dDepth;
