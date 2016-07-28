@@ -320,7 +320,9 @@ turns off the X Window System logo display in the screen-saver.
 There is currently no way to change this from a client.
 .TP 8
 .B \-render 
+
 .BR default | mono | gray | color
+
 sets the color allocation policy that will be used by the render extension.
 .RS 8
 .TP 8
@@ -450,6 +452,9 @@ start or resume a session in fullscreen mode (default: off)
 set remote keyboard layout
 .TP 8
 .B clipboard=<string>
+
+.BR both | client | server | none
+
 enable / disable (set to: \fInone\fR) clipboard support, uni-directional (\fIserver\fR or \fIclient\fR) or bi-directional (\fIboth\fR, default setting) support
 .TP 8
 .B streaming=<int>
