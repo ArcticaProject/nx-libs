@@ -67,6 +67,17 @@ typedef enum _ClientOsType
 
 } ClientOsType;
 
+typedef enum _ToleranceChecksMode
+{
+  ToleranceChecksStrict = 0,
+  ToleranceChecksSafe = 1,
+  ToleranceChecksRisky = 2,
+  ToleranceChecksBypass = 3
+} ToleranceChecksMode;
+
+
+#define DEFAULT_TOLERANCE ToleranceChecksStrict
+
 /*
  * Set of options affecting agent operations.
  */
@@ -413,6 +424,12 @@ typedef struct _AgentOptions
    */
 
   unsigned int SleepTime;
+
+  /*
+   * Tolerance - tightens or loosens reconnect checks.
+   */
+
+  ToleranceChecksMode ReconnectTolerance;
 
 } AgentOptionsRec;
 
