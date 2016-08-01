@@ -4042,4 +4042,4 @@ extern void XFreeEventData(
 
 _XFUNCPROTOEND
 
-#endif /* _X11_XLIB_H_ */
+#endif /* _XLIB_H_ */
