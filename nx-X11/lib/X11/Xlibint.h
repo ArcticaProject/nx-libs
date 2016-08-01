@@ -238,9 +238,6 @@ struct _XDisplay
 /*
  * define the following if you want the Data macro to be a procedure instead
  */
-#ifdef CRAY
-#define DataRoutineIsProcedure
-#endif /* CRAY */
 
 #ifndef _XEVENT_
 /*
@@ -440,27 +437,6 @@ extern LockInfoPtr _Xglobal_lock;
  * X Protocol packetizing macros.
  */
 
-/*   Need to start requests on 64 bit word boundaries
- *   on a CRAY computer so add a NoOp (127) if needed.
- *   A character pointer on a CRAY computer will be non-zero
- *   after shifting right 61 bits of it is not pointing to
- *   a word boundary.
- */
-#ifdef WORD64
-#define WORD64ALIGN if ((long)dpy->bufptr >> 61) {\
-           dpy->last_req = dpy->bufptr;\
-           *(dpy->bufptr)   = X_NoOperation;\
-           *(dpy->bufptr+1) =  0;\
-           *(dpy->bufptr+2) =  0;\
-           *(dpy->bufptr+3) =  1;\
-             dpy->request++;\
-             dpy->bufptr += 4;\
-         }
-#else /* else does not require alignment on 64-bit boundaries */
-#define WORD64ALIGN
-#endif /* WORD64 */
-
-
 /*
  * GetReq - Get the next available X request packet in the buffer and
  * return it.
@@ -472,7 +448,6 @@ extern LockInfoPtr _Xglobal_lock;
 
 #if !defined(UNIXCPP) || defined(ANSICPP)
 #define GetReq(name, req) \
-        WORD64ALIGN\
 	if ((dpy->bufptr + SIZEOF(x##name##Req)) > dpy->bufmax)\
 		_XFlush(dpy);\
 	req = (x##name##Req *)(dpy->last_req = dpy->bufptr);\
@@ -483,7 +458,6 @@ extern LockInfoPtr _Xglobal_lock;
 
 #else  /* non-ANSI C uses empty comment instead of "##" for token concatenation */
 #define GetReq(name, req) \
-        WORD64ALIGN\
 	if ((dpy->bufptr + SIZEOF(x/**/name/**/Req)) > dpy->bufmax)\
 		_XFlush(dpy);\
 	req = (x/**/name/**/Req *)(dpy->last_req = dpy->bufptr);\
@@ -498,7 +472,6 @@ extern LockInfoPtr _Xglobal_lock;
 
 #if !defined(UNIXCPP) || defined(ANSICPP)
 #define GetReqExtra(name, n, req) \
-        WORD64ALIGN\
 	if ((dpy->bufptr + SIZEOF(x##name##Req) + n) > dpy->bufmax)\
 		_XFlush(dpy);\
 	req = (x##name##Req *)(dpy->last_req = dpy->bufptr);\
@@ -508,7 +481,6 @@ extern LockInfoPtr _Xglobal_lock;
 	dpy->request++
 #else
 #define GetReqExtra(name, n, req) \
-        WORD64ALIGN\
 	if ((dpy->bufptr + SIZEOF(x/**/name/**/Req) + n) > dpy->bufmax)\
 		_XFlush(dpy);\
 	req = (x/**/name/**/Req *)(dpy->last_req = dpy->bufptr);\
@@ -527,7 +499,6 @@ extern LockInfoPtr _Xglobal_lock;
 
 #if !defined(UNIXCPP) || defined(ANSICPP)
 #define GetResReq(name, rid, req) \
-        WORD64ALIGN\
 	if ((dpy->bufptr + SIZEOF(xResourceReq)) > dpy->bufmax)\
 	    _XFlush(dpy);\
 	req = (xResourceReq *) (dpy->last_req = dpy->bufptr);\
@@ -538,7 +509,6 @@ extern LockInfoPtr _Xglobal_lock;
 	dpy->request++
 #else
 #define GetResReq(name, rid, req) \
-        WORD64ALIGN\
 	if ((dpy->bufptr + SIZEOF(xResourceReq)) > dpy->bufmax)\
 	    _XFlush(dpy);\
 	req = (xResourceReq *) (dpy->last_req = dpy->bufptr);\
@@ -555,7 +525,6 @@ extern LockInfoPtr _Xglobal_lock;
  */
 #if !defined(UNIXCPP) || defined(ANSICPP)
 #define GetEmptyReq(name, req) \
-        WORD64ALIGN\
 	if ((dpy->bufptr + SIZEOF(xReq)) > dpy->bufmax)\
 	    _XFlush(dpy);\
 	req = (xReq *) (dpy->last_req = dpy->bufptr);\
@@ -565,7 +534,6 @@ extern LockInfoPtr _Xglobal_lock;
 	dpy->request++
 #else
 #define GetEmptyReq(name, req) \
-        WORD64ALIGN\
 	if ((dpy->bufptr + SIZEOF(xReq)) > dpy->bufmax)\
 	    _XFlush(dpy);\
 	req = (xReq *) (dpy->last_req = dpy->bufptr);\
@@ -575,18 +543,6 @@ extern LockInfoPtr _Xglobal_lock;
 	dpy->request++
 #endif
 
-#ifdef WORD64
-#define MakeBigReq(req,n) \
-    { \
-    char _BRdat[4]; \
-    unsigned long _BRlen = req->length - 1; \
-    req->length = 0; \
-    memcpy(_BRdat, ((char *)req) + (_BRlen << 2), 4); \
-    memmove(((char *)req) + 8, ((char *)req) + 4, _BRlen << 2); \
-    memcpy(((char *)req) + 4, _BRdat, 4); \
-    Data32(dpy, (long *)&_BRdat, 4); \
-    }
-#else
 #ifdef LONG64
 #define MakeBigReq(req,n) \
     { \
@@ -609,7 +565,6 @@ extern LockInfoPtr _Xglobal_lock;
     ((CARD32 *)req)[1] = _BRlen + n + 2; \
     Data32(dpy, &_BRdat, 4); \
     }
-#endif
 #endif
 
 #define SetReqLen(req,n,badlen) \
@@ -669,10 +624,6 @@ extern void _XFlushGCCache(Display *dpy, GC gc);
     (void)ptr; \
     dpy->bufptr += (n);
 
-#ifdef WORD64
-#define Data16(dpy, data, len) _XData16(dpy, (short *)data, len)
-#define Data32(dpy, data, len) _XData32(dpy, (long *)data, len)
-#else
 #define Data16(dpy, data, len) Data((dpy), (char *)(data), (len))
 #define _XRead16Pad(dpy, data, len) _XReadPad((dpy), (char *)(data), (len))
 #define _XRead16(dpy, data, len) _XRead((dpy), (char *)(data), (len))
@@ -692,7 +643,6 @@ extern void _XRead32(
 #define Data32(dpy, data, len) Data((dpy), (char *)(data), (len))
 #define _XRead32(dpy, data, len) _XRead((dpy), (char *)(data), (len))
 #endif
-#endif /* not WORD64 */
 
 #define PackData16(dpy,data,len) Data16 (dpy, data, len)
 #define PackData32(dpy,data,len) Data32 (dpy, data, len)
@@ -761,19 +711,11 @@ extern void _XRead32(
 }
 
 
-#ifdef MUSTCOPY
-
-/* for when 32-bit alignment is not good enough */
-#define OneDataCard32(dpy,dstaddr,srcvar) \
-  { dpy->bufptr -= 4; Data32 (dpy, (char *) &(srcvar), 4); }
-
-#else
 
 /* srcvar must be a variable for large architecture version */
 #define OneDataCard32(dpy,dstaddr,srcvar) \
   { *(CARD32 *)(dstaddr) = (srcvar); }
 
-#endif /* MUSTCOPY */
 
 typedef struct _XInternalAsync {
     struct _XInternalAsync *next;
