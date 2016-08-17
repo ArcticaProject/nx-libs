@@ -80,6 +80,8 @@ typedef struct _NewClientRec *NewClientPtr;
 
 #define xstrdup(s) Xstrdup(s)
 #define xnfstrdup(s) XNFstrdup(s)
+
+#define xallocarray(num, size) reallocarray(NULL, (num), (size))
 #endif
 
 #ifdef __SCO__
