@@ -102,6 +102,11 @@ STRLCAT_SRCS = strlcat.c strlcpy.c
 STRLCAT_OBJS = strlcat.o strlcpy.o
 #endif
 
+#if !HasReallocarray
+REALLOCARRAY_SRCS = reallocarray.c
+REALLOCARRAY_OBJS = reallocarray.o
+#endif
+
 #if HasGetpeerucred
 GETPEER_DEFINES = -DHAS_GETPEERUCRED
 #else
@@ -115,12 +120,12 @@ BOOTSTRAPCFLAGS =
                   osinit.c utils.c log.c auth.c mitauth.c secauth.c \
                   $(XDMAUTHSRCS) $(RPCSRCS) xdmcp.c OtherSources \
                   xstrans.c $(SNPRINTF_SRCS) $(STRLCAT_SRCS) \
-		  xprintf.c
+		  $(REALLOCARRAY_SRCS) xprintf.c
            OBJS = WaitFor.o access.o connection.o io.o $(COLOR_OBJS) \
                   osinit.o utils.o log.o auth.o mitauth.o secauth.o \
                   $(XDMAUTHOBJS) $(RPCOBJS) xdmcp.o OtherObjects \
                   xstrans.o $(SNPRINTF_OBJS) $(STRLCAT_OBJS) \
-		  xprintf.o
+		  $(REALLOCARRAY_OBJS) xprintf.o
 
 #if UseMemLeak
      MEM_DEFINES = -DMEMBUG

@@ -707,8 +707,15 @@ FCHOWN_DEFINES = -DHAS_FCHOWN
 #define ServerSnprintfDefines /**/
 #endif
 #endif
+#ifndef ServerReallocarrayDefines
+#if HasReallocarray
+#define ServerReallocarrayDefines -DHAVE_REALLOCARRAY
+#else
+#define ServerReallocarrayDefines /**/
+#endif
+#endif
 #ifndef ServerDefines
-#define ServerDefines StandardDefines PervasiveExtensionDefines ServerExtraDefines ServerAssertDefines ServerSnprintfDefines
+#define ServerDefines StandardDefines PervasiveExtensionDefines ServerExtraDefines ServerAssertDefines ServerSnprintfDefines ServerReallocarrayDefines
 #endif
 
 #ifndef MesaUseX86Asm

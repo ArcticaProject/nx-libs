@@ -448,6 +448,12 @@ extern void AbortDDX(void);
 extern void ddxGiveUp(void);
 extern int TimeSinceLastInputEvent(void);
 
+#ifndef HAVE_REALLOCARRAY
+#define reallocarray xreallocarray
+extern _X_EXPORT void *
+reallocarray(void *optr, size_t nmemb, size_t size);
+#endif
+
 #ifndef HAVE_STRLCPY
 extern _X_EXPORT size_t
 strlcpy(char *dst, const char *src, size_t siz);

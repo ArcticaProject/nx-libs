@@ -402,6 +402,9 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 #ifndef HasSnprintf
 #define HasSnprintf		YES
 #endif
+#ifndef HasReallocarray
+#define HasReallocarray		NO
+#endif
 #define HasMkstemp		YES
 #endif
 /* getresuid() appeared in 2.1.4, and getresgid in 2.1.44 */

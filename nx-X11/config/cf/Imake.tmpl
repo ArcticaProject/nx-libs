@@ -417,6 +417,9 @@ XCOMM the platform-specific parameters - edit site.def to change
 #ifndef HasStrlcat
 #define HasStrlcat		NO	/* assume not */
 #endif
+#ifndef HasReallocarray
+#define HasReallocarray		NO	/* assume not */
+#endif
 #ifndef HasDlopen
 #define HasDlopen		NO	/* assume not */
 #endif
