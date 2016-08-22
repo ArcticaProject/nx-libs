@@ -31,6 +31,7 @@ Build-Depends:
  expat,
  libpixman-1-dev (>= 0.13.2),
  xutils-dev,
+ libgcrypt20-dev | libgcrypt11-dev (>= 1.4.0)
 Standards-Version: 3.9.8
 Homepage: https://github.com/ArcticaProject/nx-libs/
 Vcs-Git: https://github.com/ArcticaProject/nx-libs/
