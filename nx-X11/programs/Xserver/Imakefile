@@ -293,11 +293,12 @@ PIXMANLIB =  `pkg-config --libs pixman-1`
 ZLIB      =  `pkg-config --libs-only-l zlib`
 PNGLIB    =  `pkg-config --libs libpng`
 JPEGLIB   =  -ljpeg
+GCRYPTLIB =  `libgcrypt-config --libs`
 
 NXAGENT = hw/nxagent/LibraryTargetName(nxagent)
 NXCOMPEXT =  hw/nxagent/compext/LibraryTargetName(compext)
 NXAGENTLIBS = PreFbLibs $(NXAGENT) FbPostFbLibs $(NXCOMPEXT) $(NXAGENT) $(MI)
-NXAGENTSYSLIBS = $(LDPRELIBS) $(XLIB) $(SYSLIBS) $(XPMLIB) $(XMLLIB)
+NXAGENTSYSLIBS = $(LDPRELIBS) $(XLIB) $(SYSLIBS) $(XPMLIB) $(XMLLIB) $(GCRYPTLIB)
 NXCOMPEXTSYSLIBS = $(PIXMANLIB) $(ZLIB) $(PNGLIB) $(JPEGLIB)
 #if HasParallelMake
 MakeMutex($(NXAGENTDIRS) $(NXCOMPEXT) $(NXAGENTOBJS) $(NXAGENTLIBS) $(NXCOMPEXTSYSLIBS) $(NXAGENTSYSLIBS))
