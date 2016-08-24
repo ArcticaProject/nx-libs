@@ -12664,7 +12664,7 @@ int SetVersion()
 
   if (local < remote)
   {
-    cerr << "Warning" << ": Consider checking http://www.nomachine.com/ for updates.\n";
+    cerr << "Warning" << ": Consider checking https://github.com/ArcticaProject/nx-libs/releases for updates.\n";
   }
 
   //
