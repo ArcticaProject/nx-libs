@@ -1583,6 +1583,14 @@ int nxagentInitClipboard(WindowPtr pWin)
     nxagentXFixesInfo.Initialized = 1;
   }
 
+  /*
+     The first paste from CLIPBOARD did not work directly after
+     session start. Removing this code makes it work. It is unsure why
+     it was introduced in the first place so it is possible that we
+     see other effects by leaving out this code.
+
+     Fixes X2Go bug #952, see https://bugs.x2go.org/952 for details .
+
   if (nxagentSessionId[0])
   {
     #ifdef TEST
@@ -1595,6 +1603,7 @@ int nxagentInitClipboard(WindowPtr pWin)
     pWin -> eventMask |= PropertyChangeMask;
     nxagentChangeWindowAttributes(pWin, CWEventMask);
   }
+  */
 
   if (nxagentReconnectTrap)
   {
