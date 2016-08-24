@@ -13925,8 +13925,8 @@ void PrintProcessInfo()
          << "." << control -> LocalVersionMinor << "."
          << control -> LocalVersionPatch << "\n\n";
 
-    cerr << "Copyright (C) 2001, 2010 NoMachine.\n"
-         << "See http://www.nomachine.com/ for more information.\n\n";
+    cerr << GetCopyrightInfo()
+         << "See https://github.com/ArcticaProject/nx-libs for more information.\n\n";
   }
 
   //
