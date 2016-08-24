@@ -393,18 +393,26 @@ const char *GetUsageInfo()
 
 static const char CopyrightInfo[] =
 "\
-Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.\n\
+Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)\n\
+Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>\n\
+Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>\n\
+Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>\n\
+Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>\n\
+Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)\n\
 \n\
-NXCOMP, NX protocol compression and NX extensions to this software \n\
-are copyright of NoMachine. Redistribution (modified or unmodified) and\n\
-use of the present software is allowed according to terms specified in\n\
-the file LICENSE which comes in the source distribution.\n\
+NXCOMP, NX protocol compression and NX extensions to this software\n\
+are copyright of the aforementioned persons and companies.\n\
 \n\
-Check http://www.nomachine.com/licensing.html for applicability.\n\
-\n\
-NX and NoMachine are trademarks of NoMachine S.r.l.\n\
+Redistribution and use of the present software is allowed according\n\
+to terms specified in the file LICENSE.nxcomp which comes in the\n\
+source distribution.\n\
 \n\
 All rights reserved.\n\
+\n\
+NOTE: This software has received contributions from various other\n\
+contributors, only the core maintainers and supporters are listed as\n\
+copyright holders. Please contact us, if you feel you should be listed\n\
+as copyright holder, as well.\n\
 ";
 
 const char *GetCopyrightInfo()
