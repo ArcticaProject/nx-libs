@@ -2766,7 +2766,7 @@ void _XEatData(
    lib. This workaround had been implemented temporarily in a couple
    of X libs, see e.g. https://lists.x.org/archives/xorg-devel/2013-July/036763.html.
 */
-#include <X11/Xmd.h>  /* for LONG64 on 64-bit platforms */
+#include <nx-X11/Xmd.h>  /* for LONG64 on 64-bit platforms */
 #include <limits.h>
 
 void _XEatDataWords(Display *dpy, unsigned long n)
