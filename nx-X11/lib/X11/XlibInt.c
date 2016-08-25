@@ -362,7 +362,7 @@ _XWaitForWritable(
     int nfound;
 
 #ifdef NX_TRANS_SOCKET
-#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_CHANGE)
+#if defined(NX_TRANS_CHANGE)
     int congestion;
 #endif
     if (_XGetIOError(dpy)) {
