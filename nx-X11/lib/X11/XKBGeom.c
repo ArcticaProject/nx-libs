@@ -6,19 +6,19 @@ software and its documentation for any purpose and without
 fee is hereby granted, provided that the above copyright
 notice appear in all copies and that both that copyright
 notice and this permission notice appear in supporting
-documentation, and that the name of Silicon Graphics not be 
-used in advertising or publicity pertaining to distribution 
+documentation, and that the name of Silicon Graphics not be
+used in advertising or publicity pertaining to distribution
 of the software without specific prior written permission.
-Silicon Graphics makes no representation about the suitability 
+Silicon Graphics makes no representation about the suitability
 of this software for any purpose. It is provided "as is"
 without any express or implied warranty.
 
-SILICON GRAPHICS DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS 
-SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY 
+SILICON GRAPHICS DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS
+SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
 AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL SILICON
-GRAPHICS BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL 
-DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, 
-DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE 
+GRAPHICS BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL
+DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE,
+DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE
 OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION  WITH
 THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
@@ -71,6 +71,9 @@ XkbPointPtr	pt;
 	for (pt=outline->points,p=0;p<outline->num_points;p++,pt++) {
 	    _XkbCheckBounds(&shape->bounds,pt->x,pt->y);
 	}
+        if (outline->num_points<2) {
+            _XkbCheckBounds(&shape->bounds,0,0);
+        }
     }
     return True;
 }
@@ -248,9 +251,15 @@ Status	rtrn;
 	char *name,*value;
 	ok= True;
 	for (i=0;(i<rep->nProperties)&&ok;i++) {
+	    name=NULL;
+	    value=NULL;
 	    ok= _XkbGetReadBufferCountedString(buf,&name)&&ok;
 	    ok= _XkbGetReadBufferCountedString(buf,&value)&&ok;
 	    ok= ok&&(XkbAddGeomProperty(geom,name,value)!=NULL);
+	    if (name)
+		_XkbFree(name);
+	    if (value)
+		_XkbFree(value);
 	}
 	if (ok)	rtrn= Success;
 	else	rtrn= BadLength;
@@ -293,10 +302,15 @@ Status	rtrn;
 	register int i;
 	char *spec;
 	for (i=0;i<rep->nColors;i++) {
+	    spec = NULL;
 	    if (!_XkbGetReadBufferCountedString(buf,&spec))
-		return BadLength;
-	    if (XkbAddGeomColor(geom,spec,geom->num_colors)==NULL)
-		return BadAlloc;
+		rtrn = BadLength;
+	    else if (XkbAddGeomColor(geom,spec,geom->num_colors)==NULL)
+		rtrn = BadAlloc;
+	    if (spec)
+		_XkbFree(spec);
+	    if (rtrn != Success)
+		return rtrn;
 	}
 	return Success;
     }
@@ -602,7 +616,7 @@ XkbGeometryPtr	geom;
 		status= _XkbReadGeomKeyAliases(&buf,geom,rep);
 	    left= _XkbFreeReadBuffer(&buf);
 	    if ((status!=Success) || left || buf.error) {
-		if (status==Success)	
+		if (status==Success)
 		    status= BadLength;
 		XkbFreeGeometry(geom,XkbGeomAllMask,True);
 		xkb->geom= NULL;
@@ -625,21 +639,27 @@ XkbGetGeometry(Display *dpy,XkbDescPtr xkb)
 {
 xkbGetGeometryReq	*req;
 xkbGetGeometryReply	 rep;
+Status			 status;
 
     if ( (!xkb) || (dpy->flags & XlibDisplayNoXkb) ||
 	(!dpy->xkb_info && !XkbUseExtension(dpy,NULL,NULL)))
 	return BadAccess;
-    
+
+    LockDisplay(dpy);
     GetReq(kbGetGeometry, req);
     req->reqType = dpy->xkb_info->codes->major_opcode;
     req->xkbReqType = X_kbGetGeometry;
     req->deviceSpec = xkb->device_spec;
     req->name= None;
     if (!_XReply(dpy, (xReply *)&rep, 0, xFalse))
-	return BadImplementation;
-    if (!rep.found)
-	return BadName;
-    return _XkbReadGetGeometryReply(dpy,&rep,xkb,NULL);
+	status = BadImplementation;
+    else if (!rep.found)
+	status = BadName;
+    else
+	status = _XkbReadGetGeometryReply(dpy,&rep,xkb,NULL);
+    UnlockDisplay(dpy);
+    SyncHandle();
+    return status;
 }
 
 Status
@@ -647,20 +667,26 @@ XkbGetNamedGeometry(Display *dpy,XkbDescPtr xkb,Atom name)
 {
 xkbGetGeometryReq	*req;
 xkbGetGeometryReply	 rep;
+Status			 status;
 
     if ( (name==None) || (dpy->flags & XlibDisplayNoXkb) ||
 	(!dpy->xkb_info && !XkbUseExtension(dpy,NULL,NULL)) )
 	return BadAccess;
-    
+
+    LockDisplay(dpy);
     GetReq(kbGetGeometry, req);
     req->reqType = dpy->xkb_info->codes->major_opcode;
     req->xkbReqType = X_kbGetGeometry;
     req->deviceSpec = xkb->device_spec;
     req->name= (CARD32)name;
     if ((!_XReply(dpy, (xReply *)&rep, 0, xFalse))||(!rep.found))
-	return BadImplementation;
-    if (!rep.found)
-	return BadName;
-    return _XkbReadGetGeometryReply(dpy,&rep,xkb,NULL);
+	status = BadImplementation;
+    else if (!rep.found)
+	status = BadName;
+    else
+	status = _XkbReadGetGeometryReply(dpy,&rep,xkb,NULL);
+    UnlockDisplay(dpy);
+    SyncHandle();
+    return status;
 }
 

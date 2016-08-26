@@ -6,19 +6,19 @@ software and its documentation for any purpose and without
 fee is hereby granted, provided that the above copyright
 notice appear in all copies and that both that copyright
 notice and this permission notice appear in supporting
-documentation, and that the name of Silicon Graphics not be 
-used in advertising or publicity pertaining to distribution 
+documentation, and that the name of Silicon Graphics not be
+used in advertising or publicity pertaining to distribution
 of the software without specific prior written permission.
-Silicon Graphics makes no representation about the suitability 
+Silicon Graphics makes no representation about the suitability
 of this software for any purpose. It is provided "as is"
 without any express or implied warranty.
 
-SILICON GRAPHICS DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS 
-SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY 
+SILICON GRAPHICS DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS
+SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
 AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL SILICON
-GRAPHICS BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL 
-DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, 
-DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE 
+GRAPHICS BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL
+DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE,
+DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE
 OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION  WITH
 THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
@@ -104,7 +104,7 @@ XkbKeyTypePtr	type;
 	    type->num_levels = desc->numLevels;
 	    type->map_count = desc->nMapEntries;
 	    if (desc->nMapEntries>0) {
-		register xkbKTMapEntryWireDesc *wire; 
+		register xkbKTMapEntryWireDesc *wire;
 		register XkbKTMapEntryPtr	entry;
 		register int size;
 
@@ -122,7 +122,7 @@ XkbKeyTypePtr	type;
 		}
 
 	 	if (desc->preserve) {
-		    register xkbModsWireDesc *	pwire; 
+		    register xkbModsWireDesc *	pwire;
 		    register XkbModsPtr		preserve;
 		    register int sz;
 
@@ -515,7 +515,7 @@ _XkbHandleGetMapReply(Display *dpy,XkbDescPtr xkb)
 xkbGetMapReply	rep;
 
     if (!_XReply(dpy, (xReply *)&rep,
-    		 ( (SIZEOF(xkbGetMapReply)-SIZEOF(xGenericReply)) >> 2 ), 
+    		 ( (SIZEOF(xkbGetMapReply)-SIZEOF(xGenericReply)) >> 2 ),
 		 xFalse)) {
 	return BadImplementation;
     }
@@ -714,7 +714,10 @@ XkbGetKeyExplicitComponents(	Display *	dpy,
 	if ((num>0)&&(first>=xkb->min_key_code)&&(first+num<=xkb->max_key_code))
 	    bzero(&xkb->server->explicit[first],num);
     }
-    status= _XkbHandleGetMapReply(dpy, xkb);
+    if (xkb)
+        status= _XkbHandleGetMapReply(dpy, xkb);
+    else
+        status = BadMatch;
 
     UnlockDisplay(dpy);
     SyncHandle();
@@ -743,7 +746,10 @@ XkbGetKeyModifierMap(Display *dpy,unsigned first,unsigned num,XkbDescPtr xkb)
 	if ((num>0)&&(first>=xkb->min_key_code)&&(first+num<=xkb->max_key_code))
 	    bzero(&xkb->map->modmap[first],num);
     }
-    status= _XkbHandleGetMapReply(dpy, xkb);
+    if (xkb)
+        status= _XkbHandleGetMapReply(dpy, xkb);
+    else
+        status = BadMatch;
 
     UnlockDisplay(dpy);
     SyncHandle();
@@ -772,7 +778,11 @@ XkbGetKeyVirtualModMap(Display *dpy,unsigned first,unsigned num,XkbDescPtr xkb)
 	if ((num>0)&&(first>=xkb->min_key_code)&&(first+num<=xkb->max_key_code))
 	    bzero(&xkb->server->vmodmap[first],num*sizeof(unsigned short));
     }
-    status= _XkbHandleGetMapReply(dpy, xkb);
+
+    if (xkb)
+        status= _XkbHandleGetMapReply(dpy, xkb);
+    else
+        status = BadMatch;
 
     UnlockDisplay(dpy);
     SyncHandle();
@@ -809,8 +819,8 @@ XkbGetMapChanges(Display *dpy,XkbDescPtr xkb,XkbMapChangesPtr changes)
 	req->firstVModMapKey = changes->first_vmodmap_key;
 	req->nVModMapKeys = changes->num_vmodmap_keys;
 	status= _XkbHandleGetMapReply(dpy, xkb);
-	SyncHandle();
 	UnlockDisplay(dpy);
+	SyncHandle();
 	return status;
     }
     UnlockDisplay(dpy);
