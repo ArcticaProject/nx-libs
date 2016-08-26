@@ -293,6 +293,7 @@ SRCS1 = \
 	FreeCols.c \
 	FreeCurs.c \
 	FreeEData.c \
+	FreeEventData.c \
 	FreeGC.c \
 	FreePix.c \
 	FSSaver.c \
@@ -301,6 +302,7 @@ SRCS1 = \
 	GetAtomNm.c \
 	GetColor.c \
 	GetDflt.c \
+	GetEventData.c \
 	GetFPath.c \
 	GetFProp.c \
 	GetGeom.c \
@@ -423,6 +425,7 @@ OBJS1 = \
 	FreeCols.o \
 	FreeCurs.o \
 	FreeEData.o \
+	FreeEventData.o \
 	FreeGC.o \
 	FreePix.o \
 	FSSaver.o \
@@ -431,6 +434,7 @@ OBJS1 = \
 	GetAtomNm.o \
 	GetColor.o \
 	GetDflt.o \
+	GetEventData.o \
 	GetFPath.o \
 	GetFProp.o \
 	GetGeom.o \
