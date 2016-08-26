@@ -1,8 +1,6 @@
 /*
 Copyright 1985, 1986, 1987, 1991, 1998  The Open Group
 
-Portions Copyright 2000 Sun Microsystems, Inc. All Rights Reserved.
-
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the
 "Software"), to deal in the Software without restriction, including
@@ -14,21 +12,18 @@ permission notice shall be included in all copies or substantial
 portions of the Software.
 
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE OPEN GROUP OR SUN MICROSYSTEMS, INC. BE LIABLE
-FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
-THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE EVEN IF
-ADVISED IN ADVANCE OF THE POSSIBILITY OF SUCH DAMAGES.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+OPEN GROUP BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
+AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE
+EVEN IF ADVISED IN ADVANCE OF THE POSSIBILITY OF SUCH DAMAGES.
 
 
-Except as contained in this notice, the names of The Open Group and/or
-Sun Microsystems, Inc. shall not be used in advertising or otherwise to
-promote the sale, use or other dealings in this Software without prior
-written authorization from The Open Group and/or Sun Microsystems,
-Inc., as applicable.
+Except as contained in this notice, the name of The Open Group shall not be
+used in advertising or otherwise to promote the sale, use or other dealings
+in this Software without prior written authorization from The Open Group.
 
 
 X Window System is a trademark of The Open Group
@@ -41,6 +36,29 @@ interest in or to any trademark, service mark, logo or trade name of
 Sun Microsystems, Inc. or its licensors is granted.
 
 */
+/*
+ * Copyright 2000 Sun Microsystems, Inc.  All rights reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice (including the next
+ * paragraph) shall be included in all copies or substantial portions of the
+ * Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
+
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -96,7 +114,7 @@ typedef struct _XOCGenericPart {
 
 typedef struct _XOCGenericRec {
     XOCMethods methods;
-    XOCCoreRec core;	
+    XOCCoreRec core;
     XOCGenericPart gen;
 } XOCGenericRec, *XOCGeneric;
 
@@ -132,7 +150,7 @@ get_prop_name(
     unsigned long fp;
 
     if (XGetFontProperty(fs, XA_FONT, &fp))
-	return XGetAtomName(dpy, fp); 
+	return XGetAtomName(dpy, fp);
 
     return (char *) NULL;
 }
@@ -158,7 +176,7 @@ check_charset(
 
 	if (length > name_len)
 	    return(NULL);
-	
+
 	if (_XlcCompareISOLatin1(last - length, font_data->name) == 0)
 	    return font_data;
     }
@@ -261,7 +279,7 @@ load_font_info(
 	    return False;
 	if (fn_num > 0)
 	    font_set->info->fid = XLoadFont(dpy, font_set->font_name);
-	    
+
 	if (fn_list) XFreeFontNames(fn_list);
     }
     return True;
@@ -373,7 +391,7 @@ get_font_name(
 	name = (char *) Xmalloc(strlen(*list) + 1);
 	if (name)
 	    strcpy(name, *list);
-    
+
 	XFreeFontNames(list);
     } else {
 	fs = XLoadQueryFont(dpy, pattern);
@@ -479,7 +497,7 @@ Limit the length of the string copy to prevent stack corruption.
 		continue;
 	} else {
 	    if (num_fields == 13 || num_fields == 14) {
-	    /* 
+	    /*
 	     * There are 14 fields in an XLFD name -- make certain the
 	     * charset (& encoding) is placed in the correct field.
 	     */
@@ -544,11 +562,11 @@ Limit the length of the string copy to prevent stack corruption.
     strcpy(base_name, oc->core.base_name_list);
     oc->core.base_name_list = base_name;
 
-    XFreeStringList(name_list);		
+    XFreeStringList(name_list);
 
     return found_num;
 err:
-    XFreeStringList(name_list);		
+    XFreeStringList(name_list);
 
     return -1;
 }
@@ -659,7 +677,7 @@ destroy_oc(
     if (oc->core.res_class)
 	Xfree(oc->core.res_class);
 #endif
-    
+
     Xfree(oc);
 }
 
@@ -713,7 +731,7 @@ wcs_to_mbs(
 		      &to_left, NULL, 0);
     if (ret != 0 || length > 0)
 	return False;
-    
+
     return True;
 }
 
@@ -842,7 +860,7 @@ _XmbDefaultTextPerCharExtents(XOC oc, _Xconst char *text, int length,
 				   cs->rbearing);
 	    overall.width += cs->width;
 	}
-   	(*num_chars)++; 
+   	(*num_chars)++;
     }
 
     if (overall_ink) {
@@ -997,12 +1015,12 @@ create_oc(
     if (oc == NULL)
 	return (XOC) NULL;
     bzero((char *) oc, sizeof(XOCGenericRec));
-    
+
     oc->core.om = om;
 
     if (oc_resources[0].xrm_name == NULLQUARK)
 	_XlcCompileResourceList(oc_resources, XlcNumber(oc_resources));
-    
+
     if (_XlcSetValues((XPointer) oc, oc_resources, XlcNumber(oc_resources),
 		      args, num_args, XlcCreateMask | XlcDefaultMask))
 	goto err;
@@ -1038,7 +1056,7 @@ close_om(
     if ((data = gen->data)) {
 	if (data->font_data) {
 	  for (font_data = data->font_data, count = data->font_data_count;
-	       count-- > 0 ; font_data++) { 
+	       count-- > 0 ; font_data++) {
 	    if (font_data->name)
 		Xfree(font_data->name);
 	  }
@@ -1136,7 +1154,7 @@ static _Xconst char *supported_charset_list[] = {
     "SUNOLCURSOR-1",
     "SUNOLGLYPH-1"
 };
-    
+
 static Bool
 init_om(
     XOM om)
@@ -1229,7 +1247,7 @@ _XDefaultOpenOM(XLCd lcd, Display *dpy, XrmDatabase rdb,
     if (om == NULL)
 	return (XOM) NULL;
     bzero((char *) om, sizeof(XOMGenericRec));
-    
+
     om->methods = (XOMMethods)&methods;
     om->core.lcd = lcd;
     om->core.display = dpy;
@@ -1249,7 +1267,7 @@ _XDefaultOpenOM(XLCd lcd, Display *dpy, XrmDatabase rdb,
 
     if (om_resources[0].xrm_name == NULLQUARK)
 	_XlcCompileResourceList(om_resources, XlcNumber(om_resources));
-    
+
     om->core.resources = om_resources;
     om->core.num_resources = XlcNumber(om_resources);
 

@@ -714,7 +714,7 @@ load_generic(
     /***** wc_encoding_mask *****/
     _XlcGetResource(lcd, "XLC_XLOCALE", "wc_encoding_mask", &value, &num);
     if (num > 0) {
-	if (string_to_ulong(value[0], &l) == False) 
+	if (string_to_ulong(value[0], &l) == False)
 	    goto err;
 	gen->wc_encode_mask = l;
     }
@@ -736,7 +736,7 @@ load_generic(
 	gen->force_convert_to_mb = True;
     else
 	gen->force_convert_to_mb = False;
-    
+
     for (i = 0; ; i++) {
 	CodeSetRec *codeset = NULL;
 	char cs[16];
@@ -786,7 +786,7 @@ load_generic(
 	sprintf(name, "%s.%s", cs, "mb_encoding");
 	_XlcGetResource(lcd, "XLC_XLOCALE", name, &value, &num);
 	if (num > 0) {
-	    static struct { 
+	    static struct {
 		const char *str;
 		EncodingType type;
 	    } shifts[] = {
@@ -811,7 +811,7 @@ load_generic(
 			break;
 		    }
 		}
-		if (strlen (tmp) > sizeof encoding || 
+		if (strlen (tmp) > sizeof encoding ||
 		    string_to_encoding(tmp, encoding) == False)
 			goto err;
 		add_parse_list(gen, type, encoding, codeset);
@@ -824,11 +824,11 @@ load_generic(
 	if (num > 0) {
 	    if (codeset == NULL && (codeset = add_codeset(gen)) == NULL)
 		goto err;
-	    if (string_to_ulong(value[0], &l) == False) 
+	    if (string_to_ulong(value[0], &l) == False)
 		goto err;
 	    codeset->wc_encoding = l;
 	}
-  
+
 	/***** codeset.ct_encoding *****/
 	sprintf(name, "%s.%s", cs, "ct_encoding");
 	_XlcGetResource(lcd, "XLC_XLOCALE", name, &value, &num);
@@ -948,7 +948,7 @@ load_generic(
         /* For VW/UDC end */
 
     }
-	 
+
     read_charset_define(lcd,gen);       /* For VW/UDC */
     read_segmentconversion(lcd,gen);    /* For VW/UDC */
 
@@ -1005,8 +1005,7 @@ initialize_core(
 #endif
 
 static Bool
-initialize(lcd)
-    XLCd lcd;
+initialize(XLCd lcd)
 {
     XLCdPublicMethods superclass = (XLCdPublicMethods) _XlcPublicMethods;
 
@@ -1029,7 +1028,7 @@ initialize(lcd)
 }
 
 /* VW/UDC start 95.01.08 */
-static void 
+static void
 freeByteM(
     CodeSet codeset)
 {
@@ -1045,11 +1044,11 @@ freeByteM(
 	    blst[i].byteinfo = NULL;
 	}
     }
-    Xfree(codeset->byteM); 
+    Xfree(codeset->byteM);
     codeset->byteM = NULL;
 }
 
-static void 
+static void
 freeConversion(
     CodeSet codeset)
 {
@@ -1076,7 +1075,7 @@ freeConversion(
     }
 }
 
-static void 
+static void
 freeExtdSegment(
     CodeSet codeset)
 {
@@ -1093,11 +1092,11 @@ freeExtdSegment(
 	Xfree(ctextseg->area);
 	ctextseg->area = NULL;
     }
-    Xfree(codeset->ctextseg); 
+    Xfree(codeset->ctextseg);
     codeset->ctextseg = NULL;
 }
 
-static void 
+static void
 freeParseInfo(
     CodeSet codeset)
 {
@@ -1110,7 +1109,7 @@ freeParseInfo(
 	Xfree(parse_info->encoding);
 	parse_info->encoding = NULL;
     }
-    Xfree(codeset->parse_info); 
+    Xfree(codeset->parse_info);
     codeset->parse_info = NULL;
 }
 
@@ -1152,7 +1151,7 @@ destroy_SegConv(
 	    seg[i].source_encoding = NULL;
 	}
 	if (seg[i].destination_encoding) {
-	    Xfree(seg[i].destination_encoding); 
+	    Xfree(seg[i].destination_encoding);
 	    seg[i].destination_encoding = NULL;
 	}
 	if (seg[i].conv) {

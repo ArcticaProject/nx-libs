@@ -48,7 +48,7 @@ _XGetLCValues(XLCd lcd, ...)
 
     if (args == (XlcArgList) NULL)
 	return (char *) NULL;
-    
+
     ret = (*methods->get_values)(lcd, args, num_args);
 
     Xfree(args);
@@ -79,17 +79,17 @@ _XlcCreateLC(
 
     if (lcd->core->name == NULL) {
 	lcd->core->name = (char*) Xmalloc(strlen(name) + 1);
-	if (lcd->core->name == NULL) 
+	if (lcd->core->name == NULL)
 	    goto err;
 	strcpy(lcd->core->name, name);
     }
-    
+
     if (lcd->methods == NULL)
 	lcd->methods = methods;
 
     if ((*pub_methods->pub.initialize)(lcd) == False)
 	goto err;
-    
+
     return lcd;
 
 err:
