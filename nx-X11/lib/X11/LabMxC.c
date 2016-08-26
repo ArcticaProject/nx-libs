@@ -2,7 +2,7 @@
 /*
  * Code and supporting documentation (c) Copyright 1990 1991 Tektronix, Inc.
  * 	All Rights Reserved
- * 
+ *
  * This file is a component of an X Window System-specific implementation
  * of XCMS based on the TekColor Color Management System.  Permission is
  * hereby granted to use, copy, modify, sell, and otherwise distribute this
@@ -10,10 +10,10 @@
  * that this copyright, permission, and disclaimer notice is reproduced in
  * all copies of this software and in supporting documentation.  TekColor
  * is a trademark of Tektronix, Inc.
- * 
+ *
  * Tektronix makes no representation about the suitability of this software
  * for any purpose.  It is provided "as is" and with all faults.
- * 
+ *
  * TEKTRONIX DISCLAIMS ALL WARRANTIES APPLICABLE TO THIS SOFTWARE,
  * INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
  * PARTICULAR PURPOSE.  IN NO EVENT SHALL TEKTRONIX BE LIABLE FOR ANY
@@ -63,11 +63,11 @@
  *	SYNOPSIS
  */
 Status
-XcmsCIELabQueryMaxC(ccc, hue_angle, L_star, pColor_return)
-    XcmsCCC ccc;
-    XcmsFloat hue_angle;	    /* hue angle in degrees */
-    XcmsFloat L_star;
-    XcmsColor *pColor_return;
+XcmsCIELabQueryMaxC(
+    XcmsCCC ccc,
+    XcmsFloat hue_angle,	    /* hue angle in degrees */
+    XcmsFloat L_star,
+    XcmsColor *pColor_return)
 /*
  *	DESCRIPTION
  *		Return the maximum chroma for a specific hue_angle and L_star.
@@ -103,7 +103,7 @@ XcmsCIELabQueryMaxC(ccc, hue_angle, L_star, pColor_return)
 
     /* Use my own CCC and inherit screen white Pt */
     memcpy ((char *)&myCCC, (char *)ccc, sizeof(XcmsCCCRec));
-    myCCC.clientWhitePt.format = XcmsUndefinedFormat; 
+    myCCC.clientWhitePt.format = XcmsUndefinedFormat;
     myCCC.gamutCompProc = (XcmsCompressionProc)NULL;/* no gamut comp func */
 
     while (hue_angle < 0.0) {
@@ -111,7 +111,7 @@ XcmsCIELabQueryMaxC(ccc, hue_angle, L_star, pColor_return)
     }
     while (hue_angle >= 360.0) {
 	hue_angle -= 360.0;
-    } 
+    }
 
     hue = radians(hue_angle);
     tmp.spec.CIELab.L_star = L_star;
@@ -190,7 +190,7 @@ XcmsCIELabQueryMaxC(ccc, hue_angle, L_star, pColor_return)
 		/* printf("rFactor = %lf\n", rFactor); */
 	}
     }
-    if (XCMS_FABS(last_L_star - L_star) < 
+    if (XCMS_FABS(last_L_star - L_star) <
 	XCMS_FABS(tmp.spec.CIELab.L_star - L_star)) {
 	    tmp.spec.CIELab.a_star = lastaStar;
 	    tmp.spec.CIELab.b_star = lastbStar;

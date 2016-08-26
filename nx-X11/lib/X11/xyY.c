@@ -2,7 +2,7 @@
 /*
  * Code and supporting documentation (c) Copyright 1990 1991 Tektronix, Inc.
  * 	All Rights Reserved
- * 
+ *
  * This file is a component of an X Window System-specific implementation
  * of Xcms based on the TekColor Color Management System.  Permission is
  * hereby granted to use, copy, modify, sell, and otherwise distribute this
@@ -10,10 +10,10 @@
  * that this copyright, permission, and disclaimer notice is reproduced in
  * all copies of this software and in supporting documentation.  TekColor
  * is a trademark of Tektronix, Inc.
- * 
+ *
  * Tektronix makes no representation about the suitability of this software
  * for any purpose.  It is provided "as is" and with all faults.
- * 
+ *
  * TEKTRONIX DISCLAIMS ALL WARRANTIES APPLICABLE TO THIS SOFTWARE,
  * INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
  * PARTICULAR PURPOSE.  IN NO EVENT SHALL TEKTRONIX BE LIABLE FOR ANY
@@ -156,7 +156,24 @@ CIExyY_ParseString(
 	    &pColor->spec.CIExyY.x,
 	    &pColor->spec.CIExyY.y,
 	    &pColor->spec.CIExyY.Y) != 3) {
-	return(XcmsFailure);
+        char *s; /* Maybe failed due to locale */
+        int f;
+        if ((s = strdup(spec))) {
+            for (f = 0; s[f]; ++f)
+                if (s[f] == '.')
+                    s[f] = ',';
+                else if (s[f] == ',')
+                    s[f] = '.';
+	    if (sscanf(s + n + 1, "%lf/%lf/%lf",
+		       &pColor->spec.CIExyY.x,
+		       &pColor->spec.CIExyY.y,
+		       &pColor->spec.CIExyY.Y) != 3) {
+                free(s);
+                return(XcmsFailure);
+            }
+            free(s);
+        } else
+	    return(XcmsFailure);
     }
     pColor->format = XcmsCIExyYFormat;
     pColor->pixel = 0;
@@ -216,11 +233,11 @@ XcmsCIExyY_ValidSpec(
  *	SYNOPSIS
  */
 Status
-XcmsCIExyYToCIEXYZ(ccc, pxyY_WhitePt, pColors_in_out, nColors)
-    XcmsCCC ccc;
-    XcmsColor *pxyY_WhitePt;
-    XcmsColor *pColors_in_out;
-    unsigned int nColors;
+XcmsCIExyYToCIEXYZ(
+    XcmsCCC ccc,
+    XcmsColor *pxyY_WhitePt,
+    XcmsColor *pColors_in_out,
+    unsigned int nColors)
 /*
  *	DESCRIPTION
  *		Converts color specifications in an array of XcmsColor
@@ -323,11 +340,11 @@ XcmsCIExyYToCIEXYZ(ccc, pxyY_WhitePt, pColors_in_out, nColors)
  */
 /* ARGSUSED */
 Status
-XcmsCIEXYZToCIExyY(ccc, pxyY_WhitePt, pColors_in_out, nColors)
-    XcmsCCC ccc;
-    XcmsColor *pxyY_WhitePt;
-    XcmsColor *pColors_in_out;
-    unsigned int nColors;
+XcmsCIEXYZToCIExyY(
+    XcmsCCC ccc,
+    XcmsColor *pxyY_WhitePt,
+    XcmsColor *pColors_in_out,
+    unsigned int nColors)
 /*
  *	DESCRIPTION
  *		Converts color specifications in an array of XcmsColor
@@ -363,7 +380,7 @@ XcmsCIEXYZToCIExyY(ccc, pxyY_WhitePt, pColors_in_out, nColors)
 	/* Now convert for XYZ to xyY */
 	if ((div = pColor->spec.CIEXYZ.X + pColor->spec.CIEXYZ.Y + pColor->spec.CIEXYZ.Z) == 0.0) {
 	    div = EPS;
-	} 
+	}
 	xyY_return.x = pColor->spec.CIEXYZ.X / div;
 	xyY_return.y = pColor->spec.CIEXYZ.Y / div;
 	xyY_return.Y = pColor->spec.CIEXYZ.Y;

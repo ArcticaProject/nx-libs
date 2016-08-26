@@ -2,7 +2,7 @@
 /*
  * Code and supporting documentation (c) Copyright 1990 1991 Tektronix, Inc.
  * 	All Rights Reserved
- * 
+ *
  * This file is a component of an X Window System-specific implementation
  * of Xcms based on the TekColor Color Management System.  Permission is
  * hereby granted to use, copy, modify, sell, and otherwise distribute this
@@ -10,10 +10,10 @@
  * that this copyright, permission, and disclaimer notice is reproduced in
  * all copies of this software and in supporting documentation.  TekColor
  * is a trademark of Tektronix, Inc.
- * 
+ *
  * Tektronix makes no representation about the suitability of this software
  * for any purpose.  It is provided "as is" and with all faults.
- * 
+ *
  * TEKTRONIX DISCLAIMS ALL WARRANTIES APPLICABLE TO THIS SOFTWARE,
  * INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
  * PARTICULAR PURPOSE.  IN NO EVENT SHALL TEKTRONIX BE LIABLE FOR ANY
@@ -187,7 +187,7 @@ XcmsColorSpace	XcmsRGBColorSpace =
     };
 
     /*
-     * Device-Independent Color Spaces known to the 
+     * Device-Independent Color Spaces known to the
      * LINEAR_RGB Screen Color Characteristics Function Set.
      */
 static XcmsColorSpace	*DDColorSpaces[] = {
@@ -481,17 +481,17 @@ LINEAR_RGB_InitSCCData(
     /*
      * Allocate memory for pScreenData
      */
-    if (!(pScreenData = pScreenDefaultData = (LINEAR_RGB_SCCData *) 
+    if (!(pScreenData = pScreenDefaultData = (LINEAR_RGB_SCCData *)
 		      Xcalloc (1, sizeof(LINEAR_RGB_SCCData)))) {
 	return(XcmsFailure);
     }
 
-    /* 
+    /*
      *  1. Get the XYZ->RGB and RGB->XYZ matrices
      */
 
     if (MatrixAtom == None ||
-	!_XcmsGetProperty (dpy, RootWindow(dpy, screenNumber), MatrixAtom, 
+	!_XcmsGetProperty (dpy, RootWindow(dpy, screenNumber), MatrixAtom,
 	   &format_return, &nitems, &nbytes_return, &property_return) ||
 	   nitems != 18 || format_return != 32) {
 	/*
@@ -656,7 +656,7 @@ LINEAR_RGB_InitSCCData(
 	    /*
 	     * This is a per-Visual intensity table
 	     */
-	    if (!(pScreenData = (LINEAR_RGB_SCCData *) 
+	    if (!(pScreenData = (LINEAR_RGB_SCCData *)
 			      Xcalloc (1, sizeof(LINEAR_RGB_SCCData)))) {
 		return(XcmsFailure);
 	    }
@@ -665,7 +665,7 @@ LINEAR_RGB_InitSCCData(
 		   18 * sizeof(XcmsFloat));
 
 	    /* Create, initialize, and add map */
-	    if (!(pNewMap = (XcmsIntensityMap *) 
+	    if (!(pNewMap = (XcmsIntensityMap *)
 			      Xcalloc (1, sizeof(XcmsIntensityMap)))) {
 		Xfree((char *)pScreenData);
 		return(XcmsFailure);
@@ -719,7 +719,7 @@ LINEAR_RGB_InitSCCData(
 			&nitems) == XcmsFailure) {
 		    goto FreeBlueTbl;
 		}
-	    }	    
+	    }
 	} else if (cType == 1) {
 	    /* Red Intensity Table */
 	    if (!(pScreenData->pRedTbl = (IntensityTbl *)
@@ -849,7 +849,7 @@ LINEAR_RGB_FreeSCCData(
     if (pScreenData && pScreenData != &Default_RGB_SCCData) {
 	if (pScreenData->pRedTbl) {
 	    if (pScreenData->pGreenTbl) {
-		if (pScreenData->pRedTbl->pBase != 
+		if (pScreenData->pRedTbl->pBase !=
 		    pScreenData->pGreenTbl->pBase) {
 		    if (pScreenData->pGreenTbl->pBase) {
 			Xfree ((char *)pScreenData->pGreenTbl->pBase);
@@ -860,7 +860,7 @@ LINEAR_RGB_FreeSCCData(
 		}
 	    }
 	    if (pScreenData->pBlueTbl) {
-		if (pScreenData->pRedTbl->pBase != 
+		if (pScreenData->pRedTbl->pBase !=
 		    pScreenData->pBlueTbl->pBase) {
 		    if (pScreenData->pBlueTbl->pBase) {
 			Xfree ((char *)pScreenData->pBlueTbl->pBase);
@@ -919,7 +919,7 @@ _XcmsGetTableType0(
     }
 
     switch (format) {
-      case 8: 
+      case 8:
 	for (; nElements--; pIRec++) {
 	    /* 0xFFFF/0xFF = 0x101 */
 	    pIRec->value = _XcmsGetElement (format, pChar, pCount) * 0x101;
@@ -927,14 +927,14 @@ _XcmsGetTableType0(
 		    _XcmsGetElement (format, pChar, pCount) / (XcmsFloat)255.0;
 	}
 	break;
-      case 16: 
+      case 16:
 	for (; nElements--; pIRec++) {
 	    pIRec->value = _XcmsGetElement (format, pChar, pCount);
 	    pIRec->intensity = _XcmsGetElement (format, pChar, pCount)
 		    / (XcmsFloat)65535.0;
 	}
 	break;
-      case 32: 
+      case 32:
 	for (; nElements--; pIRec++) {
 	    pIRec->value = _XcmsGetElement (format, pChar, pCount);
 	    pIRec->intensity = _XcmsGetElement (format, pChar, pCount)
@@ -981,21 +981,21 @@ _XcmsGetTableType1(
     }
 
     switch (format) {
-      case 8: 
+      case 8:
 	for (count = 0; count < max_index+1; count++, pIRec++) {
 	    pIRec->value = (count * 65535) / max_index;
 	    pIRec->intensity = _XcmsGetElement (format, pChar, pCount)
 		    / (XcmsFloat)255.0;
 	}
 	break;
-      case 16: 
+      case 16:
 	for (count = 0; count < max_index+1; count++, pIRec++) {
 	    pIRec->value = (count * 65535) / max_index;
 	    pIRec->intensity = _XcmsGetElement (format, pChar, pCount)
 		    / (XcmsFloat)65535.0;
 	}
 	break;
-      case 32: 
+      case 32:
 	for (count = 0; count < max_index+1; count++, pIRec++) {
 	    pIRec->value = (count * 65535) / max_index;
 	    pIRec->intensity = _XcmsGetElement (format, pChar, pCount)
@@ -1088,7 +1088,7 @@ _XcmsValueInterpolation(
 {
     XcmsFloat ratio;
 
-    ratio = ((XcmsFloat)key->value - (XcmsFloat)lo->value) / 
+    ratio = ((XcmsFloat)key->value - (XcmsFloat)lo->value) /
 	((XcmsFloat)hi->value - (XcmsFloat)lo->value);
     answer->value = key->value;
     answer->intensity = (hi->intensity - lo->intensity) * ratio;
@@ -1239,7 +1239,7 @@ static void _XcmsMatVec(
     XcmsFloat *pMat, XcmsFloat *pIn, XcmsFloat *pOut)
 /*
  *      DESCRIPTION
- *		Multiply the passed vector by the passed matrix to return a 
+ *		Multiply the passed vector by the passed matrix to return a
  *		vector. Matrix is 3x3, vectors are of length 3.
  *
  *	RETURNS
@@ -1430,7 +1430,24 @@ XcmsLRGB_RGBi_ParseString(
 	    &pColor->spec.RGBi.red,
 	    &pColor->spec.RGBi.green,
 	    &pColor->spec.RGBi.blue) != 3) {
-	return(XcmsFailure);
+        char *s; /* Maybe failed due to locale */
+        int f;
+        if ((s = strdup(spec))) {
+            for (f = 0; s[f]; ++f)
+                if (s[f] == '.')
+                    s[f] = ',';
+                else if (s[f] == ',')
+                    s[f] = '.';
+	    if (sscanf(s + n + 1, "%lf/%lf/%lf",
+		       &pColor->spec.RGBi.red,
+		       &pColor->spec.RGBi.green,
+		       &pColor->spec.RGBi.blue) != 3) {
+                free(s);
+                return(XcmsFailure);
+            }
+            free(s);
+        } else
+	    return(XcmsFailure);
     }
 
     /*
@@ -1449,12 +1466,12 @@ XcmsLRGB_RGBi_ParseString(
  *	SYNOPSIS
  */
 /* ARGSUSED */
-Status 
-XcmsCIEXYZToRGBi(ccc, pXcmsColors_in_out, nColors, pCompressed)
-    XcmsCCC ccc;
-    XcmsColor *pXcmsColors_in_out;/* pointer to XcmsColors to convert 	*/
-    unsigned int nColors;	/* Number of colors			*/
-    Bool *pCompressed;		/* pointer to an array of Bool		*/
+Status
+XcmsCIEXYZToRGBi(
+    XcmsCCC ccc,
+    XcmsColor *pXcmsColors_in_out,/* pointer to XcmsColors to convert 	*/
+    unsigned int nColors,	/* Number of colors			*/
+    Bool *pCompressed)		/* pointer to an array of Bool		*/
 /*
  *	DESCRIPTION
  *		Converts color specifications in an array of XcmsColor
@@ -1515,7 +1532,7 @@ XcmsCIEXYZToRGBi(ccc, pXcmsColors_in_out, nColors, pCompressed)
 		/*
 		 * Aha!! Here's that little trick that will allow
 		 * gamut compression routines to get the out of bound
-		 * RGBi.  
+		 * RGBi.
 		 */
 		memcpy((char *)&pColor->spec, (char *)tmp, sizeof(tmp));
 		pColor->format = XcmsRGBiFormat;
@@ -1571,12 +1588,12 @@ XcmsCIEXYZToRGBi(ccc, pXcmsColors_in_out, nColors, pCompressed)
  *	SYNOPSIS
  */
 /* ARGSUSED */
-Status 
-XcmsRGBiToCIEXYZ(ccc, pXcmsColors_in_out, nColors, pCompressed)
-    XcmsCCC ccc;
-    XcmsColor *pXcmsColors_in_out;/* pointer to XcmsColors to convert 	*/
-    unsigned int nColors;	/* Number of colors			*/
-    Bool *pCompressed;		/* pointer to a bit array		*/
+Status
+XcmsRGBiToCIEXYZ(
+    XcmsCCC ccc,
+    XcmsColor *pXcmsColors_in_out,/* pointer to XcmsColors to convert 	*/
+    unsigned int nColors,	/* Number of colors			*/
+    Bool *pCompressed)		/* pointer to a bit array		*/
 /*
  *	DESCRIPTION
  *		Converts color specifications in an array of XcmsColor
@@ -1624,12 +1641,12 @@ XcmsRGBiToCIEXYZ(ccc, pXcmsColors_in_out, nColors, pCompressed)
  *	SYNOPSIS
  */
 /* ARGSUSED */
-Status 
-XcmsRGBiToRGB(ccc, pXcmsColors_in_out, nColors, pCompressed)
-    XcmsCCC ccc;
-    XcmsColor *pXcmsColors_in_out;/* pointer to XcmsColors to convert 	*/
-    unsigned int nColors;	/* Number of colors			*/
-    Bool *pCompressed;		/* pointer to a bit array		*/
+Status
+XcmsRGBiToRGB(
+    XcmsCCC ccc,
+    XcmsColor *pXcmsColors_in_out,/* pointer to XcmsColors to convert 	*/
+    unsigned int nColors,	/* Number of colors			*/
+    Bool *pCompressed)		/* pointer to a bit array		*/
 /*
  *	DESCRIPTION
  *		Converts color specifications in an array of XcmsColor
@@ -1707,7 +1724,7 @@ XcmsRGBiToRGB(ccc, pXcmsColors_in_out, nColors, pCompressed)
  *	SYNOPSIS
  */
 /* ARGSUSED */
-Status 
+Status
 XcmsRGBToRGBi(
     XcmsCCC ccc,
     XcmsColor *pXcmsColors_in_out,/* pointer to XcmsColors to convert 	*/
