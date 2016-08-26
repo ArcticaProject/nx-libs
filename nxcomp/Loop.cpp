@@ -13926,6 +13926,9 @@ void PrintProcessInfo()
          << control -> LocalVersionPatch << "\n\n";
 
     cerr << GetCopyrightInfo()
+	 << "\n"
+         << GetOtherCopyrightInfo()
+	 << "\n"
          << "See https://github.com/ArcticaProject/nx-libs for more information.\n\n";
   }
 
