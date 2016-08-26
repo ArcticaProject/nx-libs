@@ -13921,15 +13921,18 @@ void PrintProcessInfo()
 {
   if (agent == NULL)
   {
-    cerr << "\nNXPROXY - Version " << control -> LocalVersionMajor
-         << "." << control -> LocalVersionMinor << "."
-         << control -> LocalVersionPatch << "\n\n";
+
+    cerr << endl;
+
+    PrintVersionInfo();
+
+    cerr << endl;
 
     cerr << GetCopyrightInfo()
-	 << "\n"
+         << endl
          << GetOtherCopyrightInfo()
-	 << "\n"
-         << "See https://github.com/ArcticaProject/nx-libs for more information.\n\n";
+         << endl
+         << "See https://github.com/ArcticaProject/nx-libs for more information." << endl << endl;
   }
 
   //
