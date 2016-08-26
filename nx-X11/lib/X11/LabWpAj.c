@@ -31,7 +31,6 @@
  *		adjustment of color specifications in the CIE L*a*b* color
  *		space.
  */
-/* $XFree86$ */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>

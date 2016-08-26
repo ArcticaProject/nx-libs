@@ -31,7 +31,6 @@
  *
  *
  */
-/* $XFree86$ */
 
 /*
  *      EXTERNAL INCLUDES

@@ -27,7 +27,6 @@ IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
                                fujiwara@a80.tech.yk.fujitsu.co.jp
 
 ******************************************************************/
-/* $XFree86$ */
 
 #ifndef _XIMTRX_H
 #define _XIMTRX_H

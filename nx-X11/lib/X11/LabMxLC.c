@@ -37,7 +37,6 @@
  *		Fred W. Billmeyer & Max Saltzman, "Principles of Color
  *		Technology", John Wily & Sons, Inc, 1981.
  */
-/* $XFree86$ */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>

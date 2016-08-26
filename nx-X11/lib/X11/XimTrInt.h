@@ -27,7 +27,6 @@ OR PERFORMANCE OF THIS SOFTWARE.
 			       fujiwara@a80.tech.yk.fujitsu.co.jp
 
 ******************************************************************/
-/* $XFree86$ */
 
 #ifndef _XIMTRINT_H
 #define _XIMTRINT_H
