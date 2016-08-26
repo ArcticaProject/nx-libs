@@ -51,11 +51,11 @@
  * Static representation of a character set that can be used in Compound Text.
  */
 typedef struct _CTDataRec {
-    const char *name;
-    const char *ct_sequence;	/* Compound Text encoding, ESC sequence */
+    const char name[19];
+    const char ct_sequence[5];	/* Compound Text encoding, ESC sequence */
 } CTDataRec, *CTData;
 
-static CTDataRec default_ct_data[] =
+static const CTDataRec default_ct_data[] =
 {
     /*                                                                    */
     /* X11 registry name       MIME name         ISO-IR      ESC sequence */
@@ -123,6 +123,8 @@ static CTDataRec default_ct_data[] =
 #endif
     /* For use by utf8 -> ctext */
     { "BIG5-0:GLGR", "\033%/2"},
+    { "BIG5HKSCS-0:GLGR", "\033%/2"},
+    { "GBK-0:GLGR", "\033%/2"},
     /* used by Emacs, but not backed by ISO-IR */
     { "BIG5-E0:GL", "\033$(0" },
     { "BIG5-E0:GR", "\033$)0" },
@@ -317,7 +319,7 @@ _XlcParseCharSet(
     const char *ptr = charset->ct_sequence;
     int length;
     int char_size;
-    
+
     if (*ptr == '\0')
     	return False;
 
@@ -749,7 +751,7 @@ cttocs(
                or stop the current run. */
             if (charset) {
                 if (charset != ch_charset)
-                    break; 
+                    break;
             } else {
                 state->charset = charset = ch_charset;
             }
@@ -789,7 +791,7 @@ cttocs(
                or stop the current run. */
             if (charset) {
                 if (charset != state->charset)
-                    break; 
+                    break;
             } else {
                 charset = state->charset;
             }
@@ -1095,7 +1097,7 @@ strtocs(
 
     while (side == (*((unsigned char *) src) & 0x80) && length-- > 0)
 	*dst++ = *src++;
-    
+
     *from_left -= src - (const char *) *from;
     *from = (XPointer) src;
     *to_left -= dst - (char *) *to;
@@ -1131,7 +1133,7 @@ cstostr(
 	|| !((XlcCharSet) args[0] == state->GL_charset
 	     || (XlcCharSet) args[0] == state->GR_charset))
 	return -1;
-    
+
     csptr = *((const char **) from);
     string_ptr = *((char **) to);
     csstr_len = *from_left;
@@ -1260,10 +1262,10 @@ open_cstostr(
 /* =========================== Initialization =========================== */
 
 Bool
-_XlcInitCTInfo()
+_XlcInitCTInfo(void)
 {
     if (ct_list == NULL) {
-        CTData ct_data;
+        const CTDataRec *ct_data;
         int num;
         XlcCharSet charset;
 
