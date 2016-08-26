@@ -43,7 +43,6 @@
  *		adjustment of color specifications in the TekHVC color
  *		space.
  */
-/* $XFree86$ */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>

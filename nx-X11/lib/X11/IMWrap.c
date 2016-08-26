@@ -1,5 +1,4 @@
 /*
- * $Xorg: IMWrap.c,v 1.3 2000/08/17 19:44:37 cpqbld Exp $
  */
 
 /*

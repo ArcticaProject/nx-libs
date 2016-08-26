@@ -25,7 +25,6 @@ PERFORMANCE OF THIS SOFTWARE.
                                fujiwara@a80.tech.yk.fujitsu.co.jp
 
 ******************************************************************/
-/* $XFree86$ */
 
 #ifndef _XIMIMSW_H
 #define _XIMIMSW_H
