@@ -1,29 +1,50 @@
+/*
+ * Copyright 1992 Sun Microsystems, Inc.  All rights reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice (including the next
+ * paragraph) shall be included in all copies or substantial portions of the
+ * Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
 /******************************************************************
 
-           Copyright 1992 by Sun Microsystems, Inc.
            Copyright 1992, 1993, 1994 by FUJITSU LIMITED
 
 Permission to use, copy, modify, distribute, and sell this software
 and its documentation for any purpose is hereby granted without fee,
 provided that the above copyright notice appear in all copies and
 that both that copyright notice and this permission notice appear
-in supporting documentation, and that the name of Sun Microsystems, Inc.
-and FUJITSU LIMITED not be used in advertising or publicity pertaining to
-distribution of the software without specific, written prior permission.
-Sun Microsystems, Inc. and FUJITSU LIMITED makes no representations about
-the suitability of this software for any purpose.
+in supporting documentation, and that the name of FUJITSU LIMITED
+not be used in advertising or publicity pertaining to distribution
+of the software without specific, written prior permission.
+FUJITSU LIMITED makes no representations about the suitability of
+this software for any purpose.
 It is provided "as is" without express or implied warranty.
 
-Sun Microsystems Inc. AND FUJITSU LIMITED DISCLAIMS ALL WARRANTIES WITH
-REGARD TO THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
-AND FITNESS, IN NO EVENT SHALL Sun Microsystems, Inc. AND FUJITSU LIMITED
-BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR
-IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+FUJITSU LIMITED DISCLAIM ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
+INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO
+EVENT SHALL FUJITSU LIMITED BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+PERFORMANCE OF THIS SOFTWARE.
 
   Author: Hideki Hiura (hhiura@Sun.COM) Sun Microsystems, Inc.
-          Takashi Fujiwara     FUJITSU LIMITED 
+          Takashi Fujiwara     FUJITSU LIMITED
                                fujiwara@a80.tech.yk.fujitsu.co.jp
 
 ******************************************************************/
@@ -102,12 +123,12 @@ _XimXFilterWaitEvent(
     spec->ev = (XPointer)ev;
     ret = _XimFilterWaitEvent(im);
 
-    /* 
+    /*
      * If ev is a pointer to a stack variable, there could be
      * a coredump later on if the pointer is dereferenced.
      * Therefore, reset to NULL to force reinitialization in
      * _XimXRead().
-     * 
+     *
      * Keep in mind _XimXRead may be called again when the stack
      * is very different.
      */
@@ -153,6 +174,8 @@ _XimXConnect(Xim im)
     event.xclient.data.l[0]    = (CARD32)spec->lib_connect_wid;
     event.xclient.data.l[1]    = spec->major_code;
     event.xclient.data.l[2]    = spec->minor_code;
+    event.xclient.data.l[3]    = 0;
+    event.xclient.data.l[4]    = 0;
 
     if(event.xclient.data.l[1] == 1 || event.xclient.data.l[1] == 2) {
 	XWindowAttributes	 atr;
@@ -193,7 +216,7 @@ _XimXConnect(Xim im)
 	((major_code == 2) && (minor_code == 1))) {
 	spec->BoundarySize = (CARD32)event.xclient.data.l[3];
     }
-	
+
     /* ClientMessage Event Filter */
     _XRegisterFilterByType(im->core.display, spec->lib_connect_wid,
 			ClientMessage, ClientMessage,
@@ -233,7 +256,7 @@ _NewAtom(
 }
 
 Private Bool
-_XimXWrite(Xim im, INT16 len, XPointer data)    
+_XimXWrite(Xim im, INT16 len, XPointer data)
 {
     Atom	 atom;
     char	 atomName[16];
@@ -353,6 +376,7 @@ _XimXGetReadData(
 	    (void)memcpy(buf, prop_ret, (int)nitems);
 	    *ret_len  = (int)nitems;
 	    if (bytes_after_ret > 0) {
+		XFree(prop_ret);
 	        XGetWindowProperty(im->core.display,
 		    spec->lib_connect_wid, prop, 0L,
 		    ((length + bytes_after_ret + 3)/ 4), True, AnyPropertyType,
@@ -360,7 +384,7 @@ _XimXGetReadData(
 		    &prop_ret);
 	        XChangeProperty(im->core.display, spec->lib_connect_wid, prop,
 		    XA_STRING, 8, PropModePrepend, &prop_ret[length],
-		    (nitems - length)); 
+		    (nitems - length));
 	    }
 	} else {
 	    (void)memcpy(buf, prop_ret, buf_len);
@@ -375,7 +399,7 @@ _XimXGetReadData(
 		&type_ret, &format_ret, &nitems, &bytes_after_ret, &prop_ret);
 	    }
 	    XChangeProperty(im->core.display, spec->lib_connect_wid, prop,
-		    XA_STRING, 8, PropModePrepend, &prop_ret[buf_len], len); 
+		    XA_STRING, 8, PropModePrepend, &prop_ret[buf_len], len);
 	    event->xclient.data.l[0] = (long)len;
 	    event->xclient.data.l[1] = (long)prop;
 	    XPutBackEvent(im->core.display, event);
@@ -400,7 +424,7 @@ _XimXGetReadData(
 	    *ret_len  = buf_len;
 	    len = nitems - buf_len;
 	    XChangeProperty(im->core.display, spec->lib_connect_wid, prop,
-		XA_STRING, 8, PropModePrepend, &prop_ret[buf_len], len); 
+		XA_STRING, 8, PropModePrepend, &prop_ret[buf_len], len);
 	}
 	XFree(prop_ret);
     }
@@ -459,9 +483,7 @@ _XimXFlush(Xim im)
 }
 
 Public Bool
-_XimXConf(im, address)
-    Xim		 im;
-    char	*address;
+_XimXConf(Xim im, char *address)
 {
     XSpecRec	*spec;
 

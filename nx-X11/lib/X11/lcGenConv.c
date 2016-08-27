@@ -31,7 +31,7 @@
  *
  */
 /*
- *  2000  
+ *  2000
  *  Modifier: Ivan Pascal      The XFree86 Project
  */
 
@@ -53,13 +53,13 @@
 #include "XlcGeneric.h"
 #include <stdio.h>
 
-#if !defined(macII) && !defined(Lynx_22) && !defined(X_LOCALE)
+#if !defined(Lynx_22) && !defined(X_LOCALE)
 #define STDCVT
 #endif
 
 typedef struct _CTDataRec {
-    char *name;
-    char *encoding;             /* Compound Text encoding */
+    const char *name;
+    const char *encoding; /* Compound Text encoding */
 } CTDataRec, *CTData;
 
 static CTDataRec directionality_data[] =
@@ -199,7 +199,7 @@ mb_to_gi(
 	    return(mb_tmp);
     }
 
-    if (codeset->side == XlcC0 || codeset->side == XlcGL || 
+    if (codeset->side == XlcC0 || codeset->side == XlcGL ||
 	codeset->side == XlcC1 || codeset->side == XlcGR) {
 
         for (i = 0; i < codeset->length; i++)
@@ -281,7 +281,7 @@ wc_to_gi(
 
     wc = wc & ~wc_encode_mask;
     for (*glyph_index = 0, i = (*codeset)->length - 1; i >= 0; i--)
-	*glyph_index = (*glyph_index << 8) | 
+	*glyph_index = (*glyph_index << 8) |
 		      ( ((unsigned long)wc >> (i * wc_shift_bits)) & mask );
 
     return(True);
@@ -300,7 +300,7 @@ mb_parse_codeset(
     ParseInfo *mb_parse_list = XLC_GENERIC(state->lcd, mb_parse_list);
     ParseInfo parse_info;
     CodeSet codeset;
-    
+
     for (--num ; (parse_info = mb_parse_list[num]) != NULL; num++) {
        len = compare(src, parse_info->encoding, from_len);
        if (len > 0) {
@@ -342,7 +342,7 @@ byteM_parse_codeset(
 	    continue;
 
         for (j = 0; j < codeset->length; j++) {
-	    ch = *((unsigned char *)(inbufptr + j)); 
+	    ch = *((unsigned char *)(inbufptr + j));
 	    byteM_rec = byteM[j];
 	    byteinfo = byteM_rec.byteinfo;
 
@@ -363,7 +363,7 @@ byteM_parse_codeset(
     }
 
     return(NULL);
-}                
+}
 
 #define GLGR_parse_codeset(ch) \
      (isrightside(ch) ? (state->GR_codeset) : \
@@ -428,7 +428,7 @@ ct_parse_csi(
 	if ( !(*ctr_seq_len = strlen(directionality_data[i].encoding)) )
 	    continue;
 
-	if ( strncmp(inbufptr, directionality_data[i].encoding, 
+	if ( strncmp(inbufptr, directionality_data[i].encoding,
 						*ctr_seq_len) == 0)
             return(True);
     }
@@ -571,7 +571,7 @@ segment_conversion(
     range = segment_conv[i].range;
     if (*glyph_index < range.start || range.end < *glyph_index)
 	return(True);
-    
+
     *charset = segment_conv[i].dest;
     conv_rec.conv_num = segment_conv[i].conv_num;
     conv_rec.convlist = segment_conv[i].conv;
@@ -799,7 +799,7 @@ mbstowcs_org(
 		continue;
 	    }
         }
-    
+
 	/* next mb char data for byteM ? */
 	if ((codeset = byteM_parse_codeset(lcd, (inbufptr - 1))))
 	    goto next_mb_char;
@@ -807,7 +807,7 @@ mbstowcs_org(
 	/* next mb char data for GL or GR side ? */
 	if ((codeset = GLGR_parse_codeset(ch)))
 	    goto next_mb_char;
-	    
+
         /* can't find codeset for the ch */
         unconv_num++;
         continue;
@@ -876,7 +876,7 @@ stdc_mbstowcs(
             /* null ? */
             src++;
             src_left--;
-            if (dst) 
+            if (dst)
                 *dst++ = L'\0';
             dst_left--;
         }
@@ -916,7 +916,7 @@ wcstombs_org(
     const wchar_t *inbufptr = (const wchar_t *) *from;
     char *outbufptr = *to;
     int from_size = *from_left;
-    
+
     const char *default_string = XLC_PUBLIC(lcd, default_string);
     int defstr_len = strlen(default_string);
 
@@ -1031,14 +1031,14 @@ stdc_wcstombs(
         if (length > 0) {
 	    src++;
 	    src_left--;
-	    if (dst) 
+	    if (dst)
 		dst += length;
 	    dst_left -= length;
 	} else if (length < 0) {
 	    src++;
 	    src_left--;
 	    unconv_num++;
-	} 
+	}
     }
 
     *from = (XPointer) src;
@@ -1117,7 +1117,7 @@ wcstocts(
          * +-----+-----+-----+-----+-----+-----+-----+----   ----+-----+-----+
          * |     esc sequence      |  M  |  L  |     encoding name     | STX |
          * +-----+-----+-----+-----+-----+-----+-----+----   ----+-----+-----+
-         *           4bytes         1byte 1byte     variable length     1byte 
+         *           4bytes         1byte 1byte     variable length     1byte
          * 	                   |                                         |
          * 	                   +-----------------------------------------+
          * 	                     name length  = ((M - 128) * 128) + (L - 128)
@@ -1145,7 +1145,7 @@ wcstocts(
                 *ext_seg_len   = i % 128 + 128;
                 ext_seg_len = NULL;
             }
-	    
+
 	    if (*to_left < total_len + 1) {
                 unconv_num++;
 	        break;
@@ -1219,14 +1219,14 @@ stdc_wcstocts(
     int buf_left2;
     int unconv_num1 = 0, unconv_num2 = 0;
 
-    unconv_num1 = stdc_wcstombs(conv, 
+    unconv_num1 = stdc_wcstombs(conv,
 		from, from_left, &buf_ptr1, &buf_left1, args, num_args);
     if (unconv_num1 < 0)
         goto ret;
 
     buf_left2 = buf_ptr1 - buf_ptr2;
 
-    unconv_num2 = mbstocts(conv, 
+    unconv_num2 = mbstocts(conv,
 		&buf_ptr2, &buf_left2, to, to_left, args, num_args);
     if (unconv_num2 < 0)
         goto ret;
@@ -1319,25 +1319,25 @@ ctstowcs(
 
         /* escape sequence ? */
         if (ch == ESC) {
-	    if ( !ct_parse_charset(lcd, 
+	    if ( !ct_parse_charset(lcd,
 			inbufptr - 1, &state->charset, &ctr_seq_len) )
 		goto skip_the_seg;
 
-	    if (state->charset->side == XlcC0 || 
+	    if (state->charset->side == XlcC0 ||
 		state->charset->side == XlcGL)
 	      {
 		state->GL_charset = state->charset;
 	      }
-	    else if (state->charset->side == XlcC1 || 
+	    else if (state->charset->side == XlcC1 ||
 		     state->charset->side == XlcGR)
 	      {
 		state->GR_charset = state->charset;
-	      }	
+	      }
 	    else if (state->charset->side == XlcGLGR)
 	      {
 		state->GL_charset = state->charset;
 		state->GR_charset = state->charset;
-	      }	
+	      }
 
 	    if (*from_left + 1 < ctr_seq_len) {
 		inbufptr--;
@@ -1351,7 +1351,7 @@ ctstowcs(
 	    *from_left -= (ctr_seq_len - 1);
 
             continue;
-        } 
+        }
 
  	/* check current state */
 	if (isleftside(ch))
@@ -1378,7 +1378,7 @@ output_one_wc:
 	    segment_conversion(lcd, &charset_tmp, &glyph_index);
 
             /* get codeset */
-            if ( !_XlcGetCodeSetFromCharSet(lcd, charset_tmp, 
+            if ( !_XlcGetCodeSetFromCharSet(lcd, charset_tmp,
 						&codeset, &glyph_index) ) {
 		unconv_num += gi_len;
 		continue;
@@ -1497,7 +1497,7 @@ cstowcs(
 	    segment_conversion(lcd, &charset_tmp, &glyph_index);
 
             /* get codeset */
-            if ( !_XlcGetCodeSetFromCharSet(lcd, charset_tmp, 
+            if ( !_XlcGetCodeSetFromCharSet(lcd, charset_tmp,
 						&codeset, &glyph_index) ) {
 		unconv_num += gi_len;
 		continue;
@@ -1542,14 +1542,14 @@ stdc_ctstowcs(
     int buf_left2;
     int unconv_num1 = 0, unconv_num2 = 0;
 
-    unconv_num1 = ctstombs(conv, 
+    unconv_num1 = ctstombs(conv,
 		from, from_left, &buf_ptr1, &buf_left1, args, num_args);
     if (unconv_num1 < 0)
         goto ret;
 
     buf_left2 = buf_ptr1 - buf_ptr2;
 
-    unconv_num2 = stdc_mbstowcs(conv, 
+    unconv_num2 = stdc_mbstowcs(conv,
 		&buf_ptr2, &buf_left2, to, to_left, args, num_args);
     if (unconv_num2 < 0)
         goto ret;
@@ -1578,14 +1578,14 @@ stdc_cstowcs(
     int buf_left2;
     int unconv_num1 = 0, unconv_num2 = 0;
 
-    unconv_num1 = cstombs(conv, 
+    unconv_num1 = cstombs(conv,
 		from, from_left, &buf_ptr1, &buf_left1, args, num_args);
     if (unconv_num1 < 0)
         goto ret;
 
     buf_left2 = buf_ptr1 - buf_ptr2;
 
-    unconv_num2 = stdc_mbstowcs(conv, 
+    unconv_num2 = stdc_mbstowcs(conv,
 		&buf_ptr2, &buf_left2, to, to_left, args, num_args);
     if (unconv_num2 < 0)
         goto ret;
@@ -1614,14 +1614,14 @@ mbstocts(
     int buf_left2;
     int unconv_num1 = 0, unconv_num2 = 0;
 
-    unconv_num1 = mbstowcs_org(conv, 
+    unconv_num1 = mbstowcs_org(conv,
 		from, from_left, &buf_ptr1, &buf_left1, args, num_args);
     if (unconv_num1 < 0)
         goto ret;
 
     buf_left2 = (buf_ptr1 - buf_ptr2) / sizeof(wchar_t);
 
-    unconv_num2 += wcstocts(conv, 
+    unconv_num2 += wcstocts(conv,
 		&buf_ptr2, &buf_left2, to, to_left, args, num_args);
     if (unconv_num2 < 0)
         goto ret;
@@ -1709,7 +1709,7 @@ mbstostr(
 	/* next char data : GL or GR side ? */
 	if ((codeset = GLGR_parse_codeset(ch)))
 	    goto next_mb_char;
-	    
+
         /* can't find codeset for the ch */
         unconv_num++;
         continue;
@@ -1821,7 +1821,7 @@ mbtocs(
 	/* next mb char data for GL or GR side ? */
 	if ((codeset = GLGR_parse_codeset(ch)))
 	    goto next_mb_char;
-	    
+
         /* can't find codeset for the ch */
         unconv_num = 1;
         break;
@@ -1904,7 +1904,7 @@ mbstocs(
 
     ret = mbtocs(conv, from, from_left, to, to_left, tmp_args, 1);
     charset_old = charset;
-  
+
     while ( ret == 0 && *from_left && *to_left) {
 	inbufptr = *from;
 	in_left = *from_left;
@@ -1955,7 +1955,7 @@ wcstostr(
     const wchar_t *inbufptr = (const wchar_t *) *from;
     char *outbufptr = *to;
     int from_size = *from_left;
-    
+
     const char *default_string = XLC_PUBLIC(lcd, default_string);
     int defstr_len = strlen(default_string);
 
@@ -2071,14 +2071,14 @@ stdc_wcstostr(
     int buf_left2;
     int unconv_num1 = 0, unconv_num2 = 0;
 
-    unconv_num1 = stdc_wcstombs(conv, 
+    unconv_num1 = stdc_wcstombs(conv,
 		from, from_left, &buf_ptr1, &buf_left1, args, num_args);
     if (unconv_num1 < 0)
         goto ret;
 
     buf_left2 = buf_ptr1 - buf_ptr2;
 
-    unconv_num2 = mbstostr(conv, 
+    unconv_num2 = mbstostr(conv,
 		&buf_ptr2, &buf_left2, to, to_left, args, num_args);
     if (unconv_num2 < 0)
         goto ret;
@@ -2204,7 +2204,7 @@ stdc_wctocs(
 	} else {
 	    goto end;
 	}
-		
+
 	if (length < 0)
 	    goto end;
 
@@ -2349,14 +2349,14 @@ ctstombs(
     int buf_left2;
     int unconv_num1 = 0, unconv_num2 = 0;
 
-    unconv_num1 = ctstowcs(conv, 
+    unconv_num1 = ctstowcs(conv,
 		from, from_left, &buf_ptr1, &buf_left1, args, num_args);
     if (unconv_num1 < 0)
         goto ret;
 
     buf_left2 = (buf_ptr1 - buf_ptr2) / sizeof(wchar_t);
 
-    unconv_num2 += wcstombs_org(conv, 
+    unconv_num2 += wcstombs_org(conv,
 		&buf_ptr2, &buf_left2, to, to_left, args, num_args);
     if (unconv_num2 < 0)
         goto ret;
@@ -2385,14 +2385,14 @@ cstombs(
     int buf_left2;
     int unconv_num1 = 0, unconv_num2 = 0;
 
-    unconv_num1 = cstowcs(conv, 
+    unconv_num1 = cstowcs(conv,
 		from, from_left, &buf_ptr1, &buf_left1, args, num_args);
     if (unconv_num1 < 0)
         goto ret;
 
     buf_left2 = (buf_ptr1 - buf_ptr2) / sizeof(wchar_t);
 
-    unconv_num2 += wcstombs_org(conv, 
+    unconv_num2 += wcstombs_org(conv,
 		&buf_ptr2, &buf_left2, to, to_left, args, num_args);
     if (unconv_num2 < 0)
         goto ret;
@@ -2600,14 +2600,14 @@ stdc_strtowcs(
     int buf_left2;
     int unconv_num1 = 0, unconv_num2 = 0;
 
-    unconv_num1 = strtombs(conv, 
+    unconv_num1 = strtombs(conv,
 		from, from_left, &buf_ptr1, &buf_left1, args, num_args);
     if (unconv_num1 < 0)
         goto ret;
 
     buf_left2 = buf_ptr1 - buf_ptr2;
 
-    unconv_num2 = stdc_mbstowcs(conv, 
+    unconv_num2 = stdc_mbstowcs(conv,
 		&buf_ptr2, &buf_left2, to, to_left, args, num_args);
     if (unconv_num2 < 0)
         goto ret;
@@ -2653,23 +2653,23 @@ create_conv(
     conv = (XlcConv) Xmalloc(sizeof(XlcConvRec));
     if (conv == NULL)
 	return (XlcConv) NULL;
-    
+
     conv->methods = (XlcConvMethods) Xmalloc(sizeof(XlcConvMethodsRec));
     if (conv->methods == NULL)
 	goto err;
     *conv->methods = *methods;
-    conv->methods->reset = init_state; 
+    conv->methods->reset = init_state;
 
     conv->state = (XPointer) Xmalloc(sizeof(StateRec));
     if (conv->state == NULL)
 	goto err;
     bzero((char *) conv->state, sizeof(StateRec));
-    
+
     state = (State) conv->state;
     state->lcd = lcd;
-    
+
     _XlcResetConverter(conv);
-    
+
     return conv;
 
 err:
@@ -3110,7 +3110,7 @@ _XlcGenericLoader(
     _XlcSetConverter(lcd, XlcNCompoundText, lcd, XlcNMultiByte, open_ctstombs);
     _XlcSetConverter(lcd, XlcNString,    lcd, XlcNMultiByte,    open_strtombs);
     _XlcSetConverter(lcd, XlcNCharSet,   lcd, XlcNMultiByte,    open_cstombs);
-    
+
 #ifdef STDCVT
      gen = XLC_GENERIC_PART(lcd);
 

@@ -10,7 +10,7 @@ in supporting documentation, and that the name of FUJITSU LIMITED
 not be used in advertising or publicity pertaining to distribution
 of the software without specific, written prior permission.
 FUJITSU LIMITED makes no representations about the suitability of
-this software for any purpose. 
+this software for any purpose.
 It is provided "as is" without express or implied warranty.
 
 FUJITSU LIMITED DISCLAIM ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
@@ -21,7 +21,7 @@ USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
 
-  Author: Takashi Fujiwara     FUJITSU LIMITED 
+  Author: Takashi Fujiwara     FUJITSU LIMITED
                                fujiwara@a80.tech.yk.fujitsu.co.jp
 
 ******************************************************************/
@@ -61,7 +61,7 @@ _XimSetIMStructureList(
 	    }
 	}
 	if(i >= _XimCurrentIMcount) {
-	    if(!(xim = (Xim *)Xrealloc(_XimCurrentIMlist, 
+	    if(!(xim = (Xim *)Xrealloc(_XimCurrentIMlist,
 					 ((i + 1) * sizeof(Xim)))))
 		return False;
 	    _XimCurrentIMlist			  = xim;
@@ -73,8 +73,7 @@ _XimSetIMStructureList(
 }
 
 Public void
-_XimDestroyIMStructureList(im)
-    Xim		  im;
+_XimDestroyIMStructureList(Xim im)
 {
     register int  i;
 
@@ -88,8 +87,7 @@ _XimDestroyIMStructureList(im)
 }
 
 Public void
-_XimServerDestroy(im_2_destroy)
-    Xim		  im_2_destroy;
+_XimServerDestroy(Xim im_2_destroy)
 {
     register int  i;
     Xim		  im;
@@ -123,7 +121,7 @@ _XimServerDestroy(im_2_destroy)
 
 #ifdef XIM_CONNECTABLE
 Public void
-_XimServerReconectableDestroy()
+_XimServerReconectableDestroy(void)
 {
     register int  i;
     Xim		  im;
@@ -149,13 +147,13 @@ _XimServerReconectableDestroy()
 }
 #endif /* XIM_CONNECTABLE */
 
-Private char	*
+Private const char *
 _XimStrstr(
-    register char	*src,
-    register char	*dest)
+    register const char *src,
+    register const char *dest)
 {
     int			 len;
-    
+
     len = strlen(dest);
     while((src = strchr(src, *dest))) {
 	if(!strncmp(src, dest, len))
@@ -169,10 +167,10 @@ Private char *
 _XimMakeImName(
     XLCd	   lcd)
 {
-    char* begin = NULL;
-    char* end = NULL;
+    const char* begin = NULL;
+    const char* end = NULL;
     char* ret = NULL;
-    char* ximmodifier = XIMMODIFIER;
+    const char* ximmodifier = XIMMODIFIER;
 
     if(lcd->core->modifiers != NULL && *lcd->core->modifiers != '\0') {
 	begin = _XimStrstr(lcd->core->modifiers, ximmodifier);
@@ -205,7 +203,7 @@ _XimOpenIM(
 {
     Xim			 im;
     register int	 i;
-    
+
     if (!(im = (Xim)Xmalloc(sizeof(XimRec))))
 	return (XIM)NULL;
     bzero(im, sizeof(XimRec));
@@ -257,8 +255,7 @@ Error1:
 }
 
 Public Bool
-_XInitIM(lcd)
-    XLCd	 lcd;
+_XInitIM(XLCd lcd)
 {
     if(lcd == (XLCd)NULL)
 	return False;
