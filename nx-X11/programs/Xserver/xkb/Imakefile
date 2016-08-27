@@ -80,10 +80,6 @@ LinkFile(xkbfmisc.c,$(XKBFILELIBSRC)/xkbmisc.c)
 LinkSourceFile(xkberrs.c,$(XKBFILELIBSRC))
 LinkSourceFile(xkbconfig.c,$(XKBFILELIBSRC))
 LinkSourceFile(xkbout.c,$(XKBFILELIBSRC))
-LinkSourceFile(XKBMisc.c,$(XLIBSRC))
-LinkSourceFile(XKBMAlloc.c,$(XLIBSRC))
-LinkSourceFile(XKBAlloc.c,$(XLIBSRC))
-LinkSourceFile(XKBGAlloc.c,$(XLIBSRC))
 
 LinkSourceFile(modinit.h,../Xext/extmod)
 
