@@ -52,7 +52,7 @@ SOFTWARE.
 
 /* You must include <nx-X11/Xlib.h> before including this file */
 #include <nx-X11/Xlib.h>
-#include <X11/keysym.h>
+#include <nx-X11/keysym.h>
 
 /*
  * Bitmask returned by XParseGeometry().  Each bit tells if the corresponding
