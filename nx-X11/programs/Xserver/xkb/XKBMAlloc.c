@@ -26,19 +26,8 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
-#elif defined(HAVE_CONFIG_H)
-#include <config.h>
 #endif
 
-#ifndef XKB_IN_SERVER
-
-#include <stdio.h>
-#include "Xlibint.h"
-#include <nx-X11/extensions/XKBproto.h>
-#include <nx-X11/keysym.h>
-#include "XKBlibint.h"
-
-#else 
 
 #include <stdio.h>
 #include <nx-X11/X.h>
@@ -47,9 +36,8 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "inputstr.h"
 #include <nx-X11/keysym.h>
 #define	XKBSRV_NEED_FILE_FUNCS
-#include <nx-X11/extensions/XKBsrv.h>
+#include <xkbsrv.h>
 
-#endif /* XKB_IN_SERVER */
 
 /***====================================================================***/
 

@@ -111,7 +111,7 @@ int ProcInitialConnection();
 #ifdef XKB
 #define XKB_IN_SERVER
 #include "inputstr.h"
-#include <nx-X11/extensions/XKBsrv.h>
+#include <xkbsrv.h>
 #endif
 
 #define mskcnt ((MAXCLIENTS + 31) / 32)

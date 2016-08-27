@@ -26,8 +26,6 @@
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
-#elif defined(HAVE_CONFIG_H)
-#include <config.h>
 #endif
 
 #include <stdio.h>
@@ -35,29 +33,16 @@
 #include <nx-X11/Xos.h>
 #include <nx-X11/Xfuncs.h>
 
-#ifndef XKB_IN_SERVER
-
-#include <stdlib.h>
-#include <nx-X11/Xlib.h>
-#include <nx-X11/keysym.h>
-
-#include <nx-X11/XKBlib.h>
-
-#include <nx-X11/extensions/XKBgeom.h>
-#include "XKMformat.h"
-#include "XKBfileInt.h"
-
-#else
 
 #include <nx-X11/X.h>
 #include <nx-X11/Xproto.h>
 #include <nx-X11/keysym.h>
 #include "misc.h"
 #include "inputstr.h"
-#include <nx-X11/extensions/XKBstr.h>
+#include "xkbstr.h"
 #define	 XKBSRV_NEED_FILE_FUNCS
-#include <nx-X11/extensions/XKBsrv.h>
-#include <nx-X11/extensions/XKBgeom.h>
+#include <xkbsrv.h>
+#include "xkbgeom.h"
 
 Atom
 XkbInternAtom(Display *dpy,char *str,Bool only_if_exists)
@@ -67,7 +52,6 @@ XkbInternAtom(Display *dpy,char *str,Bool only_if_exists)
     return MakeAtom(str,strlen(str),!only_if_exists);
 }
 
-#endif
 
 #ifndef SEEK_SET
 #define	SEEK_SET 0

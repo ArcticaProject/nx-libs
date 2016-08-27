@@ -54,7 +54,7 @@
 #include "Error.h"
 
 #ifdef XKB
-#include "XKBsrv.h"
+#include "xkbsrv.h"
 #endif
 
 #include <nx/NX.h>

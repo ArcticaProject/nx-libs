@@ -34,7 +34,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "misc.h"
 #include "inputstr.h"
 #define	XKBSRV_NEED_FILE_FUNCS
-#include <nx-X11/extensions/XKBsrv.h>
+#include <xkbsrv.h>
 #include "extnsionst.h"
 #include "xkb.h"
 #include "protocol-versions.h"
@@ -3880,7 +3880,7 @@ ProcXkbSetNames(ClientPtr client)
 
 /***====================================================================***/
 
-#include <nx-X11/extensions/XKBgeom.h>
+#include "xkbgeom.h"
 
 #define	XkbSizeCountedString(s)  ((s)?((((2+strlen(s))+3)/4)*4):4)
 

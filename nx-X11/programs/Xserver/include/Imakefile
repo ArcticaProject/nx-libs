@@ -62,6 +62,7 @@ InstallDriverSDKNonExecFile(servermd.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(validate.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(window.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(windowstr.h,$(DRIVERSDKINCLUDEDIR))
+InstallDriverSDKNonExecFile(xkbsrv.h,$(DRIVERSDKINCLUDEDIR))
 
 BuildIncludes($(HEADERS),nx-X11,..)
 InstallMultipleFlags($(HEADERS),$(INCDIR)/nx-X11,$(INSTINCFLAGS))
