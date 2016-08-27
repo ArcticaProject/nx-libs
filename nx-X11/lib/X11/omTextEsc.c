@@ -257,7 +257,7 @@ _XomGenericTextEscapement(
     conv = _XomInitConverter(oc, type);
     if (conv == NULL)
 	return escapement;
-    
+
     args[0] = (XPointer) &font;
     args[1] = (XPointer) &is_xchar2b;
     args[2] = (XPointer) &font_set;
