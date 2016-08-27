@@ -62,7 +62,7 @@ HEADERS = \
 	bigreqstr.h \
 	XI.h XInput.h XIproto.h \
 	xtestconst.h xtestext1.h xteststr.h \
-	XKB.h XKBgeom.h XKBproto.h XKBstr.h XKBsrv.h \
+	XKB.h XKBgeom.h XKBproto.h XKBstr.h \
 	Xdbeproto.h \
 	$(EXTRAHEADERS) \
 	$(XKBFILEHEADERS) \
