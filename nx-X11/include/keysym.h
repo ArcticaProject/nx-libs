@@ -1,4 +1,3 @@
-
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -68,6 +67,8 @@ SOFTWARE.
 #define XK_VIETNAMESE
 #define XK_CURRENCY
 #define XK_MATHEMATICAL
+#define XK_BRAILLE
+#define XK_SINHALA
 
-#include <nx-X11/keysymdef.h>
+#include <X11/keysymdef.h>
 
