@@ -27,9 +27,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <nx-X11/X.h>
+#include <X11/X.h>
 #include <nx-X11/Xlib.h>
-#include <nx-X11/Xmd.h>
+#include <X11/Xmd.h>
 
 #include <jpeglib.h>
 

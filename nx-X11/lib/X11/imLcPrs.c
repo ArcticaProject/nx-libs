@@ -34,8 +34,8 @@ OR PERFORMANCE OF THIS SOFTWARE.
 #include <config.h>
 #endif
 #include <nx-X11/Xlib.h>
-#include <nx-X11/Xmd.h>
-#include <nx-X11/Xos.h>
+#include <X11/Xmd.h>
+#include <X11/Xos.h>
 #include "Xlibint.h"
 #include "Xlcint.h"
 #include "Ximint.h"

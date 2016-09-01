@@ -29,7 +29,7 @@
 #include "Xlibint.h"
 #include "XlcPubI.h"
 #include <nx-X11/Xutil.h>
-#include <nx-X11/Xatom.h>
+#include <X11/Xatom.h>
 
 static XPointer *
 alloc_list(

@@ -42,9 +42,9 @@ is" without express or implied warranty.
 #include <string.h>
 #include <stdlib.h>
 
-#include "X.h"
-#include "Xproto.h"
-#include "keysym.h"
+#include <X11/X.h>
+#include <X11/Xproto.h>
+#include <X11/keysym.h>
 #include "screenint.h"
 #include "inputstr.h"
 #include "misc.h"
@@ -71,7 +71,7 @@ is" without express or implied warranty.
 #include "property.h"
 #include "Init.h"
 
-#include <nx-X11/extensions/XKB.h>
+#include <X11/extensions/XKB.h>
 
 #define XKBSRV_NEED_FILE_FUNCS
 #include <nx-X11/extensions/XKBsrv.h>
@@ -79,7 +79,7 @@ is" without express or implied warranty.
 
 #include <nx-X11/extensions/XKBrules.h>
 
-#include "Xatom.h"
+#include <X11/Xatom.h>
 
 #include <errno.h>
 

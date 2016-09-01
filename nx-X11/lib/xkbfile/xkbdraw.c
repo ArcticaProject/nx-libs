@@ -31,12 +31,12 @@
 #include <ctype.h>
 #include <stdlib.h>
 
-#include <nx-X11/Xos.h>
-#include <nx-X11/Xfuncs.h>
+#include <X11/Xos.h>
+#include <X11/Xfuncs.h>
 #include <nx-X11/Xlib.h>
-#include <nx-X11/keysym.h>
+#include <X11/keysym.h>
 #include <nx-X11/XKBlib.h>
-#include <nx-X11/extensions/XKBgeom.h>
+#include <X11/extensions/XKBgeom.h>
 #include "XKMformat.h"
 #include "XKBfileInt.h"
 

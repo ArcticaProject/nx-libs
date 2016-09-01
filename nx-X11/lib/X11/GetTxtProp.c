@@ -52,9 +52,9 @@ from The Open Group.
 #include <config.h>
 #endif
 #include <nx-X11/Xlibint.h>
-#include <nx-X11/Xatom.h>
+#include <X11/Xatom.h>
 #include <nx-X11/Xutil.h>
-#include <nx-X11/Xos.h>
+#include <X11/Xos.h>
 #include <stdio.h>
 
 Status XGetTextProperty (display, window, tp, property)

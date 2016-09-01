@@ -61,7 +61,7 @@ from The Open Group.
 #include "Xlibint.h"
 #include "Xlcint.h"
 #include <nx-X11/Xlocale.h>
-#include <nx-X11/Xos.h>
+#include <X11/Xos.h>
 #include "XlcPubI.h"
 
 #define MAXLOCALE	64	/* buffer size of locale name */

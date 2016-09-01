@@ -63,7 +63,7 @@ from The Open Group.
  */
 
 #include <nx-X11/Xlib.h>
-#include <nx-X11/Xproto.h>		/* to declare xEvent */
+#include <X11/Xproto.h>		/* to declare xEvent */
 #include <nx-X11/XlibConf.h>	/* for configured options like XTHREADS */
 
 #ifdef NX_TRANS_SOCKET
@@ -234,14 +234,14 @@ typedef struct _XSQEvent
 #ifdef XTHREADS			/* for xReply */
 #endif
 
-#include <nx-X11/Xproto.h>
+#include <X11/Xproto.h>
 #ifdef __sgi
 #define _SGI_MP_SOURCE  /* turn this on to get MP safe errno */
 #endif
 #include <errno.h>
 #define _XBCOPYFUNC _Xbcopy
-#include <nx-X11/Xfuncs.h>
-#include <nx-X11/Xosdefs.h>
+#include <X11/Xfuncs.h>
+#include <X11/Xosdefs.h>
 
 /* Utek leaves kernel macros around in include files (bleah) */
 #ifdef dirty
@@ -251,7 +251,7 @@ typedef struct _XSQEvent
 #include <stdlib.h>
 #include <string.h>
 
-#include <nx-X11/Xfuncproto.h>
+#include <X11/Xfuncproto.h>
 
 _XFUNCPROTOBEGIN
 

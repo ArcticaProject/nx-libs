@@ -95,7 +95,7 @@
 
 #include "randrstr.h"
 #include "swaprep.h"
-#include "panoramiXproto.h"
+#include <X11/extensions/panoramiXproto.h>
 #include "protocol-versions.h"
 
 /* Xinerama is not multi-screen capable; just report about screen 0 */

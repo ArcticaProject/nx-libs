@@ -66,10 +66,10 @@ SOFTWARE.
 #endif
 
 #ifdef WIN32
-#include <nx-X11/Xwinsock.h>
+#include <X11/Xwinsock.h>
 #endif
-#include <nx-X11/X.h>
-#include <nx-X11/Xproto.h>
+#include <X11/X.h>
+#include <X11/Xproto.h>
 #ifndef XSERV_t
 # define XSERV_t
 #endif

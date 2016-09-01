@@ -31,15 +31,15 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #include <stdio.h>
 #include <math.h>
-#include <nx-X11/X.h>
-#include <nx-X11/Xproto.h>
-#include <nx-X11/keysym.h>
+#include <X11/X.h>
+#include <X11/Xproto.h>
+#include <X11/keysym.h>
 #include "misc.h"
 #include "inputstr.h"
 #include <nx-X11/extensions/XKBsrv.h>
 
-#include <nx-X11/extensions/XI.h>
-#include <nx-X11/extensions/XIproto.h>
+#include <X11/extensions/XI.h>
+#include <X11/extensions/XIproto.h>
 
 extern	void	ProcessOtherEvent(
     xEvent *		/* xE */,

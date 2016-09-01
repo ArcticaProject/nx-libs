@@ -29,7 +29,7 @@ in this Software without prior written authorization from The Open Group.
 #endif
 #include "Xlibint.h"
 #include <nx-X11/Xresource.h>
-#include <nx-X11/keysymdef.h>
+#include <X11/keysymdef.h>
 #include "Xresinternal.h"
 
 #define NEEDKTABLE

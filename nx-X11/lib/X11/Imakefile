@@ -1109,10 +1109,10 @@ HOST_LDLIBS=$(LDLIBS)
 HOST_CFLAGS=$(CFLAGS)
 #endif
 
-ks_tables.h: $(XINCLUDESRC)/keysymdef.h util/makekeys.c
+ks_tables.h: $(SYSTEMUSRINCDIR)/X11/keysymdef.h util/makekeys.c
 	RemoveFiles($@ HostProgramTargetName(makekeys) makekeys.Osuf)
 	-HostLinkRule(HostProgramTargetName(makekeys),$(HOST_CFLAGS) $(LOCAL_LDFLAGS),util/makekeys.c,$(HOST_LDLIBS))
-	RunProgram(MAKEKEYS,< $(XINCLUDESRC)/keysymdef.h > ks_tables_h)
+	RunProgram(MAKEKEYS,< $(SYSTEMUSRINCDIR)/X11/keysymdef.h > ks_tables_h)
 	$(MV) ks_tables_h $@
 	RemoveFiles(HostProgramTargetName(makekeys) makekeys.Osuf ks_tables_h)
 

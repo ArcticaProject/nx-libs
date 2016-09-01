@@ -30,7 +30,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <stdio.h>
 #include <ctype.h>
 #include "Xlibint.h"
-#include <nx-X11/extensions/XKBproto.h>
+#include <X11/extensions/XKBproto.h>
 #include "XKBlibint.h"
 
 static Bool	_XkbIgnoreExtension = False;

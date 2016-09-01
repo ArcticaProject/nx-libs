@@ -63,11 +63,12 @@ in this Software without prior written authorization from The Open Group.
 #include "propertyst.h"
 #include "protocol-versions.h"
 #define _SECURITY_SERVER
-#include <nx-X11/extensions/securstr.h>
+#include <nx-X11/extensions/security.h>
+#include <X11/extensions/securproto.h>
 #include <assert.h>
 #include <stdarg.h>
 #include <stdio.h>  /* for file reading operations */
-#include <nx-X11/Xatom.h>  /* for XA_STRING */
+#include <X11/Xatom.h>  /* for XA_STRING */
 
 #ifdef NXAGENT_SERVER
 
@@ -89,7 +90,7 @@ in this Software without prior written authorization from The Open Group.
 #endif
 
 #if defined(WIN32) || defined(__CYGWIN__)
-#include <nx-X11/Xos.h>
+#include <X11/Xos.h>
 #undef index
 #endif
 

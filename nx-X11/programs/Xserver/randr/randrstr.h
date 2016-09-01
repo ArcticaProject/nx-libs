@@ -37,8 +37,8 @@
 #include "list.h"
 #endif
 
-#include <nx-X11/X.h>
-#include <nx-X11/Xproto.h>
+#include <X11/X.h>
+#include <X11/Xproto.h>
 #include "misc.h"
 #include "os.h"
 #include "dixstruct.h"
@@ -49,11 +49,11 @@
 #include "extnsionst.h"
 #include "servermd.h"
 #include "rrtransform.h"
-#include "randr.h"
-#include "randrproto.h"
-#include <nx-X11/extensions/render.h>   /* we share subpixel order information */
+#include <X11/extensions/randr.h>
+#include <X11/extensions/randrproto.h>
+#include <X11/extensions/render.h>   /* we share subpixel order information */
 #include "picturestr.h"
-#include <nx-X11/Xfuncproto.h>
+#include <X11/Xfuncproto.h>
 
 /* required for ABI compatibility for now */
 #define RANDR_10_INTERFACE 1

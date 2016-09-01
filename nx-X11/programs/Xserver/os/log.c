@@ -105,7 +105,7 @@ OR PERFORMANCE OF THIS SOFTWARE.
 #include <dix-config.h>
 #endif
 
-#include <nx-X11/Xos.h>
+#include <X11/Xos.h>
 #include <stdio.h>
 #include <time.h>
 #include <sys/stat.h>
@@ -126,6 +126,10 @@ OR PERFORMANCE OF THIS SOFTWARE.
 
 #include <nx/NX.h>
 
+#endif
+
+#ifdef XF86BIGFONT
+#include "xf86bigfontsrv.h"
 #endif
 
 #ifdef DDXOSVERRORF

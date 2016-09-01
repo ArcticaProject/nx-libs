@@ -31,7 +31,7 @@
 #include <ctype.h>
 #include "Xlibint.h"
 #include "XlcPubI.h"
-#include <nx-X11/Xos.h>
+#include <X11/Xos.h>
 #if 0
 #include <unistd.h>  /* in theory delivers getresuid/gid prototypes,
 		      * in practice only the Linux syscall wrapper is there. */

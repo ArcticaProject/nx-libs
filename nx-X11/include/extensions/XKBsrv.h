@@ -66,8 +66,8 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #define XkbUpdateKeyTypeVirtualMods	SrvXkbUpdateKeyTypeVirtualMods
 #endif
 
-#include <nx-X11/extensions/XKBstr.h>
-#include <nx-X11/extensions/XKBproto.h>
+#include <X11/extensions/XKBstr.h>
+#include <X11/extensions/XKBproto.h>
 #include "inputstr.h"
 
 #ifdef NXAGENT_SERVER

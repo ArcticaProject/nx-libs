@@ -53,7 +53,7 @@ SOFTWARE.
 */
 
 #include "scrnintstr.h"
-#include <nx-X11/extensions/Xvproto.h>
+#include <X11/extensions/Xvproto.h>
 
 extern int  XvScreenIndex;
 extern unsigned long XvExtensionGeneration;

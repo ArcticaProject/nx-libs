@@ -59,8 +59,8 @@ SOFTWARE.
 #include <math.h>
 #undef _XOPEN_SOURCE
 #endif
-#include <nx-X11/X.h>
-#include <nx-X11/Xprotostr.h>
+#include <X11/X.h>
+#include <X11/Xprotostr.h>
 #include "misc.h"
 #include "gcstruct.h"
 #include "scrnintstr.h"
@@ -69,7 +69,7 @@ SOFTWARE.
 #include "mifpoly.h"
 #include "mi.h"
 #include "mifillarc.h"
-#include <nx-X11/Xfuncproto.h>
+#include <X11/Xfuncproto.h>
 
 static double miDsin(double a);
 static double miDcos(double a);

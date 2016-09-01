@@ -48,7 +48,7 @@ SOFTWARE.
 #include <dix-config.h>
 #endif
 
-#include <nx-X11/X.h>
+#include <X11/X.h>
 #include "regionstr.h"
 #include "region.h"
 #include "mi.h"

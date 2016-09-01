@@ -33,22 +33,22 @@ from The Open Group.
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include <nx-X11/X.h>
+#include <X11/X.h>
 #include <nx-X11/Xlib.h>
 #include "Xlibint.h"
 #include "Xlcint.h"
 #include "XlcPubI.h"
 #include "Ximint.h"
 #include <nx-X11/Xutil.h>
-#include <nx-X11/Xmd.h>
+#include <X11/Xmd.h>
 #define XK_LATIN1
 #define XK_PUBLISHING
-#include <nx-X11/keysym.h>
-#include <nx-X11/extensions/XKBproto.h>
+#include <X11/keysym.h>
+#include <X11/extensions/XKBproto.h>
 #include "XKBlibint.h"
 #include <nx-X11/Xlocale.h>
 #include <ctype.h>
-#include <nx-X11/Xos.h>
+#include <X11/Xos.h>
 
 #ifdef __sgi_not_xconsortium
 #define	XKB_EXTEND_LOOKUP_STRING

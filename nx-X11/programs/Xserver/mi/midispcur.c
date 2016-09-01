@@ -34,7 +34,7 @@ in this Software without prior written authorization from The Open Group.
 #include <dix-config.h>
 #endif
 
-# include   <nx-X11/X.h>
+# include   <X11/X.h>
 # include   "misc.h"
 # include   "input.h"
 # include   "cursorstr.h"

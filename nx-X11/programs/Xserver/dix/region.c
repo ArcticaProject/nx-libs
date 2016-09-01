@@ -82,7 +82,7 @@ Equipment Corporation.
 #include <pixman.h>
 
 #include "regionstr.h"
-#include <nx-X11/Xprotostr.h>
+#include <X11/Xprotostr.h>
 #include "gc.h"
 
 #if defined (__GNUC__) && !defined (NO_INLINES)

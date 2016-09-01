@@ -30,8 +30,8 @@ from The Open Group.
 #include <dix-config.h>
 #endif
 
-#include <nx-X11/X.h>
-#include <nx-X11/Xproto.h>
+#include <X11/X.h>
+#include <X11/Xproto.h>
 #include "misc.h"
 #include "os.h"
 #include "dixstruct.h"
@@ -42,11 +42,10 @@ from The Open Group.
 #include "dixevents.h"
 #include "sleepuntil.h"
 #define _XTEST_SERVER_
-#include <nx-X11/extensions/xtestconst.h>
-#include <nx-X11/extensions/xteststr.h>
+#include <X11/extensions/xtestproto.h>
 #ifdef XINPUT
-#include <nx-X11/extensions/XI.h>
-#include <nx-X11/extensions/XIproto.h>
+#include <X11/extensions/XI.h>
+#include <X11/extensions/XIproto.h>
 #define EXTENSION_EVENT_BASE	64
 #include "extinit.h"		/* LookupDeviceIntRec */
 #endif /* XINPUT */

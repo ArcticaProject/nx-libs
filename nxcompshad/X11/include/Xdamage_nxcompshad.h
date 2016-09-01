@@ -47,7 +47,7 @@
 #define _XDAMAGE_H_
 
 #include <X11/extensions/damagewire.h>
-#include <nx-X11/Xfuncproto.h>
+#include <X11/Xfuncproto.h>
 
 /* from <X11/extensions/Xfixes.h> */
 typedef XID XserverRegion;

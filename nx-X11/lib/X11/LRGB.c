@@ -39,8 +39,8 @@
 #include <config.h>
 #endif
 #include <stdio.h>
-#include <nx-X11/Xos.h>
-#include <nx-X11/Xatom.h>
+#include <X11/Xos.h>
+#include <X11/Xatom.h>
 #include "Xlibint.h"
 #include "Xcmsint.h"
 #include "Cv.h"

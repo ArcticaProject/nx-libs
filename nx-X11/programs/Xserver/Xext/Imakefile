@@ -41,7 +41,7 @@ SUBDIRS = extmod
 #endif
 
 #if BuildXF86BigfontExt
-XF86BIGFSRCS = xf86bigfont.c
+XF86BIGFSRCS = xf86bigfont.c xf86bigfontsrv.h
 XF86BIGFOBJS = xf86bigfont.o
 #if HasShm
  SHM_DEFINES = -DHAS_SHM
@@ -79,7 +79,7 @@ XF86BIGFOBJS = xf86bigfont.o
 
        SRCS = shape.c $(SHMSRCS) xcmisc.c\
               xtest.c xtest1di.c xtest1dd.c sleepuntil.c \
-	      bigreq.c sync.c $(SCRNSAVSRC) \
+	      bigreq.c sync.c syncsrv.h $(SCRNSAVSRC) \
 	      $(XF86BIGFSRCS) $(SECURITYSRCS) \
 	      $(PNRXSRCS) $(DPMSSRCS) \
 	      $(XVSRCS) $(XRESSRCS) $(DMXSRCS)

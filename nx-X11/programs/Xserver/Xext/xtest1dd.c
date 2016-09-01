@@ -61,14 +61,16 @@ University of California.
 #endif
 
 #include <stdio.h>
-#include <nx-X11/Xos.h>
-#include <nx-X11/X.h>
-#include <nx-X11/Xmd.h>
-#include <nx-X11/Xproto.h>
+#include <X11/Xos.h>
+#include <X11/X.h>
+#include <X11/Xmd.h>
+#include <X11/Xproto.h>
 #include "misc.h"
 #include "dixstruct.h"
 #define  XTestSERVER_SIDE
-#include <nx-X11/extensions/xtestext1.h>	
+#include <X11/Xlib.h>
+#include <X11/extensions/xtestext1proto.h>	
+#include <X11/extensions/xtestext1.h>	
 
 #include "xtest1dd.h"
 

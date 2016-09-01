@@ -84,12 +84,12 @@ OR PERFORMANCE OF THIS SOFTWARE.
 #endif
 
 #if defined(WIN32) && !defined(__CYGWIN__)
-#include <nx-X11/Xwinsock.h>
+#include <X11/Xwinsock.h>
 #endif
-#include <nx-X11/Xos.h>
+#include <X11/Xos.h>
 #include <stdio.h>
 #include "misc.h"
-#include <nx-X11/X.h>
+#include <X11/X.h>
 #include <nx-X11/Xtrans/Xtrans.h>
 #include "input.h"
 #include "dixfont.h"
@@ -229,7 +229,7 @@ Bool noXvExtension = FALSE;
 #endif
 
 #define X_INCLUDE_NETDB_H
-#include <nx-X11/Xos_r.h>
+#include <X11/Xos_r.h>
 
 #include <errno.h>
 

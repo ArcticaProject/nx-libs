@@ -30,7 +30,7 @@ from The Open Group.
 #ifndef CLOSESTR_H
 #define CLOSESTR_H
 
-#include <nx-X11/Xproto.h>
+#include <X11/Xproto.h>
 #include "closure.h"
 #include "dix.h"
 #include "misc.h"

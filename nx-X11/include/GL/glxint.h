@@ -22,8 +22,8 @@
 ** $SGI$
 */
 
-#include <nx-X11/X.h>
-#include <nx-X11/Xdefs.h>
+#include <X11/X.h>
+#include <X11/Xdefs.h>
 #include "GL/gl.h"
 
 typedef struct __GLXvisualConfigRec __GLXvisualConfig;

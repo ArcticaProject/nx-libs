@@ -77,7 +77,7 @@ SOFTWARE.
 #include <stdio.h>
 #include <ctype.h>
 #include <stdlib.h>
-#include <nx-X11/Xos.h>
+#include <X11/Xos.h>
 #include <nx-X11/Xlib.h>
 #include <nx-X11/XKBlib.h>
 

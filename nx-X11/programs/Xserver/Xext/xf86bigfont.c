@@ -63,8 +63,8 @@
 #include <errno.h>
 #endif
 
-#include <nx-X11/X.h>
-#include <nx-X11/Xproto.h>
+#include <X11/X.h>
+#include <X11/Xproto.h>
 #include "misc.h"
 #include "os.h"
 #include "dixstruct.h"
@@ -74,7 +74,8 @@
 #include "protocol-versions.h"
 
 #define _XF86BIGFONT_SERVER_
-#include <nx-X11/extensions/xf86bigfstr.h>
+#include <X11/extensions/xf86bigfproto.h>
+#include "xf86bigfontsrv.h"
 
 static void XF86BigfontResetProc(
     ExtensionEntry *	/* extEntry */

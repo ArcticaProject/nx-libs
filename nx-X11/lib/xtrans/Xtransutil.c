@@ -57,7 +57,7 @@ from The Open Group.
  */
 
 #ifdef XTHREADS
-#include <nx-X11/Xthreads.h>
+#include <X11/Xthreads.h>
 #endif
 
 #ifdef X11_t

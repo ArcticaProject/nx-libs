@@ -180,7 +180,7 @@ typedef CRITICAL_SECTION _glthread_Mutex;
  * We wrap it again for GL.
  */
 #ifdef USE_XTHREADS
-#include <nx-X11/Xthreads.h>
+#include <X11/Xthreads.h>
 
 typedef struct {
    xthread_key_t key;

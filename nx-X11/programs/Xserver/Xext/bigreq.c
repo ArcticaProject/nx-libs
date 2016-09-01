@@ -30,13 +30,13 @@ from The Open Group.
 #include <dix-config.h>
 #endif
 
-#include <nx-X11/X.h>
-#include <nx-X11/Xproto.h>
+#include <X11/X.h>
+#include <X11/Xproto.h>
 #include "misc.h"
 #include "os.h"
 #include "dixstruct.h"
 #include "extnsionst.h"
-#include <nx-X11/extensions/bigreqstr.h>
+#include <X11/extensions/bigreqsproto.h>
 #include "opaque.h"
 #include "modinit.h"
 

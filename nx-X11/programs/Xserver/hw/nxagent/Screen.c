@@ -101,8 +101,8 @@ is" without express or implied warranty.
 #undef  KeySym
 #undef  XID
 
-#include "Xatom.h"
-#include "Xproto.h"
+#include <X11/Xatom.h>
+#include <X11/Xproto.h>
 
 #include <nx/NXlib.h>
 

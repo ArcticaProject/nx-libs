@@ -48,8 +48,8 @@ Sun Microsystems, Inc. or its licensors is granted.
 #include "Xlibint.h"
 #include "Xlcint.h"
 #include "XlcPublic.h"
-#include <nx-X11/Xos.h>
-#include <nx-X11/Xatom.h>
+#include <X11/Xos.h>
+#include <X11/Xatom.h>
 #include <stdio.h>
 
 #define MAXFONTS		100

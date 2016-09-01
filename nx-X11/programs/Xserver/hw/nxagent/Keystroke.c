@@ -23,8 +23,8 @@
 /*                                                                        */
 /**************************************************************************/
 
-#include "X.h"
-#include "keysym.h"
+#include <X11/X.h>
+#include <X11/keysym.h>
 
 #include "screenint.h"
 #include "scrnintstr.h"

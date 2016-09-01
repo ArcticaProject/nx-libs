@@ -33,7 +33,7 @@ from The Open Group.
  * You may need to redefine these for various other operating systems. 
  */
 
-#include	<nx-X11/Xos.h>
+#include	<X11/Xos.h>
 #include        <sys/stat.h>                        
 
 #define GetSizeOfFile(fd,size)                      \

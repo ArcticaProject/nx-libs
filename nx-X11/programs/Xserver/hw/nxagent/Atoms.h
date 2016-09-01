@@ -26,7 +26,7 @@
 #ifndef __Atoms_H__
 #define __Atoms_H__
 
-#include "X.h"
+#include <X11/X.h>
 #include "../../include/window.h"
 #include "screenint.h"
 

@@ -28,7 +28,7 @@ in this Software without prior written authorization from The Open Group.
 #include <config.h>
 #endif
 #include "Xlibint.h"
-#include <nx-X11/Xatom.h>
+#include <X11/Xatom.h>
 
 char *XScreenResourceString(screen)
 	Screen *screen;

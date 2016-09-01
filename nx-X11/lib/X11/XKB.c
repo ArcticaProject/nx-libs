@@ -29,7 +29,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #endif
 #include <stdio.h>
 #include "Xlibint.h"
-#include <nx-X11/extensions/XKBproto.h>
+#include <X11/extensions/XKBproto.h>
 #include "XKBlibint.h"
 
 XkbInternAtomFunc	_XkbInternAtomFunc= XInternAtom;

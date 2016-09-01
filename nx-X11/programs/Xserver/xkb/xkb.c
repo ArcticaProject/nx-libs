@@ -29,8 +29,8 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #endif
 
 #include <stdio.h>
-#include <nx-X11/X.h>
-#include <nx-X11/Xproto.h>
+#include <X11/X.h>
+#include <X11/Xproto.h>
 #include "misc.h"
 #include "inputstr.h"
 #define	XKBSRV_NEED_FILE_FUNCS
@@ -39,7 +39,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "xkb.h"
 #include "protocol-versions.h"
 
-#include <nx-X11/extensions/XI.h>
+#include <X11/extensions/XI.h>
 
 	int	XkbEventBase;
 	int	XkbErrorBase;
@@ -3880,7 +3880,7 @@ ProcXkbSetNames(ClientPtr client)
 
 /***====================================================================***/
 
-#include <nx-X11/extensions/XKBgeom.h>
+#include <X11/extensions/XKBgeom.h>
 
 #define	XkbSizeCountedString(s)  ((s)?((((2+strlen(s))+3)/4)*4):4)
 

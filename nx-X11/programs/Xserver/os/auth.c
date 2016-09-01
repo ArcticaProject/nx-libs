@@ -60,7 +60,7 @@ from The Open Group.
 #include <dix-config.h>
 #endif
 
-# include   <nx-X11/X.h>
+# include   <X11/X.h>
 # include   <nx-X11/Xauth.h>
 # include   "misc.h"
 # include   "osdep.h"
@@ -72,7 +72,7 @@ from The Open Group.
 # include   <nx-X11/extensions/security.h>
 #endif
 #ifdef WIN32
-#include    <nx-X11/Xw32defs.h>
+#include    <X11/Xw32defs.h>
 #endif
 
 struct protocol {

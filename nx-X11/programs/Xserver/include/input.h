@@ -50,8 +50,8 @@ SOFTWARE.
 
 #include "misc.h"
 #include "screenint.h"
-#include <nx-X11/Xmd.h>
-#include <nx-X11/Xproto.h>
+#include <X11/Xmd.h>
+#include <X11/Xproto.h>
 #include "window.h"     /* for WindowPtr */
 
 #define DEVICE_INIT	0

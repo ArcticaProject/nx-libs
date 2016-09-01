@@ -27,7 +27,7 @@
 #include "Agent.h"
 
 #include "Xutil.h"
-#include "Xatom.h"
+#include <X11/Xatom.h>
 #include "Xlib.h"
 
 #include "misc.h"

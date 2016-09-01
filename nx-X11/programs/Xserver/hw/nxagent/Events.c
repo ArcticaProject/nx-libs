@@ -23,10 +23,10 @@
 /*                                                                        */
 /**************************************************************************/
 
-#include "X.h"
+#include <X11/X.h>
 #include "signal.h"
 #include "unistd.h"
-#include "Xproto.h"
+#include <X11/Xproto.h>
 #include "screenint.h"
 #include "input.h"
 #include "dix.h"
@@ -36,7 +36,7 @@
 #include "servermd.h"
 #include "mi.h"
 #include "selection.h"
-#include "keysym.h"
+#include <X11/keysym.h>
 #include "fb.h"
 #include "mibstorest.h"
 #include "osdep.h"
@@ -69,7 +69,7 @@
 #include <nx/NXvars.h>
 #include <nx/NXproto.h>
 
-#include "xfixesproto.h"
+#include <X11/extensions/xfixesproto.h>
 #define Window     XlibWindow
 #define Atom   XlibAtom
 #define Time XlibXID

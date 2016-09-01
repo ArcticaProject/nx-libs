@@ -32,8 +32,8 @@ IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <config.h>
 #endif
 #include <stdio.h>
-#include <nx-X11/Xatom.h>
-#include <nx-X11/Xmd.h>
+#include <X11/Xatom.h>
+#include <X11/Xmd.h>
 #include "Xlibint.h"
 #include <nx-X11/Xtrans/Xtrans.h>
 #include "Xlcint.h"
@@ -42,7 +42,7 @@ IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "XimTrInt.h"
 
 #ifdef WIN32
-#include <nx-X11/Xwindows.h>
+#include <X11/Xwindows.h>
 #endif
 
 

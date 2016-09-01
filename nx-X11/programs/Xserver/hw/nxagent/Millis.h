@@ -26,7 +26,7 @@
 #ifndef __Millis_H__
 #define __Millis_H__
 
-#include "Xmd.h"
+#include <X11/Xmd.h>
 
 CARD32 GetTimeInMillis(void);
 

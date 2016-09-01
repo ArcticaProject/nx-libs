@@ -33,7 +33,7 @@
 
 #include <nx/NX.h>
 
-#include "Xatom.h"
+#include <X11/Xatom.h>
 #include "dixstruct.h"
 #include "scrnintstr.h"
 #include "windowstr.h"

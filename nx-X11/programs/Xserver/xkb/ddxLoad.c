@@ -41,17 +41,17 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include <nx-X11/X.h>
-#include <nx-X11/Xos.h>
-#include <nx-X11/Xproto.h>
-#include <nx-X11/keysym.h>
+#include <X11/X.h>
+#include <X11/Xos.h>
+#include <X11/Xproto.h>
+#include <X11/keysym.h>
 #include <nx-X11/extensions/XKM.h>
 #include "inputstr.h"
 #include "scrnintstr.h"
 #include "windowstr.h"
 #define	XKBSRV_NEED_FILE_FUNCS
 #include <nx-X11/extensions/XKBsrv.h>
-#include <nx-X11/extensions/XI.h>
+#include <X11/extensions/XI.h>
 #include "xkb.h"
 
 #if defined(CSRG_BASED) || defined(linux) || defined(__sgi) || defined(AIXV3) || defined(__osf__) || defined(__GNU__)
@@ -91,7 +91,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #ifdef WIN32
 
-#include <nx-X11/Xwindows.h>
+#include <X11/Xwindows.h>
 const char* 
 Win32TempDir()
 {

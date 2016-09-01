@@ -37,10 +37,10 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <ctype.h>
 #include <unistd.h>
 #include <math.h>
-#include <nx-X11/X.h>
-#include <nx-X11/Xproto.h>
-#include <nx-X11/keysym.h>
-#include <nx-X11/Xatom.h>
+#include <X11/X.h>
+#include <X11/Xproto.h>
+#include <X11/keysym.h>
+#include <X11/Xatom.h>
 #include "misc.h"
 #include "inputstr.h"
 #include "opaque.h"
@@ -48,7 +48,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "scrnintstr.h"
 #define	XKBSRV_NEED_FILE_FUNCS
 #include <nx-X11/extensions/XKBsrv.h>
-#include <nx-X11/extensions/XKBgeom.h>
+#include <X11/extensions/XKBgeom.h>
 #include <nx-X11/extensions/XKMformat.h>
 #include <nx-X11/extensions/XKBfile.h>
 #include "xkb.h"

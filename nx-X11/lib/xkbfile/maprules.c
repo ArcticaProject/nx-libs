@@ -36,34 +36,34 @@
 
 #define X_INCLUDE_STRING_H
 #define XOS_USE_NO_LOCKING
-#include <nx-X11/Xos_r.h>
+#include <X11/Xos_r.h>
 
 #ifndef XKB_IN_SERVER
 
-#include <nx-X11/Xproto.h>
+#include <X11/Xproto.h>
 #include <nx-X11/Xlib.h>
-#include <nx-X11/Xos.h>
-#include <nx-X11/Xfuncs.h>
-#include <nx-X11/Xatom.h>
-#include <nx-X11/keysym.h>
+#include <X11/Xos.h>
+#include <X11/Xfuncs.h>
+#include <X11/Xatom.h>
+#include <X11/keysym.h>
 #include <nx-X11/XKBlib.h>
-#include <nx-X11/extensions/XKBgeom.h>
+#include <X11/extensions/XKBgeom.h>
 #include "XKMformat.h"
 #include "XKBfileInt.h"
 #include "XKBrules.h"
 
 #else
 
-#include <nx-X11/Xproto.h>
-#include <nx-X11/X.h>
-#include <nx-X11/Xos.h>
-#include <nx-X11/Xfuncs.h>
-#include <nx-X11/Xatom.h>
-#include <nx-X11/keysym.h>
+#include <X11/Xproto.h>
+#include <X11/X.h>
+#include <X11/Xos.h>
+#include <X11/Xfuncs.h>
+#include <X11/Xatom.h>
+#include <X11/keysym.h>
 #include "misc.h"
 #include "inputstr.h"
 #include "dix.h"
-#include <nx-X11/extensions/XKBstr.h>
+#include <X11/extensions/XKBstr.h>
 #define XKBSRV_NEED_FILE_FUNCS
 #include <nx-X11/extensions/XKBsrv.h>
 

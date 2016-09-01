@@ -25,7 +25,7 @@
 
 #if defined(__CYGWIN32__) || defined(WIN32)
 
-#include <nx-X11/keysym.h>
+#include <X11/keysym.h>
 
 #define PANIC
 #define WARNING

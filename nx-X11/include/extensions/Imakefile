@@ -8,65 +8,19 @@ XCOMM $XFree86: xc/include/extensions/Imakefile,v 3.55 2003/04/21 12:32:06 sven 
 
 NULL =
 
-#if BuildScreenSaverExt
-SCREENSAVERHEADERS = saver.h saverproto.h scrnsaver.h
-#endif
-
-#if BuildXF86BigfontExt
-XF86BIGFONTHEADERS = xf86bigfont.h xf86bigfstr.h
-#endif
 #if BuildXvExt
-XVHEADERS = Xv.h Xvlib.h Xvproto.h
-XVMCHEADERS = XvMC.h XvMClib.h XvMCproto.h vldXvMC.h
-#endif
-#if BuildXinerama
-XINERAMAHEADERS = panoramiXext.h panoramiXproto.h
-#endif
-#if BuildRandR
-RANDRHEADERS = randr.h randrproto.h
-#endif
-#if BuildRender
-RENDERHEADERS = render.h renderproto.h
-#endif
-#if BuildXfixes
-XFIXESHEADERS = xfixeswire.h xfixesproto.h
-#endif
-#if BuildComposite
-COMPOSITEHEADERS = composite.h compositeproto.h
-#endif
-#if BuildDamage
-DAMAGEHEADERS = damagewire.h damageproto.h
-#endif
-#if BuildXResExt
-XRESHEADERS = XResproto.h
+XVMCHEADERS = vldXvMC.h
 #endif
 
 EXTRAHEADERS = \
-	$(SCREENSAVERHEADERS) \
-	$(XINERAMAHEADERS) \
-	$(XF86BIGFONTHEADERS) \
-	$(XVHEADERS) \
 	$(XVMCHEADERS) \
-	$(RANDRHEADERS) \
-	$(RENDERHEADERS) \
-	$(XFIXESHEADERS) \
-	$(COMPOSITEHEADERS) \
-	$(DAMAGEHEADERS) \
-	$(XRESHEADERS) \
 	$(NULL)
 
 HEADERS = \
-	xcmiscstr.h \
-	bigreqstr.h \
-	XI.h XInput.h XIproto.h \
-	xtestconst.h xtestext1.h xteststr.h \
-	XKB.h XKBgeom.h XKBproto.h XKBstr.h XKBsrv.h \
-	Xdbeproto.h \
+	XInput.h \
+	XKBsrv.h \
 	$(EXTRAHEADERS) \
-	record.h recordstr.h \
-	security.h securstr.h \
-	sync.h syncstr.h \
-	dpms.h dpmsstr.h \
+	security.h \
 	$(NULL)
 
 all::
@@ -77,15 +31,5 @@ BuildIncludes($(HEADERS),nx-X11/extensions,../..)
 InstallMultipleFlags($(HEADERS),$(INCDIR)/nx-X11/extensions,$(INSTINCFLAGS))
 #endif
 
-InstallDriverSDKNonExecFile(XI.h,$(DRIVERSDKINCLUDEDIR)/extensions)
-InstallDriverSDKNonExecFile(XIproto.h,$(DRIVERSDKINCLUDEDIR)/extensions)
-InstallDriverSDKNonExecFile(Xv.h,$(DRIVERSDKINCLUDEDIR))
-InstallDriverSDKNonExecFile(Xvproto.h,$(DRIVERSDKINCLUDEDIR))
-InstallDriverSDKNonExecFile(dpms.h,$(DRIVERSDKINCLUDEDIR)/extensions)
-InstallDriverSDKNonExecFile(renderproto.h,$(DRIVERSDKINCLUDEDIR))
-InstallDriverSDKNonExecFile(Xv.h,$(DRIVERSDKINCLUDEDIR)/extensions)
-InstallDriverSDKNonExecFile(XvMC.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(vldXvMC.h,$(DRIVERSDKINCLUDEDIR))
-InstallDriverSDKNonExecFile(Xvlib.h,$(DRIVERSDKINCLUDEDIR)/extensions)
-InstallDriverSDKNonExecFile(Xv.h,$(DRIVERSDKINCLUDEDIR)/X11/extensions)
-InstallDriverSDKNonExecFile(Xvlib.h,$(DRIVERSDKINCLUDEDIR)/X11/extensions)
+

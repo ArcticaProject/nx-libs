@@ -83,12 +83,12 @@ SOFTWARE.
 #endif
 
 #ifdef WIN32
-#include <nx-X11/Xwinsock.h>
+#include <X11/Xwinsock.h>
 #endif
-#include <nx-X11/Xos.h>			/* for strings, fcntl, time */
+#include <X11/Xos.h>			/* for strings, fcntl, time */
 #include <errno.h>
 #include <stdio.h>
-#include <nx-X11/X.h>
+#include <X11/X.h>
 #include "misc.h"
 
 #ifdef __UNIXOS2__
@@ -143,7 +143,7 @@ mffs(fd_mask mask)
 
 #ifdef DPMSExtension
 #define DPMS_SERVER
-#include <nx-X11/extensions/dpms.h>
+#include <X11/extensions/dpms.h>
 #endif
 
 #ifdef XTESTEXT1

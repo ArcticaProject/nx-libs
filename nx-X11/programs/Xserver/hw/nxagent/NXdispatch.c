@@ -150,7 +150,7 @@ Bool         nxagentWMPassed  = 0;
 
 int nxagentAutoDisconnectTimeout = 0;
 
-#include "Xatom.h"
+#include <X11/Xatom.h>
 
 /*
  * Set here the required log level.

@@ -75,10 +75,10 @@ OF THIS SOFTWARE.
 extern unsigned long globalSerialNumber;
 extern unsigned long serverGeneration;
 
-#include <nx-X11/Xosdefs.h>
-#include <nx-X11/Xfuncproto.h>
-#include <nx-X11/Xmd.h>
-#include <nx-X11/X.h>
+#include <X11/Xosdefs.h>
+#include <X11/Xfuncproto.h>
+#include <X11/Xmd.h>
+#include <X11/X.h>
 #include <stdint.h>
 
 #ifndef _XTYPEDEF_POINTER
@@ -94,7 +94,7 @@ extern unsigned long serverGeneration;
  */
 #undef _XTYPEDEF_POINTER
 
-#include <nx-X11/Xdefs.h>
+#include <X11/Xdefs.h>
 
 #ifndef IN_MODULE
 #ifndef NULL
@@ -129,7 +129,7 @@ typedef struct _xReq *xReqPtr;
 
 #include "os.h" 	/* for ALLOCATE_LOCAL and DEALLOCATE_LOCAL */
 #ifndef IN_MODULE
-#include <nx-X11/Xfuncs.h> /* for bcopy, bzero, and bcmp */
+#include <X11/Xfuncs.h> /* for bcopy, bzero, and bcmp */
 #endif
 
 #define NullBox ((BoxPtr)0)

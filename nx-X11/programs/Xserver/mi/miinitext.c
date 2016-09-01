@@ -159,23 +159,23 @@ typedef void (*InitExtension)(void);
 #endif
 #ifdef XTEST
 #define _XTEST_SERVER_
-#include <nx-X11/extensions/xtestconst.h>
+#include <X11/extensions/xtestconst.h>
 #endif
 #ifdef XKB
-#include <nx-X11/extensions/XKB.h>
+#include <X11/extensions/XKB.h>
 #endif
 #ifdef XCSECURITY
 #define _SECURITY_SERVER
-#include <nx-X11/extensions/securstr.h>
+#include <X11/extensions/securproto.h>
 #endif
 #ifdef PANORAMIX
-#include <nx-X11/extensions/panoramiXproto.h>
+#include <X11/extensions/panoramiXproto.h>
 #endif
 #ifdef XF86BIGFONT
-#include <nx-X11/extensions/xf86bigfstr.h>
+#include <X11/extensions/xf86bigfproto.h>
 #endif
 #ifdef RES
-#include <nx-X11/extensions/XResproto.h>
+#include <X11/extensions/XResproto.h>
 #endif
 
 /* FIXME: this whole block of externs should be from the appropriate headers */

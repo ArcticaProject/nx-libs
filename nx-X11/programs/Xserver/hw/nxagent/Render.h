@@ -29,7 +29,7 @@
 #include "screenint.h"
 #include "cursor.h"
 #include "picture.h"
-#include "renderproto.h"
+#include <X11/extensions/renderproto.h>
 
 #include "glyphstr.h"
 

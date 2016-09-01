@@ -46,7 +46,7 @@ Equipment Corporation.
 #include <nx-X11/Xserver/ws.h> 
 #endif
 #include "panoramiX.h"
-#include <nx-X11/extensions/panoramiXproto.h>
+#include <X11/extensions/panoramiXproto.h>
 #include "panoramiXsrv.h"
 #include "globals.h"
 #include "panoramiXh.h"

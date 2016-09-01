@@ -89,7 +89,7 @@ from the copyright holders.
 
 #include <ctype.h>
 #ifdef XTHREADS
-#include <nx-X11/Xthreads.h>
+#include <X11/Xthreads.h>
 #endif
 
 #ifndef WIN32
@@ -103,7 +103,7 @@ from the copyright holders.
 #if defined(TCPCONN) || defined(UNIXCONN)
 #define X_INCLUDE_NETDB_H
 #define XOS_USE_NO_LOCKING
-#include <nx-X11/Xos_r.h>
+#include <X11/Xos_r.h>
 #endif
 
 #ifdef UNIXCONN
@@ -147,9 +147,9 @@ from the copyright holders.
 
 #else /* !WIN32 */
 
-#include <nx-X11/Xwinsock.h>
-#include <nx-X11/Xwindows.h>
-#include <nx-X11/Xw32defs.h>
+#include <X11/Xwinsock.h>
+#include <X11/Xwindows.h>
+#include <X11/Xw32defs.h>
 #undef close
 #define close closesocket
 #define ECONNREFUSED WSAECONNREFUSED
@@ -162,7 +162,7 @@ from the copyright holders.
 #define EINTR WSAEINTR
 #define X_INCLUDE_NETDB_H
 #define XOS_USE_MTSAFE_NETDBAPI
-#include <nx-X11/Xos_r.h>
+#include <X11/Xos_r.h>
 #endif /* WIN32 */
 
 #if defined(SO_DONTLINGER) && defined(SO_LINGER)

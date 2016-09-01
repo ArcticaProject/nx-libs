@@ -61,11 +61,11 @@ SOFTWARE.
 #define DEBUG_COMMUNICATION
 #endif
 #ifdef WIN32
-#include <nx-X11/Xwinsock.h>
+#include <X11/Xwinsock.h>
 #endif
 #include <stdio.h>
 #include <nx-X11/Xtrans/Xtrans.h>
-#include <nx-X11/Xmd.h>
+#include <X11/Xmd.h>
 #include <errno.h>
 #if !defined(__UNIXOS2__) && !defined(WIN32)
 #ifndef Lynx
@@ -74,8 +74,8 @@ SOFTWARE.
 #include <uio.h>
 #endif
 #endif
-#include <nx-X11/X.h>
-#include <nx-X11/Xproto.h>
+#include <X11/X.h>
+#include <X11/Xproto.h>
 #include "os.h"
 #include "osdep.h"
 #include <nx-X11/Xpoll.h>
@@ -117,7 +117,7 @@ OsCommPtr AvailableInput = (OsCommPtr)NULL;
 			      lswaps((req)->length) : (req)->length)
 
 #ifdef BIGREQS
-#include <nx-X11/extensions/bigreqstr.h>
+#include <X11/extensions/bigreqsproto.h>
 
 #define get_big_req_len(req,cli) ((cli)->swapped ? \
 				  lswapl(((xBigReq *)(req))->length) : \

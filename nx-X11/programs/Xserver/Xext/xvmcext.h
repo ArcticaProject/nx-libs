@@ -1,7 +1,7 @@
 
 #ifndef _XVMC_H
 #define _XVMC_H
-#include <nx-X11/extensions/Xv.h>
+#include <X11/extensions/Xv.h>
 #include "xvdix.h"
 
 typedef struct {

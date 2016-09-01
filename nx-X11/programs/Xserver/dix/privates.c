@@ -30,7 +30,7 @@ from The Open Group.
 #include <dix-config.h>
 #endif
 
-#include <nx-X11/X.h>
+#include <X11/X.h>
 #include "scrnintstr.h"
 #include "misc.h"
 #include "os.h"

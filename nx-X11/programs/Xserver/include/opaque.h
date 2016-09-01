@@ -29,7 +29,7 @@ from The Open Group.
 #ifndef OPAQUE_H
 #define OPAQUE_H
 
-#include <nx-X11/Xmd.h>
+#include <X11/Xmd.h>
 
 #include "globals.h"
 
