@@ -84,6 +84,7 @@ SRCS =  $(CBRT_SRC)             \
         migc.c                  \
         micmap.c                \
         mioverlay.c             \
+        micopy.c                \
         $(NXAGENT_SKIP_SRCS)    \
         $(NULL)
 
@@ -123,6 +124,7 @@ OBJS =  $(CBRT_OBJ)             \
         migc.o                  \
         micmap.o                \
         mioverlay.o             \
+        micopy.o                \
         $(NXAGENT_SKIP_OBJS)    \
         $(NULL)
 
