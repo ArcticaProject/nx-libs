@@ -614,8 +614,8 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
   #endif
 
  /*
-  * Here, before using fbDoCopy() called by fbCopyArea(),
-  * it should be provided that the cast in fbDoCopy() from
+  * Here, before using miDoCopy() called by fbCopyArea(),
+  * it should be provided that the cast in miDoCopy() from
   * int to short int would not cut off significative bits.
   */
 

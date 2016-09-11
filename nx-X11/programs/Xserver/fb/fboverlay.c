@@ -249,7 +249,7 @@ fbOverlayCopyWindow(WindowPtr	pWin,
 	{
 	    RegionTranslate(&layerRgn[i], -dx, -dy);
 	    pPixmap = pScrPriv->layer[i].u.run.pixmap;
-	    fbCopyRegion (&pPixmap->drawable, &pPixmap->drawable,
+	    miCopyRegion (&pPixmap->drawable, &pPixmap->drawable,
 			  0,
 			  &layerRgn[i], dx, dy, pScrPriv->CopyWindow, 0,
 			  (void *)(long) i);
