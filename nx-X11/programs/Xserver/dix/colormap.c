@@ -2721,13 +2721,8 @@ ResizeVisualArray(ScreenPtr pScreen, int new_visual_count, DepthPtr depth)
     first_new_vid = depth->numVids;
     first_new_visual = pScreen->numVisuals;
 
-#if 0 /* !defined(NXAGENT_SERVER) */
     vids = reallocarray(depth->vids, depth->numVids + new_visual_count,
                         sizeof(XID));
-#else
-    vids = realloc(depth->vids, sizeof(XID) *
-                    (depth->numVids + new_visual_count));
-#endif
     if (!vids)
         return FALSE;
 
@@ -2735,11 +2730,7 @@ ResizeVisualArray(ScreenPtr pScreen, int new_visual_count, DepthPtr depth)
     depth->vids = vids;
 
     numVisuals = pScreen->numVisuals + new_visual_count;
-#if 0 /* !defined(NXAGENT_SERVER) */
     visuals = reallocarray(pScreen->visuals, numVisuals, sizeof(VisualRec));
-#else
-    visuals = realloc(pScreen->visuals, sizeof(VisualRec) * numVisuals);
-#endif
     if (!visuals) {
         return FALSE;
     }

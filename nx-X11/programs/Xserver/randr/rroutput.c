@@ -75,13 +75,8 @@ RROutputCreate(ScreenPtr pScreen,
     pScrPriv = rrGetScrPriv(pScreen);
 
     if (pScrPriv->numOutputs)
-#ifndef NXAGENT_SERVER
         outputs = reallocarray(pScrPriv->outputs,
                                pScrPriv->numOutputs + 1, sizeof(RROutputPtr));
-#else                           /* !defined(NXAGENT_SERVER) */
-        outputs = realloc(pScrPriv->outputs,
-                           (pScrPriv->numOutputs + 1) * sizeof(RROutputPtr));
-#endif                          /* !defined(NXAGENT_SERVER) */
     else
         outputs = malloc(sizeof(RROutputPtr));
     if (!outputs)
@@ -228,13 +223,8 @@ RROutputAddUserMode(RROutputPtr output, RRModePtr mode)
             return BadMatch;
 
     if (output->userModes)
-#ifndef NXAGENT_SERVER
         newModes = reallocarray(output->userModes,
                                 output->numUserModes + 1, sizeof(RRModePtr));
-#else                           /* !defined(NXAGENT_SERVER) */
-        newModes = realloc(output->userModes,
-                            (output->numUserModes + 1) * sizeof(RRModePtr));
-#endif                          /* !defined(NXAGENT_SERVER) */
     else
         newModes = malloc(sizeof(RRModePtr));
     if (!newModes)

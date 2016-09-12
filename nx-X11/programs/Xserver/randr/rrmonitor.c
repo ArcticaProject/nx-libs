@@ -507,14 +507,9 @@ RRMonitorAdd(ClientPtr client, ScreenPtr screen, RRMonitorPtr monitor)
      * needs to not have any side-effects on failure
      */
     if (pScrPriv->numMonitors)
-#ifndef NXAGENT_SERVER
         monitors = reallocarray(pScrPriv->monitors,
                                 pScrPriv->numMonitors + 1,
                                 sizeof(RRMonitorPtr));
-#else                           /* !defined(NXAGENT_SERVER) */
-        monitors = realloc(pScrPriv->monitors,
-                            (pScrPriv->numMonitors + 1) * sizeof(RRMonitorPtr));
-#endif                          /* !defined(NXAGENT_SERVER) */
     else
         monitors = malloc(sizeof(RRMonitorPtr));
 

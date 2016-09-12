@@ -90,13 +90,8 @@ RRCrtcCreate(ScreenPtr pScreen, void *devPrivate)
 
     /* make space for the crtc pointer */
     if (pScrPriv->numCrtcs)
-#ifndef NXAGENT_SERVER
         crtcs = reallocarray(pScrPriv->crtcs,
                              pScrPriv->numCrtcs + 1, sizeof(RRCrtcPtr));
-#else                           /* !defined(NXAGENT_SERVER) */
-        crtcs = realloc(pScrPriv->crtcs,
-                         (pScrPriv->numCrtcs + 1) * sizeof(RRCrtcPtr));
-#endif                          /* !defined(NXAGENT_SERVER) */
     else
         crtcs = malloc(sizeof(RRCrtcPtr));
     if (!crtcs)
@@ -206,13 +201,8 @@ RRCrtcNotify(RRCrtcPtr crtc,
 
         if (numOutputs) {
             if (crtc->numOutputs)
-#ifndef NXAGENT_SERVER
                 newoutputs = reallocarray(crtc->outputs,
                                           numOutputs, sizeof(RROutputPtr));
-#else                           /* !defined(NXAGENT_SERVER) */
-                newoutputs = realloc(crtc->outputs,
-                                      numOutputs * sizeof(RROutputPtr));
-#endif                          /* !defined(NXAGENT_SERVER) */
             else
 #ifndef NXAGENT_SERVER
                 newoutputs = xallocarray(numOutputs, sizeof(RROutputPtr));

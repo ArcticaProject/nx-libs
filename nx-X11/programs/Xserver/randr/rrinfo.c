@@ -55,13 +55,8 @@ RROldModeAdd(RROutputPtr output, RRScreenSizePtr size, int refresh)
         }
 
     if (output->numModes)
-#ifndef NXAGENT_SERVER
         modes = reallocarray(output->modes,
                              output->numModes + 1, sizeof(RRModePtr));
-#else                           /* !defined(NXAGENT_SERVER) */
-        modes = realloc(output->modes,
-                         (output->numModes + 1) * sizeof(RRModePtr));
-#endif                          /* !defined(NXAGENT_SERVER) */
     else
         modes = malloc(sizeof(RRModePtr));
     if (!modes) {
@@ -271,13 +266,8 @@ RRRegisterSize(ScreenPtr pScreen,
     for (i = 0; i < pScrPriv->nSizes; i++)
         if (RRScreenSizeMatches(&tmp, &pScrPriv->pSizes[i]))
             return &pScrPriv->pSizes[i];
-#ifndef NXAGENT_SERVER
     pNew = reallocarray(pScrPriv->pSizes,
                         pScrPriv->nSizes + 1, sizeof(RRScreenSize));
-#else                           /* !defined(NXAGENT_SERVER) */
-    pNew = realloc(pScrPriv->pSizes,
-                    (pScrPriv->nSizes + 1) * sizeof(RRScreenSize));
-#endif                          /* !defined(NXAGENT_SERVER) */
     if (!pNew)
         return 0;
     pNew[pScrPriv->nSizes++] = tmp;
@@ -299,11 +289,7 @@ RRRegisterRate(ScreenPtr pScreen, RRScreenSizePtr pSize, int rate)
         if (pSize->pRates[i].rate == rate)
             return TRUE;
 
-#ifndef NXAGENT_SERVER
     pNew = reallocarray(pSize->pRates, pSize->nRates + 1, sizeof(RRScreenRate));
-#else                           /* !defined(NXAGENT_SERVER) */
-    pNew = realloc(pSize->pRates, (pSize->nRates + 1) * sizeof(RRScreenRate));
-#endif                          /* !defined(NXAGENT_SERVER) */
     if (!pNew)
         return FALSE;
     pRate = &pNew[pSize->nRates++];
