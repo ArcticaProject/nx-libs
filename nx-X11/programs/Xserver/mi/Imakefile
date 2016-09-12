@@ -74,7 +74,6 @@ SRCS =  $(CBRT_SRC)             \
         mifpolycon.c            \
         midash.c                \
         mibstore.c              \
-        mibank.c                \
         $(MIINITEXTSRC)         \
         mieq.c                  \
         mipointer.c             \
@@ -114,7 +113,6 @@ OBJS =  $(CBRT_OBJ)             \
         mifpolycon.o            \
         midash.o                \
         mibstore.o              \
-        mibank.o                \
         $(MIINITEXTOBJ)         \
         mieq.o                  \
         mipointer.o             \
@@ -193,7 +191,6 @@ AllTarget($(EXTRAMIINITEXTOBJ))
 DependTarget()
 
 InstallDriverSDKNonExecFile(mi.h,$(DRIVERSDKINCLUDEDIR))
-InstallDriverSDKNonExecFile(mibank.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(mibstore.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(micmap.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(migc.h,$(DRIVERSDKINCLUDEDIR))
