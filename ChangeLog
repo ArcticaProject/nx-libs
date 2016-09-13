@@ -1,11 +1,138 @@
-2016-07-06 10:38:25 +0200 Mike Gabriel (3f0e4c0)
+2016-09-13 15:45:03 +0200 Mike Gabriel (303f5ea)
 
-	* release 3.5.99.0 (HEAD, 3.6.x)
+	* release 3.5.99.1 (HEAD, tag: 3.5.99.1, 3.6.x)
+
+2016-08-26 12:49:28 +0200 Mike Gabriel (60e88a0)
+
+	* nxcomp/Loop.cpp: We have PrintVersionInfo(), why not use it? Use
+          endl instead of \n for EOLs when streaming application's
+          preamble to stderr. (origin/HEAD, origin/3.6.x)
+
+2016-08-26 12:40:49 +0200 Mike Gabriel (01ebcfa)
+
+	* nxcomp/Loop.cpp: Mention DXPC copyright holders on application
+          (i.e. nxproxy) start-up.
+
+2016-08-24 16:29:46 +0200 Mike Gabriel (efa309a)
+
+	* nxcomp/Loop.cpp: We have GetCopyrightInfo() in Misc.cpp, so why not
+          use it? Also: point to ArcticaProject/nx-libs namespace on
+          Github for further information.
+
+2016-08-24 16:17:24 +0200 Mike Gabriel (3520015)
+
+	* hw/nxagent/Init.c: Fix copy+paste flaw when re-arranging copyright
+          information as display by nxagent.
+
+2016-08-24 16:13:52 +0200 Mike Gabriel (e201160)
+
+	* nxcomp/Misc.cpp: Display new list of copyright holders when
+          launching nxproxy / nxagent.
+
+2016-08-24 16:11:04 +0200 Mike Gabriel (8fc2e80)
+
+	* nxcomp/*.c: Update copyright headers, use new list of copyright
+          holders like for the .cpp files.
+
+2016-08-24 16:08:41 +0200 Mike Gabriel (ed5d920)
+
+	* nxcomp/Loop.cpp: Refer to Github namespace of Arctica Project as
+          location to search for software updates.
+
+2016-08-24 15:59:36 +0200 Mike Gabriel (0ea971b)
+
+	* Merge branch 'uli42-fix_x2go_952' into 3.6.x
+
+2016-08-21 13:12:23 +0200 Ulrich Sibiller (2d450e3)
+
+	* Fix pasting the clipboard directly after session start.
+          (uli42-fix_x2go_952)
+
+2016-07-28 13:21:29 +0200 Mike Gabriel (46fef31)
+
+	* nxagent.1 man page: Some layout fixes for string options with
+          well-defined expected selections of values.
+
+2016-07-28 13:20:38 +0200 Mike Gabriel (e9a3734)
+
+	* hw/nxagent/Display.c: Fix comment where the meaning of the "bypass"
+          reconnectchecks parameter value is explained.
+
+2016-07-28 12:59:37 +0200 Mike Gabriel (bff3305)
+
+	* nxagent.1 man page: Add explanation about the new reconnectchecks
+          nx/nx option.
+
+2016-07-28 12:16:23 +0200 Mike Gabriel (aadf317)
+
+	* hw/nxagent/Args.c: Follow-up fix for PR #183: expect
+          reconnectchecks=bypass instead of =none.
+
+2016-07-28 12:14:22 +0200 Mike Gabriel (443b527)
+
+	* Merge branch 'Ionic-feature/reconnect-checks' into 3.6.x
+
+2016-07-03 23:52:43 +0000 Mihai Moldovan (64a83d1)
+
+	* nx-X11/programs/Xserver/hw/nxagent/Display.c: add FIXME comment to
+          nxagentCheckForColormapsCompatibility().
+          (Ionic-feature/reconnect-checks)
+
+2016-07-03 23:52:06 +0000 Mihai Moldovan (5ec7e48)
+
+	* nx-X11/programs/Xserver/hw/nxagent/Display.c: add FIXME comment to
+          nxagentInitAndCheckVisuals().
+
+2016-07-09 03:28:27 +0000 Mihai Moldovan (e61c8c8)
+
+	* nx-X11/programs/Xserver/hw/nxagent/Display.c: split up
+          nxagentCheckForPixmapFormatsCompatibility() and
+          nxagentInitPixmapFormats().
+
+2016-06-29 02:13:03 +0000 Mihai Moldovan (6618271)
+
+	* nx-X11/programs/Xserver/hw/nxagent/Display.c: use new
+          ReconnectTolerance nxagentOption value in
+          nxagentCheckForPixmapFormatsCompatibility() and modify
+          behavior based on this value.
+
+2016-06-28 23:54:17 +0000 Mihai Moldovan (bb9b50b)
+
+	* nx-X11/programs/Xserver/hw/nxagent/Display.c: use new
+          ReconnectTolerance nxagentOption value in
+          nxagentCheckForDepthsCompatibility() and modify behavior
+          based on this value.
+
+2016-06-28 23:51:14 +0000 Mihai Moldovan (6effea5)
+
+	* nx-X11/programs/Xserver/hw/nxagent/Display.c: use new
+          ReconnectTolerance nxagentOption in
+          nxagentCheckForDefaultDepthCompatibility() and modify
+          behavior based on this value.
+
+2016-07-02 21:49:10 +0000 Mihai Moldovan (29be5cc)
+
+	*
+          {nx-X11/programs/Xserver/hw/nxagent/{Args.c,Options.{c,h}},nxcomp/{Loop,Misc}.cpp}:
+          add tolerancechecks parameter as an nx/nx option and
+          ReconnectTolerance as an nxagentOption.
+
+2016-07-27 13:05:27 +0200 Mike Gabriel (e1c85ca)
+
+	* Merge branch 'uli42-3.6.x' into 3.6.x
+
+2016-07-26 23:25:26 +0200 Ulrich Sibiller (9a4bb50)
+
+	* Fix wrong include (uli42-3.6.x)
+
+2016-07-06 10:38:25 +0200 Mike Gabriel (470611e)
+
+	* release 3.5.99.0 (tag: 3.5.99.0, origin/release-builds/3.6.x,
+          release-builds/3.6.x)
 
 2016-07-06 10:02:37 +0200 Mike Gabriel (961fa2a)
 
-	* README.md: Add build howto for openSUSE based RPMs. (origin/HEAD,
-          origin/3.6.x)
+	* README.md: Add build howto for openSUSE based RPMs.
 
 2016-07-06 10:02:16 +0200 Mike Gabriel (b41369f)
 
@@ -23,9 +150,7 @@
 2016-07-05 16:32:57 +0200 Mike Gabriel (6144b61)
 
 	* VCS info lines: Remove ancient X.org / XFree86 VCS info line from
-          code files. (gh-sunweaver/pr/update-license-files,
-          sunweaver-pr/update-license-files,
-          pr/update-license-files)
+          code files.
 
 2016-07-05 16:22:51 +0200 Mike Gabriel (51c3d42)
 
@@ -109,9 +234,6 @@
 2016-07-04 00:28:47 +0200 Alan Coopersmith (f6a1bda)
 
 	* Remove unneccesary casts from WriteToClient calls
-          (gh-sunweaver/pr/no-more-type-casting-in-writetoclient,
-          sunweaver-pr/no-more-type-casting-in-writetoclient,
-          pr/no-more-type-casting-in-writetoclient)
 
 2016-07-04 00:21:45 +0200 Kristian Høgsberg (ff81a52)
 
@@ -184,9 +306,7 @@
 2016-07-05 09:54:47 +0200 Mike Gabriel (058ae3e)
 
 	* nx-libs.spec: Add Conflicts: fields for removed shared library
-          bin:packages. (gh-sunweaver/pr/rpm-packaging-updates,
-          sunweaver-pr/rpm-packaging-updates,
-          pr/rpm-packaging-updates)
+          bin:packages.
 
 2016-07-04 16:34:38 +0200 Mike Gabriel (1910142)
 
@@ -224,7 +344,6 @@
 
 	* Set event sequence number in WriteEventsToClient instead of at
           callers.
-          (gh-sunweaver/pr/writeeventstoclients-no-sequencenumber)
 
 2016-07-03 22:06:43 +0200 Jamey Sharp (9ea8871)
 
@@ -238,7 +357,6 @@
 2016-07-05 08:16:09 +0200 Tomas Carnecky (b15fc63)
 
 	* Replace INITARGS with void
-          (gh-sunweaver/pr/silencing-compiler-warnings)
 
 2016-06-29 15:07:16 +0200 Mike Gabriel (f0af82c)
 
@@ -369,7 +487,6 @@
 	* test scripts: Add test scripts for testing Unix file socket support
           (i.e. proxy2proxy and proxy2agent sessions via Unix file
           sockets).
-          (gh-sunweaver/pr/proxy-to-proxy-over-unix-socket)
 
 2016-06-15 10:29:12 +0200 Mike Gabriel (c6e9565)
 
@@ -415,7 +532,6 @@
 2016-06-28 20:30:42 +0200 Mike Gabriel (1bd2463)
 
 	* libNX_X11 data files: Install libNX_X11 related data files.
-          (gh-sunweaver/pr/xerrordb-from-xorg)
 
 2016-07-04 16:37:55 +0200 Mike Gabriel (27b0b57)
 
@@ -425,7 +541,6 @@
 
 	* Use internal temp variable for swap macros. Make swaps/swapl type
           safe (introducing wrong_size check at build time).
-          (gh-sunweaver/pr/type-safe-swapping)
 
 2016-06-15 16:46:10 +0200 Mike Gabriel (d1d859d)
 
@@ -444,7 +559,6 @@
 2016-06-27 12:53:03 +0200 Mike Gabriel (e858082)
 
 	* debian/patches: Refresh patches after changes in upstream code.
-          (gh-sunweaver/pr/backport-Xorg-memory-handling)
 
 2016-06-28 16:55:26 +0200 Mike Gabriel (40e3984)
 
@@ -485,7 +599,7 @@
 
 	* Xserver/include/protocol-versions.h: Switch to having an
           Xserver-specific header file containing all use protocol
-          versions. (gh-sunweaver/pr/protocols-version-h)
+          versions.
 
 2016-06-28 12:06:50 +0200 Mike Gabriel (a08e232)
 
@@ -499,7 +613,6 @@
 2016-06-30 23:50:12 +0200 Mike Gabriel (5934d03)
 
 	* Rework nxagent and nxproxy wrapper scripts.
-          (gh-sunweaver/pr/ld-loading-libX11-hack)
 
 2016-07-01 16:00:04 +0200 Mike Gabriel (da7261c)
 
@@ -528,7 +641,6 @@
 2016-06-23 10:46:48 +0200 Mike Gabriel (2045452)
 
 	* nxagent Xserver: Drop Kerberos code. Not used in nxagent.
-          (gh-sunweaver/pr/libXau-cleanup)
 
 2016-06-23 10:31:42 +0200 Mike Gabriel (26bf48b)
 
@@ -548,7 +660,6 @@
 
 	* debian/*.dirs: Don't create directories in the Debian package. All
           handled well by the upstream Makefile.
-          (gh-sunweaver/pr/debian-packaging-updates)
 
 2016-06-23 21:33:23 +0200 Mike Gabriel (2d016f8)
 
@@ -631,7 +742,6 @@
 
 	* build flags: Use -D_DEFAULT_SOURCE instead of deprecated
           -D_BSD_SOURCE and -D_SVID_SOURCE.
-          (gh-sunweaver/pr/define-default-source-not-bsd+svid-source)
 
 2016-07-01 13:13:48 +0200 Mike Gabriel (4b3081c)
 
@@ -640,7 +750,7 @@
 2016-06-23 09:58:54 +0200 Mike Gabriel (f0bf303)
 
 	* nx-X11/lib/X10: Drop really ancient X10 API code. Not used within
-          nxagent. (gh-sunweaver/pr/drop-really-old-X10-API-code)
+          nxagent.
 
 2016-07-01 13:10:06 +0200 Mike Gabriel (b666a37)
 
@@ -651,7 +761,6 @@
 
 	* OPTFLAGS: Properly propagate build option flags to
           nxcomp{,ext,shad} and the nx-X11 build scripts.
-          (gh-sunweaver/pr/properly-apply-optflags-at-buildtime)
 
 2016-06-23 09:58:54 +0200 Mike Gabriel (4693c32)
 
@@ -677,7 +786,6 @@
 
 	* nx-X11/Makefile: Drop build support for World.Win32 and World.OS2.
           Not our target platforms.
-          (gh-sunweaver/pr/drop-embedded-imake-and-makedepend)
 
 2016-06-22 12:41:50 +0200 Mike Gabriel (2f3d394)
 
@@ -692,7 +800,6 @@
 2016-06-29 21:44:08 +0200 Ulrich Sibiller (bd2650c)
 
 	* Port _XEatDataWords
-          (gh-sunweaver/pr/backport-xgetrequest-and-xeatdatawords)
 
 2016-06-29 21:25:24 +0200 Ulrich Sibiller (36d0fac)
 
@@ -706,7 +813,6 @@
 
 	* Makefile,debian/*,nx-libs.spec,<misc>: Drop references to X2Go
           Project, esp. drop x2goagent.
-          (gh-sunweaver/pr/drop-x2goagent)
 
 2016-06-29 11:13:34 +0200 Mike Gabriel (b9fb7a0)
 
@@ -717,7 +823,6 @@
 
 	* libNX_Xext: Drop unused extensions: DPMS, XTestExt1, XSync,
           XSecurity.
-          (gh-sunweaver/pr/libnx-xext-drop-unused-extensions)
 
 2016-06-28 12:13:27 +0000 Mike Gabriel (e9857d5)
 
@@ -733,7 +838,6 @@
 2016-06-28 11:43:06 +0000 Mike Gabriel (3ded4a2)
 
 	* Fix linking order hack in nxagent.
-          (gh-sunweaver/pr/linking-order-fix)
 
 2016-06-15 16:42:58 +0200 Mike Gabriel (b83a148)
 
@@ -749,7 +853,6 @@
 
 	* hw/nxagent: Drop code referring to the following removed Xserver
           extensions: XAPPGROUP, LBX, XEVIE.
-          (gh-sunweaver/pr/hw-nxagent-drop-duplicate-Xserver-code_disable-Xserver-code-and-include-in-nxagent)
 
 2016-05-02 11:29:53 +0200 Mike Gabriel (3bdcd17)
 
@@ -910,6 +1013,7 @@
 2016-06-24 21:22:01 +0200 Ulrich Sibiller (b7d7ff3)
 
 	* libX11: Extend Event functions to handle IOErrors
+          (uli42-pr/run_xinerama_without_debug_output)
 
 2016-06-25 00:31:35 +0200 Ulrich Sibiller (e079b0b)
 
@@ -926,6 +1030,7 @@
 2016-06-24 21:22:01 +0200 Ulrich Sibiller (5ee04c2)
 
 	* libX11: Extend Event functions to handle IOErrors
+          (uli42-pr/fix-crash-in-XPeekEvent)
 
 2016-06-21 04:12:07 +0200 Mike Gabriel (17f3e3b)
 
@@ -935,7 +1040,6 @@
 
 	* debian/patches: Update
           102_xserver-xext_set-securitypolicy-path.debian.patch.
-          (gh-sunweaver/pr/xrandr-extension-upgrade-1.5)
 
 2016-06-20 11:10:06 +0200 Mike Gabriel (c2b1f48)
 
@@ -1099,7 +1203,6 @@
 
 	* Properly enable/disable Xinerama support in nxagent via cmdline
           options provider in Xserver/os/utils.c.
-          (gh-sunweaver/pr/rrxinerama-vs-panoramix-with-disable-support)
 
 2016-06-09 16:24:10 +0200 Mike Gabriel (3f8aa38)
 
@@ -1127,6 +1230,7 @@
 	* nxagentReversePointerMap: Don't assume Xevent.xbutton.button is
           always greater than zero. We have seen
           Xevent.xbutton.button being set to AnyButton (equaling 0).
+          (gh-sunweaver/pr/nxagentReversePointerMapping-negative-index)
 
 2016-06-13 21:07:38 +0200 Mike Gabriel (61d0fbe)
 
@@ -1147,6 +1251,7 @@
 
 	* nx-X11/programs/Xserver: Include nxcomp{,ext,shad} headers like one
           would do with system-wide shared libraries.
+          (gh-sunweaver/pr/nxcomp+ext+shad-system-wide-headers)
 
 2016-04-05 14:29:02 +0200 Mike Gabriel (2f706cb)
 
@@ -1182,6 +1287,7 @@
 
 	* XTRAP: Drop all Xserver code blocks that relate to removed XTRAP
           extension.
+          (gh-sunweaver/pr/xserver-drop-outdated-xext-extensions)
 
 2016-04-19 12:04:57 +0200 Mike Gabriel (8c1d16d)
 
@@ -1538,6 +1644,7 @@
 
 	* Provide support for channel endpoints being UNIX file sockets in
           addition to being TCP/IP sockets.
+          (gh-sunweaver/pr/nxcomp-unix-sockets-for-channels)
 
 2016-04-27 13:56:55 +0200 Mike Gabriel (b326eda)
 
@@ -1594,7 +1701,6 @@
 2016-03-22 20:03:42 +0100 Mike Gabriel (2ffe52c)
 
 	* nxcomp: Properly define NX*Version(void) prototypes in NX.h.
-          (gh-ionic/3.6.x)
 
 2016-03-17 16:46:13 +0100 Mike Gabriel (af923fb)
 
@@ -1697,6 +1803,7 @@
 2015-10-08 22:25:09 +0200 Ulrich Sibiller (c4a3889)
 
 	* Xinerama: do not cut off at outer edges
+          (gh-sunweaver/pr/xinerama-xrandr)
 
 2015-10-07 20:45:14 +0200 Mike Gabriel (4ba8df8)
 
@@ -1850,7 +1957,7 @@
 2015-10-07 17:28:27 +0200 Mike Gabriel (e9f4422)
 
 	* Drop all references to printver.c. Not provided in source tree
-          anymore. (gh-salva/3.6.x)
+          anymore.
 
 2015-10-06 17:12:16 +0200 Mike Gabriel (e0b8f3e)
 
@@ -2230,7 +2337,7 @@
 2015-05-27 12:34:12 +0200 Mike Gabriel (06d389a)
 
 	* library clean-up: Drop libXx86{misc,vm,dga} libraries. Not needed
-          by nx-libs.
+          by nx-libs. (gh-sunweaver/pr/libXx86FOO-cleanup)
 
 2015-06-22 03:38:46 +0200 Mihai Moldovan (e7dfbd5)
 
@@ -2240,6 +2347,7 @@
 
 	* library clean-up: Drop nx-X11/lib/Xxf86rush and references to
           libglide{2,3}. Unused in nx-libs.
+          (gh-sunweaver/pr/libxf86rush-cleanup)
 
 2015-06-21 10:50:31 +0200 Mihai Moldovan (fb2a4e4)
 
@@ -2248,6 +2356,7 @@
 2015-05-27 09:48:26 +0200 Mike Gabriel (26091f4)
 
 	* nx-X11/config/cf: Drop build-logic for all hardware drivers.
+          (gh-sunweaver/pr/hw-driver-cleanup)
 
 2015-05-27 08:38:11 +0200 Mike Gabriel (ae443bd)
 
@@ -2288,6 +2397,7 @@
 
 	* imake clean-up: Enforce build of Mesa GLX extension. Drop all other
           GLX build methods (built-in DRI drivers, etc.).
+          (gh-sunweaver/pr/libglx-cleanup)
 
 2015-05-26 16:44:49 +0200 Mike Gabriel (73fa899)
 
@@ -2361,6 +2471,7 @@
 
 	* library clean-up: Don't compile (i.e., remove) libNX_Xres.a
           anymore. It is not used anywhere.
+          (gh-sunweaver/pr/libxres-cleanup)
 
 2015-05-31 17:21:10 +0200 Mike Gabriel (01b142d)
 
@@ -2377,14 +2488,12 @@
 2014-01-26 19:23:17 -0800 Alan Coopersmith (d1ca211)
 
 	* Xv: unvalidated lengths in XVideo extension swapped procs
-          [CVE-2014-8099] (origin/pr/Xext-cve-fixes,
-          gh-salva/pr/Xext-cve-fixes, gh-ionic/pr/Xext-cve-fixes)
+          [CVE-2014-8099] (origin/pr/Xext-cve-fixes)
 
 2015-05-01 13:09:24 +0200 Keith Packard (2db01a9)
 
 	* dix: Allow zero-height PutImage requests (fix for X.Org's
-          CVE-2015-3418). (origin/pr/dix-cve-fixes,
-          gh-salva/pr/dix-cve-fixes, gh-ionic/pr/dix-cve-fixes)
+          CVE-2015-3418). (origin/pr/dix-cve-fixes)
 
 2014-01-22 21:11:16 -0800 Alan Coopersmith (8623faa)
 
@@ -2427,9 +2536,7 @@
 2014-01-26 19:51:29 -0800 Alan Coopersmith (a0c90ad)
 
 	* render: unvalidated lengths in Render extn. swapped procs
-          [CVE-2014-8100 2/2] (origin/pr/render-cve-fixes,
-          gh-salva/pr/render-cve-fixes,
-          gh-ionic/pr/render-cve-fixes)
+          [CVE-2014-8100 2/2] (origin/pr/render-cve-fixes)
 
 2014-10-28 10:30:04 +0100 Julien Cristau (e469cff)
 
@@ -2685,8 +2792,7 @@
 
 	* library clean-up: Don't build and link libXfont.a anymore. Use
           system's libXfont shared library and link dynamically.
-          (origin/pr/libxfont-cleanup, gh-salva/pr/libxfont-cleanup,
-          gh-ionic/pr/libxfont-cleanup)
+          (origin/pr/libxfont-cleanup)
 
 2015-04-21 15:28:25 +0200 Mike Gabriel (a77ca87)
 
@@ -5226,8 +5332,8 @@
 
 2012-05-22 00:49:10 +0200 Mike Gabriel (222a4a2)
 
-	* Imported nxagent-3.5.0-9.tar.gz (origin/nxagent, gh-salva/nxagent,
-          gh-ionic/nxagent)
+	* Imported nxagent-3.5.0-9.tar.gz (origin/nxagent,
+          gh-sunweaver/nxagent)
 
 2012-05-11 23:57:35 +0200 Mike Gabriel (fe72988)
 
@@ -6282,7 +6388,7 @@
 2011-11-13 09:53:38 +0100 Reinhard Tartler (6dc46fa)
 
 	* Imported nxproxy-3.5.0-1.tar.gz (tag: nxproxy/3.5.0-1,
-          origin/nxproxy, gh-salva/nxproxy, gh-ionic/nxproxy)
+          origin/nxproxy, gh-sunweaver/nxproxy)
 
 2011-11-13 09:53:38 +0100 Reinhard Tartler (d83d9f6)
 
@@ -6307,8 +6413,7 @@
 2011-11-13 09:53:12 +0100 Reinhard Tartler (bf85c6e)
 
 	* Imported nxcompshad-3.5.0-2.tar.gz (tag: nxcompshad/3.5.0-2,
-          origin/nxcompshad, gh-salva/nxcompshad,
-          gh-ionic/nxcompshad)
+          origin/nxcompshad, gh-sunweaver/nxcompshad)
 
 2011-11-13 09:53:12 +0100 Reinhard Tartler (c70adf7)
 
@@ -6341,7 +6446,7 @@
 2011-11-13 09:52:38 +0100 Reinhard Tartler (88dace9)
 
 	* Imported nxcompext-3.5.0-1.tar.gz (tag: nxcompext/3.5.0-1,
-          origin/nxcompext, gh-salva/nxcompext, gh-ionic/nxcompext)
+          origin/nxcompext, gh-sunweaver/nxcompext)
 
 2011-11-13 09:52:38 +0100 Reinhard Tartler (9573b56)
 
@@ -6370,7 +6475,7 @@
 2011-11-13 09:27:53 +0100 Reinhard Tartler (232dfc4)
 
 	* Imported nxcomp-3.5.0-2.tar.gz (tag: nxcomp/3.5.0-2, origin/nxcomp,
-          gh-salva/nxcomp, gh-ionic/nxcomp)
+          gh-sunweaver/nxcomp)
 
 2011-11-13 09:27:53 +0100 Reinhard Tartler (233de71)
 
@@ -6543,7 +6648,7 @@
 2011-10-10 17:47:59 +0200 Reinhard Tartler (15cee47)
 
 	* Imported nx-X11-3.5.0-2.tar.gz (tag: nx-X11/3.5.0-2, origin/nx-X11,
-          gh-salva/nx-X11, gh-ionic/nx-X11)
+          gh-sunweaver/nx-X11)
 
 2011-10-10 17:47:52 +0200 Reinhard Tartler (964f539)
 
