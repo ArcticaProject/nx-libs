@@ -13,7 +13,7 @@
  * software without specific, written prior permission.
  *
  * IBM DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
- * ALL IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS, AND 
+ * ALL IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS, AND
  * NONINFRINGEMENT OF THIRD PARTY RIGHTS, IN NO EVENT SHALL
  * IBM BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR
  * ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
@@ -32,11 +32,7 @@
 #include "Xlibint.h"
 #include "XlcPubI.h"
 #include <nx-X11/Xos.h>
-#if 0
-#include <unistd.h>  /* in theory delivers getresuid/gid prototypes,
-		      * in practice only the Linux syscall wrapper is there. */
-#endif
-
+#include <unistd.h>
 
 /************************************************************************/
 
@@ -221,7 +217,7 @@ _XlcParsePath(
 #define XLOCALEDIR "/usr/lib/X11/locale"
 #endif
 
-static void
+void
 xlocaledir(
     char *buf,
     int buf_len)
@@ -268,7 +264,7 @@ xlocaledir(
 		priv = 0;
 	    } else {
 		if (seteuid(oldeuid) == -1) {
-		    /* XXX ouch, coudn't get back to original uid 
+		    /* XXX ouch, coudn't get back to original uid
 		     what can we do ??? */
 		    _exit(127);
 		}
@@ -295,6 +291,84 @@ xlocaledir(
       strncpy(p, XLOCALEDIR, buf_len - len);
 #else
       strncpy(p,__XOS2RedirRoot(XLOCALEDIR), buf_len - len);
+#endif
+    buf[buf_len-1] = '\0';
+}
+
+static void
+xlocalelibdir(
+    char *buf,
+    int buf_len)
+{
+    char *p = buf;
+    int len = 0;
+
+#ifndef NO_XLOCALEDIR
+    char *dir;
+    int priv = 1;
+
+    dir = getenv("XLOCALELIBDIR");
+
+    if (dir) {
+#ifndef WIN32
+	/*
+	 * Only use the user-supplied path if the process isn't priviledged.
+	 */
+	if (getuid() == geteuid() && getgid() == getegid()) {
+#if defined(HASSETUGID)
+	    priv = issetugid();
+#elif defined(HASGETRESUID)
+	    {
+		uid_t ruid, euid, suid;
+		gid_t rgid, egid, sgid;
+		if ((getresuid(&ruid, &euid, &suid) == 0) &&
+		    (getresgid(&rgid, &egid, &sgid) == 0))
+		    priv = (euid != suid) || (egid != sgid);
+	    }
+#else
+	    /*
+	     * If there are saved ID's the process might still be priviledged
+	     * even though the above test succeeded.  If issetugid() and
+	     * getresgid() aren't available, test this by trying to set
+	     * euid to 0.
+	     *
+	     * Note: this only protects setuid-root clients.  It doesn't
+	     * protect other setuid or any setgid clients.  If this tradeoff
+	     * isn't acceptable, set DisableXLocaleDirEnv to YES in host.def.
+	     */
+	    unsigned int oldeuid;
+	    oldeuid = geteuid();
+	    if (seteuid(0) != 0) {
+		priv = 0;
+	    } else {
+		if (seteuid(oldeuid) == -1) {
+		    /* XXX ouch, coudn't get back to original uid
+		     what can we do ??? */
+		    _exit(127);
+		}
+		priv = 1;
+	    }
+#endif
+	}
+#else
+	priv = 0;
+#endif
+	if (!priv) {
+	    len = strlen(dir);
+	    strncpy(p, dir, buf_len);
+	    if (len < buf_len) {
+	        p[len++] = LC_PATHDELIM;
+	        p += len;
+	    }
+	}
+    }
+#endif /* NO_XLOCALEDIR */
+
+    if (len < buf_len)
+#ifndef __UNIXOS2__
+      strncpy(p, XLOCALELIBDIR, buf_len - len);
+#else
+      strncpy(p,__XOS2RedirRoot(XLOCALELIBDIR), buf_len - len);
 #endif
     buf[buf_len-1] = '\0';
 }
@@ -387,11 +461,11 @@ normalize_lcname (const char *name)
 {
     char *p, *ret;
     const char *tmp = name;
-    
+
     p = ret = Xmalloc(strlen(name) + 1);
     if (!p)
 	return NULL;
-    
+
     if (tmp) {
 	while (*tmp && *tmp != '.' && *tmp != '@')
 	    *p++ = *tmp++;
@@ -428,7 +502,10 @@ _XlcFileName(
 
     siname = XLC_PUBLIC(lcd, siname);
 
-    lowercase(cat, category);
+    if (category)
+	lowercase(cat, category);
+    else
+	cat[0] = '\0';
     xlocaledir(dir,XLC_BUFSIZE);
     n = _XlcParsePath(dir, args, NUM_LOCALEDIR);
     for (i = 0; i < n; ++i) {
@@ -483,7 +560,7 @@ _XlcResolveLocaleName(
     xlocaledir (dir, PATH_MAX);
     n = _XlcParsePath(dir, args, NUM_LOCALEDIR);
     for (i = 0; i < n; ++i) {
-	if ((2 + (args[i] ? strlen (args[i]) : 0) + 
+	if ((2 + (args[i] ? strlen (args[i]) : 0) +
 	    strlen (locale_alias)) < PATH_MAX) {
 	    sprintf (buf, "%s/%s", args[i], locale_alias);
 	    name = resolve_name (lc_name, buf, LtoR);
@@ -515,7 +592,7 @@ _XlcResolveLocaleName(
 	return 1;
     }
 
-    /* 
+    /*
      * pub->siname is in the format <lang>_<terr>.<codeset>, typical would
      * be "en_US.ISO8859-1", "en_US.utf8", "ru_RU.KOI-8", or ja_JP.SJIS,
      * although it could be ja.SJIS too.
@@ -551,9 +628,7 @@ _XlcResolveLocaleName(
 
 /************************************************************************/
 int
-_XlcResolveI18NPath(buf, buf_len)
-    char *buf;
-    int buf_len;
+_XlcResolveI18NPath(char *buf, int buf_len)
 {
     if (buf != NULL) {
 	xlocaledir(buf, buf_len);
@@ -562,10 +637,7 @@ _XlcResolveI18NPath(buf, buf_len)
 }
 
 char *
-_XlcLocaleDirName(dir_name, dir_len, lc_name)
-     char *dir_name;
-     size_t dir_len;
-     char *lc_name;
+_XlcLocaleDirName(char *dir_name, size_t dir_len, char *lc_name)
 {
     char dir[PATH_MAX], buf[PATH_MAX], *name = NULL;
     int i, n;
@@ -574,12 +646,121 @@ _XlcLocaleDirName(dir_name, dir_len, lc_name)
     char *target_name = (char*)0;
     char *target_dir = (char*)0;
     char *nlc_name = NULL;
+    static char*  last_dir_name = 0;
+    static size_t last_dir_len = 0;
+    static char*  last_lc_name = 0;
+
+    if (last_lc_name != 0 && strcmp (last_lc_name, lc_name) == 0
+       && dir_len >= last_dir_len) {
+        strcpy (dir_name, last_dir_name);
+        return dir_name;
+    }
 
     xlocaledir (dir, PATH_MAX);
     n = _XlcParsePath(dir, args, 256);
     for (i = 0; i < n; ++i) {
-  
-	if ((2 + (args[i] ? strlen(args[i]) : 0) + 
+
+	if ((2 + (args[i] ? strlen(args[i]) : 0) +
+	    strlen(locale_alias)) < PATH_MAX) {
+	    sprintf (buf, "%s/%s", args[i], locale_alias);
+	    name = resolve_name(lc_name, buf, LtoR);
+	    if (!name) {
+		if (!nlc_name)
+		    nlc_name = normalize_lcname(lc_name);
+		if (nlc_name)
+		    name = resolve_name (nlc_name, buf, LtoR);
+	    }
+	}
+
+	/* If name is not an alias, use lc_name for locale.dir search */
+	if (name == NULL)
+	    name = lc_name;
+
+	/* look at locale.dir */
+
+	target_dir = args[i];
+	if (!target_dir) {
+	    /* something wrong */
+	    if (name != lc_name)
+		Xfree(name);
+	    continue;
+	}
+	if ((1 + (target_dir ? strlen (target_dir) : 0) +
+	     strlen("locale.dir")) < PATH_MAX) {
+	    sprintf(buf, "%s/locale.dir", target_dir);
+	    target_name = resolve_name(name, buf, RtoL);
+	}
+	if (name != lc_name)
+	    Xfree(name);
+	if (target_name != NULL) {
+	    char *p = 0;
+	    if ((p = strstr(target_name, "/XLC_LOCALE"))) {
+		*p = '\0';
+		break;
+	    }
+	    Xfree(target_name);
+	    target_name = NULL;
+	}
+	name = NULL;
+    }
+    if (nlc_name) Xfree(nlc_name);
+
+    if (target_name == NULL) {
+	/* vendor locale name == Xlocale name, no expansion of alias */
+	target_dir = args[0];
+	target_name = lc_name;
+    }
+    /* snprintf(dir_name, dir_len, "%s/%", target_dir, target_name); */
+    strncpy(dir_name, target_dir, dir_len - 1);
+    if (strlen(target_dir) >= dir_len - 1) {
+	dir_name[dir_len - 1] = '\0';
+    } else  {
+	strcat(dir_name, "/");
+	strncat(dir_name, target_name, dir_len - strlen(dir_name) - 1);
+	if (strlen(target_name) >= dir_len - strlen(dir_name) - 1)
+	    dir_name[dir_len - 1] = '\0';
+    }
+    if (target_name != lc_name)
+	Xfree(target_name);
+
+    if (last_dir_name != 0)
+	Xfree (last_dir_name);
+    if (last_lc_name != 0)
+	Xfree (last_lc_name);
+    last_dir_len = strlen (dir_name) + 1;
+    last_dir_name = Xmalloc (last_dir_len);
+    strcpy (last_dir_name, dir_name);
+    last_lc_name = Xmalloc (strlen (lc_name) + 1);
+    strcpy (last_lc_name, lc_name);
+
+    return dir_name;
+}
+
+char *
+_XlcLocaleLibDirName(char *dir_name, size_t dir_len, char *lc_name)
+{
+    char dir[PATH_MAX], buf[PATH_MAX], *name = NULL;
+    int i, n;
+    char *args[NUM_LOCALEDIR];
+    static char locale_alias[] = LOCALE_ALIAS;
+    char *target_name = (char*)0;
+    char *target_dir = (char*)0;
+    char *nlc_name = NULL;
+    static char*  last_dir_name = 0;
+    static size_t last_dir_len = 0;
+    static char*  last_lc_name = 0;
+
+    if (last_lc_name != 0 && strcmp (last_lc_name, lc_name) == 0
+       && dir_len >= last_dir_len) {
+	strcpy (dir_name, last_dir_name);
+	return dir_name;
+    }
+
+    xlocalelibdir (dir, PATH_MAX);
+    n = _XlcParsePath(dir, args, 256);
+    for (i = 0; i < n; ++i) {
+
+	if ((2 + (args[i] ? strlen(args[i]) : 0) +
  	     strlen(locale_alias)) < PATH_MAX) {
  	    sprintf (buf, "%s/%s", args[i], locale_alias);
  	    name = resolve_name(lc_name, buf, LtoR);
@@ -590,13 +771,13 @@ _XlcLocaleDirName(dir_name, dir_len, lc_name)
 		    name = resolve_name (nlc_name, buf, LtoR);
 	    }
  	}
-  
+
  	/* If name is not an alias, use lc_name for locale.dir search */
  	if (name == NULL)
  	    name = lc_name;
- 
+
  	/* look at locale.dir */
- 
+
  	target_dir = args[i];
  	if (!target_dir) {
  	    /* something wrong */
@@ -636,10 +817,21 @@ _XlcLocaleDirName(dir_name, dir_len, lc_name)
     } else  {
 	strcat(dir_name, "/");
 	strncat(dir_name, target_name, dir_len - strlen(dir_name) - 1);
-	if (strlen(target_name) >= dir_len - strlen(dir_name) - 1) 
+	if (strlen(target_name) >= dir_len - strlen(dir_name) - 1)
 	    dir_name[dir_len - 1] = '\0';
     }
     if (target_name != lc_name)
  	Xfree(target_name);
+
+    if (last_dir_name != 0)
+	Xfree (last_dir_name);
+    if (last_lc_name != 0)
+	Xfree (last_lc_name);
+    last_dir_len = strlen (dir_name) + 1;
+    last_dir_name = Xmalloc (last_dir_len);
+    strcpy (last_dir_name, dir_name);
+    last_lc_name = Xmalloc (strlen (lc_name) + 1);
+    strcpy (last_lc_name, lc_name);
+
     return dir_name;
 }

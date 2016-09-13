@@ -27,13 +27,13 @@ Copyright 1993 by Digital Equipment Corporation, Maynard, Massachusetts.
 
                         All Rights Reserved
 
-Permission to use, copy, modify, and distribute this software and its 
-documentation for any purpose and without fee is hereby granted, 
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
 provided that the above copyright notice appear in all copies and that
-both that copyright notice and this permission notice appear in 
+both that copyright notice and this permission notice appear in
 supporting documentation, and that the name of Digital not be
 used in advertising or publicity pertaining to distribution of the
-software without specific, written prior permission.  
+software without specific, written prior permission.
 
 DIGITAL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
 ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
@@ -46,20 +46,20 @@ SOFTWARE.
 ******************************************************************/
 
 /*
-**++ 
-**  FACILITY: 
-** 
-**      Xlib 
-** 
-**  ABSTRACT: 
-** 
+**++
+**  FACILITY:
+**
+**      Xlib
+**
+**  ABSTRACT:
+**
 **	Thai specific functions.
 **	Handles character classifications, composibility checking,
 **	Input sequence check and other Thai specific requirements
 **	according to WTT specification and DEC extensions.
-** 
-**  MODIFICATION HISTORY: 
-** 
+**
+**  MODIFICATION HISTORY:
+**
 **/
 
 #ifdef HAVE_CONFIG_H
@@ -316,17 +316,17 @@ THAI_istone (unsigned char	ch)
 
 Private Bool
 THAI_iscomposible (
-    unsigned char	follow_ch, 
+    unsigned char	follow_ch,
     unsigned char	lead_ch)
 {/* "Can follow_ch be put in the same display cell as lead_ch?" */
 
-    return (write_rules_lookup[THAI_chtype(lead_ch)][THAI_chtype(follow_ch)] 
+    return (write_rules_lookup[THAI_chtype(lead_ch)][THAI_chtype(follow_ch)]
             == CP);
 }
 
 Private Bool
 THAI_isaccepted (
-    unsigned char	follow_ch, 
+    unsigned char	follow_ch,
     unsigned char	lead_ch,
     unsigned char	mode)
 {
@@ -335,11 +335,11 @@ THAI_isaccepted (
     switch (mode)
     {
         case WTT_ISC1:
-            iskeyvalid = 
+            iskeyvalid =
           (wtt_isc1_lookup[THAI_chtype(lead_ch)][THAI_chtype(follow_ch)] != RJ);
             break;
         case WTT_ISC2:
-            iskeyvalid = 
+            iskeyvalid =
           (wtt_isc2_lookup[THAI_chtype(lead_ch)][THAI_chtype(follow_ch)] != RJ);
             break;
         case THAICAT_ISC:
@@ -355,15 +355,15 @@ THAI_isaccepted (
 }
 
 #ifdef UNUSED
-Private void 
+Private void
 THAI_apply_write_rules(
-    unsigned char	*instr, 
-    unsigned char	*outstr, 
-    unsigned char	insert_ch, 
+    unsigned char	*instr,
+    unsigned char	*outstr,
+    unsigned char	insert_ch,
     int 		*num_insert_ch)
 {
 /*
-Input parameters: 
+Input parameters:
     instr - input string
     insert_ch specify what char to be added when invalid composition is found
 Output parameters:
@@ -387,8 +387,8 @@ Output parameters:
         *out_ch++ = *lead_ch;
         while (*follow_ch != '\0')  /* more char in string to check */
         {
-            if (THAI_isdead(*follow_ch) && 
-                 !THAI_iscomposible(*follow_ch,*lead_ch)) 
+            if (THAI_isdead(*follow_ch) &&
+                 !THAI_iscomposible(*follow_ch,*lead_ch))
             {
                 *out_ch++ = SPACE;
                 (*num_insert_ch)++;
@@ -401,9 +401,9 @@ Output parameters:
     }
 }
 
-Private int 
+Private int
 THAI_find_chtype (
-    unsigned char	*instr, 
+    unsigned char	*instr,
     int		chtype)
 {
 /*
@@ -421,7 +421,7 @@ Output parameters:
         case DEAD:
             for (i = 0; *instr != '\0' && THAI_isdead(*instr); i++, instr++)
 		;
-            if (*instr != '\0') position = i; 
+            if (*instr != '\0') position = i;
             break;
         default:
             break;
@@ -430,12 +430,12 @@ Output parameters:
 }
 
 
-Private int 
+Private int
 THAI_apply_scm(
-    unsigned char	*instr, 
-    unsigned char	*outstr, 
-    unsigned char	spec_ch, 
-    int		num_sp, 
+    unsigned char	*instr,
+    unsigned char	*outstr,
+    unsigned char	spec_ch,
+    int		num_sp,
     unsigned char	insert_ch)
 {
     unsigned char   *scan, *outch;
@@ -450,7 +450,7 @@ THAI_apply_scm(
         if (THAI_isdead(*scan))
             dead_count++;       /* count number of non-spacing char */
         if (*scan == spec_ch)
-            if (!isconsecutive) 
+            if (!isconsecutive)
                 found_count++;      /* count number consecutive spec char found */
         *outch++ = *scan++;
         if (found_count == num_sp) {
@@ -472,7 +472,7 @@ Private void SetLed(Display *dpy, int num, int state);
 Private CARD8 FindKeyCode();
 
 
-/* The following functions are specific to this module */ 
+/* The following functions are specific to this module */
 
 Private int XThaiTranslateKey();
 Private int XThaiTranslateKeySym();
@@ -520,9 +520,9 @@ Private Bool ThaiComposeConvert(
  * Macros to save and recall last input character in XIC
  */
 #define IC_SavePreviousChar(ic,ch) \
-		(*((ic)->private.local.context->mb) = (char) (ch))
+                ((ic)->private.local.base.mb[(ic)->private.local.base.tree[(ic)->private.local.context].mb] = (char) (ch))
 #define IC_ClearPreviousChar(ic) \
-		(*((ic)->private.local.context->mb) = 0)
+                ((ic)->private.local.base.mb[(ic)->private.local.base.tree[(ic)->private.local.context].mb] = 0)
 #define IC_GetPreviousChar(ic) \
 		(IC_RealGetPreviousChar(ic,1))
 #define IC_GetContextChar(ic) \
@@ -534,6 +534,7 @@ Private unsigned char
 IC_RealGetPreviousChar(Xic ic, unsigned short pos)
 {
     XICCallback* cb = &ic->core.string_conversion_callback;
+    DefTreeBase *b = &ic->private.local.base;
 
     if (cb && cb->callback) {
         XIMStringConversionCallbackStruct screc;
@@ -550,25 +551,49 @@ IC_RealGetPreviousChar(Xic ic, unsigned short pos)
 
         (cb->callback)((XIC)ic, cb->client_data, (XPointer)&screc);
         if (!screc.text)
-            return (unsigned char) *((ic)->private.local.context->mb);
+            return (unsigned char) b->mb[b->tree[(ic)->private.local.context].mb];
         if ((screc.text->feedback &&
              *screc.text->feedback == XIMStringConversionLeftEdge) ||
             screc.text->length < 1)
         {
             c = 0;
         } else {
+            Xim     im;
+            XlcConv conv;
+            int     from_left;
+            int     to_left;
+            char   *from_buf;
+            char   *to_buf;
+
+            im = (Xim) XIMOfIC((XIC)ic);
             if (screc.text->encoding_is_wchar) {
-                c = ucs2tis(screc.text->string.wcs[0]);
-                XFree(screc.text->string.wcs);
+                conv = _XlcOpenConverter(im->core.lcd, XlcNWideChar,
+                                         im->core.lcd, XlcNCharSet);
+                from_buf = (char *) screc.text->string.wcs;
+                from_left = screc.text->length * sizeof(wchar_t);
             } else {
-                c = screc.text->string.mbs[0];
-                XFree(screc.text->string.mbs);
+                conv = _XlcOpenConverter(im->core.lcd, XlcNMultiByte,
+                                         im->core.lcd, XlcNCharSet);
+                from_buf = screc.text->string.mbs;
+                from_left = screc.text->length;
             }
+            to_buf = (char *)&c;
+            to_left = 1;
+
+            _XlcResetConverter(conv);
+            if (_XlcConvert(conv, (XPointer *)&from_buf, &from_left,
+                            (XPointer *)&to_buf, &to_left, NULL, 0) < 0)
+            {
+                c = (unsigned char) b->mb[b->tree[(ic)->private.local.context].mb];
+            }
+            _XlcCloseConverter(conv);
+
+            XFree(screc.text->string.mbs);
         }
         XFree(screc.text);
         return c;
     } else {
-        return (unsigned char) *((ic)->private.local.context->mb);
+        return (unsigned char) b->mb[b->tree[(ic)->private.local.context].mb];
     }
 }
 
@@ -791,12 +816,12 @@ XThaiTranslateKey(
     }
     /*
      * ThaiCat keyboard support :
-     * When the Shift and Thai keys are hold for some keys a 'Thai Compose'  
+     * When the Shift and Thai keys are hold for some keys a 'Thai Compose'
      * character code is generated which is different from column 3 and
-     * 4 of the keymap. 
+     * 4 of the keymap.
      * Since we don't know whether ThaiCat keyboard or WTT keyboard is
      * in use, the same mapping is done for all Thai input.
-     * We just arbitary choose to use column 3 keysyms as the indices of 
+     * We just arbitary choose to use column 3 keysyms as the indices of
      * this mapping.
      * When the control key is also hold, this mapping has no effect.
      */
@@ -814,7 +839,7 @@ XThaiTranslateKey(
     return 1;
 }
 
-/* 
+/*
  * XThaiTranslateKeySym
  *
  * Translate KeySym to TACTIS code output.
@@ -833,7 +858,7 @@ XThaiTranslateKeySym(
     int nbytes)
 {
     KeySym ckey = 0;
-    register struct _XKeytrans *p; 
+    register struct _XKeytrans *p;
     int length;
     unsigned long hiBytes;
     register unsigned char c;
@@ -910,8 +935,8 @@ XThaiTranslateKeySym(
     }
     /*
      *  ThaiCat has a key that generates two TACTIS codes D1 & E9.
-     *  It is represented by the latin-1 keysym XK_thorn (0xfe). 
-     *  If c is XK_thorn, this key is pressed and it is converted to  
+     *  It is represented by the latin-1 keysym XK_thorn (0xfe).
+     *  If c is XK_thorn, this key is pressed and it is converted to
      *  0xd1 0xe9.
      */
     if (c == XK_thorn) {
@@ -937,7 +962,7 @@ FindKeyCode(
     register KeySym code)
 {
 
-    register KeySym *kmax = dpy->keysyms + 
+    register KeySym *kmax = dpy->keysyms +
 	(dpy->max_keycode - dpy->min_keycode + 1) * dpy->keysyms_per_keycode;
     register KeySym *k = dpy->keysyms;
     while (k < kmax) {
@@ -987,8 +1012,8 @@ ComputeMaskFromKeytrans(
  *
  *
  * Compose handling routines - compose handlers 0,1,2
- * 
- * 
+ *
+ *
  ************************************************************************/
 
 #define NORMAL_KEY_STATE 0
@@ -1084,7 +1109,7 @@ int	tactis_code;
 	hi_digit = ks1 - XK_a + 10;
     else	/* out of range */
 	return NoSymbol;
-	    
+
     if ((ks2 >= XK_0) && (ks2 <= XK_9))
 	lo_digit = ks2 - XK_0;
     else if ((ks2 >= XK_A) && (ks2 <= XK_F))
@@ -1153,7 +1178,7 @@ void SetLed(
 #endif
 
 /*
- * Initialize ISC mode from im modifier 
+ * Initialize ISC mode from im modifier
  */
 Private void InitIscMode(Xic ic)
 {
@@ -1184,20 +1209,21 @@ Private void InitIscMode(Xic ic)
 
     return;
 }
-    
+
 /*
  * Helper functions for _XimThaiFilter()
  */
 Private Bool
 ThaiFltAcceptInput(Xic ic, unsigned char new_char, KeySym symbol)
 {
-    ic->private.local.composed->wc[0] = tis2ucs(new_char);
-    ic->private.local.composed->wc[1] = '\0';
+    DefTreeBase *b = &ic->private.local.base;
+    b->wc[b->tree[ic->private.local.composed].wc+0] = tis2ucs(new_char);
+    b->wc[b->tree[ic->private.local.composed].wc+1] = '\0';
 
     if ((new_char <= 0x1f) || (new_char == 0x7f))
-        ic->private.local.composed->keysym = symbol;
+        b->tree[ic->private.local.composed].keysym = symbol;
     else
-        ic->private.local.composed->keysym = NoSymbol;
+        b->tree[ic->private.local.composed].keysym = NoSymbol;
 
     return True;
 }
@@ -1205,12 +1231,13 @@ ThaiFltAcceptInput(Xic ic, unsigned char new_char, KeySym symbol)
 Private Bool
 ThaiFltReorderInput(Xic ic, unsigned char previous_char, unsigned char new_char)
 {
+    DefTreeBase *b = &ic->private.local.base;
     if (!IC_DeletePreviousChar(ic)) return False;
-    ic->private.local.composed->wc[0] = tis2ucs(new_char);
-    ic->private.local.composed->wc[1] = tis2ucs(previous_char);
-    ic->private.local.composed->wc[2] = '\0';
+    b->wc[b->tree[ic->private.local.composed].wc+0] = tis2ucs(new_char);
+    b->wc[b->tree[ic->private.local.composed].wc+1] = tis2ucs(previous_char);
+    b->wc[b->tree[ic->private.local.composed].wc+2] = '\0';
 
-    ic->private.local.composed->keysym = NoSymbol;
+    b->tree[ic->private.local.composed].keysym = NoSymbol;
 
     return True;
 }
@@ -1218,27 +1245,40 @@ ThaiFltReorderInput(Xic ic, unsigned char previous_char, unsigned char new_char)
 Private Bool
 ThaiFltReplaceInput(Xic ic, unsigned char new_char, KeySym symbol)
 {
+    DefTreeBase *b = &ic->private.local.base;
     if (!IC_DeletePreviousChar(ic)) return False;
-    ic->private.local.composed->wc[0] = tis2ucs(new_char);
-    ic->private.local.composed->wc[1] = '\0';
+    b->wc[b->tree[ic->private.local.composed].wc+0] = tis2ucs(new_char);
+    b->wc[b->tree[ic->private.local.composed].wc+1] = '\0';
 
     if ((new_char <= 0x1f) || (new_char == 0x7f))
-        ic->private.local.composed->keysym = symbol;
+        b->tree[ic->private.local.composed].keysym = symbol;
     else
-        ic->private.local.composed->keysym = NoSymbol;
+        b->tree[ic->private.local.composed].keysym = NoSymbol;
 
     return True;
+}
+
+Private unsigned
+NumLockMask(Display *d)
+{
+    int i;
+    XModifierKeymap *map = XGetModifierMapping (d);
+    KeyCode numlock_keycode = XKeysymToKeycode (d, XK_Num_Lock);
+    if (numlock_keycode == NoSymbol)
+        return 0;
+
+    for (i = 0; i < 8; i++) {
+        if (map->modifiermap[map->max_keypermod * i] == numlock_keycode)
+            return 1 << i;
+    }
+    return 0;
 }
 
 /*
  * Filter function for TACTIS
  */
 Bool
-_XimThaiFilter(d, w, ev, client_data)
-Display		*d;
-Window		w;
-XEvent		*ev;
-XPointer	client_data;
+_XimThaiFilter(Display *d, Window w, XEvent *ev, XPointer client_data)
 {
     Xic		    ic = (Xic)client_data;
     KeySym 	    symbol;
@@ -1254,6 +1294,7 @@ XPointer	client_data;
 #endif
     wchar_t	    wbuf[10];
     Bool            isReject;
+    DefTreeBase    *b = &ic->private.local.base;
 
     if ((ev->type != KeyPress)
         || (ev->xkey.keycode == 0))
@@ -1264,7 +1305,7 @@ XPointer	client_data;
     XwcLookupString((XIC)ic, &ev->xkey, wbuf, sizeof(wbuf) / sizeof(wbuf[0]),
 		    &symbol, NULL);
 
-    if ((ev->xkey.state & (AllMods & ~ShiftMask)) ||
+    if ((ev->xkey.state & (AllMods & ~(ShiftMask|LockMask|NumLockMask(d)))) ||
          ((symbol >> 8 == 0xFF) &&
          ((XK_BackSpace <= symbol && symbol <= XK_Clear) ||
            (symbol == XK_Return) ||
@@ -1278,7 +1319,7 @@ XPointer	client_data;
            IsMiscFunctionKey(symbol) ||
            IsFunctionKey(symbol))))
         {
-            IC_ClearPreviousChar(ic); 
+            IC_ClearPreviousChar(ic);
             return False;
         }
     if (((symbol >> 8 == 0xFF) &&
@@ -1297,7 +1338,7 @@ XPointer	client_data;
 	return False;
 
     /*
-     *  Hex input method processing 
+     *  Hex input method processing
      */
 
     thai_part = &ic->private.local.thai;
@@ -1356,11 +1397,11 @@ XPointer	client_data;
         return True;
     }
 
-    _Xlcwcstombs(ic->core.im->core.lcd, ic->private.local.composed->mb,
-		 ic->private.local.composed->wc, 10);
+    _Xlcwcstombs(ic->core.im->core.lcd, &b->mb[b->tree[ic->private.local.composed].mb],
+		 &b->wc[b->tree[ic->private.local.composed].wc], 10);
 
-    _Xlcmbstoutf8(ic->core.im->core.lcd, ic->private.local.composed->utf8,
-		  ic->private.local.composed->mb, 10);
+    _Xlcmbstoutf8(ic->core.im->core.lcd, &b->utf8[b->tree[ic->private.local.composed].utf8],
+		  &b->mb[b->tree[ic->private.local.composed].mb], 10);
 
     /* Remember the last character inputted
      * (as fallback in case StringConversionCallback is not provided)

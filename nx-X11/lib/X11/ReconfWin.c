@@ -33,12 +33,12 @@ in this Software without prior written authorization from The Open Group.
 		     CWBorderWidth|CWSibling|CWStackMode)
 
 int
-XConfigureWindow(dpy, w, mask, changes)
-    register Display *dpy;
-    Window w;
-    unsigned int mask;
-    XWindowChanges *changes;
-    {
+XConfigureWindow(
+    register Display *dpy,
+    Window w,
+    unsigned int mask,
+    XWindowChanges *changes)
+{
     unsigned long values[7];
     register unsigned long *value = values;
     long nvalues;
@@ -52,7 +52,7 @@ XConfigureWindow(dpy, w, mask, changes)
 
     if (mask & CWX)
 	*value++ = changes->x;
-	
+
     if (mask & CWY)
     	*value++ = changes->y;
 

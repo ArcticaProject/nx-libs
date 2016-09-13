@@ -1,4 +1,3 @@
-/* $TOG: mbWMProps.c /main/6 1998/02/06 17:44:24 kaleb $ */
 /*
 
 Copyright 1991, 1998  The Open Group

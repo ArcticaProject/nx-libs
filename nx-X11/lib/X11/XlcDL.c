@@ -1,8 +1,6 @@
 /*
 Copyright 1985, 1986, 1987, 1991, 1998  The Open Group
 
-Portions Copyright 2000 Sun Microsystems, Inc. All Rights Reserved.
-
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the
 "Software"), to deal in the Software without restriction, including
@@ -14,21 +12,18 @@ permission notice shall be included in all copies or substantial
 portions of the Software.
 
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE OPEN GROUP OR SUN MICROSYSTEMS, INC. BE LIABLE
-FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
-CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
-THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE EVEN IF
-ADVISED IN ADVANCE OF THE POSSIBILITY OF SUCH DAMAGES.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+OPEN GROUP BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
+AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE
+EVEN IF ADVISED IN ADVANCE OF THE POSSIBILITY OF SUCH DAMAGES.
 
 
-Except as contained in this notice, the names of The Open Group and/or
-Sun Microsystems, Inc. shall not be used in advertising or otherwise to
-promote the sale, use or other dealings in this Software without prior
-written authorization from The Open Group and/or Sun Microsystems,
-Inc., as applicable.
+Except as contained in this notice, the name of The Open Group shall not be
+used in advertising or otherwise to promote the sale, use or other dealings
+in this Software without prior written authorization from The Open Group.
 
 
 X Window System is a trademark of The Open Group
@@ -41,6 +36,29 @@ interest in or to any trademark, service mark, logo or trade name of
 Sun Microsystems, Inc. or its licensors is granted.
 
 */
+/*
+ * Copyright 2000 Sun Microsystems, Inc.  All rights reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice (including the next
+ * paragraph) shall be included in all copies or substantial portions of the
+ * Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
+
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
@@ -141,7 +159,7 @@ strdup_with_underscore(const char *symbol)
 {
 	char *result;
 
-	if ((result = malloc(strlen(symbol) + 2)) == NULL) 
+	if ((result = malloc(strlen(symbol) + 2)) == NULL)
 		return NULL;
 	result[0] = '_';
 	strcpy(result + 1, symbol);
@@ -211,7 +229,7 @@ Limit the length of path to prevent stack buffer corruption.
 	  if (!xi18n_objects_list) return;
 	}
 	n = parse_line(p, args, 6);
-	
+
 	if (n == 3 || n == 5) {
 	  if (!strcmp(args[0], "XLC")){
 	    xi18n_objects_list[lc_count].type = XLC_OBJECT;
@@ -321,7 +339,7 @@ open_object(
      char *lc_dir)
 {
   char *path;
-  
+
   if (object->refcount == 0) {
       path = __lc_path(object->dl_name, lc_dir);
       if (!path)
@@ -401,21 +419,25 @@ _XlcDynamicLoad(const char *lc_name)
     dynamicLoadProc lc_loader = (dynamicLoadProc)NULL;
     int count;
     XI18NObjectsList objects_list;
-    char lc_dir[BUFSIZE];
+    char lc_dir[BUFSIZE], lc_lib_dir[BUFSIZE];
 
     if (lc_name == NULL) return (XLCd)NULL;
 
-    if (_XlcLocaleDirName(lc_dir, BUFSIZE, (char *)lc_name) == (char*)NULL)
+    if (_XlcLocaleDirName(lc_dir, BUFSIZE, (char *)lc_name) == (char *)NULL)
+        return (XLCd)NULL;
+    if (_XlcLocaleLibDirName(lc_lib_dir, BUFSIZE, (char *)lc_name) == (char*)NULL)
 	return (XLCd)NULL;
 
     resolve_object(lc_dir, lc_name);
+    resolve_object(lc_lib_dir, lc_name);
 
     objects_list = xi18n_objects_list;
     count = lc_count;
     for (; count-- > 0; objects_list++) {
         if (objects_list->type != XLC_OBJECT ||
 	    strcmp(objects_list->locale_name, lc_name)) continue;
-	if (!open_object (objects_list, lc_dir))
+	if (!open_object (objects_list, lc_dir) && \
+            !open_object (objects_list, lc_lib_dir))
 	    continue;
 
 	lc_loader = (dynamicLoadProc)fetch_symbol (objects_list, objects_list->open);
@@ -424,7 +446,7 @@ _XlcDynamicLoad(const char *lc_name)
 	if (lcd != (XLCd)NULL) {
 	    break;
 	}
-	
+
 	close_object (objects_list);
     }
     return (XLCd)lcd;
@@ -446,7 +468,7 @@ _XDynamicOpenIM(XLCd lcd, Display *display, XrmDatabase rdb,
 
   lc_name = lcd->core->name;
 
-  if (_XlcLocaleDirName(lc_dir, BUFSIZE, lc_name) == NULL) return (XIM)0;
+  if (_XlcLocaleLibDirName(lc_dir, BUFSIZE, lc_name) == NULL) return (XIM)0;
 
   count = lc_count;
   for (; count-- > 0; objects_list++) {
@@ -462,7 +484,7 @@ _XDynamicOpenIM(XLCd lcd, Display *display, XrmDatabase rdb,
     if (im != (XIM)NULL) {
         break;
     }
-    
+
     close_object (objects_list);
   }
   return (XIM)im;
@@ -494,7 +516,7 @@ _XDynamicRegisterIMInstantiateCallback(
 
   lc_name = lcd->core->name;
 
-  if (_XlcLocaleDirName(lc_dir, BUFSIZE, lc_name) == NULL) return False;
+  if (_XlcLocaleLibDirName(lc_dir, BUFSIZE, lc_name) == NULL) return False;
 
   count = lc_count;
   for (; count-- > 0; objects_list++) {
@@ -598,7 +620,7 @@ _XDynamicOpenOM(XLCd lcd, Display *display, XrmDatabase rdb,
 
   lc_name = lcd->core->name;
 
-  if (_XlcLocaleDirName(lc_dir, BUFSIZE, lc_name) == NULL) return (XOM)0;
+  if (_XlcLocaleLibDirName(lc_dir, BUFSIZE, lc_name) == NULL) return (XOM)0;
 
   count = lc_count;
   for (; count-- > 0; objects_list++) {
@@ -606,7 +628,7 @@ _XDynamicOpenOM(XLCd lcd, Display *display, XrmDatabase rdb,
 	strcmp(objects_list->locale_name, lc_name)) continue;
     if (!open_object (objects_list, lc_dir))
         continue;
-    
+
     om_openOM = (dynamicIOpenProcp)fetch_symbol(objects_list, objects_list->open);
     if (!om_openOM) continue;
     om = (*om_openOM)(lcd, display, rdb, res_name, res_class);

@@ -44,6 +44,9 @@ XFreeColormap(
     UnlockDisplay(dpy);
     SyncHandle();
 
+#ifdef XCMS
     _XcmsDeleteCmapRec(dpy, cmap);
+#endif
+
     return 1;
 }

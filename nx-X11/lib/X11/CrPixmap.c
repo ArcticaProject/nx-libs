@@ -23,7 +23,6 @@ used in advertising or otherwise to promote the sale, use or other dealings
 in this Software without prior written authorization from The Open Group.
 
 */
-/* $XFree86$ */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -38,10 +37,12 @@ _XNoticeCreateBitmap (Display	    *dpy,
 		      unsigned int  height);
 #endif
 
-Pixmap XCreatePixmap (dpy, d, width, height, depth)
-    register Display *dpy;
-    Drawable d;
-    unsigned int width, height, depth;
+Pixmap XCreatePixmap (
+    register Display *dpy,
+    Drawable d,
+    unsigned int width,
+    unsigned int height,
+    unsigned int depth)
 {
     Pixmap pid;
     register xCreatePixmapReq *req;

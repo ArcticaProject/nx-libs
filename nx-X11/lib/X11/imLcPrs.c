@@ -42,6 +42,8 @@ OR PERFORMANCE OF THIS SOFTWARE.
 #include <sys/stat.h>
 #include <stdio.h>
 
+#define XLC_BUFSIZE 256
+
 extern int _Xmbstowcs(
     wchar_t	*wstr,
     char	*str,
@@ -276,38 +278,33 @@ static long
 modmask(
     char *name)
 {
-    long mask;
-
     struct _modtbl {
-	char *name;
+	const char name[6];
 	long mask;
     };
-    struct _modtbl *p;
 
-    static struct _modtbl tbl[] = {
+    static const struct _modtbl tbl[] = {
 	{ "Ctrl",	ControlMask	},
         { "Lock",	LockMask	},
         { "Caps",	LockMask	},
         { "Shift",	ShiftMask	},
         { "Alt",	Mod1Mask	},
-        { "Meta",	Mod1Mask	},
-        { NULL,		0		}};
+        { "Meta",	Mod1Mask	}};
 
-    p = tbl;
-    mask = 0;
-    for (p = tbl; p->name != NULL; p++) {
-	if (strcmp(name, p->name) == 0) {
-	    mask = p->mask;
-	    break;
-	}
-    }
-    return(mask);
+    int i, num_entries = sizeof (tbl) / sizeof (tbl[0]);
+
+    for (i = 0; i < num_entries; i++)
+        if (!strcmp (name, tbl[i].name))
+            return tbl[i].mask;
+
+    return 0;
 }
 
 static char*
 TransFileName(Xim im, char *name)
 {
    char *home = NULL, *lcCompose = NULL;
+   char dir[XLC_BUFSIZE];
    char *i = name, *ret, *j;
    int l = 0;
 
@@ -327,6 +324,10 @@ TransFileName(Xim im, char *name)
                  lcCompose = _XlcFileName(im->core.lcd, COMPOSE_FILE);
                  if (lcCompose)
                      l += strlen(lcCompose);
+   	         break;
+   	      case 'S':
+                 xlocaledir(dir, XLC_BUFSIZE);
+                 l += strlen(dir);
    	         break;
    	  }
       } else {
@@ -358,6 +359,10 @@ TransFileName(Xim im, char *name)
                     j += strlen(lcCompose);
                     Xfree(lcCompose);
                  }
+   	         break;
+   	      case 'S':
+                 strcpy(j, dir);
+                 j += strlen(dir);
    	         break;
    	  }
           i++;
@@ -408,7 +413,7 @@ get_mb_string (Xim im, char *buf, KeySym ks)
     return len;
 }
 
-#define AllMask (ShiftMask | LockMask | ControlMask | Mod1Mask) 
+#define AllMask (ShiftMask | LockMask | ControlMask | Mod1Mask)
 #define LOCAL_WC_BUFSIZE 128
 #define LOCAL_UTF8_BUFSIZE 256
 #define SEQUENCE_MAX	10
@@ -420,11 +425,13 @@ parseline(
     char* tokenbuf)
 {
     int token;
-    unsigned modifier_mask;
-    unsigned modifier;
-    unsigned tmp;
+    DTModifier modifier_mask;
+    DTModifier modifier;
+    DTModifier tmp;
     KeySym keysym = NoSymbol;
-    DefTree **top = &im->private.local.top;
+    DTIndex *top = &im->private.local.top;
+    DefTreeBase *b   = &im->private.local.base;
+    DTIndex t;
     DefTree *p = NULL;
     Bool exclam, tilde;
     KeySym rhs_keysym = 0;
@@ -436,8 +443,8 @@ parseline(
     char local_utf8_buf[LOCAL_UTF8_BUFSIZE], *rhs_string_utf8;
 
     struct DefBuffer {
-	unsigned modifier_mask;
-	unsigned modifier;
+	DTModifier modifier_mask;
+	DTModifier modifier;
 	KeySym keysym;
     };
 
@@ -447,7 +454,7 @@ parseline(
     do {
 	token = nexttoken(fp, tokenbuf, &lastch);
     } while (token == ENDOFLINE);
-    
+
     if (token == ENDOFFILE) {
 	return(-1);
     }
@@ -467,6 +474,7 @@ parseline(
             if (infp == NULL)
                 goto error;
             _XimParseStringFile(infp, im);
+            fclose(infp);
             return (0);
 	} else if ((token == KEY) && (strcmp("None", tokenbuf) == 0)) {
 	    modifier = 0;
@@ -534,20 +542,24 @@ parseline(
 
     token = nexttoken(fp, tokenbuf, &lastch);
     if (token == STRING) {
-	if( (rhs_string_mb = Xmalloc(strlen(tokenbuf) + 1)) == NULL )
-	    goto error;
+	l = strlen(tokenbuf) + 1;
+	while (b->mbused + l > b->mbsize) {
+	    b->mbsize = b->mbsize ? b->mbsize * 1.5 : 1024;
+	    if (! (b->mb = Xrealloc (b->mb, b->mbsize)) )
+		goto error;
+	}
+	rhs_string_mb = &b->mb[b->mbused];
+	b->mbused    += l;
 	strcpy(rhs_string_mb, tokenbuf);
 	token = nexttoken(fp, tokenbuf, &lastch);
 	if (token == KEY) {
 	    rhs_keysym = XStringToKeysym(tokenbuf);
 	    if (rhs_keysym == NoSymbol) {
-		Xfree(rhs_string_mb);
 		goto error;
 	    }
 	    token = nexttoken(fp, tokenbuf, &lastch);
 	}
 	if (token != ENDOFLINE && token != ENDOFFILE) {
-	    Xfree(rhs_string_mb);
 	    goto error;
 	}
     } else if (token == KEY) {
@@ -561,14 +573,13 @@ parseline(
 	}
 
         l = get_mb_string(im, local_mb_buf, rhs_keysym);
-        if (l == 0) {
-            rhs_string_mb = Xmalloc(1);
-	} else {
-            rhs_string_mb = Xmalloc(l + 1);
-        }
-	if( rhs_string_mb == NULL ) {
-	    goto error;
+	while (b->mbused + l + 1 > b->mbsize) {
+	    b->mbsize = b->mbsize ? b->mbsize * 1.5 : 1024;
+	    if (! (b->mb = Xrealloc (b->mb, b->mbsize)) )
+		goto error;
 	}
+	rhs_string_mb = &b->mb[b->mbused];
+	b->mbused    += l + 1;
         memcpy(rhs_string_mb, local_mb_buf, l);
 	rhs_string_mb[l] = '\0';
     } else {
@@ -579,62 +590,70 @@ parseline(
     if (l == LOCAL_WC_BUFSIZE - 1) {
 	local_wc_buf[l] = (wchar_t)'\0';
     }
-    if( (rhs_string_wc = (wchar_t *)Xmalloc((l + 1) * sizeof(wchar_t))) == NULL ) {
-	Xfree( rhs_string_mb );
-	return( 0 );
+    while (b->wcused + l + 1 > b->wcsize) {
+	b->wcsize = b->wcsize ? b->wcsize * 1.5 : 512;
+	if (! (b->wc = Xrealloc (b->wc, sizeof(wchar_t) * b->wcsize)) )
+	    goto error;
     }
+    rhs_string_wc = &b->wc[b->wcused];
+    b->wcused    += l + 1;
     memcpy((char *)rhs_string_wc, (char *)local_wc_buf, (l + 1) * sizeof(wchar_t) );
 
     l = _Xmbstoutf8(local_utf8_buf, rhs_string_mb, LOCAL_UTF8_BUFSIZE - 1);
     if (l == LOCAL_UTF8_BUFSIZE - 1) {
 	local_utf8_buf[l] = '\0';
     }
-    if( (rhs_string_utf8 = (char *)Xmalloc(l + 1)) == NULL ) {
-	Xfree( rhs_string_wc );
-	Xfree( rhs_string_mb );
-	return( 0 );
+    while (b->utf8used + l + 1 > b->utf8size) {
+	b->utf8size = b->utf8size ? b->utf8size * 1.5 : 1024;
+	if (! (b->utf8 = Xrealloc (b->utf8, b->utf8size)) )
+	    goto error;
     }
+    rhs_string_utf8 = &b->utf8[b->utf8used];
+    b->utf8used    += l + 1;
     memcpy(rhs_string_utf8, local_utf8_buf, l + 1);
 
     for (i = 0; i < n; i++) {
-	for (p = *top; p; p = p->next) {
-	    if (buf[i].keysym        == p->keysym &&
-		buf[i].modifier      == p->modifier &&
-		buf[i].modifier_mask == p->modifier_mask) {
+	for (t = *top; t; t = b->tree[t].next) {
+	    if (buf[i].keysym        == b->tree[t].keysym &&
+		buf[i].modifier      == b->tree[t].modifier &&
+		buf[i].modifier_mask == b->tree[t].modifier_mask) {
 		break;
 	    }
 	}
-	if (p) {
+	if (t) {
+	    p = &b->tree[t];
 	    top = &p->succession;
 	} else {
-	    if( (p = (DefTree*)Xmalloc(sizeof(DefTree))) == NULL ) {
-		Xfree( rhs_string_mb );
-		goto error;
+	    while (b->treeused >= b->treesize) {
+		DefTree *old     = b->tree;
+		int      oldsize = b->treesize;
+		b->treesize = b->treesize ? b->treesize * 1.5 : 256;
+		if (! (b->tree = Xrealloc (b->tree, sizeof(DefTree) * b->treesize)) )
+		    goto error;
+		if (top >= (DTIndex *) old && top < (DTIndex *) &old[oldsize])
+		    top = (DTIndex *) (((char *) top) + (((char *)b->tree)-(char *)old));
 	    }
+	    p = &b->tree[b->treeused];
 	    p->keysym        = buf[i].keysym;
 	    p->modifier      = buf[i].modifier;
 	    p->modifier_mask = buf[i].modifier_mask;
-	    p->succession    = NULL;
+	    p->succession    = 0;
 	    p->next          = *top;
-	    p->mb            = NULL;
-	    p->wc            = NULL;
-	    p->utf8          = NULL;
+	    p->mb            = 0;
+	    p->wc            = 0;
+	    p->utf8          = 0;
 	    p->ks            = NoSymbol;
-	    *top = p;
+	    *top = b->treeused;
 	    top = &p->succession;
+	    b->treeused++;
 	}
     }
 
-    if( p->mb != NULL )
-	Xfree( p->mb );
-    p->mb = rhs_string_mb;
-    if( p->wc != NULL )
-	Xfree( p->wc );
-    p->wc = rhs_string_wc;
-    if( p->utf8 != NULL )
-	Xfree( p->utf8 );
-    p->utf8 = rhs_string_utf8;
-    p->ks = rhs_keysym;
+    /* old entries no longer freed... */
+    p->mb   = rhs_string_mb   - b->mb;
+    p->wc   = rhs_string_wc   - b->wc;
+    p->utf8 = rhs_string_utf8 - b->utf8;
+    p->ks   = rhs_keysym;
     return(n);
 error:
     while (token != ENDOFLINE && token != ENDOFFILE) {

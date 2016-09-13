@@ -1,7 +1,3 @@
-/*
- *	$Xorg: Xproto.h,v 1.4 2001/02/09 02:03:23 xorgcvs Exp $
- */
-
 /* Definitions for the X window system used by server and c bindings */
 
 /*
@@ -263,10 +259,13 @@ restoring the definitions in X.h.  */
 typedef CARD16 KeyButMask;
 
 /***************** 
-   connection setup structure.  This is followed by
-   numRoots xWindowRoot structs.
+   Connection setup structures.  See Chapter 8: Connection Setup
+   of the X Window System Protocol specification for details.
 *****************/
 
+/* Client initiates handshake with this data, followed by the strings
+ * for the auth protocol & data.
+ */
 typedef struct {
     CARD8	byteOrder;
     BYTE	pad;
@@ -276,6 +275,16 @@ typedef struct {
     CARD16	pad2 B16;
 } xConnClientPrefix;
 
+/* Server response to xConnClientPrefix.
+ *
+ * If success == Success, this is followed by xConnSetup and
+ * numRoots xWindowRoot structs.
+ *
+ * If success == Failure, this is followed by a reason string.
+ *
+ * The protocol also defines a case of success == Authenticate, but
+ * that doesn't seem to have ever been implemented by the X Consortium.
+ */
 typedef struct {
     CARD8          success;
     BYTE           lengthReason; /*num bytes in string following if failure */
@@ -1055,8 +1064,8 @@ typedef struct _xEvent {
 	    BYTE bpad;
         } createNotify;
 /*
- * The event feilds in the structures for DestroyNotify, UnmapNotify,
- * MapNotify, ReparentNotify, ConfigureNotify, CirclulateNotify, GravityNotify,
+ * The event fields in the structures for DestroyNotify, UnmapNotify,
+ * MapNotify, ReparentNotify, ConfigureNotify, CirculateNotify, GravityNotify,
  * must be at the same offset because server internal code is depending upon
  * this to patch up the events before they are delivered.
  * Also note that MapRequest, ConfigureRequest and CirculateRequest have
@@ -1118,7 +1127,7 @@ typedef struct _xEvent {
 	} resizeRequest;
 	struct {
 /* The event field in the circulate record is really the parent when this
-   is used as a CirculateRequest insteaad of a CircluateNotify */
+   is used as a CirculateRequest instead of a CirculateNotify */
             CARD32 pad00 B32;
 	    Window event B32, window B32, parent B32;
 	    BYTE place;			/* Top or Bottom */
@@ -1203,6 +1212,38 @@ typedef struct _xEvent {
 	} clientMessage;
     } u;
 } xEvent;
+
+/*********************************************************
+ *
+ * Generic event
+ * 
+ * Those events are not part of the core protocol spec and can be used by
+ * various extensions.
+ * type is always GenericEvent
+ * extension is the minor opcode of the extension the event belongs to.
+ * evtype is the actual event type, unique __per extension__. 
+ *
+ * GenericEvents can be longer than 32 bytes, with the length field
+ * specifying the number of 4 byte blocks after the first 32 bytes. 
+ *
+ *
+ */
+typedef struct 
+{
+    BYTE    type;
+    CARD8   extension;
+    CARD16  sequenceNumber B16;
+    CARD32  length B32;
+    CARD16  evtype B16;
+    CARD16  pad2 B16;
+    CARD32  pad3 B32;
+    CARD32  pad4 B32;
+    CARD32  pad5 B32;
+    CARD32  pad6 B32;
+    CARD32  pad7 B32;
+} xGenericEvent;
+
+
 
 /* KeymapNotify events are not included in the above union because they
    are different from all other events: they do not have a "detail"
@@ -1705,7 +1746,7 @@ typedef struct {
     CARD32 planeMask B32;
 } xGetImageReq;    
 
-/* the folloiwng used by PolyText8 and PolyText16 */
+/* the following used by PolyText8 and PolyText16 */
 
 typedef struct {
     CARD8 reqType;

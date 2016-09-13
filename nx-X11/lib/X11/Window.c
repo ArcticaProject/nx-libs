@@ -41,7 +41,7 @@ void _XProcessWindowAttributes (
 
     if (valuemask & CWBackPixmap)
 	*value++ = attributes->background_pixmap;
-	
+
     if (valuemask & CWBackPixel)
     	*value++ = attributes->background_pixel;
 
@@ -59,7 +59,7 @@ void _XProcessWindowAttributes (
 
     if (valuemask & CWBackingStore)
         *value++ = attributes->backing_store;
-    
+
     if (valuemask & CWBackingPlanes)
 	*value++ = attributes->backing_planes;
 
@@ -97,17 +97,19 @@ void _XProcessWindowAttributes (
 		     CWOverrideRedirect|CWSaveUnder|CWEventMask|\
 		     CWDontPropagate|CWColormap|CWCursor)
 
-Window XCreateWindow(dpy, parent, x, y, width, height, 
-                borderWidth, depth, class, visual, valuemask, attributes)
-    register Display *dpy;
-    Window parent;
-    int x, y;
-    unsigned int width, height, borderWidth;
-    int depth;
-    unsigned int class;
-    Visual *visual;
-    unsigned long valuemask;
-    XSetWindowAttributes *attributes;
+Window XCreateWindow(
+    register Display *dpy,
+    Window parent,
+    int x,
+    int y,
+    unsigned int width,
+    unsigned int height,
+    unsigned int borderWidth,
+    int depth,
+    unsigned int class,
+    Visual *visual,
+    unsigned long valuemask,
+    XSetWindowAttributes *attributes)
 {
     Window wid;
     register xCreateWindowReq *req;
@@ -129,7 +131,7 @@ Window XCreateWindow(dpy, parent, x, y, width, height,
     wid = req->wid = XAllocID(dpy);
     valuemask &= AllMaskBits;
     if ((req->mask = valuemask))
-        _XProcessWindowAttributes (dpy, (xChangeWindowAttributesReq *)req, 
+        _XProcessWindowAttributes (dpy, (xChangeWindowAttributesReq *)req,
 			valuemask, attributes);
     UnlockDisplay(dpy);
     SyncHandle();

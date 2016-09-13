@@ -39,7 +39,7 @@
 #include "XlcGeneric.h"
 #include <stdio.h>
 
-#if !defined(macII) && !defined(X_LOCALE)
+#if !defined(X_LOCALE)
 #define STDCVT
 #endif
 
@@ -220,7 +220,7 @@ mbstocs(
 
     if (num_args > 0)
 	*((XlcCharSet *) args[0]) = charset;
-    
+
     return unconv_num;
 }
 
@@ -372,7 +372,7 @@ cstombs(
 
     if (num_args < 1)
 	return -1;
-    
+
     charset = (XlcCharSet) args[0];
 
     codeset = GetCodeSetFromCharSet(state->lcd, charset);
@@ -418,7 +418,7 @@ cstombs(
     buf_len /= codeset->length + encoding_len;
     if (csstr_len < buf_len)
 	buf_len = csstr_len;
-    
+
     cvt_length += buf_len * (encoding_len + codeset->length);
     if (bufptr) {
 	while (buf_len--) {
@@ -478,7 +478,7 @@ cstowcs(
 
     if (num_args < 1)
 	return -1;
-    
+
     codeset = GetCodeSetFromCharSet(lcd, (XlcCharSet) args[0]);
     if (codeset == NULL)
 	return -1;
@@ -487,7 +487,7 @@ cstowcs(
     csstr_len /= length;
     if (csstr_len < buf_len)
 	buf_len = csstr_len;
-    
+
     code_mask = ~XLC_GENERIC(lcd, wc_encode_mask);
     wc_encoding = codeset->wc_encoding;
     wc_shift_bits = XLC_GENERIC(lcd, wc_shift_bits);
@@ -537,7 +537,7 @@ create_conv(
     conv = (XlcConv) Xmalloc(sizeof(XlcConvRec));
     if (conv == NULL)
 	return (XlcConv) NULL;
-    
+
     conv->methods = (XlcConvMethods) Xmalloc(sizeof(XlcConvMethodsRec));
     if (conv->methods == NULL)
 	goto err;
@@ -549,11 +549,11 @@ create_conv(
     if (conv->state == NULL)
 	goto err;
     bzero((char *) conv->state, sizeof(StateRec));
-    
+
     state = (State) conv->state;
     state->lcd = lcd;
     init_state(conv);
-    
+
     return conv;
 
 err:
@@ -760,7 +760,7 @@ stdc_wcstocs(
 	    length = 1;
 	    *tmp = '\0';
 	}
-		
+
 	if (length < 0)
 	    break;
 
@@ -786,7 +786,7 @@ stdc_wcstocs(
 
     if (num_args > 0)
 	*((XlcCharSet *) args[0]) = charset;
-    
+
     return unconv_num;
 }
 
@@ -808,7 +808,7 @@ stdc_cstowcs(
     DefineLocalBuf;
     XPointer buf, save_buf;
     int length, left, ret;
-    
+
     left = length = *to_left * XLC_PUBLIC(lcd, mb_cur_max);
     buf = save_buf = (XPointer) AllocLocalBuf(length);
     if (buf == NULL)
@@ -817,7 +817,7 @@ stdc_cstowcs(
     ret = cstombs(conv, from, from_left, &buf, &left, args, num_args);
     if (ret < 0)
 	goto err;
-    
+
     buf = save_buf;
     length -= left;
     if (stdc_mbstowcs(conv, &buf, &length, to, to_left, args, num_args) < 0)

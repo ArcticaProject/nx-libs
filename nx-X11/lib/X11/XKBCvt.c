@@ -54,7 +54,7 @@ from The Open Group.
 #define	XKB_EXTEND_LOOKUP_STRING
 #endif
 
-static int 
+static int
 _XkbHandleSpecialSym(KeySym keysym, char *buffer, int nbytes, int *extra_rtrn)
 {
 
@@ -62,14 +62,14 @@ _XkbHandleSpecialSym(KeySym keysym, char *buffer, int nbytes, int *extra_rtrn)
     if (!(((keysym >= XK_BackSpace) && (keysym <= XK_Clear)) ||
 	   (keysym == XK_Return) || (keysym == XK_Escape) ||
 	   (keysym == XK_KP_Space) || (keysym == XK_KP_Tab) ||
-	   (keysym == XK_KP_Enter) || 
+	   (keysym == XK_KP_Enter) ||
 	   ((keysym >= XK_KP_Multiply) && (keysym <= XK_KP_9)) ||
 	   (keysym == XK_KP_Equal) ||
 	   (keysym == XK_Delete)))
 	return 0;
 
     if (nbytes<1) {
-	if (extra_rtrn) 
+	if (extra_rtrn)
 	    *extra_rtrn= 1;
 	return 0;
     }
@@ -83,7 +83,7 @@ _XkbHandleSpecialSym(KeySym keysym, char *buffer, int nbytes, int *extra_rtrn)
 }
 
 /*ARGSUSED*/
-static int 
+static int
 _XkbKSToKnownSet (	XPointer 	priv,
 			KeySym 		keysym,
 			char *		buffer,
@@ -141,7 +141,7 @@ _XkbKnownSetToKS(XPointer priv,char *buffer,int nbytes,Status *status)
 	return NoSymbol;
     if (((buffer[0]&0x80)==0)&&(buffer[0]>=32))
 	return buffer[0];
-    else if ((buffer[0]&0x7f)>=32) { 
+    else if ((buffer[0]&0x7f)>=32) {
 	XkbToKS *map= (XkbToKS *)priv;
 	if ( map ) {
 	    if ( map->map )	return map->prefix|map->map[buffer[0]&0x7f];
@@ -185,8 +185,8 @@ Strcmp(char *str1, char *str2)
 }
 #endif
 
-int 
-_XkbGetConverters(char *encoding_name, XkbConverters *cvt_rtrn)
+int
+_XkbGetConverters(const char *encoding_name, XkbConverters *cvt_rtrn)
 {
     if ( !cvt_rtrn ) return 0;
 
@@ -200,14 +200,14 @@ _XkbGetConverters(char *encoding_name, XkbConverters *cvt_rtrn)
 
 /***====================================================================***/
 
-/* 
+/*
  * The function _XkbGetCharset seems to be missnamed as what it seems to
  * be used for is to determine the encoding-name for the locale. ???
  */
 
 #ifdef XKB_EXTEND_LOOKUP_STRING
 
-/* 
+/*
  * XKB_EXTEND_LOOKUP_STRING is not used by the SI. It is used by various
  * X Consortium/X Project Team members, so we leave it in the source as
  * an simplify integration by these companies.
@@ -217,7 +217,7 @@ _XkbGetConverters(char *encoding_name, XkbConverters *cvt_rtrn)
 static char *_XkbKnownLanguages = "c=ascii:da,de,en,es,fr,is,it,nl,no,pt,sv=iso8859-1:hu,pl,cs=iso8859-2:eo=iso8859-3:sp=iso8859-5:ar,ara=iso8859-6:el=iso8859-7:he=iso8859-8:tr=iso8859-9:lt,lv=iso8859-13:et,fi=iso8859-15:ru=koi8-r:uk=koi8-u:th,th_TH,th_TH.iso8859-11=iso8859-11:th_TH.TIS620=tis620:hy=armscii-8:vi=tcvn-5712:ka=georgian-academy:be,bg=microsoft-cp1251";
 
 char	*
-_XkbGetCharset()
+_XkbGetCharset(void)
 {
     /*
      * PAGE USAGE TUNING: explicitly initialize to move these to data
@@ -255,7 +255,7 @@ _XkbGetCharset()
 	    return buf;
 	}
     }
-    else { 
+    else {
 	charset = NULL;
     }
 
@@ -275,7 +275,7 @@ _XkbGetCharset()
 #ifndef S_ISREG
 # define S_ISREG(mode)   (((mode) & S_IFMT) == S_IFREG)
 #endif
-	
+
 	if ( (stat(cf,&sbuf)==0) && S_ISREG(sbuf.st_mode) &&
 	    (file = fopen(cf,"r")) ) {
 	    tmp = _XkbAlloc(sbuf.st_size+1);
@@ -298,7 +298,7 @@ _XkbGetCharset()
 	if ( (set=strchr(tmp,'=')) == NULL )
 	    break;
 	*set++ = '\0';
-	if ( (next=strchr(set,':')) != NULL ) 
+	if ( (next=strchr(set,':')) != NULL )
 	    *next++ = '\0';
 	while ( tmp && *tmp ) {
 	    if ( (end=strchr(tmp,',')) != NULL )
@@ -318,7 +318,7 @@ _XkbGetCharset()
 }
 #else
 char	*
-_XkbGetCharset()
+_XkbGetCharset(void)
 {
     char *tmp;
     XLCd lcd;

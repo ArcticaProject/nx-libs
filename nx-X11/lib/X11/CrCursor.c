@@ -23,7 +23,6 @@ used in advertising or otherwise to promote the sale, use or other dealings
 in this Software without prior written authorization from The Open Group.
 
 */
-/* $XFree86$ */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -40,19 +39,22 @@ _XTryShapeBitmapCursor (Display		*dpy,
 			unsigned int	x,
 			unsigned int	y);
 #endif
-    
-Cursor XCreatePixmapCursor(dpy, source, mask, foreground, background, x, y)
-     register Display *dpy;
-     Pixmap source, mask;
-     XColor *foreground, *background;
-     unsigned int  x, y;
 
-{       
+Cursor XCreatePixmapCursor(
+     register Display *dpy,
+     Pixmap source,
+     Pixmap mask,
+     XColor *foreground,
+     XColor *background,
+     unsigned int x,
+     unsigned int y)
+
+{
     register xCreateCursorReq *req;
     Cursor cid;
 
 #ifdef USE_DYNAMIC_XCURSOR
-    cid = _XTryShapeBitmapCursor (dpy, source, mask, 
+    cid = _XTryShapeBitmapCursor (dpy, source, mask,
 				  foreground, background, x, y);
     if (cid)
 	return cid;

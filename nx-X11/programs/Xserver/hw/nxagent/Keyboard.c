@@ -74,7 +74,7 @@ is" without express or implied warranty.
 #include <nx-X11/extensions/XKB.h>
 
 #define XKBSRV_NEED_FILE_FUNCS
-#include <nx-X11/extensions/XKBsrv.h>
+#include <xkbsrv.h>
 #include <nx-X11/extensions/XKBconfig.h>
 
 #include <nx-X11/extensions/XKBrules.h>

@@ -34,12 +34,14 @@ in this Software without prior written authorization from The Open Group.
 #define size (SIZEOF(xPolyFillRectangleReq) + FRCTSPERBATCH * SIZEOF(xRectangle))
 
 int
-XFillRectangle(dpy, d, gc, x, y, width, height)
-    register Display *dpy;
-    Drawable d;
-    GC gc;
-    int x, y; /* INT16 */
-    unsigned int width, height; /* CARD16 */
+XFillRectangle(
+    register Display *dpy,
+    Drawable d,
+    GC gc,
+    int x,
+    int y, /* INT16 */
+    unsigned int width,
+    unsigned int height) /* CARD16 */
 {
     xRectangle *rect;
 
@@ -47,7 +49,7 @@ XFillRectangle(dpy, d, gc, x, y, width, height)
     FlushGC(dpy, gc);
 
     {
-    register xPolyFillRectangleReq *req 
+    register xPolyFillRectangleReq *req
 		= (xPolyFillRectangleReq *) dpy->last_req;
 
     /* if same as previous request, with same drawable, batch requests */

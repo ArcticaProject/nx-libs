@@ -36,7 +36,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <nx-X11/keysym.h>
 #include "misc.h"
 #include "inputstr.h"
-#include <nx-X11/extensions/XKBsrv.h>
+#include <xkbsrv.h>
 
 #include <nx-X11/extensions/XI.h>
 #include <nx-X11/extensions/XIproto.h>

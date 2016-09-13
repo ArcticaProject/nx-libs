@@ -28,13 +28,13 @@ Copyright 1987 by Digital Equipment Corporation, Maynard, Massachusetts.
 
                         All Rights Reserved
 
-Permission to use, copy, modify, and distribute this software and its 
-documentation for any purpose and without fee is hereby granted, 
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
 provided that the above copyright notice appear in all copies and that
-both that copyright notice and this permission notice appear in 
+both that copyright notice and this permission notice appear in
 supporting documentation, and that the name of Digital not be
 used in advertising or publicity pertaining to distribution of the
-software without specific, written prior permission.  
+software without specific, written prior permission.
 
 DIGITAL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
 ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
@@ -56,11 +56,11 @@ SOFTWARE.
 #include <nx-X11/Xatom.h>
 #include <stdio.h>
 
-Status XGetSizeHints (dpy, w, hints, property)
-	Display *dpy;
-	Window w;
-	XSizeHints *hints;
-        Atom property;
+Status XGetSizeHints (
+	Display *dpy,
+	Window w,
+	XSizeHints *hints,
+        Atom property)
 {
 	xPropSizeHints *prop = NULL;
         Atom actual_type;
@@ -97,15 +97,15 @@ Status XGetSizeHints (dpy, w, hints, property)
 	return(1);
 }
 
-/* 
+/*
  * must return a pointer to the hint, in malloc'd memory, or routine is not
  * extensible; any use of the caller's memory would cause things to be stepped
  * on.
  */
 
-XWMHints *XGetWMHints (dpy, w)
-	Display *dpy;
-	Window w;
+XWMHints *XGetWMHints (
+	Display *dpy,
+	Window w)
 {
 	xPropWMHints *prop = NULL;
 	register XWMHints *hints;
@@ -113,7 +113,7 @@ XWMHints *XGetWMHints (dpy, w)
         int actual_format;
         unsigned long leftover;
         unsigned long nitems;
-	if (XGetWindowProperty(dpy, w, XA_WM_HINTS, 
+	if (XGetWindowProperty(dpy, w, XA_WM_HINTS,
 	    0L, (long)NumPropWMHintsElements,
 	    False, XA_WM_HINTS, &actual_type, &actual_format,
             &nitems, &leftover, (unsigned char **)&prop)
@@ -147,34 +147,34 @@ XWMHints *XGetWMHints (dpy, w)
 }
 
 Status
-XGetZoomHints (dpy, w, zhints)
-	Display *dpy;
-	Window w;
-	XSizeHints *zhints;
+XGetZoomHints (
+	Display *dpy,
+	Window w,
+	XSizeHints *zhints)
 {
 	return (XGetSizeHints(dpy, w, zhints, XA_WM_ZOOM_HINTS));
 }
 
 Status
-XGetNormalHints (dpy, w, hints)
-	Display *dpy;
-	Window w;
-	XSizeHints *hints;
+XGetNormalHints (
+	Display *dpy,
+	Window w,
+	XSizeHints *hints)
 {
 	return (XGetSizeHints(dpy, w, hints, XA_WM_NORMAL_HINTS));
 }
 
-				
+
 /*
- * XGetIconSizes reads the property 
+ * XGetIconSizes reads the property
  *	ICONSIZE_ATOM	type: ICONSIZE_ATOM format: 32
  */
 
-Status XGetIconSizes (dpy, w, size_list, count)
-	Display *dpy;
-	Window w;	/* typically, root */
-	XIconSize **size_list;	/* RETURN */
-	int *count; 		/* RETURN number of items on the list */
+Status XGetIconSizes (
+	Display *dpy,
+	Window w,	/* typically, root */
+	XIconSize **size_list,	/* RETURN */
+	int *count) 		/* RETURN number of items on the list */
 {
 	xPropIconSize *prop = NULL;
 	register xPropIconSize *pp;
@@ -203,7 +203,7 @@ Status XGetIconSizes (dpy, w, size_list, count)
 	/* static copies not allowed in library, due to reentrancy constraint*/
 
 	nitems /= NumPropIconSizeElements;
-	if (! (hp = hints = (XIconSize *) 
+	if (! (hp = hints = (XIconSize *)
 	  Xcalloc ((unsigned) nitems, (unsigned) sizeof(XIconSize)))) {
 	    if (prop) Xfree ((char *) prop);
 	    return 0;
@@ -227,11 +227,11 @@ Status XGetIconSizes (dpy, w, size_list, count)
 }
 
 
-Status XGetCommand (dpy, w, argvp, argcp)
-    Display *dpy;
-    Window w;
-    char ***argvp;
-    int *argcp;
+Status XGetCommand (
+    Display *dpy,
+    Window w,
+    char ***argvp,
+    int *argcp)
 {
     XTextProperty tp;
     int argc;
@@ -267,10 +267,10 @@ Status XGetCommand (dpy, w, argvp, argcp)
 
 
 Status
-XGetTransientForHint(dpy, w, propWindow)
-	Display *dpy;
-	Window w;
-	Window *propWindow;
+XGetTransientForHint(
+	Display *dpy,
+	Window w,
+	Window *propWindow)
 {
     Atom actual_type;
     int actual_format;
@@ -278,7 +278,7 @@ XGetTransientForHint(dpy, w, propWindow)
     unsigned long leftover;
     Window *data = NULL;
     if (XGetWindowProperty(dpy, w, XA_WM_TRANSIENT_FOR, 0L, 1L, False,
-        XA_WINDOW, 
+        XA_WINDOW,
 	&actual_type,
 	&actual_format, &nitems, &leftover, (unsigned char **) &data)
 	!= Success) {
@@ -297,10 +297,10 @@ XGetTransientForHint(dpy, w, propWindow)
 }
 
 Status
-XGetClassHint(dpy, w, classhint)
-	Display *dpy;
-	Window w;
-	XClassHint *classhint;	/* RETURN */
+XGetClassHint(
+	Display *dpy,
+	Window w,
+	XClassHint *classhint)	/* RETURN */
 {
     int len_name, len_class;
 
@@ -310,11 +310,11 @@ XGetClassHint(dpy, w, classhint)
     unsigned long leftover;
     unsigned char *data = NULL;
     if (XGetWindowProperty(dpy, w, XA_WM_CLASS, 0L, (long)BUFSIZ, False,
-        XA_STRING, 
+        XA_STRING,
 	&actual_type,
 	&actual_format, &nitems, &leftover, &data) != Success)
            return (0);
-	
+
    if ( (actual_type == XA_STRING) && (actual_format == 8) ) {
 	len_name = strlen((char *) data);
 	if (! (classhint->res_name = Xmalloc((unsigned) (len_name+1)))) {

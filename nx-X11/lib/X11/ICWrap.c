@@ -1,8 +1,4 @@
 /*
- * $Xorg: ICWrap.c,v 1.4 2001/02/09 02:03:33 xorgcvs Exp $
- */
-
-/*
  * Copyright 1990, 1991 by OMRON Corporation, NTT Software Corporation,
  *                      and Nippon Telegraph and Telephone Corporation
  * Copyright 1991 by the Open Software Foundation
@@ -13,30 +9,30 @@
  * the above copyright notice appear in all copies and that both that
  * copyright notice and this permission notice appear in supporting
  * documentation, and that the names of OMRON, NTT Software, NTT, and
- * Open Software Foundation not be used in advertising or publicity 
- * pertaining to distribution of the software without specific, 
+ * Open Software Foundation not be used in advertising or publicity
+ * pertaining to distribution of the software without specific,
  * written prior permission. OMRON, NTT Software, NTT, and Open Software
  * Foundation make no representations about the suitability of this
  * software for any purpose.  It is provided "as is" without express or
  * implied warranty.
  *
- * OMRON, NTT SOFTWARE, NTT, AND OPEN SOFTWARE FOUNDATION 
- * DISCLAIM ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING 
- * ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT 
+ * OMRON, NTT SOFTWARE, NTT, AND OPEN SOFTWARE FOUNDATION
+ * DISCLAIM ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
+ * ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT
  * SHALL OMRON, NTT SOFTWARE, NTT, OR OPEN SOFTWARE FOUNDATION BE
- * LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES 
+ * LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
  * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- * 
+ *
  *	Authors: Li Yuhong		OMRON Corporation
  *		 Tatsuya Kato		NTT Software Corporation
  *		 Hiroshi Kuribayashi	OMRON Coproration
  *		 Muneiyoshi Suzuki	Nippon Telegraph and Telephone Co.
- * 
- *		 M. Collins		OSF  
+ *
+ *		 M. Collins		OSF
  *		 Takashi Fujiwara	FUJITSU LIMITED
- */				
+ */
 /*
 
 Copyright 1991, 1998  The Open Group
@@ -222,7 +218,7 @@ XGetIMValues(XIM im, ...)
 }
 
 /*
- * Create an input context within the input method, 
+ * Create an input context within the input method,
  * and return a pointer to the input context.
  */
 
@@ -233,7 +229,7 @@ XCreateIC(XIM im, ...)
     int     total_count;
     XIMArg *args;
     XIC     ic;
-  
+
     /*
      * so count the stuff dangling here
      */
@@ -261,8 +257,7 @@ XCreateIC(XIM im, ...)
  * Free the input context.
  */
 void
-XDestroyIC(ic)
-    XIC ic;
+XDestroyIC(XIC ic)
 {
     XIM im = ic->core.im;
     XIC *prev;
@@ -281,7 +276,7 @@ XDestroyIC(ic)
 
 char *
 XGetICValues(XIC ic, ...)
-{ 
+{
     va_list var;
     int     total_count;
     XIMArg *args;
@@ -344,8 +339,7 @@ XSetICValues(XIC ic, ...)
  * argument.
  */
 void
-XSetICFocus(ic)
-    XIC ic;
+XSetICFocus(XIC ic)
 {
   if (ic && ic->core.im)
       (*ic->methods->set_focus) (ic);
@@ -356,8 +350,7 @@ XSetICFocus(ic)
  * argument.
  */
 void
-XUnsetICFocus(ic)
-    XIC ic;
+XUnsetICFocus(XIC ic)
 {
   if (ic->core.im)
       (*ic->methods->unset_focus) (ic);
@@ -367,15 +360,13 @@ XUnsetICFocus(ic)
  * Return the XIM associated with the input context.
  */
 XIM
-XIMOfIC(ic)
-    XIC ic;
+XIMOfIC(XIC ic)
 {
     return ic->core.im;
 }
 
 char *
-XmbResetIC(ic)
-    XIC ic;
+XmbResetIC(XIC ic)
 {
     if (ic->core.im)
 	return (*ic->methods->mb_reset)(ic);
@@ -383,8 +374,7 @@ XmbResetIC(ic)
 }
 
 wchar_t *
-XwcResetIC(ic)
-    XIC ic;
+XwcResetIC(XIC ic)
 {
     if (ic->core.im)
 	return (*ic->methods->wc_reset)(ic);
@@ -392,8 +382,7 @@ XwcResetIC(ic)
 }
 
 char *
-Xutf8ResetIC(ic)
-    XIC ic;
+Xutf8ResetIC(XIC ic)
 {
     if (ic->core.im) {
 	if (ic->methods->utf8_reset)
@@ -405,13 +394,8 @@ Xutf8ResetIC(ic)
 }
 
 int
-XmbLookupString(ic, ev, buffer, nbytes, keysym, status)
-    XIC ic;
-    register XKeyEvent *ev;
-    char *buffer;
-    int nbytes;
-    KeySym *keysym;
-    Status *status;
+XmbLookupString(XIC ic, XKeyEvent *ev, char *buffer, int nbytes,
+		KeySym *keysym, Status *status)
 {
     if (ic->core.im)
 	return (*ic->methods->mb_lookup_string) (ic, ev, buffer, nbytes,
@@ -420,13 +404,8 @@ XmbLookupString(ic, ev, buffer, nbytes, keysym, status)
 }
 
 int
-XwcLookupString(ic, ev, buffer, nchars, keysym, status)
-    XIC ic;
-    register XKeyEvent *ev;
-    wchar_t *buffer;
-    int nchars;
-    KeySym *keysym;
-    Status *status;
+XwcLookupString(XIC ic, XKeyEvent *ev, wchar_t *buffer, int nchars,
+		KeySym *keysym, Status *status)
 {
     if (ic->core.im)
 	return (*ic->methods->wc_lookup_string) (ic, ev, buffer, nchars,
@@ -435,13 +414,8 @@ XwcLookupString(ic, ev, buffer, nchars, keysym, status)
 }
 
 int
-Xutf8LookupString(ic, ev, buffer, nbytes, keysym, status)
-    XIC ic;
-    register XKeyEvent *ev;
-    char *buffer;
-    int nbytes;
-    KeySym *keysym;
-    Status *status;
+Xutf8LookupString(XIC ic, XKeyEvent *ev, char *buffer, int nbytes,
+		  KeySym *keysym, Status *status)
 {
     if (ic->core.im) {
 	if (ic->methods->utf8_lookup_string)

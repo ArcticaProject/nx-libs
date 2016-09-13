@@ -13,7 +13,7 @@
  * software without specific, written prior permission.
  *
  * IBM DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
- * ALL IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS, AND 
+ * ALL IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS, AND
  * NONINFRINGEMENT OF THIRD PARTY RIGHTS, IN NO EVENT SHALL
  * IBM BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR
  * ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
@@ -97,10 +97,7 @@ typedef enum {
 
 typedef struct {
     Token token;	/* token id */
-    const char *name;	/* token sequence */
     int len;		/* length of token sequence */
-    int (*parse_proc)(const char *str, Token token, Database *db);
-			/* parsing procedure */
 } TokenTable;
 
 static int f_newline (const char *str, Token token, Database *db);
@@ -114,20 +111,20 @@ static int f_backslash (const char *str, Token token, Database *db);
 static int f_numeric (const char *str, Token token, Database *db);
 static int f_default (const char *str, Token token, Database *db);
 
-static TokenTable token_tbl[] = {
-    { T_NEWLINE,	"\n",	1,	f_newline },
-    { T_COMMENT,	"#",	1,	f_comment },
-    { T_SEMICOLON,	";",	1,	f_semicolon },
-    { T_DOUBLE_QUOTE,	"\"",	1,	f_double_quote },
-    { T_LEFT_BRACE,	"{",	1,	f_left_brace },
-    { T_RIGHT_BRACE,	"}",	1,	f_right_brace },
-    { T_SPACE,		" ",	1,	f_white },
-    { T_TAB,		"\t",	1,	f_white },
-    { T_BACKSLASH,	"\\",	1,	f_backslash },
-    { T_NUMERIC_HEX,	"\\x",	2,	f_numeric },
-    { T_NUMERIC_DEC,	"\\d",	2,	f_numeric },
-    { T_NUMERIC_OCT,	"\\o",	2,	f_numeric },
-    { T_DEFAULT,	" ",	1,	f_default }	/* any character */
+static const TokenTable token_tbl[] = {
+    { T_NEWLINE,      1 },
+    { T_COMMENT,      1 },
+    { T_SEMICOLON,    1 },
+    { T_DOUBLE_QUOTE, 1 },
+    { T_LEFT_BRACE,   1 },
+    { T_RIGHT_BRACE,  1 },
+    { T_SPACE,        1 },
+    { T_TAB,          1 },
+    { T_BACKSLASH,    1 },
+    { T_NUMERIC_HEX,  2 },
+    { T_NUMERIC_DEC,  2 },
+    { T_NUMERIC_OCT,  2 },
+    { T_DEFAULT,      1 } /* any character */
 };
 
 #define	SYM_CR          '\r'
@@ -517,7 +514,8 @@ append_value_list (void)
 	goto err1;
     }
     if (value != *value_list) {
-	int delta, i;
+	int i;
+	ssize_t delta;
 	delta = value - *value_list;
 	*value_list = value;
 	for (i = 1; i < value_num; ++i) {
@@ -551,7 +549,7 @@ append_value_list (void)
     return 0;
 }
 
-static int 
+static int
 construct_name(
     char *name,
     int size)
@@ -635,6 +633,7 @@ store_to_database(
 	if (new->name) {
 	    Xfree(new->name);
 	}
+	Xfree(new);
     }
     if (parse_info.value) {
 	if (*parse_info.value) {
@@ -835,7 +834,7 @@ f_double_quote(
 	len = get_quoted_word(str, wordp);
 	if (len < 1)
 	    goto err;
-	if ((parse_info.bufsize + (int)strlen(wordp) + 1) 
+	if ((parse_info.bufsize + (int)strlen(wordp) + 1)
 					>= parse_info.bufMaxSize) {
 	    if (realloc_parse_info(strlen(wordp)+1) == False) {
 		goto err;
@@ -897,7 +896,7 @@ f_numeric(
 	len = get_word(p, wordp);
 	if (len < 1)
 	    goto err;
-	if ((parse_info.bufsize + token_len + (int)strlen(wordp) + 1) 
+	if ((parse_info.bufsize + token_len + (int)strlen(wordp) + 1)
 					>= parse_info.bufMaxSize) {
 	    if (realloc_parse_info(token_len + strlen(wordp) + 1) == False)
 		goto err;
@@ -974,7 +973,7 @@ f_default(
 	break;
     case S_NAME:
     case S_VALUE:
-	if ((parse_info.bufsize + (int)strlen(wordp) + 1) 
+	if ((parse_info.bufsize + (int)strlen(wordp) + 1)
 					>= parse_info.bufMaxSize) {
 	    if (realloc_parse_info(strlen(wordp) + 1) == False)
 		goto err;
@@ -1089,8 +1088,48 @@ CreateDatabase(
 	}
 	p = line.str;
 	while (*p) {
+            int (*parse_proc)(const char *str, Token token, Database *db) = NULL;
+
 	    token = get_token(p);
-	    len = (*token_tbl[token].parse_proc)(p, token, &db);
+
+            switch (token_tbl[token].token) {
+            case T_NEWLINE:
+                parse_proc = f_newline;
+                break;
+            case T_COMMENT:
+                parse_proc = f_comment;
+                break;
+            case T_SEMICOLON:
+                parse_proc = f_semicolon;
+                break;
+            case T_DOUBLE_QUOTE:
+                parse_proc = f_double_quote;
+                break;
+            case T_LEFT_BRACE:
+                parse_proc = f_left_brace;
+                break;
+            case T_RIGHT_BRACE:
+                parse_proc = f_right_brace;
+                break;
+            case T_SPACE:
+            case T_TAB:
+                parse_proc = f_white;
+                break;
+            case T_BACKSLASH:
+                parse_proc = f_backslash;
+                break;
+            case T_NUMERIC_HEX:
+            case T_NUMERIC_DEC:
+            case T_NUMERIC_OCT:
+                parse_proc = f_numeric;
+                break;
+            case T_DEFAULT:
+                parse_proc = f_default;
+                break;
+            }
+
+            len = parse_proc(p, token, &db);
+
 	    if (len < 1) {
 		error = 1;
 		break;

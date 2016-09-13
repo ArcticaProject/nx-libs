@@ -41,6 +41,8 @@ DAMAGEHEADERS = damagewire.h damageproto.h
 XRESHEADERS = XResproto.h
 #endif
 
+XKBFILEHEADERS = XKMformat.h XKM.h XKBconfig.h XKBfile.h XKBrules.h
+
 EXTRAHEADERS = \
 	$(SCREENSAVERHEADERS) \
 	$(XINERAMAHEADERS) \
@@ -60,9 +62,10 @@ HEADERS = \
 	bigreqstr.h \
 	XI.h XInput.h XIproto.h \
 	xtestconst.h xtestext1.h xteststr.h \
-	XKB.h XKBgeom.h XKBproto.h XKBstr.h XKBsrv.h \
+	XKB.h XKBgeom.h XKBproto.h XKBstr.h \
 	Xdbeproto.h \
 	$(EXTRAHEADERS) \
+	$(XKBFILEHEADERS) \
 	record.h recordstr.h \
 	security.h securstr.h \
 	sync.h syncstr.h \

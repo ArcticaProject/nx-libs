@@ -36,7 +36,7 @@ register Display *dpy,
 _Xconst char *pattern,  /* null-terminated */
 int maxNames,
 int *actualCount)	/* RETURN */
-{       
+{
     register long nbytes;
     register unsigned i;
     register int length;
@@ -98,9 +98,8 @@ int *actualCount)	/* RETURN */
 }
 
 int
-XFreeFontNames(list)
-char **list;
-{       
+XFreeFontNames(char **list)
+{
 	if (list) {
 		if (!*(list[0]-1)) { /* from ListFontsWithInfo */
 			register char **names;

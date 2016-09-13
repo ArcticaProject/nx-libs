@@ -29,9 +29,9 @@ in this Software without prior written authorization from The Open Group.
 #endif
 #include "Xlibint.h"
 
-char **XGetFontPath(dpy, npaths)
-register Display *dpy;
-int *npaths;	/* RETURN */
+char **XGetFontPath(
+    register Display *dpy,
+    int *npaths)	/* RETURN */
 {
 	xGetFontPathReply rep;
 	register long nbytes;
@@ -81,8 +81,7 @@ int *npaths;	/* RETURN */
 }
 
 int
-XFreeFontPath (list)
-char **list;
+XFreeFontPath (char **list)
 {
 	if (list != NULL) {
 		Xfree (list[0]-1);

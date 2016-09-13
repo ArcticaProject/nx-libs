@@ -34,7 +34,7 @@ from The Open Group.
 #include "Xutil.h"
 #include <stdio.h>
 
-#define ERR_RETURN 0
+#define ERR_RETURN NULL
 
 static char *Format_Image(
     XImage *image,
@@ -80,7 +80,7 @@ static char *Format_Image(
 
   return(data);
 }
-   
+
 #define BYTES_PER_OUTPUT_LINE 12
 
 int

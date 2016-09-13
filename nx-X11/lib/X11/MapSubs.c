@@ -30,9 +30,9 @@ in this Software without prior written authorization from The Open Group.
 #include "Xlibint.h"
 
 int
-XMapSubwindows(dpy, win)
-    register Display *dpy;
-    Window win;
+XMapSubwindows(
+    register Display *dpy,
+    Window win)
 {
     register xResourceReq *req;
     LockDisplay(dpy);

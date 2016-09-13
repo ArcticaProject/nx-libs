@@ -30,9 +30,9 @@ in this Software without prior written authorization from The Open Group.
 #include "Xlibint.h"
 
 int
-XFreeGC (dpy, gc)
-    register Display *dpy;
-    GC gc;
+XFreeGC (
+    register Display *dpy,
+    GC gc)
     {
     register xResourceReq *req;
     register _XExtension *ext;
@@ -47,4 +47,3 @@ XFreeGC (dpy, gc)
     Xfree ((char *) gc);
     return 1;
     }
-    

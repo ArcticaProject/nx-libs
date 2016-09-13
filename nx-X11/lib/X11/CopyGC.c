@@ -30,10 +30,11 @@ in this Software without prior written authorization from The Open Group.
 #include "Xlibint.h"
 
 int
-XCopyGC (dpy, srcGC, mask, destGC)
-     register Display *dpy;
-     unsigned long mask;		/* which ones to set initially */
-     GC srcGC, destGC;
+XCopyGC (
+     register Display *dpy,
+     GC srcGC,
+     unsigned long mask,		/* which ones to set initially */
+     GC destGC)
 {
     register XGCValues *destgv = &destGC->values,
     		       *srcgv = &srcGC->values;
@@ -43,7 +44,7 @@ XCopyGC (dpy, srcGC, mask, destGC)
     LockDisplay(dpy);
 
     mask &= (1L << (GCLastBit + 1)) - 1;
-    /* if some of the source values to be copied are "dirty", flush them 
+    /* if some of the source values to be copied are "dirty", flush them
        out before sending the CopyGC request. */
     if (srcGC->dirty & mask)
          _XFlushGCCache(dpy, srcGC);
@@ -58,7 +59,7 @@ XCopyGC (dpy, srcGC, mask, destGC)
 
     if (mask & GCFunction)
     	destgv->function = srcgv->function;
-	
+
     if (mask & GCPlaneMask)
         destgv->plane_mask = srcgv->plane_mask;
 
@@ -76,14 +77,14 @@ XCopyGC (dpy, srcGC, mask, destGC)
 
     if (mask & GCCapStyle)
         destgv->cap_style = srcgv->cap_style;
-    
+
     if (mask & GCJoinStyle)
         destgv->join_style = srcgv->join_style;
 
     if (mask & GCFillStyle)
     	destgv->fill_style = srcgv->fill_style;
 
-    if (mask & GCFillRule) 
+    if (mask & GCFillRule)
         destgv->fill_rule = srcgv->fill_rule;
 
     if (mask & GCArcMode)
@@ -101,19 +102,19 @@ XCopyGC (dpy, srcGC, mask, destGC)
     if (mask & GCTileStipYOrigin)
         destgv->ts_y_origin = srcgv->ts_y_origin;
 
-    if (mask & GCFont) 
+    if (mask & GCFont)
         destgv->font = srcgv->font;
 
-    if (mask & GCSubwindowMode) 
+    if (mask & GCSubwindowMode)
         destgv->subwindow_mode = srcgv->subwindow_mode;
 
-    if (mask & GCGraphicsExposures) 
+    if (mask & GCGraphicsExposures)
         destgv->graphics_exposures = srcgv->graphics_exposures;
 
-    if (mask & GCClipXOrigin) 
+    if (mask & GCClipXOrigin)
         destgv->clip_x_origin = srcgv->clip_x_origin;
 
-    if (mask & GCClipYOrigin) 
+    if (mask & GCClipYOrigin)
         destgv->clip_y_origin = srcgv->clip_y_origin;
 
     if (mask & GCClipMask) {
@@ -121,7 +122,7 @@ XCopyGC (dpy, srcGC, mask, destGC)
         destgv->clip_mask = srcgv->clip_mask;
 	}
 
-    if (mask & GCDashOffset) 
+    if (mask & GCDashOffset)
         destgv->dash_offset = srcgv->dash_offset;
 
     if (mask & GCDashList) {

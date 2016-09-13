@@ -39,8 +39,8 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "inputstr.h"
 
 #define	XKBSRV_NEED_FILE_FUNCS
-#include <nx-X11/extensions/XKBsrv.h>
-#include <nx-X11/extensions/XKBgeom.h>
+#include <xkbsrv.h>
+#include "xkbgeom.h"
 #include "xkb.h"
 
 #ifdef MODE_SWITCH

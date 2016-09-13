@@ -10,7 +10,7 @@ in supporting documentation, and that the name of FUJITSU LIMITED
 not be used in advertising or publicity pertaining to distribution
 of the software without specific, written prior permission.
 FUJITSU LIMITED makes no representations about the suitability of
-this software for any purpose. 
+this software for any purpose.
 It is provided "as is" without express or implied warranty.
 
 FUJITSU LIMITED DISCLAIM ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
@@ -21,7 +21,7 @@ USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
 
-  Author: Takashi Fujiwara     FUJITSU LIMITED 
+  Author: Takashi Fujiwara     FUJITSU LIMITED
                                fujiwara@a80.tech.yk.fujitsu.co.jp
 
 ******************************************************************/
@@ -213,8 +213,13 @@ _XimRespSyncReply(
     Xic		 ic,
     BITMASK16	 mode)
 {
-    if (mode & XimSYNCHRONUS) /* SYNC Request */
-	MARK_NEED_SYNC_REPLY(ic);
+    if (mode & XimSYNCHRONUS) /* SYNC Request */ {
+	if (IS_FOCUSED(ic))
+	    MARK_NEED_SYNC_REPLY(ic);
+	else
+	    _XimProcSyncReply((Xim)ic->core.im, ic);
+    }
+
     return True;
 }
 
@@ -463,7 +468,7 @@ _XimGetWindowEventmask(
     Xim			im = (Xim )ic->core.im;
     XWindowAttributes	atr;
 
-    if (!_XGetWindowAttributes(im->core.display, ic->core.focus_window, &atr))
+    if (!XGetWindowAttributes(im->core.display, ic->core.focus_window, &atr))
 	return 0;
     return (EVENTMASK)atr.your_event_mask;
 }
@@ -885,13 +890,8 @@ _Ximctsconvert(
 }
 
 Public int
-_Ximctstombs(xim, from, from_len, to, to_len, state)
-    XIM		 xim;
-    char	*from;
-    int		 from_len;
-    char	*to;
-    int		 to_len;
-    Status	*state;
+_Ximctstombs(XIM xim, char *from, int from_len,
+	     char *to, int to_len, Status *state)
 {
     return _Ximctsconvert(((Xim)xim)->private.proto.ctom_conv,
 			  from, from_len, to, to_len, state);
@@ -930,7 +930,7 @@ _Ximctstowcs(
     /* Reset the converter.  The CompoundText at 'from' starts in
        initial state.  */
     _XlcResetConverter(conv);
-		
+
     from_left = from_len;
     to_left = BUFSIZ;
     from_cnvlen = 0;

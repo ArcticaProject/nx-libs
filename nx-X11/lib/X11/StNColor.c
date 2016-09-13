@@ -46,6 +46,7 @@ int flags)  /* DoRed, DoGreen, DoBlue */
     XcmsColor cmsColor_exact;
     XColor scr_def;
 
+#ifdef XCMS
     /*
      * Let's Attempt to use Xcms approach to Parse Color
      */
@@ -62,6 +63,7 @@ int flags)  /* DoRed, DoGreen, DoBlue */
 	 * name.  Thus pass name to the X Server.
 	 */
     }
+#endif
 
     /*
      * The Xcms and i18n methods failed, so lets pass it to the server

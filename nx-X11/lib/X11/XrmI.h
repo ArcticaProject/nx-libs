@@ -30,11 +30,11 @@ from The Open Group.
 /*
  * Macros to abstract out reading the file, and getting its size.
  *
- * You may need to redefine these for various other operating systems. 
+ * You may need to redefine these for various other operating systems.
  */
 
 #include	<nx-X11/Xos.h>
-#include        <sys/stat.h>                        
+#include        <sys/stat.h>
 
 #define GetSizeOfFile(fd,size)                      \
 {                                                   \

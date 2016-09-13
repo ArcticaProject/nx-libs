@@ -60,7 +60,7 @@ get_converter(
     XlcConverterList list, prev = NULL;
 
     for (list = conv_list; list; list = list->next) {
-	if (list->from_lcd == from_lcd && list->to_lcd == to_lcd 
+	if (list->from_lcd == from_lcd && list->to_lcd == to_lcd
 	    && list->from_type == from_type && list->to_type == to_type) {
 
 	    if (prev && prev != conv_list) {	/* XXX */
@@ -93,7 +93,7 @@ _XlcSetConverter(
     to_type = XrmStringToQuark(to);
 
     for (list = conv_list; list; list = list->next) {
-	if (list->from_lcd == from_lcd && list->to_lcd == to_lcd 
+	if (list->from_lcd == from_lcd && list->to_lcd == to_lcd
 	    && list->from_type == from_type && list->to_type == to_type) {
 
 	    list->converter = converter;

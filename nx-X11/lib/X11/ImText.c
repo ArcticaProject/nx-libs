@@ -38,7 +38,7 @@ XDrawImageString(
     int y,
     _Xconst char *string,
     int length)
-{   
+{
     register xImageText8Req *req;
     char *CharacterOffset = (char *)string;
     int FirstTimeThrough = True;
@@ -47,7 +47,7 @@ XDrawImageString(
     LockDisplay(dpy);
     FlushGC(dpy, gc);
 
-    while (length > 0) 
+    while (length > 0)
     {
 	int Unit;
 

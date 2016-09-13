@@ -1,7 +1,6 @@
 /*
 
 Copyright 1986, 1998  The Open Group
-Copyright 2004 Sun Microsystems, Inc.
 
 All rights reserved.
 
@@ -34,6 +33,29 @@ X Window System is a trademark of The Open Group.
 
 */
 
+/*
+ * Copyright 2004 Sun Microsystems, Inc.  All rights reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice (including the next
+ * paragraph) shall be included in all copies or substantial portions of the
+ * Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
+
 /* This can really be considered an os dependent routine */
 
 #ifdef HAVE_CONFIG_H
@@ -49,7 +71,7 @@ XHostAddress *XListHosts (
     int *nhosts,	/* RETURN */
     Bool *enabled)	/* RETURN */
 {
-    register XHostAddress *outbuf = 0, *op;
+    register XHostAddress *outbuf = NULL, *op;
     xListHostsReply reply;
     long nbytes;
     unsigned char *buf, *bp;
@@ -69,31 +91,32 @@ XHostAddress *XListHosts (
 
     if (reply.nHosts) {
 	nbytes = reply.length << 2;	/* compute number of bytes in reply */
+
 	op = outbuf = (XHostAddress *)
-	    Xmalloc((unsigned) (nbytes + 
+	    Xmalloc((unsigned) (nbytes +
 	      (reply.nHosts * sizeof(XHostAddress)) +
 	      (reply.nHosts * sizeof(XServerInterpretedAddress))));
 
-	if (! outbuf) {	
+	if (! outbuf) {
 	    _XEatData(dpy, (unsigned long) nbytes);
 	    UnlockDisplay(dpy);
 	    SyncHandle();
 	    return (XHostAddress *) NULL;
 	}
-	sip = (XServerInterpretedAddress *) 
+	sip = (XServerInterpretedAddress *)
 	 (((unsigned char  *) outbuf) + (reply.nHosts * sizeof(XHostAddress)));
-	bp = buf = ((unsigned char  *) sip) 
+	bp = buf = ((unsigned char  *) sip)
 	  + (reply.nHosts * sizeof(XServerInterpretedAddress));
 
 	_XRead (dpy, (char *) buf, nbytes);
 
 	for (i = 0; i < reply.nHosts; i++) {
 	    op->family = ((xHostEntry *) bp)->family;
-	    op->length =((xHostEntry *) bp)->length; 
+	    op->length =((xHostEntry *) bp)->length;
 	    if (op->family == FamilyServerInterpreted) {
 		char *tp = (char *) (bp + SIZEOF(xHostEntry));
 		char *vp = memchr(tp, 0, op->length);
-		
+
 		if (vp != NULL) {
 		    sip->type = tp;
 		    sip->typelength = vp - tp;
@@ -121,6 +144,5 @@ XHostAddress *XListHosts (
 }
 
 
-    
 
 

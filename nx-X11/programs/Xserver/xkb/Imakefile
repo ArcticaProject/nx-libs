@@ -72,19 +72,6 @@ AllTarget($(XF86_OBJS))
 
 SpecialCObjectRule(xkbInit,$(ICONFIGFILES),$(XKB_DEFINES))
 
-LinkSourceFile(maprules.c,$(XKBFILELIBSRC))
-LinkSourceFile(xkmread.c,$(XKBFILELIBSRC))
-LinkSourceFile(xkbtext.c,$(XKBFILELIBSRC))
-XCOMM avoid clash between XKBMisc.c and xkbmisc.c on NT
-LinkFile(xkbfmisc.c,$(XKBFILELIBSRC)/xkbmisc.c)
-LinkSourceFile(xkberrs.c,$(XKBFILELIBSRC))
-LinkSourceFile(xkbconfig.c,$(XKBFILELIBSRC))
-LinkSourceFile(xkbout.c,$(XKBFILELIBSRC))
-LinkSourceFile(XKBMisc.c,$(XLIBSRC))
-LinkSourceFile(XKBMAlloc.c,$(XLIBSRC))
-LinkSourceFile(XKBAlloc.c,$(XLIBSRC))
-LinkSourceFile(XKBGAlloc.c,$(XLIBSRC))
-
 LinkSourceFile(modinit.h,../Xext/extmod)
 
 #if BuildLibraries

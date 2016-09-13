@@ -38,13 +38,15 @@ from The Open Group.
 #include "Xlibint.h"
 
 /*
- * reformat a wire event into an XEvent structure of the right type.
+ * Reformat an XEvent structure to a wire event of the right type.
+ * Return True on success.  If the type is unrecognized, return what
+ * _XUnknownNativeEvent returns (i.e., False).
  */
 Status
 _XEventToWire(
-register Display *dpy,	/* pointer to display structure */
-register XEvent *re,	/* pointer to where event should be reformatted */
-register xEvent *event)	/* wire protocol event */
+    register Display *dpy,
+    register XEvent *re,        /* in: from */
+    register xEvent *event)     /* out: to */
 {
 	switch (event->u.u.type = re->type) {
 	      case KeyPress:
@@ -351,12 +353,12 @@ register xEvent *event)	/* wire protocol event */
 	      case ClientMessage:
 		{
 		   register int i;
-		   register XClientMessageEvent *ev 
+		   register XClientMessageEvent *ev
 		   			= (XClientMessageEvent *) re;
 		   event->u.clientMessage.window = ev->window;
 		   event->u.u.detail		 = ev->format;
 		   switch (ev->format) {
-			case 8:	
+			case 8:
 			  event->u.clientMessage.u.b.type   = ev->message_type;
 			  for (i = 0; i < 20; i++)
 			   event->u.clientMessage.u.b.bytes[i] = ev->data.b[i];
@@ -396,7 +398,7 @@ register xEvent *event)	/* wire protocol event */
 		    event->u.mappingNotify.count	= ev->count;
 		   }
 		break;
-		
+
 	      default:
 		return(_XUnknownNativeEvent(dpy, re, event));
 	}

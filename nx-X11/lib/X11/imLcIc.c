@@ -10,7 +10,7 @@ in supporting documentation, and that the name of FUJITSU LIMITED
 not be used in advertising or publicity pertaining to distribution
 of the software without specific, written prior permission.
 FUJITSU LIMITED makes no representations about the suitability of
-this software for any purpose. 
+this software for any purpose.
 It is provided "as is" without express or implied warranty.
 
 FUJITSU LIMITED DISCLAIM ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
@@ -21,7 +21,7 @@ USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
 
-  Author: Takashi Fujiwara     FUJITSU LIMITED 
+  Author: Takashi Fujiwara     FUJITSU LIMITED
                                fujiwara@a80.tech.yk.fujitsu.co.jp
 
 ******************************************************************/
@@ -85,7 +85,7 @@ _XimLocalSetFocus(
 
     if (ic->core.focus_window)
 	_XRegisterFilterByType(ic->core.im->core.display,
-			ic->core.focus_window, KeyPress, KeyPress,
+			ic->core.focus_window, KeyPress, KeyRelease,
 			_XimLocalFilter, (XPointer)ic);
     return;
 }
@@ -95,8 +95,11 @@ _XimLocalReset(
     XIC	 xic)
 {
     Xic	 ic = (Xic)xic;
-    ic->private.local.composed = (DefTree *)NULL;
-    ic->private.local.context  = ((Xim)ic->core.im)->private.local.top;
+    ic->private.local.composed       = 0;
+    ic->private.local.context        = ((Xim)ic->core.im)->private.local.top;
+    ic->private.local.brl_pressed    = 0;
+    ic->private.local.brl_committing = 0;
+    ic->private.local.brl_committed  = 0;
 }
 
 Private char *
@@ -147,8 +150,12 @@ _XimLocalCreateIC(
 
     ic->methods = &Local_ic_methods;
     ic->core.im = im;
-    ic->private.local.context   = ((Xim)im)->private.local.top;
-    ic->private.local.composed  = (DefTree *)NULL;
+    ic->private.local.base           = ((Xim)im)->private.local.base;
+    ic->private.local.context        = ((Xim)im)->private.local.top;
+    ic->private.local.composed       = 0;
+    ic->private.local.brl_pressed    = 0;
+    ic->private.local.brl_committing = 0;
+    ic->private.local.brl_committed  = 0;
 
     num = im->core.ic_num_resources;
     len = sizeof(XIMResource) * num;
