@@ -183,11 +183,7 @@ RRChangeOutputProperty(RROutputPtr output, Atom property, Atom type,
     if (mode == PropModeReplace || len > 0) {
         void *new_data = NULL, *old_data = NULL;
 
-#ifndef NXAGENT_SERVER
         new_value.data = xallocarray(total_len, size_in_bytes);
-#else                           /* !defined(NXAGENT_SERVER) */
-        new_value.data = malloc(total_len * size_in_bytes);
-#endif                          /* !defined(NXAGENT_SERVER) */
         if (!new_value.data && total_len && size_in_bytes) {
             if (add)
                 RRDestroyOutputProperty(prop);
@@ -356,11 +352,7 @@ RRConfigureOutputProperty(RROutputPtr output, Atom property,
         return BadMatch;
     }
 
-#ifndef NXAGENT_SERVER
     new_values = xallocarray(num_values, sizeof(INT32));
-#else                           /* !defined(NXAGENT_SERVER) */
-    new_values = malloc(num_values * sizeof(INT32));
-#endif                          /* !defined(NXAGENT_SERVER) */
     if (!new_values && num_values) {
         if (add)
             RRDestroyOutputProperty(prop);
@@ -410,11 +402,7 @@ ProcRRListOutputProperties(ClientPtr client)
     for (prop = output->properties; prop; prop = prop->next)
         numProps++;
     if (numProps)
-#ifndef NXAGENT_SERVER
         if (!(pAtoms = xallocarray(numProps, sizeof(Atom))))
-#else                           /* !defined(NXAGENT_SERVER) */
-        if (!(pAtoms = malloc(numProps * sizeof(Atom))))
-#endif                          /* !defined(NXAGENT_SERVER) */
             return BadAlloc;
 
     rep = (xRRListOutputPropertiesReply) {
@@ -461,11 +449,7 @@ ProcRRQueryOutputProperty(ClientPtr client)
         return BadName;
 
     if (prop->num_valid) {
-#ifndef NXAGENT_SERVER
         extra = xallocarray(prop->num_valid, sizeof(INT32));
-#else                           /* !defined(NXAGENT_SERVER) */
-        extra = malloc(prop->num_valid * sizeof(INT32));
-#endif                          /* !defined(NXAGENT_SERVER) */
         if (!extra)
             return BadAlloc;
     }

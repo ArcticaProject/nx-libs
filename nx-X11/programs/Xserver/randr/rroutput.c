@@ -139,11 +139,7 @@ RROutputSetClones(RROutputPtr output, RROutputPtr * clones, int numClones)
             return TRUE;
     }
     if (numClones) {
-#ifndef NXAGENT_SERVER
         newClones = xallocarray(numClones, sizeof(RROutputPtr));
-#else                           /* !defined(NXAGENT_SERVER) */
-        newClones = malloc(numClones * sizeof(RROutputPtr));
-#endif                          /* !defined(NXAGENT_SERVER) */
         if (!newClones)
             return FALSE;
     }
@@ -176,11 +172,7 @@ RROutputSetModes(RROutputPtr output,
     }
 
     if (numModes) {
-#ifndef NXAGENT_SERVER
         newModes = xallocarray(numModes, sizeof(RRModePtr));
-#else                           /* !defined(NXAGENT_SERVER) */
-        newModes = malloc(numModes * sizeof(RRModePtr));
-#endif                          /* !defined(NXAGENT_SERVER) */
         if (!newModes)
             return FALSE;
     }
@@ -279,11 +271,7 @@ RROutputSetCrtcs(RROutputPtr output, RRCrtcPtr * crtcs, int numCrtcs)
             return TRUE;
     }
     if (numCrtcs) {
-#ifndef NXAGENT_SERVER
         newCrtcs = xallocarray(numCrtcs, sizeof(RRCrtcPtr));
-#else                           /* !defined(NXAGENT_SERVER) */
-        newCrtcs = malloc(numCrtcs * sizeof(RRCrtcPtr));
-#endif                          /* !defined(NXAGENT_SERVER) */
         if (!newCrtcs)
             return FALSE;
     }

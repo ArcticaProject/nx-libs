@@ -204,11 +204,7 @@ RRCrtcNotify(RRCrtcPtr crtc,
                 newoutputs = reallocarray(crtc->outputs,
                                           numOutputs, sizeof(RROutputPtr));
             else
-#ifndef NXAGENT_SERVER
                 newoutputs = xallocarray(numOutputs, sizeof(RROutputPtr));
-#else                           /* !defined(NXAGENT_SERVER) */
-                newoutputs = malloc(numOutputs * sizeof(RROutputPtr));
-#endif                          /* !defined(NXAGENT_SERVER) */
             if (!newoutputs)
                 return FALSE;
         }
@@ -884,11 +880,7 @@ RRCrtcGammaSetSize(RRCrtcPtr crtc, int size)
     if (size == crtc->gammaSize)
         return TRUE;
     if (size) {
-#ifndef NXAGENT_SERVER
         gamma = xallocarray(size, 3 * sizeof(CARD16));
-#else                           /* !defined(NXAGENT_SERVER) */
-        gamma = malloc(size * 3 * sizeof(CARD16));
-#endif                          /* !defined(NXAGENT_SERVER) */
         if (!gamma)
             return FALSE;
     }
@@ -1131,11 +1123,7 @@ ProcRRSetCrtcConfig(ClientPtr client)
             return BadMatch;
     }
     if (numOutputs) {
-#ifndef NXAGENT_SERVER
         outputs = xallocarray(numOutputs, sizeof(RROutputPtr));
-#else                           /* !defined(NXAGENT_SERVER) */
-        outputs = malloc(numOutputs * sizeof(RROutputPtr));
-#endif                          /* !defined(NXAGENT_SERVER) */
         if (!outputs)
             return BadAlloc;
     }

@@ -354,11 +354,7 @@ RRConfigureProviderProperty(RRProviderPtr provider, Atom property,
         return BadMatch;
     }
 
-#ifndef NXAGENT_SERVER
     new_values = xallocarray(num_values, sizeof(INT32));
-#else                           /* !defined(NXAGENT_SERVER) */
-    new_values = malloc(num_values * sizeof(INT32));
-#endif                          /* !defined(NXAGENT_SERVER) */
 
     if (!new_values && num_values) {
         if (add)
@@ -409,11 +405,7 @@ ProcRRListProviderProperties(ClientPtr client)
     for (prop = provider->properties; prop; prop = prop->next)
         numProps++;
     if (numProps)
-#ifndef NXAGENT_SERVER
         if (!(pAtoms = xallocarray(numProps, sizeof(Atom))))
-#else                           /* !defined(NXAGENT_SERVER) */
-        if (!(pAtoms = malloc(numProps * sizeof(Atom))))
-#endif                          /* !defined(NXAGENT_SERVER) */
             return BadAlloc;
 
     rep = (xRRListProviderPropertiesReply) {
@@ -459,11 +451,7 @@ ProcRRQueryProviderProperty(ClientPtr client)
         return BadName;
 
     if (prop->num_valid) {
-#ifndef NXAGENT_SERVER
         extra = xallocarray(prop->num_valid, sizeof(INT32));
-#else                           /* !defined(NXAGENT_SERVER) */
-        extra = malloc(prop->num_valid * sizeof(INT32));
-#endif                          /* !defined(NXAGENT_SERVER) */
         if (!extra)
             return BadAlloc;
     }

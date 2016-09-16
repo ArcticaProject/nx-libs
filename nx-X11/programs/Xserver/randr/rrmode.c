@@ -212,11 +212,7 @@ RRModesForScreen(ScreenPtr pScreen, int *num_ret)
     RRModePtr *screen_modes;
     int num_screen_modes = 0;
 
-#ifndef NXAGENT_SERVER
     screen_modes = xallocarray((num_modes ? num_modes : 1), sizeof(RRModePtr));
-#else                           /* !defined(NXAGENT_SERVER) */
-    screen_modes = malloc((num_modes ? num_modes : 1) * sizeof(RRModePtr));
-#endif                          /* !defined(NXAGENT_SERVER) */
     if (!screen_modes)
         return NULL;
 
