@@ -68,7 +68,6 @@ extern Bool XineramaCreateGC(GCPtr pGC);
 
 extern int SProcPanoramiXDispatch(ClientPtr client);
 
-extern char *ConnectionInfo;
 extern int connBlockScreenStart;
 extern xConnSetupPrefix connSetupPrefix;
 

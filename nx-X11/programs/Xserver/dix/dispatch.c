@@ -128,7 +128,6 @@ int ProcInitialConnection();
 #define GETBIT(buf, i) (MASKWORD(buf, i) & BITMASK(i))
 
 extern xConnSetupPrefix connSetupPrefix;
-extern char *ConnectionInfo;
 
 extern int screenPrivateCount;
 
