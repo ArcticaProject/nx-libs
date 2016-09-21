@@ -193,7 +193,6 @@ NX_VERSION_CURRENT_STRING  = nxVersionString
 #if BuildXFree86ConfigTools && BuildLibrariesForConfigTools
 #define BuildLibraries		YES
 #define BuildXKBlib		YES
-#define BuildXKBfilelib		YES
 #endif
 
 /*

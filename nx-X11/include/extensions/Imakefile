@@ -41,6 +41,8 @@ DAMAGEHEADERS = damagewire.h damageproto.h
 XRESHEADERS = XResproto.h
 #endif
 
+XKBFILEHEADERS = XKMformat.h XKM.h XKBconfig.h XKBfile.h XKBrules.h
+
 EXTRAHEADERS = \
 	$(SCREENSAVERHEADERS) \
 	$(XINERAMAHEADERS) \
@@ -53,6 +55,7 @@ EXTRAHEADERS = \
 	$(COMPOSITEHEADERS) \
 	$(DAMAGEHEADERS) \
 	$(XRESHEADERS) \
+	$(XKBFILEHEADERS) \
 	$(NULL)
 
 HEADERS = \
