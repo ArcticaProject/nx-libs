@@ -72,12 +72,6 @@ AllTarget($(XF86_OBJS))
 
 SpecialCObjectRule(xkbInit,$(ICONFIGFILES),$(XKB_DEFINES))
 
-XCOMM avoid clash between XKBMisc.c and xkbmisc.c on NT
-LinkSourceFile(XKBMisc.c,$(XLIBSRC))
-LinkSourceFile(XKBMAlloc.c,$(XLIBSRC))
-LinkSourceFile(XKBAlloc.c,$(XLIBSRC))
-LinkSourceFile(XKBGAlloc.c,$(XLIBSRC))
-
 LinkSourceFile(modinit.h,../Xext/extmod)
 
 #if BuildLibraries
