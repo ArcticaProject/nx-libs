@@ -180,9 +180,6 @@ XORGRELSTRING = XorgManVersionString
 #ifndef BuildXKBlib
 #define BuildXKBlib		(BuildXKB && !BuildServersOnly)
 #endif
-#ifndef BuildXKBfilelib
-#define BuildXKBfilelib		(BuildXKB && !BuildServersOnly)
-#endif
 
 	/*
 	 * WARNING: Setting UseXKBInClients to YES cause incompatibilities
@@ -1235,56 +1232,11 @@ MOTIFINCLUDES = -I$(MOTIFINCDIR)
 #endif
 
 #if BuildXKBlib
-# ifndef SharedLibxkbfile
-#  define SharedLibxkbfile	HasSharedLibraries
-# endif
-# ifndef NormalLibxkbfile
-#  define NormalLibxkbfile	(!SharedLibxkbfile | ForceNormalLib)
-# endif
-# ifndef DebugLibxkbfile
-#  define DebugLibxkbfile	NO
-# endif
-# ifndef ProfileLibxkbfile
-#  define ProfileLibxkbfile	NO
-# endif
-#else
-# ifndef SharedLibxkbfile
-#  define SharedLibxkbfile	NO
-# endif
-# ifndef NormalLibxkbfile
-#  define NormalLibxkbfile	NO
-# endif
-# ifndef DebugLibxkbfile
-#  define DebugLibxkbfile	NO
-# endif
-# ifndef ProfileLibxkbfile
-#  define ProfileLibxkbfile	NO
-# endif
-#endif
-    XKBFILELIBSRC = $(LIBSRC)/xkbfile
-#if SharedLibxkbfile
-# ifndef SharedxkbfileRev
-#  define SharedxkbfileRev	1.0
-# endif
-SharedLibReferences(XKBFILE,NX_xkbfile,$(XKBFILESRC),SOXKBFILEREV, SharedxkbfileRev)
-#else
-ProjectUnsharedLibReferences(XKBFILE,NX_xkbfile,$(XKBFILELIBSRC),XBuildLibDir)
-#endif
-
-#if BuildXKBlib
 # ifndef XkbClientDepLibs
-#  if UseXKBInClients
-#   define XkbClientDepLibs	$(DEPXKBFILELIB)
-#  else
 #   define XkbClientDepLibs	/**/
-#  endif
 # endif
 # ifndef XkbClientLibs
-#  if UseXKBInClients
-#   define XkbClientLibs	$(XKBFILELIB)
-#  else
 #   define XkbClientLibs	/**/
-#  endif
 # endif
 
 #else /* !BuildXKBlib */

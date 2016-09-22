@@ -190,11 +190,6 @@ SpecialCObjectRule(oscolor,$(ICONFIGFILES),$(DBM_DEFINES))
 LinkSourceFile(snprintf.c,$(LIBSRC)/misc)
 #endif
 
-#if !HasStrlcat
-LinkSourceFile(strlcat.c,$(LIBSRC)/misc)
-LinkSourceFile(strlcpy.c,$(LIBSRC)/misc)
-#endif
-
 #if DoLoadableServer
 AllTarget(libcwrapper.o)
 ObjectFromSpecialSource(libcwrapper,$(XF86OSSRC)/shared/libc_wrapper,-DSELF_CONTAINED_WRAPPER)
