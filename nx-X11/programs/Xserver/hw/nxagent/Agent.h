@@ -112,13 +112,6 @@ typedef XID KeySym64;
 #define NX_TRANS_SOCKET
 #define GC XlibGC
 #include <nx-X11/Xlib.h>
-/*
-  <X11/extension/shape.h> includes <X11/Xutil.h> but we need
-  <nx-X11/Xutil.h>. As both use the same header guard we can first
-  include <nx-X11/Xutil.h> and be ok.
-*/
-#include <nx-X11/Xutil.h>
-
 #include <X11/extensions/shape.h>
 #undef GC
 
