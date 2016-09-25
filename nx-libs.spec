@@ -18,6 +18,7 @@ BuildRequires:  autoconf >= 2.13
 BuildRequires:  gcc-c++
 BuildRequires:  libjpeg-devel
 BuildRequires:  pkgconfig
+BuildRequires:  imake
 
 # suse_version 1315 is SLE-12
 %if 0%{?suse_version} != 1315 && 0%{?suse_version} >= 1230
