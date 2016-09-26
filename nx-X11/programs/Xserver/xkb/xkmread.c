@@ -56,7 +56,7 @@
 #include "inputstr.h"
 #include <nx-X11/extensions/XKBstr.h>
 #define	 XKBSRV_NEED_FILE_FUNCS
-#include <nx-X11/extensions/XKBsrv.h>
+#include <xkbsrv.h>
 #include <nx-X11/extensions/XKBgeom.h>
 
 Atom

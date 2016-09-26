@@ -33,7 +33,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <nx-X11/Xproto.h>
 #include "misc.h"
 #include "inputstr.h"
-#include <nx-X11/extensions/XKBsrv.h>
+#include <xkbsrv.h>
 #include <nx-X11/extensions/XKBstr.h>
 #include "extnsionst.h"
 #include "xkb.h"

@@ -47,7 +47,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "inputstr.h"
 #include <nx-X11/keysym.h>
 #define	XKBSRV_NEED_FILE_FUNCS
-#include <nx-X11/extensions/XKBsrv.h>
+#include <xkbsrv.h>
 
 #endif /* XKB_IN_SERVER */
 

@@ -11,7 +11,7 @@
 #include <nx-X11/X.h>
 #include "windowstr.h"
 #define XKBSRV_NEED_FILE_FUNCS
-#include <nx-X11/extensions/XKBsrv.h>
+#include <xkbsrv.h>
 
 #ifdef XF86DDXACTIONS
 #include "xf86.h"

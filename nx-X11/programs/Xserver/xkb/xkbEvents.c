@@ -35,7 +35,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <nx-X11/extensions/XI.h>
 #include "inputstr.h"
 #include "windowstr.h"
-#include <nx-X11/extensions/XKBsrv.h>
+#include <xkbsrv.h>
 #include "xkb.h"
 
 /***====================================================================***/

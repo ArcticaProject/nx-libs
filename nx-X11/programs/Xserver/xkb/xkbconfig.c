@@ -55,7 +55,7 @@
 #include "inputstr.h"
 #include "dix.h"
 #define	XKBSRV_NEED_FILE_FUNCS
-#include <nx-X11/extensions/XKBsrv.h>
+#include <xkbsrv.h>
 #endif
 
 #include <nx-X11/extensions/XKBconfig.h>

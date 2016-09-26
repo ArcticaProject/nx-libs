@@ -34,7 +34,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "misc.h"
 #include "inputstr.h"
 #define	XKBSRV_NEED_FILE_FUNCS
-#include <nx-X11/extensions/XKBsrv.h>
+#include <xkbsrv.h>
 #include "extnsionst.h"
 #include "xkb.h"
 #include "protocol-versions.h"
