@@ -49,7 +49,6 @@
 #include "inputstr.h"
 #include "dix.h"
 #include "xkbstr.h"
-#define XKBSRV_NEED_FILE_FUNCS
 #include <xkbsrv.h>
 
 

@@ -38,7 +38,6 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "misc.h"
 #include "inputstr.h"
 
-#define	XKBSRV_NEED_FILE_FUNCS
 #include <xkbsrv.h>
 #include "xkbgeom.h"
 #include "xkb.h"

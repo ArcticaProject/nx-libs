@@ -42,7 +42,6 @@
 #include "misc.h"
 #include "inputstr.h"
 #include "xkbstr.h"
-#define	 XKBSRV_NEED_FILE_FUNCS
 #include <xkbsrv.h>
 #include "xkbgeom.h"
 

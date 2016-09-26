@@ -1095,7 +1095,6 @@ extern void XkbSendNewKeyboardNotify(
 	xkbNewKeyboardNotify *	/* pNKN */
 );
 
-#ifdef XKBSRV_NEED_FILE_FUNCS
 
 #include <nx-X11/extensions/XKMformat.h>
 #include "xkbfile.h"
@@ -1177,7 +1176,6 @@ extern	int _XkbStrCaseCmp(
 	char *			/* str2 */
 );
 
-#endif /* XKBSRV_NEED_FILE_FUNCS */
 
 
 _XFUNCPROTOEND

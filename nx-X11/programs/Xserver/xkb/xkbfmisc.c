@@ -45,7 +45,6 @@
 #include "inputstr.h"
 #include "dix.h"
 #include "xkbstr.h"
-#define XKBSRV_NEED_FILE_FUNCS	1
 #include <xkbsrv.h>
 #include "xkbgeom.h"
 #include "xkb.h"
