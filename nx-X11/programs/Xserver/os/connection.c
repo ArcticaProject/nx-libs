@@ -70,15 +70,9 @@ SOFTWARE.
 #endif
 #include <nx-X11/X.h>
 #include <nx-X11/Xproto.h>
-#ifndef XSERV_t
-# define XSERV_t
-#endif
-#ifndef TRANS_SERVER
-# define TRANS_SERVER
-#endif
-#ifndef TRANS_REOPEN
-# define TRANS_REOPEN
-#endif
+#define XSERV_t
+#define TRANS_SERVER
+#define TRANS_REOPEN
 #include <nx-X11/Xtrans/Xtrans.h>
 #include <errno.h>
 #include <signal.h>

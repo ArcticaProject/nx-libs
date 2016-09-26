@@ -90,6 +90,9 @@ OR PERFORMANCE OF THIS SOFTWARE.
 #include <stdio.h>
 #include "misc.h"
 #include <nx-X11/X.h>
+#define XSERV_t
+#define TRANS_SERVER
+#define TRANS_REOPEN
 #include <nx-X11/Xtrans/Xtrans.h>
 #include "input.h"
 #include "dixfont.h"

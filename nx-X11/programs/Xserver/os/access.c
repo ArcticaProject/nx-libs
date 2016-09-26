@@ -64,6 +64,9 @@ SOFTWARE.
 
 #include <stdio.h>
 #include <stdlib.h>
+#define XSERV_t
+#define TRANS_SERVER
+#define TRANS_REOPEN
 #include <nx-X11/Xtrans/Xtrans.h>
 #include <nx-X11/Xauth.h>
 #include <nx-X11/X.h>

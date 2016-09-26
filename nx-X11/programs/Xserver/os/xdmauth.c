@@ -39,6 +39,9 @@ from The Open Group.
 
 #include <stdio.h>
 #include <nx-X11/X.h>
+#define XSERV_t
+#define TRANS_SERVER
+#define TRANS_REOPEN
 #include <nx-X11/Xtrans/Xtrans.h>
 #include "os.h"
 #include "osdep.h"

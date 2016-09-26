@@ -114,12 +114,12 @@ BOOTSTRAPCFLAGS =
            SRCS = WaitFor.c access.c connection.c io.c $(COLOR_SRCS) \
                   osinit.c utils.c log.c auth.c mitauth.c secauth.c \
                   $(XDMAUTHSRCS) $(RPCSRCS) xdmcp.c OtherSources \
-                  transport.c $(SNPRINTF_SRCS) $(STRLCAT_SRCS) \
+                  xstrans.c $(SNPRINTF_SRCS) $(STRLCAT_SRCS) \
 		  xprintf.c
            OBJS = WaitFor.o access.o connection.o io.o $(COLOR_OBJS) \
                   osinit.o utils.o log.o auth.o mitauth.o secauth.o \
                   $(XDMAUTHOBJS) $(RPCOBJS) xdmcp.o OtherObjects \
-                  transport.o $(SNPRINTF_OBJS) $(STRLCAT_OBJS) \
+                  xstrans.o $(SNPRINTF_OBJS) $(STRLCAT_OBJS) \
 		  xprintf.o
 
 #if UseMemLeak
@@ -135,7 +135,7 @@ BOOTSTRAPCFLAGS =
 #if HasPam && HasPamMisc
     PAM_DEFINES = -DUSE_PAM
 #endif
-        DEFINES = -DXSERV_t -DTRANS_SERVER $(CONNECTION_FLAGS) $(MEM_DEFINES) \
+        DEFINES = $(CONNECTION_FLAGS) $(MEM_DEFINES) \
 		  $(XDMAUTHDEFS) $(RPCDEFS) $(SIGNAL_DEFINES) $(OS_DEFINES) \
 		  $(RGB_DEFINES) $(GETPEER_DEFINES) \
 		  $(RANDOM_DEFINES) $(BUGMSG) $(XTRANS_FAILDEFINES) $(NX_DEFINES)
@@ -172,8 +172,6 @@ SpecialCObjectRule(auth,$(ICONFIGFILES),$(XDMCP_DEFINES))
 SpecialCObjectRule(xdmauth,$(ICONFIGFILES),$(XDMCP_DEFINES))
 SpecialCObjectRule(xdmcp,$(ICONFIGFILES),$(SOCK_DEFINES) $(XDMCP_DEFINES))
 SpecialCObjectRule(connection,$(ICONFIGFILES),$(SOCK_DEFINES) $(XDMCP_DEFINES))
-SpecialCObjectRule(transport,$(ICONFIGFILES),$(TRANS_INCLUDES) $(CONN_DEFINES) $(SOCK_DEFINES))
-LinkSourceFile(transport.c,$(TRANSCOMMSRC))
 SpecialCObjectRule(osinit,$(ICONFIGFILES),$(ADM_DEFINES))
 SpecialCObjectRule(WaitFor,$(ICONFIGFILES),$(EXT_DEFINES))
 SpecialCObjectRule(io,$(ICONFIGFILES),$(EXT_DEFINES))
