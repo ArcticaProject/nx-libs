@@ -57,7 +57,7 @@
 #include <xkbsrv.h>
 
 #include <nx-X11/extensions/XKBgeom.h>
-#include <nx-X11/extensions/XKBfile.h>
+#include "xkbfile.h"
 
 #endif
 

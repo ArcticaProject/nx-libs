@@ -1098,7 +1098,7 @@ extern void XkbSendNewKeyboardNotify(
 #ifdef XKBSRV_NEED_FILE_FUNCS
 
 #include <nx-X11/extensions/XKMformat.h>
-#include <nx-X11/extensions/XKBfile.h>
+#include "xkbfile.h"
 #include "xkbrules.h"
 
 #define	_XkbListKeymaps		0

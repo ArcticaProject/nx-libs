@@ -50,7 +50,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <xkbsrv.h>
 #include <nx-X11/extensions/XKBgeom.h>
 #include <nx-X11/extensions/XKMformat.h>
-#include <nx-X11/extensions/XKBfile.h>
+#include "xkbfile.h"
 #include "xkb.h"
 
 #define	CREATE_ATOM(s)	MakeAtom(s,sizeof(s)-1,1)
