@@ -35,19 +35,6 @@
 #include <nx-X11/Xos.h>
 #include <nx-X11/Xfuncs.h>
 
-#ifndef XKB_IN_SERVER
-
-#include <stdlib.h>
-#include <nx-X11/Xlib.h>
-#include <nx-X11/keysym.h>
-
-#include <nx-X11/XKBlib.h>
-
-#include "xkbgeom.h"
-#include "XKMformat.h"
-#include "XKBfileInt.h"
-
-#else
 
 #include <nx-X11/X.h>
 #include <nx-X11/Xproto.h>
@@ -67,7 +54,6 @@ XkbInternAtom(Display *dpy,char *str,Bool only_if_exists)
     return MakeAtom(str,strlen(str),!only_if_exists);
 }
 
-#endif
 
 #ifndef SEEK_SET
 #define	SEEK_SET 0

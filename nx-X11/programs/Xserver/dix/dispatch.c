@@ -109,7 +109,6 @@ int ProcInitialConnection();
 #include <nx-X11/extensions/security.h>
 #endif
 #ifdef XKB
-#define XKB_IN_SERVER
 #include "inputstr.h"
 #include <xkbsrv.h>
 #endif

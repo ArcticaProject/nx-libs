@@ -38,15 +38,6 @@
 
 #include <nx-X11/Xfuncs.h>
 
-#ifndef XKB_IN_SERVER
-
-#include <nx-X11/Xos.h>
-#include <nx-X11/Xlib.h>
-#include <nx-X11/keysym.h>
-#include <nx-X11/XKBlib.h>
-#include "XKBfileInt.h"
-
-#else
 
 #include <nx-X11/X.h>
 #include <nx-X11/keysym.h>
@@ -56,7 +47,6 @@
 #include "dix.h"
 #define	XKBSRV_NEED_FILE_FUNCS
 #include <xkbsrv.h>
-#endif
 
 #include <nx-X11/extensions/XKBconfig.h>
 
@@ -1339,14 +1329,8 @@ char *	msg;
 	default:
 	    msg= "unknown error on line %d"; break;
     }
-#ifndef XKB_IN_SERVER
-    fprintf(file,msg,line);
-    if (name)	fprintf(file," of %s\n",name);
-    else	fprintf(file,"\n");
-#else
     ErrorF(msg,line);
     if (name)	ErrorF(" of %s\n",name);
     else	ErrorF("\n");
-#endif
     return;
 }

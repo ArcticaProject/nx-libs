@@ -30,15 +30,6 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <config.h>
 #endif
 
-#ifndef XKB_IN_SERVER
-
-#include <stdio.h>
-#include "Xlibint.h"
-#include "XKBlibint.h"
-#include "xkbgeom.h"
-#include <nx-X11/extensions/XKBproto.h>
-
-#else 
 
 #include <stdio.h>
 #include <nx-X11/X.h>
@@ -48,7 +39,6 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <xkbsrv.h>
 #include "xkbgeom.h"
 
-#endif /* XKB_IN_SERVER */
 
 #ifdef X_NOT_POSIX
 #define Size_t unsigned int

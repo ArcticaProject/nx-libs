@@ -35,16 +35,6 @@
 #include <stdlib.h>
 #include <nx-X11/Xfuncs.h>
 
-#ifndef XKB_IN_SERVER
-
-#include <nx-X11/Xlib.h>
-#include <nx-X11/XKBlib.h>
-#include "xkbgeom.h"
-
-#include "XKMformat.h"
-#include "XKBfileInt.h"
-
-#else
 
 #include <nx-X11/X.h>
 #include <nx-X11/keysym.h>
@@ -59,7 +49,6 @@
 #include "xkbgeom.h"
 #include "xkbfile.h"
 
-#endif
 
 #define	VMOD_HIDE_VALUE	0
 #define	VMOD_SHOW_VALUE	1
