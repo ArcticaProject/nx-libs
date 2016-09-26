@@ -42,7 +42,7 @@
 #include <nx-X11/Xlib.h>
 #include <nx-X11/keysym.h>
 #include <nx-X11/XKBlib.h>
-#include <nx-X11/extensions/XKBgeom.h>
+#include "xkbgeom.h"
 #include "XKMformat.h"
 #include "XKBfileInt.h"
 
@@ -57,7 +57,7 @@
 #include "xkbstr.h"
 #define XKBSRV_NEED_FILE_FUNCS	1
 #include <xkbsrv.h>
-#include <nx-X11/extensions/XKBgeom.h>
+#include "xkbgeom.h"
 #include "xkb.h"
 
 #endif

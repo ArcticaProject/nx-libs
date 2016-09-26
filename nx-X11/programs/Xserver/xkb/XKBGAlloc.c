@@ -35,7 +35,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <stdio.h>
 #include "Xlibint.h"
 #include "XKBlibint.h"
-#include <nx-X11/extensions/XKBgeom.h>
+#include "xkbgeom.h"
 #include <nx-X11/extensions/XKBproto.h>
 
 #else 
@@ -46,7 +46,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "misc.h"
 #include "inputstr.h"
 #include <xkbsrv.h>
-#include <nx-X11/extensions/XKBgeom.h>
+#include "xkbgeom.h"
 
 #endif /* XKB_IN_SERVER */
 

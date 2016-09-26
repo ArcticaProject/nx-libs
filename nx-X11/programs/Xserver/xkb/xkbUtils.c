@@ -40,7 +40,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #define	XKBSRV_NEED_FILE_FUNCS
 #include <xkbsrv.h>
-#include <nx-X11/extensions/XKBgeom.h>
+#include "xkbgeom.h"
 #include "xkb.h"
 
 #ifdef MODE_SWITCH
