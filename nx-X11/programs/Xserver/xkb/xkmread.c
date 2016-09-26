@@ -54,7 +54,7 @@
 #include <nx-X11/keysym.h>
 #include "misc.h"
 #include "inputstr.h"
-#include <nx-X11/extensions/XKBstr.h>
+#include "xkbstr.h"
 #define	 XKBSRV_NEED_FILE_FUNCS
 #include <xkbsrv.h>
 #include <nx-X11/extensions/XKBgeom.h>
