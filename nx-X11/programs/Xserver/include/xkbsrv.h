@@ -1099,7 +1099,7 @@ extern void XkbSendNewKeyboardNotify(
 
 #include <nx-X11/extensions/XKMformat.h>
 #include <nx-X11/extensions/XKBfile.h>
-#include <nx-X11/extensions/XKBrules.h>
+#include "xkbrules.h"
 
 #define	_XkbListKeymaps		0
 #define	_XkbListKeycodes	1
