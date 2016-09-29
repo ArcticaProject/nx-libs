@@ -590,7 +590,6 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %defattr(-,root,root)
 %doc doc/nxproxy/README-VALGRIND
 %{_bindir}/nxproxy
-%{_mandir}/man1/nxproxy.1*
 %{_datadir}/man/man1/nxproxy.1*
 %dir %{_libdir}/nx/bin
 %{_libdir}/nx/bin/nxproxy
