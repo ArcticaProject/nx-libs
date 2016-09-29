@@ -85,8 +85,6 @@ is" without express or implied warranty.
 #include <nx/Shadow.h>
 #include "Utils.h"
 
-#include "X11/include/Xrandr_nxagent.h"
-
 #include <nx-X11/Xlib.h>
 #include "X11/include/Xinerama_nxagent.h"
 
