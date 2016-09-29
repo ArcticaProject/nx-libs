@@ -420,6 +420,9 @@ rm -r %{buildroot}%{_includedir}/nx-X11/extensions/sync.h
 rm -r %{buildroot}%{_includedir}/nx-X11/extensions/xtestext1.h
 rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 
+# remove X11 dir (we have nx-X11 with the same contents)
+rm -rf %{buildroot}%{_includedir}/X11
+
 %if 0%{?fdupes:1}
 %fdupes %buildroot/%_prefix
 %endif
@@ -590,7 +593,6 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %defattr(-,root,root)
 %doc doc/nxproxy/README-VALGRIND
 %{_bindir}/nxproxy
-%{_mandir}/man1/nxproxy.1*
 %{_datadir}/man/man1/nxproxy.1*
 %dir %{_libdir}/nx/bin
 %{_libdir}/nx/bin/nxproxy
