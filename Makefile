@@ -151,7 +151,7 @@ install-full:
 	$(INSTALL_SYMLINK) ../libNX_X11.so $(DESTDIR)$(USRLIBDIR)/nx-X11/libX11.so
 	$(INSTALL_SYMLINK) ../libNX_X11.so.6.2 $(DESTDIR)$(USRLIBDIR)/nx-X11/libX11.so.6.2
 
-	. replace.sh; set -x; find nx-X11/.build-exports/include/ -type d | \
+	. replace.sh; set -x; find nx-X11/.build-exports/include/{nx*,GL} -type d | \
 	    while read dirname; do \
 	        $(INSTALL_DIR) "$$(string_rep "$$dirname" nx-X11/.build-exports/include "$(DESTDIR)$(INCLUDEDIR)/")"; \
 	        $(INSTALL_FILE) $${dirname}/*.h \
