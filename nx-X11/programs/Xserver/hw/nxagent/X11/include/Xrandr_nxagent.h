@@ -56,9 +56,6 @@
 
 _XFUNCPROTOBEGIN
 
-typedef XID RRProvider;
-typedef XID RRMode;
-
 /*
  *  Events.
  */
@@ -80,25 +77,6 @@ typedef struct {
     int mwidth;
     int mheight;
 } XRRScreenChangeNotifyEvent;
-
-typedef unsigned long XRRModeFlags;
-
-typedef struct _XRRModeInfo {
-    RRMode		id;
-    unsigned int	width;
-    unsigned int	height;
-    unsigned long	dotClock;
-    unsigned int	hSyncStart;
-    unsigned int	hSyncEnd;
-    unsigned int	hTotal;
-    unsigned int	hSkew;
-    unsigned int	vSyncStart;
-    unsigned int	vSyncEnd;
-    unsigned int	vTotal;
-    char		*name;
-    unsigned int	nameLength;
-    XRRModeFlags	modeFlags;
-} XRRModeInfo;
 
 _XFUNCPROTOEND
 
