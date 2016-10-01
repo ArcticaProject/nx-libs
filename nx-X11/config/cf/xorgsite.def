@@ -112,7 +112,7 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
 /*
  * This allows the GCC warning flags to be set.  The default is shown here.
  *
-#define GccWarningOptions -Wall -Wpointer-arith -Wstrict-prototypes \
+#define GccWarningOptions -Wall -Wpedantic -Wpointer-arith -Wstrict-prototypes \
                           -Wmissing-prototypes -Wmissing-declarations \
                           -Wredundant-decls -Wnested-externs
  */
