@@ -110,7 +110,7 @@ int ProcInitialConnection();
 #endif
 #ifdef XKB
 #include "inputstr.h"
-#include <xkbsrv.h>
+#include "xkbsrv.h"
 #endif
 
 #define mskcnt ((MAXCLIENTS + 31) / 32)

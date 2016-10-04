@@ -42,7 +42,7 @@
 #include "misc.h"
 #include "inputstr.h"
 #include "xkbstr.h"
-#include <xkbsrv.h>
+#include "xkbsrv.h"
 #include "xkbgeom.h"
 
 Atom

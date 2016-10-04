@@ -62,7 +62,7 @@ SOFTWARE.
 #include "dixstruct.h"
 #include "site.h"
 #ifdef XKB
-#include <xkbsrv.h>
+#include "xkbsrv.h"
 #endif
 #ifdef XCSECURITY
 #define _SECURITY_SERVER
