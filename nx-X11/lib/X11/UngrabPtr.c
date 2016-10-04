@@ -30,9 +30,9 @@ in this Software without prior written authorization from The Open Group.
 #include "Xlibint.h"
 
 int
-XUngrabPointer(dpy, time)
-register Display *dpy;
-Time time;
+XUngrabPointer(
+    register Display *dpy,
+    Time time)
 {
     register xResourceReq *req;
 

@@ -30,12 +30,12 @@ in this Software without prior written authorization from The Open Group.
 #include "Xlibint.h"
 
 int
-XFillRectangles(dpy, d, gc, rectangles, n_rects)
-register Display *dpy;
-Drawable d;
-GC gc;
-XRectangle *rectangles;
-int n_rects;
+XFillRectangles(
+    register Display *dpy,
+    Drawable d,
+    GC gc,
+    XRectangle *rectangles,
+    int n_rects)
 {
     register xPolyFillRectangleReq *req;
     long len;
@@ -63,4 +63,3 @@ int n_rects;
     SyncHandle();
     return 1;
 }
-    

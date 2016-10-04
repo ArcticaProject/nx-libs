@@ -90,6 +90,13 @@ NX_XCOMPEXTCONFIGTARGET = $(NX_XCOMPEXTLIBDIR)/config.status
 SUBDIRS = xlibi18n
 #endif
 
+/*
+ FIXME: This is switchable upstream via configure option, we leave it
+ on for now as this is the upstream default.
+*/
+XCMS_DEFINES = -DXCMS
+XCB_DEFINES = -DUSE_XCB=0
+
 #include <Threads.tmpl>
 
 #ifndef MotifBC
@@ -170,7 +177,7 @@ EXTRA_LIBRARIES = /**/
 #elif HasGetresuid
   SETID_DEFINES = -DHASGETRESUID
 #endif
-    XLC_DEFINES = -DXLOCALEDIR=\"$(XLOCALEDIR)\"
+    XLC_DEFINES = -DXLOCALEDIR=\"$(XLOCALEDIR)\" -DXLOCALELIBDIR=\"$(XLOCALELIBDIR)\"
 #if (defined(FreeBSDArchitecture) && OSRelVersion < 500016) || \
 	defined(OpenBSDArchitecture)
 THRSTUBSRCS = UIThrStubs.c
@@ -187,7 +194,7 @@ XCURSOR_DEFINES = -DUSE_DYNAMIC_XCURSOR -DLIBXCURSOR=\"libXcursor.so.$(SOXCURSOR
         POSTLOCALELIBDEFINES = -DPOSTLOCALELIBDIR=\"$(POSTLOCALELIBDIR)\"
 #endif
         DEFINES = $(MALLOC_DEFINES) $(LIB_DEFINES) $(MISC_DEFINES)\
-			$(POSTLOCALELIBDEFINES) $(NX_INCLUDES) $(NX_DEFINES)
+			$(POSTLOCALELIBDEFINES) $(NX_INCLUDES) $(NX_DEFINES) ${XCMS_DEFINES} ${XCB_DEFINES}
    OPEN_DEFINES = -I$(EXTINCSRC) $(K5INCL) $(K5DEFS)
  DEPEND_DEFINES = $(OPEN_DEFINES) $(TRANS_INCLUDES) $(CONN_DEFINES) $(THREADS_DEFINES) DependDefines
        AUTHOBJS = AuDispose.o AuGetBest.o AuFileName.o AuRead.o

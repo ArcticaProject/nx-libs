@@ -35,12 +35,12 @@ from The Open Group.
 #include "Xatomtype.h"
 #include <nx-X11/Xatom.h>
 
-void XSetRGBColormaps (dpy, w, cmaps, count, property)
-    Display *dpy;
-    Window w;
-    XStandardColormap *cmaps;
-    int count;
-    Atom property;			/* XA_RGB_BEST_MAP, etc. */
+void XSetRGBColormaps (
+    Display *dpy,
+    Window w,
+    XStandardColormap *cmaps,
+    int count,
+    Atom property)			/* XA_RGB_BEST_MAP, etc. */
 {
     register int i;			/* iterator variable */
     register xPropStandardColormap *map;  /* tmp variable, data in prop */
@@ -48,7 +48,7 @@ void XSetRGBColormaps (dpy, w, cmaps, count, property)
     xPropStandardColormap *data, tmpdata;  /* scratch data */
     int mode = PropModeReplace;		/* for partial writes */
     Bool alloced_scratch_space;		/* do we need to free? */
-	
+
 
     if (count < 1) return;
 

@@ -26,7 +26,6 @@ other dealings in this Software without prior written authorization
 from The Open Group.
 
 */
-/* $XFree86$ */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -66,11 +65,11 @@ XGeometry (
 	dmask = XParseGeometry(def, &dx, &dy, &dwidth, &dheight);
 
 	/* set default values */
-	*x = (dmask & XNegative) ? 
-	    DisplayWidth(dpy, screen)  + dx - dwidth * fwidth - 
+	*x = (dmask & XNegative) ?
+	    DisplayWidth(dpy, screen)  + dx - dwidth * fwidth -
 	        2 * bwidth - xadd : dx;
-	*y = (dmask & YNegative) ? 
-	    DisplayHeight(dpy, screen) + dy - dheight * fheight - 
+	*y = (dmask & YNegative) ?
+	    DisplayHeight(dpy, screen) + dy - dheight * fheight -
 	        2 * bwidth - yadd : dy;
 	*width  = dwidth;
 	*height = dheight;
@@ -80,11 +79,11 @@ XGeometry (
 
 	if (pmask & XValue)
 	    *x = (pmask & XNegative) ?
-	      DisplayWidth(dpy, screen) + px - *width * fwidth - 
+	      DisplayWidth(dpy, screen) + px - *width * fwidth -
 		  2 * bwidth - xadd : px;
 	if (pmask & YValue)
 	    *y = (pmask & YNegative) ?
-	      DisplayHeight(dpy, screen) + py - *height * fheight - 
+	      DisplayHeight(dpy, screen) + py - *height * fheight -
 		  2 * bwidth - yadd : py;
 	return (pmask);
 }

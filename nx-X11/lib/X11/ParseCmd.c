@@ -28,13 +28,13 @@ Copyright 1987, 1988 by Digital Equipment Corporation, Maynard, Massachusetts.
 
                         All Rights Reserved
 
-Permission to use, copy, modify, and distribute this software and its 
-documentation for any purpose and without fee is hereby granted, 
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
 provided that the above copyright notice appear in all copies and that
-both that copyright notice and this permission notice appear in 
+both that copyright notice and this permission notice appear in
 supporting documentation, and that the name of Digital not be
 used in advertising or publicity pertaining to distribution of the
-software without specific, written prior permission.  
+software without specific, written prior permission.
 
 DIGITAL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
 ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
@@ -63,7 +63,7 @@ SOFTWARE.
 #include <stdio.h>
 
 
-static void _XReportParseError(XrmOptionDescRec *arg, char *msg)
+static void _XReportParseError(XrmOptionDescRec *arg, const char *msg)
 {
     (void) fprintf(stderr, "Error parsing argument \"%s\" (%s); %s\n",
 		   arg->option, arg->specifier, msg);
@@ -98,7 +98,7 @@ XrmParseCommand(
     XrmQPutStringResource(pdb, bindings, quarks, value_str);    \
     } /* PutCommandResource */
 
-    myargc = (*argc); 
+    myargc = (*argc);
     argend = argv + myargc;
     argsave = ++argv;
 
@@ -157,7 +157,7 @@ XrmParseCommand(
 		    --(*argc);
 		    PutCommandResource(options[i].value);
 		    break;
-			    
+
 		case XrmoptionIsArg:
 		    --(*argc);
 		    PutCommandResource(*argv);
@@ -175,7 +175,7 @@ XrmParseCommand(
 		    } else
 			(*argsave++) = (*argv);
 		    break;
-		
+
 		case XrmoptionResArg:
 		    if (myargc > 1) {
 			++argv; --myargc; --(*argc); --(*argc);
@@ -183,13 +183,13 @@ XrmParseCommand(
 		    } else
 			(*argsave++) = (*argv);
 		    break;
-		
+
 		case XrmoptionSkipArg:
 		    if (myargc > 1) {
 			--myargc;
 			(*argsave++) = (*argv++);
 		    }
-		    (*argsave++) = (*argv); 
+		    (*argsave++) = (*argv);
 		    break;
 
 		case XrmoptionSkipLine:
@@ -217,7 +217,7 @@ XrmParseCommand(
 		}
 	}
 	else
-	    (*argsave++) = (*argv);  /*compress arglist*/ 
+	    (*argsave++) = (*argv);  /*compress arglist*/
     }
 
     if (argsave < argend)

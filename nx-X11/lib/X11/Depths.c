@@ -33,10 +33,10 @@ in this Software without prior written authorization from The Open Group.
 /*
  * XListDepths - return info from connection setup
  */
-int *XListDepths (dpy, scrnum, countp)
-    Display *dpy;
-    int scrnum;
-    int *countp;
+int *XListDepths (
+    Display *dpy,
+    int scrnum,
+    int *countp)
 {
     Screen *scr;
     int count;
@@ -51,7 +51,7 @@ int *XListDepths (dpy, scrnum, countp)
 
 	depths = (int *) Xmalloc (count * sizeof(int));
 	if (!depths) return NULL;
-	for (i = 0, dp = scr->depths; i < count; i++, dp++) 
+	for (i = 0, dp = scr->depths; i < count; i++, dp++)
 	  depths[i] = dp->depth;
     } else {
 	/* a screen must have a depth */

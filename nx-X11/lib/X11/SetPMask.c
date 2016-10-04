@@ -30,17 +30,17 @@ in this Software without prior written authorization from The Open Group.
 #include "Xlibint.h"
 
 int
-XSetPlaneMask (dpy, gc, planemask)
-register Display *dpy;
-GC gc;
-unsigned long planemask; /* CARD32 */
+XSetPlaneMask (
+    register Display *dpy,
+    GC gc,
+    unsigned long planemask) /* CARD32 */
 {
     LockDisplay(dpy);
     if (gc->values.plane_mask != planemask) {
 	gc->values.plane_mask = planemask;
 	gc->dirty |= GCPlaneMask;
     }
-    UnlockDisplay(dpy);	
+    UnlockDisplay(dpy);
     SyncHandle();
     return 1;
 }

@@ -206,11 +206,13 @@ typedef struct {
 } Summary16;
 
 #include "lcUniConv/gb2312.h"
+#include "lcUniConv/gbk.h"
 #include "lcUniConv/jisx0208.h"
 #include "lcUniConv/jisx0212.h"
 #include "lcUniConv/ksc5601.h"
 #include "lcUniConv/big5.h"
 #include "lcUniConv/big5_emacs.h"
+#include "lcUniConv/big5hkscs.h"
 
 static Utf8ConvRec all_charsets[] = {
     /* The ISO10646-1/UTF-8 entry occurs twice, once at the beginning

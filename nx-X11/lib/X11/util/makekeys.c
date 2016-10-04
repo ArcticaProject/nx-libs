@@ -33,9 +33,6 @@ from The Open Group.
 #include <nx-X11/keysymdef.h>
 #include <stdio.h>
 #include <stdlib.h>
-#if defined(macII) && !defined(__STDC__)  /* stdlib.h fails to define these */
-char *malloc();
-#endif /* macII */
 
 typedef unsigned long Signature;
 
@@ -46,14 +43,14 @@ static struct info {
     KeySym	val;
 } info[KTNUM];
 
-#define MIN_REHASH 10
+#define MIN_REHASH 15
 #define MATCHES 10
 
-char tab[KTNUM];
-unsigned short offsets[KTNUM];
-unsigned short indexes[KTNUM];
-KeySym values[KTNUM];
-char buf[1024];
+static char tab[KTNUM];
+static unsigned short offsets[KTNUM];
+static unsigned short indexes[KTNUM];
+static KeySym values[KTNUM];
+static char buf[1024];
 
 int
 main(int argc, char *argv[])
@@ -100,12 +97,11 @@ main(int argc, char *argv[])
 		    key);
 	    continue;
 	}
-	name = malloc((unsigned)strlen(key)+1);
+	name = strdup(key);
 	if (!name) {
 	    fprintf(stderr, "makekeys: out of memory!\n");
 	    exit(1);
 	}
-	(void)strcpy(name, key);
 	info[ksnum].name = name;
 	ksnum++;
 	if (ksnum == KTNUM) {

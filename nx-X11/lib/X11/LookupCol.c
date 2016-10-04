@@ -46,6 +46,7 @@ XLookupColor (
 	XcmsCCC ccc;
 	XcmsColor cmsColor_exact;
 
+#ifdef XCMS
 	/*
 	 * Let's Attempt to use Xcms and i18n approach to Parse Color
 	 */
@@ -70,6 +71,7 @@ XLookupColor (
 		break;
 	    }
 	}
+#endif
 
 	/*
 	 * Xcms and i18n methods failed, so lets pass it to the server

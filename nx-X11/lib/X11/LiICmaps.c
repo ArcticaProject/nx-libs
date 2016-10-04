@@ -29,10 +29,10 @@ in this Software without prior written authorization from The Open Group.
 #endif
 #include "Xlibint.h"
 
-Colormap *XListInstalledColormaps(dpy, win, n)
-register Display *dpy;
-Window win;
-int *n;  /* RETURN */
+Colormap *XListInstalledColormaps(
+    register Display *dpy,
+    Window win,
+    int *n)  /* RETURN */
 {
     long nbytes;
     Colormap *cmaps;
@@ -62,7 +62,7 @@ int *n;  /* RETURN */
 	_XRead32 (dpy, (long *) cmaps, nbytes);
     }
     else cmaps = (Colormap *) NULL;
-    
+
     *n = rep.nColormaps;
     UnlockDisplay(dpy);
     SyncHandle();

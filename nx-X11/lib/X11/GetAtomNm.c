@@ -49,16 +49,16 @@ char *_XGetAtomName(
 		if ((name = (char *)Xmalloc(idx)))
 		    strcpy(name, EntryName(e));
 		return name;
-	    }		
+	    }
 	}
     }
     GetResReq(GetAtomName, atom, req);
     return (char *)NULL;
 }
 
-char *XGetAtomName(dpy, atom)
-    register Display *dpy;
-    Atom atom;
+char *XGetAtomName(
+    register Display *dpy,
+    Atom atom)
 {
     xGetAtomNameReply rep;
     char *name;
@@ -67,7 +67,7 @@ char *XGetAtomName(dpy, atom)
     if ((name = _XGetAtomName(dpy, atom))) {
 	UnlockDisplay(dpy);
 	return name;
-    }	
+    }
     if (_XReply(dpy, (xReply *)&rep, 0, xFalse) == 0) {
 	UnlockDisplay(dpy);
 	SyncHandle();
@@ -139,11 +139,11 @@ Bool _XGetAtomNameHandler(
 }
 
 Status
-XGetAtomNames (dpy, atoms, count, names_return)
-    Display *dpy;
-    Atom *atoms;
-    int count;
-    char **names_return;
+XGetAtomNames (
+    Display *dpy,
+    Atom *atoms,
+    int count,
+    char **names_return)
 {
     _XAsyncHandler async;
     _XGetAtomNameState async_state;
