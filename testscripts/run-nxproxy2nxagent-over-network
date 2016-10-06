@@ -32,13 +32,14 @@ NXAGENTBIN=nxagent
 ###
 ### Adapt to your needs: NXAGENT_HOST, NXPROXY_HOST
 ###
-### This script has to run on the NXAGENT_HOST on the NXPROXY_HOST you
-### have to execute code by copy+pasting command lines...
+### This script launches nxagent and has to be executed on the NXAGENT_HOST.
+### On the NXPROXY_HOST you will have to execute nxproxy by copy+pasting
+### some command lines...
 ###
 ### (Instructions for copy+pasting are given when this script has been launched).
 ###
-NXAGENT_HOST=127.0.0.1 # (e.g. 192.168.1.1, this scripts is launched on this machine)
-NXPROXY_HOST=127.0.0.1 # (e.g. 192.168.1.2, you want to connect nxproxy -> nxagent from this machine)
+NXAGENT_HOST=127.0.0.1 # (e.g. 192.168.1.1, this scripts is launched on the NXAGENT_HOST machine)
+NXPROXY_HOST=127.0.0.1 # (e.g. 192.168.1.2, you want to connect nxproxy -> nxagent from the NXPROXY_HOST machine)
 
 NX_PORT=9
 
@@ -137,8 +138,8 @@ echo
 echo Now... COPY+PASTE the below lines to your local system
 echo 
 echo "--------------8<---------"
-#echo NX_HOST=nx/nx,keybd=1,samba=1,cups=1,connect=$NXAGENT_HOST,cookie=$NX_COOKIE,errors=${NX_ROOT}/S-${NX_PORT}/session
 
+#NX_HOST=nx/nx,keybd=1,samba=1,cups=1,connect=$NXAGENT_HOST,cookie=$NX_COOKIE,errors=${NX_ROOT}/S-${NX_PORT}/session
 NX_HOST=nx/nx,keybd=1,samba=0,cups=0,connect=tcp:$NXAGENT_HOST:4009,cookie=$NX_COOKIE,errors=${NX_ROOT}/S-${NX_PORT}/session
 echo "NX_HOST=$NX_HOST"
 
