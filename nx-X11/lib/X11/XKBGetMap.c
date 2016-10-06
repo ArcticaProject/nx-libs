@@ -427,7 +427,7 @@ XkbServerMapPtr		srv;
 
     if ( rep->totalVModMapKeys>0 ) {
 	if (((int) rep->firstVModMapKey + rep->nVModMapKeys)
-	     > xkb->max_key_code + 1)
+	     > xkb->max_key_code)
 	    return BadLength;
 	if (((xkb->server==NULL)||(xkb->server->vmodmap==NULL))&&
 	    (XkbAllocServerMap(xkb,XkbVirtualModMapMask,0)!=Success)) {
