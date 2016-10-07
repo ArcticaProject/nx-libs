@@ -7255,7 +7255,7 @@ int ConnectToRemote(ChannelEndPoint &socketAddress)
       ESET(reason);
 
       #ifdef TEST
-      if (unixPath[0] != '\0' )
+      if (unixPath && unixPath[0] != '\0' )
       {
         *logofs << "Loop: Connection to Unix socket file '"
                 << unixPath << "' failed with error '"
