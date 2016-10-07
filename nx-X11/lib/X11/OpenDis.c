@@ -73,12 +73,6 @@ extern void *_X11TransSocketProxyConnInfo(XtransConnInfo);
 #endif
 
 #if !USE_XCB
-#ifdef X_NOT_POSIX
-#define Size_t unsigned int
-#else
-#define Size_t size_t
-#endif
-
 #define bignamelen (sizeof(XBigReqExtensionName) - 1)
 
 typedef struct {
@@ -457,8 +451,8 @@ fallback_success:
 		if (prefix.lengthReason > setuplength) {
 		    fprintf (stderr, "Xlib: Broken initial reply: length of reason > length of packet\r\n");
 		}else{
-		    (void) fwrite (u.failure, (Size_t)sizeof(char),
-			       (Size_t)prefix.lengthReason, stderr);
+		    (void) fwrite (u.failure, (size_t)sizeof(char),
+			       (size_t)prefix.lengthReason, stderr);
 		    (void) fwrite ("\r\n", sizeof(char), 2, stderr);
 		}
 
