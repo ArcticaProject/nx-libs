@@ -172,7 +172,7 @@ typedef void (*InitExtension)(void);
 #include <nx-X11/extensions/panoramiXproto.h>
 #endif
 #ifdef XF86BIGFONT
-#include <nx-X11/extensions/xf86bigfstr.h>
+#include <nx-X11/extensions/xf86bigfproto.h>
 #endif
 #ifdef RES
 #include <nx-X11/extensions/XResproto.h>

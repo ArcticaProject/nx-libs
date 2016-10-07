@@ -45,7 +45,7 @@ authorization from the X Consortium and the XFree86 Project.
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <nx-X11/extensions/xf86bigfstr.h>
+#include <nx-X11/extensions/xf86bigfproto.h>
 #endif
 
 #include "Xlcint.h"

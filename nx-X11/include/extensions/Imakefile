@@ -13,7 +13,7 @@ SCREENSAVERHEADERS = saver.h saverproto.h scrnsaver.h
 #endif
 
 #if BuildXF86BigfontExt
-XF86BIGFONTHEADERS = xf86bigfont.h xf86bigfstr.h
+XF86BIGFONTHEADERS = xf86bigfont.h xf86bigfproto.h
 #endif
 #if BuildXvExt
 XVHEADERS = Xv.h Xvlib.h Xvproto.h

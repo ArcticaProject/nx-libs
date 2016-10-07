@@ -562,7 +562,7 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %{_includedir}/nx-X11/extensions/syncstr.h
 %{_includedir}/nx-X11/extensions/xcmiscstr.h
 %{_includedir}/nx-X11/extensions/xf86bigfont.h
-%{_includedir}/nx-X11/extensions/xf86bigfstr.h
+%{_includedir}/nx-X11/extensions/xf86bigfproto.h
 %{_includedir}/nx-X11/extensions/xfixesproto.h
 %{_includedir}/nx-X11/extensions/xfixeswire.h
 %{_includedir}/nx-X11/extensions/xtestconst.h
