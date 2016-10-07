@@ -24,7 +24,9 @@ in this Software without prior written authorization from The Open Group.
 
 */
 
+#if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST)
 #include <stdio.h>
+#endif
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
