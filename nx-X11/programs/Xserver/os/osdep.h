@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/os/osdep.h,v 3.17 2002/05/31 18:46:06 dawes Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $Xorg: osdep.h,v 1.5 2001/02/09 02:05:23 xorgcvs Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -145,16 +143,6 @@ typedef struct _connectionOutput {
     int count;
 } ConnectionOutput, *ConnectionOutputPtr;
 
-#ifdef K5AUTH
-typedef struct _k5_state {
-    int		stageno;	/* current stage of auth protocol */
-    void	*srvcreds;	/* server credentials */
-    void	*srvname;	/* server principal name */
-    void	*ktname;	/* key table: principal-key pairs */
-    void	*skey;		/* session key */
-}           k5_state;
-#endif
-
 struct _osComm;
 
 #define AuthInitArgs void
@@ -190,9 +178,6 @@ typedef struct _osComm {
     ConnectionInputPtr input;
     ConnectionOutputPtr output;
     XID	auth_id;		/* authorization id */
-#ifdef K5AUTH
-    k5_state	authstate;	/* state of setup auth conversation */
-#endif
     CARD32 conn_time;		/* timestamp if not established, else 0  */
     struct _XtransConnInfo *trans_conn; /* transport connection object */
 } OsCommRec, *OsCommPtr;
@@ -200,7 +185,7 @@ typedef struct _osComm {
 extern int FlushClient(
     ClientPtr /*who*/,
     OsCommPtr /*oc*/,
-    char* /*extraBuf*/,
+    const void * /*__extraBuf*/,
     int /*extraCount*/
 );
 
@@ -281,16 +266,6 @@ extern int  SecureRPCAdd      (AuthAddCArgs);
 extern int  SecureRPCFromID   (AuthFromIDArgs);
 extern int  SecureRPCRemove   (AuthRemCArgs);
 extern int  SecureRPCReset    (AuthRstCArgs);
-#endif
-
-/* in k5auth.c */
-#ifdef K5AUTH
-extern XID  K5Check           (AuthCheckArgs);
-extern XID  K5ToID            (AuthToIDArgs);
-extern int  K5Add             (AuthAddCArgs);
-extern int  K5FromID          (AuthFromIDArgs);
-extern int  K5Remove          (AuthRemCArgs);
-extern int  K5Reset           (AuthRstCArgs);
 #endif
 
 /* in secauth.c */

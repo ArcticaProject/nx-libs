@@ -44,7 +44,6 @@
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-/* $XFree86: xc/programs/Xserver/mi/mibank.c,v 1.15 2003/11/10 18:39:16 tsi Exp $ */
 
 /*
  * This thing originated from an idea of Edwin Goei and his bank switching
@@ -1709,7 +1708,7 @@ miBankCloseScreen(
         if (pScreenPriv->pBanks[i])
             RegionDestroy(pScreenPriv->pBanks[i]);
 
-    Xfree(pScreenPriv->pBanks);
+    free(pScreenPriv->pBanks);
 
     SCREEN_UNWRAP(CreateScreenResources);
     SCREEN_UNWRAP(ModifyPixmapHeader);
@@ -1722,7 +1721,7 @@ miBankCloseScreen(
     SCREEN_UNWRAP(CopyWindow);
     SCREEN_UNWRAP(BackingStoreFuncs);
 
-    Xfree(pScreenPriv);
+    free(pScreenPriv);
     return (*pScreen->CloseScreen)(nIndex, pScreen);
 }
 
@@ -2243,13 +2242,13 @@ miInitializeBanking(
             (sizeof(miBankGCRec) - sizeof(RegionPtr))))
         return FALSE;
 
-    if (!(pScreenPriv = (miBankScreenPtr)Xcalloc(sizeof(miBankScreenRec))))
+    if (!(pScreenPriv = (miBankScreenPtr)calloc(1, sizeof(miBankScreenRec))))
         return FALSE;
 
     if (!(pScreenPriv->pBanks =                 /* Allocate and clear */
-        (RegionPtr *)Xcalloc(nBanks * sizeof(RegionPtr))))
+        (RegionPtr *)calloc(1, nBanks * sizeof(RegionPtr))))
     {
-        Xfree(pScreenPriv);
+        free(pScreenPriv);
         return FALSE;
     }
 
@@ -2360,8 +2359,8 @@ miInitializeBanking(
             if (pScreenPriv->pBanks[i])
                 RegionDestroy(pScreenPriv->pBanks[i]);
 
-        Xfree(pScreenPriv->pBanks);
-        Xfree(pScreenPriv);
+        free(pScreenPriv->pBanks);
+        free(pScreenPriv);
 
         return FALSE;
     }

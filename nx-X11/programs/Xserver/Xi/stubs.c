@@ -1,4 +1,3 @@
-/* $Xorg: stubs.c,v 1.4 2001/02/09 02:04:35 xorgcvs Exp $ */
 
 /************************************************************
 
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/Xi/stubs.c,v 3.4 2001/12/14 19:58:59 dawes Exp $ */
 
 /*
  * stubs.c -- stub routines for the X server side of the XINPUT
@@ -57,7 +55,6 @@ SOFTWARE.
  * Xnest could do the same thing.
  */
 
-#define	 NEED_EVENTS
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif

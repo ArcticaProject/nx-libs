@@ -1,4 +1,3 @@
-/* $Xorg: ReconfWM.c,v 1.4 2001/02/09 02:03:35 xorgcvs Exp $ */
 /*
 
 Copyright 1986, 1998  The Open Group
@@ -27,8 +26,6 @@ from The Open Group.
 
 */
 
-#define NEED_EVENTS
-#define NEED_REPLIES
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif

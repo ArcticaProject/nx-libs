@@ -1,22 +1,28 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
+/* are copyright of the aforementioned persons and companies.             */
 /*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
 /*                                                                        */
 /* All rights reserved.                                                   */
 /*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
+/*                                                                        */
 /**************************************************************************/
 
-/* $XdotOrg: xc/programs/Xserver/mi/miexpose.c,v 1.6 2005/07/03 08:53:51 daniels Exp $ */
-/* $XFree86: xc/programs/Xserver/mi/miexpose.c,v 3.9tsi Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -91,50 +97,10 @@ Equipment Corporation.
 
 ******************************************************************/
 
-/* $Xorg: miexpose.c,v 1.4 2001/02/09 02:05:20 xorgcvs Exp $ */
-
-#ifdef HAVE_DIX_CONFIG_H
-#include <dix-config.h>
-#endif
-
-#include <nx-X11/X.h>
-#define NEED_EVENTS
-#include <nx-X11/Xproto.h>
-#include <nx-X11/Xprotostr.h>
-
-#include "misc.h"
-#include "regionstr.h"
-#include "scrnintstr.h"
-#include "gcstruct.h"
-#include "windowstr.h"
-#include "pixmap.h"
-#include "input.h"
-
-#include "dixstruct.h"
-#include "mi.h"
-#include <nx-X11/Xmd.h>
-
-#include "globals.h"
-
-#ifdef PANORAMIX
-#include "panoramiX.h"
-#include "panoramiXsrv.h"
-#endif
-
-/*
-    machine-independent graphics exposure code.  any device that uses
-the region package can call this.
-*/
-
-#ifdef NXAGENT_SERVER
 
 #include "Windows.h"
 
-#endif
-
-#ifndef RECTLIMIT
-#define RECTLIMIT 25		/* pick a number, any number > 8 */
-#endif
+#include "../../mi/miexpose.c"
 
 /* miHandleExposures 
     generate a region for exposures for areas that were copied from obscured or
@@ -181,8 +147,6 @@ miHandleExposures(pSrcDrawable, pDstDrawable,
     BoxRec expBox;
     Bool extents;
 
-#ifdef NXAGENT_SERVER
-
     /*
      * Set the elements reported by the compiler
      * as uninitialized.
@@ -192,8 +156,6 @@ miHandleExposures(pSrcDrawable, pDstDrawable,
     expBox.y1 = 0;
     expBox.x2 = 0;
     expBox.y2 = 0;
-
-#endif
 
     /* This prevents warning about pscr not being used. */
     pGC->pScreen = pscr = pGC->pScreen;
@@ -414,133 +376,14 @@ miHandleExposures(pSrcDrawable, pDstDrawable,
     }
 }
 
-/* send GraphicsExpose events, or a NoExpose event, based on the region */
-
-void
-miSendGraphicsExpose (client, pRgn, drawable, major, minor)
-    ClientPtr	client;
-    RegionPtr	pRgn;
-    XID		drawable;
-    int	major;
-    int	minor;
-{
-    if (pRgn && !RegionNil(pRgn))
-    {
-        xEvent *pEvent;
-	register xEvent *pe;
-	register BoxPtr pBox;
-	register int i;
-	int numRects;
-
-	numRects = RegionNumRects(pRgn);
-	pBox = RegionRects(pRgn);
-	if(!(pEvent = (xEvent *)ALLOCATE_LOCAL(numRects * sizeof(xEvent))))
-		return;
-	pe = pEvent;
-
-	for (i=1; i<=numRects; i++, pe++, pBox++)
-	{
-	    pe->u.u.type = GraphicsExpose;
-	    pe->u.graphicsExposure.drawable = drawable;
-	    pe->u.graphicsExposure.x = pBox->x1;
-	    pe->u.graphicsExposure.y = pBox->y1;
-	    pe->u.graphicsExposure.width = pBox->x2 - pBox->x1;
-	    pe->u.graphicsExposure.height = pBox->y2 - pBox->y1;
-	    pe->u.graphicsExposure.count = numRects - i;
-	    pe->u.graphicsExposure.majorEvent = major;
-	    pe->u.graphicsExposure.minorEvent = minor;
-	}
-	TryClientEvents(client, pEvent, numRects,
-			    (Mask)0, NoEventMask, NullGrab);
-	DEALLOCATE_LOCAL(pEvent);
-    }
-    else
-    {
-        xEvent event;
-	memset(&event, 0, sizeof(xEvent));
-	event.u.u.type = NoExpose;
-	event.u.noExposure.drawable = drawable;
-	event.u.noExposure.majorEvent = major;
-	event.u.noExposure.minorEvent = minor;
-	TryClientEvents(client, &event, 1,
-	    (Mask)0, NoEventMask, NullGrab);
-    }
-}
-
-
-void
-miSendExposures(pWin, pRgn, dx, dy)
-    WindowPtr pWin;
-    RegionPtr pRgn;
-    register int dx, dy;
-{
-    register BoxPtr pBox;
-    int numRects;
-    register xEvent *pEvent, *pe;
-    register int i;
-
-    pBox = RegionRects(pRgn);
-    numRects = RegionNumRects(pRgn);
-    if(!(pEvent = (xEvent *) ALLOCATE_LOCAL(numRects * sizeof(xEvent))))
-	return;
-    memset(pEvent, 0, numRects * sizeof(xEvent));
-    for (i=numRects, pe = pEvent; --i >= 0; pe++, pBox++)
-    {
-	pe->u.u.type = Expose;
-	pe->u.expose.window = pWin->drawable.id;
-	pe->u.expose.x = pBox->x1 - dx;
-	pe->u.expose.y = pBox->y1 - dy;
-	pe->u.expose.width = pBox->x2 - pBox->x1;
-	pe->u.expose.height = pBox->y2 - pBox->y1;
-	pe->u.expose.count = i;
-    }
-
-#ifdef PANORAMIX
-    if(!noPanoramiXExtension) {
-	int scrnum = pWin->drawable.pScreen->myNum;
-	int x = 0, y = 0;
-	XID realWin = 0;
-
-	if(!pWin->parent) {
-	    x = panoramiXdataPtr[scrnum].x;
-	    y = panoramiXdataPtr[scrnum].y;
-	    pWin = screenInfo.screens[0]->root;
-	    realWin = pWin->drawable.id;
-	} else if (scrnum) {
-	    PanoramiXRes *win;
-	    win = PanoramiXFindIDByScrnum(XRT_WINDOW, 
-			pWin->drawable.id, scrnum);
-	    if(!win) {
-		DEALLOCATE_LOCAL(pEvent);
-		return;
-	    }
-	    realWin = win->info[0].id;
-	    pWin = LookupIDByType(realWin, RT_WINDOW);
-	}
-	if(x || y || scrnum)
-	  for (i = 0; i < numRects; i++) {
-	      pEvent[i].u.expose.window = realWin;
-	      pEvent[i].u.expose.x += x;
-	      pEvent[i].u.expose.y += y;
-	  }
-    }
-#endif
-
-    DeliverEvents(pWin, pEvent, numRects, NullWindow);
-
-    DEALLOCATE_LOCAL(pEvent);
-}
-
 void 
 miWindowExposures(pWin, prgn, other_exposed)
     WindowPtr pWin;
     register RegionPtr prgn, other_exposed;
 {
-#ifdef NXAGENT_SERVER
 
     int total;
 
-#endif
     RegionPtr   exposures = prgn;
     if (pWin->backStorage && prgn)
 	/*
@@ -576,7 +419,6 @@ miWindowExposures(pWin, prgn, other_exposed)
 	    }
 	    exposures = other_exposed;
 	}
-#ifdef NXAGENT_SERVER
 
         /*
          * If the number of rectangles is greater
@@ -587,9 +429,6 @@ miWindowExposures(pWin, prgn, other_exposed)
 
         if (clientInterested && exposures && (total > RECTLIMIT ||
                 (total > 4 && nxagentExtentsPredicate(total) == 1)))
-#else
-	if (clientInterested && exposures && (RegionNumRects(exposures) > RECTLIMIT))
-#endif
 	{
 	    /*
 	     * If we have LOTS of rectangles, we decide to take the extents
@@ -638,54 +477,6 @@ miWindowExposures(pWin, prgn, other_exposed)
 	RegionDestroy(exposures);
 }
 
-
-/*
-    this code is highly unlikely.  it is not haile selassie.
-
-    there is some hair here.  we can't just use the window's
-clip region as it is, because if we are painting the border,
-the border is not in the client area and so we will be excluded
-when we validate the GC, and if we are painting a parent-relative
-background, the area we want to paint is in some other window.
-since we trust the code calling us to tell us to paint only areas
-that are really ours, we will temporarily give the window a
-clipList the size of the whole screen and an origin at (0,0).
-this more or less assumes that ddX code will do translation
-based on the window's absolute position, and that ValidateGC will
-look at clipList, and that no other fields from the
-window will be used.  it's not possible to just draw
-in the root because it may be a different depth.
-
-to get the tile to align correctly we set the GC's tile origin to
-be the (x,y) of the window's upper left corner, after which we
-get the right bits when drawing into the root.
-
-because the clip_mask is being set to None, we may call DoChangeGC with
-fPointer set true, thus we no longer need to install the background or
-border tile in the resource table.
-*/
-
-static RESTYPE ResType = 0;
-static int numGCs = 0;
-static GCPtr	screenContext[MAXSCREENS];
-
-/*ARGSUSED*/
-static int
-tossGC (
-    void * value,
-    XID id)
-{
-    GCPtr pGC = (GCPtr)value;
-    screenContext[pGC->pScreen->myNum] = (GCPtr)NULL;
-    FreeGC (pGC, id);
-    numGCs--;
-    if (!numGCs)
-	ResType = 0;
-
-    return 0;
-}
-
-
 void
 miPaintWindow(pWin, prgn, what)
 register WindowPtr pWin;
@@ -722,8 +513,6 @@ int what;
     register xRectangle *prect;
     int numRects;
 
-#ifdef NXAGENT_SERVER
-
     /*
      * Set the elements reported by the compiler
      * as uninitialized.
@@ -738,8 +527,6 @@ int what;
 
     oldCorner.x = 0;
     oldCorner.y = 0;
-
-#endif
 
     gcmask = 0;
 
@@ -953,28 +740,4 @@ int what;
 	}
 	FreeScratchGC(pGC);
     }
-}
-
-
-/* MICLEARDRAWABLE -- sets the entire drawable to the background color of
- * the GC.  Useful when we have a scratch drawable and need to initialize 
- * it. */
-void
-miClearDrawable(pDraw, pGC)
-    DrawablePtr	pDraw;
-    GCPtr	pGC;
-{
-    XID fg = pGC->fgPixel;
-    XID bg = pGC->bgPixel;
-    xRectangle rect;
-
-    rect.x = 0;
-    rect.y = 0;
-    rect.width = pDraw->width;
-    rect.height = pDraw->height;
-    DoChangeGC(pGC, GCForeground, &bg, 0);
-    ValidateGC(pDraw, pGC);
-    (*pGC->ops->PolyFillRect)(pDraw, pGC, 1, &rect);
-    DoChangeGC(pGC, GCForeground, &fg, 0);
-    ValidateGC(pDraw, pGC);
 }

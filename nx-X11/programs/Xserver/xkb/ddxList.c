@@ -1,4 +1,3 @@
-/* $Xorg: ddxList.c,v 1.3 2000/08/17 19:53:46 cpqbld Exp $ */
 /************************************************************
 Copyright (c) 1995 by Silicon Graphics Computer Systems, Inc.
 
@@ -24,7 +23,6 @@ OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION  WITH
 THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/xkb/ddxList.c,v 3.8 2003/07/16 01:39:05 dawes Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -32,7 +30,6 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #include <stdio.h>
 #include <ctype.h>
-#define	NEED_EVENTS 1
 #include <nx-X11/X.h>
 #include <nx-X11/Xos.h>
 #include <nx-X11/Xproto.h>
@@ -118,9 +115,8 @@ char *		tmp;
     wire16[1]= slen;
     memcpy(wire8,str,slen);
     if (client->swapped) {
-	register int n;
-	swaps(&wire16[0],n);
-	swaps(&wire16[1],n);
+	swaps(&wire16[0]);
+	swaps(&wire16[1]);
     }
     list->nPool+= wlen;
     list->nFound[what]++;
@@ -169,7 +165,7 @@ char	tmpname[PATH_MAX];
 	if ((list->pattern[what][0]=='*')&&(list->pattern[what][1]=='\0')) {
 	    buf = Xprintf("%s/%s.dir",XkbBaseDirectory,componentDirs[what]);
 	    in= fopen(buf,"r");
-	    xfree (buf);
+	    free (buf);
 	    buf = NULL;
 	}
 	if (!in) {
@@ -186,7 +182,7 @@ char	tmpname[PATH_MAX];
 	if ((list->pattern[what][0]=='*')&&(list->pattern[what][1]=='\0')) {
 	    buf = Xprintf("%s.dir",componentDirs[what]);
 	    in= fopen(buf,"r");
-	    xfree (buf);
+	    free (buf);
 	    buf = NULL;
 	}
 	if (!in) {
@@ -217,7 +213,7 @@ char	tmpname[PATH_MAX];
     if (!in)
     {
         if (buf != NULL)
-	    xfree (buf);
+	    free (buf);
 #ifdef WIN32
 	unlink(tmpname);
 #endif
@@ -277,7 +273,7 @@ char	tmpname[PATH_MAX];
     unlink(tmpname);
 #endif
     if (buf != NULL)
-        xfree (buf);
+        free (buf);
     return status;
 }
 

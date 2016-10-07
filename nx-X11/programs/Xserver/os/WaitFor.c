@@ -1,4 +1,28 @@
-/* $XFree86: xc/programs/Xserver/os/WaitFor.c,v 3.42 2003/10/16 01:33:35 dawes Exp $ */
+/**************************************************************************/
+/*                                                                        */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
+/*                                                                        */
+/* nx-X11, NX protocol compression and NX extensions to this software     */
+/* are copyright of the aforementioned persons and companies.             */
+/*                                                                        */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
+/*                                                                        */
+/* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
+/*                                                                        */
+/**************************************************************************/
+
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -45,25 +69,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-
-/* $Xorg: WaitFor.c,v 1.4 2001/02/09 02:05:22 xorgcvs Exp $ */
-
-/**************************************************************************/
-/*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
-/*                                                                        */
-/* NX-X11, NX protocol compression and NX extensions to this software     */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
-/*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
-/*                                                                        */
-/* All rights reserved.                                                   */
-/*                                                                        */
-/**************************************************************************/
 
 /*****************************************************************
  * OS Dependent input routines:
@@ -650,7 +655,7 @@ TimerSet(OsTimerPtr timer, int flags, CARD32 millis,
 
     if (!timer)
     {
-	timer = (OsTimerPtr)xalloc(sizeof(struct _OsTimerRec));
+	timer = (OsTimerPtr)malloc(sizeof(struct _OsTimerRec));
 	if (!timer)
 	    return NULL;
     }
@@ -730,7 +735,7 @@ TimerFree(OsTimerPtr timer)
     if (!timer)
 	return;
     TimerCancel(timer);
-    xfree(timer);
+    free(timer);
 }
 
 void
@@ -750,7 +755,7 @@ TimerInit(void)
     while ((timer = timers))
     {
 	timers = timer->next;
-	xfree(timer);
+	free(timer);
     }
 }
 

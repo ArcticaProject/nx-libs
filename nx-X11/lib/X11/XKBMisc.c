@@ -1,4 +1,3 @@
-/* $Xorg: XKBMisc.c,v 1.4 2000/08/17 19:45:02 cpqbld Exp $ */
 /************************************************************
 Copyright (c) 1993 by Silicon Graphics Computer Systems, Inc.
 
@@ -24,7 +23,6 @@ OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION  WITH
 THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/lib/X11/XKBMisc.c,v 3.5 2001/10/28 03:32:33 tsi Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -35,8 +33,6 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #ifndef XKB_IN_SERVER
 
 #include <stdio.h>
-#define NEED_REPLIES
-#define NEED_EVENTS
 #include "Xlibint.h"
 #include <nx-X11/extensions/XKBproto.h>
 #include <nx-X11/keysym.h>
@@ -46,8 +42,6 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #include <stdio.h>
 #include <nx-X11/X.h>
-#define	NEED_EVENTS
-#define	NEED_REPLIES
 #include <nx-X11/Xproto.h>
 #include "misc.h"
 #include "inputstr.h"
@@ -666,7 +660,7 @@ register int	i;
 int		width,nOldGroups,oldWidth,newTypes[XkbNumKbdGroups];
 
     if ((!xkb) || (!XkbKeycodeInRange(xkb,key)) || (!xkb->map) ||
-	(!xkb->map->types)||(!newTypes)||((groups&XkbAllGroupsMask)==0)||
+	(!xkb->map->types)||((groups&XkbAllGroupsMask)==0)||
 	(nGroups>XkbNumKbdGroups)) {
 	return BadMatch;
     }
@@ -834,7 +828,7 @@ XkbUpdateKeyTypeVirtualMods(	XkbDescPtr	xkb,
 				XkbChangesPtr 	changes)
 {
 register unsigned int	i;
-unsigned int		mask;
+unsigned int		mask = 0;
 
     XkbVirtualModsToReal(xkb,type->mods.vmods,&mask);
     type->mods.mask= type->mods.real_mods|mask;
@@ -888,7 +882,7 @@ unsigned int	checkState = 0;
 	XkbUpdateKeyTypeVirtualMods(xkb,&xkb->map->types[i],changed,changes);
     }
     if (changed&xkb->ctrls->internal.vmods) {
-	unsigned int	newMask;
+	unsigned int	newMask = 0;
 	XkbVirtualModsToReal(xkb,xkb->ctrls->internal.vmods,&newMask);
 	newMask|= xkb->ctrls->internal.real_mods;
 	if (xkb->ctrls->internal.mask!=newMask) {
@@ -900,7 +894,7 @@ unsigned int	checkState = 0;
 	}
     }
     if (changed&xkb->ctrls->ignore_lock.vmods) {
-	unsigned int	newMask;
+	unsigned int	newMask = 0;
 	XkbVirtualModsToReal(xkb,xkb->ctrls->ignore_lock.vmods,&newMask);
 	newMask|= xkb->ctrls->ignore_lock.real_mods;
 	if (xkb->ctrls->ignore_lock.mask!=newMask) {
@@ -916,7 +910,7 @@ unsigned int	checkState = 0;
 	map= &xkb->indicators->maps[0];
 	for (i=0;i<XkbNumIndicators;i++,map++) {
 	    if (map->mods.vmods&changed) {
-		unsigned int newMask;
+		unsigned int newMask = 0;
 		XkbVirtualModsToReal(xkb,map->mods.vmods,&newMask);
 		newMask|= map->mods.real_mods;
 		if (newMask!=map->mods.mask) {
@@ -933,7 +927,7 @@ unsigned int	checkState = 0;
 	XkbCompatMapPtr	compat;
 	compat= xkb->compat;
 	for (i=0;i<XkbNumKbdGroups;i++) {
-	    unsigned int newMask;
+	    unsigned int newMask = 0;
 	    XkbVirtualModsToReal(xkb,compat->groups[i].vmods,&newMask);
 	    newMask|= compat->groups[i].real_mods;
 	    if (compat->groups[i].mask!=newMask) {

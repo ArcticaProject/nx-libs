@@ -1,5 +1,3 @@
-/* $Xorg: Host.c,v 1.4 2001/02/09 02:03:33 xorgcvs Exp $ */
-/* $XdotOrg: xc/lib/X11/Host.c,v 1.4 2005/07/03 07:00:55 daniels Exp $ */
 /*
 
 Copyright 1986, 1998  The Open Group
@@ -35,7 +33,6 @@ of the copyright holder.
 X Window System is a trademark of The Open Group.
 
 */
-/* $XFree86: xc/lib/X11/Host.c,v 1.3 2001/01/17 19:41:37 dawes Exp $ */
 
 /* this might be rightly regarded an os dependent file */
 
@@ -44,31 +41,31 @@ X Window System is a trademark of The Open Group.
 #endif
 #include "Xlibint.h"
 
-int
-XAddHost (
-    register Display *dpy,
-    XHostAddress *host)
+static inline int
+changehost (Display *dpy, XHostAddress *host, BYTE mode)
 {
-    register xChangeHostsReq *req;
-    register int length;
+    xChangeHostsReq *req;
+    int length;
     XServerInterpretedAddress *siAddr;
     int addrlen;
-
-    if (host->family == FamilyServerInterpreted) {
-	siAddr = (XServerInterpretedAddress *) host->address;
-	addrlen = siAddr->typelength + siAddr->valuelength + 1;
-    } else {
-	addrlen = host->length;
-    }
     
-    length = (addrlen + 3) & ~0x3;	/* round up */
-
+    siAddr = host->family == FamilyServerInterpreted ?
+	(XServerInterpretedAddress *)host->address : NULL;
+    addrlen = siAddr ?
+	siAddr->typelength + siAddr->valuelength + 1 : host->length;
+    
+    length = (addrlen + 3) & ~0x3;      /* round up */
+    
     LockDisplay(dpy);
     GetReqExtra (ChangeHosts, length, req);
-    req->mode = HostInsert;
+    if (!req) {
+	UnlockDisplay(dpy);
+	return 0;
+    }
+    req->mode = mode;
     req->hostFamily = host->family;
     req->hostLength = addrlen;
-    if (host->family == FamilyServerInterpreted) {
+    if (siAddr) {
 	char *dest = (char *) NEXTPTR(req,xChangeHostsReq);
 	memcpy(dest, siAddr->type, siAddr->typelength);
 	dest[siAddr->typelength] = '\0';
@@ -82,40 +79,19 @@ XAddHost (
 }
 
 int
+XAddHost (
+    register Display *dpy,
+    XHostAddress *host)
+{
+    return changehost(dpy, host, HostInsert);
+}
+
+int
 XRemoveHost (
     register Display *dpy,
     XHostAddress *host)
 {
-    register xChangeHostsReq *req;
-    register int length;
-    XServerInterpretedAddress *siAddr;
-    int addrlen;
-
-    if (host->family == FamilyServerInterpreted) {
-	siAddr = (XServerInterpretedAddress *) host->address;
-	addrlen = siAddr->typelength + siAddr->valuelength + 1;
-    } else {
-	addrlen = host->length;
-    }
-    
-    length = (addrlen + 3) & ~0x3;	/* round up */
-
-    LockDisplay(dpy);
-    GetReqExtra (ChangeHosts, length, req);
-    req->mode = HostDelete;
-    req->hostFamily = host->family;
-    req->hostLength = addrlen;
-    if (host->family == FamilyServerInterpreted) {
-	char *dest = (char *) NEXTPTR(req,xChangeHostsReq);
-	memcpy(dest, siAddr->type, siAddr->typelength);
-	dest[siAddr->typelength] = '\0';
-	memcpy(dest + siAddr->typelength + 1,siAddr->value,siAddr->valuelength);
-    } else {
-	memcpy((char *) NEXTPTR(req,xChangeHostsReq), host->address, addrlen);
-    }
-    UnlockDisplay(dpy);
-    SyncHandle();
-    return 1;
+    return changehost(dpy, host, HostDelete);
 }
 
 int

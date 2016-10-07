@@ -74,7 +74,7 @@ cwCreatePicturePrivate (PicturePtr pPicture)
     int		    error;
     cwPicturePtr    pPicturePrivate;
 
-    pPicturePrivate = xalloc (sizeof (cwPictureRec));
+    pPicturePrivate = malloc (sizeof (cwPictureRec));
     if (!pPicturePrivate)
 	return NULL;
     
@@ -84,7 +84,7 @@ cwCreatePicturePrivate (PicturePtr pPicture)
 						      &error);
     if (!pPicturePrivate->pBackingPicture)
     {
-	xfree (pPicturePrivate);
+	free (pPicturePrivate);
 	return NULL;
     }
 
@@ -108,7 +108,7 @@ cwDestroyPicturePrivate (PicturePtr pPicture)
     {
 	if (pPicturePrivate->pBackingPicture)
 	    FreePicture (pPicturePrivate->pBackingPicture, 0);
-	xfree (pPicturePrivate);
+	free (pPicturePrivate);
 	setCwPicture(pPicture, NULL);
     }
 }

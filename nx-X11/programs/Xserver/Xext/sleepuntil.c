@@ -25,7 +25,6 @@ in this Software without prior written authorization from The Open Group.
  *
  * Author:  Keith Packard, MIT X Consortium
  */
-/* $XFree86: xc/programs/Xserver/Xext/sleepuntil.c,v 3.6 2003/07/16 01:38:30 dawes Exp $ */
 
 /* dixsleep.c - implement millisecond timeouts for X clients */
 
@@ -98,7 +97,7 @@ ClientSleepUntil (client, revive, notifyFunc, closure)
 	SertafiedGeneration = serverGeneration;
 	BlockHandlerRegistered = FALSE;
     }
-    pRequest = (SertafiedPtr) xalloc (sizeof (SertafiedRec));
+    pRequest = (SertafiedPtr) malloc (sizeof (SertafiedRec));
     if (!pRequest)
 	return FALSE;
     pRequest->pClient = client;
@@ -111,7 +110,7 @@ ClientSleepUntil (client, revive, notifyFunc, closure)
 					     SertafiedWakeupHandler,
 					     (void *) 0))
 	{
-	    xfree (pRequest);
+	    free (pRequest);
 	    return FALSE;
 	}
 	BlockHandlerRegistered = TRUE;
@@ -169,7 +168,7 @@ SertafiedDelete (value, id)
 	}
     if (pRequest->notifyFunc)
 	(*pRequest->notifyFunc) (pRequest->pClient, pRequest->closure);
-    xfree (pRequest);
+    free (pRequest);
     return TRUE;
 }
 

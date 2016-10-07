@@ -1,3 +1,28 @@
+/**************************************************************************/
+/*                                                                        */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
+/*                                                                        */
+/* nx-X11, NX protocol compression and NX extensions to this software     */
+/* are copyright of the aforementioned persons and companies.             */
+/*                                                                        */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
+/*                                                                        */
+/* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
+/*                                                                        */
+/**************************************************************************/
+
 /*
  * Copyright © 2006 Keith Packard
  *
@@ -19,23 +44,6 @@
  * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
  * OF THIS SOFTWARE.
  */
-
-/**************************************************************************/
-/*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
-/*                                                                        */
-/* NX-X11, NX protocol compression and NX extensions to this software     */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
-/*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
-/*                                                                        */
-/* All rights reserved.                                                   */
-/*                                                                        */
-/**************************************************************************/
 
 #include "randrstr.h"
 
@@ -85,7 +93,7 @@ RRModeCreate(xRRModeInfo * modeInfo, const char *name, ScreenPtr userScreen)
     if (!RRInit())
         return NULL;
 
-    mode = xalloc(sizeof(RRModeRec) + modeInfo->nameLength + 1);
+    mode = malloc(sizeof(RRModeRec) + modeInfo->nameLength + 1);
     if (!mode)
         return NULL;
     mode->refcnt = 1;
@@ -99,20 +107,20 @@ RRModeCreate(xRRModeInfo * modeInfo, const char *name, ScreenPtr userScreen)
 #ifndef NXAGENT_SERVER
         newModes = reallocarray(modes, num_modes + 1, sizeof(RRModePtr));
 #else                           /* !defined(NXAGENT_SERVER) */
-        newModes = xrealloc(modes, (num_modes + 1) * sizeof(RRModePtr));
+        newModes = realloc(modes, (num_modes + 1) * sizeof(RRModePtr));
 #endif                          /* !defined(NXAGENT_SERVER) */
 
     else
-        newModes = xalloc(sizeof(RRModePtr));
+        newModes = malloc(sizeof(RRModePtr));
 
     if (!newModes) {
-        xfree(mode);
+        free(mode);
         return NULL;
     }
 
     mode->mode.id = FakeClientID(0);
     if (!AddResource(mode->mode.id, RRModeType, (void *) mode)) {
-        xfree(newModes);
+        free(newModes);
         return NULL;
     }
     modes = newModes;
@@ -211,7 +219,7 @@ RRModesForScreen(ScreenPtr pScreen, int *num_ret)
 #ifndef NXAGENT_SERVER
     screen_modes = xallocarray((num_modes ? num_modes : 1), sizeof(RRModePtr));
 #else                           /* !defined(NXAGENT_SERVER) */
-    screen_modes = xalloc((num_modes ? num_modes : 1) * sizeof(RRModePtr));
+    screen_modes = malloc((num_modes ? num_modes : 1) * sizeof(RRModePtr));
 #endif                          /* !defined(NXAGENT_SERVER) */
     if (!screen_modes)
         return NULL;
@@ -285,14 +293,14 @@ RRModeDestroy(RRModePtr mode)
                     (num_modes - m - 1) * sizeof(RRModePtr));
             num_modes--;
             if (!num_modes) {
-                xfree(modes);
+                free(modes);
                 modes = NULL;
             }
             break;
         }
     }
 
-    xfree(mode);
+    free(mode);
 }
 
 static int
@@ -344,7 +352,6 @@ ProcRRCreateMode(ClientPtr client)
     char *name;
     int error, rc;
     RRModePtr mode;
-    int n;
 
     REQUEST_AT_LEAST_SIZE(xRRCreateModeReq);
 #ifndef NXAGENT_SERVER
@@ -377,11 +384,11 @@ ProcRRCreateMode(ClientPtr client)
         .mode = mode->mode.id
     };
     if (client->swapped) {
-        swaps(&rep.sequenceNumber, n);
-        swapl(&rep.length, n);
-        swapl(&rep.mode, n);
+        swaps(&rep.sequenceNumber);
+        swapl(&rep.length);
+        swapl(&rep.mode);
     }
-    WriteToClient(client, sizeof(xRRCreateModeReply), (char *) &rep);
+    WriteToClient(client, sizeof(xRRCreateModeReply), &rep);
     /* Drop out reference to this mode */
     RRModeDestroy(mode);
     return Success;

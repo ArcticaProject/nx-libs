@@ -1,4 +1,3 @@
-/* $Xorg: grabs.c,v 1.4 2001/02/09 02:04:40 xorgcvs Exp $ */
 /*
 
 Copyright 1987, 1998  The Open Group
@@ -46,7 +45,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 */
-/* $XFree86: xc/programs/Xserver/dix/grabs.c,v 3.4 2002/02/19 11:09:22 alanh Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -54,7 +52,6 @@ SOFTWARE.
 
 #include <nx-X11/X.h>
 #include "misc.h"
-#define NEED_EVENTS
 #include <nx-X11/Xproto.h>
 #include "windowstr.h"
 #include "inputstr.h"
@@ -84,7 +81,7 @@ CreateGrab(
 {
     GrabPtr grab;
 
-    grab = (GrabPtr)xalloc(sizeof(GrabRec));
+    grab = (GrabPtr)malloc(sizeof(GrabRec));
     if (!grab)
 	return (GrabPtr)NULL;
     grab->resource = FakeClientID(client);
@@ -116,15 +113,15 @@ static void
 FreeGrab(GrabPtr pGrab)
 {
     if (pGrab->modifiersDetail.pMask != NULL)
-	xfree(pGrab->modifiersDetail.pMask);
+	free(pGrab->modifiersDetail.pMask);
 
     if (pGrab->detail.pMask != NULL)
-	xfree(pGrab->detail.pMask);
+	free(pGrab->detail.pMask);
 
     if (pGrab->cursor)
 	FreeCursor(pGrab->cursor, (Cursor)0);
 
-    xfree(pGrab);
+    free(pGrab);
 }
 
 int
@@ -158,7 +155,7 @@ DeleteDetailFromMask(Mask *pDetailMask, unsigned short detail)
     register Mask *mask;
     register int i;
 
-    mask = (Mask *)xalloc(sizeof(Mask) * MasksPerDetailMask);
+    mask = (Mask *)malloc(sizeof(Mask) * MasksPerDetailMask);
     if (mask)
     {
 	if (pDetailMask)
@@ -410,7 +407,7 @@ DeletePassiveGrabFromList(GrabPtr pMinuendGrab)
 	for (i = 0; i < nadds; i++)
 	    FreeResource(adds[i]->resource, RT_NONE);
 	for (i = 0; i < nups; i++)
-	    xfree(details[i]);
+	    free(details[i]);
     }
     else
     {
@@ -424,7 +421,7 @@ DeletePassiveGrabFromList(GrabPtr pMinuendGrab)
 	}
 	for (i = 0; i < nups; i++)
 	{
-	    xfree(*updates[i]);
+	    free(*updates[i]);
 	    *updates[i] = details[i];
 	}
     }

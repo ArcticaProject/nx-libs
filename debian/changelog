@@ -1,14 +1,16 @@
-nx-libs (2:3.5.99.0-0) UNRELEASED; urgency=medium
+nx-libs (2:3.5.99.1-0.1) unstable; urgency=medium
 
-  * Version bump, continuing NX 3.x development..
-    Targeting NX 3.6.x.y some time.
+  * Upstream-provided Debian package for nx-libs.
+    See upstream ChangeLog for recent changes.
 
-  [ Paul Szabo ]
-  * DISABLED:0401_nxcomp_bigrequests-and-genericevent-extensions.full+lite.patch.
-    Enable support for the X11 big requests extension and the generic events
-    extension.
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Tue, 13 Sep 2016 15:44:10 +0200
 
- -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Sat, 14 Feb 2015 14:27:25 +0100
+nx-libs (2:3.5.99.0-0.1) unstable; urgency=medium
+
+  * Upstream-provided Debian package for nx-libs.
+    See upstream ChangeLog for recent changes.
+
+ -- Mike Gabriel <mike.gabriel@das-netzwerkteam.de>  Wed, 06 Jul 2016 10:37:23 +0200
 
 nx-libs (2:3.5.0.33-0x2go1) UNRELEASED; urgency=low
 

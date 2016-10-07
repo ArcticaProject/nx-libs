@@ -1,17 +1,25 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
+/* are copyright of the aforementioned persons and companies.             */
 /*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
 /*                                                                        */
 /* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
 /*                                                                        */
 /**************************************************************************/
 
@@ -447,7 +455,7 @@ FIXME: Here the split trap is always set and so the caching of
 
     if (nxagentUnpackAlpha[resource] != NULL)
     {
-      Xfree(nxagentUnpackAlpha[resource] -> data);
+      free(nxagentUnpackAlpha[resource] -> data);
     }
     else if ((nxagentUnpackAlpha[resource] = Xmalloc(sizeof(UnpackAlphaRec))) == NULL)
     {
@@ -455,7 +463,7 @@ FIXME: Here the split trap is always set and so the caching of
       fprintf(stderr, "nxagentSetUnpackAlpha: PANIC! Can't allocate data for the alpha structure.\n");
       #endif
 
-      Xfree(data);
+      free(data);
 
       return;
     }
@@ -475,7 +483,7 @@ FIXME: Here the split trap is always set and so the caching of
                 resource, size);
     #endif
 
-    Xfree(data);
+    free(data);
   }
 }
 
@@ -1561,7 +1569,7 @@ nxagentPutSubImageEnd:
 
   if (packedChecksum != NULL)
   {
-    Xfree(packedChecksum);
+    free(packedChecksum);
   }
 
   if (packedImage != NULL)
@@ -1569,13 +1577,13 @@ nxagentPutSubImageEnd:
     if (packedImage -> data != NULL &&
             packedImage -> data != plainImage -> data)
     {
-      Xfree(packedImage -> data);
+      free(packedImage -> data);
     }
 
-    Xfree(packedImage);
+    free(packedImage);
   }
 
-  Xfree(plainImage);
+  free(plainImage);
 }
 
 void nxagentGetImage(DrawablePtr pDrawable, int x, int y, int w, int h,
@@ -1629,9 +1637,9 @@ void nxagentResetAlphaCache()
   {
     if (nxagentUnpackAlpha[i])
     {
-      Xfree(nxagentUnpackAlpha[i] -> data);
+      free(nxagentUnpackAlpha[i] -> data);
 
-      Xfree(nxagentUnpackAlpha[i]);
+      free(nxagentUnpackAlpha[i]);
 
       nxagentUnpackAlpha[i] = NULL;
     }
@@ -1711,7 +1719,7 @@ int nxagentScaleImage(int x, int y, unsigned xRatio, unsigned yRatio,
 
   if (newImage -> data == NULL)
   {
-    Xfree(newImage);
+    free(newImage);
     
     #ifdef PANIC
     fprintf(stderr, "nxagentScaleImage: PANIC! Failed to create the target image data.\n");
@@ -1781,10 +1789,10 @@ int nxagentScaleImage(int x, int y, unsigned xRatio, unsigned yRatio,
 
   if (image -> obdata != NULL)
   {
-    Xfree((char *) image -> obdata);
+    free((char *) image -> obdata);
   }
 
-  Xfree((char *) image);
+  free((char *) image);
 
   *pImage = newImage;
 
@@ -1808,7 +1816,7 @@ char *nxagentAllocateImageData(int width, int height, int depth, int *length, in
 
   data = NULL;
 
-  if ((data = xalloc(*length)) == NULL)
+  if ((data = malloc(*length)) == NULL)
   {
     #ifdef WARNING
     fprintf(stderr, "nxagentAllocateImageData: WARNING! Failed to allocate [%d] bytes of memory.\n", *length);

@@ -1,4 +1,3 @@
-/* $Xorg: EvToWire.c,v 1.4 2001/02/09 02:03:32 xorgcvs Exp $ */
 
 /*
 
@@ -27,14 +26,11 @@ other dealings in this Software without prior written authorization
 from The Open Group.
 
 */
-/* $XFree86: xc/lib/X11/EvToWire.c,v 1.4 2001/08/18 02:41:28 dawes Exp $ */
 
 /*
  *	XEvToWire.c - Internal support routines for the C subroutine
  *	interface library (Xlib) to the X Window System Protocol V11.0.
  */
-#define NEED_EVENTS
-#define NEED_REPLIES
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>

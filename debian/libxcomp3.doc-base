@@ -1,0 +1,9 @@
+Document: libxcomp3
+Title: NX compression library
+Section: Screen
+
+Format: Text
+Files: /usr/share/doc/libxcomp3/README.on-retroactive-DXPC-license.gz
+
+Format: PDF
+Files: /usr/share/doc/libxcomp3/nxcomp-3.6-drops-compat-code-3.4.x-testing.pdf.gz

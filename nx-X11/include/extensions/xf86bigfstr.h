@@ -1,4 +1,3 @@
-/* $XFree86: xc/include/extensions/xf86bigfstr.h,v 1.2 2000/02/29 03:09:00 dawes Exp $ */
 /*
  * Declarations of request structures for the BIGFONT extension.
  *

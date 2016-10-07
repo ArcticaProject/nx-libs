@@ -68,8 +68,6 @@ Imake.tmpl provides defaults for the following variables:
 	HasGnuMake		use the GNU make program?
         HasGhostPCL             boolean for system has GhostPCL
         HasGhostScript          boolean for system has GhostScript
-	HasKrbIV		system has Kerberos version IV support?
-	HasKrb5			system has Kerberos version 5 support?
 	HasLargeTmp		boolean for system has /tmp space
 	HasLatex		system has LaTeX document preparation software
 	HasLibCrypt		boolean for system has libcrypt
@@ -105,10 +103,6 @@ Imake.tmpl provides defaults for the following variables:
 	InstPgmFlags		install flags for normal programs
 	InstUidFlags		install flags for xterm to chown /dev/ptys
 	InstallCmd		command to install files
-	KrbIVIncludes		where to include KerberosIV header files from
-	KrbIVLibraries		where to load KerberosIV libraries from
-	Krb5Includes		where to include Kerberos header files from
-	Krb5Libraries		where to load Kerberos libraries from
 	LdCmd			command to run loader
 	LdCombineFlags		flags for incremental loading
 	LexCmd			command to run lex
@@ -189,9 +183,6 @@ X11.tmpl provides defaults for the following variables:
 	ConnectionFlags		-D's for supported transports
 	ContribDir		location of user-contributed sources
 	DebugLibX11		build libX11_d.a
-	DebugLibXau		build libXau_d.a
-	DebugLibXext		build libXext_d.a
-	DebugOldX		build liboldX_d.a
 	DefaultCursorTheme      name of default cursor theme
 	DefaultFontPath		default server font path
 	DefaultRGBDatabase	default server rgb color database
@@ -209,7 +200,6 @@ X11.tmpl provides defaults for the following variables:
 					needs Wraphelp.c, see Release Notes
 	InstallLibManPages	boolean for installing library man pages
 	InstallSecurityConfig	install server security policy file over old?
-	KrbIVDefines		defines for use with KerberosIV
 	LibDir			directory in which to install X11 support files
 	LibManSuffix		man suffix for library pages
 	LibmanDir		directory in which to install library man pages
@@ -224,15 +214,9 @@ X11.tmpl provides defaults for the following variables:
 	NeedDefaultDepLibs	boolean for enabling default DEPLIBS
 	NlsDir			directory in which to install nls files
 	NormalLibX11		build libX11.a
-	NormalLibXau		build libXau.a
-	NormalLibXext		build libXext.a
-	NormalOldX		build liboldX.a
 	OsNameDefines		If uname(2) unavailable, set to -DOS_NAME=OSName
 	PrimaryScreenResolution	resolution of default server screen
 	ProfileLibX11		build libX11_p.a
-	ProfileLibXau		build libXau_p.a
-	ProfileLibXext		build libXext_p.a
-	ProfileOldX		build liboldX_p.a
 	ProjectX		version indicating this is the X Window System
 	RemoveTargetProgramByMoving	boolean for rm -f that doesn't
 	SHELLPATH		-D for /bin/sh
@@ -242,9 +226,6 @@ X11.tmpl provides defaults for the following variables:
 	ServerOSDefines		OS -D's for server
 	ServerAssertDefines	-DNDEBUG for no assertions, /**/ for assertions
 	SharedLibX11		boolean for making sharable libX11.so
-	SharedLibXau		boolean for making sharable libXau.so
-	SharedLibXext		boolean for making sharable libXext.so
-	SharedOldX		boolean for making sharable liboldX.so
 	ShmDefines		MIT-SHM define
 	TwmDir			directory in which to install twm config files
 	UseCCMakeDepend		boolean for using alternate makedepend script
@@ -313,12 +294,8 @@ An <os>Lib.rules file provides defaults for the following variables:
 
 An <os>Lib.tmpl file provides defaults for the following variables:
 
-	SharedOldXReqs		required libs for liboldX.so
-	SharedOldXRev		version number for liboldX.so
 	SharedX11Reqs		required libs for libX11.so
 	SharedX11Rev		version number for libX11.so
-	SharedXauReqs		required libs for libXau.so
-	SharedXauRev		version number for libXau.so
 	SharedXextReqs		required libs for libXext.so
 	SharedXextRev		version number for libXext.so
 

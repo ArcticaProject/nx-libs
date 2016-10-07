@@ -1,4 +1,3 @@
-/* $Xorg: ParseCol.c,v 1.4 2001/02/09 02:03:35 xorgcvs Exp $ */
 /*
 
 Copyright 1985, 1998  The Open Group
@@ -24,9 +23,7 @@ used in advertising or otherwise to promote the sale, use or other dealings
 in this Software without prior written authorization from The Open Group.
 
 */
-/* $XFree86: xc/lib/X11/ParseCol.c,v 1.6 2003/04/13 19:22:17 dawes Exp $ */
 
-#define NEED_REPLIES
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif

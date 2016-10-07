@@ -1,0 +1,6 @@
+Document: nxagent
+Title: nx-X11 Agent (Xserver)
+Section: Screen
+
+Format: Text
+Files: /usr/share/doc/nxagent/README.keystrokes.gz

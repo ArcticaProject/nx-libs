@@ -1,3 +1,28 @@
+/**************************************************************************/
+/*                                                                        */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
+/*                                                                        */
+/* nx-X11, NX protocol compression and NX extensions to this software     */
+/* are copyright of the aforementioned persons and companies.             */
+/*                                                                        */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
+/*                                                                        */
+/* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
+/*                                                                        */
+/**************************************************************************/
+
 /*
  * Copyright © 2000 Compaq Computer Corporation
  * Copyright © 2002 Hewlett-Packard Company
@@ -25,25 +50,6 @@
  *	    Keith Packard, Intel Corporation
  */
 
-/**************************************************************************/
-/*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
-/*                                                                        */
-/* NX-X11, NX protocol compression and NX extensions to this software     */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
-/*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
-/*                                                                        */
-/* All rights reserved.                                                   */
-/*                                                                        */
-/**************************************************************************/
-
-#define NEED_REPLIES
-#define NEED_EVENTS
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
@@ -131,9 +137,9 @@ RRCloseScreen(
 
     RRMonitorClose(pScreen);
 
-    xfree(pScrPriv->crtcs);
-    xfree(pScrPriv->outputs);
-    xfree(pScrPriv);
+    free(pScrPriv->crtcs);
+    free(pScrPriv->outputs);
+    free(pScrPriv);
     RRNScreens -= 1;            /* ok, one fewer screen with RandR running */
     return (*pScreen->CloseScreen) (i, pScreen);
 }
@@ -321,7 +327,7 @@ RRScreenInit(ScreenPtr pScreen)
     if (!RRInit())
         return FALSE;
 
-    pScrPriv = (rrScrPrivPtr) xcalloc(1, sizeof(rrScrPrivRec));
+    pScrPriv = (rrScrPrivPtr) calloc(1, sizeof(rrScrPrivRec));
     if (!pScrPriv)
         return FALSE;
 
@@ -405,7 +411,7 @@ RRFreeClient(void *data, XID id)
                 *pHead = pRREvent->next;
         }
     }
-    xfree((void *) pRREvent);
+    free((void *) pRREvent);
     return 1;
 }
 
@@ -418,9 +424,9 @@ RRFreeEvents(void *data, XID id)
     for (pCur = *pHead; pCur; pCur = pNext) {
         pNext = pCur->next;
         FreeResource(pCur->clientResource, RRClientType);
-        xfree((void *) pCur);
+        free((void *) pCur);
     }
-    xfree((void *) pHead);
+    free((void *) pHead);
     return 1;
 }
 

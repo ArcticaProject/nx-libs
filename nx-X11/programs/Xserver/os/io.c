@@ -45,7 +45,6 @@ SOFTWARE.
 
 
 ******************************************************************/
-/* $Xorg: io.c,v 1.6 2001/02/09 02:05:23 xorgcvs Exp $ */
 /*****************************************************************
  * i/o functions
  *
@@ -53,7 +52,6 @@ SOFTWARE.
  *   InsertFakeRequest, ResetCurrentRequest
  *
  *****************************************************************/
-/* $XFree86: xc/programs/Xserver/os/io.c,v 3.34 2002/05/31 18:46:05 dawes Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -77,7 +75,6 @@ SOFTWARE.
 #endif
 #endif
 #include <nx-X11/X.h>
-#define NEED_REPLIES
 #include <nx-X11/Xproto.h>
 #include "os.h"
 #include "osdep.h"
@@ -222,8 +219,8 @@ ReadRequestFromClient(ClientPtr client)
 	    register ConnectionInputPtr aci = AvailableInput->input;
 	    if (aci->size > BUFWATERMARK)
 	    {
-		xfree(aci->buffer);
-		xfree(aci);
+		free(aci->buffer);
+		free(aci);
 	    }
 	    else
 	    {
@@ -321,7 +318,7 @@ ReadRequestFromClient(ClientPtr client)
 		/* make buffer bigger to accomodate request */
 		char *ibuf;
 
-		ibuf = (char *)xrealloc(oci->buffer, needed);
+		ibuf = (char *)realloc(oci->buffer, needed);
 		if (!ibuf)
 		{
 		    YieldControlDeath();
@@ -371,7 +368,7 @@ ReadRequestFromClient(ClientPtr client)
 	{
 	    char *ibuf;
 
-	    ibuf = (char *)xrealloc(oci->buffer, BUFSIZE);
+	    ibuf = (char *)realloc(oci->buffer, BUFSIZE);
 	    if (ibuf)
 	    {
 		oci->size = BUFSIZE;
@@ -504,8 +501,8 @@ InsertFakeRequest(ClientPtr client, char *data, int count)
 	    ConnectionInputPtr aci = AvailableInput->input;
 	    if (aci->size > BUFWATERMARK)
 	    {
-		xfree(aci->buffer);
-		xfree(aci);
+		free(aci->buffer);
+		free(aci);
 	    }
 	    else
 	    {
@@ -531,7 +528,7 @@ InsertFakeRequest(ClientPtr client, char *data, int count)
     {
 	char *ibuf;
 
-	ibuf = (char *)xrealloc(oci->buffer, gotnow + count);
+	ibuf = (char *)realloc(oci->buffer, gotnow + count);
 	if (!ibuf)
 	    return(FALSE);
 	oci->size = gotnow + count;
@@ -591,8 +588,7 @@ ResetCurrentRequest(ClientPtr client)
 	    ((xBigReq *)oci->bufptr)->length = client->req_len;
 	    if (client->swapped)
 	    {
-		char n;
-		swapl(&((xBigReq *)oci->bufptr)->length, n);
+		swapl(&((xBigReq *)oci->bufptr)->length);
 	    }
 	}
 #endif
@@ -858,16 +854,19 @@ SetCriticalOutputPending(void)
  *****************/
 
 int
-WriteToClient (ClientPtr who, int count, char *buf)
+WriteToClient (ClientPtr who, int count, const void *__buf)
 {
-    OsCommPtr oc = (OsCommPtr)who->osPrivate;
-    ConnectionOutputPtr oco = oc->output;
+    OsCommPtr oc;
+    ConnectionOutputPtr oco;
     int padBytes;
+    const char *buf = __buf;
 #ifdef DEBUG_COMMUNICATION
     Bool multicount = FALSE;
 #endif
-    if (!count)
+    if (!count || !who || who == serverClient || who->clientGone)
 	return(0);
+    oc = who->osPrivate;
+    oco = oc->output;
 #ifdef DEBUG_COMMUNICATION
     {
 	char info[128];
@@ -948,11 +947,10 @@ WriteToClient (ClientPtr who, int count, char *buf)
         { /* start of new reply */
 	    CARD32 replylen;
 	    unsigned long bytesleft;
-	    char n;
 
 	    replylen = ((xGenericReply *)buf)->length;
 	    if (who->swapped)
-		swapl(&replylen, n);
+		swapl(&replylen);
 	    bytesleft = (replylen * 4) + SIZEOF(xReply) - count - padBytes;
 	    replyinfo.startOfReply = TRUE;
 	    replyinfo.bytesRemaining = who->replyBytesRemaining = bytesleft;
@@ -999,13 +997,14 @@ WriteToClient (ClientPtr who, int count, char *buf)
  **********************/
 
 int
-FlushClient(ClientPtr who, OsCommPtr oc, char *extraBuf, int extraCount)
+FlushClient(ClientPtr who, OsCommPtr oc, const void *__extraBuf, int extraCount)
 {
     ConnectionOutputPtr oco = oc->output;
     int connection = oc->fd;
     XtransConnInfo trans_conn = oc->trans_conn;
     struct iovec iov[3];
     static char padBuffer[3];
+    const char *extraBuf = __extraBuf;
     long written;
     long padsize;
     long notWritten;
@@ -1051,7 +1050,7 @@ FlushClient(ClientPtr who, OsCommPtr oc, char *extraBuf, int extraCount)
 	}
 
 	InsertIOV ((char *)oco->buf, oco->count)
-	InsertIOV (extraBuf, extraCount)
+	InsertIOV ((char *)extraBuf, extraCount)
 	InsertIOV (padBuffer, padsize)
 
 	errno = 0;
@@ -1097,7 +1096,7 @@ FlushClient(ClientPtr who, OsCommPtr oc, char *extraBuf, int extraCount)
 	    {
 		unsigned char *obuf;
 
-		obuf = (unsigned char *)xrealloc(oco->buf,
+		obuf = (unsigned char *)realloc(oco->buf,
 						 notWritten + BUFSIZE);
 		if (!obuf)
 		{
@@ -1154,8 +1153,8 @@ FlushClient(ClientPtr who, OsCommPtr oc, char *extraBuf, int extraCount)
     }
     if (oco->size > BUFWATERMARK)
     {
-	xfree(oco->buf);
-	xfree(oco);
+	free(oco->buf);
+	free(oco);
     }
     else
     {
@@ -1171,13 +1170,13 @@ AllocateInputBuffer(void)
 {
     ConnectionInputPtr oci;
 
-    oci = (ConnectionInputPtr)xalloc(sizeof(ConnectionInput));
+    oci = (ConnectionInputPtr)malloc(sizeof(ConnectionInput));
     if (!oci)
 	return (ConnectionInputPtr)NULL;
-    oci->buffer = (char *)xalloc(BUFSIZE);
+    oci->buffer = (char *)malloc(BUFSIZE);
     if (!oci->buffer)
     {
-	xfree(oci);
+	free(oci);
 	return (ConnectionInputPtr)NULL;
     }
     oci->size = BUFSIZE;
@@ -1192,13 +1191,13 @@ AllocateOutputBuffer(void)
 {
     ConnectionOutputPtr oco;
 
-    oco = (ConnectionOutputPtr)xalloc(sizeof(ConnectionOutput));
+    oco = (ConnectionOutputPtr)malloc(sizeof(ConnectionOutput));
     if (!oco)
 	return (ConnectionOutputPtr)NULL;
-    oco->buf = (unsigned char *) xalloc(BUFSIZE);
+    oco->buf = (unsigned char *) malloc(BUFSIZE);
     if (!oco->buf)
     {
-	xfree(oco);
+	free(oco);
 	return (ConnectionOutputPtr)NULL;
     }
     oco->size = BUFSIZE;
@@ -1218,8 +1217,8 @@ FreeOsBuffers(OsCommPtr oc)
     {
 	if (FreeInputs)
 	{
-	    xfree(oci->buffer);
-	    xfree(oci);
+	    free(oci->buffer);
+	    free(oci);
 	}
 	else
 	{
@@ -1234,8 +1233,8 @@ FreeOsBuffers(OsCommPtr oc)
     {
 	if (FreeOutputs)
 	{
-	    xfree(oco->buf);
-	    xfree(oco);
+	    free(oco->buf);
+	    free(oco);
 	}
 	else
 	{
@@ -1255,13 +1254,13 @@ ResetOsBuffers(void)
     while ((oci = FreeInputs))
     {
 	FreeInputs = oci->next;
-	xfree(oci->buffer);
-	xfree(oci);
+	free(oci->buffer);
+	free(oci);
     }
     while ((oco = FreeOutputs))
     {
 	FreeOutputs = oco->next;
-	xfree(oco->buf);
-	xfree(oco);
+	free(oco->buf);
+	free(oco);
     }
 }

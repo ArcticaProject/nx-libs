@@ -28,7 +28,6 @@ in this Software without prior written authorization from The Open Group.
  * The X Window System is a Trademark of The Open Group.
  *
  */
-/* $XFree86: xc/include/Xos.h,v 3.41tsi Exp $ */
 
 /* This is a collection of things to try and minimize system dependencies
  * in a "signficant" number of source files.

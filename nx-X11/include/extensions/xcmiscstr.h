@@ -1,4 +1,3 @@
-/* $Xorg: xcmiscstr.h,v 1.4 2001/02/09 02:03:24 xorgcvs Exp $ */
 /*
 
 Copyright 1993, 1994, 1998  The Open Group

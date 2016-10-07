@@ -1,4 +1,3 @@
-/* $Xorg: Xtransdnet.c,v 1.4 2001/02/09 02:04:06 xorgcvs Exp $ */
 /*
 
 Copyright 1993, 1994, 1998  The Open Group
@@ -26,7 +25,6 @@ other dealings in this Software without prior written authorization
 from The Open Group.
 
 */
-/* $XFree86: xc/lib/xtrans/Xtransdnet.c,v 3.7tsi Exp $ */
 
 /* Copyright 1993, 1994 NCR Corporation - Dayton, Ohio, USA
  *
@@ -121,7 +119,7 @@ TRANS(DNETGetAddr) (XtransConnInfo ciptr)
      * Everything looks good: fill in the XtransConnInfo structure.
      */
 
-    if ((ciptr->addr = (char *) xalloc (namelen)) == NULL)
+    if ((ciptr->addr = (char *) malloc (namelen)) == NULL)
     {
         PRMSG (1, "DNETGetAddr: Can't allocate space for the addr\n",
 	       0, 0, 0);
@@ -161,7 +159,7 @@ TRANS(DNETGetPeerAddr) (XtransConnInfo ciptr)
      * Everything looks good: fill in the XtransConnInfo structure.
      */
 
-    if ((ciptr->peeraddr = (char *) xalloc (namelen)) == NULL)
+    if ((ciptr->peeraddr = (char *) malloc (namelen)) == NULL)
     {
         PRMSG (1,
 	      "DNETGetPeerAddr: Can't allocate space for the addr\n",
@@ -187,7 +185,7 @@ TRANS(DNETOpenCOTSClient) (Xtransport *thistrans, char *protocol,
 
     PRMSG (2,"DNETOpenCOTSClient(%s,%s,%s)\n", protocol, host, port);
 
-    if ((ciptr = (XtransConnInfo) xcalloc (
+    if ((ciptr = (XtransConnInfo) calloc (
 	1, sizeof(struct _XtransConnInfo))) == NULL)
     {
 	PRMSG (1, "DNETOpenCOTSClient: malloc failed\n", 0, 0, 0);
@@ -215,7 +213,7 @@ TRANS(DNETOpenCOTSServer) (Xtransport *thistrans, char *protocol,
 
     PRMSG (2,"DNETOpenCOTSServer(%s,%s,%s)\n", protocol, host, port);
 
-    if ((ciptr = (XtransConnInfo) xcalloc (
+    if ((ciptr = (XtransConnInfo) calloc (
 	1, sizeof(struct _XtransConnInfo))) == NULL)
     {
 	PRMSG (1, "DNETOpenCOTSServer: malloc failed\n", 0, 0, 0);
@@ -224,7 +222,7 @@ TRANS(DNETOpenCOTSServer) (Xtransport *thistrans, char *protocol,
 
     if ((ciptr->fd = socket (AF_DECnet, SOCK_STREAM, 0)) < 0)
     {
-	xfree ((char *) ciptr);
+	free ((char *) ciptr);
 	return NULL;
     }
 
@@ -247,7 +245,7 @@ TRANS(DNETOpenCLTSClient) (Xtransport *thistrans, char *protocol,
 
     PRMSG (2,"DNETOpenCLTSClient(%s,%s,%s)\n", protocol, host, port);
 
-    if ((ciptr = (XtransConnInfo) xcalloc (
+    if ((ciptr = (XtransConnInfo) calloc (
 	1, sizeof (struct _XtransConnInfo))) == NULL)
     {
 	PRMSG (1, "DNETOpenCLTSClient: malloc failed\n", 0, 0, 0);
@@ -290,7 +288,7 @@ TRANS(DNETReopenCOTSServer) (Xtransport *thistrans, int fd, char *port)
 
     PRMSG (2,"DNETReopenCOTSServer(%d,%s)\n", fd, port, 0);
 
-    if ((ciptr = (XtransConnInfo) xcalloc (
+    if ((ciptr = (XtransConnInfo) calloc (
 	1, sizeof(struct _XtransConnInfo))) == NULL)
     {
 	PRMSG (1, "DNETReopenCOTSServer: malloc failed\n", 0, 0, 0);
@@ -311,7 +309,7 @@ TRANS(DNETReopenCLTSServer) (Xtransport *thistrans, int fd, char *port)
 
     PRMSG (2,"DNETReopenCLTSServer(%d,%s)\n", fd, port, 0);
 
-    if ((ciptr = (XtransConnInfo) xcalloc (
+    if ((ciptr = (XtransConnInfo) calloc (
 	1, sizeof(struct _XtransConnInfo))) == NULL)
     {
 	PRMSG (1, "DNETReopenCLTSServer: malloc failed\n", 0, 0, 0);
@@ -393,7 +391,7 @@ TRANS(DNETAccept) (XtransConnInfo ciptr, int *status)
 
     PRMSG (2, "DNETAccept(%x,%d)\n", ciptr, ciptr->fd, 0);
 
-    if ((newciptr = (XtransConnInfo) xcalloc(
+    if ((newciptr = (XtransConnInfo) calloc(
 	1, sizeof (struct _XtransConnInfo))) == NULL)
     {
 	PRMSG (1, "DNETAccept: malloc failed\n", 0, 0, 0);
@@ -406,7 +404,7 @@ TRANS(DNETAccept) (XtransConnInfo ciptr, int *status)
     {
 	PRMSG (1, "DNETAccept: accept() failed\n", 0, 0, 0);
 
-	xfree (newciptr);
+	free (newciptr);
 	*status = TRANS_ACCEPT_FAILED;
 	return NULL;
     }
@@ -421,7 +419,7 @@ TRANS(DNETAccept) (XtransConnInfo ciptr, int *status)
 	PRMSG(1,
 	"DNETAccept: ...DNETGetAddr() failed:\n", 0, 0, 0);
 	close (newciptr->fd);
-	xfree (newciptr);
+	free (newciptr);
 	*status = TRANS_ACCEPT_MISC_ERROR;
         return NULL;
     }
@@ -432,8 +430,8 @@ TRANS(DNETAccept) (XtransConnInfo ciptr, int *status)
 	"DNETAccept: ...DNETGetPeerAddr() failed:\n", 0, 0, 0);
 
 	close (newciptr->fd);
-	if (newciptr->addr) xfree (newciptr->addr);
-	xfree (newciptr);
+	if (newciptr->addr) free (newciptr->addr);
+	free (newciptr);
 	*status = TRANS_ACCEPT_MISC_ERROR;
         return NULL;
     }

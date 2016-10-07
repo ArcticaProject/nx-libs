@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/dix/extension.c,v 3.11 2001/12/14 19:59:31 dawes Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -45,15 +44,12 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $Xorg: extension.c,v 1.4 2001/02/09 02:04:40 xorgcvs Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
 #include <nx-X11/X.h>
-#define NEED_EVENTS
-#define NEED_REPLIES
 #include <nx-X11/Xproto.h>
 #include "misc.h"
 #include "dixstruct.h"
@@ -95,25 +91,25 @@ AddExtension(char *name, int NumEvents, int NumErrors,
 	        (unsigned)(lastError + NumErrors > LAST_ERROR))
         return((ExtensionEntry *) NULL);
 
-    ext = (ExtensionEntry *) xalloc(sizeof(ExtensionEntry));
+    ext = (ExtensionEntry *) malloc(sizeof(ExtensionEntry));
     if (!ext)
 	return((ExtensionEntry *) NULL);
-    ext->name = (char *)xalloc(strlen(name) + 1);
+    ext->name = (char *)malloc(strlen(name) + 1);
     ext->num_aliases = 0;
     ext->aliases = (char **)NULL;
     if (!ext->name)
     {
-	xfree(ext);
+	free(ext);
 	return((ExtensionEntry *) NULL);
     }
     strcpy(ext->name,  name);
     i = NumExtensions;
-    newexts = (ExtensionEntry **) xrealloc(extensions,
+    newexts = (ExtensionEntry **) realloc(extensions,
 					   (i + 1) * sizeof(ExtensionEntry *));
     if (!newexts)
     {
-	xfree(ext->name);
-	xfree(ext);
+	free(ext->name);
+	free(ext);
 	return((ExtensionEntry *) NULL);
     }
     NumExtensions++;
@@ -159,12 +155,12 @@ Bool AddExtensionAlias(char *alias, ExtensionEntry *ext)
     char *name;
     char **aliases;
 
-    aliases = (char **)xrealloc(ext->aliases,
+    aliases = (char **)realloc(ext->aliases,
 				(ext->num_aliases + 1) * sizeof(char *));
     if (!aliases)
 	return FALSE;
     ext->aliases = aliases;
-    name = (char *)xalloc(strlen(alias) + 1);
+    name = (char *)malloc(strlen(alias) + 1);
     if (!name)
 	return FALSE;
     strcpy(name,  alias);
@@ -263,13 +259,13 @@ CloseDownExtensions()
 	if (extensions[i]->CloseDown)
 	    (* extensions[i]->CloseDown)(extensions[i]);
 	NumExtensions = i;
-	xfree(extensions[i]->name);
+	free(extensions[i]->name);
 	for (j = extensions[i]->num_aliases; --j >= 0;)
-	    xfree(extensions[i]->aliases[j]);
-	xfree(extensions[i]->aliases);
-	xfree(extensions[i]);
+	    free(extensions[i]->aliases[j]);
+	free(extensions[i]->aliases);
+	free(extensions[i]);
     }
-    xfree(extensions);
+    free(extensions);
     extensions = (ExtensionEntry **)NULL;
     lastEvent = EXTENSION_EVENT_BASE;
     lastError = FirstExtensionError;
@@ -280,14 +276,14 @@ CloseDownExtensions()
 	while (spentry->num)
 	{
 	    spentry->num--;
-	    xfree(spentry->procList[spentry->num].name);
+	    free(spentry->procList[spentry->num].name);
 	}
-	xfree(spentry->procList);
+	free(spentry->procList);
 	spentry->procList = (ProcEntryPtr)NULL;
     }
 }
 
-
+#ifndef NXAGENT_SERVER
 int
 ProcQueryExtension(ClientPtr client)
 {
@@ -392,7 +388,7 @@ ProcListExtensions(ClientPtr client)
     }
     return(client->noClientException);
 }
-
+#endif
 
 ExtensionLookupProc 
 LookupProc(char *name, GCPtr pGC)
@@ -438,15 +434,15 @@ RegisterScreenProc(char *name, ScreenPtr pScreen, ExtensionLookupProc proc)
         procEntry->proc = proc;
     else
     {
-	newname = (char *)xalloc(strlen(name)+1);
+	newname = (char *)malloc(strlen(name)+1);
 	if (!newname)
 	    return FALSE;
 	procEntry = (ProcEntryPtr)
-			    xrealloc(spentry->procList,
+			    realloc(spentry->procList,
 				     sizeof(ProcEntryRec) * (spentry->num+1));
 	if (!procEntry)
 	{
-	    xfree(newname);
+	    free(newname);
 	    return FALSE;
 	}
 	spentry->procList = procEntry;

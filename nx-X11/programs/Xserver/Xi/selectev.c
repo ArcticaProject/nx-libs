@@ -1,4 +1,3 @@
-/* $Xorg: selectev.c,v 1.4 2001/02/09 02:04:34 xorgcvs Exp $ */
 
 /************************************************************
 
@@ -45,16 +44,12 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/Xi/selectev.c,v 3.2 2001/01/17 22:13:26 dawes Exp $ */
 
 /***********************************************************************
  *
  * Request to select input from an extension device.
  *
  */
-
-#define	 NEED_EVENTS
-#define	 NEED_REPLIES
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -87,13 +82,11 @@ int
 SProcXSelectExtensionEvent (client)
 register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xSelectExtensionEventReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_AT_LEAST_SIZE(xSelectExtensionEventReq);
-    swapl(&stuff->window, n);
-    swaps(&stuff->count, n);
+    swapl(&stuff->window);
+    swaps(&stuff->count);
     REQUEST_FIXED_SIZE(xSelectExtensionEventReq,
                       stuff->count * sizeof(CARD32));
     SwapLongs((CARD32 *) (&stuff[1]), stuff->count);

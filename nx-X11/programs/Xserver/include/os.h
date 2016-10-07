@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/include/os.h,v 3.54 2003/10/30 21:21:06 herrb Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -46,14 +45,13 @@ SOFTWARE.
 
 ******************************************************************/
 
-/* $Xorg: os.h,v 1.4 2001/02/09 02:05:15 xorgcvs Exp $ */
 
 #ifndef OS_H
 #define OS_H
 
 #include "misc.h"
-#define ALLOCATE_LOCAL_FALLBACK(_size) Xalloc((unsigned long)(_size))
-#define DEALLOCATE_LOCAL_FALLBACK(_ptr) Xfree((void *)(_ptr))
+#define ALLOCATE_LOCAL_FALLBACK(_size) malloc((unsigned long)(_size))
+#define DEALLOCATE_LOCAL_FALLBACK(_ptr) free((void *)(_ptr))
 #include <nx-X11/Xalloca.h>
 #ifndef IN_MODULE
 #include <stdarg.h>
@@ -79,15 +77,11 @@ typedef void *	FID;
 typedef struct _FontPathRec *FontPathPtr;
 typedef struct _NewClientRec *NewClientPtr;
 
-#ifndef xalloc
+#ifndef xnfalloc
 #define xnfalloc(size) XNFalloc((unsigned long)(size))
 #define xnfcalloc(_num, _size) XNFcalloc((unsigned long)(_num)*(unsigned long)(_size))
 #define xnfrealloc(ptr, size) XNFrealloc((void *)(ptr), (unsigned long)(size))
 
-#define xalloc(size) Xalloc((unsigned long)(size))
-#define xcalloc(_num, _size) Xcalloc((unsigned long)(_num)*(unsigned long)(_size))
-#define xrealloc(ptr, size) Xrealloc((void *)(ptr), (unsigned long)(size))
-#define xfree(ptr) Xfree((void *)(ptr))
 #define xstrdup(s) Xstrdup(s)
 #define xnfstrdup(s) XNFstrdup(s)
 #endif
@@ -128,7 +122,7 @@ extern void FlushIfCriticalOutputPending(void);
 
 extern void SetCriticalOutputPending(void);
 
-extern int WriteToClient(ClientPtr /*who*/, int /*count*/, char* /*buf*/);
+extern int WriteToClient(ClientPtr /*who*/, int /*count*/, const void* /*__buf*/);
 
 extern void ResetOsBuffers(void);
 
@@ -228,14 +222,6 @@ extern int set_font_authorizations(
     char ** /* authorizations */, 
     int * /*authlen */, 
     void * /* client */);
-
-#ifndef _HAVE_XALLOC_DECLS
-#define _HAVE_XALLOC_DECLS
-extern void * Xalloc(unsigned long /*amount*/);
-extern void * Xcalloc(unsigned long /*amount*/);
-extern void * Xrealloc(void * /*ptr*/, unsigned long /*amount*/);
-extern void Xfree(void * /*ptr*/);
-#endif
 
 extern void * XNFalloc(unsigned long /*amount*/);
 extern void * XNFcalloc(unsigned long /*amount*/);
@@ -456,7 +442,7 @@ typedef struct {
 extern CallbackListPtr ReplyCallback;
 typedef struct {
     ClientPtr client;
-    void * replyData;
+    const void * replyData;
     unsigned long dataLenBytes;
     unsigned long bytesRemaining;
     Bool startOfReply;
@@ -468,6 +454,13 @@ extern CallbackListPtr FlushCallback;
 extern void AbortDDX(void);
 extern void ddxGiveUp(void);
 extern int TimeSinceLastInputEvent(void);
+
+#ifndef HAVE_STRLCPY
+extern _X_EXPORT size_t
+strlcpy(char *dst, const char *src, size_t siz);
+extern _X_EXPORT size_t
+strlcat(char *dst, const char *src, size_t siz);
+#endif
 
 /* Logging. */
 typedef enum _LogParameter {

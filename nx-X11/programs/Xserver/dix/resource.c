@@ -73,8 +73,6 @@ Equipment Corporation.
 
 ******************************************************************/
 
-/* $Xorg: resource.c,v 1.5 2001/02/09 02:04:40 xorgcvs Exp $ */
-/* $XdotOrg: xc/programs/Xserver/dix/resource.c,v 1.8 2005/07/03 08:53:38 daniels Exp $ */
 /* $TOG: resource.c /main/41 1998/02/09 14:20:31 kaleb $ */
 
 /*	Routines to manage various kinds of resources:
@@ -99,9 +97,7 @@ Equipment Corporation.
  *      1, and an otherwise arbitrary ID in the low 22 bits, we can create a
  *      resource "owned" by the client.
  */
-/* $XFree86: xc/programs/Xserver/dix/resource.c,v 3.13 2003/09/24 02:43:13 dawes Exp $ */
 
-#define NEED_EVENTS
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
@@ -178,7 +174,7 @@ CreateNewResourceType(DeleteType deleteFunc)
 
     if (next & lastResourceClass)
 	return 0;
-    funcs = (DeleteType *)xrealloc(DeleteFuncs,
+    funcs = (DeleteType *)realloc(DeleteFuncs,
 				   (next + 1) * sizeof(DeleteType));
     if (!funcs)
 	return 0;
@@ -186,7 +182,7 @@ CreateNewResourceType(DeleteType deleteFunc)
 #ifdef XResExtension
     {
        Atom *newnames;
-       newnames = xrealloc(ResourceNames, (next + 1) * sizeof(Atom));
+       newnames = realloc(ResourceNames, (next + 1) * sizeof(Atom));
        if(!newnames)
            return 0;
        ResourceNames = newnames;
@@ -231,8 +227,8 @@ InitClientResources(ClientPtr client)
 	lastResourceClass = RC_LASTPREDEF;
 	TypeMask = RC_LASTPREDEF - 1;
 	if (DeleteFuncs)
-	    xfree(DeleteFuncs);
-	DeleteFuncs = (DeleteType *)xalloc((lastResourceType + 1) *
+	    free(DeleteFuncs);
+	DeleteFuncs = (DeleteType *)malloc((lastResourceType + 1) *
 					   sizeof(DeleteType));
 	if (!DeleteFuncs)
 	    return FALSE;
@@ -249,14 +245,14 @@ InitClientResources(ClientPtr client)
 
 #ifdef XResExtension
         if(ResourceNames)
-            xfree(ResourceNames);
-        ResourceNames = xalloc((lastResourceType + 1) * sizeof(Atom));
+            free(ResourceNames);
+        ResourceNames = malloc((lastResourceType + 1) * sizeof(Atom));
         if(!ResourceNames)
            return FALSE;
 #endif
     }
     clientTable[i = client->index].resources =
-	(ResourcePtr *)xalloc(INITBUCKETS*sizeof(ResourcePtr));
+	(ResourcePtr *)malloc(INITBUCKETS*sizeof(ResourcePtr));
     if (!clientTable[i].resources)
 	return FALSE;
     clientTable[i].buckets = INITBUCKETS;
@@ -422,6 +418,7 @@ FakeClientID(register int client)
     return id;
 }
 
+#ifndef NXAGENT_SERVER
 Bool
 AddResource(XID id, RESTYPE type, void * value)
 {
@@ -441,7 +438,7 @@ AddResource(XID id, RESTYPE type, void * value)
 	(rrec->hashsize < MAXHASHSIZE))
 	RebuildTable(client);
     head = &rrec->resources[Hash(client, id)];
-    res = (ResourcePtr)xalloc(sizeof(ResourceRec));
+    res = (ResourcePtr)malloc(sizeof(ResourceRec));
     if (!res)
     {
 	(*DeleteFuncs[type & TypeMask])(value, id);
@@ -457,6 +454,7 @@ AddResource(XID id, RESTYPE type, void * value)
 	rrec->expectID = id + 1;
     return TRUE;
 }
+#endif /* NXAGENT_SERVER */
 
 static void
 RebuildTable(int client)
@@ -475,7 +473,7 @@ RebuildTable(int client)
     tails = (ResourcePtr **)ALLOCATE_LOCAL(j * sizeof(ResourcePtr *));
     if (!tails)
 	return;
-    resources = (ResourcePtr *)xalloc(j * sizeof(ResourcePtr));
+    resources = (ResourcePtr *)malloc(j * sizeof(ResourcePtr));
     if (!resources)
     {
 	DEALLOCATE_LOCAL(tails);
@@ -503,10 +501,11 @@ RebuildTable(int client)
     }
     DEALLOCATE_LOCAL(tails);
     clientTable[client].buckets *= 2;
-    xfree(clientTable[client].resources);
+    free(clientTable[client].resources);
     clientTable[client].resources = resources;
 }
 
+#ifndef NXAGENT_SERVER
 void
 FreeResource(XID id, RESTYPE skipDeleteFuncType)
 {
@@ -532,7 +531,7 @@ FreeResource(XID id, RESTYPE skipDeleteFuncType)
 		elements = --*eltptr;
 		if (rtype != skipDeleteFuncType)
 		    (*DeleteFuncs[rtype & TypeMask])(res->value, res->id);
-		xfree(res);
+		free(res);
 		if (*eltptr != elements)
 		    prev = head; /* prev may no longer be valid */
 		gotOne = TRUE;
@@ -565,7 +564,7 @@ FreeResourceByType(XID id, RESTYPE type, Bool skipFree)
 		*prev = res->next;
 		if (!skipFree)
 		    (*DeleteFuncs[type & TypeMask])(res->value, res->id);
-		xfree(res);
+		free(res);
 		break;
 	    }
 	    else
@@ -573,6 +572,7 @@ FreeResourceByType(XID id, RESTYPE type, Bool skipFree)
         }
     }
 }
+#endif /* NXAGENT_SERVER */
 
 /*
  * Change the value associated with a resource id.  Caller
@@ -606,6 +606,7 @@ ChangeResourceValue (XID id, RESTYPE rtype, void * value)
  * add and delete an equal number of resources!
  */
 
+#ifndef NXAGENT_SERVER
 void
 FindClientResourcesByType(
     ClientPtr client,
@@ -693,6 +694,7 @@ LookupClientResourceComplex(
     }
     return NULL;
 }
+#endif /* NXAGENT_SERVER */
 
 
 void
@@ -717,7 +719,7 @@ FreeClientNeverRetainResources(ClientPtr client)
 	    {
 		*prev = this->next;
 		(*DeleteFuncs[rtype & TypeMask])(this->value, this->id);
-		xfree(this);	    
+		free(this);	    
 	    }
 	    else
 		prev = &this->next;
@@ -761,10 +763,10 @@ FreeClientResources(ClientPtr client)
 	    RESTYPE rtype = this->type;
 	    *head = this->next;
 	    (*DeleteFuncs[rtype & TypeMask])(this->value, this->id);
-	    xfree(this);	    
+	    free(this);	    
 	}
     }
-    xfree(clientTable[client->index].resources);
+    free(clientTable[client->index].resources);
     clientTable[client->index].resources = NULL;
     clientTable[client->index].buckets = 0;
 }

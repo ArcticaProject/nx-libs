@@ -1,3 +1,28 @@
+/**************************************************************************/
+/*                                                                        */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
+/*                                                                        */
+/* nx-X11, NX protocol compression and NX extensions to this software     */
+/* are copyright of the aforementioned persons and companies.             */
+/*                                                                        */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
+/*                                                                        */
+/* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
+/*                                                                        */
+/**************************************************************************/
+
 /*
  * Copyright © 2006 Keith Packard
  * Copyright 2010 Red Hat, Inc
@@ -20,23 +45,6 @@
  * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
  * OF THIS SOFTWARE.
  */
-
-/**************************************************************************/
-/*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
-/*                                                                        */
-/* NX-X11, NX protocol compression and NX extensions to this software     */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
-/*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
-/*                                                                        */
-/* All rights reserved.                                                   */
-/*                                                                        */
-/**************************************************************************/
 
 #include "randrstr.h"
 #include "swaprep.h"
@@ -86,16 +94,16 @@ RRCrtcCreate(ScreenPtr pScreen, void *devPrivate)
         crtcs = reallocarray(pScrPriv->crtcs,
                              pScrPriv->numCrtcs + 1, sizeof(RRCrtcPtr));
 #else                           /* !defined(NXAGENT_SERVER) */
-        crtcs = xrealloc(pScrPriv->crtcs,
+        crtcs = realloc(pScrPriv->crtcs,
                          (pScrPriv->numCrtcs + 1) * sizeof(RRCrtcPtr));
 #endif                          /* !defined(NXAGENT_SERVER) */
     else
-        crtcs = xalloc(sizeof(RRCrtcPtr));
+        crtcs = malloc(sizeof(RRCrtcPtr));
     if (!crtcs)
         return FALSE;
     pScrPriv->crtcs = crtcs;
 
-    crtc = xcalloc(1, sizeof(RRCrtcRec));
+    crtc = calloc(1, sizeof(RRCrtcRec));
     if (!crtc)
         return NULL;
     crtc->id = FakeClientID(0);
@@ -202,20 +210,20 @@ RRCrtcNotify(RRCrtcPtr crtc,
                 newoutputs = reallocarray(crtc->outputs,
                                           numOutputs, sizeof(RROutputPtr));
 #else                           /* !defined(NXAGENT_SERVER) */
-                newoutputs = xrealloc(crtc->outputs,
+                newoutputs = realloc(crtc->outputs,
                                       numOutputs * sizeof(RROutputPtr));
 #endif                          /* !defined(NXAGENT_SERVER) */
             else
 #ifndef NXAGENT_SERVER
                 newoutputs = xallocarray(numOutputs, sizeof(RROutputPtr));
 #else                           /* !defined(NXAGENT_SERVER) */
-                newoutputs = xalloc(numOutputs * sizeof(RROutputPtr));
+                newoutputs = malloc(numOutputs * sizeof(RROutputPtr));
 #endif                          /* !defined(NXAGENT_SERVER) */
             if (!newoutputs)
                 return FALSE;
         }
         else {
-            xfree(crtc->outputs);
+            free(crtc->outputs);
             newoutputs = NULL;
         }
         crtc->outputs = newoutputs;
@@ -274,9 +282,6 @@ RRDeliverCrtcEvent(ClientPtr client, WindowPtr pWin, RRCrtcPtr crtc)
     xRRCrtcChangeNotifyEvent ce = {
         .type = RRNotify + RREventBase,
         .subCode = RRNotify_CrtcChange,
-#ifdef NXAGENT_SERVER
-        .sequenceNumber = client->sequence,
-#endif
         .timestamp = pScrPriv->lastSetTime.milliseconds,
         .window = pWin->drawable.id,
         .crtc = crtc->id,
@@ -370,7 +375,7 @@ RRComputeContiguity(ScreenPtr pScreen)
     Bool discontiguous = TRUE;
     int i, n = pScrPriv->numCrtcs;
 
-    int *reachable = xcalloc(n, sizeof(int));
+    int *reachable = calloc(n, sizeof(int));
 
     if (!reachable)
         goto out;
@@ -391,7 +396,7 @@ RRComputeContiguity(ScreenPtr pScreen)
     discontiguous = FALSE;
 
  out:
-    xfree(reachable);
+    free(reachable);
     pScrPriv->discontiguous = discontiguous;
 }
 
@@ -778,10 +783,10 @@ RRCrtcDestroyResource(void *value, XID pid)
 
     if (crtc->scanout_pixmap)
         RRCrtcDetachScanoutPixmap(crtc);
-    xfree(crtc->gammaRed);
+    free(crtc->gammaRed);
     if (crtc->mode)
         RRModeDestroy(crtc->mode);
-    xfree(crtc);
+    free(crtc);
     return 1;
 }
 
@@ -892,14 +897,14 @@ RRCrtcGammaSetSize(RRCrtcPtr crtc, int size)
 #ifndef NXAGENT_SERVER
         gamma = xallocarray(size, 3 * sizeof(CARD16));
 #else                           /* !defined(NXAGENT_SERVER) */
-        gamma = xalloc(size * 3 * sizeof(CARD16));
+        gamma = malloc(size * 3 * sizeof(CARD16));
 #endif                          /* !defined(NXAGENT_SERVER) */
         if (!gamma)
             return FALSE;
     }
     else
         gamma = NULL;
-    xfree(crtc->gammaRed);
+    free(crtc->gammaRed);
     crtc->gammaRed = gamma;
     crtc->gammaGreen = gamma + size;
     crtc->gammaBlue = gamma + size * 2;
@@ -997,7 +1002,6 @@ ProcRRGetCrtcInfo(ClientPtr client)
     int i, j, k;
     int width, height;
     BoxRec panned_area;
-    int n;
 
     REQUEST_SIZE_MATCH(xRRGetCrtcInfoReq);
     VERIFY_RR_CRTC(stuff->crtc, crtc, DixReadAccess);
@@ -1047,7 +1051,7 @@ ProcRRGetCrtcInfo(ClientPtr client)
 
     extraLen = rep.length << 2;
     if (extraLen) {
-        extra = xalloc(extraLen);
+        extra = malloc(extraLen);
         if (!extra)
             return BadAlloc;
     }
@@ -1060,7 +1064,7 @@ ProcRRGetCrtcInfo(ClientPtr client)
     for (i = 0; i < crtc->numOutputs; i++) {
         outputs[i] = crtc->outputs[i]->id;
         if (client->swapped)
-            swapl(&outputs[i], n);
+            swapl(&outputs[i]);
     }
     k = 0;
     for (i = 0; i < pScrPriv->numOutputs; i++)
@@ -1068,28 +1072,28 @@ ProcRRGetCrtcInfo(ClientPtr client)
             if (pScrPriv->outputs[i]->crtcs[j] == crtc) {
                 possible[k] = pScrPriv->outputs[i]->id;
                 if (client->swapped)
-                    swapl(&possible[k], n);
+                    swapl(&possible[k]);
                 k++;
             }
 
     if (client->swapped) {
-        swaps(&rep.sequenceNumber, n);
-        swapl(&rep.length, n);
-        swapl(&rep.timestamp, n);
-        swaps(&rep.x, n);
-        swaps(&rep.y, n);
-        swaps(&rep.width, n);
-        swaps(&rep.height, n);
-        swapl(&rep.mode, n);
-        swaps(&rep.rotation, n);
-        swaps(&rep.rotations, n);
-        swaps(&rep.nOutput, n);
-        swaps(&rep.nPossibleOutput, n);
+        swaps(&rep.sequenceNumber);
+        swapl(&rep.length);
+        swapl(&rep.timestamp);
+        swaps(&rep.x);
+        swaps(&rep.y);
+        swaps(&rep.width);
+        swaps(&rep.height);
+        swapl(&rep.mode);
+        swaps(&rep.rotation);
+        swaps(&rep.rotations);
+        swaps(&rep.nOutput);
+        swaps(&rep.nPossibleOutput);
     }
-    WriteToClient(client, sizeof(xRRGetCrtcInfoReply), (char *) &rep);
+    WriteToClient(client, sizeof(xRRGetCrtcInfoReply), &rep);
     if (extraLen) {
-        WriteToClient(client, extraLen, (char *) extra);
-        xfree(extra);
+        WriteToClient(client, extraLen, extra);
+        free(extra);
     }
 
     return Success;
@@ -1115,7 +1119,6 @@ ProcRRSetCrtcConfig(ClientPtr client)
 #endif
      i, j;
     CARD8 status;
-    int n;
 
     REQUEST_AT_LEAST_SIZE(xRRSetCrtcConfigReq);
     numOutputs = (stuff->length - bytes_to_int32(SIZEOF(xRRSetCrtcConfigReq)));
@@ -1136,7 +1139,7 @@ ProcRRSetCrtcConfig(ClientPtr client)
 #ifndef NXAGENT_SERVER
         outputs = xallocarray(numOutputs, sizeof(RROutputPtr));
 #else                           /* !defined(NXAGENT_SERVER) */
-        outputs = xalloc(numOutputs * sizeof(RROutputPtr));
+        outputs = malloc(numOutputs * sizeof(RROutputPtr));
 #endif                          /* !defined(NXAGENT_SERVER) */
         if (!outputs)
             return BadAlloc;
@@ -1151,7 +1154,7 @@ ProcRRSetCrtcConfig(ClientPtr client)
                                       RROutputType, client, DixSetAttrAccess);
 
         if (ret != Success) {
-            xfree(outputs);
+            free(outputs);
             return ret;
         }
 #else                           /* !defined(NXAGENT_SERVER) */
@@ -1159,7 +1162,7 @@ ProcRRSetCrtcConfig(ClientPtr client)
         if (!outputs[i]) {
             client->errorValue = outputIds[i];
             if (outputs)
-                xfree(outputs);
+                free(outputs);
             return RRErrorBase + BadRROutput;
         }
 #endif                          /* !defined(NXAGENT_SERVER) */
@@ -1168,7 +1171,7 @@ ProcRRSetCrtcConfig(ClientPtr client)
             if (outputs[i]->crtcs[j] == crtc)
                 break;
         if (j == outputs[i]->numCrtcs) {
-            xfree(outputs);
+            free(outputs);
             return BadMatch;
         }
         /* validate mode for this output */
@@ -1180,7 +1183,7 @@ ProcRRSetCrtcConfig(ClientPtr client)
                 break;
         }
         if (j == outputs[i]->numModes + outputs[i]->numUserModes) {
-            xfree(outputs);
+            free(outputs);
             return BadMatch;
         }
     }
@@ -1196,7 +1199,7 @@ ProcRRSetCrtcConfig(ClientPtr client)
                     break;
             }
             if (k == outputs[i]->numClones) {
-                xfree(outputs);
+                free(outputs);
                 return BadMatch;
             }
         }
@@ -1230,7 +1233,7 @@ ProcRRSetCrtcConfig(ClientPtr client)
          * Invalid rotation
          */
         client->errorValue = stuff->rotation;
-        xfree(outputs);
+        free(outputs);
         return BadValue;
     }
 
@@ -1240,7 +1243,7 @@ ProcRRSetCrtcConfig(ClientPtr client)
              * requested rotation or reflection not supported by screen
              */
             client->errorValue = stuff->rotation;
-            xfree(outputs);
+            free(outputs);
             return BadMatch;
         }
 
@@ -1282,13 +1285,13 @@ ProcRRSetCrtcConfig(ClientPtr client)
                                  &source_height);
             if (stuff->x + source_width > width) {
                 client->errorValue = stuff->x;
-                xfree(outputs);
+                free(outputs);
                 return BadValue;
             }
 
             if (stuff->y + source_height > height) {
                 client->errorValue = stuff->y;
-                xfree(outputs);
+                free(outputs);
                 return BadValue;
             }
         }
@@ -1304,7 +1307,7 @@ ProcRRSetCrtcConfig(ClientPtr client)
     pScrPriv->lastSetTime = time;
 
  sendReply:
-    xfree(outputs);
+    free(outputs);
 
     rep = (xRRSetCrtcConfigReply) {
         .type = X_Reply,
@@ -1314,11 +1317,11 @@ ProcRRSetCrtcConfig(ClientPtr client)
         .newTimestamp = pScrPriv->lastSetTime.milliseconds
     };
     if (client->swapped) {
-        swaps(&rep.sequenceNumber, n);
-        swapl(&rep.length, n);
-        swapl(&rep.newTimestamp, n);
+        swaps(&rep.sequenceNumber);
+        swapl(&rep.length);
+        swapl(&rep.newTimestamp);
     }
-    WriteToClient(client, sizeof(xRRSetCrtcConfigReply), (char *) &rep);
+    WriteToClient(client, sizeof(xRRSetCrtcConfigReply), &rep);
 
     return Success;
 }
@@ -1334,7 +1337,6 @@ ProcRRGetPanning(ClientPtr client)
     BoxRec total;
     BoxRec tracking;
     INT16 border[4];
-    int n;
 
     REQUEST_SIZE_MATCH(xRRGetPanningReq);
     VERIFY_RR_CRTC(stuff->crtc, crtc, DixReadAccess);
@@ -1372,23 +1374,23 @@ ProcRRGetPanning(ClientPtr client)
     }
 
     if (client->swapped) {
-        swaps(&rep.sequenceNumber, n);
-        swapl(&rep.length, n);
-        swapl(&rep.timestamp, n);
-        swaps(&rep.left, n);
-        swaps(&rep.top, n);
-        swaps(&rep.width, n);
-        swaps(&rep.height, n);
-        swaps(&rep.track_left, n);
-        swaps(&rep.track_top, n);
-        swaps(&rep.track_width, n);
-        swaps(&rep.track_height, n);
-        swaps(&rep.border_left, n);
-        swaps(&rep.border_top, n);
-        swaps(&rep.border_right, n);
-        swaps(&rep.border_bottom, n);
+        swaps(&rep.sequenceNumber);
+        swapl(&rep.length);
+        swapl(&rep.timestamp);
+        swaps(&rep.left);
+        swaps(&rep.top);
+        swaps(&rep.width);
+        swaps(&rep.height);
+        swaps(&rep.track_left);
+        swaps(&rep.track_top);
+        swaps(&rep.track_width);
+        swaps(&rep.track_height);
+        swaps(&rep.border_left);
+        swaps(&rep.border_top);
+        swaps(&rep.border_right);
+        swaps(&rep.border_bottom);
     }
-    WriteToClient(client, sizeof(xRRGetPanningReply), (char *) &rep);
+    WriteToClient(client, sizeof(xRRGetPanningReply), &rep);
     return Success;
 }
 
@@ -1405,7 +1407,6 @@ ProcRRSetPanning(ClientPtr client)
     BoxRec tracking;
     INT16 border[4];
     CARD8 status;
-    int n;
 
     REQUEST_SIZE_MATCH(xRRSetPanningReq);
     VERIFY_RR_CRTC(stuff->crtc, crtc, DixReadAccess);
@@ -1456,11 +1457,11 @@ ProcRRSetPanning(ClientPtr client)
         .newTimestamp = pScrPriv->lastSetTime.milliseconds
     };
     if (client->swapped) {
-        swaps(&rep.sequenceNumber, n);
-        swapl(&rep.length, n);
-        swapl(&rep.newTimestamp, n);
+        swaps(&rep.sequenceNumber);
+        swapl(&rep.length);
+        swapl(&rep.newTimestamp);
     }
-    WriteToClient(client, sizeof(xRRSetPanningReply), (char *) &rep);
+    WriteToClient(client, sizeof(xRRSetPanningReply), &rep);
     return Success;
 }
 
@@ -1470,7 +1471,6 @@ ProcRRGetCrtcGammaSize(ClientPtr client)
     REQUEST(xRRGetCrtcGammaSizeReq);
     xRRGetCrtcGammaSizeReply reply;
     RRCrtcPtr crtc;
-    int n;
 
     REQUEST_SIZE_MATCH(xRRGetCrtcGammaSizeReq);
     VERIFY_RR_CRTC(stuff->crtc, crtc, DixReadAccess);
@@ -1486,11 +1486,11 @@ ProcRRGetCrtcGammaSize(ClientPtr client)
         .size = crtc->gammaSize
     };
     if (client->swapped) {
-        swaps(&reply.sequenceNumber, n);
-        swapl(&reply.length, n);
-        swaps(&reply.size, n);
+        swaps(&reply.sequenceNumber);
+        swapl(&reply.length);
+        swaps(&reply.size);
     }
-    WriteToClient(client, sizeof(xRRGetCrtcGammaSizeReply), (char *) &reply);
+    WriteToClient(client, sizeof(xRRGetCrtcGammaSizeReply), &reply);
     return Success;
 }
 
@@ -1502,7 +1502,6 @@ ProcRRGetCrtcGamma(ClientPtr client)
     RRCrtcPtr crtc;
     unsigned long len;
     char *extra = NULL;
-    int n;
 
     REQUEST_SIZE_MATCH(xRRGetCrtcGammaReq);
     VERIFY_RR_CRTC(stuff->crtc, crtc, DixReadAccess);
@@ -1514,7 +1513,7 @@ ProcRRGetCrtcGamma(ClientPtr client)
     len = crtc->gammaSize * 3 * 2;
 
     if (crtc->gammaSize) {
-        extra = xalloc(len);
+        extra = malloc(len);
         if (!extra)
             return BadAlloc;
     }
@@ -1526,16 +1525,16 @@ ProcRRGetCrtcGamma(ClientPtr client)
         .size = crtc->gammaSize
     };
     if (client->swapped) {
-        swaps(&reply.sequenceNumber, n);
-        swapl(&reply.length, n);
-        swaps(&reply.size, n);
+        swaps(&reply.sequenceNumber);
+        swapl(&reply.length);
+        swaps(&reply.size);
     }
-    WriteToClient(client, sizeof(xRRGetCrtcGammaReply), (char *) &reply);
+    WriteToClient(client, sizeof(xRRGetCrtcGammaReply), &reply);
     if (crtc->gammaSize) {
         memcpy(extra, crtc->gammaRed, len);
         client->pSwapReplyFunc = (ReplySwapPtr) CopySwap16Write;
         WriteSwappedDataToClient(client, len, extra);
-        xfree(extra);
+        free(extra);
     }
     return Success;
 }
@@ -1620,7 +1619,6 @@ transform_filter_encode(ClientPtr client, char *output,
                         CARD16 *nparamsFilter, RRTransformPtr transform)
 {
     int nbytes, nparams;
-    int n;
 
     if (transform->filter == NULL) {
         *nbytesFilter = 0;
@@ -1636,8 +1634,8 @@ transform_filter_encode(ClientPtr client, char *output,
         output[nbytes++] = 0;
     memcpy(output + nbytes, transform->params, nparams * sizeof(xFixed));
     if (client->swapped) {
-        swaps(nbytesFilter, n);
-        swaps(nparamsFilter, n);
+        swaps(nbytesFilter);
+        swaps(nparamsFilter);
         SwapLongs((CARD32 *) (output + nbytes), nparams);
     }
     nbytes += nparams * sizeof(xFixed);
@@ -1662,7 +1660,6 @@ ProcRRGetCrtcTransform(ClientPtr client)
     int nextra;
     RRTransformPtr current, pending;
     char *extra;
-    int n;
 
     REQUEST_SIZE_MATCH(xRRGetCrtcTransformReq);
     VERIFY_RR_CRTC(stuff->crtc, crtc, DixReadAccess);
@@ -1673,7 +1670,7 @@ ProcRRGetCrtcTransform(ClientPtr client)
     nextra = (transform_filter_length(pending) +
               transform_filter_length(current));
 
-    reply = xcalloc(1, sizeof(xRRGetCrtcTransformReply) + nextra);
+    reply = calloc(1, sizeof(xRRGetCrtcTransformReply) + nextra);
     if (!reply)
         return BadAlloc;
 
@@ -1695,12 +1692,12 @@ ProcRRGetCrtcTransform(ClientPtr client)
                                      &reply->currentNparamsFilter, current);
 
     if (client->swapped) {
-        swaps(&reply->sequenceNumber, n);
-        swapl(&reply->length, n);
+        swaps(&reply->sequenceNumber);
+        swapl(&reply->length);
     }
     WriteToClient(client, sizeof(xRRGetCrtcTransformReply) + nextra,
-                  (char *) reply);
-    xfree(reply);
+                  reply);
+    free(reply);
     return Success;
 }
 
@@ -1825,7 +1822,7 @@ RRReplaceScanoutPixmap(DrawablePtr pDrawable, PixmapPtr pPixmap, Bool enable)
     PixmapPtr *saved_scanout_pixmap;
     int i;
 
-    saved_scanout_pixmap = xalloc(sizeof(PixmapPtr) * pScrPriv->numCrtcs);
+    saved_scanout_pixmap = malloc(sizeof(PixmapPtr) * pScrPriv->numCrtcs);
     if (saved_scanout_pixmap == NULL)
         return FALSE;
 
@@ -1894,7 +1891,7 @@ RRReplaceScanoutPixmap(DrawablePtr pDrawable, PixmapPtr pPixmap, Bool enable)
         else
             crtc->scanout_pixmap = saved_scanout_pixmap[i];
     }
-    xfree(saved_scanout_pixmap);
+    free(saved_scanout_pixmap);
 
     return ret;
 }

@@ -1,4 +1,3 @@
-/* $XdotOrg: xc/programs/Xserver/render/render.c,v 1.12 2005/08/28 19:47:39 ajax Exp $ */
 /*
  * $XFree86: xc/programs/Xserver/render/render.c,v 1.27tsi Exp $
  *
@@ -24,8 +23,6 @@
  * Author:  Keith Packard, SuSE, Inc.
  */
 
-#define NEED_REPLIES
-#define NEED_EVENTS
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
@@ -51,6 +48,8 @@
 #ifdef EXTMODULE
 #include "xf86_ansic.h"
 #endif
+
+#include "protocol-versions.h"
 
 #if !defined(UINT32_MAX)
 #define UINT32_MAX 0xffffffffU
@@ -275,12 +274,13 @@ RenderResetProc (ExtensionEntry *extEntry)
     ResetGlyphSetPrivateIndex();
 }
 
+#ifndef NXAGENT_SERVER
 static int
 ProcRenderQueryVersion (ClientPtr client)
 {
     RenderClientPtr pRenderClient = GetRenderClient (client);
     xRenderQueryVersionReply rep;
-    register int n;
+
     REQUEST(xRenderQueryVersionReq);
 
     REQUEST_SIZE_MATCH(xRenderQueryVersionReq);
@@ -292,17 +292,18 @@ ProcRenderQueryVersion (ClientPtr client)
     rep.type = X_Reply;
     rep.length = 0;
     rep.sequenceNumber = client->sequence;
-    rep.majorVersion = RENDER_MAJOR;
-    rep.minorVersion = RENDER_MINOR;
+    rep.majorVersion = SERVER_RENDER_MAJOR_VERSION;
+    rep.minorVersion = SERVER_RENDER_MINOR_VERSION;
     if (client->swapped) {
-    	swaps(&rep.sequenceNumber, n);
-    	swapl(&rep.length, n);
-	swapl(&rep.majorVersion, n);
-	swapl(&rep.minorVersion, n);
+	swaps(&rep.sequenceNumber);
+	swapl(&rep.length);
+	swapl(&rep.majorVersion);
+	swapl(&rep.minorVersion);
     }
-    WriteToClient(client, sizeof(xRenderQueryVersionReply), (char *)&rep);
+    WriteToClient(client, sizeof(xRenderQueryVersionReply), &rep);
     return (client->noClientException);
 }
+#endif /* NXAGENT_SERVER */
 
 #if 0
 static int
@@ -341,6 +342,7 @@ findVisual (ScreenPtr pScreen, VisualID vid)
 
 extern char *ConnectionInfo;
 
+#ifndef NXAGENT_SERVER
 static int
 ProcRenderQueryPictFormats (ClientPtr client)
 {
@@ -408,7 +410,7 @@ ProcRenderQueryPictFormats (ClientPtr client)
 	       ndepth * sizeof (xPictDepth) +
 	       nvisual * sizeof (xPictVisual) +
 	       numSubpixel * sizeof (CARD32));
-    reply = (xRenderQueryPictFormatsReply *) xalloc (rlength);
+    reply = (xRenderQueryPictFormatsReply *) malloc (rlength);
     if (!reply)
 	return BadAlloc;
     memset(reply, 0, rlength);
@@ -451,16 +453,16 @@ ProcRenderQueryPictFormats (ClientPtr client)
 		    pictForm->colormap = None;
 		if (client->swapped)
 		{
-		    swapl (&pictForm->id, n);
-		    swaps (&pictForm->direct.red, n);
-		    swaps (&pictForm->direct.redMask, n);
-		    swaps (&pictForm->direct.green, n);
-		    swaps (&pictForm->direct.greenMask, n);
-		    swaps (&pictForm->direct.blue, n);
-		    swaps (&pictForm->direct.blueMask, n);
-		    swaps (&pictForm->direct.alpha, n);
-		    swaps (&pictForm->direct.alphaMask, n);
-		    swapl (&pictForm->colormap, n);
+		    swapl (&pictForm->id);
+		    swaps (&pictForm->direct.red);
+		    swaps (&pictForm->direct.redMask);
+		    swaps (&pictForm->direct.green);
+		    swaps (&pictForm->direct.greenMask);
+		    swaps (&pictForm->direct.blue);
+		    swaps (&pictForm->direct.blueMask);
+		    swaps (&pictForm->direct.alpha);
+		    swaps (&pictForm->direct.alphaMask);
+		    swapl (&pictForm->colormap);
 		}
 		pictForm++;
 	    }
@@ -490,8 +492,8 @@ ProcRenderQueryPictFormats (ClientPtr client)
 		    pictVisual->format = pFormat->id;
 		    if (client->swapped)
 		    {
-			swapl (&pictVisual->visual, n);
-			swapl (&pictVisual->format, n);
+			swapl (&pictVisual->visual);
+			swapl (&pictVisual->format);
 		    }
 		    pictVisual++;
 		    nvisual++;
@@ -501,7 +503,7 @@ ProcRenderQueryPictFormats (ClientPtr client)
 	    pictDepth->nPictVisuals = nvisual;
 	    if (client->swapped)
 	    {
-		swaps (&pictDepth->nPictVisuals, n);
+		swaps (&pictDepth->nPictVisuals);
 	    }
 	    ndepth++;
 	    pictDepth = (xPictDepth *) pictVisual;
@@ -514,8 +516,8 @@ ProcRenderQueryPictFormats (ClientPtr client)
 	    pictScreen->fallback = 0;
 	if (client->swapped)
 	{
-	    swapl (&pictScreen->nDepth, n);
-	    swapl (&pictScreen->fallback, n);
+	    swapl (&pictScreen->nDepth);
+	    swapl (&pictScreen->fallback);
 	}
 	pictScreen = (xPictScreen *) pictDepth;
     }
@@ -531,25 +533,26 @@ ProcRenderQueryPictFormats (ClientPtr client)
 	    *pictSubpixel = SubPixelUnknown;
 	if (client->swapped)
 	{
-	    swapl (pictSubpixel, n);
+	    swapl (pictSubpixel);
 	}
 	++pictSubpixel;
     }
     
     if (client->swapped)
     {
-	swaps (&reply->sequenceNumber, n);
-	swapl (&reply->length, n);
-	swapl (&reply->numFormats, n);
-	swapl (&reply->numScreens, n);
-	swapl (&reply->numDepths, n);
-	swapl (&reply->numVisuals, n);
-	swapl (&reply->numSubpixel, n);
+	swaps (&reply->sequenceNumber);
+	swapl (&reply->length);
+	swapl (&reply->numFormats);
+	swapl (&reply->numScreens);
+	swapl (&reply->numDepths);
+	swapl (&reply->numVisuals);
+	swapl (&reply->numSubpixel);
     }
-    WriteToClient(client, rlength, (char *) reply);
-    xfree (reply);
+    WriteToClient(client, rlength, reply);
+    free (reply);
     return client->noClientException;
 }
+#endif /* NXAGENT_SERVER */
 
 static int
 ProcRenderQueryPictIndexValues (ClientPtr client)
@@ -557,7 +560,7 @@ ProcRenderQueryPictIndexValues (ClientPtr client)
     PictFormatPtr   pFormat;
     int		    num;
     int		    rlength;
-    int		    i, n;
+    int		    i;
     REQUEST(xRenderQueryPictIndexValuesReq);
     xRenderQueryPictIndexValuesReply *reply;
     xIndexValue	    *values;
@@ -582,7 +585,7 @@ ProcRenderQueryPictIndexValues (ClientPtr client)
     num = pFormat->index.nvalues;
     rlength = (sizeof (xRenderQueryPictIndexValuesReply) + 
 	       num * sizeof(xIndexValue));
-    reply = (xRenderQueryPictIndexValuesReply *) xalloc (rlength);
+    reply = (xRenderQueryPictIndexValuesReply *) malloc (rlength);
     if (!reply)
 	return BadAlloc;
 
@@ -599,19 +602,19 @@ ProcRenderQueryPictIndexValues (ClientPtr client)
     {
 	for (i = 0; i < num; i++)
 	{
-	    swapl (&values[i].pixel, n);
-	    swaps (&values[i].red, n);
-	    swaps (&values[i].green, n);
-	    swaps (&values[i].blue, n);
-	    swaps (&values[i].alpha, n);
+	    swapl (&values[i].pixel);
+	    swaps (&values[i].red);
+	    swaps (&values[i].green);
+	    swaps (&values[i].blue);
+	    swaps (&values[i].alpha);
 	}
-	swaps (&reply->sequenceNumber, n);
-	swapl (&reply->length, n);
-	swapl (&reply->numIndexValues, n);
+	swaps (&reply->sequenceNumber);
+	swapl (&reply->length);
+	swapl (&reply->numIndexValues);
     }
 
-    WriteToClient(client, rlength, (char *) reply);
-    xfree(reply);
+    WriteToClient(client, rlength, reply);
+    free(reply);
     return (client->noClientException);
 }
 
@@ -621,6 +624,7 @@ ProcRenderQueryDithers (ClientPtr client)
     return BadImplementation;
 }
 
+#ifndef NXAGENT_SERVER
 static int
 ProcRenderCreatePicture (ClientPtr client)
 {
@@ -710,6 +714,7 @@ ProcRenderSetPictureClipRectangles (ClientPtr client)
     else
         return(result);
 }
+#endif /* NXAGENT_SERVER */
 
 static int
 ProcRenderFreePicture (ClientPtr client)
@@ -737,6 +742,7 @@ PictOpValid (CARD8 op)
     return FALSE;
 }
 
+#ifndef NXAGENT_SERVER
 static int
 ProcRenderComposite (ClientPtr client)
 {
@@ -774,6 +780,7 @@ ProcRenderComposite (ClientPtr client)
 		      stuff->height);
     return Success;
 }
+#endif /* NXAGENT_SERVER */
 
 static int
 ProcRenderScale (ClientPtr client)
@@ -781,6 +788,7 @@ ProcRenderScale (ClientPtr client)
     return BadImplementation;
 }
 
+#ifndef NXAGENT_SERVER
 static int
 ProcRenderTrapezoids (ClientPtr client)
 {
@@ -827,6 +835,7 @@ ProcRenderTrapezoids (ClientPtr client)
 			     ntraps, (xTrapezoid *) &stuff[1]);
     return client->noClientException;
 }
+#endif /* NXAGENT_SERVER */
 
 static int
 ProcRenderTriangles (ClientPtr client)
@@ -987,6 +996,7 @@ ProcRenderTransform (ClientPtr client)
     return BadImplementation;
 }
 
+#ifndef NXAGENT_SERVER
 static int
 ProcRenderCreateGlyphSet (ClientPtr client)
 {
@@ -1060,10 +1070,12 @@ ProcRenderReferenceGlyphSet (ClientPtr client)
 	return BadAlloc;
     return client->noClientException;
 }
+#endif /* NXAGENT_SERVER */
 
 #define NLOCALDELTA	64
 #define NLOCALGLYPH	256
 
+#ifndef NXAGENT_SERVER
 static int
 ProcRenderFreeGlyphSet (ClientPtr client)
 {
@@ -1083,6 +1095,7 @@ ProcRenderFreeGlyphSet (ClientPtr client)
     FreeResource (stuff->glyphset, RT_NONE);
     return client->noClientException;
 }
+#endif /* NXAGENT_SERVER */
 
 typedef struct _GlyphNew {
     Glyph	id;
@@ -1096,7 +1109,7 @@ ProcRenderAddGlyphs (ClientPtr client)
     REQUEST(xRenderAddGlyphsReq);
     GlyphNewRec	    glyphsLocal[NLOCALGLYPH];
     GlyphNewPtr	    glyphsBase, glyphs;
-    GlyphPtr	    glyph;
+    GlyphPtr	    glyph = NULL;
     int		    remain, nglyphs;
     CARD32	    *gids;
     xGlyphInfo	    *gi;
@@ -1123,7 +1136,7 @@ ProcRenderAddGlyphs (ClientPtr client)
 	glyphsBase = glyphsLocal;
     else
     {
-	glyphsBase = (GlyphNewPtr) Xalloc (nglyphs * sizeof (GlyphNewRec));
+	glyphsBase = (GlyphNewPtr) malloc (nglyphs * sizeof (GlyphNewRec));
 	if (!glyphsBase)
 	    return BadAlloc;
     }
@@ -1180,16 +1193,16 @@ ProcRenderAddGlyphs (ClientPtr client)
     }
 
     if (glyphsBase != glyphsLocal)
-	Xfree (glyphsBase);
+	free (glyphsBase);
     return client->noClientException;
 bail:
     while (glyphs != glyphsBase)
     {
 	--glyphs;
-	xfree (glyphs->glyph);
+	free (glyphs->glyph);
     }
     if (glyphsBase != glyphsLocal)
-	Xfree (glyphsBase);
+	free (glyphsBase);
     return err;
 }
 
@@ -1199,6 +1212,7 @@ ProcRenderAddGlyphsFromPicture (ClientPtr client)
     return BadImplementation;
 }
 
+#ifndef NXAGENT_SERVER
 static int
 ProcRenderFreeGlyphs (ClientPtr client)
 {
@@ -1454,6 +1468,7 @@ ProcRenderFillRectangles (ClientPtr client)
     
     return client->noClientException;
 }
+#endif /* NXAGENT_SERVER */
 
 static void
 SetBit (unsigned char *line, int x, int bit)
@@ -1481,6 +1496,7 @@ static CARD32 orderedDither[DITHER_DIM][DITHER_DIM] = {
 
 #define DITHER_SIZE  ((sizeof orderedDither / sizeof orderedDither[0][0]) + 1)
 
+#ifndef NXAGENT_SERVER
 static int
 ProcRenderCreateCursor (ClientPtr client)
 {
@@ -1514,23 +1530,23 @@ ProcRenderCreateCursor (ClientPtr client)
     if ( stuff->x > width 
       || stuff->y > height )
 	return (BadMatch);
-    argbbits = xalloc (width * height * sizeof (CARD32));
+    argbbits = malloc (width * height * sizeof (CARD32));
     if (!argbbits)
 	return (BadAlloc);
     
     stride = BitmapBytePad(width);
     nbytes_mono = stride*height;
-    srcbits = (unsigned char *)xalloc(nbytes_mono);
+    srcbits = (unsigned char *)malloc(nbytes_mono);
     if (!srcbits)
     {
-	xfree (argbbits);
+	free (argbbits);
 	return (BadAlloc);
     }
-    mskbits = (unsigned char *)xalloc(nbytes_mono);
+    mskbits = (unsigned char *)malloc(nbytes_mono);
     if (!mskbits)
     {
-	xfree(argbbits);
-	xfree(srcbits);
+	free(argbbits);
+	free(srcbits);
 	return (BadAlloc);
     }
     bzero ((char *) mskbits, nbytes_mono);
@@ -1552,26 +1568,26 @@ ProcRenderCreateCursor (ClientPtr client)
 	pFormat = PictureMatchFormat (pScreen, 32, PICT_a8r8g8b8);
 	if (!pFormat)
 	{
-	    xfree (argbbits);
-	    xfree (srcbits);
-	    xfree (mskbits);
+	    free (argbbits);
+	    free (srcbits);
+	    free (mskbits);
 	    return (BadImplementation);
 	}
 	pPixmap = (*pScreen->CreatePixmap) (pScreen, width, height, 32);
 	if (!pPixmap)
 	{
-	    xfree (argbbits);
-	    xfree (srcbits);
-	    xfree (mskbits);
+	    free (argbbits);
+	    free (srcbits);
+	    free (mskbits);
 	    return (BadAlloc);
 	}
 	pPicture = CreatePicture (0, &pPixmap->drawable, pFormat, 0, 0, 
 				  client, &error);
 	if (!pPicture)
 	{
-	    xfree (argbbits);
-	    xfree (srcbits);
-	    xfree (mskbits);
+	    free (argbbits);
+	    free (srcbits);
+	    free (mskbits);
 	    return error;
 	}
 	(*pScreen->DestroyPixmap) (pPixmap);
@@ -1655,7 +1671,7 @@ ProcRenderCreateCursor (ClientPtr client)
     }
     else
     {
-	xfree (argbbits);
+	free (argbbits);
 	argbbits = 0;
     }
     
@@ -1694,6 +1710,7 @@ ProcRenderSetPictureTransform (ClientPtr client)
     else
         return(result);
 }
+#endif /* NXAGENT_SERVER */
 
 static int
 ProcRenderQueryFilters (ClientPtr client)
@@ -1728,7 +1745,7 @@ ProcRenderQueryFilters (ClientPtr client)
     }
     len = ((nnames + 1) >> 1) + ((nbytesName + 3) >> 2);
     total_bytes = sizeof (xRenderQueryFiltersReply) + (len << 2);
-    reply = (xRenderQueryFiltersReply *) xalloc (total_bytes);
+    reply = (xRenderQueryFiltersReply *) malloc (total_bytes);
     if (!reply)
 	return BadAlloc;
     aliases = (INT16 *) (reply + 1);
@@ -1787,23 +1804,22 @@ ProcRenderQueryFilters (ClientPtr client)
 
     if (client->swapped)
     {
-	register int n;
-
 	for (i = 0; i < reply->numAliases; i++)
 	{
-	    swaps (&aliases[i], n);
+	    swaps (&aliases[i]);
 	}
-    	swaps(&reply->sequenceNumber, n);
-    	swapl(&reply->length, n);
-	swapl(&reply->numAliases, n);
-	swapl(&reply->numFilters, n);
+	swaps(&reply->sequenceNumber);
+	swapl(&reply->length);
+	swapl(&reply->numAliases);
+	swapl(&reply->numFilters);
     }
-    WriteToClient(client, total_bytes, (char *) reply);
-    xfree (reply);
+    WriteToClient(client, total_bytes, reply);
+    free (reply);
     
     return(client->noClientException);
 }
 
+#ifndef NXAGENT_SERVER
 static int
 ProcRenderSetPictureFilter (ClientPtr client)
 {
@@ -1841,7 +1857,7 @@ ProcRenderCreateAnimCursor (ClientPtr client)
     if (client->req_len & 1)
 	return BadLength;
     ncursor = (client->req_len - (SIZEOF(xRenderCreateAnimCursorReq) >> 2)) >> 1;
-    cursors = xalloc (ncursor * (sizeof (CursorPtr) + sizeof (CARD32)));
+    cursors = malloc (ncursor * (sizeof (CursorPtr) + sizeof (CARD32)));
     if (!cursors)
 	return BadAlloc;
     deltas = (CARD32 *) (cursors + ncursor);
@@ -1852,7 +1868,7 @@ ProcRenderCreateAnimCursor (ClientPtr client)
 						       RT_CURSOR, SecurityReadAccess);
 	if (!cursors[i])
 	{
-	    xfree (cursors);
+	    free (cursors);
 	    client->errorValue = elt->cursor;
 	    return BadCursor;
 	}
@@ -1860,7 +1876,7 @@ ProcRenderCreateAnimCursor (ClientPtr client)
 	elt++;
     }
     ret = AnimCursorCreate (cursors, deltas, ncursor, &pCursor);
-    xfree (cursors);
+    free (cursors);
     if (ret != Success)
 	return ret;
     
@@ -1868,6 +1884,7 @@ ProcRenderCreateAnimCursor (ClientPtr client)
 	return client->noClientException;
     return BadAlloc;
 }
+#endif /* NXAGENT_SERVER */
 
 static int
 ProcRenderAddTraps (ClientPtr client)
@@ -1892,6 +1909,7 @@ ProcRenderAddTraps (ClientPtr client)
     return client->noClientException;
 }
 
+#ifndef NXAGENT_SERVER
 static int ProcRenderCreateSolidFill(ClientPtr client)
 {
     PicturePtr	    pPicture;
@@ -2011,38 +2029,36 @@ ProcRenderDispatch (ClientPtr client)
     else
 	return BadRequest;
 }
+#endif /* NXAGENT_SERVER */
 
 static int
 SProcRenderQueryVersion (ClientPtr client)
 {
-    register int n;
     REQUEST(xRenderQueryVersionReq);
     REQUEST_SIZE_MATCH(xRenderQueryVersionReq);
 
-    swaps(&stuff->length, n);
-    swapl(&stuff->majorVersion, n);
-    swapl(&stuff->minorVersion, n);
+    swaps(&stuff->length);
+    swapl(&stuff->majorVersion);
+    swapl(&stuff->minorVersion);
     return (*ProcRenderVector[stuff->renderReqType])(client);
 }
 
 static int
 SProcRenderQueryPictFormats (ClientPtr client)
 {
-    register int n;
     REQUEST(xRenderQueryPictFormatsReq);
     REQUEST_SIZE_MATCH(xRenderQueryPictFormatsReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     return (*ProcRenderVector[stuff->renderReqType]) (client);
 }
 
 static int
 SProcRenderQueryPictIndexValues (ClientPtr client)
 {
-    register int n;
     REQUEST(xRenderQueryPictIndexValuesReq);
     REQUEST_AT_LEAST_SIZE(xRenderQueryPictIndexValuesReq);
-    swaps(&stuff->length, n);
-    swapl(&stuff->format, n);
+    swaps(&stuff->length);
+    swapl(&stuff->format);
     return (*ProcRenderVector[stuff->renderReqType]) (client);
 }
 
@@ -2055,14 +2071,13 @@ SProcRenderQueryDithers (ClientPtr client)
 static int
 SProcRenderCreatePicture (ClientPtr client)
 {
-    register int n;
     REQUEST(xRenderCreatePictureReq);
     REQUEST_AT_LEAST_SIZE(xRenderCreatePictureReq);
-    swaps(&stuff->length, n);
-    swapl(&stuff->pid, n);
-    swapl(&stuff->drawable, n);
-    swapl(&stuff->format, n);
-    swapl(&stuff->mask, n);
+    swaps(&stuff->length);
+    swapl(&stuff->pid);
+    swapl(&stuff->drawable);
+    swapl(&stuff->format);
+    swapl(&stuff->mask);
     SwapRestL(stuff);
     return (*ProcRenderVector[stuff->renderReqType]) (client);
 }
@@ -2070,12 +2085,11 @@ SProcRenderCreatePicture (ClientPtr client)
 static int
 SProcRenderChangePicture (ClientPtr client)
 {
-    register int n;
     REQUEST(xRenderChangePictureReq);
     REQUEST_AT_LEAST_SIZE(xRenderChangePictureReq);
-    swaps(&stuff->length, n);
-    swapl(&stuff->picture, n);
-    swapl(&stuff->mask, n);
+    swaps(&stuff->length);
+    swapl(&stuff->picture);
+    swapl(&stuff->mask);
     SwapRestL(stuff);
     return (*ProcRenderVector[stuff->renderReqType]) (client);
 }
@@ -2083,11 +2097,10 @@ SProcRenderChangePicture (ClientPtr client)
 static int
 SProcRenderSetPictureClipRectangles (ClientPtr client)
 {
-    register int n;
     REQUEST(xRenderSetPictureClipRectanglesReq);
     REQUEST_AT_LEAST_SIZE(xRenderSetPictureClipRectanglesReq);
-    swaps(&stuff->length, n);
-    swapl(&stuff->picture, n);
+    swaps(&stuff->length);
+    swapl(&stuff->picture);
     SwapRestS(stuff);
     return (*ProcRenderVector[stuff->renderReqType]) (client);
 }
@@ -2095,68 +2108,64 @@ SProcRenderSetPictureClipRectangles (ClientPtr client)
 static int
 SProcRenderFreePicture (ClientPtr client)
 {
-    register int n;
     REQUEST(xRenderFreePictureReq);
     REQUEST_SIZE_MATCH(xRenderFreePictureReq);
-    swaps(&stuff->length, n);
-    swapl(&stuff->picture, n);
+    swaps(&stuff->length);
+    swapl(&stuff->picture);
     return (*ProcRenderVector[stuff->renderReqType]) (client);
 }
 
 static int
 SProcRenderComposite (ClientPtr client)
 {
-    register int n;
     REQUEST(xRenderCompositeReq);
     REQUEST_SIZE_MATCH(xRenderCompositeReq);
-    swaps(&stuff->length, n);
-    swapl(&stuff->src, n);
-    swapl(&stuff->mask, n);
-    swapl(&stuff->dst, n);
-    swaps(&stuff->xSrc, n);
-    swaps(&stuff->ySrc, n);
-    swaps(&stuff->xMask, n);
-    swaps(&stuff->yMask, n);
-    swaps(&stuff->xDst, n);
-    swaps(&stuff->yDst, n);
-    swaps(&stuff->width, n);
-    swaps(&stuff->height, n);
+    swaps(&stuff->length);
+    swapl(&stuff->src);
+    swapl(&stuff->mask);
+    swapl(&stuff->dst);
+    swaps(&stuff->xSrc);
+    swaps(&stuff->ySrc);
+    swaps(&stuff->xMask);
+    swaps(&stuff->yMask);
+    swaps(&stuff->xDst);
+    swaps(&stuff->yDst);
+    swaps(&stuff->width);
+    swaps(&stuff->height);
     return (*ProcRenderVector[stuff->renderReqType]) (client);
 }
 
 static int
 SProcRenderScale (ClientPtr client)
 {
-    register int n;
     REQUEST(xRenderScaleReq);
     REQUEST_SIZE_MATCH(xRenderScaleReq);
-    swaps(&stuff->length, n);
-    swapl(&stuff->src, n);
-    swapl(&stuff->dst, n);
-    swapl(&stuff->colorScale, n);
-    swapl(&stuff->alphaScale, n);
-    swaps(&stuff->xSrc, n);
-    swaps(&stuff->ySrc, n);
-    swaps(&stuff->xDst, n);
-    swaps(&stuff->yDst, n);
-    swaps(&stuff->width, n);
-    swaps(&stuff->height, n);
+    swaps(&stuff->length);
+    swapl(&stuff->src);
+    swapl(&stuff->dst);
+    swapl(&stuff->colorScale);
+    swapl(&stuff->alphaScale);
+    swaps(&stuff->xSrc);
+    swaps(&stuff->ySrc);
+    swaps(&stuff->xDst);
+    swaps(&stuff->yDst);
+    swaps(&stuff->width);
+    swaps(&stuff->height);
     return (*ProcRenderVector[stuff->renderReqType]) (client);
 }
 
 static int
 SProcRenderTrapezoids (ClientPtr client)
 {
-    register int n;
     REQUEST(xRenderTrapezoidsReq);
 
     REQUEST_AT_LEAST_SIZE(xRenderTrapezoidsReq);
-    swaps (&stuff->length, n);
-    swapl (&stuff->src, n);
-    swapl (&stuff->dst, n);
-    swapl (&stuff->maskFormat, n);
-    swaps (&stuff->xSrc, n);
-    swaps (&stuff->ySrc, n);
+    swaps (&stuff->length);
+    swapl (&stuff->src);
+    swapl (&stuff->dst);
+    swapl (&stuff->maskFormat);
+    swaps (&stuff->xSrc);
+    swaps (&stuff->ySrc);
     SwapRestL(stuff);
     return (*ProcRenderVector[stuff->renderReqType]) (client);
 }
@@ -2164,16 +2173,15 @@ SProcRenderTrapezoids (ClientPtr client)
 static int
 SProcRenderTriangles (ClientPtr client)
 {
-    register int n;
     REQUEST(xRenderTrianglesReq);
 
     REQUEST_AT_LEAST_SIZE(xRenderTrianglesReq);
-    swaps (&stuff->length, n);
-    swapl (&stuff->src, n);
-    swapl (&stuff->dst, n);
-    swapl (&stuff->maskFormat, n);
-    swaps (&stuff->xSrc, n);
-    swaps (&stuff->ySrc, n);
+    swaps (&stuff->length);
+    swapl (&stuff->src);
+    swapl (&stuff->dst);
+    swapl (&stuff->maskFormat);
+    swaps (&stuff->xSrc);
+    swaps (&stuff->ySrc);
     SwapRestL(stuff);
     return (*ProcRenderVector[stuff->renderReqType]) (client);
 }
@@ -2181,16 +2189,15 @@ SProcRenderTriangles (ClientPtr client)
 static int
 SProcRenderTriStrip (ClientPtr client)
 {
-    register int n;
     REQUEST(xRenderTriStripReq);
 
     REQUEST_AT_LEAST_SIZE(xRenderTriStripReq);
-    swaps (&stuff->length, n);
-    swapl (&stuff->src, n);
-    swapl (&stuff->dst, n);
-    swapl (&stuff->maskFormat, n);
-    swaps (&stuff->xSrc, n);
-    swaps (&stuff->ySrc, n);
+    swaps (&stuff->length);
+    swapl (&stuff->src);
+    swapl (&stuff->dst);
+    swapl (&stuff->maskFormat);
+    swaps (&stuff->xSrc);
+    swaps (&stuff->ySrc);
     SwapRestL(stuff);
     return (*ProcRenderVector[stuff->renderReqType]) (client);
 }
@@ -2198,16 +2205,15 @@ SProcRenderTriStrip (ClientPtr client)
 static int
 SProcRenderTriFan (ClientPtr client)
 {
-    register int n;
     REQUEST(xRenderTriFanReq);
 
     REQUEST_AT_LEAST_SIZE(xRenderTriFanReq);
-    swaps (&stuff->length, n);
-    swapl (&stuff->src, n);
-    swapl (&stuff->dst, n);
-    swapl (&stuff->maskFormat, n);
-    swaps (&stuff->xSrc, n);
-    swaps (&stuff->ySrc, n);
+    swaps (&stuff->length);
+    swapl (&stuff->src);
+    swapl (&stuff->dst);
+    swapl (&stuff->maskFormat);
+    swaps (&stuff->xSrc);
+    swaps (&stuff->ySrc);
     SwapRestL(stuff);
     return (*ProcRenderVector[stuff->renderReqType]) (client);
 }
@@ -2233,51 +2239,47 @@ SProcRenderTransform (ClientPtr client)
 static int
 SProcRenderCreateGlyphSet (ClientPtr client)
 {
-    register int n;
     REQUEST(xRenderCreateGlyphSetReq);
     REQUEST_SIZE_MATCH(xRenderCreateGlyphSetReq);
-    swaps(&stuff->length, n);
-    swapl(&stuff->gsid, n);
-    swapl(&stuff->format, n);
+    swaps(&stuff->length);
+    swapl(&stuff->gsid);
+    swapl(&stuff->format);
     return (*ProcRenderVector[stuff->renderReqType]) (client);
 }
 
 static int
 SProcRenderReferenceGlyphSet (ClientPtr client)
 {
-    register int n;
     REQUEST(xRenderReferenceGlyphSetReq);
     REQUEST_SIZE_MATCH(xRenderReferenceGlyphSetReq);
-    swaps(&stuff->length, n);
-    swapl(&stuff->gsid, n);
-    swapl(&stuff->existing, n);
+    swaps(&stuff->length);
+    swapl(&stuff->gsid);
+    swapl(&stuff->existing);
     return (*ProcRenderVector[stuff->renderReqType])  (client);
 }
 
 static int
 SProcRenderFreeGlyphSet (ClientPtr client)
 {
-    register int n;
     REQUEST(xRenderFreeGlyphSetReq);
     REQUEST_SIZE_MATCH(xRenderFreeGlyphSetReq);
-    swaps(&stuff->length, n);
-    swapl(&stuff->glyphset, n);
+    swaps(&stuff->length);
+    swapl(&stuff->glyphset);
     return (*ProcRenderVector[stuff->renderReqType]) (client);
 }
 
 static int
 SProcRenderAddGlyphs (ClientPtr client)
 {
-    register int n;
     register int i;
     CARD32  *gids;
     void    *end;
     xGlyphInfo *gi;
     REQUEST(xRenderAddGlyphsReq);
     REQUEST_AT_LEAST_SIZE(xRenderAddGlyphsReq);
-    swaps(&stuff->length, n);
-    swapl(&stuff->glyphset, n);
-    swapl(&stuff->nglyphs, n);
+    swaps(&stuff->length);
+    swapl(&stuff->glyphset);
+    swapl(&stuff->nglyphs);
     if (stuff->nglyphs & 0xe0000000)
 	return BadLength;
     end = (CARD8 *) stuff + (client->req_len << 2);
@@ -2289,13 +2291,13 @@ SProcRenderAddGlyphs (ClientPtr client)
 	return BadLength;
     for (i = 0; i < stuff->nglyphs; i++)
     {
-	swapl (&gids[i], n);
-	swaps (&gi[i].width, n);
-	swaps (&gi[i].height, n);
-	swaps (&gi[i].x, n);
-	swaps (&gi[i].y, n);
-	swaps (&gi[i].xOff, n);
-	swaps (&gi[i].yOff, n);
+	swapl (&gids[i]);
+	swaps (&gi[i].width);
+	swaps (&gi[i].height);
+	swaps (&gi[i].x);
+	swaps (&gi[i].y);
+	swaps (&gi[i].xOff);
+	swaps (&gi[i].yOff);
     }
     return (*ProcRenderVector[stuff->renderReqType]) (client);
 }
@@ -2309,11 +2311,10 @@ SProcRenderAddGlyphsFromPicture (ClientPtr client)
 static int
 SProcRenderFreeGlyphs (ClientPtr client)
 {
-    register int n;
     REQUEST(xRenderFreeGlyphsReq);
     REQUEST_AT_LEAST_SIZE(xRenderFreeGlyphsReq);
-    swaps(&stuff->length, n);
-    swapl(&stuff->glyphset, n);
+    swaps(&stuff->length);
+    swapl(&stuff->glyphset);
     SwapRestL(stuff);
     return (*ProcRenderVector[stuff->renderReqType]) (client);
 }
@@ -2321,7 +2322,6 @@ SProcRenderFreeGlyphs (ClientPtr client)
 static int
 SProcRenderCompositeGlyphs (ClientPtr client)
 {
-    register int n;
     xGlyphElt	*elt;
     CARD8	*buffer;
     CARD8	*end;
@@ -2338,13 +2338,13 @@ SProcRenderCompositeGlyphs (ClientPtr client)
     case X_RenderCompositeGlyphs32: size = 4; break;
     }
 	    
-    swaps(&stuff->length, n);
-    swapl(&stuff->src, n);
-    swapl(&stuff->dst, n);
-    swapl(&stuff->maskFormat, n);
-    swapl(&stuff->glyphset, n);
-    swaps(&stuff->xSrc, n);
-    swaps(&stuff->ySrc, n);
+    swaps(&stuff->length);
+    swapl(&stuff->src);
+    swapl(&stuff->dst);
+    swapl(&stuff->maskFormat);
+    swapl(&stuff->glyphset);
+    swaps(&stuff->xSrc);
+    swaps(&stuff->ySrc);
     buffer = (CARD8 *) (stuff + 1);
     end = (CARD8 *) stuff + (client->req_len << 2);
     while (buffer + sizeof (xGlyphElt) < end)
@@ -2352,13 +2352,13 @@ SProcRenderCompositeGlyphs (ClientPtr client)
 	elt = (xGlyphElt *) buffer;
 	buffer += sizeof (xGlyphElt);
 	
-	swaps (&elt->deltax, n);
-	swaps (&elt->deltay, n);
+	swaps (&elt->deltax);
+	swaps (&elt->deltay);
 	
 	i = elt->len;
 	if (i == 0xff)
 	{
-	    swapl (buffer, n);
+	    swapl ((int *) buffer);
 	    buffer += 4;
 	}
 	else
@@ -2371,14 +2371,14 @@ SProcRenderCompositeGlyphs (ClientPtr client)
 	    case 2:
 		while (i--)
 		{
-		    swaps (buffer, n);
+		    swaps ((short *) buffer);
 		    buffer += 2;
 		}
 		break;
 	    case 4:
 		while (i--)
 		{
-		    swapl (buffer, n);
+		    swapl ((int *) buffer);
 		    buffer += 4;
 		}
 		break;
@@ -2393,16 +2393,15 @@ SProcRenderCompositeGlyphs (ClientPtr client)
 static int
 SProcRenderFillRectangles (ClientPtr client)
 {
-    register int n;
     REQUEST(xRenderFillRectanglesReq);
 
     REQUEST_AT_LEAST_SIZE (xRenderFillRectanglesReq);
-    swaps(&stuff->length, n);
-    swapl(&stuff->dst, n);
-    swaps(&stuff->color.red, n);
-    swaps(&stuff->color.green, n);
-    swaps(&stuff->color.blue, n);
-    swaps(&stuff->color.alpha, n);
+    swaps(&stuff->length);
+    swapl(&stuff->dst);
+    swaps(&stuff->color.red);
+    swaps(&stuff->color.green);
+    swaps(&stuff->color.blue);
+    swaps(&stuff->color.alpha);
     SwapRestS(stuff);
     return (*ProcRenderVector[stuff->renderReqType]) (client);
 }
@@ -2410,73 +2409,68 @@ SProcRenderFillRectangles (ClientPtr client)
 static int
 SProcRenderCreateCursor (ClientPtr client)
 {
-    register int n;
     REQUEST(xRenderCreateCursorReq);
     REQUEST_SIZE_MATCH (xRenderCreateCursorReq);
     
-    swaps(&stuff->length, n);
-    swapl(&stuff->cid, n);
-    swapl(&stuff->src, n);
-    swaps(&stuff->x, n);
-    swaps(&stuff->y, n);
+    swaps(&stuff->length);
+    swapl(&stuff->cid);
+    swapl(&stuff->src);
+    swaps(&stuff->x);
+    swaps(&stuff->y);
     return (*ProcRenderVector[stuff->renderReqType]) (client);
 }
     
 static int
 SProcRenderSetPictureTransform (ClientPtr client)
 {
-    register int n;
     REQUEST(xRenderSetPictureTransformReq);
     REQUEST_SIZE_MATCH(xRenderSetPictureTransformReq);
 
-    swaps(&stuff->length, n);
-    swapl(&stuff->picture, n);
-    swapl(&stuff->transform.matrix11, n);
-    swapl(&stuff->transform.matrix12, n);
-    swapl(&stuff->transform.matrix13, n);
-    swapl(&stuff->transform.matrix21, n);
-    swapl(&stuff->transform.matrix22, n);
-    swapl(&stuff->transform.matrix23, n);
-    swapl(&stuff->transform.matrix31, n);
-    swapl(&stuff->transform.matrix32, n);
-    swapl(&stuff->transform.matrix33, n);
+    swaps(&stuff->length);
+    swapl(&stuff->picture);
+    swapl(&stuff->transform.matrix11);
+    swapl(&stuff->transform.matrix12);
+    swapl(&stuff->transform.matrix13);
+    swapl(&stuff->transform.matrix21);
+    swapl(&stuff->transform.matrix22);
+    swapl(&stuff->transform.matrix23);
+    swapl(&stuff->transform.matrix31);
+    swapl(&stuff->transform.matrix32);
+    swapl(&stuff->transform.matrix33);
     return (*ProcRenderVector[stuff->renderReqType]) (client);
 }
 
 static int
 SProcRenderQueryFilters (ClientPtr client)
 {
-    register int n;
     REQUEST (xRenderQueryFiltersReq);
     REQUEST_SIZE_MATCH (xRenderQueryFiltersReq);
 
-    swaps(&stuff->length, n);
-    swapl(&stuff->drawable, n);
+    swaps(&stuff->length);
+    swapl(&stuff->drawable);
     return (*ProcRenderVector[stuff->renderReqType]) (client);
 }
     
 static int
 SProcRenderSetPictureFilter (ClientPtr client)
 {
-    register int n;
     REQUEST (xRenderSetPictureFilterReq);
     REQUEST_AT_LEAST_SIZE (xRenderSetPictureFilterReq);
 
-    swaps(&stuff->length, n);
-    swapl(&stuff->picture, n);
-    swaps(&stuff->nbytes, n);
+    swaps(&stuff->length);
+    swapl(&stuff->picture);
+    swaps(&stuff->nbytes);
     return (*ProcRenderVector[stuff->renderReqType]) (client);
 }
     
 static int
 SProcRenderCreateAnimCursor (ClientPtr client)
 {
-    register int n;
     REQUEST (xRenderCreateAnimCursorReq);
     REQUEST_AT_LEAST_SIZE (xRenderCreateAnimCursorReq);
 
-    swaps(&stuff->length, n);
-    swapl(&stuff->cid, n);
+    swaps(&stuff->length);
+    swapl(&stuff->cid);
     SwapRestL(stuff);
     return (*ProcRenderVector[stuff->renderReqType]) (client);
 }
@@ -2484,14 +2478,13 @@ SProcRenderCreateAnimCursor (ClientPtr client)
 static int
 SProcRenderAddTraps (ClientPtr client)
 {
-    register int n;
     REQUEST (xRenderAddTrapsReq);
     REQUEST_AT_LEAST_SIZE (xRenderAddTrapsReq);
 
-    swaps(&stuff->length, n);
-    swapl(&stuff->picture, n);
-    swaps(&stuff->xOff, n);
-    swaps(&stuff->yOff, n);
+    swaps(&stuff->length);
+    swapl(&stuff->picture);
+    swaps(&stuff->xOff);
+    swaps(&stuff->yOff);
     SwapRestL(stuff);
     return (*ProcRenderVector[stuff->renderReqType]) (client);
 }
@@ -2499,51 +2492,50 @@ SProcRenderAddTraps (ClientPtr client)
 static int
 SProcRenderCreateSolidFill(ClientPtr client)
 {
-    register int n;
     REQUEST (xRenderCreateSolidFillReq);
     REQUEST_AT_LEAST_SIZE (xRenderCreateSolidFillReq);
 
-    swaps(&stuff->length, n);
-    swapl(&stuff->pid, n);
-    swaps(&stuff->color.alpha, n);
-    swaps(&stuff->color.red, n);
-    swaps(&stuff->color.green, n);
-    swaps(&stuff->color.blue, n);
+    swaps(&stuff->length);
+    swapl(&stuff->pid);
+    swaps(&stuff->color.alpha);
+    swaps(&stuff->color.red);
+    swaps(&stuff->color.green);
+    swaps(&stuff->color.blue);
     return (*ProcRenderVector[stuff->renderReqType]) (client);
 }
 
 static void swapStops(void *stuff, int num)
 {
-    int i, n;
+    int i;
     CARD32 *stops;
     CARD16 *colors;
+
     stops = (CARD32 *)(stuff);
     for (i = 0; i < num; ++i) {
-        swapl(stops, n);
+        swapl(stops);
         ++stops;
     }
-    colors = (CARD16 *)(stops);
+    colors = (CARD16 *) (stops);
     for (i = 0; i < 4*num; ++i) {
-        swaps(stops, n);
-        ++stops;
+        swaps(colors);
+        ++colors;
     }
 }
 
 static int
 SProcRenderCreateLinearGradient (ClientPtr client)
 {
-    register int n;
     int len;
     REQUEST (xRenderCreateLinearGradientReq);
     REQUEST_AT_LEAST_SIZE (xRenderCreateLinearGradientReq);
 
-    swaps(&stuff->length, n);
-    swapl(&stuff->pid, n);
-    swapl(&stuff->p1.x, n);
-    swapl(&stuff->p1.y, n);
-    swapl(&stuff->p2.x, n);
-    swapl(&stuff->p2.y, n);
-    swapl(&stuff->nStops, n);
+    swaps(&stuff->length);
+    swapl(&stuff->pid);
+    swapl(&stuff->p1.x);
+    swapl(&stuff->p1.y);
+    swapl(&stuff->p2.x);
+    swapl(&stuff->p2.y);
+    swapl(&stuff->nStops);
 
     len = (client->req_len << 2) - sizeof(xRenderCreateLinearGradientReq);
     if (stuff->nStops > UINT32_MAX/(sizeof(xFixed) + sizeof(xRenderColor)))
@@ -2559,20 +2551,19 @@ SProcRenderCreateLinearGradient (ClientPtr client)
 static int
 SProcRenderCreateRadialGradient (ClientPtr client)
 {
-    register int n;
     int len;
     REQUEST (xRenderCreateRadialGradientReq);
     REQUEST_AT_LEAST_SIZE (xRenderCreateRadialGradientReq);
 
-    swaps(&stuff->length, n);
-    swapl(&stuff->pid, n);
-    swapl(&stuff->inner.x, n);
-    swapl(&stuff->inner.y, n);
-    swapl(&stuff->outer.x, n);
-    swapl(&stuff->outer.y, n);
-    swapl(&stuff->inner_radius, n);
-    swapl(&stuff->outer_radius, n);
-    swapl(&stuff->nStops, n);
+    swaps(&stuff->length);
+    swapl(&stuff->pid);
+    swapl(&stuff->inner.x);
+    swapl(&stuff->inner.y);
+    swapl(&stuff->outer.x);
+    swapl(&stuff->outer.y);
+    swapl(&stuff->inner_radius);
+    swapl(&stuff->outer_radius);
+    swapl(&stuff->nStops);
 
     len = (client->req_len << 2) - sizeof(xRenderCreateRadialGradientReq);
     if (stuff->nStops > UINT32_MAX/(sizeof(xFixed) + sizeof(xRenderColor)))
@@ -2588,17 +2579,16 @@ SProcRenderCreateRadialGradient (ClientPtr client)
 static int
 SProcRenderCreateConicalGradient (ClientPtr client)
 {
-    register int n;
     int len;
     REQUEST (xRenderCreateConicalGradientReq);
     REQUEST_AT_LEAST_SIZE (xRenderCreateConicalGradientReq);
 
-    swaps(&stuff->length, n);
-    swapl(&stuff->pid, n);
-    swapl(&stuff->center.x, n);
-    swapl(&stuff->center.y, n);
-    swapl(&stuff->angle, n);
-    swapl(&stuff->nStops, n);
+    swaps(&stuff->length);
+    swapl(&stuff->pid);
+    swapl(&stuff->center.x);
+    swapl(&stuff->center.y);
+    swapl(&stuff->angle);
+    swapl(&stuff->nStops);
 
     len = (client->req_len << 2) - sizeof(xRenderCreateConicalGradientReq);
     if (stuff->nStops > UINT32_MAX/(sizeof(xFixed) + sizeof(xRenderColor)))
@@ -2611,6 +2601,7 @@ SProcRenderCreateConicalGradient (ClientPtr client)
     return (*ProcRenderVector[stuff->renderReqType]) (client);
 }
 
+#ifndef NXAGENT_SERVER
 static int
 SProcRenderDispatch (ClientPtr client)
 {
@@ -2621,6 +2612,7 @@ SProcRenderDispatch (ClientPtr client)
     else
 	return BadRequest;
 }
+#endif /* NXAGENT_SERVER */
 
 #ifdef PANORAMIX
 #include "panoramiX.h"
@@ -2657,7 +2649,7 @@ PanoramiXRenderCreatePicture (ClientPtr client)
     if(!(refDraw = (PanoramiXRes *)SecurityLookupIDByClass(
 		client, stuff->drawable, XRC_DRAWABLE, SecurityWriteAccess)))
 	return BadDrawable;
-    if(!(newPict = (PanoramiXRes *) xalloc(sizeof(PanoramiXRes))))
+    if(!(newPict = (PanoramiXRes *) malloc(sizeof(PanoramiXRes))))
 	return BadAlloc;
     newPict->type = XRT_PICTURE;
     newPict->info[0].id = stuff->pid;
@@ -2683,7 +2675,7 @@ PanoramiXRenderCreatePicture (ClientPtr client)
     if (result == Success)
 	AddResource(newPict->info[0].id, XRT_PICTURE, newPict);
     else 
-	xfree(newPict);
+	free(newPict);
 
     return (result);
 }

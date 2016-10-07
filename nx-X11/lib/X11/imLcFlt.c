@@ -1,4 +1,3 @@
-/* $Xorg: imLcFlt.c,v 1.3 2000/08/17 19:45:13 cpqbld Exp $ */
 /******************************************************************
 
               Copyright 1992 by Fuji Xerox Co., Ltd.
@@ -30,7 +29,6 @@ PERFORMANCE OF THIS SOFTWARE.
 
 ******************************************************************/
 
-#define NEED_EVENTS
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif

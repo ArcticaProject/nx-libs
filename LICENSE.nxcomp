@@ -1,0 +1,95 @@
+Copyright (c) 2001,2010 NoMachine (http://www.nomachine.com)
+Copyright (c) 2000,2003 Gian Filippo Pinzari
+Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
+Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>
+Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>
+Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)
+
+NXCOMP library and NX extensions to X are copyright of the aforementioned
+copyright holders. Redistribution and use of this software is allowed
+according to the following terms:
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License Version 2, and
+not any other version, as published by the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTA-
+BILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, you can request a copy to NoMachine
+or write to the Free Software Foundation, Inc., 51 Franklin Street, Suite
+330, Boston, MA  02110-1301 USA
+
+==============================================================================
+
+Parts of this software are derived from DXPC project. These copyright
+notices apply to original DXPC code:
+
+Redistribution and use in source and binary forms are permitted provi-
+ded that the above copyright notice and this paragraph are duplicated
+in all such forms.
+
+THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR IMPLIED
+WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
+MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+Copyright (c) 1995,1996,2000,2006 Brian Pane
+Copyright (c) 1996,1997 Zachary Vonler and Brian Pane
+Copyright (c) 1999 Kevin Vigor and Brian Pane
+<crossed-out>Copyright (c) 2000,2006 Gian Filippo Pinzari and Brian Pane</crossed-out>
+
+All rights reserved.
+
+==============================================================================
+
+Update 2015-05-21 on the nature of the original DXPC license: The
+original DXPC code used to be available under a license which failed to
+explicitly grant the permission to modify, but was later retroactively
+re-licensed under the 2-clause BSD license (see
+doc/nxcomp/README.on-retroactive-DXPC-license for the copyright owners'
+statements; also see <https://bugs.debian.org/784565> for more details).
+
+In the course of discussion, it also became evident that Gian Filippo
+Pinzari never participated in any of the official DXPC releases, but
+rather worked on the forked code on the NoMachine side. Thus, we
+crossed-out his name in the above copyright notice and moved him to the
+top list of copyright holders associated with the GPL-2 re-licensing done
+by NoMachine.
+
+Thus, the version of DXPC where NXCOMP got forked from (most likely some
+DXPC version between release 3.7.0 and release 3.8.0) can be considered
+as BSD-2-clause, as quoted below:
+
+Copyright (c) 1995,1996 Brian Pane
+Copyright (c) 1996,1997 Zachary Vonler and Brian Pane
+Copyright (c) 1999-2002 Kevin Vigor and Brian Pane
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright
+  notice, this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright
+  notice, this list of conditions and the following disclaimer in the
+  documentation and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS
+BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+DAMAGE.

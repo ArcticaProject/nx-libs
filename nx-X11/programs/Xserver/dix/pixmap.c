@@ -1,4 +1,3 @@
-/* $Xorg: pixmap.c,v 1.4 2001/02/09 02:04:40 xorgcvs Exp $ */
 /*
 
 Copyright 1993, 1998  The Open Group
@@ -26,7 +25,6 @@ other dealings in this Software without prior written authorization
 from The Open Group.
 
 */
-/* $XFree86: xc/programs/Xserver/dix/pixmap.c,v 3.4 2001/01/17 22:36:44 dawes Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -128,7 +126,7 @@ AllocatePixmap(ScreenPtr pScreen, int pixDataSize)
      * the pixmap buffer. This may be a RENDER bug.
      */
 
-    pPixmap = (PixmapPtr)xalloc(pScreen->totalPixmapSize + pixDataSize + 4);
+    pPixmap = (PixmapPtr)malloc(pScreen->totalPixmapSize + pixDataSize + 4);
     if (!pPixmap)
 	return NullPixmap;
     ppriv = (DevUnion *)(pPixmap + 1);
@@ -146,7 +144,7 @@ AllocatePixmap(ScreenPtr pScreen, int pixDataSize)
 	    ppriv->ptr = (void *)NULL;
     }
 #else
-    pPixmap = (PixmapPtr)xalloc(sizeof(PixmapRec) + pixDataSize);
+    pPixmap = (PixmapPtr)malloc(sizeof(PixmapRec) + pixDataSize);
 #endif
     return pPixmap;
 }

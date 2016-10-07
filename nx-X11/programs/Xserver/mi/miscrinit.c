@@ -1,4 +1,3 @@
-/* $Xorg: miscrinit.c,v 1.4 2001/02/09 02:05:21 xorgcvs Exp $ */
 /*
 
 Copyright 1990, 1998  The Open Group
@@ -26,7 +25,6 @@ other dealings in this Software without prior written authorization
 from The Open Group.
 
 */
-/* $XFree86: xc/programs/Xserver/mi/miscrinit.c,v 3.15tsi Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -42,7 +40,7 @@ from The Open Group.
 #include "miline.h"
 #ifdef MITSHM
 #define _XSHM_SERVER_
-#include <nx-X11/extensions/XShm.h>
+#include <X11/extensions/XShm.h>
 #endif
 
 /* We use this structure to propogate some information from miScreenInit to
@@ -180,7 +178,7 @@ miCreateScreenResources(pScreen)
     {
 	value = pScrInitParms->pbits;
     }
-    xfree(pScreen->devPrivate); /* freeing miScreenInitParmsRec */
+    free(pScreen->devPrivate); /* freeing miScreenInitParmsRec */
     pScreen->devPrivate = value; /* pPixmap or pbits */
     return TRUE;
 }
@@ -197,7 +195,7 @@ miScreenDevPrivateInit(pScreen, width, pbits)
      * to the screen, until CreateScreenResources can put them in the
      * screen pixmap.
      */
-    pScrInitParms = (miScreenInitParmsPtr)xalloc(sizeof(miScreenInitParmsRec));
+    pScrInitParms = (miScreenInitParmsPtr)malloc(sizeof(miScreenInitParmsRec));
     if (!pScrInitParms)
 	return FALSE;
     pScrInitParms->pbits = pbits;

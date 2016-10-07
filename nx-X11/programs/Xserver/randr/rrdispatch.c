@@ -21,12 +21,7 @@
  */
 
 #include "randrstr.h"
-#ifndef NXAGENT_SERVER
 #include "protocol-versions.h"
-#else
-#define SERVER_RANDR_MAJOR_VERSION     1
-#define SERVER_RANDR_MINOR_VERSION     5
-#endif
 
 Bool
 RRClientKnowsRates(ClientPtr pClient)
@@ -40,8 +35,6 @@ RRClientKnowsRates(ClientPtr pClient)
 static int
 ProcRRQueryVersion(ClientPtr client)
 {
-    int n;
-
     xRRQueryVersionReply rep = {
         .type = X_Reply,
         .sequenceNumber = client->sequence,
@@ -66,15 +59,15 @@ ProcRRQueryVersion(ClientPtr client)
     }
 
     if (client->swapped) {
-        swaps(&rep.sequenceNumber, n);
-        swapl(&rep.length, n);
-        swapl(&rep.majorVersion, n);
-        swapl(&rep.minorVersion, n);
+        swaps(&rep.sequenceNumber);
+        swapl(&rep.length);
+        swapl(&rep.majorVersion);
+        swapl(&rep.minorVersion);
     }
 #ifndef NXAGENT_SERVER
     WriteToClient(client, sizeof(xRRQueryVersionReply), &rep);
 #else
-    WriteToClient(client, sizeof(xRRQueryVersionReply), (char *) &rep);
+    WriteToClient(client, sizeof(xRRQueryVersionReply), &rep);
 #endif
     return Success;
 }
@@ -130,7 +123,7 @@ ProcRRSelectInput(ClientPtr client)
 
         if (!pRREvent) {
             /* build the entry */
-            pRREvent = (RREventPtr) xalloc(sizeof(RREventRec));
+            pRREvent = (RREventPtr) malloc(sizeof(RREventRec));
             if (!pRREvent)
                 return BadAlloc;
             pRREvent->next = 0;
@@ -152,7 +145,7 @@ ProcRRSelectInput(ClientPtr client)
              * done through the resource database.
              */
             if (!pHead) {
-                pHead = (RREventPtr *) xalloc(sizeof(RREventPtr));
+                pHead = (RREventPtr *) malloc(sizeof(RREventPtr));
                 if (!pHead ||
                     !AddResource(pWin->drawable.id, RREventType,
                                  (void *) pHead)) {
@@ -217,7 +210,7 @@ ProcRRSelectInput(ClientPtr client)
                     pNewRREvent->next = pRREvent->next;
                 else
                     *pHead = pRREvent->next;
-                xfree(pRREvent);
+                free(pRREvent);
             }
         }
     }

@@ -72,7 +72,7 @@
     FbBits	*__bits__; \
     FbStride	__stride__; \
     int		__bpp__; \
-    int		__xoff__,__yoff__; \
+    _X_UNUSED int		__xoff__,__yoff__; \
 \
     fbGetDrawable((pict)->pDrawable,__bits__,__stride__,__bpp__,__xoff__,__yoff__); \
     switch (__bpp__) { \

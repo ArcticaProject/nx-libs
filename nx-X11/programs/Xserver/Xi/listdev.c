@@ -1,4 +1,3 @@
-/* $Xorg: listdev.c,v 1.4 2001/02/09 02:04:34 xorgcvs Exp $ */
 
 /************************************************************
 
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/Xi/listdev.c,v 3.3 2001/01/17 22:13:25 dawes Exp $ */
 
 /***********************************************************************
  *
@@ -53,8 +51,6 @@ SOFTWARE.
  *
  */
 
-#define	 NEED_EVENTS
-#define	 NEED_REPLIES
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
@@ -83,10 +79,8 @@ int
 SProcXListInputDevices(client)
     register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xListInputDevicesReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     return(ProcXListInputDevices(client));
     }
 
@@ -129,7 +123,7 @@ ProcXListInputDevices (client)
 	SizeDeviceInfo (d, &namesize, &size);
 
     total_length = numdevs * sizeof (xDeviceInfo) + size + namesize;
-    devbuf = (char *) xcalloc (1, total_length);
+    devbuf = (char *) calloc (1, total_length);
     classbuf = devbuf + (numdevs * sizeof (xDeviceInfo));
     namebuf = classbuf + size;
     savbuf = devbuf;
@@ -144,7 +138,7 @@ ProcXListInputDevices (client)
     rep.length = (total_length + 3) >> 2;
     WriteReplyToClient (client, sizeof (xListInputDevicesReply), &rep);
     WriteToClient(client, total_length, savbuf);
-    xfree (savbuf);
+    free (savbuf);
     return Success;
     }
 
@@ -254,7 +248,6 @@ CopySwapDevice (client, d, num_classes, buf)
     int			num_classes;
     char 		**buf;
     {
-    register char 	n;
     xDeviceInfoPtr dev;
 
     dev = (xDeviceInfoPtr) *buf;
@@ -270,7 +263,7 @@ CopySwapDevice (client, d, num_classes, buf)
 	dev->use = IsXExtensionDevice;
     if (client->swapped)
 	{
-	swapl(&dev->type, n);	/* macro - braces are required */
+	swapl(&dev->type);	/* macro - braces are required */
 	}
     *buf += sizeof (xDeviceInfo);
     }
@@ -287,7 +280,6 @@ CopySwapKeyClass (client, k, buf)
     KeyClassPtr 	k;
     char 		**buf;
     {
-    register char 	n;
     xKeyInfoPtr 	k2;
 
     k2 = (xKeyInfoPtr) *buf;
@@ -298,7 +290,7 @@ CopySwapKeyClass (client, k, buf)
     k2->num_keys = k2->max_keycode - k2->min_keycode + 1;
     if (client->swapped)
 	{
-	swaps(&k2->num_keys,n);
+	swaps(&k2->num_keys);
 	}
     *buf += sizeof (xKeyInfo);
     }
@@ -315,7 +307,6 @@ CopySwapButtonClass (client, b, buf)
     ButtonClassPtr 	b;
     char 		**buf;
     {
-    register char 	n;
     xButtonInfoPtr 	b2;
 
     b2 = (xButtonInfoPtr) *buf;
@@ -324,7 +315,7 @@ CopySwapButtonClass (client, b, buf)
     b2->num_buttons = b->numButtons;
     if (client->swapped)
 	{
-	swaps(&b2->num_buttons,n);	/* macro - braces are required */
+	swaps(&b2->num_buttons);	/* macro - braces are required */
 	}
     *buf += sizeof (xButtonInfo);
     }
@@ -348,7 +339,6 @@ CopySwapValuatorClass (client, v, buf)
     char 		**buf;
 {
     int			i, j, axes, t_axes;
-    register char 	n;
     xValuatorInfoPtr 	v2;
     AxisInfo 		*a;
     xAxisInfoPtr 	a2;
@@ -365,7 +355,7 @@ CopySwapValuatorClass (client, v, buf)
 	v2->motion_buffer_size  = v->numMotionEvents;
 	if (client->swapped)
 	    {
-	    swapl(&v2->motion_buffer_size,n);
+	    swapl(&v2->motion_buffer_size);
 	    }
 	*buf += sizeof (xValuatorInfo);
 	a = v->axes + (VPC * i);
@@ -375,9 +365,9 @@ CopySwapValuatorClass (client, v, buf)
 	    a2->max_value = a->max_value;
 	    a2->resolution = a->resolution;
 	    if (client->swapped) {
-		swapl(&a2->min_value,n);
-		swapl(&a2->max_value,n);
-		swapl(&a2->resolution,n);
+		swapl(&a2->min_value);
+		swapl(&a2->max_value);
+		swapl(&a2->resolution);
 	    }
 	    a2++;
 	    a++;
@@ -400,9 +390,7 @@ SRepXListInputDevices (client, size, rep)
     int		size;
     xListInputDevicesReply	*rep;
     {
-    register char n;
-
-    swaps(&rep->sequenceNumber, n);
-    swapl(&rep->length, n);
-    WriteToClient(client, size, (char *)rep);
+    swaps(&rep->sequenceNumber);
+    swapl(&rep->length);
+    WriteToClient(client, size, rep);
     }

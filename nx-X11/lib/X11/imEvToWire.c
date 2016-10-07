@@ -1,4 +1,3 @@
-/* $Xorg: imEvToWire.c,v 1.3 2000/08/17 19:45:12 cpqbld Exp $ */
 /***********************************************************
 Copyright 1993 by Digital Equipment Corporation, Maynard, Massachusetts,
 
@@ -23,13 +22,11 @@ SOFTWARE.
 ******************************************************************/
 /* $XFree86$ */
 
-#define NEED_EVENTS
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 #include <nx-X11/Xlibint.h>
 #include <nx-X11/Xlib.h>
-#undef NEED_EVENTS
 #include "Ximint.h"
 
 

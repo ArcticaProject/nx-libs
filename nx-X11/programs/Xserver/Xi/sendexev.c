@@ -1,4 +1,3 @@
-/* $Xorg: sendexev.c,v 1.4 2001/02/09 02:04:34 xorgcvs Exp $ */
 
 /************************************************************
 
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/Xi/sendexev.c,v 3.2 2001/01/17 22:13:26 dawes Exp $ */
 
 /***********************************************************************
  *
@@ -54,8 +52,6 @@ SOFTWARE.
  */
 
 #define EXTENSION_EVENT_BASE  64
-#define	 NEED_EVENTS
-#define	 NEED_REPLIES
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
@@ -86,7 +82,6 @@ int
 SProcXSendExtensionEvent(client)
     register ClientPtr client;
     {
-    register char n;
     CARD32 *p;
     register int i;
     xEvent eventT;
@@ -94,10 +89,10 @@ SProcXSendExtensionEvent(client)
     EventSwapPtr proc;
 
     REQUEST(xSendExtensionEventReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_AT_LEAST_SIZE(xSendExtensionEventReq);
-    swapl(&stuff->destination, n);
-    swaps(&stuff->count, n);
+    swapl(&stuff->destination);
+    swaps(&stuff->count);
 
     if (stuff->length != (sizeof(xSendExtensionEventReq) >> 2) + stuff->count +
        (stuff->num_events * (sizeof(xEvent) >> 2)))
@@ -153,6 +148,8 @@ ProcXSendExtensionEvent (client)
 		BadDevice);
 	return Success;
 	}
+
+    // FIXME: ret is not initialized and should not be returned...
 
     if (stuff->num_events == 0)
         return ret;

@@ -1,4 +1,3 @@
-/* $Xorg: GetGeom.c,v 1.4 2001/02/09 02:03:33 xorgcvs Exp $ */
 /*
 
 Copyright 1986, 1998  The Open Group
@@ -25,7 +24,6 @@ in this Software without prior written authorization from The Open Group.
 
 */
 
-#define NEED_REPLIES
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif

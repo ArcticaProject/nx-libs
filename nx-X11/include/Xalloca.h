@@ -1,4 +1,3 @@
-/* $Xorg: Xalloca.h,v 1.4 2001/02/09 02:03:22 xorgcvs Exp $ */
 
 /*
 
@@ -27,7 +26,6 @@ other dealings in this Software without prior written authorization
 from The Open Group.
 
 */
-/* $XFree86: xc/include/Xalloca.h,v 3.10 2001/12/14 19:53:25 dawes Exp $ */
 
 /*
  * The purpose of this header is to define the macros ALLOCATE_LOCAL and

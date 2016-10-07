@@ -1,4 +1,3 @@
-/* $Xorg: closedev.c,v 1.4 2001/02/09 02:04:33 xorgcvs Exp $ */
 
 /************************************************************
 
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/Xi/closedev.c,v 3.3 2001/08/23 14:56:19 alanh Exp $ */
 
 /***********************************************************************
  *
@@ -53,8 +51,6 @@ SOFTWARE.
  *
  */
 
-#define	 NEED_EVENTS
-#define	 NEED_REPLIES
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
@@ -83,10 +79,8 @@ int
 SProcXCloseDevice(client)
     register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xCloseDeviceReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xCloseDeviceReq);
     return(ProcXCloseDevice(client));
     }

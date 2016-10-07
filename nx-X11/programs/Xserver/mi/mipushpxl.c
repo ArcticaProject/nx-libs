@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/mi/mipushpxl.c,v 3.12 2001/12/14 20:00:26 dawes Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $Xorg: mipushpxl.c,v 1.4 2001/02/09 02:05:21 xorgcvs Exp $ */
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
@@ -113,7 +111,7 @@ miPushPixels(pGC, pBitMap, pDrawable, dx, dy, xOrg, yOrg)
             LONG2CHARSDIFFORDER((MiBits)(-1) >> 1);
 #endif
 
-    pwLineStart = (MiBits *)xalloc(BitmapBytePad(dx));
+    pwLineStart = (MiBits *)malloc(BitmapBytePad(dx));
     if (!pwLineStart)
 	return;
     ipt = 0;
@@ -252,7 +250,7 @@ miPushPixels(pGC, pBitMap, pDrawable, dx, dy, xOrg, yOrg)
 	    }
 	}
     }
-    xfree(pwLineStart);
+    free(pwLineStart);
     /* Flush any remaining spans */
     if (ipt)
     {

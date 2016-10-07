@@ -1,5 +1,3 @@
-/* $Xorg: xkbInit.c,v 1.3 2000/08/17 19:53:47 cpqbld Exp $ */
-/* $XdotOrg: xc/programs/Xserver/xkb/xkbInit.c,v 1.9 2005/10/19 22:45:54 ajax Exp $ */
 /************************************************************
 Copyright (c) 1993 by Silicon Graphics Computer Systems, Inc.
 
@@ -25,7 +23,6 @@ OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION  WITH
 THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/xkb/xkbInit.c,v 3.32tsi Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -40,7 +37,6 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <ctype.h>
 #include <unistd.h>
 #include <math.h>
-#define NEED_EVENTS 1
 #include <nx-X11/X.h>
 #include <nx-X11/Xproto.h>
 #include <nx-X11/keysym.h>

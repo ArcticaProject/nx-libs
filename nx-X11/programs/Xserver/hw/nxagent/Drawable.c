@@ -1,17 +1,25 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
+/* are copyright of the aforementioned persons and companies.             */
 /*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
 /*                                                                        */
 /* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
 /*                                                                        */
 /**************************************************************************/
 
@@ -223,7 +231,7 @@ int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask
 
     length = nxagentImageLength(width, height, format, leftPad, depth);
 
-    if ((data = xalloc(length)) == NULL)
+    if ((data = malloc(length)) == NULL)
     {
       #ifdef WARNING
       fprintf(stderr, "nxagentSynchronizeDrawableData: WARNING! Failed to allocate memory for the operation.\n");
@@ -359,7 +367,7 @@ nxagentSynchronizeDrawableDataFree:
 
   if (data != NULL)
   {
-    xfree(data);
+    free(data);
   }
 
 nxagentSynchronizeDrawableDataEnd:
@@ -860,7 +868,7 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
 
             if (cmpData != NULL)
             {
-              xfree(cmpData);
+              free(cmpData);
             }
           }
         }
@@ -1060,7 +1068,7 @@ nxagentSynchronizeRegionFree:
 
   if (data != NULL)
   {
-    xfree(data);
+    free(data);
   }
 
   RegionUninit(&exposeRegion);
@@ -2129,7 +2137,7 @@ unsigned long nxagentGetColor(DrawablePtr pDrawable, int xPixel, int yPixel)
   format = (depth == 1) ? XYPixmap : ZPixmap;
   length = nxagentImageLength(1, 1, format, leftPad, depth);
 
-  if ((data = xalloc(length)) == NULL)
+  if ((data = malloc(length)) == NULL)
   {
     #ifdef WARNING
     fprintf(stderr, "nxagentGetColor: WARNING! Failed to allocate memory for the operation.\n");
@@ -2161,7 +2169,7 @@ unsigned long nxagentGetColor(DrawablePtr pDrawable, int xPixel, int yPixel)
     fprintf(stderr, "nxagentGetColor: WARNING! Failed to create the XImage.\n");
     #endif
 
-    xfree(data);
+    free(data);
 
     return -1;
   }
@@ -2374,7 +2382,7 @@ void nxagentFillRemoteRegion(DrawablePtr pDrawable, RegionPtr pRegion)
   {
     pBox = RegionRects(pRegion);
 
-    pRects = xalloc(nrects * sizeof(XRectangle));
+    pRects = malloc(nrects * sizeof(XRectangle));
 
     for (i = 0; i < nrects; i++)
     {
@@ -2387,7 +2395,7 @@ void nxagentFillRemoteRegion(DrawablePtr pDrawable, RegionPtr pRegion)
     XFillRectangles(nxagentDisplay, nxagentDrawable(pDrawable), nxagentGC(pGC),
                         pRects, nrects);
 
-    xfree(pRects);
+    free(pRects);
   }
 }
 

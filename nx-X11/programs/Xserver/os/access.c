@@ -1,5 +1,3 @@
-/* $Xorg: access.c,v 1.5 2001/02/09 02:05:23 xorgcvs Exp $ */
-/* $XdotOrg: xc/programs/Xserver/os/access.c,v 1.13 2005/11/08 06:33:30 jkj Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -55,7 +53,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $XFree86: xc/programs/Xserver/os/access.c,v 3.53 2004/01/02 18:23:19 tsi Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -256,12 +253,12 @@ typedef struct _host {
 	int		requested;
 } HOST;
 
-#define MakeHost(h,l)	(h)=(HOST *) xalloc(sizeof *(h)+(l));\
+#define MakeHost(h,l)	(h)=(HOST *) malloc(sizeof *(h)+(l));\
 			if (h) { \
 			   (h)->addr=(unsigned char *) ((h) + 1);\
 			   (h)->requested = FALSE; \
 			}
-#define FreeHost(h)	xfree(h)
+#define FreeHost(h)	free(h)
 static HOST *selfhosts = NULL;
 static HOST *validhosts = NULL;
 static int AccessEnabled = DEFAULT_ACCESS_CONTROL;
@@ -782,7 +779,7 @@ DefineSelf (int fd)
         Error ("Getting interface count");    
     if (len < (ifn.lifn_count * sizeof(struct lifreq))) {
 	len = ifn.lifn_count * sizeof(struct lifreq);
-	bufptr = xalloc(len);
+	bufptr = malloc(len);
     }
 #endif
     
@@ -1170,10 +1167,6 @@ ResetHosts (char *display)
     struct nodeent 	*np;
     struct dn_naddr 	dnaddr, *dnaddrp, *dnet_addr();
 #endif
-#ifdef K5AUTH
-    krb5_principal      princ;
-    krb5_data		kbuf;
-#endif
     int			family = 0;
     void		*addr;
     int 		len;
@@ -1249,13 +1242,6 @@ ResetHosts (char *display)
 	    hostname = ohostname + 4;
 	}
 #endif
-#ifdef K5AUTH
-	else if (!strncmp("krb:", lhostname, 4))
-	{
-	    family = FamilyKrb5Principal;
-	    hostname = ohostname + 4;
-	}
-#endif
 	else if (!strncmp("si:", lhostname, 3))
 	{
 	    family = FamilyServerInterpreted;
@@ -1298,16 +1284,6 @@ ResetHosts (char *display)
     	}
 	else
 #endif /* DNETCONN */
-#ifdef K5AUTH
-	if (family == FamilyKrb5Principal)
-	{
-            krb5_parse_name(hostname, &princ);
-	    XauKrb5Encode(princ, &kbuf);
-	    (void) NewHost(FamilyKrb5Principal, kbuf.data, kbuf.length, FALSE);
-	    krb5_free_principal(princ);
-        }
-	else
-#endif
 #ifdef SECURE_RPC
 	if ((family == FamilyNetname) || (strchr(hostname, '@')))
 	{
@@ -1397,12 +1373,12 @@ Bool LocalClient(ClientPtr client)
 	    &alen, (void **)&addr);
 	if (family == -1)
 	{
-	    xfree ((char *) from);
+	    free ((char *) from);
 	    return FALSE;
 	}
 	if (family == FamilyLocal)
 	{
-	    xfree ((char *) from);
+	    free ((char *) from);
 	    return TRUE;
 	}
 	for (host = selfhosts; host; host = host->next)
@@ -1410,7 +1386,7 @@ Bool LocalClient(ClientPtr client)
 	    if (addrEqual (family, addr, alen, host))
 		return TRUE;
 	}
-	xfree ((char *) from);
+	free ((char *) from);
     }
     return FALSE;
 }
@@ -1498,7 +1474,7 @@ LocalClientCredAndGroups(ClientPtr client, int *pUid, int *pGid,
 	const gid_t *gids;
 	*nSuppGids = ucred_getgroups(peercred, &gids);
 	if (*nSuppGids > 0) {
-	    *pSuppGids = xalloc(sizeof(int) * (*nSuppGids));
+	    *pSuppGids = malloc(sizeof(int) * (*nSuppGids));
 	    if (*pSuppGids == NULL) {
 		*nSuppGids = 0;
 	    } else {
@@ -1553,11 +1529,6 @@ AddHost (ClientPtr	client,
 	len = length;
 	LocalHostEnabled = TRUE;
 	break;
-#ifdef K5AUTH
-    case FamilyKrb5Principal:
-        len = length;
-        break;
-#endif
 #ifdef SECURE_RPC
     case FamilyNetname:
 	len = length;
@@ -1656,11 +1627,6 @@ RemoveHost (
 	len = length;
 	LocalHostEnabled = FALSE;
 	break;
-#ifdef K5AUTH
-    case FamilyKrb5Principal:
-        len = length;
-	break;
-#endif
 #ifdef SECURE_RPC
     case FamilyNetname:
 	len = length;
@@ -1722,7 +1688,7 @@ GetHosts (
     }
     if (n)
     {
-        *data = ptr = (void *) xalloc (n);
+        *data = ptr = (void *) malloc (n);
 	if (!ptr)
 	{
 	    return(BadAlloc);
@@ -1982,7 +1948,7 @@ siTypeAdd(const char *typeName, siAddrMatchFunc addrMatch,
 	}
     }
 
-    s = (struct siType *) xalloc(sizeof(struct siType));
+    s = (struct siType *) malloc(sizeof(struct siType));
     if (s == NULL)
 	return BadAlloc;
 
@@ -2324,7 +2290,7 @@ static Bool
 siLocalCredGetId(const char *addr, int len, siLocalCredPrivPtr lcPriv, int *id)
 {
     Bool parsedOK = FALSE;
-    char *addrbuf = xalloc(len + 1);
+    char *addrbuf = malloc(len + 1);
 
     if (addrbuf == NULL) {
 	return FALSE;
@@ -2358,7 +2324,7 @@ siLocalCredGetId(const char *addr, int len, siLocalCredPrivPtr lcPriv, int *id)
 	}
     }
 
-    xfree(addrbuf);
+    free(addrbuf);
     return parsedOK;
 }
 
@@ -2391,11 +2357,11 @@ siLocalCredAddrMatch(int family, void * addr, int len,
 
 	    for (i = 0 ; i < connNumSuppGids; i++) {
 		if (connSuppGids[i] == siAddrId) {
-		    xfree(connSuppGids);
+		    free(connSuppGids);
 		    return TRUE;
 		}
 	    }
-	    xfree(connSuppGids);
+	    free(connSuppGids);
 	}
     }
     return FALSE;

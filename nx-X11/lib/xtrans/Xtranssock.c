@@ -1,5 +1,28 @@
-/* $XdotOrg: xc/lib/xtrans/Xtranssock.c,v 1.11 2005/11/08 06:33:26 jkj Exp $ */
-/* $Xorg: Xtranssock.c,v 1.11 2001/02/09 02:04:06 xorgcvs Exp $ */
+/**************************************************************************/
+/*                                                                        */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
+/*                                                                        */
+/* nx-X11, NX protocol compression and NX extensions to this software     */
+/* are copyright of the aforementioned persons and companies.             */
+/*                                                                        */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
+/*                                                                        */
+/* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
+/*                                                                        */
+/**************************************************************************/
+
 /*
 
 Copyright 1993, 1994, 1998  The Open Group
@@ -28,7 +51,6 @@ other dealings in this Software without prior written authorization
 from the copyright holders.
 
 */
-/* $XFree86: xc/lib/xtrans/Xtranssock.c,v 3.68 2004/01/07 04:28:02 dawes Exp $ */
 
 /* Copyright 1993, 1994 NCR Corporation - Dayton, Ohio, USA
  *
@@ -52,23 +74,6 @@ from the copyright holders.
  * NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
-/**************************************************************************/
-/*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
-/*                                                                        */
-/* NX-X11, NX protocol compression and NX extensions to this software     */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
-/*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
-/*                                                                        */
-/* All rights reserved.                                                   */
-/*                                                                        */
-/**************************************************************************/
 
 #ifdef NX_TRANS_SOCKET
 
@@ -601,7 +606,7 @@ static XtransConnInfo TRANS(SocketCreateConnInfo) ()
     fprintf(stderr, "SocketCreateConnInfo: Going to create the NX connection info.\n");
 #endif
 
-    if ((ciptr = (XtransConnInfo) xcalloc (1, sizeof(struct _XtransConnInfo))) == NULL)
+    if ((ciptr = (XtransConnInfo) calloc (1, sizeof(struct _XtransConnInfo))) == NULL)
     {
         PRMSG (1, "SocketCreateConnInfo: malloc failed\n", 0, 0, 0);
         return NULL;
@@ -619,7 +624,7 @@ static XtransConnInfo TRANS(SocketCreateConnInfo) ()
     if (socketpair(PF_LOCAL, SOCK_STREAM, 0, fds) < 0)
     {
         PRMSG (1, "SocketCreateConnInfo: socketpair() failed.\n", 0, 0, 0);
-        xfree ((char *) ciptr);
+        free ((char *) ciptr);
         return NULL;
     }
 
@@ -643,7 +648,7 @@ static XtransConnInfo TRANS(SocketCreateConnInfo) ()
     {
         PRMSG (1, "SocketCreateConnInfo: No space for a new _NXProxyConnInfo for [%d].\n",
                   ciptr->fd, 0, 0);
-        xfree ((char *) ciptr);
+        free ((char *) ciptr);
         return NULL;
     }
     else if (_NXProxyConnInfoTab[ciptr->fd] != NULL)
@@ -653,12 +658,12 @@ static XtransConnInfo TRANS(SocketCreateConnInfo) ()
         exit(1);
     }
 
-    _NXProxyConnInfoTab[ciptr->fd] = (_NXProxyConnInfo *) xcalloc(1, sizeof(_NXProxyConnInfo));
+    _NXProxyConnInfoTab[ciptr->fd] = (_NXProxyConnInfo *) calloc(1, sizeof(_NXProxyConnInfo));
 
     if (_NXProxyConnInfoTab[ciptr->fd] == NULL)
     {
         PRMSG (1, "SocketCreateConnInfo: Alloc of _NXProxyConnInfo failed.\n", 0, 0, 0);
-        xfree ((char *) ciptr);
+        free ((char *) ciptr);
         return NULL;
     }
 
@@ -812,7 +817,7 @@ static void TRANS(SocketCloseConnInfo) (XtransConnInfo ciptr)
                 ciptr->fd);
 #endif
 
-    xfree((char *) _NXProxyConnInfoTab[ciptr->fd]);
+    free((char *) _NXProxyConnInfoTab[ciptr->fd]);
 
     _NXProxyConnInfoTab[ciptr->fd] = NULL;
 
@@ -957,7 +962,7 @@ TRANS(SocketINETGetAddr) (XtransConnInfo ciptr)
      * Everything looks good: fill in the XtransConnInfo structure.
      */
 
-    if ((ciptr->addr = (char *) xalloc (namelen)) == NULL)
+    if ((ciptr->addr = (char *) malloc (namelen)) == NULL)
     {
         PRMSG (1,
 	    "SocketINETGetAddr: Can't allocate space for the addr\n",
@@ -1032,7 +1037,7 @@ TRANS(SocketINETGetPeerAddr) (XtransConnInfo ciptr)
      * Everything looks good: fill in the XtransConnInfo structure.
      */
 
-    if ((ciptr->peeraddr = (char *) xalloc (namelen)) == NULL)
+    if ((ciptr->peeraddr = (char *) malloc (namelen)) == NULL)
     {
         PRMSG (1,
 	   "SocketINETGetPeerAddr: Can't allocate space for the addr\n",
@@ -1063,7 +1068,7 @@ TRANS(SocketOpen) (int i, int type)
 	return NULL;
 #endif
 
-    if ((ciptr = (XtransConnInfo) xcalloc (
+    if ((ciptr = (XtransConnInfo) calloc (
 	1, sizeof(struct _XtransConnInfo))) == NULL)
     {
 	PRMSG (1, "SocketOpen: malloc failed\n", 0, 0, 0);
@@ -1084,7 +1089,7 @@ TRANS(SocketOpen) (int i, int type)
 	PRMSG (2, "SocketOpen: socket() failed for %s\n",
 	    Sockettrans2devtab[i].transname, 0, 0);
 
-	xfree ((char *) ciptr);
+	free ((char *) ciptr);
 	return NULL;
     }
 
@@ -1119,7 +1124,7 @@ TRANS(SocketReopen) (int i, int type, int fd, char *port)
 
     PRMSG (3,"SocketReopen(%d,%d,%s)\n", type, fd, port);
 
-    if ((ciptr = (XtransConnInfo) xcalloc (
+    if ((ciptr = (XtransConnInfo) calloc (
 	1, sizeof(struct _XtransConnInfo))) == NULL)
     {
 	PRMSG (1, "SocketReopen: malloc failed\n", 0, 0, 0);
@@ -1834,7 +1839,7 @@ TRANS(SocketUNIXCreateListener) (XtransConnInfo ciptr, char *port,
 
     namelen = sizeof (sockname); /* this will always make it the same size */
 
-    if ((ciptr->addr = (char *) xalloc (namelen)) == NULL)
+    if ((ciptr->addr = (char *) malloc (namelen)) == NULL)
     {
         PRMSG (1,
         "SocketUNIXCreateListener: Can't allocate space for the addr\n",
@@ -1953,7 +1958,7 @@ TRANS(SocketINETAccept) (XtransConnInfo ciptr, int *status)
 
     PRMSG (2, "SocketINETAccept(%p,%d)\n", ciptr, ciptr->fd, 0);
 
-    if ((newciptr = (XtransConnInfo) xcalloc (
+    if ((newciptr = (XtransConnInfo) calloc (
 	1, sizeof(struct _XtransConnInfo))) == NULL)
     {
 	PRMSG (1, "SocketINETAccept: malloc failed\n", 0, 0, 0);
@@ -1968,7 +1973,7 @@ TRANS(SocketINETAccept) (XtransConnInfo ciptr, int *status)
 	errno = WSAGetLastError();
 #endif
 	PRMSG (1, "SocketINETAccept: accept() failed\n", 0, 0, 0);
-	xfree (newciptr);
+	free (newciptr);
 	*status = TRANS_ACCEPT_FAILED;
 	return NULL;
     }
@@ -1996,7 +2001,7 @@ TRANS(SocketINETAccept) (XtransConnInfo ciptr, int *status)
 	    "SocketINETAccept: ...SocketINETGetAddr() failed:\n",
 	    0, 0, 0);
 	close (newciptr->fd);
-	xfree (newciptr);
+	free (newciptr);
 	*status = TRANS_ACCEPT_MISC_ERROR;
         return NULL;
     }
@@ -2007,8 +2012,8 @@ TRANS(SocketINETAccept) (XtransConnInfo ciptr, int *status)
 	  "SocketINETAccept: ...SocketINETGetPeerAddr() failed:\n",
 		0, 0, 0);
 	close (newciptr->fd);
-	if (newciptr->addr) xfree (newciptr->addr);
-	xfree (newciptr);
+	if (newciptr->addr) free (newciptr->addr);
+	free (newciptr);
 	*status = TRANS_ACCEPT_MISC_ERROR;
         return NULL;
     }
@@ -2036,7 +2041,7 @@ TRANS(SocketUNIXAccept) (XtransConnInfo ciptr, int *status)
 
     PRMSG (2, "SocketUNIXAccept(%p,%d)\n", ciptr, ciptr->fd, 0);
 
-    if ((newciptr = (XtransConnInfo) xcalloc (
+    if ((newciptr = (XtransConnInfo) calloc (
 	1, sizeof(struct _XtransConnInfo))) == NULL)
     {
 	PRMSG (1, "SocketUNIXAccept: malloc() failed\n", 0, 0, 0);
@@ -2048,7 +2053,7 @@ TRANS(SocketUNIXAccept) (XtransConnInfo ciptr, int *status)
 	(struct sockaddr *) &sockname, (void *)&namelen)) < 0)
     {
 	PRMSG (1, "SocketUNIXAccept: accept() failed\n", 0, 0, 0);
-	xfree (newciptr);
+	free (newciptr);
 	*status = TRANS_ACCEPT_FAILED;
 	return NULL;
     }
@@ -2058,13 +2063,13 @@ TRANS(SocketUNIXAccept) (XtransConnInfo ciptr, int *status)
      * since this is unix domain.
      */
 
-    if ((newciptr->addr = (char *) xalloc (ciptr->addrlen)) == NULL)
+    if ((newciptr->addr = (char *) malloc (ciptr->addrlen)) == NULL)
     {
         PRMSG (1,
         "SocketUNIXAccept: Can't allocate space for the addr\n",
 	      0, 0, 0);
 	close (newciptr->fd);
-	xfree (newciptr);
+	free (newciptr);
 	*status = TRANS_ACCEPT_BAD_MALLOC;
         return NULL;
     }
@@ -2078,14 +2083,14 @@ TRANS(SocketUNIXAccept) (XtransConnInfo ciptr, int *status)
     newciptr->addrlen = ciptr->addrlen;
     memcpy (newciptr->addr, ciptr->addr, newciptr->addrlen);
 
-    if ((newciptr->peeraddr = (char *) xalloc (ciptr->addrlen)) == NULL)
+    if ((newciptr->peeraddr = (char *) malloc (ciptr->addrlen)) == NULL)
     {
         PRMSG (1,
 	      "SocketUNIXAccept: Can't allocate space for the addr\n",
 	      0, 0, 0);
 	close (newciptr->fd);
-	if (newciptr->addr) xfree (newciptr->addr);
-	xfree (newciptr);
+	if (newciptr->addr) free (newciptr->addr);
+	free (newciptr);
 	*status = TRANS_ACCEPT_BAD_MALLOC;
         return NULL;
     }
@@ -2263,7 +2268,7 @@ TRANS(SocketINETConnect) (XtransConnInfo ciptr, char *host, char *port)
 					" socketfor IPv4 address\n", 0,0,0);
 			}
 			if (newciptr)
-			    xfree(newciptr);
+			    free(newciptr);
 		    } else {
 			socketaddr = NULL;
 			PRMSG (4,"SocketINETConnect Skipping IPv4 address\n",
@@ -2301,7 +2306,7 @@ TRANS(SocketINETConnect) (XtransConnInfo ciptr, char *host, char *port)
 				   "socket for IPv6 address\n", 0,0,0);
 			}
 			if (newciptr)
-			    xfree(newciptr);
+			    free(newciptr);
 		    }
 		    else
 		    {
@@ -2827,8 +2832,8 @@ SocketUNIXConnectPost:
      * since this is unix domain.
      */
 
-    if ((ciptr->addr = (char *) xalloc(namelen)) == NULL ||
-       (ciptr->peeraddr = (char *) xalloc(namelen)) == NULL)
+    if ((ciptr->addr = (char *) malloc(namelen)) == NULL ||
+       (ciptr->peeraddr = (char *) malloc(namelen)) == NULL)
     {
         PRMSG (1,
 	"SocketUNIXCreateListener: Can't allocate space for the addr\n",

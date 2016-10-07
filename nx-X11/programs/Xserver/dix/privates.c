@@ -1,5 +1,3 @@
-/* $Xorg: privates.c,v 1.4 2001/02/09 02:04:40 xorgcvs Exp $ */
-/* $XdotOrg: xc/programs/Xserver/dix/privates.c,v 1.10 2005/09/05 07:40:50 daniels Exp $ */
 /*
 
 Copyright 1993, 1998  The Open Group
@@ -27,7 +25,6 @@ other dealings in this Software without prior written authorization
 from The Open Group.
 
 */
-/* $XFree86: xc/programs/Xserver/dix/privates.c,v 3.7 2001/01/17 22:36:44 dawes Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -66,7 +63,7 @@ ResetClientPrivates()
 {
     clientPrivateCount = 0;
     clientPrivateLen = 0;
-    xfree(clientPrivateSizes);
+    free(clientPrivateSizes);
     clientPrivateSizes = (unsigned *)NULL;
     totalClientSize =
 	((sizeof(ClientRec) + sizeof(long) - 1) / sizeof(long)) * sizeof(long);
@@ -89,7 +86,7 @@ AllocateClientPrivate(int index2, unsigned amount)
     if (index2 >= clientPrivateLen)
     {
 	unsigned *nsizes;
-	nsizes = (unsigned *)xrealloc(clientPrivateSizes,
+	nsizes = (unsigned *)realloc(clientPrivateSizes,
 				      (index2 + 1) * sizeof(unsigned));
 	if (!nsizes)
 	    return FALSE;
@@ -136,7 +133,7 @@ AllocateScreenPrivateIndex()
     for (i = 0; i < screenInfo.numScreens; i++)
     {
 	pScreen = screenInfo.screens[i];
-	nprivs = (DevUnion *)xrealloc(pScreen->devPrivates,
+	nprivs = (DevUnion *)realloc(pScreen->devPrivates,
 				      screenPrivateCount * sizeof(DevUnion));
 	if (!nprivs)
 	{
@@ -180,7 +177,7 @@ AllocateWindowPrivate(register ScreenPtr pScreen, int index2, unsigned amount)
     if (index2 >= pScreen->WindowPrivateLen)
     {
 	unsigned *nsizes;
-	nsizes = (unsigned *)xrealloc(pScreen->WindowPrivateSizes,
+	nsizes = (unsigned *)realloc(pScreen->WindowPrivateSizes,
 				      (index2 + 1) * sizeof(unsigned));
 	if (!nsizes)
 	    return FALSE;
@@ -230,7 +227,7 @@ AllocateGCPrivate(register ScreenPtr pScreen, int index2, unsigned amount)
     if (index2 >= pScreen->GCPrivateLen)
     {
 	unsigned *nsizes;
-	nsizes = (unsigned *)xrealloc(pScreen->GCPrivateSizes,
+	nsizes = (unsigned *)realloc(pScreen->GCPrivateSizes,
 				      (index2 + 1) * sizeof(unsigned));
 	if (!nsizes)
 	    return FALSE;
@@ -280,7 +277,7 @@ AllocatePixmapPrivate(register ScreenPtr pScreen, int index2, unsigned amount)
     if (index2 >= pScreen->PixmapPrivateLen)
     {
 	unsigned *nsizes;
-	nsizes = (unsigned *)xrealloc(pScreen->PixmapPrivateSizes,
+	nsizes = (unsigned *)realloc(pScreen->PixmapPrivateSizes,
 				      (index2 + 1) * sizeof(unsigned));
 	if (!nsizes)
 	    return FALSE;
@@ -345,7 +342,7 @@ AllocateColormapPrivateIndex (InitCmapPrivFunc initPrivFunc)
 
 	if (pColormap)
 	{
-	    privs = (DevUnion *) xrealloc (pColormap->devPrivates,
+	    privs = (DevUnion *) realloc (pColormap->devPrivates,
 		colormapPrivateCount * sizeof(DevUnion));
 	    if (!privs) {
 		colormapPrivateCount--;
@@ -380,7 +377,7 @@ Bool
 AllocateDevicePrivate(DeviceIntPtr device, int index)
 {
     if (device->nPrivates < ++index) {
-	DevUnion *nprivs = (DevUnion *) xrealloc(device->devPrivates,
+	DevUnion *nprivs = (DevUnion *) realloc(device->devPrivates,
 						 index * sizeof(DevUnion));
 	if (!nprivs)
 	    return FALSE;

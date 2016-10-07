@@ -23,7 +23,6 @@ SRCS =  NXwindow.c \
         NXmiglyph.c \
         NXmiexpose.c \
         NXresource.c \
-        NXmiwindow.c \
 	NXdamage.c \
 	NXmitrap.c \
 	Args.c \
@@ -85,7 +84,6 @@ OBJS =  NXwindow.o \
         NXmiglyph.o \
         NXmiexpose.o \
         NXresource.o \
-        NXmiwindow.o \
 	NXdamage.o \
 	NXmitrap.o \
 	Args.o \

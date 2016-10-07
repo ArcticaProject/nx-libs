@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/mi/miwindow.c,v 1.9tsi Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $Xorg: miwindow.c,v 1.4 2001/02/09 02:05:22 xorgcvs Exp $ */
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
@@ -275,14 +273,12 @@ miChangeSaveUnder(pWin, first)
 					 * Used when pWin was restacked */
 {
     RegionRec	rgn;	/* Area obscured by saveUnder windows */
-    register ScreenPtr pScreen;
     Bool	res;
 
     if (!deltaSaveUndersViewable && !numSaveUndersViewable)
 	return FALSE;
     numSaveUndersViewable += deltaSaveUndersViewable;
     deltaSaveUndersViewable = 0;
-    pScreen = pWin->drawable.pScreen;
     RegionNull(&rgn);
     res = miCheckSubSaveUnder (pWin->parent,
 			       pWin->saveUnder ? first : pWin->nextSib,
@@ -368,9 +364,6 @@ miMarkOverlappedWindows(pWin, pFirst, ppLayerWin)
     register WindowPtr pChild, pLast;
     Bool anyMarked = FALSE;
     MarkWindowProcPtr MarkWindow = pWin->drawable.pScreen->MarkWindow;
-    ScreenPtr pScreen;
-
-    pScreen = pWin->drawable.pScreen;
 
     /* single layered systems are easy */
     if (ppLayerWin) *ppLayerWin = pWin;
@@ -453,10 +446,7 @@ miHandleValidateExposures(pWin)
 {
     register WindowPtr pChild;
     register ValidatePtr val;
-    ScreenPtr pScreen;
     WindowExposuresProcPtr WindowExposures;
-
-    pScreen = pWin->drawable.pScreen;
 
     pChild = pWin;
     WindowExposures = pChild->drawable.pScreen->WindowExposures;
@@ -471,7 +461,7 @@ miHandleValidateExposures(pWin)
 	    RegionUninit(&val->after.borderExposed);
 	    (*WindowExposures)(pChild, &val->after.exposed, NullRegion);
 	    RegionUninit(&val->after.exposed);
-	    xfree(val);
+	    free(val);
 	    pChild->valdata = (ValidatePtr)NULL;
 	    if (pChild->firstChild)
 	    {
@@ -581,12 +571,10 @@ miRecomputeExposures (
     register WindowPtr	pWin,
     void *		value) /* must conform to VisitWindowProcPtr */
 {
-    register ScreenPtr	pScreen;
     RegionPtr	pValid = (RegionPtr)value;
 
     if (pWin->valdata)
     {
-	pScreen = pWin->drawable.pScreen;
 	/*
 	 * compute exposed regions of this window
 	 */
@@ -1048,7 +1036,25 @@ miSetShape(pWin)
 	bsExposed = (*pScreen->TranslateBackingStore)
 			     (pWin, 0, 0, pOldClip,
 			      pWin->drawable.x, pWin->drawable.y);
-	if (WasViewable)
+
+	/*
+	 * Applies to NXAGENT_SERVER builds:
+	 *
+	 * We got a few, rare, segfaults here after having
+	 * started using the backing store. It may be a
+	 * different bug but miChangeSaveUnder() calls mi-
+	 * CheckSubSaveUnder() that, in turn, can change
+	 * the backing store attribute of the window. This
+	 * means that we may try to destroy the region
+	 * even if it was not created at the beginning of
+	 * this function as, at the time, the backing store
+	 * was off. miCheckSubSaveUnder() appear to get a
+	 * pointer to the parent, so maybe doesn't change
+	 * the attribute of the window itself. This is to
+	 * be better investigated.
+	 */
+
+	if (WasViewable && pOldClip)
 	    RegionDestroy(pOldClip);
 	if (bsExposed)
 	{
@@ -1168,10 +1174,7 @@ miMarkUnrealizedWindow(pChild, pWin, fromConfigure)
 void
 miSegregateChildren(WindowPtr pWin, RegionPtr pReg, int depth)
 {
-    ScreenPtr pScreen;
     WindowPtr pChild;
-
-    pScreen = pWin->drawable.pScreen;
 
     for (pChild = pWin->firstChild; pChild; pChild = pChild->nextSib)
     {

@@ -1,4 +1,3 @@
-/* $Xorg: XKBCvt.c,v 1.5 2001/02/09 02:03:38 xorgcvs Exp $ */
 /*
 
 Copyright 1988, 1989, 1998  The Open Group
@@ -26,7 +25,6 @@ other dealings in this Software without prior written authorization
 from The Open Group.
 
 */
-/* $XFree86: xc/lib/X11/XKBCvt.c,v 3.34 2002/10/08 23:31:35 dawes Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -37,7 +35,6 @@ from The Open Group.
 
 #include <nx-X11/X.h>
 #include <nx-X11/Xlib.h>
-#define NEED_EVENTS
 #include "Xlibint.h"
 #include "Xlcint.h"
 #include "XlcPubI.h"

@@ -1,5 +1,3 @@
-/* $XdotOrg: xc/programs/Xserver/dix/globals.c,v 1.7 2005/07/03 08:53:38 daniels Exp $ */
-/* $XFree86: xc/programs/Xserver/dix/globals.c,v 1.12tsi Exp $ */
 /************************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -47,7 +45,6 @@ SOFTWARE.
 
 ********************************************************/
 
-/* $Xorg: globals.c,v 1.4 2001/02/09 02:04:40 xorgcvs Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>

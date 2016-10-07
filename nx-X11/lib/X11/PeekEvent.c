@@ -1,4 +1,3 @@
-/* $Xorg: PeekEvent.c,v 1.4 2001/02/09 02:03:35 xorgcvs Exp $ */
 /*
 
 Copyright 1986, 1998  The Open Group
@@ -24,9 +23,7 @@ used in advertising or otherwise to promote the sale, use or other dealings
 in this Software without prior written authorization from The Open Group.
 
 */
-/* $XFree86: xc/lib/X11/PeekEvent.c,v 1.3 2001/01/17 19:41:41 dawes Exp $ */
 
-#define NEED_EVENTS
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -46,6 +43,12 @@ XPeekEvent (dpy, event)
 	LockDisplay(dpy);
 	if (dpy->head == NULL)
 	    _XReadEvents(dpy);
+#ifdef NX_TRANS_SOCKET
+	if (_XGetIOError(dpy)) {
+	    UnlockDisplay(dpy);
+	    return 1;
+	}
+#endif
 	*event = (dpy->head)->event;
 	UnlockDisplay(dpy);
 	return 1;

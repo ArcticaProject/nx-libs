@@ -1,4 +1,28 @@
-/* $Xorg: XlibInt.c,v 1.8 2001/02/09 02:03:38 xorgcvs Exp $ */
+/**************************************************************************/
+/*                                                                        */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
+/*                                                                        */
+/* nx-X11, NX protocol compression and NX extensions to this software     */
+/* are copyright of the aforementioned persons and companies.             */
+/*                                                                        */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
+/*                                                                        */
+/* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
+/*                                                                        */
+/**************************************************************************/
+
 /*
 
 Copyright 1985, 1986, 1987, 1998  The Open Group
@@ -27,31 +51,10 @@ from The Open Group.
 
 */
 
-/**************************************************************************/
-/*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
-/*                                                                        */
-/* NX-X11, NX protocol compression and NX extensions to this software     */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
-/*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
-/*                                                                        */
-/* All rights reserved.                                                   */
-/*                                                                        */
-/**************************************************************************/
-
-/* $XFree86: xc/lib/X11/XlibInt.c,v 3.38 2003/10/30 21:55:05 alanh Exp $ */
-
 /*
  *	XlibInt.c - Internal support routines for the C subroutine
  *	interface library (Xlib) to the X Window System Protocol V11.0.
  */
-#define NEED_EVENTS
-#define NEED_REPLIES
 
 #ifdef WIN32
 #define _XLIBINT_
@@ -2751,6 +2754,30 @@ void _XEatData(
 #undef SCRATCHSIZE
 }
 
+/*
+   Port from libXfixes commit
+   b031e3b60fa1af9e49449f23d4a84395868be3ab We need this here to
+   enable linking of current libXrender against libNX_X11 instead of
+   the system's libX11
+
+   The original implementation of this function (libX11 commit
+   9f5d83706543696fc944c1835a403938c06f2cc5) uses xcb stuff which we
+   do not have in libNX_X11. So we take a workaround from another
+   lib. This workaround had been implemented temporarily in a couple
+   of X libs, see e.g. https://lists.x.org/archives/xorg-devel/2013-July/036763.html.
+*/
+#include <X11/Xmd.h>  /* for LONG64 on 64-bit platforms */
+#include <limits.h>
+
+void _XEatDataWords(Display *dpy, unsigned long n)
+{
+#ifndef LONG64
+    if (n >= (ULONG_MAX >> 2))
+        _XIOError(dpy);
+#endif
+    _XEatData (dpy, n << 2);
+}
+
 
 /*
  * _XEnq - Place event packets on the display's queue.
@@ -3732,6 +3759,36 @@ Screen *_XScreenOfWindow (dpy, w)
     return NULL;
 }
 
+/*
+ * WARNING: This implementation's pre-conditions and post-conditions
+ * must remain compatible with the old macro-based implementations of
+ * GetReq, GetReqExtra, GetResReq, and GetEmptyReq. The portions of the
+ * Display structure affected by those macros are part of libX11's
+ * ABI.
+ */
+void *_XGetRequest(Display *dpy, CARD8 type, size_t len)
+{
+    xReq *req;
+
+    WORD64ALIGN
+
+    if (dpy->bufptr + len > dpy->bufmax)
+       _XFlush(dpy);
+
+    if (len % 4)
+       fprintf(stderr,
+               "Xlib: request %d length %zd not a multiple of 4.\n",
+               type, len);
+
+    dpy->last_req = dpy->bufptr;
+
+    req = (xReq*)dpy->bufptr;
+    req->reqType = type;
+    req->length = len / 4;
+    dpy->bufptr += len;
+    dpy->request++;
+    return req;
+}
 
 #if defined(WIN32)
 

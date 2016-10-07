@@ -25,7 +25,6 @@ in this Software without prior written authorization from The Open Group.
  *
  * Author:  Keith Packard, MIT X Consortium
  */
-/* $XFree86: xc/programs/Xserver/mi/mieq.c,v 1.2 2001/05/25 18:41:01 dawes Exp $ */
 
 /*
  * mieq.c
@@ -34,7 +33,6 @@ in this Software without prior written authorization from The Open Group.
  *
  */
 
-# define NEED_EVENTS
 # include   <nx-X11/X.h>
 # include   <nx-X11/Xmd.h>
 # include   <nx-X11/Xproto.h>

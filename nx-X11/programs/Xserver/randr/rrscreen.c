@@ -1,3 +1,28 @@
+/**************************************************************************/
+/*                                                                        */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
+/*                                                                        */
+/* nx-X11, NX protocol compression and NX extensions to this software     */
+/* are copyright of the aforementioned persons and companies.             */
+/*                                                                        */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
+/*                                                                        */
+/* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
+/*                                                                        */
+/**************************************************************************/
+
 /*
  * Copyright © 2006 Keith Packard
  *
@@ -19,23 +44,6 @@
  * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
  * OF THIS SOFTWARE.
  */
-
-/**************************************************************************/
-/*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
-/*                                                                        */
-/* NX-X11, NX protocol compression and NX extensions to this software     */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
-/*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
-/*                                                                        */
-/* All rights reserved.                                                   */
-/*                                                                        */
-/**************************************************************************/
 
 #include "randrstr.h"
 
@@ -111,9 +119,6 @@ RRDeliverScreenEvent(ClientPtr client, WindowPtr pWin, ScreenPtr pScreen)
 
     xRRScreenChangeNotifyEvent se = {
         .type = RRScreenChangeNotify + RREventBase,
-#ifdef NXAGENT_SERVER
-        .sequenceNumber = client->sequence,
-#endif
         .rotation = (CARD8) (crtc ? crtc->rotation : RR_Rotate_0),
         .timestamp = pScrPriv->lastSetTime.milliseconds,
         .configTimestamp = pScrPriv->lastConfigTime.milliseconds,
@@ -212,7 +217,6 @@ ProcRRGetScreenSizeRange(ClientPtr client)
     ScreenPtr pScreen;
     rrScrPrivPtr pScrPriv;
     int rc;
-    int n;
 
     REQUEST_SIZE_MATCH(xRRGetScreenSizeRangeReq);
 #ifndef NXAGENT_SERVER
@@ -248,14 +252,14 @@ ProcRRGetScreenSizeRange(ClientPtr client)
         rep.maxHeight = rep.minHeight = pScreen->height;
     }
     if (client->swapped) {
-        swaps(&rep.sequenceNumber, n);
-        swapl(&rep.length, n);
-        swaps(&rep.minWidth, n);
-        swaps(&rep.minHeight, n);
-        swaps(&rep.maxWidth, n);
-        swaps(&rep.maxHeight, n);
+        swaps(&rep.sequenceNumber);
+        swapl(&rep.length);
+        swaps(&rep.minWidth);
+        swaps(&rep.minHeight);
+        swaps(&rep.maxWidth);
+        swaps(&rep.maxHeight);
     }
-    WriteToClient(client, sizeof(xRRGetScreenSizeRangeReply), (char *) &rep);
+    WriteToClient(client, sizeof(xRRGetScreenSizeRangeReply), &rep);
     return Success;
 }
 
@@ -334,27 +338,25 @@ ProcRRSetScreenSize(ClientPtr client)
     for (j = 0; j < num_modes; j++)                   \
         total_name_len += modes[j]->mode.nameLength;  \
     total_modes += num_modes;                         \
-    xfree(modes);                                      \
+    free(modes);                                      \
 } while(0)
 
 static inline void
 swap_modeinfos(xRRModeInfo * modeinfos, int i)
 {
-    int n;
-
-    swapl(&modeinfos[i].id, n);
-    swaps(&modeinfos[i].width, n);
-    swaps(&modeinfos[i].height, n);
-    swapl(&modeinfos[i].dotClock, n);
-    swaps(&modeinfos[i].hSyncStart, n);
-    swaps(&modeinfos[i].hSyncEnd, n);
-    swaps(&modeinfos[i].hTotal, n);
-    swaps(&modeinfos[i].hSkew, n);
-    swaps(&modeinfos[i].vSyncStart, n);
-    swaps(&modeinfos[i].vSyncEnd, n);
-    swaps(&modeinfos[i].vTotal, n);
-    swaps(&modeinfos[i].nameLength, n);
-    swapl(&modeinfos[i].modeFlags, n);
+    swapl(&modeinfos[i].id);
+    swaps(&modeinfos[i].width);
+    swaps(&modeinfos[i].height);
+    swapl(&modeinfos[i].dotClock);
+    swaps(&modeinfos[i].hSyncStart);
+    swaps(&modeinfos[i].hSyncEnd);
+    swaps(&modeinfos[i].hTotal);
+    swaps(&modeinfos[i].hSkew);
+    swaps(&modeinfos[i].vSyncStart);
+    swaps(&modeinfos[i].vSyncEnd);
+    swaps(&modeinfos[i].vTotal);
+    swaps(&modeinfos[i].nameLength);
+    swapl(&modeinfos[i].modeFlags);
 }
 
 #define update_arrays(gpuscreen, pScrPriv, primary_crtc, has_primary) do {            \
@@ -366,13 +368,13 @@ swap_modeinfos(xRRModeInfo * modeinfos, int i)
         }\
         crtcs[crtc_count] = pScrPriv->crtcs[j]->id;        \
         if (client->swapped)                               \
-            swapl(&crtcs[crtc_count], n);                     \
+            swapl(&crtcs[crtc_count]);                     \
         crtc_count++;                                      \
     }                                                      \
     for (j = 0; j < pScrPriv->numOutputs; j++) {           \
         outputs[output_count] = pScrPriv->outputs[j]->id;  \
         if (client->swapped)                               \
-            swapl(&outputs[output_count], n);                 \
+            swapl(&outputs[output_count]);                 \
         output_count++;                                    \
     }                                                      \
     {                                                      \
@@ -388,7 +390,7 @@ swap_modeinfos(xRRModeInfo * modeinfos, int i)
             names += mode->mode.nameLength;                \
             mode_count++;                                  \
         }                                                  \
-        xfree(modes);                                       \
+        free(modes);                                       \
     }                                                      \
     } while (0)
 
@@ -412,7 +414,6 @@ rrGetMultiScreenResources(ClientPtr client, Bool query, ScreenPtr pScreen)
     xRRModeInfo *modeinfos;
     CARD8 *names;
     int has_primary = 0;
-    int n;
 
     /* we need to iterate all the GPU masters and all their output slaves */
     total_crtcs = 0;
@@ -456,7 +457,7 @@ rrGetMultiScreenResources(ClientPtr client, Bool query, ScreenPtr pScreen)
 
     extraLen = rep.length << 2;
     if (extraLen) {
-        extra = xalloc(extraLen);
+        extra = malloc(extraLen);
         if (!extra) {
             return BadAlloc;
         }
@@ -479,7 +480,7 @@ rrGetMultiScreenResources(ClientPtr client, Bool query, ScreenPtr pScreen)
         primary_crtc = pScrPriv->primaryOutput->crtc;
         crtcs[0] = pScrPriv->primaryOutput->crtc->id;
         if (client->swapped)
-            swapl(&crtcs[0], n);
+            swapl(&crtcs[0]);
         crtc_count = 1;
     }
     update_arrays(pScreen, pScrPriv, primary_crtc, has_primary);
@@ -492,19 +493,19 @@ rrGetMultiScreenResources(ClientPtr client, Bool query, ScreenPtr pScreen)
 
     assert(bytes_to_int32((char *) names - (char *) extra) == rep.length);
     if (client->swapped) {
-        swaps(&rep.sequenceNumber, n);
-        swapl(&rep.length, n);
-        swapl(&rep.timestamp, n);
-        swapl(&rep.configTimestamp, n);
-        swaps(&rep.nCrtcs, n);
-        swaps(&rep.nOutputs, n);
-        swaps(&rep.nModes, n);
-        swaps(&rep.nbytesNames, n);
+        swaps(&rep.sequenceNumber);
+        swapl(&rep.length);
+        swapl(&rep.timestamp);
+        swapl(&rep.configTimestamp);
+        swaps(&rep.nCrtcs);
+        swaps(&rep.nOutputs);
+        swaps(&rep.nModes);
+        swaps(&rep.nbytesNames);
     }
-    WriteToClient(client, sizeof(xRRGetScreenResourcesReply), (char *) &rep);
+    WriteToClient(client, sizeof(xRRGetScreenResourcesReply), &rep);
     if (extraLen) {
-        WriteToClient(client, extraLen, (char *) extra);
-        xfree(extra);
+        WriteToClient(client, extraLen, extra);
+        free(extra);
     }
     return Success;
 }
@@ -525,7 +526,6 @@ rrGetScreenResources(ClientPtr client, Bool query)
     RROutput *outputs;
     xRRModeInfo *modeinfos;
     CARD8 *names;
-    int n;
 
     REQUEST_SIZE_MATCH(xRRGetScreenResourcesReq);
 
@@ -595,9 +595,9 @@ rrGetScreenResources(ClientPtr client, Bool query)
 
         extraLen = rep.length << 2;
         if (extraLen) {
-            extra = xalloc(extraLen);
+            extra = malloc(extraLen);
             if (!extra) {
-                xfree(modes);
+                free(modes);
                 return BadAlloc;
             }
         }
@@ -613,7 +613,7 @@ rrGetScreenResources(ClientPtr client, Bool query)
             has_primary = 1;
             crtcs[0] = pScrPriv->primaryOutput->crtc->id;
             if (client->swapped)
-                swapl(&crtcs[0], n);
+                swapl(&crtcs[0]);
         }
 
         for (i = 0; i < pScrPriv->numCrtcs; i++) {
@@ -624,13 +624,13 @@ rrGetScreenResources(ClientPtr client, Bool query)
             }
             crtcs[i + has_primary] = pScrPriv->crtcs[i]->id;
             if (client->swapped)
-                swapl(&crtcs[i + has_primary], n);
+                swapl(&crtcs[i + has_primary]);
         }
 
         for (i = 0; i < pScrPriv->numOutputs; i++) {
             outputs[i] = pScrPriv->outputs[i]->id;
             if (client->swapped)
-                swapl(&outputs[i], n);
+                swapl(&outputs[i]);
         }
 
         for (i = 0; i < num_modes; i++) {
@@ -638,42 +638,42 @@ rrGetScreenResources(ClientPtr client, Bool query)
 
             modeinfos[i] = mode->mode;
             if (client->swapped) {
-                swapl(&modeinfos[i].id, n);
-                swaps(&modeinfos[i].width, n);
-                swaps(&modeinfos[i].height, n);
-                swapl(&modeinfos[i].dotClock, n);
-                swaps(&modeinfos[i].hSyncStart, n);
-                swaps(&modeinfos[i].hSyncEnd, n);
-                swaps(&modeinfos[i].hTotal, n);
-                swaps(&modeinfos[i].hSkew, n);
-                swaps(&modeinfos[i].vSyncStart, n);
-                swaps(&modeinfos[i].vSyncEnd, n);
-                swaps(&modeinfos[i].vTotal, n);
-                swaps(&modeinfos[i].nameLength, n);
-                swapl(&modeinfos[i].modeFlags, n);
+                swapl(&modeinfos[i].id);
+                swaps(&modeinfos[i].width);
+                swaps(&modeinfos[i].height);
+                swapl(&modeinfos[i].dotClock);
+                swaps(&modeinfos[i].hSyncStart);
+                swaps(&modeinfos[i].hSyncEnd);
+                swaps(&modeinfos[i].hTotal);
+                swaps(&modeinfos[i].hSkew);
+                swaps(&modeinfos[i].vSyncStart);
+                swaps(&modeinfos[i].vSyncEnd);
+                swaps(&modeinfos[i].vTotal);
+                swaps(&modeinfos[i].nameLength);
+                swapl(&modeinfos[i].modeFlags);
             }
             memcpy(names, mode->name, mode->mode.nameLength);
             names += mode->mode.nameLength;
         }
-        xfree(modes);
+        free(modes);
         assert(bytes_to_int32((char *) names - (char *) extra) == rep.length);
     }
 
     if (client->swapped) {
-        swaps(&rep.sequenceNumber, n);
-        swapl(&rep.length, n);
-        swapl(&rep.timestamp, n);
-        swapl(&rep.configTimestamp, n);
-        swaps(&rep.nCrtcs, n);
-        swaps(&rep.nOutputs, n);
-        swaps(&rep.nModes, n);
-        swaps(&rep.nbytesNames, n);
+        swaps(&rep.sequenceNumber);
+        swapl(&rep.length);
+        swapl(&rep.timestamp);
+        swapl(&rep.configTimestamp);
+        swaps(&rep.nCrtcs);
+        swaps(&rep.nOutputs);
+        swaps(&rep.nModes);
+        swaps(&rep.nbytesNames);
     }
     WriteToClient(client, sizeof(xRRGetScreenResourcesReply),
-                  (char *) (char *) &rep);
+                  (char *) &rep);
     if (extraLen) {
-        WriteToClient(client, extraLen, (char *) (char *) extra);
-        xfree(extra);
+        WriteToClient(client, extraLen, extra);
+        free(extra);
     }
     return Success;
 }
@@ -714,7 +714,7 @@ RR10GetData(ScreenPtr pScreen, RROutputPtr output)
     Bool *used;
 
     /* Make sure there is plenty of space for any combination */
-    data = xalloc(sizeof(RR10DataRec) +
+    data = malloc(sizeof(RR10DataRec) +
                   sizeof(RRScreenSize) * nmode +
                   sizeof(RRScreenRate) * nmode + sizeof(Bool) * nmode);
     if (!data)
@@ -801,7 +801,6 @@ ProcRRGetScreenInfo(ClientPtr client)
     CARD8 *extra;
     unsigned long extraLen;
     RROutputPtr output;
-    int n;
 
     REQUEST_SIZE_MATCH(xRRGetScreenInfoReq);
 #ifndef NXAGENT_SERVER
@@ -874,9 +873,9 @@ ProcRRGetScreenInfo(ClientPtr client)
             extraLen += rep.nrateEnts * sizeof(CARD16);
 
         if (extraLen) {
-            extra = (CARD8 *) xalloc(extraLen);
+            extra = (CARD8 *) malloc(extraLen);
             if (!extra) {
-                xfree(pData);
+                free(pData);
                 return BadAlloc;
             }
         }
@@ -895,28 +894,28 @@ ProcRRGetScreenInfo(ClientPtr client)
             size->widthInMillimeters = pSize->mmWidth;
             size->heightInMillimeters = pSize->mmHeight;
             if (client->swapped) {
-                swaps(&size->widthInPixels, n);
-                swaps(&size->heightInPixels, n);
-                swaps(&size->widthInMillimeters, n);
-                swaps(&size->heightInMillimeters, n);
+                swaps(&size->widthInPixels);
+                swaps(&size->heightInPixels);
+                swaps(&size->widthInMillimeters);
+                swaps(&size->heightInMillimeters);
             }
             size++;
             if (has_rate) {
                 *rates = pSize->nRates;
                 if (client->swapped) {
-                    swaps(rates, n);
+                    swaps(rates);
                 }
                 rates++;
                 for (j = 0; j < pSize->nRates; j++) {
                     *rates = pSize->pRates[j].rate;
                     if (client->swapped) {
-                        swaps(rates, n);
+                        swaps(rates);
                     }
                     rates++;
                 }
             }
         }
-        xfree(pData);
+        free(pData);
 
         data8 = (CARD8 *) rates;
 
@@ -926,20 +925,20 @@ ProcRRGetScreenInfo(ClientPtr client)
         rep.length = bytes_to_int32(extraLen);
     }
     if (client->swapped) {
-        swaps(&rep.sequenceNumber, n);
-        swapl(&rep.length, n);
-        swapl(&rep.timestamp, n);
-        swapl(&rep.configTimestamp, n);
-        swaps(&rep.rotation, n);
-        swaps(&rep.nSizes, n);
-        swaps(&rep.sizeID, n);
-        swaps(&rep.rate, n);
-        swaps(&rep.nrateEnts, n);
+        swaps(&rep.sequenceNumber);
+        swapl(&rep.length);
+        swapl(&rep.timestamp);
+        swapl(&rep.configTimestamp);
+        swaps(&rep.rotation);
+        swaps(&rep.nSizes);
+        swaps(&rep.sizeID);
+        swaps(&rep.rate);
+        swaps(&rep.nrateEnts);
     }
-    WriteToClient(client, sizeof(xRRGetScreenInfoReply), (char *) &rep);
+    WriteToClient(client, sizeof(xRRGetScreenInfoReply), &rep);
     if (extraLen) {
-        WriteToClient(client, extraLen, (char *) extra);
-        xfree(extra);
+        WriteToClient(client, extraLen, extra);
+        free(extra);
     }
     return Success;
 }
@@ -965,7 +964,6 @@ ProcRRSetScreenConfig(ClientPtr client)
     RR10DataPtr pData = NULL;
     RRScreenSizePtr pSize;
     int width, height;
-    int n;
 
     UpdateCurrentTime();
 
@@ -1035,7 +1033,7 @@ ProcRRSetScreenConfig(ClientPtr client)
          * Invalid size ID
          */
         client->errorValue = stuff->sizeID;
-        xfree(pData);
+        free(pData);
         return BadValue;
     }
     pSize = &pData->sizes[stuff->sizeID];
@@ -1057,7 +1055,7 @@ ProcRRSetScreenConfig(ClientPtr client)
          * Invalid rotation
          */
         client->errorValue = stuff->rotation;
-        xfree(pData);
+        free(pData);
         return BadValue;
     }
 
@@ -1066,7 +1064,7 @@ ProcRRSetScreenConfig(ClientPtr client)
          * requested rotation or reflection not supported by screen
          */
         client->errorValue = stuff->rotation;
-        xfree(pData);
+        free(pData);
         return BadMatch;
     }
 
@@ -1088,7 +1086,7 @@ ProcRRSetScreenConfig(ClientPtr client)
              * Invalid rate
              */
             client->errorValue = rate;
-            xfree(pData);
+            free(pData);
             return BadValue;
         }
         mode = pSize->pRates[i].mode;
@@ -1113,12 +1111,12 @@ ProcRRSetScreenConfig(ClientPtr client)
     height = mode->mode.height;
     if (width < pScrPriv->minWidth || pScrPriv->maxWidth < width) {
         client->errorValue = width;
-        xfree(pData);
+        free(pData);
         return BadValue;
     }
     if (height < pScrPriv->minHeight || pScrPriv->maxHeight < height) {
         client->errorValue = height;
-        xfree(pData);
+        free(pData);
         return BadValue;
     }
 
@@ -1159,7 +1157,7 @@ ProcRRSetScreenConfig(ClientPtr client)
 
  sendReply:
 
-    xfree(pData);
+    free(pData);
 
     rep = (xRRSetScreenConfigReply) {
         .type = X_Reply,
@@ -1173,13 +1171,13 @@ ProcRRSetScreenConfig(ClientPtr client)
     };
 
     if (client->swapped) {
-        swaps(&rep.sequenceNumber, n);
-        swapl(&rep.length, n);
-        swapl(&rep.newTimestamp, n);
-        swapl(&rep.newConfigTimestamp, n);
-        swapl(&rep.root, n);
+        swaps(&rep.sequenceNumber);
+        swapl(&rep.length);
+        swapl(&rep.newTimestamp);
+        swapl(&rep.newConfigTimestamp);
+        swapl(&rep.root);
     }
-    WriteToClient(client, sizeof(xRRSetScreenConfigReply), (char *) &rep);
+    WriteToClient(client, sizeof(xRRSetScreenConfigReply), &rep);
 
     return Success;
 }
@@ -1202,7 +1200,7 @@ RR10CurrentSizeID(ScreenPtr pScreen)
                     sizeID = (CARD16) i;
                     break;
                 }
-            xfree(data);
+            free(data);
         }
     }
     return sizeID;

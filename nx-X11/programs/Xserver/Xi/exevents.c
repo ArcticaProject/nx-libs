@@ -1,4 +1,3 @@
-/* $Xorg: exevents.c,v 1.4 2001/02/09 02:04:33 xorgcvs Exp $ */
 /************************************************************
 
 Copyright 1989, 1998  The Open Group
@@ -44,7 +43,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/Xi/exevents.c,v 3.10 2001/12/14 19:58:55 dawes Exp $ */
 
 /********************************************************************
  *
@@ -54,7 +52,6 @@ SOFTWARE.
  *
  */
 
-#define	 NEED_EVENTS
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
@@ -302,7 +299,7 @@ InitProximityClassDeviceStruct( DeviceIntPtr dev)
 {
     register ProximityClassPtr proxc;
 
-    proxc = (ProximityClassPtr)xalloc(sizeof(ProximityClassRec));
+    proxc = (ProximityClassPtr)malloc(sizeof(ProximityClassRec));
     if (!proxc)
 	return FALSE;
     dev->proximity = proxc;
@@ -460,7 +457,7 @@ DeviceFocusEvent(dev, type, mode, detail, pWin)
 	    }
 	}
 
-	sev = ev = (deviceStateNotify *) xalloc(evcount * sizeof(xEvent));
+	sev = ev = (deviceStateNotify *) malloc(evcount * sizeof(xEvent));
 	FixDeviceStateNotify (dev, ev, NULL, NULL, NULL, first);
 
 	if (b != NULL) {
@@ -515,7 +512,7 @@ DeviceFocusEvent(dev, type, mode, detail, pWin)
 
 	(void) DeliverEventsToWindow(pWin, (xEvent *)sev, evcount,
 	    DeviceStateNotifyMask, NullGrab, dev->id);
-	xfree (sev);
+	free (sev);
         }
     }
 
@@ -741,7 +738,7 @@ AddExtensionClient (pWin, client, mask, mskidx)
 
     if (!pWin->optional && !MakeWindowOptional (pWin))
 	return BadAlloc;
-    others = (InputClients *) xalloc(sizeof(InputClients));
+    others = (InputClients *) malloc(sizeof(InputClients));
     if (!others)
 	return BadAlloc;
     if (!pWin->optional->inputMasks && !MakeInputMasks (pWin))
@@ -763,7 +760,7 @@ MakeInputMasks (pWin)
     struct _OtherInputMasks *imasks;
 
     imasks = (struct _OtherInputMasks *) 
-	xalloc (sizeof (struct _OtherInputMasks));
+	malloc (sizeof (struct _OtherInputMasks));
     if (!imasks)
 	return FALSE;
     bzero((char *) imasks, sizeof (struct _OtherInputMasks));
@@ -830,17 +827,17 @@ InputClientGone(pWin, id)
 	    if (prev)
 		{
 		prev->next = other->next;
-		xfree(other);
+		free(other);
 		}
 	    else if (!(other->next))
 		{
 	        if (ShouldFreeInputMasks(pWin, TRUE))
 		    {
 		    wOtherInputMasks(pWin)->inputClients = other->next;
-		    xfree(wOtherInputMasks(pWin));
+		    free(wOtherInputMasks(pWin));
 		    pWin->optional->inputMasks = (OtherInputMasks *) NULL;
 		    CheckWindowOptionalNeed (pWin);
-		    xfree(other);
+		    free(other);
 		    }
 		else
 		    {
@@ -853,7 +850,7 @@ InputClientGone(pWin, id)
 	    else
 		{
 		wOtherInputMasks(pWin)->inputClients = other->next;
-		xfree(other);
+		free(other);
 		}
 	    RecalculateDeviceDeliverableEvents(pWin);
 	    return(Success);
@@ -1027,12 +1024,12 @@ SetModifierMapping(client, dev, len, rlen, numKeyPerModifier, inputMap, k)
      *	list of keycodes.
      */
     if (inputMapLen) {
-	map = (KeyCode *)xalloc(inputMapLen);
+	map = (KeyCode *)malloc(inputMapLen);
         if (!map)
             return BadAlloc;
     }
     if ((*k)->modifierKeyMap)
-        xfree((*k)->modifierKeyMap);
+        free((*k)->modifierKeyMap);
     if (inputMapLen) {
         (*k)->modifierKeyMap = map;
         memmove((char *)(*k)->modifierKeyMap, (char *)inputMap, inputMapLen);

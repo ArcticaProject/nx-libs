@@ -1,4 +1,3 @@
-/* $Xorg: imDefIm.c,v 1.5 2000/08/17 19:45:12 cpqbld Exp $ */
 /******************************************************************
          Copyright 1990, 1991, 1992 by Sun Microsystems, Inc.
          Copyright 1992, 1993, 1994 by FUJITSU LIMITED
@@ -31,13 +30,11 @@ OF THIS SOFTWARE.
                                makoto@sm.sony.co.jp
 
 ******************************************************************/
-/* $XFree86: xc/lib/X11/imDefIm.c,v 1.15 2003/08/22 19:27:24 eich Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 #include <nx-X11/Xatom.h>
-#define NEED_EVENTS
 #include "Xlibint.h"
 #include "Xlcint.h"
 #include "XlcPublic.h"

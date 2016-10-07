@@ -1,4 +1,3 @@
-/* $Xorg: mibstore.c,v 1.4 2001/02/09 02:05:20 xorgcvs Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -42,9 +41,7 @@ implied warranty.
 
 ******************************************************************/
 
-/* $XFree86: xc/programs/Xserver/mi/mibstore.c,v 1.10tsi Exp $ */
 
-#define NEED_EVENTS
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
@@ -373,7 +370,7 @@ miInitializeBackingStore (pScreen)
     }
     if (!AllocateGCPrivate(pScreen, miBSGCIndex, 0))
 	return;
-    pScreenPriv = (miBSScreenPtr) xalloc (sizeof (miBSScreenRec));
+    pScreenPriv = (miBSScreenPtr) malloc (sizeof (miBSScreenRec));
     if (!pScreenPriv)
 	return;
 
@@ -433,7 +430,7 @@ miBSCloseScreen (i, pScreen)
     pScreen->ChangeWindowAttributes = pScreenPriv->ChangeWindowAttributes;
     pScreen->CreateGC = pScreenPriv->CreateGC;
 
-    xfree ((void *) pScreenPriv);
+    free ((void *) pScreenPriv);
 
     return (*pScreen->CloseScreen) (i, pScreen);
 }
@@ -903,7 +900,7 @@ miBSCreateGCPrivate (pGC)
 {
     miBSGCRec	*pPriv;
 
-    pPriv = (miBSGCRec *) xalloc (sizeof (miBSGCRec));
+    pPriv = (miBSGCRec *) malloc (sizeof (miBSGCRec));
     if (!pPriv)
 	return FALSE;
     pPriv->pBackingGC = NULL;
@@ -931,7 +928,7 @@ miBSDestroyGCPrivate (GCPtr pGC)
 	pGC->ops = pPriv->wrapOps;
 	if (pPriv->pBackingGC)
 	    FreeGC (pPriv->pBackingGC, (GContext) 0);
-	xfree ((void *) pPriv);
+	free ((void *) pPriv);
     }
 }
 
@@ -2573,15 +2570,13 @@ miBSAllocate(pWin)
     WindowPtr 	  pWin;
 {
     register miBSWindowPtr  pBackingStore;
-    register ScreenPtr 	    pScreen;
 	
     if (pWin->drawable.pScreen->backingStoreSupport == NotUseful)
 	return;
-    pScreen = pWin->drawable.pScreen;
     if (!(pBackingStore = (miBSWindowPtr)pWin->backStorage))
     {
 
-	pBackingStore = (miBSWindowPtr)xalloc(sizeof(miBSWindowRec));
+	pBackingStore = (miBSWindowPtr)malloc(sizeof(miBSWindowRec));
 	if (!pBackingStore)
 	    return;
 
@@ -2674,9 +2669,6 @@ miBSFree(pWin)
     WindowPtr pWin;
 {
     miBSWindowPtr 	pBackingStore;
-    register ScreenPtr	pScreen;
-
-    pScreen = pWin->drawable.pScreen;
 
     pBackingStore = (miBSWindowPtr)pWin->backStorage;
     if (pBackingStore)
@@ -2685,7 +2677,7 @@ miBSFree(pWin)
 
 	RegionUninit(&pBackingStore->SavedRegion);
 
-	xfree(pBackingStore);
+	free(pBackingStore);
 	pWin->backStorage = NULL;
     }
 }
@@ -3615,7 +3607,7 @@ miBSDestroyGC (pGC)
 
     FUNC_EPILOGUE (pGC, pPriv);
 
-    xfree(pPriv);
+    free(pPriv);
 }
 
 static void

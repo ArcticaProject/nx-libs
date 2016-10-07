@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/GL/glx/single2swap.c,v 1.7 2002/01/14 22:47:08 tsi Exp $ */
 /*
 ** License Applicability. Except to the extent portions of this file are
 ** made subject to an alternative license as permitted in the SGI Free
@@ -34,7 +33,6 @@
 **
 */
 
-#define NEED_REPLIES
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
@@ -218,9 +216,9 @@ int __glXDispSwap_RenderMode(__GLXclientState *cl, GLbyte *pc)
     __GLX_SWAP_INT(&reply.retval);
     __GLX_SWAP_INT(&reply.size);
     __GLX_SWAP_INT(&reply.newMode);
-    WriteToClient(client, sz_xGLXRenderModeReply, (char *)&reply);
+    WriteToClient(client, sz_xGLXRenderModeReply, &reply);
     if (retBytes) {
-	WriteToClient(client, retBytes, (char *)retBuffer);
+	WriteToClient(client, retBytes, retBuffer);
     }
     return Success;
 }

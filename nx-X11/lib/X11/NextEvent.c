@@ -1,4 +1,3 @@
-/* $Xorg: NextEvent.c,v 1.4 2001/02/09 02:03:34 xorgcvs Exp $ */
 /*
 
 Copyright 1986, 1998  The Open Group
@@ -24,9 +23,7 @@ used in advertising or otherwise to promote the sale, use or other dealings
 in this Software without prior written authorization from The Open Group.
 
 */
-/* $XFree86: xc/lib/X11/NextEvent.c,v 1.3 2001/01/17 19:41:40 dawes Exp $ */
 
-#define NEED_EVENTS
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -48,6 +45,12 @@ XNextEvent (dpy, event)
 	
 	if (dpy->head == NULL)
 	    _XReadEvents(dpy);
+#ifdef NX_TRANS_SOCKET
+	if (_XGetIOError(dpy)) {
+	    UnlockDisplay(dpy);
+	    return 0;
+	}
+#endif
 	qelt = dpy->head;
 	*event = qelt->event;
 	_XDeq(dpy, NULL, qelt);

@@ -34,7 +34,7 @@ SUBDIRS = module
 #include <Server.tmpl>
 
 #ifdef FbNoPixelAddrCode
-DEFINES=-DFBNOPIXADDR -DFBNO24BIT
+FB_DEFINES=-DFBNOPIXADDR -DFBNO24BIT
 #endif
 
 #if defined(IHaveModules)
@@ -45,6 +45,16 @@ XFMODOBJ = fbmodule.o
 #if BuildRender
 RENDERSRC = fbcompose.c
 RENDEROBJ = fbcompose.o
+#endif
+
+#if defined(NXAgentServer) && NXAgentServer
+NX_DEFINES = -DNXAGENT_SERVER
+#endif
+
+#if defined(NXAgentServer) && NXAgentServer
+     DEFINES = $(FB_DEFINES) $(NX_DEFINES)
+#else
+     DEFINES = $(FB_DEFINES)
 #endif
 
 SRCS =	$(XFMODSRC) \
@@ -81,7 +91,6 @@ SRCS =	$(XFMODSRC) \
 	fb24_32.c \
 	fbpict.c \
 	fbmmx.c \
-	fbpseudocolor.c
 
 OBJS =	$(XFMODOBJ) \
 	fbarc.o \
@@ -118,7 +127,6 @@ OBJS =	$(XFMODOBJ) \
 	fb24_32.o \
 	fbpict.o \
 	fbmmx.o \
-	fbpseudocolor.o
 
    INCLUDES = -I$(SERVERSRC)/fb -I$(SERVERSRC)/mi -I$(SERVERSRC)/include \
 	      -I$(XINCLUDESRC) \

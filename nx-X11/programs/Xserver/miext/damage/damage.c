@@ -1324,6 +1324,8 @@ damageDamageChars (DrawablePtr	pDrawable,
 #define TT_POLY16  2
 #define TT_IMAGE16 3
 
+#ifndef NXAGENT_SERVER
+
 static int 
 damageText (DrawablePtr	    pDrawable,
 	    GCPtr	    pGC,
@@ -1445,6 +1447,7 @@ damageImageText16(DrawablePtr	pDrawable,
     DAMAGE_GC_OP_EPILOGUE(pGC, pDrawable);
 }
 
+#endif /* NXAGENT_SERVER */
 
 static void
 damageImageGlyphBlt(DrawablePtr	    pDrawable,
@@ -1723,7 +1726,7 @@ damageCloseScreen (int i, ScreenPtr pScreen)
     unwrap (pScrPriv, pScreen, CopyWindow);
     unwrap (pScrPriv, pScreen, CloseScreen);
     unwrap (pScrPriv, pScreen, BackingStoreFuncs.RestoreAreas);
-    xfree (pScrPriv);
+    free (pScrPriv);
     return (*pScreen->CloseScreen) (i, pScreen);
 }
 
@@ -1767,7 +1770,7 @@ DamageSetup (ScreenPtr pScreen)
     if (!AllocateWindowPrivate (pScreen, damageWinPrivateIndex, 0))
 	return FALSE;
 
-    pScrPriv = (DamageScrPrivPtr) xalloc (sizeof (DamageScrPrivRec));
+    pScrPriv = (DamageScrPrivPtr) malloc (sizeof (DamageScrPrivRec));
     if (!pScrPriv)
 	return FALSE;
 
@@ -1815,7 +1818,7 @@ DamageCreate (DamageReportFunc  damageReport,
 {
     DamagePtr	pDamage;
 
-    pDamage = xalloc (sizeof (DamageRec));
+    pDamage = malloc (sizeof (DamageRec));
     if (!pDamage)
 	return 0;
     pDamage->pNext = 0;
@@ -1910,7 +1913,7 @@ DamageDestroy (DamagePtr    pDamage)
     if (pDamage->damageDestroy)
 	(*pDamage->damageDestroy) (pDamage, pDamage->closure);
     RegionUninit(&pDamage->damage);
-    xfree (pDamage);
+    free (pDamage);
 }
 
 Bool

@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/GL/glx/single2.c,v 1.8 2004/02/10 22:54:15 alanh Exp $ */
 /*
 ** License Applicability. Except to the extent portions of this file are
 ** made subject to an alternative license as permitted in the SGI Free
@@ -34,7 +33,6 @@
 **
 */
 
-#define NEED_REPLIES
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
@@ -201,9 +199,9 @@ int __glXDisp_RenderMode(__GLXclientState *cl, GLbyte *pc)
     reply.retval = retval;
     reply.size = nitems;
     reply.newMode = newMode;
-    WriteToClient(client, sz_xGLXRenderModeReply, (char *)&reply);
+    WriteToClient(client, sz_xGLXRenderModeReply, &reply);
     if (retBytes) {
-	WriteToClient(client, retBytes, (char *)retBuffer);
+	WriteToClient(client, retBytes, retBuffer);
     }
     return Success;
 }
@@ -380,7 +378,7 @@ int DoGetString(__GLXclientState *cl, GLbyte *pc, GLboolean need_swap)
     }
 
     __GLX_SEND_HEADER();
-    WriteToClient(client, length, (char *) string); 
+    WriteToClient(client, length, string);
     if (buf != NULL) {
 	__glXFree(buf);
     }

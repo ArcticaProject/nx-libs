@@ -8,7 +8,7 @@
 # Luna users will need to either run make as "make MAKE=make"
 # or add "MAKE = make" to this file.
 
-RELEASE = "Release 6.9"
+RELEASE = "Release $(shell cat ../VERSION)"
 SHELL = /bin/sh
 RM = rm -f
 MV = mv
@@ -17,16 +17,11 @@ WIN32WORLDOPTS = -i
 TOP = .
 CURRENT_DIR = .
 CONFIGSRC = $(TOP)/config
-IMAKESRC = $(CONFIGSRC)/imake
-DEPENDSRC = $(CONFIGSRC)/makedepend
-DEPENDTOP = ../..
-IMAKETOP = ../..
 IRULESRC = $(CONFIGSRC)/cf
-IMAKE = $(IMAKESRC)/imake
+IMAKE = imake
 IMAKE_CMD = $(IMAKE) -I$(IRULESRC) $(IMAKE_DEFINES)
 MAKE_OPTS = -f xmakefile
 MAKE_CMD = $(MAKE) $(MAKE_OPTS)
-FLAGS = $(MFLAGS) -f Makefile.ini BOOTSTRAPCFLAGS="$(BOOTSTRAPCFLAGS)" CC="$(CC)"
 
 all:
 	@${MAKE} ${MAKE_OPTS} xmakefile-exists || $(MAKE) all-initial
@@ -34,8 +29,7 @@ all:
 
 all-initial:
 	@echo Please use make World, or on NT use nmake World.Win32.
-	@echo Check the configuration parameters in the $(IRULESRC) directory,
-	@echo and pass BOOTSTRAPCFLAGS if necessary.
+	@echo
 	@echo Read the release notes carefully before proceeding.
 	@echo Do not name your log file make.log or it will be deleted.
 
@@ -43,48 +37,9 @@ World:
 	@echo ""
 	@echo Building $(RELEASE).
 	@echo ""
-	@case "x$(BOOTSTRAPCFLAGS)" in x) \
-	echo I hope you checked the configuration parameters in $(IRULESRC) ; \
-	echo to see if you need to pass BOOTSTRAPCFLAGS. ; \
-	echo "" ; \
-	;; esac;
 	@date
 	@echo ""
-	@if [ -f xmakefile ]; then \
-	    ${MAKE} ${MAKE_OPTS} -k distclean || \
-	    ${MAKE} ${MAKE_OPTS} -k clean || \
-	    $(RM) xmakefile; \
-	fi
-	@if [ ! -f $(IRULESRC)/host.def ]; then \
-	    if [ ! -f $(TOP)/lib/Xt/Imakefile ]; then \
-		echo "#define BuildServersOnly YES" > $(IRULESRC)/host.def; \
-	    else \
-		if [ ! -f $(TOP)/fonts/Imakefile ]; then \
-		    echo "#define BuildFonts NO" > $(IRULESRC)/host.def; \
-		else \
-		    echo "" > $(IRULESRC)/host.def; \
-		fi; \
-	    fi; \
-	fi
-#	@rm -f $(IRULESRC)/version.def; echo "" > $(IRULESRC)/version.def;
-	@rm -f $(IRULESRC)/date.def; echo "" > $(IRULESRC)/date.def;
-#	@if [ ! -f $(IRULESRC)/version.def ]; then \
-#	    rm -f $(IRULESRC)/version.def; \
-#	    echo "" > $(IRULESRC)/version.def; \
-#	fi
-#	@if [ ! -f $(IRULESRC)/date.def ]; then \
-#	    rm -f $(IRULESRC)/date.def; \
-#	    echo "" > $(IRULESRC)/date.def; \
-#	fi
-	cd $(IMAKESRC) && $(MAKE) $(FLAGS) clean
-	$(MAKE) $(MFLAGS) Makefile.boot
-	${MAKE} ${MAKE_OPTS} $(MFLAGS) version.def
-	$(MAKE) $(MFLAGS) Makefile.boot
-	${MAKE} ${MAKE_OPTS} $(MFLAGS) VerifyOS
-	${MAKE} ${MAKE_OPTS} $(MFLAGS) Makefiles
-	${MAKE} ${MAKE_OPTS} $(MFLAGS) BOOTSTRAPSUBDIRS= clean
-	${MAKE} ${MAKE_OPTS} $(MFLAGS) includes
-	${MAKE} ${MAKE_OPTS} $(MFLAGS) depend
+	if [ ! -f xmakefile ]; then ${MAKE} ${MFLAGS} BuildEnv; fi
 	${MAKE} ${MAKE_OPTS} $(MFLAGS) $(WORLDOPTS) World
 	@echo ""
 	@date
@@ -92,94 +47,37 @@ World:
 	@echo Full build of $(RELEASE) complete.
 	@echo ""
 
+BuildEnv:
+	@if [ -f xmakefile ]; then \
+	    ${MAKE} ${MAKE_OPTS} -k distclean || \
+	    ${MAKE} ${MAKE_OPTS} -k clean || \
+	    $(RM) xmakefile; \
+	fi
+	@rm -f $(IRULESRC)/date.def; echo "" > $(IRULESRC)/date.def;
+	${MAKE} $(MFLAGS) xmakefile
+	${MAKE} ${MAKE_OPTS} $(MFLAGS) version.def
+	${MAKE} ${MAKE_OPTS} $(MFLAGS) VerifyOS
+	${MAKE} ${MAKE_OPTS} $(MFLAGS) Makefiles
+	${MAKE} ${MAKE_OPTS} $(MFLAGS) BOOTSTRAPSUBDIRS= clean
+	${MAKE} ${MAKE_OPTS} $(MFLAGS) includes
+	${MAKE} ${MAKE_OPTS} $(MFLAGS) depend
+
+
 .PRECIOUS: Makefile
 
 # This is just a sequence of bootstrapping steps we have to do.
 # The steps are listed as separate targets so clearmake can wink in
 # the Makefile.proto files.
 
-Makefile.boot: imake.bootstrap
-	$(RM) $(IMAKESRC)/Makefile.proto
-
-imake.proto:
-	cd $(IMAKESRC) && $(MAKE) $(FLAGS)
-	$(RM) $(DEPENDSRC)/Makefile.proto
-
-$(DEPENDSRC)/Makefile.proto: imake.proto
-	$(IMAKE_CMD) -s $(DEPENDSRC)/Makefile.proto -f $(DEPENDSRC)/Imakefile -DTOPDIR=$(DEPENDTOP) -DCURDIR=$(DEPENDSRC)
-
-depend.bootstrap: $(DEPENDSRC)/Makefile.proto
-	cd $(DEPENDSRC) && $(RM) -r Makefile Makefile.dep makedepend *.o bootstrap
-	cd $(DEPENDSRC) && $(MAKE) -f Makefile.proto bootstrap
-
-$(IMAKESRC)/Makefile.proto: depend.bootstrap
-	$(IMAKE_CMD) -s $(IMAKESRC)/Makefile.proto -f $(IMAKESRC)/Imakefile -DTOPDIR=$(IMAKETOP) -DCURDIR=$(IMAKESRC) -DBootStrap
-
-imake.bootstrap: $(IMAKESRC)/Makefile.proto
-	cd $(IMAKESRC) && $(MAKE) -f Makefile.proto bootstrapdepend
-	cd $(IMAKESRC) && $(MAKE) $(FLAGS) bootstrap
-	cd $(IMAKESRC) && $(MAKE) -f Makefile.proto imakeonly
-	-@if [ -f xmakefile ]; then set -x; \
-	  $(RM) xmakefile.bak; $(MV) xmakefile xmakefile.bak; \
-	  else exit 0; fi
-	$(MAKE) $(MFLAGS) xmakefile
-
 Makefile::
 	$(MAKE) $(MFLAGS) xmakefile
 
 xmakefile: Imakefile
-	$(RM) xmakefile
+	@if [ -f xmakefile ]; then set -x; \
+	 $(RM) xmakefile.bak; $(MV) xmakefile xmakefile.bak; \
+	 else exit 0; fi
 	@rm -f $(IRULESRC)/date.def; echo "" > $(IRULESRC)/date.def;
 	$(IMAKE_CMD) -s xmakefile -DTOPDIR=$(TOP) -DCURDIR=$(CURRENT_DIR)
-
-World.Win32:
-	@echo :
-	@echo Building $(RELEASE).
-	@echo :
-	@echo :
-	-@if not exist $(IRULESRC)\host.def echo > $(IRULESRC)\host.def
-	cd $(IMAKESRC)
-	$(MAKE) -f Makefile.ini clean.Win32
-	$(MAKE) -f Makefile.ini imake.exe
-	cd ..\..
-	-if exist xmakefile.bak del xmakefile.bak
-	-if exist xmakefile ren xmakefile xmakefile.bak
-	$(IMAKE:/=\) -s xmakefile -I$(IRULESRC) $(IMAKE_DEFINES) -DTOPDIR=$(TOP) -DCURDIR=$(CURRENT_DIR)
-	${MAKE} ${MAKE_OPTS} $(MFLAGS) VerifyOS
-	${MAKE} ${MAKE_OPTS} $(MFLAGS) Makefiles
-	${MAKE} ${MAKE_OPTS} $(MFLAGS) clean
-	cd $(CONFIGSRC)\util
-	$(MAKE) mkdirhier.exe
-	cd ..\..
-	${MAKE} ${MAKE_OPTS} $(MFLAGS) includes
-	${MAKE} ${MAKE_OPTS} $(MFLAGS) depend
-	${MAKE} ${MAKE_OPTS} $(MFLAGS) $(WIN32WORLDOPTS)
-	@echo :
-	@echo :
-	@echo Full build of $(RELEASE) complete.
-	@echo :
-
-World.OS2:
-	@echo :
-	@echo Building $(RELEASE) on OS/2.
-	@echo :
-	@echo :
-	-@if not exist $(IRULESRC)\host.def echo > $(IRULESRC)\host.def
-	\indir $(IMAKESRC) $(MAKE) SHELL= -f Makefile.ini clean.os2
-	\indir $(IMAKESRC) $(MAKE) SHELL= CC=gcc -f Makefile.ini imake.os2
-	-if exist Makefile.bak del Makefile.bak
-	-if exist Makefile ren Makefile Makefile.bak
-	$(subst /,\,$(IMAKE)) -I$(IRULESRC) $(IMAKE_DEFINES) -DTOPDIR=$(TOP) -DCURDIR=$(CURRENT_DIR)
-	$(MAKE) $(MFLAGS) VerifyOS
-	$(MAKE) $(MFLAGS) Makefiles
-	$(MAKE) $(MFLAGS) clean
-	$(MAKE) $(MFLAGS) includes
-	$(MAKE) $(MFLAGS) depend
-	$(MAKE) $(MFLAGS)
-	@echo :
-	@echo :
-	@echo Full build of $(RELEASE) on OS/2 complete.
-	@echo :
 
 # don't allow any default rules in this Makefile
 .SUFFIXES:

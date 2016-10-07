@@ -4,7 +4,6 @@
  * machine independent cursor display routines
  */
 
-/* $Xorg: midispcur.c,v 1.4 2001/02/09 02:05:20 xorgcvs Exp $ */
 
 /*
 
@@ -30,13 +29,11 @@ Except as contained in this notice, the name of The Open Group shall not be
 used in advertising or otherwise to promote the sale, use or other dealings
 in this Software without prior written authorization from The Open Group.
 */
-/* $XFree86: xc/programs/Xserver/mi/midispcur.c,v 1.9 2002/12/09 04:10:57 tsi Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-#define NEED_EVENTS
 # include   <nx-X11/X.h>
 # include   "misc.h"
 # include   "input.h"
@@ -126,7 +123,7 @@ miDCInitialize (pScreen, screenFuncs)
 	    return FALSE;
 	miDCGeneration = serverGeneration;
     }
-    pScreenPriv = (miDCScreenPtr) xalloc (sizeof (miDCScreenRec));
+    pScreenPriv = (miDCScreenPtr) malloc (sizeof (miDCScreenRec));
     if (!pScreenPriv)
 	return FALSE;
 
@@ -155,7 +152,7 @@ miDCInitialize (pScreen, screenFuncs)
 
     if (!miSpriteInitialize (pScreen, &miDCFuncs, screenFuncs))
     {
-	xfree ((void *) pScreenPriv);
+	free ((void *) pScreenPriv);
 	return FALSE;
     }
     return TRUE;
@@ -187,7 +184,7 @@ miDCCloseScreen (index, pScreen)
     tossPict (pScreenPriv->pRootPicture);
     tossPict (pScreenPriv->pTempPicture);
 #endif
-    xfree ((void *) pScreenPriv);
+    free ((void *) pScreenPriv);
     return (*pScreen->CloseScreen) (index, pScreen);
 }
 
@@ -250,7 +247,7 @@ miDCRealize (
     GCPtr	    pGC;
     XID		    gcvals[3];
 
-    pPriv = (miDCCursorPtr) xalloc (sizeof (miDCCursorRec));
+    pPriv = (miDCCursorPtr) malloc (sizeof (miDCCursorRec));
     if (!pPriv)
 	return (miDCCursorPtr)NULL;
 #ifdef ARGB_CURSOR
@@ -263,7 +260,7 @@ miDCRealize (
 	pFormat = PictureMatchFormat (pScreen, 32, PICT_a8r8g8b8);
 	if (!pFormat)
 	{
-	    xfree ((void *) pPriv);
+	    free ((void *) pPriv);
 	    return (miDCCursorPtr)NULL;
 	}
 	
@@ -273,14 +270,14 @@ miDCRealize (
 					    pCursor->bits->height, 32);
 	if (!pPixmap)
 	{
-	    xfree ((void *) pPriv);
+	    free ((void *) pPriv);
 	    return (miDCCursorPtr)NULL;
 	}
 	pGC = GetScratchGC (32, pScreen);
 	if (!pGC)
 	{
 	    (*pScreen->DestroyPixmap) (pPixmap);
-	    xfree ((void *) pPriv);
+	    free ((void *) pPriv);
 	    return (miDCCursorPtr)NULL;
 	}
 	ValidateGC (&pPixmap->drawable, pGC);
@@ -294,7 +291,7 @@ miDCRealize (
         (*pScreen->DestroyPixmap) (pPixmap);
 	if (!pPriv->pPicture)
 	{
-	    xfree ((void *) pPriv);
+	    free ((void *) pPriv);
 	    return (miDCCursorPtr)NULL;
 	}
 	pCursor->bits->devPriv[pScreen->myNum] = (void *) pPriv;
@@ -305,14 +302,14 @@ miDCRealize (
     pPriv->sourceBits = (*pScreen->CreatePixmap) (pScreen, pCursor->bits->width, pCursor->bits->height, 1);
     if (!pPriv->sourceBits)
     {
-	xfree ((void *) pPriv);
+	free ((void *) pPriv);
 	return (miDCCursorPtr)NULL;
     }
     pPriv->maskBits =  (*pScreen->CreatePixmap) (pScreen, pCursor->bits->width, pCursor->bits->height, 1);
     if (!pPriv->maskBits)
     {
 	(*pScreen->DestroyPixmap) (pPriv->sourceBits);
-	xfree ((void *) pPriv);
+	free ((void *) pPriv);
 	return (miDCCursorPtr)NULL;
     }
     pCursor->bits->devPriv[pScreen->myNum] = (void *) pPriv;
@@ -372,7 +369,7 @@ miDCUnrealizeCursor (pScreen, pCursor)
 	if (pPriv->pPicture)
 	    FreePicture (pPriv->pPicture, 0);
 #endif
-	xfree ((void *) pPriv);
+	free ((void *) pPriv);
 	pCursor->bits->devPriv[pScreen->myNum] = (void *)NULL;
     }
     return TRUE;

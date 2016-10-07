@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/GL/glx/unpack.h,v 1.4 2002/01/14 22:47:08 tsi Exp $ */
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
@@ -69,7 +68,7 @@ extern xGLXSingleReply __glXReply;
   	__glXReply.sequenceNumber = client->sequence;
 
 #define __GLX_SEND_HEADER() \
-	WriteToClient( client, sz_xGLXSingleReply, (char *)&__glXReply);
+	WriteToClient( client, sz_xGLXSingleReply, &__glXReply);
 
 #define __GLX_PUT_RETVAL(a) \
   	__glXReply.retval = (a);
@@ -93,7 +92,7 @@ extern xGLXSingleReply __glXReply;
     else if ((size) > sizeof(answerBuffer)) {				 \
 	int bump;							 \
 	if ((cl)->returnBufSize < (size)+(align)) {			 \
-	    (cl)->returnBuf = (GLbyte*)Xrealloc((cl)->returnBuf,	 \
+	    (cl)->returnBuf = (GLbyte*)realloc((cl)->returnBuf,	 \
 						(size)+(align));         \
 	    if (!(cl)->returnBuf) {					 \
 		return BadAlloc;					 \
@@ -123,19 +122,19 @@ extern xGLXSingleReply __glXReply;
   	*(GLdouble *)&__glXReply.pad3 = *(GLdouble *)answer
 	  
 #define __GLX_SEND_BYTE_ARRAY(len) \
-	WriteToClient(client, __GLX_PAD((len)*__GLX_SIZE_INT8), (char *)answer)
+	WriteToClient(client, __GLX_PAD((len)*__GLX_SIZE_INT8), answer)
 
 #define __GLX_SEND_SHORT_ARRAY(len) \
-	WriteToClient(client, __GLX_PAD((len)*__GLX_SIZE_INT16), (char *)answer)
+	WriteToClient(client, __GLX_PAD((len)*__GLX_SIZE_INT16), answer)
   
 #define __GLX_SEND_INT_ARRAY(len) \
-	WriteToClient(client, (len)*__GLX_SIZE_INT32, (char *)answer)
+	WriteToClient(client, (len)*__GLX_SIZE_INT32, answer)
   
 #define __GLX_SEND_FLOAT_ARRAY(len) \
-	WriteToClient(client, (len)*__GLX_SIZE_FLOAT32, (char *)answer)
+	WriteToClient(client, (len)*__GLX_SIZE_FLOAT32, answer)
   
 #define __GLX_SEND_DOUBLE_ARRAY(len) \
-	WriteToClient(client, (len)*__GLX_SIZE_FLOAT64, (char *)answer)
+	WriteToClient(client, (len)*__GLX_SIZE_FLOAT64, answer)
 
 
 #define __GLX_SEND_VOID_ARRAY(len)  __GLX_SEND_BYTE_ARRAY(len)

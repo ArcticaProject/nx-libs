@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/include/dix.h,v 3.26 2003/01/12 02:44:27 dawes Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $Xorg: dix.h,v 1.4 2001/02/09 02:05:15 xorgcvs Exp $ */
 
 #ifndef DIX_H
 #define DIX_H
@@ -281,12 +279,12 @@ SOFTWARE.
    if ((pClient)->swapped) \
       (*ReplySwapVector[((xReq *)(pClient)->requestBuffer)->reqType]) \
            (pClient, (int)(size), pReply); \
-      else (void) WriteToClient(pClient, (int)(size), (char *)(pReply)); }
+      else WriteToClient(pClient, (int)(size), (pReply)); }
 
 #define WriteSwappedDataToClient(pClient, size, pbuf) \
    if ((pClient)->swapped) \
       (*(pClient)->pSwapReplyFunc)(pClient, (int)(size), pbuf); \
-   else (void) WriteToClient (pClient, (int)(size), (char *)(pbuf));
+   else WriteToClient (pClient, (int)(size), (pbuf));
 
 typedef struct _TimeStamp *TimeStampPtr;
 

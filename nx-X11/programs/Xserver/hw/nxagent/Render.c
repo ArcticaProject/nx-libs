@@ -1,22 +1,30 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
+/* are copyright of the aforementioned persons and companies.             */
 /*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
 /*                                                                        */
 /* All rights reserved.                                                   */
 /*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
+/*                                                                        */
 /**************************************************************************/
 
-#include "NXpicturestr.h"
-#include "NXglyphstr.h"
+#include "picturestr.h"
+#include "glyphstr.h"
 
 #include "Render.h"
 
@@ -31,6 +39,7 @@
 #include "mipict.h"
 #include "fbpict.h"
 #include "dixstruct.h"
+#include "protocol-versions.h"
 
 #include "Agent.h"
 #include "Drawable.h"
@@ -39,12 +48,12 @@
 
 #define Atom   XlibAtom
 #define Pixmap XlibPixmap
-#include "NXrenderint.h"
+#include "X11/include/Xrenderint_nxagent.h"
 #undef  Atom
 #undef  Pixmap
 
 #include "region.h"
-#include "extutil.h"
+#include <X11/extensions/extutil.h>
 
 #include "Display.h"
 #include "Pixmaps.h"
@@ -217,26 +226,26 @@ void nxagentRenderExtensionInit()
      + two versions.
      */
 
-    if (major_version > RENDER_MAJOR || 
-            (major_version == RENDER_MAJOR &&
-                 minor_version > RENDER_MINOR))
+    if (major_version > SERVER_RENDER_MAJOR_VERSION ||
+            (major_version == SERVER_RENDER_MAJOR_VERSION &&
+                 minor_version > SERVER_RENDER_MINOR_VERSION))
     {
       #ifdef TEST
       fprintf(stderr, "nxagentRenderExtensionInit: Using render version [%d.%d] with "
-                  "remote version [%d.%d].\n", RENDER_MAJOR, RENDER_MINOR,
+                  "remote version [%d.%d].\n", SERVER_RENDER_MAJOR_VERSION, SERVER_RENDER_MINOR_VERSION,
                       major_version, minor_version);
       #endif
 
-      nxagentRenderVersionMajor = RENDER_MAJOR;
-      nxagentRenderVersionMinor = RENDER_MINOR;
+      nxagentRenderVersionMajor = SERVER_RENDER_MAJOR_VERSION;
+      nxagentRenderVersionMinor = SERVER_RENDER_MINOR_VERSION;
     }
-    else if (major_version < RENDER_MAJOR ||
-                 (major_version == RENDER_MAJOR &&
-                      minor_version < RENDER_MINOR))
+    else if (major_version < SERVER_RENDER_MAJOR_VERSION ||
+                 (major_version == SERVER_RENDER_MAJOR_VERSION &&
+                      minor_version < SERVER_RENDER_MINOR_VERSION))
     {
       #ifdef TEST
       fprintf(stderr, "Info: Local render version %d.%d is higher "
-                  "than remote version %d.%d.\n", RENDER_MAJOR, RENDER_MINOR,
+                  "than remote version %d.%d.\n", SERVER_RENDER_MAJOR_VERSION, SERVER_RENDER_MINOR_VERSION,
                       major_version, minor_version);
 
       fprintf(stderr, "Info: Lowering the render version reported to clients.\n");
@@ -249,7 +258,7 @@ void nxagentRenderExtensionInit()
     {
       #ifdef TEST
       fprintf(stderr, "nxagentRenderExtensionInit: Local render version %d.%d "
-                  "matches remote version %d.%d.\n", RENDER_MAJOR, RENDER_MINOR,
+                  "matches remote version %d.%d.\n", SERVER_RENDER_MAJOR_VERSION, SERVER_RENDER_MINOR_VERSION,
                       major_version, minor_version);
       #endif
 
@@ -269,11 +278,11 @@ void nxagentRenderExtensionInit()
 
 int nxagentCursorSaveRenderInfo(ScreenPtr pScreen, CursorPtr pCursor)
 {
-  pCursor -> devPriv[pScreen -> myNum] = xalloc(sizeof(nxagentPrivCursor));
+  pCursor -> devPriv[pScreen -> myNum] = malloc(sizeof(nxagentPrivCursor));
 
   if (nxagentCursorPriv(pCursor, pScreen) == NULL)
   {
-    FatalError("xalloc failed");
+    FatalError("malloc failed");
   }
 
   nxagentCursorUsesRender(pCursor, pScreen) = 1;
@@ -2248,7 +2257,7 @@ void nxagentAddGlyphs(GlyphSetPtr glyphSet, Glyph *gids, xGlyphInfo *gi,
 
   if (sizeImages > 0)
   {
-    normalizedImages = xalloc(sizeImages);
+    normalizedImages = malloc(sizeImages);
 
     if (normalizedImages != NULL)
     {
@@ -2283,7 +2292,7 @@ void nxagentAddGlyphs(GlyphSetPtr glyphSet, Glyph *gids, xGlyphInfo *gi,
 
   if (normalizedImages != images)
   {
-    xfree(normalizedImages);
+    free(normalizedImages);
   }
 
   #ifdef DEBUG
@@ -2391,7 +2400,7 @@ FIXME: Is this useful or just a waste of bandwidth?
                           nparams);
   #endif
 
-  Xfree(szFilter);
+  free(szFilter);
 }
 
 

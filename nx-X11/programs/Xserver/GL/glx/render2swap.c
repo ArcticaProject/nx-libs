@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/GL/glx/render2swap.c,v 1.6 2002/01/14 22:47:08 tsi Exp $ */
 /*
 ** License Applicability. Except to the extent portions of this file are
 ** made subject to an alternative license as permitted in the SGI Free
@@ -34,7 +33,6 @@
 **
 */
 
-/* #define NEED_REPLIES */
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif

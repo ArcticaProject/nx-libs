@@ -1,4 +1,3 @@
-/* $Xorg: migc.c,v 1.4 2001/02/09 02:05:21 xorgcvs Exp $ */
 /*
 
 Copyright 1993, 1998  The Open Group
@@ -27,7 +26,6 @@ from The Open Group.
 
 */
 
-/* $XFree86: xc/programs/Xserver/mi/migc.c,v 1.8 2001/08/06 20:51:18 dawes Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -71,7 +69,7 @@ miCreateGCOps(prototype)
     GCOpsPtr        ret;
 
      /* XXX */ Must_have_memory = TRUE;
-    ret = (GCOpsPtr) xalloc(sizeof(GCOps));
+    ret = (GCOpsPtr) malloc(sizeof(GCOps));
      /* XXX */ Must_have_memory = FALSE;
     if (!ret)
 	return 0;
@@ -85,7 +83,7 @@ miDestroyGCOps(ops)
     GCOpsPtr        ops;
 {
     if (ops->devPrivate.val)
-	xfree(ops);
+	free(ops);
 }
 
 
@@ -136,7 +134,7 @@ miChangeClip(pGC, type, pvalue, nrects)
 	pGC->clientClip = (void *) RegionFromRects(nrects,
 						      (xRectangle *) pvalue,
 								    type);
-	xfree(pvalue);
+	free(pvalue);
     }
     pGC->clientClipType = (type != CT_NONE && pGC->clientClip) ? CT_REGION : CT_NONE;
     pGC->stateChanges |= GCClipMask;

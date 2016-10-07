@@ -1,11 +1,7 @@
 /*
    Copyright (c) 2002  XFree86 Inc
 */
-/* $XFree86: xc/programs/Xserver/Xext/xres.c,v 1.7tsi Exp $ */
-/* $XdotOrg: xc/programs/Xserver/Xext/xres.c,v 1.7 2005/07/03 08:53:36 daniels Exp $ */
 
-#define NEED_EVENTS
-#define NEED_REPLIES
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
@@ -20,34 +16,27 @@
 #include <nx-X11/extensions/XResproto.h>
 #include "pixmapstr.h"
 #include "modinit.h"
+#include "protocol-versions.h"
 
 static int
 ProcXResQueryVersion (ClientPtr client)
 {
-    REQUEST(xXResQueryVersionReq);
     xXResQueryVersionReply rep;
-    CARD16 client_major, client_minor;  /* not used */
 
     REQUEST_SIZE_MATCH (xXResQueryVersionReq);
-
-    client_major = stuff->client_major;
-    client_minor = stuff->client_minor;
-    (void) client_major;
-    (void) client_minor;
 
     rep.type = X_Reply;
     rep.length = 0;
     rep.sequenceNumber = client->sequence;
-    rep.server_major = XRES_MAJOR_VERSION;
-    rep.server_minor = XRES_MINOR_VERSION;   
+    rep.server_major = SERVER_XRES_MAJOR_VERSION;
+    rep.server_minor = SERVER_XRES_MINOR_VERSION;
     if (client->swapped) { 
-        int n;
-        swaps(&rep.sequenceNumber, n);
-        swapl(&rep.length, n);     
-        swaps(&rep.server_major, n);
-        swaps(&rep.server_minor, n);
+        swaps(&rep.sequenceNumber);
+        swapl(&rep.length);
+        swaps(&rep.server_major);
+        swaps(&rep.server_minor);
     }
-    WriteToClient(client, sizeof (xXResQueryVersionReply), (char *)&rep);
+    WriteToClient(client, sizeof (xXResQueryVersionReply), &rep);
     return (client->noClientException);
 }
 
@@ -76,12 +65,11 @@ ProcXResQueryClients (ClientPtr client)
     rep.num_clients = num_clients;
     rep.length = rep.num_clients * sz_xXResClient >> 2;
     if (client->swapped) {
-        int n;
-        swaps (&rep.sequenceNumber, n);
-        swapl (&rep.length, n);
-        swapl (&rep.num_clients, n);
+        swaps (&rep.sequenceNumber);
+        swapl (&rep.length);
+        swapl (&rep.num_clients);
     }   
-    WriteToClient (client, sizeof (xXResQueryClientsReply), (char *) &rep);
+    WriteToClient (client, sizeof (xXResQueryClientsReply), &rep);
 
     if(num_clients) {
         xXResClient scratch;
@@ -91,11 +79,10 @@ ProcXResQueryClients (ClientPtr client)
             scratch.resource_mask = RESOURCE_ID_MASK;
         
             if(client->swapped) {
-                register int n;
-                swapl (&scratch.resource_base, n);
-                swapl (&scratch.resource_mask, n);
+                swapl (&scratch.resource_base);
+                swapl (&scratch.resource_mask);
             }
-            WriteToClient (client, sz_xXResClient, (char *) &scratch);
+            WriteToClient (client, sz_xXResClient, &scratch);
         }
     }
 
@@ -149,12 +136,11 @@ ProcXResQueryClientResources (ClientPtr client)
     rep.num_types = num_types;
     rep.length = rep.num_types * sz_xXResType >> 2;
     if (client->swapped) {
-        int n;
-        swaps (&rep.sequenceNumber, n);
-        swapl (&rep.length, n);
-        swapl (&rep.num_types, n);
+        swaps (&rep.sequenceNumber);
+        swapl (&rep.length);
+        swapl (&rep.num_types);
     }   
-    WriteToClient (client,sizeof(xXResQueryClientResourcesReply),(char*)&rep);
+    WriteToClient (client,sizeof(xXResQueryClientResourcesReply),&rep);
 
     if(num_types) {
         xXResType scratch;
@@ -172,11 +158,10 @@ ProcXResQueryClientResources (ClientPtr client)
             scratch.count = counts[i];
 
             if(client->swapped) {
-                register int n;
-                swapl (&scratch.resource_type, n);
-                swapl (&scratch.count, n);
+                swapl (&scratch.resource_type);
+                swapl (&scratch.count);
             }
-            WriteToClient (client, sz_xXResType, (char *) &scratch);
+            WriteToClient (client, sz_xXResType, &scratch);
         }
     }
 
@@ -228,13 +213,12 @@ ProcXResQueryClientPixmapBytes (ClientPtr client)
     rep.bytes_overflow = 0;
 #endif
     if (client->swapped) {
-        int n;
-        swaps (&rep.sequenceNumber, n);
-        swapl (&rep.length, n);
-        swapl (&rep.bytes, n);
-        swapl (&rep.bytes_overflow, n);
+        swaps (&rep.sequenceNumber);
+        swapl (&rep.length);
+        swapl (&rep.bytes);
+        swapl (&rep.bytes_overflow);
     }
-    WriteToClient (client,sizeof(xXResQueryClientPixmapBytesReply),(char*)&rep);
+    WriteToClient (client,sizeof(xXResQueryClientPixmapBytesReply),&rep);
 
     return (client->noClientException);
 }
@@ -265,12 +249,7 @@ ProcResDispatch (ClientPtr client)
 static int
 SProcXResQueryVersion (ClientPtr client)
 {
-    REQUEST(xXResQueryVersionReq);
-    int n;
-
     REQUEST_SIZE_MATCH (xXResQueryVersionReq);
-    swaps(&stuff->client_major,n);
-    swaps(&stuff->client_minor,n);
     return ProcXResQueryVersion(client);
 }
 
@@ -278,10 +257,9 @@ static int
 SProcXResQueryClientResources (ClientPtr client)
 {
     REQUEST(xXResQueryClientResourcesReq);
-    int n;
 
     REQUEST_SIZE_MATCH (xXResQueryClientResourcesReq);
-    swaps(&stuff->xid,n);
+    swapl(&stuff->xid);
     return ProcXResQueryClientResources(client);
 }
 
@@ -289,10 +267,9 @@ static int
 SProcXResQueryClientPixmapBytes (ClientPtr client)
 {
     REQUEST(xXResQueryClientPixmapBytesReq);
-    int n;
 
     REQUEST_SIZE_MATCH (xXResQueryClientPixmapBytesReq);
-    swaps(&stuff->xid,n);
+    swapl(&stuff->xid);
     return ProcXResQueryClientPixmapBytes(client);
 }
 
@@ -300,9 +277,8 @@ static int
 SProcResDispatch (ClientPtr client)
 {
     REQUEST(xReq);
-    int n;
 
-    swaps(&stuff->length,n);
+    swaps(&stuff->length);
 
     switch (stuff->data) {
     case X_XResQueryVersion:
@@ -320,7 +296,7 @@ SProcResDispatch (ClientPtr client)
 }
 
 void
-ResExtensionInit(INITARGS)
+ResExtensionInit(void)
 {
     (void) AddExtension(XRES_NAME, 0, 0,
                             ProcResDispatch, SProcResDispatch,

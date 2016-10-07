@@ -21,7 +21,6 @@
  * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-/* $XFree86: xc/programs/Xserver/fb/fbpixmap.c,v 1.9 2001/05/29 04:54:09 keithp Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -104,7 +103,7 @@ fbDestroyPixmap (PixmapPtr pPixmap)
 {
     if(--pPixmap->refcnt)
 	return TRUE;
-    xfree(pPixmap);
+    free(pPixmap);
     return TRUE;
 }
 
@@ -309,7 +308,7 @@ fbPixmapToRegion(PixmapPtr pPix)
 	pReg->extents.y2 = RegionEnd(pReg)->y2;
 	if (pReg->data->numRects == 1)
 	{
-	    xfree(pReg->data);
+	    free(pReg->data);
 	    pReg->data = (RegDataPtr)NULL;
 	}
     }

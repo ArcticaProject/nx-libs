@@ -1,4 +1,3 @@
-/* $Xorg: WinEvent.c,v 1.4 2001/02/09 02:03:37 xorgcvs Exp $ */
 /*
 
 Copyright 1985, 1998  The Open Group
@@ -24,9 +23,7 @@ used in advertising or otherwise to promote the sale, use or other dealings
 in this Software without prior written authorization from The Open Group.
 
 */
-/* $XFree86: xc/lib/X11/WinEvent.c,v 3.5 2001/10/28 03:32:32 tsi Exp $ */
 
-#define NEED_EVENTS
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -79,5 +76,11 @@ XWindowEvent (dpy, w, mask, event)
 	    if (prev && prev->qserial_num != qe_serial)
 		/* another thread has snatched this event */
 		prev = NULL;
+#ifdef NX_TRANS_SOCKET
+	    if (_XGetIOError(dpy)) {
+	      UnlockDisplay(dpy);
+	      return 0;
+	    }
+#endif
 	}
 }

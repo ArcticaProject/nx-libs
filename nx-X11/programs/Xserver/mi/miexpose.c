@@ -1,5 +1,3 @@
-/* $XdotOrg: xc/programs/Xserver/mi/miexpose.c,v 1.6 2005/07/03 08:53:51 daniels Exp $ */
-/* $XFree86: xc/programs/Xserver/mi/miexpose.c,v 3.9tsi Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -74,14 +72,12 @@ Equipment Corporation.
 
 ******************************************************************/
 
-/* $Xorg: miexpose.c,v 1.4 2001/02/09 02:05:20 xorgcvs Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
 #include <nx-X11/X.h>
-#define NEED_EVENTS
 #include <nx-X11/Xproto.h>
 #include <nx-X11/Xprotostr.h>
 
@@ -130,6 +126,7 @@ exposing is done by the backing store's GraphicsExpose function, of course.
 
 */
 
+#ifndef NXAGENT_SERVER
 RegionPtr
 miHandleExposures(pSrcDrawable, pDstDrawable,
 		  pGC, srcx, srcy, width, height, dstx, dsty, plane)
@@ -376,6 +373,7 @@ miHandleExposures(pSrcDrawable, pDstDrawable,
 	return NULL;
     }
 }
+#endif
 
 /* send GraphicsExpose events, or a NoExpose event, based on the region */
 
@@ -495,6 +493,7 @@ miSendExposures(pWin, pRgn, dx, dy)
     DEALLOCATE_LOCAL(pEvent);
 }
 
+#ifndef NXAGENT_SERVER
 void 
 miWindowExposures(pWin, prgn, other_exposed)
     WindowPtr pWin;
@@ -583,7 +582,7 @@ miWindowExposures(pWin, prgn, other_exposed)
     else if (exposures && exposures != prgn)
 	RegionDestroy(exposures);
 }
-
+#endif
 
 /*
     this code is highly unlikely.  it is not haile selassie.
@@ -631,7 +630,7 @@ tossGC (
     return 0;
 }
 
-
+#ifndef NXAGENT_SERVER
 void
 miPaintWindow(pWin, prgn, what)
 register WindowPtr pWin;
@@ -654,7 +653,7 @@ int what;
 #define COUNT_BITS	8
 
     ChangeGCVal gcval[7];
-    ChangeGCVal newValues [COUNT_BITS];
+    ChangeGCVal newValues [COUNT_BITS] = {{ 0 }};
 
     BITS32 gcmask, index, mask;
     RegionRec prgnWin;
@@ -881,7 +880,7 @@ int what;
 	FreeScratchGC(pGC);
     }
 }
-
+#endif
 
 /* MICLEARDRAWABLE -- sets the entire drawable to the background color of
  * the GC.  Useful when we have a scratch drawable and need to initialize 

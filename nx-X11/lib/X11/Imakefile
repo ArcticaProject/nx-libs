@@ -1,28 +1,27 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
-/* NX-X11, NX protocol compression and NX extensions to this software     */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
+/* nx-X11, NX protocol compression and NX extensions to this software     */
+/* are copyright of the aforementioned persons and companies.             */
 /*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
 /*                                                                        */
 /* All rights reserved.                                                   */
 /*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
+/*                                                                        */
 /**************************************************************************/
-
-XCOMM $Xorg: Imakefile,v 1.3 2000/08/17 19:44:38 cpqbld Exp $
-
-
-
-
-XCOMM $XFree86: xc/lib/X11/Imakefile,v 3.52 2003/05/27 16:53:15 tsi Exp $
-
-
 
         HEADERS = Xlib.h Xresource.h Xutil.h cursorfont.h Xlibint.h \
 		Xcms.h Xlocale.h XKBlib.h XlibConf.h Xregion.h ImUtil.h
@@ -152,9 +151,9 @@ EXTRA_LIBRARIES = /**/
 
     XF86BIGFONT_DEFINES = XF86BigfontExtensionDefines
 
-     EDB_DEFINES = -DERRORDB=\"$(LIBDIR)/XErrorDB\"
-     KDB_DEFINES = -DKEYSYMDB=\"$(LIBDIR)/XKeysymDB\"
-     CMS_DEFINES = -DXCMSDB=\"$(LIBDIR)/Xcms.txt\"
+     EDB_DEFINES = -DERRORDB=\"$(USRDATADIR)/XErrorDB\"
+     KDB_DEFINES = -DKEYSYMDB=\"$(USRDATADIR)/XKeysymDB\"
+     CMS_DEFINES = -DXCMSDB=\"$(USRDATADIR)/Xcms.txt\"
 #if HasSnprintf
     MISC_DEFINES = -DHAS_SNPRINTF -DLIBX11
 #endif
@@ -172,12 +171,6 @@ EXTRA_LIBRARIES = /**/
   SETID_DEFINES = -DHASGETRESUID
 #endif
     XLC_DEFINES = -DXLOCALEDIR=\"$(XLOCALEDIR)\"
-#if HasKrb5
-         K5OBJS = k5encode.o
-         K5SRCS = k5encode.c
-         K5INCL = Krb5Includes
-         K5DEFS = Krb5Defines
-#endif
 #if (defined(FreeBSDArchitecture) && OSRelVersion < 500016) || \
 	defined(OpenBSDArchitecture)
 THRSTUBSRCS = UIThrStubs.c
@@ -1082,9 +1075,6 @@ SpecialCLibObjectRule(KeyBind,$(ICONFIGFILES),$(XKB_DEFINES))
 SpecialCLibObjectRule(XKBBind,$(ICONFIGFILES),$(XKB_DEFINES))
 SpecialCLibObjectRule(imConv,$(ICONFIGFILES),$(XKB_DEFINES))
 #endif
-#if HasKrb5
-SpecialCLibObjectRule(k5encode,$(_NOOP_),$(K5INCL))
-#endif
 #if BuildLoadableXlibI18n
 SpecialCLibObjectRuleSeparateOpts(lcInit,$(ICONFIGFILES),$(_NOOP_),$(LC_DYNDEFINES))
 SpecialCLibObjectRuleSeparateOpts(lcGeneric,$(ICONFIGFILES),$(_NOOP_),$(LC_DYNDEFINES))
@@ -1103,15 +1093,6 @@ InstallNonExecFile(Xcms.txt,$(LIBDIR))
 InstallNonExecFile(XErrorDB,$(LIBDIR))
 InstallNonExecFile(XKeysymDB,$(LIBDIR))
 InstallLintLibrary(X11,$(LINTLIBDIR))
-
-
-LinkSourceFile(AuDispose.c,$(XAUTHSRC))
-LinkSourceFile(AuGetBest.c,$(XAUTHSRC))
-LinkSourceFile(AuFileName.c,$(XAUTHSRC))
-LinkSourceFile(AuRead.c,$(XAUTHSRC))
-#if HasKrb5
-LinkSourceFile(k5encode.c,$(XAUTHSRC))
-#endif
 
 #ifdef QNX4Architecture
 LOCAL_LDFLAGS=-F
@@ -1138,44 +1119,6 @@ ks_tables.h: $(XINCLUDESRC)/keysymdef.h util/makekeys.c
 includes:: ks_tables.h
 
 CONFIGURE ?= ./configure
-
-#if NXLibraries
-
-$(NX_XCOMPCONFIGTARGET):
-	cd ../../../nxcomp && \
-	${CONFIGURE}
-
-$(NX_XCOMPEXTCONFIGTARGET):
-	cd ../../../nxcompext && \
-	${CONFIGURE}
-
-#ifdef SunArchitecture
-$(NX_XCOMPLIBTARGET): $(NX_XCOMPCONFIGTARGET)
-	${MAKE} -C $(NX_XCOMPLIBDIR)
-
-$(NX_XCOMPEXTLIBTARGET): $(NX_XCOMPEXTCONFIGTARGET)
-	${MAKE} -C ../../../nxcompext
-
-#else
-$(NX_XCOMPLIBTARGET): $(NX_XCOMPCONFIGTARGET)
-	${MAKE} -C $(NX_XCOMPLIBDIR)
-
-$(NX_XCOMPEXTLIBTARGET): $(NX_XCOMPEXTCONFIGTARGET) $(NX_XCOMPLIBTARGET) lib$(LIBNAME).so.$(SOXLIBREV)
-	${MAKE} -C ../../../nxcompext
-
-#endif
-
-depend::
-
-lib$(LIBNAME).so.$(SOXLIBREV): $(NX_XCOMPLIBTARGET)
-
-all:: $(NX_XCOMPLIBTARGET)
-
-depend:: $(NX_XCOMPLIBTARGET)
-
-all:: $(NX_XCOMPEXTLIBTARGET)
-
-#endif
 
 depend:: ks_tables.h
 

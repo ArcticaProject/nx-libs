@@ -1,7 +1,7 @@
 %global _hardened_build 1
 
 Name:           nx-libs
-Version:        3.5.99.0
+Version:        3.5.99.1
 Release:        0.0build1%{?dist}
 Summary:        NX X11 protocol compression libraries
 
@@ -11,13 +11,14 @@ License:        GPL-2.0+
 %else
 License:        GPLv2+
 %endif
-URL:            http://x2go.org/
+URL:            http://github.com/ArcticaProject/nx-libs/
 Source0:        %{name}-%{version}.tar.gz
 
 BuildRequires:  autoconf >= 2.13
 BuildRequires:  gcc-c++
 BuildRequires:  libjpeg-devel
 BuildRequires:  pkgconfig
+BuildRequires:  imake
 
 # suse_version 1315 is SLE-12
 %if 0%{?suse_version} != 1315 && 0%{?suse_version} >= 1230
@@ -111,7 +112,32 @@ applications over a network, especially a slow one.
 Group:          System Environment/Libraries
 Summary:        Core NX protocol client library
 Requires:       %{name}%{?_isa} >= 3.5.0.29
-Obsoletes:      libNX_X11
+Obsoletes:      libNX_X11 < 3.5.0.30
+Provides:       libNX_X11 = %{version}-%{release}
+Obsoletes:      libNX_X11%{?_isa} < 3.5.0.30
+Provides:       libNX_X11%{?_isa} = %{version}-%{release}
+Conflicts:      libNX_Xau6 < 3.5.99.1
+Conflicts:      libNX_Xau6%{?_isa} < 3.5.99.1
+Conflicts:      libNX_Xcomposite1 < 3.5.99.1
+Conflicts:      libNX_Xcomposite1%{?_isa} < 3.5.99.1
+Conflicts:      libNX_Xdamage1 < 3.5.99.1
+Conflicts:      libNX_Xdamage1%{?_isa} < 3.5.99.1
+Conflicts:      libNX_Xdmcp6 < 3.5.99.1
+Conflicts:      libNX_Xdmcp6%{?_isa} < 3.5.99.1
+Conflicts:      libNX_Xext6 < 3.5.99.1
+Conflicts:      libNX_Xext6%{?_isa} < 3.5.99.1
+Conflicts:      libNX_Xfixes3 < 3.5.99.1
+Conflicts:      libNX_Xfixes3%{?_isa} < 3.5.99.1
+Conflicts:      libNX_Xinerama1 < 3.5.99.1
+Conflicts:      libNX_Xinerama1%{?_isa} < 3.5.99.1
+Conflicts:      libNX_Xpm4 < 3.5.99.1
+Conflicts:      libNX_Xpm4%{?_isa} < 3.5.99.1
+Conflicts:      libNX_Xrandr2 < 3.5.99.1
+Conflicts:      libNX_Xrandr2%{?_isa} < 3.5.99.1
+Conflicts:      libNX_Xrender1 < 3.5.99.1
+Conflicts:      libNX_Xrender1%{?_isa} < 3.5.99.1
+Conflicts:      libNX_Xtst6 < 3.5.99.1
+Conflicts:      libNX_Xtst6%{?_isa} < 3.5.99.1
 %if 0%{?suse_version}
 Requires:       xorg-x11-fonts-core
 %endif
@@ -136,6 +162,8 @@ Group:          Development/Libraries
 Summary:        Development files for the Core NX protocol library
 Requires:       libNX_X11-6%{?_isa} = %{version}-%{release}
 Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
+Conflicts:      libNX_Xau-devel < 3.5.99.1
+Conflicts:      libNX_Xau-devel%{?_isa} < 3.5.99.1
 
 %description -n libNX_X11-devel
 NX is a software suite which implements very efficient compression of
@@ -153,92 +181,6 @@ stream connection.
 
 This package contains all necessary include files and libraries
 needed to develop applications that require these.
-
-
-%package -n libNX_Xau-devel
-Group:          Development/Libraries
-Summary:        Development files for the NX authorization protocol library
-Requires:       libNX_Xau6%{?_isa} = %{version}-%{release}
-Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
-
-%description -n libNX_Xau-devel
-NX is a software suite which implements very efficient compression of
-the X11 protocol. This increases performance when using X
-applications over a network, especially a slow one.
-
-libNX_Xau provides mechanisms for individual access to an nx-X11 Window
-System display. It uses existing core protocol and library hooks for
-specifying authorization data in the connection setup block to restrict
-use of the display to only those clients that show that they know a
-server-specific key called a "magic cookie".
-
-This package contains all necessary include files and libraries
-needed to develop applications that require these.
-
-
-%package -n libNX_Xau6
-Group:          System Environment/Libraries
-Summary:        NX authorization protocol library
-Requires:       %{name}%{?_isa} >= 3.5.0.29
-Obsoletes:      libNX_Xau
-
-%description -n libNX_Xau6
-NX is a software suite which implements very efficient compression of
-the X11 protocol. This increases performance when using X
-applications over a network, especially a slow one.
-
-libNX_Xau provides mechanisms for individual access to an X Window
-System display. It uses existing core protocol and library hooks for
-specifying authorization data in the connection setup block to
-restrict use of the display to only those clients that show that they
-know a server-specific key called a "magic cookie".
-
-
-%package -n libNX_Xext-devel
-Group:          Development/Libraries
-Summary:        Development files for the NX Common Extensions library
-Requires:       libNX_Xext6%{?_isa} = %{version}-%{release}
-Requires:       libNX_Xau6-devel%{?_isa} = %{version}-%{release}
-Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
-
-%description -n libNX_Xext-devel
-NX is a software suite which implements very efficient compression of
-the X11 protocol. This increases performance when using X
-applications over a network, especially a slow one.
-
-The NX_Xext library contains a handful of X11 extensions:
-- Display Power Management Signaling (DPMS) extension
-- X11 Nonrectangular Window Shape extension (Xshape)
-- The MIT Shared Memory extension (MIT-SHM/Xshm)
-
-This package contains all necessary include files and libraries
-needed to develop applications that require these.
-
-
-%package -n libNX_Xext6
-Group:          System Environment/Libraries
-Summary:        Common extensions to the NX protocol
-Requires:       %{name}%{?_isa} >= 3.5.0.29
-Obsoletes:      libNX_Xext
-
-%description -n libNX_Xext6
-NX is a software suite which implements very efficient compression of
-the X11 protocol. This increases performance when using X
-applications over a network, especially a slow one.
-
-The NX_Xext library contains a handful of X11 extensions:
-- Double Buffer extension (DBE/Xdbe)
-- Display Power Management Signaling (DPMS) extension
-- X11 Nonrectangular Window Shape extension (Xshape)
-- The MIT Shared Memory extension (MIT-SHM/Xshm)
-- TOG-CUP (colormap) protocol extension (Xcup)
-- X Extended Visual Information extension (XEvi)
-- X11 Double-Buffering, Multi-Buffering, and Stereo extension (Xmbuf)
-
-NX is a software suite which implements very efficient compression of
-the X11 protocol. This increases performance when using X
-applications over a network, especially a slow one.
-
 
 %package -n libXcomp-devel
 Group:          Development/Libraries
@@ -258,7 +200,10 @@ The NX differential compression library's development files.
 Group:          System Environment/Libraries
 Summary:        NX differential compression library
 Requires:       %{name}%{?_isa} >= 3.5.0.29
-Obsoletes:      libXcomp
+Obsoletes:      libXcomp <= 3.5.1
+Provides:       libXcomp = %{version}-%{release}
+Obsoletes:      libXcomp%{?_isa} <= 3.5.1
+Provides:       libXcomp%{?_isa} = %{version}-%{release}
 
 %description -n libXcomp3
 NX is a software suite from NoMachine which implements very efficient
@@ -287,7 +232,10 @@ The NX compression extensions library's development files.
 Group:          System Environment/Libraries
 Summary:        NX protocol compression extensions library
 Requires:       %{name}%{?_isa} >= 3.5.0.29
-Obsoletes:      libXcompext
+Obsoletes:      libXcompext <= 3.5.1
+Provides:       libXcompext = %{version}-%{release}
+Obsoletes:      libXcompext%{?_isa} <= 3.5.1
+Provides:       libXcompext%{?_isa} = %{version}-%{release}
 
 %description -n libXcompext3
 NX is a software suite from NoMachine which implements very efficient
@@ -303,7 +251,6 @@ Group:          Development/Libraries
 Summary:        Development files for the NX session shadowing library
 Requires:       libXcompshad3%{?_isa} = %{version}-%{release}
 Requires:       libNX_X11-devel%{?_isa} = %{version}-%{release}
-Requires:       libNX_Xext-devel%{?_isa} = %{version}-%{release}
 Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
 Requires:       %{name}-devel%{?_isa} = %{version}-%{release}
 
@@ -319,7 +266,10 @@ The NX session shadowing library's development files.
 Group:          System Environment/Libraries
 Summary:        NX session shadowing Library
 Requires:       %{name}%{?_isa} >= 3.5.0.29
-Obsoletes:      libXcompshad
+Obsoletes:      libXcompshad <= 3.5.1
+Provides:       libXcompshad = %{version}-%{release}
+Obsoletes:      libXcompshad%{?_isa} <= 3.5.1
+Provides:       libXcompshad%{?_isa} = %{version}-%{release}
 
 %description -n libXcompshad3
 NX is a software suite from NoMachine which implements very efficient
@@ -333,8 +283,6 @@ This package provides the session shadowing library.
 Group:          Development/Libraries
 Summary:        Include files and libraries for NX development
 Requires:       libNX_X11-devel%{?_isa} = %{version}-%{release}
-Requires:       libNX_Xau-devel%{?_isa} = %{version}-%{release}
-Requires:       libNX_Xext-devel%{?_isa} = %{version}-%{release}
 Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 
@@ -367,6 +315,8 @@ Obsoletes:      nx < 3.5.0-19
 Provides:       nx = %{version}-%{release}
 Obsoletes:      nx%{?_isa} < 3.5.0-19
 Provides:       nx%{?_isa} = %{version}-%{release}
+Conflicts:      nxauth < 3.5.99.1
+Conflicts:      nxauth%{?_isa} < 3.5.99.1
 %if 0%{?suse_version}
 Requires:       xorg-x11-fonts-core
 %endif
@@ -391,18 +341,6 @@ related requests locally, ensuring that the most common source of
 round-trips are nearly reduced to zero.
 
 
-%package -n nxauth
-Group:          Applications/System
-Summary:        NX Auth
-
-%description -n nxauth
-NX is a software suite which implements very efficient compression of
-the X11 protocol. This increases performance when using X
-applications over a network, especially a slow one.
-
-This package provides the NX xauth binary.
-
-
 %package -n nxproxy
 Group:          Applications/System
 Summary:        NX Proxy
@@ -419,21 +357,6 @@ applications over a network, especially a slow one.
 This package provides the NX proxy (client) binary.
 
 
-%package -n x2goagent
-Group:          Applications/System
-Summary:        X2Go Agent
-Requires:       nxagent
-
-%description -n x2goagent
-X2Go Agent functionality has been completely incorporated into
-nxagent's code base. If the nxagent binary is executed under the name
-of "x2goagent", the X2Go functionalities get activated.
-
-The x2goagent package is a wrapper that activates X2Go branding in
-nxagent. Please refer to the nxagent package's description for more
-information on NX.
-
-
 %prep
 %setup -q
 # remove build cruft that is in Git (also taken from roll-tarball.sh)
@@ -445,9 +368,7 @@ sed -i -e 's#-O3#%{optflags}#' nx-X11/config/cf/host.def
 # Use multilib dirs
 # We're installing binaries into %%{_libdir}/nx/bin rather than %%{_libexedir}/nx
 # because upstream expects libraries and binaries in the same directory
-sed -i -e 's,/lib/nx,/%{_lib}/nx,' Makefile nx-X11/config/cf/X11.tmpl
-sed -i -e 's,/lib/x2go,/%{_lib}/x2go,' Makefile
-sed -i -e 's,/usr/lib/,/usr/%{_lib}/,' bin/*
+sed -i -e 's,/lib/nx,/%{_lib}/nx,' nx-X11/config/cf/X11.tmpl
 # Fix FSF address
 find -name LICENSE | xargs sed -i \
   -e 's/59 Temple Place/51 Franklin Street/' -e 's/Suite 330/Fifth Floor/' \
@@ -470,23 +391,20 @@ chmod a+x my_configure;
 %{!?__global_ldflags: %global __global_ldflags -Wl,-z,relro}
 export SHLIBGLOBALSFLAGS="%{__global_ldflags}"
 export LOCAL_LDFLAGS="%{__global_ldflags}"
-make %{?_smp_mflags} CONFIGURE="$PWD/my_configure" PREFIX=%{_prefix} USRLIBDIR=%{_libdir} SHLIBDIR=%{_libdir}
+export CDEBUGFLAGS="%{__global_cppflags} %{__global_cflags}"
+make %{?_smp_mflags} CONFIGURE="$PWD/my_configure" PREFIX=%{_prefix} LIBDIR=%{_libdir} SHLIBDIR=%{_libdir}
 
 %install
 make install \
         DESTDIR=%{buildroot} \
         PREFIX=%{_prefix} \
-        USRLIBDIR=%{_libdir} SHLIBDIR=%{_libdir} \
+        LIBDIR=%{_libdir} SHLIBDIR=%{_libdir} \
         INSTALL_DIR="install -dm0755" \
         INSTALL_FILE="install -pm0644" \
         INSTALL_PROGRAM="install -pm0755"
 
 # Remove static libs (they don't exist on SLES, so using -f here)
 rm -f %{buildroot}%{_libdir}/*.a
-
-# Make sure x2goagent is linked relative and on 64-bit
-mkdir -p %{buildroot}%{_libdir}/x2go/bin
-ln -sf ../../nx/bin/nxagent %{buildroot}%{_libdir}/x2go/bin/x2goagent
 
 # Fix permissions on shared libraries
 chmod 755  %{buildroot}%{_libdir}/lib*.so*
@@ -496,6 +414,10 @@ rm -r %{buildroot}%{_includedir}/GL
 rm -r %{buildroot}%{_includedir}/nx-X11/extensions/XInput.h
 rm -r %{buildroot}%{_includedir}/nx-X11/extensions/XK*.h
 rm -r %{buildroot}%{_includedir}/nx-X11/extensions/*Xv*.h
+rm -r %{buildroot}%{_includedir}/nx-X11/extensions/dpms.h
+rm -r %{buildroot}%{_includedir}/nx-X11/extensions/security.h
+rm -r %{buildroot}%{_includedir}/nx-X11/extensions/sync.h
+rm -r %{buildroot}%{_includedir}/nx-X11/extensions/xtestext1.h
 rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 
 %if 0%{?fdupes:1}
@@ -504,15 +426,11 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 
 %post -p /sbin/ldconfig
 %post -n libNX_X11-6 -p /sbin/ldconfig
-%post -n libNX_Xau6 -p /sbin/ldconfig
-%post -n libNX_Xext6 -p /sbin/ldconfig
 %post -n libXcomp3 -p /sbin/ldconfig
 %post -n libXcompext3 -p /sbin/ldconfig
 %post -n libXcompshad3 -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 %postun -n libNX_X11-6 -p /sbin/ldconfig
-%postun -n libNX_Xau6 -p /sbin/ldconfig
-%postun -n libNX_Xext6 -p /sbin/ldconfig
 %postun -n libXcomp3 -p /sbin/ldconfig
 %postun -n libXcompext3 -p /sbin/ldconfig
 %postun -n libXcompshad3 -p /sbin/ldconfig
@@ -520,10 +438,12 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %files
 %defattr(-,root,root)
 %doc COPYING
-%doc nx-X11/README
 %dir %{_libdir}/nx
 %dir %{_datadir}/nx
 %{_datadir}/nx/SecurityPolicy
+%{_datadir}/nx/XErrorDB
+%{_datadir}/nx/XKeysymDB
+%{_datadir}/nx/Xcms.txt
 
 %files -n libNX_X11-6
 %defattr(-,root,root)
@@ -535,6 +455,7 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %dir %{_includedir}/nx
 %dir %{_includedir}/nx-X11
 %{_includedir}/nx-X11/ImUtil.h
+%{_includedir}/nx-X11/Xauth.h
 %{_includedir}/nx-X11/XKBlib.h
 %{_includedir}/nx-X11/Xcms.h
 %{_includedir}/nx-X11/Xlib.h
@@ -545,34 +466,6 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %{_includedir}/nx-X11/Xresource.h
 %{_includedir}/nx-X11/Xutil.h
 %{_includedir}/nx-X11/cursorfont.h
-
-%files -n libNX_Xau-devel
-%defattr(-,root,root)
-%{_libdir}/libNX_Xau.so
-%{_includedir}/nx-X11/Xauth.h
-
-%files -n libNX_Xau6
-%defattr(-,root,root)
-%{_libdir}/libNX_Xau.so.6*
-
-%files -n libNX_Xext-devel
-%defattr(-,root,root)
-%{_libdir}/libNX_Xext.so
-%dir %{_includedir}/nx-X11/extensions
-%{_includedir}/nx-X11/extensions/XShm.h
-%{_includedir}/nx-X11/extensions/Xext.h
-%{_includedir}/nx-X11/extensions/dpms.h
-%{_includedir}/nx-X11/extensions/dpmsstr.h
-%{_includedir}/nx-X11/extensions/extutil.h
-%{_includedir}/nx-X11/extensions/security.h
-%{_includedir}/nx-X11/extensions/securstr.h
-%{_includedir}/nx-X11/extensions/shape.h
-%{_includedir}/nx-X11/extensions/sync.h
-%{_includedir}/nx-X11/extensions/xtestext1.h
-
-%files -n libNX_Xext6
-%defattr(-,root,root)
-%{_libdir}/libNX_Xext.so.6*
 
 %files -n libXcomp-devel
 %defattr(-,root,root)
@@ -588,7 +481,8 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %files -n libXcomp3
 %defattr(-,root,root)
 %doc COPYING
-%doc nxcomp/README
+%doc doc/nxcomp/README.on-retroactive-DXPC-license
+%doc doc/nxcomp/nxcomp-3.6-drops-compat-code-3.4.x-testing.pdf
 %_libdir/libXcomp.so.3*
 
 %files -n libXcompext-devel
@@ -601,7 +495,6 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %files -n libXcompext3
 %defattr(-,root,root)
 %doc COPYING
-%doc nxcompext/README
 %_libdir/libXcompext.so.3*
 
 %files -n libXcompshad-devel
@@ -617,7 +510,6 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 
 %files devel
 %defattr(-,root,root)
-%{_includedir}/nx-X11/X10.h
 %dir %{_includedir}/nx-X11/extensions
 %{_includedir}/nx-X11/extensions/panoramiXext.h
 %{_includedir}/nx-X11/extensions/record.h
@@ -659,14 +551,14 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %{_includedir}/nx-X11/extensions/compositeproto.h
 %{_includedir}/nx-X11/extensions/damagewire.h
 %{_includedir}/nx-X11/extensions/damageproto.h
+%{_includedir}/nx-X11/extensions/dpmsstr.h
 %{_includedir}/nx-X11/extensions/panoramiXproto.h
 %{_includedir}/nx-X11/extensions/randr.h
 %{_includedir}/nx-X11/extensions/randrproto.h
 %{_includedir}/nx-X11/extensions/recordstr.h
 %{_includedir}/nx-X11/extensions/render.h
 %{_includedir}/nx-X11/extensions/renderproto.h
-%{_includedir}/nx-X11/extensions/shapestr.h
-%{_includedir}/nx-X11/extensions/shmstr.h
+%{_includedir}/nx-X11/extensions/securstr.h
 %{_includedir}/nx-X11/extensions/syncstr.h
 %{_includedir}/nx-X11/extensions/xcmiscstr.h
 %{_includedir}/nx-X11/extensions/xf86bigfont.h
@@ -682,44 +574,29 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %config(noreplace) %{_sysconfdir}/nxagent/keystrokes.cfg
 %config(noreplace) %{_sysconfdir}/nxagent/nxagent.keyboard
 %config(noreplace) %{_sysconfdir}/nxagent/rgb
+%doc doc/nxagent/README.keystrokes
 %{_bindir}/nxagent
 %dir %{_libdir}/nx/bin
 %{_libdir}/nx/bin/nxagent
+%dir %{_libdir}/nx-X11
+%{_libdir}/nx-X11/libX11.so*
 %{_datadir}/pixmaps/nxagent.xpm
+%dir %{_datadir}/nx
 %{_datadir}/nx/rgb
+%{_datadir}/nx/VERSION.nxagent
 %{_datadir}/man/man1/nxagent.1*
-
-%files -n nxauth
-%defattr(-,root,root)
-%{_bindir}/nxauth
-%dir %{_libdir}/nx/bin
-%{_libdir}/nx/bin/nxauth
-%{_datadir}/man/man1/nxauth.1*
 
 %files -n nxproxy
 %defattr(-,root,root)
+%doc doc/nxproxy/README-VALGRIND
 %{_bindir}/nxproxy
-%{_mandir}/man1/nxproxy.1*
 %{_datadir}/man/man1/nxproxy.1*
 %dir %{_libdir}/nx/bin
 %{_libdir}/nx/bin/nxproxy
-
-%files -n x2goagent
-%defattr(-,root,root)
-#%%{_sysconfdir}/x2go is owned by x2goserver, which this requires
-%dir %{_sysconfdir}/x2go
-%dir %{_libdir}/x2go
-%dir %{_libdir}/x2go/bin
-%config(noreplace) %{_sysconfdir}/x2go/keystrokes.cfg
-%config(noreplace) %{_sysconfdir}/x2go/x2goagent.keyboard
-%config(noreplace) %{_sysconfdir}/x2go/rgb
-%{_bindir}/x2goagent
-%{_libdir}/x2go/bin/x2goagent
-%{_datadir}/pixmaps/x2go.xpm
-%{_datadir}/x2go/
-%{_datadir}/man/man1/x2goagent.1*
+%dir %{_datadir}/nx
+%{_datadir}/nx/VERSION.nxproxy
 
 
 %changelog
-* Thu Jan 29 2015 Mike Gabriel <mike.gabriel@das-netzwerkteam.de> 3.5.99.0
+* Thu Jan 29 2015 Mike Gabriel <mike.gabriel@das-netzwerkteam.de> 3.5.99.1
 - See upstream ChangeLog and debian/changelog for details.

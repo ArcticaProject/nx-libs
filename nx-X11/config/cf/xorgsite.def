@@ -112,7 +112,7 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
 /*
  * This allows the GCC warning flags to be set.  The default is shown here.
  *
-#define GccWarningOptions -Wall -Wpointer-arith -Wstrict-prototypes \
+#define GccWarningOptions -Wall -Wpedantic -Wpointer-arith -Wstrict-prototypes \
                           -Wmissing-prototypes -Wmissing-declarations \
                           -Wredundant-decls -Wnested-externs
  */
@@ -160,25 +160,6 @@ XCOMM $XFree86: xc/config/cf/xf86site.def,v 3.186 2003/06/25 18:06:22 eich Exp $
  *
 #define LinuxCLibMajorVersion	5
 #define LinuxClibMinorVersion	4
- */
-
-/*
- * If you want to use the GNU malloc library, uncomment this
- *
-#define UseGnuMalloc		YES
- */
-
-/*
- * Set this to whatever is required to access the GNU malloc library.
- * The default is '-lgmalloc' unless is specified in the OS's .cf file.
- *
-#define GnuMallocLibrary	-L/usr/local/lib -lgmalloc
- */
-
-/*
- * To enable the internal Xserver malloc, uncomment this
- *
-#define UseInternalMalloc	YES
  */
 
 /*

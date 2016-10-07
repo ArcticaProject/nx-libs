@@ -1,17 +1,25 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2010 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
 /* NXCOMP, NX protocol compression and NX extensions to this software     */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
+/* are copyright of the aforementioned persons and companies.             */
 /*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE.nxcomp which comes in the       */
+/* source distribution.                                                   */
 /*                                                                        */
 /* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
 /*                                                                        */
 /**************************************************************************/
 
@@ -239,7 +247,7 @@ struct sockaddr_un
 // should connect to remote.
 //
 
-#define WE_INITIATE_CONNECTION    (*connectHost != '\0')
+#define WE_INITIATE_CONNECTION    (connectSocket.enabled())
 
 //
 // Is true if we must provide our credentials
@@ -255,7 +263,7 @@ struct sockaddr_un
 //
 
 #define WE_LISTEN_FORWARDER       (control -> ProxyMode == proxy_server && \
-                                           listenPort != -1)
+                                           listenSocket.enabled())
 
 //
 // You must define FLUSH in Misc.h if
@@ -440,7 +448,7 @@ static int SetupDisplaySocket(int &xServerAddrFamily, sockaddr *&xServerAddr,
 
 static int ListenConnection(ChannelEndPoint &endPoint, const char *label);
 static int ListenConnectionTCP(const char *host, long port, const char *label);
-static int ListenConnectionUnix(const char *unixPath, const char *label);
+static int ListenConnectionUnix(const char *path, const char *label);
 static int ListenConnectionAny(sockaddr *addr, socklen_t addrlen, const char *label);
 static int AcceptConnection(int fd, int domain, const char *label);
 
@@ -448,8 +456,11 @@ static int AcceptConnection(int fd, int domain, const char *label);
 // Other convenience functions.
 //
 
-static int WaitForRemote(int portNum);
-static int ConnectToRemote(const char *const hostName, int portNum);
+static int PrepareProxyConnectionTCP(char** hostName, long int* portNum, int* timeout, int* proxyFD, int* reason);
+static int PrepareProxyConnectionUnix(char** path, int* timeout, int* proxyFD, int* reason);
+
+static int WaitForRemote(ChannelEndPoint &socketAddress);
+static int ConnectToRemote(ChannelEndPoint &socketAddress);
 
 static int SendProxyOptions(int fd);
 static int SendProxyCaches(int fd);
@@ -514,7 +525,7 @@ static int ParsePackOption(const char *opt);
 // given on the command line.
 //
 
-static int ParseHostOption(const char *opt, char *host, int &port);
+static int ParseHostOption(const char *opt, char *host, long &port);
 
 //
 // Translate a font server port specification
@@ -522,14 +533,6 @@ static int ParseHostOption(const char *opt, char *host, int &port);
 //
 
 static int ParseFontPath(char *path);
-
-//
-// Determine the interface where to listen for
-// the remote proxy connection or the local
-// forwarder.
-//
-
-static int ParseListenOption(int &interface);
 
 //
 // Translate a pack method id in a literal.
@@ -952,9 +955,7 @@ static char unixSocketName[DEFAULT_STRING_LENGTH] = { 0 };
 // Other parameters.
 //
 
-static char connectHost[DEFAULT_STRING_LENGTH] = { 0 };
 static char acceptHost[DEFAULT_STRING_LENGTH]  = { 0 };
-static char listenHost[DEFAULT_STRING_LENGTH]  = { 0 };
 static char displayHost[DEFAULT_STRING_LENGTH] = { 0 };
 static char authCookie[DEFAULT_STRING_LENGTH]  = { 0 };
 
@@ -972,13 +973,19 @@ static sockaddr *xServerAddr          = NULL;
 static unsigned int xServerAddrLength = 0;
 
 //
-// The port where the local proxy will await
-// the peer connection or where the remote
-// proxy will be contacted.
+// The representation of a Unix socket path or
+// a bind address, denoting where the local proxy
+// will await the peer connection.
 //
 
-static int listenPort  = -1;
-static int connectPort = -1;
+static ChannelEndPoint listenSocket;
+
+//
+// The TCP host and port or Unix file socket where
+// the remote proxy will be contacted.
+//
+
+static ChannelEndPoint connectSocket;
 
 //
 // Helper channels are disabled by default.
@@ -3364,58 +3371,88 @@ int InitBeforeNegotiation()
 
 int SetupProxyConnection()
 {
+
   if (proxyFD == -1)
   {
+
+    char *socketUri = NULL;
+
+    // Let's make sure, the default value for listenSocket is properly set. Doing this
+    // here, because we have to make sure that we call it after the connectSocket
+    // declaration is really really complete.
+
+    if (listenSocket.disabled() && connectSocket.disabled())
+    {
+      char listenPortValue[20] = { 0 };
+      sprintf(listenPortValue, "%ld", (long)(proxyPort + DEFAULT_NX_PROXY_PORT_OFFSET));
+
+      SetAndValidateChannelEndPointArg("local", "listen", listenPortValue, listenSocket);
+    }
+
+    #ifdef TEST
+    connectSocket.getSpec(&socketUri);
+    *logofs << "Loop: connectSocket is "<< ( connectSocket.enabled() ? "enabled" : "disabled") << ". "
+            << "The socket URI is '"<< ( socketUri != NULL ? socketUri : "<unset>") << "'.\n" << logofs_flush;
+    listenSocket.getSpec(&socketUri);
+    *logofs << "Loop: listenSocket is "<< ( listenSocket.enabled() ? "enabled" : "disabled") << ". "
+            << "The socket URI is '"<< ( socketUri != NULL ? socketUri : "<unset>") << "'.\n" << logofs_flush;
+    free(socketUri);
+    socketUri = NULL;
+    #endif
+
     if (WE_INITIATE_CONNECTION)
     {
-      if (connectPort < 0)
+      if (connectSocket.getSpec(&socketUri))
       {
-        connectPort = DEFAULT_NX_PROXY_PORT_OFFSET + proxyPort;
+        #ifdef TEST
+        *logofs << "Loop: Going to connect to '" << socketUri
+                << "'.\n" << logofs_flush;
+        #endif
+        free(socketUri);
+
+        proxyFD = ConnectToRemote(connectSocket);
+
+        #ifdef TEST
+        *logofs << "Loop: Connected to remote proxy on FD#"
+                << proxyFD << ".\n" << logofs_flush;
+        #endif
+
+        cerr << "Info" << ": Connected to remote proxy on FD#"
+             << proxyFD << ".\n";
       }
-
-      #ifdef TEST
-      *logofs << "Loop: Going to connect to " << connectHost
-              << ":" << connectPort << ".\n" << logofs_flush;
-      #endif
-
-      proxyFD = ConnectToRemote(connectHost, connectPort);
-
-      #ifdef TEST
-      *logofs << "Loop: Connected to remote proxy on FD#"
-              << proxyFD << ".\n" << logofs_flush;
-      #endif
-
-      cerr << "Info" << ": Connection to remote proxy '" << connectHost
-           << ":" << connectPort << "' established.\n";
     }
     else
     {
-      if (listenPort < 0)
+
+      if (listenSocket.isTCPSocket() && (listenSocket.getTCPPort() < 0))
       {
-        listenPort = DEFAULT_NX_PROXY_PORT_OFFSET + proxyPort;
+        listenSocket.setSpec(DEFAULT_NX_PROXY_PORT_OFFSET + proxyPort);
       }
 
-      #ifdef TEST
-      *logofs << "Loop: Going to wait for connection on port " 
-              << listenPort << ".\n" << logofs_flush;
-      #endif
-
-      proxyFD = WaitForRemote(listenPort);
-
-      #ifdef TEST
-
-      if (WE_LISTEN_FORWARDER)
+      if (listenSocket.getSpec(&socketUri))
       {
-        *logofs << "Loop: Connected to remote forwarder on FD#"
-                << proxyFD << ".\n" << logofs_flush;
-      }
-      else
-      {
-        *logofs << "Loop: Connected to remote proxy on FD#"
-                << proxyFD << ".\n" << logofs_flush;
-      }
+        #ifdef TEST
+        *logofs << "Loop: Going to wait for connection at '"
+                << socketUri << "'.\n" << logofs_flush;
+        #endif
+        free(socketUri);
 
-      #endif
+        proxyFD = WaitForRemote(listenSocket);
+
+        #ifdef TEST
+        if (WE_LISTEN_FORWARDER)
+        {
+          *logofs << "Loop: Connected to remote forwarder on FD#"
+                  << proxyFD << ".\n" << logofs_flush;
+        }
+        else
+        {
+          *logofs << "Loop: Connected to remote proxy on FD#"
+                  << proxyFD << ".\n" << logofs_flush;
+        }
+        #endif
+
+      }
     }
   }
   #ifdef TEST
@@ -3431,8 +3468,11 @@ int SetupProxyConnection()
   // to reduce startup time. Option will
   // later be disabled if needed.
   //
+  // either listenSocket or connectSocket is used here...
 
-  SetNoDelay(proxyFD, 1);
+  if(listenSocket.isTCPSocket() || connectSocket.isTCPSocket())
+
+    SetNoDelay(proxyFD, 1);
 
   //
   // We need non-blocking input since the
@@ -3945,72 +3985,7 @@ int SetupTcpSocket()
   // Open TCP socket emulating local display.
   //
 
-  tcpFD = socket(AF_INET, SOCK_STREAM, PF_UNSPEC);
-
-  if (tcpFD == -1)
-  {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Call to socket failed for TCP socket"
-            << ". Error is " << EGET() << " '" << ESTR() << "'.\n"
-            << logofs_flush;
-    #endif
-
-    cerr << "Error" << ": Call to socket failed for TCP socket"
-         << ". Error is " << EGET() << " '" << ESTR() << "'.\n";
-
-    HandleCleanup();
-  }
-  else if (SetReuseAddress(tcpFD) < 0)
-  {
-    HandleCleanup();
-  }
-
-  unsigned int proxyPortTCP = X_TCP_PORT + proxyPort;
-
-  sockaddr_in tcpAddr;
-
-  tcpAddr.sin_family = AF_INET;
-  tcpAddr.sin_port = htons(proxyPortTCP);
-  if ( loopbackBind )
-  {
-    tcpAddr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-  }
-  else
-  {
-    tcpAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-  }
-
-  if (bind(tcpFD, (sockaddr *) &tcpAddr, sizeof(tcpAddr)) == -1)
-  {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Call to bind failed for TCP port "
-            << proxyPortTCP << ". Error is " << EGET() << " '" << ESTR()
-            << "'.\n" << logofs_flush;
-    #endif
-
-    cerr << "Error" << ": Call to bind failed for TCP port "
-         << proxyPortTCP << ". Error is " << EGET() << " '" << ESTR()
-         << "'.\n";
-
-    HandleCleanup();
-  }
-
-  if (listen(tcpFD, 8) == -1)
-  {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Call to listen failed for TCP port "
-            << proxyPortTCP << ". Error is " << EGET() << " '" << ESTR()
-            << "'.\n" << logofs_flush;
-    #endif
-
-    cerr << "Error" << ": Call to listen failed for TCP port "
-         << proxyPortTCP << ". Error is " << EGET() << " '" << ESTR()
-         << "'.\n";
-
-    HandleCleanup();
-  }
-
-  return 1;
+  return ListenConnectionTCP((loopbackBind ? "localhost" : "*"), X_TCP_PORT + proxyPort, "X11");
 }
 
 int SetupUnixSocket()
@@ -4019,90 +3994,40 @@ int SetupUnixSocket()
   // Open UNIX domain socket for display.
   //
 
-  unixFD = socket(AF_UNIX, SOCK_STREAM, PF_UNSPEC);
-
-  if (unixFD == -1)
-  {
+  if (!control->TempPath) {
     #ifdef PANIC
-    *logofs << "Loop: PANIC! Call to socket failed for UNIX domain"
-            << ". Error is " << EGET() << " '" << ESTR() << "'.\n"
-            << logofs_flush;
+    *logofs << "Loop: PANIC! Temporal path is null.\n" << logofs_flush;
     #endif
 
-    cerr << "Error" << ": Call to socket failed for UNIX domain"
-         << ". Error is " << EGET() << " '" << ESTR() << "'.\n";
-
+    cerr << "Error" << ": Temporal path is null.\n";
     HandleCleanup();
   }
 
-  sockaddr_un unixAddr;
-  unixAddr.sun_family = AF_UNIX;
+  unsigned int required = snprintf(unixSocketName, DEFAULT_STRING_LENGTH, "%s/.X11-unix", control->TempPath);
+  if (required < sizeof(unixSocketName)) {
 
-  char dirName[DEFAULT_STRING_LENGTH];
+    // No need to execute the following actions conditionally
+    mkdir(unixSocketName, (0777 | S_ISVTX));
+    chmod(unixSocketName, (0777 | S_ISVTX));
 
-  snprintf(dirName, DEFAULT_STRING_LENGTH - 1, "%s/.X11-unix",
-               control -> TempPath);
+    required = snprintf(unixSocketName, DEFAULT_STRING_LENGTH, "%s/.X11-unix/X%d", control->TempPath, proxyPort);
+    if (required < sizeof(unixSocketName)) {
 
-  *(dirName + DEFAULT_STRING_LENGTH - 1) = '\0';
-
-  struct stat dirStat;
-
-  if ((stat(dirName, &dirStat) == -1) && (EGET() == ENOENT))
-  {
-    mkdir(dirName, (0777 | S_ISVTX));
-    chmod(dirName, (0777 | S_ISVTX));
+      unixFD = ListenConnectionUnix(unixSocketName, "x11");
+      if (unixFD >= 0)
+        chmod(unixSocketName, 0777);
+      return unixFD;
+    }
   }
 
-  snprintf(unixSocketName,  DEFAULT_STRING_LENGTH - 1, "%s/X%d",
-               dirName, proxyPort);
+  unixSocketName[0] = '\0'; // Just in case!
 
-  strncpy(unixAddr.sun_path, unixSocketName, 108);
-
-  #ifdef TEST
-  *logofs << "Loop: Assuming Unix socket with name '"
-          << unixAddr.sun_path << "'.\n"
-          << logofs_flush;
+  #ifdef PANIC
+  *logofs << "Loop: PANIC! path for unix socket is too long.\n" << logofs_flush;
   #endif
 
-  *(unixAddr.sun_path + 107) = '\0';
-
-  if (bind(unixFD, (sockaddr *) &unixAddr, sizeof(unixAddr)) == -1)
-  {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Call to bind failed for UNIX domain socket "
-            << unixSocketName << ". Error is " << EGET() << " '" << ESTR()
-            << "'.\n" << logofs_flush;
-    #endif
-
-    cerr << "Error" << ":  Call to bind failed for UNIX domain socket "
-         << unixSocketName << ". Error is " << EGET() << " '" << ESTR()
-         << "'.\n";
-
-    HandleCleanup();
-  }
-
-  if (listen(unixFD, 8) == -1)
-  {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Call to listen failed for UNIX domain socket "
-            << unixSocketName << ". Error is " << EGET() << " '" << ESTR()
-            << "'.\n" << logofs_flush;
-    #endif
-
-    cerr << "Error" << ":  Call to listen failed for UNIX domain socket "
-         << unixSocketName << ". Error is " << EGET() << " '" << ESTR()
-         << "'.\n";
-
-    HandleCleanup();
-  }
-
-  //
-  // Let any local user to gain access to socket.
-  //
-
-  chmod(unixSocketName, 0777);
-
-  return 1;
+  cerr << "Error" << ": path for Unix socket is too long.\n";
+  HandleCleanup();
 }
 
 //
@@ -4528,11 +4453,13 @@ int ListenConnectionAny(sockaddr *addr, socklen_t addrlen, const char *label)
 
     goto SetupSocketError;
   }
-  if (SetReuseAddress(newFD) < 0)
-  {
-    // SetReuseAddress already warns with an error
-    goto SetupSocketError;
-  }
+
+  if (addr->sa_family == AF_INET)
+    if (SetReuseAddress(newFD) < 0)
+    {
+      // SetReuseAddress already warns with an error
+      goto SetupSocketError;
+    }
 
   if (bind(newFD, addr, addrlen) == -1)
   {
@@ -4551,12 +4478,12 @@ int ListenConnectionAny(sockaddr *addr, socklen_t addrlen, const char *label)
   if (listen(newFD, 8) == -1)
   {
     #ifdef PANIC
-    *logofs << "Loop: PANIC! Call to bind failed for " << label
+    *logofs << "Loop: PANIC! Call to listen failed for " << label
             << ". Error is " << EGET()
             << " '" << ESTR() << "'.\n" << logofs_flush;
     #endif
 
-    cerr << "Error" << ": Call to bind failed for " << label
+    cerr << "Error" << ": Call to listen failed for " << label
          << ". Error is " << EGET()
          << " '" << ESTR() << "'.\n";
 
@@ -5569,9 +5496,7 @@ void CleanupLocal()
 
   *unixSocketName = '\0';
 
-  *connectHost = '\0';
   *acceptHost  = '\0';
-  *listenHost  = '\0';
   *displayHost = '\0';
   *authCookie  = '\0';
 
@@ -5585,8 +5510,8 @@ void CleanupLocal()
 
   xServerAddr = NULL;
 
-  listenPort  = -1;
-  connectPort = -1;
+  listenSocket.disable();
+  connectSocket.disable();
 
   cupsPort.disable();
   auxPort.disable();
@@ -6717,151 +6642,79 @@ void ResetTimer()
 }
 
 //
-// Open TCP socket to listen for remote proxy and
-// block until remote connects. If successful close
-// the listening socket and return FD on which the
-// other party is connected.
+// Open TCP or UNIX file socket to listen for remote proxy
+// and block until remote connects. If successful close
+// the listening socket and return FD on which the other
+// party is connected.
 //
 
-int WaitForRemote(int portNum)
+int WaitForRemote(ChannelEndPoint &socketAddress)
 {
   char hostLabel[DEFAULT_STRING_LENGTH] = { 0 };
+  char *socketUri = NULL;
 
   int retryAccept  = -1;
-  int listenIPAddr = -1;
 
   int proxyFD = -1;
   int newFD   = -1;
 
-  //
-  // Get IP address of host to be awaited.
-  //
-
   int acceptIPAddr = 0;
 
-  if (*acceptHost != '\0')
+  if (socketAddress.isTCPSocket())
   {
-    acceptIPAddr = GetHostAddress(acceptHost);
 
-    if (acceptIPAddr == 0)
+    //
+    // Get IP address of host to be awaited.
+    //
+
+    if (*acceptHost != '\0')
     {
-      #ifdef PANIC
-      *logofs << "Loop: PANIC! Cannot accept connections from unknown host '"
-              << acceptHost << "'.\n" << logofs_flush;
-      #endif
+      acceptIPAddr = GetHostAddress(acceptHost);
 
-      cerr << "Error" << ": Cannot accept connections from unknown host '"
-           << acceptHost << "'.\n";
+      if (acceptIPAddr == 0)
+      {
+        #ifdef PANIC
+        *logofs << "Loop: PANIC! Cannot accept connections from unknown host '"
+                << acceptHost << "'.\n" << logofs_flush;
+        #endif
 
-      goto WaitForRemoteError;
+        cerr << "Error" << ": Cannot accept connections from unknown host '"
+             << acceptHost << "'.\n";
+
+        goto WaitForRemoteError;
+      }
+      strcpy(hostLabel, "any host");
+    }
+    else
+    {
+      snprintf(hostLabel, sizeof(hostLabel), "'%s'", acceptHost);
+    }
+
+    if (loopbackBind)
+    {
+      long bindPort;
+      if (socketAddress.getTCPHostAndPort(NULL, &bindPort))
+          socketAddress.setSpec("localhost", bindPort);
     }
   }
-
-  proxyFD = socket(AF_INET, SOCK_STREAM, PF_UNSPEC);
-
-  if (proxyFD == -1)
-  {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Call to socket failed for TCP socket. "
-            << "Error is " << EGET() << " '" << ESTR() << "'.\n"
-            << logofs_flush;
-    #endif
-
-    cerr << "Error" << ": Call to socket failed for TCP socket. "
-         << "Error is " << EGET() << " '" << ESTR() << "'.\n";
-
-    goto WaitForRemoteError;
-  }
-  else if (SetReuseAddress(proxyFD) < 0)
-  {
-    goto WaitForRemoteError;
-  }
-
-  listenIPAddr = 0;
-
-  ParseListenOption(listenIPAddr);
-
-  sockaddr_in tcpAddr;
-
-  tcpAddr.sin_family = AF_INET;
-  tcpAddr.sin_port = htons(portNum);
-
-  //
-  // Quick patch to run on MacOS/X where inet_addr("127.0.0.1")
-  // alone seems to fail to return a valid interface. It probably
-  // just needs a htonl() or something like that.
-  // 
-  // TODO: We have to give another look at inet_addr("127.0.0.1")
-  // on the Mac.
-  //
-
-  #ifdef __APPLE__
-
-  if ( loopbackBind )
-  {
-    tcpAddr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-  }
+  else if (socketAddress.isUnixSocket())
+    strcpy(hostLabel, "this host");
   else
-  {
-    tcpAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-  }
+    strcpy(hostLabel, "unknown origin (something went wrong!!!)");
 
-  #else
 
-  tcpAddr.sin_addr.s_addr = listenIPAddr;
+  proxyFD = ListenConnection(socketAddress, "NX");
 
-  #endif
-
-  if (bind(proxyFD, (sockaddr *) &tcpAddr, sizeof(tcpAddr)) == -1)
-  {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Call to bind failed for TCP port "
-            << portNum << ". Error is " << EGET() << " '" << ESTR()
-            << "'.\n" << logofs_flush;
-    #endif
-
-    cerr << "Error" << ": Call to bind failed for TCP port "
-         << portNum << ". Error is " << EGET() << " '" << ESTR()
-         << "'.\n";
-
-    goto WaitForRemoteError;
-  }
-
-  if (listen(proxyFD, 4) == -1)
-  {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Call to listen failed for TCP port "
-            << portNum << ". Error is " << EGET() << " '" << ESTR()
-            << "'.\n" << logofs_flush;
-    #endif
-
-    cerr << "Error" << ": Call to listen failed for TCP port "
-         << portNum << ". Error is " << EGET() << " '" << ESTR()
-         << "'.\n";
-
-    goto WaitForRemoteError;
-  }
-
-  if (*acceptHost != '\0')
-  {
-    strcat(hostLabel, "'");
-    strcat(hostLabel, acceptHost);
-    strcat(hostLabel, "'");
-  }
-  else
-  {
-    strcpy(hostLabel, "any host");
-  }
-
+  socketAddress.getSpec(&socketUri);
   #ifdef TEST
   *logofs << "Loop: Waiting for connection from "
-          << hostLabel  << " on port '" << portNum
+          << hostLabel  << " on socket '" << socketUri
           << "'.\n" << logofs_flush;
   #endif
-
   cerr << "Info" << ": Waiting for connection from "
-       << hostLabel << " on port '" << portNum
+       << hostLabel << " on socket '" << socketUri
        << "'.\n";
+  free(socketUri);
 
   //
   // How many times to loop waiting for connections
@@ -6916,12 +6769,19 @@ int WaitForRemote(int portNum)
     }
     else if (result > 0 && FD_ISSET(proxyFD, &readSet))
     {
-      sockaddr_in newAddr;
 
-      socklen_t addrLen = sizeof(sockaddr_in);
+      sockaddr_in newAddrINET;
 
-      newFD = accept(proxyFD, (sockaddr *) &newAddr, &addrLen);
-
+      if (socketAddress.isUnixSocket())
+      {
+        socklen_t addrLen = sizeof(sockaddr_un);
+        newFD = accept(proxyFD, NULL, &addrLen);
+      }
+      else if (socketAddress.isTCPSocket())
+      {
+        socklen_t addrLen = sizeof(sockaddr_in);
+        newFD = accept(proxyFD, (sockaddr *) &newAddrINET, &addrLen);
+      }
       if (newFD == -1)
       {
         #ifdef PANIC
@@ -6936,47 +6796,82 @@ int WaitForRemote(int portNum)
         goto WaitForRemoteError;
       }
 
-      char *connectedHost = inet_ntoa(newAddr.sin_addr);
-
-      if (*acceptHost == '\0' || (int) newAddr.sin_addr.s_addr == acceptIPAddr)
+      if (socketAddress.isUnixSocket())
       {
+
+        char * unixPath = NULL;
+        socketAddress.getUnixPath(&unixPath);
         #ifdef TEST
-
-        unsigned int connectedPort = ntohs(newAddr.sin_port);
-
-        *logofs << "Loop: Accepted connection from '" << connectedHost
-                << "' with port '" << connectedPort << "'.\n"
+        *logofs << "Loop: Accepted connection from this host on Unix file socket '"
+                << unixPath << "'.\n"
                 << logofs_flush;
         #endif
 
-        cerr << "Info" << ": Accepted connection from '"
-             << connectedHost << "'.\n";
+        cerr << "Info" << ": Accepted connection from this host on Unix file socket '"
+             << unixPath << "'.\n";
+        free(unixPath);
 
         break;
       }
-      else
+      else if (socketAddress.isTCPSocket())
       {
-        #ifdef PANIC
-        *logofs << "Loop: WARNING! Refusing connection from '" << connectedHost
-                << "' on port '" << portNum << "'.\n" << logofs_flush;
-        #endif
 
-        cerr << "Warning" << ": Refusing connection from '"
-             << connectedHost << "'.\n";
+        char *connectedHost = inet_ntoa(newAddrINET.sin_addr);
+
+        if (*acceptHost == '\0' || (int) newAddrINET.sin_addr.s_addr == acceptIPAddr)
+        {
+
+          #ifdef TEST
+
+          unsigned int connectedPort = ntohs(newAddrINET.sin_port);
+
+          *logofs << "Loop: Accepted connection from '" << connectedHost
+                  << "' with port '" << connectedPort << "'.\n"
+                  << logofs_flush;
+          #endif
+
+          cerr << "Info" << ": Accepted connection from '"
+               << connectedHost << "'.\n";
+
+          break;
+        }
+        else
+        {
+          #ifdef PANIC
+          *logofs << "Loop: WARNING! Refusing connection from '" << connectedHost
+                  << "' on port '" << socketAddress.getTCPPort() << "'.\n" << logofs_flush;
+          #endif
+
+          cerr << "Warning" << ": Refusing connection from '"
+               << connectedHost << "'.\n";
+	}
+
+        //
+        // Not the best way to elude a DOS attack...
+        //
+
+        sleep(5);
+
+        close(newFD);
+
       }
 
-      //
-      // Not the best way to elude a DOS attack...
-      //
-
-      sleep(5);
-
-      close(newFD);
     }
 
     if (--retryAccept == 0)
     {
-      if (*acceptHost == '\0')
+      if (socketAddress.isUnixSocket())
+      {
+        #ifdef PANIC
+        *logofs << "Loop: PANIC! Connection via Unix file socket from this host "
+                << "could not be established.\n"
+                << logofs_flush;
+        #endif
+
+        cerr << "Error" << ": Connection via Unix file socket from this host "
+             << "could not be established.\n";
+      }
+      else if (*acceptHost == '\0')
       {
         #ifdef PANIC
         *logofs << "Loop: PANIC! Connection with remote host "
@@ -7018,43 +6913,194 @@ WaitForRemoteError:
   HandleCleanup();
 }
 
-//
-// Connect to remote proxy. If successful
-// return FD of connection, else return -1.
-//
-
-int ConnectToRemote(const char *const hostName, int portNum)
+int PrepareProxyConnectionTCP(char** hostName, long int* portNum, int* timeout, int* proxyFD, int* reason)
 {
-  int proxyFD = -1;
 
-  int remoteIPAddr = GetHostAddress(hostName);
+  if (!proxyFD)
+  {
+    #ifdef PANIC
+    *logofs << "Loop: PANIC! Implementation error (PrepareProxyConnectionTCP). "
+            << "'proxyFD' must not be a NULL pointer.\n" << logofs_flush;
+    #endif
 
+    cerr << "Error" << ":  Implementation error (PrepareProxyConnectionTCP). "
+            << "'proxyFD' must not be a NULL pointer.\n";
+
+    return -1;
+  }
+
+  if (!reason)
+  {
+    #ifdef PANIC
+    *logofs << "Loop: PANIC! Implementation error (PrepareProxyConnectionTCP). "
+            << "'reason' must not be a NULL pointer.\n" << logofs_flush;
+    #endif
+
+    cerr << "Error" << ":  Implementation error (PrepareProxyConnectionTCP). "
+            << "'reason' must not be a NULL pointer.\n";
+
+    return -1;
+  }
+
+  int remoteIPAddr = GetHostAddress(*hostName);
   if (remoteIPAddr == 0)
   {
     #ifdef PANIC
     *logofs << "Loop: PANIC! Unknown remote host '"
-            << hostName << "'.\n" << logofs_flush;
+            << *hostName << "'.\n" << logofs_flush;
     #endif
-
-    cerr << "Error" << ": Unknown remote host '"
-         << hostName << "'.\n";
+        cerr << "Error" << ": Unknown remote host '"
+         << *hostName << "'.\n";
 
     HandleCleanup();
   }
 
   #ifdef TEST
   *logofs << "Loop: Connecting to remote host '" 
-          << hostName << ":" << portNum << "'.\n"
+          << *hostName << ":" << *portNum << "'.\n"
           << logofs_flush;
   #endif
 
   cerr << "Info" << ": Connecting to remote host '"
-       << hostName << ":" << portNum << "'.\n"
+       << *hostName << ":" << *portNum << "'.\n"
        << logofs_flush;
+
+  *proxyFD = -1;
+  *reason = -1;
+
+  sockaddr_in addr;
+  addr.sin_family = AF_INET;
+  addr.sin_port = htons(*portNum);
+  addr.sin_addr.s_addr = remoteIPAddr;
+
+  *proxyFD = socket(AF_INET, SOCK_STREAM, PF_UNSPEC);
+  *reason = EGET();
+
+  if (*proxyFD == -1)
+  {
+    #ifdef PANIC
+    *logofs << "Loop: PANIC! Call to socket failed. "
+            << "Error is " << *reason << " '" << ESTR()
+            << "'.\n" << logofs_flush;
+    #endif
+
+    cerr << "Error" << ": Call to socket failed. "
+         << "Error is " << *reason << " '" << ESTR()
+         << "'.\n";
+    return -1;
+
+  }
+  else if (SetReuseAddress(*proxyFD) < 0)
+  {
+    return -1;
+  }
+
+  //
+  // Ensure operation is timed out
+  // if there is a network problem.
+  //
+
+  if (timeout)
+    SetTimer(*timeout);
+  else
+    SetTimer(20000);
+
+  int result = connect(*proxyFD, (sockaddr *) &addr, sizeof(sockaddr_in));
+
+  *reason = EGET();
+
+  ResetTimer();
+
+  return result;
+
+}
+
+int PrepareProxyConnectionUnix(char** path, int* timeout, int* proxyFD, int* reason)
+{
+
+  if (!proxyFD)
+  {
+    #ifdef PANIC
+    *logofs << "Loop: PANIC! Implementation error (PrepareProxyConnectionUnix). "
+            << "proxyFD must not be a NULL pointer.\n" << logofs_flush;
+    #endif
+
+    cerr << "Error" << ":  Implementation error (PrepareProxyConnectionUnix). "
+            << "proxyFD must not be a NULL pointer.\n";
+
+    return -1;
+  }
+
+  if (!reason)
+  {
+    #ifdef PANIC
+    *logofs << "Loop: PANIC! Implementation error (PrepareProxyConnectionUnix). "
+            << "'reason' must not be a NULL pointer.\n" << logofs_flush;
+    #endif
+
+    cerr << "Error" << ":  Implementation error (PrepareProxyConnectionUnix). "
+            << "'reason' must not be a NULL pointer.\n";
+
+    return -1;
+  }
+
+  /* FIXME: Add socket file existence and permission checks */
+
+  *proxyFD = -1;
+  *reason = -1;
+
+  sockaddr_un addr;
+  addr.sun_family = AF_UNIX;
+  strncpy(addr.sun_path, *path, 108 - 1);
+
+  *proxyFD = socket(AF_UNIX, SOCK_STREAM, PF_UNSPEC);
+  *reason = EGET();
+
+  if (*proxyFD == -1)
+  {
+    #ifdef PANIC
+    *logofs << "Loop: PANIC! Call to socket failed. "
+            << "Error is " << *reason << " '" << ESTR()
+            << "'.\n" << logofs_flush;
+    #endif
+
+    cerr << "Error" << ": Call to socket failed. "
+         << "Error is " << *reason << " '" << ESTR()
+         << "'.\n";
+
+    return -1;
+  }
+
+  //
+  // Ensure operation is timed out
+  // if there is a network problem.
+  //
+
+  if (timeout)
+    SetTimer(*timeout);
+  else
+    SetTimer(20000);
+
+  int result = connect(*proxyFD, (sockaddr *) &addr, sizeof(sockaddr_un));
+
+  *reason = EGET();
+
+  ResetTimer();
+
+  return result;
+}
+
+//
+// Connect to remote proxy. If successful
+// return FD of connection, else return -1.
+//
+
+int ConnectToRemote(ChannelEndPoint &socketAddress)
+{
 
   //
   // How many times we retry to connect to remote
-  // host in case of failure?
+  // host / Unix domain socket in case of failure?
   //
 
   int retryConnect = control -> OptionProxyRetryConnect;
@@ -7072,39 +7118,16 @@ int ConnectToRemote(const char *const hostName, int portNum)
 
   T_timestamp lastRetry = getNewTimestamp();
 
-  sockaddr_in addr;
+  int result = -1;
+  int reason = -1;
+  int proxyFD = -1;
 
-  addr.sin_family = AF_INET;
-  addr.sin_port = htons(portNum);
-  addr.sin_addr.s_addr = remoteIPAddr;
+  char *hostName = NULL;
+  long int portNum = -1;
+  char *unixPath = NULL;
 
   for (;;)
   {
-    proxyFD = socket(AF_INET, SOCK_STREAM, PF_UNSPEC);
-
-    if (proxyFD == -1)
-    {
-      #ifdef PANIC
-      *logofs << "Loop: PANIC! Call to socket failed. "
-              << "Error is " << EGET() << " '" << ESTR()
-              << "'.\n" << logofs_flush;
-      #endif
-
-      cerr << "Error" << ": Call to socket failed. "
-           << "Error is " << EGET() << " '" << ESTR()
-           << "'.\n";
-
-      goto ConnectToRemoteError;
-    }
-    else if (SetReuseAddress(proxyFD) < 0)
-    {
-      goto ConnectToRemoteError;
-    }
-
-    //
-    // Ensure operation is timed out
-    // if there is a network problem.
-    //
 
     #ifdef DEBUG
     *logofs << "Loop: Timer set to " << connectTimeout / 1000
@@ -7113,13 +7136,10 @@ int ConnectToRemote(const char *const hostName, int portNum)
             << "'.\n" << logofs_flush;
     #endif
 
-    SetTimer(connectTimeout);
-
-    int result = connect(proxyFD, (sockaddr *) &addr, sizeof(sockaddr_in));
-
-    int reason = EGET();
-
-    ResetTimer();
+    if (socketAddress.getUnixPath(&unixPath))
+      result = PrepareProxyConnectionUnix(&unixPath, &connectTimeout, &proxyFD, &reason);
+    else if (socketAddress.getTCPHostAndPort(&hostName, &portNum))
+      result = PrepareProxyConnectionTCP(&hostName, &portNum, &connectTimeout, &proxyFD, &reason);
 
     if (result < 0)
     {
@@ -7133,24 +7153,40 @@ int ConnectToRemote(const char *const hostName, int portNum)
       {
         ESET(reason);
 
-        #ifdef PANIC
-        *logofs << "Loop: PANIC! Connection to '" << hostName
-                << ":" << portNum << "' failed. Error is "
-                << EGET() << " '" << ESTR() << "'.\n"
-                << logofs_flush;
-        #endif
+        if (socketAddress.isUnixSocket())
+        {
+          #ifdef PANIC
+          *logofs << "Loop: PANIC! Connection to Unix file socket '"
+                  << unixPath << "' failed. Error is "
+                  << EGET() << " '" << ESTR() << "'.\n"
+                  << logofs_flush;
+          #endif
 
-        cerr << "Error" << ": Connection to '" << hostName
-             << ":" << portNum << "' failed. Error is "
-             << EGET() << " '" << ESTR() << "'.\n";
+          cerr << "Error" << ": Connection to Unix file socket '"
+                  << unixPath << "' failed. Error is "
+                  << EGET() << " '" << ESTR() << "'.\n";
+        }
+        else
+        {
 
+          #ifdef PANIC
+          *logofs << "Loop: PANIC! Connection to '" << hostName
+                  << ":" << portNum << "' failed. Error is "
+                  << EGET() << " '" << ESTR() << "'.\n"
+                  << logofs_flush;
+          #endif
+
+          cerr << "Error" << ": Connection to '" << hostName
+               << ":" << portNum << "' failed. Error is "
+               << EGET() << " '" << ESTR() << "'.\n";
+        }
         goto ConnectToRemoteError;
       }
       else
       {
         #ifdef TEST
-        *logofs << "Loop: Sleeping " << retryTimeout 
-                << " Ms before retrying.\n"
+        *logofs << "Loop: Sleeping " << retryTimeout
+                << " ms before retrying.\n"
                 << logofs_flush;
         #endif
 
@@ -7219,10 +7255,20 @@ int ConnectToRemote(const char *const hostName, int portNum)
       ESET(reason);
 
       #ifdef TEST
-      *logofs << "Loop: Connection to '" << hostName
-              << ":" << portNum << "' failed with error '"
-              << ESTR() << "'. Retrying.\n"
-              << logofs_flush;
+      if (unixPath[0] != '\0' )
+      {
+        *logofs << "Loop: Connection to Unix socket file '"
+                << unixPath << "' failed with error '"
+                << ESTR() << "'. Retrying.\n"
+                << logofs_flush;
+      }
+      else
+      {
+        *logofs << "Loop: Connection to '" << hostName
+                << ":" << portNum << "' failed with error '"
+                << ESTR() << "'. Retrying.\n"
+                << logofs_flush;
+      }
       #endif
     }
     else
@@ -8448,6 +8494,9 @@ int ParseEnvironmentOptions(const char *env, int force)
 
   name = strtok(nextOpts, "=");
 
+  char connectHost[DEFAULT_STRING_LENGTH] = { 0 };
+  long connectPort = -1;
+
   while (name)
   {
     value = strtok(NULL, ",");
@@ -8468,6 +8517,7 @@ int ParseEnvironmentOptions(const char *env, int force)
     }
     else if (strcasecmp(name, "link") == 0)
     {
+
       if (control -> ProxyMode == proxy_server)
       {
         PrintOptionIgnored("local", name, value);
@@ -8529,26 +8579,29 @@ int ParseEnvironmentOptions(const char *env, int force)
     }
     else if (strcasecmp(name, "listen") == 0)
     {
-      if (*connectHost != '\0')
+      char *socketUri = NULL;
+      if (connectSocket.getSpec(&socketUri))
       {
         #ifdef PANIC
         *logofs << "Loop: PANIC! Can't handle 'listen' and 'connect' parameters "
                 << "at the same time.\n" << logofs_flush;
 
         *logofs << "Loop: PANIC! Refusing 'listen' parameter with 'connect' being '"
-                << connectHost << "'.\n" << logofs_flush;
+                << socketUri << "'.\n" << logofs_flush;
         #endif
 
         cerr << "Error" << ": Can't handle 'listen' and 'connect' parameters "
              << "at the same time.\n";
 
         cerr << "Error" << ": Refusing 'listen' parameter with 'connect' being '"
-             << connectHost << "'.\n";
+             << socketUri << "'.\n";
 
+        free(socketUri);
         return -1;
       }
 
-      listenPort = ValidateArg("local", name, value);
+      SetAndValidateChannelEndPointArg("local", name, value, listenSocket);
+
     }
     else if (strcasecmp(name, "loopback") == 0)
     {
@@ -8556,22 +8609,24 @@ int ParseEnvironmentOptions(const char *env, int force)
     }
     else if (strcasecmp(name, "accept") == 0)
     {
-      if (*connectHost != '\0')
+      char *socketUri = NULL;
+      if (connectSocket.getSpec(&socketUri))
       {
         #ifdef PANIC
         *logofs << "Loop: PANIC! Can't handle 'accept' and 'connect' parameters "
                 << "at the same time.\n" << logofs_flush;
 
         *logofs << "Loop: PANIC! Refusing 'accept' parameter with 'connect' being '"
-                << connectHost << "'.\n" << logofs_flush;
+                << socketUri << "'.\n" << logofs_flush;
         #endif
 
         cerr << "Error" << ": Can't handle 'accept' and 'connect' parameters "
              << "at the same time.\n";
 
         cerr << "Error" << ": Refusing 'accept' parameter with 'connect' being '"
-             << connectHost << "'.\n";
+             << socketUri << "'.\n";
 
+	free(socketUri);
         return -1;
       }
 
@@ -8597,8 +8652,12 @@ int ParseEnvironmentOptions(const char *env, int force)
 
         return -1;
       }
-
-      strncpy(connectHost, value, DEFAULT_STRING_LENGTH - 1);
+      if ((strncmp(value, "tcp:", 4) == 0) || (strncmp(value, "unix:", 5) == 0))
+        SetAndValidateChannelEndPointArg("local", name, value, connectSocket);
+      else
+        // if the "connect" parameter does not start with "unix:" or "tcp:" assume
+        // old parameter usage style (providing hostname string only).
+        strcpy(connectHost, value);
     }
     else if (strcasecmp(name, "port") == 0)
     {
@@ -9004,7 +9063,8 @@ int ParseEnvironmentOptions(const char *env, int force)
                                  strcasecmp(name, "clipboard") == 0 ||
                                      strcasecmp(name, "streaming") == 0 ||
                                          strcasecmp(name, "backingstore") == 0 ||
-                                             strcasecmp(name, "sleep") == 0)
+                                             strcasecmp(name, "sleep") == 0 ||
+                                                 strcasecmp(name, "tolerancechecks") == 0)
     {
       #ifdef DEBUG
       *logofs << "Loop: Ignoring agent option '" << name
@@ -9055,6 +9115,17 @@ int ParseEnvironmentOptions(const char *env, int force)
     name = strtok(NULL, "=");
 
   } // End of while (name) ...
+
+  // Assemble the connectSocket channel end point if parameter values have been old-school...
+  if (connectSocket.disabled() && (connectHost[0] != '\0') && (proxyPort > 0 || connectPort > 0))
+  {
+    if (connectPort < 0)
+      connectPort = proxyPort + DEFAULT_NX_PROXY_PORT_OFFSET;
+
+    char tcpHostAndPort[DEFAULT_STRING_LENGTH] = { 0 };
+    sprintf(tcpHostAndPort, "tcp:%s:%ld", connectHost, connectPort);
+    SetAndValidateChannelEndPointArg("local", name, tcpHostAndPort, connectSocket);
+  }
 
   #ifdef TEST
   *logofs << "Loop: Completed parsing of string '"
@@ -9296,16 +9367,21 @@ int ParseCommandLineOptions(int argc, const char **argv)
         // command line at the connecting side.
         //
 
-        if (ParseHostOption(nextArg, connectHost, connectPort) > 0)
-        {
-          //
-          // Assume port is at a proxied display offset.
-          //
+        char *cHost;
+        long cPort;
 
-          proxyPort = connectPort;
+        if (connectSocket.getTCPHostAndPort(&cHost, &cPort) && (ParseHostOption(nextArg, cHost, cPort) > 0))
+          {
+            //
+            // Assume port is at a proxied display offset.
+            //
 
-          connectPort += DEFAULT_NX_PROXY_PORT_OFFSET;
-        }
+            proxyPort = cPort;
+
+            cPort += DEFAULT_NX_PROXY_PORT_OFFSET;
+            connectSocket.setSpec(cHost, cPort);
+
+          }
         else if (ParseEnvironmentOptions(nextArg, 1) < 0)
         {
           return -1;
@@ -12588,7 +12664,7 @@ int SetVersion()
 
   if (local < remote)
   {
-    cerr << "Warning" << ": Consider checking http://www.nomachine.com/ for updates.\n";
+    cerr << "Warning" << ": Consider checking https://github.com/ArcticaProject/nx-libs/releases for updates.\n";
   }
 
   //
@@ -13409,7 +13485,7 @@ int ParseBitrateOption(const char *opt)
   return 1;
 }
 
-int ParseHostOption(const char *opt, char *host, int &port)
+int ParseHostOption(const char *opt, char *host, long &port)
 {
   #ifdef TEST
   *logofs << "Loop: Trying to parse options string '" << opt
@@ -13676,40 +13752,6 @@ ParseFontPathError:
   return -1;
 }
 
-int ParseListenOption(int &address)
-{
-  if (*listenHost == '\0')
-  {
-    //
-    // On the X client side listen on any address.
-    // On the X server side listen to the forwarder
-    // on localhost.
-    //
-
-    if (control -> ProxyMode == proxy_server)
-    {
-      address = (int) inet_addr("127.0.0.1");
-    }
-    else
-    {
-      if ( loopbackBind )
-      {
-        address = htonl(INADDR_LOOPBACK);
-      }
-      else
-      {
-        address = htonl(INADDR_ANY);
-      }
-    }
-  }
-  else
-  {
-    address = inet_addr(listenHost);
-  }
-
-  return 1;
-}
-
 int OpenLogFile(char *name, ostream *&stream)
 {
   if (name == NULL || *name == '\0')
@@ -13879,12 +13921,18 @@ void PrintProcessInfo()
 {
   if (agent == NULL)
   {
-    cerr << "\nNXPROXY - Version " << control -> LocalVersionMajor
-         << "." << control -> LocalVersionMinor << "."
-         << control -> LocalVersionPatch << "\n\n";
 
-    cerr << "Copyright (C) 2001, 2010 NoMachine.\n"
-         << "See http://www.nomachine.com/ for more information.\n\n";
+    cerr << endl;
+
+    PrintVersionInfo();
+
+    cerr << endl;
+
+    cerr << GetCopyrightInfo()
+         << endl
+         << GetOtherCopyrightInfo()
+         << endl
+         << "See https://github.com/ArcticaProject/nx-libs for more information." << endl << endl;
   }
 
   //

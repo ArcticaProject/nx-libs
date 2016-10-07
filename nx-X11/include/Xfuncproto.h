@@ -1,4 +1,3 @@
-/* $Xorg: Xfuncproto.h,v 1.4 2001/02/09 02:03:22 xorgcvs Exp $ */
 /* 
  * 
 Copyright 1989, 1991, 1998  The Open Group
@@ -24,7 +23,6 @@ used in advertising or otherwise to promote the sale, use or other dealings
 in this Software without prior written authorization from The Open Group.
  *
  */
-/* $XFree86: xc/include/Xfuncproto.h,v 3.4 2001/12/14 19:53:25 dawes Exp $ */
 
 /* Definitions to make function prototypes manageable */
 
@@ -95,6 +93,13 @@ in this Software without prior written authorization from The Open Group.
 # define _X_DEPRECATED  __attribute__((deprecated))
 #else /* not gcc >= 3.1 */
 # define _X_DEPRECATED
+#endif
+
+/* requires xproto >= 7.0.22 */
+#if defined(__GNUC__) &&  ((__GNUC__ * 100 + __GNUC_MINOR__) >= 205)
+#define _X_UNUSED  __attribute__((__unused__))
+#else
+#define _X_UNUSED  /* */
 #endif
 
 #endif /* _XFUNCPROTO_H_ */

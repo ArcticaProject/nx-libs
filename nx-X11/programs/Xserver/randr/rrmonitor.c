@@ -95,7 +95,7 @@ RRMonitorSetFromServer(RRCrtcPtr crtc, RRMonitorPtr monitor)
     monitor->name = RRMonitorCrtcName(crtc);
     monitor->pScreen = crtc->pScreen;
     monitor->numOutputs = crtc->numOutputs;
-    monitor->outputs = xcalloc(crtc->numOutputs, sizeof(RRCrtc));
+    monitor->outputs = calloc(crtc->numOutputs, sizeof(RRCrtc));
     if (!monitor->outputs)
         return FALSE;
     for (o = 0; o < crtc->numOutputs; o++)
@@ -173,7 +173,7 @@ RRMonitorSetFromClient(RRMonitorPtr client_monitor, RRMonitorPtr monitor)
     monitor->name = client_monitor->name;
     monitor->pScreen = client_monitor->pScreen;
     monitor->numOutputs = client_monitor->numOutputs;
-    monitor->outputs = xcalloc(client_monitor->numOutputs, sizeof(RROutput));
+    monitor->outputs = calloc(client_monitor->numOutputs, sizeof(RROutput));
     if (!monitor->outputs && client_monitor->numOutputs)
         return FALSE;
     memcpy(monitor->outputs, client_monitor->outputs, client_monitor->numOutputs * sizeof(RROutput));
@@ -216,7 +216,7 @@ RRMonitorInitList(ScreenPtr screen, RRMonitorListPtr mon_list, Bool get_active)
 #endif
     mon_list->num_crtcs = numCrtcs;
 
-    mon_list->server_crtc = xcalloc(numCrtcs * 2, sizeof(RRCrtcPtr));
+    mon_list->server_crtc = calloc(numCrtcs * 2, sizeof(RRCrtcPtr));
     if (!mon_list->server_crtc)
         return FALSE;
 
@@ -298,7 +298,7 @@ RRMonitorInitList(ScreenPtr screen, RRMonitorListPtr mon_list, Bool get_active)
 static void
 RRMonitorFiniList(RRMonitorListPtr list)
 {
-    xfree(list->server_crtc);
+    free(list->server_crtc);
 }
 
 /* Construct a complete list of protocol-visible monitors, including
@@ -321,7 +321,7 @@ RRMonitorMakeList(ScreenPtr screen, Bool get_active, RRMonitorPtr * monitors_ret
     if (!RRMonitorInitList(screen, &list, get_active))
         return FALSE;
 
-    monitors = xcalloc(list.num_client + list.num_server, sizeof(RRMonitorRec));
+    monitors = calloc(list.num_client + list.num_server, sizeof(RRMonitorRec));
     if (!monitors) {
         RRMonitorFiniList(&list);
         return FALSE;
@@ -401,7 +401,7 @@ RRMonitorCountList(ScreenPtr screen)
 void
 RRMonitorFree(RRMonitorPtr monitor)
 {
-    xfree(monitor);
+    free(monitor);
 }
 
 RRMonitorPtr
@@ -409,7 +409,7 @@ RRMonitorAlloc(int noutput)
 {
     RRMonitorPtr monitor;
 
-    monitor = xcalloc(1, sizeof(RRMonitorRec) + noutput * sizeof(RROutput));
+    monitor = calloc(1, sizeof(RRMonitorRec) + noutput * sizeof(RROutput));
     if (!monitor)
         return NULL;
     monitor->numOutputs = noutput;
@@ -512,11 +512,11 @@ RRMonitorAdd(ClientPtr client, ScreenPtr screen, RRMonitorPtr monitor)
                                 pScrPriv->numMonitors + 1,
                                 sizeof(RRMonitorPtr));
 #else                           /* !defined(NXAGENT_SERVER) */
-        monitors = xrealloc(pScrPriv->monitors,
+        monitors = realloc(pScrPriv->monitors,
                             (pScrPriv->numMonitors + 1) * sizeof(RRMonitorPtr));
 #endif                          /* !defined(NXAGENT_SERVER) */
     else
-        monitors = xalloc(sizeof(RRMonitorPtr));
+        monitors = malloc(sizeof(RRMonitorPtr));
 
     if (!monitors)
         return BadAlloc;
@@ -573,8 +573,8 @@ RRMonitorFreeList(RRMonitorPtr monitors, int nmon)
     int m;
 
     for (m = 0; m < nmon; m++)
-        xfree(monitors[m].outputs);
-    xfree(monitors);
+        free(monitors[m].outputs);
+    free(monitors);
 }
 
 void
@@ -600,7 +600,7 @@ RRMonitorClose(ScreenPtr screen)
 
     for (m = 0; m < pScrPriv->numMonitors; m++)
         RRMonitorFree(pScrPriv->monitors[m]);
-    xfree(pScrPriv->monitors);
+    free(pScrPriv->monitors);
     pScrPriv->monitors = NULL;
     pScrPriv->numMonitors = 0;
 }
@@ -629,7 +629,7 @@ ProcRRGetMonitors(ClientPtr client)
     RRMonitorPtr monitors;
     int nmonitors;
     int noutputs;
-    int m, n;
+    int m;
     Bool get_active;
 
     REQUEST_SIZE_MATCH(xRRGetMonitorsReq);
@@ -661,13 +661,13 @@ ProcRRGetMonitors(ClientPtr client)
     rep.noutputs = noutputs;
 
     if (client->swapped) {
-        swaps(&rep.sequenceNumber, n);
-        swapl(&rep.length, n);
-        swapl(&rep.timestamp, n);
-        swapl(&rep.nmonitors, n);
-        swapl(&rep.noutputs, n);
+        swaps(&rep.sequenceNumber);
+        swapl(&rep.length);
+        swapl(&rep.timestamp);
+        swapl(&rep.nmonitors);
+        swapl(&rep.noutputs);
     }
-    WriteToClient(client, sizeof(xRRGetMonitorsReply), (char *) &rep);
+    WriteToClient(client, sizeof(xRRGetMonitorsReply), &rep);
 
     client->pSwapReplyFunc = (ReplySwapPtr) CopySwap32Write;
 
@@ -686,17 +686,17 @@ ProcRRGetMonitors(ClientPtr client)
             .heightInMillimeters = monitor->geometry.mmHeight,
         };
         if (client->swapped) {
-            swapl(&info.name, n);
-            swaps(&info.noutput, n);
-            swaps(&info.x, n);
-            swaps(&info.y, n);
-            swaps(&info.width, n);
-            swaps(&info.height, n);
-            swapl(&info.widthInMillimeters, n);
-            swapl(&info.heightInMillimeters, n);
+            swapl(&info.name);
+            swaps(&info.noutput);
+            swaps(&info.x);
+            swaps(&info.y);
+            swaps(&info.width);
+            swaps(&info.height);
+            swapl(&info.widthInMillimeters);
+            swapl(&info.heightInMillimeters);
         }
 
-        WriteToClient(client, sizeof(xRRMonitorInfo), (char *) &info);
+        WriteToClient(client, sizeof(xRRMonitorInfo), &info);
         WriteSwappedDataToClient(client, monitor->numOutputs * sizeof(RROutput),
                                  monitor->outputs);
     }

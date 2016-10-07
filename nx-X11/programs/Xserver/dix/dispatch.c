@@ -1,5 +1,3 @@
-/* $XdotOrg: xc/programs/Xserver/dix/dispatch.c,v 1.13 2005/09/13 01:33:19 daniels Exp $ */
-/* $Xorg: dispatch.c,v 1.5 2001/02/09 02:04:40 xorgcvs Exp $ */
 /************************************************************
 
 Copyright 1987, 1989, 1998  The Open Group
@@ -76,7 +74,6 @@ Equipment Corporation.
 
 ******************************************************************/
 
-/* $XFree86: xc/programs/Xserver/dix/dispatch.c,v 3.32 2003/11/10 18:21:45 tsi Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -209,14 +206,16 @@ UpdateCurrentTimeIf()
 	currentTime = systime;
 }
 
+#ifndef NXAGENT_SERVER
 void
 InitSelections()
 {
     if (CurrentSelections)
-	xfree(CurrentSelections);
+	free(CurrentSelections);
     CurrentSelections = (Selection *)NULL;
     NumCurrentSelections = 0;
 }
+#endif /* NXAGENT_SERVER */
 
 void 
 FlushClientCaches(XID id)
@@ -349,6 +348,7 @@ SmartScheduleClient (int *clientReady, int nready)
 }
 #endif
 
+#ifndef NXAGENT_SERVER
 #define MAJOROP ((xReq *)client->requestBuffer)->reqType
 
 void
@@ -485,6 +485,7 @@ Dispatch(void)
 }
 
 #undef MAJOROP
+#endif /* NXAGENT_SERVER */
 
 int
 ProcBadRequest(ClientPtr client)
@@ -639,6 +640,7 @@ ProcChangeSaveSet(register ClientPtr client)
     }
 }
 
+#ifndef NXAGENT_SERVER
 int
 ProcReparentWindow(register ClientPtr client)
 {
@@ -673,6 +675,7 @@ ProcReparentWindow(register ClientPtr client)
     else 
         return (BadMatch);
 }
+#endif /* NXAGENT_SERVER */
 
 int
 ProcMapWindow(register ClientPtr client)
@@ -790,6 +793,7 @@ GetGeometry(register ClientPtr client, xGetGeometryReply *rep)
 
     REQUEST_SIZE_MATCH(xResourceReq);
     SECURITY_VERIFY_GEOMETRABLE (pDraw, stuff->id, client, SecurityReadAccess);
+    memset(rep, 0, sizeof(xGetGeometryReply));
     rep->type = X_Reply;
     rep->length = 0;
     rep->sequenceNumber = client->sequence;
@@ -829,7 +833,6 @@ ProcGetGeometry(register ClientPtr client)
     xGetGeometryReply rep;
     int status;
 
-    memset(&rep, 0, sizeof(xGetGeometryReply));
     if ((status = GetGeometry(client, &rep)) != Success)
 	return status;
 
@@ -838,6 +841,7 @@ ProcGetGeometry(register ClientPtr client)
 }
 
 
+#ifndef NXAGENT_SERVER
 int
 ProcQueryTree(register ClientPtr client)
 {
@@ -887,6 +891,8 @@ ProcQueryTree(register ClientPtr client)
 
     return(client->noClientException);
 }
+#endif /* NXAGENT_SERVER */
+
 
 int
 ProcInternAtom(register ClientPtr client)
@@ -936,7 +942,7 @@ ProcGetAtomName(register ClientPtr client)
 	reply.sequenceNumber = client->sequence;
 	reply.nameLength = len;
 	WriteReplyToClient(client, sizeof(xGetAtomNameReply), &reply);
-	(void)WriteToClient(client, len, str);
+	WriteToClient(client, len, str);
 	return(client->noClientException);
     }
     else 
@@ -946,10 +952,7 @@ ProcGetAtomName(register ClientPtr client)
     }
 }
 
-#ifdef K5AUTH
-extern int k5_bad();
-#endif
-
+#ifndef NXAGENT_SERVER
 int
 ProcSetSelectionOwner(register ClientPtr client)
 {
@@ -1015,9 +1018,9 @@ ProcSetSelectionOwner(register ClientPtr client)
 	    Selection *newsels;
 
 	    if (i == 0)
-		newsels = (Selection *)xalloc(sizeof(Selection));
+		newsels = (Selection *)malloc(sizeof(Selection));
 	    else
-		newsels = (Selection *)xrealloc(CurrentSelections,
+		newsels = (Selection *)realloc(CurrentSelections,
 			    (NumCurrentSelections + 1) * sizeof(Selection));
 	    if (!newsels)
 		return BadAlloc;
@@ -1045,6 +1048,7 @@ ProcSetSelectionOwner(register ClientPtr client)
         return (BadAtom);
     }
 }
+#endif /* NXAGENT_SERVER */
 
 int
 ProcGetSelectionOwner(register ClientPtr client)
@@ -1078,6 +1082,7 @@ ProcGetSelectionOwner(register ClientPtr client)
     }
 }
 
+#ifndef NXAGENT_SERVER
 int
 ProcConvertSelection(register ClientPtr client)
 {
@@ -1143,6 +1148,7 @@ ProcConvertSelection(register ClientPtr client)
         return (BadAtom);
     }
 }
+#endif /* NXAGENT_SERVER */
 
 int
 ProcGrabServer(register ClientPtr client)
@@ -1285,6 +1291,7 @@ ProcTranslateCoords(register ClientPtr client)
     return(client->noClientException);
 }
 
+#ifndef NXAGENT_SERVER
 int
 ProcOpenFont(register ClientPtr client)
 {
@@ -1324,6 +1331,7 @@ ProcCloseFont(register ClientPtr client)
         return (BadFont);
     }
 }
+#endif /* NXAGENT_SERVER */
 
 int
 ProcQueryFont(register ClientPtr client)
@@ -1335,6 +1343,7 @@ ProcQueryFont(register ClientPtr client)
 
     REQUEST_SIZE_MATCH(xResourceReq);
     client->errorValue = stuff->id;		/* EITHER font or gc */
+
     pFont = (FontPtr)SecurityLookupIDByType(client, stuff->id, RT_FONT,
 					    SecurityReadAccess);
     if (!pFont)
@@ -1367,6 +1376,7 @@ ProcQueryFont(register ClientPtr client)
 	rlength = sizeof(xQueryFontReply) +
 	             FONTINFONPROPS(FONTCHARSET(pFont)) * sizeof(xFontProp)  +
 		     nprotoxcistructs * sizeof(xCharInfo);
+
 	reply = (xQueryFontReply *)ALLOCATE_LOCAL(rlength);
 	if(!reply)
 	{
@@ -1435,6 +1445,7 @@ ProcQueryTextExtents(register ClientPtr client)
     return(client->noClientException);
 }
 
+#ifndef NXAGENT_SERVER
 int
 ProcListFonts(register ClientPtr client)
 {
@@ -1456,6 +1467,7 @@ ProcListFontsWithInfo(register ClientPtr client)
     return StartListFontsWithInfo(client, stuff->nbytes,
 				  (unsigned char *) &stuff[1], stuff->maxNames);
 }
+#endif /* NXAGENT_SERVER */
 
 /**
  *
@@ -1527,6 +1539,7 @@ CreatePmap:
     return (BadAlloc);
 }
 
+#ifndef NXAGENT_SERVER
 int
 ProcFreePixmap(register ClientPtr client)
 {
@@ -1548,6 +1561,7 @@ ProcFreePixmap(register ClientPtr client)
 	return (BadPixmap);
     }
 }
+#endif /* NXAGENT_SERVER */
 
 int
 ProcCreateGC(register ClientPtr client)
@@ -2171,7 +2185,7 @@ DoGetImage(register ClientPtr client, int format, Drawable drawable,
     xgi.length = length;
 
     if (im_return) {
-	pBuf = (char *)xcalloc(1, sz_xGetImageReply + length);
+	pBuf = (char *)calloc(1, sz_xGetImageReply + length);
 	if (!pBuf)
 	    return (BadAlloc);
 	if (widthBytesLine == 0)
@@ -2261,7 +2275,7 @@ DoGetImage(register ClientPtr client, int format, Drawable drawable,
 			       ClientOrder(client));
 
 /* Don't split me, gcc pukes when you do */
-		(void)WriteToClient(client,
+		WriteToClient(client,
 				    (int)(nlines * widthBytesLine),
 				    pBuf);
 	    }
@@ -2305,7 +2319,7 @@ DoGetImage(register ClientPtr client, int format, Drawable drawable,
 				       ClientOrder (client));
 
 /* Don't split me, gcc pukes when you do */
-			(void)WriteToClient(client,
+			WriteToClient(client,
 					(int)(nlines * widthBytesLine),
 					pBuf);
 		    }
@@ -3067,13 +3081,13 @@ ProcCreateCursor (register ClientPtr client)
 	return (BadMatch);
 
     n = BitmapBytePad(width)*height;
-    srcbits = (unsigned char *)xalloc(n);
+    srcbits = (unsigned char *)malloc(n);
     if (!srcbits)
 	return (BadAlloc);
-    mskbits = (unsigned char *)xalloc(n);
+    mskbits = (unsigned char *)malloc(n);
     if (!mskbits)
     {
-	xfree(srcbits);
+	free(srcbits);
 	return (BadAlloc);
     }
 
@@ -3186,6 +3200,7 @@ ProcQueryBestSize (register ClientPtr client)
 }
 
 
+#ifndef NXAGENT_SERVER
 int
 ProcSetScreenSaver (register ClientPtr client)
 {
@@ -3241,6 +3256,7 @@ ProcSetScreenSaver (register ClientPtr client)
     SetScreenSaverTimer();
     return (client->noClientException);
 }
+#endif /* NXAGENT_SERVER */
 
 int
 ProcGetScreenSaver(register ClientPtr client)
@@ -3313,7 +3329,7 @@ ProcListHosts(register ClientPtr client)
 	client->pSwapReplyFunc = (ReplySwapPtr) SLHostsExtend;
 	WriteSwappedDataToClient(client, len, pdata);
     }
-    xfree(pdata);
+    free(pdata);
     return (client->noClientException);
 }
 
@@ -3422,7 +3438,7 @@ ProcGetFontPath(register ClientPtr client)
 
     WriteReplyToClient(client, sizeof(xGetFontPathReply), &reply);
     if (stringLens || numpaths)
-	(void)WriteToClient(client, stringLens + numpaths, (char *)bufferStart);
+	WriteToClient(client, stringLens + numpaths, bufferStart);
     return(client->noClientException);
 }
 
@@ -3446,6 +3462,7 @@ ProcChangeCloseDownMode(register ClientPtr client)
     }
 }
 
+#ifndef NXAGENT_SERVER
 int ProcForceScreenSaver(register ClientPtr client)
 {    
     REQUEST(xForceScreenSaverReq);
@@ -3461,6 +3478,7 @@ int ProcForceScreenSaver(register ClientPtr client)
     SaveScreens(SCREEN_SAVER_FORCER, (int)stuff->mode);
     return client->noClientException;
 }
+#endif /* NXAGENT_SERVER */
 
 int ProcNoOperation(register ClientPtr client)
 {
@@ -3481,12 +3499,6 @@ InitProcVectors(void)
             ProcVector[i] = SwappedProcVector[i] = ProcBadRequest;
 	    ReplySwapVector[i] = ReplyNotSwappd;
 	}
-#ifdef K5AUTH
-	if (!k5_Vector[i])
-	{
-	    k5_Vector[i] = k5_bad;
-	}
-#endif
     }
     for(i = LASTEvent; i < 128; i++)
     {
@@ -3495,6 +3507,7 @@ InitProcVectors(void)
     
 }
 
+
 /**********************
  * CloseDownClient
  *
@@ -3502,6 +3515,7 @@ InitProcVectors(void)
  *  then killed again, the client is really destroyed.
  *********************/
 
+#ifndef NXAGENT_SERVER
 char dispatchExceptionAtReset = DE_RESET;
 
 void
@@ -3583,12 +3597,13 @@ CloseDownClient(register ClientPtr client)
 #ifdef SMART_SCHEDULE
 	SmartLastClient = NullClient;
 #endif
-	xfree(client);
+	free(client);
 
 	while (!clients[currentMaxClients-1])
 	    currentMaxClients--;
     }
 }
+#endif /* NXAGENT_SERVER */
 
 static void
 KillAllClients()
@@ -3682,6 +3697,7 @@ extern int clientPrivateLen;
 extern unsigned *clientPrivateSizes;
 extern unsigned totalClientSize;
 
+#ifndef NXAGENT_SERVER
 int
 InitClientPrivates(ClientPtr client)
 {
@@ -3697,7 +3713,7 @@ InitClientPrivates(ClientPtr client)
 	ppriv = (DevUnion *)(client + 1);
     else
     {
-	ppriv = (DevUnion *)xalloc(totalClientSize - sizeof(ClientRec));
+	ppriv = (DevUnion *)malloc(totalClientSize - sizeof(ClientRec));
 	if (!ppriv)
 	    return 0;
     }
@@ -3716,6 +3732,7 @@ InitClientPrivates(ClientPtr client)
     }
     return 1;
 }
+#endif /* NXAGENT_SERVER */
 
 /************************
  * int NextAvailableClient(ospriv)
@@ -3733,14 +3750,14 @@ ClientPtr NextAvailableClient(void * ospriv)
     i = nextFreeClientID;
     if (i == MAXCLIENTS)
 	return (ClientPtr)NULL;
-    clients[i] = client = (ClientPtr)xalloc(totalClientSize);
+    clients[i] = client = (ClientPtr)malloc(totalClientSize);
     if (!client)
 	return (ClientPtr)NULL;
     InitClient(client, i, ospriv);
     InitClientPrivates(client);
     if (!InitClientResources(client))
     {
-	xfree(client);
+	free(client);
 	return (ClientPtr)NULL;
     }
     data.reqType = 1;
@@ -3748,7 +3765,7 @@ ClientPtr NextAvailableClient(void * ospriv)
     if (!InsertFakeRequest(client, (char *)&data, sz_xReq))
     {
 	FreeClientResources(client);
-	xfree(client);
+	free(client);
 	return (ClientPtr)NULL;
     }
     if (i == currentMaxClients)
@@ -3788,7 +3805,7 @@ ProcInitialConnection(register ClientPtr client)
 		     ((prefix->nbytesAuthString + (unsigned)3) >> 2);
     if (client->swapped)
     {
-	swaps(&stuff->length, whichbyte);
+	swaps(&stuff->length);
     }
     ResetCurrentRequest(client);
     return (client->noClientException);
@@ -3815,8 +3832,8 @@ SendConnSetup(register ClientPtr client, char *reason)
 	if (client->swapped)
 	    WriteSConnSetupPrefix(client, &csp);
 	else
-	    (void)WriteToClient(client, sz_xConnSetupPrefix, (char *) &csp);
-        (void)WriteToClient(client, (int)csp.lengthReason, reason);
+	    WriteToClient(client, sz_xConnSetupPrefix, &csp);
+        WriteToClient(client, (int)csp.lengthReason, reason);
 	return (client->noClientException = -1);
     }
 
@@ -3873,9 +3890,9 @@ SendConnSetup(register ClientPtr client, char *reason)
     }
     else
     {
-	(void)WriteToClient(client, sizeof(xConnSetupPrefix),
+	WriteToClient(client, sizeof(xConnSetupPrefix),
 			    (char *) lconnSetupPrefix);
-	(void)WriteToClient(client, (int)(lconnSetupPrefix->length << 2),
+	WriteToClient(client, (int)(lconnSetupPrefix->length << 2),
 			    lConnectionInfo);
     }
     client->clientState = ClientStateRunning;
@@ -3933,7 +3950,6 @@ SendErrorToClient(ClientPtr client, unsigned majorCode, unsigned minorCode,
 
     memset(&rep, 0, sizeof(xError));
     rep.type = X_Error;
-    rep.sequenceNumber = client->sequence;
     rep.errorCode = errorCode;
     rep.majorCode = majorCode;
     rep.minorCode = minorCode;

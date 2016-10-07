@@ -1,4 +1,3 @@
-/* $Xorg: ungrdevb.c,v 1.4 2001/02/09 02:04:35 xorgcvs Exp $ */
 
 /************************************************************
 
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/Xi/ungrdevb.c,v 3.3 2001/01/17 22:13:26 dawes Exp $ */
 
 /***********************************************************************
  *
@@ -53,8 +51,6 @@ SOFTWARE.
  *
  */
 
-#define	 NEED_EVENTS
-#define	 NEED_REPLIES
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
@@ -86,13 +82,11 @@ int
 SProcXUngrabDeviceButton(client)
     register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xUngrabDeviceButtonReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xUngrabDeviceButtonReq);
-    swapl(&stuff->grabWindow, n);
-    swaps(&stuff->modifiers, n);
+    swapl(&stuff->grabWindow);
+    swaps(&stuff->modifiers);
     return(ProcXUngrabDeviceButton(client));
     }
 

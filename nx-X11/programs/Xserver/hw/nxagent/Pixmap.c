@@ -1,17 +1,25 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
+/* are copyright of the aforementioned persons and companies.             */
 /*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
 /*                                                                        */
 /* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
 /*                                                                        */
 /**************************************************************************/
 
@@ -487,7 +495,7 @@ Bool nxagentDestroyPixmap(PixmapPtr pPixmap)
     FreeResource(pPixmapPriv -> mid, RT_NONE);
   }
 
-  xfree(pPixmap);
+  free(pPixmap);
 
   return True;
 }
@@ -1251,7 +1259,7 @@ void nxagentSynchronizeShmPixmap(DrawablePtr pDrawable, int xPict, int yPict,
 
     nxagentFBTrap = 1;
 
-    if ((data = xalloc(length)) != NULL)
+    if ((data = malloc(length)) != NULL)
     {
       fbGetImage(nxagentVirtualDrawable(pDrawable), xPict, yPict,
                      width, height, format, 0xffffffff, data);
@@ -1259,7 +1267,7 @@ void nxagentSynchronizeShmPixmap(DrawablePtr pDrawable, int xPict, int yPict,
       nxagentPutImage(pDrawable, pGC, depth, xPict, yPict,
                           width, height, 0, format, data);
 
-      xfree(data);
+      free(data);
     }
     #ifdef WARNING
     else
@@ -1373,7 +1381,7 @@ FIXME: If the pixmap has a different depth from the window, the
 
   length = nxagentImageLength(width, height, format, 0, depth);
 
-  if ((data = xalloc(length)) == NULL)
+  if ((data = malloc(length)) == NULL)
   {
     #ifdef WARNING
     fprintf(stderr, "nxagentPixmapOnShadowDisplay: WARNING! Failed to allocate memory for the operation.\n");
@@ -1409,7 +1417,7 @@ FIXME: If the pixmap has a different depth from the window, the
 
     if (data != NULL)
     {
-      xfree(data);
+      free(data);
     }
 
     return False;
@@ -1535,7 +1543,7 @@ Bool nxagentFbOnShadowDisplay()
 
   length = nxagentImageLength(width, height, format, 0, depth);
 
-  if ((data = xalloc(length)) == NULL)
+  if ((data = malloc(length)) == NULL)
   {
     #ifdef WARNING
     fprintf(stderr, "nxagentFbOnShadowDisplay: WARNING! Failed to allocate memory for the operation.\n");
@@ -1571,7 +1579,7 @@ Bool nxagentFbOnShadowDisplay()
 
     if (data)
     {
-      xfree(data);
+      free(data);
     }
 
     return False;

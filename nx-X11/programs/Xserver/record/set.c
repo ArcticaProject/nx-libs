@@ -1,4 +1,3 @@
-/* $Xorg: set.c,v 1.4 2001/02/09 02:05:27 xorgcvs Exp $ */
 
 /*
 
@@ -27,7 +26,6 @@ other dealings in this Software without prior written authorization
 from The Open Group.
 
 */
-/* $XFree86: xc/programs/Xserver/record/set.c,v 1.7 2001/12/14 20:00:37 dawes Exp $ */
 
 /*
 
@@ -72,18 +70,8 @@ typedef int Bool;
 
 typedef unsigned short CARD16;
 
-#define xalloc malloc
-#define xfree free
 #define ALLOCATE_LOCAL malloc
 #define DEALLOCATE_LOCAL free
-
-void *Xcalloc(size)
-    int size;
-{
-    void *p = malloc(size);
-    if (p) memset(p, 0, size);
-    return p;
-}
 
 #ifndef max
 #define max(_a, _b) ( ((_a) > (_b)) ? (_a) : (_b) )
@@ -135,7 +123,7 @@ static void
 BitVectorDestroySet(pSet)
     RecordSetPtr pSet;
 {
-    xfree(pSet);
+    free(pSet);
 }
 
 static unsigned long
@@ -260,7 +248,7 @@ BitVectorCreateSet(pIntervals, nIntervals, pMem, memsize)
     }
     else
     {
-	pbvs = (BitVectorSetPtr)Xcalloc(memsize);
+	pbvs = (BitVectorSetPtr)calloc(1, memsize);
 	if (!pbvs) return NULL;
 	pbvs->baseSet.ops = &BitVectorSetOperations;
     }
@@ -295,7 +283,7 @@ static void
 IntervalListDestroySet(pSet)
     RecordSetPtr pSet;
 {
-    xfree(pSet);
+    free(pSet);
 }
 
 static unsigned long
@@ -425,7 +413,7 @@ IntervalListCreateSet(pIntervals, nIntervals, pMem, memsize)
     else
     {
 	prls = (IntervalListSetPtr)
-	    xalloc(sizeof(IntervalListSet) + nIntervals * sizeof(RecordSetInterval));
+	    malloc(sizeof(IntervalListSet) + nIntervals * sizeof(RecordSetInterval));
 	if (!prls) goto bailout;
 	prls->baseSet.ops = &IntervalListSetOperations;
     }
@@ -612,7 +600,7 @@ int main(argc, argv)
 	    _RecordForceSetImplementation(IntervalListImplementation);
 	    rsize = RecordSetMemoryRequirements(intervals, nIntervals, &ralign);
 	    pad = (ralign - (bsize & (ralign - 1))) & (ralign - 1);
-	    bs = (RecordSetPtr)xalloc(bsize + pad + rsize );
+	    bs = (RecordSetPtr)malloc(bsize + pad + rsize );
 	    if (!bs)
 	    {
 		fprintf(stderr, "%d: failed to alloc memory for  sets\n",
@@ -702,7 +690,7 @@ int main(argc, argv)
 
 	if (testcount & 1)
 	{
-	    xfree(bs);
+	    free(bs);
 	}
     }
 }

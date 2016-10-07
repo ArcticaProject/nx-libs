@@ -1,3 +1,28 @@
+/**************************************************************************/
+/*                                                                        */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
+/*                                                                        */
+/* nx-X11, NX protocol compression and NX extensions to this software     */
+/* are copyright of the aforementioned persons and companies.             */
+/*                                                                        */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
+/*                                                                        */
+/* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
+/*                                                                        */
+/**************************************************************************/
+
 /*
 
 Copyright 1987, 1998  The Open Group
@@ -76,25 +101,6 @@ OR PERFORMANCE OF THIS SOFTWARE.
  * authorization from the copyright holder(s) and author(s).
  */
 
-/* $XFree86: xc/programs/Xserver/os/log.c,v 1.6 2003/11/07 13:45:27 tsi Exp $ */
-
-/**************************************************************************/
-/*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
-/*                                                                        */
-/* NX-X11, NX protocol compression and NX extensions to this software     */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
-/*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
-/*                                                                        */
-/* All rights reserved.                                                   */
-/*                                                                        */
-/**************************************************************************/
-
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
@@ -107,6 +113,7 @@ OR PERFORMANCE OF THIS SOFTWARE.
 #include <stdlib.h>	/* for malloc() */
 #include <errno.h>
 
+#include "input.h"
 #include "site.h"
 #include "opaque.h"
 
@@ -186,7 +193,7 @@ LogInit(const char *fname, const char *backup)
     char *logFileName = NULL;
 
     if (fname && *fname) {
-	/* xalloc() can't be used yet. */
+	/* malloc() can't be used yet. */
 	logFileName = malloc(strlen(fname) + strlen(display) + 1);
 	if (!logFileName)
 	    FatalError("Cannot allocate space for the log file name\n");
@@ -236,7 +243,7 @@ LogInit(const char *fname, const char *backup)
      * needed.
      */
     if (saveBuffer && bufferSize > 0) {
-	free(saveBuffer);	/* Must be free(), not xfree() */
+	free(saveBuffer);	/* Must be free(), not free() */
 	saveBuffer = NULL;
 	bufferSize = 0;
     }
@@ -333,7 +340,7 @@ LogVWrite(int verb, const char *f, va_list args)
 	} else if (needBuffer) {
 	    /*
 	     * Note, this code is used before OsInit() has been called, so
-	     * xalloc() and friends can't be used.
+	     * malloc() and friends can't be used.
 	     */
 	    if (len > bufferUnused) {
 		bufferSize += 1024;
@@ -561,15 +568,6 @@ VAuditF(const char *f, va_list args)
     prefix = AuditPrefix();
     len = vsnprintf(buf, sizeof(buf), f, args);
 
-#if 1
-    /* XXX Compressing duplicated messages is temporarily disabled to
-     * work around bugzilla 964:
-     *     https://freedesktop.org/bugzilla/show_bug.cgi?id=964
-     */
-    ErrorF("%s%s", prefix != NULL ? prefix : "", buf);
-    oldlen = -1;
-    nrepeat = 0;
-#else
     if (len == oldlen && strcmp(buf, oldbuf) == 0) {
 	/* Message already seen */
 	nrepeat++;
@@ -583,7 +581,6 @@ VAuditF(const char *f, va_list args)
 	nrepeat = 0;
 	auditTimer = TimerSet(auditTimer, 0, AUDIT_TIMEOUT, AuditFlush, NULL);
     }
-#endif
     if (prefix != NULL)
 	free(prefix);
 }

@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/Xext/shm.c,v 3.41 2003/12/17 23:28:56 alanh Exp $ */
 /************************************************************
 
 Copyright 1989, 1998  The Open Group
@@ -27,7 +26,6 @@ in this Software without prior written authorization from The Open Group.
 
 /* THIS IS NOT AN X CONSORTIUM STANDARD OR AN X PROJECT TEAM SPECIFICATION */
 
-/* $Xorg: shm.c,v 1.4 2001/02/09 02:04:33 xorgcvs Exp $ */
 
 #define SHM
 
@@ -45,8 +43,6 @@ in this Software without prior written authorization from The Open Group.
 #endif
 #include <unistd.h>
 #include <sys/stat.h>
-#define NEED_REPLIES
-#define NEED_EVENTS
 #include <nx-X11/X.h>
 #include <nx-X11/Xproto.h>
 #include "misc.h"
@@ -60,11 +56,12 @@ in this Software without prior written authorization from The Open Group.
 #include "extnsionst.h"
 #include "servermd.h"
 #define _XSHM_SERVER_
-#include <nx-X11/extensions/shmstr.h>
+#include <X11/extensions/shmstr.h>
 #include <nx-X11/Xfuncproto.h>
 #ifdef EXTMODULE
 #include "xf86_ansic.h"
 #endif
+#include "protocol-versions.h"
 
 #ifdef PANORAMIX
 #include "panoramiX.h"
@@ -202,8 +199,9 @@ static Bool CheckForShmSyscall()
 
 #endif
 
+#ifndef NXAGENT_SERVER
 void
-ShmExtensionInit(INITARGS)
+ShmExtensionInit(void)
 {
     ExtensionEntry *extEntry;
     int i;
@@ -265,6 +263,7 @@ ShmExtensionInit(INITARGS)
 	EventSwapVector[ShmCompletionCode] = (EventSwapPtr) SShmCompletionEvent;
     }
 }
+#endif /* NXAGENT_SERVER */
 
 /*ARGSUSED*/
 static void
@@ -343,7 +342,6 @@ ProcShmQueryVersion(client)
     register ClientPtr client;
 {
     xShmQueryVersionReply rep;
-    register int n;
 
     REQUEST_SIZE_MATCH(xShmQueryVersionReq);
     memset(&rep, 0, sizeof(xShmQueryVersionReply));
@@ -352,19 +350,19 @@ ProcShmQueryVersion(client)
     rep.sequenceNumber = client->sequence;
     rep.sharedPixmaps = sharedPixmaps;
     rep.pixmapFormat = pixmapFormat;
-    rep.majorVersion = SHM_MAJOR_VERSION;
-    rep.minorVersion = SHM_MINOR_VERSION;
+    rep.majorVersion = SERVER_SHM_MAJOR_VERSION;
+    rep.minorVersion = SERVER_SHM_MINOR_VERSION;
     rep.uid = geteuid();
     rep.gid = getegid();
     if (client->swapped) {
-    	swaps(&rep.sequenceNumber, n);
-    	swapl(&rep.length, n);
-	swaps(&rep.majorVersion, n);
-	swaps(&rep.minorVersion, n);
-	swaps(&rep.uid, n);
-	swaps(&rep.gid, n);
+	swaps(&rep.sequenceNumber);
+	swapl(&rep.length);
+	swaps(&rep.majorVersion);
+	swaps(&rep.minorVersion);
+	swaps(&rep.uid);
+	swaps(&rep.gid);
     }
-    WriteToClient(client, sizeof(xShmQueryVersionReply), (char *)&rep);
+    WriteToClient(client, sizeof(xShmQueryVersionReply), &rep);
     return (client->noClientException);
 }
 
@@ -436,7 +434,7 @@ ProcShmAttach(client)
     }
     else
     {
-	shmdesc = (ShmDescPtr) xalloc(sizeof(ShmDescRec));
+	shmdesc = (ShmDescPtr) malloc(sizeof(ShmDescRec));
 	if (!shmdesc)
 	    return BadAlloc;
 	shmdesc->addr = shmat(stuff->shmid, 0,
@@ -444,7 +442,7 @@ ProcShmAttach(client)
 	if ((shmdesc->addr == ((char *)-1)) ||
 	    shmctl(stuff->shmid, IPC_STAT, &buf))
 	{
-	    xfree(shmdesc);
+	    free(shmdesc);
 	    return BadAccess;
 	}
 
@@ -454,7 +452,7 @@ ProcShmAttach(client)
 
 	if (shm_access(client, &(buf.shm_perm), stuff->readOnly) == -1) {
 	    shmdt(shmdesc->addr);
-	    xfree(shmdesc);
+	    free(shmdesc);
 	    return BadAccess;
 	}
 
@@ -485,7 +483,7 @@ ShmDetachSegment(value, shmseg)
     for (prev = &Shmsegs; *prev != shmdesc; prev = &(*prev)->next)
 	;
     *prev = shmdesc->next;
-    xfree(shmdesc);
+    free(shmdesc);
     return Success;
 }
 
@@ -502,6 +500,7 @@ ProcShmDetach(client)
     return(client->noClientException);
 }
 
+#ifndef NXAGENT_SERVER
 static void
 miShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
     DrawablePtr dst;
@@ -563,6 +562,7 @@ fbShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
 	miShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy,
 		      data);
 }
+#endif /* NXAGENT_SERVER */
 
 
 #ifdef PANORAMIX
@@ -707,13 +707,12 @@ ProcPanoramiXShmGetImage(ClientPtr client)
     }
     
     if (client->swapped) {
-	register int n;
-    	swaps(&xgi.sequenceNumber, n);
-    	swapl(&xgi.length, n);
-	swapl(&xgi.visual, n);
-	swapl(&xgi.size, n);
+	swaps(&xgi.sequenceNumber);
+	swapl(&xgi.length);
+	swapl(&xgi.visual);
+	swapl(&xgi.size);
     }
-    WriteToClient(client, sizeof(xShmGetImageReply), (char *)&xgi);
+    WriteToClient(client, sizeof(xShmGetImageReply), &xgi);
 
     return(client->noClientException);
 }
@@ -774,7 +773,7 @@ CreatePmap:
 
     VERIFY_SHMSIZE(shmdesc, stuff->offset, size, client);
 
-    if(!(newPix = (PanoramiXRes *) xalloc(sizeof(PanoramiXRes))))
+    if(!(newPix = (PanoramiXRes *) malloc(sizeof(PanoramiXRes))))
 	return BadAlloc;
 
     newPix->type = XRT_PIXMAP;
@@ -815,7 +814,7 @@ CreatePmap:
 	    (*pScreen->DestroyPixmap)(pMap);
 	    FreeResource(newPix->info[j].id, RT_NONE);
 	}
-	xfree(newPix);
+	free(newPix);
     } else 
 	AddResource(stuff->pid, XRT_PIXMAP, newPix);
 
@@ -824,6 +823,7 @@ CreatePmap:
 
 #endif
 
+#ifndef NXAGENT_SERVER
 static int
 ProcShmPutImage(client)
     register ClientPtr client;
@@ -924,7 +924,6 @@ ProcShmPutImage(client)
 
 	ev.type = ShmCompletionCode;
 	ev.drawable = stuff->drawable;
-	ev.sequenceNumber = client->sequence;
 	ev.minorEvent = X_ShmPutImage;
 	ev.majorEvent = ShmReqCode;
 	ev.shmseg = stuff->shmseg;
@@ -934,7 +933,7 @@ ProcShmPutImage(client)
 
     return (client->noClientException);
 }
-
+#endif /* NXAGENT_SERVER */
 
 
 static int
@@ -946,7 +945,6 @@ ProcShmGetImage(client)
     Mask		plane = 0;
     xShmGetImageReply	xgi;
     ShmDescPtr		shmdesc;
-    int			n;
 
     REQUEST(xShmGetImageReq);
 
@@ -1037,16 +1035,17 @@ ProcShmGetImage(client)
     }
     
     if (client->swapped) {
-    	swaps(&xgi.sequenceNumber, n);
-    	swapl(&xgi.length, n);
-	swapl(&xgi.visual, n);
-	swapl(&xgi.size, n);
+	swaps(&xgi.sequenceNumber);
+	swapl(&xgi.length);
+	swapl(&xgi.visual);
+	swapl(&xgi.size);
     }
-    WriteToClient(client, sizeof(xShmGetImageReply), (char *)&xgi);
+    WriteToClient(client, sizeof(xShmGetImageReply), &xgi);
 
     return(client->noClientException);
 }
 
+#ifndef NXAGENT_SERVER
 static PixmapPtr
 fbShmCreatePixmap (pScreen, width, height, depth, addr)
     ScreenPtr	pScreen;
@@ -1068,6 +1067,7 @@ fbShmCreatePixmap (pScreen, width, height, depth, addr)
     }
     return pPixmap;
 }
+#endif /* NXAGENT_SERVER */
 
 static int
 ProcShmCreatePixmap(client)
@@ -1142,6 +1142,7 @@ CreatePmap:
     return (BadAlloc);
 }
 
+#ifndef NXAGENT_SERVER
 static int
 ProcShmDispatch (client)
     register ClientPtr	client;
@@ -1177,6 +1178,7 @@ ProcShmDispatch (client)
 	return BadRequest;
     }
 }
+#endif /* NXAGENT_SERVER */
 
 static void
 SShmCompletionEvent(from, to)
@@ -1195,10 +1197,9 @@ static int
 SProcShmQueryVersion(client)
     register ClientPtr	client;
 {
-    register int n;
     REQUEST(xShmQueryVersionReq);
 
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     return ProcShmQueryVersion(client);
 }
 
@@ -1206,12 +1207,11 @@ static int
 SProcShmAttach(client)
     ClientPtr client;
 {
-    register int n;
     REQUEST(xShmAttachReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xShmAttachReq);
-    swapl(&stuff->shmseg, n);
-    swapl(&stuff->shmid, n);
+    swapl(&stuff->shmseg);
+    swapl(&stuff->shmid);
     return ProcShmAttach(client);
 }
 
@@ -1219,11 +1219,10 @@ static int
 SProcShmDetach(client)
     ClientPtr client;
 {
-    register int n;
     REQUEST(xShmDetachReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xShmDetachReq);
-    swapl(&stuff->shmseg, n);
+    swapl(&stuff->shmseg);
     return ProcShmDetach(client);
 }
 
@@ -1231,22 +1230,21 @@ static int
 SProcShmPutImage(client)
     ClientPtr client;
 {
-    register int n;
     REQUEST(xShmPutImageReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xShmPutImageReq);
-    swapl(&stuff->drawable, n);
-    swapl(&stuff->gc, n);
-    swaps(&stuff->totalWidth, n);
-    swaps(&stuff->totalHeight, n);
-    swaps(&stuff->srcX, n);
-    swaps(&stuff->srcY, n);
-    swaps(&stuff->srcWidth, n);
-    swaps(&stuff->srcHeight, n);
-    swaps(&stuff->dstX, n);
-    swaps(&stuff->dstY, n);
-    swapl(&stuff->shmseg, n);
-    swapl(&stuff->offset, n);
+    swapl(&stuff->drawable);
+    swapl(&stuff->gc);
+    swaps(&stuff->totalWidth);
+    swaps(&stuff->totalHeight);
+    swaps(&stuff->srcX);
+    swaps(&stuff->srcY);
+    swaps(&stuff->srcWidth);
+    swaps(&stuff->srcHeight);
+    swaps(&stuff->dstX);
+    swaps(&stuff->dstY);
+    swapl(&stuff->shmseg);
+    swapl(&stuff->offset);
     return ProcShmPutImage(client);
 }
 
@@ -1254,18 +1252,17 @@ static int
 SProcShmGetImage(client)
     ClientPtr client;
 {
-    register int n;
     REQUEST(xShmGetImageReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xShmGetImageReq);
-    swapl(&stuff->drawable, n);
-    swaps(&stuff->x, n);
-    swaps(&stuff->y, n);
-    swaps(&stuff->width, n);
-    swaps(&stuff->height, n);
-    swapl(&stuff->planeMask, n);
-    swapl(&stuff->shmseg, n);
-    swapl(&stuff->offset, n);
+    swapl(&stuff->drawable);
+    swaps(&stuff->x);
+    swaps(&stuff->y);
+    swaps(&stuff->width);
+    swaps(&stuff->height);
+    swapl(&stuff->planeMask);
+    swapl(&stuff->shmseg);
+    swapl(&stuff->offset);
     return ProcShmGetImage(client);
 }
 
@@ -1273,19 +1270,19 @@ static int
 SProcShmCreatePixmap(client)
     ClientPtr client;
 {
-    register int n;
     REQUEST(xShmCreatePixmapReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xShmCreatePixmapReq);
-    swapl(&stuff->pid, n);
-    swapl(&stuff->drawable, n);
-    swaps(&stuff->width, n);
-    swaps(&stuff->height, n);
-    swapl(&stuff->shmseg, n);
-    swapl(&stuff->offset, n);
+    swapl(&stuff->pid);
+    swapl(&stuff->drawable);
+    swaps(&stuff->width);
+    swaps(&stuff->height);
+    swapl(&stuff->shmseg);
+    swapl(&stuff->offset);
     return ProcShmCreatePixmap(client);
 }
 
+#ifndef NXAGENT_SERVER
 static int
 SProcShmDispatch (client)
     register ClientPtr	client;
@@ -1309,3 +1306,4 @@ SProcShmDispatch (client)
 	return BadRequest;
     }
 }
+#endif /* NXAGENT_SERVER */

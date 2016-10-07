@@ -1,5 +1,7 @@
 #include <Server.tmpl>
 
+       NULL =
+
        SRCS =	damageext.c
 
        OBJS =	damageext.o
@@ -9,6 +11,14 @@
 		`pkg-config --cflags-only-I pixman-1`
 
    LINTLIBS = ../dix/llib-ldix.ln ../os/llib-los.ln
+
+#if defined(NXAgentServer) && NXAgentServer
+ NX_DEFINES = -DNXAGENT_SERVER
+#endif
+
+    DEFINES = 			\
+              $(NX_DEFINES)	\
+              $(NULL)
 
 NormalLibraryTarget(damage,$(OBJS))
 NormalLibraryObjectRule()

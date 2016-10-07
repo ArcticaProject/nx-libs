@@ -1,4 +1,3 @@
-/* $Xorg: midbe.c,v 1.3 2000/08/17 19:48:16 cpqbld Exp $ */
 /******************************************************************************
  * 
  * Copyright (c) 1994, 1995  Hewlett-Packard Company
@@ -30,13 +29,10 @@
  *     Machine-independent DBE code
  *
  *****************************************************************************/
-/* $XFree86: xc/programs/Xserver/dbe/midbe.c,v 3.4 2001/03/06 17:31:34 dawes Exp $ */
 
 
 /* INCLUDES */
 
-#define NEED_REPLIES
-#define NEED_EVENTS
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
@@ -115,7 +111,7 @@ miDbeGetVisualInfo(pScreen, pScrVisInfo)
     }
 
     /* Allocate an array of XdbeVisualInfo items. */
-    if (!(visInfo = (XdbeVisualInfo *)xalloc(count * sizeof(XdbeVisualInfo))))
+    if (!(visInfo = (XdbeVisualInfo *)malloc(count * sizeof(XdbeVisualInfo))))
     {
         return(FALSE); /* memory alloc failure */
     }

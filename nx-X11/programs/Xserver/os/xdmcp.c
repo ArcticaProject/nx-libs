@@ -1,5 +1,3 @@
-/* $XdotOrg: xc/programs/Xserver/os/xdmcp.c,v 1.10 2005/07/03 08:53:52 daniels Exp $ */
-/* $Xorg: xdmcp.c,v 1.4 2001/01/31 13:37:19 pookie Exp $ */
 /*
  * Copyright 1989 Network Computing Devices, Inc., Mountain View, California.
  *
@@ -14,7 +12,6 @@
  * without express or implied warranty.
  *
  */
-/* $XFree86: xc/programs/Xserver/os/xdmcp.c,v 3.31 2003/12/30 21:24:32 herrb Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -407,7 +404,7 @@ XdmcpRegisterAuthentication (
 				     AuthenticationNames.length + 1) &&
 	  XdmcpReallocARRAYofARRAY8 (&AuthenticationDatas,
 				     AuthenticationDatas.length + 1) &&
-	  (newFuncs = (AuthenticationFuncsPtr) xalloc (
+	  (newFuncs = (AuthenticationFuncsPtr) malloc (
 			(AuthenticationNames.length + 1) * sizeof (AuthenticationFuncsRec)))))
     {
 	XdmcpDisposeARRAY8 (&AuthenticationName);
@@ -419,7 +416,7 @@ XdmcpRegisterAuthentication (
     newFuncs[AuthenticationNames.length-1].Validator = Validator;
     newFuncs[AuthenticationNames.length-1].Generator = Generator;
     newFuncs[AuthenticationNames.length-1].AddAuth = AddAuth;
-    xfree (AuthenticationFuncsList);
+    free (AuthenticationFuncsList);
     AuthenticationFuncsList = newFuncs;
     AuthenticationNames.data[AuthenticationNames.length-1] = AuthenticationName;
     AuthenticationDatas.data[AuthenticationDatas.length-1] = AuthenticationData;
@@ -507,18 +504,18 @@ XdmcpRegisterConnection (
 	    return;
 	}
     }
-    newAddress = (CARD8 *) xalloc (addrlen * sizeof (CARD8));
+    newAddress = (CARD8 *) malloc (addrlen * sizeof (CARD8));
     if (!newAddress)
 	return;
     if (!XdmcpReallocARRAY16 (&ConnectionTypes, ConnectionTypes.length + 1))
     {
-	xfree (newAddress);
+	free (newAddress);
 	return;
     }
     if (!XdmcpReallocARRAYofARRAY8 (&ConnectionAddresses,
 				    ConnectionAddresses.length +  1))
     {
-	xfree (newAddress);
+	free (newAddress);
 	return;
     }
     ConnectionTypes.data[ConnectionTypes.length - 1] = (CARD16) type;
@@ -548,12 +545,12 @@ XdmcpRegisterAuthorization (char *name, int namelen)
     ARRAY8  authName;
     int	    i;
 
-    authName.data = (CARD8 *) xalloc (namelen * sizeof (CARD8));
+    authName.data = (CARD8 *) malloc (namelen * sizeof (CARD8));
     if (!authName.data)
 	return;
     if (!XdmcpReallocARRAYofARRAY8 (&AuthorizationNames, AuthorizationNames.length +1))
     {
-	xfree (authName.data);
+	free (authName.data);
 	return;
     }
     for (i = 0; i < namelen; i++)

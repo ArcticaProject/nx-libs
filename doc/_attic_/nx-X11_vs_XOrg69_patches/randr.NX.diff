@@ -1,0 +1,2704 @@
+diff -u ./nx-X11/programs/Xserver/randr.X.original/Imakefile ./nx-X11/programs/Xserver/randr/Imakefile
+--- ./nx-X11/programs/Xserver/randr.X.original/Imakefile	2015-02-13 14:03:44.792440567 +0100
++++ ./nx-X11/programs/Xserver/randr/Imakefile	2015-02-10 19:13:13.636692176 +0100
+@@ -1,15 +1,33 @@
++/**************************************************************************/
++/*                                                                        */
++/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
++/*                                                                        */
++/* NX-X11, NX protocol compression and NX extensions to this software     */
++/* are copyright of NoMachine. Redistribution and use of the present      */
++/* software is allowed according to terms specified in the file LICENSE   */
++/* which comes in the source distribution.                                */
++/*                                                                        */
++/* Check http://www.nomachine.com/licensing.html for applicability.       */
++/*                                                                        */
++/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
++/*                                                                        */
++/* All rights reserved.                                                   */
++/*                                                                        */
++/**************************************************************************/
+ XCOMM $XFree86: xc/programs/Xserver/randr/Imakefile,v 1.1 2001/05/23 03:29:44 keithp Exp $
+ #include <Server.tmpl>
+ 
+-       SRCS =	randr.c mirandr.c
++       SRCS =	mirandr.c randr.c rrcrtc.c rrdispatch.c rrinfo.c rrmode.c rroutput.c rrpointer.c rrproperty.c rrscreen.c rrsdispatch.c rrxinerama.c
+ 
+-       OBJS =	randr.o mirandr.o
++       OBJS =	mirandr.o randr.o rrcrtc.o rrdispatch.o rrinfo.o rrmode.o rroutput.o rrpointer.o rrproperty.o rrscreen.o rrsdispatch.o rrxinerama.o
+ 
+    INCLUDES = -I../include -I../mi -I../../../include/fonts \
+ 		-I../fb -I../hw/kdrive -I$(EXTINCSRC) -I$(XINCLUDESRC) \
+ 		-I$(FONTINCSRC) -I../render
+    LINTLIBS = ../dix/llib-ldix.ln ../os/llib-los.ln
+ 
++    DEFINES = -DNXAGENT_SERVER
++
+ NormalLibraryTarget(randr,$(OBJS))
+ NormalLibraryObjectRule()
+ LintLibraryTarget(randr,$(SRCS))
+Only in ./nx-X11/programs/Xserver/randr: Imakefile.NX.original
+Only in ./nx-X11/programs/Xserver/randr: Imakefile.X.original
+Only in ./nx-X11/programs/Xserver/randr: Makefile.am
+Only in ./nx-X11/programs/Xserver/randr: Makefile.in
+diff -u ./nx-X11/programs/Xserver/randr.X.original/mirandr.c ./nx-X11/programs/Xserver/randr/mirandr.c
+--- ./nx-X11/programs/Xserver/randr.X.original/mirandr.c	2015-02-13 14:03:44.792440567 +0100
++++ ./nx-X11/programs/Xserver/randr/mirandr.c	2015-02-10 19:13:13.616692925 +0100
+@@ -1,76 +1,42 @@
+ /*
+- * $XFree86: xc/programs/Xserver/randr/mirandr.c,v 1.5 2001/06/04 09:45:40 keithp Exp $
+- *
+- * Copyright © 2000, Compaq Computer Corporation, 
+- * Copyright © 2002, Hewlett Packard, Inc.
++ * Copyright © 2000 Compaq Computer Corporation
++ * Copyright © 2002 Hewlett-Packard Company
++ * Copyright © 2006 Intel Corporation
+  *
+  * Permission to use, copy, modify, distribute, and sell this software and its
+  * documentation for any purpose is hereby granted without fee, provided that
+- * the above copyright notice appear in all copies and that both that
+- * copyright notice and this permission notice appear in supporting
+- * documentation, and that the name of Compaq or HP not be used in advertising
+- * or publicity pertaining to distribution of the software without specific,
+- * written prior permission.  HP makes no representations about the
+- * suitability of this software for any purpose.  It is provided "as is"
+- * without express or implied warranty.
++ * the above copyright notice appear in all copies and that both that copyright
++ * notice and this permission notice appear in supporting documentation, and
++ * that the name of the copyright holders not be used in advertising or
++ * publicity pertaining to distribution of the software without specific,
++ * written prior permission.  The copyright holders make no representations
++ * about the suitability of this software for any purpose.  It is provided "as
++ * is" without express or implied warranty.
+  *
+- * HP DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING ALL
+- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL HP
+- * BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
+- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN 
+- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
++ * THE COPYRIGHT HOLDERS DISCLAIM ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
++ * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO
++ * EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY SPECIAL, INDIRECT OR
++ * CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE,
++ * DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
++ * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
++ * OF THIS SOFTWARE.
+  *
+- * Author:  Jim Gettys, HP Labs, Hewlett-Packard, Inc.
++ * Author:  Jim Gettys, Hewlett-Packard Company, Inc.
++ *	    Keith Packard, Intel Corporation
+  */
+ 
+-
+ #ifdef HAVE_DIX_CONFIG_H
+ #include <dix-config.h>
+ #endif
+ 
+ #include "scrnintstr.h"
+ #include "mi.h"
+-#include <X11/extensions/randr.h>
+ #include "randrstr.h"
+ #include <stdio.h>
+ 
+-/*
+- * This function assumes that only a single depth can be
+- * displayed at a time, but that all visuals of that depth
+- * can be displayed simultaneously.  It further assumes that
+- * only a single size is available.  Hardware providing
+- * additional capabilties should use different code.
+- * XXX what to do here....
+- */
+-
+ Bool
+ miRRGetInfo (ScreenPtr pScreen, Rotation *rotations)
+ {
+-    int	i;
+-    Bool setConfig = FALSE;
+-    
+-    *rotations = RR_Rotate_0;
+-    for (i = 0; i < pScreen->numDepths; i++)
+-    {
+-	if (pScreen->allowedDepths[i].numVids)
+-	{
+-		RRScreenSizePtr		pSize;
+-
+-		pSize = RRRegisterSize (pScreen,
+-					pScreen->width,
+-					pScreen->height,
+-					pScreen->mmWidth,
+-					pScreen->mmHeight);
+-		if (!pSize)
+-		    return FALSE;
+-		if (!setConfig)
+-		{
+-		    RRSetCurrentConfig (pScreen, RR_Rotate_0, 0, pSize);
+-		    setConfig = TRUE;
+-		}
+-	}
+-    }
+     return TRUE;
+ }
+ 
+@@ -79,24 +45,110 @@
+  * different here
+  */
+ Bool
+-miRRSetConfig (ScreenPtr	pScreen,
+-	       Rotation		rotation,
+-	       int		rate,
+-	       RRScreenSizePtr	pSize)
++miRRCrtcSet (ScreenPtr	pScreen,
++	     RRCrtcPtr	crtc,
++	     RRModePtr	mode,
++	     int	x,
++	     int	y,
++	     Rotation	rotation,
++	     int	numOutput,
++	     RROutputPtr *outputs)
+ {
+     return TRUE;
+ }
+ 
++static Bool
++miRRCrtcSetGamma (ScreenPtr	pScreen,
++		  RRCrtcPtr	crtc)
++{
++    return TRUE;
++}
++
++Bool
++miRROutputSetProperty (ScreenPtr	    pScreen,
++		       RROutputPtr	    output,
++		       Atom		    property,
++		       RRPropertyValuePtr   value)
++{
++    return TRUE;
++}
++
++Bool
++miRROutputValidateMode (ScreenPtr	    pScreen,
++			RROutputPtr	    output,
++			RRModePtr	    mode)
++{
++    return FALSE;
++}
++
++void
++miRRModeDestroy (ScreenPtr  pScreen,
++		 RRModePtr  mode)
++{
++}
++
++/*
++ * This function assumes that only a single depth can be
++ * displayed at a time, but that all visuals of that depth
++ * can be displayed simultaneously.  It further assumes that
++ * only a single size is available.  Hardware providing
++ * additional capabilties should use different code.
++ * XXX what to do here....
++ */
+ 
+ Bool
+ miRandRInit (ScreenPtr pScreen)
+ {
+-    rrScrPrivPtr    rp;
++    rrScrPrivPtr    pScrPriv;
++#if RANDR_12_INTERFACE
++    RRModePtr	mode;
++    RRCrtcPtr	crtc;
++    RROutputPtr	output;
++    xRRModeInfo modeInfo;
++    char	name[64];
++#endif
+     
+     if (!RRScreenInit (pScreen))
+ 	return FALSE;
+-    rp = rrGetScrPriv(pScreen);
+-    rp->rrGetInfo = miRRGetInfo;
+-    rp->rrSetConfig = miRRSetConfig;
++    pScrPriv = rrGetScrPriv(pScreen);
++    pScrPriv->rrGetInfo = miRRGetInfo;
++#if RANDR_12_INTERFACE
++    pScrPriv->rrCrtcSet = miRRCrtcSet;
++    pScrPriv->rrCrtcSetGamma = miRRCrtcSetGamma;
++    pScrPriv->rrOutputSetProperty = miRROutputSetProperty;
++    pScrPriv->rrOutputValidateMode = miRROutputValidateMode;
++    pScrPriv->rrModeDestroy = miRRModeDestroy;
++    
++    RRScreenSetSizeRange (pScreen,
++			  pScreen->width, pScreen->height,
++			  pScreen->width, pScreen->height);
++
++    sprintf (name, "%dx%d", pScreen->width, pScreen->height);
++    memset (&modeInfo, '\0', sizeof (modeInfo));
++    modeInfo.width = pScreen->width;
++    modeInfo.height = pScreen->height;
++    modeInfo.nameLength = strlen (name);
++    
++    mode = RRModeGet (&modeInfo, name);
++    if (!mode)
++	return FALSE;
++    
++    crtc = RRCrtcCreate (pScreen, NULL);
++    if (!crtc)
++	return FALSE;
++    
++    output = RROutputCreate (pScreen, "screen", 6, NULL);
++    if (!output)
++	return FALSE;
++    if (!RROutputSetClones (output, NULL, 0))
++	return FALSE;
++    if (!RROutputSetModes (output, &mode, 1, 0))
++	return FALSE;
++    if (!RROutputSetCrtcs (output, &crtc, 1))
++	return FALSE;
++    if (!RROutputSetConnection (output, RR_Connected))
++	return FALSE;
++    RRCrtcNotify (crtc, mode, 0, 0, RR_Rotate_0, 1, &output);
++#endif
+     return TRUE;
+ }
+Only in ./nx-X11/programs/Xserver/randr: panoramiXproto.h
+Only in ./nx-X11/programs/Xserver/randr: panoramiXproto.h.NX.original
+Only in ./nx-X11/programs/Xserver/randr: panoramiXproto.h.X.original
+diff -u ./nx-X11/programs/Xserver/randr.X.original/randr.c ./nx-X11/programs/Xserver/randr/randr.c
+--- ./nx-X11/programs/Xserver/randr.X.original/randr.c	2015-02-13 14:03:44.792440567 +0100
++++ ./nx-X11/programs/Xserver/randr/randr.c	2015-02-10 19:13:13.616692925 +0100
+@@ -1,29 +1,46 @@
+ /*
+- * $XFree86: xc/programs/Xserver/randr/randr.c,v 1.21tsi Exp $
+- *
+- * Copyright © 2000, Compaq Computer Corporation, 
+- * Copyright © 2002, Hewlett Packard, Inc.
++ * Copyright © 2000 Compaq Computer Corporation
++ * Copyright © 2002 Hewlett-Packard Company
++ * Copyright © 2006 Intel Corporation
+  *
+  * Permission to use, copy, modify, distribute, and sell this software and its
+  * documentation for any purpose is hereby granted without fee, provided that
+- * the above copyright notice appear in all copies and that both that
+- * copyright notice and this permission notice appear in supporting
+- * documentation, and that the name of Compaq or HP not be used in advertising
+- * or publicity pertaining to distribution of the software without specific,
+- * written prior permission.  HP makes no representations about the
+- * suitability of this software for any purpose.  It is provided "as is"
+- * without express or implied warranty.
++ * the above copyright notice appear in all copies and that both that copyright
++ * notice and this permission notice appear in supporting documentation, and
++ * that the name of the copyright holders not be used in advertising or
++ * publicity pertaining to distribution of the software without specific,
++ * written prior permission.  The copyright holders make no representations
++ * about the suitability of this software for any purpose.  It is provided "as
++ * is" without express or implied warranty.
+  *
+- * HP DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING ALL
+- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL HP
+- * BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
+- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN 
+- * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
++ * THE COPYRIGHT HOLDERS DISCLAIM ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
++ * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO
++ * EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY SPECIAL, INDIRECT OR
++ * CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE,
++ * DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
++ * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
++ * OF THIS SOFTWARE.
+  *
+- * Author:  Jim Gettys, HP Labs, Hewlett-Packard, Inc.
++ * Author:  Jim Gettys, Hewlett-Packard Company, Inc.
++ *	    Keith Packard, Intel Corporation
+  */
+ 
++/**************************************************************************/
++/*                                                                        */
++/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
++/*                                                                        */
++/* NX-X11, NX protocol compression and NX extensions to this software     */
++/* are copyright of NoMachine. Redistribution and use of the present      */
++/* software is allowed according to terms specified in the file LICENSE   */
++/* which comes in the source distribution.                                */
++/*                                                                        */
++/* Check http://www.nomachine.com/licensing.html for applicability.       */
++/*                                                                        */
++/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
++/*                                                                        */
++/* All rights reserved.                                                   */
++/*                                                                        */
++/**************************************************************************/
+ 
+ #define NEED_REPLIES
+ #define NEED_EVENTS
+@@ -31,28 +48,7 @@
+ #include <dix-config.h>
+ #endif
+ 
+-#include <X11/X.h>
+-#include <X11/Xproto.h>
+-#include "misc.h"
+-#include "os.h"
+-#include "dixstruct.h"
+-#include "resource.h"
+-#include "scrnintstr.h"
+-#include "windowstr.h"
+-#include "pixmapstr.h"
+-#include "extnsionst.h"
+-#include "servermd.h"
+-#include <X11/extensions/randr.h>
+-#include <X11/extensions/randrproto.h>
+ #include "randrstr.h"
+-#ifdef RENDER
+-#include <X11/extensions/render.h> 	/* we share subpixel order information */
+-#include "picturestr.h"
+-#endif
+-#include <X11/Xfuncproto.h>
+-#ifdef EXTMODULE
+-#include "xf86_ansic.h"
+-#endif
+ 
+ /* From render.h */
+ #ifndef SubPixelUnknown
+@@ -60,13 +56,7 @@
+ #endif
+ 
+ #define RR_VALIDATE
+-int	RRGeneration;
+-int	RRNScreens;
+-
+-static int ProcRRQueryVersion (ClientPtr pClient);
+-static int ProcRRDispatch (ClientPtr pClient);
+-static int SProcRRDispatch (ClientPtr pClient);
+-static int SProcRRQueryVersion (ClientPtr pClient);
++static int	RRNScreens;
+ 
+ #define wrap(priv,real,mem,func) {\
+     priv->mem = real->mem; \
+@@ -77,56 +67,20 @@
+     real->mem = priv->mem; \
+ }
+ 
+-#if 0
+-static CARD8	RRReqCode;
+-static int	RRErrBase;
+-#endif
+-static int	RREventBase;
+-static RESTYPE ClientType, EventType; /* resource types for event masks */
+-static int	RRClientPrivateIndex;
+-
+-typedef struct _RRTimes {
+-    TimeStamp	setTime;
+-    TimeStamp	configTime;
+-} RRTimesRec, *RRTimesPtr;
+-
+-typedef struct _RRClient {
+-    int		major_version;
+-    int		minor_version;
+-/*  RRTimesRec	times[0]; */
+-} RRClientRec, *RRClientPtr;
+-
+-/*
+- * each window has a list of clients requesting
+- * RRNotify events.  Each client has a resource
+- * for each window it selects RRNotify input for,
+- * this resource is used to delete the RRNotifyRec
+- * entry from the per-window queue.
+- */
+-
+-typedef struct _RREvent *RREventPtr;
+-
+-typedef struct _RREvent {
+-    RREventPtr  next;
+-    ClientPtr	client;
+-    WindowPtr	window;
+-    XID		clientResource;
+-    int		mask;
+-} RREventRec;
++static int ProcRRDispatch (ClientPtr pClient);
++static int SProcRRDispatch (ClientPtr pClient);
+ 
++int	RREventBase;
++int	RRErrorBase;
++RESTYPE RRClientType, RREventType; /* resource types for event masks */
++
++#ifndef NXAGENT_SERVER
++DevPrivateKey RRClientPrivateKey = &RRClientPrivateKey;
++DevPrivateKey rrPrivKey = &rrPrivKey;
++#else
++int	RRClientPrivateIndex;
+ int	rrPrivIndex = -1;
+-
+-#define GetRRClient(pClient)    ((RRClientPtr) (pClient)->devPrivates[RRClientPrivateIndex].ptr)
+-#define rrClientPriv(pClient)	RRClientPtr pRRClient = GetRRClient(pClient)
+-
+-static Bool
+-RRClientKnowsRates (ClientPtr	pClient)
+-{
+-    rrClientPriv(pClient);
+-
+-    return (pRRClient->major_version > 1 ||
+-	    (pRRClient->major_version == 1 && pRRClient->minor_version >= 1));
+-}
++#endif
+ 
+ static void
+ RRClientCallback (CallbackListPtr	*list,
+@@ -163,10 +117,14 @@
+ RRCloseScreen (int i, ScreenPtr pScreen)
+ {
+     rrScrPriv(pScreen);
++    int		    j;
+ 
+     unwrap (pScrPriv, pScreen, CloseScreen);
+-    if (pScrPriv->pSizes)
+-	xfree (pScrPriv->pSizes);
++    for (j = pScrPriv->numCrtcs - 1; j >= 0; j--)
++	RRCrtcDestroy (pScrPriv->crtcs[j]);
++    for (j = pScrPriv->numOutputs - 1; j >= 0; j--)
++	RROutputDestroy (pScrPriv->outputs[j]);
++    
+     xfree (pScrPriv);
+     RRNScreens -= 1;	/* ok, one fewer screen with RandR running */
+     return (*pScreen->CloseScreen) (i, pScreen);    
+@@ -191,18 +149,105 @@
+     cpswaps(from->subpixelOrder, to->subpixelOrder);
+ }
+ 
+-Bool RRScreenInit(ScreenPtr pScreen)
++static void
++SRRCrtcChangeNotifyEvent(xRRCrtcChangeNotifyEvent *from,
++			 xRRCrtcChangeNotifyEvent *to)
+ {
+-    rrScrPrivPtr   pScrPriv;
++    to->type = from->type;
++    to->subCode = from->subCode;
++    cpswaps(from->sequenceNumber, to->sequenceNumber);
++    cpswapl(from->timestamp, to->timestamp);
++    cpswapl(from->window, to->window);
++    cpswapl(from->crtc, to->crtc);
++    cpswapl(from->mode, to->mode);
++    cpswapl(from->window, to->window);
++    cpswaps(from->rotation, to->rotation);
++    cpswaps(from->x, to->x);
++    cpswaps(from->y, to->y);
++    cpswaps(from->width, to->width);
++    cpswaps(from->height, to->height);
++}
++
++static void
++SRROutputChangeNotifyEvent(xRROutputChangeNotifyEvent *from,
++			   xRROutputChangeNotifyEvent *to)
++{
++    to->type = from->type;
++    to->subCode = from->subCode;
++    cpswaps(from->sequenceNumber, to->sequenceNumber);
++    cpswapl(from->timestamp, to->timestamp);
++    cpswapl(from->configTimestamp, to->configTimestamp);
++    cpswapl(from->window, to->window);
++    cpswapl(from->output, to->output);
++    cpswapl(from->crtc, to->crtc);
++    cpswapl(from->mode, to->mode);
++    cpswaps(from->rotation, to->rotation);
++}
+ 
++static void
++SRROutputPropertyNotifyEvent(xRROutputPropertyNotifyEvent *from,
++			     xRROutputPropertyNotifyEvent *to)
++{
++    to->type = from->type;
++    to->subCode = from->subCode;
++    cpswaps(from->sequenceNumber, to->sequenceNumber);
++    cpswapl(from->window, to->window);
++    cpswapl(from->output, to->output);
++    cpswapl(from->atom, to->atom);
++    cpswapl(from->timestamp, to->timestamp);
++}
++
++static void
++SRRNotifyEvent (xEvent *from,
++		xEvent *to)
++{
++    switch (from->u.u.detail) {
++    case RRNotify_CrtcChange:
++	SRRCrtcChangeNotifyEvent ((xRRCrtcChangeNotifyEvent *) from,
++				  (xRRCrtcChangeNotifyEvent *) to);
++	break;
++    case RRNotify_OutputChange:
++	SRROutputChangeNotifyEvent ((xRROutputChangeNotifyEvent *) from,
++				    (xRROutputChangeNotifyEvent *) to);
++	break;
++    case RRNotify_OutputProperty:
++	SRROutputPropertyNotifyEvent ((xRROutputPropertyNotifyEvent *) from,
++				      (xRROutputPropertyNotifyEvent *) to);
++	break;
++    default:
++	break;
++    }
++}
++
++static int RRGeneration;
++
++Bool RRInit (void)
++{
+     if (RRGeneration != serverGeneration)
+     {
++        #ifdef NXAGENT_SERVER
+ 	if ((rrPrivIndex = AllocateScreenPrivateIndex()) < 0)
+ 	    return FALSE;
++        #endif
++	if (!RRModeInit ())
++	    return FALSE;
++	if (!RRCrtcInit ())
++	    return FALSE;
++	if (!RROutputInit ())
++	    return FALSE;
+ 	RRGeneration = serverGeneration;
+     }
++    return TRUE;
++}
++
++Bool RRScreenInit(ScreenPtr pScreen)
++{
++    rrScrPrivPtr   pScrPriv;
++
++    if (!RRInit ())
++	return FALSE;
+ 
+-    pScrPriv = (rrScrPrivPtr) xalloc (sizeof (rrScrPrivRec));
++    pScrPriv = (rrScrPrivPtr) calloc (1, sizeof (rrScrPrivRec));
+     if (!pScrPriv)
+ 	return FALSE;
+ 
+@@ -211,8 +256,31 @@
+     /*
+      * Calling function best set these function vectors
+      */
+-    pScrPriv->rrSetConfig = 0;
+     pScrPriv->rrGetInfo = 0;
++    pScrPriv->maxWidth = pScrPriv->minWidth = pScreen->width;
++    pScrPriv->maxHeight = pScrPriv->minHeight = pScreen->height;
++    
++    pScrPriv->width = pScreen->width;
++    pScrPriv->height = pScreen->height;
++    pScrPriv->mmWidth = pScreen->mmWidth;
++    pScrPriv->mmHeight = pScreen->mmHeight;
++#if RANDR_12_INTERFACE
++    pScrPriv->rrScreenSetSize = NULL;
++    pScrPriv->rrCrtcSet = NULL;
++    pScrPriv->rrCrtcSetGamma = NULL;
++#endif
++#if RANDR_10_INTERFACE    
++    pScrPriv->rrSetConfig = 0;
++    pScrPriv->rotations = RR_Rotate_0;
++    pScrPriv->reqWidth = pScreen->width;
++    pScrPriv->reqHeight = pScreen->height;
++    pScrPriv->nSizes = 0;
++    pScrPriv->pSizes = NULL;
++    pScrPriv->rotation = RR_Rotate_0;
++    pScrPriv->rate = 0;
++    pScrPriv->size = 0;
++#endif
++    
+     /*
+      * This value doesn't really matter -- any client must call
+      * GetScreenInfo before reading it which will automatically update
+@@ -223,14 +291,10 @@
+     
+     wrap (pScrPriv, pScreen, CloseScreen, RRCloseScreen);
+ 
+-    pScrPriv->rotations = RR_Rotate_0;
+-    
+-    pScrPriv->nSizes = 0;
+-    pScrPriv->nSizesInUse = 0;
+-    pScrPriv->pSizes = 0;
+-    
+-    pScrPriv->rotation = RR_Rotate_0;
+-    pScrPriv->size = -1;
++    pScrPriv->numOutputs = 0;
++    pScrPriv->outputs = NULL;
++    pScrPriv->numCrtcs = 0;
++    pScrPriv->crtcs = NULL;
+     
+     RRNScreens += 1;	/* keep count of screens that implement randr */
+     return TRUE;
+@@ -246,7 +310,7 @@
+ 
+     pRREvent = (RREventPtr) data;
+     pWin = pRREvent->window;
+-    pHead = (RREventPtr *) LookupIDByType(pWin->drawable.id, EventType);
++    pHead = (RREventPtr *) LookupIDByType(pWin->drawable.id, RREventType);
+     if (pHead) {
+ 	pPrev = 0;
+ 	for (pCur = *pHead; pCur && pCur != pRREvent; pCur=pCur->next)
+@@ -272,7 +336,7 @@
+     pHead = (RREventPtr *) data;
+     for (pCur = *pHead; pCur; pCur = pNext) {
+ 	pNext = pCur->next;
+-	FreeResource (pCur->clientResource, ClientType);
++	FreeResource (pCur->clientResource, RRClientType);
+ 	xfree ((pointer) pCur);
+     }
+     xfree ((pointer) pHead);
+@@ -286,1034 +350,172 @@
+ 
+     if (RRNScreens == 0) return;
+ 
++    #ifndef NXAGENT_SERVER
++    if (!dixRequestPrivate(RRClientPrivateKey,
++				sizeof (RRClientRec) +
++				screenInfo.numScreens * sizeof (RRTimesRec)))
++	return;
++    #else
+     RRClientPrivateIndex = AllocateClientPrivateIndex ();
+     if (!AllocateClientPrivate (RRClientPrivateIndex,
+ 				sizeof (RRClientRec) +
+ 				screenInfo.numScreens * sizeof (RRTimesRec)))
+ 	return;
++    #endif
+     if (!AddCallback (&ClientStateCallback, RRClientCallback, 0))
+ 	return;
+ 
+-    ClientType = CreateNewResourceType(RRFreeClient);
+-    if (!ClientType)
++    RRClientType = CreateNewResourceType(RRFreeClient);
++    if (!RRClientType)
+ 	return;
+-    EventType = CreateNewResourceType(RRFreeEvents);
+-    if (!EventType)
++    RREventType = CreateNewResourceType(RRFreeEvents);
++    if (!RREventType)
+ 	return;
+     extEntry = AddExtension (RANDR_NAME, RRNumberEvents, RRNumberErrors,
+ 			     ProcRRDispatch, SProcRRDispatch,
+ 			     RRResetProc, StandardMinorOpcode);
+     if (!extEntry)
+ 	return;
+-#if 0
+-    RRReqCode = (CARD8) extEntry->base;
+-    RRErrBase = extEntry->errorBase;
+-#endif
++    RRErrorBase = extEntry->errorBase;
+     RREventBase = extEntry->eventBase;
+     EventSwapVector[RREventBase + RRScreenChangeNotify] = (EventSwapPtr) 
+-      SRRScreenChangeNotifyEvent;
+-
+-    return;
++	SRRScreenChangeNotifyEvent;
++    EventSwapVector[RREventBase + RRNotify] = (EventSwapPtr)
++	SRRNotifyEvent;
++#ifdef PANORAMIX
++    RRXineramaExtensionInit();
++#endif
+ }
+-		
++
+ static int
+ TellChanged (WindowPtr pWin, pointer value)
+ {
+     RREventPtr			*pHead, pRREvent;
+     ClientPtr			client;
+-    xRRScreenChangeNotifyEvent	se;
+     ScreenPtr			pScreen = pWin->drawable.pScreen;
+     rrScrPriv(pScreen);
+-    RRScreenSizePtr		pSize;
+-    WindowPtr			pRoot = WindowTable[pScreen->myNum];
++    int				i;
+ 
+-    pHead = (RREventPtr *) LookupIDByType (pWin->drawable.id, EventType);
++    pHead = (RREventPtr *) LookupIDByType (pWin->drawable.id, RREventType);
+     if (!pHead)
+ 	return WT_WALKCHILDREN;
+ 
+-    se.type = RRScreenChangeNotify + RREventBase;
+-    se.rotation = (CARD8) pScrPriv->rotation;
+-    se.timestamp = pScrPriv->lastSetTime.milliseconds;
+-    se.configTimestamp = pScrPriv->lastConfigTime.milliseconds;
+-    se.root =  pRoot->drawable.id;
+-    se.window = pWin->drawable.id;
+-#ifdef RENDER
+-    se.subpixelOrder = PictureGetSubpixelOrder (pScreen);
+-#else
+-    se.subpixelOrder = SubPixelUnknown;
+-#endif
+-    if (pScrPriv->size >= 0)
+-    {
+-	pSize = &pScrPriv->pSizes[pScrPriv->size];
+-	se.sizeID = pSize->id;
+-	se.widthInPixels = pSize->width;
+-	se.heightInPixels = pSize->height;
+-	se.widthInMillimeters = pSize->mmWidth;
+-	se.heightInMillimeters = pSize->mmHeight;
+-    }
+-    else
+-    {
+-	/*
+-	 * This "shouldn't happen", but a broken DDX can
+-	 * forget to set the current configuration on GetInfo
+-	 */
+-	se.sizeID = 0xffff;
+-	se.widthInPixels = 0;
+-	se.heightInPixels = 0;
+-	se.widthInMillimeters = 0;
+-	se.heightInMillimeters = 0;
+-    }    
+     for (pRREvent = *pHead; pRREvent; pRREvent = pRREvent->next) 
+     {
+ 	client = pRREvent->client;
+ 	if (client == serverClient || client->clientGone)
+ 	    continue;
+-	se.sequenceNumber = client->sequence;
+-	if(pRREvent->mask & RRScreenChangeNotifyMask)
+-	  WriteEventsToClient (client, 1, (xEvent *) &se);
+-    }
+-    return WT_WALKCHILDREN;
+-}
+ 
+-static Bool
+-RRGetInfo (ScreenPtr pScreen)
+-{
+-    rrScrPriv (pScreen);
+-    int		    i, j, k, l;
+-    Bool	    changed;
+-    Rotation	    rotations;
+-    RRScreenSizePtr pSize;
+-    RRScreenRatePtr pRate;
+-
+-    for (i = 0; i < pScrPriv->nSizes; i++)
+-    {
+-	pSize = &pScrPriv->pSizes[i];
+-	pSize->oldReferenced = pSize->referenced;
+-	pSize->referenced = FALSE;
+-	for (k = 0; k < pSize->nRates; k++)
++	if (pRREvent->mask & RRScreenChangeNotifyMask)
++	    RRDeliverScreenEvent (client, pWin, pScreen);
++	
++	if (pRREvent->mask & RRCrtcChangeNotifyMask)
+ 	{
+-	    pRate = &pSize->pRates[k];
+-	    pRate->oldReferenced = pRate->referenced;
+-	    pRate->referenced = FALSE;
+-	}
+-    }
+-    if (!(*pScrPriv->rrGetInfo) (pScreen, &rotations))
+-	return FALSE;
+-
+-    changed = FALSE;
+-
+-    /*
+-     * Check whether anything changed and simultaneously generate
+-     * the protocol id values for the objects
+-     */
+-    if (rotations != pScrPriv->rotations)
+-    {
+-	pScrPriv->rotations = rotations;
+-	changed = TRUE;
+-    }
+-
+-    j = 0;
+-    for (i = 0; i < pScrPriv->nSizes; i++)
+-    {
+-	pSize = &pScrPriv->pSizes[i];
+-	if (pSize->oldReferenced != pSize->referenced)
+-	    changed = TRUE;
+-	if (pSize->referenced)
+-	    pSize->id = j++;
+-	l = 0;
+-	for (k = 0; k < pSize->nRates; k++)
+-	{
+-	    pRate = &pSize->pRates[k];
+-	    if (pRate->oldReferenced != pRate->referenced)
+-		changed = TRUE;
+-	    if (pRate->referenced)
+-		l++;
+-	}
+-	pSize->nRatesInUse = l;
+-    }
+-    pScrPriv->nSizesInUse = j;
+-    if (changed)
+-    {
+-	UpdateCurrentTime ();
+-	pScrPriv->lastConfigTime = currentTime;
+-	WalkTree (pScreen, TellChanged, (pointer) pScreen);
+-    }
+-    return TRUE;
+-}
+-
+-static void
+-RRSendConfigNotify (ScreenPtr pScreen)
+-{
+-    WindowPtr	pWin = WindowTable[pScreen->myNum];
+-    xEvent	event;
+-
+-    event.u.u.type = ConfigureNotify;
+-    event.u.configureNotify.window = pWin->drawable.id;
+-    event.u.configureNotify.aboveSibling = None;
+-    event.u.configureNotify.x = 0;
+-    event.u.configureNotify.y = 0;
+-
+-    /* XXX xinerama stuff ? */
+-    
+-    event.u.configureNotify.width = pWin->drawable.width;
+-    event.u.configureNotify.height = pWin->drawable.height;
+-    event.u.configureNotify.borderWidth = wBorderWidth (pWin);
+-    event.u.configureNotify.override = pWin->overrideRedirect;
+-    DeliverEvents(pWin, &event, 1, NullWindow);
+-}
+-
+-static int
+-ProcRRQueryVersion (ClientPtr client)
+-{
+-    xRRQueryVersionReply rep;
+-    register int n;
+-    REQUEST(xRRQueryVersionReq);
+-    rrClientPriv(client);
+-
+-    REQUEST_SIZE_MATCH(xRRQueryVersionReq);
+-    pRRClient->major_version = stuff->majorVersion;
+-    pRRClient->minor_version = stuff->minorVersion;
+-    rep.type = X_Reply;
+-    rep.length = 0;
+-    rep.sequenceNumber = client->sequence;
+-    rep.majorVersion = RANDR_MAJOR;
+-    rep.minorVersion = RANDR_MINOR;
+-    if (client->swapped) {
+-    	swaps(&rep.sequenceNumber, n);
+-    	swapl(&rep.length, n);
+-	swapl(&rep.majorVersion, n);
+-	swapl(&rep.minorVersion, n);
+-    }
+-    WriteToClient(client, sizeof(xRRQueryVersionReply), (char *)&rep);
+-    return (client->noClientException);
+-}
+-
+-
+-extern char	*ConnectionInfo;
+-
+-static int padlength[4] = {0, 3, 2, 1};
+-
+-static void
+-RREditConnectionInfo (ScreenPtr pScreen)
+-{
+-    xConnSetup	    *connSetup;
+-    char	    *vendor;
+-    xPixmapFormat   *formats;
+-    xWindowRoot	    *root;
+-    xDepth	    *depth;
+-    xVisualType	    *visual;
+-    int		    screen = 0;
+-    int		    d;
+-
+-    connSetup = (xConnSetup *) ConnectionInfo;
+-    vendor = (char *) connSetup + sizeof (xConnSetup);
+-    formats = (xPixmapFormat *) ((char *) vendor +
+-				 connSetup->nbytesVendor +
+-				 padlength[connSetup->nbytesVendor & 3]);
+-    root = (xWindowRoot *) ((char *) formats +
+-			    sizeof (xPixmapFormat) * screenInfo.numPixmapFormats);
+-    while (screen != pScreen->myNum)
+-    {
+-	depth = (xDepth *) ((char *) root + 
+-			    sizeof (xWindowRoot));
+-	for (d = 0; d < root->nDepths; d++)
+-	{
+-	    visual = (xVisualType *) ((char *) depth +
+-				      sizeof (xDepth));
+-	    depth = (xDepth *) ((char *) visual +
+-				depth->nVisuals * sizeof (xVisualType));
+-	}
+-	root = (xWindowRoot *) ((char *) depth);
+-	screen++;
+-    }
+-    root->pixWidth = pScreen->width;
+-    root->pixHeight = pScreen->height;
+-    root->mmWidth = pScreen->mmWidth;
+-    root->mmHeight = pScreen->mmHeight;
+-}
+-
+-static int
+-ProcRRGetScreenInfo (ClientPtr client)
+-{
+-    REQUEST(xRRGetScreenInfoReq);
+-    xRRGetScreenInfoReply   rep;
+-    WindowPtr	    	    pWin;
+-    int			    n;
+-    ScreenPtr		    pScreen;
+-    rrScrPrivPtr	    pScrPriv;
+-    CARD8		    *extra;
+-    unsigned long	    extraLen;
+-
+-    REQUEST_SIZE_MATCH(xRRGetScreenInfoReq);
+-    pWin = (WindowPtr)SecurityLookupWindow(stuff->window, client,
+-					   SecurityReadAccess);
+-
+-    if (!pWin)
+-	return BadWindow;
+-
+-    pScreen = pWin->drawable.pScreen;
+-    pScrPriv = rrGetScrPriv(pScreen);
+-    rep.pad = 0;
+-    if (!pScrPriv)
+-    {
+-	rep.type = X_Reply;
+-	rep.setOfRotations = RR_Rotate_0;;
+-	rep.sequenceNumber = client->sequence;
+-	rep.length = 0;
+-	rep.root = WindowTable[pWin->drawable.pScreen->myNum]->drawable.id;
+-	rep.timestamp = currentTime.milliseconds;
+-	rep.configTimestamp = currentTime.milliseconds;
+-	rep.nSizes = 0;
+-	rep.sizeID = 0;
+-	rep.rotation = RR_Rotate_0;
+-	rep.rate = 0;
+-	rep.nrateEnts = 0;
+-	extra = 0;
+-	extraLen = 0;
+-    }
+-    else
+-    {
+-	int			i, j;
+-	xScreenSizes		*size;
+-	CARD16			*rates;
+-	CARD8			*data8;
+-	Bool			has_rate = RRClientKnowsRates (client);
+-    
+-	RRGetInfo (pScreen);
+-
+-	rep.type = X_Reply;
+-	rep.setOfRotations = pScrPriv->rotations;
+-	rep.sequenceNumber = client->sequence;
+-	rep.length = 0;
+-	rep.root = WindowTable[pWin->drawable.pScreen->myNum]->drawable.id;
+-	rep.timestamp = pScrPriv->lastSetTime.milliseconds;
+-	rep.configTimestamp = pScrPriv->lastConfigTime.milliseconds;
+-	rep.rotation = pScrPriv->rotation;
+-	rep.nSizes = pScrPriv->nSizesInUse;
+-	rep.rate = pScrPriv->rate;
+-        rep.nrateEnts = 0;
+-	if (has_rate)
+-	{
+-	    for (i = 0; i < pScrPriv->nSizes; i++)
++	    for (i = 0; i < pScrPriv->numCrtcs; i++)
+ 	    {
+-		RRScreenSizePtr pSize = &pScrPriv->pSizes[i];
+-		if (pSize->referenced)
+-		{
+-		    rep.nrateEnts += (1 + pSize->nRatesInUse);
+-		}
++		RRCrtcPtr   crtc = pScrPriv->crtcs[i];
++		if (crtc->changed)
++		    RRDeliverCrtcEvent (client, pWin, crtc);
+ 	    }
+ 	}
+-
+-	if (pScrPriv->size >= 0)
+-	    rep.sizeID = pScrPriv->pSizes[pScrPriv->size].id;
+-	else
+-	    return BadImplementation;
+-
+-	extraLen = (rep.nSizes * sizeof (xScreenSizes) +
+-		    rep.nrateEnts * sizeof (CARD16));
+-
+-	extra = (CARD8 *) xalloc (extraLen);
+-	if (!extra)
+-	    return BadAlloc;
+-	/*
+-	 * First comes the size information
+-	 */
+-	size = (xScreenSizes *) extra;
+-	rates = (CARD16 *) (size + rep.nSizes);
+-	for (i = 0; i < pScrPriv->nSizes; i++)
++	
++	if (pRREvent->mask & RROutputChangeNotifyMask)
+ 	{
+-	    RRScreenSizePtr pSize = &pScrPriv->pSizes[i];
+-	    if (pSize->referenced)
++	    for (i = 0; i < pScrPriv->numOutputs; i++)
+ 	    {
+-		size->widthInPixels = pSize->width;
+-		size->heightInPixels = pSize->height;
+-		size->widthInMillimeters = pSize->mmWidth;
+-		size->heightInMillimeters = pSize->mmHeight;
+-		if (client->swapped)
+-		{
+-		    swaps (&size->widthInPixels, n);
+-		    swaps (&size->heightInPixels, n);
+-		    swaps (&size->widthInMillimeters, n);
+-		    swaps (&size->heightInMillimeters, n);
+-		}
+-		size++;
+-		if (has_rate)
+-		{
+-		    *rates = pSize->nRatesInUse;
+-		    if (client->swapped)
+-		    {
+-			swaps (rates, n);
+-		    }
+-		    rates++;
+-		    for (j = 0; j < pSize->nRates; j++)
+-		    {
+-			RRScreenRatePtr	pRate = &pSize->pRates[j];
+-			if (pRate->referenced)
+-			{
+-			    *rates = pRate->rate;
+-			    if (client->swapped)
+-			    {
+-				swaps (rates, n);
+-			    }
+-			    rates++;
+-			}
+-		    }
+-		}
++		RROutputPtr   output = pScrPriv->outputs[i];
++		if (output->changed)
++		    RRDeliverOutputEvent (client, pWin, output);
+ 	    }
+ 	}
+-	data8 = (CARD8 *) rates;
+-
+-	if (data8 - (CARD8 *) extra != extraLen)
+-	    FatalError ("RRGetScreenInfo bad extra len %ld != %ld\n",
+-			(unsigned long)(data8 - (CARD8 *) extra), extraLen);
+-	rep.length =  (extraLen + 3) >> 2;
+-    }
+-    if (client->swapped) {
+-	swaps(&rep.sequenceNumber, n);
+-	swapl(&rep.length, n);
+-	swapl(&rep.timestamp, n);
+-	swaps(&rep.rotation, n);
+-	swaps(&rep.nSizes, n);
+-	swaps(&rep.sizeID, n);
+-	swaps(&rep.rate, n);
+-	swaps(&rep.nrateEnts, n);
+-    }
+-    WriteToClient(client, sizeof(xRRGetScreenInfoReply), (char *)&rep);
+-    if (extraLen)
+-    {
+-	WriteToClient (client, extraLen, (char *) extra);
+-	xfree (extra);
+     }
+-    return (client->noClientException);
++    return WT_WALKCHILDREN;
+ }
+ 
+-static int
+-ProcRRSetScreenConfig (ClientPtr client)
++/*
++ * Something changed; send events and adjust pointer position
++ */
++void
++RRTellChanged (ScreenPtr pScreen)
+ {
+-    REQUEST(xRRSetScreenConfigReq);
+-    xRRSetScreenConfigReply rep;
+-    DrawablePtr		    pDraw;
+-    int			    n;
+-    ScreenPtr		    pScreen;
+-    rrScrPrivPtr	    pScrPriv;
+-    TimeStamp		    configTime;
+-    TimeStamp		    time;
+-    RRScreenSizePtr	    pSize;
+-    int			    i;
+-    Rotation		    rotation;
+-    int			    rate;
+-    short		    oldWidth, oldHeight;
+-    Bool		    has_rate;
+-
+-    UpdateCurrentTime ();
+-
+-    if (RRClientKnowsRates (client))
+-    {
+-	REQUEST_SIZE_MATCH (xRRSetScreenConfigReq);
+-	has_rate = TRUE;
+-    }
+-    else
+-    {
+-	REQUEST_SIZE_MATCH (xRR1_0SetScreenConfigReq);
+-	has_rate = FALSE;
+-    }
+-    
+-    SECURITY_VERIFY_DRAWABLE(pDraw, stuff->drawable, client,
+-			     SecurityWriteAccess);
+-
+-    pScreen = pDraw->pScreen;
+-
+-    pScrPriv = rrGetScrPriv(pScreen);
+-    
+-    time = ClientTimeToServerTime(stuff->timestamp);
+-    configTime = ClientTimeToServerTime(stuff->configTimestamp);
+-    
+-    oldWidth = pScreen->width;
+-    oldHeight = pScreen->height;
+-    
+-    if (!pScrPriv)
+-    {
+-	time = currentTime;
+-	rep.status = RRSetConfigFailed;
+-	goto sendReply;
+-    }
+-    if (!RRGetInfo (pScreen))
+-	return BadAlloc;
+-    
+-    /*
+-     * if the client's config timestamp is not the same as the last config
+-     * timestamp, then the config information isn't up-to-date and
+-     * can't even be validated
+-     */
+-    if (CompareTimeStamps (configTime, pScrPriv->lastConfigTime) != 0)
+-    {
+-	rep.status = RRSetConfigInvalidConfigTime;
+-	goto sendReply;
+-    }
+-    
+-    /*
+-     * Search for the requested size
+-     */
+-    pSize = 0;
+-    for (i = 0; i < pScrPriv->nSizes; i++)
+-    {
+-	pSize = &pScrPriv->pSizes[i];
+-	if (pSize->referenced && pSize->id == stuff->sizeID)
+-	{
+-	    break;
+-	}
+-    }
+-    if (i == pScrPriv->nSizes)
+-    {
+-	/*
+-	 * Invalid size ID
+-	 */
+-	client->errorValue = stuff->sizeID;
+-	return BadValue;
+-    }
++    rrScrPriv (pScreen);
++    int i;
+     
+-    /*
+-     * Validate requested rotation
+-     */
+-    rotation = (Rotation) stuff->rotation;
+-
+-    /* test the rotation bits only! */
+-    switch (rotation & 0xf) {
+-    case RR_Rotate_0:
+-    case RR_Rotate_90:
+-    case RR_Rotate_180:
+-    case RR_Rotate_270:
+-	break;
+-    default:
+-	/*
+-	 * Invalid rotation
+-	 */
+-	client->errorValue = stuff->rotation;
+-	return BadValue;
+-    }
+-
+-    if ((~pScrPriv->rotations) & rotation)
++    if (pScrPriv->changed)
+     {
+-	/*
+-	 * requested rotation or reflection not supported by screen
+-	 */
+-	client->errorValue = stuff->rotation;
+-	return BadMatch;
+-    }
+-
+-    /*
+-     * Validate requested refresh
+-     */
+-    if (has_rate)
+-	rate = (int) stuff->rate;
+-    else
+-	rate = 0;
+-
+-    if (rate)
+-    {
+-	for (i = 0; i < pSize->nRates; i++)
++	UpdateCurrentTime ();
++	if (pScrPriv->configChanged)
+ 	{
+-	    RRScreenRatePtr pRate = &pSize->pRates[i];
+-	    if (pRate->referenced && pRate->rate == rate)
+-		break;
++	    pScrPriv->lastConfigTime = currentTime;
++	    pScrPriv->configChanged = FALSE;
+ 	}
+-	if (i == pSize->nRates)
+-	{
+-	    /*
+-	     * Invalid rate
+-	     */
+-	    client->errorValue = rate;
+-	    return BadValue;
++	pScrPriv->changed = FALSE;
++	WalkTree (pScreen, TellChanged, (pointer) pScreen);
++	for (i = 0; i < pScrPriv->numOutputs; i++)
++	    pScrPriv->outputs[i]->changed = FALSE;
++	for (i = 0; i < pScrPriv->numCrtcs; i++)
++	    pScrPriv->crtcs[i]->changed = FALSE;
++	if (pScrPriv->layoutChanged)
++	{
++	    pScrPriv->layoutChanged = FALSE;
++	    RRPointerScreenConfigured (pScreen);
++	    RRSendConfigNotify (pScreen);
+ 	}
+     }
+-    
+-    /*
+-     * Make sure the requested set-time is not older than
+-     * the last set-time
+-     */
+-    if (CompareTimeStamps (time, pScrPriv->lastSetTime) < 0)
+-    {
+-	rep.status = RRSetConfigInvalidTime;
+-	goto sendReply;
+-    }
+-
+-    /*
+-     * call out to ddx routine to effect the change
+-     */
+-    if (!(*pScrPriv->rrSetConfig) (pScreen, rotation, rate,
+-				   pSize))
+-    {
+-	/*
+-	 * unknown DDX failure, report to client
+-	 */
+-	rep.status = RRSetConfigFailed;
+-	goto sendReply;
+-    }
+-    
+-    /*
+-     * set current extension configuration pointers
+-     */
+-    RRSetCurrentConfig (pScreen, rotation, rate, pSize);
+-    
+-    /*
+-     * Deliver ScreenChangeNotify events whenever
+-     * the configuration is updated
+-     */
+-    WalkTree (pScreen, TellChanged, (pointer) pScreen);
+-    
+-    /*
+-     * Deliver ConfigureNotify events when root changes
+-     * pixel size
+-     */
+-    if (oldWidth != pScreen->width || oldHeight != pScreen->height)
+-	RRSendConfigNotify (pScreen);
+-    RREditConnectionInfo (pScreen);
+-    
+-    /*
+-     * Fix pointer bounds and location
+-     */
+-    ScreenRestructured (pScreen);
+-    pScrPriv->lastSetTime = time;
+-    
+-    /*
+-     * Report Success
+-     */
+-    rep.status = RRSetConfigSuccess;
+-    
+-sendReply:
+-    
+-    rep.type = X_Reply;
+-    /* rep.status has already been filled in */
+-    rep.length = 0;
+-    rep.sequenceNumber = client->sequence;
+-
+-    rep.newTimestamp = pScrPriv->lastSetTime.milliseconds;
+-    rep.newConfigTimestamp = pScrPriv->lastConfigTime.milliseconds;
+-    rep.root = WindowTable[pDraw->pScreen->myNum]->drawable.id;
+-
+-    if (client->swapped) 
+-    {
+-    	swaps(&rep.sequenceNumber, n);
+-    	swapl(&rep.length, n);
+-	swapl(&rep.newTimestamp, n);
+-	swapl(&rep.newConfigTimestamp, n);
+-	swapl(&rep.root, n);
+-    }
+-    WriteToClient(client, sizeof(xRRSetScreenConfigReply), (char *)&rep);
+-
+-    return (client->noClientException);
+ }
+ 
+-int
+-RRSetScreenConfig (ScreenPtr		pScreen,
+-		   Rotation		rotation,
+-		   int			rate,
+-		   RRScreenSizePtr	pSize)
++/*
++ * Return the first output which is connected to an active CRTC
++ * Used in emulating 1.0 behaviour
++ */
++RROutputPtr
++RRFirstOutput (ScreenPtr pScreen)
+ {
+-    rrScrPrivPtr	    pScrPriv;
+-    int			    i;
+-    short		    oldWidth, oldHeight;
+-
+-    pScrPriv = rrGetScrPriv(pScreen);
+-    
+-    oldWidth = pScreen->width;
+-    oldHeight = pScreen->height;
+-    
+-    if (!RRGetInfo (pScreen))
+-	return BadAlloc;
++    rrScrPriv(pScreen);
++    RROutputPtr		    output;
++    int	i, j;
+     
+-    /*
+-     * Validate requested rotation
+-     */
+-
+-    /* test the rotation bits only! */
+-    switch (rotation & 0xf) {
+-    case RR_Rotate_0:
+-    case RR_Rotate_90:
+-    case RR_Rotate_180:
+-    case RR_Rotate_270:
+-	break;
+-    default:
+-	/*
+-	 * Invalid rotation
+-	 */
+-	return BadValue;
+-    }
+-
+-    if ((~pScrPriv->rotations) & rotation)
+-    {
+-	/*
+-	 * requested rotation or reflection not supported by screen
+-	 */
+-	return BadMatch;
+-    }
+-
+-    /*
+-     * Validate requested refresh
+-     */
+-    if (rate)
++    for (i = 0; i < pScrPriv->numCrtcs; i++)
+     {
+-	for (i = 0; i < pSize->nRates; i++)
+-	{
+-	    RRScreenRatePtr pRate = &pSize->pRates[i];
+-	    if (pRate->referenced && pRate->rate == rate)
+-		break;
+-	}
+-	if (i == pSize->nRates)
++	RRCrtcPtr   crtc = pScrPriv->crtcs[i];
++	for (j = 0; j < pScrPriv->numOutputs; j++)
+ 	{
+-	    /*
+-	     * Invalid rate
+-	     */
+-	    return BadValue;
++	    output = pScrPriv->outputs[j];
++	    if (output->crtc == crtc)
++		return output;
+ 	}
+     }
+-
+-    /*
+-     * call out to ddx routine to effect the change
+-     */
+-    if (!(*pScrPriv->rrSetConfig) (pScreen, rotation, rate,
+-				   pSize))
+-    {
+-	/*
+-	 * unknown DDX failure, report to client
+-	 */
+-        return BadImplementation;
+-    }
+-    
+-    /*
+-     * set current extension configuration pointers
+-     */
+-    RRSetCurrentConfig (pScreen, rotation, rate, pSize);
+-    
+-    /*
+-     * Deliver ScreenChangeNotify events whenever
+-     * the configuration is updated
+-     */
+-    WalkTree (pScreen, TellChanged, (pointer) pScreen);
+-    
+-    /*
+-     * Deliver ConfigureNotify events when root changes
+-     * pixel size
+-     */
+-    if (oldWidth != pScreen->width || oldHeight != pScreen->height)
+-	RRSendConfigNotify (pScreen);
+-    RREditConnectionInfo (pScreen);
+-    
+-    /*
+-     * Fix pointer bounds and location
+-     */
+-    ScreenRestructured (pScreen);
+-    
+-    return Success;
++    return NULL;
+ }
+ 
+-static int
+-ProcRRSelectInput (ClientPtr client)
++CARD16
++RRVerticalRefresh (xRRModeInfo *mode)
+ {
+-    REQUEST(xRRSelectInputReq);
+-    rrClientPriv(client);
+-    RRTimesPtr	pTimes;
+-    WindowPtr	pWin;
+-    RREventPtr	pRREvent, pNewRREvent, *pHead;
+-    XID		clientResource;
+-
+-    REQUEST_SIZE_MATCH(xRRSelectInputReq);
+-    pWin = SecurityLookupWindow (stuff->window, client, SecurityWriteAccess);
+-    if (!pWin)
+-	return BadWindow;
+-    pHead = (RREventPtr *)SecurityLookupIDByType(client,
+-						 pWin->drawable.id, EventType,
+-						 SecurityWriteAccess);
+-
+-    if (stuff->enable & (RRScreenChangeNotifyMask)) 
+-    {
+-	ScreenPtr	pScreen = pWin->drawable.pScreen;
+-	rrScrPriv	(pScreen);
+-
+-	if (pHead) 
+-	{
+-	    /* check for existing entry. */
+-	    for (pRREvent = *pHead; pRREvent; pRREvent = pRREvent->next)
+-		if (pRREvent->client == client)
+-		    return Success;
+-	}
+-
+-	/* build the entry */
+-	pNewRREvent = (RREventPtr) xalloc (sizeof (RREventRec));
+-	if (!pNewRREvent)
+-	    return BadAlloc;
+-	pNewRREvent->next = 0;
+-	pNewRREvent->client = client;
+-	pNewRREvent->window = pWin;
+-	pNewRREvent->mask = stuff->enable;
+-	/*
+-	 * add a resource that will be deleted when
+-	 * the client goes away
+-	 */
+-	clientResource = FakeClientID (client->index);
+-	pNewRREvent->clientResource = clientResource;
+-	if (!AddResource (clientResource, ClientType, (pointer)pNewRREvent))
+-	    return BadAlloc;
+-	/*
+-	 * create a resource to contain a pointer to the list
+-	 * of clients selecting input.  This must be indirect as
+-	 * the list may be arbitrarily rearranged which cannot be
+-	 * done through the resource database.
+-	 */
+-	if (!pHead)
+-	{
+-	    pHead = (RREventPtr *) xalloc (sizeof (RREventPtr));
+-	    if (!pHead ||
+-		!AddResource (pWin->drawable.id, EventType, (pointer)pHead))
+-	    {
+-		FreeResource (clientResource, RT_NONE);
+-		return BadAlloc;
+-	    }
+-	    *pHead = 0;
+-	}
+-	pNewRREvent->next = *pHead;
+-	*pHead = pNewRREvent;
+-	/*
+-	 * Now see if the client needs an event
+-	 */
+-	if (pScrPriv)
+-	{
+-	    pTimes = &((RRTimesPtr) (pRRClient + 1))[pScreen->myNum];
+-	    if (CompareTimeStamps (pTimes->setTime, 
+-				   pScrPriv->lastSetTime) != 0 ||
+-		CompareTimeStamps (pTimes->configTime, 
+-				   pScrPriv->lastConfigTime) != 0)
+-	    {
+-		TellChanged (pWin, (pointer) pScreen);
+-	    }
+-	}
+-    }
+-    else if (stuff->enable == xFalse) 
+-    {
+-	/* delete the interest */
+-	if (pHead) {
+-	    pNewRREvent = 0;
+-	    for (pRREvent = *pHead; pRREvent; pRREvent = pRREvent->next) {
+-		if (pRREvent->client == client)
+-		    break;
+-		pNewRREvent = pRREvent;
+-	    }
+-	    if (pRREvent) {
+-		FreeResource (pRREvent->clientResource, ClientType);
+-		if (pNewRREvent)
+-		    pNewRREvent->next = pRREvent->next;
+-		else
+-		    *pHead = pRREvent->next;
+-		xfree (pRREvent);
+-	    }
+-	}
+-    }
+-    else 
+-    {
+-	client->errorValue = stuff->enable;
+-	return BadValue;
+-    }
+-    return Success;
++    CARD32  refresh;
++    CARD32  dots = mode->hTotal * mode->vTotal;
++    if (!dots)
++	return 0;
++    refresh = (mode->dotClock + dots/2) / dots;
++    if (refresh > 0xffff)
++	refresh = 0xffff;
++    return (CARD16) refresh;
+ }
+ 
+-
+ static int
+ ProcRRDispatch (ClientPtr client)
+ {
+     REQUEST(xReq);
+-    switch (stuff->data)
+-    {
+-    case X_RRQueryVersion:
+-	return ProcRRQueryVersion(client);
+-    case X_RRSetScreenConfig:
+-        return ProcRRSetScreenConfig(client);
+-    case X_RRSelectInput:
+-        return ProcRRSelectInput(client);
+-    case X_RRGetScreenInfo:
+-        return ProcRRGetScreenInfo(client);
+-    default:
++    if (stuff->data >= RRNumberRequests || !ProcRandrVector[stuff->data])
+ 	return BadRequest;
+-    }
+-}
+-
+-static int
+-SProcRRQueryVersion (ClientPtr client)
+-{
+-    register int n;
+-    REQUEST(xRRQueryVersionReq);
+-
+-    swaps(&stuff->length, n);
+-    swapl(&stuff->majorVersion, n);
+-    swapl(&stuff->minorVersion, n);
+-    return ProcRRQueryVersion(client);
+-}
+-
+-static int
+-SProcRRGetScreenInfo (ClientPtr client)
+-{
+-    register int n;
+-    REQUEST(xRRGetScreenInfoReq);
+-
+-    swaps(&stuff->length, n);
+-    swapl(&stuff->window, n);
+-    return ProcRRGetScreenInfo(client);
+-}
+-
+-static int
+-SProcRRSetScreenConfig (ClientPtr client)
+-{
+-    register int n;
+-    REQUEST(xRRSetScreenConfigReq);
+-
+-    if (RRClientKnowsRates (client))
+-    {
+-	REQUEST_SIZE_MATCH (xRRSetScreenConfigReq);
+-	swaps (&stuff->rate, n);
+-    }
+-    else
+-    {
+-	REQUEST_SIZE_MATCH (xRR1_0SetScreenConfigReq);
+-    }
+-    
+-    swaps(&stuff->length, n);
+-    swapl(&stuff->drawable, n);
+-    swapl(&stuff->timestamp, n);
+-    swaps(&stuff->sizeID, n);
+-    swaps(&stuff->rotation, n);
+-    return ProcRRSetScreenConfig(client);
+-}
+-
+-static int
+-SProcRRSelectInput (ClientPtr client)
+-{
+-    register int n;
+-    REQUEST(xRRSelectInputReq);
+-
+-    swaps(&stuff->length, n);
+-    swapl(&stuff->window, n);
+-    return ProcRRSelectInput(client);
++    return (*ProcRandrVector[stuff->data]) (client);
+ }
+ 
+-
+ static int
+ SProcRRDispatch (ClientPtr client)
+ {
+     REQUEST(xReq);
+-    switch (stuff->data)
+-    {
+-    case X_RRQueryVersion:
+-	return SProcRRQueryVersion(client);
+-    case X_RRSetScreenConfig:
+-        return SProcRRSetScreenConfig(client);
+-    case X_RRSelectInput:
+-        return SProcRRSelectInput(client);
+-    case X_RRGetScreenInfo:
+-        return SProcRRGetScreenInfo(client);
+-    default:
++    if (stuff->data >= RRNumberRequests || !ProcRandrVector[stuff->data])
+ 	return BadRequest;
+-    }
+-}
+-
+-
+-static Bool
+-RRScreenSizeMatches (RRScreenSizePtr  a,
+-		   RRScreenSizePtr  b)
+-{
+-    if (a->width != b->width)
+-	return FALSE;
+-    if (a->height != b->height)
+-	return FALSE;
+-    if (a->mmWidth != b->mmWidth)
+-	return FALSE;
+-    if (a->mmHeight != b->mmHeight)
+-	return FALSE;
+-    return TRUE;
+-}
+-
+-RRScreenSizePtr
+-RRRegisterSize (ScreenPtr	    pScreen,
+-		short		    width, 
+-		short		    height,
+-		short		    mmWidth,
+-		short		    mmHeight)
+-{
+-    rrScrPriv (pScreen);
+-    int		    i;
+-    RRScreenSize    tmp;
+-    RRScreenSizePtr pNew;
+-
+-    if (!pScrPriv)
+-	return 0;
+-    
+-    tmp.width = width;
+-    tmp.height= height;
+-    tmp.mmWidth = mmWidth;
+-    tmp.mmHeight = mmHeight;
+-    tmp.pRates = 0;
+-    tmp.nRates = 0;
+-    tmp.nRatesInUse = 0;
+-    tmp.referenced = TRUE;
+-    tmp.oldReferenced = FALSE;
+-    for (i = 0; i < pScrPriv->nSizes; i++)
+-	if (RRScreenSizeMatches (&tmp, &pScrPriv->pSizes[i]))
+-	{
+-	    pScrPriv->pSizes[i].referenced = TRUE;
+-	    return &pScrPriv->pSizes[i];
+-	}
+-    pNew = xrealloc (pScrPriv->pSizes,
+-		     (pScrPriv->nSizes + 1) * sizeof (RRScreenSize));
+-    if (!pNew)
+-	return 0;
+-    pNew[pScrPriv->nSizes++] = tmp;
+-    pScrPriv->pSizes = pNew;
+-    return &pNew[pScrPriv->nSizes-1];
+-}
+-
+-Bool RRRegisterRate (ScreenPtr		pScreen,
+-		     RRScreenSizePtr	pSize,
+-		     int		rate)
+-{
+-    rrScrPriv(pScreen);
+-    int		    i;
+-    RRScreenRatePtr pNew, pRate;
+-
+-    if (!pScrPriv)
+-	return FALSE;
+-    
+-    for (i = 0; i < pSize->nRates; i++)
+-    {
+-	pRate = &pSize->pRates[i];
+-	if (pRate->rate == rate)
+-	{
+-	    pRate->referenced = TRUE;
+-	    return TRUE;
+-	}
+-    }
+-
+-    pNew = xrealloc (pSize->pRates,
+-		     (pSize->nRates + 1) * sizeof (RRScreenRate));
+-    if (!pNew)
+-	return FALSE;
+-    pRate = &pNew[pSize->nRates++];
+-    pRate->rate = rate;
+-    pRate->referenced = TRUE;
+-    pRate->oldReferenced = FALSE;
+-    pSize->pRates = pNew;
+-    return TRUE;
++    return (*SProcRandrVector[stuff->data]) (client);
+ }
+ 
+-void
+-RRSetCurrentConfig (ScreenPtr		pScreen,
+-		    Rotation		rotation,
+-		    int			rate,
+-		    RRScreenSizePtr	pSize)
+-{
+-    rrScrPriv (pScreen);
+-
+-    if (!pScrPriv)
+-	return;
+-
+-    pScrPriv->rotation = rotation;
+-    pScrPriv->size = pSize - pScrPriv->pSizes;
+-    pScrPriv->rate = rate;
+-}
+Only in ./nx-X11/programs/Xserver/randr: randr.c.NX.original
+Only in ./nx-X11/programs/Xserver/randr: randr.c.X.original
+Only in ./nx-X11/programs/Xserver/randr: randr.h
+Only in ./nx-X11/programs/Xserver/randr: randr.h.NX.original
+Only in ./nx-X11/programs/Xserver/randr: randr.h.X.original
+Only in ./nx-X11/programs/Xserver/randr: randrproto.h
+Only in ./nx-X11/programs/Xserver/randr: randrproto.h.NX.original
+Only in ./nx-X11/programs/Xserver/randr: randrproto.h.X.original
+diff -u ./nx-X11/programs/Xserver/randr.X.original/randrstr.h ./nx-X11/programs/Xserver/randr/randrstr.h
+--- ./nx-X11/programs/Xserver/randr.X.original/randrstr.h	2015-02-13 14:03:44.792440567 +0100
++++ ./nx-X11/programs/Xserver/randr/randrstr.h	2015-02-10 19:13:13.636692176 +0100
+@@ -1,25 +1,28 @@
+ /*
+- * $XFree86: xc/programs/Xserver/randr/randrstr.h,v 1.5 2002/09/29 23:39:45 keithp Exp $
+- *
+  * Copyright © 2000 Compaq Computer Corporation
++ * Copyright © 2002 Hewlett-Packard Company
++ * Copyright © 2006 Intel Corporation
+  *
+  * Permission to use, copy, modify, distribute, and sell this software and its
+  * documentation for any purpose is hereby granted without fee, provided that
+- * the above copyright notice appear in all copies and that both that
+- * copyright notice and this permission notice appear in supporting
+- * documentation, and that the name of Compaq not be used in
+- * advertising or publicity pertaining to distribution of the software without
+- * specific, written prior permission.  Compaq makes no
+- * representations about the suitability of this software for any purpose.  It
+- * is provided "as is" without express or implied warranty.
++ * the above copyright notice appear in all copies and that both that copyright
++ * notice and this permission notice appear in supporting documentation, and
++ * that the name of the copyright holders not be used in advertising or
++ * publicity pertaining to distribution of the software without specific,
++ * written prior permission.  The copyright holders make no representations
++ * about the suitability of this software for any purpose.  It is provided "as
++ * is" without express or implied warranty.
+  *
+- * COMPAQ DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
++ * THE COPYRIGHT HOLDERS DISCLAIM ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
+  * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO
+- * EVENT SHALL COMPAQ BE LIABLE FOR ANY SPECIAL, INDIRECT OR
++ * EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+  * CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE,
+  * DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+- * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+- * PERFORMANCE OF THIS SOFTWARE.
++ * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
++ * OF THIS SOFTWARE.
++ *
++ * Author:  Jim Gettys, Hewlett-Packard Company, Inc.
++ *	    Keith Packard, Intel Corporation
+  */
+ 
+ #ifdef HAVE_DIX_CONFIG_H
+@@ -29,68 +32,456 @@
+ #ifndef _RANDRSTR_H_
+ #define _RANDRSTR_H_
+ 
++#include <X11/X.h>
++#include <X11/Xproto.h>
++#include "misc.h"
++#include "os.h"
++#include "dixstruct.h"
++#include "resource.h"
++#include "scrnintstr.h"
++#include "windowstr.h"
++#include "pixmapstr.h"
++#include "extnsionst.h"
++#include "servermd.h"
++#ifndef NXAGENT_SERVER
+ #include <X11/extensions/randr.h>
++#include <X11/extensions/randrproto.h>
++#else
++#include "randr.h"
++#include "randrproto.h"
++#endif
++#ifdef RENDER
++#include <X11/extensions/render.h> 	/* we share subpixel order information */
++#include "picturestr.h"
++#endif
++#include <X11/Xfuncproto.h>
++
++/* required for ABI compatibility for now */
++#define RANDR_10_INTERFACE 1
++#define RANDR_12_INTERFACE 1
++
++typedef XID	RRMode;
++typedef XID	RROutput;
++typedef XID	RRCrtc;
++
++extern int	RREventBase, RRErrorBase;
++
++extern int (*ProcRandrVector[RRNumberRequests])(ClientPtr);
++extern int (*SProcRandrVector[RRNumberRequests])(ClientPtr);
++    
++/*
++ * Modeline for a monitor. Name follows directly after this struct
++ */
++
++#define RRModeName(pMode) ((char *) (pMode + 1))
++typedef struct _rrMode		RRModeRec, *RRModePtr;
++typedef struct _rrPropertyValue	RRPropertyValueRec, *RRPropertyValuePtr;
++typedef struct _rrProperty	RRPropertyRec, *RRPropertyPtr;
++typedef struct _rrCrtc		RRCrtcRec, *RRCrtcPtr;
++typedef struct _rrOutput	RROutputRec, *RROutputPtr;
++
++struct _rrMode {
++    int		    refcnt;
++    xRRModeInfo	    mode;
++    char	    *name;
++    ScreenPtr	    userScreen;
++};
++
++struct _rrPropertyValue {
++    Atom	    type;       /* ignored by server */
++    short	    format;     /* format of data for swapping - 8,16,32 */
++    long	    size;	/* size of data in (format/8) bytes */
++    pointer         data;	/* private to client */
++};
++
++struct _rrProperty {
++    RRPropertyPtr   next;
++    ATOM 	    propertyName;
++    Bool	    is_pending;
++    Bool	    range;
++    Bool	    immutable;
++    int		    num_valid;
++    INT32	    *valid_values;
++    RRPropertyValueRec	current, pending;
++};
++
++struct _rrCrtc {
++    RRCrtc	    id;
++    ScreenPtr	    pScreen;
++    RRModePtr	    mode;
++    int		    x, y;
++    Rotation	    rotation;
++    Rotation	    rotations;
++    Bool	    changed;
++    int		    numOutputs;
++    RROutputPtr	    *outputs;
++    int		    gammaSize;
++    CARD16	    *gammaRed;
++    CARD16	    *gammaBlue;
++    CARD16	    *gammaGreen;
++    void	    *devPrivate;
++};
++
++struct _rrOutput {
++    RROutput	    id;
++    ScreenPtr	    pScreen;
++    char	    *name;
++    int		    nameLength;
++    CARD8	    connection;
++    CARD8	    subpixelOrder;
++    int		    mmWidth;
++    int		    mmHeight;
++    RRCrtcPtr	    crtc;
++    int		    numCrtcs;
++    RRCrtcPtr	    *crtcs;
++    int		    numClones;
++    RROutputPtr	    *clones;
++    int		    numModes;
++    int		    numPreferred;
++    RRModePtr	    *modes;
++    int		    numUserModes;
++    RRModePtr	    *userModes;
++    Bool	    changed;
++    RRPropertyPtr   properties;
++    Bool	    pendingProperties;
++    void	    *devPrivate;
++};
++
++#if RANDR_12_INTERFACE
++typedef Bool (*RRScreenSetSizeProcPtr) (ScreenPtr	pScreen,
++					CARD16		width,
++					CARD16		height,
++					CARD32		mmWidth,
++					CARD32		mmHeight);
++					
++typedef Bool (*RRCrtcSetProcPtr) (ScreenPtr		pScreen,
++				  RRCrtcPtr		crtc,
++				  RRModePtr		mode,
++				  int			x,
++				  int			y,
++				  Rotation		rotation,
++				  int			numOutputs,
++				  RROutputPtr		*outputs);
++
++typedef Bool (*RRCrtcSetGammaProcPtr) (ScreenPtr	pScreen,
++				       RRCrtcPtr	crtc);
++
++typedef Bool (*RROutputSetPropertyProcPtr) (ScreenPtr		pScreen,
++					    RROutputPtr		output,
++					    Atom		property,
++					    RRPropertyValuePtr	value);
++
++typedef Bool (*RROutputValidateModeProcPtr) (ScreenPtr		pScreen,
++					     RROutputPtr	output,
++					     RRModePtr		mode);
++
++typedef void (*RRModeDestroyProcPtr) (ScreenPtr	    pScreen,
++				      RRModePtr	    mode);
++
++#endif
++
++typedef Bool (*RRGetInfoProcPtr) (ScreenPtr pScreen, Rotation *rotations);
++typedef Bool (*RRCloseScreenProcPtr) ( int i, ScreenPtr pscreen);
+ 
+-typedef struct _rrScreenRate {
+-    int		    rate;
+-    Bool	    referenced;
+-    Bool	    oldReferenced;
++/* These are for 1.0 compatibility */
++ 
++typedef struct _rrRefresh {
++    CARD16	    rate;
++    RRModePtr	    mode;
+ } RRScreenRate, *RRScreenRatePtr;
+ 
+ typedef struct _rrScreenSize {
+     int		    id;
+     short	    width, height;
+     short	    mmWidth, mmHeight;
+-    RRScreenRatePtr pRates;
+     int		    nRates;
+-    int		    nRatesInUse;
+-    Bool	    referenced;
+-    Bool	    oldReferenced;
++    RRScreenRatePtr pRates;
+ } RRScreenSize, *RRScreenSizePtr;
+ 
++#ifdef RANDR_10_INTERFACE
++
+ typedef Bool (*RRSetConfigProcPtr) (ScreenPtr		pScreen,
+ 				    Rotation		rotation,
+ 				    int			rate,
+ 				    RRScreenSizePtr	pSize);
+ 
+-typedef Bool (*RRGetInfoProcPtr) (ScreenPtr pScreen, Rotation *rotations);
+-typedef Bool (*RRCloseScreenProcPtr) ( int i, ScreenPtr pscreen);
++#endif
+ 	
++
+ typedef struct _rrScrPriv {
++    /*
++     * 'public' part of the structure; DDXen fill this in
++     * as they initialize
++     */
++#if RANDR_10_INTERFACE
+     RRSetConfigProcPtr	    rrSetConfig;
++#endif
+     RRGetInfoProcPtr	    rrGetInfo;
++#if RANDR_12_INTERFACE
++    RRScreenSetSizeProcPtr  rrScreenSetSize;
++    RRCrtcSetProcPtr	    rrCrtcSet;
++    RRCrtcSetGammaProcPtr   rrCrtcSetGamma;
++    RROutputSetPropertyProcPtr	rrOutputSetProperty;
++    RROutputValidateModeProcPtr	rrOutputValidateMode;
++    RRModeDestroyProcPtr	rrModeDestroy;
++#endif
+     
++    /*
++     * Private part of the structure; not considered part of the ABI
++     */
+     TimeStamp		    lastSetTime;	/* last changed by client */
+     TimeStamp		    lastConfigTime;	/* possible configs changed */
+     RRCloseScreenProcPtr    CloseScreen;
+ 
++    Bool		    changed;		/* some config changed */
++    Bool		    configChanged;	/* configuration changed */
++    Bool		    layoutChanged;	/* screen layout changed */
++
++    CARD16		    minWidth, minHeight;
++    CARD16		    maxWidth, maxHeight;
++    CARD16		    width, height;	/* last known screen size */
++    CARD16		    mmWidth, mmHeight;	/* last known screen size */
++
++    int			    numOutputs;
++    RROutputPtr		    *outputs;
++
++    int			    numCrtcs;
++    RRCrtcPtr		    *crtcs;
++
++    /* Last known pointer position */
++    RRCrtcPtr		    pointerCrtc;
++
++#ifdef RANDR_10_INTERFACE
+     /*
+      * Configuration information
+      */
+     Rotation		    rotations;
++    CARD16		    reqWidth, reqHeight;
+     
+     int			    nSizes;
+-    int			    nSizesInUse;
+     RRScreenSizePtr	    pSizes;
+-
+-    /*
+-     * Current state
+-     */
++    
+     Rotation		    rotation;
+-    int			    size;
+     int			    rate;
++    int			    size;
++#endif
+ } rrScrPrivRec, *rrScrPrivPtr;
+ 
++#ifndef NXAGENT_SERVER
++extern DevPrivateKey rrPrivKey;
++#else
+ extern int rrPrivIndex;
++#endif
++
++#ifndef NXAGENT_SERVER
++
++#define rrGetScrPriv(pScr)  ((rrScrPrivPtr)dixLookupPrivate(&(pScr)->devPrivates, rrPrivKey))
++#define rrScrPriv(pScr)	rrScrPrivPtr    pScrPriv = rrGetScrPriv(pScr)
++#define SetRRScreen(s,p) dixSetPrivate(&(s)->devPrivates, rrPrivKey, p)
++
++#else
+ 
+ #define rrGetScrPriv(pScr)  ((rrScrPrivPtr) (pScr)->devPrivates[rrPrivIndex].ptr)
+ #define rrScrPriv(pScr)	rrScrPrivPtr    pScrPriv = rrGetScrPriv(pScr)
+ #define SetRRScreen(s,p) ((s)->devPrivates[rrPrivIndex].ptr = (pointer) (p))
+ 
++#endif
++
++/*
++ * each window has a list of clients requesting
++ * RRNotify events.  Each client has a resource
++ * for each window it selects RRNotify input for,
++ * this resource is used to delete the RRNotifyRec
++ * entry from the per-window queue.
++ */
++
++typedef struct _RREvent *RREventPtr;
++
++typedef struct _RREvent {
++    RREventPtr  next;
++    ClientPtr	client;
++    WindowPtr	window;
++    XID		clientResource;
++    int		mask;
++} RREventRec;
++
++typedef struct _RRTimes {
++    TimeStamp	setTime;
++    TimeStamp	configTime;
++} RRTimesRec, *RRTimesPtr;
++
++typedef struct _RRClient {
++    int		major_version;
++    int		minor_version;
++/*  RRTimesRec	times[0]; */
++} RRClientRec, *RRClientPtr;
++
++extern RESTYPE	RRClientType, RREventType; /* resource types for event masks */
++#ifndef NXAGENT_SERVER
++extern DevPrivateKey RRClientPrivateKey;
++#else
++extern int	RRClientPrivateIndex;
++#endif
++extern RESTYPE	RRCrtcType, RRModeType, RROutputType;
++
++#define LookupOutput(client,id,a) ((RROutputPtr) \
++				   (SecurityLookupIDByType (client, id, \
++							    RROutputType, a)))
++#define LookupCrtc(client,id,a) ((RRCrtcPtr) \
++				 (SecurityLookupIDByType (client, id, \
++							  RRCrtcType, a)))
++#define LookupMode(client,id,a) ((RRModePtr) \
++				 (SecurityLookupIDByType (client, id, \
++							  RRModeType, a)))
++#ifndef NXAGENT_SERVER
++
++#define GetRRClient(pClient)    ((RRClientPtr)dixLookupPrivate(&(pClient)->devPrivates, RRClientPrivateKey))
++#define rrClientPriv(pClient)	RRClientPtr pRRClient = GetRRClient(pClient)
++
++#else
++
++#define GetRRClient(pClient)    ((RRClientPtr) (pClient)->devPrivates[RRClientPrivateIndex].ptr)
++#define rrClientPriv(pClient)	RRClientPtr pRRClient = GetRRClient(pClient)
++
++#define DixUnknownAccess     SecurityUnknownAccess
++#define DixReadAccess        SecurityReadAccess   
++#define DixWriteAccess       SecurityWriteAccess  
++#define DixDestroyAccess     SecurityDestroyAccess
++
++#endif
++
+ /* Initialize the extension */
+ void
+ RRExtensionInit (void);
+ 
++#ifdef RANDR_12_INTERFACE
++/*
++ * Set the range of sizes for the screen
++ */
++void
++RRScreenSetSizeRange (ScreenPtr	pScreen,
++		      CARD16	minWidth,
++		      CARD16	minHeight,
++		      CARD16	maxWidth,
++		      CARD16	maxHeight);
++#endif
++
++/* rrscreen.c */
++/*
++ * Notify the extension that the screen size has been changed.
++ * The driver is responsible for calling this whenever it has changed
++ * the size of the screen
++ */
++void
++RRScreenSizeNotify (ScreenPtr	pScreen);
++
++/*
++ * Request that the screen be resized
++ */
++Bool
++RRScreenSizeSet (ScreenPtr  pScreen,
++		 CARD16	    width,
++		 CARD16	    height,
++		 CARD32	    mmWidth,
++		 CARD32	    mmHeight);
++
++/*
++ * Send ConfigureNotify event to root window when 'something' happens
++ */
++void
++RRSendConfigNotify (ScreenPtr pScreen);
++    
++/*
++ * screen dispatch
++ */
++int 
++ProcRRGetScreenSizeRange (ClientPtr client);
++
++int
++ProcRRSetScreenSize (ClientPtr client);
++
++int
++ProcRRGetScreenResources (ClientPtr client);
++
++int
++ProcRRSetScreenConfig (ClientPtr client);
++
++int
++ProcRRGetScreenInfo (ClientPtr client);
++
++/*
++ * Deliver a ScreenNotify event
++ */
++void
++RRDeliverScreenEvent (ClientPtr client, WindowPtr pWin, ScreenPtr pScreen);
++    
++/* mirandr.c */
++Bool
++miRandRInit (ScreenPtr pScreen);
++
++Bool
++miRRGetInfo (ScreenPtr pScreen, Rotation *rotations);
++
++Bool
++miRRGetScreenInfo (ScreenPtr pScreen);
++
++Bool
++miRRCrtcSet (ScreenPtr	pScreen,
++	     RRCrtcPtr	crtc,
++	     RRModePtr	mode,
++	     int	x,
++	     int	y,
++	     Rotation	rotation,
++	     int	numOutput,
++	     RROutputPtr *outputs);
++
++Bool
++miRROutputSetProperty (ScreenPtr	    pScreen,
++		       RROutputPtr	    output,
++		       Atom		    property,
++		       RRPropertyValuePtr   value);
++
++Bool
++miRROutputValidateMode (ScreenPtr	    pScreen,
++			RROutputPtr	    output,
++			RRModePtr	    mode);
++
++void
++miRRModeDestroy (ScreenPtr  pScreen,
++		 RRModePtr  mode);
++
++/* randr.c */
++/*
++ * Send all pending events
++ */
++void
++RRTellChanged (ScreenPtr pScreen);
++
++/*
++ * Poll the driver for changed information
++ */
++Bool
++RRGetInfo (ScreenPtr pScreen);
++
++Bool RRInit (void);
++
++Bool RRScreenInit(ScreenPtr pScreen);
++
++RROutputPtr
++RRFirstOutput (ScreenPtr pScreen);
++
++Rotation
++RRGetRotation (ScreenPtr pScreen);
++
++CARD16
++RRVerticalRefresh (xRRModeInfo *mode);
++
++#ifdef RANDR_10_INTERFACE					
++/*
++ * This is the old interface, deprecated but left
++ * around for compatibility
++ */
++
+ /*
+  * Then, register the specific size with the screen
+  */
+@@ -116,7 +507,10 @@
+ 		    int			rate,
+ 		    RRScreenSizePtr	pSize);
+ 
+-Bool RRScreenInit(ScreenPtr pScreen);
++Bool RRScreenInit (ScreenPtr pScreen);
++
++Rotation
++RRGetRotation (ScreenPtr pScreen);
+ 
+ int
+ RRSetScreenConfig (ScreenPtr		pScreen,
+@@ -124,19 +518,371 @@
+ 		   int			rate,
+ 		   RRScreenSizePtr	pSize);
+ 
++#endif					
++
++/* rrcrtc.c */
++
++/*
++ * Notify the CRTC of some change; layoutChanged indicates that
++ * some position or size element changed
++ */
++void
++RRCrtcChanged (RRCrtcPtr crtc, Bool layoutChanged);
++
++/*
++ * Create a CRTC
++ */
++RRCrtcPtr
++RRCrtcCreate (ScreenPtr pScreen, void	*devPrivate);
++
++/*
++ * Set the allowed rotations on a CRTC
++ */
++void
++RRCrtcSetRotations (RRCrtcPtr crtc, Rotation rotations);
++
++/*
++ * Notify the extension that the Crtc has been reconfigured,
++ * the driver calls this whenever it has updated the mode
++ */
++Bool
++RRCrtcNotify (RRCrtcPtr	    crtc,
++	      RRModePtr	    mode,
++	      int	    x,
++	      int	    y,
++	      Rotation	    rotation,
++	      int	    numOutputs,
++	      RROutputPtr   *outputs);
++
++void
++RRDeliverCrtcEvent (ClientPtr client, WindowPtr pWin, RRCrtcPtr crtc);
++    
++/*
++ * Request that the Crtc be reconfigured
++ */
+ Bool
+-miRandRInit (ScreenPtr pScreen);
++RRCrtcSet (RRCrtcPtr    crtc,
++	   RRModePtr	mode,
++	   int		x,
++	   int		y,
++	   Rotation	rotation,
++	   int		numOutput,
++	   RROutputPtr  *outputs);
++
++/*
++ * Request that the Crtc gamma be changed
++ */
+ 
+ Bool
+-miRRGetInfo (ScreenPtr pScreen, Rotation *rotations);
++RRCrtcGammaSet (RRCrtcPtr   crtc,
++		CARD16	    *red,
++		CARD16	    *green,
++		CARD16	    *blue);
++
++/*
++ * Notify the extension that the Crtc gamma has been changed
++ * The driver calls this whenever it has changed the gamma values
++ * in the RRCrtcRec
++ */
+ 
+ Bool
+-miRRSetConfig (ScreenPtr	pScreen,
+-	       Rotation		rotation,
+-	       int		rate,
+-	       RRScreenSizePtr	size);
++RRCrtcGammaNotify (RRCrtcPtr	crtc);
++
++/*
++ * Set the size of the gamma table at server startup time
++ */
+ 
+ Bool
+-miRRGetScreenInfo (ScreenPtr pScreen);
++RRCrtcGammaSetSize (RRCrtcPtr	crtc,
++		    int		size);
++
++/*
++ * Return the area of the frame buffer scanned out by the crtc,
++ * taking into account the current mode and rotation
++ */
++
++void
++RRCrtcGetScanoutSize(RRCrtcPtr crtc, int *width, int *height);
++
++/*
++ * Destroy a Crtc at shutdown
++ */
++void
++RRCrtcDestroy (RRCrtcPtr crtc);
++
++/*
++ * Initialize crtc type
++ */
++Bool
++RRCrtcInit (void);
++
++/*
++ * Crtc dispatch
++ */
++
++int
++ProcRRGetCrtcInfo (ClientPtr client);
++
++int
++ProcRRSetCrtcConfig (ClientPtr client);
++
++int
++ProcRRGetCrtcGammaSize (ClientPtr client);
++
++int
++ProcRRGetCrtcGamma (ClientPtr client);
++
++int
++ProcRRSetCrtcGamma (ClientPtr client);
++
++/* rrdispatch.c */
++Bool
++RRClientKnowsRates (ClientPtr	pClient);
++
++/* rrmode.c */
++/*
++ * Find, and if necessary, create a mode
++ */
++
++RRModePtr
++RRModeGet (xRRModeInfo	*modeInfo,
++	   const char	*name);
++
++void
++RRModePruneUnused (ScreenPtr pScreen);
++
++/*
++ * Destroy a mode.
++ */
++
++void
++RRModeDestroy (RRModePtr mode);
++
++/*
++ * Return a list of modes that are valid for some output in pScreen
++ */
++RRModePtr *
++RRModesForScreen (ScreenPtr pScreen, int *num_ret);
++    
++/*
++ * Initialize mode type
++ */
++Bool
++RRModeInit (void);
++    
++int
++ProcRRCreateMode (ClientPtr client);
++
++int
++ProcRRDestroyMode (ClientPtr client);
++
++int
++ProcRRAddOutputMode (ClientPtr client);
++
++int
++ProcRRDeleteOutputMode (ClientPtr client);
++
++/* rroutput.c */
++
++/*
++ * Notify the output of some change. configChanged indicates whether
++ * any external configuration (mode list, clones, connected status)
++ * has changed, or whether the change was strictly internal
++ * (which crtc is in use)
++ */
++void
++RROutputChanged (RROutputPtr output, Bool configChanged);
++
++/*
++ * Create an output
++ */
++
++RROutputPtr
++RROutputCreate (ScreenPtr   pScreen,
++		const char  *name,
++		int	    nameLength,
++		void	    *devPrivate);
++
++/*
++ * Notify extension that output parameters have been changed
++ */
++Bool
++RROutputSetClones (RROutputPtr  output,
++		   RROutputPtr  *clones,
++		   int		numClones);
++
++Bool
++RROutputSetModes (RROutputPtr	output,
++		  RRModePtr	*modes,
++		  int		numModes,
++		  int		numPreferred);
++
++int
++RROutputAddUserMode (RROutputPtr    output,
++		     RRModePtr	    mode);
++
++int
++RROutputDeleteUserMode (RROutputPtr output,
++			RRModePtr   mode);
++
++Bool
++RROutputSetCrtcs (RROutputPtr	output,
++		  RRCrtcPtr	*crtcs,
++		  int		numCrtcs);
++
++Bool
++RROutputSetConnection (RROutputPtr  output,
++		       CARD8	    connection);
++
++Bool
++RROutputSetSubpixelOrder (RROutputPtr output,
++			  int	      subpixelOrder);
++
++Bool
++RROutputSetPhysicalSize (RROutputPtr	output,
++			 int		mmWidth,
++			 int		mmHeight);
++
++void
++RRDeliverOutputEvent(ClientPtr client, WindowPtr pWin, RROutputPtr output);
++
++void
++RROutputDestroy (RROutputPtr	output);
++
++int
++ProcRRGetOutputInfo (ClientPtr client);
++
++/*
++ * Initialize output type
++ */
++Bool
++RROutputInit (void);
++    
++/* rrpointer.c */
++void
++RRPointerMoved (ScreenPtr pScreen, int x, int y);
++
++void
++RRPointerScreenConfigured (ScreenPtr pScreen);
++
++/* rrproperty.c */
++
++void
++RRDeleteAllOutputProperties (RROutputPtr output);
++
++RRPropertyValuePtr
++RRGetOutputProperty (RROutputPtr output, Atom property, Bool pending);
++
++RRPropertyPtr
++RRQueryOutputProperty (RROutputPtr output, Atom property);
++		       
++void
++RRDeleteOutputProperty (RROutputPtr output, Atom property);
++
++Bool
++RRPostPendingProperties (RROutputPtr output);
++    
++int
++RRChangeOutputProperty (RROutputPtr output, Atom property, Atom type,
++			int format, int mode, unsigned long len,
++			pointer value, Bool sendevent, Bool pending);
++
++int
++RRConfigureOutputProperty (RROutputPtr output, Atom property,
++			   Bool pending, Bool range, Bool immutable,
++			   int num_values, INT32 *values);
++int
++ProcRRChangeOutputProperty (ClientPtr client);
++
++int
++ProcRRGetOutputProperty (ClientPtr client);
++
++int
++ProcRRListOutputProperties (ClientPtr client);
++
++int
++ProcRRQueryOutputProperty (ClientPtr client);
++
++int
++ProcRRConfigureOutputProperty (ClientPtr client);
++
++int
++ProcRRDeleteOutputProperty (ClientPtr client);
++
++/* rrxinerama.c */
++void
++RRXineramaExtensionInit(void);
+ 
+ #endif /* _RANDRSTR_H_ */
++
++/*
++ 
++randr extension implementation structure
++
++Query state:
++    ProcRRGetScreenInfo/ProcRRGetScreenResources
++	RRGetInfo
++ 
++	    • Request configuration from driver, either 1.0 or 1.2 style
++	    • These functions only record state changes, all
++	      other actions are pended until RRTellChanged is called
++ 
++	    ->rrGetInfo
++	    1.0:
++		RRRegisterSize
++		RRRegisterRate
++		RRSetCurrentConfig
++	    1.2:
++		RRScreenSetSizeRange
++		RROutputSetCrtcs
++		RRModeGet
++		RROutputSetModes
++		RROutputSetConnection
++		RROutputSetSubpixelOrder
++		RROutputSetClones
++		RRCrtcNotify
++ 
++	• Must delay scanning configuration until after ->rrGetInfo returns
++	  because some drivers will call SetCurrentConfig in the middle
++	  of the ->rrGetInfo operation.
++ 
++	1.0:
++
++	    • Scan old configuration, mirror to new structures
++ 
++	    RRScanOldConfig
++		RRCrtcCreate
++		RROutputCreate
++		RROutputSetCrtcs
++		RROutputSetConnection
++		RROutputSetSubpixelOrder
++		RROldModeAdd	• This adds modes one-at-a-time
++		    RRModeGet
++		RRCrtcNotify
++ 
++	• send events, reset pointer if necessary
++ 
++	RRTellChanged
++	    WalkTree (sending events)
++ 
++	    • when layout has changed:
++		RRPointerScreenConfigured
++		RRSendConfigNotify
++ 
++Asynchronous state setting (1.2 only)
++    When setting state asynchronously, the driver invokes the
++    ->rrGetInfo function and then calls RRTellChanged to flush
++    the changes to the clients and reset pointer if necessary
++
++Set state
++
++    ProcRRSetScreenConfig
++	RRCrtcSet
++	    1.2:
++		->rrCrtcSet
++		    RRCrtcNotify
++	    1.0:
++		->rrSetConfig
++		RRCrtcNotify
++	    RRTellChanged
++ */
+Only in ./nx-X11/programs/Xserver/randr: registry.h
+Only in ./nx-X11/programs/Xserver/randr: registry.h.NX.original
+Only in ./nx-X11/programs/Xserver/randr: registry.h.X.original
+Only in ./nx-X11/programs/Xserver/randr: rrcrtc.c
+Only in ./nx-X11/programs/Xserver/randr: rrcrtc.c.NX.original
+Only in ./nx-X11/programs/Xserver/randr: rrcrtc.c.X.original
+Only in ./nx-X11/programs/Xserver/randr: rrdispatch.c
+Only in ./nx-X11/programs/Xserver/randr: rrdispatch.c.X.original
+Only in ./nx-X11/programs/Xserver/randr: rrinfo.c
+Only in ./nx-X11/programs/Xserver/randr: rrmode.c
+Only in ./nx-X11/programs/Xserver/randr: rrmode.c.NX.original
+Only in ./nx-X11/programs/Xserver/randr: rrmode.c.X.original
+Only in ./nx-X11/programs/Xserver/randr: rroutput.c
+Only in ./nx-X11/programs/Xserver/randr: rrpointer.c
+Only in ./nx-X11/programs/Xserver/randr: rrproperty.c
+Only in ./nx-X11/programs/Xserver/randr: rrscreen.c
+Only in ./nx-X11/programs/Xserver/randr: rrscreen.c.NX.original
+Only in ./nx-X11/programs/Xserver/randr: rrscreen.c.X.original
+Only in ./nx-X11/programs/Xserver/randr: rrsdispatch.c
+Only in ./nx-X11/programs/Xserver/randr: rrxinerama.c
+Only in ./nx-X11/programs/Xserver/randr: rrxinerama.c.NX.original
+Only in ./nx-X11/programs/Xserver/randr: rrxinerama.c.X.original

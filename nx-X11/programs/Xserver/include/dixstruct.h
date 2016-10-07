@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/include/dixstruct.h,v 3.19tsi Exp $ */
 /***********************************************************
 Copyright 1987 by Digital Equipment Corporation, Maynard, Massachusetts.
 
@@ -21,7 +20,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $Xorg: dixstruct.h,v 1.3 2000/08/17 19:53:29 cpqbld Exp $ */
 
 #ifndef DIXSTRUCT_H
 #define DIXSTRUCT_H
@@ -218,10 +216,6 @@ extern int (* InitialVector[3]) (ClientPtr /*client*/);
 extern int (* ProcVector[256]) (ClientPtr /*client*/);
 
 extern int (* SwappedProcVector[256]) (ClientPtr /*client*/);
-
-#ifdef K5AUTH
-extern int (*k5_Vector[256])(ClientPtr /*client*/);
-#endif
 
 extern ReplySwapPtr ReplySwapVector[256];
 

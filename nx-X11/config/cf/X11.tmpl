@@ -150,13 +150,6 @@ XORGRELSTRING = XorgManVersionString
 #ifndef BuildLoadableXlibXcursor
 #define BuildLoadableXlibXcursor (HasDlopen && SharedLibX11)
 #endif
-#ifndef BuildXextLib
-#define BuildXextLib		BuildLibraries
-#endif
-#ifndef BuildXauLib
-#define BuildXauLib		(BuildLibraries || BuildLibrariesForXServers)
-#endif
-#define UseInstalledXauLib	(defined(UseInstalled) || !BuildXauLib)
 #ifndef BuildTestExt
 #define BuildTestExt		YES
 #endif
@@ -186,9 +179,6 @@ XORGRELSTRING = XorgManVersionString
 #endif
 #ifndef BuildXKBlib
 #define BuildXKBlib		(BuildXKB && !BuildServersOnly)
-#endif
-#ifndef BuildXKBfilelib
-#define BuildXKBfilelib		(BuildXKB && !BuildServersOnly)
 #endif
 
 	/*
@@ -342,15 +332,6 @@ XORGRELSTRING = XorgManVersionString
 #endif
 #ifndef UseMemLeak
 #define UseMemLeak		NO
-#endif
-#ifndef SpecialMalloc
-#define SpecialMalloc		NO
-#endif
-#ifndef UseInternalMalloc
-#define UseInternalMalloc	NO
-#endif
-#ifndef XallocDefines
-#define XallocDefines		/**/
 #endif
 #ifndef ServerErrorDefines
 #define ServerErrorDefines	/**/
@@ -742,20 +723,6 @@ FCHOWN_DEFINES = -DHAS_FCHOWN
 #endif
 #ifndef ServerOSDefines
 #define ServerOSDefines /**/
-#endif
-#if HasKrbIV
-#ifndef KrbIVDefines
-#define KrbIVDefines -DKERBEROS
-#endif
-#else
-#define KrbIVDefines /**/
-#endif
-#if HasKrb5
-#ifndef Krb5Defines
-#define Krb5Defines -DK5AUTH
-#endif
-#else
-#define Krb5Defines /**/
 #endif
 #ifndef ServerExtraDefines
 #define ServerExtraDefines /* -DPIXPRIV */
@@ -1212,78 +1179,6 @@ ProjectUnsharedLibReferences(XONLY,NX_X11,$(XLIBSRC),XBuildLibDir)
       DEPXLIBONLY = $(DEPXONLYLIB)
          XLIBONLY = $(XONLYLIB)
      LINTXONLYLIB = $(LINTXONLY)
-#ifndef SharedLibXext
-#define SharedLibXext HasSharedLibraries
-#endif
-#ifndef NormalLibXext
-#define NormalLibXext (!SharedLibXext | ForceNormalLib)
-#endif
-#ifndef DebugLibXext
-#define DebugLibXext		NO	/* debugged Xext library */
-#endif
-#ifndef ProfileLibXext
-#define ProfileLibXext		NO	/* profiled Xext library */
-#endif
-      XEXTLIBSRC = $(LIBSRC)/Xext
-#if SharedLibXext
-#ifndef SharedXextRev
-#define SharedXextRev 6.4
-#endif
-SharedLibReferences(EXTENSION,NX_Xext,$(XEXTLIBSRC),SOXEXTREV,SharedXextRev)
-#else
-ProjectUnsharedLibReferences(EXTENSION,NX_Xext,$(XEXTLIBSRC),XBuildLibDir)
-#endif
-LINTEXTENSIONLIB = $(LINTEXTENSION)
-          DEPXLIB = $(DEPEXTENSIONLIB) $(DEPXONLYLIB)
-             XLIB = $(EXTENSIONLIB) $(XONLYLIB)
-         LINTXLIB = $(LINTXONLYLIB)
-#ifndef SharedLibXau
-#define SharedLibXau		YES
-#endif
-#ifndef NormalLibXau
-#define NormalLibXau (!SharedLibXau | ForceNormalLib)
-#endif
-#ifndef DebugLibXau
-#define DebugLibXau		NO	/* debugged auth library */
-#endif
-#ifndef ProfileLibXau
-#define ProfileLibXau		NO	/* profiled auth library */
-#endif
-         XAUTHSRC = $(LIBSRC)/Xau
-#if SharedLibXau
-#ifndef SharedXauRev
-#define SharedXauRev 6.0
-#endif
-SharedLibReferences(XAUTH,NX_Xau,$(XAUTHSRC),SOXAUTHREV,SharedXauRev)
-#else
-#if !UseInstalledXauLib
-ProjectUnsharedLibReferences(XAUTH,NX_Xau,$(XAUTHSRC),XBuildLibDir)
-#else
-ProjectUnsharedLibReferences(XAUTH,NX_Xau,$(XAUTHSRC),$(USRLIBDIR))
-#endif
-#endif
-
-#ifndef SharedOldX
-#define SharedOldX HasSharedLibraries
-#endif
-#ifndef NormalOldX
-#define NormalOldX (!SharedOldX | ForceNormalLib)
-#endif
-#ifndef DebugOldX
-#define DebugOldX		NO	/* debugged old X library */
-#endif
-#ifndef ProfileOldX
-#define ProfileOldX		NO	/* profiled old X library */
-#endif
-       OLDXLIBSRC = $(LIBSRC)/oldX
-#if SharedOldX
-#ifndef SharedOldXRev
-#define SharedOldXRev 6.0
-#endif
-SharedLibReferences(OLDX,NX_oldX,$(OLDXLIBSRC),SOOLDXREV,SharedOldXRev)
-#else
-ProjectUnsharedLibReferences(OLDX,NX_oldX,$(OLDXLIBSRC),XBuildLibDir)
-#endif
 
 #if HasMotif
 
@@ -1337,56 +1232,11 @@ MOTIFINCLUDES = -I$(MOTIFINCDIR)
 #endif
 
 #if BuildXKBlib
-# ifndef SharedLibxkbfile
-#  define SharedLibxkbfile	HasSharedLibraries
-# endif
-# ifndef NormalLibxkbfile
-#  define NormalLibxkbfile	(!SharedLibxkbfile | ForceNormalLib)
-# endif
-# ifndef DebugLibxkbfile
-#  define DebugLibxkbfile	NO
-# endif
-# ifndef ProfileLibxkbfile
-#  define ProfileLibxkbfile	NO
-# endif
-#else
-# ifndef SharedLibxkbfile
-#  define SharedLibxkbfile	NO
-# endif
-# ifndef NormalLibxkbfile
-#  define NormalLibxkbfile	NO
-# endif
-# ifndef DebugLibxkbfile
-#  define DebugLibxkbfile	NO
-# endif
-# ifndef ProfileLibxkbfile
-#  define ProfileLibxkbfile	NO
-# endif
-#endif
-    XKBFILELIBSRC = $(LIBSRC)/xkbfile
-#if SharedLibxkbfile
-# ifndef SharedxkbfileRev
-#  define SharedxkbfileRev	1.0
-# endif
-SharedLibReferences(XKBFILE,NX_xkbfile,$(XKBFILESRC),SOXKBFILEREV, SharedxkbfileRev)
-#else
-ProjectUnsharedLibReferences(XKBFILE,NX_xkbfile,$(XKBFILELIBSRC),XBuildLibDir)
-#endif
-
-#if BuildXKBlib
 # ifndef XkbClientDepLibs
-#  if UseXKBInClients
-#   define XkbClientDepLibs	$(DEPXKBFILELIB)
-#  else
 #   define XkbClientDepLibs	/**/
-#  endif
 # endif
 # ifndef XkbClientLibs
-#  if UseXKBInClients
-#   define XkbClientLibs	$(XKBFILELIB)
-#  else
 #   define XkbClientLibs	/**/
-#  endif
 # endif
 
 #else /* !BuildXKBlib */

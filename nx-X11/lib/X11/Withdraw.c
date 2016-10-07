@@ -1,4 +1,3 @@
-/* $Xorg: Withdraw.c,v 1.4 2001/02/09 02:03:37 xorgcvs Exp $ */
 
 /***********************************************************
 Copyright 1988 by Wyse Technology, Inc., San Jose, Ca.,
@@ -50,7 +49,6 @@ from The Open Group.
 
 */
 
-#define NEED_EVENTS
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif

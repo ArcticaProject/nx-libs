@@ -1,19 +1,25 @@
-XCOMM $XdotOrg: xc/programs/Xserver/Imakefile,v 1.37 2005/11/18 18:15:23 ajax Exp $
-XCOMM $Xorg: Imakefile,v 1.4 2001/03/14 18:42:02 pookie Exp $
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
-/* NX-X11, NX protocol compression and NX extensions to this software     */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
+/* nx-X11, NX protocol compression and NX extensions to this software     */
+/* are copyright of the aforementioned persons and companies.             */
 /*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
 /*                                                                        */
 /* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
 /*                                                                        */
 /**************************************************************************/
 
@@ -163,7 +169,7 @@ INSTPGMFLAGS =
                   $(DBEDIR) $(RECORDDIR) $(SITEEXTDIRS) \
                   $(RANDRDIR) $(RENDERDIR) $(XPCONFIGDIR) \
 		  $(FIXESDIR) $(DAMAGEDIR) $(CWDIR) $(COMPOSITEDIR)
-             OS = os/LibraryTargetName(os) $(DEPXAUTHLIB)
+             OS = os/LibraryTargetName(os)
         BSDEMUL = $(DEPXBSDLIB)
 #if DoLoadableServer
             MFB = mfb/ModuleLibraryTargetName(mfb)
@@ -187,7 +193,9 @@ INSTPGMFLAGS =
 		  cfb24/ModuleLibraryTargetName(cfb24)
           CFB32 = cfb/ModuleLibraryTargetName(cfb) \
 		  cfb32/ModuleLibraryTargetName(cfb32)
+#if (!(defined(NXAgentServer) && NXAgentServer))
          DAMAGE = miext/damage/ModuleLibraryTargetName(damage)
+#endif
          SHADOW = miext/shadow/ModuleLibraryTargetName(shadow)
           LAYER = miext/layer/ModuleLibraryTargetName(layer) 
 #else 
@@ -212,7 +220,9 @@ INSTPGMFLAGS =
 		  cfb/LibraryTargetName(cfb)
           CFB32 = cfb32/LibraryTargetName(cfb32) \
 		  cfb/LibraryTargetName(cfb)
+#if (!(defined(NXAgentServer) && NXAgentServer))
          DAMAGE = miext/damage/LibraryTargetName(damage)
+#endif
          SHADOW = miext/shadow/LibraryTargetName(shadow)
           LAYER = miext/layer/LibraryTargetName(layer) 
 #endif
@@ -242,7 +252,7 @@ INSTPGMFLAGS =
 #if !(SystemV4 || defined(SGIArchitecture) || UseRgbTxt)
        DBMLIBS = DBMLibrary
 #endif
-        SYSLIBS = $(ZLIB) MathLibrary Krb5Libraries $(DBMLIBS) $(USB) \
+        SYSLIBS = $(ZLIB) MathLibrary $(DBMLIBS) $(USB) \
 		  $(PAMLIBS)  $(EXTRASYSLIBS)
 #if !HasCbrt
            CBRT = mi/LibraryTargetName(cbrt)
@@ -356,7 +366,6 @@ NXAGENTOBJS = hw/nxagent/miinitext.o     \
               hw/nxagent/NXmiglyph.o     \
               hw/nxagent/NXmiexpose.o    \
               hw/nxagent/NXresource.o    \
-              hw/nxagent/NXmiwindow.o    \
               hw/nxagent/NXdamage.o
 #elif !defined(LynxOSArchitecture) && \
       !defined(Win32Architecture) && \
@@ -377,7 +386,6 @@ NXAGENTOBJS = hw/nxagent/miinitext.o     \
               hw/nxagent/NXmiglyph.o     \
               hw/nxagent/NXmiexpose.o    \
               hw/nxagent/NXresource.o    \
-              hw/nxagent/NXmiwindow.o    \
               hw/nxagent/NXdamage.o
 #else
 NXAGENTOBJS = hw/nxagent/miinitext.o     \
@@ -396,7 +404,6 @@ NXAGENTOBJS = hw/nxagent/miinitext.o     \
               hw/nxagent/NXmiglyph.o     \
               hw/nxagent/NXmiexpose.o    \
               hw/nxagent/NXresource.o    \
-              hw/nxagent/NXmiwindow.o    \
               hw/nxagent/NXdamage.o      \
               dix/main.o
 #endif
@@ -420,19 +427,32 @@ $(NXAGENTOBJS) $(NXAGENTLIBS) $(NXAGENTSYSLIBS):: $(NXAGENTDIRS)
  */
 
 #if defined(SunArchitecture)
-NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext -L ../../../nxcompshad \
-                -lXcomp -lXcompext -lXcompshad -lrt -L/usr/sfw/lib -lXrender -lXfixes -lXfont \
-                -L../../../nx-X11/exports/lib -lXcomposite -lXdmcp
+NXAGENTNXLIBS = -L/usr/sfw/lib \
+                -L ../../../nxcomp  \
+                -L../../../nx-X11/exports/lib \
+                -L ../../../nxcompext -L ../../../nxcompshad \
+                -lrt \
+                -lXcomp \
+                -lXcompext -lXcompshad \
+                -lXrender -lXfixes -lXfont -lXcomposite -lXinerama -lXdmcp \
+                -lNX_X11 -lXext
 #elif defined(cygwinArchitecture)
-NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext \
-                -lXcomp -lXcompext -lXrender -lX11 -lNX_Xext -lXcomposite -lXfixes -lXfont \
-                -L ../../../nxcompshad -lXcompshad -L../../../nx-X11/exports/lib -lXdmcp
+NXAGENTNXLIBS = -L ../../../nxcomp  \
+                -L../../../nx-X11/exports/lib \
+                -L ../../../nxcompext -L ../../../nxcompshad \
+                -lXcomp \
+                -lXcompext -lXcompshad \
+                -lXrender -lXfixes -lXfont -lXcomposite -lXdmcp \
+                -lNX_X11 -lXext
 #else
-NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext -L ../../../nxcompshad \
-                -lXcomp -lXcompext -lXcompshad -lXrender -lNX_X11 -lNX_Xext -lXfixes -lXfont \
-                -L../../../nx-X11/exports/lib -lXcomposite -lXinerama -lXdmcp
+NXAGENTNXLIBS = -L ../../../nxcomp  \
+                -L../../../nx-X11/exports/lib \
+                -L ../../../nxcompext -L ../../../nxcompshad \
+                -lXcomp \
+                -lXcompext -lXcompshad \
+                -lXrender -lXfixes -lXfont -lXcomposite -lXinerama -lXdmcp \
+                -lNX_X11 -lXext
 #endif
-
 #endif
 
 #ifdef cygwinArchitecture
@@ -441,27 +461,7 @@ NX_XSHADOWLIBNAME   = cygXcompshad.dll
 NX_XSHADOWLIBNAME   = libXcompshad.so
 #endif
 
-NX_XSHADOWLIBDIR    = $(XTOP)/../nxcompshad
-NX_XSHADOWLIBTARGET = $(NX_XSHADOWLIBDIR)/$(NX_XSHADOWLIBNAME)
-NX_XSHADOWCONFIGTARGET = $(NX_XSHADOWLIBDIR)/config.status
-
-CONFIGURE ?= ./configure
-
-$(NX_XSHADOWCONFIGTARGET):
-	cd $(NX_XSHADOWLIBDIR) && \
-	${CONFIGURE}
-
-#ifdef SunArchitecture
-$(NX_XSHADOWLIBTARGET): $(NX_XSHADOWCONFIGTARGET)
-	cd $(NX_XSHADOWLIBDIR) && \
-	${MAKE}
-#else
-$(NX_XSHADOWLIBTARGET): $(NX_XSHADOWCONFIGTARGET)
-	cd $(NX_XSHADOWLIBDIR) && \
-	rm -f *.o && ${MAKE}
-#endif
-
-ServerTarget(nxagent,$(NX_XSHADOWLIBTARGET) $(NXAGENTDIRS),$(NXAGENTOBJS), \
+ServerTarget(nxagent,$(NXAGENTDIRS),$(NXAGENTOBJS), \
         $(LIBCWRAPPER) $(NXAGENTLIBS) $(LOADABLEEXTS),$(NXAGENTSYSLIBS) $(NXAGENTNXLIBS))
 
 /*
@@ -484,7 +484,7 @@ nxagent_static_nolibs:  nxagent
 	else exit 0; fi
 	$(CCLINK) -o nxagent_static_nolibs -Wl,-Bstatic $(LDOPTIONS) $(NXAGENTOBJS) \
 	$(NXAGENTLIBS) $(LOADABLEEXTS) $(LIBCWRAPPER) $(LDLIBS) \
-	$(LDPRELIBS) $(SYSLIBS) -Wl,-Bdynamic -lNX_Xext -lNX_X11 $(EXTRA_LOAD_FLAGS)
+	$(LDPRELIBS) $(SYSLIBS) -Wl,-Bdynamic -lNX_X11 -lXext $(EXTRA_LOAD_FLAGS)
 #endif /* NXAgentServer */
 
 #if defined(NXWinServer) && NXWinServer
@@ -652,8 +652,6 @@ ForceSubdirs($(DEPDIRS) $(SUBDIRS))
 
 DEFAULTFONTPATH = DefaultFontPath
 EXTRAMANDEFS = -D__default_font_path__="`echo $(DEFAULTFONTPATH) | sed -e 's/,/, /g'`"
-
-InstallManPage(Xserver,$(MANDIR))
 
 #if MakeDllModules && DoLoadableServer && \
         (defined(SunArchitecture) && defined(SVR4Architecture))

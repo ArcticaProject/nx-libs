@@ -566,12 +566,6 @@ X_BYTE_ORDER = ByteOrder
 #ifndef HasSecureRPC
 #define HasSecureRPC		NO	/* if you have Secure RPC */
 #endif
-#ifndef HasKrbIV
-#define HasKrbIV		NO	/* if you have Kerberos IV */
-#endif
-#ifndef HasKrb5
-#define HasKrb5			NO      /* if you have Kerberos V5 */
-#endif
 #ifndef HasLatex
 #define HasLatex		NO
 #endif
@@ -590,27 +584,6 @@ X_BYTE_ORDER = ByteOrder
 #endif
 #ifndef GzipLibrary	/* if OS config didn't define it, assume it's -lz */
 #define GzipLibrary -lz
-#endif
-#if HasKrbIV
-#ifndef KrbIVIncludes
-#define KrbIVIncludes /**/
-#endif
-#ifndef KrbIVLibraries
-#define KrbIVLibraries -lkrb -ldes
-#endif
-#endif
-#if HasKrb5
-#ifndef Krb5Includes
-#define Krb5Includes -I/krb5/include
-#endif
-#ifndef Krb5Libraries
-#define Krb5Libraries -L/krb5/lib -L/usr/isode/lib -lkrb5 -lcrypto -lisode -lcom_err -ldbm
-#endif
-#else
-#undef Krb5Includes
-#define Krb5Includes /**/
-#undef Krb5Libraries
-#define Krb5Libraries /**/
 #endif
 #ifndef UseGnuMalloc
 #define UseGnuMalloc		NO
@@ -786,6 +759,25 @@ TCLIBDIR = TclLibDir
 #define AlternateUsrLibDir YES
 #endif
 #endif
+
+#ifndef UsrDataDir
+#ifdef ProjectRoot
+#define UsrDataDir Concat4(ProjectRoot,/,share,/nx)
+#ifndef AlternateUsrDataDir
+#define AlternateUsrDataDir YES
+#endif
+#else
+#define UsrDataDir Concat4(/usr/local,/,share,/nx)
+#ifndef AlternateUsrDataDir
+#define AlternateUsrDataDir NO
+#endif
+#endif
+#else
+#ifndef AlternateUsrDataDir
+#define AlternateUsrDataDir YES
+#endif
+#endif
+
 #ifndef VarDirectory
 #ifdef ProjectVar
 #define VarDirectory ProjectVar
@@ -1386,35 +1378,13 @@ TCLIBDIR = TclLibDir
 #define LoaderLibPrefix /**/
 #endif
 #ifndef ImakeCmd
-#ifdef UseInstalled		/* assume BINDIR in path */
 #define ImakeCmd imake
-#else
-#define ImakeCmd $(IMAKESRC)/imake
-#endif
 #endif
 #ifndef ImakeWarningFlags
 #define ImakeWarningFlags	/* Nothing */
 #endif
 #ifndef DependCmd
-#if UseGccMakeDepend
-#ifdef UseInstalled		/* assume BINDIR in path */
 #define DependCmd gccmakedep
-#else
-#define DependCmd $(DEPENDSRC)/gccmakedep
-#endif
-#elif UseCCMakeDepend
-#ifdef UseInstalled		/* assume BINDIR in path */
-#define DependCmd ccmakedep
-#else
-#define DependCmd $(DEPENDSRC)/ccmakedep
-#endif
-#else
-#ifdef UseInstalled		/* assume BINDIR in path */
-#define DependCmd makedepend
-#else
-#define DependCmd $(DEPENDSRC)/makedepend
-#endif
-#endif
 #endif
 #ifndef DependDefines
 # if UseCCMakeDepend || UseGccMakeDepend
@@ -1705,6 +1675,7 @@ TCLIBDIR = TclLibDir
 
           INCROOT = IncRoot		/* base of where to put header files */
         USRLIBDIR = UsrLibDir		/* nonshared libraries */
+       USRDATADIR = UsrDataDir		/* arch-indep files (XErrorDB, etc.) */
            VARDIR = VarDirectory	/* usually /var */
         VARLIBDIR = VarLibDir		/* xdm runtime files */
   SYSTEMUSRLIBDIR = SystemUsrLibDir	/* system's "/usr/lib" */
@@ -1900,7 +1871,7 @@ MODLDCOMBINEFLAGS = ModuleLdCombineFlags
       STD_DEFINES = StandardDefines $(PROJECT_DEFINES)
  EXTRA_LOAD_FLAGS = ExtraLoadFlags
   EXTRA_LDOPTIONS = ExtraLoadOptions
-  EXTRA_LIBRARIES = MallocLibraries ExtraLibraries Krb5Libraries
+  EXTRA_LIBRARIES = MallocLibraries ExtraLibraries
              TAGS = TagsCmd
 #if ConstructMFLAGS
            MFLAGS = -$(MAKEFLAGS)

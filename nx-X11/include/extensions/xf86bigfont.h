@@ -1,4 +1,3 @@
-/* $XFree86: xc/include/extensions/xf86bigfont.h,v 1.1 2000/02/08 17:18:25 dawes Exp $ */
 /*
  * Declarations for the BIGFONT extension.
  *

@@ -1,4 +1,3 @@
-/* $Xorg: ddxLEDs.c,v 1.3 2000/08/17 19:53:46 cpqbld Exp $ */
 /************************************************************
 Copyright (c) 1993 by Silicon Graphics Computer Systems, Inc.
 
@@ -31,7 +30,6 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #endif
 
 #include <stdio.h>
-#define	NEED_EVENTS 1
 #include <nx-X11/X.h>
 #include <nx-X11/Xproto.h>
 #include <nx-X11/keysym.h>

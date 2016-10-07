@@ -1,4 +1,3 @@
-/* $Xorg: ddxLoad.c,v 1.3 2000/08/17 19:53:46 cpqbld Exp $ */
 /************************************************************
 Copyright (c) 1993 by Silicon Graphics Computer Systems, Inc.
 
@@ -24,7 +23,6 @@ OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION  WITH
 THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/xkb/ddxLoad.c,v 3.35 2003/10/02 13:30:12 eich Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -43,7 +41,6 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <sys/stat.h>
 #include <unistd.h>
 
-#define	NEED_EVENTS 1
 #include <nx-X11/X.h>
 #include <nx-X11/Xos.h>
 #include <nx-X11/Xproto.h>
@@ -151,7 +148,7 @@ Win32System(const char *cmdline)
 	    LocalFree(buffer);
 	}
 
-	xfree(cmd);
+	free(cmd);
 	return -1;
     }
     /* Wait until child process exits. */
@@ -162,7 +159,7 @@ Win32System(const char *cmdline)
     /* Close process and thread handles. */
     CloseHandle( pi.hProcess );
     CloseHandle( pi.hThread );
-    xfree(cmd);
+    free(cmd);
 
     return dwExitCode;
 }
@@ -620,7 +617,7 @@ char 	*cmd = NULL,file[PATH_MAX],xkm_output_dir[PATH_MAX],*map,*outFile;
 	if (outFile!=NULL)
 	    _XkbFree(outFile);
         if (cmd!=NULL)
-            xfree(cmd);
+            free(cmd);
 	return True;
     } 
 #ifdef DEBUG
@@ -629,7 +626,7 @@ char 	*cmd = NULL,file[PATH_MAX],xkm_output_dir[PATH_MAX],*map,*outFile;
     if (outFile!=NULL)
 	_XkbFree(outFile);
     if (cmd!=NULL)
-        xfree(cmd);
+        free(cmd);
     return False;
 }
 
@@ -802,7 +799,7 @@ char tmpname[PATH_MAX];
 	    }
 #endif
             if (buf != NULL)
-                xfree (buf);
+                free (buf);
 	    return True;
 	}
 #ifdef DEBUG
@@ -826,7 +823,7 @@ char tmpname[PATH_MAX];
     if (nameRtrn)
 	nameRtrn[0]= '\0';
     if (buf != NULL)
-        xfree (buf);
+        free (buf);
     return False;
 }
 

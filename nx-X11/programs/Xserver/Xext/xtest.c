@@ -1,5 +1,3 @@
-/* $XdotOrg: xc/programs/Xserver/Xext/xtest.c,v 1.6 2005/07/03 08:53:36 daniels Exp $ */
-/* $Xorg: xtest.c,v 1.4 2001/02/09 02:04:33 xorgcvs Exp $ */
 /*
 
 Copyright 1992, 1998  The Open Group
@@ -27,14 +25,12 @@ other dealings in this Software without prior written authorization
 from The Open Group.
 
 */
-/* $XFree86: xc/programs/Xserver/Xext/xtest.c,v 3.10 2003/10/28 23:08:44 tsi Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
 #include <nx-X11/X.h>
-#define NEED_EVENTS
 #include <nx-X11/Xproto.h>
 #include "misc.h"
 #include "os.h"
@@ -93,7 +89,7 @@ static DISPATCH_PROC(SProcXTestGetVersion);
 static DISPATCH_PROC(SProcXTestGrabControl);
 
 void
-XTestExtensionInit(INITARGS)
+XTestExtensionInit(void)
 {
 #if 0
     ExtensionEntry *extEntry;
@@ -121,7 +117,6 @@ ProcXTestGetVersion(client)
     register ClientPtr client;
 {
     xXTestGetVersionReply rep;
-    register int n;
 
     REQUEST_SIZE_MATCH(xXTestGetVersionReq);
     rep.type = X_Reply;
@@ -130,10 +125,10 @@ ProcXTestGetVersion(client)
     rep.majorVersion = XTestMajorVersion;
     rep.minorVersion = XTestMinorVersion;
     if (client->swapped) {
-    	swaps(&rep.sequenceNumber, n);
-	swaps(&rep.minorVersion, n);
+	swaps(&rep.sequenceNumber);
+	swaps(&rep.minorVersion);
     }
-    WriteToClient(client, sizeof(xXTestGetVersionReply), (char *)&rep);
+    WriteToClient(client, sizeof(xXTestGetVersionReply), &rep);
     return(client->noClientException);
 }
 
@@ -145,7 +140,6 @@ ProcXTestCompareCursor(client)
     xXTestCompareCursorReply rep;
     WindowPtr pWin;
     CursorPtr pCursor;
-    register int n;
 
     REQUEST_SIZE_MATCH(xXTestCompareCursorReq);
     pWin = (WindowPtr)LookupWindow(stuff->window, client);
@@ -168,9 +162,9 @@ ProcXTestCompareCursor(client)
     rep.sequenceNumber = client->sequence;
     rep.same = (wCursor(pWin) == pCursor);
     if (client->swapped) {
-    	swaps(&rep.sequenceNumber, n);
+	swaps(&rep.sequenceNumber);
     }
-    WriteToClient(client, sizeof(xXTestCompareCursorReply), (char *)&rep);
+    WriteToClient(client, sizeof(xXTestCompareCursorReply), &rep);
     return(client->noClientException);
 }
 
@@ -180,7 +174,7 @@ ProcXTestFakeInput(client)
 {
     REQUEST(xXTestFakeInputReq);
     int nev;
-    int	n;
+    int        n;
     xEvent *ev;
     DeviceIntPtr dev = NULL;
     WindowPtr root;
@@ -285,7 +279,7 @@ ProcXTestFakeInput(client)
 	if (client->swapped)
 	{
     	    (void) XTestSwapFakeInput(client, (xReq *)stuff);
-	    swaps(&stuff->length, n);
+	    swaps(&stuff->length);
 	}
 	ResetCurrentRequest (client);
 	client->sequence--;
@@ -512,12 +506,11 @@ static int
 SProcXTestGetVersion(client)
     register ClientPtr	client;
 {
-    register int n;
     REQUEST(xXTestGetVersionReq);
 
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xXTestGetVersionReq);
-    swaps(&stuff->minorVersion, n);
+    swaps(&stuff->minorVersion);
     return ProcXTestGetVersion(client);
 }
 
@@ -525,13 +518,12 @@ static int
 SProcXTestCompareCursor(client)
     register ClientPtr	client;
 {
-    register int n;
     REQUEST(xXTestCompareCursorReq);
 
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xXTestCompareCursorReq);
-    swapl(&stuff->window, n);
-    swapl(&stuff->cursor, n);
+    swapl(&stuff->window);
+    swapl(&stuff->cursor);
     return ProcXTestCompareCursor(client);
 }
 
@@ -568,7 +560,7 @@ SProcXTestFakeInput(client)
     register int n;
     REQUEST(xReq);
 
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     n = XTestSwapFakeInput(client, stuff);
     if (n != Success)
 	return n;
@@ -579,10 +571,9 @@ static int
 SProcXTestGrabControl(client)
     register ClientPtr	client;
 {
-    register int n;
     REQUEST(xXTestGrabControlReq);
 
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xXTestGrabControlReq);
     return ProcXTestGrabControl(client);
 }

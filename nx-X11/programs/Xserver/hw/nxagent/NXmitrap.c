@@ -1,17 +1,25 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
+/* are copyright of the aforementioned persons and companies.             */
 /*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
 /*                                                                        */
 /* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
 /*                                                                        */
 /**************************************************************************/
 
@@ -39,117 +47,9 @@
  * PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifdef HAVE_DIX_CONFIG_H
-#include <dix-config.h>
-#endif
-
-#include "scrnintstr.h"
-#include "gcstruct.h"
-#include "pixmapstr.h"
-#include "windowstr.h"
-#include "servermd.h"
-#include "mi.h"
-#include "picturestr.h"
-#include "mipict.h"
-
-#ifdef NXAGENT_SERVER
-
 #include "Render.h"
 
-#endif
-
-PicturePtr
-miCreateAlphaPicture (ScreenPtr	    pScreen, 
-		      PicturePtr    pDst,
-		      PictFormatPtr pPictFormat,
-		      CARD16	    width,
-		      CARD16	    height)
-{
-    PixmapPtr	    pPixmap;
-    PicturePtr	    pPicture;
-    GCPtr	    pGC;
-    int		    error;
-    xRectangle	    rect;
-
-    if (width > 32767 || height > 32767)
-	return 0;
-
-    if (!pPictFormat)
-    {
-	if (pDst->polyEdge == PolyEdgeSharp)
-	    pPictFormat = PictureMatchFormat (pScreen, 1, PICT_a1);
-	else
-	    pPictFormat = PictureMatchFormat (pScreen, 8, PICT_a8);
-	if (!pPictFormat)
-	    return 0;
-    }
-
-    pPixmap = (*pScreen->CreatePixmap) (pScreen, width, height, 
-					pPictFormat->depth);
-    if (!pPixmap)
-	return 0;
-    pGC = GetScratchGC (pPixmap->drawable.depth, pScreen);
-    if (!pGC)
-    {
-	(*pScreen->DestroyPixmap) (pPixmap);
-	return 0;
-    }
-    ValidateGC (&pPixmap->drawable, pGC);
-    rect.x = 0;
-    rect.y = 0;
-    rect.width = width;
-    rect.height = height;
-    (*pGC->ops->PolyFillRect)(&pPixmap->drawable, pGC, 1, &rect);
-    FreeScratchGC (pGC);
-    pPicture = CreatePicture (0, &pPixmap->drawable, pPictFormat,
-			      0, 0, serverClient, &error);
-    (*pScreen->DestroyPixmap) (pPixmap);
-    return pPicture;
-}
-
-static xFixed
-miLineFixedX (xLineFixed *l, xFixed y, Bool ceil)
-{
-    xFixed	    dx = l->p2.x - l->p1.x;
-    xFixed_32_32    ex = (xFixed_32_32) (y - l->p1.y) * dx;
-    xFixed	    dy = l->p2.y - l->p1.y;
-    if (ceil)
-	ex += (dy - 1);
-    return l->p1.x + (xFixed) (ex / dy);
-}
-
-void
-miTrapezoidBounds (int ntrap, xTrapezoid *traps, BoxPtr box)
-{
-    box->y1 = MAXSHORT;
-    box->y2 = MINSHORT;
-    box->x1 = MAXSHORT;
-    box->x2 = MINSHORT;
-    for (; ntrap; ntrap--, traps++)
-    {
-	INT16 x1, y1, x2, y2;
-
-	if (!xTrapezoidValid(traps))
-	    continue;
-	y1 = xFixedToInt (traps->top);
-	if (y1 < box->y1)
-	    box->y1 = y1;
-	
-	y2 = xFixedToInt (xFixedCeil (traps->bottom));
-	if (y2 > box->y2)
-	    box->y2 = y2;
-	
-	x1 = xFixedToInt (min (miLineFixedX (&traps->left, traps->top, FALSE),
-			       miLineFixedX (&traps->left, traps->bottom, FALSE)));
-	if (x1 < box->x1)
-	    box->x1 = x1;
-	
-	x2 = xFixedToInt (xFixedCeil (max (miLineFixedX (&traps->right, traps->top, TRUE),
-					   miLineFixedX (&traps->right, traps->bottom, TRUE))));
-	if (x2 > box->x2)
-	    box->x2 = x2;
-    }
-}
+#include "../../render/mitrap.c"
 
 void
 miTrapezoids (CARD8	    op,
@@ -182,26 +82,18 @@ miTrapezoids (CARD8	    op,
 	xDst = traps[0].left.p1.x >> 16;
 	yDst = traps[0].left.p1.y >> 16;
 
-        #ifdef NXAGENT_SERVER
-
         if (nxagentTrapezoidExtents != NullBox)
         {
           memcpy(&bounds, nxagentTrapezoidExtents, sizeof(BoxRec));
         }
         else
         {
-          nxagentTrapezoidExtents = (BoxPtr) xalloc(sizeof(BoxRec));
+          nxagentTrapezoidExtents = (BoxPtr) malloc(sizeof(BoxRec));
 
           miTrapezoidBounds (ntrap, traps, &bounds);
 
           memcpy(nxagentTrapezoidExtents, &bounds, sizeof(BoxRec));
         }
-
-        #else
-
-        miTrapezoidBounds (ntrap, traps, &bounds);
-
-        #endif
 
 	if (bounds.y1 >= bounds.y2 || bounds.x1 >= bounds.x2)
 	    return;

@@ -1,5 +1,3 @@
-/* $XdotOrg: xc/programs/Xserver/dbe/dbe.c,v 1.5 2005/07/03 07:01:17 daniels Exp $ */
-/* $Xorg: dbe.c,v 1.3 2000/08/17 19:48:16 cpqbld Exp $ */
 /******************************************************************************
  * 
  * Copyright (c) 1994, 1995  Hewlett-Packard Company
@@ -31,12 +29,10 @@
  *     DIX DBE code
  *
  *****************************************************************************/
-/* $XFree86: xc/programs/Xserver/dbe/dbe.c,v 3.10 2001/08/23 14:19:24 alanh Exp $ */
 
 
 /* INCLUDES */
 
-#define NEED_EVENTS
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
@@ -176,7 +172,7 @@ DbeAllocWinPriv(pScreen)
     register int		i;
 
     pDbeScreenPriv = DBE_SCREEN_PRIV(pScreen);
-    pDbeWindowPriv = (DbeWindowPrivPtr)xalloc(pDbeScreenPriv->totalWinPrivSize);
+    pDbeWindowPriv = (DbeWindowPrivPtr)malloc(pDbeScreenPriv->totalWinPrivSize);
 
     if (pDbeWindowPriv)
     {
@@ -268,7 +264,7 @@ DbeAllocWinPrivPriv(pScreen, index, amount)
     if (index >= pDbeScreenPriv->winPrivPrivLen)
     {
 	unsigned *nsizes;
-	nsizes = (unsigned *)xrealloc(pDbeScreenPriv->winPrivPrivSizes,
+	nsizes = (unsigned *)realloc(pDbeScreenPriv->winPrivPrivSizes,
 				      (index + 1) * sizeof(unsigned));
 	if (!nsizes)
         {
@@ -362,8 +358,6 @@ ProcDbeGetVersion(client)
 {
     /* REQUEST(xDbeGetVersionReq); */
     xDbeGetVersionReply	rep;
-    register int	n;
-
 
     REQUEST_SIZE_MATCH(xDbeGetVersionReq);
 
@@ -375,10 +369,10 @@ ProcDbeGetVersion(client)
 
     if (client->swapped)
     {
-        swaps(&rep.sequenceNumber, n);
+        swaps(&rep.sequenceNumber);
     }
 
-    WriteToClient(client, sizeof(xDbeGetVersionReply), (char *)&rep);
+    WriteToClient(client, sizeof(xDbeGetVersionReply), &rep);
 
     return(client->noClientException);
 
@@ -476,7 +470,7 @@ ProcDbeAllocateBackBufferName(client)
     }
 
     /* Free what was allocated by the GetVisualInfo() call above. */
-    xfree(scrVisInfo.visinfo);
+    free(scrVisInfo.visinfo);
 
     if (!visualMatched)
     {
@@ -499,7 +493,7 @@ ProcDbeAllocateBackBufferName(client)
         if (!AddResource(stuff->buffer, dbeWindowPrivResType,
             (void *)pDbeWindowPriv))
         {
-            xfree(pDbeWindowPriv);
+            free(pDbeWindowPriv);
             return(BadAlloc);
         }
 
@@ -564,7 +558,7 @@ ProcDbeAllocateBackBufferName(client)
             }
 
             /* malloc/realloc a new array and initialize all elements to 0. */
-            pDbeWindowPriv->IDs = (XID *)xrealloc(pIDs,
+            pDbeWindowPriv->IDs = (XID *)realloc(pIDs,
                 (pDbeWindowPriv->maxAvailableIDs+DBE_INCR_MAX_IDS)*sizeof(XID));
             if (!pDbeWindowPriv->IDs)
             {
@@ -610,7 +604,7 @@ ProcDbeAllocateBackBufferName(client)
         /* The DDX buffer allocation routine failed for the first buffer of
          * this window.
          */
-        xfree(pDbeWindowPriv);
+        free(pDbeWindowPriv);
         return(status);
     }
 
@@ -746,7 +740,7 @@ ProcDbeSwapBuffers(client)
     dbeSwapInfo = (xDbeSwapInfo *)&stuff[1];
 
     /* Allocate array to record swap information. */ 
-    swapInfo = (DbeSwapInfoPtr)Xalloc(nStuff * sizeof(DbeSwapInfoRec));
+    swapInfo = (DbeSwapInfoPtr)malloc(nStuff * sizeof(DbeSwapInfoRec));
     if (swapInfo == NULL)
     {
         return(BadAlloc);
@@ -761,14 +755,14 @@ ProcDbeSwapBuffers(client)
         if (!(pWin = SecurityLookupWindow(dbeSwapInfo[i].window, client,
 					  SecurityWriteAccess)))
         {
-            Xfree(swapInfo);
+            free(swapInfo);
 	    return(BadWindow);
         }
 
         /* Each window must be double-buffered - BadMatch. */
         if (DBE_WINDOW_PRIV(pWin) == NULL)
         {
-            Xfree(swapInfo);
+            free(swapInfo);
             return(BadMatch);
         }
 
@@ -777,7 +771,7 @@ ProcDbeSwapBuffers(client)
         {
             if (dbeSwapInfo[i].window == dbeSwapInfo[j].window)
             {
-                Xfree(swapInfo);
+                free(swapInfo);
                 return(BadMatch);
 	    }
         }
@@ -788,7 +782,7 @@ ProcDbeSwapBuffers(client)
             (dbeSwapInfo[i].swapAction != XdbeUntouched ) &&
             (dbeSwapInfo[i].swapAction != XdbeCopied    ))
         {
-            Xfree(swapInfo);
+            free(swapInfo);
             return(BadValue);
         }
 
@@ -818,12 +812,12 @@ ProcDbeSwapBuffers(client)
         error = (*pDbeScreenPriv->SwapBuffers)(client, &nStuff, swapInfo);
         if (error != Success)
         {
-            Xfree(swapInfo);
+            free(swapInfo);
             return(error);
         }
     }
     
-    Xfree(swapInfo);
+    free(swapInfo);
     return(Success);
 
 } /* ProcDbeSwapBuffers() */
@@ -898,7 +892,7 @@ ProcDbeGetVisualInfo(client)
     xDbeGetVisualInfoReply	rep;
     Drawable			*drawables;
     DrawablePtr			*pDrawables = NULL;
-    register int		i, j, n;
+    register int		i, j;
     register int		count;  /* number of visual infos in reply */
     register int		length; /* length of reply */
     ScreenPtr			pScreen;
@@ -912,7 +906,7 @@ ProcDbeGetVisualInfo(client)
     /* Make sure any specified drawables are valid. */
     if (stuff->n != 0)
     {
-        if (!(pDrawables = (DrawablePtr *)Xalloc(stuff->n *
+        if (!(pDrawables = (DrawablePtr *)malloc(stuff->n *
                                                  sizeof(DrawablePtr))))
         {
             return(BadAlloc);
@@ -925,19 +919,19 @@ ProcDbeGetVisualInfo(client)
             if (!(pDrawables[i] = (DrawablePtr)SecurityLookupDrawable(
 				drawables[i], client, SecurityReadAccess)))
             {
-                Xfree(pDrawables);
+                free(pDrawables);
                 return(BadDrawable);
             }
         }
     }
 
     count = (stuff->n == 0) ? screenInfo.numScreens : stuff->n;
-    if (!(pScrVisInfo = (XdbeScreenVisualInfo *)xalloc(count *
+    if (!(pScrVisInfo = (XdbeScreenVisualInfo *)malloc(count *
                         sizeof(XdbeScreenVisualInfo))))
     {
         if (pDrawables)
         {
-            Xfree(pDrawables);
+            free(pDrawables);
         }
 
         return(BadAlloc);
@@ -958,13 +952,13 @@ ProcDbeGetVisualInfo(client)
             /* Free visinfos that we allocated for previous screen infos.*/
             for (j = 0; j < i; j++)
             {
-                xfree(pScrVisInfo[j].visinfo);
+                free(pScrVisInfo[j].visinfo);
             }
 
             /* Free pDrawables if we needed to allocate it above. */
             if (pDrawables)
             {
-                Xfree(pDrawables);
+                free(pDrawables);
             }
 
             return(BadAlloc);
@@ -984,13 +978,13 @@ ProcDbeGetVisualInfo(client)
 
     if (client->swapped)
     {
-        swaps(&rep.sequenceNumber, n);
-        swapl(&rep.length, n);
-        swapl(&rep.m, n);
+        swaps(&rep.sequenceNumber);
+        swapl(&rep.length);
+        swapl(&rep.m);
     }
 
     /* Send off reply. */
-    WriteToClient(client, sizeof(xDbeGetVisualInfoReply), (char *)&rep);
+    WriteToClient(client, sizeof(xDbeGetVisualInfoReply), &rep);
 
     for (i = 0; i < count; i++)
     {
@@ -1003,10 +997,10 @@ ProcDbeGetVisualInfo(client)
 
         if (client->swapped)
         {
-            swapl(&data32, n);
+            swapl(&data32);
         }
 
-        WriteToClient(client, sizeof(CARD32), (char *)&data32);
+        WriteToClient(client, sizeof(CARD32), &data32);
 
         /* Now send off visual info items. */
         for (j = 0; j < pScrVisInfo[i].count; j++)
@@ -1024,7 +1018,7 @@ ProcDbeGetVisualInfo(client)
 
             if (client->swapped)
             {
-                swapl(&visInfo.visualID, n);
+                swapl(&visInfo.visualID);
 
                 /* We do not need to swap depth and perfLevel since they are
                  * already 1 byte quantities.
@@ -1032,20 +1026,20 @@ ProcDbeGetVisualInfo(client)
             }
 
             /* Write visualID(32), depth(8), perfLevel(8), and pad(16). */
-            WriteToClient(client, 2*sizeof(CARD32), (char *)&visInfo.visualID);
+            WriteToClient(client, 2*sizeof(CARD32), &visInfo.visualID);
         }
     }
 
     /* Clean up memory. */
     for (i = 0; i < count; i++)
     {
-        xfree(pScrVisInfo[i].visinfo);
+        free(pScrVisInfo[i].visinfo);
     }
-    xfree(pScrVisInfo);
+    free(pScrVisInfo);
 
     if (pDrawables)
     {
-        Xfree(pDrawables);
+        free(pDrawables);
     }
 
     return(client->noClientException);
@@ -1075,8 +1069,6 @@ ProcDbeGetBackBufferAttributes(client)
     REQUEST(xDbeGetBackBufferAttributesReq);
     xDbeGetBackBufferAttributesReply	rep;
     DbeWindowPrivPtr			pDbeWindowPriv;
-    int					n;
-
 
     REQUEST_SIZE_MATCH(xDbeGetBackBufferAttributesReq);
 
@@ -1096,13 +1088,13 @@ ProcDbeGetBackBufferAttributes(client)
     
     if (client->swapped)
     {
-        swaps(&rep.sequenceNumber, n);
-        swapl(&rep.length, n);
-        swapl(&rep.attributes, n);
+        swaps(&rep.sequenceNumber);
+        swapl(&rep.length);
+        swapl(&rep.attributes);
     }
 
     WriteToClient(client, sizeof(xDbeGetBackBufferAttributesReply),
-                  (char *)&rep);
+                  &rep);
     return(client->noClientException);
 
 } /* ProcDbeGetbackBufferAttributes() */
@@ -1179,10 +1171,8 @@ SProcDbeGetVersion(client)
     ClientPtr client;
 {
     REQUEST(xDbeGetVersionReq);
-    register int	n;
 
-
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     return(ProcDbeGetVersion(client));
 
 } /* SProcDbeGetVersion() */
@@ -1216,13 +1206,12 @@ SProcDbeAllocateBackBufferName(client)
     ClientPtr client;
 {
     REQUEST(xDbeAllocateBackBufferNameReq);
-    register int	n;
 
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xDbeAllocateBackBufferNameReq);
 
-    swapl(&stuff->window, n);
-    swapl(&stuff->buffer, n);
+    swapl(&stuff->window);
+    swapl(&stuff->buffer);
     /* stuff->swapAction is a byte.  We do not need to swap this field. */
 
     return(ProcDbeAllocateBackBufferName(client));
@@ -1252,13 +1241,11 @@ SProcDbeDeallocateBackBufferName(client)
     ClientPtr client;
 {
     REQUEST (xDbeDeallocateBackBufferNameReq);
-    register int	n;
 
-
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xDbeDeallocateBackBufferNameReq);
 
-    swapl(&stuff->buffer, n);
+    swapl(&stuff->buffer);
 
     return(ProcDbeDeallocateBackBufferName(client));
 
@@ -1291,14 +1278,14 @@ SProcDbeSwapBuffers(client)
     ClientPtr client;
 {
     REQUEST(xDbeSwapBuffersReq);
-    unsigned int	i, n;
+    unsigned int	i;
     xDbeSwapInfo	*pSwapInfo;
 
 
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_AT_LEAST_SIZE(xDbeSwapBuffersReq);
 
-    swapl(&stuff->n, n);
+    swapl(&stuff->n);
     if (stuff->n > UINT32_MAX / sizeof(DbeSwapInfoRec))
         return BadAlloc;
     REQUEST_FIXED_SIZE(xDbeSwapBuffersReq, stuff->n * sizeof(xDbeSwapInfo));
@@ -1313,7 +1300,7 @@ SProcDbeSwapBuffers(client)
          */
         for (i = 0; i < stuff->n; i++)
         {
-            swapl(&pSwapInfo->window, n);
+            swapl(&pSwapInfo->window);
         }
     }
 
@@ -1343,9 +1330,8 @@ SProcDbeBeginIdiom(client)
     ClientPtr client;
 {
     REQUEST(xDbeBeginIdiomReq);
-    register int	n;
 
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     return(ProcDbeBeginIdiom(client));
 
 } /* SProcDbeBeginIdiom() */
@@ -1373,13 +1359,11 @@ SProcDbeGetVisualInfo(client)
     ClientPtr client;
 {
     REQUEST(xDbeGetVisualInfoReq);
-    register int	n;
 
-
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_AT_LEAST_SIZE(xDbeGetVisualInfoReq);
 
-    swapl(&stuff->n, n);
+    swapl(&stuff->n);
     SwapRestL(stuff);
 
     return(ProcDbeGetVisualInfo(client));
@@ -1408,12 +1392,11 @@ SProcDbeGetBackBufferAttributes(client)
     ClientPtr client;
 {
     REQUEST (xDbeGetBackBufferAttributesReq);
-    register int	n;
 
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xDbeGetBackBufferAttributesReq);
 
-    swapl(&stuff->buffer, n);
+    swapl(&stuff->buffer);
 
     return(ProcDbeGetBackBufferAttributes(client));
 
@@ -1640,7 +1623,7 @@ DbeWindowPrivDelete(pDbeWinPriv, id)
                DBE_INIT_MAX_IDS * sizeof(XID));
 
         /* Free the extended array; use the static array. */
-        xfree(pDbeWindowPriv->IDs);
+        free(pDbeWindowPriv->IDs);
         pDbeWindowPriv->IDs = pDbeWindowPriv->initIDs;
         pDbeWindowPriv->maxAvailableIDs = DBE_INIT_MAX_IDS;
     }
@@ -1671,7 +1654,7 @@ DbeWindowPrivDelete(pDbeWinPriv, id)
             (void *)NULL;
 
         /* We are done with the window priv. */
-        xfree(pDbeWindowPriv);
+        free(pDbeWindowPriv);
     }
 
     return(Success);
@@ -1719,10 +1702,10 @@ DbeResetProc(extEntry)
 
             if (pDbeScreenPriv->winPrivPrivSizes)
             {
-	        xfree(pDbeScreenPriv->winPrivPrivSizes);
+	        free(pDbeScreenPriv->winPrivPrivSizes);
             }
 
-	    xfree(pDbeScreenPriv);
+	    free(pDbeScreenPriv);
 	}
     }
 
@@ -1874,7 +1857,7 @@ DbeExtensionInit()
 
 	if (!AllocateWindowPrivate(pScreen, dbeWindowPrivIndex, 0) ||
 	    !(pDbeScreenPriv =
-             (DbeScreenPrivPtr)Xcalloc(sizeof(DbeScreenPrivRec))))
+             (DbeScreenPrivPtr)calloc(1, sizeof(DbeScreenPrivRec))))
 	{
             /* If we can not alloc a window or screen private,
              * then free any privates that we already alloc'ed and return
@@ -1882,7 +1865,7 @@ DbeExtensionInit()
 
 	    for (j = 0; j < i; j++)
 	    {
-	      xfree(screenInfo.screens[j]->devPrivates[dbeScreenPrivIndex].ptr);
+	      free(screenInfo.screens[j]->devPrivates[dbeScreenPrivIndex].ptr);
               screenInfo.screens[j]->devPrivates[dbeScreenPrivIndex].ptr = NULL;
 	    }
 	    return;
@@ -1986,7 +1969,7 @@ DbeExtensionInit()
 
         for (i = 0; i < screenInfo.numScreens; i++)
         {
-             xfree(screenInfo.screens[i]->devPrivates[dbeScreenPrivIndex].ptr);
+             free(screenInfo.screens[i]->devPrivates[dbeScreenPrivIndex].ptr);
              pScreen->devPrivates[dbeScreenPrivIndex].ptr = NULL;
         }
         return;

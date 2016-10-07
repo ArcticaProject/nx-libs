@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/GL/mesa/src/X/xf86glx_util.c,v 1.5 2000/03/02 16:07:39 martin Exp $ */
 /**************************************************************************
 
 Copyright 1998-1999 Precision Insight, Inc., Cedar Park, Texas.
@@ -52,7 +51,7 @@ XMesaImage *XMesaCreateImage(int bitsPerPixel, int width, int height, char *data
 {
     XMesaImage *image;
 
-    image = (XMesaImage *)xalloc(sizeof(XMesaImage));
+    image = (XMesaImage *)malloc(sizeof(XMesaImage));
 
     if (image) {
 	image->width = width;
@@ -70,7 +69,7 @@ void XMesaDestroyImage(XMesaImage *image)
 {
     if (image->data)
 	free(image->data);
-    xfree(image);
+    free(image);
 }
 
 unsigned long XMesaGetPixel(XMesaImage *image, int x, int y)

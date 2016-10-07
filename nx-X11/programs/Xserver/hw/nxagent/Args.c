@@ -1,17 +1,25 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
+/* are copyright of the aforementioned persons and companies.             */
 /*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
 /*                                                                        */
 /* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
 /*                                                                        */
 /**************************************************************************/
 
@@ -355,14 +363,14 @@ int ddxProcessArgument(int argc, char *argv[], int i)
 
       if (nxagentOptionFile != NULL)
       {
-        xfree(nxagentOptionFile);
+        free(nxagentOptionFile);
 
         nxagentOptionFile = NULL;
       }
 
       if ((size = strlen(argv[i])) < 1024)
       {
-        if ((nxagentOptionFile = xalloc(size + 1)) == NULL)
+        if ((nxagentOptionFile = malloc(size + 1)) == NULL)
         {
           FatalError("malloc failed");
         }
@@ -719,14 +727,14 @@ int ddxProcessArgument(int argc, char *argv[], int i)
 
       if (nxagentKeyboard != NULL)
       {
-        xfree(nxagentKeyboard);
+        free(nxagentKeyboard);
 
         nxagentKeyboard = NULL;
       }
 
       if ((size = strlen(argv[i])) < 256)
       {
-        if ((nxagentKeyboard = xalloc(size + 1)) == NULL)
+        if ((nxagentKeyboard = malloc(size + 1)) == NULL)
         {
           FatalError("malloc failed");
         }
@@ -1380,7 +1388,7 @@ static void nxagentParseOptions(char *name, char *value)
       sleep_parse = UINT_MAX;
 
       fprintf(stderr, "nxagentParseOptions: Warning: value [%s] of option [%s] "
-                      "out of range, clamped to [%u].\n",
+                      "out of range, clamped to [%lu].\n",
                       validateString(value), validateString(name), sleep_parse);
     }
 
@@ -1389,11 +1397,87 @@ static void nxagentParseOptions(char *name, char *value)
       sleep_parse = 0;
 
       fprintf(stderr, "nxagentParseOptions: Warning: value [%s] of option [%s] "
-                      "out of range, clamped to [%u].\n",
+                      "out of range, clamped to [%lu].\n",
                       validateString(value), validateString(name), sleep_parse);
     }
 
     nxagentChangeOption(SleepTime, sleep_parse);
+
+    return;
+  }
+  else if (!strcmp(name, "tolerancechecks"))
+  {
+    if (strcmp(value, "strict") == 0)
+    {
+      nxagentChangeOption(ReconnectTolerance, ToleranceChecksStrict);
+    }
+    else if (strcmp(value, "safe") == 0)
+    {
+      nxagentChangeOption(ReconnectTolerance, ToleranceChecksSafe);
+    }
+    else if (strcmp(value, "risky") == 0)
+    {
+      nxagentChangeOption(ReconnectTolerance, ToleranceChecksRisky);
+    }
+    else if (strcmp(value, "bypass") == 0)
+    {
+      nxagentChangeOption(ReconnectTolerance, ToleranceChecksBypass);
+    }
+    else
+    {
+      /*
+       * Check for a matching integer. Or any integer, really.
+       */
+      long tolerance_parse = 0;
+
+      errno = 0;
+      tolerance_parse = strtol(value, NULL, 10);
+
+      if ((errno) && (0 == tolerance_parse))
+      {
+        fprintf(stderr, "nxagentParseOptions: Unable to convert value [%s] of option [%s]. "
+                        "Ignoring option.\n",
+                        validateString(value), validateString(name));
+
+        return;
+      }
+
+      if ((long) UINT_MAX < tolerance_parse)
+      {
+        tolerance_parse = UINT_MAX;
+
+        fprintf(stderr, "nxagentParseOptions: Warning: value [%s] of option [%s] "
+                        "out of range, clamped to [%u].\n",
+                        validateString(value), validateString(name), tolerance_parse);
+      }
+
+      if (0 > tolerance_parse)
+      {
+        tolerance_parse = 0;
+
+        fprintf(stderr, "nxagentParseOptions: Warning: value [%s] of option [%s] "
+                        "out of range, clamped to [%u].\n",
+                        validateString(value), validateString(name), tolerance_parse);
+      }
+
+      #ifdef TEST
+      switch (tolerance_parse) {
+        case ToleranceChecksStrict:
+        case ToleranceChecksSafe:
+        case ToleranceChecksRisky:
+        case ToleranceChecksBypass:
+                               break;
+        default:
+                               fprintf(stderr, "nxagentParseOptions: Warning: value [%s] of "
+                                               "option [%s] unknown, will be mapped to "
+                                               "\"Bypass\" [%u] value internally.\n",
+                                       validateString(value), validateString(name),
+                                       (unsigned int)ToleranceChecksBypass);
+      }
+      #endif
+
+      nxagentChangeOption(ReconnectTolerance, tolerance_parse);
+    }
 
     return;
   }
@@ -1537,7 +1621,7 @@ void nxagentProcessOptionsFile()
     goto nxagentProcessOptionsFileClose;
   }
 
-  if ((data = xalloc(sizeOfFile + 1)) == NULL)
+  if ((data = malloc(sizeOfFile + 1)) == NULL)
   {
     fprintf(stderr, "Warning: Memory allocation failed processing file '%s'.\n",
                 validateString(nxagentOptionFile));
@@ -1591,7 +1675,7 @@ nxagentProcessOptionsFileFree:
 
   if (data != NULL)
   {
-    Xfree(data);
+    free(data);
   }
 
 nxagentProcessOptionsFileClose:

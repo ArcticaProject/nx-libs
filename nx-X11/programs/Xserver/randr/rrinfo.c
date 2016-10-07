@@ -59,11 +59,11 @@ RROldModeAdd(RROutputPtr output, RRScreenSizePtr size, int refresh)
         modes = reallocarray(output->modes,
                              output->numModes + 1, sizeof(RRModePtr));
 #else                           /* !defined(NXAGENT_SERVER) */
-        modes = xrealloc(output->modes,
+        modes = realloc(output->modes,
                          (output->numModes + 1) * sizeof(RRModePtr));
 #endif                          /* !defined(NXAGENT_SERVER) */
     else
-        modes = xalloc(sizeof(RRModePtr));
+        modes = malloc(sizeof(RRModePtr));
     if (!modes) {
         RRModeDestroy(mode);
         FreeResource(mode->mode.id, 0);
@@ -132,7 +132,7 @@ RRScanOldConfig(ScreenPtr pScreen, Rotation rotations)
                     newMode = mode;
                 }
             }
-            xfree(size->pRates);
+            free(size->pRates);
         }
         else {
             mode = RROldModeAdd(output, size, 0);
@@ -141,7 +141,7 @@ RRScanOldConfig(ScreenPtr pScreen, Rotation rotations)
         }
     }
     if (pScrPriv->nSizes)
-        xfree(pScrPriv->pSizes);
+        free(pScrPriv->pSizes);
     pScrPriv->pSizes = NULL;
     pScrPriv->nSizes = 0;
 
@@ -275,7 +275,7 @@ RRRegisterSize(ScreenPtr pScreen,
     pNew = reallocarray(pScrPriv->pSizes,
                         pScrPriv->nSizes + 1, sizeof(RRScreenSize));
 #else                           /* !defined(NXAGENT_SERVER) */
-    pNew = xrealloc(pScrPriv->pSizes,
+    pNew = realloc(pScrPriv->pSizes,
                     (pScrPriv->nSizes + 1) * sizeof(RRScreenSize));
 #endif                          /* !defined(NXAGENT_SERVER) */
     if (!pNew)
@@ -302,7 +302,7 @@ RRRegisterRate(ScreenPtr pScreen, RRScreenSizePtr pSize, int rate)
 #ifndef NXAGENT_SERVER
     pNew = reallocarray(pSize->pRates, pSize->nRates + 1, sizeof(RRScreenRate));
 #else                           /* !defined(NXAGENT_SERVER) */
-    pNew = xrealloc(pSize->pRates, (pSize->nRates + 1) * sizeof(RRScreenRate));
+    pNew = realloc(pSize->pRates, (pSize->nRates + 1) * sizeof(RRScreenRate));
 #endif                          /* !defined(NXAGENT_SERVER) */
     if (!pNew)
         return FALSE;

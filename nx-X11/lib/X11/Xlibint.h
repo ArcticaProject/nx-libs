@@ -1,4 +1,27 @@
-/* $Xorg: Xlibint.h,v 1.5 2001/02/09 02:03:38 xorgcvs Exp $ */
+/**************************************************************************/
+/*                                                                        */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
+/*                                                                        */
+/* nx-X11, NX protocol compression and NX extensions to this software     */
+/* are copyright of the aforementioned persons and companies.             */
+/*                                                                        */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
+/*                                                                        */
+/* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
+/*                                                                        */
+/**************************************************************************/
 
 /*
 
@@ -27,25 +50,6 @@ other dealings in this Software without prior written authorization
 from The Open Group.
 
 */
-
-/**************************************************************************/
-/*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
-/*                                                                        */
-/* NX-X11, NX protocol compression and NX extensions to this software     */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
-/*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
-/*                                                                        */
-/* All rights reserved.                                                   */
-/*                                                                        */
-/**************************************************************************/
-
-/* $XFree86: xc/lib/X11/Xlibint.h,v 3.27 2003/05/27 22:26:26 tsi Exp $ */
 
 #ifndef _XLIBINT_H_
 #define _XLIBINT_H_ 1
@@ -228,11 +232,8 @@ typedef struct _XSQEvent
 #endif
 
 #ifdef XTHREADS			/* for xReply */
-#define NEED_REPLIES
 #endif
 
-#define NEED_EVENTS
-#define NEED_REPLIES
 #include <nx-X11/Xproto.h>
 #ifdef __sgi
 #define _SGI_MP_SOURCE  /* turn this on to get MP safe errno */
@@ -422,6 +423,19 @@ extern LockInfoPtr _Xglobal_lock;
 /* Leftover from CRAY support - was defined empty on all non-Cray systems */
 #define WORD64ALIGN
 
+/**
+ * Return a len-sized request buffer for the request type. This function may
+ * flush the output queue.
+ *
+ * @param dpy The display connection
+ * @param type The request type
+ * @param len Length of the request in bytes
+ *
+ * @returns A pointer to the request buffer with a few default values
+ * initialized.
+ */
+extern void *_XGetRequest(Display *dpy, CARD8 type, size_t len);
+
 /*
  * GetReq - Get the next available X request packet in the buffer and
  * return it. 
@@ -433,23 +447,10 @@ extern LockInfoPtr _Xglobal_lock;
 
 #if !defined(UNIXCPP) || defined(ANSICPP)
 #define GetReq(name, req) \
-	if ((dpy->bufptr + SIZEOF(x##name##Req)) > dpy->bufmax)\
-		_XFlush(dpy);\
-	req = (x##name##Req *)(dpy->last_req = dpy->bufptr);\
-	req->reqType = X_##name;\
-	req->length = (SIZEOF(x##name##Req))>>2;\
-	dpy->bufptr += SIZEOF(x##name##Req);\
-	dpy->request++
-
+        req = (x##name##Req *) _XGetRequest(dpy, X_##name, SIZEOF(x##name##Req))
 #else  /* non-ANSI C uses empty comment instead of "##" for token concatenation */
 #define GetReq(name, req) \
-	if ((dpy->bufptr + SIZEOF(x/**/name/**/Req)) > dpy->bufmax)\
-		_XFlush(dpy);\
-	req = (x/**/name/**/Req *)(dpy->last_req = dpy->bufptr);\
-	req->reqType = X_/**/name;\
-	req->length = (SIZEOF(x/**/name/**/Req))>>2;\
-	dpy->bufptr += SIZEOF(x/**/name/**/Req);\
-	dpy->request++
+        req = (x/**/name/**/Req *) _XGetRequest(dpy, X_/**/name, SIZEOF(x/**/name/**/Req))
 #endif
 
 /* GetReqExtra is the same as GetReq, but allocates "n" additional
@@ -457,22 +458,10 @@ extern LockInfoPtr _Xglobal_lock;
 
 #if !defined(UNIXCPP) || defined(ANSICPP)
 #define GetReqExtra(name, n, req) \
-	if ((dpy->bufptr + SIZEOF(x##name##Req) + n) > dpy->bufmax)\
-		_XFlush(dpy);\
-	req = (x##name##Req *)(dpy->last_req = dpy->bufptr);\
-	req->reqType = X_##name;\
-	req->length = (SIZEOF(x##name##Req) + n)>>2;\
-	dpy->bufptr += SIZEOF(x##name##Req) + n;\
-	dpy->request++
+        req = (x##name##Req *) _XGetRequest(dpy, X_##name, SIZEOF(x##name##Req) + n)
 #else
 #define GetReqExtra(name, n, req) \
-	if ((dpy->bufptr + SIZEOF(x/**/name/**/Req) + n) > dpy->bufmax)\
-		_XFlush(dpy);\
-	req = (x/**/name/**/Req *)(dpy->last_req = dpy->bufptr);\
-	req->reqType = X_/**/name;\
-	req->length = (SIZEOF(x/**/name/**/Req) + n)>>2;\
-	dpy->bufptr += SIZEOF(x/**/name/**/Req) + n;\
-	dpy->request++
+        req = (x/**/name/**/Req *) _XGetRequest(dpy, X_/**/name, SIZEOF(x/**/name/**/Req) + n)
 #endif
 
 
@@ -890,6 +879,10 @@ extern int (*_XErrorFunction)(
 extern void _XEatData(
     Display*		/* dpy */,
     unsigned long	/* n */
+);
+extern void _XEatDataWords(
+    Display*            /* dpy */,
+    unsigned long       /* n */
 );
 extern char *_XAllocScratch(
     Display*		/* dpy */,

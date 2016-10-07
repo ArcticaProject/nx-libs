@@ -1,4 +1,3 @@
-/* $Xorg: opendev.c,v 1.4 2001/02/09 02:04:34 xorgcvs Exp $ */
 
 /************************************************************
 
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/Xi/opendev.c,v 3.2 2001/01/17 22:13:25 dawes Exp $ */
 
 /***********************************************************************
  *
@@ -53,8 +51,6 @@ SOFTWARE.
  *
  */
 
-#define	 NEED_EVENTS
-#define	 NEED_REPLIES
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
@@ -85,10 +81,8 @@ int
 SProcXOpenDevice(client)
     register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xOpenDeviceReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     return(ProcXOpenDevice(client));
     }
 
@@ -181,7 +175,7 @@ ProcXOpenDevice(client)
     rep.length = (j * sizeof (xInputClassInfo) + 3) >> 2;
     rep.num_classes = j;
     WriteReplyToClient (client, sizeof (xOpenDeviceReply), &rep);
-    WriteToClient(client, j * sizeof (xInputClassInfo), (char *)evbase);
+    WriteToClient(client, j * sizeof (xInputClassInfo), evbase);
     return (Success);
     }
 
@@ -198,9 +192,7 @@ SRepXOpenDevice (client, size, rep)
     int		size;
     xOpenDeviceReply	*rep;
     {
-    register char n;
-
-    swaps(&rep->sequenceNumber, n);
-    swapl(&rep->length, n);
-    WriteToClient(client, size, (char *)rep);
+    swaps(&rep->sequenceNumber);
+    swapl(&rep->length);
+    WriteToClient(client, size, rep);
     }

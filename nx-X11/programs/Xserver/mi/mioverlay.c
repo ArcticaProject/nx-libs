@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/mi/mioverlay.c,v 3.15tsi Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -125,7 +124,7 @@ miInitOverlay(
 				sizeof(miOverlayWindowRec)))
 	return FALSE;
 
-    if(!(pScreenPriv = xalloc(sizeof(miOverlayScreenRec))))
+    if(!(pScreenPriv = malloc(sizeof(miOverlayScreenRec))))
 	return FALSE;
 
     pScreen->devPrivates[miOverlayScreenIndex].ptr = (void *)pScreenPriv;
@@ -178,7 +177,7 @@ miOverlayCloseScreen(int i, ScreenPtr pScreen)
    pScreen->UnrealizeWindow = pScreenPriv->UnrealizeWindow;
    pScreen->RealizeWindow = pScreenPriv->RealizeWindow;
 
-   xfree(pScreenPriv);
+   free(pScreenPriv);
 
    return (*pScreen->CloseScreen)(i, pScreen);
 }
@@ -196,7 +195,7 @@ miOverlayCreateWindow(WindowPtr pWin)
     pWinPriv->tree = NULL;
 
     if(!pWin->parent || !((*pScreenPriv->InOverlay)(pWin))) {
-	if(!(pTree = (miOverlayTreePtr)xcalloc(1, sizeof(miOverlayTreeRec))))
+	if(!(pTree = (miOverlayTreePtr)calloc(1, sizeof(miOverlayTreeRec))))
 	   return FALSE;
     }
 
@@ -224,7 +223,7 @@ miOverlayCreateWindow(WindowPtr pWin)
 		RegionInit(&(pTree->borderClip), &fullBox, 1);
 		RegionInit(&(pTree->clipList), &fullBox, 1);
 	    }
-	} else xfree(pTree);
+	} else free(pTree);
     }
 
     return TRUE;
@@ -252,7 +251,7 @@ miOverlayDestroyWindow(WindowPtr pWin)
 
 	RegionUninit(&(pTree->borderClip));
 	RegionUninit(&(pTree->clipList));
-	xfree(pTree);
+	free(pTree);
     }
 
     if(pScreenPriv->DestroyWindow) {
@@ -874,7 +873,7 @@ miOverlayHandleExposures(WindowPtr pWin)
 		    (*WindowExposures)(pTree->pWin,&mival->exposed,NullRegion);
 		    RegionUninit(&mival->exposed);
 		}
-		xfree(mival);
+		free(mival);
 		pTree->valdata = NULL;
 		if (pTree->firstChild) {
 		    pTree = pTree->firstChild;
@@ -912,7 +911,7 @@ miOverlayHandleExposures(WindowPtr pWin)
 	    }
 	    RegionUninit(&val->after.borderExposed);
 	    RegionUninit(&val->after.exposed);
-	    xfree(val);
+	    free(val);
 	    pChild->valdata = (ValidatePtr)NULL;
 	    if (pChild->firstChild)
 	    {
@@ -2029,7 +2028,6 @@ HasUnderlayChildren(WindowPtr pWin)
 static Bool
 CollectUnderlayChildrenRegions(WindowPtr pWin, RegionPtr pReg)
 {
-    ScreenPtr pScreen = pWin->drawable.pScreen;
     WindowPtr pChild;
     miOverlayTreePtr pTree;
     Bool hasUnderlay;

@@ -1,17 +1,25 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
+/* are copyright of the aforementioned persons and companies.             */
 /*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
 /*                                                                        */
 /* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
 /*                                                                        */
 /**************************************************************************/
 
@@ -34,7 +42,6 @@ is" without express or implied warranty.
 #include <string.h>
 #include <stdlib.h>
 
-#define NEED_EVENTS
 #include "X.h"
 #include "Xproto.h"
 #include "keysym.h"
@@ -757,7 +764,7 @@ N/A
         }
 
         len = (max_keycode - min_keycode + 1) * mapWidth;
-        keymap = (KeySym *)xalloc(len * sizeof(KeySym));
+        keymap = (KeySym *)malloc(len * sizeof(KeySym));
         for(i = 0; i < len; ++i)
           keymap[i] = keymap64[i];
         XFree(keymap64);
@@ -1138,7 +1145,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
       #endif
 
 #ifdef _XSERVER64
-      xfree(keymap);
+      free(keymap);
 #else
       XFree(keymap);
 #endif
@@ -1296,7 +1303,7 @@ int nxagentResetKeyboard(void)
               savedBellPercent, savedBellPitch, savedBellDuration);
   #endif
 
-  devBackup = xalloc(sizeof(DeviceIntRec));
+  devBackup = malloc(sizeof(DeviceIntRec));
 
   if (devBackup == NULL)
   {
@@ -1473,17 +1480,17 @@ static int nxagentFreeKeyboardDeviceData(DeviceIntPtr dev)
       }
       #endif
 
-      xfree(dev->key->curKeySyms.map);
-      xfree(dev->key->modifierKeyMap);
-      xfree(dev->key);
+      free(dev->key->curKeySyms.map);
+      free(dev->key->modifierKeyMap);
+      free(dev->key);
 
       dev->key=NULL;
   }
 
   if (dev->focus)
   {
-      xfree(dev->focus->trace);
-      xfree(dev->focus);
+      free(dev->focus->trace);
+      free(dev->focus);
       dev->focus=NULL;
   }
 
@@ -1494,7 +1501,7 @@ static int nxagentFreeKeyboardDeviceData(DeviceIntPtr dev)
       if (k->xkb_sli)
           XkbFreeSrvLedInfo(k->xkb_sli);
       #endif
-      xfree(k);
+      free(k);
   }
 
   #ifdef DEBUG

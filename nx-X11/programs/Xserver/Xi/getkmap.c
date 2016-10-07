@@ -1,4 +1,3 @@
-/* $Xorg: getkmap.c,v 1.4 2001/02/09 02:04:34 xorgcvs Exp $ */
 
 /************************************************************
 
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/Xi/getkmap.c,v 3.3 2001/01/17 22:13:24 dawes Exp $ */
 
 /********************************************************************
  *
@@ -53,8 +51,6 @@ SOFTWARE.
  *
  */
 
-#define	 NEED_EVENTS			/* for inputstr.h    */
-#define	 NEED_REPLIES
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
@@ -82,10 +78,8 @@ int
 SProcXGetDeviceKeyMapping(client)
     register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xGetDeviceKeyMappingReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     return(ProcXGetDeviceKeyMapping(client));
     }
 
@@ -169,10 +163,8 @@ SRepXGetDeviceKeyMapping (client, size, rep)
     int		size;
     xGetDeviceKeyMappingReply	*rep;
     {
-    register char n;
-
-    swaps(&rep->sequenceNumber, n);
-    swapl(&rep->length, n);
-    WriteToClient(client, size, (char *)rep);
+    swaps(&rep->sequenceNumber);
+    swapl(&rep->length);
+    WriteToClient(client, size, rep);
     }
 

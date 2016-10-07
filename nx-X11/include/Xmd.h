@@ -1,4 +1,3 @@
-/* $XFree86: xc/include/Xmd.h,v 3.18tsi Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -47,7 +46,6 @@ SOFTWARE.
 ******************************************************************/
 #ifndef XMD_H
 #define XMD_H 1
-/* $Xorg: Xmd.h,v 1.4 2001/02/09 02:03:22 xorgcvs Exp $ */
 /*
  *  Xmd.h: MACHINE DEPENDENT DECLARATIONS.
  */

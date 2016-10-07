@@ -79,8 +79,7 @@ XFixesSelectionCallback (CallbackListPtr *callbacks, void * data, void * args)
     for (e = selectionEvents; e; e = e->next)
     {
 	if (e->selection == selection->selection && 
-	    (e->eventMask & eventMask) &&
-	    !e->pClient->clientGone)
+	    (e->eventMask & eventMask))
 	{
 	    xXFixesSelectionNotifyEvent	ev;
 
@@ -88,7 +87,6 @@ XFixesSelectionCallback (CallbackListPtr *callbacks, void * data, void * args)
 
 	    ev.type = XFixesEventBase + XFixesSelectionNotify;
 	    ev.subtype = subtype;
-	    ev.sequenceNumber = e->pClient->sequence;
 	    ev.window = e->pWindow->drawable.id;
 	    if (subtype == XFixesSetSelectionOwnerNotify)
 		ev.owner = selection->window;
@@ -156,7 +154,7 @@ XFixesSelectSelectionInput (ClientPtr	pClient,
     }
     if (!e)
     {
-	e = (SelectionEventPtr) xalloc (sizeof (SelectionEventRec));
+	e = (SelectionEventPtr) malloc (sizeof (SelectionEventRec));
 	if (!e)
 	    return BadAlloc;
 
@@ -174,7 +172,7 @@ XFixesSelectSelectionInput (ClientPtr	pClient,
 	    if (!AddResource (pWindow->drawable.id, SelectionWindowType,
 			      (void *) pWindow))
 	    {
-		xfree (e);
+		free (e);
 		return BadAlloc;
 	    }
 
@@ -215,14 +213,13 @@ ProcXFixesSelectSelectionInput (ClientPtr client)
 int
 SProcXFixesSelectSelectionInput (ClientPtr client)
 {
-    register int n;
     REQUEST(xXFixesSelectSelectionInputReq);
 
     REQUEST_SIZE_MATCH(xXFixesSelectSelectionInputReq);
-    swaps(&stuff->length, n);
-    swapl(&stuff->window, n);
-    swapl(&stuff->selection, n);
-    swapl(&stuff->eventMask, n);
+    swaps(&stuff->length);
+    swapl(&stuff->window);
+    swapl(&stuff->selection);
+    swapl(&stuff->eventMask);
     return ProcXFixesSelectSelectionInput(client);
 }
     
@@ -250,7 +247,7 @@ SelectionFreeClient (void * data, XID id)
 	if (e == old)
 	{
 	    *prev = e->next;
-	    xfree (e);
+	    free (e);
 	    CheckSelectionCallback ();
 	    break;
 	}

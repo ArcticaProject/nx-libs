@@ -128,7 +128,7 @@ AnimCurCloseScreen (int index, ScreenPtr pScreen)
     Unwrap(as, pScreen, RecolorCursor);
     SetAnimCurScreen(pScreen,0);
     ret = (*pScreen->CloseScreen) (index, pScreen);
-    xfree (as);
+    free (as);
     if (index == 0)
 	AnimCurScreenPrivateIndex = -1;
     return ret;
@@ -334,7 +334,7 @@ AnimCurInit (ScreenPtr pScreen)
 	animCurState.elt = 0;
 	animCurState.time = 0;
     }
-    as = (AnimCurScreenPtr) xalloc (sizeof (AnimCurScreenRec));
+    as = (AnimCurScreenPtr) malloc (sizeof (AnimCurScreenRec));
     if (!as)
 	return FALSE;
     Wrap(as, pScreen, CloseScreen, AnimCurCloseScreen);
@@ -366,7 +366,7 @@ AnimCursorCreate (CursorPtr *cursors, CARD32 *deltas, int ncursor, CursorPtr *pp
 	if (IsAnimCur (cursors[i]))
 	    return BadMatch;
 	
-    pCursor = (CursorPtr) xalloc (sizeof (CursorRec) +
+    pCursor = (CursorPtr) malloc (sizeof (CursorRec) +
 				  sizeof (AnimCurRec) +
 				  ncursor * sizeof (AnimCurElt));
     if (!pCursor)

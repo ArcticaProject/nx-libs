@@ -1,4 +1,3 @@
-/* $Xorg: connection.c,v 1.6 2001/02/09 02:05:23 xorgcvs Exp $ */
 /***********************************************************
 
 Copyright 1987, 1989, 1998  The Open Group
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $XFree86: xc/programs/Xserver/os/connection.c,v 3.64 2003/10/07 22:50:42 herrb Exp $ */
 /*****************************************************************
  *  Stuff to create connections --- OS dependent
  *
@@ -72,9 +70,15 @@ SOFTWARE.
 #endif
 #include <nx-X11/X.h>
 #include <nx-X11/Xproto.h>
-#define XSERV_t
-#define TRANS_SERVER
-#define TRANS_REOPEN
+#ifndef XSERV_t
+# define XSERV_t
+#endif
+#ifndef TRANS_SERVER
+# define TRANS_SERVER
+#endif
+#ifndef TRANS_REOPEN
+# define TRANS_REOPEN
+#endif
 #include <nx-X11/Xtrans/Xtrans.h>
 #include <errno.h>
 #include <signal.h>
@@ -261,7 +265,7 @@ void SetConnectionTranslation(int conn, int client)
             }
             node = &((*node)->next);
         }
-        *node = (struct _ct_node*)xalloc(sizeof(struct _ct_node));
+        *node = (struct _ct_node*)malloc(sizeof(struct _ct_node));
         (*node)->next = NULL;
         (*node)->key = conn;
         (*node)->value = client;
@@ -279,7 +283,7 @@ void ClearConnectionTranslation(void)
         {
             struct _ct_node *temp = node;
             node = node->next;
-            xfree(temp);
+            free(temp);
         }
     }
 }
@@ -407,7 +411,7 @@ CreateWellKnownSockets(void)
 	}
 	else
 	{
-	    ListenTransFds = (int *) xalloc (ListenTransCount * sizeof (int));
+	    ListenTransFds = (int *) malloc (ListenTransCount * sizeof (int));
 
 	    for (i = 0; i < ListenTransCount; i++)
 	    {
@@ -682,7 +686,6 @@ ClientAuthorized(ClientPtr client,
     XID	 		auth_id;
     char	 	*reason = NULL;
     XtransConnInfo	trans_conn;
-    int			restore_trans_conn = 0;
 
     priv = (OsCommPtr)client->osPrivate;
     trans_conn = priv->trans_conn;
@@ -713,7 +716,7 @@ ClientAuthorized(ClientPtr client,
 			proto_n, auth_proto, auth_id);
 	    }
 
-	    xfree ((char *) from);
+	    free ((char *) from);
 	}
 
 	if (auth_id == (XID) ~0L) {
@@ -731,7 +734,7 @@ ClientAuthorized(ClientPtr client,
 	    AuthAudit(client, TRUE, (struct sockaddr *) from, fromlen,
 		      proto_n, auth_proto, auth_id);
 
-	    xfree ((char *) from);
+	    free ((char *) from);
 	}
     }
     priv->auth_id = auth_id;
@@ -764,7 +767,7 @@ AllocNewConnection (XtransConnInfo trans_conn, int fd, CARD32 conn_time)
 #endif
 	)
 	return NullClient;
-    oc = (OsCommPtr)xalloc(sizeof(OsCommRec));
+    oc = (OsCommPtr)malloc(sizeof(OsCommRec));
     if (!oc)
 	return NullClient;
     oc->trans_conn = trans_conn;
@@ -775,7 +778,7 @@ AllocNewConnection (XtransConnInfo trans_conn, int fd, CARD32 conn_time)
     oc->conn_time = conn_time;
     if (!(client = NextAvailableClient((void *)oc)))
     {
-	xfree (oc);
+	free (oc);
 	return NullClient;
     }
     {
@@ -933,9 +936,9 @@ ErrorConnMax(XtransConnInfo trans_conn)
 	if (((*(char *) &whichbyte) && (byteOrder == 'B')) ||
 	    (!(*(char *) &whichbyte) && (byteOrder == 'l')))
 	{
-	    swaps(&csp.majorVersion, whichbyte);
-	    swaps(&csp.minorVersion, whichbyte);
-	    swaps(&csp.length, whichbyte);
+	    swaps(&csp.majorVersion);
+	    swaps(&csp.minorVersion);
+	    swaps(&csp.length);
 	}
 	iov[0].iov_len = sz_xConnSetupPrefix;
 	iov[0].iov_base = (char *) &csp;
@@ -962,7 +965,7 @@ CloseDownFileDescriptor(OsCommPtr oc)
 	_XSERVTransClose(oc->trans_conn);
     }
     FreeOsBuffers(oc);
-    xfree(oc);
+    free(oc);
 #ifndef WIN32
     ConnectionTranslation[connection] = 0;
 #else

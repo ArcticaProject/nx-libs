@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/GL/glx/glxserver.h,v 1.5 2003/09/28 20:15:43 alanh Exp $ */
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
@@ -52,7 +51,7 @@
 #include <resource.h>
 #include <scrnintstr.h>
 #include "GL/glx_ansic.h"
-
+#include "protocol-versions.h"
 
 #include <limits.h>
 /*
@@ -75,8 +74,8 @@ typedef struct __GLXdrawablePrivateRec __GLXdrawablePrivate;
 #include "glxerror.h"
 
 
-#define GLX_SERVER_MAJOR_VERSION 1
-#define GLX_SERVER_MINOR_VERSION 2
+#define GLX_SERVER_MAJOR_VERSION SERVER_GLX_MAJOR_VERSION
+#define GLX_SERVER_MINOR_VERSION SERVER_GLX_MINOR_VERSION
 
 #ifndef True
 #define True 1

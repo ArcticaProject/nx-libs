@@ -1,5 +1,3 @@
-/* $XdotOrg: xc/programs/Xserver/Xext/shape.c,v 1.9 2005/07/03 08:53:36 daniels Exp $ */
-/* $XFree86: xc/programs/Xserver/Xext/shape.c,v 3.18 2003/10/28 23:08:43 tsi Exp $ */
 /************************************************************
 
 Copyright 1989, 1998  The Open Group
@@ -26,9 +24,6 @@ in this Software without prior written authorization from The Open Group.
 
 ********************************************************/
 
-/* $Xorg: shape.c,v 1.4 2001/02/09 02:04:32 xorgcvs Exp $ */
-#define NEED_REPLIES
-#define NEED_EVENTS
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
@@ -44,8 +39,8 @@ in this Software without prior written authorization from The Open Group.
 #include "dixstruct.h"
 #include "resource.h"
 #include "opaque.h"
-#define _SHAPE_SERVER_	/* don't want Xlib structures */
-#include <nx-X11/extensions/shapestr.h>
+#include <X11/extensions/shapeproto.h>
+#include "protocol-versions.h"
 #include "regionstr.h"
 #include "gcstruct.h"
 #ifdef EXTMODULE
@@ -147,7 +142,7 @@ typedef struct _ShapeEvent {
  ****************/
 
 void
-ShapeExtensionInit(INITARGS)
+ShapeExtensionInit(void)
 {
     ExtensionEntry *extEntry;
 
@@ -289,22 +284,21 @@ ProcShapeQueryVersion (client)
     register ClientPtr	client;
 {
     xShapeQueryVersionReply	rep;
-    register int		n;
 
     REQUEST_SIZE_MATCH (xShapeQueryVersionReq);
     memset(&rep, 0, sizeof(xShapeQueryVersionReply));
     rep.type = X_Reply;
     rep.length = 0;
     rep.sequenceNumber = client->sequence;
-    rep.majorVersion = SHAPE_MAJOR_VERSION;
-    rep.minorVersion = SHAPE_MINOR_VERSION;
+    rep.majorVersion = SERVER_SHAPE_MAJOR_VERSION;
+    rep.minorVersion = SERVER_SHAPE_MINOR_VERSION;
     if (client->swapped) {
-    	swaps(&rep.sequenceNumber, n);
-    	swapl(&rep.length, n);
-	swaps(&rep.majorVersion, n);
-	swaps(&rep.minorVersion, n);
+	swaps(&rep.sequenceNumber);
+	swapl(&rep.length);
+	swaps(&rep.majorVersion);
+	swaps(&rep.minorVersion);
     }
-    WriteToClient(client, sizeof (xShapeQueryVersionReply), (char *)&rep);
+    WriteToClient(client, sizeof (xShapeQueryVersionReply), &rep);
     return (client->noClientException);
 }
 
@@ -318,7 +312,6 @@ ProcShapeRectangles (client)
     register ClientPtr client;
 {
     WindowPtr		pWin;
-    ScreenPtr		pScreen;
     REQUEST(xShapeRectanglesReq);
     xRectangle		*prects;
     int		        nrects, ctype;
@@ -351,7 +344,6 @@ ProcShapeRectangles (client)
 	client->errorValue = stuff->ordering;
         return BadValue;
     }
-    pScreen = pWin->drawable.pScreen;
     nrects = ((stuff->length  << 2) - sizeof(xShapeRectanglesReq));
     if (nrects & 4)
 	return BadLength;
@@ -714,7 +706,6 @@ ProcShapeQueryExtents (client)
     WindowPtr		pWin;
     xShapeQueryExtentsReply	rep;
     BoxRec		extents, *pExtents;
-    register int	n;
     RegionPtr		region;
 
     REQUEST_SIZE_MATCH (xShapeQueryExtentsReq);
@@ -756,18 +747,18 @@ ProcShapeQueryExtents (client)
     rep.widthClipShape = extents.x2 - extents.x1;
     rep.heightClipShape = extents.y2 - extents.y1;
     if (client->swapped) {
-    	swaps(&rep.sequenceNumber, n);
-    	swapl(&rep.length, n);
-	swaps(&rep.xBoundingShape, n);
-	swaps(&rep.yBoundingShape, n);
-	swaps(&rep.widthBoundingShape, n);
-	swaps(&rep.heightBoundingShape, n);
-	swaps(&rep.xClipShape, n);
-	swaps(&rep.yClipShape, n);
-	swaps(&rep.widthClipShape, n);
-	swaps(&rep.heightClipShape, n);
+	swaps(&rep.sequenceNumber);
+	swapl(&rep.length);
+	swaps(&rep.xBoundingShape);
+	swaps(&rep.yBoundingShape);
+	swaps(&rep.widthBoundingShape);
+	swaps(&rep.heightBoundingShape);
+	swaps(&rep.xClipShape);
+	swaps(&rep.yClipShape);
+	swaps(&rep.widthClipShape);
+	swaps(&rep.heightClipShape);
     }
-    WriteToClient(client, sizeof (xShapeQueryExtentsReply), (char *)&rep);
+    WriteToClient(client, sizeof (xShapeQueryExtentsReply), &rep);
     return (client->noClientException);
 }
 
@@ -796,7 +787,7 @@ ShapeFreeClient (data, id)
 	    	*pHead = pShapeEvent->next;
 	}
     }
-    xfree ((void *) pShapeEvent);
+    free ((void *) pShapeEvent);
     return 1;
 }
 
@@ -812,9 +803,9 @@ ShapeFreeEvents (data, id)
     for (pCur = *pHead; pCur; pCur = pNext) {
 	pNext = pCur->next;
 	FreeResource (pCur->clientResource, ClientType);
-	xfree ((void *) pCur);
+	free ((void *) pCur);
     }
-    xfree ((void *) pHead);
+    free ((void *) pHead);
     return 1;
 }
 
@@ -849,7 +840,7 @@ ProcShapeSelectInput (client)
 
 	/* build the entry */
     	pNewShapeEvent = (ShapeEventPtr)
-			    xalloc (sizeof (ShapeEventRec));
+			    malloc (sizeof (ShapeEventRec));
     	if (!pNewShapeEvent)
 	    return BadAlloc;
     	pNewShapeEvent->next = 0;
@@ -871,7 +862,7 @@ ProcShapeSelectInput (client)
      	 */
     	if (!pHead)
     	{
-	    pHead = (ShapeEventPtr *) xalloc (sizeof (ShapeEventPtr));
+	    pHead = (ShapeEventPtr *) malloc (sizeof (ShapeEventPtr));
 	    if (!pHead ||
 		!AddResource (pWin->drawable.id, EventType, (void *)pHead))
 	    {
@@ -898,7 +889,7 @@ ProcShapeSelectInput (client)
 		    pNewShapeEvent->next = pShapeEvent->next;
 		else
 		    *pHead = pShapeEvent->next;
-		xfree (pShapeEvent);
+		free (pShapeEvent);
 	    }
 	}
 	break;
@@ -919,7 +910,6 @@ SendShapeNotify (pWin, which)
     int		which;
 {
     ShapeEventPtr	*pHead, pShapeEvent;
-    ClientPtr		client;
     xShapeNotifyEvent	se;
     BoxRec		extents;
     RegionPtr		region;
@@ -972,20 +962,16 @@ SendShapeNotify (pWin, which)
 	return;
     }
     for (pShapeEvent = *pHead; pShapeEvent; pShapeEvent = pShapeEvent->next) {
-	client = pShapeEvent->client;
-	if (client == serverClient || client->clientGone)
-	    continue;
 	se.type = ShapeNotify + ShapeEventBase;
 	se.kind = which;
 	se.window = pWin->drawable.id;
-	se.sequenceNumber = client->sequence;
 	se.x = extents.x1;
 	se.y = extents.y1;
 	se.width = extents.x2 - extents.x1;
 	se.height = extents.y2 - extents.y1;
 	se.time = currentTime.milliseconds;
 	se.shaped = shaped;
-	WriteEventsToClient (client, 1, (xEvent *) &se);
+	WriteEventsToClient (pShapeEvent->client, 1, (xEvent *) &se);
     }
 }
 
@@ -998,7 +984,6 @@ ProcShapeInputSelected (client)
     ShapeEventPtr	pShapeEvent, *pHead;
     int			enabled;
     xShapeInputSelectedReply	rep;
-    register int		n;
 
     REQUEST_SIZE_MATCH (xShapeInputSelectedReq);
     pWin = LookupWindow (stuff->window, client);
@@ -1023,10 +1008,10 @@ ProcShapeInputSelected (client)
     rep.sequenceNumber = client->sequence;
     rep.enabled = enabled;
     if (client->swapped) {
-	swaps (&rep.sequenceNumber, n);
-	swapl (&rep.length, n);
+	swaps (&rep.sequenceNumber);
+	swapl (&rep.length);
     }
-    WriteToClient (client, sizeof (xShapeInputSelectedReply), (char *) &rep);
+    WriteToClient (client, sizeof (xShapeInputSelectedReply), &rep);
     return (client->noClientException);
 }
 
@@ -1040,7 +1025,6 @@ ProcShapeGetRectangles (client)
     xRectangle			*rects;
     int				nrects, i;
     RegionPtr			region;
-    register int		n;
 
     REQUEST_SIZE_MATCH(xShapeGetRectanglesReq);
     pWin = LookupWindow (stuff->window, client);
@@ -1105,13 +1089,13 @@ ProcShapeGetRectangles (client)
     rep.ordering = YXBanded;
     rep.nrects = nrects;
     if (client->swapped) {
-	swaps (&rep.sequenceNumber, n);
-	swapl (&rep.length, n);
-	swapl (&rep.nrects, n);
+	swaps (&rep.sequenceNumber);
+	swapl (&rep.length);
+	swapl (&rep.nrects);
 	SwapShorts ((short *)rects, (unsigned long)nrects * 4);
     }
-    WriteToClient (client, sizeof (rep), (char *) &rep);
-    WriteToClient (client, nrects * sizeof (xRectangle), (char *) rects);
+    WriteToClient (client, sizeof (rep), &rep);
+    WriteToClient (client, nrects * sizeof (xRectangle), rects);
     DEALLOCATE_LOCAL (rects);
     return client->noClientException;
 }
@@ -1185,10 +1169,9 @@ static int
 SProcShapeQueryVersion (client)
     register ClientPtr	client;
 {
-    register int    n;
     REQUEST (xShapeQueryVersionReq);
 
-    swaps (&stuff->length, n);
+    swaps (&stuff->length);
     return ProcShapeQueryVersion (client);
 }
 
@@ -1196,14 +1179,13 @@ static int
 SProcShapeRectangles (client)
     register ClientPtr	client;
 {
-    register char   n;
     REQUEST (xShapeRectanglesReq);
 
-    swaps (&stuff->length, n);
+    swaps (&stuff->length);
     REQUEST_AT_LEAST_SIZE (xShapeRectanglesReq);
-    swapl (&stuff->dest, n);
-    swaps (&stuff->xOff, n);
-    swaps (&stuff->yOff, n);
+    swapl (&stuff->dest);
+    swaps (&stuff->xOff);
+    swaps (&stuff->yOff);
     SwapRestS(stuff);
     return ProcShapeRectangles (client);
 }
@@ -1212,15 +1194,14 @@ static int
 SProcShapeMask (client)
     register ClientPtr	client;
 {
-    register char   n;
     REQUEST (xShapeMaskReq);
 
-    swaps (&stuff->length, n);
+    swaps (&stuff->length);
     REQUEST_SIZE_MATCH (xShapeMaskReq);
-    swapl (&stuff->dest, n);
-    swaps (&stuff->xOff, n);
-    swaps (&stuff->yOff, n);
-    swapl (&stuff->src, n);
+    swapl (&stuff->dest);
+    swaps (&stuff->xOff);
+    swaps (&stuff->yOff);
+    swapl (&stuff->src);
     return ProcShapeMask (client);
 }
 
@@ -1228,15 +1209,14 @@ static int
 SProcShapeCombine (client)
     register ClientPtr	client;
 {
-    register char   n;
     REQUEST (xShapeCombineReq);
 
-    swaps (&stuff->length, n);
+    swaps (&stuff->length);
     REQUEST_SIZE_MATCH (xShapeCombineReq);
-    swapl (&stuff->dest, n);
-    swaps (&stuff->xOff, n);
-    swaps (&stuff->yOff, n);
-    swapl (&stuff->src, n);
+    swapl (&stuff->dest);
+    swaps (&stuff->xOff);
+    swaps (&stuff->yOff);
+    swapl (&stuff->src);
     return ProcShapeCombine (client);
 }
 
@@ -1244,14 +1224,13 @@ static int
 SProcShapeOffset (client)
     register ClientPtr	client;
 {
-    register char   n;
     REQUEST (xShapeOffsetReq);
 
-    swaps (&stuff->length, n);
+    swaps (&stuff->length);
     REQUEST_SIZE_MATCH (xShapeOffsetReq);
-    swapl (&stuff->dest, n);
-    swaps (&stuff->xOff, n);
-    swaps (&stuff->yOff, n);
+    swapl (&stuff->dest);
+    swaps (&stuff->xOff);
+    swaps (&stuff->yOff);
     return ProcShapeOffset (client);
 }
 
@@ -1259,12 +1238,11 @@ static int
 SProcShapeQueryExtents (client)
     register ClientPtr	client;
 {
-    register char   n;
     REQUEST (xShapeQueryExtentsReq);
 
-    swaps (&stuff->length, n);
+    swaps (&stuff->length);
     REQUEST_SIZE_MATCH (xShapeQueryExtentsReq);
-    swapl (&stuff->window, n);
+    swapl (&stuff->window);
     return ProcShapeQueryExtents (client);
 }
 
@@ -1272,12 +1250,11 @@ static int
 SProcShapeSelectInput (client)
     register ClientPtr	client;
 {
-    register char   n;
     REQUEST (xShapeSelectInputReq);
 
-    swaps (&stuff->length, n);
+    swaps (&stuff->length);
     REQUEST_SIZE_MATCH (xShapeSelectInputReq);
-    swapl (&stuff->window, n);
+    swapl (&stuff->window);
     return ProcShapeSelectInput (client);
 }
 
@@ -1285,12 +1262,11 @@ static int
 SProcShapeInputSelected (client)
     register ClientPtr	client;
 {
-    register int    n;
     REQUEST (xShapeInputSelectedReq);
 
-    swaps (&stuff->length, n);
+    swaps (&stuff->length);
     REQUEST_SIZE_MATCH (xShapeInputSelectedReq);
-    swapl (&stuff->window, n);
+    swapl (&stuff->window);
     return ProcShapeInputSelected (client);
 }
 
@@ -1299,11 +1275,10 @@ SProcShapeGetRectangles (client)
     register ClientPtr	client;
 {
     REQUEST(xShapeGetRectanglesReq);
-    register char   n;
 
-    swaps (&stuff->length, n);
+    swaps (&stuff->length);
     REQUEST_SIZE_MATCH(xShapeGetRectanglesReq);
-    swapl (&stuff->window, n);
+    swapl (&stuff->window);
     return ProcShapeGetRectangles (client);
 }
 

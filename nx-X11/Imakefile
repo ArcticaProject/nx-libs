@@ -1,9 +1,22 @@
-XCOMM $Xorg: Imakefile,v 1.5 2000/08/17 19:41:44 cpqbld Exp $
-
-
-
-
-XCOMM $XFree86: xc/Imakefile,v 3.29tsi Exp $
+/**************************************************************************/
+/*                                                                        */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
+/*                                                                        */
+/* nx-X11, NX protocol compression and NX extensions to this software     */
+/* are copyright of the aforementioned persons and companies.             */
+/*                                                                        */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
+/*                                                                        */
+/* All rights reserved.                                                   */
+/*                                                                        */
+/**************************************************************************/
 
 #define IHaveSubdirs
 #define PassCDebugFlags CDEBUGFLAGS="$(CDEBUGFLAGS)"
@@ -105,11 +118,6 @@ Everything::
 	@echo ""
 	@date
 	@echo ""
-	cd $(IMAKESRC) && if [ -f Makefile ]; then \
-	    $(MAKE) $(MFLAGS) BOOTSTRAPCFLAGS="$(BOOTSTRAPCFLAGS)"; \
-	else \
-	    $(MAKE) $(MFLAGS) -f Makefile.ini BOOTSTRAPCFLAGS="$(BOOTSTRAPCFLAGS)"; \
-	fi
 	-$(RM) xmakefile.bak; $(MV) xmakefile xmakefile.bak
 	$(MAKE) $(MFLAGS) xmakefile
 	$(MAKE) $(MFLAGS) $(MAKE_OPTS) Makefiles
@@ -149,9 +157,6 @@ Everything::
 	@echo Rebuilding $(RELEASE) of the X Window System.
 	@echo :
 	@echo :
-	cd $(IMAKESRC)
-	$(MAKE) $(MFLAGS) -f Makefile.ini imake.exe
-	cd ..\..
 	RMoveToBakFile(xmakefile)
 	$(MAKE) $(MFLAGS) xmakefile
 	$(MAKE) $(MFLAGS) $(MAKE_OPTS) Makefiles
@@ -186,7 +191,3 @@ xmakefile-exists::
 #ifndef MakeHtmlManIndex
 #define MakeHtmlManIndex YES	/* install.man generates HTML man page index */
 #endif
-
-#undef BootstrapCleanSubdirs
-#define BootstrapCleanSubdirs BOOTSTRAPSUBDIRS="$(BOOTSTRAPSUBDIRS)"
-BOOTSTRAPSUBDIRS = imake makedepend

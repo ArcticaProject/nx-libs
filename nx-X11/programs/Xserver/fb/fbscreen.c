@@ -21,7 +21,6 @@
  * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-/* $XFree86: xc/programs/Xserver/fb/fbscreen.c,v 1.13 2001/05/29 04:54:09 keithp Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -36,12 +35,12 @@ fbCloseScreen (int index, ScreenPtr pScreen)
     DepthPtr	depths = pScreen->allowedDepths;
 
     for (d = 0; d < pScreen->numDepths; d++)
-	xfree (depths[d].vids);
-    xfree (depths);
-    xfree (pScreen->visuals);
-    xfree (pScreen->devPrivate);
+	free (depths[d].vids);
+    free (depths);
+    free (pScreen->visuals);
+    free (pScreen->devPrivate);
 #ifdef FB_SCREEN_PRIVATE
-    xfree (pScreen->devPrivates[fbScreenPrivateIndex].ptr);
+    free (pScreen->devPrivates[fbScreenPrivateIndex].ptr);
 #endif
     return TRUE;
 }

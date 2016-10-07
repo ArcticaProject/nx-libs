@@ -5,23 +5,384 @@
 \\$2 \(la\\$1\(ra\\$3
 ..
 .if \n(.g .mso www.tmac
-.TH nxproxy 1 "Nov 2011" "Version 3.5.0" "NX Proxy"
+.TH nxproxy 1 "June 2016" "Version 3.6.x" "NX Proxy"
 .SH NAME
 nxproxy \- NX Proxy Tool
 .SH SYNOPSIS
 'nh
 .fi
 .ad l
-\fBnxproxy\fR  <options>
+\fBnxproxy\fR \fI[<options>] <host>:<port>\fR
 
 .SH DESCRIPTION
 \fBnxproxy\fR is a tool that allows one to tunnel X sessions through
-the NX compression libraries. \fBnxproxy\fR is a backend application
-utilized by the X2GoClient GUI and some other NX/X2Go clients.
+the NX compression library. \fBnxproxy\fR is a backend application
+utilized by various client application (Remmina, X2Go Client, PyHoca-Gui,
+Arctica Client, TheQVD Client, etc.).
 .PP
-.SH OPTIONS
-For an insight in \fBnxproxy\fR options use \fBnxproxy \-help\fR on the command line.
-.PP
+.SH COMMAND LINE OPTIONS
+.TP 8
+.B -C
+Specify that nxproxy has to run on the 'X client' side, listening for
+connections and impersonating an X server.
+.TP 8
+.B -S
+Specify that nxproxy has to run in 'X server' mode, thus forwarding the
+connections to daemons running on the client.
+.TP 8
+.B -h
+Print this message.
+.TP 8
+.B -v
+Print version information.
+.TP 8
+.B <host>:<port>
+Put at the end, specifies the host and port of the listening proxy.
+
+.SH NX/NX DISPLAY OPTIONS
+Multiple nx/nx options can be specified in the DISPLAY environment or on
+the command line, by using the nx/nx,option=value notation.
+.TP 8
+.B link=<string>
+An indication of the link speed that is going to be used between the
+proxies. Usually the compression and the other link parameters depend on
+this setting. The value can be either 'modem', 'isdn', 'adsl', 'wan', 'lan', 'local'
+or a bandwidth specification, like for example '56k', '1m', '100m', etc.
+
+.TP 8
+.B type=<string>
+Type of session, for example 'windows', 'unix-kde'. 'unix-application',
+etc.
+
+.TP 8
+.B display=<string>
+Specify the real display where X connections have to be forwarded by the
+proxy running on the client.
+
+.TP 8
+.B listen=<int>
+Local port used for accepting the proxy connection.
+
+.TP 8
+.B loopback=<bool>
+Bind to the loopback device only.
+
+.TP 8
+.B accept=<string>
+Name or IP of host that can connect to the proxy.
+
+.TP 8
+.B connect=<string>
+Name or IP of host that the proxy will connect to.
+
+.TP 8
+.B port=<int>
+Remote port used for the connection.
+
+.TP 8
+.B retry=<int>
+Number of connection atempts.
+
+.TP 8
+.B root=<string>
+The root directory for the session. Usually is the C\-* or S\-* in the .nx
+directory in the user's home, with '*' being the virtual display.
+
+.TP 8
+.B session=<string>
+Name of the session file. The default is the name 'session' in the
+session directory.
+
+.TP 8
+.B errors=<string>
+Name of the log file used by the proxy. The default is the name 'errors'
+in the session directory.
+
+.TP 8
+.B stats=<string>
+Name of the file where are written the proxy statistics. The default is a
+file 'stats' in the session directory. The proxy replaces the data in the
+file whenever it receives a SIGUSR1 or SIGUSR2 signal:
+
+.I SIGUSR1:
+Gives total statistics, i.e. statistics collected since the beginning of
+the session.
+
+.I SIGUSR2:
+Gives partial statistics, i.e. statistics collected since the last time
+this signal was received.
+
+.TP 8
+.B cookie=<string>
+Use the provided cookie for authenticating to the remote proxy. The same
+cookie is used as the fake value used for the X authorization. The fake
+cookie is replaced on the X server side with the real cookie to be used
+for the display, so that the real cookie doesn't have to travel over the
+net. When not using a proxy cookie, any host will be able to connect to
+the proxy. See also the 'accept' parameter.
+
+.TP 8
+.B nodelay=<bool>
+A boolean indicating if TCP_NODELAY has to be set on the proxy link. Old
+Linux kernels had problems with handling TCP_NODELAY on PPP links.
+
+.TP 8
+.B policy=<bool>
+Let or not the agent decide when it is the best time to flush the proxy
+link. If set to 0, the proxy will flush any encoded data immediately. The
+option has only effect on the X client side proxy.
+
+.TP 8
+.B render=<bool>
+Enable or disable use of the RENDER extension.
+
+.TP 8
+.B taint=<bool>
+Try to suppress trivial sources of X roundtrips by generating the reply
+on the X client side.
+
+.TP 8
+.B delta=<bool>
+Enable X differential compression.
+
+.TP 8
+.B data=<int>
+Enable or disable the ZLIB data compression. It is possible to specify a
+value between 0 and 9. Usually the value is chosen automatically based on
+the requested link setting.
+
+.TP 8
+.B stream=<int>
+Enable or disable the ZLIB stream compression. The value, between 0 and
+9, is usually determined according to the requested link setting. Not
+fully implemented in nx-X11 Agent, yet.
+
+.TP 8
+.B limit=<int>
+Specify a bitrate limit allowed for this session.
+
+.TP 8
+.B memory=<int>
+Trigger memory optimizations used to keep small the size of X buffers.
+This is useful on embedded plat- forms, or where memory is scarce.
+
+.TP 8
+.B cache=<int>
+Size of the in-memory X message cache. Setting the value to 0 will
+disable the memory cache as well as the NX differential compression.
+
+.TP 8
+.B images=<int>
+Size of the persistent image cache.
+
+.TP 8
+.B shseg=<int>
+Enable the use of the MIT-SHM extension between the \fBnxproxy\fR and the
+real X server. A value greater than 1 is assumed to be the size of
+requested shared memory segment. By default, the size of the segment is
+determined based on the size of the in-memory cache.
+
+.TP 8
+.B load=<bool>
+Enable loading a persistent X message cache at the proxy startup.
+
+.TP 8
+.B save=<bool>
+Enable saving a persistent X message cache at the end of session.
+
+.TP 8
+.B cups=<int>
+Enable or disable forwarding of CUPS connections, by listening on the
+optional port 'n'.
+
+.TP 8
+.B aux=<int>
+Enable or disable forwarding of the auxiliary X channel used for
+controlling the keyboard. The 'keybd=<int>' form is accepted for backward
+compatibility.
+
+.TP 8
+.B smb=<int>
+Enable or disable forwarding of SMB connections. The 'samba=<int>' form is
+accepted for backward compatibility.
+
+.TP 8
+.B media=<int>
+Enable forwarding of audio connections.
+
+.TP 8
+.B http=<int>
+Enable forwarding of HTTP connections.
+
+.TP 8
+.B font=<int>
+Enable forwarding of reversed connections to a font
+server running on the NX server.
+
+.TP 8
+.B file=<int>
+Enable forwarding of file transfer connections.
+
+.TP 8
+.B mask=<int>
+Determine the distribution of channel ids between the proxies. By
+default, channels whose ids are multiple of 8 (starting from 0) are
+reserved for the NX client side. All the other channels can be allocated
+by the nx-X11 Agent side.
+
+.TP 8
+.B timeout=t
+Specify the keep-alive timeout used by proxies to determine if there is a
+network problem preventing communication with the remote peer. A value of
+0 disables the check.
+
+.TP 8
+.B cleanup=t
+Specify the number of seconds the proxy has to wait at session shutdown
+before closing all channels. The feature is used by the NX server to
+ensure that services are disconnected before shutting down the link.
+
+.TP 8
+.B pack=<string>
+Determine the method used to compress images.
+
+.TP 8
+.B product=<string>
+The product id of the client or server. The value is ignored by the
+proxy, but the client or server can provide it to facilitate the support.
+
+.TP 8
+.B core=<bool>
+Enable production of core dumps when aborting the proxy connection.
+
+.TP 8
+.B options=<string>
+Specify an additional file containing options that has to be merged with
+option read from the command line or the environment.
+
+.TP 8
+.B  kill=<int>
+Add the given process to the list of daemons that must be terminated at
+session shutdown. Multiple 'kill=<int>' options can be specified. The proxy
+will send them a SIGTERM signal just before exiting.
+
+.TP 8
+.B strict=<bool>
+Optimize for responsiveness, rather than for the best use of all the
+available bandwidth.
+
+.TP 8
+.B encryption=<bool>
+Should be set to 1 if the proxy is running as part of a program providing
+encryption of the point to point communication.
+
+.TP 8
+.I These options are interpreted by the nx-NX Agent. They are ignored by the proxy.
+
+    rootless=<bool>
+    geometry=<string>
+    resize=<bool>
+    fullscreen=<bool>
+    keyboard=<string>
+    clipboard=<int>
+    streaming=<int>
+    backingstore=<int>
+    composite=<int>
+    xinerama=<int>
+    shmem=<bool>
+    shpix=<bool>
+    kbtype=<string>
+    client=<string>
+    shadow=<int>
+    shadowuid=<int>
+    shadowmode=<string>
+    defer=<int>
+    tile=<string>
+    menu=<int>
+    sleep=<int>
+
+.SH NX ENVIRONMENT VARIABLES
+
+The \fBnxproxy\fR application (and also \fBnxagent\fR when using nxcomp
+support) can be influenced by the following environment variables:
+
+
+.TP 8
+.B NX_ROOT
+The root NX directory is the place where the session directory and the
+cache files are created. This is usually overridden by passing the 'root='
+option. By default, the root NX directory is assumed to be the
+directory '.nx' in the user's home.
+
+.TP 8
+.B NX_SYSTEM
+The directory where NX programs and libraries reside. If not set, the
+value is assumed to be '/usr/NX'. Programs, libraries and data files are
+respectedly searched in the 'bin', 'lib' and 'share' subdirectories.
+
+.TP 8
+.B  NX_HOME
+The NX user's home directory. If NX_ROOT is not set or invalid, the
+user's NX directory is created here.
+
+.TP 8
+.B  NX_TEMP
+The directory where the X11 Unix Domain Sockets and all temporary files
+are to be created.
+
+.TP 8
+.B  NX_CLIENT
+The full path to the <nxclient> executable. If the variable is not set,
+the <nxclient> executable will be run assuming that the program is in the
+system path. This can be useful on platforms like Windows and the MacOS X
+where <nxclient> is located in a different directory compared to the
+other programs, to make easier for the user to execute the program from
+the shell.
+
+.SH SHELL ENVIRONMENT VARIABLES
+
+.TP 8
+.B HOME
+The variable is checked in the case NX_HOME is not set, null or invalid.
+
+.TP 8
+.B TEMP
+The variable is checked whenever the NX_TEMP directory is not set, null
+or invalid.
+
+.TP 8
+.B PATH
+The path where all executables are searched, except <nxclient>. If
+NX_CLIENT is not set, also the client executable is searched in the
+system path.
+
+.TP 8
+.B  LD_LIBRARY_PATH
+System-wide library search order. This should be set by the program
+invoking the proxy.
+
+.TP 8
+.B DISPLAY
+On the X server side, the DISPLAY variable indicates the location of the
+X11 server. When nxcomp is used as a transport library, the DISPLAY may
+represent a NX transport specification and options can passed in the form
+nx/nx,option=value...
+
+.TP 8
+.B XAUTHORITY
+This is the file containing the X11 authorization cookie. If not set, the
+file is assumed to be in the user's home (either NX_HOME or HOME).
+
 .SH AUTHOR
-This manual has been written by Mike Gabriel <mike.gabriel@das\-netzwerkteam.de> for the X2Go project
-(http://www.x2go.org).
+The \fBnxproxy\fR application has originally been derived from a software
+project called DXCP. The company NoMachine turned DXCP into nxcomp with
+nxproxy as executable around nxcomp.
+.PP
+The current maintenance of \fBnxproxy\fR (major version 3) is coordinated
+between various projects, mainly by The Arctica Project, TheQVD (Qindel
+Group) and the X2Go Project.
+.PP
+This manual has been written by Mike Gabriel
+<mike.gabriel@das\-netzwerkteam.de> for the X2Go project
+(http://www.x2go.org) and later on improved for the Arctica Project
+(https://arctica-project.org).

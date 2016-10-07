@@ -1,4 +1,3 @@
-/* $Xorg: xtest1dd.c,v 1.4 2001/02/09 02:04:33 xorgcvs Exp $ */
 /*
  *	File: xtest1dd.c
  *
@@ -52,14 +51,10 @@ Telephone and Telegraph Company or of the Regents of the
 University of California.
 
 */
-/* $XFree86: xc/programs/Xserver/Xext/xtest1dd.c,v 3.6 2003/10/28 23:08:44 tsi Exp $ */
 
 /***************************************************************
  * include files
  ***************************************************************/
-
-#define	NEED_EVENTS
-#define	NEED_REPLIES
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>

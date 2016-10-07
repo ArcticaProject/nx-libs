@@ -26,7 +26,7 @@ XKB_DISABLE = -DXKB_DFLT_DISABLED=0
 XKB_DDXDEFS = XkbServerDefines
 
 #if defined(NXAgentServer) && NXAgentServer
-NX_DEFINES = -DNXAGENT_SERVER
+ NX_DEFINES = -DNXAGENT_SERVER
 #endif
 
 #if (defined(XorgServer) && XorgServer)
@@ -72,14 +72,7 @@ AllTarget($(XF86_OBJS))
 
 SpecialCObjectRule(xkbInit,$(ICONFIGFILES),$(XKB_DEFINES))
 
-LinkSourceFile(maprules.c,$(XKBFILELIBSRC))
-LinkSourceFile(xkmread.c,$(XKBFILELIBSRC))
-LinkSourceFile(xkbtext.c,$(XKBFILELIBSRC))
 XCOMM avoid clash between XKBMisc.c and xkbmisc.c on NT
-LinkFile(xkbfmisc.c,$(XKBFILELIBSRC)/xkbmisc.c)
-LinkSourceFile(xkberrs.c,$(XKBFILELIBSRC))
-LinkSourceFile(xkbconfig.c,$(XKBFILELIBSRC))
-LinkSourceFile(xkbout.c,$(XKBFILELIBSRC))
 LinkSourceFile(XKBMisc.c,$(XLIBSRC))
 LinkSourceFile(XKBMAlloc.c,$(XLIBSRC))
 LinkSourceFile(XKBAlloc.c,$(XLIBSRC))

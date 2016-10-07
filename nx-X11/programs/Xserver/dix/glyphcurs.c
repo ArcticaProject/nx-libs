@@ -45,7 +45,6 @@ SOFTWARE.
 
 ************************************************************************/
 
-/* $Xorg: glyphcurs.c,v 1.4 2001/02/09 02:04:40 xorgcvs Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -74,6 +73,7 @@ the first one we find.
 cursor metrics.
 */
 
+#ifndef NXAGENT_SERVER
 int
 ServerBitsFromGlyph(FontPtr pfont, unsigned ch, register CursorMetricPtr cm, unsigned char **ppbits)
 {
@@ -92,7 +92,7 @@ ServerBitsFromGlyph(FontPtr pfont, unsigned ch, register CursorMetricPtr cm, uns
 
     pScreen = screenInfo.screens[0];
     nby = BitmapBytePad(cm->width) * (long)cm->height;
-    pbits = (char *)xalloc(nby);
+    pbits = (char *)malloc(nby);
     if (!pbits)
 	return BadAlloc;
     /* zeroing the (pad) bits seems to help some ddx cursor handling */
@@ -107,7 +107,7 @@ ServerBitsFromGlyph(FontPtr pfont, unsigned ch, register CursorMetricPtr cm, uns
 	    (*pScreen->DestroyPixmap)(ppix);
 	if (pGC)
 	    FreeScratchGC(pGC);
-	xfree(pbits);
+	free(pbits);
 	return BadAlloc;
     }
 
@@ -138,7 +138,7 @@ ServerBitsFromGlyph(FontPtr pfont, unsigned ch, register CursorMetricPtr cm, uns
     (*pScreen->DestroyPixmap)(ppix);
     return Success;
 }
-
+#endif /* NXAGENT_SERVER */
 
 Bool
 CursorMetricsFromGlyph(register FontPtr pfont, unsigned ch, register CursorMetricPtr cm)

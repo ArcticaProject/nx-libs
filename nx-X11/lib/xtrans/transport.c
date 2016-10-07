@@ -1,4 +1,3 @@
-/* $Xorg: transport.c,v 1.4 2001/02/09 02:04:07 xorgcvs Exp $ */
 /*
 
 Copyright 1993, 1994, 1998  The Open Group
@@ -26,7 +25,6 @@ other dealings in this Software without prior written authorization
 from The Open Group.
 
 */
-/* $XFree86: xc/lib/xtrans/transport.c,v 3.9 2002/05/31 18:45:51 dawes Exp $ */
 
 /* Copyright 1993, 1994 NCR Corporation - Dayton, Ohio, USA
  *
@@ -59,10 +57,6 @@ from The Open Group.
 #include "os.h"
 #else
 #include <stdlib.h>
-#define xalloc(_size)		malloc(_size)
-#define xcalloc(_num,_size)	calloc(_num,_size)
-#define xrealloc(_ptr,_size)	realloc(_ptr,_size)
-#define xfree(_ptr)		free(_ptr)
 #endif
 
 #include "Xtransint.h"

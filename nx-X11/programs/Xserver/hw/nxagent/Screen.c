@@ -1,17 +1,25 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
+/* are copyright of the aforementioned persons and companies.             */
 /*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
 /*                                                                        */
 /* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
 /*                                                                        */
 /**************************************************************************/
 
@@ -77,8 +85,6 @@ is" without express or implied warranty.
 #include <nx/Shadow.h>
 #include "Utils.h"
 
-#include "X11/include/Xrandr_nxagent.h"
-
 #include <nx-X11/Xlib.h>
 #include "X11/include/Xinerama_nxagent.h"
 
@@ -104,10 +110,10 @@ is" without express or implied warranty.
  * Set here the required log level.
  */
 
-#define PANIC
-#define WARNING
-#define  TEST
-#define  DEBUG
+#undef  PANIC
+#undef  WARNING
+#undef  TEST
+#undef  DEBUG
 #undef  WATCH
 #undef  DUMP
 
@@ -1149,13 +1155,13 @@ Bool nxagentOpenScreen(int index, ScreenPtr pScreen,
      * Initialize the depths.
      */
 
-    depths = (DepthPtr) xalloc(nxagentNumDepths * sizeof(DepthRec));
+    depths = (DepthPtr) malloc(nxagentNumDepths * sizeof(DepthRec));
 
     for (i = 0; i < nxagentNumDepths; i++)
     {
       depths[i].depth = nxagentDepths[i];
       depths[i].numVids = 0;
-      depths[i].vids = (VisualID *) xalloc(MAXVISUALSPERDEPTH * sizeof(VisualID));
+      depths[i].vids = (VisualID *) malloc(MAXVISUALSPERDEPTH * sizeof(VisualID));
     }
 
     /*
@@ -1170,7 +1176,7 @@ Bool nxagentOpenScreen(int index, ScreenPtr pScreen,
     numVisuals = 0;
     numDepths = nxagentNumDepths;
 
-    visuals = (VisualPtr) xalloc(nxagentNumVisuals * sizeof(VisualRec));
+    visuals = (VisualPtr) malloc(nxagentNumVisuals * sizeof(VisualRec));
 
     for (i = 0; i < nxagentNumVisuals; i++)
     {
@@ -1250,7 +1256,7 @@ Bool nxagentOpenScreen(int index, ScreenPtr pScreen,
 
         depths[depthIndex].depth = nxagentVisuals[i].depth;
         depths[depthIndex].numVids = 0;
-        depths[depthIndex].vids = (VisualID *) xalloc(MAXVISUALSPERDEPTH * sizeof(VisualID));
+        depths[depthIndex].vids = (VisualID *) malloc(MAXVISUALSPERDEPTH * sizeof(VisualID));
 
         numDepths++;
       }
@@ -1302,7 +1308,7 @@ Bool nxagentOpenScreen(int index, ScreenPtr pScreen,
                 "[%d] bitsPerPixel [%d] sizeInBytes [%d]\n", rootDepth, bitsPerPixel, sizeInBytes);
     #endif
 
-    pFrameBufferBits = (char *) Xalloc(sizeInBytes);
+    pFrameBufferBits = (char *) malloc(sizeInBytes);
 
     if (!pFrameBufferBits)
     {
@@ -1358,8 +1364,8 @@ Bool nxagentOpenScreen(int index, ScreenPtr pScreen,
      * by fbScreenInit with our own.
      */
 
-    xfree(pScreen -> visuals);
-    xfree(pScreen -> allowedDepths);
+    free(pScreen -> visuals);
+    free(pScreen -> allowedDepths);
 
     pScreen -> visuals = visuals;
     pScreen -> allowedDepths = depths;
@@ -2079,18 +2085,18 @@ Bool nxagentCloseScreen(int index, ScreenPtr pScreen)
 
   for (i = 0; i < pScreen->numDepths; i++)
   {
-    xfree(pScreen->allowedDepths[i].vids);
+    free(pScreen->allowedDepths[i].vids);
   }
 
   /*
    * Free the frame buffer.
    */
 
-  xfree(((PixmapPtr)pScreen -> devPrivate) -> devPrivate.ptr);
+  free(((PixmapPtr)pScreen -> devPrivate) -> devPrivate.ptr);
 
-  xfree(pScreen->allowedDepths);
-  xfree(pScreen->visuals);
-  xfree(pScreen->devPrivate);
+  free(pScreen->allowedDepths);
+  free(pScreen->visuals);
+  free(pScreen->devPrivate);
 
   /*
    * Reset the geometry and alpha information
@@ -3065,15 +3071,15 @@ int nxagentShadowPoll(PixmapPtr nxagentShadowPixmapPtr, GCPtr nxagentShadowGCPtr
 
       if (tBuffer)
       {
-        xfree(tBuffer);
+        free(tBuffer);
       }
 
-      tBuffer = xalloc(length);
+      tBuffer = malloc(length);
 
       if (tBuffer == NULL)
       {
         #ifdef PANIC
-        fprintf(stderr, "nxagentShadowPoll: xalloc failed.\n");
+        fprintf(stderr, "nxagentShadowPoll: malloc failed.\n");
         #endif
 
         return -1;
@@ -3125,7 +3131,7 @@ int nxagentShadowPoll(PixmapPtr nxagentShadowPixmapPtr, GCPtr nxagentShadowGCPtr
 
     if (tBuffer)
     {
-      xfree(tBuffer);
+      free(tBuffer);
     }
 
     RegionUninit(&updateRegion);
@@ -3166,7 +3172,7 @@ void nxagentShadowAdaptDepth(unsigned int width, unsigned int height,
 
   length = nxagentImageLength(width, height, ZPixmap, 0, nxagentShadowDepth);
 
-  cBuffer = xalloc(length);
+  cBuffer = malloc(length);
   icBuffer = cBuffer;
 
   pVisual = nxagentImageVisual((DrawablePtr) nxagentShadowPixmapPtr, nxagentShadowDepth);
@@ -3346,7 +3352,7 @@ void nxagentShadowAdaptDepth(unsigned int width, unsigned int height,
 
   if (cBuffer != NULL)
   {
-    xfree(cBuffer);
+    free(cBuffer);
   }
 }
 
@@ -3423,7 +3429,7 @@ FIXME: The port information is not used at the moment and produces a
 
     #endif
 
-    local_buf = (char *) xalloc(strlen((char*)pszReturnData) + 100);
+    local_buf = (char *) malloc(strlen((char*)pszReturnData) + 100);
 
     if (local_buf)
     {
@@ -3529,7 +3535,7 @@ FIXME: The port information is not used at the moment and produces a
                              strlen(local_buf), local_buf, 1);
       }
 
-      xfree(local_buf);
+      free(local_buf);
     }
   }
 }
@@ -3769,9 +3775,9 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       number = 1;
 
       if (screeninfo) {
-	xfree(screeninfo);
+	free(screeninfo);
       }
-      if (!(screeninfo = xalloc(sizeof(XineramaScreenInfo)))) {
+      if (!(screeninfo = malloc(sizeof(XineramaScreenInfo)))) {
 	return FALSE;
       }
 
@@ -3799,7 +3805,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
     }
 #else
     /* we are not interested in the return code */
-    RRGetInfo(pScreen);
+    RRGetInfo(pScreen, FALSE);
 #endif
 
 #ifndef NXAGENT_RANDR_XINERAMA_CLIPPING
@@ -4061,7 +4067,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
 
     /* release allocated memory */
     if (screeninfo) {
-      xfree(screeninfo);
+      free(screeninfo);
       screeninfo = NULL;
     }
 
@@ -4157,7 +4163,7 @@ void nxagentSaveAreas(PixmapPtr pPixmap, RegionPtr prgnSave, int xorg, int yorg,
 
   nRects = RegionNumRects(&cleanRegion);
   size = nRects * sizeof(*pRects);
-  pRects = (XRectangle *) xalloc(size);
+  pRects = (XRectangle *) malloc(size);
   pBox = RegionRects(&cleanRegion);
 
   for (i = nRects; i-- > 0;)
@@ -4170,7 +4176,7 @@ void nxagentSaveAreas(PixmapPtr pPixmap, RegionPtr prgnSave, int xorg, int yorg,
 
   XSetClipRectangles(nxagentDisplay, gc, 0, 0, pRects, nRects, Unsorted);
 
-  xfree((char *) pRects);
+  free((char *) pRects);
 
   extents = *RegionExtents(&cleanRegion);
 
@@ -4303,7 +4309,7 @@ void nxagentRestoreAreas(PixmapPtr pPixmap, RegionPtr prgnRestore, int xorg,
 
   nRects = RegionNumRects(clipRegion);
   size = nRects * sizeof(*pRects);
-  pRects = (XRectangle *) xalloc(size);
+  pRects = (XRectangle *) malloc(size);
   pBox = RegionRects(clipRegion);
 
   for (i = nRects; i-- > 0;)
@@ -4316,7 +4322,7 @@ void nxagentRestoreAreas(PixmapPtr pPixmap, RegionPtr prgnRestore, int xorg,
 
   XSetClipRectangles(nxagentDisplay, gc, 0, 0, pRects, nRects, Unsorted);
 
-  xfree(pRects);
+  free(pRects);
 
   extents = *RegionExtents(clipRegion);
 
@@ -4511,10 +4517,10 @@ void nxagentShowPixmap(PixmapPtr pPixmap, int x, int y, int width, int height)
 
   length = nxagentImageLength(width, height, format, 0, depth);
 
-  if ((data = xalloc(length)) == NULL)
+  if ((data = malloc(length)) == NULL)
   {
     #ifdef WARNING
-    fprintf(stderr, "nxagentShowPixmap: xalloc failed.\n");
+    fprintf(stderr, "nxagentShowPixmap: malloc failed.\n");
     #endif
 
     return;
@@ -4537,7 +4543,7 @@ FIXME
 
     if (data)
     {
-      xfree(data);
+      free(data);
     }
 
     return;
@@ -4573,7 +4579,7 @@ FIXME
 
   if (data != NULL)
   {
-    xfree(data);
+    free(data);
   }
 
 /*
@@ -4607,10 +4613,10 @@ void nxagentFbRestoreArea(PixmapPtr pPixmap, WindowPtr pWin, int xSrc, int ySrc,
 
   length = nxagentImageLength(width, height, format, 0, depth);
 
-  if ((data = xalloc(length)) == NULL)
+  if ((data = malloc(length)) == NULL)
   {
     #ifdef WARNING
-    fprintf(stderr, "nxagentFbRestoreArea: xalloc failed.\n");
+    fprintf(stderr, "nxagentFbRestoreArea: malloc failed.\n");
     #endif
 
     return;
@@ -4628,7 +4634,7 @@ void nxagentFbRestoreArea(PixmapPtr pPixmap, WindowPtr pWin, int xSrc, int ySrc,
 
     if (data)
     {
-      xfree(data);
+      free(data);
     }
 
     return;
@@ -4691,7 +4697,7 @@ FIXME
 FIXME
   if (data)
   {
-    xfree(data);
+    free(data);
   }
 */
 }

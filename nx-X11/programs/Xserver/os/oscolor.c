@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/os/oscolor.c,v 3.10 2003/07/16 01:39:03 dawes Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ******************************************************************/
-/* $Xorg: oscolor.c,v 1.4 2001/02/09 02:05:23 xorgcvs Exp $ */
 
 #ifdef NX_TRANS_SOCKET
 
@@ -134,11 +132,11 @@ OsLookupColor(int screen, char *name, unsigned int len,
     if(!rgb_dbm)
 	return(0);
 
-    /* we use xalloc here so that we can compile with cc without alloca
+    /* we use malloc here so that we can compile with cc without alloca
      * when otherwise using gcc */
     if (len < sizeof(buf))
 	lowername = buf;
-    else if (!(lowername = (char *)xalloc(len + 1)))
+    else if (!(lowername = (char *)malloc(len + 1)))
 	return(0);
     CopyISOLatin1Lowered ((unsigned char *) lowername, (unsigned char *) name,
 			  (int)len);
@@ -152,7 +150,7 @@ OsLookupColor(int screen, char *name, unsigned int len,
 #endif
 
     if (len >= sizeof(buf))
-	xfree(lowername);
+	free(lowername);
 
     if(dbent.dptr)
     {
@@ -372,7 +370,7 @@ lookup(char *name, int len, Bool create)
   else
     prev = &(hashTab[h]);
 
-  if (!entry && create && (entry = (dbEntryPtr)xalloc(sizeof(dbEntry) +len)))
+  if (!entry && create && (entry = (dbEntryPtr)malloc(sizeof(dbEntry) +len)))
     {
       *prev = entry;
       entry->link = NULL;

@@ -1,5 +1,3 @@
-/* $XdotOrg: xc/programs/Xserver/dix/events.c,v 1.17 2005/08/25 22:11:04 anholt Exp $ */
-/* $XFree86: xc/programs/Xserver/dix/events.c,v 3.51 2004/01/12 17:04:52 tsi Exp $ */
 /************************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -109,7 +107,6 @@ of the copyright holder.
 
 ******************************************************************/
 
-/* $Xorg: events.c,v 1.4 2001/02/09 02:04:40 xorgcvs Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -118,8 +115,6 @@ of the copyright holder.
 #include <nx-X11/X.h>
 #include "misc.h"
 #include "resource.h"
-#define NEED_EVENTS
-#define NEED_REPLIES
 #include <nx-X11/Xproto.h>
 #include "windowstr.h"
 #include "inputstr.h"
@@ -1027,7 +1022,7 @@ EnqueueEvent(xEvent *xE, DeviceIntPtr device, int count)
 	    return;
 	}
     }
-    qe = (QdEventPtr)xalloc(sizeof(QdEventRec) + (count * sizeof(xEvent)));
+    qe = (QdEventPtr)malloc(sizeof(QdEventRec) + (count * sizeof(xEvent)));
     if (!qe)
 	return;
     qe->next = (QdEventPtr)NULL;
@@ -1076,7 +1071,7 @@ PlayReleasedEvents(void)
 #endif
 	    (*qe->device->public.processInputProc)(qe->event, qe->device,
 						   qe->evcount);
-	    xfree(qe);
+	    free(qe);
 	    for (dev = inputInfo.devices; dev && dev->sync.frozen; dev = dev->next)
 		;
 	    if (!dev)
@@ -1218,6 +1213,7 @@ CheckGrabForSyncs(register DeviceIntPtr thisDev, Bool thisMode, Bool otherMode)
     ComputeFreezes();
 }
 
+#ifndef NXAGENT_SERVER
 void
 ActivatePointerGrab(register DeviceIntPtr mouse, register GrabPtr grab, 
                     TimeStamp time, Bool autoGrab)
@@ -1269,6 +1265,7 @@ DeactivatePointerGrab(register DeviceIntPtr mouse)
 	FreeCursor(grab->cursor, (Cursor)0);
     ComputeFreezes();
 }
+#endif /* NXAGENT_SERVER */
 
 void
 ActivateKeyboardGrab(register DeviceIntPtr keybd, GrabPtr grab, TimeStamp time, Bool passive)
@@ -1501,7 +1498,6 @@ int
 TryClientEvents (ClientPtr client, xEvent *pEvents, int count, Mask mask, 
                  Mask filter, GrabPtr grab)
 {
-    int i;
     int type;
 
 #ifdef DEBUG
@@ -1544,14 +1540,6 @@ TryClientEvents (ClientPtr client, xEvent *pEvents, int count, Mask mask,
 		return 1;
 	}
 #endif
-	type &= 0177;
-	if (type != KeymapNotify)
-	{
-	    /* all extension events must have a sequence number */
-	    for (i = 0; i < count; i++)
-		pEvents[i].u.u.sequenceNumber = client->sequence;
-	}
-
 	if (BitIsOn(criticalEvents, type))
 	{
 #ifdef SMART_SCHEDULE
@@ -1914,6 +1902,7 @@ PointInBorderSize(WindowPtr pWin, int x, int y)
     return FALSE;
 }
 
+#ifndef NXAGENT_SERVER
 static WindowPtr 
 XYToWindow(int x, int y)
 {
@@ -1949,7 +1938,7 @@ XYToWindow(int x, int y)
 	    {
 		spriteTraceSize += 10;
 		Must_have_memory = TRUE; /* XXX */
-		spriteTrace = (WindowPtr *)xrealloc(
+		spriteTrace = (WindowPtr *)realloc(
 		    spriteTrace, spriteTraceSize*sizeof(WindowPtr));
 		Must_have_memory = FALSE; /* XXX */
 	    }
@@ -1961,6 +1950,7 @@ XYToWindow(int x, int y)
     }
     return spriteTrace[spriteTraceGood-1];
 }
+#endif /* NXAGENT_SERVER */
 
 static Bool
 CheckMotion(xEvent *xE)
@@ -2072,6 +2062,7 @@ void ReinitializeRootWindow(WindowPtr win, int xoff, int yoff)
 }
 #endif
 
+#ifndef NXAGENT_SERVER
 void
 DefineInitialRootWindow(register WindowPtr win)
 {
@@ -2113,6 +2104,7 @@ DefineInitialRootWindow(register WindowPtr win)
     }
 #endif
 }
+#endif /* NXAGENT_SERVER */
 
 /*
  * This does not take any shortcuts, and even ignores its argument, since
@@ -2461,7 +2453,7 @@ CheckPassiveGrabsOnWindow(
 		if (device->sync.evcount < count)
 		{
 		    Must_have_memory = TRUE; /* XXX */
-		    device->sync.event = (xEvent *)xrealloc(device->sync.event,
+		    device->sync.event = (xEvent *)realloc(device->sync.event,
 							    count*
 							    sizeof(xEvent));
 		    Must_have_memory = FALSE; /* XXX */
@@ -2633,7 +2625,7 @@ DeliverGrabbedEvent(register xEvent *xE, register DeviceIntPtr thisDev,
 	    if (thisDev->sync.evcount < count)
 	    {
 		Must_have_memory = TRUE; /* XXX */
-		thisDev->sync.event = (xEvent *)xrealloc(thisDev->sync.event,
+		thisDev->sync.event = (xEvent *)realloc(thisDev->sync.event,
 							 count*sizeof(xEvent));
 		Must_have_memory = FALSE; /* XXX */
 	    }
@@ -2953,7 +2945,7 @@ OtherClientGone(void * value, XID id)
 		if (!(pWin->optional->otherClients = other->next))
 		    CheckWindowOptionalNeed (pWin);
 	    }
-	    xfree(other);
+	    free(other);
 	    RecalculateDeliverableEvents(pWin);
 	    return(Success);
 	}
@@ -3024,7 +3016,7 @@ EventSelectForWindow(register WindowPtr pWin, register ClientPtr client, Mask ma
 	check = 0;
 	if (!pWin->optional && !MakeWindowOptional (pWin))
 	    return BadAlloc;
-	others = (OtherClients *) xalloc(sizeof(OtherClients));
+	others = (OtherClients *) malloc(sizeof(OtherClients));
 	if (!others)
 	    return BadAlloc;
 	others->mask = mask;
@@ -3140,6 +3132,7 @@ EnterLeaveEvent(
     }
     if (mask & filters[type])
     {
+	memset(&event, 0, sizeof(xEvent));
 	event.u.u.type = type;
 	event.u.u.detail = detail;
 	event.u.enterLeave.time = currentTime.milliseconds;
@@ -3523,7 +3516,7 @@ SetInputFocus(
         {
 	    focus->traceSize = depth+1;
 	    Must_have_memory = TRUE; /* XXX */
-	    focus->trace = (WindowPtr *)xrealloc(focus->trace,
+	    focus->trace = (WindowPtr *)realloc(focus->trace,
 						 focus->traceSize *
 						 sizeof(WindowPtr));
 	    Must_have_memory = FALSE; /* XXX */
@@ -3922,7 +3915,7 @@ InitEvents()
     if (spriteTraceSize == 0)
     {
 	spriteTraceSize = 32;
-	spriteTrace = (WindowPtr *)xalloc(32*sizeof(WindowPtr));
+	spriteTrace = (WindowPtr *)malloc(32*sizeof(WindowPtr));
 	if (!spriteTrace)
 	    FatalError("failed to allocate spriteTrace");
     }
@@ -3941,7 +3934,7 @@ InitEvents()
     while (syncEvents.pending)
     {
 	QdEventPtr next = syncEvents.pending->next;
-	xfree(syncEvents.pending);
+	free(syncEvents.pending);
 	syncEvents.pending = next;
     }
     syncEvents.pendtail = &syncEvents.pending;
@@ -3961,11 +3954,12 @@ InitEvents()
 void
 CloseDownEvents(void)
 {
-  xfree(spriteTrace);
+  free(spriteTrace);
   spriteTrace = NULL;
   spriteTraceSize = 0;
 }
 
+#ifndef NXAGENT_SERVER
 int
 ProcSendEvent(ClientPtr client)
 {
@@ -4053,6 +4047,7 @@ ProcSendEvent(ClientPtr client)
 				    NullGrab, 0);
     return Success;
 }
+#endif /* NXAGENT_SERVER */
 
 int
 ProcUngrabKey(ClientPtr client)
@@ -4430,6 +4425,13 @@ WriteEventsToClient(ClientPtr pClient, int count, xEvent *events)
     xEvent    eventTo, *eventFrom;
     int       i;
 
+    if (!pClient || pClient == serverClient || pClient->clientGone)
+	return;
+
+    for (i = 0; i < count; i++)
+	if ((events[i].u.u.type & 0x7f) != KeymapNotify)
+	    events[i].u.u.sequenceNumber = pClient->sequence;
+
 #ifdef XKB
     if ((!noXkbExtension)&&(!XkbFilterEvents(pClient, count, events)))
 	return;
@@ -4486,11 +4488,11 @@ WriteEventsToClient(ClientPtr pClient, int count, xEvent *events)
 	       this event was sent with "SendEvent." */
 	    (*EventSwapVector[eventFrom->u.u.type & 0177])
 		(eventFrom, &eventTo);
-	    (void)WriteToClient(pClient, sizeof(xEvent), (char *)&eventTo);
+	    WriteToClient(pClient, sizeof(xEvent), &eventTo);
 	}
     }
     else
     {
-	(void)WriteToClient(pClient, count * sizeof(xEvent), (char *) events);
+	WriteToClient(pClient, count * sizeof(xEvent), events);
     }
 }

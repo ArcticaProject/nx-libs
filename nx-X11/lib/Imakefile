@@ -11,33 +11,12 @@ XCOMM $XFree86: xc/lib/Imakefile,v 3.74 2003/04/14 20:37:07 herrb Exp $
 
 NULL =
 
-#if BuildXKBfilelib || BuildXKB
-XKBLIBDIR = xkbfile
-#endif
-
-#if BuildXauLib
-XAULIBDIR = Xau
-#endif
-
 #if BuildX11Lib
 X11LIBDIR = X11
 #endif
 
-#if BuildXextLib
-XEXTLIBDIR = Xext
-#endif
-
-#if BuildLibraries
-OLDXLIBDIR = oldX
-#endif
-
-
 LINTSUBDIRS = \
-	$(XAULIBDIR) \
 	$(X11LIBDIR) \
-	$(OLDXLIBDIR) \
-	$(XEXTLIBDIR) \
-	$(XKBLIBDIR) \
 	$(NULL)
 
 SUBDIRS = xtrans $(LINTSUBDIRS)

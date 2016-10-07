@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/dix/atom.c,v 3.3 2001/12/14 19:59:29 dawes Exp $ */
 /***********************************************************
 
 Copyright 1987, 1998  The Open Group
@@ -46,7 +45,6 @@ SOFTWARE.
 
 ******************************************************************/
 
-/* $Xorg: atom.c,v 1.4 2001/02/09 02:04:39 xorgcvs Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -109,7 +107,7 @@ MakeAtom(const char *string, unsigned len, Bool makeit)
     {
 	register NodePtr nd;
 
-	nd = (NodePtr) xalloc(sizeof(NodeRec));
+	nd = (NodePtr) malloc(sizeof(NodeRec));
 	if (!nd)
 	    return BAD_RESOURCE;
 	if (lastAtom < XA_LAST_PREDEFINED)
@@ -118,9 +116,9 @@ MakeAtom(const char *string, unsigned len, Bool makeit)
 	}
 	else
 	{
-	    nd->string = (char *) xalloc(len + 1);
+	    nd->string = (char *) malloc(len + 1);
 	    if (!nd->string) {
-		xfree(nd);
+		free(nd);
 		return BAD_RESOURCE;
 	    }
 	    strncpy(nd->string, string, (int)len);
@@ -129,12 +127,12 @@ MakeAtom(const char *string, unsigned len, Bool makeit)
 	if ((lastAtom + 1) >= tableLength) {
 	    NodePtr *table;
 
-	    table = (NodePtr *) xrealloc(nodeTable,
+	    table = (NodePtr *) realloc(nodeTable,
 					 tableLength * (2 * sizeof(NodePtr)));
 	    if (!table) {
 		if (nd->string != string)
-		    xfree(nd->string);
-		xfree(nd);
+		    free(nd->string);
+		free(nd);
 		return BAD_RESOURCE;
 	    }
 	    tableLength <<= 1;
@@ -180,8 +178,8 @@ FreeAtom(NodePtr patom)
     if(patom->right)
 	FreeAtom(patom->right);
     if (patom->a > XA_LAST_PREDEFINED)
-	xfree(patom->string);
-    xfree(patom);
+	free(patom->string);
+    free(patom);
 }
 
 void
@@ -191,7 +189,7 @@ FreeAllAtoms()
 	return;
     FreeAtom(atomRoot);
     atomRoot = (NodePtr)NULL;
-    xfree(nodeTable);
+    free(nodeTable);
     nodeTable = (NodePtr *)NULL;
     lastAtom = None;
 }
@@ -201,7 +199,7 @@ InitAtoms()
 {
     FreeAllAtoms();
     tableLength = InitialTableSize;
-    nodeTable = (NodePtr *)xalloc(InitialTableSize*sizeof(NodePtr));
+    nodeTable = (NodePtr *)malloc(InitialTableSize*sizeof(NodePtr));
     if (!nodeTable)
 	AtomError();
     nodeTable[None] = (NodePtr)NULL;

@@ -1,4 +1,3 @@
-/* $Xorg: XKBUse.c,v 1.3 2000/08/17 19:45:03 cpqbld Exp $ */
 /************************************************************
 Copyright (c) 1993 by Silicon Graphics Computer Systems, Inc.
 
@@ -24,15 +23,12 @@ OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION  WITH
 THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/lib/X11/XKBUse.c,v 3.7 2003/07/07 15:34:21 eich Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 #include <stdio.h>
 #include <ctype.h>
-#define NEED_REPLIES
-#define NEED_EVENTS
 #include "Xlibint.h"
 #include <nx-X11/extensions/XKBproto.h>
 #include "XKBlibint.h"

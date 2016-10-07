@@ -1,4 +1,3 @@
-/* $Xorg: imInsClbk.c,v 1.3 2000/08/17 19:45:13 cpqbld Exp $ */
 /******************************************************************
 
            Copyright 1993, 1994 by Sony Corporation
@@ -26,13 +25,11 @@ PERFORMANCE OF THIS SOFTWARE.
                                makoto@sm.sony.co.jp
 
 ******************************************************************/
-/* $XFree86: xc/lib/X11/imInsClbk.c,v 3.3 2003/05/27 22:26:26 tsi Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 #include	<nx-X11/Xatom.h>
-#define NEED_EVENTS
 #include	"Xlibint.h"
 #include	"Xlcint.h"
 #include	"XlcPublic.h"
@@ -111,7 +108,7 @@ _XimFilterPropertyNotify(
     }
 
     lock = True;
-    for( ii = 0; ii < nitems; ii++, atoms ) {
+    for( ii = 0; ii < nitems; ii++ ) {
 	if(XGetSelectionOwner (display, atoms[ii])) {
 	    for( icb = callback_list; icb; icb = icb->next ) {
 		if( !icb->call  &&  !icb->destroy ) {

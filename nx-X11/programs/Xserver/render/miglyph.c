@@ -89,6 +89,7 @@ miGlyphExtents (int		nlist,
 
 #define NeedsComponent(f) (PICT_FORMAT_A(f) != 0 && PICT_FORMAT_RGB(f) != 0)
 
+#ifndef NXAGENT_SERVER
 void
 miGlyphs (CARD8		op,
 	  PicturePtr	pSrc,
@@ -241,3 +242,4 @@ miGlyphs (CARD8		op,
 	(*pScreen->DestroyPixmap) (pMaskPixmap);
     }
 }
+#endif

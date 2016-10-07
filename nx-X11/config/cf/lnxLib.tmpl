@@ -7,9 +7,6 @@ XCOMM $XFree86: xc/config/cf/lnxLib.tmpl,v 3.19 2003/10/15 22:47:48 herrb Exp $
 
 #define SharedX11Reqs     $(LDPRELIB) -ldl -lXdmcp
 #define SharedXlibi18nReqs $(LDPRELIB) $(XONLYLIB)
-#define SharedOldXReqs	  $(LDPRELIB) $(XONLYLIB)
 #define SharedXextReqs	  $(LDPRELIB) $(XONLYLIB)
-
-#define SharedxkbfileReqs	$(LDPRELIB) $(XONLYLIB)
 
 #define NoMessageCatalog

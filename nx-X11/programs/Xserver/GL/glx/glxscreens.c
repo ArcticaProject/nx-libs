@@ -1,4 +1,3 @@
-/* $XFree86: xc/programs/Xserver/GL/glx/glxscreens.c,v 1.14 2004/02/09 23:46:31 alanh Exp $ */
 /*
 ** License Applicability. Except to the extent portions of this file are
 ** made subject to an alternative license as permitted in the SGI Free
@@ -366,9 +365,9 @@ void __glXScreenReset(void)
       __glXFree(__glXActiveScreens[i].GLXextensions);
       __glXFree(__glXActiveScreens[i].GLextensions);
   }
-  xfree(__glXActiveScreens);
-  xfree(__glXHyperpipeFuncs);
-  xfree(__glXSwapBarrierFuncs);
+  free(__glXActiveScreens);
+  free(__glXHyperpipeFuncs);
+  free(__glXSwapBarrierFuncs);
   __glXNumHyperpipeFuncs = 0;
   __glXNumSwapBarrierFuncs = 0;
   __glXHyperpipeFuncs = NULL;

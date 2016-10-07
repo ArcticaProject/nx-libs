@@ -1,3 +1,28 @@
+dnl /**************************************************************************/
+dnl /*                                                                        */
+dnl /* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+dnl /* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+dnl /* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+dnl /* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+dnl /* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+dnl /* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
+dnl /*                                                                        */
+dnl /* NXCOMPEXT, NX protocol compression and NX extensions to this software  */
+dnl /* are copyright of the aforementioned persons and companies.             */
+dnl /*                                                                        */
+dnl /* Redistribution and use of the present software is allowed according    */
+dnl /* to terms specified in the file LICENSE which comes in the source       */
+dnl /* distribution.                                                          */
+dnl /*                                                                        */
+dnl /* All rights reserved.                                                   */
+dnl /*                                                                        */
+dnl /* NOTE: This software has received contributions from various other      */
+dnl /* contributors, only the core maintainers and supporters are listed as   */
+dnl /* copyright holders. Please contact us, if you feel you should be listed */
+dnl /* as copyright holder, as well.                                          */
+dnl /*                                                                        */
+dnl /**************************************************************************/
+
 dnl Process this file with autoconf to produce a configure script.
 
 dnl Prolog
@@ -10,8 +35,12 @@ AC_SUBST(pkgconfigdir)
 
 dnl Reset default compilation flags.
 
-CXXFLAGS="$CXXFLAGS -O3"
-CFLAGS="$CFLAGS -O3"
+if test "x$CXXFLAGS" = "x"; then
+  CXXFLAGS="-O3"
+fi
+if test "x$CFLAGS" == "x"; then
+  CFLAGS="-O3"
+fi
 
 dnl Reset default linking directives.
 
@@ -225,16 +254,6 @@ dnl Find makedepend somewhere.
 
 AC_SUBST(MAKEDEPEND)
 MAKEDEPEND="$(which makedepend)"
-
-# Try to desperately find makedepend.
-# Set MAKEDEPEND to the shipped makedepend binary. This will not
-# exist in nx-libs-lite, though, in which case MAKEDEPEND
-# will stay empty.
-if test -z "${MAKEDEPEND}"; then
-  if test -x "../nx-X11/config/makedepend/makedepend"; then
-    MAKEDEPEND="../nx-X11/config/makedepend/makedepend"
-  fi
-fi
 
 dnl Determine what to build based on the platform.
 dnl Override the LIBS settings on Cygwin32 so that

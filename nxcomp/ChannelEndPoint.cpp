@@ -1,19 +1,27 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2015 Qindel Formacion y Servicios SL.                    */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
-/* This program is free software; you can redistribute it and/or modify   */
-/* it under the terms of the GNU General Public License Version 2, as     */
-/* published by the Free Software Foundation.                             */
+/* NXCOMP, NX protocol compression and NX extensions to this software     */
+/* are copyright of the aforementioned persons and companies.             */
 /*                                                                        */
-/* This program is distributed in the hope that it will be useful, but    */
-/* WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTA-  */
-/* BILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General       */
-/* Public License for more details.                                       */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE.nxcomp which comes in the       */
+/* source distribution.                                                   */
 /*                                                                        */
-/* You should have received a copy of the GNU General Public License      */
-/* along with this program; if not, you can request a copy to Qindel      */
-/* or write to the Free Software Foundation, Inc., 59 Temple Place, Suite */
+/* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
+/*                                                                        */
+/**************************************************************************/
 /* 330, Boston, MA  02111-1307 USA                                        */
 /*                                                                        */
 /* All rights reserved.                                                   */
@@ -24,6 +32,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <sys/stat.h>
 
 #include "ChannelEndPoint.h"
 
@@ -31,8 +40,21 @@
 
 ChannelEndPoint::ChannelEndPoint(const char *spec)
   : defaultTCPPort_(0), defaultTCPInterface_(0),
-    defaultUnixPath_(NULL) {
-  spec_ = (spec ? strdup(spec) : NULL);
+    defaultUnixPath_(NULL), spec_(NULL) {
+  setSpec(spec);
+}
+
+ChannelEndPoint::~ChannelEndPoint()
+{
+  char *unixPath = NULL;
+
+  if (getUnixPath(&unixPath))
+  {
+    struct stat st;
+    lstat(unixPath, &st);
+    if(S_ISSOCK(st.st_mode))
+      unlink(unixPath);
+  }
 }
 
 void
@@ -40,19 +62,90 @@ ChannelEndPoint::setSpec(const char *spec) {
   if (spec_) free(spec_);
 
   if (spec && strlen(spec))
+  {
     spec_ = strdup(spec);
+    isUnix_ = getUnixPath();
+    isTCP_ = getTCPHostAndPort();
+  }
   else
+  {
     spec_ = NULL;
+    isUnix_ = false;
+    isTCP_ = false;
+  }
 }
 
 void
-ChannelEndPoint::setSpec(int port) {
+ChannelEndPoint::setSpec(long port) {
   if (port >= 0) {
     char tmp[20];
-    sprintf(tmp, "%d", port);
+    sprintf(tmp, "%ld", port);
     setSpec(tmp);
   }
+  else {
+    disable();
+  }
+}
+
+void
+ChannelEndPoint::setSpec(const char *hostName, long port) {
+  int length;
+
+  if (spec_) free(spec_);
+  isUnix_ = false;
+  isTCP_ = false;
+
+  if (hostName && strlen(hostName) && port >= 1)
+  {
+    length = snprintf(NULL, 0, "tcp:%s:%ld", hostName, port);
+    spec_ = (char *)calloc(length + 1, sizeof(char));
+    snprintf(spec_, length+1, "tcp:%s:%ld", hostName, port);
+    isTCP_ = true;
+  }
   else setSpec((char*)NULL);
+}
+
+bool
+ChannelEndPoint::getSpec(char **socketUri) const {
+
+  if (socketUri) *socketUri = NULL;
+
+  char *unixPath = NULL;
+  char *hostName = NULL;
+  long port = -1;
+
+  char *newSocketUri = NULL;
+  int length = -1;
+
+  if (getUnixPath(&unixPath))
+  {
+    length = snprintf(NULL, 0, "unix:%s", unixPath);
+  }
+  else if (getTCPHostAndPort(&hostName, &port))
+  {
+    length = snprintf(NULL, 0, "tcp:%s:%ld", hostName, port);
+  }
+
+  if (length > 0)
+  {
+    newSocketUri = (char *)calloc(length + 1, sizeof(char));
+    if (isUnixSocket())
+      snprintf(newSocketUri, length+1, "unix:%s", unixPath);
+    else
+      snprintf(newSocketUri, length+1, "tcp:%s:%ld", hostName, port);
+
+    if (socketUri)
+      *socketUri = strdup(newSocketUri);
+  }
+
+  free(newSocketUri);
+  free(unixPath);
+  free(hostName);
+
+  if (*socketUri != '\0')
+    return true;
+
+  return false;
 }
 
 void
@@ -76,10 +169,12 @@ ChannelEndPoint::setDefaultUnixPath(char *path) {
 }
 
 void
-ChannelEndPoint::disable() { setSpec("0"); }
+ChannelEndPoint::disable() {
+  setSpec("0");
+}
 
 bool
-ChannelEndPoint::specIsPort(long *port) const {
+ChannelEndPoint::getPort(long *port) const {
   if (port) *port = 0;
   long p = -1;
   if (spec_) {
@@ -101,7 +196,7 @@ ChannelEndPoint::getUnixPath(char **unixPath) const {
   long p;
   char *path = NULL;
 
-  if (specIsPort(&p)) {
+  if (getPort(&p)) {
     if (p != 1) return false;
   }
   else if (spec_ && (strncmp("unix:", spec_, 5) == 0)) {
@@ -120,6 +215,11 @@ ChannelEndPoint::getUnixPath(char **unixPath) const {
     *unixPath = strdup(path);
 
   return true;
+}
+
+bool
+ChannelEndPoint::isUnixSocket() const {
+  return isUnix_;
 }
 
 // FIXME!!!
@@ -158,7 +258,7 @@ ChannelEndPoint::getTCPHostAndPort(char **host, long *port) const {
   if (host) *host = NULL;
   if (port) *port = 0;
 
-  if (specIsPort(&p)) {
+  if (getPort(&p)) {
     h_len = 0;
   }
   else if (spec_ && (strncmp("tcp:", spec_, 4) == 0)) {
@@ -194,8 +294,8 @@ ChannelEndPoint::getTCPHostAndPort(char **host, long *port) const {
 }
 
 bool
-ChannelEndPoint::enabled() const {
-  return (getUnixPath() || getTCPHostAndPort());
+ChannelEndPoint::isTCPSocket() const {
+  return isTCP_;
 }
 
 long ChannelEndPoint::getTCPPort() const {
@@ -205,8 +305,15 @@ long ChannelEndPoint::getTCPPort() const {
 }
 
 bool
+ChannelEndPoint::enabled() const {
+  return (isUnixSocket() || isTCPSocket());
+}
+
+bool
 ChannelEndPoint::validateSpec() {
-  return (specIsPort() || getUnixPath() || getTCPHostAndPort());
+  isTCP_ = getTCPHostAndPort();
+  isUnix_ = getUnixPath();
+  return ( getPort() || isUnix_ || isTCP_ );
 }
 
 ChannelEndPoint &ChannelEndPoint::operator=(const ChannelEndPoint &other) {
@@ -219,26 +326,24 @@ ChannelEndPoint &ChannelEndPoint::operator=(const ChannelEndPoint &other) {
   old = spec_;
   spec_ = (other.spec_ ? strdup(other.spec_) : NULL);
   free(old);
+  isUnix_ = getUnixPath();
+  isTCP_ = getTCPHostAndPort();
   return *this;
 }
 
 std::ostream& operator<<(std::ostream& os, const ChannelEndPoint& endPoint) {
   if (endPoint.enabled()) {
-    char *unixPath, *host;
-    long port;
-    if (endPoint.getUnixPath(&unixPath)) {
-      os << "unix:" << unixPath;
-      free(unixPath);
+    char* endPointSpec = NULL;
+    if (endPoint.getSpec(&endPointSpec))
+    {
+      os << endPointSpec;
+      free(endPointSpec);
     }
-    else if (endPoint.getTCPHostAndPort(&host, &port)) {
-      os << "tcp:" << host << ":" << port;
-      free(host);
-    }
-    else {
+    else
       os << "(invalid)";
-    }
   }
-  else {
+  else
+  {
     os << "(disabled)";
   }
   return os;

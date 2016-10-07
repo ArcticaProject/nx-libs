@@ -21,7 +21,6 @@
  * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-/* $XFree86: xc/programs/Xserver/fb/fbfill.c,v 1.5 2003/01/29 00:43:33 torrey Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -72,7 +71,7 @@ fbFill (DrawablePtr pDrawable,
 	    FbBits	*stip;
 	    FbStride    stipStride;
 	    int		stipBpp;
-	    int		stipXoff, stipYoff; /* XXX assumed to be zero */
+	    _X_UNUSED int		stipXoff, stipYoff; /* XXX assumed to be zero */
 
 	    if (pGC->fillStyle == FillStippled)
 		alu = FbStipple1Rop(pGC->alu,pGC->fgPixel);
@@ -99,7 +98,7 @@ fbFill (DrawablePtr pDrawable,
 	    FbStip	*stip;
 	    FbStride    stipStride;
 	    int		stipBpp;
-	    int		stipXoff, stipYoff; /* XXX assumed to be zero */
+	    _X_UNUSED int		stipXoff, stipYoff; /* XXX assumed to be zero */
 	    FbBits	fgand, fgxor, bgand, bgxor;
 
 	    fgand = pPriv->and;
@@ -140,7 +139,7 @@ fbFill (DrawablePtr pDrawable,
 	int	    tileBpp;
 	int	    tileWidth;
 	int	    tileHeight;
-	int	    tileXoff, tileYoff; /* XXX assumed to be zero */
+	_X_UNUSED int	    tileXoff, tileYoff; /* XXX assumed to be zero */
 	
 	fbGetDrawable (&pTile->drawable, tile, tileStride, tileBpp, tileXoff, tileYoff);
 	tileWidth = pTile->drawable.width;

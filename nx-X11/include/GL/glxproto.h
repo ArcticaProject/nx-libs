@@ -1,7 +1,6 @@
 #ifndef _GLX_glxproto_h_
 #define _GLX_glxproto_h_
 
-/* $XFree86: xc/include/GL/glxproto.h,v 1.6 2003/09/28 20:14:58 alanh Exp $ */
 /*
 ** License Applicability. Except to the extent portions of this file are
 ** made subject to an alternative license as permitted in the SGI Free

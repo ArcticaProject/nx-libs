@@ -1,4 +1,3 @@
-/* $Xorg: getmmap.c,v 1.4 2001/02/09 02:04:34 xorgcvs Exp $ */
 
 /************************************************************
 
@@ -45,7 +44,6 @@ ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
 
 ********************************************************/
-/* $XFree86: xc/programs/Xserver/Xi/getmmap.c,v 3.2 2001/01/17 22:13:25 dawes Exp $ */
 
 /********************************************************************
  *
@@ -53,8 +51,6 @@ SOFTWARE.
  *
  */
 
-#define	 NEED_EVENTS			/* for inputstr.h    */
-#define	 NEED_REPLIES
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
@@ -81,10 +77,8 @@ int
 SProcXGetDeviceModifierMapping(client)
     register ClientPtr client;
     {
-    register char n;
-
     REQUEST(xGetDeviceModifierMappingReq);
-    swaps(&stuff->length, n);
+    swaps(&stuff->length);
     return(ProcXGetDeviceModifierMapping(client));
     }
 
@@ -133,7 +127,7 @@ ProcXGetDeviceModifierMapping(client)
     WriteReplyToClient(client, sizeof(xGetDeviceModifierMappingReply), &rep);
 
     /* Reply with the (modified by DDX) map that SetModifierMapping passed in */
-    WriteToClient(client, 8*maxkeys, (char *)kp->modifierKeyMap);
+    WriteToClient(client, 8*maxkeys, kp->modifierKeyMap);
     return Success;
     }
 
@@ -150,9 +144,7 @@ SRepXGetDeviceModifierMapping (client, size, rep)
     int		size;
     xGetDeviceModifierMappingReply	*rep;
     {
-    register char n;
-
-    swaps(&rep->sequenceNumber, n);
-    swapl(&rep->length, n);
-    WriteToClient(client, size, (char *)rep);
+    swaps(&rep->sequenceNumber);
+    swapl(&rep->length);
+    WriteToClient(client, size, rep);
     }

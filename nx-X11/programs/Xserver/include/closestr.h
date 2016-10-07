@@ -1,4 +1,3 @@
-/* $Xorg: closestr.h,v 1.4 2001/02/09 02:05:14 xorgcvs Exp $ */
 /*
 
 Copyright 1991, 1998  The Open Group
@@ -26,13 +25,11 @@ other dealings in this Software without prior written authorization
 from The Open Group.
 
 */
-/* $XFree86: xc/programs/Xserver/include/closestr.h,v 3.4 2001/12/14 19:59:53 dawes Exp $ */
 
 
 #ifndef CLOSESTR_H
 #define CLOSESTR_H
 
-#define	NEED_REPLIES
 #include <nx-X11/Xproto.h>
 #include "closure.h"
 #include "dix.h"

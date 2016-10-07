@@ -1,17 +1,25 @@
 /**************************************************************************/
 /*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
 /*                                                                        */
 /* NXAGENT, NX protocol compression and NX extensions to this software    */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
+/* are copyright of the aforementioned persons and companies.             */
 /*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
 /*                                                                        */
 /* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
 /*                                                                        */
 /**************************************************************************/
 
@@ -754,7 +762,7 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
 
     length = nxagentImageLength(width, height, format, leftPad, depth);
 
-    if ((data = xalloc(length)) == NULL)
+    if ((data = malloc(length)) == NULL)
     {
       #ifdef WARNING
       fprintf(stderr, "nxagentCopyArea: WARNING! Failed to allocate memory for the operation.\n");
@@ -779,7 +787,7 @@ RegionPtr nxagentCopyArea(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
                    srcx, srcy, width, height);
     #endif
 
-    xfree(data);
+    free(data);
 
     /*
      * If the source is a shared memory pixmap, the
@@ -974,7 +982,7 @@ RegionPtr nxagentCopyPlane(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
 
     length = nxagentImageLength(width, height, format, leftPad, depth);
 
-    if ((data = xalloc(length)) == NULL)
+    if ((data = malloc(length)) == NULL)
     {
       #ifdef DEBUG
       fprintf(stderr, "nxagentCopyPlane: WARNING! Failed to allocate memory for the operation.\n");
@@ -999,7 +1007,7 @@ RegionPtr nxagentCopyPlane(DrawablePtr pSrcDrawable, DrawablePtr pDstDrawable,
                    srcx, srcy, width, height);
     #endif
 
-    xfree(data);
+    free(data);
 
     /*
      * If the source is a shared memory pixmap, the
@@ -1467,7 +1475,7 @@ void nxagentFillPolygon(DrawablePtr pDrawable, GCPtr pGC, int shape,
 
     mode = CoordModePrevious;
 
-    newPoints = xalloc(nPoints * sizeof(xPoint));
+    newPoints = malloc(nPoints * sizeof(xPoint));
 
     /*
      * The first point is always relative
@@ -1539,7 +1547,7 @@ void nxagentFillPolygon(DrawablePtr pDrawable, GCPtr pGC, int shape,
 
   if (newPoints != NULL)
   {
-    xfree(newPoints);
+    free(newPoints);
   }
 }
 

@@ -1,5 +1,3 @@
-/* $XdotOrg: xc/lib/X11/Xlib.h,v 1.6 2005/11/08 06:33:25 jkj Exp $ */
-/* $Xorg: Xlib.h,v 1.6 2001/02/09 02:03:38 xorgcvs Exp $ */
 /* 
 
 Copyright 1985, 1986, 1987, 1991, 1998  The Open Group
@@ -25,7 +23,6 @@ used in advertising or otherwise to promote the sale, use or other dealings
 in this Software without prior written authorization from The Open Group.
 
 */
-/* $XFree86: xc/lib/X11/Xlib.h,v 3.25 2003/11/17 22:20:10 dawes Exp $ */
 
 
 /*
@@ -33,8 +30,10 @@ in this Software without prior written authorization from The Open Group.
  *	interface library (Xlib) to the X Window System Protocol (V11).
  *	Structures and symbols starting with "_" are private to the library.
  */
-#ifndef _XLIB_H_
+
+#if !defined(_XLIB_H_) && !defined(_X11_XLIB_H_)
 #define _XLIB_H_
+#define _X11_XLIB_H_
 
 #define XlibSpecificationRelease 6
 

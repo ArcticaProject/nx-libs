@@ -3,7 +3,7 @@
 This source tree started as a re-distribution of those NX packages needed
 to setup FreeNX and/or X2Go on a Linux server.
 
-The NX re-distribution (3.5.0.x) has been maintained by the X2Go Project:
+In the past, the NX re-distribution (3.5.0.x) had been maintained by the X2Go Project:
 http://wiki.x2go.org
 
 In 2014, [the QVD project](http://theqvd.com) run by the company Qindel
@@ -37,24 +37,22 @@ Scheduled for end of Q2/2016.
 Release goals (phase 1) for nx-libs release series 3.6.0.x:
 
 * CVE security audit (complete)
-* remove unused code (work in progress)
+* remove unused code (+/- complete)
 * no bundled non-X11 libraries anymore (complete)
-* complete imake cleanup (work in progress)
+* complete imake cleanup (+/- complete)
 * replace as many libNX_X* libraries by X.org's libX* libraries
-  (work in progress)
+  (complete, only remaining library: libNX_X11)
 * support for iOS (nxproxy, complete)
 * Unix file socket communication for nxproxy -C <-> nxproxy -S connections
-  (todo)
-* allow Unix file sockets as channel endpoints (work in progress)
-* allow embedding of nxproxy into other windows (work in progress)
+  (complete)
+* allow Unix file sockets as channel endpoints (complete)
+* allow embedding of nxproxy into other windows (work pending)
 * new RandR based Xinerama extension (+/- complete, more QA needed)
-* Fix Xcomposite extension in Xserver (todo)
-* Rename project to Xccc or similar (todo, to be discussed)
-* KDE5 support: Add minimal XInput2 support, patch KDE5, or similar (todo)
-* nxcomp protocol clean-up (todo)
-* nxcomp logging clean-up (todo)
-* optimizing documentation: how to tune NX connections (todo)
- 
+* Fix Xcomposite extension in Xserver (work pending)
+* nxcomp protocol clean-up (complete)
+* nxcomp logging clean-up (work pending)
+* optimizing documentation: how to tune NX connections (work pending)
+
 
 ## Release series 3.7.0.x
 
@@ -101,6 +99,35 @@ cp --preserve=time nx-libs.spec ../
 cd ..
 mock --buildsrpm --spec ./nx-libs.spec --sources ./nx-libs-3.5.99.0.tar.gz --resultdir ~/result
 mock --rebuild ~/result/nx-libs-3.5.99.0-0.0build1.fc23.src.rpm --resultdir ~/result
+```
+
+The end result is RPMs under ~/result that you can install (or upgrade to) using yum or dnf, which will resolve their dependencies.
+
+## Building for openSUSE using OBS Build
+
+Assuming:
+
+1. The branch you are building is 3.6.x
+2. The current version is 3.5.99.0 (specified in the .spec file)
+3. The current release is 0.0build1 (specified in the .spec file)
+4. You wish for the RPM files and the obs-build logs to be under ~/rpmbuild
+
+Prerequisites:
+
+1. Install package "obs-build"
+2. Make sure your user account can become root via sudo
+3. cd to the nx-libs directory that you cloned using git
+
+```
+mkdir -p ~/rpmbuild/SOURCES ~/rpmbuild/RPMS ~/rpmbuild/SRPMS ~/rpmbuild/OTHER ~/rpmbuild/BUILD
+git archive -o $HOME/rpmbuild/SOURCES/nx-libs-3.5.99.0.tar.gz --prefix=nx-libs-3.5.99.0/ 3.6.x
+cp --preserve=time nx-libs.spec ~/rpmbuild/SOURCES
+cd ..
+sudo obs-build --clean --nosignature --repo http://download.opensuse.org/distribution/<OPENSUSE-VERSION>/repo/oss/suse/ --root /var/lib/obs-build/ ~/rpmbuild/SOURCES/nx-libs.spec
+cp -ar /var/lib/obs-build/home/abuild/rpmbuild/RPMS/* ~/rpmbuild/RPMS/
+cp -ar /var/lib/obs-build/home/abuild/rpmbuild/SRPMS/* ~/rpmbuild/SRPMS/
+cp -ar /var/lib/obs-build/home/abuild/rpmbuild/OTHER/* ~/rpmbuild/OTHER/
+cp -ar /var/lib/obs-build/.build.log ~/rpmbuild/BUILD/
 ```
 
 The end result is RPMs under ~/result that you can install (or upgrade to) using yum or dnf, which will resolve their dependencies.

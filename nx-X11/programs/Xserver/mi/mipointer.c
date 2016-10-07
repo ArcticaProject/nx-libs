@@ -2,7 +2,6 @@
  * mipointer.c
  */
 
-/* $Xorg: mipointer.c,v 1.4 2001/02/09 02:05:21 xorgcvs Exp $ */
 
 /*
 
@@ -28,13 +27,11 @@ Except as contained in this notice, the name of The Open Group shall not be
 used in advertising or otherwise to promote the sale, use or other dealings
 in this Software without prior written authorization from The Open Group.
 */
-/* $XFree86: xc/programs/Xserver/mi/mipointer.c,v 3.9 2001/09/04 14:03:28 dawes Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-# define NEED_EVENTS
 # include   <nx-X11/X.h>
 # include   <nx-X11/Xmd.h>
 # include   <nx-X11/Xproto.h>
@@ -88,7 +85,7 @@ miPointerInitialize (pScreen, spriteFuncs, screenFuncs, waitForUpdate)
 	    return FALSE;
 	miPointerGeneration = serverGeneration;
     }
-    pScreenPriv = (miPointerScreenPtr) xalloc (sizeof (miPointerScreenRec));
+    pScreenPriv = (miPointerScreenPtr) malloc (sizeof (miPointerScreenRec));
     if (!pScreenPriv)
 	return FALSE;
     pScreenPriv->spriteFuncs = spriteFuncs;
@@ -146,7 +143,7 @@ miPointerCloseScreen (index, pScreen)
     if (pScreen == miPointer.pSpriteScreen)
 	miPointer.pSpriteScreen = 0;
     pScreen->CloseScreen = pScreenPriv->CloseScreen;
-    xfree ((void *) pScreenPriv);
+    free ((void *) pScreenPriv);
     return (*pScreen->CloseScreen) (index, pScreen);
 }
 

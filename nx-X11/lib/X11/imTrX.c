@@ -1,4 +1,3 @@
-/* $Xorg: imTrX.c,v 1.4 2000/08/17 19:45:15 cpqbld Exp $ */
 /******************************************************************
 
            Copyright 1992 by Sun Microsystems, Inc.
@@ -28,14 +27,12 @@ IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
                                fujiwara@a80.tech.yk.fujitsu.co.jp
 
 ******************************************************************/
-/* $XFree86: xc/lib/X11/imTrX.c,v 1.3 2003/04/13 19:22:21 dawes Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 #include <string.h>
 #include <nx-X11/Xatom.h>
-#define NEED_EVENTS
 #include "Xlibint.h"
 #include "Xlcint.h"
 #include "Ximint.h"
@@ -436,7 +433,7 @@ _XimXRead(Xim im, XPointer recv_buf, int buf_len, int *ret_len)
 {
     XEvent	*ev;
     XEvent	 event;
-    int		 len;
+    int		 len = 0;
     XSpecRec	*spec = (XSpecRec *)im->private.proto.spec;
     XPointer	  arg = spec->ev;
 

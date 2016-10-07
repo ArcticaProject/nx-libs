@@ -1,5 +1,3 @@
-/* $XdotOrg: xc/programs/Xserver/dix/window.c,v 1.12 2005/07/03 08:53:38 daniels Exp $ */
-/* $Xorg: window.c,v 1.4 2001/02/09 02:04:41 xorgcvs Exp $ */
 /*
 
 Copyright 1987, 1998  The Open Group
@@ -78,7 +76,6 @@ Equipment Corporation.
 
 ******************************************************************/
 
-/* $XFree86: xc/programs/Xserver/dix/window.c,v 3.36 2003/11/14 23:52:50 torrey Exp $ */
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -160,7 +157,7 @@ static Bool TileScreenSaver(int i, int kind);
 int numSaveUndersViewable = 0;
 int deltaSaveUndersViewable = 0;
 
-#ifdef DEBUG
+#if defined(DEBUG) || (defined(NXAGENT_SERVER) && defined(WINDOW_TREE_DEBUG))
 /******
  * PrintWindowTree
  *    For debugging only
@@ -286,6 +283,7 @@ SetWindowToDefaults(register WindowPtr pWin)
 #endif
 }
 
+#ifndef NXAGENT_SERVER
 static void
 MakeRootTile(WindowPtr pWin)
 {
@@ -331,6 +329,7 @@ MakeRootTile(WindowPtr pWin)
    FreeScratchGC(pGC);
 
 }
+#endif /* NXAGENT_SERVER */
 
 WindowPtr
 AllocateWindow(ScreenPtr pScreen)
@@ -342,7 +341,7 @@ AllocateWindow(ScreenPtr pScreen)
     register unsigned size;
     register int i;
 
-    pWin = (WindowPtr)xalloc(pScreen->totalWindowSize);
+    pWin = (WindowPtr)malloc(pScreen->totalWindowSize);
     if (pWin)
     {
 	ppriv = (DevUnion *)(pWin + 1);
@@ -401,7 +400,7 @@ CreateRootWindow(ScreenPtr pScreen)
     pWin->parent = NullWindow;
     SetWindowToDefaults(pWin);
 
-    pWin->optional = (WindowOptRec *) xalloc (sizeof (WindowOptRec));
+    pWin->optional = (WindowOptRec *) malloc (sizeof (WindowOptRec));
     if (!pWin->optional)
         return FALSE;
 
@@ -477,6 +476,7 @@ CreateRootWindow(ScreenPtr pScreen)
     return TRUE;
 }
 
+#ifndef NXAGENT_SERVER
 void
 InitRootWindow(WindowPtr pWin)
 {
@@ -498,6 +498,7 @@ InitRootWindow(WindowPtr pWin)
 
     MapWindow(pWin, serverClient);
 }
+#endif /* NXAGENT_SERVER */
 
 /* Set the region to the intersection of the rectangle and the
  * window's winSize.  The window is typically the parent of the
@@ -509,7 +510,6 @@ ClippedRegionFromBox(register WindowPtr pWin, RegionPtr Rgn,
                      register int x, register int y,
                      register int w, register int h)
 {
-    ScreenPtr pScreen = pWin->drawable.pScreen;
     BoxRec box;
 
     box = *(RegionExtents(&pWin->winSize));
@@ -679,7 +679,7 @@ CreateWindow(Window wid, register WindowPtr pParent, int x, int y, unsigned w,
     {
 	if (!MakeWindowOptional (pWin))
 	{
-	    xfree (pWin);
+	    free (pWin);
 	    *error = BadAlloc;
 	    return NullWindow;
 	}
@@ -861,7 +861,7 @@ CrushTree(WindowPtr pWin)
 		(*UnrealizeWindow)(pChild);
 	    }
 	    FreeWindowResources(pChild);
-	    xfree(pChild);
+	    free(pChild);
 	    if ( (pChild = pSib) )
 		break;
 	    pChild = pParent;
@@ -872,13 +872,15 @@ CrushTree(WindowPtr pWin)
 	}
     }
 }
-	
+
+
 /*****
  *  DeleteWindow
  *	 Deletes child of window then window itself
  *	 If wid is None, don't send any events
  *****/
 
+#ifndef NXAGENT_SERVER
 int
 DeleteWindow(void * value, XID wid)
  {
@@ -911,9 +913,10 @@ DeleteWindow(void * value, XID wid)
 	if (pWin->prevSib)
 	    pWin->prevSib->nextSib = pWin->nextSib;
     }
-    xfree(pWin);
+    free(pWin);
     return Success;
 }
+#endif /* NXAGENT_SERVER */
 
 void
 DestroySubwindows(register WindowPtr pWin, ClientPtr client)
@@ -1231,6 +1234,25 @@ ChangeWindowAttributes(register WindowPtr pWin, Mask vmask, XID *vlist, ClientPt
 #endif /* DO_SAVE_UNDERS */
 	    break;
 	  case CWEventMask:
+
+	    /*
+	     * TODO: Some applications like java bean shell
+	     * don' t work if they cannot monitor the root
+	     * window for Structure Redirect events. However
+	     * this doesn't seem to be the best solution, since
+	     * also an X server with a window manager running,
+	     * doesn't allow to monitor for those events, but
+	     * the java bean shell works flawlessy on this
+	     * server.
+	     *
+	     * #ifdef NXAGENT_SERVER
+	     * if (nxagentCheckIllegalRootMonitoring(pWin, (Mask)*pVlist))
+	     * {
+	     *   return BadAccess;
+	     * }
+	     * #endif
+	     */
+
 	    result = EventSelectForWindow(pWin, client, (Mask )*pVlist);
 	    if (result)
 	    {
@@ -1599,8 +1621,6 @@ CreateUnclippedWinSize (register WindowPtr pWin)
     pRgn = RegionCreate(&box, 1);
 #ifdef SHAPE
     if (wBoundingShape (pWin) || wClipShape (pWin)) {
-	ScreenPtr pScreen = pWin->drawable.pScreen;
-
 	RegionTranslate(pRgn, - pWin->drawable.x,
 			 - pWin->drawable.y);
 	if (wBoundingShape (pWin))
@@ -1635,8 +1655,6 @@ SetWinSize (register WindowPtr pWin)
 			 (int)pWin->drawable.height);
 #ifdef SHAPE
     if (wBoundingShape (pWin) || wClipShape (pWin)) {
-	ScreenPtr pScreen = pWin->drawable.pScreen;
-
 	RegionTranslate(&pWin->winSize, - pWin->drawable.x,
 			 - pWin->drawable.y);
 	if (wBoundingShape (pWin))
@@ -1677,8 +1695,6 @@ SetBorderSize (register WindowPtr pWin)
 		(int)(pWin->drawable.height + (bw<<1)));
 #ifdef SHAPE
 	if (wBoundingShape (pWin)) {
-	    ScreenPtr pScreen = pWin->drawable.pScreen;
-
 	    RegionTranslate(&pWin->borderSize, - pWin->drawable.x,
 			     - pWin->drawable.y);
 	    RegionIntersect(&pWin->borderSize, &pWin->borderSize,
@@ -1752,6 +1768,7 @@ GravityTranslate (register int x, register int y, int oldx, int oldy,
 }
 
 /* XXX need to retile border on each window with ParentRelative origin */
+#ifndef NXAGENT_SERVER
 void
 ResizeChildrenWinSize(register WindowPtr pWin, int dx, int dy, int dw, int dh)
 {
@@ -1816,6 +1833,7 @@ ResizeChildrenWinSize(register WindowPtr pWin, int dx, int dy, int dw, int dh)
 	}
     }
 }
+#endif /* NXAGENT_SERVER */
 
 #define GET_INT16(m, f) \
 	if (m & mask) \
@@ -1888,7 +1906,6 @@ MakeBoundingRegion (
     BoxPtr	pBox)
 {
     RegionPtr	pRgn;
-    ScreenPtr   pScreen = pWin->drawable.pScreen;
 
     pRgn = RegionCreate(pBox, 1);
     if (wBoundingShape (pWin)) {
@@ -1909,12 +1926,10 @@ ShapeOverlap (
     BoxPtr	pSibBox)
 {
     RegionPtr	pWinRgn, pSibRgn;
-    register ScreenPtr	pScreen;
     Bool	ret;
 
     if (!IS_SHAPED(pWin) && !IS_SHAPED(pSib))
 	return TRUE;
-    pScreen = pWin->drawable.pScreen;
     pWinRgn = MakeBoundingRegion (pWin, pWinBox);
     pSibRgn = MakeBoundingRegion (pSib, pSibBox);
     RegionIntersect(pWinRgn, pWinRgn, pSibRgn);
@@ -2015,7 +2030,6 @@ WhereDoIGoInTheStack(
     int smode)
 {
     BoxRec box;
-    register ScreenPtr pScreen;
     WindowPtr pHead, pFirst;
 
     if ((pWin == pWin->parent->firstChild) &&
@@ -2023,7 +2037,6 @@ WhereDoIGoInTheStack(
 	return((WindowPtr ) NULL);
     pHead = RealChildHead(pWin->parent);
     pFirst = pHead ? pHead->nextSib : pWin->parent->firstChild;
-    pScreen = pWin->drawable.pScreen;
     box.x1 = x;
     box.y1 = y;
     box.x2 = x + (int)w;
@@ -2164,6 +2177,7 @@ ReflectStackChange(
  * ConfigureWindow
  *****/
 
+#ifndef NXAGENT_SERVER
 int
 ConfigureWindow(register WindowPtr pWin, register Mask mask, XID *vlist, ClientPtr client)
 {
@@ -2417,6 +2431,7 @@ ActuallyDoSomething:
 #undef RESIZE_WIN
 #undef REBORDER_WIN
 }
+#endif /* NXAGENT_SERVER */
 
 
 /******
@@ -2435,6 +2450,17 @@ CirculateWindow(WindowPtr pParent, int direction, ClientPtr client)
     register WindowPtr pWin, pHead, pFirst;
     xEvent event;
     BoxRec box;
+
+    /*
+     * #ifdef NXAGENT_SERVER
+     * if (nxagentOption(Rootless) && nxagentWMIsRunning &&
+     *         nxagentWindowTopLevel(pWin) && pWin -> overrideRedirect == 0)
+     * {
+     *   nxagentCirculateRootlessWindows(direction);
+     *   return Success;
+     * }
+     * #endif
+     */
 
     pHead = RealChildHead(pParent);
     pFirst = pHead ? pHead->nextSib : pParent->firstChild;
@@ -2501,6 +2527,7 @@ CompareWIDs(
  *  ReparentWindow
  *****/
 
+#ifndef NXAGENT_SERVER
 int
 ReparentWindow(register WindowPtr pWin, register WindowPtr pParent,
                int x, int y, ClientPtr client)
@@ -2593,6 +2620,7 @@ ReparentWindow(register WindowPtr pWin, register WindowPtr pParent,
     RecalculateDeliverableEvents(pWin);
     return(Success);
 }
+#endif /* NXAGENT_SERVER */
 
 static void
 RealizeTree(WindowPtr pWin)
@@ -2635,6 +2663,7 @@ RealizeTree(WindowPtr pWin)
  *    MapNotify event is generated.
  *****/
 
+#ifndef NXAGENT_SERVER
 int
 MapWindow(register WindowPtr pWin, ClientPtr client)
 {
@@ -2737,7 +2766,7 @@ MapWindow(register WindowPtr pWin, ClientPtr client)
 
     return(Success);
 }
-
+#endif /* NXAGENT_SERVER */
 
 /*****
  * MapSubwindows
@@ -2926,6 +2955,7 @@ UnrealizeTree(
  *    generated.  Cannot unmap a root window.
  *****/
 
+#ifndef NXAGENT_SERVER
 int
 UnmapWindow(register WindowPtr pWin, Bool fromConfigure)
 {
@@ -2979,6 +3009,7 @@ UnmapWindow(register WindowPtr pWin, Bool fromConfigure)
 	WindowsRestructured ();
     return(Success);
 }
+#endif /* NXAGENT_SERVER */
 
 /*****
  * UnmapSubwindows
@@ -3113,7 +3144,7 @@ HandleSaveSet(register ClientPtr client)
 		MapWindow(pWin, client);
 	}
     }
-    xfree(client->saveSet);
+    free(client->saveSet);
     client->numSaved = 0;
     client->saveSet = (SaveSetElt *)NULL;
 }
@@ -3159,10 +3190,8 @@ PointInWindowIsVisible(register WindowPtr pWin, int x, int y)
 RegionPtr
 NotClippedByChildren(register WindowPtr pWin)
 {
-    register ScreenPtr pScreen;
     RegionPtr pReg;
 
-    pScreen = pWin->drawable.pScreen;
     pReg = RegionCreate(NullBox, 1);
     if (pWin->parent ||
 	screenIsSaved != SCREEN_SAVER_ON ||
@@ -3251,6 +3280,7 @@ static void DrawLogo(
 );
 #endif
 
+#ifndef NXAGENT_SERVER
 void
 SaveScreens(int on, int mode)
 {
@@ -3363,6 +3393,7 @@ SaveScreens(int on, int mode)
     if (mode == ScreenSaverReset)
        SetScreenSaverTimer();
 }
+#endif /* NXAGENT_SERVER */
 
 static Bool
 TileScreenSaver(int i, int kind)
@@ -3411,12 +3442,12 @@ TileScreenSaver(int i, int kind)
     cm.height=16;
     cm.xhot=8;
     cm.yhot=8;
-    srcbits = (unsigned char *)xalloc( BitmapBytePad(32)*16);
-    mskbits = (unsigned char *)xalloc( BitmapBytePad(32)*16);
+    srcbits = (unsigned char *)malloc( BitmapBytePad(32)*16);
+    mskbits = (unsigned char *)malloc( BitmapBytePad(32)*16);
     if (!srcbits || !mskbits)
     {
-	xfree(srcbits);
-	xfree(mskbits);
+	free(srcbits);
+	free(mskbits);
 	cursor = 0;
     }
     else
@@ -3437,8 +3468,8 @@ TileScreenSaver(int i, int kind)
 	}
 	else
 	{
-	    xfree (srcbits);
-	    xfree (mskbits);
+	    free (srcbits);
+	    free (mskbits);
 	}
     }
 
@@ -3561,7 +3592,7 @@ MakeWindowOptional (register WindowPtr pWin)
 
     if (pWin->optional)
 	return TRUE;
-    optional = (WindowOptPtr) xalloc (sizeof (WindowOptRec));
+    optional = (WindowOptPtr) malloc (sizeof (WindowOptRec));
     if (!optional)
 	return FALSE;
     optional->dontPropagateMask = DontPropagateMasks[pWin->dontPropagate];
@@ -3626,7 +3657,7 @@ DisposeWindowOptional (register WindowPtr pWin)
     }
     else
 	pWin->cursorIsNone = TRUE;
-    xfree (pWin->optional);
+    free (pWin->optional);
     pWin->optional = NULL;
 }
 

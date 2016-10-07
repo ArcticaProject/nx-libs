@@ -1,4 +1,3 @@
-/* $Xorg: lcFile.c,v 1.5 2000/12/12 12:44:05 coskrey Exp $ */
 /*
  *
  * Copyright IBM Corporation 1993
@@ -23,7 +22,6 @@
  * SOFTWARE.
  *
 */
-/* $XFree86: xc/lib/X11/lcFile.c,v 3.32 2003/03/25 04:18:09 dawes Exp $ */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -437,8 +435,7 @@ _XlcFileName(
 	char buf[PATH_MAX], *name;
 
 	name = NULL;
-	if ((5 + (args[i] ? strlen (args[i]) : 0) +
-	    (cat ? strlen (cat) : 0)) < PATH_MAX) {
+	if ((5 + (args[i] ? strlen (args[i]) : 0) + strlen(cat)) < PATH_MAX) {
 	    sprintf(buf, "%s/%s.dir", args[i], cat);
 	    name = resolve_name(siname, buf, RtoL);
 	}

@@ -1,4 +1,28 @@
-/* $Xorg: auth.c,v 1.5 2001/02/09 02:05:23 xorgcvs Exp $ */
+/**************************************************************************/
+/*                                                                        */
+/* Copyright (c) 2001, 2011 NoMachine (http://www.nomachine.com)          */
+/* Copyright (c) 2008-2014 Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>  */
+/* Copyright (c) 2011-2016 Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+/* Copyright (c) 2014-2016 Mihai Moldovan <ionic@ionic.de>                */
+/* Copyright (c) 2014-2016 Ulrich Sibiller <uli42@gmx.de>                 */
+/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
+/*                                                                        */
+/* nx-X11, NX protocol compression and NX extensions to this software     */
+/* are copyright of the aforementioned persons and companies.             */
+/*                                                                        */
+/* Redistribution and use of the present software is allowed according    */
+/* to terms specified in the file LICENSE which comes in the source       */
+/* distribution.                                                          */
+/*                                                                        */
+/* All rights reserved.                                                   */
+/*                                                                        */
+/* NOTE: This software has received contributions from various other      */
+/* contributors, only the core maintainers and supporters are listed as   */
+/* copyright holders. Please contact us, if you feel you should be listed */
+/* as copyright holder, as well.                                          */
+/*                                                                        */
+/**************************************************************************/
+
 /*
 
 Copyright 1988, 1998  The Open Group
@@ -26,24 +50,6 @@ other dealings in this Software without prior written authorization
 from The Open Group.
 
 */
-/* $XFree86: auth.c,v 1.13 2003/04/27 21:31:08 herrb Exp $ */
-
-/**************************************************************************/
-/*                                                                        */
-/* Copyright (c) 2001, 2011 NoMachine, http://www.nomachine.com/.         */
-/*                                                                        */
-/* NX-X11, NX protocol compression and NX extensions to this software     */
-/* are copyright of NoMachine. Redistribution and use of the present      */
-/* software is allowed according to terms specified in the file LICENSE   */
-/* which comes in the source distribution.                                */
-/*                                                                        */
-/* Check http://www.nomachine.com/licensing.html for applicability.       */
-/*                                                                        */
-/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
-/*                                                                        */
-/* All rights reserved.                                                   */
-/*                                                                        */
-/**************************************************************************/
 
 /*
  * authorization hooks for the server
@@ -54,9 +60,6 @@ from The Open Group.
 #include <dix-config.h>
 #endif
 
-#ifdef K5AUTH
-# include   <krb5/krb5.h>
-#endif
 # include   <nx-X11/X.h>
 # include   <nx-X11/Xauth.h>
 # include   "misc.h"
@@ -107,15 +110,6 @@ static struct protocol   protocols[] = {
 {   (unsigned short) 9,    "SUN-DES-1",
 		SecureRPCAdd,	SecureRPCCheck,	SecureRPCReset,
 		SecureRPCToID,	SecureRPCFromID,SecureRPCRemove,
-#ifdef XCSECURITY
-		NULL
-#endif
-},
-#endif
-#ifdef K5AUTH
-{   (unsigned short) 14, "MIT-KERBEROS-5",
-		K5Add, K5Check, K5Reset,
-		K5ToID, K5FromID, K5Remove,
 #ifdef XCSECURITY
 		NULL
 #endif

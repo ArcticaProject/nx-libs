@@ -1,4 +1,3 @@
-/* $Xorg: Xtransutil.c,v 1.4 2001/02/09 02:04:07 xorgcvs Exp $ */
 /*
 
 Copyright 1993, 1994, 1998  The Open Group
@@ -26,7 +25,6 @@ other dealings in this Software without prior written authorization
 from The Open Group.
 
 */
-/* $XFree86: xc/lib/xtrans/Xtransutil.c,v 3.26 2003/07/09 15:27:30 tsi Exp $ */
 
 /* Copyright 1993, 1994 NCR Corporation - Dayton, Ohio, USA
  *
@@ -211,11 +209,11 @@ TRANS(ConvertAddress)(int *familyp, int *addrlenp, Xtransaddr **addrp)
 	if (len > 0) {
 	    if (*addrp && *addrlenp < (len + 1))
 	    {
-		xfree ((char *) *addrp);
+		free ((char *) *addrp);
 		*addrp = NULL;
 	    }
 	    if (!*addrp)
-		*addrp = (Xtransaddr *) xalloc (len + 1);
+		*addrp = (Xtransaddr *) malloc (len + 1);
 	    if (*addrp) {
 		strcpy ((char *) *addrp, hostnamebuf);
 		*addrlenp = len;
@@ -226,7 +224,7 @@ TRANS(ConvertAddress)(int *familyp, int *addrlenp, Xtransaddr **addrp)
 	else
 	{
 	    if (*addrp)
-		xfree ((char *) *addrp);
+		free ((char *) *addrp);
 	    *addrp = NULL;
 	    *addrlenp = 0;
 	}
@@ -262,7 +260,7 @@ TRANS(GetMyNetworkId) (XtransConnInfo ciptr)
     case AF_UNIX:
     {
 	struct sockaddr_un *saddr = (struct sockaddr_un *) addr;
-	networkId = (char *) xalloc (3 + strlen (transName) +
+	networkId = (char *) malloc (3 + strlen (transName) +
 	    strlen (hostnamebuf) + strlen (saddr->sun_path));
 	sprintf (networkId, "%s/%s:%s", transName,
 	    hostnamebuf, saddr->sun_path);
@@ -292,7 +290,7 @@ TRANS(GetMyNetworkId) (XtransConnInfo ciptr)
 	    portnum = ntohs (saddr->sin_port);
 
 	sprintf (portnumbuf, "%d", portnum);
-	networkId = (char *) xalloc (3 + strlen (transName) +
+	networkId = (char *) malloc (3 + strlen (transName) +
 	    strlen (hostnamebuf) + strlen (portnumbuf));
 	sprintf (networkId, "%s/%s:%s", transName, hostnamebuf, portnumbuf);
 	break;
@@ -304,7 +302,7 @@ TRANS(GetMyNetworkId) (XtransConnInfo ciptr)
     {
 	struct sockaddr_dn *saddr = (struct sockaddr_dn *) addr;
 
-	networkId = (char *) xalloc (
+	networkId = (char *) malloc (
 	    13 + strlen (hostnamebuf) + saddr->sdn_objnamel);
 	sprintf (networkId, "dnet/%s::%s",
 	    hostnamebuf, saddr->sdn_objname);
@@ -453,7 +451,7 @@ TRANS(GetPeerNetworkId) (XtransConnInfo ciptr)
     }
 
 
-    hostname = (char *) xalloc (
+    hostname = (char *) malloc (
 	strlen (ciptr->transptr->TransName) + strlen (addr) + 2);
     strcpy (hostname, ciptr->transptr->TransName);
     strcat (hostname, "/");
