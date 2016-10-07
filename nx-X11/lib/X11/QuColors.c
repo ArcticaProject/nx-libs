@@ -75,26 +75,25 @@ int
 XQueryColors(
     register Display * const dpy,
     const Colormap cmap,
-    XColor *defs,              /* RETURN */
+    XColor *defs, 		/* RETURN */
     int ncolors)
 {
     int n;
 
     if (dpy->bigreq_size > 0)
-       n = dpy->bigreq_size - (sizeof (xQueryColorsReq) >> 2) - 1;
+	n = dpy->bigreq_size - (sizeof (xQueryColorsReq) >> 2) - 1;
     else
-       n = dpy->max_request_size - (sizeof (xQueryColorsReq) >> 2);
+	n = dpy->max_request_size - (sizeof (xQueryColorsReq) >> 2);
 
     LockDisplay(dpy);
     while (ncolors >= n) {
-       _XQueryColors(dpy, cmap, defs, n);
-       defs += n;
-       ncolors -= n;
+	_XQueryColors(dpy, cmap, defs, n);
+	defs += n;
+	ncolors -= n;
     }
     if (ncolors > 0)
-       _XQueryColors(dpy, cmap, defs, ncolors);
+	_XQueryColors(dpy, cmap, defs, ncolors);
     UnlockDisplay(dpy);
     SyncHandle();
     return 1;
 }
-

@@ -116,9 +116,7 @@ _XkbReadCopyData32(int *wire,long *to,int num_words)
     }
     return 1;
 }
-#endif
 
-#if defined(LONG64)
 int
 _XkbReadBufferCopy32(XkbReadBufferPtr from,long *to,int num_words)
 {
@@ -128,9 +126,7 @@ _XkbReadBufferCopy32(XkbReadBufferPtr from,long *to,int num_words)
     from->data+= (4*num_words);
     return True;
 }
-#endif
 
-#ifdef LONG64
 int
 _XkbWriteCopyData32 (register unsigned long *from,CARD32 *to,int len)
 {
@@ -141,6 +137,7 @@ _XkbWriteCopyData32 (register unsigned long *from,CARD32 *to,int len)
     return True;
 }
 #endif /* LONG64 */
+
 
 char *
 _XkbPeekAtReadBuffer(XkbReadBufferPtr from,int size)

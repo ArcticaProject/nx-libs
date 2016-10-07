@@ -66,6 +66,7 @@ XDrawArc(
     arc->angle1 = angle1;
     arc->angle2 = angle2;
 
+
     UnlockDisplay(dpy);
     SyncHandle();
     return 1;

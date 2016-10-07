@@ -317,7 +317,7 @@ _XomConvert(
     XlcCharSet charset;
     int length, cs_left, ret;
     FontSet font_set;
-    
+
     cs = *to;
     cs_left = *to_left;
     lc_args[0] = (XPointer) &charset;
@@ -335,19 +335,17 @@ _XomConvert(
 
     length = *to_left - cs_left;
 
-    {
-	if (font_set->side != charset->side) {
-	    if (font_set->side == XlcGL)
-		shift_to_gl(*to, length);
-	    else if (font_set->side == XlcGR)
-		shift_to_gr(*to, length);
-	}
-
-	if (font_set->is_xchar2b)
-	    length >>= 1;
-	*to = cs;
-	*to_left -= length;
+    if (font_set->side != charset->side) {
+	if (font_set->side == XlcGL)
+	    shift_to_gl(*to, length);
+	else if (font_set->side == XlcGR)
+	    shift_to_gr(*to, length);
     }
+
+    if (font_set->is_xchar2b)
+	length >>= 1;
+    *to = cs;
+    *to_left -= length;
 
     *((XFontStruct **) args[0]) = font_set->font;
     *((Bool *) args[1]) = font_set->is_xchar2b;

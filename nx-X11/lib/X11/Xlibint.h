@@ -243,10 +243,6 @@ struct _XDisplay
 
 #define XAllocIDs(dpy,ids,n) (*(dpy)->idlist_alloc)(dpy,ids,n)
 
-/*
- * define the following if you want the Data macro to be a procedure instead
- */
-
 #ifndef _XEVENT_
 /*
  * _QEvent datatype for use in input queueing.
@@ -445,6 +441,9 @@ extern LockInfoPtr _Xglobal_lock;
  * X Protocol packetizing macros.
  */
 
+/* Leftover from CRAY support - was defined empty on all non-Cray systems */
+#define WORD64ALIGN
+
 /**
  * Return a len-sized request buffer for the request type. This function may
  * flush the output queue.
@@ -593,7 +592,7 @@ extern void _XFlushGCCache(Display *dpy, GC gc);
  * 32 bit word alignment.  Transmit if the buffer fills.
  *
  * "dpy" is a pointer to a Display.
- * "data" is a pinter to a data buffer.
+ * "data" is a pointer to a data buffer.
  * "len" is the length of the data buffer.
  */
 #ifndef DataRoutineIsProcedure
@@ -713,7 +712,6 @@ extern void _XRead32(
     unsigned int c = (fs->default_char & 0xff); \
     CI_GET_CHAR_INFO_2D (fs, r, c, NULL, cs); \
 }
-
 
 
 /* srcvar must be a variable for large architecture version */
@@ -894,7 +892,7 @@ extern int _XError(
 );
 extern int _XIOError(
     Display*	/* dpy */
-);
+) _X_NORETURN;
 extern int (*_XIOErrorFunction)(
     Display*	/* dpy */
 );

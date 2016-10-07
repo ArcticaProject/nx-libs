@@ -1,4 +1,4 @@
-/* 
+/*
 
 Copyright 1992, 1998  The Open Group
 

@@ -36,9 +36,7 @@ THIS SOFTWARE.
 #include <config.h>
 #endif
 #include <stdio.h>
-/*
-#include <nx-X11/Xlib.h>
-*/
+
 #include <nx-X11/Xmd.h>
 #include <nx-X11/Xatom.h>
 #include <nx-X11/Xos.h>

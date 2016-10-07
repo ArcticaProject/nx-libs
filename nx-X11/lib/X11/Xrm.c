@@ -1595,13 +1595,13 @@ ReadInFile(_Xconst char *filename)
      * to the size returned by fstat.
      */
     {
-       struct stat status_buffer;
-       if ( ((fstat(fd, &status_buffer)) == -1 ) ||
+	struct stat status_buffer;
+	if ( ((fstat(fd, &status_buffer)) == -1 ) ||
              (status_buffer.st_size >= INT_MAX) ) {
-           close (fd);
-           return (char *)NULL;
-       } else
-           size = (int) status_buffer.st_size;
+	    close (fd);
+	    return (char *)NULL;
+	} else
+	    size = (int) status_buffer.st_size;
     }
 
     if (!(filebuf = Xmalloc(size + 1))) { /* leave room for '\0' */

@@ -543,8 +543,7 @@ static unsigned long _XGetPixel32 (
 			[y * ximage->bytes_per_line + (x << 2)];
 	    if (*((const char *)&byteorderpixel) == ximage->byte_order)
 		pixel = *((CARD32 *)addr);
-	    else
-	    if (ximage->byte_order == MSBFirst)
+	    else if (ximage->byte_order == MSBFirst)
 		pixel = ((unsigned long)addr[0] << 24 |
 			 (unsigned long)addr[1] << 16 |
 			 (unsigned long)addr[2] << 8 |
@@ -732,8 +731,7 @@ static int _XPutPixel32 (
 			[y * ximage->bytes_per_line + (x << 2)];
 	    if (*((const char *)&byteorderpixel) == ximage->byte_order)
 		*((CARD32 *)addr) = pixel;
-	    else
-	    if (ximage->byte_order == MSBFirst) {
+	    else if (ximage->byte_order == MSBFirst) {
 		addr[0] = pixel >> 24;
 		addr[1] = pixel >> 16;
 		addr[2] = pixel >> 8;

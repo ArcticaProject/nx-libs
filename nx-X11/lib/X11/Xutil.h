@@ -50,7 +50,7 @@ SOFTWARE.
 #define _X11_XUTIL_H_
 #define _XUTIL_H_
 
-/* You must include <nx-X11/Xlib.h> before including this file */
+/* You must include <X11/Xlib.h> before including this file */
 #include <nx-X11/Xlib.h>
 #include <nx-X11/keysym.h>
 

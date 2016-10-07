@@ -128,11 +128,11 @@ _XcmsGetProperty(
     int xgwp_ret;
 
     while (True) {
-       xgwp_ret = XGetWindowProperty (pDpy, w, property, 0, len, False,
-                                      XA_INTEGER, &atom_ret, &format_ret,
-                                      &nitems_ret, &after_ret,
-                                      (unsigned char **)&prop_ret);
-       if (xgwp_ret == Success && after_ret > 0) {
+	xgwp_ret = XGetWindowProperty (pDpy, w, property, 0, len, False,
+				       XA_INTEGER, &atom_ret, &format_ret,
+				       &nitems_ret, &after_ret,
+				       (unsigned char **)&prop_ret);
+	if (xgwp_ret == Success && after_ret > 0) {
 	    len += nitems_ret * (format_ret >> 3);
 	    XFree (prop_ret);
 	} else {
@@ -140,7 +140,7 @@ _XcmsGetProperty(
 	}
     }
     if (xgwp_ret != Success || format_ret == 0 || nitems_ret == 0) {
-       /* the property does not exist or is of an unexpected type or
+	/* the property does not exist or is of an unexpected type or
            getting window property failed */
 	return(XcmsFailure);
     }

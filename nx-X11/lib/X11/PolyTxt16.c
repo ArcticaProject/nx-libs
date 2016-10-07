@@ -120,9 +120,9 @@ XDrawText16(
             {
 	    	int nb = SIZEOF(xTextElt);
 
-		BufAlloc (xTextElt *, elt, nb);
+	    	BufAlloc (xTextElt *, elt, nb);
 	    	elt->len = 0;
-		if (PartialDelta > 0 )
+	    	if (PartialDelta > 0 )
 		{
 		    elt->delta = 127;
 		    PartialDelta = PartialDelta - 127;
@@ -146,9 +146,9 @@ XDrawText16(
 		{
 		    FirstTimeThrough = False;
 		    if (!item->delta)
-		    {
+ 		    {
 			nbytes += SIZEOF(xTextElt);
-			BufAlloc (xTextElt *, elt, nbytes);
+	   		BufAlloc (xTextElt *, elt, nbytes);
 		        elt->delta = 0;
 		    }
 		    else
@@ -180,9 +180,9 @@ XDrawText16(
 		{
 		    FirstTimeThrough = False;
 		    if (!item->delta)
-		    {
+ 		    {
 			nbytes += SIZEOF(xTextElt);
-			BufAlloc (xTextElt *, elt, nbytes);
+	   		BufAlloc (xTextElt *, elt, nbytes);
 			elt->delta = 0;
 		    }
 		    else
@@ -197,13 +197,14 @@ XDrawText16(
 		else
 		{
  		    nbytes += SIZEOF(xTextElt);
-		    BufAlloc (xTextElt *, elt, nbytes);
+	   	    BufAlloc (xTextElt *, elt, nbytes);
 		    elt->delta = 0;
 		}
 	    	elt->len = PartialNChars;
 
 		memcpy ((char *) (elt + 1), (char *)CharacterOffset,
-			PartialNChars * 2);
+			PartialNChars *
+2);
 	    }
 	}
     item++;

@@ -65,7 +65,7 @@ XChangeProperty (
 	    Data (dpy, (_Xconst char *)data, nelements);
 	} /* else force BadLength */
         break;
- 
+
       case 16:
 	len = ((long)nelements + 1)>>1;
 	if (dpy->bigreq_size || req->length + len <= (unsigned) 65535) {

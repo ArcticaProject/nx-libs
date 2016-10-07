@@ -74,3 +74,4 @@ XChangeKeyboardMapping (
     SyncHandle();
     return 0;
     }
+

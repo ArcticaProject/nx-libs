@@ -51,6 +51,7 @@ XStoreColor(
     citem->blue = def->blue;
     citem->flags = def->flags; /* do_red, do_green, do_blue */
 
+
     UnlockDisplay(dpy);
     SyncHandle();
     return 1;

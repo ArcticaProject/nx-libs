@@ -260,7 +260,6 @@ _XQueryFont (
      * If no characters in font, then it is a bad font, but
      * shouldn't try to read nothing.
      */
-    /* have to unpack charinfos on some machines (CRAY) */
     fs->per_char = NULL;
     if (reply.nCharInfos > 0){
 	/* nCharInfos is a CARD32 */
@@ -507,11 +506,11 @@ _XF86BigfontQueryFont (
     /* compares each part to half the maximum, which should be far more than
        any real font needs, so the combined total doesn't overflow either */
     if (reply.nUniqCharInfos > ((ULONG_MAX / 2) / SIZEOF(xCharInfo)) ||
-       reply.nCharInfos > ((ULONG_MAX / 2) / sizeof(CARD16))) {
-       Xfree((char *) fs->properties);
-       Xfree((char *) fs);
-       _XEatDataWords(dpy, reply_left);
-       return (XFontStruct *)NULL;
+	reply.nCharInfos > ((ULONG_MAX / 2) / sizeof(CARD16))) {
+	Xfree((char *) fs->properties);
+	Xfree((char *) fs);
+	_XEatDataWords(dpy, reply_left);
+	return (XFontStruct *)NULL;
     }
 #endif
     if (reply.nCharInfos > 0) {
