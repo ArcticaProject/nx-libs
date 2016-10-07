@@ -55,7 +55,7 @@ XF86INCLUDES = -I$(XF86COMSRC) -I$(XF86OSSRC)
 	      `pkg-config --cflags-only-I pixman-1`
    LINTLIBS = ../dix/llib-ldix.ln ../os/llib-los.ln
 
-DEFINES = -DXKB_IN_SERVER $(EXTRA_ALLOC_DEFINES) $(XKB_DDXDEFS) $(NX_DEFINES)
+DEFINES = $(EXTRA_ALLOC_DEFINES) $(XKB_DDXDEFS) $(NX_DEFINES)
 XKB_DEFINES = -DXKB_BASE_DIRECTORY=\"$(LIBDIR)/xkb\" $(XKB_DISABLE)
 
 NormalLibraryObjectRule()
@@ -71,12 +71,6 @@ AllTarget($(XF86_OBJS))
 #endif
 
 SpecialCObjectRule(xkbInit,$(ICONFIGFILES),$(XKB_DEFINES))
-
-XCOMM avoid clash between XKBMisc.c and xkbmisc.c on NT
-LinkSourceFile(XKBMisc.c,$(XLIBSRC))
-LinkSourceFile(XKBMAlloc.c,$(XLIBSRC))
-LinkSourceFile(XKBAlloc.c,$(XLIBSRC))
-LinkSourceFile(XKBGAlloc.c,$(XLIBSRC))
 
 LinkSourceFile(modinit.h,../Xext/extmod)
 

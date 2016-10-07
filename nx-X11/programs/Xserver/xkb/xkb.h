@@ -1,7 +1,5 @@
 /* $XFree86$ */
 
-/* #include "XKBfile.h" */
-
 extern int ProcXkbUseExtension(ClientPtr client);
 extern int ProcXkbSelectEvents(ClientPtr client);
 extern int ProcXkbBell(ClientPtr client);

@@ -19,6 +19,10 @@
 
 #ifdef WIN32
 #include <nx-X11/Xwinsock.h>
+#define XSERV_t
+#define TRANS_SERVER
+#define TRANS_REOPEN
+#include <nx-X11/Xtrans/Xtrans.h>
 #endif
 
 #include <nx-X11/Xos.h>

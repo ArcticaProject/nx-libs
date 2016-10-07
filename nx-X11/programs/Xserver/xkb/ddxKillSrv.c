@@ -39,7 +39,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "inputstr.h"
 #include "scrnintstr.h"
 #include "windowstr.h"
-#include <nx-X11/extensions/XKBsrv.h>
+#include <xkbsrv.h>
 #include <nx-X11/extensions/XI.h>
 
 #ifdef XF86DDXACTIONS

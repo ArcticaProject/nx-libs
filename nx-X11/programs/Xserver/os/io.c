@@ -64,6 +64,9 @@ SOFTWARE.
 #include <nx-X11/Xwinsock.h>
 #endif
 #include <stdio.h>
+#define XSERV_t
+#define TRANS_SERVER
+#define TRANS_REOPEN
 #include <nx-X11/Xtrans/Xtrans.h>
 #include <nx-X11/Xmd.h>
 #include <errno.h>

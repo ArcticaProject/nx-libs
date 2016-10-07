@@ -36,8 +36,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "scrnintstr.h"
 #include "windowstr.h"
 #include "os.h"
-#define	XKBSRV_NEED_FILE_FUNCS
-#include <nx-X11/extensions/XKBsrv.h>
+#include <xkbsrv.h>
 #include <nx-X11/extensions/XKBconfig.h>
 
 Bool

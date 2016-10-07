@@ -61,9 +61,8 @@ SOFTWARE.
 #include "cursorstr.h"
 #include "dixstruct.h"
 #include "site.h"
-#define	XKB_IN_SERVER
 #ifdef XKB
-#include <nx-X11/extensions/XKBsrv.h>
+#include "xkbsrv.h"
 #endif
 #ifdef XCSECURITY
 #define _SECURITY_SERVER
