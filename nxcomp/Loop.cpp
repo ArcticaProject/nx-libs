@@ -9367,10 +9367,10 @@ int ParseCommandLineOptions(int argc, const char **argv)
         // command line at the connecting side.
         //
 
-        char *cHost;
-        long cPort;
+        char cHost[DEFAULT_STRING_LENGTH] = { '\0' };
+        long cPort = 0;
 
-        if (connectSocket.getTCPHostAndPort(&cHost, &cPort) && (ParseHostOption(nextArg, cHost, cPort) > 0))
+        if (ParseHostOption(nextArg, cHost, cPort) > 0)
           {
             //
             // Assume port is at a proxied display offset.
