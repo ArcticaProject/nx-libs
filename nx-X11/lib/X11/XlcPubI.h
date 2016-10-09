@@ -238,7 +238,7 @@ _Xsetlocale(
     int           category,
     _Xconst char  *name);
 #else
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(__DARWIN__)
 extern char *
 _Xsetlocale(
     int           category,

@@ -257,7 +257,7 @@ typedef struct {
  */
 
 #if defined(__NetBSD__) || defined(__FreeBSD__) || defined(__OpenBSD__) || \
-    defined(__APPLE__) || defined(__DragonFly__)
+    defined(__APPLE__) || defined(__DARWIN__) || defined(__DragonFly__)
 static __inline__ void _Xpw_copyPasswd(_Xgetpwparams p)
 {
    memcpy(&(p).pws, (p).pwp, sizeof(struct passwd));
@@ -327,7 +327,7 @@ static __inline__ void _Xpw_copyPasswd(_Xgetpwparams p)
   (_Xos_processUnlock), \
   (p).pwp )
 
-#elif !defined(_POSIX_THREAD_SAFE_FUNCTIONS) && !defined(__APPLE__)
+#elif !defined(_POSIX_THREAD_SAFE_FUNCTIONS) && !defined(__APPLE__) && !defined(__DARWIN__)
 /* SVR4 threads, AIX 4.2.0 and earlier and OSF/1 3.2 and earlier pthreads */
 # define X_NEEDS_PWPARAMS
 typedef struct {
@@ -620,7 +620,7 @@ typedef struct {
 } _Xreaddirparams;
 
 # if defined(_POSIX_THREAD_SAFE_FUNCTIONS) || defined(AIXV3) || \
-     defined(AIXV4) || defined(__APPLE__)
+     defined(AIXV4) || defined(__APPLE__) || defined(__DARWIN__)
 /* AIX defines the draft POSIX symbol, but uses the final API. */
 /* POSIX final API, returns (int)0 on success. */
 #  if defined(__osf__)
