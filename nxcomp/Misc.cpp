@@ -326,7 +326,7 @@ defer=n\n\
 tile=s\n\
 menu=n\n\
 sleep=n\n\
-tolerancecehcks=s\n\
+tolerancechecks=s\n\
                These options are interpreted by the NX agent. They\n\
                are ignored by the proxy.\n\
 \n\
