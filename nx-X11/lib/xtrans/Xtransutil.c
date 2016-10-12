@@ -140,7 +140,7 @@ TRANS(ConvertAddress)(int *familyp, int *addrlenp, Xtransaddr **addrp)
 	    {
 		*familyp=FamilyLocal;
 	    }
-	    else 
+	    else
 	    {
 		*familyp=FamilyInternet;
 		*addrlenp = sizeof (struct in_addr);
@@ -165,7 +165,7 @@ TRANS(ConvertAddress)(int *familyp, int *addrlenp, Xtransaddr **addrp)
 	*familyp=FamilyLocal;
 	break;
     }
-#endif /* defined(UNIXCONN) || defined(LOCALCONN)*/
+#endif /* defined(UNIXCONN) || defined(LOCALCONN) */
 
 #if (defined(__SCO__) || defined(__UNIXWARE__)) && defined(LOCALCONN)
     case 0:
@@ -188,7 +188,7 @@ TRANS(ConvertAddress)(int *familyp, int *addrlenp, Xtransaddr **addrp)
 	 * In the case of a local connection, we need to get the
 	 * host name for authentication.
 	 */
-	
+
 	char hostnamebuf[256];
 	int len = TRANS(GetHostname) (hostnamebuf, sizeof hostnamebuf);
 
@@ -377,7 +377,7 @@ TRANS(GetPeerNetworkId) (XtransConnInfo ciptr)
 	 * Assume that if it does not respond in NAMESERVER_TIMEOUT seconds
 	 * that something is wrong and do not make the user wait.
 	 * gethostbyaddr will continue after a signal, so we have to
-	 * jump out of it. 
+	 * jump out of it.
 	 */
 
 	nameserver_timedout = 0;
@@ -469,7 +469,7 @@ is_numeric (char *str)
  * it's not save if the directory has non-root ownership or the sticky
  * bit cannot be set and fail.
  */
-static int 
+static int
 trans_mkdir(char *path, int mode)
 {
     struct stat buf;
@@ -492,7 +492,7 @@ trans_mkdir(char *path, int mode)
 	    if (mode & 01000) {
 		PRMSG(1, "mkdir: ERROR: euid != 0,"
 		      "directory %s will not be created.\n",
-		      path, 0, 0);	    
+		      path, 0, 0);
 #ifdef FAIL_HARD
 		return -1;
 #endif
@@ -522,7 +522,7 @@ trans_mkdir(char *path, int mode)
 	}
 
 	return 0;
-	
+
     } else {
 	if (S_ISDIR(buf.st_mode)) {
 	    int updateOwner = 0;
@@ -541,7 +541,7 @@ trans_mkdir(char *path, int mode)
 	     */
 	    if ((~mode) & 0077 & buf.st_mode)
 		updateMode = 1;
-	    
+
 	    /*
 	     * If the directory is not writeable not everybody may
 	     * be able to create sockets. Therefore warn if mode
@@ -551,7 +551,7 @@ trans_mkdir(char *path, int mode)
 		updateMode = 1;
 		status |= WARN_NO_ACCESS;
 	    }
-	    
+
 	    /*
 	     * If 'sticky' bit is requested fail if owner isn't root
 	     * as we assume the caller makes certain security implications
@@ -563,7 +563,7 @@ trans_mkdir(char *path, int mode)
 		    updateMode = 1;
 		}
 	    }
-	    
+
 #ifdef HAS_FCHOWN
 	    /*
 	     * If fchown(2) and fchmod(2) are available, try to correct the
@@ -598,7 +598,7 @@ trans_mkdir(char *path, int mode)
 		}
 	    }
 #endif
-	    
+
 	    if (updateOwner && !updatedOwner) {
 #ifdef FAIL_HARD
 		if (status & FAIL_IF_NOT_ROOT) {
@@ -610,7 +610,7 @@ trans_mkdir(char *path, int mode)
 	  	PRMSG(1, "mkdir: Owner of %s should be set to root\n",
 		      path, 0, 0);
 	    }
-	    
+
 	    if (updateMode && !updatedMode) {
 #ifdef FAIL_HARD
 		if (status & FAIL_IF_NOMODE) {
