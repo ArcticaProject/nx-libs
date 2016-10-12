@@ -100,7 +100,7 @@ from The Open Group.
  * to avoid a race condition. JKJ (6/5/97)
  */
 
-# if (defined(_POSIX_SOURCE) && !defined(AIXV3) && !defined(__QNX__)) || defined(USG) || defined(SVR4) || defined(__SCO__)
+# if (defined(_POSIX_SOURCE) && !defined(__QNX__)) || defined(USG) || defined(SVR4) || defined(__SCO__)
 #  ifndef NEED_UTSNAME
 #   define NEED_UTSNAME
 #  endif
