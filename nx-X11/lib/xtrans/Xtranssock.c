@@ -117,7 +117,7 @@ from the copyright holders.
 #include <sys/stat.h>
 #endif
 
-#if defined(hpux) || (defined(MOTOROLA) && defined(SYSV))
+#if defined(MOTOROLA) && defined(SYSV)
 #define NO_TCP_H
 #endif 
 
@@ -228,36 +228,6 @@ static int TRANS(SocketINETClose) (XtransConnInfo ciptr);
 
 #ifdef UNIXCONN
 
-#ifdef hpux
-
-#if defined(X11_t)
-#define UNIX_PATH "/usr/spool/sockets/X11/"
-#define UNIX_DIR "/usr/spool/sockets/X11"
-#define OLD_UNIX_PATH "/tmp/.X11-unix/X"
-#endif /* X11_t */
-#if defined(XIM_t)
-#define UNIX_PATH "/usr/spool/sockets/XIM/"
-#define UNIX_DIR "/usr/spool/sockets/XIM"
-#define OLD_UNIX_PATH "/tmp/.XIM-unix/XIM"
-#endif /* XIM_t */
-#if defined(FS_t) || defined(FONT_t)
-#define UNIX_PATH "/usr/spool/sockets/fontserv/"
-#define UNIX_DIR "/usr/spool/sockets/fontserv"
-#endif /* FS_t || FONT_t */
-#if defined(ICE_t)
-#define UNIX_PATH "/usr/spool/sockets/ICE/"
-#define UNIX_DIR "/usr/spool/sockets/ICE"
-#endif /* ICE_t */
-#if defined(TEST_t)
-#define UNIX_PATH "/usr/spool/sockets/xtrans_test/"
-#define UNIX_DIR "/usr/spool/sockets/xtrans_test"
-#endif
-#if defined(LBXPROXY_t)
-#define UNIX_PATH "/usr/spool/sockets/X11/"
-#define UNIX_DIR  "/usr/spool/sockets/X11"
-#endif
-
-#else /* !hpux */
 
 #if defined(X11_t)
 #define UNIX_PATH "/tmp/.X11-unix/X"
@@ -284,7 +254,6 @@ static int TRANS(SocketINETClose) (XtransConnInfo ciptr);
 #define UNIX_DIR  "/tmp/.X11-unix"
 #endif
 
-#endif /* hpux */
 
 #endif /* UNIXCONN */
 
@@ -481,30 +450,6 @@ _NXGetUnixPathError:
     return _NXUnixPath;
 }
 
-#ifdef hpux
-
-static char *_NXGetOldUnixPath(char *path)
-{
-    PRMSG (3, "_NXGetOldUnixPath(%s)\n", path, 0, 0);
-
-    if (strcmp(path, OLD_UNIX_PATH) == 0)
-    {
-#ifdef NX_TRANS_TEST
-        fprintf(stderr, "_NXGetOldUnixPath: Returning X11 Unix path [%s].\n",
-                    _NXGetUnixPath(path));
-#endif
-
-        return _NXGetUnixPath(path);
-    }
-
-#ifdef NX_TRANS_TEST
-    fprintf(stderr, "_NXGetOldUnixPath: Returning other old X11 Unix path [%s].\n", path);
-#endif
-
-    return path;
-}
-
-#endif /* #ifdef hpux */
 
 /*
  * Forcibly close any connection attempt on the
@@ -2635,10 +2580,6 @@ TRANS(SocketUNIXConnect) (XtransConnInfo ciptr, char *host, char *port)
     abstract = ciptr->transptr->flags & TRANS_ABSTRACT;
 #endif
 
-#if defined(hpux) && defined(X11_t)
-    struct sockaddr_un	old_sockname;
-    int			old_namelen;
-#endif
 
 
     PRMSG (2,"SocketUNIXConnect(%d,%s,%s)\n", ciptr->fd, host, port);
@@ -2699,22 +2640,6 @@ TRANS(SocketUNIXConnect) (XtransConnInfo ciptr, char *host, char *port)
 #endif
 
 
-#if defined(hpux) && defined(X11_t)
-    /*
-     * This is gross, but it was in Xlib
-     */
-    old_sockname.sun_family = AF_UNIX;
-#ifdef NX_TRANS_SOCKET
-    if (set_sun_path(port, _NXGetOldUnixPath(OLD_UNIX_PATH), old_sockname.sun_path) != 0) {
-#else
-    if (set_sun_path(port, OLD_UNIX_PATH, old_sockname.sun_path) != 0) {
-#endif
-	PRMSG (1, "SocketUNIXConnect: path too long\n", 0, 0, 0);
-	return TRANS_CONNECT_FAILED;
-    }
-    old_namelen = strlen (old_sockname.sun_path) +
-	sizeof (old_sockname.sun_family);
-#endif
 
 #if defined(NX_TRANS_SOCKET) && defined(TRANS_CLIENT)
 
@@ -2747,18 +2672,6 @@ TRANS(SocketUNIXConnect) (XtransConnInfo ciptr, char *host, char *port)
 	int olderrno = errno;
 	int connected = 0;
 	
-#if defined(hpux) && defined(X11_t)
-	if (olderrno == ENOENT)
-	{
-	    if (connect (ciptr->fd,
-		(struct sockaddr *) &old_sockname, old_namelen) >= 0)
-	    {
-		connected = 1;
-	    }
-	    else
-		olderrno = errno;
-	}
-#endif
 	if (!connected)
 	{
 	    errno = olderrno;
