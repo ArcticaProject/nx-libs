@@ -681,7 +681,7 @@ TRANS(SetOption) (XtransConnInfo ciptr, int option, int arg)
 	    break;
 	case 1: /* Set to non-blocking mode */
 
-#if defined(O_NONBLOCK) && (!defined(ultrix) && !defined(hpux) && !defined(AIXV3) && !defined(uniosu) && !defined(__UNIXOS2__) && !defined(SCO325)) && !defined(__QNX__)
+#if defined(O_NONBLOCK) && (!defined(ultrix) && !defined(uniosu) && !defined(__UNIXOS2__) && !defined(SCO325)) && !defined(__QNX__)
 	    ret = fcntl (fd, F_GETFL, 0);
 	    if (ret != -1)
 		ret = fcntl (fd, F_SETFL, ret | O_NONBLOCK);
@@ -1295,7 +1295,7 @@ static int TRANS(WriteV) (XtransConnInfo ciptr, struct iovec *iov, int iovcnt)
 #endif /* SYSV && i386 || WIN32 || __sxg__ */
 
 
-#if (defined(_POSIX_SOURCE) && !defined(AIXV3) && !defined(__QNX__)) || defined(hpux) || defined(USG) || defined(SVR4) || defined(__SCO__)
+#if (defined(_POSIX_SOURCE) && !defined(AIXV3) && !defined(__QNX__)) || defined(USG) || defined(SVR4) || defined(__SCO__)
 #ifndef NEED_UTSNAME
 #define NEED_UTSNAME
 #endif
