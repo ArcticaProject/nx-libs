@@ -53,10 +53,10 @@ from The Open Group.
 #define _XTRANSINT_H_
 
 /*
- * XTRANSDEBUG will enable the PRMSG() macros used in the X Transport 
- * Interface code. Each use of the PRMSG macro has a level associated with 
- * it. XTRANSDEBUG is defined to be a level. If the invocation level is =< 
- * the value of XTRANSDEBUG, then the message will be printed out to stderr. 
+ * XTRANSDEBUG will enable the PRMSG() macros used in the X Transport
+ * Interface code. Each use of the PRMSG macro has a level associated with
+ * it. XTRANSDEBUG is defined to be a level. If the invocation level is =<
+ * the value of XTRANSDEBUG, then the message will be printed out to stderr.
  * Recommended levels are:
  *
  *	XTRANSDEBUG=1	Error messages

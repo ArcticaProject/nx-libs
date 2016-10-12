@@ -51,7 +51,7 @@ from The Open Group.
 
 /*
  *
- * The connection code/ideas in lib/X and server/os for SVR4/Intel 
+ * The connection code/ideas in lib/X and server/os for SVR4/Intel
  * environments was contributed by the following companies/groups:
  *
  *	MetroLink Inc
@@ -63,12 +63,12 @@ from The Open Group.
  *
  * The goal is to have common connection code among all SVR4/Intel vendors.
  *
- * ALL THE ABOVE COMPANIES DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS 
- * SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, 
- * IN NO EVENT SHALL THESE COMPANIES * BE LIABLE FOR ANY SPECIAL, INDIRECT 
- * OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS 
- * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE 
- * OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE 
+ * ALL THE ABOVE COMPANIES DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS
+ * SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS,
+ * IN NO EVENT SHALL THESE COMPANIES * BE LIABLE FOR ANY SPECIAL, INDIRECT
+ * OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+ * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE
+ * OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE
  * OR PERFORMANCE OF THIS SOFTWARE.
  */
 
@@ -1102,7 +1102,7 @@ TRANS(ISCOpenServer)(XtransConnInfo ciptr, char *port)
 	PRMSG(1,"ISCOpenServer: failed to link %s to %s\n",
 	      server_path, server_unix_path, 0 );
     /*
-     * Don't make this failure fatal since the listener 
+     * Don't make this failure fatal since the listener
      * is already established, and this just for compatability
      */
 #else
@@ -1117,7 +1117,7 @@ TRANS(ISCOpenServer)(XtransConnInfo ciptr, char *port)
 	PRMSG(1,"ISCOpenServer: failed to link %s to %s\n",
 	      server_path, server_unix_path, 0 );
     /*
-     * Don't make this failure fatal since the listener 
+     * Don't make this failure fatal since the listener
      * is already established, and this just for compatability
      */
 #endif /* SVR4 */
@@ -2210,7 +2210,7 @@ TRANS(LocalReopenServer)(int type, int index, int fd, char *port)
 #ifdef TRANS_CLIENT
 
 static XtransConnInfo
-TRANS(LocalOpenCOTSClient)(Xtransport *thistrans, char *protocol, 
+TRANS(LocalOpenCOTSClient)(Xtransport *thistrans, char *protocol,
 			   char *host, char *port)
 
 {
@@ -2225,7 +2225,7 @@ TRANS(LocalOpenCOTSClient)(Xtransport *thistrans, char *protocol,
 #ifdef TRANS_SERVER
 
 static XtransConnInfo
-TRANS(LocalOpenCOTSServer)(Xtransport *thistrans, char *protocol, 
+TRANS(LocalOpenCOTSServer)(Xtransport *thistrans, char *protocol,
 			   char *host, char *port)
 
 {
@@ -2269,7 +2269,7 @@ TRANS(LocalOpenCOTSServer)(Xtransport *thistrans, char *protocol,
 #ifdef TRANS_CLIENT
 
 static XtransConnInfo
-TRANS(LocalOpenCLTSClient)(Xtransport *thistrans, char *protocol, 
+TRANS(LocalOpenCLTSClient)(Xtransport *thistrans, char *protocol,
 			   char *host, char *port)
 
 {
@@ -2284,7 +2284,7 @@ TRANS(LocalOpenCLTSClient)(Xtransport *thistrans, char *protocol,
 #ifdef TRANS_SERVER
 
 static XtransConnInfo
-TRANS(LocalOpenCLTSServer)(Xtransport *thistrans, char *protocol, 
+TRANS(LocalOpenCLTSServer)(Xtransport *thistrans, char *protocol,
 			   char *host, char *port)
 
 {
@@ -2524,7 +2524,7 @@ TRANS(LocalCloseForCloning)(XtransConnInfo ciptr)
  * MakeAllCOTSServerListeners() will go through the entire Xtransports[]
  * array defined in Xtrans.c and try to OpenCOTSServer() for each entry.
  * We will add duplicate entries to that table so that the OpenCOTSServer()
- * function will get called once for each type of local transport. 
+ * function will get called once for each type of local transport.
  *
  * The TransName is in lowercase, so it will never match during a normal
  * call to SelectTransport() in Xtrans.c.
