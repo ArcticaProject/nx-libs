@@ -155,7 +155,7 @@ TRANS(FillAddrInfo)(XtransConnInfo ciptr, char *sun_path, char *peer_sun_path)
 	return 0;
     }
     strcpy (sunaddr->sun_path, sun_path);
-#if defined(BSD44SOCKETS) && !defined(Lynx)
+#if defined(BSD44SOCKETS)
     sunaddr->sun_len = strlen (sunaddr->sun_path);
 #endif
 
@@ -182,7 +182,7 @@ TRANS(FillAddrInfo)(XtransConnInfo ciptr, char *sun_path, char *peer_sun_path)
 	return 0;
     }
     strcpy (p_sunaddr->sun_path, peer_sun_path);
-#if defined(BSD44SOCKETS) && !defined(Lynx)
+#if defined(BSD44SOCKETS)
     p_sunaddr->sun_len = strlen (p_sunaddr->sun_path);
 #endif
 
@@ -616,7 +616,7 @@ TRANS(PTSAccept)(XtransConnInfo ciptr, XtransConnInfo newciptr, int *status)
 
     sunaddr->sun_family=AF_UNIX;
     strcpy(sunaddr->sun_path,buf);
-#if defined(BSD44SOCKETS) && !defined(Lynx)
+#if defined(BSD44SOCKETS)
     sunaddr->sun_len=strlen(sunaddr->sun_path);
 #endif
 

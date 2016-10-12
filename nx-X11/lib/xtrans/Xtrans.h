@@ -56,11 +56,7 @@ from The Open Group.
 #include <nx-X11/Xos.h>
 
 #ifndef WIN32
-#ifndef Lynx
 #include <sys/socket.h>
-#else
-#include <socket.h>
-#endif
 #endif
 
 
@@ -210,11 +206,7 @@ struct iovec {
 };
 
 #else
-#ifndef Lynx
 #include <sys/uio.h>
-#else
-#include <uio.h>
-#endif
 #endif
 
 typedef struct _XtransConnInfo *XtransConnInfo;
