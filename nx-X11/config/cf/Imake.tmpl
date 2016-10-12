@@ -375,9 +375,6 @@ XCOMM the platform-specific parameters - edit site.def to change
 #ifndef HasSockets
 #define HasSockets		YES
 #endif
-#ifndef HasStreams
-#define HasStreams		!HasSockets
-#endif
 #ifndef HasPoll
 #if SystemV || SystemV4
 #define HasPoll			YES

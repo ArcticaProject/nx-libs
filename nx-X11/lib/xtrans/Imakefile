@@ -13,7 +13,6 @@ HEADERS = \
 	Xtranslcl.c \
 	Xtransos2.c \
 	Xtranssock.c \
-	Xtranstli.c \
 	Xtransutil.c \
 	transport.c
 

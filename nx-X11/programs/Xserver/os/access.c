@@ -84,9 +84,9 @@ SOFTWARE.
 #include <sys/ioctl.h>
 #include <ctype.h>
 
-#if defined(TCPCONN) || defined(STREAMSCONN) || defined(ISC) || defined(__SCO__)
+#if defined(TCPCONN) || defined(ISC) || defined(__SCO__)
 #include <netinet/in.h>
-#endif /* TCPCONN || STREAMSCONN || ISC || __SCO__ */
+#endif /* TCPCONN || ISC || __SCO__ */
 
 #ifdef HAS_GETPEERUCRED
 # include <ucred.h>
@@ -525,7 +525,7 @@ DefineSelf (int fd)
 void
 DefineSelf (int fd)
 {
-#if !defined(TCPCONN) && !defined(STREAMSCONN) && !defined(UNIXCONN) && !defined(MNX_TCPCONN)
+#if !defined(TCPCONN) && !defined(UNIXCONN) && !defined(MNX_TCPCONN)
     return;
 #else
     register int n;
@@ -668,7 +668,7 @@ DefineLocalHost:
 	    selfhosts = host;
 	}
     }
-#endif /* !TCPCONN && !STREAMSCONN && !UNIXCONN && !MNX_TCPCONN */
+#endif /* !TCPCONN && !UNIXCONN && !MNX_TCPCONN */
 }
 
 #else
@@ -1110,13 +1110,13 @@ ResetHosts (char *display)
     FILE		*fd;
     char		*ptr;
     int                 i, hostlen;
-#if ((defined(TCPCONN) || defined(STREAMSCONN) || defined(MNX_TCPCONN)) && \
+#if ((defined(TCPCONN) || defined(MNX_TCPCONN)) && \
      (!defined(IPv6) || !defined(AF_INET6)))
     union {
         struct sockaddr	sa;
-#if defined(TCPCONN) || defined(STREAMSCONN) || defined(MNX_TCPCONN)
+#if defined(TCPCONN) || defined(MNX_TCPCONN)
 	struct sockaddr_in in;
-#endif /* TCPCONN || STREAMSCONN */
+#endif /* TCPCONN */
     }			saddr;
 #endif
     int			family = 0;
@@ -1166,7 +1166,7 @@ ResetHosts (char *display)
 	    NewHost(family, "", 0, FALSE);
 	    LocalHostRequested = TRUE;	/* Fix for XFree86 bug #156 */
 	}
-#if defined(TCPCONN) || defined(STREAMSCONN) || defined(MNX_TCPCONN)
+#if defined(TCPCONN) || defined(MNX_TCPCONN)
 	else if (!strncmp("inet:", lhostname, 5))
 	{
 	    family = FamilyInternet;
@@ -1211,7 +1211,7 @@ ResetHosts (char *display)
 	}
 	else
 #endif /* SECURE_RPC */
-#if defined(TCPCONN) || defined(STREAMSCONN) || defined(MNX_TCPCONN)
+#if defined(TCPCONN) || defined(MNX_TCPCONN)
 	{
 #if defined(IPv6) && defined(AF_INET6)
 	    if ( (family == FamilyInternet) || (family == FamilyInternet6) ||
@@ -1261,7 +1261,7 @@ ResetHosts (char *display)
     	    }
 #endif /* IPv6 */
         }
-#endif /* TCPCONN || STREAMSCONN */
+#endif /* TCPCONN */
 	family = FamilyWild;
         }
         fclose (fd);
@@ -1642,7 +1642,7 @@ CheckAddr (
 
     switch (family)
     {
-#if defined(TCPCONN) || defined(STREAMSCONN) || defined(MNX_TCPCONN)
+#if defined(TCPCONN) || defined(MNX_TCPCONN)
       case FamilyInternet:
 	if (length == sizeof (struct in_addr))
 	    len = length;
@@ -1735,7 +1735,7 @@ ConvertAddr (
     case AF_UNIX:
 #endif
         return FamilyLocal;
-#if defined(TCPCONN) || defined(STREAMSCONN) || defined(MNX_TCPCONN)
+#if defined(TCPCONN) || defined(MNX_TCPCONN)
     case AF_INET:
 #ifdef WIN32
         if (16777343 == *(long*)&((struct sockaddr_in *) saddr)->sin_addr)

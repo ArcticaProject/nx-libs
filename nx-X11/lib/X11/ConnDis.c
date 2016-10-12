@@ -846,13 +846,6 @@ _XSendClientPrefix(
 }
 
 
-#ifdef STREAMSCONN
-#ifdef SVR4
-#include <tiuser.h>
-#else
-#undef HASXDMAUTH
-#endif
-#endif
 
 #ifdef SECURE_RPC
 #include <rpc/rpc.h>
