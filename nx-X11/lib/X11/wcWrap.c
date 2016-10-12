@@ -43,13 +43,13 @@ from The Open Group.
  * OPEN SOFTWARE FOUNDATION DISCLAIMS ALL WARRANTIES WITH REGARD TO
  * THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS, IN NO EVENT SHALL OPEN SOFTWARE FOUNDATIONN BE
- * LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES 
+ * LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
  * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- * 
- *		 M. Collins		OSF  
- */				
+ *
+ *		 M. Collins		OSF
+ */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -120,7 +120,7 @@ XwcDrawImageString(
 						text, text_len);
 }
 
-int 
+int
 XwcTextEscapement(
     XFontSet            font_set,
     _Xconst wchar_t    *text,
@@ -154,8 +154,8 @@ XwcTextPerCharExtents(
     XRectangle         *max_ink_extents,
     XRectangle         *max_logical_extents)
 {
-    return (*font_set->methods->wc_extents_per_char) 
-	      (font_set, text, text_len, 
+    return (*font_set->methods->wc_extents_per_char)
+	      (font_set, text, text_len,
 	       ink_extents_buffer, logical_extents_buffer,
 	       buffer_size, num_chars, max_ink_extents, max_logical_extents);
 }

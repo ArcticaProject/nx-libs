@@ -1,8 +1,4 @@
 /*
- * $Xorg: IMWrap.c,v 1.3 2000/08/17 19:44:37 cpqbld Exp $
- */
-
-/*
  * Copyright 1991 by the Open Software Foundation
  * Copyright 1993, 1994 by the Sony Corporation
  *
@@ -11,10 +7,10 @@
  * the above copyright notice appear in all copies and that both that
  * copyright notice and this permission notice appear in supporting
  * documentation, and that the names of Open Software Foundation and
- * Sony Corporation not be used in advertising or publicity pertaining to 
- * distribution of the software without specific, written prior permission.  
- * Open Software Foundation and Sony Corporation make no 
- * representations about the suitability of this software for any purpose.  
+ * Sony Corporation not be used in advertising or publicity pertaining to
+ * distribution of the software without specific, written prior permission.
+ * Open Software Foundation and Sony Corporation make no
+ * representations about the suitability of this software for any purpose.
  * It is provided "as is" without express or implied warranty.
  *
  * OPEN SOFTWARE FOUNDATION AND SONY CORPORATION DISCLAIM ALL
@@ -24,11 +20,11 @@
  * INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
  * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE
  * OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
- * PERFORMANCE OF THIS SOFTWARE. 
- * 
- *		 M. Collins		OSF  
+ * PERFORMANCE OF THIS SOFTWARE.
+ *
+ *		 M. Collins		OSF
  *               Makoto Wakamatsu       Sony Corporation
- */				
+ */
 /*
 
 Copyright 1991, 1998  The Open Group
@@ -68,9 +64,7 @@ from The Open Group.
  * Compile the resource name. (resource_name ---> xrm_name)
  */
 void
-_XIMCompileResourceList(res, num_res)
-    register XIMResourceList res;
-    unsigned int num_res;
+_XIMCompileResourceList(XIMResourceList res, unsigned int num_res)
 {
     register unsigned int count;
 
@@ -80,10 +74,7 @@ _XIMCompileResourceList(res, num_res)
 }
 
 void
-_XCopyToArg(src, dst, size)
-    XPointer src;
-    XPointer *dst;
-    register unsigned int size;
+_XCopyToArg(XPointer src, XPointer *dst, unsigned int size)
 {
     if (!*dst) {
 	union {
@@ -120,12 +111,8 @@ _XCopyToArg(src, dst, size)
  * a XIM object and return a pointer the newly created XIM back to the caller.
  */
 
-XIM 
-XOpenIM( display, rdb, res_name, res_class )
-    Display	*display;
-    XrmDatabase	 rdb;
-    char	*res_name;
-    char	*res_class;
+XIM
+XOpenIM(Display *display, XrmDatabase rdb, char *res_name, char *res_class)
 {
     XLCd	lcd = _XOpenLC( (char *)NULL );
 
@@ -138,13 +125,12 @@ XOpenIM( display, rdb, res_name, res_class )
  * Close the connection to the input manager, and free the XIM structure
  */
 Status
-XCloseIM(im)
-    XIM im;
+XCloseIM(XIM im)
 {
     Status s;
     XIC ic;
     XLCd lcd = im->core.lcd;
-  
+
     s = (im->methods->close) (im);
     for (ic = im->core.ic_chain; ic; ic = ic->core.next)
 	ic->core.im = (XIM)NULL;
@@ -157,8 +143,7 @@ XCloseIM(im)
  * Return the Display associated with the input method.
  */
 Display *
-XDisplayOfIM(im)
-    XIM im;
+XDisplayOfIM(XIM im)
 {
     return im->core.display;
 }
@@ -167,8 +152,7 @@ XDisplayOfIM(im)
  * Return the Locale associated with the input method.
  */
 char *
-XLocaleOfIM(im)
-    XIM im;
+XLocaleOfIM(XIM im)
 {
     return im->core.lcd->core->name;
 }

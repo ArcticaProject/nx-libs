@@ -55,7 +55,7 @@
 #    define INTERNAL
 #  endif
 
-#if defined(__CYGWIN__) || defined(__MINGW32__) || defined(__APPLE__)
+#if defined(__CYGWIN__) || defined(__MINGW32__) || defined(__APPLE__) || defined(__DARWIN__)
 #  undef HAVE_ALIAS
 #endif
 #ifdef HAVE_ALIAS

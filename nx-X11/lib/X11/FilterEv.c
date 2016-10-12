@@ -18,12 +18,12 @@
   * CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE,
   * DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
   * TORTUOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
-  * PERFORMANCE OF THIS SOFTWARE. 
+  * PERFORMANCE OF THIS SOFTWARE.
   *
   *	Author:	Seiji Kuwari	OMRON Corporation
   *				kuwa@omron.co.jp
   *				kuwa%omron.co.jp@uunet.uu.net
-  */				
+  */
 
 /*
 
@@ -69,9 +69,9 @@ extern long const _Xevent_to_mask[];
  * Look up if there is a specified filter for the event.
  */
 Bool
-XFilterEvent(ev, window)
-    XEvent *ev;
-    Window window;
+XFilterEvent(
+    XEvent *ev,
+    Window window)
 {
 #if XLOCALE
     XFilterEventList	p;
@@ -93,9 +93,9 @@ XFilterEvent(ev, window)
 	if (win == p->window) {
 	    if ((mask & p->event_mask) ||
 		(ev->type >= p->start_type && ev->type <= p->end_type)) {
+		UnlockDisplay(ev->xany.display);
 		ret = (*(p->filter))(ev->xany.display, p->window, ev,
 				      p->client_data);
-		UnlockDisplay(ev->xany.display);
 		return(ret);
 	    }
 	}

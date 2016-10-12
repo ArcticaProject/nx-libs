@@ -118,7 +118,7 @@ _XomGetFontDataFromFontSet(
     unsigned char *str,
     int len,
     int *len_ret,
-    int is2b,     
+    int is2b,
     int type)          /* VMAP , VROTATE , else */
 {
     unsigned long value;
@@ -126,7 +126,7 @@ _XomGetFontDataFromFontSet(
     FontData fontdata;
     unsigned char *c;
     int vfont_type;
-    
+
     c = str;
     hit = -1;
     if(type == VMAP){
@@ -162,7 +162,7 @@ _XomGetFontDataFromFontSet(
         } else {
             value = (unsigned long)*c;
         }
-    
+
        /* ### NOTE: This routine DOES NOT WORK!
 	* ###       We can work around the problem in the calling routine,
 	* ###       but we really need to understand this better.  As it
@@ -289,7 +289,7 @@ load_font(
 			oc->core.font_info.font_name_list[font_set->id]);
     if (font_set->font == NULL)
 	return False;
-    
+
     oc->core.font_info.font_struct_list[font_set->id] = font_set->font;
     XFreeFontInfo(NULL, font_set->info, 1);
     font_set->info = NULL;
@@ -365,7 +365,7 @@ _XomInitConverter(
 {
     XOCGenericPart *gen = XOC_GENERIC(oc);
     XlcConv *convp;
-    char *conv_type;
+    const char *conv_type;
     XlcConv conv;
     XLCd lcd;
 

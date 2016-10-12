@@ -24,7 +24,7 @@
 /**************************************************************************/
 
 /*
- 
+
 Copyright 1989, 1998  The Open Group
 
 Permission to use, copy, modify, distribute, and sell this software and its
@@ -49,7 +49,7 @@ in this Software without prior written authorization from The Open Group.
 
 */
 
-/* 
+/*
  * This file contains operating system dependencies.
  */
 
@@ -59,9 +59,12 @@ in this Software without prior written authorization from The Open Group.
 #include <nx-X11/Xlibint.h>
 #include <nx-X11/Xtrans/Xtrans.h>
 #include <nx-X11/Xauth.h>
+#ifdef HASXDMAUTH
 #include <X11/Xdmcp.h>
+#endif
 #include <stdio.h>
 #include <ctype.h>
+#include <unistd.h>
 
 #if !defined(WIN32)
 #ifndef Lynx
@@ -75,10 +78,6 @@ in this Software without prior written authorization from The Open Group.
 
 #ifndef X_CONNECTION_RETRIES		/* number retries on ECONNREFUSED */
 #define X_CONNECTION_RETRIES 5
-#endif
-
-#ifdef LOCALCONN
-#include <sys/utsname.h>
 #endif
 
 #include "Xintconn.h"
@@ -96,7 +95,7 @@ static void GetAuthorization(
     int *auth_datalenp);
 
 /* functions */
-static char *copystring (char *src, int len)
+static char *copystring (const char *src, int len)
 {
     char *dst = Xmalloc (len + 1);
 
@@ -108,8 +107,38 @@ static char *copystring (char *src, int len)
     return dst;
 }
 
+#define Xstrdup(s)	copystring(s, strlen(s))
 
-/* 
+#ifdef TCPCONN
+# define TCP_TRANS	"tcp"
+#endif
+#ifdef UNIXCONN
+# define UNIX_TRANS	"unix"
+#endif
+#if defined(LOCALCONN) || defined(OS2PIPECONN) || defined(UNIXCONN)
+# define LOCAL_TRANS	"local"
+#endif
+
+/* FIXME:  This should be handled through Makefile/configure logic. See configure.ac in upstream libX11 */
+
+#ifdef UNIXCONN
+#  ifdef TCPCONN
+#    define LOCAL_TRANSPORT_LIST LOCAL_TRANS,UNIX_TRANS,TCP_TRANS
+#  else
+#    define LOCAL_TRANSPORT_LIST LOCAL_TRANS,UNIX_TRANS
+#  endif
+#else
+#  ifdef TCPCONN
+#    define LOCAL_TRANSPORT_LIST TCP_TRANS
+#  else
+#    define LOCAL_TRANSPORT_LIST
+#  endif
+#endif
+
+
+
+
+/*
  * Attempts to connect to server, given display name. Returns file descriptor
  * (network socket) or -1 if connection fails.  Display names may be of the
  * following format:
@@ -126,7 +155,7 @@ static char *copystring (char *src, int len)
  * by IETF RFC 2732.
  *
  * If no hostname and no protocol is specified, the string is interpreted
- * as the most efficient local connection to a server on the same machine.  
+ * as the most efficient local connection to a server on the same machine.
  * This is usually:
  *
  *     o  shared memory
@@ -170,11 +199,11 @@ _X11TransConnectDisplay (
     char* address = addrbuf;
     XtransConnInfo trans_conn = NULL;	/* transport connection object */
     int connect_stat;
-#ifdef LOCALCONN
-    struct utsname sys;
-#endif
-#ifdef TCPCONN
-    char *tcphostname = NULL;		/* A place to save hostname pointer */
+#if defined(LOCALCONN) || defined(UNIXCONN) || defined(TCPCONN)
+    Bool reset_hostname = False;	/* Reset hostname? */
+    char *original_hostname = NULL;
+    int local_transport_index = -1;
+    const char *local_transport[] = { LOCAL_TRANSPORT_LIST, NULL };
 #endif
 
     p = display_name;
@@ -216,7 +245,7 @@ _X11TransConnectDisplay (
 #endif
 
     /*
-     * Step 0, find the protocol.  This is delimited by the optional 
+     * Step 0, find the protocol.  This is delimited by the optional
      * slash ('/').
      */
     for (lastp = p; *p && *p != ':' && *p != '/'; p++) ;
@@ -287,7 +316,7 @@ _X11TransConnectDisplay (
     /*
      * Step 1, find the hostname.  This is delimited by either one colon,
      * or two colons in the case of DECnet (DECnet Phase V allows a single
-     * colon in the hostname).  (See note above regarding IPv6 numeric 
+     * colon in the hostname).  (See note above regarding IPv6 numeric
      * addresses with triple colons or [] brackets.)
      */
 
@@ -299,7 +328,7 @@ _X11TransConnectDisplay (
 
     if (!lastc) return NULL;		/* must have a colon */
 
-    if ((lastp != lastc) && (*(lastc - 1) == ':') 
+    if ((lastp != lastc) && (*(lastc - 1) == ':')
 #if defined(IPv6) && defined(AF_INET6)
       && ( ((lastc - 1) == lastp) || (*(lastc - 2) != ':'))
 #endif
@@ -327,23 +356,17 @@ _X11TransConnectDisplay (
 
     p = lastc;
 
-#ifdef LOCALCONN
+#if defined(LOCALCONN) || defined(UNIXCONN) || defined(TCPCONN)
     /* check if phostname == localnodename AND protocol not specified */
-    if (!pprotocol && phostname && uname(&sys) >= 0 &&
-	!strncmp(phostname, sys.nodename, 
-	(strlen(sys.nodename) < strlen(phostname) ? 
-	strlen(phostname) : strlen(sys.nodename))))
-    {
-#ifdef TCPCONN
-	/*
-	 * We'll first attempt to connect using the local transport.  If
-	 * this fails (which is the case if sshd X protocol forwarding is
-	 * being used), retry using tcp and this hostname.
-	 */
-	tcphostname = copystring(phostname, strlen(phostname));
-#endif
-	Xfree (phostname);
-	phostname = copystring ("unix", 4);
+    if (!pprotocol && phostname) {
+	char localhostname[256];
+
+	if ((_XGetHostname (localhostname, sizeof localhostname) > 0)
+	    && (strcmp(phostname, localhostname) == 0)) {
+	    original_hostname = phostname;
+	    phostname = NULL;
+	    reset_hostname = True;
+	}
     }
 #endif
 
@@ -363,7 +386,7 @@ _X11TransConnectDisplay (
 
 
     /*
-     * Step 2, find the display number.  This field is required and is 
+     * Step 2, find the display number.  This field is required and is
      * delimited either by a nul or a period, depending on whether or not
      * a screen number is present.
      */
@@ -437,7 +460,7 @@ _X11TransConnectDisplay (
 
 
     /*
-     * Step 3, find the screen number.  This field is optional.  It is 
+     * Step 3, find the screen number.  This field is optional.  It is
      * present only if the display number was followed by a period (which
      * we've already verified is the only non-nul character).
      */
@@ -460,7 +483,7 @@ _X11TransConnectDisplay (
      *     idisplay                 display number
      *     iscreen                  screen number
      *     dnet                     DECnet boolean
-     * 
+     *
      * We can now decide which transport to use based on the ConnectionFlags
      * build parameter the hostname string.  If phostname is NULL or equals
      * the string "local", then choose the best transport.  If phostname
@@ -490,59 +513,41 @@ _X11TransConnectDisplay (
 
 #if defined(TCPCONN) || defined(UNIXCONN) || defined(LOCALCONN) || defined(MNX_TCPCONN) || defined(OS2PIPECONN)
     if (!pprotocol) {
-	if (!phostname) {
-#if defined(UNIXCONN) || defined(LOCALCONN) || defined(OS2PIPECONN)
-	    pprotocol = copystring ("local", 5);
-#if defined(TCPCONN)
-	    tcphostname = copystring("localhost", 9);
+#if defined(UNIXCONN)
+	if (phostname && (strcmp (phostname, "unix") == 0)) {
+	    Xfree(pprotocol);
+	    pprotocol = copystring ("unix", 4);
+	} else
 #endif
+#ifdef HAVE_LAUNCHD
+	if (phostname && phostname[0]=='/') {
+		pprotocol = copystring ("local", 5);
 	}
-	else
-	{
 #endif
+	if (!phostname)
+	{
+	    if (local_transport[0] != NULL) {
+		pprotocol = Xstrdup(local_transport[0]);
+		local_transport_index = 0;
+	    }
+	}
+
+	if (!pprotocol) { /* if still not found one, tcp is our last resort */
 	    pprotocol = copystring ("tcp", 3);
 	}
     }
 #endif
 
-#if defined(UNIXCONN) || defined(LOCALCONN) || defined(OS2PIPECONN)
-    /*
-     * Now that the defaults have been established, see if we have any 
-     * special names that we have to override:
-     *
-     *     :N         =>     if UNIXCONN then unix-domain-socket
-     *     ::N        =>     if UNIXCONN then unix-domain-socket
-     *     unix:N     =>     if UNIXCONN then unix-domain-socket
-     *
-     * Note that if UNIXCONN isn't defined, then we can use the default
-     * transport connection function set above.
-     */
 
-    if (!phostname) {
-#ifdef apollo
-	;   /* Unix domain sockets are *really* bad on apollos */
-#else
-	if( pprotocol ) Xfree(pprotocol);
-	pprotocol = copystring ("local", 5);
-#endif
-    }
-    else if (strcmp (phostname, "unix") == 0) {
-	if( pprotocol ) Xfree(pprotocol);
-	pprotocol = copystring ("local", 5);
-    }
-#endif
-
-#if defined(TCPCONN)
   connect:
-#endif
     /*
      * This seems kind of backwards, but we need to put the protocol,
      * host, and port back together to pass to _X11TransOpenCOTSClient().
      */
 
     {
-	int olen = 3 + (pprotocol ? strlen(pprotocol) : 0) + 
-		       (phostname ? strlen(phostname) : 0) + 
+	int olen = 3 + (pprotocol ? strlen(pprotocol) : 0) +
+		       (phostname ? strlen(phostname) : 0) +
 		       (pdpynum   ? strlen(pdpynum)   : 0);
 	if (olen > sizeof addrbuf) address = Xmalloc (olen);
     }
@@ -564,19 +569,19 @@ _X11TransConnectDisplay (
         fprintf(stderr, "_X11TransConnectDisplay: Entering connection loop.\n");
 #endif
     for(retry=X_CONNECTION_RETRIES; retry>=0; retry-- )
-	{
+    {
 #if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST)
         fprintf(stderr, "_X11TransConnectDisplay: Going to call _X11TransOpenCOTSClient(address) with address [%s].\n", address);
 #endif
 	if ( (trans_conn = _X11TransOpenCOTSClient(address)) == NULL )
-	    {
+	{
 	    break;
-	    }
+	}
 #if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST)
         fprintf(stderr, "_X11TransConnectDisplay: Going to call _X11TransConnect(trans_conn,address).\n");
 #endif
 	if ((connect_stat = _X11TransConnect(trans_conn,address)) < 0 )
-	    {
+	{
 #if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST)
             fprintf(stderr, "_X11TransConnectDisplay: Going to call _X11TransClose(trans_conn).\n");
 #endif
@@ -584,13 +589,10 @@ _X11TransConnectDisplay (
 	    trans_conn = NULL;
 
 	    if (connect_stat == TRANS_TRY_CONNECT_AGAIN)
-	    {
-		sleep(1);
 		continue;
-	    }
 	    else
 		break;
-	    }
+	}
 
 #if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST)
         fprintf(stderr, "_X11TransConnectDisplay: Going to call _X11TransGetPeerAddr(trans_conn, &family, &saddrlen, &saddr).\n");
@@ -607,20 +609,19 @@ _X11TransConnectDisplay (
         fprintf(stderr, "_X11TransConnectDisplay: Going to call _X11TransConvertAddress(&family, &saddrlen, &saddr).\n");
 #endif
 	if( _X11TransConvertAddress(&family, &saddrlen, &saddr) < 0 )
-	    {
+	{
 	    _X11TransClose(trans_conn);
 	    trans_conn = NULL;
-	    sleep(1);
 	    if (saddr)
 	    {
 		free ((char *) saddr);
 		saddr = NULL;
 	    }
 	    continue;
-	    }
+	}
 
 	break;
-	}
+    }
 
 #if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST)
         fprintf(stderr, "_X11TransConnectDisplay: Out of connection loop.\n");
@@ -642,11 +643,30 @@ _X11TransConnectDisplay (
      *
      *     [host] : [:] dpy . scr \0
      */
+#if defined(LOCALCONN) || defined(TCPCONN) || defined(UNIXCONN)
+    /*
+     *  If we computed the host name, get rid of it so that
+     *  XDisplayString() and XDisplayName() agree.
+     */
+    if (reset_hostname && (phostname != original_hostname)) {
+	Xfree (phostname);
+	phostname = original_hostname;
+	original_hostname = NULL;
+    }
+#endif
     len = ((phostname ? strlen(phostname) : 0) + 1 + (dnet ? 1 : 0) +
 	   strlen(pdpynum) + 1 + (pscrnum ? strlen(pscrnum) : 1) + 1);
     *fullnamep = (char *) Xmalloc (len);
     if (!*fullnamep) goto bad;
 
+#ifdef HAVE_LAUNCHD
+    if (phostname && strlen(phostname) > 11 && !strncmp(phostname, "/tmp/launch", 11))
+	sprintf (*fullnamep, "%s%s%d",
+	     (phostname ? phostname : ""),
+	     (dnet ? "::" : ":"),
+	     idisplay);
+    else
+#endif
     sprintf (*fullnamep, "%s%s%d.%d",
 	     (phostname ? phostname : ""),
 	     (dnet ? "::" : ":"),
@@ -658,8 +678,8 @@ _X11TransConnectDisplay (
     if (phostname) Xfree (phostname);
     if (pdpynum) Xfree (pdpynum);
     if (pscrnum) Xfree (pscrnum);
-#ifdef TCPCONN
-    if (tcphostname) Xfree (tcphostname);
+#if defined(LOCALCONN) || defined(UNIXCONN) || defined(TCPCONN)
+    if (original_hostname) Xfree (original_hostname);
 #endif
 
     GetAuthorization(trans_conn, family, (char *) saddr, saddrlen, idisplay,
@@ -677,14 +697,36 @@ _X11TransConnectDisplay (
     if (phostname) Xfree (phostname);
     if (address && address != addrbuf) { Xfree(address); address = addrbuf; }
 
-#if defined(TCPCONN)
-    if (tcphostname) {
-	pprotocol = copystring("tcp", 3);
-	phostname = tcphostname;
-	tcphostname = NULL;
-	goto connect;
+#if defined(LOCALCONN) || defined(UNIXCONN) || defined(TCPCONN)
+    /* If connecting to the local machine, and we failed, try again with
+     * the next transport type available, if there is one.
+     */
+    if (local_transport_index >= 0) {
+	if (local_transport[++local_transport_index] != NULL) {
+	    pprotocol = Xstrdup(local_transport[local_transport_index]);
+#ifdef TCPCONN
+	    if (strcmp(pprotocol, "tcp") == 0) {
+		if (original_hostname != NULL) {
+		    phostname = original_hostname;
+		    original_hostname = NULL;
+		} else {
+		    phostname = copystring("localhost", 9);
+		}
+	    } else
+#endif /* TCPCONN */
+	    {
+		if ((phostname != NULL) && (original_hostname == NULL)) {
+		    original_hostname = phostname;
+		}
+		phostname = NULL;
+	    }
+	    goto connect;
+	}
     }
-#endif
+
+    /* No more to try, we've failed all available local transports */
+    if (original_hostname) Xfree(original_hostname);
+#endif /* LOCALCONN || UNIXCONN || TCPCONN */
 
     if (pdpynum) Xfree (pdpynum);
     if (pscrnum) Xfree (pscrnum);
@@ -731,14 +773,11 @@ int _XConnectDisplay (
  *                                                                           *
  *****************************************************************************/
 
-/* 
+/*
  * Disconnect from server.
  */
 
-int _XDisconnectDisplay (trans_conn)
-
-XtransConnInfo	trans_conn;
-
+int _XDisconnectDisplay (XtransConnInfo trans_conn)
 {
     _X11TransDisconnect(trans_conn);
     _X11TransClose(trans_conn);
@@ -748,11 +787,11 @@ XtransConnInfo	trans_conn;
 
 
 Bool
-_XSendClientPrefix (dpy, client, auth_proto, auth_string, prefix)
-     Display *dpy;
-     xConnClientPrefix *client;		/* contains count for auth_* */
-     char *auth_proto, *auth_string;	/* NOT null-terminated */
-     xConnSetupPrefix *prefix;		/* prefix information */
+_XSendClientPrefix(
+     Display *dpy,
+     xConnClientPrefix *client,			/* contains count for auth_* */
+     char *auth_proto, char *auth_string,	/* NOT null-terminated */
+     xConnSetupPrefix *prefix)			/* prefix information */
 {
     int auth_length = client->nbytesAuthProto;
     int auth_strlen = client->nbytesAuthString;
@@ -878,15 +917,15 @@ static _Xconst int default_xauth_lengths[] = {
 };
 
 #define NUM_DEFAULT_AUTH    (sizeof (default_xauth_names) / sizeof (default_xauth_names[0]))
-    
+
 static char **xauth_names = default_xauth_names;
 static _Xconst int  *xauth_lengths = default_xauth_lengths;
 
 static int  xauth_names_length = NUM_DEFAULT_AUTH;
 
-void XSetAuthorization (name, namelen, data, datalen)
-    int namelen, datalen;		/* lengths of name and data */
-    char *name, *data;			/* NULL or arbitrary array of bytes */
+void XSetAuthorization (
+    char *name, int namelen,		/* *len are lengths of name and data */
+    char *data, int datalen)		/* name/data are NULL or arbitrary array of bytes */
 {
     char *tmpname, *tmpdata;
 
@@ -946,11 +985,11 @@ void XSetAuthorization (name, namelen, data, datalen)
  * Create a credential that we can send to the X server.
  */
 static int
-auth_ezencode(servername, window, cred_out, len)
-        char           *servername;
-        int             window;
-	char	       *cred_out;
-        int            *len;
+auth_ezencode(
+    char           *servername,
+    int             window,
+    char	   *cred_out,
+    int            *len)
 {
         AUTH           *a;
         XDR             xdr;
@@ -1308,7 +1347,7 @@ GetAuthorization(
 	{
 #ifdef AF_INET
 	case AF_INET:
-	{
+	  {
 	    /*
 	     * addr will contain a sockaddr_in with all
 	     * of the members already in network byte order.
@@ -1319,37 +1358,37 @@ GetAuthorization(
 	    for(i=2; i<4; i++)	/* do sin_port */
 		xdmcp_data[j++] = ((char *)addr)[i];
 	    break;
-	}
+	  }
 #endif /* AF_INET */
 #if defined(IPv6) && defined(AF_INET6)
 	case AF_INET6:
 	  /* XXX This should probably never happen */
-	{
+	  {
 	    unsigned char ipv4mappedprefix[] = {
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xff, 0xff };
-	    
-	    /* In the case of v4 mapped addresses send the v4 
+
+	    /* In the case of v4 mapped addresses send the v4
 	       part of the address - addr is already in network byte order */
-	    if (memcmp(addr+8, ipv4mappedprefix, 12) == 0) {
+	    if (memcmp((char*)addr+8, ipv4mappedprefix, 12) == 0) {
 		for (i = 20 ; i < 24; i++)
 		    xdmcp_data[j++] = ((char *)addr)[i];
-	    
+
 		/* Port number */
 		for (i=2; i<4; i++)
 		    xdmcp_data[j++] = ((char *)addr)[i];
 	    } else {
-		/* Fake data to keep the data aligned. Otherwise the 
+		/* Fake data to keep the data aligned. Otherwise the
 		   the server will bail about incorrect timing data */
 		for (i = 0; i < 6; i++) {
 		    xdmcp_data[j++] = 0;
 		}
 	    }
 	    break;
-	}
+	  }
 #endif /* AF_INET6 */
 #ifdef AF_UNIX
 	case AF_UNIX:
-	{
+	  {
 	    /*
 	     * We don't use the sockaddr_un for this encoding.
 	     * Instead, we create a sockaddr_in filled with
@@ -1362,14 +1401,14 @@ GetAuthorization(
 	    unsigned short	the_port;
 	    unsigned long	the_utime;
 	    struct timeval      tp;
-	    
+
 	    X_GETTIMEOFDAY(&tp);
 	    _XLockMutex(_Xglobal_lock);
 	    the_addr = unix_addr--;
 	    _XUnlockMutex(_Xglobal_lock);
 	    the_utime = (unsigned long) tp.tv_usec;
 	    the_port = getpid ();
-	    
+
 	    xdmcp_data[j++] = (the_utime >> 24) & 0xFF;
 	    xdmcp_data[j++] = (the_utime >> 16) & 0xFF;
 	    xdmcp_data[j++] = ((the_utime >>  8) & 0xF0)
@@ -1378,7 +1417,7 @@ GetAuthorization(
 	    xdmcp_data[j++] = (the_port >>  8) & 0xFF;
 	    xdmcp_data[j++] = (the_port >>  0) & 0xFF;
 	    break;
-	}
+	  }
 #endif /* AF_UNIX */
 #ifdef AF_DECnet
 	case AF_DECnet:

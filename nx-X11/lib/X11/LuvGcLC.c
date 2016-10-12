@@ -2,7 +2,7 @@
 /*
  * Code and supporting documentation (c) Copyright 1990 1991 Tektronix, Inc.
  * 	All Rights Reserved
- * 
+ *
  * This file is a component of an X Window System-specific implementation
  * of XCMS based on the TekColor Color Management System.  Permission is
  * hereby granted to use, copy, modify, sell, and otherwise distribute this
@@ -10,10 +10,10 @@
  * that this copyright, permission, and disclaimer notice is reproduced in
  * all copies of this software and in supporting documentation.  TekColor
  * is a trademark of Tektronix, Inc.
- * 
+ *
  * Tektronix makes no representation about the suitability of this software
  * for any purpose.  It is provided "as is" and with all faults.
- * 
+ *
  * TEKTRONIX DISCLAIMS ALL WARRANTIES APPLICABLE TO THIS SOFTWARE,
  * INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
  * PARTICULAR PURPOSE.  IN NO EVENT SHALL TEKTRONIX BE LIABLE FOR ANY
@@ -60,15 +60,15 @@
  */
 /* ARGSUSED */
 Status
-XcmsCIELuvClipLuv (ccc, pColors_in_out, nColors, i, pCompressed)
-    XcmsCCC ccc;
-    XcmsColor *pColors_in_out;
-    unsigned int nColors;
-    unsigned int i;
-    Bool *pCompressed;
+XcmsCIELuvClipLuv (
+    XcmsCCC ccc,
+    XcmsColor *pColors_in_out,
+    unsigned int nColors,
+    unsigned int i,
+    Bool *pCompressed)
 /*
  *	DESCRIPTION
- *		This routine will find the closest L* and chroma 
+ *		This routine will find the closest L* and chroma
  *		for a specific hue.  The color input is converted to
  *		CIE L*u*v* format and returned as CIE XYZ format.
  *
@@ -138,12 +138,12 @@ XcmsCIELuvClipLuv (ccc, pColors_in_out, nColors, i, pCompressed)
     chroma = XCMS_CIELUV_PMETRIC_CHROMA(pColor->spec.CIELuv.u_star,
 					pColor->spec.CIELuv.v_star);
     memcpy((char *)&Luv_max, (char *)pColor, sizeof(XcmsColor));
-    if (_XcmsCIELuvQueryMaxLCRGB (&myCCC, hue, &Luv_max, &rgb_max) 
+    if (_XcmsCIELuvQueryMaxLCRGB (&myCCC, hue, &Luv_max, &rgb_max)
 	    == XcmsFailure) {
 	return (XcmsFailure);
     }
     maxLstar = Luv_max.spec.CIELuv.L_star;
-	
+
     /* Now check and return the appropriate L* */
     if (saveLstar == maxLstar) {
 	/* When the L* input is equal to the maximum L* */
@@ -197,7 +197,7 @@ XcmsCIELuvClipLuv (ccc, pColors_in_out, nColors, i, pCompressed)
 		bestLstar = pColor->spec.CIELuv.L_star;
 		bestustar = pColor->spec.CIELuv.u_star;
 		bestvstar = pColor->spec.CIELuv.v_star;
-		bestChroma = chroma;	    
+		bestChroma = chroma;
 	    }
 	    if (nI == nILast || nI == 0) {
 		break;

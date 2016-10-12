@@ -1,5 +1,6 @@
 
-#ifndef _IMUTIL_H_
+#if !defined(_X11_IMUTIL_H_) && !defined(_IM_UTIL_H_)
+#define _X11_IMUTIL_H_
 #define _IMUTIL_H_
 
 extern int
@@ -27,4 +28,4 @@ extern void
 _XInitImageFuncPtrs(
     register XImage *image);
 
-#endif /* _IMUTIL_H_ */
+#endif /* !defined(_X11_IMUTIL_H_) && !defined(_IM_UTIL_H_) */

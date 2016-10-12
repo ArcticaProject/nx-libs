@@ -28,12 +28,13 @@ in this Software without prior written authorization from The Open Group.
 #include <config.h>
 #endif
 #include "Xlibint.h"
-int XGrabKeyboard (dpy, window, ownerEvents, pointerMode, keyboardMode, time)
-    register Display *dpy;
-    Window window;
-    Bool ownerEvents;
-    int pointerMode, keyboardMode;
-    Time time;
+int XGrabKeyboard (
+    register Display *dpy,
+    Window window,
+    Bool ownerEvents,
+    int pointerMode,
+    int keyboardMode,
+    Time time)
 {
         xGrabKeyboardReply rep;
 	register xGrabKeyboardReq *req;
@@ -47,7 +48,7 @@ int XGrabKeyboard (dpy, window, ownerEvents, pointerMode, keyboardMode, time)
 	req->time = time;
 
        /* if we ever return, suppress the error */
-	if (_XReply (dpy, (xReply *) &rep, 0, xTrue) == 0) 
+	if (_XReply (dpy, (xReply *) &rep, 0, xTrue) == 0)
 		rep.status = GrabSuccess;
 	status = rep.status;
 	UnlockDisplay(dpy);

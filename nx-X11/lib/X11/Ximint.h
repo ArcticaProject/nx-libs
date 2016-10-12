@@ -12,7 +12,7 @@ Sony Corporation not be used in advertising or publicity pertaining to
 distribution of the software without specific, written prior
 permission.  FUJITSU LIMITED and Sony Corporation makes no
 representations about the suitability of this software for any
-purpose.  It is provided "as is" without express or implied warranty. 
+purpose.  It is provided "as is" without express or implied warranty.
 
 FUJITSU LIMITED AND SONY CORPORATION DISCLAIM ALL WARRANTIES WITH
 REGARD TO THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF
@@ -21,9 +21,9 @@ SONY CORPORATION BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL
 DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
 PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
 TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
-PERFORMANCE OF THIS SOFTWARE. 
+PERFORMANCE OF THIS SOFTWARE.
 
-  Author:   Takashi Fujiwara   FUJITSU LIMITED 
+  Author:   Takashi Fujiwara   FUJITSU LIMITED
                                fujiwara@a80.tech.yk.fujitsu.co.jp
   Motifier: Makoto Wakamatsu   Sony Corporation
 			       makoto@sm.sony.co.jp
@@ -178,6 +178,8 @@ typedef struct _XimDefICValues {
 #define	XIM_FALSE	False
 #define	XIM_OVERFLOW	(-1)
 
+#define BRL_UC_ROW	0x2800
+
 /*
  * Global symbols
  */
@@ -225,7 +227,7 @@ extern Bool _XimCheckCreateICValues(
 extern XIMResourceList _XimGetResourceListRec(
     XIMResourceList	 res_list,
     unsigned int	 list_num,
-    char		*name
+    const char		*name
 );
 
 extern void _XimSetIMMode(
@@ -581,7 +583,7 @@ extern char *	_XimEncodeIMATTRIBUTE(
     Xim			  im,
     XIMResourceList	  res_list,
     unsigned int	  res_num,
-    XIMArg               *arg, 
+    XIMArg               *arg,
     XIMArg		**arg_ret,
     char		 *buf,
     int			  size,
@@ -594,7 +596,7 @@ extern char *	_XimEncodeICATTRIBUTE(
     Xic			  ic,
     XIMResourceList	  res_list,
     unsigned int	  res_num,
-    XIMArg               *arg, 
+    XIMArg               *arg,
     XIMArg		**arg_ret,
     char		 *buf,
     int			  size,
@@ -666,6 +668,10 @@ extern int	_XimLcctstoutf8(
     char	*to,
     int		 to_len,
     Status	*state
+);
+
+extern char _XimGetMyEndian(
+    void
 );
 
 extern int	_XimCheckDataSize(
@@ -833,14 +839,6 @@ extern Bool	_XimRead(
     XPointer	 arg
 );
 
-extern Bool	_XimIntrCallback(
-    Xim		 im,
-    Bool	 (*callback)(
-			     Xim, INT16, XPointer, XPointer
-			     ),
-    XPointer	 call_data
-);
-
 extern void	_XimFlush(
     Xim		 im
 );
@@ -862,9 +860,9 @@ extern CARD32	_XimExtenArgCheck(
 #endif
 
 extern Bool _XimCbDispatch(
-    Xim im, 
-    INT16 len, 
-    XPointer data, 
+    Xim im,
+    INT16 len,
+    XPointer data,
     XPointer call_data
 );
 

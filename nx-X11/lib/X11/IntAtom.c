@@ -37,8 +37,7 @@ from The Open Group.
 #define REHASH(idx,rehash) ((idx + rehash) & (TABLESIZE-1))
 
 void
-_XFreeAtomTable(dpy)
-    Display *dpy;
+_XFreeAtomTable(Display *dpy)
 {
     register Entry *table;
     register int i;
@@ -113,13 +112,13 @@ nomatch:    if (idx == firstidx)
 }
 
 void
-_XUpdateAtomCache(dpy, name, atom, sig, idx, n)
-    Display *dpy;
-    const char *name;
-    Atom atom;
-    unsigned long sig;
-    int idx;
-    int n;
+_XUpdateAtomCache(
+    Display *dpy,
+    const char *name,
+    Atom atom,
+    unsigned long sig,
+    int idx,
+    int n)
 {
     Entry e, oe;
     register char *s1;
@@ -238,12 +237,12 @@ Bool _XIntAtomHandler(
 }
 
 Status
-XInternAtoms (dpy, names, count, onlyIfExists, atoms_return)
-    Display *dpy;
-    char **names;
-    int count;
-    Bool onlyIfExists;
-    Atom *atoms_return;
+XInternAtoms (
+    Display *dpy,
+    char **names,
+    int count,
+    Bool onlyIfExists,
+    Atom *atoms_return)
 {
     int i, idx, n, tidx;
     unsigned long sig;
@@ -283,7 +282,7 @@ XInternAtoms (dpy, names, count, onlyIfExists, atoms_return)
         }
 	if (_XReply (dpy, (xReply *)&rep, 0, xTrue)) {
 	    if ((atoms_return[missed] = rep.atom))
-		_XUpdateAtomCache(dpy, names[missed], (Atom) rep.atom, 
+		_XUpdateAtomCache(dpy, names[missed], (Atom) rep.atom,
 				  sig, idx, n);
 	} else {
 	    atoms_return[missed] = None;

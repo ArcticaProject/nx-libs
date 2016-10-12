@@ -48,7 +48,7 @@ _XlcGetCharSet(
 {
     XlcCharSetList list;
     XrmQuark xrm_name;
-    
+
     xrm_name = XrmStringToQuark(name);
 
     for (list = charset_list; list; list = list->next) {
@@ -69,7 +69,7 @@ _XlcGetCharSetWithSide(
 {
     XlcCharSetList list;
     XrmQuark xrm_encoding_name;
-    
+
     xrm_encoding_name = XrmStringToQuark(encoding_name);
 
     for (list = charset_list; list; list = list->next) {
@@ -95,7 +95,7 @@ _XlcAddCharSet(
     list = (XlcCharSetList) Xmalloc(sizeof(XlcCharSetListRec));
     if (list == NULL)
 	return False;
-    
+
     list->charset = charset;
     list->next = charset_list;
     charset_list = list;
@@ -156,7 +156,7 @@ _XlcGetCSValues(XlcCharSet charset, ...)
 
     if (args == (XlcArgList) NULL)
 	return (char *) NULL;
-    
+
     ret = get_values(charset, args, num_args);
 
     Xfree(args);

@@ -45,7 +45,7 @@ from The Open Group.
  */
 #ifdef NULL_NOT_ZERO			/* then need to initialize */
 #define SetZero(t,var,z) t var = z
-#else 
+#else
 #define SetZero(t,var,z) t var
 #endif
 
@@ -114,25 +114,25 @@ extern int close();
 #ifdef SVR4
 extern int _XsSetupSpStream();
 extern int _XsSetupNamedStream();
-#endif 
+#endif
 extern int _XsSetupLocalStream();
 extern int _XsConnectLocalClient();
 extern int _XsCallLocalServer();
 extern int _XsReadLocalStream();
 extern int _XsErrorCall();
 extern int _XsWriteLocalStream();
-extern int _XsCloseLocalStream(); 
+extern int _XsCloseLocalStream();
 extern int _XsSetupTliStream();
 extern int _XsConnectTliClient();
-extern int _XsCallTliServer(); 
-extern int _XsReadTliStream(); 
+extern int _XsCallTliServer();
+extern int _XsReadTliStream();
 extern int _XsWriteTliStream();
 extern int _XsCloseTliStream();
 
 
 Xstream _XsStream[] = {
 
-    { 
+    {
 	/* local connections using pseudo-ttys */
 
 	_XsSetupLocalStream,
@@ -144,7 +144,7 @@ Xstream _XsStream[] = {
 	close,
 	NULL
     },
-    { 
+    {
 #ifdef SVR4
 	/* local connections using named streams */
 

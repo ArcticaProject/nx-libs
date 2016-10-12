@@ -32,16 +32,16 @@ in this Software without prior written authorization from The Open Group.
 #include <nx-X11/Xutil.h>
 
 /*
- * XStringListToTextProperty - fill in TextProperty structure with 
- * concatenated list of null-separated strings.  Return True if successful 
+ * XStringListToTextProperty - fill in TextProperty structure with
+ * concatenated list of null-separated strings.  Return True if successful
  * else False.  Allocate room on end for trailing NULL, but don't include in
  * count.
  */
 
-Status XStringListToTextProperty (argv, argc, textprop)
-    char **argv;
-    int argc;
-    XTextProperty *textprop;
+Status XStringListToTextProperty (
+    char **argv,
+    int argc,
+    XTextProperty *textprop)
 {
     register int i;
     register unsigned int nbytes;

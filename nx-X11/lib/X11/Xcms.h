@@ -2,7 +2,7 @@
 /*
  * Code and supporting documentation (c) Copyright 1990 1991 Tektronix, Inc.
  * 	All Rights Reserved
- * 
+ *
  * This file is a component of an X Window System-specific implementation
  * of Xcms based on the TekColor Color Management System.  Permission is
  * hereby granted to use, copy, modify, sell, and otherwise distribute this
@@ -10,10 +10,10 @@
  * that this copyright, permission, and disclaimer notice is reproduced in
  * all copies of this software and in supporting documentation.  TekColor
  * is a trademark of Tektronix, Inc.
- * 
+ *
  * Tektronix makes no representation about the suitability of this software
  * for any purpose.  It is provided "as is" and with all faults.
- * 
+ *
  * TEKTRONIX DISCLAIMS ALL WARRANTIES APPLICABLE TO THIS SOFTWARE,
  * INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
  * PARTICULAR PURPOSE.  IN NO EVENT SHALL TEKTRONIX BE LIABLE FOR ANY
@@ -26,7 +26,8 @@
  *	DESCRIPTION
  *		Public include file for X Color Management System
  */
-#ifndef _XCMS_H_
+#if !defined(_X11_XCMS_H_) && !defined(_XCMS_H_)
+#define _X11_XCMS_H_
 #define _XCMS_H_
 
 #include <nx-X11/Xlib.h>
@@ -250,7 +251,7 @@ typedef void (*XcmsScreenFreeProc)(
  * XXX:  The use of the XcmsConversionProc type is broken.  The
  *       device-independent colour conversion code uses it as:
 
-typedef Status (*XcmsConversionProc)(XcmsCCC, XcmsColor *, XcmsColor *, 
+typedef Status (*XcmsConversionProc)(XcmsCCC, XcmsColor *, XcmsColor *,
 				     unsigned int);
 
  *       while the device-dependent code uses it as:
@@ -800,4 +801,4 @@ extern Visual *XcmsVisualOfCCC (
 
 _XFUNCPROTOEND
 
-#endif /* _XCMS_H_ */
+#endif /* !defined(_X11_XCMS_H_) && !defined(_XCMS_H_) */

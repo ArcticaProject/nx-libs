@@ -108,7 +108,7 @@ _XimFilterPropertyNotify(
     }
 
     lock = True;
-    for( ii = 0; ii < nitems; ii++ ) {
+    for( ii = 0; ii < nitems; ii++, atoms ) {
 	if(XGetSelectionOwner (display, atoms[ii])) {
 	    for( icb = callback_list; icb; icb = icb->next ) {
 		if( !icb->call  &&  !icb->destroy ) {
@@ -268,8 +268,7 @@ _XimUnRegisterIMInstantiateCallback(
 
 
 Public void
-_XimResetIMInstantiateCallback( xim )
-    Xim		xim;
+_XimResetIMInstantiateCallback(Xim xim)
 {
     char		 locale[XIM_MAXLCNAMELEN];
     XimInstCallback	 icb;

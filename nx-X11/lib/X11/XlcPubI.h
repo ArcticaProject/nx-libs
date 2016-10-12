@@ -96,7 +96,7 @@ typedef struct _XLCdPublicPart {
 } XLCdPublicPart;
 
 typedef struct _XLCdPublicRec {
-    XLCdCoreRec core;	
+    XLCdCoreRec core;
     XLCdPublicPart pub;
 } XLCdPublicRec, *XLCdPublic;
 
@@ -204,6 +204,12 @@ extern int _XlcResolveI18NPath(
     int			buf_len
 );
 
+extern char *_XlcLocaleLibDirName(
+     char*             /* dir_name */,
+     size_t,	       /* dir_len */
+     char*             /* lc_name */
+);
+
 extern char *_XlcLocaleDirName(
      char*             /* dir_name */,
      size_t,	       /* dir_len */
@@ -232,7 +238,7 @@ _Xsetlocale(
     int           category,
     _Xconst char  *name);
 #else
-#ifdef __DARWIN__
+#if defined(__APPLE__) || defined(__DARWIN__)
 extern char *
 _Xsetlocale(
     int           category,

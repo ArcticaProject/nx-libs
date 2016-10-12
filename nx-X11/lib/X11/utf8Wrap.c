@@ -1,4 +1,3 @@
-/* $TOG: mbWrap.c /main/7 1998/02/06 17:44:30 kaleb $ */
 /*
 
 Copyright 1991, 1998  The Open Group
@@ -33,7 +32,7 @@ from The Open Group.
  * documentation for any purpose is hereby granted without fee, provided that
  * the above copyright notice appear in all copies and that both that
  * copyright notice and this permission notice appear in supporting
- * documentation, and that the name of Open Software Foundation 
+ * documentation, and that the name of Open Software Foundation
  * not be used in advertising or publicity pertaining to distribution of the
  * software without specific, written prior permission.  Open Software
  * Foundation makes no representations about the suitability of this
@@ -43,13 +42,13 @@ from The Open Group.
  * OPEN SOFTWARE FOUNDATION DISCLAIMS ALL WARRANTIES WITH REGARD TO
  * THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
  * FITNESS, IN NO EVENT SHALL OPEN SOFTWARE FOUNDATIONN BE
- * LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES 
+ * LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
  * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- * 
- *		 M. Collins		OSF  
- */				
+ *
+ *		 M. Collins		OSF
+ */
 /*
  * Copyright 2000 by Bruno Haible
  *
@@ -143,7 +142,7 @@ Xutf8DrawImageString(
 						  (char *)text, text_len);
 }
 
-int 
+int
 Xutf8TextEscapement(
     XFontSet        font_set,
     _Xconst char   *text,
@@ -180,7 +179,7 @@ Xutf8TextPerCharExtents(
     XRectangle     *max_logical_extents)
 {
     return (*font_set->methods->utf8_extents_per_char)
-	     (font_set, (char *)text, text_len, 
+	     (font_set, (char *)text, text_len,
 	      ink_extents_buffer, logical_extents_buffer,
 	      buffer_size, num_chars, max_ink_extents, max_logical_extents);
 }

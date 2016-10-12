@@ -23,7 +23,6 @@ used in advertising or otherwise to promote the sale, use or other dealings
 in this Software without prior written authorization from The Open Group.
 
 */
-/* $XFree86$ */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -31,10 +30,10 @@ in this Software without prior written authorization from The Open Group.
 #include "Xlib.h"
 
 /*
- * XCreateBitmapFromData: Routine to make a pixmap of depth 1 from user 
+ * XCreateBitmapFromData: Routine to make a pixmap of depth 1 from user
  *	                  supplied data.
  *	D is any drawable on the same screen that the pixmap will be used in.
- *	Data is a pointer to the bit data, and 
+ *	Data is a pointer to the bit data, and
  *	width & height give the size in bits of the pixmap.
  *
  * The following format is assumed for data:
@@ -46,7 +45,7 @@ in this Software without prior written authorization from The Open Group.
  *    bitmap_unit=8
  *    xoffset=0
  *    no extra bytes per line
- */  
+ */
 Pixmap XCreateBitmapFromData(
      Display *display,
      Drawable d,

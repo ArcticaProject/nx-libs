@@ -29,16 +29,16 @@ in this Software without prior written authorization from The Open Group.
 #endif
 #include "Xlibint.h"
 
-int XGrabPointer(dpy, grab_window, owner_events, event_mask, pointer_mode,
-	     keyboard_mode, confine_to, curs, time)
-register Display *dpy;
-Window grab_window;
-Bool owner_events;
-unsigned int event_mask; /* CARD16 */
-int pointer_mode, keyboard_mode;
-Window confine_to;
-Cursor curs;
-Time time;
+int XGrabPointer(
+    register Display *dpy,
+    Window grab_window,
+    Bool owner_events,
+    unsigned int event_mask, /* CARD16 */
+    int pointer_mode,
+    int keyboard_mode,
+    Window confine_to,
+    Cursor curs,
+    Time time)
 {
     xGrabPointerReply rep;
     register xGrabPointerReq *req;
@@ -53,7 +53,7 @@ Time time;
     req->confineTo = confine_to;
     req->cursor = curs;
     req->time = time;
-    
+
     /* if we ever return, suppress the error */
     if (_XReply (dpy, (xReply *) &rep, 0, xTrue) == 0)
 	rep.status = GrabSuccess;

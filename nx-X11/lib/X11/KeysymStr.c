@@ -31,10 +31,9 @@ in this Software without prior written authorization from The Open Group.
 #include "Xlibint.h"
 #include <nx-X11/Xresource.h>
 #include <nx-X11/keysymdef.h>
+#include "Xresinternal.h"
 
 #include <stdio.h> /* sprintf */
-
-typedef unsigned long Signature;
 
 #define NEEDVTABLE
 #include "ks_tables.h"
@@ -69,8 +68,7 @@ SameValue(
     return False;
 }
 
-char *XKeysymToString(ks)
-    KeySym ks;
+char *XKeysymToString(KeySym ks)
 {
     register int i, n;
     int h;
@@ -146,7 +144,7 @@ char *XKeysymToString(ks)
                 s[i] = 'A'+ val1 - 10;
         }
         s[i] = 'U';
-        return s; 
+        return s;
     }
     return ((char *) NULL);
 }

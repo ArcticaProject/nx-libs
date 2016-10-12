@@ -134,9 +134,9 @@ typedef struct _XLCdGenericPart {
 } XLCdGenericPart;
 
 typedef struct _XLCdGenericRec {
-    XLCdCoreRec 	core;	
+    XLCdCoreRec 	core;
     XLCdPublicPart 	pub;
-    XLCdGenericPart 	gen;	
+    XLCdGenericPart 	gen;
 } XLCdGenericRec, *XLCdGeneric;
 
 extern XLCdMethods _XlcGenericMethods;

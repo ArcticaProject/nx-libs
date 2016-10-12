@@ -53,10 +53,14 @@ in this Software without prior written authorization from The Open Group.
 #include <config.h>
 #endif
 #include "Xlibint.h"
+#if USE_XCB
+#include "Xxcbint.h"
+#else /* !USE_XCB */
 #include <nx-X11/Xtrans/Xtrans.h>
+#include <nx-X11/extensions/bigreqstr.h>
+#endif /* USE_XCB */
 #include <nx-X11/Xatom.h>
 #include <nx-X11/Xresource.h>
-#include <nx-X11/extensions/bigreqstr.h>
 #include <stdio.h>
 #include "Xintconn.h"
 
@@ -68,6 +72,7 @@ in this Software without prior written authorization from The Open Group.
 extern void *_X11TransSocketProxyConnInfo(XtransConnInfo);
 #endif
 
+#if !USE_XCB
 #ifdef X_NOT_POSIX
 #define Size_t unsigned int
 #else
@@ -80,6 +85,7 @@ typedef struct {
     unsigned long seq;
     int opcode;
 } _XBigReqState;
+#endif /* !USE_XCB */
 
 #ifdef XTHREADS
 #include "locking.h"
@@ -98,10 +104,12 @@ static xReq _dummy_request = {
 };
 
 static void OutOfMemory(Display *dpy, char *setup);
+#if !USE_XCB
 static Bool _XBigReqHandler(Display *dpy, xReply *rep, char *buf, int len,
 				XPointer data);
+#endif /* !USE_XCB */
 
-/* 
+/*
  * Connects to a server, creates a Display object and returns a pointer to
  * the newly created Display back to the caller.
  */
@@ -113,15 +121,19 @@ XOpenDisplay (
 	register int i;
 	int j, k;			/* random iterator indexes */
 	char *display_name;		/* pointer to display name */
+#if !USE_XCB
 	int endian;			/* to determine which endian. */
 	xConnClientPrefix client;	/* client information */
-	xConnSetupPrefix prefix;	/* prefix information */
-	int vendorlen;			/* length of vendor string */
+	int idisplay;			/* display number */
+	int prefixread = 0;             /* setup prefix already read? */
+	char *conn_auth_name, *conn_auth_data;
+	int conn_auth_namelen, conn_auth_datalen;
+#endif /* !USE_XCB */
 	char *setup = NULL;		/* memory allocated at startup */
 	char *fullname = NULL;		/* expanded name of display */
-	int idisplay;			/* display number */
 	int iscreen;			/* screen number */
-	int prefixread = 0;             /* setup prefix already read? */
+	xConnSetupPrefix prefix;	/* prefix information */
+	int vendorlen;			/* length of vendor string */
 	union {
 		xConnSetup *setup;
 		char *failure;
@@ -133,20 +145,20 @@ XOpenDisplay (
 	} u;				/* proto data returned from server */
 	long setuplength;	/* number of bytes in setup message */
 	long usedbytes = 0;     /* number of bytes we have processed */
-	char *conn_auth_name, *conn_auth_data;
-	int conn_auth_namelen, conn_auth_datalen;
 	unsigned long mask;
-       long int conn_buf_size;
-       char *xlib_buffer_size;
+	long int conn_buf_size;
+	char *xlib_buffer_size;
 
+#if !USE_XCB
 	bzero((char *) &client, sizeof(client));
 	bzero((char *) &prefix, sizeof(prefix));
+#endif /* !USE_XCB */
 
 #if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST)
         fprintf(stderr, "\nXOpenDisplay: Called with display [%s].\n", display);
 #endif
 	/*
-	 * If the display specifier string supplied as an argument to this 
+	 * If the display specifier string supplied as an argument to this
 	 * routine is NULL or a pointer to NULL, read the DISPLAY variable.
 	 */
 	if (display == NULL || *display == '\0') {
@@ -159,6 +171,7 @@ XOpenDisplay (
 		/* Display is non-NULL, copy the pointer */
 		display_name = (char *)display;
 	}
+
 /*
  * Set the default error handlers.  This allows the global variables to
  * default to NULL for use with shared libraries.
@@ -179,6 +192,32 @@ XOpenDisplay (
  * will set fullname to point to the expanded name.
  */
 
+#if USE_XCB
+	if(!_XConnectXCB(dpy, display, &fullname, &iscreen)) {
+		/* Try falling back on other transports if no transport specified */
+		const char *slash = strrchr(display_name, '/');
+		if(slash == NULL) {
+			const char *protocols[] = {"local", "unix", "tcp", "inet6", "inet", NULL};
+			const char **s;
+			size_t buf_size = strlen(display_name) + 7; // max strlen + 2 (null + /)
+			char *buf = Xmalloc(buf_size * sizeof(char));
+
+			if(buf) {
+				for(s = protocols; buf && *s; s++) {
+					snprintf(buf, buf_size, "%s/%s", *s, display_name);
+					if(_XConnectXCB(dpy, buf, &fullname, &iscreen))
+						goto fallback_success;
+				}
+				Xfree(buf);
+			}
+		}
+
+		dpy->display_name = fullname;
+		OutOfMemory(dpy, NULL);
+		return NULL;
+	}
+fallback_success:
+#else /* !USE_XCB */
 	if ((dpy->trans_conn = _X11TransConnectDisplay (
 					 display_name, &fullname, &idisplay,
 					 &iscreen, &conn_auth_name,
@@ -189,6 +228,7 @@ XOpenDisplay (
 	}
 
 	dpy->fd = _X11TransGetConnectionNumber (dpy->trans_conn);
+#endif /* USE_XCB */
 
 #if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST) 
         fprintf(stderr, "\nXOpenDisplay: Connected display with dpy->fd = [%d].\n", dpy->fd);
@@ -274,7 +314,7 @@ XOpenDisplay (
 	if (!_XPollfdCacheInit(dpy)) {
 	        OutOfMemory (dpy, setup);
 		return(NULL);
-	}	
+	}
 
 	/* Set up the output buffers. */
 #ifndef XLIBDEFAULTBUFSIZE
@@ -283,23 +323,34 @@ XOpenDisplay (
 #ifndef XLIBMINBUFSIZE
 #define XLIBMINBUFSIZE BUFSIZE /* old default buffer size */
 #endif
-    if ((xlib_buffer_size = getenv("XLIBBUFFERSIZE")) == NULL)
-        conn_buf_size = XLIBDEFAULTBUFSIZE;
-    else
-        conn_buf_size = 1024 * strtol(xlib_buffer_size, NULL, 10);
-    if (conn_buf_size < XLIBMINBUFSIZE)
-        conn_buf_size = XLIBMINBUFSIZE;
+	xlib_buffer_size = getenv("XLIBBUFFERSIZE");
+
+#ifdef __sun /* Backwards compatibility for old Solaris libX11 name */
+	if (xlib_buffer_size == NULL)
+	    xlib_buffer_size = getenv("XSUNBUFFERSIZE");
+#endif
+
+	if (xlib_buffer_size == NULL)
+	    conn_buf_size = XLIBDEFAULTBUFSIZE;
+	else
+	    conn_buf_size = 1024 * strtol(xlib_buffer_size, NULL, 10);
+	if (conn_buf_size < XLIBMINBUFSIZE)
+	    conn_buf_size = XLIBMINBUFSIZE;
 #if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST) 
     fprintf (stderr, "Xlib: Running with XLIBBUFFERSIZE [%d] XLIBMINBUFSIZE [%d] "
                  "buffer size [%ld].\n", XLIBDEFAULTBUFSIZE, XLIBMINBUFSIZE, conn_buf_size);
 #endif
 
-    if ((dpy->bufptr = dpy->buffer = Xcalloc(1, conn_buf_size)) == NULL) {
-         OutOfMemory (dpy, setup);
-         return(NULL);
-    }
-    dpy->bufmax = dpy->buffer + conn_buf_size;
- 
+	if ((dpy->bufptr = dpy->buffer = Xcalloc(1, conn_buf_size)) == NULL) {
+	    OutOfMemory (dpy, setup);
+	    return(NULL);
+	}
+	dpy->bufmax = dpy->buffer + conn_buf_size;
+#if USE_XCB
+	dpy->xcb->real_bufmax = dpy->bufmax;
+	dpy->bufmax = dpy->buffer;
+#endif
+
 	/* Set up the input event queue and input event queue parameters. */
 	dpy->head = dpy->tail = NULL;
 	dpy->qlen = 0;
@@ -312,10 +363,11 @@ XOpenDisplay (
 	    return(NULL);
 	}
 
+#if !USE_XCB
 /*
  * The xConnClientPrefix describes the initial connection setup information
  * and is followed by the authorization information.  Sites that are interested
- * in security are strongly encouraged to use an authentication and 
+ * in security are strongly encouraged to use an authentication and
  * authorization system such as Kerberos.
  */
 	endian = 1;
@@ -373,7 +425,18 @@ XOpenDisplay (
 	    Xfree ((char *)dpy);
 	    return(NULL);
 	}
+#endif /* !USE_XCB */
 
+#if USE_XCB
+	{
+		const struct xcb_setup_t *xcbsetup = xcb_get_setup(dpy->xcb->connection);
+		memcpy(&prefix, xcbsetup, sizeof(prefix));
+		setuplength = prefix.length << 2;
+		setup = (char *) xcbsetup;
+		setup += SIZEOF(xConnSetupPrefix);
+		u.setup = (xConnSetup *) setup;
+	}
+#else /* !USE_XCB */
 	setuplength = prefix.length << 2;
 	if ( (u.setup = (xConnSetup *)
 	      (setup =  Xmalloc ((unsigned) setuplength))) == NULL) {
@@ -389,7 +452,7 @@ XOpenDisplay (
  */
 	if (prefix.success != xTrue) {
 		/* XXX - printing messages marks a bad programming interface */
-		fprintf (stderr, 
+		fprintf (stderr,
 		      "Xlib: connection to \"%s\" refused by server\r\nXlib: ",
 			 fullname);
 
@@ -404,6 +467,7 @@ XOpenDisplay (
 		OutOfMemory(dpy, setup);
 		return (NULL);
 	}
+#endif /* USE_XCB */
 
 /*
  * Check if the reply was long enough to get any information out of it.
@@ -443,7 +507,7 @@ XOpenDisplay (
 	    OutOfMemory(dpy, setup);
 	    return (NULL);
 	}
-    
+
 	while (!(mask & 1)) {
 	    dpy->resource_shift++;
 	    mask = mask >> 1;
@@ -480,15 +544,12 @@ XOpenDisplay (
   	(void) strncpy(dpy->vendor, u.vendor, vendorlen);
 	dpy->vendor[vendorlen] = '\0';
  	vendorlen = (vendorlen + 3) & ~3;	/* round up */
+	u.vendor += vendorlen;
 
-
-	memmove (setup, u.vendor + vendorlen,
-		 (int) setuplength - sz_xConnSetup - vendorlen);
- 	u.vendor = setup;
 /*
  * Now iterate down setup information.....
  */
-	dpy->pixmap_format = 
+	dpy->pixmap_format =
 	    (ScreenFormat *)Xmalloc(
 		(unsigned) (dpy->nformats *sizeof(ScreenFormat)));
 	if (dpy->pixmap_format == NULL) {
@@ -518,7 +579,7 @@ XOpenDisplay (
 /*
  * next the Screen structures.
  */
-	dpy->screens = 
+	dpy->screens =
 	    (Screen *)Xmalloc((unsigned) dpy->nscreens*sizeof(Screen));
 	if (dpy->screens == NULL) {
 	        OutOfMemory (dpy, setup);
@@ -539,7 +600,7 @@ XOpenDisplay (
 		return(NULL);
 	    }
 
-	    root_visualID = u.rp->rootVisualID;	    
+	    root_visualID = u.rp->rootVisualID;
 	    sp->display	    = dpy;
 	    sp->root 	    = u.rp->windowId;
 	    sp->cmap 	    = u.rp->defaultColormap;
@@ -579,12 +640,12 @@ XOpenDisplay (
 		    OutOfMemory (dpy, setup);
 		    return(NULL);
 		}
-		
+
 		dp->depth = u.dp->depth;
 		dp->nvisuals = u.dp->nVisuals;
 		u.dp = (xDepth *) (((char *) u.dp) + sz_xDepth);
 		if (dp->nvisuals > 0) {
-		    dp->visuals = 
+		    dp->visuals =
 		      (Visual *)Xmalloc((unsigned)dp->nvisuals*sizeof(Visual));
 		    if (dp->visuals == NULL) {
 			OutOfMemory (dpy, setup);
@@ -599,7 +660,7 @@ XOpenDisplay (
 			    OutOfMemory (dpy, setup);
 			    return(NULL);
 			}
-			
+
 			vp->visualid	= u.vp->visualID;
 			vp->class	= u.vp->class;
 			vp->bits_per_rgb= u.vp->bitsPerRGB;
@@ -637,7 +698,9 @@ XOpenDisplay (
  * Now start talking to the server to setup all other information...
  */
 
+#if !USE_XCB
 	Xfree (setup);	/* all finished with setup information */
+#endif /* !USE_XCB */
 
 /*
  * Make sure default screen is legal.
@@ -647,10 +710,18 @@ XOpenDisplay (
 	    return(NULL);
 	}
 
+#if !USE_XCB
 /*
  * finished calling internal routines, now unlock for external routines
  */
 	UnlockDisplay(dpy);
+#endif /* !USE_XCB */
+
+#if USE_XCB
+	dpy->bigreq_size = xcb_get_maximum_request_length(dpy->xcb->connection);
+	if(dpy->bigreq_size <= dpy->max_request_size)
+		dpy->bigreq_size = 0;
+#endif /* USE_XCB */
 
 /*
  * Set up other stuff clients are always going to use.
@@ -679,11 +750,12 @@ XOpenDisplay (
  */
 	LockDisplay(dpy);
 	{
+	    xGetPropertyReply reply;
+	    xGetPropertyReq *req;
+#if !USE_XCB
 	    _XAsyncHandler async;
 	    _XBigReqState async_state;
 	    xQueryExtensionReq *qreq;
-	    xGetPropertyReply reply;
-	    xGetPropertyReq *req;
 	    xBigReqEnableReq *breq;
 	    xBigReqEnableReply brep;
 
@@ -697,6 +769,7 @@ XOpenDisplay (
 	    qreq->nbytes = bignamelen;
 	    qreq->length += (bignamelen+3)>>2;
 	    Data(dpy, XBigReqExtensionName, bignamelen);
+#endif /* !USE_XCB */
 
 	    GetReq (GetProperty, req);
 	    req->window = RootWindow(dpy, 0);
@@ -717,6 +790,7 @@ XOpenDisplay (
 		else if (reply.propertyType != None)
 		    _XEatData(dpy, reply.nItems * (reply.format >> 3));
 	    }
+#if !USE_XCB
 	    DeqAsyncHandler(dpy, &async);
 	    if (async_state.opcode) {
 		GetReq(BigReqEnable, breq);
@@ -725,6 +799,7 @@ XOpenDisplay (
 		if (_XReply(dpy, (xReply *)&brep, 0, xFalse))
 		    dpy->bigreq_size = brep.max_request_size;
 	    }
+#endif /* !USE_XCB */
 	}
 	UnlockDisplay(dpy);
 
@@ -746,13 +821,14 @@ XOpenDisplay (
  	return(dpy);
 }
 
+#if !USE_XCB
 static Bool
-_XBigReqHandler(dpy, rep, buf, len, data)
-    register Display *dpy;
-    register xReply *rep;
-    char *buf;
-    int len;
-    XPointer data;
+_XBigReqHandler(
+    register Display *dpy,
+    register xReply *rep,
+    char *buf,
+    int len,
+    XPointer data)
 {
     _XBigReqState *state;
     xQueryExtensionReply replbuf;
@@ -771,9 +847,10 @@ _XBigReqHandler(dpy, rep, buf, len, data)
 	state->opcode = repl->major_opcode;
     return True;
 }
+#endif /* !USE_XCB */
 
 
-/* XFreeDisplayStructure frees all the storage associated with a 
+/* XFreeDisplayStructure frees all the storage associated with a
  * Display.  It is used by XOpenDisplay if it runs out of memory,
  * and also by XCloseDisplay.   It needs to check whether all pointers
  * are non-NULL before dereferencing them, since it may be called
@@ -782,9 +859,19 @@ _XBigReqHandler(dpy, rep, buf, len, data)
  * before the first possible call on this.
  */
 
-void _XFreeDisplayStructure(dpy)
-	register Display *dpy;
+void _XFreeDisplayStructure(Display *dpy)
 {
+	/* move all cookies in the EQ to the jar, then free them. */
+	if (dpy->qfree) {
+	    _XQEvent *qelt = dpy->qfree;
+	    while (qelt) {
+		if (_XIsEventCookie(dpy, &qelt->event))
+		    _XStoreEventCookie(dpy, &qelt->event);
+		qelt = qelt->next;
+	    }
+        }
+	if (dpy->cookiejar)
+	    _XFreeEventCookies(dpy);
 	while (dpy->ext_procs) {
 	    _XExtension *ext = dpy->ext_procs;
 	    dpy->ext_procs = ext->next;
@@ -844,7 +931,7 @@ void _XFreeDisplayStructure(dpy)
 
 	    Xfree ((char *)dpy->screens);
 	    }
-	
+
 	if (dpy->pixmap_format) {
 	    register int i;
 
@@ -898,17 +985,26 @@ void _XFreeDisplayStructure(dpy)
 	if (dpy->filedes)
 	    Xfree (dpy->filedes);
 
+#if USE_XCB
+	_XFreeX11XCBStructure(dpy);
+#endif /* USE_XCB */
+
 	Xfree ((char *)dpy);
 }
 
 /* OutOfMemory is called if malloc fails.  XOpenDisplay returns NULL
    after this returns. */
 
-static void OutOfMemory (dpy, setup)
-    Display *dpy;
-    char *setup;
+static void OutOfMemory(Display *dpy, char *setup)
 {
+#if USE_XCB
+    if(dpy->xcb->connection)
+	xcb_disconnect(dpy->xcb->connection);
+#else /* !USE_XCB */
     _XDisconnectDisplay (dpy->trans_conn);
+#endif /* USE_XCB */
     _XFreeDisplayStructure (dpy);
+#if !USE_XCB
     if (setup) Xfree (setup);
+#endif /* !USE_XCB */
 }

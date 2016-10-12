@@ -90,6 +90,13 @@ NX_XCOMPEXTCONFIGTARGET = $(NX_XCOMPEXTLIBDIR)/config.status
 SUBDIRS = xlibi18n
 #endif
 
+/*
+ FIXME: This is switchable upstream via configure option, we leave it
+ on for now as this is the upstream default.
+*/
+XCMS_DEFINES = -DXCMS
+XCB_DEFINES = -DUSE_XCB=0
+
 #include <Threads.tmpl>
 
 #ifndef MotifBC
@@ -140,8 +147,8 @@ EXTRA_LIBRARIES = /**/
    POLL_DEFINES = -DUSE_POLL
 #endif
    CONN_DEFINES = $(CONNECTION_FLAGS)
-   XTRANS_X_DEFINES = -DX11_t -DTRANS_CLIENT $(XTRANS_FAILDEFINES)
-   XTRANS_XIM_DEFINES = -DXIM_t -DTRANS_CLIENT $(XTRANS_FAILDEFINES)
+   XTRANS_X_DEFINES = $(XTRANS_FAILDEFINES)
+   XTRANS_XIM_DEFINES = $(XTRANS_FAILDEFINES)
 #if HasBSD44Sockets
    SOCK_DEFINES = -DBSD44SOCKETS
 #endif
@@ -170,7 +177,7 @@ EXTRA_LIBRARIES = /**/
 #elif HasGetresuid
   SETID_DEFINES = -DHASGETRESUID
 #endif
-    XLC_DEFINES = -DXLOCALEDIR=\"$(XLOCALEDIR)\"
+    XLC_DEFINES = -DXLOCALEDIR=\"$(XLOCALEDIR)\" -DXLOCALELIBDIR=\"$(XLOCALELIBDIR)\"
 #if (defined(FreeBSDArchitecture) && OSRelVersion < 500016) || \
 	defined(OpenBSDArchitecture)
 THRSTUBSRCS = UIThrStubs.c
@@ -187,7 +194,7 @@ XCURSOR_DEFINES = -DUSE_DYNAMIC_XCURSOR -DLIBXCURSOR=\"libXcursor.so.$(SOXCURSOR
         POSTLOCALELIBDEFINES = -DPOSTLOCALELIBDIR=\"$(POSTLOCALELIBDIR)\"
 #endif
         DEFINES = $(MALLOC_DEFINES) $(LIB_DEFINES) $(MISC_DEFINES)\
-			$(POSTLOCALELIBDEFINES) $(NX_INCLUDES) $(NX_DEFINES)
+			$(POSTLOCALELIBDEFINES) $(NX_INCLUDES) $(NX_DEFINES) ${XCMS_DEFINES} ${XCB_DEFINES}
    OPEN_DEFINES = -I$(EXTINCSRC) $(K5INCL) $(K5DEFS)
  DEPEND_DEFINES = $(OPEN_DEFINES) $(TRANS_INCLUDES) $(CONN_DEFINES) $(THREADS_DEFINES) DependDefines
        AUTHOBJS = AuDispose.o AuGetBest.o AuFileName.o AuRead.o
@@ -286,6 +293,7 @@ SRCS1 = \
 	FreeCols.c \
 	FreeCurs.c \
 	FreeEData.c \
+	FreeEventData.c \
 	FreeGC.c \
 	FreePix.c \
 	FSSaver.c \
@@ -294,6 +302,7 @@ SRCS1 = \
 	GetAtomNm.c \
 	GetColor.c \
 	GetDflt.c \
+	GetEventData.c \
 	GetFPath.c \
 	GetFProp.c \
 	GetGeom.c \
@@ -416,6 +425,7 @@ OBJS1 = \
 	FreeCols.o \
 	FreeCurs.o \
 	FreeEData.o \
+	FreeEventData.o \
 	FreeGC.o \
 	FreePix.o \
 	FSSaver.o \
@@ -424,6 +434,7 @@ OBJS1 = \
 	GetAtomNm.o \
 	GetColor.o \
 	GetDflt.o \
+	GetEventData.o \
 	GetFPath.o \
 	GetFProp.o \
 	GetGeom.o \
@@ -789,8 +800,8 @@ SRCS3 = \
 	RegstFlt.c \
 	locking.c \
 	LockDis.c \
-	x11trans.c \
-	ximtrans.c \
+	x11_trans.c \
+	xim_trans.c \
 	$(XKBSRCS) $(LCSRCS) $(MISCSRCS)
 
 OBJS3 = \
@@ -872,8 +883,8 @@ OBJS3 = \
 	RegstFlt.o \
 	locking.o \
 	LockDis.o \
-	x11trans.o \
-	ximtrans.o \
+	x11_trans.o \
+	xim_trans.o \
 	$(XKBOBJS) $(LCOBJS) $(MISCOBJS)
 
 #if BuildLoadableXlibI18n
@@ -1054,10 +1065,8 @@ EXTRASHAREDOBJS = $(STATICLCOBJS)
 SpecialCLibObjectRule(ErrDes,$(ICONFIGFILES),$(EDB_DEFINES))
 SpecialCLibObjectRule(StrKeysym,$(ICONFIGFILES),$(KDB_DEFINES))
 SpecialCLibObjectRule(ConnDis,$(ICONFIGFILES),$(XDMAUTHDEFS) $(RPCDEFS) $(CONN_DEFINES) $(SOCK_DEFINES) $(POLL_DEFINES) $(XTRANS_X_DEFINES) $(K5INCL) $(K5DEFS))
-SpecialCLibObjectRule(x11trans,$(ICONFIGFILES),$(TRANS_INCLUDES) $(CONN_DEFINES) $(SOCK_DEFINES) $(XTRANS_X_DEFINES) $(POLL_DEFINES))
-LinkFile(x11trans.c,$(TRANSCOMMSRC)/transport.c)
-SpecialCLibObjectRule(ximtrans,$(ICONFIGFILES),$(TRANS_INCLUDES) $(CONN_DEFINES) $(SOCK_DEFINES) $(XTRANS_XIM_DEFINES) $(POLL_DEFINES))
-LinkFile(ximtrans.c,$(TRANSCOMMSRC)/transport.c)
+SpecialCLibObjectRule(x11_trans,$(ICONFIGFILES),$(TRANS_INCLUDES) $(CONN_DEFINES) $(SOCK_DEFINES) $(XTRANS_X_DEFINES) $(POLL_DEFINES))
+SpecialCLibObjectRule(xim_trans,$(ICONFIGFILES),$(TRANS_INCLUDES) $(CONN_DEFINES) $(SOCK_DEFINES) $(XTRANS_XIM_DEFINES) $(POLL_DEFINES))
 SpecialCLibObjectRule(OpenDis,$(ICONFIGFILES),$(BC_DEFINES) $(OPEN_DEFINES) $(XTRANS_X_DEFINES) $(XKB_DEFINES))
 SpecialCLibObjectRule(XlibInt,$(ICONFIGFILES),$(CONN_DEFINES) $(POLL_DEFINES) $(XTRANS_X_DEFINES))
 SpecialCLibObjectRule(Font,$(ICONFIGFILES),$(SHM_DEFINES) $(XF86BIGFONT_DEFINES))
@@ -1099,6 +1108,7 @@ LOCAL_LDFLAGS=-F
 #endif
 
 MAKEKEYS = ./makekeys
+KEYSYMDEFS =  $(XINCLUDESRC)/keysymdef.h $(XINCLUDESRC)/XF86keysym.h $(XINCLUDESRC)/Sunkeysym.h $(XINCLUDESRC)/DECkeysym.h $(XINCLUDESRC)/HPkeysym.h
 
 #if CrossCompiling
 HOST_LDLIBS=
@@ -1109,10 +1119,10 @@ HOST_LDLIBS=$(LDLIBS)
 HOST_CFLAGS=$(CFLAGS)
 #endif
 
-ks_tables.h: $(XINCLUDESRC)/keysymdef.h util/makekeys.c
+ks_tables.h: $(KEYSYMDEFS) util/makekeys.c
 	RemoveFiles($@ HostProgramTargetName(makekeys) makekeys.Osuf)
 	-HostLinkRule(HostProgramTargetName(makekeys),$(HOST_CFLAGS) $(LOCAL_LDFLAGS),util/makekeys.c,$(HOST_LDLIBS))
-	RunProgram(MAKEKEYS,< $(XINCLUDESRC)/keysymdef.h > ks_tables_h)
+	RunProgram(MAKEKEYS, $(KEYSYMDEFS) > ks_tables_h)
 	$(MV) ks_tables_h $@
 	RemoveFiles(HostProgramTargetName(makekeys) makekeys.Osuf ks_tables_h)
 

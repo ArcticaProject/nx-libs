@@ -28,13 +28,13 @@ Copyright 1987 by Digital Equipment Corporation, Maynard, Massachusetts.
 
                         All Rights Reserved
 
-Permission to use, copy, modify, and distribute this software and its 
-documentation for any purpose and without fee is hereby granted, 
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
 provided that the above copyright notice appear in all copies and that
-both that copyright notice and this permission notice appear in 
+both that copyright notice and this permission notice appear in
 supporting documentation, and that the name of Digital not be
 used in advertising or publicity pertaining to distribution of the
-software without specific, written prior permission.  
+software without specific, written prior permission.
 
 DIGITAL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
 ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
@@ -58,86 +58,108 @@ SOFTWARE.
 #define safestrlen(s) ((s) ? strlen(s) : 0)
 
 int
-XSetSizeHints(dpy, w, hints, property)		/* old routine */
-	Display *dpy;
-	Window w;
-	XSizeHints *hints;
-        Atom property;
+XSetSizeHints(		/* old routine */
+	Display *dpy,
+	Window w,
+	XSizeHints *hints,
+        Atom property)
 {
-        xPropSizeHints prop;
+	xPropSizeHints prop;
+	memset(&prop, 0, sizeof(prop));
 	prop.flags = (hints->flags & (USPosition|USSize|PAllHints));
-	prop.x = hints->x;
-	prop.y = hints->y;
-	prop.width = hints->width;
-	prop.height = hints->height;
-	prop.minWidth = hints->min_width;
-	prop.minHeight = hints->min_height;
-	prop.maxWidth  = hints->max_width;
-	prop.maxHeight = hints->max_height;
-	prop.widthInc = hints->width_inc;
-	prop.heightInc = hints->height_inc;
-	prop.minAspectX = hints->min_aspect.x;
-	prop.minAspectY = hints->min_aspect.y;
-	prop.maxAspectX = hints->max_aspect.x;
-	prop.maxAspectY = hints->max_aspect.y;
+	if (hints->flags & (USPosition|PPosition)) {
+	    prop.x = hints->x;
+	    prop.y = hints->y;
+	}
+	if (hints->flags & (USSize|PSize)) {
+	    prop.width = hints->width;
+	    prop.height = hints->height;
+	}
+	if (hints->flags & PMinSize) {
+	    prop.minWidth = hints->min_width;
+	    prop.minHeight = hints->min_height;
+	}
+	if (hints->flags & PMaxSize) {
+	    prop.maxWidth  = hints->max_width;
+	    prop.maxHeight = hints->max_height;
+	}
+	if (hints->flags & PResizeInc) {
+	    prop.widthInc = hints->width_inc;
+	    prop.heightInc = hints->height_inc;
+	}
+	if (hints->flags & PAspect) {
+	    prop.minAspectX = hints->min_aspect.x;
+	    prop.minAspectY = hints->min_aspect.y;
+	    prop.maxAspectX = hints->max_aspect.x;
+	    prop.maxAspectY = hints->max_aspect.y;
+	}
 	return XChangeProperty (dpy, w, property, XA_WM_SIZE_HINTS, 32,
-				PropModeReplace, (unsigned char *) &prop, 
+				PropModeReplace, (unsigned char *) &prop,
 				OldNumPropSizeElements);
 }
 
-/* 
- * XSetWMHints sets the property 
+/*
+ * XSetWMHints sets the property
  *	WM_HINTS 	type: WM_HINTS	format:32
  */
 
 int
-XSetWMHints (dpy, w, wmhints)
-	Display *dpy;
-	Window w;
-	XWMHints *wmhints; 
+XSetWMHints (
+	Display *dpy,
+	Window w,
+	XWMHints *wmhints)
 {
 	xPropWMHints prop;
+	memset(&prop, 0, sizeof(prop));
 	prop.flags = wmhints->flags;
-	prop.input = (wmhints->input == True ? 1 : 0);
-	prop.initialState = wmhints->initial_state;
-	prop.iconPixmap = wmhints->icon_pixmap;
-	prop.iconWindow = wmhints->icon_window;
-	prop.iconX = wmhints->icon_x;
-	prop.iconY = wmhints->icon_y;
-	prop.iconMask = wmhints->icon_mask;
-	prop.windowGroup = wmhints->window_group;
+	if (wmhints->flags & InputHint)
+	    prop.input = (wmhints->input == True ? 1 : 0);
+	if (wmhints->flags & StateHint)
+	    prop.initialState = wmhints->initial_state;
+	if (wmhints->flags & IconPixmapHint)
+	    prop.iconPixmap = wmhints->icon_pixmap;
+	if (wmhints->flags & IconWindowHint)
+	    prop.iconWindow = wmhints->icon_window;
+	if (wmhints->flags & IconPositionHint) {
+	    prop.iconX = wmhints->icon_x;
+	    prop.iconY = wmhints->icon_y;
+	}
+	if (wmhints->flags & IconMaskHint)
+	    prop.iconMask = wmhints->icon_mask;
+	if (wmhints->flags & WindowGroupHint)
+	    prop.windowGroup = wmhints->window_group;
 	return XChangeProperty (dpy, w, XA_WM_HINTS, XA_WM_HINTS, 32,
-				PropModeReplace, (unsigned char *) &prop, 
+				PropModeReplace, (unsigned char *) &prop,
 				NumPropWMHintsElements);
 }
 
 
 
-/* 
- * XSetZoomHints sets the property 
+/*
+ * XSetZoomHints sets the property
  *	WM_ZOOM_HINTS 	type: WM_SIZE_HINTS format: 32
  */
 
 int
-XSetZoomHints (dpy, w, zhints)
-	Display *dpy;
-	Window w;
-	XSizeHints *zhints;
+XSetZoomHints (
+	Display *dpy,
+	Window w,
+	XSizeHints *zhints)
 {
 	return XSetSizeHints (dpy, w, zhints, XA_WM_ZOOM_HINTS);
 }
 
 
-/* 
- * XSetNormalHints sets the property 
+/*
+ * XSetNormalHints sets the property
  *	WM_NORMAL_HINTS 	type: WM_SIZE_HINTS format: 32
  */
 
 int
-XSetNormalHints (dpy, w, hints)			/* old routine */
-	Display *dpy;
-	Window w;
-	XSizeHints *hints;
+XSetNormalHints (			/* old routine */
+	Display *dpy,
+	Window w,
+	XSizeHints *hints)
 {
 	return XSetSizeHints (dpy, w, hints, XA_WM_NORMAL_HINTS);
 }
@@ -151,11 +173,11 @@ XSetNormalHints (dpy, w, hints)			/* old routine */
  */
 
 int
-XSetIconSizes (dpy, w, list, count)
-	Display *dpy;
-	Window w;	/* typically, root */
-	XIconSize *list;
-	int count; 	/* number of items on the list */
+XSetIconSizes (
+	Display *dpy,
+	Window w,	/* typically, root */
+	XIconSize *list,
+	int count) 	/* number of items on the list */
 {
 	register int i;
 	xPropIconSize *pp, *prop;
@@ -173,8 +195,8 @@ XSetIconSizes (dpy, w, list, count)
 		pp += 1;
 		list += 1;
 	    }
-	    XChangeProperty (dpy, w, XA_WM_ICON_SIZE, XA_WM_ICON_SIZE, 32, 
-			     PropModeReplace, (unsigned char *) prop, 
+	    XChangeProperty (dpy, w, XA_WM_ICON_SIZE, XA_WM_ICON_SIZE, 32,
+			     PropModeReplace, (unsigned char *) prop,
 			     count * NumPropIconSizeElements);
 	    Xfree ((char *)prop);
 	}
@@ -182,11 +204,11 @@ XSetIconSizes (dpy, w, list, count)
 }
 
 int
-XSetCommand (dpy, w, argv, argc)
-	Display *dpy;
-	Window w;
-	char **argv;
-	int argc;
+XSetCommand (
+	Display *dpy,
+	Window w,
+	char **argv,
+	int argc)
 {
 	register int i;
 	register int nbytes;
@@ -194,10 +216,10 @@ XSetCommand (dpy, w, argv, argc)
 	for (i = 0, nbytes = 0; i < argc; i++) {
 		nbytes += safestrlen(argv[i]) + 1;
 	}
-	if ((bp = buf = Xmalloc((unsigned) nbytes))) { 
+	if ((bp = buf = Xmalloc((unsigned) nbytes))) {
 	    /* copy arguments into single buffer */
 	    for (i = 0; i < argc; i++) {
-		if (argv[i]) { 
+		if (argv[i]) {
 		    (void) strcpy(bp, argv[i]);
 		    bp += strlen(argv[i]) + 1;
 		}
@@ -206,11 +228,11 @@ XSetCommand (dpy, w, argv, argc)
 	    }
 	    XChangeProperty (dpy, w, XA_WM_COMMAND, XA_STRING, 8,
 			     PropModeReplace, (unsigned char *)buf, nbytes);
-	    Xfree(buf);		
+	    Xfree(buf);
 	}
 	return 1;
 }
-/* 
+/*
  * XSetStandardProperties sets the following properties:
  *	WM_NAME		  type: STRING		format: 8
  *	WM_ICON_NAME	  type: STRING		format: 8
@@ -245,7 +267,7 @@ XSetStandardProperties (
 		phints.flags |= IconPixmapHint;
 		}
 	if (argv != NULL) XSetCommand(dpy, w, argv, argc);
-	
+
 	if (hints != NULL) XSetNormalHints(dpy, w, hints);
 
 	if (phints.flags != 0) XSetWMHints(dpy, w, &phints);
@@ -254,20 +276,20 @@ XSetStandardProperties (
 }
 
 int
-XSetTransientForHint(dpy, w, propWindow)
-	Display *dpy;
-	Window w;
-	Window propWindow;
+XSetTransientForHint(
+	Display *dpy,
+	Window w,
+	Window propWindow)
 {
 	return XChangeProperty(dpy, w, XA_WM_TRANSIENT_FOR, XA_WINDOW, 32,
 			       PropModeReplace, (unsigned char *) &propWindow, 1);
 }
 
 int
-XSetClassHint(dpy, w, classhint)
-	Display *dpy;
-	Window w;
-	XClassHint *classhint;
+XSetClassHint(
+	Display *dpy,
+	Window w,
+	XClassHint *classhint)
 {
 	char *class_string;
 	char *s;
@@ -275,7 +297,7 @@ XSetClassHint(dpy, w, classhint)
 
 	len_nm = safestrlen(classhint->res_name);
 	len_cl = safestrlen(classhint->res_class);
-	if ((class_string = s = Xmalloc((unsigned) (len_nm + len_cl + 2)))) { 
+	if ((class_string = s = Xmalloc((unsigned) (len_nm + len_cl + 2)))) {
 	    if (len_nm) {
 		strcpy(s, classhint->res_name);
 		s += len_nm + 1;
@@ -287,7 +309,7 @@ XSetClassHint(dpy, w, classhint)
 	    else
 		*s = '\0';
 	    XChangeProperty(dpy, w, XA_WM_CLASS, XA_STRING, 8,
-			    PropModeReplace, (unsigned char *) class_string, 
+			    PropModeReplace, (unsigned char *) class_string,
 			    len_nm+len_cl+2);
 	    Xfree(class_string);
 	}
