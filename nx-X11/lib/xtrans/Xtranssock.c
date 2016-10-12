@@ -108,11 +108,7 @@ from the copyright holders.
 
 #ifdef UNIXCONN
 #ifndef X_NO_SYS_UN
-#ifndef Lynx
 #include <sys/un.h>
-#else
-#include <un.h>
-#endif
 #endif
 #include <sys/stat.h>
 #endif
@@ -1720,7 +1716,7 @@ TRANS(SocketUNIXCreateListener) (XtransConnInfo ciptr, char *port,
 #endif
     }
 
-#if (defined(BSD44SOCKETS) || defined(__UNIXWARE__)) && !defined(Lynx)
+#if (defined(BSD44SOCKETS) || defined(__UNIXWARE__))
     sockname.sun_len = strlen(sockname.sun_path);
     namelen = SUN_LEN(&sockname);
 #else
@@ -2632,7 +2628,7 @@ TRANS(SocketUNIXConnect) (XtransConnInfo ciptr, char *host, char *port)
 	return TRANS_CONNECT_FAILED;
     }
 
-#if (defined(BSD44SOCKETS) || defined(__UNIXWARE__)) && !defined(Lynx)
+#if (defined(BSD44SOCKETS) || defined(__UNIXWARE__))
     sockname.sun_len = strlen (sockname.sun_path);
     namelen = SUN_LEN (&sockname);
 #else

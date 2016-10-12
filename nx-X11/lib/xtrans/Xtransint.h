@@ -87,11 +87,7 @@ from The Open Group.
 #include <errno.h>
 
 #ifndef WIN32
-# ifndef Lynx
 #  include <sys/socket.h>
-# else
-#  include <socket.h>
-# endif
 # include <netinet/in.h>
 # include <arpa/inet.h>
 
