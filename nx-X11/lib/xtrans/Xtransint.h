@@ -96,7 +96,7 @@ from The Open Group.
  * to avoid a race condition. JKJ (6/5/97)
  */
 
-# if (defined(_POSIX_SOURCE) && !defined(__QNX__)) || defined(USG) || defined(SVR4) || defined(__SCO__)
+# if defined(_POSIX_SOURCE) || defined(USG) || defined(SVR4) || defined(__SCO__)
 #  ifndef NEED_UTSNAME
 #   define NEED_UTSNAME
 #  endif
@@ -133,7 +133,7 @@ from The Open Group.
 #       ifdef NOFILE
 #        define OPEN_MAX NOFILE
 #       else
-#        if !defined(__UNIXOS2__) && !defined(__QNX__)
+#        if !defined(__UNIXOS2__)
 #         define OPEN_MAX NOFILES_MAX
 #        else
 #         define OPEN_MAX 256
