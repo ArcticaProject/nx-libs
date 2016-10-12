@@ -49,9 +49,6 @@ from The Open Group.
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifdef __UNIXOS2__
-#define I_NEED_OS2_H
-#endif
 
 #ifdef XSERV_t
 #include "os.h"

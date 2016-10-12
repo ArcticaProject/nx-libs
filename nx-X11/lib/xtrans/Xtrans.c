@@ -703,11 +703,7 @@ TRANS(SetOption) (XtransConnInfo ciptr, int option, int arg)
 	    arg = 1;
 /* IBM TCP/IP understands this option too well: it causes TRANS(Read) to fail
  * eventually with EWOULDBLOCK */
-#ifndef __UNIXOS2__
 	    ret = ioctl (fd, FIONBIO, &arg);
-#else
-/*	    ret = ioctl(fd, FIONBIO, &arg, sizeof(int));*/
-#endif
 	}
 #else
 	    ret = fcntl (fd, F_GETFL, 0);

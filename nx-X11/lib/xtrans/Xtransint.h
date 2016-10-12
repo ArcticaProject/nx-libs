@@ -71,11 +71,7 @@ from The Open Group.
  */
 
 #ifndef XTRANSDEBUG
-# ifndef __UNIXOS2__
 #  define XTRANSDEBUG 1
-# else
-#  define XTRANSDEBUG 1
-# endif
 #endif
 
 #ifdef WIN32
@@ -98,9 +94,6 @@ from The Open Group.
 # endif
 # include <netinet/in.h>
 # include <arpa/inet.h>
-# ifdef __UNIXOS2__
-#  include <sys/ioctl.h>
-# endif
 
 /*
  * Moved the setting of NEED_UTSNAME to this header file from Xtrans.c,
@@ -167,11 +160,7 @@ from The Open Group.
 
 # endif /* TRANS_OPEN_MAX */
 
-# ifdef __UNIXOS2__
-#  define ESET(val)
-# else
 #  define ESET(val) errno = val
-# endif
 # define EGET() errno
 
 #else /* WIN32 */
