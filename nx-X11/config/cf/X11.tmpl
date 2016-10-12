@@ -355,18 +355,11 @@ XORGRELSTRING = XorgManVersionString
 #ifndef IPv6SocketsAlsoIPv4
 #define IPv6SocketsAlsoIPv4	YES
 #endif
-#ifndef DECnetFlags
-#if HasDECnet
-#define DECnetFlags -DDNETCONN
-#else
-#define DECnetFlags
-#endif
-#endif
 #ifndef ConnectionFlags
 #if HasStreams
 #define ConnectionFlags -DSTREAMSCONN
 #else
-#define ConnectionFlags -DTCPCONN -DUNIXCONN DECnetFlags
+#define ConnectionFlags -DTCPCONN -DUNIXCONN
 #endif
 #endif
 #if HasStickyDirBit

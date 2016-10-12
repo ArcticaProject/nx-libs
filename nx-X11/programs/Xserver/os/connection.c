@@ -156,10 +156,6 @@ extern __const__ int _nfiles;
 #define Pid_t pid_t
 #endif
 
-#ifdef DNETCONN
-#include <netdnet/dn.h>
-#endif /* DNETCONN */
-
 int lastfdesc;			/* maximum file descriptor */
 
 fd_set WellKnownConnections;	/* Listener mask */
@@ -619,12 +615,6 @@ AuthAudit (ClientPtr client, Bool letin,
 	}
 	    break;
 #endif
-#endif
-#ifdef DNETCONN
-	case AF_DECnet:
-	    sprintf(out, "DN %s",
-		    dnet_ntoa(&((struct sockaddr_dn *) saddr)->sdn_add));
-	    break;
 #endif
 	default:
 	    strcpy(out, "unknown address");

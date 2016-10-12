@@ -53,7 +53,6 @@ Imake.tmpl provides defaults for the following variables:
 	HasCodeCenter		boolean for system has CodeCenter
 	HasCookieMaker		boolean for system has xauth cookie generator
 	HasCplusplus		system has a C++ compiler?
-	HasDECnet		system has DECnet?
 	HasFortran		boolean for system has Fortran compiler
 	HasGcc			boolean for system has GNU gcc compiler
 	HasGcc2			boolean for system has GNU gcc 2.x compiler

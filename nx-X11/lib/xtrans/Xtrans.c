@@ -93,9 +93,6 @@ Xtransport_table Xtransports[] = {
 #endif /* IPv6 */
     { &TRANS(SocketINETFuncs),	TRANS_SOCKET_INET_INDEX },
 #endif /* TCPCONN */
-#if defined(DNETCONN)
-    { &TRANS(DNETFuncs),	TRANS_DNET_INDEX },
-#endif /* DNETCONN */
 #if defined(UNIXCONN)
 #if !defined(LOCALCONN)
     { &TRANS(SocketLocalFuncs),	TRANS_SOCKET_LOCAL_INDEX },
@@ -206,7 +203,6 @@ TRANS(ParseAddress) (char *address, char **protocol, char **host, char **port)
      *
      * If the protocol part is missing, then assume TCP.
      * If the protocol part and host part are missing, then assume local.
-     * If a "::" is found then assume DNET.
      */
 
     char	*mybuf, *tmpptr;
@@ -287,22 +283,6 @@ TRANS(ParseAddress) (char *address, char **protocol, char **host, char **port)
 	*port = NULL;
 	free (tmpptr);
 	return 0;
-    }
-
-    /* Check for DECnet */
-
-    if ((mybuf != _host) && (*(mybuf - 1) == ':')
-#if defined(IPv6) && defined(AF_INET6)
-      /* An IPv6 address can end in :: so three : in a row is assumed to be
-	 an IPv6 host and not a DECnet node with a : in it's name, unless
-         DECnet is specifically requested */
-      && ( ((mybuf - 1) == _host) || (*(mybuf - 2) != ':') ||
-	((_protocol != NULL) && (strcmp(_protocol, "dnet") == 0)) )
-#endif
-	)
-    {
-	_protocol = "dnet";
-	*(mybuf - 1) = '\0';
     }
 
     *mybuf ++= '\0';
@@ -420,7 +400,7 @@ TRANS(Open) (int type, char *address)
 
     PRMSG (2,"Open(%d,%s)\n", type, address, 0);
 
-#if defined(WIN32) && (defined(TCPCONN) || defined(DNETCONN))
+#if defined(WIN32) && defined(TCPCONN)
     if (TRANS(WSAStartup)())
     {
 	PRMSG (1,"Open: WSAStartup failed\n", 0, 0, 0);
