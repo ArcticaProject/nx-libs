@@ -54,11 +54,6 @@
 #include <sys/ioctl.h>
 #endif
 
-#ifdef STREAMSCONN
-#include <tiuser.h>
-#include <netconfig.h>
-#include <netdir.h>
-#endif
 
 #ifndef NX_TRANS_SOCKET
 
@@ -1029,43 +1024,6 @@ XdmcpAddAuthorization (
 static void
 get_xdmcp_sock(void)
 {
-#ifdef STREAMSCONN
-    struct netconfig *nconf;
-
-    if ((xdmcpSocket = t_open("/dev/udp", O_RDWR, 0)) < 0) {
-	XdmcpWarning("t_open() of /dev/udp failed");
-	return;
-    }
-
-    if( t_bind(xdmcpSocket,NULL,NULL) < 0 ) {
-	XdmcpWarning("UDP socket creation failed");
-	t_error("t_bind(xdmcpSocket) failed" );
-	t_close(xdmcpSocket);
-	return;
-    }
-
-    /*
-     * This part of the code looks contrived. It will actually fit in nicely
-     * when the CLTS part of Xtrans is implemented.
-     */
- 
-    if( (nconf=getnetconfigent("udp")) == NULL ) {
-	XdmcpWarning("UDP socket creation failed: getnetconfigent()");
-	t_unbind(xdmcpSocket);
-	t_close(xdmcpSocket);
-	return;
-    }
- 
-    if( netdir_options(nconf, ND_SET_BROADCAST, xdmcpSocket, NULL) ) {
-	XdmcpWarning("UDP set broadcast option failed: netdir_options()");
-	freenetconfigent(nconf);
-	t_unbind(xdmcpSocket);
-	t_close(xdmcpSocket);
-	return;
-    }
- 
-    freenetconfigent(nconf);
-#else
     int soopts = 1;
 
 #if defined(IPv6) && defined(AF_INET6)
@@ -1085,7 +1043,6 @@ get_xdmcp_sock(void)
 	    FatalError("Xserver: failed to bind to -from address: %s\n", xdm_from);
 	}
     }
-#endif /* STREAMSCONN */
 }
 
 static void

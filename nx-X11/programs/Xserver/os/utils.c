@@ -131,7 +131,7 @@ OR PERFORMANCE OF THIS SOFTWARE.
 
 #include <stdlib.h>	/* for malloc() */
 
-#if defined(TCPCONN) || defined(STREAMSCONN)
+#if defined(TCPCONN)
 # ifndef WIN32
 #  include <netdb.h>
 # endif
@@ -1285,7 +1285,7 @@ int
 set_font_authorizations(char **authorizations, int *authlen, void * client)
 {
 #define AUTHORIZATION_NAME "hp-hostname-1"
-#if defined(TCPCONN) || defined(STREAMSCONN)
+#if defined(TCPCONN)
     static char *result = NULL;
     static char *p = NULL;
 

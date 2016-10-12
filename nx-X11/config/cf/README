@@ -77,7 +77,6 @@ Imake.tmpl provides defaults for the following variables:
 	HasShm			boolean for System V shared memory
 	HasSockets		boolean for system has BSD sockets
 	HasStrcasecmp		boolean for system implements str[n]casecmp
-	HasStreams		use STREAMS I/O interface?
 	HasSymLinks		boolean for system has symbolic links
 	HasTestCenter		boolean for system has TestCenter
 	HasVarDirectory		boolean for system has /var
