@@ -54,6 +54,9 @@ from The Open Group.
 #include <stdlib.h>
 #endif
 
+#define XTRANS_TRANSPORT_C  /* used to flag Xtransint.h that it's being used
+			       here, not just #included in another file */
+
 #include "Xtransint.h"
 
 #ifdef LOCALCONN
