@@ -64,9 +64,6 @@ from The Open Group.
 #ifdef LOCALCONN
 #include "Xtranslcl.c"
 #endif
-#ifdef OS2PIPECONN
-#include "Xtransos2.c"
-#endif
 #if defined(TCPCONN) || defined(UNIXCONN)
 #include "Xtranssock.c"
 #endif

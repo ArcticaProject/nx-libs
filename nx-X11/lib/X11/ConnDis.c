@@ -115,7 +115,7 @@ static char *copystring (const char *src, int len)
 #ifdef UNIXCONN
 # define UNIX_TRANS	"unix"
 #endif
-#if defined(LOCALCONN) || defined(OS2PIPECONN) || defined(UNIXCONN)
+#if defined(LOCALCONN) || defined(UNIXCONN)
 # define LOCAL_TRANS	"local"
 #endif
 
@@ -502,7 +502,7 @@ _X11TransConnectDisplay (
 
 #endif
 
-#if defined(TCPCONN) || defined(UNIXCONN) || defined(LOCALCONN) || defined(MNX_TCPCONN) || defined(OS2PIPECONN)
+#if defined(TCPCONN) || defined(UNIXCONN) || defined(LOCALCONN) || defined(MNX_TCPCONN)
     if (!pprotocol) {
 #if defined(UNIXCONN)
 	if (phostname && (strcmp (phostname, "unix") == 0)) {
