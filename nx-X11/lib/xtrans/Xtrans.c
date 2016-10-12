@@ -693,7 +693,7 @@ TRANS(SetOption) (XtransConnInfo ciptr, int option, int arg)
 	    ret = ioctl (fd, FIOSNBIO, &arg);
 	}
 #else
-#if (defined(AIXV3) || defined(uniosu) || defined(WIN32) || defined(__UNIXOS2__) || defined(__QNX__)) && defined(FIONBIO)
+#if (defined(uniosu) || defined(WIN32) || defined(__UNIXOS2__) || defined(__QNX__)) && defined(FIONBIO)
 	{
 #ifdef WIN32
 	    u_long arg;
@@ -712,7 +712,7 @@ TRANS(SetOption) (XtransConnInfo ciptr, int option, int arg)
 #else
 	    ret = fcntl (fd, F_SETFL, ret | O_NDELAY);
 #endif
-#endif /* AIXV3  || uniosu */
+#endif /* uniosu */
 #endif /* FIOSNBIO */
 #endif /* O_NONBLOCK */
 	    break;
@@ -1295,7 +1295,7 @@ static int TRANS(WriteV) (XtransConnInfo ciptr, struct iovec *iov, int iovcnt)
 #endif /* SYSV && i386 || WIN32 || __sxg__ */
 
 
-#if (defined(_POSIX_SOURCE) && !defined(AIXV3) && !defined(__QNX__)) || defined(USG) || defined(SVR4) || defined(__SCO__)
+#if (defined(_POSIX_SOURCE) && !defined(__QNX__)) || defined(USG) || defined(SVR4) || defined(__SCO__)
 #ifndef NEED_UTSNAME
 #define NEED_UTSNAME
 #endif
