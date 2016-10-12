@@ -861,15 +861,8 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 #define PamMiscLibraries	-lpam_misc
 #endif
 
-#ifndef HasDECnet
-#define HasDECnet		NO
-#endif
-#if HasDECnet
-# define ConnectionFlags	-DUNIXCONN -DTCPCONN -DDNETCONN
-# define ExtraLibraries		-ldnet
-#else
-# define ConnectionFlags	-DUNIXCONN -DTCPCONN
-#endif
+#define ConnectionFlags	-DUNIXCONN -DTCPCONN
+
 
 /* Some of these man page defaults are overriden in the above OS sections */
 #ifndef ManSuffix

@@ -430,13 +430,6 @@
 #endif /* #if defined(LinuxArchitecture) */
 
 /*
- * If you have Linux DECnet support, and want to build XFree86 with support
- * for connections over DECnet, uncomment this.
- *
-#define HasDECnet		YES
- */
-
-/*
  * To build static and shared libraries with debugging information, uncomment
  * this. Assumes you have Gcc2.
  * (If you don't have Gcc2, you can use the DebugLib{X11,...} variables
