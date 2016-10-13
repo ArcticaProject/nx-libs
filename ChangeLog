@@ -1,12 +1,560 @@
-2016-09-13 15:45:03 +0200 Mike Gabriel (303f5ea)
+2016-10-13 14:10:28 +0200 Mike Gabriel (38394e6)
 
-	* release 3.5.99.1 (HEAD, tag: 3.5.99.1, 3.6.x)
+	* release 3.5.99.2 (HEAD, 3.6.x)
+
+2016-10-13 15:05:37 +0200 Mike Gabriel (64aa45a)
+
+	* debian/*.triggers: Call ldconfig via a trigger for all shared
+          libraries.
+
+2016-10-13 15:05:31 +0200 Mike Gabriel (440c675)
+
+	* debian/rules: Don't modify/create post{inst,rm} scripts during
+          dh_makeshlibs. This avoids adding ldconfig calls to such
+          scripts.
+
+2016-10-13 14:45:37 +0200 Mike Gabriel (bd25086)
+
+	* hw/nxagent/{Clipboard|Events}.c: Typo fix in error messages.
+
+2016-10-13 14:44:27 +0200 Mike Gabriel (d2fb76d)
+
+	* nxcomp/{Client|}Proxy.cpp: Typo fix in error messages.
+
+2016-10-13 14:17:55 +0200 Mike Gabriel (0006fc0)
+
+	* debian/libnx-x11-6.symbols: Update symbols for new backports in
+          libNX_X11 API.
+
+2016-10-07 21:19:07 +0200 Ulrich Sibiller (97c2697)
+
+	* Pending.c: conditionally include stdio.h (origin/HEAD,
+          origin/3.6.x)
+
+2016-10-10 01:00:38 +0200 Ulrich Sibiller (0bf52dc)
+
+	* nxcomp: Fix typo in usage message.
+
+2016-10-13 14:02:51 +0200 Mike Gabriel (133c91f)
+
+	* Merge branch 'uli42-pr/libX11_debian_backports' into 3.6.x
+
+2013-05-21 21:54:55 +0200 Julien Cristau (a9f623f)
+
+	* Add a couple fixups for the security patches
+          (uli42-pr/libX11_debian_backports)
+
+2013-05-08 19:33:09 +0200 Matthieu Herrb (838108c)
+
+	* XListFontsWithInfo: Re-decrement flist[0] before calling free() on
+          it.
+
+2013-03-31 12:22:35 -0700 Alan Coopersmith (dc749a4)
+
+	* _XkbReadGetMapReply: reject maxKeyCodes smaller than the minKeyCode
+
+2013-03-16 10:03:13 -0700 Alan Coopersmith (37f8d3e)
+
+	* Use calloc in XOpenDisplay to initialize structs containing
+          pointers
+
+2013-03-02 12:39:58 -0800 Alan Coopersmith (e386187)
+
+	* Unbounded recursion in _XimParseStringFile() when parsing include
+          files [CVE-2013-2004 2/2]
+
+2013-03-02 12:01:39 -0800 Alan Coopersmith (bddfee4)
+
+	* Unbounded recursion in GetDatabase() when parsing include files
+          [CVE-2013-2004 1/2]
+
+2013-03-02 15:08:21 -0800 Alan Coopersmith (dbc1171)
+
+	* Avoid overflows in XListExtensions() [CVE-2013-1997 15/15]
+
+2013-03-02 15:08:21 -0800 Alan Coopersmith (77edd88)
+
+	* Avoid overflows in XGetFontPath() [CVE-2013-1997 14/15]
+
+2013-03-02 15:08:21 -0800 Alan Coopersmith (f6c5069)
+
+	* Avoid overflows in XListFonts() [CVE-2013-1997 13/15]
+
+2013-03-02 11:25:25 -0800 Alan Coopersmith (0284afb)
+
+	* unvalidated length in _XimXGetReadData() [CVE-2013-1997 12/15]
+
+2013-03-02 11:11:08 -0800 Alan Coopersmith (0bf09b4)
+
+	* unvalidated index/length in _XkbReadGetNamesReply() [CVE-2013-1997
+          11/15]
+
+2013-03-02 11:01:04 -0800 Alan Coopersmith (e6d8856)
+
+	* unvalidated index in _XkbReadVirtualModMap() [CVE-2013-1997 10/15]
+
+2013-03-02 11:04:44 -0800 Alan Coopersmith (e27df80)
+
+	* unvalidated index in _XkbReadExplicitComponents() [CVE-2013-1997
+          9/15]
+
+2013-03-02 10:51:51 -0800 Alan Coopersmith (7564bf7)
+
+	* unvalidated index in _XkbReadModifierMap() [CVE-2013-1997 8/15]
+
+2013-03-02 10:39:21 -0800 Alan Coopersmith (8f2c050)
+
+	* unvalidated index in _XkbReadKeyBehaviors() [CVE-2013-1997 7/15]
+
+2013-03-02 09:40:22 -0800 Alan Coopersmith (4c19cd0)
+
+	* unvalidated index in _XkbReadKeyActions() [CVE-2013-1997 6/15]
+
+2013-03-02 09:28:33 -0800 Alan Coopersmith (5dae1d3)
+
+	* unvalidated index in _XkbReadKeySyms() [CVE-2013-1997 5/15]
+
+2013-03-02 09:18:26 -0800 Alan Coopersmith (e6fbdea)
+
+	* unvalidated indexes in _XkbReadGetGeometryReply() [CVE-2013-1997
+          4/15]
+
+2013-03-02 09:12:47 -0800 Alan Coopersmith (0445730)
+
+	* unvalidated indexes in _XkbReadGeomShapes() [CVE-2013-1997 3/15]
+
+2013-03-01 22:49:01 -0800 Alan Coopersmith (b069526)
+
+	* unvalidated index in _XkbReadGetDeviceInfoReply() [CVE-2013-1997
+          2/15]
+
+2013-03-01 19:30:09 -0800 Alan Coopersmith (2a1fbb1)
+
+	* unvalidated lengths in XAllocColorCells() [CVE-2013-1997 1/15]
+
+2013-03-09 11:04:37 -0800 Alan Coopersmith (e03f392)
+
+	* Make XGetWindowProperty() always initialize returned values
+
+2013-03-02 13:03:55 -0800 Alan Coopersmith (b207105)
+
+	* Move repeated #ifdef magic to find PATH_MAX into a common header
+
+2013-03-02 16:56:16 -0800 Alan Coopersmith (05b72b8)
+
+	* Convert more _XEatData callers to _XEatDataWords
+
+2013-03-02 15:08:21 -0800 Alan Coopersmith (306ca00)
+
+	* integer overflow in XGetModifierMapping() [CVE-2013-1981 13/13]
+
+2013-03-02 15:08:21 -0800 Alan Coopersmith (748af52)
+
+	* integer overflow in XGetPointerMapping() & XGetKeyboardMapping()
+          [CVE-2013-1981 12/13]
+
+2013-03-02 15:08:21 -0800 Alan Coopersmith (9501bce)
+
+	* integer overflow in XGetImage() [CVE-2013-1981 11/13]
+
+2013-03-08 22:25:35 -0800 Alan Coopersmith (361d367)
+
+	* integer overflow in XGetWindowProperty() [CVE-2013-1981 10/13]
+
+2013-03-02 13:18:48 -0800 Alan Coopersmith (2517230)
+
+	* integer overflows in TransFileName() [CVE-2013-1981 9/13]
+
+2013-03-01 18:37:37 -0800 Alan Coopersmith (8468165)
+
+	* integer truncation in _XimParseStringFile() [CVE-2013-1981 8/13]
+
+2013-03-01 18:37:37 -0800 Alan Coopersmith (00d7a2e)
+
+	* integer overflow in ReadInFile() in Xrm.c [CVE-2013-1981 7/13]
+
+2013-03-02 11:44:19 -0800 Alan Coopersmith (0349af1)
+
+	* Integer overflows in stringSectionSize() cause buffer overflow in
+          ReadColornameDB() [CVE-2013-1981 6/13]
+
+2013-03-01 22:49:01 -0800 Alan Coopersmith (8673bf0)
+
+	* integer overflow in XListHosts() [CVE-2013-1981 5/13]
+
+2013-03-01 22:49:01 -0800 Alan Coopersmith (7d18bbe)
+
+	* integer overflow in XGetMotionEvents() [CVE-2013-1981 4/13]
+
+2013-03-01 22:49:01 -0800 Alan Coopersmith (2977955)
+
+	* integer overflow in XListFontsWithInfo() [CVE-2013-1981 3/13]
+
+2013-03-01 21:05:27 -0800 Alan Coopersmith (dda0c65)
+
+	* integer overflow in _XF86BigfontQueryFont() [CVE-2013-1981 2/13]
+
+2013-03-01 21:05:27 -0800 Alan Coopersmith (de2d3cb)
+
+	* integer overflow in _XQueryFont() on 32-bit platforms
+          [CVE-2013-1981 1/13]
+
+2013-01-22 10:03:00 -0500 Nickolai Zeldovich (e8ada07)
+
+	* XListFontsWithInfo: avoid accessing realloc'ed memory
+
+2011-02-11 14:20:24 -0800 Alan Coopersmith (290f94a)
+
+	* ximcp: Prevent memory leak & double free if multiple %L in string
+
+2011-01-31 14:02:06 +0200 Erkki Seppälä (9361547)
+
+	* Xrm: Handle the extremely unlikely situation of fstat failing
+
+2016-10-12 08:32:04 +0200 Mike Gabriel (051d521)
+
+	* Merge branch 'uli42-pr/upgrade_libX11' into 3.6.x
+
+2016-10-09 17:49:20 +0200 Ulrich Sibiller (b8de7bf)
+
+	* Use both __APPLE__ and __DARWIN__ defines (uli42-pr/upgrade_libX11)
+
+2015-04-15 10:16:18 +0200 Karl Tomlinson (0186533)
+
+	* MakeBigReq: don't move the last word, already handled by Data32
+          (X.Org CVE-2013-7439).
+
+2013-04-19 14:30:40 -0700 Alan Coopersmith (670b8ef)
+
+	* Give GNU & Solaris Studio compilers hints about XEatData branches
+
+2011-12-13 19:58:30 -0800 Alan Coopersmith (6165daf)
+
+	* makekeys: move buf declaration from global to main to silence gcc
+          -Wshadow
+
+2011-09-22 18:44:13 -0400 Derek Buitenhuis (62e5b0f)
+
+	* makekeys: Fix build/target word size mismatch when cross-compiling
+
+2016-08-27 03:24:22 +0200 Ulrich Sibiller (0bcb4bb)
+
+	* adapt Imakefile to call makekeys correctly after update
+
+2010-06-15 18:48:48 +0100 Daniel Stone (c98265a)
+
+	* makekeys: Scan vendor keysyms as well as core
+
+2009-03-17 15:42:19 -0700 Alan Coopersmith (7032799)
+
+	* When makekeys fails to find a good hash, print error instead of
+          divide-by-zero
+
+2008-10-25 09:13:08 -0400 James Cloos (f573654)
+
+	* Increase size of working arrays in the makekeys utility program.
+
+2016-08-27 02:24:46 +0200 Ulrich Sibiller (9a3096a)
+
+	* Update keysym includes
+
+2016-08-27 02:13:27 +0200 Ulrich Sibiller (1baa27d)
+
+	* update files from modules dir of libX11 1.3.4
+
+2016-08-27 02:13:02 +0200 Ulrich Sibiller (da3e7fd)
+
+	* Xutil.h: Fix wrong include path
+
+2016-08-27 01:44:41 +0200 Ulrich Sibiller (d3ae0b2)
+
+	* replace {x11,xim}trans.c links by libX11 1.3.4 solution
+
+2016-08-27 01:22:46 +0200 Ulrich Sibiller (385dc2b)
+
+	* update xlibi18n files to libX11 1.3.4
+
+2016-08-27 01:00:43 +0200 Ulrich Sibiller (e868fbb)
+
+	* update xcms files to libX11 1.3.4
+
+2016-08-27 00:37:53 +0200 Ulrich Sibiller (2749290)
+
+	* Update some missing files to libX11 1.3.4
+
+2016-08-27 00:31:05 +0200 Ulrich Sibiller (8a5f30f)
+
+	* Add (Free|Get)EventData.c from libX11 1.3.4
+
+2016-08-27 00:16:07 +0200 Ulrich Sibiller (efa70b0)
+
+	* remove more NEED_REPLIES/EVENTS
+
+2016-08-27 00:24:37 +0200 Ulrich Sibiller (0079db6)
+
+	* Purge more remaining VCS refs
+
+2016-08-27 00:04:03 +0200 Ulrich Sibiller (af1f7ce)
+
+	* Lift XKB*.c to libX11 1.3.4
+
+2016-08-25 21:43:53 +0200 Ulrich Sibiller (3e75c81)
+
+	* XlibInt.c: shorten one ifdef
+
+2016-08-24 16:52:58 +0200 Ulrich Sibiller (a497ebf)
+
+	* update X.h and Xproto.h because of GenericEvent
+
+2016-08-03 19:19:58 +0200 Ulrich Sibiller (2265215)
+
+	* set USE_XCB define to 0 to prevent compiler complaints
+
+2016-08-02 01:06:35 +0200 Ulrich Sibiller (e51b961)
+
+	* Remove CRAY support
+
+2016-08-02 01:23:54 +0200 Ulrich Sibiller (35270a3)
+
+	* adapt include files to libX11 1.3.4
+
+2016-08-02 00:51:13 +0200 Ulrich Sibiller (7b0bdde)
+
+	* update makekeys.c to libX11 1.3.4 (+ fix)
+
+2016-08-01 23:54:34 +0200 Ulrich Sibiller (b4571a8)
+
+	* update lcUniConv subdir to libX11 1.3.4
+
+2016-07-29 00:44:38 +0200 Ulrich Sibiller (687d44b)
+
+	* update src files *[ch] to libX11 1.3.4
+
+2016-07-26 23:19:36 +0200 Ulrich Sibiller (ea24f0b)
+
+	* add XLOCALELIBDIR
+
+2016-07-26 23:18:33 +0200 Ulrich Sibiller (ef5565f)
+
+	* improve header guards
+
+2016-07-26 00:34:34 +0200 Ulrich Sibiller (5930731)
+
+	* update all files with NX relevant changes to libX11 1.3.4
+
+2016-08-24 16:41:42 +0200 Ulrich Sibiller (a053df0)
+
+	* fix wrong include in XlibInt.c
+
+2016-10-08 21:31:17 +0200 Mike Gabriel (6dce607)
+
+	* Merge branch 'uli42-pr/decouple-xserver' into 3.6.x
+
+2016-10-08 00:40:36 +0200 Ulrich Sibiller (b062272)
+
+	* xserver: add missing xkbfile.h (uli42-pr/decouple-xserver)
+
+2016-10-07 13:12:39 +0200 Vadim Troshchinskiyddd (f55852c)
+
+	* Fix nxproxy hostname parsing.
+
+2016-10-07 13:58:57 +0200 Vadim Troshchinskiy (85f5fdf)
+
+	* Check if unixPath is NULL before accessing it; this fixes crashing
+          of nxagent when TEST is enabled.
+
+2016-10-07 21:38:18 +0200 Mike Gabriel (3039a34)
+
+	* Merge branch 'uli42-pr/decouple-xserver' into 3.6.x
+
+2016-10-04 21:24:56 +0200 Ulrich Sibiller (736a233)
+
+	* xserver: adapt xkbsrc includes syntax to match upstream
+
+2015-02-17 14:40:27 +1000 Dave Airlie (a2a7482)
+
+	* os/access: fix regression in server interpreted auth
+
+2014-10-22 14:24:55 -0700 Keith Packard (a116296)
+
+	* os: Eliminate uninitialized value warnings from access.c
+
+2014-12-09 09:31:00 -0800 Keith Packard (057cdaf)
+
+	* dix: GetHosts bounds check using wrong pointer value [CVE-2014-8092
+          pt. 6]
+
+2008-06-13 21:59:09 -0400 Eamon Walsh (da5da20)
+
+	* Fix multiple warnings in os/xdmauth.c.
+
+2016-09-26 23:00:04 +0200 Ulrich Sibiller (b60f66b)
+
+	* replace transport.c link by xstrans.c
+
+2016-09-26 22:20:45 +0200 Ulrich Sibiller (2a5364d)
+
+	* xserver: drop XKBSRV_NEED_FILE_FUNCS
+
+2016-09-26 21:32:05 +0200 Ulrich Sibiller (7c5d836)
+
+	* xserver: remove define XKB_IN_SERVER
+
+2016-09-26 21:12:23 +0200 Ulrich Sibiller (2fdb1ad)
+
+	* xserver: use own copy of XKBgeom.h header
+
+2016-09-26 21:09:36 +0200 Ulrich Sibiller (2c31ce2)
+
+	* xserver: use own copy of XKBrules.h header
+
+2016-09-26 21:05:32 +0200 Ulrich Sibiller (e601843)
+
+	* xserver: use own copy of XKBrules.h header
+
+2016-09-26 21:03:02 +0200 Ulrich Sibiller (3b88190)
+
+	* xserver: use own copy of XKBstr.h header
+
+2016-09-26 20:43:23 +0200 Ulrich Sibiller (3739a9b)
+
+	* xserver: use own copy of XKBsrv.h header
+
+2016-09-21 20:54:53 +0200 Ulrich Sibiller (f0c0ff4)
+
+	* copy files from libX11 to xserver dir
+
+2016-10-06 13:04:25 +0200 Mike Gabriel (168c063)
+
+	* run-nxproxy2nxagent-over-network: Improve comment that describes
+          script usage. Fix commented-out NX_HOST assignment.
+
+2016-10-06 12:59:52 +0200 Mike Gabriel (834f13f)
+
+	* testscripts: Rename run-nxagent and run-nxagent-over-sockets.
+
+2016-10-06 12:59:25 +0200 Mike Gabriel (cd0da09)
+
+	* run-nxproxy2nxagent-over-network: New test script that tests
+          nxproxy/nxagent connectivity between networked hosts.
+
+2016-10-01 20:22:18 +0200 Mike Gabriel (3e59f16)
+
+	* Merge branch 'sunweaver-pr/update-X11s-XKeysymDB' into 3.6.x
+
+2011-03-22 11:28:56 +1000 Peter Hutterer (5dcf0d5)
+
+	* Add XF86TouchpadOn and XF86TouchpadOff to keysymdb
+          (gh-sunweaver/pr/update-X11s-XKeysymDB,
+          sunweaver-pr/update-X11s-XKeysymDB,
+          pr/update-X11s-XKeysymDB)
+
+2016-08-25 00:52:51 +0200 Mike Gabriel (34cb7b5)
+
+	* lib/X11/XKeysymDB: Update to last version found in X.org (between
+          1.3.5 and 1.3.6).
+
+2016-10-01 20:20:18 +0200 Mike Gabriel (5d52d21)
+
+	* Merge branch 'sunweaver-pr/use-gccmakedep' into 3.6.x
+
+2016-10-01 12:04:54 +0200 Mike Gabriel (b160371)
+
+	* Imake.tmpl: Use gccmakedep instead of makedepend.
+          (gh-sunweaver/pr/use-gccmakedep,
+          sunweaver-pr/use-gccmakedep, pr/use-gccmakedep)
+
+2016-10-01 20:16:39 +0200 Mike Gabriel (e3ea748)
+
+	* Merge branch 'sunweaver-pr/fix-protoheader-mess' into 3.6.x
+
+2016-10-01 11:28:50 +0200 Mike Gabriel (3698cf2)
+
+	* include/extensions/damageproto.h: Use nx-X11's xfixesproto.h and
+          damagewire.h instead of X.org's.
+          (gh-sunweaver/pr/fix-protoheader-mess,
+          sunweaver-pr/fix-protoheader-mess,
+          pr/fix-protoheader-mess)
+
+2016-10-01 11:25:29 +0200 Mike Gabriel (9acfa3b)
+
+	* randrproto: It was discovered that nx-libs shipped two different
+          version of randr.h and randrproto.h. This commit leaves
+          the newer file versions in the package and let's the build
+          process use those everywhere.
+
+2016-10-01 11:00:01 +0200 Mike Gabriel (f4f0b44)
+
+	* nx-X11: Enable -Wpedantic as default CFLAG. This is to detect
+          redefined typedefs when building nxagent.
+
+2016-10-01 10:53:37 +0200 Mike Gabriel (b50b0af)
+
+	* hw/nxagent/X11/include/Xrandr_nxagent.h: Reduce injected
+          libXrandr(_nxagent) header file, so that it only contains
+          the XRRScreenChangeNotifyEvent typedef.
+
+2016-09-29 20:58:15 +0200 Ulrich Sibiller (4858052)
+
+	* nx-libs.spec: Fix warning because of double reference to
+          nxproxy.1.gz.
+
+2016-09-29 20:28:59 +0200 Ulrich Sibiller (ce31b9c)
+
+	* Fix FTBFS with gcc 4.4
+
+2016-10-01 10:29:48 +0200 Mike Gabriel (a788c68)
+
+	* Makefile: Adapt install target to the new situation where we fake
+          X11 headers in .build-export. This fixes FTBFS during file
+          installation into .deb and .rpm packages.
+
+2016-09-29 08:40:05 -0400 Mike DePaulo (5c2a8cd)
+
+	* Merge pull request #203 from mikedep333/issue-202
+
+2016-09-25 08:28:29 -0400 Mike DePaulo (cf435b3)
+
+	* nx-libs.spec: Add BuildRequires: imake
+
+2016-09-24 23:59:02 +0200 Mike Gabriel (049bf68)
+
+	* Merge branch 'uli42-pr/improve_include_path_handling' into 3.6.x
+
+2016-09-24 23:44:09 +0200 Ulrich Sibiller (97a5cec)
+
+	* Revert "Fix wrong include" (uli42-pr/improve_include_path_handling)
+
+2016-09-24 23:43:01 +0200 Ulrich Sibiller (c061022)
+
+	* whitespace cleanup
+
+2016-09-24 23:41:55 +0200 Ulrich Sibiller (35e8c02)
+
+	* ensure that <X11/..> headers references use nx-X11 files if
+          existing
+
+2016-09-22 08:41:24 +0200 Mike Gabriel (a906bf0)
+
+	* Merge branch 'uli42-remove-misc' into 3.6.x
+
+2016-09-21 18:37:10 +0200 Ulrich Sibiller (09d5e07)
+
+	* remove misc dir (uli42-remove-misc)
+
+2016-09-21 18:28:22 +0200 Ulrich Sibiller (8d4d2bc)
+
+	* move xkblib to xserver
+
+2016-09-13 15:45:03 +0200 Mike Gabriel (43f135b)
+
+	* release 3.5.99.1 (tag: 3.5.99.1, origin/release-builds/3.6.x)
 
 2016-08-26 12:49:28 +0200 Mike Gabriel (60e88a0)
 
 	* nxcomp/Loop.cpp: We have PrintVersionInfo(), why not use it? Use
           endl instead of \n for EOLs when streaming application's
-          preamble to stderr. (origin/HEAD, origin/3.6.x)
+          preamble to stderr.
 
 2016-08-26 12:40:49 +0200 Mike Gabriel (01ebcfa)
 
@@ -127,8 +675,7 @@
 
 2016-07-06 10:38:25 +0200 Mike Gabriel (470611e)
 
-	* release 3.5.99.0 (tag: 3.5.99.0, origin/release-builds/3.6.x,
-          release-builds/3.6.x)
+	* release 3.5.99.0 (tag: 3.5.99.0)
 
 2016-07-06 10:02:37 +0200 Mike Gabriel (961fa2a)
 
