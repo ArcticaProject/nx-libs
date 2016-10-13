@@ -134,6 +134,7 @@ libNX_X11.so.6 libnx-x11-6 #MINVER#
  XEHeadOfExtensionList@Base 3.5.0.29
  XESetBeforeFlush@Base 3.5.0.29
  XESetCloseDisplay@Base 3.5.0.29
+ XESetCopyEventCookie@Base 2:3.5.99.2
  XESetCopyGC@Base 3.5.0.29
  XESetCreateFont@Base 3.5.0.29
  XESetCreateGC@Base 3.5.0.29
@@ -146,6 +147,7 @@ libNX_X11.so.6 libnx-x11-6 #MINVER#
  XESetPrintErrorValues@Base 3.5.0.29
  XESetWireToError@Base 3.5.0.29
  XESetWireToEvent@Base 3.5.0.29
+ XESetWireToEventCookie@Base 2:3.5.99.2
  XEmptyRegion@Base 3.5.0.29
  XEnableAccessControl@Base 3.5.0.29
  XEqualRegion@Base 3.5.0.29
@@ -172,6 +174,7 @@ libNX_X11.so.6 libnx-x11-6 #MINVER#
  XFreeColormap@Base 3.5.0.29
  XFreeColors@Base 3.5.0.29
  XFreeCursor@Base 3.5.0.29
+ XFreeEventData@Base 2:3.5.99.2
  XFreeExtensionList@Base 3.5.0.29
  XFreeFont@Base 3.5.0.29
  XFreeFontInfo@Base 3.5.0.29
@@ -191,6 +194,7 @@ libNX_X11.so.6 libnx-x11-6 #MINVER#
  XGetDefault@Base 3.5.0.29
  XGetErrorDatabaseText@Base 3.5.0.29
  XGetErrorText@Base 3.5.0.29
+ XGetEventData@Base 2:3.5.99.2
  XGetFontPath@Base 3.5.0.29
  XGetFontProperty@Base 3.5.0.29
  XGetGCValues@Base 3.5.0.29
@@ -815,6 +819,7 @@ libNX_X11.so.6 libnx-x11-6 #MINVER#
  _XCloseLC@Base 3.5.0.29
  _XColor_to_XcmsRGB@Base 3.5.0.29
  _XConnectDisplay@Base 3.5.0.29
+ _XCopyEventCookie@Base 2:3.5.99.2
  _XCopyToArg@Base 3.5.0.29
  _XCreateMutex_fn@Base 3.5.0.29
   (arch=amd64 ia64 alpha ppc64 arm64)_XData32@Base 3.5.0.29
@@ -833,11 +838,13 @@ libNX_X11.so.6 libnx-x11-6 #MINVER#
  _XEventsQueued@Base 3.5.0.29
  _XF86BigfontFreeFontMetrics@Base 3.5.0.29
  _XF86LoadQueryLocaleFont@Base 3.5.0.29
+ _XFetchEventCookie@Base 2:3.5.99.2
  _XFlush@Base 3.5.0.29
  _XFlushGCCache@Base 3.5.0.29
  _XFreeAtomTable@Base 3.5.0.29
  _XFreeDisplayLock_fn@Base 3.5.0.29
  _XFreeDisplayStructure@Base 3.5.0.29
+ _XFreeEventCookies@Base 2:3.5.99.2
  _XFreeExtData@Base 3.5.0.29
  _XFreeMutex_fn@Base 3.5.0.29
  _XFreeTemp@Base 3.5.0.29
@@ -850,6 +857,7 @@ libNX_X11.so.6 libnx-x11-6 #MINVER#
  _XGetScanlinePad@Base 3.5.0.29
  _XGetWindowAttributes@Base 3.5.0.29
  _XHeadOfDisplayList@Base 3.5.0.29
+ _XIDHandler@Base 2:3.5.99.2
  _XIMCompileResourceList@Base 3.5.0.29
  _XIOError@Base 3.5.0.29
  _XIOErrorFunction@Base 3.5.0.29
@@ -858,6 +866,7 @@ libNX_X11.so.6 libnx-x11-6 #MINVER#
  _XInitImageFuncPtrs@Base 3.5.0.29
  _XInitKeysymDB@Base 3.5.0.29
  _XInitOM@Base 3.5.0.29
+ _XIsEventCookie@Base 2:3.5.99.2
  _XKeyInitialize@Base 3.5.0.29
  _XKeycodeToKeysym@Base 3.5.0.29
  _XKeysymToKeycode@Base 3.5.0.29
@@ -872,6 +881,7 @@ libNX_X11.so.6 libnx-x11-6 #MINVER#
  _XPollfdCacheAdd@Base 3.5.0.29
  _XPollfdCacheDel@Base 3.5.0.29
  _XPollfdCacheInit@Base 3.5.0.29
+ _XProcessInternalConnection@Base 2:3.5.99.2
  _XProcessWindowAttributes@Base 3.5.0.29
  _XPutBackEvent@Base 3.5.0.29
  (arch=amd64 ia64 alpha ppc64 arm64)_XRead32@Base 3.5.0.29
@@ -888,16 +898,22 @@ libNX_X11.so.6 libnx-x11-6 #MINVER#
  _XSelect@Base 3.5.0.29
  _XSend@Base 3.5.0.29
  _XSendClientPrefix@Base 3.5.0.29
+ _XSeqSyncFunction@Base 2:3.5.99.2
  _XSetClipRectangles@Base 3.5.0.29
  _XSetImage@Base 3.5.0.29
  _XSetLastRequestRead@Base 3.5.0.29
+ _XSetPrivSyncFunction@Base 2:3.5.99.2
+ _XSetSeqSyncFunction@Base 2:3.5.99.2
+ _XStoreEventCookie@Base 2:3.5.99.2
  _XTextHeight16@Base 3.5.0.29
  _XTextHeight@Base 3.5.0.29
  _XTranslateKey@Base 3.5.0.29
  _XTranslateKeySym@Base 3.5.0.29
  _XTryShapeBitmapCursor@Base 3.5.0.29
+ _XUnknownCopyEventCookie@Base 2:3.5.99.2
  _XUnknownNativeEvent@Base 3.5.0.29
  _XUnknownWireEvent@Base 3.5.0.29
+ _XUnknownWireEventCookie@Base 2:3.5.99.2
  _XUnlockMutex_fn@Base 3.5.0.29
  _XUnregisterFilter@Base 3.5.0.29
  _XUnregisterInternalConnection@Base 3.5.0.29
@@ -1001,6 +1017,7 @@ libNX_X11.so.6 libnx-x11-6 #MINVER#
  _XimGetICValueData@Base 3.5.0.29
  _XimGetIMValueData@Base 3.5.0.29
  _XimGetLocaleCode@Base 3.5.0.29
+ _XimGetMyEndian@Base 2:3.5.99.2
  _XimGetResourceListRec@Base 3.5.0.29
  _XimGetResourceListRecByQuark@Base 3.5.0.29
  _XimGetWindowEventmask@Base 3.5.0.29
@@ -1139,6 +1156,7 @@ libNX_X11.so.6 libnx-x11-6 #MINVER#
  _XkeyTable@Base 3.5.0.29
  _XlcAddCT@Base 3.5.0.29
  _XlcAddCharSet@Base 3.5.0.29
+ _XlcAddGB18030LocaleConverters@Base 2:3.5.99.2
  _XlcAddLoader@Base 3.5.0.29
  _XlcAddUtf8Converters@Base 3.5.0.29
  _XlcAddUtf8LocaleConverters@Base 3.5.0.29
@@ -1171,6 +1189,7 @@ libNX_X11.so.6 libnx-x11-6 #MINVER#
  _XlcInitCTInfo@Base 3.5.0.29
  _XlcInitLoader@Base 3.5.0.29
  _XlcLocaleDirName@Base 3.5.0.29
+ _XlcLocaleLibDirName@Base 2:3.5.99.2
  _XlcMapOSLocaleName@Base 3.5.0.29
  _XlcNCompareISOLatin1@Base 3.5.0.29
  _XlcOpenConverter@Base 3.5.0.29
@@ -1252,3 +1271,4 @@ libNX_X11.so.6 libnx-x11-6 #MINVER#
  _qfree@Base 3.5.0.29
  in6addr_any@Base 3.5.0.29
  read_EncodingInfo@Base 3.5.0.29
+ xlocaledir@Base 2:3.5.99.2
