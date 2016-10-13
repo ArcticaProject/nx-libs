@@ -549,9 +549,7 @@ fallback_success:
 /*
  * Now iterate down setup information.....
  */
-	dpy->pixmap_format =
-	    (ScreenFormat *)Xmalloc(
-		(unsigned) (dpy->nformats *sizeof(ScreenFormat)));
+	dpy->pixmap_format = Xcalloc(dpy->nformats, sizeof(ScreenFormat));
 	if (dpy->pixmap_format == NULL) {
 	        OutOfMemory (dpy, setup);
 		return(NULL);
@@ -579,8 +577,7 @@ fallback_success:
 /*
  * next the Screen structures.
  */
-	dpy->screens =
-	    (Screen *)Xmalloc((unsigned) dpy->nscreens*sizeof(Screen));
+	dpy->screens = Xcalloc(dpy->nscreens, sizeof(Screen));
 	if (dpy->screens == NULL) {
 	        OutOfMemory (dpy, setup);
 		return(NULL);
@@ -622,8 +619,7 @@ fallback_success:
 /*
  * lets set up the depth structures.
  */
-	    sp->depths = (Depth *)Xmalloc(
-			(unsigned)sp->ndepths*sizeof(Depth));
+	    sp->depths = Xcalloc(sp->ndepths, sizeof(Depth));
 	    if (sp->depths == NULL) {
 		OutOfMemory (dpy, setup);
 		return(NULL);
@@ -645,8 +641,7 @@ fallback_success:
 		dp->nvisuals = u.dp->nVisuals;
 		u.dp = (xDepth *) (((char *) u.dp) + sz_xDepth);
 		if (dp->nvisuals > 0) {
-		    dp->visuals =
-		      (Visual *)Xmalloc((unsigned)dp->nvisuals*sizeof(Visual));
+		    dp->visuals = Xcalloc(dp->nvisuals, sizeof(Visual));
 		    if (dp->visuals == NULL) {
 			OutOfMemory (dpy, setup);
 			return(NULL);
@@ -788,7 +783,7 @@ fallback_success:
 		    dpy->xdefaults[reply.nItems] = '\0';
 		}
 		else if (reply.propertyType != None)
-		    _XEatData(dpy, reply.nItems * (reply.format >> 3));
+		    _XEatDataWords(dpy, reply.length);
 	    }
 #if !USE_XCB
 	    DeqAsyncHandler(dpy, &async);

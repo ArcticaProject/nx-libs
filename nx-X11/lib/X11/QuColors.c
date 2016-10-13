@@ -37,9 +37,7 @@ XQueryColors(
     int ncolors)
 {
     register int i;
-    xrgb *color;
     xQueryColorsReply rep;
-    long nbytes;
     register xQueryColorsReq *req;
 
     LockDisplay(dpy);
@@ -53,8 +51,9 @@ XQueryColors(
        /* XXX this isn't very efficient */
 
     if (_XReply(dpy, (xReply *) &rep, 0, xFalse) != 0) {
-	if ((color = (xrgb *)
-	    Xmalloc((unsigned) (nbytes = (long) ncolors * SIZEOF(xrgb))))) {
+	unsigned long nbytes = (long) ncolors * SIZEOF(xrgb);
+	xrgb *color = Xmalloc(nbytes);
+	if (color != NULL) {
 
 	    _XRead(dpy, (char *) color, nbytes);
 
@@ -68,7 +67,8 @@ XQueryColors(
 	    }
 	    Xfree((char *)color);
 	}
-	else _XEatData(dpy, (unsigned long) nbytes);
+	else
+	    _XEatDataWords(dpy, rep.length);
     }
     UnlockDisplay(dpy);
     SyncHandle();
