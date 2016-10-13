@@ -631,7 +631,7 @@ TRANS(SetOption) (XtransConnInfo ciptr, int option, int arg)
 	    break;
 	case 1: /* Set to non-blocking mode */
 
-#if defined(O_NONBLOCK) && (!defined(ultrix) && !defined(uniosu) && !defined(__UNIXOS2__) && !defined(SCO325))
+#if defined(O_NONBLOCK) && (!defined(ultrix) && !defined(uniosu) && !defined(SCO325))
 	    ret = fcntl (fd, F_GETFL, 0);
 	    if (ret != -1)
 		ret = fcntl (fd, F_SETFL, ret | O_NONBLOCK);
@@ -643,7 +643,7 @@ TRANS(SetOption) (XtransConnInfo ciptr, int option, int arg)
 	    ret = ioctl (fd, FIOSNBIO, &arg);
 	}
 #else
-#if (defined(uniosu) || defined(WIN32) || defined(__UNIXOS2__)) && defined(FIONBIO)
+#if (defined(uniosu) || defined(WIN32)) && defined(FIONBIO)
 	{
 #ifdef WIN32
 	    u_long arg;
@@ -1081,7 +1081,7 @@ TRANS(MakeAllCOTSServerListeners) (char *port, int *partial, int *count_ret,
  * may be used by it.
  */
 
-#if (defined(SYSV) && defined(__i386__) && !defined(__SCO__)) || defined(WIN32) || defined(__sxg__) || defined(__UNIXOS2__)
+#if (defined(SYSV) && defined(__i386__) && !defined(__SCO__)) || defined(WIN32) || defined(__sxg__)
 
 /*
  * emulate readv
@@ -1113,7 +1113,7 @@ static int TRANS(ReadV) (XtransConnInfo ciptr, struct iovec *iov, int iovcnt)
 
 #endif /* SYSV && __i386__ || WIN32 || __sxg__ */
 
-#if (defined(SYSV) && defined(__i386__) && !defined(__SCO__)) || defined(WIN32) || defined(__sxg__) || defined(__UNIXOS2__)
+#if (defined(SYSV) && defined(__i386__) && !defined(__SCO__)) || defined(WIN32) || defined(__sxg__)
 
 /*
  * emulate writev
