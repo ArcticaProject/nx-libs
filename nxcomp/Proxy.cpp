@@ -5908,11 +5908,11 @@ int Proxy::handleNewGenericConnection(int clientFd, T_channel_type type, const c
   if (channelId == -1)
   {
     #ifdef PANIC
-    *logofs << "Proxy: PANIC! Maximum mumber of available "
+    *logofs << "Proxy: PANIC! Maximum number of available "
             << "channels exceeded.\n" << logofs_flush;
     #endif
 
-    cerr << "Error" << ": Maximum mumber of available "
+    cerr << "Error" << ": Maximum number of available "
          << "channels exceeded.\n";
 
     return -1;

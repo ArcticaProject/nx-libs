@@ -193,11 +193,11 @@ int ClientProxy::handleNewAgentConnection(Agent *agent)
   if (channelId == -1)
   {
     #ifdef PANIC
-    *logofs << "ClientProxy: PANIC! Maximum mumber of available "
+    *logofs << "ClientProxy: PANIC! Maximum number of available "
             << "channels exceeded.\n" << logofs_flush;
     #endif
 
-    cerr << "Error" << ": Maximum mumber of available "
+    cerr << "Error" << ": Maximum number of available "
          << "channels exceeded.\n";
 
     return -1;
@@ -226,11 +226,11 @@ int ClientProxy::handleNewXConnection(int clientFd)
     if (channelId == -1)
     {
       #ifdef PANIC
-      *logofs << "ClientProxy: PANIC! Maximum mumber of available "
+      *logofs << "ClientProxy: PANIC! Maximum number of available "
               << "channels exceeded.\n" << logofs_flush;
       #endif
 
-      cerr << "Error" << ": Maximum mumber of available "
+      cerr << "Error" << ": Maximum number of available "
            << "channels exceeded.\n";
 
       return -1;
