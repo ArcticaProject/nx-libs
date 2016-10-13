@@ -87,7 +87,7 @@ TRANS(ConvertAddress)(int *familyp, int *addrlenp, Xtransaddr **addrp)
 
 {
 
-    prmsg(2,"ConvertAddress(%d,%d,%x)\n",*familyp,*addrlenp,*addrp);
+    prmsg(2,"ConvertAddress(%d,%d,%p)\n",*familyp,*addrlenp,*addrp);
 
     switch( *familyp )
     {

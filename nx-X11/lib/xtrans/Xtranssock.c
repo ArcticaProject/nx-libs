@@ -345,7 +345,7 @@ void TRANS(SocketRejectConnection) (XtransConnInfo ciptr)
     struct timeval t;
     int f;
 
-    prmsg (3, "SocketRejectConnection(%x)\n", ciptr);
+    prmsg (3, "SocketRejectConnection(%p)\n", ciptr);
 
     FD_ZERO(&fs);
     FD_SET(ciptr -> fd, &fs);
@@ -639,7 +639,7 @@ int TRANS(SocketCongestionChange) (XtransConnInfo ciptr, int *state)
 
     _NXProxyConnInfo *proxy_conn;
 
-    prmsg (3, "SocketCongestionChange(%x)\n", ciptr);
+    prmsg (3, "SocketCongestionChange(%p)\n", ciptr);
 
     proxy_conn = (_NXProxyConnInfo *) ciptr->priv;
 
@@ -1320,7 +1320,7 @@ TRANS(SocketCreateListener) (XtransConnInfo ciptr,
     int	fd = ciptr->fd;
     int	retry;
 
-    prmsg (3, "SocketCreateListener(%x,%p)\n", ciptr, fd);
+    prmsg (3, "SocketCreateListener(%p,%d)\n", ciptr, fd);
 
     if (Sockettrans2devtab[ciptr->index].family == AF_INET
 #if defined(IPv6) && defined(AF_INET6)
@@ -2906,7 +2906,7 @@ TRANS(SocketUNIXClose) (XtransConnInfo ciptr)
     struct sockaddr_un	*sockname = (struct sockaddr_un *) ciptr->addr;
     int ret;
 
-    prmsg (2,"SocketUNIXClose(%x,%d)\n", ciptr, ciptr->fd);
+    prmsg (2,"SocketUNIXClose(%p,%d)\n", ciptr, ciptr->fd);
 
 #if defined(NX_TRANS_SOCKET) && defined(TRANS_CLIENT)
 
