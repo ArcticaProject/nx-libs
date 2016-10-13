@@ -2363,7 +2363,7 @@ int nxagentHandlePropertyNotify(XEvent *X)
       if (resource == -1)
       {
         #ifdef WARNING
-        fprintf(stderr, "nxagentHandlePropertyNotify: WARNING! Asyncronous get property queue is full.\n");
+        fprintf(stderr, "nxagentHandlePropertyNotify: WARNING! Asynchronous get property queue is full.\n");
         #endif
 
         return 0;

@@ -550,7 +550,7 @@ void nxagentTransferSelection(int resource)
       if (nxagentLastClipboardClient == -1)
       {
         #ifdef WARNING
-        fprintf(stderr, "nxagentTransferSelection: WARNING! Asyncronous GetProperty queue full.\n");
+        fprintf(stderr, "nxagentTransferSelection: WARNING! Asynchronous GetProperty queue full.\n");
         #endif
 
         result = -1;
@@ -606,7 +606,7 @@ void nxagentTransferSelection(int resource)
       if (nxagentLastClipboardClient == -1)
       {
         #ifdef WARNING
-        fprintf(stderr, "nxagentTransferSelection: WARNING! Asyncronous GetProperty queue full.\n");
+        fprintf(stderr, "nxagentTransferSelection: WARNING! Asynchronous GetProperty queue full.\n");
         #endif
 
         result = -1;
