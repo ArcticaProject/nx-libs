@@ -2572,7 +2572,7 @@ TRANS(SocketRead) (XtransConnInfo ciptr, char *buf, int size)
 
 #else /* #if defined(NX_TRANS_SOCKET) && defined(TRANS_CLIENT) */
 
-#if defined(WIN32) || defined(__UNIXOS2__)
+#if defined(WIN32)
     {
 	int ret = recv ((SOCKET)ciptr->fd, buf, size, 0);
 #ifdef WIN32
@@ -2629,7 +2629,7 @@ TRANS(SocketWrite) (XtransConnInfo ciptr, char *buf, int size)
 
 #else /* #if defined(NX_TRANS_SOCKET) && defined(TRANS_CLIENT) */
 
-#if defined(WIN32) || defined(__UNIXOS2__)
+#if defined(WIN32)
     {
 	int ret = send ((SOCKET)ciptr->fd, buf, size, 0);
 #ifdef WIN32
