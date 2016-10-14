@@ -63,7 +63,7 @@ NXAGENT_SKIP_OBJS =                     \
                 g_renderswap.c          \
                 g_single.c              \
                 g_singleswap.c          \
-                glcontextmodes. c       \
+                glcontextmodes.c        \
                 indirect_size.c         \
                 $(MSRCS)                \
                 $(NXAGENT_SKIP_SRCS)    \
