@@ -2468,7 +2468,6 @@ static int nxagentCheckForPixmapFormatsCompatibility()
    */
 
   bool compatible = true;
-  bool one_match = false;
   bool matched = false;
   int total_matches = 0;
 
@@ -2483,7 +2482,6 @@ static int nxagentCheckForPixmapFormatsCompatibility()
           nxagentPixmapFormats[i].scanline_pad == nxagentRemotePixmapFormats[j].scanline_pad)
       {
         matched = true;
-        one_match = true;
         ++total_matches;
 
         break;
