@@ -148,7 +148,7 @@ int (*SwappedUntrustedProcVector[256])(
  * try a set of well known paths.
  */
 
-const char *_NXGetPolicyFilePath(const char *path)
+char *_NXGetPolicyFilePath(const char *path)
 {
 
   struct stat SecurityPolicyStat;
@@ -1345,7 +1345,6 @@ SecurityCensorImage(client, pVisibleRegion, widthBytesLine, pDraw, x, y, w, h,
     unsigned int format;
     char * pBuf;
 {
-    ScreenPtr pScreen = pDraw->pScreen;
     RegionRec imageRegion;  /* region representing x,y,w,h */
     RegionRec censorRegion; /* region to obliterate */
     BoxRec imageBox;
