@@ -40,11 +40,7 @@ from The Open Group.
 #include <nx-X11/extensions/xcmiscstr.h>
 #include "modinit.h"
 
-#if HAVE_STDINT_H
 #include <stdint.h>
-#elif !defined(UINT32_MAX)
-#define UINT32_MAX 0xffffffffU
-#endif
 
 #if 0
 static unsigned char XCMiscCode;
