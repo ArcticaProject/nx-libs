@@ -1085,7 +1085,8 @@ unsigned i,size_toc;
 	}
 	return 0;
     }
-    fread(file_info,SIZEOF(xkmFileInfo),1,file);
+    _X_UNUSED int ignored_result;
+    ignored_result = fread(file_info,SIZEOF(xkmFileInfo),1,file);
     size_toc= file_info->num_toc;
     if (size_toc>max_toc) {
 #ifdef DEBUG
@@ -1095,7 +1096,7 @@ unsigned i,size_toc;
 	size_toc= max_toc;
     }
     for (i=0;i<size_toc;i++) {
-	fread(&toc[i],SIZEOF(xkmSectionInfo),1,file);
+      ignored_result = fread(&toc[i],SIZEOF(xkmSectionInfo),1,file);
     }
     return 1;
 }
@@ -1126,7 +1127,8 @@ int			nRead;
 	return 0;
     }
     fseek(file,toc->offset,SEEK_SET);
-    fread(&tmpTOC,SIZEOF(xkmSectionInfo),1,file);
+    _X_UNUSED int ignored_result;
+    ignored_result = fread(&tmpTOC,SIZEOF(xkmSectionInfo),1,file);
     nRead= SIZEOF(xkmSectionInfo);
     if ((tmpTOC.type!=toc->type)||(tmpTOC.format!=toc->format)||
 	(tmpTOC.size!=toc->size)||(tmpTOC.offset!=toc->offset)) {
@@ -1201,7 +1203,8 @@ char 		name[100];
 	case XkmSymbolsIndex:
 	case XkmGeometryIndex:
 	    fseek(file,toc->offset,SEEK_SET);
-	    fread(&tmpTOC,SIZEOF(xkmSectionInfo),1,file);
+	    _X_UNUSED int ignored_result;
+	    ignored_result = fread(&tmpTOC,SIZEOF(xkmSectionInfo),1,file);
 	    if ((tmpTOC.type!=toc->type)||(tmpTOC.format!=toc->format)||
 		(tmpTOC.size!=toc->size)||(tmpTOC.offset!=toc->offset)) {
 		_XkbLibError(_XkbErrIllegalContents,"XkmReadFileSectionName",0);
