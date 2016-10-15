@@ -4402,7 +4402,7 @@ char *	wire, *next;
 CARD16	len;
 
     wire= *wire_inout;
-    len= (CARD16 *)wire;
+    len = *(CARD16 *) wire;
     if (client->swapped) {
 	swaps(&len);
     }
