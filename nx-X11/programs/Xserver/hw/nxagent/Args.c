@@ -1447,7 +1447,7 @@ static void nxagentParseOptions(char *name, char *value)
         tolerance_parse = UINT_MAX;
 
         fprintf(stderr, "nxagentParseOptions: Warning: value [%s] of option [%s] "
-                        "out of range, clamped to [%u].\n",
+                        "out of range, clamped to [%lu].\n",
                         validateString(value), validateString(name), tolerance_parse);
       }
 
@@ -1456,7 +1456,7 @@ static void nxagentParseOptions(char *name, char *value)
         tolerance_parse = 0;
 
         fprintf(stderr, "nxagentParseOptions: Warning: value [%s] of option [%s] "
-                        "out of range, clamped to [%u].\n",
+                        "out of range, clamped to [%lu].\n",
                         validateString(value), validateString(name), tolerance_parse);
       }
 
