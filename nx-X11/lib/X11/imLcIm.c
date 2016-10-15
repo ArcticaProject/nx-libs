@@ -510,14 +510,15 @@ _XimCreateDefaultTree(
     Xim		im)
 {
     FILE *fp = NULL;
-    char *name, *tmpname = NULL, *intname;
+    char *name, *tmpname = NULL;
     char *cachename = NULL;
     /* Should use getpwent() instead of $HOME (cross-platform?) */
     char *home = getenv("HOME");
-    char *cachedir = NULL;
     char *tmpcachedir = NULL;
     int   hl = home ? strlen (home) : 0;
 #ifdef COMPOSECACHE
+    char *intname;
+    char *cachedir = NULL;
     const char *encoding = nl_langinfo (CODESET);
     uid_t euid = geteuid ();
     gid_t egid = getegid ();
@@ -545,9 +546,9 @@ _XimCreateDefaultTree(
     if (name == (char *) NULL) {
         tmpname = name = _XlcFileName(im->core.lcd, COMPOSE_FILE);
     }
+#ifdef COMPOSECACHE
     intname = name;
 
-#ifdef COMPOSECACHE
     if (getuid () == euid && getgid () == egid && euid != 0) {
 	char *c;
 	/* Usage: XCOMPOSECACHE=<cachedir>[=<filename>]
