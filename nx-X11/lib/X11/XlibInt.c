@@ -3743,6 +3743,8 @@ _XIOError (
     dpy->flags &= ~XlibDisplayReadEvents;
     dpy->flags &= ~XlibDisplayWriting;
     dpy->flags &= ~XlibDisplayReply;
+    /* shut up the compiler by returning something */
+    return 0;
 #else
     exit (1);
 #endif

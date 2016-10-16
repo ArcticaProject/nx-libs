@@ -856,7 +856,12 @@ extern int _XError(
 );
 extern int _XIOError(
     Display*	/* dpy */
+#ifdef NX_TRANS_SOCKET
+);
+#else
 ) _X_NORETURN;
+#endif /* NX_TRANS_SOCKET */
+
 extern int (*_XIOErrorFunction)(
     Display*	/* dpy */
 );
