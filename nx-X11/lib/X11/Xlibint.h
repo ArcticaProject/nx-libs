@@ -67,6 +67,14 @@ from The Open Group.
 #include <nx-X11/Xproto.h>		/* to declare xEvent */
 #include <nx-X11/XlibConf.h>	/* for configured options like XTHREADS */
 
+/* The Xlib structs are full of implicit padding to properly align members.
+   We can't clean that up without breaking ABI, so tell clang not to bother
+   complaining about it. */
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wpadded"
+#endif
+
 #ifdef NX_TRANS_SOCKET
 
 #include <nx/NXvars.h>
@@ -78,14 +86,6 @@ from The Open Group.
 
 #ifdef WIN32
 #define _XFlush _XFlushIt
-#endif
-
-/*
- * If your BytesReadable correctly detects broken connections, then
- * you should NOT define XCONN_CHECK_FREQ.
- */
-#ifndef XCONN_CHECK_FREQ
-#define XCONN_CHECK_FREQ 256
 #endif
 
 struct _XGC
@@ -235,10 +235,6 @@ struct _XDisplay
 
 #define XAllocIDs(dpy,ids,n) (*(dpy)->idlist_alloc)(dpy,ids,n)
 
-/*
- * define the following if you want the Data macro to be a procedure instead
- */
-
 #ifndef _XEVENT_
 /*
  * _QEvent datatype for use in input queueing.
@@ -367,7 +363,7 @@ extern LockInfoPtr _Xglobal_lock;
  * define MALLOC_0_RETURNS_NULL.  This is necessary because some
  * Xlib code expects malloc(0) to return a valid pointer to storage.
  */
-#ifdef MALLOC_0_RETURNS_NULL
+#if defined(MALLOC_0_RETURNS_NULL) || defined(__clang_analyzer__)
 
 # define Xmalloc(size) malloc(((size) == 0 ? 1 : (size)))
 # define Xrealloc(ptr, size) realloc((ptr), ((size) == 0 ? 1 : (size)))
@@ -437,6 +433,28 @@ extern LockInfoPtr _Xglobal_lock;
  * X Protocol packetizing macros.
  */
 
+/* Leftover from CRAY support - was defined empty on all non-Cray systems */
+#define WORD64ALIGN
+
+/**
+ * Return a len-sized request buffer for the request type. This function may
+ * flush the output queue.
+ *
+ * @param dpy The display connection
+ * @param type The request type
+ * @param len Length of the request in bytes
+ *
+ * @returns A pointer to the request buffer with a few default values
+ * initialized.
+ */
+extern void *_XGetRequest(Display *dpy, CARD8 type, size_t len);
+
+/* GetReqSized is the same as GetReq but allows the caller to specify the
+ * size in bytes. 'sz' must be a multiple of 4! */
+
+#define GetReqSized(name, sz, req) \
+	req = (x##name##Req *) _XGetRequest(dpy, X_##name, sz)
+
 /*
  * GetReq - Get the next available X request packet in the buffer and
  * return it.
@@ -446,50 +464,14 @@ extern LockInfoPtr _Xglobal_lock;
  *
  */
 
-#if !defined(UNIXCPP) || defined(ANSICPP)
 #define GetReq(name, req) \
-	if ((dpy->bufptr + SIZEOF(x##name##Req)) > dpy->bufmax)\
-		_XFlush(dpy);\
-	req = (x##name##Req *)(dpy->last_req = dpy->bufptr);\
-	req->reqType = X_##name;\
-	req->length = (SIZEOF(x##name##Req))>>2;\
-	dpy->bufptr += SIZEOF(x##name##Req);\
-	dpy->request++
-
-#else  /* non-ANSI C uses empty comment instead of "##" for token concatenation */
-#define GetReq(name, req) \
-	if ((dpy->bufptr + SIZEOF(x/**/name/**/Req)) > dpy->bufmax)\
-		_XFlush(dpy);\
-	req = (x/**/name/**/Req *)(dpy->last_req = dpy->bufptr);\
-	req->reqType = X_/**/name;\
-	req->length = (SIZEOF(x/**/name/**/Req))>>2;\
-	dpy->bufptr += SIZEOF(x/**/name/**/Req);\
-	dpy->request++
-#endif
+	GetReqSized(name, SIZEOF(x##name##Req), req)
 
 /* GetReqExtra is the same as GetReq, but allocates "n" additional
    bytes after the request. "n" must be a multiple of 4!  */
 
-#if !defined(UNIXCPP) || defined(ANSICPP)
 #define GetReqExtra(name, n, req) \
-	if ((dpy->bufptr + SIZEOF(x##name##Req) + n) > dpy->bufmax)\
-		_XFlush(dpy);\
-	req = (x##name##Req *)(dpy->last_req = dpy->bufptr);\
-	req->reqType = X_##name;\
-	req->length = (SIZEOF(x##name##Req) + n)>>2;\
-	dpy->bufptr += SIZEOF(x##name##Req) + n;\
-	dpy->request++
-#else
-#define GetReqExtra(name, n, req) \
-	if ((dpy->bufptr + SIZEOF(x/**/name/**/Req) + n) > dpy->bufmax)\
-		_XFlush(dpy);\
-	req = (x/**/name/**/Req *)(dpy->last_req = dpy->bufptr);\
-	req->reqType = X_/**/name;\
-	req->length = (SIZEOF(x/**/name/**/Req) + n)>>2;\
-	dpy->bufptr += SIZEOF(x/**/name/**/Req) + n;\
-	dpy->request++
-#endif
-
+	GetReqSized(name, SIZEOF(x##name##Req) + n, req)
 
 /*
  * GetResReq is for those requests that have a resource ID
@@ -497,51 +479,16 @@ extern LockInfoPtr _Xglobal_lock;
  * "rid" is the name of the resource.
  */
 
-#if !defined(UNIXCPP) || defined(ANSICPP)
 #define GetResReq(name, rid, req) \
-	if ((dpy->bufptr + SIZEOF(xResourceReq)) > dpy->bufmax)\
-	    _XFlush(dpy);\
-	req = (xResourceReq *) (dpy->last_req = dpy->bufptr);\
-	req->reqType = X_##name;\
-	req->length = 2;\
-	req->id = (rid);\
-	dpy->bufptr += SIZEOF(xResourceReq);\
-	dpy->request++
-#else
-#define GetResReq(name, rid, req) \
-	if ((dpy->bufptr + SIZEOF(xResourceReq)) > dpy->bufmax)\
-	    _XFlush(dpy);\
-	req = (xResourceReq *) (dpy->last_req = dpy->bufptr);\
-	req->reqType = X_/**/name;\
-	req->length = 2;\
-	req->id = (rid);\
-	dpy->bufptr += SIZEOF(xResourceReq);\
-	dpy->request++
-#endif
+	req = (xResourceReq *) _XGetRequest(dpy, X_##name, SIZEOF(xResourceReq)); \
+	req->id = (rid)
 
 /*
  * GetEmptyReq is for those requests that have no arguments
  * at all.
  */
-#if !defined(UNIXCPP) || defined(ANSICPP)
 #define GetEmptyReq(name, req) \
-	if ((dpy->bufptr + SIZEOF(xReq)) > dpy->bufmax)\
-	    _XFlush(dpy);\
-	req = (xReq *) (dpy->last_req = dpy->bufptr);\
-	req->reqType = X_##name;\
-	req->length = 1;\
-	dpy->bufptr += SIZEOF(xReq);\
-	dpy->request++
-#else
-#define GetEmptyReq(name, req) \
-	if ((dpy->bufptr + SIZEOF(xReq)) > dpy->bufmax)\
-	    _XFlush(dpy);\
-	req = (xReq *) (dpy->last_req = dpy->bufptr);\
-	req->reqType = X_/**/name;\
-	req->length = 1;\
-	dpy->bufptr += SIZEOF(xReq);\
-	dpy->request++
-#endif
+	req = (xReq *) _XGetRequest(dpy, X_##name, SIZEOF(xReq))
 
 /*
  * MakeBigReq sets the CARD16 "req->length" to 0 and inserts a new CARD32
@@ -582,6 +529,7 @@ extern LockInfoPtr _Xglobal_lock;
  * Do not use SetReqLen if "req" does not already have data after the
  * xReq header. req->length must already be >= 2.
  */
+#ifndef __clang_analyzer__
 #define SetReqLen(req,n,badlen) \
     if ((req->length + n) > (unsigned)65535) { \
 	if (dpy->bigreq_size) { \
@@ -592,6 +540,10 @@ extern LockInfoPtr _Xglobal_lock;
 	} \
     } else \
 	req->length += n
+#else
+#define SetReqLen(req,n,badlen) \
+    req->length += n
+#endif
 
 #define SyncHandle() \
 	if (dpy->synchandler) (*dpy->synchandler)(dpy)
@@ -604,7 +556,7 @@ extern void _XFlushGCCache(Display *dpy, GC gc);
  * 32 bit word alignment.  Transmit if the buffer fills.
  *
  * "dpy" is a pointer to a Display.
- * "data" is a pinter to a data buffer.
+ * "data" is a pointer to a data buffer.
  * "len" is the length of the data buffer.
  */
 #ifndef DataRoutineIsProcedure
@@ -636,17 +588,17 @@ extern void _XFlushGCCache(Display *dpy, GC gc);
     if (dpy->bufptr + (n) > dpy->bufmax) \
         _XFlush (dpy); \
     ptr = (type) dpy->bufptr; \
-    (void)ptr; \
+    memset(ptr, '\0', n); \
     dpy->bufptr += (n);
 
-#define Data16(dpy, data, len) Data((dpy), (char *)(data), (len))
+#define Data16(dpy, data, len) Data((dpy), (_Xconst char *)(data), (len))
 #define _XRead16Pad(dpy, data, len) _XReadPad((dpy), (char *)(data), (len))
 #define _XRead16(dpy, data, len) _XRead((dpy), (char *)(data), (len))
 #ifdef LONG64
-#define Data32(dpy, data, len) _XData32(dpy, (long *)data, len)
+#define Data32(dpy, data, len) _XData32(dpy, (_Xconst long *)data, len)
 extern int _XData32(
 	     Display *dpy,
-	     register long *data,
+             register _Xconst long *data,
 	     unsigned len
 );
 extern void _XRead32(
@@ -655,7 +607,7 @@ extern void _XRead32(
 	     long len
 );
 #else
-#define Data32(dpy, data, len) Data((dpy), (char *)(data), (len))
+#define Data32(dpy, data, len) Data((dpy), (_Xconst char *)(data), (len))
 #define _XRead32(dpy, data, len) _XRead((dpy), (char *)(data), (len))
 #endif
 
@@ -726,7 +678,6 @@ extern void _XRead32(
 }
 
 
-
 /* srcvar must be a variable for large architecture version */
 #define OneDataCard32(dpy,dstaddr,srcvar) \
   { *(CARD32 *)(dstaddr) = (srcvar); }
@@ -784,7 +735,7 @@ typedef int (*FreeModmapType) (
  */
 typedef struct _XFreeFuncs {
     FreeFuncType atoms;		/* _XFreeAtomTable */
-    FreeModmapType modifiermap;	/* XFreeModifierMap */
+    FreeModmapType modifiermap;	/* XFreeModifiermap */
     FreeFuncType key_bindings;	/* _XFreeKeyBindings */
     FreeFuncType context_db;	/* _XFreeContextDB */
     FreeFuncType defaultCCCs;	/* _XcmsFreeDefaultCCCs */
@@ -905,7 +856,7 @@ extern int _XError(
 );
 extern int _XIOError(
     Display*	/* dpy */
-);
+) _X_NORETURN;
 extern int (*_XIOErrorFunction)(
     Display*	/* dpy */
 );
@@ -1404,6 +1355,10 @@ extern void xlocaledir(
     char *buf,
     int buf_len
 );
+
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 
 _XFUNCPROTOEND
 

@@ -34,7 +34,7 @@ PERFORMANCE OF THIS SOFTWARE.
 #include "Ximint.h"
 
 
-Private XIMResourceList
+static XIMResourceList
 _XimGetNestedListSeparator(
     XIMResourceList	 res_list,		/* LISTofIMATTR or IMATTR */
     unsigned int	 res_num)
@@ -42,7 +42,7 @@ _XimGetNestedListSeparator(
     return  _XimGetResourceListRec(res_list, res_num, XNSeparatorofNestedList);
 }
 
-Private Bool
+static Bool
 _XimCheckInnerIMAttributes(
     Xim			 im,
     XIMArg		*arg,
@@ -64,7 +64,7 @@ _XimCheckInnerIMAttributes(
     return True;
 }
 
-Public char *
+char *
 _XimMakeIMAttrIDList(
     Xim			 im,
     XIMResourceList	 res_list,
@@ -102,7 +102,7 @@ _XimMakeIMAttrIDList(
     return (char *)NULL;
 }
 
-Private Bool
+static Bool
 _XimCheckInnerICAttributes(
     Xic			 ic,
     XIMArg		*arg,
@@ -124,7 +124,7 @@ _XimCheckInnerICAttributes(
     return True;
 }
 
-Public char *
+char *
 _XimMakeICAttrIDList(
     Xic			 ic,
     XIMResourceList	 res_list,
@@ -177,6 +177,8 @@ _XimMakeICAttrIDList(
 		    else *len += new_len;
 		    return name;
 		}
+		*len += new_len;
+		buf = (CARD16 *)((char *)buf + new_len);
 	    } else if (res->xrm_name == sts_quark) {
 		if ((name = _XimMakeICAttrIDList(ic, res_list, res_num,
 				(XIMArg *)p->value, buf, &new_len,
@@ -185,9 +187,10 @@ _XimMakeICAttrIDList(
 		    else *len += new_len;
 		    return name;
 		}
+		*len += new_len;
+		buf = (CARD16 *)((char *)buf + new_len);
 	    }
-	    *len += new_len;
-	    buf = (CARD16 *)((char *)buf + new_len);
+
 	    if (!(res = _XimGetNestedListSeparator(res_list, res_num))) {
 		p++;
 		if (p) {
@@ -206,7 +209,7 @@ _XimMakeICAttrIDList(
     return (char *)NULL;
 }
 
-Private Bool
+static Bool
 _XimAttributeToValue(
     Xic			  ic,
     XIMResourceList	  res,
@@ -235,7 +238,7 @@ _XimAttributeToValue(
 	    if (!(value))
 		return False;
 
-	    if (!(str = (char *)Xmalloc(data_len + 1)))
+	    if (!(str = Xmalloc(data_len + 1)))
 		return False;
 
 	    (void)memcpy(str, (char *)data, data_len);
@@ -259,7 +262,7 @@ _XimAttributeToValue(
 		return False;
 
 	    alloc_len = sizeof(XIMStyles) + sizeof(XIMStyle) * num;
-	    if (!(p = (char *)Xmalloc(alloc_len)))
+	    if (!(p = Xmalloc(alloc_len)))
 		return False;
 
 	    rep   = (XIMStyles *)p;
@@ -281,7 +284,7 @@ _XimAttributeToValue(
 	    if (!(value))
 		return False;
 
-	    if (!(rep = (XRectangle *)Xmalloc(sizeof(XRectangle))))
+	    if (!(rep = Xmalloc(sizeof(XRectangle))))
 		return False;
 
 	    rep->x      = data[0];
@@ -299,7 +302,7 @@ _XimAttributeToValue(
 	    if (!(value))
 		return False;
 
-	    if (!(rep = (XPoint *)Xmalloc(sizeof(XPoint))))
+	    if (!(rep = Xmalloc(sizeof(XPoint))))
 		return False;
 
 	    rep->x = data[0];
@@ -313,7 +316,7 @@ _XimAttributeToValue(
 	    INT16	 len = data[0];
 	    char	*base_name;
 	    XFontSet	 rep = (XFontSet)NULL;
-	    char	**missing_list;
+	    char	**missing_list = NULL;
 	    int		 missing_count;
 	    char	*def_string;
 
@@ -322,7 +325,7 @@ _XimAttributeToValue(
 	    if (!ic)
 		return False;
 
-	    if (!(base_name = (char *)Xmalloc(len + 1)))
+	    if (!(base_name = Xmalloc(len + 1)))
 		return False;
 
 	    (void)strncpy(base_name, (char *)&data[1], (int)len);
@@ -347,6 +350,7 @@ _XimAttributeToValue(
 	    }
 
 	    Xfree(base_name);
+	    Xfree(missing_list);
 	    *((XFontSet *)value) = rep;
 	    break;
 	}
@@ -366,7 +370,7 @@ _XimAttributeToValue(
 
 	    alloc_len = sizeof(XIMHotKeyTriggers)
 		      + sizeof(XIMHotKeyTrigger) * num;
-	    if (!(p = (char *)Xmalloc(alloc_len)))
+	    if (!(p = Xmalloc(alloc_len)))
 		return False;
 
 	    rep = (XIMHotKeyTriggers *)p;
@@ -395,7 +399,7 @@ _XimAttributeToValue(
     return True;
 }
 
-Private Bool
+static Bool
 _XimDecodeInnerIMATTRIBUTE(
     Xim			 im,
     XIMArg		*arg)
@@ -411,7 +415,7 @@ _XimDecodeInnerIMATTRIBUTE(
     return _XimDecodeLocalIMAttr(res, (XPointer)&im_values, arg->value);
 }
 
-Public char *
+char *
 _XimDecodeIMATTRIBUTE(
     Xim			 im,
     XIMResourceList	 res_list,
@@ -464,7 +468,7 @@ _XimDecodeIMATTRIBUTE(
     return (char *)NULL;
 }
 
-Private Bool
+static Bool
 _XimDecodeInnerICATTRIBUTE(
     Xic			 ic,
     XIMArg		*arg,
@@ -484,7 +488,7 @@ _XimDecodeInnerICATTRIBUTE(
     return True;
 }
 
-Public char *
+char *
 _XimDecodeICATTRIBUTE(
     Xic			 ic,
     XIMResourceList	 res_list,
@@ -560,7 +564,7 @@ _XimDecodeICATTRIBUTE(
     return (char *)NULL;
 }
 
-Private Bool
+static Bool
 _XimValueToAttribute(
     XIMResourceList	 res,
     XPointer		 buf,
@@ -768,7 +772,7 @@ _XimValueToAttribute(
     return True;
 }
 
-Private Bool
+static Bool
 _XimSetInnerIMAttributes(
     Xim			 im,
     XPointer		 top,
@@ -791,7 +795,7 @@ _XimSetInnerIMAttributes(
     return _XimEncodeLocalIMAttr(res, top, arg->value);
 }
 
-Public char *
+char *
 _XimEncodeIMATTRIBUTE(
     Xim			  im,
     XIMResourceList	  res_list,
@@ -855,7 +859,7 @@ _XimEncodeIMATTRIBUTE(
 }
 
 #ifdef XIM_CONNECTABLE
-Public	Bool
+Bool
 _XimEncodeSavedIMATTRIBUTE(
     Xim			 im,
     XIMResourceList	 res_list,
@@ -918,7 +922,7 @@ _XimEncodeSavedIMATTRIBUTE(
 }
 #endif /* XIM_CONNECTABLE */
 
-Private Bool
+static Bool
 _XimEncodeTopValue(
     Xic			 ic,
     XIMResourceList	 res,
@@ -941,7 +945,7 @@ _XimEncodeTopValue(
     return True;
 }
 
-Private Bool
+static Bool
 _XimEncodePreeditValue(
     Xic			 ic,
     XIMResourceList	 res,
@@ -956,6 +960,7 @@ _XimEncodePreeditValue(
 				&count, (Atom)p->value)))
 	    return False;
 
+	XFree(colormap_ret);
     } else if (res->xrm_name == XrmStringToQuark(XNFontSet)) {
 	int		  list_ret;
 	XFontStruct	**struct_list;
@@ -967,8 +972,7 @@ _XimEncodePreeditValue(
 	if (!p->value)
 	    return False;
 
-	if (ic->private.proto.preedit_font)
-	    Xfree(ic->private.proto.preedit_font);
+	Xfree(ic->private.proto.preedit_font);
 
 	list_ret = XFontsOfFontSet((XFontSet)p->value,
 						 &struct_list, &name_list);
@@ -992,14 +996,14 @@ _XimEncodePreeditValue(
     return True;
 }
 
-Private Bool
+static Bool
 _XimEncodeStatusValue(
     Xic			 ic,
     XIMResourceList	 res,
     XIMArg		*p)
 {
     if (res->xrm_name == XrmStringToQuark(XNStdColormap)) {
-	XStandardColormap	*colormap_ret;
+	XStandardColormap	*colormap_ret = NULL;
 	int			 count;
 
 	if (!(XGetRGBColormaps(ic->core.im->core.display,
@@ -1007,6 +1011,7 @@ _XimEncodeStatusValue(
 				&count, (Atom)p->value)))
 	    return False;
 
+	XFree(colormap_ret);
     } else if (res->xrm_name == XrmStringToQuark(XNFontSet)) {
 	int		  list_ret;
 	XFontStruct	**struct_list;
@@ -1018,8 +1023,7 @@ _XimEncodeStatusValue(
 	if (!p->value)
 	    return False;
 
-	if (ic->private.proto.status_font)
-	    Xfree(ic->private.proto.status_font);
+	Xfree(ic->private.proto.status_font);
 
 	list_ret = XFontsOfFontSet((XFontSet)p->value,
 						 &struct_list, &name_list);
@@ -1043,7 +1047,7 @@ _XimEncodeStatusValue(
     return True;
 }
 
-Private Bool
+static Bool
 _XimSetInnerICAttributes(
     Xic			 ic,
     XPointer		 top,
@@ -1066,7 +1070,7 @@ _XimSetInnerICAttributes(
     return _XimEncodeLocalICAttr(ic, res, top, arg, mode);
 }
 
-Public char *
+char *
 _XimEncodeICATTRIBUTE(
     Xic			  ic,
     XIMResourceList	  res_list,
@@ -1178,7 +1182,7 @@ _XimEncodeICATTRIBUTE(
 }
 
 #ifdef XIM_CONNECTABLE
-Private Bool
+static Bool
 _XimEncodeSavedPreeditValue(
     Xic			  ic,
     XIMResourceList	  res,
@@ -1220,7 +1224,7 @@ _XimEncodeSavedPreeditValue(
     return True;
 }
 
-Private Bool
+static Bool
 _XimEncodeSavedStatusValue(
     Xic			  ic,
     XIMResourceList	  res,
@@ -1237,8 +1241,7 @@ _XimEncodeSavedStatusValue(
 	if (!value)
 	    return False;
 
-	if (ic->private.proto.status_font)
-	    Xfree(ic->private.proto.status_font);
+	Xfree(ic->private.proto.status_font);
 
 	list_ret = XFontsOfFontSet((XFontSet)value,
 						&struct_list, &name_list);
@@ -1262,7 +1265,7 @@ _XimEncodeSavedStatusValue(
     return True;
 }
 
-Public	Bool
+Bool
 _XimEncodeSavedICATTRIBUTE(
     Xic			 ic,
     XIMResourceList	 res_list,
@@ -1373,7 +1376,7 @@ _XimEncodeSavedICATTRIBUTE(
 }
 #endif /* XIM_CONNECTABLE */
 
-Private unsigned int
+static unsigned int
 _XimCountNumberOfAttr(
     INT16	 total,
     CARD16	*attr,
@@ -1381,7 +1384,7 @@ _XimCountNumberOfAttr(
 {
     unsigned int n;
     INT16	 len;
-    INT16	 min_len = sizeof(CARD16)	/* sizeof attrinute ID */
+    INT16	 min_len = sizeof(CARD16)	/* sizeof attribute ID */
 			 + sizeof(CARD16)	/* sizeof type of value */
 			 + sizeof(INT16);	/* sizeof length of attribute */
 
@@ -1398,14 +1401,13 @@ _XimCountNumberOfAttr(
     return n;
 }
 
-Public Bool
+Bool
 _XimGetAttributeID(
     Xim			  im,
     CARD16		 *buf)
 {
     unsigned int	  n;
     XIMResourceList	  res;
-    int			  res_len;
     char		 *names;
     int			  names_len;
     XPointer		  tmp;
@@ -1414,7 +1416,7 @@ _XimGetAttributeID(
     int			  values_len;
     register int	  i;
     INT16		  len;
-    INT16		  min_len = sizeof(CARD16) /* sizeof attrinute ID */
+    INT16		  min_len = sizeof(CARD16) /* sizeof attribute ID */
 				  + sizeof(CARD16) /* sizeof type of value */
 				  + sizeof(INT16); /* sizeof length of attr */
     /*
@@ -1423,16 +1425,15 @@ _XimGetAttributeID(
 
     if (!(n = _XimCountNumberOfAttr(buf[0], &buf[1], &names_len)))
 	return False;
-    res_len = sizeof(XIMResource) * n;
 
-    if (!(res = (XIMResourceList)Xmalloc(res_len)))
+    if (!(res = Xcalloc(n, sizeof(XIMResource))))
 	return False;
-    bzero((char *)res, res_len);
 
     values_len = sizeof(XIMValuesList) + (sizeof(char **) * n) + names_len;
-    if (!(tmp = (XPointer)Xmalloc(values_len)))
+    if (!(tmp = Xcalloc(1, values_len))) {
+	Xfree(res);
 	return False;
-    bzero(tmp, values_len);
+    }
 
     values_list = (XIMValuesList *)tmp;
     values = (char **)((char *)tmp + sizeof(XIMValuesList));
@@ -1456,10 +1457,9 @@ _XimGetAttributeID(
     }
     _XIMCompileResourceList(res, n);
 
-    if (im->core.im_resources)
-	Xfree(im->core.im_resources);
-    if (im->core.im_values_list)
-	Xfree(im->core.im_values_list);
+    Xfree(im->core.im_resources);
+    Xfree(im->core.im_values_list);
+
     im->core.im_resources     = res;
     im->core.im_num_resources = n;
     im->core.im_values_list   = values_list;
@@ -1470,16 +1470,15 @@ _XimGetAttributeID(
 
     if (!(n = _XimCountNumberOfAttr(buf[0], &buf[2], &names_len)))
 	return False;
-    res_len = sizeof(XIMResource) * n;
 
-    if (!(res = (XIMResourceList)Xmalloc(res_len)))
+    if (!(res = Xcalloc(n, sizeof(XIMResource))))
 	return False;
-    bzero((char *)res, res_len);
 
     values_len = sizeof(XIMValuesList) + (sizeof(char **) * n) + names_len;
-    if (!(tmp = (XPointer)Xmalloc(values_len)))
+    if (!(tmp = Xcalloc(1, values_len))) {
+	Xfree(res);
 	return False;
-    bzero(tmp, values_len);
+    }
 
     values_list = (XIMValuesList *)tmp;
     values = (char **)((char *)tmp + sizeof(XIMValuesList));
@@ -1503,10 +1502,10 @@ _XimGetAttributeID(
     }
     _XIMCompileResourceList(res, n);
 
-    if (im->core.ic_resources)
-	Xfree(im->core.ic_resources);
-    if (im->core.ic_values_list)
-	Xfree(im->core.ic_values_list);
+
+    Xfree(im->core.ic_resources);
+    Xfree(im->core.ic_values_list);
+
     im->core.ic_resources     = res;
     im->core.ic_num_resources = n;
     im->core.ic_values_list   = values_list;

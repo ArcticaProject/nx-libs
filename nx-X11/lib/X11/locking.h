@@ -1,4 +1,4 @@
-/* 
+/*
 
 Copyright 1992, 1998  The Open Group
 
@@ -36,6 +36,8 @@ in this Software without prior written authorization from The Open Group.
 
 #define xmalloc(s) Xmalloc(s)
 #define xfree(s) Xfree(s)
+#include <nx-X11/Xlib.h>
+#include <nx-X11/Xlibint.h>
 #include <nx-X11/Xthreads.h>
 
 struct _XCVList {

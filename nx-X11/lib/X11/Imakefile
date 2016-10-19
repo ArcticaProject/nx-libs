@@ -159,8 +159,7 @@ EXTRA_LIBRARIES = /**/
     XF86BIGFONT_DEFINES = XF86BigfontExtensionDefines
 
      EDB_DEFINES = -DERRORDB=\"$(USRDATADIR)/XErrorDB\"
-     KDB_DEFINES = -DKEYSYMDB=\"$(USRDATADIR)/XKeysymDB\"
-     CMS_DEFINES = -DXCMSDB=\"$(USRDATADIR)/Xcms.txt\"
+     CMS_DEFINES = -DXCMSDB=\"$(USRDATADIR)/Xcms.txt\" -DXCMSDIR=\"$(USRDATADIR)\"
 #if HasSnprintf
     MISC_DEFINES = -DHAS_SNPRINTF -DLIBX11
 #endif
@@ -925,10 +924,7 @@ STATICI18NSTATICSRCS = \
 	imTrX.c \
 	imTransR.c \
 	imTrans.c \
-	lcEuc.c \
 	lcGenConv.c \
-	lcJis.c \
-	lcSjis.c \
 	lcUTF8Load.c \
 	omDefault.c \
 	omGeneric.c \
@@ -999,10 +995,7 @@ STATICI18NSTATICOBJS = \
 	imTrX.o \
 	imTransR.o \
 	imTrans.o \
-	lcEuc.o \
 	lcGenConv.o \
-	lcJis.o \
-	lcSjis.o \
 	lcUTF8Load.o \
 	omDefault.o \
 	omGeneric.o \
@@ -1063,7 +1056,6 @@ EXTRASHAREDOBJS = $(STATICLCOBJS)
 #include <Library.tmpl>
 
 SpecialCLibObjectRule(ErrDes,$(ICONFIGFILES),$(EDB_DEFINES))
-SpecialCLibObjectRule(StrKeysym,$(ICONFIGFILES),$(KDB_DEFINES))
 SpecialCLibObjectRule(ConnDis,$(ICONFIGFILES),$(XDMAUTHDEFS) $(RPCDEFS) $(CONN_DEFINES) $(SOCK_DEFINES) $(POLL_DEFINES) $(XTRANS_X_DEFINES) $(K5INCL) $(K5DEFS))
 SpecialCLibObjectRule(x11_trans,$(ICONFIGFILES),$(TRANS_INCLUDES) $(CONN_DEFINES) $(SOCK_DEFINES) $(XTRANS_X_DEFINES) $(POLL_DEFINES))
 SpecialCLibObjectRule(xim_trans,$(ICONFIGFILES),$(TRANS_INCLUDES) $(CONN_DEFINES) $(SOCK_DEFINES) $(XTRANS_XIM_DEFINES) $(POLL_DEFINES))
@@ -1100,7 +1092,6 @@ SpecialCLibObjectRuleSeparateOpts(PutImage,$(ICONFIGFILES),$(_NOOP_),$(XCURSOR_D
 InstallNonExecFile(Xcms.txt,$(LIBDIR))
 #endif
 InstallNonExecFile(XErrorDB,$(LIBDIR))
-InstallNonExecFile(XKeysymDB,$(LIBDIR))
 InstallLintLibrary(X11,$(LINTLIBDIR))
 
 #ifdef QNX4Architecture

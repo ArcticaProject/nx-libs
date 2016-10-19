@@ -49,7 +49,7 @@ XLoadFont (
     Data (dpy, name, nbytes);
     UnlockDisplay(dpy);
     SyncHandle();
-    return (fid); 
+    return (fid);
        /* can't return (req->fid) since request may have already been sent */
 }
 

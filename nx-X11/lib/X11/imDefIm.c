@@ -1,5 +1,5 @@
 /*
- * Copyright 1990, 1991, 1992 Sun Microsystems, Inc.  All rights reserved.
+ * Copyright 1990, 1991, 1992 Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -63,7 +63,7 @@ PERFORMANCE OF THIS SOFTWARE.
 #include "Ximint.h"
 
 
-Public int
+int
 _XimCheckDataSize(
     XPointer	 buf,
     int		 len)
@@ -75,7 +75,7 @@ _XimCheckDataSize(
     return  buf_s[1];
 }
 
-Public void
+void
 _XimSetHeader(
     XPointer	 buf,
     CARD8	 major_opcode,
@@ -93,7 +93,7 @@ _XimSetHeader(
     return;
 }
 
-Public char
+char
 _XimGetMyEndian(void)
 {
     CARD16	 test_card = 1;
@@ -104,7 +104,7 @@ _XimGetMyEndian(void)
 	return BIGENDIAN;
 }
 
-Private Bool
+static Bool
 _XimCheckServerName(
     Xim		   im,
     char	  *str)
@@ -142,7 +142,7 @@ _XimCheckServerName(
     return True;
 }
 
-Private char *
+static char *
 _XimCheckLocaleName(
     Xim		   im,
     char	  *address,
@@ -182,7 +182,7 @@ _XimCheckLocaleName(
     return (char *)NULL;
 }
 
-Private Bool
+static Bool
 _XimCheckTransport(
     char	  *address,
     int		   address_len,
@@ -226,7 +226,7 @@ _XimCheckTransport(
     return True;
 }
 
-Private Bool
+static Bool
 _CheckSNEvent(
     Display		*display,
     XEvent		*xevent,
@@ -240,7 +240,7 @@ _CheckSNEvent(
     return False;
 }
 
-Private Bool
+static Bool
 _XimGetSelectionNotify(
     Display		 *display,
     Window		  window,
@@ -269,7 +269,7 @@ _XimGetSelectionNotify(
     return True;
 }
 
-Private Bool
+static Bool
 _XimPreConnectionIM(
     Xim			 im,
     Atom		 selection)
@@ -387,7 +387,7 @@ Error:
     return False;
 }
 
-Private Bool
+static Bool
 _XimPreConnect(
     Xim		    im)
 {
@@ -434,7 +434,7 @@ _XimPreConnect(
     return True;
 }
 
-Private Bool
+static Bool
 _XimGetAuthProtocolNames(
     Xim		 im,
     CARD16	*buf,
@@ -452,7 +452,7 @@ _XimGetAuthProtocolNames(
     return True;
 }
 
-Private Bool
+static Bool
 _XimSetAuthReplyData(
     Xim		 im,
     XPointer	 buf,
@@ -465,7 +465,7 @@ _XimSetAuthReplyData(
     return True;
 }
 
-Private Bool
+static Bool
 _XimSetAuthNextData(
     Xim		 im,
     XPointer	 buf,
@@ -478,7 +478,7 @@ _XimSetAuthNextData(
     return True;
 }
 
-Private Bool
+static Bool
 _XimSetAuthRequiredData(
     Xim		 im,
     XPointer	 buf,
@@ -491,7 +491,7 @@ _XimSetAuthRequiredData(
     return True;
 }
 
-Private Bool
+static Bool
 _XimCheckAuthSetupData(
     Xim		 im,
     XPointer	 buf)
@@ -502,7 +502,7 @@ _XimCheckAuthSetupData(
     return True;
 }
 
-Private Bool
+static Bool
 _XimCheckAuthNextData(
     Xim		 im,
     XPointer	 buf)
@@ -517,7 +517,7 @@ _XimCheckAuthNextData(
 #define	GOOD_AUTH	1
 #define	BAD_AUTH	0
 
-Private int
+static int
 _XimClientAuthCheck(
     Xim		 im,
     XPointer	 buf)
@@ -528,7 +528,7 @@ _XimClientAuthCheck(
     return NO_MORE_AUTH;
 }
 
-Private void
+static void
 _XimAuthNG(
     Xim		 im)
 {
@@ -542,7 +542,7 @@ _XimAuthNG(
     return;
 }
 
-Private	Bool
+static Bool
 _XimAllRecv(
     Xim		 im,
     INT16	 len,
@@ -555,7 +555,7 @@ _XimAllRecv(
 #define	CLIENT_WAIT1		1
 #define	CLIENT_WAIT2		2
 
-Private Bool
+static Bool
 _XimConnection(
     Xim		 im)
 {
@@ -616,7 +616,7 @@ _XimConnection(
 		preply = reply;
 	    } else {
 		buf_size = len;
-		preply = (XPointer)Xmalloc(buf_size);
+		preply = Xmalloc(buf_size);
 		ret_code = _XimRead(im, &len, preply, buf_size, _XimAllRecv, 0);
 		if(ret_code != XIM_TRUE) {
 		    Xfree(preply);
@@ -716,7 +716,7 @@ _XimConnection(
     return True;
 }
 
-Private	Bool
+static Bool
 _XimDisconnectCheck(
     Xim		 im,
     INT16	 len,
@@ -735,7 +735,7 @@ _XimDisconnectCheck(
     return False;
 }
 
-Private Bool
+static Bool
 _XimDisconnect(
     Xim		 im)
 {
@@ -759,7 +759,7 @@ _XimDisconnect(
 	if(ret_code == XIM_OVERFLOW) {
 	    if(len > 0) {
 		buf_size = len;
-		preply = (XPointer)Xmalloc(buf_size);
+		preply = Xmalloc(buf_size);
 		ret_code = _XimRead(im, &len, preply, buf_size,
 						 _XimDisconnectCheck, 0);
 		Xfree(preply);
@@ -775,7 +775,7 @@ _XimDisconnect(
     return True;
 }
 
-Private	Bool
+static Bool
 _XimOpenCheck(
     Xim		 im,
     INT16	 len,
@@ -794,7 +794,7 @@ _XimOpenCheck(
     return False;
 }
 
-Private Bool
+static Bool
 _XimOpen(
     Xim			 im)
 {
@@ -831,7 +831,7 @@ _XimOpen(
 	    preply = reply;
 	} else {
 	    buf_size = len;
-	    preply = (XPointer)Xmalloc(buf_size);
+	    preply = Xmalloc(buf_size);
 	    ret_code = _XimRead(im, &len, preply, buf_size,
 					_XimOpenCheck, 0);
 	    if(ret_code != XIM_TRUE) {
@@ -890,7 +890,7 @@ _XimOpen(
     return True;
 }
 
-Private	Bool
+static Bool
 _XimCloseCheck(
     Xim		 im,
     INT16	 len,
@@ -914,7 +914,7 @@ _XimCloseCheck(
     return False;
 }
 
-Private Bool
+static Bool
 _XimClose(
     Xim		 im)
 {
@@ -950,7 +950,7 @@ _XimClose(
 	    preply = reply;
 	} else {
 	    buf_size = len;
-	    preply = (XPointer)Xmalloc(buf_size);
+	    preply = Xmalloc(buf_size);
 	    ret_code = _XimRead(im, &len, preply, buf_size, _XimCloseCheck, 0);
 	    if(ret_code != XIM_TRUE) {
 		Xfree(preply);
@@ -972,7 +972,7 @@ _XimClose(
     return True;
 }
 
-Public void
+void
 _XimProtoIMFree(
     Xim		  im)
 {
@@ -1090,7 +1090,7 @@ _XimProtoIMFree(
     return;
 }
 
-Private Status
+static Status
 _XimProtoCloseIM(
     XIM		 xim)
 {
@@ -1105,10 +1105,10 @@ _XimProtoCloseIM(
 	next = ic->core.next;
 #ifdef XIM_CONNECTABLE
 	if (!(!IS_SERVER_CONNECTED(im) && IS_RECONNECTABLE(im))) {
-	    Xfree ((char *) ic);
+	    Xfree (ic);
 	}
 #else
-	Xfree ((char *) ic);
+	Xfree (ic);
 #endif /* XIM_CONNECTABLE */
 	ic = next;
     }
@@ -1138,7 +1138,7 @@ _XimProtoCloseIM(
 }
 
 #ifdef XIM_CONNECTABLE
-Private Bool
+static Bool
 _XimCheckIMQuarkList(
     XrmQuark		*quark_list,
     int			 num_quark,
@@ -1154,7 +1154,7 @@ _XimCheckIMQuarkList(
     return False;
 }
 
-Private Bool
+static Bool
 _XimSaveIMValues(
     Xim			 im,
     XIMArg		*arg)
@@ -1173,7 +1173,7 @@ _XimSaveIMValues(
 	    if (_XimCheckIMQuarkList(quark_list, num_quark, quark)) {
 		continue;
 	    }
-	    if (!(tmp = (XrmQuark *)Xrealloc(quark_list,
+	    if (!(tmp = Xrealloc(quark_list,
 				(sizeof(XrmQuark) * (num_quark + 1))))) {
 		im->private.proto.saved_imvalues = quark_list;
 		im->private.proto.num_saved_imvalues = num_quark;
@@ -1190,7 +1190,7 @@ _XimSaveIMValues(
 
     for (p = arg, n = 0; p && p->name; p++, n++);
 
-    if (!(quark_list = (XrmQuark *)Xmalloc(sizeof(XrmQuark) * n))) {
+    if (!(quark_list = Xmalloc(sizeof(XrmQuark) * n))) {
 	return False;
     }
 
@@ -1203,7 +1203,7 @@ _XimSaveIMValues(
     return True;
 }
 
-Private char *
+static char *
 _XimDelayModeSetIMValues(
     Xim			 im,
     XIMArg		*arg)
@@ -1221,7 +1221,7 @@ _XimDelayModeSetIMValues(
 }
 #endif /* XIM_CONNECTABLE */
 
-Private Bool
+static Bool
 _XimSetIMValuesCheck(
     Xim          im,
     INT16        len,
@@ -1245,7 +1245,7 @@ _XimSetIMValuesCheck(
     return False;
 }
 
-Private char *
+static char *
 _XimProtoSetIMValues(
     XIM			 xim,
     XIMArg		*arg)
@@ -1311,13 +1311,13 @@ _XimProtoSetIMValues(
 
 	buf_size += ret_len;
 	if (buf == tmp_buf) {
-	    if (!(tmp = (char *)Xmalloc(buf_size + data_len))) {
+	    if (!(tmp = Xmalloc(buf_size + data_len))) {
 		return arg->name;
 	    }
 	    memcpy(tmp, buf, buf_size);
 	    buf = tmp;
 	} else {
-	    if (!(tmp = (char *)Xrealloc(buf, (buf_size + data_len)))) {
+	    if (!(tmp = Xrealloc(buf, (buf_size + data_len)))) {
 		Xfree(buf);
 		return arg->name;
 	    }
@@ -1353,7 +1353,7 @@ _XimProtoSetIMValues(
 	    preply = reply;
 	} else {
 	    buf_size = (int)len;
-	    preply = (XPointer)Xmalloc(buf_size);
+	    preply = Xmalloc(buf_size);
 	    ret_code = _XimRead(im, &len, reply, buf_size,
 					_XimSetIMValuesCheck, 0);
 	    if(ret_code != XIM_TRUE) {
@@ -1377,7 +1377,7 @@ _XimProtoSetIMValues(
 }
 
 #ifdef XIM_CONNECTABLE
-Private char *
+static char *
 _XimDelayModeGetIMValues(
     Xim			 im,
     XIMArg		*arg)
@@ -1390,7 +1390,7 @@ _XimDelayModeGetIMValues(
 }
 #endif /* XIM_CONNECTABLE */
 
-Private Bool
+static Bool
 _XimGetIMValuesCheck(
     Xim          im,
     INT16        len,
@@ -1414,7 +1414,7 @@ _XimGetIMValuesCheck(
     return False;
 }
 
-Private char *
+static char *
 _XimProtoGetIMValues(
     XIM			 xim,
     XIMArg		*arg)
@@ -1462,7 +1462,7 @@ _XimProtoGetIMValues(
 	     + sizeof(INT16)
 	     + XIM_PAD(buf_size);
 
-    if (!(buf = (CARD8 *)Xmalloc(buf_size)))
+    if (!(buf = Xmalloc(buf_size)))
 	return arg->name;
     buf_s = (CARD16 *)&buf[XIM_HEADER_SIZE];
 
@@ -1494,7 +1494,7 @@ _XimProtoGetIMValues(
 		preply = reply;
 	    } else {
 		buf_size = len;
-		preply = (XPointer)Xmalloc(buf_size);
+		preply = Xmalloc(buf_size);
 		ret_code = _XimRead(im, &len, preply, buf_size,
 						_XimGetIMValuesCheck, 0);
 		if(ret_code != XIM_TRUE) {
@@ -1526,7 +1526,7 @@ _XimProtoGetIMValues(
 	return makeid_name;
 }
 
-Private XIMMethodsRec     im_methods = {
+static XIMMethodsRec     im_methods = {
     _XimProtoCloseIM,           /* close */
     _XimProtoSetIMValues,       /* set_values */
     _XimProtoGetIMValues,       /* get_values */
@@ -1536,7 +1536,7 @@ Private XIMMethodsRec     im_methods = {
     _Ximctstoutf8		/* ctstoutf8 */
 };
 
-Private Bool
+static Bool
 _XimSetEncodingByName(
     Xim		  im,
     char	**buf,
@@ -1556,7 +1556,7 @@ _XimSetEncodingByName(
     encoding_len = strlen(encoding);
     compound_len = strlen("COMPOUND_TEXT");
     *len = encoding_len + sizeof(BYTE) + compound_len + sizeof(BYTE);
-    if (!(ret = (BYTE *)Xmalloc(*len))) {
+    if (!(ret = Xmalloc(*len))) {
 	return False;
     }
     *buf = (char *)ret;
@@ -1569,7 +1569,7 @@ _XimSetEncodingByName(
     return True;
 }
 
-Private Bool
+static Bool
 _XimSetEncodingByDetail(
     Xim		 im,
     char	**buf,
@@ -1580,7 +1580,7 @@ _XimSetEncodingByDetail(
     return True;
 }
 
-Private Bool
+static Bool
 _XimGetEncoding(
     Xim		 im,
     CARD16	*buf,
@@ -1669,7 +1669,7 @@ _XimGetEncoding(
     return True;
 }
 
-Private	Bool
+static Bool
 _XimEncodingNegoCheck(
     Xim		 im,
     INT16	 len,
@@ -1693,7 +1693,7 @@ _XimEncodingNegoCheck(
     return False;
 }
 
-Private Bool
+static Bool
 _XimEncodingNegotiation(
     Xim		 im)
 {
@@ -1713,11 +1713,8 @@ _XimEncodingNegotiation(
     if (!(_XimSetEncodingByName(im, &name_ptr, &name_len)))
 	return False;
 
-    if (!(_XimSetEncodingByDetail(im, &detail_ptr, &detail_len))) {
-	if (name_ptr)
-	    Xfree(name_ptr);
-	return False;
-    }
+    if (!(_XimSetEncodingByDetail(im, &detail_ptr, &detail_len)))
+	goto free_name_ptr;
 
     len = sizeof(CARD16)
 	+ sizeof(INT16)
@@ -1727,13 +1724,9 @@ _XimEncodingNegotiation(
 	+ sizeof(CARD16)
 	+ detail_len;
 
-    if (!(buf = (CARD8 *)Xmalloc(XIM_HEADER_SIZE + len))) {
-	if (name_ptr)
-	    Xfree(name_ptr);
-	if (detail_ptr)
-	    Xfree(detail_ptr);
-	return False;
-    }
+    if (!(buf = Xmalloc(XIM_HEADER_SIZE + len)))
+	goto free_detail_ptr;
+
     buf_s = (CARD16 *)&buf[XIM_HEADER_SIZE];
 
     buf_s[0] = im->private.proto.imid;
@@ -1750,7 +1743,7 @@ _XimEncodingNegotiation(
     _XimSetHeader((XPointer)buf, XIM_ENCODING_NEGOTIATION, 0, &len);
     if (!(_XimWrite(im, len, (XPointer)buf))) {
 	Xfree(buf);
-	return False;
+	goto free_detail_ptr;
     }
     _XimFlush(im);
     Xfree(buf);
@@ -1764,43 +1757,47 @@ _XimEncodingNegotiation(
 	    preply = reply;
 	} else {
 	    buf_size = len;
-	    preply = (XPointer)Xmalloc(buf_size);
+	    preply = Xmalloc(buf_size);
 	    ret_code = _XimRead(im, &len, preply, buf_size,
 					_XimEncodingNegoCheck, 0);
-	    if(ret_code != XIM_TRUE) {
-		Xfree(preply);
-		return False;
-	    }
+	    if(ret_code != XIM_TRUE)
+		goto free_preply;
 	}
     } else
-	return False;
+	goto free_detail_ptr;
     buf_s = (CARD16 *)((char *)preply + XIM_HEADER_SIZE);
     if (*((CARD8 *)preply) == XIM_ERROR) {
 	_XimProcError(im, 0, (XPointer)&buf_s[3]);
-	if(reply != preply)
-	    Xfree(preply);
-	return False;
+	goto free_preply;
     }
 
     if (!(_XimGetEncoding(im, &buf_s[1], name_ptr, name_len,
-						detail_ptr, detail_len))) {
-	if(reply != preply)
-	    Xfree(preply);
-	return False;
-    }
-    if (name_ptr)
-	Xfree(name_ptr);
-    if (detail_ptr)
-	Xfree(detail_ptr);
+						detail_ptr, detail_len)))
+	goto free_preply;
+
+    Xfree(name_ptr);
+    Xfree(detail_ptr);
 
     if(reply != preply)
 	Xfree(preply);
 
     return True;
+
+free_preply:
+    if (reply != preply)
+	Xfree(preply);
+
+free_detail_ptr:
+    Xfree(detail_ptr);
+
+free_name_ptr:
+    Xfree(name_ptr);
+
+    return False;
 }
 
 #ifdef XIM_CONNECTABLE
-Private Bool
+static Bool
 _XimSendSavedIMValues(
     Xim			 im)
 {
@@ -1845,13 +1842,13 @@ _XimSendSavedIMValues(
 
 	buf_size += ret_len;
 	if (buf == tmp_buf) {
-	    if (!(tmp = (char *)Xmalloc(buf_size + data_len))) {
+	    if (!(tmp = Xmalloc(buf_size + data_len))) {
 		return False;
 	    }
 	    memcpy(tmp, buf, buf_size);
 	    buf = tmp;
 	} else {
-	    if (!(tmp = (char *)Xrealloc(buf, (buf_size + data_len)))) {
+	    if (!(tmp = Xrealloc(buf, (buf_size + data_len)))) {
 		Xfree(buf);
 		return False;
 	    }
@@ -1886,7 +1883,7 @@ _XimSendSavedIMValues(
 	    preply = reply;
 	} else {
 	    buf_size = (int)len;
-	    preply = (XPointer)Xmalloc(buf_size);
+	    preply = Xmalloc(buf_size);
 	    ret_code = _XimRead(im, &len, reply, buf_size,
 					_XimSetIMValuesCheck, 0);
     	    if(ret_code != XIM_TRUE) {
@@ -1910,7 +1907,7 @@ _XimSendSavedIMValues(
     return True;
 }
 
-Private void
+static void
 _XimDelayModeIMFree(
     Xim		 im)
 {
@@ -1933,13 +1930,13 @@ _XimDelayModeIMFree(
     return;
 }
 
-Public Bool
+Bool
 _XimConnectServer(
     Xim		 im)
 {
     Xim		 save_im;
 
-    if (!(save_im = (Xim)Xmalloc(sizeof(XimRec))))
+    if (!(save_im = Xmalloc(sizeof(XimRec))))
 	return False;
     memcpy((char *)save_im, (char *)im, sizeof(XimRec));
 
@@ -1957,7 +1954,7 @@ _XimConnectServer(
     return False;
 }
 
-Public Bool
+Bool
 _XimDelayModeSetAttr(
     Xim			 im)
 {
@@ -1989,7 +1986,7 @@ _XimDelayModeSetAttr(
     return True;
 }
 
-Private Bool
+static Bool
 _XimReconnectModeSetAttr(
     Xim			 im)
 {
@@ -2016,7 +2013,7 @@ _XimReconnectModeSetAttr(
 }
 #endif /* XIM_CONNECTABLE */
 
-Public Bool
+Bool
 _XimProtoOpenIM(
     Xim		 im)
 {

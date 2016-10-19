@@ -43,7 +43,7 @@ PERFORMANCE OF THIS SOFTWARE.
 #include "XlcPubI.h"
 #include "Ximint.h"
 
-Public int
+int
 _XimLocalMbLookupString(XIC xic, XKeyEvent *ev, char *buffer, int bytes,
 			KeySym *keysym, Status *status)
 {
@@ -67,12 +67,21 @@ _XimLocalMbLookupString(XIC xic, XKeyEvent *ev, char *buffer, int bytes,
 		if(status) *status = XBufferOverflow;
 		return(ret);
 	    }
-	    if(keysym) {
-		*keysym = XK_braille_blank | pattern;
-		if(status) *status = XLookupBoth;
-	    } else
-		if(status) *status = XLookupChars;
-	    memcpy(buffer, mb, ret);
+	    if(keysym) *keysym = XK_braille_blank | pattern;
+	    if(ret > 0) {
+		if (keysym) {
+		    if(status) *status = XLookupBoth;
+		} else {
+		    if(status) *status = XLookupChars;
+		}
+		memcpy(buffer, mb, ret);
+	    } else {
+		if(keysym) {
+		    if(status) *status = XLookupKeySym;
+		} else {
+		    if(status) *status = XLookupNone;
+		}
+	    }
 	} else { /* Composed Event */
 	    ret = strlen(&mb[b[ic->private.local.composed].mb]);
 	    if(ret > bytes) {
@@ -117,7 +126,7 @@ _XimLocalMbLookupString(XIC xic, XKeyEvent *ev, char *buffer, int bytes,
     return (ret);
 }
 
-Public int
+int
 _XimLocalWcLookupString(XIC xic, XKeyEvent *ev, wchar_t *buffer, int wlen,
 			KeySym *keysym, Status *status)
 {
@@ -189,7 +198,7 @@ _XimLocalWcLookupString(XIC xic, XKeyEvent *ev, wchar_t *buffer, int wlen,
     return (ret);
 }
 
-Public int
+int
 _XimLocalUtf8LookupString(XIC xic, XKeyEvent *ev, char *buffer, int bytes,
 			  KeySym *keysym, Status *status)
 {
@@ -213,6 +222,11 @@ _XimLocalUtf8LookupString(XIC xic, XKeyEvent *ev, char *buffer, int bytes,
 	    buffer[0] = 0xe0 | ((BRL_UC_ROW >> 12) & 0x0f);
 	    buffer[1] = 0x80 | ((BRL_UC_ROW >> 8) & 0x30) | (pattern >> 6);
 	    buffer[2] = 0x80 | (pattern & 0x3f);
+	    if(keysym) {
+		*keysym = XK_braille_blank | pattern;
+		if(status) *status = XLookupBoth;
+	    } else
+		if(status) *status = XLookupChars;
 	} else { /* Composed Event */
 	    ret = strlen(&utf8[b[ic->private.local.composed].utf8]);
 	    if(ret > bytes) {
@@ -257,7 +271,7 @@ _XimLocalUtf8LookupString(XIC xic, XKeyEvent *ev, char *buffer, int bytes,
     return (ret);
 }
 
-Private int
+static int
 _XimLcctsconvert(
     XlcConv	 conv,
     char	*from,
@@ -323,7 +337,7 @@ _XimLcctsconvert(
     return to_cnvlen;
 }
 
-Public int
+int
 _XimLcctstombs(XIM xim, char *from, int from_len,
 	       char *to, int to_len, Status *state)
 {
@@ -331,7 +345,7 @@ _XimLcctstombs(XIM xim, char *from, int from_len,
 			    from, from_len, to, to_len, state);
 }
 
-Public int
+int
 _XimLcctstowcs(XIM xim, char *from, int from_len,
 	       wchar_t *to, int to_len, Status *state)
 {
@@ -394,7 +408,7 @@ _XimLcctstowcs(XIM xim, char *from, int from_len,
     return to_cnvlen;
 }
 
-Public int
+int
 _XimLcctstoutf8(XIM xim, char *from, int from_len,
 		char *to, int to_len, Status *state)
 {

@@ -61,13 +61,13 @@ XcmsFormatOfPrefix(char *prefix)
     XcmsColorSpace	**papColorSpaces;
     char		string_buf[64];
     char		*string_lowered;
-    int			len;
+    size_t		len;
 
     /*
      * While copying prefix to string_lowered, convert to lowercase
      */
     if ((len = strlen(prefix)) >= sizeof(string_buf)) {
-	string_lowered = (char *) Xmalloc(len+1);
+	string_lowered = Xmalloc(len+1);
     } else {
 	string_lowered = string_buf;
     }

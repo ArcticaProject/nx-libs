@@ -36,7 +36,7 @@ PERFORMANCE OF THIS SOFTWARE.
 #include "Ximint.h"
 
 
-Public Bool
+Bool
 _XimRegProtoIntrCallback(
     Xim		 im,
     CARD16	 major_code,
@@ -49,7 +49,7 @@ _XimRegProtoIntrCallback(
 {
     XimProtoIntrRec    *rec;
 
-    if (!(rec = (XimProtoIntrRec *)Xmalloc(sizeof(XimProtoIntrRec))))
+    if (!(rec = Xmalloc(sizeof(XimProtoIntrRec))))
         return False;
     rec->func       = proc;
     rec->major_code = major_code;
@@ -60,7 +60,7 @@ _XimRegProtoIntrCallback(
     return True;
 }
 
-Public void
+void
 _XimFreeProtoIntrCallback(Xim im)
 {
     register XimProtoIntrRec *rec, *next;
@@ -74,7 +74,7 @@ _XimFreeProtoIntrCallback(Xim im)
     return;
 }
 
-Private Bool
+static Bool
 _XimTransportIntr(
     Xim		 im,
     INT16	 len,
@@ -95,7 +95,7 @@ _XimTransportIntr(
     return False;
 }
 
-Public Bool
+Bool
 _XimDispatchInit(Xim im)
 {
     if (_XimRegisterDispatcher(im, _XimTransportIntr, (XPointer)im))

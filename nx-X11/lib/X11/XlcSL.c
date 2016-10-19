@@ -37,7 +37,7 @@ Sun Microsystems, Inc. or its licensors is granted.
 
 */
 /*
- * Copyright 2000 Sun Microsystems, Inc.  All rights reserved.
+ * Copyright 2000 Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -71,8 +71,7 @@ extern XIM _XDefaultOpenIM(
 			   );
 
 Bool
-_XInitDefaultIM(lcd)
-XLCd lcd;
+_XInitDefaultIM(XLCd lcd)
 {
     if(lcd == (XLCd)NULL)
 	return False;
@@ -88,8 +87,7 @@ extern XOM _XDefaultOpenOM(
 			   );
 
 Bool
-_XInitDefaultOM(lcd)
-    XLCd lcd;
+_XInitDefaultOM(XLCd lcd)
 {
     lcd->methods->open_om = _XDefaultOpenOM;
     return True;

@@ -40,11 +40,11 @@ alloc_list(
     if (is_wide_char) {
 	wchar_t **wstr_list;
 
-	wstr_list = (wchar_t **) Xmalloc(count * sizeof(wchar_t *));
+	wstr_list = Xmalloc(count * sizeof(wchar_t *));
 	if (wstr_list == NULL)
 	    return (XPointer *) NULL;
 
-	*wstr_list = (wchar_t *) Xmalloc(nitems * sizeof(wchar_t));
+	*wstr_list = Xmalloc(nitems * sizeof(wchar_t));
 	if (*wstr_list == NULL) {
 	    Xfree(wstr_list);
 	    return (XPointer *) NULL;
@@ -54,11 +54,11 @@ alloc_list(
     } else {
 	char **str_list;
 
-	str_list = (char **) Xmalloc(count * sizeof(char *));
+	str_list = Xmalloc(count * sizeof(char *));
 	if (str_list == NULL)
 	    return (XPointer *) NULL;
 
-	*str_list = (char *) Xmalloc(nitems);
+	*str_list = Xmalloc(nitems);
 	if (*str_list == NULL) {
 	    Xfree(str_list);
 	    return (XPointer *) NULL;
@@ -149,14 +149,14 @@ _XTextPropertyToTextList(
 	return XConverterNotFound;
 
     if (is_wide_char) {
-	buf_len = (text_prop->nitems + 1) * sizeof(wchar_t);;
+	buf_len = (text_prop->nitems + 1) * sizeof(wchar_t);
     } else {
 	if (strcmp(to_type, XlcNUtf8String) == 0)
 	    buf_len = text_prop->nitems * 6 + 1;
 	else
 	    buf_len = text_prop->nitems * XLC_PUBLIC(lcd, mb_cur_max) + 1;
     }
-    buf = (XPointer) Xmalloc(buf_len);
+    buf = Xmalloc(buf_len);
     if (buf == NULL)
 	return XNoMemory;
     to = buf;
@@ -283,8 +283,7 @@ _XwcFreeStringList(
     wchar_t **list)
 {
     if (list) {
-        if (*list)
-	     Xfree(*list);
+        Xfree(*list);
         Xfree(list);
     }
 }

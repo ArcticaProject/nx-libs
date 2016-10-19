@@ -41,7 +41,7 @@ from The Open Group.
 #define max_byte2 max_char_or_byte2
 
 
-/* 
+/*
  * CI_GET_ROWZERO_CHAR_INFO_2D - do the same thing as CI_GET_CHAR_INFO_1D,
  * except that the font has more than one row.  This is special case of more
  * general version used in XTextExt16.c since row == 0.  This is used when
@@ -119,7 +119,7 @@ XTextExtents (
 	    } else {
 		overall->ascent = max (overall->ascent, cs->ascent);
 		overall->descent = max (overall->descent, cs->descent);
-		overall->lbearing = min (overall->lbearing, 
+		overall->lbearing = min (overall->lbearing,
 					 overall->width + cs->lbearing);
 		overall->rbearing = max (overall->rbearing,
 					 overall->width + cs->rbearing);
@@ -132,7 +132,7 @@ XTextExtents (
      * if there were no characters, then set everything to 0
      */
     if (nfound == 0) {
-	overall->width = overall->ascent = overall->descent = 
+	overall->width = overall->ascent = overall->descent =
 	  overall->lbearing = overall->rbearing = 0;
     }
 
@@ -141,7 +141,7 @@ XTextExtents (
 
 
 /*
- * XTextWidth - compute the width of a string of eightbit bytes.  This is a 
+ * XTextWidth - compute the width of a string of eightbit bytes.  This is a
  * subset of XTextExtents.
  */
 int

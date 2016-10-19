@@ -44,13 +44,9 @@ in this Software without prior written authorization from The Open Group.
 #define XK_CAUCASUS
 #define XK_VIETNAMESE
 #define XK_XKB_KEYS
+#define XK_SINHALA
 #include <nx-X11/keysymdef.h>
 #include <stdio.h>
-
-#ifdef USE_OWN_COMPOSE
-#include "imComp.h"
-
-#endif
 
 #include "Xresource.h"
 #include "Key.h"
@@ -238,7 +234,7 @@ XRefreshKeyboardMapping(register XMappingEvent *event)
 	 */
 	LockDisplay(event->display);
 	if (event->display->keysyms) {
-	     Xfree ((char *)event->display->keysyms);
+	     Xfree (event->display->keysyms);
 	     event->display->keysyms = NULL;
 	}
 	UnlockDisplay(event->display);
@@ -275,12 +271,13 @@ _XKeyInitialize(
 	if (! keysyms) return 0;
 
 	LockDisplay(dpy);
-	if (dpy->keysyms)
-	    Xfree ((char *)dpy->keysyms);
+
+	Xfree (dpy->keysyms);
 	dpy->keysyms = keysyms;
 	dpy->keysyms_per_keycode = per;
 	if (dpy->modifiermap)
 	    ResetModMap(dpy);
+
 	UnlockDisplay(dpy);
     }
     if (!dpy->modifiermap)
@@ -890,73 +887,6 @@ XLookupString (
 		  &modifiers, &symbol))
 	return 0;
 
-#ifdef USE_OWN_COMPOSE
-    if ( status ) {
-	static int been_here= 0;
-	if ( !been_here ) {
-	    XimCompInitTables();
-	    been_here = 1;
-	}
-	if ( !XimCompLegalStatus(status) ) {
-	    status->compose_ptr = NULL;
-	    status->chars_matched = 0;
-	}
-	if ( ((status->chars_matched>0)&&(status->compose_ptr!=NULL)) ||
-		XimCompIsComposeKey(symbol,event->keycode,status) ) {
-	    XimCompRtrn rtrn;
-	    switch (XimCompProcessSym(status,symbol,&rtrn)) {
-		case XIM_COMP_IGNORE:
-		    break;
-		case XIM_COMP_IN_PROGRESS:
-		    if ( keysym!=NULL )
-			*keysym = NoSymbol;
-		    return 0;
-		case XIM_COMP_FAIL:
-		{
-		    int n = 0, len= 0;
-		    for (n=len=0;rtrn.sym[n]!=XK_VoidSymbol;n++) {
-			if ( nbytes-len > 0 ) {
-			    len+= _XTranslateKeySym(event->display,rtrn.sym[n],
-							event->state,
-							buffer+len,nbytes-len);
-			}
-		    }
-		    if ( keysym!=NULL ) {
-			if ( n==1 )	*keysym = rtrn.sym[0];
-			else		*keysym = NoSymbol;
-		    }
-		    return len;
-		}
-		case XIM_COMP_SUCCEED:
-		{
-		    int len,n = 0;
-
-		    symbol = rtrn.matchSym;
-		    if ( keysym!=NULL )	*keysym = symbol;
-		    if ( rtrn.str[0]!='\0' ) {
-			strncpy(buffer,rtrn.str,nbytes-1);
-			buffer[nbytes-1]= '\0';
-			len = strlen(buffer);
-		    }
-		    else {
-			len = _XTranslateKeySym(event->display,symbol,
-							event->state,
-							buffer,nbytes);
-		    }
-		    for (n=0;rtrn.sym[n]!=XK_VoidSymbol;n++) {
-			if ( nbytes-len > 0 ) {
-			    len+= _XTranslateKeySym(event->display,rtrn.sym[n],
-							event->state,
-							buffer+len,nbytes-len);
-			}
-		    }
-		    return len;
-		}
-	    }
-	}
-    }
-#endif
-
     if (keysym)
 	*keysym = symbol;
     /* arguable whether to use (event->state & ~modifiers) here */
@@ -973,8 +903,8 @@ _XFreeKeyBindings(
     for (p = dpy->key_bindings; p; p = np) {
 	np = p->next;
 	Xfree(p->string);
-	Xfree((char *)p->modifiers);
-	Xfree((char *)p);
+	Xfree(p->modifiers);
+	Xfree(p);
     }
 }
 
@@ -996,15 +926,13 @@ XRebindKeysym (
     tmp = dpy->key_bindings;
     nb = sizeof(KeySym) * nm;
 
-    if ((! (p = (struct _XKeytrans *) Xmalloc( sizeof(struct _XKeytrans)))) ||
-	((! (p->string = (char *) Xmalloc( (unsigned) nbytes))) &&
-	 (nbytes > 0)) ||
-	((! (p->modifiers = (KeySym *) Xmalloc( (unsigned) nb))) &&
-	 (nb > 0))) {
+    if ((! (p = Xcalloc( 1, sizeof(struct _XKeytrans)))) ||
+	((! (p->string = Xmalloc(nbytes))) && (nbytes > 0)) ||
+	((! (p->modifiers = Xmalloc(nb))) && (nb > 0))) {
 	if (p) {
-	    if (p->string) Xfree(p->string);
-	    if (p->modifiers) Xfree((char *) p->modifiers);
-	    Xfree((char *) p);
+	    Xfree(p->string);
+	    Xfree(p->modifiers);
+	    Xfree(p);
 	}
 	UnlockDisplay(dpy);
 	return 0;
@@ -1013,7 +941,7 @@ XRebindKeysym (
     dpy->key_bindings = p;
     dpy->free_funcs->key_bindings = _XFreeKeyBindings;
     p->next = tmp;	/* chain onto list */
-    memcpy (p->string, (char *) str, nbytes);
+    memcpy (p->string, str, nbytes);
     p->len = nbytes;
     memcpy ((char *) p->modifiers, (char *) mlist, nb);
     p->key = keysym;

@@ -36,7 +36,7 @@ PERFORMANCE OF THIS SOFTWARE.
 #include "Xlcint.h"
 #include "Ximint.h"
 
-Private void
+static void
 _XimLocalUnSetFocus(
     XIC	 xic)
 {
@@ -49,7 +49,7 @@ _XimLocalUnSetFocus(
     return;
 }
 
-Private void
+static void
 _XimLocalDestroyIC(
     XIC	 xic)
 {
@@ -68,7 +68,7 @@ _XimLocalDestroyIC(
     return;
 }
 
-Private void
+static void
 _XimLocalSetFocus(
     XIC	 xic)
 {
@@ -90,7 +90,7 @@ _XimLocalSetFocus(
     return;
 }
 
-Private void
+static void
 _XimLocalReset(
     XIC	 xic)
 {
@@ -102,7 +102,7 @@ _XimLocalReset(
     ic->private.local.brl_committed  = 0;
 }
 
-Private char *
+static char *
 _XimLocalMbReset(
     XIC	 xic)
 {
@@ -110,7 +110,7 @@ _XimLocalMbReset(
     return (char *)NULL;
 }
 
-Private wchar_t *
+static wchar_t *
 _XimLocalWcReset(
     XIC	 xic)
 {
@@ -118,7 +118,7 @@ _XimLocalWcReset(
     return (wchar_t *)NULL;
 }
 
-Private XICMethodsRec Local_ic_methods = {
+static XICMethodsRec Local_ic_methods = {
     _XimLocalDestroyIC, 	/* destroy */
     _XimLocalSetFocus,  	/* set_focus */
     _XimLocalUnSetFocus,	/* unset_focus */
@@ -132,7 +132,7 @@ Private XICMethodsRec Local_ic_methods = {
     _XimLocalUtf8LookupString	/* utf8_lookup_string */
 };
 
-Public XIC
+XIC
 _XimLocalCreateIC(
     XIM			 im,
     XIMArg		*values)
@@ -143,10 +143,9 @@ _XimLocalCreateIC(
     unsigned int	 num;
     int			 len;
 
-    if((ic = (Xic)Xmalloc(sizeof(XicRec))) == (Xic)NULL) {
+    if((ic = Xcalloc(1, sizeof(XicRec))) == (Xic)NULL) {
 	return ((XIC)NULL);
     }
-    bzero((char *)ic, sizeof(XicRec));
 
     ic->methods = &Local_ic_methods;
     ic->core.im = im;
@@ -159,7 +158,7 @@ _XimLocalCreateIC(
 
     num = im->core.ic_num_resources;
     len = sizeof(XIMResource) * num;
-    if((res = (XIMResourceList)Xmalloc(len)) == (XIMResourceList)NULL) {
+    if((res = Xmalloc(len)) == (XIMResourceList)NULL) {
 	goto Set_Error;
     }
     (void)memcpy((char *)res, (char *)im->core.ic_resources, len);
@@ -180,7 +179,7 @@ _XimLocalCreateIC(
 			values, XIM_CREATEIC, True)) {
 	goto Set_Error;
     }
-    ic_values.filter_events = KeyPressMask;
+    ic_values.filter_events = KeyPressMask | KeyReleaseMask;
     _XimSetCurrentICValues(ic, &ic_values);
     if(_XimSetICDefaults(ic, (XPointer)&ic_values,
 				XIM_SETICDEFAULTS, res, num) == False) {

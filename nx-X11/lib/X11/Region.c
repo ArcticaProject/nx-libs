@@ -139,10 +139,10 @@ XCreateRegion(void)
 {
     Region temp;
 
-    if (! (temp = ( Region )Xmalloc( (unsigned) sizeof( REGION ))))
+    if (! (temp = Xmalloc(sizeof( REGION ))))
 	return (Region) NULL;
-    if (! (temp->rects = ( BOX * )Xmalloc( (unsigned) sizeof( BOX )))) {
-	Xfree((char *) temp);
+    if (! (temp->rects = Xmalloc(sizeof( BOX )))) {
+	Xfree(temp);
 	return (Region) NULL;
     }
     temp->numRects = 0;
@@ -384,7 +384,12 @@ XShrinkRegion(
     int grow;
 
     if (!dx && !dy) return 0;
-    if ((! (s = XCreateRegion()))  || (! (t = XCreateRegion()))) return 0;
+    if (! (s = XCreateRegion()) )
+	return 0;
+    if (! (t = XCreateRegion()) ) {
+	XDestroyRegion(s);
+	return 0;
+    }
     if ((grow = (dx < 0))) dx = -dx;
     if (dx) Compress(r, s, t, (unsigned) 2*dx, TRUE, grow);
     if ((grow = (dy < 0))) dy = -dy;
@@ -502,7 +507,7 @@ XIntersectRegion(
     return 1;
 }
 
-static void
+static int
 miRegionCopy(
     register Region dstrgn,
     register Region rgn)
@@ -516,11 +521,12 @@ miRegionCopy(
             {
 		BOX *prevRects = dstrgn->rects;
 
-                if (! (dstrgn->rects = (BOX *)
-		       Xrealloc((char *) dstrgn->rects,
-				(unsigned) rgn->numRects * (sizeof(BOX))))) {
+		dstrgn->rects = Xrealloc(dstrgn->rects,
+					 rgn->numRects * (sizeof(BOX)));
+		if (! dstrgn->rects) {
 		    Xfree(prevRects);
-		    return;
+		    dstrgn->size = 0;
+		    return 0;
 		}
             }
             dstrgn->size = rgn->numRects;
@@ -534,6 +540,7 @@ miRegionCopy(
 	memcpy((char *) dstrgn->rects, (char *) rgn->rects,
 	       (int) (rgn->numRects * sizeof(BOX)));
     }
+    return 1;
 }
 
 /*======================================================================
@@ -783,8 +790,7 @@ miRegionOp(
      */
     newReg->size = max(reg1->numRects,reg2->numRects) * 2;
 
-    if (! (newReg->rects = (BoxPtr)
-	   Xmalloc ((unsigned) (sizeof(BoxRec) * newReg->size)))) {
+    if (! (newReg->rects = Xmalloc (sizeof(BoxRec) * newReg->size))) {
 	newReg->size = 0;
 	return;
     }
@@ -974,11 +980,12 @@ miRegionOp(
 	if (REGION_NOT_EMPTY(newReg))
 	{
 	    BoxPtr prev_rects = newReg->rects;
-	    newReg->size = newReg->numRects;
-	    newReg->rects = (BoxPtr) Xrealloc ((char *) newReg->rects,
-				   (unsigned) (sizeof(BoxRec) * newReg->size));
+	    newReg->rects = Xrealloc (newReg->rects,
+				      sizeof(BoxRec) * newReg->numRects);
 	    if (! newReg->rects)
 		newReg->rects = prev_rects;
+	    else
+		newReg->size = newReg->numRects;
 	}
 	else
 	{
@@ -987,11 +994,11 @@ miRegionOp(
 	     * the region is empty
 	     */
 	    newReg->size = 1;
-	    Xfree((char *) newReg->rects);
-	    newReg->rects = (BoxPtr) Xmalloc(sizeof(BoxRec));
+	    Xfree(newReg->rects);
+	    newReg->rects = Xmalloc(sizeof(BoxRec));
 	}
     }
-    Xfree ((char *) oldRects);
+    Xfree (oldRects);
     return;
 }
 
@@ -1146,7 +1153,7 @@ XUnionRegion(
     if ( (reg1 == reg2) || (!(reg1->numRects)) )
     {
         if (newReg != reg2)
-            miRegionCopy(newReg, reg2);
+            return miRegionCopy(newReg, reg2);
         return 1;
     }
 
@@ -1156,7 +1163,7 @@ XUnionRegion(
     if (!(reg2->numRects))
     {
         if (newReg != reg1)
-            miRegionCopy(newReg, reg1);
+            return miRegionCopy(newReg, reg1);
         return 1;
     }
 
@@ -1170,7 +1177,7 @@ XUnionRegion(
 	(reg1->extents.y2 >= reg2->extents.y2))
     {
         if (newReg != reg1)
-            miRegionCopy(newReg, reg1);
+            return miRegionCopy(newReg, reg1);
         return 1;
     }
 
@@ -1184,7 +1191,7 @@ XUnionRegion(
 	(reg2->extents.y2 >= reg1->extents.y2))
     {
         if (newReg != reg2)
-            miRegionCopy(newReg, reg2);
+            return miRegionCopy(newReg, reg2);
         return 1;
     }
 
@@ -1425,8 +1432,7 @@ XSubtractRegion(
     if ( (!(regM->numRects)) || (!(regS->numRects))  ||
 	(!EXTENTCHECK(&regM->extents, &regS->extents)) )
     {
-	miRegionCopy(regD, regM);
-        return 1;
+	return miRegionCopy(regD, regM);
     }
 
     miRegionOp (regD, regM, regS, miSubtractO,
@@ -1448,8 +1454,12 @@ XXorRegion(Region sra, Region srb, Region dr)
 {
     Region tra, trb;
 
-    if ((! (tra = XCreateRegion())) || (! (trb = XCreateRegion())))
+    if (! (tra = XCreateRegion()) )
 	return 0;
+    if (! (trb = XCreateRegion()) ) {
+	XDestroyRegion(tra);
+	return 0;
+    }
     (void) XSubtractRegion(sra,srb,tra);
     (void) XSubtractRegion(srb,sra,trb);
     (void) XUnionRegion(tra,trb,dr);

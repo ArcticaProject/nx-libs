@@ -59,28 +59,24 @@ typedef unsigned long wchar_t;
 #endif
 #endif
 
-#if defined(ISC) && defined(USE_XMBTOWC)
-#define wctomb(a,b)	_Xwctomb(a,b)
-#define mblen(a,b)	_Xmblen(a,b)
-#ifndef USE_XWCHAR_STRING
-#define mbtowc(a,b,c)	_Xmbtowc(a,b,c)
-#endif
-#endif
 
 extern int
 _Xmblen(
-#ifdef ISC
-    char const *str,
-    size_t len
-#else
     char *str,
     int len
-#endif
     );
 
 /* API mentioning "UTF8" or "utf8" is an XFree86 extension, introduced in
    November 2000. Its presence is indicated through the following macro. */
 #define X_HAVE_UTF8_STRING 1
+
+/* The Xlib structs are full of implicit padding to properly align members.
+   We can't clean that up without breaking ABI, so tell clang not to bother
+   complaining about it. */
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wpadded"
+#endif
 
 typedef char *XPointer;
 
@@ -93,39 +89,39 @@ typedef char *XPointer;
 #define QueuedAfterReading 1
 #define QueuedAfterFlush 2
 
-#define ConnectionNumber(dpy) 	(((_XPrivDisplay)dpy)->fd)
+#define ConnectionNumber(dpy) 	(((_XPrivDisplay)(dpy))->fd)
 #define RootWindow(dpy, scr) 	(ScreenOfDisplay(dpy,scr)->root)
-#define DefaultScreen(dpy) 	(((_XPrivDisplay)dpy)->default_screen)
+#define DefaultScreen(dpy) 	(((_XPrivDisplay)(dpy))->default_screen)
 #define DefaultRootWindow(dpy) 	(ScreenOfDisplay(dpy,DefaultScreen(dpy))->root)
 #define DefaultVisual(dpy, scr) (ScreenOfDisplay(dpy,scr)->root_visual)
 #define DefaultGC(dpy, scr) 	(ScreenOfDisplay(dpy,scr)->default_gc)
 #define BlackPixel(dpy, scr) 	(ScreenOfDisplay(dpy,scr)->black_pixel)
 #define WhitePixel(dpy, scr) 	(ScreenOfDisplay(dpy,scr)->white_pixel)
 #define AllPlanes 		((unsigned long)~0L)
-#define QLength(dpy) 		(((_XPrivDisplay)dpy)->qlen)
+#define QLength(dpy) 		(((_XPrivDisplay)(dpy))->qlen)
 #define DisplayWidth(dpy, scr) 	(ScreenOfDisplay(dpy,scr)->width)
 #define DisplayHeight(dpy, scr) (ScreenOfDisplay(dpy,scr)->height)
 #define DisplayWidthMM(dpy, scr)(ScreenOfDisplay(dpy,scr)->mwidth)
 #define DisplayHeightMM(dpy, scr)(ScreenOfDisplay(dpy,scr)->mheight)
 #define DisplayPlanes(dpy, scr) (ScreenOfDisplay(dpy,scr)->root_depth)
 #define DisplayCells(dpy, scr) 	(DefaultVisual(dpy,scr)->map_entries)
-#define ScreenCount(dpy) 	(((_XPrivDisplay)dpy)->nscreens)
-#define ServerVendor(dpy) 	(((_XPrivDisplay)dpy)->vendor)
-#define ProtocolVersion(dpy) 	(((_XPrivDisplay)dpy)->proto_major_version)
-#define ProtocolRevision(dpy) 	(((_XPrivDisplay)dpy)->proto_minor_version)
-#define VendorRelease(dpy) 	(((_XPrivDisplay)dpy)->release)
-#define DisplayString(dpy) 	(((_XPrivDisplay)dpy)->display_name)
+#define ScreenCount(dpy) 	(((_XPrivDisplay)(dpy))->nscreens)
+#define ServerVendor(dpy) 	(((_XPrivDisplay)(dpy))->vendor)
+#define ProtocolVersion(dpy) 	(((_XPrivDisplay)(dpy))->proto_major_version)
+#define ProtocolRevision(dpy) 	(((_XPrivDisplay)(dpy))->proto_minor_version)
+#define VendorRelease(dpy) 	(((_XPrivDisplay)(dpy))->release)
+#define DisplayString(dpy) 	(((_XPrivDisplay)(dpy))->display_name)
 #define DefaultDepth(dpy, scr) 	(ScreenOfDisplay(dpy,scr)->root_depth)
 #define DefaultColormap(dpy, scr)(ScreenOfDisplay(dpy,scr)->cmap)
-#define BitmapUnit(dpy) 	(((_XPrivDisplay)dpy)->bitmap_unit)
-#define BitmapBitOrder(dpy) 	(((_XPrivDisplay)dpy)->bitmap_bit_order)
-#define BitmapPad(dpy) 		(((_XPrivDisplay)dpy)->bitmap_pad)
-#define ImageByteOrder(dpy) 	(((_XPrivDisplay)dpy)->byte_order)
-#define NextRequest(dpy)	(((_XPrivDisplay)dpy)->request + 1)
-#define LastKnownRequestProcessed(dpy)	(((_XPrivDisplay)dpy)->last_request_read)
+#define BitmapUnit(dpy) 	(((_XPrivDisplay)(dpy))->bitmap_unit)
+#define BitmapBitOrder(dpy) 	(((_XPrivDisplay)(dpy))->bitmap_bit_order)
+#define BitmapPad(dpy) 		(((_XPrivDisplay)(dpy))->bitmap_pad)
+#define ImageByteOrder(dpy) 	(((_XPrivDisplay)(dpy))->byte_order)
+#define NextRequest(dpy)	(((_XPrivDisplay)(dpy))->request + 1)
+#define LastKnownRequestProcessed(dpy)	(((_XPrivDisplay)(dpy))->last_request_read)
 
 /* macros for screen oriented applications (toolkit) */
-#define ScreenOfDisplay(dpy, scr)(&((_XPrivDisplay)dpy)->screens[scr])
+#define ScreenOfDisplay(dpy, scr)(&((_XPrivDisplay)(dpy))->screens[scr])
 #define DefaultScreenOfDisplay(dpy) ScreenOfDisplay(dpy,DefaultScreen(dpy))
 #define DisplayOfScreen(s)	((s)->display)
 #define RootWindowOfScreen(s)	((s)->root)
@@ -1014,7 +1010,7 @@ typedef union _XEvent {
 } XEvent;
 #endif
 
-#define XAllocID(dpy) ((*((_XPrivDisplay)dpy)->resource_alloc)((dpy)))
+#define XAllocID(dpy) ((*((_XPrivDisplay)(dpy))->resource_alloc)((dpy)))
 
 /*
  * per character font metric information.
@@ -1688,6 +1684,7 @@ extern XHostAddress *XListHosts(
     int*		/* nhosts_return */,
     Bool*		/* state_return */
 );
+_X_DEPRECATED
 extern KeySym XKeycodeToKeysym(
     Display*		/* display */,
 #if NeedWidePrototypes
@@ -4012,13 +4009,8 @@ extern void XSetAuthorization(
 
 extern int _Xmbtowc(
     wchar_t *			/* wstr */,
-#ifdef ISC
-    char const *		/* str */,
-    size_t			/* len */
-#else
     char *			/* str */,
     int				/* len */
-#endif
 );
 
 extern int _Xwctomb(
@@ -4035,6 +4027,10 @@ extern void XFreeEventData(
     Display*			/* dpy */,
     XGenericEventCookie*	/* cookie*/
 );
+
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 
 _XFUNCPROTOEND
 

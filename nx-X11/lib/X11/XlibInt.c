@@ -608,7 +608,7 @@ Bool _XPollfdCacheInit(
 #ifdef USE_POLL
     struct pollfd *pfp;
 
-    pfp = (struct pollfd *)Xmalloc(POLLFD_CACHE_SIZE * sizeof(struct pollfd));
+    pfp = Xmalloc(POLLFD_CACHE_SIZE * sizeof(struct pollfd));
     if (!pfp)
 	return False;
     pfp[0].fd = dpy->fd;
@@ -901,7 +901,7 @@ void _XSeqSyncFunction(
 static int
 _XPrivSyncFunction (Display *dpy)
 {
-#if XTHREADS
+#ifdef XTHREADS
     assert(!dpy->lock_fns);
 #endif
     assert(dpy->synchandler == _XPrivSyncFunction);
@@ -2477,10 +2477,10 @@ _XRegisterInternalConnection(
 #if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
     fprintf(stderr, "_XRegisterInternalConnection: Got called.\n");
 #endif
-    new_conni = (struct _XConnectionInfo*)Xmalloc(sizeof(struct _XConnectionInfo));
+    new_conni = Xmalloc(sizeof(struct _XConnectionInfo));
     if (!new_conni)
 	return 0;
-    new_conni->watch_data = (XPointer *)Xmalloc(dpy->watcher_count * sizeof(XPointer));
+    new_conni->watch_data = Xmalloc(dpy->watcher_count * sizeof(XPointer));
     if (!new_conni->watch_data) {
 	Xfree(new_conni);
 	return 0;
@@ -2537,8 +2537,7 @@ _XUnregisterInternalConnection(
 		 watch=watch->next, wd++) {
 		(*watch->fn) (dpy, watch->client_data, fd, False, wd);
 	    }
-	    if (info_list->watch_data)
-		Xfree (info_list->watch_data);
+	    Xfree (info_list->watch_data);
 	    Xfree (info_list);
 	    break;
 	}
@@ -2573,7 +2572,7 @@ XInternalConnectionNumbers(
     count = 0;
     for (info_list=dpy->im_fd_info; info_list; info_list=info_list->next)
 	count++;
-    fd_list = (int*) Xmalloc (count * sizeof(int));
+    fd_list = Xmalloc (count * sizeof(int));
     if (!fd_list) {
 	UnlockDisplay(dpy);
 	return 0;
@@ -2666,17 +2665,17 @@ XAddConnectionWatch(
 
     /* allocate new watch data */
     for (info_list=dpy->im_fd_info; info_list; info_list=info_list->next) {
-	wd_array = (XPointer *)Xrealloc((char *)info_list->watch_data,
-					(dpy->watcher_count + 1) *
-					sizeof(XPointer));
+        wd_array = Xrealloc(info_list->watch_data,
+                           (dpy->watcher_count + 1) * sizeof(XPointer));
 	if (!wd_array) {
 	    UnlockDisplay(dpy);
 	    return 0;
 	}
+	info_list->watch_data = wd_array;
 	wd_array[dpy->watcher_count] = NULL;	/* for cleanliness */
     }
 
-    new_watcher = (struct _XConnWatchInfo*)Xmalloc(sizeof(struct _XConnWatchInfo));
+    new_watcher = Xmalloc(sizeof(struct _XConnWatchInfo));
     if (!new_watcher) {
 	UnlockDisplay(dpy);
 	return 0;
@@ -2839,10 +2838,10 @@ _XFreeEventCookies(Display *dpy)
     head = (struct stored_event**)&dpy->cookiejar;
 
     DL_FOREACH_SAFE(*head, e, tmp) {
-        XFree(e->ev.data);
-        XFree(e);
         if (dpy->cookiejar == e)
             dpy->cookiejar = NULL;
+        XFree(e->ev.data);
+        XFree(e);
     }
 }
 
@@ -2935,8 +2934,7 @@ void _XEnq(
 		/* If dpy->qfree is non-NULL do this, else malloc a new one. */
 		dpy->qfree = qelt->next;
 	}
-	else if ((qelt =
-	    (_XQEvent *) Xmalloc((unsigned)sizeof(_XQEvent))) == NULL) {
+        else if ((qelt = Xmalloc(sizeof(_XQEvent))) == NULL) {
 		/* Malloc call failed! */
 		ESET(ENOMEM);
 #ifdef NX_TRANS_SOCKET
@@ -2951,7 +2949,9 @@ void _XEnq(
 
 	type = event->u.u.type & 0177;
 	extension = ((xGenericEvent*)event)->extension;
-	/* If an extension has registerd a generic_event_vec handler, then
+
+	qelt->event.type = type;
+	/* If an extension has registered a generic_event_vec handler, then
 	 * it can handle event cookies. Otherwise, proceed with the normal
 	 * event handlers.
 	 *
@@ -3496,7 +3496,7 @@ int _XDefaultIOError(
 #else
         exit(1);
 #endif /* #ifdef NX_TRANS_SOCKET */
-        return(0); /* dummy - function should never return */
+        /*NOTREACHED*/
 }
 
 
@@ -3518,16 +3518,17 @@ static int _XPrintDefaultError(
 	mesg, BUFSIZ);
     (void) fprintf(fp, mesg, event->request_code);
     if (event->request_code < 128) {
-	sprintf(number, "%d", event->request_code);
+	snprintf(number, sizeof(number), "%d", event->request_code);
 	XGetErrorDatabaseText(dpy, "XRequest", number, "", buffer, BUFSIZ);
     } else {
 	for (ext = dpy->ext_procs;
 	     ext && (ext->codes.major_opcode != event->request_code);
 	     ext = ext->next)
 	  ;
-	if (ext)
-	    strcpy(buffer, ext->name);
-	else
+	if (ext) {
+	    strncpy(buffer, ext->name, BUFSIZ);
+	    buffer[BUFSIZ - 1] = '\0';
+        } else
 	    buffer[0] = '\0';
     }
     (void) fprintf(fp, " (%s)\n", buffer);
@@ -3537,7 +3538,7 @@ static int _XPrintDefaultError(
 	fputs("  ", fp);
 	(void) fprintf(fp, mesg, event->minor_code);
 	if (ext) {
-	    sprintf(mesg, "%s.%d", ext->name, event->minor_code);
+	    snprintf(mesg, sizeof(mesg), "%s.%d", ext->name, event->minor_code);
 	    XGetErrorDatabaseText(dpy, "XRequest", mesg, "", buffer, BUFSIZ);
 	    (void) fprintf(fp, " (%s)", buffer);
 	}
@@ -3560,8 +3561,8 @@ static int _XPrintDefaultError(
 		bext = ext;
 	}
 	if (bext)
-	    sprintf(buffer, "%s.%d", bext->name,
-		    event->error_code - bext->codes.first_error);
+	    snprintf(buffer, sizeof(buffer), "%s.%d", bext->name,
+                     event->error_code - bext->codes.first_error);
 	else
 	    strcpy(buffer, "Value");
 	XGetErrorDatabaseText(dpy, mtype, buffer, "", mesg, BUFSIZ);
@@ -3745,7 +3746,7 @@ _XIOError (
 #else
     exit (1);
 #endif
-    return 0;
+    /*NOTREACHED*/
 }
 
 
@@ -3761,8 +3762,9 @@ char *_XAllocScratch(
 	unsigned long nbytes)
 {
 	if (nbytes > dpy->scratch_length) {
-	    if (dpy->scratch_buffer) Xfree (dpy->scratch_buffer);
-	    if ((dpy->scratch_buffer = Xmalloc((unsigned) nbytes)))
+	    Xfree (dpy->scratch_buffer);
+	    dpy->scratch_buffer = Xmalloc(nbytes);
+	    if (dpy->scratch_buffer)
 		dpy->scratch_length = nbytes;
 	    else dpy->scratch_length = 0;
 	}
@@ -3790,8 +3792,8 @@ void _XFreeTemp(
     char *buf,
     unsigned long nbytes)
 {
-    if (dpy->scratch_buffer)
-	Xfree(dpy->scratch_buffer);
+
+    Xfree(dpy->scratch_buffer);
     dpy->scratch_buffer = buf;
     dpy->scratch_length = nbytes;
 }
@@ -3848,7 +3850,7 @@ void _Xbcopy(b1, b2, length)
 #ifdef DataRoutineIsProcedure
 void Data(
 	Display *dpy,
-	char *data,
+	_Xconst char *data,
 	long len)
 {
 	if (dpy->bufptr + (len) <= dpy->bufmax) {
@@ -3865,7 +3867,7 @@ void Data(
 int
 _XData32(
     Display *dpy,
-    register long *data,
+    register _Xconst long *data,
     unsigned len)
 {
     register int *buf;
@@ -3978,6 +3980,14 @@ void *_XGetRequest(Display *dpy, CARD8 type, size_t len)
 
     if (dpy->bufptr + len > dpy->bufmax)
        _XFlush(dpy);
+    /* Request still too large, so do not allow it to overflow. */
+    if (dpy->bufptr + len > dpy->bufmax) {
+       fprintf(stderr,
+               "Xlib: request %d length %zd would exceed buffer size.\n",
+               type, len);
+       /* Changes failure condition from overflow to NULL dereference. */
+       return NULL;
+    }
 
     if (len % 4)
        fprintf(stderr,

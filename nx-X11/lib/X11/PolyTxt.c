@@ -121,9 +121,9 @@ XDrawText(
             {
 	    	int nb = SIZEOF(xTextElt);
 
-		BufAlloc (char *, tbuf, nb);
+	    	BufAlloc (char *, tbuf, nb);
 	    	*tbuf = 0;    /*   elt->len  */
-		if (PartialDelta > 0 )
+	    	if (PartialDelta > 0 )
 		{
 		    *(tbuf+1) = 127;  /* elt->delta  */
 		    PartialDelta = PartialDelta - 127;
@@ -148,9 +148,9 @@ XDrawText(
 		{
 		    FirstTimeThrough = False;
 		    if (!item->delta)
-		    {
+ 		    {
 			nbytes += SIZEOF(xTextElt);
-			BufAlloc (char *, tbuf, nbytes);
+	   		BufAlloc (char *, tbuf, nbytes);
 		        *(tbuf+1) = 0;     /* elt->delta */
 		    }
 		    else
@@ -179,9 +179,9 @@ XDrawText(
 		{
 		    FirstTimeThrough = False;
 		    if (!item->delta)
-		    {
+ 		    {
 			nbytes += SIZEOF(xTextElt);
-			BufAlloc (char *, tbuf, nbytes);
+	   		BufAlloc (char *, tbuf, nbytes);
 			*(tbuf+1) = 0;   /*  elt->delta  */
 		    }
 		    else
@@ -193,7 +193,7 @@ XDrawText(
 		else
 		{
  		    nbytes += SIZEOF(xTextElt);
-		    BufAlloc (char *, tbuf, nbytes);
+	   	    BufAlloc (char *, tbuf, nbytes);
 		    *(tbuf+1) = 0;   /* elt->delta  */
 		}
 	    	*tbuf = PartialNChars;   /*  elt->len  */

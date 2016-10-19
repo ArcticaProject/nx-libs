@@ -41,7 +41,7 @@ from The Open Group.
 #define max_byte2 max_char_or_byte2
 
 /*
- * XTextExtents16 - compute the extents of string given as a sequence of 
+ * XTextExtents16 - compute the extents of string given as a sequence of
  * XChar2bs.
  */
 int
@@ -94,7 +94,7 @@ XTextExtents16 (
 	    } else {
 		overall->ascent = max (overall->ascent, cs->ascent);
 		overall->descent = max (overall->descent, cs->descent);
-		overall->lbearing = min (overall->lbearing, 
+		overall->lbearing = min (overall->lbearing,
 					 overall->width + cs->lbearing);
 		overall->rbearing = max (overall->rbearing,
 					 overall->width + cs->rbearing);
@@ -107,7 +107,7 @@ XTextExtents16 (
      * if there were no characters, then set everything to 0
      */
     if (nfound == 0) {
-	overall->width = overall->ascent = overall->descent = 
+	overall->width = overall->ascent = overall->descent =
 	  overall->lbearing = overall->rbearing = 0;
     }
 
@@ -116,7 +116,7 @@ XTextExtents16 (
 
 
 /*
- * XTextWidth16 - compute the width of sequence of XChar2bs.  This is a 
+ * XTextWidth16 - compute the width of sequence of XChar2bs.  This is a
  * subset of XTextExtents16.
  */
 int

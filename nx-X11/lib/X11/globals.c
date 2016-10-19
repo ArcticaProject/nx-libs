@@ -53,15 +53,9 @@ from The Open Group.
 /*
  * If we need to define extra variables for each global
  */
-#if !defined(UNIXCPP) || defined(ANSICPP)
 #define ZEROINIT(t,var,val) SetZero(t,var,val); \
   SetZero (long, _libX_##var##Flag, 0); \
   SetZero (void *, _libX_##var##Ptr, NULL)
-#else /* else pcc concatenation */
-#define ZEROINIT(t,var,val) SetZero(t,var,val); \
-  SetZero (long, _libX_/**/var/**/Flag, 0); \
-  SetZero (void *, _libX_/**/var/**/Ptr, NULL)
-#endif /* concat ANSI C vs. pcc */
 
 #else /* else not USL_SHAREDLIB */
 /*
@@ -85,127 +79,6 @@ ZEROINIT (_XQEvent *, _qfree, NULL);
  */
 ZEROINIT (int, _Xdebug, 0);
 ZEROINIT (Display *, _XHeadOfDisplayList, NULL);
-
-
-
-#if 0
-#ifdef STREAMSCONN
-
-
-/* The following are how the Xstream connections are used:              */
-/*      1)      Local connections over pseudo-tty ports.                */
-/*      2)      SVR4 local connections using named streams or SVR3.2    */
-/*              local connections using streams.                        */
-/*      3)      SVR4 stream pipe code. This code is proprietary and     */
-/*              the actual code is not included in the XC distribution. */
-/*      4)      remote connections using tcp                            */
-/*      5)      remote connections using StarLan                        */
-
-/*
- * descriptor block for streams connections
- */
-
-#include "Xstreams.h"
-
-char _XsTypeOfStream[100] = { 0 };
-
-extern int write();
-extern int close();
-#ifdef SVR4
-extern int _XsSetupSpStream();
-extern int _XsSetupNamedStream();
-#endif
-extern int _XsSetupLocalStream();
-extern int _XsConnectLocalClient();
-extern int _XsCallLocalServer();
-extern int _XsReadLocalStream();
-extern int _XsErrorCall();
-extern int _XsWriteLocalStream();
-extern int _XsCloseLocalStream();
-extern int _XsSetupTliStream();
-extern int _XsConnectTliClient();
-extern int _XsCallTliServer();
-extern int _XsReadTliStream();
-extern int _XsWriteTliStream();
-extern int _XsCloseTliStream();
-
-
-Xstream _XsStream[] = {
-
-    {
-	/* local connections using pseudo-ttys */
-
-	_XsSetupLocalStream,
-	_XsConnectLocalClient,
-	_XsCallLocalServer,
-	_XsReadLocalStream,
-	_XsErrorCall,
-	write,
-	close,
-	NULL
-    },
-    {
-#ifdef SVR4
-	/* local connections using named streams */
-
-        _XsSetupNamedStream,
-#else
-	/* local connections using streams */
-        _XsSetupLocalStream,
-#endif
-        _XsConnectLocalClient,
-        _XsCallLocalServer,
-        _XsReadLocalStream,
-        _XsErrorCall,
-        write,
-        close,
-        NULL
-    },
-    /* Enhanced Application Compatibility Support */
-    {
-#ifdef SVR4
-	/* SVR4 stream pipe code */
-	_XsSetupSpStream,
-#else
-	_XsSetupLocalStream,
-#endif
-	_XsConnectLocalClient,
-	_XsCallLocalServer,
-	_XsReadLocalStream,
-	_XsErrorCall,
-	write,
-	close,
-	NULL
-    },
-    /* End Enhanced Application Compatibility Support */
-
-    {
-	/* remote connections using tcp */
-        _XsSetupTliStream,
-        _XsConnectTliClient,
-        _XsCallTliServer,
-        _XsReadLocalStream,
-        _XsErrorCall,
-	write,
-	close,
-	NULL
-    },
-    {
-	/* remote connections using StarLan */
-        _XsSetupTliStream,
-        _XsConnectTliClient,
-        _XsCallTliServer,
-        _XsReadLocalStream,
-        _XsErrorCall,
-        write,
-        close,
-        NULL
-    }
-};
-
-
-#endif /* STREAMSCONN */
-#endif
 
 
 #ifdef XTEST1

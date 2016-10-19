@@ -8,10 +8,12 @@
 #ifndef XPRIVATE_H
 #define XPRIVATE_H
 
-extern void _XIDHandler(Display *dpy);
-extern void _XSeqSyncFunction(Display *dpy);
-extern void _XSetPrivSyncFunction(Display *dpy);
-extern void _XSetSeqSyncFunction(Display *dpy);
+#include <nx-X11/Xlib.h>
+
+extern _X_HIDDEN void _XIDHandler(Display *dpy);
+extern _X_HIDDEN void _XSeqSyncFunction(Display *dpy);
+extern _X_HIDDEN void _XSetPrivSyncFunction(Display *dpy);
+extern _X_HIDDEN void _XSetSeqSyncFunction(Display *dpy);
 
 #ifdef XTHREADS
 #if defined(XTHREADS_WARN) || defined(XTHREADS_FILE_LINE)

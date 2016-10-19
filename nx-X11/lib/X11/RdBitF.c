@@ -137,7 +137,7 @@ XReadBitmapFileData (
 
     /* error cleanup and return macro	*/
 #define	RETURN(code) \
-{ if (bits) Xfree ((char *)bits); fclose (fstream); return code; }
+{ Xfree (bits); fclose (fstream); return code; }
 
     while (fgets(line, MAX_SIZE, fstream)) {
 	if (strlen(line) == MAX_SIZE-1)
@@ -191,7 +191,7 @@ XReadBitmapFileData (
 	bytes_per_line = (ww+7)/8 + padding;
 
 	size = bytes_per_line * hh;
-	bits = (unsigned char *) Xmalloc ((unsigned int) size);
+	bits = Xmalloc (size);
 	if (!bits)
 	  RETURN (BitmapNoMemory);
 
@@ -216,6 +216,11 @@ XReadBitmapFileData (
 		*ptr=value;
 	    }
 	}
+
+	/* If we got to this point, we read a full bitmap file. Break so we don't
+	 * start reading another one from the same file and leak the memory
+	 * allocated for the previous one. */
+	break;
     }					/* end while */
 
     fclose(fstream);
@@ -249,7 +254,7 @@ XReadBitmapFile (
     if (res != BitmapSuccess)
 	return res;
     *pixmap = XCreateBitmapFromData(display, d, (char *)data, *width, *height);
-    Xfree((char *)data);
+    Xfree(data);
     if (*pixmap == None)
 	return (BitmapNoMemory);
     return (BitmapSuccess);

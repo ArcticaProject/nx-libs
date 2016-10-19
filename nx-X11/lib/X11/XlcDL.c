@@ -37,7 +37,7 @@ Sun Microsystems, Inc. or its licensors is granted.
 
 */
 /*
- * Copyright 2000 Sun Microsystems, Inc.  All rights reserved.
+ * Copyright 2000 Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -85,16 +85,6 @@ Sun Microsystems, Inc. or its licensors is granted.
 #include "Xlibint.h"
 #include "XlcPublic.h"
 #include "XlcPubI.h"
-
-#if defined(_LP64)  && defined(__sparcv9)
-# define	_MACH64_NAME		"sparcv9"
-#else
-# undef _MACH64_NAME
-#endif /* defined(_LP64)  && defined(__sparcv9) */
-
-#ifdef _MACH64_NAME
-#  define	_MACH64_NAME_LEN	(sizeof (_MACH64_NAME) - 1)
-#endif
 
 #define XI18N_DLREL		2
 
@@ -195,16 +185,10 @@ resolve_object(char *path, const char *lc_name)
 
     if (lc_len == 0) { /* True only for the 1st time */
       lc_len = OBJECT_INIT_LEN;
-      xi18n_objects_list = (XI18NObjectsList)
-	  Xmalloc(sizeof(XI18NObjectsListRec) * lc_len);
+      xi18n_objects_list = Xmalloc(sizeof(XI18NObjectsListRec) * lc_len);
       if (!xi18n_objects_list) return;
     }
-/*
-1266793
-Limit the length of path to prevent stack buffer corruption.
-    sprintf(filename, "%s/%s", path, "XI18N_OBJS");
-*/
-    sprintf(filename, "%.*s/%s", BUFSIZ - 12, path, "XI18N_OBJS");
+    snprintf(filename, sizeof(filename), "%s/%s", path, "XI18N_OBJS");
     fp = fopen(filename, "r");
     if (fp == (FILE *)NULL){
 	return;
@@ -222,11 +206,13 @@ Limit the length of path to prevent stack buffer corruption.
 	}
 
 	if (lc_count == lc_len) {
-	  lc_len += OBJECT_INC_LEN;
-	  xi18n_objects_list = (XI18NObjectsList)
-	    Xrealloc(xi18n_objects_list,
-		     sizeof(XI18NObjectsListRec) * lc_len);
-	  if (!xi18n_objects_list) return;
+	  int new_len = lc_len + OBJECT_INC_LEN;
+	  XI18NObjectsListRec *tmp = Xrealloc(xi18n_objects_list,
+	      sizeof(XI18NObjectsListRec) * new_len);
+	  if (tmp == NULL)
+	      goto done;
+	  xi18n_objects_list = tmp;
+	  lc_len = new_len;
 	}
 	n = parse_line(p, args, 6);
 
@@ -254,6 +240,7 @@ Limit the length of path to prevent stack buffer corruption.
 	  lc_count++;
 	}
     }
+  done:
     fclose(fp);
 }
 
@@ -262,6 +249,7 @@ __lc_path(const char *dl_name, const char *lc_dir)
 {
     char *path;
     size_t len;
+    char *slash_p;
 
     /*
      * reject this for possible security issue
@@ -269,35 +257,6 @@ __lc_path(const char *dl_name, const char *lc_dir)
     if (strstr (dl_name, "../"))
 	return NULL;
 
-#if defined (_LP64) && defined (_MACH64_NAME)
-    len = (lc_dir ? strlen(lc_dir) : 0 ) +
-	(dl_name ? strlen(dl_name) : 0) + _MACH64_NAME_LEN + 10;
-    path = Xmalloc(len + 1);
-
-    if (strchr(dl_name, '/') != NULL) {
-	char *tmp = strdup(dl_name);
-	char *dl_dir, *dl_file;
-	char *slash_p;
-	slash_p = strchr(tmp, '/');
-	*slash_p = '\0';
-	dl_dir = tmp;
-	dl_file = ++slash_p;
-
-	slash_p = strrchr(lc_dir, '/');
-	*slash_p = '\0';
-	strcpy(path, lc_dir); strcat(path, "/");
-	strcat(path, dl_dir); strcat(path, "/");
-	strcat(path, _MACH64_NAME); strcat(path, "/");
-	strcat(path, dl_file); strcat(path, ".so.2");
-
-	*slash_p = '/';
-	Xfree(tmp);
-    } else {
-	strcpy(path, lc_dir); strcat(path, "/");
-	strcat(path, _MACH64_NAME); strcat(path, "/");
-	strcat(path, dl_name); strcat(path, ".so.2");
-    }
-#else
     len = (lc_dir ? strlen(lc_dir) : 0 ) +
 	(dl_name ? strlen(dl_name) : 0) + 10;
 #if defined POSTLOCALELIBDIR
@@ -306,23 +265,21 @@ __lc_path(const char *dl_name, const char *lc_dir)
     path = Xmalloc(len + 1);
 
     if (strchr(dl_name, '/') != NULL) {
-	char *slash_p;
 	slash_p = strrchr(lc_dir, '/');
 	*slash_p = '\0';
-	strcpy(path, lc_dir); strcat(path, "/");
+    } else
+	slash_p = NULL;
+
 #if defined POSTLOCALELIBDIR
-	strcat(path, POSTLOCALELIBDIR); strcat(path, "/");
+    snprintf(path, len + 1, "%s/%s/%s.so.2",
+             lc_dir, POSTLOCALELIBDIR, dl_name);
+#else
+    snprintf(path, len + 1, "%s/%s.so.2", lc_dir, dl_name);
 #endif
-	strcat(path, dl_name); strcat(path, ".so.2");
+
+    if (slash_p != NULL)
 	*slash_p = '/';
-    } else {
-	strcpy(path, lc_dir); strcat(path, "/");
-#if defined POSTLOCALELIBDIR
-	strcat(path, POSTLOCALELIBDIR); strcat(path, "/");
-#endif
-	strcat(path, dl_name); strcat(path, ".so.2");
-    }
-#endif
+
     return path;
 }
 
@@ -423,9 +380,9 @@ _XlcDynamicLoad(const char *lc_name)
 
     if (lc_name == NULL) return (XLCd)NULL;
 
-    if (_XlcLocaleDirName(lc_dir, BUFSIZE, (char *)lc_name) == (char *)NULL)
+    if (_XlcLocaleDirName(lc_dir, BUFSIZE, lc_name) == NULL)
         return (XLCd)NULL;
-    if (_XlcLocaleLibDirName(lc_lib_dir, BUFSIZE, (char *)lc_name) == (char*)NULL)
+    if (_XlcLocaleLibDirName(lc_lib_dir, BUFSIZE, lc_name) == NULL)
 	return (XLCd)NULL;
 
     resolve_object(lc_dir, lc_name);
@@ -552,7 +509,7 @@ _XDynamicUnRegisterIMInstantiateCallback(
     XPointer	 client_data)
 {
   char lc_dir[BUFSIZE];
-  char *lc_name;
+  const char *lc_name;
   dynamicUnregisterProcp im_unregisterIM = (dynamicUnregisterProcp)NULL;
   Bool ret_flag = False;
   int count;

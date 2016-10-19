@@ -37,7 +37,7 @@ Sun Microsystems, Inc. or its licensors is granted.
 
 */
 /*
- * Copyright 2000 Sun Microsystems, Inc.  All rights reserved.
+ * Copyright 2000 Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -168,32 +168,25 @@ _XDefaultOpenIM(
     char                *res_class)
 {
     StaticXIM im;
-    XIMStaticXIMRec *local_impart;
-    XlcConv ctom_conv, ctow_conv;
     int i;
     char *mod;
     char buf[BUFSIZ];
 
-    if (!(ctom_conv = _XlcOpenConverter(lcd,
-			XlcNCompoundText, lcd, XlcNMultiByte))) {
-	return((XIM)NULL);
-    }
+    if ((im = Xcalloc(1, sizeof(StaticXIMRec))) == NULL)
+        return NULL;
 
-    if (!(ctow_conv = _XlcOpenConverter(lcd,
-			XlcNCompoundText, lcd, XlcNWideChar))) {
-	return((XIM)NULL);
-    }
+    if ((im->private = Xcalloc(1, sizeof(XIMStaticXIMRec))) == NULL)
+        goto Error;
 
-    if ((im = (StaticXIM)Xmalloc(sizeof(StaticXIMRec))) == (StaticXIM)NULL) {
-	return((XIM)NULL);
-    }
-    if ((local_impart = (XIMStaticXIMRec*)Xmalloc(sizeof(XIMStaticXIMRec)))
-	== (XIMStaticXIMRec *)NULL) {
-	Xfree(im);
-	return((XIM)NULL);
-    }
-    memset(im, 0, sizeof(StaticXIMRec));
-    memset(local_impart, 0, sizeof(XIMStaticXIMRec));
+    if ((im->private->ctom_conv = _XlcOpenConverter(lcd, XlcNCompoundText,
+                                                    lcd, XlcNMultiByte))
+        == NULL)
+        goto Error;
+
+    if ((im->private->ctow_conv = _XlcOpenConverter(lcd, XlcNCompoundText,
+                                                    lcd, XlcNWideChar))
+        == NULL)
+        goto Error;
 
     buf[0] = '\0';
     i = 0;
@@ -209,11 +202,9 @@ _XDefaultOpenIM(
 	}
     }
 #undef MODIFIER
-    if ((im->core.im_name = Xmalloc(i+1)) == NULL)
-	goto Error2;
-    strcpy(im->core.im_name, buf);
+    if ((im->core.im_name = strdup(buf)) == NULL)
+	goto Error;
 
-    im->private = local_impart;
     im->methods        = (XIMMethods)&local_im_methods;
     im->core.lcd       = lcd;
     im->core.ic_chain  = (XIC)NULL;
@@ -222,25 +213,18 @@ _XDefaultOpenIM(
     im->core.res_name  = NULL;
     im->core.res_class = NULL;
 
-    local_impart->ctom_conv = ctom_conv;
-    local_impart->ctow_conv = ctow_conv;
-
     if ((res_name != NULL) && (*res_name != '\0')){
-	im->core.res_name  = (char *)Xmalloc(strlen(res_name)+1);
-	strcpy(im->core.res_name,res_name);
+	im->core.res_name  = strdup(res_name);
     }
     if ((res_class != NULL) && (*res_class != '\0')){
-	im->core.res_class = (char *)Xmalloc(strlen(res_class)+1);
-	strcpy(im->core.res_class,res_class);
+	im->core.res_class = strdup(res_class);
     }
 
     return (XIM)im;
-Error2 :
-    Xfree(im->private);
-    Xfree(im->core.im_name);
+
+  Error:
+    _CloseIM((XIM)im);
     Xfree(im);
-    _XlcCloseConverter(ctom_conv);
-    _XlcCloseConverter(ctow_conv);
     return(NULL);
 }
 
@@ -248,13 +232,16 @@ static Status
 _CloseIM(XIM xim)
 {
     StaticXIM im = (StaticXIM)xim;
-    _XlcCloseConverter(im->private->ctom_conv);
-    _XlcCloseConverter(im->private->ctow_conv);
+
+    if (im->private->ctom_conv != NULL)
+        _XlcCloseConverter(im->private->ctom_conv);
+    if (im->private->ctow_conv != NULL)
+        _XlcCloseConverter(im->private->ctow_conv);
     XFree(im->private);
     XFree(im->core.im_name);
-    if (im->core.res_name) XFree(im->core.res_name);
-    if (im->core.res_class) XFree(im->core.res_class);
-    return 1; /*bugID 4163122*/
+    XFree(im->core.res_name);
+    XFree(im->core.res_class);
+    return 1;
 }
 
 static char *
@@ -275,11 +262,11 @@ _GetIMValues(
 
     for (p = values; p->name != NULL; p++) {
 	if (strcmp(p->name, XNQueryInputStyle) == 0) {
-	    styles = (XIMStyles *)Xmalloc(sizeof(XIMStyles));
+	    styles = Xmalloc(sizeof(XIMStyles));
 	    *(XIMStyles **)p->value = styles;
 	    styles->count_styles = 1;
 	    styles->supported_styles =
-		(XIMStyle*)Xmalloc(styles->count_styles * sizeof(XIMStyle));
+		Xmalloc(styles->count_styles * sizeof(XIMStyle));
 	    styles->supported_styles[0] = (XIMPreeditNone | XIMStatusNone);
 	} else {
 	    break;
@@ -346,10 +333,9 @@ _CreateIC(XIM im, XIMArg *arg)
 {
     XIC ic;
 
-    if ((ic = (XIC)Xmalloc(sizeof(XICRec))) == (XIC)NULL) {
+    if ((ic = Xcalloc(1, sizeof(XICRec))) == (XIC)NULL) {
 	return ((XIC)NULL);
     }
-    memset(ic, 0, sizeof(XICRec));
 
     ic->methods = (XICMethods)&local_ic_methods;
     ic->core.im = im;
@@ -454,7 +440,7 @@ _WcLookupString(
     XComposeStatus NotSupportedYet ;
     int length;
     /* In single-byte, mb_len = wc_len */
-    char *mb_buf = (char *)Xmalloc(wlen);
+    char *mb_buf = Xmalloc(wlen);
 
     length = XLookupString(ev, mb_buf, wlen, keysym, &NotSupportedYet);
 

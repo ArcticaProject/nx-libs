@@ -1,5 +1,5 @@
 /*
- * Copyright 1992 Sun Microsystems, Inc.  All rights reserved.
+ * Copyright 1992 Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -57,7 +57,7 @@ PERFORMANCE OF THIS SOFTWARE.
 #include "XimTrInt.h"
 #include "Ximint.h"
 
-Public TransportSW _XimTransportRec[] = {
+TransportSW _XimTransportRec[] = {
     { "X",          _XimXConf },  /* 1st entry must be X.
 					This will be a fallback */
 #ifdef TCPCONN
@@ -66,34 +66,28 @@ Public TransportSW _XimTransportRec[] = {
 #if defined(UNIXCONN) || defined(LOCALCONN)
     { "local",      _XimTransConf }, /* use X transport lib */
 #endif /* UNIXCONN */
-#ifdef DNETCONN
-    { "dnet",     _XimTransConf }, /* use X transport lib */
-#endif /* DNETCONN */
-#ifdef STREAMSCONN
-    { "streams",    _XimTransConf }, /* use X transport lib */
-#endif /* STREAMSCONN */
     { (char *)NULL, (Bool (*)(Xim, char *))NULL },
 };
 
-Public Bool
+Bool
 _XimConnect(Xim im)
 {
     return im->private.proto.connect(im);
 }
 
-Public Bool
+Bool
 _XimShutdown(Xim im)
 {
     return im->private.proto.shutdown(im);
 }
 
-Public Bool
+Bool
 _XimWrite(Xim im, INT16 len, XPointer data)
 {
     return im->private.proto.write(im, len, data);
 }
 
-Private int
+static int
 _CheckProtocolData(
     Xim		  im,
     char	 *recv_buf)
@@ -104,7 +98,7 @@ _CheckProtocolData(
     return data_len;
 }
 
-Private int
+static int
 _XimReadData(
     Xim		 im,
     INT16	*len,
@@ -144,7 +138,7 @@ _XimReadData(
 		data_len -= i;
 
 		if (data_len) {
-		    if (!(tmp = (char *)Xmalloc(data_len))) {
+		    if (!(tmp = Xmalloc(data_len))) {
 			return XIM_FALSE;
 		    }
 		    memcpy(tmp, &hold_buf[i], data_len);
@@ -179,7 +173,7 @@ _XimReadData(
     }
 
     if (packet_size > buf_size) {
-	if (!(tmp = (char *)Xmalloc(data_len))) {
+	if (!(tmp = Xmalloc(data_len))) {
 	    return XIM_FALSE;
 	}
 	memcpy(tmp, buf, data_len);
@@ -206,7 +200,7 @@ _XimReadData(
     data_len -= i;
 
     if (data_len) {
-	if (!(tmp = (char *)Xmalloc(data_len))) {
+	if (!(tmp = Xmalloc(data_len))) {
 	    return XIM_FALSE;
 	}
 	memcpy(tmp, &buf[i], data_len);
@@ -221,7 +215,7 @@ _XimReadData(
     return XIM_TRUE;
 }
 
-Private Bool
+static Bool
 _XimCallDispatcher(
     Xim		 im,
     INT16	 len,
@@ -230,7 +224,7 @@ _XimCallDispatcher(
     return im->private.proto.call_dispatcher(im, len, data);
 }
 
-Public int
+int
 _XimRead(Xim im, INT16 *len, XPointer buf, int buf_size,
 	 Bool (*predicate)(Xim, INT16, XPointer, XPointer), XPointer arg)
 {
@@ -252,7 +246,7 @@ _XimRead(Xim im, INT16 *len, XPointer buf, int buf_size,
     return True;
 }
 
-Public Bool
+Bool
 _XimRegisterDispatcher(
     Xim		 im,
     Bool	 (*callback)(
@@ -263,14 +257,14 @@ _XimRegisterDispatcher(
     return im->private.proto.register_dispatcher(im, callback, call_data);
 }
 
-Public void
+void
 _XimFlush(Xim im)
 {
     im->private.proto.flush(im);
     return;
 }
 
-Public Bool
+Bool
 _XimFilterWaitEvent(Xim im)
 {
     INT16	 read_len;
@@ -289,7 +283,7 @@ _XimFilterWaitEvent(Xim im)
 	    preply = reply;
 	} else {
 	    buf_size = (int)read_len;
-	    preply = (XPointer)Xmalloc(buf_size);
+	    preply = Xmalloc(buf_size);
 	    ret_code = _XimReadData(im, &read_len, preply, buf_size);
 	    if(ret_code != XIM_TRUE) {
 		if (preply != reply)

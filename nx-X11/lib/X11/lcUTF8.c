@@ -86,7 +86,7 @@ create_conv(
 {
     XlcConv conv;
 
-    conv = (XlcConv) Xmalloc(sizeof(XlcConvRec));
+    conv = Xmalloc(sizeof(XlcConvRec));
     if (conv == (XlcConv) NULL)
 	return (XlcConv) NULL;
 
@@ -100,7 +100,7 @@ static void
 close_converter(
     XlcConv conv)
 {
-    Xfree((char *) conv);
+    Xfree(conv);
 }
 
 /* Replacement character for invalid multibyte sequence or wide character. */
@@ -498,7 +498,7 @@ create_tocs_conv(
     if (charset_num > all_charsets_count-1)
 	charset_num = all_charsets_count-1;
 
-    conv = (XlcConv) Xmalloc(sizeof(XlcConvRec)
+    conv = Xmalloc(sizeof(XlcConvRec)
 			     + (charset_num + 1) * sizeof(Utf8Conv));
     if (conv == (XlcConv) NULL)
 	return (XlcConv) NULL;
@@ -539,7 +539,7 @@ close_tocs_converter(
     XlcConv conv)
 {
     /* conv->state is allocated together with conv, free both at once.  */
-    Xfree((char *) conv);
+    Xfree(conv);
 }
 
 /*
@@ -961,7 +961,7 @@ create_ucstocs_conv(
 
 	lazy_init_all_charsets();
 
-	conv = (XlcConv) Xmalloc(sizeof(XlcConvRec) + 2 * sizeof(Utf8Conv));
+	conv = Xmalloc(sizeof(XlcConvRec) + 2 * sizeof(Utf8Conv));
 	if (conv == (XlcConv) NULL)
 	    return (XlcConv) NULL;
 	preferred = (Utf8Conv *) ((char *) conv + sizeof(XlcConvRec));
@@ -1015,7 +1015,7 @@ ucstocs1(
     XPointer *args,
     int num_args)
 {
-    ucs4_t const *src = (ucs4_t const *) *from;
+    ucs4_t const *src;
     unsigned char *dst = (unsigned char *) *to;
     int unconv_num = 0;
     Utf8Conv *preferred_charsets = (Utf8Conv *) conv->state;
@@ -1026,6 +1026,8 @@ ucstocs1(
 
     if (from == NULL || *from == NULL)
 	return 0;
+
+    src = (ucs4_t const *) *from;
 
     count = charset_wctocs_exactly(preferred_charsets, &chosen_charset,
                                    &chosen_side, conv, dst, *src, *to_left);
@@ -1731,10 +1733,10 @@ create_tofontcs_conv(
     lazy_init_all_charsets();
 
     for (i = 0, num = 0;; i++) {
-	sprintf(buf, "fs%d.charset.name", i);
+	snprintf(buf, sizeof(buf), "fs%d.charset.name", i);
 	_XlcGetResource(lcd, "XLC_FONTSET", buf, &value, &count);
 	if (count < 1) {
-	    sprintf(buf, "fs%d.charset", i);
+	    snprintf(buf, sizeof(buf), "fs%d.charset", i);
 	    _XlcGetResource(lcd, "XLC_FONTSET", buf, &value, &count);
 	    if (count < 1)
 		break;
@@ -1742,17 +1744,17 @@ create_tofontcs_conv(
 	num += count;
     }
 
-    conv = (XlcConv) Xmalloc(sizeof(XlcConvRec) + (num + 1) * sizeof(Utf8Conv));
+    conv = Xmalloc(sizeof(XlcConvRec) + (num + 1) * sizeof(Utf8Conv));
     if (conv == (XlcConv) NULL)
 	return (XlcConv) NULL;
     preferred = (Utf8Conv *) ((char *) conv + sizeof(XlcConvRec));
 
     /* Loop through all fontsets mentioned in the locale. */
     for (i = 0, num = 0;; i++) {
-        sprintf(buf, "fs%d.charset.name", i);
+        snprintf(buf, sizeof(buf), "fs%d.charset.name", i);
         _XlcGetResource(lcd, "XLC_FONTSET", buf, &value, &count);
         if (count < 1) {
-            sprintf(buf, "fs%d.charset", i);
+            snprintf(buf, sizeof(buf), "fs%d.charset", i);
             _XlcGetResource(lcd, "XLC_FONTSET", buf, &value, &count);
             if (count < 1)
                 break;

@@ -1,5 +1,5 @@
 /*
- * Copyright 1991, 1992 Sun Microsystems, Inc.  All rights reserved.
+ * Copyright 1991, 1992 Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -56,7 +56,7 @@ PERFORMANCE OF THIS SOFTWARE.
 #include "Xlcint.h"
 #include "Ximint.h"
 
-Private Bool
+static Bool
 _XimCreateICCheck(
     Xim          im,
     INT16        len,
@@ -81,7 +81,7 @@ _XimCreateICCheck(
 }
 
 #ifdef XIM_CONNECTABLE
-Public Bool
+Bool
 _XimReCreateIC(ic)
     Xic			 ic;
 {
@@ -108,7 +108,7 @@ _XimReCreateIC(ic)
     XPointer		 preply;
     int			 ret_code;
 
-    if (!(save_ic = (Xic)Xmalloc(sizeof(XicRec))))
+    if (!(save_ic = Xmalloc(sizeof(XicRec))))
 	return False;
     memcpy((char *)save_ic, (char *)ic, sizeof(XicRec));
 
@@ -120,7 +120,7 @@ _XimReCreateIC(ic)
 
     num = im->core.ic_num_resources;
     buf_size = sizeof(XIMResource) * num;
-    if (!(res = (XIMResourceList)Xmalloc(buf_size)))
+    if (!(res = Xmalloc(buf_size)))
 	goto ErrorOnReCreateIC;
     (void)memcpy((char *)res, (char *)im->core.ic_resources, buf_size);
     ic->private.proto.ic_resources     = res;
@@ -128,7 +128,7 @@ _XimReCreateIC(ic)
 
     num = im->private.proto.ic_num_inner_resources;
     buf_size = sizeof(XIMResource) * num;
-    if (!(res = (XIMResourceList)Xmalloc(buf_size)))
+    if (!(res = Xmalloc(buf_size)))
 	goto ErrorOnReCreateIC;
     (void)memcpy((char *)res,
 			(char *)im->private.proto.ic_inner_resources, buf_size);
@@ -164,13 +164,13 @@ _XimReCreateIC(ic)
 
 	buf_size += ret_len;
 	if (buf == tmp_buf) {
-	    if (!(tmp = (char *)Xmalloc(buf_size + data_len))) {
+	    if (!(tmp = Xmalloc(buf_size + data_len))) {
 		goto ErrorOnReCreateIC;
 	    }
 	    memcpy(tmp, buf, buf_size);
 	    buf = tmp;
 	} else {
-	    if (!(tmp = (char *)Xrealloc(buf, (buf_size + data_len)))) {
+	    if (!(tmp = Xrealloc(buf, (buf_size + data_len)))) {
 		Xfree(buf);
 		goto ErrorOnReCreateIC;
 	    }
@@ -203,7 +203,7 @@ _XimReCreateIC(ic)
 	    preply = reply;
 	} else {
 	    buf_size = (int)len;
-	    preply = (XPointer)Xmalloc(buf_size);
+	    preply = Xmalloc(buf_size);
 	    ret_code = _XimRead(im, &len, preply, buf_size,
 						 _XimCreateICCheck, 0);
 	    if (ret_code != XIM_TRUE) {
@@ -244,7 +244,7 @@ ErrorOnReCreateIC:
     return False;
 }
 
-Private char *
+static char *
 _XimDelayModeGetICValues(ic, arg)
     Xic			 ic;
     XIMArg		*arg;
@@ -259,7 +259,7 @@ _XimDelayModeGetICValues(ic, arg)
 }
 #endif /* XIM_CONNECTABLE */
 
-Private Bool
+static Bool
 _XimGetICValuesCheck(
     Xim          im,
     INT16        len,
@@ -288,7 +288,7 @@ _XimGetICValuesCheck(
     return False;
 }
 
-Private char *
+static char *
 _XimProtoGetICValues(
     XIC			 xic,
     XIMArg		*arg)
@@ -351,7 +351,7 @@ _XimProtoGetICValues(
 	     + sizeof(INT16)
 	     + XIM_PAD(2 + buf_size);
 
-    if (!(buf = (CARD8 *)Xmalloc(buf_size)))
+    if (!(buf = Xmalloc(buf_size)))
 	return arg->name;
     buf_s = (CARD16 *)&buf[XIM_HEADER_SIZE];
 
@@ -385,7 +385,7 @@ _XimProtoGetICValues(
 		preply = reply;
 	    } else {
 		buf_size = (int)len;
-		preply = (XPointer)Xmalloc(len);
+		preply = Xmalloc(len);
 		ret_code = _XimRead(im, &len, preply, buf_size,
 				_XimGetICValuesCheck, (XPointer)ic);
 		if (ret_code != XIM_TRUE) {
@@ -424,7 +424,7 @@ _XimProtoGetICValues(
 }
 
 #ifdef XIM_CONNECTABLE
-Private Bool
+static Bool
 _XimCheckNestQuarkList(quark_list, num_quark, quark, separator)
     XrmQuark		*quark_list;
     int			 num_quark;
@@ -444,7 +444,7 @@ _XimCheckNestQuarkList(quark_list, num_quark, quark, separator)
     return False;
 }
 
-Private Bool
+static Bool
 _XimCheckNestedQuarkList(quark_list, idx, num_quark, arg, separator)
     XrmQuark		**quark_list;
     int			  idx;
@@ -465,7 +465,7 @@ _XimCheckNestedQuarkList(quark_list, idx, num_quark, arg, separator)
 							quark, separator)) {
 	    continue;
 	}
-	if (!(tmp = (XrmQuark *)Xmalloc((sizeof(XrmQuark) * (n_quark + 1))))) {
+	if (!(tmp = Xmalloc((sizeof(XrmQuark) * (n_quark + 1))))) {
 	    *quark_list = q_list;
 	    *num_quark = n_quark;
 	    return False;
@@ -485,7 +485,7 @@ _XimCheckNestedQuarkList(quark_list, idx, num_quark, arg, separator)
     return True;
 }
 
-Private Bool
+static Bool
 _XimCheckICQuarkList(quark_list, num_quark, quark, idx)
     XrmQuark		*quark_list;
     int			 num_quark;
@@ -503,7 +503,7 @@ _XimCheckICQuarkList(quark_list, num_quark, quark, idx)
     return False;
 }
 
-Private Bool
+static Bool
 _XimSaveICValues(ic, arg)
     Xic			 ic;
     XIMArg		*arg;
@@ -535,7 +535,7 @@ _XimSaveICValues(ic, arg)
 
 		    for (pp = (XIMArg *)p->value, nn = 0;
 						pp && pp->name; pp++, nn++);
-	            if (!(tmp = (XrmQuark *)Xrealloc(quark_list,
+	            if (!(tmp = Xrealloc(quark_list,
 				(sizeof(XrmQuark) * (num_quark + nn + 2))))) {
 		        ic->private.proto.saved_icvalues = quark_list;
 		        ic->private.proto.num_saved_icvalues = num_quark;
@@ -562,7 +562,7 @@ _XimSaveICValues(ic, arg)
 	        if (_XimCheckICQuarkList(quark_list, num_quark, quark, &idx)) {
 		    continue;
 	        }
-	        if (!(tmp = (XrmQuark *)Xrealloc(quark_list,
+	        if (!(tmp = Xrealloc(quark_list,
 				(sizeof(XrmQuark) * (num_quark + 1))))) {
 		    ic->private.proto.saved_icvalues = quark_list;
 		    ic->private.proto.num_saved_icvalues = num_quark;
@@ -589,7 +589,7 @@ _XimSaveICValues(ic, arg)
 	}
     }
 
-    if (!(quark_list = (XrmQuark *)Xmalloc(sizeof(XrmQuark) * n))) {
+    if (!(quark_list = Xmalloc(sizeof(XrmQuark) * n))) {
 	return False;
     }
 
@@ -610,7 +610,7 @@ _XimSaveICValues(ic, arg)
     return True;
 }
 
-Private char *
+static char *
 _XimDelayModeSetICValues(ic, arg)
     Xic			 ic;
     XIMArg		*arg;
@@ -628,7 +628,7 @@ _XimDelayModeSetICValues(ic, arg)
 }
 #endif /* XIM_CONNECTABLE */
 
-Private Bool
+static Bool
 _XimSetICValuesCheck(
     Xim          im,
     INT16        len,
@@ -657,7 +657,7 @@ _XimSetICValuesCheck(
     return False;
 }
 
-Private char *
+static char *
 _XimProtoSetICValues(
     XIC			 xic,
     XIMArg		*arg)
@@ -731,13 +731,13 @@ _XimProtoSetICValues(
 
 	buf_size += ret_len;
 	if (buf == tmp_buf) {
-	    if (!(tmp = (char *)Xmalloc(buf_size + data_len))) {
+	    if (!(tmp = Xmalloc(buf_size + data_len))) {
 		return tmp_name;
 	    }
 	    memcpy(tmp, buf, buf_size);
 	    buf = tmp;
 	} else {
-	    if (!(tmp = (char *)Xrealloc(buf, (buf_size + data_len)))) {
+	    if (!(tmp = Xrealloc(buf, (buf_size + data_len)))) {
 		Xfree(buf);
 		return tmp_name;
 	    }
@@ -781,7 +781,7 @@ _XimProtoSetICValues(
 	preply = reply;
     } else if (ret_code == XIM_OVERFLOW) {
 	buf_size = (int)len;
-	preply = (XPointer)Xmalloc(buf_size);
+	preply = Xmalloc(buf_size);
 	ret_code = _XimRead(im, &len, preply, buf_size,
 					_XimSetICValuesCheck, (XPointer)ic);
 	if (ret_code != XIM_TRUE) {
@@ -807,7 +807,7 @@ _XimProtoSetICValues(
     return name;
 }
 
-Private Bool
+static Bool
 _XimDestroyICCheck(
     Xim          im,
     INT16        len,
@@ -837,7 +837,7 @@ _XimDestroyICCheck(
     return ret;
 }
 
-Private void
+static void
 _XimProtoICFree(
     Xic		 ic)
 {
@@ -884,7 +884,7 @@ _XimProtoICFree(
     return;
 }
 
-Private void
+static void
 _XimProtoDestroyIC(
     XIC		 xic)
 {
@@ -915,7 +915,7 @@ _XimProtoDestroyIC(
 					_XimDestroyICCheck, (XPointer)ic);
 	if (ret_code == XIM_OVERFLOW) {
 	    buf_size = len;
-	    preply = (XPointer)Xmalloc(buf_size);
+	    preply = Xmalloc(buf_size);
 	    (void)_XimRead(im, &len, preply, buf_size,
 					_XimDestroyICCheck, (XPointer)ic);
 	    Xfree(preply);
@@ -927,7 +927,7 @@ _XimProtoDestroyIC(
     return;
 }
 
-Private void
+static void
 _XimProtoSetFocus(
     XIC		 xic)
 {
@@ -968,13 +968,11 @@ _XimProtoSetFocus(
     (void)_XimWrite(im, len, (XPointer)buf);
     _XimFlush(im);
 
-    MARK_FOCUSED(ic);
-
     _XimRegisterFilter(ic);
     return;
 }
 
-Private void
+static void
 _XimProtoUnsetFocus(
     XIC		 xic)
 {
@@ -1015,13 +1013,11 @@ _XimProtoUnsetFocus(
     (void)_XimWrite(im, len, (XPointer)buf);
     _XimFlush(im);
 
-    UNMARK_FOCUSED(ic);
-
     _XimUnregisterFilter(ic);
     return;
 }
 
-Private Bool
+static Bool
 _XimResetICCheck(
     Xim          im,
     INT16        len,
@@ -1050,7 +1046,7 @@ _XimResetICCheck(
     return False;
 }
 
-Private char *
+static char *
 _XimProtoReset(
     XIC		 xic,
     char *     (*retfunc) (Xim im, Xic ic, XPointer buf) )
@@ -1092,7 +1088,7 @@ _XimProtoReset(
     	    preply = reply;
     	} else {
     	    buf_size = len;
-    	    preply = (XPointer)Xmalloc(buf_size);
+	    preply = Xmalloc(buf_size);
     	    ret_code = _XimRead(im, &len, preply, buf_size,
     					_XimResetICCheck, (XPointer)ic);
     	    if (ret_code != XIM_TRUE) {
@@ -1121,7 +1117,7 @@ _XimProtoReset(
     return commit;
 }
 
-Private char *
+static char *
 _XimCommitedMbString(
     Xim			 im,
     Xic			 ic,
@@ -1143,7 +1139,7 @@ _XimCommitedMbString(
     if ( len == 0 )
 	return( NULL );
 
-    if (!(commit = (char *)Xmalloc(len + 1)))
+    if (!(commit = Xmalloc(len + 1)))
 	goto Error_On_Reset;
 
     str = commit;
@@ -1171,14 +1167,14 @@ Error_On_Reset:
     return new_commit;
 }
 
-Private char *
+static char *
 _XimProtoMbReset(
     XIC		 xic)
 {
     return _XimProtoReset(xic, _XimCommitedMbString);
 }
 
-Private wchar_t *
+static wchar_t *
 _XimCommitedWcString(
     Xim		 im,
     Xic		 ic,
@@ -1200,7 +1196,7 @@ _XimCommitedWcString(
     if ( len == 0 )
 	return( (wchar_t *)NULL );
 
-    if (!(commit = (char *)Xmalloc(len + 1)))
+    if (!(commit = Xmalloc(len + 1)))
 	goto Error_On_Reset;
 
     str = commit;
@@ -1229,7 +1225,7 @@ Error_On_Reset:
     return new_commit;
 }
 
-Private wchar_t *
+static wchar_t *
 _XimProtoWcReset(
     XIC		 xic)
 {
@@ -1237,7 +1233,7 @@ _XimProtoWcReset(
 			(char * (*) (Xim, Xic, XPointer)) _XimCommitedWcString);
 }
 
-Private char *
+static char *
 _XimCommitedUtf8String(
     Xim			 im,
     Xic			 ic,
@@ -1259,7 +1255,7 @@ _XimCommitedUtf8String(
     if ( len == 0 )
 	return( NULL );
 
-    if (!(commit = (char *)Xmalloc(len + 1)))
+    if (!(commit = Xmalloc(len + 1)))
 	goto Error_On_Reset;
 
     str = commit;
@@ -1287,14 +1283,14 @@ Error_On_Reset:
     return new_commit;
 }
 
-Private char *
+static char *
 _XimProtoUtf8Reset(
     XIC		 xic)
 {
     return _XimProtoReset(xic, _XimCommitedUtf8String);
 }
 
-Private XICMethodsRec ic_methods = {
+static XICMethodsRec ic_methods = {
     _XimProtoDestroyIC,		/* destroy */
     _XimProtoSetFocus,		/* set_focus */
     _XimProtoUnsetFocus,	/* unset_focus */
@@ -1308,7 +1304,7 @@ Private XICMethodsRec ic_methods = {
     _XimProtoUtf8LookupString	/* utf8_lookup_string */
 };
 
-Private Bool
+static Bool
 _XimGetInputStyle(
     XIMArg		*arg,
     XIMStyle		*input_style)
@@ -1325,7 +1321,7 @@ _XimGetInputStyle(
 }
 
 #ifdef XIM_CONNECTABLE
-Private Bool
+static Bool
 _XimDelayModeCreateIC(
     Xic			 ic,
     XIMArg		*values,
@@ -1360,7 +1356,7 @@ _XimDelayModeCreateIC(
     return True;
 }
 
-Public Bool
+Bool
 _XimReconnectModeCreateIC(ic)
     Xic			 ic;
 {
@@ -1372,7 +1368,7 @@ _XimReconnectModeCreateIC(ic)
 
     num = im->core.ic_num_resources;
     len = sizeof(XIMResource) * num;
-    if (!(res = (XIMResourceList)Xmalloc(len)))
+    if (!(res = Xmalloc(len)))
 	return False;
     (void)memcpy((char *)res, (char *)im->core.ic_resources, len);
     ic->private.proto.ic_resources     = res;
@@ -1386,7 +1382,7 @@ _XimReconnectModeCreateIC(ic)
 }
 #endif /* XIM_CONNECTABLE */
 
-Public XIC
+XIC
 _XimProtoCreateIC(
     XIM			 xim,
     XIMArg		*arg)
@@ -1425,18 +1421,17 @@ _XimProtoCreateIC(
     if (!(_XimGetInputStyle(arg, &input_style)))
 	return (XIC)NULL;
 
-    if ((ic = (Xic)Xmalloc(sizeof(XicRec))) == (Xic)NULL)
+    if ((ic = Xcalloc(1, sizeof(XicRec))) == (Xic)NULL)
 	return (XIC)NULL;
 
-    bzero((char *)ic, sizeof(XicRec));
     ic->methods = &ic_methods;
     ic->core.im = (XIM)im;
     ic->core.input_style = input_style;
 
     num = im->core.ic_num_resources;
     len = sizeof(XIMResource) * num;
-    if (!(res = (XIMResourceList)Xmalloc(len)))
-	return (XIC)NULL;
+    if (!(res = Xmalloc(len)))
+	goto ErrorOnCreatingIC;
     (void)memcpy((char *)res, (char *)im->core.ic_resources, len);
     ic->private.proto.ic_resources     = res;
     ic->private.proto.ic_num_resources = num;
@@ -1463,8 +1458,8 @@ _XimProtoCreateIC(
 
     num = im->private.proto.ic_num_inner_resources;
     len = sizeof(XIMResource) * num;
-    if (!(res = (XIMResourceList)Xmalloc(len)))
-	 return (XIC)NULL;
+    if (!(res = Xmalloc(len)))
+	goto ErrorOnCreatingIC;
     (void)memcpy((char *)res,
 			 (char *)im->private.proto.ic_inner_resources, len);
     ic->private.proto.ic_inner_resources     = res;
@@ -1497,13 +1492,13 @@ _XimProtoCreateIC(
 
 	buf_size += ret_len;
 	if (buf == tmp_buf) {
-	    if (!(tmp = (char *)Xmalloc(buf_size + data_len))) {
+	    if (!(tmp = Xmalloc(buf_size + data_len))) {
 	        goto ErrorOnCreatingIC;
 	    }
 	    memcpy(tmp, buf, buf_size);
 	    buf = tmp;
 	} else {
-	    if (!(tmp = (char *)Xrealloc(buf, (buf_size + data_len)))) {
+	    if (!(tmp = Xrealloc(buf, (buf_size + data_len)))) {
 		Xfree(buf);
 	        goto ErrorOnCreatingIC;
 	    }
@@ -1543,7 +1538,7 @@ _XimProtoCreateIC(
 	    preply = reply;
 	} else {
 	    buf_size = (int)len;
-	    preply = (XPointer)Xmalloc(buf_size);
+	    preply = Xmalloc(buf_size);
 	    ret_code = _XimRead(im, &len, preply, buf_size,
 						 _XimCreateICCheck, 0);
 	    if (ret_code != XIM_TRUE) {
@@ -1573,10 +1568,9 @@ _XimProtoCreateIC(
 
 ErrorOnCreatingIC:
     _XimUnregisterFilter(ic);
-    if (ic->private.proto.ic_resources)
-	Xfree(ic->private.proto.ic_resources);
-    if (ic->private.proto.ic_inner_resources)
-	Xfree(ic->private.proto.ic_inner_resources);
+
+    Xfree(ic->private.proto.ic_resources);
+    Xfree(ic->private.proto.ic_inner_resources);
     Xfree(ic);
     return (XIC)NULL;
 }

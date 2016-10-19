@@ -511,7 +511,7 @@ LINEAR_RGB_InitSCCData(
 	    *pValue++ = (long)_XcmsGetElement(format_return, &pChar,
 		    &nitems) / (XcmsFloat)XDCCC_NUMBER;
 	}
-	Xfree ((char *)property_return);
+	Xfree (property_return);
 	pPerScrnInfo->screenWhitePt.spec.CIEXYZ.X =
 		pScreenData->RGBtoXYZmatrix[0][0] +
 		pScreenData->RGBtoXYZmatrix[0][1] +
@@ -573,7 +573,6 @@ LINEAR_RGB_InitSCCData(
     if (CorrectAtom == None ||
 	!_XcmsGetProperty (dpy, RootWindow(dpy, screenNumber), CorrectAtom,
 	   &format_return, &nitems, &nbytes_return, &property_return)) {
-	Xfree ((char *)property_return);
 	goto FreeSCCData;
     }
 
@@ -595,8 +594,7 @@ LINEAR_RGB_InitSCCData(
 	     *		intensity2
 	     */
 	    if (nitems < 9) {
-		Xfree ((char *)property_return);
-		goto FreeSCCData;
+		goto Free_property_return;
 	    }
 	    count = 3;
 	    break;
@@ -612,8 +610,7 @@ LINEAR_RGB_InitSCCData(
 	     *		intensity2
 	     */
 	    if (nitems < 7) {
-		Xfree ((char *)property_return);
-		goto FreeSCCData;
+		goto Free_property_return;
 	    }
 	    count = 1;
 	    break;
@@ -628,14 +625,12 @@ LINEAR_RGB_InitSCCData(
 	     *		intensity2
 	     */
 	    if (nitems < 6) {
-		Xfree ((char *)property_return);
-		goto FreeSCCData;
+		goto Free_property_return;
 	    }
 	    count = 0;
 	    break;
 	  default:
-	    Xfree ((char *)property_return);
-	    goto FreeSCCData;
+	    goto Free_property_return;
 	}
 
 	/*
@@ -658,7 +653,7 @@ LINEAR_RGB_InitSCCData(
 	     */
 	    if (!(pScreenData = (LINEAR_RGB_SCCData *)
 			      Xcalloc (1, sizeof(LINEAR_RGB_SCCData)))) {
-		return(XcmsFailure);
+		goto Free_property_return;
 	    }
 	    /* copy matrices */
 	    memcpy((char *)pScreenData, (char *)pScreenDefaultData,
@@ -667,8 +662,8 @@ LINEAR_RGB_InitSCCData(
 	    /* Create, initialize, and add map */
 	    if (!(pNewMap = (XcmsIntensityMap *)
 			      Xcalloc (1, sizeof(XcmsIntensityMap)))) {
-		Xfree((char *)pScreenData);
-		return(XcmsFailure);
+		Xfree(pScreenData);
+		goto Free_property_return;
 	    }
 	    pNewMap->visualID = visualID;
 	    pNewMap->screenData = (XPointer)pScreenData;
@@ -687,7 +682,7 @@ LINEAR_RGB_InitSCCData(
 	    /* Red Intensity Table */
 	    if (!(pScreenData->pRedTbl = (IntensityTbl *)
 		    Xcalloc (1, sizeof(IntensityTbl)))) {
-		goto FreeSCCData;
+		goto Free_property_return;
 	    }
 	    if (_XcmsGetTableType0(pScreenData->pRedTbl, format_return, &pChar,
 		    &nitems) == XcmsFailure) {
@@ -724,7 +719,7 @@ LINEAR_RGB_InitSCCData(
 	    /* Red Intensity Table */
 	    if (!(pScreenData->pRedTbl = (IntensityTbl *)
 		    Xcalloc (1, sizeof(IntensityTbl)))) {
-		goto FreeSCCData;
+		goto Free_property_return;
 	    }
 	    if (_XcmsGetTableType1(pScreenData->pRedTbl, format_return, &pChar,
 		    &nitems) == XcmsFailure) {
@@ -753,7 +748,7 @@ LINEAR_RGB_InitSCCData(
 		/* Blue Intensity Table */
 		if (!(pScreenData->pBlueTbl = (IntensityTbl *)
 			Xcalloc (1, sizeof(IntensityTbl)))) {
-		    goto FreeBlueTblElements;
+		    goto FreeGreenTblElements;
 		}
 		if (_XcmsGetTableType1(pScreenData->pBlueTbl, format_return, &pChar,
 			&nitems) == XcmsFailure) {
@@ -761,8 +756,7 @@ LINEAR_RGB_InitSCCData(
 		}
 	    }
 	} else {
-	    Xfree ((char *)property_return);
-	    goto FreeSCCData;
+	    goto Free_property_return;
 	}
 
 #ifdef ALLDEBUG
@@ -788,7 +782,7 @@ LINEAR_RGB_InitSCCData(
 #endif /* ALLDEBUG */
     }
 
-    Xfree ((char *)property_return);
+    Xfree (property_return);
 
     /* Free the old memory and use the new structure created. */
     LINEAR_RGB_FreeSCCData(pPerScrnInfo->screenData);
@@ -802,25 +796,28 @@ LINEAR_RGB_InitSCCData(
     return(XcmsSuccess);
 
 FreeBlueTblElements:
-    Xfree((char *)pScreenData->pBlueTbl->pBase);
+    Xfree(pScreenData->pBlueTbl->pBase);
 
 FreeBlueTbl:
-    Xfree((char *)pScreenData->pBlueTbl);
+    Xfree(pScreenData->pBlueTbl);
 
 FreeGreenTblElements:
-    Xfree((char *)pScreenData->pBlueTbl->pBase);
+    Xfree(pScreenData->pGreenTbl->pBase);
 
 FreeGreenTbl:
-    Xfree((char *)pScreenData->pGreenTbl);
+    Xfree(pScreenData->pGreenTbl);
 
 FreeRedTblElements:
-    Xfree((char *)pScreenData->pRedTbl->pBase);
+    Xfree(pScreenData->pRedTbl->pBase);
 
 FreeRedTbl:
-    Xfree((char *)pScreenData->pRedTbl);
+    Xfree(pScreenData->pRedTbl);
+
+Free_property_return:
+    Xfree (property_return);
 
 FreeSCCData:
-    Xfree((char *)pScreenData);
+    Xfree(pScreenDefaultData);
     pPerScrnInfo->state = XcmsInitNone;
     return(XcmsFailure);
 }
@@ -852,30 +849,30 @@ LINEAR_RGB_FreeSCCData(
 		if (pScreenData->pRedTbl->pBase !=
 		    pScreenData->pGreenTbl->pBase) {
 		    if (pScreenData->pGreenTbl->pBase) {
-			Xfree ((char *)pScreenData->pGreenTbl->pBase);
+			Xfree (pScreenData->pGreenTbl->pBase);
 		    }
 		}
 		if (pScreenData->pGreenTbl != pScreenData->pRedTbl) {
-		    Xfree ((char *)pScreenData->pGreenTbl);
+		    Xfree (pScreenData->pGreenTbl);
 		}
 	    }
 	    if (pScreenData->pBlueTbl) {
 		if (pScreenData->pRedTbl->pBase !=
 		    pScreenData->pBlueTbl->pBase) {
 		    if (pScreenData->pBlueTbl->pBase) {
-			Xfree ((char *)pScreenData->pBlueTbl->pBase);
+			Xfree (pScreenData->pBlueTbl->pBase);
 		    }
 		}
 		if (pScreenData->pBlueTbl != pScreenData->pRedTbl) {
-		    Xfree ((char *)pScreenData->pBlueTbl);
+		    Xfree (pScreenData->pBlueTbl);
 		}
 	    }
 	    if (pScreenData->pRedTbl->pBase) {
-		Xfree ((char *)pScreenData->pRedTbl->pBase);
+		Xfree (pScreenData->pRedTbl->pBase);
 	    }
-	    Xfree ((char *)pScreenData->pRedTbl);
+	    Xfree (pScreenData->pRedTbl);
 	}
-	Xfree ((char *)pScreenData);
+	Xfree (pScreenData);
     }
 }
 
@@ -969,7 +966,7 @@ _XcmsGetTableType1(
  *
  */
 {
-    int count;
+    unsigned int count;
     unsigned int max_index;
     IntensityRec *pIRec;
 
@@ -1408,13 +1405,13 @@ XcmsLRGB_RGBi_ParseString(
  *		0 if failed, non-zero otherwise.
  */
 {
-    int n;
+    size_t n;
     char *pchar;
 
     if ((pchar = strchr(spec, ':')) == NULL) {
 	return(XcmsFailure);
     }
-    n = (int)(pchar - spec);
+    n = (size_t)(pchar - spec);
 
     /*
      * Check for proper prefix.

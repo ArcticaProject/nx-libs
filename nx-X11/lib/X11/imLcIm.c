@@ -36,9 +36,7 @@ THIS SOFTWARE.
 #include <config.h>
 #endif
 #include <stdio.h>
-/*
-#include <nx-X11/Xlib.h>
-*/
+
 #include <nx-X11/Xmd.h>
 #include <nx-X11/Xatom.h>
 #include <nx-X11/Xos.h>
@@ -88,14 +86,14 @@ struct _XimCacheStruct {
     /* char encoding[1] */
 };
 
-Private struct  _XimCacheStruct* _XimCache_mmap = NULL;
-Private DefTreeBase _XimCachedDefaultTreeBase;
-Private int     _XimCachedDefaultTreeRefcount = 0;
+static struct  _XimCacheStruct* _XimCache_mmap = NULL;
+static DefTreeBase _XimCachedDefaultTreeBase;
+static int     _XimCachedDefaultTreeRefcount = 0;
 
 #endif
 
 
-Public Bool
+Bool
 _XimCheckIfLocalProcessing(Xim im)
 {
     FILE        *fp;
@@ -119,7 +117,7 @@ _XimCheckIfLocalProcessing(Xim im)
     return(False);
 }
 
-Private void
+static void
 XimFreeDefaultTree(
     DefTreeBase *b)
 {
@@ -133,58 +131,51 @@ XimFreeDefaultTree(
     }
 #endif
     Xfree (b->tree);
-    if (b->mb)    Xfree (b->mb);
-    if (b->wc)    Xfree (b->wc);
-    if (b->utf8)  Xfree (b->utf8);
     b->tree = NULL;
+    Xfree (b->mb);
     b->mb   = NULL;
+    Xfree (b->wc);
     b->wc   = NULL;
+    Xfree (b->utf8);
     b->utf8 = NULL;
+
     b->treeused = b->treesize = 0;
     b->mbused   = b->mbsize   = 0;
     b->wcused   = b->wcsize   = 0;
     b->utf8used = b->utf8size = 0;
 }
 
-Public void
+void
 _XimLocalIMFree(
     Xim		im)
 {
     XimFreeDefaultTree(&im->private.local.base);
     im->private.local.top = 0;
 
-    if(im->core.im_resources) {
-	Xfree(im->core.im_resources);
-	im->core.im_resources = NULL;
-    }
-    if(im->core.ic_resources) {
-	Xfree(im->core.ic_resources);
-	im->core.ic_resources = NULL;
-    }
-    if(im->core.im_values_list) {
-	Xfree(im->core.im_values_list);
-	im->core.im_values_list = NULL;
-    }
-    if(im->core.ic_values_list) {
-	Xfree(im->core.ic_values_list);
-	im->core.ic_values_list = NULL;
-    }
-    if(im->core.styles) {
-	Xfree(im->core.styles);
-	im->core.styles = NULL;
-    }
-    if(im->core.res_name) {
-	Xfree(im->core.res_name);
-	im->core.res_name = NULL;
-    }
-    if(im->core.res_class) {
-	Xfree(im->core.res_class);
-	im->core.res_class = NULL;
-    }
-    if(im->core.im_name) {
-	Xfree(im->core.im_name);
-	im->core.im_name = NULL;
-    }
+    Xfree(im->core.im_resources);
+    im->core.im_resources = NULL;
+
+    Xfree(im->core.ic_resources);
+    im->core.ic_resources = NULL;
+
+    Xfree(im->core.im_values_list);
+    im->core.im_values_list = NULL;
+
+    Xfree(im->core.ic_values_list);
+    im->core.ic_values_list = NULL;
+
+    Xfree(im->core.styles);
+    im->core.styles = NULL;
+
+    Xfree(im->core.res_name);
+    im->core.res_name = NULL;
+
+    Xfree(im->core.res_class);
+    im->core.res_class = NULL;
+
+    Xfree(im->core.im_name);
+    im->core.im_name = NULL;
+
     if (im->private.local.ctom_conv) {
 	_XlcCloseConverter(im->private.local.ctom_conv);
         im->private.local.ctom_conv = NULL;
@@ -220,7 +211,7 @@ _XimLocalIMFree(
     return;
 }
 
-Private Status
+static Status
 _XimLocalCloseIM(
     XIM		xim)
 {
@@ -233,7 +224,7 @@ _XimLocalCloseIM(
     while (ic) {
 	(*ic->methods->destroy) (ic);
 	next = ic->core.next;
-	Xfree ((char *) ic);
+	Xfree (ic);
 	ic = next;
     }
     _XimLocalIMFree(im);
@@ -241,7 +232,7 @@ _XimLocalCloseIM(
     return(True);
 }
 
-Public char *
+char *
 _XimLocalGetIMValues(
     XIM			 xim,
     XIMArg		*values)
@@ -254,7 +245,7 @@ _XimLocalGetIMValues(
 			im->core.im_resources, im->core.im_num_resources));
 }
 
-Public char *
+char *
 _XimLocalSetIMValues(
     XIM			 xim,
     XIMArg		*values)
@@ -273,7 +264,7 @@ _XimLocalSetIMValues(
 
 #ifdef COMPOSECACHE
 
-Private Bool
+static Bool
 _XimReadCachedDefaultTree(
     int          fd_cache,
     const char  *name,
@@ -324,7 +315,7 @@ _XimReadCachedDefaultTree(
     return True;
 }
 
-Private unsigned int strToHash (
+static unsigned int strToHash (
     const char *name)
 {
     unsigned int hash = 0;
@@ -336,7 +327,7 @@ Private unsigned int strToHash (
 
 /* Returns read-only fd of cache file, -1 if none.
  * Sets *res to cache filename if safe. Sets *size to file size of cache. */
-Private int _XimCachedFileName (
+static int _XimCachedFileName (
     const char *dir, const char *name,
     const char *intname, const char *encoding,
     uid_t uid, int isglobal, char **res, off_t *size)
@@ -421,7 +412,7 @@ Private int _XimCachedFileName (
 }
 
 
-Private Bool _XimLoadCache (
+static Bool _XimLoadCache (
     int         fd,
     const char *name,
     const char *encoding,
@@ -441,7 +432,7 @@ Private Bool _XimLoadCache (
 }
 
 
-Private void
+static void
 _XimWriteCachedDefaultTree(
     const char *name,
     const char *encoding,
@@ -456,7 +447,7 @@ _XimWriteCachedDefaultTree(
 		   + XIM_CACHE_TREE_ALIGNMENT-1) & -XIM_CACHE_TREE_ALIGNMENT;
     DefTreeBase *b = &im->private.local.base;
 
-    if (! b->tree && ! (b->tree = Xmalloc (sizeof(DefTree))) )
+    if (! b->tree && ! (b->tree = Xcalloc (1, sizeof(DefTree))) )
 	return;
     if (! b->mb   && ! (b->mb   = Xmalloc (1)) )
 	return;
@@ -466,13 +457,11 @@ _XimWriteCachedDefaultTree(
 	return;
 
     /* First entry is always unused */
-    memset (b->tree, 0, sizeof(DefTree));
     b->mb[0]   = 0;
     b->wc[0]   = 0;
     b->utf8[0] = 0;
 
-    m = Xmalloc (msize);
-    memset (m, 0, msize);
+    m = Xcalloc (1, msize);
     m->id       = XIM_CACHE_MAGIC;
     m->version  = XIM_CACHE_VERSION;
     m->top      = im->private.local.top;
@@ -491,10 +480,13 @@ _XimWriteCachedDefaultTree(
 
     /* This STILL might be racy on NFS */
     if ( (fd = _XOpenFileMode (cachename, O_WRONLY | O_CREAT | O_EXCL,
-			       0600)) < 0)
+			       0600)) < 0) {
+       Xfree(m);
        return;
+    }
     if (! (fp = fdopen (fd, "wb")) ) {
        close (fd);
+       Xfree(m);
        return;
     }
     fwrite (m, msize, 1, fp);
@@ -513,7 +505,7 @@ _XimWriteCachedDefaultTree(
 #endif
 
 
-Private void
+static void
 _XimCreateDefaultTree(
     Xim		im)
 {
@@ -575,19 +567,15 @@ _XimCreateDefaultTree(
 				      encoding, 0, 1, &cachename, &size);
 	if (cachefd != -1) {
 	    if (_XimLoadCache (cachefd, intname, encoding, size, im)) {
-		if (tmpcachedir)
-		    Xfree  (tmpcachedir);
-		if (tmpname)
-		    Xfree (tmpname);
-		if (cachename)
-		    Xfree (cachename);
+	        Xfree (tmpcachedir);
+		Xfree (tmpname);
+		Xfree (cachename);
 		close (cachefd);
 		return;
 	    }
 	    close (cachefd);
 	}
-	if (cachename)
-	    Xfree (cachename);
+	Xfree (cachename);
 	cachename = NULL;
     }
 
@@ -602,12 +590,9 @@ _XimCreateDefaultTree(
 				      euid, 0, &cachename, &size);
 	if (cachefd != -1) {
 	    if (_XimLoadCache (cachefd, intname, encoding, size, im)) {
-		if (tmpcachedir)
-		    Xfree  (tmpcachedir);
-		if (tmpname)
-		    Xfree (tmpname);
-		if (cachename)
-		    Xfree (cachename);
+	        Xfree (tmpcachedir);
+		Xfree (tmpname);
+		Xfree (cachename);
 		close (cachefd);
 		return;
 	    }
@@ -617,12 +602,9 @@ _XimCreateDefaultTree(
 #endif
 
     if (! (fp = _XFopenFile (name, "r"))) {
-	if (tmpcachedir)
-	    Xfree  (tmpcachedir);
-	if (tmpname)
-	    Xfree (tmpname);
-	if (cachename)
-	    Xfree (cachename);
+	Xfree (tmpcachedir);
+	Xfree (tmpname);
+	Xfree (cachename);
         return;
     }
     _XimParseStringFile(fp, im);
@@ -635,15 +617,12 @@ _XimCreateDefaultTree(
     }
 #endif
 
-    if (tmpcachedir)
-	Xfree  (tmpcachedir);
-    if (tmpname)
-	Xfree (tmpname);
-    if (cachename)
-	Xfree (cachename);
+    Xfree (tmpcachedir);
+    Xfree (tmpname);
+    Xfree (cachename);
 }
 
-Private XIMMethodsRec      Xim_im_local_methods = {
+static XIMMethodsRec      Xim_im_local_methods = {
     _XimLocalCloseIM,           /* close */
     _XimLocalSetIMValues,       /* set_values */
     _XimLocalGetIMValues,       /* get_values */
@@ -653,7 +632,7 @@ Private XIMMethodsRec      Xim_im_local_methods = {
     _XimLcctstoutf8		/* ctstoutf8 */
 };
 
-Public Bool
+Bool
 _XimLocalOpenIM(
     Xim			 im)
 {

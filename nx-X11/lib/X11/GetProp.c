@@ -47,7 +47,7 @@ XGetWindowProperty(
 {
     xGetPropertyReply reply;
     register xGetPropertyReq *req;
-    xError error;
+    xError error = {0};
 
     /* Always initialize return values, in case callers fail to initialize
        them and fail to check the return code for an error. */

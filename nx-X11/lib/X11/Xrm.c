@@ -60,8 +60,9 @@ from The Open Group.
 #ifdef XTHREADS
 #include	"locking.h"
 #endif
-#include 	"XrmI.h"
 #include	<nx-X11/Xos.h>
+#include	<sys/stat.h>
+#include	<limits.h>
 #include "Xresinternal.h"
 #include "Xresource.h"
 
@@ -348,7 +349,7 @@ void XrmSetDatabase(
     XrmDatabase database)
 {
     LockDisplay(display);
-    /* destroy database if set up imlicitely by XGetDefault() */
+    /* destroy database if set up implicitly by XGetDefault() */
     if (display->db && (display->flags & XlibDisplayDfltRMDB)) {
 	XrmDestroyDatabase(display->db);
 	display->flags &= ~XlibDisplayDfltRMDB;
@@ -494,7 +495,7 @@ static XrmDatabase NewDatabase(void)
 {
     register XrmDatabase db;
 
-    db = (XrmDatabase) Xmalloc(sizeof(XrmHashBucketRec));
+    db = Xmalloc(sizeof(XrmHashBucketRec));
     if (db) {
 	_XCreateMutex(&db->linfo);
 	db->table = (NTable)NULL;
@@ -507,7 +508,7 @@ static XrmDatabase NewDatabase(void)
 }
 
 /* move all values from ftable to ttable, and free ftable's buckets.
- * ttable is quaranteed empty to start with.
+ * ttable is guaranteed empty to start with.
  */
 static void MoveValues(
     LTable ftable,
@@ -530,7 +531,7 @@ static void MoveValues(
 	    fentry->next = tentry;
 	}
     }
-    Xfree((char *)ftable->buckets);
+    Xfree(ftable->buckets);
 }
 
 /* move all tables from ftable to ttable, and free ftable.
@@ -557,7 +558,7 @@ static void MoveTables(
 	    fentry->next = tentry;
 	}
     }
-    Xfree((char *)ftable);
+    Xfree(ftable);
 }
 
 /* grow the table, based on current number of entries */
@@ -581,23 +582,21 @@ static void GrowTable(
 	ltable = (LTable)table;
 	/* cons up a copy to make MoveValues look symmetric */
 	otable = *ltable;
-	ltable->buckets = (VEntry *)Xmalloc(i * sizeof(VEntry));
+	ltable->buckets = Xcalloc(i, sizeof(VEntry));
 	if (!ltable->buckets) {
 	    ltable->buckets = otable.buckets;
 	    return;
 	}
 	ltable->table.mask = i - 1;
-	bzero((char *)ltable->buckets, i * sizeof(VEntry));
 	MoveValues(&otable, ltable);
     } else {
 	register NTable ntable;
 
-	ntable = (NTable)Xmalloc(sizeof(NTableRec) + i * sizeof(NTable));
+	ntable = Xcalloc(1, sizeof(NTableRec) + (i * sizeof(NTable)));
 	if (!ntable)
 	    return;
 	*ntable = *table;
 	ntable->mask = i - 1;
-	bzero((char *)NodeBuckets(ntable), i * sizeof(NTable));
 	*prev = ntable;
 	MoveTables(table, ntable);
     }
@@ -650,7 +649,7 @@ static void MergeValues(
 		    fentry = *prev;
 		    *prev = tentry->next;
 		    /* free the overridden entry */
-		    Xfree((char *)tentry);
+		    Xfree(tentry);
 		    /* get next tentry */
 		    tentry = *prev;
 		} else {
@@ -659,7 +658,7 @@ static void MergeValues(
 		    tentry = fentry; /* use as a temp var */
 		    fentry = fentry->next;
 		    /* free the overpowered entry */
-		    Xfree((char *)tentry);
+		    Xfree(tentry);
 		    /* get next tentry */
 		    tentry = *prev;
 		}
@@ -677,8 +676,8 @@ static void MergeValues(
 	    }
 	}
     }
-    Xfree((char *)ftable->buckets);
-    Xfree((char *)ftable);
+    Xfree(ftable->buckets);
+    Xfree(ftable);
     /* resize if necessary, now that we're all done */
     GROW(pprev);
 }
@@ -752,7 +751,7 @@ static void MergeTables(
 	    }
 	}
     }
-    Xfree((char *)ftable);
+    Xfree(ftable);
     /* resize if necessary, now that we're all done */
     GROW(pprev);
 }
@@ -802,7 +801,7 @@ void XrmCombineDatabase(
 	(from->methods->destroy)(from->mbstate);
 	_XUnlockMutex(&from->linfo);
 	_XFreeMutex(&from->linfo);
-	Xfree((char *)from);
+	Xfree(from);
 	_XUnlockMutex(&(*into)->linfo);
     }
 }
@@ -829,7 +828,7 @@ static void PutEntry(
     NTable *nprev, *firstpprev;
 
 #define NEWTABLE(q,i) \
-    table = (NTable)Xmalloc(sizeof(LTableRec)); \
+    table = Xmalloc(sizeof(LTableRec)); \
     if (!table) \
 	return; \
     table->name = q; \
@@ -842,8 +841,10 @@ static void PutEntry(
 	nprev = NodeBuckets(table); \
     } else { \
 	table->leaf = 1; \
-	if (!(nprev = (NTable *)Xmalloc(sizeof(VEntry *)))) \
+	if (!(nprev = Xmalloc(sizeof(VEntry *)))) {\
+	    Xfree(table); \
 	    return; \
+        } \
 	((LTable)table)->buckets = (VEntry *)nprev; \
     } \
     *nprev = (NTable)NULL; \
@@ -928,7 +929,7 @@ static void PutEntry(
 		}
 		/* splice out and free old entry */
 		*vprev = entry->next;
-		Xfree((char *)entry);
+		Xfree(entry);
 		(*pprev)->entries--;
 	    }
 	    /* this is where to insert */
@@ -954,9 +955,8 @@ static void PutEntry(
 	prev = nprev;
     }
     /* now allocate the value entry */
-    entry = (VEntry)Xmalloc(((type == XrmQString) ?
-			     sizeof(VEntryRec) : sizeof(DEntryRec)) +
-			    value->size);
+    entry = Xmalloc(((type == XrmQString) ?
+		     sizeof(VEntryRec) : sizeof(DEntryRec)) + value->size);
     if (!entry)
 	return;
     entry->name = q = *quarks;
@@ -986,13 +986,12 @@ static void PutEntry(
 	if (resourceQuarks) {
 	    unsigned char *prevQuarks = resourceQuarks;
 
-	    resourceQuarks = (unsigned char *)Xrealloc((char *)resourceQuarks,
-						       size);
+	    resourceQuarks = Xrealloc(resourceQuarks, size);
 	    if (!resourceQuarks) {
 		Xfree(prevQuarks);
 	    }
 	} else
-	    resourceQuarks = (unsigned char *)Xmalloc(size);
+	    resourceQuarks = Xmalloc(size);
 	if (resourceQuarks) {
 	    bzero((char *)&resourceQuarks[oldsize], size - oldsize);
 	    maxResourceQuark = (size << 3) - 1;
@@ -1092,7 +1091,7 @@ static void GetIncludeFile(
 
 static void GetDatabase(
     XrmDatabase db,
-    _Xconst register char *str,
+    _Xconst char *str,
     _Xconst char *filename,
     Bool doall,
     int depth)
@@ -1137,11 +1136,11 @@ static void GetDatabase(
 
     str_len = strlen (str);
     if (DEF_BUFF_SIZE > str_len) lhs = lhs_s;
-    else if ((lhs = (char*) Xmalloc (str_len)) == NULL)
+    else if ((lhs = Xmalloc (str_len)) == NULL)
 	return;
 
     alloc_chars = DEF_BUFF_SIZE < str_len ? str_len : DEF_BUFF_SIZE;
-    if ((rhs = (char*) Xmalloc (alloc_chars)) == NULL) {
+    if ((rhs = Xmalloc (alloc_chars)) == NULL) {
 	if (lhs != lhs_s) Xfree (lhs);
 	return;
     }
@@ -1595,12 +1594,14 @@ ReadInFile(_Xconst char *filename)
      * result that the number of bytes actually read with be <=
      * to the size returned by fstat.
      */
-    GetSizeOfFile(fd, size);
-
-    /* There might have been a problem trying to stat a file */
-    if (size == -1) {
-	close (fd);
-	return (char *)NULL;
+    {
+	struct stat status_buffer;
+	if ( ((fstat(fd, &status_buffer)) == -1 ) ||
+             (status_buffer.st_size >= INT_MAX) ) {
+	    close (fd);
+	    return (char *)NULL;
+	} else
+	    size = (int) status_buffer.st_size;
     }
 
     if (!(filebuf = Xmalloc(size + 1))) { /* leave room for '\0' */
@@ -2604,11 +2605,11 @@ static void DestroyLTable(
     for (i = table->table.mask; i >= 0; i--, buckets++) {
 	for (next = *buckets; (entry = next); ) {
 	    next = entry->next;
-	    Xfree((char *)entry);
+	    Xfree(entry);
 	}
     }
-    Xfree((char *)table->buckets);
-    Xfree((char *)table);
+    Xfree(table->buckets);
+    Xfree(table);
 }
 
 /* destroy all contained tables, plus table itself */
@@ -2629,7 +2630,7 @@ static void DestroyNTable(
 		DestroyNTable(entry);
 	}
     }
-    Xfree((char *)table);
+    Xfree(table);
 }
 
 const char *
@@ -2660,6 +2661,6 @@ void XrmDestroyDatabase(
 	_XUnlockMutex(&db->linfo);
 	_XFreeMutex(&db->linfo);
 	(*db->methods->destroy)(db->mbstate);
-	Xfree((char *)db);
+	Xfree(db);
     }
 }

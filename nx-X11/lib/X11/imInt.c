@@ -37,10 +37,10 @@ PERFORMANCE OF THIS SOFTWARE.
 #include "Ximint.h"
 #include "XimImSw.h"
 
-Private Xim 		*_XimCurrentIMlist  = (Xim *)NULL;
-Private int		 _XimCurrentIMcount = 0;
+static Xim 		*_XimCurrentIMlist  = (Xim *)NULL;
+static int		 _XimCurrentIMcount = 0;
 
-Private Bool
+static Bool
 _XimSetIMStructureList(
     Xim		  im)
 {
@@ -48,7 +48,7 @@ _XimSetIMStructureList(
     Xim		 *xim;
 
     if(!(_XimCurrentIMlist)) {
-	if(!(_XimCurrentIMlist = (Xim *)Xmalloc(sizeof(Xim))))
+	if(!(_XimCurrentIMlist = Xmalloc(sizeof(Xim))))
 	    return False;
 	_XimCurrentIMlist[0] = im;
 	_XimCurrentIMcount   = 1;
@@ -61,7 +61,7 @@ _XimSetIMStructureList(
 	    }
 	}
 	if(i >= _XimCurrentIMcount) {
-	    if(!(xim = (Xim *)Xrealloc(_XimCurrentIMlist,
+	    if(!(xim = Xrealloc(_XimCurrentIMlist,
 					 ((i + 1) * sizeof(Xim)))))
 		return False;
 	    _XimCurrentIMlist			  = xim;
@@ -72,7 +72,7 @@ _XimSetIMStructureList(
     return True;
 }
 
-Public void
+void
 _XimDestroyIMStructureList(Xim im)
 {
     register int  i;
@@ -86,7 +86,7 @@ _XimDestroyIMStructureList(Xim im)
     return;
 }
 
-Public void
+void
 _XimServerDestroy(Xim im_2_destroy)
 {
     register int  i;
@@ -120,7 +120,7 @@ _XimServerDestroy(Xim im_2_destroy)
 }
 
 #ifdef XIM_CONNECTABLE
-Public void
+void
 _XimServerReconectableDestroy(void)
 {
     register int  i;
@@ -147,7 +147,7 @@ _XimServerReconectableDestroy(void)
 }
 #endif /* XIM_CONNECTABLE */
 
-Private const char *
+static const char *
 _XimStrstr(
     register const char *src,
     register const char *dest)
@@ -163,7 +163,7 @@ _XimStrstr(
     return NULL;
 }
 
-Private char *
+static char *
 _XimMakeImName(
     XLCd	   lcd)
 {
@@ -193,7 +193,7 @@ _XimMakeImName(
     return ret;
 }
 
-Public XIM
+XIM
 _XimOpenIM(
     XLCd		 lcd,
     Display		*dpy,
@@ -204,9 +204,8 @@ _XimOpenIM(
     Xim			 im;
     register int	 i;
 
-    if (!(im = (Xim)Xmalloc(sizeof(XimRec))))
+    if (!(im = Xcalloc(1, sizeof(XimRec))))
 	return (XIM)NULL;
-    bzero(im, sizeof(XimRec));
 
     im->core.lcd       = lcd;
     im->core.ic_chain  = (XIC)NULL;
@@ -215,14 +214,12 @@ _XimOpenIM(
     im->core.res_name  = NULL;
     im->core.res_class = NULL;
     if((res_name != NULL) && (*res_name != '\0')){
-	if(!(im->core.res_name  = (char *)Xmalloc(strlen(res_name)+1)))
+	if(!(im->core.res_name  = strdup(res_name)))
 	    goto Error1;
-	strcpy(im->core.res_name,res_name);
     }
     if((res_class != NULL) && (*res_class != '\0')){
-	if(!(im->core.res_class = (char *)Xmalloc(strlen(res_class)+1)))
+	if(!(im->core.res_class = strdup(res_class)))
 	    goto Error2;
-	strcpy(im->core.res_class,res_class);
     }
     if(!(im->core.im_name = _XimMakeImName(lcd)))
 	goto Error3;
@@ -242,19 +239,16 @@ Error4 :
     Xfree(im);
     return NULL;
 Error3 :
-    if(im->core.im_name)
-	Xfree(im->core.im_name);
+    Xfree(im->core.im_name);
 Error2:
-    if(im->core.res_class)
-	Xfree(im->core.res_class);
+    Xfree(im->core.res_class);
 Error1:
-    if(im->core.res_name)
-	Xfree(im->core.res_name);
+    Xfree(im->core.res_name);
     Xfree(im);
     return NULL;
 }
 
-Public Bool
+Bool
 _XInitIM(XLCd lcd)
 {
     if(lcd == (XLCd)NULL)

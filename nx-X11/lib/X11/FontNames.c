@@ -47,7 +47,7 @@ int *actualCount)	/* RETURN */
     int count = 0;
     xListFontsReply rep;
     register xListFontsReq *req;
-    unsigned long rlen;
+    unsigned long rlen = 0;
 
     LockDisplay(dpy);
     GetReq(ListFonts, req);
@@ -66,15 +66,15 @@ int *actualCount)	/* RETURN */
 
     if (rep.nFonts) {
 	flist = Xmalloc (rep.nFonts * sizeof(char *));
-	if (rep.length < (LONG_MAX >> 2)) {
+	if (rep.length > 0 && rep.length < (INT_MAX >> 2)) {
 	    rlen = rep.length << 2;
 	    ch = Xmalloc(rlen + 1);
 	    /* +1 to leave room for last null-terminator */
 	}
 
 	if ((! flist) || (! ch)) {
-	    if (flist) Xfree((char *) flist);
-	    if (ch) Xfree(ch);
+	    Xfree(flist);
+	    Xfree(ch);
 	    _XEatDataWords(dpy, rep.length);
 	    *actualCount = 0;
 	    UnlockDisplay(dpy);
@@ -93,11 +93,22 @@ int *actualCount)	/* RETURN */
 	    if (ch + length < chend) {
 		flist[i] = ch + 1;  /* skip over length */
 		ch += length + 1;  /* find next length ... */
-		length = *(unsigned char *)ch;
-		*ch = '\0';  /* and replace with null-termination */
-		count++;
-	    } else
-		flist[i] = NULL;
+		if (ch <= chend) {
+		    length = *(unsigned char *)ch;
+		    *ch = '\0';  /* and replace with null-termination */
+		    count++;
+		} else {
+                    Xfree(flist);
+                    flist = NULL;
+                    count = 0;
+                    break;
+		}
+	    } else {
+                Xfree(flist);
+                flist = NULL;
+                count = 0;
+                break;
+            }
 	}
     }
     *actualCount = count;
@@ -116,7 +127,7 @@ XFreeFontNames(char **list)
 				Xfree (*names);
 		}
 		Xfree (list[0]-1);
-		Xfree ((char *)list);
+		Xfree (list);
 	}
 	return 1;
 }

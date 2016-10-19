@@ -37,7 +37,7 @@ Sun Microsystems, Inc. or its licensors is granted.
 
 */
 /*
- * Copyright 2000 Sun Microsystems, Inc.  All rights reserved.
+ * Copyright 2000 Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -76,7 +76,7 @@ Sun Microsystems, Inc. or its licensors is granted.
 #define XOC_GENERIC(font_set)	(&((XOCGeneric) font_set)->gen)
 
 #define DefineLocalBuf		char local_buf[BUFSIZ]
-#define AllocLocalBuf(length)	(length > BUFSIZ ? (char *)Xmalloc(length) : local_buf)
+#define AllocLocalBuf(length)	(length > BUFSIZ ? Xmalloc(length) : local_buf)
 #define FreeLocalBuf(ptr)	if (ptr != local_buf) Xfree(ptr)
 
 typedef struct _FontDataRec {
@@ -128,10 +128,9 @@ init_fontset(
 
     data = XOM_GENERIC(oc->core.om)->data;
 
-    font_set = (FontSet) Xmalloc(sizeof(FontSetRec));
+    font_set = Xcalloc(1, sizeof(FontSetRec));
     if (font_set == NULL)
 	return False;
-    bzero((char *) font_set, sizeof(FontSetRec));
 
     gen = XOC_GENERIC(oc);
     gen->font_set = font_set;
@@ -183,62 +182,6 @@ check_charset(
     return (FontData) NULL;
 }
 
-#if 0 /* Unused */
-static int
-check_fontname(
-    XOC oc,
-    char *name)
-{
-    Display *dpy = oc->core.om->core.display;
-    XOCGenericPart *gen = XOC_GENERIC(oc);
-    FontData data;
-    FontSet font_set;
-    XFontStruct *fs_list;
-    char **fn_list, *fname, *prop_fname = NULL;
-    int list_num, i;
-    int list2_num;
-    char **fn2_list = NULL;
-    int found_num = 0;
-
-    fn_list = XListFonts(dpy, name, MAXFONTS, &list_num);
-    if (fn_list == NULL)
-	return found_num;
-
-    for (i = 0; i < list_num; i++) {
-	fname = fn_list[i];
-
-	font_set = gen->font_set;
-
-	if ((data = check_charset(font_set, fname)) == NULL) {
-	    if ((fn2_list = XListFontsWithInfo(dpy, name, MAXFONTS,
-					       &list2_num, &fs_list))
-		&& (prop_fname = get_prop_name(dpy, fs_list))
-		&& (data = check_charset(font_set, prop_fname)))
-		fname = prop_fname;
-	}
-	if (data) {
-	    font_set->font_name = (char *) Xmalloc(strlen(fname) + 1);
-	    if (font_set->font_name) {
-		strcpy(font_set->font_name, fname);
-		found_num++;
-	    }
-	}
-	if (fn2_list) {
-	    XFreeFontInfo(fn2_list, fs_list, list2_num);
-	    fn2_list = NULL;
-	    if (prop_fname) {
-		Xfree(prop_fname);
-		prop_fname = NULL;
-	    }
-	}
-	if (found_num == 1)
-	    break;
-    }
-    XFreeFontNames(fn_list);
-    return found_num;
-}
-#endif
-
 static Bool
 load_font(
     XOC oc)
@@ -257,34 +200,6 @@ load_font(
     }
     return True;
 }
-
-#if 0
-static Bool
-load_font_info(
-    XOC oc)
-{
-    Display *dpy = oc->core.om->core.display;
-    XOCGenericPart *gen = XOC_GENERIC(oc);
-    FontSet font_set = gen->font_set;
-    char **fn_list;
-    int fn_num;
-
-    if (font_set->font_name == NULL)
-	return False;
-
-    if (font_set->info == NULL) {
-	fn_list = XListFontsWithInfo(dpy, font_set->font_name, 1, &fn_num,
-				     &font_set->info);
-	if (font_set->info == NULL)
-	    return False;
-	if (fn_num > 0)
-	    font_set->info->fid = XLoadFont(dpy, font_set->font_name);
-
-	if (fn_list) XFreeFontNames(fn_list);
-    }
-    return True;
-}
-#endif
 
 static void
 set_fontset_extents(
@@ -322,27 +237,21 @@ init_core_part(
     FontSet font_set;
     XFontStruct **font_struct_list;
     char **font_name_list, *font_name_buf;
-    int	count, length;
 
     font_set = gen->font_set;
-    count = length = 0;
 
-    if (font_set->font_name != NULL) {
-	length += strlen(font_set->font_name) + 1;
-	count++;
-    }
-    if (count == 0)
+    if (font_set->font_name == NULL)
         return False;
 
-    font_struct_list = (XFontStruct **) Xmalloc(sizeof(XFontStruct *));
+    font_struct_list = Xmalloc(sizeof(XFontStruct *));
     if (font_struct_list == NULL)
 	return False;
 
-    font_name_list = (char **) Xmalloc(sizeof(char *));
+    font_name_list = Xmalloc(sizeof(char *));
     if (font_name_list == NULL)
 	goto err;
 
-    font_name_buf = (char *) Xmalloc(length);
+    font_name_buf = strdup(font_set->font_name);
     if (font_name_buf == NULL)
 	goto err;
 
@@ -350,27 +259,21 @@ init_core_part(
     oc->core.font_info.font_name_list = font_name_list;
     oc->core.font_info.font_struct_list = font_struct_list;
 
-    font_set = gen->font_set;
-
-    if (font_set->font_name != NULL) {
-	font_set->id = 1;
-	if (font_set->font)
-	    *font_struct_list++ = font_set->font;
-	else
-	    *font_struct_list++ = font_set->info;
-	strcpy(font_name_buf, font_set->font_name);
-	Xfree(font_set->font_name);
-	*font_name_list++ = font_set->font_name = font_name_buf;
-	font_name_buf += strlen(font_name_buf) + 1;
-    }
+    font_set->id = 1;
+    if (font_set->font)
+        *font_struct_list = font_set->font;
+    else
+        *font_struct_list = font_set->info;
+    Xfree(font_set->font_name);
+    *font_name_list = font_set->font_name = font_name_buf;
 
     set_fontset_extents(oc);
 
     return True;
 
 err:
-    if (font_name_list)
-	Xfree(font_name_list);
+
+    Xfree(font_name_list);
     Xfree(font_struct_list);
 
     return False;
@@ -381,29 +284,21 @@ get_font_name(
     XOC oc,
     char *pattern)
 {
-    char **list, *name, *prop_name;
+    char **list, *name;
     int count;
     XFontStruct *fs;
     Display *dpy = oc->core.om->core.display;
 
     list = XListFonts(dpy, pattern, 1, &count);
     if (list != NULL) {
-	name = (char *) Xmalloc(strlen(*list) + 1);
-	if (name)
-	    strcpy(name, *list);
+	name = strdup(*list);
 
 	XFreeFontNames(list);
     } else {
 	fs = XLoadQueryFont(dpy, pattern);
 	if (fs == NULL) return NULL;
 
-	prop_name = get_prop_name(dpy, fs);
-	if (prop_name == NULL) return NULL;
-
-	name = (char*) Xmalloc(strlen(prop_name) + 1);
-	if (name)
-	    strcpy(name, prop_name);
-
+	name = get_prop_name(dpy, fs);
 	XFreeFont(dpy, fs);
     }
     return name;
@@ -466,21 +361,15 @@ parse_fontname(
 	    if (font_data == NULL)
 		continue;
 
-	    font_set->font_name = (char *) Xmalloc(strlen(font_name) + 1);
+	    font_set->font_name = strdup(font_name);
+	    Xfree(font_name);
 	    if (font_set->font_name == NULL) {
-		Xfree(font_name);
 		goto err;
 	    }
-	    strcpy(font_set->font_name, font_name);
-	    Xfree(font_name);
 	    found_num++;
 	    goto found;
 	}
-/*
-1266793
-Limit the length of the string copy to prevent stack corruption.
-	strcpy(buf, pattern);
-*/
+
 	strncpy(buf, pattern, BUFSIZ);
 	buf[BUFSIZ-1] = '\0';
 	length = strlen(buf);
@@ -532,11 +421,6 @@ Limit the length of the string copy to prevent stack corruption.
 	for ( ; font_data_count-- > 0; font_data++) {
 	    if (append_charset)
 		{
-/*
-1266793
-Limit the length of the string copy to prevent stack corruption.
-		strcpy(last, font_data->name);
-*/
 		strncpy(last, font_data->name, BUFSIZ - length);
 		buf[BUFSIZ-1] = '\0';
 		}
@@ -555,11 +439,10 @@ Limit the length of the string copy to prevent stack corruption.
 	}
     }
   found:
-    base_name = (char *) Xmalloc(strlen(oc->core.base_name_list) + 1);
+    base_name = strdup(oc->core.base_name_list);
     if (base_name == NULL)
 	goto err;
 
-    strcpy(base_name, oc->core.base_name_list);
     oc->core.base_name_list = base_name;
 
     XFreeStringList(name_list);
@@ -578,24 +461,17 @@ set_missing_list(
     XOCGenericPart *gen = XOC_GENERIC(oc);
     FontSet font_set;
     char **charset_list, *charset_buf;
-    int	count, length;
 
     font_set = gen->font_set;
-    count = length = 0;
 
-    if (!font_set->info && !font_set->font) {
-	length += strlen(font_set->font_data->name) + 1;
-	count++;
-    }
-
-    if (count == 0)
+    if (font_set->info == NULL || font_set->font == NULL)
 	return True;
 
-    charset_list = (char **) Xmalloc(sizeof(char *));
+    charset_list = Xmalloc(sizeof(char *));
     if (charset_list == NULL)
 	return False;
 
-    charset_buf = (char *) Xmalloc(length);
+    charset_buf = strdup(font_set->font_data->name);
     if (charset_buf == NULL) {
 	Xfree(charset_list);
 	return False;
@@ -603,13 +479,8 @@ set_missing_list(
 
     oc->core.missing_list.charset_list = charset_list;
 
-    font_set = gen->font_set;
+    *charset_list = charset_buf;
 
-    if (!font_set->info && !font_set->font) {
-	strcpy(charset_buf, font_set->font_data->name);
-	*charset_list++ = charset_buf;
-	charset_buf += strlen(charset_buf) + 1;
-    }
     return True;
 }
 
@@ -649,14 +520,10 @@ destroy_oc(
     XOCGenericPart *gen = XOC_GENERIC(oc);
     XFontStruct **font_list, *font;
 
-    if (gen->font_set)
-	Xfree(gen->font_set);
 
-    if (oc->core.base_name_list)
-	Xfree(oc->core.base_name_list);
-
-    if (oc->core.font_info.font_name_list)
-	XFreeStringList(oc->core.font_info.font_name_list);
+    Xfree(gen->font_set);
+    Xfree(oc->core.base_name_list);
+    XFreeStringList(oc->core.font_info.font_name_list);
 
     if ((font_list = oc->core.font_info.font_struct_list)) {
 	if ((font = *font_list)) {
@@ -668,14 +535,12 @@ destroy_oc(
 	Xfree(oc->core.font_info.font_struct_list);
     }
 
-    if (oc->core.missing_list.charset_list)
-	XFreeStringList(oc->core.missing_list.charset_list);
+
+    XFreeStringList(oc->core.missing_list.charset_list);
 
 #ifdef notdef
-    if (oc->core.res_name)
-	Xfree(oc->core.res_name);
-    if (oc->core.res_class)
-	Xfree(oc->core.res_class);
+    Xfree(oc->core.res_name);
+    Xfree(oc->core.res_class);
 #endif
 
     Xfree(oc);
@@ -1011,10 +876,9 @@ create_oc(
 {
     XOC oc;
 
-    oc = (XOC) Xmalloc(sizeof(XOCGenericRec));
+    oc = Xcalloc(1, sizeof(XOCGenericRec));
     if (oc == NULL)
 	return (XOC) NULL;
-    bzero((char *) oc, sizeof(XOCGenericRec));
 
     oc->core.om = om;
 
@@ -1057,7 +921,6 @@ close_om(
 	if (data->font_data) {
 	  for (font_data = data->font_data, count = data->font_data_count;
 	       count-- > 0 ; font_data++) {
-	    if (font_data->name)
 		Xfree(font_data->name);
 	  }
 	  Xfree(data->font_data);
@@ -1065,17 +928,16 @@ close_om(
 	Xfree(gen->data);
     }
 
-    if (om->core.res_name)
-	Xfree(om->core.res_name);
-    if (om->core.res_class)
-	Xfree(om->core.res_class);
+
+    Xfree(om->core.res_name);
+    Xfree(om->core.res_class);
+
     if (om->core.required_charset.charset_list)
 	XFreeStringList(om->core.required_charset.charset_list);
     else
 	Xfree((char*)om->core.required_charset.charset_list);
-    if (om->core.orientation_list.orientation)
-	Xfree(om->core.orientation_list.orientation);
 
+    Xfree(om->core.orientation_list.orientation);
     Xfree(om);
 
     return 1;
@@ -1132,25 +994,19 @@ add_data(
     XOMGenericPart *gen = XOM_GENERIC(om);
     OMData new;
 
-    new = (OMData) Xmalloc(sizeof(OMDataRec));
+    new = Xcalloc(1, sizeof(OMDataRec));
 
     if (new == NULL)
         return NULL;
 
     gen->data = new;
 
-    bzero((char *) new, sizeof(OMDataRec));
-
     return new;
 }
 
 static _Xconst char *supported_charset_list[] = {
     "ISO8859-1",
-/* fix for bug4332979 */
     "adobe-fontspecific",
-/* fix for bug4237353: "JISX0201.1976-0" entry should be removed from
-   supported_charset_list because it is not a supported_charset for C locale
-    "JISX0201.1976-0", */
     "SUNOLCURSOR-1",
     "SUNOLGLYPH-1"
 };
@@ -1164,44 +1020,33 @@ init_om(
     FontData font_data;
     char **required_list;
     XOrientation *orientation;
-    char **value, buf[BUFSIZ], *bufptr;
-    int count, length = 0;
+    char *bufptr;
+    int i, count;
 
-    value = (char**)supported_charset_list;
     count = XlcNumber(supported_charset_list);
 
     data = add_data(om);
     if (data == NULL)
 	return False;
 
-    font_data = (FontData) Xmalloc(sizeof(FontDataRec) * count);
+    font_data = Xcalloc(count, sizeof(FontDataRec));
     if (font_data == NULL)
 	return False;
-    bzero((char *) font_data, sizeof(FontDataRec) * count);
     data->font_data = font_data;
     data->font_data_count = count;
 
-    for ( ; count-- > 0; font_data++) {
-/*
-1266793
-This one is fine.  *value points to one of the local strings in
-supported_charset_list[].
-*/
-	strcpy(buf, *value++);
-	font_data->name = (char *) Xmalloc(strlen(buf) + 1);
+    for (i = 0; i < count; i++, font_data++) {
+	font_data->name = strdup(supported_charset_list[i]);
 	if (font_data->name == NULL)
 	    return False;
-	strcpy(font_data->name, buf);
     }
 
-    length += strlen(data->font_data->name) + 1;
-
     /* required charset list */
-    required_list = (char **) Xmalloc(sizeof(char *));
+    required_list = Xmalloc(sizeof(char *));
     if (required_list == NULL)
 	return False;
 
-    bufptr = (char *) Xmalloc(length);
+    bufptr = strdup(data->font_data->name);
     if (bufptr == NULL) {
 	Xfree(required_list);
 	return False;
@@ -1212,12 +1057,10 @@ supported_charset_list[].
 
     data = gen->data;
 
-    strcpy(bufptr, data->font_data->name);
-    *required_list++ = bufptr;
-    bufptr += strlen(bufptr) + 1;
+    *required_list = bufptr;
 
     /* orientation list */
-    orientation = (XOrientation *) Xmalloc(sizeof(XOrientation));
+    orientation = Xmalloc(sizeof(XOrientation));
     if (orientation == NULL)
 	return False;
 
@@ -1243,26 +1086,23 @@ _XDefaultOpenOM(XLCd lcd, Display *dpy, XrmDatabase rdb,
 {
     XOM om;
 
-    om = (XOM) Xmalloc(sizeof(XOMGenericRec));
+    om = Xcalloc(1, sizeof(XOMGenericRec));
     if (om == NULL)
 	return (XOM) NULL;
-    bzero((char *) om, sizeof(XOMGenericRec));
 
     om->methods = (XOMMethods)&methods;
     om->core.lcd = lcd;
     om->core.display = dpy;
     om->core.rdb = rdb;
     if (res_name) {
-	om->core.res_name = (char *)Xmalloc(strlen(res_name) + 1);
+	om->core.res_name = strdup(res_name);
 	if (om->core.res_name == NULL)
 	    goto err;
-	strcpy(om->core.res_name, res_name);
     }
     if (res_class) {
-	om->core.res_class = (char *)Xmalloc(strlen(res_class) + 1);
+	om->core.res_class = strdup(res_class);
 	if (om->core.res_class == NULL)
 	    goto err;
-	strcpy(om->core.res_class, res_class);
     }
 
     if (om_resources[0].xrm_name == NULLQUARK)

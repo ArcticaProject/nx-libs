@@ -1,5 +1,5 @@
 /*
- * Copyright 1992 Sun Microsystems, Inc.  All rights reserved.
+ * Copyright 1992 Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -60,7 +60,7 @@ PERFORMANCE OF THIS SOFTWARE.
 #include "XimTrInt.h"
 #include "XimTrX.h"
 
-Private Bool
+static Bool
 _XimXRegisterDispatcher(
     Xim			 im,
     Bool		 (*callback)(
@@ -71,7 +71,7 @@ _XimXRegisterDispatcher(
     XIntrCallbackPtr	 rec;
     XSpecRec		*spec = (XSpecRec *)im->private.proto.spec;
 
-    if (!(rec = (XIntrCallbackPtr)Xmalloc(sizeof(XIntrCallbackRec))))
+    if (!(rec = Xmalloc(sizeof(XIntrCallbackRec))))
         return False;
 
     rec->func       = callback;
@@ -81,7 +81,7 @@ _XimXRegisterDispatcher(
     return True;
 }
 
-Private void
+static void
 _XimXFreeIntrCallback(
     Xim			 im)
 {
@@ -96,7 +96,7 @@ _XimXFreeIntrCallback(
     return;
 }
 
-Private Bool
+static Bool
 _XimXCallDispatcher(Xim im, INT16 len, XPointer data)
 {
     register XIntrCallbackRec	*rec;
@@ -109,7 +109,7 @@ _XimXCallDispatcher(Xim im, INT16 len, XPointer data)
     return False;
 }
 
-Private Bool
+static Bool
 _XimXFilterWaitEvent(
     Display	*d,
     Window	 w,
@@ -137,7 +137,7 @@ _XimXFilterWaitEvent(
      return ret;
 }
 
-Private Bool
+static Bool
 _CheckConnect(
     Display	*display,
     XEvent	*event,
@@ -153,7 +153,7 @@ _CheckConnect(
     return False;
 }
 
-Private Bool
+static Bool
 _XimXConnect(Xim im)
 {
     XEvent	 event;
@@ -224,7 +224,7 @@ _XimXConnect(Xim im)
     return True;
 }
 
-Private Bool
+static Bool
 _XimXShutdown(Xim im)
 {
     XSpecRec	*spec = (XSpecRec *)im->private.proto.spec;
@@ -244,7 +244,7 @@ _XimXShutdown(Xim im)
     return True;
 }
 
-Private char *
+static char *
 _NewAtom(
     char	*atomName)
 {
@@ -255,7 +255,7 @@ _NewAtom(
     return atomName;
 }
 
-Private Bool
+static Bool
 _XimXWrite(Xim im, INT16 len, XPointer data)
 {
     Atom	 atom;
@@ -316,7 +316,7 @@ _XimXWrite(Xim im, INT16 len, XPointer data)
     return True;
 }
 
-Private Bool
+static Bool
 _XimXGetReadData(
     Xim			  im,
     char		 *buf,
@@ -377,14 +377,19 @@ _XimXGetReadData(
 	    *ret_len  = (int)nitems;
 	    if (bytes_after_ret > 0) {
 		XFree(prop_ret);
-	        XGetWindowProperty(im->core.display,
-		    spec->lib_connect_wid, prop, 0L,
-		    ((length + bytes_after_ret + 3)/ 4), True, AnyPropertyType,
-		    &type_ret, &format_ret, &nitems, &bytes_after_ret,
-		    &prop_ret);
-	        XChangeProperty(im->core.display, spec->lib_connect_wid, prop,
-		    XA_STRING, 8, PropModePrepend, &prop_ret[length],
-		    (nitems - length));
+		if (XGetWindowProperty(im->core.display,
+				       spec->lib_connect_wid, prop, 0L,
+				       ((length + bytes_after_ret + 3)/ 4),
+				       True, AnyPropertyType,
+				       &type_ret, &format_ret, &nitems,
+				       &bytes_after_ret,
+				       &prop_ret) == Success) {
+		    XChangeProperty(im->core.display, spec->lib_connect_wid, prop,
+				    XA_STRING, 8, PropModePrepend, &prop_ret[length],
+				    (nitems - length));
+		} else {
+		    return False;
+		}
 	    }
 	} else {
 	    (void)memcpy(buf, prop_ret, buf_len);
@@ -393,10 +398,14 @@ _XimXGetReadData(
 
 	    if (bytes_after_ret > 0) {
 		XFree(prop_ret);
-	        XGetWindowProperty(im->core.display,
-		spec->lib_connect_wid, prop, 0L,
-		((length + bytes_after_ret + 3)/ 4), True, AnyPropertyType,
-		&type_ret, &format_ret, &nitems, &bytes_after_ret, &prop_ret);
+		if (XGetWindowProperty(im->core.display,
+				       spec->lib_connect_wid, prop, 0L,
+				       ((length + bytes_after_ret + 3)/ 4),
+				       True, AnyPropertyType,
+				       &type_ret, &format_ret, &nitems,
+				       &bytes_after_ret, &prop_ret) != Success) {
+		    return False;
+		}
 	    }
 	    XChangeProperty(im->core.display, spec->lib_connect_wid, prop,
 		    XA_STRING, 8, PropModePrepend, &prop_ret[buf_len], len);
@@ -431,7 +440,7 @@ _XimXGetReadData(
     return True;
 }
 
-Private Bool
+static Bool
 _CheckCMEvent(
     Display	*display,
     XEvent	*event,
@@ -452,7 +461,7 @@ _CheckCMEvent(
     return False;
 }
 
-Private Bool
+static Bool
 _XimXRead(Xim im, XPointer recv_buf, int buf_len, int *ret_len)
 {
     XEvent	*ev;
@@ -475,21 +484,20 @@ _XimXRead(Xim im, XPointer recv_buf, int buf_len, int *ret_len)
     return True;
 }
 
-Private void
+static void
 _XimXFlush(Xim im)
 {
     XFlush(im->core.display);
     return;
 }
 
-Public Bool
+Bool
 _XimXConf(Xim im, char *address)
 {
     XSpecRec	*spec;
 
-    if (!(spec = (XSpecRec *)Xmalloc(sizeof(XSpecRec))))
+    if (!(spec = Xcalloc(1, sizeof(XSpecRec))))
 	return False;
-    bzero(spec, sizeof(XSpecRec));
 
     spec->improtocolid = XInternAtom(im->core.display, _XIM_PROTOCOL, False);
     spec->imconnectid  = XInternAtom(im->core.display, _XIM_XCONNECT, False);

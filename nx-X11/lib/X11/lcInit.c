@@ -37,7 +37,7 @@ Sun Microsystems, Inc. or its licensors is granted.
 
 */
 /*
- * Copyright 2000 Sun Microsystems, Inc.  All rights reserved.
+ * Copyright 2000 Oracle and/or its affiliates. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -106,11 +106,6 @@ Sun Microsystems, Inc. or its licensors is granted.
 #define USE_GENERIC_LOADER
 #define USE_DEFAULT_LOADER
 #define USE_UTF8_LOADER
-#ifdef X_LOCALE
-# define USE_EUC_LOADER
-# define USE_SJIS_LOADER
-# define USE_JIS_LOADER
-#endif
 #endif
 
 /*
@@ -138,18 +133,6 @@ _XlcInitLoader(void)
     _XlcAddLoader(_XlcUtf8Loader, XlcHead);
 #endif
 
-#ifdef USE_EUC_LOADER
-    _XlcAddLoader(_XlcEucLoader, XlcHead);
-#endif
-
-#ifdef USE_SJIS_LOADER
-    _XlcAddLoader(_XlcSjisLoader, XlcHead);
-#endif
-
-#ifdef USE_JIS_LOADER
-    _XlcAddLoader(_XlcJisLoader, XlcHead);
-#endif
-
 #ifdef USE_DYNAMIC_LOADER
     _XlcAddLoader(_XlcDynamicLoader, XlcHead);
 #endif
@@ -175,18 +158,6 @@ _XlcDeInitLoader(void)
 
 #ifdef USE_UTF8_LOADER
     _XlcRemoveLoader(_XlcUtf8Loader);
-#endif
-
-#ifdef USE_EUC_LOADER
-    _XlcRemoveLoader(_XlcEucLoader);
-#endif
-
-#ifdef USE_SJIS_LOADER
-   _XlcRemoveLoader(_XlcSjisLoader);
-#endif
-
-#ifdef USE_JIS_LOADER
-    _XlcRemoveLoader(_XlcJisLoader);
 #endif
 
 #ifdef USE_DYNAMIC_LOADER

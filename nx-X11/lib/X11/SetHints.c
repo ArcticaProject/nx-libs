@@ -184,7 +184,7 @@ XSetIconSizes (
 #define size_of_the_real_thing sizeof	/* avoid grepping screwups */
 	unsigned nbytes = count * size_of_the_real_thing(xPropIconSize);
 #undef size_of_the_real_thing
-	if ((prop = pp = (xPropIconSize *) Xmalloc (nbytes))) {
+	if ((prop = pp = Xmalloc (nbytes))) {
 	    for (i = 0; i < count; i++) {
 		pp->minWidth  = list->min_width;
 		pp->minHeight = list->min_height;
@@ -198,7 +198,7 @@ XSetIconSizes (
 	    XChangeProperty (dpy, w, XA_WM_ICON_SIZE, XA_WM_ICON_SIZE, 32,
 			     PropModeReplace, (unsigned char *) prop,
 			     count * NumPropIconSizeElements);
-	    Xfree ((char *)prop);
+	    Xfree (prop);
 	}
 	return 1;
 }
@@ -216,7 +216,7 @@ XSetCommand (
 	for (i = 0, nbytes = 0; i < argc; i++) {
 		nbytes += safestrlen(argv[i]) + 1;
 	}
-	if ((bp = buf = Xmalloc((unsigned) nbytes))) {
+	if ((bp = buf = Xmalloc(nbytes))) {
 	    /* copy arguments into single buffer */
 	    for (i = 0; i < argc; i++) {
 		if (argv[i]) {
@@ -259,7 +259,9 @@ XSetStandardProperties (
 
 	if (icon_string != NULL) {
 	    XChangeProperty (dpy, w, XA_WM_ICON_NAME, XA_STRING, 8,
-		PropModeReplace, (unsigned char *)icon_string, safestrlen(icon_string));
+                             PropModeReplace,
+                             (_Xconst unsigned char *)icon_string,
+                             safestrlen(icon_string));
 		}
 
 	if (icon_pixmap != None) {
@@ -297,7 +299,7 @@ XSetClassHint(
 
 	len_nm = safestrlen(classhint->res_name);
 	len_cl = safestrlen(classhint->res_class);
-	if ((class_string = s = Xmalloc((unsigned) (len_nm + len_cl + 2)))) {
+	if ((class_string = s = Xmalloc(len_nm + len_cl + 2))) {
 	    if (len_nm) {
 		strcpy(s, classhint->res_name);
 		s += len_nm + 1;

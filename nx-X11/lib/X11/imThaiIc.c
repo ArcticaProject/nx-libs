@@ -42,7 +42,7 @@ THIS SOFTWARE.
 #include "Xlcint.h"
 #include "Ximint.h"
 
-Private void
+static void
 _XimThaiUnSetFocus(
     XIC	 xic)
 {
@@ -55,7 +55,7 @@ _XimThaiUnSetFocus(
     return;
 }
 
-Private void
+static void
 _XimThaiDestroyIC(
     XIC	 xic)
 {
@@ -65,23 +65,25 @@ _XimThaiDestroyIC(
     if(((Xim)ic->core.im)->private.local.current_ic == (XIC)ic) {
 	_XimThaiUnSetFocus(xic);
     }
-    if(ic->private.local.ic_resources) {
-	Xfree(ic->private.local.ic_resources);
-	ic->private.local.ic_resources = NULL;
-    }
 
-    if (b->tree)  Xfree (b->tree);
-    if (b->mb)    Xfree (b->mb);
-    if (b->wc)    Xfree (b->wc);
-    if (b->utf8)  Xfree (b->utf8);
+    Xfree(ic->private.local.ic_resources);
+    ic->private.local.ic_resources = NULL;
+
+    Xfree (b->tree);
     b->tree = NULL;
+
+    Xfree (b->mb);
     b->mb   = NULL;
+
+    Xfree (b->wc);
     b->wc   = NULL;
+
+    Xfree (b->utf8);
     b->utf8 = NULL;
     return;
 }
 
-Private void
+static void
 _XimThaiSetFocus(
     XIC	 xic)
 {
@@ -102,7 +104,7 @@ _XimThaiSetFocus(
     return;
 }
 
-Private void
+static void
 _XimThaiReset(
     XIC	 xic)
 {
@@ -115,7 +117,7 @@ _XimThaiReset(
     b->utf8[b->tree[ic->private.local.composed].utf8] = '\0';
 }
 
-Private char *
+static char *
 _XimThaiMbReset(
     XIC	 xic)
 {
@@ -123,7 +125,7 @@ _XimThaiMbReset(
     return (char *)NULL;
 }
 
-Private wchar_t *
+static wchar_t *
 _XimThaiWcReset(
     XIC	 xic)
 {
@@ -131,7 +133,7 @@ _XimThaiWcReset(
     return (wchar_t *)NULL;
 }
 
-Private XICMethodsRec Thai_ic_methods = {
+static XICMethodsRec Thai_ic_methods = {
     _XimThaiDestroyIC, 	/* destroy */
     _XimThaiSetFocus,  	/* set_focus */
     _XimThaiUnSetFocus,	/* unset_focus */
@@ -157,22 +159,21 @@ _XimThaiCreateIC(
     int			 len;
     DefTree             *tree;
 
-    if((ic = (Xic)Xmalloc(sizeof(XicRec))) == (Xic)NULL) {
+    if((ic = Xcalloc(1, sizeof(XicRec))) == (Xic)NULL) {
 	return ((XIC)NULL);
     }
-    bzero((char *)ic,      sizeof(XicRec));
 
     ic->methods = &Thai_ic_methods;
     ic->core.im = im;
     ic->core.filter_events = KeyPressMask;
 
-    if (! (ic->private.local.base.tree = tree = (DefTree *)Xmalloc(sizeof(DefTree)*3)) )
+    if (! (ic->private.local.base.tree = tree = Xmalloc(sizeof(DefTree)*3)) )
 	goto Set_Error;
-    if (! (ic->private.local.base.mb = (char *)Xmalloc(21)) )
+    if (! (ic->private.local.base.mb = Xmalloc(21)) )
 	goto Set_Error;
-    if (! (ic->private.local.base.wc = (wchar_t*)Xmalloc(sizeof(wchar_t)*21)) )
+    if (! (ic->private.local.base.wc = Xmalloc(sizeof(wchar_t)*21)) )
 	goto Set_Error;
-    if (! (ic->private.local.base.utf8 = (char *)Xmalloc(21)) )
+    if (! (ic->private.local.base.utf8 = Xmalloc(21)) )
 	goto Set_Error;
     ic->private.local.context = 1;
     tree[1].mb   = 1;
@@ -189,7 +190,7 @@ _XimThaiCreateIC(
 
     num = im->core.ic_num_resources;
     len = sizeof(XIMResource) * num;
-    if((res = (XIMResourceList)Xmalloc(len)) == (XIMResourceList)NULL) {
+    if((res = Xmalloc(len)) == (XIMResourceList)NULL) {
 	goto Set_Error;
     }
     (void)memcpy((char *)res, (char *)im->core.ic_resources, len);

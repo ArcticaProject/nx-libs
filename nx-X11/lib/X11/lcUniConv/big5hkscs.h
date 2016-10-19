@@ -6249,3 +6249,4 @@ big5hkscs_wctomb (conv_t conv, unsigned char *r, ucs4_t wc, int n)
   }
   return RET_TOOSMALL;
 }
+

@@ -80,17 +80,15 @@ create(
     XLCd lcd;
     XLCdPublicMethods new;
 
-    lcd = (XLCd) Xmalloc(sizeof(XLCdRec));
+    lcd = Xcalloc(1, sizeof(XLCdRec));
     if (lcd == NULL)
         return (XLCd) NULL;
-    bzero((char *) lcd, sizeof(XLCdRec));
 
-    lcd->core = (XLCdCore) Xmalloc(sizeof(XLCdPublicRec));
+    lcd->core = Xcalloc(1, sizeof(XLCdPublicRec));
     if (lcd->core == NULL)
 	goto err;
-    bzero((char *) lcd->core, sizeof(XLCdPublicRec));
 
-    new = (XLCdPublicMethods) Xmalloc(sizeof(XLCdPublicMethodsRec));
+    new = Xmalloc(sizeof(XLCdPublicMethodsRec));
     if (new == NULL)
 	goto err;
     memcpy(new,methods,sizeof(XLCdPublicMethodsRec));
@@ -108,7 +106,8 @@ load_public(
     XLCd lcd)
 {
     XLCdPublicPart *pub = XLC_PUBLIC_PART(lcd);
-    char **values, *str;
+    char **values;
+    const char *str;
     int num;
 
     if(_XlcCreateLocaleDataBase(lcd) == NULL)
@@ -130,10 +129,9 @@ load_public(
 
     _XlcGetResource(lcd, "XLC_XLOCALE", "encoding_name", &values, &num);
     str = (num > 0) ? values[0] : "STRING";
-    pub->encoding_name = (char*) Xmalloc(strlen(str) + 1);
+    pub->encoding_name = strdup(str);
     if (pub->encoding_name == NULL)
 	return False;
-    strcpy(pub->encoding_name, str);
 
     return True;
 }
@@ -256,16 +254,14 @@ static void
 destroy_core(
     XLCd lcd)
 {
-    if (lcd->core) {
-	if (lcd->core->name)
+    if (lcd) {
+        if (lcd->core) {
             Xfree(lcd->core->name);
-	Xfree(lcd->core);
+            Xfree(lcd->core);
+        }
+        Xfree(lcd->methods);
+        Xfree(lcd);
     }
-
-    if (lcd->methods)
-	Xfree(lcd->methods);
-
-    Xfree(lcd);
 }
 
 static void
@@ -276,10 +272,8 @@ destroy(
 
     _XlcDestroyLocaleDataBase(lcd);
 
-    if (pub->siname)
-	Xfree(pub->siname);
-    if (pub->encoding_name)
-	Xfree(pub->encoding_name);
+    Xfree(pub->siname);
+    Xfree(pub->encoding_name);
 
     destroy_core(lcd);
 }

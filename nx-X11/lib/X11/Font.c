@@ -45,7 +45,7 @@ authorization from the X Consortium and the XFree86 Project.
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <nx-X11/extensions/xf86bigfstr.h>
+#include <nx-X11/extensions/xf86bigfproto.h>
 #endif
 
 #include "Xlcint.h"
@@ -166,13 +166,13 @@ XFreeFont(
 #ifdef USE_XF86BIGFONT
 	_XF86BigfontFreeFontMetrics(fs);
 #else
-	Xfree ((char *) fs->per_char);
+	Xfree (fs->per_char);
 #endif
     }
     _XFreeExtData(fs->ext_data);
-    if (fs->properties)
-	Xfree ((char *) fs->properties);
-    Xfree ((char *) fs);
+
+    Xfree (fs->properties);
+    Xfree (fs);
     return 1;
 }
 
@@ -215,7 +215,7 @@ _XQueryFont (
 	DeqAsyncHandler(dpy, &async);
     reply_left = reply.length -
 	((SIZEOF(xQueryFontReply) - SIZEOF(xReply)) >> 2);
-    if (! (fs = (XFontStruct *) Xmalloc (sizeof (XFontStruct)))) {
+    if (! (fs = Xmalloc (sizeof (XFontStruct)))) {
 	_XEatDataWords(dpy, reply_left);
 	return (XFontStruct *)NULL;
     }
@@ -249,7 +249,7 @@ _XQueryFont (
 		fs->properties = Xmalloc (pbytes);
 	    }
 	    if (! fs->properties) {
-		Xfree((char *) fs);
+		Xfree(fs);
 		_XEatDataWords(dpy, reply_left);
 		return (XFontStruct *)NULL;
 	    }
@@ -260,7 +260,6 @@ _XQueryFont (
      * If no characters in font, then it is a bad font, but
      * shouldn't try to read nothing.
      */
-    /* have to unpack charinfos on some machines (CRAY) */
     fs->per_char = NULL;
     if (reply.nCharInfos > 0){
 	/* nCharInfos is a CARD32 */
@@ -272,8 +271,8 @@ _XQueryFont (
 	    }
 	}
 	if (! fs->per_char) {
-	    if (fs->properties) Xfree((char *) fs->properties);
-	    Xfree((char *) fs);
+	    Xfree(fs->properties);
+	    Xfree(fs);
 	    _XEatDataWords(dpy, reply_left);
 	    return (XFontStruct *)NULL;
 	}
@@ -324,7 +323,7 @@ _XF86BigfontCodes (
     if (pData)
 	return (XF86BigfontCodes *) pData->private_data;
 
-    pData = (XExtData *) Xmalloc(sizeof(XExtData) + sizeof(XF86BigfontCodes));
+    pData = Xmalloc(sizeof(XExtData) + sizeof(XF86BigfontCodes));
     if (!pData) {
 	/* Out of luck. */
 	return (XF86BigfontCodes *) NULL;
@@ -460,7 +459,7 @@ _XF86BigfontQueryFont (
 	DeqAsyncHandler(dpy, &async1);
     reply_left = reply.length -
 	((SIZEOF(xXF86BigfontQueryFontReply) - SIZEOF(xReply)) >> 2);
-    if (! (fs = (XFontStruct *) Xmalloc (sizeof (XFontStruct)))) {
+    if (! (fs = Xmalloc (sizeof (XFontStruct)))) {
 	_XEatDataWords(dpy, reply_left);
 	return (XFontStruct *)NULL;
     }
@@ -494,7 +493,7 @@ _XF86BigfontQueryFont (
 	    fs->properties = Xmalloc (pbytes);
 	}
 	if (! fs->properties) {
-	    Xfree((char *) fs);
+	    Xfree(fs);
 	    _XEatDataWords(dpy, reply_left);
 	    return (XFontStruct *)NULL;
 	}
@@ -507,11 +506,11 @@ _XF86BigfontQueryFont (
     /* compares each part to half the maximum, which should be far more than
        any real font needs, so the combined total doesn't overflow either */
     if (reply.nUniqCharInfos > ((ULONG_MAX / 2) / SIZEOF(xCharInfo)) ||
-       reply.nCharInfos > ((ULONG_MAX / 2) / sizeof(CARD16))) {
-       Xfree(fs->properties);
-       Xfree((char *) fs);
-       _XEatDataWords(dpy, reply_left);
-       return (XFontStruct *)NULL;
+	reply.nCharInfos > ((ULONG_MAX / 2) / sizeof(CARD16))) {
+	Xfree(fs->properties);
+	Xfree(fs);
+	_XEatDataWords(dpy, reply_left);
+	return (XFontStruct *)NULL;
     }
 #endif
     if (reply.nCharInfos > 0) {
@@ -523,17 +522,17 @@ _XF86BigfontQueryFont (
 
 	    nbytes = reply.nUniqCharInfos * SIZEOF(xCharInfo)
 	             + (reply.nCharInfos+1)/2 * 2 * sizeof(CARD16);
-	    pUniqCI = (xCharInfo *) Xmalloc (nbytes);
+	    pUniqCI = Xmalloc (nbytes);
 	    if (!pUniqCI) {
-		if (fs->properties) Xfree((char *) fs->properties);
-		Xfree((char *) fs);
+		Xfree(fs->properties);
+		Xfree(fs);
 		_XEatDataWords(dpy, reply_left);
 		return (XFontStruct *)NULL;
 	    }
-	    if (! (fs->per_char = (XCharStruct *) Xmalloc (reply.nCharInfos * sizeof(XCharStruct)))) {
-		Xfree((char *) pUniqCI);
-		if (fs->properties) Xfree((char *) fs->properties);
-		Xfree((char *) fs);
+	    if (! (fs->per_char = Xmalloc (reply.nCharInfos * sizeof(XCharStruct)))) {
+		Xfree(pUniqCI);
+		Xfree(fs->properties);
+		Xfree(fs);
 		_XEatDataWords(dpy, reply_left);
 		return (XFontStruct *)NULL;
 	    }
@@ -542,25 +541,25 @@ _XF86BigfontQueryFont (
 	    for (i = 0; i < reply.nCharInfos; i++) {
 		if (pIndex2UniqIndex[i] >= reply.nUniqCharInfos) {
 		    fprintf(stderr, "_XF86BigfontQueryFont: server returned wrong data\n");
-		    Xfree((char *) pUniqCI);
-		    if (fs->properties) Xfree((char *) fs->properties);
-		    Xfree((char *) fs);
+		    Xfree(pUniqCI);
+		    Xfree(fs->properties);
+		    Xfree(fs);
 		    return (XFontStruct *)NULL;
 		}
 		/* XXX the next statement won't work if short isn't 16 bits */
 		fs->per_char[i] = * (XCharStruct *) &pUniqCI[pIndex2UniqIndex[i]];
 	    }
-	    Xfree((char *) pUniqCI);
+	    Xfree(pUniqCI);
 	} else {
 #ifdef HAS_SHM
 	    XExtData *pData;
 	    XEDataObject fs_union;
 	    char *addr;
 
-	    pData = (XExtData *) Xmalloc(sizeof(XExtData));
+	    pData = Xmalloc(sizeof(XExtData));
 	    if (!pData) {
-		if (fs->properties) Xfree((char *) fs->properties);
-		Xfree((char *) fs);
+		Xfree(fs->properties);
+		Xfree(fs);
 		return (XFontStruct *)NULL;
 	    }
 
@@ -578,9 +577,9 @@ _XF86BigfontQueryFont (
 	    if ((addr = shmat(reply.shmid, NULL, SHM_RDONLY)) == (char *)-1) {
 		if (extcodes->serverCapabilities & CAP_VerifiedLocal)
 		    fprintf(stderr, "_XF86BigfontQueryFont: could not attach shm segment\n");
-	        Xfree((char *) pData);
-	        if (fs->properties) Xfree((char *) fs->properties);
-	        Xfree((char *) fs);
+	        Xfree(pData);
+	        Xfree(fs->properties);
+	        Xfree(fs);
 		/* Stop requesting shared memory transport from now on. */
 		extcodes->serverCapabilities &= ~ XF86Bigfont_CAP_LocalShm;
 	        return (XFontStruct *)NULL;
@@ -589,13 +588,13 @@ _XF86BigfontQueryFont (
 	    if (!(extcodes->serverCapabilities & CAP_VerifiedLocal)) {
 		struct shmid_ds buf;
 		if (!(shmctl(reply.shmid, IPC_STAT, &buf) >= 0
-		      && reply.nCharInfos < (LONG_MAX / sizeof(XCharStruct))
+		      && reply.nCharInfos < (INT_MAX / sizeof(XCharStruct))
 		      && buf.shm_segsz >= reply.shmsegoffset + reply.nCharInfos * sizeof(XCharStruct) + sizeof(CARD32)
 		      && *(CARD32 *)(addr + reply.shmsegoffset + reply.nCharInfos * sizeof(XCharStruct)) == extcodes->serverSignature)) {
 		    shmdt(addr);
-		    Xfree((char *) pData);
-		    if (fs->properties) Xfree((char *) fs->properties);
-		    Xfree((char *) fs);
+		    Xfree(pData);
+		    Xfree(fs->properties);
+		    Xfree(fs);
 		    /* Stop requesting shared memory transport from now on. */
 		    extcodes->serverCapabilities &= ~ XF86Bigfont_CAP_LocalShm;
 		    return (XFontStruct *)NULL;
@@ -612,8 +611,8 @@ _XF86BigfontQueryFont (
 	    fs->per_char = (XCharStruct *) (addr + reply.shmsegoffset);
 #else
 	    fprintf(stderr, "_XF86BigfontQueryFont: try recompiling libX11 with HasShm, Xserver has shm support\n");
-	    if (fs->properties) Xfree((char *) fs->properties);
-	    Xfree((char *) fs);
+	    if (fs->properties) Xfree(fs->properties);
+	    Xfree(fs);
 	    /* Stop requesting shared memory transport from now on. */
 	    extcodes->serverCapabilities &= ~ XF86Bigfont_CAP_LocalShm;
 	    return (XFontStruct *)NULL;
@@ -639,9 +638,9 @@ _XF86BigfontFreeFontMetrics (XFontStruct *fs)
 				      XF86BigfontNumber)))
 	shmdt ((char *) pData->private_data);
     else
-	Xfree ((char *) fs->per_char);
+	Xfree (fs->per_char);
 #else
-    Xfree ((char *) fs->per_char);
+    Xfree (fs->per_char);
 #endif
 }
 
@@ -694,14 +693,14 @@ int _XF86LoadQueryLocaleFont(
 #ifdef USE_XF86BIGFONT
 	    _XF86BigfontFreeFontMetrics(fs);
 #else
-	    Xfree ((char *) fs->per_char);
+	    Xfree (fs->per_char);
 #endif
 	}
 	_XFreeExtData(fs->ext_data);
-	if (fs->properties)
-	    Xfree ((char *) fs->properties);
+
+	Xfree (fs->properties);
 	*fidp = fs->fid;
-	Xfree ((char *) fs);
+	Xfree (fs);
     } else {
 	XFreeFont(dpy, fs);
     }

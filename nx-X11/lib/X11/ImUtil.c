@@ -332,7 +332,7 @@ XImage *XCreateImage (
 	    (xpad != 8 && xpad != 16 && xpad != 32) ||
 	    offset < 0)
 	    return (XImage *) NULL;
-	if ((image = (XImage *) Xcalloc(1, (unsigned) sizeof(XImage))) == NULL)
+	if ((image = Xcalloc(1, sizeof(XImage))) == NULL)
 	    return (XImage *) NULL;
 
 	image->width = width;
@@ -372,6 +372,7 @@ XImage *XCreateImage (
 	if (image_bytes_per_line == 0) {
 	    image->bytes_per_line = min_bytes_per_line;
 	} else if (image_bytes_per_line < min_bytes_per_line) {
+	    Xfree(image);
 	    return NULL;
 	} else {
 	    image->bytes_per_line = image_bytes_per_line;
@@ -433,9 +434,9 @@ Status XInitImage (XImage *image)
 
 static int _XDestroyImage (XImage *ximage)
 {
-	if (ximage->data != NULL) Xfree((char *)ximage->data);
-	if (ximage->obdata != NULL) Xfree((char *)ximage->obdata);
-	Xfree((char *)ximage);
+	Xfree(ximage->data);
+	Xfree(ximage->obdata);
+	Xfree(ximage);
 	return 1;
 }
 
@@ -542,8 +543,7 @@ static unsigned long _XGetPixel32 (
 			[y * ximage->bytes_per_line + (x << 2)];
 	    if (*((const char *)&byteorderpixel) == ximage->byte_order)
 		pixel = *((CARD32 *)addr);
-	    else
-	    if (ximage->byte_order == MSBFirst)
+	    else if (ximage->byte_order == MSBFirst)
 		pixel = ((unsigned long)addr[0] << 24 |
 			 (unsigned long)addr[1] << 16 |
 			 (unsigned long)addr[2] << 8 |
@@ -731,8 +731,7 @@ static int _XPutPixel32 (
 			[y * ximage->bytes_per_line + (x << 2)];
 	    if (*((const char *)&byteorderpixel) == ximage->byte_order)
 		*((CARD32 *)addr) = pixel;
-	    else
-	    if (ximage->byte_order == MSBFirst) {
+	    else if (ximage->byte_order == MSBFirst) {
 		addr[0] = pixel >> 24;
 		addr[1] = pixel >> 16;
 		addr[2] = pixel >> 8;
@@ -843,7 +842,7 @@ static XImage *_XSubImage (
 	register unsigned long pixel;
 	char *data;
 
-	if ((subimage = (XImage *) Xcalloc (1, sizeof (XImage))) == NULL)
+	if ((subimage = Xcalloc (1, sizeof (XImage))) == NULL)
 	    return (XImage *) NULL;
 	subimage->width = width;
 	subimage->height = height;
@@ -869,8 +868,8 @@ static XImage *_XSubImage (
 	_XInitImageFuncPtrs (subimage);
 	dsize = subimage->bytes_per_line * height;
 	if (subimage->format == XYPixmap) dsize = dsize * subimage->depth;
-	if (((data = Xcalloc (1, (unsigned) dsize)) == NULL) && (dsize > 0)) {
-	    Xfree((char *) subimage);
+	if (((data = Xcalloc (1, dsize)) == NULL) && (dsize > 0)) {
+	    Xfree(subimage);
 	    return (XImage *) NULL;
 	}
 	subimage->data = data;

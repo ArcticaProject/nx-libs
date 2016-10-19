@@ -82,7 +82,7 @@ _Xthread_waiter(void)
     struct _xthread_waiter *me;
 
     if (!(me = TlsGetValue(_X_TlsIndex))) {
-	me = (struct _xthread_waiter *)xmalloc(sizeof(struct _xthread_waiter));
+	me = xmalloc(sizeof(struct _xthread_waiter));
 	me->sem = CreateSemaphore(NULL, 0, 1, NULL);
 	me->next = NULL;
 	TlsSetValue(_X_TlsIndex, me);
@@ -249,7 +249,7 @@ static struct _XCVList *_XCreateCVL(
 	dpy->lock->free_cvls = cvl->next;
 	dpy->lock->num_free_cvls--;
     } else {
-	cvl = (struct _XCVList *)Xmalloc(sizeof(struct _XCVList));
+	cvl = Xmalloc(sizeof(struct _XCVList));
 	if (!cvl)
 	    return NULL;
 	cvl->cv = xcondition_malloc();
@@ -312,8 +312,8 @@ static void _XPopReader(
 	    dpy->lock->num_free_cvls++;
 	} else {
 	    xcondition_clear(front->cv);
-	    Xfree((char *)front->cv);
-	    Xfree((char *)front);
+	    Xfree(front->cv);
+	    Xfree(front);
 	}
     }
 
@@ -419,14 +419,14 @@ static void _XFreeDisplayLock(
 	while ((cvl = dpy->lock->free_cvls)) {
 	    dpy->lock->free_cvls = cvl->next;
 	    xcondition_clear(cvl->cv);
-	    Xfree((char *)cvl->cv);
-	    Xfree((char *)cvl);
+	    Xfree(cvl->cv);
+	    Xfree(cvl);
 	}
-	Xfree((char *)dpy->lock);
+	Xfree(dpy->lock);
 	dpy->lock = NULL;
     }
     if (dpy->lock_fns != NULL) {
-	Xfree((char *)dpy->lock_fns);
+	Xfree(dpy->lock_fns);
 	dpy->lock_fns = NULL;
     }
 }
@@ -486,6 +486,8 @@ static void _XInternalLockDisplay(
 static void _XUserLockDisplay(
     register Display* dpy)
 {
+    _XDisplayLockWait(dpy);
+
     if (++dpy->lock->locking_level == 1) {
 	dpy->lock->lock_wait = _XDisplayLockWait;
 	dpy->lock->locking_thread = xthread_self();
@@ -510,10 +512,10 @@ void _XUserUnlockDisplay(
 static int _XInitDisplayLock(
     Display *dpy)
 {
-    dpy->lock_fns = (struct _XLockPtrs*)Xmalloc(sizeof(struct _XLockPtrs));
+    dpy->lock_fns = Xmalloc(sizeof(struct _XLockPtrs));
     if (dpy->lock_fns == NULL)
 	return -1;
-    dpy->lock = (struct _XLockInfo *)Xmalloc(sizeof(struct _XLockInfo));
+    dpy->lock = Xmalloc(sizeof(struct _XLockInfo));
     if (dpy->lock == NULL) {
 	_XFreeDisplayLock(dpy);
 	return -1;

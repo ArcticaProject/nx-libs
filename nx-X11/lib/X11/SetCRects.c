@@ -78,3 +78,4 @@ XSetClipRectangles (
     SyncHandle();
     return 1;
 }
+

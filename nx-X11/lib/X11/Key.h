@@ -2,6 +2,9 @@
 #ifndef _KEY_H_
 #define _KEY_H_
 
+#include <nx-X11/Xlib.h>
+#include <nx-X11/Xresource.h>
+
 #ifndef NEEDKTABLE
 extern const unsigned char _XkeyTable[];
 #endif

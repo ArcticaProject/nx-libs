@@ -7,8 +7,8 @@
 
 /* THIS IS NOT AN X CONSORTIUM STANDARD */
 
-#ifndef _XF86BIGFSTR_H_
-#define _XF86BIGFSTR_H_
+#ifndef _XF86BIGFPROTO_H_
+#define _XF86BIGFPROTO_H_
 
 #include <nx-X11/extensions/xf86bigfont.h>
 
@@ -85,4 +85,4 @@ typedef struct {
 /* Bit masks that can be set in the flags */
 #define XF86Bigfont_FLAGS_Shm 1
 
-#endif /* _XF86BIGFSTR_H_ */
+#endif /* _XF86BIGFPROTO_H_ */

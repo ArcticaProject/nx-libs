@@ -85,10 +85,9 @@ _XParseBaseFontNameList(
     if (!*str)
 	return (char **)NULL;
 
-    if (!(ptr = Xmalloc((unsigned)strlen(str) + 1))) {
+    if (!(ptr = strdup(str))) {
 	return (char **)NULL;
     }
-    strcpy(ptr, str);
 
     psave = ptr;
     /* somebody who specifies more than XMAXLIST basefontnames will lose */
@@ -113,7 +112,7 @@ _XParseBaseFontNameList(
 	if (!*ptr)
 	    break;
     }
-    if (!(list = (char **) Xmalloc((unsigned)sizeof(char *) * (*num + 1)))) {
+    if (!(list = Xmalloc(sizeof(char *) * (*num + 1)))) {
 	Xfree(psave);
 	return (char **)NULL;
     }
@@ -131,10 +130,10 @@ copy_string_list(
     char **string_list_ret, **list_src, **list_dst, *dst;
     int length, count;
 
-    if (string_list == NULL)
+    if (string_list == NULL || list_count <= 0)
 	return (char **) NULL;
 
-    string_list_ret = (char **) Xmalloc(sizeof(char *) * list_count);
+    string_list_ret = Xmalloc(sizeof(char *) * list_count);
     if (string_list_ret == NULL)
 	return (char **) NULL;
 
@@ -143,7 +142,7 @@ copy_string_list(
     for (length = 0; count-- > 0; list_src++)
 	length += strlen(*list_src) + 1;
 
-    dst = (char *) Xmalloc(length);
+    dst = Xmalloc(length);
     if (dst == NULL) {
 	Xfree(string_list_ret);
 	return (char **) NULL;
