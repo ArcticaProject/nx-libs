@@ -1852,6 +1852,12 @@ int ServerChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
           break;
         default:
           {
+            // BEWARE: not only inputOpcode == GenericEvent but also
+            // others not handled above, at least:
+            //   GraphicsExpose    13
+            //   MapRequest        20
+            //   ConfigureRequest  23
+            // and any beyond LASTEvent.
             #ifdef TEST
             *logofs << "handleRead: Using generic event compression "
                     << "for OPCODE#" << (unsigned int) inputOpcode
@@ -1865,6 +1871,16 @@ int ServerChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
             {
               encodeBuffer.encodeCachedValue(GetUINT(inputMessage + i * 2 + 4, bigEndian_),
                                  16, *serverCache_ -> genericEventIntCache[i]);
+            }
+            // Handle "X Generic Event Extension"
+            // Cannot cache extra data...
+	    // FIXME: is it OK to have the first 32 bytes cached, but not the rest?
+            if (inputOpcode == GenericEvent && inputLength > 32)
+            {
+              for (unsigned int i = 14; i < ((inputLength-4)>>1); i++)
+              {
+                encodeBuffer.encodeValue(GetUINT(inputMessage + i * 2 + 4, bigEndian_), 16);
+              }
             }
           }
 
