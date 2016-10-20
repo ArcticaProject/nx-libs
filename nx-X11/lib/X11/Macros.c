@@ -292,7 +292,7 @@ int XAddPixel(
 int
 XNoOp (register Display *dpy)
 {
-    register xReq *req;
+    _X_UNUSED register xReq *req;
 
     LockDisplay(dpy);
     GetEmptyReq(NoOperation, req);

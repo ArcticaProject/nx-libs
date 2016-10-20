@@ -311,7 +311,7 @@ void nxagentSetInstalledColormapWindows(ScreenPtr pScreen)
         {
           fprintf(stderr, "nxagentSetInstalledColormapWindows: WARNING! "
                       "Window at [%p] has no colormap with class [%d].\n",
-                          pWin, pWin -> drawable.class);
+		  (void *)pWin, pWin -> drawable.class);
         }
         #endif
       }

@@ -753,13 +753,11 @@ ProcXFixesSetPictureClipRegion (ClientPtr client)
 #ifdef RENDER
     PicturePtr		pPicture;
     RegionPtr		pRegion;
-    ScreenPtr		pScreen;
     REQUEST(xXFixesSetPictureClipRegionReq);
     
     REQUEST_SIZE_MATCH (xXFixesSetPictureClipRegionReq);
     VERIFY_PICTURE(pPicture, stuff->picture, client, SecurityWriteAccess,
 		   RenderErrBase + BadPicture);
-    pScreen = pPicture->pDrawable->pScreen;
     VERIFY_REGION_OR_NONE(pRegion, stuff->region, client, SecurityReadAccess);
     
     return SetPictureClipRegion (pPicture, stuff->xOrigin, stuff->yOrigin,

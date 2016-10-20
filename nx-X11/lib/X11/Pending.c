@@ -41,7 +41,7 @@ int XEventsQueued (
 {
     int ret_val;
 #if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST)
-    fprintf(stderr, "\nXEventsQueued: Called with a display at [%p].\n", dpy);
+    fprintf(stderr, "\nXEventsQueued: Called with a display at [%p].\n", (void *)dpy);
 #endif
 
     LockDisplay(dpy);
@@ -50,7 +50,7 @@ int XEventsQueued (
     else
 	ret_val = _XEventsQueued (dpy, mode);
 #if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_TEST)
-    fprintf(stderr, "\nXEventsQueued: Going to unlock the display at [%p].\n", dpy);
+    fprintf(stderr, "\nXEventsQueued: Going to unlock the display at [%p].\n", (void *)dpy);
 #endif
     UnlockDisplay(dpy);
     return ret_val;

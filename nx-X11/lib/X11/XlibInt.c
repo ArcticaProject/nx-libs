@@ -874,7 +874,7 @@ void _XSeqSyncFunction(
     register Display *dpy)
 {
     xGetInputFocusReply rep;
-    register xReq *req;
+    _X_UNUSED register xReq *req;
 
 #ifdef NX_TRANS_SOCKET
 #ifdef NX_TRANS_DEBUG
@@ -3743,6 +3743,8 @@ _XIOError (
     dpy->flags &= ~XlibDisplayReadEvents;
     dpy->flags &= ~XlibDisplayWriting;
     dpy->flags &= ~XlibDisplayReply;
+    /* shut up the compiler by returning something */
+    return 0;
 #else
     exit (1);
 #endif

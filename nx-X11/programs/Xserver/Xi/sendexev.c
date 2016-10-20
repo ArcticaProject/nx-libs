@@ -149,10 +149,14 @@ ProcXSendExtensionEvent (client)
 	return Success;
 	}
 
-    // FIXME: ret is not initialized and should not be returned...
-
+    /*
+       the previous code here returned the unitialized variable ret,
+       so using Success we have defined returncode at least. FIXME:
+       Upstream works different here, we must check this!
+    */
     if (stuff->num_events == 0)
-        return ret;
+        /* return ret; */
+        return Success;
 
     /* The client's event type must be one defined by an extension. */
 

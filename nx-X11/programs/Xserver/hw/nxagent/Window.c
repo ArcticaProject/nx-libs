@@ -1953,7 +1953,7 @@ Bool nxagentUnrealizeWindow(pWin)
 void nxagentFrameBufferPaintWindow(WindowPtr pWin, RegionPtr pRegion, int what)
 {
 
-  void *PaintWindowBackgroundBackup;
+  void (*PaintWindowBackgroundBackup)(WindowPtr, RegionPtr, int);
 
   if (pWin->backgroundState == BackgroundPixmap)
   {

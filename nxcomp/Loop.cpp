@@ -10201,7 +10201,7 @@ int SetCore()
   if (getrlimit(RLIMIT_CORE, &rlim))
   {
     #ifdef TEST
-    *logofs << "Cannot read RLIMIT_CORE. Error is '"
+    *logofs << "Loop: Cannot read RLIMIT_CORE. Error is '"
             << ESTR() << "'.\n" << logofs_flush;
     #endif
 
@@ -10215,7 +10215,7 @@ int SetCore()
     if (setrlimit(RLIMIT_CORE, &rlim))
     {
       #ifdef TEST
-      *logofs << "Loop: Cannot read RLIMIT_CORE. Error is '"
+      *logofs << "Loop: Cannot set RLIMIT_CORE. Error is '"
               << ESTR() << "'.\n" << logofs_flush;
       #endif
 
@@ -10224,7 +10224,7 @@ int SetCore()
   }
 
   #ifdef TEST
-  *logofs << "Loop: Set RLIMIT_CORE to "<< rlim.rlim_max
+  *logofs << "Loop: RLIMIT_CORE is "<< rlim.rlim_max
           << ".\n" << logofs_flush;
   #endif
 
