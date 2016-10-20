@@ -857,7 +857,7 @@ libNX_X11.so.6 libnx-x11-6 #MINVER#
  _XGetScanlinePad@Base 3.5.0.29
  _XGetWindowAttributes@Base 3.5.0.29
  _XHeadOfDisplayList@Base 3.5.0.29
- _XIDHandler@Base 2:3.5.99.2
+#MISSING: 2:3.5.99.2-0.1# _XIDHandler@Base 2:3.5.99.2
  _XIMCompileResourceList@Base 3.5.0.29
  _XIOError@Base 3.5.0.29
  _XIOErrorFunction@Base 3.5.0.29
@@ -898,12 +898,12 @@ libNX_X11.so.6 libnx-x11-6 #MINVER#
  _XSelect@Base 3.5.0.29
  _XSend@Base 3.5.0.29
  _XSendClientPrefix@Base 3.5.0.29
- _XSeqSyncFunction@Base 2:3.5.99.2
+#MISSING: 2:3.5.99.2-0.1# _XSeqSyncFunction@Base 2:3.5.99.2
  _XSetClipRectangles@Base 3.5.0.29
  _XSetImage@Base 3.5.0.29
  _XSetLastRequestRead@Base 3.5.0.29
- _XSetPrivSyncFunction@Base 2:3.5.99.2
- _XSetSeqSyncFunction@Base 2:3.5.99.2
+#MISSING: 2:3.5.99.2-0.1# _XSetPrivSyncFunction@Base 2:3.5.99.2
+#MISSING: 2:3.5.99.2-0.1# _XSetSeqSyncFunction@Base 2:3.5.99.2
  _XStoreEventCookie@Base 2:3.5.99.2
  _XTextHeight16@Base 3.5.0.29
  _XTextHeight@Base 3.5.0.29
