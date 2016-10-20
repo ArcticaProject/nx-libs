@@ -165,7 +165,6 @@ install-full:
 
 	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/nx
 	$(INSTALL_FILE) nx-X11/lib/X11/XErrorDB $(DESTDIR)$(PREFIX)/share/nx/
-	$(INSTALL_FILE) nx-X11/lib/X11/XKeysymDB $(DESTDIR)$(PREFIX)/share/nx/
 	$(INSTALL_FILE) nx-X11/lib/X11/Xcms.txt $(DESTDIR)$(PREFIX)/share/nx/
 	$(INSTALL_SYMLINK) $(ETCDIR_NX)/rgb $(DESTDIR)$(PREFIX)/share/nx/rgb
 	$(INSTALL_FILE) VERSION $(DESTDIR)$(PREFIX)/share/nx/VERSION.nxagent
