@@ -358,6 +358,13 @@ tolerancechecks=s\n\
                ory compared to the other programs, to make easier\n\
                for the user to execute the program from the shell.\n\
 \n\
+  NX_SLAVE_CMD The full path to the slave channel handler. When the\n\
+               slave channel is enabled, the agent will listen on a\n\
+               port and forward the connection to the NX_SLAVE_CMD\n\
+               program. This can be used to implement agent/proxy\n\
+               communication for applications such as serial port and\n\
+               USB forwarding.\n\
+\n\
   Shell environment:\n\
 \n\
   HOME         The variable is checked in the case NX_HOME is not\n\

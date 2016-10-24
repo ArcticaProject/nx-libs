@@ -339,6 +339,13 @@ where <nxclient> is located in a different directory compared to the
 other programs, to make easier for the user to execute the program from
 the shell.
 
+.TP 8
+.B  NX_SLAVE_CMD
+The full path to the slave channel handler. When the slave channel is
+enabled, the agent will listen on a port and forward the connection to
+the NX_SLAVE_CMD program. This can be used to implement agent/proxy
+communication for applications such as serial port and USB forwarding.
+
 .SH SHELL ENVIRONMENT VARIABLES
 
 .TP 8
