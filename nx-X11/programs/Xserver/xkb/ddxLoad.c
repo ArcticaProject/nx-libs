@@ -223,8 +223,8 @@ static int NXVerifyXkbBaseDirectory(const char *dirPath)
   {
 
     #ifdef TEST
-    fprintf(stderr, "NXVerifyXkbBaseDirectory: Can't find the keymap.dir file [%s].\n",
-                rulesBaseFilePath);
+    fprintf(stderr, "NXVerifyXkbBaseDirectory: Xkb Base Directory [%s] is not valid (can't find file [%s]).\n",
+	        dirPath, rulesBaseFilePath);
     #endif
 
     free(rulesBaseFilePath);

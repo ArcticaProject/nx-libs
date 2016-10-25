@@ -477,6 +477,11 @@ CARD8 nxagentConvertKeycode(CARD8 k)
 {
  if (nxagentKeycodeConversion != 0)
  {
+   #ifdef DEBUG
+   if (k != nxagentConvertedKeycodes[k])
+     fprintf(stderr, "nxagentConvertKeycode: converting keycode [%d] to [%d]\n", k, nxagentConvertedKeycodes[k]);
+   #endif
+
    return nxagentConvertedKeycodes[k];
  }
  else
@@ -501,10 +506,10 @@ static void nxagentCheckXkbBaseDirectory(void)
 
   #ifdef TEST
   fprintf(stderr, "nxagentCheckXkbBaseDirectory: "
-              "Before calling _NXGetXkbBasePath.\n");
+              "Before calling _NXGetXkbBasePath:\n");
 
   fprintf(stderr, "nxagentCheckXkbBaseDirectory: "
-              "XkbBaseDirectory varible [%s].\n",
+              "XkbBaseDirectory variable [%s].\n",
                   XkbBaseDirectory);
   #endif
 
@@ -512,10 +517,10 @@ static void nxagentCheckXkbBaseDirectory(void)
 
   #ifdef TEST
   fprintf(stderr, "nxagentCheckXkbBaseDirectory: "
-              "After calling _NXGetXkbBasePath.\n");
+              "After calling _NXGetXkbBasePath:\n");
 
   fprintf(stderr, "nxagentCheckXkbBaseDirectory: "
-              "XkbBaseDirectory varible [%s].\n",
+              "XkbBaseDirectory variable [%s].\n",
                   XkbBaseDirectory);
   #endif
 
@@ -877,6 +882,10 @@ XkbError:
         fprintf(stderr, "nxagentKeyboardProc: Using XKB extension.\n");
         #endif
 
+        #ifdef TEST
+        fprintf(stderr, "nxagentKeyboardProc: nxagentKeyboard is [%s].\n", nxagentKeyboard ? nxagentKeyboard : "NULL");
+        #endif
+
         memset(&names, 0, sizeof(XkbComponentNamesRec));
 
         rules = nxagentXkbGetRules();
@@ -988,6 +997,11 @@ XkbError:
           }
           fprintf(stderr, "nxagentKeyboardProc: Going to set rules and init device.\n");
           #endif
+          #ifdef DEBUG
+          fprintf(stderr, "nxagentKeyboardProc: Going to set rules and init device: "
+                          "[rules='%s',model='%s',layout='%s',variants='%s',options='%s'].\n",
+                          rules, model, layout, variants, options);
+          #endif
 
           XkbSetRulesDflts(rules, model, layout, variants, options);
           XkbInitKeyboardDeviceStruct((void *)pDev, &names, &keySyms, modmap,
@@ -1072,11 +1086,12 @@ XkbError:
         else
         {
           #ifdef TEST
-          fprintf(stderr, "nxagentKeyboardProc: No config file.\n");
-          #endif
-
-          #ifdef TEST
           fprintf(stderr, "nxagentKeyboardProc: No config file, going to set rules and init device.\n");
+          #endif
+          #ifdef DEBUG
+          fprintf(stderr, "nxagentKeyboardProc: Going to set rules and init device: "
+                          "[rules='%s',model='%s',layout='%s',variants='%s',options='%s'].\n",
+                          rules, model, layout, variants, options);
           #endif
 
           XkbSetRulesDflts(rules, model, layout, variants, options);
@@ -1096,6 +1111,11 @@ XkbError:
 
         #ifdef TEST
         fprintf(stderr, "nxagentKeyboardProc: Going to set rules and init device.\n");
+        #endif
+        #ifdef DEBUG
+        fprintf(stderr, "nxagentKeyboardProc: Going to set rules and init device: "
+		        "[rules='%s',model='%s',layout='%s',variants='%s',options='%s'].\n",
+		          rules, model, layout, variants, options);
         #endif
 
         XkbSetRulesDflts(rules, model, layout, variants, options);
@@ -1402,8 +1422,8 @@ void nxagentCheckRemoteKeycodes()
   nxagentNumLockKeycode  = XKeysymToKeycode(nxagentDisplay, XK_Num_Lock);
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentCheckRemoteKeycodes: Remote CapsLock keycode "
-              "is [%d] NumLock [%d].\n", nxagentCapsLockKeycode,
+  fprintf(stderr, "nxagentCheckRemoteKeycodes: Remote keycodes: CapsLock "
+                  "[%d] NumLock [%d].\n", nxagentCapsLockKeycode,
                   nxagentNumLockKeycode);
   #endif
 }
@@ -1805,8 +1825,8 @@ void nxagentKeycodeConversionSetup(void)
   if (drulesLen != 0 && drules != NULL && dmodel != NULL)
   {
     fprintf(stderr, "nxagentKeycodeConversionSetup: "
-                "Remote: [%s,%s,%s,%s,%s].\n", drules, dmodel, dlayout,
-                    dvariant, doptions);
+                    "Remote: [rules='%s',model='%s',layout='%s',variant='%s',options='%s'].\n",
+                    drules, dmodel, dlayout, dvariant, doptions);
   }
   else
   {
@@ -1862,6 +1882,11 @@ void nxagentKeycodeConversionSetup(void)
                 (strcmp(drules, "evdev") == 0 ||
                     strcmp(dmodel, "evdev") == 0))
   {
+    #ifdef DEBUG
+    fprintf(stderr, "nxagentKeycodeConversionSetup: "
+                "Activating KeyCode conversion.\n");
+    #endif
+
     nxagentKeycodeConversion = 1;
   }
 
