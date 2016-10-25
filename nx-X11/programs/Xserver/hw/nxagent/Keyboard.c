@@ -1841,15 +1841,15 @@ void nxagentKeycodeConversionSetup(void)
       strcat(keyboard_file_path, "/keyboard");
       if ((keyboard_file = fopen(keyboard_file_path, "w")) != NULL) {
         if ( drules != NULL )
-          fprintf(keyboard_file, "rules=%s\n", drules);
+          fprintf(keyboard_file, "rules=\"%s\"\n", drules[0] == '\0' ? "," : drules);
         if ( dmodel != NULL )
-          fprintf(keyboard_file, "model=%s\n", dmodel);
+          fprintf(keyboard_file, "model=\"%s\"\n", dmodel[0] == '\0' ? "," : dmodel);
         if ( dlayout != NULL )
-          fprintf(keyboard_file, "layout=%s\n", dlayout);
+          fprintf(keyboard_file, "layout=\"%s\"\n", dlayout[0] == '\0' ? "," : dlayout);
         if ( dvariant != NULL )
-          fprintf(keyboard_file, "variant=%s\n", dvariant);
+          fprintf(keyboard_file, "variant=\"%s\"\n", dvariant[0] == '\0' ? "," : dvariant);
         if ( doptions != NULL )
-          fprintf(keyboard_file, "options=%s\n", doptions);
+          fprintf(keyboard_file, "options=\"%s\"\n", doptions[0] == '\0' ? "," : doptions);
         fclose(keyboard_file);
         fprintf(stderr, "keyboard file created\n");
       }
