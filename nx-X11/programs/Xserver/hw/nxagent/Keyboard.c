@@ -1800,11 +1800,11 @@ static int nxagentXkbGetNames(char **rules, char **model, char **layout,
 
 void nxagentKeycodeConversionSetup(void)
 {
-  char *drules = 0;
-  char *dmodel = 0;
-  char *dlayout = 0;
-  char *dvariant = 0;
-  char *doptions = 0;
+  char *drules = NULL;
+  char *dmodel = NULL;
+  char *dlayout = NULL;
+  char *dvariant = NULL;
+  char *doptions = NULL;
   unsigned int drulesLen;
 
   nxagentKeycodeConversion = 0;
