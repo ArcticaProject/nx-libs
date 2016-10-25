@@ -542,7 +542,7 @@ static char *nxagentXkbGetRules()
   sizeDflt = strlen(XKB_DFLT_RULES_FILE);
   sizeAlt = strlen(XKB_ALTS_RULES_FILE);
   size = strlen(XkbBaseDirectory) + strlen("/rules/");
-  size += (sizeDflt > sizeAlt) ? sizeDflt: sizeAlt;
+  size += (sizeDflt > sizeAlt) ? sizeDflt : sizeAlt;
 
   if ((path = malloc((size + 1) * sizeof(char))) == NULL)
   {
@@ -888,13 +888,13 @@ XkbError:
 
         rules = nxagentXkbGetRules();
 
-        if ((nxagentKeyboard != NULL) && (strcmp(nxagentKeyboard, "query") !=0))
+        if ((nxagentKeyboard != NULL) && (strcmp(nxagentKeyboard, "query") != 0))
         {
           for (i = 0; nxagentKeyboard[i] != '/' && nxagentKeyboard[i] != 0; i++);
 
           if(nxagentKeyboard[i] == 0 || nxagentKeyboard[i + 1] == 0 || i == 0)
           {
-            ErrorF("Warning: Wrong keyboard type: %s.\n",nxagentKeyboard);
+            ErrorF("Warning: Wrong keyboard type: %s.\n", nxagentKeyboard);
 
             goto XkbError;
           }
@@ -951,7 +951,7 @@ XkbError:
         options = XKB_DFLT_KB_OPTIONS;
 
         #ifdef TEST
-        fprintf(stderr, "nxagentKeyboardProc: XkbInitialMap [%s]\n", XkbInitialMap ? XkbInitialMap: "NULL");
+        fprintf(stderr, "nxagentKeyboardProc: XkbInitialMap [%s]\n", XkbInitialMap ? XkbInitialMap : "NULL");
         #endif
 
         if (XkbInitialMap) {
@@ -1829,7 +1829,8 @@ void nxagentKeycodeConversionSetup(void)
   if (drulesLen != 0)
   {
     char *sessionpath = nxagentGetSessionPath();
-    if (sessionpath != NULL){
+    if (sessionpath != NULL)
+    {
       int keyboard_file_path_size = strlen(sessionpath) + strlen("/keyboard");
       char *keyboard_file_path = malloc((keyboard_file_path_size + 1) * sizeof(char));
       FILE *keyboard_file;
@@ -1840,26 +1841,28 @@ void nxagentKeycodeConversionSetup(void)
       strcpy(keyboard_file_path, sessionpath);
       strcat(keyboard_file_path, "/keyboard");
       if ((keyboard_file = fopen(keyboard_file_path, "w")) != NULL) {
-        if ( drules != NULL )
+        if (drules != NULL)
           fprintf(keyboard_file, "rules=\"%s\"\n", drules[0] == '\0' ? "," : drules);
-        if ( dmodel != NULL )
+        if (dmodel != NULL)
           fprintf(keyboard_file, "model=\"%s\"\n", dmodel[0] == '\0' ? "," : dmodel);
-        if ( dlayout != NULL )
+        if (dlayout != NULL)
           fprintf(keyboard_file, "layout=\"%s\"\n", dlayout[0] == '\0' ? "," : dlayout);
-        if ( dvariant != NULL )
+        if (dvariant != NULL)
           fprintf(keyboard_file, "variant=\"%s\"\n", dvariant[0] == '\0' ? "," : dvariant);
-        if ( doptions != NULL )
+        if (doptions != NULL)
           fprintf(keyboard_file, "options=\"%s\"\n", doptions[0] == '\0' ? "," : doptions);
         fclose(keyboard_file);
         fprintf(stderr, "keyboard file created\n");
       }
-      else {
+      else
+      {
         int save_err = errno;
         fprintf(stderr, "keyboard file not created: %s\n", strerror(save_err));
       }
       free(keyboard_file_path);
     }
-    else {
+    else
+    {
       fprintf(stderr, "SessionPath not defined\n");
     }
   }
