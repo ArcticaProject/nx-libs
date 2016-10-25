@@ -1833,7 +1833,7 @@ void nxagentKeycodeConversionSetup(void)
       int keyboard_file_path_size = strlen(sessionpath) + strlen("/keyboard");
       char *keyboard_file_path = malloc((keyboard_file_path_size + 1) * sizeof(char));
       FILE *keyboard_file;
-      if ( keyboard_file_path == NULL)
+      if (keyboard_file_path == NULL)
       {
         FatalError("nxagentKeycodeConversionSetup: malloc failed.");
       }
