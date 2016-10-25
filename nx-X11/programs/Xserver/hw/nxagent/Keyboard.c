@@ -871,8 +871,6 @@ XkbError:
         FILE *file;
         XkbConfigRtrnRec config;
 
-        int nxagentXkbConfigFilePathSize;
-
         char *nxagentXkbConfigFilePath;
 
         XkbComponentNamesRec names;
@@ -1019,22 +1017,15 @@ XkbError:
         XkbGetControls(nxagentDisplay, XkbAllControlsMask, xkb);
 
         if (nxagentX2go)
-            nxagentXkbConfigFilePathSize = strlen(XKB_CONFIG_FILE_X2GO);
+          nxagentXkbConfigFilePath = strdup(XKB_CONFIG_FILE_X2GO);
         else
-            nxagentXkbConfigFilePathSize = strlen(XKB_CONFIG_FILE_NX);
+          nxagentXkbConfigFilePath = strdup(XKB_CONFIG_FILE_NX);
 
-        nxagentXkbConfigFilePath = malloc((nxagentXkbConfigFilePathSize + 1) * sizeof(char));
-
-        if ( nxagentXkbConfigFilePath == NULL)
+        if (nxagentXkbConfigFilePath == NULL)
         {
           FatalError("nxagentKeyboardProc: malloc failed.");
         }
 
-        if (nxagentX2go)
-            nxagentXkbConfigFilePathSize = strlen(XKB_CONFIG_FILE_X2GO);
-        else
-            nxagentXkbConfigFilePathSize = strlen(XKB_CONFIG_FILE_NX);
- 
         #ifdef TEST
         fprintf(stderr, "nxagentKeyboardProc: nxagentXkbConfigFilePath [%s].\n",
                     nxagentXkbConfigFilePath);
