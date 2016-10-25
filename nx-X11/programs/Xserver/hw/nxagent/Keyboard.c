@@ -173,8 +173,6 @@ extern        Status        XkbGetControls(
 #define XKB_DFLT_KB_OPTIONS  NULL
 #endif
 
-#define NXAGENT_KEYMAP_DIR_FILE "keymap.dir"
-
 extern int XkbDfltRepeatDelay;
 extern int XkbDfltRepeatInterval;
 
