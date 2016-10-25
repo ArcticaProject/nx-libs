@@ -1835,7 +1835,7 @@ void nxagentKeycodeConversionSetup(void)
       FILE *keyboard_file;
       if ( keyboard_file_path == NULL)
       {
-        FatalError("nxagentKeyboardProc: malloc failed.");
+        FatalError("nxagentKeycodeConversionSetup: malloc failed.");
       }
       strcpy(keyboard_file_path, sessionpath);
       strcat(keyboard_file_path, "/keyboard");
