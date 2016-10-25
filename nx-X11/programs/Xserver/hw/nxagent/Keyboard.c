@@ -900,16 +900,10 @@ XkbError:
           }
 
           free_model = 1;
-          model = malloc(i + 1);
-
-          strncpy(model, nxagentKeyboard, i);
-
-          model[i] = '\0';
+	  model = strndup(nxagentKeyboard, i);
 
           free_layout = 1;
-          layout = malloc(strlen(&nxagentKeyboard[i + 1]) + 1);
-
-          strcpy(layout, &nxagentKeyboard[i + 1]);
+	  layout = strdup(&nxagentKeyboard[i + 1]);
 
           /*
            * There is no description for pc105 on Solaris.
