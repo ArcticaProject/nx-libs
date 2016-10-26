@@ -1863,10 +1863,9 @@ void nxagentKeycodeConversionSetup(void)
     fprintf(stderr, "Failed to create the keyboard file\n");
   }
 
-  if (nxagentOption(ClientOs) == ClientOsLinux &&
-            drules != NULL && dmodel != NULL &&
-                (strcmp(drules, "evdev") == 0 ||
-                    strcmp(dmodel, "evdev") == 0))
+  if (drules != NULL && dmodel != NULL &&
+      (strcmp(drules, "evdev") == 0 ||
+       strcmp(dmodel, "evdev") == 0))
   {
     #ifdef DEBUG
     fprintf(stderr, "nxagentKeycodeConversionSetup: "
