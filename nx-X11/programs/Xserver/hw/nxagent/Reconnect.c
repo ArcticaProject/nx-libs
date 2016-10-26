@@ -438,22 +438,14 @@ Bool nxagentReconnectSession(void)
 
   if (nxagentKeyboard != NULL)
   {
-    int size;
-
-    size = strlen(nxagentKeyboard);
-
-    if ((nxagentOldKeyboard = malloc(size + 1)) != NULL)
+    nxagentOldKeyboard = strndup(nxagentKeyboard, strlen(nxagentKeyboard));
+    if (nxagentOldKeyboard == NULL)
     {
-      strncpy(nxagentOldKeyboard, nxagentKeyboard, size);
-
-      nxagentOldKeyboard[size] = '\0';
+      /* 0 means reconnection failed */
+      return 0;
     }
-  }
 
-  if (nxagentKeyboard)
-  {
     free(nxagentKeyboard);
-
     nxagentKeyboard = NULL;
   }
 
