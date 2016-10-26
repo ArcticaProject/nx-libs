@@ -697,10 +697,6 @@ int nxagentKeyboardProc(DeviceIntPtr pDev, int onoff)
   int free_model = 0, free_layout = 0;
   XkbDescPtr xkb = NULL;
 
-  #ifdef TEST
-  int ret;
-  #endif
-
   switch (onoff)
   {
     case DEVICE_INIT:
@@ -857,13 +853,15 @@ XkbError:
              (char *) values.auto_repeats, sizeof(values.auto_repeats));
 
       #ifdef TEST
-      ret =
+      {
+        int ret =
       #endif
-      InitKeyboardDeviceStruct((DevicePtr) pDev, &keySyms, modmap,
+        InitKeyboardDeviceStruct((DevicePtr) pDev, &keySyms, modmap,
                                nxagentBell, nxagentChangeKeyboardControl);
 
       #ifdef TEST
-      fprintf(stderr, "nxagentKeyboardProc: InitKeyboardDeviceStruct returns [%d].\n", ret);
+        fprintf(stderr, "nxagentKeyboardProc: InitKeyboardDeviceStruct returns [%d].\n", ret);
+      }
       #endif
 
 #ifdef XKB
