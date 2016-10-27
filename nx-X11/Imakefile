@@ -74,27 +74,6 @@ VerifyOS::
 	@echo ""
 #endif
 
-#ifndef OS2Architecture
-version.def::
-	$(RM) $(IRULESRC)/date.def
-	@if [ -f ../../$(XF86SRC)/xf86Date.h ]; then \
- 	  $(LN) ../../$(XF86SRC)/xf86Date.h $(IRULESRC)/date.def; \
-	else \
-  	  echo "" > $(IRULESRC)/date.def; \
-	fi;
-	$(RM) $(IRULESRC)/version.def
-	@if [ -f ../../$(XF86SRC)/xf86Version.h ]; then \
- 	   echo foo; \
-           $(LN) ../../$(XF86SRC)/xf86Version.h $(IRULESRC)/version.def; \
-        else \
-           echo "" > $(IRULESRC)/version.def; \
-        fi;
-#else /*OS2Architecture*/
-version.def::
-	$(RM) $(IRULESRC)/date.def
-	$(CP) $(XF86SRC)/xf86Date.h $(IRULESRC)/date.def
-#endif
-
 includes::
 	MakeDir($(BUILDINCDIR))
 	MakeDir($(BUILDBINDIR))

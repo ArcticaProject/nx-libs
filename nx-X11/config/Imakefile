@@ -13,18 +13,9 @@ SUBDIRS = cf
 #if defined(XorgVersionString) \
 	&& defined(ProjectRoot) && \
 	defined(BuildBindist)
-all:: version
-
-version: cf/version.def
-	RemoveFile(version)
-#if defined (XorgVersionString)
-	echo XorgVersionString > version
-#endif
-
-InstallNamedNonExec(version,.$(VENDORNAMESHORT)_Version,ProjectRoot)
+all::
 
 clean::
-	RemoveFile(version)
 #endif
 
 MakeSubdirs($(SUBDIRS))
