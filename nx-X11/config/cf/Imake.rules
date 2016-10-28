@@ -569,7 +569,7 @@ install::								@@\
 includes:: srclist							@@\
 	MakeDir($(BUILDINCDIR))						@@\
 	@(set -x; cd $(BUILDINCDIR) && for i in srclist; do \		@@\
-		RemoveFile($$i); \					@@\
+		RemoveFile(`basename $$i`); \				@@\
 		$(LN) $(BUILDINCTOP)/$(CURRENT_DIR)/$$i .; \		@@\
 	done)
 #endif /* BuildIncludesTop */
@@ -579,7 +579,7 @@ includes:: srclist							@@\
 includes:: srclist							@@\
 	MakeDir($(BUILDINCDIR)/dstsubdir)				@@\
 	@(set -x; cd $(BUILDINCDIR)/dstsubdir && for i in srclist; do \	@@\
-		RemoveFile($$i); \					@@\
+		RemoveFile(`basename $$i`); \				@@\
 		$(LN) $(BUILDINCTOP)/dstupdir/$(CURRENT_DIR)/$$i .; \	@@\
 	done)
 #endif /* BuildIncludes */
