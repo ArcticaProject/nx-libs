@@ -1126,6 +1126,9 @@ depend:: ks_tables.h
 clean::
 	RemoveFiles(ks_tables_h ks_tables.h HostProgramTargetName(makekeys))
 
+KeysymStr.o: ks_tables.h
+
+StrKeysym.o: ks_tables.h
 
 DependTarget3($(SRCS1),$(SRCS2),$(SRCS3) $(EXTRASRCS))
 
