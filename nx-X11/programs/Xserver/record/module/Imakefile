@@ -1,8 +1,3 @@
-XCOMM $XFree86: xc/programs/Xserver/record/module/Imakefile,v 1.1 2000/04/05 18:14:03 dawes Exp $
-XCOMM
-XCOMM
-XCOMM $XConsortium: Imakefile /main/3 1996/09/28 17:15:43 rws $
-
 #define IHaveModules
 #include <Server.tmpl>
 

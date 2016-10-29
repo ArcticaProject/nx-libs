@@ -1,5 +1,3 @@
-XCOMM $XFree86:$
-
 MESASHADERBUILDDIR = MesaShaderBuildDir
 
   MESA_SHADER_SRCS =	$(MESASHADERBUILDDIR)arbprogparse.c \

@@ -1,8 +1,3 @@
-XCOMM $XFree86: xc/programs/Xserver/fb/Imakefile,v 1.16 2002/05/31 16:12:17 dawes Exp $
-XCOMM 
-XCOMM 
-XCOMM Id: Imakefile,v 1.1 1999/11/02 03:54:44 keithp Exp $
-
 /*
  * The X.org 6.8.99.16 snapshot fails to compile with GCC 4.
  * Temporarily disable the MMX features until the bug is

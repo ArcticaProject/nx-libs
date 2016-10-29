@@ -1,5 +1,3 @@
-XCOMM $XFree86: xc/lib/GL/mesa/src/Imakefile.inc,v 1.7tsi Exp $
-
 MESABUILDDIR = MesaBuildDir
 
 COREMESASRCS = $(COREMESABASESRCS) \

@@ -1,10 +1,3 @@
-XCOMM $Xorg: Imakefile,v 1.3 2000/08/17 19:53:29 cpqbld Exp $
-
-
-
-
-XCOMM $XFree86: xc/programs/Xserver/include/Imakefile,v 3.21 2001/01/17 22:36:56 dawes Exp $
-
 HEADERS = os.h misc.h
 
 #if defined(XorgVersion) \

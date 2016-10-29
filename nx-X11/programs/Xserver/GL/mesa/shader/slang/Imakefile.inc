@@ -1,5 +1,3 @@
-XCOMM $XFree86$
-
 MESASLANGBUILDDIR=MesaSlangBuildDir
 
   MESA_SLANG_SRCS =	$(MESASLANGBUILDDIR)slang_assemble_assignment.c \
