@@ -7,10 +7,6 @@
 
 SUBDIRS = glx $(CORE_SUBDIR)
 
-#if DoLoadableServer
-MSRCS = glxmodule.c
-MOBJS = glxmodule.o
-#endif
 
 #if BuildModuleInSubdir
 SRCS = glx/module/?*.c $(MSRCS)

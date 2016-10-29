@@ -3419,41 +3419,24 @@ MutexDirective:	targets
  * ObjectModuleTarget - build a module as a single object file
  */
 #ifndef ObjectModuleTarget
-#if MakeDllModules && DoLoadableServer
-#define ObjectModuleTarget(module,objects)				@@\
-DynamicModuleTarget(Concat(module,_drv.so), objects)
-#else
 #define ObjectModuleTarget(module,objects)				@@\
 NormalRelocatableTarget(Concat(module,_drv), objects)
-#endif
 #endif
 
 /*
  * LibraryModuleTarget
  */
 #ifndef LibraryModuleTarget
-#if MakeDllModules && DoLoadableServer
-#define LibraryModuleTarget(module,objects)				@@\
-NormalLibraryTarget(module, objects)					@@\
-DynamicModuleTarget(Concat3(lib,module,.so), objects)
-#else
 #define LibraryModuleTarget(module, objects)				@@\
 NormalLibraryTarget(module, objects)
-#endif
 #endif
 
 /*
  * DepLibraryModuleTarget
  */
 #ifndef DepLibraryModuleTarget
-#if MakeDllModules && DoLoadableServer
-#define DepLibraryModuleTarget(module,deplist,objects)			@@\
-NormalDepLibraryTarget(module, deplist, objects)			@@\
-DepDynamicModuleTarget(Concat3(lib,module,.so), deplist, objects)
-#else
 #define DepLibraryModuleTarget(module,deplist,objects)			@@\
 NormalDepLibraryTarget(module, deplist, objects)
-#endif
 #endif
 
 /*
@@ -3532,31 +3515,11 @@ InstallObjectModule(module,dest,multimedia)
 #endif
 
 #ifndef InstallObjectModule
-#if !DoLoadableServer
 #define InstallObjectModule(module,dest,subdir)	/**/
-#else
-#if MakeDllModules
-#define InstallObjectModule(module,dest,subdir)				@@\
-InstallDynamicModule(Concat(module,_drv.so),dest,subdir)
-#else
-#define InstallObjectModule(module,dest,subdir)				@@\
-InstallDynamicModule(Concat(module,_drv.o),dest,subdir)
-#endif
-#endif
 #endif
 
 #ifndef InstallLibraryModule
-#if !DoLoadableServer
 #define InstallLibraryModule(module,dest,subdir)	/**/
-#else
-#if MakeDllModules
-#define InstallLibraryModule(module,dest,subdir)			@@\
-InstallDynamicModule(Concat3(lib,module,.so),dest,subdir)
-#else
-#define InstallLibraryModule(module,dest,subdir)			@@\
-InstallDynamicModule(ModuleLibraryTargetName(module),dest,subdir)
-#endif
-#endif
 #endif
 
 #ifndef InstallModuleManPage

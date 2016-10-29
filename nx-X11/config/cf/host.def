@@ -300,23 +300,6 @@
  */
 
 /*
- * Build a server that dynamically loads the modules by setting
- * this to YES.  This defaults to YES on most platforms.  A static server
- * can be built by setting this to NO.
- *
-#define DoLoadableServer	NO
- */
-
-/*
- * This release defaults to building dlopen() style modules instead of the 
- * previously standard loader modules.
- * 
- * Uncomment the following to return to the XFree86 custom loader modules.
- *
-#define MakeDllModules		NO
- */
-
-/*
  * Build XAA.  This can be disabled with:
  *
 #define XF86XAA			NO

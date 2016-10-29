@@ -25,11 +25,6 @@
 
 #include <Server.tmpl>
 
-#if DoLoadableServer
-#define IHaveSubdirs
-SUBDIRS = extmod
-#endif
-
 #if HasShm && (!(defined(NXAgentServer) && NXAgentServer))
   SHMSRCS = shm.c
   SHMOBJS = shm.o
@@ -123,10 +118,6 @@ NormalLibraryTarget(ext,$(OBJS))
 LintLibraryTarget(ext,$(SRCS))
 NormalLintTarget($(SRCS))
 
-#if DoLoadableServer
-NormalLibraryTarget(exts,$(SOBJS))
-#endif
-
 #if BuildXF86BigfontExt
 SpecialCObjectRule(xf86bigfont,$(ICONFIGFILES),$(SHM_DEFINES))
 #endif
@@ -143,11 +134,6 @@ InstallNonExecFile(SecurityPolicy,$(SERVERCONFIGDIR))
 #endif
 
 DependTarget()
-
-#if DoLoadableServer
-MakeSubdirs($(SUBDIRS))
-DependSubdirs($(SUBDIRS))
-#endif
 
 InstallDriverSDKNonExecFile(xvdix.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(xvmcext.h,$(DRIVERSDKINCLUDEDIR))

@@ -1,7 +1,3 @@
-#if DoLoadableServer
-#define IHaveModules
-#endif
-
 #define IHaveSubdirs
       SUBDIRS = main math array_cache swrast swrast_setup tnl shader X GLcore $(MODSUBDIR)
 
@@ -20,11 +16,7 @@
 
       DEFINES = $(GLX_DEFINES)
 
-#ifdef IHaveModules
-ModuleObjectRule()
-#else
 NormalLibraryObjectRule()
-#endif
 
 #ifdef IHaveSubdirs
 MakeSubdirs($(SUBDIRS))

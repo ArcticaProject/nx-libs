@@ -2,10 +2,6 @@ HEADERS = os.h misc.h
 
 #if defined(XorgVersion) \
 	|| defined(BSDOSArchitecture)
-#if DoLoadableServer
-LinkSourceFile(xf86Module.h,$(XF86COMSRC))
-LinkSourceFile(xf86Opt.h,$(XF86COMSRC))
-#endif
 #endif
 
 LinkSourceFile(osdep.h,../os)

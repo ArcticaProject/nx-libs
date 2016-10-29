@@ -17,14 +17,6 @@ SpecialCObjectRule(fbcopy,fbcopy.c,$(USEMMXOPTIONS))
 #endif
  */
 
-#if DoLoadableServer
-#if !BuildModuleInSubdir
-#define IHaveModules
-#elif !defined(IHaveModules)
-#define IHaveSubdirs
-SUBDIRS = module
-#endif
-#endif
 
 #include <Server.tmpl>
 
@@ -32,10 +24,6 @@ SUBDIRS = module
 FB_DEFINES=-DFBNOPIXADDR -DFBNO24BIT
 #endif
 
-#if defined(IHaveModules)
-XFMODSRC = fbmodule.c
-XFMODOBJ = fbmodule.o
-#endif
 
 #if BuildRender
 RENDERSRC = fbcompose.c
@@ -131,21 +119,13 @@ OBJS =	$(XFMODOBJ) \
    LINTLIBS = $(SERVERSRC)/dix/llib-ldix.ln $(SERVERSRC)/os/llib-los.ln \
 	     $(SERVERSRC)/mi/llib-lmi.ln
 
-#ifdef IHaveModules
-ModuleObjectRule()
-LibraryModuleTarget(fb,$(OBJS))
-#else
 NormalLibraryObjectRule()
 NormalLibraryTarget(fb,$(OBJS))
-#endif
 
 LintLibraryTarget(fb,$(SRCS))
 
 NormalLintTarget($(SRCS))
 
-#ifdef IHaveModules
-InstallLibraryModule(fb,$(MODULEDIR),.)
-#endif
 
 DependTarget()
 

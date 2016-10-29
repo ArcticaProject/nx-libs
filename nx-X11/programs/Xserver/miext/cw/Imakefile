@@ -1,4 +1,3 @@
-#define IHaveModules
 #include <Server.tmpl>
 
 SRCS = cw.c cw_ops.c cw_render.c

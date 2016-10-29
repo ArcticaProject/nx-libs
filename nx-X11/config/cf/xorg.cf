@@ -201,18 +201,6 @@ NX_VERSION_CURRENT_STRING  = nxVersionString
 #define BuildModuleInSubdir	NO
 #endif
 
-#ifndef DoLoadableServer
-#define DoLoadableServer	NO
-#endif
-
-#ifndef MakeDllModules
-#if DoLoadableServer
-#define MakeDllModules		YES
-#else
-#define MakeDllModules		NO
-#endif
-#endif 
-
 /*
  * Default settings for which X Servers to build.
  */
@@ -336,10 +324,6 @@ NX_VERSION_CURRENT_STRING  = nxVersionString
 
 #ifndef XorgServer
 # define XorgServer		NO
-#endif
-#if !XorgServer
-# undef DoLoadableServer
-# define DoLoadableServer	NO
 #endif
 
 /*
@@ -569,18 +553,10 @@ IPLAN2P8_DEFS = -DUSE_IPLAN2P8
 #endif
 
 #ifndef ExtraLoaderDefines
-# if MakeDllModules
-#  define ExtraLoaderDefines	DlopenHack
-# else
 #  define ExtraLoaderDefines	/**/
-# endif
 #endif
 
-#if DoLoadableServer
-# define XFree86LoaderDefines	-DXFree86LOADER ExtraLoaderDefines
-#else
 # define XFree86LoaderDefines	/**/
-#endif
 
 #ifndef HasBsdMake
 #define HasBsdMake		NO
