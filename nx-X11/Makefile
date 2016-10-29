@@ -55,7 +55,6 @@ BuildEnv:
 	fi
 	@rm -f $(IRULESRC)/date.def; echo "" > $(IRULESRC)/date.def;
 	${MAKE} $(MFLAGS) xmakefile
-	${MAKE} ${MAKE_OPTS} $(MFLAGS) version.def
 	${MAKE} ${MAKE_OPTS} $(MFLAGS) VerifyOS
 	${MAKE} ${MAKE_OPTS} $(MFLAGS) Makefiles
 	${MAKE} ${MAKE_OPTS} $(MFLAGS) BOOTSTRAPSUBDIRS= clean
@@ -92,12 +91,11 @@ clean:
 	    find lib -type f | egrep '.*/Makefile$$' | while read makefile; do rm -f $$makefile; done
 	    find programs -type f | egrep '.*/Makefile$$' | while read makefile; do rm -f $$makefile; done
 	    find include -type f | egrep '.*/Makefile$$' | while read makefile; do rm -f $$makefile; done
-	    rm -f config/cf/{version.def,date.def}
 dangerous_strip_clean:
 	    ${MAKE} ${MAKE_OPTS} $@
 distclean:
 	    -${MAKE} ${MAKE_OPTS} $@
-	    $(RM) xmakefile $(IRULESRC)/version.def $(IRULESRC)/date.def
+	    $(RM) xmakefile
 depend:
 	    ${MAKE} ${MAKE_OPTS} $@
 Everything:

@@ -10,7 +10,6 @@ XCOMM $Xorg: xfree86.cf,v 1.4 2000/08/17 19:41:49 cpqbld Exp $
 
 /* Get and set version information. */
 
-#include "date.def"
 #include "xorgversion.def"
 
 #if !defined(XorgVersionString) && \

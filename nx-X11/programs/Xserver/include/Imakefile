@@ -13,10 +13,6 @@ HEADERS = os.h misc.h
 LinkSourceFile(xf86Module.h,$(XF86COMSRC))
 LinkSourceFile(xf86Opt.h,$(XF86COMSRC))
 #endif
-LinkSourceFile(xf86_libc.h,$(XF86OSSRC))
-LinkSourceFile(xf86_ansic.h,$(XF86OSSRC))
-LinkSourceFile(xf86Version.h,$(XF86SRC))
-LinkSourceFile(compiler.h,$(XF86COMSRC))
 #endif
 
 LinkSourceFile(osdep.h,../os)
