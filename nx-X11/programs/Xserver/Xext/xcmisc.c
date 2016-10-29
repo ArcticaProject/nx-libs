@@ -38,7 +38,6 @@ from The Open Group.
 #include "extnsionst.h"
 #include "swaprep.h"
 #include <nx-X11/extensions/xcmiscstr.h>
-#include "modinit.h"
 
 #include <stdint.h>
 

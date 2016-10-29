@@ -112,8 +112,6 @@ static char _NXPolicyFilePath[1024];
 
 #endif
 
-#include "modinit.h"
-
 static int SecurityErrorBase;  /* first Security error number */
 static int SecurityEventBase;  /* first Security event number */
 

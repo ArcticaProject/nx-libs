@@ -65,8 +65,6 @@ AllTarget($(XF86_OBJS))
 
 SpecialCObjectRule(xkbInit,$(ICONFIGFILES),$(XKB_DEFINES))
 
-LinkSourceFile(modinit.h,../Xext/extmod)
-
 #if BuildLibraries
 #if UseConfDirForXkb
 LinkConfDirectory(xkb,.,xkb,.)

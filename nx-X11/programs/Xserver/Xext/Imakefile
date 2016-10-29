@@ -25,11 +25,6 @@
 
 #include <Server.tmpl>
 
-#if DoLoadableServer
-#define IHaveSubdirs
-SUBDIRS = extmod
-#endif
-
 #if HasShm && (!(defined(NXAgentServer) && NXAgentServer))
   SHMSRCS = shm.c
   SHMOBJS = shm.o
@@ -135,8 +130,6 @@ SpecialCObjectRule(security,$(ICONFIGFILES),$(POLICYFILEDEF))
 #endif
 
 LinkConfDirectory(xserver,.,xserver,.)
-
-LinkSourceFile(modinit.h,extmod)
 
 #if BuildXCSecurity && InstallSecurityConfig
 InstallNonExecFile(SecurityPolicy,$(SERVERCONFIGDIR))
