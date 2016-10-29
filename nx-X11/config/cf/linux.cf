@@ -1,12 +1,3 @@
-XCOMM $XdotOrg: xc/config/cf/linux.cf,v 1.31 2005/10/21 19:10:27 ajax Exp $
-XCOMM platform:  $Xorg: linux.cf,v 1.3 2000/08/17 19:41:47 cpqbld Exp $
-
-
-
-
-
-XCOMM platform:  $XFree86: xc/config/cf/linux.cf,v 3.220 2003/12/30 22:38:33 tsi Exp $
-
 #ifndef LinuxElfDefault
 # define LinuxElfDefault	YES
 #endif

@@ -1,5 +1,3 @@
-XCOMM $XFree86: xc/programs/Xserver/GL/mesa/src/swrast/Imakefile,v 1.8 2002/11/22 22:56:01 tsi Exp $
-
 #if DoLoadableServer
 #define IHaveModules
 #endif

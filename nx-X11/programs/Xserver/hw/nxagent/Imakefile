@@ -1,5 +1,3 @@
-# XCOMM $Xorg: Imakefile,v 1.3 2000/08/17 19:53:28 cpqbld Exp $
-
 #include <Server.tmpl>
 
 #ifdef OS2Architecture
