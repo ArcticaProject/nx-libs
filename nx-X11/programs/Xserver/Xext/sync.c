@@ -54,6 +54,8 @@ PERFORMANCE OF THIS SOFTWARE.
 #include <dix-config.h>
 #endif
 
+#include <string.h>
+
 #include <nx-X11/X.h>
 #include <nx-X11/Xproto.h>
 #include <nx-X11/Xmd.h>
@@ -68,13 +70,9 @@ PERFORMANCE OF THIS SOFTWARE.
 #include <nx-X11/extensions/syncstr.h>
 #include "protocol-versions.h"
 
-#ifdef EXTMODULE
-#include "xf86_ansic.h"
-#else
 #include <stdio.h>
 #if !defined(WIN32) && !defined(Lynx)
 #include <sys/time.h>
-#endif
 #endif
 
 /*

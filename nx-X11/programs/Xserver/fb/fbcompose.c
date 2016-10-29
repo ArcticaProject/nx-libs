@@ -33,10 +33,14 @@
 
 #ifdef RENDER
 
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+#include <assert.h>
+
 #include "picturestr.h"
 #include "mipict.h"
 #include "fbpict.h"
-#include <math.h>
 
 #define mod(a,b)	((b) == 1 ? 0 : (a) >= 0 ? (a) % (b) : (b) - (-a) % (b))
 

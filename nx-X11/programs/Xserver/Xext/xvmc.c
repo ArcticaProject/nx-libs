@@ -3,6 +3,8 @@
 #include <dix-config.h>
 #endif
 
+#include <string.h>
+
 #include <nx-X11/X.h>
 #include <nx-X11/Xproto.h>
 #include "misc.h"

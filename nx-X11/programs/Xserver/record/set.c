@@ -53,12 +53,13 @@ from The Open Group.
 #include <dix-config.h>
 #endif
 
+#include <string.h>
+
 #ifndef TESTING
 #include "misc.h"
 #else
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 /* stuff that you normally get from the X Server's environment */
 
@@ -80,11 +81,6 @@ typedef unsigned short CARD16;
 #endif /* TESTING */
 
 #include "set.h"
-
-#ifdef XFree86LOADER
-#include "xf86_libc.h"
-#include "xf86_ansic.h"
-#endif
 
 static int
 maxMemberInInterval(pIntervals, nIntervals)

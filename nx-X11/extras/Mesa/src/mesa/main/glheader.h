@@ -47,11 +47,9 @@
 #define GLHEADER_H
 
 
-#if defined(XFree86LOADER) && defined(IN_MODULE)
-#include "xf86_ansic.h"
-#else
 #include <assert.h>
 #include <ctype.h>
+
 /* If we can use Compaq's Fast Math Library on Alpha */
 #if defined(__alpha__) && defined(CCPML)
 #include <cpml.h>
@@ -65,7 +63,7 @@
 #if defined(__linux__) && defined(__i386__)
 #include <fpu_control.h>
 #endif
-#endif
+
 #include <float.h>
 #include <stdarg.h>
 

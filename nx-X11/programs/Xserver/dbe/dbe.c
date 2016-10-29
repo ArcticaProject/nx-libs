@@ -37,6 +37,8 @@
 #include <dix-config.h>
 #endif
 
+#include <string.h>
+
 #include <nx-X11/X.h>
 #include <nx-X11/Xproto.h>
 #include "scrnintstr.h"
@@ -46,10 +48,6 @@
 #define NEED_DBE_PROTOCOL
 #include "dbestruct.h"
 #include "midbe.h"
-
-#ifdef XFree86LOADER
-#include "xf86_ansic.h"
-#endif
 
 #if !defined(UINT32_MAX)
 #define UINT32_MAX 0xffffffffU

@@ -146,12 +146,8 @@ extern Bool noXIdleExtension;
 extern Bool noXvExtension;
 #endif
 
-#ifndef XFree86LOADER
 #define INITARGS void
 typedef void (*InitExtension)(void);
-#else /* XFree86Loader */
-#include "loaderProcs.h"
-#endif
 
 #ifdef MITSHM
 #define _XSHM_SERVER_
@@ -380,8 +376,6 @@ void EnableDisableExtensionError(char *name, Bool enable)
 	ErrorF("    %s\n", ext->name);
 }
 
-#ifndef XFree86LOADER
-
 /*ARGSUSED*/
 void
 InitExtensions(argc, argv)
@@ -496,101 +490,3 @@ InitVisualWrap()
 #endif
 }
 
-#else /* XFree86LOADER */
-/* List of built-in (statically linked) extensions */
-static ExtensionModule staticExtensions[] = {
-#ifdef XTESTEXT1
-    { XTestExtension1Init, "XTEST1", &noTestExtensions, NULL, NULL },
-#endif
-#ifdef MITSHM
-    { ShmExtensionInit, SHMNAME, &noMITShmExtension, NULL, NULL },
-#endif
-#ifdef XINPUT
-    { XInputExtensionInit, "XInputExtension", &noXInputExtension, NULL, NULL },
-#endif
-#ifdef XTEST
-    { XTestExtensionInit, XTestExtensionName, &noTestExtensions, NULL, NULL },
-#endif
-#ifdef XIDLE
-    { XIdleExtensionInit, "XIDLE", &noXIdleExtension, NULL, NULL },
-#endif
-#ifdef XKB
-    { XkbExtensionInit, XkbName, &noXkbExtension, NULL, NULL },
-#endif
-#ifdef XCSECURITY
-    { SecurityExtensionInit, SECURITY_EXTENSION_NAME, &noSecurityExtension, NULL, NULL },
-#endif
-#ifdef PANORAMIX
-    { PanoramiXExtensionInit, PANORAMIX_PROTOCOL_NAME, &noPanoramiXExtension, NULL, NULL },
-#endif
-#ifdef XFIXES
-    /* must be before Render to layer DisplayCursor correctly */
-    { XFixesExtensionInit, "XFIXES", &noXFixesExtension, NULL, NULL },
-#endif
-#ifdef XF86BIGFONT
-    { XFree86BigfontExtensionInit, XF86BIGFONTNAME, &noXFree86BigfontExtension, NULL, NULL },
-#endif
-#ifdef RENDER
-    { RenderExtensionInit, "RENDER", &noRenderExtension, NULL, NULL },
-#endif
-#ifdef RANDR
-    { RRExtensionInit, "RANDR", &noRRExtension, NULL, NULL },
-#endif
-#ifdef COMPOSITE
-    { CompositeExtensionInit, "COMPOSITE", &noCompositeExtension, NULL },
-#endif
-#ifdef DAMAGE
-    { DamageExtensionInit, "DAMAGE", &noDamageExtension, NULL },
-#endif
-    { NULL, NULL, NULL, NULL, NULL }
-};
-    
-/*ARGSUSED*/
-void
-InitExtensions(argc, argv)
-    int		argc;
-    char	*argv[];
-{
-    int i;
-    ExtensionModule *ext;
-    static Bool listInitialised = FALSE;
-
-    if (!listInitialised) {
-	/* Add built-in extensions to the list. */
-	for (i = 0; staticExtensions[i].name; i++)
-	    LoadExtension(&staticExtensions[i], TRUE);
-
-	/* Sort the extensions according the init dependencies. */
-	LoaderSortExtensions();
-	listInitialised = TRUE;
-    }
-
-    for (i = 0; ExtensionModuleList[i].name != NULL; i++) {
-	ext = &ExtensionModuleList[i];
-	if (ext->initFunc != NULL && 
-	    (ext->disablePtr == NULL || 
-	     (ext->disablePtr != NULL && !*ext->disablePtr))) {
-	    (ext->initFunc)();
-	}
-    }
-}
-
-static void (*__miHookInitVisualsFunction)(miInitVisualsProcPtr *);
-
-void
-InitVisualWrap()
-{
-    miResetInitVisuals();
-    if (__miHookInitVisualsFunction)
-	(*__miHookInitVisualsFunction)(&miInitVisualsProc);
-}
-
-void miHookInitVisuals(void (**old)(miInitVisualsProcPtr *),
-		       void (*new)(miInitVisualsProcPtr *))
-{
-    if (old)
-	*old = __miHookInitVisualsFunction;
-    __miHookInitVisualsFunction = new;
-}
-
-#endif /* XFree86LOADER */

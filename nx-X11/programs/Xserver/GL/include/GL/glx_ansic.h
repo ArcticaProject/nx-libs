@@ -55,9 +55,6 @@
 
 #ifdef XFree86Server
 
-#ifdef XFree86LOADER
-#include "xf86_ansic.h"
-#endif
 #ifndef assert
 #define assert(a)
 #endif
@@ -111,4 +108,3 @@
 #define __glXAtoi(a)			atoi(a)
 
 #endif /* _glx_ansic_h_ */
-

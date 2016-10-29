@@ -28,6 +28,8 @@ in this Software without prior written authorization from The Open Group.
 #include <dix-config.h>
 #endif
 
+#include <stdlib.h>
+
 #include <nx-X11/X.h>
 #include <nx-X11/Xproto.h>
 #include "misc.h"
@@ -43,9 +45,6 @@ in this Software without prior written authorization from The Open Group.
 #include "protocol-versions.h"
 #include "regionstr.h"
 #include "gcstruct.h"
-#ifdef EXTMODULE
-#include "xf86_ansic.h"
-#endif
 
 typedef	RegionPtr (*CreateDftPtr)(
 	WindowPtr /* pWin */

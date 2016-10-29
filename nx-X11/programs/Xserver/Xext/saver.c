@@ -53,11 +53,7 @@ in this Software without prior written authorization from the X Consortium.
 #endif
 
 
-#ifdef IN_MODULE
-#include <xf86_ansic.h>
-#else
 #include <stdio.h>
-#endif
 
 #include "protocol-versions.h"
 

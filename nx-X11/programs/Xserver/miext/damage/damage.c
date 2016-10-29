@@ -26,6 +26,8 @@
 #include <dix-config.h>
 #endif
 
+#include <stdlib.h>
+
 #include    <nx-X11/X.h>
 #include    "scrnintstr.h"
 #include    "windowstr.h"

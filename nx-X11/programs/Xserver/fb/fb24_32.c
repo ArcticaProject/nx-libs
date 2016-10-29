@@ -27,11 +27,7 @@
 #include <dix-config.h>
 #endif
 
-#ifdef XFree86LOADER
-#include "xf86.h"
-#include "xf86_ansic.h"
-#endif
-
+#include <string.h>
 #include "fb.h"
 
 /* X apps don't like 24bpp images, this code exposes 32bpp images */
