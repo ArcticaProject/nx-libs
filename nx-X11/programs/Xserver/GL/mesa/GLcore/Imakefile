@@ -1,7 +1,3 @@
-#if DoLoadableServer
-#define IHaveModules
-#endif
-
 #include <Server.tmpl>
 
 #define NeedAllMesaSrc
@@ -29,11 +25,6 @@
 #include "../X/Imakefile.inc"
 #include "../Imakefile.inc"
 
-#ifdef IHaveModules
-        MSRCS = GLcoremodule.c
-        MOBJS = GLcoremodule.o
-#endif
-
         XOBJS = ../X/?*.o
 
          OBJS = $(COREMESAOBJS) $(MOBJS)
@@ -50,16 +41,8 @@
 
       DEFINES = $(GLX_DEFINES)
 
-#ifdef IHaveModules
-ModuleObjectRule()
-
-DepLibraryModuleTarget(GLcore, $(DONES) $(OBJS),$(OBJS) $(XOBJS))
-InstallLibraryModule(GLcore,$(MODULEDIR),extensions)
-
-#else
 NormalDepLibraryTarget(GLcore, $(DONES) $(OBJS), $(OBJS) $(XOBJS))
 NormalLibraryObjectRule()
-#endif
 
 InstallDriverSDKLibraryModule(GLcore,$(DRIVERSDKMODULEDIR),extensions)
 

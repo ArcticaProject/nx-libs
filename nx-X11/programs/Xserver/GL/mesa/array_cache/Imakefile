@@ -1,7 +1,3 @@
-#if DoLoadableServer
-#define IHaveModules
-#endif
-
 #include <Server.tmpl>
 
 #define NeedAllMesaSrc
@@ -25,11 +21,7 @@
 
       DEFINES = $(GLX_DEFINES) /*-DUSE_X86_ASM*/ /*-DUSE_SPARC_ASM*/
 
-#ifdef IHaveModules
-ModuleObjectRule()
-#else
 NormalLibraryObjectRule()
-#endif
 
 SubdirLibraryRule($(OBJS))
 

@@ -61,13 +61,8 @@ INSTPGMFLAGS =
 #define AllFBLibs PreFbLibs $(FB) PostFbLibs
 
 #if BuildGlxExt
-# if DoLoadableServer
       GLXLIB = GL/glx/ModuleLibraryTargetName(glx) \
                GL/mesa/GLcore/ModuleLibraryTargetName(GLcore)
-# else
-      GLXLIB = GL/glx/ModuleLibraryTargetName(glx) \
-               GL/mesa/GLcore/ModuleLibraryTargetName(GLcore)
-# endif
       GLXDIR = GL
       GLXEXT = $(GLXLIB)
 #endif
@@ -101,14 +96,8 @@ INSTPGMFLAGS =
 #ifdef SiteExtensionDirs
     SITEEXTDIRS = SiteExtensionDirs
 #endif
-#if DoLoadableServer && HasDlopen
-          LIBDL = DlLibrary
-#endif
        LIBREGEX = RegexLibrary
 
-#if DoLoadableServer
-    LIBCWRAPPER = os/libcwrapper.o
-#endif
 
 #if BuildRender
       RENDERDIR = render
@@ -130,46 +119,24 @@ INSTPGMFLAGS =
           CWDIR = miext/cw
    COMPOSITEDIR = composite
    COMPOSITELIB = $(COMPOSITEDIR)/libcomposite.a
-#if DoLoadableServer
-             CW = miext/cw/ModuleLibraryTargetName(cw)
-#else
              CW = miext/cw/LibraryTargetName(cw)
 #endif
-#endif
-#if DoLoadableServer
-     EXTENSIONS = $(COMPOSITELIB) $(DAMAGELIB) $(DAMAGE) $(FIXESLIB) $(CW) \
-		  $(OTHEREXTS) $(RANDRLIB) $(RENDERLIB)
-   LOADABLEEXTS = $(MISCEXT) $(DBEEXT) $(RECORDEXT) $(GLXEXT)
-        MISCEXT = Xext/LibraryTargetName(ext)
-      OTHEREXTS = Xext/LibraryTargetName(exts) $(XKBEXT) $(XINPUTEXT) \
-                  $(SITEEXTS)
-#else
      EXTENSIONS = $(COMPOSITELIB) $(DAMAGELIB) $(DAMAGE) $(FIXESLIB) $(CW) \
 		  $(OTHEREXTS) $(GLXEXT) $(RANDRLIB) $(RENDERLIB)
       OTHEREXTS = Xext/LibraryTargetName(ext) $(XKBEXT) $(XINPUTEXT) \
                   $(DBEEXT) $(RECORDEXT) $(SITEEXTS)
-#endif
         EXTDIRS = Xext $(XKBDIR) $(XIDIR) $(GLXDIR) \
                   $(DBEDIR) $(RECORDDIR) $(SITEEXTDIRS) \
                   $(RANDRDIR) $(RENDERDIR) $(XPCONFIGDIR) \
 		  $(FIXESDIR) $(DAMAGEDIR) $(CWDIR) $(COMPOSITEDIR)
              OS = os/LibraryTargetName(os)
         BSDEMUL = $(DEPXBSDLIB)
-#if DoLoadableServer
-             FB = fb/ModuleLibraryTargetName(fb)
-#if (!(defined(NXAgentServer) && NXAgentServer))
-         DAMAGE = miext/damage/ModuleLibraryTargetName(damage)
-#endif
-         SHADOW = miext/shadow/ModuleLibraryTargetName(shadow)
-          LAYER = miext/layer/ModuleLibraryTargetName(layer) 
-#else 
              FB = fb/LibraryTargetName(fb)
 #if (!(defined(NXAgentServer) && NXAgentServer))
          DAMAGE = miext/damage/LibraryTargetName(damage)
 #endif
          SHADOW = miext/shadow/LibraryTargetName(shadow)
           LAYER = miext/layer/LibraryTargetName(layer) 
-#endif
 #if !HasFfs && (defined(mingwArchitecture) || defined(cygwinArchitecture))
              /* Order of libraries is important when linking in mingw or
               * cygwin. libmi.a requires ffs from libdix.a. So it is added
@@ -220,11 +187,11 @@ XCOMM
 #if defined(NXAgentServer) && NXAgentServer
 NXAGENT = nxagent
 #endif
-#if defined(NXWinServer) && NXWinServer && !MakeDllModules
+#if defined(NXWinServer) && NXWinServer
 NXWIN = NXWin
 #endif
 #if (defined(NXAgentServer) && NXAgentServer) || \
-    (!MakeDllModules && defined(NXWinServer) && NXWinServer) 
+    (defined(NXWinServer) && NXWinServer)
 MakeMutex($(NXAGENT) $(NXWIN))
 #endif
 MakeMutex($(STDDIRS) fb)
@@ -568,20 +535,3 @@ ForceSubdirs($(DEPDIRS) $(SUBDIRS))
 
 DEFAULTFONTPATH = DefaultFontPath
 EXTRAMANDEFS = -D__default_font_path__="`echo $(DEFAULTFONTPATH) | sed -e 's/,/, /g'`"
-
-#if MakeDllModules && DoLoadableServer && \
-        (defined(SunArchitecture) && defined(SVR4Architecture))
-XCOMM Hackery for building dlopen-able .so modules on Solaris
-
-AllTarget(linker-deps)
-
-LINKER_DEPS_DIRS = $(SUBDIRS)
-
-XCOMM After everything is built, run through and generate linker dependencies
-linker-deps:
-        RunPerlScript($(XF86SRC)/os-support/sunos/find_deps.pl,-R ProjectRoot $(LINKER_DEPS_DIRS))
-	for i in $(LINKER_DEPS_DIRS) ; do \
-	  echo "relinking with dependency flags in $(CURRENT_DIR)/$$i..."; \
-                MakeNamedTargetSubdir($$i,NullParameter,all) ; \
-        done
-#endif

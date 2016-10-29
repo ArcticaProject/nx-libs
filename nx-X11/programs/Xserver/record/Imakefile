@@ -1,14 +1,8 @@
        NULL =
 
-#if DoLoadableServer
-#define IHaveSubdirs
-#endif
 
 #include <Server.tmpl>
 
-#if DoLoadableServer
-    SUBDIRS = module
-#endif
        SRCS = record.c set.c
        OBJS = record.o set.o
    INCLUDES = -I../include -I$(XINCLUDESRC) -I$(EXTINCSRC) -I$(SERVERSRC)/Xext `pkg-config --cflags-only-I pixman-1`
@@ -28,9 +22,5 @@ NormalLibraryTarget(record,$(OBJS))
 LintLibraryTarget(record,$(SRCS))
 NormalLintTarget($(SRCS))
 
-#if DoLoadableServer
-MakeSubdirs($(SUBDIRS))
-DependSubdirs($(SUBDIRS))
-#endif
 
 DependTarget()

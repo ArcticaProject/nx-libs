@@ -36,12 +36,8 @@ CBRT_OBJ = cbrt.o
 FFS_DEFINES = -DHAS_FFS
 #endif
 
-#if DoLoadableServer
-EXTRAMIINITEXTOBJ = miinitext.o
-#else
 MIINITEXTSRC = miinitext.c
 MIINITEXTOBJ = miinitext.o
-#endif
 
 #if (!(defined(NXAgentServer) && NXAgentServer))
 NXAGENT_SKIP_SRCS =                     \

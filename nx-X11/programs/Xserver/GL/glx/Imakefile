@@ -1,13 +1,5 @@
 NULL =
 
-#if DoLoadableServer
-# if !BuildModuleInSubdir
-#  define IHaveModules
-# elif !defined(IHaveModules)
-#  define IHaveSubdirs
-SUBDIRS = module
-# endif
-#endif
 
 /* Large PIC tables needed for SPARC builds */
 #if defined(sparc) || defined(SparcArchitecture)
@@ -131,10 +123,6 @@ XCOMM add DEBUG to the define in ../mesa/src/X/xf86glx.c
                 $(NX_DEFINES)		\
                 $(NULL)
 
-#ifdef IHaveModules
-ModuleObjectRule()
-LibraryModuleTarget(glx,$(OBJS))
-#else
 NormalLibraryObjectRule()
 NormalLibraryTarget(glx,$(OBJS))
 #if defined(GlxUseWindows) && GlxUseWindows
@@ -144,7 +132,6 @@ includes::
 	MakeDir(stdcall)
 SpecialObjectRule(stdcall/%.o,%.c,-DUSE_OPENGL32 -o $@)
 NormalLibraryTarget(glx_stdcall,$(foreach obj,$(OBJS), stdcall/$(obj)))
-#endif
 #endif
 SubdirLibraryRule($(OBJS))
 
