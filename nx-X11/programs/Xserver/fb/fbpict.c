@@ -34,7 +34,6 @@
 #include "picturestr.h"
 #include "mipict.h"
 #include "fbpict.h"
-#include "fbmmx.h"
 
 typedef void	(*CompositeFunc) (CARD8      op,
 				  PicturePtr pSrc,
@@ -850,14 +849,6 @@ fbComposite (CARD8      op,
     int		    x_msk, y_msk, x_src, y_src, x_dst, y_dst;
     int		    w, h, w_this, h_this;
 
-#ifdef USE_MMX
-    static Bool mmx_setup = FALSE;
-    if (!mmx_setup) {
-        fbComposeSetupMMX();
-        mmx_setup = TRUE;
-    }
-#endif
-        
     xDst += pDst->pDrawable->x;
     yDst += pDst->pDrawable->y;
     if (pSrc->pDrawable) {
@@ -879,13 +870,6 @@ fbComposite (CARD8      op,
         && (!pMask || pMask->filter != PictFilterConvolution))
     switch (op) {
     case PictOpSrc:
-#ifdef USE_MMX
-	if (!pMask && pSrc->format == pDst->format &&
-	    pSrc->format != PICT_a8 && pSrc->pDrawable != pDst->pDrawable)
-	{
-	    func = fbCompositeCopyAreammx;
-	}
-#endif
 	break;
     case PictOpOver:
 	if (pMask)
@@ -901,12 +885,7 @@ fbComposite (CARD8      op,
 			switch (pDst->format) {
 			case PICT_r5g6b5:
 			case PICT_b5g6r5:
-#ifdef USE_MMX
-			    if (fbHaveMMX())
-				func = fbCompositeSolidMask_nx8x0565mmx;
-			    else
-#endif
-				func = fbCompositeSolidMask_nx8x0565;
+			    func = fbCompositeSolidMask_nx8x0565;
 			    break;
 			case PICT_r8g8b8:
 			case PICT_b8g8r8:
@@ -916,12 +895,7 @@ fbComposite (CARD8      op,
 			case PICT_x8r8g8b8:
 			case PICT_a8b8g8r8:
 			case PICT_x8b8g8r8:
-#ifdef USE_MMX
-			    if (fbHaveMMX())
-				func = fbCompositeSolidMask_nx8x8888mmx;
-			    else
-#endif
-				func = fbCompositeSolidMask_nx8x8888;
+			    func = fbCompositeSolidMask_nx8x8888;
 			    break;
 			}
 			break;
@@ -930,20 +904,10 @@ fbComposite (CARD8      op,
 			    switch (pDst->format) {
 			    case PICT_a8r8g8b8:
 			    case PICT_x8r8g8b8:
-#ifdef USE_MMX
-				if (fbHaveMMX())
-				    func = fbCompositeSolidMask_nx8888x8888Cmmx;
-				else
-#endif
-				    func = fbCompositeSolidMask_nx8888x8888C;
+				func = fbCompositeSolidMask_nx8888x8888C;
 				break;
 			    case PICT_r5g6b5:
-#ifdef USE_MMX
-				if (fbHaveMMX())
-				    func = fbCompositeSolidMask_nx8888x0565Cmmx;
-				else
-#endif
-				    func = fbCompositeSolidMask_nx8888x0565C;
+				func = fbCompositeSolidMask_nx8888x0565C;
 				break;
 			    }
 			}
@@ -953,20 +917,10 @@ fbComposite (CARD8      op,
 			    switch (pDst->format) {
 			    case PICT_a8b8g8r8:
 			    case PICT_x8b8g8r8:
-#ifdef USE_MMX
-				if (fbHaveMMX())
-				    func = fbCompositeSolidMask_nx8888x8888Cmmx;
-				else
-#endif
-				    func = fbCompositeSolidMask_nx8888x8888C;
+				func = fbCompositeSolidMask_nx8888x8888C;
 				break;
 			    case PICT_b5g6r5:
-#ifdef USE_MMX
-				if (fbHaveMMX())
-				    func = fbCompositeSolidMask_nx8888x0565Cmmx;
-				else
-#endif
-				    func = fbCompositeSolidMask_nx8888x0565C;
+				func = fbCompositeSolidMask_nx8888x0565C;
 				break;
 			    }
 			}
@@ -1003,16 +957,8 @@ fbComposite (CARD8      op,
 			    switch (pDst->format) {
 			    case PICT_a8r8g8b8:
 			    case PICT_x8r8g8b8:
-#ifdef USE_MMX
-				if (fbHaveMMX())
-				    func = fbCompositeSrc_8888RevNPx8888mmx;
-#endif
 				break;
 			    case PICT_r5g6b5:
-#ifdef USE_MMX
-				if (fbHaveMMX())
-				    func = fbCompositeSrc_8888RevNPx0565mmx;
-#endif
 				break;
 			    }
 			    break;
@@ -1025,16 +971,8 @@ fbComposite (CARD8      op,
 			    switch (pDst->format) {
 			    case PICT_a8b8g8r8:
 			    case PICT_x8b8g8r8:
-#ifdef USE_MMX
-				if (fbHaveMMX())
-				    func = fbCompositeSrc_8888RevNPx8888mmx;
-#endif
 				break;
 			    case PICT_r5g6b5:
-#ifdef USE_MMX
-				if (fbHaveMMX())
-				    func = fbCompositeSrc_8888RevNPx0565mmx;
-#endif
 				break;
 			    }
 			    break;
@@ -1054,10 +992,6 @@ fbComposite (CARD8      op,
 			    pDst->format == PICT_x8r8g8b8 &&
 			    pMask->format == PICT_a8)
 			{
-#ifdef USE_MMX
-			    if (fbHaveMMX())
-				func = fbCompositeSrc_8888x8x8888mmx;
-#endif
 			}
 		    }
 		}
@@ -1075,22 +1009,8 @@ fbComposite (CARD8      op,
 		    switch (pDst->format) {
 		    case PICT_a8r8g8b8:
 		    case PICT_x8r8g8b8:
-#ifdef USE_MMX
-			if (fbHaveMMX())
-			{
-			    srcRepeat = FALSE;
-			    func = fbCompositeSolid_nx8888mmx;
-			}
-#endif
 			break;
 		    case PICT_r5g6b5:
-#ifdef USE_MMX
-			if (fbHaveMMX())
-			{
-			    srcRepeat = FALSE;
-			    func = fbCompositeSolid_nx0565mmx;
-			}
-#endif
 			break;
 		    }
 		    break;
@@ -1103,12 +1023,7 @@ fbComposite (CARD8      op,
 		    switch (pDst->format) {
 		    case PICT_a8r8g8b8:
 		    case PICT_x8r8g8b8:
-#ifdef USE_MMX
-			if (fbHaveMMX())
-			    func = fbCompositeSrc_8888x8888mmx;
-			else
-#endif
-			    func = fbCompositeSrc_8888x8888;
+			func = fbCompositeSrc_8888x8888;
 			break;
 		    case PICT_r8g8b8:
 			func = fbCompositeSrc_8888x0888;
@@ -1122,20 +1037,12 @@ fbComposite (CARD8      op,
 		    switch (pDst->format) {
 		    case PICT_a8r8g8b8:
 		    case PICT_x8r8g8b8:
-#ifdef USE_MMX
-			if (fbHaveMMX())
-			    func = fbCompositeCopyAreammx;
-#endif
 			break;
 		    }
 		case PICT_x8b8g8r8:
 		    switch (pDst->format) {
 		    case PICT_a8b8g8r8:
 		    case PICT_x8b8g8r8:
-#ifdef USE_MMX
-			if (fbHaveMMX())
-			    func = fbCompositeCopyAreammx;
-#endif
 			break;
 		    }
 		    break;
@@ -1143,12 +1050,7 @@ fbComposite (CARD8      op,
 		    switch (pDst->format) {
 		    case PICT_a8b8g8r8:
 		    case PICT_x8b8g8r8:
-#ifdef USE_MMX
-			if (fbHaveMMX())
-			    func = fbCompositeSrc_8888x8888mmx;
-			else
-#endif
-			    func = fbCompositeSrc_8888x8888;
+			func = fbCompositeSrc_8888x8888;
 			break;
 		    case PICT_b8g8r8:
 			func = fbCompositeSrc_8888x0888;
@@ -1183,36 +1085,21 @@ fbComposite (CARD8      op,
 	    case PICT_a8r8g8b8:
 		switch (pDst->format) {
 		case PICT_a8r8g8b8:
-#ifdef USE_MMX
-		    if (fbHaveMMX())
-			func = fbCompositeSrcAdd_8888x8888mmx;
-		    else
-#endif
-			func = fbCompositeSrcAdd_8888x8888;
+		    func = fbCompositeSrcAdd_8888x8888;
 		    break;
 		}
 		break;
 	    case PICT_a8b8g8r8:
 		switch (pDst->format) {
 		case PICT_a8b8g8r8:
-#ifdef USE_MMX
-		    if (fbHaveMMX())
-			func = fbCompositeSrcAdd_8888x8888mmx;
-		    else
-#endif
-			func = fbCompositeSrcAdd_8888x8888;
+		    func = fbCompositeSrcAdd_8888x8888;
 		    break;
 		}
 		break;
 	    case PICT_a8:
 		switch (pDst->format) {
 		case PICT_a8:
-#ifdef USE_MMX
-		    if (fbHaveMMX())
-			func = fbCompositeSrcAdd_8000x8000mmx;
-		    else
-#endif
-			func = fbCompositeSrcAdd_8000x8000;
+		    func = fbCompositeSrcAdd_8000x8000;
 		    break;
 		}
 		break;
@@ -1336,121 +1223,3 @@ fbPictureInit (ScreenPtr pScreen, PictFormatPtr formats, int nformats)
 
     return TRUE;
 }
-
-#ifdef USE_MMX
-/* The CPU detection code needs to be in a file not compiled with
- * "-mmmx -msse", as gcc would generate CMOV instructions otherwise
- * that would lead to SIGILL instructions on old CPUs that don't have
- * it.
- */
-#if !defined(__amd64__) && !defined(__x86_64__)
-
-enum CPUFeatures {
-    NoFeatures = 0,
-    MMX = 0x1,
-    MMX_Extensions = 0x2, 
-    SSE = 0x6,
-    SSE2 = 0x8,
-    CMOV = 0x10
-};
-
-static unsigned int detectCPUFeatures(void) {
-    unsigned int result;
-    char vendor[13];
-    vendor[0] = 0;
-    vendor[12] = 0;
-    /* see p. 118 of amd64 instruction set manual Vol3 */
-    /* We need to be careful about the handling of %ebx and
-     * %esp here. We can't declare either one as clobbered
-     * since they are special registers (%ebx is the "PIC
-     * register" holding an offset to global data, %esp the
-     * stack pointer), so we need to make sure they have their+      * original values when we access the output operands.
-     */
-    __asm__ ("pushf\n"
-             "pop %%eax\n"
-             "mov %%eax, %%ecx\n"
-             "xor $0x00200000, %%eax\n"
-             "push %%eax\n"
-             "popf\n"
-             "pushf\n"
-             "pop %%eax\n"
-             "mov $0x0, %%edx\n"
-             "xor %%ecx, %%eax\n"
-             "jz 1\n"
-
-             "mov $0x00000000, %%eax\n"
-	     "push %%ebx\n"
-             "cpuid\n"
-             "mov %%ebx, %%eax\n"
-	     "pop %%ebx\n"
-	     "mov %%eax, %1\n"
-             "mov %%edx, %2\n"
-             "mov %%ecx, %3\n"
-             "mov $0x00000001, %%eax\n"
-	     "push %%ebx\n"
-             "cpuid\n"
-	     "pop %%ebx\n"
-             "1:\n"
-             "mov %%edx, %0\n"
-             : "=r" (result), 
-               "=m" (vendor[0]), 
-               "=m" (vendor[4]), 
-               "=m" (vendor[8])
-             :
-             : "%eax", "%ecx", "%edx"
-        );
-
-    unsigned int features = 0;
-    if (result) {
-        /* result now contains the standard feature bits */
-        if (result & (1 << 15))
-            features |= CMOV;
-        if (result & (1 << 23))
-            features |= MMX;
-        if (result & (1 << 25))
-            features |= SSE;
-        if (result & (1 << 26))
-            features |= SSE2;
-        if ((result & MMX) && !(result & SSE) && (strcmp(vendor, "AuthenticAMD") == 0)) {
-            /* check for AMD MMX extensions */
-
-            unsigned int result;            
-            __asm__("push %%ebx\n"
-                    "mov $0x80000000, %%eax\n"
-                    "cpuid\n"
-                    "xor %%edx, %%edx\n"
-                    "cmp $0x1, %%eax\n"
-                    "jge 2\n"
-                    "mov $0x80000001, %%eax\n"
-                    "cpuid\n"
-                    "2:\n"
-                    "pop %%ebx\n"
-                    "mov %%edx, %0\n"
-                    : "=r" (result)
-                    :
-                    : "%eax", "%ecx", "%edx"
-                );
-            if (result & (1<<22))
-                features |= MMX_Extensions;
-        }
-    }
-    return features;
-}
-
-Bool
-fbHaveMMX (void)
-{
-    static Bool initialized = FALSE;
-    static Bool mmx_present;
-
-    if (!initialized)
-    {
-        unsigned int features = detectCPUFeatures();
-	mmx_present = (features & (MMX|MMX_Extensions)) == (MMX|MMX_Extensions);
-        initialized = TRUE;
-    }
-    
-    return mmx_present;
-}
-#endif /* __amd64__ */
-#endif
