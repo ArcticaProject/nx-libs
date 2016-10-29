@@ -17,6 +17,7 @@ SpecialCObjectRule(fbcopy,fbcopy.c,$(USEMMXOPTIONS))
 #endif
  */
 
+NULL =
 
 #include <Server.tmpl>
 
@@ -74,6 +75,7 @@ SRCS =	$(XFMODSRC) \
 	fb24_32.c \
 	fbpict.c \
 	fbmmx.c \
+	$(NULL)
 
 OBJS =	$(XFMODOBJ) \
 	fbarc.o \
@@ -110,6 +112,7 @@ OBJS =	$(XFMODOBJ) \
 	fb24_32.o \
 	fbpict.o \
 	fbmmx.o \
+	$(NULL)
 
    INCLUDES = -I$(SERVERSRC)/fb -I$(SERVERSRC)/mi -I$(SERVERSRC)/include \
 	      -I$(XINCLUDESRC) \
