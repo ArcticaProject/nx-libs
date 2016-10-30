@@ -49,13 +49,6 @@ INSTPGMFLAGS =
 #define BarePostFbLibs $(XPFBLIBS) $(MI)
 #define PostFbLibs BarePostFbLibs $(EXTENSIONS)
 
-#define CFBLibs PreFbLibs $(CFB) PostFbLibs
-#define CFB4Libs PreFbLibs $(CFB4) PostFbLibs
-#define CFB8Libs PreFbLibs $(CFB8) PostFbLibs
-#define CFB16Libs PreFbLibs $(CFB16) PostFbLibs
-#define CFB24Libs PreFbLibs $(CFB24) PostFbLibs
-#define CFB32Libs PreFbLibs $(CFB32) PostFbLibs
-
 #if !BuildXinerama
 #define FbPostFbLibs $(FB) BarePostFbLibs $(EXTENSIONS)
 #else
@@ -66,7 +59,7 @@ INSTPGMFLAGS =
 
 #define MiExtLibs $(SHADOW)
 
-#define AllFBLibs PreFbLibs $(FB) $(CFB) PostFbLibs
+#define AllFBLibs PreFbLibs $(FB) PostFbLibs
 
 #if BuildGlxExt
 # if DoLoadableServer
@@ -165,25 +158,6 @@ INSTPGMFLAGS =
         BSDEMUL = $(DEPXBSDLIB)
 #if DoLoadableServer
              FB = fb/ModuleLibraryTargetName(fb)
-#if XF8_32Wid
-            CFB = cfb/ModuleLibraryTargetName(cfb) \
-		  cfb16/ModuleLibraryTargetName(cfb16) \
-		  cfb24/ModuleLibraryTargetName(cfb24) \
-		  cfb32/ModuleLibraryTargetName(cfb32)
-#else
-            CFB = cfb/ModuleLibraryTargetName(cfb) \
-		  cfb16/ModuleLibraryTargetName(cfb16) \
-		  cfb32/ModuleLibraryTargetName(cfb32)
-#endif
-           CFB8 = cfb/ModuleLibraryTargetName(cfb)
-           CFB4 = cfb/ModuleLibraryTargetName(cfb) \
-		  cfb4/ModuleLibraryTargetName(cfb4)
-          CFB16 = cfb/ModuleLibraryTargetName(cfb) \
-		  cfb16/ModuleLibraryTargetName(cfb16)
-          CFB24 = cfb/ModuleLibraryTargetName(cfb) \
-		  cfb24/ModuleLibraryTargetName(cfb24)
-          CFB32 = cfb/ModuleLibraryTargetName(cfb) \
-		  cfb32/ModuleLibraryTargetName(cfb32)
 #if (!(defined(NXAgentServer) && NXAgentServer))
          DAMAGE = miext/damage/ModuleLibraryTargetName(damage)
 #endif
@@ -191,25 +165,6 @@ INSTPGMFLAGS =
           LAYER = miext/layer/ModuleLibraryTargetName(layer) 
 #else 
              FB = fb/LibraryTargetName(fb)
-#if XF8_32Wid
-            CFB = cfb16/LibraryTargetName(cfb16) \
-		  cfb24/LibraryTargetName(cfb24) \
-		  cfb32/LibraryTargetName(cfb32) \
-		  cfb/LibraryTargetName(cfb)
-#else
-            CFB = cfb16/LibraryTargetName(cfb16) \
-		  cfb32/LibraryTargetName(cfb32) \
-		  cfb/LibraryTargetName(cfb)
-#endif
-           CFB8 = cfb/LibraryTargetName(cfb)
-           CFB4 = cfb4/LibraryTargetName(cfb4) \
-		  cfb/LibraryTargetName(cfb)
-          CFB16 = cfb16/LibraryTargetName(cfb16) \
-		  cfb/LibraryTargetName(cfb)
-          CFB24 = cfb24/LibraryTargetName(cfb24) \
-		  cfb/LibraryTargetName(cfb)
-          CFB32 = cfb32/LibraryTargetName(cfb32) \
-		  cfb/LibraryTargetName(cfb)
 #if (!(defined(NXAgentServer) && NXAgentServer))
          DAMAGE = miext/damage/LibraryTargetName(damage)
 #endif
@@ -249,11 +204,6 @@ INSTPGMFLAGS =
 #endif
         STDDIRS = include dix os mi $(XPDDXDIR) $(EXTDIRS)
           FBDIR = fb
-        CFB4DIR = cfb4
-        CFB8DIR = cfb
-       CFB16DIR = cfb16
-       CFB24DIR = cfb24
-       CFB32DIR = cfb32
          AFBDIR = afb
 
 XCOMM
@@ -264,23 +214,6 @@ XCOMM
 .c.o:
 
 .s.o:
-
-/*  		  Build rule blocks, add one for each server
- *  
- *  Similarly, its build block should have:
- *  CFB4SUBDIR  = cfb4  (if the server needs 4 bit cfb)
- *  CFB8SUBDIR  = cfb   (8 bit cfb)
- *  CFB16SUBDIR = cfb16 (16 bit cfb)
- *  CFB24SUBDIR = cfb24 (24 bit cfb)
- *  CFB32SUBDIR = cfb32 (32 bit cfb)
- *  
- *  If a server does not need all of the above components, simply
- *  omit the relevant lines from the build block.
- *  
- *  If these guidelines are followed, a make at the top of the server
- *  tree should result in each subdirectory being built only once,
- *  even if multiple servers that share subdirectories are being built.
- */
 
 #if HasParallelMake
 XCOMM
@@ -296,7 +229,7 @@ NXWIN = NXWin
     (!MakeDllModules && defined(NXWinServer) && NXWinServer) 
 MakeMutex($(NXAGENT) $(NXWIN))
 #endif
-MakeMutex($(STDDIRS) fb cfb cfb16 cfb24 cfb32)
+MakeMutex($(STDDIRS) fb)
 #endif
 
 
@@ -613,13 +546,12 @@ ServerTarget(NXWin,$(NXWINDIRS),$(NXWINOBJS), \
 #endif /* NXWinServer */
 #endif
 
-CFBSUBDIRS = $(CFB8SUBDIR) $(CFB16SUBDIR) $(CFB24SUBDIR) $(CFB32SUBDIR)
 MIEXTDIRS = $(SHADOWDIR) $(LAYERDIR) $(ROOTLESSDIR) $(MIDAMAGEDIR)
 IPLANDIRS = $(IPLAN2P2DIR) $(IPLAN2P4DIR) $(IPLAN2P8DIR)
 DDXDIRS = $(DECWSDDXDIR) $(SUNDDXDIR) $(LYNXDDXDIR) \
 	  $(HPDDXDIR) $(XFREE86DDXDIR) \
 	  $(NXAGENTDDXDIR) $(NXWINDDXDIR)
-SUBDIRS = $(STDDIRS) $(CFBSUBDIRS) \
+SUBDIRS = $(STDDIRS) \
 	  $(IPLANDIRS) $(ILBMDIR) $(AFBSUBDIR) \
           $(DDXDIRS) $(FBSUBDIR) $(KDRIVEDIRS) $(MIEXTDIRS)
 
