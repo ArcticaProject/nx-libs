@@ -411,7 +411,6 @@ chmod 755  %{buildroot}%{_libdir}/lib*.so*
 
 #Remove extras, GL, and other unneeded headers
 rm -r %{buildroot}%{_includedir}/GL
-rm -r %{buildroot}%{_includedir}/nx-X11/extensions/XInput.h
 rm -r %{buildroot}%{_includedir}/nx-X11/extensions/XK*.h
 rm -r %{buildroot}%{_includedir}/nx-X11/extensions/*Xv*.h
 rm -r %{buildroot}%{_includedir}/nx-X11/extensions/dpms.h
