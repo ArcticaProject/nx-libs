@@ -38,7 +38,6 @@ HEADERS = \
 	Xproto.h \
 	Xprotostr.h \
 	Xthreads.h \
-	ap_keysym.h \
 	keysym.h \
 	keysymdef.h \
 	$(AU_HEADERS) \
