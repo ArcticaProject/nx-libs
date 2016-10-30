@@ -204,7 +204,6 @@ INSTPGMFLAGS =
 #endif
         STDDIRS = include dix os mi $(XPDDXDIR) $(EXTDIRS)
           FBDIR = fb
-         AFBDIR = afb
 
 XCOMM
 XCOMM This turns off the default rule for compiling .c files because
@@ -552,7 +551,7 @@ DDXDIRS = $(DECWSDDXDIR) $(SUNDDXDIR) $(LYNXDDXDIR) \
 	  $(HPDDXDIR) $(XFREE86DDXDIR) \
 	  $(NXAGENTDDXDIR) $(NXWINDDXDIR)
 SUBDIRS = $(STDDIRS) \
-	  $(IPLANDIRS) $(ILBMDIR) $(AFBSUBDIR) \
+	  $(IPLANDIRS) $(ILBMDIR) \
           $(DDXDIRS) $(FBSUBDIR) $(KDRIVEDIRS) $(MIEXTDIRS)
 
 #if  defined(ServerToInstall) && !defined(OS2Architecture)
