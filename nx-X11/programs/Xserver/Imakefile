@@ -46,20 +46,9 @@ INSTPGMFLAGS =
 #endif
 
 #define PreFbLibs $(DIX) $(OS) $(XPDDX)
-#define PreFbLibsNoFont $(DIX) $(OS)
-#define BarePostFbLibs $(MFB) $(XPFBLIBS) $(MI)
+#define BarePostFbLibs $(XPFBLIBS) $(MI)
 #define PostFbLibs BarePostFbLibs $(EXTENSIONS)
-#define NoMfbBarePostFbLibs $(XPFBLIBS) $(MI)
-#if !BuildXinerama
-#define NoMfbPostFbLibs NoMfbBarePostFbLibs $(EXTENSIONS)
-#else
-#define NoMfbPostFbLibs $(EXTENSIONS) NoMfbBarePostFbLibs $(EXTENSIONS)
-#endif
 
-#define MFBBareLibs PreFbLibs BarePostFbLibs
-#define NoMFBBareLibs PreFbLibs NoMfbBarePostFbLibs
-#define MFBLibs PreFbLibs PostFbLibs
-#define NoMFBLibs PreFbLibs NoMfbPostFbLibs
 #define CFBLibs PreFbLibs $(CFB) PostFbLibs
 #define CFB4Libs PreFbLibs $(CFB4) PostFbLibs
 #define CFB8Libs PreFbLibs $(CFB8) PostFbLibs
@@ -67,9 +56,12 @@ INSTPGMFLAGS =
 #define CFB24Libs PreFbLibs $(CFB24) PostFbLibs
 #define CFB32Libs PreFbLibs $(CFB32) PostFbLibs
 
-#define NoMFBCFBLibs PreFbLibs $(CFB) NoMfbPostFbLibs
-#define NoMFBCFB8Libs PreFbLibs $(CFB8) NoMfbPostFbLibs
-#define FbPostFbLibs  $(FB) NoMfbPostFbLibs
+#if !BuildXinerama
+#define FbPostFbLibs $(FB) BarePostFbLibs $(EXTENSIONS)
+#else
+#define FbPostFbLibs $(FB) $(EXTENSIONS) BarePostFbLibs $(EXTENSIONS)
+#endif
+
 #define FBLibs PreFbLibs FbPostFbLibs
 
 #define MiExtLibs $(SHADOW)
@@ -172,7 +164,6 @@ INSTPGMFLAGS =
              OS = os/LibraryTargetName(os)
         BSDEMUL = $(DEPXBSDLIB)
 #if DoLoadableServer
-            MFB = mfb/ModuleLibraryTargetName(mfb)
              FB = fb/ModuleLibraryTargetName(fb)
 #if XF8_32Wid
             CFB = cfb/ModuleLibraryTargetName(cfb) \
@@ -199,7 +190,6 @@ INSTPGMFLAGS =
          SHADOW = miext/shadow/ModuleLibraryTargetName(shadow)
           LAYER = miext/layer/ModuleLibraryTargetName(layer) 
 #else 
-            MFB = mfb/LibraryTargetName(mfb)
              FB = fb/LibraryTargetName(fb)
 #if XF8_32Wid
             CFB = cfb16/LibraryTargetName(cfb16) \
@@ -259,7 +249,6 @@ INSTPGMFLAGS =
 #endif
         STDDIRS = include dix os mi $(XPDDXDIR) $(EXTDIRS)
           FBDIR = fb
-         MFBDIR = mfb
         CFB4DIR = cfb4
         CFB8DIR = cfb
        CFB16DIR = cfb16
@@ -278,8 +267,6 @@ XCOMM
 
 /*  		  Build rule blocks, add one for each server
  *  
- *  If a server needs mfb, its build block should have a line like:
- *  MFBSUBDIR = mfb
  *  Similarly, its build block should have:
  *  CFB4SUBDIR  = cfb4  (if the server needs 4 bit cfb)
  *  CFB8SUBDIR  = cfb   (8 bit cfb)
@@ -309,7 +296,7 @@ NXWIN = NXWin
     (!MakeDllModules && defined(NXWinServer) && NXWinServer) 
 MakeMutex($(NXAGENT) $(NXWIN))
 #endif
-MakeMutex($(STDDIRS) mfb fb cfb cfb16 cfb24 cfb32)
+MakeMutex($(STDDIRS) fb cfb cfb16 cfb24 cfb32)
 #endif
 
 
@@ -326,7 +313,7 @@ NXAGENTDDXDIR = hw/nxagent
 NXAGENTDDXDIR = hw
 #endif
 
-NXAGENTDIRS = $(STDDIRS) $(MFBDIR) $(FBDIR) $(MIDAMAGEDIR) $(NXAGENTDDXDIR) $(DEPDIRS)
+NXAGENTDIRS = $(STDDIRS) $(FBDIR) $(MIDAMAGEDIR) $(NXAGENTDDXDIR) $(DEPDIRS)
 
 NX_XCOMP_HEADERS = \
               ../../../nxcomp/NXalert.h         \
@@ -632,7 +619,7 @@ IPLANDIRS = $(IPLAN2P2DIR) $(IPLAN2P4DIR) $(IPLAN2P8DIR)
 DDXDIRS = $(DECWSDDXDIR) $(SUNDDXDIR) $(LYNXDDXDIR) \
 	  $(HPDDXDIR) $(XFREE86DDXDIR) \
 	  $(NXAGENTDDXDIR) $(NXWINDDXDIR)
-SUBDIRS = $(STDDIRS) $(MFBSUBDIR) $(CFBSUBDIRS) \
+SUBDIRS = $(STDDIRS) $(CFBSUBDIRS) \
 	  $(IPLANDIRS) $(ILBMDIR) $(AFBSUBDIR) \
           $(DDXDIRS) $(FBSUBDIR) $(KDRIVEDIRS) $(MIEXTDIRS)
 
