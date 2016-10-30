@@ -27,17 +27,7 @@ RELEASE = XOrgReleaseString
 #define OSName Unknown Operating System!
 #endif
 
-#if !BuildServersOnly
-#ifndef Win32Architecture
-#if BuildDocs
-        DOCSDIR = doc
-#endif
-        NLSSUBDIR = nls
-#endif
-#endif
-
-        SUBDIRS = include config lib $(NLSSUBDIR) \
-                  programs $(FONTSDIR) $(DOCSDIR)
+        SUBDIRS = include config lib programs
   LNINSTALLDIRS = lib
 
 #if HasParallelMake

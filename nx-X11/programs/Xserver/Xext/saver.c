@@ -686,7 +686,6 @@ ProcScreenSaverQueryVersion (client)
     register ClientPtr	client;
 {
     xScreenSaverQueryVersionReply	rep;
-    register int		n;
 
     REQUEST_SIZE_MATCH (xScreenSaverQueryVersionReq);
     rep.type = X_Reply;
@@ -708,7 +707,6 @@ ProcScreenSaverQueryInfo (client)
 {
     REQUEST(xScreenSaverQueryInfoReq);
     xScreenSaverQueryInfoReply	rep;
-    register int		n;
     ScreenSaverStuffPtr		pSaver;
     DrawablePtr			pDraw;
     CARD32			lastInput;
@@ -1320,7 +1318,6 @@ SProcScreenSaverQueryVersion (client)
     ClientPtr	client;
 {
     REQUEST(xScreenSaverQueryVersionReq);
-    int	    n;
 
     swaps (&stuff->length);
     REQUEST_SIZE_MATCH(xScreenSaverQueryVersionReq);
@@ -1332,7 +1329,6 @@ SProcScreenSaverQueryInfo (client)
     ClientPtr	client;
 {
     REQUEST(xScreenSaverQueryInfoReq);
-    int	    n;
 
     swaps (&stuff->length);
     REQUEST_SIZE_MATCH(xScreenSaverQueryInfoReq);
@@ -1345,7 +1341,6 @@ SProcScreenSaverSelectInput (client)
     ClientPtr	client;
 {
     REQUEST(xScreenSaverSelectInputReq);
-    int	    n;
 
     swaps (&stuff->length);
     REQUEST_SIZE_MATCH(xScreenSaverSelectInputReq);
@@ -1359,7 +1354,6 @@ SProcScreenSaverSetAttributes (client)
     ClientPtr	client;
 {
     REQUEST(xScreenSaverSetAttributesReq);
-    int	    n;
 
     swaps (&stuff->length);
     REQUEST_AT_LEAST_SIZE(xScreenSaverSetAttributesReq);
@@ -1380,7 +1374,6 @@ SProcScreenSaverUnsetAttributes (client)
     ClientPtr	client;
 {
     REQUEST(xScreenSaverUnsetAttributesReq);
-    int	    n;
 
     swaps (&stuff->length);
     REQUEST_SIZE_MATCH(xScreenSaverUnsetAttributesReq);
