@@ -537,7 +537,6 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %{_includedir}/nx-X11/Xproto.h
 %{_includedir}/nx-X11/Xprotostr.h
 %{_includedir}/nx-X11/Xthreads.h
-%{_includedir}/nx-X11/ap_keysym.h
 %{_includedir}/nx-X11/keysym.h
 %{_includedir}/nx-X11/keysymdef.h
 %{_includedir}/nx-X11/extensions/Xdbeproto.h
