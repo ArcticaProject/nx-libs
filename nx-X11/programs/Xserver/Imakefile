@@ -336,8 +336,7 @@ NX_XCOMP_HEADERS = \
               ../../../nxcomp/NXvars.h
 
 NX_XCOMPEXT_HEADERS =                           \
-              ../../../nxcompext/NXlib.h        \
-              ../../../nxcompext/NXlibint.h
+              ../../../nxcompext/NXlib.h
 
 NX_XCOMPSHAD_HEADERS =                          \
               ../../../nxcompshad/Shadow.h

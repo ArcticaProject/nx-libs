@@ -488,7 +488,6 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %defattr(-,root,root)
 %_libdir/libXcompext.so
 %{_includedir}/nx/NXlib.h
-%{_includedir}/nx/NXlibint.h
 %{_libdir}/pkgconfig/nxcompext.pc
 
 %files -n libXcompext3
