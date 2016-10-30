@@ -200,7 +200,6 @@ uninstall.lib:
 	$(RM_FILE) $(DESTDIR)${libdir}/$(LIBLOAD)
 	$(RM_FILE) $(DESTDIR)${libdir}/$(LIBSHARED)
 	$(RM_FILE) $(DESTDIR)${includedir}/nx/NXlib.h
-	$(RM_FILE) $(DESTDIR)${includedir}/nx/NXlibint.h
 	$(RM_FILE) $(DESTDIR)${pkgconfigdir}/nxcompext.pc
 	echo "Running ldconfig tool, this may take a while..." && ldconfig || true
 
