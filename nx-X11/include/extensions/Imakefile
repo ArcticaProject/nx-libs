@@ -8,8 +8,8 @@ SCREENSAVERHEADERS = saver.h saverproto.h scrnsaver.h
 XF86BIGFONTHEADERS = xf86bigfont.h xf86bigfproto.h
 #endif
 #if BuildXvExt
-XVHEADERS = Xv.h Xvlib.h Xvproto.h
-XVMCHEADERS = XvMC.h XvMClib.h XvMCproto.h vldXvMC.h
+XVHEADERS = Xv.h Xvproto.h
+XVMCHEADERS = XvMC.h XvMCproto.h
 #endif
 #if BuildXinerama
 XINERAMAHEADERS = panoramiXext.h panoramiXproto.h
@@ -80,7 +80,4 @@ InstallDriverSDKNonExecFile(dpms.h,$(DRIVERSDKINCLUDEDIR)/extensions)
 InstallDriverSDKNonExecFile(renderproto.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(Xv.h,$(DRIVERSDKINCLUDEDIR)/extensions)
 InstallDriverSDKNonExecFile(XvMC.h,$(DRIVERSDKINCLUDEDIR))
-InstallDriverSDKNonExecFile(vldXvMC.h,$(DRIVERSDKINCLUDEDIR))
-InstallDriverSDKNonExecFile(Xvlib.h,$(DRIVERSDKINCLUDEDIR)/extensions)
 InstallDriverSDKNonExecFile(Xv.h,$(DRIVERSDKINCLUDEDIR)/X11/extensions)
-InstallDriverSDKNonExecFile(Xvlib.h,$(DRIVERSDKINCLUDEDIR)/X11/extensions)
