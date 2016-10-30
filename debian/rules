@@ -28,7 +28,6 @@ override_dh_install:
 
 	# remove extras, GL, and other unneeded headers
 	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/GL/
-	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/extensions/XInput.h
 	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/extensions/XK*.h
 	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/extensions/*Xv*.h
 	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/nx-X11/extensions/XRes*.h
