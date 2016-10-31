@@ -1,4 +1,3 @@
-
 #include "../../Xi18nLib.conf"
 
  EXTRA_INCLUDES = -I../../..

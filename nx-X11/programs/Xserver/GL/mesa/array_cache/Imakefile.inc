@@ -1,5 +1,3 @@
-XCOMM $XFree86: xc/lib/GL/mesa/src/array_cache/Imakefile.inc,v 1.1tsi Exp $
-
 MESAACBUILDDIR = MesaACBuildDir
 
   MESA_AC_SRCS = $(MESAACBUILDDIR)ac_context.c \

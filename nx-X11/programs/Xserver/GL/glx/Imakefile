@@ -1,5 +1,3 @@
-XCOMM $XFree86: xc/programs/Xserver/GL/glx/Imakefile,v 1.11 2004/01/28 18:11:50 alanh Exp $
-
 NULL =
 
 #if DoLoadableServer

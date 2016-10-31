@@ -1,5 +1,3 @@
-XCOMM $Xorg: Imakefile,v 1.3 2000/08/17 19:46:44 cpqbld Exp $
-
 #define IncSubdir nx-X11
 
 all::
