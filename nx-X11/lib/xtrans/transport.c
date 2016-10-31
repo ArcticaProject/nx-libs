@@ -47,17 +47,18 @@ from The Open Group.
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-
-#ifdef XSERV_t
-#include "os.h"
-#else
 #include <stdlib.h>
-#endif
 
 #define XTRANS_TRANSPORT_C  /* used to flag Xtransint.h that it's being used
 			       here, not just #included in another file */
 
 #include "Xtransint.h"
+
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wformat-nonliteral"
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
 
 #ifdef LOCALCONN
 #include "Xtranslcl.c"
@@ -67,3 +68,7 @@ from The Open Group.
 #endif
 #include "Xtrans.c"
 #include "Xtransutil.c"
+
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
