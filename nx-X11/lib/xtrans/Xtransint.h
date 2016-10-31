@@ -68,7 +68,7 @@ from The Open Group.
  * message.
  */
 
-#ifndef XTRANSDEBUG
+#if !defined(XTRANSDEBUG) && defined(XTRANS_TRANSPORT_C)
 #  define XTRANSDEBUG 1
 #endif
 
@@ -77,6 +77,10 @@ from The Open Group.
 #endif
 
 #include "Xtrans.h"
+
+#ifndef _X_UNUSED  /* Defined in Xfuncproto.h in xproto >= 7.0.22 */
+# define _X_UNUSED  /* */
+#endif
 
 #ifdef XTRANSDEBUG
 # include <stdio.h>
@@ -94,7 +98,7 @@ from The Open Group.
  * to avoid a race condition. JKJ (6/5/97)
  */
 
-# if defined(_POSIX_SOURCE) || defined(USG) || defined(SVR4) || defined(__SCO__)
+# if defined(_POSIX_SOURCE) || defined(USG) || defined(SVR4) || defined(__SVR4) || defined(__SCO__)
 #  ifndef NEED_UTSNAME
 #   define NEED_UTSNAME
 #  endif
@@ -119,6 +123,16 @@ from The Open Group.
 #define X_TCP_PORT	6000
 #endif
 
+#if XTRANS_SEND_FDS
+
+struct _XtransConnFd {
+    struct _XtransConnFd   *next;
+    int                    fd;
+    int                    do_close;
+};
+
+#endif
+
 struct _XtransConnInfo {
     struct _Xtransport     *transptr;
     int		index;
@@ -131,33 +145,35 @@ struct _XtransConnInfo {
     int		addrlen;
     char	*peeraddr;
     int		peeraddrlen;
+    struct _XtransConnFd        *recv_fds;
+    struct _XtransConnFd        *send_fds;
 };
 
 #define XTRANS_OPEN_COTS_CLIENT       1
 #define XTRANS_OPEN_COTS_SERVER       2
 
 typedef struct _Xtransport {
-    char	*TransName;
+    const char	*TransName;
     int		flags;
 
 #ifdef TRANS_CLIENT
 
     XtransConnInfo (*OpenCOTSClient)(
 	struct _Xtransport *,	/* transport */
-	char *,			/* protocol */
-	char *,			/* host */
-	char *			/* port */
+	const char *,		/* protocol */
+	const char *,		/* host */
+	const char *		/* port */
     );
 
 #endif /* TRANS_CLIENT */
 
 #ifdef TRANS_SERVER
-    char **	nolisten;
+    const char **	nolisten;
     XtransConnInfo (*OpenCOTSServer)(
 	struct _Xtransport *,	/* transport */
-	char *,			/* protocol */
-	char *,			/* host */
-	char *			/* port */
+	const char *,		/* protocol */
+	const char *,		/* host */
+	const char *		/* port */
     );
 
 #endif /* TRANS_SERVER */
@@ -167,7 +183,7 @@ typedef struct _Xtransport {
     XtransConnInfo (*ReopenCOTSServer)(
 	struct _Xtransport *,	/* transport */
         int,			/* fd */
-        char *			/* port */
+        const char *		/* port */
     );
 
 #endif /* TRANS_REOPEN */
@@ -185,7 +201,7 @@ typedef struct _Xtransport {
 
     int	(*CreateListener)(
 	XtransConnInfo,		/* connection */
-	char *,			/* port */
+	const char *,		/* port */
 	unsigned int		/* flags */
     );
 
@@ -204,8 +220,8 @@ typedef struct _Xtransport {
 
     int	(*Connect)(
 	XtransConnInfo,		/* connection */
-	char *,			/* host */
-	char *			/* port */
+	const char *,		/* host */
+	const char *		/* port */
     );
 
 #endif /* TRANS_CLIENT */
@@ -239,6 +255,18 @@ typedef struct _Xtransport {
 	int			/* size */
     );
 
+#if XTRANS_SEND_FDS
+    int (*SendFd)(
+	XtransConnInfo,		/* connection */
+        int,                    /* fd */
+        int                     /* do_close */
+    );
+
+    int (*RecvFd)(
+	XtransConnInfo		/* connection */
+    );
+#endif
+
     int	(*Disconnect)(
 	XtransConnInfo		/* connection */
     );
@@ -268,8 +296,10 @@ typedef struct _Xtransport_table {
 #define TRANS_LOCAL	(1<<1)	/* local transport */
 #define TRANS_DISABLED	(1<<2)	/* Don't open this one */
 #define TRANS_NOLISTEN  (1<<3)  /* Don't listen on this one */
-#define TRANS_NOUNLINK	(1<<4)	/* Dont unlink transport endpoints */
+#define TRANS_NOUNLINK	(1<<4)	/* Don't unlink transport endpoints */
 #define TRANS_ABSTRACT	(1<<5)	/* Use abstract sockets if available */
+#define TRANS_NOXAUTH	(1<<6)	/* Don't verify authentication (because it's secure some other way at the OS layer) */
+#define TRANS_RECEIVED	(1<<7)  /* The fd for this has already been opened by someone else. */
 
 /* Flags to preserve when setting others */
 #define TRANS_KEEPFLAGS	(TRANS_NOUNLINK|TRANS_ABSTRACT)
@@ -277,12 +307,18 @@ typedef struct _Xtransport_table {
 #ifdef XTRANS_TRANSPORT_C /* only provide static function prototypes when
 			     building the transport.c file that has them in */
 
+#ifdef __clang__
+/* Not all clients make use of all provided statics */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-function"
+#endif
+
 /*
  * readv() and writev() don't exist or don't work correctly on some
  * systems, so they may be emulated.
  */
 
-#if (defined(SYSV) && defined(__i386__) && !defined(__SCO__)) || defined(WIN32) || defined(__sxg__)
+#ifdef WIN32
 
 #define READV(ciptr, iov, iovcnt)	TRANS(ReadV)(ciptr, iov, iovcnt)
 
@@ -296,10 +332,10 @@ static	int TRANS(ReadV)(
 
 #define READV(ciptr, iov, iovcnt)	readv(ciptr->fd, iov, iovcnt)
 
-#endif /* (SYSV && __i386__) || WIN32 || __sxg__ || */
+#endif /* WIN32 */
 
 
-#if (defined(SYSV) && defined(__i386__) && !defined(__SCO__)) || defined(WIN32) || defined(__sxg__)
+#ifdef WIN32
 
 #define WRITEV(ciptr, iov, iovcnt)	TRANS(WriteV)(ciptr, iov, iovcnt)
 
@@ -313,18 +349,22 @@ static int TRANS(WriteV)(
 
 #define WRITEV(ciptr, iov, iovcnt)	writev(ciptr->fd, iov, iovcnt)
 
-#endif /* WIN32 || __sxg__ */
+#endif /* WIN32 */
 
 
 static int is_numeric (
-    char *		/* str */
+    const char *	/* str */
 );
 
 #ifdef TRANS_SERVER
 static int trans_mkdir (
-    char *,		/* path */
+    const char *,	/* path */
     int			/* mode */
 );
+#endif
+
+#ifdef __clang__
+#pragma clang diagnostic pop
 #endif
 
 /*

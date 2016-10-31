@@ -48,6 +48,11 @@ from The Open Group.
  */
 
 #include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+#ifdef HAVE_SYSTEMD_DAEMON
+#include <systemd/sd-daemon.h>
+#endif
 
 /*
  * The transport table contains a definition for every transport (protocol)
@@ -72,9 +77,10 @@ from The Open Group.
 #define TRANS_LOCAL_LOCAL_INDEX		9
 #define TRANS_LOCAL_PTS_INDEX		10
 #define TRANS_LOCAL_NAMED_INDEX		11
-#define TRANS_LOCAL_ISC_INDEX		12
+/* 12 used to be ISC, but that's gone. */
 #define TRANS_LOCAL_SCO_INDEX		13
 #define TRANS_SOCKET_INET6_INDEX	14
+#define TRANS_LOCAL_PIPE_INDEX		15
 
 
 static
@@ -94,18 +100,18 @@ Xtransport_table Xtransports[] = {
 #endif /* UNIXCONN */
 #if defined(LOCALCONN)
     { &TRANS(LocalFuncs),	TRANS_LOCAL_LOCAL_INDEX },
-#ifndef sun
+#ifndef __sun
     { &TRANS(PTSFuncs),		TRANS_LOCAL_PTS_INDEX },
-#endif /* sun */
-#ifdef SVR4
+#endif /* __sun */
+#if defined(SVR4) || defined(__SVR4)
     { &TRANS(NAMEDFuncs),	TRANS_LOCAL_NAMED_INDEX },
 #endif
-#ifndef sun
-#if !defined(__SCO__) && !defined(__UNIXWARE__)
-    { &TRANS(ISCFuncs),		TRANS_LOCAL_ISC_INDEX },
-#endif
+#ifdef __sun
+    { &TRANS(PIPEFuncs),	TRANS_LOCAL_PIPE_INDEX },
+#endif /* __sun */
+#if defined(__SCO__) || defined(__UNIXWARE__)
     { &TRANS(SCOFuncs),		TRANS_LOCAL_SCO_INDEX },
-#endif /* sun */
+#endif /* __SCO__ || __UNIXWARE__ */
 #endif /* LOCALCONN */
 };
 
@@ -137,14 +143,14 @@ TRANS(FreeConnInfo) (XtransConnInfo ciptr)
     if (ciptr->port)
 	free (ciptr->port);
 
-    free ((char *) ciptr);
+    free (ciptr);
 }
 
 
 #define PROTOBUFSIZE	20
 
 static Xtransport *
-TRANS(SelectTransport) (char *protocol)
+TRANS(SelectTransport) (const char *protocol)
 
 {
     char 	protobuf[PROTOBUFSIZE];
@@ -161,8 +167,8 @@ TRANS(SelectTransport) (char *protocol)
     protobuf[PROTOBUFSIZE-1] = '\0';
 
     for (i = 0; i < PROTOBUFSIZE && protobuf[i] != '\0'; i++)
-	if (isupper (protobuf[i]))
-	    protobuf[i] = tolower (protobuf[i]);
+	if (isupper ((unsigned char)protobuf[i]))
+	    protobuf[i] = tolower ((unsigned char)protobuf[i]);
 
     /* Look at all of the configured protocols */
 
@@ -179,7 +185,8 @@ TRANS(SelectTransport) (char *protocol)
 static
 #endif /* TEST_t */
 int
-TRANS(ParseAddress) (char *address, char **protocol, char **host, char **port)
+TRANS(ParseAddress) (const char *address,
+                     char **protocol, char **host, char **port)
 
 {
     /*
@@ -193,10 +200,12 @@ TRANS(ParseAddress) (char *address, char **protocol, char **host, char **port)
      *
      * If the protocol part is missing, then assume TCP.
      * If the protocol part and host part are missing, then assume local.
+     * If a "::" is found then assume DNET.
      */
 
     char	*mybuf, *tmpptr;
-    char	*_protocol, *_host, *_port;
+    const char	*_protocol;
+    char	*_host, *_port;
     char	hostnamebuf[256];
     int		_host_len;
 
@@ -204,8 +213,7 @@ TRANS(ParseAddress) (char *address, char **protocol, char **host, char **port)
 
     /* Copy the string so it can be changed */
 
-    tmpptr = mybuf = (char *) malloc (strlen (address) + 1);
-    strcpy (mybuf, address);
+    tmpptr = mybuf = strdup (address);
 
     /* Parse the string to get each component */
 
@@ -324,12 +332,21 @@ TRANS(ParseAddress) (char *address, char **protocol, char **host, char **port)
      */
 #endif
 
+#ifdef HAVE_LAUNCHD
+    /* launchd sockets will look like 'local//tmp/launch-XgkNns/:0' */
+    if(address != NULL && strlen(address)>8 && (!strncmp(address,"local//",7))) {
+      _protocol="local";
+      _host="";
+      _port=address+6;
+    }
+#endif
+
     /*
      * Now that we have all of the components, allocate new
      * string space for them.
      */
 
-    if ((*protocol = (char *) malloc(strlen (_protocol) + 1)) == NULL)
+    if ((*protocol = strdup (_protocol)) == NULL)
     {
 	/* Malloc failed */
 	*port = NULL;
@@ -338,10 +355,8 @@ TRANS(ParseAddress) (char *address, char **protocol, char **host, char **port)
 	free (tmpptr);
 	return 0;
     }
-    else
-        strcpy (*protocol, _protocol);
 
-    if ((*host = (char *) malloc (strlen (_host) + 1)) == NULL)
+    if ((*host = strdup (_host)) == NULL)
     {
 	/* Malloc failed */
 	*port = NULL;
@@ -351,10 +366,8 @@ TRANS(ParseAddress) (char *address, char **protocol, char **host, char **port)
 	free (tmpptr);
 	return 0;
 	}
-    else
-        strcpy (*host, _host);
 
-    if ((*port = (char *) malloc (strlen (_port) + 1)) == NULL)
+    if ((*port = strdup (_port)) == NULL)
     {
 	/* Malloc failed */
 	*port = NULL;
@@ -365,8 +378,6 @@ TRANS(ParseAddress) (char *address, char **protocol, char **host, char **port)
 	free (tmpptr);
 	return 0;
     }
-    else
-        strcpy (*port, _port);
 
     free (tmpptr);
 
@@ -381,7 +392,7 @@ TRANS(ParseAddress) (char *address, char **protocol, char **host, char **port)
  */
 
 static XtransConnInfo
-TRANS(Open) (int type, char *address)
+TRANS(Open) (int type, const char *address)
 
 {
     char 		*protocol = NULL, *host = NULL, *port = NULL;
@@ -469,7 +480,7 @@ TRANS(Open) (int type, char *address)
  */
 
 static XtransConnInfo
-TRANS(Reopen) (int type, int trans_id, int fd, char *port)
+TRANS(Reopen) (int type, int trans_id, int fd, const char *port)
 
 {
     XtransConnInfo	ciptr = NULL;
@@ -496,14 +507,12 @@ TRANS(Reopen) (int type, int trans_id, int fd, char *port)
 	return NULL;
     }
 
-    if ((save_port = (char *) malloc (strlen (port) + 1)) == NULL)
+    if ((save_port = strdup (port)) == NULL)
     {
 	prmsg (1,"Reopen: Unable to malloc port string\n");
 
 	return NULL;
     }
-
-    strcpy (save_port, port);
 
     /* Get a new XtransConnInfo object */
 
@@ -519,6 +528,7 @@ TRANS(Reopen) (int type, int trans_id, int fd, char *port)
     if (ciptr == NULL)
     {
 	prmsg (1,"Reopen: transport open failed\n");
+	free (save_port);
 	return NULL;
     }
 
@@ -541,7 +551,7 @@ TRANS(Reopen) (int type, int trans_id, int fd, char *port)
 #ifdef TRANS_CLIENT
 
 XtransConnInfo
-TRANS(OpenCOTSClient) (char *address)
+TRANS(OpenCOTSClient) (const char *address)
 
 {
     prmsg (2,"OpenCOTSClient(%s)\n", address);
@@ -554,7 +564,7 @@ TRANS(OpenCOTSClient) (char *address)
 #ifdef TRANS_SERVER
 
 XtransConnInfo
-TRANS(OpenCOTSServer) (char *address)
+TRANS(OpenCOTSServer) (const char *address)
 
 {
     prmsg (2,"OpenCOTSServer(%s)\n", address);
@@ -567,7 +577,7 @@ TRANS(OpenCOTSServer) (char *address)
 #ifdef TRANS_REOPEN
 
 XtransConnInfo
-TRANS(ReopenCOTSServer) (int trans_id, int fd, char *port)
+TRANS(ReopenCOTSServer) (int trans_id, int fd, const char *port)
 
 {
     prmsg (2,"ReopenCOTSServer(%d, %d, %s)\n", trans_id, fd, port);
@@ -587,13 +597,10 @@ TRANS(GetReopenInfo) (XtransConnInfo ciptr,
 	    *trans_id = Xtransports[i].transport_id;
 	    *fd = ciptr->fd;
 
-	    if ((*port = (char *) malloc (strlen (ciptr->port) + 1)) == NULL)
+	    if ((*port = strdup (ciptr->port)) == NULL)
 		return 0;
 	    else
-	    {
-		strcpy (*port, ciptr->port);
 		return 1;
-	    }
 	}
 
     return 0;
@@ -631,7 +638,7 @@ TRANS(SetOption) (XtransConnInfo ciptr, int option, int arg)
 	    break;
 	case 1: /* Set to non-blocking mode */
 
-#if defined(O_NONBLOCK) && (!defined(ultrix) && !defined(uniosu) && !defined(SCO325))
+#if defined(O_NONBLOCK) && !defined(SCO325)
 	    ret = fcntl (fd, F_GETFL, 0);
 	    if (ret != -1)
 		ret = fcntl (fd, F_SETFL, ret | O_NONBLOCK);
@@ -643,7 +650,7 @@ TRANS(SetOption) (XtransConnInfo ciptr, int option, int arg)
 	    ret = ioctl (fd, FIOSNBIO, &arg);
 	}
 #else
-#if (defined(uniosu) || defined(WIN32)) && defined(FIONBIO)
+#if defined(WIN32)
 	{
 #ifdef WIN32
 	    u_long arg;
@@ -662,7 +669,7 @@ TRANS(SetOption) (XtransConnInfo ciptr, int option, int arg)
 #else
 	    ret = fcntl (fd, F_SETFL, ret | O_NDELAY);
 #endif
-#endif /* uniosu */
+#endif /* AIXV3  || uniosu */
 #endif /* FIOSNBIO */
 #endif /* O_NONBLOCK */
 	    break;
@@ -688,14 +695,42 @@ TRANS(SetOption) (XtransConnInfo ciptr, int option, int arg)
 #ifdef TRANS_SERVER
 
 int
-TRANS(CreateListener) (XtransConnInfo ciptr, char *port, unsigned int flags)
+TRANS(CreateListener) (XtransConnInfo ciptr, const char *port, unsigned int flags)
 
 {
     return ciptr->transptr->CreateListener (ciptr, port, flags);
 }
 
 int
-TRANS(NoListen) (char * protocol)
+TRANS(Received) (const char * protocol)
+
+{
+   Xtransport *trans;
+   int i = 0, ret = 0;
+
+   prmsg (5, "Received(%s)\n", protocol);
+
+   if ((trans = TRANS(SelectTransport)(protocol)) == NULL)
+   {
+	prmsg (1,"Received: unable to find transport: %s\n",
+	       protocol);
+
+	return -1;
+   }
+   if (trans->flags & TRANS_ALIAS) {
+       if (trans->nolisten)
+	   while (trans->nolisten[i]) {
+	       ret |= TRANS(Received)(trans->nolisten[i]);
+	       i++;
+       }
+   }
+
+   trans->flags |= TRANS_RECEIVED;
+   return ret;
+}
+
+int
+TRANS(NoListen) (const char * protocol)
 	
 {
    Xtransport *trans;
@@ -718,6 +753,47 @@ TRANS(NoListen) (char * protocol)
 
    trans->flags |= TRANS_NOLISTEN;
    return ret;
+}
+
+int
+TRANS(Listen) (const char * protocol)
+{
+   Xtransport *trans;
+   int i = 0, ret = 0;
+
+   if ((trans = TRANS(SelectTransport)(protocol)) == NULL)
+   {
+	prmsg (1,"TransListen: unable to find transport: %s\n",
+	       protocol);
+
+	return -1;
+   }
+   if (trans->flags & TRANS_ALIAS) {
+       if (trans->nolisten)
+	   while (trans->nolisten[i]) {
+	       ret |= TRANS(Listen)(trans->nolisten[i]);
+	       i++;
+       }
+   }
+
+   trans->flags &= ~TRANS_NOLISTEN;
+   return ret;
+}
+
+int
+TRANS(IsListening) (const char * protocol)
+{
+   Xtransport *trans;
+
+   if ((trans = TRANS(SelectTransport)(protocol)) == NULL)
+   {
+	prmsg (1,"TransIsListening: unable to find transport: %s\n",
+	       protocol);
+
+	return 0;
+   }
+
+   return !(trans->flags & TRANS_NOLISTEN);
 }
 
 int
@@ -753,7 +829,7 @@ TRANS(Accept) (XtransConnInfo ciptr, int *status)
 #ifdef TRANS_CLIENT
 
 int
-TRANS(Connect) (XtransConnInfo ciptr, char *address)
+TRANS(Connect) (XtransConnInfo ciptr, const char *address)
 
 {
     char	*protocol;
@@ -769,6 +845,10 @@ TRANS(Connect) (XtransConnInfo ciptr, char *address)
 	       address);
 	return -1;
     }
+
+#ifdef HAVE_LAUNCHD
+    if (!host) host=strdup("");
+#endif
 
     if (!port || !*port)
     {
@@ -826,6 +906,20 @@ TRANS(Writev) (XtransConnInfo ciptr, struct iovec *buf, int size)
     return ciptr->transptr->Writev (ciptr, buf, size);
 }
 
+#if XTRANS_SEND_FDS
+int
+TRANS(SendFd) (XtransConnInfo ciptr, int fd, int do_close)
+{
+    return ciptr->transptr->SendFd(ciptr, fd, do_close);
+}
+
+int
+TRANS(RecvFd) (XtransConnInfo ciptr)
+{
+    return ciptr->transptr->RecvFd(ciptr);
+}
+#endif
+
 int
 TRANS(Disconnect) (XtransConnInfo ciptr)
 
@@ -870,10 +964,11 @@ TRANS(IsLocal) (XtransConnInfo ciptr)
     return (ciptr->family == AF_UNIX);
 }
 
-
+#ifdef NX_TRANS_SOCKET
+/* this is needed for pre-xcb X11 as we have in NX */ 
 int
 TRANS(GetMyAddr) (XtransConnInfo ciptr, int *familyp, int *addrlenp,
-		  Xtransaddr **addrp)
+                 Xtransaddr **addrp)
 
 {
     prmsg (2,"GetMyAddr(%d)\n", ciptr->fd);
@@ -883,13 +978,14 @@ TRANS(GetMyAddr) (XtransConnInfo ciptr, int *familyp, int *addrlenp,
 
     if ((*addrp = (Xtransaddr *) malloc (ciptr->addrlen)) == NULL)
     {
-	prmsg (1,"GetMyAddr: malloc failed\n");
-	return -1;
+       prmsg (1,"GetMyAddr: malloc failed\n");
+       return -1;
     }
     memcpy(*addrp, ciptr->addr, ciptr->addrlen);
 
     return 0;
 }
+#endif
 
 int
 TRANS(GetPeerAddr) (XtransConnInfo ciptr, int *familyp, int *addrlenp,
@@ -901,7 +997,7 @@ TRANS(GetPeerAddr) (XtransConnInfo ciptr, int *familyp, int *addrlenp,
     *familyp = ciptr->family;
     *addrlenp = ciptr->peeraddrlen;
 
-    if ((*addrp = (Xtransaddr *) malloc (ciptr->peeraddrlen)) == NULL)
+    if ((*addrp = malloc (ciptr->peeraddrlen)) == NULL)
     {
 	prmsg (1,"GetPeerAddr: malloc failed\n");
 	return -1;
@@ -956,33 +1052,126 @@ complete_network_count (void)
 }
 
 
+static int
+receive_listening_fds(const char* port, XtransConnInfo* temp_ciptrs,
+                      int* count_ret)
+
+{
+#ifdef HAVE_SYSTEMD_DAEMON
+    XtransConnInfo ciptr;
+    int i, systemd_listen_fds;
+
+    systemd_listen_fds = sd_listen_fds(1);
+    if (systemd_listen_fds < 0)
+    {
+        prmsg (1, "receive_listening_fds: sd_listen_fds error: %s\n",
+               strerror(-systemd_listen_fds));
+        return -1;
+    }
+
+    for (i = 0; i < systemd_listen_fds && *count_ret < NUMTRANS; i++)
+    {
+        struct sockaddr_storage a;
+        int ti;
+        const char* tn;
+        socklen_t al;
+
+        al = sizeof(a);
+        if (getsockname(i + SD_LISTEN_FDS_START, (struct sockaddr*)&a, &al) < 0) {
+            prmsg (1, "receive_listening_fds: getsockname error: %s\n",
+                   strerror(errno));
+            return -1;
+        }
+
+        switch (a.ss_family)
+        {
+        case AF_UNIX:
+            ti = TRANS_SOCKET_UNIX_INDEX;
+            if (*((struct sockaddr_un*)&a)->sun_path == '\0' &&
+                al > sizeof(sa_family_t))
+                tn = "local";
+            else
+                tn = "unix";
+            break;
+        case AF_INET:
+            ti = TRANS_SOCKET_INET_INDEX;
+            tn = "inet";
+            break;
+#if defined(IPv6) && defined(AF_INET6)
+        case AF_INET6:
+            ti = TRANS_SOCKET_INET6_INDEX;
+            tn = "inet6";
+            break;
+#endif /* IPv6 */
+        default:
+            prmsg (1, "receive_listening_fds:"
+                   "Got unknown socket address family\n");
+            return -1;
+        }
+
+        ciptr = TRANS(ReopenCOTSServer)(ti, i + SD_LISTEN_FDS_START, port);
+        if (!ciptr)
+        {
+            prmsg (1, "receive_listening_fds:"
+                   "Got NULL while trying to reopen socket received from systemd.\n");
+            return -1;
+        }
+
+        prmsg (5, "receive_listening_fds: received listener for %s, %d\n",
+               tn, ciptr->fd);
+        temp_ciptrs[(*count_ret)++] = ciptr;
+        TRANS(Received)(tn);
+    }
+#endif /* HAVE_SYSTEMD_DAEMON */
+    return 0;
+}
+
+#ifdef XQUARTZ_EXPORTS_LAUNCHD_FD
+extern int xquartz_launchd_fd;
+#endif
 
 int
-TRANS(MakeAllCOTSServerListeners) (char *port, int *partial, int *count_ret,
-				   XtransConnInfo **ciptrs_ret)
+TRANS(MakeAllCOTSServerListeners) (const char *port, int *partial,
+                                   int *count_ret, XtransConnInfo **ciptrs_ret)
 
 {
     char		buffer[256]; /* ??? What size ?? */
     XtransConnInfo	ciptr, temp_ciptrs[NUMTRANS];
     int			status, i, j;
+
 #if defined(IPv6) && defined(AF_INET6)
     int		ipv6_succ = 0;
 #endif
-
     prmsg (2,"MakeAllCOTSServerListeners(%s,%p)\n",
 	   port ? port : "NULL", ciptrs_ret);
 
     *count_ret = 0;
+
+#ifdef XQUARTZ_EXPORTS_LAUNCHD_FD
+    fprintf(stderr, "Launchd socket fd: %d\n", xquartz_launchd_fd);
+    if(xquartz_launchd_fd != -1) {
+        if((ciptr = TRANS(ReopenCOTSServer(TRANS_SOCKET_LOCAL_INDEX,
+                                           xquartz_launchd_fd, getenv("DISPLAY"))))==NULL)
+            fprintf(stderr,"Got NULL while trying to Reopen launchd port\n");
+        else
+            temp_ciptrs[(*count_ret)++] = ciptr;
+    }
+#endif
+
+    if (receive_listening_fds(port, temp_ciptrs, count_ret) < 0)
+	return -1;
 
     for (i = 0; i < NUMTRANS; i++)
     {
 	Xtransport *trans = Xtransports[i].transport;
 	unsigned int flags = 0;
 
-	if (trans->flags&TRANS_ALIAS || trans->flags&TRANS_NOLISTEN)
+	if (trans->flags&TRANS_ALIAS || trans->flags&TRANS_NOLISTEN ||
+	    trans->flags&TRANS_RECEIVED)
 	    continue;
 
-	sprintf(buffer,"%s/:%s", trans->TransName, port ? port : "");
+	snprintf(buffer, sizeof(buffer), "%s/:%s",
+		 trans->TransName, port ? port : "");
 
 	prmsg (5,"MakeAllCOTSServerListeners: opening %s\n",
 	       buffer);
@@ -1055,7 +1244,7 @@ TRANS(MakeAllCOTSServerListeners) (char *port, int *partial, int *count_ret,
 
     if (*count_ret > 0)
     {
-	if ((*ciptrs_ret = (XtransConnInfo *) malloc (
+	if ((*ciptrs_ret = malloc (
 	    *count_ret * sizeof (XtransConnInfo))) == NULL)
 	{
 	    return -1;
@@ -1081,7 +1270,8 @@ TRANS(MakeAllCOTSServerListeners) (char *port, int *partial, int *count_ret,
  * may be used by it.
  */
 
-#if (defined(SYSV) && defined(__i386__) && !defined(__SCO__)) || defined(WIN32) || defined(__sxg__)
+
+#ifdef WIN32
 
 /*
  * emulate readv
@@ -1111,9 +1301,6 @@ static int TRANS(ReadV) (XtransConnInfo ciptr, struct iovec *iov, int iovcnt)
     return total;
 }
 
-#endif /* SYSV && __i386__ || WIN32 || __sxg__ */
-
-#if (defined(SYSV) && defined(__i386__) && !defined(__SCO__)) || defined(WIN32) || defined(__sxg__)
 
 /*
  * emulate writev
@@ -1143,10 +1330,10 @@ static int TRANS(WriteV) (XtransConnInfo ciptr, struct iovec *iov, int iovcnt)
     return total;
 }
 
-#endif /* SYSV && __i386__ || WIN32 || __sxg__ */
+#endif /* WIN32 */
 
 
-#if defined(_POSIX_SOURCE) || defined(USG) || defined(SVR4) || defined(__SCO__)
+#if defined(_POSIX_SOURCE) || defined(USG) || defined(SVR4) || defined(__SVR4) || defined(__SCO__)
 #ifndef NEED_UTSNAME
 #define NEED_UTSNAME
 #endif

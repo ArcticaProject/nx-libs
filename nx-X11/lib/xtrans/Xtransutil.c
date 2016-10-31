@@ -55,7 +55,11 @@ from The Open Group.
  */
 
 #ifdef XTHREADS
-#include <nx-X11/Xthreads.h>
+#include <X11/Xthreads.h>
+#endif
+#ifdef WIN32
+#include <X11/Xlibint.h>
+#include <X11/Xwinsock.h>
 #endif
 
 #ifdef X11_t
@@ -193,11 +197,11 @@ TRANS(ConvertAddress)(int *familyp, int *addrlenp, Xtransaddr **addrp)
 	if (len > 0) {
 	    if (*addrp && *addrlenp < (len + 1))
 	    {
-		free ((char *) *addrp);
+		free (*addrp);
 		*addrp = NULL;
 	    }
 	    if (!*addrp)
-		*addrp = (Xtransaddr *) malloc (len + 1);
+		*addrp = malloc (len + 1);
 	    if (*addrp) {
 		strcpy ((char *) *addrp, hostnamebuf);
 		*addrlenp = len;
@@ -208,7 +212,7 @@ TRANS(ConvertAddress)(int *familyp, int *addrlenp, Xtransaddr **addrp)
 	else
 	{
 	    if (*addrp)
-		free ((char *) *addrp);
+		free (*addrp);
 	    *addrp = NULL;
 	    *addrlenp = 0;
 	}
@@ -221,6 +225,13 @@ TRANS(ConvertAddress)(int *familyp, int *addrlenp, Xtransaddr **addrp)
 
 #ifdef ICE_t
 
+/* Needed for _XGethostbyaddr usage in TRANS(GetPeerNetworkId) */
+# if defined(TCPCONN) || defined(UNIXCONN)
+#  define X_INCLUDE_NETDB_H
+#  define XOS_USE_NO_LOCKING
+#  include <X11/Xos_r.h>
+# endif
+
 #include <signal.h>
 
 char *
@@ -231,7 +242,7 @@ TRANS(GetMyNetworkId) (XtransConnInfo ciptr)
     char 	*addr = ciptr->addr;
     char	hostnamebuf[256];
     char 	*networkId = NULL;
-    char	*transName = ciptr->transptr->TransName;
+    const char	*transName = ciptr->transptr->TransName;
 
     if (gethostname (hostnamebuf, sizeof (hostnamebuf)) < 0)
     {
@@ -244,7 +255,7 @@ TRANS(GetMyNetworkId) (XtransConnInfo ciptr)
     case AF_UNIX:
     {
 	struct sockaddr_un *saddr = (struct sockaddr_un *) addr;
-	networkId = (char *) malloc (3 + strlen (transName) +
+	networkId = malloc (3 + strlen (transName) +
 	    strlen (hostnamebuf) + strlen (saddr->sun_path));
 	sprintf (networkId, "%s/%s:%s", transName,
 	    hostnamebuf, saddr->sun_path);
@@ -273,8 +284,8 @@ TRANS(GetMyNetworkId) (XtransConnInfo ciptr)
 #endif
 	    portnum = ntohs (saddr->sin_port);
 
-	sprintf (portnumbuf, "%d", portnum);
-	networkId = (char *) malloc (3 + strlen (transName) +
+	snprintf (portnumbuf, sizeof(portnumbuf), "%d", portnum);
+	networkId = malloc (3 + strlen (transName) +
 	    strlen (hostnamebuf) + strlen (portnumbuf));
 	sprintf (networkId, "%s/%s:%s", transName, hostnamebuf, portnumbuf);
 	break;
@@ -295,24 +306,12 @@ static jmp_buf env;
 #ifdef SIGALRM
 static volatile int nameserver_timedout = 0;
 
-static
-#ifdef RETSIGTYPE /* set by autoconf AC_TYPE_SIGNAL */
-RETSIGTYPE
-#else /* Imake */
-#ifdef SIGNALRETURNSINT
-int
-#else
-void
-#endif
-#endif
-nameserver_lost(int sig)
+static void
+nameserver_lost(int sig _X_UNUSED)
 {
   nameserver_timedout = 1;
   longjmp (env, -1);
   /* NOTREACHED */
-#ifdef SIGNALRETURNSINT
-  return -1;				/* for picky compilers */
-#endif
 }
 #endif /* SIGALARM */
 
@@ -407,8 +406,7 @@ TRANS(GetPeerNetworkId) (XtransConnInfo ciptr)
     }
 
 
-    hostname = (char *) malloc (
-	strlen (ciptr->transptr->TransName) + strlen (addr) + 2);
+    hostname = malloc (strlen (ciptr->transptr->TransName) + strlen (addr) + 2);
     strcpy (hostname, ciptr->transptr->TransName);
     strcat (hostname, "/");
     if (addr)
@@ -428,16 +426,16 @@ TRANS(WSAStartup) (void)
 
     prmsg (2,"WSAStartup()\n");
 
-    if (!wsadata.wVersion && WSAStartup(0x0101, &wsadata))
+    if (!wsadata.wVersion && WSAStartup(MAKEWORD(2,2), &wsadata))
         return 1;
     return 0;
 }
 #endif
 
+#include <ctype.h>
 
 static int
-is_numeric (char *str)
-
+is_numeric (const char *str)
 {
     int i;
 
@@ -468,7 +466,7 @@ is_numeric (char *str)
  * bit cannot be set and fail.
  */
 static int
-trans_mkdir(char *path, int mode)
+trans_mkdir(const char *path, int mode)
 {
     struct stat buf;
 
@@ -480,7 +478,7 @@ trans_mkdir(char *path, int mode)
 	}
 	/* Dir doesn't exist. Try to create it */
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(__CYGWIN__)
 	/*
 	 * 'sticky' bit requested: assume application makes
 	 * certain security implications. If effective user ID
@@ -575,6 +573,7 @@ trans_mkdir(char *path, int mode)
 		    if (fstat(fd, &fbuf) == -1) {
 			prmsg(1, "mkdir: ERROR: fstat failed for %s (%d)\n",
 			      path, errno);
+			close(fd);
 			return -1;
 		    }
 		    /*
@@ -586,6 +585,7 @@ trans_mkdir(char *path, int mode)
 			buf.st_ino != fbuf.st_ino) {
 			prmsg(1, "mkdir: ERROR: inode for %s changed\n",
 			      path);
+			close(fd);
 			return -1;
 		    }
 		    if (updateOwner && fchown(fd, 0, 0) == 0)
@@ -605,8 +605,10 @@ trans_mkdir(char *path, int mode)
 		    return -1;
 		}
 #endif
+#if !defined(__APPLE_CC__) && !defined(__CYGWIN__)
 	  	prmsg(1, "mkdir: Owner of %s should be set to root\n",
 		      path);
+#endif
 	    }
 
 	    if (updateMode && !updatedMode) {
