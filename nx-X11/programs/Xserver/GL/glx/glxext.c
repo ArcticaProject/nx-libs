@@ -62,17 +62,18 @@ static void ResetClientState(int clientIndex)
 {
     __GLXclientState *cl = __glXClients[clientIndex];
 
-    if (cl->returnBuf) __glXFree(cl->returnBuf);
-    if (cl->largeCmdBuf) __glXFree(cl->largeCmdBuf);
-    if (cl->currentContexts) __glXFree(cl->currentContexts);
-    __glXMemset(cl, 0, sizeof(__GLXclientState));
+    if (cl->returnBuf) free(cl->returnBuf);
+    if (cl->largeCmdBuf) free(cl->largeCmdBuf);
+    if (cl->currentContexts) free(cl->currentContexts);
+    memset(cl, 0, sizeof(__GLXclientState));
     /*
     ** By default, assume that the client supports
     ** GLX major version 1 minor version 0 protocol.
     */
     cl->GLClientmajorVersion = 1;
     cl->GLClientminorVersion = 0;
-    if (cl->GLClientextensions) __glXFree(cl->GLClientextensions);
+    if (cl->GLClientextensions)
+	free(cl->GLClientextensions);
 
 }
 
@@ -151,7 +152,7 @@ static int PixmapGone(__GLXpixmap *pGlxPixmap, XID id)
 	** only if it's zero.
 	*/
 	(*pGlxPixmap->pScreen->DestroyPixmap)(pPixmap);
-	__glXFree(pGlxPixmap);
+	free(pGlxPixmap);
     }
 
     return True;
@@ -169,9 +170,9 @@ GLboolean __glXFreeContext(__GLXcontext *cx)
 	    return GL_FALSE;
 	}
     }
-    if (cx->feedbackBuf) __glXFree(cx->feedbackBuf);
-    if (cx->selectBuf) __glXFree(cx->selectBuf);
-    __glXFree(cx);
+    if (cx->feedbackBuf) free(cx->feedbackBuf);
+    if (cx->selectBuf) free(cx->selectBuf);
+    free(cx);
     if (cx == __glXLastContext) {
 	__glXFlushContextCache();
     }
@@ -404,12 +405,12 @@ static int __glXDispatch(ClientPtr client)
     opcode = stuff->glxCode;
     cl = __glXClients[client->index];
     if (!cl) {
-	cl = (__GLXclientState *) __glXMalloc(sizeof(__GLXclientState));
+	cl = (__GLXclientState *) malloc(sizeof(__GLXclientState));
 	 __glXClients[client->index] = cl;
 	if (!cl) {
 	    return BadAlloc;
 	}
-	__glXMemset(cl, 0, sizeof(__GLXclientState));
+	memset(cl, 0, sizeof(__GLXclientState));
     }
     
     if (!cl->inUse) {
@@ -458,12 +459,12 @@ static int __glXSwapDispatch(ClientPtr client)
     opcode = stuff->glxCode;
     cl = __glXClients[client->index];
     if (!cl) {
-	cl = (__GLXclientState *) __glXMalloc(sizeof(__GLXclientState));
+	cl = (__GLXclientState *) malloc(sizeof(__GLXclientState));
 	 __glXClients[client->index] = cl;
 	if (!cl) {
 	    return BadAlloc;
 	}
-	__glXMemset(cl, 0, sizeof(__GLXclientState));
+	memset(cl, 0, sizeof(__GLXclientState));
     }
     
     if (!cl->inUse) {

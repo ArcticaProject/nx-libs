@@ -31,31 +31,17 @@
  * \author Ian Romanick <idr@us.ibm.com>
  */
 
-#if defined(IN_MINI_GLX)
 # include <stdlib.h>
 # include <string.h>
+
+#if defined(IN_MINI_GLX)
 # include <GL/gl.h>
 # include "GL/internal/dri_interface.h"
 # include "imports.h"
-# define __glXMemset  memset
 #else
 # include <nx-X11/X.h>
 # include <GL/glx.h>
 # include "GL/glxint.h"
-
-# ifdef XFree86Server
-void *memset( void * ptr, int val, size_t size);
-#  include "GL/glx_ansic.h"
-extern void * __glXMalloc( size_t size );
-extern void __glXFree( void * ptr );
-#  define _mesa_malloc(b) __glXMalloc(b)
-#  define _mesa_free(m)   __glXFree(m)
-# else
-#  include <nx-X11/Xlibint.h>
-#  define __glXMemset  memset
-#  define _mesa_malloc(b) Xmalloc(b)
-#  define _mesa_free(m) Xfree(m)
-# endif /* XFree86Server */
 #endif /* !defined(IN_MINI_GLX) */
 
 #include "glcontextmodes.h"
@@ -127,7 +113,7 @@ _gl_copy_visual_to_context_mode( __GLcontextModes * mode,
 {
     __GLcontextModes * const next = mode->next;
 
-    (void) __glXMemset( mode, 0, sizeof( __GLcontextModes ) );
+    (void) memset( mode, 0, sizeof( __GLcontextModes ) );
     mode->next = next;
 
     mode->visualID = config->vid;
@@ -361,14 +347,14 @@ _gl_context_modes_create( unsigned count, size_t minimum_size )
 
    next = & base;
    for ( i = 0 ; i < count ; i++ ) {
-      *next = (__GLcontextModes *) _mesa_malloc( size );
+      *next = (__GLcontextModes *) malloc( size );
       if ( *next == NULL ) {
 	 _gl_context_modes_destroy( base );
 	 base = NULL;
 	 break;
       }
       
-      (void) __glXMemset( *next, 0, size );
+      (void) memset( *next, 0, size );
       (*next)->visualID = GLX_DONT_CARE;
       (*next)->visualType = GLX_DONT_CARE;
       (*next)->visualRating = GLX_NONE;
@@ -402,7 +388,7 @@ _gl_context_modes_destroy( __GLcontextModes * modes )
    while ( modes != NULL ) {
       __GLcontextModes * const next = modes->next;
 
-      _mesa_free( modes );
+      free( modes );
       modes = next;
    }
 }

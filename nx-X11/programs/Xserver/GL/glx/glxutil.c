@@ -47,7 +47,6 @@
 #include <windowstr.h>
 #include "glxutil.h"
 #include "glxbuf.h"
-#include "GL/glx_ansic.h"
 #include "GL/internal/glcore.h"
 #include "GL/glxint.h"
 #include "glcontextmodes.h"
@@ -58,80 +57,7 @@ void __glXNop(void) {}
 
 /************************************************************************/
 
-/* Memory Allocation for GLX */
-
-void *
-__glXMalloc(size_t size)
-{
-    void *addr;
-
-    if (size == 0) {
-	return NULL;
-    }
-    addr = (void *) malloc(size);
-    if (addr == NULL) {
-	/* XXX: handle out of memory error */
-	return NULL;
-    }
-    return addr;
-}
-
-void *
-__glXCalloc(size_t numElements, size_t elementSize)
-{
-    void *addr;
-    size_t size;
-
-    if ((numElements == 0) || (elementSize == 0)) {
-	return NULL;
-    }
-    size = numElements * elementSize;
-    addr = (void *) malloc(size);
-    if (addr == NULL) {
-	/* XXX: handle out of memory error */
-	return NULL;
-    }
-    __glXMemset(addr, 0, size);
-    return addr;
-}
-
-void *
-__glXRealloc(void *addr, size_t newSize)
-{
-    void *newAddr;
-
-    if (addr) {
-	if (newSize == 0) {
-	    free(addr);
-	    return NULL;
-	} else {
-	    newAddr = realloc(addr, newSize);
-	}
-    } else {
-	if (newSize == 0) {
-	    return NULL;
-	} else {
-	    newAddr = malloc(newSize);
-	}
-    }
-    if (newAddr == NULL) {
-	return NULL;	/* XXX: out of memory */
-    }
-
-    return newAddr;
-}
-
-void
-__glXFree(void *addr)
-{
-    if (addr) {
-	free(addr);
-    }
-}
-
-/************************************************************************/
 /* Context stuff */
-
 
 /*
 ** associate a context with a drawable
@@ -299,8 +225,8 @@ __glXCreateDrawablePrivate(DrawablePtr pDraw, XID drawId,
     __GLdrawablePrivate *glPriv;
     __GLXscreenInfo *pGlxScreen;
 
-    glxPriv = (__GLXdrawablePrivate *) __glXMalloc(sizeof(*glxPriv));
-    __glXMemset(glxPriv, 0, sizeof(__GLXdrawablePrivate));
+    glxPriv = (__GLXdrawablePrivate *) malloc(sizeof(*glxPriv));
+    memset(glxPriv, 0, sizeof(__GLXdrawablePrivate));
 
     glxPriv->type = pDraw->type;
     glxPriv->pDraw = pDraw;
@@ -312,18 +238,18 @@ __glXCreateDrawablePrivate(DrawablePtr pDraw, XID drawId,
     /* since we are creating the drawablePrivate, drawId should be new */
     if (!AddResource(drawId, __glXDrawableRes, glxPriv)) {
 	/* oops! */
-	__glXFree(glxPriv);
+	free(glxPriv);
 	return NULL;
     }
 
     /* fill up glPriv */
     glPriv = &glxPriv->glPriv;
-    glPriv->modes = (__GLcontextModes *) __glXMalloc(sizeof(__GLcontextModes));
+    glPriv->modes = (__GLcontextModes *) malloc(sizeof(__GLcontextModes));
     *glPriv->modes = *modes;
-    glPriv->malloc = __glXMalloc;
-    glPriv->calloc = __glXCalloc;
-    glPriv->realloc = __glXRealloc;
-    glPriv->free = __glXFree;
+    glPriv->malloc = malloc;
+    glPriv->calloc = calloc;
+    glPriv->realloc = realloc;
+    glPriv->free = free;
     glPriv->addSwapRect = NULL;
     glPriv->setClipRect = (void (*)(__GLdrawablePrivate *, GLint, GLint, GLsizei, GLsizei)) __glXNop;
     glPriv->lockDP = LockDP;
@@ -334,7 +260,7 @@ __glXCreateDrawablePrivate(DrawablePtr pDraw, XID drawId,
 
     /* allocate a one-rect ownership region */
     glPriv->ownershipRegion.rects = 
-	(__GLregionRect *)__glXCalloc(1, sizeof(__GLregionRect));
+	(__GLregionRect *)calloc(1, sizeof(__GLregionRect));
     glPriv->ownershipRegion.numRects = 1;
 
     glxPriv->freeBuffers = __glXFreeBuffers;
@@ -377,9 +303,9 @@ __glXDestroyDrawablePrivate(__GLXdrawablePrivate *glxPriv)
     }
 
     /* Free the drawable Private */
-    __glXFree(glxPriv->glPriv.modes);
-    __glXFree(glxPriv->glPriv.ownershipRegion.rects);
-    __glXFree(glxPriv);
+    free(glxPriv->glPriv.modes);
+    free(glxPriv->glPriv.ownershipRegion.rects);
+    free(glxPriv);
 
     return GL_TRUE;
 }

@@ -32,7 +32,7 @@ extern "C" {
 /* Compile-time assertions.  If the expression is zero, try to declare an
  * array of size [-1] to cause compilation error.
  */
-#define static_assert(expr) do { int _array[(expr) ? 1 : -1]; _array[0]; } while (0)
+#define _static_assert(expr) do { int _array[(expr) ? 1 : -1]; _array[0]; } while (0)
 
 void slang_alloc_free (void *);
 void *slang_alloc_malloc (unsigned int);

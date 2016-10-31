@@ -47,7 +47,6 @@
 #include <pixmapstr.h>
 #include <windowstr.h>
 #include "glxext.h"
-#include "GL/glx_ansic.h"
 
 static int __glXSwapGetFBConfigsSGIX(__GLXclientState *cl, GLbyte *pc);
 static int __glXSwapCreateContextWithConfigSGIX(__GLXclientState *cl, GLbyte *pc);
@@ -683,16 +682,16 @@ int __glXSwapRenderLarge(__GLXclientState *cl, GLbyte *pc)
 	*/
 	if (cl->largeCmdBufSize < cmdlen) {
 	    if (!cl->largeCmdBuf) {
-		cl->largeCmdBuf = (GLbyte *) __glXMalloc(cmdlen);
+		cl->largeCmdBuf = (GLbyte *) malloc(cmdlen);
 	    } else {
-		cl->largeCmdBuf = (GLbyte *) __glXRealloc(cl->largeCmdBuf, cmdlen);
+		cl->largeCmdBuf = (GLbyte *) realloc(cl->largeCmdBuf, cmdlen);
 	    }
 	    if (!cl->largeCmdBuf) {
 		return BadAlloc;
 	    }
 	    cl->largeCmdBufSize = cmdlen;
 	}
-	__glXMemcpy(cl->largeCmdBuf, pc, dataBytes);
+	memcpy(cl->largeCmdBuf, pc, dataBytes);
 
 	cl->largeCmdBytesSoFar = dataBytes;
 	cl->largeCmdBytesTotal = cmdlen;
@@ -735,7 +734,7 @@ int __glXSwapRenderLarge(__GLXclientState *cl, GLbyte *pc)
 	    __glXResetLargeCommandStatus(cl);
 	    return __glXBadLargeRequest;
 	}
-	__glXMemcpy(cl->largeCmdBuf + cl->largeCmdBytesSoFar, pc, dataBytes);
+	memcpy(cl->largeCmdBuf + cl->largeCmdBytesSoFar, pc, dataBytes);
 	cl->largeCmdBytesSoFar += dataBytes;
 	cl->largeCmdRequestsSoFar++;
 

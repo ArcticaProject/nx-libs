@@ -67,12 +67,12 @@ static int __glXDispatch(ClientPtr client)
     opcode = stuff->glxCode;
     cl = __glXClients[client->index];
     if (!cl) {
-	cl = (__GLXclientState *) __glXMalloc(sizeof(__GLXclientState));
+	cl = (__GLXclientState *) malloc(sizeof(__GLXclientState));
 	 __glXClients[client->index] = cl;
 	if (!cl) {
 	    return BadAlloc;
 	}
-	__glXMemset(cl, 0, sizeof(__GLXclientState));
+	memset(cl, 0, sizeof(__GLXclientState));
     }
     
     if (!cl->inUse) {
@@ -145,12 +145,12 @@ static int __glXSwapDispatch(ClientPtr client)
     opcode = stuff->glxCode;
     cl = __glXClients[client->index];
     if (!cl) {
-	cl = (__GLXclientState *) __glXMalloc(sizeof(__GLXclientState));
+	cl = (__GLXclientState *) malloc(sizeof(__GLXclientState));
 	 __glXClients[client->index] = cl;
 	if (!cl) {
 	    return BadAlloc;
 	}
-	__glXMemset(cl, 0, sizeof(__GLXclientState));
+	memset(cl, 0, sizeof(__GLXclientState));
     }
     
     if (!cl->inUse) {

@@ -95,7 +95,7 @@ Free(__GLdrawableBuffer *buf, __GLdrawablePrivate *glPriv)
 	FreeScratchGC(bufferInfo->pGC);
     }
 
-    __glXFree(bufferInfo);
+    free(bufferInfo);
     buf->other = NULL;
 }
 
@@ -123,7 +123,7 @@ __glXInitPix(__GLdrawableBuffer *buf, __GLdrawablePrivate *glPriv,
     buf->free = Free;
 
     /* allocate local information */
-    bufferInfo = (__GLPixBufferInfo *) __glXMalloc(sizeof(__GLPixBufferInfo));
+    bufferInfo = (__GLPixBufferInfo *) malloc(sizeof(__GLPixBufferInfo));
     buf->other = (void *) bufferInfo;
 
     bufferInfo->pGC = CreateScratchGC(pGlxPixmap->pDraw->pScreen,
