@@ -52,7 +52,6 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "xf86glxint.h"
 #include "context.h"
 #include "xmesaP.h"
-#include <GL/xf86glx.h>
 #include "context.h"
 
 /*
