@@ -551,7 +551,7 @@ libNX_X11.so.6 libnx-x11-6 #MINVER#
  XcmsTekHVCWhiteShiftColors@Base 3.5.0.29
  XcmsUNDEFINEDColorSpace@Base 3.5.0.29
  XcmsVisualOfCCC@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0~build1# XdmcpWrap@Base 3.5.0.29
+#MISSING: 3.5.99.0# XdmcpWrap@Base 3.5.0.29
  XkbAddDeviceLedInfo@Base 3.5.0.29
  XkbAddGeomColor@Base 3.5.0.29
  XkbAddGeomDoodad@Base 3.5.0.29
@@ -798,7 +798,7 @@ libNX_X11.so.6 libnx-x11-6 #MINVER#
  _X11TransGetMyAddr@Base 3.5.0.29
  _X11TransGetPeerAddr@Base 3.5.0.29
  _X11TransIsLocal@Base 3.5.0.29
- _X11TransOpenCLTSClient@Base 3.5.0.29
+#MISSING: 3.5.99.2# _X11TransOpenCLTSClient@Base 3.5.0.29
  _X11TransOpenCOTSClient@Base 3.5.0.29
  _X11TransRead@Base 3.5.0.29
  _X11TransReadv@Base 3.5.0.29
@@ -857,7 +857,7 @@ libNX_X11.so.6 libnx-x11-6 #MINVER#
  _XGetScanlinePad@Base 3.5.0.29
  _XGetWindowAttributes@Base 3.5.0.29
  _XHeadOfDisplayList@Base 3.5.0.29
-#MISSING: 2:3.5.99.2-0.1# _XIDHandler@Base 2:3.5.99.2
+#MISSING: 3.5.99.2# _XIDHandler@Base 2:3.5.99.2
  _XIMCompileResourceList@Base 3.5.0.29
  _XIOError@Base 3.5.0.29
  _XIOErrorFunction@Base 3.5.0.29
@@ -898,12 +898,12 @@ libNX_X11.so.6 libnx-x11-6 #MINVER#
  _XSelect@Base 3.5.0.29
  _XSend@Base 3.5.0.29
  _XSendClientPrefix@Base 3.5.0.29
-#MISSING: 2:3.5.99.2-0.1# _XSeqSyncFunction@Base 2:3.5.99.2
+#MISSING: 3.5.99.2# _XSeqSyncFunction@Base 2:3.5.99.2
  _XSetClipRectangles@Base 3.5.0.29
  _XSetImage@Base 3.5.0.29
  _XSetLastRequestRead@Base 3.5.0.29
-#MISSING: 2:3.5.99.2-0.1# _XSetPrivSyncFunction@Base 2:3.5.99.2
-#MISSING: 2:3.5.99.2-0.1# _XSetSeqSyncFunction@Base 2:3.5.99.2
+#MISSING: 3.5.99.2# _XSetPrivSyncFunction@Base 2:3.5.99.2
+#MISSING: 3.5.99.2# _XSetSeqSyncFunction@Base 2:3.5.99.2
  _XStoreEventCookie@Base 2:3.5.99.2
  _XTextHeight16@Base 3.5.0.29
  _XTextHeight@Base 3.5.0.29
@@ -974,9 +974,9 @@ libNX_X11.so.6 libnx-x11-6 #MINVER#
  _XcmsTekHVC_prefix@Base 3.5.0.29
  _XcmsUnresolveColor@Base 3.5.0.29
  _Xdebug@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0~build1# _XdmcpAuthDoIt@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0~build1# _XdmcpAuthSetup@Base 3.5.0.29
-#MISSING: 2:3.5.99.0-0~build1# _XdmcpWrapperToOddParity@Base 3.5.0.29
+#MISSING: 3.5.99.0# _XdmcpAuthDoIt@Base 3.5.0.29
+#MISSING: 3.5.99.0# _XdmcpAuthSetup@Base 3.5.0.29
+#MISSING: 3.5.99.0# _XdmcpWrapperToOddParity@Base 3.5.0.29
  _Xevent_to_mask@Base 3.5.0.29
  _Xglobal_lock@Base 3.5.0.29
  _Xi18n_lock@Base 3.5.0.29
@@ -1111,10 +1111,10 @@ libNX_X11.so.6 libnx-x11-6 #MINVER#
  _XimXTransFreeConnInfo@Base 3.5.0.29
  _XimXTransGetConnectionNumber@Base 3.5.0.29
  _XimXTransGetHostname@Base 3.5.0.29
- _XimXTransGetMyAddr@Base 3.5.0.29
+#MISSING: 3.5.99.2# _XimXTransGetMyAddr@Base 3.5.0.29
  _XimXTransGetPeerAddr@Base 3.5.0.29
  _XimXTransIsLocal@Base 3.5.0.29
- _XimXTransOpenCLTSClient@Base 3.5.0.29
+#MISSING: 3.5.99.2# _XimXTransOpenCLTSClient@Base 3.5.0.29
  _XimXTransOpenCOTSClient@Base 3.5.0.29
  _XimXTransRead@Base 3.5.0.29
  _XimXTransReadv@Base 3.5.0.29
@@ -1269,6 +1269,6 @@ libNX_X11.so.6 libnx-x11-6 #MINVER#
  _Xwcstombs@Base 3.5.0.29
  _Xwctomb@Base 3.5.0.29
  _qfree@Base 3.5.0.29
- in6addr_any@Base 3.5.0.29
+#MISSING: 3.5.99.2# in6addr_any@Base 3.5.0.29
  read_EncodingInfo@Base 3.5.0.29
  xlocaledir@Base 2:3.5.99.2
