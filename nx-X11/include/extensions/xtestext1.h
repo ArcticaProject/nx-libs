@@ -41,8 +41,8 @@ documentation, and that the name of Hewlett-Packard not be used in
 advertising or publicity pertaining to distribution of the
 software without specific, written prior permission.
 
-Hewlett-Packard makes no representations about the 
-suitability of this software for any purpose.  It is provided 
+Hewlett-Packard makes no representations about the
+suitability of this software for any purpose.  It is provided
 "as is" without express or implied warranty.
 
 This software is not subject to any license of the American
@@ -90,7 +90,7 @@ University of California.
 #define XTestEVENT_COUNT                2
 
 /*
- * XTest request type values 
+ * XTest request type values
  *
  * used in the XTest extension protocol requests
  */
@@ -304,7 +304,7 @@ typedef struct {
 } XTestMotionInfo;
 
 /*
- * These are the definitions for a long delay input action.  It is 
+ * These are the definitions for a long delay input action.  It is
  * used when more than XTestSHORT_DELAY_TIME milliseconds of delay
  * (approximately one minute) is needed.
  *
@@ -315,7 +315,7 @@ typedef struct {
  */
 
 #define XTestSHORT_DELAY_TIME	0xffff
-#define XTestDELAY_DEVICE_ID    0x0f   
+#define XTestDELAY_DEVICE_ID    0x0f
 
 typedef struct {
         CARD8   header;         /* always XTestDELAY_DEVICE_ID */

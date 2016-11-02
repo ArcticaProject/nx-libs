@@ -44,7 +44,7 @@ typedef struct _PanoramiXQueryVersion {
 	CARD16	length B16;
 	CARD8	clientMajor;
 	CARD8	clientMinor;
-	CARD16	unused B16;           
+	CARD16	unused B16;
 } xPanoramiXQueryVersionReq;
 
 #define sz_xPanoramiXQueryVersionReq	8
@@ -54,8 +54,8 @@ typedef struct {
 	CARD8	pad1;			/* unused	*/
 	CARD16	sequenceNumber  B16;	/* last sequence number */
 	CARD32	length  B32;		/* 0 */
-	CARD16	majorVersion  B16;	
-	CARD16	minorVersion  B16;	
+	CARD16	majorVersion  B16;
+	CARD16	minorVersion  B16;
 	CARD32	pad2	B32;		/* unused */
 	CARD32	pad3	B32;		/* unused */
 	CARD32	pad4	B32;		/* unused */
@@ -72,7 +72,7 @@ typedef	struct	_PanoramiXGetState {
         CARD16  length B16;
 	CARD32  window B32;
 } xPanoramiXGetStateReq;
-#define sz_xPanoramiXGetStateReq	8	
+#define sz_xPanoramiXGetStateReq	8
 
 typedef struct {
 	BYTE	type;
@@ -118,11 +118,11 @@ typedef	struct	_PanoramiXGetScreenSize {
 	CARD32  window B32;
 	CARD32	screen B32;
 } xPanoramiXGetScreenSizeReq;
-#define sz_xPanoramiXGetScreenSizeReq	12	
+#define sz_xPanoramiXGetScreenSizeReq	12
 
 typedef struct {
 	BYTE	type;
-	CARD8	pad1;			
+	CARD8	pad1;
 	CARD16	sequenceNumber B16;
 	CARD32	length	B32;
 	CARD32	width	B32;
@@ -132,7 +132,7 @@ typedef struct {
 	CARD32	pad2	B32;		/* unused */
 	CARD32	pad3	B32;		/* unused */
 } xPanoramiXGetScreenSizeReply;
-#define sz_panoramiXGetScreenSizeReply 32	
+#define sz_panoramiXGetScreenSizeReply 32
 
 /************  Alternate protocol  ******************/
 
@@ -145,7 +145,7 @@ typedef struct {
 
 typedef struct {
 	BYTE	type;
-	CARD8	pad1;			
+	CARD8	pad1;
 	CARD16	sequenceNumber B16;
 	CARD32	length	B32;
 	CARD32	state	B32;
@@ -155,7 +155,7 @@ typedef struct {
 	CARD32	pad5	B32;
 	CARD32	pad6	B32;
 } xXineramaIsActiveReply;
-#define sz_XineramaIsActiveReply 32	
+#define sz_XineramaIsActiveReply 32
 
 
 typedef struct {
@@ -167,7 +167,7 @@ typedef struct {
 
 typedef struct {
 	BYTE	type;
-	CARD8	pad1;			
+	CARD8	pad1;
 	CARD16	sequenceNumber B16;
 	CARD32	length	B32;
 	CARD32	number	B32;
@@ -177,7 +177,7 @@ typedef struct {
 	CARD32	pad5	B32;
 	CARD32	pad6	B32;
 } xXineramaQueryScreensReply;
-#define sz_XineramaQueryScreensReply 32	
+#define sz_XineramaQueryScreensReply 32
 
 typedef struct {
 	INT16   x_org   B16;
@@ -187,4 +187,4 @@ typedef struct {
 } xXineramaScreenInfo;
 #define sz_XineramaScreenInfo 8
 
-#endif 
+#endif

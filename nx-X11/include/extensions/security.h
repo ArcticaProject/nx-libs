@@ -55,7 +55,7 @@ from The Open Group.
 
 /* event offsets */
 #define XSecurityAuthorizationRevoked 0
-    
+
 #define XSecurityAuthorizationName	"XC-QUERY-SECURITY-1"
 #define XSecurityAuthorizationNameLen	19
 
@@ -128,7 +128,7 @@ typedef struct {
 
 /* The following callback is called when a GenerateAuthorization request
  * is processed to sanity check the group argument.  The call data will
- * be a pointer to a SecurityValidateGroupInfoRec (below).  
+ * be a pointer to a SecurityValidateGroupInfoRec (below).
  * Functions registered on this callback are expected to examine the
  * group and set the valid field to TRUE if they recognize the group as a
  * legitimate group.  If they don't recognize it, they should not change the

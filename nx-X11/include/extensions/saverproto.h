@@ -54,7 +54,7 @@ typedef struct _ScreenSaverQueryVersion {
     CARD16 length B16;
     CARD8 clientMajor;
     CARD8 clientMinor;
-    CARD16 unused B16;	
+    CARD16 unused B16;
 } xScreenSaverQueryVersionReq;
 #define sz_xScreenSaverQueryVersionReq	8
 

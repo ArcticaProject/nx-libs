@@ -67,7 +67,7 @@ typedef struct {
     CARD16      length B16;
     CARD16	nbytesAuthProto B16;
     CARD16	nbytesAuthData B16;
-    CARD32	valueMask B32; 
+    CARD32	valueMask B32;
     /* auth protocol name padded to 4 bytes */
     /* auth protocol data padded to 4 bytes */
     /* list of CARD32 values, if any */
