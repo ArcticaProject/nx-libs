@@ -33,10 +33,10 @@ extern "C" {
 #include <nx-X11/X.h>
 #include <nx-X11/Xlib.h>
 
-#include "NX.h"
-#include "NXpack.h"
-#include "NXproto.h"
-#include "NXvars.h"
+#include <nx/NX.h>
+#include <nx/NXpack.h>
+#include <nx/NXproto.h>
+#include <nx/NXvars.h>
 
 /*
  * All the NX code should use these.
@@ -44,7 +44,7 @@ extern "C" {
 
 #define Xmalloc(size) malloc((size))
 #define Xfree(ptr)    free((ptr))
- 
+
 /*
  * Maximum number of supported pack methods.
  */
@@ -279,7 +279,7 @@ extern NXDisplayStatisticsHandler NXSetDisplayStatisticsHandler(
  * an out-of-order sequence number received in the X
  * protocol stream.
  */
- 
+
 extern NXLostSequenceHandler NXSetLostSequenceHandler(
 #if NeedFunctionPrototypes
     NXLostSequenceHandler /* handler */

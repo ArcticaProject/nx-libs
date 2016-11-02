@@ -137,7 +137,7 @@ of the copyright holder.
 
 #include "../../dix/events.c"
 
-#include <nx/NXlib.h>
+#include "compext/Compext.h"
 
 #include "Events.h"
 #include "Windows.h"

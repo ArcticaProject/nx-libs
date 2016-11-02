@@ -23,29 +23,54 @@
 /*                                                                        */
 /**************************************************************************/
 
-#include <zlib.h>
+#ifndef Png_H
+#define Png_H
 
-#include "NXlib.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#include "Rgb.h"
-#include "Z.h"
+#include <nx-X11/X.h>
+#include <nx-X11/Xlib.h>
+#include <nx-X11/Xmd.h>
 
-#define PANIC
-#define WARNING
-#undef  TEST
-#undef  DEBUG
+#include <png.h>
 
-#define RGB_COMPRESSION_LEVEL      4
-#define RGB_COMPRESSION_THRESHOLD  32
-#define RGB_COMPRESSION_STRATEGY   Z_DEFAULT_STRATEGY
+extern int PngCompareColorTable(
+#if NeedFunctionPrototypes
+  NXColorTable*     /* color_table_1 */,
+  NXColorTable*     /* color_table_2 */
+#endif
+);
 
-static int rgbCompressionLevel     = RGB_COMPRESSION_LEVEL;
-static int rgbCompressionThreshold = RGB_COMPRESSION_THRESHOLD;
-static int rgbCompressionStrategy  = RGB_COMPRESSION_STRATEGY;
+extern char *PngCompressData(
+#if NeedFunctionPrototypes
+    XImage*          /* image */,
+    int*             /* compressed_size */
+#endif
+);
 
-char *RgbCompressData(XImage *image, unsigned int *size)
-{
-  return ZCompressData(image -> data, image -> bytes_per_line * image -> height,
-                           rgbCompressionThreshold, rgbCompressionLevel,
-                               rgbCompressionStrategy, size);
+int NXCreatePalette16(
+#if NeedFunctionPrototypes
+    XImage*          /* src_image */,
+    NXColorTable*    /* color_table */,
+    CARD8*           /* image_index */,
+    int              /* nb_max */
+#endif
+);
+
+int NXCreatePalette32(
+#if NeedFunctionPrototypes
+    XImage*          /* src_image */,
+    NXColorTable*    /* color_table */,
+    CARD8*           /* image_index */,
+    int              /* nb_max */
+#endif
+);
+
+#ifdef __cplusplus
 }
+#endif
+
+#endif /* Png_H */
+

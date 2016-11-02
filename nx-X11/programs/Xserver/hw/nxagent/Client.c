@@ -57,7 +57,7 @@
  * definition of GC in Agent.h.
  */
 
-#include <nx/NXlib.h>
+#include "compext/Compext.h"
 
 /*
  * Set here the required log level.

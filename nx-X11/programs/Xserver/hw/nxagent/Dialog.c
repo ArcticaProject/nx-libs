@@ -42,7 +42,7 @@
 #include "Dialog.h"
 
 #include <nx/NX.h>
-#include <nx/NXlib.h>
+#include "compext/Compext.h"
 #include <nx/NXalert.h>
 
 /*

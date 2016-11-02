@@ -1,6 +1,10 @@
 #include <Server.tmpl>
 
+
 NULL =
+
+SUBDIRS = compext \
+          $(NULL)
 
 #ifdef OS2Architecture
 SRCS1 = os2Stub.c
@@ -156,9 +160,6 @@ INCLUDES = \
 	$(VFBINCLUDES) \
 	`pkg-config --cflags-only-I libxml-2.0` \
 	`pkg-config --cflags-only-I pixman-1` \
-	`pkg-config --cflags-only-I zlib` \
-	`pkg-config --cflags-only-I libjpeg` \
-	`pkg-config --cflags-only-I libpng` \
 	$(NULL)
 #ifdef SunArchitecture
 INCLUDES = \
@@ -180,7 +181,6 @@ INCLUDES = \
 	`pkg-config --cflags-only-I libxml-2.0` \
 	`pkg-config --cflags-only-I pixman-1` \
 	`pkg-config --cflags-only-I zlib` \
-	`pkg-config --cflags-only-I libjpeg` \
 	`pkg-config --cflags-only-I libpng` \
 	$(NULL)
 #else
@@ -197,7 +197,6 @@ INCLUDES = \
 	-I../../miext/damage \
 	-I../../miext/cw \
 	-I../../../../../nxcomp \
-	-I../../../../../nxcompext \
 	-I../../../../../nxcompshad \
 	-I../../../../extras/Mesa/include \
 	-I$(EXTINCSRC) -I$(XINCLUDESRC) \
@@ -205,7 +204,6 @@ INCLUDES = \
 	`pkg-config --cflags-only-I libxml-2.0` \
 	`pkg-config --cflags-only-I pixman-1` \
 	`pkg-config --cflags-only-I zlib` \
-	`pkg-config --cflags-only-I libjpeg` \
 	`pkg-config --cflags-only-I libpng` \
 	$(NULL)
 #endif
@@ -274,3 +272,7 @@ NormalLibraryObjectRule()
 NormalLibraryTarget(nxagent,$(OBJS))
 
 DependTarget()
+
+#define IHaveSubdirs
+MakeSubdirs($(SUBDIRS))
+DependSubdirs($(SUBDIRS))

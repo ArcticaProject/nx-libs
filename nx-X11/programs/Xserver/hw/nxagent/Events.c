@@ -102,7 +102,7 @@
 #include <nx/Shadow.h>
 #include "X11/include/Xrandr_nxagent.h"
 
-#include <nx/NXlib.h>
+#include "compext/Compext.h"
 
 /*
  * Set here the required log level. Please note

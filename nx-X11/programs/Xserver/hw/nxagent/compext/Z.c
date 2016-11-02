@@ -29,7 +29,7 @@
 
 #include <zlib.h>
 
-#include "NXlib.h"
+#include "Compext.h"
 
 #include "Z.h"
 

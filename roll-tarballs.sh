@@ -102,7 +102,6 @@ if [ "x$MODE" = "xfull" ]; then
 else
     rm -f  "bin/nxagent"
     rm -Rf "nxcompshad"*
-    rm -Rf "nxcompext"*
     rm -Rf "nx-X11"*
     rm -Rf "etc"*
     rm -Rf "doc/nx-X11_vs_XOrg69_patches"*

@@ -27,12 +27,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "Xutil.h"
+#include <nx-X11/Xutil.h>
 
-#include "NXlib.h"
+#include "Compext.h"
 
 #include "Mask.h"
-#include "Pgn.h"
+#include "Png.h"
 
 #define PANIC
 #define WARNING

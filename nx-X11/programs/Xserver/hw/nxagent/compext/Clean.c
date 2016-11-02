@@ -28,7 +28,7 @@
 
 #include "os.h"
 
-#include "NXlib.h"
+#include "Compext.h"
 
 #include "Clean.h"
 
@@ -237,7 +237,7 @@ int CopyAndCleanImage(XImage *src_image, XImage *dst_image)
         register unsigned int mask = 0xffffffff;
         register int line_size;
         register int i;
-                
+
         line_size = dst_image -> bytes_per_line >> 2;
 
         if (dst_image -> byte_order == MSBFirst)

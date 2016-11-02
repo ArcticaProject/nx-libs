@@ -46,7 +46,7 @@
  * Use asyncronous get property replies.
  */
 
-#include <nx/NXlib.h>
+#include "compext/Compext.h"
 
 /*
  * Set here the required log level.

@@ -25,7 +25,7 @@
 
 #include <zlib.h>
 
-#include "NXlib.h"
+#include "Compext.h"
 
 #include "Rle.h"
 #include "Z.h"

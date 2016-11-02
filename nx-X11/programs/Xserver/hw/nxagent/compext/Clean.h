@@ -23,28 +23,22 @@
 /*                                                                        */
 /**************************************************************************/
 
-#include <zlib.h>
+#ifndef Clean_H
+#define Clean_H
 
-#include "NXlib.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#include "Colormap.h"
-#include "Z.h"
+#include <nx-X11/Xlib.h>
 
-#define PANIC
-#define WARNING
-#undef  TEST
-#undef  DEBUG
+int CleanXYImage(XImage *image);
+int CleanZImage(XImage *image);
 
-#define COLORMAP_COMPRESSION_LEVEL      4
-#define COLORMAP_COMPRESSION_THRESHOLD  32
-#define COLORMAP_COMPRESSION_STRATEGY   Z_DEFAULT_STRATEGY
+int CopyAndCleanImage(XImage *src_image, XImage *dst_image);
 
-static int colormapCompressionLevel     = COLORMAP_COMPRESSION_LEVEL;
-static int colormapCompressionThreshold = COLORMAP_COMPRESSION_THRESHOLD;
-static int colormapCompressionStrategy  = COLORMAP_COMPRESSION_STRATEGY;
-
-char *ColormapCompressData(const char *data, unsigned int size, unsigned int *compressed_size)
-{
-  return ZCompressData(data, size, colormapCompressionThreshold, colormapCompressionLevel,
-                           colormapCompressionStrategy, compressed_size);
+#ifdef __cplusplus
 }
+#endif
+
+#endif /* Clean_H */

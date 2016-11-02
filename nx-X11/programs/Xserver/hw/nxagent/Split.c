@@ -34,7 +34,7 @@
 #include "Events.h"
 #include "GCs.h"
 
-#include <nx/NXlib.h>
+#include "compext/Compext.h"
 
 
 /*

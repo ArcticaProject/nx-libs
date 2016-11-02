@@ -214,21 +214,18 @@ NXAGENTDDXDIR = hw
 NXAGENTDIRS = $(STDDIRS) $(FBDIR) $(MIDAMAGEDIR) $(NXAGENTDDXDIR) $(DEPDIRS)
 
 NX_XCOMP_HEADERS = \
+              ../../../nxcomp/MD5.h             \
               ../../../nxcomp/NXalert.h         \
               ../../../nxcomp/NX.h              \
               ../../../nxcomp/NXpack.h          \
               ../../../nxcomp/NXproto.h         \
               ../../../nxcomp/NXvars.h
 
-NX_XCOMPEXT_HEADERS =                           \
-              ../../../nxcompext/NXlib.h
-
 NX_XCOMPSHAD_HEADERS =                          \
               ../../../nxcompshad/Shadow.h
 
 NX_HEADERS =                                    \
              $(NX_XCOMP_HEADERS)                \
-             $(NX_XCOMPEXT_HEADERS)             \
              $(NX_XCOMPSHAD_HEADERS)
 
 BuildIncludes($(NX_HEADERS),nx,..)
@@ -295,11 +292,17 @@ NXAGENTOBJS = hw/nxagent/miinitext.o     \
 XPMLIB    =  -lXpm
 XMLLIB    =  `pkg-config --libs libxml-2.0`
 PIXMANLIB =  `pkg-config --libs pixman-1`
+ZLIB      =  `pkg-config --libs zlib`
+PNGLIB    =  `pkg-config --libs libpng`
+JPEGLIB   =  -ljpeg
+
 NXAGENT = hw/nxagent/LibraryTargetName(nxagent)
-NXAGENTLIBS = PreFbLibs $(NXAGENT) FbPostFbLibs $(NXAGENT) $(MI)
-NXAGENTSYSLIBS = $(LDPRELIBS) $(XLIB) $(SYSLIBS) $(XPMLIB) $(XMLLIB) $(PIXMANLIB)
+NXCOMPEXT =  hw/nxagent/compext/LibraryTargetName(compext)
+NXAGENTLIBS = PreFbLibs $(NXAGENT) FbPostFbLibs $(NXCOMPEXT) $(NXAGENT) $(MI)
+NXAGENTSYSLIBS = $(LDPRELIBS) $(XLIB) $(SYSLIBS) $(XPMLIB) $(XMLLIB)
+NXCOMPEXTSYSLIBS = $(PIXMANLIB) $(ZLIB) $(PNGLIB) $(JPEGLIB)
 #if HasParallelMake
-MakeMutex($(NXAGENTDIRS) $(NXAGENTOBJS) $(NXAGENTLIBS) $(NXAGENTSYSLIBS))
+MakeMutex($(NXAGENTDIRS) $(NXCOMPEXT) $(NXAGENTOBJS) $(NXAGENTLIBS) $(NXCOMPEXTSYSLIBS) $(NXAGENTSYSLIBS))
 #endif
 #if ForceServerRemake
 $(NXAGENTOBJS) $(NXAGENTLIBS) $(NXAGENTSYSLIBS):: $(NXAGENTDIRS)
@@ -314,26 +317,26 @@ $(NXAGENTOBJS) $(NXAGENTLIBS) $(NXAGENTSYSLIBS):: $(NXAGENTDIRS)
 NXAGENTNXLIBS = -L/usr/sfw/lib \
                 -L ../../../nxcomp  \
                 -L../../../nx-X11/exports/lib \
-                -L ../../../nxcompext -L ../../../nxcompshad \
+                -L ../../../nxcompshad \
                 -lrt \
                 -lXcomp \
-                -lXcompext -lXcompshad \
+                -lXcompshad \
                 -lXrender -lXfixes -lXfont -lXcomposite -lXinerama -lXdmcp \
                 -lNX_X11 -lXext
 #elif defined(cygwinArchitecture)
 NXAGENTNXLIBS = -L ../../../nxcomp  \
                 -L../../../nx-X11/exports/lib \
-                -L ../../../nxcompext -L ../../../nxcompshad \
+                -L ../../../nxcompshad \
                 -lXcomp \
-                -lXcompext -lXcompshad \
+                -lXcompshad \
                 -lXrender -lXfixes -lXfont -lXcomposite -lXdmcp \
                 -lNX_X11 -lXext
 #else
 NXAGENTNXLIBS = -L ../../../nxcomp  \
                 -L../../../nx-X11/exports/lib \
-                -L ../../../nxcompext -L ../../../nxcompshad \
+                -L ../../../nxcompshad \
                 -lXcomp \
-                -lXcompext -lXcompshad \
+                -lXcompshad \
                 -lXrender -lXfixes -lXfont -lXcomposite -lXinerama -lXdmcp \
                 -lNX_X11 -lXext
 #endif
@@ -346,7 +349,7 @@ NX_XSHADOWLIBNAME   = libXcompshad.so
 #endif
 
 ServerTarget(nxagent,$(NXAGENTDIRS),$(NXAGENTOBJS), \
-        $(LIBCWRAPPER) $(NXAGENTLIBS) $(LOADABLEEXTS),$(NXAGENTSYSLIBS) $(NXAGENTNXLIBS))
+        $(LIBCWRAPPER) $(NXCOMPEXT) $(NXAGENTLIBS) $(LOADABLEEXTS),$(NXCOMPEXTSYSLIBS) $(NXAGENTSYSLIBS) $(NXAGENTNXLIBS))
 
 /*
  *  Hard coded target to build a static nxagent server.
@@ -356,8 +359,8 @@ nxagent_static: nxagent
 	$(MV) nxagent_static nxagent_static.bak; \
 	else exit 0; fi
 	$(CCLINK) -o nxagent_static -static $(LDOPTIONS) $(NXAGENTOBJS) \
-	$(LIBCWRAPPER) $(NXAGENTLIBS) $(LOADABLEEXTS) $(LDLIBS) \
-	$(NXAGENTSYSLIBS) $(EXTRA_LOAD_FLAGS)
+	$(LIBCWRAPPER) $(NXCOMPEXT) $(NXAGENTLIBS) $(LOADABLEEXTS) $(LDLIBS) \
+	$(NXCOMPEXTSYSLIBS) $(NXAGENTSYSLIBS) $(EXTRA_LOAD_FLAGS)
 
 /*
  *  Hard coded target to build a static nxagent server except for libX11 and libXext.

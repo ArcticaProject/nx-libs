@@ -326,7 +326,6 @@ Depends:
  ${shlibs:Depends},
  ${misc:Depends},
  libxcomp3 (= ${binary:Version}),
- libxcompext3 (= ${binary:Version}),
  libxcompshad3 (= ${binary:Version}),
  libnx-x11-6 (= ${binary:Version}),
 Recommends:
@@ -334,8 +333,10 @@ Recommends:
  xkb-data,
 Breaks:
  nxauth,
+ libxcompext3 (<< 2:3.5.99.3~),
 Replaces:
  nxauth,
+ libxcompext3,
 Description: NX agent
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -467,58 +468,6 @@ Description: nx-X11 compression library (debug package)
  using X applications over a network, especially a slow one.
  .
  This package provides the compression library.
- .
- This package contains debug symbols for this library.
-
-Package: libxcompext3
-Architecture: any
-Multi-Arch: same
-Depends:
- ${shlibs:Depends},
- ${misc:Depends},
- libnx-x11-6 (= ${binary:Version}),
-Breaks: nxcompext (<=3.5.1)
-Replaces: nxcompext
-Description: nx-X11 protocol compression extensions library
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package extends the core NX library with additional features.
-
-Package: libxcompext-dev
-Provides: libxcompext3-dev
-Architecture: any
-Section: libdevel
-Depends:
- libxcompext3 (= ${binary:Version}),
- ${misc:Depends},
- libxcomp-dev,
-Breaks: nxcompext-dev (<=3.5.1),
-Replaces: nxcompext-dev,
-Description: nx-X11 protocol compression extensions library (development headers)
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package extends the core NX library with additional features.
- .
- This package contains the development headers for this library.
-
-Package: libxcompext3-dbg
-Architecture: any
-Multi-Arch: same
-Depends:
- libxcompext3 (= ${binary:Version}),
- ${misc:Depends},
-Section: debug
-Breaks: nx-x11-dbg (<< 2:3.5.0.29-1~),
-Description: nx-X11 protocol compression extensions library (debug package)
- NX is a software suite which implements very efficient
- compression of the X11 protocol. This increases performance when
- using X applications over a network, especially a slow one.
- .
- This package extends the core NX library with additional features.
  .
  This package contains debug symbols for this library.
 

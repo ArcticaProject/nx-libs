@@ -1,0 +1,48 @@
+NULL =
+
+#include <Server.tmpl>
+
+SRCS =	\
+	Alpha.c \
+	Bitmap.c \
+	Clean.c \
+	Colormap.c \
+	Compext.c \
+	Jpeg.c \
+	Mask.c \
+	Png.c \
+	Rgb.c \
+	Rle.c \
+	Z.c \
+	$(NULL)
+
+OBJS =	\
+	Alpha.o \
+	Bitmap.o \
+	Clean.o \
+	Colormap.o \
+	Compext.o \
+	Jpeg.o \
+	Mask.o \
+	Png.o \
+	Rgb.o \
+	Rle.o \
+	Z.o \
+	$(NULL)
+
+   INCLUDES = -I$(SERVERSRC)/include \
+              -I$(XBUILDINCDIR) \
+              `pkg-config --cflags-only-I pixman-1` \
+              `pkg-config --cflags-only-I zlib` \
+              `pkg-config --cflags-only-I libpng` \
+              $(NULL)
+
+   LINTLIBS = $(SERVERSRC)/dix/llib-ldix.ln \
+              $(NULL)
+
+NormalLibraryObjectRule()
+NormalLibraryTarget(compext,$(OBJS))
+LintLibraryTarget(compext,$(SRCS))
+NormalLintTarget($(SRCS))
+
+DependTarget()

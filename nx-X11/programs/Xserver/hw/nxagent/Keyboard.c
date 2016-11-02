@@ -61,7 +61,7 @@ is" without express or implied warranty.
 #include "Options.h"
 #include "Error.h"
 
-#include <nx/NXlib.h>
+#include "compext/Compext.h"
 
 #include <nx/Shadow.h>
 

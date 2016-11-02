@@ -39,7 +39,7 @@
 #include "Atoms.h"
 #include "Trap.h"
 
-#include <nx/NXlib.h>
+#include "compext/Compext.h"
 
 /*
  * Set here the required log level.
