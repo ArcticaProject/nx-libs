@@ -606,7 +606,7 @@ trans_mkdir(const char *path, int mode)
 		}
 #endif
 #if !defined(__APPLE_CC__) && !defined(__CYGWIN__)
-	  	prmsg(1, "mkdir: Owner of %s should be set to root\n",
+		prmsg(1, "mkdir: Owner of %s should be set to root\n",
 		      path);
 #endif
 	    }
@@ -619,7 +619,7 @@ trans_mkdir(const char *path, int mode)
 		    return -1;
 		}
 #endif
-	  	prmsg(1, "mkdir: Mode of %s should be set to %04o\n",
+		prmsg(1, "mkdir: Mode of %s should be set to %04o\n",
 		      path, mode);
 		if (status & WARN_NO_ACCESS) {
 		    prmsg(1, "mkdir: this may cause subsequent errors\n");

@@ -965,7 +965,7 @@ TRANS(IsLocal) (XtransConnInfo ciptr)
 }
 
 #ifdef NX_TRANS_SOCKET
-/* this is needed for pre-xcb X11 as we have in NX */ 
+/* this is needed for pre-xcb X11 as we have in NX */
 int
 TRANS(GetMyAddr) (XtransConnInfo ciptr, int *familyp, int *addrlenp,
                  Xtransaddr **addrp)
