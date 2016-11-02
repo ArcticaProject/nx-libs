@@ -50,6 +50,15 @@ NX_DEFINES = -DNX_TRANS_SOCKET \
 #            -DNX_TRANS_TEST      \
 #            -DNX_TRANS_DEBUG     \
 
+/*
+   This is used to create libX11* links in exports/lib.
+   It is a dependency of the part that links the libNX_X11.so
+   to exports/lib and is therefore called _before_ any libNX*
+   links exist.
+   The make target libX11-links is at the end of the file.
+*/
+EXTRALIBRARYDEPS = libX11-links
+
 #ifdef cygwinArchitecture
 NX_XCOMPLIBNAME   = cygXcomp.dll
 NX_XCOMPEXTLIBNAME   = cygXcompext.dll
@@ -1126,6 +1135,9 @@ depend:: ks_tables.h
 clean::
 	RemoveFiles(ks_tables_h ks_tables.h HostProgramTargetName(makekeys))
 
+KeysymStr.o: ks_tables.h
+
+StrKeysym.o: ks_tables.h
 
 DependTarget3($(SRCS1),$(SRCS2),$(SRCS3) $(EXTRASRCS))
 
@@ -1161,3 +1173,21 @@ XlibConf.h:
 	echo '/* Defines needed to use Xlib from non-imake projects */' > $@
 	XThreadsDefine
 	MTSafeAPIDefine
+
+/* create libX11 links in exports/lib */
+libX11-links:
+	MakeDir($(BUILDLIBDIR))
+	@MAJREV=`echo $(SOXLIBREV) | cut -d. -f1`;\
+	(for i in "" .$$MAJREV .$(SOXLIBREV); do\
+	    t="lib$(LIBNAME).so$$i";\
+	    l="libX11.so$$i";\
+	    $(RM) "$(BUILDLIBDIR)/$$l";\
+	    (set -x; $(LN) "$$t" "$(BUILDLIBDIR)/$$l");\
+	done)
+
+/* remove libX11 _and_ libNX_X11 links in epxorts/lib */
+clean::
+	@MAJREV=`echo $(SOXLIBREV) | cut -d. -f1`;\
+	set -x; for i in "" .$$MAJREV .$(SOXLIBREV); do\
+	    $(RM) "$(BUILDLIBDIR)/lib$(LIBNAME).so$$i" "$(BUILDLIBDIR)/libX11.so$$i";\
+	done
