@@ -146,7 +146,9 @@ install-full:
 	done;
 
 	$(INSTALL_DIR) $(DESTDIR)$(USRLIBDIR)
-	$(COPY_SYMLINK) nx-X11/.build-exports/lib/*.so* $(DESTDIR)$(USRLIBDIR)/
+	$(COPY_SYMLINK) nx-X11/.build-exports/lib/libNX_X11.so $(DESTDIR)$(USRLIBDIR)/
+	$(COPY_SYMLINK) nx-X11/.build-exports/lib/libNX_X11.so.6 $(DESTDIR)$(USRLIBDIR)/
+	cd nx-X11/.build-exports/lib/ && $(INSTALL_FILE) `readlink libNX_X11.so.6.2` $(DESTDIR)$(USRLIBDIR)/
 	$(INSTALL_DIR) $(DESTDIR)$(USRLIBDIR)/nx-X11
 	$(INSTALL_SYMLINK) ../libNX_X11.so $(DESTDIR)$(USRLIBDIR)/nx-X11/libX11.so
 	$(INSTALL_SYMLINK) ../libNX_X11.so.6.2 $(DESTDIR)$(USRLIBDIR)/nx-X11/libX11.so.6.2
