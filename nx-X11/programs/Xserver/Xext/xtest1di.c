@@ -42,8 +42,8 @@ documentation, and that the name of Hewlett-Packard not be used in
 advertising or publicity pertaining to distribution of the
 software without specific, written prior permission.
 
-Hewlett-Packard makes no representations about the 
-suitability of this software for any purpose.  It is provided 
+Hewlett-Packard makes no representations about the
+suitability of this software for any purpose.  It is provided
 "as is" without express or implied warranty.
 
 This software is not subject to any license of the American
@@ -65,7 +65,7 @@ University of California.
 #include <nx-X11/Xproto.h>
 #include "misc.h"
 #include "os.h"
-#include "gcstruct.h"   
+#include "gcstruct.h"
 #include "extnsionst.h"
 #include "dixstruct.h"
 #include "opaque.h"
@@ -210,8 +210,8 @@ XTestExtension1Init(void)
 		{
 			FatalError("XTestExtension1Init: CreateNewResourceType failed\n");
 		}
-	} 
-	else 
+	}
+	else
 	{
 		FatalError("XTestExtension1Init: AddExtensions failed\n");
 	}
@@ -567,10 +567,10 @@ ProcTestGetInput(client)
 		return(BadAccess);
 	}
 	else
-	{ 
+	{
 		/*
 		 * Set up a resource associated with the client using this
-		 * function so that this extension gets called when the 
+		 * function so that this extension gets called when the
 		 * client "goes away".  This allows this extension to
 		 * clean up the server state.
 		 */
@@ -586,7 +586,7 @@ ProcTestGetInput(client)
 		{
 			exclusive_steal = FALSE;
 		}
-		else 
+		else
 		{
 			exclusive_steal = TRUE;
 		}
@@ -606,11 +606,11 @@ ProcTestStopInput(client)
 	register ClientPtr	client;
 {
 	REQUEST_SIZE_MATCH(xTestStopInputReq);
-	if (on_steal_input && (current_xtest_client == client)) 
-	{ 
+	if (on_steal_input && (current_xtest_client == client))
+	{
 		on_steal_input = FALSE;
 		exclusive_steal = FALSE;
-		stop_stealing_input();	
+		stop_stealing_input();
 		/*
 		 * remove the resource associated with this client
 		 */
@@ -649,7 +649,7 @@ ProcTestReset(client)
 	/*
 	 * defined in xtest1dd.c
 	 */
-	stop_stealing_input();	
+	stop_stealing_input();
 	/*
 	 * defined in xtest1dd.c
 	 */
@@ -715,7 +715,7 @@ XTestResetProc(unused)
  *	PXTestCurrentClientGone
  *
  *	This routine is called when a client that has asked for input actions
- *	to be sent to it "goes away".  This routine must clean up the 
+ *	to be sent to it "goes away".  This routine must clean up the
  *	server state.
  */
 /*ARGSUSED*/

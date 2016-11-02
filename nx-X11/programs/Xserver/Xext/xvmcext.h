@@ -59,7 +59,7 @@ typedef int (*XvMCCreateContextProcPtr) (
   XvPortPtr port,
   XvMCContextPtr context,
   int *num_priv,
-  CARD32 **priv 
+  CARD32 **priv
 );
 
 typedef void (*XvMCDestroyContextProcPtr) (
@@ -93,11 +93,11 @@ typedef struct {
   XvMCSurfaceInfoPtr		    *surfaces;
   int				    num_subpictures;
   XvImagePtr			    *subpictures;
-  XvMCCreateContextProcPtr          CreateContext; 
-  XvMCDestroyContextProcPtr         DestroyContext; 
-  XvMCCreateSurfaceProcPtr          CreateSurface;  
-  XvMCDestroySurfaceProcPtr         DestroySurface; 
-  XvMCCreateSubpictureProcPtr       CreateSubpicture; 
+  XvMCCreateContextProcPtr          CreateContext;
+  XvMCDestroyContextProcPtr         DestroyContext;
+  XvMCCreateSurfaceProcPtr          CreateSurface;
+  XvMCDestroySurfaceProcPtr         DestroySurface;
+  XvMCCreateSubpictureProcPtr       CreateSubpicture;
   XvMCDestroySubpictureProcPtr      DestroySubpicture;
 } XvMCAdaptorRec, *XvMCAdaptorPtr;
 
@@ -108,7 +108,7 @@ int XvMCScreenInit(ScreenPtr pScreen, int num, XvMCAdaptorPtr adapt);
 XvImagePtr XvMCFindXvImage(XvPortPtr pPort, CARD32 id);
 
 int xf86XvMCRegisterDRInfo(ScreenPtr pScreen, char *name,
-			   char *busID, int major, int minor, 
+			   char *busID, int major, int minor,
 			   int patchLevel);
 
 

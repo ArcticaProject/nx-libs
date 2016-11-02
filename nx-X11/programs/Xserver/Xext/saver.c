@@ -335,10 +335,10 @@ setEventMask (pScreen, client, mask)
     }
     else
     {
-    	if (!pEv) 
+    	if (!pEv)
     	{
 	    pEv = New (ScreenSaverEventRec);
-	    if (!pEv) 
+	    if (!pEv)
 	    {
 		CheckScreenPrivate (pScreen);
 	    	return FALSE;
@@ -538,9 +538,9 @@ CreateSaverWindow (pScreen)
 
     pWin = CreateWindow (pSaver->wid, pScreen->root,
 			 pAttr->x, pAttr->y, pAttr->width, pAttr->height,
-			 pAttr->borderWidth, pAttr->class, 
-			 pAttr->mask, (XID *)pAttr->values, 
-			 pAttr->depth, serverClient, pAttr->visual, 
+			 pAttr->borderWidth, pAttr->class,
+			 pAttr->mask, (XID *)pAttr->values,
+			 pAttr->depth, serverClient, pAttr->visual,
 			 &result);
     if (!pWin)
 	return FALSE;
@@ -599,7 +599,7 @@ CreateSaverWindow (pScreen)
 						 sizeof (Colormap));
     numInstalled = (*pWin->drawable.pScreen->ListInstalledColormaps)
 						    (pScreen, installedMaps);
-    for (i = 0; i < numInstalled; i++) 
+    for (i = 0; i < numInstalled; i++)
 	if (installedMaps[i] == wantMap)
 	    break;
 
@@ -653,20 +653,20 @@ ScreenSaverHandle (pScreen, xstate, force)
 
     switch (xstate)
     {
-    case SCREEN_SAVER_ON:	
+    case SCREEN_SAVER_ON:
 	state = ScreenSaverOn;
 	ret = CreateSaverWindow (pScreen);
 	break;
-    case SCREEN_SAVER_OFF:	
+    case SCREEN_SAVER_OFF:
 	state = ScreenSaverOff;
 	ret = DestroySaverWindow (pScreen);
 	break;
-    case SCREEN_SAVER_CYCLE:	
+    case SCREEN_SAVER_CYCLE:
 	state = ScreenSaverCycle;
 	pPriv = GetScreenPrivate (pScreen);
 	if (pPriv && pPriv->hasWindow)
 	    ret = TRUE;
-	
+
     }
 #ifdef PANORAMIX
     if(noPanoramiXExtension || !pScreen->myNum)
@@ -825,7 +825,7 @@ ScreenSaverSetAttributes (ClientPtr client)
 	client->errorValue = 0;
         return BadValue;
     }
-    switch (class = stuff->c_class) 
+    switch (class = stuff->c_class)
     {
     case CopyFromParent:
     case InputOnly:
@@ -971,7 +971,7 @@ ScreenSaverSetAttributes (ClientPtr client)
 		*values++ = ParentRelative;
 	    }
             else
-	    {	
+	    {
                 pPixmap = (PixmapPtr)LookupIDByType(pixID, RT_PIXMAP);
                 if (pPixmap != (PixmapPtr) NULL)
 		{
@@ -1008,7 +1008,7 @@ ScreenSaverSetAttributes (ClientPtr client)
 		*values++ = CopyFromParent;
 	    }
 	    else
-	    {	
+	    {
 		pPixmap = (PixmapPtr)LookupIDByType(pixID, RT_PIXMAP);
 		if (pPixmap)
 		{
@@ -1239,7 +1239,7 @@ ProcScreenSaverSetAttributes (ClientPtr client)
        orig_visual = stuff->visualID;
 
        FOR_NSCREENS_BACKWARD(i) {
-          stuff->drawable = draw->info[i].id;  
+          stuff->drawable = draw->info[i].id;
           if (backPix)
              *((CARD32 *) &stuff[1] + pback_offset) = backPix->info[i].id;
           if (bordPix)
@@ -1247,8 +1247,8 @@ ProcScreenSaverSetAttributes (ClientPtr client)
           if (cmap)
              *((CARD32 *) &stuff[1] + cmap_offset) = cmap->info[i].id;
 
-          if (orig_visual != CopyFromParent) 
-            stuff->visualID = 
+          if (orig_visual != CopyFromParent)
+            stuff->visualID =
                      PanoramiXVisualTable[(orig_visual*MAXSCREENS) + i];
 
           status = ScreenSaverSetAttributes(client);

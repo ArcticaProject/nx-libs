@@ -4,13 +4,13 @@ and the Massachusetts Institute of Technology, Cambridge, Massachusetts.
 
                         All Rights Reserved
 
-Permission to use, copy, modify, and distribute this software and its 
-documentation for any purpose and without fee is hereby granted, 
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
 provided that the above copyright notice appear in all copies and that
-both that copyright notice and this permission notice appear in 
+both that copyright notice and this permission notice appear in
 supporting documentation, and that the names of Digital or MIT not be
 used in advertising or publicity pertaining to distribution of the
-software without specific, written prior permission.  
+software without specific, written prior permission.
 
 DIGITAL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
 ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
@@ -23,11 +23,11 @@ SOFTWARE.
 ******************************************************************/
 
 /*
-** File: 
+** File:
 **
 **   xvdisp.c --- Xv server extension dispatch module.
 **
-** Author: 
+** Author:
 **
 **   David Carver (Digital Workstation Engineering/Project Athena)
 **
@@ -229,7 +229,7 @@ ProcXvDispatch(ClientPtr client)
 
   UpdateCurrentTime();
 
-  switch (stuff->data) 
+  switch (stuff->data)
     {
     case xv_QueryExtension: return(ProcXvQueryExtension(client));
     case xv_QueryAdaptors: return(ProcXvQueryAdaptors(client));
@@ -254,14 +254,14 @@ ProcXvDispatch(ClientPtr client)
     case xv_UngrabPort: return(ProcXvUngrabPort(client));
     case xv_SelectVideoNotify: return(ProcXvSelectVideoNotify(client));
     case xv_SelectPortNotify: return(ProcXvSelectPortNotify(client));
-    case xv_StopVideo: 
+    case xv_StopVideo:
 #ifdef PANORAMIX
         if(!noPanoramiXExtension)
 	    return(XineramaXvStopVideo(client));
 	else
 #endif
 	    return(ProcXvStopVideo(client));
-    case xv_SetPortAttribute: 
+    case xv_SetPortAttribute:
 #ifdef PANORAMIX
         if(!noPanoramiXExtension)
 	    return(XineramaXvSetPortAttribute(client));
@@ -279,7 +279,7 @@ ProcXvDispatch(ClientPtr client)
 #endif
 	    return(ProcXvPutImage(client));
 #ifdef MITSHM
-    case xv_ShmPutImage: 
+    case xv_ShmPutImage:
 #ifdef PANORAMIX
         if(!noPanoramiXExtension)
 	    return(XineramaXvShmPutImage(client));
@@ -292,7 +292,7 @@ ProcXvDispatch(ClientPtr client)
     default:
       if (stuff->data < xvNumRequests)
 	{
-	  SendErrorToClient(client, XvReqCode, stuff->data, 0, 
+	  SendErrorToClient(client, XvReqCode, stuff->data, 0,
 			    BadImplementation);
 	  return(BadImplementation);
 	}
@@ -311,7 +311,7 @@ SProcXvDispatch(ClientPtr client)
 
   UpdateCurrentTime();
 
-  switch (stuff->data) 
+  switch (stuff->data)
     {
     case xv_QueryExtension: return(SProcXvQueryExtension(client));
     case xv_QueryAdaptors: return(SProcXvQueryAdaptors(client));
@@ -338,7 +338,7 @@ SProcXvDispatch(ClientPtr client)
     default:
       if (stuff->data < xvNumRequests)
 	{
-	  SendErrorToClient(client, XvReqCode, stuff->data, 0, 
+	  SendErrorToClient(client, XvReqCode, stuff->data, 0,
 			    BadImplementation);
 	  return(BadImplementation);
 	}
@@ -515,7 +515,7 @@ ProcXvQueryEncodings(ClientPtr client)
 
   ne = pPort->pAdaptor->nEncodings;
   pe = pPort->pAdaptor->pEncodings;
-  while (ne--) 
+  while (ne--)
     {
       einfo.encoding = pe->id;
       einfo.name_size = strlen(pe->name);
@@ -880,10 +880,10 @@ ProcXvSetPortAttribute(ClientPtr client)
       return(BadAtom);
     }
 
-  status = XVCALL(diSetPortAttribute)(client, pPort, 
+  status = XVCALL(diSetPortAttribute)(client, pPort,
 				    stuff->attribute, stuff->value);
 
-  if (status == BadMatch) 
+  if (status == BadMatch)
       client->errorValue = stuff->attribute;
   else
       client->errorValue = stuff->value;
@@ -930,7 +930,7 @@ ProcXvGetPortAttribute(ClientPtr client)
   rep.sequenceNumber = client->sequence;
   rep.length = 0;
   rep.value = value;
- 
+
   _WriteGetPortAttributeReply(client, &rep);
 
   return Success;
@@ -963,13 +963,13 @@ ProcXvQueryBestSize(ClientPtr client)
   rep.length = 0;
 
   (* pPort->pAdaptor->ddQueryBestSize)(client, pPort, stuff->motion,
-				       stuff->vid_w, stuff->vid_h, 
-				       stuff->drw_w, stuff->drw_h, 
+				       stuff->vid_w, stuff->vid_h,
+				       stuff->drw_w, stuff->drw_h,
 				       &actual_width, &actual_height);
 
   rep.actual_width = actual_width;
   rep.actual_height = actual_height;
- 
+
   _WriteQueryBestSizeReply(client, &rep);
 
   return Success;
@@ -1004,9 +1004,9 @@ ProcXvQueryPortAttributes(ClientPtr client)
   rep.num_attributes = pPort->pAdaptor->nAttributes;
   rep.text_size = 0;
 
-  for(i = 0, pAtt = pPort->pAdaptor->pAttributes; 
-      i < rep.num_attributes; i++, pAtt++) 
-  {    
+  for(i = 0, pAtt = pPort->pAdaptor->pAttributes;
+      i < rep.num_attributes; i++, pAtt++)
+  {
       rep.text_size += (strlen(pAtt->name) + 1 + 3) & ~3L;
   }
 
@@ -1015,8 +1015,8 @@ ProcXvQueryPortAttributes(ClientPtr client)
 
   _WriteQueryPortAttributesReply(client, &rep);
 
-  for(i = 0, pAtt = pPort->pAdaptor->pAttributes; 
-      i < rep.num_attributes; i++, pAtt++) 
+  for(i = 0, pAtt = pPort->pAdaptor->pAttributes;
+      i < rep.num_attributes; i++, pAtt++)
   {
       size = strlen(pAtt->name) + 1;  /* pass the NULL */
       Info.flags = pAtt->flags;
@@ -1034,7 +1034,7 @@ ProcXvQueryPortAttributes(ClientPtr client)
 
 
 
-static int 
+static int
 ProcXvPutImage(ClientPtr client)
 {
   DrawablePtr pDraw;
@@ -1086,18 +1086,18 @@ ProcXvPutImage(ClientPtr client)
 
   width = stuff->width;
   height = stuff->height;
-  size = (*pPort->pAdaptor->ddQueryImageAttributes)(client, 
+  size = (*pPort->pAdaptor->ddQueryImageAttributes)(client,
 			pPort, pImage, &width, &height, NULL, NULL);
   size += sizeof(xvPutImageReq);
   size = (size + 3) >> 2;
-  
+
   if((width < stuff->width) || (height < stuff->height))
      return BadValue;
 
   if(client->req_len < size)
      return BadLength;
 
-  return XVCALL(diPutImage)(client, pDraw, pPort, pGC, 
+  return XVCALL(diPutImage)(client, pDraw, pPort, pGC,
 			    stuff->src_x, stuff->src_y,
 			    stuff->src_w, stuff->src_h,
 			    stuff->drw_x, stuff->drw_y,
@@ -1121,7 +1121,7 @@ extern RESTYPE ShmSegType;
 extern int BadShmSegCode;
 extern int ShmCompletionCode;
 
-static int 
+static int
 ProcXvShmPutImage(ClientPtr client)
 {
   ShmDescPtr shmdesc;
@@ -1172,28 +1172,28 @@ ProcXvShmPutImage(ClientPtr client)
   if(!pImage)
      return BadMatch;
 
-  if(!(shmdesc = (ShmDescPtr)LookupIDByType(stuff->shmseg, ShmSegType))) 
+  if(!(shmdesc = (ShmDescPtr)LookupIDByType(stuff->shmseg, ShmSegType)))
     {
       client->errorValue = stuff->shmseg;
-      return BadShmSegCode;  
-    }	
- 
+      return BadShmSegCode;
+    }
+
   width = stuff->width;
   height = stuff->height;
-  size_needed = (*pPort->pAdaptor->ddQueryImageAttributes)(client, 
+  size_needed = (*pPort->pAdaptor->ddQueryImageAttributes)(client,
 			pPort, pImage, &width, &height, NULL, NULL);
   if((size_needed + stuff->offset) > shmdesc->size)
       return BadAccess;
 
   if((width < stuff->width) || (height < stuff->height))
      return BadValue;
-     
-  status = XVCALL(diPutImage)(client, pDraw, pPort, pGC, 
+
+  status = XVCALL(diPutImage)(client, pDraw, pPort, pGC,
 			    stuff->src_x, stuff->src_y,
 			    stuff->src_w, stuff->src_h,
 			    stuff->drw_x, stuff->drw_y,
 			    stuff->drw_w, stuff->drw_h, pImage,
-			    (unsigned char *)shmdesc->addr + stuff->offset, 
+			    (unsigned char *)shmdesc->addr + stuff->offset,
 			    stuff->send_event, stuff->width, stuff->height);
 
   if((status == Success) && stuff->send_event) {
@@ -1216,7 +1216,7 @@ ProcXvShmPutImage(ClientPtr client)
 #include "xvmcext.h"
 #endif
 
-static int 
+static int
 ProcXvQueryImageAttributes(ClientPtr client)
 {
   xvQueryImageAttributesReply rep;
@@ -1235,7 +1235,7 @@ ProcXvQueryImageAttributes(ClientPtr client)
       client->errorValue = stuff->port;
       return (_XvBadPort);
     }
-  
+
   for(i = 0; i < pPort->pAdaptor->nImages; i++) {
       if(pPort->pAdaptor->pImages[i].id == stuff->id) {
 	  pImage = &(pPort->pAdaptor->pImages[i]);
@@ -1270,7 +1270,7 @@ ProcXvQueryImageAttributes(ClientPtr client)
   rep.width = width;
   rep.height = height;
   rep.data_size = size;
- 
+
   _WriteQueryImageAttributesReply(client, &rep);
   if(client->swapped)
     SwapLongs((CARD32*)offsets, rep.length);
@@ -1281,7 +1281,7 @@ ProcXvQueryImageAttributes(ClientPtr client)
   return Success;
 }
 
-static int 
+static int
 ProcXvListImageFormats(ClientPtr client)
 {
   XvPortPtr pPort;
@@ -1307,32 +1307,32 @@ ProcXvListImageFormats(ClientPtr client)
   _WriteListImageFormatsReply(client, &rep);
 
   pImage = pPort->pAdaptor->pImages;
-  
+
   for(i = 0; i < rep.num_formats; i++, pImage++) {
-     info.id = pImage->id; 	
-     info.type = pImage->type; 	
-     info.byte_order = pImage->byte_order; 
-     memcpy(&info.guid, pImage->guid, 16);	
-     info.bpp = pImage->bits_per_pixel; 	
-     info.num_planes = pImage->num_planes; 	
-     info.depth = pImage->depth; 	
-     info.red_mask = pImage->red_mask; 	
-     info.green_mask = pImage->green_mask; 	
-     info.blue_mask = pImage->blue_mask; 	
-     info.format = pImage->format; 	
-     info.y_sample_bits = pImage->y_sample_bits; 	
-     info.u_sample_bits = pImage->u_sample_bits; 	
-     info.v_sample_bits = pImage->v_sample_bits; 	
-     info.horz_y_period = pImage->horz_y_period; 	
-     info.horz_u_period = pImage->horz_u_period; 	
-     info.horz_v_period = pImage->horz_v_period; 	
-     info.vert_y_period = pImage->vert_y_period; 	
-     info.vert_u_period = pImage->vert_u_period; 	
-     info.vert_v_period = pImage->vert_v_period; 	
-     memcpy(&info.comp_order, pImage->component_order, 32);	
+     info.id = pImage->id;
+     info.type = pImage->type;
+     info.byte_order = pImage->byte_order;
+     memcpy(&info.guid, pImage->guid, 16);
+     info.bpp = pImage->bits_per_pixel;
+     info.num_planes = pImage->num_planes;
+     info.depth = pImage->depth;
+     info.red_mask = pImage->red_mask;
+     info.green_mask = pImage->green_mask;
+     info.blue_mask = pImage->blue_mask;
+     info.format = pImage->format;
+     info.y_sample_bits = pImage->y_sample_bits;
+     info.u_sample_bits = pImage->u_sample_bits;
+     info.v_sample_bits = pImage->v_sample_bits;
+     info.horz_y_period = pImage->horz_y_period;
+     info.horz_u_period = pImage->horz_u_period;
+     info.horz_v_period = pImage->horz_v_period;
+     info.vert_y_period = pImage->vert_y_period;
+     info.vert_u_period = pImage->vert_u_period;
+     info.vert_v_period = pImage->vert_v_period;
+     memcpy(&info.comp_order, pImage->component_order, 32);
      info.scanline_order = pImage->scanline_order;
      _WriteImageFormatInfo(client, &info);
-  }  
+  }
 
   return Success;
 }
@@ -1634,7 +1634,7 @@ SWriteQueryExtensionReply(
   swapl(&rep->length);
   swaps(&rep->version);
   swaps(&rep->revision);
-  
+
   WriteToClient(client, sz_xvQueryExtensionReply, &rep);
 
   return Success;
@@ -1648,7 +1648,7 @@ SWriteQueryAdaptorsReply(
   swaps(&rep->sequenceNumber);
   swapl(&rep->length);
   swaps(&rep->num_adaptors);
-  
+
   WriteToClient(client, sz_xvQueryAdaptorsReply, &rep);
 
   return Success;
@@ -1662,7 +1662,7 @@ SWriteQueryEncodingsReply(
   swaps(&rep->sequenceNumber);
   swapl(&rep->length);
   swaps(&rep->num_encodings);
-  
+
   WriteToClient(client, sz_xvQueryEncodingsReply, &rep);
 
   return Success;
@@ -1896,7 +1896,7 @@ XineramaXvSetPortAttribute(ClientPtr client)
 
 
 #ifdef MITSHM
-static int 
+static int
 XineramaXvShmPutImage(ClientPtr client)
 {
     REQUEST(xvShmPutImageReq);
@@ -1913,12 +1913,12 @@ XineramaXvShmPutImage(ClientPtr client)
 
     if(!(gc = (PanoramiXRes *)SecurityLookupIDByType(
                 client, stuff->gc, XRT_GC, SecurityReadAccess)))
-        return BadGC;    
+        return BadGC;
 
     if(!(port = (PanoramiXRes *)SecurityLookupIDByType(
                 client, stuff->port, XvXRTPort, SecurityReadAccess)))
         return _XvBadPort;
- 
+
     isRoot = (draw->type == XRT_WINDOW) && draw->u.win.root;
 
     x = stuff->drw_x;
@@ -1944,7 +1944,7 @@ XineramaXvShmPutImage(ClientPtr client)
 }
 #endif
 
-static int 
+static int
 XineramaXvPutImage(ClientPtr client)
 {
     REQUEST(xvPutImageReq);
@@ -1960,12 +1960,12 @@ XineramaXvPutImage(ClientPtr client)
 
     if(!(gc = (PanoramiXRes *)SecurityLookupIDByType(
                 client, stuff->gc, XRT_GC, SecurityReadAccess)))
-        return BadGC;    
+        return BadGC;
 
     if(!(port = (PanoramiXRes *)SecurityLookupIDByType(
 		client, stuff->port, XvXRTPort, SecurityReadAccess)))
 	return _XvBadPort;
- 
+
     isRoot = (draw->type == XRT_WINDOW) && draw->u.win.root;
 
     x = stuff->drw_x;
@@ -2095,16 +2095,16 @@ void XineramifyXv(void)
    XvXRTPort = CreateNewResourceType(XineramaDeleteResource);
 
    if(!xvsp0) return;
-   
+
    for(i = 0; i < xvsp0->nAdaptors; i++) {
       refAdapt = xvsp0->pAdaptors + i;
 
       bzero(MatchingAdaptors, sizeof(XvAdaptorPtr) * MAXSCREENS);
-      
+
       MatchingAdaptors[0] = refAdapt;
-   
+
       if(!(refAdapt->type & XvInputMask)) continue;
-      
+
       isOverlay = FALSE;
       for(j = 0; j < refAdapt->nAttributes; j++) {
          pAttr = refAdapt->pAttributes + j;
@@ -2113,14 +2113,14 @@ void XineramifyXv(void)
 	    break;
 	 }
       }
-   
+
       for(j = 1; j < PanoramiXNumScreens; j++) {
          pScreen = screenInfo.screens[j];
 	 xvsp = (XvScreenPtr)pScreen->devPrivates[XvScreenIndex].ptr;
 
          /* Do not try to go on if xv is not supported on this screen */
          if (xvsp==NULL) continue ;
-	 
+
          /* if the adaptor has the same name it's a perfect match */
 	 for(k = 0; k < xvsp->nAdaptors; k++) {
 	   pAdapt = xvsp->pAdaptors + k;
@@ -2130,11 +2130,11 @@ void XineramifyXv(void)
 	   }
          }
 	 if(MatchingAdaptors[j]) continue; /* found it */
-	 
+
 	 /* otherwise we only look for XvImage adaptors */
 	 if(!(refAdapt->type & XvImageMask)) continue;
 	 if(refAdapt->nImages <= 0) continue;
-	 
+
 	 /* prefer overlay/overlay non-overlay/non-overlay pairing */
 	 for(k = 0; k < xvsp->nAdaptors; k++) {
 	    pAdapt = xvsp->pAdaptors + k;
@@ -2156,11 +2156,11 @@ void XineramifyXv(void)
 	      }
 	    }
          }
-	 
+
 	 if(MatchingAdaptors[j]) continue; /* found it */
-	 
+
 	 /* but we'll take any XvImage pairing if we can get it */
-	 	 
+
 	 for(k = 0; k < xvsp->nAdaptors; k++) {
 	    pAdapt = xvsp->pAdaptors + k;
 	    if((pAdapt->type & XvImageMask) && (pAdapt->nImages > 0)) {
@@ -2178,11 +2178,11 @@ void XineramifyXv(void)
 	 AddResource(port->info[0].id, XvXRTPort, port);
 
 	 for(k = 1; k < PanoramiXNumScreens; k++) {
-	    if(MatchingAdaptors[k] && (MatchingAdaptors[k]->nPorts > j)) 
+	    if(MatchingAdaptors[k] && (MatchingAdaptors[k]->nPorts > j))
 		port->info[k].id = MatchingAdaptors[k]->base_id + j;
 	    else
 		port->info[k].id = 0;
-	 } 
+	 }
       }
    }
 }

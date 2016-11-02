@@ -42,8 +42,8 @@ documentation, and that the name of Hewlett-Packard not be used in
 advertising or publicity pertaining to distribution of the
 software without specific, written prior permission.
 
-Hewlett-Packard makes no representations about the 
-suitability of this software for any purpose.  It is provided 
+Hewlett-Packard makes no representations about the
+suitability of this software for any purpose.  It is provided
 "as is" without express or implied warranty.
 
 This software is not subject to any license of the American
@@ -68,7 +68,7 @@ University of California.
 #include "misc.h"
 #include "dixstruct.h"
 #define  XTestSERVER_SIDE
-#include <nx-X11/extensions/xtestext1.h>	
+#include <nx-X11/extensions/xtestext1.h>
 
 #include "xtest1dd.h"
 
@@ -112,7 +112,7 @@ struct {
 	 * holds the action type, one of: XTestDELAY_ACTION,
 	 * XTestKEY_ACTION, XTestMOTION_ACTION, XTestJUMP_ACTION
 	 */
-	CARD8	type;	
+	CARD8	type;
 	/*
 	 * holds the device type, in the range 0 to 15
 	 */
@@ -175,7 +175,7 @@ static short			pmousex;
  */
 static short			pmousey;
 /*
- * The playback_on flag is set to 1 while there are input actions in the 
+ * The playback_on flag is set to 1 while there are input actions in the
  * input action array.  It is set to 0 when the server has received all of
  * the user actions.
  */
@@ -212,7 +212,7 @@ static int			saved_usec;
  */
 static int			time_saved = 0;
 /*
- * holds the extension's notion of what the current time is while it is 
+ * holds the extension's notion of what the current time is while it is
  * sending input actions to a client
  */
 static struct timeval		current_time;
@@ -320,7 +320,7 @@ stop_stealing_input()
 /*
  * put any code that you might need to stop stealing input actions here
  */
-	if (packet_index != 0) 
+	if (packet_index != 0)
 	{
 		/*
 		 * if there is a partially full input action event waiting
@@ -348,7 +348,7 @@ ClientPtr	client;
  */
 CARD32		mode;
 {
-	if (packet_index != 0) 
+	if (packet_index != 0)
 	{
 		/*
 		 * if there is a partially full input action event waiting
@@ -357,7 +357,7 @@ CARD32		mode;
 		flush_input_actions();
 	}
 	else
-	{	
+	{
 		/*
 		 * otherwise, set up a new input action event
 		 */
@@ -385,7 +385,7 @@ CARD32		mode;
 	 */
 	XTestStealJumpData(xtest_mousex, xtest_mousey, 0);
 }
-	
+
 /******************************************************************************
  *
  *	flush_input_actions
@@ -408,7 +408,7 @@ flush_input_actions()
 	if (packet_index == 0)
 	{
 		/*
-		 * empty input actions event 
+		 * empty input actions event
 		 */
 		return;
 	}
@@ -437,7 +437,7 @@ flush_input_actions()
 	 */
 	input_action_packet.type = XTestInputActionType;
  	packet_index = 0;
-}	
+}
 
 /******************************************************************************
  *
@@ -458,7 +458,7 @@ int	jy;
  * which device caused the jump
  */
 int	dev_type;
-{	
+{
 	XTestJumpInfo 	*jmp_ptr;
 	/*
 	 * time delta (in ms) from previous event
@@ -493,7 +493,7 @@ int	dev_type;
 	/*
 	 * compute the input action header
 	 */
-	jmp_ptr->header = (XTestPackDeviceID(dev_type) | XTestJUMP_ACTION);	
+	jmp_ptr->header = (XTestPackDeviceID(dev_type) | XTestJUMP_ACTION);
 	/*
 	 * set the x and y coordinates to jump to in the input action
 	 */
@@ -515,7 +515,7 @@ int	dev_type;
 		 */
 		flush_input_actions();
 	}
-}	
+}
 
 /******************************************************************************
  *
@@ -527,7 +527,7 @@ int	dev_type;
 static CARD32
 current_ms(otime)
 struct timeval	*otime;
-{	
+{
 	struct timeval	tval;
 	unsigned long	the_ms;
 	unsigned long	sec;
@@ -613,7 +613,7 @@ check_time_event()
 		 * increment the packet index by the size of the input action
 		 */
 		packet_index = packet_index + (sizeof(XTestDelayInfo));
-		if (packed_mode != XTestPACKED_ACTIONS) 
+		if (packed_mode != XTestPACKED_ACTIONS)
 		{
 			/*
 			 * if input actions are not packed, send the input
@@ -652,7 +652,7 @@ there_is_room(actsize)
 int	actsize;
 {
 	if ((packet_index + actsize) > XTestACTIONS_SIZE)
-	{ 
+	{
 		return(0);
 	}
 	else
@@ -714,7 +714,7 @@ int	my;
 				   (xtest_mousey + dy), dev_type);
 	}
 	else
-	{ 
+	{
 		/*
 		 * compute the new logical position of the mouse
 		 */
@@ -744,13 +744,13 @@ int	my;
 		 * compute the input action header
 		 */
 		fm->header = XTestMOTION_ACTION;
-		if (dx < 0)	
-		{  
+		if (dx < 0)
+		{
 			fm->header |= XTestX_NEGATIVE;
 			dx = abs(dx);
 		}
-		if (dy < 0)   
-		{  
+		if (dy < 0)
+		{
 			fm->header |= XTestY_NEGATIVE;
 			dy = abs(dy);
 		}
@@ -777,7 +777,7 @@ int	my;
 			flush_input_actions();
 		}
 
-	}   
+	}
 }
 
 /******************************************************************************
@@ -882,7 +882,7 @@ int		locy;
 	 */
  	if(((keycode == xtest_command_key) && (keystate == KeyRelease)) ||
 	   (packed_mode != XTestPACKED_ACTIONS))
-	{	
+	{
 		flush_input_actions();
 	}
 	/* return TRUE if the event should be passed on to DIX */
@@ -913,7 +913,7 @@ ClientPtr	client;
  * a pointer to the xTestFakeInputReq structure sent by the client
  */
 char		*req;
-{	
+{
 	/*
 	 * if set to 1, done processing input actions from the request
 	 */
@@ -933,7 +933,7 @@ char		*req;
 	/*
 	 * holds the index into the action list in the request
 	 */
-	int			parse_index;	
+	int			parse_index;
 
 	/*
 	 * get a correct-type pointer to the client-supplied request data
@@ -956,7 +956,7 @@ char		*req;
 		done = 1;
 	}
 	while (!done)
-	{ 
+	{
 		/*
 		 * get the type of input action in the list
 		 */
@@ -970,7 +970,7 @@ char		*req;
 		 * process the input action appropriately
 		 */
 		switch (action_type)
-		{ 
+		{
 		case XTestKEY_ACTION:
 			parse_key_fake((XTestKeyInfo *)
 				       &(request->action_list[parse_index]));
@@ -988,14 +988,14 @@ char		*req;
 			break;
 		case XTestDELAY_ACTION:
 			if (dev_type == XTestDELAY_DEVICE_ID)
-			{ 
+			{
 				parse_delay_fake((XTestDelayInfo *)
 						 &(request->action_list[parse_index]));
 				parse_index = parse_index +
 					      sizeof(XTestDelayInfo);
 			}
 			else
-			{ 
+			{
 				/*
 				 * An invalid input action header byte has
 				 * been detected, so there are no more
@@ -1014,7 +1014,7 @@ char		*req;
 			 */
 			done = 1;
 		}
-		if (write_index >= ACTION_ARRAY_SIZE) 
+		if (write_index >= ACTION_ARRAY_SIZE)
 		{
 			/*
 			 * no room in the input actions array
@@ -1023,14 +1023,14 @@ char		*req;
 		}
 	}
 	if (write_index > read_index)
-	{ 
+	{
 		/*
 		 * there are fake input actions in the input action array
 		 * to be given to the server
 		 */
 		playback_on = 1;
 		playback_client = client;
-	} 
+	}
 }
 
 /******************************************************************************
@@ -1045,7 +1045,7 @@ char		*req;
 static void
 parse_key_fake(fkey)
 XTestKeyInfo	*fkey;
-{	
+{
 	action_array[write_index].type = XTestKEY_ACTION;
 	action_array[write_index].device = XTestUnpackDeviceID(fkey->header);
 	action_array[write_index].keycode = fkey->keycode;
@@ -1066,7 +1066,7 @@ XTestKeyInfo	*fkey;
 static void
 parse_motion_fake(fmotion)
 XTestMotionInfo	*fmotion;
-{	
+{
 	int	dx;
 	int	dy;
 
@@ -1084,7 +1084,7 @@ XTestMotionInfo	*fmotion;
 	{
 		pmousey -= dy;
 	}
-	else 
+	else
 	{
 		pmousey += dy;
 	}
@@ -1147,14 +1147,14 @@ XTestDelayInfo	*tevent;
 void
 XTestComputeWaitTime(waittime)
 struct timeval	*waittime;
-{	
+{
 	/*
 	 * The playback_on flag is set to 1 in parse_fake_input.  It is set to
 	 * 0 in XTestProcessInputAction if the server has replayed all input
 	 * actions.
 	 */
 	if (playback_on)
-	{  
+	{
 		if (!play_clock)
 		{
 			/*
@@ -1171,10 +1171,10 @@ struct timeval	*waittime;
 		if (!time_saved)
 		{
 			saved_sec = waittime->tv_sec;
-			saved_usec = waittime->tv_usec; 
+			saved_usec = waittime->tv_usec;
 			time_saved = 1;
-		}	
-		if (go_for_next) 
+		}
+		if (go_for_next)
 		{
 			/*
 			 * if we just processed an input action, figure out
@@ -1182,7 +1182,7 @@ struct timeval	*waittime;
 			 */
 			compute_action_time(&rtime);
 		}
-		else  
+		else
 		{
 			/*
 			 * else just find out how much more time to wait
@@ -1211,7 +1211,7 @@ XTestProcessInputAction(readable, waittime)
  *
  * This extension modifies the select call's timeout value to cause the
  * select to time out when the next input action is ready to given to
- * the server.  This routine is called immediately after the select, to 
+ * the server.  This routine is called immediately after the select, to
  * give it a chance to process an input action.  If we have an input action
  * to process and the only reason that the select returned was because it
  * timed out, then we change the select value to 1 and return 1 instead of 0.
@@ -1221,18 +1221,18 @@ int		readable;
  * this is the timeout value that the select was called with
  */
 struct timeval	*waittime;
-{	
+{
 int mousex, mousey;
 	/*
 	 * if playback_on is 0, then the input action array is empty
 	 */
 	if (playback_on)
-	{ 
+	{
 		restorewait = waittime;
 		/*
 		 * figure out if we need to wait for the next input action
 		 */
-		if (find_residual_time(&rtime) > 0) 
+		if (find_residual_time(&rtime) > 0)
 		{
 			/*
 			 * still have to wait before processing the current
@@ -1240,7 +1240,7 @@ int mousex, mousey;
 			 */
 			go_for_next = 0;
 		}
-		else 
+		else
 		{
 			/*
 			 * don't have to wait any longer before processing
@@ -1253,61 +1253,61 @@ int mousex, mousey;
 		 * that the select returned was because it timed out, then we
 		 * change the select value to 1 and return 1 instead of 0
 		 */
-		if (readable == 0) 
+		if (readable == 0)
 		{
-			readable++;			
+			readable++;
 		}
 		/*
 		 * if we don't need to wait, then get an input action from
 		 * the input action array and process it
 		 */
 		if (go_for_next)
-		{  
+		{
 			/*
 			 * There are three possible types of input actions in
 			 * the input action array (motion input actions are
 			 * converted to jump input actions before being put
-			 * into the input action array).  Delay input actions 
+			 * into the input action array).  Delay input actions
 			 * are processed by the compute_action_time function
 			 * which is called from XTestComputeWaitTime.  The
 			 * other two types of input actions are processed here.
 			 */
 			if (action_array[read_index].type == XTestJUMP_ACTION)
-			{	
+			{
 				XTestJumpPointer(
-					action_array[read_index].x, 
-					action_array[read_index].y, 
+					action_array[read_index].x,
+					action_array[read_index].y,
 					action_array[read_index].device);
 			}
 			if (action_array[read_index].type == XTestKEY_ACTION)
 			    {
 			    GetSpritePosition(&mousex, &mousey);
 			    XTestGenerateEvent(
-				     action_array[read_index].device, 
-				     action_array[read_index].keycode, 
+				     action_array[read_index].device,
+				     action_array[read_index].keycode,
 				     action_array[read_index].keystate,
 				     mousex,
 				     mousey);
 			    }
 			read_index++;
 			/*
-			 * if all input actions are processed, then restore 
-			 * the server state 
+			 * if all input actions are processed, then restore
+			 * the server state
 			 */
 			if (read_index >= write_index)
-			{ 
+			{
 				waittime->tv_sec = saved_sec;
 				waittime->tv_usec = saved_usec;
 				time_saved = 0;
 				playback_on = 0;
-				if (acknowledge) 
-				{ 
+				if (acknowledge)
+				{
 					/*
 					 * if the playback client is waiting
 					 * for an xTestFakeAck event, send
 					 * it to him
 					 */
-					send_ack(playback_client);		
+					send_ack(playback_client);
 					acknowledge = 0;
 				}
 				write_index = 0;
@@ -1337,8 +1337,8 @@ ClientPtr	client;
 	 */
 	rep.sequenceNumber = client->sequence;
 	rep.type = XTestFakeAckType;
-	WriteEventsToClient(client, 1, (xEvent *) &rep);		
-}		
+	WriteEventsToClient(client, 1, (xEvent *) &rep);
+}
 
 /******************************************************************************
  *
@@ -1398,7 +1398,7 @@ struct timeval	*rtime;
 	 */
 	if ((action_array[read_index].type == XTestDELAY_ACTION) &&
 	    ((read_index + 1) < write_index))
-	{  
+	{
 		read_index++;
 		dtime = dtime + action_array[read_index].delay_time;
 	}
@@ -1421,7 +1421,7 @@ struct timeval	*rtime;
 	 * if it is greater than one second's worth, adjust the seconds
 	 */
 	if (tot_usec >= 1000000)
-	{ 
+	{
 		tot_usec -= 1000000;
 		sec++;
 	}
@@ -1484,20 +1484,20 @@ struct timeval	*the_residual;
 	 * if the current time is already later than the playback time,
 	 * we don't need to wait
 	 */
-	if (bsec > psec)	
+	if (bsec > psec)
 	{
 	    wait = -1;
 	}
 	else
-	{ 
+	{
 		if (bsec == psec)
-		{ 
+		{
 			/*
 			 * if the current and playback times have the same
 			 * second value, then compare the microsecond values
 			 */
-			if ( busec >= pusec) 
-			{ 
+			if ( busec >= pusec)
+			{
 				/*
 				 * if the current time is already later than
 				 * the playback time, we don't need to wait
@@ -1505,15 +1505,15 @@ struct timeval	*the_residual;
 				wait = -1;
 			}
 			else
-			{ 
+			{
 				the_residual->tv_usec = pusec - busec;
 				the_residual->tv_sec = 0;
 			}
 		}
-		else	
-		{ 
+		else
+		{
 			if (busec > pusec)
-			{ 
+			{
 				/*
 				 * 'borrow' a second's worth of microseconds
 				 * from the seconds left to wait
@@ -1523,14 +1523,14 @@ struct timeval	*the_residual;
 				the_residual->tv_sec = psec - bsec;
 			}
 			else
-			{ 
+			{
 				the_residual->tv_sec = psec - bsec;
 				the_residual->tv_usec = pusec - busec;
 			}
 		}
 	}
 	if (wait < 0)
-	{ 
+	{
 		/*
 		 * if don't need to wait, set the playback time
 		 * to the current time
@@ -1544,7 +1544,7 @@ struct timeval	*the_residual;
 	}
 	return(wait);
 }
-	
+
 /******************************************************************************
  *
  *	abort_play_back
@@ -1609,4 +1609,4 @@ ClientPtr	client;
 	WriteReplyToClient(client,
 			   sizeof(xTestQueryInputSizeReply),
 			   (void *) &rep);
-}		
+}

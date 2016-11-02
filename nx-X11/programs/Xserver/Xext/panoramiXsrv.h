@@ -37,7 +37,7 @@ extern void XineramaGetImageData(
     DrawablePtr *pDrawables,
     int left,
     int top,
-    int width, 
+    int width,
     int height,
     unsigned int format,
     unsigned long planemask,

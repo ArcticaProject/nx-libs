@@ -43,7 +43,7 @@ Equipment Corporation.
 #include "pixmapstr.h"
 #if 0
 #include <sys/workstation.h>
-#include <nx-X11/Xserver/ws.h> 
+#include <nx-X11/Xserver/ws.h>
 #endif
 #include "panoramiX.h"
 #include <nx-X11/extensions/panoramiXproto.h>
@@ -71,7 +71,7 @@ SProcPanoramiXGetState(ClientPtr client)
 	return ProcPanoramiXGetState(client);
 }
 
-static int 
+static int
 SProcPanoramiXGetScreenCount(ClientPtr client)
 {
 	REQUEST(xPanoramiXGetScreenCountReq);
@@ -81,7 +81,7 @@ SProcPanoramiXGetScreenCount(ClientPtr client)
 	return ProcPanoramiXGetScreenCount(client);
 }
 
-static int 
+static int
 SProcPanoramiXGetScreenSize(ClientPtr client)
 {
 	REQUEST(xPanoramiXGetScreenSizeReq);
@@ -92,7 +92,7 @@ SProcPanoramiXGetScreenSize(ClientPtr client)
 }
 
 
-static int 
+static int
 SProcXineramaIsActive(ClientPtr client)
 {
 	REQUEST(xXineramaIsActiveReq);
@@ -103,7 +103,7 @@ SProcXineramaIsActive(ClientPtr client)
 }
 
 
-static int 
+static int
 SProcXineramaQueryScreens(ClientPtr client)
 {
 	REQUEST(xXineramaQueryScreensReq);

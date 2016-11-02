@@ -303,7 +303,7 @@ ShmDestroyPixmap (PixmapPtr pPixmap)
 	shmdesc = (ShmDescPtr) pPixmap->devPrivates[shmPixmapPrivate].ptr;
 #else
 	char	*base = (char *) pPixmap->devPrivate.ptr;
-	
+
 	if (base != (void *) (pPixmap + 1))
 	{
 	    for (shmdesc = Shmsegs; shmdesc; shmdesc = shmdesc->next)
@@ -318,7 +318,7 @@ ShmDestroyPixmap (PixmapPtr pPixmap)
 	if (shmdesc)
 	    ShmDetachSegment ((void *) shmdesc, pPixmap->drawable.id);
     }
-    
+
     pScreen->DestroyPixmap = destroyPixmap[pScreen->myNum];
     ret = (*pScreen->DestroyPixmap) (pPixmap);
     destroyPixmap[pScreen->myNum] = pScreen->DestroyPixmap;
@@ -373,7 +373,7 @@ shm_access(ClientPtr client, struct ipc_perm *perm, int readonly)
     mode_t mask;
 
     if (LocalClientCred(client, &uid, &gid) != -1) {
-	
+
 	/* User id 0 always gets access */
 	if (uid == 0) {
 	    return 0;
@@ -443,7 +443,7 @@ ProcShmAttach(client)
 	}
 
 	/* The attach was performed with root privs. We must
-	 * do manual checking of access rights for the credentials 
+	 * do manual checking of access rights for the credentials
 	 * of the client */
 
 	if (shm_access(client, &(buf.shm_perm), stuff->readOnly) == -1) {
@@ -562,7 +562,7 @@ fbShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
 
 
 #ifdef PANORAMIX
-static int 
+static int
 ProcPanoramiXShmPutImage(register ClientPtr client)
 {
     int			 j, result = 0, orig_x, orig_y;
@@ -600,7 +600,7 @@ ProcPanoramiXShmPutImage(register ClientPtr client)
     return(result);
 }
 
-static int 
+static int
 ProcPanoramiXShmGetImage(ClientPtr client)
 {
     PanoramiXRes	*draw;
@@ -694,14 +694,14 @@ ProcPanoramiXShmGetImage(ClientPtr client)
 	length = stuff->offset;
         for (; plane; plane >>= 1) {
 	    if (planemask & plane) {
-		XineramaGetImageData(drawables, x, y, w, h, 
+		XineramaGetImageData(drawables, x, y, w, h,
 				     format, plane, shmdesc->addr + length,
 				     widthBytesLine, isRoot);
 		length += lenPer;
 	    }
 	}
     }
-    
+
     if (client->swapped) {
 	swaps(&xgi.sequenceNumber);
 	swapl(&xgi.length);
@@ -783,7 +783,7 @@ CreatePmap:
     FOR_NSCREENS(j) {
 	pScreen = screenInfo.screens[j];
 
-	pMap = (*shmFuncs[j]->CreatePixmap)(pScreen, 
+	pMap = (*shmFuncs[j]->CreatePixmap)(pScreen,
 				stuff->width, stuff->height, stuff->depth,
 				shmdesc->addr + stuff->offset);
 
@@ -811,7 +811,7 @@ CreatePmap:
 	    FreeResource(newPix->info[j].id, RT_NONE);
 	}
 	free(newPix);
-    } else 
+    } else
 	AddResource(stuff->pid, XRT_PIXMAP, newPix);
 
     return result;
@@ -860,13 +860,13 @@ ProcShmPutImage(client)
         return BadValue;
     }
 
-    /* 
+    /*
      * There's a potential integer overflow in this check:
      * VERIFY_SHMSIZE(shmdesc, stuff->offset, length * stuff->totalHeight,
      *                client);
      * the version below ought to avoid it
      */
-    if (stuff->totalHeight != 0 && 
+    if (stuff->totalHeight != 0 &&
 	length > (shmdesc->size - stuff->offset)/stuff->totalHeight) {
 	client->errorValue = stuff->totalWidth;
 	return BadValue;
@@ -901,8 +901,8 @@ ProcShmPutImage(client)
 	((stuff->srcX + stuff->srcWidth) == stuff->totalWidth))
 	(*pGC->ops->PutImage) (pDraw, pGC, stuff->depth,
 			       stuff->dstX, stuff->dstY,
-			       stuff->totalWidth, stuff->srcHeight, 
-			       stuff->srcX, stuff->format, 
+			       stuff->totalWidth, stuff->srcHeight,
+			       stuff->srcX, stuff->format,
 			       shmdesc->addr + stuff->offset +
 			       (stuff->srcY * length));
     else
@@ -990,7 +990,7 @@ ProcShmGetImage(client)
     {
 	length = PixmapBytePad(stuff->width, pDraw->depth) * stuff->height;
     }
-    else 
+    else
     {
 	lenPer = PixmapBytePad(stuff->width, 1) * stuff->height;
 	plane = ((Mask)1) << (pDraw->depth - 1);
@@ -1029,7 +1029,7 @@ ProcShmGetImage(client)
 	    }
 	}
     }
-    
+
     if (client->swapped) {
 	swaps(&xgi.sequenceNumber);
 	swapl(&xgi.length);
@@ -1085,7 +1085,7 @@ ProcShmCreatePixmap(client)
     LEGAL_NEW_RESOURCE(stuff->pid, client);
     VERIFY_GEOMETRABLE(pDraw, stuff->drawable, client);
     VERIFY_SHMPTR(stuff->shmseg, stuff->offset, TRUE, shmdesc, client);
-    
+
     width = stuff->width;
     height = stuff->height;
     depth = stuff->depth;

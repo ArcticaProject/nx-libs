@@ -91,7 +91,7 @@ XF86BIGFOBJS = xf86bigfont.o
 	      $(XF86BIGFOBJS)
 
 #if defined(NXAgentServer) && NXAgentServer
-NX_DEFINES = -DNXAGENT_SERVER 
+NX_DEFINES = -DNXAGENT_SERVER
 #endif
 
 

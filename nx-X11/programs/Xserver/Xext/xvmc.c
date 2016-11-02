@@ -31,7 +31,7 @@
 #include <shm.h>
 #endif /* Lynx */
 #endif /* HAS_XVMCSHM */
-   
+
 
 
 #define DR_CLIENT_DRIVER_NAME_SIZE 48
@@ -58,7 +58,7 @@ typedef struct {
    int major;
    int minor;
    int patchLevel;
-} XvMCScreenRec, *XvMCScreenPtr; 
+} XvMCScreenRec, *XvMCScreenPtr;
 
 #define XVMC_GET_PRIVATE(pScreen) \
    (XvMCScreenPtr)((pScreen)->devPrivates[XvMCScreenIndex].ptr)
@@ -68,14 +68,14 @@ static int
 XvMCDestroyContextRes(void * data, XID id)
 {
    XvMCContextPtr pContext = (XvMCContextPtr)data;
-   
+
    pContext->refcnt--;
 
    if(!pContext->refcnt) {
   	 XvMCScreenPtr pScreenPriv = XVMC_GET_PRIVATE(pContext->pScreen);
 	(*pScreenPriv->adaptors[pContext->adapt_num].DestroyContext)(pContext);
 	free(pContext);
-   }	   
+   }
 
    return Success;
 }
@@ -87,7 +87,7 @@ XvMCDestroySurfaceRes(void * data, XID id)
    XvMCContextPtr pContext = pSurface->context;
    XvMCScreenPtr pScreenPriv = XVMC_GET_PRIVATE(pContext->pScreen);
 
-   (*pScreenPriv->adaptors[pContext->adapt_num].DestroySurface)(pSurface); 
+   (*pScreenPriv->adaptors[pContext->adapt_num].DestroySurface)(pSurface);
    free(pSurface);
 
    XvMCDestroyContextRes((void *)pContext, pContext->context_id);
@@ -103,7 +103,7 @@ XvMCDestroySubpictureRes(void * data, XID id)
    XvMCContextPtr pContext = pSubpict->context;
    XvMCScreenPtr pScreenPriv = XVMC_GET_PRIVATE(pContext->pScreen);
 
-   (*pScreenPriv->adaptors[pContext->adapt_num].DestroySubpicture)(pSubpict); 
+   (*pScreenPriv->adaptors[pContext->adapt_num].DestroySubpicture)(pSubpict);
    free(pSubpict);
 
    XvMCDestroyContextRes((void *)pContext, pContext->context_id);
@@ -117,7 +117,7 @@ XvMCResetProc (ExtensionEntry *extEntry)
 }
 
 
-static int 
+static int
 ProcXvMCQueryVersion(ClientPtr client)
 {
     xvmcQueryVersionReply rep;
@@ -133,7 +133,7 @@ ProcXvMCQueryVersion(ClientPtr client)
 }
 
 
-static int 
+static int
 ProcXvMCListSurfaceTypes(ClientPtr client)
 {
     XvPortPtr pPort;
@@ -167,7 +167,7 @@ ProcXvMCListSurfaceTypes(ClientPtr client)
     rep.sequenceNumber = client->sequence;
     rep.num = (adaptor) ? adaptor->num_surfaces : 0;
     rep.length = rep.num * sizeof(xvmcSurfaceInfo) >> 2;
- 
+
     WriteToClient(client, sizeof(xvmcListSurfaceTypesReply), &rep);
 
     for(i = 0; i < rep.num; i++) {
@@ -186,12 +186,12 @@ ProcXvMCListSurfaceTypes(ClientPtr client)
     return Success;
 }
 
-static int 
+static int
 ProcXvMCCreateContext(ClientPtr client)
 {
     XvPortPtr pPort;
     CARD32 *data = NULL;
-    int dwords = 0; 
+    int dwords = 0;
     int i, result, adapt_num = -1;
     ScreenPtr pScreen;
     XvMCContextPtr pContext;
@@ -211,20 +211,20 @@ ProcXvMCCreateContext(ClientPtr client)
 
     if(XvMCScreenIndex < 0) /* no XvMC adaptors */
        return BadMatch;
- 
+
     if(!(pScreenPriv = XVMC_GET_PRIVATE(pScreen))) /* none this screen */
        return BadMatch;
 
     for(i = 0; i < pScreenPriv->num_adaptors; i++) {
 	if(pPort->pAdaptor == pScreenPriv->adaptors[i].xv_adaptor) {
 	    adaptor = &(pScreenPriv->adaptors[i]);
-	    adapt_num = i; 
+	    adapt_num = i;
 	    break;
 	}
     }
 
     if(adapt_num < 0) /* none this port */
-	return BadMatch;	
+	return BadMatch;
 
     for(i = 0; i < adaptor->num_surfaces; i++) {
         if(adaptor->surfaces[i]->surface_type_id == stuff->surface_type_id) {
@@ -264,9 +264,9 @@ ProcXvMCCreateContext(ClientPtr client)
 
     rep.type = X_Reply;
     rep.sequenceNumber = client->sequence;
-    rep.width_actual = pContext->width; 
-    rep.height_actual = pContext->height; 
-    rep.flags_return = pContext->flags; 
+    rep.width_actual = pContext->width;
+    rep.height_actual = pContext->height;
+    rep.flags_return = pContext->flags;
     rep.length = dwords;
 
     WriteToClient(client, sizeof(xvmcCreateContextReply), &rep);
@@ -280,7 +280,7 @@ ProcXvMCCreateContext(ClientPtr client)
     return Success;
 }
 
-static int 
+static int
 ProcXvMCDestroyContext(ClientPtr client)
 {
     REQUEST(xvmcDestroyContextReq);
@@ -289,12 +289,12 @@ ProcXvMCDestroyContext(ClientPtr client)
     if(!LookupIDByType(stuff->context_id, XvMCRTContext))
 	return (XvMCBadContext + XvMCErrorBase);
 
-    FreeResource(stuff->context_id, RT_NONE); 
+    FreeResource(stuff->context_id, RT_NONE);
 
     return Success;
 }
 
-static int 
+static int
 ProcXvMCCreateSurface(ClientPtr client)
 {
     CARD32 *data = NULL;
@@ -312,7 +312,7 @@ ProcXvMCCreateSurface(ClientPtr client)
 
     pScreenPriv = XVMC_GET_PRIVATE(pContext->pScreen);
 
-    if(!(pSurface = malloc(sizeof(XvMCSurfaceRec)))) 
+    if(!(pSurface = malloc(sizeof(XvMCSurfaceRec))))
         return BadAlloc;
 
     pSurface->surface_id = stuff->surface_id;
@@ -344,7 +344,7 @@ ProcXvMCCreateSurface(ClientPtr client)
     return Success;
 }
 
-static int 
+static int
 ProcXvMCDestroySurface(ClientPtr client)
 {
     REQUEST(xvmcDestroySurfaceReq);
@@ -358,7 +358,7 @@ ProcXvMCDestroySurface(ClientPtr client)
     return Success;
 }
 
-static int 
+static int
 ProcXvMCCreateSubpicture(ClientPtr client)
 {
     Bool image_supported = FALSE;
@@ -378,7 +378,7 @@ ProcXvMCCreateSubpicture(ClientPtr client)
 
     pScreenPriv = XVMC_GET_PRIVATE(pContext->pScreen);
 
-    adaptor = &(pScreenPriv->adaptors[pContext->adapt_num]); 
+    adaptor = &(pScreenPriv->adaptors[pContext->adapt_num]);
 
     /* find which surface this context supports */
     for(i = 0; i < adaptor->num_surfaces; i++) {
@@ -386,7 +386,7 @@ ProcXvMCCreateSubpicture(ClientPtr client)
 	   surface = adaptor->surfaces[i];
 	   break;
 	}
-    } 
+    }
 
     if(!surface) return BadMatch;
 
@@ -421,7 +421,7 @@ ProcXvMCCreateSubpicture(ClientPtr client)
     pSubpicture->component_order[2] = 0;
     pSubpicture->component_order[3] = 0;
     pSubpicture->context = pContext;
-   
+
     result = (*pScreenPriv->adaptors[pContext->adapt_num].CreateSubpicture)(
                 pSubpicture, &dwords, &data);
 
@@ -455,7 +455,7 @@ ProcXvMCCreateSubpicture(ClientPtr client)
     return Success;
 }
 
-static int 
+static int
 ProcXvMCDestroySubpicture(ClientPtr client)
 {
     REQUEST(xvmcDestroySubpictureReq);
@@ -519,7 +519,7 @@ ProcXvMCListSubpictureTypes(ClientPtr client)
     rep.type = X_Reply;
     rep.sequenceNumber = client->sequence;
     rep.num = 0;
-    if(surface->compatible_subpictures) 
+    if(surface->compatible_subpictures)
 	rep.num = surface->compatible_subpictures->num_xvimages;
 
     rep.length = rep.num * sizeof(xvImageFormatInfo) >> 2;
@@ -538,27 +538,27 @@ ProcXvMCListSubpictureTypes(ClientPtr client)
 	}
 	if(!pImage) return BadImplementation;
 
-        info.id = pImage->id;      
-	info.type = pImage->type;  
-        info.byte_order = pImage->byte_order; 
-        memcpy(&info.guid, pImage->guid, 16);      
-        info.bpp = pImage->bits_per_pixel;         
-        info.num_planes = pImage->num_planes;      
-        info.depth = pImage->depth;        
-        info.red_mask = pImage->red_mask;  
-        info.green_mask = pImage->green_mask;      
-        info.blue_mask = pImage->blue_mask;        
-        info.format = pImage->format;      
-        info.y_sample_bits = pImage->y_sample_bits;        
-        info.u_sample_bits = pImage->u_sample_bits;        
-        info.v_sample_bits = pImage->v_sample_bits;        
-        info.horz_y_period = pImage->horz_y_period;        
-        info.horz_u_period = pImage->horz_u_period;        
-        info.horz_v_period = pImage->horz_v_period;        
-        info.vert_y_period = pImage->vert_y_period;        
-        info.vert_u_period = pImage->vert_u_period;        
-        info.vert_v_period = pImage->vert_v_period;        
-        memcpy(&info.comp_order, pImage->component_order, 32);     
+        info.id = pImage->id;
+	info.type = pImage->type;
+        info.byte_order = pImage->byte_order;
+        memcpy(&info.guid, pImage->guid, 16);
+        info.bpp = pImage->bits_per_pixel;
+        info.num_planes = pImage->num_planes;
+        info.depth = pImage->depth;
+        info.red_mask = pImage->red_mask;
+        info.green_mask = pImage->green_mask;
+        info.blue_mask = pImage->blue_mask;
+        info.format = pImage->format;
+        info.y_sample_bits = pImage->y_sample_bits;
+        info.u_sample_bits = pImage->u_sample_bits;
+        info.v_sample_bits = pImage->v_sample_bits;
+        info.horz_y_period = pImage->horz_y_period;
+        info.horz_u_period = pImage->horz_u_period;
+        info.horz_v_period = pImage->horz_v_period;
+        info.vert_y_period = pImage->vert_y_period;
+        info.vert_u_period = pImage->vert_u_period;
+        info.vert_v_period = pImage->vert_v_period;
+        memcpy(&info.comp_order, pImage->component_order, 32);
         info.scanline_order = pImage->scanline_order;
 	WriteToClient(client, sizeof(xvImageFormatInfo), &info);
     }
@@ -589,7 +589,7 @@ ProcXvMCGetDRInfo(ClientPtr client)
 
     pScreen = pPort->pAdaptor->pScreen;
     pScreenPriv = XVMC_GET_PRIVATE(pScreen);
-    
+
     rep.type = X_Reply;
     rep.sequenceNumber = client->sequence;
     rep.major = pScreenPriv->major;
@@ -614,10 +614,10 @@ ProcXvMCGetDRInfo(ClientPtr client)
         register volatile CARD32 *patternC = patternP;
 	register int i;
 	CARD32 magic = stuff->magic;
-	
+
 	rep.isLocal = 1;
 	i = 1024 / sizeof(CARD32);
-	
+
 	while ( i-- ) {
 	    if (*patternC++ != magic) {
 		rep.isLocal = 0;
@@ -625,18 +625,18 @@ ProcXvMCGetDRInfo(ClientPtr client)
 	    }
 	    magic = ~magic;
 	}
-	shmdt( (char *)patternP ); 
+	shmdt( (char *)patternP );
     }
 #endif /* HAS_XVMCSHM */
-    
-    WriteToClient(client, sizeof(xvmcGetDRInfoReply), 
+
+    WriteToClient(client, sizeof(xvmcGetDRInfoReply),
 		  &rep);
-    if (rep.length) {      
-	WriteToClient(client, rep.nameLen, 
+    if (rep.length) {
+	WriteToClient(client, rep.nameLen,
 		      pScreenPriv->clientDriverName);
-	WriteToClient(client, rep.busIDLen, 
+	WriteToClient(client, rep.busIDLen,
 		      pScreenPriv->busID);
-    }	
+    }
     return Success;
 }
 
@@ -658,7 +658,7 @@ static int
 ProcXvMCDispatch (ClientPtr client)
 {
     REQUEST(xReq);
-    
+
     if(stuff->data < xvmcNumRequest)
 	return (*ProcXvMCVector[stuff->data])(client);
     else
@@ -672,13 +672,13 @@ SProcXvMCDispatch (ClientPtr client)
     return BadImplementation;
 }
 
-void 
+void
 XvMCExtensionInit()
 {
    ExtensionEntry *extEntry;
 
    if(XvMCScreenIndex < 0) /* nobody supports it */
-	return; 
+	return;
 
    if(!(XvMCRTContext = CreateNewResourceType(XvMCDestroyContextRes)))
 	return;
@@ -689,12 +689,12 @@ XvMCExtensionInit()
    if(!(XvMCRTSubpicture = CreateNewResourceType(XvMCDestroySubpictureRes)))
 	return;
 
-   extEntry = AddExtension(XvMCName, XvMCNumEvents, XvMCNumErrors, 
+   extEntry = AddExtension(XvMCName, XvMCNumEvents, XvMCNumErrors,
                               ProcXvMCDispatch, SProcXvMCDispatch,
                               XvMCResetProc, StandardMinorOpcode);
 
    if(!extEntry) return;
-  
+
    XvMCReqCode = extEntry->base;
    XvMCEventBase = extEntry->eventBase;
    XvMCErrorBase = extEntry->errorBase;
@@ -754,7 +754,7 @@ XvImagePtr XvMCFindXvImage(XvPortPtr pPort, CARD32 id)
 
     if(XvMCScreenIndex < 0) return NULL;
 
-    if(!(pScreenPriv = XVMC_GET_PRIVATE(pScreen))) 
+    if(!(pScreenPriv = XVMC_GET_PRIVATE(pScreen)))
         return NULL;
 
     for(i = 0; i < pScreenPriv->num_adaptors; i++) {

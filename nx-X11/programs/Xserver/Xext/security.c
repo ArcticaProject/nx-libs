@@ -519,7 +519,7 @@ SecurityEventSelectForAuthorization(
 	    return Success;
 	}
     }
-    
+
     pEventClient = (OtherClients *) malloc(sizeof(OtherClients));
     if (!pEventClient)
 	return BadAlloc;
@@ -808,7 +808,7 @@ SProcSecurityGenerateAuthorization(
     swapl(&stuff->valueMask);
     values_offset = ((stuff->nbytesAuthProto + (unsigned)3) >> 2) +
 		    ((stuff->nbytesAuthData + (unsigned)3) >> 2);
-    if (values_offset > 
+    if (values_offset >
 	stuff->length - (sz_xSecurityGenerateAuthorizationReq >> 2))
 	return BadLength;
     values = (CARD32 *)(&stuff[1]) + values_offset;
@@ -850,7 +850,7 @@ SProcSecurityDispatch(
     }
 } /* SProcSecurityDispatch */
 
-static void 
+static void
 SwapSecurityAuthorizationRevokedEvent(
     xSecurityAuthorizationRevokedEvent *from,
     xSecurityAuthorizationRevokedEvent *to)
@@ -1017,10 +1017,10 @@ SecurityCheckDeviceAccess(client, dev, fromRequest)
 	} /* while propogating the event */
     }
 
-    /* allow access by untrusted clients only if an event would have gone 
+    /* allow access by untrusted clients only if an event would have gone
      * to an untrusted client
      */
-    
+
     if (!untrusted_got_event)
     {
 	char *devname = dev->name;
@@ -1077,7 +1077,7 @@ SecurityAuditResourceIDAccess(
 	    SecurityAudit("client %d attempted request %d with resource 0x%x of client %d\n",
 		   client->index, reqtype, id, cid);
 	    break;
-	}   
+	}
     }
     return NULL;
 } /* SecurityAuditResourceIDAccess */
@@ -1243,12 +1243,12 @@ SecurityCheckResourceIDAccess(
  * Returns: nothing.
  *
  * Side Effects:
- * 
+ *
  * If a new client is connecting, its authorization ID is copied to
  * client->authID.  If this is a generated authorization, its reference
  * count is bumped, its timer is cancelled if it was running, and its
  * trustlevel is copied to client->trustLevel.
- * 
+ *
  * If a client is disconnecting and the client was using a generated
  * authorization, the authorization's reference count is decremented, and
  * if it is now zero, the timer for this authorization is started.
@@ -1266,7 +1266,7 @@ SecurityClientStateCallback(
     switch (client->clientState)
     {
 	case ClientStateRunning:
-	{ 
+	{
 	    XID authId = AuthorizationIDOfClient(client);
 	    SecurityAuthorizationPtr pAuth;
 
@@ -1305,10 +1305,10 @@ SecurityClientStateCallback(
 		{
 		    SecurityStartAuthorizationTimer(pAuth);
 		}
-	    }	    
+	    }
 	    break;
 	}
-	default: break; 
+	default: break;
     }
 } /* SecurityClientStateCallback */
 
@@ -1581,7 +1581,7 @@ SecurityParsePropertyAccessRule(
     keyword = SecurityParseKeyword(&p);
     if (keyword == SecurityKeywordRoot)
 	windowRestriction = SecurityRootWindow;
-    else if (keyword == SecurityKeywordAny) 
+    else if (keyword == SecurityKeywordAny)
 	windowRestriction = SecurityAnyWindow;
     else /* not root or any, must be a property name */
     {
@@ -1629,7 +1629,7 @@ SecurityParsePropertyAccessRule(
      */
     size = sizeof(PropertyAccessRec);
 
-    /* If there is a property value string, allocate space for it 
+    /* If there is a property value string, allocate space for it
      * right after the PropertyAccessRec.
      */
     if (mustHaveValue)
@@ -1799,7 +1799,7 @@ SecurityLoadPropertyAccessList(void)
 #endif
 
 #endif
- 
+
     if (!f)
     {
 #ifdef NXAGENT_SERVER
@@ -1999,7 +1999,7 @@ SecurityCheckPropertyAccess(client, pWin, propertyName, access_mode)
     }
 #endif
 
-    /* If the property atom is bigger than any atoms on the list, 
+    /* If the property atom is bigger than any atoms on the list,
      * we know we won't find it, so don't even bother looking.
      */
     if (propertyName <= SecurityMaxPropertyName)

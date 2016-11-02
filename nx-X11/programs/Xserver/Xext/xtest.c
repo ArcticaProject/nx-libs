@@ -146,7 +146,7 @@ ProcXTestCompareCursor(client)
 	pCursor = GetSpriteCursor();
     else {
 	pCursor = (CursorPtr)LookupIDByType(stuff->cursor, RT_CURSOR);
-	if (!pCursor) 
+	if (!pCursor)
 	{
 	    client->errorValue = stuff->cursor;
 	    return (BadCursor);

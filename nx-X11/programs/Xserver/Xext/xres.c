@@ -29,7 +29,7 @@ ProcXResQueryVersion (ClientPtr client)
     rep.sequenceNumber = client->sequence;
     rep.server_major = SERVER_XRES_MAJOR_VERSION;
     rep.server_minor = SERVER_XRES_MINOR_VERSION;
-    if (client->swapped) { 
+    if (client->swapped) {
         swaps(&rep.sequenceNumber);
         swapl(&rep.length);
         swaps(&rep.server_major);
@@ -55,7 +55,7 @@ ProcXResQueryClients (ClientPtr client)
     for(i = 1; i < currentMaxClients; i++) {
        if(clients[i]) {
            current_clients[num_clients] = i;
-           num_clients++;   
+           num_clients++;
        }
     }
 
@@ -67,7 +67,7 @@ ProcXResQueryClients (ClientPtr client)
         swaps (&rep.sequenceNumber);
         swapl (&rep.length);
         swapl (&rep.num_clients);
-    }   
+    }
     WriteToClient (client, sizeof (xXResQueryClientsReply), &rep);
 
     if(num_clients) {
@@ -76,7 +76,7 @@ ProcXResQueryClients (ClientPtr client)
         for(i = 0; i < num_clients; i++) {
             scratch.resource_base = clients[current_clients[i]]->clientAsMask;
             scratch.resource_mask = RESOURCE_ID_MASK;
-        
+
             if(client->swapped) {
                 swapl (&scratch.resource_base);
                 swapl (&scratch.resource_mask);
@@ -138,7 +138,7 @@ ProcXResQueryClientResources (ClientPtr client)
         swaps (&rep.sequenceNumber);
         swapl (&rep.length);
         swapl (&rep.num_types);
-    }   
+    }
     WriteToClient (client,sizeof(xXResQueryClientResourcesReply),&rep);
 
     if(num_types) {
@@ -165,11 +165,11 @@ ProcXResQueryClientResources (ClientPtr client)
     }
 
     DEALLOCATE_LOCAL(counts);
-    
+
     return (client->noClientException);
 }
 
-static void 
+static void
 ResFindPixmaps (void * value, XID id, void * cdata)
 {
    unsigned long *bytes = (unsigned long *)cdata;
@@ -199,7 +199,7 @@ ProcXResQueryClientPixmapBytes (ClientPtr client)
 
     bytes = 0;
 
-    FindClientResourcesByType(clients[clientID], RT_PIXMAP, ResFindPixmaps, 
+    FindClientResourcesByType(clients[clientID], RT_PIXMAP, ResFindPixmaps,
                               (void *)(&bytes));
 
     rep.type = X_Reply;

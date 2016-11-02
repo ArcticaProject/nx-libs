@@ -176,7 +176,7 @@ XFree86BigfontExtensionInit()
 	 * Note: Local-clients will not be optimized without shared memory
 	 * support. Remote-client optimization does not depend on shared
 	 * memory support.  Thus, the extension is still registered even
-	 * when shared memory support is not functional.  
+	 * when shared memory support is not functional.
 	 */
 	if (!CheckForShmSyscall()) {
 	    ErrorF(XF86BIGFONTNAME " extension local-client optimization disabled due to lack of shared memory support in the kernel\n");

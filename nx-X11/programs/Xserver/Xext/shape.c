@@ -681,7 +681,7 @@ ProcPanoramiXShapeOffset(
     int j, result = 0;
 
     REQUEST_AT_LEAST_SIZE (xShapeOffsetReq);
-   
+
     if(!(win = (PanoramiXRes *)SecurityLookupIDByType(
 		client, stuff->dest, XRT_WINDOW, SecurityWriteAccess)))
 	return BadWindow;
@@ -1110,7 +1110,7 @@ ProcShapeDispatch (client)
 #ifdef PANORAMIX
         if ( !noPanoramiXExtension )
 	    return ProcPanoramiXShapeRectangles (client);
-        else 
+        else
 #endif
 	return ProcShapeRectangles (client);
     case X_ShapeMask:
