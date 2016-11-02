@@ -27,7 +27,6 @@ Equipment Corporation.
 
 ******************************************************************/
 
-
 /* THIS IS NOT AN X PROJECT TEAM SPECIFICATION */
 
 /*
@@ -44,7 +43,6 @@ Equipment Corporation.
 #include <nx-X11/extensions/panoramiXext.h>
 /*#include "gcstruct.h"*/
 
-
 typedef struct _PanoramiXData {
     int x;
     int y;
@@ -53,27 +51,27 @@ typedef struct _PanoramiXData {
 } PanoramiXData;
 
 typedef struct _PanoramiXInfo {
-    XID id ;
+    XID id;
 } PanoramiXInfo;
 
 typedef struct {
     PanoramiXInfo info[MAXSCREENS];
     RESTYPE type;
     union {
-	struct {
-	    char   visibility;
-	    char   class;
-            char   root;
-	} win;
-	struct {
-	    Bool shared;
-	} pix;
+        struct {
+            char visibility;
+            char class;
+            char root;
+        } win;
+        struct {
+            Bool shared;
+        } pix;
 #ifdef RENDER
-	struct {
-	    Bool root;
-	} pict;
+        struct {
+            Bool root;
+        } pict;
 #endif
-	char raw_data[4];
+        char raw_data[4];
     } u;
 } PanoramiXRes;
 
@@ -110,4 +108,4 @@ typedef struct {
 
 #define SKIP_FAKE_WINDOW(a) if(!LookupIDByType(a, XRT_WINDOW)) return
 
-#endif /* _PANORAMIX_H_ */
+#endif                          /* _PANORAMIX_H_ */

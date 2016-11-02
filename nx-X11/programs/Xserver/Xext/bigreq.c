@@ -43,9 +43,8 @@ from The Open Group.
 static unsigned char XBigReqCode;
 #endif
 
-static void BigReqResetProc(
-    ExtensionEntry * /* extEntry */
-);
+static void BigReqResetProc(ExtensionEntry *    /* extEntry */
+    );
 
 static DISPATCH_PROC(ProcBigReqDispatch);
 
@@ -56,37 +55,36 @@ BigReqExtensionInit(void)
     ExtensionEntry *extEntry;
 
     if ((extEntry = AddExtension(XBigReqExtensionName, 0, 0,
-				 ProcBigReqDispatch, ProcBigReqDispatch,
-				 BigReqResetProc, StandardMinorOpcode)) != 0)
-	XBigReqCode = (unsigned char)extEntry->base;
+                                 ProcBigReqDispatch, ProcBigReqDispatch,
+                                 BigReqResetProc, StandardMinorOpcode)) != 0)
+        XBigReqCode = (unsigned char) extEntry->base;
 #else
     (void) AddExtension(XBigReqExtensionName, 0, 0,
-			ProcBigReqDispatch, ProcBigReqDispatch,
-			BigReqResetProc, StandardMinorOpcode);
+                        ProcBigReqDispatch, ProcBigReqDispatch,
+                        BigReqResetProc, StandardMinorOpcode);
 #endif
 
     DeclareExtensionSecurity(XBigReqExtensionName, TRUE);
 }
 
-/*ARGSUSED*/
-static void
-BigReqResetProc (extEntry)
-    ExtensionEntry	*extEntry;
+ /*ARGSUSED*/ static void
+BigReqResetProc(extEntry)
+ExtensionEntry *extEntry;
 {
 }
 
 static int
-ProcBigReqDispatch (client)
-    register ClientPtr	client;
+ProcBigReqDispatch(client)
+register ClientPtr client;
 {
     REQUEST(xBigReqEnableReq);
     xBigReqEnableReply rep;
 
     if (client->swapped) {
-	swaps(&stuff->length);
+        swaps(&stuff->length);
     }
     if (stuff->brReqType != X_BigReqEnable)
-	return BadRequest;
+        return BadRequest;
     REQUEST_SIZE_MATCH(xBigReqEnableReq);
     client->big_requests = TRUE;
     memset(&rep, 0, sizeof(xBigReqEnableReply));
@@ -95,9 +93,9 @@ ProcBigReqDispatch (client)
     rep.sequenceNumber = client->sequence;
     rep.max_request_size = maxBigRequestSize;
     if (client->swapped) {
-	swaps(&rep.sequenceNumber);
-	swapl(&rep.max_request_size);
+        swaps(&rep.sequenceNumber);
+        swapl(&rep.max_request_size);
     }
     WriteToClient(client, sizeof(xBigReqEnableReply), &rep);
-    return(client->noClientException);
+    return (client->noClientException);
 }

@@ -9,7 +9,7 @@
 #define _DPMSPROC_H_
 
 void DPMSSet(int level);
-int  DPMSGet(int *plevel);
+int DPMSGet(int *plevel);
 Bool DPMSSupported(void);
 
 #endif

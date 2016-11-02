@@ -73,5 +73,4 @@ extern int connBlockScreenStart;
 extern xConnSetupPrefix connSetupPrefix;
 
 extern ScreenInfo *GlobalScrInfo;
-extern int (* SavedProcVector[256]) (ClientPtr client);
-
+extern int (*SavedProcVector[256]) (ClientPtr client);

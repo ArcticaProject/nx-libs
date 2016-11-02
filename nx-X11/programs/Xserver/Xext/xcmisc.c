@@ -45,9 +45,8 @@ from The Open Group.
 static unsigned char XCMiscCode;
 #endif
 
-static void XCMiscResetProc(
-    ExtensionEntry * /* extEntry */
-);
+static void XCMiscResetProc(ExtensionEntry *    /* extEntry */
+    );
 
 static DISPATCH_PROC(ProcXCMiscDispatch);
 static DISPATCH_PROC(ProcXCMiscGetVersion);
@@ -65,28 +64,27 @@ XCMiscExtensionInit(void)
     ExtensionEntry *extEntry;
 
     if ((extEntry = AddExtension(XCMiscExtensionName, 0, 0,
-				ProcXCMiscDispatch, SProcXCMiscDispatch,
-				XCMiscResetProc, StandardMinorOpcode)) != 0)
-	XCMiscCode = (unsigned char)extEntry->base;
+                                 ProcXCMiscDispatch, SProcXCMiscDispatch,
+                                 XCMiscResetProc, StandardMinorOpcode)) != 0)
+        XCMiscCode = (unsigned char) extEntry->base;
 #else
     (void) AddExtension(XCMiscExtensionName, 0, 0,
-			ProcXCMiscDispatch, SProcXCMiscDispatch,
-			XCMiscResetProc, StandardMinorOpcode);
+                        ProcXCMiscDispatch, SProcXCMiscDispatch,
+                        XCMiscResetProc, StandardMinorOpcode);
 #endif
 
     DeclareExtensionSecurity(XCMiscExtensionName, TRUE);
 }
 
-/*ARGSUSED*/
-static void
-XCMiscResetProc (extEntry)
-    ExtensionEntry	*extEntry;
+ /*ARGSUSED*/ static void
+XCMiscResetProc(extEntry)
+ExtensionEntry *extEntry;
 {
 }
 
 static int
 ProcXCMiscGetVersion(client)
-    register ClientPtr client;
+register ClientPtr client;
 {
     xXCMiscGetVersionReply rep;
 
@@ -97,17 +95,17 @@ ProcXCMiscGetVersion(client)
     rep.majorVersion = XCMiscMajorVersion;
     rep.minorVersion = XCMiscMinorVersion;
     if (client->swapped) {
-	swaps(&rep.sequenceNumber);
-	swaps(&rep.majorVersion);
-	swaps(&rep.minorVersion);
+        swaps(&rep.sequenceNumber);
+        swaps(&rep.majorVersion);
+        swaps(&rep.minorVersion);
     }
     WriteToClient(client, sizeof(xXCMiscGetVersionReply), &rep);
-    return(client->noClientException);
+    return (client->noClientException);
 }
 
 static int
 ProcXCMiscGetXIDRange(client)
-    register ClientPtr client;
+register ClientPtr client;
 {
     xXCMiscGetXIDRangeReply rep;
     XID min_id, max_id;
@@ -120,17 +118,17 @@ ProcXCMiscGetXIDRange(client)
     rep.start_id = min_id;
     rep.count = max_id - min_id + 1;
     if (client->swapped) {
-	swaps(&rep.sequenceNumber);
-	swapl(&rep.start_id);
-	swapl(&rep.count);
+        swaps(&rep.sequenceNumber);
+        swapl(&rep.start_id);
+        swapl(&rep.count);
     }
     WriteToClient(client, sizeof(xXCMiscGetXIDRangeReply), &rep);
-    return(client->noClientException);
+    return (client->noClientException);
 }
 
 static int
 ProcXCMiscGetXIDList(client)
-    register ClientPtr client;
+register ClientPtr client;
 {
     REQUEST(xXCMiscGetXIDListReq);
     xXCMiscGetXIDListReply rep;
@@ -140,12 +138,11 @@ ProcXCMiscGetXIDList(client)
     REQUEST_SIZE_MATCH(xXCMiscGetXIDListReq);
 
     if (stuff->count > UINT32_MAX / sizeof(XID))
-	    return BadAlloc;
+        return BadAlloc;
 
-    pids = (XID *)malloc(stuff->count * sizeof(XID));
-    if (!pids)
-    {
-	return BadAlloc;
+    pids = (XID *) malloc(stuff->count * sizeof(XID));
+    if (!pids) {
+        return BadAlloc;
     }
     count = GetXIDList(client, stuff->count, pids);
     rep.type = X_Reply;
@@ -153,41 +150,39 @@ ProcXCMiscGetXIDList(client)
     rep.length = count;
     rep.count = count;
     if (client->swapped) {
-	swaps(&rep.sequenceNumber);
-	swapl(&rep.length);
-	swapl(&rep.count);
+        swaps(&rep.sequenceNumber);
+        swapl(&rep.length);
+        swapl(&rep.count);
     }
     WriteToClient(client, sizeof(xXCMiscGetXIDListReply), &rep);
-    if (count)
-    {
-    	client->pSwapReplyFunc = (ReplySwapPtr) Swap32Write;
-	WriteSwappedDataToClient(client, count * sizeof(XID), pids);
+    if (count) {
+        client->pSwapReplyFunc = (ReplySwapPtr) Swap32Write;
+        WriteSwappedDataToClient(client, count * sizeof(XID), pids);
     }
     free(pids);
-    return(client->noClientException);
+    return (client->noClientException);
 }
 
 static int
-ProcXCMiscDispatch (client)
-    register ClientPtr	client;
+ProcXCMiscDispatch(client)
+register ClientPtr client;
 {
     REQUEST(xReq);
-    switch (stuff->data)
-    {
+    switch (stuff->data) {
     case X_XCMiscGetVersion:
-	return ProcXCMiscGetVersion(client);
+        return ProcXCMiscGetVersion(client);
     case X_XCMiscGetXIDRange:
-	return ProcXCMiscGetXIDRange(client);
+        return ProcXCMiscGetXIDRange(client);
     case X_XCMiscGetXIDList:
-	return ProcXCMiscGetXIDList(client);
+        return ProcXCMiscGetXIDList(client);
     default:
-	return BadRequest;
+        return BadRequest;
     }
 }
 
 static int
 SProcXCMiscGetVersion(client)
-    register ClientPtr	client;
+register ClientPtr client;
 {
     REQUEST(xXCMiscGetVersionReq);
 
@@ -200,7 +195,7 @@ SProcXCMiscGetVersion(client)
 
 static int
 SProcXCMiscGetXIDRange(client)
-    register ClientPtr	client;
+register ClientPtr client;
 {
     REQUEST(xReq);
 
@@ -210,7 +205,7 @@ SProcXCMiscGetXIDRange(client)
 
 static int
 SProcXCMiscGetXIDList(client)
-    register ClientPtr	client;
+register ClientPtr client;
 {
     REQUEST(xXCMiscGetXIDListReq);
     REQUEST_SIZE_MATCH(xXCMiscGetXIDListReq);
@@ -221,19 +216,18 @@ SProcXCMiscGetXIDList(client)
 }
 
 static int
-SProcXCMiscDispatch (client)
-    register ClientPtr	client;
+SProcXCMiscDispatch(client)
+register ClientPtr client;
 {
     REQUEST(xReq);
-    switch (stuff->data)
-    {
+    switch (stuff->data) {
     case X_XCMiscGetVersion:
-	return SProcXCMiscGetVersion(client);
+        return SProcXCMiscGetVersion(client);
     case X_XCMiscGetXIDRange:
-	return SProcXCMiscGetXIDRange(client);
+        return SProcXCMiscGetXIDRange(client);
     case X_XCMiscGetXIDList:
-	return SProcXCMiscGetXIDList(client);
+        return SProcXCMiscGetXIDList(client);
     default:
-	return BadRequest;
+        return BadRequest;
     }
 }

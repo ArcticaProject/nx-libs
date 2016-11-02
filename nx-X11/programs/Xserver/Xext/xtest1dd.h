@@ -30,97 +30,83 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #ifndef XTEST1DD_H
 #define XTEST1DD_H 1
 
-extern	short		xtest_mousex;
-extern	short		xtest_mousey;
-extern	int		playback_on;
-extern	ClientPtr	current_xtest_client;
-extern	ClientPtr	playback_client;
-extern	KeyCode		xtest_command_key;
+extern short xtest_mousex;
+extern short xtest_mousey;
+extern int playback_on;
+extern ClientPtr current_xtest_client;
+extern ClientPtr playback_client;
+extern KeyCode xtest_command_key;
 
-extern void stop_stealing_input(
-	void
-);
-
-extern void
-steal_input(
-	ClientPtr              /* client */,
-	CARD32                 /* mode */
-);
+extern void stop_stealing_input(void
+    );
 
 extern void
-flush_input_actions(
-	void
-);
+ steal_input(ClientPtr /* client */ ,
+             CARD32             /* mode */
+    );
 
 extern void
-XTestStealJumpData(
-	int                    /* jx */,
-	int                    /* jy */,
-	int                    /* dev_type */
-);
+ flush_input_actions(void
+    );
 
 extern void
-XTestStealMotionData(
-	int                    /* dx */,
-	int                    /* dy */,
-	int                    /* dev_type */,
-	int                    /* mx */,
-	int                    /* my */
-);
+ XTestStealJumpData(int /* jx */ ,
+                    int /* jy */ ,
+                    int         /* dev_type */
+    );
+
+extern void
+ XTestStealMotionData(int /* dx */ ,
+                      int /* dy */ ,
+                      int /* dev_type */ ,
+                      int /* mx */ ,
+                      int       /* my */
+    );
 
 extern Bool
-XTestStealKeyData(
-	unsigned               /* keycode */,
-	int                    /* keystate */,
-	int                    /* dev_type */,
-	int                    /* locx */,
-	int                    /* locy */
-);
+ XTestStealKeyData(unsigned /* keycode */ ,
+                   int /* keystate */ ,
+                   int /* dev_type */ ,
+                   int /* locx */ ,
+                   int          /* locy */
+    );
 
 extern void
-parse_fake_input(
-	ClientPtr              /* client */,
-	char *                 /* req */
-);
+ parse_fake_input(ClientPtr /* client */ ,
+                  char *        /* req */
+    );
 
 extern void
-XTestComputeWaitTime(
-	struct timeval *       /* waittime */
-);
+ XTestComputeWaitTime(struct timeval *  /* waittime */
+    );
 
 extern int
-XTestProcessInputAction(
-	int                    /* readable */,
-	struct timeval *       /* waittime */
-);
+ XTestProcessInputAction(int /* readable */ ,
+                         struct timeval *       /* waittime */
+    );
 
 extern void
-abort_play_back(
-	void
-);
+ abort_play_back(void
+    );
 
 extern void
-return_input_array_size(
-	ClientPtr              /* client */
-);
+ return_input_array_size(ClientPtr      /* client */
+    );
 
-extern void XTestGenerateEvent(
-	int                    /* dev_type */,
-	int                    /* keycode */,
-	int                    /* keystate */,
-	int                    /* mousex */,
-	int                    /* mousey */
-);
+extern void XTestGenerateEvent(int /* dev_type */ ,
+                               int /* keycode */ ,
+                               int /* keystate */ ,
+                               int /* mousex */ ,
+                               int      /* mousey */
+    );
 
-extern void XTestGetPointerPos(
-	short *                /* fmousex */,
-	short *                /* fmousey */
-);
+extern void XTestGetPointerPos(short * /* fmousex */ ,
+                               short *  /* fmousey */
+    );
 
-extern void XTestJumpPointer(
-	int                    /* jx */,
-	int                    /* jy */,
-	int                    /* dev_type */
-);
+extern void XTestJumpPointer(int /* jx */ ,
+                             int /* jy */ ,
+                             int        /* dev_type */
+    );
 
-#endif /* XTEST1DD_H */
+#endif                          /* XTEST1DD_H */

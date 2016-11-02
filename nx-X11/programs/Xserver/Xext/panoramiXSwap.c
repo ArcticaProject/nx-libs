@@ -52,85 +52,82 @@ Equipment Corporation.
 #include "panoramiXh.h"
 
 static int
-SProcPanoramiXQueryVersion (ClientPtr client)
+SProcPanoramiXQueryVersion(ClientPtr client)
 {
-	REQUEST(xPanoramiXQueryVersionReq);
+    REQUEST(xPanoramiXQueryVersionReq);
 
-	swaps(&stuff->length);
-	REQUEST_SIZE_MATCH (xPanoramiXQueryVersionReq);
-	return ProcPanoramiXQueryVersion(client);
+    swaps(&stuff->length);
+    REQUEST_SIZE_MATCH(xPanoramiXQueryVersionReq);
+    return ProcPanoramiXQueryVersion(client);
 }
 
 static int
 SProcPanoramiXGetState(ClientPtr client)
 {
-	REQUEST(xPanoramiXGetStateReq);
+    REQUEST(xPanoramiXGetStateReq);
 
-	swaps (&stuff->length);
-	REQUEST_SIZE_MATCH(xPanoramiXGetStateReq);
-	return ProcPanoramiXGetState(client);
+    swaps(&stuff->length);
+    REQUEST_SIZE_MATCH(xPanoramiXGetStateReq);
+    return ProcPanoramiXGetState(client);
 }
 
 static int
 SProcPanoramiXGetScreenCount(ClientPtr client)
 {
-	REQUEST(xPanoramiXGetScreenCountReq);
+    REQUEST(xPanoramiXGetScreenCountReq);
 
-	swaps (&stuff->length);
-	REQUEST_SIZE_MATCH(xPanoramiXGetScreenCountReq);
-	return ProcPanoramiXGetScreenCount(client);
+    swaps(&stuff->length);
+    REQUEST_SIZE_MATCH(xPanoramiXGetScreenCountReq);
+    return ProcPanoramiXGetScreenCount(client);
 }
 
 static int
 SProcPanoramiXGetScreenSize(ClientPtr client)
 {
-	REQUEST(xPanoramiXGetScreenSizeReq);
+    REQUEST(xPanoramiXGetScreenSizeReq);
 
-	swaps (&stuff->length);
-	REQUEST_SIZE_MATCH(xPanoramiXGetScreenSizeReq);
-	return ProcPanoramiXGetScreenSize(client);
+    swaps(&stuff->length);
+    REQUEST_SIZE_MATCH(xPanoramiXGetScreenSizeReq);
+    return ProcPanoramiXGetScreenSize(client);
 }
-
 
 static int
 SProcXineramaIsActive(ClientPtr client)
 {
-	REQUEST(xXineramaIsActiveReq);
+    REQUEST(xXineramaIsActiveReq);
 
-	swaps (&stuff->length);
-	REQUEST_SIZE_MATCH(xXineramaIsActiveReq);
-	return ProcXineramaIsActive(client);
+    swaps(&stuff->length);
+    REQUEST_SIZE_MATCH(xXineramaIsActiveReq);
+    return ProcXineramaIsActive(client);
 }
-
 
 static int
 SProcXineramaQueryScreens(ClientPtr client)
 {
-	REQUEST(xXineramaQueryScreensReq);
+    REQUEST(xXineramaQueryScreensReq);
 
-	swaps (&stuff->length);
-	REQUEST_SIZE_MATCH(xXineramaQueryScreensReq);
-	return ProcXineramaQueryScreens(client);
+    swaps(&stuff->length);
+    REQUEST_SIZE_MATCH(xXineramaQueryScreensReq);
+    return ProcXineramaQueryScreens(client);
 }
 
-
 int
-SProcPanoramiXDispatch (ClientPtr client)
-{   REQUEST(xReq);
-    switch (stuff->data)
-    {
-	case X_PanoramiXQueryVersion:
-	     return SProcPanoramiXQueryVersion(client);
-	case X_PanoramiXGetState:
-	     return SProcPanoramiXGetState(client);
-	case X_PanoramiXGetScreenCount:
-	     return SProcPanoramiXGetScreenCount(client);
-	case X_PanoramiXGetScreenSize:
-	     return SProcPanoramiXGetScreenSize(client);
-	case X_XineramaIsActive:
-	     return SProcXineramaIsActive(client);
-	case X_XineramaQueryScreens:
-	     return SProcXineramaQueryScreens(client);
+SProcPanoramiXDispatch(ClientPtr client)
+{
+    REQUEST(xReq);
+    switch (stuff->data) {
+    case X_PanoramiXQueryVersion:
+        return SProcPanoramiXQueryVersion(client);
+    case X_PanoramiXGetState:
+        return SProcPanoramiXGetState(client);
+    case X_PanoramiXGetScreenCount:
+        return SProcPanoramiXGetScreenCount(client);
+    case X_PanoramiXGetScreenSize:
+        return SProcPanoramiXGetScreenSize(client);
+    case X_XineramaIsActive:
+        return SProcXineramaIsActive(client);
+    case X_XineramaQueryScreens:
+        return SProcXineramaQueryScreens(client);
     }
     return BadRequest;
 }
