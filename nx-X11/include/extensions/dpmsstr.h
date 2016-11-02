@@ -56,130 +56,142 @@ Equipment Corporation.
 #define DPMSExtensionName	"DPMS"
 
 typedef struct {
-    CARD8	reqType;	/* always DPMSCode */
-    CARD8	dpmsReqType;	/* always X_DPMSGetVersion */
-    CARD16	length B16;
-    CARD16	majorVersion B16;
-    CARD16	minorVersion B16;
+    CARD8 reqType;              /* always DPMSCode */
+    CARD8 dpmsReqType;          /* always X_DPMSGetVersion */
+    CARD16 length B16;
+    CARD16 majorVersion B16;
+    CARD16 minorVersion B16;
 } xDPMSGetVersionReq;
+
 #define sz_xDPMSGetVersionReq 8
 
 typedef struct {
-    BYTE	type;			/* X_Reply */
-    CARD8	pad0;
-    CARD16	sequenceNumber B16;
-    CARD32	length B32;
-    CARD16	majorVersion B16;
-    CARD16	minorVersion B16;
-    CARD32	pad1 B32;
-    CARD32	pad2 B32;
-    CARD32	pad3 B32;
-    CARD32	pad4 B32;
-    CARD32	pad5 B32;
+    BYTE type;                  /* X_Reply */
+    CARD8 pad0;
+    CARD16 sequenceNumber B16;
+    CARD32 length B32;
+    CARD16 majorVersion B16;
+    CARD16 minorVersion B16;
+    CARD32 pad1 B32;
+    CARD32 pad2 B32;
+    CARD32 pad3 B32;
+    CARD32 pad4 B32;
+    CARD32 pad5 B32;
 } xDPMSGetVersionReply;
+
 #define sz_xDPMSGetVersionReply 32
 
 typedef struct {
-    CARD8	reqType;	/* always DPMSCode */
-    CARD8	dpmsReqType;	/* always X_DPMSCapable */
-    CARD16	length B16;
+    CARD8 reqType;              /* always DPMSCode */
+    CARD8 dpmsReqType;          /* always X_DPMSCapable */
+    CARD16 length B16;
 } xDPMSCapableReq;
+
 #define sz_xDPMSCapableReq 4
 
 typedef struct {
-    BYTE	type;			/* X_Reply */
-    CARD8	pad0;
-    CARD16	sequenceNumber B16;
-    CARD32	length B32;
-    BOOL	capable;
-    CARD8	pad1;
-    CARD16	pad2 B16;
-    CARD32	pad3 B32;
-    CARD32	pad4 B32;
-    CARD32	pad5 B32;
-    CARD32	pad6 B32;
-    CARD32	pad7 B32;
+    BYTE type;                  /* X_Reply */
+    CARD8 pad0;
+    CARD16 sequenceNumber B16;
+    CARD32 length B32;
+    BOOL capable;
+    CARD8 pad1;
+    CARD16 pad2 B16;
+    CARD32 pad3 B32;
+    CARD32 pad4 B32;
+    CARD32 pad5 B32;
+    CARD32 pad6 B32;
+    CARD32 pad7 B32;
 } xDPMSCapableReply;
+
 #define sz_xDPMSCapableReply 32
 
 typedef struct {
-    CARD8	reqType;	/* always DPMSCode */
-    CARD8	dpmsReqType;	/* always X_DPMSGetTimeouts */
-    CARD16	length B16;
+    CARD8 reqType;              /* always DPMSCode */
+    CARD8 dpmsReqType;          /* always X_DPMSGetTimeouts */
+    CARD16 length B16;
 } xDPMSGetTimeoutsReq;
+
 #define sz_xDPMSGetTimeoutsReq 4
 
 typedef struct {
-    BYTE	type;			/* X_Reply */
-    CARD8	pad0;
-    CARD16	sequenceNumber B16;
-    CARD32	length B32;
-    CARD16	standby B16;
-    CARD16	suspend B16;
-    CARD16	off B16;
-    CARD16	pad1 B16;
-    CARD32	pad2 B32;
-    CARD32	pad3 B32;
-    CARD32	pad4 B32;
-    CARD32	pad5 B32;
+    BYTE type;                  /* X_Reply */
+    CARD8 pad0;
+    CARD16 sequenceNumber B16;
+    CARD32 length B32;
+    CARD16 standby B16;
+    CARD16 suspend B16;
+    CARD16 off B16;
+    CARD16 pad1 B16;
+    CARD32 pad2 B32;
+    CARD32 pad3 B32;
+    CARD32 pad4 B32;
+    CARD32 pad5 B32;
 } xDPMSGetTimeoutsReply;
+
 #define sz_xDPMSGetTimeoutsReply 32
 
 typedef struct {
-    CARD8	reqType;	/* always DPMSCode */
-    CARD8	dpmsReqType;	/* always X_DPMSSetTimeouts */
-    CARD16	length B16;
-    CARD16	standby B16;
-    CARD16	suspend B16;
-    CARD16	off B16;
-    CARD16	pad0 B16;
+    CARD8 reqType;              /* always DPMSCode */
+    CARD8 dpmsReqType;          /* always X_DPMSSetTimeouts */
+    CARD16 length B16;
+    CARD16 standby B16;
+    CARD16 suspend B16;
+    CARD16 off B16;
+    CARD16 pad0 B16;
 } xDPMSSetTimeoutsReq;
+
 #define sz_xDPMSSetTimeoutsReq 12
 
 typedef struct {
-    CARD8	reqType;	/* always DPMSCode */
-    CARD8	dpmsReqType;	/* always X_DPMSEnable */
-    CARD16	length B16;
+    CARD8 reqType;              /* always DPMSCode */
+    CARD8 dpmsReqType;          /* always X_DPMSEnable */
+    CARD16 length B16;
 } xDPMSEnableReq;
+
 #define sz_xDPMSEnableReq 4
 
 typedef struct {
-    CARD8	reqType;	/* always DPMSCode */
-    CARD8	dpmsReqType;	/* always X_DPMSDisable */
-    CARD16	length B16;
+    CARD8 reqType;              /* always DPMSCode */
+    CARD8 dpmsReqType;          /* always X_DPMSDisable */
+    CARD16 length B16;
 } xDPMSDisableReq;
+
 #define sz_xDPMSDisableReq 4
 
 typedef struct {
-    CARD8	reqType;	/* always DPMSCode */
-    CARD8	dpmsReqType;	/* always X_DPMSForceLevel */
-    CARD16	length B16;
-    CARD16	level B16;	/* power level requested */
-    CARD16	pad0 B16;
+    CARD8 reqType;              /* always DPMSCode */
+    CARD8 dpmsReqType;          /* always X_DPMSForceLevel */
+    CARD16 length B16;
+    CARD16 level B16;           /* power level requested */
+    CARD16 pad0 B16;
 } xDPMSForceLevelReq;
+
 #define sz_xDPMSForceLevelReq 8
 
 typedef struct {
-    CARD8	reqType;	/* always DPMSCode */
-    CARD8	dpmsReqType;	/* always X_DPMSInfo */
-    CARD16	length B16;
+    CARD8 reqType;              /* always DPMSCode */
+    CARD8 dpmsReqType;          /* always X_DPMSInfo */
+    CARD16 length B16;
 } xDPMSInfoReq;
+
 #define sz_xDPMSInfoReq 4
 
 typedef struct {
-    BYTE	type;			/* X_Reply */
-    CARD8	pad0;
-    CARD16	sequenceNumber B16;
-    CARD32	length B32;
-    CARD16	power_level B16;
-    BOOL	state;
-    CARD8	pad1;
-    CARD32	pad2 B32;
-    CARD32	pad3 B32;
-    CARD32	pad4 B32;
-    CARD32	pad5 B32;
-    CARD32	pad6 B32;
+    BYTE type;                  /* X_Reply */
+    CARD8 pad0;
+    CARD16 sequenceNumber B16;
+    CARD32 length B32;
+    CARD16 power_level B16;
+    BOOL state;
+    CARD8 pad1;
+    CARD32 pad2 B32;
+    CARD32 pad3 B32;
+    CARD32 pad4 B32;
+    CARD32 pad5 B32;
+    CARD32 pad6 B32;
 } xDPMSInfoReply;
+
 #define sz_xDPMSInfoReply 32
 
-#endif /* _DPMSSTR_H_ */
+#endif                          /* _DPMSSTR_H_ */

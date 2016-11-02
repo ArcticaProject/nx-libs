@@ -36,7 +36,6 @@ Equipment Corporation.
  * @(#)RCSfile: dpms.h,v Revision: 1.1.4.2  (DEC) Date: 1995/11/21 19:34:17
  */
 
-
 #define DPMSModeOn	0
 #define DPMSModeStandby	1
 #define DPMSModeSuspend	2
@@ -60,6 +59,5 @@ extern Status DPMSForceLevel(Display *, CARD16);
 extern Status DPMSInfo(Display *, CARD16 *, BOOL *);
 
 _XFUNCPROTOEND
-#endif /* !DPMS_SERVER */
-#endif /* !_X11_EXTENSIONS_DPMS_H */
-
+#endif                          /* !DPMS_SERVER */
+#endif                          /* !_X11_EXTENSIONS_DPMS_H */

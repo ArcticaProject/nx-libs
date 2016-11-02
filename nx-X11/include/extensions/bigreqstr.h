@@ -37,32 +37,33 @@ in this Software without prior written authorization from The Open Group.
 #define XBigReqExtensionName	"BIG-REQUESTS"
 
 typedef struct {
-    CARD8	reqType;	/* always XBigReqCode */
-    CARD8	brReqType;	/* always X_BigReqEnable */
-    CARD16	length B16;
+    CARD8 reqType;              /* always XBigReqCode */
+    CARD8 brReqType;            /* always X_BigReqEnable */
+    CARD16 length B16;
 } xBigReqEnableReq;
+
 #define sz_xBigReqEnableReq 4
 
 typedef struct {
-    BYTE	type;			/* X_Reply */
-    CARD8	pad0;
-    CARD16	sequenceNumber B16;
-    CARD32	length B32;
-    CARD32	max_request_size B32;
-    CARD32	pad1 B32;
-    CARD32	pad2 B32;
-    CARD32	pad3 B32;
-    CARD32	pad4 B32;
-    CARD32	pad5 B32;
+    BYTE type;                  /* X_Reply */
+    CARD8 pad0;
+    CARD16 sequenceNumber B16;
+    CARD32 length B32;
+    CARD32 max_request_size B32;
+    CARD32 pad1 B32;
+    CARD32 pad2 B32;
+    CARD32 pad3 B32;
+    CARD32 pad4 B32;
+    CARD32 pad5 B32;
 } xBigReqEnableReply;
+
 #define sz_xBigReqEnableReply 32
 
-
 typedef struct {
-	CARD8 reqType;
-	CARD8 data;
-	CARD16 zero B16;
-        CARD32 length B32;
+    CARD8 reqType;
+    CARD8 data;
+    CARD16 zero B16;
+    CARD32 length B32;
 } xBigReq;
 
-#endif /* _BIGREQSTR_H_ */
+#endif                          /* _BIGREQSTR_H_ */

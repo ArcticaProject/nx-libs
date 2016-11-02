@@ -65,75 +65,73 @@
 #define XVMC_RENDERING          0x00000001
 #define XVMC_DISPLAYING         0x00000002
 
-
 typedef struct {
-   int surface_type_id;
-   int chroma_format;
-   unsigned short max_width;
-   unsigned short max_height;
-   unsigned short subpicture_max_width;
-   unsigned short subpicture_max_height;
-   int mc_type;
-   int flags;
+    int surface_type_id;
+    int chroma_format;
+    unsigned short max_width;
+    unsigned short max_height;
+    unsigned short subpicture_max_width;
+    unsigned short subpicture_max_height;
+    int mc_type;
+    int flags;
 } XvMCSurfaceInfo;
 
 typedef struct {
-   XID context_id;
-   int surface_type_id;
-   unsigned short width;
-   unsigned short height;
-   XvPortID port;
-   int flags;
-   void * privData;  /* private to the library */
+    XID context_id;
+    int surface_type_id;
+    unsigned short width;
+    unsigned short height;
+    XvPortID port;
+    int flags;
+    void *privData;             /* private to the library */
 } XvMCContext;
 
 typedef struct {
-  XID surface_id;
-  XID context_id;
-  int surface_type_id;
-  unsigned short width;
-  unsigned short height;
-  void *privData;  /* private to the library */
+    XID surface_id;
+    XID context_id;
+    int surface_type_id;
+    unsigned short width;
+    unsigned short height;
+    void *privData;             /* private to the library */
 } XvMCSurface;
 
 typedef struct {
-  XID subpicture_id;
-  XID context_id;
-  int xvimage_id;
-  unsigned short width;
-  unsigned short height;
-  int num_palette_entries;
-  int entry_bytes;
-  char component_order[4];
-  void *privData;    /* private to the library */
+    XID subpicture_id;
+    XID context_id;
+    int xvimage_id;
+    unsigned short width;
+    unsigned short height;
+    int num_palette_entries;
+    int entry_bytes;
+    char component_order[4];
+    void *privData;             /* private to the library */
 } XvMCSubpicture;
 
 typedef struct {
-  unsigned int num_blocks;
-  XID context_id;
-  void *privData;
-  short *blocks;
+    unsigned int num_blocks;
+    XID context_id;
+    void *privData;
+    short *blocks;
 } XvMCBlockArray;
 
 typedef struct {
-   unsigned short x;
-   unsigned short y;
-   unsigned char macroblock_type;
-   unsigned char motion_type;
-   unsigned char motion_vertical_field_select;
-   unsigned char dct_type;
-   short PMV[2][2][2];
-   unsigned int index;
-   unsigned short coded_block_pattern;
-   unsigned short pad0;
+    unsigned short x;
+    unsigned short y;
+    unsigned char macroblock_type;
+    unsigned char motion_type;
+    unsigned char motion_vertical_field_select;
+    unsigned char dct_type;
+    short PMV[2][2][2];
+    unsigned int index;
+    unsigned short coded_block_pattern;
+    unsigned short pad0;
 } XvMCMacroBlock;
 
-
 typedef struct {
-  unsigned int num_blocks;
-  XID context_id;
-  void *privData;
-  XvMCMacroBlock *macro_blocks;
+    unsigned int num_blocks;
+    XID context_id;
+    void *privData;
+    XvMCMacroBlock *macro_blocks;
 } XvMCMacroBlockArray;
 
 #endif

@@ -69,7 +69,6 @@ typedef XID XvEncodingID;
 #define XvPixmapMask	 0x00010000
 #define XvWindowMask	 0x00020000
 
-
 #define XvGettable	0x01
 #define XvSettable	0x02
 
@@ -81,7 +80,6 @@ typedef XID XvEncodingID;
 
 #define XvTopToBottom	0
 #define XvBottomToTop	1
-
 
 /* Events */
 
@@ -124,5 +122,4 @@ typedef XID XvEncodingID;
 #define XvBadReply 4
 #define XvBadAlloc 5
 
-#endif /* XV_H */
-
+#endif                          /* XV_H */

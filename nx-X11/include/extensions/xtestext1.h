@@ -6,7 +6,6 @@
 
 /*
 
-
 Copyright 1986, 1987, 1988, 1998  The Open Group
 
 Permission to use, copy, modify, distribute, and sell this software and its
@@ -28,7 +27,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 Except as contained in this notice, the name of The Open Group shall not be
 used in advertising or otherwise to promote the sale, use or other dealings
 in this Software without prior written authorization from The Open Group.
-
 
 Copyright 1986, 1987, 1988 by Hewlett-Packard Corporation
 
@@ -109,41 +107,46 @@ University of California.
 #define XTestMAX_ACTION_LIST_SIZE       64
 
 typedef struct {
-        CARD8   reqType;        /* always XTestReqCode             */
-        CARD8   XTestReqType;   /* always X_TestFakeInput           */
-        CARD16  length B16;     /* 2 + XTestMAX_ACTION_LIST_SIZE/4 */
-        CARD32  ack B32;
-        CARD8   action_list[XTestMAX_ACTION_LIST_SIZE];
+    CARD8 reqType;              /* always XTestReqCode             */
+    CARD8 XTestReqType;         /* always X_TestFakeInput           */
+    CARD16 length B16;          /* 2 + XTestMAX_ACTION_LIST_SIZE/4 */
+    CARD32 ack B32;
+    CARD8 action_list[XTestMAX_ACTION_LIST_SIZE];
 } xTestFakeInputReq;
+
 #define sz_xTestFakeInputReq (XTestMAX_ACTION_LIST_SIZE + 8)
 
 typedef struct {
-        CARD8   reqType;        /* always XTestReqCode  */
-        CARD8   XTestReqType;   /* always X_TestGetInput */
-        CARD16  length B16;     /* 2                    */
-        CARD32  mode B32;
+    CARD8 reqType;              /* always XTestReqCode  */
+    CARD8 XTestReqType;         /* always X_TestGetInput */
+    CARD16 length B16;          /* 2                    */
+    CARD32 mode B32;
 } xTestGetInputReq;
+
 #define sz_xTestGetInputReq 8
 
 typedef struct {
-        CARD8   reqType;        /* always XTestReqCode   */
-        CARD8   XTestReqType;   /* always X_TestStopInput */
-        CARD16  length B32;     /* 1                     */
+    CARD8 reqType;              /* always XTestReqCode   */
+    CARD8 XTestReqType;         /* always X_TestStopInput */
+    CARD16 length B32;          /* 1                     */
 } xTestStopInputReq;
+
 #define sz_xTestStopInputReq 4
 
 typedef struct {
-        CARD8   reqType;        /* always XTestReqCode */
-        CARD8   XTestReqType;   /* always X_TestReset   */
-        CARD16  length B16;     /* 1                   */
+    CARD8 reqType;              /* always XTestReqCode */
+    CARD8 XTestReqType;         /* always X_TestReset   */
+    CARD16 length B16;          /* 1                   */
 } xTestResetReq;
+
 #define sz_xTestResetReq 4
 
 typedef struct {
-        CARD8   reqType;        /* always XTestReqCode        */
-        CARD8   XTestReqType;   /* always X_TestQueryInputSize */
-        CARD16  length B16;     /* 1                          */
+    CARD8 reqType;              /* always XTestReqCode        */
+    CARD8 XTestReqType;         /* always X_TestQueryInputSize */
+    CARD16 length B16;          /* 1                          */
 } xTestQueryInputSizeReq;
+
 #define sz_xTestQueryInputSizeReq 4
 
 /*
@@ -152,16 +155,16 @@ typedef struct {
  * (32 bytes).
  */
 typedef struct {
-        CARD8   type;           /* always X_Reply  */
-        CARD8   pad1;
-        CARD16  sequenceNumber B16;
-        CARD32  length B32;     /* always 0 */
-        CARD32  size_return B32;
-        CARD32  pad2 B32;
-        CARD32  pad3 B32;
-        CARD32  pad4 B32;
-        CARD32  pad5 B32;
-        CARD32  pad6 B32;
+    CARD8 type;                 /* always X_Reply  */
+    CARD8 pad1;
+    CARD16 sequenceNumber B16;
+    CARD32 length B32;          /* always 0 */
+    CARD32 size_return B32;
+    CARD32 pad2 B32;
+    CARD32 pad3 B32;
+    CARD32 pad4 B32;
+    CARD32 pad5 B32;
+    CARD32 pad6 B32;
 } xTestQueryInputSizeReply;
 
 /*
@@ -173,10 +176,10 @@ typedef struct {
 #define XTestACTIONS_SIZE	28
 
 typedef struct {
-        CARD8   type;           /* always XTestInputActionType */
-        CARD8   pad00;
-        CARD16  sequenceNumber B16;
-        CARD8   actions[XTestACTIONS_SIZE];
+    CARD8 type;                 /* always XTestInputActionType */
+    CARD8 pad00;
+    CARD16 sequenceNumber B16;
+    CARD8 actions[XTestACTIONS_SIZE];
 } xTestInputActionEvent;
 
 /*
@@ -186,16 +189,16 @@ typedef struct {
  * It must remain the same size as all other wire events (32 bytes).
  */
 typedef struct {
-        CARD8   type;           /* always XTestFakeAckType */
-        CARD8   pad00;
-        CARD16  sequenceNumber B16;
-        CARD32  pad02 B32;
-        CARD32  pad03 B32;
-        CARD32  pad04 B32;
-        CARD32  pad05 B32;
-        CARD32  pad06 B32;
-        CARD32  pad07 B32;
-        CARD32  pad08 B32;
+    CARD8 type;                 /* always XTestFakeAckType */
+    CARD8 pad00;
+    CARD16 sequenceNumber B16;
+    CARD32 pad02 B32;
+    CARD32 pad03 B32;
+    CARD32 pad04 B32;
+    CARD32 pad05 B32;
+    CARD32 pad06 B32;
+    CARD32 pad07 B32;
+    CARD32 pad08 B32;
 } xTestFakeAckEvent;
 
 /*
@@ -210,10 +213,10 @@ typedef struct {
  * it receives an input action event.
  */
 typedef struct {
-        int     type;           /* always XTestInputActionType */
-	Display *display;
-	Window  window;
-        CARD8   actions[XTestACTIONS_SIZE];
+    int type;                   /* always XTestInputActionType */
+    Display *display;
+    Window window;
+    CARD8 actions[XTestACTIONS_SIZE];
 } XTestInputActionEvent;
 
 /*
@@ -222,9 +225,9 @@ typedef struct {
  * it receives an XTestFakeAck event.
  */
 typedef struct {
-        int     type;           /* always XTestFakeAckType */
-	Display *display;
-	Window  window;
+    int type;                   /* always XTestFakeAckType */
+    Display *display;
+    Window window;
 } XTestFakeAckEvent;
 #endif
 
@@ -257,20 +260,20 @@ typedef struct {
 #define XTestKEY_DOWN           0x00
 
 typedef struct {
-        CARD8   header;         /* which device, key up/down */
-        CARD8   keycode;        /* which key/button to move  */
-        CARD16  delay_time B16; /* how long to delay (in ms) */
+    CARD8 header;               /* which device, key up/down */
+    CARD8 keycode;              /* which key/button to move  */
+    CARD16 delay_time B16;      /* how long to delay (in ms) */
 } XTestKeyInfo;
 
 /*
  * This is the definition for pointer jump input actions.
  */
 typedef struct {
-        CARD8   header;         /* which pointer             */
-        CARD8   pad1;           /* unused padding byte       */
-        CARD16  jumpx B16;      /* x coord to jump to        */
-        CARD16  jumpy B16;      /* y coord to jump to        */
-        CARD16  delay_time B16; /* how long to delay (in ms) */
+    CARD8 header;               /* which pointer             */
+    CARD8 pad1;                 /* unused padding byte       */
+    CARD16 jumpx B16;           /* x coord to jump to        */
+    CARD16 jumpy B16;           /* y coord to jump to        */
+    CARD16 delay_time B16;      /* how long to delay (in ms) */
 } XTestJumpInfo;
 
 /*
@@ -298,9 +301,9 @@ typedef struct {
 #define XTestUnpackYMotionValue(x) (((x) & XTestY_MOTION_MASK) >> 4)
 
 typedef struct {
-        CARD8   header;         /* which pointer             */
-        CARD8   motion_data;    /* x,y relative motion       */
-        CARD16  delay_time B16; /* how long to delay (in ms) */
+    CARD8 header;               /* which pointer             */
+    CARD8 motion_data;          /* x,y relative motion       */
+    CARD16 delay_time B16;      /* how long to delay (in ms) */
 } XTestMotionInfo;
 
 /*
@@ -318,8 +321,8 @@ typedef struct {
 #define XTestDELAY_DEVICE_ID    0x0f
 
 typedef struct {
-        CARD8   header;         /* always XTestDELAY_DEVICE_ID */
-        CARD8   pad1;           /* unused padding byte         */
-        CARD16  pad2 B16;       /* unused padding word         */
-        CARD32  delay_time B32; /* how long to delay (in ms)   */
+    CARD8 header;               /* always XTestDELAY_DEVICE_ID */
+    CARD8 pad1;                 /* unused padding byte         */
+    CARD16 pad2 B16;            /* unused padding word         */
+    CARD32 delay_time B32;      /* how long to delay (in ms)   */
 } XTestDelayInfo;

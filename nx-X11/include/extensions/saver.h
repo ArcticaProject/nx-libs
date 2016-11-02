@@ -51,4 +51,4 @@ in this Software without prior written authorization from the X Consortium.
 #define ScreenSaverNotify	0
 #define ScreenSaverNumberEvents	1
 
-#endif /* _SAVER_H_ */
+#endif                          /* _SAVER_H_ */

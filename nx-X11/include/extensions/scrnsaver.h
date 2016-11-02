@@ -36,96 +36,85 @@ in this Software without prior written authorization from the X Consortium.
 #include <nx-X11/extensions/saver.h>
 
 typedef struct {
-    int	type;		    /* of event */
-    unsigned long serial;   /* # of last request processed by server */
-    Bool send_event;	    /* true if this came frome a SendEvent request */
-    Display *display;	    /* Display the event was read from */
-    Window window;	    /* screen saver window */
-    Window root;	    /* root window of event screen */
-    int state;		    /* ScreenSaverOff, ScreenSaverOn, ScreenSaverCycle*/
-    int kind;		    /* ScreenSaverBlanked, ...Internal, ...External */
-    Bool forced;	    /* extents of new region */
-    Time time;		    /* event timestamp */
+    int type;                   /* of event */
+    unsigned long serial;       /* # of last request processed by server */
+    Bool send_event;            /* true if this came frome a SendEvent request */
+    Display *display;           /* Display the event was read from */
+    Window window;              /* screen saver window */
+    Window root;                /* root window of event screen */
+    int state;                  /* ScreenSaverOff, ScreenSaverOn, ScreenSaverCycle */
+    int kind;                   /* ScreenSaverBlanked, ...Internal, ...External */
+    Bool forced;                /* extents of new region */
+    Time time;                  /* event timestamp */
 } XScreenSaverNotifyEvent;
 
 typedef struct {
-    Window  window;	    /* screen saver window - may not exist */
-    int	    state;	    /* ScreenSaverOff, ScreenSaverOn, ScreenSaverDisabled*/
-    int	    kind;	    /* ScreenSaverBlanked, ...Internal, ...External */
-    unsigned long    til_or_since;   /* time til or since screen saver */
-    unsigned long    idle;	    /* total time since last user input */
-    unsigned long   eventMask; /* currently selected events for this client */
+    Window window;              /* screen saver window - may not exist */
+    int state;                  /* ScreenSaverOff, ScreenSaverOn, ScreenSaverDisabled */
+    int kind;                   /* ScreenSaverBlanked, ...Internal, ...External */
+    unsigned long til_or_since; /* time til or since screen saver */
+    unsigned long idle;         /* total time since last user input */
+    unsigned long eventMask;    /* currently selected events for this client */
 } XScreenSaverInfo;
 
 _XFUNCPROTOBEGIN
 
-extern Bool XScreenSaverQueryExtension (
-    Display*	/* display */,
-    int*	/* event_base */,
-    int*	/* error_base */
-);
+extern Bool XScreenSaverQueryExtension(Display * /* display */ ,
+                                       int * /* event_base */ ,
+                                       int *    /* error_base */
+    );
 
-extern Status XScreenSaverQueryVersion (
-    Display*	/* display */,
-    int*	/* major_version */,
-    int*	/* minor_version */
-);
+extern Status XScreenSaverQueryVersion(Display * /* display */ ,
+                                       int * /* major_version */ ,
+                                       int *    /* minor_version */
+    );
 
-extern XScreenSaverInfo *XScreenSaverAllocInfo (
-    void
-);
+extern XScreenSaverInfo *XScreenSaverAllocInfo(void
+    );
 
-extern Status XScreenSaverQueryInfo (
-    Display*		/* display */,
-    Drawable		/* drawable */,
-    XScreenSaverInfo*	/* info */
-);
+extern Status XScreenSaverQueryInfo(Display * /* display */ ,
+                                    Drawable /* drawable */ ,
+                                    XScreenSaverInfo *  /* info */
+    );
 
-extern void XScreenSaverSelectInput (
-    Display*	/* display */,
-    Drawable	/* drawable */,
-    unsigned long   /* eventMask */
-);
+extern void XScreenSaverSelectInput(Display * /* display */ ,
+                                    Drawable /* drawable */ ,
+                                    unsigned long       /* eventMask */
+    );
 
-extern void XScreenSaverSetAttributes (
-    Display*		    /* display */,
-    Drawable		    /* drawable */,
-    int			    /* x */,
-    int			    /* y */,
-    unsigned int	    /* width */,
-    unsigned int	    /* height */,
-    unsigned int	    /* border_width */,
-    int			    /* depth */,
-    unsigned int	    /* class */,
-    Visual *		    /* visual */,
-    unsigned long	    /* valuemask */,
-    XSetWindowAttributes *  /* attributes */
-);
+extern void XScreenSaverSetAttributes(Display * /* display */ ,
+                                      Drawable /* drawable */ ,
+                                      int /* x */ ,
+                                      int /* y */ ,
+                                      unsigned int /* width */ ,
+                                      unsigned int /* height */ ,
+                                      unsigned int /* border_width */ ,
+                                      int /* depth */ ,
+                                      unsigned int /* class */ ,
+                                      Visual * /* visual */ ,
+                                      unsigned long /* valuemask */ ,
+                                      XSetWindowAttributes *    /* attributes */
+    );
 
-extern void XScreenSaverUnsetAttributes (
-    Display*	/* display */,
-    Drawable	/* drawable */
-);
+extern void XScreenSaverUnsetAttributes(Display * /* display */ ,
+                                        Drawable        /* drawable */
+    );
 
-extern Status XScreenSaverRegister (
-    Display*	/* display */,
-    int		/* screen */,
-    XID		/* xid */,
-    Atom	/* type */
-);
+extern Status XScreenSaverRegister(Display * /* display */ ,
+                                   int /* screen */ ,
+                                   XID /* xid */ ,
+                                   Atom /* type */
+    );
 
-extern Status XScreenSaverUnregister (
-    Display*	/* display */,
-    int		/* screen */
-);
+extern Status XScreenSaverUnregister(Display * /* display */ ,
+                                     int        /* screen */
+    );
 
-extern Status XScreenSaverGetRegistered (
-    Display*	/* display */,
-    int		/* screen */,
-    XID*	/* xid */,
-    Atom*	/* type */
-);
+extern Status XScreenSaverGetRegistered(Display * /* display */ ,
+                                        int /* screen */ ,
+                                        XID * /* xid */ ,
+                                        Atom *  /* type */
+    );
 
 _XFUNCPROTOEND
-
-#endif /* _SCRNSAVER_H_ */
+#endif                          /* _SCRNSAVER_H_ */

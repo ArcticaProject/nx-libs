@@ -59,19 +59,17 @@ from The Open Group.
 #define XSecurityAuthorizationName	"XC-QUERY-SECURITY-1"
 #define XSecurityAuthorizationNameLen	19
 
-
 #ifndef _SECURITY_SERVER
 
 _XFUNCPROTOBEGIN
 
-Status XSecurityQueryExtension (
-    Display *dpy,
-    int *major_version_return,
-    int *minor_version_return);
+Status XSecurityQueryExtension(Display * dpy,
+                               int *major_version_return,
+                               int *minor_version_return);
 
 Xauth *XSecurityAllocXauth(void);
 
-void XSecurityFreeXauth(Xauth *auth);
+void XSecurityFreeXauth(Xauth * auth);
 
 /* type for returned auth ids */
 typedef unsigned long XSecurityAuthorization;
@@ -79,50 +77,49 @@ typedef unsigned long XSecurityAuthorization;
 typedef struct {
     unsigned int timeout;
     unsigned int trust_level;
-    XID          group;
-    long	 event_mask;
+    XID group;
+    long event_mask;
 } XSecurityAuthorizationAttributes;
 
-Xauth *XSecurityGenerateAuthorization(
-    Display *dpy,
-    Xauth *auth_in,
-    unsigned long valuemask,
-    XSecurityAuthorizationAttributes *attributes,
-    XSecurityAuthorization *auth_id_return);
+Xauth *XSecurityGenerateAuthorization(Display * dpy,
+                                      Xauth * auth_in,
+                                      unsigned long valuemask,
+                                      XSecurityAuthorizationAttributes *
+                                      attributes,
+                                      XSecurityAuthorization * auth_id_return);
 
-Status XSecurityRevokeAuthorization(
-    Display *dpy,
-    XSecurityAuthorization auth_id);
+Status XSecurityRevokeAuthorization(Display * dpy,
+                                    XSecurityAuthorization auth_id);
 
 _XFUNCPROTOEND
 
-typedef struct {
-    int type;		      /* event base + XSecurityAuthorizationRevoked */
-    unsigned long serial;     /* # of last request processed by server */
-    Bool send_event;	      /* true if this came from a SendEvent request */
-    Display *display;	      /* Display the event was read from */
-    XSecurityAuthorization auth_id; /* revoked authorization id */
+    typedef struct {
+    int type;                   /* event base + XSecurityAuthorizationRevoked */
+    unsigned long serial;       /* # of last request processed by server */
+    Bool send_event;            /* true if this came from a SendEvent request */
+    Display *display;           /* Display the event was read from */
+    XSecurityAuthorization auth_id;     /* revoked authorization id */
 } XSecurityAuthorizationRevokedEvent;
 
-#else /* _SECURITY_SERVER */
+#else                           /* _SECURITY_SERVER */
 
-#include "input.h"    /* for DeviceIntPtr */
-#include "property.h" /* for PropertyPtr */
-#include "pixmap.h"   /* for DrawablePtr */
-#include "resource.h" /* for RESTYPE */
+#include "input.h"              /* for DeviceIntPtr */
+#include "property.h"           /* for PropertyPtr */
+#include "pixmap.h"             /* for DrawablePtr */
+#include "resource.h"           /* for RESTYPE */
 
 /* resource type to pass in LookupIDByType for authorizations */
 extern RESTYPE SecurityAuthorizationResType;
 
 /* this is what we store for an authorization */
 typedef struct {
-    XID id;			/* resource ID */
-    CARD32 timeout;	/* how long to live in seconds after refcnt == 0 */
-    unsigned int trustLevel;	/* trusted/untrusted */
-    XID group;			/* see embedding extension */
-    unsigned int refcnt;	/* how many clients connected with this auth */
-    unsigned int secondsRemaining; /* overflow time amount for >49 days */
-    OsTimerPtr timer;		/* timer for this auth */
+    XID id;                     /* resource ID */
+    CARD32 timeout;             /* how long to live in seconds after refcnt == 0 */
+    unsigned int trustLevel;    /* trusted/untrusted */
+    XID group;                  /* see embedding extension */
+    unsigned int refcnt;        /* how many clients connected with this auth */
+    unsigned int secondsRemaining;      /* overflow time amount for >49 days */
+    OsTimerPtr timer;           /* timer for this auth */
     struct _OtherClients *eventClients; /* clients wanting events */
 } SecurityAuthorizationRec, *SecurityAuthorizationPtr;
 
@@ -136,8 +133,8 @@ typedef struct {
  */
 extern CallbackListPtr SecurityValidateGroupCallback;
 typedef struct {
-    XID group;	/* the group that was sent in GenerateAuthorization */
-    Bool valid; /* did anyone recognize it? if so, set to TRUE */
+    XID group;                  /* the group that was sent in GenerateAuthorization */
+    Bool valid;                 /* did anyone recognize it? if so, set to TRUE */
 } SecurityValidateGroupInfoRec;
 
 /* Proc vectors for untrusted clients, swapped and unswapped versions.
@@ -147,11 +144,11 @@ typedef struct {
  * from guessing extension major opcodes and using the extension even though
  * the extension can't be listed or queried.
  */
-extern int (*UntrustedProcVector[256])(ClientPtr client);
-extern int (*SwappedUntrustedProcVector[256])(ClientPtr client);
+extern int (*UntrustedProcVector[256]) (ClientPtr client);
+extern int (*SwappedUntrustedProcVector[256]) (ClientPtr client);
 
 extern Bool SecurityCheckDeviceAccess(ClientPtr client, DeviceIntPtr dev,
-			       Bool fromRequest);
+                                      Bool fromRequest);
 
 extern void SecurityAudit(char *format, ...);
 
@@ -160,30 +157,28 @@ extern int XSecurityOptions(int argc, char **argv, int i);
 /* Give this value or higher to the -audit option to get security messages */
 #define SECURITY_AUDIT_LEVEL 4
 
-extern void SecurityCensorImage(
-    ClientPtr client,
-    RegionPtr pVisibleRegion,
-    long widthBytesLine,
-    DrawablePtr pDraw,
-    int x, int y, int w, int h,
-    unsigned int format,
-    char * pBuf);
+extern void SecurityCensorImage(ClientPtr client,
+                                RegionPtr pVisibleRegion,
+                                long widthBytesLine,
+                                DrawablePtr pDraw,
+                                int x, int y, int w, int h,
+                                unsigned int format, char *pBuf);
 
 #define SecurityAllowOperation  0
 #define SecurityIgnoreOperation 1
 #define SecurityErrorOperation  2
 
 char
-SecurityCheckPropertyAccess(
-    ClientPtr client,
-    WindowPtr pWin,
-    ATOM  propertyName,
-    Mask access_mode);
+
+
+SecurityCheckPropertyAccess(ClientPtr client,
+                            WindowPtr pWin,
+                            ATOM propertyName, Mask access_mode);
 
 #define SECURITY_POLICY_FILE_VERSION "version-1"
 
 char **SecurityGetSitePolicyStrings(int *n);
 
-#endif /* _SECURITY_SERVER */
+#endif                          /* _SECURITY_SERVER */
 
-#endif /* _SECURITY_H */
+#endif                          /* _SECURITY_H */
