@@ -283,7 +283,7 @@ static int TRANS(SocketINETClose) (XtransConnInfo ciptr);
 
 #ifdef NX_TRANS_SOCKET
 
-#ifdef XTRANS_SEND_FDS
+#if XTRANS_SEND_FDS
    #error XTRANS_SEND_FDS is unsupported for NX!
 #endif
 
