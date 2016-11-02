@@ -132,7 +132,7 @@ void
 TRANS(FreeConnInfo) (XtransConnInfo ciptr)
 
 {
-    prmsg (3,"FreeConnInfo(%p)\n", ciptr);
+    prmsg (3,"FreeConnInfo(%p)\n", (void *) ciptr);
 
     if (ciptr->addr)
 	free (ciptr->addr);
@@ -1143,7 +1143,7 @@ TRANS(MakeAllCOTSServerListeners) (const char *port, int *partial,
     int		ipv6_succ = 0;
 #endif
     prmsg (2,"MakeAllCOTSServerListeners(%s,%p)\n",
-	   port ? port : "NULL", ciptrs_ret);
+	   port ? port : "NULL", (void *) ciptrs_ret);
 
     *count_ret = 0;
 
