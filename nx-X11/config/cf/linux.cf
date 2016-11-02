@@ -462,25 +462,11 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 # endif
 #endif
 
-#if UseElfFormat
-# ifndef DoLoadableServer
-#  if defined(MipsArchitecture) || defined(SuperHArchitecture)
-#   define DoLoadableServer	NO
-#  else
-#   define DoLoadableServer	YES
-#  endif
-# endif
-#endif
-
-
 #if LinuxElfDefault
 # if UseElfFormat
 #  ifdef MipsArchitecture
 #   ifndef AsCmd
 #     define AsCmd		gcc -c -x assembler-with-cpp
-#   endif
-#   ifndef MakeDllModules
-#     define MakeDllModules	YES
 #   endif
 #  endif /* MipsArchitecure */
 #  if defined (i386Architecture) && ((GccMajorVersion >3) \
@@ -840,9 +826,6 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 # define LinuxMachineDefines	-D__sh__
 # define ServerOSDefines	XFree86ServerOSDefines -DDDXTIME
 # define ServerExtraDefines	-DGCCUSESGAS XFree86ServerDefines
-# ifndef DoLoadableServer
-#  define DoLoadableServer NO
-# endif
 #endif
 
 #ifdef AMD64Architecture

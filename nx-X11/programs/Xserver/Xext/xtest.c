@@ -54,8 +54,6 @@ from The Open Group.
 #include "xf86_ansic.h"
 #endif
 
-#include "modinit.h"
-
 #if 0
 static unsigned char XTestReqCode;
 #endif

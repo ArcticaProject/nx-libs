@@ -71,7 +71,6 @@ University of California.
 #include "opaque.h"
 #define  XTestSERVER_SIDE
 #include <nx-X11/extensions/xtestext1.h>
-#include "modinit.h"
 
 #include "xtest1dd.h"
 

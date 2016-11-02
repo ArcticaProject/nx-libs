@@ -59,8 +59,6 @@ in this Software without prior written authorization from the X Consortium.
 #include <stdio.h>
 #endif
 
-#include "modinit.h"
-
 #include "protocol-versions.h"
 
 #if 0

@@ -38,7 +38,6 @@ from The Open Group.
 #include "extnsionst.h"
 #include <nx-X11/extensions/bigreqstr.h>
 #include "opaque.h"
-#include "modinit.h"
 
 #if 0
 static unsigned char XBigReqCode;

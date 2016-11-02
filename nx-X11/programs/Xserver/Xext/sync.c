@@ -77,8 +77,6 @@ PERFORMANCE OF THIS SOFTWARE.
 #endif
 #endif
 
-#include "modinit.h"
-
 /*
  * Local Global Variables
  */

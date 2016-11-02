@@ -1,12 +1,5 @@
-#if DoLoadableServer
-#define IHaveSubdirs
-#endif
-
 #include <Server.tmpl>
 
-#if DoLoadableServer
-    SUBDIRS = module
-#endif
 
        SRCS = dbe.c midbe.c 
        OBJS = dbe.o midbe.o 
@@ -20,10 +13,6 @@ NormalLibraryTarget(dbe,$(OBJS))
 LintLibraryTarget(dbe,$(SRCS))
 NormalLintTarget($(SRCS))
 
-#if DoLoadableServer
-MakeSubdirs($(SUBDIRS))
-DependSubdirs($(SUBDIRS))
-#endif
 
 DependTarget()
 

@@ -1,6 +1,3 @@
-#if DoLoadableServer
-#define IHaveModules
-#endif
 
 #include <Server.tmpl>
 
@@ -22,11 +19,7 @@
 
       DEFINES = $(GLX_DEFINES) /*-DUSE_X86_ASM*/ /*-DUSE_SPARC_ASM*/
 
-#ifdef IHaveModules
-ModuleObjectRule()
-#else
 NormalLibraryObjectRule()
-#endif
 
 DependTarget()
 

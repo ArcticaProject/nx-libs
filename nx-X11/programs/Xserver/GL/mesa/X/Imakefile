@@ -1,7 +1,3 @@
-#if DoLoadableServer
-#define IHaveModules
-#endif
-
 #include <Server.tmpl>
 
 #define NeedAllMesaSrc
@@ -42,11 +38,7 @@ LinkSourceFile(compsize.c,$(MESASRCDIR)/src/glx/x11)
 
       DEFINES = $(GLX_DEFINES) $(GLXSRV_DEFINES) -DNXAGENT_SERVER /*-DUSE_X86_ASM*/ /*-DUSE_SPARC_ASM*/
 
-#ifdef IHaveModules
-ModuleObjectRule()
-#else
 NormalLibraryObjectRule()
-#endif
 
 SubdirLibraryRule($(OBJS))
 
@@ -59,10 +51,6 @@ MakeSubdirs($(SUBDIRS))
 DependSubdirs($(SUBDIRS))
 #endif
 
-#if defined(IHaveModules) && BuildModuleInSubdir
-LinkSourceFile(xf86glx.c,..)
-LinkSourceFile(xf86glx_util.c,..)
-#endif
 
 #ifndef MesaDrvSrcDir
 #define MesaDrvSrcDir $(MESASRCDIR)/src/mesa/drivers/dri

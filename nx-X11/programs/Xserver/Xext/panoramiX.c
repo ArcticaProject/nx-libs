@@ -55,7 +55,6 @@ Equipment Corporation.
 #ifdef RENDER
 #include "picturestr.h"
 #endif
-#include "modinit.h"
 #include "protocol-versions.h"
 
 #ifdef GLXPROXY

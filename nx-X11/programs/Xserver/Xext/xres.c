@@ -15,7 +15,6 @@
 #include "swaprep.h"
 #include <nx-X11/extensions/XResproto.h>
 #include "pixmapstr.h"
-#include "modinit.h"
 #include "protocol-versions.h"
 
 static int

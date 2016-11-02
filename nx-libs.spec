@@ -411,7 +411,6 @@ chmod 755  %{buildroot}%{_libdir}/lib*.so*
 
 #Remove extras, GL, and other unneeded headers
 rm -r %{buildroot}%{_includedir}/GL
-rm -r %{buildroot}%{_includedir}/nx-X11/extensions/XInput.h
 rm -r %{buildroot}%{_includedir}/nx-X11/extensions/XK*.h
 rm -r %{buildroot}%{_includedir}/nx-X11/extensions/*Xv*.h
 rm -r %{buildroot}%{_includedir}/nx-X11/extensions/dpms.h
@@ -537,7 +536,6 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %{_includedir}/nx-X11/Xproto.h
 %{_includedir}/nx-X11/Xprotostr.h
 %{_includedir}/nx-X11/Xthreads.h
-%{_includedir}/nx-X11/ap_keysym.h
 %{_includedir}/nx-X11/keysym.h
 %{_includedir}/nx-X11/keysymdef.h
 %{_includedir}/nx-X11/extensions/Xdbeproto.h

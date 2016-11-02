@@ -48,7 +48,6 @@ Equipment Corporation.
 #include <nx-X11/extensions/dpms.h>
 #include <nx-X11/extensions/dpmsstr.h>
 #include "dpmsproc.h"
-#include "modinit.h"
 
 #if 0
 static unsigned char DPMSCode;

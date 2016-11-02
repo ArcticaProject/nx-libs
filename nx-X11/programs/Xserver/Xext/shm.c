@@ -68,8 +68,6 @@ in this Software without prior written authorization from The Open Group.
 #include "panoramiXsrv.h"
 #endif
 
-#include "modinit.h"
-
 typedef struct _ShmDesc {
     struct _ShmDesc *next;
     int shmid;
