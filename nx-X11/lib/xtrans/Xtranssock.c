@@ -458,7 +458,7 @@ static XtransConnInfo TRANS(SocketCreateConnInfo) ()
     return ciptr;
 }
 
-static int TRANS(SocketConnectConnInfo) (XtransConnInfo ciptr, char *host, char *port)
+static int TRANS(SocketConnectConnInfo) (XtransConnInfo ciptr, const char *host, const char *port)
 {
     int fds[2];
     char display[1024];
