@@ -53,7 +53,6 @@ Imake.tmpl provides defaults for the following variables:
 	HasCodeCenter		boolean for system has CodeCenter
 	HasCookieMaker		boolean for system has xauth cookie generator
 	HasCplusplus		system has a C++ compiler?
-	HasDECnet		system has DECnet?
 	HasFortran		boolean for system has Fortran compiler
 	HasGcc			boolean for system has GNU gcc compiler
 	HasGcc2			boolean for system has GNU gcc 2.x compiler
@@ -78,7 +77,6 @@ Imake.tmpl provides defaults for the following variables:
 	HasShm			boolean for System V shared memory
 	HasSockets		boolean for system has BSD sockets
 	HasStrcasecmp		boolean for system implements str[n]casecmp
-	HasStreams		use STREAMS I/O interface?
 	HasSymLinks		boolean for system has symbolic links
 	HasTestCenter		boolean for system has TestCenter
 	HasVarDirectory		boolean for system has /var

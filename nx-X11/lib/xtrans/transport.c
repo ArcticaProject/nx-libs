@@ -24,9 +24,7 @@ not be used in advertising or otherwise to promote the sale, use or
 other dealings in this Software without prior written authorization
 from The Open Group.
 
-*/
-
-/* Copyright 1993, 1994 NCR Corporation - Dayton, Ohio, USA
+ * Copyright 1993, 1994 NCR Corporation - Dayton, Ohio, USA
  *
  * All Rights Reserved
  *
@@ -49,32 +47,28 @@ from The Open Group.
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifdef __UNIXOS2__
-#define I_NEED_OS2_H
-#endif
-
-#ifdef XSERV_t
-#include "os.h"
-#else
 #include <stdlib.h>
-#endif
+
+#define XTRANS_TRANSPORT_C  /* used to flag Xtransint.h that it's being used
+			       here, not just #included in another file */
 
 #include "Xtransint.h"
 
-#ifdef DNETCONN
-#include "Xtransdnet.c"
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wformat-nonliteral"
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 #endif
+
 #ifdef LOCALCONN
 #include "Xtranslcl.c"
-#endif
-#ifdef OS2PIPECONN
-#include "Xtransos2.c"
 #endif
 #if defined(TCPCONN) || defined(UNIXCONN)
 #include "Xtranssock.c"
 #endif
-#ifdef STREAMSCONN
-#include "Xtranstli.c"
-#endif
 #include "Xtrans.c"
 #include "Xtransutil.c"
+
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif

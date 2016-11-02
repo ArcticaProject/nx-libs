@@ -334,8 +334,7 @@ XORGRELSTRING = XorgManVersionString
  * NOTE:  IPv6Flags could be tacked on to either ConnectionFlags or
  *        ExtraConnectionDefs.  Here, we choose the later in order to
  *        maximise exposure of the IPv6 code (a number of <OS>.def files
- *        contain ConnectionFlags overrides).  Mind you, this might not
- *        the right thing to do when HasStreams is asserted.
+ *        contain ConnectionFlags overrides).
  */
 #ifndef BuildIPv6		/* If the OS also #define's AF_INET6 */
 #define BuildIPv6		YES
@@ -355,19 +354,8 @@ XORGRELSTRING = XorgManVersionString
 #ifndef IPv6SocketsAlsoIPv4
 #define IPv6SocketsAlsoIPv4	YES
 #endif
-#ifndef DECnetFlags
-#if HasDECnet
-#define DECnetFlags -DDNETCONN
-#else
-#define DECnetFlags
-#endif
-#endif
 #ifndef ConnectionFlags
-#if HasStreams
-#define ConnectionFlags -DSTREAMSCONN
-#else
-#define ConnectionFlags -DTCPCONN -DUNIXCONN DECnetFlags
-#endif
+#define ConnectionFlags -DTCPCONN -DUNIXCONN
 #endif
 #if HasStickyDirBit
 STICKY_DEFINES = -DHAS_STICKY_DIR_BIT

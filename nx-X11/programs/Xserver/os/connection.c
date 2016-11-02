@@ -112,7 +112,7 @@ SOFTWARE.
 extern __const__ int _nfiles;
 #endif
 
-#if defined(TCPCONN) || defined(STREAMSCONN)
+#if defined(TCPCONN)
 # include <netinet/in.h>
 # include <arpa/inet.h>
 # if !defined(hpux)
@@ -155,10 +155,6 @@ extern __const__ int _nfiles;
 #else
 #define Pid_t pid_t
 #endif
-
-#ifdef DNETCONN
-#include <netdnet/dn.h>
-#endif /* DNETCONN */
 
 int lastfdesc;			/* maximum file descriptor */
 
@@ -600,12 +596,12 @@ AuthAudit (ClientPtr client, Bool letin,
 	switch (saddr->sa_family)
 	{
 	case AF_UNSPEC:
-#if defined(UNIXCONN) || defined(LOCALCONN) || defined(OS2PIPECONN)
+#if defined(UNIXCONN) || defined(LOCALCONN)
 	case AF_UNIX:
 #endif
 	    strcpy(out, "local host");
 	    break;
-#if defined(TCPCONN) || defined(STREAMSCONN) || defined(MNX_TCPCONN)
+#if defined(TCPCONN) || defined(MNX_TCPCONN)
 	case AF_INET:
 	    sprintf(out, "IP %s",
 		inet_ntoa(((struct sockaddr_in *) saddr)->sin_addr));
@@ -619,12 +615,6 @@ AuthAudit (ClientPtr client, Bool letin,
 	}
 	    break;
 #endif
-#endif
-#ifdef DNETCONN
-	case AF_DECnet:
-	    sprintf(out, "DN %s",
-		    dnet_ntoa(&((struct sockaddr_dn *) saddr)->sdn_add));
-	    break;
 #endif
 	default:
 	    strcpy(out, "unknown address");

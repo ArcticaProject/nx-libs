@@ -24,9 +24,7 @@ not be used in advertising or otherwise to promote the sale, use or
 other dealings in this Software without prior written authorization
 from The Open Group.
 
-*/
-
-/* Copyright 1993, 1994 NCR Corporation - Dayton, Ohio, USA
+ * Copyright 1993, 1994 NCR Corporation - Dayton, Ohio, USA
  *
  * All Rights Reserved
  *
@@ -57,7 +55,11 @@ from The Open Group.
  */
 
 #ifdef XTHREADS
-#include <nx-X11/Xthreads.h>
+#include <X11/Xthreads.h>
+#endif
+#ifdef WIN32
+#include <X11/Xlibint.h>
+#include <X11/Xwinsock.h>
 #endif
 
 #ifdef X11_t
@@ -89,11 +91,11 @@ TRANS(ConvertAddress)(int *familyp, int *addrlenp, Xtransaddr **addrp)
 
 {
 
-    PRMSG(2,"ConvertAddress(%d,%d,%x)\n",*familyp,*addrlenp,*addrp);
+    prmsg(2,"ConvertAddress(%d,%d,%p)\n",*familyp,*addrlenp,*addrp);
 
     switch( *familyp )
     {
-#if defined(TCPCONN) || defined(STREAMSCONN)
+#if defined(TCPCONN)
     case AF_INET:
     {
 	/*
@@ -140,7 +142,7 @@ TRANS(ConvertAddress)(int *familyp, int *addrlenp, Xtransaddr **addrp)
 	    {
 		*familyp=FamilyLocal;
 	    }
-	    else 
+	    else
 	    {
 		*familyp=FamilyInternet;
 		*addrlenp = sizeof (struct in_addr);
@@ -156,30 +158,16 @@ TRANS(ConvertAddress)(int *familyp, int *addrlenp, Xtransaddr **addrp)
 	break;
     }
 #endif /* IPv6 */
-#endif /* defined(TCPCONN) || defined(STREAMSCONN) */
+#endif /* defined(TCPCONN) */
 
-#if defined(DNETCONN)
-    case AF_DECnet:
-    {
-	struct sockaddr_dn saddr;
 
-	memcpy (&saddr, *addrp, sizeof (struct sockaddr_dn));
-
-	*familyp=FamilyDECnet;
-	*addrlenp=sizeof(struct dn_naddr);
-	memcpy(*addrp,&saddr.sdn_add,*addrlenp);
-
-	break;
-    }
-#endif /* defined(DNETCONN) */
-
-#if defined(UNIXCONN) || defined(LOCALCONN) || defined(OS2PIPECONN)
+#if defined(UNIXCONN) || defined(LOCALCONN)
     case AF_UNIX:
     {
 	*familyp=FamilyLocal;
 	break;
     }
-#endif /* defined(UNIXCONN) || defined(LOCALCONN) || defined(OS2PIPECONN)*/
+#endif /* defined(UNIXCONN) || defined(LOCALCONN) */
 
 #if (defined(__SCO__) || defined(__UNIXWARE__)) && defined(LOCALCONN)
     case 0:
@@ -190,8 +178,8 @@ TRANS(ConvertAddress)(int *familyp, int *addrlenp, Xtransaddr **addrp)
 #endif
 
     default:
-	PRMSG(1,"ConvertAddress: Unknown family type %d\n",
-	      *familyp, 0,0 );
+	prmsg(1,"ConvertAddress: Unknown family type %d\n",
+	      *familyp);
 	return -1;
     }
 
@@ -202,18 +190,18 @@ TRANS(ConvertAddress)(int *familyp, int *addrlenp, Xtransaddr **addrp)
 	 * In the case of a local connection, we need to get the
 	 * host name for authentication.
 	 */
-	
+
 	char hostnamebuf[256];
 	int len = TRANS(GetHostname) (hostnamebuf, sizeof hostnamebuf);
 
 	if (len > 0) {
 	    if (*addrp && *addrlenp < (len + 1))
 	    {
-		free ((char *) *addrp);
+		free (*addrp);
 		*addrp = NULL;
 	    }
 	    if (!*addrp)
-		*addrp = (Xtransaddr *) malloc (len + 1);
+		*addrp = malloc (len + 1);
 	    if (*addrp) {
 		strcpy ((char *) *addrp, hostnamebuf);
 		*addrlenp = len;
@@ -224,7 +212,7 @@ TRANS(ConvertAddress)(int *familyp, int *addrlenp, Xtransaddr **addrp)
 	else
 	{
 	    if (*addrp)
-		free ((char *) *addrp);
+		free (*addrp);
 	    *addrp = NULL;
 	    *addrlenp = 0;
 	}
@@ -237,6 +225,13 @@ TRANS(ConvertAddress)(int *familyp, int *addrlenp, Xtransaddr **addrp)
 
 #ifdef ICE_t
 
+/* Needed for _XGethostbyaddr usage in TRANS(GetPeerNetworkId) */
+# if defined(TCPCONN) || defined(UNIXCONN)
+#  define X_INCLUDE_NETDB_H
+#  define XOS_USE_NO_LOCKING
+#  include <X11/Xos_r.h>
+# endif
+
 #include <signal.h>
 
 char *
@@ -247,7 +242,7 @@ TRANS(GetMyNetworkId) (XtransConnInfo ciptr)
     char 	*addr = ciptr->addr;
     char	hostnamebuf[256];
     char 	*networkId = NULL;
-    char	*transName = ciptr->transptr->TransName;
+    const char	*transName = ciptr->transptr->TransName;
 
     if (gethostname (hostnamebuf, sizeof (hostnamebuf)) < 0)
     {
@@ -256,19 +251,19 @@ TRANS(GetMyNetworkId) (XtransConnInfo ciptr)
 
     switch (family)
     {
-#if defined(UNIXCONN) || defined(STREAMSCONN) || defined(LOCALCONN) || defined(OS2PIPECONN)
+#if defined(UNIXCONN) || defined(LOCALCONN)
     case AF_UNIX:
     {
 	struct sockaddr_un *saddr = (struct sockaddr_un *) addr;
-	networkId = (char *) malloc (3 + strlen (transName) +
+	networkId = malloc (3 + strlen (transName) +
 	    strlen (hostnamebuf) + strlen (saddr->sun_path));
 	sprintf (networkId, "%s/%s:%s", transName,
 	    hostnamebuf, saddr->sun_path);
 	break;
     }
-#endif /* defined(UNIXCONN) || defined(STREAMSCONN) || defined(LOCALCONN) || defined(OS2PIPECONN) */
+#endif /* defined(UNIXCONN) || defined(LOCALCONN) */
 
-#if defined(TCPCONN) || defined(STREAMSCONN)
+#if defined(TCPCONN)
     case AF_INET:
 #if defined(IPv6) && defined(AF_INET6)
     case AF_INET6:
@@ -289,26 +284,14 @@ TRANS(GetMyNetworkId) (XtransConnInfo ciptr)
 #endif
 	    portnum = ntohs (saddr->sin_port);
 
-	sprintf (portnumbuf, "%d", portnum);
-	networkId = (char *) malloc (3 + strlen (transName) +
+	snprintf (portnumbuf, sizeof(portnumbuf), "%d", portnum);
+	networkId = malloc (3 + strlen (transName) +
 	    strlen (hostnamebuf) + strlen (portnumbuf));
 	sprintf (networkId, "%s/%s:%s", transName, hostnamebuf, portnumbuf);
 	break;
     }
-#endif /* defined(TCPCONN) || defined(STREAMSCONN) */
+#endif /* defined(TCPCONN) */
 
-#if defined(DNETCONN)
-    case AF_DECnet:
-    {
-	struct sockaddr_dn *saddr = (struct sockaddr_dn *) addr;
-
-	networkId = (char *) malloc (
-	    13 + strlen (hostnamebuf) + saddr->sdn_objnamel);
-	sprintf (networkId, "dnet/%s::%s",
-	    hostnamebuf, saddr->sdn_objname);
-	break;
-    }
-#endif /* defined(DNETCONN) */
 
     default:
 	break;
@@ -323,24 +306,12 @@ static jmp_buf env;
 #ifdef SIGALRM
 static volatile int nameserver_timedout = 0;
 
-static
-#ifdef RETSIGTYPE /* set by autoconf AC_TYPE_SIGNAL */
-RETSIGTYPE
-#else /* Imake */
-#ifdef SIGNALRETURNSINT
-int
-#else
-void
-#endif
-#endif
-nameserver_lost(int sig)
+static void
+nameserver_lost(int sig _X_UNUSED)
 {
   nameserver_timedout = 1;
   longjmp (env, -1);
   /* NOTREACHED */
-#ifdef SIGNALRETURNSINT
-  return -1;				/* for picky compilers */
-#endif
 }
 #endif /* SIGALARM */
 
@@ -358,16 +329,16 @@ TRANS(GetPeerNetworkId) (XtransConnInfo ciptr)
     switch (family)
     {
     case AF_UNSPEC:
-#if defined(UNIXCONN) || defined(STREAMSCONN) || defined(LOCALCONN) || defined(OS2PIPECONN)
+#if defined(UNIXCONN) || defined(LOCALCONN)
     case AF_UNIX:
     {
 	if (gethostname (addrbuf, sizeof (addrbuf)) == 0)
 	    addr = addrbuf;
 	break;
     }
-#endif /* defined(UNIXCONN) || defined(STREAMSCONN) || defined(LOCALCONN) || defined(OS2PIPECONN) */
+#endif /* defined(UNIXCONN) || defined(LOCALCONN) */
 
-#if defined(TCPCONN) || defined(STREAMSCONN)
+#if defined(TCPCONN)
     case AF_INET:
 #if defined(IPv6) && defined(AF_INET6)
     case AF_INET6:
@@ -403,7 +374,7 @@ TRANS(GetPeerNetworkId) (XtransConnInfo ciptr)
 	 * Assume that if it does not respond in NAMESERVER_TIMEOUT seconds
 	 * that something is wrong and do not make the user wait.
 	 * gethostbyaddr will continue after a signal, so we have to
-	 * jump out of it. 
+	 * jump out of it.
 	 */
 
 	nameserver_timedout = 0;
@@ -427,32 +398,15 @@ TRANS(GetPeerNetworkId) (XtransConnInfo ciptr)
 	break;
     }
 
-#endif /* defined(TCPCONN) || defined(STREAMSCONN) */
+#endif /* defined(TCPCONN) */
 
-#if defined(DNETCONN)
-    case AF_DECnet:
-    {
-	struct sockaddr_dn *saddr = (struct sockaddr_dn *) peer_addr;
-	struct nodeent *np;
-
-	if (np = getnodebyaddr(saddr->sdn_add.a_addr,
-	    saddr->sdn_add.a_len, AF_DECnet)) {
-	    sprintf(addrbuf, "%s:", np->n_name);
-	} else {
-	    sprintf(addrbuf, "%s:", dnet_htoa(&saddr->sdn_add));
-	}
-	addr = addrbuf;
-	break;
-    }
-#endif /* defined(DNETCONN) */
 
     default:
 	return (NULL);
     }
 
 
-    hostname = (char *) malloc (
-	strlen (ciptr->transptr->TransName) + strlen (addr) + 2);
+    hostname = malloc (strlen (ciptr->transptr->TransName) + strlen (addr) + 2);
     strcpy (hostname, ciptr->transptr->TransName);
     strcat (hostname, "/");
     if (addr)
@@ -464,24 +418,24 @@ TRANS(GetPeerNetworkId) (XtransConnInfo ciptr)
 #endif /* ICE_t */
 
 
-#if defined(WIN32) && (defined(TCPCONN) || defined(DNETCONN))
+#if defined(WIN32) && defined(TCPCONN)
 int
 TRANS(WSAStartup) (void)
 {
     static WSADATA wsadata;
 
-    PRMSG (2,"WSAStartup()\n", 0, 0, 0);
+    prmsg (2,"WSAStartup()\n");
 
-    if (!wsadata.wVersion && WSAStartup(0x0101, &wsadata))
+    if (!wsadata.wVersion && WSAStartup(MAKEWORD(2,2), &wsadata))
         return 1;
     return 0;
 }
 #endif
 
+#include <ctype.h>
 
 static int
-is_numeric (char *str)
-
+is_numeric (const char *str)
 {
     int i;
 
@@ -511,20 +465,20 @@ is_numeric (char *str)
  * it's not save if the directory has non-root ownership or the sticky
  * bit cannot be set and fail.
  */
-static int 
-trans_mkdir(char *path, int mode)
+static int
+trans_mkdir(const char *path, int mode)
 {
     struct stat buf;
 
     if (lstat(path, &buf) != 0) {
 	if (errno != ENOENT) {
-	    PRMSG(1, "mkdir: ERROR: (l)stat failed for %s (%d)\n",
-		  path, errno, 0);
+	    prmsg(1, "mkdir: ERROR: (l)stat failed for %s (%d)\n",
+		  path, errno);
 	    return -1;
 	}
 	/* Dir doesn't exist. Try to create it */
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(__CYGWIN__)
 	/*
 	 * 'sticky' bit requested: assume application makes
 	 * certain security implications. If effective user ID
@@ -532,15 +486,15 @@ trans_mkdir(char *path, int mode)
 	 */
 	if (geteuid() != 0) {
 	    if (mode & 01000) {
-		PRMSG(1, "mkdir: ERROR: euid != 0,"
+		prmsg(1, "mkdir: ERROR: euid != 0,"
 		      "directory %s will not be created.\n",
-		      path, 0, 0);	    
+		      path);
 #ifdef FAIL_HARD
 		return -1;
 #endif
 	    } else {
-		PRMSG(1, "mkdir: Cannot create %s with root ownership\n",
-		      path, 0, 0);
+		prmsg(1, "mkdir: Cannot create %s with root ownership\n",
+		      path);
 	    }
 	}
 #endif
@@ -548,8 +502,8 @@ trans_mkdir(char *path, int mode)
 #ifndef WIN32
 	if (mkdir(path, mode) == 0) {
 	    if (chmod(path, mode)) {
-		PRMSG(1, "mkdir: ERROR: Mode of %s should be set to %04o\n",
-		      path, mode, 0);
+		prmsg(1, "mkdir: ERROR: Mode of %s should be set to %04o\n",
+		      path, mode);
 #ifdef FAIL_HARD
 		return -1;
 #endif
@@ -558,13 +512,13 @@ trans_mkdir(char *path, int mode)
 	if (mkdir(path) == 0) {
 #endif
 	} else {
-	    PRMSG(1, "mkdir: ERROR: Cannot create %s\n",
-		  path, 0, 0);
+	    prmsg(1, "mkdir: ERROR: Cannot create %s\n",
+		  path);
 	    return -1;
 	}
 
 	return 0;
-	
+
     } else {
 	if (S_ISDIR(buf.st_mode)) {
 	    int updateOwner = 0;
@@ -583,7 +537,7 @@ trans_mkdir(char *path, int mode)
 	     */
 	    if ((~mode) & 0077 & buf.st_mode)
 		updateMode = 1;
-	    
+
 	    /*
 	     * If the directory is not writeable not everybody may
 	     * be able to create sockets. Therefore warn if mode
@@ -593,7 +547,7 @@ trans_mkdir(char *path, int mode)
 		updateMode = 1;
 		status |= WARN_NO_ACCESS;
 	    }
-	    
+
 	    /*
 	     * If 'sticky' bit is requested fail if owner isn't root
 	     * as we assume the caller makes certain security implications
@@ -605,7 +559,7 @@ trans_mkdir(char *path, int mode)
 		    updateMode = 1;
 		}
 	    }
-	    
+
 #ifdef HAS_FCHOWN
 	    /*
 	     * If fchown(2) and fchmod(2) are available, try to correct the
@@ -617,8 +571,9 @@ trans_mkdir(char *path, int mode)
 		struct stat fbuf;
 		if ((fd = open(path, O_RDONLY)) != -1) {
 		    if (fstat(fd, &fbuf) == -1) {
-			PRMSG(1, "mkdir: ERROR: fstat failed for %s (%d)\n",
-			      path, errno, 0);
+			prmsg(1, "mkdir: ERROR: fstat failed for %s (%d)\n",
+			      path, errno);
+			close(fd);
 			return -1;
 		    }
 		    /*
@@ -628,8 +583,9 @@ trans_mkdir(char *path, int mode)
 		    if (!S_ISDIR(fbuf.st_mode) ||
 			buf.st_dev != fbuf.st_dev ||
 			buf.st_ino != fbuf.st_ino) {
-			PRMSG(1, "mkdir: ERROR: inode for %s changed\n",
-			      path, 0, 0);
+			prmsg(1, "mkdir: ERROR: inode for %s changed\n",
+			      path);
+			close(fd);
 			return -1;
 		    }
 		    if (updateOwner && fchown(fd, 0, 0) == 0)
@@ -640,32 +596,33 @@ trans_mkdir(char *path, int mode)
 		}
 	    }
 #endif
-	    
+
 	    if (updateOwner && !updatedOwner) {
 #ifdef FAIL_HARD
 		if (status & FAIL_IF_NOT_ROOT) {
-		    PRMSG(1, "mkdir: ERROR: Owner of %s must be set to root\n",
-			  path, 0, 0);
+		    prmsg(1, "mkdir: ERROR: Owner of %s must be set to root\n",
+			  path);
 		    return -1;
 		}
 #endif
-	  	PRMSG(1, "mkdir: Owner of %s should be set to root\n",
-		      path, 0, 0);
+#if !defined(__APPLE_CC__) && !defined(__CYGWIN__)
+		prmsg(1, "mkdir: Owner of %s should be set to root\n",
+		      path);
+#endif
 	    }
-	    
+
 	    if (updateMode && !updatedMode) {
 #ifdef FAIL_HARD
 		if (status & FAIL_IF_NOMODE) {
-		    PRMSG(1, "mkdir: ERROR: Mode of %s must be set to %04o\n",
-			  path, mode, 0);
+		    prmsg(1, "mkdir: ERROR: Mode of %s must be set to %04o\n",
+			  path, mode);
 		    return -1;
 		}
 #endif
-	  	PRMSG(1, "mkdir: Mode of %s should be set to %04o\n",
-		      path, mode, 0);
+		prmsg(1, "mkdir: Mode of %s should be set to %04o\n",
+		      path, mode);
 		if (status & WARN_NO_ACCESS) {
-		    PRMSG(1, "mkdir: this may cause subsequent errors\n",
-			  0, 0, 0);
+		    prmsg(1, "mkdir: this may cause subsequent errors\n");
 		}
 	    }
 	    return 0;

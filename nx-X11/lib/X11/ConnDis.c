@@ -115,7 +115,7 @@ static char *copystring (const char *src, int len)
 #ifdef UNIXCONN
 # define UNIX_TRANS	"unix"
 #endif
-#if defined(LOCALCONN) || defined(OS2PIPECONN) || defined(UNIXCONN)
+#if defined(LOCALCONN) || defined(UNIXCONN)
 # define LOCAL_TRANS	"local"
 #endif
 
@@ -145,14 +145,15 @@ static char *copystring (const char *src, int len)
  *
  *     [protocol/] [hostname] : [:] displaynumber [.screennumber]
  *
- * A string with exactly two colons seperating hostname from the display
- * indicates a DECnet style name.  Colons in the hostname may occur if an
- * IPv6 numeric address is used as the hostname.  An IPv6 numeric address
- * may also end in a double colon, so three colons in a row indicates an
- * IPv6 address ending in :: followed by :display.  To make it easier for
- * people to read, an IPv6 numeric address hostname may be surrounded by
- * [ ] in a similar fashion to the IPv6 numeric address URL syntax defined
- * by IETF RFC 2732.
+ * A string with exactly two colons seperating hostname from the
+ * display indicates a (now unsupported) DECnet style name.  Colons in
+ * the hostname may occur if an IPv6 numeric address is used as the
+ * hostname.  An IPv6 numeric address may also end in a double colon,
+ * so three colons in a row indicates an IPv6 address ending in ::
+ * followed by :display.  To make it easier for people to read, an
+ * IPv6 numeric address hostname may be surrounded by [ ] in a similar
+ * fashion to the IPv6 numeric address URL syntax defined by IETF RFC
+ * 2732.
  *
  * If no hostname and no protocol is specified, the string is interpreted
  * as the most efficient local connection to a server on the same machine.
@@ -188,7 +189,6 @@ _X11TransConnectDisplay (
     char *phostname = NULL;		/* start of host of display */
     char *pdpynum = NULL;		/* start of dpynum of display */
     char *pscrnum = NULL;		/* start of screen of display */
-    Bool dnet = False;			/* if true, then DECnet format */
     int idisplay = 0;			/* required display number */
     int iscreen = 0;			/* optional screen number */
     /*  int (*connfunc)(); */		/* method to create connection */
@@ -318,6 +318,7 @@ _X11TransConnectDisplay (
      * or two colons in the case of DECnet (DECnet Phase V allows a single
      * colon in the hostname).  (See note above regarding IPv6 numeric
      * addresses with triple colons or [] brackets.)
+     * FIXME: we do not support DECnet anymore, so maybe remove these checks?
      */
 
     lastp = p;
@@ -335,16 +336,7 @@ _X11TransConnectDisplay (
 	) {
 	/* DECnet display specified */
 
-#ifndef DNETCONN
 	goto bad;
-#else
-	dnet = True;
-	/* override the protocol specified */
-	if (pprotocol)
-	    Xfree (pprotocol);
-	pprotocol = copystring ("dnet", 4);
-	hostlen = lastc - 1 - lastp;
-#endif
     }
     else
 	hostlen = lastc - lastp;
@@ -482,7 +474,6 @@ _X11TransConnectDisplay (
      *     phostname                hostname string or NULL
      *     idisplay                 display number
      *     iscreen                  screen number
-     *     dnet                     DECnet boolean
      *
      * We can now decide which transport to use based on the ConnectionFlags
      * build parameter the hostname string.  If phostname is NULL or equals
@@ -511,7 +502,7 @@ _X11TransConnectDisplay (
 
 #endif
 
-#if defined(TCPCONN) || defined(UNIXCONN) || defined(LOCALCONN) || defined(MNX_TCPCONN) || defined(OS2PIPECONN)
+#if defined(TCPCONN) || defined(UNIXCONN) || defined(LOCALCONN) || defined(MNX_TCPCONN)
     if (!pprotocol) {
 #if defined(UNIXCONN)
 	if (phostname && (strcmp (phostname, "unix") == 0)) {
@@ -654,7 +645,7 @@ _X11TransConnectDisplay (
 	original_hostname = NULL;
     }
 #endif
-    len = ((phostname ? strlen(phostname) : 0) + 1 + (dnet ? 1 : 0) +
+    len = ((phostname ? strlen(phostname) : 0) + 1 +
 	   strlen(pdpynum) + 1 + (pscrnum ? strlen(pscrnum) : 1) + 1);
     *fullnamep = (char *) Xmalloc (len);
     if (!*fullnamep) goto bad;
@@ -663,13 +654,13 @@ _X11TransConnectDisplay (
     if (phostname && strlen(phostname) > 11 && !strncmp(phostname, "/tmp/launch", 11))
 	sprintf (*fullnamep, "%s%s%d",
 	     (phostname ? phostname : ""),
-	     (dnet ? "::" : ":"),
+	     ":",
 	     idisplay);
     else
 #endif
     sprintf (*fullnamep, "%s%s%d.%d",
 	     (phostname ? phostname : ""),
-	     (dnet ? "::" : ":"),
+	     ":",
 	     idisplay, iscreen);
 
     *dpynump = idisplay;
@@ -855,13 +846,6 @@ _XSendClientPrefix(
 }
 
 
-#ifdef STREAMSCONN
-#ifdef SVR4
-#include <tiuser.h>
-#else
-#undef HASXDMAUTH
-#endif
-#endif
 
 #ifdef SECURE_RPC
 #include <rpc/rpc.h>
@@ -1419,13 +1403,6 @@ GetAuthorization(
 	    break;
 	  }
 #endif /* AF_UNIX */
-#ifdef AF_DECnet
-	case AF_DECnet:
-	    /*
-	     * What is the defined encoding for this?
-	     */
-	    break;
-#endif /* AF_DECnet */
 	default:
 	    /*
 	     * Need to return some kind of errro status here.

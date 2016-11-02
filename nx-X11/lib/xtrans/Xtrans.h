@@ -24,9 +24,7 @@ not be used in advertising or otherwise to promote the sale, use or
 other dealings in this Software without prior written authorization
 from The Open Group.
 
-*/
-
-/* Copyright 1993, 1994 NCR Corporation - Dayton, Ohio, USA
+ * Copyright 1993, 1994 NCR Corporation - Dayton, Ohio, USA
  *
  * All Rights Reserved
  *
@@ -54,121 +52,75 @@ from The Open Group.
 
 #include <nx-X11/Xfuncproto.h>
 #include <nx-X11/Xos.h>
+#include <nx-X11/Xmd.h>
 
 #ifndef WIN32
-#ifndef Lynx
 #include <sys/socket.h>
-#else
-#include <socket.h>
-#endif
 #endif
 
+#ifdef __clang__
+/* Not all clients make use of all provided statics */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-function"
+#endif
 
 /*
  * Set the functions names according to where this code is being compiled.
  */
 
 #ifdef X11_t
-#if !defined(UNIXCPP) || defined(ANSICPP)
 #define TRANS(func) _X11Trans##func
-#else
-#define TRANS(func) _X11Trans/**/func
-#endif
 #ifdef XTRANSDEBUG
-static char* __xtransname = "_X11Trans";
+static const char *__xtransname = "_X11Trans";
 #endif
 #endif /* X11_t */
 
 #ifdef XSERV_t
-#if !defined(UNIXCPP) || defined(ANSICPP)
 #define TRANS(func) _XSERVTrans##func
-#else
-#define TRANS(func) _XSERVTrans/**/func
-#endif
 #ifdef XTRANSDEBUG
-static char* __xtransname = "_XSERVTrans";
+static const char *__xtransname = "_XSERVTrans";
 #endif
 #define X11_t
 #endif /* XSERV_t */
 
 #ifdef XIM_t
-#if !defined(UNIXCPP) || defined(ANSICPP)
 #define TRANS(func) _XimXTrans##func
-#else
-#define TRANS(func) _XimXTrans/**/func
-#endif
 #ifdef XTRANSDEBUG
-static char* __xtransname = "_XimTrans";
+static const char *__xtransname = "_XimTrans";
 #endif
 #endif /* XIM_t */
 
 #ifdef FS_t
-#if !defined(UNIXCPP) || defined(ANSICPP)
 #define TRANS(func) _FSTrans##func
-#else
-#define TRANS(func) _FSTrans/**/func
-#endif
 #ifdef XTRANSDEBUG
-static char* __xtransname = "_FSTrans";
+static const char *__xtransname = "_FSTrans";
 #endif
 #endif /* FS_t */
 
 #ifdef FONT_t
-#if !defined(UNIXCPP) || defined(ANSICPP)
 #define TRANS(func) _FontTrans##func
-#else
-#define TRANS(func) _FontTrans/**/func
-#endif
 #ifdef XTRANSDEBUG
-static char* __xtransname = "_FontTrans";
+static const char *__xtransname = "_FontTrans";
 #endif
 #endif /* FONT_t */
 
 #ifdef ICE_t
-#if !defined(UNIXCPP) || defined(ANSICPP)
 #define TRANS(func) _IceTrans##func
-#else
-#define TRANS(func) _IceTrans/**/func
-#endif
 #ifdef XTRANSDEBUG
-static char* __xtransname = "_IceTrans";
+static const char *__xtransname = "_IceTrans";
 #endif
 #endif /* ICE_t */
 
-#ifdef TEST_t
-#if !defined(UNIXCPP) || defined(ANSICPP)
-#define TRANS(func) _TESTTrans##func
-#else
-#define TRANS(func) _TESTTrans/**/func
-#endif
-#ifdef XTRANSDEBUG
-static char* __xtransname = "_TESTTrans";
-#endif
-#endif /* TEST_t */
-
-#ifdef LBXPROXY_t
-#if !defined(UNIXCPP) || defined(ANSICPP)
-#define TRANS(func) _LBXPROXYTrans##func
-#else
-#define TRANS(func) _LBXPROXYTrans/**/func
-#endif
-#define X11_t		/* The server defines this - so should the LBX proxy */
-#ifdef XTRANSDEBUG
-static char* __xtransname = "_LBXPROXYTrans";
-#endif
-#endif /* LBXPROXY_t */
-
 #if !defined(TRANS)
-#if !defined(UNIXCPP) || defined(ANSICPP)
 #define TRANS(func) _XTrans##func
-#else
-#define TRANS(func) _XTrans/**/func
-#endif
 #ifdef XTRANSDEBUG
-static char* __xtransname = "_XTrans";
+static const char *__xtransname = "_XTrans";
 #endif
 #endif /* !TRANS */
 
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 
 /*
  * Create a single address structure that can be used wherever
@@ -196,7 +148,7 @@ typedef long BytesReadable_t;
 #endif
 
 
-#if defined(WIN32) || (defined(USG) && !defined(umips) && !defined(MOTOROLA) && !defined(uniosu) && !defined(__sxg__))
+#if defined(WIN32) || defined(USG)
 
 /*
  *      TRANS(Readv) and TRANS(Writev) use struct iovec, normally found
@@ -210,11 +162,7 @@ struct iovec {
 };
 
 #else
-#ifndef Lynx
 #include <sys/uio.h>
-#else
-#include <uio.h>
-#endif
 #endif
 
 typedef struct _XtransConnInfo *XtransConnInfo;
@@ -274,7 +222,7 @@ void TRANS(FreeConnInfo) (
 #ifdef TRANS_CLIENT
 
 XtransConnInfo TRANS(OpenCOTSClient)(
-    char *		/* address */
+    const char *	/* address */
 );
 
 #endif /* TRANS_CLIENT */
@@ -282,23 +230,7 @@ XtransConnInfo TRANS(OpenCOTSClient)(
 #ifdef TRANS_SERVER
 
 XtransConnInfo TRANS(OpenCOTSServer)(
-    char *		/* address */
-);
-
-#endif /* TRANS_SERVER */
-
-#ifdef TRANS_CLIENT
-
-XtransConnInfo TRANS(OpenCLTSClient)(
-    char *		/* address */
-);
-
-#endif /* TRANS_CLIENT */
-
-#ifdef TRANS_SERVER
-
-XtransConnInfo TRANS(OpenCLTSServer)(
-    char *		/* address */
+    const char *	/* address */
 );
 
 #endif /* TRANS_SERVER */
@@ -308,13 +240,7 @@ XtransConnInfo TRANS(OpenCLTSServer)(
 XtransConnInfo TRANS(ReopenCOTSServer)(
     int,		/* trans_id */
     int,		/* fd */
-    char *		/* port */
-);
-
-XtransConnInfo TRANS(ReopenCLTSServer)(
-    int,		/* trans_id */
-    int,		/* fd */
-    char *		/* port */
+    const char *	/* port */
 );
 
 int TRANS(GetReopenInfo)(
@@ -337,12 +263,24 @@ int TRANS(SetOption)(
 
 int TRANS(CreateListener)(
     XtransConnInfo,	/* ciptr */
-    char *,		/* port */
+    const char *,	/* port */
     unsigned int	/* flags */
 );
 
+int TRANS(Received) (
+    const char*         /* protocol*/
+);
+
 int TRANS(NoListen) (
-    char*               /* protocol*/
+    const char*         /* protocol*/
+);
+
+int TRANS(Listen) (
+    const char*         /* protocol*/
+);
+
+int TRANS(IsListening) (
+    const char*         /* protocol*/
 );
 
 int TRANS(ResetListener)(
@@ -360,7 +298,7 @@ XtransConnInfo TRANS(Accept)(
 
 int TRANS(Connect)(
     XtransConnInfo,	/* ciptr */
-    char *		/* address */
+    const char *	/* address */
 );
 
 #endif /* TRANS_CLIENT */
@@ -394,6 +332,10 @@ int TRANS(Writev)(
     int			/* size */
 );
 
+int TRANS(SendFd) (XtransConnInfo ciptr, int fd, int do_close);
+
+int TRANS(RecvFd) (XtransConnInfo ciptr);
+
 int TRANS(Disconnect)(
     XtransConnInfo	/* ciptr */
 );
@@ -410,12 +352,15 @@ int TRANS(IsLocal)(
     XtransConnInfo	/* ciptr */
 );
 
+#ifdef NX_TRANS_SOCKET
+/* needed for pre-xcb libX11 as we have in NX */
 int TRANS(GetMyAddr)(
-    XtransConnInfo,	/* ciptr */
-    int *,		/* familyp */
-    int *,		/* addrlenp */
-    Xtransaddr **	/* addrp */
+    XtransConnInfo,    /* ciptr */
+    int *,             /* familyp */
+    int *,             /* addrlenp */
+    Xtransaddr **      /* addrp */
 );
+#endif
 
 int TRANS(GetPeerAddr)(
     XtransConnInfo,	/* ciptr */
@@ -431,14 +376,7 @@ int TRANS(GetConnectionNumber)(
 #ifdef TRANS_SERVER
 
 int TRANS(MakeAllCOTSServerListeners)(
-    char *,		/* port */
-    int *,		/* partial */
-    int *,		/* count_ret */
-    XtransConnInfo **	/* ciptrs_ret */
-);
-
-int TRANS(MakeAllCLTSServerListeners)(
-    char *,		/* port */
+    const char *,	/* port */
     int *,		/* partial */
     int *,		/* count_ret */
     XtransConnInfo **	/* ciptrs_ret */
@@ -475,13 +413,13 @@ TRANS(GetPeerNetworkId)(
 
 #endif /* ICE_t */
 
-int 
+int
 TRANS(GetHostname) (
     char *	/* buf */,
     int 	/* maxlen */
 );
 
-#if defined(WIN32) && (defined(TCPCONN) || defined(DNETCONN))
+#if defined(WIN32) && defined(TCPCONN)
 int TRANS(WSAStartup)();
 #endif
 
