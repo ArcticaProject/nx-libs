@@ -1,22 +1,4 @@
-/*
- * The X.org 6.8.99.16 snapshot fails to compile with GCC 4.
- * Temporarily disable the MMX features until the bug is
- * fixed.
- *
-#if defined(HasGcc34) && HasGcc34
-MMXOPTIONS= -mmmx -msse -Winline --param inline-unit-growth=10000 \
-	--param large-function-growth=10000 -DUSE_MMX
-USEMMXOPTIONS= -DUSE_MMX
-#if defined(i386Architecture) || defined(AMD64Architecture)
-SpecialCObjectRule(fbmmx,fbmmx.c,$(MMXOPTIONS))
-SpecialCObjectRule(fbpict,fbpict.c,$(USEMMXOPTIONS))
-SpecialCObjectRule(fbfill,fbfill.c,$(USEMMXOPTIONS))
-SpecialCObjectRule(fbcopy,fbcopy.c,$(USEMMXOPTIONS))
-#endif
-
-#endif
- */
-
+NULL =
 
 #include <Server.tmpl>
 
@@ -73,7 +55,7 @@ SRCS =	$(XFMODSRC) \
 	fbwindow.c \
 	fb24_32.c \
 	fbpict.c \
-	fbmmx.c \
+	$(NULL)
 
 OBJS =	$(XFMODOBJ) \
 	fbarc.o \
@@ -109,7 +91,7 @@ OBJS =	$(XFMODOBJ) \
 	fbwindow.o \
 	fb24_32.o \
 	fbpict.o \
-	fbmmx.o \
+	$(NULL)
 
    INCLUDES = -I$(SERVERSRC)/fb -I$(SERVERSRC)/mi -I$(SERVERSRC)/include \
 	      -I$(XINCLUDESRC) \
@@ -170,7 +152,6 @@ LinkSourceFile(fbtile.c,LinkDirectory)
 LinkSourceFile(fbtrap.c,LinkDirectory)
 LinkSourceFile(fbutil.c,LinkDirectory)
 LinkSourceFile(fbwindow.c,LinkDirectory)
-LinkSourceFile(fbmmx.c,LinkDirectory)
 #endif
 
 InstallDriverSDKLibraryModule(fb,$(DRIVERSDKMODULEDIR),.)
