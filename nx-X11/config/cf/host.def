@@ -534,4 +534,3 @@
  */ 
 
 #define BuildRman NO
-#define BuildLoadableXlibI18n NO
