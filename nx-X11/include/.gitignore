@@ -1,0 +1,5 @@
+GL/gl.h
+GL/glext.h
+GL/glxext.h
+GL/osmesa.h
+Xpoll.h
