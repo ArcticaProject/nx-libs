@@ -537,5 +537,3 @@
  *
 #define X86EMU_LIBPATH /usr/local/lib
  */ 
-
-#define BuildRman NO
