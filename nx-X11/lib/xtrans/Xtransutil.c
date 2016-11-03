@@ -91,7 +91,7 @@ TRANS(ConvertAddress)(int *familyp, int *addrlenp, Xtransaddr **addrp)
 
 {
 
-    prmsg(2,"ConvertAddress(%d,%d,%p)\n",*familyp,*addrlenp,*addrp);
+    prmsg(2,"ConvertAddress(%d,%d,%p)\n",*familyp,*addrlenp,(void *) *addrp);
 
     switch( *familyp )
     {
@@ -434,6 +434,7 @@ TRANS(WSAStartup) (void)
 
 #include <ctype.h>
 
+#if defined(X11_t)
 static int
 is_numeric (const char *str)
 {
@@ -445,6 +446,7 @@ is_numeric (const char *str)
 
     return (1);
 }
+#endif
 
 #ifdef TRANS_SERVER
 #include <sys/types.h>

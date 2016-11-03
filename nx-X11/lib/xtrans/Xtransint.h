@@ -351,10 +351,11 @@ static int TRANS(WriteV)(
 
 #endif /* WIN32 */
 
-
+#if defined(X11_t)
 static int is_numeric (
     const char *	/* str */
 );
+#endif
 
 #ifdef TRANS_SERVER
 static int trans_mkdir (
