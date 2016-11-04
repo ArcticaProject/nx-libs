@@ -1,0 +1,414 @@
+#!/usr/bin/perl -w
+#/**************************************************************************/
+#/*                                                                        */
+#/* Copyright (c) 2015-2016 Qindel Group (http://www.qindel.com)           */
+#/*                                                                        */
+#/* NXSCRIPTS, NX protocol compression and NX extensions to this software  */
+#/* are copyright of NoMachine. Redistribution and use of the present      */
+#/* software is allowed according to terms specified in the file LICENSE   */
+#/* which comes in the source distribution.                                */
+#/*                                                                        */
+#/* Check http://www.nomachine.com/licensing.html for applicability.       */
+#/*                                                                        */
+#/* NX and NoMachine are trademarks of Medialogic S.p.A.                   */
+#/*                                                                        */
+#/* All rights reserved.                                                   */
+#/*                                                                        */
+#/**************************************************************************/
+#
+
+use strict;
+use Getopt::Long;
+use IO::Socket;
+use Time::HiRes qw(gettimeofday tv_interval sleep );
+use IO::Socket::INET;
+
+my ($opt_batch, $opt_count, $opt_host, $opt_port, $opt_debug, $opt_blocksize, $opt_dump, $opt_delay);
+my ($cmd_echo, $cmd_pingbench, $cmd_rand_read_bench, $cmd_fast_read_bench, $cmd_fast_write_bench);
+my ($cmd_rand_write_bench, $cmd_fast_echo_bench, $cmd_rand_echo_bench, $cmd_all_bench);
+my ($cmd_char_write_bench, $cmd_char_read_bench);
+my ($cmd_help);
+
+
+$opt_host = "127.0.0.1";
+$opt_count = 10000;
+$opt_blocksize = 1024;
+$opt_delay = 0;
+
+Getopt::Long::Configure ("bundling");
+
+GetOptions(
+	"d|dump"           => \$opt_dump,
+	"c|count=i"        => \$opt_count,
+	"H|host=s"         => \$opt_host,
+	"P|port=i"         => \$opt_port,
+	"D|debug"          => \$opt_debug,
+	"e|delay=f"        => \$opt_delay,
+	"b|blocksize=i"    => \$opt_blocksize,
+	"E|echo=s"         => \$cmd_echo,
+	"pingbench"      => \$cmd_pingbench,
+	"randreadbench"  => \$cmd_rand_read_bench,
+	"fastreadbench"  => \$cmd_fast_read_bench,
+	"fastwritebench" => \$cmd_fast_write_bench,
+	"randwritebench" => \$cmd_rand_write_bench,
+	"fastechobench"  => \$cmd_fast_echo_bench,
+	"randechobench"  => \$cmd_rand_echo_bench,
+	"charwritebench" => \$cmd_char_write_bench,
+	"charreadbench"  => \$cmd_char_read_bench,
+	"a|allbench"       => \$cmd_all_bench,
+	"h|help"           => \$cmd_help,
+) or die "Getopt failed";
+
+
+if ($cmd_help) {
+	print <<HELP;
+Usage: $0 --port <port> [options] <command>
+NX Slave Channel demo, benchmark and tester.
+
+Options:
+  -b, --blocksize=INT Block size for testing. 1024 bytes by default.
+  -c, --count=NUM     Number of blocks or pings to issue.
+  -D, --debug         Output protocol data for debugging
+  -d, --dump          Dump benchmark data in tab separated format, for
+                      graphing.
+  -e, --delay=FLOAT   Delay between blocks or pings. None by default.
+  -H, --host=HOST     Host to connect to. 'localhost' by default. 
+  -P, --port=PORT     Port to connect to. Mandatory.
+
+Benchmarks:
+  -a, --allbench      Run all the benchmarks
+  --fastechobench     Benchmark sending a single repeated character,
+                      and receiving it back.
+  --fastreadbench     Benchmark reading a single repeated character.
+  --fastwritebench    Benchmark writing a single repeated character.
+  --pingbench         Benchmark ping time.
+  --randechobench     Benchmark sending random data, and receiving it 
+                      back
+  --randreadbench     Benchmark reading random, incompressible data.
+  --randwritebench    Benchmark writing random, incompressible data.
+
+Other commands:
+  -E, --echo=STR      Send STR to the slave channel handler, and print
+                      the response.
+  -h, --help          Show this text
+
+Example:
+   Test basic connectivity:
+       $0 --port 42000 --echo "hi"
+
+   Connect to port 42000 and run all the benchmarks:
+       $0 --port 42000 -a
+   
+HELP
+exit(0);
+}
+
+if (!$opt_port) {
+	print STDERR "Syntax: $0 --port <port> <command> [arguments]\nUse $0 --help for more information.\n\n";
+	exit(1);
+}
+
+
+my $socket = IO::Socket::INET->new(PeerAddr => $opt_host, PeerPort => $opt_port, Proto => 'tcp'); 
+if (!$socket) {
+	die "Can't connect to $opt_host:$opt_port: $!";
+}
+
+my @greeting = read_until_prompt();
+my $sl = StatusLine->new();
+my $random_fh;
+
+if ( $cmd_all_bench ) {
+	$cmd_pingbench        = 1;
+	$cmd_rand_read_bench  = 1;
+	$cmd_fast_read_bench  = 1;
+	$cmd_fast_write_bench = 1;
+	$cmd_rand_write_bench = 1;
+	$cmd_fast_echo_bench  = 1;
+	$cmd_rand_echo_bench  = 1;
+	$cmd_all_bench        = 1;
+
+}
+
+if ( $cmd_echo ) {
+	send_cmd("echo $cmd_echo");
+	print read_until_prompt() . "\n";
+}
+
+if ( $cmd_pingbench ) {
+	my $t0 = [gettimeofday()];
+	for(my $i=0;$i<$opt_count;$i++) {
+		send_cmd("echo $i");
+		read_until_prompt();
+	
+		my $elapsed  = tv_interval($t0, [gettimeofday()]);
+		if ( $opt_dump ) {
+			print "$elapsed\t$i\n";
+		} else {
+			$sl->set("Pinged " . ($i+1) . " times, ${elapsed}s elapsed, " . $opt_count / $elapsed . "/s");
+		}
+
+		sleep($opt_delay) if ($opt_delay>0);
+	}
+
+	$sl->show_last();
+	print STDERR "\n\n";
+}
+
+if ( $cmd_rand_read_bench ) {
+	read_bench("Random read", "randgen");
+}
+
+if ( $cmd_fast_read_bench ) {
+	read_bench("Fast read", "fastgen");
+}
+
+if ( $cmd_fast_write_bench ) {
+	write_bench("Fast write", "discard", sub { "x" x $opt_blocksize  }, 0);
+}
+
+if ( $cmd_rand_write_bench ) {
+	write_bench("Random write", "discard", \&get_random_bytes, 0);
+}
+
+if ( $cmd_fast_echo_bench ) {
+	write_bench("Fast echo", "blkecho $opt_blocksize", sub { "x" x $opt_blocksize }, 1);
+}
+
+
+if ( $cmd_rand_echo_bench ) {
+	write_bench("Random echo", "blkecho $opt_blocksize", \&get_random_bytes, 1);
+}
+
+if ( $cmd_char_write_bench ) {
+	for(my $i=0;$i<=255;$i++) {
+		write_bench("Fast write $i", "discard", sub { chr($i) x $opt_blocksize  }, 0);
+	}
+}
+
+if ( $cmd_char_read_bench ) {
+	for(my $i=0;$i<=255;$i++) {
+		read_bench("Fast read $i", "fastgen $i");
+	}
+}
+
+sub get_random_bytes {
+	if (!$random_fh) {
+		open($random_fh, '<', "/dev/urandom") or die "Can't open /dev/urandom: $!";
+	}
+
+	my $buf="";
+	while(length($buf) < $opt_blocksize) {
+		my $tmp;
+		sysread($random_fh, $tmp, $opt_blocksize - length($buf));
+		$buf .= $tmp;
+	}
+
+	return $buf;
+}
+
+sub read_bench {
+	my ($desc, $command) = @_;
+	init();
+	send_cmd($command);
+
+	my $t0 = [gettimeofday()];
+	my $bytes = 0;
+
+	while($bytes < $opt_count * $opt_blocksize) {
+		my $junk = "";
+		while(length($junk) < $opt_blocksize) {
+			$junk .= read_sock($opt_blocksize - length($junk));
+		}
+
+		$bytes += length($junk);
+
+		my $elapsed  = tv_interval($t0, [gettimeofday()]);
+		if ( $opt_dump ) {
+			print "$elapsed\t$bytes\n";
+		} else {
+			$sl->set("$desc $bytes bytes, ${elapsed}s elapsed, " . sprintf("%0.3f", ($bytes / $elapsed) / (1024*1024)) . " MB/s");
+		}
+
+		sleep($opt_delay) if ($opt_delay>0);
+
+	}
+
+	$sl->show_last();
+	print STDERR "\n\n";
+
+}
+
+sub write_bench {
+	my ($desc, $command, $generator, $do_read) = @_;
+	init();
+	send_cmd($command);
+
+	my $t0 = [gettimeofday()];
+	my $bytes = 0;
+
+	while($bytes < $opt_count * $opt_blocksize) {
+
+		my $junk = $generator->();
+		$bytes += length($junk);
+
+		write_sock($junk);
+
+		if ( $do_read ) {
+			my $readbuf = "";
+			while(length($readbuf) < $opt_blocksize) {
+				$readbuf .= read_sock($opt_blocksize-length($readbuf));
+			}
+
+			if ( $junk ne $readbuf ) {
+				die "Agent returned different data! Sent:\n$junk\nReceived:\n$readbuf\n";
+			}
+		}
+
+		my $elapsed  = tv_interval($t0, [gettimeofday()]);
+		if ( $opt_dump ) {
+			print "$elapsed\t$bytes\n";
+		} else {
+			$sl->set("$desc $bytes bytes, ${elapsed}s elapsed, " . sprintf("%0.3f", ($bytes / $elapsed) / (1024*1024)) . " MB/s");
+		}
+
+		sleep($opt_delay) if ($opt_delay>0);
+	}
+
+	$sl->show_last();
+	print STDERR "\n\n";
+
+}
+
+
+
+sub read_until_prompt {
+	my $buf;
+	my $tmp;
+	my @lines;
+	my $ret = "";
+
+	while(1) {
+		$buf .= read_sock(1024);
+
+		while ( $buf =~ /^(.*?)\n/m ) {
+			dbg("LINE: '$1'\n");
+			push @lines, $1;
+			$ret .= "$1\n";
+			$buf =~ s/^(.*?)\n//m;
+		}
+
+		dbg("BUF: '$buf'\n");
+		if ( $buf =~ /^(Agent|Proxy|\?)> / ) {
+			dbg("PROMPT: '$buf'\n");
+			return  wantarray ? @lines : $ret;
+		}
+	}
+}
+
+sub init {
+	if ( $socket ) {
+		close $socket;
+	}
+
+	$socket = IO::Socket::INET->new(PeerAddr => $opt_host, PeerPort => $opt_port, Proto => 'tcp');
+
+	if (!$socket) {
+		die "Can't connect to $opt_host:$opt_port: $!";
+	}
+
+	my @greeting = read_until_prompt();
+}
+
+sub read_sock {
+	my ($len) = @_;
+	my $buf;
+	my $ret = sysread($socket, $buf, $len);
+	if (!defined $ret) {
+		die "Error reading $len bytes from socket: $!";
+	}
+
+	if ( $ret == 0 ) {
+		die "Socket unexpectedly closed when trying to read $len bytes";
+	}
+
+	dbg("READ: '$buf', length $ret\n");
+	return $buf;
+}
+
+sub write_sock {
+	my ($data) = @_;
+	dbg("SEND: '$data'\n");
+
+	my $written = 0;
+	my $total = length($data);
+
+	while($written < $total) {
+		my $ret = syswrite($socket, $data, $total, $written);
+
+		if (!$ret) {
+			die "Error writing '$data' to socket: $!";
+		}
+		if ( $ret == 0 ) {
+			die "Socket closed when writing '$data' to socket";
+		}
+
+		$written += $ret;
+	}
+
+}
+
+
+sub send_cmd {
+	my ($cmd) = @_;
+	write_sock("$cmd\n");
+}
+
+sub dbg {
+	my ($str) = @_;
+	if ( $opt_debug ) {
+		$str =~ s/[^[:print:]\r\n\t]/./g;
+		print STDERR $str;
+	}
+}
+
+
+package StatusLine;
+use Time::HiRes qw(gettimeofday tv_interval );
+
+sub new {
+	my $class = shift;
+
+	my $self = {
+		prev_len => 0
+	};
+
+	bless $self, $class;
+	return $self;
+}
+
+sub set {
+	my ($self, $str) = @_;
+
+	my $now = [gettimeofday()];
+	$self->{last_str} = $str;
+
+	if ( !defined $self->{prev_time} || tv_interval($self->{prev_time}, $now) >= 0.1 ) {
+		print STDERR "\r" . (" " x $self->{prev_len}) . "\r$str";
+		$self->{prev_len} = length($str);
+		$self->{prev_time} = $now;
+	}
+}
+
+sub clear {
+	my ($self) = @_;
+	undef $self->{prev_time};
+	$self->set("");
+}
+
+sub show_last {
+	my ($self) = @_;
+	undef $self->{prev_time};
+	$self->set( $self->{last_str} ) if ( $self->{last_str} );
+}
+
