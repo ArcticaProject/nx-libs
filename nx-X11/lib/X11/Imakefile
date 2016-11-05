@@ -57,7 +57,21 @@ NX_DEFINES = -DNX_TRANS_SOCKET \
    links exist.
    The make target libX11-links is at the end of the file.
 */
-EXTRALIBRARYDEPS = libX11-links
+/*
+   Currently, this breaks our builds. Autoconf-based packages
+   like nxcompext try to detect host X11 libraries, but will
+   find links to libNX_X11 in exports/lib as libX11 files,
+   which in turn will be test-linked in configure and always
+   fail (for instance, because necessary dependencies like
+   libXcomp will not be available on clean systems.)
+
+   Keep this disabled for now.
+
+   If anything, this code needs to be reworked to create
+   libX11 symlinks only *after* everything has been
+   installed.
+*/
+#EXTRALIBRARYDEPS = libX11-links
 
 #ifdef cygwinArchitecture
 NX_XCOMPLIBNAME   = cygXcomp.dll
@@ -1186,8 +1200,9 @@ libX11-links:
 	done)
 
 /* remove libX11 _and_ libNX_X11 links in epxorts/lib */
-clean::
-	@MAJREV=`echo $(SOXLIBREV) | cut -d. -f1`;\
-	set -x; for i in "" .$$MAJREV .$(SOXLIBREV); do\
-	    $(RM) "$(BUILDLIBDIR)/lib$(LIBNAME).so$$i" "$(BUILDLIBDIR)/libX11.so$$i";\
-	done
+/* Disable this for now, refer to the comments regarding libX11-links. */
+#clean::
+#	@MAJREV=`echo $(SOXLIBREV) | cut -d. -f1`;\
+#	set -x; for i in "" .$$MAJREV .$(SOXLIBREV); do\
+#	    $(RM) "$(BUILDLIBDIR)/lib$(LIBNAME).so$$i" "$(BUILDLIBDIR)/libX11.so$$i";\
+#	done
