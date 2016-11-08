@@ -173,8 +173,6 @@ extern        Status        XkbGetControls(
 #define XKB_DFLT_KB_OPTIONS  NULL
 #endif
 
-#define NXAGENT_KEYMAP_DIR_FILE "keymap.dir"
-
 extern int XkbDfltRepeatDelay;
 extern int XkbDfltRepeatInterval;
 
@@ -479,6 +477,11 @@ CARD8 nxagentConvertKeycode(CARD8 k)
 {
  if (nxagentKeycodeConversion != 0)
  {
+   #ifdef DEBUG
+   if (k != nxagentConvertedKeycodes[k])
+     fprintf(stderr, "nxagentConvertKeycode: converting keycode [%d] to [%d]\n", k, nxagentConvertedKeycodes[k]);
+   #endif
+
    return nxagentConvertedKeycodes[k];
  }
  else
@@ -503,10 +506,10 @@ static void nxagentCheckXkbBaseDirectory(void)
 
   #ifdef TEST
   fprintf(stderr, "nxagentCheckXkbBaseDirectory: "
-              "Before calling _NXGetXkbBasePath.\n");
+              "Before calling _NXGetXkbBasePath:\n");
 
   fprintf(stderr, "nxagentCheckXkbBaseDirectory: "
-              "XkbBaseDirectory varible [%s].\n",
+              "XkbBaseDirectory variable [%s].\n",
                   XkbBaseDirectory);
   #endif
 
@@ -514,10 +517,10 @@ static void nxagentCheckXkbBaseDirectory(void)
 
   #ifdef TEST
   fprintf(stderr, "nxagentCheckXkbBaseDirectory: "
-              "After calling _NXGetXkbBasePath.\n");
+              "After calling _NXGetXkbBasePath:\n");
 
   fprintf(stderr, "nxagentCheckXkbBaseDirectory: "
-              "XkbBaseDirectory varible [%s].\n",
+              "XkbBaseDirectory variable [%s].\n",
                   XkbBaseDirectory);
   #endif
 
@@ -539,7 +542,7 @@ static char *nxagentXkbGetRules()
   sizeDflt = strlen(XKB_DFLT_RULES_FILE);
   sizeAlt = strlen(XKB_ALTS_RULES_FILE);
   size = strlen(XkbBaseDirectory) + strlen("/rules/");
-  size += (sizeDflt > sizeAlt) ? sizeDflt: sizeAlt;
+  size += (sizeDflt > sizeAlt) ? sizeDflt : sizeAlt;
 
   if ((path = malloc((size + 1) * sizeof(char))) == NULL)
   {
@@ -693,10 +696,6 @@ int nxagentKeyboardProc(DeviceIntPtr pDev, int onoff)
   char *model = NULL, *layout = NULL;
   int free_model = 0, free_layout = 0;
   XkbDescPtr xkb = NULL;
-
-  #ifdef TEST
-  int ret;
-  #endif
 
   switch (onoff)
   {
@@ -854,21 +853,21 @@ XkbError:
              (char *) values.auto_repeats, sizeof(values.auto_repeats));
 
       #ifdef TEST
-      ret =
+      {
+        int ret =
       #endif
-      InitKeyboardDeviceStruct((DevicePtr) pDev, &keySyms, modmap,
+        InitKeyboardDeviceStruct((DevicePtr) pDev, &keySyms, modmap,
                                nxagentBell, nxagentChangeKeyboardControl);
 
       #ifdef TEST
-      fprintf(stderr, "nxagentKeyboardProc: InitKeyboardDeviceStruct returns [%d].\n", ret);
+        fprintf(stderr, "nxagentKeyboardProc: InitKeyboardDeviceStruct returns [%d].\n", ret);
+      }
       #endif
 
 #ifdef XKB
       } else {
         FILE *file;
         XkbConfigRtrnRec config;
-
-        int nxagentXkbConfigFilePathSize;
 
         char *nxagentXkbConfigFilePath;
 
@@ -879,32 +878,30 @@ XkbError:
         fprintf(stderr, "nxagentKeyboardProc: Using XKB extension.\n");
         #endif
 
+        #ifdef TEST
+        fprintf(stderr, "nxagentKeyboardProc: nxagentKeyboard is [%s].\n", nxagentKeyboard ? nxagentKeyboard : "NULL");
+        #endif
+
         memset(&names, 0, sizeof(XkbComponentNamesRec));
 
         rules = nxagentXkbGetRules();
 
-        if ((nxagentKeyboard != NULL) && (strcmp(nxagentKeyboard, "query") !=0))
+        if ((nxagentKeyboard != NULL) && (strcmp(nxagentKeyboard, "query") != 0))
         {
           for (i = 0; nxagentKeyboard[i] != '/' && nxagentKeyboard[i] != 0; i++);
 
           if(nxagentKeyboard[i] == 0 || nxagentKeyboard[i + 1] == 0 || i == 0)
           {
-            ErrorF("Warning: Wrong keyboard type: %s.\n",nxagentKeyboard);
+            ErrorF("Warning: Wrong keyboard type: %s.\n", nxagentKeyboard);
 
             goto XkbError;
           }
 
           free_model = 1;
-          model = malloc(i + 1);
-
-          strncpy(model, nxagentKeyboard, i);
-
-          model[i] = '\0';
+	  model = strndup(nxagentKeyboard, i);
 
           free_layout = 1;
-          layout = malloc(strlen(&nxagentKeyboard[i + 1]) + 1);
-
-          strcpy(layout, &nxagentKeyboard[i + 1]);
+	  layout = strdup(&nxagentKeyboard[i + 1]);
 
           /*
            * There is no description for pc105 on Solaris.
@@ -946,7 +943,7 @@ XkbError:
         options = XKB_DFLT_KB_OPTIONS;
 
         #ifdef TEST
-        fprintf(stderr, "nxagentKeyboardProc: XkbInitialMap [%s]\n", XkbInitialMap ? XkbInitialMap: "NULL");
+        fprintf(stderr, "nxagentKeyboardProc: XkbInitialMap [%s]\n", XkbInitialMap ? XkbInitialMap : "NULL");
         #endif
 
         if (XkbInitialMap) {
@@ -990,6 +987,11 @@ XkbError:
           }
           fprintf(stderr, "nxagentKeyboardProc: Going to set rules and init device.\n");
           #endif
+          #ifdef DEBUG
+          fprintf(stderr, "nxagentKeyboardProc: Going to set rules and init device: "
+                          "[rules='%s',model='%s',layout='%s',variants='%s',options='%s'].\n",
+                          rules, model, layout, variants, options);
+          #endif
 
           XkbSetRulesDflts(rules, model, layout, variants, options);
           XkbInitKeyboardDeviceStruct((void *)pDev, &names, &keySyms, modmap,
@@ -1007,22 +1009,15 @@ XkbError:
         XkbGetControls(nxagentDisplay, XkbAllControlsMask, xkb);
 
         if (nxagentX2go)
-            nxagentXkbConfigFilePathSize = strlen(XKB_CONFIG_FILE_X2GO);
+          nxagentXkbConfigFilePath = strdup(XKB_CONFIG_FILE_X2GO);
         else
-            nxagentXkbConfigFilePathSize = strlen(XKB_CONFIG_FILE_NX);
+          nxagentXkbConfigFilePath = strdup(XKB_CONFIG_FILE_NX);
 
-        nxagentXkbConfigFilePath = malloc((nxagentXkbConfigFilePathSize + 1) * sizeof(char));
-
-        if ( nxagentXkbConfigFilePath == NULL)
+        if (nxagentXkbConfigFilePath == NULL)
         {
           FatalError("nxagentKeyboardProc: malloc failed.");
         }
 
-        if (nxagentX2go)
-            nxagentXkbConfigFilePathSize = strlen(XKB_CONFIG_FILE_X2GO);
-        else
-            nxagentXkbConfigFilePathSize = strlen(XKB_CONFIG_FILE_NX);
- 
         #ifdef TEST
         fprintf(stderr, "nxagentKeyboardProc: nxagentXkbConfigFilePath [%s].\n",
                     nxagentXkbConfigFilePath);
@@ -1074,11 +1069,12 @@ XkbError:
         else
         {
           #ifdef TEST
-          fprintf(stderr, "nxagentKeyboardProc: No config file.\n");
-          #endif
-
-          #ifdef TEST
           fprintf(stderr, "nxagentKeyboardProc: No config file, going to set rules and init device.\n");
+          #endif
+          #ifdef DEBUG
+          fprintf(stderr, "nxagentKeyboardProc: Going to set rules and init device: "
+                          "[rules='%s',model='%s',layout='%s',variants='%s',options='%s'].\n",
+                          rules, model, layout, variants, options);
           #endif
 
           XkbSetRulesDflts(rules, model, layout, variants, options);
@@ -1098,6 +1094,11 @@ XkbError:
 
         #ifdef TEST
         fprintf(stderr, "nxagentKeyboardProc: Going to set rules and init device.\n");
+        #endif
+        #ifdef DEBUG
+        fprintf(stderr, "nxagentKeyboardProc: Going to set rules and init device: "
+		        "[rules='%s',model='%s',layout='%s',variants='%s',options='%s'].\n",
+		          rules, model, layout, variants, options);
         #endif
 
         XkbSetRulesDflts(rules, model, layout, variants, options);
@@ -1404,8 +1405,8 @@ void nxagentCheckRemoteKeycodes()
   nxagentNumLockKeycode  = XKeysymToKeycode(nxagentDisplay, XK_Num_Lock);
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentCheckRemoteKeycodes: Remote CapsLock keycode "
-              "is [%d] NumLock [%d].\n", nxagentCapsLockKeycode,
+  fprintf(stderr, "nxagentCheckRemoteKeycodes: Remote keycodes: CapsLock "
+                  "[%d] NumLock [%d].\n", nxagentCapsLockKeycode,
                   nxagentNumLockKeycode);
   #endif
 }
@@ -1791,11 +1792,11 @@ static int nxagentXkbGetNames(char **rules, char **model, char **layout,
 
 void nxagentKeycodeConversionSetup(void)
 {
-  char *drules = 0;
-  char *dmodel = 0;
-  char *dlayout = 0;
-  char *dvariant = 0;
-  char *doptions = 0;
+  char *drules = NULL;
+  char *dmodel = NULL;
+  char *dlayout = NULL;
+  char *dvariant = NULL;
+  char *doptions = NULL;
   unsigned int drulesLen;
 
   nxagentKeycodeConversion = 0;
@@ -1807,8 +1808,8 @@ void nxagentKeycodeConversionSetup(void)
   if (drulesLen != 0 && drules != NULL && dmodel != NULL)
   {
     fprintf(stderr, "nxagentKeycodeConversionSetup: "
-                "Remote: [%s,%s,%s,%s,%s].\n", drules, dmodel, dlayout,
-                    dvariant, doptions);
+                    "Remote: [rules='%s',model='%s',layout='%s',variant='%s',options='%s'].\n",
+                    drules, dmodel, dlayout, dvariant, doptions);
   }
   else
   {
@@ -1820,37 +1821,40 @@ void nxagentKeycodeConversionSetup(void)
   if (drulesLen != 0)
   {
     char *sessionpath = nxagentGetSessionPath();
-    if (sessionpath != NULL){
+    if (sessionpath != NULL)
+    {
       int keyboard_file_path_size = strlen(sessionpath) + strlen("/keyboard");
       char *keyboard_file_path = malloc((keyboard_file_path_size + 1) * sizeof(char));
       FILE *keyboard_file;
-      if ( keyboard_file_path == NULL)
+      if (keyboard_file_path == NULL)
       {
-        FatalError("nxagentKeyboardProc: malloc failed.");
+        FatalError("nxagentKeycodeConversionSetup: malloc failed.");
       }
       strcpy(keyboard_file_path, sessionpath);
       strcat(keyboard_file_path, "/keyboard");
       if ((keyboard_file = fopen(keyboard_file_path, "w")) != NULL) {
-        if ( drules != NULL )
-          fprintf(keyboard_file, "rules=%s\n", drules);
-        if ( dmodel != NULL )
-          fprintf(keyboard_file, "model=%s\n", dmodel);
-        if ( dlayout != NULL )
-          fprintf(keyboard_file, "layout=%s\n", dlayout);
-        if ( dvariant != NULL )
-          fprintf(keyboard_file, "variant=%s\n", dvariant);
-        if ( doptions != NULL )
-          fprintf(keyboard_file, "options=%s\n", doptions);
+        if (drules != NULL)
+          fprintf(keyboard_file, "rules=\"%s\"\n", drules[0] == '\0' ? "," : drules);
+        if (dmodel != NULL)
+          fprintf(keyboard_file, "model=\"%s\"\n", dmodel[0] == '\0' ? "," : dmodel);
+        if (dlayout != NULL)
+          fprintf(keyboard_file, "layout=\"%s\"\n", dlayout[0] == '\0' ? "," : dlayout);
+        if (dvariant != NULL)
+          fprintf(keyboard_file, "variant=\"%s\"\n", dvariant[0] == '\0' ? "," : dvariant);
+        if (doptions != NULL)
+          fprintf(keyboard_file, "options=\"%s\"\n", doptions[0] == '\0' ? "," : doptions);
         fclose(keyboard_file);
         fprintf(stderr, "keyboard file created\n");
       }
-      else {
+      else
+      {
         int save_err = errno;
         fprintf(stderr, "keyboard file not created: %s\n", strerror(save_err));
       }
       free(keyboard_file_path);
     }
-    else {
+    else
+    {
       fprintf(stderr, "SessionPath not defined\n");
     }
   }
@@ -1859,11 +1863,15 @@ void nxagentKeycodeConversionSetup(void)
     fprintf(stderr, "Failed to create the keyboard file\n");
   }
 
-  if (nxagentOption(ClientOs) == ClientOsLinux &&
-            drules != NULL && dmodel != NULL &&
-                (strcmp(drules, "evdev") == 0 ||
-                    strcmp(dmodel, "evdev") == 0))
+  if (drules != NULL && dmodel != NULL &&
+      (strcmp(drules, "evdev") == 0 ||
+       strcmp(dmodel, "evdev") == 0))
   {
+    #ifdef DEBUG
+    fprintf(stderr, "nxagentKeycodeConversionSetup: "
+                "Activating KeyCode conversion.\n");
+    #endif
+
     nxagentKeycodeConversion = 1;
   }
 
