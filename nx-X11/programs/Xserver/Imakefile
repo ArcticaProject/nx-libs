@@ -315,26 +315,26 @@ $(NXAGENTOBJS) $(NXAGENTLIBS) $(NXAGENTSYSLIBS):: $(NXAGENTDIRS)
 
 #if defined(SunArchitecture)
 NXAGENTNXLIBS = -L/usr/sfw/lib \
-                -L ../../../nxcomp  \
+                -L../../../nxcomp  \
                 -L../../../nx-X11/exports/lib \
-                -L ../../../nxcompshad \
+                -L../../../nxcompshad \
                 -lrt \
                 -lXcomp \
                 -lXcompshad \
                 -lXrender -lXfixes -lXfont -lXcomposite -lXinerama -lXdmcp \
                 -lNX_X11 -lXext
 #elif defined(cygwinArchitecture)
-NXAGENTNXLIBS = -L ../../../nxcomp  \
+NXAGENTNXLIBS = -L../../../nxcomp  \
                 -L../../../nx-X11/exports/lib \
-                -L ../../../nxcompshad \
+                -L../../../nxcompshad \
                 -lXcomp \
                 -lXcompshad \
                 -lXrender -lXfixes -lXfont -lXcomposite -lXdmcp \
                 -lNX_X11 -lXext
 #else
-NXAGENTNXLIBS = -L ../../../nxcomp  \
+NXAGENTNXLIBS = -L../../../nxcomp  \
                 -L../../../nx-X11/exports/lib \
-                -L ../../../nxcompshad \
+                -L../../../nxcompshad \
                 -lXcomp \
                 -lXcompshad \
                 -lXrender -lXfixes -lXfont -lXcomposite -lXinerama -lXdmcp \
