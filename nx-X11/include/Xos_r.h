@@ -927,8 +927,8 @@ typedef struct {
    (_Xos_processUnlock), \
    (p).result )
 
-#elif !defined(_POSIX_THREAD_SAFE_FUNCTIONS) && (defined(__osf__) || defined(hpV4))
-/* Returns (int)0 on success.  OSF/1 v3.2, HP/UX 10
+#elif !defined(_POSIX_THREAD_SAFE_FUNCTIONS) && (defined(__osf__)
+/* Returns (int)0 on success.  OSF/1 v3.2
  *
  * extern int asctime_r(const struct tm *timeptr, char *buffer, int buflen);
  * extern int ctime_r(const time_t *timer, char *buffer, int buflen);

@@ -105,7 +105,7 @@ SOFTWARE.
 #endif
 
 
-#if defined(hpux) || defined(QNX4)
+#if defined(QNX4)
 # include <sys/utsname.h>
 # ifdef HAS_IFREQ
 #  include <net/if.h>
@@ -127,7 +127,7 @@ SOFTWARE.
 #else /*!__GNU__*/
 # include <net/if.h>
 #endif /*__GNU__ */
-#endif /* hpux */
+#endif /* QNX4 */
 
 #ifdef SVR4
 #include <sys/sockio.h>
@@ -513,7 +513,7 @@ DefineSelf (int fd)
 
 #else /* WINTCP */
 
-#if !defined(SIOCGIFCONF) || (defined (hpux) && ! defined (HAS_IFREQ)) || defined(QNX4)
+#if !defined(SIOCGIFCONF) || defined(QNX4)
 void
 DefineSelf (int fd)
 {
@@ -1047,7 +1047,7 @@ DefineSelf (int fd)
 	}
     }
 }
-#endif /* hpux && !HAS_IFREQ */
+#endif /* SIOCGIFCONF || QNX4 */
 #endif /* WINTCP */
 
 #ifdef XDMCP

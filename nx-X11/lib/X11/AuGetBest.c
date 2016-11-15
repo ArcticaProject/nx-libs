@@ -33,11 +33,6 @@ in this Software without prior written authorization from The Open Group.
 #ifdef XTHREADS
 #include <nx-X11/Xthreads.h>
 #endif
-#ifdef hpux
-#define X_INCLUDE_NETDB_H
-#define XOS_USE_NO_LOCKING
-#include <nx-X11/Xos_r.h>
-#endif
 
 static int
 binaryEqual (_Xconst char *a, _Xconst char *b, int len)
@@ -74,10 +69,6 @@ XauGetBestAuthByAddr (
     Xauth   *best;
     int	    best_type;
     int	    type;
-#ifdef hpux
-    char		*fully_qual_address;
-    unsigned short	fully_qual_address_length;
-#endif
 
     auth_name = XauFileName ();
     if (!auth_name)
@@ -87,26 +78,6 @@ XauGetBestAuthByAddr (
     auth_file = fopen (auth_name, "rb");
     if (!auth_file)
 	return 0;
-
-#ifdef hpux
-    if (family == FamilyLocal) {
-#ifdef XTHREADS_NEEDS_BYNAMEPARAMS
-	_Xgethostbynameparams hparams;
-#endif
-	struct hostent *hostp;
-
-	/* make sure we try fully-qualified hostname */
-	if ((hostp = _XGethostbyname(address,hparams)) != NULL) {
-	    fully_qual_address = hostp->h_name;
-	    fully_qual_address_length = strlen(fully_qual_address);
-	}
-	else
-	{
-	    fully_qual_address = NULL;
-	    fully_qual_address_length = 0;
-	}
-    }
-#endif /* hpux */
 
     best = 0;
     best_type = types_length;
@@ -131,12 +102,6 @@ XauGetBestAuthByAddr (
 	     (entry->family == family &&
 	     ((address_length == entry->address_length &&
 	     binaryEqual (entry->address, address, (int)address_length))
-#ifdef hpux
-	     || (family == FamilyLocal &&
-		fully_qual_address_length == entry->address_length &&
-	     	binaryEqual (entry->address, fully_qual_address,
-		    (int) fully_qual_address_length))
-#endif
 	    ))) &&
 	    (number_length == 0 || entry->number_length == 0 ||
 	     (number_length == entry->number_length &&

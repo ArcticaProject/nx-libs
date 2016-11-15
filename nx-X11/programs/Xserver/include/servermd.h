@@ -114,14 +114,6 @@ SOFTWARE.
 
 #endif /* __aarch64__ */
 
-#if defined (hpux) || defined __hppa__
-
-#define IMAGE_BYTE_ORDER	MSBFirst
-#define BITMAP_BIT_ORDER	MSBFirst
-#define GLYPHPADBYTES		4	/* to make fb work */
-
-#endif /* hpux || __hppa__ */
-
 #if defined(__powerpc__) || defined(__ppc__)
 
 #define IMAGE_BYTE_ORDER        MSBFirst
