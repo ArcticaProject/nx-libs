@@ -320,7 +320,7 @@ static __inline__ void _Xpw_copyPasswd(_Xgetpwparams p)
   (p).pwp )
 
 #elif !defined(_POSIX_THREAD_SAFE_FUNCTIONS) && !defined(__APPLE__) && !defined(__DARWIN__)
-/* SVR4 threads, AIX 4.2.0 and earlier and OSF/1 3.2 and earlier pthreads */
+/* SVR4 threads and OSF/1 3.2 and earlier pthreads */
 # define X_NEEDS_PWPARAMS
 typedef struct {
   struct passwd pws;
@@ -467,7 +467,7 @@ typedef struct {
  */
 # ifdef _POSIX_REENTRANT_FUNCTIONS
 #  ifndef _POSIX_THREAD_SAFE_FUNCTIONS
-#   if defined(AIXV3) || defined(AIXV4) || defined(__osf__)
+#   if defined(__osf__)
 #    define X_POSIX_THREAD_SAFE_FUNCTIONS 1
 #   endif
 #  endif
@@ -604,9 +604,8 @@ typedef struct {
 # endif
 } _Xreaddirparams;
 
-# if defined(_POSIX_THREAD_SAFE_FUNCTIONS) || defined(AIXV3) || \
-     defined(AIXV4) || defined(__APPLE__) || defined(__DARWIN__)
-/* AIX defines the draft POSIX symbol, but uses the final API. */
+# if defined(_POSIX_THREAD_SAFE_FUNCTIONS) || \
+     defined(__APPLE__) || defined(__DARWIN__)
 /* POSIX final API, returns (int)0 on success. */
 #  if defined(__osf__)
 /* OSF/1 V4.0 <dirent.h> doesn't declare _Preaddir_r, breaking under C++. */
@@ -972,7 +971,7 @@ typedef struct tm _Xltimeparams;
 # define _XLocaltime(t,p)	localtime_r((t),&(p))
 
 #else /* defined(_POSIX_THREAD_SAFE_FUNCTIONS) */
-/* POSIX final API.  OSF/1 v4.0, AIX, etc.
+/* POSIX final API.  OSF/1 v4.0, etc.
  *
  * extern char *asctime_r(const struct tm *timeptr, char *buffer);
  * extern char *ctime_r(const time_t *timer, char *buffer);
@@ -1093,7 +1092,7 @@ typedef struct {
 #define _XGetgrnam(n,p)	getgrnam_r((n), &(p).grp, (p).buf, sizeof((p).buf))
 
 #elif !defined(_POSIX_THREAD_SAFE_FUNCTIONS)
-/* Non-POSIX API.  HP/UX 10, AIX 4.
+/* Non-POSIX API.  HP/UX 10.
  *
  * extern int getgrgid_r(gid_t, struct group *, char *, int);
  * extern int getgrnam_r(const char *, struct group *, char *, int);

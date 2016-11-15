@@ -529,7 +529,7 @@
 # define StellarArchitecture
 #endif /* stellar */
 
-#if defined(ibm) || defined(_IBMR2) || defined(ibm032) || defined(aix)
+#if defined(ibm) || defined(_IBMR2) || defined(ibm032)
 # define MacroIncludeFile <ibm.cf>
 # define MacroFile ibm.cf
 # ifdef ibm
@@ -543,10 +543,6 @@
 # ifdef ibm032
 #  undef ibm032
 #  define RtArchitecture
-# endif
-# ifdef aix
-#  undef aix
-#  define AIXArchitecture
 # endif
 # ifdef _IBMR2
 #  undef _IBMR2

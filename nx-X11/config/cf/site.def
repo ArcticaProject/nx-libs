@@ -46,7 +46,7 @@
  * the two following macros need to be defined directly (where "X11" is
  * really whatever the TopLevelProject macro is defined to be).
  */
-# if defined(AIXArchitecture) || defined(SVR4Architecture) || \
+# if defined(SVR4Architecture) || \
      defined(SCOArchitecture) || defined(Win32Architecture) || \
      defined(UXPArchitecture) || defined(SunArchitecture) || \
      defined(DynixPtxArchitecture) || defined(i386IscArchitecture)
