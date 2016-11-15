@@ -37,9 +37,8 @@ in this Software without prior written authorization from The Open Group.
  *
  * If you are on a platform that defines XTHREADS but does not have
  * MT-safe system API (e.g. UnixWare) you must define _Xos_processLock
- * and _Xos_processUnlock macros before including this header.  If
- * you are on OSF/1 V3.2 and plan to use readdir(), you must also define
- * _Xos_isThreadsInitialized.  For convenience XOS_USE_XLIB_LOCKING or
+ * and _Xos_processUnlock macros before including this header.
+ * For convenience XOS_USE_XLIB_LOCKING or
  * XOS_USE_XT_LOCKING may be defined to obtain either Xlib-only or
  * Xt-based versions of these macros.  These macros won't result in
  * truly thread-safe calls, but they are better than nothing.  If you
@@ -320,7 +319,7 @@ static __inline__ void _Xpw_copyPasswd(_Xgetpwparams p)
   (p).pwp )
 
 #elif !defined(_POSIX_THREAD_SAFE_FUNCTIONS) && !defined(__APPLE__) && !defined(__DARWIN__)
-/* SVR4 threads and OSF/1 3.2 and earlier pthreads */
+/* SVR4 threads */
 # define X_NEEDS_PWPARAMS
 typedef struct {
   struct passwd pws;
@@ -340,11 +339,6 @@ typedef struct {
 
 #else /* _POSIX_THREAD_SAFE_FUNCTIONS */
 /* Digital UNIX 4.0, but not (beta) T4.0-1 */
-# if defined(__osf__)
-/* OSF/1 V4.0 <pwd.h> doesn't declare the _P routines, breaking under C++. */
-extern int _Pgetpwuid_r(uid_t, struct passwd *, char *, size_t, struct passwd **);
-extern int _Pgetpwnam_r(const char *, struct passwd *, char *, size_t, struct passwd **);
-# endif
 # define X_NEEDS_PWPARAMS
 typedef struct {
   struct passwd pws;
@@ -467,9 +461,7 @@ typedef struct {
  */
 # ifdef _POSIX_REENTRANT_FUNCTIONS
 #  ifndef _POSIX_THREAD_SAFE_FUNCTIONS
-#   if defined(__osf__)
-#    define X_POSIX_THREAD_SAFE_FUNCTIONS 1
-#   endif
+#   define X_POSIX_THREAD_SAFE_FUNCTIONS 1
 #  endif
 # endif
 # ifdef _POSIX_THREAD_SAFE_FUNCTIONS
@@ -607,28 +599,8 @@ typedef struct {
 # if defined(_POSIX_THREAD_SAFE_FUNCTIONS) || \
      defined(__APPLE__) || defined(__DARWIN__)
 /* POSIX final API, returns (int)0 on success. */
-#  if defined(__osf__)
-/* OSF/1 V4.0 <dirent.h> doesn't declare _Preaddir_r, breaking under C++. */
-extern int _Preaddir_r(DIR *, struct dirent *, struct dirent **);
-#  endif
 #  define _XReaddir(d,p)						\
     (readdir_r((d), &((p).dir_entry), &((p).result)) ? NULL : (p).result)
-# elif defined(_POSIX_REENTRANT_FUNCTIONS) && defined(__osf__)
-/*
- * OSF/1 V3.2 readdir_r() will SEGV if the main program is not
- * explicitly linked with -lc_r.  The library REQUIREDLIBS don't help.
- * Assume that if threads have been initialized we're linked properly.
- */
-#  define _XReaddir(d,p)						\
- ( (_Xos_isThreadInitialized) ?						\
-   (readdir_r((d), &((p).dir_entry)) ? NULL : &((p).dir_entry)) :	\
-   ((_Xos_processLock),							\
-    (((p).result = readdir((d))) ?					\
-     (memcpy(&((p).dir_entry), (p).result, (p).result->d_reclen),	\
-      ((p).result = &(p).dir_entry), 0) :				\
-     0),								\
-    (_Xos_processUnlock),						\
-    (p).result) )
 # elif defined(_POSIX_REENTRANT_FUNCTIONS)
 /* POSIX draft API, returns (int)0 on success. */
 #  define _XReaddir(d,p)	\
@@ -926,28 +898,6 @@ typedef struct {
    (_Xos_processUnlock), \
    (p).result )
 
-#elif !defined(_POSIX_THREAD_SAFE_FUNCTIONS) && (defined(__osf__)
-/* Returns (int)0 on success.  OSF/1 v3.2
- *
- * extern int asctime_r(const struct tm *timeptr, char *buffer, int buflen);
- * extern int ctime_r(const time_t *timer, char *buffer, int buflen);
- * extern int gmtime_r(const time_t *timer, struct tm *result);
- * extern int localtime_r(const time_t *timer, struct tm *result);
- */
-# ifdef TIMELEN
-typedef char _Xatimeparams[TIMELEN];
-typedef char _Xctimeparams[TIMELEN];
-# else
-typedef char _Xatimeparams[26];
-typedef char _Xctimeparams[26];
-# endif
-typedef struct tm _Xgtimeparams;
-typedef struct tm _Xltimeparams;
-# define _XAsctime(t,p)		(asctime_r((t),(p),sizeof((p))) ? NULL : (p))
-# define _XCtime(t,p)		(ctime_r((t),(p),sizeof((p))) ? NULL : (p))
-# define _XGmtime(t,p)		(gmtime_r((t),&(p)) ? NULL : &(p))
-# define _XLocaltime(t,p)	(localtime_r((t),&(p)) ? NULL : &(p))
-
 #elif !defined(_POSIX_THREAD_SAFE_FUNCTIONS) && defined(sun)
 /* Returns NULL on failure.  Solaris 2.5
  *
@@ -978,12 +928,6 @@ typedef struct tm _Xltimeparams;
  * extern struct tm *gmtime_r(const time_t *timer, struct tm *result);
  * extern struct tm *localtime_r(const time_t *timer, struct tm *result);
  */
-# if defined(__osf__)
-/* OSF/1 V4.0 <time.h> doesn't declare the _P routines, breaking under C++. */
-extern char *_Pasctime_r(const struct tm *, char *);
-extern char *_Pctime_r(const time_t *, char *);
-extern struct tm *_Plocaltime_r(const time_t *, struct tm *);
-# endif
 # ifdef TIMELEN
 typedef char _Xatimeparams[TIMELEN];
 typedef char _Xctimeparams[TIMELEN];
@@ -1078,7 +1022,7 @@ typedef struct {
    (_Xos_processUnlock), \
    (p).pgrp )
 
-#elif !defined(_POSIX_THREAD_SAFE_FUNCTIONS) && (defined(sun) || defined(__osf__))
+#elif !defined(_POSIX_THREAD_SAFE_FUNCTIONS) && defined(sun)
 /* Non-POSIX API.  Solaris, DEC v3.2.
  *
  * extern struct group *getgrgid_r(gid_t, struct group *, char *, int);
@@ -1112,11 +1056,6 @@ typedef struct {
  * int getgrgid_r(gid_t, struct group *, char *, size_t, struct group **);
  * int getgrnam_r(const char *, struct group *, char *, size_t, struct group **);
  */
-# if defined(__osf__)
-/* OSF/1 V4.0 <grp.h> doesn't declare the _P routines, breaking under C++. */
-extern int _Pgetgrgid_r(gid_t, struct group *, char *, size_t, struct group **);
-extern int _Pgetgrnam_r(const char *, struct group *, char *, size_t, struct group **);
-# endif
 typedef struct {
   struct group grp;
   char buf[X_LINE_MAX];	/* Should be sysconf(_SC_GETGR_R_SIZE_MAX)? */

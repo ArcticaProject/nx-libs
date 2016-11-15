@@ -703,22 +703,6 @@
 # define ConvexArchitecture
 #endif /* _convex_ */
 
-#ifdef __osf__
-# define MacroIncludeFile <osf1.cf>
-# define MacroFile osf1.cf
-# define OSF1Architecture
-# undef __osf__
-# ifdef __mips__
-#  undef __mips__
-#  define MipsArchitecture
-#  define MipselArchitecture
-# endif
-# ifdef __alpha
-#  undef __alpha
-#  define AlphaArchitecture
-# endif
-#endif /* __osf__ */
-
 #ifdef Oki
 # define MacroIncludeFile <Oki.cf>
 # define MacroFile Oki.cf
