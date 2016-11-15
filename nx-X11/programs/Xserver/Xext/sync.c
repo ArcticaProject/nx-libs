@@ -71,7 +71,7 @@ PERFORMANCE OF THIS SOFTWARE.
 #include "protocol-versions.h"
 
 #include <stdio.h>
-#if !defined(WIN32) && !defined(Lynx)
+#if !defined(WIN32)
 #include <sys/time.h>
 #endif
 

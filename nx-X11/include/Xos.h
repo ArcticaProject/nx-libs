@@ -219,7 +219,7 @@ struct timeval {
     (t)->tv_sec = _gtodtmp.time; \
     (t)->tv_usec = _gtodtmp.millitm * 1000; \
 }
-#elif defined(_SEQUENT_) || defined(Lynx)
+#elif defined(_SEQUENT_)
 #include <time.h>
 #elif defined (__QNX__)
 typedef unsigned long fd_mask;

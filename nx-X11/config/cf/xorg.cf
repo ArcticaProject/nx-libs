@@ -512,7 +512,7 @@ IPLAN2P8_DEFS = -DUSE_IPLAN2P8
 #ifndef BuildScanpci
 # if SystemV || SystemV4 || \
     (defined(LinuxArchitecture) && !defined(Mc68020Architecture)) || \
-    defined(i386BsdArchitecture) || defined(LynxOSArchitecture) || \
+    defined(i386BsdArchitecture) || \
     defined(GNUMachArchitecture) || \
     (defined(KFreeBSDArchitecture) && defined(i386Architecture))
 #   define BuildScanpci		YES

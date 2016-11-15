@@ -73,13 +73,6 @@
 #if !defined(BYTE_ORDER) && defined(__BYTE_ORDER)
 #define BYTE_ORDER __BYTE_ORDER
 #endif
-#elif defined(Lynx)
-#if 0
-/* LynxOS 2.4.0 has wrong defines in bsd/ip.h */
-#include <bsd/in.h>
-#include <bsd/in_systm.h>
-#include <bsd/ip.h>
-#endif
 #endif
 
 #ifndef BYTE_ORDER
@@ -98,14 +91,7 @@
 #endif
 #endif
 
-#ifdef Lynx
-#if defined(i386) || defined(__i386__) || defined(__x86__)
-#define BYTE_ORDER LITTLE_ENDIAN
-#else
-#define BYTE_ORDER BIG_ENDIAN
-#endif
-#endif
-#if (defined(sun) && defined(SVR4)) && !defined(Lynx)
+#if (defined(sun) && defined(SVR4))
 #include <sys/isa_defs.h>
 #ifdef _LITTLE_ENDIAN
 #define BYTE_ORDER LITTLE_ENDIAN

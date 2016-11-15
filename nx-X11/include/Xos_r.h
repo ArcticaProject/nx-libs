@@ -197,14 +197,6 @@ extern void XtProcessUnlock(
 # undef _POSIX_THREAD_SAFE_FUNCTIONS
 #endif
 
-/*
- * LynxOS 3.1 defines _POSIX_THREAD_SAFE_FUNCTIONS but
- * getpwuid_r has different semantics than defined by POSIX
- */
-#if defined(Lynx) && defined(_POSIX_THREAD_SAFE_FUNCTIONS)
-# undef _POSIX_THREAD_SAFE_FUNCTIONS
-#endif
-
 
 /***** <pwd.h> wrappers *****/
 
@@ -334,18 +326,11 @@ typedef struct {
   struct passwd pws;
   char pwbuf[X_LINE_MAX];
 } _Xgetpwparams;
-# if defined(_POSIX_REENTRANT_FUNCTIONS) || !defined(SVR4) || defined(Lynx)
-#  ifndef Lynx
-#   define _XGetpwuid(u,p) \
+# if defined(_POSIX_REENTRANT_FUNCTIONS) || !defined(SVR4)
+#  define _XGetpwuid(u,p) \
 ((getpwuid_r((u),&(p).pws,(p).pwbuf,sizeof((p).pwbuf)) == -1) ? NULL : &(p).pws)
-#   define _XGetpwnam(u,p) \
+#  define _XGetpwnam(u,p) \
 ((getpwnam_r((u),&(p).pws,(p).pwbuf,sizeof((p).pwbuf)) == -1) ? NULL : &(p).pws)
-#  else /* Lynx */
-#   define _XGetpwuid(u,p) \
-((getpwuid_r(&(p).pws,(u),(p).pwbuf,sizeof((p).pwbuf)) == -1) ? NULL : &(p).pws)
-#   define _XGetpwnam(u,p) \
-((getpwnam_r(&(p).pws,(u),(p).pwbuf,sizeof((p).pwbuf)) == -1) ? NULL : &(p).pws)
-#  endif
 # else /* SVR4 */
 #  define _XGetpwuid(u,p) \
 ((getpwuid_r((u),&(p).pws,(p).pwbuf,sizeof((p).pwbuf)) == NULL) ? NULL : &(p).pws)
