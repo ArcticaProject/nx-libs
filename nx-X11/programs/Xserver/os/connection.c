@@ -82,18 +82,6 @@ SOFTWARE.
 #ifndef WIN32
 #include <sys/socket.h>
 
-#if defined(DGUX)
-#include <sys/ioctl.h>
-#include <sys/utsname.h>
-#include <sys/socket.h>
-#include <sys/uio.h>
-#include <netinet/in.h>
-#include <netinet/tcp.h>
-#include <sys/param.h>
-#include <unistd.h>
-#endif
-
-
 #if defined(TCPCONN)
 # include <netinet/in.h>
 # include <arpa/inet.h>

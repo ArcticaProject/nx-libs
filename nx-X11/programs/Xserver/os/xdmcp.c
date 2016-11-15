@@ -45,11 +45,6 @@
 #include "dixstruct.h"
 #include "opaque.h"
 
-#if defined(DGUX)
-#include <net/net_ioctl.h>
-#include <sys/ioctl.h>
-#endif
-
 
 #ifndef NX_TRANS_SOCKET
 
