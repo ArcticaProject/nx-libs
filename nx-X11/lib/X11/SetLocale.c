@@ -102,7 +102,7 @@ _XlcMapOSLocaleName(
 
 /* FIXME: correct indentation levels after ancient platform clean-up */
 
-#if defined(CSRG_BASED) || defined(sun) || defined(SVR4) || defined(sgi) || defined(ultrix) || defined(WIN32) || defined(linux)
+#if defined(CSRG_BASED) || defined(sun) || defined(SVR4) || defined(ultrix) || defined(WIN32) || defined(linux)
 #  ifdef ultrix
 #   define SKIPCOUNT 2
 #   define STARTCHAR '\001'

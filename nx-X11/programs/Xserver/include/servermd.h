@@ -192,7 +192,7 @@ SOFTWARE.
 
 #endif /* macII */
 
-#if (defined(mips) || defined(__mips)) && !defined(sgi)
+#if (defined(mips) || defined(__mips))
 
 #if defined(MIPSEL) || defined(__MIPSEL__)
 # define IMAGE_BYTE_ORDER	LSBFirst        /* Values for the PMAX only */
@@ -343,14 +343,6 @@ SOFTWARE.
 #define GLYPHPADBYTES          4
 
 #endif /* linux/m68k */
-
-#ifdef sgi
-
-#define IMAGE_BYTE_ORDER	MSBFirst
-#define BITMAP_BIT_ORDER	MSBFirst
-#define GLYPHPADBYTES		4
-
-#endif
 
 /* linux on the Compaq Itsy */
 #if defined(linux) && defined(__arm__)

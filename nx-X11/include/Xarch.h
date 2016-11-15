@@ -40,7 +40,7 @@
 #else
 
 #ifdef SVR4
-#if defined(NCR) || defined(Mips) || defined(__sgi)
+#if defined(NCR) || defined(Mips)
 #include <sys/endian.h>
 #else
 #if !defined(sun)

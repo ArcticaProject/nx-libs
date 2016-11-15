@@ -57,10 +57,8 @@ in this Software without prior written authorization from The Open Group.
 #endif
 #endif /* USG */
 
-#ifndef sgi
 #if defined(__SCO__) || defined(__UNIXWARE__)
 #include <stdint.h>
-#endif
 #endif
 
 #ifdef _SEQUENT_

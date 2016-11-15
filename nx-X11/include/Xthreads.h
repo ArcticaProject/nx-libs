@@ -56,7 +56,7 @@ typedef struct mutex xmutex_rec;
 #define xcondition_broadcast(cv) condition_broadcast(cv)
 #define xcondition_set_name(cv,str) condition_set_name(cv,str)
 #else /* !CTHREADS */
-#if defined(SVR4) && !defined(__sgi) && !defined(_SEQUENT_)
+#if defined(SVR4) && !defined(_SEQUENT_)
 #include <thread.h>
 #include <synch.h>
 typedef thread_t xthread_t;

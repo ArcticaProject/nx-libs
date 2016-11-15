@@ -50,10 +50,6 @@ from The Open Group.
 #include <ctype.h>
 #include <nx-X11/Xos.h>
 
-#ifdef __sgi_not_xconsortium
-#define	XKB_EXTEND_LOOKUP_STRING
-#endif
-
 static int
 _XkbHandleSpecialSym(KeySym keysym, char *buffer, int nbytes, int *extra_rtrn)
 {

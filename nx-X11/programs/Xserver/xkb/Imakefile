@@ -1,10 +1,6 @@
 #define SGIHyperOpt
 #include <Server.tmpl>
 
-#ifdef SGIArchitecture
-EXTRA_ALLOC_DEFINES = -DFORCE_ALLOCA
-#endif
-
 #if BuildXInputExt
 XKBXI_SRCS = xkbPrOtherEv.c
 XKBXI_OBJS = xkbPrOtherEv.o
@@ -48,7 +44,7 @@ XF86INCLUDES = -I$(XF86COMSRC) -I$(XF86OSSRC)
 	      `pkg-config --cflags-only-I pixman-1`
    LINTLIBS = ../dix/llib-ldix.ln ../os/llib-los.ln
 
-DEFINES = $(EXTRA_ALLOC_DEFINES) $(XKB_DDXDEFS) $(NX_DEFINES)
+DEFINES = $(XKB_DDXDEFS) $(NX_DEFINES)
 XKB_DEFINES = -DXKB_BASE_DIRECTORY=\"$(LIBDIR)/xkb\" $(XKB_DISABLE)
 
 NormalLibraryObjectRule()
