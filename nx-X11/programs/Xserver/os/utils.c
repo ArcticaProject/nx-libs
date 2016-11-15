@@ -124,11 +124,6 @@ OR PERFORMANCE OF THIS SOFTWARE.
 #include <grp.h>
 #include <pwd.h>
 
-#if defined(DGUX)
-#include <sys/resource.h>
-#include <netdb.h>
-#endif
-
 #include <stdlib.h>	/* for malloc() */
 
 #if defined(TCPCONN)
@@ -317,11 +312,6 @@ OsSignal(sig, handler)
 #define LOCK_TMP_PREFIX "/.tX"
 #define LOCK_PREFIX "/.X"
 #define LOCK_SUFFIX "-lock"
-
-#if defined(DGUX)
-#include <limits.h>
-#include <sys/param.h>
-#endif
 
 #ifndef PATH_MAX
 #include <sys/param.h>

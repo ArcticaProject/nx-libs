@@ -79,22 +79,17 @@ from The Open Group.
 /* Below is the monster branch from hell.  Basically, most systems will drop to
  * 'the branch below is the fallthrough for halfway modern systems', and include
  * <sys/select.h>, so we get the FD_* macros. */
-#if !defined(DGUX)
-# if defined(SVR4) && !defined(FD_SETSIZE)
-#  include <sys/select.h>
-#  ifdef luna
-#   include <sysent.h>
-#  endif
-# else /* not SVR4 */
-#  ifdef __QNX__  /* Make sure we get 256 bit select masks */
-#   define FD_SETSIZE 256
-#  endif
-#  include <sys/select.h>
+
+#if defined(SVR4) && !defined(FD_SETSIZE)
+# include <sys/select.h>
+# ifdef luna
+#  include <sysent.h>
 # endif
-#else /* DGUX  -- No sys/select in Intel DG/ux */
-# include <sys/time.h> 
-# include <sys/types.h>
-# include <unistd.h>
+#else /* not SVR4 */
+# ifdef __QNX__  /* Make sure we get 256 bit select masks */
+#  define FD_SETSIZE 256
+# endif
+# include <sys/select.h>
 #endif
 
 #include <nx-X11/Xmd.h>
