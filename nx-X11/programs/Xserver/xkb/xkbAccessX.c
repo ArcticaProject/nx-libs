@@ -360,9 +360,7 @@ XkbControlsPtr	ctrls;
 	if (keybd->kbdfeed->ctrl.autoRepeat && 
 	    ((xkbi->slowKey != xkbi->mouseKey) || (!xkbi->mouseKeysAccel)) &&
 	     (ctrls->enabled_ctrls&XkbRepeatKeysMask)) {
-#ifndef AIXV3
 	    if (BitIsOn(keybd->kbdfeed->ctrl.autoRepeats,xkbi->slowKey))
-#endif
 	    {
 		xkbi->repeatKey = xkbi->slowKey;
 		xkbi->repeatKeyTimer= TimerSet(xkbi->repeatKeyTimer,
@@ -529,9 +527,7 @@ KeySym *	sym = XkbKeySymsPtr(xkbi->desc,key);
 	if ((keybd->kbdfeed->ctrl.autoRepeat) &&
 		((ctrls->enabled_ctrls&(XkbSlowKeysMask|XkbRepeatKeysMask))==
 							XkbRepeatKeysMask)) {
-#ifndef AIXV3
 	    if (BitIsOn(keybd->kbdfeed->ctrl.autoRepeats,key))
-#endif
 	    {
 #ifdef DEBUG
 		if (xkbDebugFlags&0x10)

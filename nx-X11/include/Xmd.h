@@ -100,7 +100,7 @@ typedef long INT32;
 #endif
 typedef short INT16;
 
-#if defined(__STDC__) || defined(sgi) || defined(AIXV3)
+#if defined(__STDC__) || defined(sgi)
 typedef signed char    INT8;
 #else
 typedef char           INT8;

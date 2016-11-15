@@ -80,22 +80,16 @@ from The Open Group.
  * 'the branch below is the fallthrough for halfway modern systems', and include
  * <sys/select.h>, so we get the FD_* macros. */
 #if !defined(DGUX)
-# if (defined(SVR4) || defined(AIXV3)) && !defined(FD_SETSIZE)
+# if defined(SVR4) && !defined(FD_SETSIZE)
 #  include <sys/select.h>
 #  ifdef luna
 #   include <sysent.h>
 #  endif
-# else /* not SVR4/AIXv3 */
-#  if defined(AIXV4) /* AIX 4.2 fubar-ed <sys/select.h>, so try really hard. */
-#   if !defined(NFDBITS)
-#    include <sys/select.h>
-#   endif
-#  else /* the branch below is the fallthrough for halfway modern systems */
-#   ifdef __QNX__  /* Make sure we get 256 bit select masks */
-#    define FD_SETSIZE 256
-#   endif
-#   include <sys/select.h>
+# else /* not SVR4 */
+#  ifdef __QNX__  /* Make sure we get 256 bit select masks */
+#   define FD_SETSIZE 256
 #  endif
+#  include <sys/select.h>
 # endif
 #else /* DGUX  -- No sys/select in Intel DG/ux */
 # include <sys/time.h> 

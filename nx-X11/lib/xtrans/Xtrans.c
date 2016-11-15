@@ -669,7 +669,7 @@ TRANS(SetOption) (XtransConnInfo ciptr, int option, int arg)
 #else
 	    ret = fcntl (fd, F_SETFL, ret | O_NDELAY);
 #endif
-#endif /* AIXV3  || uniosu */
+#endif /* WIN32 */
 #endif /* FIOSNBIO */
 #endif /* O_NONBLOCK */
 	    break;

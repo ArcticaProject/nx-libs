@@ -94,10 +94,6 @@ SOFTWARE.
 #endif
 
 
-#ifdef AIXV3
-#include <sys/ioctl.h>
-#endif
-
 #if defined(TCPCONN)
 # include <netinet/in.h>
 # include <arpa/inet.h>
