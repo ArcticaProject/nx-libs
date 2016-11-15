@@ -1006,34 +1006,6 @@ XCOMM Keep cpp from replacing path elements containing i486/i586/i686
 # endif
 #endif /* linux || __GLIBC__ */
 
-#if (defined(__Lynx__) || defined(Lynx)) && (defined(i386) || defined(__i386__) || defined(__x86__) || defined(__powerpc__) || defined(__sparc__) || defined(sparc))
-# define MacroIncludeFile <lynx.cf>
-# define MacroFile lynx.cf
-# define LynxOSArchitecture
-# undef __Lynx__
-# undef Lynx
-# undef lynx
-# if defined(i386) || defined(__i386__) || defined(__x86__)
-#  define i386Architecture
-#  undef i386
-#  undef __i386__
-#  undef __x86__
-# endif
-# ifdef __powerpc__
-#  define PpcArchitecture
-#  undef __powerpc__
-# endif
-# if defined(sparc) || defined(__sparc__)
-#  define SparcArchitecture
-#  undef sparc
-#  undef __sparc__
-# endif
-/* for compatibility with 3.3.x */
-# ifdef PpcArchitecture
-#  define PowerPCArchitecture
-# endif
-#endif /* LynxOS AT/PPC/microSPARC */
-
 #ifdef __uxp__
 # define MacroIncludeFile <fujitsu.cf>
 # define MacroFile fujitsu.cf

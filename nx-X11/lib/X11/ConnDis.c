@@ -67,11 +67,7 @@ in this Software without prior written authorization from The Open Group.
 #include <unistd.h>
 
 #if !defined(WIN32)
-#ifndef Lynx
 #include <sys/socket.h>
-#else
-#include <socket.h>
-#endif
 #else
 #include <nx-X11/Xwindows.h>
 #endif

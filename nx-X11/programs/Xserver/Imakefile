@@ -248,8 +248,7 @@ NXAGENTOBJS = hw/nxagent/miinitext.o     \
               hw/nxagent/NXmiexpose.o    \
               hw/nxagent/NXresource.o    \
               hw/nxagent/NXdamage.o
-#elif !defined(LynxOSArchitecture) && \
-      !defined(Win32Architecture) && \
+#elif !defined(Win32Architecture) && \
       !defined(QNX4Architecture)
 NXAGENTOBJS = hw/nxagent/miinitext.o     \
               hw/nxagent/NXwindow.o      \
@@ -516,7 +515,7 @@ ServerTarget(NXWin,$(NXWINDIRS),$(NXWINOBJS), \
 
 MIEXTDIRS = $(SHADOWDIR) $(LAYERDIR) $(ROOTLESSDIR) $(MIDAMAGEDIR)
 IPLANDIRS = $(IPLAN2P2DIR) $(IPLAN2P4DIR) $(IPLAN2P8DIR)
-DDXDIRS = $(DECWSDDXDIR) $(SUNDDXDIR) $(LYNXDDXDIR) \
+DDXDIRS = $(DECWSDDXDIR) $(SUNDDXDIR) \
 	  $(HPDDXDIR) $(XFREE86DDXDIR) \
 	  $(NXAGENTDDXDIR) $(NXWINDDXDIR)
 SUBDIRS = $(STDDIRS) \
