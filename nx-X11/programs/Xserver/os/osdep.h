@@ -61,7 +61,6 @@ SOFTWARE.
 
 #include <X11/Xdmcp.h>
 
-#ifndef sgi	    /* SGI defines OPEN_MAX in a useless way */
 #ifndef X_NOT_POSIX
 #ifdef _POSIX_SOURCE
 #include <limits.h>
@@ -77,7 +76,6 @@ SOFTWARE.
 #undef _POSIX_
 #endif
 #endif /* X_NOT_POSIX */
-#endif
 
 #ifndef OPEN_MAX
 #ifdef SVR4

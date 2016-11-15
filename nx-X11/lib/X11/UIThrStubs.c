@@ -66,7 +66,7 @@ typedef cthread_t xthread_t;
 #pragma weak condition_signal = _Xthr_zero_stub_
 #pragma weak condition_broadcast = _Xthr_zero_stub_
 #else /* !CTHREADS */
-#if defined(SVR4) && !defined(__sgi)
+#if defined(SVR4)
 #include <thread.h>
 typedef thread_t xthread_t;
 #pragma weak thr_self = _Xthr_self_stub_

@@ -269,10 +269,6 @@ long Memory_fail = 0;
 #include <stdlib.h>  /* for random() */
 #endif
 
-#ifdef sgi
-int userdefinedfontpath = 0;
-#endif /* sgi */
-
 char *dev_tty_from_init = NULL;		/* since we need to parse it anyway */
 
 extern char dispatchExceptionAtReset;
@@ -831,9 +827,6 @@ ProcessCommandLine(int argc, char *argv[])
 	{
 	    if(++i < argc)
 	    {
-#ifdef sgi
-		userdefinedfontpath = 1;
-#endif /* sgi */
 	        defaultFontPath = argv[i];
 	    }
 	    else

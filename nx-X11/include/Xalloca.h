@@ -109,14 +109,12 @@ from The Open Group.
  * decide that you don't want to use alloca, you might want to fix it here.
  */
 /* alloca might be a macro taking one arg (hi, Sun!), so give it one. */
-#        ifndef __sgi			/* IRIX 5/6 has definition */
 #          define __Xnullarg		/* as nothing */
 #          ifndef X_NOT_STDC_ENV
              extern void *alloca(__Xnullarg);
 #          else
              extern char *alloca(__Xnullarg);
 #          endif
-#        endif /* __sgi */
 #        define ALLOCATE_LOCAL(size) alloca((int)(size))
 #      endif /* who does alloca */
 #    endif /* NCR */

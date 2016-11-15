@@ -59,8 +59,7 @@ SOFTWARE.
     defined(__sparc64__) || \
     defined(__s390x__) || \
     defined(__amd64__) || defined(amd64) || \
-    defined(__powerpc64__) || \
-    (defined(sgi) && (_MIPS_SZLONG == 64))
+    defined(__powerpc64__)
 #define LONG64				/* 32/64-bit architecture */
 #endif
 
@@ -100,7 +99,7 @@ typedef long INT32;
 #endif
 typedef short INT16;
 
-#if defined(__STDC__) || defined(sgi)
+#if defined(__STDC__)
 typedef signed char    INT8;
 #else
 typedef char           INT8;

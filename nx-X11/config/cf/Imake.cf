@@ -504,24 +504,6 @@
 # define MacIIArchitecture
 #endif /* macII */
 
-#ifdef sgi
-# define MacroIncludeFile <sgi.cf>
-# define MacroFile sgi.cf
-# undef sgi
-# define SGIArchitecture
-# undef mips
-# undef __mips
-# define MipsArchitecture
-# ifdef _SVR4
-#  undef _SVR4
-#  define SVR4Architecture
-# endif
-# ifdef _SYSTYPE_SVR4
-#  undef _SYSTYPE_SVR4
-#  define SVR4Architecture
-# endif
-#endif /* sgi */
-
 #ifdef stellar
 # define MacroIncludeFile <stellar.cf>
 # define MacroFile stellar.cf
