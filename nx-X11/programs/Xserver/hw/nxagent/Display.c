@@ -87,7 +87,7 @@ is" without express or implied warranty.
 #include "Handlers.h"
 
 #include <nx/NX.h>
-#include <nx/NXlib.h>
+#include "compext/Compext.h"
 
 #include NXAGENT_ICON_NAME
 #include X2GOAGENT_ICON_NAME

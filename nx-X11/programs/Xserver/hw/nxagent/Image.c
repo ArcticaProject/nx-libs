@@ -45,7 +45,7 @@
 #include "Pixels.h"
 #include "Utils.h"
 
-#include <nx/NXlib.h>
+#include "compext/Compext.h"
 #include <nx/NXpack.h>
 
 /*

@@ -102,7 +102,7 @@ is" without express or implied warranty.
 #include "Xatom.h"
 #include "Xproto.h"
 
-#include <nx/NXlib.h>
+#include "compext/Compext.h"
 
 #include "mibstorest.h"
 

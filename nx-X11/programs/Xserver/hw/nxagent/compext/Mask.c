@@ -25,9 +25,9 @@
 
 #include <stdio.h>
 
-#include "Xlib.h"
+#include <nx-X11/Xlib.h>
 
-#include "NXpack.h"
+#include <nx/NXpack.h>
 
 #include "Mask.h"
 
@@ -128,7 +128,7 @@ int MaskImage(const ColorMask *mask, XImage *src_image, XImage *dst_image)
   }
   else if (src_image -> bits_per_pixel == 16)
   {
-    /* 
+    /*
      * FIXME: Masking doesn't work in 16 bpp.
      *
 
@@ -485,7 +485,7 @@ static int Pack24To8(unsigned int src_data_size, XImage *src_image, XImage *dst_
     src_pixel = end_of_line;
     end_of_line += bytes_per_line;
   }
-  
+
   return 1;
 }
 

@@ -29,7 +29,6 @@ SHELL:=/bin/bash
 	if test -f nxcomp/Makefile; then ${MAKE} -C nxcomp $@; fi
 	if test -f nxproxy/Makefile; then ${MAKE} -C nxproxy $@; fi
 	if test -d nx-X11; then \
-	    if test -f nxcompext/Makefile; then ${MAKE} -C nxcompext $@; fi; \
 	    if test -f nxcompshad/Makefile; then ${MAKE} -C nxcompshad $@; fi; \
 	    if test -f nx-X11/Makefile; then ${MAKE} -C nx-X11 $@; fi; \
 	fi
@@ -70,7 +69,6 @@ build-full:
 	# nxcomp{ext,shad}.
 	cd nx-X11/lib && make
 
-	cd nxcompext && autoconf && (${CONFIGURE}) && ${MAKE}
 	cd nxcompshad && autoconf && (${CONFIGURE}) && ${MAKE}
 
 	cd nx-X11 && ${MAKE} World
@@ -112,8 +110,7 @@ install-full:
 	sed -e 's|@@NXLIBDIR@@|$(NXLIBDIR)|g' bin/nxagent.in > bin/nxagent
 	$(INSTALL_PROGRAM) bin/nxagent $(DESTDIR)$(BINDIR)
 
-	for d in nxcompext nxcompshad; do \
-	   $(MAKE) -C $$d install; done
+	$(MAKE) -C nxcompshad install
 
 	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/pixmaps
 	$(INSTALL_FILE) nx-X11/programs/Xserver/hw/nxagent/nxagent.xpm $(DESTDIR)$(PREFIX)/share/pixmaps
@@ -198,7 +195,6 @@ uninstall-full:
 	$(RM_DIR) $(DESTDIR)$(NXLIBDIR)/share/nx/
 
 	if test -d nx-X11; then \
-	    if test -f nxcompext/Makefile; then ${MAKE} -C nxcompext $@; fi; \
 	    if test -f nxcompshad/Makefile; then ${MAKE} -C nxcompshad $@; fi; \
 	    if test -f nx-X11/Makefile; then \
 	        if test -d $(NXLIBDIR); then rm -rf $(NXLIBDIR); fi; \

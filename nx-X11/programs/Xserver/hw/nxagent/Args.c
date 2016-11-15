@@ -75,7 +75,7 @@ is" without express or implied warranty.
  * NX includes and definitions.
  */
 
-#include <nx/NXlib.h>
+#include "compext/Compext.h"
 #include <nx/NXpack.h>
 
 /*

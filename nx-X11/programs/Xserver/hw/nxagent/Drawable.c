@@ -42,7 +42,7 @@
 #include "Reconnect.h"
 #include "GCOps.h"
 
-#include <nx/NXlib.h>
+#include "compext/Compext.h"
 
 #include "mibstorest.h"
 

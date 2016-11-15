@@ -1,11 +1,18 @@
 #include <Server.tmpl>
 
+
+NULL =
+
+SUBDIRS = compext \
+          $(NULL)
+
 #ifdef OS2Architecture
 SRCS1 = os2Stub.c
 OBJS1 = os2Stub.o
 #endif
 
-SRCS =  NXwindow.c \
+SRCS =  \
+	NXwindow.c \
 	NXevents.c \
 	NXproperty.c \
 	NXdixfonts.c \
@@ -64,9 +71,11 @@ SRCS =  NXwindow.c \
 	stubs.c \
 	xpstubs.c \
 	miinitext.c \
-	$(SRCS1)
+	$(SRCS1) \
+	$(NULL)
 
-OBJS =  NXwindow.o \
+OBJS =  \
+	NXwindow.o \
 	NXevents.o \
 	NXproperty.o \
 	NXdixfonts.o \
@@ -125,44 +134,78 @@ OBJS =  NXwindow.o \
 	stubs.o \
 	xpstubs.o \
 	miinitext.o \
-	$(OBJS1)
+	$(OBJS1) \
+	$(NULL)
 
-VFBINCLUDES = -I../../fb -I../../mfb -I../../render
+VFBINCLUDES =  \
+	-I../../fb \
+	-I../../mfb \
+	-I../../render \
+	$(NULL)
 
-INCLUDES = -I. \
-           -I../../../../extras/Mesa/include \
-	   -I$(XBUILDINCDIR) \
-	   -I../../mi -I../../include -I../../os \
-           -I../../miext/damage -I../../miext/cw \
-	   -I../../GL/glx -I../../GL/include -I../../../../lib/GL/include -I../../Xext \
-           -I$(EXTINCSRC) -I$(XINCLUDESRC) \
-	   $(VFBINCLUDES) \
-           `pkg-config --cflags-only-I libxml-2.0` \
-           `pkg-config --cflags-only-I pixman-1`
+INCLUDES = \
+	-I. \
+	-I../../../../extras/Mesa/include \
+	-I$(XBUILDINCDIR) \
+	-I../../mi \
+	-I../../include \
+	-I../../os \
+	-I../../miext/damage \
+	-I../../miext/cw \
+	-I../../GL/glx \
+	-I../../GL/include \
+	-I../../../../lib/GL/include \
+	-I../../Xext \
+	-I$(EXTINCSRC) -I$(XINCLUDESRC) \
+	$(VFBINCLUDES) \
+	`pkg-config --cflags-only-I libxml-2.0` \
+	`pkg-config --cflags-only-I pixman-1` \
+	$(NULL)
 #ifdef SunArchitecture
-INCLUDES = -I. \
-           -I../../../../extras/Mesa/include \
-	   -I$(XBUILDINCDIR) \
-	   -I/usr/sfw/include \
-	   -I../../mi -I../../include -I../../os \
-	   -I../../GL/glx -I../../GL/include -I../../../../lib/GL/include -I../../Xext \
-           -I../../miext/damage -I../../miext/cw \
-           -I$(EXTINCSRC) -I$(XINCLUDESRC) \
-	   $(VFBINCLUDES) \
-           `pkg-config --cflags-only-I libxml-2.0`
-           `pkg-config --cflags-only-I pixman-1`
+INCLUDES = \
+	-I. \
+	-I../../../../extras/Mesa/include \
+	-I$(XBUILDINCDIR) \
+	-I/usr/sfw/include \
+	-I../../mi \
+	-I../../include \
+	-I../../os \
+	-I../../GL/glx \
+	-I../../GL/include \
+	-I../../../../lib/GL/include \
+	-I../../Xext \
+	-I../../miext/damage \
+	-I../../miext/cw \
+	-I$(EXTINCSRC) -I$(XINCLUDESRC) \
+	$(VFBINCLUDES) \
+	`pkg-config --cflags-only-I libxml-2.0` \
+	`pkg-config --cflags-only-I pixman-1` \
+	`pkg-config --cflags-only-I zlib` \
+	`pkg-config --cflags-only-I libpng` \
+	$(NULL)
 #else
 #ifdef cygwinArchitecture
-INCLUDES = -I. -I$(XBUILDINCDIR) \
-	   -I../../mi -I../../include -I../../os \
-	   -I../../GL/glx -I../../GL/include -I../../../../lib/GL/include -I../../Xext \
-           -I../../miext/damage -I../../miext/cw \
-           -I../../../../../nxcomp -I../../../../../nxcompext -I../../../../../nxcompshad \
-           -I../../../../extras/Mesa/include \
-           -I$(EXTINCSRC) -I$(XINCLUDESRC) \
-	   $(VFBINCLUDES) \
-           `pkg-config --cflags-only-I libxml-2.0`
-           `pkg-config --cflags-only-I pixman-1`
+INCLUDES = \
+	-I. -I$(XBUILDINCDIR) \
+	-I../../mi \
+	-I../../include \
+	-I../../os \
+	-I../../GL/glx \
+	-I../../GL/include \
+	-I../../../../lib/GL/include \
+	-I../../Xext \
+	-I../../miext/damage \
+	-I../../miext/cw \
+	-I../../../../../nxcomp \
+	-I../../../../../nxcompshad \
+	-I../../../../extras/Mesa/include \
+	-I$(EXTINCSRC) -I$(XINCLUDESRC) \
+	$(VFBINCLUDES) \
+	`pkg-config --cflags-only-I libxml-2.0` \
+	`pkg-config --cflags-only-I pixman-1` \
+	`pkg-config --cflags-only-I zlib` \
+	`pkg-config --cflags-only-I libpng` \
+	$(NULL)
 #endif
 #endif
 
@@ -182,36 +225,40 @@ INCLUDES = -I. -I$(XBUILDINCDIR) \
 # NXAGENT_RANDR_XINERAMA_CLIPPING  cut off invisible window parts in xinerama mode (you probably do not want this)
 
 #if nxVersion
-NX_DEFINES=-DNX_VERSION_CURRENT="$(NX_VERSION_CURRENT)" \
-           -DNX_VERSION_CURRENT_STRING="\"$(NX_VERSION_CURRENT_STRING)\""
+NX_DEFINES = \
+	-DNX_VERSION_CURRENT="$(NX_VERSION_CURRENT)" \
+	-DNX_VERSION_CURRENT_STRING="\"$(NX_VERSION_CURRENT_STRING)\"" \
+	$(NULL)
 #endif
 
-DEFINES = -g $(OS_DEFINES) $(EXT_DEFINES) $(NX_DEFINES) \
-          -UXF86VIDMODE -UXFreeXDGA -UXF86MISC -UXF86DRI -UXFree86LOADER \
-          -DNXAGENT_SERVER \
-          -DNXAGENT_CONSTRAINCURSOR \
-          -DNXAGENT_FONTCACHE_SIZE=50 \
-          -DNXAGENT_GLYPHCACHE -DNXAGENT_GLYPHCACHE_SIZE=50 \
-          -DNXAGENT_SHAPE2 \
-          -DNXAGENT_FIXKEYS \
-          -DNXAGENT_CLIPBOARD \
-          -DNXAGENT_EXPOSURES \
-          -DNXAGENT_FONTEXCLUDE \
-          -DNXAGENT_PACKEDIMAGES \
-          -DNXAGENT_VISIBILITY \
-          -DNXAGENT_WAKEUP=1000 \
-          -DNXAGENT_ONSTART \
-          -DNXAGENT_SPLASH \
-          -DNXAGENT_ARTSD \
-          -DNXAGENT_RANDR_MODE_PREFIX \
-          -UNX_DEBUG_INPUT \
-	  -DRANDR_10_INTERFACE=1 \
-	  -DRANDR_12_INTERFACE=1 \
-	  -DRANDR_13_INTERFACE=1 \
-	  -DRANDR_14_INTERFACE=1 \
-	  -DRANDR_15_INTERFACE=1 \
-          -DPANORAMIX \
-          -UDEBUG_TREE
+DEFINES = \
+	-g $(OS_DEFINES) $(EXT_DEFINES) $(NX_DEFINES) \
+        -UXF86VIDMODE -UXFreeXDGA -UXF86MISC -UXF86DRI -UXFree86LOADER \
+        -DNXAGENT_SERVER \
+        -DNXAGENT_CONSTRAINCURSOR \
+        -DNXAGENT_FONTCACHE_SIZE=50 \
+        -DNXAGENT_GLYPHCACHE -DNXAGENT_GLYPHCACHE_SIZE=50 \
+        -DNXAGENT_SHAPE2 \
+        -DNXAGENT_FIXKEYS \
+        -DNXAGENT_CLIPBOARD \
+        -DNXAGENT_EXPOSURES \
+        -DNXAGENT_FONTEXCLUDE \
+        -DNXAGENT_PACKEDIMAGES \
+        -DNXAGENT_VISIBILITY \
+        -DNXAGENT_WAKEUP=1000 \
+        -DNXAGENT_ONSTART \
+        -DNXAGENT_SPLASH \
+        -DNXAGENT_ARTSD \
+        -DNXAGENT_RANDR_MODE_PREFIX \
+        -UNX_DEBUG_INPUT \
+	-DRANDR_10_INTERFACE=1 \
+	-DRANDR_12_INTERFACE=1 \
+	-DRANDR_13_INTERFACE=1 \
+	-DRANDR_14_INTERFACE=1 \
+	-DRANDR_15_INTERFACE=1 \
+        -DPANORAMIX \
+        -UDEBUG_TREE \
+	$(NULL)
 
 all:: $(OBJS)
 
@@ -225,3 +272,7 @@ NormalLibraryObjectRule()
 NormalLibraryTarget(nxagent,$(OBJS))
 
 DependTarget()
+
+#define IHaveSubdirs
+MakeSubdirs($(SUBDIRS))
+DependSubdirs($(SUBDIRS))

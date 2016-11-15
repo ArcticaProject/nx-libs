@@ -23,22 +23,28 @@
 /*                                                                        */
 /**************************************************************************/
 
-#ifndef Clean_H
-#define Clean_H
+#include <zlib.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "Compext.h"
 
-#include "Xlib.h"
+#include "Alpha.h"
+#include "Z.h"
 
-int CleanXYImage(XImage *image);
-int CleanZImage(XImage *image);
+#define PANIC
+#define WARNING
+#undef  TEST
+#undef  DEBUG
 
-int CopyAndCleanImage(XImage *src_image, XImage *dst_image);
+#define ALPHA_COMPRESSION_LEVEL      1
+#define ALPHA_COMPRESSION_THRESHOLD  32
+#define ALPHA_COMPRESSION_STRATEGY   Z_RLE
 
-#ifdef __cplusplus
+static int alphaCompressionLevel     = ALPHA_COMPRESSION_LEVEL;
+static int alphaCompressionThreshold = ALPHA_COMPRESSION_THRESHOLD;
+static int alphaCompressionStrategy  = ALPHA_COMPRESSION_STRATEGY;
+
+char *AlphaCompressData(const char *data, unsigned int size, unsigned int *compressed_size)
+{
+  return ZCompressData(data, size, alphaCompressionThreshold, alphaCompressionLevel,
+                           alphaCompressionStrategy, compressed_size);
 }
-#endif
-
-#endif /* Clean_H */

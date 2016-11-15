@@ -58,7 +58,7 @@ is" without express or implied warranty.
 
 #include "Args.h"
 
-#include <nx/NXlib.h>
+#include "compext/Compext.h"
 #include <nx/NXalert.h>
 
 #include <string.h>

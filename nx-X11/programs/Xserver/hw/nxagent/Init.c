@@ -75,7 +75,7 @@ is" without express or implied warranty.
 #include "Error.h"
 
 #include <nx/NX.h>
-#include <nx/NXlib.h>
+#include "compext/Compext.h"
 #include "Reconnect.h"
 /*
  * Set here the required log level.

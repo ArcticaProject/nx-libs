@@ -50,7 +50,7 @@
 #include "Holder.h"
 #include "Args.h"
 
-#include <nx/NXlib.h>
+#include "compext/Compext.h"
 #include <nx/NXpack.h>
 
 RESTYPE  RT_NX_PIXMAP;

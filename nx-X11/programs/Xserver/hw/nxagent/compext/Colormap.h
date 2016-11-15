@@ -23,28 +23,23 @@
 /*                                                                        */
 /**************************************************************************/
 
-#include <zlib.h>
+#ifndef ColormapComp_H
+#define ColormapComp_H
 
-#include "NXlib.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#include "Alpha.h"
-#include "Z.h"
+extern char *ColormapCompressData(
+#if NeedFunctionPrototypes
+    const char*       /* data */,
+    unsigned int      /* size */,
+    unsigned int*     /* compressed_size */
+#endif
+);
 
-#define PANIC
-#define WARNING
-#undef  TEST
-#undef  DEBUG
-
-#define ALPHA_COMPRESSION_LEVEL      1
-#define ALPHA_COMPRESSION_THRESHOLD  32
-#define ALPHA_COMPRESSION_STRATEGY   Z_RLE
-
-static int alphaCompressionLevel     = ALPHA_COMPRESSION_LEVEL;
-static int alphaCompressionThreshold = ALPHA_COMPRESSION_THRESHOLD;
-static int alphaCompressionStrategy  = ALPHA_COMPRESSION_STRATEGY;
-
-char *AlphaCompressData(const char *data, unsigned int size, unsigned int *compressed_size)
-{
-  return ZCompressData(data, size, alphaCompressionThreshold, alphaCompressionLevel,
-                           alphaCompressionStrategy, compressed_size);
+#ifdef __cplusplus
 }
+#endif
+
+#endif /* ColormapComp_H */

@@ -213,39 +213,6 @@ using X applications over a network, especially a slow one.
 This package contains the NX differential compression library for X11.
 
 
-%package -n libXcompext-devel
-Group:          Development/Libraries
-Summary:        Development files for the NX compression extensions library
-Requires:       libXcompext3%{?_isa} = %{version}-%{release}
-Requires:       libNX_X11-devel%{?_isa} = %{version}-%{release}
-Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
-
-%description -n libXcompext-devel
-NX is a software suite from NoMachine which implements very efficient
-compression of the X11 protocol. This increases performance when
-using X applications over a network, especially a slow one.
-
-The NX compression extensions library's development files.
-
-
-%package -n libXcompext3
-Group:          System Environment/Libraries
-Summary:        NX protocol compression extensions library
-Requires:       %{name}%{?_isa} >= 3.5.0.29
-Obsoletes:      libXcompext <= 3.5.1
-Provides:       libXcompext = %{version}-%{release}
-Obsoletes:      libXcompext%{?_isa} <= 3.5.1
-Provides:       libXcompext%{?_isa} = %{version}-%{release}
-
-%description -n libXcompext3
-NX is a software suite from NoMachine which implements very efficient
-compression of the X11 protocol. This increases performance when
-using X applications over a network, especially a slow one.
-
-This package provides the library to support additional features to
-the core NX library.
-
-
 %package -n libXcompshad-devel
 Group:          Development/Libraries
 Summary:        Development files for the NX session shadowing library
@@ -317,6 +284,8 @@ Obsoletes:      nx%{?_isa} < 3.5.0-19
 Provides:       nx%{?_isa} = %{version}-%{release}
 Conflicts:      nxauth < 3.5.99.1
 Conflicts:      nxauth%{?_isa} < 3.5.99.1
+Conflicts:      libXcompext < 3.5.99.3
+Conflicts:      libXcompext%{?_isa} < 3.5.99.3
 %if 0%{?suse_version}
 Requires:       xorg-x11-fonts-core
 %endif
@@ -426,12 +395,10 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %post -p /sbin/ldconfig
 %post -n libNX_X11-6 -p /sbin/ldconfig
 %post -n libXcomp3 -p /sbin/ldconfig
-%post -n libXcompext3 -p /sbin/ldconfig
 %post -n libXcompshad3 -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 %postun -n libNX_X11-6 -p /sbin/ldconfig
 %postun -n libXcomp3 -p /sbin/ldconfig
-%postun -n libXcompext3 -p /sbin/ldconfig
 %postun -n libXcompshad3 -p /sbin/ldconfig
 
 %files
@@ -482,17 +449,6 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %doc doc/nxcomp/README.on-retroactive-DXPC-license
 %doc doc/nxcomp/nxcomp-3.6-drops-compat-code-3.4.x-testing.pdf
 %_libdir/libXcomp.so.3*
-
-%files -n libXcompext-devel
-%defattr(-,root,root)
-%_libdir/libXcompext.so
-%{_includedir}/nx/NXlib.h
-%{_libdir}/pkgconfig/nxcompext.pc
-
-%files -n libXcompext3
-%defattr(-,root,root)
-%doc COPYING
-%_libdir/libXcompext.so.3*
 
 %files -n libXcompshad-devel
 %defattr(-,root,root)

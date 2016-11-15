@@ -33,7 +33,7 @@
 
 #include <jpeglib.h>
 
-#include "NXlib.h"
+#include "Compext.h"
 
 #include "Mask.h"
 #include "Jpeg.h"

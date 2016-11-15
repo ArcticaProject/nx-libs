@@ -23,13 +23,13 @@
 /*                                                                        */
 /**************************************************************************/
 
+#undef _XSERVER64
+
 #include <sys/socket.h>
 
 #ifndef __sun
 #include <strings.h>
 #endif
-
-#include "NX.h"
 
 #include "dix.h"
 #include "os.h"
@@ -41,13 +41,16 @@
 
 #define NX_TRANS_SOCKET
 
-#include "Xlib.h"
-#include "Xutil.h"
-#include "Xlibint.h"
+#include <nx-X11/Xlib.h>
+#include <nx-X11/Xutil.h>
+#include <nx-X11/Xlibint.h>
 
-#include "NXlib.h"
-#include "NXproto.h"
-#include "NXpack.h"
+#include "Compext.h"
+
+#include <nx/NX.h>
+#include <nx/NXproto.h>
+#include <nx/NXpack.h>
+#include <nx/MD5.h>
 
 #include "Clean.h"
 #include "Mask.h"
@@ -55,12 +58,11 @@
 #include "Alpha.h"
 #include "Bitmap.h"
 #include "Jpeg.h"
-#include "Pgn.h"
+#include "Png.h"
 #include "Rgb.h"
 #include "Rle.h"
 #include "Z.h"
 
-#include "MD5.h"
 
 #define PANIC
 #define WARNING
@@ -991,7 +993,7 @@ Status NXGetUnpackParameters(Display *dpy, unsigned int *entries, unsigned char 
       fprintf(stderr, "[%d]", i);
     }
   }
-  
+
   fprintf(stderr, ".\n");
 
   #endif
@@ -1259,7 +1261,7 @@ Status NXGetFontParameters(Display *dpy, unsigned int path_length, char path_dat
   {
     fprintf(stderr, "%c", *(path_data + i + 1));
   }
-  
+
   fprintf(stderr, "].\n");
 
   #endif
@@ -1285,7 +1287,7 @@ unsigned int NXAllocSplit(Display *dpy, unsigned int resource)
         fprintf(stderr, "******NXAllocSplit: Reserved resource [%u].\n",
                     resource);
         #endif
-    
+
         return resource;
       }
     }
@@ -1312,7 +1314,7 @@ unsigned int NXAllocSplit(Display *dpy, unsigned int resource)
     }
 
     #endif
-    
+
     _NXSplitResources[resource] = 1;
   }
 
@@ -1570,7 +1572,7 @@ unsigned int NXAllocUnpack(Display *dpy, unsigned int resource)
         fprintf(stderr, "******NXAllocUnpack: Reserved resource [%u].\n",
                     resource);
         #endif
-    
+
         return resource;
       }
     }
@@ -1597,7 +1599,7 @@ unsigned int NXAllocUnpack(Display *dpy, unsigned int resource)
     }
 
     #endif
-    
+
     _NXUnpackResources[resource] = 1;
   }
 
@@ -2120,7 +2122,7 @@ NXPackedImage *NXPackImage(Display *dpy, XImage *src_image, unsigned int method)
   #endif
 
   /*
-   * Get the mask out of the method and 
+   * Get the mask out of the method and
    * check if the visual is supported by
    * the color reduction algorithm.
    */
@@ -2604,10 +2606,10 @@ int NXAllocColors(Display *dpy, Colormap colormap, unsigned int entries,
       screens_in_out[i].red   = rep.red;
       screens_in_out[i].green = rep.green;
       screens_in_out[i].blue  = rep.blue;
-      
+
       results_in_out[i] = True;
-    } 
-    else 
+    }
+    else
     {
       results_in_out[i] = False;
 
