@@ -248,8 +248,7 @@ NXAGENTOBJS = hw/nxagent/miinitext.o     \
               hw/nxagent/NXmiexpose.o    \
               hw/nxagent/NXresource.o    \
               hw/nxagent/NXdamage.o
-#elif !defined(Win32Architecture) && \
-      !defined(QNX4Architecture)
+#elif !defined(Win32Architecture)
 NXAGENTOBJS = hw/nxagent/miinitext.o     \
               hw/nxagent/NXwindow.o      \
               hw/nxagent/NXevents.o      \

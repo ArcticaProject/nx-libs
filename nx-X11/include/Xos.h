@@ -221,13 +221,6 @@ struct timeval {
 }
 #elif defined(_SEQUENT_)
 #include <time.h>
-#elif defined (__QNX__)
-typedef unsigned long fd_mask;
-/* Make sure we get 256 bit select masks */
-#define FD_SETSIZE 256
-#include <sys/select.h>
-#include <sys/time.h>
-#include <time.h>
 #else
 #include <sys/time.h>
 #include <time.h>
@@ -264,8 +257,7 @@ typedef unsigned long fd_mask;
 #endif
 
 #if defined(ISC) || \
-    (defined(__linux__) && !defined(__GLIBC__)) || \
-    (defined(__QNX__) && !defined(UNIXCONN))
+    (defined(__linux__) && !defined(__GLIBC__))
 /*
  *	Some OS's may not have this
  */

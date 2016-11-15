@@ -113,7 +113,7 @@ OR PERFORMANCE OF THIS SOFTWARE.
 #ifndef WIN32
 #include <sys/wait.h>
 #endif
-#if !defined(SYSV) && !defined(WIN32) && !defined(QNX4)
+#if !defined(SYSV) && !defined(WIN32)
 #include <sys/resource.h>
 #endif
 #include <time.h>
@@ -2007,9 +2007,6 @@ CheckUserParameters(int argc, char **argv, char **envp)
     enum BadCode bad = NotBad;
     int i = 0, j;
     char *a, *e = NULL;
-#if defined(__QNX__) && !defined(__QNXNTO__)
-    char cmd_name[64];
-#endif
 
 #if CHECK_EUID
     if (geteuid() == 0 && getuid() != geteuid())

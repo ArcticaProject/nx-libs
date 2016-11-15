@@ -1078,10 +1078,6 @@ InstallNonExecFile(Xcms.txt,$(LIBDIR))
 InstallNonExecFile(XErrorDB,$(LIBDIR))
 InstallLintLibrary(X11,$(LINTLIBDIR))
 
-#ifdef QNX4Architecture
-LOCAL_LDFLAGS=-F
-#endif
-
 MAKEKEYS = ./makekeys
 KEYSYMDEFS =  $(XINCLUDESRC)/keysymdef.h $(XINCLUDESRC)/XF86keysym.h $(XINCLUDESRC)/Sunkeysym.h $(XINCLUDESRC)/DECkeysym.h $(XINCLUDESRC)/HPkeysym.h
 
