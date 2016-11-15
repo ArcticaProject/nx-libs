@@ -86,9 +86,6 @@ from The Open Group.
 #  include <sysent.h>
 # endif
 #else /* not SVR4 */
-# ifdef __QNX__  /* Make sure we get 256 bit select masks */
-#  define FD_SETSIZE 256
-# endif
 # include <sys/select.h>
 #endif
 

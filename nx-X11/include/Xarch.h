@@ -79,18 +79,6 @@
 #define LITTLE_ENDIAN 1234
 #define BIG_ENDIAN    4321
 
-#if defined(__QNX__) && !defined(__QNXNTO__)
-#define BYTE_ORDER LITTLE_ENDIAN
-#endif
-
-#if defined(__QNXNTO__)
-#if defined(i386) || defined(__i386__) || defined(__x86__)
-#define BYTE_ORDER LITTLE_ENDIAN
-#else
-#define BYTE_ORDER BIG_ENDIAN
-#endif
-#endif
-
 #if (defined(sun) && defined(SVR4))
 #include <sys/isa_defs.h>
 #ifdef _LITTLE_ENDIAN
