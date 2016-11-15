@@ -63,11 +63,7 @@ Sun Microsystems, Inc. or its licensors is granted.
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #else
-# if defined(hpux)
-#  define HAVE_DL_H
-# else
-#  define HAVE_DLFCN_H
-# endif
+# define HAVE_DLFCN_H
 #endif
 
 #include <stdio.h>
@@ -106,11 +102,7 @@ typedef struct {
   char *im_unregister;
   int dl_release;
   unsigned int refcount;
-#if defined(hpux)
-  shl_t dl_module;
-#else
   void *dl_module;
-#endif
 } XI18NObjectsListRec, *XI18NObjectsList;
 
 #define OBJECT_INIT_LEN 8
@@ -156,7 +148,6 @@ strdup_with_underscore(const char *symbol)
 	return result;
 }
 
-#ifndef hpux
 static void *
 try_both_dlsym (void *handle, char *name)
 {
@@ -174,7 +165,6 @@ try_both_dlsym (void *handle, char *name)
     }
     return ret;
 }
-#endif
 
 static void
 resolve_object(char *path, const char *lc_name)
@@ -301,11 +291,7 @@ open_object(
       path = __lc_path(object->dl_name, lc_dir);
       if (!path)
 	  return False;
-#if defined(hpux)
-      object->dl_module = shl_load(path, BIND_DEFERRED, 0L);
-#else
       object->dl_module = dlopen(path, RTLD_LAZY);
-#endif
       Xfree(path);
 
       if (!object->dl_module)
@@ -322,31 +308,11 @@ fetch_symbol(
      char *symbol)
 {
     void *result = NULL;
-#if defined(hpux)
-    int getsyms_cnt, i;
-    struct shl_symbol *symbols;
-#endif
 
     if (symbol == NULL)
     	return NULL;
 
-#if defined(hpux)
-    getsyms_cnt = shl_getsymbols(object->dl_module, TYPE_PROCEDURE,
-				 EXPORT_SYMBOLS, malloc, &symbols);
-
-    for(i=0; i<getsyms_cnt; i++) {
-        if(!strcmp(symbols[i].name, symbol)) {
-	    result = symbols[i].value;
-	    break;
-         }
-    }
-
-    if(getsyms_cnt > 0) {
-        free(symbols);
-    }
-#else
     result = try_both_dlsym(object->dl_module, symbol);
-#endif
 
     return result;
 }
@@ -357,11 +323,7 @@ close_object(XI18NObjectsList object)
   object->refcount--;
   if (object->refcount == 0)
     {
-#if defined(hpux)
-        shl_unload(object->dl_module);
-#else
         dlclose(object->dl_module);
-#endif
         object->dl_module = NULL;
     }
 }
@@ -466,10 +428,6 @@ _XDynamicRegisterIMInstantiateCallback(
   Bool ret_flag = False;
   int count;
   XI18NObjectsList objects_list = xi18n_objects_list;
-#if defined(hpux)
-  int getsyms_cnt, i;
-  struct shl_symbol *symbols;
-#endif
 
   lc_name = lcd->core->name;
 
@@ -514,10 +472,6 @@ _XDynamicUnRegisterIMInstantiateCallback(
   Bool ret_flag = False;
   int count;
   XI18NObjectsList objects_list = xi18n_objects_list;
-#if defined(hpux)
-  int getsyms_cnt, i;
-  struct shl_symbol *symbols;
-#endif
 
   lc_name = lcd->core->name;
   if (_XlcLocaleDirName(lc_dir, BUFSIZE, lc_name) == NULL) return False;
@@ -570,10 +524,6 @@ _XDynamicOpenOM(XLCd lcd, Display *display, XrmDatabase rdb,
   char *lc_name;
   dynamicIOpenProcp om_openOM = (dynamicIOpenProcp)NULL;
   XI18NObjectsList objects_list = xi18n_objects_list;
-#if defined(hpux)
-  int getsyms_cnt, i;
-  struct shl_symbol *symbols;
-#endif
 
   lc_name = lcd->core->name;
 

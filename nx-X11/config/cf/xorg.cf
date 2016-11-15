@@ -244,7 +244,7 @@ NX_VERSION_CURRENT_STRING  = nxVersionString
     defined(Sparc64Architecture) || defined(MipsArchitecture) || \
     defined(AlphaArchitecture) || defined(PpcArchitecture) || \
     defined(Mc68020Architecture) || defined(Arm32Architecture) || \
-    defined(HPArchitecture) || defined(SuperHArchitecture)
+    defined(SuperHArchitecture)
 # ifndef XorgServer
 #  define XorgServer		YES
 # endif

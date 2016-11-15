@@ -82,11 +82,6 @@ SOFTWARE.
 #ifndef WIN32
 #include <sys/socket.h>
 
-#ifdef hpux
-#include <sys/utsname.h>
-#include <sys/ioctl.h>
-#endif
-
 #if defined(DGUX)
 #include <sys/ioctl.h>
 #include <sys/utsname.h>
@@ -106,7 +101,9 @@ SOFTWARE.
 #if defined(TCPCONN)
 # include <netinet/in.h>
 # include <arpa/inet.h>
-# if !defined(hpux)
+
+/* FIXME: correct indentation levels after ancient platform support clean-up */
+
 #  ifdef apollo
 #   ifndef NO_TCP_H
 #    include <netinet/tcp.h>
@@ -117,7 +114,6 @@ SOFTWARE.
 #   endif
 #   include <netinet/tcp.h>
 #  endif
-# endif
 # include <arpa/inet.h>
 #endif
 

@@ -202,7 +202,6 @@ typedef union { GLfloat f; GLint i; } fi_type;
     defined(__s390x__) || defined(__powerpc__) || \
     defined(__amd64__) || \
     defined(ia64) || defined(__ia64__) || \
-    defined(__hppa__) || defined(hpux) || \
     defined(__mips) || defined(_MIPS_ARCH) || \
     defined(__arm__) || \
     defined(__sh__) || \
