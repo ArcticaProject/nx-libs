@@ -318,9 +318,7 @@ OsSignal(sig, handler)
  * server at a time.  This keeps the servers from stomping on each other
  * if the user forgets to give them different display numbers.
  */
-#ifndef __UNIXOS2__
 #define LOCK_DIR "/tmp"
-#endif
 #define LOCK_TMP_PREFIX "/.tX"
 #define LOCK_PREFIX "/.X"
 #define LOCK_SUFFIX "-lock"
@@ -328,10 +326,6 @@ OsSignal(sig, handler)
 #if defined(DGUX)
 #include <limits.h>
 #include <sys/param.h>
-#endif
-
-#ifdef __UNIXOS2__
-#define link rename
 #endif
 
 #ifndef PATH_MAX
@@ -372,14 +366,7 @@ LockServer(void)
   /*
    * Path names
    */
-#ifndef __UNIXOS2__
   tmppath = LOCK_DIR;
-#else
-  /* OS/2 uses TMP directory, must also prepare for 8.3 names */
-  tmppath = getenv("TMP");
-  if (!tmppath)
-    FatalError("No TMP dir found\n");
-#endif
 
   sprintf(port, "%d", atoi(display));
   len = strlen(LOCK_PREFIX) > strlen(LOCK_TMP_PREFIX) ? strlen(LOCK_PREFIX) :
@@ -422,12 +409,10 @@ LockServer(void)
   if (write(lfd, pid_str, 11) != 11)
     FatalError("Could not write pid to lock file in %s\n", tmp);
 
-#ifndef __UNIXOS2__
 #ifndef USE_CHMOD
   (void) fchmod(lfd, 0444);
 #else
   (void) chmod(tmp, 0444);
-#endif
 #endif
   (void) close(lfd);
 
@@ -507,9 +492,6 @@ UnlockServer(void)
 
   if (!StillLocking){
 
-#ifdef __UNIXOS2__
-  (void) chmod(LockFile,S_IREAD|S_IWRITE);
-#endif /* __UNIXOS2__ */
   (void) unlink(LockFile);
   }
 }
@@ -928,7 +910,7 @@ ProcessCommandLine(int argc, char *argv[])
 #ifdef SERVER_LOCK
 	else if ( strcmp ( argv[i], "-nolock") == 0)
 	{
-#if !defined(WIN32) && !defined(__UNIXOS2__) && !defined(__CYGWIN__)
+#if !defined(WIN32) && !defined(__CYGWIN__)
 	  if (getuid() != 0)
 	    ErrorF("Warning: the -nolock option can only be used by root\n");
 	  else
@@ -1260,7 +1242,7 @@ ExpandCommandLine(int *pargc, char ***pargv)
 {
     int i;
 
-#if !defined(WIN32) && !defined(__UNIXOS2__) && !defined(__CYGWIN__)
+#if !defined(WIN32) && !defined(__CYGWIN__)
     if (getuid() != geteuid())
 	return;
 #endif
@@ -1609,7 +1591,7 @@ OsReleaseSignals (void)
 #endif
 }
 
-#if !defined(WIN32) && !defined(__UNIXOS2__)
+#if !defined(WIN32)
 /*
  * "safer" versions of system(3), popen(3) and pclose(3) which give up
  * all privs before running a command.
@@ -1964,7 +1946,7 @@ Fclose(void * iop)
 #endif
 }
 
-#endif /* !WIN32 && !__UNIXOS2__ */
+#endif /* !WIN32 */
 
 
 /*

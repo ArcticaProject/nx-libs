@@ -31,10 +31,6 @@ in this Software without prior written authorization from The Open Group.
 
 #ifdef USE_DYNAMIC_XCURSOR
 
-#ifdef __UNIXOS2__
-#define RTLD_LAZY 1
-#define LIBXCURSOR "Xcursor.dll"
-#endif
 #include <stdio.h>
 #include <string.h>
 #if defined(hpux)

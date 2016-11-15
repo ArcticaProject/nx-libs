@@ -279,11 +279,7 @@ _XkbGetCharset(void)
     else {
         struct stat sbuf;
         FILE *file;
-#ifndef __UNIXOS2__
         char *cf = CHARSET_FILE;
-#else
-        char *cf = __XOS2RedirRoot(CHARSET_FILE);
-#endif
 
 #ifndef S_ISREG
 # define S_ISREG(mode)   (((mode) & S_IFMT) == S_IFREG)

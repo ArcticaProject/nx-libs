@@ -1481,11 +1481,7 @@ SecurityFreePropertyAccessList(void)
     }
 } /* SecurityFreePropertyAccessList */
 
-#ifndef __UNIXOS2__
 #define SecurityIsWhitespace(c) ( (c == ' ') || (c == '\t') || (c == '\n') )
-#else
-#define SecurityIsWhitespace(c) ( (c == ' ') || (c == '\t') || (c == '\n') || (c == '\r') )
-#endif
 
 static char *
 SecuritySkipWhitespace(
@@ -1774,8 +1770,6 @@ SecurityLoadPropertyAccessList(void)
 
 #endif
 
-#ifndef __UNIXOS2__
-
 #ifdef NXAGENT_SERVER
 
     f = Fopen(_NXGetPolicyFilePath(SecurityPolicyFile), "r");
@@ -1786,20 +1780,6 @@ SecurityLoadPropertyAccessList(void)
 
 #endif
 
-#else
-
-#ifdef NXAGENT_SERVER
-
-    f = Fopen((char*)__XOS2RedirRoot( _NXGetPolicyFilePath(SecurityPolicyFile)), "r");
-
-#else
-
-    f = Fopen((char*)__XOS2RedirRoot(SecurityPolicyFile), "r");
-
-#endif
-
-#endif
- 
     if (!f)
     {
 #ifdef NXAGENT_SERVER

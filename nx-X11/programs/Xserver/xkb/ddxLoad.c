@@ -82,7 +82,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #define	POST_ERROR_MSG1 "\"Errors from xkbcomp are not fatal to the X server\""
 #define	POST_ERROR_MSG2 "\"End of messages from xkbcomp\""
 
-#if defined(__UNIXOS2__) || defined(WIN32)
+#if defined(WIN32)
 #define PATHSEPARATOR "\\"
 #else
 #define PATHSEPARATOR "/"
@@ -558,31 +558,12 @@ char 	*cmd = NULL,file[PATH_MAX],xkm_output_dir[PATH_MAX],*map,*outFile;
 
 #endif
 
-#ifndef __UNIXOS2__
-
 #ifdef NXAGENT_SERVER
         char *xkbbasedir = _NXGetXkbBasePath(XkbBaseDirectory);
         char *xkbbindir = _NXGetXkbCompPath(XkbBinDirectory);
 #else
         char *xkbbasedir = XkbBaseDirectory;
         char *xkbbindir = XkbBinDirectory;
-#endif
-
-#else
-        /* relocate the basedir and replace the slashes with backslashes */
-#ifdef NXAGENT_SERVER
-        char *xkbbasedir = (char*)__XOS2RedirRoot(_NXGetXkbBasePath(XkbBaseDirectory));
-        char *xkbbindir = (char*)__XOS2RedirRoot(_NXGetXkbCompPath(XkbBinDirectory));
-#else
-        char *xkbbasedir = (char*)__XOS2RedirRoot(XkbBaseDirectory);
-        char *xkbbindir = (char*)__XOS2RedirRoot(XkbBinDirectory);
-#endif
-        int i;
-
-	for (i=0; i<strlen(xkbbasedir); i++) 
-            if (xkbbasedir[i]=='/') xkbbasedir[i]='\\';
-	for (i=0; i<strlen(xkbbindir); i++) 
-            if (xkbbindir[i]=='/') xkbbindir[i]='\\';
 #endif
 
 	cmd = Xprintf("\"%s" PATHSEPARATOR "xkbcomp\" -w %d \"-R%s\" -xkm %s%s -em1 %s -emp %s -eml %s keymap/%s \"%s%s.xkm\"",
@@ -675,27 +656,12 @@ char tmpname[PATH_MAX];
            for xkbcomp. xkbcomp does not read from stdin. */
         char *xkmfile = tmpname;
 #endif
-#ifndef __UNIXOS2__
 #ifdef NXAGENT_SERVER
         char *xkbbasedir = _NXGetXkbBasePath(XkbBaseDirectory);
         char *xkbbindir = _NXGetXkbCompPath(XkbBinDirectory);
 #else
         char *xkbbasedir = XkbBaseDirectory;
         char *xkbbindir = XkbBinDirectory;
-#endif
-#else
-        int i;
-#ifdef NXAGENT_SERVER
-        char *xkbbasedir = (char*)__XOS2RedirRoot(_NXGetXkbBasePath(XkbBaseDirectory));
-        char *xkbbindir = (char*)__XOS2RedirRoot(_NXGetXkbCompPath(XkbBinDirectory));
-#else
-        char *xkbbasedir = (char*)__XOS2RedirRoot(XkbBaseDirectory);
-        char *xkbbindir = (char*)__XOS2RedirRoot(XkbBinDirectory);
-#endif
-	for (i=0; i<strlen(xkbbasedir); i++) 
-            if (xkbbasedir[i]=='/') xkbbasedir[i]='\\';
-	for (i=0; i<strlen(xkbbindir); i++) 
-            if (xkbbindir[i]=='/') xkbbindir[i]='\\';
 #endif
         
 	buf = Xprintf(

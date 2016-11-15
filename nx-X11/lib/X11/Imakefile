@@ -806,7 +806,7 @@ SRCS3 = \
 	LockDis.c \
 	x11_trans.c \
 	xim_trans.c \
-	$(XKBSRCS) $(LCSRCS) $(MISCSRCS)
+	$(XKBSRCS) $(LCSRCS)
 
 OBJS3 = \
 	Lab.o \
@@ -889,7 +889,7 @@ OBJS3 = \
 	LockDis.o \
 	x11_trans.o \
 	xim_trans.o \
-	$(XKBOBJS) $(LCOBJS) $(MISCOBJS)
+	$(XKBOBJS) $(LCOBJS)
 
 SHAREDLCDEPSYMSRCS = XlcDL.c XlcSL.c
 
@@ -1035,14 +1035,6 @@ STATICLCOBJS = \
 SHAREDLCOBJS = \
 	$(SHAREDLCDEPOBJS) \
 	$(SHAREDI18NSTATICOBJS) 
-
-#ifdef OS2Architecture
-MISCSRCS = os2Stubs.c
-#endif
-
-#ifdef OS2Architecture
-MISCOBJS = os2Stubs.o
-#endif
 
 OBJS = $(OBJS1) $(OBJS2) $(OBJS3)
 
