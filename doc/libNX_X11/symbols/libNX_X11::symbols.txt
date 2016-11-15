@@ -1,5 +1,5 @@
-### as found in libX11 1.6.3 (20160315)
-
+### as found in libNX_X11 (rebased against libX11 1.6.4) (20161115)
+###
 KeySymToUcs4
 XActivateScreenSaver
 XAddConnectionWatch
@@ -39,6 +39,7 @@ XChangeProperty
 XChangeSaveSet
 XChangeWindowAttributes
 XCheckIfEvent
+XCheckIfEventNoFlush
 XCheckMaskEvent
 XCheckTypedEvent
 XCheckTypedWindowEvent
@@ -468,6 +469,10 @@ XWindowEvent
 XWithdrawWindow
 XWriteBitmapFile
 XXorRegion
+XauDisposeAuth
+XauFileName
+XauGetBestAuthByAddr
+XauReadAuth
 XcmsAddColorSpace
 XcmsAddFunctionSet
 XcmsAllocColor
@@ -780,6 +785,31 @@ XwcTextListToTextProperty
 XwcTextPerCharExtents
 XwcTextPropertyToTextList
 _Utf8GetConvByName
+_X11TransBytesReadable
+_X11TransClose
+_X11TransCloseForCloning
+_X11TransConnect
+_X11TransConnectDisplay
+_X11TransConvertAddress
+_X11TransDisconnect
+_X11TransFreeConnInfo
+_X11TransGetConnectionNumber
+_X11TransGetHostname
+_X11TransGetMyAddr
+_X11TransGetPeerAddr
+_X11TransIsLocal
+_X11TransOpenCOTSClient
+_X11TransRead
+_X11TransReadv
+_X11TransSetOption
+_X11TransSocketINET6Funcs
+_X11TransSocketINETFuncs
+_X11TransSocketLocalFuncs
+_X11TransSocketProxyConnInfo
+_X11TransSocketTCPFuncs
+_X11TransSocketUNIXFuncs
+_X11TransWrite
+_X11TransWritev
 _XAllocID
 _XAllocIDs
 _XAllocScratch
@@ -787,18 +817,17 @@ _XAllocTemp
 _XAsyncErrorHandler
 _XCloseLC
 _XColor_to_XcmsRGB
-_XConnectXCB
+_XConnectDisplay
 _XCopyEventCookie
 _XCopyToArg
 _XCreateMutex_fn
-_XData32
+ (arch=amd64 ia64 alpha ppc64 arm64)_XData32
 _XDefaultError
 _XDefaultIOError
-_XDefaultOpenIM
-_XDefaultOpenOM
 _XDefaultWireError
 _XDeq
 _XDeqAsyncHandler
+_XDisconnectDisplay
 _XEatData
 _XEatDataWords
 _XEnq
@@ -818,7 +847,6 @@ _XFreeEventCookies
 _XFreeExtData
 _XFreeMutex_fn
 _XFreeTemp
-_XFreeX11XCBStructure
 _XGetAsyncData
 _XGetAsyncReply
 _XGetBitsPerPixel
@@ -854,7 +882,7 @@ _XPollfdCacheInit
 _XProcessInternalConnection
 _XProcessWindowAttributes
 _XPutBackEvent
-_XRead32
+(arch=amd64 ia64 alpha ppc64 arm64)_XRead32
 _XRead
 _XReadEvents
 _XReadPad
@@ -865,7 +893,9 @@ _XRegisterInternalConnection
 _XReply
 _XReverse_Bytes
 _XScreenOfWindow
+_XSelect
 _XSend
+_XSendClientPrefix
 _XSetClipRectangles
 _XSetImage
 _XSetLastRequestRead
@@ -1073,10 +1103,8 @@ _XimXTransDisconnect
 _XimXTransFreeConnInfo
 _XimXTransGetConnectionNumber
 _XimXTransGetHostname
-_XimXTransGetMyAddr
 _XimXTransGetPeerAddr
 _XimXTransIsLocal
-_XimXTransOpenCLTSClient
 _XimXTransOpenCOTSClient
 _XimXTransRead
 _XimXTransReadv
@@ -1102,9 +1130,9 @@ _XkbInitReadBuffer
 _XkbInternAtomFunc
 _XkbNoteCoreMapChanges
 _XkbPeekAtReadBuffer
-_XkbReadBufferCopy32
+(arch=amd64 ia64 alpha ppc64 arm64)_XkbReadBufferCopy32
 _XkbReadBufferCopyKeySyms
-_XkbReadCopyData32
+(arch=amd64 ia64 alpha ppc64 arm64)_XkbReadCopyData32
 _XkbReadCopyKeySyms
 _XkbReadGetCompatMapReply
 _XkbReadGetGeometryReply
@@ -1113,7 +1141,7 @@ _XkbReadGetMapReply
 _XkbReadGetNamesReply
 _XkbReloadDpy
 _XkbSkipReadBufferData
-_XkbWriteCopyData32
+(arch=amd64 ia64 alpha ppc64 arm64)_XkbWriteCopyData32
 _XkbWriteCopyKeySyms
 _XkeyTable
 _XlcAddCT

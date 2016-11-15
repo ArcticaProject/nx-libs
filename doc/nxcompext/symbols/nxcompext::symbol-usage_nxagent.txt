@@ -1,0 +1,351 @@
+
+#### AlphaCompressData ####
+
+#### BitmapCompressData ####
+
+#### CleanXYImage ####
+
+#### CleanZImage ####
+
+#### ColormapCompressData ####
+
+#### CopyAndCleanImage ####
+
+#### FindLSB ####
+
+#### JpegCompressData ####
+
+#### MaskImage ####
+NXdixfonts.c:225:	     BitmapFormatMaskImageRectangle |
+
+#### MaskInPlaceImage ####
+
+#### NXAbortSplit ####
+Split.c:506:    NXAbortSplit(nxagentDisplay, pResource -> split);
+
+#### NXAllocColors ####
+
+#### NXAllocSplit ####
+Split.c:104:    resource = NXAllocSplit(nxagentDisplay, NXAnyResource);
+
+#### NXAllocUnpack ####
+
+#### NXCacheAddImage ####
+Image.c:1495:      NXCacheAddImage(packedImage, packMethod, packedChecksum);
+
+#### NXCacheFindImage ####
+Image.c:1305:      packedImage = NXCacheFindImage(plainImage, &packMethod, &packedChecksum);
+
+#### NXCleanImage ####
+Cursor.c:209:  NXCleanImage(image);
+Cursor.c:227:  NXCleanImage(image);
+Image.c:1294:      NXCleanImage(plainImage);
+Image.c:1393:          NXCleanImage(plainImage);
+Image.c:1533:        NXCleanImage(plainImage);
+Pixmap.c:1102:    NXCleanImage(image);
+Pixmap.c:1434:  NXCleanImage(image);
+Pixmap.c:1596:  NXCleanImage(image);
+Screen.c:4567:  NXCleanImage(image);
+Screen.c:4680:  NXCleanImage(image);
+
+#### NXCollectGrabPointer ####
+Events.c:1246:          NXCollectGrabPointer(nxagentDisplay, resource,
+Events.c:3055:    case NXCollectGrabPointerNotify:
+Events.c:3060:      fprintf(stderr, "nxagentHandleProxyEvent: NXCollectGrabPointerNotify received with resource [%d].\n",
+Events.c:3884:  NXCollectGrabPointer(nxagentDisplay, resource,
+Events.c:3967:                     X -> xclient.data.l[0] == NXCollectGrabPointerNotify);
+NXevents.c:213:       NXCollectGrabPointer(nxagentDisplay, resource, nxagentWindow(grab -> window),
+
+#### NXCollectImage ####
+
+#### NXCollectInputFocus ####
+Events.c:3068:    case NXCollectInputFocusNotify:
+Events.c:3077:      fprintf(stderr, "nxagentHandleProxyEvent: NXCollectInputFocusNotify received with resource [%d].\n",
+Handlers.c:1039:                     X -> xclient.data.l[0] == NXCollectInputFocusNotify);
+Handlers.c:1331:      NXCollectInputFocus(nxagentDisplay, resource);
+
+#### NXCollectProperty ####
+Clipboard.c:560:        result = NXCollectProperty(nxagentDisplay,
+Clipboard.c:616:        result = NXCollectProperty(nxagentDisplay,
+Events.c:2372:      NXCollectProperty(nxagentDisplay, resource,
+Events.c:3042:    case NXCollectPropertyNotify:
+Events.c:3047:      fprintf(stderr, "nxagentHandleProxyEvent: NXCollectPropertyNotify received with resource [%d].\n",
+
+#### NXCommitSplit ####
+Client.c:319:                      event -> xclient.data.l[0] == NXCommitSplitNotify ||
+Events.c:2986:    case NXCommitSplitNotify:
+Events.c:3001:      fprintf(stderr, "nxagentHandleProxyEvent: NXCommitSplitNotify received with "
+Split.c:814:              event -> xclient.data.l[0] == NXCommitSplitNotify &&
+Split.c:1032:      NXCommitSplit(nxagentDisplay, resource, 1, request, position);
+Split.c:1041:      NXCommitSplit(nxagentDisplay, resource, 0, request, position);
+
+#### NXCreatePackedImage ####
+
+#### NXCreatePalette16 ####
+
+#### NXCreatePalette32 ####
+
+#### NXDestroyPackedImage ####
+
+#### NXDisplayCongestion ####
+Display.c:783:    nxagentCongestion = NXDisplayCongestion(nxagentDisplay);
+
+#### NXDisplayError ####
+Client.c:378:            NXDisplayError(nxagentDisplay) == 1)
+Dialog.c:367:  if (NXDisplayError(nxagentDisplay) == 0 &&
+Dialog.c:377:    while (NXDisplayError(nxagentDisplay) == 0 &&
+Drawable.c:1348:  if (NXDisplayError(nxagentDisplay) == 1)
+Events.c:4541:  if (NXDisplayError(dpy) == 1)
+Font.c:233:  if (NXDisplayError(nxagentDisplay) == 1)
+Font.c:608:     if (nxagentRemoteFontList.length == 0 && (NXDisplayError(nxagentDisplay) == 0))
+Font.c:660:    if (NXDisplayError(nxagentDisplay) == 0)
+Handlers.c:249:  if (NXDisplayError(nxagentDisplay) == 1 && nxagentShadowCounter == 0 && nxagentOption(SleepTime) > 0)
+Handlers.c:544:    if (NXDisplayError(nxagentDisplay) == 0 &&
+Image.c:523:          NXDisplayError(nxagentDisplay) == 1 &&
+Image.c:626:  if (NXDisplayError(nxagentDisplay) == 1)
+Image.c:946:  if (NXDisplayError(nxagentDisplay) == 1)
+Keyboard.c:708:      if (NXDisplayError(nxagentDisplay) == 1)
+Keyboard.c:1162:      if (NXDisplayError(nxagentDisplay) == 1)
+Keyboard.c:1191:      if (NXDisplayError(nxagentDisplay) == 1)
+Keyboard.c:1291:  if (NXDisplayError(nxagentDisplay) == 1)
+Pixmap.c:858:          NXDisplayError(nxagentDisplay) == 1)
+Pointer.c:119:      if (NXDisplayError(nxagentDisplay) == 1)
+Pointer.c:138:      if (NXDisplayError(nxagentDisplay) == 1)
+Pointer.c:155:      if (NXDisplayError(nxagentDisplay) == 1)
+Reconnect.c:712:  if (NXDisplayError(nxagentDisplay) == 0)
+Rootless.c:466:  if (NXDisplayError(nxagentDisplay) == 1)
+Rootless.c:1179:  if (NXDisplayError(nxagentDisplay) == 1)
+Split.c:783:            NXDisplayError(nxagentDisplay) == 1)
+Split.c:787:      if (NXDisplayError(nxagentDisplay) == 1)
+Split.c:885:    if (NXDisplayError(nxagentDisplay) == 1)
+Window.c:2312:  if (NXDisplayError(nxagentDisplay) == 1)
+
+#### NXDisplayFlushable ####
+Handlers.c:467:  flushable = NXDisplayFlushable(nxagentDisplay);
+
+#### NXDisplayReadable ####
+
+#### NXEncodeAlpha ####
+
+#### NXEncodeBitmap ####
+Image.c:1410:          packedImage = NXEncodeBitmap(plainImage, packMethod, packQuality);
+
+#### NXEncodeColormap ####
+
+#### NXEncodeColors ####
+
+#### NXEncodeJpeg ####
+Image.c:1431:      packedImage = NXEncodeJpeg(plainImage, packMethod, packQuality);
+
+#### NXEncodePng ####
+Image.c:1436:      packedImage = NXEncodePng(plainImage, packMethod, packQuality);
+
+#### NXEncodeRgb ####
+Image.c:1416:          packedImage = NXEncodeRgb(plainImage, packMethod, packQuality);
+
+#### NXEncodeRle ####
+Image.c:1422:          packedImage = NXEncodeRle(plainImage, packMethod, packQuality);
+
+#### NXEndSplit ####
+Client.c:320:                          event -> xclient.data.l[0] == NXEndSplitNotify ||
+Events.c:3010:    case NXEndSplitNotify:
+Events.c:3020:      fprintf(stderr, "nxagentHandleProxyEvent: NXEndSplitNotify received with "
+Image.c:835:    NXEndSplit(nxagentDisplay, resource);
+
+#### NXFinishSplit ####
+Client.c:351:  NXFinishSplit(nxagentDisplay, client -> index);
+Split.c:756:  NXFinishSplit(nxagentDisplay, pResource -> split);
+
+#### NXFlushDisplay ####
+Client.c:355:  NXFlushDisplay(nxagentDisplay, NXFlushBuffer);
+Events.c:3354:            NXFlushDisplay(nxagentDisplay, NXFlushLink);
+Events.c:4517:  NXFlushDisplay(dpy, NXFlushLink);
+Handlers.c:487:      NXFlushDisplay(nxagentDisplay, NXFlushLink);
+Handlers.c:524:    NXFlushDisplay(nxagentDisplay, NXFlushLink);
+Handlers.c:838:  NXFlushDisplay(nxagentDisplay, NXFlushLink);
+Handlers.c:1333:      NXFlushDisplay(nxagentDisplay, NXFlushBuffer);
+Split.c:760:  NXFlushDisplay(nxagentDisplay, NXFlushBuffer);
+Split.c:874:  NXFlushDisplay(nxagentDisplay, NXFlushBuffer);
+Window.c:2493:  NXFlushDisplay(nxagentDisplay, NXFlushLink);
+
+#### NXForceDisplayError ####
+Display.c:834:      NXForceDisplayError(display);
+Display.c:2989:    NXForceDisplayError(nxagentDisplay);
+Events.c:4498:    NXForceDisplayError(dpy);
+
+#### NXFreeCache ####
+Display.c:1854:    NXFreeCache(nxagentDisplay);
+
+#### NXFreeSplit ####
+Split.c:185:  NXFreeSplit(nxagentDisplay, pResource -> split);
+
+#### NXFreeUnpack ####
+
+#### NXGetCollectGrabPointerResource ####
+Events.c:1240:          int resource = nxagentWaitForResource(NXGetCollectGrabPointerResource,
+Events.c:3881:  resource = nxagentWaitForResource(NXGetCollectGrabPointerResource,
+NXevents.c:210:       int resource = nxagentWaitForResource(NXGetCollectGrabPointerResource,
+
+#### NXGetCollectImageResource ####
+
+#### NXGetCollectInputFocusResource ####
+Handlers.c:1312:      resource = nxagentWaitForResource(NXGetCollectInputFocusResource,
+
+#### NXGetCollectPropertyResource ####
+Clipboard.c:548:      nxagentLastClipboardClient = NXGetCollectPropertyResource(nxagentDisplay);
+Clipboard.c:604:      nxagentLastClipboardClient = NXGetCollectPropertyResource(nxagentDisplay);
+Events.c:2361:      resource = NXGetCollectPropertyResource(nxagentDisplay);
+
+#### NXGetCollectedGrabPointer ####
+Events.c:3974:  if (NXGetCollectedGrabPointer(nxagentDisplay, resource, &status) == 0)
+
+#### NXGetCollectedImage ####
+
+#### NXGetCollectedInputFocus ####
+Handlers.c:1011:  if (NXGetCollectedInputFocus(nxagentDisplay, resource, &window, &revert_to) == 0)
+
+#### NXGetCollectedProperty ####
+Clipboard.c:677:  result = NXGetCollectedProperty(nxagentDisplay,
+Events.c:4013:    result = NXGetCollectedProperty(nxagentDisplay,
+
+#### NXGetControlParameters ####
+Args.c:1800:      if (NXGetControlParameters(dpy, &linkType, &localMajor, &localMinor,
+
+#### NXGetFontParameters ####
+Font.c:1417:  if (NXGetFontParameters(nxagentDisplay, 256, path) == True)
+
+#### NXGetShmemParameters ####
+Args.c:1873:      if (NXGetShmemParameters(dpy, &enableClient, &enableServer, &clientSegment,
+
+#### NXGetUnpackParameters ####
+Args.c:2228:  if (NXGetUnpackParameters(nxagentDisplay, &entries, supportedMethods) == 0 ||
+
+#### NXHandleDisplayError ####
+Display.c:860:  NXHandleDisplayError(1);
+
+#### NXImageCache ####
+Image.c:1277:                nxagentLosslessTrap == 0 && NXImageCacheSize > 0)
+Image.c:1476:    if (NXImageCacheSize > 0 && packedChecksum != NULL)
+
+#### NXImageCacheHits ####
+
+#### NXImageCacheOps ####
+
+#### NXImageCacheSize ####
+Image.c:1277:                nxagentLosslessTrap == 0 && NXImageCacheSize > 0)
+Image.c:1476:    if (NXImageCacheSize > 0 && packedChecksum != NULL)
+
+#### NXInPlacePackImage ####
+
+#### NXInitCache ####
+Display.c:909:    NXInitCache(nxagentDisplay, 128);
+Display.c:911:    NXInitCache(nxagentDisplay, 256);
+
+#### NXInitDisplay ####
+Display.c:905:    NXInitDisplay(nxagentDisplay);
+
+#### NXMaskImage ####
+
+#### NXPackImage ####
+
+#### NXPutPackedImage ####
+Image.c:933:   * NXPutPackedImage is longer than PutPackedImage
+Image.c:937:  const int subSize = (MAX_REQUEST_SIZE << 2) - sizeof(xNXPutPackedImageReq);
+Image.c:1317:        NXPutPackedImage(nxagentDisplay, client -> index, nxagentDrawable(pDrawable),
+Image.c:1465:    NXPutPackedImage(nxagentDisplay, client -> index, nxagentDrawable(pDrawable),
+
+#### NXResetDisplay ####
+Display.c:932:    NXResetDisplay(nxagentDisplay);
+Display.c:1856:    NXResetDisplay(nxagentDisplay);
+
+#### NXSetCacheParameters ####
+Image.c:776:    NXSetCacheParameters(nxagentDisplay, 0, 1, 0, 0);
+Image.c:913:    NXSetCacheParameters(nxagentDisplay, 1, 1, 1, 1);
+
+#### NXSetDisplayBlockHandler ####
+Display.c:862:  NXSetDisplayBlockHandler(nxagentDisplayBlockHandler);
+
+#### NXSetDisplayBuffer ####
+Args.c:2538:  if (NXSetDisplayBuffer(nxagentDisplay, nxagentBuffer) < 0)
+Handlers.c:430:    NXSetDisplayBuffer(nxagentDisplay, nxagentBuffer);
+Handlers.c:442:    NXSetDisplayBuffer(nxagentDisplay, nxagentBuffer);
+
+#### NXSetDisplayErrorPredicate ####
+Display.c:889:  NXSetDisplayErrorPredicate(nxagentDisplayErrorPredicate);
+
+#### NXSetDisplayFlushHandler ####
+Display.c:866:  NXSetDisplayFlushHandler(nxagentDisplayFlushHandler, NULL);
+Display.c:913:    NXSetDisplayFlushHandler(nxagentDisplayFlushHandler, nxagentDisplay);
+
+#### NXSetDisplayPolicy ####
+Display.c:661:  NXSetDisplayPolicy(nxagentDisplay, NXPolicyImmediate);
+Init.c:457:  NXSetDisplayPolicy(nxagentDisplay, NXPolicyDeferred);
+Reconnect.c:669:  NXSetDisplayPolicy(nxagentDisplay, NXPolicyDeferred);
+
+#### NXSetDisplayStatisticsHandler ####
+
+#### NXSetDisplayWriteHandler ####
+Display.c:864:  NXSetDisplayWriteHandler(nxagentDisplayWriteHandler);
+
+#### NXSetExposeParameters ####
+Args.c:1896:      NXSetExposeParameters(nxagentDisplay, 1, 1, 0);
+Events.c:614:      NXSetExposeParameters(nxagentDisplay, 0, 0, 0);
+Screen.c:969:      NXSetExposeParameters(nxagentDisplay, 0, 0, 0);
+
+#### NXSetLostSequenceHandler ####
+
+#### NXSetUnpackAlpha ####
+Image.c:449:      NXSetUnpackAlpha(nxagentDisplay, resource, PACK_NONE, size, data, size);
+Image.c:453:      NXSetUnpackAlphaCompat(nxagentDisplay, resource, size, data);
+
+#### NXSetUnpackAlphaCompat ####
+Image.c:453:      NXSetUnpackAlphaCompat(nxagentDisplay, resource, size, data);
+
+#### NXSetUnpackColormap ####
+
+#### NXSetUnpackColormapCompat ####
+
+#### NXSetUnpackGeometry ####
+Image.c:1247:      NXSetUnpackGeometry(nxagentDisplay, client -> index, pVisual);
+
+#### NXStartSplit ####
+Client.c:318:                  event -> xclient.data.l[0] == NXStartSplitNotify ||
+Events.c:2958:    case NXStartSplitNotify:
+Events.c:2978:        fprintf(stderr, "nxagentHandleProxyEvent: PANIC! NXStartSplitNotify received "
+Image.c:827:    NXStartSplit(nxagentDisplay, resource, NXSplitModeDefault);
+Split.c:857:                  event -> xclient.data.l[0] == NXStartSplitNotify) &&
+
+#### NXUnsetLibraryPath ####
+Init.c:276:  NXUnsetLibraryPath(1);
+
+#### PackImage ####
+
+#### PngCompareColorTable ####
+
+#### PngCompressData ####
+
+#### RgbCompressData ####
+
+#### RleCompressData ####
+
+#### ZCompressData ####
+
+#### ZInitEncoder ####
+
+#### ZResetEncoder ####
+
+#### _NXInternalInitEncoders ####
+
+#### _NXInternalInitResources ####
+
+#### _NXInternalResetEncoders ####
+
+#### _NXInternalResetResources ####
+
+#### color_type ####
+
+#### info_ptr ####
+
+#### palette ####
+
+#### png_ptr ####

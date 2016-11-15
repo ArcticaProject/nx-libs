@@ -1,0 +1,3288 @@
+
+#### KeySymToUcs4 ####
+
+#### XActivateScreenSaver ####
+
+#### XAddConnectionWatch ####
+
+#### XAddExtension ####
+
+#### XAddHost ####
+
+#### XAddHosts ####
+
+#### XAddPixel ####
+
+#### XAddToExtensionList ####
+
+#### XAddToSaveSet ####
+
+#### XAllPlanes ####
+
+#### XAllocClassHint ####
+
+#### XAllocColor ####
+
+#### XAllocColorCells ####
+
+#### XAllocColorPlanes ####
+
+#### XAllocIconSize ####
+
+#### XAllocNamedColor ####
+
+#### XAllocSizeHints ####
+
+#### XAllocStandardColormap ####
+
+#### XAllocWMHints ####
+
+#### XAllowEvents ####
+NXevents.c:310://      *   XAllowEvents(nxagentDisplay, stuff -> mode, CurrentTime);
+
+#### XAutoRepeatOff ####
+
+#### XAutoRepeatOn ####
+
+#### XBaseFontNameListOfFontSet ####
+
+#### XBell ####
+Keyboard.c:588:  XBell(nxagentDisplay, volume);
+
+#### XBitmapBitOrder ####
+
+#### XBitmapPad ####
+
+#### XBitmapUnit ####
+
+#### XBlackPixel ####
+
+#### XBlackPixelOfScreen ####
+
+#### XCellsOfScreen ####
+
+#### XChangeActivePointerGrab ####
+
+#### XChangeGC ####
+Cursor.c:176:  XChangeGC(nxagentDisplay, nxagentBitmapGC, valuemask, &values);
+GC.c:564:    XChangeGC(nxagentDisplay, nxagentGC(pGC), mask, &values);
+GC.c:1441: * This is why we call the XChangeGC at the end of
+GC.c:1532:  XChangeGC(nxagentDisplay, nxagentGC(pGC), mask, &values);
+GC.c:1561: * lues and to avoid XChangeGC() requests.
+Holder.c:147:  XChangeGC(nxagentDisplay, gc, GCForeground | GCLineWidth | GCLineStyle, &value);
+Holder.c:161:  XChangeGC(nxagentDisplay, gc, GCForeground | GCLineWidth | GCLineStyle, &value);
+
+#### XChangeKeyboardControl ####
+Keyboard.c:660:    XChangeKeyboardControl(nxagentDisplay, value_mask, &values);
+Keyboard.c:675:      XChangeKeyboardControl(nxagentDisplay, value_mask, &values);
+
+#### XChangeKeyboardMapping ####
+
+#### XChangePointerControl ####
+Pointer.c:94:    XChangePointerControl(nxagentDisplay, True, True, 
+
+#### XChangeProperty ####
+Clipboard.c:323:      XChangeProperty (nxagentDisplay,
+Clipboard.c:341:        XChangeProperty(nxagentDisplay,
+Clipboard.c:957:            fprintf (stderr, "SelectionNotify - XChangeProperty failed\n");
+Clipboard.c:963:            result = XChangeProperty(nxagentDisplay,
+Rootless.c:76: * a parameter of XChangeProperty().
+Rootless.c:524:     * Initialize the structure used in XChangeProperty().
+Rootless.c:747:        XChangeProperty(nxagentDisplay, nxagentWindow(pWin), propertyX, typeX,
+Rootless.c:772:          XChangeProperty(nxagentDisplay, nxagentWindow(pWin), propertyX,
+Screen.c:1831:        XChangeProperty(nxagentDisplay,
+Screen.c:2588:  XChangeProperty(nxagentShadowDisplay, DefaultRootWindow(nxagentShadowDisplay),
+
+#### XChangeSaveSet ####
+
+#### XChangeWindowAttributes ####
+Splash.c:159:  XChangeWindowAttributes(nxagentDisplay, nxagentSplashWindow, CWOverrideRedirect, &attributes);
+Window.c:808:  XChangeWindowAttributes(nxagentDisplay, w, valuemask, &attributes);
+Window.c:943:      XChangeWindowAttributes(nxagentDisplay, w, valuemask, &attributes);
+Window.c:1856:    XChangeWindowAttributes(nxagentDisplay, nxagentWindow(pWin), mask, &attributes);
+Window.c:3400:    XChangeWindowAttributes(nxagentDisplay, nxagentWindow(pWin), mask, &attributes);
+
+#### XCheckIfEvent ####
+Events.h:234:    XCheckIfEventNoFlush((display), (event), (predicate), (argument)) 
+
+#### XCheckIfEventNoFlush ####
+Events.h:234:    XCheckIfEventNoFlush((display), (event), (predicate), (argument)) 
+
+#### XCheckMaskEvent ####
+
+#### XCheckTypedEvent ####
+
+#### XCheckTypedWindowEvent ####
+Events.c:3372:              while (XCheckTypedWindowEvent(nxagentDisplay, nxagentDefaultWindows[pScreen -> myNum],
+Screen.c:343:      if (XCheckTypedWindowEvent(nxagentDisplay, nxagentFullscreenWindow, ReparentNotify, &e))
+Screen.c:361:    while (XCheckTypedWindowEvent(nxagentDisplay, nxagentFullscreenWindow, LeaveNotify, &e));
+Window.c:832:      if (XCheckTypedWindowEvent(nxagentDisplay, w, ReparentNotify, &e))
+Window.c:914:      XCheckTypedWindowEvent(nxagentDisplay, w, LeaveNotify, &e);
+
+#### XCheckWindowEvent ####
+
+#### XCirculateSubwindows ####
+Rootless.c:242:  XCirculateSubwindows(nxagentDisplay, DefaultRootWindow(nxagentDisplay), direction);
+
+#### XCirculateSubwindowsDown ####
+
+#### XCirculateSubwindowsUp ####
+
+#### XClearArea ####
+Drawable.c:72: * If defined, send the XClearArea at the end
+Drawable.c:920:            XClearArea(nxagentDisplay, nxagentWindow(owner), scaledx, scaledy, scaledw, scaledh, 0);
+Drawable.c:924:            XClearArea(nxagentDisplay, nxagentWindow(owner), x, y, w, h, 0);
+Drawable.c:1051:          XClearArea(nxagentDisplay, nxagentWindow(owner), scaledx, scaledy, scaledw, scaledh, 0);
+Drawable.c:1055:          XClearArea(nxagentDisplay, nxagentWindow(owner), x, y, w, h, 0);
+Drawable.c:2327:    XClearArea(nxagentDisplay, nxagentWindow(pWin), pBox[i].x1, pBox[i].y1,
+Window.c:2004:      XClearArea(nxagentDisplay, nxagentWindow(pWin),
+
+#### XClearWindow ####
+Events.c:2519:        XClearWindow(nxagentDisplay, nxagentWindowPriv(nxagentRootTileWindow) -> window);
+Pixmap.c:1350:    XClearWindow(shadow, win);
+Pixmap.c:1502:    XClearWindow(shadow, win);
+Screen.c:1898:    XClearWindow(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum]);
+Window.c:481:      XClearWindow(nxagentDisplay, nxagentWindowPriv(nxagentRootTileWindow)->window);
+Window.c:652:    XClearWindow(nxagentDisplay, nxagentWindowPriv(nxagentRootTileWindow) -> window);
+
+#### XClipBox ####
+
+#### XCloseDisplay ####
+Display.c:1869:  XCloseDisplay(nxagentDisplay);
+Display.c:2105:    XCloseDisplay(nxagentDisplayBackup);
+Display.c:2164:        XCloseDisplay(nxagentDisplay);
+
+#### XCloseIM ####
+
+#### XCloseOM ####
+
+#### XConfigureWindow ####
+Pixmap.c:1541:    XConfigureWindow(shadow, win, CWWidth | CWHeight, &values);
+Rootless.c:237:  XConfigureWindow(nxagentDisplay, nxagentWindow(pWin), mask, &changes);
+Screen.c:1819:        XConfigureWindow(nxagentDisplay, nxagentFullscreenWindow, ch_mask, &ch);
+Screen.c:2932:  XConfigureWindow(nxagentDisplay, nxagentWindow(nxagentShadowWindowPtr), mask, &changes);
+Screen.c:2965:  XConfigureWindow(nxagentDisplay, nxagentWindow(pWin), mask, &changes);
+Splash.c:157:  XConfigureWindow(nxagentDisplay, nxagentSplashWindow, CWStackMode, &values);
+Window.c:1358:    XConfigureWindow(nxagentDisplay, nxagentWindow(pWin), valuemask, &values);
+Window.c:1388:    XConfigureWindow(nxagentDisplay, nxagentWindow(pSib), valuemask, &values);
+Window.c:1412:      XConfigureWindow(nxagentDisplay, nxagentWindow(pSib), valuemask, &values);
+Window.c:1480:   *      XConfigureWindow(nxagentDisplay, nxagentSplashWindow, valuemask, &values);
+Window.c:3486:      XConfigureWindow(nxagentDisplay, nxagentConfiguredSynchroWindow,
+
+#### XConnectionNumber ####
+Display.c:110:int nxagentXConnectionNumber;
+Display.c:1236:  nxagentXConnectionNumber = XConnectionNumber(nxagentDisplay);
+Display.c:2937:  int fd = XConnectionNumber(nxagentDisplay);
+Display.c:2939:  nxagentXConnectionNumber = fd;
+Display.c:2943:              "to the device set.\n", nxagentXConnectionNumber);
+Display.c:2946:  AddEnabledDevice(nxagentXConnectionNumber);
+Display.c:2953:              "from the device set.\n", nxagentXConnectionNumber);
+Display.c:2956:  RemoveEnabledDevice(nxagentXConnectionNumber);
+Display.c:2986:                nxagentXConnectionNumber);
+Handlers.c:636:  if (count > 0 && FD_ISSET(nxagentXConnectionNumber, (fd_set *) mask))
+Handlers.c:649:    FD_CLR(nxagentXConnectionNumber, (fd_set *) mask);
+Handlers.c:932:  if (count > 0 && FD_ISSET(nxagentXConnectionNumber, (fd_set *) mask))
+Handlers.c:945:    FD_CLR(nxagentXConnectionNumber, (fd_set *) mask);
+Screen.c:196:int                  nxagentShadowXConnectionNumber;
+Screen.c:2773:  fd = XConnectionNumber(nxagentShadowDisplay);
+Screen.c:2775:  nxagentShadowXConnectionNumber = fd;
+Screen.c:2784:  AddEnabledDevice(nxagentShadowXConnectionNumber);
+Display.h:159:extern int nxagentXConnectionNumber;
+Display.h:166:extern int nxagentShadowXConnectionNumber;
+
+#### XContextDependentDrawing ####
+
+#### XContextualDrawing ####
+
+#### XConvertCase ####
+
+#### XConvertSelection ####
+Clipboard.c:401:      XConvertSelection(nxagentDisplay, CurrentSelections[i].selection,
+Clipboard.c:406:      fprintf(stderr, "nxagentRequestSelection: Sent XConvertSelection.\n");
+Clipboard.c:1353:      XConvertSelection(nxagentDisplay, selection, serverUTF8_STRING, serverCutProperty,
+Clipboard.c:1358:      XConvertSelection(nxagentDisplay, selection, XA_STRING, serverCutProperty,
+Clipboard.c:1363:    fprintf(stderr, "nxagentConvertSelection: Sent XConvertSelection with target=[%s], property [%s]\n",
+
+#### XCopyArea ####
+GCOps.c:276: * XCopyArea request must be skipped.
+GCOps.c:533:      XCopyArea(nxagentDisplay, nxagentDrawable(pSrcDrawable), nxagentDrawable(pDstDrawable),
+GCOps.c:824:    XCopyArea(nxagentDisplay, nxagentDrawable(pSrcDrawable), nxagentDrawable(pDstDrawable),
+Holder.c:182:    XCopyArea(nxagentDisplay, nxagentPlaceholderPixmaps[depth],
+Screen.c:4205:  XCopyArea(nxagentDisplay, nxagentWindow(pWin), nxagentPixmap(pPixmap), gc,
+Screen.c:4340:  XCopyArea(nxagentDisplay, nxagentPixmap(pPixmap), nxagentWindow(pWin), gc,
+
+#### XCopyColormapAndFree ####
+
+#### XCopyGC ####
+GC.c:587:  XCopyGC(nxagentDisplay, nxagentGC(pGCSrc), mask, nxagentGC(pGCDst));
+
+#### XCopyPlane ####
+GCOps.c:1075:    XCopyPlane(nxagentDisplay,
+
+#### XCreateBitmapFromData ####
+
+#### XCreateColormap ####
+Colormap.c:106:    XCreateColormap(nxagentDisplay,
+Colormap.c:569:      XCreateColormap(nxagentDisplay,
+Display.c:1289:    nxagentDefaultColormaps[i] = XCreateColormap(nxagentDisplay,
+Display.c:2790:      nxagentDefaultColormaps[i] = XCreateColormap(nxagentDisplay,
+
+#### XCreateFontCursor ####
+Events.c:1244:          viewportCursor = XCreateFontCursor(nxagentDisplay, XC_fleur);
+
+#### XCreateFontSet ####
+
+#### XCreateGC ####
+Display.c:1372:  nxagentBitmapGC = XCreateGC(nxagentDisplay, nxagentDefaultDrawables[1], 0L, NULL);
+Display.c:2892:  nxagentBitmapGC = XCreateGC(nxagentDisplay, nxagentDefaultDrawables[1], 0L, NULL);
+Drawable.c:2578:  gc = XCreateGC(nxagentDisplay, nxagentWindow(pWin), GCForeground | GCSubwindowMode, &value);
+GC.c:172:  nxagentGCPriv(pGC)->gc = XCreateGC(nxagentDisplay,
+GC.c:1144:  if ((nxagentGC(pGC) = XCreateGC(nxagentDisplay,
+Holder.c:126:  gc = XCreateGC(nxagentDisplay, drawable, GCBackground |
+Pixmap.c:1431:  gc = XCreateGC(shadow, win, GCBackground |
+Pixmap.c:1593:  gc = XCreateGC(shadow, win, GCBackground |
+Screen.c:2816:  gc = XCreateGC(nxagentDisplay, nxagentPixmap(nxagentShadowPixmapPtr), GCBackground |
+Screen.c:4133:  gc = XCreateGC(nxagentDisplay, nxagentWindow(screenInfo.screens[0]->root), GCSubwindowMode, &values);
+Screen.c:4254:  gc = XCreateGC(nxagentDisplay, nxagentWindow(screenInfo.screens[0]->root), GCSubwindowMode, &values);
+Screen.c:4562:  gc = XCreateGC(shadow, win, GCBackground |
+Screen.c:4677:  gc = XCreateGC(shadow, nxagentWindow(screenInfo.screens[0]->root), GCBackground |
+Splash.c:153:  gc = XCreateGC(nxagentDisplay, nxagentSplashWindow, 0, NULL);
+
+#### XCreateGlyphCursor ####
+
+#### XCreateIC ####
+
+#### XCreateImage ####
+Cursor.c:190:  image = XCreateImage(nxagentDisplay,
+Cursor.c:216:  image = XCreateImage(nxagentDisplay,
+Drawable.c:2162:  ximage = XCreateImage(nxagentDisplay, pVisual, depth, format, leftPad, (char *) data,
+Image.c:985:    image = XCreateImage(nxagentDisplay, pVisual, depth, ZPixmap,
+Image.c:1098:   * XCreateImage is the place where the leftPad should be passed.
+Image.c:1107:   * plainImage = XCreateImage(nxagentDisplay, pVisual,
+Image.c:1113:  if ((plainImage = XCreateImage(nxagentDisplay, pVisual,
+Image.c:1698:  newImage = XCreateImage(nxagentDisplay, NULL, image -> depth, image -> format, 0, NULL,
+Pixmap.c:1407:  image = XCreateImage(nxagentDisplay, pVisual,
+Pixmap.c:1415:    fprintf(stderr, "nxagentPixmapOnShadowDisplay: XCreateImage failed.\n");
+Pixmap.c:1569:  image = XCreateImage(nxagentDisplay, pVisual,
+Pixmap.c:1577:    fprintf(stderr, "nxagentFbOnShadowDisplay: XCreateImage failed.\n");
+Screen.c:4660:  image = XCreateImage(nxagentDisplay, pVisual,
+
+#### XCreateOC ####
+
+#### XCreatePixmap ####
+Cursor.c:178:  source = XCreatePixmap(nxagentDisplay,
+Cursor.c:184:  mask = XCreatePixmap(nxagentDisplay,
+Cursor.c:245:         XCreatePixmapCursor(nxagentDisplay, source, mask, &fg_color,
+Display.c:1775:            XCreatePixmap(nxagentDisplay, DefaultRootWindow(nxagentDisplay),
+Display.c:1793:          XCreatePixmap(nxagentDisplay, DefaultRootWindow(nxagentDisplay),
+Pixmap.c:219:    pPixmapPriv -> id = XCreatePixmap(nxagentDisplay,
+Pixmap.c:898:    pPixmapPriv -> id = XCreatePixmap(nxagentDisplay,
+Screen.c:2882:  xid = XCreatePixmap(nxagentDisplay, nxagentDefaultWindows[0],
+Screen.c:3560:  nxagentPixmap(pPixmap) = XCreatePixmap(nxagentDisplay, 
+Screen.c:3574:       XCreatePixmap(nxagentDisplay, 
+Splash.c:223:  nxagentPixmapLogo = XCreatePixmap(nxagentDisplay, win, width, height, nxagentLogoDepth);
+
+#### XCreatePixmapCursor ####
+Cursor.c:245:         XCreatePixmapCursor(nxagentDisplay, source, mask, &fg_color,
+
+#### XCreatePixmapFromBitmapData ####
+
+#### XCreateRegion ####
+Render.c:715:      reg = XCreateRegion();
+Window.c:2346:      reg = XCreateRegion();
+Window.c:2406:      reg = XCreateRegion();
+
+#### XCreateSimpleWindow ####
+Pixmap.c:1346:    win = XCreateSimpleWindow(shadow, DefaultRootWindow(shadow), 0, 0,
+Pixmap.c:1498:    win = XCreateSimpleWindow(shadow, DefaultRootWindow(shadow), 0, 0,
+Screen.c:4493:    win = XCreateSimpleWindow(shadow, DefaultRootWindow(shadow), 0, 0,
+Splash.c:140:      XCreateSimpleWindow(nxagentDisplay,
+
+#### XCreateWindow ####
+Display.c:1384:  nxagentConfineWindow = XCreateWindow(nxagentDisplay,
+Display.c:2898:  nxagentConfineWindow = XCreateWindow(nxagentDisplay,
+Screen.c:392:  w = XCreateWindow(nxagentDisplay, DefaultRootWindow(nxagentDisplay),
+Screen.c:1734:          XCreateWindow(nxagentDisplay,
+Screen.c:1753:             XCreateWindow(nxagentDisplay,
+Window.c:380:  nxagentWindowPriv(pWin)->window = XCreateWindow(nxagentDisplay,
+Window.c:2152:      nxagentConfiguredSynchroWindow = XCreateWindow(nxagentDisplay, DefaultRootWindow(nxagentDisplay), 0, 0,
+Window.c:2980:  nxagentWindow(pWin) = XCreateWindow(nxagentDisplay,
+
+#### XDefaultColormap ####
+
+#### XDefaultColormapOfScreen ####
+
+#### XDefaultDepth ####
+
+#### XDefaultDepthOfScreen ####
+
+#### XDefaultGC ####
+
+#### XDefaultGCOfScreen ####
+
+#### XDefaultRootWindow ####
+
+#### XDefaultScreen ####
+
+#### XDefaultScreenOfDisplay ####
+
+#### XDefaultString ####
+
+#### XDefaultVisual ####
+
+#### XDefaultVisualOfScreen ####
+
+#### XDefineCursor ####
+Cursor.c:139:    XDefineCursor(nxagentDisplay,
+Window.c:3167:    XDefineCursor(nxagentDisplay,nxagentWindow(pWin),nxagentCursor(pCursor,pScreen));
+
+#### XDeleteContext ####
+
+#### XDeleteModifiermapEntry ####
+
+#### XDeleteProperty ####
+Rootless.c:755:        XDeleteProperty(nxagentDisplay, nxagentWindow(pWin), propertyX);
+
+#### XDestroyIC ####
+
+#### XDestroyImage ####
+Drawable.c:2179:  XDestroyImage(ximage);
+Image.c:1076:    XDestroyImage(image);
+Pixmap.c:1166:      XDestroyImage(image);
+Pixmap.c:1442:    XDestroyImage(image);
+Pixmap.c:1604:    XDestroyImage(image);
+Screen.c:4577:    XDestroyImage(image);
+Screen.c:4693:    XDestroyImage(image);
+Window.c:3338:       XDestroyImage(image);
+
+#### XDestroyOC ####
+
+#### XDestroyRegion ####
+Render.c:749:      XDestroyRegion(reg);
+Window.c:2364:      XDestroyRegion(reg);
+Window.c:2424:      XDestroyRegion(reg);
+
+#### XDestroySubwindows ####
+
+#### XDestroyWindow ####
+Screen.c:4589:    XDestroyWindow(shadow, win);
+Splash.c:404:    XDestroyWindow(nxagentDisplay, nxagentSplashWindow);
+Window.c:636:  XDestroyWindow(nxagentDisplay, nxagentWindow(pWin));
+Window.c:964:    XDestroyWindow(nxagentDisplay, nxagentIconWindow);
+
+#### XDirectionalDependentDrawing ####
+
+#### XDisableAccessControl ####
+
+#### XDisplayCells ####
+
+#### XDisplayHeight ####
+
+#### XDisplayHeightMM ####
+
+#### XDisplayKeycodes ####
+Keyboard.c:750:      XDisplayKeycodes(nxagentDisplay, &min_keycode, &max_keycode);
+
+#### XDisplayMotionBufferSize ####
+
+#### XDisplayName ####
+Display.c:1206:    strncpy(nxagentDisplayName, XDisplayName(NULL), 1023);
+
+#### XDisplayOfIM ####
+
+#### XDisplayOfOM ####
+
+#### XDisplayOfScreen ####
+
+#### XDisplayPlanes ####
+
+#### XDisplayString ####
+
+#### XDisplayWidth ####
+
+#### XDisplayWidthMM ####
+
+#### XDoesBackingStore ####
+Init.c:340:  nxagentBackingStore = XDoesBackingStore(DefaultScreenOfDisplay(nxagentDisplay));
+
+#### XDoesSaveUnders ####
+Init.c:347:  nxagentSaveUnder = XDoesSaveUnders(DefaultScreenOfDisplay(nxagentDisplay));
+
+#### XDrawArc ####
+GCOps.c:1424:        XDrawArcs(nxagentDisplay, nxagentDrawable((DrawablePtr) nxagentRealPixmap((PixmapPtr) pDrawable)),
+GCOps.c:1430:       XDrawArcs(nxagentDisplay, nxagentDrawable(pDrawable), nxagentGC(pGC),
+GCOps.c:1440:    XDrawArcs(nxagentDisplay, nxagentDrawable(pDrawable), nxagentGC(pGC),
+
+#### XDrawArcs ####
+GCOps.c:1424:        XDrawArcs(nxagentDisplay, nxagentDrawable((DrawablePtr) nxagentRealPixmap((PixmapPtr) pDrawable)),
+GCOps.c:1430:       XDrawArcs(nxagentDisplay, nxagentDrawable(pDrawable), nxagentGC(pGC),
+GCOps.c:1440:    XDrawArcs(nxagentDisplay, nxagentDrawable(pDrawable), nxagentGC(pGC),
+
+#### XDrawImageString16 ####
+GCOps.c:2024:        XDrawImageString16(nxagentDisplay, nxagentDrawable((DrawablePtr) nxagentRealPixmap((PixmapPtr) pDrawable)),
+GCOps.c:2030:      XDrawImageString16(nxagentDisplay, nxagentDrawable(pDrawable),
+GCOps.c:2040:    XDrawImageString16(nxagentDisplay, nxagentDrawable(pDrawable),
+
+#### XDrawImageString ####
+GCOps.c:1967:        XDrawImageString(nxagentDisplay, nxagentDrawable((DrawablePtr) nxagentRealPixmap((PixmapPtr) pDrawable)),
+GCOps.c:1973:      XDrawImageString(nxagentDisplay, nxagentDrawable(pDrawable),
+GCOps.c:1983:    XDrawImageString(nxagentDisplay, nxagentDrawable(pDrawable),
+GCOps.c:2024:        XDrawImageString16(nxagentDisplay, nxagentDrawable((DrawablePtr) nxagentRealPixmap((PixmapPtr) pDrawable)),
+GCOps.c:2030:      XDrawImageString16(nxagentDisplay, nxagentDrawable(pDrawable),
+GCOps.c:2040:    XDrawImageString16(nxagentDisplay, nxagentDrawable(pDrawable),
+
+#### XDrawLine ####
+GCOps.c:1209:        XDrawLines(nxagentDisplay, nxagentDrawable((DrawablePtr) nxagentRealPixmap((PixmapPtr) pDrawable)),
+GCOps.c:1215:      XDrawLines(nxagentDisplay, nxagentDrawable(pDrawable), nxagentGC(pGC),
+GCOps.c:1225:    XDrawLines(nxagentDisplay, nxagentDrawable(pDrawable), nxagentGC(pGC),
+Holder.c:148:  XDrawLines(nxagentDisplay, drawable, gc, points, 3, CoordModeOrigin);
+Holder.c:162:  XDrawLines(nxagentDisplay, drawable, gc, points, 3, CoordModeOrigin);
+
+#### XDrawLines ####
+GCOps.c:1209:        XDrawLines(nxagentDisplay, nxagentDrawable((DrawablePtr) nxagentRealPixmap((PixmapPtr) pDrawable)),
+GCOps.c:1215:      XDrawLines(nxagentDisplay, nxagentDrawable(pDrawable), nxagentGC(pGC),
+GCOps.c:1225:    XDrawLines(nxagentDisplay, nxagentDrawable(pDrawable), nxagentGC(pGC),
+Holder.c:148:  XDrawLines(nxagentDisplay, drawable, gc, points, 3, CoordModeOrigin);
+Holder.c:162:  XDrawLines(nxagentDisplay, drawable, gc, points, 3, CoordModeOrigin);
+
+#### XDrawPoint ####
+GCOps.c:1152:        XDrawPoints(nxagentDisplay, nxagentDrawable((DrawablePtr) nxagentRealPixmap((PixmapPtr) pDrawable)),
+GCOps.c:1158:      XDrawPoints(nxagentDisplay, nxagentDrawable(pDrawable), nxagentGC(pGC),
+GCOps.c:1168:    XDrawPoints(nxagentDisplay, nxagentDrawable(pDrawable), nxagentGC(pGC),
+
+#### XDrawPoints ####
+GCOps.c:1152:        XDrawPoints(nxagentDisplay, nxagentDrawable((DrawablePtr) nxagentRealPixmap((PixmapPtr) pDrawable)),
+GCOps.c:1158:      XDrawPoints(nxagentDisplay, nxagentDrawable(pDrawable), nxagentGC(pGC),
+GCOps.c:1168:    XDrawPoints(nxagentDisplay, nxagentDrawable(pDrawable), nxagentGC(pGC),
+
+#### XDrawRectangle ####
+Drawable.c:2598:    XDrawRectangle(nxagentDisplay, nxagentWindow(pWin), gc,
+GCOps.c:1359:        XDrawRectangles(nxagentDisplay, nxagentDrawable((DrawablePtr) nxagentRealPixmap((PixmapPtr) pDrawable)),
+GCOps.c:1365:      XDrawRectangles(nxagentDisplay, nxagentDrawable(pDrawable), nxagentGC(pGC),
+GCOps.c:1379:    XDrawRectangles(nxagentDisplay, nxagentDrawable(pDrawable), nxagentGC(pGC),
+
+#### XDrawRectangles ####
+GCOps.c:1359:        XDrawRectangles(nxagentDisplay, nxagentDrawable((DrawablePtr) nxagentRealPixmap((PixmapPtr) pDrawable)),
+GCOps.c:1365:      XDrawRectangles(nxagentDisplay, nxagentDrawable(pDrawable), nxagentGC(pGC),
+GCOps.c:1379:    XDrawRectangles(nxagentDisplay, nxagentDrawable(pDrawable), nxagentGC(pGC),
+
+#### XDrawSegments ####
+GCOps.c:1282:        XDrawSegments(nxagentDisplay, nxagentDrawable((DrawablePtr) nxagentRealPixmap((PixmapPtr) pDrawable)),
+GCOps.c:1288:      XDrawSegments(nxagentDisplay, nxagentDrawable(pDrawable), nxagentGC(pGC),
+GCOps.c:1300:    XDrawSegments(nxagentDisplay, nxagentDrawable(pDrawable), nxagentGC(pGC),
+
+#### XDrawString16 ####
+GCOps.c:1908:        XDrawString16(nxagentDisplay, nxagentDrawable((DrawablePtr) nxagentRealPixmap((PixmapPtr) pDrawable)),
+GCOps.c:1914:      XDrawString16(nxagentDisplay, nxagentDrawable(pDrawable),
+GCOps.c:1924:    XDrawString16(nxagentDisplay, nxagentDrawable(pDrawable),
+
+#### XDrawString ####
+GCOps.c:1835:         XDrawString(nxagentDisplay, nxagentDrawable((DrawablePtr) nxagentRealPixmap((PixmapPtr) pDrawable)),
+GCOps.c:1841:      XDrawString(nxagentDisplay, nxagentDrawable(pDrawable),
+GCOps.c:1851:    XDrawString(nxagentDisplay, nxagentDrawable(pDrawable), nxagentGC(pGC),
+GCOps.c:1908:        XDrawString16(nxagentDisplay, nxagentDrawable((DrawablePtr) nxagentRealPixmap((PixmapPtr) pDrawable)),
+GCOps.c:1914:      XDrawString16(nxagentDisplay, nxagentDrawable(pDrawable),
+GCOps.c:1924:    XDrawString16(nxagentDisplay, nxagentDrawable(pDrawable),
+
+#### XDrawText16 ####
+
+#### XDrawText ####
+
+#### XEHeadOfExtensionList ####
+
+#### XESetBeforeFlush ####
+
+#### XESetCloseDisplay ####
+
+#### XESetCopyEventCookie ####
+
+#### XESetCopyGC ####
+
+#### XESetCreateFont ####
+
+#### XESetCreateGC ####
+
+#### XESetError ####
+
+#### XESetErrorString ####
+
+#### XESetEventToWire ####
+
+#### XESetFlushGC ####
+
+#### XESetFreeFont ####
+
+#### XESetFreeGC ####
+
+#### XESetPrintErrorValues ####
+
+#### XESetWireToError ####
+
+#### XESetWireToEvent ####
+
+#### XESetWireToEventCookie ####
+
+#### XEmptyRegion ####
+
+#### XEnableAccessControl ####
+
+#### XEqualRegion ####
+
+#### XEventMaskOfScreen ####
+
+#### XEventsQueued ####
+Events.h:231:    XEventsQueued((display), QueuedAfterReading)
+
+#### XExtendedMaxRequestSize ####
+
+#### XExtentsOfFontSet ####
+
+#### XFetchBuffer ####
+
+#### XFetchBytes ####
+
+#### XFetchName ####
+Events.c:325:    if (!XFetchName(nxagentDisplay, window, &winName))
+
+#### XFillArc ####
+GCOps.c:1756:        XFillArcs(nxagentDisplay, nxagentDrawable((DrawablePtr) nxagentRealPixmap((PixmapPtr) pDrawable)),
+GCOps.c:1762:      XFillArcs(nxagentDisplay, nxagentDrawable(pDrawable), nxagentGC(pGC),
+GCOps.c:1776:    XFillArcs(nxagentDisplay, nxagentDrawable(pDrawable),
+
+#### XFillArcs ####
+GCOps.c:1756:        XFillArcs(nxagentDisplay, nxagentDrawable((DrawablePtr) nxagentRealPixmap((PixmapPtr) pDrawable)),
+GCOps.c:1762:      XFillArcs(nxagentDisplay, nxagentDrawable(pDrawable), nxagentGC(pGC),
+GCOps.c:1776:    XFillArcs(nxagentDisplay, nxagentDrawable(pDrawable),
+
+#### XFillPolygon ####
+GCOps.c:1520:        XFillPolygon(nxagentDisplay, nxagentDrawable((DrawablePtr) nxagentRealPixmap((PixmapPtr) pDrawable)),
+GCOps.c:1526:      XFillPolygon(nxagentDisplay, nxagentDrawable(pDrawable), nxagentGC(pGC),
+GCOps.c:1538:    XFillPolygon(nxagentDisplay, nxagentDrawable(pDrawable), nxagentGC(pGC),
+Splash.c:230:  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
+Splash.c:253:  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
+Splash.c:259:  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
+Splash.c:273:  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
+Splash.c:279:  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
+Splash.c:285:  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
+Splash.c:291:  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
+Splash.c:298:  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
+Splash.c:311:  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
+Splash.c:317:  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
+Splash.c:323:  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
+Splash.c:329:  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
+Splash.c:335:  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
+Splash.c:341:  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
+Splash.c:354:  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
+Splash.c:360:  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
+Splash.c:366:  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
+Splash.c:372:  XFillPolygon(nxagentDisplay, nxagentPixmapLogo, gc, rect, 4, Convex, CoordModeOrigin);
+
+#### XFillRectangle ####
+Drawable.c:2376:    XFillRectangle(nxagentDisplay, nxagentDrawable(pDrawable), nxagentGC(pGC),
+Drawable.c:2395:    XFillRectangles(nxagentDisplay, nxagentDrawable(pDrawable), nxagentGC(pGC),
+GCOps.c:1699:        XFillRectangles(nxagentDisplay, nxagentDrawable((DrawablePtr) nxagentRealPixmap((PixmapPtr) pDrawable)),
+GCOps.c:1705:      XFillRectangles(nxagentDisplay, nxagentDrawable(pDrawable), nxagentGC(pGC),
+GCOps.c:1715:    XFillRectangles(nxagentDisplay, nxagentDrawable(pDrawable), nxagentGC(pGC),
+Holder.c:129:  XFillRectangle(nxagentDisplay, drawable, gc, x, y, w, h);
+Screen.c:2819:  XFillRectangle(nxagentDisplay, nxagentPixmap(nxagentShadowPixmapPtr), gc, 0, 0,
+
+#### XFillRectangles ####
+Drawable.c:2395:    XFillRectangles(nxagentDisplay, nxagentDrawable(pDrawable), nxagentGC(pGC),
+GCOps.c:1699:        XFillRectangles(nxagentDisplay, nxagentDrawable((DrawablePtr) nxagentRealPixmap((PixmapPtr) pDrawable)),
+GCOps.c:1705:      XFillRectangles(nxagentDisplay, nxagentDrawable(pDrawable), nxagentGC(pGC),
+GCOps.c:1715:    XFillRectangles(nxagentDisplay, nxagentDrawable(pDrawable), nxagentGC(pGC),
+
+#### XFilterEvent ####
+
+#### XFindContext ####
+
+#### XFindOnExtensionList ####
+
+#### XFlush ####
+Client.c:355:  NXFlushDisplay(nxagentDisplay, NXFlushBuffer);
+Events.c:3354:            NXFlushDisplay(nxagentDisplay, NXFlushLink);
+Events.c:4517:  NXFlushDisplay(dpy, NXFlushLink);
+Handlers.c:487:      NXFlushDisplay(nxagentDisplay, NXFlushLink);
+Handlers.c:524:    NXFlushDisplay(nxagentDisplay, NXFlushLink);
+Handlers.c:838:  NXFlushDisplay(nxagentDisplay, NXFlushLink);
+Handlers.c:1333:      NXFlushDisplay(nxagentDisplay, NXFlushBuffer);
+Reconnect.c:512:  XFlush(nxagentDisplay);
+Screen.c:4571:  XFlush(shadow);
+Screen.c:4687:  XFlush(shadow);
+Split.c:760:  NXFlushDisplay(nxagentDisplay, NXFlushBuffer);
+Split.c:874:  NXFlushDisplay(nxagentDisplay, NXFlushBuffer);
+Window.c:2493:  NXFlushDisplay(nxagentDisplay, NXFlushLink);
+
+#### XFlushGC ####
+
+#### XFontsOfFontSet ####
+
+#### XForceScreenSaver ####
+
+#### XFree ####
+Args.c:2035:     * to a standard XFree86 server.
+Atoms.c:763:    XFree(string);
+Clipboard.c:315:      XFree(strTarget);
+Clipboard.c:701:      XFree(pszReturnData);
+Clipboard.c:725:      XFree(pszReturnData);
+Clipboard.c:839:  XFree(pszReturnData);
+Colormap.c:178:  XFreeColormap(nxagentDisplay, nxagentColormap(pCmap));
+Cursor.c:214:  XFree(image);
+Cursor.c:232:  XFree(image);
+Cursor.c:256:  XFreePixmap(nxagentDisplay, source);
+Cursor.c:257:  XFreePixmap(nxagentDisplay, mask);
+Cursor.c:273:    XFreeCursor(nxagentDisplay, nxagentCursor(pCursor, pScreen));
+Display.c:1603:  XFree(viList);
+Display.c:1828:  XFree(nxagentVisuals);
+Display.c:1834:  XFree(nxagentPixmapFormats);
+Display.c:1837:  XFree(nxagentRemotePixmapFormats);
+Display.c:1854:    NXFreeCache(nxagentDisplay);
+Display.c:2114:      XFreeGC(nxagentDisplayBackup, nxagentBitmapGCBackup);
+Display.c:2136:        XFreeGC(nxagentDisplay, nxagentBitmapGC);
+Display.c:2623:  XFree(viList);
+Display.c:2822:    XFree(nxagentPixmapFormats);
+Display.c:2829:    XFree(nxagentRemotePixmapFormats);
+Drawable.c:2603:  XFreeGC(nxagentDisplay, gc);
+Events.c:332:      XFree(winName);
+Events.c:358:        XFreeStringList(list);
+Events.c:481:    XFree((char *) childList);
+Events.c:1327:          XFreeCursor(nxagentDisplay, viewportCursor);
+Events.c:3181:    XFree(children_return);
+Events.c:3543:          XFree(children_return);
+Events.c:3575:          XFree(children_return);
+Events.c:3647:          XFree(childrenReturn);
+Events.c:4040:      XFree(pszReturnData);
+Font.c:280:    XFreeFontNames(xList);
+Font.c:689:           XFreeFont(nxagentDisplay, nxagentFontStruct(pFont));
+Font.c:906:     XFreeFont(nxagentDisplay, privFont -> font_struct);
+Font.c:1084:      XFree(CACHE_NAME(i));
+Font.c:1361:      XFreeFontPath(fontPaths);
+Font.c:1372:  XFreeFontPath(fontPaths);
+Font.c:1734:  XFree(fs);
+GC.c:608:  XFreeGC(nxagentDisplay, nxagentGC(pGC));
+Holder.c:187:  XFreeGC(nxagentDisplay, gc);
+Keyboard.c:762:          XFreeModifiermap(modifier_keymap);
+Keyboard.c:771:        XFree(keymap64);
+Keyboard.c:783:        XFreeModifiermap(modifier_keymap);
+Keyboard.c:807:      XFreeModifiermap(modifier_keymap);
+Keyboard.c:1153:      XFree(keymap);
+Keyboard.c:1753:      XFree(data);
+Keyboard.c:1880:    XFree(drules);
+NXglxext.c:26:/* $XFree86: xc/programs/Xserver/GL/glx/glxext.c,v 1.9 2003/09/28 20:15:43 alanh Exp $
+NXglyph.c:27: * $XFree86: xc/programs/Xserver/render/glyph.c,v 1.5 2001/01/30 07:01:22 keithp Exp $
+NXmiglyph.c:27: * $XFree86: xc/programs/Xserver/render/miglyph.c,v 1.4 2000/11/20 07:13:13 keithp Exp $
+NXmitrap.c:27: * $XFree86: xc/programs/Xserver/render/mitrap.c,v 1.8 2002/09/03 19:28:28 keithp Exp $
+NXmitrap.c:29: * Copyright © 2002 Keith Packard, member of The XFree86 Project, Inc.
+NXpicture.c:27: * $XFree86: xc/programs/Xserver/render/picture.c,v 1.29 2002/11/23 02:38:15 keithp Exp $
+NXrender.c:27: * $XFree86: xc/programs/Xserver/render/render.c,v 1.27tsi Exp $
+Pixmap.c:490:    XFreePixmap(nxagentDisplay, pPixmapPriv -> id);
+Pixmap.c:1438:  XFreeGC(shadow, gc);
+Pixmap.c:1600:  XFreeGC(shadow, gc);
+Rootless.c:294:    XFree(children_return);
+Screen.c:2822:  XFreeGC(nxagentDisplay, gc);
+Screen.c:2880:  XFreePixmap(nxagentDisplay, nxagentPixmap(nxagentVirtualPixmap(nxagentShadowPixmapPtr)));
+Screen.c:4216:  XFreeGC(nxagentDisplay, gc);
+Screen.c:4343:  XFreeGC(nxagentDisplay, gc);
+Screen.c:4573:  XFreeGC(shadow, gc);
+Screen.c:4689:  XFreeGC(shadow, gc);
+Splash.c:160:  XFreeGC(nxagentDisplay, gc);
+Splash.c:420:    XFreePixmap(nxagentDisplay, nxagentPixmapLogo);
+Split.c:185:  NXFreeSplit(nxagentDisplay, pResource -> split);
+Window.c:1448:          XFree(children_return);
+NXglyphstr_GlyphRef.h:27: * $XFree86: xc/programs/Xserver/render/glyphstr.h,v 1.3 2000/11/20 07:13:13 keithp Exp $
+NXglyphstr_GlyphSet.h:27: * $XFree86: xc/programs/Xserver/render/glyphstr.h,v 1.3 2000/11/20 07:13:13 keithp Exp $
+Pixels.h:117:       te on XFree86 remote server.
+
+#### XFreeColormap ####
+Colormap.c:178:  XFreeColormap(nxagentDisplay, nxagentColormap(pCmap));
+
+#### XFreeColors ####
+
+#### XFreeCursor ####
+Cursor.c:273:    XFreeCursor(nxagentDisplay, nxagentCursor(pCursor, pScreen));
+Events.c:1327:          XFreeCursor(nxagentDisplay, viewportCursor);
+
+#### XFreeEventData ####
+
+#### XFreeExtensionList ####
+
+#### XFreeFont ####
+Font.c:280:    XFreeFontNames(xList);
+Font.c:689:           XFreeFont(nxagentDisplay, nxagentFontStruct(pFont));
+Font.c:906:     XFreeFont(nxagentDisplay, privFont -> font_struct);
+Font.c:1361:      XFreeFontPath(fontPaths);
+Font.c:1372:  XFreeFontPath(fontPaths);
+
+#### XFreeFontInfo ####
+
+#### XFreeFontNames ####
+Font.c:280:    XFreeFontNames(xList);
+
+#### XFreeFontPath ####
+Font.c:1361:      XFreeFontPath(fontPaths);
+Font.c:1372:  XFreeFontPath(fontPaths);
+
+#### XFreeFontSet ####
+
+#### XFreeGC ####
+Display.c:2114:      XFreeGC(nxagentDisplayBackup, nxagentBitmapGCBackup);
+Display.c:2136:        XFreeGC(nxagentDisplay, nxagentBitmapGC);
+Drawable.c:2603:  XFreeGC(nxagentDisplay, gc);
+GC.c:608:  XFreeGC(nxagentDisplay, nxagentGC(pGC));
+Holder.c:187:  XFreeGC(nxagentDisplay, gc);
+Pixmap.c:1438:  XFreeGC(shadow, gc);
+Pixmap.c:1600:  XFreeGC(shadow, gc);
+Screen.c:2822:  XFreeGC(nxagentDisplay, gc);
+Screen.c:4216:  XFreeGC(nxagentDisplay, gc);
+Screen.c:4343:  XFreeGC(nxagentDisplay, gc);
+Screen.c:4573:  XFreeGC(shadow, gc);
+Screen.c:4689:  XFreeGC(shadow, gc);
+Splash.c:160:  XFreeGC(nxagentDisplay, gc);
+
+#### XFreeModifiermap ####
+Keyboard.c:762:          XFreeModifiermap(modifier_keymap);
+Keyboard.c:783:        XFreeModifiermap(modifier_keymap);
+Keyboard.c:807:      XFreeModifiermap(modifier_keymap);
+
+#### XFreePixmap ####
+Cursor.c:256:  XFreePixmap(nxagentDisplay, source);
+Cursor.c:257:  XFreePixmap(nxagentDisplay, mask);
+Pixmap.c:490:    XFreePixmap(nxagentDisplay, pPixmapPriv -> id);
+Screen.c:2880:  XFreePixmap(nxagentDisplay, nxagentPixmap(nxagentVirtualPixmap(nxagentShadowPixmapPtr)));
+Splash.c:420:    XFreePixmap(nxagentDisplay, nxagentPixmapLogo);
+
+#### XFreeStringList ####
+Events.c:358:        XFreeStringList(list);
+
+#### XGContextFromGC ####
+
+#### XGeometry ####
+
+#### XGetAtomName ####
+Atoms.c:748:  if ((string = XGetAtomName(nxagentDisplay, remote)))
+Clipboard.c:304:    strTarget = XGetAtomName(nxagentDisplay, X->xselectionrequest.target);
+Clipboard.c:1599:                    validateString(XGetAtomName(nxagentDisplay, nxagentAtoms[10])), iWindow);
+Events.c:925:                        (int)X.xproperty.atom, validateString(XGetAtomName(nxagentDisplay, X.xproperty.atom)),
+
+#### XGetAtomNames ####
+
+#### XGetClassHint ####
+
+#### XGetCommand ####
+
+#### XGetDefault ####
+
+#### XGetErrorDatabaseText ####
+Error.c:135:    XGetErrorDatabaseText(dpy, mtype, "XError", "X Error", mesg, BUFSIZ);
+Error.c:137:    XGetErrorDatabaseText(dpy, mtype, "MajorCode", "Request Major code %d",
+Error.c:142:	XGetErrorDatabaseText(dpy, "XRequest", number, "", buffer, BUFSIZ);
+Error.c:156:	XGetErrorDatabaseText(dpy, mtype, "MinorCode", "Request Minor code %d",
+Error.c:163:	    XGetErrorDatabaseText(dpy, "XRequest", mesg, "", buffer, BUFSIZ);
+Error.c:192:	XGetErrorDatabaseText(dpy, mtype, buffer, "", mesg, BUFSIZ);
+Error.c:216:	    XGetErrorDatabaseText(dpy, mtype, "Value", "Value 0x%x",
+Error.c:219:	    XGetErrorDatabaseText(dpy, mtype, "AtomID", "AtomID 0x%x",
+Error.c:222:	    XGetErrorDatabaseText(dpy, mtype, "ResourceID", "ResourceID 0x%x",
+Error.c:228:    XGetErrorDatabaseText(dpy, mtype, "ErrorSerial", "Error Serial #%d", 
+Error.c:232:    XGetErrorDatabaseText(dpy, mtype, "CurrentSerial", "Current Serial #%d",
+
+#### XGetErrorText ####
+Error.c:134:    XGetErrorText(dpy, event->error_code, buffer, BUFSIZ);
+
+#### XGetEventData ####
+
+#### XGetFontPath ####
+Font.c:1304:  fontPaths = XGetFontPath(nxagentDisplay, &nPaths);
+NXdixfonts.c:107:static const char *_NXGetFontPath(const char *path)
+NXdixfonts.c:127:            fprintf(stderr, "_NXGetFontPath: WARNING! Maximum length of font path exceeded.\n");
+NXdixfonts.c:129:            goto _NXGetFontPathError;
+NXdixfonts.c:135:        fprintf(stderr, "_NXGetFontPath: Using NX font path [%s].\n", _NXFontPath);
+NXdixfonts.c:141:_NXGetFontPathError:
+NXdixfonts.c:147:    fprintf(stderr, "_NXGetFontPath: Using default font path [%s].\n", _NXFontPath);
+NXdixfonts.c:941:    len = strlen(_NXGetFontPath(path)) + 1;
+NXdixfonts.c:949:    pp = (unsigned char *) _NXGetFontPath(path);
+
+#### XGetFontProperty ####
+
+#### XGetGCValues ####
+
+#### XGetGeometry ####
+
+#### XGetICValues ####
+
+#### XGetIMValues ####
+
+#### XGetIconName ####
+
+#### XGetIconSizes ####
+
+#### XGetImage ####
+Pixmap.c:1086:    image = XGetImage(nxagentDisplay, nxagentPixmap(pPixmap), 0, 0,
+Pixmap.c:1090:      FatalError("XGetImage: Failed.\n");
+Screen.c:4531:  image = XGetImage(nxagentDisplay, nxagentPixmap(pPixmap), x, y,
+Screen.c:4535:  image = XGetImage(nxagentDisplay, RootWindow(nxagentDisplay, 0), 0, 0,
+Screen.c:4541:    fprintf(stderr, "nxagentShowPixmap: XGetImage failed.\n");
+Screen.c:4625:  image = XGetImage(nxagentDisplay, nxagentPixmap(pPixmap), xSrc, ySrc,
+Screen.c:4632:    fprintf(stderr, "nxagentFbRestoreArea: XGetImage failed.\n");
+Window.c:3286:     image = XGetImage(nxagentDisplay, nxagentWindow(pWin), 0, 0,
+Window.c:3290:       fprintf(stderr, "XGetImage: Failed.\n");
+
+#### XGetInputFocus ####
+
+#### XGetKeyboardControl ####
+Keyboard.c:850:      XGetKeyboardControl(nxagentDisplay, &values);
+
+#### XGetKeyboardMapping ####
+Keyboard.c:755:        keymap64 = XGetKeyboardMapping(nxagentDisplay,
+Keyboard.c:776:      keymap = XGetKeyboardMapping(nxagentDisplay,
+
+#### XGetModifierMapping ####
+Keyboard.c:743:      modifier_keymap = XGetModifierMapping(nxagentDisplay);
+
+#### XGetMotionEvents ####
+
+#### XGetNormalHints ####
+
+#### XGetOCValues ####
+
+#### XGetOMValues ####
+
+#### XGetPixel ####
+Drawable.c:2177:  pixel = XGetPixel(ximage, 0, 0);
+Image.c:1743:      val = XGetPixel(image, i - x, j - y);
+
+#### XGetPointerControl ####
+
+#### XGetPointerMapping ####
+Pointer.c:124:      nmap = XGetPointerMapping(nxagentDisplay, map, MAXBUTTONS);
+Pointer.c:189:  numButtons = XGetPointerMapping(nxagentDisplay, pointerMap, MAXBUTTONS);
+
+#### XGetRGBColormaps ####
+
+#### XGetScreenSaver ####
+
+#### XGetSelectionOwner ####
+Clipboard.c:1117:   if (XGetSelectionOwner(nxagentDisplay,pSelection->selection)==serverWindow)
+
+#### XGetSizeHints ####
+
+#### XGetStandardColormap ####
+
+#### XGetSubImage ####
+
+#### XGetTextProperty ####
+
+#### XGetTransientForHint ####
+
+#### XGetVisualInfo ####
+Display.c:1568:  viList = XGetVisualInfo(nxagentDisplay, mask, &vi, &viNumList);
+Display.c:2553:  viList = XGetVisualInfo(nxagentDisplay, viMask, &viTemplate, &viNumList);
+
+#### XGetWMClientMachine ####
+
+#### XGetWMColormapWindows ####
+
+#### XGetWMHints ####
+
+#### XGetWMIconName ####
+
+#### XGetWMName ####
+Events.c:337:    if (XGetWMName(nxagentDisplay, window, &tp) != 0)
+
+#### XGetWMNormalHints ####
+
+#### XGetWMProtocols ####
+
+#### XGetWMSizeHints ####
+
+#### XGetWindowAttributes ####
+Events.c:393:  if (XGetWindowAttributes(nxagentDisplay, win, &attributes) == 0)
+Events.c:3609:    if ((XGetWindowAttributes(nxagentDisplay, X -> xreparent.window,
+Events.c:3614:                  "XGetWindowAttributes failed.\n");
+Events.c:3658:      if (XGetWindowAttributes(nxagentDisplay, w, &attributes) == 0)
+Events.c:3662:                    "XGetWindowAttributes failed for parent window.\n");
+Screen.c:1425:      XGetWindowAttributes(nxagentDisplay, nxagentParentWindow, &gattributes);
+Splash.c:111:   * XGetWindowAttributes(nxagentDisplay, parentWindow, &getAttributes);
+
+#### XGetWindowProperty ####
+Keyboard.c:1740:  result = XGetWindowProperty(nxagentDisplay, DefaultRootWindow(nxagentDisplay),
+Screen.c:3400:  iReturn = XGetWindowProperty(nxagentDisplay,
+
+#### XGetZoomHints ####
+
+#### XGrabButton ####
+
+#### XGrabKey ####
+Events.c:3860:  result = XGrabKeyboard(nxagentDisplay, nxagentFullscreenWindow,
+Events.c:3891:   * XGrabKey(nxagentDisplay, AnyKey, AnyModifier, nxagentFullscreenWindow,
+Screen.c:1904:        XGrabKeyboard(nxagentDisplay, nxagentFullscreenWindow, True, GrabModeAsync,
+Screen.c:1923:      fprintf(stderr, "nxagentOpenScreen: No window manager, we call XGrabKeyboard.\n");
+Screen.c:1926:      XGrabKeyboard(nxagentDisplay, RootWindow (nxagentDisplay, 0), True, GrabModeAsync,
+
+#### XGrabKeyboard ####
+Events.c:3860:  result = XGrabKeyboard(nxagentDisplay, nxagentFullscreenWindow,
+Screen.c:1904:        XGrabKeyboard(nxagentDisplay, nxagentFullscreenWindow, True, GrabModeAsync,
+Screen.c:1923:      fprintf(stderr, "nxagentOpenScreen: No window manager, we call XGrabKeyboard.\n");
+Screen.c:1926:      XGrabKeyboard(nxagentDisplay, RootWindow (nxagentDisplay, 0), True, GrabModeAsync,
+
+#### XGrabPointer ####
+
+#### XGrabServer ####
+
+#### XHeightMMOfScreen ####
+
+#### XHeightOfScreen ####
+
+#### XIMOfIC ####
+
+#### XIconifyWindow ####
+Events.c:2144:        XIconifyWindow(nxagentDisplay, nxagentDefaultWindows[0],
+Events.c:2759:          XIconifyWindow(nxagentDisplay, nxagentIconWindow,
+Screen.c:301:    XIconifyWindow(nxagentDisplay, nxagentIconWindow,
+Screen.c:306:    XIconifyWindow(nxagentDisplay, nxagentIconWindow,
+Screen.c:358:    XIconifyWindow(nxagentDisplay, nxagentIconWindow,
+Window.c:2585:      XIconifyWindow(nxagentDisplay, nxagentIconWindow,
+Window.c:3228:      XIconifyWindow(nxagentDisplay, nxagentWindow(pWin), pWin -> drawable.pScreen -> myNum);
+
+#### XIfEvent ####
+Split.c:769:     * We should better use XIfEvent() instead
+Split.c:883:    XIfEvent(nxagentDisplay, &event, nxagentWaitSplitPredicate, NULL);
+
+#### XImageByteOrder ####
+
+#### XInitExtension ####
+
+#### XInitImage ####
+
+#### XInitThreads ####
+
+#### XInsertModifiermapEntry ####
+
+#### XInstallColormap ####
+Colormap.c:363:      XInstallColormap(nxagentDisplay, nxagentColormap(pCmap));
+
+#### XInternAtom ####
+Atoms.c:246:   * after a reset the XInternAtom could be cached
+Atoms.c:472:  ret_value = XInternAtoms(nxagentDisplay, name_list, list_size, False, atom_list);
+Atoms.c:477:    fprintf(stderr, "nxagentInitAtomMap: WARNING! XInternAtoms request failed.\n");
+Atoms.c:653:    remote = XInternAtom(nxagentDisplay, string, !Makeit);
+Atoms.c:658:      fprintf(stderr, "nxagentMakeAtom: WARNING XInternAtom failed.\n");
+Atoms.c:693:  remote = XInternAtom(nxagentDisplay, string, False);
+Atoms.c:698:    fprintf(stderr, "nxagentLocalToRemoteAtom: WARNING XInternAtom failed.\n");
+Clipboard.c:326:                                XInternAtom(nxagentDisplay, "ATOM", 0),
+Clipboard.c:1417:     * XInternAtom(nxagentDisplay, "CLIPBOARD", 1).
+Keyboard.c:1733:  atom = XInternAtom(nxagentDisplay, "_XKB_RULES_NAMES", 1);
+Screen.c:2586:  nxagentShadowAtom = XInternAtom(nxagentShadowDisplay, "_NX_SHADOW", False);
+
+#### XInternAtoms ####
+Atoms.c:472:  ret_value = XInternAtoms(nxagentDisplay, name_list, list_size, False, atom_list);
+Atoms.c:477:    fprintf(stderr, "nxagentInitAtomMap: WARNING! XInternAtoms request failed.\n");
+
+#### XInternalConnectionNumbers ####
+
+#### XIntersectRegion ####
+
+#### XKeycodeToKeysym ####
+Events.c:1104:        keysym = XKeycodeToKeysym(nxagentDisplay, X.xkey.keycode, 0);
+Events.c:4642:                      XKeysymToString(XKeycodeToKeysym(nxagentDisplay, i * 8 + k, 0)));
+Keystroke.c:409:  KeySym keysym = XKeycodeToKeysym(nxagentDisplay, X->keycode, 0);
+Keystroke.c:443:  sym = XKeycodeToKeysym(nxagentDisplay, X -> keycode, index);
+
+#### XKeysymToKeycode ####
+Keyboard.c:1380:  if (keycode == XKeysymToKeycode(nxagentDisplay, XK_Meta_L))
+Keyboard.c:1385:  if (keycode == XKeysymToKeycode(nxagentDisplay, XK_Meta_R))
+Keyboard.c:1390:  if (keycode == XKeysymToKeycode(nxagentDisplay, XK_Alt_L))
+Keyboard.c:1395:  if (keycode == XKeysymToKeycode(nxagentDisplay, XK_Alt_R))
+Keyboard.c:1403:  nxagentCapsLockKeycode = XKeysymToKeycode(nxagentDisplay, XK_Caps_Lock);
+Keyboard.c:1405:  nxagentNumLockKeycode  = XKeysymToKeycode(nxagentDisplay, XK_Num_Lock);
+
+#### XKeysymToString ####
+Events.c:4642:                      XKeysymToString(XKeycodeToKeysym(nxagentDisplay, i * 8 + k, 0)));
+
+#### XKillClient ####
+
+#### XLastKnownRequestProcessed ####
+
+#### XListDepths ####
+Display.c:1619:  nxagentDepths = XListDepths(nxagentDisplay, DefaultScreen(nxagentDisplay),
+
+#### XListExtensions ####
+
+#### XListFonts ####
+Font.c:260:    xList = XListFonts(nxagentDisplay, patterns[p], maxNames, &xLen);
+
+#### XListFontsWithInfo ####
+
+#### XListHosts ####
+
+#### XListInstalledColormaps ####
+
+#### XListPixmapFormats ####
+Display.c:1709:  nxagentRemotePixmapFormats = XListPixmapFormats(nxagentDisplay, &nxagentRemoteNumPixmapFormats);
+
+#### XListProperties ####
+
+#### XLoadFont ####
+Font.c:1657:  fs -> fid                = XLoadFont(dpy, name);      /* Font id for this font. */
+
+#### XLoadQueryFont ####
+
+#### XLocaleOfFontSet ####
+
+#### XLocaleOfIM ####
+
+#### XLocaleOfOM ####
+
+#### XLockDisplay ####
+
+#### XLookupColor ####
+
+#### XLookupKeysym ####
+
+#### XLookupString ####
+
+#### XLowerWindow ####
+Window.c:1507:      XLowerWindow(nxagentDisplay, nxagentWindow(pWin));
+
+#### XMapRaised ####
+Events.c:2757:          XMapRaised(nxagentDisplay, nxagentFullscreenWindow);
+Screen.c:356:    XMapRaised(nxagentDisplay, nxagentFullscreenWindow);
+Splash.c:155:  XMapRaised (nxagentDisplay, nxagentSplashWindow);
+Window.c:912:      XMapRaised(nxagentDisplay, w);
+
+#### XMapSubwindows ####
+
+#### XMapWindow ####
+Pixmap.c:1349:    XMapWindow(shadow, win);
+Pixmap.c:1501:    XMapWindow(shadow, win);
+Screen.c:300:    XMapWindow(nxagentDisplay, nxagentIconWindow);
+Screen.c:317:    XMapWindow(nxagentDisplay, nxagentFullscreenWindow);
+Screen.c:363:    XMapWindow(nxagentDisplay, nxagentIconWindow);
+Screen.c:2805:  XMapWindow(nxagentDisplay, nxagentDefaultWindows[0]);
+Screen.c:2957:  XMapWindow(nxagentDisplay, nxagentWindow(nxagentShadowWindowPtr));
+Screen.c:4498:    XMapWindow(shadow, win);
+Window.c:909:        XMapWindow(nxagentDisplay, nxagentIconWindow);
+Window.c:944:      XMapWindow(nxagentDisplay, w);
+Window.c:1007:    XMapWindow(nxagentDisplay, w);
+Window.c:1538:    XMapWindow(nxagentDisplay, nxagentWindow(pWin));
+Window.c:1911:   *   XMapWindow(nxagentDisplay, nxagentWindow(pWin));
+Window.c:2535:        XMapWindow(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum]);
+Window.c:2547:      XMapWindow(nxagentDisplay, nxagentInputWindows[pScreen->myNum]);
+Window.c:2581:    XMapWindow(nxagentDisplay, nxagentIconWindow);
+Window.c:3216:     do anything, leaving this mapped window around. XMapWindow()
+Window.c:3221:      XMapWindow(nxagentDisplay, nxagentWindow(pWin));
+Window.c:3240:    XMapWindow(nxagentDisplay, nxagentWindow(pWin));
+
+#### XMaskEvent ####
+
+#### XMatchVisualInfo ####
+
+#### XMaxCmapsOfScreen ####
+
+#### XMaxRequestSize ####
+
+#### XMinCmapsOfScreen ####
+
+#### XMoveResizeWindow ####
+Events.c:3420:        XMoveResizeWindow(nxagentDisplay, nxagentInputWindows[0], 0, 0,
+Extensions.c:425:    XMoveResizeWindow(nxagentDisplay, nxagentInputWindows[0], 0, 0, width,
+Screen.c:2491:  XMoveResizeWindow(nxagentDisplay, nxagentInputWindows[0], 0, 0, 
+Window.c:890:      XMoveResizeWindow(nxagentDisplay, w, nxagentOption(X), nxagentOption(Y),
+Window.c:1001:    XMoveResizeWindow(nxagentDisplay, w, nxagentOption(X), nxagentOption(Y),
+Window.c:1013:  XMoveResizeWindow(nxagentDisplay, nxagentInputWindows[0], 0, 0,
+
+#### XMoveWindow ####
+Events.c:3441:          XMoveWindow(nxagentDisplay, nxagentWindow(pScreen->root),
+Screen.c:2432:  XMoveWindow(nxagentDisplay, nxagentWindow(screenInfo.screens[0]->root),
+Window.c:895:      XMoveWindow(nxagentDisplay, nxagentWindow(pScreen->root),
+Window.c:1006:    XMoveWindow(nxagentDisplay, nxagentWindow(pScreen->root), 0, 0);
+Window.c:1171:    XMoveWindow(nxagentDisplay, nxagentWindow(pScreen->root),
+Window.c:2790:    XMoveWindow(nxagentDisplay, nxagentWindow(nxagentViewportFrameLeft),
+Window.c:2792:    XMoveWindow(nxagentDisplay, nxagentWindow(nxagentViewportFrameRight),
+Window.c:2794:    XMoveWindow(nxagentDisplay, nxagentWindow(nxagentViewportFrameAbove),
+Window.c:2796:    XMoveWindow(nxagentDisplay, nxagentWindow(nxagentViewportFrameBelow),
+Window.c:3237:    XMoveWindow(nxagentDisplay, nxagentWindow(pWin),
+
+#### XNewModifiermap ####
+
+#### XNextEvent ####
+Screen.c:4504:      XNextEvent(shadow, &e);
+
+#### XNextRequest ####
+Window.c:1344:      nxagentAddStaticResizedWindow(pWin, XNextRequest(nxagentDisplay), offX, offY);
+
+#### XNoOp ####
+
+#### XOMOfOC ####
+
+#### XOffsetRegion ####
+
+#### XOpenDisplay ####
+Display.c:645:  newDisplay = XOpenDisplay(display);
+Pixmap.c:1333:    shadow = XOpenDisplay("localhost:0");
+Pixmap.c:1482:    shadow = XOpenDisplay("localhost:0");
+Screen.c:4477:    shadow = XOpenDisplay("localhost:0");
+
+#### XOpenIM ####
+
+#### XOpenOM ####
+
+#### XParseColor ####
+
+#### XParseGeometry ####
+Args.c:632:          nxagentUserGeometry.flag = XParseGeometry(argv[i], 
+
+#### XPeekEvent ####
+Events.c:4532:    XPeekEvent(dpy, &ev);
+
+#### XPeekIfEvent ####
+
+#### XPending ####
+
+#### XPlanesOfScreen ####
+
+#### XPointInRegion ####
+
+#### XPolygonRegion ####
+
+#### XProcessInternalConnection ####
+
+#### XProtocolRevision ####
+
+#### XProtocolVersion ####
+
+#### XPutBackEvent ####
+Events.c:3958:    XPutBackEvent(nxagentDisplay, (XEvent*)&X);
+
+#### XPutImage ####
+Cursor.c:211:  XPutImage(nxagentDisplay, source, nxagentBitmapGC, image,
+Cursor.c:229:  XPutImage(nxagentDisplay, mask, nxagentBitmapGC, image,
+Image.c:1103:   * the src_x of XPutImage otherwise the src_x would make Xlib
+Image.c:1545:    fprintf(stderr, "nxagentPutSubImage: Calling XPutImage with geometry [%d,%d] and data size [%d].\n",
+Image.c:1552:     * XPutImage(nxagentDisplay, nxagentDrawable(pDrawable),
+Image.c:1556:    XPutImage(nxagentDisplay, nxagentDrawable(pDrawable),
+Pixmap.c:1355:       XPutImage returns a BadMatch. For example this may happens if
+Pixmap.c:1436:  XPutImage(shadow, win, gc, image, 0, 0, 0, 0, width, height);
+Pixmap.c:1598:  XPutImage(shadow, win, gc, image, 0, 0, 0, 0, width, height);
+Screen.c:4569:  XPutImage(shadow, win, gc, image, 0, 0, 0, 0, width, height);
+Screen.c:4682:  XPutImage(shadow, nxagentWindow(pWin), gc, image, 0, 0, xDst, yDst, width, height);
+
+#### XPutPixel ####
+Image.c:1770:          XPutPixel(newImage, k - x1, l - y1, val);
+
+#### XQLength ####
+Events.c:4458:  else if (XQLength(dpy) > 0)
+Events.c:4462:                XQLength(dpy));
+Events.h:228:    XQLength((display))
+
+#### XQueryBestCursor ####
+
+#### XQueryBestSize ####
+
+#### XQueryBestStipple ####
+
+#### XQueryBestTile ####
+
+#### XQueryColor ####
+Colormap.c:117:    XQueryColors(nxagentDisplay, nxagentColormap(pCmap), colors, ncolors);
+Colormap.c:130:    XQueryColors(nxagentDisplay, nxagentColormap(pCmap), colors, ncolors);
+Colormap.c:154:    XQueryColors(nxagentDisplay, nxagentColormap(pCmap), colors, ncolors);
+
+#### XQueryColors ####
+Colormap.c:117:    XQueryColors(nxagentDisplay, nxagentColormap(pCmap), colors, ncolors);
+Colormap.c:130:    XQueryColors(nxagentDisplay, nxagentColormap(pCmap), colors, ncolors);
+Colormap.c:154:    XQueryColors(nxagentDisplay, nxagentColormap(pCmap), colors, ncolors);
+
+#### XQueryExtension ####
+Clipboard.c:1559:  if (XQueryExtension(nxagentDisplay,
+
+#### XQueryFont ####
+
+#### XQueryKeymap ####
+
+#### XQueryPointer ####
+
+#### XQueryTextExtents16 ####
+
+#### XQueryTextExtents ####
+
+#### XQueryTree ####
+Events.c:431:  if (!XQueryTree(nxagentDisplay, window, &rootWin, &parentWin, &childList,
+Events.c:434:    fprintf(stderr, "nxagentRemoteWindowsTree - XQueryTree failed.\n");
+Events.c:1913:         * XQueryTree(nxagentDisplay, DefaultRootWindow(nxagentDisplay),
+Events.c:3165:  result = XQueryTree(nxagentDisplay, DefaultRootWindow(nxagentDisplay),
+Events.c:3529:        result = XQueryTree(nxagentDisplay, w, &root_return,
+Events.c:3559:        result = XQueryTree(nxagentDisplay, DefaultRootWindow(nxagentDisplay),
+Events.c:3637:        result = XQueryTree(nxagentDisplay, w, &rootReturn, &parentReturn,
+Rootless.c:258:  result = XQueryTree(nxagentDisplay, DefaultRootWindow(nxagentDisplay),
+Window.c:1428:      result = XQueryTree(nxagentDisplay, DefaultRootWindow(nxagentDisplay),
+
+#### XRaiseWindow ####
+Screen.c:4515:    XRaiseWindow(nxagentDisplay, win);
+Window.c:1498:      XRaiseWindow(nxagentDisplay, nxagentWindow(pWin));
+Window.c:2557:        XRaiseWindow(nxagentDisplay, nxagentInputWindows[pScreen->myNum]);
+Window.c:2742:      XRaiseWindow(nxagentDisplay, nxagentInputWindows[i]);
+
+#### XReadBitmapFile ####
+
+#### XReadBitmapFileData ####
+
+#### XRebindKeysym ####
+
+#### XRecolorCursor ####
+Cursor.c:296:  XRecolorCursor(nxagentDisplay,
+
+#### XReconfigureWMWindow ####
+
+#### XRectInRegion ####
+
+#### XRefreshKeyboardMapping ####
+
+#### XRegisterIMInstantiateCallback ####
+
+#### XRemoveConnectionWatch ####
+
+#### XRemoveFromSaveSet ####
+
+#### XRemoveHost ####
+
+#### XRemoveHosts ####
+
+#### XReparentWindow ####
+Screen.c:325:FIXME: We'll check for ReparentNotify and LeaveNotify events after XReparentWindow()
+Screen.c:334:    XReparentWindow(nxagentDisplay, nxagentFullscreenWindow,
+Window.c:810:  XReparentWindow(nxagentDisplay, w, DefaultRootWindow(nxagentDisplay), 0, 0);
+Window.c:1559:  XReparentWindow(nxagentDisplay, nxagentWindow(pWin),
+
+#### XResetScreenSaver ####
+
+#### XResizeWindow ####
+Extensions.c:421:  XResizeWindow(nxagentDisplay, nxagentDefaultWindows[0], width, height);
+Screen.c:2401:    XResizeWindow(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], width, height);
+Screen.c:2405:      XResizeWindow(nxagentDisplay, nxagentInputWindows[pScreen -> myNum], width, height);
+Screen.c:2488:  XResizeWindow(nxagentDisplay, nxagentDefaultWindows[0],
+Screen.c:4514:    XResizeWindow(nxagentDisplay, win, width, height);
+
+#### XResourceManagerString ####
+
+#### XRestackWindows ####
+Window.c:1521:      XRestackWindows(nxagentDisplay, windowList, 2);
+
+#### XRootWindow ####
+
+#### XRootWindowOfScreen ####
+
+#### XRotateBuffers ####
+
+#### XRotateWindowProperties ####
+
+#### XSaveContext ####
+
+#### XScreenCount ####
+
+#### XScreenNumberOfScreen ####
+
+#### XScreenOfDisplay ####
+
+#### XScreenResourceString ####
+
+#### XSelectInput ####
+Atoms.c:130:  XSelectInput(nxagentDisplay,
+Atoms.c:157:    XSelectInput(nxagentDisplay, RootWindow (nxagentDisplay, 0), 0);
+Events.c:3549:        XSelectInput(nxagentDisplay, w, StructureNotifyMask);
+Events.c:3697:    XSelectInput(nxagentDisplay, nxagentDefaultWindows[i], mask);
+Events.c:3718:    XSelectInput(nxagentDisplay, nxagentDefaultWindows[i], mask);
+Events.c:3737:    XSelectInput(nxagentDisplay, nxagentDefaultWindows[i], mask);
+Events.c:3754:    XSelectInput(nxagentDisplay, nxagentDefaultWindows[i], mask);
+Screen.c:437:  XSelectInput(nxagentDisplay, w, (mask & ~(KeyPressMask |
+Screen.c:1708:      XSelectInput(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], mask);
+Screen.c:1843:      XSelectInput(nxagentDisplay, nxagentFullscreenWindow, mask);
+Screen.c:2045:  XSelectInput(nxagentDisplay, DefaultRootWindow(nxagentDisplay), StructureNotifyMask);
+Screen.c:3583:  XSelectInput(nxagentDisplay, nxagentDefaultWindows[0], mask);
+Screen.c:4496:    XSelectInput(shadow, win, StructureNotifyMask);
+
+#### XSendEvent ####
+Clipboard.c:364:    XSendEvent(nxagentDisplay,
+Clipboard.c:373:      fprintf(stderr, "nxagentRequestSelection: WARNING! XSendEvent failed.\n");
+Clipboard.c:377:      fprintf(stderr, "nxagentRequestSelection: XSendEvent sent to window [0x%lx].\n",
+Clipboard.c:481:        XSendEvent(nxagentDisplay,
+Clipboard.c:488:        fprintf(stderr, "nxagentRequestSelection: Executed XSendEvent with property None.\n");
+Clipboard.c:1007:        result = XSendEvent(nxagentDisplay,
+Clipboard.c:1015:          fprintf (stderr, "SelectionRequest - XSendEvent failed\n");
+Clipboard.c:1437:    result = XSendEvent (nxagentDisplay, x.requestor, False,
+Clipboard.c:1442:       fprintf (stderr, "nxagentSendNotify: XSendEvent failed.\n");
+Window.c:762:  XSendEvent(nxagentDisplay, DefaultRootWindow(nxagentDisplay), False,
+
+#### XServerVendor ####
+
+#### XSetAccessControl ####
+
+#### XSetAfterFunction ####
+
+#### XSetArcMode ####
+
+#### XSetAuthorization ####
+
+#### XSetBackground ####
+Splash.c:221:  XSetBackground(nxagentDisplay, gc, nxagentLogoRed);
+Splash.c:237:  XSetBackground(nxagentDisplay, gc, nxagentLogoWhite);
+Splash.c:248:  XSetBackground(nxagentDisplay, gc, nxagentLogoWhite);
+
+#### XSetClassHint ####
+Screen.c:1784:        XSetClassHint(nxagentDisplay,nxagentDefaultWindows[pScreen->myNum],&hint);
+Screen.c:1800:        XSetClassHint(nxagentDisplay,nxagentDefaultWindows[pScreen->myNum],&hint);
+
+#### XSetClipMask ####
+GC.c:673:        XSetClipMask(nxagentDisplay, nxagentGC(pGC), None);
+GC.c:706:        XSetClipMask(nxagentDisplay, nxagentGC(pGC),
+GC.c:814:    XSetClipMask(nxagentDisplay, nxagentGC(pGC), None);
+GC.c:1283:      XSetClipMask(nxagentDisplay, nxagentGC(pGC), None);
+GC.c:1313:        XSetClipMask(nxagentDisplay, nxagentGC(pGC),
+GC.c:1323:      XSetClipMask(nxagentDisplay, nxagentGC(pGC),
+
+#### XSetClipOrigin ####
+GC.c:1316:        XSetClipOrigin(nxagentDisplay, nxagentGC(pGC), pGC -> clipOrg.x, pGC -> clipOrg.y);
+GC.c:1326:      XSetClipOrigin(nxagentDisplay, nxagentGC(pGC), pGC -> clipOrg.x, pGC -> clipOrg.y);
+
+#### XSetClipRectangles ####
+GC.c:695:        XSetClipRectangles(nxagentDisplay, nxagentGC(pGC), pGC -> clipOrg.x, pGC -> clipOrg.y,
+GC.c:724:        XSetClipRectangles(nxagentDisplay, nxagentGC(pGC),
+GC.c:735:        XSetClipRectangles(nxagentDisplay, nxagentGC(pGC),
+GC.c:746:        XSetClipRectangles(nxagentDisplay, nxagentGC(pGC),
+GC.c:757:        XSetClipRectangles(nxagentDisplay, nxagentGC(pGC),
+GC.c:1307:        XSetClipRectangles(nxagentDisplay, nxagentGC(pGC), pGC -> clipOrg.x, pGC -> clipOrg.y,
+GC.c:1339:      XSetClipRectangles(nxagentDisplay, nxagentGC(pGC),
+GC.c:1345:      XSetClipRectangles(nxagentDisplay, nxagentGC(pGC),
+GC.c:1351:      XSetClipRectangles(nxagentDisplay, nxagentGC(pGC),
+GC.c:1357:      XSetClipRectangles(nxagentDisplay, nxagentGC(pGC),
+GCOps.c:502:         * used in the XSetClipRectangles().
+Screen.c:4177:  XSetClipRectangles(nxagentDisplay, gc, 0, 0, pRects, nRects, Unsorted);
+Screen.c:4323:  XSetClipRectangles(nxagentDisplay, gc, 0, 0, pRects, nRects, Unsorted);
+
+#### XSetCloseDownMode ####
+
+#### XSetCommand ####
+
+#### XSetDashes ####
+GC.c:540:      XSetDashes(nxagentDisplay, nxagentGC(pGC),
+
+#### XSetErrorHandler ####
+Atoms.c:122:  previousErrorHandler = XSetErrorHandler((XErrorHandler)&catchAndRedirect);
+Atoms.c:137:  XSetErrorHandler(previousErrorHandler);
+Display.c:920:  XSetErrorHandler(nxagentErrorHandler);
+
+#### XSetFillRule ####
+
+#### XSetFillStyle ####
+Splash.c:219:  XSetFillStyle(nxagentDisplay, gc, FillSolid);
+
+#### XSetFont ####
+Font.c:1325:    XSetFontPath(nxagentDisplay, newFontPaths, nPaths  + 1);
+Font.c:1357:      XSetFontPath(nxagentDisplay, fontPaths, nPaths);
+Font.c:1370:  XSetFontPath(nxagentDisplay, fontPaths, nPaths);
+
+#### XSetFontPath ####
+Font.c:1325:    XSetFontPath(nxagentDisplay, newFontPaths, nPaths  + 1);
+Font.c:1357:      XSetFontPath(nxagentDisplay, fontPaths, nPaths);
+Font.c:1370:  XSetFontPath(nxagentDisplay, fontPaths, nPaths);
+
+#### XSetForeground ####
+Splash.c:220:  XSetForeground(nxagentDisplay, gc, nxagentLogoBlack);
+Splash.c:236:  XSetForeground(nxagentDisplay, gc, nxagentLogoRed);
+Splash.c:247:  XSetForeground(nxagentDisplay, gc, nxagentLogoGray);
+
+#### XSetFunction ####
+Splash.c:218:  XSetFunction(nxagentDisplay, gc, GXcopy);
+
+#### XSetGraphicsExposures ####
+
+#### XSetICFocus ####
+
+#### XSetICValues ####
+
+#### XSetIMValues ####
+
+#### XSetIOErrorHandler ####
+Display.c:872:  XSetIOErrorHandler(nxagentIOErrorHandler);
+
+#### XSetIconName ####
+
+#### XSetIconSizes ####
+
+#### XSetInputFocus ####
+Events.c:3901:    XSetInputFocus(nxagentDisplay, nxagentFullscreenWindow,
+Window.c:913:      XSetInputFocus(nxagentDisplay, w, RevertToParent, CurrentTime);
+Window.c:2596:    XSetInputFocus(nxagentDisplay, nxagentFullscreenWindow,
+
+#### XSetLineAttributes ####
+
+#### XSetLocaleModifiers ####
+
+#### XSetModifierMapping ####
+
+#### XSetNormalHints ####
+
+#### XSetOCValues ####
+
+#### XSetOMValues ####
+
+#### XSetPlaneMask ####
+
+#### XSetPointerMapping ####
+
+#### XSetRGBColormaps ####
+
+#### XSetRegion ####
+
+#### XSetScreenSaver ####
+Screen.c:1444:      XSetScreenSaver(nxagentDisplay, 0, 0, DefaultExposures, DefaultBlanking);
+Screen.c:1693:        XSetScreenSaver(nxagentDisplay, 0, 0, DefaultExposures, DefaultBlanking);
+Window.c:903:      XSetScreenSaver(nxagentDisplay, 0, 0, DefaultExposures, DefaultBlanking);
+
+#### XSetSelectionOwner ####
+Clipboard.c:1049:    XSetSelectionOwner(nxagentDisplay, lastSelectionOwner[i].selection, serverWindow, CurrentTime);
+Clipboard.c:1100:      XSetSelectionOwner(nxagentDisplay, lastSelectionOwner[i].selection, serverWindow, CurrentTime);
+Clipboard.c:1557:  XSetSelectionOwner(nxagentDisplay, serverCutProperty, iWindow, CurrentTime);
+Clipboard.c:1602:    XSetSelectionOwner(nxagentDisplay, nxagentAtoms[10], iWindow, CurrentTime);
+Clipboard.c:1618:        XSetSelectionOwner(nxagentDisplay, lastSelectionOwner[i].selection, iWindow, CurrentTime);
+Splash.c:101:  XSetSelectionOwner(nxagentDisplay, nxagentWMStart, None, CurrentTime);
+Splash.c:396:    XSetSelectionOwner(nxagentDisplay, nxagentWMStart,
+Splash.c:414:    XSetSelectionOwner(nxagentDisplay, serverCutProperty,
+Window.c:2566:    XSetSelectionOwner(nxagentDisplay, serverCutProperty,
+
+#### XSetSizeHints ####
+
+#### XSetStandardColormap ####
+
+#### XSetStandardProperties ####
+Screen.c:1871:    XSetStandardProperties(nxagentDisplay,
+
+#### XSetState ####
+
+#### XSetStipple ####
+
+#### XSetSubwindowMode ####
+
+#### XSetTSOrigin ####
+
+#### XSetTextProperty ####
+
+#### XSetTile ####
+
+#### XSetTransientForHint ####
+
+#### XSetWMClientMachine ####
+
+#### XSetWMColormapWindows ####
+Colormap.c:270:      XSetWMColormapWindows(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum],
+Colormap.c:275:    XSetWMColormapWindows(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum],
+Colormap.c:334:    XSetWMColormapWindows(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum],
+Colormap.c:339:  XSetWMColormapWindows(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum],
+
+#### XSetWMHints ####
+Screen.c:1890:    XSetWMHints(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], &wmHints);
+
+#### XSetWMIconName ####
+
+#### XSetWMName ####
+
+#### XSetWMNormalHints ####
+Events.c:599:      XSetWMNormalHints(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum],
+Events.c:620:    XSetWMNormalHints(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum],
+Events.c:664:  XSetWMNormalHints(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum],
+Screen.c:2399:    XSetWMNormalHints(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], &sizeHints);
+Screen.c:4400:  XSetWMNormalHints(nxagentDisplay, nxagentDefaultWindows[screen], &sizeHints);
+Screen.c:4422:  XSetWMNormalHints(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], &sizeHints);
+Window.c:3099:      XSetWMNormalHints(nxagentDisplay,
+
+#### XSetWMProperties ####
+Screen.c:427:  XSetWMProperties(nxagentDisplay, w,
+
+#### XSetWMProtocols ####
+Screen.c:448:    XSetWMProtocols(nxagentDisplay, w, &deleteWMAtom, 1);
+Screen.c:1964:      XSetWMProtocols(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], &deleteWMatom, 1);
+Screen.c:1974:      XSetWMProtocols(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum], &deleteWMatom, 1);
+Window.c:453:    XSetWMProtocols(nxagentDisplay, nxagentWindowPriv(pWin)->window, &atom, 1);
+Window.c:3014:      XSetWMProtocols(nxagentDisplay, nxagentWindow(pWin), &atom, 1);
+
+#### XSetWMSizeHints ####
+
+#### XSetWindowBackground ####
+Splash.c:379:  XSetWindowBackgroundPixmap(nxagentDisplay, win, nxagentPixmapLogo);
+
+#### XSetWindowBackgroundPixmap ####
+Splash.c:379:  XSetWindowBackgroundPixmap(nxagentDisplay, win, nxagentPixmapLogo);
+
+#### XSetWindowBorder ####
+
+#### XSetWindowBorderPixmap ####
+
+#### XSetWindowBorderWidth ####
+
+#### XSetWindowColormap ####
+Colormap.c:305:          XSetWindowColormap(nxagentDisplay,
+
+#### XSetZoomHints ####
+
+#### XShrinkRegion ####
+
+#### XStoreBuffer ####
+
+#### XStoreBytes ####
+
+#### XStoreColor ####
+Colormap.c:458:    XStoreColors(nxagentDisplay, nxagentColormap(pCmap), pColors64, nColors);
+Colormap.c:462:    XStoreColors(nxagentDisplay, nxagentColormap(pCmap),
+
+#### XStoreColors ####
+Colormap.c:458:    XStoreColors(nxagentDisplay, nxagentColormap(pCmap), pColors64, nColors);
+Colormap.c:462:    XStoreColors(nxagentDisplay, nxagentColormap(pCmap),
+
+#### XStoreName ####
+
+#### XStoreNamedColor ####
+
+#### XStringListToTextProperty ####
+Screen.c:409:  XStringListToTextProperty(&window_name, 1, &windowName);
+
+#### XStringToKeysym ####
+Keystroke.c:200:      new.keysym = XStringToKeysym((char *)attr->children->content);
+
+#### XSubImage ####
+
+#### XSubtractRegion ####
+
+#### XSupportsLocale ####
+
+#### XSync ####
+Atoms.c:168:  XSync(nxagentDisplay, 0);
+Atoms.c:261:    XSync(nxagentDisplay, 0);
+Display.c:1234:    XSynchronize(nxagentDisplay, True);
+Display.c:2991:    XSync(nxagentDisplay, 0);
+Events.c:3370:              XSync(nxagentDisplay, 0);
+GC.c:1156:  XSync(nxagentDisplay, 0);
+Handlers.c:1254:      XSync(nxagentDisplay, 0);
+Render.c:540:  XSync(nxagentDisplay, 0);
+Render.c:607:  XSync(nxagentDisplay, 0);
+Render.c:666:      XSync(nxagentDisplay, 0);
+Render.c:699:      XSync(nxagentDisplay, 0);
+Render.c:745:      XSync(nxagentDisplay, 0);
+Render.c:991:  XSync(nxagentDisplay, 0);
+Render.c:1155:  XSync(nxagentDisplay, 0);
+Render.c:1653:  XSync(nxagentDisplay, 0);
+Render.c:1827:  XSync(nxagentDisplay, 0);
+Render.c:1913:  XSync(nxagentDisplay, 0);
+Render.c:1991:  XSync(nxagentDisplay, 0);
+Render.c:2069:  XSync(nxagentDisplay, 0);
+Render.c:2090:    XSync(nxagentDisplay, 0);
+Render.c:2098:    XSync(nxagentDisplay, 0);
+Render.c:2172:  XSync(nxagentDisplay, 0);
+Render.c:2300:  XSync(nxagentDisplay, 0);
+Render.c:2537:    XSync(nxagentDisplay, 0);
+Render.c:2694:  XSync(nxagentDisplay, 0);
+Render.c:2834:  XSync(nxagentDisplay, 0);
+Render.c:2902:  XSync(nxagentDisplay, 0);
+Render.c:2975:  XSync(nxagentDisplay, 0);
+Render.c:3038:  XSync(nxagentDisplay, 0);
+Screen.c:348:      XSync(nxagentDisplay, 0);
+Screen.c:4565:  XSync(shadow, 0);
+Window.c:107:#define MAKE_SYNC_CONFIGURE_WINDOW  XSync(nxagentDisplay, 0)
+Window.c:842:      XSync(nxagentDisplay, 0);
+Window.c:2717:  XSync(nxagentDisplay, 0);
+Window.c:2756:  XSync(nxagentDisplay, 0);
+Window.c:2773:  XSync(nxagentDisplay, 0);
+
+#### XSynchronize ####
+Display.c:1234:    XSynchronize(nxagentDisplay, True);
+
+#### XTextExtents16 ####
+
+#### XTextExtents ####
+
+#### XTextPropertyToStringList ####
+
+#### XTextWidth16 ####
+GCOps.c:1875:  width = XTextWidth16(nxagentFontStruct(pGC->font), (XChar2b *)string, count);
+
+#### XTextWidth ####
+GCOps.c:1802:  width = XTextWidth(nxagentFontStruct(pGC->font), string, count);
+GCOps.c:1875:  width = XTextWidth16(nxagentFontStruct(pGC->font), (XChar2b *)string, count);
+
+#### XTranslateCoordinates ####
+Events.c:3623:    XTranslateCoordinates(nxagentDisplay, X -> xreparent.window,
+
+#### XUndefineCursor ####
+
+#### XUngrabButton ####
+
+#### XUngrabKey ####
+Events.c:3928:  XUngrabKeyboard(nxagentDisplay, now);
+
+#### XUngrabKeyboard ####
+Events.c:3928:  XUngrabKeyboard(nxagentDisplay, now);
+
+#### XUngrabPointer ####
+Events.c:1325:          XUngrabPointer(nxagentDisplay, CurrentTime);
+Events.c:3934:  XUngrabPointer(nxagentDisplay, now);
+NXevents.c:250:      XUngrabPointer(nxagentDisplay, CurrentTime);
+
+#### XUngrabServer ####
+
+#### XUninstallColormap ####
+Colormap.c:381:      XUninstallColormap(nxagentDisplay, nxagentColormap(pCmap));
+
+#### XUnionRectWithRegion ####
+Render.c:724:        XUnionRectWithRegion(&rectangle, reg, reg);
+Window.c:2356:        XUnionRectWithRegion(&rect, reg, reg);
+Window.c:2416:        XUnionRectWithRegion(&rect, reg, reg);
+
+#### XUnionRegion ####
+
+#### XUnloadFont ####
+
+#### XUnlockDisplay ####
+
+#### XUnmapSubwindows ####
+
+#### XUnmapWindow ####
+Screen.c:296:  XUnmapWindow(nxagentDisplay, nxagentFullscreenWindow);
+Screen.c:315:    XUnmapWindow(nxagentDisplay, nxagentIconWindow);
+Screen.c:322:    XUnmapWindow(nxagentDisplay, nxagentIconWindow);
+Window.c:807:  XUnmapWindow(nxagentDisplay, w);
+Window.c:1948:  XUnmapWindow(nxagentDisplay, nxagentWindow(pWin));
+Window.c:2488:        XUnmapWindow(nxagentDisplay, nxagentDefaultWindows[i]);
+
+#### XUnregisterIMInstantiateCallback ####
+
+#### XUnsetICFocus ####
+
+#### XVaCreateNestedList ####
+
+#### XVendorRelease ####
+
+#### XVisualIDFromVisual ####
+Display.c:1543:    vi.visualid = XVisualIDFromVisual(DefaultVisual(nxagentDisplay,
+
+#### XWMGeometry ####
+
+#### XWarpPointer ####
+
+#### XWhitePixel ####
+
+#### XWhitePixelOfScreen ####
+
+#### XWidthMMOfScreen ####
+
+#### XWidthOfScreen ####
+
+#### XWindowEvent ####
+
+#### XWithdrawWindow ####
+
+#### XWriteBitmapFile ####
+
+#### XXorRegion ####
+
+#### XauDisposeAuth ####
+
+#### XauFileName ####
+
+#### XauGetBestAuthByAddr ####
+
+#### XauReadAuth ####
+
+#### XcmsAddColorSpace ####
+
+#### XcmsAddFunctionSet ####
+
+#### XcmsAllocColor ####
+
+#### XcmsAllocNamedColor ####
+
+#### XcmsCCCOfColormap ####
+
+#### XcmsCIELabClipL ####
+
+#### XcmsCIELabClipLab ####
+
+#### XcmsCIELabClipab ####
+
+#### XcmsCIELabColorSpace ####
+
+#### XcmsCIELabQueryMaxC ####
+
+#### XcmsCIELabQueryMaxL ####
+
+#### XcmsCIELabQueryMaxLC ####
+
+#### XcmsCIELabQueryMinL ####
+
+#### XcmsCIELabToCIEXYZ ####
+
+#### XcmsCIELabWhiteShiftColors ####
+
+#### XcmsCIELuvClipL ####
+
+#### XcmsCIELuvClipLuv ####
+
+#### XcmsCIELuvClipuv ####
+
+#### XcmsCIELuvColorSpace ####
+
+#### XcmsCIELuvQueryMaxC ####
+
+#### XcmsCIELuvQueryMaxL ####
+
+#### XcmsCIELuvQueryMaxLC ####
+
+#### XcmsCIELuvQueryMinL ####
+
+#### XcmsCIELuvToCIEuvY ####
+
+#### XcmsCIELuvWhiteShiftColors ####
+
+#### XcmsCIEXYZColorSpace ####
+
+#### XcmsCIEXYZToCIELab ####
+
+#### XcmsCIEXYZToCIEuvY ####
+
+#### XcmsCIEXYZToCIExyY ####
+
+#### XcmsCIEXYZToRGBi ####
+
+#### XcmsCIEuvYColorSpace ####
+
+#### XcmsCIEuvYToCIELuv ####
+
+#### XcmsCIEuvYToCIEXYZ ####
+
+#### XcmsCIEuvYToTekHVC ####
+
+#### XcmsCIExyYColorSpace ####
+
+#### XcmsCIExyYToCIEXYZ ####
+
+#### XcmsClientWhitePointOfCCC ####
+
+#### XcmsConvertColors ####
+
+#### XcmsCreateCCC ####
+
+#### XcmsDefaultCCC ####
+
+#### XcmsDisplayOfCCC ####
+
+#### XcmsFormatOfPrefix ####
+
+#### XcmsFreeCCC ####
+
+#### XcmsLinearRGBFunctionSet ####
+
+#### XcmsLookupColor ####
+
+#### XcmsPrefixOfFormat ####
+
+#### XcmsQueryBlack ####
+
+#### XcmsQueryBlue ####
+
+#### XcmsQueryColor ####
+
+#### XcmsQueryColors ####
+
+#### XcmsQueryGreen ####
+
+#### XcmsQueryRed ####
+
+#### XcmsQueryWhite ####
+
+#### XcmsRGBColorSpace ####
+
+#### XcmsRGBToRGBi ####
+
+#### XcmsRGBiColorSpace ####
+
+#### XcmsRGBiToCIEXYZ ####
+
+#### XcmsRGBiToRGB ####
+
+#### XcmsScreenNumberOfCCC ####
+
+#### XcmsScreenWhitePointOfCCC ####
+
+#### XcmsSetCCCOfColormap ####
+
+#### XcmsSetCompressionProc ####
+
+#### XcmsSetWhiteAdjustProc ####
+
+#### XcmsSetWhitePoint ####
+
+#### XcmsStoreColor ####
+
+#### XcmsStoreColors ####
+
+#### XcmsTekHVCClipC ####
+
+#### XcmsTekHVCClipV ####
+
+#### XcmsTekHVCClipVC ####
+
+#### XcmsTekHVCColorSpace ####
+
+#### XcmsTekHVCQueryMaxC ####
+
+#### XcmsTekHVCQueryMaxV ####
+
+#### XcmsTekHVCQueryMaxVC ####
+
+#### XcmsTekHVCQueryMaxVSamples ####
+
+#### XcmsTekHVCQueryMinV ####
+
+#### XcmsTekHVCToCIEuvY ####
+
+#### XcmsTekHVCWhiteShiftColors ####
+
+#### XcmsUNDEFINEDColorSpace ####
+
+#### XcmsVisualOfCCC ####
+
+#### XkbAddDeviceLedInfo ####
+
+#### XkbAddGeomColor ####
+
+#### XkbAddGeomDoodad ####
+
+#### XkbAddGeomKey ####
+
+#### XkbAddGeomKeyAlias ####
+
+#### XkbAddGeomOutline ####
+
+#### XkbAddGeomOverlay ####
+
+#### XkbAddGeomOverlayKey ####
+
+#### XkbAddGeomOverlayRow ####
+
+#### XkbAddGeomProperty ####
+
+#### XkbAddGeomRow ####
+
+#### XkbAddGeomSection ####
+
+#### XkbAddGeomShape ####
+
+#### XkbAddKeyType ####
+
+#### XkbAllocClientMap ####
+
+#### XkbAllocCompatMap ####
+
+#### XkbAllocControls ####
+
+#### XkbAllocDeviceInfo ####
+
+#### XkbAllocGeomColors ####
+
+#### XkbAllocGeomDoodads ####
+
+#### XkbAllocGeomKeyAliases ####
+
+#### XkbAllocGeomKeys ####
+
+#### XkbAllocGeomOutlines ####
+
+#### XkbAllocGeomOverlayKeys ####
+
+#### XkbAllocGeomOverlayRows ####
+
+#### XkbAllocGeomOverlays ####
+
+#### XkbAllocGeomPoints ####
+
+#### XkbAllocGeomProps ####
+
+#### XkbAllocGeomRows ####
+
+#### XkbAllocGeomSectionDoodads ####
+
+#### XkbAllocGeomSections ####
+
+#### XkbAllocGeomShapes ####
+
+#### XkbAllocGeometry ####
+
+#### XkbAllocIndicatorMaps ####
+
+#### XkbAllocKeyboard ####
+
+#### XkbAllocNames ####
+
+#### XkbAllocServerMap ####
+
+#### XkbApplyCompatMapToKey ####
+
+#### XkbApplyVirtualModChanges ####
+
+#### XkbBell ####
+
+#### XkbBellEvent ####
+
+#### XkbChangeDeviceInfo ####
+
+#### XkbChangeEnabledControls ####
+
+#### XkbChangeKeycodeRange ####
+
+#### XkbChangeMap ####
+
+#### XkbChangeNames ####
+
+#### XkbChangeTypesOfKey ####
+
+#### XkbComputeEffectiveMap ####
+
+#### XkbComputeRowBounds ####
+
+#### XkbComputeSectionBounds ####
+
+#### XkbComputeShapeBounds ####
+
+#### XkbComputeShapeTop ####
+
+#### XkbCopyKeyType ####
+
+#### XkbCopyKeyTypes ####
+
+#### XkbDeviceBell ####
+
+#### XkbDeviceBellEvent ####
+
+#### XkbFindOverlayForKey ####
+
+#### XkbForceBell ####
+
+#### XkbForceDeviceBell ####
+
+#### XkbFreeClientMap ####
+
+#### XkbFreeCompatMap ####
+
+#### XkbFreeComponentList ####
+
+#### XkbFreeControls ####
+
+#### XkbFreeDeviceInfo ####
+
+#### XkbFreeGeomColors ####
+
+#### XkbFreeGeomDoodads ####
+
+#### XkbFreeGeomKeyAliases ####
+
+#### XkbFreeGeomKeys ####
+
+#### XkbFreeGeomOutlines ####
+
+#### XkbFreeGeomOverlayKeys ####
+
+#### XkbFreeGeomOverlayRows ####
+
+#### XkbFreeGeomOverlays ####
+
+#### XkbFreeGeomPoints ####
+
+#### XkbFreeGeomProperties ####
+
+#### XkbFreeGeomRows ####
+
+#### XkbFreeGeomSections ####
+
+#### XkbFreeGeomShapes ####
+
+#### XkbFreeGeometry ####
+
+#### XkbFreeIndicatorMaps ####
+
+#### XkbFreeKeyboard ####
+Keyboard.c:837:        XkbFreeKeyboard(xkb, XkbAllComponentsMask, True);
+Keyboard.c:1128:        XkbFreeKeyboard(xkb, XkbAllComponentsMask, True);
+
+#### XkbFreeNames ####
+
+#### XkbFreeServerMap ####
+
+#### XkbGetAutoRepeatRate ####
+
+#### XkbGetAutoResetControls ####
+
+#### XkbGetCompatMap ####
+
+#### XkbGetControls ####
+Keyboard.c:137:extern        Status        XkbGetControls(
+Keyboard.c:1009:        XkbGetControls(nxagentDisplay, XkbAllControlsMask, xkb);
+
+#### XkbGetDetectableAutoRepeat ####
+
+#### XkbGetDeviceButtonActions ####
+
+#### XkbGetDeviceInfo ####
+
+#### XkbGetDeviceInfoChanges ####
+
+#### XkbGetDeviceLedInfo ####
+
+#### XkbGetGeometry ####
+
+#### XkbGetIndicatorMap ####
+
+#### XkbGetIndicatorState ####
+Events.c:203: * and XkbGetIndicatorState.
+Events.c:3790:  XkbGetIndicatorState(nxagentDisplay, XkbUseCoreKbd, &modifiers);
+
+#### XkbGetKeyActions ####
+
+#### XkbGetKeyBehaviors ####
+
+#### XkbGetKeyExplicitComponents ####
+
+#### XkbGetKeyModifierMap ####
+
+#### XkbGetKeySyms ####
+
+#### XkbGetKeyTypes ####
+
+#### XkbGetKeyVirtualModMap ####
+
+#### XkbGetKeyboard ####
+Keyboard.c:129:extern        XkbDescPtr XkbGetKeyboard(
+Keyboard.c:972:        xkb = XkbGetKeyboard(nxagentDisplay, XkbGBN_AllComponentsMask, XkbUseCoreKbd);
+
+#### XkbGetKeyboardByName ####
+
+#### XkbGetMap ####
+
+#### XkbGetMapChanges ####
+
+#### XkbGetNamedDeviceIndicator ####
+
+#### XkbGetNamedGeometry ####
+
+#### XkbGetNamedIndicator ####
+
+#### XkbGetNames ####
+Keyboard.c:88:static int nxagentXkbGetNames(char **rules, char **model, char **layout,
+Keyboard.c:1709:static int nxagentXkbGetNames(char **rules, char **model, char **layout,
+Keyboard.c:1804:  drulesLen = nxagentXkbGetNames(&drules, &dmodel, &dlayout,
+
+#### XkbGetPerClientControls ####
+
+#### XkbGetState ####
+
+#### XkbGetUpdatedMap ####
+
+#### XkbGetVirtualMods ####
+
+#### XkbGetXlibControls ####
+
+#### XkbIgnoreExtension ####
+
+#### XkbInitCanonicalKeyTypes ####
+
+#### XkbKeyTypesForCoreSymbols ####
+
+#### XkbKeycodeToKeysym ####
+
+#### XkbKeysymToModifiers ####
+
+#### XkbLatchGroup ####
+
+#### XkbLatchModifiers ####
+
+#### XkbLibraryVersion ####
+
+#### XkbListComponents ####
+
+#### XkbLockGroup ####
+
+#### XkbLockModifiers ####
+
+#### XkbLookupKeyBinding ####
+
+#### XkbLookupKeySym ####
+
+#### XkbNoteControlsChanges ####
+
+#### XkbNoteDeviceChanges ####
+
+#### XkbNoteMapChanges ####
+
+#### XkbNoteNameChanges ####
+
+#### XkbOpenDisplay ####
+
+#### XkbQueryExtension ####
+Keyboard.c:118:extern Bool XkbQueryExtension(
+Keyboard.c:960:        if (XkbQueryExtension(nxagentDisplay,
+Keyboard.c:1889:  result = XkbQueryExtension(nxagentDisplay, &info.Opcode, &info.EventBase,
+
+#### XkbRefreshKeyboardMapping ####
+
+#### XkbResizeDeviceButtonActions ####
+
+#### XkbResizeKeyActions ####
+
+#### XkbResizeKeySyms ####
+
+#### XkbResizeKeyType ####
+
+#### XkbSelectEventDetails ####
+
+#### XkbSelectEvents ####
+Events.c:3700:  XkbSelectEvents(nxagentDisplay, XkbUseCoreKbd,
+Events.c:3721:  XkbSelectEvents(nxagentDisplay, XkbUseCoreKbd, 0x0, 0x0);
+
+#### XkbSetAtomFuncs ####
+
+#### XkbSetAutoRepeatRate ####
+
+#### XkbSetAutoResetControls ####
+
+#### XkbSetCompatMap ####
+
+#### XkbSetControls ####
+
+#### XkbSetDebuggingFlags ####
+
+#### XkbSetDetectableAutoRepeat ####
+
+#### XkbSetDeviceButtonActions ####
+
+#### XkbSetDeviceInfo ####
+
+#### XkbSetDeviceLedInfo ####
+
+#### XkbSetGeometry ####
+
+#### XkbSetIgnoreLockMods ####
+
+#### XkbSetIndicatorMap ####
+
+#### XkbSetMap ####
+
+#### XkbSetNamedDeviceIndicator ####
+
+#### XkbSetNamedIndicator ####
+
+#### XkbSetNames ####
+
+#### XkbSetPerClientControls ####
+
+#### XkbSetServerInternalMods ####
+
+#### XkbSetXlibControls ####
+
+#### XkbToControl ####
+
+#### XkbTranslateKey ####
+
+#### XkbTranslateKeyCode ####
+
+#### XkbTranslateKeySym ####
+
+#### XkbUpdateActionVirtualMods ####
+
+#### XkbUpdateKeyTypeVirtualMods ####
+
+#### XkbUpdateMapFromCore ####
+
+#### XkbUseExtension ####
+
+#### XkbVirtualModsToReal ####
+
+#### XkbXlibControlsImplemented ####
+
+#### XmbDrawImageString ####
+
+#### XmbDrawString ####
+
+#### XmbDrawText ####
+
+#### XmbLookupString ####
+
+#### XmbResetIC ####
+
+#### XmbSetWMProperties ####
+
+#### XmbTextEscapement ####
+
+#### XmbTextExtents ####
+
+#### XmbTextListToTextProperty ####
+
+#### XmbTextPerCharExtents ####
+
+#### XmbTextPropertyToTextList ####
+Events.c:349:      ret = XmbTextPropertyToTextList(nxagentDisplay, &tp, &list, &count);
+
+#### Xpermalloc ####
+
+#### XrmCombineDatabase ####
+
+#### XrmCombineFileDatabase ####
+
+#### XrmDestroyDatabase ####
+
+#### XrmEnumerateDatabase ####
+
+#### XrmGetDatabase ####
+
+#### XrmGetFileDatabase ####
+
+#### XrmGetResource ####
+
+#### XrmGetStringDatabase ####
+
+#### XrmInitialize ####
+
+#### XrmLocaleOfDatabase ####
+
+#### XrmMergeDatabases ####
+
+#### XrmParseCommand ####
+
+#### XrmPermStringToQuark ####
+
+#### XrmPutFileDatabase ####
+
+#### XrmPutLineResource ####
+
+#### XrmPutResource ####
+
+#### XrmPutStringResource ####
+
+#### XrmQGetResource ####
+
+#### XrmQGetSearchList ####
+
+#### XrmQGetSearchResource ####
+
+#### XrmQPutResource ####
+
+#### XrmQPutStringResource ####
+
+#### XrmQuarkToString ####
+
+#### XrmSetDatabase ####
+
+#### XrmStringToBindingQuarkList ####
+
+#### XrmStringToQuark ####
+
+#### XrmStringToQuarkList ####
+
+#### XrmUniqueQuark ####
+
+#### Xutf8DrawImageString ####
+
+#### Xutf8DrawString ####
+
+#### Xutf8DrawText ####
+
+#### Xutf8LookupString ####
+
+#### Xutf8ResetIC ####
+
+#### Xutf8SetWMProperties ####
+
+#### Xutf8TextEscapement ####
+
+#### Xutf8TextExtents ####
+
+#### Xutf8TextListToTextProperty ####
+
+#### Xutf8TextPerCharExtents ####
+
+#### Xutf8TextPropertyToTextList ####
+
+#### XwcDrawImageString ####
+
+#### XwcDrawString ####
+
+#### XwcDrawText ####
+
+#### XwcFreeStringList ####
+
+#### XwcLookupString ####
+
+#### XwcResetIC ####
+
+#### XwcTextEscapement ####
+
+#### XwcTextExtents ####
+
+#### XwcTextListToTextProperty ####
+
+#### XwcTextPerCharExtents ####
+
+#### XwcTextPropertyToTextList ####
+
+#### _Utf8GetConvByName ####
+
+#### _X11TransBytesReadable ####
+
+#### _X11TransClose ####
+
+#### _X11TransCloseForCloning ####
+
+#### _X11TransConnect ####
+
+#### _X11TransConnectDisplay ####
+
+#### _X11TransConvertAddress ####
+
+#### _X11TransDisconnect ####
+
+#### _X11TransFreeConnInfo ####
+
+#### _X11TransGetConnectionNumber ####
+
+#### _X11TransGetHostname ####
+
+#### _X11TransGetMyAddr ####
+
+#### _X11TransGetPeerAddr ####
+
+#### _X11TransIsLocal ####
+
+#### _X11TransOpenCOTSClient ####
+
+#### _X11TransRead ####
+
+#### _X11TransReadv ####
+
+#### _X11TransSetOption ####
+
+#### _X11TransSocketINET6Funcs ####
+
+#### _X11TransSocketINETFuncs ####
+
+#### _X11TransSocketLocalFuncs ####
+
+#### _X11TransSocketProxyConnInfo ####
+
+#### _X11TransSocketTCPFuncs ####
+
+#### _X11TransSocketUNIXFuncs ####
+
+#### _X11TransWrite ####
+
+#### _X11TransWritev ####
+
+#### _XAllocID ####
+
+#### _XAllocIDs ####
+
+#### _XAllocScratch ####
+
+#### _XAllocTemp ####
+
+#### _XAsyncErrorHandler ####
+
+#### _XCloseLC ####
+
+#### _XColor_to_XcmsRGB ####
+
+#### _XConnectDisplay ####
+
+#### _XCopyEventCookie ####
+
+#### _XCopyToArg ####
+
+#### _XCreateMutex_fn ####
+
+#### (arch=amd64 ia64 alpha ppc64 arm64)_XData32 ####
+
+#### _XDefaultError ####
+
+#### _XDefaultIOError ####
+
+#### _XDefaultWireError ####
+
+#### _XDeq ####
+Events.c:4206:          _XDeq(nxagentDisplay, prev, qelt);
+Events.c:4215:          _XDeq(nxagentDisplay, prevKeyRelease, qeltKeyRelease);
+
+#### _XDeqAsyncHandler ####
+
+#### _XDisconnectDisplay ####
+
+#### _XEatData ####
+
+#### _XEatDataWords ####
+
+#### _XEnq ####
+
+#### _XError ####
+
+#### _XErrorFunction ####
+
+#### _XEventToWire ####
+
+#### _XEventsQueued ####
+
+#### _XF86BigfontFreeFontMetrics ####
+Font.c:1723:    _XF86BigfontFreeFontMetrics(fs);
+
+#### _XF86LoadQueryLocaleFont ####
+
+#### _XFetchEventCookie ####
+
+#### _XFlush ####
+
+#### _XFlushGCCache ####
+
+#### _XFreeAtomTable ####
+
+#### _XFreeDisplayLock_fn ####
+
+#### _XFreeDisplayStructure ####
+
+#### _XFreeEventCookies ####
+
+#### _XFreeExtData ####
+
+#### _XFreeMutex_fn ####
+
+#### _XFreeTemp ####
+
+#### _XGetAsyncData ####
+
+#### _XGetAsyncReply ####
+
+#### _XGetBitsPerPixel ####
+Args.c:122:extern int _XGetBitsPerPixel(Display *dpy, int depth);
+
+#### _XGetHostname ####
+
+#### _XGetLCValues ####
+
+#### _XGetRequest ####
+
+#### _XGetScanlinePad ####
+
+#### _XGetWindowAttributes ####
+
+#### _XHeadOfDisplayList ####
+
+#### _XIMCompileResourceList ####
+
+#### _XIOError ####
+
+#### _XIOErrorFunction ####
+
+#### _XInitDisplayLock_fn ####
+
+#### _XInitIM ####
+
+#### _XInitImageFuncPtrs ####
+
+#### _XInitKeysymDB ####
+
+#### _XInitOM ####
+
+#### _XIsEventCookie ####
+
+#### _XKeyInitialize ####
+
+#### _XKeycodeToKeysym ####
+
+#### _XKeysymToKeycode ####
+
+#### _XKeysymToModifiers ####
+
+#### _XLockMutex_fn ####
+
+#### _XLookupKeysym ####
+
+#### _XLookupString ####
+
+#### _XNoticeCreateBitmap ####
+
+#### _XNoticePutBitmap ####
+
+#### _XOpenLC ####
+
+#### _XParseBaseFontNameList ####
+
+#### _XPollfdCacheAdd ####
+
+#### _XPollfdCacheDel ####
+
+#### _XPollfdCacheInit ####
+
+#### _XProcessInternalConnection ####
+
+#### _XProcessWindowAttributes ####
+
+#### _XPutBackEvent ####
+
+#### (arch=amd64 ia64 alpha ppc64 arm64)_XRead32 ####
+
+#### _XRead ####
+
+#### _XReadEvents ####
+
+#### _XReadPad ####
+
+#### _XRefreshKeyboardMapping ####
+
+#### _XRegisterFilterByMask ####
+
+#### _XRegisterFilterByType ####
+
+#### _XRegisterInternalConnection ####
+
+#### _XReply ####
+
+#### _XReverse_Bytes ####
+
+#### _XScreenOfWindow ####
+
+#### _XSelect ####
+
+#### _XSend ####
+
+#### _XSendClientPrefix ####
+
+#### _XSetClipRectangles ####
+
+#### _XSetImage ####
+
+#### _XSetLastRequestRead ####
+
+#### _XStoreEventCookie ####
+
+#### _XTextHeight16 ####
+
+#### _XTextHeight ####
+
+#### _XTranslateKey ####
+
+#### _XTranslateKeySym ####
+
+#### _XTryShapeBitmapCursor ####
+
+#### _XUnknownCopyEventCookie ####
+
+#### _XUnknownNativeEvent ####
+
+#### _XUnknownWireEvent ####
+
+#### _XUnknownWireEventCookie ####
+
+#### _XUnlockMutex_fn ####
+
+#### _XUnregisterFilter ####
+
+#### _XUnregisterInternalConnection ####
+
+#### _XUnresolveColor ####
+
+#### _XUpdateAtomCache ####
+
+#### _XUpdateGCCache ####
+
+#### _XVIDtoVisual ####
+
+#### _XWireToEvent ####
+
+#### _XcmsAddCmapRec ####
+
+#### _XcmsArcTangent ####
+
+#### _XcmsCIELabQueryMaxLCRGB ####
+
+#### _XcmsCIELab_prefix ####
+
+#### _XcmsCIELuvQueryMaxLCRGB ####
+
+#### _XcmsCIELuv_prefix ####
+
+#### _XcmsCIEXYZ_ValidSpec ####
+
+#### _XcmsCIEXYZ_prefix ####
+
+#### _XcmsCIEuvY_ValidSpec ####
+
+#### _XcmsCIEuvY_prefix ####
+
+#### _XcmsCIExyY_prefix ####
+
+#### _XcmsConvertColorsWithWhitePt ####
+
+#### _XcmsCopyCmapRecAndFree ####
+
+#### _XcmsCopyISOLatin1Lowered ####
+
+#### _XcmsCopyPointerArray ####
+
+#### _XcmsCosine ####
+
+#### _XcmsCubeRoot ####
+
+#### _XcmsDDColorSpaces ####
+
+#### _XcmsDDColorSpacesInit ####
+
+#### _XcmsDDConvertColors ####
+
+#### _XcmsDIColorSpaces ####
+
+#### _XcmsDIColorSpacesInit ####
+
+#### _XcmsDIConvertColors ####
+
+#### _XcmsDeleteCmapRec ####
+
+#### _XcmsEqualWhitePts ####
+
+#### _XcmsFreeIntensityMaps ####
+
+#### _XcmsFreePointerArray ####
+
+#### _XcmsGetElement ####
+
+#### _XcmsGetIntensityMap ####
+
+#### _XcmsGetProperty ####
+
+#### _XcmsInitDefaultCCCs ####
+
+#### _XcmsInitScrnInfo ####
+
+#### _XcmsLRGB_InitScrnDefault ####
+
+#### _XcmsPushPointerArray ####
+
+#### _XcmsRGB_prefix ####
+
+#### _XcmsRGB_to_XColor ####
+
+#### _XcmsRGBi_prefix ####
+
+#### _XcmsRegColorSpaces ####
+
+#### _XcmsRegFormatOfPrefix ####
+
+#### _XcmsResolveColor ####
+
+#### _XcmsResolveColorString ####
+
+#### _XcmsSCCFuncSets ####
+
+#### _XcmsSCCFuncSetsInit ####
+
+#### _XcmsSetGetColor ####
+
+#### _XcmsSetGetColors ####
+
+#### _XcmsSine ####
+
+#### _XcmsSquareRoot ####
+
+#### _XcmsTekHVCQueryMaxVCRGB ####
+
+#### _XcmsTekHVC_CheckModify ####
+
+#### _XcmsTekHVC_prefix ####
+
+#### _XcmsUnresolveColor ####
+
+#### _Xdebug ####
+
+#### _Xevent_to_mask ####
+
+#### _Xglobal_lock ####
+
+#### _Xi18n_lock ####
+
+#### _XimCbDispatch ####
+
+#### _XimCheckCreateICValues ####
+
+#### _XimCheckDataSize ####
+
+#### _XimCheckICMode ####
+
+#### _XimCheckIMMode ####
+
+#### _XimCheckIfLocalProcessing ####
+
+#### _XimCheckIfThaiProcessing ####
+
+#### _XimCheckLocalInputStyle ####
+
+#### _XimCommitCallback ####
+
+#### _XimConnect ####
+
+#### _XimDecodeICATTRIBUTE ####
+
+#### _XimDecodeIMATTRIBUTE ####
+
+#### _XimDecodeLocalICAttr ####
+
+#### _XimDecodeLocalIMAttr ####
+
+#### _XimDestroyIMStructureList ####
+
+#### _XimDispatchInit ####
+
+#### _XimEncodeICATTRIBUTE ####
+
+#### _XimEncodeIMATTRIBUTE ####
+
+#### _XimEncodeLocalICAttr ####
+
+#### _XimEncodeLocalIMAttr ####
+
+#### _XimError ####
+
+#### _XimErrorCallback ####
+
+#### _XimExtension ####
+
+#### _XimFilterWaitEvent ####
+
+#### _XimFlush ####
+
+#### _XimForwardEvent ####
+
+#### _XimForwardEventCallback ####
+
+#### _XimFreeCommitInfo ####
+
+#### _XimFreeProtoIntrCallback ####
+
+#### _XimFreeTransIntrCallback ####
+
+#### _XimGetAttributeID ####
+
+#### _XimGetCharCode ####
+
+#### _XimGetCurrentICValues ####
+
+#### _XimGetCurrentIMValues ####
+
+#### _XimGetICValueData ####
+
+#### _XimGetIMValueData ####
+
+#### _XimGetLocaleCode ####
+
+#### _XimGetMyEndian ####
+
+#### _XimGetResourceListRec ####
+
+#### _XimGetResourceListRecByQuark ####
+
+#### _XimGetWindowEventmask ####
+
+#### _XimICOfXICID ####
+
+#### _XimImSportRec ####
+
+#### _XimInitialResourceInfo ####
+
+#### _XimLcctstombs ####
+
+#### _XimLcctstoutf8 ####
+
+#### _XimLcctstowcs ####
+
+#### _XimLocalCreateIC ####
+
+#### _XimLocalFilter ####
+
+#### _XimLocalGetICValues ####
+
+#### _XimLocalGetIMValues ####
+
+#### _XimLocalIMFree ####
+
+#### _XimLocalMbLookupString ####
+
+#### _XimLocalOpenIM ####
+
+#### _XimLocalSetICValues ####
+
+#### _XimLocalSetIMValues ####
+
+#### _XimLocalUtf8LookupString ####
+
+#### _XimLocalWcLookupString ####
+
+#### _XimLookupMBText ####
+
+#### _XimLookupUTF8Text ####
+
+#### _XimLookupWCText ####
+
+#### _XimMakeICAttrIDList ####
+
+#### _XimMakeIMAttrIDList ####
+
+#### _XimOpenIM ####
+
+#### _XimParseStringFile ####
+
+#### _XimProcError ####
+
+#### _XimProcSyncReply ####
+
+#### _XimProtoCreateIC ####
+
+#### _XimProtoEventToWire ####
+
+#### _XimProtoIMFree ####
+
+#### _XimProtoMbLookupString ####
+
+#### _XimProtoOpenIM ####
+
+#### _XimProtoUtf8LookupString ####
+
+#### _XimProtoWcLookupString ####
+
+#### _XimProtoWireToEvent ####
+
+#### _XimRead ####
+
+#### _XimRegProtoIntrCallback ####
+
+#### _XimRegisterDispatcher ####
+
+#### _XimRegisterFilter ####
+
+#### _XimRegisterIMInstantiateCallback ####
+
+#### _XimRegisterServerFilter ####
+
+#### _XimRegisterTriggerKeysCallback ####
+
+#### _XimReregisterFilter ####
+
+#### _XimResetIMInstantiateCallback ####
+
+#### _XimRespSyncReply ####
+
+#### _XimServerDestroy ####
+
+#### _XimSetCurrentICValues ####
+
+#### _XimSetCurrentIMValues ####
+
+#### _XimSetEventMaskCallback ####
+
+#### _XimSetHeader ####
+
+#### _XimSetICDefaults ####
+
+#### _XimSetICMode ####
+
+#### _XimSetICResourceList ####
+
+#### _XimSetICValueData ####
+
+#### _XimSetIMMode ####
+
+#### _XimSetIMResourceList ####
+
+#### _XimSetIMValueData ####
+
+#### _XimSetInnerICResourceList ####
+
+#### _XimSetInnerIMResourceList ####
+
+#### _XimSetLocalIMDefaults ####
+
+#### _XimShutdown ####
+
+#### _XimSync ####
+
+#### _XimSyncCallback ####
+
+#### _XimThaiCloseIM ####
+
+#### _XimThaiCreateIC ####
+
+#### _XimThaiFilter ####
+
+#### _XimThaiIMFree ####
+
+#### _XimThaiOpenIM ####
+
+#### _XimTransCallDispatcher ####
+
+#### _XimTransConf ####
+
+#### _XimTransFilterWaitEvent ####
+
+#### _XimTransFlush ####
+
+#### _XimTransInternalConnection ####
+
+#### _XimTransRead ####
+
+#### _XimTransRegisterDispatcher ####
+
+#### _XimTransWrite ####
+
+#### _XimTransportRec ####
+
+#### _XimTriggerNotify ####
+
+#### _XimUnRegisterIMInstantiateCallback ####
+
+#### _XimUnregisterFilter ####
+
+#### _XimUnregisterServerFilter ####
+
+#### _XimWrite ####
+
+#### _XimXConf ####
+
+#### _XimXTransBytesReadable ####
+
+#### _XimXTransClose ####
+
+#### _XimXTransCloseForCloning ####
+
+#### _XimXTransConnect ####
+
+#### _XimXTransDisconnect ####
+
+#### _XimXTransFreeConnInfo ####
+
+#### _XimXTransGetConnectionNumber ####
+
+#### _XimXTransGetHostname ####
+
+#### _XimXTransGetPeerAddr ####
+
+#### _XimXTransIsLocal ####
+
+#### _XimXTransOpenCOTSClient ####
+
+#### _XimXTransRead ####
+
+#### _XimXTransReadv ####
+
+#### _XimXTransSetOption ####
+
+#### _XimXTransSocketINET6Funcs ####
+
+#### _XimXTransSocketINETFuncs ####
+
+#### _XimXTransSocketLocalFuncs ####
+
+#### _XimXTransSocketTCPFuncs ####
+
+#### _XimXTransSocketUNIXFuncs ####
+
+#### _XimXTransWrite ####
+
+#### _XimXTransWritev ####
+
+#### _Ximctstombs ####
+
+#### _Ximctstoutf8 ####
+
+#### _Ximctstowcs ####
+
+#### _XkbCopyFromReadBuffer ####
+
+#### _XkbFreeReadBuffer ####
+
+#### _XkbGetAtomNameFunc ####
+
+#### _XkbGetCharset ####
+
+#### _XkbGetConverters ####
+
+#### _XkbGetReadBufferCountedString ####
+
+#### _XkbGetReadBufferPtr ####
+
+#### _XkbInitReadBuffer ####
+
+#### _XkbInternAtomFunc ####
+
+#### _XkbNoteCoreMapChanges ####
+
+#### _XkbPeekAtReadBuffer ####
+
+#### (arch=amd64 ia64 alpha ppc64 arm64)_XkbReadBufferCopy32 ####
+
+#### _XkbReadBufferCopyKeySyms ####
+
+#### (arch=amd64 ia64 alpha ppc64 arm64)_XkbReadCopyData32 ####
+
+#### _XkbReadCopyKeySyms ####
+
+#### _XkbReadGetCompatMapReply ####
+
+#### _XkbReadGetGeometryReply ####
+
+#### _XkbReadGetIndicatorMapReply ####
+
+#### _XkbReadGetMapReply ####
+
+#### _XkbReadGetNamesReply ####
+
+#### _XkbReloadDpy ####
+
+#### _XkbSkipReadBufferData ####
+
+#### (arch=amd64 ia64 alpha ppc64 arm64)_XkbWriteCopyData32 ####
+
+#### _XkbWriteCopyKeySyms ####
+
+#### _XkeyTable ####
+
+#### _XlcAddCT ####
+
+#### _XlcAddCharSet ####
+
+#### _XlcAddGB18030LocaleConverters ####
+
+#### _XlcAddLoader ####
+
+#### _XlcAddUtf8Converters ####
+
+#### _XlcAddUtf8LocaleConverters ####
+
+#### _XlcCloseConverter ####
+
+#### _XlcCompareISOLatin1 ####
+
+#### _XlcCompileResourceList ####
+
+#### _XlcConvert ####
+
+#### _XlcCopyFromArg ####
+
+#### _XlcCopyToArg ####
+
+#### _XlcCountVaList ####
+
+#### _XlcCreateDefaultCharSet ####
+
+#### _XlcCreateLC ####
+
+#### _XlcCreateLocaleDataBase ####
+
+#### _XlcCurrentLC ####
+
+#### _XlcDbg_printValue ####
+
+#### _XlcDeInitLoader ####
+
+#### _XlcDefaultLoader ####
+
+#### _XlcDefaultMapModifiers ####
+
+#### _XlcDestroyLC ####
+
+#### _XlcDestroyLocaleDataBase ####
+
+#### _XlcFileName ####
+
+#### _XlcGenericLoader ####
+
+#### _XlcGenericMethods ####
+
+#### _XlcGetCSValues ####
+
+#### _XlcGetCharSet ####
+
+#### _XlcGetCharSetWithSide ####
+
+#### _XlcGetLocaleDataBase ####
+
+#### _XlcGetResource ####
+
+#### _XlcGetValues ####
+
+#### _XlcInitCTInfo ####
+
+#### _XlcInitLoader ####
+
+#### _XlcLocaleDirName ####
+
+#### _XlcLocaleLibDirName ####
+
+#### _XlcMapOSLocaleName ####
+
+#### _XlcNCompareISOLatin1 ####
+
+#### _XlcOpenConverter ####
+
+#### _XlcParseCharSet ####
+
+#### _XlcParse_scopemaps ####
+
+#### _XlcPublicMethods ####
+
+#### _XlcRemoveLoader ####
+
+#### _XlcResetConverter ####
+
+#### _XlcResolveI18NPath ####
+
+#### _XlcResolveLocaleName ####
+
+#### _XlcSetConverter ####
+
+#### _XlcSetValues ####
+
+#### _XlcUtf8Loader ####
+
+#### _XlcVaToArgList ####
+
+#### _XlcValidModSyntax ####
+
+#### _Xlcmbstoutf8 ####
+
+#### _Xlcmbstowcs ####
+
+#### _Xlcmbtowc ####
+
+#### _Xlcwcstombs ####
+
+#### _Xlcwctomb ####
+
+#### _XmbDefaultDrawImageString ####
+
+#### _XmbDefaultDrawString ####
+
+#### _XmbDefaultTextEscapement ####
+
+#### _XmbDefaultTextExtents ####
+
+#### _XmbDefaultTextPerCharExtents ####
+
+#### _XmbGenericDrawImageString ####
+
+#### _XmbGenericDrawString ####
+
+#### _XmbGenericTextEscapement ####
+
+#### _XmbGenericTextExtents ####
+
+#### _XmbGenericTextPerCharExtents ####
+
+#### _XmbTextListToTextProperty ####
+
+#### _XmbTextPropertyToTextList ####
+
+#### _Xmblen ####
+
+#### _Xmbstoutf8 ####
+
+#### _Xmbstowcs ####
+
+#### _Xmbtowc ####
+
+#### _XomConvert ####
+
+#### _XomGenericDrawString ####
+
+#### _XomGenericOpenOM ####
+
+#### _XomGenericTextExtents ####
+
+#### _XomGetFontDataFromFontSet ####
+
+#### _XomInitConverter ####
+
+#### _XrmDefaultInitParseInfo ####
+
+#### _XrmInitParseInfo ####
+
+#### _XrmInternalStringToQuark ####
+
+#### _Xthread_self_fn ####
+
+#### _Xutf8DefaultDrawImageString ####
+
+#### _Xutf8DefaultDrawString ####
+
+#### _Xutf8DefaultTextEscapement ####
+
+#### _Xutf8DefaultTextExtents ####
+
+#### _Xutf8DefaultTextPerCharExtents ####
+
+#### _Xutf8GenericDrawImageString ####
+
+#### _Xutf8GenericDrawString ####
+
+#### _Xutf8GenericTextEscapement ####
+
+#### _Xutf8GenericTextExtents ####
+
+#### _Xutf8GenericTextPerCharExtents ####
+
+#### _Xutf8TextListToTextProperty ####
+
+#### _Xutf8TextPropertyToTextList ####
+
+#### _XwcDefaultDrawImageString ####
+
+#### _XwcDefaultDrawString ####
+
+#### _XwcDefaultTextEscapement ####
+
+#### _XwcDefaultTextExtents ####
+
+#### _XwcDefaultTextPerCharExtents ####
+
+#### _XwcFreeStringList ####
+
+#### _XwcGenericDrawImageString ####
+
+#### _XwcGenericDrawString ####
+
+#### _XwcGenericTextEscapement ####
+
+#### _XwcGenericTextExtents ####
+
+#### _XwcGenericTextPerCharExtents ####
+
+#### _XwcTextListToTextProperty ####
+
+#### _XwcTextPropertyToTextList ####
+
+#### _Xwcscmp ####
+
+#### _Xwcscpy ####
+
+#### _Xwcslen ####
+
+#### _Xwcsncmp ####
+
+#### _Xwcsncpy ####
+
+#### _Xwcstombs ####
+
+#### _Xwctomb ####
+
+#### _qfree ####
+
+#### read_EncodingInfo ####
+
+#### xlocaledir ####
