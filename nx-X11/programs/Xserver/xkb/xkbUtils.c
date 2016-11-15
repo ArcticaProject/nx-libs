@@ -51,11 +51,7 @@ int	XkbDisableLockActions = 0;
 /***====================================================================***/
 
 #ifndef RETURN_SHOULD_REPEAT
-#if (defined(__osf__) && defined(__alpha))
-#define RETURN_SHOULD_REPEAT 1
-#else
 #define	RETURN_SHOULD_REPEAT 0
-#endif
 #endif
 
 /***====================================================================***/

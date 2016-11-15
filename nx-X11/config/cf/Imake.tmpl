@@ -1516,21 +1516,21 @@ TCLIBDIR = TclLibDir
 #define LibManSuffix	3		/* use just one tab or cpp will die */
 #endif
 #ifndef FileManSuffix
-#if SystemV || SystemV4 || defined(OSF1Architecture)
+#if SystemV || SystemV4
 #define FileManSuffix	4		/* use just one tab or cpp will die */
 #else
 #define FileManSuffix	5		/* use just one tab or cpp will die */
 #endif
 #endif
 #ifndef MiscManSuffix
-#if SystemV || SystemV4 || defined(OSF1Architecture)
+#if SystemV || SystemV4
 #define MiscManSuffix	5		/* use just one tab or cpp will die */
 #else
 #define MiscManSuffix	7		/* use just one tab or cpp will die */
 #endif
 #endif
 #ifndef DriverManSuffix
-#if SystemV || SystemV4 || defined(OSF1Architecture)
+#if SystemV || SystemV4
 #define DriverManSuffix	7		/* use just one tab or cpp will die */
 #else
 #define DriverManSuffix	4		/* use just one tab or cpp will die */
