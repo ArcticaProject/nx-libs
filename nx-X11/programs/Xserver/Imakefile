@@ -523,7 +523,7 @@ SUBDIRS = $(STDDIRS) \
 	  $(IPLANDIRS) $(ILBMDIR) \
           $(DDXDIRS) $(FBSUBDIR) $(KDRIVEDIRS) $(MIEXTDIRS)
 
-#if  defined(ServerToInstall) && !defined(OS2Architecture)
+#if  defined(ServerToInstall)
 install::
 	-(cd $(DESTDIR)$(BINDIR); $(RM) X; $(LN) ServerToInstall X)
 #endif

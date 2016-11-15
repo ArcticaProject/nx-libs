@@ -128,9 +128,6 @@ XkbConfigRtrnPtr	rtrn;
         sprintf(buf,"X%s-config%s%s",display,(dName[0]?".":""),dName);
     }
 #endif
-#ifdef __UNIXOS2__
-    strcpy(buf,(char*)__XOS2RedirRoot(buf));
-#endif
 #ifdef DEBUG
     ErrorF("Looking for keyboard configuration in %s...",buf);
 #endif

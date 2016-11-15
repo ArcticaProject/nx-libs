@@ -36,9 +36,6 @@
 
 /************************************************************************/
 
-#ifdef __UNIXOS2__
-# define seteuid setuid
-#endif
 #define	iscomment(ch)	((ch) == '#' || (ch) == '\0')
 #if defined(WIN32)
 #define isreadable(f)	(_XAccessFile(f))
@@ -46,11 +43,7 @@
 #define isreadable(f)	((access((f), R_OK) != -1) ? 1 : 0)
 #endif
 
-#ifndef __UNIXOS2__
 #define LC_PATHDELIM ':'
-#else
-#define LC_PATHDELIM ';'
-#endif
 
 #define XLC_BUFSIZE 256
 
@@ -92,40 +85,7 @@ parse_line(
     return argc;
 }
 
-#ifdef __UNIXOS2__
-
-/* fg021216: entries in locale files are separated by colons while under
-   OS/2, path entries are separated by semicolon, so we need two functions */
-
-static int
-parse_line1(
-    char *line,
-    char **argv,
-    int argsize)
-{
-    int argc = 0;
-    char *p = line;
-
-    while (argc < argsize) {
-	while (isspace(*p)) {
-	    ++p;
-	}
-	if (*p == '\0') {
-	    break;
-	}
-	argv[argc++] = p;
-	while (*p != ';' && *p != '\n' && *p != '\0') {
-	    ++p;
-	}
-	if (*p == '\0') {
-	    break;
-	}
-	*p++ = '\0';
-    }
-
-    return argc;
-}
-#elif defined(WIN32)
+#if defined(WIN32)
 
 /* this is parse_line but skips drive letters at the beginning of the entry */
 static int
@@ -160,7 +120,7 @@ parse_line1(
     return argc;
 }
 
-#endif   /* __UNIXOS2__ */
+#endif   /* WIN32 */
 
 /* Splits a colon separated list of directories, and returns the constituent
    paths (without trailing slash). At most argsize constituents are stored
@@ -174,7 +134,7 @@ _XlcParsePath(
     char *p = path;
     int n, i;
 
-#if !defined(__UNIXOS2__) && !defined(WIN32)
+#if !defined(WIN32)
     n = parse_line(path, argv, argsize);
 #else
     n = parse_line1(path, argv, argsize);
@@ -265,11 +225,7 @@ xlocaledir(
 #endif /* NO_XLOCALEDIR */
 
     if (len < buf_len)
-#ifndef __UNIXOS2__
       strncpy(p, XLOCALEDIR, buf_len - len);
-#else
-      strncpy(p,__XOS2RedirRoot(XLOCALEDIR), buf_len - len);
-#endif
     buf[buf_len-1] = '\0';
 }
 
@@ -343,11 +299,7 @@ xlocalelibdir(
 #endif /* NO_XLOCALEDIR */
 
     if (len < buf_len)
-#ifndef __UNIXOS2__
       strncpy(p, XLOCALELIBDIR, buf_len - len);
-#else
-      strncpy(p,__XOS2RedirRoot(XLOCALELIBDIR), buf_len - len);
-#endif
     buf[buf_len-1] = '\0';
 }
 
@@ -374,17 +326,6 @@ resolve_name(
 	char *p = buf;
 	int n;
 	char *args[2], *from, *to;
-#ifdef __UNIXOS2__  /* Take out CR under OS/2 */
-	int len;
-
-	len = strlen(p);
-	if (len > 1) {
-	    if (*(p+len-2) == '\r' && *(p+len-1) == '\n') {
-		*(p+len-2) = '\n';
-		*(p+len-1) = '\0';
-	    }
-	}
-#endif
 	while (isspace(*p)) {
 	    ++p;
 	}

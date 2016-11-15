@@ -466,7 +466,7 @@ XCOMM the platform-specific parameters - edit site.def to change
 #define HasBasename		YES
 #endif
 #ifndef HasGetopt
-# if !defined(Win32Architecture) && !defined(OS2Architecture)
+# if !defined(Win32Architecture)
 #  define HasGetopt		YES
 # else
 #  define HasGetopt		NO

@@ -397,7 +397,6 @@ OsInitColors(void)
 
   if (!was_here)
     {
-#ifndef __UNIXOS2__
 #ifdef NX_TRANS_SOCKET
       /*
        * Add the trailing '.txt' if a
@@ -418,12 +417,6 @@ OsInitColors(void)
       strcpy(path, rgbPath);
       strcat(path, ".txt");
 #endif
-#else
-      char *tmp = (char*)__XOS2RedirRoot(rgbPath);
-      path = (char*)ALLOCATE_LOCAL(strlen(tmp) +5);
-      strcpy(path, tmp);
-      strcat(path, ".txt");
-#endif
       if (!(rgb = fopen(path, "r")))
         {
 #ifdef NX_TRANS_SOCKET
@@ -438,11 +431,7 @@ OsInitColors(void)
       while(fgets(line, sizeof(line), rgb))
 	{
 	  lineno++;
-#ifndef __UNIXOS2__
 	  if (sscanf(line,"%d %d %d %[^\n]\n", &red, &green, &blue, name) == 4)
-#else
-	  if (sscanf(line,"%d %d %d %[^\n\r]\n", &red, &green, &blue, name) == 4)
-#endif
 	    {
 	      if (red >= 0   && red <= 0xff &&
 		  green >= 0 && green <= 0xff &&

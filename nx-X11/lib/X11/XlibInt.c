@@ -169,13 +169,8 @@ extern int _X11TransSocketCongestionChange(XtransConnInfo, int *);
 #define ECHECK(err) (WSAGetLastError() == err)
 #define ESET(val) WSASetLastError(val)
 #else
-#ifdef __UNIXOS2__
-#define ECHECK(err) (errno == err)
-#define ESET(val)
-#else
 #define ECHECK(err) (errno == err)
 #define ESET(val) errno = val
-#endif
 #endif
 
 #if defined(LOCALCONN) || defined(LACHMAN)
@@ -188,14 +183,6 @@ extern int _X11TransSocketCongestionChange(XtransConnInfo, int *);
 #ifdef EMSGSIZE
 #define ESZTEST() ECHECK(EMSGSIZE)
 #endif
-#endif
-
-#ifdef __UNIXOS2__
-#if !USE_XCB
-#define select(n,r,w,x,t) os2ClientSelect(n,r,w,x,t)
-#endif /* !USE_XCB */
-#include <limits.h>
-#define MAX_PATH _POSIX_PATH_MAX
 #endif
 
 #if !USE_XCB
@@ -4054,10 +4041,6 @@ static int AccessFile (path, pathbuf, len_pathbuf, pathret)
 
     /* try the places set in the environment */
     drive = getenv ("_XBASEDRIVE");
-#ifdef __UNIXOS2__
-    if (!drive)
-	drive = getenv ("X11ROOT");
-#endif
     if (!drive)
 	drive = "C:";
     len = strlen (drive) + strlen (path);
@@ -4070,7 +4053,6 @@ static int AccessFile (path, pathbuf, len_pathbuf, pathret)
 	return 1;
     }
 
-#ifndef __UNIXOS2__
     /* one last place to look */
     drive = getenv ("HOMEDRIVE");
     if (drive) {
@@ -4105,7 +4087,6 @@ static int AccessFile (path, pathbuf, len_pathbuf, pathret)
 	    }
 	}
     }
-#endif
     return 0;
 }
 

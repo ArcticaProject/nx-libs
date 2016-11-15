@@ -1249,12 +1249,6 @@ struct _XConnWatchInfo {	/* info from XAddConnectionWatch */
     struct _XConnWatchInfo *next;
 };
 
-#ifdef __UNIXOS2__
-extern char* __XOS2RedirRoot(
-    char*
-);
-#endif
-
 extern int _XTextHeight(
     XFontStruct*	/* font_struct */,
     _Xconst char*	/* string */,

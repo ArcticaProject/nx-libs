@@ -127,11 +127,6 @@ in this Software without prior written authorization from The Open Group.
 #define X_NOT_STDC_ENV
 #endif
 
-#ifdef __UNIXOS2__
-#define USGISH
-#define NULL_NOT_ZERO
-#endif
-
 #ifdef __DARWIN__
 #define NULL_NOT_ZERO
 #endif

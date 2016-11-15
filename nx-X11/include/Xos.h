@@ -246,12 +246,6 @@ typedef unsigned long fd_mask;
 #endif
 #endif /* XPG4 else */
 
-#ifdef __UNIXOS2__
-typedef unsigned long fd_mask;
-#include <limits.h>
-#define MAX_PATH _POSIX_PATH_MAX
-#endif
-
 #ifdef __GNU__
 #define PATH_MAX 4096
 #define MAXPATHLEN 4096
@@ -269,7 +263,7 @@ typedef unsigned long fd_mask;
 #define NGROUPS 16
 #endif
 
-#if defined(ISC) || defined(__UNIXOS2__) || \
+#if defined(ISC) || \
     (defined(__linux__) && !defined(__GLIBC__)) || \
     (defined(__QNX__) && !defined(UNIXCONN))
 /*

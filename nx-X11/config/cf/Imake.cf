@@ -1117,13 +1117,6 @@ XCOMM Keep cpp from replacing path elements containing i486/i586/i686
 #endif
 #endif
 
-#ifdef emxos2
-#define MacroIncludeFile <os2.cf>
-#define MacroFile os2.cf
-#define OS2Architecture
-#define i386Architecture
-#endif /* emxos2 */
-
 #if defined(__QNX__) && !defined(__QNXNTO__)
 #define MacroIncludeFile <QNX4.cf>
 #define MacroFile QNX4.cf
