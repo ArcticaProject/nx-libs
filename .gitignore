@@ -1,0 +1,13 @@
+.gitignore
+*.o
+*.so.*
+*.so
+*.a
+xmakefile
+autom4te.cache/
+config.log
+config.status
+configure
+depend.status
+*~
+[#]*
