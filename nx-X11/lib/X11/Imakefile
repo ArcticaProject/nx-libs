@@ -93,12 +93,6 @@ NX_XCOMPEXTCONFIGTARGET = $(NX_XCOMPEXTLIBDIR)/config.status
 
 #endif
 
-#if BuildLoadableXlibI18n
-#define IHaveSubdirs
-#define PassCDebugFlags CDEBUGFLAGS="$(CDEBUGFLAGS)"
-#define NoLibSubdirs
-#endif
-
 #define DoNormalLib NormalLibX11
 #define DoSharedLib SharedLibX11
 #define DoExtraLib SharedLibX11
@@ -108,10 +102,6 @@ NX_XCOMPEXTCONFIGTARGET = $(NX_XCOMPEXTLIBDIR)/config.status
 #define SoRev SOXLIBREV
 #define HugeLibrary YES
 #define IncSubdir nx-X11
-
-#if BuildLoadableXlibI18n
-SUBDIRS = xlibi18n
-#endif
 
 /*
  FIXME: This is switchable upstream via configure option, we leave it
@@ -128,9 +118,6 @@ XCB_DEFINES = -DUSE_XCB=0
 
 #ifdef SharedX11Reqs
 REQUIREDX11LIBS = SharedX11Reqs
-#endif
-#if BuildLoadableXlibI18n
-REQUIREDI18NLIBS = DlLibrary
 #endif
 #ifdef cygwinArchitecture
 EXCLUDE_SYMBOL = -Wl,--exclude-symbol,XdmcpWrap:_XdmcpWrapperToOddParity
@@ -224,12 +211,7 @@ XCURSOR_DEFINES = -DUSE_DYNAMIC_XCURSOR -DLIBXCURSOR=\"libXcursor.so.$(SOXCURSOR
            SRCS = $(SRCS1) $(SRCS2) $(SRCS3) $(EXTRASRCS) /* try *.c if you have trouble */
        LINTLIBS =
 
-#if BuildLoadableXlibI18n && DoSharedLib
-EXTRASHAREDSRC = $(SHAREDLCSRCS)
-#endif
-#if !BuildLoadableXlibI18n || DoNormalLib
 EXTRASTATICSRC = $(STATICLCSRCS)
-#endif
 
 EXTRASRCS = $(EXTRASHAREDSRC) $(EXTRASTATICSRC)
 
@@ -909,10 +891,6 @@ OBJS3 = \
 	xim_trans.o \
 	$(XKBOBJS) $(LCOBJS) $(MISCOBJS)
 
-#if BuildLoadableXlibI18n
-LC_DYNDEFINES = -DUSE_DYNAMIC_LC
-#endif
-
 SHAREDLCDEPSYMSRCS = XlcDL.c XlcSL.c
 
 SHAREDI18NSTATICSRCS = \
@@ -1070,11 +1048,7 @@ OBJS = $(OBJS1) $(OBJS2) $(OBJS3)
 
 EXTRAUNSHAREDOBJS = $(STATICLCOBJS)
 
-#if BuildLoadableXlibI18n
-EXTRASHAREDOBJS = $(SHAREDLCOBJS)
-# else
 EXTRASHAREDOBJS = $(STATICLCOBJS)
-#endif
 
 #include <Library.tmpl>
 
@@ -1098,11 +1072,6 @@ SpecialCLibObjectRule(XKBCvt,$(_NOOP_),$(RCONST_DEFINES))
 SpecialCLibObjectRule(KeyBind,$(ICONFIGFILES),$(XKB_DEFINES))
 SpecialCLibObjectRule(XKBBind,$(ICONFIGFILES),$(XKB_DEFINES))
 SpecialCLibObjectRule(imConv,$(ICONFIGFILES),$(XKB_DEFINES))
-#endif
-#if BuildLoadableXlibI18n
-SpecialCLibObjectRuleSeparateOpts(lcInit,$(ICONFIGFILES),$(_NOOP_),$(LC_DYNDEFINES))
-SpecialCLibObjectRuleSeparateOpts(lcGeneric,$(ICONFIGFILES),$(_NOOP_),$(LC_DYNDEFINES))
-SpecialCLibObjectRuleSeparateOpts(lcPublic,$(ICONFIGFILES),$(_NOOP_),$(LC_DYNDEFINES))
 #endif
 #if BuildLoadableXlibXcursor
 SpecialCLibObjectRuleSeparateOpts(CrCursor,$(ICONFIGFILES),$(_NOOP_),$(XCURSOR_DEFINES))
@@ -1155,12 +1124,6 @@ StrKeysym.o: ks_tables.h
 
 DependTarget3($(SRCS1),$(SRCS2),$(SRCS3) $(EXTRASRCS))
 
-#if BuildLoadableXlibI18n
-MakeSubdirs($(SUBDIRS))
-DependSubdirs($(SUBDIRS))
-MakeLintLibSubdirs($(LINTSUBDIRS))
-MakeLintSubdirs($(LINTSUBDIRS),install.ln,install.ln)
-#endif
 #endif
 
 includes:: XlibConf.h pathmax.h

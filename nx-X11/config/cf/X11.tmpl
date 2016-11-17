@@ -126,20 +126,14 @@ XORGRELSTRING = XorgManVersionString
 #define BuildX11Lib		BuildLibraries
 #endif
 
-#ifndef BuildLoadableXlibI18n
-#define BuildLoadableXlibI18n	(HasDlopen && SharedLibX11)
-#endif
 #ifndef InstallXcmsTxt
 #define InstallXcmsTxt		YES
 #endif
 /*
- * This disables XLOCALEDIR.  Set it if you're using BuildLoadableXlibI18n,
- * don't have either issetugid() or getresuid(), and you need to protect
- * clients that are setgid or setuid to an id other than 0.
+ * This disables XLOCALEDIR. 
  */
 #ifndef DisableXLocaleDirEnv
-#define DisableXLocaleDirEnv	BuildLoadableXlibI18n && \
-					!(HasIssetugid || HasGetresuid)
+#define DisableXLocaleDirEnv	NO
 #endif
 #ifndef BuildLoadableXlibXcursor
 #define BuildLoadableXlibXcursor (HasDlopen && SharedLibX11)
