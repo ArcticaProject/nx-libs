@@ -41,72 +41,38 @@ in this Software without prior written authorization from The Open Group.
 #include "dixstruct.h"
 #include "resource.h"
 #include "opaque.h"
-#include <X11/extensions/shapeproto.h>
-#include "protocol-versions.h"
+#include <nx-X11/extensions/shapeproto.h>
 #include "regionstr.h"
 #include "gcstruct.h"
+#ifndef XORG_TOO_OLD
+# include "extinit.h"
+#endif
+#include "protocol-versions.h"
 
 typedef RegionPtr (*CreateDftPtr) (WindowPtr    /* pWin */
     );
 
 static int ShapeFreeClient(void * /* data */ ,
-                           XID  /* id */
+                           XID    /* id */
     );
 static int ShapeFreeEvents(void * /* data */ ,
-                           XID  /* id */
-    );
-static void ShapeResetProc(ExtensionEntry *     /* extEntry */
+                           XID    /* id */
     );
 static void SShapeNotifyEvent(xShapeNotifyEvent * /* from */ ,
                               xShapeNotifyEvent *       /* to */
-    );
-static int
- RegionOperate(ClientPtr /* client */ ,
-               WindowPtr /* pWin */ ,
-               int /* kind */ ,
-               RegionPtr * /* destRgnp */ ,
-               RegionPtr /* srcRgn */ ,
-               int /* op */ ,
-               int /* xoff */ ,
-               int /* yoff */ ,
-               CreateDftPtr     /* create */
     );
 
 /* SendShapeNotify, CreateBoundingShape and CreateClipShape are used
  * externally by the Xfixes extension and are now defined in window.h
  */
 
-static DISPATCH_PROC(ProcShapeCombine);
-static DISPATCH_PROC(ProcShapeDispatch);
-static DISPATCH_PROC(ProcShapeGetRectangles);
-static DISPATCH_PROC(ProcShapeInputSelected);
-static DISPATCH_PROC(ProcShapeMask);
-static DISPATCH_PROC(ProcShapeOffset);
-static DISPATCH_PROC(ProcShapeQueryExtents);
-static DISPATCH_PROC(ProcShapeQueryVersion);
-static DISPATCH_PROC(ProcShapeRectangles);
-static DISPATCH_PROC(ProcShapeSelectInput);
-static DISPATCH_PROC(SProcShapeCombine);
-static DISPATCH_PROC(SProcShapeDispatch);
-static DISPATCH_PROC(SProcShapeGetRectangles);
-static DISPATCH_PROC(SProcShapeInputSelected);
-static DISPATCH_PROC(SProcShapeMask);
-static DISPATCH_PROC(SProcShapeOffset);
-static DISPATCH_PROC(SProcShapeQueryExtents);
-static DISPATCH_PROC(SProcShapeQueryVersion);
-static DISPATCH_PROC(SProcShapeRectangles);
-static DISPATCH_PROC(SProcShapeSelectInput);
-
 #ifdef PANORAMIX
 #include "panoramiX.h"
 #include "panoramiXsrv.h"
 #endif
 
-#if 0
-static unsigned char ShapeReqCode = 0;
-#endif
 static int ShapeEventBase = 0;
-static RESTYPE ClientType, EventType;   /* resource types for event masks */
+static RESTYPE ClientType, ShapeEventType;      /* resource types for event masks */
 
 /*
  * each window has a list of clients requesting
@@ -133,43 +99,13 @@ typedef struct _ShapeEvent {
  *
  ****************/
 
-void
-ShapeExtensionInit(void)
-{
-    ExtensionEntry *extEntry;
-
-    ClientType = CreateNewResourceType(ShapeFreeClient);
-    EventType = CreateNewResourceType(ShapeFreeEvents);
-    if (ClientType && EventType &&
-        (extEntry = AddExtension(SHAPENAME, ShapeNumberEvents, 0,
-                                 ProcShapeDispatch, SProcShapeDispatch,
-                                 ShapeResetProc, StandardMinorOpcode))) {
-#if 0
-        ShapeReqCode = (unsigned char) extEntry->base;
-#endif
-        ShapeEventBase = extEntry->eventBase;
-        EventSwapVector[ShapeEventBase] = (EventSwapPtr) SShapeNotifyEvent;
-    }
-}
-
- /*ARGSUSED*/ static void
-ShapeResetProc(extEntry)
-ExtensionEntry *extEntry;
-{
-}
-
 static int
-RegionOperate(client, pWin, kind, destRgnp, srcRgn, op, xoff, yoff, create)
-ClientPtr client;
-WindowPtr pWin;
-int kind;
-RegionPtr *destRgnp, srcRgn;
-int op;
-int xoff, yoff;
-CreateDftPtr create;            /* creates a reasonable *destRgnp */
+RegionOperate(ClientPtr client,
+              WindowPtr pWin,
+              int kind,
+              RegionPtr *destRgnp,
+              RegionPtr srcRgn, int op, int xoff, int yoff, CreateDftPtr create)
 {
-    ScreenPtr pScreen = pWin->drawable.pScreen;
-
     if (srcRgn && (xoff || yoff))
         RegionTranslate(srcRgn, xoff, yoff);
     if (!pWin->parent) {
@@ -238,14 +174,17 @@ CreateDftPtr create;            /* creates a reasonable *destRgnp */
         }
     if (srcRgn)
         RegionDestroy(srcRgn);
-    (*pScreen->SetShape) (pWin);
+#ifdef XORG_TOO_OLD
+    (*pWin->drawable.pScreen->SetShape) (pWin);
+#else
+    (*pWin->drawable.pScreen->SetShape) (pWin, kind);
+#endif /* XORG_TOO_OLD */
     SendShapeNotify(pWin, kind);
     return Success;
 }
 
 RegionPtr
-CreateBoundingShape(pWin)
-WindowPtr pWin;
+CreateBoundingShape(WindowPtr pWin)
 {
     BoxRec extents;
 
@@ -257,8 +196,7 @@ WindowPtr pWin;
 }
 
 RegionPtr
-CreateClipShape(pWin)
-WindowPtr pWin;
+CreateClipShape(WindowPtr pWin)
 {
     BoxRec extents;
 
@@ -270,18 +208,18 @@ WindowPtr pWin;
 }
 
 static int
-ProcShapeQueryVersion(client)
-register ClientPtr client;
+ProcShapeQueryVersion(ClientPtr client)
 {
-    xShapeQueryVersionReply rep;
+    xShapeQueryVersionReply rep = {
+        .type = X_Reply,
+        .sequenceNumber = client->sequence,
+        .length = 0,
+        .majorVersion = SERVER_SHAPE_MAJOR_VERSION,
+        .minorVersion = SERVER_SHAPE_MINOR_VERSION
+    };
 
     REQUEST_SIZE_MATCH(xShapeQueryVersionReq);
-    memset(&rep, 0, sizeof(xShapeQueryVersionReply));
-    rep.type = X_Reply;
-    rep.length = 0;
-    rep.sequenceNumber = client->sequence;
-    rep.majorVersion = SERVER_SHAPE_MAJOR_VERSION;
-    rep.minorVersion = SERVER_SHAPE_MINOR_VERSION;
+
     if (client->swapped) {
         swaps(&rep.sequenceNumber);
         swapl(&rep.length);
@@ -289,7 +227,7 @@ register ClientPtr client;
         swaps(&rep.minorVersion);
     }
     WriteToClient(client, sizeof(xShapeQueryVersionReply), &rep);
-    return (client->noClientException);
+    return Success;
 }
 
 /*****************
@@ -298,23 +236,31 @@ register ClientPtr client;
  *****************/
 
 static int
-ProcShapeRectangles(client)
-register ClientPtr client;
+ProcShapeRectangles(ClientPtr client)
 {
     WindowPtr pWin;
 
     REQUEST(xShapeRectanglesReq);
     xRectangle *prects;
     int nrects, ctype;
+#ifndef XORG_TOO_OLD
+    int rc;
+#endif /* XORG_TOO_OLD */
     RegionPtr srcRgn;
     RegionPtr *destRgn;
     CreateDftPtr createDefault;
 
     REQUEST_AT_LEAST_SIZE(xShapeRectanglesReq);
     UpdateCurrentTime();
+#ifdef XORG_TOO_OLD
     pWin = LookupWindow(stuff->dest, client);
     if (!pWin)
         return BadWindow;
+#else
+    rc = dixLookupWindow(&pWin, stuff->dest, client, DixSetAttrAccess);
+    if (rc != Success)
+        return rc;
+#endif /* XORG_TOO_OLD */
     switch (stuff->destKind) {
     case ShapeBounding:
         createDefault = CreateBoundingShape;
@@ -367,27 +313,35 @@ register ClientPtr client;
 
 #ifdef PANORAMIX
 static int
-ProcPanoramiXShapeRectangles(register ClientPtr client)
+ProcPanoramiXShapeRectangles(ClientPtr client)
 {
     REQUEST(xShapeRectanglesReq);
     PanoramiXRes *win;
-    int j, result = 0;
+    int j, result;
 
     REQUEST_AT_LEAST_SIZE(xShapeRectanglesReq);
 
+#ifdef XORG_TOO_OLD
     if (!
         (win =
          (PanoramiXRes *) SecurityLookupIDByType(client, stuff->dest,
                                                  XRT_WINDOW,
                                                  SecurityWriteAccess)))
         return BadWindow;
+#else
+    result = dixLookupResourceByType((void **) &win, stuff->dest, XRT_WINDOW,
+                                     client, DixWriteAccess);
+    if (result != Success)
+        return result;
+#endif /* XORG_TOO_OLD */
 
     FOR_NSCREENS(j) {
         stuff->dest = win->info[j].id;
         result = ProcShapeRectangles(client);
-        BREAK_IF(result != Success);
+        if (result != Success)
+            break;
     }
-    return (result);
+    return result;
 }
 #endif
 
@@ -396,8 +350,7 @@ ProcPanoramiXShapeRectangles(register ClientPtr client)
  **************/
 
 static int
-ProcShapeMask(client)
-register ClientPtr client;
+ProcShapeMask(ClientPtr client)
 {
     WindowPtr pWin;
     ScreenPtr pScreen;
@@ -407,12 +360,22 @@ register ClientPtr client;
     RegionPtr *destRgn;
     PixmapPtr pPixmap;
     CreateDftPtr createDefault;
+#ifndef XORG_TOO_OLD
+    int rc;
+#endif
 
     REQUEST_SIZE_MATCH(xShapeMaskReq);
     UpdateCurrentTime();
+#ifdef XORG_TOO_OLD
     pWin = SecurityLookupWindow(stuff->dest, client, SecurityWriteAccess);
     if (!pWin)
         return BadWindow;
+#else
+    rc = dixLookupWindow(&pWin, stuff->dest, client, DixSetAttrAccess);
+    if (rc != Success)
+        return rc;
+#endif /* XORG_TOO_OLD */
+
     switch (stuff->destKind) {
     case ShapeBounding:
         createDefault = CreateBoundingShape;
@@ -431,11 +394,18 @@ register ClientPtr client;
     if (stuff->src == None)
         srcRgn = 0;
     else {
+#ifdef XORG_TOO_OLD
         pPixmap = (PixmapPtr) SecurityLookupIDByType(client, stuff->src,
                                                      RT_PIXMAP,
                                                      SecurityReadAccess);
         if (!pPixmap)
             return BadPixmap;
+#else
+        rc = dixLookupResourceByType((void **) &pPixmap, stuff->src,
+                                     RT_PIXMAP, client, DixReadAccess);
+        if (rc != Success)
+            return rc;
+#endif /* XORG_TOO_OLD */
         if (pPixmap->drawable.pScreen != pScreen ||
             pPixmap->drawable.depth != 1)
             return BadMatch;
@@ -467,28 +437,42 @@ register ClientPtr client;
 
 #ifdef PANORAMIX
 static int
-ProcPanoramiXShapeMask(register ClientPtr client)
+ProcPanoramiXShapeMask(ClientPtr client)
 {
     REQUEST(xShapeMaskReq);
     PanoramiXRes *win, *pmap;
-    int j, result = 0;
+    int j, result;
 
     REQUEST_SIZE_MATCH(xShapeMaskReq);
 
+#ifdef XORG_TOO_OLD
     if (!
         (win =
          (PanoramiXRes *) SecurityLookupIDByType(client, stuff->dest,
                                                  XRT_WINDOW,
                                                  SecurityWriteAccess)))
         return BadWindow;
+#else
+    result = dixLookupResourceByType((void **) &win, stuff->dest, XRT_WINDOW,
+                                     client, DixWriteAccess);
+    if (result != Success)
+        return result;
+#endif /* XORG_TOO_OLD */
 
     if (stuff->src != None) {
+#ifdef XORG_TOO_OLD
         if (!
             (pmap =
              (PanoramiXRes *) SecurityLookupIDByType(client, stuff->src,
                                                      XRT_PIXMAP,
                                                      SecurityReadAccess)))
             return BadPixmap;
+#else
+        result = dixLookupResourceByType((void **) &pmap, stuff->src,
+                                         XRT_PIXMAP, client, DixReadAccess);
+        if (result != Success)
+            return result;
+#endif /* XORG_TOO_OLD */
     }
     else
         pmap = NULL;
@@ -498,9 +482,10 @@ ProcPanoramiXShapeMask(register ClientPtr client)
         if (pmap)
             stuff->src = pmap->info[j].id;
         result = ProcShapeMask(client);
-        BREAK_IF(result != Success);
+        if (result != Success)
+            break;
     }
-    return (result);
+    return result;
 }
 #endif
 
@@ -509,11 +494,9 @@ ProcPanoramiXShapeMask(register ClientPtr client)
  ************/
 
 static int
-ProcShapeCombine(client)
-register ClientPtr client;
+ProcShapeCombine(ClientPtr client)
 {
     WindowPtr pSrcWin, pDestWin;
-    ScreenPtr pScreen;
 
     REQUEST(xShapeCombineReq);
     RegionPtr srcRgn;
@@ -521,12 +504,21 @@ register ClientPtr client;
     CreateDftPtr createDefault;
     CreateDftPtr createSrc;
     RegionPtr tmp;
+#ifndef XORG_TOO_OLD
+    int rc;
+#endif /* XORG_TOO_OLD */
 
     REQUEST_SIZE_MATCH(xShapeCombineReq);
     UpdateCurrentTime();
+#ifdef XORG_TOO_OLD
     pDestWin = LookupWindow(stuff->dest, client);
     if (!pDestWin)
         return BadWindow;
+#else
+    rc = dixLookupWindow(&pDestWin, stuff->dest, client, DixSetAttrAccess);
+    if (rc != Success)
+        return rc;
+#endif /* XORG_TOO_OLD */
     if (!pDestWin->optional)
         MakeWindowOptional(pDestWin);
     switch (stuff->destKind) {
@@ -543,11 +535,17 @@ register ClientPtr client;
         client->errorValue = stuff->destKind;
         return BadValue;
     }
-    pScreen = pDestWin->drawable.pScreen;
 
+#ifdef XORG_TOO_OLD
     pSrcWin = LookupWindow(stuff->src, client);
     if (!pSrcWin)
         return BadWindow;
+#else
+    rc = dixLookupWindow(&pSrcWin, stuff->src, client, DixGetAttrAccess);
+    if (rc != Success)
+        return rc;
+#endif /* XORG_TOO_OLD */
+
     switch (stuff->srcKind) {
     case ShapeBounding:
         srcRgn = wBoundingShape(pSrcWin);
@@ -565,7 +563,7 @@ register ClientPtr client;
         client->errorValue = stuff->srcKind;
         return BadValue;
     }
-    if (pSrcWin->drawable.pScreen != pScreen) {
+    if (pSrcWin->drawable.pScreen != pDestWin->drawable.pScreen) {
         return BadMatch;
     }
 
@@ -600,34 +598,52 @@ register ClientPtr client;
 
 #ifdef PANORAMIX
 static int
-ProcPanoramiXShapeCombine(register ClientPtr client)
+ProcPanoramiXShapeCombine(ClientPtr client)
 {
     REQUEST(xShapeCombineReq);
     PanoramiXRes *win, *win2;
-    int j, result = 0;
+    int j;
+#ifdef XORG_TOO_OLD
+    int result;
+#endif /* XORG_TOO_OLD */
 
     REQUEST_AT_LEAST_SIZE(xShapeCombineReq);
 
+#ifdef XORG_TOO_OLD
     if (!
         (win =
          (PanoramiXRes *) SecurityLookupIDByType(client, stuff->dest,
                                                  XRT_WINDOW,
                                                  SecurityWriteAccess)))
         return BadWindow;
+#else
+    result = dixLookupResourceByType((void **) &win, stuff->dest, XRT_WINDOW,
+                                     client, DixWriteAccess);
+    if (result != Success)
+        return result;
+#endif
 
+#ifdef XORG_TOO_OLD
     if (!
         (win2 =
          (PanoramiXRes *) SecurityLookupIDByType(client, stuff->src, XRT_WINDOW,
                                                  SecurityReadAccess)))
         return BadWindow;
+#else
+    result = dixLookupResourceByType((void **) &win2, stuff->src, XRT_WINDOW,
+                                     client, DixReadAccess);
+    if (result != Success)
+        return result;
+#endif
 
     FOR_NSCREENS(j) {
         stuff->dest = win->info[j].id;
         stuff->src = win2->info[j].id;
         result = ProcShapeCombine(client);
-        BREAK_IF(result != Success);
+        if (result != Success)
+            break;
     }
-    return (result);
+    return result;
 }
 #endif
 
@@ -636,20 +652,27 @@ ProcPanoramiXShapeCombine(register ClientPtr client)
  *************/
 
 static int
-ProcShapeOffset(client)
-register ClientPtr client;
+ProcShapeOffset(ClientPtr client)
 {
     WindowPtr pWin;
-    ScreenPtr pScreen;
 
     REQUEST(xShapeOffsetReq);
     RegionPtr srcRgn;
+#ifndef XORG_TOO_OLD
+    int rc;
+#endif /* XORG_TOO_OLD */
 
     REQUEST_SIZE_MATCH(xShapeOffsetReq);
     UpdateCurrentTime();
+#ifdef XORG_TOO_OLD
     pWin = LookupWindow(stuff->dest, client);
     if (!pWin)
         return BadWindow;
+#else
+    rc = dixLookupWindow(&pWin, stuff->dest, client, DixSetAttrAccess);
+    if (rc != Success)
+        return rc;
+#endif
     switch (stuff->destKind) {
     case ShapeBounding:
         srcRgn = wBoundingShape(pWin);
@@ -664,10 +687,13 @@ register ClientPtr client;
         client->errorValue = stuff->destKind;
         return BadValue;
     }
-    pScreen = pWin->drawable.pScreen;
     if (srcRgn) {
         RegionTranslate(srcRgn, stuff->xOff, stuff->yOff);
-        (*pScreen->SetShape) (pWin);
+#ifdef XORG_TOO_OLD
+        (*pWin->drawable.pScreen->SetShape) (pWin);
+#else
+        (*pWin->drawable.pScreen->SetShape) (pWin, stuff->destKind);
+#endif /* XORG_TOO_OLD */
     }
     SendShapeNotify(pWin, (int) stuff->destKind);
     return Success;
@@ -675,7 +701,7 @@ register ClientPtr client;
 
 #ifdef PANORAMIX
 static int
-ProcPanoramiXShapeOffset(register ClientPtr client)
+ProcPanoramiXShapeOffset(ClientPtr client)
 {
     REQUEST(xShapeOffsetReq);
     PanoramiXRes *win;
@@ -683,12 +709,19 @@ ProcPanoramiXShapeOffset(register ClientPtr client)
 
     REQUEST_AT_LEAST_SIZE(xShapeOffsetReq);
 
+#ifdef XORG_TOO_OLD
     if (!
         (win =
          (PanoramiXRes *) SecurityLookupIDByType(client, stuff->dest,
                                                  XRT_WINDOW,
                                                  SecurityWriteAccess)))
         return BadWindow;
+#else
+    result = dixLookupResourceByType((void **) &win, stuff->dest, XRT_WINDOW,
+                                     client, DixWriteAccess);
+    if (result != Success)
+        return result;
+#endif
 
     FOR_NSCREENS(j) {
         stuff->dest = win->info[j].id;
@@ -696,30 +729,40 @@ ProcPanoramiXShapeOffset(register ClientPtr client)
         if (result != Success)
             break;
     }
-    return (result);
+    return result;
 }
 #endif
 
 static int
-ProcShapeQueryExtents(client)
-register ClientPtr client;
+ProcShapeQueryExtents(ClientPtr client)
 {
     REQUEST(xShapeQueryExtentsReq);
     WindowPtr pWin;
     xShapeQueryExtentsReply rep;
     BoxRec extents, *pExtents;
+#ifndef XORG_TOO_OLD
+    int rc;
+#endif /* XORG_TOO_OLD */
     RegionPtr region;
 
     REQUEST_SIZE_MATCH(xShapeQueryExtentsReq);
+#ifdef XORG_TOO_OLD
     memset(&rep, 0, sizeof(xShapeQueryExtentsReply));
     pWin = LookupWindow(stuff->window, client);
     if (!pWin)
         return BadWindow;
-    rep.type = X_Reply;
-    rep.length = 0;
-    rep.sequenceNumber = client->sequence;
-    rep.boundingShaped = (wBoundingShape(pWin) != 0);
-    rep.clipShaped = (wClipShape(pWin) != 0);
+#else
+    rc = dixLookupWindow(&pWin, stuff->window, client, DixGetAttrAccess);
+    if (rc != Success)
+        return rc;
+#endif /* XORG_TOO_OLD */
+    rep = (xShapeQueryExtentsReply) {
+        .type = X_Reply,
+        .sequenceNumber = client->sequence,
+        .length = 0,
+        .boundingShaped = (wBoundingShape(pWin) != 0),
+        .clipShaped = (wClipShape(pWin) != 0)
+    };
     if ((region = wBoundingShape(pWin))) {
         /* this is done in two steps because of a compiler bug on SunOS 4.1.3 */
         pExtents = RegionExtents(region);
@@ -763,22 +806,30 @@ register ClientPtr client;
         swaps(&rep.heightClipShape);
     }
     WriteToClient(client, sizeof(xShapeQueryExtentsReply), &rep);
-    return (client->noClientException);
+    return Success;
 }
 
  /*ARGSUSED*/ static int
-ShapeFreeClient(data, id)
-void *data;
-XID id;
+ShapeFreeClient(void *data, XID id)
 {
     ShapeEventPtr pShapeEvent;
     WindowPtr pWin;
     ShapeEventPtr *pHead, pCur, pPrev;
+#ifndef XORG_TOO_OLD
+    int rc;
+#endif /* XORG_TOO_OLD */
 
     pShapeEvent = (ShapeEventPtr) data;
     pWin = pShapeEvent->window;
-    pHead = (ShapeEventPtr *) LookupIDByType(pWin->drawable.id, EventType);
+
+#ifdef XORG_TOO_OLD
+    pHead = (ShapeEventPtr *) LookupIDByType(pWin->drawable.id, ShapeEventType);
     if (pHead) {
+#else
+    rc = dixLookupResourceByType((void **) &pHead, pWin->drawable.id,
+                                 ShapeEventType, serverClient, DixReadAccess);
+    if (rc == Success) {
+#endif /* XORG_TOO_OLD */
         pPrev = 0;
         for (pCur = *pHead; pCur && pCur != pShapeEvent; pCur = pCur->next)
             pPrev = pCur;
@@ -794,9 +845,7 @@ XID id;
 }
 
  /*ARGSUSED*/ static int
-ShapeFreeEvents(data, id)
-void *data;
-XID id;
+ShapeFreeEvents(void *data, XID id)
 {
     ShapeEventPtr *pHead, pCur, pNext;
 
@@ -811,22 +860,34 @@ XID id;
 }
 
 static int
-ProcShapeSelectInput(client)
-register ClientPtr client;
+ProcShapeSelectInput(ClientPtr client)
 {
     REQUEST(xShapeSelectInputReq);
     WindowPtr pWin;
     ShapeEventPtr pShapeEvent, pNewShapeEvent, *pHead;
     XID clientResource;
+#ifndef XORG_TOO_OLD
+    int rc;
+#endif /* XORG_TOO_OLD */
 
     REQUEST_SIZE_MATCH(xShapeSelectInputReq);
+#ifdef XORG_TOO_OLD
     pWin = SecurityLookupWindow(stuff->window, client, SecurityWriteAccess);
     if (!pWin)
         return BadWindow;
     pHead = (ShapeEventPtr *) SecurityLookupIDByType(client,
                                                      pWin->drawable.id,
-                                                     EventType,
+                                                     ShapeEventType,
                                                      SecurityWriteAccess);
+#else
+    rc = dixLookupWindow(&pWin, stuff->window, client, DixReceiveAccess);
+    if (rc != Success)
+        return rc;
+    rc = dixLookupResourceByType((void **) &pHead, pWin->drawable.id,
+                                 ShapeEventType, client, DixWriteAccess);
+    if (rc != Success && rc != BadValue)
+        return rc;
+#endif /* XORG_TOO_OLD */
     switch (stuff->enable) {
     case xTrue:
         if (pHead) {
@@ -840,8 +901,7 @@ register ClientPtr client;
         }
 
         /* build the entry */
-        pNewShapeEvent = (ShapeEventPtr)
-            malloc(sizeof(ShapeEventRec));
+        pNewShapeEvent = malloc(sizeof(ShapeEventRec));
         if (!pNewShapeEvent)
             return BadAlloc;
         pNewShapeEvent->next = 0;
@@ -856,15 +916,16 @@ register ClientPtr client;
         if (!AddResource(clientResource, ClientType, (void *) pNewShapeEvent))
             return BadAlloc;
         /*
-         * create a resource to contain a pointer to the list
+         * create a resource to contain a void *to the list
          * of clients selecting input.  This must be indirect as
          * the list may be arbitrarily rearranged which cannot be
          * done through the resource database.
          */
         if (!pHead) {
-            pHead = (ShapeEventPtr *) malloc(sizeof(ShapeEventPtr));
+            pHead = malloc(sizeof(ShapeEventPtr));
             if (!pHead ||
-                !AddResource(pWin->drawable.id, EventType, (void *) pHead)) {
+                !AddResource(pWin->drawable.id, ShapeEventType,
+                             (void *) pHead)) {
                 FreeResource(clientResource, RT_NONE);
                 return BadAlloc;
             }
@@ -905,18 +966,24 @@ register ClientPtr client;
  */
 
 void
-SendShapeNotify(pWin, which)
-WindowPtr pWin;
-int which;
+SendShapeNotify(WindowPtr pWin, int which)
 {
     ShapeEventPtr *pHead, pShapeEvent;
-    xShapeNotifyEvent se;
     BoxRec extents;
     RegionPtr region;
     BYTE shaped;
+#ifndef XORG_TOO_OLD
+    int rc;
+#endif /* XORG_TOO_OLD */
 
-    pHead = (ShapeEventPtr *) LookupIDByType(pWin->drawable.id, EventType);
+#ifdef XORG_TOO_OLD
+    pHead = (ShapeEventPtr *) LookupIDByType(pWin->drawable.id, ShapeEventType);
     if (!pHead)
+#else
+    rc = dixLookupResourceByType((void **) &pHead, pWin->drawable.id,
+                                 ShapeEventType, serverClient, DixReadAccess);
+    if (rc != Success)
+#endif /* XORG_TOO_OLD */
         return;
     switch (which) {
     case ShapeBounding:
@@ -964,38 +1031,53 @@ int which;
     default:
         return;
     }
+    UpdateCurrentTimeIf();
     for (pShapeEvent = *pHead; pShapeEvent; pShapeEvent = pShapeEvent->next) {
-        se.type = ShapeNotify + ShapeEventBase;
-        se.kind = which;
-        se.window = pWin->drawable.id;
-        se.x = extents.x1;
-        se.y = extents.y1;
-        se.width = extents.x2 - extents.x1;
-        se.height = extents.y2 - extents.y1;
-        se.time = currentTime.milliseconds;
-        se.shaped = shaped;
+        xShapeNotifyEvent se = {
+            .type = ShapeNotify + ShapeEventBase,
+            .kind = which,
+            .window = pWin->drawable.id,
+            .x = extents.x1,
+            .y = extents.y1,
+            .width = extents.x2 - extents.x1,
+            .height = extents.y2 - extents.y1,
+            .time = currentTime.milliseconds,
+            .shaped = shaped
+        };
         WriteEventsToClient(pShapeEvent->client, 1, (xEvent *) &se);
     }
 }
 
 static int
-ProcShapeInputSelected(client)
-register ClientPtr client;
+ProcShapeInputSelected(ClientPtr client)
 {
     REQUEST(xShapeInputSelectedReq);
     WindowPtr pWin;
     ShapeEventPtr pShapeEvent, *pHead;
     int enabled;
+#ifndef XORG_TOO_OLD
+    rc;
+#endif /* XORG_TOO_OLD */
     xShapeInputSelectedReply rep;
 
     REQUEST_SIZE_MATCH(xShapeInputSelectedReq);
+#ifdef XORG_TOO_OLD
     pWin = LookupWindow(stuff->window, client);
     if (!pWin)
         return BadWindow;
     pHead = (ShapeEventPtr *) SecurityLookupIDByType(client,
                                                      pWin->drawable.id,
-                                                     EventType,
+                                                     ShapeEventType,
                                                      SecurityReadAccess);
+#else
+    rc = dixLookupWindow(&pWin, stuff->window, client, DixGetAttrAccess);
+    if (rc != Success)
+        return rc;
+    rc = dixLookupResourceByType((void **) &pHead, pWin->drawable.id,
+                                 ShapeEventType, client, DixReadAccess);
+    if (rc != Success && rc != BadValue)
+        return rc;
+#endif /* XORG_TOO_OLD */
     enabled = xFalse;
     if (pHead) {
         for (pShapeEvent = *pHead; pShapeEvent; pShapeEvent = pShapeEvent->next) {
@@ -1005,33 +1087,43 @@ register ClientPtr client;
             }
         }
     }
-    rep.type = X_Reply;
-    rep.length = 0;
-    rep.sequenceNumber = client->sequence;
-    rep.enabled = enabled;
+    rep = (xShapeInputSelectedReply) {
+        .type = X_Reply,
+        .enabled = enabled,
+        .sequenceNumber = client->sequence,
+        .length = 0
+    };
     if (client->swapped) {
         swaps(&rep.sequenceNumber);
         swapl(&rep.length);
     }
     WriteToClient(client, sizeof(xShapeInputSelectedReply), &rep);
-    return (client->noClientException);
+    return Success;
 }
 
 static int
-ProcShapeGetRectangles(client)
-register ClientPtr client;
+ProcShapeGetRectangles(ClientPtr client)
 {
     REQUEST(xShapeGetRectanglesReq);
     WindowPtr pWin;
     xShapeGetRectanglesReply rep;
     xRectangle *rects;
     int nrects, i;
+#ifndef XORG_TOO_OLD
+    int rc;
+#endif
     RegionPtr region;
 
     REQUEST_SIZE_MATCH(xShapeGetRectanglesReq);
+#ifdef XORG_TOO_OLD
     pWin = LookupWindow(stuff->window, client);
     if (!pWin)
         return BadWindow;
+#else
+    rc = dixLookupWindow(&pWin, stuff->window, client, DixGetAttrAccess);
+    if (rc != Success)
+        return rc;
+#endif /* XORG_TOO_OLD */
     switch (stuff->kind) {
     case ShapeBounding:
         region = wBoundingShape(pWin);
@@ -1048,7 +1140,7 @@ register ClientPtr client;
     }
     if (!region) {
         nrects = 1;
-        rects = (xRectangle *) ALLOCATE_LOCAL(sizeof(xRectangle));
+        rects = malloc(sizeof(xRectangle));
         if (!rects)
             return BadAlloc;
         switch (stuff->kind) {
@@ -1077,7 +1169,12 @@ register ClientPtr client;
 
         nrects = RegionNumRects(region);
         box = RegionRects(region);
-        rects = (xRectangle *) ALLOCATE_LOCAL(nrects * sizeof(xRectangle));
+#ifdef XORG_TOO_OLD
+        rects = malloc(nrects * sizeof(xRectangle));
+#else
+        rects = xallocarray(nrects, sizeof(xRectangle));
+#endif /* XORG_TOO_OLD */
+
         if (!rects && nrects)
             return BadAlloc;
         for (i = 0; i < nrects; i++, box++) {
@@ -1087,11 +1184,13 @@ register ClientPtr client;
             rects[i].height = box->y2 - box->y1;
         }
     }
-    rep.type = X_Reply;
-    rep.sequenceNumber = client->sequence;
-    rep.length = (nrects * sizeof(xRectangle)) >> 2;
-    rep.ordering = YXBanded;
-    rep.nrects = nrects;
+    rep = (xShapeGetRectanglesReply) {
+        .type = X_Reply,
+        .ordering = YXBanded,
+        .sequenceNumber = client->sequence,
+        .length = bytes_to_int32(nrects * sizeof(xRectangle)),
+        .nrects = nrects
+    };
     if (client->swapped) {
         swaps(&rep.sequenceNumber);
         swapl(&rep.length);
@@ -1100,13 +1199,12 @@ register ClientPtr client;
     }
     WriteToClient(client, sizeof(rep), &rep);
     WriteToClient(client, nrects * sizeof(xRectangle), rects);
-    DEALLOCATE_LOCAL(rects);
-    return client->noClientException;
+    free(rects);
+    return Success;
 }
 
 static int
-ProcShapeDispatch(client)
-register ClientPtr client;
+ProcShapeDispatch(ClientPtr client)
 {
     REQUEST(xReq);
     switch (stuff->data) {
@@ -1154,8 +1252,7 @@ register ClientPtr client;
 }
 
 static void
-SShapeNotifyEvent(from, to)
-xShapeNotifyEvent *from, *to;
+SShapeNotifyEvent(xShapeNotifyEvent * from, xShapeNotifyEvent * to)
 {
     to->type = from->type;
     to->kind = from->kind;
@@ -1170,8 +1267,7 @@ xShapeNotifyEvent *from, *to;
 }
 
 static int
-SProcShapeQueryVersion(client)
-register ClientPtr client;
+SProcShapeQueryVersion(ClientPtr client)
 {
     REQUEST(xShapeQueryVersionReq);
 
@@ -1180,8 +1276,7 @@ register ClientPtr client;
 }
 
 static int
-SProcShapeRectangles(client)
-register ClientPtr client;
+SProcShapeRectangles(ClientPtr client)
 {
     REQUEST(xShapeRectanglesReq);
 
@@ -1195,8 +1290,7 @@ register ClientPtr client;
 }
 
 static int
-SProcShapeMask(client)
-register ClientPtr client;
+SProcShapeMask(ClientPtr client)
 {
     REQUEST(xShapeMaskReq);
 
@@ -1210,8 +1304,7 @@ register ClientPtr client;
 }
 
 static int
-SProcShapeCombine(client)
-register ClientPtr client;
+SProcShapeCombine(ClientPtr client)
 {
     REQUEST(xShapeCombineReq);
 
@@ -1225,8 +1318,7 @@ register ClientPtr client;
 }
 
 static int
-SProcShapeOffset(client)
-register ClientPtr client;
+SProcShapeOffset(ClientPtr client)
 {
     REQUEST(xShapeOffsetReq);
 
@@ -1239,8 +1331,7 @@ register ClientPtr client;
 }
 
 static int
-SProcShapeQueryExtents(client)
-register ClientPtr client;
+SProcShapeQueryExtents(ClientPtr client)
 {
     REQUEST(xShapeQueryExtentsReq);
 
@@ -1251,8 +1342,7 @@ register ClientPtr client;
 }
 
 static int
-SProcShapeSelectInput(client)
-register ClientPtr client;
+SProcShapeSelectInput(ClientPtr client)
 {
     REQUEST(xShapeSelectInputReq);
 
@@ -1263,8 +1353,7 @@ register ClientPtr client;
 }
 
 static int
-SProcShapeInputSelected(client)
-register ClientPtr client;
+SProcShapeInputSelected(ClientPtr client)
 {
     REQUEST(xShapeInputSelectedReq);
 
@@ -1275,11 +1364,9 @@ register ClientPtr client;
 }
 
 static int
-SProcShapeGetRectangles(client)
-register ClientPtr client;
+SProcShapeGetRectangles(ClientPtr client)
 {
     REQUEST(xShapeGetRectanglesReq);
-
     swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xShapeGetRectanglesReq);
     swapl(&stuff->window);
@@ -1287,8 +1374,7 @@ register ClientPtr client;
 }
 
 static int
-SProcShapeDispatch(client)
-register ClientPtr client;
+SProcShapeDispatch(ClientPtr client)
 {
     REQUEST(xReq);
     switch (stuff->data) {
@@ -1312,5 +1398,26 @@ register ClientPtr client;
         return SProcShapeGetRectangles(client);
     default:
         return BadRequest;
+    }
+}
+
+void
+ShapeExtensionInit(void)
+{
+    ExtensionEntry *extEntry;
+
+#ifdef XORG_TOO_OLD
+    ClientType = CreateNewResourceType(ShapeFreeClient);
+    ShapeEventType = CreateNewResourceType(ShapeFreeEvents);
+#else
+    ClientType = CreateNewResourceType(ShapeFreeClient, "ShapeClient");
+    ShapeEventType = CreateNewResourceType(ShapeFreeEvents, "ShapeEvent");
+#endif /* XORG_TOO_OLD */
+    if (ClientType && ShapeEventType &&
+        (extEntry = AddExtension(SHAPENAME, ShapeNumberEvents, 0,
+                                 ProcShapeDispatch, SProcShapeDispatch,
+                                 NULL, StandardMinorOpcode))) {
+        ShapeEventBase = extEntry->eventBase;
+        EventSwapVector[ShapeEventBase] = (EventSwapPtr) SShapeNotifyEvent;
     }
 }

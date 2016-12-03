@@ -107,9 +107,9 @@ XF86INCLUDES = -I$(XF86COMSRC)
     LINTLIBS = ../dix/llib-ldix.ln ../os/llib-los.ln
 
 #if defined(NXAgentServer) && NXAgentServer
-     DEFINES = $(EXT_DEFINES) $(XVMCSHM_DEFINES) $(NX_DEFINES)
+     DEFINES = -DXORG_TOO_OLD $(EXT_DEFINES) $(XVMCSHM_DEFINES) $(NX_DEFINES)
 #else
-     DEFINES = $(EXT_DEFINES) $(XVMCSHM_DEFINES)
+     DEFINES = -DXORG_TOO_OLD $(EXT_DEFINES) $(XVMCSHM_DEFINES)
 #endif
 
 NormalLibraryObjectRule()

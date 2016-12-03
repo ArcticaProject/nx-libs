@@ -60,6 +60,7 @@ HEADERS = \
 	$(EXTRAHEADERS) \
 	record.h recordstr.h \
 	security.h securstr.h \
+	shapeconst.h shapeproto.h \
 	sync.h syncstr.h \
 	dpms.h dpmsstr.h \
 	$(NULL)

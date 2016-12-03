@@ -2,5 +2,7 @@ usr/include/*/nx-X11/extensions/dpmsstr.h
 usr/include/*/nx-X11/extensions/xteststr.h
 usr/include/*/nx-X11/extensions/xtestconst.h
 usr/include/*/nx-X11/extensions/securstr.h
+usr/include/*/nx-X11/extensions/shapeconst.h
+usr/include/*/nx-X11/extensions/shapeproto.h
 usr/include/*/nx-X11/extensions/syncstr.h
 usr/include/*/nx-X11/extensions/Xdbeproto.h
