@@ -3951,7 +3951,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       prevmode = pScrPriv->crtcs[i]->mode;
       #ifdef DEBUG
       if (prevmode) {
-        fprintf(stderr, "nxagentAdjustRandRXinerama: output %d: prevmode [%s] ([%p]) refcnt [%d]\n", i, prevmode->name, prevmode, prevmode->refcnt);
+        fprintf(stderr, "nxagentAdjustRandRXinerama: output %d: prevmode [%s] ([%p]) refcnt [%d]\n", i, prevmode->name, (void *)prevmode, prevmode->refcnt);
       } else {
         fprintf(stderr, "nxagentAdjustRandRXinerama: output %d: no prevmode\n", i);
       }
@@ -4017,7 +4017,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
 
 #ifdef DEBUG
         if (mymode) {
-          fprintf(stderr, "nxagentAdjustRandRXinerama: output %d: mode [%s] ([%p]) created/received, refcnt [%d]\n", i, name, mymode, mymode->refcnt);
+          fprintf(stderr, "nxagentAdjustRandRXinerama: output %d: mode [%s] ([%p]) created/received, refcnt [%d]\n", i, name, (void *)mymode, mymode->refcnt);
         }
         else
         {
@@ -4027,7 +4027,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
 #endif
 	if (prevmode && mymode == prevmode) {
           #ifdef DEBUG
-          fprintf(stderr, "nxagentAdjustRandRXinerama: mymode [%s] ([%p]) == prevmode [%s] ([%p])\n", mymode->name, mymode, prevmode->name, prevmode);
+          fprintf(stderr, "nxagentAdjustRandRXinerama: mymode [%s] ([%p]) == prevmode [%s] ([%p])\n", mymode->name, (void *)mymode, prevmode->name, (void *)prevmode);
           #endif
 
           /* if they are the same RRModeGet() has increased the
@@ -4038,12 +4038,12 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
         else
 	{ 
           #ifdef DEBUG
-          fprintf(stderr, "nxagentAdjustRandRXinerama: setting mode [%s] ([%p]) refcnt [%d] for output %d\n", mymode->name, mymode, mymode->refcnt, i);
+          fprintf(stderr, "nxagentAdjustRandRXinerama: setting mode [%s] ([%p]) refcnt [%d] for output %d\n", mymode->name, (void *)mymode, mymode->refcnt, i);
           #endif
           RROutputSetModes(pScrPriv->outputs[i], &mymode, 1, 0);
 
           #ifdef DEBUG
-          fprintf(stderr, "nxagentAdjustRandRXinerama: setting mode [%s] ([%p]) refcnt [%d] for crtc %d\n", mymode->name, mymode, mymode->refcnt, i);
+          fprintf(stderr, "nxagentAdjustRandRXinerama: setting mode [%s] ([%p]) refcnt [%d] for crtc %d\n", mymode->name, (void *)mymode, mymode->refcnt, i);
           #endif
           RRCrtcSet(pScrPriv->crtcs[i], mymode, new_x, new_y, RR_Rotate_0, 1, &(pScrPriv->outputs[i]));
 
@@ -4075,7 +4075,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
     for (i = 0; i < pScrPriv->numCrtcs; i++) {
       RRModePtr mode = pScrPriv->crtcs[i]->mode;
       if (mode) {
-        fprintf(stderr, "nxagentAdjustRandRXinerama: crtc %d has mode [%s] ([%p]), refcnt [%d] and %d outputs\n", i, pScrPriv->crtcs[i]->mode->name, pScrPriv->crtcs[i]->mode, pScrPriv->crtcs[i]->mode->refcnt, pScrPriv->crtcs[i]->numOutputs);
+        fprintf(stderr, "nxagentAdjustRandRXinerama: crtc %d has mode [%s] ([%p]), refcnt [%d] and %d outputs\n", i, pScrPriv->crtcs[i]->mode->name, (void *)pScrPriv->crtcs[i]->mode, pScrPriv->crtcs[i]->mode->refcnt, pScrPriv->crtcs[i]->numOutputs);
       }
       else
       {
@@ -4083,7 +4083,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       }
 
       if (pScrPriv->crtcs[i]->numOutputs > 0)
-	fprintf(stderr, "                            output[%d]->crtc=[%p]\n", i, pScrPriv->outputs[i]->crtc);
+	fprintf(stderr, "                            output[%d]->crtc=[%p]\n", i, (void *)pScrPriv->outputs[i]->crtc);
     }
 #endif
 

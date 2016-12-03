@@ -821,7 +821,7 @@ Status NXGetControlParameters(Display *dpy, unsigned int *link_type, unsigned in
 {
   xNXGetControlParametersReply rep;
 
-  register xReq *req;
+  _X_UNUSED register xReq *req;
 
   LockDisplay(dpy);
 
@@ -1169,7 +1169,7 @@ Status NXGetShmemParameters(Display *dpy, unsigned int *enable_client,
 
 Status NXGetFontParameters(Display *dpy, unsigned int path_length, char path_data[])
 {
-  register xNXGetFontParametersReq *req;
+  _X_UNUSED register xNXGetFontParametersReq *req;
 
   xNXGetFontParametersReply rep;
 
@@ -4626,7 +4626,7 @@ int NXGetCollectInputFocusResource(Display *dpy)
 
 int NXCollectInputFocus(Display *dpy, unsigned int resource)
 {
-  register xReq *req;
+  _X_UNUSED register xReq *req;
 
   _NXCollectInputFocusState *state;
   _XAsyncHandler *handler;
