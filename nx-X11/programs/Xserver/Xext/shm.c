@@ -58,9 +58,7 @@ in this Software without prior written authorization from The Open Group.
 #define _XSHM_SERVER_
 #include <X11/extensions/shmstr.h>
 #include <nx-X11/Xfuncproto.h>
-#ifdef EXTMODULE
-#include "xf86_ansic.h"
-#endif
+
 #include "protocol-versions.h"
 
 #ifdef PANORAMIX

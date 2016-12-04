@@ -26,10 +26,9 @@
 #include <dix-config.h>
 #endif
 
+#include <stdlib.h>
+
 #include "fb.h"
-#ifdef IN_MODULE
-#include "xf86_ansic.h"
-#endif
 
 Bool
 fbCreateWindow(WindowPtr pWin)

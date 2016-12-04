@@ -42,12 +42,8 @@ and Jim Haggerty of Metheus.
 #include <nx-X11/extensions/recordstr.h>
 #include "set.h"
 
-#ifndef XFree86LOADER
 #include <stdio.h>
 #include <assert.h>
-#else
-#include "xf86_ansic.h"
-#endif
 
 #ifdef PANORAMIX
 #include "globals.h"

@@ -32,9 +32,6 @@ in this Software without prior written authorization from The Open Group.
 
 #include <nx-X11/Xosdefs.h>
 
-/* the old Xfuncs.h, for pre-R6 */
-#if !(defined(XFree86LOADER) && defined(IN_MODULE))
-
 #ifdef X_USEBFUNCS
 void bcopy();
 void bzero();
@@ -87,7 +84,5 @@ void bcopy();
 #if defined(X_NOT_STDC_ENV) || (defined(sun) && !defined(SVR4))
 #define atexit(f) on_exit(f, 0)
 #endif
-
-#endif /* !(defined(XFree86LOADER) && defined(IN_MODULE)) */
 
 #endif /* _XFUNCS_H_ */

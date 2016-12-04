@@ -92,10 +92,6 @@ int limitNoFile = -1;
 
 Bool OsDelayInitColors = FALSE;
 
-#ifdef XFree86LOADER
-extern void xf86WrapperInit(void);
-#endif
-
 void
 OsInit(void)
 {
@@ -109,9 +105,6 @@ OsInit(void)
 #endif
 
     if (!been_here) {
-#ifdef XFree86LOADER
-	xf86WrapperInit();
-#endif
 #if !defined(__SCO__) && !defined(__CYGWIN__) && !defined(__UNIXWARE__)
 	fclose(stdin);
 	fclose(stdout);

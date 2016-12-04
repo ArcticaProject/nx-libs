@@ -53,11 +53,7 @@ SOFTWARE.
 #define ALLOCATE_LOCAL_FALLBACK(_size) malloc((unsigned long)(_size))
 #define DEALLOCATE_LOCAL_FALLBACK(_ptr) free((void *)(_ptr))
 #include <nx-X11/Xalloca.h>
-#ifndef IN_MODULE
 #include <stdarg.h>
-#else
-#include "xf86_ansic.h"
-#endif
 
 #define NullFID ((FID) 0)
 
@@ -86,12 +82,10 @@ typedef struct _NewClientRec *NewClientPtr;
 #define xnfstrdup(s) XNFstrdup(s)
 #endif
 
-#ifndef IN_MODULE
 #ifdef __SCO__
 #include <stdio.h>
 #endif
 #include <string.h>
-#endif
 
 /* have to put $(SIGNAL_DEFINES) in DEFINES in Imakefile to get this right */
 #ifdef SIGNALRETURNSINT
@@ -519,7 +513,7 @@ extern void ErrorF(const char *f, ...) _printf_attribute(1,2);
 extern void Error(char *str);
 extern void LogPrintMarkers(void);
 
-#if defined(NEED_SNPRINTF) && !defined(IN_MODULE)
+#if defined(NEED_SNPRINTF)
 extern int snprintf(char *str, size_t size, const char *format, ...)
 	_printf_attribute(3,4);
 extern int vsnprintf(char *str, size_t size, const char *format, va_list ap);

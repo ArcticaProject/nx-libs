@@ -141,14 +141,12 @@ OBJS =  $(CBRT_OBJ)             \
  * in order to build the XInputExtension, since we
  * don't use the XF86 module loader.
  */
-
 EXT_DEFINES = ExtensionDefines \
-	-UXFree86LOADER
-
+              $(NULL)
 #else
-
-EXT_DEFINES = ExtensionDefines -UXINPUT \
-	-UXFree86LOADER
+EXT_DEFINES = ExtensionDefines \
+              -UXINPUT \
+              $(NULL)
 #endif
 
 #endif

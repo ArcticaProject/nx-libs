@@ -36,7 +36,3 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #endif
 
 #include "miscstruct.h"
-
-#ifdef XFree86LOADER
-#include "xf86_ansic.h"
-#endif

@@ -77,6 +77,8 @@ SOFTWARE.
 #include <dix-config.h>
 #endif
 
+#include <string.h>
+
 #include <nx-X11/X.h>
 #include <nx-X11/Xproto.h>
 #include "misc.h"
@@ -96,10 +98,6 @@ SOFTWARE.
 #include <nx-X11/extensions/Xv.h>
 #include <nx-X11/extensions/Xvproto.h>
 #include "xvdix.h"
-
-#ifdef EXTMODULE
-#include "xf86_ansic.h"
-#endif
 
 #ifdef PANORAMIX
 #include "panoramiX.h"

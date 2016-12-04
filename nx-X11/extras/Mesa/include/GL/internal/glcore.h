@@ -36,9 +36,7 @@
 **
 */
 
-#ifndef XFree86LOADER
 #include <sys/types.h>
-#endif
 
 #ifdef CAPI
 #undef CAPI

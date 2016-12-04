@@ -556,8 +556,6 @@ IPLAN2P8_DEFS = -DUSE_IPLAN2P8
 #  define ExtraLoaderDefines	/**/
 #endif
 
-# define XFree86LoaderDefines	/**/
-
 #ifndef HasBsdMake
 #define HasBsdMake		NO
 #endif
@@ -584,7 +582,7 @@ IPLAN2P8_DEFS = -DUSE_IPLAN2P8
 #ifndef XFree86ServerDefines
 # define XFree86ServerDefines	-DAVOID_GLYPHBLT -DPIXPRIV -DSINGLEDEPTH \
 				XFree86XvDefines \
-				XFree86LoaderDefines -DXFree86Server \
+				-DXFree86Server \
 				XFree86XvMCDefines \
 				SmartScheduleDefines \
 				DebugDefines XFree86XResDefines \
