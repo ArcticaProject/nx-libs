@@ -44,7 +44,6 @@
 #include "glxserver.h"
 #include "glxcontext.h"
 #include "glximports.h"
-#include "GL/glx_ansic.h"
 
 void *__glXImpMalloc(__GLcontext *gc, size_t size)
 {
@@ -76,7 +75,7 @@ void *__glXImpCalloc(__GLcontext *gc, size_t numElements, size_t elementSize)
 	return NULL;
     }
     /* zero out memory */
-    __glXMemset(addr, 0, size);
+    memset(addr, 0, size);
 
     return addr;
 }
@@ -119,17 +118,17 @@ void __glXImpWarning(__GLcontext *gc, char *msg)
 void __glXImpFatal(__GLcontext *gc, char *msg)
 {
     ErrorF("%s",(char *)msg);
-    __glXAbort();
+    abort();
 }
 
 char *__glXImpGetenv(__GLcontext *gc, const char *var)
 {
-    return __glXGetenv(var);
+    return getenv(var);
 }
 
 int __glXImpAtoi(__GLcontext *gc, const char *str)
 {
-    return __glXAtoi(str);
+    return atoi(str);
 }
 
 int __glXImpSprintf(__GLcontext *gc, char *str, const char *fmt, ...)
@@ -139,7 +138,7 @@ int __glXImpSprintf(__GLcontext *gc, char *str, const char *fmt, ...)
 
     /* have to deal with var args */
     va_start(ap, fmt);
-    ret = __glXVsprintf(str, fmt, ap);
+    ret = vsprintf(str, fmt, ap);
     va_end(ap);
 
     return ret;
@@ -147,12 +146,12 @@ int __glXImpSprintf(__GLcontext *gc, char *str, const char *fmt, ...)
 
 void *__glXImpFopen(__GLcontext *gc, const char *path, const char *mode)
 {
-    return (void *) __glXFopen(path, mode);
+    return (void *) fopen(path, mode);
 }
 
 int __glXImpFclose(__GLcontext *gc, void *stream)
 {
-    return __glXFclose((FILE *)stream);
+    return fclose((FILE *)stream);
 }
 
 int __glXImpFprintf(__GLcontext *gc, void *stream, const char *fmt, ...)
@@ -162,7 +161,7 @@ int __glXImpFprintf(__GLcontext *gc, void *stream, const char *fmt, ...)
 
     /* have to deal with var args */
     va_start(ap, fmt);
-    ret = __glXVfprintf((FILE *)stream, fmt, ap);
+    ret = vfprintf((FILE *)stream, fmt, ap);
     va_end(ap);
 
     return ret;

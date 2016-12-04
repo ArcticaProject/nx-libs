@@ -39,6 +39,7 @@
 #endif
 
 #include <string.h>
+#include <assert.h>
 
 #include "glxserver.h"
 #include <GL/glxtokens.h>
@@ -50,7 +51,6 @@
 #include "glximports.h"
 #include "glxutil.h"
 #include "glxext.h"
-#include "GL/glx_ansic.h"
 #include "glcontextmodes.h"
 
 /************************************************************************/
@@ -193,11 +193,11 @@ int DoCreateContext(__GLXclientState *cl, GLXContextID gcId,
     /*
     ** Allocate memory for the new context
     */
-    glxc = (__GLXcontext *) __glXMalloc(sizeof(__GLXcontext));
+    glxc = (__GLXcontext *) malloc(sizeof(__GLXcontext));
     if (!glxc) {
 	return BadAlloc;
     }
-    __glXMemset(glxc, 0, sizeof(__GLXcontext));
+    memset(glxc, 0, sizeof(__GLXcontext));
 
     /*
     ** Initially, setup the part of the context that could be used by
@@ -216,7 +216,7 @@ int DoCreateContext(__GLXclientState *cl, GLXContextID gcId,
 	imports.other = (void *)glxc;
 	glxc->gc = (*pGlxScreen->createContext)(&imports, glxc->modes, shareGC);
 	if (!glxc->gc) {
-	    __glXFree(glxc);
+	    free(glxc);
 	    client->errorValue = gcId;
 	    return BadAlloc;
 	}
@@ -233,7 +233,7 @@ int DoCreateContext(__GLXclientState *cl, GLXContextID gcId,
 	if (!isDirect) {
 	    (*glxc->gc->exports.destroyContext)((__GLcontext *)glxc->gc);
         }
-	__glXFree(glxc);
+	free(glxc);
 	client->errorValue = gcId;
 	return BadAlloc;
     }
@@ -335,9 +335,9 @@ static int AddCurrentContext(__GLXclientState *cl, __GLXcontext *glxc)
     ** Didn't find a free slot, so we'll have to grow the table.
     */
     if (!num) {
-	table = (__GLXcontext **) __glXMalloc(sizeof(__GLXcontext *));
+	table = (__GLXcontext **) malloc(sizeof(__GLXcontext *));
     } else {
-	table = (__GLXcontext **) __glXRealloc(table,
+	table = (__GLXcontext **) realloc(table,
 					   (num+1)*sizeof(__GLXcontext *));
     }
     table[num] = glxc;
@@ -685,7 +685,7 @@ int DoMakeCurrent( __GLXclientState *cl,
 		    ** refcount of the X pixmap and free only if it's zero.
 		    */
 		    (*prevglxc->readPixmap->pScreen->DestroyPixmap)(pPixmap);
-		    __glXFree(prevglxc->readPixmap);
+		    free(prevglxc->readPixmap);
 		}
 	    }
 
@@ -701,7 +701,7 @@ int DoMakeCurrent( __GLXclientState *cl,
 		** refcount of the X pixmap and free only if it's zero.
 		*/
 		(*prevglxc->drawPixmap->pScreen->DestroyPixmap)(pPixmap);
-		__glXFree(prevglxc->drawPixmap);
+		free(prevglxc->drawPixmap);
 	    }
 
 	    prevglxc->drawPixmap = NULL;
@@ -1192,7 +1192,7 @@ int DoCreateGLXPixmap(__GLXclientState *cl, VisualID visual,
 	return BadValue;
     }
 
-    pGlxPixmap = (__GLXpixmap *) __glXMalloc(sizeof(__GLXpixmap));
+    pGlxPixmap = (__GLXpixmap *) malloc(sizeof(__GLXpixmap));
     if (!pGlxPixmap) {
 	return BadAlloc;
     }
@@ -1382,7 +1382,7 @@ int __glXQueryContextInfoEXT(__GLXclientState *cl, GLbyte *pc)
     reply.n = nProps;
 
     nReplyBytes = reply.length << 2;
-    sendBuf = (int *)__glXMalloc((size_t)nReplyBytes);
+    sendBuf = (int *)malloc((size_t)nReplyBytes);
     if (sendBuf == NULL) {
 	return __glXBadContext;	/* XXX: Is this correct? */
     }
@@ -1400,7 +1400,7 @@ int __glXQueryContextInfoEXT(__GLXclientState *cl, GLbyte *pc)
 	WriteToClient(client, sz_xGLXQueryContextInfoEXTReply, &reply);
 	WriteToClient(client, nReplyBytes, sendBuf);
     }
-    __glXFree((char *)sendBuf);
+    free((char *)sendBuf);
 
     return Success;
 }
@@ -1626,17 +1626,17 @@ int __glXRenderLarge(__GLXclientState *cl, GLbyte *pc)
 	*/
 	if (cl->largeCmdBufSize < cmdlen) {
 	    if (!cl->largeCmdBuf) {
-		cl->largeCmdBuf = (GLbyte *) __glXMalloc((size_t)cmdlen);
+		cl->largeCmdBuf = (GLbyte *) malloc((size_t)cmdlen);
 	    } else {
-		cl->largeCmdBuf = (GLbyte *) __glXRealloc(cl->largeCmdBuf, 
-							  (size_t)cmdlen);
+		cl->largeCmdBuf = (GLbyte *) realloc(cl->largeCmdBuf, 
+						      (size_t)cmdlen);
 	    }
 	    if (!cl->largeCmdBuf) {
 		return BadAlloc;
 	    }
 	    cl->largeCmdBufSize = cmdlen;
 	}
-	__glXMemcpy(cl->largeCmdBuf, pc, dataBytes);
+	memcpy(cl->largeCmdBuf, pc, dataBytes);
 
 	cl->largeCmdBytesSoFar = dataBytes;
 	cl->largeCmdBytesTotal = cmdlen;
@@ -1679,7 +1679,7 @@ int __glXRenderLarge(__GLXclientState *cl, GLbyte *pc)
 	    __glXResetLargeCommandStatus(cl);
 	    return __glXBadLargeRequest;
 	}
-	__glXMemcpy(cl->largeCmdBuf + cl->largeCmdBytesSoFar, pc, dataBytes);
+	memcpy(cl->largeCmdBuf + cl->largeCmdBytesSoFar, pc, dataBytes);
 	cl->largeCmdBytesSoFar += dataBytes;
 	cl->largeCmdRequestsSoFar++;
 
@@ -2074,17 +2074,18 @@ int __glXQueryExtensionsString(__GLXclientState *cl, GLbyte *pc)
 
     ptr = __glXActiveScreens[screen].GLXextensions;
 
-    n = __glXStrlen(ptr) + 1;
+    n = strlen(ptr) + 1;
     length = __GLX_PAD(n) >> 2;
     reply.type = X_Reply;
     reply.sequenceNumber = client->sequence;
     reply.length = length;
     reply.n = n;
 
-    if ((buf = (char *) __glXMalloc(length << 2)) == NULL) {
+    /* Allocate buffer to make sure it's a multiple of 4 bytes big.*/
+    buf = (char *) malloc(length << 2);
+    if (buf == NULL)
         return BadAlloc;
-    }
-    __glXStrncpy(buf, ptr, n);
+    memcpy(buf, ptr, n);
 
     if (client->swapped) {
         glxSwapQueryExtensionsStringReply(client, &reply, buf);
@@ -2093,7 +2094,7 @@ int __glXQueryExtensionsString(__GLXclientState *cl, GLbyte *pc)
         WriteToClient(client, (int)(length << 2), buf);
     }
 
-    __glXFree(buf);
+    free(buf);
     return Success;
 }
 
@@ -2131,7 +2132,7 @@ int __glXQueryServerString(__GLXclientState *cl, GLbyte *pc)
 	    return BadValue; 
     }
 
-    n = __glXStrlen(ptr) + 1;
+    n = strlen(ptr) + 1;
     length = __GLX_PAD(n) >> 2;
     reply.type = X_Reply;
     reply.sequenceNumber = client->sequence;
@@ -2141,7 +2142,7 @@ int __glXQueryServerString(__GLXclientState *cl, GLbyte *pc)
     if ((buf = (char *) malloc(length << 2)) == NULL) {
         return BadAlloc;
     }
-    __glXStrncpy(buf, ptr, n);
+    memcpy(buf, ptr, n);
 
     if (client->swapped) {
         glxSwapQueryServerStringReply(client, &reply, buf);
@@ -2150,7 +2151,7 @@ int __glXQueryServerString(__GLXclientState *cl, GLbyte *pc)
         WriteToClient(client, (int)(length << 2), buf);
     }
 
-    __glXFree(buf);
+    free(buf);
     return Success;
 }
 
@@ -2161,9 +2162,10 @@ int __glXClientInfo(__GLXclientState *cl, GLbyte *pc)
    
     cl->GLClientmajorVersion = req->major;
     cl->GLClientminorVersion = req->minor;
-    if (cl->GLClientextensions) __glXFree(cl->GLClientextensions);
+    if (cl->GLClientextensions)
+	free(cl->GLClientextensions);
     buf = (const char *)(req+1);
-    cl->GLClientextensions = __glXStrdup(buf);
+    cl->GLClientextensions = xstrdup(buf);
 
     return Success;
 }

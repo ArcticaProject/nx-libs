@@ -195,10 +195,10 @@ int _slang_execute (const slang_assembly_file *file)
 	/* XXX why???, disabling the pointer size assertions here.
 	 * See bug 4021.
 	 */
-	static_assert(sizeof (GLfloat) == 4);
-	/*static_assert(sizeof (GLfloat *) == 4);*/
-	static_assert(sizeof (GLuint) == 4);
-	/*static_assert(sizeof (GLuint *) == 4);*/
+	_static_assert(sizeof (GLfloat) == 4);
+	/*_static_assert(sizeof (GLfloat *) == 4);*/
+	_static_assert(sizeof (GLuint) == 4);
+	/*_static_assert(sizeof (GLuint *) == 4);*/
 
 	dump (file);
 

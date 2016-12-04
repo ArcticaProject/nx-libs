@@ -52,7 +52,6 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "xf86glxint.h"
 #include "context.h"
 #include "xmesaP.h"
-#include <GL/xf86glx.h>
 #include "context.h"
 
 /*
@@ -319,15 +318,15 @@ static Bool init_visuals(int *nvisualp, VisualPtr *visualp,
 
     /* Alloc space for the list of new GLX visuals */
     pNewVisualConfigs = (__GLXvisualConfig *)
-                     __glXMalloc(numNewConfigs * sizeof(__GLXvisualConfig));
+                     malloc(numNewConfigs * sizeof(__GLXvisualConfig));
     if (!pNewVisualConfigs) {
 	return FALSE;
     }
 
     /* Alloc space for the list of new GLX visual privates */
-    pNewVisualPriv = (void **) __glXMalloc(numNewConfigs * sizeof(void *));
+    pNewVisualPriv = (void **) malloc(numNewConfigs * sizeof(void *));
     if (!pNewVisualPriv) {
-	__glXFree(pNewVisualConfigs);
+	free(pNewVisualConfigs);
 	return FALSE;
     }
 
@@ -371,40 +370,40 @@ static Bool init_visuals(int *nvisualp, VisualPtr *visualp,
     numConfigs = 0;
 
     /* Alloc temp space for the list of orig VisualIDs for each new visual */
-    orig_vid = (VisualID *)__glXMalloc(numNewVisuals * sizeof(VisualID));
+    orig_vid = (VisualID *)malloc(numNewVisuals * sizeof(VisualID));
     if (!orig_vid) {
-	__glXFree(pNewVisualPriv);
-	__glXFree(pNewVisualConfigs);
+	free(pNewVisualPriv);
+	free(pNewVisualConfigs);
 	return FALSE;
     }
 
     /* Alloc space for the list of glXVisuals */
     modes = _gl_context_modes_create(numNewVisuals, sizeof(__GLcontextModes));
     if (modes == NULL) {
-	__glXFree(orig_vid);
-	__glXFree(pNewVisualPriv);
-	__glXFree(pNewVisualConfigs);
+	free(orig_vid);
+	free(pNewVisualPriv);
+	free(pNewVisualConfigs);
 	return FALSE;
     }
 
     /* Alloc space for the list of glXVisualPrivates */
-    glXVisualPriv = (void **)__glXMalloc(numNewVisuals * sizeof(void *));
+    glXVisualPriv = (void **)malloc(numNewVisuals * sizeof(void *));
     if (!glXVisualPriv) {
 	_gl_context_modes_destroy( modes );
-	__glXFree(orig_vid);
-	__glXFree(pNewVisualPriv);
-	__glXFree(pNewVisualConfigs);
+	free(orig_vid);
+	free(pNewVisualPriv);
+	free(pNewVisualConfigs);
 	return FALSE;
     }
 
     /* Alloc space for the new list of the X server's visuals */
-    pVisualNew = (VisualPtr)__glXMalloc(numNewVisuals * sizeof(VisualRec));
+    pVisualNew = (VisualPtr)malloc(numNewVisuals * sizeof(VisualRec));
     if (!pVisualNew) {
-	__glXFree(glXVisualPriv);
+	free(glXVisualPriv);
 	_gl_context_modes_destroy( modes );
-	__glXFree(orig_vid);
-	__glXFree(pNewVisualPriv);
-	__glXFree(pNewVisualConfigs);
+	free(orig_vid);
+	free(pNewVisualPriv);
+	free(pNewVisualConfigs);
 	return FALSE;
     }
 
@@ -487,7 +486,7 @@ static Bool init_visuals(int *nvisualp, VisualPtr *visualp,
 		    numVids++;
 
 	/* Allocate a new list of VisualIDs for this depth */
-	pVids = (VisualID *)__glXMalloc(numVids * sizeof(VisualID));
+	pVids = (VisualID *)malloc(numVids * sizeof(VisualID));
 
 	/* Initialize the new list of VisualIDs for this depth */
 	for (j = 0; j < pdepth[i].numVids; j++)
@@ -496,7 +495,7 @@ static Bool init_visuals(int *nvisualp, VisualPtr *visualp,
 		    pVids[n++] = pVisualNew[k].vid;
 
 	/* Update this depth's list of VisualIDs */
-	__glXFree(pdepth[i].vids);
+	free(pdepth[i].vids);
 	pdepth[i].vids = pVids;
 	pdepth[i].numVids = numVids;
     }
@@ -506,12 +505,12 @@ static Bool init_visuals(int *nvisualp, VisualPtr *visualp,
     *visualp = pVisualNew;
 
     /* Free the old list of the X server's visuals */
-    __glXFree(pVisual);
+    free(pVisual);
 
     /* Clean up temporary allocations */
-    __glXFree(orig_vid);
-    __glXFree(pNewVisualPriv);
-    __glXFree(pNewVisualConfigs);
+    free(orig_vid);
+    free(pNewVisualPriv);
+    free(pNewVisualConfigs);
 
     /* Free the private list created by DDX HW driver */
     if (visualPrivates)
@@ -581,19 +580,19 @@ static void init_screen_visuals(int screen)
     int i, j;
 
     /* Alloc space for the list of XMesa visuals */
-    pXMesaVisual = (XMesaVisual *)__glXMalloc(MESAScreens[screen].num_vis *
+    pXMesaVisual = (XMesaVisual *)malloc(MESAScreens[screen].num_vis *
 					      sizeof(XMesaVisual));
-    __glXMemset(pXMesaVisual, 0,
+    memset(pXMesaVisual, 0,
 		MESAScreens[screen].num_vis * sizeof(XMesaVisual));
 
     /* FIXME: Change 'used' to be a array of bits (rather than of ints),
      * FIXME: create a stack array of 8 or 16 bytes.  If 'numVisuals' is less
      * FIXME: than 64 or 128 the stack array can be used instead of calling
-     * FIXME: __glXMalloc / __glXFree.  If nothing else, convert 'used' to
+     * FIXME: malloc / free.  If nothing else, convert 'used' to
      * FIXME: array of bytes instead of ints!
      */
-    used = (int *)__glXMalloc(pScreen->numVisuals * sizeof(int));
-    __glXMemset(used, 0, pScreen->numVisuals * sizeof(int));
+    used = (int *)malloc(pScreen->numVisuals * sizeof(int));
+    memset(used, 0, pScreen->numVisuals * sizeof(int));
 
     i = 0;
     for ( modes = MESAScreens[screen].modes 
@@ -652,7 +651,7 @@ static void init_screen_visuals(int screen)
 	i++;
     }
 
-    __glXFree(used);
+    free(used);
 
     MESAScreens[screen].xm_vis = pXMesaVisual;
 }
@@ -703,9 +702,9 @@ extern void __MESA_resetExtension(void)
 	}
 	_gl_context_modes_destroy( MESAScreens[i].modes );
 	MESAScreens[i].modes = NULL;
-	__glXFree(MESAScreens[i].private);
+	free(MESAScreens[i].private);
 	MESAScreens[i].private = NULL;
-	__glXFree(MESAScreens[i].xm_vis);
+	free(MESAScreens[i].xm_vis);
 	MESAScreens[i].xm_vis = NULL;
 	MESAScreens[i].num_vis = 0;
     }
@@ -725,7 +724,7 @@ void __MESA_createBuffer(__GLXdrawablePrivate *glxPriv)
 	ErrorF("find_mesa_visual returned NULL for visualID = 0x%04x\n",
 	       glxPriv->modes->visualID);
     }
-    buf = (__MESA_buffer)__glXMalloc(sizeof(struct __MESA_bufferRec));
+    buf = (__MESA_buffer)malloc(sizeof(struct __MESA_bufferRec));
 
     /* Create Mesa's buffers */
     if (glxPriv->type == DRAWABLE_WINDOW) {
@@ -793,7 +792,7 @@ void __MESA_destroyBuffer(__GLdrawablePrivate *glPriv)
     glxPriv->swapBuffers = buf->fbswap;
     glPriv->frontBuffer.resize = buf->fbresize;
 
-    __glXFree(glPriv->private);
+    free(glPriv->private);
     glPriv->private = NULL; 
 }
 
