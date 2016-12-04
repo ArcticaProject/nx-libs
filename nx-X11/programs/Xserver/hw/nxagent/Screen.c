@@ -3876,7 +3876,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
     /* at this stage only NX outputs are left - we delete the superfluous ones */
     for (i = pScrPriv->numOutputs - 1; i >= number; i--) {
       #ifdef DEBUG
-      fprintf(stderr, "nxagentAdjustRandRXinerama: destroying output [%s]\n", pScrPriv->outputs[i]->name);
+      fprintf(stderr, "nxagentAdjustRandRXinerama: destroying nx output [%s]\n", pScrPriv->outputs[i]->name);
       #endif
       RROutputDestroy(pScrPriv->outputs[i]);
     }
@@ -3918,14 +3918,14 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       /*
       if ((nxagentOption(X) < bbx1 || (nxagentOption(X) + width >= bbx2 )) {
         #ifdef DEBUG
-        fprintf(stderr, "nxagentAdjustRandRXinerama: output %d: window has parts outside visible area - width stays unchanged [%d]\n", width);
+        fprintf(stderr, "nxagentAdjustRandRXinerama: output %d [%s]: window has parts outside visible area - width stays unchanged [%d]\n", i, pScrPriv->outputs[i]->name, width);
         #endif
 	new_w = width;
       }
 
 	if ((nxagentOption(Y) < bby1 || (nxagentOption(Y) + height >= bby2 ) {
           #ifdef DEBUG
-          fprintf(stderr, "nxagentAdjustRandRXinerama: output %d: window has parts outside visible area - height stays unchanged [%d]\n", height);
+          fprintf(stderr, "nxagentAdjustRandRXinerama: output %d [%s]: window has parts outside visible area - height stays unchanged [%d]\n", i, pScrPriv->outputs[i]->name, height);
           #endif
 	  new_h = height;
 	}
@@ -3951,9 +3951,9 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       prevmode = pScrPriv->crtcs[i]->mode;
       #ifdef DEBUG
       if (prevmode) {
-        fprintf(stderr, "nxagentAdjustRandRXinerama: output %d: prevmode [%s] ([%p]) refcnt [%d]\n", i, prevmode->name, prevmode, prevmode->refcnt);
+        fprintf(stderr, "nxagentAdjustRandRXinerama: output %d [%s]: prevmode [%s] ([%p]) refcnt [%d]\n", i, pScrPriv->outputs[i]->name, prevmode->name, (void *)prevmode, prevmode->refcnt);
       } else {
-        fprintf(stderr, "nxagentAdjustRandRXinerama: output %d: no prevmode\n", i);
+        fprintf(stderr, "nxagentAdjustRandRXinerama: output %d [%s]: no prevmode\n", i, pScrPriv->outputs[i]->name);
       }
       #endif
 
@@ -3961,7 +3961,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
 
       if (disable_output) {
         #ifdef DEBUG
-        fprintf(stderr, "nxagentAdjustRandRXinerama: output %d: no (valid) intersection - disconnecting\n", i);
+        fprintf(stderr, "nxagentAdjustRandRXinerama: output %d [%s]: no (valid) intersection - disconnecting\n", i, pScrPriv->outputs[i]->name);
         #endif
         RROutputSetConnection(pScrPriv->outputs[i], RR_Disconnected);
 
@@ -3976,7 +3976,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
          */
         if (prevmode) {
           #ifdef DEBUG
-          fprintf(stderr, "nxagentAdjustRandRXinerama: removing mode from output %d\n", i);
+          fprintf(stderr, "nxagentAdjustRandRXinerama: removing mode from output %d [%s]\n", i, pScrPriv->outputs[i]->name);
           #endif
           RROutputSetModes(pScrPriv->outputs[i], NULL, 0, 0);
 
@@ -3989,7 +3989,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       else
       {
         #ifdef DEBUG
-        fprintf(stderr, "nxagentAdjustRandRXinerama: output %d: intersection is x [%d] y [%d] width [%d] height [%d]\n", i, new_x, new_y, new_w, new_h);
+        fprintf(stderr, "nxagentAdjustRandRXinerama: output %d [%s]: intersection is x [%d] y [%d] width [%d] height [%d]\n", i, pScrPriv->outputs[i]->name, new_x, new_y, new_w, new_h);
         #endif
 
         RROutputSetConnection(pScrPriv->outputs[i], RR_Connected);
@@ -4017,17 +4017,17 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
 
 #ifdef DEBUG
         if (mymode) {
-          fprintf(stderr, "nxagentAdjustRandRXinerama: output %d: mode [%s] ([%p]) created/received, refcnt [%d]\n", i, name, mymode, mymode->refcnt);
+          fprintf(stderr, "nxagentAdjustRandRXinerama: output %d [%s]: mode [%s] ([%p]) created/received, refcnt [%d]\n", i, pScrPriv->outputs[i]->name, name, (void *)mymode, mymode->refcnt);
         }
         else
         {
 	  /* FIXME: what is the correct behaviour in this case? */
-          fprintf(stderr, "nxagentAdjustRandRXinerama: output %d: mode [%s] creation failed!\n", i, name);
+          fprintf(stderr, "nxagentAdjustRandRXinerama: output %d [%s]: mode [%s] creation failed!\n", i, pScrPriv->outputs[i]->name, name);
         }
 #endif
 	if (prevmode && mymode == prevmode) {
           #ifdef DEBUG
-          fprintf(stderr, "nxagentAdjustRandRXinerama: mymode [%s] ([%p]) == prevmode [%s] ([%p])\n", mymode->name, mymode, prevmode->name, prevmode);
+          fprintf(stderr, "nxagentAdjustRandRXinerama: mymode [%s] ([%p]) == prevmode [%s] ([%p])\n", mymode->name, (void *)mymode, prevmode->name, (void *)prevmode);
           #endif
 
           /* if they are the same RRModeGet() has increased the
@@ -4038,12 +4038,12 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
         else
 	{ 
           #ifdef DEBUG
-          fprintf(stderr, "nxagentAdjustRandRXinerama: setting mode [%s] ([%p]) refcnt [%d] for output %d\n", mymode->name, mymode, mymode->refcnt, i);
+          fprintf(stderr, "nxagentAdjustRandRXinerama: setting mode [%s] ([%p]) refcnt [%d] for output %d [%s]\n", mymode->name, (void *)mymode, mymode->refcnt, i, pScrPriv->outputs[i]->name);
           #endif
           RROutputSetModes(pScrPriv->outputs[i], &mymode, 1, 0);
 
           #ifdef DEBUG
-          fprintf(stderr, "nxagentAdjustRandRXinerama: setting mode [%s] ([%p]) refcnt [%d] for crtc %d\n", mymode->name, mymode, mymode->refcnt, i);
+          fprintf(stderr, "nxagentAdjustRandRXinerama: setting mode [%s] ([%p]) refcnt [%d] for crtc %d\n", mymode->name, (void *)mymode, mymode->refcnt, i);
           #endif
           RRCrtcSet(pScrPriv->crtcs[i], mymode, new_x, new_y, RR_Rotate_0, 1, &(pScrPriv->outputs[i]));
 
@@ -4075,7 +4075,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
     for (i = 0; i < pScrPriv->numCrtcs; i++) {
       RRModePtr mode = pScrPriv->crtcs[i]->mode;
       if (mode) {
-        fprintf(stderr, "nxagentAdjustRandRXinerama: crtc %d has mode [%s] ([%p]), refcnt [%d] and %d outputs\n", i, pScrPriv->crtcs[i]->mode->name, pScrPriv->crtcs[i]->mode, pScrPriv->crtcs[i]->mode->refcnt, pScrPriv->crtcs[i]->numOutputs);
+        fprintf(stderr, "nxagentAdjustRandRXinerama: crtc %d has mode [%s] ([%p]), refcnt [%d] and %d outputs\n", i, pScrPriv->crtcs[i]->mode->name, (void *)pScrPriv->crtcs[i]->mode, pScrPriv->crtcs[i]->mode->refcnt, pScrPriv->crtcs[i]->numOutputs);
       }
       else
       {
@@ -4083,7 +4083,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       }
 
       if (pScrPriv->crtcs[i]->numOutputs > 0)
-	fprintf(stderr, "                            output[%d]->crtc=[%p]\n", i, pScrPriv->outputs[i]->crtc);
+	fprintf(stderr, "                            output[%d][%s]->crtc=[%p]\n", i, pScrPriv->outputs[i]->name, (void *)pScrPriv->outputs[i]->crtc);
     }
 #endif
 
