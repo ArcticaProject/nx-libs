@@ -15,7 +15,7 @@ Build-Depends:
  libxmltok1-dev,
  libxml2-dev,
  libxpm-dev,
- libxfont-dev,
+ libxfont1-dev | libxfont-dev,
  libxdmcp-dev,
  libxdamage-dev,
  libxext-dev,
