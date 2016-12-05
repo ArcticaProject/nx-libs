@@ -486,6 +486,13 @@ IPLAN2P8_DEFS = -DUSE_IPLAN2P8
 # define BuildXResExt                   YES
 #endif
 
+/*
+ * Build the Generic Extension
+ */
+#ifndef BuildGenericExt
+# define BuildGenericExt		YES
+#endif
+
 #if Malloc0ReturnsNull
 # ifndef XtMalloc0ReturnsNullDefines
 #  define XtMalloc0ReturnsNullDefines	Malloc0ReturnsNullDefines -DXTMALLOC_BC

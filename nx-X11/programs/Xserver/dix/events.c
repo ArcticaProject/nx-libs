@@ -168,6 +168,16 @@ extern Bool XkbFilterEvents(ClientPtr, int, xEvent *);
 	ShiftMask | LockMask | ControlMask | Mod1Mask | Mod2Mask | \
 	Mod3Mask | Mod4Mask | Mod5Mask )
 #define AllEventMasks (lastEventMask|(lastEventMask-1))
+
+/* @return the core event type or 0 if the event is not a core event */
+static inline int
+core_get_type(const xEvent *event)
+{
+    int type = event->u.u.type;
+
+    return ((type & EXTENSION_EVENT_BASE) || type == GenericEvent) ? 0 : type;
+}
+
 /*
  * The following relies on the fact that the Button<n>MotionMasks are equal
  * to the corresponding Button<n>Masks from the current modifier/button state.
@@ -1577,7 +1587,7 @@ DeliverEventsToWindow(register WindowPtr pWin, xEvent *pEvents, int count,
     int type = pEvents->u.u.type;
 
     /* CantBeFiltered means only window owner gets the event */
-    if ((filter == CantBeFiltered) || !(type & EXTENSION_EVENT_BASE))
+    if ((filter == CantBeFiltered) || core_get_type(pEvents) != 0)
     {
 	/* if nobody ever wants to see this event, skip some work */
 	if (filter != CantBeFiltered &&
@@ -1597,7 +1607,7 @@ DeliverEventsToWindow(register WindowPtr pWin, xEvent *pEvents, int count,
     }
     if (filter != CantBeFiltered)
     {
-	if (type & EXTENSION_EVENT_BASE)
+	if (core_get_type(pEvents) != 0)
 	{
 	    OtherInputMasks *inputMasks;
 
@@ -1783,7 +1793,7 @@ DeliverDeviceEvents(register WindowPtr pWin, register xEvent *xE, GrabPtr grab,
     Mask filter = filters[type];
     int deliveries = 0;
 
-    if (type & EXTENSION_EVENT_BASE)
+    if (core_get_type(xE) != 0)
     {
 	register OtherInputMasks *inputMasks;
 	int mskidx = dev->id;
@@ -2548,7 +2558,7 @@ DeliverFocusedEvent(DeviceIntPtr keybd, xEvent *xE, WindowPtr window, int count)
     }
     /* just deliver it to the focus window */
     FixUpEventFromWindow(xE, focus, None, FALSE);
-    if (xE->u.u.type & EXTENSION_EVENT_BASE)
+    if (core_get_type(xE) != 0)
 	mskidx = keybd->id;
     (void)DeliverEventsToWindow(focus, xE, count, filters[xE->u.u.type],
 				NullGrab, mskidx);

@@ -1,4 +1,6 @@
 usr/include/*/nx-X11/extensions/dpmsstr.h
+usr/include/*/nx-X11/extensions/ge.h
+usr/include/*/nx-X11/extensions/geproto.h
 usr/include/*/nx-X11/extensions/xteststr.h
 usr/include/*/nx-X11/extensions/xtestconst.h
 usr/include/*/nx-X11/extensions/securstr.h

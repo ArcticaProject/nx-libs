@@ -51,6 +51,11 @@ XF86BIGFOBJS = xf86bigfont.o
       XVOBJS = xvmain.o xvdisp.o xvmc.o
 #endif
 
+#if BuildGenericExt
+ GESRCS = geext.c
+ GEOBJS = geext.o
+#endif
+
 #if BuildXResExt
  XRESSRCS = xres.c
  XRESOBJS = xres.o
@@ -75,14 +80,14 @@ XF86BIGFOBJS = xf86bigfont.o
        SRCS = shape.c $(SHMSRCS) xcmisc.c\
               xtest.c xtest1di.c xtest1dd.c sleepuntil.c \
 	      bigreq.c sync.c $(SCRNSAVSRC) \
-	      $(XF86BIGFSRCS) $(SECURITYSRCS) \
+	      $(XF86BIGFSRCS) $(SECURITYSRCS) $(GESRCS) \
 	      $(PNRXSRCS) $(DPMSSRCS) \
 	      $(XVSRCS) $(XRESSRCS) $(DMXSRCS)
 
        OBJS = shape.o $(SHMOBJS) xcmisc.o \
               xtest.o xtest1di.o xtest1dd.o sleepuntil.o \
               bigreq.o sync.o $(SCRNSAVOBJ) \
-	      $(XF86BIGFOBJS) $(SECURITYOBJS) \
+	      $(XF86BIGFOBJS) $(SECURITYOBJS) $(GEOBJS) \
 	      $(PNRXOBJS) $(DPMSOBJS) \
 	      $(XVOBJS) $(XRESOBJS) $(DMXOBJS)
 

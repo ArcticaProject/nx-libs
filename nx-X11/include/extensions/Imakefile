@@ -53,6 +53,7 @@ EXTRAHEADERS = \
 HEADERS = \
 	xcmiscstr.h \
 	bigreqstr.h \
+	ge.h geproto.h \
 	XI.h XIproto.h \
 	xtestconst.h xtestext1.h xteststr.h \
 	XKB.h XKBgeom.h XKBproto.h XKBstr.h XKBsrv.h \
