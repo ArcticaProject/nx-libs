@@ -3940,14 +3940,14 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       /*
       if ((nxagentOption(X) < bbx1 || (nxagentOption(X) + width >= bbx2 )) {
         #ifdef DEBUG
-        fprintf(stderr, "nxagentAdjustRandRXinerama: output %d [%s]: window has parts outside visible area - width stays unchanged [%d]\n", i, pScrPriv->outputs[i]->name, width);
+        fprintf(stderr, "nxagentAdjustRandRXinerama: output [%d] name [%s]: window has parts outside visible area - width stays unchanged [%d]\n", i, pScrPriv->outputs[i]->name, width);
         #endif
 	new_w = width;
       }
 
 	if ((nxagentOption(Y) < bby1 || (nxagentOption(Y) + height >= bby2 ) {
           #ifdef DEBUG
-          fprintf(stderr, "nxagentAdjustRandRXinerama: output %d [%s]: window has parts outside visible area - height stays unchanged [%d]\n", i, pScrPriv->outputs[i]->name, height);
+          fprintf(stderr, "nxagentAdjustRandRXinerama: output [%d] name [%s]: window has parts outside visible area - height stays unchanged [%d]\n", i, pScrPriv->outputs[i]->name, height);
           #endif
 	  new_h = height;
 	}
@@ -3973,9 +3973,9 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       prevmode = pScrPriv->crtcs[i]->mode;
       #ifdef DEBUG
       if (prevmode) {
-        fprintf(stderr, "nxagentAdjustRandRXinerama: output %d [%s]: prevmode [%s] ([%p]) refcnt [%d]\n", i, pScrPriv->outputs[i]->name, prevmode->name, (void *)prevmode, prevmode->refcnt);
+        fprintf(stderr, "nxagentAdjustRandRXinerama: output [%d] name [%s]: prevmode [%s] ([%p]) refcnt [%d]\n", i, pScrPriv->outputs[i]->name, prevmode->name, (void *)prevmode, prevmode->refcnt);
       } else {
-        fprintf(stderr, "nxagentAdjustRandRXinerama: output %d [%s]: no prevmode\n", i, pScrPriv->outputs[i]->name);
+        fprintf(stderr, "nxagentAdjustRandRXinerama: output [%d] name [%s]: no prevmode\n", i, pScrPriv->outputs[i]->name);
       }
       #endif
 
@@ -3983,7 +3983,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
 
       if (disable_output) {
         #ifdef DEBUG
-        fprintf(stderr, "nxagentAdjustRandRXinerama: output %d [%s]: no (valid) intersection - disconnecting\n", i, pScrPriv->outputs[i]->name);
+        fprintf(stderr, "nxagentAdjustRandRXinerama: output [%d] name [%s]: no (valid) intersection - disconnecting\n", i, pScrPriv->outputs[i]->name);
         #endif
         RROutputSetConnection(pScrPriv->outputs[i], RR_Disconnected);
 
@@ -3998,12 +3998,12 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
          */
         if (prevmode) {
           #ifdef DEBUG
-          fprintf(stderr, "nxagentAdjustRandRXinerama: removing mode from output %d [%s]\n", i, pScrPriv->outputs[i]->name);
+          fprintf(stderr, "nxagentAdjustRandRXinerama: removing mode from output [%d] name [%s]\n", i, pScrPriv->outputs[i]->name);
           #endif
           RROutputSetModes(pScrPriv->outputs[i], NULL, 0, 0);
 
           #ifdef DEBUG
-          fprintf(stderr, "nxagentAdjustRandRXinerama: removing mode from ctrc %d\n", i);
+          fprintf(stderr, "nxagentAdjustRandRXinerama: removing mode from ctrc [%d]\n", i);
           #endif
           RRCrtcSet(pScrPriv->crtcs[i], NULL, 0, 0, RR_Rotate_0, 1, &(pScrPriv->outputs[i]));
         }
@@ -4011,7 +4011,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       else
       {
         #ifdef DEBUG
-        fprintf(stderr, "nxagentAdjustRandRXinerama: output %d [%s]: intersection is x [%d] y [%d] width [%d] height [%d]\n", i, pScrPriv->outputs[i]->name, new_x, new_y, new_w, new_h);
+        fprintf(stderr, "nxagentAdjustRandRXinerama: output [%d] name [%s]: intersection is x [%d] y [%d] width [%d] height [%d]\n", i, pScrPriv->outputs[i]->name, new_x, new_y, new_w, new_h);
         #endif
 
         RROutputSetConnection(pScrPriv->outputs[i], RR_Connected);
