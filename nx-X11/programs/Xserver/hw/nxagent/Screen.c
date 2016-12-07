@@ -2899,7 +2899,7 @@ int nxagentShadowCreateMainWindow(ScreenPtr pScreen, WindowPtr pWin, int width, 
   if (nxagentShadowGCPtr)
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentShadowCreateMainWindow: Created GC with pGC[%p]\n", nxagentShadowGCPtr);
+    fprintf(stderr, "nxagentShadowCreateMainWindow: Created GC with pGC[%p]\n", (void *) nxagentShadowGCPtr);
     #endif
     ValidateGC((DrawablePtr)nxagentShadowPixmapPtr, nxagentShadowGCPtr);
   }
@@ -3035,7 +3035,7 @@ int nxagentShadowPoll(PixmapPtr nxagentShadowPixmapPtr, GCPtr nxagentShadowGCPtr
     pBox = (BoxRec *)ptBox;
 
     #ifdef TEST
-    fprintf(stderr, "nxagentShadowPoll: nRects[%ld],pBox[%p] depth[%d].\n", numRects, pBox, nxagentShadowDepth);
+    fprintf(stderr, "nxagentShadowPoll: nRects[%ld], pBox[%p] depth[%d].\n", numRects, (void *) pBox, nxagentShadowDepth);
     #endif
 
     for (n = 0; n < numRects; n++)
@@ -3677,7 +3677,7 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
   #endif
 
   #ifdef TEST
-  fprintf(stderr, "nxagentChangeScreenConfig: screenInfo.screens[%d]->root is %p\n", screen, screenInfo.screens[screen]);
+  fprintf(stderr, "nxagentChangeScreenConfig: screenInfo.screens[%d]->root [%p]\n", screen, (void *) screenInfo.screens[screen]);
   #endif
   if (screenInfo.screens[screen]->root == NULL)
   {
@@ -3709,7 +3709,7 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
      */
 
     #ifdef TEST
-    fprintf(stderr, "nxagentChangeScreenConfig: Cancel with grabbed server (grab held by %p).\n", nxagentGrabServerInfo.client);
+    fprintf(stderr, "nxagentChangeScreenConfig: Cancel with grabbed server (grab held by [%p]).\n", (void *) nxagentGrabServerInfo.client);
     #endif
 
     return 0;
@@ -4232,7 +4232,7 @@ void nxagentSaveAreas(PixmapPtr pPixmap, RegionPtr prgnSave, int xorg, int yorg,
 
   #ifdef TEST
   fprintf(stderr,"nxagentSaveAreas: Added pixmap [%p] with id [%d] on window [%p] to BSPixmapList.\n",
-              pPixmap, nxagentPixmap(pPixmap), pWin);
+                 (void *) pPixmap, nxagentPixmap(pPixmap), (void *) pWin);
   #endif
 
   XFreeGC(nxagentDisplay, gc);
