@@ -3734,8 +3734,8 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
   }
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentChangeScreenConfig: Geometry: %d,%d %dx%d\n", nxagentOption(X), nxagentOption(Y),nxagentOption(Width),nxagentOption(Height));
-  fprintf(stderr, "nxagentChangeScreenConfig: return %d\n", r);
+  fprintf(stderr, "nxagentChangeScreenConfig: current geometry: %d,%d %dx%d\n", nxagentOption(X), nxagentOption(Y), nxagentOption(Width), nxagentOption(Height));
+  fprintf(stderr, "nxagentChangeScreenConfig: returning [%d]\n", r);
   #endif
 
   return r;
@@ -3842,7 +3842,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       bby1 = MIN(bby1, screeninfo[i].y_org);
     }
     #ifdef DEBUG
-    fprintf(stderr, "nxagentAdjustRandRXinerama: bounding box: left [%d] right [%d] top [%d] bottom[%d]\n", bbx1, bbx2, bby1, bby2);
+    fprintf(stderr, "nxagentAdjustRandRXinerama: bounding box: left [%d] right [%d] top [%d] bottom [%d]\n", bbx1, bbx2, bby1, bby2);
     #endif
 #endif
 
@@ -4038,17 +4038,17 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
 
 #ifdef DEBUG
         if (mymode) {
-          fprintf(stderr, "nxagentAdjustRandRXinerama: output %d [%s]: mode [%s] ([%p]) created/received, refcnt [%d]\n", i, pScrPriv->outputs[i]->name, name, (void *)mymode, mymode->refcnt);
+          fprintf(stderr, "nxagentAdjustRandRXinerama: output [%d] name [%s]: mode [%s] ([%p]) created/received, refcnt [%d]\n", i, pScrPriv->outputs[i]->name, name, (void *) mymode, mymode->refcnt);
         }
         else
         {
 	  /* FIXME: what is the correct behaviour in this case? */
-          fprintf(stderr, "nxagentAdjustRandRXinerama: output %d [%s]: mode [%s] creation failed!\n", i, pScrPriv->outputs[i]->name, name);
+          fprintf(stderr, "nxagentAdjustRandRXinerama: output [%d] name [%s]: mode [%s] creation failed!\n", i, pScrPriv->outputs[i]->name, name);
         }
 #endif
 	if (prevmode && mymode == prevmode) {
           #ifdef DEBUG
-          fprintf(stderr, "nxagentAdjustRandRXinerama: mymode [%s] ([%p]) == prevmode [%s] ([%p])\n", mymode->name, (void *)mymode, prevmode->name, (void *)prevmode);
+          fprintf(stderr, "nxagentAdjustRandRXinerama: mymode [%s] ([%p]) == prevmode [%s] ([%p])\n", mymode->name, (void *) mymode, prevmode->name, (void *)prevmode);
           #endif
 
           /* if they are the same RRModeGet() has increased the
@@ -4059,12 +4059,12 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
         else
 	{ 
           #ifdef DEBUG
-          fprintf(stderr, "nxagentAdjustRandRXinerama: setting mode [%s] ([%p]) refcnt [%d] for output %d [%s]\n", mymode->name, (void *)mymode, mymode->refcnt, i, pScrPriv->outputs[i]->name);
+          fprintf(stderr, "nxagentAdjustRandRXinerama: setting mode [%s] ([%p]) refcnt [%d] for output %d [%s]\n", mymode->name, (void *) mymode, mymode->refcnt, i, pScrPriv->outputs[i]->name);
           #endif
           RROutputSetModes(pScrPriv->outputs[i], &mymode, 1, 0);
 
           #ifdef DEBUG
-          fprintf(stderr, "nxagentAdjustRandRXinerama: setting mode [%s] ([%p]) refcnt [%d] for crtc %d\n", mymode->name, (void *)mymode, mymode->refcnt, i);
+          fprintf(stderr, "nxagentAdjustRandRXinerama: setting mode [%s] ([%p]) refcnt [%d] for crtc %d\n", mymode->name, (void *) mymode, mymode->refcnt, i);
           #endif
           RRCrtcSet(pScrPriv->crtcs[i], mymode, new_x, new_y, RR_Rotate_0, 1, &(pScrPriv->outputs[i]));
 
@@ -4118,7 +4118,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
   /* FIXME: adjust maximum screen size according to remote randr/xinerama setup */
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentAdjustRandRXinerama: Min %dx%d, Max %dx%d \n", pScrPriv->minWidth,pScrPriv->minHeight,pScrPriv->maxWidth,pScrPriv->maxHeight);
+  fprintf(stderr, "nxagentAdjustRandRXinerama: Min %dx%d, Max %dx%d \n", pScrPriv->minWidth, pScrPriv->minHeight, pScrPriv->maxWidth, pScrPriv->maxHeight);
   #endif
 
   return TRUE;
