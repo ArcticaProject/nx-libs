@@ -3803,6 +3803,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       }
 
       /* fake a xinerama screeninfo that covers the whole screen */
+      screeninfo->screen_number = 0;
       screeninfo->x_org = nxagentOption(X);
       screeninfo->y_org = nxagentOption(Y);
       screeninfo->width = nxagentOption(Width);
