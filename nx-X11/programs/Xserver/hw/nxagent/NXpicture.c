@@ -46,12 +46,14 @@
  * Author:  Keith Packard, SuSE, Inc.
  */
 
+/* Keep this on top to get the "real" libXrender XID types. */
+#include "Render.h"
+
 #include "picturestr.h"
 
 #include "Screen.h"
 #include "Pixmaps.h"
 #include "Drawable.h"
-#include "Render.h"
 
 /* prototypes */
 
