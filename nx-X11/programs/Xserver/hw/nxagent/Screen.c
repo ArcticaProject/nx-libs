@@ -2899,7 +2899,7 @@ int nxagentShadowCreateMainWindow(ScreenPtr pScreen, WindowPtr pWin, int width, 
   if (nxagentShadowGCPtr)
   {
     #ifdef TEST
-    fprintf(stderr, "nxagentShadowCreateMainWindow: Created GC with pGC[%p]\n", nxagentShadowGCPtr);
+    fprintf(stderr, "nxagentShadowCreateMainWindow: Created GC with pGC[%p]\n", (void *) nxagentShadowGCPtr);
     #endif
     ValidateGC((DrawablePtr)nxagentShadowPixmapPtr, nxagentShadowGCPtr);
   }
@@ -3035,7 +3035,7 @@ int nxagentShadowPoll(PixmapPtr nxagentShadowPixmapPtr, GCPtr nxagentShadowGCPtr
     pBox = (BoxRec *)ptBox;
 
     #ifdef TEST
-    fprintf(stderr, "nxagentShadowPoll: nRects[%ld],pBox[%p] depth[%d].\n", numRects, pBox, nxagentShadowDepth);
+    fprintf(stderr, "nxagentShadowPoll: nRects[%ld], pBox[%p] depth[%d].\n", numRects, (void *) pBox, nxagentShadowDepth);
     #endif
 
     for (n = 0; n < numRects; n++)
@@ -3672,8 +3672,12 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
   int          doNotify = TRUE;
   int          r;
 
+  #ifdef DEBUG
+  fprintf(stderr, "nxagentChangeScreenConfig: called for screen [%d], width [%d] height [%d] mmWidth [%d] mmHeight [%d]\n", screen, width, height, mmWidth, mmHeight);
+  #endif
+
   #ifdef TEST
-  fprintf(stderr, "nxagentChangeScreenConfig: screenInfo.screens[%d]->root is %p\n", screen, screenInfo.screens[screen]);
+  fprintf(stderr, "nxagentChangeScreenConfig: screenInfo.screens[%d]->root [%p]\n", screen, (void *) screenInfo.screens[screen]);
   #endif
   if (screenInfo.screens[screen]->root == NULL)
   {
@@ -3681,6 +3685,19 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
   }
 
   UpdateCurrentTime();
+
+  #ifdef DEBUG
+  if (nxagentGrabServerInfo.grabstate == SERVER_GRABBED)
+    fprintf(stderr, "nxagentChangeScreenConfig: grabstate [SERVER_GRABBED], client [%p]\n", (void *) nxagentGrabServerInfo.client);
+  else if (nxagentGrabServerInfo.grabstate == SERVER_UNGRABBED)
+    fprintf(stderr, "nxagentChangeScreenConfig: grabstate [SERVER_UNGRABBED], client [%p]\n", (void *) nxagentGrabServerInfo.client);
+  else if (nxagentGrabServerInfo.grabstate == CLIENT_PERVIOUS)
+    fprintf(stderr, "nxagentChangeScreenConfig: grabstate [CLIENT_PERVIOUS], client [%p]\n", (void *) nxagentGrabServerInfo.client);
+  else if (nxagentGrabServerInfo.grabstate == CLIENT_IMPERVIOUS)
+    fprintf(stderr, "nxagentChangeScreenConfig: grabstate [CLIENT_IMPERVIOUS], client [%p]\n", (void *) nxagentGrabServerInfo.client);
+  else
+    fprintf(stderr, "nxagentChangeScreenConfig: grabstate [UNKNOWN], client [%p]\n", (void *) nxagentGrabServerInfo.client);
+  #endif
 
   if (nxagentGrabServerInfo.grabstate == SERVER_GRABBED && nxagentGrabServerInfo.client != NULL)
   {
@@ -3692,7 +3709,7 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
      */
 
     #ifdef TEST
-    fprintf(stderr, "nxagentChangeScreenConfig: Cancel with grabbed server (grab held by %p).\n", nxagentGrabServerInfo.client);
+    fprintf(stderr, "nxagentChangeScreenConfig: Cancel with grabbed server (grab held by [%p]).\n", (void *) nxagentGrabServerInfo.client);
     #endif
 
     return 0;
@@ -3701,7 +3718,7 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
   pScreen = screenInfo.screens[screen] -> root -> drawable.pScreen;
 
   #ifdef TEST
-  fprintf(stderr, "nxagentChangeScreenConfig: Changing config to %dx%d.\n", width, height);
+  fprintf(stderr, "nxagentChangeScreenConfig: Changing config to %d x %d (%dmm x %dmm).\n", width, height, mmWidth, mmHeight);
   #endif
 
   r = nxagentResizeScreen(pScreen, width, height, mmWidth, mmHeight);
@@ -3716,10 +3733,10 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
     RRScreenSizeNotify(pScreen);
   }
 
-#ifdef DEBUG
-  fprintf(stderr, "nxagentChangeScreenConfig: Geometry: %d,%d %dx%d\n", nxagentOption(X), nxagentOption(Y),nxagentOption(Width),nxagentOption(Height));
-  fprintf(stderr, "nxagentChangeScreenConfig: return %d\n", r);
-#endif
+  #ifdef DEBUG
+  fprintf(stderr, "nxagentChangeScreenConfig: current geometry: %d,%d %dx%d\n", nxagentOption(X), nxagentOption(Y), nxagentOption(Width), nxagentOption(Height));
+  fprintf(stderr, "nxagentChangeScreenConfig: returning [%d]\n", r);
+  #endif
 
   return r;
 }
@@ -3747,7 +3764,11 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       screeninfo = XineramaQueryScreens(nxagentDisplay, &number);
 #ifdef DEBUG
       if (number) {
-        fprintf(stderr, "nxagentAdjustRandRXinerama: XineramaQueryScreens() returned %d screens\n", number);
+        fprintf(stderr, "nxagentAdjustRandRXinerama: XineramaQueryScreens() returned [%d] screens:\n", number);
+	for (int i=0; i < number; i++) {
+	  fprintf(stderr, "nxagentAdjustRandRXinerama:   screen_number [%d] x_org [%d] y_org [%d] width [%d] height [%d]\n", screeninfo[i].screen_number, screeninfo[i].x_org, screeninfo[i].y_org, screeninfo[i].width, screeninfo[i].height);
+	}
+
       }
       else
       {
@@ -3782,6 +3803,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       }
 
       /* fake a xinerama screeninfo that covers the whole screen */
+      screeninfo->screen_number = 0;
       screeninfo->x_org = nxagentOption(X);
       screeninfo->y_org = nxagentOption(Y);
       screeninfo->width = nxagentOption(Width);
@@ -3821,7 +3843,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       bby1 = MIN(bby1, screeninfo[i].y_org);
     }
     #ifdef DEBUG
-    fprintf(stderr, "nxagentAdjustRandRXinerama: bounding box: left [%d] right [%d] top [%d] bottom[%d]\n", bbx1, bbx2, bby1, bby2);
+    fprintf(stderr, "nxagentAdjustRandRXinerama: bounding box: left [%d] right [%d] top [%d] bottom [%d]\n", bbx1, bbx2, bby1, bby2);
     #endif
 #endif
 
@@ -3918,14 +3940,14 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       /*
       if ((nxagentOption(X) < bbx1 || (nxagentOption(X) + width >= bbx2 )) {
         #ifdef DEBUG
-        fprintf(stderr, "nxagentAdjustRandRXinerama: output %d [%s]: window has parts outside visible area - width stays unchanged [%d]\n", i, pScrPriv->outputs[i]->name, width);
+        fprintf(stderr, "nxagentAdjustRandRXinerama: output [%d] name [%s]: window has parts outside visible area - width stays unchanged [%d]\n", i, pScrPriv->outputs[i]->name, width);
         #endif
 	new_w = width;
       }
 
 	if ((nxagentOption(Y) < bby1 || (nxagentOption(Y) + height >= bby2 ) {
           #ifdef DEBUG
-          fprintf(stderr, "nxagentAdjustRandRXinerama: output %d [%s]: window has parts outside visible area - height stays unchanged [%d]\n", i, pScrPriv->outputs[i]->name, height);
+          fprintf(stderr, "nxagentAdjustRandRXinerama: output [%d] name [%s]: window has parts outside visible area - height stays unchanged [%d]\n", i, pScrPriv->outputs[i]->name, height);
           #endif
 	  new_h = height;
 	}
@@ -3951,9 +3973,9 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       prevmode = pScrPriv->crtcs[i]->mode;
       #ifdef DEBUG
       if (prevmode) {
-        fprintf(stderr, "nxagentAdjustRandRXinerama: output %d [%s]: prevmode [%s] ([%p]) refcnt [%d]\n", i, pScrPriv->outputs[i]->name, prevmode->name, (void *)prevmode, prevmode->refcnt);
+        fprintf(stderr, "nxagentAdjustRandRXinerama: output [%d] name [%s]: prevmode [%s] ([%p]) refcnt [%d]\n", i, pScrPriv->outputs[i]->name, prevmode->name, (void *)prevmode, prevmode->refcnt);
       } else {
-        fprintf(stderr, "nxagentAdjustRandRXinerama: output %d [%s]: no prevmode\n", i, pScrPriv->outputs[i]->name);
+        fprintf(stderr, "nxagentAdjustRandRXinerama: output [%d] name [%s]: no prevmode\n", i, pScrPriv->outputs[i]->name);
       }
       #endif
 
@@ -3961,7 +3983,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
 
       if (disable_output) {
         #ifdef DEBUG
-        fprintf(stderr, "nxagentAdjustRandRXinerama: output %d [%s]: no (valid) intersection - disconnecting\n", i, pScrPriv->outputs[i]->name);
+        fprintf(stderr, "nxagentAdjustRandRXinerama: output [%d] name [%s]: no (valid) intersection - disconnecting\n", i, pScrPriv->outputs[i]->name);
         #endif
         RROutputSetConnection(pScrPriv->outputs[i], RR_Disconnected);
 
@@ -3976,12 +3998,12 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
          */
         if (prevmode) {
           #ifdef DEBUG
-          fprintf(stderr, "nxagentAdjustRandRXinerama: removing mode from output %d [%s]\n", i, pScrPriv->outputs[i]->name);
+          fprintf(stderr, "nxagentAdjustRandRXinerama: removing mode from output [%d] name [%s]\n", i, pScrPriv->outputs[i]->name);
           #endif
           RROutputSetModes(pScrPriv->outputs[i], NULL, 0, 0);
 
           #ifdef DEBUG
-          fprintf(stderr, "nxagentAdjustRandRXinerama: removing mode from ctrc %d\n", i);
+          fprintf(stderr, "nxagentAdjustRandRXinerama: removing mode from ctrc [%d]\n", i);
           #endif
           RRCrtcSet(pScrPriv->crtcs[i], NULL, 0, 0, RR_Rotate_0, 1, &(pScrPriv->outputs[i]));
         }
@@ -3989,7 +4011,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       else
       {
         #ifdef DEBUG
-        fprintf(stderr, "nxagentAdjustRandRXinerama: output %d [%s]: intersection is x [%d] y [%d] width [%d] height [%d]\n", i, pScrPriv->outputs[i]->name, new_x, new_y, new_w, new_h);
+        fprintf(stderr, "nxagentAdjustRandRXinerama: output [%d] name [%s]: intersection is x [%d] y [%d] width [%d] height [%d]\n", i, pScrPriv->outputs[i]->name, new_x, new_y, new_w, new_h);
         #endif
 
         RROutputSetConnection(pScrPriv->outputs[i], RR_Connected);
@@ -4017,17 +4039,17 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
 
 #ifdef DEBUG
         if (mymode) {
-          fprintf(stderr, "nxagentAdjustRandRXinerama: output %d [%s]: mode [%s] ([%p]) created/received, refcnt [%d]\n", i, pScrPriv->outputs[i]->name, name, (void *)mymode, mymode->refcnt);
+          fprintf(stderr, "nxagentAdjustRandRXinerama: output [%d] name [%s]: mode [%s] ([%p]) created/received, refcnt [%d]\n", i, pScrPriv->outputs[i]->name, name, (void *) mymode, mymode->refcnt);
         }
         else
         {
 	  /* FIXME: what is the correct behaviour in this case? */
-          fprintf(stderr, "nxagentAdjustRandRXinerama: output %d [%s]: mode [%s] creation failed!\n", i, pScrPriv->outputs[i]->name, name);
+          fprintf(stderr, "nxagentAdjustRandRXinerama: output [%d] name [%s]: mode [%s] creation failed!\n", i, pScrPriv->outputs[i]->name, name);
         }
 #endif
 	if (prevmode && mymode == prevmode) {
           #ifdef DEBUG
-          fprintf(stderr, "nxagentAdjustRandRXinerama: mymode [%s] ([%p]) == prevmode [%s] ([%p])\n", mymode->name, (void *)mymode, prevmode->name, (void *)prevmode);
+          fprintf(stderr, "nxagentAdjustRandRXinerama: mymode [%s] ([%p]) == prevmode [%s] ([%p])\n", mymode->name, (void *) mymode, prevmode->name, (void *)prevmode);
           #endif
 
           /* if they are the same RRModeGet() has increased the
@@ -4038,12 +4060,12 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
         else
 	{ 
           #ifdef DEBUG
-          fprintf(stderr, "nxagentAdjustRandRXinerama: setting mode [%s] ([%p]) refcnt [%d] for output %d [%s]\n", mymode->name, (void *)mymode, mymode->refcnt, i, pScrPriv->outputs[i]->name);
+          fprintf(stderr, "nxagentAdjustRandRXinerama: setting mode [%s] ([%p]) refcnt [%d] for output %d [%s]\n", mymode->name, (void *) mymode, mymode->refcnt, i, pScrPriv->outputs[i]->name);
           #endif
           RROutputSetModes(pScrPriv->outputs[i], &mymode, 1, 0);
 
           #ifdef DEBUG
-          fprintf(stderr, "nxagentAdjustRandRXinerama: setting mode [%s] ([%p]) refcnt [%d] for crtc %d\n", mymode->name, (void *)mymode, mymode->refcnt, i);
+          fprintf(stderr, "nxagentAdjustRandRXinerama: setting mode [%s] ([%p]) refcnt [%d] for crtc %d\n", mymode->name, (void *) mymode, mymode->refcnt, i);
           #endif
           RRCrtcSet(pScrPriv->crtcs[i], mymode, new_x, new_y, RR_Rotate_0, 1, &(pScrPriv->outputs[i]));
 
@@ -4075,15 +4097,16 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
     for (i = 0; i < pScrPriv->numCrtcs; i++) {
       RRModePtr mode = pScrPriv->crtcs[i]->mode;
       if (mode) {
-        fprintf(stderr, "nxagentAdjustRandRXinerama: crtc %d has mode [%s] ([%p]), refcnt [%d] and %d outputs\n", i, pScrPriv->crtcs[i]->mode->name, (void *)pScrPriv->crtcs[i]->mode, pScrPriv->crtcs[i]->mode->refcnt, pScrPriv->crtcs[i]->numOutputs);
+	fprintf(stderr, "nxagentAdjustRandRXinerama: crtc [%d] ([%p]) has mode [%s] ([%p]), refcnt [%d] and [%d] outputs:\n", i, (void *) pScrPriv->crtcs[i], pScrPriv->crtcs[i]->mode->name, (void *)pScrPriv->crtcs[i]->mode, pScrPriv->crtcs[i]->mode->refcnt, pScrPriv->crtcs[i]->numOutputs);
       }
       else
       {
-        fprintf(stderr, "nxagentAdjustRandRXinerama: crtc %d has no mode and %d outputs\n", i, pScrPriv->crtcs[i]->numOutputs);
+	fprintf(stderr, "nxagentAdjustRandRXinerama: crtc [%d] ([%p]) has no mode and [%d] outputs:\n", i, (void *) pScrPriv->crtcs[i], pScrPriv->crtcs[i]->numOutputs);
       }
 
       if (pScrPriv->crtcs[i]->numOutputs > 0)
-	fprintf(stderr, "                            output[%d][%s]->crtc=[%p]\n", i, pScrPriv->outputs[i]->name, (void *)pScrPriv->outputs[i]->crtc);
+        for (int j=0; j < pScrPriv->crtcs[i]->numOutputs; j++)
+	  fprintf(stderr, "nxagentAdjustRandRXinerama:   output [%d] name [%s]->crtc=[%p]\n", j, pScrPriv->crtcs[i]->outputs[j]->name, (void *)pScrPriv->crtcs[i]->outputs[j]->crtc);
     }
 #endif
 
@@ -4096,7 +4119,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
   /* FIXME: adjust maximum screen size according to remote randr/xinerama setup */
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentAdjustRandRXinerama: Min %dx%d, Max %dx%d \n", pScrPriv->minWidth,pScrPriv->minHeight,pScrPriv->maxWidth,pScrPriv->maxHeight);
+  fprintf(stderr, "nxagentAdjustRandRXinerama: Min %dx%d, Max %dx%d \n", pScrPriv->minWidth, pScrPriv->minHeight, pScrPriv->maxWidth, pScrPriv->maxHeight);
   #endif
 
   return TRUE;
@@ -4210,7 +4233,7 @@ void nxagentSaveAreas(PixmapPtr pPixmap, RegionPtr prgnSave, int xorg, int yorg,
 
   #ifdef TEST
   fprintf(stderr,"nxagentSaveAreas: Added pixmap [%p] with id [%d] on window [%p] to BSPixmapList.\n",
-              pPixmap, nxagentPixmap(pPixmap), pWin);
+                 (void *) pPixmap, nxagentPixmap(pPixmap), (void *) pWin);
   #endif
 
   XFreeGC(nxagentDisplay, gc);
