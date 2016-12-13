@@ -1235,9 +1235,11 @@ static void nxagentParseOptions(char *name, char *value)
     return;
 #else
     if (PANORAMIX_DISABLED_COND && RRXINERAMA_DISABLED_COND)
+    {
       nxagentChangeOption(Xinerama, 0);
       fprintf(stderr, "Warning: XINERAMA extension has been disabled on %s startup.\n", __progname);
       return;
+    }
 
     if (!strcmp(value, "1"))
     {
