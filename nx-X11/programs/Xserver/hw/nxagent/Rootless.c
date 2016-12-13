@@ -965,7 +965,7 @@ void nxagentImportProperty(Window window,
       }
     }
 
-    if ((wmHints.flags & IconWindowHint) && (wmHints.icon_window =! None))
+    if ((wmHints.flags & IconWindowHint) && (wmHints.icon_window != None))
     {
       WindowPtr icon = nxagentWindowPtr(wmHints.icon_window);
 
@@ -986,7 +986,7 @@ void nxagentImportProperty(Window window,
       }
     }
 
-    if ((wmHints.flags & IconMaskHint) && (wmHints.icon_mask =! None))
+    if ((wmHints.flags & IconMaskHint) && (wmHints.icon_mask != None))
     {
       PixmapPtr icon = nxagentPixmapPtr(wmHints.icon_mask);
 
