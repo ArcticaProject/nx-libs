@@ -407,7 +407,7 @@ static void nxagentSigchldHandler(int signal)
    * Leave the other children unaffected.
    */
 
-  if (pid == 0 && nxagentRootlessDialogPid)
+  if (nxagentRootlessDialogPid)
   {
     pid = waitpid(nxagentRootlessDialogPid, &status, options);
 
