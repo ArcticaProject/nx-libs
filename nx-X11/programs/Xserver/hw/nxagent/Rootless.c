@@ -315,6 +315,13 @@ void nxagentRootlessRestack(unsigned long children[], unsigned int nchildren)
   Mask mask;
 
   toplevel = malloc(sizeof(WindowPtr) * nchildren);
+
+  if (!toplevel)
+  {
+    /* FIXME: Is this too much and we and simply return here? */
+    FatalError("nxagentRootlessRestack: malloc() failed.");
+  }
+
   ntoplevel = 0;
 
   for(i = 0; i < nchildren; i++)
@@ -497,6 +504,7 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
   #ifdef _XSERVER64
   else if (strcmp(typeS, "CARDINAL") == 0 || strcmp(typeS, "WM_SIZE_HINTS") == 0)
   {
+    /* FIXME: is it okay here to ignore malloc fails? */
     unsigned long *buffer = malloc(nUnits * sizeof(*buffer));
     int *input = value;
     int i;
@@ -640,6 +648,14 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
     int i;
     int j = 0;
 
+    if (!atoms)
+    {
+      #ifdef WARNING
+      fprintf(stderr, "nxagentExportProperty: WARNING! malloc() failed for '%s'- bailing out.\n", typeS);
+      #endif
+      return False;
+    }
+
     freeMem = True;
     export = True;
     output = (char *) atoms;
@@ -689,6 +705,14 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
     ClientPtr pClient = wClient(pWin);
     WindowPtr pWindow;
     int i;
+
+    if (!wind)
+    {
+      #ifdef WARNING
+      fprintf(stderr, "nxagentExportProperty: WARNING! malloc() failed for '%s' - bailing out.\n", typeS);
+      #endif
+      return False;
+    }
 
     freeMem = True;
     export = True;
@@ -1037,7 +1061,7 @@ void nxagentImportProperty(Window window,
     if (atoms == NULL)
     {
       #ifdef WARNING
-      fprintf(stderr, "nxagentImportProperty: WARNING! Malloc failed bailing out.\n");
+      fprintf(stderr, "nxagentImportProperty: WARNING! malloc() failed for '%s' - bailing out.\n", typeS);
       #endif
 
       return;
@@ -1067,6 +1091,14 @@ void nxagentImportProperty(Window window,
     WindowPtr pWindow;
     int i;
 
+    if (!wind)
+    {
+      #ifdef WARNING
+      fprintf(stderr, "nxagentImportProperty: WARNING! malloc() failed for '%s' - bailing out.\n", typeS);
+      #endif
+
+      return;
+    }
     freeMem = True;
     import = True;
     output = (char*) wind;
@@ -1185,7 +1217,7 @@ void nxagentAddPropertyToList(Atom property, WindowPtr pWin)
 
   if ((tmp = malloc(sizeof(struct nxagentPropertyRec))) == NULL)
   {
-    FatalError("nxagentAddPropertyToList: malloc failed.");
+    FatalError("nxagentAddPropertyToList: malloc() failed.");
   }
 
   #ifdef TEST
