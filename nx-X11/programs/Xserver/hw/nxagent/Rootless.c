@@ -351,14 +351,14 @@ void nxagentRootlessRestack(unsigned long children[], unsigned int nchildren)
 
   for (i = 0; i < ntoplevel; i++)
   {
-    fprintf(stderr, "[%p]\n", toplevel[i]);
+    fprintf(stderr, "nxagentRootlessRestack: [%p]\n", toplevel[i]);
   }
 
   fprintf(stderr, "nxagentRootlessRestack: Internal top level windows before restack:");
 
   for (pWin = screenInfo.screens[0]->root -> firstChild; pWin != NULL; pWin = pWin -> nextSib)
   {
-    fprintf(stderr, "[%p]\n", pWin);
+    fprintf(stderr, "nxagentRootlessRestack: [%p]\n", pWin);
   }
 
   #endif
@@ -394,14 +394,14 @@ void nxagentRootlessRestack(unsigned long children[], unsigned int nchildren)
 
   for (i = 0; i < ntoplevel; i++)
   {
-    fprintf(stderr, "[%p]\n", toplevel[i]);
+    fprintf(stderr, "nxagentRootlessRestack: [%p]\n", toplevel[i]);
   }
 
   fprintf(stderr, "nxagentRootlessRestack: Internal top level windows after restack:");
 
   for (pWin = screenInfo.screens[0]->root -> firstChild; pWin != NULL; pWin = pWin -> nextSib)
   {
-    fprintf(stderr, "[%p]\n", pWin);
+    fprintf(stderr, "nxagentRootlessRestack: [%p]\n", pWin);
   }
 
   #endif
