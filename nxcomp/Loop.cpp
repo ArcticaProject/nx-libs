@@ -6692,11 +6692,15 @@ int WaitForRemote(ChannelEndPoint &socketAddress)
       strcpy(hostLabel, "any host");
     }
 
-    if (loopbackBind)
+    long bindPort;
+    if (socketAddress.getTCPHostAndPort(NULL, &bindPort))
     {
-      long bindPort;
-      if (socketAddress.getTCPHostAndPort(NULL, &bindPort))
-          socketAddress.setSpec("localhost", bindPort);
+      socketAddress.setSpec(loopbackBind ? "localhost" : "*", bindPort);
+    }
+    else
+    {
+      // This should never happen
+      cerr << "Error" << ": Unable to change bind host\n";
     }
   }
   else if (socketAddress.isUnixSocket())
