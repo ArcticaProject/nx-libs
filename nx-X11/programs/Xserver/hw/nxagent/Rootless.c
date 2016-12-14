@@ -334,6 +334,7 @@ void nxagentRootlessRestack(unsigned long children[], unsigned int nchildren)
 
   if (!ntoplevel)
   {
+    free(toplevel);
     return;
   }
 
