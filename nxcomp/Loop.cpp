@@ -6685,11 +6685,11 @@ int WaitForRemote(ChannelEndPoint &socketAddress)
 
         goto WaitForRemoteError;
       }
-      strcpy(hostLabel, "any host");
+      snprintf(hostLabel, sizeof(hostLabel), "'%s'", acceptHost);
     }
     else
     {
-      snprintf(hostLabel, sizeof(hostLabel), "'%s'", acceptHost);
+      strcpy(hostLabel, "any host");
     }
 
     if (loopbackBind)
