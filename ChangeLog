@@ -1,6 +1,1499 @@
-2016-10-13 14:10:28 +0200 Mike Gabriel (38394e6)
+2016-12-19 15:03:09 +0100 Mike Gabriel (f2c07b8)
 
-	* release 3.5.99.2 (HEAD, 3.6.x)
+	* release 3.5.99.3 (HEAD, 3.6.x)
+
+2016-12-14 13:32:23 +0100 Mike Gabriel (8be276d)
+
+	* Merge branch 'theqvd-fix-loopback-bind' into 3.6.x (origin/HEAD,
+          origin/3.6.x)
+
+2016-12-13 12:00:43 +0100 Vadim Troshchinskiy (920f423)
+
+	* Make nxagent only bind to loopback when requested
+          (theqvd-fix-loopback-bind)
+
+2016-12-14 10:57:39 +0100 Mike Gabriel (e466a93)
+
+	* Merge branch 'theqvd-fix-accept-host-message' into 3.6.x
+
+2016-12-13 12:19:09 +0100 Vadim Troshchinskiy (7718886)
+
+	* Fix reversed logic in acceptHost setting
+          (theqvd-fix-accept-host-message)
+
+2016-12-10 21:49:10 +0100 Mike Gabriel (2b8f592)
+
+	* Merge branch 'uli42-pr/improve_xinerama_debug' into 3.6.x
+
+2016-12-07 21:50:40 +0100 Ulrich Sibiller (6f3fb52)
+
+	* Screen.c: more debug output formatting improvements
+          (uli42-pr/improve_xinerama_debug)
+
+2016-12-07 21:17:26 +0100 Ulrich Sibiller (e143098)
+
+	* Screen.c: fix uninitalized variable
+
+2016-12-07 21:15:59 +0100 Ulrich Sibiller (ce76009)
+
+	* Screen.c: fix compile warnings in DEBUG mode
+
+2016-12-07 21:42:03 +0100 Ulrich Sibiller (6882b08)
+
+	* Screen.c: fix formatting
+
+2016-12-07 20:18:09 +0100 Ulrich Sibiller (c806956)
+
+	* Screen.c: improve debugging output
+
+2016-12-05 10:26:28 +0000 Mike Gabriel (5bdb2fc)
+
+	* debian/control: B-D alternatively on libxfont1-dev or libxfont-dev.
+          Fix FTBFS on Debian stretch which has libxfont2-dev as
+          default now.
+
+2016-12-04 21:45:33 +0100 Mike Gabriel (c893ad6)
+
+	* Merge branch 'sunweaver-pr/drop-glx-ansic' into 3.6.x
+
+2016-11-02 20:30:07 +0100 Mike Gabriel (4e33fd4)
+
+	* Mesa: Convert some files with MSDOS EOL style to Unix EOL style.
+          (gh-sunweaver/pr/drop-glx-ansic,
+          sunweaver-pr/drop-glx-ansic, pr/drop-glx-ansic)
+
+2016-11-01 21:30:22 +0100 Kristian Høgsberg (4146d1a)
+
+	* Drop xf86glx.h, so we can finally drop Xserver/GL/include/
+          entirely.
+
+2016-10-31 15:06:37 +0100 Kristian Høgsberg (cee997d)
+
+	* Drop glx_ansic.h wrapper and call malloc, realloc, free and
+          str-funcs directly.
+
+2016-12-04 21:14:24 +0100 Mike Gabriel (b38d5b9)
+
+	* Merge branch 'sunweaver-pr/extmod-xfree86loader-cleanup' into 3.6.x
+
+2016-10-29 11:28:02 +0200 Eric Anholt (508d2de)
+
+	* Remove libcwrapper usage from xorg server modules. The libcwrapper
+          is not used in nxagent.
+          (gh-sunweaver/pr/extmod-xfree86loader-cleanup,
+          sunweaver-pr/extmod-xfree86loader-cleanup,
+          pr/extmod-xfree86loader-cleanup)
+
+2016-12-04 21:09:52 +0100 Mike Gabriel (62f8e50)
+
+	* Merge branch 'uli42-pr/compilation_fixes_and_debug_improvements'
+          into 3.6.x
+
+2016-12-03 23:31:26 +0100 Ulrich Sibiller (b0106e7)
+
+	* slightly improve rrxinerama debug output
+
+2016-12-03 23:06:32 +0100 Ulrich Sibiller (c5e06d4)
+
+	* Fix compilation warnings
+
+2016-11-30 08:13:54 +0100 Mike Gabriel (a0a429c)
+
+	* Update auto-generated debian/copyright.in.
+
+2016-11-18 00:07:19 +0100 Mike Gabriel (cb8af80)
+
+	* .gitignore: Don't ignore myself.
+
+2016-11-18 00:06:30 +0100 Mike Gabriel (edeca4a)
+
+	* Merge branch 'uli42-pr/gitignore' into 3.6.x
+
+2016-11-03 23:53:46 +0100 Ulrich Sibiller (7993d28)
+
+	* add .gitignore files
+
+2016-11-17 20:49:53 +0100 Mike Gabriel (1f60704)
+
+	* Merge branch 'uli42-pr/remove_xlibi18n' into 3.6.x
+
+2016-11-04 00:25:25 +0100 Ulrich Sibiller (de4eca1)
+
+	* LibX11: drop unused xlibi18n
+
+2016-11-15 17:06:18 +0100 Mike Gabriel (cb8bcbe)
+
+	* Merge branch 'sunweaver-pr/testscripts-file-headers' into 3.6.x
+
+2016-11-07 12:32:09 +0100 Mike Gabriel (00725f1)
+
+	* testscripts: Use non-NoMachine file headers for our testscripts.
+          (gh-sunweaver/pr/testscripts-file-headers,
+          pr/testscripts-file-headers)
+
+2016-11-15 17:02:11 +0100 Mike Gabriel (91d0672)
+
+	* New helper script: regenerate-symbol-docs.sh. Plus update symbols
+          usage of libNX_X11 and nxcompext in nxagent, nxcompext and
+          libNX_X11.
+
+2016-11-15 16:42:39 +0100 Mike Gabriel (8c5a1b0)
+
+	* Merge branch 'sunweaver-pr/move-nxcompext-into-Xserver' into 3.6.x
+
+2016-11-09 16:45:47 +0100 Mike Gabriel (9ad0aae)
+
+	* Xserver/Imakefile: Some whitespace fixes.
+          (gh-sunweaver/pr/move-nxcompext-into-Xserver)
+
+2016-11-03 00:19:26 +0100 Mike Gabriel (80b5de3)
+
+	* nxcompext: Move code into Xserver subtree, as nxcompext requires
+          Xserver includes at build time.
+
+2016-11-03 08:30:49 +0100 Mike Gabriel (cae394b)
+
+	* Xserver/hw/nxagent/Imakefile: Introduce the NULL variable.
+
+2016-11-08 08:00:44 +0100 Mihai Moldovan (b1d3f2c)
+
+	* Merge branch 'uli42-pr/keyboard_fixes' into arctica-3.6.x
+
+2016-10-27 01:00:23 +0200 Ulrich Sibiller (2f2ade6)
+
+	* Keyboard.c: evdev is only existing on Linux
+
+2006-10-02 20:58:33 +0300 Daniel Stone (926e90a)
+
+	* xkb: remove the world's most staggeringly broken vendor workaround
+
+2016-10-26 11:01:57 +0200 Ulrich Sibiller (08ed062)
+
+	* Keyboard.c: move variable to inner scope
+
+2016-10-26 10:39:37 +0200 Ulrich Sibiller (d37f9f3)
+
+	* Reconnect.c: simplify code by using strndup
+
+2016-10-25 23:40:13 +0200 Ulrich Sibiller (e52799d)
+
+	* Keyboard.c: replace malloc/strcpy by str(n)dup
+
+2016-10-25 22:59:35 +0200 Ulrich Sibiller (718c5b9)
+
+	* Keyboard.c: more whitespace/formatting fixes
+
+2016-10-25 22:53:39 +0200 Ulrich Sibiller (b5cc3c9)
+
+	* Keyboard.c: improve keyboard file creation
+
+2016-10-25 22:53:07 +0200 Ulrich Sibiller (52848b7)
+
+	* Keyboard.c: use NULL instead of 0
+
+2016-10-25 22:52:43 +0200 Ulrich Sibiller (3ea601b)
+
+	* Keyboard.c: remove superfluous whitespace
+
+2016-10-25 21:50:11 +0200 Ulrich Sibiller (2901aca)
+
+	* Keyboard.c: Fix wrong error msg prefix
+
+2016-10-25 21:41:11 +0200 Ulrich Sibiller (2f7f39b)
+
+	* Keyboard.c: Fix and simplify keyboard config file handling
+
+2016-10-25 21:40:10 +0200 Ulrich Sibiller (8793e36)
+
+	* Improve DEBUG/TEST output regarding keyboard stuff
+
+2016-10-25 21:39:24 +0200 Ulrich Sibiller (e3ac55b)
+
+	* Drop unused define NXAGENT_KEYMAP_DIR_FILE
+
+2016-11-05 05:20:31 +0000 Mihai Moldovan (7b79e8d)
+
+	* Makefile: fix up a9b145d4.
+
+2016-11-05 05:18:06 +0000 Mihai Moldovan (c7e0193)
+
+	* nx-X11/lib/X11/Imakefile: essentially revert 5a90a63.
+
+2016-11-04 14:19:07 +0100 Vadim Troshchinskiy (e5091e0)
+
+	* Added sample slave agent and test script
+
+2016-11-03 22:51:56 +0100 Mihai Moldovan (53d304e)
+
+	* Merge branch 'sunweaver-pr/drop-fbmmx' into arctica-3.6.x
+
+2016-10-29 14:23:58 +0200 Mike Gabriel (f5c5cb1)
+
+	* Xserver/fb: Drop fbmmx.[ch] files and code passages wrapped-in by
+          USE_MMX macro. (gh-sunweaver/pr/drop-fbmmx)
+
+2016-10-29 14:23:25 +0200 Mike Gabriel (89e1457)
+
+	* Xserver/fb/Imakefile: Introduce NULL variable.
+
+2016-11-03 09:36:23 +0100 Mike Gabriel (d12b775)
+
+	* Merge branch 'uli42-pr/libX11_xtrans_silence_compiler_warnings'
+          into 3.6.x
+
+2016-11-02 23:57:43 +0100 Ulrich Sibiller (47fab08)
+
+	* xtrans: fix const warnings for SocketConnectConnInfo
+
+2016-11-02 23:55:23 +0100 Ulrich Sibiller (882c034)
+
+	* xtrans: silence compiler warning regarding is_numeric
+
+2016-11-02 23:37:30 +0100 Ulrich Sibiller (90612d2)
+
+	* libX11 + Xserver: fix missing define warning
+
+2016-11-02 23:36:50 +0100 Ulrich Sibiller (2631603)
+
+	* xtrans: Fix compile warning
+
+2016-11-02 23:14:52 +0100 Ulrich Sibiller (5d06f46)
+
+	* xtrans: fix compilation warnings because of missing XTRANS_SEND_FDS
+
+2016-11-02 19:59:23 +0100 Mike Gabriel (8dc0d18)
+
+	* debian/libnx-x11-6.symbols: Update after upgrade of xtrans library
+          files.
+
+2016-11-02 19:50:24 +0100 Mike Gabriel (107e72b)
+
+	* Merge branch 'uli42-pr/upgrade_xtrans' into 3.6.x
+
+2016-11-02 11:48:23 +0100 Ulrich Sibiller (6a186b9)
+
+	* Whitespace fixes
+
+2016-10-31 02:29:18 +0100 Ulrich Sibiller (e65b106)
+
+	* Xtrans: update to Xorg/xtrans upstream (1.3.5+)
+
+2016-10-13 21:53:17 +0200 Ulrich Sibiller (793d587)
+
+	* Remove __UNIXOS2__ references
+
+2016-05-18 12:38:02 -0400 Adam Jackson (603fe25)
+
+	* remove CLTS code
+
+2016-10-13 19:08:37 +0200 Ulrich Sibiller (247e1f7)
+
+	* use %p in format strings
+
+2016-10-13 00:51:03 +0200 Ulrich Sibiller (c3f43e8)
+
+	* replace PRMSG by prmsg
+
+2016-10-13 00:35:04 +0200 Ulrich Sibiller (c4b775f)
+
+	* align license headers with Xorg/xtrans upstream
+
+2016-10-13 00:31:51 +0200 Ulrich Sibiller (6957b3d)
+
+	* move helper functions to file end
+
+2008-02-10 19:04:40 -0800 Jeremy Huddleston (f686bc3)
+
+	* Fixed #ifdef checks that were using i386 to use __i386__
+
+2016-10-13 00:16:30 +0200 Ulrich Sibiller (64d5186)
+
+	* whitespace cleanup
+
+2008-08-07 10:32:11 -0400 Adam Jackson (e5b4532)
+
+	* Drastically simplify TRANS_OPEN_MAX.
+
+2016-10-12 22:28:41 +0200 Ulrich Sibiller (0ca6e59)
+
+	* undef __QNX__
+
+2016-10-12 22:27:34 +0200 Ulrich Sibiller (4ab02b2)
+
+	* undef Lynx
+
+2016-10-12 22:47:36 +0200 Ulrich Sibiller (89cea60)
+
+	* undef AIXV3
+
+2016-10-12 22:44:21 +0200 Ulrich Sibiller (eb4ee6c)
+
+	* undef hpux
+
+2016-10-12 22:24:09 +0200 Ulrich Sibiller (175a341)
+
+	* undef __UNIXOS2__
+
+2016-10-12 22:05:26 +0200 Ulrich Sibiller (97d651f)
+
+	* Remove OS2PIPECONN transport
+
+2016-10-12 21:33:00 +0200 Ulrich Sibiller (0cbc892)
+
+	* Remove unused TLI ("STREAMSCONN") code
+
+2016-10-12 21:06:36 +0200 Ulrich Sibiller (b5bfd3a)
+
+	* remove DECnet support
+
+2016-11-02 19:38:08 +0100 Mike Gabriel (a9b145d)
+
+	* Makefile: Make sure libNX_X11.so.6.2 does not get installed as
+          symlink but as actual file. (Follow-up for 5a90a63).
+
+2016-11-02 17:54:24 +0100 Mike Gabriel (1d1d1fc)
+
+	* Merge branch 'pr/unused_files' into 3.6.x
+
+2016-10-30 19:05:56 +0100 Ulrich Sibiller (7d88404)
+
+	* remove unused mkks.sh (pr/unused_files)
+
+2016-10-30 19:02:36 +0100 Ulrich Sibiller (bac5ce7)
+
+	* remove unused jump_* files from libX11
+
+2016-10-30 18:54:04 +0100 Ulrich Sibiller (331497b)
+
+	* drop unused xtest1.frags
+
+2016-10-30 18:48:31 +0100 Ulrich Sibiller (6b9ce7d)
+
+	* remove unused fb24_32.h
+
+2016-10-30 18:47:04 +0100 Ulrich Sibiller (a29a2b6)
+
+	* remove unused registry.h
+
+2016-10-30 18:43:38 +0100 Ulrich Sibiller (89f9212)
+
+	* remove unused XInput.h
+
+2016-10-30 18:40:10 +0100 Ulrich Sibiller (881979b)
+
+	* Remove unused Xv and XvMC headers
+
+2016-10-30 18:01:11 +0100 Ulrich Sibiller (ba87cf4)
+
+	* drop unused glu.h
+
+2016-10-30 17:58:59 +0100 Ulrich Sibiller (903d5ce)
+
+	* drop ap_keysym.h
+
+2016-10-30 17:55:53 +0100 Ulrich Sibiller (1832ab6)
+
+	* remove unused registry file
+
+2016-10-30 17:54:46 +0100 Ulrich Sibiller (b7daac2)
+
+	* remove *-def.cpp
+
+2016-10-29 23:26:05 +0200 Ulrich Sibiller (4271b9e)
+
+	* nxcomp: remove unused Utils.cpp
+
+2016-10-29 22:52:53 +0200 Ulrich Sibiller (96c9aaf)
+
+	* Imake: drop DoLoadableServer, MakeDllModules and IHaveModules
+
+2016-10-29 11:18:41 +0200 Mike Gabriel (8dab7c2)
+
+	* Remove extmod from nx-X11/programs/Xserver/Xext/.
+
+2016-11-02 17:53:15 +0100 Mike Gabriel (6eb8d3e)
+
+	* Merge branch 'uli42-pr/add_libX11_links' into 3.6.x
+
+2016-10-28 23:38:17 +0200 Ulrich Sibiller (5a90a63)
+
+	* libX11/Imakefile: handle libX11 links
+
+2016-10-28 23:37:17 +0200 Ulrich Sibiller (f1d420b)
+
+	* libX11/Imakefile: add missing dependencies on ks_tables.h
+
+2016-10-31 12:44:52 +0100 Mike Gabriel (4c59a3c)
+
+	* Merge branch 'sunweaver-pr/clean-up-old-vcs-comments' into 3.6.x
+
+2016-10-29 15:30:20 +0200 Mike Gabriel (fcf61d3)
+
+	* Imakefile cleanup: Delete all ancient Vcs comments stemming from
+          SVN times of X.org and XFree86.
+
+2016-10-30 23:52:44 +0100 Mike Gabriel (6b3080d)
+
+	* Merge branch 'sunweaver-pr/drop-mfb-maskbits-h' into 3.6.x
+
+2016-10-30 21:36:53 +0100 Mike Gabriel (b99c787)
+
+	* Xserver/Imakefile: Drop references to already removed afb code.
+          (gh-sunweaver/pr/drop-mfb-maskbits-h)
+
+2016-10-30 21:36:03 +0100 Mike Gabriel (65e25bd)
+
+	* Xserver/Imakefile: Drop all references to building already removed
+          cfb* implementations.
+
+2016-10-30 20:16:53 +0100 Adam Jackson (cc03502)
+
+	* Death to mfb (removing last remnants from NX code).
+
+2016-10-30 18:31:54 +0100 Adam Jackson (3c0e426)
+
+	* Disinfect mi/ of mfb.
+
+2016-10-30 14:32:04 +0100 Mike Gabriel (23c66f4)
+
+	* Merge branch 'sunweaver-pr/drop-nxlibint-h' into 3.6.x
+
+2016-10-30 13:11:38 +0100 Mike Gabriel (1ddbe39)
+
+	* nxcompext: Drop (nowadays) no-op file NXlibint.h.
+          (gh-sunweaver/pr/drop-nxlibint-h)
+
+2016-10-30 14:25:57 +0100 Mike Gabriel (23ad270)
+
+	* Merge branch 'uli42-misc_fixes' into 3.6.x
+
+2016-10-30 13:46:11 +0100 Ulrich Sibiller (1694701)
+
+	* nxagent.keyboard: add quotes
+
+2016-10-30 13:45:33 +0100 Ulrich Sibiller (903cc06)
+
+	* Imakefile: remove references to non-existing subdirs
+
+2016-10-30 02:32:35 +0200 Ulrich Sibiller (162a627)
+
+	* saver.c: fix unused variable warnings
+
+2016-10-29 10:32:51 +0200 Mike Gabriel (a375d17)
+
+	* Merge branch 'sunweaver-pr/build-includes-robustness' into 3.6.x
+
+2016-10-28 15:19:10 +0200 Mike Gabriel (2f2a5a9)
+
+	* Imake.rules: Make BuildIncludes{,Top}() more robust in case people
+          attempt providing path names instead of file names via
+          srclist. (gh-sunweaver/pr/build-includes-robustness)
+
+2016-10-29 10:30:27 +0200 Mike Gabriel (ecd335f)
+
+	* Merge branch 'uli42-pr/remove_xf86' into 3.6.x
+
+2016-10-28 01:05:03 +0200 Ulrich Sibiller (4aeed7a)
+
+	* remove hw/xfree86 altogether
+
+2016-10-28 00:30:25 +0200 Ulrich Sibiller (6c7f9cd)
+
+	* remove xf86Version.h and xf86Date.h
+
+2016-10-28 14:51:52 +0200 Mike Gabriel (4cdcd91)
+
+	* debian/patches: Rebase
+          102_xserver-xext_set-securitypolicy-path.debian.patch.
+          (pr/harmonize-xkb-defaults)
+
+2016-10-28 14:48:25 +0200 Mike Gabriel (c9da511)
+
+	* Merge branch 'theqvd-slave-channel' into 3.6.x
+
+2016-10-24 13:27:52 +0200 Vadim Troshchinskiy (c7eac1f)
+
+	* Add description of NX_SLAVE_CMD to man and help
+          (theqvd-slave-channel)
+
+2016-10-18 09:19:28 +0200 Vadim Troshchinskiy (30af52e)
+
+	* Slave channel implementation
+
+2016-10-28 05:42:02 +0200 Mihai Moldovan (a5de791)
+
+	* Merge branch 'uli42-pr/backup_memleak' into arctica-3.6.x
+
+2016-10-25 21:30:15 +0200 Emilio Pozuelo Monfort (8d1126e)
+
+	* Plug a memory leak
+
+2016-10-20 22:56:41 +0200 Mike Gabriel (5d4a7e0)
+
+	* debian/rules: Re-enable (+pie) hardening flags again when building
+          .deb packages.
+
+2016-10-20 10:31:24 +0200 Mike Gabriel (61b8d44)
+
+	* Merge branch 'uli42-pr/fix_compile_warnings' into 3.6.x
+
+2016-10-20 00:15:20 +0200 Ulrich Sibiller (50eb5e4)
+
+	* sendexev.c: Fix return of unitialized variable
+
+2011-05-24 18:33:17 +0200 Cyril Brulebois (151e0b1)
+
+	* xfixes: Remove unused variable.
+
+2006-02-14 08:11:41 +0000 Benjamin Herrenschmidt (c266216)
+
+	* Remove useless line of code that contained a bug and triggered a
+          gcc warning. This variable will be overriden before being
+          used anyway. (Bugzilla #5595)
+
+2009-01-11 08:25:17 +0100 Julien Cristau (4f99f85)
+
+	* dix: fix cast from pointer to integer
+
+2014-12-09 09:30:57 -0800 Keith Packard (e3e4062)
+
+	* dbe: Call to DDX SwapBuffers requires address of int, not unsigned
+          int [CVE-2014-8097 pt. 2]
+
+2016-10-19 21:58:06 +0200 Ulrich Sibiller (01eaab8)
+
+	* LRGB.c: Fix label defined but not used
+
+2016-06-04 17:19:59 +0200 walter harms (ddc5ed4)
+
+	* Fixes: warning: variable 'req' set but not,used
+
+2016-04-26 16:31:27 +0200 walter harms (21405f6)
+
+	* fix: warning: pointer targets in passing argument 2 of '_XSend'
+          differ in signedness [-Wpointer-sign]
+
+2016-04-26 16:34:11 +0200 walter harms (3f9ebf3)
+
+	* no need to check args for Xfree()
+
+2016-04-26 16:23:46 +0200 walter harms (897b8b2)
+
+	* remove stray extern
+
+2016-10-16 02:15:13 +0200 Ulrich Sibiller (2c59fbe)
+
+	* Fix warnings in XlibInt.c
+
+2016-10-16 00:41:11 +0200 Ulrich Sibiller (0a28292)
+
+	* xkb.c: fix 'assignment makes integer from pointer without a cast'
+
+2016-10-16 00:19:47 +0200 Ulrich Sibiller (057ddde)
+
+	* xkmread.c: use _X_UNUSED to avoid compiler warning when result is
+          not needed
+
+2016-10-16 00:07:21 +0200 Ulrich Sibiller (33b5911)
+
+	* xcmisc.c: remove HAVE_STDINT
+
+2016-10-16 00:02:41 +0200 Ulrich Sibiller (c180a21)
+
+	* security.c: fix compiler warnings
+
+2016-10-15 23:01:59 +0200 Ulrich Sibiller (185fbda)
+
+	* Loop.cpp: Fix output of SetCore()
+
+2016-10-15 22:02:06 +0200 Ulrich Sibiller (d238db3)
+
+	* Window.c: Fix function assignment warning
+
+2016-10-15 21:45:30 +0200 Ulrich Sibiller (81a7c6c)
+
+	* Display.c: remove unused variable
+
+2016-10-15 21:42:54 +0200 Ulrich Sibiller (54b7561)
+
+	* Colormap.c: add cast to avoid warning
+
+2016-10-15 21:41:03 +0200 Ulrich Sibiller (3c5621c)
+
+	* Args.c: fix string format warning
+
+2016-10-15 18:21:48 +0200 Ulrich Sibiller (e3c9bc3)
+
+	* imLcIm.c: Fix unused variables
+
+2016-10-15 18:03:18 +0200 Ulrich Sibiller (babaf67)
+
+	* Pending.c: Fix compilation warning
+
+2016-10-15 17:51:11 +0200 Ulrich Sibiller (ae8ec6b)
+
+	* Fix libX11 implicit declaration warnings
+
+2016-10-20 10:08:14 +0200 Mike Gabriel (da01dc8)
+
+	* Drop nx-X11/lib/X11/libX11.elist. Not needed for anything nowadays.
+          Probably never was needed in nx-X11.
+
+2016-10-20 09:58:37 +0200 Mike Gabriel (44c76ca)
+
+	* debian/libnx-x11-6.symbols: Update symbols list.
+
+2016-10-20 09:52:45 +0200 Mike Gabriel (a559592)
+
+	* XKeysymDB: ... got removed.
+
+2016-10-19 22:15:01 +0200 Mike Gabriel (70ac75f)
+
+	* Merge branch 'uli42-pr/libX11_further_backports' into 3.6.x
+
+2016-09-25 21:25:25 +0200 Tobias Stoeckmann (70e9d34)
+
+	* Validation of server responses in XGetImage()
+
+2016-09-25 21:22:57 +0200 Tobias Stoeckmann (b17557f)
+
+	* The validation of server responses avoids out of boundary accesses.
+
+2016-02-06 14:18:32 -0800 Alan Coopersmith (68e3ee6)
+
+	* xcms: use size_t for pointer offsets passed to strncmp
+
+2016-02-06 13:32:44 -0800 Alan Coopersmith (8d8d5cf)
+
+	* xcms: use unsigned indexes when looping through unsigned values
+
+2016-02-06 13:01:25 -0800 Alan Coopersmith (327d2cc)
+
+	* xcms: use size_t for strlen/sizeof values instead of converting to
+          int & back
+
+2015-03-26 07:52:58 +0100 Dominik Muth (de40477)
+
+	* Xlib.h: Fix macros imitating C functions.
+
+2016-01-21 11:54:19 +0100 Olivier Fourdan (a3759f3)
+
+	* XKB: fix XkbGetKeyboardByName with Xming server
+
+2015-12-19 18:03:41 -0800 Alan Coopersmith (50192b7)
+
+	* lcPubWrap: replace malloc(strlen) + strcpy with strdup
+
+2015-12-19 10:21:04 -0800 Alan Coopersmith (7a1fc17)
+
+	* XlcDL.c: reduce code duplication
+
+2015-12-19 10:19:25 -0800 Alan Coopersmith (c9ebd12)
+
+	* XlcDL.c: replace strcpy+strcat sequences with snprintf
+
+2015-12-19 10:05:42 -0800 Alan Coopersmith (2874fd1)
+
+	* XDefaultOMIF: Remove comments referring to ancient Sun bug ids
+
+2015-12-19 10:00:22 -0800 Alan Coopersmith (d980be3)
+
+	* XDefaultOMIF: additional code simplification
+
+2015-12-19 09:46:31 -0800 Alan Coopersmith (c00196d)
+
+	* XDefaultOMIF: replace strlen+Xmalloc+strcpy with strdup
+
+2015-12-19 09:20:55 -0800 Alan Coopersmith (f7254c6)
+
+	* Use strdup instead of Xmalloc+strcpy in _XDefaultOpenIM
+
+2015-12-04 22:20:53 -0800 Alan Coopersmith (b912a40)
+
+	* Delete #if 0 hunks of code
+
+2015-12-03 23:38:07 -0800 Alan Coopersmith (9dec6c1)
+
+	* Bug 93183: _XDefaultOpenIM memory leaks in out-of-memory error
+          paths
+
+2015-12-03 23:19:48 -0800 Alan Coopersmith (8d6d95d)
+
+	* Bug 93184: read_EncodingInfo invalid free
+
+2015-11-28 13:18:11 -0800 Alan Coopersmith (8339e68)
+
+	* Remove unused definition of XCONN_CHECK_FREQ
+
+2015-09-27 18:38:32 -0700 Alan Coopersmith (f857c70)
+
+	* Get rid of some extraneous ; at the end of C source lines
+
+2015-07-19 10:22:45 +0200 Thomas Klausner (fc524dd)
+
+	* Do not return() after exit().
+
+2015-05-18 14:49:01 +0100 Ross Burton (1445735)
+
+	* Add missing NULL checks to ICWrap
+
+2015-06-04 20:51:17 -0700 Alan Coopersmith (39dd37d)
+
+	* Replace Xmalloc+memset pairs with Xcalloc calls
+
+2015-06-04 19:07:12 -0700 Bhavi Dhingra (a402ed0)
+
+	* omGeneric.c: Correct the parameter usage of sizeof
+
+2015-05-19 12:30:22 +1000 Peter Hutterer (73f2d66)
+
+	* Fix three "use of uninitialized variable" coverity warnings
+
+2015-05-18 07:55:17 +1000 Peter Hutterer (e144899)
+
+	* Fix potential memory leak
+
+2015-02-03 13:23:50 -0500 Ran Benita (8e3e7bb)
+
+	* compose: fix the description of modifiers in compose sequences
+
+2014-07-11 10:34:08 -0700 Alan Coopersmith (0f1fa85)
+
+	* Use C99 named initializers to fill in events passed to XSendEvent
+
+2014-07-06 11:13:49 -0700 Alan Coopersmith (f20f91e)
+
+	* Fix validation of ctrls parameter to XkbGetPerClientControls()
+
+2014-07-06 10:54:57 -0700 Alan Coopersmith (37b8d68)
+
+	* Fix map->num_types check in XkbAddKeyType()
+
+2014-06-07 12:03:17 +0200 walter harms (aa7053b)
+
+	* lcDefConv.c: fix use before check
+
+2014-06-07 11:54:34 +0200 walter harms (dd6dc2d)
+
+	* rm redundant null checks
+
+2014-06-07 15:17:27 +0200 walter harms (a982607)
+
+	* libX11: rm redundante NULL checks
+
+2014-06-06 22:53:05 +0200 walter harms (1ff6961)
+
+	* Remove more redundant null checks before Xfree()
+
+2014-06-05 18:37:40 +0200 walter harms (fc26b97)
+
+	* Remove redundant null checks before free
+
+2014-06-04 17:12:31 +0200 walter harms (191d157)
+
+	* libX11/lcUTF8.c fix: dereferenced before check
+
+2014-06-04 17:10:20 +0200 walter harms (861fe5a)
+
+	* libX11/XKBNames.c fix: dereferenced before check
+
+2014-06-04 17:08:12 +0200 walter harms (e7528f5)
+
+	* libX11/lcGenConv.c fix: dereferenced before check
+
+2014-05-09 18:21:05 -0400 Owen W. Taylor (afc7138)
+
+	* Fix XNextRequest() after direct usage of XCB
+
+2014-02-11 13:26:16 +0200 Ran Benita (88d4965)
+
+	* Remove dead USE_OWN_COMPOSE-protected code
+
+2014-02-06 13:48:08 -0800 Alan Coopersmith (3e8df1a)
+
+	* Fix typos in Xrm.c comments
+
+2013-12-26 09:26:13 -0800 Alan Coopersmith (101419b)
+
+	* _XkbReadGeomOverlay: check for NULL first, then use pointer
+
+2013-12-26 09:22:49 -0800 Alan Coopersmith (1b0df5d)
+
+	* XkbSelectEventDetails: remove unnecessary assignments
+
+2010-10-07 18:46:08 +0100 Jon TURNEY (4fad46e)
+
+	* Don't try so hard to find a matching font with the given encoding
+
+2013-12-02 21:51:27 -0800 Alan Coopersmith (f45ac4a)
+
+	* unifdef -UISC
+
+2013-11-16 20:21:54 -0800 Alan Coopersmith (35dc478)
+
+	* Drop X_LOCALE fallback for OS'es without setlocale()
+
+2013-08-24 17:27:43 -0700 Alan Coopersmith (f04e1a6)
+
+	* Bug 68413 - [Bisected]Error in `xterm': realloc(): invalid next
+          size
+
+2013-08-16 21:04:02 -0700 Alan Coopersmith (ba86b7a)
+
+	* Stop checking for HAVE_DIX_CONFIG_H on the client side
+
+2013-08-16 18:27:28 -0700 Alan Coopersmith (2824899)
+
+	* Rearrange some variable declarations & initializations in XKB
+
+2013-08-11 13:29:33 -0700 Alan Coopersmith (3c5880e)
+
+	* Reindent XKB code to X.Org standard style
+
+2013-08-16 18:14:14 -0700 Alan Coopersmith (3cd8225)
+
+	* Fix overflow checks in _XkbReadKeySyms when key_sym_map is already
+          created
+
+2013-08-11 17:02:21 -0700 Alan Coopersmith (c22524d)
+
+	* Remove long unused udcInf.c
+
+2013-08-11 00:07:33 -0700 Alan Coopersmith (2625618)
+
+	* Remove unnecessary casts of pointers to (char *) in calls to
+          Xfree()
+
+2013-08-10 23:57:55 -0700 Alan Coopersmith (d33cf04)
+
+	* Don't cast sizeof() results to unsigned when passing to
+          Xmalloc/Xcalloc
+
+2013-08-10 23:51:08 -0700 Alan Coopersmith (c161df4)
+
+	* Remove even more casts of return values from Xmalloc/Xrealloc
+
+2013-08-10 23:05:13 -0700 Alan Coopersmith (5d6cda4)
+
+	* xlibi18n: fix argsize argument to _XlcParsePath
+
+2013-08-10 22:32:42 -0700 Alan Coopersmith (069c1f4)
+
+	* i18n modules: Fix some const cast warnings
+
+2013-08-10 22:21:54 -0700 Alan Coopersmith (d8358c6)
+
+	* xlibi18n: Fix a bunch of const cast warnings
+
+2013-08-10 22:18:00 -0700 Alan Coopersmith (e667b90)
+
+	* Fix const handling in XSetLocaleModifiers
+
+2013-08-10 21:46:37 -0700 Alan Coopersmith (d2671c2)
+
+	* Constify lc_name argument to _XlcLocaleDirName() &
+          _XlcLocaleLibDirName()
+
+2013-08-10 13:37:53 -0700 Alan Coopersmith (22377a7)
+
+	* init_om: remove unneeded extra copy of string to local buffer
+
+2013-08-10 12:34:53 -0700 Alan Coopersmith (9259131)
+
+	* Delete unused XKB_INSURE_SIZE macro from XKBlibint.h
+
+2013-08-10 12:19:17 -0700 Alan Coopersmith (be32fbb)
+
+	* miRegionOp(): ensure region size is not updated if realloc fails
+
+2013-08-10 12:19:17 -0700 Alan Coopersmith (ad51fbd)
+
+	* miRegionCopy(): handle realloc failure better
+
+2013-08-10 11:27:22 -0700 Alan Coopersmith (105cd47)
+
+	* Avoid memory leak/corruption if realloc fails in Xregion.h:MEMCHECK
+          macro
+
+2013-08-10 12:07:51 -0700 Alan Coopersmith (180991c)
+
+	* Avoid memory leak/corruption if realloc fails in
+          imLcPrs.c:parseline()
+
+2013-08-10 12:30:39 -0700 Alan Coopersmith (7156a20)
+
+	* lcDB.c: ensure buffer size is updated correctly if realloc fails
+
+2013-08-10 11:07:47 -0700 Alan Coopersmith (0574a55)
+
+	* Avoid memory leak/corruption if realloc fails in
+          XlcDL.c:resolve_object()
+
+2013-08-09 23:33:03 -0700 Alan Coopersmith (a6d9409)
+
+	* omGeneric.c: convert sprintf calls to snprintf
+
+2013-08-09 23:30:30 -0700 Alan Coopersmith (d03ab1d)
+
+	* ximcp/imRm.c: convert sprintf calls to snprintf
+
+2013-08-09 23:02:12 -0700 Alan Coopersmith (a1b0fdb)
+
+	* xlibi18n: convert sprintf calls to snprintf
+
+2013-08-09 23:02:12 -0700 Alan Coopersmith (bde3d8b)
+
+	* lcfile: skip over any null entries in args list
+
+2013-08-09 22:00:09 -0700 Alan Coopersmith (7bca345)
+
+	* Fix file leak on malloc error in XlcDL.c:resolve_object()
+
+2012-12-18 15:28:05 +0000 ISHIKAWA,chiaki (ce482d4)
+
+	* Fix bogus timestamp generated by XIM
+
+2011-06-16 17:28:39 +0200 Egbert Eich (ed53aca)
+
+	* XIM: Fix race on focus change: set 'FABRICATED' only when keyev
+          filters in place.
+
+2013-07-27 01:03:18 -0700 Alan Coopersmith (adcf389)
+
+	* omGeneric: remove space between struct name & member name
+
+2013-07-23 22:11:34 -0700 Alan Coopersmith (6d64c41)
+
+	* XSetModifierMapping: Use Data instead of GetReqExtra
+
+2013-06-09 11:13:42 -0700 Kees Cook (ea82396)
+
+	* libX11: check size of GetReqExtra after XFlush
+
+2013-06-25 22:35:29 +0200 Thomas Klausner (39c6e5a)
+
+	* Tighten out-of-range comparisons.
+
+2013-06-25 18:34:32 +0200 Thomas Klausner (ac3d262)
+
+	* Fix out-of-range comparison in _XF86BigfontQueryFont
+
+2013-06-25 18:33:56 +0200 Thomas Klausner (61fdf93)
+
+	* Check for symbol existence with #ifdef, not #if
+
+2013-06-25 18:31:32 +0200 Thomas Klausner (d122d75)
+
+	* Stop truncating source to destination length if it is larger.
+
+2013-06-24 23:02:05 -0700 Alan Coopersmith (88edf80)
+
+	* Require ANSI C89 pre-processor, drop pre-C89 token pasting support
+
+2016-10-08 00:20:48 +0200 Ulrich Sibiller (7f98ab0)
+
+	* update Xfuncproto.h
+
+2016-10-07 23:46:05 +0200 Ulrich Sibiller (e2e45b2)
+
+	* Align files with upstream libX11-1.6.0
+
+2012-12-16 17:44:42 -0800 Alan Coopersmith (878040b)
+
+	* Tell clang not to report -Wpadded warnings on public headers we
+          can't fix
+
+2010-09-08 10:44:23 -0400 Adam Jackson (9b5f99c)
+
+	* Zero buffer data in BufAlloc()
+
+2011-01-31 14:02:10 +0200 Erkki Seppälä (13fe4d4)
+
+	* GetProp: Zero-initialized error so its resourceID field is
+          initialized
+
+2013-03-01 18:37:37 -0800 Alan Coopersmith (7992a98)
+
+	* integer overflow in ReadInFile() in Xrm.c [CVE-2013-1981 7/13]
+
+2011-01-31 14:01:58 +0200 Erkki Seppälä (78b0ca2)
+
+	* ximcp/imRmAttr: Handle leaking colormap_ret
+
+2011-02-21 15:56:54 +0100 Samuel Thibault (b00312f)
+
+	* Fix status reporting for braille patterns
+
+2016-10-07 22:16:24 +0200 Ulrich Sibiller (a2fded2)
+
+	* Revert incomplete "Fix status reporting for braille patterns"
+
+2010-09-03 23:11:53 -0700 Alan Coopersmith (bd43a06)
+
+	* Sun's copyrights are now owned by Oracle
+
+2016-10-07 21:16:39 +0200 Ulrich Sibiller (5dbcf19)
+
+	* Assume size_t is always available, since it was defined in C89
+
+2016-10-07 21:00:20 +0200 Ulrich Sibiller (1078f97)
+
+	* rename xf86bigfstr.h to xf86bigfproto.h
+
+2013-06-02 11:49:54 -0700 Thomas Klausner (e03d8c2)
+
+	* cmsMath.c: Add missing stdio header for printf(3) in DEBUG build.
+
+2013-05-17 15:26:21 -0700 Niveditha Rau (26f7239)
+
+	* Make sure internal headers include required headers
+
+2013-05-16 23:05:36 -0700 Alan Coopersmith (71fb99c)
+
+	* Free fs->properties in XF86BigfontQueryFont overflow error path
+
+2013-05-23 20:39:46 +0200 Julien Cristau (78ed233)
+
+	* xkb: fix off-by-one in _XkbReadGetNamesReply and
+          _XkbReadVirtualModMap
+
+2016-10-06 23:34:06 +0200 Ulrich Sibiller (082e831)
+
+	* Revert "Add a couple fixups for the security patches"
+
+2013-03-07 23:46:05 -0800 Alan Coopersmith (e15023b)
+
+	* Remove more unnecessary casts from Xmalloc/calloc calls
+
+2013-03-16 18:30:56 -0700 Alan Coopersmith (47d0ea1)
+
+	* Move big request comment in XOpenDisplay to the right place
+
+2013-03-08 22:33:28 -0800 Alan Coopersmith (4988e9b)
+
+	* Fix very weird indenting in nx-X11/lib/X11/GetFProp.c
+
+2013-03-08 15:37:33 -0800 Alan Coopersmith (001aeb5)
+
+	* XAllocClassHint: Assume calloc sets pointers in allocated memory to
+          NULL
+
+2013-03-08 17:13:09 -0800 Alan Coopersmith (7ddc5b9)
+
+	* _xudc_code_to_glyph: check for NULL pointer *before* writing to it,
+          not after
+
+2013-03-01 18:10:27 -0800 Alan Coopersmith (e18ccaa)
+
+	* Assume size_t is always available, since it was defined in C89
+
+2013-03-01 18:09:07 -0800 Alan Coopersmith (2393e1a)
+
+	* unifdef XKB_IN_SERVER
+
+2013-02-16 10:42:23 -0800 Alan Coopersmith (d31b81c)
+
+	* Convert more sprintf calls to snprintf
+
+2013-02-15 23:43:12 -0800 Alan Coopersmith (d43f4c3)
+
+	* XKeysymToString: move variable declarations to the scope of their
+          usage
+
+2013-02-15 23:34:40 -0800 Alan Coopersmith (5e0584c)
+
+	* Preserve constness in casting arguments through the Data*()
+          routines
+
+2013-02-15 23:25:38 -0800 Alan Coopersmith (d91c145)
+
+	* XStringToKeysym: preserve constness when casting off unsignedness
+          for strcmp
+
+2013-02-15 23:14:40 -0800 Alan Coopersmith (6417045)
+
+	* XRebindKeysym: Drop unnecessary const-removing cast
+
+2013-02-15 22:45:19 -0800 Alan Coopersmith (5608b67)
+
+	* cmsColNm.c: maintain constness of arguments to qsort helper
+          function
+
+2012-12-26 22:57:39 -0800 Alan Coopersmith (19275f9)
+
+	* Remove unused DECnet ("DNETCONN") code from Xlib
+
+2012-12-26 22:56:38 -0800 Alan Coopersmith (acceb2c)
+
+	* Remove unused TLI ("STREAMSCONN") code from Xlib
+
+2011-05-20 18:25:24 +0200 Egbert Eich (53e2e92)
+
+	* Don't hard code path to Xcms.txt file.
+
+2012-10-22 13:54:11 -0500 Yaakov Selkowitz (11d6dac)
+
+	* XIM: remove Private and Public macros
+
+2012-06-29 23:08:04 -0700 Alan Coopersmith (97b9864)
+
+	* Convert XCreate{Pix,Bit}map...Data to use C99 designated
+          initializers
+
+2012-06-29 22:57:13 -0700 Alan Coopersmith (7a8721b)
+
+	* XCreate{Pix,Bit}map...Data: Free pixmap in error path if XCreateGC
+          fails
+
+2010-12-22 15:14:05 +0000 Philipp Reh (c868061)
+
+	* Events: Store event cookie when dequeuing event
+
+2011-05-03 09:32:53 -0700 Jeremy Huddleston (5062342)
+
+	* clang analyzer: Don't warn about Xmalloc(0)
+
+2011-05-08 09:08:07 -0700 Jeremy Huddleston (c19cda6)
+
+	* Silence clang static analysis warnings for SetReqLen
+
+2011-05-17 20:49:59 -0700 Alan Coopersmith (c300a43)
+
+	* Fix man page and comment references to use XFreeModifiermap
+          (lowercase map)
+
+2011-10-10 14:09:17 -0700 Jeremy Huddleston (f3bbb81)
+
+	* Mark XKeycodeToKeysym as _X_DEPRECATED
+
+2011-10-10 16:40:52 +0200 Bodo Graumann (cc4d526)
+
+	* libX11: Fixing modifier key range in Xutil.h (Bug #21910)
+
+2011-10-27 13:24:10 +1000 Peter Hutterer (3bf3507)
+
+	* Switch GetEmptyReq and GetResReq to call _XGetRequest
+
+2011-10-14 14:51:06 +1000 Peter Hutterer (3597915)
+
+	* include: Add GetReqSized() for request buffers of specific size
+
+2011-10-27 13:53:22 +1000 Peter Hutterer (3155b9b)
+
+	* Use GetReqSized for GetReq and GetReqExtra
+
+2011-01-31 14:01:59 +0200 Erkki Seppälä (79cb50e)
+
+	* ximcp/imRmAttr: Handle leaking missing_list
+
+2011-01-31 14:02:01 +0200 Erkki Seppälä (44e4720)
+
+	* ximcp/imRm: Handle leaking colormap_ret
+
+2011-01-31 14:02:14 +0200 Erkki Seppälä (89dc7cc)
+
+	* ximcp/imTrX: Handle failing XGetWindowProperty
+
+2011-01-31 14:02:15 +0200 Erkki Seppälä (8142209)
+
+	* ximcp/imLckup: Handle negative return value from _Xlcwctomb
+
+2011-01-31 14:02:13 +0200 Ander Conselvan de Oliveira (a8598e0)
+
+	* lc/def/lcDefConv: Use Xcalloc to avoid use of uninitialized memory
+
+2011-02-21 15:56:54 +0100 Samuel Thibault (93a4f5c)
+
+	* Fix status reporting for braille patterns
+
+2011-02-21 21:54:17 +0100 Samuel Thibault (2cca621)
+
+	* Make the Local XIM request key releases for braille
+
+2011-01-10 16:22:45 +0200 Erkki Seppälä (e481512)
+
+	* im/ximcp: release modifiermap before returning
+
+2011-04-12 20:50:42 -0700 Alan Coopersmith (018d938)
+
+	* Fix "attrinute" typo in comments in ximcp
+
+2011-03-24 16:24:29 +0200 Ander Conselvan de Oliveira (4aa79f1)
+
+	* Fix leaks in _XimEncodingNegotiation error paths.
+
+2011-03-24 19:36:56 +0200 Ander Conselvan de Oliveira (3720ed7)
+
+	* Fix memory leaks on _XimProtoCreateIC error paths.
+
+2011-03-24 19:48:44 +0200 Ander Conselvan de Oliveira (b7cc762)
+
+	* Fix memory leaks on _XimWriteCachedDefaultTree error paths.
+
+2011-03-24 19:52:05 +0200 Ander Conselvan de Oliveira (7024f3d)
+
+	* Fix memory leak on _XimCommitRecv error path.
+
+2011-03-24 19:55:33 +0200 Ander Conselvan de Oliveira (60840dc)
+
+	* Fix memory leaks on _XimCbDispatch error path.
+
+2011-03-24 20:40:41 +0200 Ander Conselvan de Oliveira (9fa1e98)
+
+	* om: Fix memory leak on read_EncodingInfo error path.
+
+2011-03-25 16:06:15 +0200 Ander Conselvan de Oliveira (748cf89)
+
+	* om: Fix potential memory leak in init_om.
+
+2011-03-25 14:47:35 +0200 Ander Conselvan de Oliveira (6fe8d44)
+
+	* om: Fix memory leaks on get_font_name error paths.
+
+2011-10-09 02:26:45 -0700 Jeremy Huddleston (73a2898)
+
+	* Fix potential uninitialized variable access in _XimMakeICAttrIDList
+
+2011-10-09 17:56:45 +0200 Yann Droneaud (bec22fe)
+
+	* Return name instead of value in XGetIMValues() and XSetIMValues()
+
+2011-10-11 17:27:59 +0200 Yann Droneaud (cded330)
+
+	* Return name instead of False in XSetICValues()
+
+2011-10-14 17:39:21 -0700 Xue Wei (8d1e059)
+
+	* mbtocs should not truncate input
+
+2011-10-14 17:53:00 -0700 Alan Coopersmith (2f49f62)
+
+	* Fix "nomal" -> "normal" typo in several comments
+
+2011-11-08 20:18:09 +0000 Andreas Wettstein (4ef2779)
+
+	* XIM: Allow modifier releases in compose sequences (#26705)
+
+2011-02-21 17:27:38 +0100 Samuel Thibault (b8b885d)
+
+	* Match braille patterns with compose tree
+
+2012-04-30 16:36:47 +1000 Peter Hutterer (79a5330)
+
+	* Typo fix
+
+2012-03-15 22:03:21 -0700 Alan Coopersmith (4c7f0af)
+
+	* Remove "register" qualifier that annoys Solaris Studio compiler
+
+2012-03-04 02:00:13 -0800 Keith Packard (3d37513)
+
+	* Block for other threads in _XUserLockDisplay
+
+2011-02-20 17:09:43 +0200 Marko Myllynen (e8e91b6)
+
+	* Provide translation from XK_permille (ad5) to Unicode (U2030)
+
+2012-01-01 21:04:52 +0000 Ryan Pavlik (fd71577)
+
+	* Use pthreads on MinGW also
+
+2011-12-14 02:17:55 -0500 Kusanagi Kouichi (5eb1147)
+
+	* XQueryColors: Split a request into multiple requests if necessary
+
+2011-11-29 23:56:57 -0800 Alan Coopersmith (30d4454)
+
+	* Reject negative string counts in copy_string_list
+
+2011-11-09 21:00:36 -0800 Alan Coopersmith (0f08982)
+
+	* XlcSL.c: convert old-style function definitions to ANSI C89 style
+
+2011-10-17 09:45:15 +1000 Peter Hutterer (02dad70)
+
+	* Add _XGetRequest as substitute for GetReq/GetReqExtra
+
+2011-10-13 07:58:02 +0900 Choe Hwanjin (1871ff0)
+
+	* XIM: Make Xim handle NEED_SYNC_REPLY flag
+
+2011-05-04 15:34:31 -0700 Jeremy Huddleston (7efa7da)
+
+	* XKB: XkbComputeSectionBounds: Check correct bounds in default
+          switch-case
+
+2011-05-04 11:35:31 -0700 Jeremy Huddleston (1d806a5)
+
+	* Dead code removal
+
+2011-04-21 16:21:04 -0700 Alan Coopersmith (8127b17)
+
+	* Delete special case code to append "/sparcv9" to i18n module path
+
+2011-04-12 22:30:45 -0700 Alan Coopersmith (dde00b2)
+
+	* Convert malloc(strlen()); strcpy() sets to strdup
+
+2011-04-12 21:27:45 -0700 Alan Coopersmith (7d7224d)
+
+	* Replace Xmalloc+bzero pairs with Xcalloc calls
+
+2011-03-24 19:42:36 +0200 Ander Conselvan de Oliveira (369c956)
+
+	* Fix memory leaks on _XimGetAttributeID error paths.
+
+2011-03-30 15:06:10 +0300 Ander Conselvan de Oliveira (f50e651)
+
+	* xcms: Fix memory leaks on LINEAR_RGB_InitSCCData error path.
+
+2011-03-30 15:19:28 +0300 Ander Conselvan de Oliveira (fefb909)
+
+	* xcms: Fix error on LINEAR_RGB_InitSCCData error path.
+
+2011-03-24 14:17:44 +0200 Ander Conselvan de Oliveira (dce8150)
+
+	* FSWrap: fix potential leak in copy_string_list
+
+2011-03-23 14:36:22 +0200 Ander Conselvan de Oliveira (0f71486)
+
+	* Fix memory leak with broken bitmap files in XReadBitmapFileData
+
+2011-03-21 14:49:37 +0000 Harshula Jayasuriya (417e041)
+
+	* Add #define XK_SINHALA
+
+2011-01-18 15:58:20 +0200 Erkki Seppälä (29ad23b)
+
+	* xkb: XkbPropertyPtr determined allocation success from wrong
+          variables
+
+2011-01-10 16:37:22 +0200 Erkki Seppälä (bbeee4f)
+
+	* keyBind: Use Xcalloc to initialize allocated _XKeytrans
+
+2011-02-11 14:49:17 -0800 Alan Coopersmith (2618bd3)
+
+	* Clean up memory when first XCreateRegion succeeds and second fails
+
+2011-02-03 17:08:57 +0200 Erkki Seppälä (07fae91)
+
+	* cmsProp: don't deal with uninitialized values, fail instead
+
+2011-01-31 14:02:07 +0200 Ander Conselvan de Oliveira (ae4e753)
+
+	* xcms/LRGB: don't double-free property_return
+
+2011-02-02 08:58:45 -0800 Alan Coopersmith (26270ab)
+
+	* Xrm.c: ReadInFile: refactor fstat error handling
+
+2011-02-02 08:56:00 -0800 Alan Coopersmith (563318a)
+
+	* Expand GetSizeOfFile() macro at the one place it's called
+
+2011-01-31 14:01:57 +0200 Erkki Seppälä (20470a8)
+
+	* XlibInt: Use strncpy+zero termination instead of strcpy to enforce
+          buffer size
+
+2011-01-31 14:02:16 +0200 Erkki Seppälä (7576f5f)
+
+	* xlibi18n/lcFile: Removed superfluous check for NULL target_dir
+
+2011-01-31 14:02:12 +0200 Ander Conselvan de Oliveira (698270c)
+
+	* XlibInt: info_list->watch_data was reallocated, but result was
+          discarded
+
+2011-02-01 11:07:25 +0200 Ander Conselvan de Oliveira (7482afc)
+
+	* xcms/LRGB: Add a label for freeing property_return.
+
+2011-01-31 14:02:08 +0200 Ander Conselvan de Oliveira (8f5a564)
+
+	* xcms/LRGB: Fix potential resource leak.
+
+2011-01-31 14:02:05 +0200 Erkki Seppälä (afd1d4e)
+
+	* Xrm: NEWTABLE had a memory leak after a memory allocation error
+
+2011-01-31 14:02:03 +0200 Erkki Seppälä (1ac1b69)
+
+	* ImUtil: Handle a memory leak in one early return branch
+
+2011-01-31 14:01:56 +0200 Erkki Seppälä (52d2c35)
+
+	* xlibi18n/lcGeneric: Initialize uninitialized local variable
+
+2011-01-31 14:01:54 +0200 Erkki Seppälä (865043e)
+
+	* xcmx/cmxColNm: Removed unused assignments to pBuf (in two
+          functions)
+
+2011-02-01 12:30:56 +0200 Alan Coopersmith (54550eb)
+
+	* XDefaultOMIF.c: Fix memory leaks in get_font_name
+
+2011-01-18 12:49:48 +0200 Erkki Seppälä (b7694b0)
+
+	* Comparing array against NULL is not useful "&xkb->server->vmods !=
+          NULL"
+
+2011-01-12 15:51:11 +0200 Erkki Seppälä (3147ddb)
+
+	* Variable "entry" tracked as NULL was dereferenced.
+
+2011-01-27 09:54:00 +0200 Erkki Seppälä (e175587)
+
+	* Dereferencing possibly NULL "str" in call to function "memcpy"
+          (Deref assumed on the basis of 'nonnull' parameter
+          attribute.)
+
+2011-01-10 16:17:47 +0200 Erkki Seppälä (8aacb3f)
+
+	* Using freed pointer "e"
+
+2011-01-03 12:25:28 -0500 Pauli Nieminen (1a72bc4)
+
+	* Initialize event type
+
+2010-06-04 13:20:17 -0700 Alan Coopersmith (8ff5261)
+
+	* LINEAR_RGB_InitSCCData: When malloc fails, don't try to free
+          unallocated bits
+
+2010-07-09 18:13:13 +0100 Daniel Stone (93b55ee)
+
+	* XStringToKeysym: Cope with 0x1234cafe-style input
+
+2010-07-08 16:49:51 +0100 Daniel Stone (b414bc2)
+
+	* XStringToKeysym: Check strdup() return value
+
+2010-06-15 18:49:43 +0100 Daniel Stone (c1b175d)
+
+	* Delete now-redundant XKeysymDB
+
+2010-06-15 18:47:37 +0100 Daniel Stone (f0b87f3)
+
+	* XStringToKeysym: Special case for XF86 keysyms
+
+2016-10-14 16:49:08 +0200 Mike Gabriel (6c303d9)
+
+	* debian/rules: Don't use -pie -fPIE at build time for 3.5.99.2 as it
+          causes nxagent to segfault. Investigating the reasons
+          behind it is in process... (origin/release-builds/3.6.x,
+          release-builds/3.6.x)
+
+2016-10-14 02:31:38 +0000 Mihai Moldovan (75e0808)
+
+	* nx-X11/programs/Xserver/GL/glx/Imakefile: typo fix, leading to
+          glcontextmodes.c not being compiled.
+
+2016-10-13 14:10:28 +0200 Mike Gabriel (29e2934)
+
+	* release 3.5.99.2 (tag: 3.5.99.2)
 
 2016-10-13 15:05:37 +0200 Mike Gabriel (64aa45a)
 
@@ -28,8 +1521,7 @@
 
 2016-10-07 21:19:07 +0200 Ulrich Sibiller (97c2697)
 
-	* Pending.c: conditionally include stdio.h (origin/HEAD,
-          origin/3.6.x)
+	* Pending.c: conditionally include stdio.h
 
 2016-10-10 01:00:38 +0200 Ulrich Sibiller (0bf52dc)
 
@@ -42,7 +1534,6 @@
 2013-05-21 21:54:55 +0200 Julien Cristau (a9f623f)
 
 	* Add a couple fixups for the security patches
-          (uli42-pr/libX11_debian_backports)
 
 2013-05-08 19:33:09 +0200 Matthieu Herrb (838108c)
 
@@ -217,7 +1708,7 @@
 
 2016-10-09 17:49:20 +0200 Ulrich Sibiller (b8de7bf)
 
-	* Use both __APPLE__ and __DARWIN__ defines (uli42-pr/upgrade_libX11)
+	* Use both __APPLE__ and __DARWIN__ defines
 
 2015-04-15 10:16:18 +0200 Karl Tomlinson (0186533)
 
@@ -352,7 +1843,7 @@
 
 2016-10-08 00:40:36 +0200 Ulrich Sibiller (b062272)
 
-	* xserver: add missing xkbfile.h (uli42-pr/decouple-xserver)
+	* xserver: add missing xkbfile.h
 
 2016-10-07 13:12:39 +0200 Vadim Troshchinskiyddd (f55852c)
 
@@ -445,9 +1936,7 @@
 2011-03-22 11:28:56 +1000 Peter Hutterer (5dcf0d5)
 
 	* Add XF86TouchpadOn and XF86TouchpadOff to keysymdb
-          (gh-sunweaver/pr/update-X11s-XKeysymDB,
-          sunweaver-pr/update-X11s-XKeysymDB,
-          pr/update-X11s-XKeysymDB)
+          (gh-sunweaver/pr/update-X11s-XKeysymDB)
 
 2016-08-25 00:52:51 +0200 Mike Gabriel (34cb7b5)
 
@@ -461,8 +1950,7 @@
 2016-10-01 12:04:54 +0200 Mike Gabriel (b160371)
 
 	* Imake.tmpl: Use gccmakedep instead of makedepend.
-          (gh-sunweaver/pr/use-gccmakedep,
-          sunweaver-pr/use-gccmakedep, pr/use-gccmakedep)
+          (gh-sunweaver/pr/use-gccmakedep)
 
 2016-10-01 20:16:39 +0200 Mike Gabriel (e3ea748)
 
@@ -473,7 +1961,6 @@
 	* include/extensions/damageproto.h: Use nx-X11's xfixesproto.h and
           damagewire.h instead of X.org's.
           (gh-sunweaver/pr/fix-protoheader-mess,
-          sunweaver-pr/fix-protoheader-mess,
           pr/fix-protoheader-mess)
 
 2016-10-01 11:25:29 +0200 Mike Gabriel (9acfa3b)
@@ -523,7 +2010,7 @@
 
 2016-09-24 23:44:09 +0200 Ulrich Sibiller (97a5cec)
 
-	* Revert "Fix wrong include" (uli42-pr/improve_include_path_handling)
+	* Revert "Fix wrong include"
 
 2016-09-24 23:43:01 +0200 Ulrich Sibiller (c061022)
 
@@ -540,7 +2027,7 @@
 
 2016-09-21 18:37:10 +0200 Ulrich Sibiller (09d5e07)
 
-	* remove misc dir (uli42-remove-misc)
+	* remove misc dir
 
 2016-09-21 18:28:22 +0200 Ulrich Sibiller (8d4d2bc)
 
@@ -548,7 +2035,7 @@
 
 2016-09-13 15:45:03 +0200 Mike Gabriel (43f135b)
 
-	* release 3.5.99.1 (tag: 3.5.99.1, origin/release-builds/3.6.x)
+	* release 3.5.99.1 (tag: 3.5.99.1)
 
 2016-08-26 12:49:28 +0200 Mike Gabriel (60e88a0)
 
@@ -594,7 +2081,6 @@
 2016-08-21 13:12:23 +0200 Ulrich Sibiller (2d450e3)
 
 	* Fix pasting the clipboard directly after session start.
-          (uli42-fix_x2go_952)
 
 2016-07-28 13:21:29 +0200 Mike Gabriel (46fef31)
 
@@ -671,7 +2157,7 @@
 
 2016-07-26 23:25:26 +0200 Ulrich Sibiller (9a4bb50)
 
-	* Fix wrong include (uli42-3.6.x)
+	* Fix wrong include
 
 2016-07-06 10:38:25 +0200 Mike Gabriel (470611e)
 
@@ -1560,7 +3046,6 @@
 2016-06-24 21:22:01 +0200 Ulrich Sibiller (b7d7ff3)
 
 	* libX11: Extend Event functions to handle IOErrors
-          (uli42-pr/run_xinerama_without_debug_output)
 
 2016-06-25 00:31:35 +0200 Ulrich Sibiller (e079b0b)
 
@@ -1577,7 +3062,6 @@
 2016-06-24 21:22:01 +0200 Ulrich Sibiller (5ee04c2)
 
 	* libX11: Extend Event functions to handle IOErrors
-          (uli42-pr/fix-crash-in-XPeekEvent)
 
 2016-06-21 04:12:07 +0200 Mike Gabriel (17f3e3b)
 
