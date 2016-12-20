@@ -36,20 +36,21 @@ NULL=""
 test -d ".git" || usage
 RELEASE="$1"
 test -n "${RELEASE}" || usage
-CHECKOUT="$2"
-test -n "$CHECKOUT" || usage
+MODE="$2"
+test -n "$MODE" || usage
 
-if [ "x$CHECKOUT" = "xserver" ] || [ "x${CHECKOUT}" = "xfull" ]; then
+
+if [ "x$MODE" = "xserver" ] || [ "x${MODE}" = "xfull" ]; then
     MODE="full"
-    CHECKOUT="redist-server/${RELEASE}"
     RELEASE_SUFFIX='-full'
-elif [ "x$CHECKOUT" = "xclient" ] || [ "x${CHECKOUT}" = "xlite" ]; then
+elif [ "x$MODE" = "xclient" ] || [ "x${MODE}" = "xlite" ]; then
     MODE="lite"
-    CHECKOUT="redist-client/${RELEASE}"
     RELEASE_SUFFIX='-lite'
 else
     usage
 fi
+
+CHECKOUT="${RELEASE}"
 
 if [ x"$RELEASE" == "xHEAD" ]; then
     CHECKOUT="refs/heads/$(git rev-parse --abbrev-ref HEAD)"
@@ -63,7 +64,7 @@ if ! git rev-parse --verify -q "$CHECKOUT" >/dev/null; then
     exit 1
 fi
 
-TARGETDIR=".."
+TARGETDIR="../.."
 
 MANIFEST="$(mktemp)"
 TEMP_DIR="$(mktemp -d)"
@@ -94,31 +95,69 @@ mkdir -p "doc/applied-patches"
 
 # prepare patches for lite and full tarball
 if [ "x$MODE" = "xfull" ]; then
+
+    rm -f "README.md"
+    rm -Rf "doc/_attic_/"
+    rm -f  ".gitignore"
+    rm -f  "nxcomp/.gitignore"
+    rm -f  "nxcompext/.gitignore"
+    rm -f  "nxcompshad/.gitignore"
+    rm -f  "nxproxy/.gitignore"
+    rm -f  "nx-X11/lib/X11/.gitignore"
+    rm -f  "nx-X11/.gitignore"
+    rm -f  "nx-X11/programs/Xserver/composite/.gitignore"
+    rm -f  "nx-X11/programs/Xserver/hw/nxagent/.gitignore"
+    rm -f  "nx-X11/programs/Xserver/.gitignore"
+    rm -f  "nx-X11/programs/Xserver/include/.gitignore"
+    rm -f  "nx-X11/programs/Xserver/GL/.gitignore"
+    rm -f  "nx-X11/include/.gitignore"
+
+
+    # this is for 3.5.0.x only...
     cat "debian/patches/series" | sort | grep -v '^#' | egrep "([0-9]+(_|-).*\.(full|full\+lite)\.patch)" | while read file
     do
         cp -v "debian/patches/$file" "doc/applied-patches/"
         echo "${file##*/}" >> "doc/applied-patches/series"
     done
+
 else
-    rm -f  "bin/nxagent"
+    rm -f "README.md"
+    rm -f  "bin/nxagent"*
     rm -Rf "nxcompshad"*
     rm -Rf "nx-X11"*
     rm -Rf "etc"*
+    rm -f  "generate-symbol-docs.sh"
+    rm -Rf "testscripts/"*nxagent*
+    rm -Rf "testscripts/"slave*
+    rm -Rf "doc/libNX_X11/"
+    rm -Rf "doc/nxagent/"
+    rm -Rf "doc/nxcompext/"
+    rm -Rf "doc/nxcompshad/"
+    rm -Rf "doc/_attic_/"
+    rm -f  ".gitignore"
+    rm -f  "nxcomp/.gitignore"
+    rm -f  "nxproxy/.gitignore"
+
+    # for old nx-libs releases, re-arranged since 3.5.99.3
     rm -Rf "doc/nx-X11_vs_XOrg69_patches"*
     rm -Rf "doc/X11-symbols"*
     rm -f  "README.keystrokes"
+    rm -Rf "nxcompext"*
+
+    mv LICENSE.nxcomp LICENSE
+
+    # this is for 3.5.0.x only...
     cat "debian/patches/series" | sort | grep -v '^#' | egrep "([0-9]+(_|-).*\.full\+lite\.patch)" | while read file
     do
         cp -v "debian/patches/$file" "doc/applied-patches/"
         echo "${file##*/}" >> "doc/applied-patches/series"
     done
+
 fi
 
 # apply all patches shipped in debian/patches and create a copy of them that we ship with the tarball
 if [ -s "doc/applied-patches/series" ]; then
     QUILT_PATCHES="doc/applied-patches" quilt --quiltrc /dev/null push -a -q
-else
-    echo "No patches applied at all. Very old release?"
 fi
 
 # remove folders that we do not want to roll into the tarball
