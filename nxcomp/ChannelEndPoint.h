@@ -22,11 +22,6 @@
 /* as copyright holder, as well.                                          */
 /*                                                                        */
 /**************************************************************************/
-/* 330, Boston, MA  02111-1307 USA                                        */
-/*                                                                        */
-/* All rights reserved.                                                   */
-/*                                                                        */
-/**************************************************************************/
 
 #ifndef ChannelEndPoint_H
 #define ChannelEndPoint_H
