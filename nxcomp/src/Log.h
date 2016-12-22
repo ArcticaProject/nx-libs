@@ -223,7 +223,7 @@ class NXLog
     NXLog()
     {
         stream_             = &std::cerr;
-        level_              = NXDEBUG;
+        level_              = NXWARNING;
         synchronized_       = true;
         thread_buffer_size_ = 1024;
         log_level_          = false;
