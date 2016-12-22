@@ -660,15 +660,11 @@ static int ReopenLogFile(char *name, ostream *&stream, int limit);
 static void handleCheckSessionInLoop();
 static void handleCheckBitrateInLoop();
 
-#if defined(TEST) || defined(INFO)
 static void handleCheckSelectInLoop(int &setFDs, fd_set &readSet,
-                                        fd_set &writeSet, T_timestamp selectTs);
-static void handleCheckResultInLoop(int &resultFDs, int &errorFDs, int &setFDs, fd_set &readSet,
+                                        fd_set &writeSet, T_timestamp selectTs);static void handleCheckResultInLoop(int &resultFDs, int &errorFDs, int &setFDs, fd_set &readSet,
                                         fd_set &writeSet, struct timeval &selectTs,
                                             struct timeval &startTs);
-static void handleCheckStateInLoop(int &setFDs);
-#endif
-
+	static void handleCheckStateInLoop(int &setFDs);
 static void handleCheckSessionInConnect();
 
 static inline void handleSetReadInLoop(fd_set &readSet, int &setFDs, struct timeval &selectTs);
@@ -1150,10 +1146,8 @@ int NXTransProxy(int fd, int mode, const char* options)
 
   if (setjmp(context) == 1)
   {
-    #ifdef TEST
-    *logofs << "NXTransProxy: Out of the long jump with pid '"
-            << lastProxy << "'.\n" << logofs_flush;
-    #endif
+    nxinfo << "NXTransProxy: Out of the long jump with pid '"
+            << lastProxy << "'.\n" << std::flush;
 
     return -1;
   }
@@ -1172,10 +1166,8 @@ int NXTransProxy(int fd, int mode, const char* options)
 
   lastProxy = getpid();
 
-  #ifdef TEST
-  *logofs << "NXTransProxy: Main process started with pid '"
-          << lastProxy << "'.\n" << logofs_flush;
-  #endif
+  nxinfo << "NXTransProxy: Main process started with pid '"
+          << lastProxy << "'.\n" << std::flush;
 
   SetMode(mode);
 
@@ -1183,15 +1175,13 @@ int NXTransProxy(int fd, int mode, const char* options)
   {
     if (fd != NX_FD_ANY)
     {
-      #ifdef TEST
 
-      *logofs << "NXTransProxy: Agent descriptor for X client connections is FD#"
-              << fd << ".\n" << logofs_flush;
+      nxinfo << "NXTransProxy: Agent descriptor for X client connections is FD#"
+              << fd << ".\n" << std::flush;
 
-      *logofs << "NXTransProxy: Disabling listening on further X client connections.\n"
-              << logofs_flush;
+      nxinfo << "NXTransProxy: Disabling listening on further X client connections.\n"
+              << std::flush;
 
-      #endif
 
       useTcpSocket   = 0;
       useUnixSocket  = 0;
@@ -1204,10 +1194,8 @@ int NXTransProxy(int fd, int mode, const char* options)
   {
     if (fd != NX_FD_ANY)
     {
-      #ifdef TEST
-      *logofs << "NXTransProxy: PANIC! Agent descriptor for X server connections "
-              << "not supported yet.\n" << logofs_flush;
-      #endif
+      nxinfo << "NXTransProxy: PANIC! Agent descriptor for X server connections "
+              << "not supported yet.\n" << std::flush;
 
       cerr << "Error" << ": Agent descriptor for X server connections "
            << "not supported yet.\n";
@@ -1237,10 +1225,8 @@ int NXTransProxy(int fd, int mode, const char* options)
 
   SetLogs();
 
-  #ifdef TEST
-  *logofs << "NXTransProxy: Going to run the NX transport loop.\n"
-          << logofs_flush;
-  #endif
+  nxinfo << "NXTransProxy: Going to run the NX transport loop.\n"
+          << std::flush;
 
   WaitCleanup();
 
@@ -1262,20 +1248,16 @@ void NXTransExit(int code)
 
   if (++recurse > 1)
   {
-    #ifdef TEST
-    *logofs << "NXTransExit: Aborting process with pid '"
+    nxinfo << "NXTransExit: Aborting process with pid '"
             << getpid() << "' due to recursion through "
-            << "exit.\n" << logofs_flush;
-    #endif
+            << "exit.\n" << std::flush;
 
     abort();
   }
 
-  #ifdef TEST
-  *logofs << "NXTransExit: Process with pid '"
+  nxinfo << "NXTransExit: Process with pid '"
           << getpid() << "' called exit with code '"
-          << code << "'.\n" << logofs_flush;
-  #endif
+          << code << "'.\n" << std::flush;
 
   if (control != NULL)
   {
@@ -1346,10 +1328,8 @@ int NXTransCreate(int fd, int mode, const char* options)
 
   if (control != NULL)
   {
-    #ifdef PANIC
-    *logofs << "NXTransCreate: PANIC! The NX transport seems "
-            << "to be already running.\n" << logofs_flush;
-    #endif
+    nxfatal << "NXTransCreate: PANIC! The NX transport seems "
+            << "to be already running.\n" << std::flush;
 
     cerr << "Error" << ": The NX transport seems "
          << "to be already running.\n";
@@ -1361,10 +1341,8 @@ int NXTransCreate(int fd, int mode, const char* options)
 
   if (control == NULL)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Error creating the NX transport.\n"
-            << logofs_flush;
-    #endif
+    nxfatal << "Loop: PANIC! Error creating the NX transport.\n"
+            << std::flush;
 
     cerr << "Error" << ": Error creating the NX transport.\n";
 
@@ -1373,10 +1351,8 @@ int NXTransCreate(int fd, int mode, const char* options)
 
   lastProxy = getpid();
 
-  #ifdef TEST
-  *logofs << "NXTransCreate: Caller process running with pid '"
-          << lastProxy << "'.\n" << logofs_flush;
-  #endif
+  nxinfo << "NXTransCreate: Caller process running with pid '"
+          << lastProxy << "'.\n" << std::flush;
 
   //
   // Set the local proxy mode an parse the
@@ -1412,15 +1388,11 @@ int NXTransCreate(int fd, int mode, const char* options)
 
   proxyFD = fd;
 
-  #ifdef TEST
-  *logofs << "NXTransCreate: Called with NX proxy descriptor '"
-          << proxyFD << "'.\n" << logofs_flush;
-  #endif
+  nxinfo << "NXTransCreate: Called with NX proxy descriptor '"
+          << proxyFD << "'.\n" << std::flush;
 
-  #ifdef TEST
-  *logofs << "NXTransCreate: Creation of the NX transport completed.\n"
-          << logofs_flush;
-  #endif
+  nxinfo << "NXTransCreate: Creation of the NX transport completed.\n"
+          << std::flush;
 
   return 1;
 }
@@ -1458,10 +1430,8 @@ int NXTransAgent(int fd[2])
   }
   else if (control -> ProxyMode != proxy_client)
   {
-    #ifdef PANIC
-    *logofs << "NXTransAgent: Invalid mode while setting the NX agent.\n"
-            << logofs_flush;
-    #endif
+    nxfatal << "NXTransAgent: Invalid mode while setting the NX agent.\n"
+            << std::flush;
 
     cerr << "Error" << ": Invalid mode while setting the NX agent.\n\n";
 
@@ -1475,35 +1445,29 @@ int NXTransAgent(int fd[2])
   agentFD[0] = fd[0];
   agentFD[1] = fd[1];
 
-  #ifdef TEST
 
-  *logofs << "NXTransAgent: Internal descriptors for agent are FD#"
+  nxinfo << "NXTransAgent: Internal descriptors for agent are FD#"
           << agentFD[0] << " and FD#" << agentFD[1] << ".\n"
-          << logofs_flush;
+          << std::flush;
 
-  *logofs << "NXTransAgent: Disabling listening for further X client "
-          << "connections.\n" << logofs_flush;
+  nxinfo << "NXTransAgent: Disabling listening for further X client "
+          << "connections.\n" << std::flush;
 
-  #endif
 
   agent = new Agent(agentFD);
 
   if (agent == NULL || agent -> isValid() != 1)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Error creating the NX memory transport .\n"
-            << logofs_flush;
-    #endif
+    nxfatal << "Loop: PANIC! Error creating the NX memory transport .\n"
+            << std::flush;
 
     cerr << "Error" << ": Error creating the NX memory transport.\n";
 
     HandleCleanup();
   }
 
-  #ifdef TEST
-  *logofs << "NXTransAgent: Enabling memory-to-memory transport.\n"
-          << logofs_flush;
-  #endif
+  nxinfo << "NXTransAgent: Enabling memory-to-memory transport.\n"
+          << std::flush;
 
   return 1;
 }
@@ -1527,21 +1491,17 @@ int NXTransClose(int fd)
   {
     if (proxy != NULL)
     {
-      #ifdef TEST
-      *logofs << "NXTransClose: Closing down all the X connections.\n"
-              << logofs_flush;
-      #endif
+      nxinfo << "NXTransClose: Closing down all the X connections.\n"
+              << std::flush;
 
       CleanupConnections();
     }
   }
-  #ifdef TEST
   else
   {
-    *logofs << "NXTransClose: The NX transport is not running.\n"
-            << logofs_flush;
+    nxinfo << "NXTransClose: The NX transport is not running.\n"
+            << std::flush;
   }
-  #endif
 
   return 1;
 }
@@ -1569,30 +1529,24 @@ int NXTransDestroy(int fd)
 
     if (proxy != NULL)
     {
-      #ifdef TEST
-      *logofs << "NXTransDestroy: Closing down all the X connections.\n"
-              << logofs_flush;
-      #endif
+      nxinfo << "NXTransDestroy: Closing down all the X connections.\n"
+              << std::flush;
 
       CleanupConnections();
     }
 
-    #ifdef TEST
-    *logofs << "NXTransDestroy: Waiting for the NX transport to terminate.\n"
-            << logofs_flush;
-    #endif
+    nxinfo << "NXTransDestroy: Waiting for the NX transport to terminate.\n"
+            << std::flush;
 
     lastDestroy = 1;
 
     WaitCleanup();
   }
-  #ifdef TEST
   else
   {
-    *logofs << "NXTransDestroy: The NX transport is not running.\n"
-            << logofs_flush;
+    nxinfo << "NXTransDestroy: The NX transport is not running.\n"
+            << std::flush;
   }
-  #endif
 
   return 1;
 }
@@ -1674,10 +1628,8 @@ int NXTransSignal(int signal, int action)
 
   if (action == NX_SIGNAL_RAISE)
   {
-    #ifdef TEST
-    *logofs << "NXTransSignal: Raising signal '" << DumpSignal(signal)
-            << "' in the proxy handler.\n" << logofs_flush;
-    #endif
+    nxinfo << "NXTransSignal: Raising signal '" << DumpSignal(signal)
+            << "' in the proxy handler.\n" << std::flush;
 
     HandleSignal(signal);
 
@@ -1685,10 +1637,8 @@ int NXTransSignal(int signal, int action)
   }
   else if (signal == NX_SIGNAL_ANY)
   {
-    #ifdef TEST
-    *logofs << "NXTransSignal: Setting action of all signals to '"
-            << action << "'.\n" << logofs_flush;
-    #endif
+    nxinfo << "NXTransSignal: Setting action of all signals to '"
+            << action << "'.\n" << std::flush;
 
     for (int i = 0; i < 32; i++)
     {
@@ -1702,11 +1652,9 @@ int NXTransSignal(int signal, int action)
   }
   else if (CheckSignal(signal) == 1)
   {
-    #ifdef TEST
-    *logofs << "NXTransSignal: Setting action of signal '"
+    nxinfo << "NXTransSignal: Setting action of signal '"
             << DumpSignal(signal) << "' to '" << action
-            << "'.\n" << logofs_flush;
-    #endif
+            << "'.\n" << std::flush;
 
     if (action == NX_SIGNAL_ENABLE ||
             action == NX_SIGNAL_FORWARD)
@@ -1723,11 +1671,9 @@ int NXTransSignal(int signal, int action)
     }
   }
 
-  #ifdef WARNING
-  *logofs << "NXTransSignal: WARNING! Unable to perform action '"
+  nxwarn << "NXTransSignal: WARNING! Unable to perform action '"
           << action << "' on signal '" << DumpSignal(signal)
-          << "'.\n" << logofs_flush;
-  #endif
+          << "'.\n" << std::flush;
 
   cerr << "Warning" << ": Unable to perform action '" << action
        << "' on signal '" << DumpSignal(signal)
@@ -1740,16 +1686,12 @@ int NXTransCongestion(int fd)
 {
   if (control != NULL && proxy != NULL)
   {
-    #ifdef DUMP
 
     int congestion = proxy -> getCongestion(proxyFD);
-
-    *logofs << "NXTransCongestion: Returning " << congestion
-            << " as current congestion level.\n" << logofs_flush;
+    nxdbg << "NXTransCongestion: Returning " << congestion
+            << " as current congestion level.\n" << std::flush;
 
     return congestion;
-
-    #endif
 
     return (proxy -> getCongestion(proxyFD));
   }
@@ -1788,23 +1730,19 @@ int NXTransHandler(int fd, int type, void (*handler)(void *parameter,
     }
     default:
     {
-      #ifdef TEST
-      *logofs << "NXTransHandler: WARNING! Failed to set "
+      nxinfo << "NXTransHandler: WARNING! Failed to set "
               << "the NX callback for event '" << type << "' to '"
               << (void *) handler << "' and parameter '"
-              << parameter << "'.\n" << logofs_flush;
-      #endif
+              << parameter << "'.\n" << std::flush;
 
       return 0;
     }
   }
 
-  #ifdef TEST
-  *logofs << "NXTransHandler: Set the NX "
+  nxinfo << "NXTransHandler: Set the NX "
           << "callback for event '" << type << "' to '"
           << (void *) handler << "' and parameter '"
-          << parameter << "'.\n" << logofs_flush;
-  #endif
+          << parameter << "'.\n" << std::flush;
 
   return 1;
 }
@@ -1819,36 +1757,30 @@ int NXTransRead(int fd, char *data, int size)
   if (control != NULL && agent != NULL &&
           fd == agentFD[0])
   {
-    #ifdef DUMP
-    *logofs << "NXTransRead: Dequeuing " << size << " bytes "
-            << "from FD#" << agentFD[0] << ".\n" << logofs_flush;
-    #endif
+    nxdbg << "NXTransRead: Dequeuing " << size << " bytes "
+            << "from FD#" << agentFD[0] << ".\n" << std::flush;
 
     int result = agent -> dequeueData(data, size);
 
-    #ifdef DUMP
 
     if (result < 0 && EGET() == EAGAIN)
     {
-      *logofs << "NXTransRead: WARNING! Dequeuing from FD#"
-              << agentFD[0] << " would block.\n" << logofs_flush;
+      nxdbg << "NXTransRead: WARNING! Dequeuing from FD#"
+              << agentFD[0] << " would block.\n" << std::flush;
     }
     else
     {
-      *logofs << "NXTransRead: Dequeued " << result << " bytes "
-              << "to FD#" << agentFD[0] << ".\n" << logofs_flush;
+      nxdbg << "NXTransRead: Dequeued " << result << " bytes "
+              << "to FD#" << agentFD[0] << ".\n" << std::flush;
     }
 
-    #endif
 
     return result;
   }
   else
   {
-    #ifdef DUMP
-    *logofs << "NXTransRead: Reading " << size << " bytes "
-            << "from FD#" << fd << ".\n" << logofs_flush;
-    #endif
+    nxdbg << "NXTransRead: Reading " << size << " bytes "
+            << "from FD#" << fd << ".\n" << std::flush;
 
     return read(fd, data, size);
   }
@@ -1864,16 +1796,14 @@ int NXTransReadVector(int fd, struct iovec *iovdata, int iovsize)
   if (control != NULL && agent != NULL &&
           fd == agentFD[0])
   {
-    #if defined(DUMP)
 
     if (control -> ProxyStage >= stage_operational &&
             agent -> localReadable() > 0)
     {
-      *logofs << "NXTransReadVector: WARNING! Agent has data readable.\n"
-              << logofs_flush;
+      nxdbg << "NXTransReadVector: WARNING! Agent has data readable.\n"
+              << std::flush;
     }
 
-    #endif
 
     char *base;
 
@@ -1895,29 +1825,25 @@ int NXTransReadVector(int fd, struct iovec *iovdata, int iovsize)
 
       while (length > 0)
       {
-        #ifdef DUMP
-        *logofs << "NXTransReadVector: Dequeuing " << length
+        nxdbg << "NXTransReadVector: Dequeuing " << length
                 << " bytes " << "from FD#" << agentFD[0] << ".\n"
-                << logofs_flush;
-        #endif
+                << std::flush;
 
         result = agent -> dequeueData(base, length);
 
-        #ifdef DUMP
 
         if (result < 0 && EGET() == EAGAIN)
         {
-          *logofs << "NXTransReadVector: WARNING! Dequeuing from FD#"
-                  << agentFD[0] << " would block.\n" << logofs_flush;
+          nxdbg << "NXTransReadVector: WARNING! Dequeuing from FD#"
+                  << agentFD[0] << " would block.\n" << std::flush;
         }
         else
         {
-          *logofs << "NXTransReadVector: Dequeued " << result
+          nxdbg << "NXTransReadVector: Dequeued " << result
                   << " bytes " << "from FD#" << agentFD[0] << ".\n"
-                  << logofs_flush;
+                  << std::flush;
         }
 
-        #endif
 
         if (result < 0 && total == 0)
         {
@@ -1940,11 +1866,9 @@ int NXTransReadVector(int fd, struct iovec *iovdata, int iovsize)
   }
   else
   {
-    #ifdef DUMP
-    *logofs << "NXTransReadVector: Reading vector with "
+    nxdbg << "NXTransReadVector: Reading vector with "
             << iovsize << " elements from FD#" << fd << ".\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     return readv(fd, iovdata, iovsize);
   }
@@ -1960,29 +1884,21 @@ int NXTransReadable(int fd, int *readable)
   if (control == NULL || agent == NULL ||
           fd != agentFD[0])
   {
-    #ifdef DUMP
 
     int result = GetBytesReadable(fd, readable);
-
     if (result == -1)
     {
-      *logofs << "NXTransReadable: Error detected on FD#"
-              << fd << ".\n" << logofs_flush;
+      nxdbg << "NXTransReadable: Error detected on FD#"
+              << fd << ".\n" << std::flush;
     }
     else
     {
-      *logofs << "NXTransReadable: Returning " << *readable
+      nxdbg << "NXTransReadable: Returning " << *readable
               << " bytes as readable from FD#" << fd
-              << ".\n" << logofs_flush;
+              << ".\n" << std::flush;
     }
 
     return result;
-
-    #else
-
-    return GetBytesReadable(fd, readable);
-
-    #endif
   }
 
   int result = agent -> dequeuableData();
@@ -2002,11 +1918,9 @@ int NXTransReadable(int fd, int *readable)
 
       if (proxy != NULL && proxy -> canRead() == 1)
       {
-        #if defined(TEST) || defined(INFO)
-        *logofs << "NXTransReadable: WARNING! Trying to "
+        nxinfo << "NXTransReadable: WARNING! Trying to "
                 << "read to generate new agent data.\n"
-                << logofs_flush;
-        #endif
+                << std::flush;
 
         //
         // Set the context as the function
@@ -2020,11 +1934,9 @@ int NXTransReadable(int fd, int *readable)
 
         if (proxy -> handleRead() < 0)
         {
-          #if defined(TEST) || defined(INFO)
-          *logofs << "NXTransReadable: Failure reading "
+          nxinfo << "NXTransReadable: Failure reading "
                   << "messages from proxy FD#" << proxyFD
-                  << ".\n" << logofs_flush;
-          #endif
+                  << ".\n" << std::flush;
 
           HandleShutdown();
         }
@@ -2038,11 +1950,9 @@ int NXTransReadable(int fd, int *readable)
         return NXTransReadable(fd, readable);
       }
 
-      #ifdef DUMP
-      *logofs << "NXTransReadable: Returning " << 0
+      nxdbg << "NXTransReadable: Returning " << 0
               << " bytes as readable from FD#" << fd
-              << " with result 0.\n" << logofs_flush;
-      #endif
+              << " with result 0.\n" << std::flush;
 
       *readable = 0;
 
@@ -2050,11 +1960,9 @@ int NXTransReadable(int fd, int *readable)
     }
     case -1:
     {
-      #ifdef DUMP
-      *logofs << "NXTransReadable: Returning " << 0
+      nxdbg << "NXTransReadable: Returning " << 0
               << " bytes as readable from FD#" << fd
-              << " with result -1.\n" << logofs_flush;
-      #endif
+              << " with result -1.\n" << std::flush;
 
       *readable = 0;
 
@@ -2062,11 +1970,9 @@ int NXTransReadable(int fd, int *readable)
     }
     default:
     {
-      #ifdef DUMP
-      *logofs << "NXTransReadable: Returning " << result
+      nxdbg << "NXTransReadable: Returning " << result
               << " bytes as readable from FD#" << fd
-              << " with result 0.\n" << logofs_flush;
-      #endif
+              << " with result 0.\n" << std::flush;
 
       *readable = result;
 
@@ -2095,11 +2001,9 @@ int NXTransWrite(int fd, char *data, int size)
     {
       if (proxy -> canRead(agentFD[1]) == 0)
       {
-        #if defined(DUMP) || defined(TEST)
-        *logofs << "NXTransWrite: WARNING! Delayed enqueuing to FD#"
+        nxdbg << "NXTransWrite: WARNING! Delayed enqueuing to FD#"
                 << agentFD[0] << " with proxy unable to read.\n"
-                << logofs_flush;
-        #endif
+                << std::flush;
 
         ESET(EAGAIN);
 
@@ -2121,11 +2025,9 @@ int NXTransWrite(int fd, char *data, int size)
       // but let the channel borrow the buffer.
       //
 
-      #ifdef DUMP
-      *logofs << "NXTransWrite: Letting the channel borrow "
+      nxdbg << "NXTransWrite: Letting the channel borrow "
               << size << " bytes from FD#" << agentFD[0]
-              << ".\n" << logofs_flush;
-      #endif
+              << ".\n" << std::flush;
 
       result = proxy -> handleRead(agentFD[1], data, size);
 
@@ -2154,46 +2056,40 @@ int NXTransWrite(int fd, char *data, int size)
       // Enqueue the data to the agent transport.
       //
 
-      #ifdef DUMP
-      *logofs << "NXTransWrite: Enqueuing " << size << " bytes "
-              << "to FD#" << agentFD[0] << ".\n" << logofs_flush;
-      #endif
+      nxdbg << "NXTransWrite: Enqueuing " << size << " bytes "
+              << "to FD#" << agentFD[0] << ".\n" << std::flush;
 
       result = agent -> enqueueData(data, size);
     }
 
-    #ifdef DUMP
 
     if (result < 0)
     {
       if (EGET() == EAGAIN)
       {
-        *logofs << "NXTransWrite: WARNING! Enqueuing to FD#"
+        nxdbg << "NXTransWrite: WARNING! Enqueuing to FD#"
                 << agentFD[0] << " would block.\n"
-                << logofs_flush;
+                << std::flush;
       }
       else
       {
-        *logofs << "NXTransWrite: WARNING! Error enqueuing to FD#"
-                << agentFD[0] << ".\n" << logofs_flush;
+        nxdbg << "NXTransWrite: WARNING! Error enqueuing to FD#"
+                << agentFD[0] << ".\n" << std::flush;
       }
     }
     else
     {
-      *logofs << "NXTransWrite: Enqueued " << result << " bytes "
-              << "to FD#" << agentFD[0] << ".\n" << logofs_flush;
+      nxdbg << "NXTransWrite: Enqueued " << result << " bytes "
+              << "to FD#" << agentFD[0] << ".\n" << std::flush;
     }
 
-    #endif
 
     return result;
   }
   else
   {
-    #ifdef DUMP
-    *logofs << "NXTransWrite: Writing " << size << " bytes "
-            << "to FD#" << fd << ".\n" << logofs_flush;
-    #endif
+    nxdbg << "NXTransWrite: Writing " << size << " bytes "
+            << "to FD#" << fd << ".\n" << std::flush;
 
     return write(fd, data, size);
   }
@@ -2225,11 +2121,9 @@ int NXTransWriteVector(int fd, struct iovec *iovdata, int iovsize)
     {
       if (proxy -> canRead(agentFD[1]) == 0)
       {
-        #if defined(DUMP) || defined(TEST)
-        *logofs << "NXTransWriteVector: WARNING! Delayed enqueuing to FD#"
+        nxdbg << "NXTransWriteVector: WARNING! Delayed enqueuing to FD#"
                 << agentFD[0] << " with proxy unable to read.\n"
-                << logofs_flush;
-        #endif
+                << std::flush;
 
         ESET(EAGAIN);
 
@@ -2273,11 +2167,9 @@ int NXTransWriteVector(int fd, struct iovec *iovdata, int iovsize)
           // but let the channel borrow the buffer.
           //
 
-          #ifdef DUMP
-          *logofs << "NXTransWriteVector: Letting the channel borrow "
+          nxdbg << "NXTransWriteVector: Letting the channel borrow "
                   << length << " bytes from FD#" << agentFD[0]
-                  << ".\n" << logofs_flush;
-          #endif
+                  << ".\n" << std::flush;
 
           result = proxy -> handleRead(agentFD[1], base, length);
 
@@ -2306,39 +2198,35 @@ int NXTransWriteVector(int fd, struct iovec *iovdata, int iovsize)
           // Enqueue the data to the agent transport.
           //
 
-          #ifdef DUMP
-          *logofs << "NXTransWriteVector: Enqueuing " << length
+          nxdbg << "NXTransWriteVector: Enqueuing " << length
                   << " bytes " << "to FD#" << agentFD[0] << ".\n"
-                  << logofs_flush;
-          #endif
+                  << std::flush;
 
           result = agent -> enqueueData(base, length);
         }
 
-        #ifdef DUMP
 
         if (result < 0)
         {
           if (EGET() == EAGAIN)
           {
-            *logofs << "NXTransWriteVector: WARNING! Enqueuing to FD#"
+            nxdbg << "NXTransWriteVector: WARNING! Enqueuing to FD#"
                     << agentFD[0] << " would block.\n"
-                    << logofs_flush;
+                    << std::flush;
           }
           else
           {
-            *logofs << "NXTransWriteVector: WARNING! Error enqueuing to FD#"
-                    << agentFD[0] << ".\n" << logofs_flush;
+            nxdbg << "NXTransWriteVector: WARNING! Error enqueuing to FD#"
+                    << agentFD[0] << ".\n" << std::flush;
           }
         }
         else
         {
-          *logofs << "NXTransWriteVector: Enqueued " << result
+          nxdbg << "NXTransWriteVector: Enqueued " << result
                   << " bytes " << "to FD#" << agentFD[0] << ".\n"
-                  << logofs_flush;
+                  << std::flush;
         }
 
-        #endif
 
         if (result < 0 && total == 0)
         {
@@ -2361,11 +2249,9 @@ int NXTransWriteVector(int fd, struct iovec *iovdata, int iovsize)
   }
   else
   {
-    #ifdef DUMP
-    *logofs << "NXTransWriteVector: Writing vector with "
+    nxdbg << "NXTransWriteVector: Writing vector with "
             << iovsize << " elements to FD#" << fd << ".\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     return writev(fd, iovdata, iovsize);
   }
@@ -2377,13 +2263,11 @@ int NXTransPolicy(int fd, int type)
   {
     if (usePolicy == -1)
     {
-      #if defined(TEST) || defined(INFO)
-      *logofs << "NXTransPolicy: Setting flush policy on "
+      nxinfo << "NXTransPolicy: Setting flush policy on "
               << "proxy FD#" << proxyFD << " to '"
               << DumpPolicy(type == NX_POLICY_DEFERRED ?
                      policy_deferred : policy_immediate)
-              << "'.\n" << logofs_flush;
-      #endif
+              << "'.\n" << std::flush;
 
       control -> FlushPolicy = (type == NX_POLICY_DEFERRED ?
                                     policy_deferred : policy_immediate);
@@ -2397,12 +2281,10 @@ int NXTransPolicy(int fd, int type)
     }
     else
     {
-      #if defined(TEST) || defined(INFO)
-      *logofs << "NXTransPolicy: Ignoring the agent "
+      nxinfo << "NXTransPolicy: Ignoring the agent "
               << "setting with user policy set to '"
               << DumpPolicy(control -> FlushPolicy)
-              << "'.\n" << logofs_flush;
-      #endif
+              << "'.\n" << std::flush;
 
       return 0;
     }
@@ -2416,22 +2298,18 @@ int NXTransFlushable(int fd)
   if (proxy == NULL || agent == NULL ||
           fd != agentFD[0])
   {
-    #ifdef DUMP
-    *logofs << "NXTransFlushable: Returning 0 bytes as "
+    nxdbg << "NXTransFlushable: Returning 0 bytes as "
             << "flushable for unrecognized FD#" << fd
-            << ".\n" << logofs_flush;
-    #endif
+            << ".\n" << std::flush;
 
     return 0;
   }
   else
   {
-    #if defined(DUMP) || defined(INFO)
-    *logofs << "NXTransFlushable: Returning " << proxy ->
+    nxdbg << "NXTransFlushable: Returning " << proxy ->
                getFlushable(proxyFD) << " as bytes flushable on "
             << "proxy FD#" << proxyFD << ".\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     return proxy -> getFlushable(proxyFD);
   }
@@ -2441,11 +2319,9 @@ int NXTransFlush(int fd)
 {
   if (proxy != NULL)
   {
-    #if defined(TEST) || defined(INFO)
-    *logofs << "NXTransFlush: Requesting an immediate flush of "
+    nxinfo << "NXTransFlush: Requesting an immediate flush of "
             << "proxy FD#" << proxyFD << ".\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     return proxy -> handleFlush();
   }
@@ -2467,11 +2343,9 @@ int NXTransChannel(int fd, int channelFd, int type)
       return -1;
     }
 
-    #if defined(TEST) || defined(INFO)
-    *logofs << "NXTransChannel: Going to create a new channel "
+    nxinfo << "NXTransChannel: Going to create a new channel "
             << "with type '" << type << "' on FD#" << channelFd
-            << ".\n" << logofs_flush;
-    #endif
+            << ".\n" << std::flush;
 
     int result = -1;
 
@@ -2543,25 +2417,21 @@ int NXTransChannel(int fd, int channelFd, int type)
       }
       default:
       {
-        #ifdef WARNING
-        *logofs << "NXTransChannel: WARNING! Unrecognized channel "
-                << "type '" << type << "'.\n" << logofs_flush;
-        #endif
+        nxwarn << "NXTransChannel: WARNING! Unrecognized channel "
+                << "type '" << type << "'.\n" << std::flush;
 
         break;
       }
     }
 
-    #ifdef WARNING
 
     if (result != 1)
     {
-      *logofs << "NXTransChannel: WARNING! Could not create the "
+      nxwarn << "NXTransChannel: WARNING! Could not create the "
                 << "new channel with type '" << type << "' on FD#"
-                << channelFd << ".\n" << logofs_flush;
+                << channelFd << ".\n" << std::flush;
     }
 
-    #endif
 
     return result;
   }
@@ -2626,11 +2496,9 @@ int NXTransAlert(int code, int local)
 {
   if (proxy != NULL)
   {
-    #if defined(DUMP) || defined(INFO)
-    *logofs << "NXTransAlert: Requesting a NX dialog with code "
+    nxdbg << "NXTransAlert: Requesting a NX dialog with code "
             << code << " and local " << local << ".\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     if (local == 0)
     {
@@ -2657,18 +2525,15 @@ int NXTransAlert(int code, int local)
 
     return 1;
   }
-  #if defined(DUMP) || defined(INFO)
   else
   {
     if (logofs == NULL)
     {
-      logofs = &cerr;
-    }
+      logofs = &cerr;    }
 
-    *logofs << "NXTransAlert: Can't request an alert without "
-            << "a valid NX transport.\n" << logofs_flush;
+    nxdbg << "NXTransAlert: Can't request an alert without "
+            << "a valid NX transport.\n" << std::flush;
   }
-  #endif
 
   return 0;
 }
@@ -2698,10 +2563,8 @@ int NXTransPrepare(int *setFDs, fd_set *readSet,
     return 0;
   }
 
-  #if defined(TEST) || defined(INFO)
-  *logofs << "\nNXTransPrepare: Going to prepare the NX transport.\n"
-          << logofs_flush;
-  #endif
+  nxinfo << "\nNXTransPrepare: Going to prepare the NX transport.\n"
+          << std::flush;
 
   if (control -> ProxyStage < stage_operational)
   {
@@ -2709,24 +2572,22 @@ int NXTransPrepare(int *setFDs, fd_set *readSet,
   }
   else
   {
-    #if defined(TEST) || defined(INFO)
 
     if (isTimestamp(*selectTs) == 0)
     {
-      *logofs << "Loop: WARNING! Preparing the select with requested "
+      nxinfo << "Loop: WARNING! Preparing the select with requested "
               << "timeout of " << selectTs -> tv_sec << " S and "
               << (double) selectTs -> tv_usec / 1000 << " Ms.\n"
-              << logofs_flush;
+              << std::flush;
     }
     else
     {
-      *logofs << "Loop: Preparing the select with requested "
+      nxinfo << "Loop: Preparing the select with requested "
               << "timeout of " << selectTs -> tv_sec << " S and "
               << (double) selectTs -> tv_usec / 1000 << " Ms.\n"
-              << logofs_flush;
+              << std::flush;
     }
 
-    #endif
 
     //
     // Set descriptors of listening sockets.
@@ -2768,11 +2629,9 @@ int NXTransPrepare(int *setFDs, fd_set *readSet,
 
   int diffTs = diffTimestamp(startTs, nowTs);
 
-  #ifdef TEST
-  *logofs << "Loop: Mark - 0 - at " << strMsTimestamp()
+  nxinfo << "Loop: Mark - 0 - at " << strMsTimestamp()
           << " with " << diffTs << " Ms elapsed.\n"
-          << logofs_flush;
-  #endif
+          << std::flush;
 
   //
   // TODO: Should add the read time in two
@@ -2788,10 +2647,8 @@ int NXTransPrepare(int *setFDs, fd_set *readSet,
 
   startTs = nowTs;
 
-  #ifdef DEBUG
-  *logofs << "Loop: New timestamp is " << strMsTimestamp(startTs)
-          << ".\n" << logofs_flush;
-  #endif
+  nxdbg << "Loop: New timestamp is " << strMsTimestamp(startTs)
+          << ".\n" << std::flush;
 
   return 1;
 }
@@ -2810,8 +2667,6 @@ int NXTransSelect(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
   #ifdef TIME
 
   static T_timestamp lastTs;
-
-  #endif
 
   if (logofs == NULL)
   {
@@ -2834,52 +2689,41 @@ int NXTransSelect(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
     return 0;
   }
 
-  #if defined(TEST) || defined(INFO)
-  *logofs << "\nNXTransSelect: Going to select the NX descriptors.\n"
-          << logofs_flush;
-  #endif
+  nxinfo << "\nNXTransSelect: Going to select the NX descriptors.\n"
+          << std::flush;
 
-  #if defined(TEST) || defined(INFO)
 
   handleCheckSelectInLoop(*setFDs, *readSet, *writeSet, *selectTs);
 
-  #endif
-
-  #ifdef TIME
 
   diffTs = diffTimestamp(lastTs, getNewTimestamp());
-
   if (diffTs > 20)
   {
-    *logofs << "Loop: TIME! Spent " << diffTs
+    nxdbg << "Loop: TIME! Spent " << diffTs
             << " Ms handling messages for proxy FD#"
-            << proxyFD << ".\n" << logofs_flush;
+            << proxyFD << ".\n" << std::flush;
   }
 
   lastTs = getNewTimestamp();
 
-  #endif
-
-  #if defined(TEST) || defined(INFO)
 
   if (isTimestamp(*selectTs) == 0)
   {
-    *logofs << "Loop: WARNING! Executing the select with requested "
+    nxinfo << "Loop: WARNING! Executing the select with requested "
             << "timeout of " << selectTs -> tv_sec << " S and "
             << (double) selectTs -> tv_usec / 1000 << " Ms.\n"
-            << logofs_flush;
+            << std::flush;
   }
   else if (proxy != NULL && proxy -> getFlushable(proxyFD) > 0)
   {
-    *logofs << "Loop: WARNING! Proxy FD#" << proxyFD
+    nxinfo << "Loop: WARNING! Proxy FD#" << proxyFD
             << " has " << proxy -> getFlushable(proxyFD)
             << " bytes to write but timeout is "
             << selectTs -> tv_sec << " S and "
             << selectTs -> tv_usec / 1000 << " Ms.\n"
-            << logofs_flush;
+            << std::flush;
   }
 
-  #endif
 
   //
   // Wait for the selected sockets
@@ -2892,30 +2736,23 @@ int NXTransSelect(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
 
   *errorFDs = EGET();
 
-  #ifdef TIME
 
   diffTs = diffTimestamp(lastTs, getNewTimestamp());
-
   if (diffTs > 100)
   {
-    *logofs << "Loop: TIME! Spent " << diffTs
+    nxdbg << "Loop: TIME! Spent " << diffTs
             << " Ms waiting for new data for proxy FD#"
-            << proxyFD << ".\n" << logofs_flush;
+            << proxyFD << ".\n" << std::flush;
   }
 
   lastTs = getNewTimestamp();
-
-  #endif
 
   //
   // Check the result of the select.
   //
 
-  #if defined(TEST) || defined(INFO)
 
   handleCheckResultInLoop(*resultFDs, *errorFDs, *setFDs, *readSet, *writeSet, *selectTs, startTs);
-
-  #endif
 
   //
   // Get time spent in select. The accouting is done
@@ -2929,18 +2766,14 @@ int NXTransSelect(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
 
   diffTs = diffTimestamp(startTs, nowTs);
 
-  #ifdef TEST
-  *logofs << "Loop: Out of select after " << diffTs << " Ms "
+  nxinfo << "Loop: Out of select after " << diffTs << " Ms "
           << "at " << strMsTimestamp(nowTs) << " with result "
-          << *resultFDs << ".\n" << logofs_flush;
-  #endif
+          << *resultFDs << ".\n" << std::flush;
 
   startTs = nowTs;
 
-  #ifdef DEBUG
-  *logofs << "Loop: New timestamp is " << strMsTimestamp(startTs)
-          << ".\n" << logofs_flush;
-  #endif
+  nxdbg << "Loop: New timestamp is " << strMsTimestamp(startTs)
+          << ".\n" << std::flush;
 
   if (control -> ProxyStage >= stage_operational)
   {
@@ -2968,29 +2801,25 @@ int NXTransSelect(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
     #endif
 
     {
-      #ifdef TEST
 
       if (*errorFDs == EINTR)
       {
-        *logofs << "Loop: Select failed due to EINTR error.\n"
-                << logofs_flush;
+        nxinfo << "Loop: Select failed due to EINTR error.\n"
+                << std::flush;
       }
       else
       {
-        *logofs << "Loop: WARNING! Call to select failed. Error is "
+        nxinfo << "Loop: WARNING! Call to select failed. Error is "
                 << EGET() << " '" << ESTR() << "'.\n"
-                << logofs_flush;
+                << std::flush;
       }
 
-      #endif
     }
     else
     {
-      #ifdef PANIC
-      *logofs << "Loop: PANIC! Call to select failed. Error is "
+      nxfatal << "Loop: PANIC! Call to select failed. Error is "
               << EGET() << " '" << ESTR() << "'.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
 
       cerr << "Error" << ": Call to select failed. Error is "
            << EGET() << " '" << ESTR() << "'.\n";
@@ -3027,10 +2856,8 @@ int NXTransExecute(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
     return 0;
   }
 
-  #if defined(TEST) || defined(INFO)
-  *logofs << "\nNXTransExecute: Going to execute I/O on the NX descriptors.\n"
-          << logofs_flush;
-  #endif
+  nxinfo << "\nNXTransExecute: Going to execute I/O on the NX descriptors.\n"
+          << std::flush;
 
   if (control -> ProxyStage >= stage_operational)
   {
@@ -3044,11 +2871,9 @@ int NXTransExecute(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
       handleAgentInLoop(*resultFDs, *errorFDs, *setFDs, *readSet, *writeSet, *selectTs);
     }
 
-    #ifdef TEST
-    *logofs << "Loop: Mark - 1 - at " << strMsTimestamp()
+    nxinfo << "Loop: Mark - 1 - at " << strMsTimestamp()
             << " with " << diffTimestamp(startTs, getTimestamp())
-            << " Ms elapsed.\n" << logofs_flush;
-    #endif
+            << " Ms elapsed.\n" << std::flush;
 
     //
     // Rotate the channel that will be handled
@@ -3063,11 +2888,9 @@ int NXTransExecute(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
 
     handleWritableInLoop(*resultFDs, *writeSet);
 
-    #ifdef TEST
-    *logofs << "Loop: Mark - 2 - at " << strMsTimestamp()
+    nxinfo << "Loop: Mark - 2 - at " << strMsTimestamp()
             << " with " << diffTimestamp(startTs, getTimestamp())
-            << " Ms elapsed.\n" << logofs_flush;
-    #endif
+            << " Ms elapsed.\n" << std::flush;
 
     //
     // Check if any socket has become readable.
@@ -3075,11 +2898,9 @@ int NXTransExecute(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
 
     handleReadableInLoop(*resultFDs, *readSet);
 
-    #ifdef TEST
-    *logofs << "Loop: Mark - 3 - at " << strMsTimestamp()
+    nxinfo << "Loop: Mark - 3 - at " << strMsTimestamp()
             << " with " << diffTimestamp(startTs, getTimestamp())
-            << " Ms elapsed.\n" << logofs_flush;
-    #endif
+            << " Ms elapsed.\n" << std::flush;
 
     //
     // Handle the scheduled events on channels.
@@ -3099,11 +2920,9 @@ int NXTransExecute(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
 
     handleEventsInLoop();
 
-    #ifdef TEST
-    *logofs << "Loop: Mark - 4 - at " << strMsTimestamp()
+    nxinfo << "Loop: Mark - 4 - at " << strMsTimestamp()
             << " with " << diffTimestamp(startTs, getTimestamp())
-            << " Ms elapsed.\n" << logofs_flush;
-    #endif
+            << " Ms elapsed.\n" << std::flush;
 
     //
     // Check if user sent a signal to produce
@@ -3124,11 +2943,9 @@ int NXTransExecute(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
       handleAgentLateInLoop(*resultFDs, *errorFDs, *setFDs, *readSet, *writeSet, *selectTs);
     }
 
-    #ifdef TEST
-    *logofs << "Loop: Mark - 5 - at " << strMsTimestamp()
+    nxinfo << "Loop: Mark - 5 - at " << strMsTimestamp()
             << " with " << diffTimestamp(startTs, getTimestamp())
-            << " Ms elapsed.\n" << logofs_flush;
-    #endif
+            << " Ms elapsed.\n" << std::flush;
 
     //
     // Check if there is any data to flush.
@@ -3138,11 +2955,9 @@ int NXTransExecute(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
 
     handleFlushInLoop();
 
-    #ifdef TEST
-    *logofs << "Loop: Mark - 6 - at " << strMsTimestamp()
+    nxinfo << "Loop: Mark - 6 - at " << strMsTimestamp()
             << " with " << diffTimestamp(startTs, getTimestamp())
-            << " Ms elapsed.\n" << logofs_flush;
-    #endif
+            << " Ms elapsed.\n" << std::flush;
   }
 
   //
@@ -3170,17 +2985,12 @@ int NXTransExecute(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
     // Check coherency of internal state.
     //
 
-    #if defined(TEST) || defined(INFO)
 
     handleCheckStateInLoop(*setFDs);
 
-    #endif
-
-    #ifdef TEST
-    *logofs << "Loop: Mark - 7 - at " << strMsTimestamp()
+    nxinfo << "Loop: Mark - 7 - at " << strMsTimestamp()
             << " with " << diffTimestamp(startTs, getTimestamp())
-            << " Ms elapsed.\n" << logofs_flush;
-    #endif
+            << " Ms elapsed.\n" << std::flush;
   }
 
   //
@@ -3221,11 +3031,9 @@ int InitBeforeNegotiation()
   startTs = nowTs;
   initTs  = nowTs;
 
-  #ifdef TEST
-  *logofs << "Loop: INIT! Taking mark for initialization at "
+  nxinfo << "Loop: INIT! Taking mark for initialization at "
           << strMsTimestamp(initTs) << ".\n"
-          << logofs_flush;
-  #endif
+          << std::flush;
 
   //
   // If not explicitly specified, determine if local
@@ -3248,30 +3056,24 @@ int InitBeforeNegotiation()
 
   if (control -> ProxyMode == proxy_client)
   {
-    #ifdef TEST
-    *logofs << "Loop: Starting watchdog process with timeout of "
+    nxinfo << "Loop: Starting watchdog process with timeout of "
             << control -> InitTimeout / 1000 << " seconds.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     lastWatchdog = NXTransWatchdog(control -> InitTimeout);
 
     if (IsFailed(lastWatchdog))
     {
-      #ifdef PANIC
-      *logofs << "Loop: PANIC! Can't start the NX watchdog process.\n"
-              << logofs_flush;
-      #endif
+      nxfatal << "Loop: PANIC! Can't start the NX watchdog process.\n"
+              << std::flush;
 
       SetNotRunning(lastWatchdog);
     }
-    #ifdef TEST
     else
     {
-      *logofs << "Loop: Watchdog started with pid '"
-              << lastWatchdog << "'.\n" << logofs_flush;
+      nxinfo << "Loop: Watchdog started with pid '"
+              << lastWatchdog << "'.\n" << std::flush;
     }
-    #endif
   }
 
   //
@@ -3302,11 +3104,9 @@ int InitBeforeNegotiation()
 
   setHostBigEndian(*((unsigned char *) (&test)) == 0);
 
-  #ifdef TEST
-  *logofs << "Loop: Local host is "
+  nxinfo << "Loop: Local host is "
           << (hostBigEndian() ? "big endian" : "little endian")
-          << ".\n" << logofs_flush;
-  #endif
+          << ".\n" << std::flush;
 
   if (control -> ProxyMode == proxy_client)
   {
@@ -3378,33 +3178,27 @@ int SetupProxyConnection()
       SetAndValidateChannelEndPointArg("local", "listen", listenPortValue, listenSocket);
     }
 
-    #ifdef TEST
     connectSocket.getSpec(&socketUri);
-    *logofs << "Loop: connectSocket is "<< ( connectSocket.enabled() ? "enabled" : "disabled") << ". "
-            << "The socket URI is '"<< ( socketUri != NULL ? socketUri : "<unset>") << "'.\n" << logofs_flush;
-    listenSocket.getSpec(&socketUri);
-    *logofs << "Loop: listenSocket is "<< ( listenSocket.enabled() ? "enabled" : "disabled") << ". "
-            << "The socket URI is '"<< ( socketUri != NULL ? socketUri : "<unset>") << "'.\n" << logofs_flush;
-    free(socketUri);
-    socketUri = NULL;
-    #endif
+    nxinfo << "Loop: connectSocket is "<< ( connectSocket.enabled() ? "enabled" : "disabled") << ". "
+           << "The socket URI is '"<< ( socketUri != NULL ? socketUri : "<unset>") << "'.\n" << std::flush;
 
+    listenSocket.getSpec(&socketUri);
+    nxinfo << "Loop: listenSocket is "<< ( listenSocket.enabled() ? "enabled" : "disabled") << ". "
+           << "The socket URI is '"<< ( socketUri != NULL ? socketUri : "<unset>") << "'.\n" << std::flush;
+
+    free(socketUri);    socketUri = NULL;
     if (WE_INITIATE_CONNECTION)
     {
       if (connectSocket.getSpec(&socketUri))
       {
-        #ifdef TEST
-        *logofs << "Loop: Going to connect to '" << socketUri
-                << "'.\n" << logofs_flush;
-        #endif
+        nxinfo << "Loop: Going to connect to '" << socketUri
+                << "'.\n" << std::flush;
         free(socketUri);
 
         proxyFD = ConnectToRemote(connectSocket);
 
-        #ifdef TEST
-        *logofs << "Loop: Connected to remote proxy on FD#"
-                << proxyFD << ".\n" << logofs_flush;
-        #endif
+        nxinfo << "Loop: Connected to remote proxy on FD#"
+                << proxyFD << ".\n" << std::flush;
 
         cerr << "Info" << ": Connected to remote proxy on FD#"
              << proxyFD << ".\n";
@@ -3420,37 +3214,31 @@ int SetupProxyConnection()
 
       if (listenSocket.getSpec(&socketUri))
       {
-        #ifdef TEST
-        *logofs << "Loop: Going to wait for connection at '"
-                << socketUri << "'.\n" << logofs_flush;
-        #endif
+        nxinfo << "Loop: Going to wait for connection at '"
+                << socketUri << "'.\n" << std::flush;
         free(socketUri);
 
         proxyFD = WaitForRemote(listenSocket);
 
-        #ifdef TEST
         if (WE_LISTEN_FORWARDER)
         {
-          *logofs << "Loop: Connected to remote forwarder on FD#"
-                  << proxyFD << ".\n" << logofs_flush;
+          nxinfo << "Loop: Connected to remote forwarder on FD#"
+                  << proxyFD << ".\n" << std::flush;
         }
         else
         {
-          *logofs << "Loop: Connected to remote proxy on FD#"
-                  << proxyFD << ".\n" << logofs_flush;
+          nxinfo << "Loop: Connected to remote proxy on FD#"
+                  << proxyFD << ".\n" << std::flush;
         }
-        #endif
 
       }
     }
   }
-  #ifdef TEST
   else
   {
-    *logofs << "Loop: Using the inherited connection on FD#"
-            << proxyFD << ".\n" << logofs_flush;
+    nxinfo << "Loop: Using the inherited connection on FD#"
+            << proxyFD << ".\n" << std::flush;
   }
-  #endif
 
   //
   // Set TCP_NODELAY on proxy descriptor
@@ -3480,10 +3268,8 @@ int SetupProxyConnection()
 
 int InitAfterNegotiation()
 {
-  #ifdef TEST
-  *logofs << "Loop: Connection with remote proxy completed.\n"
-          << logofs_flush;
-  #endif
+  nxinfo << "Loop: Connection with remote proxy completed.\n"
+          << std::flush;
 
   cerr << "Info" << ": Connection with remote proxy completed.\n"
         << logofs_flush;
@@ -3569,12 +3355,10 @@ int InitAfterNegotiation()
   // rated by the proxy.
   //
 
-  #ifdef TEST
-  *logofs << "Loop: INIT! Completed initialization at "
+  nxinfo << "Loop: INIT! Completed initialization at "
           << strMsTimestamp(nowTs) << " with "
           << diffTimestamp(initTs, nowTs) << " Ms "
-          << "since the init mark.\n" << logofs_flush;
-  #endif
+          << "since the init mark.\n" << std::flush;
 
   initTs = getNewTimestamp();
 
@@ -3602,21 +3386,17 @@ int SetMode(int mode)
   {
     if (mode == NX_MODE_CLIENT)
     {
-      #ifdef TEST
-      *logofs << "Loop: INIT! Initializing with mode "
+      nxinfo << "Loop: INIT! Initializing with mode "
               << "NX_MODE_CLIENT at " << strMsTimestamp()
-              << ".\n" << logofs_flush;
-      #endif
+              << ".\n" << std::flush;
 
       control -> ProxyMode = proxy_client;
     }
     else if (mode == NX_MODE_SERVER)
     {
-      #ifdef TEST
-      *logofs << "Loop: INIT! Initializing with mode "
+      nxinfo << "Loop: INIT! Initializing with mode "
               << "NX_MODE_SERVER at " << strMsTimestamp()
-              << ".\n" << logofs_flush;
-      #endif
+              << ".\n" << std::flush;
 
       control -> ProxyMode = proxy_server;
     }
@@ -3645,10 +3425,8 @@ int SetupProxyInstance()
 
   if (proxy == NULL)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Error creating the NX proxy.\n"
-            << logofs_flush;
-    #endif
+    nxfatal << "Loop: PANIC! Error creating the NX proxy.\n"
+            << std::flush;
 
     cerr << "Error" << ": Error creating the NX proxy.\n";
 
@@ -3663,10 +3441,8 @@ int SetupProxyInstance()
 
   if (statistics == NULL)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Error creating the NX statistics.\n"
-            << logofs_flush;
-    #endif
+    nxfatal << "Loop: PANIC! Error creating the NX statistics.\n"
+            << std::flush;
 
     cerr << "Error" << ": Error creating the NX statistics.\n";
 
@@ -3718,10 +3494,8 @@ int SetupProxyInstance()
           proxy -> handleLinkConfiguration() < 0 ||
               proxy -> handleCacheConfiguration() < 0)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Error configuring the NX transport.\n"
-            << logofs_flush;
-    #endif
+    nxfatal << "Loop: PANIC! Error configuring the NX transport.\n"
+            << std::flush;
 
     cerr << "Error" << ": Error configuring the NX transport.\n";
 
@@ -3768,16 +3542,14 @@ int SetupProxyInstance()
 
   proxy -> handleFlush();
 
-  #if defined(TEST) || defined(INFO)
 
   if (proxy -> getFlushable(proxyFD) > 0)
   {
-    *logofs << "Loop: WARNING! Proxy FD#" << proxyFD << " has data "
+    nxinfo << "Loop: WARNING! Proxy FD#" << proxyFD << " has data "
             << "to flush after setup of the NX transport.\n"
-            << logofs_flush;
+            << std::flush;
   }
 
-  #endif
 
   return 1;
 }
@@ -3827,29 +3599,23 @@ int SetupAuthInstance()
 
         *(launchdAddrUnix.sun_path + launchdAddrNameLength - 1) = '\0';
 
-        #ifdef TEST
-        *logofs << "Loop: Connecting to launchd service "
-                << "on Unix port '" << displayHost << "'.\n" << logofs_flush;
-        #endif
+        nxinfo << "Loop: Connecting to launchd service "
+                << "on Unix port '" << displayHost << "'.\n" << std::flush;
 
         int launchdFd = socket(launchdAddrFamily, SOCK_STREAM, PF_UNSPEC);
 
         if (launchdFd < 0)
         {
-          #ifdef PANIC
-          *logofs << "Loop: PANIC! Call to socket failed. "
+          nxfatal << "Loop: PANIC! Call to socket failed. "
                   << "Error is " << EGET() << " '" << ESTR()
-                  << "'.\n" << logofs_flush;
-          #endif
+                  << "'.\n" << std::flush;
         }
         else if ((success = connect(launchdFd, (sockaddr *) &launchdAddrUnix, launchdAddrLength)) < 0)
         {
-          #ifdef WARNING
-          *logofs << "Loop: WARNING! Connection to launchd service "
+          nxwarn << "Loop: WARNING! Connection to launchd service "
                   << "on Unix port '" << displayHost << "' failed "
                   << "with error " << EGET() << ", '" << ESTR() << "'.\n"
-                  << logofs_flush;
-          #endif
+                  << std::flush;
         }
 
         if (launchdFd >= 0)
@@ -3889,10 +3655,8 @@ int SetupAuthInstance()
 
       if (auth == NULL || auth -> isValid() != 1)
       {
-        #ifdef PANIC
-        *logofs << "Loop: PANIC! Error creating the X authorization.\n"
-                << logofs_flush;
-        #endif
+        nxfatal << "Loop: PANIC! Error creating the X authorization.\n"
+                << std::flush;
 
         cerr << "Error" << ": Error creating the X authorization.\n";
 
@@ -3900,11 +3664,9 @@ int SetupAuthInstance()
       }
       else if (auth -> isFake() == 1)
       {
-        #ifdef WARNING
-        *logofs << "Loop: WARNING! Could not retrieve the X server "
+        nxwarn << "Loop: WARNING! Could not retrieve the X server "
                 << "authentication cookie.\n"
-                << logofs_flush;
-        #endif
+                << std::flush;
 
         cerr << "Warning" << ": Failed to read data from the X "
              << "auth command.\n";
@@ -3915,18 +3677,14 @@ int SetupAuthInstance()
     }
     else
     {
-      #ifdef TEST
-      *logofs << "Loop: No proxy cookie was provided for "
-              << "authentication.\n" << logofs_flush;
-      #endif
+      nxinfo << "Loop: No proxy cookie was provided for "
+              << "authentication.\n" << std::flush;
 
       cerr << "Info" << ": No proxy cookie was provided for "
            << "authentication.\n";
 
-      #ifdef TEST
-      *logofs << "Loop: Forwarding the real X authorization "
-              << "cookie.\n" << logofs_flush;
-      #endif
+      nxinfo << "Loop: Forwarding the real X authorization "
+              << "cookie.\n" << std::flush;
 
       cerr << "Info" << ": Forwarding the real X authorization "
            << "cookie.\n";
@@ -3962,10 +3720,8 @@ int SetupAgentInstance()
 
     if (result < 0)
     {
-      #ifdef PANIC
-      *logofs << "Loop: PANIC! Error creating the NX agent connection.\n"
-              << logofs_flush;
-      #endif
+      nxfatal << "Loop: PANIC! Error creating the NX agent connection.\n"
+              << std::flush;
 
       cerr << "Error" << ": Error creating the NX agent connection.\n";
 
@@ -3992,9 +3748,7 @@ int SetupUnixSocket()
   //
 
   if (!control->TempPath) {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Temporal path is null.\n" << logofs_flush;
-    #endif
+    nxfatal << "Loop: PANIC! Temporal path is null.\n" << std::flush;
 
     cerr << "Error" << ": Temporal path is null.\n";
     HandleCleanup();
@@ -4019,9 +3773,7 @@ int SetupUnixSocket()
 
   unixSocketName[0] = '\0'; // Just in case!
 
-  #ifdef PANIC
-  *logofs << "Loop: PANIC! path for unix socket is too long.\n" << logofs_flush;
-  #endif
+  nxfatal << "Loop: PANIC! path for unix socket is too long.\n" << std::flush;
 
   cerr << "Error" << ": path for Unix socket is too long.\n";
   HandleCleanup();
@@ -4055,10 +3807,8 @@ int SetupDisplaySocket(int &addr_family, sockaddr *&addr,
 
     if (display == NULL || *display == '\0')
     {
-      #ifdef PANIC
-      *logofs << "Loop: PANIC! Host X server DISPLAY is not set.\n"
-              << logofs_flush;
-      #endif
+      nxfatal << "Loop: PANIC! Host X server DISPLAY is not set.\n"
+              << std::flush;
 
       cerr << "Error" << ": Host X server DISPLAY is not set.\n";
 
@@ -4069,10 +3819,8 @@ int SetupDisplaySocket(int &addr_family, sockaddr *&addr,
                      strncasecmp(display, "nx/nx:", 6) == 0 ||
                          strncasecmp(display, "nx:", 3) == 0)
     {
-      #ifdef PANIC
-      *logofs << "Loop: PANIC! NX transport on host X server '"
-              << display << "' not supported.\n" << logofs_flush;
-      #endif
+      nxfatal << "Loop: PANIC! NX transport on host X server '"
+              << display << "' not supported.\n" << std::flush;
 
       cerr << "Error" << ": NX transport on host X server '"
            << display << "' not supported.\n";
@@ -4084,11 +3832,9 @@ int SetupDisplaySocket(int &addr_family, sockaddr *&addr,
     }
     else if (strlen(display) >= DEFAULT_STRING_LENGTH)
     {
-      #ifdef PANIC
-      *logofs << "Loop: PANIC! Host X server DISPLAY cannot exceed "
+      nxfatal << "Loop: PANIC! Host X server DISPLAY cannot exceed "
               << DEFAULT_STRING_LENGTH << " characters.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
 
       cerr << "Error" << ": Host X server DISPLAY cannot exceed "
            << DEFAULT_STRING_LENGTH << " characters.\n";
@@ -4103,10 +3849,8 @@ int SetupDisplaySocket(int &addr_family, sockaddr *&addr,
 
   if (display == NULL)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Out of memory handling DISPLAY variable.\n"
-            << logofs_flush;
-    #endif
+    nxfatal << "Loop: PANIC! Out of memory handling DISPLAY variable.\n"
+            << std::flush;
 
     cerr << "Error" << ": Out of memory handling DISPLAY variable.\n";
 
@@ -4119,10 +3863,8 @@ int SetupDisplaySocket(int &addr_family, sockaddr *&addr,
 
   if ((strncasecmp(display, "/tmp/launch", 11) == 0) || (strncasecmp(display, "/private/tmp/com.apple.launchd", 30) == 0))
   {
-    #ifdef TEST
-    *logofs << "Loop: Using launchd service on socket '"
-            << display << "'.\n" << logofs_flush;
-    #endif
+    nxinfo << "Loop: Using launchd service on socket '"
+            << display << "'.\n" << std::flush;
 
     useLaunchdSocket = 1;
   }
@@ -4133,10 +3875,8 @@ int SetupDisplaySocket(int &addr_family, sockaddr *&addr,
 
   if ((separator == NULL) || !isdigit(*(separator + 1)))
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Invalid display '" << display << "'.\n"
-            << logofs_flush;
-    #endif
+    nxfatal << "Loop: PANIC! Invalid display '" << display << "'.\n"
+            << std::flush;
 
     cerr << "Error" << ": Invalid display '" << display << "'.\n";
 
@@ -4147,11 +3887,9 @@ int SetupDisplaySocket(int &addr_family, sockaddr *&addr,
 
   xPort = atoi(separator + 1);
 
-  #ifdef TEST
-  *logofs << "Loop: Using local X display '" << displayHost
+  nxinfo << "Loop: Using local X display '" << displayHost
           << "' with host '" << display << "' and port '"
-          << xPort << "'.\n" << logofs_flush;
-  #endif
+          << xPort << "'.\n" << std::flush;
 
   #ifdef __APPLE__
 
@@ -4168,10 +3906,8 @@ int SetupDisplaySocket(int &addr_family, sockaddr *&addr,
     // UNIX domain port.
     //
 
-    #ifdef TEST
-    *logofs << "Loop: Using real X server on UNIX domain socket.\n"
-            << logofs_flush;
-    #endif
+    nxinfo << "Loop: Using real X server on UNIX domain socket.\n"
+            << std::flush;
 
     sockaddr_un *xServerAddrUNIX = new sockaddr_un;
 
@@ -4250,26 +3986,20 @@ int SetupDisplaySocket(int &addr_family, sockaddr *&addr,
 
     *(unixSocketDir + DEFAULT_STRING_LENGTH - 1) = '\0';
 
-    #ifdef TEST
-    *logofs << "Loop: Assuming X socket in directory '"
-            << unixSocketDir << "'.\n" << logofs_flush;
-    #endif
+    nxinfo << "Loop: Assuming X socket in directory '"
+            << unixSocketDir << "'.\n" << std::flush;
 
     if (stat(unixSocketDir, &statInfo) < 0)
     {
-      #ifdef PANIC
-      *logofs << "Loop: PANIC! Can't determine the location of "
-              << "the X display socket.\n" << logofs_flush;
-      #endif
+      nxfatal << "Loop: PANIC! Can't determine the location of "
+              << "the X display socket.\n" << std::flush;
 
       cerr << "Error" << ": Can't determine the location of "
            << "the X display socket.\n";
 
-      #ifdef PANIC
-      *logofs << "Loop: PANIC! Error " << EGET() << " '" << ESTR()
+      nxfatal << "Loop: PANIC! Error " << EGET() << " '" << ESTR()
               << "' checking '" << unixSocketDir << "'.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
 
       cerr << "Error" << ": Error " << EGET() << " '" << ESTR()
            << "' checking '" << unixSocketDir << "'.\n";
@@ -4288,10 +4018,8 @@ int SetupDisplaySocket(int &addr_family, sockaddr *&addr,
 
     #endif
 
-    #ifdef TEST
-    *logofs << "Loop: Assuming X socket name '" << unixSocketName
-            << "'.\n" << logofs_flush;
-    #endif
+    nxinfo << "Loop: Assuming X socket name '" << unixSocketName
+            << "'.\n" << std::flush;
 
     strcpy(xServerAddrUNIX -> sun_path, unixSocketName);
 
@@ -4309,10 +4037,8 @@ int SetupDisplaySocket(int &addr_family, sockaddr *&addr,
     // TCP port.
     //
 
-    #ifdef TEST
-    *logofs << "Loop: Using real X server on TCP port.\n"
-            << logofs_flush;
-    #endif
+    nxinfo << "Loop: Using real X server on TCP port.\n"
+            << std::flush;
 
     addr_family = AF_INET;
 
@@ -4320,10 +4046,8 @@ int SetupDisplaySocket(int &addr_family, sockaddr *&addr,
 
     if (xServerIPAddr == 0)
     {
-      #ifdef PANIC
-      *logofs << "Loop: PANIC! Unknown display host '" << display
-              << "'.\n" << logofs_flush;
-      #endif
+      nxfatal << "Loop: PANIC! Unknown display host '" << display
+              << "'.\n" << std::flush;
 
       cerr << "Error" << ": Unknown display host '" << display
            << "'.\n";
@@ -4439,11 +4163,9 @@ int ListenConnectionAny(sockaddr *addr, socklen_t addrlen, const char *label)
 
   if (newFD == -1)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Call to socket failed for " << label
+    nxfatal << "Loop: PANIC! Call to socket failed for " << label
             << " socket. Error is " << EGET() << " '"
-            << ESTR() << "'.\n" << logofs_flush;
-    #endif
+            << ESTR() << "'.\n" << std::flush;
 
     cerr << "Error" << ": Call to socket failed for " << label
          << " socket. Error is " << EGET() << " '"
@@ -4461,11 +4183,9 @@ int ListenConnectionAny(sockaddr *addr, socklen_t addrlen, const char *label)
 
   if (bind(newFD, addr, addrlen) == -1)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Call to bind failed for " << label
+    nxfatal << "Loop: PANIC! Call to bind failed for " << label
             << ". Error is " << EGET()
-            << " '" << ESTR() << "'.\n" << logofs_flush;
-    #endif
+            << " '" << ESTR() << "'.\n" << std::flush;
 
     cerr << "Error" << ": Call to bind failed for " << label
          << ". Error is " << EGET()
@@ -4475,11 +4195,9 @@ int ListenConnectionAny(sockaddr *addr, socklen_t addrlen, const char *label)
 
   if (listen(newFD, 8) == -1)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Call to listen failed for " << label
+    nxfatal << "Loop: PANIC! Call to listen failed for " << label
             << ". Error is " << EGET()
-            << " '" << ESTR() << "'.\n" << logofs_flush;
-    #endif
+            << " '" << ESTR() << "'.\n" << std::flush;
 
     cerr << "Error" << ": Call to listen failed for " << label
          << ". Error is " << EGET()
@@ -4520,10 +4238,8 @@ int ListenConnectionUnix(const char *path, const char *label)
   if (strlen(path) >= sizeof(unixAddr.sun_path))
 #endif
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Socket path \"" << path << "\" for "
-            << label << " is too long.\n" << logofs_flush;
-    #endif
+    nxfatal << "Loop: PANIC! Socket path \"" << path << "\" for "
+            << label << " is too long.\n" << std::flush;
 
     cerr << "Error" << ": Socket path \"" << path << "\" for "
          << label << " is too long.\n";
@@ -4555,10 +4271,8 @@ int ListenConnectionTCP(const char *host, long port, const char *label)
     int ip = tcpAddr.sin_addr.s_addr = GetHostAddress(host);
     if (ip == 0)
     {
-      #ifdef PANIC
-      *logofs << "Loop: PANIC! Unknown " << label << " host '" << host
-              << "'.\n" << logofs_flush;
-      #endif
+      nxfatal << "Loop: PANIC! Unknown " << label << " host '" << host
+              << "'.\n" << std::flush;
 
       cerr << "Error" << ": Unknown " << label << " host '" << host
            << "'.\n";
@@ -4590,32 +4304,28 @@ static int AcceptConnection(int fd, int domain, const char *label)
 
   socklen_t addrLen = sizeof(newAddr);
 
-  #ifdef TEST
 
   if (domain == AF_UNIX)
   {
-    *logofs << "Loop: Going to accept new Unix " << label
+    nxinfo << "Loop: Going to accept new Unix " << label
             << " connection on FD#" << fd << ".\n"
-            << logofs_flush;
+            << std::flush;
   }
   else
   {
-    *logofs << "Loop: Going to accept new TCP " << label
+    nxinfo << "Loop: Going to accept new TCP " << label
             << " connection on FD#" << fd << ".\n"
-            << logofs_flush;
+            << std::flush;
   }
 
-  #endif
 
   int newFD = accept(fd, &newAddr, &addrLen);
 
   if (newFD < 0)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Call to accept failed for "
+    nxfatal << "Loop: PANIC! Call to accept failed for "
             << label << " connection. Error is " << EGET()
-            << " '" << ESTR() << "'.\n" << logofs_flush;
-    #endif
+            << " '" << ESTR() << "'.\n" << std::flush;
 
     cerr << "Error" << ": Call to accept failed for "
          << label << " connection. Error is " << EGET()
@@ -4629,11 +4339,9 @@ void HandleShutdown()
 {
   if (proxy -> getShutdown() == 0)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! No shutdown of proxy link "
+    nxfatal << "Loop: PANIC! No shutdown of proxy link "
             << "performed by remote proxy.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     //
     // Close the socket before showing the alert.
@@ -4650,11 +4358,9 @@ void HandleShutdown()
 
     cerr << "Error" << ": Connection with remote peer broken.\n";
 
-    #ifdef TEST
-    *logofs << "Loop: Bytes received so far are "
+    nxinfo << "Loop: Bytes received so far are "
             << (unsigned long long) statistics -> getBytesIn()
-            << ".\n" << logofs_flush;
-    #endif
+            << ".\n" << std::flush;
 
     cerr << "Error" << ": Please check the state of your "
          << "network and retry.\n";
@@ -4663,23 +4369,19 @@ void HandleShutdown()
 
     if (control -> ProxyMode == proxy_server)
     {
-      #ifdef TEST
-      *logofs << "Loop: Showing the proxy abort dialog.\n"
-              << logofs_flush;
-      #endif
+      nxinfo << "Loop: Showing the proxy abort dialog.\n"
+              << std::flush;
 
       HandleAlert(ABORT_PROXY_CONNECTION_ALERT, 1);
 
       handleAlertInLoop();
     }
   }
-  #ifdef TEST
   else
   {
-    *logofs << "Loop: Finalized the remote proxy shutdown.\n"
-            << logofs_flush;
+    nxinfo << "Loop: Finalized the remote proxy shutdown.\n"
+            << std::flush;
   }
-  #endif
 
   HandleCleanup();
 }
@@ -4701,22 +4403,18 @@ int KillProcess(int pid, const char *label, int signal, int wait)
 {
   if (pid > 0)
   {
-    #if defined(TEST) || defined(INFO)
-    *logofs << "Loop: Killing the " << label << " process '"
+    nxinfo << "Loop: Killing the " << label << " process '"
             << pid << "' from process with pid '" << getpid()
             << "' with signal '" << DumpSignal(signal)
-            << "'.\n" << logofs_flush;
-    #endif
+            << "'.\n" << std::flush;
 
     signal = (signal == 0 ? SIGTERM : signal);
 
     if (kill(pid, signal) < 0 && EGET() != ESRCH)
     {
-      #ifdef PANIC
-      *logofs << "Loop: PANIC! Couldn't kill the " << label
+      nxfatal << "Loop: PANIC! Couldn't kill the " << label
               << " process with pid '" << pid << "'.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
 
       cerr << "Error" << ": Couldn't kill the " << label
            << " process with pid '" << pid << "'.\n";
@@ -4731,11 +4429,9 @@ int KillProcess(int pid, const char *label, int signal, int wait)
   }
   else
   {
-    #ifdef TEST
-    *logofs << "Loop: No " << label << " process "
+    nxinfo << "Loop: No " << label << " process "
             << "to kill with pid '" << pid
-            << "'.\n" << logofs_flush;
-    #endif
+            << "'.\n" << std::flush;
 
     return 0;
   }
@@ -4743,19 +4439,15 @@ int KillProcess(int pid, const char *label, int signal, int wait)
 
 int CheckProcess(int pid, const char *label)
 {
-  #if defined(TEST) || defined(INFO)
-  *logofs << "Loop: Checking the " << label << " process '"
+  nxinfo << "Loop: Checking the " << label << " process '"
           << pid << "' from process with pid '" << getpid()
-          << "'.\n" << logofs_flush;
-  #endif
+          << "'.\n" << std::flush;
 
   if (kill(pid, SIGCONT) < 0 && EGET() == ESRCH)
   {
-    #ifdef WARNING
-    *logofs << "Loop: WARNING! The " << label << " process "
+    nxwarn << "Loop: WARNING! The " << label << " process "
             << "with pid '" << pid << "' has exited.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     cerr << "Warning" << ": The " << label << " process "
          << "with pid '" << pid << "' has exited.\n";
@@ -4768,21 +4460,17 @@ int CheckProcess(int pid, const char *label)
 
 int StartKeeper()
 {
-  #if defined(TEST) || defined(INFO)
 
   if (IsRunning(lastKeeper) == 1 ||
           IsRestarting(lastKeeper) == 1)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! The house-keeping process is "
+    nxfatal << "Loop: PANIC! The house-keeping process is "
             << "alreay running with pid '" << lastKeeper
-            << "'.\n" << logofs_flush;
-    #endif
+            << "'.\n" << std::flush;
 
     HandleCleanup();
   }
 
-  #endif
 
   //
   // Don't care harvesting the persistent caches if
@@ -4800,53 +4488,43 @@ int StartKeeper()
 
   if (control -> LocalTotalStorageSize > 0)
   {
-    #ifdef TEST
-    *logofs << "Loop: Starting the house-keeping process with "
+    nxinfo << "Loop: Starting the house-keeping process with "
             << "storage size " << control -> PersistentCacheDiskLimit
-            << ".\n" << logofs_flush;
-    #endif
+            << ".\n" << std::flush;
 
     lastKeeper = NXTransKeeper(control -> PersistentCacheDiskLimit,
                                    0, control -> RootPath);
 
     if (IsFailed(lastKeeper))
     {
-      #ifdef WARNING
-      *logofs << "Loop: WARNING! Failed to start the NX keeper process.\n"
-              << logofs_flush;
-      #endif
+      nxwarn << "Loop: WARNING! Failed to start the NX keeper process.\n"
+              << std::flush;
 
       cerr << "Warning" << ": Failed to start the NX keeper process.\n";
 
       SetNotRunning(lastKeeper);
     }
-    #ifdef TEST
     else
     {
-      *logofs << "Loop: Keeper started with pid '"
-              << lastKeeper << "'.\n" << logofs_flush;
+      nxinfo << "Loop: Keeper started with pid '"
+              << lastKeeper << "'.\n" << std::flush;
     }
-    #endif
   }
-  #ifdef TEST
   else
   {
-    *logofs << "Loop: Nothing to do for the keeper process "
+    nxinfo << "Loop: Nothing to do for the keeper process "
             << "with persistent cache not enabled.\n"
-            << logofs_flush;
+            << std::flush;
   }
-  #endif
 
   return 1;
 }
 
 void HandleCleanupForReconnect()
 {
-  #ifdef TEST
-  *logofs << "Loop: Going to clean up system resources for Reconnect "
+  nxinfo << "Loop: Going to clean up system resources for Reconnect "
           << "in process '" << getpid() << "'.\n"
-          << logofs_flush;
-  #endif
+          << std::flush;
   handleTerminatedInLoop();
   DisableSignals();
   if (control)
@@ -4864,11 +4542,9 @@ void HandleCleanupForReconnect()
 }
 void HandleCleanup(int code)
 {
-  #ifdef TEST
-  *logofs << "Loop: Going to clean up system resources "
+  nxinfo << "Loop: Going to clean up system resources "
           << "in process '" << getpid() << "'.\n"
-          << logofs_flush;
-  #endif
+          << std::flush;
 
   handleTerminatedInLoop();
 
@@ -4920,22 +4596,20 @@ void HandleCleanup(int code)
   // safely exit.
   //
 
-  #ifdef TEST
 
   if (getpid() == lastProxy)
   {
-    *logofs << "Loop: Reverting to loop context in process with "
+    nxinfo << "Loop: Reverting to loop context in process with "
             << "pid '" << getpid() << "' at " << strMsTimestamp()
-            << ".\n" << logofs_flush;
+            << ".\n" << std::flush;
   }
   else
   {
-    *logofs << "Loop: Exiting from child process with pid '"
+    nxinfo << "Loop: Exiting from child process with pid '"
             << getpid() << "' at " << strMsTimestamp()
-            << ".\n" << logofs_flush;
+            << ".\n" << std::flush;
   }
 
-  #endif
 
   if (getpid() == lastProxy)
   {
@@ -4968,11 +4642,9 @@ void CleanupKeeper()
 {
   if (keeper != NULL)
   {
-    #ifdef TEST
-    *logofs << "Loop: Freeing up keeper in process "
+    nxinfo << "Loop: Freeing up keeper in process "
             << "with pid '" << getpid() << "'.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     delete keeper;
 
@@ -4991,11 +4663,9 @@ void CleanupStreams()
 
   #ifndef __CYGWIN32__
 
-  #ifdef TEST
-  *logofs << "Loop: Freeing up streams in process "
+  nxinfo << "Loop: Freeing up streams in process "
           << "with pid '" << getpid() << "'.\n"
-          << logofs_flush;
-  #endif
+          << std::flush;
 
   if (logofs != NULL && logofs != &cerr &&
           *errorsFileName != '\0')
@@ -5091,12 +4761,10 @@ void CleanupChildren()
 
   if (IsRunning(lastDialog))
   {
-    #if defined(TEST) || defined(INFO)
-    *logofs << "Loop: WARNING! Leaving the dialog process '"
+    nxinfo << "Loop: WARNING! Leaving the dialog process '"
             << lastDialog << "' running in process "
             << "with pid '" << getpid() << "'.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     SetNotRunning(lastDialog);
   }
@@ -5107,22 +4775,18 @@ void CleanupChildren()
 
   if (control -> EnableRestartOnShutdown == 1)
   {
-    #ifdef WARNING
-    *logofs << "Loop: WARNING! Respawning the NX client "
+    nxwarn << "Loop: WARNING! Respawning the NX client "
             << "on display '" << displayHost << "'.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     NXTransClient(displayHost);
   }
 
   for (int i = 0; i < control -> KillDaemonOnShutdownNumber; i++)
   {
-    #ifdef WARNING
-    *logofs << "Loop: WARNING! Killing the NX daemon with "
+    nxwarn << "Loop: WARNING! Killing the NX daemon with "
             << "pid '" << control -> KillDaemonOnShutdown[i]
-            << "'.\n" << logofs_flush;
-    #endif
+            << "'.\n" << std::flush;
 
     KillProcess(control -> KillDaemonOnShutdown[i], "daemon", SIGTERM, 0);
   }
@@ -5132,11 +4796,9 @@ void CleanupGlobal()
 {
   if (proxy != NULL)
   {
-    #ifdef TEST
-    *logofs << "Loop: Freeing up proxy in process "
+    nxinfo << "Loop: Freeing up proxy in process "
             << "with pid '" << getpid() << "'.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     delete proxy;
 
@@ -5145,11 +4807,9 @@ void CleanupGlobal()
 
   if (agent != NULL)
   {
-    #ifdef TEST
-    *logofs << "Loop: Freeing up agent in process "
+    nxinfo << "Loop: Freeing up agent in process "
             << "with pid '" << getpid() << "'.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     delete agent;
 
@@ -5158,11 +4818,9 @@ void CleanupGlobal()
 
   if (auth != NULL)
   {
-    #ifdef TEST
-    *logofs << "Loop: Freeing up auth data in process "
+    nxinfo << "Loop: Freeing up auth data in process "
             << "with pid '" << getpid() << "'.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     delete auth;
 
@@ -5171,11 +4829,9 @@ void CleanupGlobal()
 
   if (statistics != NULL)
   {
-    #ifdef TEST
-    *logofs << "Loop: Freeing up statistics in process "
+    nxinfo << "Loop: Freeing up statistics in process "
             << "with pid '" << getpid() << "'.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     delete statistics;
 
@@ -5184,11 +4840,9 @@ void CleanupGlobal()
 
   if (control != NULL)
   {
-    #ifdef TEST
-    *logofs << "Loop: Freeing up control in process "
+    nxinfo << "Loop: Freeing up control in process "
             << "with pid '" << getpid() << "'.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     delete control;
 
@@ -5200,17 +4854,13 @@ void CleanupConnections()
 {
   if (proxy -> getChannels(channel_x11) != 0)
   {
-    #ifdef TEST
-    *logofs << "Loop: Closing any remaining X connections.\n"
-            << logofs_flush;
-    #endif
+    nxinfo << "Loop: Closing any remaining X connections.\n"
+            << std::flush;
 
     proxy -> handleCloseAllXConnections();
 
-    #ifdef TEST
-    *logofs << "Loop: Closing any remaining listener.\n"
-            << logofs_flush;
-    #endif
+    nxinfo << "Loop: Closing any remaining listener.\n"
+            << std::flush;
 
     proxy -> handleCloseAllListeners();
   }
@@ -5224,11 +4874,9 @@ void CleanupListeners()
   {
     if (tcpFD != -1)
     {
-      #ifdef TEST
-      *logofs << "Loop: Closing TCP listener in process "
+      nxinfo << "Loop: Closing TCP listener in process "
               << "with pid '" << getpid() << "'.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
 
       close(tcpFD);
 
@@ -5242,11 +4890,9 @@ void CleanupListeners()
   {
     if (unixFD != -1)
     {
-      #ifdef TEST
-      *logofs << "Loop: Closing UNIX listener in process "
+      nxinfo << "Loop: Closing UNIX listener in process "
               << "with pid '" << getpid() << "'.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
 
       close(unixFD);
 
@@ -5255,11 +4901,9 @@ void CleanupListeners()
 
     if (*unixSocketName != '\0')
     {
-      #ifdef TEST
-      *logofs << "Loop: Going to remove the Unix domain socket '"
+      nxinfo << "Loop: Going to remove the Unix domain socket '"
               << unixSocketName << "' in process " << "with pid '"
-              << getpid() << "'.\n" << logofs_flush;
-      #endif
+              << getpid() << "'.\n" << std::flush;
 
       unlink(unixSocketName);
     }
@@ -5281,11 +4925,9 @@ void CleanupListeners()
   {
     if (cupsFD != -1)
     {
-      #ifdef TEST
-      *logofs << "Loop: Closing CUPS listener in process "
+      nxinfo << "Loop: Closing CUPS listener in process "
               << "with pid '" << getpid() << "'.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
 
       close(cupsFD);
 
@@ -5299,11 +4941,9 @@ void CleanupListeners()
   {
     if (auxFD != -1)
     {
-      #ifdef TEST
-      *logofs << "Loop: Closing auxiliary X11 listener "
+      nxinfo << "Loop: Closing auxiliary X11 listener "
               << "in process " << "with pid '" << getpid()
-              << "'.\n" << logofs_flush;
-      #endif
+              << "'.\n" << std::flush;
 
       close(auxFD);
 
@@ -5317,11 +4957,9 @@ void CleanupListeners()
   {
     if (smbFD != -1)
     {
-      #ifdef TEST
-      *logofs << "Loop: Closing SMB listener in process "
+      nxinfo << "Loop: Closing SMB listener in process "
               << "with pid '" << getpid() << "'.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
 
       close(smbFD);
 
@@ -5335,11 +4973,9 @@ void CleanupListeners()
   {
     if (mediaFD != -1)
     {
-      #ifdef TEST
-      *logofs << "Loop: Closing multimedia listener in process "
+      nxinfo << "Loop: Closing multimedia listener in process "
               << "with pid '" << getpid() << "'.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
 
       close(mediaFD);
 
@@ -5353,11 +4989,9 @@ void CleanupListeners()
   {
     if (httpFD != -1)
     {
-      #ifdef TEST
-      *logofs << "Loop: Closing http listener in process "
+      nxinfo << "Loop: Closing http listener in process "
               << "with pid '" << getpid() << "'.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
 
       close(httpFD);
 
@@ -5371,11 +5005,9 @@ void CleanupListeners()
   {
     if (fontFD != -1)
     {
-      #ifdef TEST
-      *logofs << "Loop: Closing font server listener in process "
+      nxinfo << "Loop: Closing font server listener in process "
               << "with pid '" << getpid() << "'.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
 
       close(fontFD);
 
@@ -5389,11 +5021,9 @@ void CleanupListeners()
   {
     if (slaveFD != -1)
     {
-      #ifdef TEST
-      *logofs << "Loop: Closing slave listener in process "
+      nxinfo << "Loop: Closing slave listener in process "
               << "with pid '" << getpid() << "'.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
 
       close(slaveFD);
 
@@ -5408,11 +5038,9 @@ void CleanupSockets()
 {
   if (proxyFD != -1)
   {
-    #ifdef TEST
-    *logofs << "Loop: Closing proxy FD in process "
+    nxinfo << "Loop: Closing proxy FD in process "
             << "with pid '" << getpid() << "'.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     close(proxyFD);
 
@@ -5421,11 +5049,9 @@ void CleanupSockets()
 
   if (agentFD[1] != -1)
   {
-    #ifdef TEST
-    *logofs << "Loop: Closing agent FD in process "
+    nxinfo << "Loop: Closing agent FD in process "
             << "with pid '" << getpid() << "'.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     close(agentFD[1]);
 
@@ -5567,11 +5193,9 @@ int CheckAbort()
 {
   if (lastSignal != 0)
   {
-    #ifdef TEST
-    *logofs << "Loop: Aborting the procedure due to signal '"
+    nxinfo << "Loop: Aborting the procedure due to signal '"
             << lastSignal << "', '" << DumpSignal(lastSignal)
-            << "'.\n" << logofs_flush;
-    #endif
+            << "'.\n" << std::flush;
 
     cerr << "Info" << ": Aborting the procedure due to signal '"
          << lastSignal << "'.\n";
@@ -5627,10 +5251,8 @@ void HandleAbort()
     raise(SIGABRT);
   }
 
-  #ifdef TEST
-  *logofs << "Loop: Showing the proxy abort dialog.\n"
-          << logofs_flush;
-  #endif
+  nxinfo << "Loop: Showing the proxy abort dialog.\n"
+          << std::flush;
 
   if (control -> ProxyMode == proxy_server)
   {
@@ -5662,23 +5284,19 @@ void HandleAlert(int code, int local)
 {
   if (lastAlert.code == 0)
   {
-    #if defined(TEST) || defined(INFO)
-    *logofs << "Loop: Requesting an alert dialog with code "
+    nxinfo << "Loop: Requesting an alert dialog with code "
             << code << " and local " << local << ".\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     lastAlert.code  = code;
     lastAlert.local = local;
   }
-  #if defined(TEST) || defined(INFO)
   else
   {
-    *logofs << "Loop: WARNING! Alert dialog already requested "
+    nxinfo << "Loop: WARNING! Alert dialog already requested "
             << "with code " << lastAlert.code << ".\n"
-            << logofs_flush;
+            << std::flush;
   }
-  #endif
 
   return;
 }
@@ -5687,22 +5305,18 @@ void FlushCallback(int length)
 {
   if (flushCallback != NULL)
   {
-    #if defined(TEST) || defined(INFO)
-    *logofs << "Loop: Reporting a flush request at "
+    nxinfo << "Loop: Reporting a flush request at "
             << strMsTimestamp() << " with " << length
-            << " bytes written.\n" << logofs_flush;
-    #endif
+            << " bytes written.\n" << std::flush;
 
     (*flushCallback)(flushParameter, length);
   }
-  #if defined(TEST) || defined(INFO)
   else if (control -> ProxyMode == proxy_client)
   {
-    *logofs << "Loop: WARNING! Can't find a flush "
+    nxinfo << "Loop: WARNING! Can't find a flush "
             << "callback in process with pid '" << getpid()
-            << "'.\n" << logofs_flush;
+            << "'.\n" << std::flush;
   }
-  #endif
 }
 
 void KeeperCallback()
@@ -5717,56 +5331,44 @@ void KeeperCallback()
     if (control -> ImageCacheEnableLoad == 1 ||
             control -> ImageCacheEnableSave == 1)
     {
-      #ifdef TEST
-      *logofs << "Loop: Starting the house-keeping process with "
+      nxinfo << "Loop: Starting the house-keeping process with "
               << "image storage size " << control -> ImageCacheDiskLimit
-              << ".\n" << logofs_flush;
-      #endif
+              << ".\n" << std::flush;
 
       lastKeeper = NXTransKeeper(0, control -> ImageCacheDiskLimit,
                                      control -> RootPath);
 
       if (IsFailed(lastKeeper))
       {
-        #ifdef WARNING
-        *logofs << "Loop: WARNING! Can't start the NX keeper process.\n"
-                << logofs_flush;
-        #endif
+        nxwarn << "Loop: WARNING! Can't start the NX keeper process.\n"
+                << std::flush;
 
         SetNotRunning(lastKeeper);
       }
-      #ifdef TEST
       else
       {
-        *logofs << "Loop: Keeper started with pid '"
-                << lastKeeper << "'.\n" << logofs_flush;
+        nxinfo << "Loop: Keeper started with pid '"
+                << lastKeeper << "'.\n" << std::flush;
       }
-      #endif
     }
-    #ifdef TEST
     else
     {
-      *logofs << "Loop: Nothing to do for the keeper process "
+      nxinfo << "Loop: Nothing to do for the keeper process "
               << "with image cache not enabled.\n"
-              << logofs_flush;
+              << std::flush;
     }
-    #endif
   }
-  #ifdef TEST
   else
   {
-    *logofs << "Loop: Nothing to do with the keeper process "
-            << "already running.\n" << logofs_flush;
+    nxinfo << "Loop: Nothing to do with the keeper process "
+            << "already running.\n" << std::flush;
   }
-  #endif
 }
 
 void InstallSignals()
 {
-  #ifdef TEST
-  *logofs << "Loop: Installing signals in process with pid '"
-          << getpid() << "'.\n" << logofs_flush;
-  #endif
+  nxinfo << "Loop: Installing signals in process with pid '"
+          << getpid() << "'.\n" << std::flush;
 
   for (int i = 0; i < 32; i++)
   {
@@ -5782,10 +5384,8 @@ void InstallSignals()
 
 void RestoreSignals()
 {
-  #ifdef TEST
-  *logofs << "Loop: Restoring signals in process with pid '"
-          << getpid() << "'.\n" << logofs_flush;
-  #endif
+  nxinfo << "Loop: Restoring signals in process with pid '"
+          << getpid() << "'.\n" << std::flush;
 
   if (lastMasks.installed == 1)
   {
@@ -5828,11 +5428,9 @@ void DisableSignals()
     {
       if (CheckSignal(i) > 0)
       {
-        #ifdef DUMP
-        *logofs << "Loop: Disabling signal " << i << " '"
+        nxdbg << "Loop: Disabling signal " << i << " '"
                 << DumpSignal(i) << "' in process with pid '"
-                << getpid() << "'.\n" << logofs_flush;
-        #endif
+                << getpid() << "'.\n" << std::flush;
 
         sigaddset(&newMask, i);
       }
@@ -5842,24 +5440,20 @@ void DisableSignals()
 
     lastMasks.blocked++;
   }
-  #ifdef TEST
   else
   {
-    *logofs << "Loop: WARNING! Signals were already blocked in "
+    nxinfo << "Loop: WARNING! Signals were already blocked in "
             << "process with pid '" << getpid() << "'.\n"
-            << logofs_flush;
+            << std::flush;
   }
-  #endif
 }
 
 void EnableSignals()
 {
   if (lastMasks.blocked == 1)
   {
-    #ifdef TEST
-    *logofs << "Loop: Enabling signals in process with pid '"
-            << getpid() << "'.\n" << logofs_flush;
-    #endif
+    nxinfo << "Loop: Enabling signals in process with pid '"
+            << getpid() << "'.\n" << std::flush;
 
     sigprocmask(SIG_SETMASK, &lastMasks.saved, NULL);
 
@@ -5867,11 +5461,9 @@ void EnableSignals()
   }
   else
   {
-    #ifdef WARNING
-    *logofs << "Loop: WARNING! Signals were not blocked in "
+    nxwarn << "Loop: WARNING! Signals were not blocked in "
             << "process with pid '" << getpid() << "'.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     cerr << "Warning" << ": Signals were not blocked in "
          << "process with pid '" << getpid() << "'.\n";
@@ -5884,36 +5476,30 @@ void InstallSignal(int signal, int action)
   {
     if (action == NX_SIGNAL_FORWARD)
     {
-      #ifdef TEST
-      *logofs << "Loop: Forwarding handler for signal " << signal
+      nxinfo << "Loop: Forwarding handler for signal " << signal
               << " '" << DumpSignal(signal) << "' in process "
               << "with pid '" << getpid() << "'.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
 
       lastMasks.forward[signal] = 1;
 
       return;
     }
-    #ifdef TEST
     else
     {
-      *logofs << "Loop: Reinstalling handler for signal " << signal
+      nxinfo << "Loop: Reinstalling handler for signal " << signal
               << " '" << DumpSignal(signal) << "' in process "
               << "with pid '" << getpid() << "'.\n"
-              << logofs_flush;
+              << std::flush;
     }
-    #endif
   }
-  #ifdef TEST
   else
   {
-    *logofs << "Loop: Installing handler for signal " << signal
+    nxinfo << "Loop: Installing handler for signal " << signal
             << " '" << DumpSignal(signal) << "' in process "
             << "with pid '" << getpid() << "'.\n"
-            << logofs_flush;
+            << std::flush;
   }
-  #endif
 
   if (signal == SIGALRM && isTimestamp(lastTimer.start))
   {
@@ -5951,11 +5537,9 @@ void RestoreSignal(int signal)
 {
   if (lastMasks.enabled[signal] == 0)
   {
-    #ifdef WARNING
-    *logofs << "Loop: WARNING! Signal '" << DumpSignal(signal)
+    nxwarn << "Loop: WARNING! Signal '" << DumpSignal(signal)
             << " not installed in process with pid '"
-            << getpid() << "'.\n" << logofs_flush;
-    #endif
+            << getpid() << "'.\n" << std::flush;
 
     cerr << "Warning" << ": Signal '" << DumpSignal(signal)
          << " not installed in process with pid '"
@@ -5964,12 +5548,10 @@ void RestoreSignal(int signal)
     return;
   }
 
-  #ifdef TEST
-  *logofs << "Loop: Restoring handler for signal " << signal
+  nxinfo << "Loop: Restoring handler for signal " << signal
           << " '" << DumpSignal(signal) << "' in process "
           << "with pid '" << getpid() << "'.\n"
-          << logofs_flush;
-  #endif
+          << std::flush;
 
   if (signal == SIGALRM && isTimestamp(lastTimer.start))
   {
@@ -5989,29 +5571,25 @@ void HandleSignal(int signal)
     logofs = &cerr;
   }
 
-  #if defined(UNSAFE) && (defined(TEST) || defined(INFO))
 
   if (lastSignal != 0)
   {
-    *logofs << "Loop: WARNING! Last signal is '" << lastSignal
+    nxinfo << "Loop: WARNING! Last signal is '" << lastSignal
             << "', '" << DumpSignal(signal) << "' and not zero "
             << "in process with pid '" << getpid() << "'.\n"
-            << logofs_flush;
+            << std::flush;
   }
 
-  *logofs << "Loop: Signal '" << signal << "', '"
+  nxinfo << "Loop: Signal '" << signal << "', '"
           << DumpSignal(signal) << "' received in process "
-          << "with pid '" << getpid() << "'.\n" << logofs_flush;
+          << "with pid '" << getpid() << "'.\n" << std::flush;
 
-  #endif
 
   if (getpid() != lastProxy && signalHandler != NULL)
   {
-    #if defined(UNSAFE) && (defined(TEST) || defined(INFO))
-    *logofs << "Loop: Calling slave handler in process "
+    nxinfo << "Loop: Calling slave handler in process "
             << "with pid '" << getpid() << "'.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     if ((*signalHandler)(signal) == 0)
     {
@@ -6096,15 +5674,13 @@ void HandleSignal(int signal)
       // memory function if the daemon is not running.
       //
 
-      #ifdef TEST
-      *logofs << "Loop: WARNING! Received signal '12' in "
+      nxinfo << "Loop: WARNING! Received signal '12' in "
               << "process with pid '" << getpid() << "'.\n"
-              << logofs_flush;
+              << std::flush;
 
-      *logofs << "Loop: WARNING! Please check that the "
+      nxinfo << "Loop: WARNING! Please check that the "
               << "cygserver daemon is running.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
 
       break;
     }
@@ -6121,12 +5697,10 @@ void HandleSignal(int signal)
 
       if (getpid() == lastProxy)
       {
-        #if defined(UNSAFE) && defined(TEST)
-        *logofs << "Loop: Registering end of session request "
+        nxinfo << "Loop: Registering end of session request "
                 << "due to signal '" << signal << "', '"
                 << DumpSignal(signal) << "'.\n"
-                << logofs_flush;
-        #endif
+                << std::flush;
 
         lastSignal = signal;
       }
@@ -6146,22 +5720,18 @@ void HandleSignal(int signal)
     if (lastMasks.action[signal].sa_handler != NULL &&
             lastMasks.action[signal].sa_handler != HandleSignal)
     {
-      #if defined(UNSAFE) && defined(TEST)
-      *logofs << "Loop: Forwarding signal '" << signal << "', '"
+      nxinfo << "Loop: Forwarding signal '" << signal << "', '"
               << DumpSignal(signal) << "' to previous handler.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
 
       lastMasks.action[signal].sa_handler(signal);
     }
-    #ifdef WARNING
     else if (lastMasks.action[signal].sa_handler == NULL)
     {
-      *logofs << "Loop: WARNING! Parent requested to forward "
+      nxwarn << "Loop: WARNING! Parent requested to forward "
               << "signal '" << signal << "', '" << DumpSignal(signal)
-              << "' but didn't set a handler.\n" << logofs_flush;
+              << "' but didn't set a handler.\n" << std::flush;
     }
-    #endif
   }
 }
 
@@ -6175,10 +5745,8 @@ int HandleChildren()
 
   if (IsRunning(lastDialog) && HandleChild(lastDialog) == 1)
   {
-    #if defined(UNSAFE) && defined(TEST)
-    *logofs << "Loop: Resetting pid of last dialog process "
-            << "in handler.\n" << logofs_flush;
-    #endif
+    nxinfo << "Loop: Resetting pid of last dialog process "
+            << "in handler.\n" << std::flush;
 
     SetNotRunning(lastDialog);
 
@@ -6192,17 +5760,13 @@ int HandleChildren()
 
   if (IsRunning(lastWatchdog) && HandleChild(lastWatchdog) == 1)
   {
-    #if defined(UNSAFE) && defined(TEST)
-    *logofs << "Loop: Watchdog is gone. Setting the last "
-            << "signal to SIGHUP.\n" << logofs_flush;
-    #endif
+    nxinfo << "Loop: Watchdog is gone. Setting the last "
+            << "signal to SIGHUP.\n" << std::flush;
 
     lastSignal = SIGHUP;
 
-    #if defined(UNSAFE) && defined(TEST)
-    *logofs << "Loop: Resetting pid of last watchdog process "
-            << "in handler.\n" << logofs_flush;
-    #endif
+    nxinfo << "Loop: Resetting pid of last watchdog process "
+            << "in handler.\n" << std::flush;
 
     SetNotRunning(lastWatchdog);
 
@@ -6219,10 +5783,8 @@ int HandleChildren()
 
   if (IsRunning(lastKeeper) && HandleChild(lastKeeper) == 1)
   {
-    #if defined(UNSAFE) && defined(TEST)
-    *logofs << "Loop: Resetting pid of last house-keeping "
-            << "process in handler.\n" << logofs_flush;
-    #endif
+    nxinfo << "Loop: Resetting pid of last house-keeping "
+            << "process in handler.\n" << std::flush;
 
     SetNotRunning(lastKeeper);
 
@@ -6236,10 +5798,8 @@ int HandleChildren()
 
   if (IsRunning(lastChild))
   {
-    #if defined(UNSAFE) && defined(TEST)
-    *logofs << "Loop: Resetting pid of last child process "
-            << "in handler.\n" << logofs_flush;
-    #endif
+    nxinfo << "Loop: Resetting pid of last child process "
+            << "in handler.\n" << std::flush;
 
     SetNotRunning(lastChild);
 
@@ -6255,10 +5815,8 @@ int HandleChildren()
   // of our parent.
   //
 
-  #if defined(UNSAFE) && (defined(TEST) || defined(INFO))
-  *logofs << "Loop: Ignoring signal received for the "
-          << "unregistered child.\n" << logofs_flush;
-  #endif
+  nxinfo << "Loop: Ignoring signal received for the "
+          << "unregistered child.\n" << std::flush;
 
   return 0;
 }
@@ -6285,11 +5843,9 @@ int WaitChild(int child, const char* label, int force)
 
   for (;;)
   {
-    #if defined(TEST) || defined(INFO)
-    *logofs << "Loop: Waiting for the " << label
+    nxinfo << "Loop: Waiting for the " << label
             << " process '" << child << "' to die.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     pid = waitpid(child, &status, options);
 
@@ -6300,12 +5856,10 @@ int WaitChild(int child, const char* label, int force)
         return 0;
       }
 
-      #ifdef WARNING
-      *logofs << "Loop: WARNING! Ignoring signal while "
+      nxwarn << "Loop: WARNING! Ignoring signal while "
               << "waiting for the " << label << " process '"
               << child << "' to die.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
 
       continue;
     }
@@ -6324,11 +5878,9 @@ int CheckChild(int pid, int status)
   {
     if (WIFSTOPPED(status))
     {
-      #if defined(UNSAFE) && defined(TEST)
-      *logofs << "Loop: Child process '" << pid << "' was stopped "
+      nxinfo << "Loop: Child process '" << pid << "' was stopped "
               << "with signal " << (WSTOPSIG(status)) << ".\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
 
       return 0;
     }
@@ -6336,11 +5888,9 @@ int CheckChild(int pid, int status)
     {
       if (WIFEXITED(status))
       {
-        #if defined(UNSAFE) && defined(TEST)
-        *logofs << "Loop: Child process '" << pid << "' exited "
+        nxinfo << "Loop: Child process '" << pid << "' exited "
                 << "with status '" << (WEXITSTATUS(status))
-                << "'.\n" << logofs_flush;
-        #endif
+                << "'.\n" << std::flush;
 
         lastStatus = WEXITSTATUS(status);
       }
@@ -6348,26 +5898,22 @@ int CheckChild(int pid, int status)
       {
         if (CheckSignal(WTERMSIG(status)) != 1)
         {
-          #ifdef WARNING
-          *logofs << "Loop: WARNING! Child process '" << pid
+          nxwarn << "Loop: WARNING! Child process '" << pid
                   << "' died because of signal " << (WTERMSIG(status))
                   << ", '" << DumpSignal(WTERMSIG(status)) << "'.\n"
-                  << logofs_flush;
-          #endif
+                  << std::flush;
 
           cerr << "Warning" << ": Child process '" << pid
                << "' died because of signal " << (WTERMSIG(status))
                << ", '" << DumpSignal(WTERMSIG(status)) << "'.\n";
         }
-        #if defined(UNSAFE) && defined(TEST)
         else
         {
-          *logofs << "Loop: Child process '" << pid
+          nxinfo << "Loop: Child process '" << pid
                   << "' died because of signal " << (WTERMSIG(status))
                   << ", '" << DumpSignal(WTERMSIG(status)) << "'.\n"
-                  << logofs_flush;
+                  << std::flush;
         }
-        #endif
 
         lastStatus = 1;
       }
@@ -6379,11 +5925,9 @@ int CheckChild(int pid, int status)
   {
     if (EGET() != ECHILD)
     {
-      #ifdef PANIC
-      *logofs << "Loop: PANIC! Call to waitpid failed. "
+      nxfatal << "Loop: PANIC! Call to waitpid failed. "
               << "Error is " << EGET() << " '" << ESTR()
-              << "'.\n" << logofs_flush;
-      #endif
+              << "'.\n" << std::flush;
 
       cerr << "Error" << ": Call to waitpid failed. "
            << "Error is " << EGET() << " '" << ESTR()
@@ -6398,10 +5942,8 @@ int CheckChild(int pid, int status)
     // within the call.
     //
 
-    #ifdef TEST
-    *logofs << "Loop: No more children processes running.\n"
-            << logofs_flush;
-    #endif
+    nxinfo << "Loop: No more children processes running.\n"
+            << std::flush;
 
     return 1;
   }
@@ -6411,23 +5953,21 @@ int CheckChild(int pid, int status)
 
 void RegisterChild(int child)
 {
-  #if defined(TEST) || defined(INFO)
 
   if (IsNotRunning(lastChild))
   {
-    *logofs << "Loop: Registering child process '" << child
+    nxinfo << "Loop: Registering child process '" << child
             << "' in process with pid '" << getpid()
-            << "'.\n" << logofs_flush;
+            << "'.\n" << std::flush;
   }
   else
   {
-    *logofs << "Loop: WARNING! Overriding registered child '"
+    nxinfo << "Loop: WARNING! Overriding registered child '"
             << lastChild << "' with new child '" << child
             << "' in process with pid '" << getpid()
-            << "'.\n" << logofs_flush;
+            << "'.\n" << std::flush;
   }
 
-  #endif
 
   lastChild = child;
 }
@@ -6436,11 +5976,9 @@ int CheckParent(const char *name, const char *type, int parent)
 {
   if (parent != getppid() || parent == 1)
   {
-    #ifdef WARNING
-    *logofs << name << ": WARNING! Parent process appears "
+    nxwarn << name << ": WARNING! Parent process appears "
             << "to be dead. Exiting " << type << ".\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     cerr << "Warning" << ": Parent process appears "
          << "to be dead. Exiting " << type << ".\n";
@@ -6457,11 +5995,9 @@ void HandleTimer(int signal)
   {
     if (isTimestamp(lastTimer.start))
     {
-      #if defined(UNSAFE) && defined(TEST)
-      *logofs << "Loop: Timer expired at " << strMsTimestamp()
+      nxinfo << "Loop: Timer expired at " << strMsTimestamp()
               << " in process with pid '" << getpid() << "'.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
 
       if (proxy != NULL)
       {
@@ -6472,11 +6008,9 @@ void HandleTimer(int signal)
     }
     else
     {
-      #ifdef PANIC
-      *logofs << "Loop: PANIC! Inconsistent timer state "
+      nxfatal << "Loop: PANIC! Inconsistent timer state "
               << " in process with pid '" << getpid() << "'.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
 
       cerr << "Error" << ": Inconsistent timer state "
            << " in process with pid '" << getpid() << "'.\n";
@@ -6484,12 +6018,10 @@ void HandleTimer(int signal)
   }
   else
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Inconsistent signal '"
+    nxfatal << "Loop: PANIC! Inconsistent signal '"
             << signal << "', '" << DumpSignal(signal)
             << "' received in process with pid '"
-            << getpid() << "'.\n" << logofs_flush;
-    #endif
+            << getpid() << "'.\n" << std::flush;
 
     cerr << "Error" << ": Inconsistent signal '"
          << signal << "', '" << DumpSignal(signal)
@@ -6508,11 +6040,9 @@ void SetTimer(int value)
 
     if (diffTs > lastTimer.next.tv_usec / 1000 * 2)
     {
-      #ifdef WARNING
-      *logofs << "Loop: WARNING! Timer missed to expire at "
+      nxwarn << "Loop: WARNING! Timer missed to expire at "
               << strMsTimestamp() << " in process with pid '"
-              << getpid() << "'.\n" << logofs_flush;
-      #endif
+              << getpid() << "'.\n" << std::flush;
 
       cerr << "Warning" << ": Timer missed to expire at "
            << strMsTimestamp() << " in process with pid '"
@@ -6522,11 +6052,9 @@ void SetTimer(int value)
     }
     else
     {
-      #ifdef TEST
-      *logofs << "Loop: Timer already running at "
+      nxinfo << "Loop: Timer already running at "
               << strMsTimestamp() << " in process with pid '"
-              << getpid() << "'.\n" << logofs_flush;
-      #endif
+              << getpid() << "'.\n" << std::flush;
 
       return;
     }
@@ -6559,21 +6087,17 @@ void SetTimer(int value)
   timer.it_interval = lastTimer.next;
   timer.it_value    = lastTimer.next;
 
-  #ifdef TEST
-  *logofs << "Loop: Timer set to " << lastTimer.next.tv_sec
+  nxinfo << "Loop: Timer set to " << lastTimer.next.tv_sec
           << " S and " << lastTimer.next.tv_usec / 1000
           << " Ms at " << strMsTimestamp() << " in process "
           << "with pid '" << getpid() << "'.\n"
-          << logofs_flush;
-  #endif
+          << std::flush;
 
   if (setitimer(ITIMER_REAL, &timer, &lastTimer.value) < 0)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Call to setitimer failed. "
+    nxfatal << "Loop: PANIC! Call to setitimer failed. "
             << "Error is " << EGET() << " '" << ESTR()
-            << "'.\n" << logofs_flush;
-    #endif
+            << "'.\n" << std::flush;
 
     cerr << "Error" << ": Call to setitimer failed. "
          << "Error is " << EGET() << " '" << ESTR()
@@ -6591,20 +6115,16 @@ void ResetTimer()
 {
   if (isTimestamp(lastTimer.start) == 0)
   {
-    #if defined(UNSAFE) && defined(TEST)
-    *logofs << "Loop: Timer not running in process "
+    nxinfo << "Loop: Timer not running in process "
             << "with pid '" << getpid() << "'.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     return;
   }
 
-  #if defined(UNSAFE) && defined(TEST)
-  *logofs << "Loop: Timer reset at " << strMsTimestamp()
+  nxinfo << "Loop: Timer reset at " << strMsTimestamp()
           << " in process with pid '" << getpid()
-          << "'.\n" << logofs_flush;
-  #endif
+          << "'.\n" << std::flush;
 
   //
   // Restore the old signal mask and timer.
@@ -6612,11 +6132,9 @@ void ResetTimer()
 
   if (setitimer(ITIMER_REAL, &lastTimer.value, NULL) < 0)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Call to setitimer failed. "
+    nxfatal << "Loop: PANIC! Call to setitimer failed. "
             << "Error is " << EGET() << " '" << ESTR()
-            << "'.\n" << logofs_flush;
-    #endif
+            << "'.\n" << std::flush;
 
     cerr << "Error" << ": Call to setitimer failed. "
          << "Error is " << EGET() << " '" << ESTR()
@@ -6625,11 +6143,9 @@ void ResetTimer()
 
   if (sigaction(SIGALRM, &lastTimer.action, NULL) < 0)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Call to sigaction failed. "
+    nxfatal << "Loop: PANIC! Call to sigaction failed. "
             << "Error is " << EGET() << " '" << ESTR()
-            << "'.\n" << logofs_flush;
-    #endif
+            << "'.\n" << std::flush;
 
     cerr << "Error" << ": Call to sigaction failed. "
          << "Error is " << EGET() << " '" << ESTR()
@@ -6671,10 +6187,8 @@ int WaitForRemote(ChannelEndPoint &socketAddress)
 
       if (acceptIPAddr == 0)
       {
-        #ifdef PANIC
-        *logofs << "Loop: PANIC! Cannot accept connections from unknown host '"
-                << acceptHost << "'.\n" << logofs_flush;
-        #endif
+        nxfatal << "Loop: PANIC! Cannot accept connections from unknown host '"
+                << acceptHost << "'.\n" << std::flush;
 
         cerr << "Error" << ": Cannot accept connections from unknown host '"
              << acceptHost << "'.\n";
@@ -6708,11 +6222,9 @@ int WaitForRemote(ChannelEndPoint &socketAddress)
   pFD = ListenConnection(socketAddress, "NX");
 
   socketAddress.getSpec(&socketUri);
-  #ifdef TEST
-  *logofs << "Loop: Waiting for connection from "
+  nxinfo << "Loop: Waiting for connection from "
           << hostLabel  << " on socket '" << socketUri
-          << "'.\n" << logofs_flush;
-  #endif
+          << "'.\n" << std::flush;
   cerr << "Info" << ": Waiting for connection from "
        << hostLabel << " on socket '" << socketUri
        << "'.\n";
@@ -6758,11 +6270,9 @@ int WaitForRemote(ChannelEndPoint &socketAddress)
         continue;
       }
  
-      #ifdef PANIC
-      *logofs << "Loop: PANIC! Call to select failed. Error is "
+      nxfatal << "Loop: PANIC! Call to select failed. Error is "
               << EGET() << " '" << ESTR() << "'.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
 
       cerr << "Error" << ": Call to select failed. Error is "
            << EGET() << " '" << ESTR() << "'.\n";
@@ -6786,11 +6296,9 @@ int WaitForRemote(ChannelEndPoint &socketAddress)
       }
       if (newFD == -1)
       {
-        #ifdef PANIC
-        *logofs << "Loop: PANIC! Call to accept failed. Error is "
+        nxfatal << "Loop: PANIC! Call to accept failed. Error is "
                 << EGET() << " '" << ESTR() << "'.\n"
-                << logofs_flush;
-        #endif
+                << std::flush;
 
         cerr << "Error" << ": Call to accept failed. Error is "
              << EGET() << " '" << ESTR() << "'.\n";
@@ -6803,11 +6311,9 @@ int WaitForRemote(ChannelEndPoint &socketAddress)
 
         char * unixPath = NULL;
         socketAddress.getUnixPath(&unixPath);
-        #ifdef TEST
-        *logofs << "Loop: Accepted connection from this host on Unix file socket '"
+        nxinfo << "Loop: Accepted connection from this host on Unix file socket '"
                 << unixPath << "'.\n"
-                << logofs_flush;
-        #endif
+                << std::flush;
 
         cerr << "Info" << ": Accepted connection from this host on Unix file socket '"
              << unixPath << "'.\n";
@@ -6823,14 +6329,11 @@ int WaitForRemote(ChannelEndPoint &socketAddress)
         if (*acceptHost == '\0' || (int) newAddrINET.sin_addr.s_addr == acceptIPAddr)
         {
 
-          #ifdef TEST
 
           unsigned int connectedPort = ntohs(newAddrINET.sin_port);
-
-          *logofs << "Loop: Accepted connection from '" << connectedHost
+          nxinfo << "Loop: Accepted connection from '" << connectedHost
                   << "' with port '" << connectedPort << "'.\n"
-                  << logofs_flush;
-          #endif
+                  << std::flush;
 
           cerr << "Info" << ": Accepted connection from '"
                << connectedHost << "'.\n";
@@ -6839,10 +6342,8 @@ int WaitForRemote(ChannelEndPoint &socketAddress)
         }
         else
         {
-          #ifdef PANIC
-          *logofs << "Loop: WARNING! Refusing connection from '" << connectedHost
-                  << "' on port '" << socketAddress.getTCPPort() << "'.\n" << logofs_flush;
-          #endif
+          nxfatal << "Loop: WARNING! Refusing connection from '" << connectedHost
+                  << "' on port '" << socketAddress.getTCPPort() << "'.\n" << std::flush;
 
           cerr << "Warning" << ": Refusing connection from '"
                << connectedHost << "'.\n";
@@ -6864,33 +6365,27 @@ int WaitForRemote(ChannelEndPoint &socketAddress)
     {
       if (socketAddress.isUnixSocket())
       {
-        #ifdef PANIC
-        *logofs << "Loop: PANIC! Connection via Unix file socket from this host "
+        nxfatal << "Loop: PANIC! Connection via Unix file socket from this host "
                 << "could not be established.\n"
-                << logofs_flush;
-        #endif
+                << std::flush;
 
         cerr << "Error" << ": Connection via Unix file socket from this host "
              << "could not be established.\n";
       }
       else if (*acceptHost == '\0')
       {
-        #ifdef PANIC
-        *logofs << "Loop: PANIC! Connection with remote host "
+        nxfatal << "Loop: PANIC! Connection with remote host "
                 << "could not be established.\n"
-                << logofs_flush;
-        #endif
+                << std::flush;
 
         cerr << "Error" << ": Connection with remote host "
              << "could not be established.\n";
       }
       else
       {
-        #ifdef PANIC
-        *logofs << "Loop: PANIC! Connection with remote host '"
+        nxfatal << "Loop: PANIC! Connection with remote host '"
                 << acceptHost << "' could not be established.\n"
-                << logofs_flush;
-        #endif
+                << std::flush;
 
         cerr << "Error" << ": Connection with remote host '"
              << acceptHost << "' could not be established.\n";
@@ -6920,10 +6415,8 @@ int PrepareProxyConnectionTCP(char** hostName, long int* portNum, int* timeout, 
 
   if (!proxyFileDescriptor)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Implementation error (PrepareProxyConnectionTCP). "
-            << "'proxyFileDescriptor' must not be a NULL pointer.\n" << logofs_flush;
-    #endif
+    nxfatal << "Loop: PANIC! Implementation error (PrepareProxyConnectionTCP). "
+            << "'proxyFileDescriptor' must not be a NULL pointer.\n" << std::flush;
 
     cerr << "Error" << ":  Implementation error (PrepareProxyConnectionTCP). "
             << "'proxyFileDescriptor' must not be a NULL pointer.\n";
@@ -6933,10 +6426,8 @@ int PrepareProxyConnectionTCP(char** hostName, long int* portNum, int* timeout, 
 
   if (!reason)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Implementation error (PrepareProxyConnectionTCP). "
-            << "'reason' must not be a NULL pointer.\n" << logofs_flush;
-    #endif
+    nxfatal << "Loop: PANIC! Implementation error (PrepareProxyConnectionTCP). "
+            << "'reason' must not be a NULL pointer.\n" << std::flush;
 
     cerr << "Error" << ":  Implementation error (PrepareProxyConnectionTCP). "
             << "'reason' must not be a NULL pointer.\n";
@@ -6947,21 +6438,17 @@ int PrepareProxyConnectionTCP(char** hostName, long int* portNum, int* timeout, 
   int remoteIPAddr = GetHostAddress(*hostName);
   if (remoteIPAddr == 0)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Unknown remote host '"
-            << *hostName << "'.\n" << logofs_flush;
-    #endif
+    nxfatal << "Loop: PANIC! Unknown remote host '"
+            << *hostName << "'.\n" << std::flush;
         cerr << "Error" << ": Unknown remote host '"
          << *hostName << "'.\n";
 
     HandleCleanup();
   }
 
-  #ifdef TEST
-  *logofs << "Loop: Connecting to remote host '" 
+  nxinfo << "Loop: Connecting to remote host '" 
           << *hostName << ":" << *portNum << "'.\n"
-          << logofs_flush;
-  #endif
+          << std::flush;
 
   cerr << "Info" << ": Connecting to remote host '"
        << *hostName << ":" << *portNum << "'.\n"
@@ -6980,11 +6467,9 @@ int PrepareProxyConnectionTCP(char** hostName, long int* portNum, int* timeout, 
 
   if (*proxyFileDescriptor == -1)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Call to socket failed. "
+    nxfatal << "Loop: PANIC! Call to socket failed. "
             << "Error is " << *reason << " '" << ESTR()
-            << "'.\n" << logofs_flush;
-    #endif
+            << "'.\n" << std::flush;
 
     cerr << "Error" << ": Call to socket failed. "
          << "Error is " << *reason << " '" << ESTR()
@@ -7022,10 +6507,8 @@ int PrepareProxyConnectionUnix(char** path, int* timeout, int* proxyFileDescript
 
   if (!proxyFileDescriptor)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Implementation error (PrepareProxyConnectionUnix). "
-            << "proxyFileDescriptor must not be a NULL pointer.\n" << logofs_flush;
-    #endif
+    nxfatal << "Loop: PANIC! Implementation error (PrepareProxyConnectionUnix). "
+            << "proxyFileDescriptor must not be a NULL pointer.\n" << std::flush;
 
     cerr << "Error" << ":  Implementation error (PrepareProxyConnectionUnix). "
             << "proxyFileDescriptor must not be a NULL pointer.\n";
@@ -7035,10 +6518,8 @@ int PrepareProxyConnectionUnix(char** path, int* timeout, int* proxyFileDescript
 
   if (!reason)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Implementation error (PrepareProxyConnectionUnix). "
-            << "'reason' must not be a NULL pointer.\n" << logofs_flush;
-    #endif
+    nxfatal << "Loop: PANIC! Implementation error (PrepareProxyConnectionUnix). "
+            << "'reason' must not be a NULL pointer.\n" << std::flush;
 
     cerr << "Error" << ":  Implementation error (PrepareProxyConnectionUnix). "
             << "'reason' must not be a NULL pointer.\n";
@@ -7060,11 +6541,9 @@ int PrepareProxyConnectionUnix(char** path, int* timeout, int* proxyFileDescript
 
   if (*proxyFileDescriptor == -1)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Call to socket failed. "
+    nxfatal << "Loop: PANIC! Call to socket failed. "
             << "Error is " << *reason << " '" << ESTR()
-            << "'.\n" << logofs_flush;
-    #endif
+            << "'.\n" << std::flush;
 
     cerr << "Error" << ": Call to socket failed. "
          << "Error is " << *reason << " '" << ESTR()
@@ -7131,12 +6610,10 @@ int ConnectToRemote(ChannelEndPoint &socketAddress)
   for (;;)
   {
 
-    #ifdef DEBUG
-    *logofs << "Loop: Timer set to " << connectTimeout / 1000
+    nxdbg << "Loop: Timer set to " << connectTimeout / 1000
             << " S " << "with retry set to " << retryConnect
             << " in process with pid '" << getpid()
-            << "'.\n" << logofs_flush;
-    #endif
+            << "'.\n" << std::flush;
 
     if (socketAddress.getUnixPath(&unixPath))
       result = PrepareProxyConnectionUnix(&unixPath, &connectTimeout, &pFD, &reason);
@@ -7157,12 +6634,10 @@ int ConnectToRemote(ChannelEndPoint &socketAddress)
 
         if (socketAddress.isUnixSocket())
         {
-          #ifdef PANIC
-          *logofs << "Loop: PANIC! Connection to Unix file socket '"
+          nxfatal << "Loop: PANIC! Connection to Unix file socket '"
                   << unixPath << "' failed. Error is "
                   << EGET() << " '" << ESTR() << "'.\n"
-                  << logofs_flush;
-          #endif
+                  << std::flush;
 
           cerr << "Error" << ": Connection to Unix file socket '"
                   << unixPath << "' failed. Error is "
@@ -7171,12 +6646,10 @@ int ConnectToRemote(ChannelEndPoint &socketAddress)
         else
         {
 
-          #ifdef PANIC
-          *logofs << "Loop: PANIC! Connection to '" << hostName
+          nxfatal << "Loop: PANIC! Connection to '" << hostName
                   << ":" << portNum << "' failed. Error is "
                   << EGET() << " '" << ESTR() << "'.\n"
-                  << logofs_flush;
-          #endif
+                  << std::flush;
 
           cerr << "Error" << ": Connection to '" << hostName
                << ":" << portNum << "' failed. Error is "
@@ -7186,11 +6659,9 @@ int ConnectToRemote(ChannelEndPoint &socketAddress)
       }
       else
       {
-        #ifdef TEST
-        *logofs << "Loop: Sleeping " << retryTimeout
+        nxinfo << "Loop: Sleeping " << retryTimeout
                 << " ms before retrying.\n"
-                << logofs_flush;
-        #endif
+                << std::flush;
 
         usleep(retryTimeout * 1000);
 
@@ -7246,32 +6717,28 @@ int ConnectToRemote(ChannelEndPoint &socketAddress)
           lastRetry = getTimestamp();
         }
       }
-      #ifdef TEST
       {
-        *logofs << "Loop: Not showing the dialog with "
+        nxinfo << "Loop: Not showing the dialog with "
                 << (diffTimestamp(lastRetry, getTimestamp()) / 1000)
-                << " seconds elapsed.\n" << logofs_flush;
+                << " seconds elapsed.\n" << std::flush;
       }
-      #endif
 
       ESET(reason);
 
-      #ifdef TEST
       if (unixPath && unixPath[0] != '\0' )
       {
-        *logofs << "Loop: Connection to Unix socket file '"
+        nxinfo << "Loop: Connection to Unix socket file '"
                 << unixPath << "' failed with error '"
                 << ESTR() << "'. Retrying.\n"
-                << logofs_flush;
+                << std::flush;
       }
       else
       {
-        *logofs << "Loop: Connection to '" << hostName
+        nxinfo << "Loop: Connection to '" << hostName
                 << ":" << portNum << "' failed with error '"
                 << ESTR() << "'. Retrying.\n"
-                << logofs_flush;
+                << std::flush;
       }
-      #endif
     }
     else
     {
@@ -7451,20 +6918,16 @@ int SendProxyOptions(int fd)
     }
   }
 
-  #ifdef TEST
-  *logofs << "Loop: Sending remote options '"
-          << options << "'.\n" << logofs_flush;
-  #endif
+  nxinfo << "Loop: Sending remote options '"
+          << options << "'.\n" << std::flush;
 
   return WriteLocalData(fd, options, strlen(options));
 }
 
 int ReadProxyVersion(int fd)
 {
-  #ifdef TEST
-  *logofs << "Loop: Going to read the remote proxy version "
-          << "from FD#" << fd << ".\n" << logofs_flush;
-  #endif
+  nxinfo << "Loop: Going to read the remote proxy version "
+          << "from FD#" << fd << ".\n" << std::flush;
 
   //
   // Read until the first space in string.
@@ -7490,18 +6953,14 @@ int ReadProxyVersion(int fd)
     return result;
   }
 
-  #ifdef TEST
-  *logofs << "Loop: Received remote version string '"
+  nxinfo << "Loop: Received remote version string '"
           << options << "' from FD#" << fd << ".\n"
-          << logofs_flush;
-  #endif
+          << std::flush;
 
   if (strncmp(options, "NXPROXY-", strlen("NXPROXY-")) != 0)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Parse error in remote options string '"
-            << options << "'.\n" << logofs_flush;
-    #endif
+    nxfatal << "Loop: PANIC! Parse error in remote options string '"
+            << options << "'.\n" << std::flush;
 
     cerr << "Error" << ": Parse error in remote options string '"
          << options << "'.\n";
@@ -7528,11 +6987,9 @@ int ReadProxyVersion(int fd)
               control -> RemoteVersionPatch == 2 &&
                   major != -1 && minor != -1 && patch != -1)
   {
-    #ifdef TEST
-    *logofs << "Loop: Read trailing remote version '" << major
+    nxinfo << "Loop: Read trailing remote version '" << major
             << "." << minor << "." << patch << "'.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     control -> CompatVersionMajor = major;
     control -> CompatVersionMinor = minor;
@@ -7585,10 +7042,8 @@ int ReadProxyVersion(int fd)
 
 int ReadProxyOptions(int fd)
 {
-  #ifdef TEST
-  *logofs << "Loop: Going to read the remote proxy options "
-          << "from FD#" << fd << ".\n" << logofs_flush;
-  #endif
+  nxinfo << "Loop: Going to read the remote proxy options "
+          << "from FD#" << fd << ".\n" << std::flush;
 
   char options[DEFAULT_REMOTE_OPTIONS_LENGTH];
 
@@ -7599,11 +7054,9 @@ int ReadProxyOptions(int fd)
     return result;
   }
 
-  #ifdef TEST
-  *logofs << "Loop: Received remote options string '"
+  nxinfo << "Loop: Received remote options string '"
           << options << "' from FD#" << fd << ".\n"
-          << logofs_flush;
-  #endif
+          << std::flush;
 
   //
   // Get the remote options, delimited by a space character.
@@ -7613,11 +7066,9 @@ int ReadProxyOptions(int fd)
 
   if (ParseRemoteOptions(options) < 0)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Couldn't negotiate a valid "
+    nxfatal << "Loop: PANIC! Couldn't negotiate a valid "
             << "session with remote NX proxy.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     cerr << "Error" << ": Couldn't negotiate a valid "
          << "session with remote NX proxy.\n";
@@ -7630,10 +7081,8 @@ int ReadProxyOptions(int fd)
 
 int SendProxyCaches(int fd)
 {
-  #ifdef TEST
-  *logofs << "Loop: Synchronizing local and remote caches.\n"
-          << logofs_flush;
-  #endif
+  nxinfo << "Loop: Synchronizing local and remote caches.\n"
+          << std::flush;
 
   if (control -> ProxyMode == proxy_client)
   {
@@ -7642,10 +7091,8 @@ int SendProxyCaches(int fd)
     // session type and send it to the remote.
     //
 
-    #ifdef TEST
-    *logofs << "Loop: Going to send the list of local caches.\n"
-            << logofs_flush;
-    #endif
+    nxinfo << "Loop: Going to send the list of local caches.\n"
+            << std::flush;
 
     SetCaches();
 
@@ -7656,20 +7103,16 @@ int SendProxyCaches(int fd)
     if (control -> LocalDeltaCompression == 0 ||
             control -> PersistentCacheEnableLoad == 0)
     {
-      #ifdef TEST
-      *logofs << "Loop: Writing an empty list to FD#" << fd
-              << ".\n" << logofs_flush;
-      #endif
+      nxinfo << "Loop: Writing an empty list to FD#" << fd
+              << ".\n" << std::flush;
 
       return WriteLocalData(fd, "cachelist=none ", strlen("cachelist=none "));
     }
 
     int count = 0;
 
-    #ifdef TEST
-    *logofs << "Loop: Looking for cache files in directory '"
-            << control -> PersistentCachePath << "'.\n" << logofs_flush;
-    #endif
+    nxinfo << "Loop: Looking for cache files in directory '"
+            << control -> PersistentCachePath << "'.\n" << std::flush;
 
     DIR *cacheDir = opendir(control -> PersistentCachePath);
 
@@ -7695,11 +7138,9 @@ int SendProxyCaches(int fd)
             WriteLocalData(fd, ",", strlen(","));
           }
 
-          #ifdef TEST
-          *logofs << "Loop: Writing entry '" << control -> PersistentCachePath
+          nxinfo << "Loop: Writing entry '" << control -> PersistentCachePath
                   << "/" << dirEntry -> d_name << "' to FD#" << fd
-                  << ".\n" << logofs_flush;
-          #endif
+                  << ".\n" << std::flush;
 
           //
           // Write cache file name to the socket,
@@ -7717,10 +7158,8 @@ int SendProxyCaches(int fd)
 
     if (count == 0)
     {
-      #ifdef TEST
-      *logofs << "Loop: Writing an empty list to FD#" << fd
-              << ".\n" << logofs_flush;
-      #endif
+      nxinfo << "Loop: Writing an empty list to FD#" << fd
+              << ".\n" << std::flush;
 
       return WriteLocalData(fd, "cachelist=none ", strlen("cachelist=none "));
     }
@@ -7735,20 +7174,16 @@ int SendProxyCaches(int fd)
     // Send back the selected cache name.
     //
 
-    #ifdef TEST
-    *logofs << "Loop: Going to send the selected cache.\n"
-            << logofs_flush;
-    #endif
+    nxinfo << "Loop: Going to send the selected cache.\n"
+            << std::flush;
 
     char buffer[DEFAULT_STRING_LENGTH];
 
     if (control -> PersistentCacheName != NULL)
     {
-      #ifdef TEST
-      *logofs << "Loop: Name of selected cache file is '"
+      nxinfo << "Loop: Name of selected cache file is '"
               << control -> PersistentCacheName << "'.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
 
       sprintf(buffer, "cachefile=%s%s ",
                   *(control -> PersistentCacheName) == 'C' ? "S-" : "C-",
@@ -7756,19 +7191,15 @@ int SendProxyCaches(int fd)
     }
     else
     {
-      #ifdef TEST
-      *logofs << "Loop: No valid cache file was selected.\n"
-              << logofs_flush;
-      #endif
+      nxinfo << "Loop: No valid cache file was selected.\n"
+              << std::flush;
 
       sprintf(buffer, "cachefile=none ");
     }
 
-    #ifdef TEST
-    *logofs << "Loop: Sending string '" << buffer
+    nxinfo << "Loop: Sending string '" << buffer
             << "' as selected cache file.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     return WriteLocalData(fd, buffer, strlen(buffer));
   }
@@ -7778,10 +7209,8 @@ int ReadProxyCaches(int fd)
 {
   if (control -> ProxyMode == proxy_client)
   {
-    #ifdef TEST
-    *logofs << "Loop: Going to receive the selected proxy cache.\n"
-            << logofs_flush;
-    #endif
+    nxinfo << "Loop: Going to receive the selected proxy cache.\n"
+            << std::flush;
 
     //
     // We will read the name of cache plus the stop character.
@@ -7804,11 +7233,9 @@ int ReadProxyCaches(int fd)
 
     if (cacheName == NULL)
     {
-      #ifdef PANIC
-      *logofs << "Loop: PANIC! Invalid cache file option '"
+      nxfatal << "Loop: PANIC! Invalid cache file option '"
               << buffer << "' provided by remote proxy.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
 
       cerr << "Error" << ": Invalid cache file option '"
            << buffer << "' provided by remote proxy.\n";
@@ -7827,19 +7254,15 @@ int ReadProxyCaches(int fd)
 
     if (strncasecmp(cacheName, "none", strlen("none")) == 0)
     {
-      #ifdef TEST
-      *logofs << "Loop: No cache file selected by remote proxy.\n"
-              << logofs_flush;
-      #endif
+      nxinfo << "Loop: No cache file selected by remote proxy.\n"
+              << std::flush;
     }
     else if (strlen(cacheName) != MD5_LENGTH * 2 + 3 ||
                  *(cacheName + MD5_LENGTH * 2 + 2) != ' ')
     {
-      #ifdef PANIC
-      *logofs << "Loop: PANIC! Invalid cache file name '"
+      nxfatal << "Loop: PANIC! Invalid cache file name '"
               << cacheName << "' provided by remote proxy.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
 
       cerr << "Error" << ": Invalid cache file name '"
            << cacheName << "' provided by remote proxy.\n";
@@ -7858,18 +7281,14 @@ int ReadProxyCaches(int fd)
 
       strcpy(control -> PersistentCacheName, cacheName);
 
-      #ifdef TEST
-      *logofs << "Loop: Cache file '" << control -> PersistentCacheName
-              << "' selected by remote proxy.\n" << logofs_flush;
-      #endif
+      nxinfo << "Loop: Cache file '" << control -> PersistentCacheName
+              << "' selected by remote proxy.\n" << std::flush;
     }
   }
   else
   {
-    #ifdef TEST
-    *logofs << "Loop: Going to receive the list of remote caches.\n"
-            << logofs_flush;
-    #endif
+    nxinfo << "Loop: Going to receive the list of remote caches.\n"
+            << std::flush;
 
     SetCaches();
 
@@ -7887,10 +7306,8 @@ int ReadProxyCaches(int fd)
       return result;
     }
 
-    #ifdef TEST
-    *logofs << "Loop: Read list of caches from remote side as '"
-            << buffer << "'.\n" << logofs_flush;
-    #endif
+    nxinfo << "Loop: Read list of caches from remote side as '"
+            << buffer << "'.\n" << std::flush;
 
     //
     // Prepare the buffer. What we want is a list
@@ -7902,10 +7319,8 @@ int ReadProxyCaches(int fd)
 
     if (strncasecmp(buffer, "cachelist=", strlen("cachelist=")) != 0)
     {
-      #ifdef PANIC
-      *logofs << "Loop: Wrong format for list of cache files "
-              << "read from FD#" << fd << ".\n" << logofs_flush;
-      #endif
+      nxfatal << "Loop: Wrong format for list of cache files "
+              << "read from FD#" << fd << ".\n" << std::flush;
 
       cerr << "Error" << ": Wrong format for list of cache files.\n";
 
@@ -7928,10 +7343,8 @@ int ReadProxyCaches(int fd)
 
 int ReadForwarderVersion(int fd)
 {
-  #ifdef TEST
-  *logofs << "Loop: Going to negotiate the forwarder version.\n"
-          << logofs_flush;
-  #endif
+  nxinfo << "Loop: Going to negotiate the forwarder version.\n"
+          << std::flush;
 
   //
   // Check if we actually expect the session cookie.
@@ -7939,10 +7352,8 @@ int ReadForwarderVersion(int fd)
 
   if (*authCookie == '\0')
   {
-    #ifdef TEST
-    *logofs << "Loop: No authentication cookie required "
-            << "from FD#" << fd << ".\n" << logofs_flush;
-    #endif
+    nxinfo << "Loop: No authentication cookie required "
+            << "from FD#" << fd << ".\n" << std::flush;
 
     return 1;
   }
@@ -7956,17 +7367,13 @@ int ReadForwarderVersion(int fd)
     return result;
   }
 
-  #ifdef TEST
-  *logofs << "Loop: Received forwarder version string '" << options
-          << "' from FD#" << fd << ".\n" << logofs_flush;
-  #endif
+  nxinfo << "Loop: Received forwarder version string '" << options
+          << "' from FD#" << fd << ".\n" << std::flush;
 
   if (strncmp(options, "NXSSH-", strlen("NXSSH-")) != 0)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Parse error in forwarder options string '"
-            << options << "'.\n" << logofs_flush;
-    #endif
+    nxfatal << "Loop: PANIC! Parse error in forwarder options string '"
+            << options << "'.\n" << std::flush;
 
     cerr << "Error" << ": Parse error in forwarder options string '"
          << options << "'.\n";
@@ -7981,11 +7388,9 @@ int ReadForwarderVersion(int fd)
   sscanf(options, "NXSSH-%i.%i.%i", &(control -> RemoteVersionMajor),
              &(control -> RemoteVersionMinor), &(control -> RemoteVersionPatch));
 
-  #ifdef TEST
-  *logofs << "Loop: Read forwarder version '" << control -> RemoteVersionMajor
+  nxinfo << "Loop: Read forwarder version '" << control -> RemoteVersionMajor
           << "." << control -> RemoteVersionMinor << "." << control -> RemoteVersionPatch
-          << "'.\n" << logofs_flush;
-  #endif
+          << "'.\n" << std::flush;
 
   return 1;
 }
@@ -7998,10 +7403,8 @@ int ReadForwarderOptions(int fd)
 
   if (*authCookie == '\0')
   {
-    #ifdef TEST
-    *logofs << "Loop: No authentication cookie required "
-            << "from FD#" << fd << ".\n" << logofs_flush;
-    #endif
+    nxinfo << "Loop: No authentication cookie required "
+            << "from FD#" << fd << ".\n" << std::flush;
 
     return 1;
   }
@@ -8015,19 +7418,15 @@ int ReadForwarderOptions(int fd)
     return result;
   }
 
-  #ifdef TEST
-  *logofs << "Loop: Received forwarder options string '"
+  nxinfo << "Loop: Received forwarder options string '"
           << options << "' from FD#" << fd << ".\n"
-          << logofs_flush;
-  #endif
+          << std::flush;
 
   if (ParseForwarderOptions(options) < 0)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Couldn't negotiate a valid "
+    nxfatal << "Loop: PANIC! Couldn't negotiate a valid "
             << "cookie with the NX forwarder.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     cerr << "Error" << ": Couldn't negotiate a valid "
          << "cookie with the NX forwarder.\n";
@@ -8040,17 +7439,13 @@ int ReadForwarderOptions(int fd)
 
 int ReadRemoteData(int fd, char *buffer, int size, char stop)
 {
-  #ifdef TEST
-  *logofs << "Loop: Going to read remote data from FD#"
-          << fd << ".\n" << logofs_flush;
-  #endif
+  nxinfo << "Loop: Going to read remote data from FD#"
+          << fd << ".\n" << std::flush;
 
   if (size >= MAXIMUM_REMOTE_OPTIONS_LENGTH)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Maximum remote options buffer "
-            << "limit exceeded.\n" << logofs_flush;
-    #endif
+    nxfatal << "Loop: PANIC! Maximum remote options buffer "
+            << "limit exceeded.\n" << std::flush;
 
     cerr << "Error" << ": Maximum remote options buffer "
          << "limit exceeded.\n";
@@ -8070,10 +7465,8 @@ int ReadRemoteData(int fd, char *buffer, int size, char stop)
       {
         if (EGET() == EAGAIN)
         {
-          #ifdef TEST
-          *logofs << "Loop: Reading data from FD#" << fd
-                  << " would block.\n" << logofs_flush;
-          #endif
+          nxinfo << "Loop: Reading data from FD#" << fd
+                  << " would block.\n" << std::flush;
 
           return 0;
         }
@@ -8088,10 +7481,8 @@ int ReadRemoteData(int fd, char *buffer, int size, char stop)
         }
       }
 
-      #ifdef PANIC
-      *logofs << "Loop: PANIC! The remote NX proxy closed "
-              << "the connection.\n" << logofs_flush;
-      #endif
+      nxfatal << "Loop: PANIC! The remote NX proxy closed "
+              << "the connection.\n" << std::flush;
 
       cerr << "Error" << ": The remote NX proxy closed "
            << "the connection.\n";
@@ -8100,10 +7491,8 @@ int ReadRemoteData(int fd, char *buffer, int size, char stop)
     }
     else if (*(remoteData + remotePosition) == stop)
     {
-      #ifdef TEST
-      *logofs << "Loop: Read stop character from FD#"
-              << fd << ".\n" << logofs_flush;
-      #endif
+      nxinfo << "Loop: Read stop character from FD#"
+              << fd << ".\n" << std::flush;
 
       remotePosition++;
 
@@ -8116,11 +7505,9 @@ int ReadRemoteData(int fd, char *buffer, int size, char stop)
 
       memcpy(buffer, remoteData, remotePosition + 1);
 
-      #ifdef TEST
-      *logofs << "Loop: Remote string '" << remoteData
+      nxinfo << "Loop: Remote string '" << remoteData
               << "' read from FD#" << fd << ".\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
 
       int t = remotePosition;
 
@@ -8137,12 +7524,10 @@ int ReadRemoteData(int fd, char *buffer, int size, char stop)
 
       if (isgraph(*(remoteData + remotePosition)) == 0)
       {
-        #ifdef WARNING
-        *logofs << "Loop: WARNING! Non printable character decimal '"
+        nxwarn << "Loop: WARNING! Non printable character decimal '"
                 << (unsigned int) *(remoteData + remotePosition)
                 << "' received in remote data from FD#"
-                << fd << ".\n" << logofs_flush;
-        #endif
+                << fd << ".\n" << std::flush;
 
         cerr << "Warning" << ": Non printable character decimal '"
                 << (unsigned int) *(remoteData + remotePosition)
@@ -8152,11 +7537,9 @@ int ReadRemoteData(int fd, char *buffer, int size, char stop)
         *(remoteData + remotePosition) = ' ';
       }
 
-      #ifdef DEBUG
-      *logofs << "Loop: Read a further character "
+      nxdbg << "Loop: Read a further character "
               << "from FD#" << fd << ".\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
 
       remotePosition++;
     }
@@ -8164,12 +7547,10 @@ int ReadRemoteData(int fd, char *buffer, int size, char stop)
 
   *(remoteData + remotePosition) = '\0';
 
-  #ifdef PANIC
-  *logofs << "Loop: PANIC! Stop character missing "
+  nxfatal << "Loop: PANIC! Stop character missing "
           << "from FD#" << fd << " after " << remotePosition 
           << " characters read in string '" << remoteData
-          << "'.\n" << logofs_flush;
-  #endif
+          << "'.\n" << std::flush;
 
   cerr << "Error" << ": Stop character missing "
        << "from FD#" << fd << " after " << remotePosition 
@@ -8234,10 +7615,8 @@ int WriteLocalData(int fd, const char *buffer, int size)
 
     ret = select(fd+1, NULL, &writeSet, NULL, &selectTs);
 
-    #ifdef DEBUG
-    *logofs << "Loop: WriteLocalData: select() returned with a code of " << ret << " and remaining timeout of "
-            << selectTs.tv_sec << " sec, " << selectTs.tv_usec << "usec\n" << logofs_flush;
-    #endif
+    nxdbg << "Loop: WriteLocalData: select() returned with a code of " << ret << " and remaining timeout of "
+            << selectTs.tv_sec << " sec, " << selectTs.tv_usec << "usec\n" << std::flush;
 
     if ( ret < 0 )
     {
@@ -8265,10 +7644,8 @@ int WriteLocalData(int fd, const char *buffer, int size)
         continue;
       }
 
-      #ifdef TEST
-      *logofs << "Loop: Error writing data to FD#"
-              << fd << ".\n" << logofs_flush;
-      #endif
+      nxinfo << "Loop: Error writing data to FD#"
+              << fd << ".\n" << std::flush;
 
       return -1;
     }
@@ -8311,42 +7688,34 @@ int ParseEnvironmentOptions(const char *env, int force)
 
   if (setjmp(context) == 1)
   {
-    #ifdef TEST
-    *logofs << "Loop: Out of the long jump while parsing "
+    nxinfo << "Loop: Out of the long jump while parsing "
             << "the environment options.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     return -1;
   }
 
   if (force == 0 && parsedOptions == 1)
   {
-    #ifdef TEST
-    *logofs << "Loop: Skipping a further parse of environment "
+    nxinfo << "Loop: Skipping a further parse of environment "
             << "options string '" << (env != NULL ? env : "")
-            << "'.\n" << logofs_flush;
-    #endif
+            << "'.\n" << std::flush;
 
     return 1;
   }
 
   if (env == NULL || *env == '\0')
   {
-    #ifdef TEST
-    *logofs << "Loop: Nothing to do with empty environment "
+    nxinfo << "Loop: Nothing to do with empty environment "
             << "options string '" << (env != NULL ? env : "")
-            << "'.\n" << logofs_flush;
-    #endif
+            << "'.\n" << std::flush;
 
     return 0;
   }
 
-  #ifdef TEST
-  *logofs << "Loop: Going to parse the environment options "
+  nxinfo << "Loop: Going to parse the environment options "
           << "string '" << env << "'.\n"
-          << logofs_flush;
-  #endif
+          << std::flush;
 
   parsedOptions = 1;
 
@@ -8365,11 +7734,9 @@ int ParseEnvironmentOptions(const char *env, int force)
 
   if (strlen(env) >= DEFAULT_DISPLAY_OPTIONS_LENGTH)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Environment options string '" << env
+    nxfatal << "Loop: PANIC! Environment options string '" << env
             << "' exceeds length of " << DEFAULT_DISPLAY_OPTIONS_LENGTH
-            << " characters.\n" << logofs_flush;
-    #endif
+            << " characters.\n" << std::flush;
 
     cerr << "Error" << ": Environment options string '" << env
          << "' exceeds length of " << DEFAULT_DISPLAY_OPTIONS_LENGTH
@@ -8391,10 +7758,8 @@ int ParseEnvironmentOptions(const char *env, int force)
   if (strncasecmp(opts, "nx/nx,:", 7) == 0 ||
           strncasecmp(opts, "nx,:", 4) == 0)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Parse error in options string '"
-            << opts << "' at 'nx,:'.\n" << logofs_flush;
-    #endif
+    nxfatal << "Loop: PANIC! Parse error in options string '"
+            << opts << "' at 'nx,:'.\n" << std::flush;
 
     cerr << "Error" << ": Parse error in options string '"
          << opts << "' at 'nx,:'.\n";
@@ -8415,10 +7780,8 @@ int ParseEnvironmentOptions(const char *env, int force)
   }
   else if (force == 0)
   {
-    #ifdef TEST
-    *logofs << "Loop: Ignoring host X server display string '"
-            << opts << "'.\n" << logofs_flush;
-    #endif
+    nxinfo << "Loop: Ignoring host X server display string '"
+            << opts << "'.\n" << std::flush;
 
     return 0;
   }
@@ -8448,10 +7811,8 @@ int ParseEnvironmentOptions(const char *env, int force)
 
     if (*check == '\0' || isdigit(*check) == 0)
     {
-      #ifdef PANIC
-      *logofs << "Loop: PANIC! Can't identify NX port in string '"
-              << value << "'.\n" << logofs_flush;
-      #endif
+      nxfatal << "Loop: PANIC! Can't identify NX port in string '"
+              << value << "'.\n" << std::flush;
 
       cerr << "Error" << ": Can't identify NX port in string '"
            << value << "'.\n";
@@ -8474,10 +7835,8 @@ int ParseEnvironmentOptions(const char *env, int force)
     // the port on the command line.
     //
 
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Can't identify NX port in string '"
-            << opts << "'.\n" << logofs_flush;
-    #endif
+    nxfatal << "Loop: PANIC! Can't identify NX port in string '"
+            << opts << "'.\n" << std::flush;
 
     cerr << "Error" << ": Can't identify NX port in string '"
          << opts << "'.\n";
@@ -8485,10 +7844,8 @@ int ParseEnvironmentOptions(const char *env, int force)
     return -1;
   }
 
-  #ifdef TEST
-  *logofs << "Loop: Parsing options string '"
-          << nextOpts << "'.\n" << logofs_flush;
-  #endif
+  nxinfo << "Loop: Parsing options string '"
+          << nextOpts << "'.\n" << std::flush;
 
   //
   // Now all the other optional parameters.
@@ -8526,10 +7883,8 @@ int ParseEnvironmentOptions(const char *env, int force)
       }
       else if (ParseLinkOption(value) < 0)
       {
-        #ifdef PANIC
-        *logofs << "Loop: PANIC! Can't identify 'link' option in string '"
-                << value << "'.\n" << logofs_flush;
-        #endif
+        nxfatal << "Loop: PANIC! Can't identify 'link' option in string '"
+                << value << "'.\n" << std::flush;
 
         cerr << "Error" << ": Can't identify 'link' option in string '"
              << value << "'.\n";
@@ -8545,10 +7900,8 @@ int ParseEnvironmentOptions(const char *env, int force)
       }
       else if (ParseBitrateOption(value) < 0)
       {
-        #ifdef PANIC
-        *logofs << "Loop: PANIC! Can't identify option 'limit' in string '"
-                << value << "'.\n" << logofs_flush;
-        #endif
+        nxfatal << "Loop: PANIC! Can't identify option 'limit' in string '"
+                << value << "'.\n" << std::flush;
 
         cerr << "Error" << ": Can't identify option 'limit' in string '"
              << value << "'.\n";
@@ -8584,13 +7937,11 @@ int ParseEnvironmentOptions(const char *env, int force)
       char *socketUri = NULL;
       if (connectSocket.getSpec(&socketUri))
       {
-        #ifdef PANIC
-        *logofs << "Loop: PANIC! Can't handle 'listen' and 'connect' parameters "
-                << "at the same time.\n" << logofs_flush;
+        nxfatal << "Loop: PANIC! Can't handle 'listen' and 'connect' parameters "
+                << "at the same time.\n" << std::flush;
 
-        *logofs << "Loop: PANIC! Refusing 'listen' parameter with 'connect' being '"
-                << socketUri << "'.\n" << logofs_flush;
-        #endif
+        nxfatal << "Loop: PANIC! Refusing 'listen' parameter with 'connect' being '"
+                << socketUri << "'.\n" << std::flush;
 
         cerr << "Error" << ": Can't handle 'listen' and 'connect' parameters "
              << "at the same time.\n";
@@ -8614,13 +7965,11 @@ int ParseEnvironmentOptions(const char *env, int force)
       char *socketUri = NULL;
       if (connectSocket.getSpec(&socketUri))
       {
-        #ifdef PANIC
-        *logofs << "Loop: PANIC! Can't handle 'accept' and 'connect' parameters "
-                << "at the same time.\n" << logofs_flush;
+        nxfatal << "Loop: PANIC! Can't handle 'accept' and 'connect' parameters "
+                << "at the same time.\n" << std::flush;
 
-        *logofs << "Loop: PANIC! Refusing 'accept' parameter with 'connect' being '"
-                << socketUri << "'.\n" << logofs_flush;
-        #endif
+        nxfatal << "Loop: PANIC! Refusing 'accept' parameter with 'connect' being '"
+                << socketUri << "'.\n" << std::flush;
 
         cerr << "Error" << ": Can't handle 'accept' and 'connect' parameters "
              << "at the same time.\n";
@@ -8638,13 +7987,11 @@ int ParseEnvironmentOptions(const char *env, int force)
     {
       if (*acceptHost != '\0')
       {
-        #ifdef PANIC
-        *logofs << "Loop: PANIC! Can't handle 'connect' and 'accept' parameters "
-                << "at the same time.\n" << logofs_flush;
+        nxfatal << "Loop: PANIC! Can't handle 'connect' and 'accept' parameters "
+                << "at the same time.\n" << std::flush;
 
-        *logofs << "Loop: PANIC! Refusing 'connect' parameter with 'accept' being '"
-                << acceptHost << "'.\n" << logofs_flush;
-        #endif
+        nxfatal << "Loop: PANIC! Refusing 'connect' parameter with 'accept' being '"
+                << acceptHost << "'.\n" << std::flush;
 
         cerr << "Error" << ": Can't handle 'connect' and 'accept' parameters "
              << "at the same time.\n";
@@ -8791,10 +8138,8 @@ int ParseEnvironmentOptions(const char *env, int force)
       }
       else if (ParseCacheOption(value) < 0)
       {
-        #ifdef PANIC
-        *logofs << "Loop: PANIC! Can't identify cache size for string '"
-                << value << "'.\n" << logofs_flush;
-        #endif
+        nxfatal << "Loop: PANIC! Can't identify cache size for string '"
+                << value << "'.\n" << std::flush;
 
         cerr << "Error" << ": Can't identify cache size for string '"
              << value << "'.\n";
@@ -8810,10 +8155,8 @@ int ParseEnvironmentOptions(const char *env, int force)
       }
       else if (ParseImagesOption(value) < 0)
       {
-        #ifdef PANIC
-        *logofs << "Loop: PANIC! Can't identify images cache size for string '"
-                << value << "'.\n" << logofs_flush;
-        #endif
+        nxfatal << "Loop: PANIC! Can't identify images cache size for string '"
+                << value << "'.\n" << std::flush;
 
         cerr << "Error" << ": Can't identify images cache size for string '"
              << value << "'.\n";
@@ -8838,11 +8181,9 @@ int ParseEnvironmentOptions(const char *env, int force)
       }
       else if (ParseShmemOption(value) < 0)
       {
-        #ifdef PANIC
-        *logofs << "Loop: PANIC! Can't identify size of shared memory "
+        nxfatal << "Loop: PANIC! Can't identify size of shared memory "
                 << "segment in string '" << value << "'.\n"
-                << logofs_flush;
-        #endif
+                << std::flush;
 
         cerr << "Error" << ": Can't identify size of shared memory "
              << "segment in string '" << value << "'.\n";
@@ -8910,10 +8251,8 @@ int ParseEnvironmentOptions(const char *env, int force)
     }
     else if (strcasecmp(name, "sync") == 0)
     {
-      #ifdef WARNING
-      *logofs << "Loop: WARNING! No 'sync' channel in current version. "
-              << "Assuming 'cups' channel.\n" << logofs_flush;
-      #endif
+      nxwarn << "Loop: WARNING! No 'sync' channel in current version. "
+              << "Assuming 'cups' channel.\n" << std::flush;
 
       cerr << "Warning" << ": No 'sync' channel in current version. "
            << "Assuming 'cups' channel.\n";
@@ -8956,10 +8295,8 @@ int ParseEnvironmentOptions(const char *env, int force)
 
       if (timeout == 0)
       {
-        #ifdef TEST
-        *logofs << "Loop: Disabling timeout on broken "
-                << "proxy connection.\n" << logofs_flush;
-        #endif
+        nxinfo << "Loop: Disabling timeout on broken "
+                << "proxy connection.\n" << std::flush;
 
         control -> ProxyTimeout = 0;
       }
@@ -8974,10 +8311,8 @@ int ParseEnvironmentOptions(const char *env, int force)
 
       if (cleanup == 0)
       {
-        #ifdef TEST
-        *logofs << "Loop: Disabling grace timeout on "
-                << "proxy shutdown.\n" << logofs_flush;
-        #endif
+        nxinfo << "Loop: Disabling grace timeout on "
+                << "proxy shutdown.\n" << std::flush;
 
         control -> CleanupTimeout = 0;
       }
@@ -8994,10 +8329,8 @@ int ParseEnvironmentOptions(const char *env, int force)
       }
       else if (ParsePackOption(value) < 0)
       {
-        #ifdef PANIC
-        *logofs << "Loop: PANIC! Can't identify pack method for string '"
-                << value << "'.\n" << logofs_flush;
-        #endif
+        nxfatal << "Loop: PANIC! Can't identify pack method for string '"
+                << value << "'.\n" << std::flush;
 
         cerr << "Error" << ": Can't identify pack method for string '"
              << value << "'.\n";
@@ -9014,12 +8347,10 @@ int ParseEnvironmentOptions(const char *env, int force)
       if (control -> KillDaemonOnShutdownNumber <
               control -> KillDaemonOnShutdownLimit)
       {
-        #ifdef TEST
-        *logofs << "Loop: WARNING! Adding process with pid '"
+        nxinfo << "Loop: WARNING! Adding process with pid '"
                 << ValidateArg("local", name, value) << " to the "
                 << "daemons to kill at shutdown.\n"
-                << logofs_flush;
-        #endif
+                << std::flush;
 
         control -> KillDaemonOnShutdown[control ->
                        KillDaemonOnShutdownNumber] =
@@ -9029,10 +8360,8 @@ int ParseEnvironmentOptions(const char *env, int force)
       }
       else
       {
-        #ifdef WARNING
-        *logofs << "Loop: WARNING! Number of daemons to kill "
-                << "at shutdown exceeded.\n" << logofs_flush;
-        #endif
+        nxwarn << "Loop: WARNING! Number of daemons to kill "
+                << "at shutdown exceeded.\n" << std::flush;
 
         cerr << "Warning" << ": Number of daemons to kill "
              << "at shutdown exceeded.\n";
@@ -9068,11 +8397,9 @@ int ParseEnvironmentOptions(const char *env, int force)
                                              strcasecmp(name, "sleep") == 0 ||
                                                  strcasecmp(name, "tolerancechecks") == 0)
     {
-      #ifdef DEBUG
-      *logofs << "Loop: Ignoring agent option '" << name
+      nxdbg << "Loop: Ignoring agent option '" << name
               << "' with value '" << value << "'.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
     }
     else if (strcasecmp(name, "composite") == 0 ||
                  strcasecmp(name, "shmem") == 0 ||
@@ -9085,30 +8412,24 @@ int ParseEnvironmentOptions(const char *env, int force)
                                              strcasecmp(name, "clients") == 0 ||
                                                  strcasecmp(name, "xinerama") == 0)
     {
-      #ifdef DEBUG
-      *logofs << "Loop: Ignoring agent option '" << name
+      nxdbg << "Loop: Ignoring agent option '" << name
               << "' with value '" << value << "'.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
     }
     else if (strcasecmp(name, "defer") == 0 ||
                  strcasecmp(name, "tile") == 0 ||
                      strcasecmp(name, "menu") == 0 ||
                         strcasecmp(name, "state") == 0 )
     {
-      #ifdef DEBUG
-      *logofs << "Loop: Ignoring agent option '" << name
+      nxdbg << "Loop: Ignoring agent option '" << name
               << "' with value '" << value << "'.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
     }
     else
     {
-      #ifdef WARNING
-      *logofs << "Loop: WARNING! Ignoring unknown option '"
+      nxwarn << "Loop: WARNING! Ignoring unknown option '"
               << name << "' with value '" << value << "'.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
 
       cerr << "Warning" << ": Ignoring unknown option '"
            << name << "' with value '" << value << "'.\n";
@@ -9129,43 +8450,35 @@ int ParseEnvironmentOptions(const char *env, int force)
     SetAndValidateChannelEndPointArg("local", name, tcpHostAndPort, connectSocket);
   }
 
-  #ifdef TEST
-  *logofs << "Loop: Completed parsing of string '"
-          << env << "'.\n" << logofs_flush;
-  #endif
+  nxinfo << "Loop: Completed parsing of string '"
+          << env << "'.\n" << std::flush;
 
   if ((*fileOptions != '\0') && (strncmp(fileOptions, "/dev/", 5) != 0) && (strncmp(fileOptions, "/proc/", 6) != 0) && (strncmp(fileOptions, "/sys/", 5) != 0))
   {
     if (strcmp(fileOptions, optionsFileName) != 0)
     {
-      #ifdef TEST
-      *logofs << "Loop: Reading options from '" << fileOptions
-              << "'.\n" << logofs_flush;
-      #endif
+      nxinfo << "Loop: Reading options from '" << fileOptions
+              << "'.\n" << std::flush;
 
       if (ParseFileOptions(fileOptions) < 0)
       {
         return -1;
       }
     }
-    #ifdef WARNING
     else
     {
-      *logofs << "Loop: WARNING! Name of the options file "
+      nxwarn << "Loop: WARNING! Name of the options file "
               << "specified multiple times. Not parsing "
-              << "again.\n" << logofs_flush;
+              << "again.\n" << std::flush;
     }
-    #endif
 
     if (*optionsFileName == '\0')
     {
       strncpy(optionsFileName, value, DEFAULT_STRING_LENGTH - 1);
 
-      #ifdef TEST
-      *logofs << "Loop: Assuming name of options file '"
+      nxinfo << "Loop: Assuming name of options file '"
               << optionsFileName << "'.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
     }
   }
 
@@ -9205,11 +8518,9 @@ int ParseCommandLineOptions(int argc, const char **argv)
 
   if (setjmp(context) == 1)
   {
-    #ifdef TEST
-    *logofs << "Loop: Out of the long jump while parsing "
+    nxinfo << "Loop: Out of the long jump while parsing "
             << "the command line options.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     return -1;
   }
@@ -9225,18 +8536,14 @@ int ParseCommandLineOptions(int argc, const char **argv)
 
   if (parsedCommand == 1)
   {
-    #ifdef TEST
-    *logofs << "Loop: Skipping a further parse of command line options.\n"
-            << logofs_flush;
-    #endif
+    nxinfo << "Loop: Skipping a further parse of command line options.\n"
+            << std::flush;
 
     return 1;
   }
 
-  #ifdef TEST
-  *logofs << "Loop: Going to parse the command line options.\n"
-          << logofs_flush;
-  #endif
+  nxinfo << "Loop: Going to parse the command line options.\n"
+          << std::flush;
 
   parsedCommand = 1;
 
@@ -9244,17 +8551,15 @@ int ParseCommandLineOptions(int argc, const char **argv)
   // Print out arguments.
   //
 
-  #ifdef TEST
 
-  *logofs << "Loop: Argc is " << argc << ".\n" << logofs_flush;
+  nxinfo << "Loop: Argc is " << argc << ".\n" << std::flush;
 
   for (int argi = 0; argi < argc; argi++)
-  {
-    *logofs << "Loop: Argv[" << argi << "] is " << argv[argi]
-            << ".\n" << logofs_flush;
+  {    
+    nxinfo << "Loop: Argv[" << argi << "] is " << argv[argi]
+           << ".\n" << std::flush;
   }
 
-  #endif
 
   //
   // Shall use getopt here.
@@ -9282,19 +8587,15 @@ int ParseCommandLineOptions(int argc, const char **argv)
 
           if (WE_SET_PROXY_MODE == 0)
           {
-            #ifdef TEST
-            *logofs << "Loop: Setting local proxy mode to proxy_client.\n"
-                    << logofs_flush;
-            #endif
+            nxinfo << "Loop: Setting local proxy mode to proxy_client.\n"
+                    << std::flush;
 
             control -> ProxyMode = proxy_client;
           }
           else if (control -> ProxyMode != proxy_client)
           {
-            #ifdef PANIC
-            *logofs << "Loop: PANIC! Can't redefine local proxy to "
-                    << "client mode.\n" << logofs_flush;
-            #endif
+            nxfatal << "Loop: PANIC! Can't redefine local proxy to "
+                    << "client mode.\n" << std::flush;
 
             cerr << "Error" << ": Can't redefine local proxy to "
                  << "client mode.\n";
@@ -9312,19 +8613,15 @@ int ParseCommandLineOptions(int argc, const char **argv)
 
           if (WE_SET_PROXY_MODE == 0)
           {
-            #ifdef TEST
-            *logofs << "Loop: Setting local proxy mode to proxy_server.\n"
-                    << logofs_flush;
-            #endif
+            nxinfo << "Loop: Setting local proxy mode to proxy_server.\n"
+                    << std::flush;
 
             control -> ProxyMode = proxy_server;
           }
           else if (control -> ProxyMode != proxy_server)
           {
-            #ifdef PANIC
-            *logofs << "Loop: PANIC! Can't redefine local proxy to "
-                    << "server mode.\n" << logofs_flush;
-            #endif
+            nxfatal << "Loop: PANIC! Can't redefine local proxy to "
+                    << "server mode.\n" << std::flush;
 
             cerr << "Error" << ": Can't redefine local proxy to "
                  << "server mode.\n";
@@ -9548,20 +8845,16 @@ int ParseFileOptions(const char *file)
     strcpy(fileName, file);
   }
 
-  #ifdef TEST
-  *logofs << "Loop: Going to read options from file '"
-          << fileName << "'.\n" << logofs_flush;
-  #endif
+  nxinfo << "Loop: Going to read options from file '"
+          << fileName << "'.\n" << std::flush;
 
   FILE *filePtr = fopen(fileName, "r");
 
   if (filePtr == NULL)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Can't open options file '" << fileName
+    nxfatal << "Loop: PANIC! Can't open options file '" << fileName
             << "'. Error is " << EGET() << " '" << ESTR() << "'.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     cerr << "Error" << ": Can't open options file '" << fileName
          << "'. Error is " << EGET() << " '" << ESTR() << "'.\n";
@@ -9581,11 +8874,9 @@ int ParseFileOptions(const char *file)
 
   if (fgets(options, DEFAULT_DISPLAY_OPTIONS_LENGTH, filePtr) == NULL)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Can't read options from file '" << fileName
+    nxfatal << "Loop: PANIC! Can't read options from file '" << fileName
             << "'. Error is " << EGET() << " '" << ESTR() << "'.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     cerr << "Error" << ": Can't read options from file '" << fileName
          << "'. Error is " << EGET() << " '" << ESTR() << "'.\n";
@@ -9616,10 +8907,8 @@ int ParseFileOptions(const char *file)
     next++;
   }
 
-  #ifdef TEST
-  *logofs << "Loop: Read options '" << options << "' from file '"
-          << fileName << "'.\n" << logofs_flush;
-  #endif
+  nxinfo << "Loop: Read options '" << options << "' from file '"
+          << fileName << "'.\n" << std::flush;
 
   if (ParseEnvironmentOptions(options, 1) < 0)
   {
@@ -9640,11 +8929,9 @@ int ParseFileOptions(const char *file)
 
 int ParseRemoteOptions(char *opts)
 {
-  #ifdef TEST
-  *logofs << "Loop: Going to parse the remote options "
+  nxinfo << "Loop: Going to parse the remote options "
           << "string '" << opts << "'.\n"
-          << logofs_flush;
-  #endif
+          << std::flush;
 
   char *name;
   char *value;
@@ -9689,11 +8976,9 @@ int ParseRemoteOptions(char *opts)
     {
       if (WE_PROVIDE_CREDENTIALS)
       {
-        #ifdef WARNING
-        *logofs << "Loop: WARNING! Ignoring remote option 'cookie' "
+        nxwarn << "Loop: WARNING! Ignoring remote option 'cookie' "
                 << "with value '" << value << "' when initiating "
-                << "connection.\n" << logofs_flush;
-        #endif
+                << "connection.\n" << std::flush;
 
         cerr << "Warning" << ": Ignoring remote option 'cookie' "
              << "with value '" << value << "' when initiating "
@@ -9701,11 +8986,9 @@ int ParseRemoteOptions(char *opts)
       }
       else if (strncasecmp(authCookie, value, strlen(authCookie)) != 0)
       {
-        #ifdef PANIC
-        *logofs << "Loop: PANIC! Authentication cookie '" << value
+        nxfatal << "Loop: PANIC! Authentication cookie '" << value
                 << "' doesn't match '" << authCookie << "'.\n"
-                << logofs_flush;
-        #endif
+                << std::flush;
 
         cerr << "Error" << ": Authentication cookie '" << value
              << "' doesn't match '" << authCookie << "'.\n";
@@ -9725,11 +9008,9 @@ int ParseRemoteOptions(char *opts)
       {
         if (*linkSpeedName != '\0' && strcasecmp(linkSpeedName, value) != 0)
         {
-          #ifdef WARNING
-          *logofs << "Loop: WARNING! Overriding option 'link' "
+          nxwarn << "Loop: WARNING! Overriding option 'link' "
                   << "with new value '" << value << "'.\n"
-                  << logofs_flush;
-          #endif
+                  << std::flush;
 
           cerr << "Warning" << ": Overriding option 'link' "
                << "with new value '" << value << "'.\n";
@@ -9737,11 +9018,9 @@ int ParseRemoteOptions(char *opts)
 
         if (ParseLinkOption(value) < 0)
         {
-          #ifdef PANIC
-          *logofs << "Loop: PANIC! Can't identify remote 'link' "
+          nxfatal << "Loop: PANIC! Can't identify remote 'link' "
                   << "option in string '" << value << "'.\n"
-                  << logofs_flush;
-          #endif
+                  << std::flush;
 
           cerr << "Error" << ": Can't identify remote 'link' "
                << "option in string '" << value << "'.\n";
@@ -9762,11 +9041,9 @@ int ParseRemoteOptions(char *opts)
       {
         if (*packMethodName != '\0' && strcasecmp(packMethodName, value) != 0)
         {
-          #ifdef WARNING
-          *logofs << "Loop: WARNING! Overriding option 'pack' "
+          nxwarn << "Loop: WARNING! Overriding option 'pack' "
                   << "with remote value '" << value << "'.\n"
-                  << logofs_flush;
-          #endif
+                  << std::flush;
 
           cerr << "Warning" << ": Overriding option 'pack' "
                << "with remote value '" << value << "'.\n";
@@ -9774,11 +9051,9 @@ int ParseRemoteOptions(char *opts)
 
         if (ParsePackOption(value) < 0)
         {
-          #ifdef PANIC
-          *logofs << "Loop: PANIC! Invalid pack option '"
+          nxfatal << "Loop: PANIC! Invalid pack option '"
                   << value << "' requested by remote.\n"
-                  << logofs_flush;
-          #endif
+                  << std::flush;
 
           cerr << "Error" << ": Invalid pack option '"
                << value << "' requested by remote.\n";
@@ -9806,11 +9081,9 @@ int ParseRemoteOptions(char *opts)
 
         if (ParseCacheOption(value) < 0)
         {
-          #ifdef PANIC
-          *logofs << "Loop: PANIC! Can't identify remote 'cache' "
+          nxfatal << "Loop: PANIC! Can't identify remote 'cache' "
                   << "option in string '" << value << "'.\n"
-                  << logofs_flush;
-          #endif
+                  << std::flush;
 
           cerr << "Error" << ": Can't identify remote 'cache' "
                << "option in string '" << value << "'.\n";
@@ -9837,11 +9110,9 @@ int ParseRemoteOptions(char *opts)
 
         if (ParseImagesOption(value) < 0)
         {
-          #ifdef PANIC
-          *logofs << "Loop: PANIC! Can't identify remote 'images' "
+          nxfatal << "Loop: PANIC! Can't identify remote 'images' "
                   << "option in string '" << value << "'.\n"
-                  << logofs_flush;
-          #endif
+                  << std::flush;
 
           cerr << "Error" << ": Can't identify remote 'images' "
                << "option in string '" << value << "'.\n";
@@ -9863,11 +9134,9 @@ int ParseRemoteOptions(char *opts)
         if (*bitrateLimitName != '\0' &&
                 strcasecmp(bitrateLimitName, value) != 0)
         {
-          #ifdef WARNING
-          *logofs << "Loop: WARNING! Overriding option 'limit' "
+          nxwarn << "Loop: WARNING! Overriding option 'limit' "
                   << "with new value '" << value << "'.\n"
-                  << logofs_flush;
-          #endif
+                  << std::flush;
 
           cerr << "Warning" << ": Overriding option 'limit' "
                << "with new value '" << value << "'.\n";
@@ -9875,11 +9144,9 @@ int ParseRemoteOptions(char *opts)
 
         if (ParseBitrateOption(value) < 0)
         {
-          #ifdef PANIC
-          *logofs << "Loop: PANIC! Can't identify 'limit' "
+          nxfatal << "Loop: PANIC! Can't identify 'limit' "
                   << "option in string '" << value << "'.\n"
-                  << logofs_flush;
-          #endif
+                  << std::flush;
 
           cerr << "Error" << ": Can't identify 'limit' "
                << "option in string '" << value << "'.\n";
@@ -9953,11 +9220,9 @@ int ParseRemoteOptions(char *opts)
       }
       else if (ParseShmemOption(value) < 0)
       {
-        #ifdef PANIC
-        *logofs << "Loop: PANIC! Can't identify size of shared memory "
+        nxfatal << "Loop: PANIC! Can't identify size of shared memory "
                 << "segment in string '" << value << "'.\n"
-               << logofs_flush;
-        #endif
+               << std::flush;
 
         cerr << "Error" << ": Can't identify size of shared memory "
              << "segment in string '" << value << "'.\n";
@@ -10087,19 +9352,15 @@ int ParseRemoteOptions(char *opts)
       // versions.
       //
 
-      #ifdef DEBUG
-      *logofs << "Loop: Ignoring obsolete remote option '"
+      nxdbg << "Loop: Ignoring obsolete remote option '"
               << name << "' with value '" << value
-              << "'.\n" << logofs_flush;
-      #endif
+              << "'.\n" << std::flush;
     }
     else
     {
-      #ifdef WARNING
-      *logofs << "Loop: WARNING! Ignoring unknown remote option '"
+      nxwarn << "Loop: WARNING! Ignoring unknown remote option '"
               << name << "' with value '" << value << "'.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
 
       cerr << "Warning" << ": Ignoring unknown remote option '"
            << name << "' with value '" << value << "'.\n";
@@ -10188,10 +9449,8 @@ int ParseRemoteOptions(char *opts)
 
   if (*missing != '\0')
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! The remote peer didn't specify the option '"
-            << missing << "'.\n" << logofs_flush;
-    #endif
+    nxfatal << "Loop: PANIC! The remote peer didn't specify the option '"
+            << missing << "'.\n" << std::flush;
 
     cerr << "Error" << ": The remote peer didn't specify the option '"
          << missing << "'.\n";
@@ -10209,11 +9468,9 @@ int ParseRemoteOptions(char *opts)
 
 int ParseForwarderOptions(char *opts)
 {
-  #ifdef TEST
-  *logofs << "Loop: Going to parse the forwarder options "
+  nxinfo << "Loop: Going to parse the forwarder options "
           << "string '" << opts << "'.\n"
-          << logofs_flush;
-  #endif
+          << std::flush;
 
   char *name;
   char *value;
@@ -10244,11 +9501,9 @@ int ParseForwarderOptions(char *opts)
     {
       if (strncasecmp(authCookie, value, strlen(authCookie)) != 0)
       {
-        #ifdef PANIC
-        *logofs << "Loop: PANIC! The NX forwarder cookie '" << value
+        nxfatal << "Loop: PANIC! The NX forwarder cookie '" << value
                 << "' doesn't match '" << authCookie << "'.\n"
-                << logofs_flush;
-        #endif
+                << std::flush;
 
         cerr << "Error" << ": The NX forwarder cookie '" << value
              << "' doesn't match '" << authCookie << "'.\n";
@@ -10260,11 +9515,9 @@ int ParseForwarderOptions(char *opts)
     }
     else
     {
-      #ifdef WARNING
-      *logofs << "Loop: WARNING! Ignoring unknown forwarder option '"
+      nxwarn << "Loop: WARNING! Ignoring unknown forwarder option '"
               << name << "' with value '" << value << "'.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
 
       cerr << "Warning" << ": Ignoring unknown forwarder option '"
            << name << "' with value '" << value << "'.\n";
@@ -10276,10 +9529,8 @@ int ParseForwarderOptions(char *opts)
 
   if (hasCookie == 0)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! The NX forwarder didn't provide "
-            << "the authentication cookie.\n" << logofs_flush;
-    #endif
+    nxfatal << "Loop: PANIC! The NX forwarder didn't provide "
+            << "the authentication cookie.\n" << std::flush;
 
     cerr << "Error" << ": The NX forwarder didn't provide "
          << "the authentication cookie.\n";
@@ -10298,10 +9549,8 @@ int SetCore()
 
   if (getrlimit(RLIMIT_CORE, &rlim))
   {
-    #ifdef TEST
-    *logofs << "Loop: Cannot read RLIMIT_CORE. Error is '"
-            << ESTR() << "'.\n" << logofs_flush;
-    #endif
+    nxinfo << "Cannot read RLIMIT_CORE. Error is '"
+            << ESTR() << "'.\n" << std::flush;
 
     return -1;
   }
@@ -10312,19 +9561,15 @@ int SetCore()
 
     if (setrlimit(RLIMIT_CORE, &rlim))
     {
-      #ifdef TEST
-      *logofs << "Loop: Cannot set RLIMIT_CORE. Error is '"
-              << ESTR() << "'.\n" << logofs_flush;
-      #endif
+      nxinfo << "Loop: Cannot read RLIMIT_CORE. Error is '"
+              << ESTR() << "'.\n" << std::flush;
 
       return -2;
     }
   }
 
-  #ifdef TEST
-  *logofs << "Loop: RLIMIT_CORE is "<< rlim.rlim_max
-          << ".\n" << logofs_flush;
-  #endif
+  nxinfo << "Loop: Set RLIMIT_CORE to "<< rlim.rlim_max
+          << ".\n" << std::flush;
 
   #endif // #ifdef COREDUMPS
 
@@ -10336,11 +9581,9 @@ char *GetLastCache(char *listBuffer, const char *searchPath)
   if (listBuffer == NULL || searchPath == NULL ||
           strncmp(listBuffer, "cachelist=", strlen("cachelist=")) != 0)
   {
-    #ifdef TEST
-    *logofs << "Loop: Invalid parameters '" << listBuffer << "' and '"
+    nxinfo << "Loop: Invalid parameters '" << listBuffer << "' and '"
             << (searchPath != NULL ? searchPath : "")
-            << "'. Can't select any cache.\n" << logofs_flush;
-    #endif
+            << "'. Can't select any cache.\n" << std::flush;
 
     return NULL;
   }
@@ -10387,10 +9630,8 @@ char *GetLastCache(char *listBuffer, const char *searchPath)
   {
     if (strncmp(fileName, "none", strlen("none")) == 0)
     {
-      #ifdef TEST
-      *logofs << "Loop: No cache files seem to be available.\n"
-              << logofs_flush;
-      #endif
+      nxinfo << "Loop: No cache files seem to be available.\n"
+              << std::flush;
 
       delete [] selectedName;
 
@@ -10399,10 +9640,8 @@ char *GetLastCache(char *listBuffer, const char *searchPath)
     else if (strlen(fileName) != MD5_LENGTH * 2 + 2 ||
                  strncmp(fileName, remotePrefix, 2) != 0)
     {
-      #ifdef PANIC
-      *logofs << "Loop: PANIC! Bad cache file name '"
-               << fileName << "'.\n" << logofs_flush;
-      #endif
+      nxfatal << "Loop: PANIC! Bad cache file name '"
+               << fileName << "'.\n" << std::flush;
 
       cerr << "Error" << ": Bad cache file name '"
            << fileName << "'.\n";
@@ -10412,10 +9651,8 @@ char *GetLastCache(char *listBuffer, const char *searchPath)
       HandleCleanup();
     }
 
-    #ifdef TEST
-    *logofs << "Loop: Parsing remote cache name '"
-            << fileName << "'.\n" << logofs_flush;
-    #endif
+    nxinfo << "Loop: Parsing remote cache name '"
+            << fileName << "'.\n" << std::flush;
 
     //
     // Prefix, received as "S-", becomes
@@ -10430,10 +9667,8 @@ char *GetLastCache(char *listBuffer, const char *searchPath)
 
     if (stat(fullPath, &fileStat) == 0)
     {
-      #ifdef TEST
-      *logofs << "Loop: Found a matching cache '"
-              << fullPath << "'.\n" << logofs_flush;
-      #endif
+      nxinfo << "Loop: Found a matching cache '"
+              << std::string(fullPath) << "'.\n" << std::flush;
 
       if (fileStat.st_mtime >= selectedTime)
       {
@@ -10442,13 +9677,11 @@ char *GetLastCache(char *listBuffer, const char *searchPath)
         selectedTime = fileStat.st_mtime;
       }
     }
-    #ifdef TEST
     else
     {
-      *logofs << "Loop: Can't get stats of file '"
-              << fullPath << "'.\n" << logofs_flush;
+      nxinfo << "Loop: Can't get stats of file '"
+              << std::string(fullPath) << "'.\n" << std::flush;
     }
-    #endif
 
     fileName = strtok(NULL, ",");
   }
@@ -10478,19 +9711,15 @@ char *GetTempPath()
 
     if (tempEnv == NULL || *tempEnv == '\0')
     {
-      #ifdef TEST
-      *logofs << "Loop: WARNING! No environment for NX_TEMP.\n"
-              << logofs_flush;
-      #endif
+      nxinfo << "Loop: WARNING! No environment for NX_TEMP.\n"
+              << std::flush;
 
       tempEnv = getenv("TEMP");
 
       if (tempEnv == NULL || *tempEnv == '\0')
       {
-        #ifdef TEST
-        *logofs << "Loop: WARNING! No environment for TEMP.\n"
-                << logofs_flush;
-        #endif
+        nxinfo << "Loop: WARNING! No environment for TEMP.\n"
+                << std::flush;
 
         tempEnv = "/tmp";
       }
@@ -10498,11 +9727,9 @@ char *GetTempPath()
 
     if (strlen(tempEnv) > DEFAULT_STRING_LENGTH - 1)
     {
-      #ifdef PANIC
-      *logofs << "Loop: PANIC! Invalid value for the NX "
+      nxfatal << "Loop: PANIC! Invalid value for the NX "
               << "temporary directory '" << tempEnv
-              << "'.\n" << logofs_flush;
-      #endif
+              << "'.\n" << std::flush;
 
       cerr << "Error" << ": Invalid value for the NX "
            << "temporary directory '" << tempEnv
@@ -10513,20 +9740,16 @@ char *GetTempPath()
 
     strcpy(tempDir, tempEnv);
 
-    #ifdef TEST
-    *logofs << "Loop: Assuming temporary NX directory '"
-            << tempDir << "'.\n" << logofs_flush;
-    #endif
+    nxinfo << "Loop: Assuming temporary NX directory '"
+            << tempDir << "'.\n" << std::flush;
   }
 
   char *tempPath = new char[strlen(tempDir) + 1];
 
   if (tempPath == NULL)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Can't allocate memory "
-            << "for the temp path.\n" << logofs_flush;
-    #endif
+    nxfatal << "Loop: PANIC! Can't allocate memory "
+            << "for the temp path.\n" << std::flush;
 
     cerr << "Error" << ": Can't allocate memory "
          << "for the temp path.\n";
@@ -10551,10 +9774,8 @@ char *GetClientPath()
 
     if (clientEnv == NULL || *clientEnv == '\0')
     {
-      #ifdef TEST
-      *logofs << "Loop: WARNING! No environment for NX_CLIENT.\n"
-              << logofs_flush;
-      #endif
+      nxinfo << "Loop: WARNING! No environment for NX_CLIENT.\n"
+              << std::flush;
 
       //
       // Try to guess the location of the client.
@@ -10577,11 +9798,9 @@ char *GetClientPath()
 
     if (strlen(clientEnv) > DEFAULT_STRING_LENGTH - 1)
     {
-      #ifdef PANIC
-      *logofs << "Loop: PANIC! Invalid value for the NX "
+      nxfatal << "Loop: PANIC! Invalid value for the NX "
               << "client directory '" << clientEnv
-              << "'.\n" << logofs_flush;
-      #endif
+              << "'.\n" << std::flush;
 
       cerr << "Error" << ": Invalid value for the NX "
            << "client directory '" << clientEnv
@@ -10592,20 +9811,16 @@ char *GetClientPath()
 
     strcpy(clientDir, clientEnv);
 
-    #ifdef TEST
-    *logofs << "Loop: Assuming NX client location '"
-            << clientDir << "'.\n" << logofs_flush;
-    #endif
+    nxinfo << "Loop: Assuming NX client location '"
+            << clientDir << "'.\n" << std::flush;
   }
 
   char *clientPath = new char[strlen(clientDir) + 1];
 
   if (clientPath == NULL)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Can't allocate memory "
-            << "for the client path.\n" << logofs_flush;
-    #endif
+    nxfatal << "Loop: PANIC! Can't allocate memory "
+            << "for the client path.\n" << std::flush;
 
     cerr << "Error" << ": Can't allocate memory "
          << "for the client path.\n";
@@ -10630,21 +9845,17 @@ char *GetSystemPath()
 
     if (systemEnv == NULL || *systemEnv == '\0')
     {
-      #ifdef TEST
-      *logofs << "Loop: WARNING! No environment for NX_SYSTEM.\n"
-              << logofs_flush;
-      #endif
+      nxinfo << "Loop: WARNING! No environment for NX_SYSTEM.\n"
+              << std::flush;
 
       systemEnv = "/usr/NX";
     }
 
     if (strlen(systemEnv) > DEFAULT_STRING_LENGTH - 1)
     {
-      #ifdef PANIC
-      *logofs << "Loop: PANIC! Invalid value for the NX "
+      nxfatal << "Loop: PANIC! Invalid value for the NX "
               << "system directory '" << systemEnv
-              << "'.\n" << logofs_flush;
-      #endif
+              << "'.\n" << std::flush;
 
       cerr << "Error" << ": Invalid value for the NX "
            << "system directory '" << systemEnv
@@ -10655,20 +9866,16 @@ char *GetSystemPath()
 
     strcpy(systemDir, systemEnv);
 
-    #ifdef TEST
-    *logofs << "Loop: Assuming system NX directory '"
-            << systemDir << "'.\n" << logofs_flush;
-    #endif
+    nxinfo << "Loop: Assuming system NX directory '"
+            << systemDir << "'.\n" << std::flush;
   }
 
   char *systemPath = new char[strlen(systemDir) + 1];
 
   if (systemPath == NULL)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Can't allocate memory "
-            << "for the system path.\n" << logofs_flush;
-    #endif
+    nxfatal << "Loop: PANIC! Can't allocate memory "
+            << "for the system path.\n" << std::flush;
 
     cerr << "Error" << ": Can't allocate memory "
          << "for the system path.\n";
@@ -10693,19 +9900,15 @@ char *GetHomePath()
 
     if (homeEnv == NULL || *homeEnv == '\0')
     {
-      #ifdef TEST
-      *logofs << "Loop: WARNING! No environment for NX_HOME.\n"
-              << logofs_flush;
-      #endif
+      nxinfo << "Loop: WARNING! No environment for NX_HOME.\n"
+              << std::flush;
 
       homeEnv = getenv("HOME");
 
       if (homeEnv == NULL || *homeEnv == '\0')
       {
-        #ifdef PANIC
-        *logofs << "Loop: PANIC! No environment for HOME.\n"
-                << logofs_flush;
-        #endif
+        nxfatal << "Loop: PANIC! No environment for HOME.\n"
+                << std::flush;
 
         cerr << "Error" << ": No environment for HOME.\n";
 
@@ -10715,11 +9918,9 @@ char *GetHomePath()
 
     if (strlen(homeEnv) > DEFAULT_STRING_LENGTH - 1)
     {
-      #ifdef PANIC
-      *logofs << "Loop: PANIC! Invalid value for the NX "
+      nxfatal << "Loop: PANIC! Invalid value for the NX "
               << "home directory '" << homeEnv
-              << "'.\n" << logofs_flush;
-      #endif
+              << "'.\n" << std::flush;
 
       cerr << "Error" << ": Invalid value for the NX "
            << "home directory '" << homeEnv
@@ -10730,20 +9931,16 @@ char *GetHomePath()
 
     strcpy(homeDir, homeEnv);
 
-    #ifdef TEST
-    *logofs << "Loop: Assuming NX user's home directory '"
-            << homeDir << "'.\n" << logofs_flush;
-    #endif
+    nxinfo << "Loop: Assuming NX user's home directory '"
+            << homeDir << "'.\n" << std::flush;
   }
 
   char *homePath = new char[strlen(homeDir) + 1];
 
   if (homePath == NULL)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Can't allocate memory "
-            << "for the home path.\n" << logofs_flush;
-    #endif
+    nxfatal << "Loop: PANIC! Can't allocate memory "
+            << "for the home path.\n" << std::flush;
 
     cerr << "Error" << ": Can't allocate memory "
          << "for the home path.\n";
@@ -10768,10 +9965,8 @@ char *GetRootPath()
 
     if (rootEnv == NULL || *rootEnv == '\0')
     {
-      #ifdef TEST
-      *logofs << "Loop: WARNING! No environment for NX_ROOT.\n"
-              << logofs_flush;
-      #endif
+      nxinfo << "Loop: WARNING! No environment for NX_ROOT.\n"
+              << std::flush;
 
       //
       // We will determine the root NX directory
@@ -10784,11 +9979,9 @@ char *GetRootPath()
       if (strlen(homeEnv) > DEFAULT_STRING_LENGTH -
               strlen("/.nx") - 1)
       {
-        #ifdef PANIC
-        *logofs << "Loop: PANIC! Invalid value for the NX "
+        nxfatal << "Loop: PANIC! Invalid value for the NX "
                 << "home directory '" << homeEnv
-                << "'.\n" << logofs_flush;
-        #endif
+                << "'.\n" << std::flush;
 
         cerr << "Error" << ": Invalid value for the NX "
              << "home directory '" << homeEnv
@@ -10797,11 +9990,9 @@ char *GetRootPath()
         HandleCleanup();
       }
 
-      #ifdef TEST
-      *logofs << "Loop: Assuming NX root directory in "
+      nxinfo << "Loop: Assuming NX root directory in "
               << "the user's home '" << homeEnv
-              << "'.\n" << logofs_flush;
-      #endif
+              << "'.\n" << std::flush;
 
       strcpy(rootDir, homeEnv);
       strcat(rootDir, "/.nx");
@@ -10818,11 +10009,9 @@ char *GetRootPath()
       {
         if (mkdir(rootDir, 0700) < 0 && (EGET() != EEXIST))
         {
-          #ifdef PANIC
-          *logofs << "Loop: PANIC! Can't create directory '"
+          nxfatal << "Loop: PANIC! Can't create directory '"
                   << rootDir << ". Error is " << EGET() << " '"
-                  << ESTR() << "'.\n" << logofs_flush;
-          #endif
+                  << ESTR() << "'.\n" << std::flush;
 
           cerr << "Error" << ": Can't create directory '"
                << rootDir << ". Error is " << EGET() << " '"
@@ -10836,11 +10025,9 @@ char *GetRootPath()
     {
       if (strlen(rootEnv) > DEFAULT_STRING_LENGTH - 1)
       {
-        #ifdef PANIC
-        *logofs << "Loop: PANIC! Invalid value for the NX "
+        nxfatal << "Loop: PANIC! Invalid value for the NX "
                 << "root directory '" << rootEnv
-                << "'.\n" << logofs_flush;
-        #endif
+                << "'.\n" << std::flush;
 
         cerr << "Error" << ": Invalid value for the NX "
              << "root directory '" << rootEnv
@@ -10852,20 +10039,16 @@ char *GetRootPath()
       strcpy(rootDir, rootEnv);
     }
 
-    #ifdef TEST
-    *logofs << "Loop: Assuming NX root directory '"
-            << rootDir << "'.\n" << logofs_flush;
-    #endif
+    nxinfo << "Loop: Assuming NX root directory '"
+            << rootDir << "'.\n" << std::flush;
   }
 
   char *rootPath = new char[strlen(rootDir) + 1];
 
   if (rootPath == NULL)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Can't allocate memory "
-            << "for the root path.\n" << logofs_flush;
-    #endif
+    nxfatal << "Loop: PANIC! Can't allocate memory "
+            << "for the root path.\n" << std::flush;
 
     cerr << "Error" << ": Can't allocate memory "
          << "for the root path.\n";
@@ -10917,11 +10100,9 @@ char *GetCachePath()
   {
     if (mkdir(cachePath, 0700) < 0 && (EGET() != EEXIST))
     {
-      #ifdef PANIC
-      *logofs << "Loop: PANIC! Can't create directory '" << cachePath
+      nxfatal << "Loop: PANIC! Can't create directory '" << cachePath
               << ". Error is " << EGET() << " '" << ESTR() << "'.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
 
       cerr << "Error" << ": Can't create directory '" << cachePath
            << ". Error is " << EGET() << " '" << ESTR() << "'.\n";
@@ -10958,11 +10139,9 @@ char *GetImagesPath()
   {
     if (mkdir(imagesPath, 0700) < 0 && (EGET() != EEXIST))
     {
-      #ifdef PANIC
-      *logofs << "Loop: PANIC! Can't create directory '" << imagesPath
+      nxfatal << "Loop: PANIC! Can't create directory '" << imagesPath
               << ". Error is " << EGET() << " '" << ESTR() << "'.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
 
       cerr << "Error" << ": Can't create directory '" << imagesPath
            << ". Error is " << EGET() << " '" << ESTR() << "'.\n";
@@ -10997,11 +10176,9 @@ char *GetImagesPath()
     {
       if (mkdir(digitPath, 0700) < 0 && (EGET() != EEXIST))
       {
-        #ifdef PANIC
-        *logofs << "Loop: PANIC! Can't create directory '" << digitPath
+        nxfatal << "Loop: PANIC! Can't create directory '" << digitPath
                 << ". Error is " << EGET() << " '" << ESTR() << "'.\n"
-                << logofs_flush;
-        #endif
+                << std::flush;
 
         cerr << "Error" << ": Can't create directory '" << digitPath
              << ". Error is " << EGET() << " '" << ESTR() << "'.\n";
@@ -11055,11 +10232,9 @@ char *GetSessionPath()
     {
       if (mkdir(sessionDir, 0700) < 0 && (EGET() != EEXIST))
       {
-        #ifdef PANIC
-        *logofs << "Loop: PANIC! Can't create directory '" << sessionDir
+        nxfatal << "Loop: PANIC! Can't create directory '" << sessionDir
                 << ". Error is " << EGET() << " '" << ESTR() << "'.\n"
-                << logofs_flush;
-        #endif
+                << std::flush;
 
         cerr << "Error" << ": Can't create directory '" << sessionDir
              << ". Error is " << EGET() << " '" << ESTR() << "'.\n";
@@ -11070,10 +10245,8 @@ char *GetSessionPath()
       }
     }
 
-    #ifdef TEST
-    *logofs << "Loop: Root of NX session is '" << sessionDir
-            << "'.\n" << logofs_flush;
-    #endif
+    nxinfo << "Loop: Root of NX session is '" << sessionDir
+            << "'.\n" << std::flush;
 
     delete [] rootPath;
   }
@@ -11143,16 +10316,12 @@ int ParseLinkOption(const char *opt)
 
 int ParsePackOption(const char *opt)
 {
-  #ifdef DEBUG
-  *logofs << "Loop: Pack method is " << packMethod
+  nxdbg << "Loop: Pack method is " << packMethod
           << " quality is " << packQuality << ".\n"
-          << logofs_flush;
-  #endif
+          << std::flush;
 
-  #ifdef DEBUG
-  *logofs << "Loop: Parsing pack method '" << opt
-          << "'.\n" << logofs_flush;
-  #endif
+  nxdbg << "Loop: Parsing pack method '" << opt
+          << "'.\n" << std::flush;
 
   if (strcasecmp(opt, "0") == 0 ||
           strcasecmp(opt, "none") == 0 ||
@@ -11340,10 +10509,8 @@ int ParsePackOption(const char *opt)
     {
       packQuality = atoi(dash + 1);
 
-      #ifdef DEBUG
-      *logofs << "Loop: Using pack quality '"
-              << packQuality << "'.\n" << logofs_flush;
-      #endif
+      nxdbg << "Loop: Using pack quality '"
+              << packQuality << "'.\n" << std::flush;
     }
   }
   else
@@ -11646,18 +10813,14 @@ int SetLogs()
   {
     strcpy(statsFileName, "stats");
 
-    #ifdef TEST
-    *logofs << "Loop: Assuming default statistics file '"
-            << statsFileName << "'.\n" << logofs_flush;
-    #endif
+    nxinfo << "Loop: Assuming default statistics file '"
+            << statsFileName << "'.\n" << std::flush;
   }
-  #ifdef TEST
   else
   {
-    *logofs << "Loop: Name selected for statistics is '"
-            << statsFileName << "'.\n" << logofs_flush;
+    nxinfo << "Loop: Name selected for statistics is '"
+            << statsFileName << "'.\n" << std::flush;
   }
-  #endif
 
   if (OpenLogFile(statsFileName, statofs) < 0)
   {
@@ -11670,18 +10833,14 @@ int SetLogs()
   {
     strcpy(errorsFileName, "errors");
 
-    #ifdef TEST
-    *logofs << "Loop: Assuming default log file name '"
-            << errorsFileName << "'.\n" << logofs_flush;
-    #endif
+    nxinfo << "Loop: Assuming default log file name '"
+            << errorsFileName << "'.\n" << std::flush;
   }
-  #ifdef TEST
   else
   {
-    *logofs << "Loop: Name selected for log file is '"
-            << errorsFileName << "'.\n" << logofs_flush;
+    nxinfo << "Loop: Name selected for log file is '"
+            << errorsFileName << "'.\n" << std::flush;
   }
-  #endif
 
   //
   // Share the bebug output with the nxssh binder
@@ -11719,27 +10878,21 @@ int SetLogs()
 
   if (*sessionFileName != '\0')
   {
-    #ifdef TEST
-    *logofs << "Loop: Name selected for session file is '"
-            << sessionFileName << "'.\n" << logofs_flush;
-    #endif
+    nxinfo << "Loop: Name selected for session file is '"
+            << sessionFileName << "'.\n" << std::flush;
 
     if (errofs != NULL)
     {
-      #ifdef WARNING
-      *logofs << "Loop: WARNING! Unexpected value for stream errofs.\n"
-              << logofs_flush;
-      #endif
+      nxwarn << "Loop: WARNING! Unexpected value for stream errofs.\n"
+              << std::flush;
 
       cerr << "Warning" << ": Unexpected value for stream errofs.\n";
     }
 
     if (errsbuf != NULL)
     {
-      #ifdef WARNING
-      *logofs << "Loop: WARNING! Unexpected value for buffer errsbuf.\n"
-              << logofs_flush;
-      #endif
+      nxwarn << "Loop: WARNING! Unexpected value for buffer errsbuf.\n"
+              << std::flush;
 
       cerr << "Warning" << ": Unexpected value for buffer errsbuf.\n";
     }
@@ -11800,10 +10953,8 @@ int SetPorts()
 
 
 
-#ifdef TEST
-  *logofs << "Loop: cups port: " << cupsPort << "\n"
-            << logofs_flush;
-#endif
+  nxinfo << "Loop: cups port: " << cupsPort << "\n"
+            << std::flush;
 
   if (control -> ProxyMode == proxy_client) {
     auxPort.setDefaultTCPPort(DEFAULT_NX_AUX_PORT_OFFSET + proxyPort);
@@ -11812,11 +10963,9 @@ int SetPorts()
     auxPort.setDefaultTCPPort(1);
 
     if ( auxPort.getTCPPort() != 1 ) {
-      #ifdef WARNING
-      *logofs << "Loop: WARNING! Overriding auxiliary X11 "
-              << "port with new value '" << 1 << "'.\n"
-              << logofs_flush;
-      #endif
+        nxwarn << "Loop: WARNING! Overriding auxiliary X11 "
+                << "port with new value '" << 1 << "'.\n"
+                << std::flush;
 
       cerr << "Warning" << ": Overriding auxiliary X11 "
            << "port with new value '" << 1 << "'.\n";
@@ -11825,10 +10974,8 @@ int SetPorts()
     }
   }
 
-#ifdef TEST
-  *logofs << "Loop: aux port: " << auxPort << "\n"
-	  << logofs_flush;
-#endif
+  nxinfo << "Loop: aux port: " << auxPort << "\n"
+	  << std::flush;
 
   if (control -> ProxyMode == proxy_client) {
     smbPort.setDefaultTCPPort(DEFAULT_NX_SMB_PORT_OFFSET + proxyPort);
@@ -11838,10 +10985,8 @@ int SetPorts()
   }
 
 
-#ifdef TEST
-  *logofs << "Loop: smb port: " << smbPort << "\n"
-	  << logofs_flush;
-#endif
+  nxinfo << "Loop: smb port: " << smbPort << "\n"
+	  << std::flush;
 
   if ( mediaPort.configured() ) {
     if (control -> ProxyMode == proxy_client) {
@@ -11850,10 +10995,8 @@ int SetPorts()
     } else {
 
       if ( mediaPort.getTCPPort() < 0 ) {
-        #ifdef PANIC
-        *logofs << "Loop: PANIC! No port specified for multimedia connections.\n"
-                << logofs_flush;
-        #endif
+        nxfatal << "Loop: PANIC! No port specified for multimedia connections.\n"
+                << std::flush;
 
         cerr << "Error" << ": No port specified for multimedia connections.\n";
 
@@ -11862,10 +11005,8 @@ int SetPorts()
     }
   }
 
-#ifdef TEST
-  *logofs << "Loop: Using multimedia port '" << mediaPort
-	  << "'.\n" << logofs_flush;
-#endif
+  nxinfo << "Loop: Using multimedia port '" << mediaPort
+	  << "'.\n" << std::flush;
 
   if (control -> ProxyMode == proxy_client) {
       httpPort.setDefaultTCPPort(DEFAULT_NX_HTTP_PORT_OFFSET + proxyPort);
@@ -11874,17 +11015,13 @@ int SetPorts()
       httpPort.setDefaultTCPPort(80);
   }
 
-#ifdef TEST
-  *logofs << "Loop: Using HTTP port '" << httpPort
-	  << "'.\n" << logofs_flush;
-#endif
+  nxinfo << "Loop: Using HTTP port '" << httpPort
+	  << "'.\n" << std::flush;
 
   if (ParseFontPath(fontPort) <= 0)
   {
-    #ifdef TEST
-    *logofs << "Loop: Disabling font server connections.\n"
-            << logofs_flush;
-    #endif
+    nxinfo << "Loop: Disabling font server connections.\n"
+            << std::flush;
 
     *fontPort = '\0';
 
@@ -11908,10 +11045,8 @@ int SetPorts()
       useFontSocket = 0;
     }
 
-    #ifdef TEST
-    *logofs << "Loop: Using font server port '" << fontPort
-            << "'.\n" << logofs_flush;
-    #endif
+    nxinfo << "Loop: Using font server port '" << fontPort
+            << "'.\n" << std::flush;
   }
 
   if (control -> ProxyMode == proxy_client) {
@@ -11921,10 +11056,8 @@ int SetPorts()
     slavePort.setDefaultTCPPort(DEFAULT_NX_SLAVE_PORT_SERVER_OFFSET + proxyPort);
   }
 
-#ifdef TEST
-  *logofs << "Loop: Using slave port '" << slavePort
-	  << "'.\n" << logofs_flush;
-#endif
+  nxinfo << "Loop: Using slave port '" << slavePort
+	  << "'.\n" << std::flush;
 
   return 1;
 }
@@ -11982,10 +11115,8 @@ int SetDescriptors()
 
   if (limit == 0)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Cannot determine number of available "
-            << "file descriptors.\n" << logofs_flush;
-    #endif
+    nxfatal << "Loop: PANIC! Cannot determine number of available "
+            << "file descriptors.\n" << std::flush;
 
     cerr << "Error" << ": Cannot determine number of available "
          << "file descriptors.\n";
@@ -12005,20 +11136,16 @@ int SetCaches()
 {
   if ((control -> PersistentCachePath = GetCachePath()) == NULL)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Error getting or creating the cache path.\n"
-            << logofs_flush;
-    #endif
+    nxfatal << "Loop: PANIC! Error getting or creating the cache path.\n"
+            << std::flush;
 
     cerr << "Error" << ": Error getting or creating the cache path.\n";
 
     HandleCleanup();
   }
 
-  #ifdef TEST
-  *logofs << "Loop: Path of cache files is '" << control -> PersistentCachePath
-          << "'.\n" << logofs_flush;
-  #endif
+  nxinfo << "Loop: Path of cache files is '" << control -> PersistentCachePath
+          << "'.\n" << std::flush;
 
   return 1;
 }
@@ -12141,11 +11268,9 @@ int SetSession()
 
     if (*sessionType != '\0')
     {
-      #ifdef WARNING
-      *logofs << "Loop: WARNING! Unrecognized session type '"
+      nxwarn << "Loop: WARNING! Unrecognized session type '"
               << sessionType << "'. Assuming agent session.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
 
       cerr << "Warning" << ": Unrecognized session type '"
            << sessionType << "'. Assuming agent session.\n";
@@ -12154,12 +11279,10 @@ int SetSession()
     control -> SessionMode = session_agent;
   }
 
-  #if defined(TEST) || defined(INFO)
-  *logofs << "Loop: Assuming session type '"
+  nxinfo << "Loop: Assuming session type '"
           << DumpSession(control -> SessionMode) << "' with "
           << "string '" << sessionType << "'.\n"
-          << logofs_flush;
-  #endif
+          << std::flush;
 
   //
   // By default the policy is immediate. Agents
@@ -12179,21 +11302,17 @@ int SetSession()
       control -> FlushPolicy = policy_immediate;
     }
 
-    #if defined(TEST) || defined(INFO)
-    *logofs << "Loop: WARNING! Forcing flush policy to '"
+    nxinfo << "Loop: WARNING! Forcing flush policy to '"
             << DumpPolicy(control -> FlushPolicy)
-            << ".\n" << logofs_flush;
-    #endif
+            << ".\n" << std::flush;
   }
   else
   {
     control -> FlushPolicy = policy_immediate;
 
-    #if defined(TEST) || defined(INFO)
-    *logofs << "Loop: Setting initial flush policy to '"
+    nxinfo << "Loop: Setting initial flush policy to '"
             << DumpPolicy(control -> FlushPolicy)
-            << "'.\n" << logofs_flush;
-    #endif
+            << "'.\n" << std::flush;
   }
 
   //
@@ -12216,19 +11335,15 @@ int SetSession()
 
   if (control -> LinkEncrypted == 1)
   {
-    #if defined(TEST) || defined(INFO)
-    *logofs << "Loop: Proxy running as part of an "
+    nxinfo << "Loop: Proxy running as part of an "
             << "encrypting client.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
   }
   else
   {
-    #if defined(TEST) || defined(INFO)
-    *logofs << "Loop: Assuming proxy running as a "
+    nxinfo << "Loop: Assuming proxy running as a "
             << "standalone program.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
   }
 
   //
@@ -12250,10 +11365,8 @@ int SetSession()
 
     if (stat(fileName, &fileStat) == 0)
     {
-      #ifdef TEST
-      *logofs << "Loop: Enabling respawn of client at session shutdown.\n"
-              << logofs_flush;
-      #endif
+      nxinfo << "Loop: Enabling respawn of client at session shutdown.\n"
+              << std::flush;
 
       control -> EnableRestartOnShutdown = 1;
     }
@@ -12307,22 +11420,18 @@ int SetStorage()
         control -> ClientTotalStorageSize;
   }
 
-  #ifdef DEBUG
-  *logofs << "Loop: Storage size limit is "
+  nxdbg << "Loop: Storage size limit is "
           << control -> ClientTotalStorageSize
           << " at client and "
           << control -> ServerTotalStorageSize
           << " at server.\n"
-          << logofs_flush;
-  #endif
+          << std::flush;
 
-  #ifdef DEBUG
-  *logofs << "Loop: Storage local limit set to "
+  nxdbg << "Loop: Storage local limit set to "
           << control -> LocalTotalStorageSize
           << " remote limit set to "
           << control -> RemoteTotalStorageSize
-          << ".\n" << logofs_flush;
-  #endif
+          << ".\n" << std::flush;
 
   //
   // Never reserve for split store more than
@@ -12332,11 +11441,9 @@ int SetStorage()
   if (size > 0 && control ->
           SplitTotalStorageSize > size / 2)
   {
-    #ifdef TEST
-    *logofs << "Loop: Reducing size of split store to "
+    nxinfo << "Loop: Reducing size of split store to "
             << size / 2 << " bytes.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     control -> SplitTotalStorageSize = size / 2;
   }
@@ -12349,11 +11456,9 @@ int SetStorage()
 
   if (control -> HideRender == 1)
   {
-    #ifdef TEST
-    *logofs << "Loop: Not loading render extension "
+    nxinfo << "Loop: Not loading render extension "
             << "from persistent cache.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     control -> PersistentCacheLoadRender = 0;
   }
@@ -12422,18 +11527,14 @@ int SetShmem()
   {
     control -> ShmemServer = 1;
 
-    #if defined(TEST) || defined(INFO)
-    *logofs << "Loop: Set initial shared memory size "
+    nxinfo << "Loop: Set initial shared memory size "
             << "to " << control -> ShmemServerSize
-            << " bytes.\n" << logofs_flush;
-    #endif
+            << " bytes.\n" << std::flush;
   }
   else
   {
-    #if defined(TEST) || defined(INFO)
-    *logofs << "Loop: Disabled use of the shared memory "
-            << "extension.\n" << logofs_flush;
-    #endif
+    nxinfo << "Loop: Disabled use of the shared memory "
+            << "extension.\n" << std::flush;
 
     control -> ShmemServer = 0;
   }
@@ -12452,11 +11553,9 @@ int SetShmem()
 
 int SetPack()
 {
-  #ifdef TEST
-  *logofs << "Loop: Setting pack with initial method "
+  nxinfo << "Loop: Setting pack with initial method "
           << packMethod << " and quality " << packQuality
-          << ".\n" << logofs_flush;
-  #endif
+          << ".\n" << std::flush;
 
   //
   // Check if this is a proxy session and, in
@@ -12467,10 +11566,8 @@ int SetPack()
 
   if (control -> SessionMode == session_proxy)
   {
-    #ifdef TEST
-    *logofs << "Loop: WARNING! Disabling pack with proxy session.\n"
-            << logofs_flush;
-    #endif
+    nxinfo << "Loop: WARNING! Disabling pack with proxy session.\n"
+            << std::flush;
 
     packMethod = PACK_NONE;
   }
@@ -12491,11 +11588,9 @@ int SetPack()
   {
     control -> PersistentCacheLoadPacked = 0;
 
-    #ifdef TEST
-    *logofs << "Loop: Not loading packed images "
+    nxinfo << "Loop: Not loading packed images "
             << "from persistent cache.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
   }
 
   return 1;
@@ -12515,11 +11610,9 @@ int SetImages()
 
   if (control -> SessionMode == session_proxy)
   {
-    #ifdef TEST
-    *logofs << "Loop: Disabling image cache with "
+    nxinfo << "Loop: Disabling image cache with "
             << "session '" << DumpSession(control ->
-               SessionMode) << "'.\n" << logofs_flush;
-    #endif
+               SessionMode) << "'.\n" << std::flush;
 
     sprintf(imagesSizeName, "0");
 
@@ -12549,28 +11642,22 @@ int SetImages()
     {
       if ((control -> ImageCachePath = GetImagesPath()) == NULL)
       {
-        #ifdef PANIC
-        *logofs << "Loop: PANIC! Error getting or creating image cache path.\n"
-                << logofs_flush;
-        #endif
+        nxfatal << "Loop: PANIC! Error getting or creating image cache path.\n"
+                << std::flush;
 
         cerr << "Error" << ": Error getting or creating image cache path.\n";
 
         HandleCleanup();
       }
 
-      #ifdef TEST
-      *logofs << "Loop: Path of image cache files is '" << control -> ImageCachePath
-              << "'.\n" << logofs_flush;
-      #endif
+      nxinfo << "Loop: Path of image cache files is '" << control -> ImageCachePath
+              << "'.\n" << std::flush;
     }
   }
   else
   {
-    #ifdef TEST
-    *logofs << "Loop: Disabling the persistent image cache.\n"
-            << logofs_flush;
-    #endif
+    nxinfo << "Loop: Disabling the persistent image cache.\n"
+            << std::flush;
 
     control -> ImageCacheEnableLoad = 0;
     control -> ImageCacheEnableSave = 0;
@@ -12610,11 +11697,9 @@ int SetVersion()
     minor = control -> CompatVersionMinor;
     patch = control -> CompatVersionPatch;
 
-    #ifdef TEST
-    *logofs << "Loop: Using compatibility version '"
+    nxinfo << "Loop: Using compatibility version '"
             << major << "." << minor << "." << patch
-            << "'.\n" << logofs_flush;
-    #endif
+            << "'.\n" << std::flush;
   }
   else if (control -> LocalVersionMajor >
                control -> RemoteVersionMajor)
@@ -12629,11 +11714,9 @@ int SetVersion()
     minor = control -> RemoteVersionMinor;
     patch = control -> RemoteVersionPatch;
 
-    #ifdef TEST
-    *logofs << "Loop: Using remote version '"
+    nxinfo << "Loop: Using remote version '"
             << major << "." << minor << "." << patch
-            << "'.\n" << logofs_flush;
-    #endif
+            << "'.\n" << std::flush;
   }
   else
   {
@@ -12651,11 +11734,9 @@ int SetVersion()
       minor = control -> RemoteVersionMinor;
       patch = control -> RemoteVersionPatch;
 
-      #ifdef TEST
-      *logofs << "Loop: Using remote version '"
+      nxinfo << "Loop: Using remote version '"
               << major << "." << minor << "." << patch
-              << "'.\n" << logofs_flush;
-      #endif
+              << "'.\n" << std::flush;
     }
     else
     {
@@ -12663,11 +11744,9 @@ int SetVersion()
       minor = control -> LocalVersionMinor;
       patch = control -> LocalVersionPatch;
 
-      #ifdef TEST
-      *logofs << "Loop: Using local version '"
+      nxinfo << "Loop: Using local version '"
               << major << "." << minor << "." << patch
-              << "'.\n" << logofs_flush;
-      #endif
+              << "'.\n" << std::flush;
     }
   }
 
@@ -12692,23 +11771,19 @@ int SetVersion()
 
   if (step == 0)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Unable to set the protocol step value from "
+    nxfatal << "Loop: PANIC! Unable to set the protocol step value from "
          << "the negotiated protocol version " << major << "." << minor
-         << "." << patch << ".\n" << logofs_flush;
-    #endif
+         << "." << patch << ".\n" << std::flush;
 
     cerr << "Error" << ": Unable to set the protocol step value from "
          << "the negotiated protocol version " << major << "." << minor
          << "." << patch << ".\n";
 
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Incompatible remote version "
+    nxfatal << "Loop: PANIC! Incompatible remote version "
             << control -> RemoteVersionMajor << "." << control -> RemoteVersionMinor
             << "." << control -> RemoteVersionPatch << " with local version "
             << control -> LocalVersionMajor << "." << control -> LocalVersionMinor
-            << "." << control -> LocalVersionPatch << ".\n" << logofs_flush;
-    #endif
+            << "." << control -> LocalVersionPatch << ".\n" << std::flush;
 
     cerr << "Error" << ": Incompatible remote version "
          << control -> RemoteVersionMajor << "." << control -> RemoteVersionMinor
@@ -12719,10 +11794,8 @@ int SetVersion()
     return -1;
   }
 
-  #ifdef TEST
-  *logofs << "Loop: Using NX protocol step "
-          << step << ".\n" << logofs_flush;
-  #endif
+  nxinfo << "Loop: Using NX protocol step "
+          << step << ".\n" << std::flush;
 
   control -> setProtoStep(step);
 
@@ -12738,13 +11811,11 @@ int SetVersion()
 
   if (local != remote)
   {
-    #ifdef WARNING
-    *logofs << "Loop: WARNING! Connected to remote version "
+    nxwarn << "Loop: WARNING! Connected to remote version "
             << control -> RemoteVersionMajor << "." << control -> RemoteVersionMinor
             << "." << control -> RemoteVersionPatch << " with local version "
             << control -> LocalVersionMajor << "." << control -> LocalVersionMinor
-            << "." << control -> LocalVersionPatch << ".\n" << logofs_flush;
-    #endif
+            << "." << control -> LocalVersionPatch << ".\n" << std::flush;
 
     cerr << "Warning" << ": Connected to remote version "
          << control -> RemoteVersionMajor << "." << control -> RemoteVersionMinor
@@ -12755,7 +11826,7 @@ int SetVersion()
 
   if (local < remote)
   {
-    cerr << "Warning" << ": Consider checking https://github.com/ArcticaProject/nx-libs/releases for updates.\n";
+    nxerr << "Warning" << ": Consider checking https://github.com/ArcticaProject/nx-libs/releases for updates.\n";
   }
 
   //
@@ -12774,13 +11845,11 @@ int SetVersion()
     // method
     //
 
-    #ifdef TEST
-    *logofs << __FILE__ << " : " << __LINE__ << " - "
+    nxinfo << __FILE__ << " : " << __LINE__ << " - "
             << "step = " << control -> getProtoStep()
             << " packMethod = " << packMethod
             << " packQuality = " << packQuality
-            << ".\n"  << logofs_flush;
-    #endif
+            << ".\n"  << std::flush;
 
     //
     // Update the pack method name.
@@ -12807,11 +11876,9 @@ int SetVersion()
   //
 
   // Since ProtoStep8 (#issue 108)
-  #ifdef TEST
-  *logofs << "Loop: Disabling image cache with protocol "
+  nxinfo << "Loop: Disabling image cache with protocol "
           << "step '" << control -> getProtoStep()
-          << "'.\n"  << logofs_flush;
-  #endif
+          << "'.\n"  << std::flush;
 
   sprintf(imagesSizeName, "0");
 
@@ -12829,20 +11896,16 @@ int SetVersion()
 
 int SetLink()
 {
-  #ifdef TEST
-  *logofs << "Loop: Setting link with initial value "
-          << linkSpeedName << ".\n" << logofs_flush;
-  #endif
+  nxinfo << "Loop: Setting link with initial value "
+          << linkSpeedName << ".\n" << std::flush;
 
   if (*linkSpeedName == '\0')
   {
     strcpy(linkSpeedName, "lan");
   }
   
-  #ifdef TEST
-  *logofs << "Loop: Link speed is " << linkSpeedName
-          << ".\n" << logofs_flush;
-  #endif
+  nxinfo << "Loop: Link speed is " << linkSpeedName
+          << ".\n" << std::flush;
 
   if (strcasecmp(linkSpeedName, "modem") == 0)
   {
@@ -12896,11 +11959,9 @@ int SetLink()
 
   if (ParsePackMethod(packMethod, packQuality) < 0)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Unrecognized pack method id "
+    nxfatal << "Loop: PANIC! Unrecognized pack method id "
             << packMethod << " with quality " << packQuality
-            << ".\n" << logofs_flush;
-    #endif
+            << ".\n" << std::flush;
 
     cerr << "Error" << ": Unrecognized pack method id "
          << packMethod << " with quality " << packQuality
@@ -12923,11 +11984,9 @@ int SetLink()
     }
     else
     {
-      #ifdef WARNING
-      *logofs << "Loop: WARNING! Forcing taint of replies "
+      nxwarn << "Loop: WARNING! Forcing taint of replies "
               << "with a proxy session.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
 
       control -> TaintReplies = 1;
     }
@@ -12951,11 +12010,9 @@ int SetLink()
 
   if (control -> SessionMode == session_proxy)
   {
-    #ifdef WARNING
-    *logofs << "Loop: WARNING! Forcing flush on priority "
+    nxwarn << "Loop: WARNING! Forcing flush on priority "
             << "with a proxy session.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     control -> FlushPriority = 1;
   }
@@ -12969,10 +12026,8 @@ int SetLink()
 
 int SetLinkModem()
 {
-  #ifdef TEST
-  *logofs << "Loop: Setting parameters for MODEM.\n"
-          << logofs_flush;
-  #endif
+  nxinfo << "Loop: Setting parameters for MODEM.\n"
+          << std::flush;
 
   control -> LinkMode = LINK_TYPE_MODEM;
 
@@ -12999,10 +12054,8 @@ int SetLinkModem()
 
 int SetLinkIsdn()
 {
-  #ifdef TEST
-  *logofs << "Loop: Setting parameters for ISDN.\n"
-          << logofs_flush;
-  #endif
+  nxinfo << "Loop: Setting parameters for ISDN.\n"
+          << std::flush;
 
   control -> LinkMode = LINK_TYPE_ISDN;
 
@@ -13029,10 +12082,8 @@ int SetLinkIsdn()
 
 int SetLinkAdsl()
 {
-  #ifdef TEST
-  *logofs << "Loop: Setting parameters for ADSL.\n"
-          << logofs_flush;
-  #endif
+  nxinfo << "Loop: Setting parameters for ADSL.\n"
+          << std::flush;
 
   control -> LinkMode = LINK_TYPE_ADSL;
 
@@ -13059,10 +12110,8 @@ int SetLinkAdsl()
 
 int SetLinkWan()
 {
-  #ifdef TEST
-  *logofs << "Loop: Setting parameters for WAN.\n"
-          << logofs_flush;
-  #endif
+  nxinfo << "Loop: Setting parameters for WAN.\n"
+          << std::flush;
 
   control -> LinkMode = LINK_TYPE_WAN;
 
@@ -13089,10 +12138,8 @@ int SetLinkWan()
 
 int SetLinkLan()
 {
-  #ifdef TEST
-  *logofs << "Loop: Setting parameters for LAN.\n"
-          << logofs_flush;
-  #endif
+  nxinfo << "Loop: Setting parameters for LAN.\n"
+          << std::flush;
 
   control -> LinkMode = LINK_TYPE_LAN;
 
@@ -13349,12 +12396,10 @@ int SetLimits()
 
   if (useStrict == 1)
   {
-    #if defined(TEST) || defined(INFO)
-    *logofs << "Loop: LIMIT! Decreasing the token limit "
+    nxinfo << "Loop: LIMIT! Decreasing the token limit "
             << "to " << control -> TokenLimit / 2
             << " with option 'strict'.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     control -> TokenLimit /= 2;
   }
@@ -13363,12 +12408,10 @@ int SetLimits()
 
   control -> TokenLimit = 1;
 
-  #if defined(TEST) || defined(INFO)
-  *logofs << "Loop: WARNING! LIMIT! Setting the token limit "
+  nxinfo << "Loop: WARNING! LIMIT! Setting the token limit "
           << "to " << control -> TokenLimit
           << " to simulate the proxy congestion.\n"
-          << logofs_flush;
-  #endif
+          << std::flush;
 
   #endif
 
@@ -13400,14 +12443,12 @@ int SetLimits()
     }
   }
 
-  #if defined(TEST) || defined(INFO)
-  *logofs << "Loop: LIMIT! Setting client bitrate limit "
+  nxinfo << "Loop: LIMIT! Setting client bitrate limit "
           << "to " << control -> ClientBitrateLimit
           << " server bitrate limit to " << control ->
              ServerBitrateLimit << " with local limit "
           << control -> LocalBitrateLimit << ".\n"
-          << logofs_flush;
-  #endif
+          << std::flush;
 
   return 1;
 }
@@ -13424,11 +12465,9 @@ int ParseCacheOption(const char *opt)
 
   if (size < 0)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Invalid value '"
+    nxfatal << "Loop: PANIC! Invalid value '"
             << opt << "' for option 'cache'.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     cerr << "Error" << ": Invalid value '"
          << opt << "' for option 'cache'.\n";
@@ -13436,10 +12475,8 @@ int ParseCacheOption(const char *opt)
     return -1;
   }
 
-  #ifdef TEST
-  *logofs << "Loop: Setting size of cache to "
-          << size << " bytes.\n" << logofs_flush;
-  #endif
+  nxinfo << "Loop: Setting size of cache to "
+          << size << " bytes.\n" << std::flush;
 
   control -> ClientTotalStorageSize = size;
   control -> ServerTotalStorageSize = size;
@@ -13448,17 +12485,13 @@ int ParseCacheOption(const char *opt)
 
   if (size == 0)
   {
-    #ifdef WARNING
-    *logofs << "Loop: WARNING! Disabling NX delta compression.\n"
-            << logofs_flush;
-    #endif
+    nxwarn << "Loop: WARNING! Disabling NX delta compression.\n"
+            << std::flush;
 
     control -> LocalDeltaCompression = 0;
 
-    #ifdef WARNING
-    *logofs << "Loop: WARNING! Disabling use of NX persistent cache.\n"
-            << logofs_flush;
-    #endif
+    nxwarn << "Loop: WARNING! Disabling use of NX persistent cache.\n"
+            << std::flush;
 
     control -> PersistentCacheEnableLoad = 0;
     control -> PersistentCacheEnableSave = 0;
@@ -13473,11 +12506,9 @@ int ParseImagesOption(const char *opt)
 
   if (size < 0)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Invalid value '"
+    nxfatal << "Loop: PANIC! Invalid value '"
             << opt << "' for option 'images'.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     cerr << "Error" << ": Invalid value '"
          << opt << "' for option 'images'.\n";
@@ -13485,10 +12516,8 @@ int ParseImagesOption(const char *opt)
     return -1;
   }
 
-  #ifdef TEST
-  *logofs << "Loop: Setting size of images cache to "
-          << size << " bytes.\n" << logofs_flush;
-  #endif
+  nxinfo << "Loop: Setting size of images cache to "
+          << size << " bytes.\n" << std::flush;
 
   control -> ImageCacheDiskLimit = size;
 
@@ -13503,11 +12532,9 @@ int ParseShmemOption(const char *opt)
 
   if (size < 0)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Invalid value '"
+    nxfatal << "Loop: PANIC! Invalid value '"
             << opt << "' for option 'shseg'.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     cerr << "Error" << ": Invalid value '"
          << opt << "' for option 'shseg'.\n";
@@ -13518,11 +12545,9 @@ int ParseShmemOption(const char *opt)
   control -> ShmemClientSize = size;
   control -> ShmemServerSize = size;
 
-  #if defined(TEST) || defined(INFO)
-  *logofs << "Loop: Set shared memory size to "
+  nxinfo << "Loop: Set shared memory size to "
           << control -> ShmemServerSize << " bytes.\n"
-          << logofs_flush;
-  #endif
+          << std::flush;
 
   strcpy(shsegSizeName, opt);
 
@@ -13535,11 +12560,9 @@ int ParseBitrateOption(const char *opt)
 
   if (bitrate < 0)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Invalid value '"
+    nxfatal << "Loop: PANIC! Invalid value '"
             << opt << "' for option 'limit'.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     cerr << "Error" << ": Invalid value '"
          << opt << "' for option 'limit'.\n";
@@ -13551,19 +12574,15 @@ int ParseBitrateOption(const char *opt)
 
   if (bitrate == 0)
   {
-    #ifdef TEST
-    *logofs << "Loop: Disabling bitrate limit on proxy link.\n"
-            << logofs_flush;
-    #endif
+    nxinfo << "Loop: Disabling bitrate limit on proxy link.\n"
+            << std::flush;
 
     control -> LocalBitrateLimit = 0;
   }
   else
   {
-    #ifdef TEST
-    *logofs << "Loop: Setting bitrate to " << bitrate
-            << " bits per second.\n" << logofs_flush;
-    #endif
+    nxinfo << "Loop: Setting bitrate to " << bitrate
+            << " bits per second.\n" << std::flush;
 
     //
     // Internal representation is in bytes
@@ -13578,27 +12597,21 @@ int ParseBitrateOption(const char *opt)
 
 int ParseHostOption(const char *opt, char *host, long &port)
 {
-  #ifdef TEST
-  *logofs << "Loop: Trying to parse options string '" << opt
-          << "' as a remote NX host.\n" << logofs_flush;
-  #endif
+  nxinfo << "Loop: Trying to parse options string '" << opt
+          << "' as a remote NX host.\n" << std::flush;
 
   if (opt == NULL || *opt == '\0')
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! No host parameter provided.\n"
-            << logofs_flush;
-    #endif
+    nxfatal << "Loop: PANIC! No host parameter provided.\n"
+            << std::flush;
 
     return 0;
   }
   else if (strlen(opt) >= DEFAULT_STRING_LENGTH)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Host parameter exceeds length of "
+    nxfatal << "Loop: PANIC! Host parameter exceeds length of "
             << DEFAULT_STRING_LENGTH << " characters.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     return 0;
   }
@@ -13626,10 +12639,8 @@ int ParseHostOption(const char *opt, char *host, long &port)
 
     if (newPort < 0 || *check != '\0')
     {
-      #ifdef TEST
-      *logofs << "Loop: Can't identify remote NX port in string '"
-              << separator << "'.\n" << logofs_flush;
-      #endif
+      nxinfo << "Loop: Can't identify remote NX port in string '"
+              << separator << "'.\n" << std::flush;
 
       return 0;
     }
@@ -13641,10 +12652,8 @@ int ParseHostOption(const char *opt, char *host, long &port)
     // by other means.
     //
 
-    #ifdef TEST
-    *logofs << "Loop: Can't identify remote NX port in string '"
-            << opt << "'.\n" << logofs_flush;
-    #endif
+    nxinfo << "Loop: Can't identify remote NX port in string '"
+            << opt << "'.\n" << std::flush;
 
     return 0;
   }
@@ -13669,22 +12678,18 @@ int ParseHostOption(const char *opt, char *host, long &port)
 
   if (*check != '\0')
   {
-    #ifdef TEST
-    *logofs << "Loop: Can't identify remote NX host in string '"
-            << newHost << "'.\n" << logofs_flush;
-    #endif
+    nxinfo << "Loop: Can't identify remote NX host in string '"
+            << newHost << "'.\n" << std::flush;
 
     return 0;
   }
   else if (*acceptHost != '\0')
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Can't manage to connect and accept connections "
-            << "at the same time.\n" << logofs_flush;
+    nxfatal << "Loop: PANIC! Can't manage to connect and accept connections "
+            << "at the same time.\n" << std::flush;
 
-    *logofs << "Loop: PANIC! Refusing remote NX host with string '"
-            << opt << "'.\n" << logofs_flush;
-    #endif
+    nxfatal << "Loop: PANIC! Refusing remote NX host with string '"
+            << opt << "'.\n" << std::flush;
 
     cerr << "Error" << ": Can't manage to connect and accept connections "
          << "at the same time.\n";
@@ -13697,29 +12702,23 @@ int ParseHostOption(const char *opt, char *host, long &port)
 
   if (*host != '\0' && strcmp(host, newHost) != 0)
   {
-    #ifdef WARNING
-    *logofs << "Loop: WARNING! Overriding remote NX host '"
+    nxwarn << "Loop: WARNING! Overriding remote NX host '"
             << host << "' with new value '" << newHost
-            << "'.\n" << logofs_flush;
-    #endif
+            << "'.\n" << std::flush;
   }
 
   strcpy(host, newHost);
 
   if (port != -1 && port != newPort)
   {
-    #ifdef WARNING
-    *logofs << "Loop: WARNING! Overriding remote NX port '"
+    nxwarn << "Loop: WARNING! Overriding remote NX port '"
             << port << "' with new value '" << newPort
-            << "'.\n" << logofs_flush;
-    #endif
+            << "'.\n" << std::flush;
   }
 
-  #ifdef TEST
-  *logofs << "Loop: Parsed options string '" << opt
+  nxinfo << "Loop: Parsed options string '" << opt
           << "' with host '" << newHost << "' and port '"
-          << newPort << "'.\n" << logofs_flush;
-  #endif
+          << newPort << "'.\n" << std::flush;
 
   port = newPort;
 
@@ -13737,10 +12736,8 @@ int ParseFontPath(char *path)
     return 0;
   }
 
-  #ifdef TEST
-  *logofs << "Loop: Parsing font server option '" << path
-          << "'.\n" << logofs_flush;
-  #endif
+  nxinfo << "Loop: Parsing font server option '" << path
+          << "'.\n" << std::flush;
 
   //
   // Convert the value to our default port.
@@ -13770,10 +12767,8 @@ int ParseFontPath(char *path)
 
   if (atoi(path) > 0)
   {
-    #ifdef TEST
-    *logofs << "Loop: Assuming numeric TCP port '" << atoi(path)
-            << "' for font server.\n" << logofs_flush;
-    #endif
+    nxinfo << "Loop: Assuming numeric TCP port '" << atoi(path)
+            << "' for font server.\n" << std::flush;
 
     return 1;
   }
@@ -13791,10 +12786,8 @@ int ParseFontPath(char *path)
 
     *(path + DEFAULT_STRING_LENGTH - 1) = '\0';
 
-    #ifdef TEST
-    *logofs << "Loop: Assuming Unix socket '" << path
-            << "' for font server.\n" << logofs_flush;
-    #endif
+    nxinfo << "Loop: Assuming Unix socket '" << path
+            << "' for font server.\n" << std::flush;
   }
   else if (strncmp("tcp/:", path, 5) == 0)
   {
@@ -13807,10 +12800,8 @@ int ParseFontPath(char *path)
       goto ParseFontPathError;
     }
 
-    #ifdef TEST
-    *logofs << "Loop: Assuming TCP port '" << atoi(path)
-            << "' for font server.\n" << logofs_flush;
-    #endif
+    nxinfo << "Loop: Assuming TCP port '" << atoi(path)
+            << "' for font server.\n" << std::flush;
   }
   else
   {
@@ -13824,21 +12815,17 @@ int ParseFontPath(char *path)
       goto ParseFontPathError;
     }
 
-    #ifdef TEST
-    *logofs << "Loop: Assuming Unix socket '" << path
-            << "' for font server.\n" << logofs_flush;
-    #endif
+    nxinfo << "Loop: Assuming Unix socket '" << path
+            << "' for font server.\n" << std::flush;
   }
 
   return 1;
 
 ParseFontPathError:
 
-  #ifdef TEST
-  *logofs << "Loop: Unable to determine the font server "
+  nxinfo << "Loop: Unable to determine the font server "
           << "port in string '" << path << "'.\n"
-          << logofs_flush;
-  #endif
+          << std::flush;
 
   return -1;
 }
@@ -13847,10 +12834,8 @@ int OpenLogFile(char *name, ostream *&stream)
 {
   if (name == NULL || *name == '\0')
   {
-    #ifdef TEST
-    *logofs << "Loop: WARNING! No name provided for output. Using standard error.\n"
-            << logofs_flush;
-    #endif
+    nxinfo << "Loop: WARNING! No name provided for output. Using standard error.\n"
+            << std::flush;
 
     if (stream == NULL)
     {
@@ -13868,10 +12853,8 @@ int OpenLogFile(char *name, ostream *&stream)
 
       if (filePath == NULL)
       {
-        #ifdef PANIC
-        *logofs << "Loop: PANIC! Cannot determine directory of NX session file.\n"
-                << logofs_flush;
-        #endif
+        nxfatal << "Loop: PANIC! Cannot determine directory of NX session file.\n"
+                << std::flush;
 
         cerr << "Error" << ": Cannot determine directory of NX session file.\n";
 
@@ -13881,11 +12864,9 @@ int OpenLogFile(char *name, ostream *&stream)
       if (strlen(filePath) + strlen("/") +
               strlen(name) + 1 > DEFAULT_STRING_LENGTH)
       {
-        #ifdef PANIC
-        *logofs << "Loop: PANIC! Full name of NX file '" << name
+        nxfatal << "Loop: PANIC! Full name of NX file '" << name
                 << " would exceed length of " << DEFAULT_STRING_LENGTH
-                << " characters.\n" << logofs_flush;
-        #endif
+                << " characters.\n" << std::flush;
 
         cerr << "Error" << ": Full name of NX file '" << name
              << " would exceed length of " << DEFAULT_STRING_LENGTH
@@ -13927,10 +12908,8 @@ int OpenLogFile(char *name, ostream *&stream)
   }
   else
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Bad stream provided for output.\n"
-            << logofs_flush;
-    #endif
+    nxfatal << "Loop: PANIC! Bad stream provided for output.\n"
+            << std::flush;
 
     cerr << "Error" << ": Bad stream provided for output.\n";
 
@@ -13955,11 +12934,9 @@ int ReopenLogFile(char *name, ostream *&stream, int limit)
 
       if (stat(name, &fileStat) != 0)
       {
-        #ifdef WARNING
-        *logofs << "Loop: WARNING! Can't get stats of file '"
+        nxwarn << "Loop: WARNING! Can't get stats of file '"
                 << name  << "'. Error is " << EGET() 
-                << " '" << ESTR() << "'.\n" << logofs_flush;
-        #endif
+                << " '" << ESTR() << "'.\n" << std::flush;
 
         return 0;
       }
@@ -13969,11 +12946,9 @@ int ReopenLogFile(char *name, ostream *&stream, int limit)
       }
     }
 
-    #ifdef TEST
-    *logofs << "Loop: Deleting file '" << name
+    nxinfo << "Loop: Deleting file '" << name
             << "' with size " << fileStat.st_size
-            << ".\n" << logofs_flush;
-    #endif
+            << ".\n" << std::flush;
 
     //
     // Create a new stream over the previous
@@ -13999,10 +12974,8 @@ int ReopenLogFile(char *name, ostream *&stream, int limit)
 
     umask(fileMode);
 
-    #ifdef TEST
-    *logofs << "Loop: Reopened file '" << name
-            << "'.\n" << logofs_flush;
-    #endif
+    nxinfo << "Loop: Reopened file '" << name
+            << "'.\n" << std::flush;
   }
 
   return 1;
@@ -14043,19 +13016,15 @@ void PrintProcessInfo()
          << strTimestamp() << "'.\n";
   }
 
-  #ifdef TEST
 
   if (*errorsFileName != '\0')
   {
-    cerr << "Info" << ": Using errors file '" << errorsFileName << "'.\n";
-  }
+    cerr << "Info" << ": Using errors file '" << errorsFileName << "'.\n";  }
 
   if (*statsFileName != '\0')
   {
-    cerr << "Info" << ": Using stats file '" << statsFileName << "'.\n";
-  }
+    cerr << "Info" << ": Using stats file '" << statsFileName << "'.\n";  }
 
-  #endif
 }
 
 void PrintConnectionInfo()
@@ -14308,12 +13277,10 @@ void PrintOptionIgnored(const char *type, const char *name, const char *value)
 {
   if (control -> ProxyMode == proxy_server)
   {
-    #ifdef WARNING
-    *logofs << "Loop: WARNING! Ignoring " << type
+    nxwarn << "Loop: WARNING! Ignoring " << type
             << " option '" << name << "' with value '"
             << value << "' at " << "NX client side.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     cerr << "Warning" << ": Ignoring " << type
          << " option '" << name << "' with value '"
@@ -14321,12 +13288,10 @@ void PrintOptionIgnored(const char *type, const char *name, const char *value)
   }
   else
   {
-    #ifdef WARNING
-    *logofs << "Loop: WARNING! Ignoring " << type
+    nxwarn << "Loop: WARNING! Ignoring " << type
             << " option '" << name << "' with value '"
             << value << "' at " << "NX server side.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     cerr << "Warning" << ": Ignoring " << type
          << " option '" << name << "' with value '"
@@ -14342,11 +13307,9 @@ const char *GetOptions(const char *options)
             strncasecmp(options, "nx,", 3) != 0 &&
                 strncasecmp(options, "nx:", 3) != 0)
     {
-      #ifdef TEST
-      *logofs << "Loop: PANIC! Display options string '" << options
+      nxinfo << "Loop: PANIC! Display options string '" << options
               << "' must start with 'nx' or 'nx/nx' prefix.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
 
       cerr << "Error" << ": Display options string '" << options
            << "' must start with 'nx' or 'nx/nx' prefix.\n";
@@ -14391,19 +13354,15 @@ const char *GetArg(int &argi, int argc, const char **argv)
 
 int CheckArg(const char *type, const char *name, const char *value)
 {
-  #ifdef TEST
-  *logofs << "Loop: Parsing " << type << " option '" << name
+  nxinfo << "Loop: Parsing " << type << " option '" << name
           << "' with value '" << (value ? value : "(null)")
-          << "'.\n" << logofs_flush;
-  #endif
+          << "'.\n" << std::flush;
 
   if (value == NULL || strstr(value, "=") != NULL)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Error in " << type << " option '"
+    nxfatal << "Loop: PANIC! Error in " << type << " option '"
             << name << "'. No value found.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     cerr << "Error" << ": Error in " << type << " option '"
          << name << "'. No value found.\n";
@@ -14412,10 +13371,8 @@ int CheckArg(const char *type, const char *name, const char *value)
   }
   else if (strstr(name, ",") != NULL)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Parse error at " << type << " option '"
-            << name << "'.\n" << logofs_flush;
-    #endif
+    nxfatal << "Loop: PANIC! Parse error at " << type << " option '"
+            << name << "'.\n" << std::flush;
 
     cerr << "Error" << ": Parse error at " << type << " option '"
          << name << "'.\n";
@@ -14424,12 +13381,10 @@ int CheckArg(const char *type, const char *name, const char *value)
   }
   else if (strlen(value) >= DEFAULT_STRING_LENGTH)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Value '" << value << "' of "
+    nxfatal << "Loop: PANIC! Value '" << value << "' of "
             << type << " option '" << name << "' exceeds length of "
             << DEFAULT_STRING_LENGTH << " characters.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     cerr << "Error" << ": Value '" << value << "' of "
          << type << " option '" << name << "' exceeds length of "
@@ -14483,25 +13438,23 @@ int ParseArg(const char *type, const char *name, const char *value)
 
   *(string + (strlen(value) - 1)) = '\0';
 
-  #ifdef TEST
 
-  *logofs << "Loop: Parsing integer option '" << name
-          << "' from string '" << string << "' with base set to ";
+  nxinfo << "Loop: Parsing integer option '" << name
+         << "' from string '" << string << "' with base set to ";
 
   switch (tolower(*id))
   {
     case 'k':
     case 'm':
     case 'g':
-    {
-      *logofs << (char) toupper(*id);
+    {      
+      nxinfo << (char) toupper(*id);
+      break;
     }
-    break;
   }
 
-  *logofs << ".\n" << logofs_flush;
+  nxinfo << ".\n" << std::flush;
 
-  #endif
 
   double result = atof(string) * base;
 
@@ -14514,10 +13467,8 @@ int ParseArg(const char *type, const char *name, const char *value)
 
   delete [] string;
 
-  #ifdef TEST
-  *logofs << "Loop: Integer option parsed to '"
-          << (int) result << "'.\n" << logofs_flush;
-  #endif
+  nxinfo << "Loop: Integer option parsed to '"
+          << (int) result << "'.\n" << std::flush;
 
   return (int) result;
 }
@@ -14526,11 +13477,9 @@ void SetAndValidateChannelEndPointArg(const char *type, const char *name, const 
                                       ChannelEndPoint &endPoint) {
   endPoint.setSpec(value);
   if (!endPoint.validateSpec()) {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Invalid " << type
+    nxfatal << "Loop: PANIC! Invalid " << type
             << " option '" << name << "' with value '"
-            << value << "'.\n" << logofs_flush;
-    #endif
+            << value << "'.\n" << std::flush;
 
     cerr << "Error" << ": Invalid " << type
          << " option '" << name << "' with value '"
@@ -14547,11 +13496,9 @@ int ValidateArg(const char *type, const char *name, const char *value)
 
   if (number < 0)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Invalid " << type
+    nxfatal << "Loop: PANIC! Invalid " << type
             << " option '" << name << "' with value '"
-            << value << "'.\n" << logofs_flush;
-    #endif
+            << value << "'.\n" << std::flush;
 
     cerr << "Error" << ": Invalid " << type
          << " option '" << name << "' with value '"
@@ -14656,20 +13603,16 @@ static void handleCheckSessionInLoop()
 
   if (proxy -> getShutdown() > 0)
   {
-    #ifdef TEST
-    *logofs << "Loop: End of NX transport requested "
-            << "by remote.\n" << logofs_flush;
-    #endif
+    nxinfo << "Loop: End of NX transport requested "
+            << "by remote.\n" << std::flush;
 
     handleTerminatingInLoop();
 
     if (control -> ProxyMode == proxy_server)
     {
-      #ifdef TEST
-      *logofs << "Loop: Bytes received so far are "
+      nxinfo << "Loop: Bytes received so far are "
               << (unsigned long long) statistics -> getBytesIn()
-              << ".\n" << logofs_flush;
-      #endif
+              << ".\n" << std::flush;
 
       if (statistics -> getBytesIn() < 1024)
       {
@@ -14682,20 +13625,16 @@ static void handleCheckSessionInLoop()
       }
     }
 
-    #ifdef TEST
-    *logofs << "Loop: Shutting down the NX transport.\n"
-            << logofs_flush;
-    #endif
+    nxinfo << "Loop: Shutting down the NX transport.\n"
+            << std::flush;
 
     HandleCleanup();
   }
   else if (proxy -> handlePing() < 0)
   {
-    #ifdef TEST
-    *logofs << "Loop: Failure handling the ping for "
+    nxinfo << "Loop: Failure handling the ping for "
             << "proxy FD#" << proxyFD << ".\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     HandleShutdown();
   }
@@ -14708,18 +13647,14 @@ static void handleCheckSessionInLoop()
 
   if (IsRunning(lastWatchdog) && CheckProcess(lastWatchdog, "watchdog") == 0)
   {
-    #ifdef WARNING
-    *logofs << "Loop: WARNING! Watchdog is gone unnoticed. "
+    nxwarn << "Loop: WARNING! Watchdog is gone unnoticed. "
             << "Setting the last signal to SIGTERM.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     lastSignal = SIGTERM;
 
-    #ifdef WARNING
-    *logofs << "Loop: WARNING! Resetting pid of last "
-            << "watchdog process.\n" << logofs_flush;
-    #endif
+    nxwarn << "Loop: WARNING! Resetting pid of last "
+            << "watchdog process.\n" << std::flush;
 
     SetNotRunning(lastWatchdog);
   }
@@ -14737,16 +13672,12 @@ static void handleCheckSessionInLoop()
           agent != NULL && proxy -> getType(agentFD[1]) ==
               channel_none && lastKill == 0 && lastDestroy == 1)
   {
-    #ifdef TEST
-    *logofs << "Loop: End of NX transport requested "
-            << "by agent.\n" << logofs_flush;
-    #endif
+    nxinfo << "Loop: End of NX transport requested "
+            << "by agent.\n" << std::flush;
 
-    #ifdef TEST
-    *logofs << "Loop: Bytes sent so far are "
+    nxinfo << "Loop: Bytes sent so far are "
             << (unsigned long long) statistics -> getBytesOut()
-            << ".\n" << logofs_flush;
-    #endif
+            << ".\n" << std::flush;
 
     if (statistics -> getBytesOut() < 1024)
     {
@@ -14811,11 +13742,9 @@ static void handleCheckSessionInLoop()
 
       if (signal != 0)
       {
-        #ifdef TEST
-        *logofs << "Loop: End of NX transport requested by signal '"
+        nxinfo << "Loop: End of NX transport requested by signal '"
                 << signal << "' '" << DumpSignal(signal)
-                << "'.\n" << logofs_flush;
-        #endif
+                << "'.\n" << std::flush;
 
         handleTerminatingInLoop();
       }
@@ -14844,10 +13773,8 @@ static void handleCheckSessionInLoop()
     }
     else if (lastKill == 2)
     {
-      #ifdef TEST
-      *logofs << "Loop: Shutting down the NX transport.\n"
-              << logofs_flush;
-      #endif
+      nxinfo << "Loop: Shutting down the NX transport.\n"
+              << std::flush;
 
       proxy -> handleShutdown();
 
@@ -14880,49 +13807,39 @@ static void handleCheckSessionInLoop()
           timeout = 500;
         }
 
-        #ifdef TEST
-        *logofs << "Loop: Starting watchdog process with timeout "
+        nxinfo << "Loop: Starting watchdog process with timeout "
                 << "of " << timeout << " Ms.\n"
-                << logofs_flush;
-        #endif
+                << std::flush;
       }
-      #ifdef TEST
       else
       {
-        *logofs << "Loop: Starting watchdog process without "
-                << "a timeout.\n" << logofs_flush;
+        nxinfo << "Loop: Starting watchdog process without "
+                << "a timeout.\n" << std::flush;
       }
-      #endif
 
       lastWatchdog = NXTransWatchdog(timeout);
 
       if (IsFailed(lastWatchdog))
       {
-        #ifdef PANIC
-        *logofs << "Loop: PANIC! Can't start the NX watchdog "
-                << "process in shutdown.\n" << logofs_flush;
-        #endif
+        nxfatal << "Loop: PANIC! Can't start the NX watchdog "
+                << "process in shutdown.\n" << std::flush;
 
         cerr << "Error" << ": Can't start the NX watchdog "
              << "process in shutdown.\n";
 
         HandleCleanup();
       }
-      #ifdef TEST
       else
       {
-        *logofs << "Loop: Watchdog started with pid '"
-                << lastWatchdog << "'.\n" << logofs_flush;
+        nxinfo << "Loop: Watchdog started with pid '"
+                << lastWatchdog << "'.\n" << std::flush;
       }
-      #endif
     }
     else
     {
-      #ifdef PANIC
-      *logofs << "Loop: PANIC! Previous watchdog detected "
+      nxfatal << "Loop: PANIC! Previous watchdog detected "
               << "in shutdown with pid '" << lastWatchdog
-              << "'.\n" << logofs_flush;
-      #endif
+              << "'.\n" << std::flush;
 
       cerr << "Error" << ": Previous watchdog detected "
            << "in shutdown with pid '" << lastWatchdog
@@ -14933,10 +13850,8 @@ static void handleCheckSessionInLoop()
 
     if (control -> CleanupTimeout > 0)
     {
-      #ifdef TEST
-      *logofs << "Loop: Waiting the cleanup timeout to complete.\n"
-              << logofs_flush;
-      #endif
+      nxinfo << "Loop: Waiting the cleanup timeout to complete.\n"
+              << std::flush;
 
       cerr << "Info" << ": Waiting the cleanup timeout to complete.\n";
     }
@@ -14951,10 +13866,8 @@ static void handleCheckSessionInLoop()
       cerr << "Info" << ": Watchdog running with pid '" << lastWatchdog
            << "'.\n";
 
-      #ifdef TEST
-      *logofs << "Loop: Waiting the watchdog process to complete.\n"
-              << logofs_flush;
-      #endif
+      nxinfo << "Loop: Waiting the watchdog process to complete.\n"
+              << std::flush;
 
       cerr << "Info" << ": Waiting the watchdog process to complete.\n";
     }
@@ -14967,13 +13880,11 @@ static void handleCheckBitrateInLoop()
 {
   static long int slept = 0;
 
-  #ifdef TEST
-  *logofs << "Loop: Bitrate is " << statistics -> getBitrateInShortFrame()
+  nxinfo << "Loop: Bitrate is " << statistics -> getBitrateInShortFrame()
           << " B/s and " << statistics -> getBitrateInLongFrame()
           << " B/s in " << control -> ShortBitrateTimeFrame / 1000
           << "/" << control -> LongBitrateTimeFrame / 1000
-          << " seconds timeframes.\n" << logofs_flush;
-  #endif
+          << " seconds timeframes.\n" << std::flush;
 
   //
   // This can be improved. We may not jump out
@@ -14983,11 +13894,9 @@ static void handleCheckBitrateInLoop()
 
   if (control -> LocalBitrateLimit > 0)
   {
-    #ifdef TEST
-    *logofs << "Loop: Calculating bandwidth usage with limit "
+    nxinfo << "Loop: Calculating bandwidth usage with limit "
             << control -> LocalBitrateLimit << ".\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     int reference = (statistics -> getBitrateInLongFrame() +
                          statistics -> getBitrateInShortFrame()) / 2;
@@ -15006,11 +13915,9 @@ static void handleCheckBitrateInLoop()
 
       if (slept > 2000)
       {
-        #ifdef WARNING
-        *logofs << "Loop: WARNING! Sleeping due to "
+        nxwarn << "Loop: WARNING! Sleeping due to "
                 << "reference bitrate of " << reference
-                << " B/s.\n" << logofs_flush;
-        #endif
+                << " B/s.\n" << std::flush;
 
         cerr << "Warning" << ": Sleeping due to "
              << "reference bitrate of " << reference
@@ -15032,27 +13939,20 @@ static void handleCheckBitrateInLoop()
   }
 }
 
-#if defined(TEST) || defined(INFO)
 
 static void handleCheckStateInLoop(int &setFDs)
-{
-  int fdLength;
-  int fdPending;
-  int fdSplits;
-
+{  
+  int fdLength;  int fdPending;  int fdSplits;
   for (int j = 0; j < setFDs; j++)
   {
     if (j != proxyFD)
     {
       fdPending = proxy -> getPending(j);
-
       if (fdPending > 0)
       {
-        #ifdef PANIC
-        *logofs << "Loop: PANIC! Buffer for descriptor FD#"
+        nxfatal << "Loop: PANIC! Buffer for descriptor FD#"
                 << j << " has pending bytes to read.\n"
-                << logofs_flush;
-        #endif
+                << std::flush;
 
         HandleCleanup();
       }
@@ -15061,11 +13961,9 @@ static void handleCheckStateInLoop(int &setFDs)
 
       if (fdLength > 0)
       {
-        #ifdef TEST
-        *logofs << "Loop: WARNING! Buffer for descriptor FD#"
+        nxinfo << "Loop: WARNING! Buffer for descriptor FD#"
                 << j << " has " << fdLength << " bytes to write.\n"
-                << logofs_flush;
-        #endif
+                << std::flush;
       }
     }
   }
@@ -15074,11 +13972,9 @@ static void handleCheckStateInLoop(int &setFDs)
 
   if (fdPending > 0)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Buffer for proxy descriptor FD#"
+    nxfatal << "Loop: PANIC! Buffer for proxy descriptor FD#"
             << proxyFD << " has pending bytes to read.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     HandleCleanup();
   }
@@ -15090,22 +13986,18 @@ static void handleCheckStateInLoop(int &setFDs)
     if (control -> FlushPolicy == policy_immediate &&
             proxy -> getBlocked(proxyFD) == 0)
     {
-      #ifdef PANIC
-      *logofs << "Loop: PANIC! Buffer for proxy descriptor FD#"
+      nxfatal << "Loop: PANIC! Buffer for proxy descriptor FD#"
               << proxyFD << " has " << fdLength << " bytes "
               << "to write with policy 'immediate'.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
 
       HandleCleanup();
     }
     else
     {
-      #ifdef TEST
-      *logofs << "Loop: WARNING! Buffer for proxy descriptor FD#"
+      nxinfo << "Loop: WARNING! Buffer for proxy descriptor FD#"
               << proxyFD << " has " << fdLength << " bytes "
-              << "to write.\n" << logofs_flush;
-      #endif
+              << "to write.\n" << std::flush;
     }
   }
 
@@ -15113,22 +14005,18 @@ static void handleCheckStateInLoop(int &setFDs)
 
   if (fdSplits > 0)
   {
-    #ifdef WARNING
-    *logofs << "Loop: WARNING! Proxy descriptor FD#" << proxyFD
+    nxwarn << "Loop: WARNING! Proxy descriptor FD#" << proxyFD
             << " has " << fdSplits << " splits to send.\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
   }
 }
 
 static void handleCheckSelectInLoop(int &setFDs, fd_set &readSet,
                                         fd_set &writeSet, T_timestamp selectTs)
 {
-  #if defined(TEST) || defined(INFO)
-  *logofs << "Loop: Maximum descriptors is ["
+  nxinfo << "Loop: Maximum descriptors is ["
           << setFDs << "] at " << strMsTimestamp()
-          << ".\n" << logofs_flush;
-  #endif
+          << ".\n" << std::flush;
 
   int i;
 
@@ -15136,17 +14024,13 @@ static void handleCheckSelectInLoop(int &setFDs, fd_set &readSet,
   {
     i = 0;
 
-    #if defined(TEST) || defined(INFO)
-    *logofs << "Loop: Selected for read are ";
-    #endif
+    nxinfo << "Loop: Selected for read are ";
 
     for (int j = 0; j < setFDs; j++)
     {
       if (FD_ISSET(j, &readSet))
       {
-        #if defined(TEST) || defined(INFO)
-        *logofs << "[" << j << "]" << logofs_flush;
-        #endif
+        nxinfo << "[" << j << "]" << std::flush;
 
         i++;
       }
@@ -15154,30 +14038,22 @@ static void handleCheckSelectInLoop(int &setFDs, fd_set &readSet,
 
     if (i > 0)
     {
-      #if defined(TEST) || defined(INFO)
-      *logofs << ".\n" << logofs_flush;
-      #endif
+      nxinfo << ".\n" << std::flush;
     }
     else
     {
-      #if defined(TEST) || defined(INFO)
-      *logofs << "[none].\n" << logofs_flush;
-      #endif
+      nxinfo << "[none].\n" << std::flush;
     }
 
     i = 0;
 
-    #if defined(TEST) || defined(INFO)
-    *logofs << "Loop: Selected for write are ";
-    #endif
+    nxinfo << "Loop: Selected for write are ";
 
     for (int j = 0; j < setFDs; j++)
     {
       if (FD_ISSET(j, &writeSet))
       {
-        #if defined(TEST) || defined(INFO)
-        *logofs << "[" << j << "]" << logofs_flush;
-        #endif
+        nxinfo << "[" << j << "]" << std::flush;
 
         i++;
       }
@@ -15185,24 +14061,18 @@ static void handleCheckSelectInLoop(int &setFDs, fd_set &readSet,
 
     if (i > 0)
     {
-      #if defined(TEST) || defined(INFO)
-      *logofs << ".\n" << logofs_flush;
-      #endif
+      nxinfo << ".\n" << std::flush;
     }
     else
     {
-      #if defined(TEST) || defined(INFO)
-      *logofs << "[none].\n" << logofs_flush;
-      #endif
+      nxinfo << "[none].\n" << std::flush;
     }
   }
 
-  #if defined(TEST) || defined(INFO)
-  *logofs << "Loop: Select timeout is "
+  nxinfo << "Loop: Select timeout is "
           << selectTs.tv_sec << " S and "
           << (double) selectTs.tv_usec / 1000
-          << " Ms.\n" << logofs_flush;
-  #endif
+          << " Ms.\n" << std::flush;
 }
 
 static void handleCheckResultInLoop(int &resultFDs, int &errorFDs, int &setFDs, fd_set &readSet,
@@ -15211,25 +14081,23 @@ static void handleCheckResultInLoop(int &resultFDs, int &errorFDs, int &setFDs, 
 {
   int diffTs = diffTimestamp(startTs, getNewTimestamp());
 
-  #if defined(TEST) || defined(INFO)
 
   if (diffTs >= (control -> PingTimeout -
                      (control -> LatencyTimeout * 4)))
   {
-    *logofs << "Loop: Select result is [" << resultFDs
+    nxinfo << "Loop: Select result is [" << resultFDs
             << "] at " << strMsTimestamp() << " with no "
             << "communication within " << diffTs
-            << " Ms.\n" << logofs_flush;
+            << " Ms.\n" << std::flush;
   }
   else
   {
-    *logofs << "Loop: Select result is [" << resultFDs
+    nxinfo << "Loop: Select result is [" << resultFDs
             << "] error is [" << errorFDs << "] at "
             << strMsTimestamp() << " after " << diffTs
-            << " Ms.\n" << logofs_flush;
+            << " Ms.\n" << std::flush;
   }
 
-  #endif
 
   int i;
 
@@ -15237,17 +14105,13 @@ static void handleCheckResultInLoop(int &resultFDs, int &errorFDs, int &setFDs, 
   {
     i = 0;
 
-    #if defined(TEST) || defined(INFO)
-    *logofs << "Loop: Selected for read are ";
-    #endif
+    nxinfo << "Loop: Selected for read are ";
 
     for (int j = 0; j < setFDs; j++)
     {
       if (FD_ISSET(j, &readSet))
       {
-        #if defined(TEST) || defined(INFO)
-        *logofs << "[" << j << "]" << logofs_flush;
-        #endif
+        nxinfo << "[" << j << "]" << std::flush;
 
         i++;
       }
@@ -15255,30 +14119,22 @@ static void handleCheckResultInLoop(int &resultFDs, int &errorFDs, int &setFDs, 
 
     if (i > 0)
     {
-      #if defined(TEST) || defined(INFO)
-      *logofs << ".\n" << logofs_flush;
-      #endif
+      nxinfo << ".\n" << std::flush;
     }
     else
     {
-      #if defined(TEST) || defined(INFO)
-      *logofs << "[none].\n" << logofs_flush;
-      #endif
+      nxinfo << "[none].\n" << std::flush;
     }
 
     i = 0;
 
-    #if defined(TEST) || defined(INFO)
-    *logofs << "Loop: Selected for write are ";
-    #endif
+    nxinfo << "Loop: Selected for write are ";
 
     for (int j = 0; j < setFDs; j++)
     {
       if (FD_ISSET(j, &writeSet))
       {
-        #if defined(TEST) || defined(INFO)
-        *logofs << "[" << j << "]" << logofs_flush;
-        #endif
+        nxinfo << "[" << j << "]" << std::flush;
 
         i++;
       }
@@ -15286,27 +14142,20 @@ static void handleCheckResultInLoop(int &resultFDs, int &errorFDs, int &setFDs, 
 
     if (i > 0)
     {
-      #if defined(TEST) || defined(INFO)
-      *logofs << ".\n" << logofs_flush;
-      #endif
+      nxinfo << ".\n" << std::flush;
     }
     else
     {
-      #if defined(TEST) || defined(INFO)
-      *logofs << "[none].\n" << logofs_flush;
-      #endif
+      nxinfo << "[none].\n" << std::flush;
     }
   }
 }
 
-#endif
 
 static void handleCheckSessionInConnect()
 {
-  #ifdef TEST
-  *logofs << "Loop: Going to check session in connect.\n"
-          << logofs_flush;
-  #endif
+  nxinfo << "Loop: Going to check session in connect.\n"
+          << std::flush;
 
   if (control -> ProxyMode == proxy_client)
   {
@@ -15350,11 +14199,9 @@ static void handleStatisticsInLoop()
 
     if (mode == TOTAL_STATS || mode == PARTIAL_STATS)
     {
-      #ifdef TEST
-      *logofs << "Loop: Going to request proxy statistics "
+      nxinfo << "Loop: Going to request proxy statistics "
               << "with signal '" << DumpSignal(lastSignal)
-              << "'.\n" << logofs_flush;
-      #endif
+              << "'.\n" << std::flush;
 
       if (proxy != NULL)
       {
@@ -15376,22 +14223,18 @@ static void handleNegotiationInLoop(int &setFDs, fd_set &readSet,
 
   while (yield == 0)
   {
-    #ifdef TEST
-    *logofs << "Loop: Going to run a new negotiation loop "
+    nxinfo << "Loop: Going to run a new negotiation loop "
             << "with stage " << control -> ProxyStage
             << " at " << strMsTimestamp() << ".\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     switch (control -> ProxyStage)
     {
       case stage_undefined:
       {
-        #ifdef TEST
-        *logofs << "Loop: Handling negotiation with '"
+        nxinfo << "Loop: Handling negotiation with '"
                 << "stage_undefined" << "'.\n"
-                << logofs_flush;
-        #endif
+                << std::flush;
 
         control -> ProxyStage = stage_initializing;
 
@@ -15399,11 +14242,9 @@ static void handleNegotiationInLoop(int &setFDs, fd_set &readSet,
       }
       case stage_initializing:
       {
-        #ifdef TEST
-        *logofs << "Loop: Handling negotiation with '"
+        nxinfo << "Loop: Handling negotiation with '"
                 << "stage_initializing" << "'.\n"
-                << logofs_flush;
-        #endif
+                << std::flush;
 
         InitBeforeNegotiation();
 
@@ -15413,11 +14254,9 @@ static void handleNegotiationInLoop(int &setFDs, fd_set &readSet,
       }
       case stage_connecting:
       {
-        #ifdef TEST
-        *logofs << "Loop: Handling negotiation with '"
+        nxinfo << "Loop: Handling negotiation with '"
                 << "stage_connecting" << "'.\n"
-                << logofs_flush;
-        #endif
+                << std::flush;
 
         SetupProxyConnection();
 
@@ -15427,11 +14266,9 @@ static void handleNegotiationInLoop(int &setFDs, fd_set &readSet,
       }
       case stage_connected:
       {
-        #ifdef TEST
-        *logofs << "Loop: Handling negotiation with '"
+        nxinfo << "Loop: Handling negotiation with '"
                 << "stage_connected" << "'.\n"
-                << logofs_flush;
-        #endif
+                << std::flush;
 
         //
         // Server side proxy must always be the one that
@@ -15472,11 +14309,9 @@ static void handleNegotiationInLoop(int &setFDs, fd_set &readSet,
       }
       case stage_sending_proxy_options:
       {
-        #ifdef TEST
-        *logofs << "Loop: Handling negotiation with '"
+        nxinfo << "Loop: Handling negotiation with '"
                 << "stage_sending_proxy_options" << "'.\n"
-                << logofs_flush;
-        #endif
+                << std::flush;
 
         if (SendProxyOptions(proxyFD) < 0)
         {
@@ -15496,11 +14331,9 @@ static void handleNegotiationInLoop(int &setFDs, fd_set &readSet,
       }
       case stage_waiting_forwarder_version:
       {
-        #ifdef TEST
-        *logofs << "Loop: Handling negotiation with '"
+        nxinfo << "Loop: Handling negotiation with '"
                 << "stage_waiting_forwarder_version" << "'.\n"
-                << logofs_flush;
-        #endif
+                << std::flush;
 
         int result = ReadForwarderVersion(proxyFD);
 
@@ -15521,11 +14354,9 @@ static void handleNegotiationInLoop(int &setFDs, fd_set &readSet,
       }
       case stage_waiting_forwarder_options:
       {
-        #ifdef TEST
-        *logofs << "Loop: Handling negotiation with '"
+        nxinfo << "Loop: Handling negotiation with '"
                 << "stage_waiting_forwarder_options" << "'.\n"
-                << logofs_flush;
-        #endif
+                << std::flush;
 
         int result = ReadForwarderOptions(proxyFD);
 
@@ -15546,11 +14377,9 @@ static void handleNegotiationInLoop(int &setFDs, fd_set &readSet,
       }
       case stage_waiting_proxy_version:
       {
-        #ifdef TEST
-        *logofs << "Loop: Handling negotiation with '"
+        nxinfo << "Loop: Handling negotiation with '"
                 << "stage_waiting_proxy_version" << "'.\n"
-                << logofs_flush;
-        #endif
+                << std::flush;
 
         int result = ReadProxyVersion(proxyFD);
 
@@ -15571,11 +14400,9 @@ static void handleNegotiationInLoop(int &setFDs, fd_set &readSet,
       }
       case stage_waiting_proxy_options:
       {
-        #ifdef TEST
-        *logofs << "Loop: Handling negotiation with '"
+        nxinfo << "Loop: Handling negotiation with '"
                 << "stage_waiting_proxy_options" << "'.\n"
-                << logofs_flush;
-        #endif
+                << std::flush;
 
         int result = ReadProxyOptions(proxyFD);
 
@@ -15603,11 +14430,9 @@ static void handleNegotiationInLoop(int &setFDs, fd_set &readSet,
       }
       case stage_sending_proxy_caches:
       {
-        #ifdef TEST
-        *logofs << "Loop: Handling negotiation with '"
+        nxinfo << "Loop: Handling negotiation with '"
                 << "stage_sending_proxy_caches" << "'.\n"
-                << logofs_flush;
-        #endif
+                << std::flush;
 
         if (SendProxyCaches(proxyFD) < 0)
         {
@@ -15627,11 +14452,9 @@ static void handleNegotiationInLoop(int &setFDs, fd_set &readSet,
       }
       case stage_waiting_proxy_caches:
       {
-        #ifdef TEST
-        *logofs << "Loop: Handling negotiation with '"
+        nxinfo << "Loop: Handling negotiation with '"
                 << "stage_waiting_proxy_caches" << "'.\n"
-                << logofs_flush;
-        #endif
+                << std::flush;
 
         int result = ReadProxyCaches(proxyFD);
 
@@ -15659,11 +14482,9 @@ static void handleNegotiationInLoop(int &setFDs, fd_set &readSet,
       }
       case stage_operational:
       {
-        #ifdef TEST
-        *logofs << "Loop: Handling negotiation with '"
+        nxinfo << "Loop: Handling negotiation with '"
                 << "stage_operational" << "'.\n"
-                << logofs_flush;
-        #endif
+                << std::flush;
 
         InitAfterNegotiation();
 
@@ -15673,10 +14494,8 @@ static void handleNegotiationInLoop(int &setFDs, fd_set &readSet,
       }
       default:
       {
-        #ifdef PANIC
-        *logofs << "Loop: PANIC! Unmanaged case '" << control -> ProxyStage
-                << "' while handling negotiation.\n" << logofs_flush;
-        #endif
+        nxfatal << "Loop: PANIC! Unmanaged case '" << control -> ProxyStage
+                << "' while handling negotiation.\n" << std::flush;
 
         cerr << "Error" << ": Unmanaged case '" << control -> ProxyStage
              << "' while handling negotiation.\n";
@@ -15710,20 +14529,16 @@ static void handleNegotiationInLoop(int &setFDs, fd_set &readSet,
 
   setMinTimestamp(selectTs, control -> PingTimeout);
 
-  #ifdef TEST
-  *logofs << "Loop: Selected proxy FD#" << proxyFD << " in negotiation "
+  nxinfo << "Loop: Selected proxy FD#" << proxyFD << " in negotiation "
           << "phase with timeout of " << selectTs.tv_sec << " S and "
-          << selectTs.tv_usec << " Ms.\n" << logofs_flush;
-  #endif
+          << selectTs.tv_usec << " Ms.\n" << std::flush;
 
   return;
 
 handleNegotiationInLoopError:
 
-  #ifdef PANIC
-  *logofs << "Loop: PANIC! Failure negotiating the session in stage '"
-          << control -> ProxyStage << "'.\n" << logofs_flush;
-  #endif
+  nxfatal << "Loop: PANIC! Failure negotiating the session in stage '"
+          << control -> ProxyStage << "'.\n" << std::flush;
 
   cerr << "Error" << ": Failure negotiating the session in stage '"
        << control -> ProxyStage << "'.\n";
@@ -15732,10 +14547,8 @@ handleNegotiationInLoopError:
   if (control -> ProxyMode == proxy_server &&
           control -> ProxyStage == stage_waiting_proxy_version)
   {
-    #ifdef PANIC
-    *logofs << "Loop: PANIC! Wrong version or invalid session "
-            << "authentication cookie.\n" << logofs_flush;
-    #endif
+    nxfatal << "Loop: PANIC! Wrong version or invalid session "
+            << "authentication cookie.\n" << std::flush;
 
     cerr << "Error" << ": Wrong version or invalid session "
          << "authentication cookie.\n";
@@ -15798,10 +14611,8 @@ static void handleAlertInLoop()
   {
     if (proxy != NULL)
     {
-      #if defined(TEST) || defined(INFO)
-      *logofs << "Loop: Requesting a remote alert with code '"
-              << lastAlert.code << "'.\n" << logofs_flush;
-      #endif
+      nxinfo << "Loop: Requesting a remote alert with code '"
+              << lastAlert.code << "'.\n" << std::flush;
 
       if (proxy -> handleAlert(lastAlert.code) < 0)
       {
@@ -15811,10 +14622,8 @@ static void handleAlertInLoop()
   }
   else
   {
-    #if defined(TEST) || defined(INFO)
-    *logofs << "Loop: Handling a local alert with code '"
-            << lastAlert.code << "'.\n" << logofs_flush;
-    #endif
+    nxinfo << "Loop: Handling a local alert with code '"
+            << lastAlert.code << "'.\n" << std::flush;
 
     if (control -> ProxyMode == proxy_client)
     {
@@ -16048,22 +14857,18 @@ static void handleAlertInLoop()
         {
           if (lastAlert.code > LAST_PROTO_STEP_7_ALERT)
           {
-            #ifdef WARNING
-            *logofs << "Loop: WARNING! An unrecognized alert type '"
+            nxwarn << "Loop: WARNING! An unrecognized alert type '"
                     << lastAlert.code << "' was requested.\n"
-                    << logofs_flush;
-            #endif
+                    << std::flush;
 
             cerr << "Warning" << ": An unrecognized alert type '"
                  << lastAlert.code << "' was requested.\n";
           }
-          #ifdef WARNING
           else
           {
-            *logofs << "Loop: WARNING! Ignoring obsolete alert type '"
-                    << lastAlert.code << "'.\n" << logofs_flush;
+            nxwarn << "Loop: WARNING! Ignoring obsolete alert type '"
+                    << lastAlert.code << "'.\n" << std::flush;
           }
-          #endif
 
           message = NULL;
           type    = NULL;
@@ -16076,10 +14881,8 @@ static void handleAlertInLoop()
 
       if (replace == 1 && IsRunning(lastDialog))
       {
-        #if defined(TEST) || defined(INFO)
-        *logofs << "Loop: Killing the previous dialog with pid '"
-                << lastDialog << "'.\n" << logofs_flush;
-        #endif
+        nxinfo << "Loop: Killing the previous dialog with pid '"
+                << lastDialog << "'.\n" << std::flush;
 
         //
         // The client ignores the TERM signal
@@ -16110,28 +14913,22 @@ static void handleAlertInLoop()
 
         if (IsFailed(lastDialog))
         {
-          #ifdef PANIC
-          *logofs << "Loop: PANIC! Can't start the NX dialog process.\n"
-                  << logofs_flush;
-          #endif
+          nxfatal << "Loop: PANIC! Can't start the NX dialog process.\n"
+                  << std::flush;
 
           SetNotRunning(lastDialog);
         }
-        #if defined(TEST) || defined(INFO)
         else
         {
-          *logofs << "Loop: Dialog started with pid '"
-                  << lastDialog << "'.\n" << logofs_flush;
+          nxinfo << "Loop: Dialog started with pid '"
+                  << lastDialog << "'.\n" << std::flush;
         }
-        #endif
       }
-      #if defined(TEST) || defined(INFO)
       else
       {
-        *logofs << "Loop: No new dialog required for code '"
-                << lastAlert.code << "'.\n" << logofs_flush;
+        nxinfo << "Loop: No new dialog required for code '"
+                << lastAlert.code << "'.\n" << std::flush;
       }
-      #endif
     }
   }
 
@@ -16146,10 +14943,8 @@ static void handleAlertInLoop()
 static inline void handleSetAgentInLoop(int &setFDs, fd_set &readSet,
                                             fd_set &writeSet, struct timeval &selectTs)
 {
-  #ifdef TEST
-  *logofs << "Loop: Preparing the masks for the agent descriptors.\n"
-          << logofs_flush;
-  #endif
+  nxinfo << "Loop: Preparing the masks for the agent descriptors.\n"
+          << std::flush;
 
   agent -> saveChannelState();
 
@@ -16163,10 +14958,8 @@ static inline void handleSetAgentInLoop(int &setFDs, fd_set &readSet,
                 agent -> localCanRead() ||
                     agent -> proxyCanRead())
     {
-      #ifdef TEST
-      *logofs << "Loop: Setting a null timeout with agent descriptors ready.\n"
-              << logofs_flush;
-      #endif
+      nxinfo << "Loop: Setting a null timeout with agent descriptors ready.\n"
+              << std::flush;
 
       //
       // Force a null timeout so we'll bail out
@@ -16179,10 +14972,8 @@ static inline void handleSetAgentInLoop(int &setFDs, fd_set &readSet,
     }
   }
 
-  #ifdef TEST
-  *logofs << "Loop: Clearing the read and write agent descriptors.\n"
-          << logofs_flush;
-  #endif
+  nxinfo << "Loop: Clearing the read and write agent descriptors.\n"
+          << std::flush;
 
   agent -> clearReadMask(&readSet);
   agent -> clearWriteMask(&writeSet);
@@ -16191,10 +14982,8 @@ static inline void handleSetAgentInLoop(int &setFDs, fd_set &readSet,
 static inline void handleAgentInLoop(int &resultFDs, int &errorFDs, int &setFDs, fd_set &readSet,
                                          fd_set &writeSet, struct timeval &selectTs)
 {
-  #if defined(TEST) || defined(INFO)
-  *logofs << "Loop: Setting proxy and local agent descriptors.\n"
-          << logofs_flush;
-  #endif
+  nxinfo << "Loop: Setting proxy and local agent descriptors.\n"
+          << std::flush;
 
   //
   // Check if I/O is possible on the local
@@ -16210,57 +14999,47 @@ static inline void handleAgentInLoop(int &resultFDs, int &errorFDs, int &setFDs,
 
     agent -> saveChannelState();
 
-    #if defined(TEST) || defined(INFO)
-    *logofs << "Loop: Values were resultFDs " << resultFDs
+    nxinfo << "Loop: Values were resultFDs " << resultFDs
             << " errorFDs " << errorFDs << " setFDs "
-            << setFDs << ".\n" << logofs_flush;
-    #endif
+            << setFDs << ".\n" << std::flush;
 
     if (agent -> localCanRead() == 1)
     {
-      #if defined(TEST) || defined(INFO)
-      *logofs << "Loop: Setting agent descriptor FD#" << agent ->
+      nxinfo << "Loop: Setting agent descriptor FD#" << agent ->
                  getLocalFd() << " as ready to read.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
 
       agent -> setLocalRead(&readSet, &resultFDs);
     }
 
-    #if defined(TEST) || defined(INFO)
 
     if (agent -> proxyCanRead(&readSet) == 0 &&
             agent -> proxyCanRead() == 1)
     {
-      *logofs << "Loop: WARNING! Can read from proxy FD#"
+      nxinfo << "Loop: WARNING! Can read from proxy FD#"
               << proxyFD << " but the descriptor "
-              << "is not selected.\n" << logofs_flush;
+              << "is not selected.\n" << std::flush;
     }
 
     if (agent -> proxyCanRead(&readSet) == 1)
     {
-      *logofs << "Loop: Setting proxy descriptor FD#" << agent ->
+      nxinfo << "Loop: Setting proxy descriptor FD#" << agent ->
                  getProxyFd() << " as ready to read.\n"
-              << logofs_flush;
+              << std::flush;
     }
 
-    #endif
 
-    #if defined(TEST) || defined(INFO)
-    *logofs << "Loop: Values are now resultFDs " << resultFDs
+    nxinfo << "Loop: Values are now resultFDs " << resultFDs
             << " errorFDs " << errorFDs << " setFDs "
-            << setFDs << ".\n" << logofs_flush;
-    #endif
+            << setFDs << ".\n" << std::flush;
   }
 }
 
 static inline void handleAgentLateInLoop(int &resultFDs, int &errorFDs, int &setFDs, fd_set &readSet,
                                              fd_set &writeSet, struct timeval &selectTs)
 {
-  #if defined(TEST) || defined(INFO)
-  *logofs << "Loop: Setting remote agent descriptors.\n"
-          << logofs_flush;
-  #endif
+  nxinfo << "Loop: Setting remote agent descriptors.\n"
+          << std::flush;
 
   //
   // We reset the masks before calling our select.
@@ -16281,20 +15060,16 @@ static inline void handleAgentLateInLoop(int &resultFDs, int &errorFDs, int &set
 
     agent -> saveChannelState();
 
-    #if defined(TEST) || defined(INFO)
-    *logofs << "Loop: Values were resultFDs " << resultFDs
+    nxinfo << "Loop: Values were resultFDs " << resultFDs
             << " errorFDs " << errorFDs << " setFDs "
-            << setFDs << ".\n" << logofs_flush;
-    #endif
+            << setFDs << ".\n" << std::flush;
 
     if (agent -> remoteCanRead(agent ->
             getSavedReadMask()) == 1)
     {
-      #if defined(TEST) || defined(INFO)
-      *logofs << "Loop: Setting agent descriptor FD#" << agent ->
+      nxinfo << "Loop: Setting agent descriptor FD#" << agent ->
                  getRemoteFd() << " as ready to read.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
 
       agent -> setRemoteRead(&readSet, &resultFDs);
     }
@@ -16302,20 +15077,16 @@ static inline void handleAgentLateInLoop(int &resultFDs, int &errorFDs, int &set
     if (agent -> remoteCanWrite(agent ->
             getSavedWriteMask()) == 1)
     {
-      #if defined(TEST) || defined(INFO)
-      *logofs << "Loop: Setting agent descriptor FD#" << agent ->
+      nxinfo << "Loop: Setting agent descriptor FD#" << agent ->
                  getRemoteFd() << " as ready to write.\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
 
       agent -> setRemoteWrite(&writeSet, &resultFDs);
     }
 
-    #if defined(TEST) || defined(INFO)
-    *logofs << "Loop: Values are now resultFDs " << resultFDs
+    nxinfo << "Loop: Values are now resultFDs " << resultFDs
             << " errorFDs " << errorFDs << " setFDs "
-            << setFDs << ".\n" << logofs_flush;
-    #endif
+            << setFDs << ".\n" << std::flush;
   }
 }
 
@@ -16435,10 +15206,8 @@ static inline void handleReadableInLoop(int &resultFDs, fd_set &readSet)
       {
         if (proxy -> handleNewConnection(type, newFD) < 0)
         {
-          #ifdef PANIC
-          *logofs << "Loop: PANIC! Error creating new " << label
-                  << " connection.\n" << logofs_flush;
-          #endif
+          nxfatal << "Loop: PANIC! Error creating new " << label
+                  << " connection.\n" << std::flush;
 
           cerr << "Error" << ": Error creating new " << label
                << " connection.\n";
@@ -16458,40 +15227,32 @@ static inline void handleReadableInLoop(int &resultFDs, fd_set &readSet)
           // to read immediately.
           //
 
-          #ifdef TEST
-          *logofs << "Loop: Trying to read immediately "
+          nxinfo << "Loop: Trying to read immediately "
                   << "from descriptor FD#" << newFD
-                  << ".\n" << logofs_flush;
-          #endif
+                  << ".\n" << std::flush;
 
           FD_SET(newFD, &readSet);
 
           resultFDs++;
         }
-        #ifdef TEST
         else
         {
-          *logofs << "Loop: Nothing to read immediately "
+          nxinfo << "Loop: Nothing to read immediately "
                   << "from descriptor FD#" << newFD
-                  << ".\n" << logofs_flush;
+                  << ".\n" << std::flush;
         }
-        #endif
       }
     }
   }
 
-  #ifdef DEBUG
-  *logofs << "Loop: Going to check the readable descriptors.\n"
-          << logofs_flush;
-  #endif
+  nxdbg << "Loop: Going to check the readable descriptors.\n"
+          << std::flush;
 
   if (proxy -> handleRead(resultFDs, readSet) < 0)
   {
-    #ifdef TEST
-    *logofs << "Loop: Failure reading from descriptors "
+    nxinfo << "Loop: Failure reading from descriptors "
             << "for proxy FD#" << proxyFD << ".\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     HandleShutdown();
   }
@@ -16499,18 +15260,14 @@ static inline void handleReadableInLoop(int &resultFDs, fd_set &readSet)
 
 static inline void handleWritableInLoop(int &resultFDs, fd_set &writeSet)
 {
-  #ifdef DEBUG
-  *logofs << "Loop: Going to check the writable descriptors.\n"
-          << logofs_flush;
-  #endif
+  nxdbg << "Loop: Going to check the writable descriptors.\n"
+          << std::flush;
 
   if (resultFDs > 0 && proxy -> handleFlush(resultFDs, writeSet) < 0)
   {
-    #ifdef TEST
-    *logofs << "Loop: Failure writing to descriptors "
+    nxinfo << "Loop: Failure writing to descriptors "
             << "for proxy FD#" << proxyFD << ".\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     HandleShutdown();
   }
@@ -16518,31 +15275,25 @@ static inline void handleWritableInLoop(int &resultFDs, fd_set &writeSet)
 
 static inline void handleFlushInLoop()
 {
-  #ifdef DEBUG
-  *logofs << "Loop: Going to flush any data to the proxy.\n"
-          << logofs_flush;
-  #endif
+  nxdbg << "Loop: Going to flush any data to the proxy.\n"
+          << std::flush;
 
   if (agent == NULL || control ->
           FlushPolicy == policy_immediate)
   {
-    #if defined(TEST) || defined(INFO)
 
     if (usePolicy == -1 && control ->
             ProxyMode == proxy_client)
     {
-      *logofs << "Loop: WARNING! Flushing the proxy link "
-              << "on behalf of the agent.\n" << logofs_flush;
+      nxinfo << "Loop: WARNING! Flushing the proxy link "
+              << "on behalf of the agent.\n" << std::flush;
     }
 
-    #endif
 
     if (proxy -> handleFlush() < 0)
     {
-      #ifdef TEST
-      *logofs << "Loop: Failure flushing the proxy FD#"
-              << proxyFD << ".\n" << logofs_flush;
-      #endif
+      nxinfo << "Loop: Failure flushing the proxy FD#"
+              << proxyFD << ".\n" << std::flush;
 
       HandleShutdown();
     }
@@ -16551,30 +15302,24 @@ static inline void handleFlushInLoop()
 
 static inline void handleRotateInLoop()
 {
-  #ifdef DEBUG
-  *logofs << "Loop: Going to rotate channels "
+  nxdbg << "Loop: Going to rotate channels "
           << "for proxy FD#" << proxyFD << ".\n"
-          << logofs_flush;
-  #endif
+          << std::flush;
 
   proxy -> handleRotate();
 }
 
 static inline void handleEventsInLoop()
 {
-  #ifdef DEBUG
-  *logofs << "Loop: Going to check channel events "
+  nxdbg << "Loop: Going to check channel events "
           << "for proxy FD#" << proxyFD << ".\n"
-          << logofs_flush;
-  #endif
+          << std::flush;
 
   if (proxy -> handleEvents() < 0)
   {
-    #ifdef TEST
-    *logofs << "Loop: Failure handling channel events "
+    nxinfo << "Loop: Failure handling channel events "
             << "for proxy FD#" << proxyFD << ".\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
 
     HandleShutdown();
   }
@@ -16594,10 +15339,8 @@ static void handleLogReopenInLoop(T_timestamp &lTs, T_timestamp &nTs)
 
   #endif
   {
-    #ifdef DEBUG
-    *logofs << "Loop: Checking size of log file '"
-            << errorsFileName << "'.\n" << logofs_flush;
-    #endif
+    nxdbg << "Loop: Checking size of log file '"
+            << errorsFileName << "'.\n" << std::flush;
 
     #ifndef MIXED
 
@@ -16643,11 +15386,9 @@ static void handleSetListenersInLoop(fd_set &readSet, int &setFDs)
         setFDs = tcpFD + 1;
       }
 
-      #ifdef DEBUG
-      *logofs << "Loop: Selected listener tcpFD " << tcpFD
+      nxdbg << "Loop: Selected listener tcpFD " << tcpFD
               << " with setFDs " << setFDs << ".\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
     }
 
     if (useUnixSocket == 1)
@@ -16659,11 +15400,9 @@ static void handleSetListenersInLoop(fd_set &readSet, int &setFDs)
         setFDs = unixFD + 1;
       }
 
-      #ifdef DEBUG
-      *logofs << "Loop: Selected listener unixFD " << unixFD
+      nxdbg << "Loop: Selected listener unixFD " << unixFD
               << " with setFDs " << setFDs << ".\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
     }
 
     if (useCupsSocket == 1)
@@ -16675,11 +15414,9 @@ static void handleSetListenersInLoop(fd_set &readSet, int &setFDs)
         setFDs = cupsFD + 1;
       }
 
-      #ifdef DEBUG
-      *logofs << "Loop: Selected listener cupsFD " << cupsFD
+      nxdbg << "Loop: Selected listener cupsFD " << cupsFD
               << " with setFDs " << setFDs << ".\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
     }
 
     if (useAuxSocket == 1)
@@ -16691,11 +15428,9 @@ static void handleSetListenersInLoop(fd_set &readSet, int &setFDs)
         setFDs = auxFD + 1;
       }
 
-      #ifdef DEBUG
-      *logofs << "Loop: Selected listener auxFD " << auxFD
+      nxdbg << "Loop: Selected listener auxFD " << auxFD
               << " with setFDs " << setFDs << ".\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
     }
 
     if (useSmbSocket == 1)
@@ -16707,11 +15442,9 @@ static void handleSetListenersInLoop(fd_set &readSet, int &setFDs)
         setFDs = smbFD + 1;
       }
 
-      #ifdef DEBUG
-      *logofs << "Loop: Selected listener smbFD " << smbFD
+      nxdbg << "Loop: Selected listener smbFD " << smbFD
               << " with setFDs " << setFDs << ".\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
     }
 
     if (useMediaSocket == 1)
@@ -16723,11 +15456,9 @@ static void handleSetListenersInLoop(fd_set &readSet, int &setFDs)
         setFDs = mediaFD + 1;
       }
 
-      #ifdef DEBUG
-      *logofs << "Loop: Selected listener mediaFD " << mediaFD
+      nxdbg << "Loop: Selected listener mediaFD " << mediaFD
               << " with setFDs " << setFDs << ".\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
     }
 
     if (useHttpSocket == 1)
@@ -16739,11 +15470,9 @@ static void handleSetListenersInLoop(fd_set &readSet, int &setFDs)
         setFDs = httpFD + 1;
       }
 
-      #ifdef DEBUG
-      *logofs << "Loop: Selected listener httpFD " << httpFD
+      nxdbg << "Loop: Selected listener httpFD " << httpFD
               << " with setFDs " << setFDs << ".\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
     }
   }
   else
@@ -16757,11 +15486,9 @@ static void handleSetListenersInLoop(fd_set &readSet, int &setFDs)
         setFDs = fontFD + 1;
       }
 
-      #ifdef DEBUG
-      *logofs << "Loop: Selected listener fontFD " << fontFD
+      nxdbg << "Loop: Selected listener fontFD " << fontFD
               << " with setFDs " << setFDs << ".\n"
-              << logofs_flush;
-      #endif
+              << std::flush;
     }
   }
 
@@ -16774,10 +15501,8 @@ static void handleSetListenersInLoop(fd_set &readSet, int &setFDs)
       setFDs = slaveFD + 1;
     }
 
-    #ifdef DEBUG
-    *logofs << "Loop: Selected listener slaveFD " << slaveFD
+    nxdbg << "Loop: Selected listener slaveFD " << slaveFD
             << " with setFDs " << setFDs << ".\n"
-            << logofs_flush;
-    #endif
+            << std::flush;
   }
 }
