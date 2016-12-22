@@ -114,6 +114,7 @@ libXcomp_la_SOURCES =					\
     WriteBuffer.cpp					\
     XidCache.cpp					\
     Z.cpp						\
+    Log.cpp						\
     $(NULL)
 
 libXcomp_la_LIBADD =					\
