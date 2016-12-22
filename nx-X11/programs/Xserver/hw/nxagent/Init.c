@@ -22,11 +22,6 @@
 /* as copyright holder, as well.                                          */
 /*                                                                        */
 /**************************************************************************/
-/* contributors, only the core maintainers and supporters are listed as   */
-/* copyright holders. Please contact us, if you feel you should be listed */
-/* as copyright holder, as well.                                          */
-/*                                                                        */
-/**************************************************************************/
 
 /*
 
