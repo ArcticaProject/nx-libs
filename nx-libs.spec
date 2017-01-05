@@ -92,8 +92,19 @@ BuildRequires:  zlib-devel
 
 Obsoletes:      nx < 3.5.0-19
 Provides:       nx = %{version}-%{release}
-Obsoletes:      nx%{?_isa} < 3.5.0-19
 Provides:       nx%{?_isa} = %{version}-%{release}
+Obsoletes:      libNX_Xau6 < 3.5.99.1
+Obsoletes:      libNX_Xcomposite1 < 3.5.99.1
+Obsoletes:      libNX_Xdamage1 < 3.5.99.1
+Obsoletes:      libNX_Xdmcp6 < 3.5.99.1
+Obsoletes:      libNX_Xext6 < 3.5.99.1
+Obsoletes:      libNX_Xfixes3 < 3.5.99.1
+Obsoletes:      libNX_Xinerama1 < 3.5.99.1
+Obsoletes:      libNX_Xpm4 < 3.5.99.1
+Obsoletes:      libNX_Xrandr2 < 3.5.99.1
+Obsoletes:      libNX_Xrender1 < 3.5.99.1
+Obsoletes:      libNX_Xtst6 < 3.5.99.1
+Obsoletes:      libXcompext < 3.5.99.3
 
 %if 0%{?el5}
 # For compatibility with EPEL5
@@ -114,30 +125,7 @@ Summary:        Core NX protocol client library
 Requires:       %{name}%{?_isa} >= 3.5.0.29
 Obsoletes:      libNX_X11 < 3.5.0.30
 Provides:       libNX_X11 = %{version}-%{release}
-Obsoletes:      libNX_X11%{?_isa} < 3.5.0.30
 Provides:       libNX_X11%{?_isa} = %{version}-%{release}
-Conflicts:      libNX_Xau6 < 3.5.99.1
-Conflicts:      libNX_Xau6%{?_isa} < 3.5.99.1
-Conflicts:      libNX_Xcomposite1 < 3.5.99.1
-Conflicts:      libNX_Xcomposite1%{?_isa} < 3.5.99.1
-Conflicts:      libNX_Xdamage1 < 3.5.99.1
-Conflicts:      libNX_Xdamage1%{?_isa} < 3.5.99.1
-Conflicts:      libNX_Xdmcp6 < 3.5.99.1
-Conflicts:      libNX_Xdmcp6%{?_isa} < 3.5.99.1
-Conflicts:      libNX_Xext6 < 3.5.99.1
-Conflicts:      libNX_Xext6%{?_isa} < 3.5.99.1
-Conflicts:      libNX_Xfixes3 < 3.5.99.1
-Conflicts:      libNX_Xfixes3%{?_isa} < 3.5.99.1
-Conflicts:      libNX_Xinerama1 < 3.5.99.1
-Conflicts:      libNX_Xinerama1%{?_isa} < 3.5.99.1
-Conflicts:      libNX_Xpm4 < 3.5.99.1
-Conflicts:      libNX_Xpm4%{?_isa} < 3.5.99.1
-Conflicts:      libNX_Xrandr2 < 3.5.99.1
-Conflicts:      libNX_Xrandr2%{?_isa} < 3.5.99.1
-Conflicts:      libNX_Xrender1 < 3.5.99.1
-Conflicts:      libNX_Xrender1%{?_isa} < 3.5.99.1
-Conflicts:      libNX_Xtst6 < 3.5.99.1
-Conflicts:      libNX_Xtst6%{?_isa} < 3.5.99.1
 %if 0%{?suse_version}
 Requires:       xorg-x11-fonts-core
 %endif
@@ -162,8 +150,6 @@ Group:          Development/Libraries
 Summary:        Development files for the Core NX protocol library
 Requires:       libNX_X11-6%{?_isa} = %{version}-%{release}
 Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
-Conflicts:      libNX_Xau-devel < 3.5.99.1
-Conflicts:      libNX_Xau-devel%{?_isa} < 3.5.99.1
 
 %description -n libNX_X11-devel
 NX is a software suite which implements very efficient compression of
@@ -202,7 +188,6 @@ Summary:        NX differential compression library
 Requires:       %{name}%{?_isa} >= 3.5.0.29
 Obsoletes:      libXcomp <= 3.5.1
 Provides:       libXcomp = %{version}-%{release}
-Obsoletes:      libXcomp%{?_isa} <= 3.5.1
 Provides:       libXcomp%{?_isa} = %{version}-%{release}
 
 %description -n libXcomp3
@@ -235,7 +220,6 @@ Summary:        NX session shadowing Library
 Requires:       %{name}%{?_isa} >= 3.5.0.29
 Obsoletes:      libXcompshad <= 3.5.1
 Provides:       libXcompshad = %{version}-%{release}
-Obsoletes:      libXcompshad%{?_isa} <= 3.5.1
 Provides:       libXcompshad%{?_isa} = %{version}-%{release}
 
 %description -n libXcompshad3
@@ -252,6 +236,12 @@ Summary:        Include files and libraries for NX development
 Requires:       libNX_X11-devel%{?_isa} = %{version}-%{release}
 Requires:       nx-proto-devel%{?_isa} = %{version}-%{release}
 Requires:       %{name}%{?_isa} = %{version}-%{release}
+Obsoletes:      libNX_Xau-devel < 3.5.99.1
+Obsoletes:      libNX_Xdmcp-devel < 3.5.0.32-2
+Obsoletes:      libNX_Xext-devel < 3.5.99.1
+Obsoletes:      libNX_Xfixes-devel < 3.5.99.1
+Obsoletes:      libNX_Xpm-devel < 3.5.0.32-2
+Obsoletes:      libNX_Xrender-devel < 3.5.99.1
 
 %description devel
 NX is a software suite from NoMachine which implements very efficient
@@ -280,12 +270,8 @@ Group:          Applications/System
 Summary:        NX Agent
 Obsoletes:      nx < 3.5.0-19
 Provides:       nx = %{version}-%{release}
-Obsoletes:      nx%{?_isa} < 3.5.0-19
 Provides:       nx%{?_isa} = %{version}-%{release}
-Conflicts:      nxauth < 3.5.99.1
-Conflicts:      nxauth%{?_isa} < 3.5.99.1
-Conflicts:      libXcompext < 3.5.99.3
-Conflicts:      libXcompext%{?_isa} < 3.5.99.3
+Obsoletes:      nxauth < 3.5.99.1
 %if 0%{?suse_version}
 Requires:       xorg-x11-fonts-core
 %endif
@@ -315,7 +301,6 @@ Group:          Applications/System
 Summary:        NX Proxy
 Obsoletes:      nx < 3.5.0-19
 Provides:       nx = %{version}-%{release}
-Obsoletes:      nx%{?_isa} < 3.5.0-19
 Provides:       nx%{?_isa} = %{version}-%{release}
 
 %description -n nxproxy
