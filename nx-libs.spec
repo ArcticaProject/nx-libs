@@ -374,7 +374,7 @@ rm -r %{buildroot}%{_includedir}/nx-X11/extensions/xtestext1.h
 rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 
 %if 0%{?fdupes:1}
-%fdupes %buildroot/%_prefix
+%fdupes %{buildroot}%{_prefix}
 %endif
 
 %post -p /sbin/ldconfig
@@ -419,7 +419,7 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 
 %files -n libXcomp-devel
 %defattr(-,root,root)
-%_libdir/libXcomp.so
+%{_libdir}/libXcomp.so
 %{_includedir}/nx/MD5.h
 %{_includedir}/nx/NX.h
 %{_includedir}/nx/NXalert.h
@@ -433,18 +433,18 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %doc COPYING
 %doc doc/nxcomp/README.on-retroactive-DXPC-license
 %doc doc/nxcomp/nxcomp-3.6-drops-compat-code-3.4.x-testing.pdf
-%_libdir/libXcomp.so.3*
+%{_libdir}/libXcomp.so.3*
 
 %files -n libXcompshad-devel
 %defattr(-,root,root)
-%_libdir/libXcompshad.so
+%{_libdir}/libXcompshad.so
 %{_includedir}/nx/Shadow.h
 %{_libdir}/pkgconfig/nxcompshad.pc
 
 %files -n libXcompshad3
 %defattr(-,root,root)
 %doc COPYING
-%_libdir/libXcompshad.so.3*
+%{_libdir}/libXcompshad.so.3*
 
 %files devel
 %defattr(-,root,root)
