@@ -149,6 +149,7 @@ install-full:
 	$(COPY_DEREFERENCED) nx-X11/.build-exports/lib/libNX_X11.so.6.2 $(DESTDIR)$(USRLIBDIR)/
 	$(INSTALL_DIR) $(DESTDIR)$(USRLIBDIR)/nx-X11
 	$(INSTALL_SYMLINK) ../libNX_X11.so $(DESTDIR)$(USRLIBDIR)/nx-X11/libX11.so
+	$(INSTALL_SYMLINK) ../libNX_X11.so.6 $(DESTDIR)$(USRLIBDIR)/nx-X11/libX11.so.6
 	$(INSTALL_SYMLINK) ../libNX_X11.so.6.2 $(DESTDIR)$(USRLIBDIR)/nx-X11/libX11.so.6.2
 
 	. replace.sh; set -x; find nx-X11/.build-exports/include/{nx*,GL} -type d | \
