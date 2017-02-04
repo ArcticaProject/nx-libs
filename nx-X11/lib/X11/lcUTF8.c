@@ -163,9 +163,6 @@ typedef struct _Utf8ConvRec {
 
 #include "lcUniConv/utf8.h"
 #include "lcUniConv/ucs2be.h"
-#ifdef notused
-#include "lcUniConv/ascii.h"
-#endif
 #include "lcUniConv/iso8859_1.h"
 #include "lcUniConv/iso8859_2.h"
 #include "lcUniConv/iso8859_3.h"
