@@ -515,8 +515,8 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %{_bindir}/nxagent
 %dir %{_libdir}/nx/bin
 %{_libdir}/nx/bin/nxagent
-%dir %{_libdir}/nx-X11
-%{_libdir}/nx-X11/libX11.so*
+%dir %{_libdir}/nx/X11
+%{_libdir}/nx/X11/libX11.so*
 %{_datadir}/pixmaps/nxagent.xpm
 %dir %{_datadir}/nx
 %{_datadir}/nx/rgb
