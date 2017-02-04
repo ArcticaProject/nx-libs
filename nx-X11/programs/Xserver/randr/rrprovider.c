@@ -440,6 +440,10 @@ RRProviderInit(void)
     if (!RRProviderType)
         return FALSE;
 
+#ifdef NXAGENT_SERVER
+    RegisterResourceName(RRProviderType, "Provider");
+#endif
+
     return TRUE;
 }
 
