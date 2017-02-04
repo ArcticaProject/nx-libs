@@ -72,7 +72,7 @@ build-full:
 
 	cd nxcompshad && autoconf && (${CONFIGURE}) && ${MAKE}
 
-	cd nx-X11 && ${MAKE} World
+	cd nx-X11 && ${MAKE} World USRLIBDIR=$(USRLIBDIR) SHLIBDIR=$(SHLIBDIR)
 
 	cd nxproxy && autoconf && (${CONFIGURE}) && ${MAKE}
 
