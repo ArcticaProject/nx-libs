@@ -6,16 +6,16 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 Last-Update: 2012-12-31
 --- a/nx-X11/config/cf/Imake.tmpl
 +++ b/nx-X11/config/cf/Imake.tmpl
-@@ -749,7 +749,7 @@
+@@ -730,7 +730,7 @@
  #define AlternateUsrLibDir YES
  #endif
  #else
--#define UsrLibDir Concat4(/usr/local,/,LibDirName,/nx)
-+#define UsrLibDir Concat4(/usr,/,LibDirName,/nx)
+-#define UsrLibDir Concat4(/usr/local,/,LibDirName,/nx/X11)
++#define UsrLibDir Concat4(/usr,/,LibDirName,/nx/X11)
  #ifndef AlternateUsrLibDir
  #define AlternateUsrLibDir NO
  #endif
-@@ -767,7 +767,7 @@
+@@ -748,7 +748,7 @@
  #define AlternateUsrDataDir YES
  #endif
  #else
@@ -26,7 +26,7 @@ Last-Update: 2012-12-31
  #endif
 --- a/nx-X11/config/cf/site.def
 +++ b/nx-X11/config/cf/site.def
-@@ -72,7 +72,7 @@
+@@ -69,7 +69,7 @@
  #ifdef AfterVendorCF
  
  #ifndef ProjectRoot
