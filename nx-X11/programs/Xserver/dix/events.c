@@ -2986,12 +2986,7 @@ EventSelectForWindow(register WindowPtr pWin, register ClientPtr client, Mask ma
     if (wClient (pWin) == client)
     {
 	check = pWin->eventMask;
-#ifdef SGIMISC
-	pWin->eventMask =
-	    (mask & ~SGIMiscSpecialDestroyMask) | (pWin->eventMask & SGIMiscSpecialDestroyMask);
-#else
 	pWin->eventMask = mask;
-#endif
     }
     else
     {
@@ -3000,9 +2995,6 @@ EventSelectForWindow(register WindowPtr pWin, register ClientPtr client, Mask ma
 	    if (SameClient(others, client))
 	    {
 		check = others->mask;
-#ifdef SGIMISC
-		mask = (mask & ~SGIMiscSpecialDestroyMask) | (others->mask & SGIMiscSpecialDestroyMask);
-#endif
 		if (mask == 0)
 		{
 		    FreeResource(others->resource, RT_NONE);
