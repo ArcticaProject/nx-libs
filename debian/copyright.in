@@ -1484,7 +1484,6 @@ Files: nx-X11/extras/Mesa/include/GL/glext.h
  nx-X11/programs/Xserver/GL/glx/singlesize.h
  nx-X11/programs/Xserver/GL/glx/unpack.h
  nx-X11/programs/Xserver/GL/glx/xfont.c
- nx-X11/programs/Xserver/GL/include/GL/glx_ansic.h
 Copyright: 1991-2000, Silicon Graphics, Inc
   1991-2004, Silicon Graphics, Inc
 License: UNKNOWN
@@ -1862,16 +1861,6 @@ Copyright: 1994-1995, Hewlett-Packard Company
 License: Expat
  FIXME
 
-Files: nx-X11/extras/Mesa/include/GL/xmesa_xf86.h
- nx-X11/programs/Xserver/GL/include/GL/xf86glx.h
- nx-X11/programs/Xserver/GL/mesa/X/xf86glx.c
- nx-X11/programs/Xserver/GL/mesa/X/xf86glx_util.c
- nx-X11/programs/Xserver/GL/mesa/X/xf86glx_util.h
- nx-X11/programs/Xserver/GL/mesa/X/xf86glxint.h
-Copyright: 1998-1999, Precision Insight, Inc., Cedar Park, Texas
-License: Expat
- FIXME
-
 Files: nx-X11/extras/Mesa/src/mesa/tnl/t_save_api.c
  nx-X11/extras/Mesa/src/mesa/tnl/t_save_api.h
  nx-X11/extras/Mesa/src/mesa/tnl/t_vtx_api.c
@@ -1892,6 +1881,15 @@ Files: nx-X11/lib/xtrans/Xtrans.c
 Copyright: 1993-1994, 1998 The Open Group
   1993-1994, NCR Corporation - Dayton, Ohio, USA
 License: UNKNOWN
+ FIXME
+
+Files: nx-X11/extras/Mesa/include/GL/xmesa_xf86.h
+ nx-X11/programs/Xserver/GL/mesa/X/xf86glx.c
+ nx-X11/programs/Xserver/GL/mesa/X/xf86glx_util.c
+ nx-X11/programs/Xserver/GL/mesa/X/xf86glx_util.h
+ nx-X11/programs/Xserver/GL/mesa/X/xf86glxint.h
+Copyright: 1998-1999, Precision Insight, Inc., Cedar Park, Texas
+License: Expat
  FIXME
 
 Files: nx-X11/lib/X11/XimintL.h
@@ -1928,15 +1926,6 @@ Files: nx-X11/programs/Xserver/miext/cw/cw.c
  nx-X11/programs/Xserver/miext/cw/cw_render.c
 Copyright: 2004, Eric Anholt
 License: UNKNOWN
- FIXME
-
-Files: nx-X11/extras/Mesa/src/mesa/glapi/glapitable.h
- nx-X11/extras/Mesa/src/mesa/glapi/glapitemp.h
- nx-X11/extras/Mesa/src/mesa/glapi/glprocs.h
-Copyright: 1999-2001, Brian Paul
-  1999-2003, Brian Paul
-  IBM Corporation 2004
-License: Expat
  FIXME
 
 Files: nx-X11/extras/Mesa/src/mesa/shader/atifragshader.c
@@ -2008,6 +1997,21 @@ Files: nx-X11/programs/Xserver/include/bstore.h
  nx-X11/programs/Xserver/mi/mibstore.h
 Copyright: 1987, the Regents of the University of California
 License: UNKNOWN
+ FIXME
+
+Files: nx-X11/extras/Mesa/src/mesa/glapi/glapitable.h
+ nx-X11/extras/Mesa/src/mesa/glapi/glapitemp.h
+Copyright: 1999-2001, Brian Paul
+  1999-2003, Brian Paul
+  IBM Corporation 2004
+License: Expat
+ FIXME
+
+Files: nx-X11/extras/Mesa/src/mesa/glapi/glapioffsets.h
+ nx-X11/extras/Mesa/src/mesa/glapi/glprocs.h
+Copyright: 1999-2001, Brian Paul
+  IBM Corporation 2004,
+License: Expat
  FIXME
 
 Files: nx-X11/programs/Xserver/dix/region.c
@@ -2211,12 +2215,6 @@ License: BSD-2-clause
 
 Files: nx-X11/programs/Xserver/os/xprintf.c
 Copyright: 2004, Alexander Gottwald
-License: Expat
- FIXME
-
-Files: nx-X11/extras/Mesa/src/mesa/glapi/glapioffsets.h
-Copyright: 1999-2001, Brian Paul
-  IBM Corporation 2004,
 License: Expat
  FIXME
 
