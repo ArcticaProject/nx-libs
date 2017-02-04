@@ -20,6 +20,5 @@ NX_LIBDIR=@@NXLIBDIR@@
 # make sure nxagent starts properly with pam_tmpdir.so being in use
 NX_TEMP=${NX_TEMP:-/tmp}
 export NX_TEMP
-export LD_LIBRARY_PATH=@@NX_LIBDIR@@/X11/
 
 exec $NX_LIBDIR/bin/${NXAPP:-"nxagent"} "$@"

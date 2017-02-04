@@ -39,9 +39,9 @@
 #endif
 
 #ifdef X11ProjectRoot
-# define XUsrLibDirPath	$(USRLIBDIR)/nx:$(XPROJECTROOT)
+# define XUsrLibDirPath	$(USRLIBDIR):$(XPROJECTROOT)
 #else
-# define XUsrLibDirPath	$(USRLIBDIR)/nx
+# define XUsrLibDirPath	$(USRLIBDIR)
 #endif
 #ifdef UsrLibDirPath
 # undef UsrLibDirPath

@@ -723,12 +723,12 @@ TCLIBDIR = TclLibDir
 
 #ifndef UsrLibDir
 #ifdef ProjectRoot
-#define UsrLibDir Concat4(ProjectRoot,/,LibDirName,/nx)
+#define UsrLibDir Concat4(ProjectRoot,/,LibDirName,/nx/X11)
 #ifndef AlternateUsrLibDir
 #define AlternateUsrLibDir YES
 #endif
 #else
-#define UsrLibDir Concat4(/usr/local,/,LibDirName,/nx)
+#define UsrLibDir Concat4(/usr/local,/,LibDirName,/nx/X11)
 #ifndef AlternateUsrLibDir
 #define AlternateUsrLibDir NO
 #endif
