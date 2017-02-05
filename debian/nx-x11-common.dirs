@@ -1,0 +1,2 @@
+# we symlink to this dir, so make sure it exists
+usr/share/fonts/X11
