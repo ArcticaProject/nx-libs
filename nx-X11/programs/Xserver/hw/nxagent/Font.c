@@ -77,26 +77,22 @@ is" without express or implied warranty.
 #define NXAGENT_DEFAULT_FONT_PATH  \
 "/usr/share/nx/fonts/misc/,/usr/share/nx/fonts/Speedo/,\
 /usr/share/nx/fonts/Type1/,/usr/share/nx/fonts/75dpi/,\
-/usr/share/nx/fonts/100dpi/,/usr/share/nx/fonts/TTF/,\
-/usr/NX/share/fonts/base"
+/usr/share/nx/fonts/100dpi/,/usr/share/nx/fonts/TTF/"
 
 #define NXAGENT_ALTERNATE_FONT_PATH  \
 "/usr/share/X11/fonts/misc/,/usr/share/X11/fonts/Speedo/,\
 /usr/share/X11/fonts/Type1/,/usr/share/X11/fonts/75dpi/,\
-/usr/share/X11/fonts/100dpi/,/usr/share/X11/fonts/TTF/,\
-/usr/NX/share/fonts/base"
+/usr/share/X11/fonts/100dpi/,/usr/share/X11/fonts/TTF/"
 
 #define NXAGENT_ALTERNATE_FONT_PATH_2  \
 "/usr/share/fonts/X11/misc/,/usr/share/fonts/X11/Speedo/,\
 /usr/share/fonts/X11/Type1/,/usr/share/fonts/X11/75dpi/,\
-/usr/share/fonts/X11/100dpi/,/usr/share/fonts/X11/TTF/,\
-/usr/NX/share/fonts/base"
+/usr/share/fonts/X11/100dpi/,/usr/share/fonts/X11/TTF/"
 
 #define NXAGENT_ALTERNATE_FONT_PATH_3  \
 "/usr/X11R6/lib/X11/fonts/misc/,/usr/X11R6/lib/X11/fonts/Speedo/,\
 /usr/X11R6/lib/X11/fonts/Type1/,/usr/X11R6/lib/X11/fonts/75dpi/,\
-/usr/X11R6/lib/X11/fonts/100dpi/,/usr/X11R6/lib/X11/fonts/TTF/,\
-/usr/NX/share/fonts/base"
+/usr/X11R6/lib/X11/fonts/100dpi/,/usr/X11R6/lib/X11/fonts/TTF/"
 
 #undef NXAGENT_FONTCACHE_DEBUG
 #undef NXAGENT_RECONNECT_FONT_DEBUG
