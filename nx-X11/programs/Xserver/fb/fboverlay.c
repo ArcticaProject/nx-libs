@@ -32,6 +32,10 @@
 #include "fb.h"
 #include "fboverlay.h"
 
+#ifdef MITSHM
+#include "shmint.h"
+#endif
+
 int	fbOverlayGeneration;
 int	fbOverlayScreenPrivateIndex = -1;
 
