@@ -388,7 +388,7 @@ main(int argc, char *argv[], char *envp[])
 	    SetFontPath(0, 0, (unsigned char *)defaultFontPath, &error);
 	} else {
 	    if (SetDefaultFontPath(defaultFontPath) != Success)
-		ErrorF("failed to set default font path '%s'",
+		ErrorF("failed to set default font path '%s'\n",
 			defaultFontPath);
 	}
 	if (!SetDefaultFont(defaultTextFont))
