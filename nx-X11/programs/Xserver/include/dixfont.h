@@ -150,4 +150,9 @@ extern void InitGlyphCaching(void);
 
 extern void SetGlyphCachingMode(int /*newmode*/);
 
+/*
+ * libXfont/src/builtins/builtin.h
+ */
+extern _X_EXPORT void BuiltinRegisterFpeFunctions(void);
+
 #endif				/* DIXFONT_H */
