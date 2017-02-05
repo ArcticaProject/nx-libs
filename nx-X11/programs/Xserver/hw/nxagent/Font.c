@@ -73,7 +73,6 @@ is" without express or implied warranty.
 #define NXAGENT_ALTERNATE_FONT_DIR    "/usr/share/X11/fonts"
 #define NXAGENT_ALTERNATE_FONT_DIR_2  "/usr/share/fonts/X11"
 #define NXAGENT_ALTERNATE_FONT_DIR_3  "/usr/share/fonts"
-#define NXAGENT_ALTERNATE_FONT_DIR_4  "/usr/NX/share/fonts"
 
 #define NXAGENT_DEFAULT_FONT_PATH  \
 "/usr/X11R6/lib/X11/fonts/misc/,/usr/X11R6/lib/X11/fonts/Speedo/,\
@@ -98,9 +97,6 @@ is" without express or implied warranty.
 /usr/share/fonts/Type1/,/usr/share/fonts/75dpi/,\
 /usr/share/fonts/100dpi/,/usr/share/fonts/TTF/,\
 /usr/NX/share/fonts/base"
-
-#define NXAGENT_ALTERNATE_FONT_PATH_4  \
-"/usr/NX/share/fonts/base"
 
 #undef NXAGENT_FONTCACHE_DEBUG
 #undef NXAGENT_RECONNECT_FONT_DEBUG
@@ -1574,32 +1570,6 @@ void nxagentVerifyDefaultFontPath(void)
 
     strcat(fontPath, NXAGENT_ALTERNATE_FONT_PATH_3);
   }
-
-  if (stat(NXAGENT_ALTERNATE_FONT_DIR_4, &dirStat) == 0 &&
-          S_ISDIR(dirStat.st_mode) != 0)
-  {
-    /*
-     * Let's use the "/usr/NX/share/fonts" path.
-     */
-
-    #ifdef TEST
-    fprintf(stderr, "nxagentVerifyDefaultFontPath: Assuming fonts in directory [%s].\n",
-                validateString(NXAGENT_ALTERNATE_FONT_DIR_4));
-    #endif
-
-    if (*fontPath != '\0')
-    {
-      fontPath = realloc(fontPath, strlen(fontPath) + strlen(NXAGENT_ALTERNATE_FONT_PATH_4) + 2);
-      strcat(fontPath, ",");
-    }
-    else
-    {
-      fontPath = realloc(fontPath, strlen(fontPath) + strlen(NXAGENT_ALTERNATE_FONT_PATH_4) + 1);
-    }
-
-    strcat(fontPath, NXAGENT_ALTERNATE_FONT_PATH_4);
-  }
-
   if (*fontPath == '\0') 
   {
     #ifdef WARNING
