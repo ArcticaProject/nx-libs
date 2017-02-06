@@ -91,7 +91,6 @@ OBJS =                          \
  * .macros files or site.def in the directory util/imake.includes/:
  *
  *     DefaultFontPath                COMPILEDDEFAULTFONTPATH
- *     DefaultRGBDatabase             RGB_DB
  *
  * The sample util/imake.includes/Imake.tmpl will provide generic defaults.
  * The values in site.h are simply a last line of defense and should not be
@@ -101,11 +100,6 @@ OBJS =                          \
 #ifdef DefaultFontPath
 DEFAULTFONTPATH = DefaultFontPath
 SITE_FONT_PATH = -DCOMPILEDDEFAULTFONTPATH=\"$(DEFAULTFONTPATH)\"
-#endif
-
-#ifdef DefaultRGBDatabase
-DEFAULTRGBDATABASE = DefaultRGBDatabase
-   SITE_RGB_DB = -DRGB_DB=\"$(DEFAULTRGBDATABASE)\"
 #endif
 
 #ifdef DefaultDisplayClass
@@ -129,7 +123,7 @@ VENDORRELEASE = XVendorRelease
 #endif
 #endif
 
-SITE_DEFINES = $(SITE_FONT_PATH) $(SITE_RGB_DB) $(SITE_DISPLAY_CLASS)
+SITE_DEFINES = $(SITE_FONT_PATH) $(SITE_DISPLAY_CLASS)
 
 VENDOR_DEFINES = $(VENDOR_STRING) $(VENDOR_RELEASE) $(QUARTZ_DEFINES)
 

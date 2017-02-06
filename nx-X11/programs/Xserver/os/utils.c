@@ -567,7 +567,6 @@ void UseMsg(void)
     ErrorF("-c                     turns off key-click\n");
     ErrorF("c #                    key-click volume (0-100)\n");
     ErrorF("-cc int                default color visual class\n");
-    ErrorF("-co file               color database file\n");
 #ifdef COMMANDLINE_CHALLENGED_OPERATING_SYSTEMS
     ErrorF("-config file           read options from file\n");
 #endif
@@ -772,13 +771,6 @@ ProcessCommandLine(int argc, char *argv[])
 	{
 	    if(++i < argc)
 	        defaultColorVisualClass = atoi(argv[i]);
-	    else
-		UseMsg();
-	}
-	else if ( strcmp( argv[i], "-co") == 0)
-	{
-	    if(++i < argc)
-	        rgbPath = argv[i];
 	    else
 		UseMsg();
 	}

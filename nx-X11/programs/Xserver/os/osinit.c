@@ -90,8 +90,6 @@ int limitStackSpace = -1;
 int limitNoFile = -1;
 #endif
 
-Bool OsDelayInitColors = FALSE;
-
 void
 OsInit(void)
 {
@@ -222,7 +220,6 @@ OsInit(void)
 	    SmartScheduleDisable = TRUE;
 #endif
     OsInitAllocator();
-    if (!OsDelayInitColors) OsInitColors();
 }
 
 void

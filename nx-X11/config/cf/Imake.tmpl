@@ -539,9 +539,6 @@ X_BYTE_ORDER = ByteOrder
 #ifndef HasMktemp
 #define HasMktemp		NO	/* if you have the mktemp command */
 #endif
-#ifndef HasNdbm
-#define HasNdbm			NO
-#endif
 #ifndef HasSecureRPC
 #define HasSecureRPC		NO	/* if you have Secure RPC */
 #endif
@@ -1286,13 +1283,6 @@ TCLIBDIR = TclLibDir
 #ifndef ToolkitStringsABIOptions
 #define ToolkitStringsABIOptions /**/
 #endif
-#ifndef NdbmDefines
-#if HasNdbm
-#define NdbmDefines -DNDBM
-#else
-#define NdbmDefines /**/
-#endif
-#endif
 #ifndef HasLdRunPath
 #define HasLdRunPath NO
 #endif
@@ -1316,9 +1306,6 @@ TCLIBDIR = TclLibDir
 #endif
 #ifndef MathLibrary
 #define MathLibrary -lm
-#endif
-#ifndef DBMLibrary
-#define DBMLibrary -ldbm
 #endif
 #ifndef DlLibrary
 #define DlLibrary -ldl
