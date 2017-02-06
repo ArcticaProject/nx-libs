@@ -65,7 +65,6 @@ Imake.tmpl provides defaults for the following variables:
 	HasLibCrypt		boolean for system has libcrypt
         HasMotif                boolean for system has Motif
         HasMotif2               boolean for system has Motif2 or OpenMotif
-	HasNdbm			boolean for system has ndbm routines
 	HasPoll			use poll() syscall?
 	HasPurify		boolean for system has Purify
 	HasPutenv		boolean for libc has putenv()
@@ -114,7 +113,6 @@ Imake.tmpl provides defaults for the following variables:
 	MkCookieCmd		command to generate an xauth cookie
 	MsMacros		macro flag for TroffCmd, normally "-ms"
 	MvCmd			command to rename a file
-	NdbmDefines		-D's to turn on use of ndbm routines
 	NeedConstPrototoypes	whether const is supported
 	NeedFunctionPrototypes	whether or not to force function prototypes
 	NeedNestedPrototypes	whether nested prototypes are supported
@@ -176,7 +174,6 @@ X11.tmpl provides defaults for the following variables:
 	DebugLibX11		build libX11_d.a
 	DefaultCursorTheme      name of default cursor theme
 	DefaultFontPath		default server font path
-	DefaultRGBDatabase	default server rgb color database
 	DefaultSystemPath	default system xdm PATH environment variable
 	DefaultSystemShell	default /bin/sh
 	DefaultUserPath		default user xdm PATH environment variable
@@ -220,7 +217,6 @@ X11.tmpl provides defaults for the following variables:
 	ShmDefines		MIT-SHM define
 	TwmDir			directory in which to install twm config files
 	UseCCMakeDepend		boolean for using alternate makedepend script
-	UseRgbTxt		use rgb.txt file as is instead of DBM-compiled
 	VarDirectory		directory in /var for logs, etc., and config
 	VendorHasX11R6_3libXext	don't need Security & AppGroup in xrx plug-in
 	XAppLoadDir		directory in which to install app defaults
