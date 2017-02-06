@@ -510,7 +510,6 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %dir %{_sysconfdir}/nxagent
 %config(noreplace) %{_sysconfdir}/nxagent/keystrokes.cfg
 %config(noreplace) %{_sysconfdir}/nxagent/nxagent.keyboard
-%config(noreplace) %{_sysconfdir}/nxagent/rgb
 %doc doc/nxagent/README.keystrokes
 %{_bindir}/nxagent
 %dir %{_libdir}/nx/bin
@@ -519,7 +518,6 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %{_libdir}/nx/X11/libX11.so*
 %{_datadir}/pixmaps/nxagent.xpm
 %dir %{_datadir}/nx
-%{_datadir}/nx/rgb
 %{_datadir}/nx/VERSION.nxagent
 %{_datadir}/man/man1/nxagent.1*
 
