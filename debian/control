@@ -39,6 +39,8 @@ Vcs-Browser: https://github.com/ArcticaProject/nx-libs/
 Package: nx-x11-common
 Architecture: all
 Multi-Arch: foreign
+Pre-Depends:
+ dpkg (>= 1.15.7.2),
 Depends:
  ${misc:Depends},
 Breaks: nxlibs (<= 3.5.1),
