@@ -272,8 +272,9 @@ Obsoletes:      nx < 3.5.0-19
 Provides:       nx = %{version}-%{release}
 Provides:       nx%{?_isa} = %{version}-%{release}
 Obsoletes:      nxauth < 3.5.99.1
-%if 0%{?suse_version}
-Requires:       xorg-x11-fonts-core
+%if 0%{?fedora} || 0%{?rhel}
+# For /usr/share/X11/fonts
+Requires: xorg-x11-font-utils
 %endif
 
 %description -n nxagent
@@ -356,6 +357,13 @@ make install \
         INSTALL_DIR="install -dm0755" \
         INSTALL_FILE="install -pm0644" \
         INSTALL_PROGRAM="install -pm0755"
+
+# this needs to be adapted distribution-wise...
+%if 0%{?suse_version}
+ln -s ../fonts %{buildroot}%{_datadir}/nx/fonts
+%elif 0%{?fedora} || 0%{?rhel}
+ln -s ../X11/fonts %{buildroot}%{_datadir}/nx/fonts
+%endif
 
 # Remove static libs (they don't exist on SLES, so using -f here)
 rm -f %{buildroot}%{_libdir}/*.a
@@ -520,6 +528,7 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %dir %{_datadir}/nx
 %{_datadir}/nx/VERSION.nxagent
 %{_datadir}/man/man1/nxagent.1*
+%{_datadir}/nx/fonts
 
 %files -n nxproxy
 %defattr(-,root,root)
