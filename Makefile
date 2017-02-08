@@ -186,14 +186,14 @@ uninstall-lite:
 	$(RM_DIR) $(DESTDIR)$(NXLIBDIR)/bin/
 	$(RM_FILE) $(DESTDIR)$(PREFIX)/share/man/man1/*.1
 	$(RM_FILE) $(DESTDIR)$(PREFIX)/share/nx/VERSION.nxproxy
-	$(RM_DIR) $(DESTDIR)$(NXLIBDIR)/share/nx/
+	$(RM_DIR) $(DESTDIR)$(PREFIX)/share/nx/
 
 uninstall-full:
 	for f in nxagent; do \
 	    $(RM_FILE) $(DESTDIR)$(BINDIR)/$$f; done
 
 	$(RM_FILE) $(DESTDIR)$(PREFIX)/share/nx/VERSION.nxagent
-	$(RM_DIR) $(DESTDIR)$(NXLIBDIR)/share/nx/
+	$(RM_DIR) $(DESTDIR)$(PREFIX)/share/nx/
 
 	if test -d nx-X11; then \
 	    if test -f nxcompshad/Makefile; then ${MAKE} -C nxcompshad $@; fi; \
