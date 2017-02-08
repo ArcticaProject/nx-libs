@@ -9,15 +9,15 @@ COPY_DEREFERENCED=cp -RH
 RM_FILE=rm -f
 RM_DIR=rmdir -p --ignore-fail-on-non-empty
 
-ETCDIR_NX   ?= /etc/nxagent
-PREFIX      ?= /usr/local
-BINDIR      ?= $(PREFIX)/bin
-LIBDIR      ?= $(PREFIX)/lib
-SHLIBDIR    ?= $(LIBDIR)
-NXLIBDIR    ?= $(SHLIBDIR)/nx
-USRLIBDIR   ?= $(NXLIBDIR)/X11
-INCLUDEDIR  ?= $(PREFIX)/include
-CONFIGURE   ?= ./configure
+ETCDIR_NX       ?= /etc/nxagent
+PREFIX          ?= /usr/local
+BINDIR          ?= $(PREFIX)/bin
+LIBDIR          ?= $(PREFIX)/lib
+SHLIBDIR        ?= $(LIBDIR)
+NXLIBDIR        ?= $(SHLIBDIR)/nx
+USRLIBDIR       ?= $(NXLIBDIR)/X11
+INCLUDEDIR      ?= $(PREFIX)/include
+CONFIGURE       ?= ./configure
 
 NX_VERSION_MAJOR=$(shell ./version.sh 1)
 NX_VERSION_MINOR=$(shell ./version.sh 2)
