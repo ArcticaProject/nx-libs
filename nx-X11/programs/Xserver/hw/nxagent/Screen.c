@@ -3741,6 +3741,27 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
   return r;
 }
 
+/*
+ Destroy an output after removing it from any crtc that might reference it
+ */
+void nxagentDropOutput(RROutputPtr o) {
+  RRCrtcPtr c = o->crtc;
+  if (c) {
+    for (int i = 0; i < c->numOutputs; i++) {
+      if (c->outputs[i] == o) {
+#ifdef DEBUG
+	fprintf(stderr, "nxagentDropOutput: output [%s] is in use by crtc [%p], removing it from there\n", o->name, c);
+#endif
+	RRCrtcSet(c, NULL, 0, 0, RR_Rotate_0, 0, NULL);
+      }
+    }
+  }
+#ifdef DEBUG
+  fprintf(stderr, "nxagentDropOutput: destroying output [%s]\n", o->name);
+#endif
+  RROutputDestroy(o);
+}
+
 int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
 {
   rrScrPrivPtr pScrPriv;
@@ -3858,6 +3879,8 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
         #ifdef DEBUG
         fprintf(stderr, "nxagentAdjustRandRXinerama: destroying crtc\n");
         #endif
+        /* first reset the crtc to free possible outputs, then destroy the crtc */
+        RRCrtcSet(pScrPriv->crtcs[pScrPriv->numCrtcs - 1], NULL, 0, 0, RR_Rotate_0, 0, NULL);
         RRCrtcDestroy(pScrPriv->crtcs[pScrPriv->numCrtcs - 1]);
       }
       else
@@ -3886,22 +3909,13 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
     }
 
     /* delete superfluous non-NX outputs */
-    for (i = pScrPriv->numOutputs - 1; i >= 0; i--) {
-      if (strncmp(pScrPriv->outputs[i]->name, "NX", 2)) {
-        #ifdef DEBUG
-        fprintf(stderr, "nxagentAdjustRandRXinerama: destroying output [%s]\n", pScrPriv->outputs[i]->name);
-        #endif
-        RROutputDestroy(pScrPriv->outputs[i]);
-      }
-    }
+    for (i = pScrPriv->numOutputs - 1; i >= 0; i--)
+      if (strncmp(pScrPriv->outputs[i]->name, "NX", 2))
+        nxagentDropOutput(pScrPriv->outputs[i]);
 
     /* at this stage only NX outputs are left - we delete the superfluous ones */
-    for (i = pScrPriv->numOutputs - 1; i >= number; i--) {
-      #ifdef DEBUG
-      fprintf(stderr, "nxagentAdjustRandRXinerama: destroying nx output [%s]\n", pScrPriv->outputs[i]->name);
-      #endif
-      RROutputDestroy(pScrPriv->outputs[i]);
-    }
+    for (i = pScrPriv->numOutputs - 1; i >= number; i--)
+      nxagentDropOutput(pScrPriv->outputs[i]);
 
     /* add and init outputs */
     for (i = 0; i < number; i++) {
