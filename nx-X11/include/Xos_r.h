@@ -459,11 +459,6 @@ typedef struct {
  * POSIX does not specify _r equivalents for <netdb.h> API, but some
  * vendors provide them anyway.  Use them only when explicitly asked.
  */
-# ifdef _POSIX_REENTRANT_FUNCTIONS
-#  ifndef _POSIX_THREAD_SAFE_FUNCTIONS
-#   define X_POSIX_THREAD_SAFE_FUNCTIONS 1
-#  endif
-# endif
 # ifdef _POSIX_THREAD_SAFE_FUNCTIONS
 #  define X_POSIX_THREAD_SAFE_FUNCTIONS 1
 # endif
