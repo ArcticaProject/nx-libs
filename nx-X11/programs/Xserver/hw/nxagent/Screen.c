@@ -3812,7 +3812,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
      */
     if (number == 0) {
       #ifdef DEBUG
-      fprintf(stderr, "nxagentAdjustRandRXinerama: faking xinerama\n" );
+      fprintf(stderr, "nxagentAdjustRandRXinerama: faking xinerama\n");
       #endif
       number = 1;
 
@@ -3934,7 +3934,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
         output = pScrPriv->outputs[i];
       }
       #ifdef DEBUG
-      fprintf(stderr, "nxagentAdjustRandRXinerama: adjusting output [%s]\n",  pScrPriv->outputs[i]->name);
+      fprintf(stderr, "nxagentAdjustRandRXinerama: adjusting output [%s]\n", pScrPriv->outputs[i]->name);
       #endif
       RROutputSetCrtcs(output, &(pScrPriv->crtcs[i]), 1);
       /* FIXME: Isn't there a function for setting this? */
@@ -3945,7 +3945,7 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       RROutputSetPhysicalSize(output, 0, 0);
     }
 
-    for (i = 0; i < pScrPriv->numOutputs; i++ ) {
+    for (i = 0; i < pScrPriv->numOutputs; i++) {
       Bool disable_output = FALSE;
       RRModePtr mymode, prevmode;
       int new_x, new_y;
@@ -4089,7 +4089,6 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       /* throw away the mode if otherwise unused. We do not need it
          anymore. We call FreeResource() to ensure the system will not
          try to free it again on shutdown */
-
       if (prevmode && prevmode->refcnt == 1) {
         #ifdef DEBUG
         fprintf(stderr, "nxagentAdjustRandRXinerama: destroying prevmode [%s]\n", prevmode->name);
