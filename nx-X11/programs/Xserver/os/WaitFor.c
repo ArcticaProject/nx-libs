@@ -509,10 +509,6 @@ WaitForSomething(int *pClientsReady)
 	    if (XFD_ANYSET(&tmp_set))
 	         HandleNotifyFds();
 
-#ifdef DPMSExtension
-	    if (XFD_ANYSET (&devicesReadable) && (DPMSPowerLevel != DPMSModeOn))
-		DPMSSet(DPMSModeOn);
-#endif
 	    if (XFD_ANYSET (&devicesReadable) || XFD_ANYSET (&clientsReadable))
 		break;
 #ifdef WIN32
