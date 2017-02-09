@@ -99,33 +99,21 @@ _XlcMapOSLocaleName(
     char *osname,
     char *siname)
 {
-#if defined(hpux) || defined(CSRG_BASED) || defined(sun) || defined(SVR4) || defined(sgi) || defined(__osf__) || defined(AIXV3) || defined(ultrix) || defined(WIN32) || defined(__UNIXOS2__) || defined(linux)
-# ifdef hpux
-#  ifndef _LastCategory
-   /* HPUX 9 and earlier */
-#   define SKIPCOUNT 2
-#   define STARTCHAR ':'
-#   define ENDCHAR ';'
-#  else
-   /* HPUX 10 */
-#   define ENDCHAR ' '
-#  endif
-# else
+
+/* FIXME: correct indentation levels after ancient platform clean-up */
+
+#if defined(CSRG_BASED) || defined(sun) || defined(SVR4) || defined(ultrix) || defined(WIN32) || defined(linux)
 #  ifdef ultrix
 #   define SKIPCOUNT 2
 #   define STARTCHAR '\001'
 #   define ENDCHAR '\001'
 #  else
-#   if defined(WIN32) || defined(__UNIXOS2__)
+#   if defined(WIN32)
 #    define SKIPCOUNT 1
 #    define STARTCHAR '='
 #    define ENDCHAR ';'
 #    define WHITEFILL
 #   else
-#    if defined(__osf__) || (defined(AIXV3) && !defined(AIXV4))
-#     define STARTCHAR ' '
-#     define ENDCHAR ' '
-#    else
 #     if defined(linux)
 #      define STARTSTR "LC_CTYPE="
 #      define ENDCHAR ';'
@@ -135,10 +123,8 @@ _XlcMapOSLocaleName(
 #       define ENDCHAR '/'
 #      endif
 #     endif
-#    endif
 #   endif
 #  endif
-# endif
 
     char           *start;
     char           *end;

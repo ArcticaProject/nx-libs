@@ -70,12 +70,8 @@ SOFTWARE.
 #include <nx-X11/Xtrans/Xtrans.h>
 #include <nx-X11/Xmd.h>
 #include <errno.h>
-#if !defined(__UNIXOS2__) && !defined(WIN32)
-#ifndef Lynx
+#if !defined(WIN32)
 #include <sys/uio.h>
-#else
-#include <uio.h>
-#endif
 #endif
 #include <nx-X11/X.h>
 #include <nx-X11/Xproto.h>
@@ -92,7 +88,6 @@ CallbackListPtr       FlushCallback;
 /* check for both EAGAIN and EWOULDBLOCK, because some supposedly POSIX
  * systems are broken and return EWOULDBLOCK when they should return EAGAIN
  */
-#ifndef __UNIXOS2__
 #ifndef WIN32
 #if defined(EAGAIN) && defined(EWOULDBLOCK)
 #define ETEST(err) (err == EAGAIN || err == EWOULDBLOCK)
@@ -105,9 +100,6 @@ CallbackListPtr       FlushCallback;
 #endif
 #else /* WIN32 The socket errorcodes differ from the normal errors*/
 #define ETEST(err) (err == EAGAIN || err == WSAEWOULDBLOCK)
-#endif
-#else /* __UNIXOS2__  Writing to full pipes may return ENOSPC */
-#define ETEST(err) (err == EAGAIN || err == EWOULDBLOCK || err == ENOSPC)
 #endif
 
 Bool CriticalOutputPending;

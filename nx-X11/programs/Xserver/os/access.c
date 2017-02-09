@@ -76,11 +76,7 @@ SOFTWARE.
 #include <errno.h>
 #include <sys/types.h>
 #ifndef WIN32
-#ifndef Lynx
 #include <sys/socket.h>
-#else
-#include <socket.h>
-#endif
 #include <sys/ioctl.h>
 #include <ctype.h>
 
@@ -95,26 +91,6 @@ SOFTWARE.
 # endif
 #endif
 
-#if defined(DGUX)
-#include <sys/ioctl.h>
-#include <sys/socket.h>
-#include <net/if.h>
-#include <netinet/in.h>
-#include <ctype.h>
-#include <sys/utsname.h>
-#include <sys/stream.h>
-#include <sys/stropts.h>
-#include <sys/param.h>
-#include <sys/sockio.h>
-#endif
-
-
-#if defined(hpux) || defined(QNX4)
-# include <sys/utsname.h>
-# ifdef HAS_IFREQ
-#  include <net/if.h>
-# endif
-#else
 #if defined(SVR4) ||  (defined(SYSV) && defined(i386)) || defined(__GNU__)
 # include <sys/utsname.h>
 #endif
@@ -131,7 +107,6 @@ SOFTWARE.
 #else /*!__GNU__*/
 # include <net/if.h>
 #endif /*__GNU__ */
-#endif /* hpux */
 
 #ifdef SVR4
 #include <sys/sockio.h>
@@ -173,11 +148,7 @@ SOFTWARE.
 #endif /* WIN32 */
 
 #ifndef PATH_MAX
-#ifndef Lynx
 #include <sys/param.h>
-#else
-#include <param.h>
-#endif 
 #ifndef PATH_MAX
 #ifdef MAXPATHLEN
 #define PATH_MAX MAXPATHLEN
@@ -315,7 +286,7 @@ AccessUsingXdmcp (void)
 }
 
 
-#if ((defined(SVR4) && !defined(DGUX) && !defined(SCO325) && !defined(sun) && !defined(NCR)) || defined(ISC)) && !defined(__sgi) && defined(SIOCGIFCONF) && !defined(USE_SIOCGLIFCONF)
+#if ((defined(SVR4) && !defined(SCO325) && !defined(sun) && !defined(NCR)) || defined(ISC)) && defined(SIOCGIFCONF) && !defined(USE_SIOCGLIFCONF)
 
 /* Deal with different SIOCGIFCONF ioctl semantics on these OSs */
 
@@ -364,9 +335,9 @@ ifioctl (int fd, int cmd, char *arg)
 #endif
     return(ret);
 }
-#else /* Case DGUX, sun, SCO325 NCR and others  */
+#else /* Case sun, SCO325 NCR and others  */
 #define ifioctl ioctl
-#endif /* ((SVR4 && !DGUX !sun !SCO325 !NCR) || ISC) && SIOCGIFCONF */
+#endif /* ((SVR4 && !sun !SCO325 !NCR) || ISC) && SIOCGIFCONF */
 
 /*
  * DefineSelf (fd):
@@ -521,7 +492,7 @@ DefineSelf (int fd)
 
 #else /* WINTCP */
 
-#if !defined(SIOCGIFCONF) || (defined (hpux) && ! defined (HAS_IFREQ)) || defined(QNX4)
+#if !defined(SIOCGIFCONF)
 void
 DefineSelf (int fd)
 {
@@ -564,18 +535,10 @@ DefineSelf (int fd)
      * uname() lets me access to the whole string (it smashes release, you
      * see), whereas gethostname() kindly truncates it for me.
      */
-#ifndef QNX4
 #ifndef WIN32
     uname(&name);
 #else
     gethostname(name.nodename, sizeof(name.nodename));
-#endif
-#else
-    /* QNX4's uname returns node number in name.nodename, not the hostname
-       have to overwrite it */
-    char hname[1024];
-    gethostname(hname, 1024);
-    name.nodename = hname;
 #endif
 
     hp = _XGethostbyname(name.nodename, hparams);
@@ -685,13 +648,8 @@ DefineLocalHost:
 		      p->ifr_addr.sa_len - sizeof (p->ifr_addr) : 0))
 #define ifraddr_size(a) (a.sa_len)
 #else
-#ifdef QNX4
-#define ifr_size(p) (p->ifr_addr.sa_len + IFNAMSIZ)
-#define ifraddr_size(a) (a.sa_len)
-#else
 #define ifr_size(p) (sizeof (ifr_type))
 #define ifraddr_size(a) (sizeof (a))
-#endif
 #endif
 
 #if defined(DEF_SELF_DEBUG) || (defined(IPv6) && defined(AF_INET6))
@@ -1055,7 +1013,7 @@ DefineSelf (int fd)
 	}
     }
 }
-#endif /* hpux && !HAS_IFREQ */
+#endif /* !SIOCGIFCONF */
 #endif /* WINTCP */
 
 #ifdef XDMCP
@@ -1139,9 +1097,6 @@ ResetHosts (char *display)
     if (fnamelen > sizeof(fname))
 	FatalError("Display name `%s' is too long\n", display);
     sprintf(fname, ETC_HOST_PREFIX "%s" ETC_HOST_SUFFIX, display);
-#ifdef __UNIXOS2__
-    strcpy(fname, (char*)__XOS2RedirRoot(fname));
-#endif /* __UNIXOS2__ */
 
     if ((fd = fopen (fname, "r")) != 0)
     {
@@ -1152,10 +1107,6 @@ ResetHosts (char *display)
 	    continue;
     	if ((ptr = strchr(ohostname, '\n')) != 0)
     	    *ptr = 0;
-#ifdef __UNIXOS2__
-    	if ((ptr = strchr(ohostname, '\r')) != 0)
-    	    *ptr = 0;
-#endif
         hostlen = strlen(ohostname) + 1;
         for (i = 0; i < hostlen; i++)
 	    lhostname[i] = tolower(ohostname[i]);

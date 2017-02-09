@@ -44,7 +44,7 @@
 #define MB_LEN_MAX 6
 #endif
 
-#if !defined(Lynx_22) && !defined(X_LOCALE)
+#if !defined(X_LOCALE)
 #define STDCVT
 #endif
 

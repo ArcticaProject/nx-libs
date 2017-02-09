@@ -806,7 +806,7 @@ SRCS3 = \
 	LockDis.c \
 	x11_trans.c \
 	xim_trans.c \
-	$(XKBSRCS) $(LCSRCS) $(MISCSRCS)
+	$(XKBSRCS) $(LCSRCS)
 
 OBJS3 = \
 	Lab.o \
@@ -889,7 +889,7 @@ OBJS3 = \
 	LockDis.o \
 	x11_trans.o \
 	xim_trans.o \
-	$(XKBOBJS) $(LCOBJS) $(MISCOBJS)
+	$(XKBOBJS) $(LCOBJS)
 
 SHAREDLCDEPSYMSRCS = XlcDL.c XlcSL.c
 
@@ -1036,14 +1036,6 @@ SHAREDLCOBJS = \
 	$(SHAREDLCDEPOBJS) \
 	$(SHAREDI18NSTATICOBJS) 
 
-#ifdef OS2Architecture
-MISCSRCS = os2Stubs.c
-#endif
-
-#ifdef OS2Architecture
-MISCOBJS = os2Stubs.o
-#endif
-
 OBJS = $(OBJS1) $(OBJS2) $(OBJS3)
 
 EXTRAUNSHAREDOBJS = $(STATICLCOBJS)
@@ -1085,10 +1077,6 @@ InstallNonExecFile(Xcms.txt,$(LIBDIR))
 #endif
 InstallNonExecFile(XErrorDB,$(LIBDIR))
 InstallLintLibrary(X11,$(LINTLIBDIR))
-
-#ifdef QNX4Architecture
-LOCAL_LDFLAGS=-F
-#endif
 
 MAKEKEYS = ./makekeys
 KEYSYMDEFS =  $(XINCLUDESRC)/keysymdef.h $(XINCLUDESRC)/XF86keysym.h $(XINCLUDESRC)/Sunkeysym.h $(XINCLUDESRC)/DECkeysym.h $(XINCLUDESRC)/HPkeysym.h

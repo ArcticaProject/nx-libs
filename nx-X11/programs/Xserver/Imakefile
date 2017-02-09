@@ -160,7 +160,7 @@ INSTPGMFLAGS =
 #if HasPam && HasPamMisc
         PAMLIBS = PamLibraries PamMiscLibraries
 #endif
-#if !(SystemV4 || defined(SGIArchitecture) || UseRgbTxt)
+#if !(SystemV4 || UseRgbTxt)
        DBMLIBS = DBMLibrary
 #endif
         SYSLIBS = $(ZLIB) MathLibrary $(DBMLIBS) $(USB) \
@@ -248,9 +248,7 @@ NXAGENTOBJS = hw/nxagent/miinitext.o     \
               hw/nxagent/NXmiexpose.o    \
               hw/nxagent/NXresource.o    \
               hw/nxagent/NXdamage.o
-#elif !defined(LynxOSArchitecture) && \
-      !defined(Win32Architecture) && \
-      !defined(QNX4Architecture)
+#elif !defined(Win32Architecture)
 NXAGENTOBJS = hw/nxagent/miinitext.o     \
               hw/nxagent/NXwindow.o      \
               hw/nxagent/NXevents.o      \
@@ -516,14 +514,14 @@ ServerTarget(NXWin,$(NXWINDIRS),$(NXWINOBJS), \
 
 MIEXTDIRS = $(SHADOWDIR) $(LAYERDIR) $(ROOTLESSDIR) $(MIDAMAGEDIR)
 IPLANDIRS = $(IPLAN2P2DIR) $(IPLAN2P4DIR) $(IPLAN2P8DIR)
-DDXDIRS = $(DECWSDDXDIR) $(SUNDDXDIR) $(LYNXDDXDIR) \
+DDXDIRS = $(DECWSDDXDIR) $(SUNDDXDIR) \
 	  $(HPDDXDIR) $(XFREE86DDXDIR) \
 	  $(NXAGENTDDXDIR) $(NXWINDDXDIR)
 SUBDIRS = $(STDDIRS) \
 	  $(IPLANDIRS) $(ILBMDIR) \
           $(DDXDIRS) $(FBSUBDIR) $(KDRIVEDIRS) $(MIEXTDIRS)
 
-#if  defined(ServerToInstall) && !defined(OS2Architecture)
+#if  defined(ServerToInstall)
 install::
 	-(cd $(DESTDIR)$(BINDIR); $(RM) X; $(LN) ServerToInstall X)
 #endif

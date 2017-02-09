@@ -6,11 +6,6 @@ NULL =
 SUBDIRS = compext \
           $(NULL)
 
-#ifdef OS2Architecture
-SRCS1 = os2Stub.c
-OBJS1 = os2Stub.o
-#endif
-
 SRCS =  \
 	NXwindow.c \
 	NXevents.c \
@@ -71,7 +66,6 @@ SRCS =  \
 	stubs.c \
 	xpstubs.c \
 	miinitext.c \
-	$(SRCS1) \
 	$(NULL)
 
 OBJS =  \
@@ -134,7 +128,6 @@ OBJS =  \
 	stubs.o \
 	xpstubs.o \
 	miinitext.o \
-	$(OBJS1) \
 	$(NULL)
 
 VFBINCLUDES =  \

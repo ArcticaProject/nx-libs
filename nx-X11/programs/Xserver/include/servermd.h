@@ -114,24 +114,11 @@ SOFTWARE.
 
 #endif /* __aarch64__ */
 
-#if defined (hpux) || defined __hppa__
-
-#define IMAGE_BYTE_ORDER	MSBFirst
-#define BITMAP_BIT_ORDER	MSBFirst
-#define GLYPHPADBYTES		4	/* to make fb work */
-
-#endif /* hpux || __hppa__ */
-
 #if defined(__powerpc__) || defined(__ppc__)
 
 #define IMAGE_BYTE_ORDER        MSBFirst
 #define BITMAP_BIT_ORDER        MSBFirst
 #define GLYPHPADBYTES           4
-
-/* XXX Should this be for Lynx only? */
-#ifdef Lynx
-#define BITMAP_SCANLINE_UNIT	8
-#endif
 
 #endif /* PowerPC */
 
@@ -172,15 +159,6 @@ SOFTWARE.
 
 #endif /* sun && !(i386 && SVR4) */
 
-
-#if defined(AIXV3)
-
-#define IMAGE_BYTE_ORDER        MSBFirst        /* Values for the RISC/6000 */
-#define BITMAP_BIT_ORDER        MSBFirst
-#define GLYPHPADBYTES           4
-
-#endif /* AIXV3 */
-
 #if defined(ibm032) || defined (ibm)
 
 #ifdef i386
@@ -214,7 +192,7 @@ SOFTWARE.
 
 #endif /* macII */
 
-#if (defined(mips) || defined(__mips)) && !defined(sgi)
+#if (defined(mips) || defined(__mips))
 
 #if defined(MIPSEL) || defined(__MIPSEL__)
 # define IMAGE_BYTE_ORDER	LSBFirst        /* Values for the PMAX only */
@@ -327,9 +305,6 @@ SOFTWARE.
 #if	(defined(SVR4) && defined(i386)) || \
 	defined(__alpha__) || defined(__alpha) || \
 	defined(__i386__) || defined(__i386) || \
-	defined(__UNIXOS2__) || \
-	defined(__OS2ELF__) || \
-	defined(__QNX__) || \
 	defined(__s390x__) || defined(__s390__)
   
 #ifndef IMAGE_BYTE_ORDER
@@ -368,14 +343,6 @@ SOFTWARE.
 #define GLYPHPADBYTES          4
 
 #endif /* linux/m68k */
-
-#ifdef sgi
-
-#define IMAGE_BYTE_ORDER	MSBFirst
-#define BITMAP_BIT_ORDER	MSBFirst
-#define GLYPHPADBYTES		4
-
-#endif
 
 /* linux on the Compaq Itsy */
 #if defined(linux) && defined(__arm__)

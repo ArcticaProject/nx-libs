@@ -30,15 +30,12 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #include <stdio.h>
 #include <math.h>
-#ifdef __QNX__
-#include <limits.h>
-#endif
 #include <nx-X11/X.h>
 #include <nx-X11/Xproto.h>
 #include <nx-X11/keysym.h>
 #include "inputstr.h"
 #include <xkbsrv.h>
-#if !defined(WIN32) && !defined(Lynx)
+#if !defined(WIN32)
 #include <sys/time.h>
 #endif
 
@@ -360,9 +357,7 @@ XkbControlsPtr	ctrls;
 	if (keybd->kbdfeed->ctrl.autoRepeat && 
 	    ((xkbi->slowKey != xkbi->mouseKey) || (!xkbi->mouseKeysAccel)) &&
 	     (ctrls->enabled_ctrls&XkbRepeatKeysMask)) {
-#ifndef AIXV3
 	    if (BitIsOn(keybd->kbdfeed->ctrl.autoRepeats,xkbi->slowKey))
-#endif
 	    {
 		xkbi->repeatKey = xkbi->slowKey;
 		xkbi->repeatKeyTimer= TimerSet(xkbi->repeatKeyTimer,
@@ -529,9 +524,7 @@ KeySym *	sym = XkbKeySymsPtr(xkbi->desc,key);
 	if ((keybd->kbdfeed->ctrl.autoRepeat) &&
 		((ctrls->enabled_ctrls&(XkbSlowKeysMask|XkbRepeatKeysMask))==
 							XkbRepeatKeysMask)) {
-#ifndef AIXV3
 	    if (BitIsOn(keybd->kbdfeed->ctrl.autoRepeats,key))
-#endif
 	    {
 #ifdef DEBUG
 		if (xkbDebugFlags&0x10)

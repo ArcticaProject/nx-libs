@@ -91,9 +91,6 @@ SOFTWARE.
 #include <nx-X11/X.h>
 #include "misc.h"
 
-#ifdef __UNIXOS2__
-#define select(n,r,w,x,t) os2PseudoSelect(n,r,w,x,t)
-#endif
 #include "osdep.h"
 #include <nx-X11/Xpoll.h>
 #include "dixstruct.h"

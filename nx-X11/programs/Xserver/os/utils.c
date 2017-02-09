@@ -113,7 +113,7 @@ OR PERFORMANCE OF THIS SOFTWARE.
 #ifndef WIN32
 #include <sys/wait.h>
 #endif
-#if !defined(SYSV) && !defined(WIN32) && !defined(Lynx) && !defined(QNX4)
+#if !defined(SYSV) && !defined(WIN32)
 #include <sys/resource.h>
 #endif
 #include <time.h>
@@ -123,11 +123,6 @@ OR PERFORMANCE OF THIS SOFTWARE.
 #include <sys/types.h>
 #include <grp.h>
 #include <pwd.h>
-
-#if defined(DGUX)
-#include <sys/resource.h>
-#include <netdb.h>
-#endif
 
 #include <stdlib.h>	/* for malloc() */
 
@@ -264,11 +259,6 @@ int auditTrailLevel = 1;
 
 Bool Must_have_memory = FALSE;
 
-#ifdef AIXV3
-int SyncOn  = 0;
-extern int SelectWaitTime;
-#endif
-
 #if defined(SVR4) || defined(__linux__) || defined(CSRG_BASED)
 #define HAS_SAVED_IDS_AND_SETEUID
 #endif
@@ -278,10 +268,6 @@ extern int SelectWaitTime;
 long Memory_fail = 0;
 #include <stdlib.h>  /* for random() */
 #endif
-
-#ifdef sgi
-int userdefinedfontpath = 0;
-#endif /* sgi */
 
 char *dev_tty_from_init = NULL;		/* since we need to parse it anyway */
 
@@ -318,28 +304,13 @@ OsSignal(sig, handler)
  * server at a time.  This keeps the servers from stomping on each other
  * if the user forgets to give them different display numbers.
  */
-#ifndef __UNIXOS2__
 #define LOCK_DIR "/tmp"
-#endif
 #define LOCK_TMP_PREFIX "/.tX"
 #define LOCK_PREFIX "/.X"
 #define LOCK_SUFFIX "-lock"
 
-#if defined(DGUX)
-#include <limits.h>
-#include <sys/param.h>
-#endif
-
-#ifdef __UNIXOS2__
-#define link rename
-#endif
-
 #ifndef PATH_MAX
-#ifndef Lynx
 #include <sys/param.h>
-#else
-#include <param.h>
-#endif
 #ifndef PATH_MAX
 #ifdef MAXPATHLEN
 #define PATH_MAX MAXPATHLEN
@@ -372,14 +343,7 @@ LockServer(void)
   /*
    * Path names
    */
-#ifndef __UNIXOS2__
   tmppath = LOCK_DIR;
-#else
-  /* OS/2 uses TMP directory, must also prepare for 8.3 names */
-  tmppath = getenv("TMP");
-  if (!tmppath)
-    FatalError("No TMP dir found\n");
-#endif
 
   sprintf(port, "%d", atoi(display));
   len = strlen(LOCK_PREFIX) > strlen(LOCK_TMP_PREFIX) ? strlen(LOCK_PREFIX) :
@@ -422,12 +386,10 @@ LockServer(void)
   if (write(lfd, pid_str, 11) != 11)
     FatalError("Could not write pid to lock file in %s\n", tmp);
 
-#ifndef __UNIXOS2__
 #ifndef USE_CHMOD
   (void) fchmod(lfd, 0444);
 #else
   (void) chmod(tmp, 0444);
-#endif
 #endif
   (void) close(lfd);
 
@@ -507,9 +469,6 @@ UnlockServer(void)
 
   if (!StillLocking){
 
-#ifdef __UNIXOS2__
-  (void) chmod(LockFile,S_IREAD|S_IWRITE);
-#endif /* __UNIXOS2__ */
   (void) unlink(LockFile);
   }
 }
@@ -593,7 +552,6 @@ AdjustWaitForDelay (void * waitTime, unsigned long newdelay)
 
 void UseMsg(void)
 {
-#if !defined(AIXrt) && !defined(AIX386)
     ErrorF("use: X [:<display>] [option]\n");
     ErrorF("-a #                   mouse acceleration (pixels)\n");
     ErrorF("-ac                    disable access control restrictions\n");
@@ -686,7 +644,6 @@ void UseMsg(void)
 #ifdef XDMCP
     XdmcpUseMsg();
 #endif
-#endif /* !AIXrt && ! AIX386 */
 #ifdef XKB
     XkbUseMsg();
 #endif
@@ -870,9 +827,6 @@ ProcessCommandLine(int argc, char *argv[])
 	{
 	    if(++i < argc)
 	    {
-#ifdef sgi
-		userdefinedfontpath = 1;
-#endif /* sgi */
 	        defaultFontPath = argv[i];
 	    }
 	    else
@@ -928,7 +882,7 @@ ProcessCommandLine(int argc, char *argv[])
 #ifdef SERVER_LOCK
 	else if ( strcmp ( argv[i], "-nolock") == 0)
 	{
-#if !defined(WIN32) && !defined(__UNIXOS2__) && !defined(__CYGWIN__)
+#if !defined(WIN32) && !defined(__CYGWIN__)
 	  if (getuid() != 0)
 	    ErrorF("Warning: the -nolock option can only be used by root\n");
 	  else
@@ -1083,19 +1037,6 @@ ProcessCommandLine(int argc, char *argv[])
 	{
 	    i = skip - 1;
 	}
-#endif
-#ifdef AIXV3
-        else if ( strcmp( argv[i], "-timeout") == 0)
-        {
-            if(++i < argc)
-                SelectWaitTime = atoi(argv[i]);
-            else
-                UseMsg();
-        }
-        else if ( strcmp( argv[i], "-sync") == 0)
-        {
-            SyncOn++;
-        }
 #endif
 #ifdef SMART_SCHEDULE
 	else if ( strcmp( argv[i], "-dumbSched") == 0)
@@ -1260,7 +1201,7 @@ ExpandCommandLine(int *pargc, char ***pargv)
 {
     int i;
 
-#if !defined(WIN32) && !defined(__UNIXOS2__) && !defined(__CYGWIN__)
+#if !defined(WIN32) && !defined(__CYGWIN__)
     if (getuid() != geteuid())
 	return;
 #endif
@@ -1609,7 +1550,7 @@ OsReleaseSignals (void)
 #endif
 }
 
-#if !defined(WIN32) && !defined(__UNIXOS2__)
+#if !defined(WIN32)
 /*
  * "safer" versions of system(3), popen(3) and pclose(3) which give up
  * all privs before running a command.
@@ -1964,7 +1905,7 @@ Fclose(void * iop)
 #endif
 }
 
-#endif /* !WIN32 && !__UNIXOS2__ */
+#endif /* !WIN32 */
 
 
 /*
@@ -2059,9 +2000,6 @@ CheckUserParameters(int argc, char **argv, char **envp)
     enum BadCode bad = NotBad;
     int i = 0, j;
     char *a, *e = NULL;
-#if defined(__QNX__) && !defined(__QNXNTO__)
-    char cmd_name[64];
-#endif
 
 #if CHECK_EUID
     if (geteuid() == 0 && getuid() != geteuid())

@@ -80,42 +80,14 @@ SOFTWARE.
 #include <stdlib.h>
 
 #ifndef WIN32
-#if defined(Lynx)
-#include <socket.h>
-#else
 #include <sys/socket.h>
-#endif
-
-#ifdef hpux
-#include <sys/utsname.h>
-#include <sys/ioctl.h>
-#endif
-
-#if defined(DGUX)
-#include <sys/ioctl.h>
-#include <sys/utsname.h>
-#include <sys/socket.h>
-#include <sys/uio.h>
-#include <netinet/in.h>
-#include <netinet/tcp.h>
-#include <sys/param.h>
-#include <unistd.h>
-#endif
-
-
-#ifdef AIXV3
-#include <sys/ioctl.h>
-#endif
-
-#ifdef __UNIXOS2__
-#define select(n,r,w,x,t) os2PseudoSelect(n,r,w,x,t)
-extern __const__ int _nfiles;
-#endif
 
 #if defined(TCPCONN)
 # include <netinet/in.h>
 # include <arpa/inet.h>
-# if !defined(hpux)
+
+/* FIXME: correct indentation levels after ancient platform support clean-up */
+
 #  ifdef apollo
 #   ifndef NO_TCP_H
 #    include <netinet/tcp.h>
@@ -124,21 +96,12 @@ extern __const__ int _nfiles;
 #   ifdef CSRG_BASED
 #    include <sys/param.h>
 #   endif
-#    ifndef __UNIXOS2__
-#     include <netinet/tcp.h>
-#    endif
+#   include <netinet/tcp.h>
 #  endif
-# endif
 # include <arpa/inet.h>
 #endif
 
-#if !defined(__UNIXOS2__)
-#ifndef Lynx
 #include <sys/uio.h>
-#else
-#include <uio.h>
-#endif
-#endif
 #endif /* WIN32 */
 #include "misc.h"
 #include "osdep.h"
@@ -173,9 +136,6 @@ Bool AnyClientsWriteBlocked;	/* true if some client blocked on write */
 Bool RunFromSmartParent;	/* send SIGUSR1 to parent process */
 Bool PartialNetwork;		/* continue even if unable to bind all addrs */
 static Pid_t ParentProcess;
-#ifdef __UNIXOS2__
-Pid_t GetPPID(Pid_t pid);
-#endif
 
 static Bool debug_conns = FALSE;
 
@@ -314,8 +274,6 @@ InitConnectionLimits(void)
 
 #ifndef __CYGWIN__
 
-#ifndef __UNIXOS2__
-
 #if !defined(XNO_SYSCONF) && defined(_SC_OPEN_MAX)
     lastfdesc = sysconf(_SC_OPEN_MAX) - 1;
 #endif
@@ -328,10 +286,6 @@ InitConnectionLimits(void)
 #ifdef _NFILE
     if (lastfdesc < 0)
 	lastfdesc = _NFILE - 1;
-#endif
-
-#else /* __UNIXOS2__ */
-    lastfdesc = _nfiles - 1;
 #endif
 
 #endif /* __CYGWIN__ */
@@ -449,15 +403,6 @@ CreateWellKnownSockets(void)
 	RunFromSmartParent = TRUE;
     OsSignal(SIGUSR1, handler);
     ParentProcess = getppid ();
-#ifdef __UNIXOS2__
-    /*
-     * fg030505: under OS/2, xinit is not the parent process but
-     * the "grant parent" process of the server because execvpe()
-     * presents us an additional process number;
-     * GetPPID(pid) is part of libemxfix
-     */
-    ParentProcess = GetPPID (ParentProcess);
-#endif /* __UNIXOS2__ */
     if (RunFromSmartParent) {
 	if (ParentProcess > 1) {
 	    kill (ParentProcess, SIGUSR1);

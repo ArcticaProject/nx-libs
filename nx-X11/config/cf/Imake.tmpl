@@ -466,7 +466,7 @@ XCOMM the platform-specific parameters - edit site.def to change
 #define HasBasename		YES
 #endif
 #ifndef HasGetopt
-# if !defined(Win32Architecture) && !defined(OS2Architecture)
+# if !defined(Win32Architecture)
 #  define HasGetopt		YES
 # else
 #  define HasGetopt		NO
@@ -514,8 +514,6 @@ XCOMM the platform-specific parameters - edit site.def to change
 #elif defined(RsArchitecture)
 #define ByteOrder		X_BIG_ENDIAN
 #elif defined(PpcArchitecture) || defined(Ppc64Architecture)
-#define ByteOrder		X_BIG_ENDIAN
-#elif defined(HPArchitecture)
 #define ByteOrder		X_BIG_ENDIAN
 #elif defined(SuperHArchitecture)
 #define ByteOrder		X_LITTLE_ENDIAN
@@ -1518,21 +1516,21 @@ TCLIBDIR = TclLibDir
 #define LibManSuffix	3		/* use just one tab or cpp will die */
 #endif
 #ifndef FileManSuffix
-#if SystemV || SystemV4 || defined(OSF1Architecture)
+#if SystemV || SystemV4
 #define FileManSuffix	4		/* use just one tab or cpp will die */
 #else
 #define FileManSuffix	5		/* use just one tab or cpp will die */
 #endif
 #endif
 #ifndef MiscManSuffix
-#if SystemV || SystemV4 || defined(OSF1Architecture)
+#if SystemV || SystemV4
 #define MiscManSuffix	5		/* use just one tab or cpp will die */
 #else
 #define MiscManSuffix	7		/* use just one tab or cpp will die */
 #endif
 #endif
 #ifndef DriverManSuffix
-#if SystemV || SystemV4 || defined(OSF1Architecture)
+#if SystemV || SystemV4
 #define DriverManSuffix	7		/* use just one tab or cpp will die */
 #else
 #define DriverManSuffix	4		/* use just one tab or cpp will die */

@@ -79,28 +79,14 @@ from The Open Group.
 /* Below is the monster branch from hell.  Basically, most systems will drop to
  * 'the branch below is the fallthrough for halfway modern systems', and include
  * <sys/select.h>, so we get the FD_* macros. */
-#if !defined(DGUX)
-# if (defined(SVR4) || defined(AIXV3)) && !defined(FD_SETSIZE)
-#  include <sys/select.h>
-#  ifdef luna
-#   include <sysent.h>
-#  endif
-# else /* not SVR4/AIXv3 */
-#  if defined(AIXV4) /* AIX 4.2 fubar-ed <sys/select.h>, so try really hard. */
-#   if !defined(NFDBITS)
-#    include <sys/select.h>
-#   endif
-#  else /* the branch below is the fallthrough for halfway modern systems */
-#   ifdef __QNX__  /* Make sure we get 256 bit select masks */
-#    define FD_SETSIZE 256
-#   endif
-#   include <sys/select.h>
-#  endif
+
+#if defined(SVR4) && !defined(FD_SETSIZE)
+# include <sys/select.h>
+# ifdef luna
+#  include <sysent.h>
 # endif
-#else /* DGUX  -- No sys/select in Intel DG/ux */
-# include <sys/time.h> 
-# include <sys/types.h>
-# include <unistd.h>
+#else /* not SVR4 */
+# include <sys/select.h>
 #endif
 
 #include <nx-X11/Xmd.h>
@@ -149,27 +135,11 @@ typedef struct fd_set {
 extern int _XSelect(int maxfds, fd_set *readfds, fd_set *writefds,
                         fd_set *exceptfds, struct timeval *timeout);
 
-#ifndef hpux /* and perhaps old BSD ??? */
-# define Select(n,r,w,e,t) _XSelect(n,(fd_set*)r,(fd_set*)w,(fd_set*)e,(struct timeval*)t)
-#else
-# ifndef _XPG4_EXTENDED /* HPUX 9.x and earlier */
-#  define Select(n,r,w,e,t) _XSelect(n,(int*)r,(int*)w,(int*)e,(struct timeval*)t)
-# else
-#  define Select(n,r,w,e,t) _XSelect(n,(fd_set*)r,(fd_set*)w,(fd_set*)e,(struct timeval*)t)
-# endif
-#endif
+#define Select(n,r,w,e,t) _XSelect(n,(fd_set*)r,(fd_set*)w,(fd_set*)e,(struct timeval*)t)
 
 #else /* #ifdef NX_TRANS_SOCKET */
 
-#ifndef hpux /* and perhaps old BSD ??? */
-# define Select(n,r,w,e,t) select(n,(fd_set*)r,(fd_set*)w,(fd_set*)e,(struct timeval*)t)
-#else
-# ifndef _XPG4_EXTENDED /* HPUX 9.x and earlier */
-#  define Select(n,r,w,e,t) select(n,(int*)r,(int*)w,(int*)e,(struct timeval*)t)
-# else
-#  define Select(n,r,w,e,t) select(n,(fd_set*)r,(fd_set*)w,(fd_set*)e,(struct timeval*)t)
-# endif
-#endif
+#define Select(n,r,w,e,t) select(n,(fd_set*)r,(fd_set*)w,(fd_set*)e,(struct timeval*)t)
 
 #endif /* #ifdef NX_TRANS_SOCKET */
 

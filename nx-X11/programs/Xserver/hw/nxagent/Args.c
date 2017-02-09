@@ -587,12 +587,6 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     if(++i < argc)
     {
 
-      #ifdef sgi
-
-      userdefinedfontpath = 1;
-
-      #endif
-
       #ifdef TEST
       fprintf(stderr, "ddxProcessArgument: User defined font path [%s].\n", argv[i]);
       #endif

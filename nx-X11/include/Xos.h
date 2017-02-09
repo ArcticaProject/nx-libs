@@ -57,10 +57,8 @@ in this Software without prior written authorization from The Open Group.
 #endif
 #endif /* USG */
 
-#ifndef sgi
 #if defined(__SCO__) || defined(__UNIXWARE__)
 #include <stdint.h>
-#endif
 #endif
 
 #ifdef _SEQUENT_
@@ -219,14 +217,7 @@ struct timeval {
     (t)->tv_sec = _gtodtmp.time; \
     (t)->tv_usec = _gtodtmp.millitm * 1000; \
 }
-#elif defined(_SEQUENT_) || defined(Lynx)
-#include <time.h>
-#elif defined (__QNX__)
-typedef unsigned long fd_mask;
-/* Make sure we get 256 bit select masks */
-#define FD_SETSIZE 256
-#include <sys/select.h>
-#include <sys/time.h>
+#elif defined(_SEQUENT_)
 #include <time.h>
 #else
 #include <sys/time.h>
@@ -246,12 +237,6 @@ typedef unsigned long fd_mask;
 #endif
 #endif /* XPG4 else */
 
-#ifdef __UNIXOS2__
-typedef unsigned long fd_mask;
-#include <limits.h>
-#define MAX_PATH _POSIX_PATH_MAX
-#endif
-
 #ifdef __GNU__
 #define PATH_MAX 4096
 #define MAXPATHLEN 4096
@@ -269,9 +254,8 @@ typedef unsigned long fd_mask;
 #define NGROUPS 16
 #endif
 
-#if defined(ISC) || defined(__UNIXOS2__) || \
-    (defined(__linux__) && !defined(__GLIBC__)) || \
-    (defined(__QNX__) && !defined(UNIXCONN))
+#if defined(ISC) || \
+    (defined(__linux__) && !defined(__GLIBC__))
 /*
  *	Some OS's may not have this
  */

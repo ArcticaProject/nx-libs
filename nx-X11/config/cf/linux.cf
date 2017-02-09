@@ -535,13 +535,6 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 #   define LdCmd		CcCmd -nostdlib -Wl,"-m alpha"
 #   define AsmDefines		-DUSE_GAS -U__ELF__
 #  endif /* AlphaArchitecture */
-#  ifdef HPArchitecture
-#   define CcCmd		gcc
-#   define CplusplusCmd		g++
-#   define AsCmd		CcCmd -c -x assembler
-#   define LdCmd		CcCmd -nostdlib
-#   define AsmDefines		-DUSE_GAS -U__ELF__
-#  endif /* HPArchitecture */
 #  ifdef i386Architecture
 #   define CcCmd		gcc -b i486-linuxaout
 #   define CplusplusCmd		g++ -b i486-linuxaout
@@ -580,13 +573,6 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 #   define AsmDefines		-D__ELF__
 #   define CplusplusCmd		c++ -b alpha-linux
 #  endif /* AlphaArchitecture */
-#  ifdef HPArchitecture
-#   define CcCmd		gcc
-#   define CplusplusCmd		g++
-#   define AsCmd		CcCmd -c -x assembler
-#   define LdCmd		CcCmd -nostdlib
-#   define AsmDefines		-D__ELF__
-#  endif /* HPArchitecture */
 #  ifdef i386Architecture
 #   define CcCmd		gcc -b i486-linux
 #   define AsCmd		CcCmd -c -x assembler
@@ -707,13 +693,6 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 # define ServerOSDefines	XFree86ServerOSDefines -DDDXTIME
 # define ServerExtraDefines	-DGCCUSESGAS XFree86ServerDefines
 #endif /* Arm64Achitecture */
-
-#ifdef HPArchitecture
-# define OptimizedCDebugFlags	-O2  GccAliasingArgs
-# define LinuxMachineDefines	-D__hppa__
-# define ServerOSDefines	XFree86ServerOSDefines -DDDXTIME
-# define ServerExtraDefines	-DGCCUSESGAS XFree86ServerDefines
-#endif
 
 #ifdef i386Architecture
 # ifndef OptimizedCDebugFlags

@@ -105,9 +105,6 @@ XWriteBitmapFile(
   else
     name++;
 
-#ifdef __UNIXOS2__
-  filename = (char*)__XOS2RedirRoot(filename);
-#endif
   if (!(stream = fopen(filename, "w")))
     return(BitmapOpenFailed);
 

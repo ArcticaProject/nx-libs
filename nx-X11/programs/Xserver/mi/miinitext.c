@@ -66,10 +66,6 @@ SOFTWARE.
 #include "extension.h"
 #include "micmap.h"
 
-#if defined(QNX4) /* sleaze for Watcom on QNX4 ... */
-#undef GLXEXT
-#endif
-
 extern Bool noTestExtensions;
 
 #ifdef BIGREQS

@@ -136,7 +136,7 @@ from the copyright holders.
 #ifndef NO_TCP_H
 #if defined(linux) || defined(__GLIBC__)
 #include <sys/param.h>
-#endif /* osf */
+#endif /* linux || __GLIBC__ */
 #if defined(__NetBSD__) || defined(__OpenBSD__) || defined(__FreeBSD__) || defined(__DragonFly__)
 #include <sys/param.h>
 #include <machine/endian.h>

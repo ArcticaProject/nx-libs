@@ -54,14 +54,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #define	CREATE_ATOM(s)	MakeAtom(s,sizeof(s)-1,1)
 
-#ifdef sgi
-#define LED_CAPS	5
-#define	LED_NUM		6
-#define	LED_SCROLL	7
-#define	PHYS_LEDS	0x7f
-#define	LED_COMPOSE	8
-#else
-#if defined(ultrix) || defined(__osf__) || defined(__alpha) || defined(__alpha__)
+#if defined(ultrix) || defined(__alpha) || defined(__alpha__)
 #define	LED_COMPOSE	2
 #define LED_CAPS	3
 #define	LED_SCROLL	4
@@ -79,7 +72,6 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #define	LED_NUM		2
 #define	LED_SCROLL	3
 #define	PHYS_LEDS	0x07
-#endif
 #endif
 #endif
 
@@ -914,7 +906,7 @@ XkbProcessArguments(int argc,char *argv[],int i)
     }
     else if (strncmp(argv[i], "-xkbdir", 7) == 0) {
 	if(++i < argc) {
-#if !defined(WIN32) && !defined(__UNIXOS2__) && !defined(__CYGWIN__)
+#if !defined(WIN32) && !defined(__CYGWIN__)
 	    if (getuid() != geteuid()) {
 		LogMessage(X_WARNING, "-xkbdir is not available for setuid X servers\n");
 		return -1;

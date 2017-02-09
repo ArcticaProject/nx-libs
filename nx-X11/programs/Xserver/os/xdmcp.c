@@ -28,12 +28,8 @@
 #include <nx-X11/Xos.h>
 
 #if !defined(WIN32)
-#ifndef Lynx
 #include <sys/param.h>
 #include <sys/socket.h>
-#else
-#include <socket.h>
-#endif
 #include <netinet/in.h>
 #include <netdb.h>
 #endif
@@ -48,11 +44,6 @@
 #include "input.h"
 #include "dixstruct.h"
 #include "opaque.h"
-
-#if defined(DGUX)
-#include <net/net_ioctl.h>
-#include <sys/ioctl.h>
-#endif
 
 
 #ifndef NX_TRANS_SOCKET
