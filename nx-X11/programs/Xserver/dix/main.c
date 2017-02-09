@@ -261,8 +261,8 @@ main(int argc, char *argv[], char *envp[])
 	ResetPixmapPrivates();
 #endif
 	ResetColormapPrivates();
-	ResetFontPrivateIndex();
 	ResetDevicePrivateIndex();
+	InitFonts();
 	InitCallbackManager();
 	InitVisualWrap();
 	InitOutput(&screenInfo, argc, argv);
@@ -294,7 +294,6 @@ main(int argc, char *argv[], char *envp[])
 	    FatalError("failed to initialize core devices");
 	ReserveClientIds(serverClient);
 
-	InitFonts();
 	if (loadableFonts) {
 	    SetFontPath(0, 0, (unsigned char *)defaultFontPath, &error);
 	} else {
