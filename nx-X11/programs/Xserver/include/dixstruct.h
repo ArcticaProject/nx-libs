@@ -141,15 +141,12 @@ typedef struct _Client {
     struct _FontResolution * (*fontResFunc) (    /* no need for font.h */
 		ClientPtr	/* pClient */,
 		int *		/* num */);
-#ifdef SMART_SCHEDULE
     int	    smart_priority;
     long    smart_start_tick;
     long    smart_stop_tick;
     long    smart_check_tick;
-#endif
 }           ClientRec;
 
-#ifdef SMART_SCHEDULE
 /*
  * Scheduling interface
  */
@@ -169,8 +166,6 @@ extern Bool SmartScheduleStopTimer(void);
 #define SMART_MIN_PRIORITY  (-20)
 
 extern Bool SmartScheduleInit(void);
-
-#endif
 
 /* This prototype is used pervasively in Xext, dix */
 #define DISPATCH_PROC(func) int func(ClientPtr /* client */)

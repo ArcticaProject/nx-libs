@@ -2538,25 +2538,9 @@ void nxagentSetBufferSize()
 
 void nxagentSetScheduler()
 {
-  #ifdef DISABLE_SMART_SCHEDULE
-
-  #ifdef SMART_SCHEDULE
-
-  #ifdef TEST
-  fprintf(stderr, "nxagentSetScheduler: Disabling the smart scheduler.\n");
-  #endif
-
-  nxagentDisableTimer();
-
-  #endif
-
-  #else /* #ifdef DISABLE_SMART_SCHEDULE */
-
   /*
    * The smart scheduler is the default.
    */
-
-  #ifdef SMART_SCHEDULE
 
   if (nxagentOption(Shadow) == 1)
   {
@@ -2566,10 +2550,6 @@ void nxagentSetScheduler()
 
     nxagentDisableTimer();
   }
-
-  #endif
-
-  #endif /* #ifdef DISABLE_SMART_SCHEDULE */
 }
 
 void nxagentSetCoalescence()

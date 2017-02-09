@@ -564,15 +564,11 @@ void nxagentBlockHandler(void * data, struct timeval **timeout, void * mask)
    * the client is scheduled in.
    */
 
-  #ifdef SMART_SCHEDULE
-
   #ifdef DEBUG
   fprintf(stderr, "nxagentBlockHandler: Stopping the smart schedule timer.\n");
   #endif
 
   nxagentStopTimer();
-
-  #endif
 
   nxagentPrintGeometry();
 
@@ -601,12 +597,8 @@ void nxagentWakeupHandler(void * data, int count, void * mask)
     nxagentHandleConnectionStates();
   }
 
-  #ifdef SMART_SCHEDULE
-
   if (SmartScheduleDisable == 1)
   {
-
-  #endif
 
     #ifdef DEBUG
     fprintf(stderr, "nxagentWakeupHandler: Resetting the dispatch state after wakeup.\n");
@@ -617,11 +609,7 @@ void nxagentWakeupHandler(void * data, int count, void * mask)
     nxagentDispatch.in  = nxagentBytesIn;
     nxagentDispatch.out = nxagentBytesOut;
 
-  #ifdef SMART_SCHEDULE
-
   }
-
-  #endif
 
   /*
    * Can become true during the dispatch loop.
@@ -897,12 +885,8 @@ void nxagentShadowWakeupHandler(void * data, int count, void * mask)
     nxagentHandleConnectionStates();
   }
 
-  #ifdef SMART_SCHEDULE
-
   if (SmartScheduleDisable == 1)
   {
-
-  #endif
 
     #ifdef DEBUG
     fprintf(stderr, "nxagentShadowWakeupHandler: Resetting the dispatch state after wakeup.\n");
@@ -913,11 +897,7 @@ void nxagentShadowWakeupHandler(void * data, int count, void * mask)
     nxagentDispatch.in  = nxagentBytesIn;
     nxagentDispatch.out = nxagentBytesOut;
 
-  #ifdef SMART_SCHEDULE
-
   }
-
-  #endif
 
   /*
    * Can become true during the dispatch loop.
@@ -1095,12 +1075,8 @@ void nxagentDispatchHandler(ClientPtr client, int in, int out)
       #endif
     }
 
-    #ifdef SMART_SCHEDULE
-
     if (SmartScheduleDisable == 1)
     {
-
-    #endif
 
       /*
        * Pay attention to the next client if this
@@ -1131,11 +1107,7 @@ void nxagentDispatchHandler(ClientPtr client, int in, int out)
       }
       #endif
 
-    #ifdef SMART_SCHEDULE
-
     }
-
-    #endif
 
     return;
   }
@@ -1178,12 +1150,8 @@ void nxagentDispatchHandler(ClientPtr client, int in, int out)
      * the inner dispatch loop forever.
      */
 
-    #ifdef SMART_SCHEDULE
-
     if (SmartScheduleDisable == 1)
     {
-
-    #endif
 
       if  (client -> index != nxagentDispatch.client)
       {
@@ -1230,11 +1198,7 @@ void nxagentDispatchHandler(ClientPtr client, int in, int out)
         #endif
       }
 
-    #ifdef SMART_SCHEDULE
-
     }
-
-    #endif
 
   }
 
