@@ -143,10 +143,6 @@ extern void CheckConnections(void);
 
 extern void CloseDownConnection(ClientPtr /*client*/);
 
-extern void AddEnabledDevice(int /*fd*/);
-
-extern void RemoveEnabledDevice(int /*fd*/);
-
 typedef void (*NotifyFdProcPtr)(int fd, int ready, void *data);
 
 #define X_NOTIFY_NONE   0
