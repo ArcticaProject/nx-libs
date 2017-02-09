@@ -147,6 +147,19 @@ extern void AddEnabledDevice(int /*fd*/);
 
 extern void RemoveEnabledDevice(int /*fd*/);
 
+typedef void (*NotifyFdProcPtr)(int fd, int ready, void *data);
+
+#define X_NOTIFY_NONE   0
+#define X_NOTIFY_READ   1
+#define X_NOTIFY_WRITE  2
+
+extern Bool SetNotifyFd(int fd, NotifyFdProcPtr notify_fd, int mask, void *data);
+
+static inline void RemoveNotifyFd(int fd)
+{
+    (void) SetNotifyFd(fd, NULL, X_NOTIFY_NONE, NULL);
+}
+
 extern void OnlyListenToOneClient(ClientPtr /*client*/);
 
 extern void ListenToAllClients(void);

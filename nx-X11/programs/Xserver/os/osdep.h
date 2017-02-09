@@ -188,6 +188,10 @@ extern void FreeOsBuffers(
     OsCommPtr /*oc*/
 );
 
+extern void InitNotifyFds(void);
+
+extern void HandleNotifyFds(void);
+
 #include "dix.h"
 
 extern ConnectionInputPtr AllocateInputBuffer(void);
@@ -199,6 +203,7 @@ extern fd_set AllClients;
 extern fd_set LastSelectMask;
 extern fd_set WellKnownConnections;
 extern fd_set EnabledDevices;
+extern fd_set NotifyReadFds;
 extern fd_set ClientsWithInput;
 extern fd_set ClientsWriteBlocked;
 extern fd_set OutputPending;
