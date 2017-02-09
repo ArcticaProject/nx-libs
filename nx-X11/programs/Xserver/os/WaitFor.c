@@ -504,6 +504,11 @@ WaitForSomething(int *pClientsReady)
 	    if (XFD_ANYSET(&tmp_set))
 		QueueWorkProc(EstablishNewConnections, NULL,
 		              (void *)&LastSelectMask);
+
+	    XFD_ANDSET(&tmp_set, &LastSelectMask, &NotifyReadFds);
+	    if (XFD_ANYSET(&tmp_set))
+	         HandleNotifyFds();
+
 #ifdef DPMSExtension
 	    if (XFD_ANYSET (&devicesReadable) && (DPMSPowerLevel != DPMSModeOn))
 		DPMSSet(DPMSModeOn);

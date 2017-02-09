@@ -108,6 +108,7 @@ SOFTWARE.
 #include <nx-X11/Xpoll.h>
 #include "opaque.h"
 #include "dixstruct.h"
+#include "list.h"
 #ifdef XCSECURITY
 #define _SECURITY_SERVER
 #include <nx-X11/extensions/security.h>
@@ -123,6 +124,7 @@ int lastfdesc;			/* maximum file descriptor */
 
 fd_set WellKnownConnections;	/* Listener mask */
 fd_set EnabledDevices;		/* mask for input devices that are on */
+fd_set NotifyReadFds;           /* mask for other file descriptors */
 fd_set AllSockets;		/* select on this */
 fd_set AllClients;		/* available clients */
 fd_set LastSelectMask;		/* mask returned from last select call */
@@ -1011,6 +1013,98 @@ RemoveEnabledDevice(int fd)
     FD_CLR(fd, &AllSockets);
     if (GrabInProgress)
 	FD_CLR(fd, &SavedAllSockets);
+}
+
+struct notify_fd {
+    struct xorg_list list;
+    int fd;
+    int mask;
+    NotifyFdProcPtr notify;
+    void *data;
+};
+
+static struct xorg_list notify_fds;
+
+void
+InitNotifyFds(void)
+{
+    struct notify_fd *s, *next;
+    static int been_here;
+
+    if (been_here)
+	xorg_list_for_each_entry_safe(s, next, &notify_fds, list)
+	     RemoveNotifyFd(s->fd);
+
+    xorg_list_init(&notify_fds);
+    been_here = 1;
+}
+
+/*****************
+ * SetNotifyFd
+ *    Registers a callback to be invoked when the specified
+ *    file descriptor becomes readable.
+ *****************/
+
+Bool
+SetNotifyFd(int fd, NotifyFdProcPtr notify, int mask, void *data)
+{
+    struct notify_fd *n;
+    int changes;
+
+    xorg_list_for_each_entry(n, &notify_fds, list)
+	if (n->fd == fd)
+	    break;
+
+    if (&n->list == &notify_fds) {
+	if (mask == 0)
+	    return TRUE;
+
+	n = calloc(1, sizeof (struct notify_fd));
+	if (!n)
+	    return FALSE;
+	n->fd = fd;
+	xorg_list_add(&n->list, &notify_fds);
+    }
+
+    changes = n->mask ^ mask;
+
+    if (changes & X_NOTIFY_READ) {
+	if (mask & X_NOTIFY_READ) {
+	    FD_SET(fd, &NotifyReadFds);
+	    AddGeneralSocket(fd);
+	} else {
+	    RemoveGeneralSocket(fd);
+	     FD_CLR(fd, &NotifyReadFds);
+	}
+    }
+    if (mask == 0) {
+	xorg_list_del(&n->list);
+	free(n);
+    } else {
+	n->mask = mask;
+	n->data = data;
+	n->notify = notify;
+    }
+
+    return TRUE;
+}
+
+/*****************
+ * HandlNotifyFds
+ *    A WorkProc to be called when any of the registered
+ *    file descriptors are readable.
+ *****************/
+
+void
+HandleNotifyFds(void)
+{
+    struct notify_fd *s, *next;
+
+    xorg_list_for_each_entry_safe(s, next, &notify_fds, list) {
+	if (FD_ISSET(s->fd, &LastSelectMask)) {
+	    s->notify(s->fd, X_NOTIFY_READ, s->data);
+	}
+    }
 }
 
 /*****************
