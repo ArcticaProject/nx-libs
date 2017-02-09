@@ -2781,7 +2781,7 @@ int nxagentShadowInit(ScreenPtr pScreen, WindowPtr pWin)
               "to the device set.\n", fd);
   #endif
 
-  AddEnabledDevice(nxagentShadowXConnectionNumber);
+  SetNotifyFd(nxagentShadowXConnectionNumber, nxagentNotifyConnection, X_NOTIFY_READ, NULL);
 
   accessPixmapID = FakeClientID(serverClient -> index);
 
