@@ -597,16 +597,12 @@ Display *nxagentInternalOpenDisplay(char *display)
 
   int result;
 
-  #ifdef SMART_SCHEDULE
-
   /*
    * Stop the smart schedule timer since
    * it uses SIGALRM as we do.
    */
 
   nxagentStopTimer();
-
-  #endif
 
   /*
    * Install the handler rejecting a possible
@@ -678,15 +674,11 @@ static void nxagentDisplayBlockHandler(Display *display, int reason)
      * for the remote display.
      */
 
-    #ifdef SMART_SCHEDULE
-
     #ifdef DEBUG
     fprintf(stderr, "nxagentDisplayBlockHandler: BLOCK! Stopping the smart schedule timer.\n");
     #endif
 
     nxagentStopTimer();
-
-    #endif
 
     if (reason == NXBlockRead)
     {
@@ -702,12 +694,8 @@ static void nxagentDisplayBlockHandler(Display *display, int reason)
 
       nxagentBlocking = 1;
 
-      #ifdef SMART_SCHEDULE
-
       if (SmartScheduleDisable == 1)
       {
-
-      #endif
 
         /*
          * Let the dispatch attend the next
@@ -723,11 +711,7 @@ static void nxagentDisplayBlockHandler(Display *display, int reason)
         nxagentDispatch.in  = nxagentBytesIn;
         nxagentDispatch.out = nxagentBytesOut;
 
-      #ifdef SMART_SCHEDULE
-
       }
-
-      #endif
 
       /*
        * Give a chance to the next client.
@@ -1022,11 +1006,7 @@ void nxagentInstallSignalHandlers()
    * Reset the SIGALRM to the default.
    */
 
-  #ifdef SMART_SCHEDULE
-
   nxagentStopTimer();
-
-  #endif
 
   newAction.sa_handler = SIG_DFL;
 
@@ -1040,16 +1020,12 @@ void nxagentInstallSignalHandlers()
     FatalError("Can't set the handler for alarm signal.");
   }
 
-  #ifdef SMART_SCHEDULE
-
   /*
    * Let the smart schedule set the SIGALRM
    * handler again.
    */
 
   nxagentInitTimer();
-
-  #endif
 
   /*
    * Install our own handler for the SIGHUP.
@@ -1146,11 +1122,7 @@ void nxagentResetSignalHandlers()
    * Reset the SIGALRM to the default.
    */
 
-  #ifdef SMART_SCHEDULE
-
   nxagentStopTimer();
-
-  #endif
 
   newAction.sa_handler = SIG_DFL;
 
@@ -1164,8 +1136,6 @@ void nxagentResetSignalHandlers()
     FatalError("Can't set the handler for alarm signal.");
   }
 
-  #ifdef SMART_SCHEDULE
-
   /*
    * Let the smart schedule set the SIGALRM
    * handler again.
@@ -1173,7 +1143,6 @@ void nxagentResetSignalHandlers()
 
   nxagentInitTimer();
 
-  #endif
 }
 
 void nxagentOpenDisplay(int argc, char *argv[])
@@ -2969,15 +2938,11 @@ void nxagentWaitDisplay()
    * Disable the smart scheduler's interrupts.
    */
 
-  #ifdef SMART_SCHEDULE
-
   #ifdef DEBUG
   fprintf(stderr, "nxagentWaitDisplay: Stopping the smart schedule timer.\n");
   #endif
 
   nxagentStopTimer();
-
-  #endif
 
   if (nxagentDisplay != NULL)
   {

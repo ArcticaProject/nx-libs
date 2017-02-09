@@ -116,8 +116,6 @@ Bool nxagentReconnectDisplay(void *p0);
  * Deal with the smart scheduler.
  */
 
-#ifdef SMART_SCHEDULE
-
 #define nxagentInitTimer() \
 \
     SmartScheduleInit();
@@ -148,8 +146,6 @@ Bool nxagentReconnectDisplay(void *p0);
     } \
 \
     SmartScheduleDisable = 1;
-
-#endif /* #ifdef SMART_SCHEDULE */
 
 /*
  * File descriptor currently used by

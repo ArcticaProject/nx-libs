@@ -243,8 +243,6 @@ FlushClientCaches(XID id)
 	}
     }
 }
-#ifdef SMART_SCHEDULE
-
 #undef SMART_DEBUG
 
 #define SMART_SCHEDULE_DEFAULT_INTERVAL	20	    /* ms */
@@ -345,7 +343,6 @@ SmartScheduleClient (int *clientReady, int nready)
     }
     return best;
 }
-#endif
 
 #ifndef NXAGENT_SERVER
 #define MAJOROP ((xReq *)client->requestBuffer)->reqType
@@ -358,9 +355,7 @@ Dispatch(void)
     register ClientPtr	client;
     register int	nready;
     register HWEventQueuePtr* icheck = checkForInput;
-#ifdef SMART_SCHEDULE
     long			start_tick;
-#endif
 
     nextFreeClientID = 1;
     InitSelections();
@@ -380,13 +375,11 @@ Dispatch(void)
 
 	nready = WaitForSomething(clientReady);
 
-#ifdef SMART_SCHEDULE
 	if (nready && !SmartScheduleDisable)
 	{
 	    clientReady[0] = SmartScheduleClient (clientReady, nready);
 	    nready = 1;
 	}
-#endif
        /***************** 
 	*  Handle events in round robin fashion, doing input between 
 	*  each round 
@@ -409,9 +402,7 @@ Dispatch(void)
 	    isItTimeToYield = FALSE;
  
             requestingClient = client;
-#ifdef SMART_SCHEDULE
 	    start_tick = SmartScheduleTime;
-#endif
 	    while (!isItTimeToYield)
 	    {
 	        if (*icheck[0] != *icheck[1])
@@ -419,7 +410,6 @@ Dispatch(void)
 		    ProcessInputEvents();
 		    FlushIfCriticalOutputPending();
 		}
-#ifdef SMART_SCHEDULE
 		if (!SmartScheduleDisable && 
 		    (SmartScheduleTime - start_tick) >= SmartScheduleSlice)
 		{
@@ -428,7 +418,6 @@ Dispatch(void)
 			client->smart_priority--;
 		    break;
 		}
-#endif
 		/* now, finally, deal with client requests */
 
 	        result = ReadRequestFromClient(client);
@@ -466,11 +455,9 @@ Dispatch(void)
 #endif
 	    }
 	    FlushAllOutput();
-#ifdef SMART_SCHEDULE
 	    client = clients[clientReady[nready]];
 	    if (client)
 		client->smart_stop_tick = SmartScheduleTime;
-#endif
 	    requestingClient = NULL;
 	}
 	dispatchException &= ~DE_PRIORITYCHANGE;
@@ -3593,9 +3580,7 @@ CloseDownClient(register ClientPtr client)
 	if (client->index < nextFreeClientID)
 	    nextFreeClientID = client->index;
 	clients[client->index] = NullClient;
-#ifdef SMART_SCHEDULE
 	SmartLastClient = NullClient;
-#endif
 	free(client);
 
 	while (!clients[currentMaxClients-1])
@@ -3684,12 +3669,10 @@ void InitClient(ClientPtr client, int i, void * ospriv)
     client->authId = 0;
 #endif
     client->fontResFunc = NULL;
-#ifdef SMART_SCHEDULE
     client->smart_priority = 0;
     client->smart_start_tick = SmartScheduleTime;
     client->smart_stop_tick = SmartScheduleTime;
     client->smart_check_tick = SmartScheduleTime;
-#endif
 }
 
 extern int clientPrivateLen;
