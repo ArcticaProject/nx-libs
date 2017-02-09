@@ -43,6 +43,12 @@ in this Software without prior written authorization from The Open Group.
 # include   "mi.h"
 # include   "scrnintstr.h"
 
+#ifdef DPMSExtension
+# include "dpmsproc.h"
+# define DPMS_SERVER
+# include <nx-X11/extensions/dpms.h>
+#endif
+
 #define QUEUE_SIZE  256
 
 typedef struct _Event {
@@ -150,6 +156,14 @@ void mieqProcessInputEvents ()
     {
 	if (screenIsSaved == SCREEN_SAVER_ON)
 	    SaveScreens (SCREEN_SAVER_OFF, ScreenSaverReset);
+
+#ifdef DPMSExtension
+	else if (DPMSPowerLevel != DPMSModeOn)
+	     SetScreenSaverTimer();
+
+	if (DPMSPowerLevel != DPMSModeOn)
+	     DPMSSet(DPMSModeOn);
+#endif
 
 	e = &miEventQueue.events[miEventQueue.head];
 	/*
