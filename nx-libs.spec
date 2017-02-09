@@ -34,7 +34,7 @@ BuildRequires:  pkgconfig(pixman-1) >= 0.13.2
 BuildRequires:  pkgconfig(x11)
 BuildRequires:  pkgconfig(xext)
 BuildRequires:  pkgconfig(xpm)
-BuildRequires:  pkgconfig(xfont)
+BuildRequires:  pkgconfig(xfont) >= 1.4.2
 BuildRequires:  pkgconfig(xdmcp)
 BuildRequires:  pkgconfig(xdamage)
 BuildRequires:  pkgconfig(xcomposite)
@@ -50,7 +50,7 @@ BuildRequires:  pixman-devel >= 0.13.2
 BuildRequires:  xorg-x11-libX11-devel
 BuildRequires:  xorg-x11-libXext-devel
 BuildRequires:  xorg-x11-libXpm-devel
-BuildRequires:  xorg-x11-libXfont-devel
+BuildRequires:  xorg-x11-libXfont-devel >= 1.4.2
 BuildRequires:  xorg-x11-libXdmcp-devel
 BuildRequires:  xorg-x11-libXdamage-devel
 BuildRequires:  xorg-x11-libXcomposite-devel
@@ -70,7 +70,7 @@ BuildRequires:  pixman-devel >= 0.13.2
 BuildRequires:  libX11-devel
 BuildRequires:  libXext-devel
 BuildRequires:  libXpm-devel
-BuildRequires:  libXfont-devel
+BuildRequires:  libXfont-devel >= 1.4.2
 BuildRequires:  libXdmcp-devel
 BuildRequires:  libXdamage-devel
 BuildRequires:  libXcomposite-devel
