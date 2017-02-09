@@ -346,7 +346,7 @@ chmod a+x my_configure;
 export SHLIBGLOBALSFLAGS="%{__global_ldflags}"
 export LOCAL_LDFLAGS="%{__global_ldflags}"
 export CDEBUGFLAGS="%{__global_cppflags} %{__global_cflags}"
-make %{?_smp_mflags} CONFIGURE="$PWD/my_configure" PREFIX=%{_prefix} LIBDIR=%{_libdir} SHLIBDIR=%{_libdir}
+make %{?_smp_mflags} CONFIGURE="$PWD/my_configure" PREFIX=%{_prefix} LIBDIR=%{_libdir}
 
 %install
 make install \
@@ -515,8 +515,8 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %{_bindir}/nxagent
 %dir %{_libdir}/nx/bin
 %{_libdir}/nx/bin/nxagent
-%dir %{_libdir}/nx-X11
-%{_libdir}/nx-X11/libX11.so*
+%dir %{_libdir}/nx/X11
+%{_libdir}/nx/X11/libX11.so*
 %{_datadir}/pixmaps/nxagent.xpm
 %dir %{_datadir}/nx
 %{_datadir}/nx/rgb

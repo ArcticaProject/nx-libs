@@ -9,7 +9,7 @@
 #endif
 
 #ifndef UseRpath
-#define UseRpath NO
+#define UseRpath YES
 #endif
 
 #if UseElfFormat

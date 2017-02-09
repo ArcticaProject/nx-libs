@@ -15,11 +15,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see http://www.gnu.org/licenses/.
 
-NX_LIBS=@@NXLIBDIR@@
+NX_LIBDIR=@@NXLIBDIR@@
 
 # make sure nxagent starts properly with pam_tmpdir.so being in use
 NX_TEMP=${NX_TEMP:-/tmp}
 export NX_TEMP
-export LD_LIBRARY_PATH=@@NXLIBDIR@@-X11/
 
-exec $NX_LIBS/bin/${NXAPP:-"nxagent"} "$@"
+exec $NX_LIBDIR/bin/${NXAPP:-"nxagent"} "$@"

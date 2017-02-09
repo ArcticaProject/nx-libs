@@ -9,14 +9,15 @@ COPY_DEREFERENCED=cp -RH
 RM_FILE=rm -f
 RM_DIR=rmdir -p --ignore-fail-on-non-empty
 
-ETCDIR_NX   ?= /etc/nxagent
-PREFIX      ?= /usr/local
-BINDIR      ?= $(PREFIX)/bin
-LIBDIR      ?= $(PREFIX)/lib
-USRLIBDIR   ?= $(LIBDIR)
-INCLUDEDIR  ?= $(PREFIX)/include
-NXLIBDIR    ?= $(LIBDIR)/nx
-CONFIGURE   ?= ./configure
+ETCDIR_NX       ?= /etc/nxagent
+PREFIX          ?= /usr/local
+BINDIR          ?= $(PREFIX)/bin
+LIBDIR          ?= $(PREFIX)/lib
+SHLIBDIR        ?= $(LIBDIR)
+NXLIBDIR        ?= $(SHLIBDIR)/nx
+USRLIBDIR       ?= $(NXLIBDIR)/X11
+INCLUDEDIR      ?= $(PREFIX)/include
+CONFIGURE       ?= ./configure
 
 NX_VERSION_MAJOR=$(shell ./version.sh 1)
 NX_VERSION_MINOR=$(shell ./version.sh 2)
@@ -71,7 +72,7 @@ build-full:
 
 	cd nxcompshad && autoconf && (${CONFIGURE}) && ${MAKE}
 
-	cd nx-X11 && ${MAKE} World
+	cd nx-X11 && ${MAKE} World USRLIBDIR=$(USRLIBDIR) SHLIBDIR=$(SHLIBDIR)
 
 	cd nxproxy && autoconf && (${CONFIGURE}) && ${MAKE}
 
@@ -143,13 +144,13 @@ install-full:
 	    cp -a "$$(string_rep "$$libpath" "$$libfile" "$$link")" "$$(string_rep "$$libdir" exports .build-exports)"; \
 	done;
 
+	$(INSTALL_DIR) $(DESTDIR)$(SHLIBDIR)
+	$(COPY_SYMLINK) nx-X11/.build-exports/lib/libNX_X11.so $(DESTDIR)$(SHLIBDIR)/
+	$(COPY_SYMLINK) nx-X11/.build-exports/lib/libNX_X11.so.6 $(DESTDIR)$(SHLIBDIR)/
+	$(COPY_DEREFERENCED) nx-X11/.build-exports/lib/libNX_X11.so.6.2 $(DESTDIR)$(SHLIBDIR)/
 	$(INSTALL_DIR) $(DESTDIR)$(USRLIBDIR)
-	$(COPY_SYMLINK) nx-X11/.build-exports/lib/libNX_X11.so $(DESTDIR)$(USRLIBDIR)/
-	$(COPY_SYMLINK) nx-X11/.build-exports/lib/libNX_X11.so.6 $(DESTDIR)$(USRLIBDIR)/
-	$(COPY_DEREFERENCED) nx-X11/.build-exports/lib/libNX_X11.so.6.2 $(DESTDIR)$(USRLIBDIR)/
-	$(INSTALL_DIR) $(DESTDIR)$(USRLIBDIR)/nx-X11
-	$(INSTALL_SYMLINK) ../libNX_X11.so.6 $(DESTDIR)$(USRLIBDIR)/nx-X11/libX11.so.6
-	$(INSTALL_SYMLINK) ../libNX_X11.so.6.2 $(DESTDIR)$(USRLIBDIR)/nx-X11/libX11.so.6.2
+	$(INSTALL_SYMLINK) ../../libNX_X11.so.6 $(DESTDIR)$(USRLIBDIR)/libX11.so.6
+	$(INSTALL_SYMLINK) ../../libNX_X11.so.6.2 $(DESTDIR)$(USRLIBDIR)/libX11.so.6.2
 
 	. replace.sh; set -x; find nx-X11/.build-exports/include/{nx*,GL} -type d | \
 	    while read dirname; do \
@@ -185,14 +186,14 @@ uninstall-lite:
 	$(RM_DIR) $(DESTDIR)$(NXLIBDIR)/bin/
 	$(RM_FILE) $(DESTDIR)$(PREFIX)/share/man/man1/*.1
 	$(RM_FILE) $(DESTDIR)$(PREFIX)/share/nx/VERSION.nxproxy
-	$(RM_DIR) $(DESTDIR)$(NXLIBDIR)/share/nx/
+	$(RM_DIR) $(DESTDIR)$(PREFIX)/share/nx/
 
 uninstall-full:
 	for f in nxagent; do \
 	    $(RM_FILE) $(DESTDIR)$(BINDIR)/$$f; done
 
 	$(RM_FILE) $(DESTDIR)$(PREFIX)/share/nx/VERSION.nxagent
-	$(RM_DIR) $(DESTDIR)$(NXLIBDIR)/share/nx/
+	$(RM_DIR) $(DESTDIR)$(PREFIX)/share/nx/
 
 	if test -d nx-X11; then \
 	    if test -f nxcompshad/Makefile; then ${MAKE} -C nxcompshad $@; fi; \
