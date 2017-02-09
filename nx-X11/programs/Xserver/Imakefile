@@ -323,7 +323,7 @@ NXAGENTNXLIBS = -L/usr/sfw/lib \
                 -lXcompshad \
                 -lXrender \
                 -lXfixes \
-                -lXfont \
+                $(XFONTLIB) \
                 -lXcomposite \
                 -lXinerama \
                 -lXdmcp \
@@ -338,7 +338,7 @@ NXAGENTNXLIBS = -L../../../nxcomp  \
                 -lXcompshad \
                 -lXrender \
                 -lXfixes \
-                -lXfont \
+                $(XFONTLIB) \
                 -lXcomposite \
                 -lXdmcp \
                 -lNX_X11 \
@@ -353,7 +353,7 @@ NXAGENTNXLIBS = -L../../../nxcomp  \
                 -lXcompshad \
                 -lXrender \
                 -lXfixes \
-                -lXfont \
+                $(XFONTLIB) \
                 -lXcomposite \
                 -lXinerama \
                 -lXdmcp \
@@ -368,7 +368,7 @@ NXAGENTNXLIBS = -L../../../nxcomp  \
                 -lXcompshad \
                 -lXrender \
                 -lXfixes \
-                -lXfont \
+                $(XFONTLIB) \
                 -lXcomposite \
                 -lXinerama \
                 -lXdmcp \

@@ -41,6 +41,7 @@ is" without express or implied warranty.
 #include "dixstruct.h"
 #include <X11/fonts/font.h>
 #include <X11/fonts/fontstruct.h>
+#include "dixfontstr.h"
 #include "misc.h"
 #include "miscstruct.h"
 #include "opaque.h"
@@ -495,7 +496,11 @@ Bool nxagentRealizeFont(ScreenPtr pScreen, FontPtr pFont)
   const char *name;
   char *origName = (char*) pScreen;
 
+#ifdef HAS_XFONT2
+  xfont2_font_set_private(pFont, nxagentFontPrivateIndex, NULL);
+#else
   FontSetPrivate(pFont, nxagentFontPrivateIndex, NULL);
+#endif /* HAS_XFONT2 */
 
   if (requestingClient && XpClientIsPrintClient(requestingClient, NULL))
     return True;
@@ -540,7 +545,11 @@ Bool nxagentRealizeFont(ScreenPtr pScreen, FontPtr pFont)
   }
 
   priv = (void *)malloc(sizeof(nxagentPrivFont));
+#ifdef HAS_XFONT2
+  xfont2_font_set_private(pFont, nxagentFontPrivateIndex, priv);
+#else
   FontSetPrivate(pFont, nxagentFontPrivateIndex, priv);
+#endif /* HAS_XFONT2 */
 
   nxagentFontPriv(pFont) -> mirrorID = 0;
 
@@ -688,7 +697,11 @@ Bool nxagentUnrealizeFont(ScreenPtr pScreen, FontPtr pFont)
       FreeResource(nxagentFontPriv(pFont) -> mirrorID, RT_NONE);
 
     free(nxagentFontPriv(pFont));
+#ifdef HAS_XFONT2
+    xfont2_font_set_private(pFont, nxagentFontPrivateIndex, NULL);
+#else
     FontSetPrivate(pFont, nxagentFontPrivateIndex, NULL);
+#endif /* HAS_XFONT2 */
   }
 
   return True;

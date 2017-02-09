@@ -390,6 +390,12 @@
 #define BuildXKBlib		YES
 
 /*
+ * If you want to build against libXfont2, rather than libXfont(1), uncomment this.
+ *
+#define HasXfont2		YES
+ */
+
+/*
  * If you are running NetBSD 0.9C or later, and have the aperture driver
  * installed, uncomment this.
  *

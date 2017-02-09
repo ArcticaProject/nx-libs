@@ -59,10 +59,14 @@ Equipment Corporation.
 #include "resource.h"
 #include "dixstruct.h"
 #include "cursorstr.h"
+#include "list.h"
 #include "misc.h"
 #include "opaque.h"
 #include "dixfontstr.h"
 #include "closestr.h"
+#ifdef HAS_XFONT2
+# include <X11/fonts/libxfont2.h>
+#endif /* HAS_XFONT2 */
 
 #ifdef DEBUG
 #include	<stdio.h>
@@ -79,14 +83,20 @@ Equipment Corporation.
 
 #define QUERYCHARINFO(pci, pr)  *(pr) = (pci)->metrics
 
+#ifndef HAS_XFONT2
 extern void register_fpe_functions(void);
+#endif
 
 extern void * fosNaturalParams;
 extern FontPtr defaultFont;
 
 static FontPathElementPtr *font_path_elements = (FontPathElementPtr *) 0;
 static int  num_fpes = 0;
+#ifdef HAS_XFONT2
+xfont2_fpe_funcs_rec const **fpe_functions;
+#else
 FPEFunctions *fpe_functions = (FPEFunctions *) 0;
+#endif
 static int  num_fpe_types = 0;
 
 static unsigned char *font_path_string;
@@ -94,7 +104,11 @@ static unsigned char *font_path_string;
 static int  num_slept_fpes = 0;
 static int  size_slept_fpes = 0;
 static FontPathElementPtr *slept_fpes = (FontPathElementPtr *) 0;
+#ifdef HAS_XFONT2
+xfont2_pattern_cache_ptr patternCache;
+#else
 static FontPatternCachePtr patternCache;
+#endif /* HAS_FONT2 */
 
 int
 FontToXError(err)
@@ -205,7 +219,11 @@ FontWakeup(void * data, int count, void * LastSelectMask)
     /* wake up any fpe's that may be waiting for information */
     for (i = 0; i < num_slept_fpes; i++) {
 	fpe = slept_fpes[i];
+#ifdef HAS_XFONT2
+	(void) (*fpe_functions[fpe->type]->wakeup_fpe) (fpe);
+#else
 	(void) (*fpe_functions[fpe->type].wakeup_fpe) (fpe, LastSelectMask);
+#endif /* HAS_XFONT2 */
     }
 }
 
@@ -221,7 +239,11 @@ FreeFPE (FontPathElementPtr fpe)
 {
     fpe->refcount--;
     if (fpe->refcount == 0) {
+#ifdef HAS_XFONT2
+	(*fpe_functions[fpe->type]->free_fpe) (fpe);
+#else
 	(*fpe_functions[fpe->type].free_fpe) (fpe);
+#endif
 	free(fpe->name);
 	free(fpe);
     }
@@ -276,14 +298,22 @@ doOpenFont(ClientPtr client, OFclosurePtr c)
 	if (c->current_fpe < c->num_fpes)
 	{
 	    fpe = c->fpe_list[c->current_fpe];
+#ifdef HAS_XFONT2
+	    (*fpe_functions[fpe->type]->client_died) ((void *) client, fpe);
+#else
 	    (*fpe_functions[fpe->type].client_died) ((void *) client, fpe);
+#endif /* HAS_XFONT2 */
 	}
 	err = Successful;
 	goto bail;
     }
     while (c->current_fpe < c->num_fpes) {
 	fpe = c->fpe_list[c->current_fpe];
+#ifdef HAS_XFONT2
+	err = (*fpe_functions[fpe->type]->open_font)
+#else
 	err = (*fpe_functions[fpe->type].open_font)
+#endif /* HAS_XFONT2 */
 	    ((void *) client, fpe, c->flags,
 	     c->fontname, c->fnamelen, FontFormat,
 	     BitmapFormatMaskByte |
@@ -361,7 +391,11 @@ doOpenFont(ClientPtr client, OFclosurePtr c)
 	goto bail;
     }
     if (patternCache && pfont != c->non_cachable_font)
+#ifdef HAS_XFONT2
+	xfont2_cache_font_pattern(patternCache, c->origFontName, c->origFontNameLen,
+#else
 	CacheFontPattern(patternCache, c->origFontName, c->origFontNameLen,
+#endif /* HAS_XFONT2 */
 			 pfont);
 bail:
     if (err != Successful && c->client != serverClient) {
@@ -417,7 +451,11 @@ OpenFont(ClientPtr client, XID fid, Mask flags, unsigned lenfname, char *pfontna
     ** having to create another instance of a font that already exists.
     */
 
+#ifdef HAS_XFONT2
+	cached = xfont2_find_cached_font_pattern(patternCache, pfontname, lenfname);
+#else
 	cached = FindCachedFontPattern(patternCache, pfontname, lenfname);
+#endif /* HAS_XFONT2 */
 	if (cached && cached->info.cachable)
 	{
 	    if (!AddResource(fid, RT_FONT, (void *) cached))
@@ -482,7 +520,11 @@ CloseFont(void * value, XID fid)
 	return (Success);
     if (--pfont->refcnt == 0) {
 	if (patternCache)
+#ifdef HAS_XFONT2
+	    xfont2_remove_cached_font_pattern(patternCache, pfont);
+#else
 	    RemoveCachedFontPattern (patternCache, pfont);
+#endif /* HAS_XFONT2 */
 	/*
 	 * since the last reference is gone, ask each screen to free any
 	 * storage it may have allocated locally for it.
@@ -498,7 +540,11 @@ CloseFont(void * value, XID fid)
 	XF86BigfontFreeFontShm(pfont);
 #endif
 	fpe = pfont->fpe;
+#ifdef HAS_XFONT2
+	(*fpe_functions[fpe->type]->close_font) (fpe, pfont);
+#else
 	(*fpe_functions[fpe->type].close_font) (fpe, pfont);
+#endif
 	FreeFPE(fpe);
     }
     return (Success);
@@ -597,7 +643,11 @@ doListFontsAndAliases(ClientPtr client, LFclosurePtr c)
 	if (c->current.current_fpe < c->num_fpes)
 	{
 	    fpe = c->fpe_list[c->current.current_fpe];
+#ifdef HAS_XFONT2
+	    (*fpe_functions[fpe->type]->client_died) ((void *) client, fpe);
+#else
 	    (*fpe_functions[fpe->type].client_died) ((void *) client, fpe);
+#endif /* HAS_XFONT2 */
 	}
 	err = Successful;
 	goto bail;
@@ -610,11 +660,19 @@ doListFontsAndAliases(ClientPtr client, LFclosurePtr c)
 	fpe = c->fpe_list[c->current.current_fpe];
 	err = Successful;
 
+#ifdef HAS_XFONT2
+	if (!fpe_functions[fpe->type]->start_list_fonts_and_aliases)
+#else
 	if (!fpe_functions[fpe->type].start_list_fonts_and_aliases)
+#endif /* HAS_XFONT2 */
 	{
 	    /* This FPE doesn't support/require list_fonts_and_aliases */
 
+#ifdef HAS_XFONT2
+	    err = (*fpe_functions[fpe->type]->list_fonts)
+#else
 	    err = (*fpe_functions[fpe->type].list_fonts)
+#endif /* HAS_XFONT2 */
 		((void *) c->client, fpe, c->current.pattern,
 		 c->current.patlen, c->current.max_names - c->names->nnames,
 		 c->names);
@@ -643,7 +701,11 @@ doListFontsAndAliases(ClientPtr client, LFclosurePtr c)
 	       the FPEs.  */
 
 	    if (!c->current.list_started) {
+#ifdef HAS_XFONT2
+		err = (*fpe_functions[fpe->type]->start_list_fonts_and_aliases)
+#else
 		err = (*fpe_functions[fpe->type].start_list_fonts_and_aliases)
+#endif /* HAS_XFONT2 */
 		    ((void *) c->client, fpe, c->current.pattern,
 		     c->current.patlen, c->current.max_names - c->names->nnames,
 		     &c->current.private);
@@ -662,7 +724,11 @@ doListFontsAndAliases(ClientPtr client, LFclosurePtr c)
 	    if (err == Successful) {
 		char    *tmpname;
 		name = 0;
+#ifdef HAS_XFONT2
+		err = (*fpe_functions[fpe->type]->list_next_font_or_alias)
+#else
 		err = (*fpe_functions[fpe->type].list_next_font_or_alias)
+#endif /* HAS_XFONT2 */
 		    ((void *) c->client, fpe, &name, &namelen, &tmpname,
 		     &resolvedlen, c->current.private);
 		if (err == Suspended) {
@@ -687,11 +753,19 @@ doListFontsAndAliases(ClientPtr client, LFclosurePtr c)
 		if (c->haveSaved)
 		{
 		    if (c->savedName)
+#ifdef HAS_XFONT2
+			(void)xfont2_add_font_names_name(c->names, c->savedName,
+#else
 			(void)AddFontNamesName(c->names, c->savedName,
+#endif /* HAS_XFONT2 */
 					       c->savedNameLen);
 		}
 		else
+#ifdef HAS_XFONT2
+		    (void)xfont2_add_font_names_name(c->names, name, namelen);
+#else
 		    (void)AddFontNamesName(c->names, name, namelen);
+#endif /* HAS_XFONT2 */
 	    }
 
 	    /*
@@ -716,7 +790,11 @@ doListFontsAndAliases(ClientPtr client, LFclosurePtr c)
 		    int     tmpnamelen;
 
 		    tmpname = 0;
+#ifdef HAS_XFONT2
+		    (void) (*fpe_functions[fpe->type]->list_next_font_or_alias)
+#else
 		    (void) (*fpe_functions[fpe->type].list_next_font_or_alias)
+#endif /* HAS_XFONT2 */
 			((void *) c->client, fpe, &tmpname, &tmpnamelen,
 			 &tmpname, &tmpnamelen, c->current.private);
 		    if (--aliascount <= 0)
@@ -827,7 +905,11 @@ bail:
 	FreeFPE(c->fpe_list[i]);
     free(c->fpe_list);
     if (c->savedName) free(c->savedName);
+#ifdef HAS_XFONT2
+    xfont2_free_font_names(names);
+#else
     FreeFontNames(names);
+#endif /* HAS_XFONT2 */
     free(c);
     if (resolved) free(resolved);
     return TRUE;
@@ -857,7 +939,11 @@ ListFonts(ClientPtr client, unsigned char *pattern, unsigned length,
 	free(c);
 	return BadAlloc;
     }
+#ifdef HAS_XFONT2
+    c->names = xfont2_make_font_names_record(max_names < 100 ? max_names : 100);
+#else
     c->names = MakeFontNamesRecord(max_names < 100 ? max_names : 100);
+#endif /* HAS_XFONT2 */
     if (!c->names)
     {
 	free(c->fpe_list);
@@ -905,7 +991,11 @@ doListFontsWithInfo(ClientPtr client, LFWIclosurePtr c)
 	if (c->current.current_fpe < c->num_fpes)
  	{
 	    fpe = c->fpe_list[c->current.current_fpe];
+#ifdef HAS_XFONT2
+	    (*fpe_functions[fpe->type]->client_died) ((void *) client, fpe);
+#else
 	    (*fpe_functions[fpe->type].client_died) ((void *) client, fpe);
+#endif /* HAS_XFONT2 */
 	}
 	err = Successful;
 	goto bail;
@@ -919,7 +1009,11 @@ doListFontsWithInfo(ClientPtr client, LFWIclosurePtr c)
 	err = Successful;
 	if (!c->current.list_started)
  	{
+#ifdef HAS_XFONT2
+	    err = (*fpe_functions[fpe->type]->start_list_fonts_with_info)
+#else
 	    err = (*fpe_functions[fpe->type].start_list_fonts_with_info)
+#endif /* HAS_XFONT2 */
 		(client, fpe, c->current.pattern, c->current.patlen,
 		 c->current.max_names, &c->current.private);
 	    if (err == Suspended)
@@ -938,7 +1032,11 @@ doListFontsWithInfo(ClientPtr client, LFWIclosurePtr c)
  	{
 	    name = 0;
 	    pFontInfo = &fontInfo;
+#ifdef HAS_XFONT2
+	    err = (*fpe_functions[fpe->type]->list_next_font_with_info)
+#else
 	    err = (*fpe_functions[fpe->type].list_next_font_with_info)
+#endif /* HAS_XFONT2 */
 		(client, fpe, &name, &namelen, &pFontInfo,
 		 &numFonts, c->current.private);
 	    if (err == Suspended)
@@ -975,7 +1073,11 @@ doListFontsWithInfo(ClientPtr client, LFWIclosurePtr c)
 
 	    	tmpname = 0;
 	    	tmpFontInfo = &fontInfo;
-	    	(void) (*fpe_functions[fpe->type].list_next_font_with_info)
+#ifdef HAS_XFONT2
+		(void) (*fpe_functions[fpe->type]->list_next_font_with_info)
+#else
+		(void) (*fpe_functions[fpe->type].list_next_font_with_info)
+#endif /* HAS_XFONT2 */
 		    (client, fpe, &tmpname, &tmpnamelen, &tmpFontInfo,
 		     &numFonts, c->current.private);
 		if (--aliascount <= 0)
@@ -1175,7 +1277,11 @@ doPolyText(ClientPtr client, register PTclosurePtr c)
     if (client->clientGone)
     {
 	fpe = c->pGC->font->fpe;
+#ifdef HAS_XFONT2
+	(*fpe_functions[fpe->type]->client_died) ((void *) client, fpe);
+#else
 	(*fpe_functions[fpe->type].client_died) ((void *) client, fpe);
+#endif /* HAS_XFONT2 */
 
 	if (c->slept)
 	{
@@ -1203,7 +1309,11 @@ doPolyText(ClientPtr client, register PTclosurePtr c)
 	   the FPE code to clean up after client and avoid further
 	   rendering while we clean up after ourself.  */
 	fpe = c->pGC->font->fpe;
+#ifdef HAS_XFONT2
+	(*fpe_functions[fpe->type]->client_died) ((void *) client, fpe);
+#else
 	(*fpe_functions[fpe->type].client_died) ((void *) client, fpe);
+#endif /* HAS_XFONT2 */
 	c->pDraw = (DrawablePtr)0;
     }
 
@@ -1480,7 +1590,11 @@ doImageText(ClientPtr client, register ITclosurePtr c)
     if (client->clientGone)
     {
 	fpe = c->pGC->font->fpe;
+#ifdef HAS_XFONT2
+	(*fpe_functions[fpe->type]->client_died) ((void *) client, fpe);
+#else
 	(*fpe_functions[fpe->type].client_died) ((void *) client, fpe);
+#endif
 	err = Success;
 	goto bail;
     }
@@ -1494,7 +1608,11 @@ doImageText(ClientPtr client, register ITclosurePtr c)
 	/* Our drawable has disappeared.  Treat like client died... ask
 	   the FPE code to clean up after client. */
 	fpe = c->pGC->font->fpe;
+#ifdef HAS_XFONT2
+	(*fpe_functions[fpe->type]->client_died) ((void *) client, fpe);
+#else
 	(*fpe_functions[fpe->type].client_died) ((void *) client, fpe);
+#endif /* HAS_XFONT2 */
 	err = Success;
 	goto bail;
     }
@@ -1642,7 +1760,11 @@ DetermineFPEType(char *pathname)
     int         i;
 
     for (i = 0; i < num_fpe_types; i++) {
+#ifdef HAS_XFONT2
+	if ((*fpe_functions[i]->name_check) (pathname))
+#else
 	if ((*fpe_functions[i].name_check) (pathname))
+#endif /* HAS_XFONT2 */
 	    return i;
     }
     return -1;
@@ -1706,8 +1828,13 @@ SetFontPathElements(int npaths, unsigned char *paths, int *bad, Bool persist)
 	return BadAlloc;
     }
     for (i = 0; i < num_fpe_types; i++) {
+#ifdef HAS_XFONT2
+	if (fpe_functions[i]->set_path_hook)
+	    (*fpe_functions[i]->set_path_hook) ();
+#else
 	if (fpe_functions[i].set_path_hook)
 	    (*fpe_functions[i].set_path_hook) ();
+#endif /* HAS_XFONT2 */
     }
     for (i = 0; i < npaths; i++) 
     {
@@ -1729,7 +1856,11 @@ SetFontPathElements(int npaths, unsigned char *paths, int *bad, Bool persist)
 	    fpe = find_existing_fpe(font_path_elements, num_fpes, cp, len);
 	    if (fpe) 
 	    {
+#ifdef HAS_XFONT2
+		err = (*fpe_functions[fpe->type]->reset_fpe) (fpe);
+#else
 		err = (*fpe_functions[fpe->type].reset_fpe) (fpe);
+#endif /* HAS_XFONT2 */
 		if (err == Successful) 
 		{
 		    UseFPE(fpe);/* since it'll be decref'd later when freed
@@ -1763,7 +1894,11 @@ SetFontPathElements(int npaths, unsigned char *paths, int *bad, Bool persist)
 		if (fpe->type == -1)
 		    err = BadValue;
 		else
+#ifdef HAS_XFONT2
+		    err = (*fpe_functions[fpe->type]->init_fpe) (fpe);
+#else
 		    err = (*fpe_functions[fpe->type].init_fpe) (fpe);
+#endif /* HAS_XFONT2 */
 		if (err != Successful)
 		{
 #ifndef NXAGENT_SERVER
@@ -1793,7 +1928,11 @@ SetFontPathElements(int npaths, unsigned char *paths, int *bad, Bool persist)
     FreeFontPath(font_path_elements, num_fpes, FALSE);
     font_path_elements = fplist;
     if (patternCache)
+#ifdef HAS_XFONT2
+	xfont2_empty_font_pattern_cache(patternCache);
+#else
 	EmptyFontPatternCache(patternCache);
+#endif /* HAS_XFONT2 */
     num_fpes = valid_paths;
 
     return Success;
@@ -1928,12 +2067,34 @@ GetFontPath(int *count, int *length)
 int
 LoadGlyphs(ClientPtr client, FontPtr pfont, unsigned nchars, int item_size, unsigned char *data)
 {
+#ifdef HAS_XFONT2
+    if (fpe_functions[pfont->fpe->type]->load_glyphs)
+	return (*fpe_functions[pfont->fpe->type]->load_glyphs)
+#else
     if (fpe_functions[pfont->fpe->type].load_glyphs)
 	return (*fpe_functions[pfont->fpe->type].load_glyphs)
+#endif
 	    (client, pfont, 0, nchars, item_size, data);
     else
 	return Successful;
 }
+
+void
+#ifdef HAS_XFONT2
+GetGlyphs(FontPtr font, unsigned long count, unsigned char *chars,
+          FontEncoding fontEncoding,
+          unsigned long *glyphcount,    /* RETURN */
+          CharInfoPtr *glyphs)          /* RETURN */
+#else
+dixGetGlyphs(FontPtr font, unsigned long count, unsigned char *chars,
+             FontEncoding fontEncoding,
+             unsigned long *glyphcount,    /* RETURN */
+             CharInfoPtr *glyphs)          /* RETURN */
+#endif /* HAS_XFONT2 */
+ {
+     (*font->get_glyphs) (font, count, chars, fontEncoding, glyphcount, glyphs);
+ }
+
 
 void
 DeleteClientFontStuff(ClientPtr client)
@@ -1944,11 +2105,33 @@ DeleteClientFontStuff(ClientPtr client)
     for (i = 0; i < num_fpes; i++)
     {
 	fpe = font_path_elements[i];
+#ifdef HAS_XFONT2
+	if (fpe_functions[fpe->type]->client_died)
+	    (*fpe_functions[fpe->type]->client_died) ((void *) client, fpe);
+#else
 	if (fpe_functions[fpe->type].client_died)
 	    (*fpe_functions[fpe->type].client_died) ((void *) client, fpe);
+#endif /* HAS_XFONT2 */
     }
 }
 
+#ifdef HAS_XFONT2
+static int
+register_fpe_funcs(const xfont2_fpe_funcs_rec *funcs)
+{
+    xfont2_fpe_funcs_rec const **new;
+
+    /* grow the list */
+    new = reallocarray(fpe_functions, num_fpe_types + 1, sizeof(xfont2_fpe_funcs_ptr));
+    if (!new)
+        return -1;
+    fpe_functions = new;
+
+    fpe_functions[num_fpe_types] = funcs;
+
+    return num_fpe_types++;
+}
+#else
 void
 InitFonts ()
 {
@@ -1958,16 +2141,38 @@ InitFonts ()
 
     register_fpe_functions();
 }
+#endif /* HAS_XFONT2 */
 
+#ifdef HAS_XFONT2
+static unsigned long
+get_server_generation(void)
+{
+    return serverGeneration;
+}
+
+static void *
+get_server_client(void)
+{
+    return serverClient;
+}
+
+static int
+get_default_point_size(void)
+#else
 int
 GetDefaultPointSize ()
+#endif /* HAS_XFONT2 */
 {
     return 120;
 }
 
-
+#ifdef HAS_XFONT2
+static FontResolutionPtr
+get_client_resolutions(int *num)
+#else
 FontResolutionPtr
 GetClientResolutions (int *num)
+#endif /* HAS_XFONT2 */
 {
     if (requestingClient && requestingClient->fontResFunc != NULL &&
 	!requestingClient->clientGone)
@@ -1999,6 +2204,7 @@ GetClientResolutions (int *num)
     }
 }
 
+#ifndef HAS_XFONT2
 /*
  * returns the type index of the new fpe
  *
@@ -2053,12 +2259,17 @@ RegisterFPEFunctions(NameCheckFunc name_func,
 
     return num_fpe_types++;
 }
+#endif /* !HAS_XFONT2 */
 
 void
 FreeFonts()
 {
     if (patternCache) {
+#ifdef HAS_XFONT2
+	xfont2_free_font_pattern_cache(patternCache);
+#else
 	FreeFontPatternCache(patternCache);
+#endif /* HAS_XFONT2 */
 	patternCache = 0;
     }
     FreeFontPath(font_path_elements, num_fpes, TRUE);
@@ -2066,11 +2277,18 @@ FreeFonts()
     num_fpes = 0;
     free(fpe_functions);
     num_fpe_types = 0;
+#ifdef HAS_XFONT2
+    fpe_functions = NULL;
+#else
     fpe_functions = (FPEFunctions *) 0;
+#endif /* HAS_XFONT2 */
 }
 
 /* convenience functions for FS interface */
 
+#ifdef HAS_XFONT2
+static
+#endif /* HAS_XFONT2 */
 FontPtr
 find_old_font(XID id)
 {
@@ -2078,26 +2296,46 @@ find_old_font(XID id)
 					    DixUnknownAccess);
 }
 
+#ifdef HAS_XFONT2
+static Font
+get_new_font_client_id(void)
+#else
 Font
 GetNewFontClientID()
+#endif /* HAS_XFONT2 */
 {
     return FakeClientID(0);
 }
 
+#ifdef HAS_XFONT2
+static int
+store_font_Client_font(FontPtr pfont, Font id)
+#else
 int
 StoreFontClientFont(FontPtr pfont, Font id)
+#endif /* HAS_XFONT2 */
 {
     return AddResource(id, RT_NONE, (void *) pfont);
 }
 
+#ifdef HAS_XFONT2
+static void
+delete_font_client_id(Font id)
+#else
 void
 DeleteFontClientID(Font id)
+#endif /* HAS_XFONT2 */
 {
     FreeResource(id, RT_NONE);
 }
 
+#ifdef HAS_XFONT2
+static int
+_client_auth_generation(ClientPtr client)
+#else
 int
 client_auth_generation(ClientPtr client)
+#endif /* HAS_XFONT2 */
 {
     return 0;
 }
@@ -2105,8 +2343,78 @@ client_auth_generation(ClientPtr client)
 static int  fs_handlers_installed = 0;
 static unsigned int last_server_gen;
 
+#ifdef HAS_XFONT2
+static void
+fs_block_handler(void *blockData, OSTimePtr timeout, void *readmask)
+{
+    FontBlockHandlerProcPtr block_handler = blockData;
+
+    (*block_handler)(timeout);
+}
+
+struct fs_fd_entry {
+    struct xorg_list            entry;
+    int                         fd;
+    void                        *data;
+    FontFdHandlerProcPtr        handler;
+};
+
+static void
+fs_fd_handler(int fd, int ready, void *data)
+{
+    struct fs_fd_entry    *entry = data;
+
+    entry->handler(fd, entry->data);
+}
+
+static struct xorg_list fs_fd_list;
+
+static int
+add_fs_fd(int fd, FontFdHandlerProcPtr handler, void *data)
+{
+    struct fs_fd_entry  *entry = calloc(1, sizeof (struct fs_fd_entry));
+
+    if (!entry)
+        return FALSE;
+
+    entry->fd = fd;
+    entry->data = data;
+    entry->handler = handler;
+    if (!SetNotifyFd(fd, fs_fd_handler, X_NOTIFY_READ, entry)) {
+        free(entry);
+        return FALSE;
+    }
+    xorg_list_add(&entry->entry, &fs_fd_list);
+    return TRUE;
+}
+
+static void
+remove_fs_fd(int fd)
+{
+    struct fs_fd_entry  *entry, *temp;
+
+    xorg_list_for_each_entry_safe(entry, temp, &fs_fd_list, entry) {
+	if (entry->fd == fd) {
+	    xorg_list_del(&entry->entry);
+	    free(entry);
+	    break;
+	}
+    }
+    RemoveNotifyFd(fd);
+}
+
+static void
+adjust_fs_wait_for_delay(void *wt, unsigned long newdelay)
+{
+    AdjustWaitForDelay(wt, newdelay);
+}
+
+static int
+_init_fs_handlers(FontPathElementPtr fpe, FontBlockHandlerProcPtr block_handler)
+#else
 int
 init_fs_handlers(FontPathElementPtr fpe, BlockHandlerProcPtr block_handler)
+#endif /* HAS_XFONT2 */
 {
     /* if server has reset, make sure the b&w handlers are reinstalled */
     if (last_server_gen < serverGeneration) {
@@ -2119,17 +2427,30 @@ init_fs_handlers(FontPathElementPtr fpe, BlockHandlerProcPtr block_handler)
 	fprintf(stderr, "adding FS b & w handlers\n");
 #endif
 
+#ifdef HAS_XFONT2
+	if (!RegisterBlockAndWakeupHandlers(fs_block_handler,
+					    FontWakeup, (void *) block_handler))
+#else
 	if (!RegisterBlockAndWakeupHandlers(block_handler,
 					    FontWakeup, (void *) 0))
+#endif /* HAS_XFONT2 */
 	    return AllocError;
+#ifdef HAS_XFONT2
+	xorg_list_init(&fs_fd_list);
+#endif /* HAS_XFONT2 */
 	fs_handlers_installed++;
     }
     QueueFontWakeup(fpe);
     return Successful;
 }
 
+#ifdef HAS_XFONT2
+static void
+_remove_fs_handlers(FontPathElementPtr fpe, FontBlockHandlerProcPtr block_handler, Bool all)
+#else
 void
 remove_fs_handlers(FontPathElementPtr fpe, BlockHandlerProcPtr block_handler, Bool all)
+#endif /* HAS_XFONT2 */
 {
     if (all) {
 	/* remove the handlers if no one else is using them */
@@ -2139,12 +2460,56 @@ remove_fs_handlers(FontPathElementPtr fpe, BlockHandlerProcPtr block_handler, Bo
 	    fprintf(stderr, "removing FS b & w handlers\n");
 #endif
 
+#ifdef HAS_XFONT2
+	    RemoveBlockAndWakeupHandlers(fs_block_handler, FontWakeup,
+					 (void *) block_handler);
+#else
 	    RemoveBlockAndWakeupHandlers(block_handler, FontWakeup,
 					 (void *) 0);
+#endif /* HAS_XFONT2 */
 	}
     }
     RemoveFontWakeup(fpe);
 }
+
+#ifdef HAS_XFONT2
+static const xfont2_client_funcs_rec xfont2_client_funcs = {
+    .version = XFONT2_CLIENT_FUNCS_VERSION,
+    .client_auth_generation = _client_auth_generation,
+    .client_signal = ClientSignal,
+    .delete_font_client_id = delete_font_client_id,
+    .verrorf = VErrorF,
+    .find_old_font = find_old_font,
+    .get_client_resolutions = get_client_resolutions,
+    .get_default_point_size = get_default_point_size,
+    .get_new_font_client_id = get_new_font_client_id,
+    .get_time_in_millis = GetTimeInMillis,
+    .init_fs_handlers = _init_fs_handlers,
+    .register_fpe_funcs = register_fpe_funcs,
+    .remove_fs_handlers = _remove_fs_handlers,
+    .get_server_client = get_server_client,
+    .set_font_authorizations = set_font_authorizations,
+    .store_font_client_font = store_font_Client_font,
+    .make_atom = MakeAtom,
+    .valid_atom = ValidAtom,
+    .name_for_atom = NameForAtom,
+    .get_server_generation = get_server_generation,
+    .add_fs_fd = add_fs_fd,
+    .remove_fs_fd = remove_fs_fd,
+    .adjust_fs_wait_for_delay = adjust_fs_wait_for_delay,
+};
+
+xfont2_pattern_cache_ptr fontPatternCache;
+
+void
+InitFonts(void)
+{
+    if (fontPatternCache)
+       xfont2_free_font_pattern_cache(fontPatternCache);
+    fontPatternCache = xfont2_make_font_pattern_cache();
+    xfont2_init(&xfont2_client_funcs);
+}
+#endif /* HAS_XFONT2 */
 
 #ifdef DEBUG
 #define GLWIDTHBYTESPADDED(bits,nbytes) \

@@ -22,6 +22,8 @@ NormalLibraryTarget(damage,$(OBJS))
 LintLibraryTarget(damage,$(SRCS))
 
 NormalLintTarget($(SRCS))
+
+SpecialCObjectRule(damage,$(ICONFIGFILES),$(FONT_DEFINES))
 #endif
 
 DependTarget()

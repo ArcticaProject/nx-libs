@@ -95,6 +95,12 @@ Equipment Corporation.
 #include "colormapst.h"
 #include "cursorstr.h"
 #include <X11/fonts/font.h>
+#include <X11/fonts/fontstruct.h>
+#ifdef HAS_XFONT2
+# include <X11/fonts/libxfont2.h>
+#else
+# include <X11/fonts/fontutil.h>
+#endif /* HAS_XFONT2 */
 #include "opaque.h"
 #include "servermd.h"
 #include "site.h"
@@ -252,7 +258,11 @@ main(int argc, char *argv[], char *envp[])
 
 	InitAtoms();
 	InitEvents();
+#ifdef HAS_XFONT2
+	xfont2_init_glyph_caching();
+#else
 	InitGlyphCaching();
+#endif /* of HAS_XFONT2 */
 	ResetClientPrivates();
 	ResetScreenPrivates();
 	ResetWindowPrivates();

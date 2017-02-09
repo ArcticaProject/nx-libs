@@ -70,3 +70,11 @@ GLX_DEFINES = GlxDefines
 #ifdef XorgVersion
 #include <xorg.tmpl>
 #endif
+
+#if HasXfont2
+FONT_DEFINES = -DHAS_XFONT2
+    XFONTLIB = -lXfont2
+#else
+FONT_DEFINES =
+    XFONTLIB = -lXfont
+#endif
