@@ -1953,11 +1953,7 @@ InitFonts ()
 {
     patternCache = MakeFontPatternCache();
 
-#if defined(BUILTIN_FONTS) || defined(NXAGENT_SERVER)
-    BuiltinRegisterFpeFunctions();
-#else
     register_fpe_functions();
-#endif
 }
 
 int
