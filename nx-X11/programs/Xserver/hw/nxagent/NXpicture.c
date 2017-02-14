@@ -344,6 +344,9 @@ static PicturePtr createSourcePicture(void)
 
       nxagentPicturePriv(pPicture) -> picture = 0;
     }
+    else {
+	return 0;
+    }
 
     pPicture->pDrawable = 0;
     pPicture->pFormat = 0;
