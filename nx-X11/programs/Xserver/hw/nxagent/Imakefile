@@ -26,6 +26,7 @@ SRCS =  \
 	NXmitrap.c \
 	Args.c \
 	Binder.c \
+	BitmapUtils.c \
 	Colormap.c \
 	Cursor.c \
 	Dialog.c \
@@ -87,6 +88,7 @@ OBJS =  \
 	NXmitrap.o \
 	Args.o \
 	Binder.o \
+	BitmapUtils.o \
 	Colormap.o \
 	Cursor.o \
 	Dialog.o \

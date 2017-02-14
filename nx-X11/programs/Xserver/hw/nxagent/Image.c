@@ -98,9 +98,9 @@ int nxagentAlphaCompat  = 0;
  * displays having different byte order.
  */
 
-extern void BitOrderInvert(unsigned char *, int);
-extern void TwoByteSwap(unsigned char *, register int);
-extern void FourByteSwap(register unsigned char *, register int);
+extern void nxagentBitOrderInvert(unsigned char *, int);
+extern void nxagentTwoByteSwap(unsigned char *, register int);
+extern void nxagentFourByteSwap(register unsigned char *, register int);
 
 /*
  * Store the last visual used to unpack
@@ -206,7 +206,7 @@ int nxagentImageReformat(char *base, int nbytes, int bpp, int order)
                     "bits per pixel [%d] byte order [%d].\n", nbytes, bpp, order);
         #endif
 
-        BitOrderInvert((unsigned char *) base, nbytes);
+        nxagentBitOrderInvert((unsigned char *) base, nbytes);
       }
 
       #if IMAGE_BYTE_ORDER != BITMAP_BIT_ORDER && BITMAP_SCANLINE_UNIT != 8
@@ -231,7 +231,7 @@ int nxagentImageReformat(char *base, int nbytes, int bpp, int order)
                     "bits per pixel [%d] byte order [%d].\n", nbytes, bpp, order);
         #endif
 
-        TwoByteSwap((unsigned char *) base, nbytes);
+        nxagentTwoByteSwap((unsigned char *) base, nbytes);
       }
 
       break;
@@ -245,7 +245,7 @@ int nxagentImageReformat(char *base, int nbytes, int bpp, int order)
                     "bits per pixel [%d] byte order [%d].\n", nbytes, bpp, order);
         #endif
 
-        FourByteSwap((unsigned char *) base, nbytes);
+        nxagentFourByteSwap((unsigned char *) base, nbytes);
       }
 
       break;
@@ -1152,7 +1152,7 @@ FIXME: Should use an unpack resource here.
 
   #ifdef TEST
   fprintf(stderr, "nxagentPutSubImage: Display image order is [%d] bitmap order is [%d].\n",
-              ImageByteOrder(nxagentDisplay), BitmapBitOrder(nxagentDisplay));
+              ImageByteOrder(nxagentDisplay), nxagentBitmapBitOrder(nxagentDisplay));
   #endif
 
   /*
