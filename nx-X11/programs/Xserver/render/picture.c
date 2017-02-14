@@ -1275,7 +1275,7 @@ ChangePicture (PicturePtr	pPicture,
 	    break;
 	case CPAlphaMap:
 	    {
-		PicturePtr  pAlpha;
+		PicturePtr  pAlpha = NULL;
 		
 		if (vlist)
 		{
@@ -1330,7 +1330,7 @@ ChangePicture (PicturePtr	pPicture,
 	case CPClipMask:
 	    {
 		Pixmap	    pid;
-		PixmapPtr   pPixmap;
+		PixmapPtr   pPixmap = NULL;
 		int	    clipType;
                 if (!pScreen)
                     return BadDrawable;
