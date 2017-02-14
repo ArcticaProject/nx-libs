@@ -660,6 +660,9 @@ PictureInit (ScreenPtr pScreen, PictFormatPtr formats, int nformats)
     {
 	if (!AddResource (formats[n].id, PictFormatType, (void *) (formats+n)))
 	{
+	    int i;
+	    for (i = 0; i < n; i++)
+		FreeResource(formats[i].id, RT_NONE);
 	    free (formats);
 	    return FALSE;
 	}
