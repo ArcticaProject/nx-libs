@@ -69,6 +69,7 @@ PicturePtr CreatePicture (Picture       pid,
 static PicturePtr createSourcePicture(void);
 int FreePicture (void *value, XID pid);
 
+#define XORG_TOO_OLD
 #include "../../render/picture.c"
 
 
