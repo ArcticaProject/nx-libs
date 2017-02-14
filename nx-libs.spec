@@ -78,6 +78,7 @@ BuildRequires:  libXrandr-devel
 BuildRequires:  libXfixes-devel
 BuildRequires:  libXtst-devel
 BuildRequires:  libXinerama-devel
+BuildRequires:  xorg-x11-font-utils
 %endif
 
 # For imake
