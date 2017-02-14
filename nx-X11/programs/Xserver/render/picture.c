@@ -984,6 +984,8 @@ static PicturePtr createSourcePicture(void)
 {
     PicturePtr pPicture;
     pPicture = (PicturePtr) malloc(sizeof(PictureRec));
+    if (!pPicture)
+	return 0;
     pPicture->pDrawable = 0;
     pPicture->pFormat = 0;
     pPicture->pNext = 0;
