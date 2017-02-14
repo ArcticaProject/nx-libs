@@ -371,8 +371,9 @@ FreePicture (void *	value,
     {
         nxagentDestroyPicture(pPicture);
 
-	if (pPicture->transform)
-	    free (pPicture->transform);
+	free (pPicture->transform);
+	free (pPicture->filter_params);
+
         if (!pPicture->pDrawable) {
             if (pPicture->pSourcePict) {
                 if (pPicture->pSourcePict->type != SourcePictTypeSolidFill)
