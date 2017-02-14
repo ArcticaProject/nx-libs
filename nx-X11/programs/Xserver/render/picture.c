@@ -43,6 +43,10 @@
 #include "picturestr.h"
 #endif
 
+#ifdef PANORAMIX
+#include "panoramiXsrv.h"
+#endif
+
 int		PictureScreenPrivateIndex = -1;
 int		PictureWindowPrivateIndex;
 int		PictureGeneration;
@@ -1158,6 +1162,75 @@ CreateConicalGradientPicture (Picture pid, xPointFixed *center, xFixed angle,
     return pPicture;
 }
 
+static int
+cpAlphaMap(void **result, XID id, ScreenPtr screen, ClientPtr client, Mask mode)
+{
+#ifdef PANORAMIX
+    if (!noPanoramiXExtension) {
+	PanoramiXRes *res;
+#ifdef XSERVER_LACKS_PRIVATES_ABI
+	res = (void*) SecurityLookupIDByType(client,
+					     id,
+					     XRT_PICTURE,
+					     mode);
+
+	if (!res)
+	    return BadPicture;
+#else
+	int err = dixLookupResourceByType((void **)&res, id, XRT_PICTURE,
+	                                  client, mode);
+	if (err != Success)
+	    return err;
+#endif /* XSERVER_LACKS_PRIVATES_ABI */
+	id = res->info[screen->myNum].id;
+    }
+#endif /* PANORAMIX */
+
+#ifdef XSERVER_LACKS_PRIVATES_ABI
+    result = (void*) SecurityLookupIDByType(client, id,  PictureType, mode);
+    if (result)
+	return Success;
+    else
+	return BadAccess;
+#else
+    return dixLookupResourceByType(result, id, PictureType, client, mode);
+#endif /* XSERVER_LACKS_PRIVATES_ABI */
+}
+
+static int
+cpClipMask(void **result, XID id, ScreenPtr screen, ClientPtr client, Mask mode)
+{
+#ifdef PANORAMIX
+    if (!noPanoramiXExtension) {
+	PanoramiXRes *res;
+#ifdef XSERVER_LACKS_PRIVATES_ABI
+	res = (void*) SecurityLookupIDByType(client,
+					     id,
+					     XRT_PIXMAP,
+					     mode);
+
+	if (!res)
+	    return BadAccess;
+#else
+	int err = dixLookupResourceByType((void **)&res, id, XRT_PIXMAP,
+	                                  client, mode);
+	if (err != Success)
+	    return err;
+#endif /* XSERVER_LACKS_PRIVATES_ABI */
+	id = res->info[screen->myNum].id;
+    }
+#endif /* PANORAMIX */
+#ifdef XSERVER_LACKS_PRIVATES_ABI
+    result = (void*) SecurityLookupIDByType(client, id,  RT_PIXMAP, mode);
+    if (result)
+	return Success;
+    else
+	return BadAccess;
+#else
+    return dixLookupResourceByType(result, id, RT_PIXMAP, client, mode);
+#endif /* XSERVER_LACKS_PRIVATES_ABI */
+}
+
 #define NEXT_VAL(_type) (vlist ? (_type) *vlist++ : (_type) ulist++->val)
 
 #define NEXT_PTR(_type) ((_type) ulist++->ptr)
@@ -1212,11 +1285,11 @@ ChangePicture (PicturePtr	pPicture,
 			pAlpha = 0;
 		    else
 		    {
-			pAlpha = (PicturePtr) SecurityLookupIDByType(client,
-								     pid, 
-								     PictureType, 
-								     DixWriteAccess|DixReadAccess);
-			if (!pAlpha)
+			error = cpAlphaMap((void **) &pAlpha, pid, pScreen,
+			                   client,
+			                   DixReadAccess
+			);
+			if (error != Success)
 			{
 			    client->errorValue = pid;
 			    error = BadPixmap;
@@ -1273,10 +1346,11 @@ ChangePicture (PicturePtr	pPicture,
 		    else
 		    {
 			clipType = CT_PIXMAP;
-			pPixmap = (PixmapPtr)SecurityLookupIDByType(client,
-								    pid, 
-								    RT_PIXMAP,
-								    DixReadAccess);
+			error = cpClipMask((void **) &pPixmap, pid, pScreen,
+			                   client,
+			                   DixReadAccess
+			);
+
 			if (!pPixmap)
 			{
 			    client->errorValue = pid;
