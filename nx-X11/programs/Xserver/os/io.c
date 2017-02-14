@@ -1004,6 +1004,10 @@ FlushClient(ClientPtr who, OsCommPtr oc, const void *__extraBuf, int extraCount)
     written = 0;
     padsize = padlength[extraCount & 3];
     notWritten = oco->count + extraCount + padsize;
+
+    if (!notWritten)
+	return 0;
+
     todo = notWritten;
     while (notWritten) {
 	long before = written;	/* amount of whole thing written */
