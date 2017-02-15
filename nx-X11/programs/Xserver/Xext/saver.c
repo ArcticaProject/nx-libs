@@ -1199,7 +1199,7 @@ ProcScreenSaverSetAttributes (ClientPtr client)
        REQUEST_AT_LEAST_SIZE (xScreenSaverSetAttributesReq);
 
        if(!(draw = (PanoramiXRes *)SecurityLookupIDByClass(
-                   client, stuff->drawable, XRC_DRAWABLE, SecurityWriteAccess)))
+                   client, stuff->drawable, XRC_DRAWABLE, DixWriteAccess)))
            return BadDrawable;
 
        len = stuff->length -  (sizeof(xScreenSaverSetAttributesReq) >> 2);
@@ -1211,7 +1211,7 @@ ProcScreenSaverSetAttributes (ClientPtr client)
           tmp = *((CARD32 *) &stuff[1] + pback_offset);
           if ((tmp != None) && (tmp != ParentRelative)) {
              if(!(backPix = (PanoramiXRes*) SecurityLookupIDByType(
-                  client, tmp, XRT_PIXMAP, SecurityReadAccess)))
+                  client, tmp, XRT_PIXMAP, DixReadAccess)))
                 return BadPixmap;
           }
        }
@@ -1221,7 +1221,7 @@ ProcScreenSaverSetAttributes (ClientPtr client)
           tmp = *((CARD32 *) &stuff[1] + pbord_offset);
           if (tmp != CopyFromParent) {
              if(!(bordPix = (PanoramiXRes*) SecurityLookupIDByType(
-                  client, tmp, XRT_PIXMAP, SecurityReadAccess)))
+                  client, tmp, XRT_PIXMAP, DixReadAccess)))
                 return BadPixmap;
           }
        }
@@ -1231,7 +1231,7 @@ ProcScreenSaverSetAttributes (ClientPtr client)
            tmp = *((CARD32 *) &stuff[1] + cmap_offset);
            if ((tmp != CopyFromParent) && (tmp != None)) {
              if(!(cmap = (PanoramiXRes*) SecurityLookupIDByType(
-                  client, tmp, XRT_COLORMAP, SecurityReadAccess)))
+                  client, tmp, XRT_COLORMAP, DixReadAccess)))
                  return BadColor;
            }
        }
@@ -1271,7 +1271,7 @@ ProcScreenSaverUnsetAttributes (ClientPtr client)
        int i;
 
        if(!(draw = (PanoramiXRes *)SecurityLookupIDByClass(
-                   client, stuff->drawable, XRC_DRAWABLE, SecurityWriteAccess)))
+                   client, stuff->drawable, XRC_DRAWABLE, DixWriteAccess)))
            return BadDrawable;
 
        for(i = PanoramiXNumScreens - 1; i > 0; i--) {

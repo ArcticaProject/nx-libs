@@ -750,7 +750,7 @@ ProcSecurityRevokeAuthorization(
     REQUEST_SIZE_MATCH(xSecurityRevokeAuthorizationReq);
 
     pAuth = (SecurityAuthorizationPtr)SecurityLookupIDByType(client,
-	stuff->authId, SecurityAuthorizationResType, SecurityDestroyAccess);
+	stuff->authId, SecurityAuthorizationResType, DixDestroyAccess);
     if (!pAuth)
 	return SecurityErrorBase + XSecurityBadAuthorization;
 
@@ -1115,7 +1115,7 @@ SecurityCheckResourceIDAccess(
     int cid = CLIENT_ID(id);
     int reqtype = ((xReq *)client->requestBuffer)->reqType;
 
-    if (SecurityUnknownAccess == access_mode)
+    if (DixUnknownAccess == access_mode)
 	return rval;  /* for compatibility, we have to allow access */
 
     switch (reqtype)
@@ -2051,11 +2051,11 @@ SecurityCheckPropertyAccess(client, pWin, propertyName, access_mode)
 	     * executed a continue, which will skip the follwing code.
 	     */
 	    action = SecurityAllowOperation;
-	    if (access_mode & SecurityReadAccess)
+	    if (access_mode & DixReadAccess)
 		action = max(action, pacl->readAction);
-	    if (access_mode & SecurityWriteAccess)
+	    if (access_mode & DixWriteAccess)
 		action = max(action, pacl->writeAction);
-	    if (access_mode & SecurityDestroyAccess)
+	    if (access_mode & DixDestroyAccess)
 		action = max(action, pacl->destroyAction);
 	    break;
 	} /* end for each pacl */

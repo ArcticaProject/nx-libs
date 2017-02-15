@@ -131,7 +131,7 @@ ProcChangeProperty(ClientPtr client)
     if (pWin == NULL)
 #endif
     pWin = (WindowPtr)SecurityLookupWindow(stuff->window, client,
-					   SecurityWriteAccess);
+					   DixWriteAccess);
     if (!pWin)
 	return(BadWindow);
     if (!ValidAtom(stuff->property))
@@ -147,7 +147,7 @@ ProcChangeProperty(ClientPtr client)
 
 #ifdef XCSECURITY
     switch (SecurityCheckPropertyAccess(client, pWin, stuff->property,
-					SecurityWriteAccess))
+					DixWriteAccess))
     {
 	case SecurityErrorOperation:
 	    client->errorValue = stuff->property;
@@ -348,7 +348,7 @@ ProcGetProperty(ClientPtr client)
     if (stuff->delete)
 	UpdateCurrentTime();
     pWin = (WindowPtr)SecurityLookupWindow(stuff->window, client,
-					   SecurityReadAccess);
+					   DixReadAccess);
     if (!pWin)
 	return BadWindow;
 
@@ -439,10 +439,10 @@ ProcGetProperty(ClientPtr client)
 
 #ifdef XCSECURITY
     {
-	Mask access_mode = SecurityReadAccess;
+	Mask access_mode = DixReadAccess;
 
 	if (stuff->delete)
-	    access_mode |= SecurityDestroyAccess;
+	    access_mode |= DixDestroyAccess;
 	switch(SecurityCheckPropertyAccess(client, pWin, stuff->property,
 					   access_mode))
 	{

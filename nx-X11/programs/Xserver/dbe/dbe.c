@@ -420,7 +420,7 @@ ProcDbeAllocateBackBufferName(client)
 
     /* The window must be valid. */
     if (!(pWin = SecurityLookupWindow(stuff->window, client,
-				      SecurityWriteAccess)))
+				      DixWriteAccess)))
     {
 	return(BadWindow);
     }
@@ -648,9 +648,9 @@ ProcDbeDeallocateBackBufferName(client)
 
     /* Buffer name must be valid */
     if (!(pDbeWindowPriv = (DbeWindowPrivPtr)SecurityLookupIDByType(client,
-		stuff->buffer, dbeWindowPrivResType, SecurityDestroyAccess)) ||
+		stuff->buffer, dbeWindowPrivResType, DixDestroyAccess)) ||
         !(SecurityLookupIDByType(client, stuff->buffer, dbeDrawableResType,
-				 SecurityDestroyAccess)))
+				 DixDestroyAccess)))
     {
         client->errorValue = stuff->buffer;
         return(dbeErrorBase + DbeBadBuffer);
@@ -751,7 +751,7 @@ ProcDbeSwapBuffers(client)
 
         /* Each window must be a valid window - BadWindow. */
         if (!(pWin = SecurityLookupWindow(dbeSwapInfo[i].window, client,
-					  SecurityWriteAccess)))
+					  DixWriteAccess)))
         {
             free(swapInfo);
 	    return(BadWindow);
@@ -916,7 +916,7 @@ ProcDbeGetVisualInfo(client)
         for (i = 0; i < stuff->n; i++)
         {
             if (!(pDrawables[i] = (DrawablePtr)SecurityLookupDrawable(
-				drawables[i], client, SecurityReadAccess)))
+				drawables[i], client, DixReadAccess)))
             {
                 free(pDrawables);
                 return(BadDrawable);
@@ -1072,7 +1072,7 @@ ProcDbeGetBackBufferAttributes(client)
     REQUEST_SIZE_MATCH(xDbeGetBackBufferAttributesReq);
 
     if (!(pDbeWindowPriv = (DbeWindowPrivPtr)SecurityLookupIDByType(client,
-		stuff->buffer, dbeWindowPrivResType, SecurityReadAccess)))
+		stuff->buffer, dbeWindowPrivResType, DixReadAccess)))
     {
         rep.attributes = None;
     }

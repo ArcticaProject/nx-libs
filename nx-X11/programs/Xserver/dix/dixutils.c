@@ -260,13 +260,13 @@ SecurityLookupDrawable(XID rid, ClientPtr client, Mask access_mode)
 WindowPtr
 LookupWindow(XID rid, ClientPtr client)
 {
-    return SecurityLookupWindow(rid, client, SecurityUnknownAccess);
+    return SecurityLookupWindow(rid, client, DixUnknownAccess);
 }
 
 void *
 LookupDrawable(XID rid, ClientPtr client)
 {
-    return SecurityLookupDrawable(rid, client, SecurityUnknownAccess);
+    return SecurityLookupDrawable(rid, client, DixUnknownAccess);
 }
 
 #else /* not XCSECURITY */
@@ -317,7 +317,7 @@ ClientPtr
 LookupClient(XID rid, ClientPtr client)
 {
     void * pRes = (void *)SecurityLookupIDByClass(client, rid, RC_ANY,
-						    SecurityReadAccess);
+						    DixReadAccess);
     int clientIndex = CLIENT_ID(rid);
 
     if (clientIndex && pRes && clients[clientIndex] && !(rid & SERVER_BIT))
