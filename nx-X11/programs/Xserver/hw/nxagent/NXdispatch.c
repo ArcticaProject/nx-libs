@@ -586,7 +586,7 @@ ProcReparentWindow(register ClientPtr client)
 
     REQUEST_SIZE_MATCH(xReparentWindowReq);
     pWin = (WindowPtr)SecurityLookupWindow(stuff->window, client,
-					   SecurityWriteAccess);
+					   DixWriteAccess);
     if (!pWin)
         return(BadWindow);
 
@@ -596,7 +596,7 @@ ProcReparentWindow(register ClientPtr client)
     }
 
     pParent = (WindowPtr)SecurityLookupWindow(stuff->parent, client,
-					      SecurityWriteAccess);
+					      DixWriteAccess);
     if (!pParent)
         return(BadWindow);
     if (SAME_SCREENS(pWin->drawable, pParent->drawable))
@@ -630,7 +630,7 @@ ProcQueryTree(register ClientPtr client)
 
     REQUEST_SIZE_MATCH(xResourceReq);
     pWin = (WindowPtr)SecurityLookupWindow(stuff->id, client,
-					   SecurityReadAccess);
+					   DixReadAccess);
     if (!pWin)
         return(BadWindow);
     memset(&reply, 0, sizeof(xQueryTreeReply));
@@ -698,7 +698,7 @@ ProcSetSelectionOwner(register ClientPtr client)
     if (stuff->window != None)
     {
         pWin = (WindowPtr)SecurityLookupWindow(stuff->window, client,
-					       SecurityReadAccess);
+					       DixReadAccess);
         if (!pWin)
             return(BadWindow);
     }
@@ -797,7 +797,7 @@ ProcConvertSelection(register ClientPtr client)
 
     REQUEST_SIZE_MATCH(xConvertSelectionReq);
     pWin = (WindowPtr)SecurityLookupWindow(stuff->requestor, client,
-					   SecurityReadAccess);
+					   DixReadAccess);
     if (!pWin)
         return(BadWindow);
 
@@ -837,7 +837,7 @@ ProcConvertSelection(register ClientPtr client)
 #ifdef XCSECURITY
 	    && (!client->CheckAccess ||
 		(* client->CheckAccess)(client, CurrentSelections[i].window,
-					RT_WINDOW, SecurityReadAccess,
+					RT_WINDOW, DixReadAccess,
 					CurrentSelections[i].pWin))
 #endif
 	    )
@@ -918,7 +918,7 @@ ProcCloseFont(register ClientPtr client)
 
     REQUEST_SIZE_MATCH(xResourceReq);
     pFont = (FontPtr)SecurityLookupIDByType(client, stuff->id, RT_FONT,
-					    SecurityDestroyAccess);
+					    DixDestroyAccess);
     if (pFont != (FontPtr)NULL)
     {
         #ifdef NXAGENT_SERVER
@@ -1015,7 +1015,7 @@ ProcFreePixmap(register ClientPtr client)
 
     REQUEST_SIZE_MATCH(xResourceReq);
     pMap = (PixmapPtr)SecurityLookupIDByType(client, stuff->id, RT_PIXMAP,
-					     SecurityDestroyAccess);
+					     DixDestroyAccess);
     if (pMap) 
     {
         #ifdef NXAGENT_SERVER

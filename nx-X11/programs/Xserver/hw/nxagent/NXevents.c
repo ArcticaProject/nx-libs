@@ -583,7 +583,7 @@ ProcSendEvent(ClientPtr client)
     }
     else
 	pWin = SecurityLookupWindow(stuff->destination, client,
-				    SecurityReadAccess);
+				    DixReadAccess);
     if (!pWin)
 	return BadWindow;
     if ((stuff->propagate != xFalse) && (stuff->propagate != xTrue))

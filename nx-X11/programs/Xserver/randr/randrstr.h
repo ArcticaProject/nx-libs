@@ -443,12 +443,8 @@ extern _X_EXPORT RESTYPE RRCrtcType, RRModeType, RROutputType, RRProviderType;
                                 (SecurityLookupIDByType (client, id, \
                                                          RRProviderType, a)))
 
-#define DixUnknownAccess     SecurityUnknownAccess
-#define DixReadAccess        SecurityReadAccess
-#define DixWriteAccess       SecurityWriteAccess
-#define DixSetAttrAccess     SecurityWriteAccess
-#define DixUseAccess         SecurityWriteAccess
-#define DixDestroyAccess     SecurityDestroyAccess
+#define DixSetAttrAccess     DixWriteAccess
+#define DixUseAccess         DixWriteAccess
 
 #endif
 

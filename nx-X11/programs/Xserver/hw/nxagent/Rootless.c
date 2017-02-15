@@ -540,7 +540,7 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
     if ((wmHints.flags & IconPixmapHint) && (wmHints.icon_pixmap != None))
     {
       PixmapPtr icon = (PixmapPtr)SecurityLookupIDByType(pClient, wmHints.icon_pixmap,
-                                                             RT_PIXMAP, SecurityDestroyAccess);
+                                                             RT_PIXMAP, DixDestroyAccess);
 
       if (icon)
       {
@@ -567,7 +567,7 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
     if ((wmHints.flags & IconWindowHint) && (wmHints.icon_window != None))
     {
       WindowPtr icon = (WindowPtr)SecurityLookupWindow(wmHints.icon_window, pClient,
-                                                  SecurityDestroyAccess);
+                                                  DixDestroyAccess);
 
       if (icon)
       {
@@ -589,7 +589,7 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
     if ((wmHints.flags & IconMaskHint) && (wmHints.icon_mask != None))
     {
       PixmapPtr icon = (PixmapPtr)SecurityLookupIDByType(pClient, wmHints.icon_mask,
-                                                             RT_PIXMAP, SecurityDestroyAccess);
+                                                             RT_PIXMAP, DixDestroyAccess);
 
       if (icon)
       {
@@ -611,7 +611,7 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
     if ((wmHints.flags & WindowGroupHint) && (wmHints.window_group != None))
     {
       WindowPtr window = (WindowPtr)SecurityLookupWindow(wmHints.window_group, pClient,
-                                                  SecurityDestroyAccess);
+                                                  DixDestroyAccess);
 
       if (window)
       {
@@ -695,7 +695,7 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
     for (i = 0; i < nUnits; i++)
     {
       pWindow = (WindowPtr)SecurityLookupWindow(input[i], pClient,
-                                                    SecurityDestroyAccess);
+                                                    DixDestroyAccess);
       if ((input[i] != None) && pWindow)
       {
         wind[i] = nxagentWindow(pWindow);

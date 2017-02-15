@@ -222,7 +222,7 @@ ProcRRGetScreenSizeRange(ClientPtr client)
 #ifndef NXAGENT_SERVER
     rc = dixLookupWindow(&pWin, stuff->window, client, DixGetAttrAccess);
 #else
-    pWin = SecurityLookupWindow(stuff->window, client, SecurityReadAccess);
+    pWin = SecurityLookupWindow(stuff->window, client, DixReadAccess);
     rc = pWin ? Success : BadWindow;
 #endif
 
@@ -276,7 +276,7 @@ ProcRRSetScreenSize(ClientPtr client)
 #ifndef NXAGENT_SERVER
     rc = dixLookupWindow(&pWin, stuff->window, client, DixGetAttrAccess);
 #else
-    pWin = SecurityLookupWindow(stuff->window, client, SecurityReadAccess);
+    pWin = SecurityLookupWindow(stuff->window, client, DixReadAccess);
     rc = pWin ? Success : BadWindow;
 #endif
     if (rc != Success)
@@ -532,7 +532,7 @@ rrGetScreenResources(ClientPtr client, Bool query)
 #ifndef NXAGENT_SERVER
     rc = dixLookupWindow(&pWin, stuff->window, client, DixGetAttrAccess);
 #else
-    pWin = SecurityLookupWindow(stuff->window, client, SecurityReadAccess);
+    pWin = SecurityLookupWindow(stuff->window, client, DixReadAccess);
     rc = pWin ? Success : BadWindow;
 #endif
     if (rc != Success)
@@ -806,7 +806,7 @@ ProcRRGetScreenInfo(ClientPtr client)
 #ifndef NXAGENT_SERVER
     rc = dixLookupWindow(&pWin, stuff->window, client, DixGetAttrAccess);
 #else
-    pWin = SecurityLookupWindow(stuff->window, client, SecurityReadAccess);
+    pWin = SecurityLookupWindow(stuff->window, client, DixReadAccess);
     rc = pWin ? Success : BadWindow;
 #endif
 
@@ -980,7 +980,7 @@ ProcRRSetScreenConfig(ClientPtr client)
     rc = dixLookupDrawable(&pDraw, stuff->drawable, client, 0, DixWriteAccess);
 #else                           /* !defined(NXAGENT_SERVER) */
     pDraw =
-        SecurityLookupDrawable(stuff->drawable, client, SecurityWriteAccess);
+        SecurityLookupDrawable(stuff->drawable, client, DixWriteAccess);
     rc = pDraw ? Success : BadDrawable;
 #endif                          /* !defined(NXAGENT_SERVER) */
 

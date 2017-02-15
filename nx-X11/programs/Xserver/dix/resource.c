@@ -878,14 +878,14 @@ void *
 LookupIDByType(XID id, RESTYPE rtype)
 {
     return SecurityLookupIDByType(NullClient, id, rtype,
-				  SecurityUnknownAccess);
+				  DixUnknownAccess);
 }
 
 void *
 LookupIDByClass(XID id, RESTYPE classes)
 {
     return SecurityLookupIDByClass(NullClient, id, classes,
-				   SecurityUnknownAccess);
+				   DixUnknownAccess);
 }
 
 #else /* not XCSECURITY */

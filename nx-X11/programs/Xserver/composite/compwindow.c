@@ -83,7 +83,7 @@ compRepaintBorder (ClientPtr pClient, void * closure)
         dixLookupWindow(&pWindow, (XID) (intptr_t) closure, pClient,
                         DixWriteAccess);
 #else
-    pWindow = SecurityLookupWindow((XID) (intptr_t) closure, pClient, SecurityWriteAccess);
+    pWindow = SecurityLookupWindow((XID) (intptr_t) closure, pClient, DixWriteAccess);
     int rc = pWindow ? Success : BadWindow;
 #endif
 
