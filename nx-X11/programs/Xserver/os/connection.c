@@ -549,7 +549,7 @@ AuthAudit (ClientPtr client, Bool letin,
 #endif
 	    strcpy(out, "local host");
 	    break;
-#if defined(TCPCONN) || defined(MNX_TCPCONN)
+#if defined(TCPCONN)
 	case AF_INET:
 	    sprintf(out, "IP %s",
 		inet_ntoa(((struct sockaddr_in *) saddr)->sin_addr));

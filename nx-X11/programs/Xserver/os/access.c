@@ -496,7 +496,7 @@ DefineSelf (int fd)
 void
 DefineSelf (int fd)
 {
-#if !defined(TCPCONN) && !defined(UNIXCONN) && !defined(MNX_TCPCONN)
+#if !defined(TCPCONN) && !defined(UNIXCONN)
     return;
 #else
     register int n;
@@ -631,7 +631,7 @@ DefineLocalHost:
 	    selfhosts = host;
 	}
     }
-#endif /* !TCPCONN && !UNIXCONN && !MNX_TCPCONN */
+#endif /* !TCPCONN && !UNIXCONN */
 }
 
 #else
@@ -1070,11 +1070,10 @@ ResetHosts (char *display)
     FILE		*fd;
     char		*ptr;
     int                 i, hostlen;
-#if ((defined(TCPCONN) || defined(MNX_TCPCONN)) && \
-     (!defined(IPv6) || !defined(AF_INET6)))
+#if (defined(TCPCONN) && (!defined(IPv6) || !defined(AF_INET6)))
     union {
         struct sockaddr	sa;
-#if defined(TCPCONN) || defined(MNX_TCPCONN)
+#if defined(TCPCONN)
 	struct sockaddr_in in;
 #endif /* TCPCONN */
     }			saddr;
@@ -1119,7 +1118,7 @@ ResetHosts (char *display)
 	    NewHost(family, "", 0, FALSE);
 	    LocalHostRequested = TRUE;	/* Fix for XFree86 bug #156 */
 	}
-#if defined(TCPCONN) || defined(MNX_TCPCONN)
+#if defined(TCPCONN)
 	else if (!strncmp("inet:", lhostname, 5))
 	{
 	    family = FamilyInternet;
@@ -1164,7 +1163,7 @@ ResetHosts (char *display)
 	}
 	else
 #endif /* SECURE_RPC */
-#if defined(TCPCONN) || defined(MNX_TCPCONN)
+#if defined(TCPCONN)
 	{
 #if defined(IPv6) && defined(AF_INET6)
 	    if ( (family == FamilyInternet) || (family == FamilyInternet6) ||
@@ -1595,7 +1594,7 @@ CheckAddr (
 
     switch (family)
     {
-#if defined(TCPCONN) || defined(MNX_TCPCONN)
+#if defined(TCPCONN)
       case FamilyInternet:
 	if (length == sizeof (struct in_addr))
 	    len = length;
@@ -1688,7 +1687,7 @@ ConvertAddr (
     case AF_UNIX:
 #endif
         return FamilyLocal;
-#if defined(TCPCONN) || defined(MNX_TCPCONN)
+#if defined(TCPCONN)
     case AF_INET:
 #ifdef WIN32
         if (16777343 == *(long*)&((struct sockaddr_in *) saddr)->sin_addr)
