@@ -893,6 +893,8 @@ DefineSelf (int fd)
 	return;
     }
     for (ifr = ifap; ifr != NULL; ifr = ifr->ifa_next) {
+	if (!ifr->ifa_addr)
+	     continue;
 	len = sizeof(*(ifr->ifa_addr));
 	family = ConvertAddr(ifr->ifa_addr, &len, (void **)&addr);
 	if (family == -1 || family == FamilyLocal) 
