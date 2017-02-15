@@ -534,8 +534,8 @@ AuthAudit (ClientPtr client, Bool letin,
     char addr[128];
     char *out = addr;
 
-    int client_uid;
-    char client_uid_string[32];
+    char client_uid_string[64];
+    LocalClientCredRec *lcc;
 
     if (!len)
         strcpy(out, "local host");
@@ -567,10 +567,44 @@ AuthAudit (ClientPtr client, Bool letin,
 	    strcpy(out, "unknown address");
 	}
 
-    if (LocalClientCred(client, &client_uid, NULL) != -1) {
-	snprintf(client_uid_string, sizeof(client_uid_string),
-	         " (uid %d)", client_uid);
-    } else {
+    if (GetLocalClientCreds(client, &lcc) != -1) {
+	int slen; /* length written to client_uid_string */
+
+	strcpy(client_uid_string, " ( ");
+	slen = 3;
+
+	if (lcc->fieldsSet & LCC_UID_SET) {
+	    snprintf(client_uid_string + slen,
+	             sizeof(client_uid_string) - slen,
+	             "uid=%ld ", (long) lcc->euid);
+	    slen = strlen(client_uid_string);
+	}
+
+	if (lcc->fieldsSet & LCC_GID_SET) {
+	    snprintf(client_uid_string + slen,
+	             sizeof(client_uid_string) - slen,
+	             "gid=%ld ", (long) lcc->egid);
+	    slen = strlen(client_uid_string);
+    }
+
+	if (lcc->fieldsSet & LCC_PID_SET) {
+	    snprintf(client_uid_string + slen,
+	             sizeof(client_uid_string) - slen,
+	             "pid=%ld ", (long) lcc->pid);
+	    slen = strlen(client_uid_string);
+	}
+
+	if (lcc->fieldsSet & LCC_ZID_SET) {
+	    snprintf(client_uid_string + slen,
+	            sizeof(client_uid_string) - slen,
+	            "zoneid=%ld ", (long) lcc->zoneid);
+	    slen = strlen(client_uid_string);
+	}
+
+	snprintf(client_uid_string + slen, sizeof(client_uid_string) - slen, ")");
+	FreeLocalClientCreds(lcc);
+    }
+    else {
 	client_uid_string[0] = '\0';
     }
 

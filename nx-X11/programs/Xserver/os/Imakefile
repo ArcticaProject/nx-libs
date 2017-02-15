@@ -31,6 +31,8 @@ NULL =
  * If you have any extra files to be put into the library, define them here.
  */
 
+ZONEID_DEFINES = -UHAVE_GETZONEID
+
 #if NXLibraries
 
 NX_INCLUDES = -I../../../../nxcomp
@@ -235,7 +237,7 @@ alloca.o:  $(PWLIB)
 	ar x $(PWLIB) alloca.o
 #endif /* NEED_ALLOCA_FROM_LIBPW */
 
-SpecialCObjectRule(access,$(ICONFIGFILES),$(XDMCP_DEFINES) $(SOCK_DEFINES) $(IFADDRS_DEFINES))
+SpecialCObjectRule(access,$(ICONFIGFILES),$(XDMCP_DEFINES) $(SOCK_DEFINES) $(IFADDRS_DEFINES) $(ZONEID_DEFINES))
 SpecialCObjectRule(auth,$(ICONFIGFILES),$(XDMCP_DEFINES))
 SpecialCObjectRule(xdmauth,$(ICONFIGFILES),$(XDMCP_DEFINES))
 SpecialCObjectRule(xdmcp,$(ICONFIGFILES),$(SOCK_DEFINES) $(XDMCP_DEFINES))
