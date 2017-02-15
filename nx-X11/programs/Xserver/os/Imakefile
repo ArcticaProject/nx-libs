@@ -128,6 +128,7 @@ TMEMCMP_OBJS = timingsafe_memcmp.o
 BOOTSTRAPCFLAGS = 
            SRCS = WaitFor.c		\
                   access.c		\
+                  client.c		\
                   connection.c		\
                   io.c			\
                   $(COLOR_SRCS)		\
@@ -151,6 +152,7 @@ BOOTSTRAPCFLAGS =
 
            OBJS = WaitFor.o		\
                   access.o		\
+                  client.o		\
                   connection.o		\
                   io.o			\
                   $(COLOR_OBJS)		\

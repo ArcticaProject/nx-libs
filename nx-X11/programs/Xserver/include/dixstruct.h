@@ -24,6 +24,7 @@ SOFTWARE.
 #ifndef DIXSTRUCT_H
 #define DIXSTRUCT_H
 
+#include "client.h"
 #include "dix.h"
 #include "resource.h"
 #include "cursor.h"
@@ -141,6 +142,8 @@ typedef struct _Client {
     long    smart_start_tick;
     long    smart_stop_tick;
     long    smart_check_tick;
+
+    ClientIdPtr  clientIds;
 }           ClientRec;
 
 /*

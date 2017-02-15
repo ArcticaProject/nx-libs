@@ -112,6 +112,7 @@ int ProcInitialConnection();
 #include "inputstr.h"
 #include "xkbsrv.h"
 #endif
+#include "client.h"
 
 #define mskcnt ((MAXCLIENTS + 31) / 32)
 #define BITMASK(i) (1U << ((i) & 31))
@@ -3560,6 +3561,9 @@ CloseDownClient(register ClientPtr client)
 	    CallCallbacks((&ClientStateCallback), (void *)&clientinfo);
 	} 	    
 	FreeClientResources(client);
+	/* Disable client ID tracking. This must be done after
+	 * ClientStateCallback. */
+	ReleaseClientIds(client);
 	if (client->index < nextFreeClientID)
 	    nextFreeClientID = client->index;
 	clients[client->index] = NullClient;
@@ -3643,6 +3647,7 @@ void InitClient(ClientPtr client, int i, void * ospriv)
     client->smart_start_tick = SmartScheduleTime;
     client->smart_stop_tick = SmartScheduleTime;
     client->smart_check_tick = SmartScheduleTime;
+    client->clientIds = NULL;
 }
 
 extern int clientPrivateLen;
@@ -3724,6 +3729,11 @@ ClientPtr NextAvailableClient(void * ospriv)
 	currentMaxClients++;
     while ((nextFreeClientID < MAXCLIENTS) && clients[nextFreeClientID])
 	nextFreeClientID++;
+
+    /* Enable client ID tracking. This must be done before
+     * ClientStateCallback. */
+    ReserveClientIds(client);
+
     if (ClientStateCallback)
     {
 	NewClientInfoRec clientinfo;

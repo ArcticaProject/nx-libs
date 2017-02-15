@@ -323,6 +323,15 @@ NXAGENTNXLIBS = -L../../../nxcomp  \
                 -lXcompshad \
                 -lXrender -lXfixes -lXfont -lXcomposite -lXdmcp \
                 -lNX_X11 -lXext
+#elif defined(OpenBSDArchitecture)
+NXAGENTNXLIBS = -L../../../nxcomp  \
+                -L../../../nx-X11/exports/lib \
+                -L../../../nxcompshad \
+                -lkvm \
+                -lXcomp \
+                -lXcompshad \
+                -lXrender -lXfixes -lXfont -lXcomposite -lXinerama -lXdmcp \
+                -lNX_X11 -lXext
 #else
 NXAGENTNXLIBS = -L../../../nxcomp  \
                 -L../../../nx-X11/exports/lib \

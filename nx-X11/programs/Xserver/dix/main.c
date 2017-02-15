@@ -100,6 +100,7 @@ Equipment Corporation.
 #include "site.h"
 #include "dixfont.h"
 #include "extnsionst.h"
+#include "client.h"
 #ifdef PANORAMIX
 #include "panoramiXsrv.h"
 #else
@@ -382,6 +383,7 @@ main(int argc, char *argv[], char *envp[])
 	InitInput(argc, argv);
 	if (InitAndStartDevices() != Success)
 	    FatalError("failed to initialize core devices");
+	ReserveClientIds(serverClient);
 
 	InitFonts();
 	if (loadableFonts) {
@@ -470,6 +472,7 @@ main(int argc, char *argv[], char *envp[])
 #endif
 	FreeAuditTimer();
 
+	ReleaseClientIds(serverClient);
 	free(serverClient->devPrivates);
 	serverClient->devPrivates = NULL;
 
