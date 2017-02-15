@@ -534,10 +534,6 @@ AuthAudit (ClientPtr client, Bool letin,
     char addr[128];
     char *out = addr;
 
-    if (!((OsCommPtr)client->osPrivate)->trans_conn) {
-	strcpy(addr, "LBX proxy at ");
-	out += strlen(addr);
-    }
     if (!len)
         strcpy(out, "local host");
     else
