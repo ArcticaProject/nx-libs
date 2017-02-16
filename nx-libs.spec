@@ -509,7 +509,6 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %defattr(-,root,root)
 %dir %{_sysconfdir}/nxagent
 %config(noreplace) %{_sysconfdir}/nxagent/keystrokes.cfg
-%config(noreplace) %{_sysconfdir}/nxagent/nxagent.keyboard
 %doc doc/nxagent/README.keystrokes
 %{_bindir}/nxagent
 %dir %{_libdir}/nx/bin
