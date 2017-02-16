@@ -884,11 +884,6 @@ XkbError:
 
 #ifdef XKB
       } else { /* if (noXkbExtension) */
-        FILE *file;
-        XkbConfigRtrnRec config;
-
-        char *nxagentXkbConfigFilePath;
-
         XkbComponentNamesRec names = {0};
         char *rules, *variants, *options;
 
@@ -1035,108 +1030,23 @@ XkbError:
 
         XkbGetControls(nxagentDisplay, XkbAllControlsMask, xkb);
 
-        if (nxagentX2go)
-          nxagentXkbConfigFilePath = strdup(XKB_CONFIG_FILE_X2GO);
-        else
-          nxagentXkbConfigFilePath = strdup(XKB_CONFIG_FILE_NX);
-
-        if (!nxagentXkbConfigFilePath)
-        {
-          FatalError("nxagentKeyboardProc: malloc failed.");
-        }
-
-        #ifdef TEST
-        fprintf(stderr, "nxagentKeyboardProc: nxagentXkbConfigFilePath [%s].\n",
-                    nxagentXkbConfigFilePath);
-        #endif
-
-        if ((file = fopen(nxagentXkbConfigFilePath, "r"))) {
-
-          #ifdef TEST
-          fprintf(stderr, "nxagentKeyboardProc: Going to parse config file.\n");
-          #endif
-
-          if (XkbCFParse(file, XkbCFDflts, xkb, &config) == 0) {
-            ErrorF("Error parsing config file.\n");
-
-            free(nxagentXkbConfigFilePath);
-            nxagentXkbConfigFilePath = NULL;
-
-            fclose(file);
-            goto XkbError;
-          }
-          if (config.rules_file)
-            rules = config.rules_file;
-          if (config.model)
-          {
-            if (free_model)
-            {
-              free_model = 0; 
-              free(model);
-            }
-            model = config.model;
-          }
-          if (config.layout)
-          {
-            if (free_layout)
-            {
-              free_layout = 0;
-              free(layout);
-            }
-            layout = config.layout;
-          }
-          if (config.variant)
-            variants = config.variant;
-          if (config.options)
-            options = config.options;
-
-          free(nxagentXkbConfigFilePath);
-          nxagentXkbConfigFilePath = NULL;
-
-          fclose(file);
-        }
-        else
-        {
-          #ifdef TEST
-          fprintf(stderr, "nxagentKeyboardProc: No config file, going to set rules and init device.\n");
-          #endif
-          #ifdef DEBUG
-          fprintf(stderr, "nxagentKeyboardProc: Going to set rules and init device: "
-                          "[rules='%s',model='%s',layout='%s',variants='%s',options='%s'].\n",
-                          rules, model, layout, variants, options);
-          #endif
-
-          XkbSetRulesDflts(rules, model, layout, variants, options);
-          XkbInitKeyboardDeviceStruct((void *)pDev, &names, &keySyms, modmap,
-                                          nxagentBell, nxagentChangeKeyboardControl);
-
-          free(nxagentXkbConfigFilePath);
-          nxagentXkbConfigFilePath = NULL;
-
-          if (!nxagentKeyboard || strcmp(nxagentKeyboard, "query") == 0)
-          {
-            goto XkbError;
-          }
-
-          goto XkbEnd;
-        }
-
-        #ifdef TEST
-        fprintf(stderr, "nxagentKeyboardProc: Going to set rules and init device.\n");
-        #endif
         #ifdef DEBUG
         fprintf(stderr, "nxagentKeyboardProc: Going to set rules and init device: "
                         "[rules='%s',model='%s',layout='%s',variants='%s',options='%s'].\n",
-                          rules, model, layout, variants, options);
+                        rules, model, layout, variants, options);
         #endif
 
         XkbSetRulesDflts(rules, model, layout, variants, options);
         XkbInitKeyboardDeviceStruct((void *)pDev, &names, &keySyms, modmap,
                                     nxagentBell, nxagentChangeKeyboardControl);
-        XkbDDXChangeControls((void *)pDev, xkb->ctrls, xkb->ctrls);
+
+        if (!nxagentKeyboard ||
+               (nxagentKeyboard && (strcmp(nxagentKeyboard, "query") == 0)))
+        {
+          goto XkbError;
+        }
 
 XkbEnd:
-
         if (nxagentOption(Shadow) == 1 && pDev && pDev->key)
         {
           NXShadowInitKeymap(&(pDev->key->curKeySyms));
