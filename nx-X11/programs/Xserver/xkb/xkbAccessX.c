@@ -48,9 +48,9 @@ void *	XkbLastRepeatEvent=	NULL;
 
 unsigned short	XkbDfltAccessXTimeout= 	120;
 unsigned int	XkbDfltAccessXTimeoutMask= DFLT_TIMEOUT_CTRLS;
-unsigned int	XkbDfltAccessXTimeoutValues= 0;
-unsigned int	XkbDfltAccessXTimeoutOptionsMask= DFLT_TIMEOUT_OPTS;
-unsigned int	XkbDfltAccessXTimeoutOptionsValues= 0;
+static unsigned int	XkbDfltAccessXTimeoutValues= 0;
+static unsigned int	XkbDfltAccessXTimeoutOptionsMask= DFLT_TIMEOUT_OPTS;
+static unsigned int	XkbDfltAccessXTimeoutOptionsValues= 0;
 unsigned int	XkbDfltAccessXFeedback= XkbAccessXFeedbackMask;
 unsigned short	XkbDfltAccessXOptions=  XkbAX_AllOptionsMask & ~(XkbAX_IndicatorFBMask|XkbAX_SKReleaseFBMask|XkbAX_SKRejectFBMask);
 
