@@ -387,7 +387,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 
          #endif
 
-	if (nready && !SmartScheduleDisable)
+	if (nready)
 	{
 	    clientReady[0] = SmartScheduleClient (clientReady, nready);
 	    nready = 1;
@@ -422,8 +422,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 		    ProcessInputEvents();
 		    FlushIfCriticalOutputPending();
 		}
-		if (!SmartScheduleDisable && 
-		    (SmartScheduleTime - start_tick) >= SmartScheduleSlice)
+		if ((SmartScheduleTime - start_tick) >= SmartScheduleSlice)
 		{
 		    /* Penalize clients which consume ticks */
 		    if (client->smart_priority > SMART_MIN_PRIORITY)
@@ -511,6 +510,10 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 #else
 		    result = (* client->requestVector[MAJOROP])(client);
 #endif
+
+
+                if (!SmartScheduleSignalEnable)
+                    SmartScheduleTime = GetTimeInMillis();
 
 		if (result != Success) 
 		{

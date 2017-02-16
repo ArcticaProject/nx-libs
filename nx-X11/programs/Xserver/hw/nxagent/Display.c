@@ -669,7 +669,7 @@ static void nxagentDisplayBlockHandler(Display *display, int reason)
 
       nxagentBlocking = 1;
 
-      if (SmartScheduleDisable == 1)
+      if (!SmartScheduleSignalEnable)
       {
 
         /*

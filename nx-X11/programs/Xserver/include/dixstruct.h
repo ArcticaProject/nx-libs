@@ -150,18 +150,19 @@ extern long SmartScheduleTime;
 extern long SmartScheduleInterval;
 extern long SmartScheduleSlice;
 extern long SmartScheduleMaxSlice;
-extern unsigned long SmartScheduleIdleCount;
-extern Bool SmartScheduleDisable;
-extern Bool SmartScheduleIdle;
-extern Bool SmartScheduleTimerStopped;
-extern Bool SmartScheduleStartTimer(void);
-#ifdef NXAGENT_SERVER
-extern Bool SmartScheduleStopTimer(void);
+#ifdef HAVE_SETITIMER
+#if HAVE_SETITIMER
+extern Bool SmartScheduleSignalEnable;
+#else
+#define SmartScheduleSignalEnable FALSE
 #endif
+#endif
+extern void SmartScheduleStartTimer(void);
+extern void SmartScheduleStopTimer(void);
 #define SMART_MAX_PRIORITY  (20)
 #define SMART_MIN_PRIORITY  (-20)
 
-extern Bool SmartScheduleInit(void);
+extern void SmartScheduleInit(void);
 
 /* This prototype is used pervasively in Xext, dix */
 #define DISPATCH_PROC(func) int func(ClientPtr /* client */)

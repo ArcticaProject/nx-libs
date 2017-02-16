@@ -465,24 +465,15 @@ ReadRequestFromClient(ClientPtr client)
 	    FD_SET(fd, &ClientsWithInput);
 	else
 	{
-	    if (!SmartScheduleDisable)
-		FD_CLR(fd, &ClientsWithInput);
-	    else
-		YieldControlNoInput();
+	    FD_CLR(fd, &ClientsWithInput);
 	}
     }
     else
     {
 	if (!gotnow)
 	    AvailableInput = oc;
-	if (!SmartScheduleDisable)
-	    FD_CLR(fd, &ClientsWithInput);
-	else
-	    YieldControlNoInput();
+	FD_CLR(fd, &ClientsWithInput);
     }
-    if (SmartScheduleDisable)
-    if (++timesThisConnection >= MAX_TIMES_PER)
-	YieldControl();
 #ifdef BIGREQS
     if (move_header)
     {

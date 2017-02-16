@@ -213,18 +213,10 @@ WaitForSomething(int *pClientsReady)
 	    ProcessWorkQueue();
 	if (XFD_ANYSET (&ClientsWithInput))
 	{
-	    if (!SmartScheduleDisable)
-	    {
-		someReady = TRUE;
-		waittime.tv_sec = 0;
-		waittime.tv_usec = 0;
-		wt = &waittime;
-	    }
-	    else
-	    {
-		XFD_COPYSET (&ClientsWithInput, &clientsReadable);
-		break;
-	    }
+	    someReady = TRUE;
+	    waittime.tv_sec = 0;
+	    waittime.tv_usec = 0;
+	    wt = &waittime;
 	}
 	if (someReady)
 	{
@@ -247,7 +239,8 @@ WaitForSomething(int *pClientsReady)
 	}
 	XFD_COPYSET(&AllSockets, &LastSelectMask);
 	}
-	SmartScheduleIdle = TRUE;
+	SmartScheduleStopTimer ();
+
 	BlockHandler((void *)&wt, (void *)&LastSelectMask);
 	if (NewOutputPending)
 	    FlushAllOutput();
@@ -387,13 +380,8 @@ WaitForSomething(int *pClientsReady)
 	    i = XTestProcessInputAction (i, &waittime);
 	}
 #endif /* XTESTEXT1 */
-	if (i >= 0)
-	{
-	    SmartScheduleIdle = FALSE;
-	    SmartScheduleIdleCount = 0;
-	    if (SmartScheduleTimerStopped)
-		(void) SmartScheduleStartTimer ();
-	}
+	SmartScheduleStartTimer ();
+
 	if (i <= 0) /* An error or timeout occurred */
 	{
 #if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)

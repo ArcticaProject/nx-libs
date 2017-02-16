@@ -221,7 +221,11 @@ InitSelections()
 #define SMART_SCHEDULE_DEFAULT_INTERVAL	20	    /* ms */
 #define SMART_SCHEDULE_MAX_SLICE	200	    /* ms */
 
-Bool	    SmartScheduleDisable = FALSE;
+#ifdef HAVE_SETITIMER
+#define SMART_SCHEDULE_DEFAULT_SIGNAL_ENABLE HAVE_SETITIMER
+Bool SmartScheduleSignalEnable = SMART_SCHEDULE_DEFAULT_SIGNAL_ENABLE;
+#endif
+
 long	    SmartScheduleSlice = SMART_SCHEDULE_DEFAULT_INTERVAL;
 long	    SmartScheduleInterval = SMART_SCHEDULE_DEFAULT_INTERVAL;
 long	    SmartScheduleMaxSlice = SMART_SCHEDULE_MAX_SLICE;
@@ -351,7 +355,7 @@ Dispatch(void)
 
 	nready = WaitForSomething(clientReady);
 
-	if (nready && !SmartScheduleDisable)
+	if (nready)
 	{
 	    clientReady[0] = SmartScheduleClient (clientReady, nready);
 	    nready = 1;
@@ -386,8 +390,7 @@ Dispatch(void)
 		    ProcessInputEvents();
 		    FlushIfCriticalOutputPending();
 		}
-		if (!SmartScheduleDisable && 
-		    (SmartScheduleTime - start_tick) >= SmartScheduleSlice)
+		if ((SmartScheduleTime - start_tick) >= SmartScheduleSlice)
 		{
 		    /* Penalize clients which consume ticks */
 		    if (client->smart_priority > SMART_MIN_PRIORITY)
@@ -415,7 +418,10 @@ Dispatch(void)
 		    result = BadLength;
 		else
 		    result = (* client->requestVector[MAJOROP])(client);
-	    
+
+		if (!SmartScheduleSignalEnable)
+		    SmartScheduleTime = GetTimeInMillis();
+
 		if (result != Success) 
 		{
 		    if (client->noClientException != Success)
