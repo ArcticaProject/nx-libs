@@ -5,4 +5,7 @@ set -e
 dpkg-maintscript-helper rm_conffile \
     /etc/nxagent/rgb "2:3.5.99.3-999" nxagent -- "$@"
 
+dpkg-maintscript-helper rm_conffile \
+    /etc/nxagent/nxagent.keyboard "2:3.5.99.3-999" nxagent -- "$@"
+
 #DEBHELPER#

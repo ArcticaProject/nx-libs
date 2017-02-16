@@ -5,4 +5,3 @@ usr/lib/*/nx/bin/nxagent
 usr/lib/*/nx/X11/
 usr/bin/nxagent
 usr/share/pixmaps/nxagent.xpm
-etc/nxagent/nxagent.keyboard
