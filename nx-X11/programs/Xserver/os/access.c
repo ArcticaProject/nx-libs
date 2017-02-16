@@ -1240,20 +1240,22 @@ Bool LocalClient(ClientPtr client)
 	    &alen, (void **)&addr);
 	if (family == -1)
 	{
-	    free ((char *) from);
+	    free(from);
 	    return FALSE;
 	}
 	if (family == FamilyLocal)
 	{
-	    free ((char *) from);
+	    free(from);
 	    return TRUE;
 	}
 	for (host = selfhosts; host; host = host->next)
 	{
-	    if (addrEqual (family, addr, alen, host))
+	    if (addrEqual (family, addr, alen, host)) {
+		free(from);
 		return TRUE;
+	    }
 	}
-	free ((char *) from);
+	free(from);
     }
     return FALSE;
 }
