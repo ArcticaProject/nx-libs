@@ -100,8 +100,7 @@ extern int ImageText(ClientPtr /*client*/,
 
 extern int SetFontPath(ClientPtr /*client*/,
 		       int /*npaths*/,
-		       unsigned char * /*paths*/,
-		       int * /*error*/);
+		       unsigned char * /*paths*/);
 
 extern int SetDefaultFontPath(char * /*path*/);
 

@@ -295,7 +295,7 @@ main(int argc, char *argv[], char *envp[])
 	ReserveClientIds(serverClient);
 
 	if (loadableFonts) {
-	    SetFontPath(serverClient, 0, (unsigned char *)defaultFontPath, &error);
+	    SetFontPath(serverClient, 0, (unsigned char *)defaultFontPath);
 	} else {
 	    if (SetDefaultFontPath(defaultFontPath) != Success)
 		ErrorF("failed to set default font path '%s'\n",

@@ -3364,7 +3364,6 @@ ProcSetFontPath(register ClientPtr client)
     unsigned long nbytes, total;
     long nfonts;
     int n, result;
-    int error;
     REQUEST(xSetFontPathReq);
     
     REQUEST_AT_LEAST_SIZE(xSetFontPathReq);
@@ -3382,13 +3381,9 @@ ProcSetFontPath(register ClientPtr client)
     }
     if (total >= 4)
 	return(BadLength);
-    result = SetFontPath(client, stuff->nFonts, (unsigned char *)&stuff[1],
-			 &error);
+    result = SetFontPath(client, stuff->nFonts, (unsigned char *)&stuff[1]);
     if (!result)
-    {
 	result = client->noClientException;
-	client->errorValue = error;
-    }
     return (result);
 }
 
