@@ -1264,13 +1264,6 @@ ComputeLocalClient(ClientPtr client)
     return FALSE;
 }
 
-Bool LocalClient(ClientPtr client)
-{
-    if (!client->osPrivate)
-	return FALSE;
-    return ((OsCommPtr)client->osPrivate)->local_client;
-}
-
 /*
  * Return the uid and gid of a connected local client
  * 
@@ -1419,7 +1412,7 @@ AuthorizedClient(ClientPtr client)
 {
     if (!client || defeatAccessControl)
 	return TRUE;
-    return LocalClient(client);
+    return client->local ? Success : BadAccess;
 }
 
 /* Add a host to the access control list.  This is the external interface

@@ -95,6 +95,7 @@ typedef struct _Client {
     void        *requestBuffer;
     void        *osPrivate;	/* for OS layer, including scheduler */
     Bool        swapped;
+    Bool        local;
     ReplySwapPtr pSwapReplyFunc;
     XID         errorValue;
     int         sequence;

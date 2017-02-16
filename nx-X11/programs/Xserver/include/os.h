@@ -317,8 +317,6 @@ typedef struct sockaddr * sockaddrPtr;
 
 extern int InvalidHost(sockaddrPtr /*saddr*/, int /*len*/, ClientPtr client);
 
-extern int LocalClient(ClientPtr /* client */);
-
 extern int LocalClientCred(ClientPtr, int *, int *);
 
 #define LCC_UID_SET    (1 << 0)
