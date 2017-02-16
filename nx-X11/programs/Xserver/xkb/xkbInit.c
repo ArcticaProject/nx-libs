@@ -115,7 +115,7 @@ typedef struct	_SrvXkmInfo {
 
 char	*		XkbBaseDirectory=	XKB_BASE_DIRECTORY;
 char	*		XkbBinDirectory=	XKB_BIN_DIRECTORY;
-int	 		XkbWantAccessX=		0;	
+static int 		XkbWantAccessX=		0;
 static XkbFileInfo *	_XkbInitFileInfo=	NULL;
 char *			XkbDB=			NULL;
 int			XkbAutoLoad=		1;
@@ -127,20 +127,17 @@ static char *		XkbLayoutDflt=		NULL;
 static char *		XkbVariantDflt=		NULL;
 static char *		XkbOptionsDflt=		NULL;
 
-char *			XkbModelUsed=	NULL;
-char *			XkbLayoutUsed=	NULL;
-char *			XkbVariantUsed=	NULL;
-char *			XkbOptionsUsed=	NULL;
-
-int			_XkbClientMajor=	XkbMajorVersion;
-int			_XkbClientMinor=	XkbMinorVersion;
+static char *		XkbModelUsed=		NULL;
+static char *		XkbLayoutUsed=		NULL;
+static char *		XkbVariantUsed=		NULL;
+static char *		XkbOptionsUsed=		NULL;
 
 Bool			noXkbExtension=		XKB_DFLT_DISABLED;
-Bool			XkbWantRulesProp=	XKB_DFLT_RULES_PROP;
+static Bool		XkbWantRulesProp=	XKB_DFLT_RULES_PROP;
 
 /***====================================================================***/
 
-char *
+static char *
 XkbGetRulesDflts(XkbRF_VarDefsPtr defs)
 {
     if (XkbModelDflt)	defs->model= XkbModelDflt;
@@ -154,7 +151,7 @@ XkbGetRulesDflts(XkbRF_VarDefsPtr defs)
     return (rulesDefined?XkbRulesFile:XKB_DFLT_RULES_FILE);
 }
 
-Bool
+static Bool
 XkbWriteRulesProp(ClientPtr client, void * closure)
 {
 int 			len,out;
@@ -223,7 +220,7 @@ char *			pval;
     return True;
 }
 
-void
+static void
 XkbSetRulesUsed(XkbRF_VarDefsPtr defs)
 {
     if (XkbModelUsed)
@@ -281,9 +278,6 @@ XkbSetRulesDflts(char *rulesFile,char *model,char *layout,
 #endif
 
 #include "xkbDflts.h"
-
-/* A dummy to keep the compiler quiet */
-void * xkbBogus = &indicators;
 
 static Bool
 XkbInitKeyTypes(XkbDescPtr xkb,SrvXkmInfo *file)

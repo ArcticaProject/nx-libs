@@ -40,9 +40,9 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <ctype.h>
 
 static unsigned int _xkbServerGeneration;
-int xkbDevicePrivateIndex = -1;
+static int xkbDevicePrivateIndex = -1;
 
-void
+static void
 xkbUnwrapProc(DeviceIntPtr device, DeviceHandleProc proc,
                    void * data)
 {
@@ -215,7 +215,7 @@ static XkbAction 	fake;
     return fake;
 }
 
-XkbAction
+static XkbAction
 XkbGetButtonAction(DeviceIntPtr kbd,DeviceIntPtr dev,int button)
 {
 XkbAction fake;

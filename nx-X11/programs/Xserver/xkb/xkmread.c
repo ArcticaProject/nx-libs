@@ -1101,18 +1101,6 @@ unsigned i,size_toc;
     return 1;
 }
 
-xkmSectionInfo *
-XkmFindTOCEntry(xkmFileInfo *finfo,xkmSectionInfo *toc,unsigned type)
-{
-register int i;
-
-    for (i=0;i<finfo->num_toc;i++) {
-	if (toc[i].type==type)
-	    return &toc[i];
-    }
-    return NULL;
-}
-
 Bool
 XkmReadFileSection(	FILE *			file,
 			xkmSectionInfo *	toc,
