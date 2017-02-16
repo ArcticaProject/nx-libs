@@ -161,7 +161,6 @@ install-full:
 
 	$(INSTALL_DIR) $(DESTDIR)/$(ETCDIR_NX)
 	$(INSTALL_FILE) etc/keystrokes.cfg $(DESTDIR)/$(ETCDIR_NX)/
-	$(INSTALL_FILE) etc/nxagent.keyboard $(DESTDIR)$(ETCDIR_NX)/
 
 	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/nx
 	$(INSTALL_FILE) nx-X11/lib/X11/XErrorDB $(DESTDIR)$(PREFIX)/share/nx/
