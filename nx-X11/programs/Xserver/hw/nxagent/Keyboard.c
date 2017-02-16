@@ -939,16 +939,6 @@ XkbError:
 
         #ifdef TEST
         fprintf(stderr, "nxagentKeyboardProc: XkbInitialMap [%s]\n", XkbInitialMap ? XkbInitialMap : "NULL");
-        #endif
-
-        if (XkbInitialMap) {
-          if ((names.keymap = strchr(XkbInitialMap, '/')) != NULL)
-            ++names.keymap;
-          else
-            names.keymap = XkbInitialMap;
-        }
-
-        #ifdef TEST
         fprintf(stderr, "nxagentKeyboardProc: Init XKB extension.\n");
         #endif
 
