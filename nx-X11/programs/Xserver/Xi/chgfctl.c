@@ -358,9 +358,9 @@ ChangeKbdFeedback (client, dev, mask, k, f)
 		kctrl.autoRepeat = defaultKeyboardControl.autoRepeat;
 	    else
 		kctrl.autoRepeats[inx] &= ~kmask;
-		kctrl.autoRepeats[inx] =
-			(kctrl.autoRepeats[inx] & ~kmask) |
-			(defaultKeyboardControl.autoRepeats[inx] & kmask);
+	    kctrl.autoRepeats[inx] =
+		(kctrl.autoRepeats[inx] & ~kmask) |
+		(defaultKeyboardControl.autoRepeats[inx] & kmask);
 	    }
 	else
 	    {
