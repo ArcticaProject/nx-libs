@@ -544,17 +544,14 @@ WaitForSomething(int *pClientsReady)
 #ifndef WIN32
 	for (i=0; i<howmany(XFD_SETSIZE, NFDBITS); i++)
 	{
-	    int highest_priority = 0;
-
 	    while (clientsReadable.fds_bits[i])
 	    {
-	        int client_priority, client_index;
+		int client_index;
 
 		curclient = ffs (clientsReadable.fds_bits[i]) - 1;
 		client_index = /* raphael: modified */
 			ConnectionTranslation[curclient + (i * (sizeof(fd_mask) * 8))];
 #else
-	int highest_priority = 0;
 	fd_set savedClientsReadable;
 	XFD_COPYSET(&clientsReadable, &savedClientsReadable);
 	for (i = 0; i < XFD_SETCOUNT(&savedClientsReadable); i++)
@@ -564,40 +561,10 @@ WaitForSomething(int *pClientsReady)
 	    curclient = XFD_FD(&savedClientsReadable, i);
 	    client_index = GetConnectionTranslation(curclient);
 #endif
-#ifdef XSYNC
-		/*  We implement "strict" priorities.
-		 *  Only the highest priority client is returned to
-		 *  dix.  If multiple clients at the same priority are
-		 *  ready, they are all returned.  This means that an
-		 *  aggressive client could take over the server.
-		 *  This was not considered a big problem because
-		 *  aggressive clients can hose the server in so many 
-		 *  other ways :)
-		 */
-		client_priority = clients[client_index]->priority;
-		if (nready == 0 || client_priority > highest_priority)
-		{
-		    /*  Either we found the first client, or we found
-		     *  a client whose priority is greater than all others
-		     *  that have been found so far.  Either way, we want 
-		     *  to initialize the list of clients to contain just
-		     *  this client.
-		     */
-		    pClientsReady[0] = client_index;
-		    highest_priority = client_priority;
-		    nready = 1;
-		}
-		/*  the following if makes sure that multiple same-priority 
-		 *  clients get batched together
-		 */
-		else if (client_priority == highest_priority)
-#endif
-		{
-		    pClientsReady[nready++] = client_index;
-		}
+	    pClientsReady[nready++] = client_index;
 #ifndef WIN32
-		clientsReadable.fds_bits[i] &= ~(((fd_mask)1L) << curclient);
-	    }
+	    clientsReadable.fds_bits[i] &= ~(((fd_mask)1L) << curclient);
+	}
 #else
 	    FD_CLR(curclient, &clientsReadable);
 #endif
