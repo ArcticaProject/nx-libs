@@ -1217,12 +1217,17 @@ ResetHosts (char *display)
 }
 
 /* Is client on the local host */
-Bool LocalClient(ClientPtr client)
+Bool
+ComputeLocalClient(ClientPtr client)
 {
     int    		alen, family, notused;
     Xtransaddr		*from = NULL;
     void		*addr;
     register HOST	*host;
+    OsCommPtr		 oc = (OsCommPtr) client->osPrivate;
+
+    if (!oc->trans_conn)
+	return FALSE;
 
 #ifdef XCSECURITY
     /* untrusted clients can't change host access */
@@ -1233,8 +1238,7 @@ Bool LocalClient(ClientPtr client)
 	return FALSE;
     }
 #endif
-    if (!_XSERVTransGetPeerAddr (((OsCommPtr)client->osPrivate)->trans_conn,
-	&notused, &alen, &from))
+    if (!_XSERVTransGetPeerAddr (oc->trans_conn, &notused, &alen, &from))
     {
 	family = ConvertAddr ((struct sockaddr *) from,
 	    &alen, (void **)&addr);
@@ -1258,6 +1262,13 @@ Bool LocalClient(ClientPtr client)
 	free(from);
     }
     return FALSE;
+}
+
+Bool LocalClient(ClientPtr client)
+{
+    if (!client->osPrivate)
+	return FALSE;
+    return ((OsCommPtr)client->osPrivate)->local_client;
 }
 
 /*
