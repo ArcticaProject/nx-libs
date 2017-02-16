@@ -25,10 +25,10 @@ XF86INCLUDES = -I$(XF86COMSRC) -I$(XF86OSSRC)
 
  DDX_SRCS = ddxBeep.c ddxCtrls.c ddxFakeBtn.c ddxFakeMtn.c ddxInit.c \
 	    ddxKeyClick.c ddxKillSrv.c ddxLEDs.c ddxVT.c ddxLoad.c \
-	    ddxList.c ddxConfig.c ddxDevBtn.c ddxPrivate.c xkbconfig.c
+	    ddxList.c ddxDevBtn.c ddxPrivate.c
  DDX_OBJS = ddxBeep.o ddxCtrls.o ddxFakeBtn.o ddxFakeMtn.o ddxInit.o \
 	    ddxKeyClick.o ddxKillSrv.o ddxLEDs.o ddxVT.o ddxLoad.o \
-	    ddxList.o ddxConfig.o ddxDevBtn.o ddxPrivate.o xkbconfig.o
+	    ddxList.o ddxDevBtn.o ddxPrivate.o
      SRCS = xkb.c xkbUtils.c xkbEvents.c xkbAccessX.c xkbSwap.c \
             xkbLEDs.c xkbInit.c xkbActions.c xkbPrKeyEv.c \
 	    xkmread.c xkbtext.c xkbfmisc.c xkberrs.c xkbout.c maprules.c \

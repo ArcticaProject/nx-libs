@@ -582,8 +582,6 @@ KeySymsRec		tmpSyms,*pSyms;
 CARD8			tmpMods[XkbMaxLegalKeyCode+1],*pMods;
 char			name[PATH_MAX],*rules;
 Bool			ok=False;
-XPointer		config;
-XkbComponentNamesRec	cfgNames;
 XkbRF_VarDefsRec	defs;
 
     if ((dev->key!=NULL)||(dev->kbdfeed!=NULL))
@@ -591,9 +589,7 @@ XkbRF_VarDefsRec	defs;
     pSyms= pSymsIn;
     pMods= pModsIn;
     bzero(&defs,sizeof(XkbRF_VarDefsRec));
-    bzero(&cfgNames,sizeof(XkbComponentNamesRec));
     rules= XkbGetRulesDflts(&defs);
-    config= XkbDDXPreloadConfig(&rules,&defs,&cfgNames,dev);
 
     /*
      * The strings are duplicated because it is not guaranteed that
@@ -645,30 +641,6 @@ XkbRF_VarDefsRec	defs;
 	    }
 	    XkbSetRulesUsed(&defs);
 	}
-    }
-    if (cfgNames.keymap){
-	if (names->keymap) _XkbFree(names->keymap);
-	names->keymap= cfgNames.keymap;
-    }
-    if (cfgNames.keycodes){
-	if (names->keycodes) _XkbFree(names->keycodes);	
-	names->keycodes= cfgNames.keycodes;
-    }
-    if (cfgNames.types) {
-	if (names->types) _XkbFree(names->types);	
-	names->types= cfgNames.types;
-    }
-    if (cfgNames.compat) {
-	if (names->compat) _XkbFree(names->compat);	
-	names->compat= cfgNames.compat;
-    }
-    if (cfgNames.symbols){
-	if (names->symbols) _XkbFree(names->symbols);	
-	names->symbols= cfgNames.symbols;
-    }
-    if (cfgNames.geometry) {
-	if (names->geometry) _XkbFree(names->geometry);
-	names->geometry= cfgNames.geometry;
     }
 
     if (names->keymap) {
@@ -722,8 +694,6 @@ XkbRF_VarDefsRec	defs;
 	LogMessage(X_WARNING, "Couldn't load XKB keymap, falling back to pre-XKB keymap\n");
     }
     ok= InitKeyboardDeviceStruct((DevicePtr)dev,pSyms,pMods,bellProc,ctrlProc);
-    if ((config!=NULL)&&(dev && dev->key && dev->key->xkbInfo))
-	XkbDDXApplyConfig(config,dev->key->xkbInfo);
     _XkbInitFileInfo= NULL;
     if ((pSyms==&tmpSyms)&&(pSyms->map!=NULL)) {
 	_XkbFree(pSyms->map);
