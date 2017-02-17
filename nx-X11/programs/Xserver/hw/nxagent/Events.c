@@ -4664,12 +4664,12 @@ void nxagentDumpInputDevicesState(void)
     }
   }
 
-  fprintf(stderr, "\nKeyboard device state: \n\tdevice [%p]\n\tlast grab time [%lu]"
+  fprintf(stderr, "\nKeyboard device state: \n\tdevice [%p]\n\tlast grab time [%u]"
               "\n\tfrozen [%s]\n\tstate [%s]\n\tother [%p]\n\tevent count [%d]"
-                  "\n\tfrom passive grab [%s]\n\tactivating key [%d]", dev,
+                  "\n\tfrom passive grab [%s]\n\tactivating key [%d]", (void *)dev,
                       dev -> grabTime.milliseconds, dev -> sync.frozen ? "Yes": "No",
                           nxagentGrabStateToString(dev -> sync.state),
-                              dev -> sync.other, dev -> sync.evcount,
+                              (void *)dev -> sync.other, dev -> sync.evcount,
                                   dev -> fromPassiveGrab ? "Yes" : "No",
                                       dev -> activatingKey);
 
@@ -4679,7 +4679,7 @@ void nxagentDumpInputDevicesState(void)
   {
     fprintf(stderr, "\nKeyboard grab state: \n\twindow pointer [%p]"
                 "\n\towner events flag [%s]\n\tgrab mode [%s]",
-                    grab -> window, grab -> ownerEvents ? "True" : "False",
+                    (void *)grab -> window, grab -> ownerEvents ? "True" : "False",
                         grab -> keyboardMode ? "asynchronous" : "synchronous");
 
    /*
@@ -4693,8 +4693,8 @@ void nxagentDumpInputDevicesState(void)
     {
       fprintf(stderr, "\nPassive grab state: \n\tdevice [%p]\n\towner events flag [%s]"
                   "\n\tpointer grab mode [%s]\n\tkeyboard grab mode [%s]\n\tevent type [%d]"
-                      "\n\tmodifiers [%x]\n\tbutton/key [%u]\n\tevent mask [%lx]",
-                          grab -> device, grab -> ownerEvents ? "True" : "False",
+                      "\n\tmodifiers [%x]\n\tbutton/key [%u]\n\tevent mask [%x]",
+                          (void *)grab -> device, grab -> ownerEvents ? "True" : "False",
                               grab -> pointerMode ? "asynchronous" : "synchronous",
                                   grab -> keyboardMode ? "asynchronous" : "synchronous",
                                       grab -> type, grab -> modifiersDetail.exact,
@@ -4724,12 +4724,12 @@ void nxagentDumpInputDevicesState(void)
     }
   }
 
-  fprintf(stderr, "\nPointer device state: \n\tdevice [%p]\n\tlast grab time [%lu]"
+  fprintf(stderr, "\nPointer device state: \n\tdevice [%p]\n\tlast grab time [%u]"
               "\n\tfrozen [%s]\n\tstate [%s]\n\tother [%p]\n\tevent count [%d]"
-                  "\n\tfrom passive grab [%s]\n\tactivating button [%d]", dev,
+                  "\n\tfrom passive grab [%s]\n\tactivating button [%d]", (void *)dev,
                       dev -> grabTime.milliseconds, dev -> sync.frozen ? "Yes" : "No",
                           nxagentGrabStateToString(dev -> sync.state),
-                              dev -> sync.other, dev -> sync.evcount,
+                              (void *)dev -> sync.other, dev -> sync.evcount,
                                   dev -> fromPassiveGrab ? "Yes" : "No",
                                       dev -> activatingKey);
 
@@ -4739,7 +4739,7 @@ void nxagentDumpInputDevicesState(void)
   {
     fprintf(stderr, "\nPointer grab state: \n\twindow pointer [%p]"
                 "\n\towner events flag [%s]\n\tgrab mode [%s]",
-                    grab -> window, grab -> ownerEvents ? "True" : "False",
+                    (void *)grab -> window, grab -> ownerEvents ? "True" : "False",
                         grab -> pointerMode ? "asynchronous" : "synchronous");
 
     if (grab -> window != pWin)
@@ -4754,8 +4754,8 @@ void nxagentDumpInputDevicesState(void)
       {
         fprintf(stderr, "\nPassive grab state: \n\tdevice [%p]\n\towner events flag [%s]"
                     "\n\tpointer grab mode [%s]\n\tkeyboard grab mode [%s]\n\tevent type [%d]"
-                        "\n\tmodifiers [%x]\n\tbutton/key [%u]\n\tevent mask [%lx]",
-                            grab -> device, grab -> ownerEvents ? "True" : "False",
+                        "\n\tmodifiers [%x]\n\tbutton/key [%u]\n\tevent mask [%x]",
+                            (void *)grab -> device, grab -> ownerEvents ? "True" : "False",
                                 grab -> pointerMode ? "asynchronous" : "synchronous",
                                     grab -> keyboardMode ? "asynchronous" : "synchronous",
                                         grab -> type, grab -> modifiersDetail.exact,
