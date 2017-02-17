@@ -113,7 +113,7 @@ __glXFBMemSwapBuffers(__GLXdrawablePrivate *glxPriv)
 			 depth,
 			 0, 0, width, height,
 			 pad, ZPixmap,
-			 buf);
+			 (char *)buf);
 
     return GL_TRUE;
 }
