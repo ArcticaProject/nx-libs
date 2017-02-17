@@ -406,7 +406,13 @@ free(filename);
 
 static enum nxagentSpecialKeystroke find_keystroke(XKeyEvent *X)
 {
-  KeySym keysym = XKeycodeToKeysym(nxagentDisplay, X->keycode, 0);
+  int keysyms_per_keycode_return;
+  XlibKeySym *keysym = XGetKeyboardMapping(nxagentDisplay,
+                                           X->keycode,
+                                           1,
+                                           &keysyms_per_keycode_return);
+
+
   struct nxagentSpecialKeystrokeMap *cur = map;
 
   if (! nxagentKeystrokeFileParsed)
@@ -418,19 +424,20 @@ static enum nxagentSpecialKeystroke find_keystroke(XKeyEvent *X)
   enum nxagentSpecialKeystroke ret = KEYSTROKE_NOTHING;
 
   while (cur->stroke != KEYSTROKE_END_MARKER) {
-    if (cur->keysym == keysym && modifier_matches(cur->modifierMask, cur->modifierAltMeta, X->state)) {
+    if (cur->keysym == keysym[0] && modifier_matches(cur->modifierMask, cur->modifierAltMeta, X->state)) {
+
+      free(keysym);
       return cur->stroke;
     }
     cur++;
   }
 
+  free(keysym);
   return ret;
 }
 
 int nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
 {
-  KeySym sym;
-  int index = 0;
   enum nxagentSpecialKeystroke stroke = find_keystroke(X);
 
   *result = doNothing;
@@ -440,17 +447,23 @@ int nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
    * Do we need a cache ?
    */
 
-  sym = XKeycodeToKeysym(nxagentDisplay, X -> keycode, index);
+  int keysyms_per_keycode_return;
+  XlibKeySym *sym = XGetKeyboardMapping(nxagentDisplay,
+                                        X->keycode,
+                                        1,
+                                        &keysyms_per_keycode_return);
 
-  if (sym == XK_VoidSymbol || sym == NoSymbol)
+  if (sym[0] == XK_VoidSymbol || sym[0] == NoSymbol)
   {
+    free(sym);
     return 0;
   }
 
   #ifdef TEST
   fprintf(stderr, "nxagentCheckSpecialKeystroke: got code %x - state %x - sym %lx\n",
-              X -> keycode, X -> state, sym);
+              X -> keycode, X -> state, sym[0]);
   #endif
+  free(sym);
 
   /*
    * Check special keys.
