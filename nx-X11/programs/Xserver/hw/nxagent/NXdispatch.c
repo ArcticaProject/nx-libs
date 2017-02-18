@@ -241,9 +241,7 @@ Dispatch(void)
     register ClientPtr	client;
     register int	nready;
     register HWEventQueuePtr* icheck = checkForInput;
-#ifdef SMART_SCHEDULE
     long			start_tick;
-#endif
 
     unsigned long currentDispatch = 0;
 
@@ -389,13 +387,11 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 
          #endif
 
-#ifdef SMART_SCHEDULE
 	if (nready && !SmartScheduleDisable)
 	{
 	    clientReady[0] = SmartScheduleClient (clientReady, nready);
 	    nready = 1;
 	}
-#endif
        /***************** 
 	*  Handle events in round robin fashion, doing input between 
 	*  each round 
@@ -418,9 +414,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 	    isItTimeToYield = FALSE;
  
             requestingClient = client;
-#ifdef SMART_SCHEDULE
 	    start_tick = SmartScheduleTime;
-#endif
 	    while (!isItTimeToYield)
 	    {
 	        if (*icheck[0] != *icheck[1])
@@ -428,7 +422,6 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 		    ProcessInputEvents();
 		    FlushIfCriticalOutputPending();
 		}
-#ifdef SMART_SCHEDULE
 		if (!SmartScheduleDisable && 
 		    (SmartScheduleTime - start_tick) >= SmartScheduleSlice)
 		{
@@ -437,7 +430,6 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 			client->smart_priority--;
 		    break;
 		}
-#endif
 		/* now, finally, deal with client requests */
 
                 #ifdef TEST
@@ -535,11 +527,9 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
 #endif
 	    }
 	    FlushAllOutput();
-#ifdef SMART_SCHEDULE
 	    client = clients[clientReady[nready]];
 	    if (client)
 		client->smart_stop_tick = SmartScheduleTime;
-#endif
 	    requestingClient = NULL;
 	}
 	dispatchException &= ~DE_PRIORITYCHANGE;
@@ -1318,9 +1308,7 @@ CloseDownClient(register ClientPtr client)
 	if (client->index < nextFreeClientID)
 	    nextFreeClientID = client->index;
 	clients[client->index] = NullClient;
-#ifdef SMART_SCHEDULE
 	SmartLastClient = NullClient;
-#endif
 	free(client);
 
 	while (!clients[currentMaxClients-1])

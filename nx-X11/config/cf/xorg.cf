@@ -568,23 +568,12 @@ IPLAN2P8_DEFS = -DUSE_IPLAN2P8
 # endif
 #endif
 
-#ifndef UseSmartScheduler
-#define UseSmartScheduler YES
-#endif
-
-#if UseSmartScheduler
-#define SmartScheduleDefines -DSMART_SCHEDULE
-#else
-#define SmartScheduleDefines /**/
-#endif
-
 /* Server defines required for all OSs */
 #ifndef XFree86ServerDefines
 # define XFree86ServerDefines	-DAVOID_GLYPHBLT -DPIXPRIV -DSINGLEDEPTH \
 				XFree86XvDefines \
 				-DXFree86Server \
 				XFree86XvMCDefines \
-				SmartScheduleDefines \
 				DebugDefines XFree86XResDefines \
 				-DX_BYTE_ORDER=$(X_BYTE_ORDER) \
 				VersionDefines

@@ -190,9 +190,7 @@ WaitForSomething(int *pClientsReady)
     int nready;
     fd_set devicesReadable;
     CARD32 now = 0;
-#ifdef SMART_SCHEDULE
     Bool    someReady = FALSE;
-#endif
 
 #if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
     fprintf(stderr, "WaitForSomething: Got called.\n");
@@ -215,7 +213,6 @@ WaitForSomething(int *pClientsReady)
 	    ProcessWorkQueue();
 	if (XFD_ANYSET (&ClientsWithInput))
 	{
-#ifdef SMART_SCHEDULE
 	    if (!SmartScheduleDisable)
 	    {
 		someReady = TRUE;
@@ -224,13 +221,11 @@ WaitForSomething(int *pClientsReady)
 		wt = &waittime;
 	    }
 	    else
-#endif
 	    {
 		XFD_COPYSET (&ClientsWithInput, &clientsReadable);
 		break;
 	    }
 	}
-#ifdef SMART_SCHEDULE
 	if (someReady)
 	{
 	    XFD_COPYSET(&AllSockets, &LastSelectMask);
@@ -238,7 +233,6 @@ WaitForSomething(int *pClientsReady)
 	}
 	else
 	{
-#endif
         wt = NULL;
 	if (timers)
         {
@@ -252,10 +246,8 @@ WaitForSomething(int *pClientsReady)
 	    wt = &waittime;
 	}
 	XFD_COPYSET(&AllSockets, &LastSelectMask);
-#ifdef SMART_SCHEDULE
 	}
 	SmartScheduleIdle = TRUE;
-#endif
 	BlockHandler((void *)&wt, (void *)&LastSelectMask);
 	if (NewOutputPending)
 	    FlushAllOutput();
@@ -394,7 +386,6 @@ WaitForSomething(int *pClientsReady)
 	    i = XTestProcessInputAction (i, &waittime);
 	}
 #endif /* XTESTEXT1 */
-#ifdef SMART_SCHEDULE
 	if (i >= 0)
 	{
 	    SmartScheduleIdle = FALSE;
@@ -402,7 +393,6 @@ WaitForSomething(int *pClientsReady)
 	    if (SmartScheduleTimerStopped)
 		(void) SmartScheduleStartTimer ();
 	}
-#endif
 	if (i <= 0) /* An error or timeout occurred */
 	{
 #if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
@@ -442,7 +432,6 @@ WaitForSomething(int *pClientsReady)
 			selecterr);
 		}
 	    }
-#ifdef SMART_SCHEDULE
 	    else if (someReady)
 	    {
 		/*
@@ -452,7 +441,6 @@ WaitForSomething(int *pClientsReady)
 		XFD_COPYSET(&ClientsWithInput, &clientsReadable);
 		break;
 	    }
-#endif
 #if defined(NX_TRANS_SOCKET)
             if (*checkForInput[0] != *checkForInput[1])
             {
@@ -499,10 +487,8 @@ WaitForSomething(int *pClientsReady)
                         return 0;
 	        }
 	    }
-#ifdef SMART_SCHEDULE
 	    if (someReady)
 		XFD_ORSET(&LastSelectMask, &ClientsWithInput, &LastSelectMask);
-#endif	    
 	    if (AnyClientsWriteBlocked && XFD_ANYSET (&clientsWritable))
 	    {
 		NewOutputPending = TRUE;
