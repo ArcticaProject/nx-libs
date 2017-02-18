@@ -216,33 +216,6 @@ InitSelections()
 }
 #endif /* NXAGENT_SERVER */
 
-void 
-FlushClientCaches(XID id)
-{
-    int i;
-    register ClientPtr client;
-
-    client = clients[CLIENT_ID(id)];
-    if (client == NullClient)
-        return ;
-    for (i=0; i<currentMaxClients; i++)
-    {
-	client = clients[i];
-        if (client != NullClient)
-	{
-            if (client->lastDrawableID == id)
-	    {
-		client->lastDrawableID = screenInfo.screens[0]->root->drawable.id;
-		client->lastDrawable = (DrawablePtr)screenInfo.screens[0]->root;
-	    }
-            else if (client->lastGCID == id)
-	    {
-                client->lastGCID = INVALID;
-		client->lastGC = (GCPtr)NULL;
-	    }
-	}
-    }
-}
 #undef SMART_DEBUG
 
 #define SMART_SCHEDULE_DEFAULT_INTERVAL	20	    /* ms */
@@ -3629,20 +3602,7 @@ void InitClient(ClientPtr client, int i, void * ospriv)
     client->sequence = 0; 
     client->clientAsMask = ((Mask)i) << CLIENTOFFSET;
     client->clientGone = FALSE;
-    if (i)
-    {
-	client->closeDownMode = DestroyAll;
-	client->lastDrawable = (DrawablePtr)screenInfo.screens[0]->root;
-	client->lastDrawableID = screenInfo.screens[0]->root->drawable.id;
-    }
-    else
-    {
-	client->closeDownMode = RetainPermanent;
-	client->lastDrawable = (DrawablePtr)NULL;
-	client->lastDrawableID = INVALID;
-    }
-    client->lastGC = (GCPtr) NULL;
-    client->lastGCID = INVALID;
+    client->closeDownMode = i ? DestroyAll : RetainPermanent;
     client->numSaved = 0;
     client->saveSet = (SaveSetElt *)NULL;
     client->noClientException = Success;

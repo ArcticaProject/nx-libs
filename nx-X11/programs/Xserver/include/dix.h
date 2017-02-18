@@ -91,15 +91,11 @@ SOFTWARE.
 /* XXX if you are using this macro, you are probably not generating Match
  * errors where appropriate */
 #define LOOKUP_DRAWABLE(did, client)\
-    ((client->lastDrawableID == did) ? \
-     client->lastDrawable : (DrawablePtr)LookupDrawable(did, client))
+    ((DrawablePtr)LookupDrawable(did, client))
 
 #ifdef XCSECURITY
 
 #define SECURITY_VERIFY_DRAWABLE(pDraw, did, client, mode)\
-    if (client->lastDrawableID == did && !client->trustLevel)\
-	pDraw = client->lastDrawable;\
-    else \
     {\
 	pDraw = (DrawablePtr) SecurityLookupIDByClass(client, did, \
 						      RC_DRAWABLE, mode);\
@@ -113,9 +109,6 @@ SOFTWARE.
     }
 
 #define SECURITY_VERIFY_GEOMETRABLE(pDraw, did, client, mode)\
-    if (client->lastDrawableID == did && !client->trustLevel)\
-	pDraw = client->lastDrawable;\
-    else \
     {\
 	pDraw = (DrawablePtr) SecurityLookupIDByClass(client, did, \
 						      RC_DRAWABLE, mode);\
@@ -127,10 +120,7 @@ SOFTWARE.
     }
 
 #define SECURITY_VERIFY_GC(pGC, rid, client, mode)\
-    if (client->lastGCID == rid && !client->trustLevel)\
-        pGC = client->lastGC;\
-    else\
-	pGC = (GC *) SecurityLookupIDByType(client, rid, RT_GC, mode);\
+    pGC = (GC *) SecurityLookupIDByType(client, rid, RT_GC, mode);\
     if (!pGC)\
     {\
 	client->errorValue = rid;\
@@ -149,9 +139,6 @@ SOFTWARE.
 #else /* not XCSECURITY */
 
 #define VERIFY_DRAWABLE(pDraw, did, client)\
-    if (client->lastDrawableID == did)\
-	pDraw = client->lastDrawable;\
-    else \
     {\
 	pDraw = (DrawablePtr) LookupIDByClass(did, RC_DRAWABLE);\
 	if (!pDraw) \
@@ -164,9 +151,6 @@ SOFTWARE.
     }
 
 #define VERIFY_GEOMETRABLE(pDraw, did, client)\
-    if (client->lastDrawableID == did)\
-	pDraw = client->lastDrawable;\
-    else \
     {\
 	pDraw = (DrawablePtr) LookupIDByClass(did, RC_DRAWABLE);\
 	if (!pDraw) \
@@ -177,10 +161,7 @@ SOFTWARE.
     }
 
 #define VERIFY_GC(pGC, rid, client)\
-    if (client->lastGCID == rid)\
-        pGC = client->lastGC;\
-    else\
-	pGC = (GC *)LookupIDByType(rid, RT_GC);\
+    pGC = (GC *)LookupIDByType(rid, RT_GC);\
     if (!pGC)\
     {\
 	client->errorValue = rid;\
@@ -252,23 +233,12 @@ SOFTWARE.
 #endif /* NEED_DBE_BUF_BITS */
 
 #define VALIDATE_DRAWABLE_AND_GC(drawID, pDraw, pGC, client)\
-    if ((stuff->gc == INVALID) || (client->lastGCID != stuff->gc) ||\
-	(client->lastDrawableID != drawID))\
     {\
 	SECURITY_VERIFY_GEOMETRABLE(pDraw, drawID, client, DixWriteAccess);\
 	SECURITY_VERIFY_GC(pGC, stuff->gc, client, DixReadAccess);\
 	if ((pGC->depth != pDraw->depth) ||\
 	    (pGC->pScreen != pDraw->pScreen))\
 	    return (BadMatch);\
-	client->lastDrawable = pDraw;\
-	client->lastDrawableID = drawID;\
-	client->lastGC = pGC;\
-	client->lastGCID = stuff->gc;\
-    }\
-    else\
-    {\
-        pGC = client->lastGC;\
-        pDraw = client->lastDrawable;\
     }\
     SET_DBE_DSTBUF(pDraw, drawID);\
     if (pGC->serialNumber != pDraw->serialNumber)\
@@ -324,8 +294,6 @@ extern void UpdateCurrentTime(void);
 extern void UpdateCurrentTimeIf(void);
 
 extern void InitSelections(void);
-
-extern void FlushClientCaches(XID /*id*/);
 
 extern int dixDestroyPixmap(
     void * /*value*/,

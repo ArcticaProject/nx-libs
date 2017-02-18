@@ -210,27 +210,10 @@ CompareISOLatin1Lowered(unsigned char *s1, int s1len,
 WindowPtr
 SecurityLookupWindow(XID rid, ClientPtr client, Mask access_mode)
 {
-    WindowPtr	pWin;
-
     client->errorValue = rid;
     if(rid == INVALID)
 	return NULL;
-    if (client->trustLevel != XSecurityClientTrusted)
-	return (WindowPtr)SecurityLookupIDByType(client, rid, RT_WINDOW, access_mode);
-    if (client->lastDrawableID == rid)
-    {
-        if (client->lastDrawable->type == DRAWABLE_WINDOW)
-            return ((WindowPtr) client->lastDrawable);
-        return (WindowPtr) NULL;
-    }
-    pWin = (WindowPtr)SecurityLookupIDByType(client, rid, RT_WINDOW, access_mode);
-    if (pWin && pWin->drawable.type == DRAWABLE_WINDOW) {
-	client->lastDrawable = (DrawablePtr) pWin;
-	client->lastDrawableID = rid;
-	client->lastGCID = INVALID;
-	client->lastGC = (GCPtr)NULL;
-    }
-    return pWin;
+    return (WindowPtr)SecurityLookupIDByType(client, rid, RT_WINDOW, access_mode);
 }
 
 
@@ -241,15 +224,10 @@ SecurityLookupDrawable(XID rid, ClientPtr client, Mask access_mode)
 
     if(rid == INVALID)
 	return (void *) NULL;
-    if (client->trustLevel != XSecurityClientTrusted)
-	return (DrawablePtr)SecurityLookupIDByClass(client, rid, RC_DRAWABLE,
-						    access_mode);
-    if (client->lastDrawableID == rid)
-	return ((void *) client->lastDrawable);
     pDraw = (DrawablePtr)SecurityLookupIDByClass(client, rid, RC_DRAWABLE,
 						 access_mode);
-    if (pDraw && (pDraw->type != UNDRAWABLE_WINDOW))
-        return (void *)pDraw;
+    if ((client->trustLevel != XSecurityClientTrusted) || (pDraw && (pDraw->type != UNDRAWABLE_WINDOW)))
+	return (void *)pDraw;
     return (void *)NULL;
 }
 
@@ -279,20 +257,7 @@ LookupWindow(XID rid, ClientPtr client)
     client->errorValue = rid;
     if(rid == INVALID)
 	return NULL;
-    if (client->lastDrawableID == rid)
-    {
-        if (client->lastDrawable->type == DRAWABLE_WINDOW)
-            return ((WindowPtr) client->lastDrawable);
-        return (WindowPtr) NULL;
-    }
-    pWin = (WindowPtr)LookupIDByType(rid, RT_WINDOW);
-    if (pWin && pWin->drawable.type == DRAWABLE_WINDOW) {
-	client->lastDrawable = (DrawablePtr) pWin;
-	client->lastDrawableID = rid;
-	client->lastGCID = INVALID;
-	client->lastGC = (GCPtr)NULL;
-    }
-    return pWin;
+    return (WindowPtr)LookupIDByType(rid, RT_WINDOW);
 }
 
 
@@ -303,8 +268,6 @@ LookupDrawable(XID rid, ClientPtr client)
 
     if(rid == INVALID)
 	return (void *) NULL;
-    if (client->lastDrawableID == rid)
-	return ((void *) client->lastDrawable);
     pDraw = (DrawablePtr)LookupIDByClass(rid, RC_DRAWABLE);
     if (pDraw && (pDraw->type != UNDRAWABLE_WINDOW))
         return (void *)pDraw;
