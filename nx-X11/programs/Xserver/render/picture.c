@@ -45,6 +45,10 @@
 #include "picturestr.h"
 #endif
 
+#ifdef PANORAMIX
+#include "panoramiXsrv.h"
+#endif
+
 int		PictureScreenPrivateIndex = -1;
 int		PictureWindowPrivateIndex;
 int		PictureGeneration;
@@ -660,6 +664,9 @@ PictureInit (ScreenPtr pScreen, PictFormatPtr formats, int nformats)
     {
 	if (!AddResource (formats[n].id, PictFormatType, (void *) (formats+n)))
 	{
+	    int i;
+	    for (i = 0; i < n; i++)
+		FreeResource(formats[i].id, RT_NONE);
 	    free (formats);
 	    return FALSE;
 	}
@@ -981,6 +988,8 @@ static PicturePtr createSourcePicture(void)
 {
     PicturePtr pPicture;
     pPicture = (PicturePtr) malloc(sizeof(PictureRec));
+    if (!pPicture)
+	return 0;
     pPicture->pDrawable = 0;
     pPicture->pFormat = 0;
     pPicture->pNext = 0;
@@ -1153,6 +1162,75 @@ CreateConicalGradientPicture (Picture pid, xPointFixed *center, xFixed angle,
     return pPicture;
 }
 
+static int
+cpAlphaMap(void **result, XID id, ScreenPtr screen, ClientPtr client, Mask mode)
+{
+#ifdef PANORAMIX
+    if (!noPanoramiXExtension) {
+	PanoramiXRes *res;
+#ifdef XORG_TOO_OLD
+	res = (void*) SecurityLookupIDByType(client,
+					     id,
+					     XRT_PICTURE,
+					     mode);
+
+	if (!res)
+	    return BadPicture;
+#else
+	int err = dixLookupResourceByType((void **)&res, id, XRT_PICTURE,
+	                                  client, mode);
+	if (err != Success)
+	    return err;
+#endif /* XORG_TOO_OLD */
+	id = res->info[screen->myNum].id;
+    }
+#endif /* PANORAMIX */
+
+#ifdef XORG_TOO_OLD
+    result = (void*) SecurityLookupIDByType(client, id,  PictureType, mode);
+    if (result)
+	return Success;
+    else
+	return BadAccess;
+#else
+    return dixLookupResourceByType(result, id, PictureType, client, mode);
+#endif /* XORG_TOO_OLD */
+}
+
+static int
+cpClipMask(void **result, XID id, ScreenPtr screen, ClientPtr client, Mask mode)
+{
+#ifdef PANORAMIX
+    if (!noPanoramiXExtension) {
+	PanoramiXRes *res;
+#ifdef XORG_TOO_OLD
+	res = (void*) SecurityLookupIDByType(client,
+					     id,
+					     XRT_PIXMAP,
+					     mode);
+
+	if (!res)
+	    return BadAccess;
+#else
+	int err = dixLookupResourceByType((void **)&res, id, XRT_PIXMAP,
+	                                  client, mode);
+	if (err != Success)
+	    return err;
+#endif /* XORG_TOO_OLD */
+	id = res->info[screen->myNum].id;
+    }
+#endif /* PANORAMIX */
+#ifdef XORG_TOO_OLD
+    result = (void*) SecurityLookupIDByType(client, id,  RT_PIXMAP, mode);
+    if (result)
+	return Success;
+    else
+	return BadAccess;
+#else
+    return dixLookupResourceByType(result, id, RT_PIXMAP, client, mode);
+#endif
+}
+
 #define NEXT_VAL(_type) (vlist ? (_type) *vlist++ : (_type) ulist++->val)
 
 #define NEXT_PTR(_type) ((_type) ulist++->ptr)
@@ -1197,7 +1275,7 @@ ChangePicture (PicturePtr	pPicture,
 	    break;
 	case CPAlphaMap:
 	    {
-		PicturePtr  pAlpha;
+		PicturePtr  pAlpha = NULL;
 		
 		if (vlist)
 		{
@@ -1207,11 +1285,15 @@ ChangePicture (PicturePtr	pPicture,
 			pAlpha = 0;
 		    else
 		    {
-			pAlpha = (PicturePtr) SecurityLookupIDByType(client,
-								     pid, 
-								     PictureType, 
-								     SecurityWriteAccess|SecurityReadAccess);
-			if (!pAlpha)
+			error = cpAlphaMap((void **) &pAlpha, pid, pScreen,
+			                   client,
+#ifdef XORG_TOO_OLD
+			                   SecurityWriteAccess|SecurityReadAccess
+#else
+			                   DixReadAccess
+#endif
+			);
+			if (error != Success)
 			{
 			    client->errorValue = pid;
 			    error = BadPixmap;
@@ -1252,7 +1334,7 @@ ChangePicture (PicturePtr	pPicture,
 	case CPClipMask:
 	    {
 		Pixmap	    pid;
-		PixmapPtr   pPixmap;
+		PixmapPtr   pPixmap = NULL;
 		int	    clipType;
                 if (!pScreen)
                     return BadDrawable;
@@ -1268,10 +1350,15 @@ ChangePicture (PicturePtr	pPicture,
 		    else
 		    {
 			clipType = CT_PIXMAP;
-			pPixmap = (PixmapPtr)SecurityLookupIDByType(client,
-								    pid, 
-								    RT_PIXMAP,
-								    SecurityReadAccess);
+			error = cpClipMask((void **) &pPixmap, pid, pScreen,
+			                   client,
+#ifdef XORG_TOO_OLD
+			                   SecurityReadAccess
+#else
+			                   DixReadAccess
+#endif /* XORG_TOO_OLD */
+			);
+
 			if (!pPixmap)
 			{
 			    client->errorValue = pid;
@@ -1610,8 +1697,9 @@ FreePicture (void *	value,
 
     if (--pPicture->refcnt == 0)
     {
-	if (pPicture->transform)
-	    free (pPicture->transform);
+	free (pPicture->transform);
+	free (pPicture->filter_params);
+
         if (!pPicture->pDrawable) {
             if (pPicture->pSourcePict) {
                 if (pPicture->pSourcePict->type != SourcePictTypeSolidFill)

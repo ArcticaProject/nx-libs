@@ -69,6 +69,7 @@ PicturePtr CreatePicture (Picture       pid,
 static PicturePtr createSourcePicture(void);
 int FreePicture (void *value, XID pid);
 
+#define XORG_TOO_OLD
 #include "../../render/picture.c"
 
 
@@ -349,6 +350,9 @@ static PicturePtr createSourcePicture(void)
 
       nxagentPicturePriv(pPicture) -> picture = 0;
     }
+    else {
+	return 0;
+    }
 
     pPicture->pDrawable = 0;
     pPicture->pFormat = 0;
@@ -368,8 +372,9 @@ FreePicture (void *	value,
     {
         nxagentDestroyPicture(pPicture);
 
-	if (pPicture->transform)
-	    free (pPicture->transform);
+	free (pPicture->transform);
+	free (pPicture->filter_params);
+
         if (!pPicture->pDrawable) {
             if (pPicture->pSourcePict) {
                 if (pPicture->pSourcePict->type != SourcePictTypeSolidFill)
