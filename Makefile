@@ -36,6 +36,8 @@ SHELL:=/bin/bash
 
 	# clean auto-generated nxversion.def file \
 	if [ "x$@" == "xclean" ] || [ "x$@" = "xdistclean" ]; then \
+	    ./mesa-quilt pop -a; \
+	    rm -Rf nx-X11/extras/Mesa/.pc/; \
 	    rm -f nx-X11/config/cf/nxversion.def; \
 	    rm -f bin/nxagent; \
 	    rm -f bin/nxproxy; \
@@ -72,6 +74,7 @@ build-full:
 
 	cd nxcompshad && autoconf && (${CONFIGURE}) && ${MAKE}
 
+	./mesa-quilt push -a
 	cd nx-X11 && ${MAKE} World USRLIBDIR=$(USRLIBDIR) SHLIBDIR=$(SHLIBDIR)
 
 	cd nxproxy && autoconf && (${CONFIGURE}) && ${MAKE}
