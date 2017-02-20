@@ -87,7 +87,7 @@ ProcRRSelectInput(ClientPtr client)
 #ifndef NXAGENT_SERVER
     rc = dixLookupWindow(&pWin, stuff->window, client, DixReceiveAccess);
 #else
-    pWin = SecurityLookupWindow(stuff->window, client, SecurityWriteAccess);
+    pWin = SecurityLookupWindow(stuff->window, client, DixWriteAccess);
     rc = pWin ? Success : BadWindow;
 #endif
     if (rc != Success)

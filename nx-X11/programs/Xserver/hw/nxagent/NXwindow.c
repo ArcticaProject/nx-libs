@@ -503,7 +503,7 @@ ConfigureWindow(register WindowPtr pWin, register Mask mask, XID *vlist, ClientP
 	    sibwid = (Window ) *pVlist;
 	    pVlist++;
 	    pSib = (WindowPtr )SecurityLookupIDByType(client, sibwid,
-						RT_WINDOW, SecurityReadAccess);
+						RT_WINDOW, DixReadAccess);
 	    if (!pSib)
 	    {
 		client->errorValue = sibwid;

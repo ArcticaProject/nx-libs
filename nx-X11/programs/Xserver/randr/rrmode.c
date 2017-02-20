@@ -357,7 +357,7 @@ ProcRRCreateMode(ClientPtr client)
 #ifndef NXAGENT_SERVER
     rc = dixLookupWindow(&pWin, stuff->window, client, DixGetAttrAccess);
 #else
-    pWin = SecurityLookupWindow(stuff->window, client, SecurityReadAccess);
+    pWin = SecurityLookupWindow(stuff->window, client, DixReadAccess);
     rc = pWin ? Success : BadWindow;
 #endif
     if (rc != Success)

@@ -198,7 +198,7 @@ ProcXFixesSelectSelectionInput (ClientPtr client)
 
     REQUEST_SIZE_MATCH (xXFixesSelectSelectionInputReq);
     pWin = (WindowPtr)SecurityLookupWindow(stuff->window, client,
-					   SecurityReadAccess);
+					   DixReadAccess);
     if (!pWin)
         return(BadWindow);
     if (stuff->eventMask & ~SelectionAllEvents)

@@ -636,7 +636,7 @@ ProcRRGetMonitors(ClientPtr client)
 #ifndef NXAGENT_SERVER
     r = dixLookupWindow(&window, stuff->window, client, DixGetAttrAccess);
 #else
-    window = SecurityLookupWindow(stuff->window, client, SecurityReadAccess);
+    window = SecurityLookupWindow(stuff->window, client, DixReadAccess);
     r = window ? Success : BadWindow;
 #endif
 
@@ -723,7 +723,7 @@ ProcRRSetMonitor(ClientPtr client)
 #ifndef NXAGENT_SERVER
     r = dixLookupWindow(&window, stuff->window, client, DixGetAttrAccess);
 #else
-    window = SecurityLookupWindow(stuff->window, client, SecurityReadAccess);
+    window = SecurityLookupWindow(stuff->window, client, DixReadAccess);
     r = window ? Success : BadWindow;
 #endif
 
@@ -772,7 +772,7 @@ ProcRRDeleteMonitor(ClientPtr client)
 #ifndef NXAGENT_SERVER
     r = dixLookupWindow(&window, stuff->window, client, DixGetAttrAccess);
 #else
-    window = SecurityLookupWindow(stuff->window, client, SecurityReadAccess);
+    window = SecurityLookupWindow(stuff->window, client, DixReadAccess);
     r = window ? Success : BadWindow;
 #endif
 

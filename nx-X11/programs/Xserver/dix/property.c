@@ -106,7 +106,7 @@ ProcRotateProperties(ClientPtr client)
     REQUEST_FIXED_SIZE(xRotatePropertiesReq, stuff->nAtoms << 2);
     UpdateCurrentTime();
     pWin = (WindowPtr) SecurityLookupWindow(stuff->window, client,
-					    SecurityWriteAccess);
+					    DixWriteAccess);
     if (!pWin)
         return(BadWindow);
     if (!stuff->nAtoms)
@@ -119,7 +119,7 @@ ProcRotateProperties(ClientPtr client)
     {
 #ifdef XCSECURITY
 	char action = SecurityCheckPropertyAccess(client, pWin, atoms[i],
-				SecurityReadAccess|SecurityWriteAccess);
+				DixReadAccess|DixWriteAccess);
 #endif
         if (!ValidAtom(atoms[i])
 #ifdef XCSECURITY
@@ -219,7 +219,7 @@ ProcChangeProperty(ClientPtr client)
     REQUEST_FIXED_SIZE(xChangePropertyReq, totalSize);
 
     pWin = (WindowPtr)SecurityLookupWindow(stuff->window, client,
-					   SecurityWriteAccess);
+					   DixWriteAccess);
     if (!pWin)
 	return(BadWindow);
     if (!ValidAtom(stuff->property))
@@ -235,7 +235,7 @@ ProcChangeProperty(ClientPtr client)
 
 #ifdef XCSECURITY
     switch (SecurityCheckPropertyAccess(client, pWin, stuff->property,
-					SecurityWriteAccess))
+					DixWriteAccess))
     {
 	case SecurityErrorOperation:
 	    client->errorValue = stuff->property;
@@ -469,7 +469,7 @@ ProcGetProperty(ClientPtr client)
     if (stuff->delete)
 	UpdateCurrentTime();
     pWin = (WindowPtr)SecurityLookupWindow(stuff->window, client,
-					   SecurityReadAccess);
+					   DixReadAccess);
     if (!pWin)
 	return BadWindow;
 
@@ -507,10 +507,10 @@ ProcGetProperty(ClientPtr client)
 
 #ifdef XCSECURITY
     {
-	Mask access_mode = SecurityReadAccess;
+	Mask access_mode = DixReadAccess;
 
 	if (stuff->delete)
-	    access_mode |= SecurityDestroyAccess;
+	    access_mode |= DixDestroyAccess;
 	switch(SecurityCheckPropertyAccess(client, pWin, stuff->property,
 					   access_mode))
 	{
@@ -614,7 +614,7 @@ ProcListProperties(ClientPtr client)
 
     REQUEST_SIZE_MATCH(xResourceReq);
     pWin = (WindowPtr)SecurityLookupWindow(stuff->id, client,
-					   SecurityReadAccess);
+					   DixReadAccess);
     if (!pWin)
         return(BadWindow);
 
@@ -659,7 +659,7 @@ ProcDeleteProperty(register ClientPtr client)
     REQUEST_SIZE_MATCH(xDeletePropertyReq);
     UpdateCurrentTime();
     pWin = (WindowPtr)SecurityLookupWindow(stuff->window, client,
-					   SecurityWriteAccess);
+					   DixWriteAccess);
     if (!pWin)
         return(BadWindow);
     if (!ValidAtom(stuff->property))
@@ -670,7 +670,7 @@ ProcDeleteProperty(register ClientPtr client)
 
 #ifdef XCSECURITY
     switch(SecurityCheckPropertyAccess(client, pWin, stuff->property,
-				       SecurityDestroyAccess))
+				       DixDestroyAccess))
     {
 	case SecurityErrorOperation:
 	    client->errorValue = stuff->property;

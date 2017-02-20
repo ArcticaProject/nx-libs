@@ -1197,7 +1197,7 @@ doPolyText(ClientPtr client, register PTclosurePtr c)
     if (c->slept &&
 	c->pDraw &&
 	c->pDraw != (DrawablePtr)SecurityLookupIDByClass(client, c->did,
-					RC_DRAWABLE, SecurityWriteAccess))
+					RC_DRAWABLE, DixWriteAccess))
     {
 	/* Our drawable has disappeared.  Treat like client died... ask
 	   the FPE code to clean up after client and avoid further
@@ -1227,7 +1227,7 @@ doPolyText(ClientPtr client, register PTclosurePtr c)
 		 | ((Font)*(c->pElt+2)) << 16
 		 | ((Font)*(c->pElt+1)) << 24;
 	    pFont = (FontPtr)SecurityLookupIDByType(client, fid, RT_FONT,
-						    SecurityReadAccess);
+						    DixReadAccess);
 	    if (!pFont)
 	    {
 		client->errorValue = fid;
@@ -1489,7 +1489,7 @@ doImageText(ClientPtr client, register ITclosurePtr c)
     if (c->slept &&
 	c->pDraw &&
 	c->pDraw != (DrawablePtr)SecurityLookupIDByClass(client, c->did,
-					RC_DRAWABLE, SecurityWriteAccess))
+					RC_DRAWABLE, DixWriteAccess))
     {
 	/* Our drawable has disappeared.  Treat like client died... ask
 	   the FPE code to clean up after client. */
@@ -2044,7 +2044,7 @@ FontPtr
 find_old_font(XID id)
 {
     return (FontPtr) SecurityLookupIDByType(NullClient, id, RT_NONE,
-					    SecurityUnknownAccess);
+					    DixUnknownAccess);
 }
 
 Font

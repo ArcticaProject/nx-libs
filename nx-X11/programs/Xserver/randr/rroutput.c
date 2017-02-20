@@ -583,7 +583,7 @@ ProcRRSetOutputPrimary(ClientPtr client)
 #ifndef NXAGENT_SERVER
     ret = dixLookupWindow(&pWin, stuff->window, client, DixGetAttrAccess);
 #else
-    pWin = SecurityLookupWindow(stuff->window, client, SecurityReadAccess);
+    pWin = SecurityLookupWindow(stuff->window, client, DixReadAccess);
     ret = pWin ? Success : BadWindow;
 #endif
 
@@ -641,7 +641,7 @@ ProcRRGetOutputPrimary(ClientPtr client)
 #ifndef NXAGENT_SERVER
     rc = dixLookupWindow(&pWin, stuff->window, client, DixGetAttrAccess);
 #else
-    pWin = SecurityLookupWindow(stuff->window, client, SecurityReadAccess);
+    pWin = SecurityLookupWindow(stuff->window, client, DixReadAccess);
     rc = pWin ? Success : BadWindow;
 #endif
 

@@ -138,13 +138,13 @@ SOFTWARE.
     }
 
 #define VERIFY_DRAWABLE(pDraw, did, client)\
-	SECURITY_VERIFY_DRAWABLE(pDraw, did, client, SecurityUnknownAccess)
+	SECURITY_VERIFY_DRAWABLE(pDraw, did, client, DixUnknownAccess)
 
 #define VERIFY_GEOMETRABLE(pDraw, did, client)\
-	SECURITY_VERIFY_GEOMETRABLE(pDraw, did, client, SecurityUnknownAccess)
+	SECURITY_VERIFY_GEOMETRABLE(pDraw, did, client, DixUnknownAccess)
 
 #define VERIFY_GC(pGC, rid, client)\
-	SECURITY_VERIFY_GC(pGC, rid, client, SecurityUnknownAccess)
+	SECURITY_VERIFY_GC(pGC, rid, client, DixUnknownAccess)
 
 #else /* not XCSECURITY */
 
@@ -255,8 +255,8 @@ SOFTWARE.
     if ((stuff->gc == INVALID) || (client->lastGCID != stuff->gc) ||\
 	(client->lastDrawableID != drawID))\
     {\
-	SECURITY_VERIFY_GEOMETRABLE(pDraw, drawID, client, SecurityWriteAccess);\
-	SECURITY_VERIFY_GC(pGC, stuff->gc, client, SecurityReadAccess);\
+	SECURITY_VERIFY_GEOMETRABLE(pDraw, drawID, client, DixWriteAccess);\
+	SECURITY_VERIFY_GC(pGC, stuff->gc, client, DixReadAccess);\
 	if ((pGC->depth != pDraw->depth) ||\
 	    (pGC->pScreen != pDraw->pScreen))\
 	    return (BadMatch);\

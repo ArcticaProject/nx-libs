@@ -1028,7 +1028,7 @@ ChangeWindowAttributes(register WindowPtr pWin, Mask vmask, XID *vlist, ClientPt
 	    else
 	    {	
 		pPixmap = (PixmapPtr)SecurityLookupIDByType(client, pixID,
-						RT_PIXMAP, SecurityReadAccess);
+						RT_PIXMAP, DixReadAccess);
 		if (pPixmap != (PixmapPtr) NULL)
 		{
 		    if	((pPixmap->drawable.depth != pWin->drawable.depth) ||
@@ -1089,7 +1089,7 @@ ChangeWindowAttributes(register WindowPtr pWin, Mask vmask, XID *vlist, ClientPt
 	    else
 	    {	
 		pPixmap = (PixmapPtr)SecurityLookupIDByType(client, pixID,
-					RT_PIXMAP, SecurityReadAccess);
+					RT_PIXMAP, DixReadAccess);
 		if (pPixmap)
 		{
 		    if	((pPixmap->drawable.depth != pWin->drawable.depth) ||
@@ -1302,7 +1302,7 @@ ChangeWindowAttributes(register WindowPtr pWin, Mask vmask, XID *vlist, ClientPt
 		goto PatchUp;
 	    }
 	    pCmap = (ColormapPtr)SecurityLookupIDByType(client, cmap,
-					      RT_COLORMAP, SecurityReadAccess);
+					      RT_COLORMAP, DixReadAccess);
 	    if (!pCmap)
 	    {
 		error = BadColor;
@@ -1378,7 +1378,7 @@ ChangeWindowAttributes(register WindowPtr pWin, Mask vmask, XID *vlist, ClientPt
 	    else
 	    {
 		pCursor = (CursorPtr)SecurityLookupIDByType(client, cursorID,
-						RT_CURSOR, SecurityReadAccess);
+						RT_CURSOR, DixReadAccess);
 		if (!pCursor)
 		{
 		    error = BadCursor;
@@ -2252,7 +2252,7 @@ ConfigureWindow(register WindowPtr pWin, register Mask mask, XID *vlist, ClientP
 	    sibwid = (Window ) *pVlist;
 	    pVlist++;
 	    pSib = (WindowPtr )SecurityLookupIDByType(client, sibwid,
-						RT_WINDOW, SecurityReadAccess);
+						RT_WINDOW, DixReadAccess);
 	    if (!pSib)
 	    {
 		client->errorValue = sibwid;
