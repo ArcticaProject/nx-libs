@@ -14,17 +14,3 @@ LinkSourceFile(swrast_setup.h, $(MESASRCDIR)/src/mesa/swrast_setup)
 
  MESA_SWR_SETUP_OBJS = $(MESASWRSETUPDIR)ss_context.o \
 		       $(MESASWRSETUPDIR)ss_triangle.o 
-
-#if defined(DoSharedLib) && DoSharedLib
-MESA_SWR_SETUP_UOBJS = $(MESASWRSETUPDIR)unshared/ss_context.o \
-		       $(MESASWRSETUPDIR)unshared/ss_triangle.o 
-#else
-MESA_SWR_SETUP_UOBJS = $(MESA_SWR_SETUP_OBJS)
-#endif
-
-MESA_SWR_SETUP_DOBJS = $(MESASWRSETUPDIR)debugger/ss_context.o \
-		       $(MESASWRSETUPDIR)debugger/ss_triangle.o 
-
-MESA_SWR_SETUP_POBJS = $(MESASWRSETUPDIR)profiled/ss_context.o \
-		       $(MESASWRSETUPDIR)profiled/ss_triangle.o 
-

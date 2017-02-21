@@ -3,7 +3,6 @@
 #define NeedAllMesaSrc
 #define NeedToLinkMesaSrc
 #define MesaXBuildDir /**/
-#define MesaInXServer
 #include "Imakefile.inc"
 
 

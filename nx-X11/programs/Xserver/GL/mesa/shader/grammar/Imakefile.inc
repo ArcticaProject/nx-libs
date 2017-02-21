@@ -11,13 +11,3 @@ LinkSourceFile(grammar_mesa.h, $(MESASRCDIR)/src/mesa/shader/grammar)
 #endif
 
   MESA_GRAMMAR_OBJS =	 $(MESAGRAMMARBUILDDIR)grammar_mesa.o
-
-#if defined(DoSharedLib) && DoSharedLib
- MESA_GRAMMAR_UOBJS = $(MESAGRAMMARBUILDDIR)unshared/grammar_mesa.o
-#else
- MESA_GRAMMAR_UOBJS = $(MESA_GRAMMAR_OBJS)
-#endif
-
- MESA_GRAMMAR_DOBJS = $(MESAGRAMMARBUILDDIR)debugger/grammar_mesa.o
-
- MESA_GRAMMAR_POBJS = $(MESAGRAMMARBUILDDIR)profiled/grammar_mesa.o
