@@ -173,7 +173,8 @@ miShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
         nxagentShmTrap = 1;
 	return;
     }
-    pmap = (*dst->pScreen->CreatePixmap)(dst->pScreen, sw, sh, depth);
+    pmap = (*dst->pScreen->CreatePixmap)(dst->pScreen, sw, sh, depth,
+                                        CREATE_PIXMAP_USAGE_SCRATCH);
     if (!pmap)
     {
         nxagentShmTrap = 1;
@@ -387,7 +388,7 @@ fbShmCreatePixmap (pScreen, width, height, depth, addr)
 
     nxagentShmPixmapTrap = 1;
 
-    pPixmap = (*pScreen->CreatePixmap)(pScreen, width, height, depth);
+    pPixmap = (*pScreen->CreatePixmap)(pScreen, width, height, depth, 0);
 
     if (!pPixmap)
     {
@@ -397,7 +398,7 @@ fbShmCreatePixmap (pScreen, width, height, depth, addr)
     }
 
     #ifdef TEST
-    fprintf(stderr,"fbShmCreatePixmap: Width [%d] Height [%d] Depth [%d]\n", width, height, depth);
+    fprintf(stderr,"fbShmCreatePixmap: Width [%d] Height [%d] Depth [%d] Hint[%d]\n", width, height, depth, 0);
     #endif
 
     if (!(*pScreen->ModifyPixmapHeader)(pPixmap, width, height, depth,

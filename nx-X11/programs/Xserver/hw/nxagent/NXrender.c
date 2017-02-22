@@ -1266,7 +1266,8 @@ ProcRenderCreateCursor (ClientPtr client)
 	    free (mskbits);
 	    return (BadImplementation);
 	}
-	pPixmap = (*pScreen->CreatePixmap) (pScreen, width, height, 32);
+	pPixmap = (*pScreen->CreatePixmap) (pScreen, width, height, 32,
+	                                   CREATE_PIXMAP_USAGE_SCRATCH);
 	if (!pPixmap)
 	{
 	    free (argbbits);

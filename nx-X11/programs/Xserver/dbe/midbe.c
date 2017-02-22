@@ -188,7 +188,7 @@ miDbeAllocBackBufferName(pWin, bufId, swapAction)
         if (!(pDbeWindowPrivPriv->pFrontBuffer =
             (*pScreen->CreatePixmap)(pScreen, pDbeWindowPriv->width,
                                      pDbeWindowPriv->height,
-                                     pWin->drawable.depth)))
+                                     pWin->drawable.depth, 0)))
         {
             return(BadAlloc);
         }
@@ -197,7 +197,7 @@ miDbeAllocBackBufferName(pWin, bufId, swapAction)
         if (!(pDbeWindowPrivPriv->pBackBuffer =
             (*pScreen->CreatePixmap)(pScreen, pDbeWindowPriv->width,
                                      pDbeWindowPriv->height,
-                                     pWin->drawable.depth)))
+                                     pWin->drawable.depth, 0)))
         {
             (*pScreen->DestroyPixmap)(pDbeWindowPrivPriv->pFrontBuffer); 
             return(BadAlloc);
@@ -668,10 +668,10 @@ miDbePositionWindow(pWin, x, y)
 
     /* Create DBE buffer pixmaps equal to size of resized window. */
     pFrontBuffer = (*pScreen->CreatePixmap)(pScreen, width, height,
-					    pWin->drawable.depth);
+					    pWin->drawable.depth, 0);
 
     pBackBuffer = (*pScreen->CreatePixmap)(pScreen, width, height,
-					   pWin->drawable.depth);
+					   pWin->drawable.depth, 0);
 
     if (!pFrontBuffer || !pBackBuffer)
     {
