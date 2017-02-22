@@ -33,6 +33,7 @@
 **
 */
 
+#define NEED_REPLIES
 #define FONT_PCF
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -47,46 +48,137 @@
 #include "g_disptab.h"
 #include <pixmapstr.h>
 #include <windowstr.h>
-#include "g_disptab_EXT.h"
-#include "glximports.h"
 #include "glxutil.h"
 #include "glxext.h"
-#include "glcontextmodes.h"
+#include "glapitable.h"
+#include "glapi.h"
+#include "glthread.h"
+#include "dispatch.h"
+#include "indirect_dispatch.h"
+#include "indirect_table.h"
+#include "indirect_util.h"
 
-/************************************************************************/
+#ifdef XSERVER_LACKS_XACE_EXT
+#define DixGetAttrAccess DixReadAccess
+#define DixAddAccess DixWriteAccess
+#endif
 
-static __GLimports imports = {
-    __glXImpMalloc,
-    __glXImpCalloc,
-    __glXImpRealloc,
-    __glXImpFree,
-    __glXImpWarning,
-    __glXImpFatal,
-    __glXImpGetenv,
-    __glXImpAtoi,
-    __glXImpSprintf,
-    __glXImpFopen,
-    __glXImpFclose,
-    __glXImpFprintf,
-    __glXImpGetDrawablePrivate,
-    __glXImpGetReadablePrivate,
-    NULL
-};
+void
+GlxSetRenderTables (struct _glapi_table *table)
+{
+    _glapi_set_dispatch (table);
+}
 
-static int __glXGetFBConfigsSGIX(__GLXclientState *cl, GLbyte *pc);
-static int __glXCreateContextWithConfigSGIX(__GLXclientState *cl, GLbyte *pc);
-static int __glXCreateGLXPixmapWithConfigSGIX(__GLXclientState *cl, GLbyte *pc);
-static int __glXMakeCurrentReadSGI(__GLXclientState *cl, GLbyte *pc);
+static int
+validGlxScreen(ClientPtr client, int screen, __GLXscreen **pGlxScreen, int *err)
+{
+    /*
+    ** Check if screen exists.
+    */
+    if (screen >= screenInfo.numScreens) {
+	client->errorValue = screen;
+	*err = BadValue;
+	return FALSE;
+    }
+    *pGlxScreen = glxGetScreen(screenInfo.screens[screen]);
 
-static int __glXBindSwapBarrierSGIX(__GLXclientState *cl, GLbyte *pc);
-static int __glXQueryMaxSwapBarriersSGIX(__GLXclientState *cl, GLbyte *pc);
-static int __glxQueryHyperpipeNetworkSGIX(__GLXclientState *cl, GLbyte *pc);
-static int __glxDestroyHyperpipeConfigSGIX (__GLXclientState *cl, GLbyte *pc);
-static int __glxQueryHyperpipeConfigSGIX(__GLXclientState *cl, GLbyte *pc);
-static int __glxHyperpipeConfigSGIX(__GLXclientState *cl, GLbyte *pc);
+    return TRUE;
+}
+
+static int
+validGlxFBConfig(ClientPtr client, __GLXscreen *pGlxScreen, XID id,
+		 __GLXconfig **config, int *err)
+{
+    __GLXconfig *m;
+
+    for (m = pGlxScreen->fbconfigs; m != NULL; m = m->next)
+	if (m->fbconfigID == id) {
+	    *config = m;
+	    return TRUE;
+	}
+
+    client->errorValue = id;
+    *err = __glXError(GLXBadFBConfig);
+
+    return FALSE;
+}
+
+static int
+validGlxVisual(ClientPtr client, __GLXscreen *pGlxScreen, XID id,
+	       __GLXconfig **config, int *err)
+{
+    int i;
+
+    for (i = 0; i < pGlxScreen->numVisuals; i++)
+ 	if (pGlxScreen->visuals[i]->visualID == id) {
+	    *config = pGlxScreen->visuals[i];
+	    return TRUE;
+	}
+
+    client->errorValue = id;
+    *err = BadValue;
+
+    return FALSE;
+}
+
+static int
+validGlxFBConfigForWindow(ClientPtr client, __GLXconfig *config,
+			  DrawablePtr pDraw, int *err)
+{
+    ScreenPtr pScreen = pDraw->pScreen;
+    VisualPtr pVisual = NULL;
+    XID vid;
+    int i;
+
+    vid = wVisual((WindowPtr)pDraw);
+    for (i = 0; i < pScreen->numVisuals; i++) {
+	if (pScreen->visuals[i].vid == vid) {
+	    pVisual = &pScreen->visuals[i];
+	    break;
+	}
+    }
+
+    /* FIXME: What exactly should we check here... */
+    if (pVisual->class != glxConvertToXVisualType(config->visualType) ||
+	!(config->drawableType & GLX_WINDOW_BIT)) {
+	client->errorValue = pDraw->id;
+	*err = BadMatch;
+	return FALSE;
+    }
+
+    return TRUE;
+}
+
+void
+__glXContextDestroy(__GLXcontext *context)
+{
+    if (!context->isDirect)
+	__glXDeassociateContext(context);
+    __glXFlushContextCache();
+}
 
 
-/************************************************************************/
+static void __glXdirectContextDestroy(__GLXcontext *context)
+{
+    __glXContextDestroy(context);
+    free(context);
+}
+
+static __GLXcontext *__glXdirectContextCreate(__GLXscreen *screen,
+					      __GLXconfig *modes,
+					      __GLXcontext *shareContext)
+{
+    __GLXcontext *context;
+
+    context = malloc(sizeof (__GLXcontext));
+    if (context == NULL)
+	return NULL;
+
+    memset(context, 0, sizeof *context);
+    context->destroy = __glXdirectContextDestroy;
+
+    return context;
+}
 
 /**
  * Create a GL context with the given properties.  This routine is used
@@ -96,60 +188,15 @@ static int __glxHyperpipeConfigSGIX(__GLXclientState *cl, GLbyte *pc);
  * same as the VisualID.
  */
 
-int DoCreateContext(__GLXclientState *cl, GLXContextID gcId,
-		    GLXContextID shareList, VisualID visual,
-		    GLuint screen, GLboolean isDirect)
+static int
+DoCreateContext(__GLXclientState *cl, GLXContextID gcId,
+		GLXContextID shareList, __GLXconfig *config,
+		__GLXscreen *pGlxScreen, GLboolean isDirect)
 {
     ClientPtr client = cl->client;
-    VisualPtr pVisual;
-    ScreenPtr pScreen;
     __GLXcontext *glxc, *shareglxc;
-    __GLcontextModes *modes;
-    __GLXscreenInfo *pGlxScreen;
-    __GLinterface *shareGC;
-    GLint i;
 
     LEGAL_NEW_RESOURCE(gcId, client);
-    
-    /*
-    ** Check if screen exists.
-    */
-    if (screen >= screenInfo.numScreens) {
-	client->errorValue = screen;
-	return BadValue;
-    }
-    pScreen = screenInfo.screens[screen];
-    pGlxScreen = &__glXActiveScreens[screen];
-    
-    /*
-    ** Check if the visual ID is valid for this screen.
-    */
-    pVisual = pScreen->visuals;
-    for (i = 0; i < pScreen->numVisuals; i++, pVisual++) {
-	if (pVisual->vid == visual) {
-	    break;
-	}
-    }
-    if (i == pScreen->numVisuals) {
-	client->errorValue = visual;
-	return BadValue;
-    }
-
-    /*
-    ** Get configuration of the visual.  This assumes that the
-    ** glXActiveScreens structure contains visual configurations only for the
-    ** subset of Visuals that are supported by this implementation of the
-    ** OpenGL.
-    */
-
-    modes = _gl_context_modes_find_visual( pGlxScreen->modes, visual );
-    if (modes == NULL) {
-	/*
-	** Visual not support on this screen by this OpenGL implementation.
-	*/
-	client->errorValue = visual;
-	return BadValue;
-    }
 
     /*
     ** Find the display list space that we want to share.  
@@ -161,12 +208,12 @@ int DoCreateContext(__GLXclientState *cl, GLXContextID gcId,
     ** for multithreaded servers, we don't do this.  
     */
     if (shareList == None) {
-	shareGC = 0;
+	shareglxc = 0;
     } else {
 	shareglxc = (__GLXcontext *) LookupIDByType(shareList, __glXContextRes);
 	if (!shareglxc) {
 	    client->errorValue = shareList;
-	    return __glXBadContext;
+	    return __glXError(GLXBadContext);
 	}
 	if (shareglxc->isDirect) {
 	    /*
@@ -187,53 +234,31 @@ int DoCreateContext(__GLXclientState *cl, GLXContextID gcId,
 	    */
 	    isDirect = GL_FALSE;
 	}
-	shareGC = shareglxc->gc;
     }
 
     /*
     ** Allocate memory for the new context
     */
-    glxc = (__GLXcontext *) malloc(sizeof(__GLXcontext));
+    if (!isDirect)
+	glxc = pGlxScreen->createContext(pGlxScreen, config, shareglxc);
+    else
+	glxc = __glXdirectContextCreate(pGlxScreen, config, shareglxc);
     if (!glxc) {
 	return BadAlloc;
     }
-    memset(glxc, 0, sizeof(__GLXcontext));
 
     /*
     ** Initially, setup the part of the context that could be used by
     ** a GL core that needs windowing information (e.g., Mesa).
     */
-    glxc->pScreen = pScreen;
     glxc->pGlxScreen = pGlxScreen;
-    glxc->pVisual = pVisual;
-    glxc->modes = modes;
+    glxc->config = config;
 
-    if (!isDirect) {
-
-	/*
-	** Allocate a GL context
-	*/
-	imports.other = (void *)glxc;
-	glxc->gc = (*pGlxScreen->createContext)(&imports, glxc->modes, shareGC);
-	if (!glxc->gc) {
-	    free(glxc);
-	    client->errorValue = gcId;
-	    return BadAlloc;
-	}
-    } else {
-	/*
-	** Don't need local GL context for a direct context.
-	*/
-	glxc->gc = 0;
-    }
     /*
     ** Register this context as a resource.
     */
-    if (!AddResource(gcId, __glXContextRes, (void *)glxc)) {
-	if (!isDirect) {
-	    (*glxc->gc->exports.destroyContext)((__GLcontext *)glxc->gc);
-        }
-	free(glxc);
+    if (!AddResource(gcId, __glXContextRes, (pointer)glxc)) {
+	(*glxc->destroy)(glxc);
 	client->errorValue = gcId;
 	return BadAlloc;
     }
@@ -252,35 +277,55 @@ int DoCreateContext(__GLXclientState *cl, GLXContextID gcId,
     return Success;
 }
 
-
-int __glXCreateContext(__GLXclientState *cl, GLbyte *pc)
+int __glXDisp_CreateContext(__GLXclientState *cl, GLbyte *pc)
 {
     xGLXCreateContextReq *req = (xGLXCreateContextReq *) pc;
-    return DoCreateContext( cl, req->context, req->shareList, req->visual,
-			    req->screen, req->isDirect );
+    __GLXconfig *config;
+    __GLXscreen *pGlxScreen;
+    int err;
+
+    if (!validGlxScreen(cl->client, req->screen, &pGlxScreen, &err))
+	return err;
+    if (!validGlxVisual(cl->client, pGlxScreen, req->visual, &config, &err))
+	return err;
+
+    return DoCreateContext(cl, req->context, req->shareList,
+			   config, pGlxScreen, req->isDirect);
 }
 
-
-int __glXCreateNewContext(__GLXclientState *cl, GLbyte *pc)
+int __glXDisp_CreateNewContext(__GLXclientState *cl, GLbyte *pc)
 {
     xGLXCreateNewContextReq *req = (xGLXCreateNewContextReq *) pc;
-    return DoCreateContext( cl, req->context, req->shareList, req->fbconfig,
-			    req->screen, req->isDirect );
+    __GLXconfig *config;
+    __GLXscreen *pGlxScreen;
+    int err;
+
+    if (!validGlxScreen(cl->client, req->screen, &pGlxScreen, &err))
+	return err;
+    if (!validGlxFBConfig(cl->client, pGlxScreen, req->fbconfig, &config, &err))
+	return err;
+
+    return DoCreateContext(cl, req->context, req->shareList,
+			   config, pGlxScreen, req->isDirect);
 }
 
-
-int __glXCreateContextWithConfigSGIX(__GLXclientState *cl, GLbyte *pc)
+int __glXDisp_CreateContextWithConfigSGIX(__GLXclientState *cl, GLbyte *pc)
 {
     xGLXCreateContextWithConfigSGIXReq *req = 
 	(xGLXCreateContextWithConfigSGIXReq *) pc;
-    return DoCreateContext( cl, req->context, req->shareList, req->fbconfig,
-			    req->screen, req->isDirect );
-}
+    __GLXconfig *config;
+    __GLXscreen *pGlxScreen;
+    int err;
 
-/*
-** Destroy a GL context as an X resource.
-*/
-int __glXDestroyContext(__GLXclientState *cl, GLbyte *pc)
+    if (!validGlxScreen(cl->client, req->screen, &pGlxScreen, &err))
+	return err;
+    if (!validGlxFBConfig(cl->client, pGlxScreen, req->fbconfig, &config, &err))
+	return err;
+
+    return DoCreateContext(cl, req->context, req->shareList,
+			   config, pGlxScreen, req->isDirect);
+}
+int __glXDisp_DestroyContext(__GLXclientState *cl, GLbyte *pc)
 {
     ClientPtr client = cl->client;
     xGLXDestroyContextReq *req = (xGLXDestroyContextReq *) pc;
@@ -299,7 +344,7 @@ int __glXDestroyContext(__GLXclientState *cl, GLbyte *pc)
 	return Success;
     } else {
 	client->errorValue = gcId;
-	return __glXBadContext;
+	return __glXError(GLXBadContext);
     }
 }
 
@@ -393,36 +438,6 @@ static void StartUsingContext(__GLXclientState *cl, __GLXcontext *glxc)
     glxc->isCurrent = GL_TRUE;
 }
 
-/*****************************************************************************/
-/*
-** Make an OpenGL context and drawable current.
-*/
-
-int __glXMakeCurrent(__GLXclientState *cl, GLbyte *pc)
-{
-    xGLXMakeCurrentReq *req = (xGLXMakeCurrentReq *) pc;
-
-    return DoMakeCurrent( cl, req->drawable, req->drawable,
-			  req->context, req->oldContextTag );
-}
-
-int __glXMakeContextCurrent(__GLXclientState *cl, GLbyte *pc)
-{
-    xGLXMakeContextCurrentReq *req = (xGLXMakeContextCurrentReq *) pc;
-
-    return DoMakeCurrent( cl, req->drawable, req->readdrawable,
-			  req->context, req->oldContextTag );
-}
-
-int __glXMakeCurrentReadSGI(__GLXclientState *cl, GLbyte *pc)
-{
-    xGLXMakeCurrentReadSGIReq *req = (xGLXMakeCurrentReadSGIReq *) pc;
-
-    return DoMakeCurrent( cl, req->drawable, req->readable,
-			  req->context, req->oldContextTag );
-}
-
-
 /**
  * Given a drawable ID, get the associated drawable and / or pixmap.
  * 
@@ -433,90 +448,98 @@ int __glXMakeCurrentReadSGI(__GLXclientState *cl, GLbyte *pc)
  *
  * \param glxc      Associated GLX context.
  * \param drawId    ID of the drawable.
- * \param ppDraw    Location to store the pointer to the drawable.
- * \param ppPixmap  Location to store the pointer to the pixmap.
  * \param client    Pointer to the client state.
- * \return  Zero is returned on success.  Otherwise a GLX / X11 protocol error
- *          is returned.
+ * \return  the __GLXdrawable is returned on success.  Otherwise NULL.
  * 
  * \notes This function will need some modification when support pbuffers
  *        is added.
  */
-static int GetDrawableOrPixmap( __GLXcontext *glxc, GLXDrawable drawId,
-				DrawablePtr *ppDraw, __GLXpixmap **ppPixmap,
-				ClientPtr client )
+static __GLXdrawable *
+__glXGetDrawable(__GLXcontext *glxc, GLXDrawable drawId, ClientPtr client,
+		 int *error)
 {
     DrawablePtr pDraw;
-    __GLXpixmap *drawPixmap = NULL;
+    __GLXdrawable *pGlxDraw;
+    int rc;
 
-    pDraw = (DrawablePtr) LookupDrawable(drawId, client);
-    if (pDraw) {
-	if (pDraw->type == DRAWABLE_WINDOW) {
-	    /*
-	    ** Drawable is an X Window.
-	    */
-	    WindowPtr pWin = (WindowPtr)pDraw;
-	    VisualID vid = wVisual(pWin);
-
-	    /*
-	    ** Check if window and context are similar.
-	    */
-	    if ((vid != glxc->pVisual->vid) ||
-		(pWin->drawable.pScreen != glxc->pScreen)) {
-		client->errorValue = drawId;
-		return BadMatch;
-	    }
-	} else {
-	    /*
-	    ** An X Pixmap is not allowed as a parameter (a GLX Pixmap
-	    ** is, but it must first be created with glxCreateGLXPixmap).
-	    */
+    /* This is the GLX 1.3 case - the client passes in a GLXWindow or
+     * GLXPixmap and we just return the __GLXdrawable.  */
+    pGlxDraw = (__GLXdrawable *) LookupIDByType(drawId, __glXDrawableRes);
+    if (pGlxDraw != NULL) {
+	if (glxc != NULL && pGlxDraw->config != glxc->config) {
 	    client->errorValue = drawId;
-	    return __glXBadDrawable;
+	    *error = BadMatch;
+	    return NULL;
 	}
-    } else {
-	drawPixmap = (__GLXpixmap *) LookupIDByType(drawId, __glXPixmapRes);
-	if (drawPixmap) {
-	    /*
-	    ** Check if pixmap and context are similar.
-	    */
-	    if (drawPixmap->pScreen != glxc->pScreen ||
-		drawPixmap->modes->visualID != glxc->modes->visualID) {
-		client->errorValue = drawId;
-		return BadMatch;
-	    }
-	    pDraw = drawPixmap->pDraw;
 
-	} else {
-	    /*
-	    ** Drawable is neither a Window nor a GLXPixmap.
-	    */
-	    client->errorValue = drawId;
-	    return __glXBadDrawable;
-	}
+	return pGlxDraw;
     }
 
-    *ppPixmap = drawPixmap;
-    *ppDraw = pDraw;
+    /* The drawId wasn't a GLX drawable, so presumably it's a regular
+     * X window.  In that case, we create a shadow GLXWindow for it on
+     * demand here for pre GLX 1.3 compatibility and use the X Window
+     * XID as its GLXWindow XID.  The client can't explicitly create a
+     * GLXWindow with the same XID as an X Window, so we wont get any
+     * resource ID clashes.  Effectively, the X Window is now also a
+     * GLXWindow. */
 
-    return 0;
+#ifndef XSERVER_LACKS_XACE_EXT
+    rc = dixLookupDrawable(&pDraw, drawId, client, 0, DixGetAttrAccess);
+#else
+    pDraw =
+        SecurityLookupDrawable(drawId, client, DixGetAttrAccess);
+    rc = pDraw ? Success : BadDrawable;
+#endif /* XSERVER_LACKS_XACE_EXT */
+
+    if (rc != Success || pDraw->type != DRAWABLE_WINDOW) {
+	client->errorValue = drawId;
+	*error = __glXError(GLXBadDrawable);
+	return NULL;
+    }
+
+    /* If we're not given a context, don't create the __GLXdrawable */
+    if (glxc == NULL) {
+	*error = __glXError(GLXBadDrawable);
+	return NULL;
+    }
+
+    /* We're binding an X Window for the first time and need to create
+     * a GLX drawable for it.  Check that the drawable screen matches
+     * the context screen and that the context fbconfig is compatible
+     * with the window visual. */
+    if (pDraw->pScreen != glxc->pGlxScreen->pScreen ||
+	!validGlxFBConfigForWindow(client, glxc->config, pDraw, error))
+	return NULL;
+
+    pGlxDraw = glxc->pGlxScreen->createDrawable(glxc->pGlxScreen,
+						pDraw, GLX_DRAWABLE_WINDOW,
+						drawId, glxc->config);
+
+    /* since we are creating the drawablePrivate, drawId should be new */
+    if (!AddResource(drawId, __glXDrawableRes, pGlxDraw)) {
+	pGlxDraw->destroy (pGlxDraw);
+	*error = BadAlloc;
+	return NULL;
+    }
+
+    return pGlxDraw;
 }
 
+/*****************************************************************************/
+/*
+** Make an OpenGL context and drawable current.
+*/
 
-int DoMakeCurrent( __GLXclientState *cl,
-		   GLXDrawable drawId, GLXDrawable readId,
-		   GLXContextID contextId, GLXContextTag tag )
+static int
+DoMakeCurrent(__GLXclientState *cl,
+	      GLXDrawable drawId, GLXDrawable readId,
+	      GLXContextID contextId, GLXContextTag tag)
 {
     ClientPtr client = cl->client;
-    DrawablePtr pDraw;
-    DrawablePtr pRead;
     xGLXMakeCurrentReply reply;
-    __GLXpixmap *drawPixmap = NULL;
-    __GLXpixmap *readPixmap = NULL;
     __GLXcontext *glxc, *prevglxc;
-    __GLinterface *gc, *prevgc;
-    __GLXdrawablePrivate *drawPriv = NULL;
-    __GLXdrawablePrivate *readPriv = NULL;
+    __GLXdrawable *drawPriv = NULL;
+    __GLXdrawable *readPriv = NULL;
     GLint error;
     GLuint  mask;
 
@@ -541,17 +564,15 @@ int DoMakeCurrent( __GLXclientState *cl,
 	    /*
 	    ** Tag for previous context is invalid.
 	    */
-	    return __glXBadContextTag;
+	    return __glXError(GLXBadContextTag);
 	}
 	if (prevglxc->renderMode != GL_RENDER) {
 	    /* Oops.  Not in render mode render. */
 	    client->errorValue = prevglxc->id;
-	    return __glXBadContextState;
+	    return __glXError(GLXBadContextState);
 	}
-	prevgc = prevglxc->gc;
     } else {
 	prevglxc = 0;
-	prevgc = 0;
     }
 
     /*
@@ -563,58 +584,29 @@ int DoMakeCurrent( __GLXclientState *cl,
 	glxc = (__GLXcontext *) LookupIDByType(contextId, __glXContextRes);
 	if (!glxc) {
 	    client->errorValue = contextId;
-	    return __glXBadContext;
+	    return __glXError(GLXBadContext);
 	}
 	if ((glxc != prevglxc) && glxc->isCurrent) {
 	    /* Context is current to somebody else */
 	    return BadAccess;
 	}
-	gc = glxc->gc;
-
 
 	assert( drawId != None );
 	assert( readId != None );
 
-	status = GetDrawableOrPixmap( glxc, drawId, & pDraw, & drawPixmap,
-				      client );
-	if ( status != 0 ) {
+	drawPriv = __glXGetDrawable(glxc, drawId, client, &status);
+	if (drawPriv == NULL)
 	    return status;
-	}
 
-	if ( readId != drawId ) {
-	    status = GetDrawableOrPixmap( glxc, readId, & pRead, & readPixmap,
-					  client );
-	    if ( status != 0 ) {
-		return status;
-	    }
-	} else {
-	    pRead = pDraw;
-	}
-
-	/* FIXME: Finish refactoring this. - idr */
-	/* get the drawable private */
-	if (pDraw) {
-	    drawPriv = __glXGetDrawablePrivate(pDraw, drawId, glxc->modes);
-	    if (drawPriv == NULL) {
-		return __glXBadDrawable;
-	    }
-	}
-
-	if (pRead != pDraw) {
-	    readPriv = __glXGetDrawablePrivate(pRead, readId, glxc->modes);
-	    if (readPriv == NULL) {
-		return __glXBadDrawable;
-	    }
-	} else {
-	    readPriv = drawPriv;
-	}
+	readPriv = __glXGetDrawable(glxc, readId, client, &status);
+	if (readPriv == NULL)
+	    return status;
 
     } else {
 	/* Switching to no context.  Ignore new drawable. */
 	glxc = 0;
-	gc = 0;
-	pDraw = 0;
-	pRead = 0;
+	drawPriv = 0;
+	readPriv = 0;
     }
 
 
@@ -624,7 +616,7 @@ int DoMakeCurrent( __GLXclientState *cl,
 	*/
 	if (__GLX_HAS_UNFLUSHED_CMDS(prevglxc)) {
 	    if (__glXForceCurrent(cl, tag, (int *)&error)) {
-		glFlush();
+		CALL_Flush( GET_DISPATCH(), () );
 		__GLX_NOTE_FLUSHED_CMDS(prevglxc);
 	    } else {
 		return error;
@@ -634,9 +626,10 @@ int DoMakeCurrent( __GLXclientState *cl,
 	/*
 	** Make the previous context not current.
 	*/
-	if (!(*prevgc->exports.loseCurrent)((__GLcontext *)prevgc)) {
-	    return __glXBadContext;
+	if (!(*prevglxc->loseCurrent)(prevglxc)) {
+	    return __glXError(GLXBadContext);
 	}
+	__glXFlushContextCache();
 	__glXDeassociateContext(prevglxc);
     }
 	
@@ -645,22 +638,21 @@ int DoMakeCurrent( __GLXclientState *cl,
 
 	glxc->drawPriv = drawPriv;
 	glxc->readPriv = readPriv;
-	__glXCacheDrawableSize(drawPriv);
 
 	/* make the context current */
-	if (!(*gc->exports.makeCurrent)((__GLcontext *)gc)) {
+	if (!(*glxc->makeCurrent)(glxc)) {
 	    glxc->drawPriv = NULL;
 	    glxc->readPriv = NULL;
-	    return __glXBadContext;
+	    return __glXError(GLXBadContext);
 	}
 
 	/* resize the buffers */
-	if (!__glXResizeDrawableBuffers(drawPriv)) {
+	if (!(*drawPriv->resize)(drawPriv)) {
 	    /* could not do initial resize.  make current failed */
-	    (*gc->exports.loseCurrent)((__GLcontext *)gc);
+	    (*glxc->loseCurrent)(glxc);
 	    glxc->drawPriv = NULL;
 	    glxc->readPriv = NULL;
-	    return __glXBadContext;
+	    return __glXError(GLXBadContext);
 	}
 
 	glxc->isCurrent = GL_TRUE;
@@ -670,42 +662,6 @@ int DoMakeCurrent( __GLXclientState *cl,
     }
 
     if (prevglxc) {
-	if (prevglxc->drawPixmap) {
-	    if (prevglxc->readPixmap &&
-		prevglxc->drawPixmap != prevglxc->readPixmap) {
-		/*
-		** The previous drawable was a glx pixmap, release it.
-		*/
-		prevglxc->readPixmap->refcnt--;
-		if (!prevglxc->readPixmap->idExists &&
-		    !prevglxc->readPixmap->refcnt) {
-		    PixmapPtr pPixmap = (PixmapPtr) prevglxc->readPixmap->pDraw;
-		    /*
-		    ** The DestroyPixmap routine should decrement the
-		    ** refcount of the X pixmap and free only if it's zero.
-		    */
-		    (*prevglxc->readPixmap->pScreen->DestroyPixmap)(pPixmap);
-		    free(prevglxc->readPixmap);
-		}
-	    }
-
-	    /*
-	    ** The previous drawable was a glx pixmap, release it.
-	    */
-	    prevglxc->drawPixmap->refcnt--;
-	    if (!prevglxc->drawPixmap->idExists &&
-		!prevglxc->drawPixmap->refcnt) {
-		PixmapPtr pPixmap = (PixmapPtr) prevglxc->drawPixmap->pDraw;
-		/*
-		** The DestroyPixmap routine should decrement the
-		** refcount of the X pixmap and free only if it's zero.
-		*/
-		(*prevglxc->drawPixmap->pScreen->DestroyPixmap)(pPixmap);
-		free(prevglxc->drawPixmap);
-	    }
-
-	    prevglxc->drawPixmap = NULL;
-	}
 	ChangeCurrentContext(cl, glxc, tag);
 	StopUsingContext(prevglxc);
     } else {
@@ -713,16 +669,6 @@ int DoMakeCurrent( __GLXclientState *cl,
     }
 
     if (glxc) {
-	if (drawPixmap) {
-	    drawPixmap->refcnt++;
-	    glxc->drawPixmap = drawPixmap;
-	}
-
-	if (readPixmap && (readPixmap != drawPixmap)) {
-	    readPixmap->refcnt++;
-	    glxc->readPixmap = readPixmap;
-	}
-
 	StartUsingContext(cl, glxc);
 	reply.contextTag = tag;
     } else {
@@ -736,12 +682,36 @@ int DoMakeCurrent( __GLXclientState *cl,
     if (client->swapped) {
 	__glXSwapMakeCurrentReply(client, &reply);
     } else {
-	WriteToClient(client, sz_xGLXMakeCurrentReply, &reply);
+	WriteToClient(client, sz_xGLXMakeCurrentReply, (char *)&reply);
     }
     return Success;
 }
 
-int __glXIsDirect(__GLXclientState *cl, GLbyte *pc)
+int __glXDisp_MakeCurrent(__GLXclientState *cl, GLbyte *pc)
+{
+    xGLXMakeCurrentReq *req = (xGLXMakeCurrentReq *) pc;
+
+    return DoMakeCurrent( cl, req->drawable, req->drawable,
+			  req->context, req->oldContextTag );
+}
+
+int __glXDisp_MakeContextCurrent(__GLXclientState *cl, GLbyte *pc)
+{
+    xGLXMakeContextCurrentReq *req = (xGLXMakeContextCurrentReq *) pc;
+
+    return DoMakeCurrent( cl, req->drawable, req->readdrawable,
+			  req->context, req->oldContextTag );
+}
+
+int __glXDisp_MakeCurrentReadSGI(__GLXclientState *cl, GLbyte *pc)
+{
+    xGLXMakeCurrentReadSGIReq *req = (xGLXMakeCurrentReadSGIReq *) pc;
+
+    return DoMakeCurrent( cl, req->drawable, req->readable,
+			  req->context, req->oldContextTag );
+}
+
+int __glXDisp_IsDirect(__GLXclientState *cl, GLbyte *pc)
 {
     ClientPtr client = cl->client;
     xGLXIsDirectReq *req = (xGLXIsDirectReq *) pc;
@@ -754,7 +724,7 @@ int __glXIsDirect(__GLXclientState *cl, GLbyte *pc)
     glxc = (__GLXcontext *) LookupIDByType(req->context, __glXContextRes);
     if (!glxc) {
 	client->errorValue = req->context;
-	return __glXBadContext;
+	return __glXError(GLXBadContext);
     }
 
     reply.isDirect = glxc->isDirect;
@@ -765,13 +735,13 @@ int __glXIsDirect(__GLXclientState *cl, GLbyte *pc)
     if (client->swapped) {
 	__glXSwapIsDirectReply(client, &reply);
     } else {
-	WriteToClient(client, sz_xGLXIsDirectReply, &reply);
+	WriteToClient(client, sz_xGLXIsDirectReply, (char *)&reply);
     }
 
     return Success;
 }
 
-int __glXQueryVersion(__GLXclientState *cl, GLbyte *pc)
+int __glXDisp_QueryVersion(__GLXclientState *cl, GLbyte *pc)
 {
     ClientPtr client = cl->client;
     xGLXQueryVersionReq *req = (xGLXQueryVersionReq *) pc;
@@ -797,12 +767,12 @@ int __glXQueryVersion(__GLXclientState *cl, GLbyte *pc)
     if (client->swapped) {
 	__glXSwapQueryVersionReply(client, &reply);
     } else {
-	WriteToClient(client, sz_xGLXQueryVersionReply, &reply);
+	WriteToClient(client, sz_xGLXQueryVersionReply, (char *)&reply);
     }
     return Success;
 }
 
-int __glXWaitGL(__GLXclientState *cl, GLbyte *pc)
+int __glXDisp_WaitGL(__GLXclientState *cl, GLbyte *pc)
 {
     xGLXWaitGLReq *req = (xGLXWaitGLReq *)pc;
     int error;
@@ -810,11 +780,11 @@ int __glXWaitGL(__GLXclientState *cl, GLbyte *pc)
     if (!__glXForceCurrent(cl, req->contextTag, &error)) {
 	return error;
     }
-    glFinish();
+    CALL_Finish( GET_DISPATCH(), () );
     return Success;
 }
 
-int __glXWaitX(__GLXclientState *cl, GLbyte *pc)
+int __glXDisp_WaitX(__GLXclientState *cl, GLbyte *pc)
 {
     xGLXWaitXReq *req = (xGLXWaitXReq *)pc;
     int error;
@@ -831,7 +801,7 @@ int __glXWaitX(__GLXclientState *cl, GLbyte *pc)
     return Success;
 }
 
-int __glXCopyContext(__GLXclientState *cl, GLbyte *pc)
+int __glXDisp_CopyContext(__GLXclientState *cl, GLbyte *pc)
 {
     ClientPtr client = cl->client;
     xGLXCopyContextReq *req = (xGLXCopyContextReq *) pc;
@@ -848,12 +818,12 @@ int __glXCopyContext(__GLXclientState *cl, GLbyte *pc)
     src = (__GLXcontext *) LookupIDByType(source, __glXContextRes);
     if (!src) {
 	client->errorValue = source;
-	return __glXBadContext;
+	return __glXError(GLXBadContext);
     }
     dst = (__GLXcontext *) LookupIDByType(dest, __glXContextRes);
     if (!dst) {
 	client->errorValue = dest;
-	return __glXBadContext;
+	return __glXError(GLXBadContext);
     }
 
     /*
@@ -878,7 +848,7 @@ int __glXCopyContext(__GLXclientState *cl, GLbyte *pc)
 	__GLXcontext *tagcx = __glXLookupContextByTag(cl, tag);
 	
 	if (!tagcx) {
-	    return __glXBadContextTag;
+	    return __glXError(GLXBadContextTag);
 	}
 	if (tagcx != src) {
 	    /*
@@ -896,7 +866,7 @@ int __glXCopyContext(__GLXclientState *cl, GLbyte *pc)
 	    ** Do whatever is needed to make sure that all preceding requests
 	    ** in both streams are completed before the copy is executed.
 	    */
-	    glFinish();
+	    CALL_Finish( GET_DISPATCH(), () );
 	    __GLX_NOTE_FLUSHED_CMDS(tagcx);
 	} else {
 	    return error;
@@ -905,9 +875,7 @@ int __glXCopyContext(__GLXclientState *cl, GLbyte *pc)
     /*
     ** Issue copy.  The only reason for failure is a bad mask.
     */
-    if (!(*dst->gc->exports.copyContext)((__GLcontext *)dst->gc, 
-					 (__GLcontext *)src->gc,
-					 mask)) {
+    if (!(*dst->copy)(dst, src, mask)) {
 	client->errorValue = mask;
 	return BadValue;
     }
@@ -915,49 +883,42 @@ int __glXCopyContext(__GLXclientState *cl, GLbyte *pc)
 }
 
 
-int DoGetVisualConfigs(__GLXclientState *cl, unsigned screen,
-		       GLboolean do_swap)
+int __glXDisp_GetVisualConfigs(__GLXclientState *cl, GLbyte *pc)
 {
+    xGLXGetVisualConfigsReq *req = (xGLXGetVisualConfigsReq *) pc;
     ClientPtr client = cl->client;
     xGLXGetVisualConfigsReply reply;
-    __GLXscreenInfo *pGlxScreen;
-    __GLcontextModes *modes;
+    __GLXscreen *pGlxScreen;
+    __GLXconfig *modes;
     CARD32 buf[__GLX_TOTAL_CONFIG];
-    int p;
+    int p, i, err;
     __GLX_DECLARE_SWAP_VARIABLES;
     __GLX_DECLARE_SWAP_ARRAY_VARIABLES;
 
-    if (screen >= screenInfo.numScreens) {
-	/* The client library must send a valid screen number. */
-	client->errorValue = screen;
-	return BadValue;
-    }
-    pGlxScreen = &__glXActiveScreens[screen];
+    if (!validGlxScreen(cl->client, req->screen, &pGlxScreen, &err))
+	return err;
 
-    reply.numVisuals = pGlxScreen->numUsableVisuals;
+    reply.numVisuals = pGlxScreen->numVisuals;
     reply.numProps = __GLX_TOTAL_CONFIG;
-    reply.length = (pGlxScreen->numUsableVisuals * __GLX_SIZE_CARD32 *
-		    __GLX_TOTAL_CONFIG) >> 2;
+    reply.length = (reply.numVisuals * __GLX_SIZE_CARD32 * __GLX_TOTAL_CONFIG) >> 2;
     reply.type = X_Reply;
     reply.sequenceNumber = client->sequence;
 
-    if ( do_swap ) {
+    if (client->swapped) {
 	__GLX_SWAP_SHORT(&reply.sequenceNumber);
 	__GLX_SWAP_INT(&reply.length);
 	__GLX_SWAP_INT(&reply.numVisuals);
 	__GLX_SWAP_INT(&reply.numProps);
     }
 
-    WriteToClient(client, sz_xGLXGetVisualConfigsReply, &reply);
+    WriteToClient(client, sz_xGLXGetVisualConfigsReply, (char *)&reply);
 
-    for ( modes = pGlxScreen->modes ; modes != NULL ; modes = modes->next ) {
-	if (modes->visualID == 0) {
-	    /* not a usable visual */
-	    continue;
-	}
+    for (i = 0; i < pGlxScreen->numVisuals; i++) {
+	modes = pGlxScreen->visuals[i];
+
 	p = 0;
 	buf[p++] = modes->visualID;
-	buf[p++] = _gl_convert_to_x_visual_type( modes->visualType );
+	buf[p++] = glxConvertToXVisualType( modes->visualType );
 	buf[p++] = modes->rgbMode;
 
 	buf[p++] = modes->redBits;
@@ -994,25 +955,23 @@ int DoGetVisualConfigs(__GLXclientState *cl, unsigned screen,
 	buf[p++] = modes->transparentAlpha;
 	buf[p++] = GLX_TRANSPARENT_INDEX_VALUE;
 	buf[p++] = modes->transparentIndex;
+	buf[p++] = 0;
+	buf[p++] = 0;
+	buf[p++] = 0;
+	buf[p++] = 0;
+	buf[p++] = 0;
+	buf[p++] = 0;
 
-	if ( do_swap ) {
+	if (client->swapped) {
 	    __GLX_SWAP_INT_ARRAY(buf, __GLX_TOTAL_CONFIG);
 	}
 	WriteToClient(client, __GLX_SIZE_CARD32 * __GLX_TOTAL_CONFIG, 
-		buf);
+		(char *)buf);
     }
     return Success;
 }
 
-int __glXGetVisualConfigs(__GLXclientState *cl, GLbyte *pc)
-{
-    xGLXGetVisualConfigsReq *req = (xGLXGetVisualConfigsReq *) pc;
-    return DoGetVisualConfigs( cl, req->screen, GL_FALSE );
-}
-
-
-
-#define __GLX_TOTAL_FBCONFIG_ATTRIBS (28)
+#define __GLX_TOTAL_FBCONFIG_ATTRIBS (33)
 #define __GLX_FBCONFIG_ATTRIBS_LENGTH (__GLX_TOTAL_FBCONFIG_ATTRIBS * 2)
 /**
  * Send the set of GLXFBConfigs to the client.  There is not currently
@@ -1024,52 +983,44 @@ int __glXGetVisualConfigs(__GLXclientState *cl, GLbyte *pc)
  * is the same, so this routine pulls double duty.
  */
 
-int DoGetFBConfigs(__GLXclientState *cl, unsigned screen, GLboolean do_swap)
+static int
+DoGetFBConfigs(__GLXclientState *cl, unsigned screen)
 {
     ClientPtr client = cl->client;
     xGLXGetFBConfigsReply reply;
-    __GLXscreenInfo *pGlxScreen;
+    __GLXscreen *pGlxScreen;
     CARD32 buf[__GLX_FBCONFIG_ATTRIBS_LENGTH];
-    int p;
-    __GLcontextModes *modes;
+    int p, err;
+    __GLXconfig *modes;
     __GLX_DECLARE_SWAP_VARIABLES;
     __GLX_DECLARE_SWAP_ARRAY_VARIABLES;
 
+    if (!validGlxScreen(cl->client, screen, &pGlxScreen, &err))
+	return err;
 
-    if (screen >= screenInfo.numScreens) {
-	/* The client library must send a valid screen number. */
-	client->errorValue = screen;
-	return BadValue;
-    }
-    pGlxScreen = &__glXActiveScreens[screen];
-
-    reply.numFBConfigs = pGlxScreen->numUsableVisuals;
+    reply.numFBConfigs = pGlxScreen->numFBConfigs;
     reply.numAttribs = __GLX_TOTAL_FBCONFIG_ATTRIBS;
     reply.length = (__GLX_FBCONFIG_ATTRIBS_LENGTH * reply.numFBConfigs);
     reply.type = X_Reply;
     reply.sequenceNumber = client->sequence;
 
-    if ( do_swap ) {
+    if (client->swapped) {
 	__GLX_SWAP_SHORT(&reply.sequenceNumber);
 	__GLX_SWAP_INT(&reply.length);
 	__GLX_SWAP_INT(&reply.numFBConfigs);
 	__GLX_SWAP_INT(&reply.numAttribs);
     }
 
-    WriteToClient(client, sz_xGLXGetFBConfigsReply, &reply);
+    WriteToClient(client, sz_xGLXGetFBConfigsReply, (char *)&reply);
 
-    for ( modes = pGlxScreen->modes ; modes != NULL ; modes = modes->next ) {
-	if (modes->visualID == 0) {
-	    /* not a usable visual */
-	    continue;
-	}
+    for (modes = pGlxScreen->fbconfigs; modes != NULL; modes = modes->next) {
 	p = 0;
 
 #define WRITE_PAIR(tag,value) \
     do { buf[p++] = tag ; buf[p++] = value ; } while( 0 )
 
 	WRITE_PAIR( GLX_VISUAL_ID,        modes->visualID );
-	WRITE_PAIR( GLX_FBCONFIG_ID,      modes->visualID );
+	WRITE_PAIR( GLX_FBCONFIG_ID,      modes->fbconfigID );
 	WRITE_PAIR( GLX_X_RENDERABLE,     GL_TRUE );
 
 	WRITE_PAIR( GLX_RGBA,             modes->rgbMode );
@@ -1089,12 +1040,7 @@ int DoGetFBConfigs(__GLXclientState *cl, unsigned screen, GLboolean do_swap)
 	WRITE_PAIR( GLX_ACCUM_ALPHA_SIZE, modes->accumAlphaBits );
 	WRITE_PAIR( GLX_DEPTH_SIZE,       modes->depthBits );
 	WRITE_PAIR( GLX_STENCIL_SIZE,     modes->stencilBits );
-
 	WRITE_PAIR( GLX_X_VISUAL_TYPE,    modes->visualType );
-
-	/* 
-	** Add token/value pairs for extensions.
-	*/
 	WRITE_PAIR( GLX_CONFIG_CAVEAT, modes->visualRating );
 	WRITE_PAIR( GLX_TRANSPARENT_TYPE, modes->transparentPixel );
 	WRITE_PAIR( GLX_TRANSPARENT_RED_VALUE, modes->transparentRed );
@@ -1103,162 +1049,377 @@ int DoGetFBConfigs(__GLXclientState *cl, unsigned screen, GLboolean do_swap)
 	WRITE_PAIR( GLX_TRANSPARENT_ALPHA_VALUE, modes->transparentAlpha );
 	WRITE_PAIR( GLX_TRANSPARENT_INDEX_VALUE, modes->transparentIndex );
 	WRITE_PAIR( GLX_SWAP_METHOD_OML, modes->swapMethod );
+	WRITE_PAIR( GLX_DRAWABLE_TYPE, modes->drawableType );
+	WRITE_PAIR( GLX_BIND_TO_TEXTURE_RGB_EXT, modes->bindToTextureRgb );
+	WRITE_PAIR( GLX_BIND_TO_TEXTURE_RGBA_EXT, modes->bindToTextureRgba );
+	WRITE_PAIR( GLX_BIND_TO_MIPMAP_TEXTURE_EXT, modes->bindToMipmapTexture );
+	WRITE_PAIR( GLX_BIND_TO_TEXTURE_TARGETS_EXT, modes->bindToTextureTargets );
 
-	if ( do_swap ) {
+	if (client->swapped) {
 	    __GLX_SWAP_INT_ARRAY(buf, __GLX_FBCONFIG_ATTRIBS_LENGTH);
 	}
 	WriteToClient(client, __GLX_SIZE_CARD32 * __GLX_FBCONFIG_ATTRIBS_LENGTH,
-		      buf);
+		      (char *)buf);
     }
     return Success;
 }
 
 
-int __glXGetFBConfigs(__GLXclientState *cl, GLbyte *pc)
+int __glXDisp_GetFBConfigs(__GLXclientState *cl, GLbyte *pc)
 {
     xGLXGetFBConfigsReq *req = (xGLXGetFBConfigsReq *) pc;
-    return DoGetFBConfigs( cl, req->screen, GL_FALSE );
+    return DoGetFBConfigs(cl, req->screen);
 }
 
-
-int __glXGetFBConfigsSGIX(__GLXclientState *cl, GLbyte *pc)
+int __glXDisp_GetFBConfigsSGIX(__GLXclientState *cl, GLbyte *pc)
 {
     xGLXGetFBConfigsSGIXReq *req = (xGLXGetFBConfigsSGIXReq *) pc;
-    return DoGetFBConfigs( cl, req->screen, GL_FALSE );
+    return DoGetFBConfigs(cl, req->screen);
 }
 
-
-/*
-** Create a GLX Pixmap from an X Pixmap.
-*/
-int DoCreateGLXPixmap(__GLXclientState *cl, VisualID visual,
-		      GLuint screenNum, XID pixmapId, XID glxpixmapId)
+static int 
+DoCreateGLXDrawable(ClientPtr client, __GLXscreen *pGlxScreen, __GLXconfig *config,
+		    DrawablePtr pDraw, XID glxDrawableId, int type)
 {
-    ClientPtr client = cl->client;
-    DrawablePtr pDraw;
-    ScreenPtr pScreen;
-    VisualPtr pVisual;
-    __GLXpixmap *pGlxPixmap;
-    __GLXscreenInfo *pGlxScreen;
-    __GLcontextModes *modes;
-    int i;
+    __GLXdrawable *pGlxDraw;
 
-    LEGAL_NEW_RESOURCE(glxpixmapId, client);
-    
-    pDraw = (DrawablePtr) LookupDrawable(pixmapId, client);
-    if (!pDraw || pDraw->type != DRAWABLE_PIXMAP) {
-	client->errorValue = pixmapId;
+    LEGAL_NEW_RESOURCE(glxDrawableId, client);
+
+    if (pGlxScreen->pScreen != pDraw->pScreen)
+	return BadMatch;
+
+    pGlxDraw = pGlxScreen->createDrawable(pGlxScreen, pDraw, type,
+					  glxDrawableId, config);
+    if (pGlxDraw == NULL)
+	return BadAlloc;
+
+    if (!AddResource(glxDrawableId, __glXDrawableRes, pGlxDraw)) {
+	pGlxDraw->destroy (pGlxDraw);
+	return BadAlloc;
+    }
+
+    return Success;
+}
+
+static int
+DoCreateGLXPixmap(ClientPtr client, __GLXscreen *pGlxScreen, __GLXconfig *config,
+		  XID drawableId, XID glxDrawableId)
+{
+    DrawablePtr pDraw;
+    int err;
+
+#ifndef XSERVER_LACKS_XACE_EXT
+    err = dixLookupDrawable(&pDraw, drawableId, client, 0, DixAddAccess);
+#else
+    pDraw =
+        SecurityLookupDrawable(drawableId, client, DixAddAccess);
+    err = pDraw ? Success : BadDrawable;
+#endif /* XSERVER_LACKS_XACE_EXT */
+
+    if (err != Success || pDraw->type != DRAWABLE_PIXMAP) {
+	client->errorValue = drawableId;
 	return BadPixmap;
     }
 
-    /*
-    ** Check if screen of visual matches screen of pixmap.
-    */
-    pScreen = pDraw->pScreen;
-    if (screenNum != pScreen->myNum) {
-	return BadMatch;
-    }
+    err = DoCreateGLXDrawable(client, pGlxScreen, config, pDraw,
+			      glxDrawableId, GLX_DRAWABLE_PIXMAP);
 
-    /*
-    ** Find the VisualRec for this visual.
-    */
-    pVisual = pScreen->visuals;
-    for (i=0; i < pScreen->numVisuals; i++, pVisual++) {
-	if (pVisual->vid == visual) {
-	    break;
+    if (err == Success)
+	((PixmapPtr) pDraw)->refcnt++;
+
+    return err;
+}
+
+static void
+determineTextureTarget(XID glxDrawableID, CARD32 *attribs, CARD32 numAttribs)
+{
+    GLenum target = 0;
+    int i;
+    __GLXdrawable *pGlxDraw;
+
+    pGlxDraw = LookupIDByType(glxDrawableID, __glXDrawableRes);
+
+    for (i = 0; i < numAttribs; i++) {
+	if (attribs[2 * i] == GLX_TEXTURE_TARGET_EXT) {
+	    switch (attribs[2 * i + 1]) {
+	    case GLX_TEXTURE_2D_EXT:
+		target = GL_TEXTURE_2D;
+		break;
+	    case GLX_TEXTURE_RECTANGLE_EXT:
+		target = GL_TEXTURE_RECTANGLE_ARB;
+		break;
+	    }
 	}
     }
-    if (i == pScreen->numVisuals) {
-	client->errorValue = visual;
-	return BadValue;
-    }
-    /*
-    ** Check if depth of visual matches depth of pixmap.
-    */
-    if (pVisual->nplanes != pDraw->depth) {
-	return BadMatch;
-    }
-
-    /*
-    ** Get configuration of the visual.
-    */
-    pGlxScreen = &__glXActiveScreens[screenNum];
-    modes = _gl_context_modes_find_visual( pGlxScreen->modes, visual );
-    if (modes == NULL) {
-	/*
-	** Visual not support on this screen by this OpenGL implementation.
-	*/
-	client->errorValue = visual;
-	return BadValue;
+ 
+    if (!target) {
+	int w = pGlxDraw->pDraw->width, h = pGlxDraw->pDraw->height;
+	
+	if (h & (h - 1) || w & (w - 1))
+	    target = GL_TEXTURE_RECTANGLE_ARB;
+	else
+	    target = GL_TEXTURE_2D;
     }
 
-    pGlxPixmap = (__GLXpixmap *) malloc(sizeof(__GLXpixmap));
-    if (!pGlxPixmap) {
-	return BadAlloc;
-    }
-    if (!(AddResource(glxpixmapId, __glXPixmapRes, pGlxPixmap))) {
-	return BadAlloc;
-    }
-    pGlxPixmap->pDraw = pDraw;
-    pGlxPixmap->pGlxScreen = pGlxScreen;
-    pGlxPixmap->pScreen = pScreen;
-    pGlxPixmap->idExists = True;
-    pGlxPixmap->refcnt = 0;
+    pGlxDraw->target = target;
+}
 
-    pGlxPixmap->modes = modes;
+int __glXDisp_CreateGLXPixmap(__GLXclientState *cl, GLbyte *pc)
+{
+    xGLXCreateGLXPixmapReq *req = (xGLXCreateGLXPixmapReq *) pc;
+    __GLXconfig *config;
+    __GLXscreen *pGlxScreen;
+    int err;
 
-    /*
-    ** Bump the ref count on the X pixmap so it won't disappear.
-    */
-    ((PixmapPtr) pDraw)->refcnt++;
+    if (!validGlxScreen(cl->client, req->screen, &pGlxScreen, &err))
+	return err;
+    if (!validGlxVisual(cl->client, pGlxScreen, req->visual, &config, &err))
+	return err;
+
+    return DoCreateGLXPixmap(cl->client, pGlxScreen, config,
+			     req->pixmap, req->glxpixmap);
+}
+
+int __glXDisp_CreatePixmap(__GLXclientState *cl, GLbyte *pc)
+{
+    xGLXCreatePixmapReq *req = (xGLXCreatePixmapReq *) pc;
+    __GLXconfig *config;
+    __GLXscreen *pGlxScreen;
+    int err;
+
+    if (!validGlxScreen(cl->client, req->screen, &pGlxScreen, &err))
+	return err;
+    if (!validGlxFBConfig(cl->client, pGlxScreen, req->fbconfig, &config, &err))
+	return err;
+
+    err = DoCreateGLXPixmap(cl->client, pGlxScreen, config,
+			    req->pixmap, req->glxpixmap);
+    if (err != Success)
+	return err;
+
+    determineTextureTarget(req->glxpixmap,
+			   (CARD32*) (req + 1), req->numAttribs);
 
     return Success;
 }
 
-int __glXCreateGLXPixmap(__GLXclientState *cl, GLbyte *pc)
-{
-    xGLXCreateGLXPixmapReq *req = (xGLXCreateGLXPixmapReq *) pc;
-    return DoCreateGLXPixmap( cl, req->visual, req->screen,
-			      req->pixmap, req->glxpixmap );
-}
-
-int __glXCreatePixmap(__GLXclientState *cl, GLbyte *pc)
-{
-    xGLXCreatePixmapReq *req = (xGLXCreatePixmapReq *) pc;
-    return DoCreateGLXPixmap( cl, req->fbconfig, req->screen,
-			      req->pixmap, req->glxpixmap );
-}
-
-int __glXCreateGLXPixmapWithConfigSGIX(__GLXclientState *cl, GLbyte *pc)
+int __glXDisp_CreateGLXPixmapWithConfigSGIX(__GLXclientState *cl, GLbyte *pc)
 {
     xGLXCreateGLXPixmapWithConfigSGIXReq *req = 
 	(xGLXCreateGLXPixmapWithConfigSGIXReq *) pc;
-    return DoCreateGLXPixmap( cl, req->fbconfig, req->screen,
-			      req->pixmap, req->glxpixmap );
+    __GLXconfig *config;
+    __GLXscreen *pGlxScreen;
+    int err;
+
+    if (!validGlxScreen(cl->client, req->screen, &pGlxScreen, &err))
+	return err;
+    if (!validGlxFBConfig(cl->client, pGlxScreen, req->fbconfig, &config, &err))
+	return err;
+
+    return DoCreateGLXPixmap(cl->client, pGlxScreen,
+			     config, req->pixmap, req->glxpixmap);
 }
 
 
-/**
- * Destroy a GLX pixmap.  This function is used for both
- * \c glXDestroyGLXPixmap and \c glXDestroyPixmap.
- */
-
-int __glXDestroyGLXPixmap(__GLXclientState *cl, GLbyte *pc)
+static int DoDestroyDrawable(__GLXclientState *cl, XID glxdrawable, int type)
 {
     ClientPtr client = cl->client;
-    xGLXDestroyGLXPixmapReq *req = (xGLXDestroyGLXPixmapReq *) pc;
-    XID glxpixmap = req->glxpixmap;
+    __GLXdrawable *pGlxDraw;
 
     /*
-    ** Check if it's a valid GLX pixmap.
+    ** Check it's the right type of drawable.
     */
-    if (!LookupIDByType(glxpixmap, __glXPixmapRes)) {
-	client->errorValue = glxpixmap;
-	return __glXBadPixmap;
+    pGlxDraw = LookupIDByType(glxdrawable, __glXDrawableRes);
+    if (pGlxDraw == NULL || pGlxDraw->type != type) {
+	client->errorValue = glxdrawable;
+	switch (type) {
+	case GLX_DRAWABLE_WINDOW:
+	    return __glXError(GLXBadWindow);
+	case GLX_DRAWABLE_PIXMAP:
+	    return __glXError(GLXBadDrawable);
+	case GLX_DRAWABLE_PBUFFER:
+	    return __glXError(GLXBadPbuffer);
+	}
     }
-    FreeResource(glxpixmap, FALSE);
+
+    if (type == GLX_DRAWABLE_PIXMAP) {
+	((PixmapPtr) pGlxDraw->pDraw)->refcnt--;
+    }
+
+    FreeResource(glxdrawable, FALSE);
+
     return Success;
 }
+
+int __glXDisp_DestroyGLXPixmap(__GLXclientState *cl, GLbyte *pc)
+{
+    xGLXDestroyGLXPixmapReq *req = (xGLXDestroyGLXPixmapReq *) pc;
+
+    return DoDestroyDrawable(cl, req->glxpixmap, GLX_DRAWABLE_PIXMAP);
+}
+
+int __glXDisp_DestroyPixmap(__GLXclientState *cl, GLbyte *pc)
+{
+    xGLXDestroyPixmapReq *req = (xGLXDestroyPixmapReq *) pc;
+
+    return DoDestroyDrawable(cl, req->glxpixmap, GLX_DRAWABLE_PIXMAP);
+}
+
+static int
+DoCreatePbuffer(ClientPtr client, int screenNum, XID fbconfigId,
+		int width, int height, XID glxDrawableId)
+{
+    __GLXconfig	*config;
+    __GLXscreen		*pGlxScreen;
+    PixmapPtr		 pPixmap;
+    int			 err;
+
+    if (!validGlxScreen(client, screenNum, &pGlxScreen, &err))
+	return err;
+    if (!validGlxFBConfig(client, pGlxScreen, fbconfigId, &config, &err))
+	return err;
+
+    __glXenterServer(GL_FALSE);
+    pPixmap = (*pGlxScreen->pScreen->CreatePixmap) (pGlxScreen->pScreen,
+						    width, height, config->rgbBits, 0);
+    __glXleaveServer(GL_FALSE);
+
+    return DoCreateGLXDrawable(client, pGlxScreen, config, &pPixmap->drawable,
+			       glxDrawableId, GLX_DRAWABLE_PBUFFER);
+}
+
+int __glXDisp_CreatePbuffer(__GLXclientState *cl, GLbyte *pc)
+{
+    xGLXCreatePbufferReq	*req = (xGLXCreatePbufferReq *) pc;
+    CARD32			*attrs;
+    int				 width, height, i;
+
+    attrs = (CARD32 *) (req + 1);
+    width = 0;
+    height = 0;
+
+    for (i = 0; i < req->numAttribs; i++) {
+	switch (attrs[i * 2]) {
+	case GLX_PBUFFER_WIDTH:
+	    width = attrs[i * 2 + 1];
+	    break;
+	case GLX_PBUFFER_HEIGHT:
+	    height = attrs[i * 2 + 1];
+	    break;
+	case GLX_LARGEST_PBUFFER:
+	case GLX_PRESERVED_CONTENTS:
+	    /* FIXME: huh... */
+	    break;
+	}
+    }
+
+    return DoCreatePbuffer(cl->client, req->screen, req->fbconfig,
+			   width, height, req->pbuffer);
+}
+
+int __glXDisp_CreateGLXPbufferSGIX(__GLXclientState *cl, GLbyte *pc)
+{
+    xGLXCreateGLXPbufferSGIXReq *req = (xGLXCreateGLXPbufferSGIXReq *) pc;
+
+    return DoCreatePbuffer(cl->client, req->screen, req->fbconfig,
+			   req->width, req->height, req->pbuffer);
+}
+
+int __glXDisp_DestroyPbuffer(__GLXclientState *cl, GLbyte *pc)
+{
+    xGLXDestroyPbufferReq *req = (xGLXDestroyPbufferReq *) pc;
+
+    return DoDestroyDrawable(cl, req->pbuffer, GLX_DRAWABLE_PBUFFER);
+}
+
+int __glXDisp_DestroyGLXPbufferSGIX(__GLXclientState *cl, GLbyte *pc)
+{
+    xGLXDestroyGLXPbufferSGIXReq *req = (xGLXDestroyGLXPbufferSGIXReq *) pc;
+
+    return DoDestroyDrawable(cl, req->pbuffer, GLX_DRAWABLE_PBUFFER);
+}
+
+static int
+DoChangeDrawableAttributes(ClientPtr client, XID glxdrawable,
+			   int numAttribs, CARD32 *attribs)
+{
+    __GLXdrawable *pGlxDraw;
+    int i;
+
+    pGlxDraw = LookupIDByType(glxdrawable, __glXDrawableRes);
+    for (i = 0; i < numAttribs; i++) {
+	switch(attribs[i * 2]) {
+	case GLX_EVENT_MASK:
+	    /* All we do is to record the event mask so we can send it
+	     * back when queried.  We never actually clobber the
+	     * pbuffers, so we never need to send out the event. */
+	    pGlxDraw->eventMask = attribs[i * 2 + 1];
+	    break;
+	}
+    }
+
+    return Success;
+}
+
+int __glXDisp_ChangeDrawableAttributes(__GLXclientState *cl, GLbyte *pc)
+{
+    xGLXChangeDrawableAttributesReq *req =
+	(xGLXChangeDrawableAttributesReq *) pc;
+
+    return DoChangeDrawableAttributes(cl->client, req->drawable,
+				      req->numAttribs, (CARD32 *) (req + 1));
+}
+
+int __glXDisp_ChangeDrawableAttributesSGIX(__GLXclientState *cl, GLbyte *pc)
+{
+    xGLXChangeDrawableAttributesSGIXReq *req =
+	(xGLXChangeDrawableAttributesSGIXReq *)pc;
+
+    return DoChangeDrawableAttributes(cl->client, req->drawable,
+				      req->numAttribs, (CARD32 *) (req + 1));
+}
+
+int __glXDisp_CreateWindow(__GLXclientState *cl, GLbyte *pc)
+{
+    xGLXCreateWindowReq	*req = (xGLXCreateWindowReq *) pc;
+    __GLXconfig	*config;
+    __GLXscreen		*pGlxScreen;
+    ClientPtr		 client = cl->client;
+    DrawablePtr		 pDraw;
+    int			 err;
+
+    if (!validGlxScreen(client, req->screen, &pGlxScreen, &err))
+	return err;
+    if (!validGlxFBConfig(client, pGlxScreen, req->fbconfig, &config, &err))
+	return err;
+
+#ifndef XSERVER_LACKS_XACE_EXT
+    err = dixLookupDrawable(&pDraw, req->window, client, 0, DixAddAccess);
+#else
+    pDraw =
+        SecurityLookupDrawable(req->window, client, DixAddAccess);
+    err = pDraw ? Success : BadDrawable;
+#endif /* XSERVER_LACKS_XACE_EXT */
+
+    if (err != Success || pDraw->type != DRAWABLE_WINDOW) {
+	client->errorValue = req->window;
+	return BadWindow;
+    }
+
+    if (!validGlxFBConfigForWindow(client, config, pDraw, &err))
+	return err;
+
+    return DoCreateGLXDrawable(client, pGlxScreen, config,
+			       pDraw, req->glxwindow, GLX_DRAWABLE_WINDOW);
+}
+
+int __glXDisp_DestroyWindow(__GLXclientState *cl, GLbyte *pc)
+{
+    xGLXDestroyWindowReq *req = (xGLXDestroyWindowReq *) pc;
+
+    return DoDestroyDrawable(cl, req->glxwindow, GLX_DRAWABLE_WINDOW);
+}
+
 
 /*****************************************************************************/
 
@@ -1267,53 +1428,20 @@ int __glXDestroyGLXPixmap(__GLXclientState *cl, GLbyte *pc)
 ** this time that is of value.  Consequently, this code must be
 ** implemented by somebody other than SGI.
 */
-int __glXSwapBuffers(__GLXclientState *cl, GLbyte *pc)
+int __glXDisp_SwapBuffers(__GLXclientState *cl, GLbyte *pc)
 {
     ClientPtr client = cl->client;
-    DrawablePtr pDraw;
     xGLXSwapBuffersReq *req = (xGLXSwapBuffersReq *) pc;
     GLXContextTag tag = req->contextTag;
     XID drawId = req->drawable;
-    __GLXpixmap *pGlxPixmap;
     __GLXcontext *glxc = NULL;
+    __GLXdrawable *pGlxDraw;
     int error;
-    
-    /*
-    ** Check that the GLX drawable is valid.
-    */
-    pDraw = (DrawablePtr) LookupDrawable(drawId, client);
-    if (pDraw) {
-	if (pDraw->type == DRAWABLE_WINDOW) {
-	    /*
-	    ** Drawable is an X window.
-	    */
-	} else {
-	    /*
-	    ** Drawable is an X pixmap, which is not allowed.
-	    */
-	    client->errorValue = drawId;
-	    return __glXBadDrawable;
-	}
-    } else {
-	pGlxPixmap = (__GLXpixmap *) LookupIDByType(drawId,
-						    __glXPixmapRes);
-	if (pGlxPixmap) {
-	    /*
-	    ** Drawable is a GLX pixmap.
-	    */
-	} else {
-	    /*
-	    ** Drawable is neither a X window nor a GLX pixmap.
-	    */
-	    client->errorValue = drawId;
-	    return __glXBadDrawable;
-	}
-    }
 
     if (tag) {
 	glxc = __glXLookupContextByTag(cl, tag);
 	if (!glxc) {
-	    return __glXBadContextTag;
+	    return __glXError(GLXBadContextTag);
 	}
 	/*
 	** The calling thread is swapping its current drawable.  In this case,
@@ -1325,54 +1453,39 @@ int __glXSwapBuffers(__GLXclientState *cl, GLbyte *pc)
 	    ** Do whatever is needed to make sure that all preceding requests
 	    ** in both streams are completed before the swap is executed.
 	    */
-	    glFinish();
+	    CALL_Finish( GET_DISPATCH(), () );
 	    __GLX_NOTE_FLUSHED_CMDS(glxc);
 	} else {
 	    return error;
 	}
     }
 
-    if (pDraw) {
-	__GLXdrawablePrivate *glxPriv;
+    pGlxDraw = __glXGetDrawable(glxc, drawId, client, &error);
+    if (pGlxDraw == NULL)
+	return error;
 
-	if (glxc) {
-	    glxPriv = __glXGetDrawablePrivate(pDraw, drawId, glxc->modes);
-	    if (glxPriv == NULL) {
-		return __glXBadDrawable;
-	    }
-	}
-	else {
-	    glxPriv = __glXFindDrawablePrivate(drawId);
-	    if (glxPriv == NULL) {
-		/* This is a window we've never seen before, do nothing */
-		return Success;
-	    }
-	}
-
-	if ((*glxPriv->swapBuffers)(glxPriv) == GL_FALSE) {
-	    return __glXBadDrawable;
-	}
-    }
+    if (pGlxDraw->type == DRAWABLE_WINDOW &&
+	(*pGlxDraw->swapBuffers)(pGlxDraw) == GL_FALSE)
+	return __glXError(GLXBadDrawable);
 
     return Success;
 }
 
 
-int __glXQueryContextInfoEXT(__GLXclientState *cl, GLbyte *pc)
+static int
+DoQueryContext(__GLXclientState *cl, GLXContextID gcId)
 {
     ClientPtr client = cl->client;
     __GLXcontext *ctx;
-    xGLXQueryContextInfoEXTReq *req;
     xGLXQueryContextInfoEXTReply reply;
     int nProps;
     int *sendBuf, *pSendBuf;
     int nReplyBytes;
 
-    req = (xGLXQueryContextInfoEXTReq *)pc;
-    ctx = (__GLXcontext *) LookupIDByType(req->context, __glXContextRes);
+    ctx = (__GLXcontext *) LookupIDByType(gcId, __glXContextRes);
     if (!ctx) {
-	client->errorValue = req->context;
-	return __glXBadContext;
+	client->errorValue = gcId;
+	return __glXError(GLXBadContext);
     }
 
     nProps = 3;
@@ -1384,27 +1497,226 @@ int __glXQueryContextInfoEXT(__GLXclientState *cl, GLbyte *pc)
     nReplyBytes = reply.length << 2;
     sendBuf = (int *)malloc((size_t)nReplyBytes);
     if (sendBuf == NULL) {
-	return __glXBadContext;	/* XXX: Is this correct? */
+	return __glXError(GLXBadContext);	/* XXX: Is this correct? */
     }
     pSendBuf = sendBuf;
     *pSendBuf++ = GLX_SHARE_CONTEXT_EXT;
     *pSendBuf++ = (int)(ctx->share_id);
     *pSendBuf++ = GLX_VISUAL_ID_EXT;
-    *pSendBuf++ = (int)(ctx->pVisual->vid);
+    *pSendBuf++ = (int)(ctx->config->visualID);
     *pSendBuf++ = GLX_SCREEN_EXT;
-    *pSendBuf++ = (int)(ctx->pScreen->myNum);
+    *pSendBuf++ = (int)(ctx->pGlxScreen->pScreen->myNum);
 
     if (client->swapped) {
 	__glXSwapQueryContextInfoEXTReply(client, &reply, sendBuf);
     } else {
-	WriteToClient(client, sz_xGLXQueryContextInfoEXTReply, &reply);
-	WriteToClient(client, nReplyBytes, sendBuf);
+	WriteToClient(client, sz_xGLXQueryContextInfoEXTReply, (char *)&reply);
+	WriteToClient(client, nReplyBytes, (char *)sendBuf);
     }
     free((char *)sendBuf);
 
     return Success;
 }
 
+int __glXDisp_QueryContextInfoEXT(__GLXclientState *cl, GLbyte *pc)
+{
+    xGLXQueryContextInfoEXTReq *req = (xGLXQueryContextInfoEXTReq *) pc;
+
+    return DoQueryContext(cl, req->context);
+}
+
+int __glXDisp_QueryContext(__GLXclientState *cl, GLbyte *pc)
+{
+    xGLXQueryContextReq *req = (xGLXQueryContextReq *) pc;
+
+    return DoQueryContext(cl, req->context);
+}
+
+int __glXDisp_BindTexImageEXT(__GLXclientState *cl, GLbyte *pc)
+{
+    xGLXVendorPrivateReq *req = (xGLXVendorPrivateReq *) pc;
+    ClientPtr		 client = cl->client;
+    __GLXcontext	*context;
+    __GLXdrawable	*pGlxDraw;
+    GLXDrawable		 drawId;
+    int			 buffer;
+    int			 error;
+
+    pc += __GLX_VENDPRIV_HDR_SIZE;
+
+    drawId = *((CARD32 *) (pc));
+    buffer = *((INT32 *)  (pc + 4));
+
+    if (buffer != GLX_FRONT_LEFT_EXT)
+	return __glXError(GLXBadPixmap);
+
+    context = __glXForceCurrent (cl, req->contextTag, &error);
+    if (!context)
+	return error;
+
+    pGlxDraw = __glXGetDrawable(NULL, drawId, client, &error);
+    if (!pGlxDraw || pGlxDraw->type != GLX_DRAWABLE_PIXMAP) {
+	client->errorValue = drawId;
+	return __glXError(GLXBadPixmap);
+    }
+
+    if (!context->textureFromPixmap)
+	return __glXError(GLXUnsupportedPrivateRequest);
+
+    return context->textureFromPixmap->bindTexImage(context,
+						    buffer,
+						    pGlxDraw);
+}
+
+int __glXDisp_ReleaseTexImageEXT(__GLXclientState *cl, GLbyte *pc)
+{
+    xGLXVendorPrivateReq *req = (xGLXVendorPrivateReq *) pc;
+    ClientPtr		 client = cl->client;
+    __GLXdrawable	*pGlxDraw;
+    __GLXcontext	*context;
+    GLXDrawable		 drawId;
+    int			 buffer;
+    int			 error;
+
+    pc += __GLX_VENDPRIV_HDR_SIZE;
+
+    drawId = *((CARD32 *) (pc));
+    buffer = *((INT32 *)  (pc + 4));
+    
+    context = __glXForceCurrent (cl, req->contextTag, &error);
+    if (!context)
+	return error;
+
+    pGlxDraw = __glXGetDrawable(NULL, drawId, client, &error);
+    if (!pGlxDraw || pGlxDraw->type != GLX_DRAWABLE_PIXMAP) {
+	client->errorValue = drawId;
+	return error;
+    }
+
+    if (!context->textureFromPixmap)
+	return __glXError(GLXUnsupportedPrivateRequest);
+
+    return context->textureFromPixmap->releaseTexImage(context,
+						       buffer,
+						       pGlxDraw);
+}
+
+int __glXDisp_CopySubBufferMESA(__GLXclientState *cl, GLbyte *pc)
+{
+    xGLXVendorPrivateReq *req = (xGLXVendorPrivateReq *) pc;
+    GLXContextTag         tag = req->contextTag;
+    __GLXcontext         *glxc = NULL;
+    __GLXdrawable        *pGlxDraw;
+    ClientPtr		  client = cl->client;
+    GLXDrawable		  drawId;
+    int                   error;
+    int                   x, y, width, height;
+
+    (void) client;
+    (void) req;
+
+    pc += __GLX_VENDPRIV_HDR_SIZE;
+
+    drawId = *((CARD32 *) (pc));
+    x      = *((INT32 *)  (pc + 4));
+    y      = *((INT32 *)  (pc + 8));
+    width  = *((INT32 *)  (pc + 12));
+    height = *((INT32 *)  (pc + 16));
+
+    if (tag) {
+	glxc = __glXLookupContextByTag(cl, tag);
+	if (!glxc) {
+	    return __glXError(GLXBadContextTag);
+	}
+	/*
+	** The calling thread is swapping its current drawable.  In this case,
+	** glxSwapBuffers is in both GL and X streams, in terms of
+	** sequentiality.
+	*/
+	if (__glXForceCurrent(cl, tag, &error)) {
+	    /*
+	    ** Do whatever is needed to make sure that all preceding requests
+	    ** in both streams are completed before the swap is executed.
+	    */
+	    CALL_Finish( GET_DISPATCH(), () );
+	    __GLX_NOTE_FLUSHED_CMDS(glxc);
+	} else {
+	    return error;
+	}
+    }
+
+    pGlxDraw = __glXGetDrawable(glxc, drawId, client, &error);
+    if (!pGlxDraw)
+	return error;
+
+    if (pGlxDraw == NULL ||
+	pGlxDraw->type != GLX_DRAWABLE_WINDOW ||
+	pGlxDraw->copySubBuffer == NULL)
+	return __glXError(GLXBadDrawable);
+
+    (*pGlxDraw->copySubBuffer)(pGlxDraw, x, y, width, height);
+
+    return Success;
+}
+
+/*
+** Get drawable attributes
+*/
+static int
+DoGetDrawableAttributes(__GLXclientState *cl, XID drawId)
+{
+    ClientPtr client = cl->client;
+    xGLXGetDrawableAttributesReply reply;
+    __GLXdrawable *pGlxDraw;
+    CARD32 attributes[6];
+    int numAttribs, error;
+
+    pGlxDraw = __glXGetDrawable(NULL, drawId, client, &error);
+    if (!pGlxDraw) {
+	client->errorValue = drawId;
+	return error;
+    }
+
+    numAttribs = 3;
+    reply.length = numAttribs << 1;
+    reply.type = X_Reply;
+    reply.sequenceNumber = client->sequence;
+    reply.numAttribs = numAttribs;
+
+    attributes[0] = GLX_TEXTURE_TARGET_EXT;
+    attributes[1] = pGlxDraw->target == GL_TEXTURE_2D ? GLX_TEXTURE_2D_EXT :
+	GLX_TEXTURE_RECTANGLE_EXT;
+    attributes[2] = GLX_Y_INVERTED_EXT;
+    attributes[3] = GL_FALSE;
+    attributes[4] = GLX_EVENT_MASK;
+    attributes[5] = pGlxDraw->eventMask;
+
+    if (client->swapped) {
+	__glXSwapGetDrawableAttributesReply(client, &reply, attributes);
+    } else {
+	WriteToClient(client, sz_xGLXGetDrawableAttributesReply,
+		      (char *)&reply);
+	WriteToClient(client, reply.length * sizeof (CARD32),
+		      (char *)attributes);
+    }
+
+    return Success;
+}
+
+int __glXDisp_GetDrawableAttributes(__GLXclientState *cl, GLbyte *pc)
+{
+    xGLXGetDrawableAttributesReq *req = (xGLXGetDrawableAttributesReq *)pc;
+
+    return DoGetDrawableAttributes(cl, req->drawable);
+}
+
+int __glXDisp_GetDrawableAttributesSGIX(__GLXclientState *cl, GLbyte *pc)
+{
+    xGLXGetDrawableAttributesSGIXReq *req =
+	(xGLXGetDrawableAttributesSGIXReq *)pc;
+    
+    return DoGetDrawableAttributes(cl, req->drawable);
+}
 
 /************************************************************************/
 
@@ -1416,7 +1728,7 @@ int __glXQueryContextInfoEXT(__GLXclientState *cl, GLbyte *pc)
 /*
 ** Execute all the drawing commands in a request.
 */
-int __glXRender(__GLXclientState *cl, GLbyte *pc)
+int __glXDisp_Render(__GLXclientState *cl, GLbyte *pc)
 {
     xGLXRenderReq *req;
     ClientPtr client= cl->client;
@@ -1425,14 +1737,14 @@ int __glXRender(__GLXclientState *cl, GLbyte *pc)
     CARD16 opcode;
     __GLXrenderHeader *hdr;
     __GLXcontext *glxc;
+    __GLX_DECLARE_SWAP_VARIABLES;
 
-    /*
-    ** NOTE: much of this code also appears in the byteswapping version of this
-    ** routine, __glXSwapRender().  Any changes made here should also be
-    ** duplicated there.
-    */
-    
     req = (xGLXRenderReq *) pc;
+    if (client->swapped) {
+	__GLX_SWAP_SHORT(&req->length);
+	__GLX_SWAP_INT(&req->contextTag);
+    }
+
     glxc = __glXForceCurrent(cl, req->contextTag, &error);
     if (!glxc) {
 	return error;
@@ -1442,60 +1754,53 @@ int __glXRender(__GLXclientState *cl, GLbyte *pc)
     pc += sz_xGLXRenderReq;
     left = (req->length << 2) - sz_xGLXRenderReq;
     while (left > 0) {
-        __GLXrenderSizeData *entry;
-        int extra = 0;
-	void (* proc)(GLbyte *);
+        __GLXrenderSizeData entry;
+        int extra;
+	__GLXdispatchRenderProcPtr proc;
+	int err;
 
 	/*
 	** Verify that the header length and the overall length agree.
 	** Also, each command must be word aligned.
 	*/
 	hdr = (__GLXrenderHeader *) pc;
+	if (client->swapped) {
+	    __GLX_SWAP_SHORT(&hdr->length);
+	    __GLX_SWAP_SHORT(&hdr->opcode);
+	}
 	cmdlen = hdr->length;
 	opcode = hdr->opcode;
-
-	if (left < cmdlen)
-	    return BadLength;
 
 	/*
 	** Check for core opcodes and grab entry data.
 	*/
-	if ( (opcode >= __GLX_MIN_RENDER_OPCODE) && 
-	     (opcode <= __GLX_MAX_RENDER_OPCODE) ) {
-	    entry = &__glXRenderSizeTable[opcode];
-	    proc = __glXRenderTable[opcode];
-#if __GLX_MAX_RENDER_OPCODE_EXT > __GLX_MIN_RENDER_OPCODE_EXT
-	} else if ( (opcode >= __GLX_MIN_RENDER_OPCODE_EXT) && 
-		    (opcode <= __GLX_MAX_RENDER_OPCODE_EXT) ) {
-	    entry = 
-		&__glXRenderSizeTable_EXT[opcode - 
-					 __GLX_MIN_RENDER_OPCODE_EXT];
-	    proc = __glXRenderTable_EXT[opcode - 
-				       __GLX_MIN_RENDER_OPCODE_EXT];
-#endif /* __GLX_MAX_RENDER_OPCODE_EXT > __GLX_MIN_RENDER_OPCODE_EXT */
-	} else {
+	err = __glXGetProtocolSizeData(& Render_dispatch_info, opcode, & entry);
+	proc = (__GLXdispatchRenderProcPtr)
+	    __glXGetProtocolDecodeFunction(& Render_dispatch_info,
+					   opcode, client->swapped);
+
+	if ((err < 0) || (proc == NULL)) {
 	    client->errorValue = commandsDone;
-	    return __glXBadRenderRequest;
+	    return __glXError(GLXBadRenderRequest);
 	}
 
-        if (!entry->bytes) {
-            /* unused opcode */
-            client->errorValue = commandsDone;
-            return __glXBadRenderRequest;
-        }
-
-        if (cmdlen < entry->bytes) {
-            return BadLength;
-        }
-
-        if (entry->varsize) {
+        if (entry.varsize) {
             /* variable size command */
-	    extra = (*entry->varsize)(pc + __GLX_RENDER_HDR_SIZE, False, left - __GLX_RENDER_HDR_SIZE);
+            extra = (*entry.varsize)(pc + __GLX_RENDER_HDR_SIZE,
+				     client->swapped);
             if (extra < 0) {
+                extra = 0;
+            }
+            if (cmdlen != __GLX_PAD(entry.bytes + extra)) {
+                return BadLength;
+            }
+        } else {
+            /* constant size command */
+            if (cmdlen != __GLX_PAD(entry.bytes)) {
                 return BadLength;
             }
         }
-	if (cmdlen != safe_pad(safe_add(entry->bytes, extra))) {
+	if (left < cmdlen) {
 	    return BadLength;
 	}
 
@@ -1515,44 +1820,42 @@ int __glXRender(__GLXclientState *cl, GLbyte *pc)
     return Success;
 }
 
+
 /*
 ** Execute a large rendering request (one that spans multiple X requests).
 */
-int __glXRenderLarge(__GLXclientState *cl, GLbyte *pc)
+int __glXDisp_RenderLarge(__GLXclientState *cl, GLbyte *pc)
 {
     xGLXRenderLargeReq *req;
     ClientPtr client= cl->client;
-    GLuint dataBytes;
-    void (*proc)(GLbyte *);
+    size_t dataBytes;
     __GLXrenderLargeHeader *hdr;
     __GLXcontext *glxc;
     int error;
     CARD16 opcode;
-
-    /*
-    ** NOTE: much of this code also appears in the byteswapping version of this
-    ** routine, __glXSwapRenderLarge().  Any changes made here should also be
-    ** duplicated there.
-    */
+    __GLX_DECLARE_SWAP_VARIABLES;
     
-    REQUEST_AT_LEAST_SIZE(xGLXRenderLargeReq);
-
     req = (xGLXRenderLargeReq *) pc;
+    if (client->swapped) {
+	__GLX_SWAP_SHORT(&req->length);
+	__GLX_SWAP_INT(&req->contextTag);
+	__GLX_SWAP_INT(&req->dataBytes);
+	__GLX_SWAP_SHORT(&req->requestNumber);
+	__GLX_SWAP_SHORT(&req->requestTotal);
+    }
+
     glxc = __glXForceCurrent(cl, req->contextTag, &error);
     if (!glxc) {
 	/* Reset in case this isn't 1st request. */
 	__glXResetLargeCommandStatus(cl);
 	return error;
     }
-    if (safe_pad(req->dataBytes) < 0)
-        return BadLength;
-
     dataBytes = req->dataBytes;
 
     /*
     ** Check the request length.
     */
-    if ((req->length << 2) != safe_pad(dataBytes) + sz_xGLXRenderLargeReq) {
+    if ((req->length << 2) != __GLX_PAD(dataBytes) + sz_xGLXRenderLargeReq) {
 	client->errorValue = req->length;
 	/* Reset in case this isn't 1st request. */
 	__glXResetLargeCommandStatus(cl);
@@ -1561,75 +1864,66 @@ int __glXRenderLarge(__GLXclientState *cl, GLbyte *pc)
     pc += sz_xGLXRenderLargeReq;
     
     if (cl->largeCmdRequestsSoFar == 0) {
-	__GLXrenderSizeData *entry;
-	int extra = 0, cmdlen;
-	int left = (req->length << 2) - sz_xGLXRenderLargeReq;
+	__GLXrenderSizeData entry;
+	int extra;
+	size_t cmdlen;
+	int err;
+
 	/*
 	** This is the first request of a multi request command.
 	** Make enough space in the buffer, then copy the entire request.
 	*/
 	if (req->requestNumber != 1) {
 	    client->errorValue = req->requestNumber;
-	    return __glXBadLargeRequest;
+	    return __glXError(GLXBadLargeRequest);
 	}
 
-        if (dataBytes < __GLX_RENDER_LARGE_HDR_SIZE)
-            return BadLength;
-
 	hdr = (__GLXrenderLargeHeader *) pc;
+	if (client->swapped) {
+	    __GLX_SWAP_INT(&hdr->length);
+	    __GLX_SWAP_INT(&hdr->opcode);
+	}
+	cmdlen = hdr->length;
 	opcode = hdr->opcode;
-        if ((cmdlen = safe_pad(hdr->length)) < 0)
-	    return BadLength;
 
 	/*
 	** Check for core opcodes and grab entry data.
 	*/
-	if ( (opcode >= __GLX_MIN_RENDER_OPCODE) && 
-	     (opcode <= __GLX_MAX_RENDER_OPCODE) ) {
-	    entry = &__glXRenderSizeTable[opcode];
-#if __GLX_MAX_RENDER_OPCODE_EXT > __GLX_MIN_RENDER_OPCODE_EXT
-	} else if ( (opcode >= __GLX_MIN_RENDER_OPCODE_EXT) && 
-	     (opcode <= __GLX_MAX_RENDER_OPCODE_EXT) ) {
-	    opcode -= __GLX_MIN_RENDER_OPCODE_EXT;
-	    entry = &__glXRenderSizeTable_EXT[opcode];
-#endif /* __GLX_MAX_RENDER_OPCODE_EXT > __GLX_MIN_RENDER_OPCODE_EXT */
-	} else {
+	err = __glXGetProtocolSizeData(& Render_dispatch_info, opcode, & entry);
+	if (err < 0) {
 	    client->errorValue = opcode;
-	    return __glXBadLargeRequest;
+	    return __glXError(GLXBadLargeRequest);
 	}
 
-        if (!entry->bytes) {
-            /* unused opcode */
-            client->errorValue = opcode;
-            return __glXBadLargeRequest;
-        }
-	if (entry->varsize) {
+	if (entry.varsize) {
 	    /*
 	    ** If it's a variable-size command (a command whose length must
 	    ** be computed from its parameters), all the parameters needed
 	    ** will be in the 1st request, so it's okay to do this.
 	    */
-	    extra = (*entry->varsize)(pc + __GLX_RENDER_LARGE_HDR_SIZE, False,
-				      left - __GLX_RENDER_LARGE_HDR_SIZE);
+	    extra = (*entry.varsize)(pc + __GLX_RENDER_LARGE_HDR_SIZE,
+				     client->swapped);
 	    if (extra < 0) {
-	        return BadLength;
+		extra = 0;
+	    }
+	    /* large command's header is 4 bytes longer, so add 4 */
+	    if (cmdlen != __GLX_PAD(entry.bytes + 4 + extra)) {
+		return BadLength;
+	    }
+	} else {
+	    /* constant size command */
+	    if (cmdlen != __GLX_PAD(entry.bytes + 4)) {
+		return BadLength;
 	    }
 	}
-
-        /* the +4 is safe because we know entry.bytes is small */
-        if (cmdlen != safe_pad(safe_add(entry->bytes + 4, extra))) {
-            return BadLength;
-        }
-
 	/*
 	** Make enough space in the buffer, then copy the entire request.
 	*/
 	if (cl->largeCmdBufSize < cmdlen) {
 	    if (!cl->largeCmdBuf) {
-		cl->largeCmdBuf = (GLbyte *) malloc((size_t)cmdlen);
+		cl->largeCmdBuf = (GLbyte *) malloc(cmdlen);
 	    } else {
-		cl->largeCmdBuf = (GLbyte *) realloc(cl->largeCmdBuf, 
-						      (size_t)cmdlen);
+		cl->largeCmdBuf = (GLbyte *) realloc(cl->largeCmdBuf, cmdlen);
 	    }
 	    if (!cl->largeCmdBuf) {
 		return BadAlloc;
@@ -1649,7 +1943,6 @@ int __glXRenderLarge(__GLXclientState *cl, GLbyte *pc)
 	** We are receiving subsequent (i.e. not the first) requests of a
 	** multi request command.
 	*/
-        int bytesSoFar; /* including this packet */
 
 	/*
 	** Check the request number and the total request count.
@@ -1657,69 +1950,63 @@ int __glXRenderLarge(__GLXclientState *cl, GLbyte *pc)
 	if (req->requestNumber != cl->largeCmdRequestsSoFar + 1) {
 	    client->errorValue = req->requestNumber;
 	    __glXResetLargeCommandStatus(cl);
-	    return __glXBadLargeRequest;
+	    return __glXError(GLXBadLargeRequest);
 	}
 	if (req->requestTotal != cl->largeCmdRequestsTotal) {
 	    client->errorValue = req->requestTotal;
 	    __glXResetLargeCommandStatus(cl);
-	    return __glXBadLargeRequest;
+	    return __glXError(GLXBadLargeRequest);
 	}
 
 	/*
 	** Check that we didn't get too much data.
 	*/
-        if ((bytesSoFar = safe_add(cl->largeCmdBytesSoFar, dataBytes)) < 0) {
-            client->errorValue = dataBytes;
-            __glXResetLargeCommandStatus(cl);
-            return __glXBadLargeRequest;
-        }
-
-        if (bytesSoFar > cl->largeCmdBytesTotal) {
+	if ((cl->largeCmdBytesSoFar + dataBytes) > cl->largeCmdBytesTotal) {
 	    client->errorValue = dataBytes;
 	    __glXResetLargeCommandStatus(cl);
-	    return __glXBadLargeRequest;
+	    return __glXError(GLXBadLargeRequest);
 	}
 	memcpy(cl->largeCmdBuf + cl->largeCmdBytesSoFar, pc, dataBytes);
 	cl->largeCmdBytesSoFar += dataBytes;
 	cl->largeCmdRequestsSoFar++;
 
 	if (req->requestNumber == cl->largeCmdRequestsTotal) {
+	    __GLXdispatchRenderProcPtr proc;
+
 	    /*
 	    ** This is the last request; it must have enough bytes to complete
 	    ** the command.
 	    */
-            /* NOTE: the pad macro below is needed because the client library
-             ** pads the total byte count, but not the per-request byte counts.
-             ** The Protocol Encoding says the total byte count should not be
-             ** padded, so a proposal will be made to the ARB to relax the
-             ** padding constraint on the total byte count, thus preserving
-             ** backward compatibility.  Meanwhile, the padding done below
-             ** fixes a bug that did not allow large commands of odd sizes to
-             ** be accepted by the server.
+	    /* NOTE: the two pad macros have been added below; they are needed
+	    ** because the client library pads the total byte count, but not
+	    ** the per-request byte counts.  The Protocol Encoding says the
+	    ** total byte count should not be padded, so a proposal will be 
+	    ** made to the ARB to relax the padding constraint on the total 
+	    ** byte count, thus preserving backward compatibility.  Meanwhile, 
+	    ** the padding done below fixes a bug that did not allow
+	    ** large commands of odd sizes to be accepted by the server.
 	    */
-            if (safe_pad(cl->largeCmdBytesSoFar) != cl->largeCmdBytesTotal) {
+	    if (__GLX_PAD(cl->largeCmdBytesSoFar) !=
+		__GLX_PAD(cl->largeCmdBytesTotal)) {
 		client->errorValue = dataBytes;
 		__glXResetLargeCommandStatus(cl);
-		return __glXBadLargeRequest;
+		return __glXError(GLXBadLargeRequest);
 	    }
 	    hdr = (__GLXrenderLargeHeader *) cl->largeCmdBuf;
-	    opcode = hdr->opcode;
-
 	    /*
+	    ** The opcode and length field in the header had already been
+	    ** swapped when the first request was received.
+	    **
 	    ** Use the opcode to index into the procedure table.
 	    */
-	    if ( (opcode >= __GLX_MIN_RENDER_OPCODE) && 
-		 (opcode <= __GLX_MAX_RENDER_OPCODE) ) {
-		proc = __glXRenderTable[opcode];
-#if __GLX_MAX_RENDER_OPCODE_EXT > __GLX_MIN_RENDER_OPCODE_EXT
-	    } else if ( (opcode >= __GLX_MIN_RENDER_OPCODE_EXT) && 
-		 (opcode <= __GLX_MAX_RENDER_OPCODE_EXT) ) {
-		opcode -= __GLX_MIN_RENDER_OPCODE_EXT;
-		proc = __glXRenderTable_EXT[opcode];
-#endif /* __GLX_MAX_RENDER_OPCODE_EXT > __GLX_MIN_RENDER_OPCODE_EXT */
-	    } else {
+	    opcode = hdr->opcode;
+
+	    proc = (__GLXdispatchRenderProcPtr)
+	      __glXGetProtocolDecodeFunction(& Render_dispatch_info, opcode,
+					     client->swapped);
+	    if (proc == NULL) {
 		client->errorValue = opcode;
-		return __glXBadLargeRequest;
+		return __glXError(GLXBadLargeRequest);
 	    }
 
 	    /*
@@ -1743,24 +2030,33 @@ int __glXRenderLarge(__GLXclientState *cl, GLbyte *pc)
 
 extern RESTYPE __glXSwapBarrierRes;
 
-static int __glXBindSwapBarrierSGIX(__GLXclientState *cl, GLbyte *pc)
+int __glXDisp_BindSwapBarrierSGIX(__GLXclientState *cl, GLbyte *pc)
 {
     ClientPtr client = cl->client;
     xGLXBindSwapBarrierSGIXReq *req = (xGLXBindSwapBarrierSGIXReq *) pc;
     XID drawable = req->drawable;
     int barrier = req->barrier;
-    DrawablePtr pDraw = (DrawablePtr) LookupDrawable(drawable, client);
-    int screen = pDraw->pScreen->myNum;
+    DrawablePtr pDraw;
+    int screen, rc;
+    __GLXscreen *pGlxScreen;
 
+#ifndef XSERVER_LACKS_XACE_EXT
+    rc = dixLookupDrawable(&pDraw, drawable, client, 0, DixGetAttrAccess);
+#else
+    pDraw =
+        SecurityLookupDrawable(drawable, client, DixGetAttrAccess);
+    rc = pDraw ? Success : BadDrawable;
+#endif /* XSERVER_LACKS_XACE_EXT */
 
-    if (pDraw && (pDraw->type == DRAWABLE_WINDOW)) {
-        if (__glXSwapBarrierFuncs &&
-            __glXSwapBarrierFuncs[screen].bindSwapBarrierFunc) {
-            int ret = __glXSwapBarrierFuncs[screen].bindSwapBarrierFunc(screen, drawable, barrier);
+    pGlxScreen = glxGetScreen(pDraw->pScreen);
+    if (rc == Success && (pDraw->type == DRAWABLE_WINDOW)) {
+	screen = pDraw->pScreen->myNum;
+        if (pGlxScreen->swapBarrierFuncs) {
+            int ret = pGlxScreen->swapBarrierFuncs->bindSwapBarrierFunc(screen, drawable, barrier);
             if (ret == Success) {
                 if (barrier)
                     /* add source for cleanup when drawable is gone */
-                    AddResource(drawable, __glXSwapBarrierRes, (void *)screen);
+                    AddResource(drawable, __glXSwapBarrierRes, (pointer)screen);
                 else
                     /* delete source */
                     FreeResourceByType(drawable, __glXSwapBarrierRes, FALSE);
@@ -1769,21 +2065,22 @@ static int __glXBindSwapBarrierSGIX(__GLXclientState *cl, GLbyte *pc)
         }
     }
     client->errorValue = drawable;
-    return __glXBadDrawable;
+    return __glXError(GLXBadDrawable);
 }
 
 
-static int __glXQueryMaxSwapBarriersSGIX(__GLXclientState *cl, GLbyte *pc)
+int __glXDisp_QueryMaxSwapBarriersSGIX(__GLXclientState *cl, GLbyte *pc)
 {
     ClientPtr client = cl->client;
     xGLXQueryMaxSwapBarriersSGIXReq *req =
                                     (xGLXQueryMaxSwapBarriersSGIXReq *) pc;
     xGLXQueryMaxSwapBarriersSGIXReply reply;
     int screen = req->screen;
+    __GLXscreen *pGlxScreen;
 
-    if (__glXSwapBarrierFuncs &&
-        __glXSwapBarrierFuncs[screen].queryMaxSwapBarriersFunc)
-        reply.max = __glXSwapBarrierFuncs[screen].queryMaxSwapBarriersFunc(screen);
+    pGlxScreen = glxGetScreen(screenInfo.screens[screen]);
+    if (pGlxScreen->swapBarrierFuncs)
+        reply.max = pGlxScreen->swapBarrierFuncs->queryMaxSwapBarriersFunc(screen);
     else
         reply.max = 0;
 
@@ -1798,13 +2095,13 @@ static int __glXQueryMaxSwapBarriersSGIX(__GLXclientState *cl, GLbyte *pc)
     }
 
     WriteToClient(client, sz_xGLXQueryMaxSwapBarriersSGIXReply,
-                        &reply);
+                        (char *) &reply);
     return Success;
 }
 
 #define GLX_BAD_HYPERPIPE_SGIX 92
 
-static int __glxQueryHyperpipeNetworkSGIX(__GLXclientState *cl, GLbyte *pc)
+int __glXDisp_QueryHyperpipeNetworkSGIX(__GLXclientState *cl, GLbyte *pc)
 {
     ClientPtr client = cl->client;
     xGLXQueryHyperpipeNetworkSGIXReq * req = (xGLXQueryHyperpipeNetworkSGIXReq *) pc;
@@ -1816,11 +2113,12 @@ static int __glxQueryHyperpipeNetworkSGIX(__GLXclientState *cl, GLbyte *pc)
     int npipes=0;
 
     int n= 0;
+    __GLXscreen *pGlxScreen;
 
-    if (__glXHyperpipeFuncs &&
-        __glXHyperpipeFuncs[screen].queryHyperpipeNetworkFunc != NULL) {
+    pGlxScreen = glxGetScreen(screenInfo.screens[screen]);
+    if (pGlxScreen->hyperpipeFuncs) {
         rdata =
-            (__glXHyperpipeFuncs[screen].queryHyperpipeNetworkFunc(screen, &npipes, &n));
+            (pGlxScreen->hyperpipeFuncs->queryHyperpipeNetworkFunc(screen, &npipes, &n));
     }
     length = __GLX_PAD(n) >> 2;
     reply.type = X_Reply;
@@ -1837,14 +2135,14 @@ static int __glxQueryHyperpipeNetworkSGIX(__GLXclientState *cl, GLbyte *pc)
         __GLX_SWAP_INT(&reply.npipes);
     }
     WriteToClient(client, sz_xGLXQueryHyperpipeNetworkSGIXReply,
-                  &reply);
+                  (char *) &reply);
 
-    WriteToClient(client, length << 2, rdata);
+    WriteToClient(client, length << 2, (char *)rdata);
 
     return Success;
 }
 
-static int __glxDestroyHyperpipeConfigSGIX (__GLXclientState *cl, GLbyte *pc)
+int __glXDisp_DestroyHyperpipeConfigSGIX (__GLXclientState *cl, GLbyte *pc)
 {
     ClientPtr client = cl->client;
     xGLXDestroyHyperpipeConfigSGIXReq * req =
@@ -1853,13 +2151,13 @@ static int __glxDestroyHyperpipeConfigSGIX (__GLXclientState *cl, GLbyte *pc)
     int screen = req->screen;
     int  success = GLX_BAD_HYPERPIPE_SGIX;
     int hpId ;
+    __GLXscreen *pGlxScreen;
 
     hpId = req->hpId;
 
-
-    if (__glXHyperpipeFuncs &&
-        __glXHyperpipeFuncs[screen].destroyHyperpipeConfigFunc != NULL) {
-        success = __glXHyperpipeFuncs[screen].destroyHyperpipeConfigFunc(screen, hpId);
+    pGlxScreen = glxGetScreen(screenInfo.screens[screen]);
+    if (pGlxScreen->hyperpipeFuncs) {
+        success = pGlxScreen->hyperpipeFuncs->destroyHyperpipeConfigFunc(screen, hpId);
     }
 
     reply.type = X_Reply;
@@ -1875,11 +2173,11 @@ static int __glxDestroyHyperpipeConfigSGIX (__GLXclientState *cl, GLbyte *pc)
     }
     WriteToClient(client,
                   sz_xGLXDestroyHyperpipeConfigSGIXReply,
-                  &reply);
+                  (char *) &reply);
     return Success;
 }
 
-static int __glxQueryHyperpipeConfigSGIX(__GLXclientState *cl, GLbyte *pc)
+int __glXDisp_QueryHyperpipeConfigSGIX(__GLXclientState *cl, GLbyte *pc)
 {
     ClientPtr client = cl->client;
     xGLXQueryHyperpipeConfigSGIXReq * req =
@@ -1891,12 +2189,13 @@ static int __glxQueryHyperpipeConfigSGIX(__GLXclientState *cl, GLbyte *pc)
     int npipes=0;
     int n= 0;
     int hpId;
+    __GLXscreen *pGlxScreen;
 
     hpId = req->hpId;
 
-    if (__glXHyperpipeFuncs &&
-        __glXHyperpipeFuncs[screen].queryHyperpipeConfigFunc != NULL) {
-        rdata = __glXHyperpipeFuncs[screen].queryHyperpipeConfigFunc(screen, hpId,&npipes, &n);
+    pGlxScreen = glxGetScreen(screenInfo.screens[screen]);
+    if (pGlxScreen->hyperpipeFuncs) {
+        rdata = pGlxScreen->hyperpipeFuncs->queryHyperpipeConfigFunc(screen, hpId,&npipes, &n);
     }
 
     length = __GLX_PAD(n) >> 2;
@@ -1916,14 +2215,14 @@ static int __glxQueryHyperpipeConfigSGIX(__GLXclientState *cl, GLbyte *pc)
     }
 
     WriteToClient(client, sz_xGLXQueryHyperpipeConfigSGIXReply,
-                  &reply);
+                  (char *) &reply);
 
-    WriteToClient(client, length << 2, rdata);
+    WriteToClient(client, length << 2, (char *)rdata);
 
     return Success;
 }
 
-static int __glxHyperpipeConfigSGIX(__GLXclientState *cl, GLbyte *pc)
+int __glXDisp_HyperpipeConfigSGIX(__GLXclientState *cl, GLbyte *pc)
 {
     ClientPtr client = cl->client;
     xGLXHyperpipeConfigSGIXReq * req =
@@ -1934,14 +2233,15 @@ static int __glxHyperpipeConfigSGIX(__GLXclientState *cl, GLbyte *pc)
 
     int npipes=0, networkId;
     int hpId=-1;
+    __GLXscreen *pGlxScreen;
 
+    pGlxScreen = glxGetScreen(screenInfo.screens[screen]);
     networkId = (int)req->networkId;
     npipes = (int)req->npipes;
     rdata = (void *)(req +1);
 
-    if (__glXHyperpipeFuncs &&
-        __glXHyperpipeFuncs[screen].hyperpipeConfigFunc != NULL) {
-        __glXHyperpipeFuncs[screen].hyperpipeConfigFunc(screen,networkId,
+    if (pGlxScreen->hyperpipeFuncs) {
+        pGlxScreen->hyperpipeFuncs->hyperpipeConfigFunc(screen,networkId,
                                                         &hpId, &npipes,
                                                         (void *) rdata);
     }
@@ -1961,7 +2261,7 @@ static int __glxHyperpipeConfigSGIX(__GLXclientState *cl, GLbyte *pc)
     }
 
     WriteToClient(client, sz_xGLXHyperpipeConfigSGIXReply,
-                  &reply);
+                  (char *) &reply);
 
     return Success;
 }
@@ -1974,107 +2274,57 @@ static int __glxHyperpipeConfigSGIX(__GLXclientState *cl, GLbyte *pc)
 ** allocating the entry points in the dispatch table.
 */
 
-int __glXVendorPrivate(__GLXclientState *cl, GLbyte *pc)
+int __glXDisp_VendorPrivate(__GLXclientState *cl, GLbyte *pc)
 {
-    xGLXVendorPrivateReq *req;
-    GLint vendorcode;
+    xGLXVendorPrivateReq *req = (xGLXVendorPrivateReq *) pc;
+    GLint vendorcode = req->vendorCode;
+    __GLXdispatchVendorPrivProcPtr proc;
 
-    req = (xGLXVendorPrivateReq *) pc;
-    vendorcode = req->vendorCode;
 
-#ifndef __DARWIN__
-    switch( vendorcode ) {
-    case X_GLvop_SampleMaskSGIS:
-	glSampleMaskSGIS(*(GLfloat *)(pc + 4),
-			 *(GLboolean *)(pc + 8));
-	return Success;
-    case X_GLvop_SamplePatternSGIS:
-	glSamplePatternSGIS( *(GLenum *)(pc + 4));
-	return Success;
-    case X_GLXvop_BindSwapBarrierSGIX:
-        return __glXBindSwapBarrierSGIX(cl, pc);
-    }
-#endif
-
-    if ((vendorcode >= __GLX_MIN_VENDPRIV_OPCODE_EXT) &&
-          (vendorcode <= __GLX_MAX_VENDPRIV_OPCODE_EXT))  {
-	(*__glXVendorPrivTable_EXT[vendorcode-__GLX_MIN_VENDPRIV_OPCODE_EXT])
-							(cl, (GLbyte*)req);
+    proc = (__GLXdispatchVendorPrivProcPtr)
+      __glXGetProtocolDecodeFunction(& VendorPriv_dispatch_info,
+				     vendorcode, 0);
+    if (proc != NULL) {
+	(*proc)(cl, (GLbyte*)req);
 	return Success;
     }
-    /*
-    ** This sample implemention does not support any private requests.
-    */
+
     cl->client->errorValue = req->vendorCode;
-    return __glXUnsupportedPrivateRequest;
+    return __glXError(GLXUnsupportedPrivateRequest);
 }
 
-int __glXVendorPrivateWithReply(__GLXclientState *cl, GLbyte *pc)
+int __glXDisp_VendorPrivateWithReply(__GLXclientState *cl, GLbyte *pc)
 {
-    xGLXVendorPrivateWithReplyReq *req;
-    GLint vendorcode;
+    xGLXVendorPrivateReq *req = (xGLXVendorPrivateReq *) pc;
+    GLint vendorcode = req->vendorCode;
+    __GLXdispatchVendorPrivProcPtr proc;
 
-    req = (xGLXVendorPrivateWithReplyReq *) pc;
-    vendorcode = req->vendorCode;
 
-    switch (vendorcode) {
-      case X_GLXvop_QueryContextInfoEXT:
-	return __glXQueryContextInfoEXT(cl, pc);
-      case X_GLXvop_MakeCurrentReadSGI:
-	return __glXMakeCurrentReadSGI(cl, pc);
-      case X_GLXvop_QueryMaxSwapBarriersSGIX:
-        return __glXQueryMaxSwapBarriersSGIX(cl, pc);
-      case X_GLXvop_QueryHyperpipeNetworkSGIX:
-        return __glxQueryHyperpipeNetworkSGIX(cl, pc);
-      case X_GLXvop_QueryHyperpipeConfigSGIX:
-        return __glxQueryHyperpipeConfigSGIX(cl, pc);
-      case X_GLXvop_DestroyHyperpipeConfigSGIX:
-        return __glxDestroyHyperpipeConfigSGIX(cl, pc);
-      case X_GLXvop_HyperpipeConfigSGIX:
-        return __glxHyperpipeConfigSGIX(cl, pc);
-      case X_GLXvop_GetFBConfigsSGIX:
-	return __glXGetFBConfigsSGIX(cl, pc);
-      case X_GLXvop_CreateContextWithConfigSGIX:
-	return __glXCreateContextWithConfigSGIX(cl, pc);
-      case X_GLXvop_CreateGLXPixmapWithConfigSGIX:
-	return __glXCreateGLXPixmapWithConfigSGIX(cl, pc);
-      default:
-	break;
-    }
-
-    if ((vendorcode >= __GLX_MIN_VENDPRIV_OPCODE_EXT) &&
-          (vendorcode <= __GLX_MAX_VENDPRIV_OPCODE_EXT))  {
-	return 
-	(*__glXVendorPrivTable_EXT[vendorcode-__GLX_MIN_VENDPRIV_OPCODE_EXT])
-							(cl, (GLbyte*)req);
+    proc = (__GLXdispatchVendorPrivProcPtr)
+      __glXGetProtocolDecodeFunction(& VendorPriv_dispatch_info,
+				     vendorcode, 0);
+    if (proc != NULL) {
+	return (*proc)(cl, (GLbyte*)req);
     }
 
     cl->client->errorValue = vendorcode;
-    return __glXUnsupportedPrivateRequest;
+    return __glXError(GLXUnsupportedPrivateRequest);
 }
 
-int __glXQueryExtensionsString(__GLXclientState *cl, GLbyte *pc)
+int __glXDisp_QueryExtensionsString(__GLXclientState *cl, GLbyte *pc)
 {
     ClientPtr client = cl->client;
     xGLXQueryExtensionsStringReq *req = (xGLXQueryExtensionsStringReq *) pc;
     xGLXQueryExtensionsStringReply reply;
-    GLuint screen;
+    __GLXscreen *pGlxScreen;
     size_t n, length;
-    const char *ptr;
     char *buf;
+    int err;
 
-    screen = req->screen;
-    /*
-    ** Check if screen exists.
-    */
-    if (screen >= screenInfo.numScreens) {
-	client->errorValue = screen;
-	return BadValue;
-    }
+    if (!validGlxScreen(client, req->screen, &pGlxScreen, &err))
+	return err;
 
-    ptr = __glXActiveScreens[screen].GLXextensions;
-
-    n = strlen(ptr) + 1;
+    n = strlen(pGlxScreen->GLXextensions) + 1;
     length = __GLX_PAD(n) >> 2;
     reply.type = X_Reply;
     reply.sequenceNumber = client->sequence;
@@ -2085,48 +2335,42 @@ int __glXQueryExtensionsString(__GLXclientState *cl, GLbyte *pc)
     buf = (char *) malloc(length << 2);
     if (buf == NULL)
         return BadAlloc;
-    memcpy(buf, ptr, n);
+    memcpy(buf, pGlxScreen->GLXextensions, n);
 
     if (client->swapped) {
         glxSwapQueryExtensionsStringReply(client, &reply, buf);
     } else {
-        WriteToClient(client, sz_xGLXQueryExtensionsStringReply,&reply);
-        WriteToClient(client, (int)(length << 2), buf);
+        WriteToClient(client, sz_xGLXQueryExtensionsStringReply,(char *)&reply);
+        WriteToClient(client, (int)(length << 2), (char *)buf);
     }
 
     free(buf);
     return Success;
 }
 
-int __glXQueryServerString(__GLXclientState *cl, GLbyte *pc)
+int __glXDisp_QueryServerString(__GLXclientState *cl, GLbyte *pc)
 {
     ClientPtr client = cl->client;
     xGLXQueryServerStringReq *req = (xGLXQueryServerStringReq *) pc;
     xGLXQueryServerStringReply reply;
-    int name;
-    GLuint screen;
     size_t n, length;
     const char *ptr;
     char *buf;
+    __GLXscreen *pGlxScreen;
+    int err;
 
-    name = req->name;
-    screen = req->screen;
-    /*
-    ** Check if screen exists.
-    */
-    if (screen >= screenInfo.numScreens) {
-	client->errorValue = screen;
-	return BadValue;
-    }
-    switch(name) {
+    if (!validGlxScreen(client, req->screen, &pGlxScreen, &err))
+	return err;
+
+    switch(req->name) {
 	case GLX_VENDOR:
-	    ptr = __glXActiveScreens[screen].GLXvendor;
+	    ptr = pGlxScreen->GLXvendor;
 	    break;
 	case GLX_VERSION:
-	    ptr = __glXActiveScreens[screen].GLXversion;
+	    ptr = pGlxScreen->GLXversion;
 	    break;
 	case GLX_EXTENSIONS:
-	    ptr = __glXActiveScreens[screen].GLXextensions;
+	    ptr = pGlxScreen->GLXextensions;
 	    break;
 	default:
 	    return BadValue; 
@@ -2139,7 +2383,8 @@ int __glXQueryServerString(__GLXclientState *cl, GLbyte *pc)
     reply.length = length;
     reply.n = n;
 
-    if ((buf = (char *) malloc(length << 2)) == NULL) {
+    buf = (char *) malloc(length << 2);
+    if (buf == NULL) {
         return BadAlloc;
     }
     memcpy(buf, ptr, n);
@@ -2147,7 +2392,7 @@ int __glXQueryServerString(__GLXclientState *cl, GLbyte *pc)
     if (client->swapped) {
         glxSwapQueryServerStringReply(client, &reply, buf);
     } else {
-        WriteToClient(client, sz_xGLXQueryServerStringReply, &reply);
+        WriteToClient(client, sz_xGLXQueryServerStringReply, (char *)&reply);
         WriteToClient(client, (int)(length << 2), buf);
     }
 
@@ -2155,7 +2400,7 @@ int __glXQueryServerString(__GLXclientState *cl, GLbyte *pc)
     return Success;
 }
 
-int __glXClientInfo(__GLXclientState *cl, GLbyte *pc)
+int __glXDisp_ClientInfo(__GLXclientState *cl, GLbyte *pc)
 {
     xGLXClientInfoReq *req = (xGLXClientInfoReq *) pc;
     const char *buf;
@@ -2169,4 +2414,3 @@ int __glXClientInfo(__GLXclientState *cl, GLbyte *pc)
 
     return Success;
 }
-

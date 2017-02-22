@@ -40,9 +40,9 @@
 **
 */
 
-#include <nx-X11/X.h>
-#include <nx-X11/Xproto.h>
-#include <nx-X11/Xmd.h>
+#include <X11/X.h>
+#include <X11/Xproto.h>
+#include <X11/Xmd.h>
 #include <misc.h>
 #include <dixstruct.h>
 #include <pixmapstr.h>
@@ -50,9 +50,7 @@
 #include <extnsionst.h>
 #include <resource.h>
 #include <scrnintstr.h>
-#include "protocol-versions.h"
 
-#include <limits.h>
 /*
 ** The X header misc.h defines these math functions.
 */
@@ -65,16 +63,16 @@
 #include <GL/glxint.h>
 
 /* For glxscreens.h */
-typedef struct __GLXdrawablePrivateRec __GLXdrawablePrivate;
+typedef struct __GLXdrawable __GLXdrawable;
+typedef struct __GLXcontext __GLXcontext;
 
 #include "glxscreens.h"
 #include "glxdrawable.h"
 #include "glxcontext.h"
-#include "glxerror.h"
 
 
-#define GLX_SERVER_MAJOR_VERSION SERVER_GLX_MAJOR_VERSION
-#define GLX_SERVER_MINOR_VERSION SERVER_GLX_MINOR_VERSION
+#define GLX_SERVER_MAJOR_VERSION 1
+#define GLX_SERVER_MINOR_VERSION 2
 
 #ifndef True
 #define True 1
@@ -90,20 +88,30 @@ typedef XID GLXContextID;
 typedef XID GLXPixmap;
 typedef XID GLXDrawable;
 
-typedef struct __GLXcontextRec *GLXContext;
 typedef struct __GLXclientStateRec __GLXclientState;
 
-extern __GLXscreenInfo *__glXActiveScreens;
-extern GLint __glXNumActiveScreens;
-extern __GLXscreenInfo *__glXgetActiveScreen(int num);
+extern __GLXscreen *glxGetScreen(ScreenPtr pScreen);
+extern __GLXclientState *glxGetClient(ClientPtr pClient);
 
 /************************************************************************/
+
+void GlxExtensionInit(void);
+
+void GlxSetVisualConfigs(int nconfigs, 
+                         __GLXvisualConfig *configs, void **privates);
+
+struct _glapi_table;
+void GlxSetRenderTables (struct _glapi_table *table);
 
 /*
 ** The last context used (from the server's persective) is cached.
 */
 extern __GLXcontext *__glXLastContext;
 extern __GLXcontext *__glXForceCurrent(__GLXclientState*, GLXContextTag, int*);
+
+extern ClientPtr __pGlxClient;
+
+int __glXError(int error);
 
 /*
 ** Macros to set, unset, and retrieve the flag that says whether a context
@@ -114,6 +122,31 @@ extern __GLXcontext *__glXForceCurrent(__GLXclientState*, GLXContextTag, int*);
 #define __GLX_HAS_UNFLUSHED_CMDS(glxc) (glxc->hasUnflushedCommands)
 
 /************************************************************************/
+
+typedef struct __GLXprovider __GLXprovider;
+struct __GLXprovider {
+    __GLXscreen *(*screenProbe)(ScreenPtr pScreen);
+    const char    *name;
+    __GLXprovider *next;
+};
+
+void GlxPushProvider(__GLXprovider *provider);
+
+enum {
+    GLX_MINIMAL_VISUALS,
+    GLX_TYPICAL_VISUALS,
+    GLX_ALL_VISUALS
+};
+
+void GlxSetVisualConfig(int config);
+
+void __glXsetEnterLeaveServerFuncs(void (*enter)(GLboolean),
+				   void (*leave)(GLboolean));
+void __glXenterServer(GLboolean rendering);
+void __glXleaveServer(GLboolean rendering);
+
+void glxSuspendClients(void);
+void glxResumeClients(void);
 
 /*
 ** State kept per client.
@@ -155,8 +188,6 @@ struct __GLXclientStateRec {
     char *GLClientextensions;
 };
 
-extern __GLXclientState *__glXClients[];
-
 /************************************************************************/
 
 /*
@@ -170,17 +201,16 @@ typedef int (*__GLXdispatchVendorPrivProcPtr)(__GLXclientState *, GLbyte *);
  * Dispatch for GLX commands.
  */
 typedef int (*__GLXprocPtr)(__GLXclientState *, char *pc);
-extern __GLXprocPtr __glXProcTable[];
 
 /*
  * Tables for computing the size of each rendering command.
  */
+typedef int (*gl_proto_size_func)(const GLbyte *, Bool);
+
 typedef struct {
     int bytes;
-    int (*varsize)(GLbyte *pc, Bool swap, int left);
+    gl_proto_size_func varsize;
 } __GLXrenderSizeData;
-extern __GLXrenderSizeData __glXRenderSizeTable[];
-extern __GLXrenderSizeData __glXRenderSizeTable_EXT[];
 
 /************************************************************************/
 
@@ -213,6 +243,8 @@ extern void __glXSwapQueryVersionReply(ClientPtr client,
 extern void __glXSwapQueryContextInfoEXTReply(ClientPtr client,
 					      xGLXQueryContextInfoEXTReply *reply,
 					      int *buf);
+extern void __glXSwapGetDrawableAttributesReply(ClientPtr client,
+						xGLXGetDrawableAttributesReply *reply, CARD32 *buf);
 extern void glxSwapQueryExtensionsStringReply(ClientPtr client,
 				xGLXQueryExtensionsStringReply *reply, char *buf);
 extern void glxSwapQueryServerStringReply(ClientPtr client,
@@ -222,105 +254,11 @@ extern void glxSwapQueryServerStringReply(ClientPtr client,
 /*
  * Routines for computing the size of variably-sized rendering commands.
  */
-static __inline__ int
-safe_add(int a, int b)
-{
-    if (a < 0 || b < 0)
-        return -1;
-
-    if (INT_MAX - a < b)
-        return -1;
-
-    return a + b;
-}
-
-static __inline__ int
-safe_mul(int a, int b)
-{
-    if (a < 0 || b < 0)
-        return -1;
-
-    if (a == 0 || b == 0)
-        return 0;
-
-    if (a > INT_MAX / b)
-        return -1;
-
-   return a * b;
-}
-
-static __inline__ int
-safe_pad(int a)
-{
-    int ret;
-
-    if (a < 0)
-        return -1;
-
-    if ((ret = safe_add(a, 3)) < 0)
-        return -1;
-
-    return ret & (GLuint)~3;
-}
 
 extern int __glXTypeSize(GLenum enm);
 extern int __glXImageSize(GLenum format, GLenum type,
     GLenum target, GLsizei w, GLsizei h, GLsizei d,
     GLint imageHeight, GLint rowLength, GLint skipImages, GLint skipRows,
     GLint alignment);
-
-extern int __glXCallListsReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXBitmapReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXFogfvReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXFogivReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXLightfvReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXLightivReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXLightModelfvReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXLightModelivReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXMaterialfvReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXMaterialivReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXTexParameterfvReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXTexParameterivReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXTexImage1DReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXTexImage2DReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXTexEnvfvReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXTexEnvivReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXTexGendvReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXTexGenfvReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXTexGenivReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXMap1dReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXMap1fReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXMap2dReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXMap2fReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXPixelMapfvReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXPixelMapuivReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXPixelMapusvReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXDrawPixelsReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXDrawArraysSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXPrioritizeTexturesReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXTexSubImage1DReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXTexSubImage2DReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXTexImage3DReqSize(GLbyte *pc, Bool swap, int reqlen );
-extern int __glXTexSubImage3DReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXConvolutionFilter1DReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXConvolutionFilter2DReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXConvolutionParameterivReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXConvolutionParameterfvReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXSeparableFilter2DReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXColorTableReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXColorSubTableReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXColorTableParameterfvReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXColorTableParameterivReqSize(GLbyte *pc, Bool swap, int reqlen);
-
-/*
- * Routines for computing the size of returned data.
- */
-extern int __glXConvolutionParameterivSize(GLenum pname);
-extern int __glXConvolutionParameterfvSize(GLenum pname);
-extern int __glXColorTableParameterfvSize(GLenum pname);
-extern int __glXColorTableParameterivSize(GLenum pname);
-
-extern int __glXPointParameterfvARBReqSize(GLbyte *pc, Bool swap, int reqlen);
-extern int __glXPointParameterivReqSize(GLbyte *pc, Bool swap, int reqlen);
 
 #endif /* !__GLX_server_h__ */

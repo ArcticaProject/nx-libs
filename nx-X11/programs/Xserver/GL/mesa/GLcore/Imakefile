@@ -1,8 +1,9 @@
+NULL =
+
 #include <Server.tmpl>
 
 #define NeedAllMesaSrc
 #define MesaBuildDir ../main/
-#define MesaACBuildDir ../array_cache/
 #define MesaMathBuildDir ../math/
 #define MesaSwrastBuildDir ../swrast/
 #define MesaSwrastSetupBuildDir ../swrast_setup/
@@ -12,7 +13,6 @@
 #define MesaSlangBuildDir ../shader/slang/
 #define MesaXBuildDir ../X/
 
-#include "../array_cache/Imakefile.inc"
 #include "../swrast/Imakefile.inc"
 #include "../swrast_setup/Imakefile.inc"
 #include "../tnl/Imakefile.inc"
@@ -26,17 +26,31 @@
 
         XOBJS = ../X/?*.o
 
-         OBJS = $(COREMESAOBJS) $(MOBJS)
+         OBJS =					\
+                $(COREMESAOBJS)			\
+                $(MOBJS)			\
+                $(NULL)
 
-        DONES = ../main/DONE ../X/DONE ../array_cache/DONE \
-		../math/DONE ../swrast/DONE ../swrast_setup/DONE \
-		../tnl/DONE ../shader/DONE ../shader/grammar/DONE \
-                ../shader/slang/DONE
+        DONES =					\
+                ../main/DONE			\
+                ../X/DONE			\
+                ../math/DONE			\
+                ../swrast/DONE			\
+                ../swrast_setup/DONE		\
+                ../tnl/DONE			\
+                ../shader/DONE			\
+                ../shader/grammar/DONE		\
+                ../shader/slang/DONE		\
+                $(NULL)
 
-     INCLUDES = -I$(INCLUDESRC) -I$(XINCLUDESRC) -I$(EXTINCSRC) \
-		-I$(MESASRCDIR)/include \
-		-I$(MESASRCDIR)/src/mesa \
-		-I$(SERVERSRC)/include
+     INCLUDES =					\
+                -I$(INCLUDESRC)			\
+                -I$(XINCLUDESRC)		\
+                -I$(EXTINCSRC)			\
+                -I$(MESASRCDIR)/include		\
+                -I$(MESASRCDIR)/src/mesa	\
+                -I$(SERVERSRC)/include		\
+                $(NULL)
 
       DEFINES = $(GLX_DEFINES)
 

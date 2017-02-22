@@ -1,4 +1,3 @@
-/* $XFree86$ */
 /*
 ** License Applicability. Except to the extent portions of this file are
 ** made subject to an alternative license as permitted in the SGI Free
@@ -34,14 +33,20 @@
 **
 */
 
+#define NEED_REPLIES
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
 #include "glxserver.h"
 #include "glxutil.h"
+#include "unpack.h"
 #include "g_disptab.h"
-#include <unpack.h>
+#include "glapitable.h"
+#include "glapi.h"
+#include "glthread.h"
+#include "dispatch.h"
+#include "indirect_dispatch.h"
 #include <GL/gl.h>
 #include <pixmapstr.h>
 #include <windowstr.h>
@@ -95,8 +100,10 @@ static int __glXMakeBitmapFromGlyph(FontPtr font, CharInfoPtr pci)
 	pglyph -= widthPadded;
 	p += widthPadded;
     }
-    glBitmap(w, h, -pci->metrics.leftSideBearing, pci->metrics.descent,
-	     pci->metrics.characterWidth, 0, allocbuf ? allocbuf : buf);
+    CALL_Bitmap( GET_DISPATCH(), (w, h, -pci->metrics.leftSideBearing,
+				  pci->metrics.descent,
+				  pci->metrics.characterWidth, 0, 
+				  allocbuf ? allocbuf : buf) );
 
     if (allocbuf) {
 	free(allocbuf);
@@ -119,12 +126,12 @@ MakeBitmapsFromFont(FontPtr pFont, int first, int count, int list_base)
     int rv;				/* return value */
     int encoding = (FONTLASTROW(pFont) == 0) ? Linear16Bit : TwoD16Bit;
     
-    glPixelStorei(GL_UNPACK_SWAP_BYTES, FALSE);
-    glPixelStorei(GL_UNPACK_LSB_FIRST, BITMAP_BIT_ORDER == LSBFirst);
-    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-    glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
-    glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
-    glPixelStorei(GL_UNPACK_ALIGNMENT, GLYPHPADBYTES);
+    CALL_PixelStorei( GET_DISPATCH(), (GL_UNPACK_SWAP_BYTES, FALSE) );
+    CALL_PixelStorei( GET_DISPATCH(), (GL_UNPACK_LSB_FIRST, BITMAP_BIT_ORDER == LSBFirst) );
+    CALL_PixelStorei( GET_DISPATCH(), (GL_UNPACK_ROW_LENGTH, 0) );
+    CALL_PixelStorei( GET_DISPATCH(), (GL_UNPACK_SKIP_ROWS, 0) );
+    CALL_PixelStorei( GET_DISPATCH(), (GL_UNPACK_SKIP_PIXELS, 0) );
+    CALL_PixelStorei( GET_DISPATCH(), (GL_UNPACK_ALIGNMENT, GLYPHPADBYTES) );
     for (i=0; i < count; i++) {
 	chs[0] = (first + i) >> 8;	/* high byte is first byte */
 	chs[1] = first + i;
@@ -135,21 +142,21 @@ MakeBitmapsFromFont(FontPtr pFont, int first, int count, int list_base)
 	/*
 	** Define a display list containing just a glBitmap() call.
 	*/
-	glNewList(list_base + i, GL_COMPILE);
+	CALL_NewList( GET_DISPATCH(), (list_base + i, GL_COMPILE) );
 	if (nglyphs ) {
 	    rv = __glXMakeBitmapFromGlyph(pFont, pci);
 	    if (rv) {
 		return rv;
 	    }
 	}
-	glEndList();
+	CALL_EndList( GET_DISPATCH(), () );
     }
     return Success;
 }
 
 /************************************************************************/
 
-int __glXUseXFont(__GLXclientState *cl, GLbyte *pc)
+int __glXDisp_UseXFont(__GLXclientState *cl, GLbyte *pc)
 {
     ClientPtr client = cl->client;
     xGLXUseXFontReq *req;
@@ -165,14 +172,14 @@ int __glXUseXFont(__GLXclientState *cl, GLbyte *pc)
 	return error;
     }
 
-    glGetIntegerv(GL_LIST_INDEX, (GLint*) &currentListIndex);
+    CALL_GetIntegerv( GET_DISPATCH(), (GL_LIST_INDEX, (GLint*) &currentListIndex) );
     if (currentListIndex != 0) {
 	/*
 	** A display list is currently being made.  It is an error
 	** to try to make a font during another lists construction.
 	*/
 	client->errorValue = cx->id;
-	return __glXBadContextState;
+	return __glXError(GLXBadContextState);
     }
 
     /*

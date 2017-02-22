@@ -40,46 +40,41 @@
 **
 */
 
-typedef struct {
+#include <damage.h>
 
-    DrawablePtr pDraw;
-    __GLcontextModes *modes;
-    __GLXscreenInfo *pGlxScreen;
-    ScreenPtr pScreen;
-    Bool idExists;
-    int refcnt;
+/* We just need to avoid clashing with DRAWABLE_{WINDOW,PIXMAP} */
+enum {
+    GLX_DRAWABLE_WINDOW,
+    GLX_DRAWABLE_PIXMAP,
+    GLX_DRAWABLE_PBUFFER
+};
 
-} __GLXpixmap;
+struct __GLXdrawable {
+    void (*destroy)(__GLXdrawable *private);
+    GLboolean (*resize)(__GLXdrawable *private);
+    GLboolean (*swapBuffers)(__GLXdrawable *);
+    void      (*copySubBuffer)(__GLXdrawable *drawable,
+			       int x, int y, int w, int h);
 
-struct __GLXdrawablePrivateRec {
     /*
     ** list of drawable private structs
     */
-    struct __GLXdrawablePrivateRec *last;
-    struct __GLXdrawablePrivateRec *next;
+    __GLXdrawable *last;
+    __GLXdrawable *next;
 
     DrawablePtr pDraw;
     XID drawId;
-    __GLXpixmap *pGlxPixmap;
 
     /*
-    ** Either DRAWABLE_PIXMAP or DRAWABLE_WINDOW, copied from pDraw above.
-    ** Needed by the resource freer because pDraw might already have been
-    ** freed.
+    ** Either GLX_DRAWABLE_PIXMAP, GLX_DRAWABLE_WINDOW or
+    ** GLX_DRAWABLE_PBUFFER.
     */
     int type;
 
     /*
     ** Configuration of the visual to which this drawable was created.
     */
-    __GLcontextModes *modes;
-
-    /*
-    ** cached drawable size and origin
-    */
-
-    GLint xorigin, yorigin;
-    GLint width, height;
+    __GLXconfig *config;
 
     /*
     ** Lists of contexts bound to this drawable.  There are two lists here.
@@ -87,25 +82,20 @@ struct __GLXdrawablePrivateRec {
     ** and the other is the list of contexts that have this drawable bound
     ** for reading.
     */
-    struct __GLXcontextRec *drawGlxc;
-    struct __GLXcontextRec *readGlxc;
-
-    /*
-    ** "methods" that the drawble should be able to respond to.
-    */
-    void (*freeBuffers)(struct __GLXdrawablePrivateRec *);
-    void (*updatePalette)(struct __GLXdrawablePrivateRec *);
-    GLboolean (*swapBuffers)(struct __GLXdrawablePrivateRec *);
-
-    /*
-    ** The GL drawable (information shared between GLX and the GL core)
-    */
-    __GLdrawablePrivate glPriv;
+    __GLXcontext *drawGlxc;
+    __GLXcontext *readGlxc;
 
     /*
     ** reference count
     */
     int refCount;
+
+    GLenum target;
+
+    /*
+    ** Event mask
+    */
+    unsigned long eventMask;
 };
 
 #endif /* !__GLX_drawable_h__ */

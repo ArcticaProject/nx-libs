@@ -41,135 +41,23 @@
 #include "glxserver.h"
 #include "GL/glxproto.h"
 #include "unpack.h"
-#include "impsize.h"
+#include "indirect_size.h"
+#include "indirect_reqsize.h"
 
 #define SWAPL(a) \
   (((a & 0xff000000U)>>24) | ((a & 0xff0000U)>>8) | \
    ((a & 0xff00U)<<8) | ((a & 0xffU)<<24))
 
-int __glXCallListsReqSize(GLbyte *pc, Bool swap, int reqlen)
+static int Map1Size( GLint k, GLint order)
 {
-    GLsizei n = *(GLsizei *)(pc + 0);
-    GLenum type = *(GLenum *)(pc + 4);
-
-    if (swap) {
-	n = SWAPL( n );
-	type = SWAPL( type );
-    }
-    return n * __glCallLists_size( type );
+    if (order <= 0 || k < 0) return -1;
+    return k * order;
 }
 
-int __glXFogivReqSize(GLbyte *pc, Bool swap, int reqlen)
-{
-    GLenum pname = *(GLenum *)(pc + 0);
-    if (swap) {
-	pname = SWAPL( pname );
-    }
-    return 4 * __glFogiv_size( pname );		/* defined in samplegl lib */
-}
-
-int __glXFogfvReqSize(GLbyte *pc, Bool swap, int reqlen)
-{
-    return __glXFogivReqSize( pc, swap, reqlen);
-}
-
-int __glXLightfvReqSize(GLbyte *pc, Bool swap, int reqlen)
-{
-    GLenum pname = *(GLenum *)(pc + 4);
-    if (swap) {
-	pname = SWAPL( pname );
-    }
-    return 4 * __glLightfv_size( pname );	/* defined in samplegl lib */
-}
-
-int __glXLightivReqSize(GLbyte *pc, Bool swap, int reqlen)
-{
-    return __glXLightfvReqSize( pc, swap, reqlen);
-}
-
-int __glXLightModelfvReqSize(GLbyte *pc, Bool swap, int reqlen)
-{
-    GLenum pname = *(GLenum *)(pc + 0);
-    if (swap) {
-	pname = SWAPL( pname );
-    }
-    return 4 * __glLightModelfv_size( pname );	/* defined in samplegl lib */
-}
-
-int __glXLightModelivReqSize(GLbyte *pc, Bool swap, int reqlen)
-{
-    return __glXLightModelfvReqSize( pc, swap, reqlen);
-}
-
-int __glXMaterialfvReqSize(GLbyte *pc, Bool swap, int reqlen)
-{
-    GLenum pname = *(GLenum *)(pc + 4);
-    if (swap) {
-	pname = SWAPL( pname );
-    }
-    return 4 * __glMaterialfv_size( pname );	/* defined in samplegl lib */
-}
-
-int __glXMaterialivReqSize(GLbyte *pc, Bool swap, int reqlen)
-{
-    return __glXMaterialfvReqSize( pc, swap, reqlen);
-}
-
-int __glXTexGendvReqSize(GLbyte *pc, Bool swap, int reqlen)
-{
-    GLenum pname = *(GLenum *)(pc + 4);
-    if (swap) {
-	pname = SWAPL( pname );
-    }
-    return 8 * __glTexGendv_size( pname );	/* defined in samplegl lib */
-}
-
-int __glXTexGenfvReqSize(GLbyte *pc, Bool swap, int reqlen)
-{
-    GLenum pname = *(GLenum *)(pc + 4);
-    if (swap) {
-	pname = SWAPL( pname );
-    }
-    return 4 * __glTexGenfv_size( pname );	/* defined in samplegl lib */
-}
-
-int __glXTexGenivReqSize(GLbyte *pc, Bool swap, int reqlen)
-{
-    return __glXTexGenfvReqSize( pc, swap, reqlen);
-}
-
-int __glXTexParameterfvReqSize(GLbyte *pc, Bool swap, int reqlen)
-{
-    GLenum pname = *(GLenum *)(pc + 4);
-    if (swap) {
-	pname = SWAPL( pname );
-    }
-    return 4 * __glTexParameterfv_size( pname ); /* defined in samplegl lib */
-}
-
-int __glXTexParameterivReqSize(GLbyte *pc, Bool swap, int reqlen)
-{
-    return __glXTexParameterfvReqSize( pc, swap, reqlen);
-}
-
-int __glXTexEnvfvReqSize(GLbyte *pc, Bool swap, int reqlen)
-{
-    GLenum pname = *(GLenum *)(pc + 4);
-    if (swap) {
-	pname = SWAPL( pname );
-    }
-    return 4 * __glTexEnvfv_size( pname );	/* defined in samplegl lib */
-}
-
-int __glXTexEnvivReqSize(GLbyte *pc, Bool swap, int reqlen )
-{
-    return __glXTexEnvfvReqSize( pc, swap, reqlen);
-}
-
-int __glXMap1dReqSize(GLbyte *pc, Bool swap, int reqlen )
+int __glXMap1dReqSize( const GLbyte *pc, Bool swap )
 {
     GLenum target;
-    GLint order;
+    GLint order, k;
 
     target = *(GLenum*) (pc + 16);
     order = *(GLint*) (pc + 20);
@@ -177,15 +65,14 @@ int __glXMap1dReqSize(GLbyte *pc, Bool swap, int reqlen )
 	target = SWAPL( target );
 	order = SWAPL( order );
     }
-    if (order < 1)
-	return -1;
-    return safe_mul(8, safe_mul(__glMap1d_size(target), order));
+    k = __glMap1d_size( target );
+    return 8 * Map1Size( k, order );
 }
 
-int __glXMap1fReqSize(GLbyte *pc, Bool swap, int reqlen )
+int __glXMap1fReqSize( const GLbyte *pc, Bool swap )
 {
     GLenum target;
-    GLint order;
+    GLint order, k;
 
     target = *(GLenum *)(pc + 0);
     order = *(GLint *)(pc + 12);
@@ -193,21 +80,20 @@ int __glXMap1fReqSize(GLbyte *pc, Bool swap, int reqlen )
 	target = SWAPL( target );
 	order = SWAPL( order );
     }
-    if (order < 1)
-	return -1;
-    return safe_mul(4, safe_mul(__glMap1f_size(target), order));
+    k = __glMap1f_size(target);
+    return 4 * Map1Size(k, order);
 }
 
 static int Map2Size(int k, int majorOrder, int minorOrder)
 {
-    if (majorOrder < 1 || minorOrder < 1) return -1;
-    return safe_mul(k, safe_mul(majorOrder, minorOrder));
+    if (majorOrder <= 0 || minorOrder <= 0 || k < 0) return -1;
+    return k * majorOrder * minorOrder;
 }
 
-int __glXMap2dReqSize(GLbyte *pc, Bool swap, int reqlen)
+int __glXMap2dReqSize( const GLbyte *pc, Bool swap )
 {
     GLenum target;
-    GLint uorder, vorder;
+    GLint uorder, vorder, k;
 
     target = *(GLenum *)(pc + 32);
     uorder = *(GLint *)(pc + 36);
@@ -217,13 +103,14 @@ int __glXMap2dReqSize(GLbyte *pc, Bool swap, int reqlen)
 	uorder = SWAPL( uorder );
 	vorder = SWAPL( vorder );
     }
-    return safe_mul(8, Map2Size(__glMap2d_size(target), uorder, vorder));
+    k = __glMap2d_size( target );
+    return 8 * Map2Size( k, uorder, vorder );
 }
 
-int __glXMap2fReqSize(GLbyte *pc, Bool swap, int reqlen)
+int __glXMap2fReqSize( const GLbyte *pc, Bool swap )
 {
     GLenum target;
-    GLint uorder, vorder;
+    GLint uorder, vorder, k;
 
     target = *(GLenum *)(pc + 0);
     uorder = *(GLint *)(pc + 12);
@@ -233,32 +120,8 @@ int __glXMap2fReqSize(GLbyte *pc, Bool swap, int reqlen)
 	uorder = SWAPL( uorder );
 	vorder = SWAPL( vorder );
     }
-    return safe_mul(4, Map2Size(__glMap2f_size(target), uorder, vorder));
-}
-
-int __glXPixelMapfvReqSize(GLbyte *pc, Bool swap, int reqlen)
-{
-    GLint mapsize;
-    mapsize = *(GLint *)(pc + 4);
-    if (swap) {
-	mapsize = SWAPL( mapsize );
-    }
-    return 4 * mapsize;
-}
-
-int __glXPixelMapuivReqSize(GLbyte *pc, Bool swap, int reqlen)
-{
-    return __glXPixelMapfvReqSize( pc, swap, reqlen);
-}
-
-int __glXPixelMapusvReqSize(GLbyte *pc, Bool swap, int reqlen)
-{
-    GLint mapsize;
-    mapsize = *(GLint *)(pc + 4);
-    if (swap) {
-	mapsize = SWAPL( mapsize );
-    }
-    return 2 * mapsize;
+    k = __glMap2f_size( target );
+    return 4 * Map2Size( k, uorder, vorder );
 }
 
 /**
@@ -308,16 +171,13 @@ int __glXImageSize( GLenum format, GLenum type, GLenum target,
     GLint bytesPerElement, elementsPerGroup, groupsPerRow;
     GLint groupSize, rowSize, padding, imageSize;
 
-    if (w == 0 || h == 0 || d == 0)
-        return 0;
-
     if (w < 0 || h < 0 || d < 0 ||
 	(type == GL_BITMAP &&
 	 (format != GL_COLOR_INDEX && format != GL_STENCIL_INDEX))) {
 	return -1;
     }
+    if (w==0 || h==0 || d == 0) return 0;
 
-    /* proxy targets have no data */
     switch( target ) {
     case GL_PROXY_TEXTURE_1D:
     case GL_PROXY_TEXTURE_2D:
@@ -334,12 +194,6 @@ int __glXImageSize( GLenum format, GLenum type, GLenum target,
 	return 0;
     }
 
-    /* real data has to have real sizes */
-    if (imageHeight < 0 || rowLength < 0 || skipImages < 0 || skipRows < 0)
-        return -1;
-    if (alignment != 1 && alignment != 2 && alignment != 4 && alignment != 8)
-        return -1;
-
     if (type == GL_BITMAP) {
 	if (rowLength > 0) {
 	    groupsPerRow = rowLength;
@@ -347,13 +201,11 @@ int __glXImageSize( GLenum format, GLenum type, GLenum target,
 	    groupsPerRow = w;
 	}
 	rowSize = (groupsPerRow + 7) >> 3;
-        if (rowSize < 0)
-            return -1;
 	padding = (rowSize % alignment);
 	if (padding) {
 	    rowSize += alignment - padding;
 	}
-        return safe_mul(safe_add(h, skipRows), rowSize);
+	return ((h + skipRows) * rowSize);
     } else {
 	switch(format) {
 	  case GL_COLOR_INDEX:
@@ -434,132 +286,26 @@ int __glXImageSize( GLenum format, GLenum type, GLenum target,
 	  default:
 	    return -1;
 	}
-        /* known safe by the switches above, not checked */
 	groupSize = bytesPerElement * elementsPerGroup;
 	if (rowLength > 0) {
 	    groupsPerRow = rowLength;
 	} else {
 	    groupsPerRow = w;
 	}
-        if ((rowSize = safe_mul(groupsPerRow, groupSize)) < 0)
-            return -1;
+	rowSize = groupsPerRow * groupSize;
 	padding = (rowSize % alignment);
 	if (padding) {
 	    rowSize += alignment - padding;
 	}
-        if (imageHeight > 0)
-            h = imageHeight;
-        h = safe_add(h, skipRows);
-
-        imageSize = safe_mul(h, rowSize);
-        return safe_mul(safe_add(d, skipImages), imageSize);
+	if (imageHeight > 0) {
+	    imageSize = (imageHeight + skipRows) * rowSize;
+	} else {
+	    imageSize = (h + skipRows) * rowSize;
+	}
+	return ((d + skipImages) * imageSize);
     }
 }
 
-
-int __glXDrawPixelsReqSize(GLbyte *pc, Bool swap, int reqlen)
-{
-    __GLXdispatchDrawPixelsHeader *hdr = (__GLXdispatchDrawPixelsHeader *) pc;
-    GLenum format = hdr->format;
-    GLenum type = hdr->type;
-    GLint w = hdr->width;
-    GLint h = hdr->height;
-    GLint rowLength = hdr->rowLength;
-    GLint skipRows = hdr->skipRows;
-    GLint alignment = hdr->alignment;
-
-    if (swap) {
-	format = SWAPL( format );
-	type = SWAPL( type );
-	w = SWAPL( w );
-	h = SWAPL( h );
-	rowLength = SWAPL( rowLength );
-	skipRows = SWAPL( skipRows );
-	alignment = SWAPL( alignment );
-    }
-    return __glXImageSize( format, type, 0, w, h, 1,
-			   0, rowLength, 0, skipRows, alignment );
-}
-
-int __glXBitmapReqSize(GLbyte *pc, Bool swap, int reqlen)
-{
-    __GLXdispatchBitmapHeader *hdr = (__GLXdispatchBitmapHeader *) pc;
-    GLint w = hdr->width;
-    GLint h = hdr->height;
-    GLint rowLength = hdr->rowLength;
-    GLint skipRows = hdr->skipRows;
-    GLint alignment = hdr->alignment;
-
-    if (swap) {
-	w = SWAPL( w );
-	h = SWAPL( h );
-	rowLength = SWAPL( rowLength );
-	skipRows = SWAPL( skipRows );
-	alignment = SWAPL( alignment );
-    }
-    return __glXImageSize( GL_COLOR_INDEX, GL_BITMAP, 0, w, h, 1,
-		      0, rowLength, 0, skipRows, alignment );
-}
-
-int __glXTexImage1DReqSize(GLbyte *pc, Bool swap, int reqlen)
-{
-    __GLXdispatchTexImageHeader *hdr = (__GLXdispatchTexImageHeader *) pc;
-    GLenum target = hdr->target;
-    GLenum format = hdr->format;
-    GLenum type = hdr->type;
-    GLint w = hdr->width;
-    GLint rowLength = hdr->rowLength;
-    GLint skipRows = hdr->skipRows;
-    GLint alignment = hdr->alignment;
-
-    if (swap) {
-	target = SWAPL( target );
-	format = SWAPL( format );
-	type = SWAPL( type );
-	w = SWAPL( w );
-	rowLength = SWAPL( rowLength );
-	skipRows = SWAPL( skipRows );
-	alignment = SWAPL( alignment );
-    }
-    if (target == GL_PROXY_TEXTURE_1D) {
-	return 0;
-    } else if (format == GL_STENCIL_INDEX || format == GL_DEPTH_COMPONENT) {
-	return -1;
-    }
-    return __glXImageSize( format, type, 0, w, 1, 1,
-			   0, rowLength, 0, skipRows, alignment );
-}
-
-int __glXTexImage2DReqSize(GLbyte *pc, Bool swap, int reqlen)
-{
-    __GLXdispatchTexImageHeader *hdr = (__GLXdispatchTexImageHeader *) pc;
-    GLenum target = hdr->target;
-    GLenum format = hdr->format;
-    GLenum type = hdr->type;
-    GLint w = hdr->width;
-    GLint h = hdr->height;
-    GLint rowLength = hdr->rowLength;
-    GLint skipRows = hdr->skipRows;
-    GLint alignment = hdr->alignment;
-
-    if (swap) {
-	target = SWAPL( target );
-	format = SWAPL( format );
-	type = SWAPL( type );
-	w = SWAPL( w );
-	h = SWAPL( h );
-	rowLength = SWAPL( rowLength );
-	skipRows = SWAPL( skipRows );
-	alignment = SWAPL( alignment );
-    }
-    if (target == GL_PROXY_TEXTURE_2D || target == GL_PROXY_TEXTURE_CUBE_MAP_ARB) {
-	return 0;
-    } else if (format == GL_STENCIL_INDEX || format == GL_DEPTH_COMPONENT) {
-	return -1;
-    }
-    return __glXImageSize( format, type, 0, w, h, 1,
-			   0, rowLength, 0, skipRows, alignment );
-}
 
 /* XXX this is used elsewhere - should it be exported from glxserver.h? */
 int __glXTypeSize(GLenum enm)
@@ -577,14 +323,13 @@ int __glXTypeSize(GLenum enm)
   }
 }
 
-int __glXDrawArraysSize( GLbyte *pc, Bool swap, int reqlen)
+int __glXDrawArraysReqSize( const GLbyte *pc, Bool swap )
 {
     __GLXdispatchDrawArraysHeader *hdr = (__GLXdispatchDrawArraysHeader *) pc;
     __GLXdispatchDrawArraysComponentHeader *compHeader;
     GLint numVertexes = hdr->numVertexes;
     GLint numComponents = hdr->numComponents;
     GLint arrayElementSize = 0;
-	GLint x, size;
     int i;
 
     if (swap) {
@@ -593,13 +338,6 @@ int __glXDrawArraysSize( GLbyte *pc, Bool swap, int reqlen)
     }
 
     pc += sizeof(__GLXdispatchDrawArraysHeader);
-    reqlen -= sizeof(__GLXdispatchDrawArraysHeader);
-
-    size = safe_mul(sizeof(__GLXdispatchDrawArraysComponentHeader),
-		    numComponents);
-    if (size < 0 || reqlen < 0 || reqlen < size)
-        return -1;
-    
     compHeader = (__GLXdispatchDrawArraysComponentHeader *) pc;
 
     for (i=0; i<numComponents; i++) {
@@ -643,227 +381,16 @@ int __glXDrawArraysSize( GLbyte *pc, Bool swap, int reqlen)
 	    return -1;
 	}
 
-        x = safe_pad(safe_mul(numVals, __glXTypeSize(datatype)));
-        if ((arrayElementSize = safe_add(arrayElementSize, x)) < 0)
-            return -1;
+	arrayElementSize += __GLX_PAD(numVals * __glXTypeSize(datatype));
 
 	pc += sizeof(__GLXdispatchDrawArraysComponentHeader);
     }
 
-    return safe_add(size, safe_mul(numVertexes, arrayElementSize));
+    return ((numComponents * sizeof(__GLXdispatchDrawArraysComponentHeader)) +
+	    (numVertexes * arrayElementSize));
 }
 
-int __glXPrioritizeTexturesReqSize(GLbyte *pc, Bool swap, int reqlen)
-{
-    GLint n = *(GLsizei *)(pc + 0);
-    if (swap) n = SWAPL(n);
-    return(8*n); /* 4*n for textures, 4*n for priorities */
-}
-
-int __glXTexSubImage1DReqSize(GLbyte *pc, Bool swap, int reqlen)
-{
-    __GLXdispatchTexSubImageHeader *hdr = (__GLXdispatchTexSubImageHeader *) pc;
-    GLenum format = hdr->format;
-    GLenum type = hdr->type;
-    GLint w = hdr->width;
-    GLint rowLength = hdr->rowLength;
-    GLint skipRows = hdr->skipRows;
-    GLint alignment = hdr->alignment;
-
-    if (swap) {
-	format = SWAPL( format );
-	type = SWAPL( type );
-	w = SWAPL( w );
-	rowLength = SWAPL( rowLength );
-	skipRows = SWAPL( skipRows );
-	alignment = SWAPL( alignment );
-    }
-    return __glXImageSize( format, type, 0, w, 1, 1,
-			   0, rowLength, 0, skipRows, alignment );
-}
-
-int __glXTexSubImage2DReqSize(GLbyte *pc, Bool swap, int reqlen)
-{
-    __GLXdispatchTexSubImageHeader *hdr = (__GLXdispatchTexSubImageHeader *) pc;
-    GLenum format = hdr->format;
-    GLenum type = hdr->type;
-    GLint w = hdr->width;
-    GLint h = hdr->height;
-    GLint rowLength = hdr->rowLength;
-    GLint skipRows = hdr->skipRows;
-    GLint alignment = hdr->alignment;
-
-    if (swap) {
-	format = SWAPL( format );
-	type = SWAPL( type );
-	w = SWAPL( w );
-	h = SWAPL( h );
-	rowLength = SWAPL( rowLength );
-	skipRows = SWAPL( skipRows );
-	alignment = SWAPL( alignment );
-    }
-    return __glXImageSize( format, type, 0, w, h, 1,
-			   0, rowLength, 0, skipRows, alignment );
-}
-
-int __glXTexImage3DReqSize(GLbyte *pc, Bool swap, int reqlen)
-{
-    __GLXdispatchTexImage3DHeader *hdr = (__GLXdispatchTexImage3DHeader *) pc;
-    GLenum target = hdr->target;
-    GLenum format = hdr->format;
-    GLenum type = hdr->type;
-    GLint w = hdr->width;
-    GLint h = hdr->height;
-    GLint d = hdr->depth;
-    GLint imageHeight = hdr->imageHeight;
-    GLint rowLength = hdr->rowLength;
-    GLint skipImages = hdr->skipImages;
-    GLint skipRows = hdr->skipRows;
-    GLint alignment = hdr->alignment;
-    GLint nullImage = hdr->nullimage;
-
-    if (swap) {
-	target = SWAPL( target );
-	format = SWAPL( format );
-	type = SWAPL( type );
-	w = SWAPL( w );
-	h = SWAPL( h );
-	d = SWAPL( d );
-	imageHeight = SWAPL( imageHeight );
-	rowLength = SWAPL( rowLength );
-	skipImages = SWAPL( skipImages );
-	skipRows = SWAPL( skipRows );
-	alignment = SWAPL( alignment );
-    }
-    if (target == GL_PROXY_TEXTURE_3D || nullImage) {
-	return 0;
-    } else {
-	return __glXImageSize( format, type, target, w, h, d, imageHeight,
-			       rowLength, skipImages, skipRows, alignment );
-    }
-}
-
-int __glXTexSubImage3DReqSize(GLbyte *pc, Bool swap, int reqlen)
-{
-    __GLXdispatchTexSubImage3DHeader *hdr =
-					(__GLXdispatchTexSubImage3DHeader *) pc;
-    GLenum target = hdr->target;
-    GLenum format = hdr->format;
-    GLenum type = hdr->type;
-    GLint w = hdr->width;
-    GLint h = hdr->height;
-    GLint d = hdr->depth;
-    GLint imageHeight = hdr->imageHeight;
-    GLint rowLength = hdr->rowLength;
-    GLint skipImages = hdr->skipImages;
-    GLint skipRows = hdr->skipRows;
-    GLint alignment = hdr->alignment;
-
-    if (swap) {
-	target = SWAPL( target );
-	format = SWAPL( format );
-	type = SWAPL( type );
-	w = SWAPL( w );
-	h = SWAPL( h );
-	d = SWAPL( d );
-	imageHeight = SWAPL( imageHeight );
-	rowLength = SWAPL( rowLength );
-	skipImages = SWAPL( skipImages );
-	skipRows = SWAPL( skipRows );
-	alignment = SWAPL( alignment );
-    }
-    if (target == GL_PROXY_TEXTURE_3D) {
-	return 0;
-    } else {
-	return __glXImageSize( format, type, target, w, h, d, imageHeight,
-			       rowLength, skipImages, skipRows, alignment );
-    }
-}
-
-int __glXConvolutionFilter1DReqSize(GLbyte *pc, Bool swap, int reqlen)
-{
-    __GLXdispatchConvolutionFilterHeader *hdr =
-			(__GLXdispatchConvolutionFilterHeader *) pc;
-
-    GLenum format = hdr->format;
-    GLenum type = hdr->type;
-    GLint w = hdr->width;
-    GLint rowLength = hdr->rowLength;
-    GLint alignment = hdr->alignment;
-
-    if (swap) {
-	format = SWAPL( format );
-	type = SWAPL( type );
-	w = SWAPL( w );
-	rowLength = SWAPL( rowLength );
-	alignment = SWAPL( alignment );
-    }
-
-    return __glXImageSize( format, type, 0, w, 1, 1, 
-			   0, rowLength, 0, 0, alignment );
-}
-
-int __glXConvolutionFilter2DReqSize(GLbyte *pc, Bool swap, int reqlen)
-{
-    __GLXdispatchConvolutionFilterHeader *hdr =
-			(__GLXdispatchConvolutionFilterHeader *) pc;
-
-    GLenum format = hdr->format;
-    GLenum type = hdr->type;
-    GLint w = hdr->width;
-    GLint h = hdr->height;
-    GLint rowLength = hdr->rowLength;
-    GLint skipRows = hdr->skipRows;
-    GLint alignment = hdr->alignment;
-
-    if (swap) {
-	format = SWAPL( format );
-	type = SWAPL( type );
-	w = SWAPL( w );
-	h = SWAPL( h );
-	rowLength = SWAPL( rowLength );
-	skipRows = SWAPL( skipRows );
-	alignment = SWAPL( alignment );
-    }
-
-    return __glXImageSize( format, type, 0, w, h, 1,
-			   0, rowLength, 0, skipRows, alignment );
-}
-
-int __glXConvolutionParameterivSize(GLenum pname)
-{
-    switch (pname) {
-      case GL_CONVOLUTION_BORDER_COLOR:
-      case GL_CONVOLUTION_FILTER_SCALE:
-      case GL_CONVOLUTION_FILTER_BIAS:
-	return 4;
-      case GL_CONVOLUTION_BORDER_MODE:
-	return 1;
-      default:
-	return -1;
-    }
-}
-
-int __glXConvolutionParameterfvSize(GLenum pname)
-{
-    return __glXConvolutionParameterivSize(pname);
-}
-
-int __glXConvolutionParameterivReqSize(GLbyte *pc, Bool swap, int reqlen)
-{
-    GLenum pname = *(GLenum *)(pc + 4);
-    if (swap) {
-	pname = SWAPL( pname );
-    }
-    return 4 * __glXConvolutionParameterivSize( pname );
-}
-
-int __glXConvolutionParameterfvReqSize(GLbyte *pc, Bool swap, int reqlen)
-{
-    return __glXConvolutionParameterivReqSize( pc, swap, reqlen);
-}
-
-int __glXSeparableFilter2DReqSize(GLbyte *pc, Bool swap, int reqlen)
+int __glXSeparableFilter2DReqSize( const GLbyte *pc, Bool swap )
 {
     __GLXdispatchConvolutionFilterHeader *hdr =
 			(__GLXdispatchConvolutionFilterHeader *) pc;
@@ -888,114 +415,9 @@ int __glXSeparableFilter2DReqSize(GLbyte *pc, Bool swap, int reqlen)
     /* XXX Should rowLength be used for either or both image? */
     image1size = __glXImageSize( format, type, 0, w, 1, 1,
 				 0, rowLength, 0, 0, alignment );
+    image1size = __GLX_PAD(image1size);
     image2size = __glXImageSize( format, type, 0, h, 1, 1,
 				 0, rowLength, 0, 0, alignment );
-    return safe_add(safe_pad(image1size), image2size);
+    return image1size + image2size;
 
-}
-
-int __glXColorTableParameterfvSize(GLenum pname)
-{
-    /* currently, only scale and bias are supported; return RGBA */
-    switch(pname) {
-    case GL_COLOR_TABLE_SCALE:
-    case GL_COLOR_TABLE_BIAS:
-	return 4;
-    default:
-	return 0;
-    }
-}
-
-int __glXColorTableParameterivSize(GLenum pname)
-{
-    /* fv and iv are the same in this context */
-    return __glXColorTableParameterfvSize(pname);
-}
-
-int __glXColorTableReqSize(GLbyte *pc, Bool swap, int reqlen)
-{
-    __GLXdispatchColorTableHeader *hdr =
-			(__GLXdispatchColorTableHeader *) pc;
-
-    GLenum target = hdr->target;
-    GLenum format = hdr->format;
-    GLenum type = hdr->type;
-    GLint w = hdr->width;
-    GLint rowLength = hdr->rowLength;
-    GLint alignment = hdr->alignment;
-
-    switch (target) {
-      case GL_PROXY_TEXTURE_1D:
-      case GL_PROXY_TEXTURE_2D:
-      case GL_PROXY_TEXTURE_3D:
-      case GL_PROXY_COLOR_TABLE:
-      case GL_PROXY_POST_CONVOLUTION_COLOR_TABLE:
-      case GL_PROXY_POST_COLOR_MATRIX_COLOR_TABLE:
-      case GL_PROXY_TEXTURE_CUBE_MAP_ARB:
-          return 0;
-    }
-
-    if (swap) {
-	format = SWAPL( format );
-	type = SWAPL( type );
-	w = SWAPL( w );
-	rowLength = SWAPL( rowLength );
-	alignment = SWAPL( alignment );
-    }
-
-    return __glXImageSize( format, type, 0, w, 1, 1,
-			   0, rowLength, 0, 0, alignment );
-}
-
-int __glXColorSubTableReqSize(GLbyte *pc, Bool swap, int reqlen)
-{
-    __GLXdispatchColorSubTableHeader *hdr =
-			(__GLXdispatchColorSubTableHeader *) pc;
-
-    GLenum format = hdr->format;
-    GLenum type = hdr->type;
-    GLint count = hdr->count;
-    GLint rowLength = hdr->rowLength;
-    GLint alignment = hdr->alignment;
-
-    if (swap) {
-	format = SWAPL( format );
-	type = SWAPL( type );
-	count = SWAPL( count );
-	rowLength = SWAPL( rowLength );
-	alignment = SWAPL( alignment );
-    }
-
-    return __glXImageSize( format, type, 0, count, 1, 1,
-			   0, rowLength, 0, 0, alignment );
-}
-
-int __glXColorTableParameterfvReqSize(GLbyte *pc, Bool swap, int reqlen)
-{
-    GLenum pname = *(GLenum *)(pc + 4);
-    if (swap) {
-	pname = SWAPL( pname );
-    }
-    return 4 * __glXColorTableParameterfvSize(pname);
-}
-
-int __glXColorTableParameterivReqSize(GLbyte *pc, Bool swap, int reqlen)
-{
-    /* no difference between fv and iv versions */
-    return __glXColorTableParameterfvReqSize(pc, swap, reqlen);
-}
-
-int __glXPointParameterfvARBReqSize(GLbyte *pc, Bool swap, int reqlen)
-{
-    GLenum pname = *(GLenum *)(pc + 0);
-    if (swap) {
-	pname = SWAPL( pname );
-    }
-    return 4 * __glPointParameterfvEXT_size( pname );
-}
-
-int __glXPointParameterivReqSize(GLbyte *pc, Bool swap, int reqlen)
-{
-    /* no difference between fv and iv versions */
-    return __glXPointParameterfvARBReqSize(pc, swap, reqlen);
 }

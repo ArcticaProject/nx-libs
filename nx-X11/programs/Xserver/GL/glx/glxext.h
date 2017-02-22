@@ -66,30 +66,12 @@ typedef struct {
 extern GLboolean __glXFreeContext(__GLXcontext *glxc);
 extern void __glXFlushContextCache(void);
 
-extern void __glXNoSuchRenderOpcode(GLbyte*);
-extern int __glXNoSuchSingleOpcode(__GLXclientState*, GLbyte*);
-extern void __glXErrorCallBack(__GLinterface *gc, GLenum code);
+extern void __glXErrorCallBack(GLenum code);
 extern void __glXClearErrorOccured(void);
 extern GLboolean __glXErrorOccured(void);
 extern void __glXResetLargeCommandStatus(__GLXclientState*);
 
-extern int __glXQueryContextInfoEXT(__GLXclientState *cl, GLbyte *pc);
-extern int __glXSwapQueryContextInfoEXT(__GLXclientState *cl, GLbyte *pc);
-
-extern int DoMakeCurrent( __GLXclientState *cl, GLXDrawable drawId,
-    GLXDrawable readId, GLXContextID contextId, GLXContextTag tag );
-extern int DoGetVisualConfigs(__GLXclientState *cl, unsigned screen,
-    GLboolean do_swap);
-extern int DoGetFBConfigs(__GLXclientState *cl, unsigned screen,
-    GLboolean do_swap);
-extern int DoCreateContext(__GLXclientState *cl, GLXContextID gcId,
-    GLXContextID shareList, VisualID visual, GLuint screen, GLboolean isDirect);
-extern int DoCreateGLXPixmap(__GLXclientState *cl, VisualID visual,
-    GLuint screenNum, XID pixmapId, XID glxpixmapId);
-
 extern void GlxExtensionInit(void);
-
-extern Bool __glXCoreType(void);
 
 extern const char GLServerVersion[];
 extern int DoGetString(__GLXclientState *cl, GLbyte *pc, GLboolean need_swap);
@@ -105,26 +87,6 @@ extern int GlxInitVisuals(
     int               bitsPerRGB,
     int               preferredVis
 );
-
-typedef struct {
-    void * (* queryHyperpipeNetworkFunc)(int, int *, int *);
-    void * (* queryHyperpipeConfigFunc)(int, int, int *, int *);
-    int    (* destroyHyperpipeConfigFunc)(int, int);
-    void * (* hyperpipeConfigFunc)(int, int, int *, int *, void *);
-} __GLXHyperpipeExtensionFuncs;
-
-extern void __glXHyperpipeInit(int screen, __GLXHyperpipeExtensionFuncs *funcs);
-
-extern __GLXHyperpipeExtensionFuncs *__glXHyperpipeFuncs;
-
-typedef struct {
-    int    (* bindSwapBarrierFunc)(int, XID, int);
-    int    (* queryMaxSwapBarriersFunc)(int);
-} __GLXSwapBarrierExtensionFuncs;
-
-extern void __glXSwapBarrierInit(int screen, __GLXSwapBarrierExtensionFuncs *funcs);
-
-extern __GLXSwapBarrierExtensionFuncs *__glXSwapBarrierFuncs;
 
 #endif /* _glxext_h_ */
 

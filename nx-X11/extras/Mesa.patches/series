@@ -1,2 +1,1 @@
-4001_Arctica_Fix-non-working-GLX-in-64bit-Xorg-7.0.patch
-4002_no-special-glx-memfunctions.patch
+# no Mesa patches needed at the moment...

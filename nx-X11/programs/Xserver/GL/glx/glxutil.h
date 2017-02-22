@@ -40,31 +40,18 @@
 **
 */
 
-extern void __glXNop(void);
-
 /* relate contexts with drawables */
 extern void __glXAssociateContext(__GLXcontext *glxc);
 extern void __glXDeassociateContext(__GLXcontext *glxc);
 
-/* drawable operation */
-extern void __glXGetDrawableSize(__GLdrawablePrivate *glPriv, 
-				 GLint *x, GLint *y, 
-				 GLuint *width, GLuint *height);
-extern GLboolean __glXResizeDrawable(__GLdrawablePrivate *glPriv);
-extern GLboolean __glXResizeDrawableBuffers(__GLXdrawablePrivate *glxPriv);
-
 /* drawable management */
-extern void __glXRefDrawablePrivate(__GLXdrawablePrivate *glxPriv);
-extern void __glXUnrefDrawablePrivate(__GLXdrawablePrivate *glxPriv);
-extern __GLXdrawablePrivate *__glXCreateDrawablePrivate(DrawablePtr pDraw, 
-							XID glxpixmapId, 
-							__GLcontextModes *modes);
-extern GLboolean __glXDestroyDrawablePrivate(__GLXdrawablePrivate *glxPriv);
-extern __GLXdrawablePrivate *__glXFindDrawablePrivate(XID glxpixmapId);
-extern __GLXdrawablePrivate *__glXGetDrawablePrivate(DrawablePtr pDraw, 
-						     XID glxpixmapId, 
-						     __GLcontextModes *modes);
-extern void __glXCacheDrawableSize(__GLXdrawablePrivate *glxPriv);
+extern void __glXRefDrawable(__GLXdrawable *glxPriv);
+extern void __glXUnrefDrawable(__GLXdrawable *glxPriv);
+
+extern GLboolean __glXDrawableInit(__GLXdrawable *drawable,
+				   __GLXscreen *screen,
+				   DrawablePtr pDraw, int type, XID drawID,
+				   __GLXconfig *config);
 
 /* context helper routines */
 extern __GLXcontext *__glXLookupContextByTag(__GLXclientState*, GLXContextTag);
@@ -74,4 +61,3 @@ extern void *__glXglDDXScreenInfo(void);
 extern void *__glXglDDXExtensionInfo(void);
 
 #endif /* _glxcmds_h_ */
-
