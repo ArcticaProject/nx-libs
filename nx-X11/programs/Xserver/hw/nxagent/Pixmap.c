@@ -242,7 +242,7 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width,
    * Create the pixmap in the virtual framebuffer.
    */
 
-  pVirtual = fbCreatePixmap(pScreen, width, height, depth);
+  pVirtual = fbCreatePixmap(pScreen, width, height, depth, 0);
 
   if (pVirtual == NULL)
   {
