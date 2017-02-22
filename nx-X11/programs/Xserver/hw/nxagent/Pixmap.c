@@ -96,8 +96,8 @@ struct nxagentPixmapPair
   PixmapPtr pMap;
 };
 
-PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width,
-                                  int height, int depth)
+PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width, int height,
+                              int depth, unsigned usage_hint)
 {
   nxagentPrivPixmapPtr pPixmapPriv, pVirtualPriv;
 
@@ -106,7 +106,8 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width,
 
   #ifdef DEBUG
   fprintf(stderr, "nxagentCreatePixmap: Creating pixmap with width [%d] "
-              "height [%d] depth [%d].\n", width, height, depth);
+              "height [%d] depth [%d] and allocation hint [%d].\n",
+              width, height, depth, usage_hint);
   #endif
 
   /*
@@ -120,7 +121,8 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width,
   {
     #ifdef WARNING
     fprintf(stderr, "nxagentCreatePixmap: WARNING! Failed to create pixmap with "
-                "width [%d] height [%d] depth [%d].\n", width, height, depth);
+                "width [%d] height [%d] depth [%d] and allocation hint [%d].\n",
+                width, height, depth, usage_hint);
     #endif
 
     return NullPixmap;
@@ -243,13 +245,14 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width,
    * Create the pixmap in the virtual framebuffer.
    */
 
-  pVirtual = fbCreatePixmap(pScreen, width, height, depth, 0);
+  pVirtual = fbCreatePixmap(pScreen, width, height, depth, usage_hint);
 
   if (pVirtual == NULL)
   {
     #ifdef PANIC
     fprintf(stderr, "nxagentCreatePixmap: PANIC! Failed to create virtual pixmap with "
-                "width [%d] height [%d] depth [%d].\n", width, height, depth);
+                "width [%d] height [%d] depth [%d] and allocation hint [%d].\n",
+                width, height, depth, usage_hint);
     #endif
 
     nxagentDestroyPixmap(pPixmap);
@@ -258,8 +261,9 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width,
   }
 
   #ifdef TEST
-  fprintf(stderr,"nxagentCreatePixmap: Allocated memory for the Virtual %sPixmap %p of real Pixmap %p (%dx%d)\n",
-              nxagentShmPixmapTrap ? "Shm " : "", (void *) pVirtual, (void *) pPixmap, width, height);
+  fprintf(stderr,"nxagentCreatePixmap: Allocated memory for the Virtual %sPixmap %p of real Pixmap %p (%dx%d),",
+              "allocation hint [%d].\n",
+              nxagentShmPixmapTrap ? "Shm " : "", (void *) pVirtual, (void *) pPixmap, width, height, usage_hint);
   #endif
 
   pPixmapPriv -> pVirtualPixmap = pVirtual;
@@ -331,10 +335,11 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width,
                 "bits per pixel.\n", (void *) pVirtual);
 
     fprintf(stderr, "nxagentCreatePixmap: WARNING! Real pixmap created with width [%d] "
-                "height [%d] depth [%d] bits per pixel [%d].\n", pPixmap -> drawable.width,
+                "height [%d] depth [%d] bits per pixel [%d] and allocation hint [%d].\n",
+                pPixmap -> drawable.width,
                     pPixmap -> drawable.height = height, pPixmap -> drawable.depth,
-                        pPixmap -> drawable.bitsPerPixel);
-
+                        pPixmap -> drawable.bitsPerPixel,
+                           usage_hint);
     #endif
 
     if (!nxagentRenderTrap)
@@ -353,8 +358,8 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width,
 
   #ifdef TEST
   fprintf(stderr, "nxagentCreatePixmap: Created pixmap at [%p] virtual at [%p] with width [%d] "
-              "height [%d] depth [%d].\n", (void *) pPixmap, (void *) pVirtual,
-                  width, height, depth);
+              "height [%d] depth [%d] and allocation hint [%d].\n",
+              (void *) pPixmap, (void *) pVirtual, width, height, depth, usage_hint);
   #endif
 
   return pPixmap;
