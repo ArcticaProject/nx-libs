@@ -1596,7 +1596,8 @@ fbPictureInit (ScreenPtr pScreen,
  */
 
 PixmapPtr
-fbCreatePixmapBpp (ScreenPtr pScreen, int width, int height, int depth, int bpp);
+fbCreatePixmapBpp (ScreenPtr pScreen, int width, int height, int depth, int bpp
+                   unsigned usage_hint);
 
 PixmapPtr
 fbCreatePixmap (ScreenPtr pScreen, int width, int height, int depth, unsigned usage_hint);
