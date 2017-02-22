@@ -493,7 +493,8 @@ miBSGetImage (pDrawable, sx, sy, w, h, format, planemask, pdstLine)
 		    XID	subWindowMode = IncludeInferiors;
 		    int	x, y;
 
-		    pPixmap = (*pScreen->CreatePixmap) (pScreen, w, h, depth);
+		    pPixmap = (*pScreen->CreatePixmap) (pScreen, w, h, depth,
+		                                       CREATE_PIXMAP_USAGE_SCRATCH);
 		    if (!pPixmap)
 			goto punt;
 		    pGC = GetScratchGC (depth, pScreen);
@@ -2737,7 +2738,7 @@ miResizeBackingStore(
 	    pNewPixmap = (PixmapPtr)(*pScreen->CreatePixmap)
 					    (pScreen,
 					     nw, nh,
-					     pWin->drawable.depth);
+					     pWin->drawable.depth, 0);
 	    if (!pNewPixmap)
 	    {
 #ifdef BSEAGER
@@ -3737,7 +3738,7 @@ miCreateBSPixmap (pWin, pExtents)
 			   (pScreen,
 			    extents->x2 - extents->x1,
 			    extents->y2 - extents->y1,
-			    pWin->drawable.depth);
+			    pWin->drawable.depth, 0);
     }
     if (!pBackingStore->pBackingPixmap)
     {

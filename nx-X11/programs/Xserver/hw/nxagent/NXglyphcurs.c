@@ -114,7 +114,8 @@ ServerBitsFromGlyph(FontPtr pfont, unsigned ch, register CursorMetricPtr cm, uns
     /* zeroing the (pad) bits seems to help some ddx cursor handling */
     bzero(pbits, nby);
 
-    ppix = fbCreatePixmap(pScreen, cm->width, cm->height, 1);
+    ppix = fbCreatePixmap(pScreen, cm->width, cm->height, 1,
+                          CREATE_PIXMAP_USAGE_SCRATCH);
     pGC = GetScratchGC(1, pScreen);
     if (!ppix || !pGC)
     {

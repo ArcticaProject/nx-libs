@@ -266,7 +266,8 @@ miDCRealize (
 	pPriv->sourceBits = 0;
 	pPriv->maskBits = 0;
 	pPixmap = (*pScreen->CreatePixmap) (pScreen, pCursor->bits->width,
-					    pCursor->bits->height, 32);
+					    pCursor->bits->height, 32,
+					    CREATE_PIXMAP_USAGE_SCRATCH);
 	if (!pPixmap)
 	{
 	    free ((void *) pPriv);
@@ -298,13 +299,13 @@ miDCRealize (
     }
     pPriv->pPicture = 0;
 #endif
-    pPriv->sourceBits = (*pScreen->CreatePixmap) (pScreen, pCursor->bits->width, pCursor->bits->height, 1);
+    pPriv->sourceBits = (*pScreen->CreatePixmap) (pScreen, pCursor->bits->width, pCursor->bits->height, 1, 0);
     if (!pPriv->sourceBits)
     {
 	free ((void *) pPriv);
 	return (miDCCursorPtr)NULL;
     }
-    pPriv->maskBits =  (*pScreen->CreatePixmap) (pScreen, pCursor->bits->width, pCursor->bits->height, 1);
+    pPriv->maskBits =  (*pScreen->CreatePixmap) (pScreen, pCursor->bits->width, pCursor->bits->height, 1, 0);
     if (!pPriv->maskBits)
     {
 	(*pScreen->DestroyPixmap) (pPriv->sourceBits);
@@ -525,7 +526,7 @@ miDCSaveUnderCursor (pScreen, x, y, w, h)
 	if (pSave)
 	    (*pScreen->DestroyPixmap) (pSave);
 	pScreenPriv->pSave = pSave =
-		(*pScreen->CreatePixmap) (pScreen, w, h, pScreen->rootDepth);
+		(*pScreen->CreatePixmap) (pScreen, w, h, pScreen->rootDepth, 0);
 	if (!pSave)
 	    return FALSE;
     }
@@ -735,7 +736,7 @@ miDCMoveCursor (pScreen, pCursor, x, y, w, h, dx, dy, source, mask)
 	}
 #endif
 	pScreenPriv->pTemp = pTemp = (*pScreen->CreatePixmap)
-	    (pScreen, w, h, pScreenPriv->pSave->drawable.depth);
+	    (pScreen, w, h, pScreenPriv->pSave->drawable.depth, 0);
 	if (!pTemp)
 	    return FALSE;
     }
