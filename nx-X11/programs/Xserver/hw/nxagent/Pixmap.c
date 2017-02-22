@@ -146,6 +146,7 @@ PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width, int height,
   pPixmap -> devKind = 0;
   pPixmap -> refcnt = 1;
   pPixmap -> devPrivate.ptr = NULL;
+  pPixmap -> usage_hint = usage_hint;
 
   /*
    * Initialize the privates of the real picture.
