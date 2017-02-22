@@ -1,0 +1,10 @@
+*.a
+*.o
+*.so
+*.sw[a-z]
+*.pc
+*~
+depend
+depend.bak
+lib
+lib64
