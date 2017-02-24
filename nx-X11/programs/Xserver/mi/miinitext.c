@@ -238,6 +238,9 @@ extern void XFree86DRIExtensionInit(void);
 #ifdef DPMSExtension
 extern void DPMSExtensionInit(void);
 #endif
+#ifdef PRESENT
+extern void present_extension_init(void);
+#endif
 #ifdef DPSEXT
 extern void DPSExtensionInit(void);
 #endif
@@ -291,6 +294,9 @@ static ExtensionToggle ExtensionToggleList[] =
 #endif
 #ifdef DPMSExtension
     { "DPMS", &noDPMSExtension },
+#endif
+#ifdef PRESENT
+    { "Present", &noPresentExtension },
 #endif
 #ifdef GLXEXT
     { "GLX", &noGlxExtension },

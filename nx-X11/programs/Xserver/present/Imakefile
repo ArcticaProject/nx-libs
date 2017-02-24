@@ -1,0 +1,49 @@
+NULL =
+
+#include <Server.tmpl>
+
+       SRCS = 			\
+              present.c		\
+              present_event.c	\
+              present_fake.c	\
+              present_fence.c	\
+              present_notify.c	\
+              present_request.c	\
+              present_screen.c	\
+              $(NULL)
+       OBJS = 			\
+              present.o		\
+              present_event.o	\
+              present_fake.o	\
+              present_fence.o	\
+              present_notify.o	\
+              present_request.o	\
+              present_screen.o	\
+              $(NULL)
+   INCLUDES = 						\
+              -I$(SERVERSRC)/include			\
+              -I$(SERVERSRC)/randr			\
+              -I$(SERVERSRC)/render			\
+              -I$(XINCLUDESRC)				\
+              -I$(EXTINCSRC)				\
+              `pkg-config --cflags-only-I pixman-1`	\
+              $(NULL)
+
+   LINTLIBS =					\
+              ../dix/llib-ldix.ln		\
+              ../os/llib-los.ln			\
+              $(NULL)
+
+RESENT_DEFINES =				\
+              -DPRESENT_FUTURE_VERSION=0	\
+              $(NULL)
+
+NormalLibraryObjectRule()
+
+NormalLibraryTarget(present,$(OBJS))
+
+LintLibraryTarget(present,$(SRCS))
+NormalLintTarget($(SRCS))
+
+
+DependTarget()

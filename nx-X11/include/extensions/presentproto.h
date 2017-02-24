@@ -23,7 +23,7 @@
 #ifndef _PRESENT_PROTO_H_
 #define _PRESENT_PROTO_H_
 
-#include <X11/extensions/presenttokens.h>
+#include <nx-X11/extensions/presenttokens.h>
 
 #define Window CARD32
 #define Pixmap CARD32

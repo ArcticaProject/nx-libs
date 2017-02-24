@@ -23,7 +23,7 @@
 #ifndef _PRESENT_PRIV_H_
 #define _PRESENT_PRIV_H_
 
-#include <X11/X.h>
+#include <nx-X11/X.h>
 #include "scrnintstr.h"
 #include "misc.h"
 #include "list.h"

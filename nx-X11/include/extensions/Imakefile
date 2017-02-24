@@ -20,6 +20,9 @@ RANDRHEADERS = randr.h randrproto.h
 #if BuildRender
 RENDERHEADERS = render.h renderproto.h
 #endif
+#if BuildPresent
+PRESENTHEADERS = presentproto.h presenttokens.h
+#endif
 #if BuildXfixes
 XFIXESHEADERS = xfixeswire.h xfixesproto.h
 #endif
@@ -43,6 +46,7 @@ EXTRAHEADERS = \
 	$(XVMCHEADERS) \
 	$(RANDRHEADERS) \
 	$(RENDERHEADERS) \
+	$(PRESENTHEADERS) \
 	$(XFIXESHEADERS) \
 	$(COMPOSITEHEADERS) \
 	$(DAMAGEHEADERS) \

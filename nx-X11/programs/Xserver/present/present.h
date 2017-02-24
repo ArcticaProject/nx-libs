@@ -23,7 +23,7 @@
 #ifndef _PRESENT_H_
 #define _PRESENT_H_
 
-#include <X11/extensions/presentproto.h>
+#include <nx-X11/extensions/presentproto.h>
 #include "randrstr.h"
 #include "presentext.h"
 
