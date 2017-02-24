@@ -78,7 +78,7 @@ static Bool
 compRepaintBorder (ClientPtr pClient, void * closure)
 {
     WindowPtr	pWindow;
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_LACKS_PRIVATES_ABI
     int rc =
         dixLookupWindow(&pWindow, (XID) (intptr_t) closure, pClient,
                         DixWriteAccess);

@@ -29,11 +29,11 @@
 #include "compint.h"
 #include "compositeext.h"
 
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_LACKS_PRIVATES_ABI
 DevPrivateKeyRec CompScreenPrivateKeyRec;
 DevPrivateKeyRec CompWindowPrivateKeyRec;
 DevPrivateKeyRec CompSubwindowsPrivateKeyRec;
-#else /* !defined(NXAGENT_SERVER) */
+#else /* !defined(XSERVER_LACKS_PRIVATES_ABI) */
 int CompScreenPrivIndex = -1;
 int CompWindowPrivIndex = -1;
 int CompSubwindowsPrivIndex = -1;
@@ -371,14 +371,14 @@ compScreenInit (ScreenPtr pScreen)
 {
     CompScreenPtr   cs;
 
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_LACKS_PRIVATES_ABI
     if (!dixRegisterPrivateKey(&CompScreenPrivateKeyRec, PRIVATE_SCREEN, 0))
 	    return FALSE;
     if (!dixRegisterPrivateKey(&CompWindowPrivateKeyRec, PRIVATE_WINDOW, 0))
 	return FALSE;
     if (!dixRegisterPrivateKey(&CompSubwindowsPrivateKeyRec, PRIVATE_WINDOW, 0))
 	return FALSE;
-#else /* !defined(NXAGENT_SERVER) */
+#else /* !defined(XSERVER_LACKS_PRIVATES_ABI) */
     if ((CompScreenPrivIndex = AllocateScreenPrivateIndex()) < 0)
         return FALSE;
     if ((CompWindowPrivIndex = AllocateWindowPrivateIndex()) < 0)
