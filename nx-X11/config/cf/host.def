@@ -165,7 +165,6 @@
 
 #if defined(cygwinArchitecture)
 #define DefaultFontPath		/mnt/NX/fonts/base/,/mnt/NX/fonts/misc/,/mnt/NX/fonts/Speedo/,/mnt/NX/fonts/Type1/,/mnt/NX/fonts/75dpi/,/mnt/NX/fonts/100dpi/,/mnt/NX/fonts/TTF/
-#define DefaultRGBDatabase      /mnt/NX/fonts/rgb
 #endif /* #if defined(cygwinArchitecture) */
 
 /*

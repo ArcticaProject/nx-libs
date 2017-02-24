@@ -65,18 +65,14 @@ SOFTWARE.
 #endif
 
 /*
- * The following constants are provided solely as a last line of defense.  The
- * normal build ALWAYS overrides them using a special rule given in
- * server/dix/Imakefile.  If you want to change either of these constants, 
- * you should set the DefaultFontPath or DefaultRGBDatabase configuration 
- * parameters.
+ * The following constant is provided solely as a last line of defense.  The
+ * normal build ALWAYS overrides it using a special rule given in
+ * server/dix/Imakefile.  If you want to change this constant, you should set
+ * the DefaultFontPath configuration parameter.
  * DO NOT CHANGE THESE VALUES OR THE DIX IMAKEFILE!
  */
 #ifndef COMPILEDDEFAULTFONTPATH
 #define COMPILEDDEFAULTFONTPATH	"/usr/lib/X11/fonts/misc/"
-#endif
-#ifndef RGB_DB
-#define RGB_DB			"/usr/lib/X11/rgb"
 #endif
 
 /*

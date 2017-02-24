@@ -125,10 +125,6 @@ BOOTSTRAPCFLAGS =
 #if UseMemLeak
      MEM_DEFINES = -DMEMBUG
 #endif
-#if UseRgbTxt
-    RGB_DEFINES = -DUSE_RGB_TXT
-#endif
-    DBM_DEFINES = NdbmDefines
     ADM_DEFINES = -DADMPATH=\"$(ADMDIR)/X\%smsgs\"
   XDMCP_DEFINES = ServerXdmcpDefines
   ERROR_DEFINES = ServerErrorDefines
@@ -146,7 +142,7 @@ BOOTSTRAPCFLAGS =
 		  -I$(SERVERSRC)/Xext -I$(SERVERSRC)/render \
 		  -I$(TOP)/lib/Xau $(NX_INCLUDES) \
 		  `pkg-config --cflags-only-I pixman-1`
- DEPEND_DEFINES = $(DBM_DEFINES) $(XDMCP_DEFINES) $(EXT_DEFINES) \
+ DEPEND_DEFINES = $(XDMCP_DEFINES) $(EXT_DEFINES) \
 		  $(TRANS_INCLUDES) $(CONNECTION_FLAGS) $(GETPEER_DEFINES) \
 		  DependDefines
        LINTLIBS = ../dix/llib-ldix.ln
@@ -182,9 +178,7 @@ SpecialCObjectRule(utils,$(ICONFIGFILES),$(XDMCP_DEFINES) $(EXT_DEFINES) $(ERROR
 #if defined(SparcArchitecture) && HasGcc && !HasGcc2
 oscolor.o: oscolor.c $(ICONFIGFILES)
 	$(RM) $@
-	cc -c $(DBM_DEFINES) $(CDEBUGFLAGS) $(ALLDEFINES) $*.c
-#else
-SpecialCObjectRule(oscolor,$(ICONFIGFILES),$(DBM_DEFINES))
+	cc -c $(CDEBUGFLAGS) $(ALLDEFINES) $*.c
 #endif
 
 #if !HasSnprintf

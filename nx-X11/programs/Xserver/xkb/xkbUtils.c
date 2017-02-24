@@ -175,44 +175,6 @@ register unsigned mask;
     return mask;
 }
 
-
-Bool
-XkbApplyVModChanges(	XkbSrvInfoPtr		xkbi,
-			unsigned		changed,
-			XkbChangesPtr		changes,
-			unsigned *		needChecksRtrn,
-			XkbEventCausePtr	cause)
-{
-XkbDescPtr		xkb;
-Bool			check;
-
-    xkb= xkbi->desc;
-#ifdef DEBUG
-{
-register unsigned i,bit;
-    for (i=0,bit=1;i<XkbNumVirtualMods;i++,bit<<=1) {
-	if ((changed&bit)==0)
-	    continue;
-	if (xkbDebugFlags)
-	    ErrorF("Should be applying: change vmod %d to 0x%x\n",i,
-					xkb->server->vmods[i]);
-    }
-}
-#endif
-    check= XkbApplyVirtualModChanges(xkb,changed,changes);
-    XkbApplyVModChangesToAllDevices(xkbi->device,xkb,changed,cause);
-
-    if (needChecksRtrn!=NULL)  {
-	if (check)
-	     *needChecksRtrn= XkbStateNotifyMask|XkbIndicatorStateNotifyMask;
-	else *needChecksRtrn= 0;
-    }
-    else if (check) {
-	/* 7/12/95 (ef) -- XXX check compatibility and/or indicator state */
-    }
-    return 1;
-}
-
 /***====================================================================***/
 
 void
@@ -775,21 +737,6 @@ XkbCheckSecondaryEffects(	XkbSrvInfoPtr		xkbi,
 
 /***====================================================================***/
 
-void
-XkbSetPhysicalLockingKey(DeviceIntPtr dev,unsigned key)
-{
-XkbDescPtr	xkb;
-
-    xkb= dev->key->xkbInfo->desc;
-    if ((key>=xkb->min_key_code) && (key<=xkb->max_key_code)) {
-	xkb->server->behaviors[key].type= XkbKB_Lock|XkbKB_Permanent;
-    }
-    else ErrorF("Internal Error!  Bad XKB info in SetPhysicalLockingKey\n");
-    return;
-}
-
-/***====================================================================***/
-
 Bool
 XkbEnableDisableControls(	XkbSrvInfoPtr		xkbi,
 				unsigned long		change,
@@ -853,26 +800,6 @@ XkbDescPtr	xkb=	xkbi->desc;
     }
     if ((xkb->geom!=NULL)&&(xkb->geom->name==name))
 	return xkb->geom;
-    else if ((name==xkb->names->geometry)&&(xkb->geom==NULL)) {
-	FILE *file= XkbDDXOpenConfigFile(XkbInitialMap,NULL,0);
-	if (file!=NULL) {
-	    XkbFileInfo		xkbFInfo;
-	    xkmFileInfo		finfo;
-	    xkmSectionInfo	toc[MAX_TOC],*entry;
-	    bzero(&xkbFInfo,sizeof(xkbFInfo));
-	    xkbFInfo.xkb= xkb;
-	    if (XkmReadTOC(file,&finfo,MAX_TOC,toc)) {
-		entry= XkmFindTOCEntry(&finfo,toc,XkmGeometryIndex);
-		if (entry!=NULL)
-		    XkmReadFileSection(file,entry,&xkbFInfo,NULL);
-	    }
-	    fclose(file);
-	    if (xkb->geom) {
-		*shouldFree= 0;
-		return xkb->geom;
-	    }
-	}
-    }
     *shouldFree= 1;
     return NULL;
 }
