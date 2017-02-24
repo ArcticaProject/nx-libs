@@ -101,10 +101,15 @@ OsInit(void)
 #endif
 
     if (!been_here) {
+
+	InitNotifyFds();
+
 #if !defined(__SCO__) && !defined(__CYGWIN__) && !defined(__UNIXWARE__)
 	fclose(stdin);
 	fclose(stdout);
 #endif
+
+
 	/* 
 	 * If a write of zero bytes to stderr returns non-zero, i.e. -1, 
 	 * then writing to stderr failed, and we'll write somewhere else 
@@ -203,7 +208,6 @@ OsInit(void)
 #endif
 	been_here = TRUE;
     }
-    InitNotifyFds();
     TimerInit();
 #ifdef DDXOSINIT
     OsVendorInit();
