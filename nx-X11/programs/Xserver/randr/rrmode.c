@@ -311,14 +311,14 @@ RRModeInit(void)
     assert(num_modes == 0);
     assert(modes == NULL);
     RRModeType = CreateNewResourceType(RRModeDestroyResource
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_OLD_RESOURCE_NAME_ABI
                                        , "MODE"
 #endif
         );
     if (!RRModeType)
         return FALSE;
 
-#ifdef NXAGENT_SERVER
+#ifdef XSERVER_OLD_RESOURCE_NAME_ABI
     RegisterResourceName(RRModeType, "MODE");
 #endif
     return TRUE;
@@ -330,7 +330,7 @@ RRModeInit(void)
 void
 RRModeInitErrorValue(void)
 {
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_OLD_RESOURCE_NAME_ABI
     SetResourceTypeErrorValue(RRModeType, RRErrorBase + BadRRMode);
 #endif
 }
@@ -349,7 +349,7 @@ ProcRRCreateMode(ClientPtr client)
     RRModePtr mode;
 
     REQUEST_AT_LEAST_SIZE(xRRCreateModeReq);
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_LACKS_PRIVATES_ABI
     rc = dixLookupWindow(&pWin, stuff->window, client, DixGetAttrAccess);
 #else
     pWin = SecurityLookupWindow(stuff->window, client, DixReadAccess);

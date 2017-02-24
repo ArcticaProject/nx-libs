@@ -947,14 +947,14 @@ Bool
 RRCrtcInit(void)
 {
     RRCrtcType = CreateNewResourceType(RRCrtcDestroyResource
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_OLD_RESOURCE_NAME_ABI
                                        , "CRTC"
 #endif
         );
     if (!RRCrtcType)
         return FALSE;
 
-#ifdef NXAGENT_SERVER
+#ifdef XSERVER_OLD_RESOURCE_NAME_ABI
     RegisterResourceName(RRCrtcType, "CRTC");
 #endif
 
@@ -967,7 +967,7 @@ RRCrtcInit(void)
 void
 RRCrtcInitErrorValue(void)
 {
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_OLD_RESOURCE_NAME_ABI
     SetResourceTypeErrorValue(RRCrtcType, RRErrorBase + BadRRCrtc);
 #endif
 }
@@ -1101,7 +1101,7 @@ ProcRRSetCrtcConfig(ClientPtr client)
     TimeStamp time;
     Rotation rotation;
     int
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_LACKS_PRIVATES_ABI
      ret,
 #endif
      i, j;
@@ -1132,7 +1132,7 @@ ProcRRSetCrtcConfig(ClientPtr client)
 
     outputIds = (RROutput *) (stuff + 1);
     for (i = 0; i < numOutputs; i++) {
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_LACKS_PRIVATES_ABI
         ret = dixLookupResourceByType((void **) (outputs + i), outputIds[i],
                                       RROutputType, client, DixSetAttrAccess);
 
@@ -1140,7 +1140,7 @@ ProcRRSetCrtcConfig(ClientPtr client)
             free(outputs);
             return ret;
         }
-#else                           /* !defined(NXAGENT_SERVER) */
+#else                           /* !defined(XSERVER_LACKS_PRIVATES_ABI) */
         outputs[i] = (RROutputPtr) LookupIDByType(outputIds[i], RROutputType);
         if (!outputs[i]) {
             client->errorValue = outputIds[i];
@@ -1148,7 +1148,7 @@ ProcRRSetCrtcConfig(ClientPtr client)
                 free(outputs);
             return RRErrorBase + BadRROutput;
         }
-#endif                          /* !defined(NXAGENT_SERVER) */
+#endif                          /* !defined(XSERVER_LACKS_PRIVATES_ABI) */
         /* validate crtc for this output */
         for (j = 0; j < outputs[i]->numCrtcs; j++)
             if (outputs[i]->crtcs[j] == crtc)
@@ -1710,9 +1710,9 @@ check_all_screen_crtcs(ScreenPtr pScreen, int *x, int *y)
 
 static Bool
 constrain_all_screen_crtcs(
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_OLD_DEVICE_ABI
                            DeviceIntPtr pDev,
-#endif /* !defined(NXAGENT_SERVER) */
+#endif /* !defined(XSERVER_OLD_DEVICE_ABI) */
                            ScreenPtr pScreen, int *x, int *y)
 {
     rrScrPriv(pScreen);
@@ -1728,12 +1728,11 @@ constrain_all_screen_crtcs(
             continue;
 
         crtc_bounds(crtc, &left, &right, &top, &bottom);
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_OLD_DEVICE_ABI
         miPointerGetPosition(pDev, &nx, &ny);
-#else                           /* !defined(NXAGENT_SERVER) */
-
+#else                           /* !defined(XSERVER_OLD_DEVICE_ABI */
         miPointerPosition(&nx, &ny);
-#endif                          /* !defined(NXAGENT_SERVER) */
+#endif                          /* !defined(XSERVER_OLD_DEVICE_ABI) */
 
         if ((nx >= left) && (nx < right) && (ny >= top) && (ny < bottom)) {
             if (*x < left)
@@ -1753,9 +1752,9 @@ constrain_all_screen_crtcs(
 
 void
 RRConstrainCursorHarder(
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_OLD_DEVICE_ABI
                         DeviceIntPtr pDev,
-#endif /* !defined(NXAGENT_SERVER) */
+#endif /* !defined(XSERVER_OLD_DEVICE_ABI) */
                         ScreenPtr pScreen, int mode, int *x,
                         int *y)
 {
@@ -1784,9 +1783,9 @@ RRConstrainCursorHarder(
 
     /* if we're trying to escape, clamp to the CRTC we're coming from */
     ret = constrain_all_screen_crtcs(
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_OLD_DEVICE_ABI
                                       pDev,
-#endif /* !defined(NXAGENT_SERVER) */
+#endif /* !defined(XSERVER_OLD_DEVICE_ABI) */
                                       pScreen, x, y);
     if (ret == TRUE)
         return;

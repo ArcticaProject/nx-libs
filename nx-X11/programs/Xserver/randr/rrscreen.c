@@ -219,7 +219,7 @@ ProcRRGetScreenSizeRange(ClientPtr client)
     int rc;
 
     REQUEST_SIZE_MATCH(xRRGetScreenSizeRangeReq);
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_LACKS_PRIVATES_ABI
     rc = dixLookupWindow(&pWin, stuff->window, client, DixGetAttrAccess);
 #else
     pWin = SecurityLookupWindow(stuff->window, client, DixReadAccess);
@@ -273,7 +273,7 @@ ProcRRSetScreenSize(ClientPtr client)
     int i, rc;
 
     REQUEST_SIZE_MATCH(xRRSetScreenSizeReq);
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_LACKS_PRIVATES_ABI
     rc = dixLookupWindow(&pWin, stuff->window, client, DixGetAttrAccess);
 #else
     pWin = SecurityLookupWindow(stuff->window, client, DixReadAccess);
@@ -529,7 +529,7 @@ rrGetScreenResources(ClientPtr client, Bool query)
 
     REQUEST_SIZE_MATCH(xRRGetScreenResourcesReq);
 
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_LACKS_PRIVATES_ABI
     rc = dixLookupWindow(&pWin, stuff->window, client, DixGetAttrAccess);
 #else
     pWin = SecurityLookupWindow(stuff->window, client, DixReadAccess);
@@ -803,7 +803,7 @@ ProcRRGetScreenInfo(ClientPtr client)
     RROutputPtr output;
 
     REQUEST_SIZE_MATCH(xRRGetScreenInfoReq);
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_LACKS_PRIVATES_ABI
     rc = dixLookupWindow(&pWin, stuff->window, client, DixGetAttrAccess);
 #else
     pWin = SecurityLookupWindow(stuff->window, client, DixReadAccess);
@@ -976,13 +976,13 @@ ProcRRSetScreenConfig(ClientPtr client)
         has_rate = FALSE;
     }
 
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_LACKS_PRIVATES_ABI
     rc = dixLookupDrawable(&pDraw, stuff->drawable, client, 0, DixWriteAccess);
-#else                           /* !defined(NXAGENT_SERVER) */
+#else                           /* !defined(XSERVER_LACKS_PRIVATES_ABI) */
     pDraw =
         SecurityLookupDrawable(stuff->drawable, client, DixWriteAccess);
     rc = pDraw ? Success : BadDrawable;
-#endif                          /* !defined(NXAGENT_SERVER) */
+#endif                          /* !defined(XSERVER_LACKS_PRIVATES_ABI) */
 
     if (rc != Success)
         return rc;

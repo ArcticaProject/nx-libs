@@ -33,7 +33,7 @@ RESTYPE RRProviderType;
 void
 RRProviderInitErrorValue(void)
 {
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_OLD_RESOURCE_NAME_ABI
     SetResourceTypeErrorValue(RRProviderType, RRErrorBase + BadRRProvider);
 #endif
 }
@@ -66,7 +66,7 @@ ProcRRGetProviders(ClientPtr client)
 #endif
 
     REQUEST_SIZE_MATCH(xRRGetProvidersReq);
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_LACKS_PRIVATES_ABI
     rc = dixLookupWindow(&pWin, stuff->window, client, DixGetAttrAccess);
 #else
     pWin = SecurityLookupWindow(stuff->window, client, DixReadAccess);
@@ -433,14 +433,14 @@ Bool
 RRProviderInit(void)
 {
     RRProviderType = CreateNewResourceType(RRProviderDestroyResource
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_OLD_RESOURCE_NAME_ABI
                                            , "Provider"
-#endif                          /* !defined(NXAGENT_SERVER) */
+#endif                          /* !defined(XSERVER_OLD_RESOURCE_NAME_ABI) */
         );
     if (!RRProviderType)
         return FALSE;
 
-#ifdef NXAGENT_SERVER
+#ifdef XSERVER_OLD_RESOURCE_NAME_ABI
     RegisterResourceName(RRProviderType, "Provider");
 #endif
 
@@ -450,16 +450,16 @@ RRProviderInit(void)
 extern _X_EXPORT Bool
 RRProviderLookup(XID id, RRProviderPtr * provider_p)
 {
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_LACKS_PRIVATES_ABI
     int rc = dixLookupResourceByType((void **) provider_p, id,
                                      RRProviderType, NullClient, DixReadAccess);
     if (rc == Success)
         return TRUE;
-#else                           /* !defined(NXAGENT_SERVER) */
+#else                           /* !defined(XSERVER_LACKS_PRIVATES_ABI) */
     provider_p = (RRProviderPtr *) LookupIDByType(id, RREventType);
     if (provider_p)
         return TRUE;
-#endif                          /* !defined(NXAGENT_SERVER) */
+#endif                          /* !defined(XSERVER_LACKS_PRIVATES_ABI) */
 
     return FALSE;
 }
@@ -474,7 +474,7 @@ RRDeliverProviderEvent(ClientPtr client, WindowPtr pWin, RRProviderPtr provider)
     xRRProviderChangeNotifyEvent pe = {
         .type = RRNotify + RREventBase,
         .subCode = RRNotify_ProviderChange,
-#ifdef NXAGENT_SERVER
+#ifdef XSERVER_EVENT_STILL_NEEDS_SEQNO
         .sequenceNumber = client->sequence,
 #endif
         .timestamp = pScrPriv->lastSetTime.milliseconds,

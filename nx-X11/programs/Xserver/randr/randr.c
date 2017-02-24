@@ -84,7 +84,7 @@ int RREventBase;
 int RRErrorBase;
 RESTYPE RRClientType, RREventType;      /* resource types for event masks */
 
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_LACKS_PRIVATES_ABI
 DevPrivateKey RRClientPrivateKey = &RRClientPrivateKey;
 DevPrivateKey rrPrivKey = &rrPrivKey;
 #else
@@ -118,7 +118,7 @@ RRClientCallback(CallbackListPtr *list, void *closure, void *data)
 
 static Bool
 RRCloseScreen(
-#ifdef NXAGENT_SERVER
+#ifdef XSERVER_OLD_CLOSE_SCREEN_ABI
               int i,
 #endif
               ScreenPtr pScreen)
@@ -297,7 +297,7 @@ Bool
 RRInit(void)
 {
     if (RRGeneration != serverGeneration) {
-#ifdef NXAGENT_SERVER
+#ifdef XSERVER_LACKS_PRIVATES_ABI
         if ((rrPrivIndex = AllocateScreenPrivateIndex()) < 0)
             return FALSE;
 #endif
@@ -311,10 +311,10 @@ RRInit(void)
             return FALSE;
         RRGeneration = serverGeneration;
     }
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_LACKS_PRIVATES_ABI
     if (!dixRegisterPrivateKey(&rrPrivKeyRec, PRIVATE_SCREEN, 0))
         return FALSE;
-#endif                          /* !defined(NXAGENT_SERVER) */
+#endif                          /* !defined(XSERVER_LACKS_PRIVATES_ABI) */
 
     return TRUE;
 }
@@ -393,12 +393,12 @@ RRFreeClient(void *data, XID id)
 
     pRREvent = (RREventPtr) data;
     pWin = pRREvent->window;
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_LACKS_PRIVATES_ABI
     dixLookupResourceByType((void **) &pHead, pWin->drawable.id,
                             RREventType, serverClient, DixDestroyAccess);
-#else                           /* !defined(NXAGENT_SERVER) */
+#else                           /* !defined(XSERVER_LACKS_PRIVATES_ABI) */
     pHead = (RREventPtr *) LookupIDByType(pWin->drawable.id, RREventType);
-#endif                          /* !defined(NXAGENT_SERVER) */
+#endif                          /* !defined(XSERVER_LACKS_PRIVATES_ABI) */
 
     if (pHead) {
         pPrev = 0;
@@ -438,43 +438,43 @@ RRExtensionInit(void)
     if (RRNScreens == 0)
         return;
 
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_LACKS_PRIVATES_ABI
     if (!dixRegisterPrivateKey(&RRClientPrivateKeyRec, PRIVATE_CLIENT,
                                sizeof(RRClientRec) +
                                screenInfo.numScreens * sizeof(RRTimesRec)))
         return;
-#else                           /* !defined(NXAGENT_SERVER) */
+#else                           /* !defined(XSERVER_LACKS_PRIVATES_ABI) */
     RRClientPrivateIndex = AllocateClientPrivateIndex();
     if (!AllocateClientPrivate(RRClientPrivateIndex,
                                sizeof(RRClientRec) +
                                screenInfo.numScreens * sizeof(RRTimesRec)))
         return;
-#endif                          /* !defined(NXAGENT_SERVER) */
+#endif                          /* !defined(XSERVER_LACKS_PRIVATES_ABI) */
 
     if (!AddCallback(&ClientStateCallback, RRClientCallback, 0))
         return;
 
     RRClientType = CreateNewResourceType(RRFreeClient
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_OLD_RESOURCE_NAME_ABI
                                          , "RandRClient"
 #endif
         );
     if (!RRClientType)
         return;
 
-#ifdef NXAGENT_SERVER
+#ifdef XSERVER_OLD_RESOURCE_NAME_ABI
     RegisterResourceName(RRClientType, "RandRClient");
 #endif
 
     RREventType = CreateNewResourceType(RRFreeEvents
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_OLD_RESOURCE_NAME_ABI
                                         , "RandREvent"
 #endif
         );
     if (!RREventType)
         return;
 
-#ifdef NXAGENT_SERVER
+#ifdef XSERVER_OLD_RESOURCE_NAME_ABI
     RegisterResourceName(RREventType, "RandREvent");
 #endif
 
@@ -518,7 +518,7 @@ RRDeliverResourceEvent(ClientPtr client, WindowPtr pWin)
     xRRResourceChangeNotifyEvent re = {
         .type = RRNotify + RREventBase,
         .subCode = RRNotify_ResourceChange,
-#ifdef NXAGENT_SERVER
+#ifdef XSERVER_EVENT_STILL_NEEDS_SEQNO
         .sequenceNumber = client->sequence,
 #endif
         .timestamp = pScrPriv->lastSetTime.milliseconds,
@@ -543,12 +543,12 @@ TellChanged(WindowPtr pWin, void *value)
     rrScrPriv(pScreen);
     int i;
 
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_LACKS_PRIVATES_ABI
     dixLookupResourceByType((void **) &pHead, pWin->drawable.id,
                             RREventType, serverClient, DixReadAccess);
-#else                           /* !defined(NXAGENT_SERVER) */
+#else                           /* !defined(XSERVER_LACKS_PRIVATES_ABI) */
     pHead = (RREventPtr *) LookupIDByType(pWin->drawable.id, RREventType);
-#endif                          /* !defined(NXAGENT_SERVER) */
+#endif                          /* !defined(XSERVER_LACKS_PRIVATES_ABI) */
     if (!pHead)
         return WT_WALKCHILDREN;
 

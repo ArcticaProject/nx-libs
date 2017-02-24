@@ -366,28 +366,26 @@ typedef struct _rrScrPriv {
 
 } rrScrPrivRec, *rrScrPrivPtr;
 
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_LACKS_PRIVATES_ABI
+
 extern _X_EXPORT DevPrivateKeyRec rrPrivKeyRec;
 
 #define rrPrivKey (&rrPrivKeyRec)
 extern DevPrivateKey rrPrivKey;
-#else
-extern int rrPrivIndex;
-#endif
-
-#ifndef NXAGENT_SERVER
 
 #define rrGetScrPriv(pScr) ((rrScrPrivPtr)dixLookupPrivate(&(pScr)->devPrivates, rrPrivKey))
 #define rrScrPriv(pScr)	rrScrPrivPtr pScrPriv = rrGetScrPriv(pScr)
 #define SetRRScreen(s,p) dixSetPrivate(&(s)->devPrivates, rrPrivKey, p)
 
-#else                           /* !defined(NXAGENT_SERVER) */
+#else                           /* !defined(XSERVER_LACKS_PRIVATES_ABI) */
+
+extern int rrPrivIndex;
 
 #define rrGetScrPriv(pScr) ((rrScrPrivPtr) (pScr)->devPrivates[rrPrivIndex].ptr)
 #define rrScrPriv(pScr) rrScrPrivPtr pScrPriv = rrGetScrPriv(pScr)
 #define SetRRScreen(s,p) ((s)->devPrivates[rrPrivIndex].ptr = (void *) (p))
 
-#endif                          /* !defined(NXAGENT_SERVER) */
+#endif                          /* !defined(XSERVER_LACKS_PRIVATES_ABI) */
 
 /*
  * each window has a list of clients requesting
@@ -420,7 +418,7 @@ typedef struct _RRClient {
 
 extern RESTYPE RRClientType, RREventType;       /* resource types for event masks */
 
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_LACKS_PRIVATES_ABI
 extern DevPrivateKey RRClientPrivateKey;
 #else
 extern int RRClientPrivateIndex;
@@ -428,7 +426,7 @@ extern int RRClientPrivateIndex;
 
 extern _X_EXPORT RESTYPE RRCrtcType, RRModeType, RROutputType, RRProviderType;
 
-#ifdef NXAGENT_SERVER
+#ifdef XSERVER_LACKS_PRIVATES_ABI
 
 #define LookupOutput(client,id,a) ((RROutputPtr) \
                                   (SecurityLookupIDByType (client, id, \
@@ -448,23 +446,23 @@ extern _X_EXPORT RESTYPE RRCrtcType, RRModeType, RROutputType, RRProviderType;
 
 #endif
 
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_LACKS_PRIVATES_ABI
 
 #define RRClientPrivateKey (&RRClientPrivateKeyRec)
 #define GetRRClient(pClient) ((RRClientPtr)dixLookupPrivate(&(pClient)->devPrivates, RRClientPrivateKey))
 
-#else                           /* !defined/NXAGENT_SERVER) */
+#else                           /* !defined(XSERVER_LACKS_PRIVATES_ABI) */
 
 #define GetRRClient(pClient) ((RRClientPtr) (pClient)->devPrivates[RRClientPrivateIndex].ptr)
 
-#endif                          /* !defined(NXAGENT_SERVER) */
+#endif                          /* !defined(XSERVER_LACKS_PRIVATES_ABI) */
 #define rrClientPriv(pClient) RRClientPtr pRRClient = GetRRClient(pClient)
 
 /* Initialize the extension */
 void
  RRExtensionInit(void);
 
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_LACKS_PRIVATES_ABI
 #define VERIFY_RR_OUTPUT(id, ptr, a)\
     {\
         int rc = dixLookupResourceByType((void **)&(ptr), id,\
@@ -504,7 +502,7 @@ void
             return rc;\
         }\
     }
-#else                           /* !defined(NXAGENT_SERVER) */
+#else                           /* !defined(XSERVER_LACKS_PRIVATES_ABI) */
 #define VERIFY_RR_OUTPUT(id, ptr, a)\
     {\
 	ptr = LookupOutput(client, id, a);\
@@ -540,7 +538,7 @@ void
 	    return RRErrorBase + BadRRProvider;\
 	}\
     }
-#endif                          /* !defined(NXAGENT_SERVER) */
+#endif                          /* !defined(XSERVER_LACKS_PRIVATES_ABI) */
 
 #ifdef RANDR_12_INTERFACE
 /*
@@ -837,9 +835,9 @@ int
 
 void
  RRConstrainCursorHarder(
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_OLD_DEVICE_ABI
                          DeviceIntPtr,
-#endif /* !defined(NXAGENT_SERVER) */
+#endif /* !defined(XSERVER_OLD_DEVICE_ABI) */
                          ScreenPtr, int, int *, int *);
 
 /* rrdispatch.c */

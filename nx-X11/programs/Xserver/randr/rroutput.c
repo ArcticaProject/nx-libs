@@ -400,14 +400,14 @@ Bool
 RROutputInit(void)
 {
     RROutputType = CreateNewResourceType(RROutputDestroyResource
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_OLD_RESOURCE_NAME_ABI
                                          , "OUTPUT"
 #endif
         );
     if (!RROutputType)
         return FALSE;
 
-#ifdef NXAGENT_SERVER
+#ifdef XSERVER_OLD_RESOURCE_NAME_ABI
     RegisterResourceName(RROutputType, "OUTPUT");
 #endif
 
@@ -420,7 +420,7 @@ RROutputInit(void)
 void
 RROutputInitErrorValue(void)
 {
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_OLD_RESOURCE_NAME_ABI
     SetResourceTypeErrorValue(RROutputType, RRErrorBase + BadRROutput);
 #endif
 }
@@ -562,7 +562,7 @@ ProcRRSetOutputPrimary(ClientPtr client)
 
     REQUEST_SIZE_MATCH(xRRSetOutputPrimaryReq);
 
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_LACKS_PRIVATES_ABI
     ret = dixLookupWindow(&pWin, stuff->window, client, DixGetAttrAccess);
 #else
     pWin = SecurityLookupWindow(stuff->window, client, DixReadAccess);
@@ -620,7 +620,7 @@ ProcRRGetOutputPrimary(ClientPtr client)
 
     REQUEST_SIZE_MATCH(xRRGetOutputPrimaryReq);
 
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_LACKS_PRIVATES_ABI
     rc = dixLookupWindow(&pWin, stuff->window, client, DixGetAttrAccess);
 #else
     pWin = SecurityLookupWindow(stuff->window, client, DixReadAccess);
