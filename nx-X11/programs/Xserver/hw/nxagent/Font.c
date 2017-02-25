@@ -57,6 +57,7 @@ is" without express or implied warranty.
 #include "Reconnect.h"
 
 #include "Args.h"
+#include "Atoms.h"
 
 #include "compext/Compext.h"
 #include <nx/NXalert.h>

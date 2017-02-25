@@ -95,6 +95,10 @@ static char *nxagentAtomNames[NXAGENT_NUMBER_OF_ATOMS + 1] =
 
 static XErrorHandler previousErrorHandler = NULL;
 
+const char * validateString(const char *str) {
+  return str ? str : "(null)";
+}
+
 static void catchAndRedirect(Display* dpy, XErrorEvent* X)
 {
   if (X -> error_code == BadAccess &&
