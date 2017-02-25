@@ -660,6 +660,7 @@ ProcPanoramiXShmGetImage(ClientPtr client)
     for(i = 1; i < PanoramiXNumScreens; i++)
 	VERIFY_DRAWABLE(drawables[i], draw->info[i].id, client);
 
+    memset(&xgi, 0, sizeof(xShmGetImageReply));
     xgi.visual = wVisual(((WindowPtr)pDraw));
     xgi.type = X_Reply;
     xgi.length = 0;
@@ -913,6 +914,7 @@ ProcShmPutImage(client)
     {
 	xShmCompletionEvent ev;
 
+	memset(&ev, 0, sizeof(xShmCompletionEvent));
 	ev.type = ShmCompletionCode;
 	ev.drawable = stuff->drawable;
 	ev.minorEvent = X_ShmPutImage;
@@ -947,6 +949,9 @@ ProcShmGetImage(client)
     }
     VERIFY_DRAWABLE(pDraw, stuff->drawable, client);
     VERIFY_SHMPTR(stuff->shmseg, stuff->offset, TRUE, shmdesc, client);
+
+    memset(&xgi, 0, sizeof(xShmGetImageReply));
+
     if (pDraw->type == DRAWABLE_WINDOW)
     {
       if( /* check for being viewable */

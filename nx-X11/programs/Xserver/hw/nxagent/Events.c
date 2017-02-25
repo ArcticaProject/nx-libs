@@ -1177,6 +1177,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was
           nxagentXkbNumTrap = 0;
         }
 
+        memset(&x, 0, sizeof(xEvent));
         x.u.u.type = KeyRelease;
         x.u.u.detail = nxagentConvertKeycode(X.xkey.keycode);
         x.u.keyButtonPointer.time = nxagentLastKeyPressTime +
@@ -1263,6 +1264,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was
                 X.xbutton.window == nxagentFullscreenWindow &&
                     X.xbutton.subwindow == None))
         {
+          memset(&x, 0, sizeof(xEvent));
           x.u.u.type = ButtonPress;
           x.u.u.detail = inputInfo.pointer -> button -> map[nxagentReversePointerMap[X.xbutton.button]];
           x.u.keyButtonPointer.time = nxagentLastEventTime = GetTimeInMillis();
@@ -1336,6 +1338,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was
 
         if (minimize != True)
         {
+          memset(&x, 0, sizeof(xEvent));
           x.u.u.type = ButtonRelease;
           x.u.u.detail = inputInfo.pointer -> button -> map[nxagentReversePointerMap[X.xbutton.button]];
           x.u.keyButtonPointer.time = nxagentLastEventTime = GetTimeInMillis();
@@ -1402,6 +1405,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was
         }
         #endif
 
+        memset(&x, 0, sizeof(xEvent));
         x.u.u.type = MotionNotify;
 
         if (nxagentOption(Rootless))
@@ -1583,6 +1587,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was
                   if (!nxagentOption(Rootless) ||
                           inputInfo.keyboard->key->modifierMap[i * 8 + k])
                   {
+                    memset(&x, 0, sizeof(xEvent));
                     x.u.u.type = KeyRelease;
                     x.u.u.detail = i * 8 + k;
                     x.u.keyButtonPointer.time = nxagentLastEventTime = GetTimeInMillis();
@@ -1706,6 +1711,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was
           {
             NewCurrentScreen(pScreen, X.xcrossing.x, X.xcrossing.y);
 
+            memset(&x, 0, sizeof(xEvent));
             x.u.u.type = MotionNotify;
 
             if (nxagentOption(Rootless))
@@ -2337,6 +2343,7 @@ int nxagentHandleKeyPress(XEvent *X, enum HandleEventResult *result)
 
   nxagentLastEventTime = nxagentLastKeyPressTime = GetTimeInMillis();
   
+  memset(&x, 0, sizeof(xEvent));
   x.u.u.type = KeyPress;
   x.u.u.detail = nxagentConvertKeycode(X -> xkey.keycode);
   x.u.keyButtonPointer.time = nxagentLastKeyPressTime;
@@ -2641,7 +2648,6 @@ int nxagentHandleGraphicsExposeEvent(XEvent *X)
 int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
 {
   WindowPtr pWin;
-  xEvent x;
 
   *result = doNothing;
 
@@ -2695,6 +2701,9 @@ int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
       char *message_data;
       #endif
 
+      xEvent x;
+
+      memset(&x, 0, sizeof(xEvent));
       x.u.u.type = ClientMessage;
       x.u.u.detail = X -> xclient.format;
 
@@ -3201,7 +3210,6 @@ int nxagentHandleConfigureNotify(XEvent* X)
     ClientPtr pClient;
     WindowPtr pWinWindow;
     WindowPtr pWin;
-    xEvent x;
     int sendEventAnyway = 0;
 
     pWinWindow = nxagentWindowPtr(X -> xconfigure.window);
@@ -3294,6 +3302,9 @@ int nxagentHandleConfigureNotify(XEvent* X)
 
       if (sendEventAnyway || X -> xconfigure.send_event)
       {
+        xEvent x;
+
+        memset(&x, 0, sizeof(xEvent));
         x.u.u.type = X -> xconfigure.type;
         x.u.u.type |= 0x80;
 
@@ -3767,6 +3778,7 @@ void nxagentSendFakeKey(int key)
 
   now = GetTimeInMillis();
 
+  memset(&fake, 0, sizeof(xEvent));
   fake.u.u.type = KeyPress;
   fake.u.u.detail = key;
   fake.u.keyButtonPointer.time = now;
@@ -3791,6 +3803,8 @@ int nxagentInitKeyboardState()
   #ifdef TEST
   fprintf(stderr, "nxagentInitKeyboardState: Initializing XKB state.\n");
   #endif
+
+  memset(&X, 0, sizeof(XEvent));
 
   XkbGetIndicatorState(nxagentDisplay, XkbUseCoreKbd, &modifiers);
 

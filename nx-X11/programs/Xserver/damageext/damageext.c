@@ -136,6 +136,8 @@ ProcDamageQueryVersion(ClientPtr client)
     REQUEST(xDamageQueryVersionReq);
 
     REQUEST_SIZE_MATCH(xDamageQueryVersionReq);
+
+    memset(&rep, 0, sizeof(xDamageQueryVersionReply));
     rep.type = X_Reply;
     rep.length = 0;
     rep.sequenceNumber = client->sequence;

@@ -457,7 +457,7 @@ rrGetMultiScreenResources(ClientPtr client, Bool query, ScreenPtr pScreen)
 
     extraLen = rep.length << 2;
     if (extraLen) {
-        extra = malloc(extraLen);
+        extra = calloc(1,extraLen);
         if (!extra) {
             return BadAlloc;
         }
@@ -595,7 +595,7 @@ rrGetScreenResources(ClientPtr client, Bool query)
 
         extraLen = rep.length << 2;
         if (extraLen) {
-            extra = malloc(extraLen);
+            extra = calloc(1, extraLen);
             if (!extra) {
                 free(modes);
                 return BadAlloc;
@@ -873,7 +873,7 @@ ProcRRGetScreenInfo(ClientPtr client)
             extraLen += rep.nrateEnts * sizeof(CARD16);
 
         if (extraLen) {
-            extra = (CARD8 *) malloc(extraLen);
+            extra = (CARD8 *) calloc(1, extraLen);
             if (!extra) {
                 free(pData);
                 return BadAlloc;

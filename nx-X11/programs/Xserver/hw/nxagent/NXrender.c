@@ -229,10 +229,9 @@ ProcRenderQueryPictFormats (ClientPtr client)
 	       ndepth * sizeof (xPictDepth) +
 	       nvisual * sizeof (xPictVisual) +
 	       numSubpixel * sizeof (CARD32));
-    reply = (xRenderQueryPictFormatsReply *) malloc (rlength);
+    reply = (xRenderQueryPictFormatsReply *) calloc (1, rlength);
     if (!reply)
 	return BadAlloc;
-    memset(reply, 0, rlength);
     reply->type = X_Reply;
     reply->sequenceNumber = client->sequence;
     reply->length = (rlength - sizeof(xGenericReply)) >> 2;
