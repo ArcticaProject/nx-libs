@@ -26,6 +26,10 @@ BuildRequires:  gpg-offline
 %endif
 %if 0%{?suse_version}
 BuildRequires:  fdupes
+
+# This is what provides /usr/share/fonts on SUSE systems...
+BuildRequires: filesystem
+
 %if 0%{?suse_version} >= 1130
 BuildRequires:  pkgconfig(expat)
 BuildRequires:  pkgconfig(libpng)
