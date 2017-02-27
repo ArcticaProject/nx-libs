@@ -62,7 +62,6 @@ extern int nxagentSplitThreshold;
  */
 
 extern int nxagentAlphaEnabled;
-extern int nxagentAlphaCompat;
 
 /*
  * Reset the visual and alpha cache

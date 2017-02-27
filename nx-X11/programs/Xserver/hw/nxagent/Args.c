@@ -1819,19 +1819,6 @@ N/A
                   packMethod, packQuality);
       #endif
 
-      if (remoteMajor < 2)
-      {
-        #ifdef TEST
-        fprintf(stderr, "nxagentPostProcessArgs: WARNING! Using backward compatible alpha encoding.\n");
-        #endif
-
-        nxagentAlphaCompat = 1;
-      }
-      else
-      {
-        nxagentAlphaCompat = 0;
-      }
-
       nxagentRemoteMajor = remoteMajor;
 
       if (nxagentPackMethod == -1)

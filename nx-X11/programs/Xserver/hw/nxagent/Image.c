@@ -444,14 +444,7 @@ FIXME: Here the split trap is always set and so the caching of
      * compressed form.
      */
 
-    if (nxagentAlphaCompat == 0)
-    {
-      NXSetUnpackAlpha(nxagentDisplay, resource, PACK_NONE, size, data, size);
-    }
-    else
-    {
-      NXSetUnpackAlphaCompat(nxagentDisplay, resource, size, data);
-    }
+    NXSetUnpackAlpha(nxagentDisplay, resource, PACK_NONE, size, data, size);
 
     if (nxagentUnpackAlpha[resource] != NULL)
     {
