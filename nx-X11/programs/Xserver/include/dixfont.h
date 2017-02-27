@@ -150,4 +150,6 @@ extern void InitGlyphCaching(void);
 
 extern void SetGlyphCachingMode(int /*newmode*/);
 
+extern void register_fpe_functions(void);
+
 #endif				/* DIXFONT_H */

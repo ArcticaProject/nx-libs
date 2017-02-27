@@ -69,38 +69,30 @@ is" without express or implied warranty.
 #undef  TEST
 #undef  DEBUG
 
-#define NXAGENT_DEFAULT_FONT_DIR      "/usr/X11R6/lib/X11/fonts"
+#define NXAGENT_DEFAULT_FONT_DIR      "/usr/share/nx/fonts"
 #define NXAGENT_ALTERNATE_FONT_DIR    "/usr/share/X11/fonts"
 #define NXAGENT_ALTERNATE_FONT_DIR_2  "/usr/share/fonts/X11"
-#define NXAGENT_ALTERNATE_FONT_DIR_3  "/usr/share/fonts"
-#define NXAGENT_ALTERNATE_FONT_DIR_4  "/usr/NX/share/fonts"
+#define NXAGENT_ALTERNATE_FONT_DIR_3  "/usr/X11R6/lib/X11/fonts"
 
 #define NXAGENT_DEFAULT_FONT_PATH  \
-"/usr/X11R6/lib/X11/fonts/misc/,/usr/X11R6/lib/X11/fonts/Speedo/,\
-/usr/X11R6/lib/X11/fonts/Type1/,/usr/X11R6/lib/X11/fonts/75dpi/,\
-/usr/X11R6/lib/X11/fonts/100dpi/,/usr/X11R6/lib/X11/fonts/TTF/,\
-/usr/NX/share/fonts/base"
+"/usr/share/nx/fonts/misc/,/usr/share/nx/fonts/Speedo/,\
+/usr/share/nx/fonts/Type1/,/usr/share/nx/fonts/75dpi/,\
+/usr/share/nx/fonts/100dpi/,/usr/share/nx/fonts/TTF/"
 
 #define NXAGENT_ALTERNATE_FONT_PATH  \
 "/usr/share/X11/fonts/misc/,/usr/share/X11/fonts/Speedo/,\
 /usr/share/X11/fonts/Type1/,/usr/share/X11/fonts/75dpi/,\
-/usr/share/X11/fonts/100dpi/,/usr/share/X11/fonts/TTF/,\
-/usr/NX/share/fonts/base"
+/usr/share/X11/fonts/100dpi/,/usr/share/X11/fonts/TTF/"
 
 #define NXAGENT_ALTERNATE_FONT_PATH_2  \
 "/usr/share/fonts/X11/misc/,/usr/share/fonts/X11/Speedo/,\
 /usr/share/fonts/X11/Type1/,/usr/share/fonts/X11/75dpi/,\
-/usr/share/fonts/X11/100dpi/,/usr/share/fonts/X11/TTF/,\
-/usr/NX/share/fonts/base"
+/usr/share/fonts/X11/100dpi/,/usr/share/fonts/X11/TTF/"
 
 #define NXAGENT_ALTERNATE_FONT_PATH_3  \
-"/usr/share/fonts/misc/,/usr/share/fonts/Speedo/,\
-/usr/share/fonts/Type1/,/usr/share/fonts/75dpi/,\
-/usr/share/fonts/100dpi/,/usr/share/fonts/TTF/,\
-/usr/NX/share/fonts/base"
-
-#define NXAGENT_ALTERNATE_FONT_PATH_4  \
-"/usr/NX/share/fonts/base"
+"/usr/X11R6/lib/X11/fonts/misc/,/usr/X11R6/lib/X11/fonts/Speedo/,\
+/usr/X11R6/lib/X11/fonts/Type1/,/usr/X11R6/lib/X11/fonts/75dpi/,\
+/usr/X11R6/lib/X11/fonts/100dpi/,/usr/X11R6/lib/X11/fonts/TTF/"
 
 #undef NXAGENT_FONTCACHE_DEBUG
 #undef NXAGENT_RECONNECT_FONT_DEBUG
@@ -1479,7 +1471,7 @@ void nxagentVerifyDefaultFontPath(void)
           S_ISDIR(dirStat.st_mode) != 0)
   {
     /*
-     * Let's use the old "/usr/X11R6/lib/X11/fonts" style.
+     * Let's use the old "/usr/share/nx/fonts" style.
      */
 
     #ifdef TEST
@@ -1554,7 +1546,7 @@ void nxagentVerifyDefaultFontPath(void)
           S_ISDIR(dirStat.st_mode) != 0)
   {
     /*
-     * Let's use the "/usr/share/fonts" path.
+     * Let's use the "/usr/X11R6/lib/X11/fonts" path.
      */
 
     #ifdef TEST
@@ -1574,32 +1566,6 @@ void nxagentVerifyDefaultFontPath(void)
 
     strcat(fontPath, NXAGENT_ALTERNATE_FONT_PATH_3);
   }
-
-  if (stat(NXAGENT_ALTERNATE_FONT_DIR_4, &dirStat) == 0 &&
-          S_ISDIR(dirStat.st_mode) != 0)
-  {
-    /*
-     * Let's use the "/usr/NX/share/fonts" path.
-     */
-
-    #ifdef TEST
-    fprintf(stderr, "nxagentVerifyDefaultFontPath: Assuming fonts in directory [%s].\n",
-                validateString(NXAGENT_ALTERNATE_FONT_DIR_4));
-    #endif
-
-    if (*fontPath != '\0')
-    {
-      fontPath = realloc(fontPath, strlen(fontPath) + strlen(NXAGENT_ALTERNATE_FONT_PATH_4) + 2);
-      strcat(fontPath, ",");
-    }
-    else
-    {
-      fontPath = realloc(fontPath, strlen(fontPath) + strlen(NXAGENT_ALTERNATE_FONT_PATH_4) + 1);
-    }
-
-    strcat(fontPath, NXAGENT_ALTERNATE_FONT_PATH_4);
-  }
-
   if (*fontPath == '\0') 
   {
     #ifdef WARNING

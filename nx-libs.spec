@@ -26,6 +26,10 @@ BuildRequires:  gpg-offline
 %endif
 %if 0%{?suse_version}
 BuildRequires:  fdupes
+
+# This is what provides /usr/share/fonts on SUSE systems...
+BuildRequires: filesystem
+
 %if 0%{?suse_version} >= 1130
 BuildRequires:  pkgconfig(expat)
 BuildRequires:  pkgconfig(libpng)
@@ -34,7 +38,7 @@ BuildRequires:  pkgconfig(pixman-1) >= 0.13.2
 BuildRequires:  pkgconfig(x11)
 BuildRequires:  pkgconfig(xext)
 BuildRequires:  pkgconfig(xpm)
-BuildRequires:  pkgconfig(xfont)
+BuildRequires:  pkgconfig(xfont) >= 1.4.2
 BuildRequires:  pkgconfig(xdmcp)
 BuildRequires:  pkgconfig(xdamage)
 BuildRequires:  pkgconfig(xcomposite)
@@ -50,7 +54,7 @@ BuildRequires:  pixman-devel >= 0.13.2
 BuildRequires:  xorg-x11-libX11-devel
 BuildRequires:  xorg-x11-libXext-devel
 BuildRequires:  xorg-x11-libXpm-devel
-BuildRequires:  xorg-x11-libXfont-devel
+BuildRequires:  xorg-x11-libXfont-devel >= 1.4.2
 BuildRequires:  xorg-x11-libXdmcp-devel
 BuildRequires:  xorg-x11-libXdamage-devel
 BuildRequires:  xorg-x11-libXcomposite-devel
@@ -70,7 +74,7 @@ BuildRequires:  pixman-devel >= 0.13.2
 BuildRequires:  libX11-devel
 BuildRequires:  libXext-devel
 BuildRequires:  libXpm-devel
-BuildRequires:  libXfont-devel
+BuildRequires:  libXfont-devel >= 1.4.2
 BuildRequires:  libXdmcp-devel
 BuildRequires:  libXdamage-devel
 BuildRequires:  libXcomposite-devel
@@ -78,6 +82,7 @@ BuildRequires:  libXrandr-devel
 BuildRequires:  libXfixes-devel
 BuildRequires:  libXtst-devel
 BuildRequires:  libXinerama-devel
+BuildRequires:  xorg-x11-font-utils
 %endif
 
 # For imake
@@ -272,8 +277,9 @@ Obsoletes:      nx < 3.5.0-19
 Provides:       nx = %{version}-%{release}
 Provides:       nx%{?_isa} = %{version}-%{release}
 Obsoletes:      nxauth < 3.5.99.1
-%if 0%{?suse_version}
-Requires:       xorg-x11-fonts-core
+%if 0%{?fedora} || 0%{?rhel}
+# For /usr/share/X11/fonts
+Requires: xorg-x11-font-utils
 %endif
 
 %description -n nxagent
@@ -356,6 +362,13 @@ make install \
         INSTALL_DIR="install -dm0755" \
         INSTALL_FILE="install -pm0644" \
         INSTALL_PROGRAM="install -pm0755"
+
+# this needs to be adapted distribution-wise...
+%if 0%{?suse_version}
+ln -s ../fonts %{buildroot}%{_datadir}/nx/fonts
+%elif 0%{?fedora} || 0%{?rhel}
+ln -s ../X11/fonts %{buildroot}%{_datadir}/nx/fonts
+%endif
 
 # Remove static libs (they don't exist on SLES, so using -f here)
 rm -f %{buildroot}%{_libdir}/*.a
@@ -520,6 +533,7 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %dir %{_datadir}/nx
 %{_datadir}/nx/VERSION.nxagent
 %{_datadir}/man/man1/nxagent.1*
+%{_datadir}/nx/fonts
 
 %files -n nxproxy
 %defattr(-,root,root)

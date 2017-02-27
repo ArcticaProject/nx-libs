@@ -926,6 +926,9 @@ bail:
 int
 SetDefaultFontPath(char *path)
 {
+    char       *temp_path,
+               *start,
+               *end;
     unsigned char *cp,
                *pp,
                *nump,
@@ -936,20 +939,41 @@ SetDefaultFontPath(char *path)
                 size = 0,
                 bad;
 
-    /* get enough for string, plus values -- use up commas */
 #ifdef NX_TRANS_SOCKET
-    len = strlen(_NXGetFontPath(path)) + 1;
-#else
-    len = strlen(path) + 1;
-#endif
-    nump = cp = newpath = (unsigned char *) ALLOCATE_LOCAL(len);
-    if (!newpath)
+    path = (char *) _NXGetFontPath(path);
+#endif /* NX_TRANS_SOCKET */
+
+    start = path;
+
+    /* ensure temp_path contains "built-ins" */
+    while (1) {
+	start = strstr(start, "built-ins");
+	if (start == NULL)
+	    break;
+	end = start + strlen("built-ins");
+	if ((start == path || start[-1] == ',') && (!*end || *end == ','))
+	    break;
+	start = end;
+    }
+    if (!start) {
+	if (asprintf(&temp_path, "%s%sbuilt-ins", path, *path ? "," : "")
+	    == -1)
+	    temp_path = NULL;
+	}
+    else {
+	temp_path = strdup(path);
+    }
+    if (!temp_path)
 	return BadAlloc;
-#ifdef NX_TRANS_SOCKET
-    pp = (unsigned char *) _NXGetFontPath(path);
-#else
-    pp = (unsigned char *) path;
-#endif
+
+    /* get enough for string, plus values -- use up commas */
+    len = strlen(temp_path) + 1;
+    nump = cp = newpath = (unsigned char *) ALLOCATE_LOCAL(len);
+    if (!newpath) {
+	free(temp_path);
+	return BadAlloc;
+    }
+    pp = (unsigned char *) temp_path;
     cp++;
     while (*pp) {
 	if (*pp == ',') {
@@ -968,6 +992,7 @@ SetDefaultFontPath(char *path)
     err = SetFontPathElements(num, newpath, &bad, TRUE);
 
     DEALLOCATE_LOCAL(newpath);
+    free(temp_path);
 
     return err;
 }
