@@ -91,6 +91,8 @@ void nxagentSetCoalescence(void);
 extern int nxagentUserDefinedFontPath;
 
 extern int nxagentRemoteMajor;
+extern int nxagentRemoteMinor;
+extern int nxagentRemotePatch;
 
 extern char *nxagentKeystrokeFile;
 

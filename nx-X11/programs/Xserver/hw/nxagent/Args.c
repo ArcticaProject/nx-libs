@@ -162,6 +162,8 @@ char *nxagentKeyboard = NULL;
 Bool nxagentOnce = True;
 
 int nxagentRemoteMajor = -1;
+int nxagentRemoteMinor = -1;
+int nxagentRemotePatch = -1;
 
 static void nxagentParseOptionString(char*);
 
@@ -1819,7 +1821,18 @@ N/A
                   packMethod, packQuality);
       #endif
 
-      nxagentRemoteMajor = remoteMajor;
+      if ((remoteMajor >= 3) && (remoteMinor >= 5))
+      {
+        nxagentRemoteMajor = remoteMajor;
+        nxagentRemoteMinor = remoteMinor;
+        nxagentRemotePatch = remotePatch;
+      }
+      else
+      {
+
+        FatalError("%s: We don't support speaking to proxy clients << 3.5.0.0. Exiting...", __progname);
+
+      }
 
       if (nxagentPackMethod == -1)
       {
