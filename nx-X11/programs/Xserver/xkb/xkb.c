@@ -3529,7 +3529,7 @@ register int i,bit;
 static Bool
 _XkbCheckTypeName(Atom name,int typeNdx)
 {
-char *	str;
+const char *	str;
 
     str= NameForAtom(name);
     if ((strcmp(str,"ONE_LEVEL")==0)||(strcmp(str,"TWO_LEVEL")==0)||

@@ -1066,7 +1066,7 @@ SecurityAuditResourceIDAccess(
 	    xChangePropertyReq *req =
 		(xChangePropertyReq *)client->requestBuffer;
 	    int propertyatom = req->property;
-	    char *propertyname = NameForAtom(propertyatom);
+	    const char *propertyname = NameForAtom(propertyatom);
 
 	    SecurityAudit("client %d attempted request %d with window 0x%x property %s of client %d\n",
 		   client->index, reqtype, id, propertyname, cid);

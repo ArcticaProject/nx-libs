@@ -1164,7 +1164,7 @@ FIXME: Why this pointer can be not a valid
 int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
                                 Window requestor, Atom property, Atom target, Time time)
 {
-  char *strTarget;
+  const char *strTarget;
   int i;
 
   if (agentClipboardStatus != 1 ||
