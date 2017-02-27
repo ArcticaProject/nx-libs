@@ -28,7 +28,7 @@
 #include "Compext.h"
 
 #include "Rgb.h"
-#include "Z.h"
+#include "Zlib.h"
 
 #define PANIC
 #define WARNING
@@ -45,7 +45,7 @@ static int rgbCompressionStrategy  = RGB_COMPRESSION_STRATEGY;
 
 char *RgbCompressData(XImage *image, unsigned int *size)
 {
-  return ZCompressData(image -> data, image -> bytes_per_line * image -> height,
+  return ZlibCompressData(image -> data, image -> bytes_per_line * image -> height,
                            rgbCompressionThreshold, rgbCompressionLevel,
                                rgbCompressionStrategy, size);
 }

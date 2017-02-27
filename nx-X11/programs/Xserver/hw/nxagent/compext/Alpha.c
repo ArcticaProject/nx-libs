@@ -28,7 +28,7 @@
 #include "Compext.h"
 
 #include "Alpha.h"
-#include "Z.h"
+#include "Zlib.h"
 
 #define PANIC
 #define WARNING
@@ -45,6 +45,6 @@ static int alphaCompressionStrategy  = ALPHA_COMPRESSION_STRATEGY;
 
 char *AlphaCompressData(const char *data, unsigned int size, unsigned int *compressed_size)
 {
-  return ZCompressData(data, size, alphaCompressionThreshold, alphaCompressionLevel,
+  return ZlibCompressData(data, size, alphaCompressionThreshold, alphaCompressionLevel,
                            alphaCompressionStrategy, compressed_size);
 }

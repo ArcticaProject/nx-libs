@@ -28,7 +28,7 @@
 #include "Compext.h"
 
 #include "Colormap.h"
-#include "Z.h"
+#include "Zlib.h"
 
 #define PANIC
 #define WARNING
@@ -45,6 +45,6 @@ static int colormapCompressionStrategy  = COLORMAP_COMPRESSION_STRATEGY;
 
 char *ColormapCompressData(const char *data, unsigned int size, unsigned int *compressed_size)
 {
-  return ZCompressData(data, size, colormapCompressionThreshold, colormapCompressionLevel,
+  return ZlibCompressData(data, size, colormapCompressionThreshold, colormapCompressionLevel,
                            colormapCompressionStrategy, compressed_size);
 }

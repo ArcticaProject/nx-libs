@@ -13,7 +13,7 @@ SRCS =	\
 	Png.c \
 	Rgb.c \
 	Rle.c \
-	Z.c \
+	Zlib.c \
 	$(NULL)
 
 OBJS =	\
@@ -27,7 +27,7 @@ OBJS =	\
 	Png.o \
 	Rgb.o \
 	Rle.o \
-	Z.o \
+	Zlib.o \
 	$(NULL)
 
    INCLUDES = -I$(SERVERSRC)/include \

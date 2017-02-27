@@ -61,7 +61,7 @@
 #include "Png.h"
 #include "Rgb.h"
 #include "Rle.h"
-#include "Z.h"
+#include "Zlib.h"
 
 
 #define PANIC
@@ -420,14 +420,14 @@ int _NXInternalResetResources(Display *dpy)
 
 int _NXInternalInitEncoders(Display *dpy)
 {
-  ZInitEncoder();
+  ZlibInitEncoder();
 
   return 1;
 }
 
 int _NXInternalResetEncoders(Display *dpy)
 {
-  ZResetEncoder();
+  ZlibResetEncoder();
 
   return 1;
 }
