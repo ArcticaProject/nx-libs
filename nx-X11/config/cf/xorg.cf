@@ -660,10 +660,6 @@ XFREE86JAPANESEDOCDIR = $(DOCDIR)/Japanese
 # define OtherIConfigFiles $(IRULESRC)/xf86.rules
 #endif
 
-#ifndef UseRgbTxt
-# define UseRgbTxt	YES
-#endif
-
 #ifndef ManSuffix
 # define ManSuffix	1
 #endif

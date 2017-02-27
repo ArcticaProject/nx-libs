@@ -12,7 +12,6 @@ extern CARD32 ScreenSaverTime;
 extern CARD32 ScreenSaverInterval;
 
 extern char *defaultFontPath;
-extern char *rgbPath;
 extern int monitorResolution;
 extern Bool loadableFonts;
 extern int defaultColorVisualClass;

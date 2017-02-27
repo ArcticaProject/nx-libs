@@ -160,10 +160,7 @@ INSTPGMFLAGS =
 #if HasPam && HasPamMisc
         PAMLIBS = PamLibraries PamMiscLibraries
 #endif
-#if !(SystemV4 || UseRgbTxt)
-       DBMLIBS = DBMLibrary
-#endif
-        SYSLIBS = $(ZLIB) MathLibrary $(DBMLIBS) $(USB) \
+        SYSLIBS = $(ZLIB) MathLibrary $(USB) \
 		  $(PAMLIBS)  $(EXTRASYSLIBS)
 #if !HasCbrt
            CBRT = mi/LibraryTargetName(cbrt)
