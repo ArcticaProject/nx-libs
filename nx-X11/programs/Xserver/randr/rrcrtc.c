@@ -972,6 +972,10 @@ RRCrtcInit(void)
     if (!RRCrtcType)
         return FALSE;
 
+#ifdef NXAGENT_SERVER
+    RegisterResourceName(RRCrtcType, "CRTC");
+#endif
+
     return TRUE;
 }
 

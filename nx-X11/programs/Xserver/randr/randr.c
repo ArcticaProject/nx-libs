@@ -461,6 +461,11 @@ RRExtensionInit(void)
         );
     if (!RRClientType)
         return;
+
+#ifdef NXAGENT_SERVER
+    RegisterResourceName(RRClientType, "RandRClient");
+#endif
+
     RREventType = CreateNewResourceType(RRFreeEvents
 #ifndef NXAGENT_SERVER
                                         , "RandREvent"
@@ -468,6 +473,11 @@ RRExtensionInit(void)
         );
     if (!RREventType)
         return;
+
+#ifdef NXAGENT_SERVER
+    RegisterResourceName(RREventType, "RandREvent");
+#endif
+
     extEntry = AddExtension(RANDR_NAME, RRNumberEvents, RRNumberErrors,
                             ProcRRDispatch, SProcRRDispatch,
                             NULL, StandardMinorOpcode);

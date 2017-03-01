@@ -429,6 +429,10 @@ RROutputInit(void)
     if (!RROutputType)
         return FALSE;
 
+#ifdef NXAGENT_SERVER
+    RegisterResourceName(RROutputType, "OUTPUT");
+#endif
+
     return TRUE;
 }
 

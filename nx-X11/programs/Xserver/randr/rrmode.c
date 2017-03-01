@@ -326,6 +326,9 @@ RRModeInit(void)
     if (!RRModeType)
         return FALSE;
 
+#ifdef NXAGENT_SERVER
+    RegisterResourceName(RRModeType, "MODE");
+#endif
     return TRUE;
 }
 
