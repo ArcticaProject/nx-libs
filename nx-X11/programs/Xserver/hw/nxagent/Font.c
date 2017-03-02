@@ -491,7 +491,7 @@ Bool nxagentRealizeFont(ScreenPtr pScreen, FontPtr pFont)
   int nprops;
   FontPropPtr props;
   int i;
-  char *name;
+  const char *name;
   char *origName = (char*) pScreen;
 
   FontSetPrivate(pFont, nxagentFontPrivateIndex, NULL);
@@ -513,7 +513,7 @@ Bool nxagentRealizeFont(ScreenPtr pScreen, FontPtr pFont)
 
   if (!value_atom) return False;
 
-  name = (char *)NameForAtom(value_atom);
+  name = NameForAtom(value_atom);
 
   #ifdef NXAGENT_FONTCACHE_DEBUG
   fprintf(stderr, "Font: nxagentRealizeFont, realizing font: %s\n", validateString(name));
@@ -602,7 +602,7 @@ Bool nxagentRealizeFont(ScreenPtr pScreen, FontPtr pFont)
        nxagentListRemoteFonts("*", nxagentMaxFontNames);
      }
 
-     nxagentFontPriv(pFont)->font_struct = nxagentLoadQueryFont(nxagentDisplay, name, pFont);
+     nxagentFontPriv(pFont)->font_struct = nxagentLoadQueryFont(nxagentDisplay, (char *)name, pFont);
      strcpy(nxagentFontPriv(pFont)->fontName, name);
      if (nxagentFontPriv(pFont)->font_struct != NULL)
      {

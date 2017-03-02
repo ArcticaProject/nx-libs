@@ -336,7 +336,7 @@ int nxagentQueryAtoms(ScreenPtr pScreen)
 typedef struct {
     Atom local;
     Atom remote;
-    char *string;
+    const char *string;
     int  length;
 } AtomMap;
 
@@ -345,7 +345,7 @@ static unsigned int privAtomMapSize = 0;
 static unsigned int privLastAtom = 0;
 
 static void nxagentExpandCache(void);
-static void nxagentWriteAtom(Atom, Atom, char*, Bool);
+static void nxagentWriteAtom(Atom, Atom, const char*, Bool);
 static AtomMap* nxagentFindAtomByRemoteValue(Atom);
 static AtomMap* nxagentFindAtomByLocalValue(Atom);
 static AtomMap* nxagentFindAtomByName(char*, unsigned);
@@ -368,9 +368,9 @@ static void nxagentExpandCache(void)
  * then cache the atom-couple.
  */
 
-static void nxagentWriteAtom(Atom local, Atom remote, char *string, Bool duplicate)
+static void nxagentWriteAtom(Atom local, Atom remote, const char *string, Bool duplicate)
 {
-  char *s;
+  const char *s;
 
   /*
    * We could remove this string duplication if
@@ -460,7 +460,7 @@ static int nxagentInitAtomMap(char **atomNameList, int count, Atom *atomsRet)
   
   for (i = 0; i < privLastAtom; i++)
   {
-    name_list[count + i] = privAtomMap[i].string;
+    name_list[count + i] = (char *)privAtomMap[i].string;
     atom_list[count + i] = None;
   }
 
@@ -670,7 +670,7 @@ Atom nxagentMakeAtom(char *string, unsigned int length, Bool Makeit)
 Atom nxagentLocalToRemoteAtom(Atom local)
 {
   AtomMap *current;
-  char    *string;
+  const char    *string;
   Atom    remote;
 
   if (!ValidAtom(local))

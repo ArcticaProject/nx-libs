@@ -62,7 +62,7 @@ typedef struct _Node {
     struct _Node   *left,   *right;
     Atom a;
     unsigned int fingerPrint;
-    char   *string;
+    const char   *string;
 } NodeRec, *NodePtr;
 
 static Atom lastAtom = None;
@@ -116,13 +116,11 @@ MakeAtom(const char *string, unsigned len, Bool makeit)
 	}
 	else
 	{
-	    nd->string = (char *) malloc(len + 1);
+	    nd->string = strndup(string, len);
 	    if (!nd->string) {
 		free(nd);
 		return BAD_RESOURCE;
 	    }
-	    strncpy(nd->string, string, (int)len);
-	    nd->string[len] = 0;
 	}
 	if ((lastAtom + 1) >= tableLength) {
 	    NodePtr *table;
@@ -131,7 +129,8 @@ MakeAtom(const char *string, unsigned len, Bool makeit)
 					 tableLength * (2 * sizeof(NodePtr)));
 	    if (!table) {
 		if (nd->string != string)
-		    free(nd->string);
+		     /* nd->string has been strdup'ed */
+		    free((char *)nd->string);
 		free(nd);
 		return BAD_RESOURCE;
 	    }
@@ -155,7 +154,7 @@ ValidAtom(Atom atom)
     return (atom != None) && (atom <= lastAtom);
 }
 
-char *
+const char *
 NameForAtom(Atom atom)
 {
     NodePtr node;
@@ -178,7 +177,7 @@ FreeAtom(NodePtr patom)
     if(patom->right)
 	FreeAtom(patom->right);
     if (patom->a > XA_LAST_PREDEFINED)
-	free(patom->string);
+	free((char *)patom->string);
     free(patom);
 }
 

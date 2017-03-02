@@ -75,7 +75,7 @@ XkbAtomText(Display *dpy,Atom atm,unsigned format)
 {
 char	*rtrn,*tmp;
 
-    tmp= XkbAtomGetString(dpy,atm);
+    tmp= (char *)XkbAtomGetString(dpy,atm);
     if (tmp!=NULL) {
 	int	len;
 	len= strlen(tmp)+1;
@@ -118,7 +118,7 @@ char  numBuf[20];
     if (ndx>=XkbNumVirtualMods)
 	 tmp= "illegal";
     else if (vmodNames&&(vmodNames[ndx]!=None))
-	 tmp= XkbAtomGetString(dpy,vmodNames[ndx]);
+	 tmp= (char *)XkbAtomGetString(dpy,vmodNames[ndx]);
     if (tmp==NULL)
 	sprintf(tmp=numBuf,"%d",ndx);
 

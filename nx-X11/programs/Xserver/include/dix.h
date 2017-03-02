@@ -480,7 +480,7 @@ extern Atom MakeAtom(
 extern Bool ValidAtom(
     Atom /*atom*/);
 
-extern char *NameForAtom(
+extern const char *NameForAtom(
     Atom /*atom*/);
 
 extern void AtomError(void);

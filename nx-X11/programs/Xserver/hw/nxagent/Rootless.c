@@ -455,7 +455,7 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
     unsigned long nUnits;
     void        *value;
 {
-  char *propertyS, *typeS;
+  const char *propertyS, *typeS;
   Atom propertyX, typeX;
   char *output = NULL;
   nxagentWMHints wmHints;
@@ -634,7 +634,7 @@ int nxagentExportProperty(pWin, property, type, format, mode, nUnits, value)
   {
     XlibAtom *atoms = malloc(nUnits * sizeof(*atoms));
     Atom *input = value;
-    char *atomName = NULL;
+    const char *atomName = NULL;
     int i;
     int j = 0;
 
@@ -834,7 +834,7 @@ void nxagentImportProperty(Window window,
   WMState wmState;
 
   char *output = NULL;
-  char *typeS;
+  const char *typeS;
 
   pWin = nxagentWindowPtr(window);
 

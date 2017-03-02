@@ -886,7 +886,7 @@ ProcInternAtom(register ClientPtr client)
 int
 ProcGetAtomName(register ClientPtr client)
 {
-    char *str;
+    const char *str;
     xGetAtomNameReply reply;
     int len;
     REQUEST(xResourceReq);
