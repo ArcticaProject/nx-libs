@@ -118,15 +118,15 @@ miFillSppPoly(dst, pgc, count, ptsIn, xTrans, yTrans, xFtrans, yFtrans)
     y = ymax - ymin + 1;
     if ((count < 3) || (y <= 0))
 	return;
-    ptsOut = FirstPoint = (DDXPointPtr)ALLOCATE_LOCAL(sizeof(DDXPointRec) * y);
-    width = FirstWidth = (int *) ALLOCATE_LOCAL(sizeof(int) * y);
-    Marked = (int *) ALLOCATE_LOCAL(sizeof(int) * count);
+    ptsOut = FirstPoint = (DDXPointPtr)malloc(sizeof(DDXPointRec) * y);
+    width = FirstWidth = (int *) malloc(sizeof(int) * y);
+    Marked = (int *) malloc(sizeof(int) * count);
 
     if(!ptsOut || !width || !Marked)
     {
-	if (Marked) DEALLOCATE_LOCAL(Marked);
-	if (width) DEALLOCATE_LOCAL(width);
-	if (ptsOut) DEALLOCATE_LOCAL(ptsOut);
+	if (Marked) free(Marked);
+	if (width) free(width);
+	if (ptsOut) free(ptsOut);
 	return;
     }
 
@@ -240,9 +240,9 @@ miFillSppPoly(dst, pgc, count, ptsIn, xTrans, yTrans, xFtrans, yFtrans)
     /* Finally, fill the spans we've collected */
     (*pgc->ops->FillSpans)(dst, pgc, 
 		      ptsOut-FirstPoint, FirstPoint, FirstWidth, 1);
-    DEALLOCATE_LOCAL(Marked);
-    DEALLOCATE_LOCAL(FirstWidth);
-    DEALLOCATE_LOCAL(FirstPoint);
+    free(Marked);
+    free(FirstWidth);
+    free(FirstPoint);
 }
 
 

@@ -111,7 +111,7 @@ ProcRotateProperties(ClientPtr client)
     if (!stuff->nAtoms)
 	return(Success);
     atoms = (Atom *) & stuff[1];
-    props = (PropertyPtr *)ALLOCATE_LOCAL(stuff->nAtoms * sizeof(PropertyPtr));
+    props = (PropertyPtr *)malloc(stuff->nAtoms * sizeof(PropertyPtr));
     if (!props)
 	return(BadAlloc);
     for (i = 0; i < stuff->nAtoms; i++)
@@ -126,21 +126,21 @@ ProcRotateProperties(ClientPtr client)
 #endif
 	   )
         {
-            DEALLOCATE_LOCAL(props);
+            free(props);
 	    client->errorValue = atoms[i];
             return BadAtom;
         }
 #ifdef XCSECURITY
 	if (SecurityIgnoreOperation == action)
         {
-            DEALLOCATE_LOCAL(props);
+            free(props);
 	    return Success;
 	}
 #endif
         for (j = i + 1; j < stuff->nAtoms; j++)
             if (atoms[j] == atoms[i])
             {
-                DEALLOCATE_LOCAL(props);
+                free(props);
                 return BadMatch;
             }
         pProp = wUserProps (pWin);
@@ -150,7 +150,7 @@ ProcRotateProperties(ClientPtr client)
                 goto found;
 	    pProp = pProp->next;
         }
-        DEALLOCATE_LOCAL(props);
+        free(props);
         return BadMatch;
 found: 
         props[i] = pProp;
@@ -181,7 +181,7 @@ found:
             props[i]->propertyName = atoms[(i + delta) % stuff->nAtoms];
 	}
     }
-    DEALLOCATE_LOCAL(props);
+    free(props);
     return Success;
 }
 
@@ -630,7 +630,7 @@ ProcListProperties(ClientPtr client)
 	numProps++;
     }
     if (numProps)
-        if(!(pAtoms = (Atom *)ALLOCATE_LOCAL(numProps * sizeof(Atom))))
+        if(!(pAtoms = (Atom *)malloc(numProps * sizeof(Atom))))
             return(BadAlloc);
 
     memset(&xlpr, 0, sizeof(xListPropertiesReply));
@@ -650,7 +650,7 @@ ProcListProperties(ClientPtr client)
     {
         client->pSwapReplyFunc = (ReplySwapPtr)Swap32Write;
         WriteSwappedDataToClient(client, numProps * sizeof(Atom), pAtoms);
-        DEALLOCATE_LOCAL(pAtoms);
+        free(pAtoms);
     }
     return(client->noClientException);
 }

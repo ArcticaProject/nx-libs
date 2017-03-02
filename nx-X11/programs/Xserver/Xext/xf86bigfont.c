@@ -66,7 +66,6 @@
 #include <nx-X11/X.h>
 #include <nx-X11/Xproto.h>
 #include "misc.h"
-#include "os.h"
 #include "dixstruct.h"
 #include "gcstruct.h"
 #include "dixfontstr.h"
@@ -491,7 +490,7 @@ ProcXF86BigfontQueryFont(
 	    } else {
 #endif
 		pCI = (xCharInfo *)
-		      ALLOCATE_LOCAL(nCharInfos * sizeof(xCharInfo));
+		      malloc(nCharInfos * sizeof(xCharInfo));
 		if (!pCI)
 		    return BadAlloc;
 #ifdef HAS_SHM
@@ -554,9 +553,9 @@ ProcXF86BigfontQueryFont(
 		hashModulus = nCharInfos+1;
 
 	    tmp = (CARD16*)
-		  ALLOCATE_LOCAL((4*nCharInfos+1) * sizeof(CARD16));
+		  malloc((4*nCharInfos+1) * sizeof(CARD16));
 	    if (!tmp) {
-		if (!pDesc) DEALLOCATE_LOCAL(pCI);
+		if (!pDesc) free(pCI);
 		return BadAlloc;
 	    }
 	    pIndex2UniqIndex = tmp;
@@ -643,8 +642,8 @@ ProcXF86BigfontQueryFont(
 	char* p;
 	if (!reply) {
 	    if (nCharInfos > 0) {
-		if (shmid == -1) DEALLOCATE_LOCAL(pIndex2UniqIndex);
-		if (!pDesc) DEALLOCATE_LOCAL(pCI);
+		if (shmid == -1) free(pIndex2UniqIndex);
+		if (!pDesc) free(pCI);
 	    }
 	    return BadAlloc;
 	}
@@ -721,8 +720,8 @@ ProcXF86BigfontQueryFont(
 	WriteToClient(client, rlength, reply);
 	free(reply);
 	if (nCharInfos > 0) {
-	    if (shmid == -1) DEALLOCATE_LOCAL(pIndex2UniqIndex);
-	    if (!pDesc) DEALLOCATE_LOCAL(pCI);
+	    if (shmid == -1) free(pIndex2UniqIndex);
+	    if (!pDesc) free(pCI);
 	}
 	return (client->noClientException);
     }

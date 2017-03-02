@@ -1257,7 +1257,7 @@ int PanoramiXPolyPoint(ClientPtr client)
     isRoot = (draw->type == XRT_WINDOW) && draw->u.win.root;
     npoint = ((client->req_len << 2) - sizeof(xPolyPointReq)) >> 2;
     if (npoint > 0) {
-        origPts = (xPoint *) ALLOCATE_LOCAL(npoint * sizeof(xPoint));
+        origPts = (xPoint *) malloc(npoint * sizeof(xPoint));
         memcpy((char *) origPts, (char *) &stuff[1], npoint * sizeof(xPoint));
         FOR_NSCREENS_FORWARD(j){
 
@@ -1284,7 +1284,7 @@ int PanoramiXPolyPoint(ClientPtr client)
 	    result = (* SavedProcVector[X_PolyPoint])(client);
 	    if(result != Success) break;
         }
-        DEALLOCATE_LOCAL(origPts);
+        free(origPts);
         return (result);
     } else
 	return (client->noClientException);
@@ -1315,7 +1315,7 @@ int PanoramiXPolyLine(ClientPtr client)
     isRoot = (draw->type == XRT_WINDOW) && draw->u.win.root;
     npoint = ((client->req_len << 2) - sizeof(xPolyLineReq)) >> 2;
     if (npoint > 0){
-        origPts = (xPoint *) ALLOCATE_LOCAL(npoint * sizeof(xPoint));
+        origPts = (xPoint *) malloc(npoint * sizeof(xPoint));
         memcpy((char *) origPts, (char *) &stuff[1], npoint * sizeof(xPoint));
         FOR_NSCREENS_FORWARD(j){
 
@@ -1342,7 +1342,7 @@ int PanoramiXPolyLine(ClientPtr client)
 	    result = (* SavedProcVector[X_PolyLine])(client);
 	    if(result != Success) break;
         }
-        DEALLOCATE_LOCAL(origPts);
+        free(origPts);
         return (result);
    } else
 	return (client->noClientException);
@@ -1376,7 +1376,7 @@ int PanoramiXPolySegment(ClientPtr client)
     if(nsegs & 4) return BadLength;
     nsegs >>= 3;
     if (nsegs > 0) {
-	origSegs = (xSegment *) ALLOCATE_LOCAL(nsegs * sizeof(xSegment));
+	origSegs = (xSegment *) malloc(nsegs * sizeof(xSegment));
         memcpy((char *) origSegs, (char *) &stuff[1], nsegs * sizeof(xSegment));
         FOR_NSCREENS_FORWARD(j){
 
@@ -1403,7 +1403,7 @@ int PanoramiXPolySegment(ClientPtr client)
 	    result = (* SavedProcVector[X_PolySegment])(client);
 	    if(result != Success) break;
     	}
-	DEALLOCATE_LOCAL(origSegs);
+	free(origSegs);
 	return (result);
     } else
 	  return (client->noClientException);
@@ -1438,7 +1438,7 @@ int PanoramiXPolyRectangle(ClientPtr client)
     if(nrects & 4) return BadLength;
     nrects >>= 3;
     if (nrects > 0){
-	origRecs = (xRectangle *) ALLOCATE_LOCAL(nrects * sizeof(xRectangle));
+	origRecs = (xRectangle *) malloc(nrects * sizeof(xRectangle));
 	memcpy((char *)origRecs,(char *)&stuff[1],nrects * sizeof(xRectangle));
         FOR_NSCREENS_FORWARD(j){
 
@@ -1464,7 +1464,7 @@ int PanoramiXPolyRectangle(ClientPtr client)
 	    result = (* SavedProcVector[X_PolyRectangle])(client);
 	    if(result != Success) break;
 	}
-	DEALLOCATE_LOCAL(origRecs);
+	free(origRecs);
 	return (result);
     } else
        return (client->noClientException);
@@ -1498,7 +1498,7 @@ int PanoramiXPolyArc(ClientPtr client)
     if(narcs % sizeof(xArc)) return BadLength;
     narcs /= sizeof(xArc);
     if (narcs > 0){
-	origArcs = (xArc *) ALLOCATE_LOCAL(narcs * sizeof(xArc));
+	origArcs = (xArc *) malloc(narcs * sizeof(xArc));
 	memcpy((char *) origArcs, (char *) &stuff[1], narcs * sizeof(xArc));
         FOR_NSCREENS_FORWARD(j){
 
@@ -1522,7 +1522,7 @@ int PanoramiXPolyArc(ClientPtr client)
 	    result = (* SavedProcVector[X_PolyArc])(client);
 	    if(result != Success) break;
         }
-	DEALLOCATE_LOCAL(origArcs);
+	free(origArcs);
 	return (result);
     } else
        return (client->noClientException);
@@ -1554,7 +1554,7 @@ int PanoramiXFillPoly(ClientPtr client)
 
     count = ((client->req_len << 2) - sizeof(xFillPolyReq)) >> 2;
     if (count > 0){
-	locPts = (DDXPointPtr) ALLOCATE_LOCAL(count * sizeof(DDXPointRec));
+	locPts = (DDXPointPtr) malloc(count * sizeof(DDXPointRec));
 	memcpy((char *)locPts, (char *)&stuff[1], count * sizeof(DDXPointRec));
         FOR_NSCREENS_FORWARD(j){
 
@@ -1581,7 +1581,7 @@ int PanoramiXFillPoly(ClientPtr client)
 	    result = (* SavedProcVector[X_FillPoly])(client);
 	    if(result != Success) break;
 	}
-	DEALLOCATE_LOCAL(locPts);
+	free(locPts);
 	return (result);
     } else
        return (client->noClientException);
@@ -1615,7 +1615,7 @@ int PanoramiXPolyFillRectangle(ClientPtr client)
     if(things & 4) return BadLength;
     things >>= 3;
     if (things > 0){
-	origRects = (xRectangle *) ALLOCATE_LOCAL(things * sizeof(xRectangle));
+	origRects = (xRectangle *) malloc(things * sizeof(xRectangle));
 	memcpy((char*)origRects,(char*)&stuff[1], things * sizeof(xRectangle));
         FOR_NSCREENS_FORWARD(j){
 
@@ -1640,7 +1640,7 @@ int PanoramiXPolyFillRectangle(ClientPtr client)
 	    result = (* SavedProcVector[X_PolyFillRectangle])(client);
 	    if(result != Success) break;
 	}
-	DEALLOCATE_LOCAL(origRects);
+	free(origRects);
 	return (result);
     } else
        return (client->noClientException);
@@ -1674,7 +1674,7 @@ int PanoramiXPolyFillArc(ClientPtr client)
     IF_RETURN((narcs % sizeof(xArc)), BadLength);
     narcs /= sizeof(xArc);
     if (narcs > 0) {
-	origArcs = (xArc *) ALLOCATE_LOCAL(narcs * sizeof(xArc));
+	origArcs = (xArc *) malloc(narcs * sizeof(xArc));
 	memcpy((char *) origArcs, (char *)&stuff[1], narcs * sizeof(xArc));
         FOR_NSCREENS_FORWARD(j){
 
@@ -1699,7 +1699,7 @@ int PanoramiXPolyFillArc(ClientPtr client)
 	    result = (* SavedProcVector[X_PolyFillArc])(client);
 	    if(result != Success) break;
 	}
-	DEALLOCATE_LOCAL(origArcs);
+	free(origArcs);
 	return (result);
     } else
        return (client->noClientException);

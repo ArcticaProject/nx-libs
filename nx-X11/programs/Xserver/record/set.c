@@ -71,9 +71,6 @@ typedef int Bool;
 
 typedef unsigned short CARD16;
 
-#define ALLOCATE_LOCAL malloc
-#define DEALLOCATE_LOCAL free
-
 #ifndef max
 #define max(_a, _b) ( ((_a) > (_b)) ? (_a) : (_b) )
 #endif
@@ -358,7 +355,7 @@ IntervalListCreateSet(pIntervals, nIntervals, pMem, memsize)
 
     if (nIntervals > 0)
     {
-	stackIntervals = (RecordSetInterval *)ALLOCATE_LOCAL(
+	stackIntervals = (RecordSetInterval *)malloc(
 				sizeof(RecordSetInterval) * nIntervals);
 	if (!stackIntervals) return NULL;
 
@@ -416,7 +413,7 @@ IntervalListCreateSet(pIntervals, nIntervals, pMem, memsize)
     memcpy(&prls[1], stackIntervals, nIntervals * sizeof(RecordSetInterval));
     prls->nIntervals = nIntervals;
 bailout:
-    if (stackIntervals) DEALLOCATE_LOCAL(stackIntervals);
+    if (stackIntervals) free(stackIntervals);
     return (RecordSetPtr)prls;
 }
 

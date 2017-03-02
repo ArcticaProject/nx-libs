@@ -566,7 +566,7 @@ int what;
 	}
     }
 
-    prect = (xRectangle *)ALLOCATE_LOCAL(RegionNumRects(prgn) *
+    prect = (xRectangle *)malloc(RegionNumRects(prgn) *
 					 sizeof(xRectangle));
     if (!prect)
 	return;
@@ -591,7 +591,7 @@ int what;
 	pGC = GetScratchGC(pWin->drawable.depth, pWin->drawable.pScreen);
 	if (!pGC)
 	{
-	    DEALLOCATE_LOCAL(prect);
+	    free(prect);
 	    return;
 	}
 	/*
@@ -723,7 +723,7 @@ int what;
     }
     prect -= numRects;
     (*pGC->ops->PolyFillRect)((DrawablePtr)pWin, pGC, numRects, prect);
-    DEALLOCATE_LOCAL(prect);
+    free(prect);
 
     if (pWin->backStorage)
 	(*pWin->drawable.pScreen->DrawGuarantee) (pWin, pGC, GuaranteeNothing);
