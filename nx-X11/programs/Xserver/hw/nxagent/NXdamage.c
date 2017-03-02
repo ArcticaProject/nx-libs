@@ -112,7 +112,7 @@ damageText (DrawablePtr	    pDrawable,
 
     imageblt = (textType == TT_IMAGE8) || (textType == TT_IMAGE16);
 
-    charinfo = (CharInfoPtr *) ALLOCATE_LOCAL(count * sizeof(CharInfoPtr));
+    charinfo = (CharInfoPtr *) malloc(count * sizeof(CharInfoPtr));
     if (!charinfo)
 	return x;
 
@@ -139,7 +139,7 @@ damageText (DrawablePtr	    pDrawable,
 #endif
 
     }
-    DEALLOCATE_LOCAL(charinfo);
+    free(charinfo);
     return x + w;
 }
 

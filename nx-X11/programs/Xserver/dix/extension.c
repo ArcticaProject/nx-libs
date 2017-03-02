@@ -358,7 +358,7 @@ ProcListExtensions(ClientPtr client)
 		total_length += strlen(extensions[i]->aliases[j]) + 1;
 	}
         reply.length = (total_length + 3) >> 2;
-	buffer = bufptr = (char *)ALLOCATE_LOCAL(total_length);
+	buffer = bufptr = (char *)malloc(total_length);
 	if (!buffer)
 	    return(BadAlloc);
         for (i=0;  i<NumExtensions; i++)
@@ -384,7 +384,7 @@ ProcListExtensions(ClientPtr client)
     if (reply.length)
     {
         WriteToClient(client, total_length, buffer);
-    	DEALLOCATE_LOCAL(buffer);
+        free(buffer);
     }
     return(client->noClientException);
 }

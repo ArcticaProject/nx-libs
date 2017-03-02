@@ -334,7 +334,7 @@ Dispatch(void)
     InitSelections();
     nClients = 0;
 
-    clientReady = (int *) ALLOCATE_LOCAL(sizeof(int) * MaxClients);
+    clientReady = (int *) malloc(sizeof(int) * MaxClients);
     if (!clientReady)
 	return;
 
@@ -439,7 +439,7 @@ Dispatch(void)
     ddxBeforeReset ();
 #endif
     KillAllClients();
-    DEALLOCATE_LOCAL(clientReady);
+    free(clientReady);
     dispatchException &= ~DE_RESET;
 }
 
@@ -830,7 +830,7 @@ ProcQueryTree(register ClientPtr client)
     {
 	int curChild = 0;
 
-	childIDs = (Window *) ALLOCATE_LOCAL(numChildren * sizeof(Window));
+	childIDs = (Window *) malloc(numChildren * sizeof(Window));
 	if (!childIDs)
 	    return BadAlloc;
 	for (pChild = pWin->lastChild; pChild != pHead; pChild = pChild->prevSib)
@@ -845,7 +845,7 @@ ProcQueryTree(register ClientPtr client)
     {
     	client->pSwapReplyFunc = (ReplySwapPtr) Swap32Write;
 	WriteSwappedDataToClient(client, numChildren * sizeof(Window), childIDs);
-	DEALLOCATE_LOCAL(childIDs);
+	free(childIDs);
     }
 
     return(client->noClientException);
@@ -1336,7 +1336,7 @@ ProcQueryFont(register ClientPtr client)
 	             FONTINFONPROPS(FONTCHARSET(pFont)) * sizeof(xFontProp)  +
 		     nprotoxcistructs * sizeof(xCharInfo);
 
-	reply = (xQueryFontReply *)ALLOCATE_LOCAL(rlength);
+	reply = (xQueryFontReply *)malloc(rlength);
 	if(!reply)
 	{
 	    return(BadAlloc);
@@ -1349,7 +1349,7 @@ ProcQueryFont(register ClientPtr client)
 	QueryFont( pFont, reply, nprotoxcistructs);
 
         WriteReplyToClient(client, rlength, reply);
-	DEALLOCATE_LOCAL(reply);
+	free(reply);
 	return(client->noClientException);
     }
 }
@@ -2182,7 +2182,7 @@ DoGetImage(register ClientPtr client, int format, Drawable drawable,
 		length += widthBytesLine;
 	    }
 	}
-	if(!(pBuf = (char *) ALLOCATE_LOCAL(length)))
+	if(!(pBuf = (char *) malloc(length)))
 	    return (BadAlloc);
 	memset(pBuf, 0, length);
 	WriteReplyToClient(client, sizeof (xGetImageReply), &xgi);
@@ -2292,7 +2292,7 @@ DoGetImage(register ClientPtr client, int format, Drawable drawable,
 	RegionDestroy(pVisibleRegion);
 #endif
     if (!im_return)
-	DEALLOCATE_LOCAL(pBuf);
+	free(pBuf);
     return (client->noClientException);
 }
 
@@ -2552,7 +2552,7 @@ ProcListInstalledColormaps(register ClientPtr client)
         return(BadWindow);
 
     preply = (xListInstalledColormapsReply *) 
-		ALLOCATE_LOCAL(sizeof(xListInstalledColormapsReply) +
+		malloc(sizeof(xListInstalledColormapsReply) +
 		     pWin->drawable.pScreen->maxInstalledCmaps *
 		     sizeof(Colormap));
     if(!preply)
@@ -2567,7 +2567,7 @@ ProcListInstalledColormaps(register ClientPtr client)
     WriteReplyToClient(client, sizeof (xListInstalledColormapsReply), preply);
     client->pSwapReplyFunc = (ReplySwapPtr) Swap32Write;
     WriteSwappedDataToClient(client, nummaps * sizeof(Colormap), &preply[1]);
-    DEALLOCATE_LOCAL(preply);
+    free(preply);
     return(client->noClientException);
 }
 
@@ -2695,7 +2695,7 @@ ProcAllocColorCells (register ClientPtr client)
 	}
 	nmasks = stuff->planes;
 	length = ((long)npixels + (long)nmasks) * sizeof(Pixel);
-	ppixels = (Pixel *)ALLOCATE_LOCAL(length);
+	ppixels = (Pixel *)malloc(length);
 	if(!ppixels)
             return(BadAlloc);
 	pmasks = ppixels + npixels;
@@ -2703,7 +2703,7 @@ ProcAllocColorCells (register ClientPtr client)
 	if( (retval = AllocColorCells(client->index, pcmp, npixels, nmasks, 
 				    (Bool)stuff->contiguous, ppixels, pmasks)) )
 	{
-	    DEALLOCATE_LOCAL(ppixels);
+	    free(ppixels);
             if (client->noClientException != Success)
                 return(client->noClientException);
 	    else
@@ -2722,7 +2722,7 @@ ProcAllocColorCells (register ClientPtr client)
 	    client->pSwapReplyFunc = (ReplySwapPtr) Swap32Write;
 	    WriteSwappedDataToClient(client, length, ppixels);
 	}
-	DEALLOCATE_LOCAL(ppixels);
+	free(ppixels);
         return (client->noClientException);        
     }
     else
@@ -2763,7 +2763,7 @@ ProcAllocColorPlanes(register ClientPtr client)
 	acpr.sequenceNumber = client->sequence;
 	acpr.nPixels = npixels;
 	length = (long)npixels * sizeof(Pixel);
-	ppixels = (Pixel *)ALLOCATE_LOCAL(length);
+	ppixels = (Pixel *)malloc(length);
 	if(!ppixels)
             return(BadAlloc);
 	if( (retval = AllocColorPlanes(client->index, pcmp, npixels,
@@ -2771,7 +2771,7 @@ ProcAllocColorPlanes(register ClientPtr client)
 	    (Bool)stuff->contiguous, ppixels,
 	    &acpr.redMask, &acpr.greenMask, &acpr.blueMask)) )
 	{
-            DEALLOCATE_LOCAL(ppixels);
+            free(ppixels);
             if (client->noClientException != Success)
                 return(client->noClientException);
 	    else
@@ -2786,7 +2786,7 @@ ProcAllocColorPlanes(register ClientPtr client)
 	    client->pSwapReplyFunc = (ReplySwapPtr) Swap32Write;
 	    WriteSwappedDataToClient(client, length, ppixels);
 	}
-	DEALLOCATE_LOCAL(ppixels);
+	free(ppixels);
         return (client->noClientException);        
     }
     else
@@ -2915,13 +2915,13 @@ ProcQueryColors(register ClientPtr client)
 	xQueryColorsReply	qcr;
 
 	count = ((client->req_len << 2) - sizeof(xQueryColorsReq)) >> 2;
-	prgbs = (xrgb *)ALLOCATE_LOCAL(count * sizeof(xrgb));
+	prgbs = (xrgb *)malloc(count * sizeof(xrgb));
 	if(!prgbs && count)
             return(BadAlloc);
 	memset(prgbs, 0, count * sizeof(xrgb));
 	if( (retval = QueryColors(pcmp, count, (Pixel *)&stuff[1], prgbs)) )
 	{
-   	    if (prgbs) DEALLOCATE_LOCAL(prgbs);
+	    if (prgbs) free(prgbs);
 	    if (client->noClientException != Success)
                 return(client->noClientException);
 	    else
@@ -2942,7 +2942,7 @@ ProcQueryColors(register ClientPtr client)
 	    client->pSwapReplyFunc = (ReplySwapPtr) SQColorsExtend;
 	    WriteSwappedDataToClient(client, count * sizeof(xrgb), prgbs);
 	}
-	if (prgbs) DEALLOCATE_LOCAL(prgbs);
+	if (prgbs) free(prgbs);
 	return(client->noClientException);
 	
     }

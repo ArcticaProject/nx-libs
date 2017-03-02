@@ -298,7 +298,7 @@ fbCopyRegion (DrawablePtr   pSrcDrawable,
 	if (nbox > 1)
 	{
 	    /* keep ordering in each band, reverse order of bands */
-	    pboxNew1 = (BoxPtr)ALLOCATE_LOCAL(sizeof(BoxRec) * nbox);
+	    pboxNew1 = (BoxPtr)malloc(sizeof(BoxRec) * nbox);
 	    if(!pboxNew1)
 		return;
 	    pboxBase = pboxNext = pbox+nbox-1;
@@ -335,11 +335,11 @@ fbCopyRegion (DrawablePtr   pSrcDrawable,
 	if (nbox > 1)
 	{
 	    /* reverse order of rects in each band */
-	    pboxNew2 = (BoxPtr)ALLOCATE_LOCAL(sizeof(BoxRec) * nbox);
+	    pboxNew2 = (BoxPtr)malloc(sizeof(BoxRec) * nbox);
 	    if(!pboxNew2)
 	    {
 		if (pboxNew1)
-		    DEALLOCATE_LOCAL(pboxNew1);
+		    free(pboxNew1);
 		return;
 	    }
 	    pboxBase = pboxNext = pbox;
@@ -374,9 +374,9 @@ fbCopyRegion (DrawablePtr   pSrcDrawable,
 		 reverse, upsidedown, bitPlane, closure);
     
     if (pboxNew1)
-	DEALLOCATE_LOCAL (pboxNew1);
+	free (pboxNew1);
     if (pboxNew2)
-	DEALLOCATE_LOCAL (pboxNew2);
+	free (pboxNew2);
 }
 
 RegionPtr

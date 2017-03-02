@@ -987,7 +987,7 @@ ProcRenderCompositeGlyphs (ClientPtr client)
 	glyphsBase = glyphsLocal;
     else
     {
-	glyphsBase = (GlyphPtr *) ALLOCATE_LOCAL (nglyph * sizeof (GlyphPtr));
+	glyphsBase = (GlyphPtr *) malloc (nglyph * sizeof (GlyphPtr));
 	if (!glyphsBase)
 	    return BadAlloc;
     }
@@ -995,7 +995,7 @@ ProcRenderCompositeGlyphs (ClientPtr client)
 	listsBase = listsLocal;
     else
     {
-	listsBase = (GlyphListPtr) ALLOCATE_LOCAL (nlist * sizeof (GlyphListRec));
+	listsBase = (GlyphListPtr) malloc (nlist * sizeof (GlyphListRec));
 	if (!listsBase)
 	    return BadAlloc;
     }
@@ -1031,9 +1031,9 @@ ProcRenderCompositeGlyphs (ClientPtr client)
 		{
 		    client->errorValue = gs;
 		    if (glyphsBase != glyphsLocal)
-			DEALLOCATE_LOCAL (glyphsBase);
+			free (glyphsBase);
 		    if (listsBase != listsLocal)
-			DEALLOCATE_LOCAL (listsBase);
+			free (listsBase);
 		    return RenderErrBase + BadGlyphSet;
 		}
 	    }
@@ -1140,9 +1140,9 @@ ProcRenderCompositeGlyphs (ClientPtr client)
     nxagentGlyphsExtents = NullBox;
 
     if (glyphsBase != glyphsLocal)
-	DEALLOCATE_LOCAL (glyphsBase);
+	free (glyphsBase);
     if (listsBase != listsLocal)
-	DEALLOCATE_LOCAL (listsBase);
+	free (listsBase);
     
     free(elementsBase);
 

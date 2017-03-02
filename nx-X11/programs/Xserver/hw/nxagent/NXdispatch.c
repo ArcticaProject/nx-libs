@@ -274,7 +274,7 @@ Dispatch(void)
 
     #endif
 
-    clientReady = (int *) ALLOCATE_LOCAL(sizeof(int) * MaxClients);
+    clientReady = (int *) malloc(sizeof(int) * MaxClients);
     if (!clientReady)
 	return;
 
@@ -571,7 +571,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
     saveAgentState("TERMINATED");
 
     KillAllClients();
-    DEALLOCATE_LOCAL(clientReady);
+    free(clientReady);
     dispatchException &= ~DE_RESET;
 }
 
@@ -653,7 +653,7 @@ ProcQueryTree(register ClientPtr client)
     {
 	int curChild = 0;
 
-	childIDs = (Window *) ALLOCATE_LOCAL(numChildren * sizeof(Window));
+	childIDs = (Window *) malloc(numChildren * sizeof(Window));
 	if (!childIDs)
 	    return BadAlloc;
 	for (pChild = pWin->lastChild; pChild != pHead; pChild = pChild->prevSib)
@@ -673,7 +673,7 @@ ProcQueryTree(register ClientPtr client)
     {
     	client->pSwapReplyFunc = (ReplySwapPtr) Swap32Write;
 	WriteSwappedDataToClient(client, numChildren * sizeof(Window), childIDs);
-	DEALLOCATE_LOCAL(childIDs);
+	free(childIDs);
     }
 
     return(client->noClientException);

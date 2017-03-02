@@ -1044,7 +1044,7 @@ ProcShapeGetRectangles (client)
     }
     if (!region) {
 	nrects = 1;
-	rects = (xRectangle *) ALLOCATE_LOCAL (sizeof (xRectangle));
+	rects = (xRectangle *) malloc (sizeof (xRectangle));
 	if (!rects)
 	    return BadAlloc;
 	switch (stuff->kind) {
@@ -1071,7 +1071,7 @@ ProcShapeGetRectangles (client)
 	BoxPtr box;
 	nrects = RegionNumRects(region);
 	box = RegionRects(region);
-	rects = (xRectangle *) ALLOCATE_LOCAL (nrects * sizeof (xRectangle));
+	rects = (xRectangle *) malloc (nrects * sizeof (xRectangle));
 	if (!rects && nrects)
 	    return BadAlloc;
 	for (i = 0; i < nrects; i++, box++) {
@@ -1094,7 +1094,7 @@ ProcShapeGetRectangles (client)
     }
     WriteToClient (client, sizeof (rep), &rep);
     WriteToClient (client, nrects * sizeof (xRectangle), rects);
-    DEALLOCATE_LOCAL (rects);
+    free (rects);
     return client->noClientException;
 }
 

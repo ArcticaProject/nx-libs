@@ -395,7 +395,7 @@ miSendGraphicsExpose (client, pRgn, drawable, major, minor)
 
 	numRects = RegionNumRects(pRgn);
 	pBox = RegionRects(pRgn);
-	if(!(pEvent = (xEvent *)ALLOCATE_LOCAL(numRects * sizeof(xEvent))))
+	if(!(pEvent = (xEvent *)malloc(numRects * sizeof(xEvent))))
 		return;
 	pe = pEvent;
 
@@ -413,7 +413,7 @@ miSendGraphicsExpose (client, pRgn, drawable, major, minor)
 	}
 	TryClientEvents(client, pEvent, numRects,
 			    (Mask)0, NoEventMask, NullGrab);
-	DEALLOCATE_LOCAL(pEvent);
+	free(pEvent);
     }
     else
     {
@@ -442,7 +442,7 @@ miSendExposures(pWin, pRgn, dx, dy)
 
     pBox = RegionRects(pRgn);
     numRects = RegionNumRects(pRgn);
-    if(!(pEvent = (xEvent *) ALLOCATE_LOCAL(numRects * sizeof(xEvent))))
+    if(!(pEvent = (xEvent *) malloc(numRects * sizeof(xEvent))))
 	return;
     memset(pEvent, 0, numRects * sizeof(xEvent));
 
@@ -473,7 +473,7 @@ miSendExposures(pWin, pRgn, dx, dy)
 	    win = PanoramiXFindIDByScrnum(XRT_WINDOW, 
 			pWin->drawable.id, scrnum);
 	    if(!win) {
-		DEALLOCATE_LOCAL(pEvent);
+		free(pEvent);
 		return;
 	    }
 	    realWin = win->info[0].id;
@@ -490,7 +490,7 @@ miSendExposures(pWin, pRgn, dx, dy)
 
     DeliverEvents(pWin, pEvent, numRects, NullWindow);
 
-    DEALLOCATE_LOCAL(pEvent);
+    free(pEvent);
 }
 
 #ifndef NXAGENT_SERVER
@@ -705,7 +705,7 @@ int what;
 	}
     }
 
-    prect = (xRectangle *)ALLOCATE_LOCAL(RegionNumRects(prgn) *
+    prect = (xRectangle *)malloc(RegionNumRects(prgn) *
 					 sizeof(xRectangle));
     if (!prect)
 	return;
@@ -730,7 +730,7 @@ int what;
 	pGC = GetScratchGC(pWin->drawable.depth, pWin->drawable.pScreen);
 	if (!pGC)
 	{
-	    DEALLOCATE_LOCAL(prect);
+	    free(prect);
 	    return;
 	}
 	/*
@@ -862,7 +862,7 @@ int what;
     }
     prect -= numRects;
     (*pGC->ops->PolyFillRect)((DrawablePtr)pWin, pGC, numRects, prect);
-    DEALLOCATE_LOCAL(prect);
+    free(prect);
 
     if (pWin->backStorage)
 	(*pWin->drawable.pScreen->DrawGuarantee) (pWin, pGC, GuaranteeNothing);

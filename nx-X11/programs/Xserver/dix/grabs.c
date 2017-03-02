@@ -321,16 +321,16 @@ DeletePassiveGrabFromList(GrabPtr pMinuendGrab)
 	i++;
     if (!i)
 	return TRUE;
-    deletes = (GrabPtr *)ALLOCATE_LOCAL(i * sizeof(GrabPtr));
-    adds = (GrabPtr *)ALLOCATE_LOCAL(i * sizeof(GrabPtr));
-    updates = (Mask ***)ALLOCATE_LOCAL(i * sizeof(Mask **));
-    details = (Mask **)ALLOCATE_LOCAL(i * sizeof(Mask *));
+    deletes = (GrabPtr *)malloc(i * sizeof(GrabPtr));
+    adds = (GrabPtr *)malloc(i * sizeof(GrabPtr));
+    updates = (Mask ***)malloc(i * sizeof(Mask **));
+    details = (Mask **)malloc(i * sizeof(Mask *));
     if (!deletes || !adds || !updates || !details)
     {
-	if (details) DEALLOCATE_LOCAL(details);
-	if (updates) DEALLOCATE_LOCAL(updates);
-	if (adds) DEALLOCATE_LOCAL(adds);
-	if (deletes) DEALLOCATE_LOCAL(deletes);
+	if (details) free(details);
+	if (updates) free(updates);
+	if (adds) free(adds);
+	if (deletes) free(deletes);
 	return FALSE;
     }
     ndels = nadds = nups = 0;
@@ -425,10 +425,10 @@ DeletePassiveGrabFromList(GrabPtr pMinuendGrab)
 	    *updates[i] = details[i];
 	}
     }
-    DEALLOCATE_LOCAL(details);
-    DEALLOCATE_LOCAL(updates);
-    DEALLOCATE_LOCAL(adds);
-    DEALLOCATE_LOCAL(deletes);
+    free(details);
+    free(updates);
+    free(adds);
+    free(deletes);
     return ok;
 
 #undef UPDATE

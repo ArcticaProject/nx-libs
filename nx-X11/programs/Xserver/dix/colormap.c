@@ -740,7 +740,7 @@ UpdateColors (ColormapPtr pmap)
 
     pVisual = pmap->pVisual;
     size = pVisual->ColormapEntries;
-    defs = (xColorItem *)ALLOCATE_LOCAL(size * sizeof(xColorItem));
+    defs = (xColorItem *)malloc(size * sizeof(xColorItem));
     if (!defs)
 	return;
     n = 0;
@@ -790,7 +790,7 @@ UpdateColors (ColormapPtr pmap)
     }
     if (n)
 	(*pmap->pScreen->StoreColors)(pmap, n, defs);
-    DEALLOCATE_LOCAL(defs);
+    free(defs);
 }
 
 /* Get a read-only color from a ColorMap (probably slow for large maps)
@@ -1741,14 +1741,14 @@ AllocDirect (int client, ColormapPtr pmap, int c, int r, int g, int b, Bool cont
     for(p = pixels; p < pixels + c; p++)
 	*p = 0;
 
-    ppixRed = (Pixel *)ALLOCATE_LOCAL(npixR * sizeof(Pixel));
-    ppixGreen = (Pixel *)ALLOCATE_LOCAL(npixG * sizeof(Pixel));
-    ppixBlue = (Pixel *)ALLOCATE_LOCAL(npixB * sizeof(Pixel));
+    ppixRed = (Pixel *)malloc(npixR * sizeof(Pixel));
+    ppixGreen = (Pixel *)malloc(npixG * sizeof(Pixel));
+    ppixBlue = (Pixel *)malloc(npixB * sizeof(Pixel));
     if (!ppixRed || !ppixGreen || !ppixBlue)
     {
-	if (ppixBlue) DEALLOCATE_LOCAL(ppixBlue);
-	if (ppixGreen) DEALLOCATE_LOCAL(ppixGreen);
-	if (ppixRed) DEALLOCATE_LOCAL(ppixRed);
+	if (ppixBlue) free(ppixBlue);
+	if (ppixGreen) free(ppixGreen);
+	if (ppixRed) free(ppixRed);
 	return(BadAlloc);
     }
 
@@ -1786,9 +1786,9 @@ AllocDirect (int client, ColormapPtr pmap, int c, int r, int g, int b, Bool cont
 	if (okB)
 	    for(ppix = ppixBlue, npix = npixB; --npix >= 0; ppix++)
 		pmap->blue[*ppix].refcnt = 0;
-	DEALLOCATE_LOCAL(ppixBlue);
-	DEALLOCATE_LOCAL(ppixGreen);
-	DEALLOCATE_LOCAL(ppixRed);
+	free(ppixBlue);
+	free(ppixGreen);
+	free(ppixRed);
 	return(BadAlloc);
     }
 
@@ -1830,9 +1830,9 @@ AllocDirect (int client, ColormapPtr pmap, int c, int r, int g, int b, Bool cont
     for (pDst = pixels; pDst < pixels + c; pDst++)
 	*pDst |= ALPHAMASK(pmap->pVisual);
 
-    DEALLOCATE_LOCAL(ppixBlue);
-    DEALLOCATE_LOCAL(ppixGreen);
-    DEALLOCATE_LOCAL(ppixRed);
+    free(ppixBlue);
+    free(ppixGreen);
+    free(ppixRed);
 
     return (Success);
 }
@@ -1848,7 +1848,7 @@ AllocPseudo (int client, ColormapPtr pmap, int c, int r, Bool contig,
     npix = c << r;
     if ((r >= 32) || (npix > pmap->freeRed) || (npix < c))
 	return(BadAlloc);
-    if(!(ppixTemp = (Pixel *)ALLOCATE_LOCAL(npix * sizeof(Pixel))))
+    if(!(ppixTemp = (Pixel *)malloc(npix * sizeof(Pixel))))
 	return(BadAlloc);
     ok = AllocCP(pmap, pmap->red, c, r, contig, ppixTemp, pmask);
 
@@ -1878,7 +1878,7 @@ AllocPseudo (int client, ColormapPtr pmap, int c, int r, Bool contig,
 	pmap->numPixelsRed[client] += npix;
 	pmap->freeRed -= npix;
     }
-    DEALLOCATE_LOCAL(ppixTemp);
+    free(ppixTemp);
     return (ok ? Success : BadAlloc);
 }
 
@@ -2078,7 +2078,7 @@ AllocShared (ColormapPtr pmap, Pixel *ppix, int c, int r, int g, int b,
 
     npixClientNew = c << (r + g + b);
     npixShared = (c << r) + (c << g) + (c << b);
-    psharedList = (SHAREDCOLOR **)ALLOCATE_LOCAL(npixShared *
+    psharedList = (SHAREDCOLOR **)malloc(npixShared *
 						 sizeof(SHAREDCOLOR *));
     if (!psharedList)
 	return FALSE;
@@ -2193,7 +2193,7 @@ AllocShared (ColormapPtr pmap, Pixel *ppix, int c, int r, int g, int b,
 	    }
 	}
     }
-    DEALLOCATE_LOCAL(psharedList);
+    free(psharedList);
     return TRUE;
 }
 
@@ -2667,7 +2667,7 @@ IsMapInstalled(Colormap map, WindowPtr pWin)
     Colormap	*pmaps;
     int		imap, nummaps, found;
 
-    pmaps = (Colormap *) ALLOCATE_LOCAL( 
+    pmaps = (Colormap *) malloc(
              pWin->drawable.pScreen->maxInstalledCmaps * sizeof(Colormap));
     if(!pmaps)
 	return(FALSE);
@@ -2682,7 +2682,7 @@ IsMapInstalled(Colormap map, WindowPtr pWin)
 	    break;
 	}
     }
-    DEALLOCATE_LOCAL(pmaps);
+    free(pmaps);
     return (found);
 }
 

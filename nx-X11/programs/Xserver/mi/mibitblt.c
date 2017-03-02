@@ -143,21 +143,21 @@ miCopyArea(pSrcDrawable, pDstDrawable,
     }
 
     pptFirst = ppt = (DDXPointPtr)
-        ALLOCATE_LOCAL(heightSrc * sizeof(DDXPointRec));
+        malloc(heightSrc * sizeof(DDXPointRec));
     pwidthFirst = pwidth = (unsigned int *)
-        ALLOCATE_LOCAL(heightSrc * sizeof(unsigned int));
+        malloc(heightSrc * sizeof(unsigned int));
     numRects = RegionNumRects(prgnSrcClip);
     boxes = RegionRects(prgnSrcClip);
     ordering = (unsigned int *)
-        ALLOCATE_LOCAL(numRects * sizeof(unsigned int));
+        malloc(numRects * sizeof(unsigned int));
     if(!pptFirst || !pwidthFirst || !ordering)
     {
        if (ordering)
-	   DEALLOCATE_LOCAL(ordering);
+	   free(ordering);
        if (pwidthFirst)
-           DEALLOCATE_LOCAL(pwidthFirst);
+           free(pwidthFirst);
        if (pptFirst)
-           DEALLOCATE_LOCAL(pptFirst);
+           free(pptFirst);
        return (RegionPtr)NULL;
     }
 
@@ -264,9 +264,9 @@ miCopyArea(pSrcDrawable, pDstDrawable,
     if(realSrcClip)
 	RegionDestroy(prgnSrcClip);
 		
-    DEALLOCATE_LOCAL(ordering);
-    DEALLOCATE_LOCAL(pwidthFirst);
-    DEALLOCATE_LOCAL(pptFirst);
+    free(ordering);
+    free(pwidthFirst);
+    free(pptFirst);
     return prgnExposed;
 }
 
@@ -436,12 +436,12 @@ miOpqStipDrawable(pDraw, pGC, prgnSrc, pbits, srcx, w, h, dstx, dsty)
     dixChangeGC(NullClient, pGCT, GCBackground, NULL, gcv);
     ValidateGC((DrawablePtr)pPixmap, pGCT);
     miClearDrawable((DrawablePtr)pPixmap, pGCT);
-    ppt = pptFirst = (DDXPointPtr)ALLOCATE_LOCAL(h * sizeof(DDXPointRec));
-    pwidth = pwidthFirst = (int *)ALLOCATE_LOCAL(h * sizeof(int));
+    ppt = pptFirst = (DDXPointPtr)malloc(h * sizeof(DDXPointRec));
+    pwidth = pwidthFirst = (int *)malloc(h * sizeof(int));
     if(!pptFirst || !pwidthFirst)
     {
-	if (pwidthFirst) DEALLOCATE_LOCAL(pwidthFirst);
-	if (pptFirst) DEALLOCATE_LOCAL(pptFirst);
+	if (pwidthFirst) free(pwidthFirst);
+	if (pptFirst) free(pptFirst);
 	FreeScratchGC(pGCT);
 	return;
     }
@@ -467,8 +467,8 @@ miOpqStipDrawable(pDraw, pGC, prgnSrc, pbits, srcx, w, h, dstx, dsty)
 
     (*pGCT->ops->SetSpans)((DrawablePtr)pPixmap, pGCT, (char *)pbits,
 			   pptFirst, pwidthFirst, h, TRUE);
-    DEALLOCATE_LOCAL(pwidthFirst);
-    DEALLOCATE_LOCAL(pptFirst);
+    free(pwidthFirst);
+    free(pptFirst);
 
 
     /* Save current values from the client GC */
@@ -810,14 +810,14 @@ miPutImage(pDraw, pGC, depth, x, y, w, h, leftPad, format, pImage)
 	break;
 
       case ZPixmap:
-    	ppt = pptFirst = (DDXPointPtr)ALLOCATE_LOCAL(h * sizeof(DDXPointRec));
-    	pwidth = pwidthFirst = (int *)ALLOCATE_LOCAL(h * sizeof(int));
+	ppt = pptFirst = (DDXPointPtr)malloc(h * sizeof(DDXPointRec));
+	pwidth = pwidthFirst = (int *)malloc(h * sizeof(int));
 	if(!pptFirst || !pwidthFirst)
         {
 	   if (pwidthFirst)
-               DEALLOCATE_LOCAL(pwidthFirst);
+               free(pwidthFirst);
            if (pptFirst)
-               DEALLOCATE_LOCAL(pptFirst);
+               free(pptFirst);
            return;
         }
 	if (pGC->miTranslate)
@@ -836,8 +836,8 @@ miPutImage(pDraw, pGC, depth, x, y, w, h, leftPad, format, pImage)
 
 	(*pGC->ops->SetSpans)(pDraw, pGC, (char *)pImage, pptFirst,
 			      pwidthFirst, h, TRUE);
-	DEALLOCATE_LOCAL(pwidthFirst);
-	DEALLOCATE_LOCAL(pptFirst);
+	free(pwidthFirst);
+	free(pptFirst);
 	break;
     }
 }
