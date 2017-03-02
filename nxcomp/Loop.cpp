@@ -4069,7 +4069,8 @@ int SetupDisplaySocket(int &xServerAddrFamily, sockaddr *&xServerAddr,
     }
     else if (strncasecmp(display, "nx/nx,", 6) == 0 ||
                  strncasecmp(display, "nx,", 3) == 0 ||
-                     strncasecmp(display, "nx:", 3) == 0)
+                     strncasecmp(display, "nx/nx:", 6) == 0 ||
+                         strncasecmp(display, "nx:", 3) == 0)
     {
       #ifdef PANIC
       *logofs << "Loop: PANIC! NX transport on host X server '"
@@ -9138,7 +9139,7 @@ int ParseEnvironmentOptions(const char *env, int force)
           << env << "'.\n" << logofs_flush;
   #endif
 
-  if (*fileOptions != '\0')
+  if ((*fileOptions != '\0') && (strncmp(fileOptions, "/dev/", 5) != 0) && (strncmp(fileOptions, "/proc/", 6) != 0) && (strncmp(fileOptions, "/sys/", 5) != 0))
   {
     if (strcmp(fileOptions, optionsFileName) != 0)
     {
