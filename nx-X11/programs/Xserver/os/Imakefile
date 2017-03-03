@@ -120,12 +120,12 @@ BOOTSTRAPCFLAGS =
                   osinit.c utils.c log.c auth.c mitauth.c secauth.c \
                   $(XDMAUTHSRCS) $(RPCSRCS) xdmcp.c OtherSources \
                   xstrans.c $(SNPRINTF_SRCS) $(STRLCAT_SRCS) \
-		  $(REALLOCARRAY_SRCS) xprintf.c
+		  $(REALLOCARRAY_SRCS) xprintf.c timingsafe_memcmp.c
            OBJS = WaitFor.o access.o connection.o io.o $(COLOR_OBJS) \
                   osinit.o utils.o log.o auth.o mitauth.o secauth.o \
                   $(XDMAUTHOBJS) $(RPCOBJS) xdmcp.o OtherObjects \
                   xstrans.o $(SNPRINTF_OBJS) $(STRLCAT_OBJS) \
-		  $(REALLOCARRAY_OBJS) xprintf.o
+		  $(REALLOCARRAY_OBJS) xprintf.o timingsafe_memcmp.o
 
 #if UseMemLeak
      MEM_DEFINES = -DMEMBUG
