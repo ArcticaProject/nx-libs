@@ -6,6 +6,9 @@ NULL =
 FB_DEFINES=-DFBNOPIXADDR -DFBNO24BIT
 #endif
 
+#if HasShm
+SHM_DEFINES = ShmDefines
+#endif
 
 #if BuildRender
 RENDERSRC = fbcompose.c
@@ -115,6 +118,8 @@ DependTarget()
 MakeSubdirs($(SUBDIRS))
 DependSubdirs($(SUBDIRS))
 #endif
+
+SpecialCObjectRule(fboverlay,$(ICONFIGFILES),$(SHM_DEFINES))
 
 #ifdef LinkDirectory
 LinkSourceFile(fb24_32.c,LinkDirectory)
