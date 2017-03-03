@@ -229,16 +229,16 @@ XkbSetRulesUsed(XkbRF_VarDefsPtr defs)
 {
     if (XkbModelUsed)
 	_XkbFree(XkbModelUsed);
-    XkbModelUsed= (defs->model?_XkbDupString(defs->model):NULL);
+    XkbModelUsed= (defs->model?Xstrdup(defs->model):NULL);
     if (XkbLayoutUsed)
 	_XkbFree(XkbLayoutUsed);
-    XkbLayoutUsed= (defs->layout?_XkbDupString(defs->layout):NULL);
+    XkbLayoutUsed= (defs->layout?Xstrdup(defs->layout):NULL);
     if (XkbVariantUsed)
 	_XkbFree(XkbVariantUsed);
-    XkbVariantUsed= (defs->variant?_XkbDupString(defs->variant):NULL);
+    XkbVariantUsed= (defs->variant?Xstrdup(defs->variant):NULL);
     if (XkbOptionsUsed)
 	_XkbFree(XkbOptionsUsed);
-    XkbOptionsUsed= (defs->options?_XkbDupString(defs->options):NULL);
+    XkbOptionsUsed= (defs->options?Xstrdup(defs->options):NULL);
     if (XkbWantRulesProp)
 	QueueWorkProc(XkbWriteRulesProp,NULL,NULL);
     return;
@@ -250,27 +250,27 @@ XkbSetRulesDflts(char *rulesFile,char *model,char *layout,
 {
     if (XkbRulesFile)
 	_XkbFree(XkbRulesFile);
-    XkbRulesFile= _XkbDupString(rulesFile);
+    XkbRulesFile= Xstrdup(rulesFile);
     rulesDefined= True;
     if (model) {
 	if (XkbModelDflt)
 	    _XkbFree(XkbModelDflt);
-	XkbModelDflt= _XkbDupString(model);
+	XkbModelDflt= Xstrdup(model);
     }
     if (layout) {
 	if (XkbLayoutDflt)
 	    _XkbFree(XkbLayoutDflt);
-	XkbLayoutDflt= _XkbDupString(layout);
+	XkbLayoutDflt= Xstrdup(layout);
     }
     if (variant) {
 	if (XkbVariantDflt)
 	    _XkbFree(XkbVariantDflt);
-	XkbVariantDflt= _XkbDupString(variant);
+	XkbVariantDflt= Xstrdup(variant);
     }
     if (options) {
 	if (XkbOptionsDflt)
 	    _XkbFree(XkbOptionsDflt);
-	XkbOptionsDflt= _XkbDupString(options);
+	XkbOptionsDflt= Xstrdup(options);
     }
     return;
 }
@@ -637,12 +637,12 @@ XkbRF_VarDefsRec	defs;
      * generation. Eventually they will be freed at the end of this
      * function.
      */
-    if (names->keymap) names->keymap = _XkbDupString(names->keymap);
-    if (names->keycodes) names->keycodes = _XkbDupString(names->keycodes);
-    if (names->types) names->types = _XkbDupString(names->types);
-    if (names->compat) names->compat = _XkbDupString(names->compat);
-    if (names->geometry) names->geometry = _XkbDupString(names->geometry);
-    if (names->symbols) names->symbols = _XkbDupString(names->symbols);
+    if (names->keymap) names->keymap = Xstrdup(names->keymap);
+    if (names->keycodes) names->keycodes = Xstrdup(names->keycodes);
+    if (names->types) names->types = Xstrdup(names->types);
+    if (names->compat) names->compat = Xstrdup(names->compat);
+    if (names->geometry) names->geometry = Xstrdup(names->geometry);
+    if (names->symbols) names->symbols = Xstrdup(names->symbols);
 
     if (defs.model && defs.layout && rules) {
 	XkbComponentNamesRec	rNames;

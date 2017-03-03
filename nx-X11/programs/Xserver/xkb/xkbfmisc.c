@@ -265,7 +265,8 @@ XkbWriteXKBKeymapForNames(	FILE *			file,
 				unsigned		want,
 				unsigned		need)
 {
-char *		name,*tmp;
+char *		name;
+const char *	tmp;
 unsigned	complete;
 XkbNamesPtr	old_names;
 int		multi_section;
@@ -333,8 +334,8 @@ XkbFileInfo	finfo;
     if ((xkb!=NULL) && (old_names!=NULL)) {
 	if (wantNames&XkmTypesMask) {
 	    if (old_names->types!=None) {
-		tmp= XkbAtomGetString(dpy,old_names->types);
-		names->types= _XkbDupString(tmp);
+		tmp= NameForAtom(old_names->types);
+		names->types= Xstrdup(tmp);
 	    }
 	    else {
 		wantDflts|= XkmTypesMask;
@@ -343,8 +344,8 @@ XkbFileInfo	finfo;
 	}
 	if (wantNames&XkmCompatMapMask) {
 	    if (old_names->compat!=None) {
-		tmp= XkbAtomGetString(dpy,old_names->compat);
-		names->compat= _XkbDupString(tmp);
+		tmp= NameForAtom(old_names->compat);
+		names->compat= Xstrdup(tmp);
 	    }
 	    else wantDflts|= XkmCompatMapMask;
 	    complete|= XkmCompatMapMask; 
@@ -352,14 +353,14 @@ XkbFileInfo	finfo;
 	if (wantNames&XkmSymbolsMask) {
 	    if (old_names->symbols==None)
 		return False;
-	    tmp= XkbAtomGetString(dpy,old_names->symbols);
-	    names->symbols= _XkbDupString(tmp);
+	    tmp= NameForAtom(old_names->symbols);
+	    names->symbols= Xstrdup(tmp);
 	    complete|= XkmSymbolsMask; 
 	}
 	if (wantNames&XkmKeyNamesMask) {
 	   if (old_names->keycodes!=None) {
-		tmp= XkbAtomGetString(dpy,old_names->keycodes);
-		names->keycodes= _XkbDupString(tmp);
+		tmp= NameForAtom(old_names->keycodes);
+		names->keycodes= Xstrdup(tmp);
 	    }
 	    else wantDflts|= XkmKeyNamesMask;
 	    complete|= XkmKeyNamesMask;
@@ -367,8 +368,8 @@ XkbFileInfo	finfo;
 	if (wantNames&XkmGeometryMask) {
 	    if (old_names->geometry==None)
 		return False;
-	    tmp= XkbAtomGetString(dpy,old_names->geometry);
-	    names->geometry= _XkbDupString(tmp);
+	    tmp= NameForAtom(old_names->geometry);
+	    names->geometry= Xstrdup(tmp);
 	    complete|= XkmGeometryMask; 
 	    wantNames&= ~XkmGeometryMask;
 	}

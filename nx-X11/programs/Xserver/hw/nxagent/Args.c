@@ -70,6 +70,7 @@ is" without express or implied warranty.
 #include "Handlers.h"
 #include "Error.h"
 #include "Reconnect.h"
+#include "Utils.h"
 
 /*
  * NX includes and definitions.

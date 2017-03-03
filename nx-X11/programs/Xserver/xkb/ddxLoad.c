@@ -542,8 +542,8 @@ char 	*cmd = NULL,file[PATH_MAX],xkm_output_dir[PATH_MAX],*map,*outFile;
 	}
     }
     if ((outFile= strrchr(file,'/'))!=NULL)
-	 outFile= _XkbDupString(&outFile[1]);
-    else outFile= _XkbDupString(file);
+	 outFile= Xstrdup(&outFile[1]);
+    else outFile= Xstrdup(file);
     XkbEnsureSafeMapName(outFile);
     OutputDirectory(xkm_output_dir, sizeof(xkm_output_dir));
 

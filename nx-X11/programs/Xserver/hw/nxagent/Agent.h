@@ -133,6 +133,4 @@ typedef XID KeySym64;
 #undef KeySym
 #endif /*_XSERVER64_tmp*/
 
-#define validateString(string) ((string) ? (string) : "(null)")
-
 #endif /* __Agent_H__ */
