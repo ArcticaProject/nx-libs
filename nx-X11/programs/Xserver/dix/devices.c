@@ -80,7 +80,7 @@ _AddInputDevice(DeviceProc deviceProc, Bool autoStart)
 
     if (inputInfo.numDevices >= MAX_DEVICES)
 	return (DeviceIntPtr)NULL;
-    dev = (DeviceIntPtr) malloc(sizeof(DeviceIntRec));
+    dev = (DeviceIntPtr) calloc(1, sizeof(DeviceIntRec));
     if (!dev)
 	return (DeviceIntPtr)NULL;
     dev->name = (char *)NULL;
@@ -498,10 +498,9 @@ InitModMap(register KeyClassPtr keyc)
 	    }
 	}
     }
-    keyc->modifierKeyMap = (KeyCode *)malloc(8*keyc->maxKeysPerModifier);
+    keyc->modifierKeyMap = (KeyCode *)calloc(8, keyc->maxKeysPerModifier);
     if (!keyc->modifierKeyMap && keyc->maxKeysPerModifier)
 	return (FALSE);
-    bzero((char *)keyc->modifierKeyMap, 8*(int)keyc->maxKeysPerModifier);
     for (i = 0; i < 8; i++)
 	keysPerModifier[i] = 0;
     for (i = 8; i < MAP_LENGTH; i++)
@@ -525,7 +524,7 @@ InitKeyClassDeviceStruct(DeviceIntPtr dev, KeySymsPtr pKeySyms, CARD8 pModifiers
     int i;
     register KeyClassPtr keyc;
 
-    keyc = (KeyClassPtr)malloc(sizeof(KeyClassRec));
+    keyc = (KeyClassPtr)calloc(1, sizeof(KeyClassRec));
     if (!keyc)
 	return FALSE;
     keyc->curKeySyms.map = (KeySym *)NULL;
@@ -564,7 +563,7 @@ InitButtonClassDeviceStruct(register DeviceIntPtr dev, int numButtons,
     register ButtonClassPtr butc;
     int i;
 
-    butc = (ButtonClassPtr)malloc(sizeof(ButtonClassRec));
+    butc = (ButtonClassPtr)calloc(1, sizeof(ButtonClassRec));
     if (!butc)
 	return FALSE;
     butc->numButtons = numButtons;
@@ -589,7 +588,7 @@ InitValuatorClassDeviceStruct(DeviceIntPtr dev, int numAxes,
     int i;
     register ValuatorClassPtr valc;
 
-    valc = (ValuatorClassPtr)malloc(sizeof(ValuatorClassRec) +
+    valc = (ValuatorClassPtr)calloc(1, sizeof(ValuatorClassRec) +
 				    numAxes * sizeof(AxisInfo) +
 				    numAxes * sizeof(unsigned int));
     if (!valc)
@@ -612,7 +611,7 @@ InitFocusClassDeviceStruct(DeviceIntPtr dev)
 {
     register FocusClassPtr focc;
 
-    focc = (FocusClassPtr)malloc(sizeof(FocusClassRec));
+    focc = (FocusClassPtr)calloc(1, sizeof(FocusClassRec));
     if (!focc)
 	return FALSE;
     focc->win = PointerRootWin;
@@ -631,7 +630,7 @@ InitKbdFeedbackClassDeviceStruct(DeviceIntPtr dev, BellProcPtr bellProc,
 {
     register KbdFeedbackPtr feedc;
 
-    feedc = (KbdFeedbackPtr)malloc(sizeof(KbdFeedbackClassRec));
+    feedc = (KbdFeedbackPtr)calloc(1, sizeof(KbdFeedbackClassRec));
     if (!feedc)
 	return FALSE;
     feedc->BellProc = bellProc;
@@ -658,7 +657,7 @@ InitPtrFeedbackClassDeviceStruct(DeviceIntPtr dev, PtrCtrlProcPtr controlProc)
 {
     register PtrFeedbackPtr feedc;
 
-    feedc = (PtrFeedbackPtr)malloc(sizeof(PtrFeedbackClassRec));
+    feedc = (PtrFeedbackPtr)calloc(1, sizeof(PtrFeedbackClassRec));
     if (!feedc)
 	return FALSE;
     feedc->CtrlProc = controlProc;
@@ -696,7 +695,7 @@ InitStringFeedbackClassDeviceStruct (
     int i;
     register StringFeedbackPtr feedc;
 
-    feedc = (StringFeedbackPtr)malloc(sizeof(StringFeedbackClassRec));
+    feedc = (StringFeedbackPtr)calloc(1, sizeof(StringFeedbackClassRec));
     if (!feedc)
 	return FALSE;
     feedc->CtrlProc = controlProc;
@@ -704,9 +703,9 @@ InitStringFeedbackClassDeviceStruct (
     feedc->ctrl.num_symbols_displayed = 0;
     feedc->ctrl.max_symbols = max_symbols;
     feedc->ctrl.symbols_supported = (KeySym *) 
-	malloc (sizeof (KeySym) * num_symbols_supported);
+	calloc (num_symbols_supported, sizeof (KeySym));
     feedc->ctrl.symbols_displayed = (KeySym *) 
-	malloc (sizeof (KeySym) * max_symbols);
+	calloc (max_symbols, sizeof (KeySym));
     if (!feedc->ctrl.symbols_supported || !feedc->ctrl.symbols_displayed)
     {
 	if (feedc->ctrl.symbols_supported)
@@ -734,7 +733,7 @@ InitBellFeedbackClassDeviceStruct (DeviceIntPtr dev, BellProcPtr bellProc,
 {
     register BellFeedbackPtr feedc;
 
-    feedc = (BellFeedbackPtr)malloc(sizeof(BellFeedbackClassRec));
+    feedc = (BellFeedbackPtr)calloc(1, sizeof(BellFeedbackClassRec));
     if (!feedc)
 	return FALSE;
     feedc->CtrlProc = controlProc;
@@ -753,7 +752,7 @@ InitLedFeedbackClassDeviceStruct (DeviceIntPtr dev, LedCtrlProcPtr controlProc)
 {
     register LedFeedbackPtr feedc;
 
-    feedc = (LedFeedbackPtr)malloc(sizeof(LedFeedbackClassRec));
+    feedc = (LedFeedbackPtr)calloc(1, sizeof(LedFeedbackClassRec));
     if (!feedc)
 	return FALSE;
     feedc->CtrlProc = controlProc;
@@ -774,7 +773,7 @@ InitIntegerFeedbackClassDeviceStruct (DeviceIntPtr dev, IntegerCtrlProcPtr contr
 {
     register IntegerFeedbackPtr feedc;
 
-    feedc = (IntegerFeedbackPtr)malloc(sizeof(IntegerFeedbackClassRec));
+    feedc = (IntegerFeedbackPtr)calloc(1, sizeof(IntegerFeedbackClassRec));
     if (!feedc)
 	return FALSE;
     feedc->CtrlProc = controlProc;

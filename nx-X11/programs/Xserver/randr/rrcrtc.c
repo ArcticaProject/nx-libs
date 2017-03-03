@@ -1018,6 +1018,7 @@ ProcRRGetCrtcInfo(ClientPtr client)
 
     mode = crtc->mode;
 
+    memset(&rep, 0, sizeof(xRRGetCrtcInfoReply));
     rep = (xRRGetCrtcInfoReply) {
         .type = X_Reply,
         .status = RRSetConfigSuccess,
@@ -1055,7 +1056,7 @@ ProcRRGetCrtcInfo(ClientPtr client)
 
     extraLen = rep.length << 2;
     if (extraLen) {
-        extra = malloc(extraLen);
+        extra = calloc(1, extraLen);
         if (!extra)
             return BadAlloc;
     }
@@ -1313,6 +1314,7 @@ ProcRRSetCrtcConfig(ClientPtr client)
  sendReply:
     free(outputs);
 
+    memset(&rep, 0, sizeof(xRRSetCrtcConfigReply));
     rep = (xRRSetCrtcConfigReply) {
         .type = X_Reply,
         .status = status,
@@ -1354,6 +1356,7 @@ ProcRRGetPanning(ClientPtr client)
     if (!pScrPriv)
         return RRErrorBase + BadRRCrtc;
 
+    memset(&rep, 0, sizeof(xRRGetPanningReply));
     rep = (xRRGetPanningReply) {
         .type = X_Reply,
         .status = RRSetConfigSuccess,
@@ -1453,6 +1456,7 @@ ProcRRSetPanning(ClientPtr client)
     status = RRSetConfigSuccess;
 
  sendReply:
+    memset(&rep, 0, sizeof(xRRSetPanningReply));
     rep = (xRRSetPanningReply) {
         .type = X_Reply,
         .status = status,
@@ -1517,7 +1521,7 @@ ProcRRGetCrtcGamma(ClientPtr client)
     len = crtc->gammaSize * 3 * 2;
 
     if (crtc->gammaSize) {
-        extra = malloc(len);
+        extra = calloc(1, len);
         if (!extra)
             return BadAlloc;
     }

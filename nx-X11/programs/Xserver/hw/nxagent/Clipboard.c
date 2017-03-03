@@ -224,8 +224,6 @@ void nxagentClearClipboard(ClientPtr pClient, WindowPtr pWindow)
 
 void nxagentClearSelection(XEvent *X)
 {
-  xEvent x;
-
   int i = 0;
 
   #ifdef DEBUG
@@ -252,6 +250,8 @@ void nxagentClearSelection(XEvent *X)
   {
     if (lastSelectionOwner[i].client != NULL)
     {
+      xEvent x;
+      memset(&x, 0, sizeof(xEvent));
       x.u.u.type = SelectionClear;
       x.u.selectionClear.time = GetTimeInMillis();
       x.u.selectionClear.window = lastSelectionOwner[i].window;
@@ -315,6 +315,7 @@ FIXME: Do we need this?
       XFree(strTarget);
     }
 */
+    memset(&eventSelection, 0, sizeof(XSelectionEvent));
     eventSelection.property = None;
 
     if (X->xselectionrequest.target == serverTARGETS)
@@ -423,6 +424,7 @@ FIXME: Do we need this?
 
         lastServerTime = X->xselectionrequest.time;
 
+        memset(&x, 0, sizeof(xEvent));
         x.u.u.type = SelectionRequest;
         x.u.selectionRequest.time = GetTimeInMillis();
         x.u.selectionRequest.owner = lastSelectionOwner[i].window;
@@ -501,6 +503,7 @@ void nxagentSendSelectionNotify(Atom property)
                lastClientClientPtr -> index);
   #endif
 
+  memset(&x, 0, sizeof(xEvent));
   x.u.u.type = SelectionNotify;
 
   x.u.selectionNotify.time = lastClientTime;
@@ -980,6 +983,7 @@ void nxagentNotifySelection(XEvent *X)
 
         }
 
+        memset(&eventSelection, 0, sizeof(XSelectionEvent));
         eventSelection.type = SelectionNotify;
         eventSelection.send_event = True;
         eventSelection.display = nxagentDisplay;
@@ -1150,6 +1154,7 @@ FIXME: Why this pointer can be not a valid
     return;
   }
 
+  memset(&x, 0, sizeof(xEvent));
   x.u.u.type = SelectionNotify;
   x.u.selectionNotify.time = time;
   x.u.selectionNotify.requestor = requestor;
@@ -1255,6 +1260,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
                          4,
                          &xa_STRING, 1);
 
+    memset(&x, 0, sizeof(xEvent));
     x.u.u.type = SelectionNotify;
     x.u.selectionNotify.time = time;
     x.u.selectionNotify.requestor = requestor;
@@ -1287,6 +1293,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
                            (unsigned char *) &lastSelectionOwner[i].lastTimeChanged,
                            1);
 
+      memset(&x, 0, sizeof(xEvent));
       x.u.u.type = SelectionNotify;
       x.u.selectionNotify.time = time;
       x.u.selectionNotify.requestor = requestor;
@@ -1375,6 +1382,7 @@ int nxagentConvertSelection(ClientPtr client, WindowPtr pWin, Atom selection,
                "to the requestor with property None.\n");
     #endif
 
+    memset(&x, 0, sizeof(xEvent));
     x.u.u.type = SelectionNotify;
     x.u.selectionNotify.time = time;
     x.u.selectionNotify.requestor = requestor;
@@ -1407,6 +1415,7 @@ int nxagentSendNotify(xEvent *event)
      * Setup selection notify event to real server.
      */
 
+    memset(&x, 0, sizeof(XSelectionEvent));
     x.type = SelectionNotify;
     x.send_event = True;
     x.display = nxagentDisplay;

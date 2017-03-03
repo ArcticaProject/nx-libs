@@ -95,10 +95,9 @@ PictureCreateDefaultFormats (ScreenPtr pScreen, int *nformatp)
 
     nxagentPictureCreateDefaultFormats(pScreen, formats, &nformats);
 
-    pFormats = (PictFormatPtr) malloc (nformats * sizeof (PictFormatRec));
+    pFormats = (PictFormatPtr) calloc (nformats, sizeof (PictFormatRec));
     if (!pFormats)
 	return 0;
-    memset (pFormats, '\0', nformats * sizeof (PictFormatRec));
     for (f = 0; f < nformats; f++)
     {
         pFormats[f].id = FakeClientID (0);
@@ -198,7 +197,7 @@ AllocatePicture (ScreenPtr  pScreen)
     unsigned int    	size;
     int			i;
 
-    pPicture = (PicturePtr) malloc (ps->totalPictureSize);
+    pPicture = (PicturePtr) calloc(1, ps->totalPictureSize);
     if (!pPicture)
 	return 0;
     ppriv = (DevUnion *)(pPicture + 1);
@@ -289,7 +288,7 @@ CreateSolidPicture (Picture pid, xRenderColor *color, int *error)
     }
 
     pPicture->id = pid;
-    pPicture->pSourcePict = (SourcePictPtr) malloc(sizeof(PictSolidFill));
+    pPicture->pSourcePict = (SourcePictPtr) calloc(1, sizeof(PictSolidFill));
     if (!pPicture->pSourcePict) {
         *error = BadAlloc;
         free(pPicture);
@@ -326,7 +325,7 @@ static PicturePtr createSourcePicture(void)
                            picturePrivateCount * sizeof(DevUnion) +
                                sizeof(nxagentPrivPictureRec);
 
-    pPicture = (PicturePtr) malloc(totalPictureSize);
+    pPicture = (PicturePtr) calloc(1, totalPictureSize);
 
     if (pPicture != NULL)
     {

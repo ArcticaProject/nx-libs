@@ -652,6 +652,7 @@ SyntheticMotion(int x, int y)
 	y += panoramiXdataPtr[0].y - panoramiXdataPtr[sprite.screen->myNum].y;
     }
 #endif
+    memset(&xE, 0, sizeof(xEvent));
     xE.u.keyButtonPointer.rootX = x;
     xE.u.keyButtonPointer.rootY = y;
     if (syncEvents.playingEvents)
@@ -1022,7 +1023,7 @@ EnqueueEvent(xEvent *xE, DeviceIntPtr device, int count)
 	    return;
 	}
     }
-    qe = (QdEventPtr)malloc(sizeof(QdEventRec) + (count * sizeof(xEvent)));
+    qe = (QdEventPtr)calloc(1, sizeof(QdEventRec) + (count * sizeof(xEvent)));
     if (!qe)
 	return;
     qe->next = (QdEventPtr)NULL;
@@ -3100,7 +3101,6 @@ EnterLeaveEvent(
     register WindowPtr pWin,
     Window child)
 {
-    xEvent		event;
     register DeviceIntPtr keybd = inputInfo.keyboard;
     WindowPtr		focus;
     register DeviceIntPtr mouse = inputInfo.pointer;
@@ -3122,6 +3122,7 @@ EnterLeaveEvent(
     }
     if (mask & filters[type])
     {
+	xEvent event;
 	memset(&event, 0, sizeof(xEvent));
 	event.u.u.type = type;
 	event.u.u.detail = detail;
@@ -3244,6 +3245,7 @@ FocusEvent(DeviceIntPtr dev, int type, int mode, int detail, register WindowPtr 
 	return;
     }
 #endif
+    memset(&event, 0, sizeof(xEvent));
     event.u.focus.mode = mode;
     event.u.u.type = type;
     event.u.u.detail = detail;

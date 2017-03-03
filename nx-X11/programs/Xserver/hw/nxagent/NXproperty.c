@@ -205,6 +205,8 @@ ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format,
     void * data;
     int copySize;
 
+    memset(&event, 0, sizeof(xEvent));
+
     sizeInBytes = format>>3;
     totalSize = len * sizeInBytes;
 
@@ -332,11 +334,6 @@ ChangeWindowProperty(WindowPtr pWin, Atom property, Atom type, int format,
 int
 ProcGetProperty(ClientPtr client)
 {
-    #ifdef NXAGENT_SERVER
-    nxagentWMStateRec wmState;
-    nxagentWMStateRec *wmsP = &wmState;
-    #endif
-
     PropertyPtr pProp, prevProp;
     unsigned long n, len, ind;
     WindowPtr pWin;
@@ -395,6 +392,10 @@ ProcGetProperty(ClientPtr client)
                 (!pProp) &&
                     strcmp(NameForAtom(stuff->property), "WM_STATE") == 0)
     {
+      nxagentWMStateRec wmState;
+      nxagentWMStateRec *wmsP = &wmState;
+
+      memset(&wmState, 0, sizeof(nxagentWMStateRec));
       wmState.state = 1;
       wmState.icon = None;
 
@@ -498,6 +499,7 @@ ProcGetProperty(ClientPtr client)
     { /* send the event */
 	xEvent event;
 
+	memset(&event, 0, sizeof(xEvent));
 	event.u.u.type = PropertyNotify;
 	event.u.property.window = pWin->drawable.id;
 	event.u.property.state = PropertyDelete;
@@ -620,6 +622,7 @@ GetWindowProperty(pWin, property, longOffset, longLength, delete,
     { /* send the event */
 	xEvent event;
 
+	memset(&event, 0, sizeof(xEvent));
 	event.u.u.type = PropertyNotify;
 	event.u.property.window = pWin->drawable.id;
 	event.u.property.state = PropertyDelete;

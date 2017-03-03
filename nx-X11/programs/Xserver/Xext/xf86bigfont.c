@@ -354,6 +354,7 @@ ProcXF86BigfontQueryVersion(
     xXF86BigfontQueryVersionReply reply;
 
     REQUEST_SIZE_MATCH(xXF86BigfontQueryVersionReq);
+    memset(&reply, 0, sizeof(xXF86BigfontQueryVersionReply));
     reply.type = X_Reply;
     reply.length = 0;
     reply.sequenceNumber = client->sequence;
@@ -638,7 +639,7 @@ ProcXF86BigfontQueryFont(
 	        + (nCharInfos+1)/2 * 2 * sizeof(CARD16)
 	      : 0);
 	xXF86BigfontQueryFontReply* reply =
-	   (xXF86BigfontQueryFontReply *) ALLOCATE_LOCAL(rlength);
+	   (xXF86BigfontQueryFontReply *) calloc(1, rlength);
 	char* p;
 	if (!reply) {
 	    if (nCharInfos > 0) {
@@ -718,7 +719,7 @@ ProcXF86BigfontQueryFont(
 	    }
 	}
 	WriteToClient(client, rlength, reply);
-	DEALLOCATE_LOCAL(reply);
+	free(reply);
 	if (nCharInfos > 0) {
 	    if (shmid == -1) DEALLOCATE_LOCAL(pIndex2UniqIndex);
 	    if (!pDesc) DEALLOCATE_LOCAL(pCI);

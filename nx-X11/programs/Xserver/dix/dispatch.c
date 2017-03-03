@@ -2584,6 +2584,7 @@ ProcAllocColor (register ClientPtr client)
 					RT_COLORMAP, DixWriteAccess);
     if (pmap)
     {
+	memset(&acr, 0, sizeof(xAllocColorReply));
 	acr.type = X_Reply;
 	acr.length = 0;
 	acr.sequenceNumber = client->sequence;
@@ -3766,6 +3767,7 @@ SendConnSetup(register ClientPtr client, char *reason)
     {
 	xConnSetupPrefix csp;
 
+	memset(&csp, 0, sizeof(xConnSetupPrefix));
 	csp.success = xFalse;
 	csp.lengthReason = strlen(reason);
 	csp.length = (csp.lengthReason + (unsigned)3) >> 2;

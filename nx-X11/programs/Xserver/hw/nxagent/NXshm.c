@@ -240,7 +240,7 @@ fbShmPutImage(dst, pGC, depth, format, w, h, sx, sy, sw, sh, dx, dy, data)
 
         length = nxagentImageLength(sw, sh, format, 0, depth);
 
-        if ((newdata = malloc(length)) != NULL)
+        if ((newdata = calloc(1, length)) != NULL)
         {
           fbGetImage((DrawablePtr) pPixmap, sx, sy, sw, sh, format, AllPlanes, newdata);
           (*pGC->ops->PutImage)(dst, pGC, depth, dx, dy, sw, sh, 0, format, newdata);
@@ -360,6 +360,7 @@ ProcShmPutImage(client)
     {
 	xShmCompletionEvent ev;
 
+	memset(&ev, 0, sizeof(xShmCompletionEvent));
 	ev.type = ShmCompletionCode;
 	ev.drawable = stuff->drawable;
 	ev.sequenceNumber = client->sequence;
