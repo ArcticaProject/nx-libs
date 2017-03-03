@@ -1109,6 +1109,8 @@ void nxagentResetSignalHandlers()
 
   int result;
 
+  memset(&newAction, 0, sizeof(newAction));
+
   /*
    * Reset the signal handlers
    * to a well known state.
