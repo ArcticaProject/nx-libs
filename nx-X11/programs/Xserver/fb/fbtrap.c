@@ -110,7 +110,6 @@ fbRasterizeTrapezoid (PicturePtr    pPicture,
     int		height;
     int		pxoff, pyoff;
 
-    xFixed	x_off_fixed;
     xFixed	y_off_fixed;
     RenderEdge	l, r;
     xFixed	t, b;
@@ -125,7 +124,6 @@ fbRasterizeTrapezoid (PicturePtr    pPicture,
     x_off += pxoff;
     y_off += pyoff;
     
-    x_off_fixed = IntToxFixed(x_off);
     y_off_fixed = IntToxFixed(y_off);
     t = trap->top + y_off_fixed;
     if (t < 0)
