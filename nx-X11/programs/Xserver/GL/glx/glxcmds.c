@@ -783,6 +783,8 @@ int __glXQueryVersion(__GLXclientState *cl, GLbyte *pc)
     (void)major;
     (void)minor;
 
+    memset(&reply, 0, sizeof(xGLXQueryVersionReply));
+
     /*
     ** Server should take into consideration the version numbers sent by the
     ** client if it wants to work with older clients; however, in this
