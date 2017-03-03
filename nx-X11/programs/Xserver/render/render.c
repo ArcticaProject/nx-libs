@@ -1338,7 +1338,7 @@ ProcRenderCompositeGlyphs (ClientPtr client)
 	glyphsBase = glyphsLocal;
     else
     {
-	glyphsBase = (GlyphPtr *) ALLOCATE_LOCAL (nglyph * sizeof (GlyphPtr));
+	glyphsBase = (GlyphPtr *) malloc (nglyph * sizeof (GlyphPtr));
 	if (!glyphsBase)
 	    return BadAlloc;
     }
@@ -1346,7 +1346,7 @@ ProcRenderCompositeGlyphs (ClientPtr client)
 	listsBase = listsLocal;
     else
     {
-	listsBase = (GlyphListPtr) ALLOCATE_LOCAL (nlist * sizeof (GlyphListRec));
+	listsBase = (GlyphListPtr) malloc (nlist * sizeof (GlyphListRec));
 	if (!listsBase)
 	    return BadAlloc;
     }
@@ -1371,9 +1371,9 @@ ProcRenderCompositeGlyphs (ClientPtr client)
 		{
 		    client->errorValue = gs;
 		    if (glyphsBase != glyphsLocal)
-			DEALLOCATE_LOCAL (glyphsBase);
+			free (glyphsBase);
 		    if (listsBase != listsLocal)
-			DEALLOCATE_LOCAL (listsBase);
+			free (listsBase);
 		    return RenderErrBase + BadGlyphSet;
 		}
 	    }
@@ -1427,9 +1427,9 @@ ProcRenderCompositeGlyphs (ClientPtr client)
 		     glyphsBase);
 
     if (glyphsBase != glyphsLocal)
-	DEALLOCATE_LOCAL (glyphsBase);
+	free (glyphsBase);
     if (listsBase != listsLocal)
-	DEALLOCATE_LOCAL (listsBase);
+	free (listsBase);
     
     return client->noClientException;
 }
@@ -2893,7 +2893,7 @@ PanoramiXRenderFillRectangles (ClientPtr client)
 			RenderErrBase + BadPicture);
     extra_len = (client->req_len << 2) - sizeof (xRenderFillRectanglesReq);
     if (extra_len &&
-	(extra = (char *) ALLOCATE_LOCAL (extra_len)))
+	(extra = (char *) malloc (extra_len)))
     {
 	memcpy (extra, stuff + 1, extra_len);
 	FOR_NSCREENS_FORWARD(j) {
@@ -2919,7 +2919,7 @@ PanoramiXRenderFillRectangles (ClientPtr client)
 	    result = (*PanoramiXSaveRenderVector[X_RenderFillRectangles]) (client);
 	    if(result != Success) break;
 	}
-	DEALLOCATE_LOCAL(extra);
+	free(extra);
     }
 
     return result;
@@ -2944,7 +2944,7 @@ PanoramiXRenderTrapezoids(ClientPtr client)
     extra_len = (client->req_len << 2) - sizeof (xRenderTrapezoidsReq);
 
     if (extra_len &&
-	(extra = (char *) ALLOCATE_LOCAL (extra_len))) {
+	(extra = (char *) malloc (extra_len))) {
 	memcpy (extra, stuff + 1, extra_len);
 
 	FOR_NSCREENS_FORWARD(j) {
@@ -2981,7 +2981,7 @@ PanoramiXRenderTrapezoids(ClientPtr client)
 	    if(result != Success) break;
 	}
 	
-        DEALLOCATE_LOCAL(extra);
+        free(extra);
     }
 
     return result;
@@ -3006,7 +3006,7 @@ PanoramiXRenderTriangles(ClientPtr client)
     extra_len = (client->req_len << 2) - sizeof (xRenderTrianglesReq);
 
     if (extra_len &&
-	(extra = (char *) ALLOCATE_LOCAL (extra_len))) {
+	(extra = (char *) malloc (extra_len))) {
 	memcpy (extra, stuff + 1, extra_len);
 
 	FOR_NSCREENS_FORWARD(j) {
@@ -3039,7 +3039,7 @@ PanoramiXRenderTriangles(ClientPtr client)
 	    if(result != Success) break;
 	}
 	
-        DEALLOCATE_LOCAL(extra);
+        free(extra);
     }
 
     return result;
@@ -3064,7 +3064,7 @@ PanoramiXRenderTriStrip(ClientPtr client)
     extra_len = (client->req_len << 2) - sizeof (xRenderTriStripReq);
 
     if (extra_len &&
-	(extra = (char *) ALLOCATE_LOCAL (extra_len))) {
+	(extra = (char *) malloc (extra_len))) {
 	memcpy (extra, stuff + 1, extra_len);
 
 	FOR_NSCREENS_FORWARD(j) {
@@ -3093,7 +3093,7 @@ PanoramiXRenderTriStrip(ClientPtr client)
 	    if(result != Success) break;
 	}
 	
-        DEALLOCATE_LOCAL(extra);
+        free(extra);
     }
 
     return result;
@@ -3118,7 +3118,7 @@ PanoramiXRenderTriFan(ClientPtr client)
     extra_len = (client->req_len << 2) - sizeof (xRenderTriFanReq);
 
     if (extra_len &&
-	(extra = (char *) ALLOCATE_LOCAL (extra_len))) {
+	(extra = (char *) malloc (extra_len))) {
 	memcpy (extra, stuff + 1, extra_len);
 
 	FOR_NSCREENS_FORWARD(j) {
@@ -3147,7 +3147,7 @@ PanoramiXRenderTriFan(ClientPtr client)
 	    if(result != Success) break;
 	}
 	
-        DEALLOCATE_LOCAL(extra);
+        free(extra);
     }
 
     return result;
@@ -3172,7 +3172,7 @@ PanoramiXRenderColorTrapezoids(ClientPtr client)
     extra_len = (client->req_len << 2) - sizeof (xRenderColorTrapezoidsReq);
 
     if (extra_len &&
-	(extra = (char *) ALLOCATE_LOCAL (extra_len))) {
+	(extra = (char *) malloc (extra_len))) {
 	memcpy (extra, stuff + 1, extra_len);
 
 	FOR_NSCREENS_FORWARD(j) {
@@ -3193,7 +3193,7 @@ PanoramiXRenderColorTrapezoids(ClientPtr client)
 	    if(result != Success) break;
 	}
 	
-        DEALLOCATE_LOCAL(extra);
+        free(extra);
     }
 
     return result;
@@ -3216,7 +3216,7 @@ PanoramiXRenderColorTriangles(ClientPtr client)
     extra_len = (client->req_len << 2) - sizeof (xRenderColorTrianglesReq);
 
     if (extra_len &&
-	(extra = (char *) ALLOCATE_LOCAL (extra_len))) {
+	(extra = (char *) malloc (extra_len))) {
 	memcpy (extra, stuff + 1, extra_len);
 
 	FOR_NSCREENS_FORWARD(j) {
@@ -3237,7 +3237,7 @@ PanoramiXRenderColorTriangles(ClientPtr client)
 	    if(result != Success) break;
 	}
 	
-        DEALLOCATE_LOCAL(extra);
+        free(extra);
     }
 
     return result;
@@ -3260,7 +3260,7 @@ PanoramiXRenderAddTraps (ClientPtr client)
 			RenderErrBase + BadPicture);
     extra_len = (client->req_len << 2) - sizeof (xRenderAddTrapsReq);
     if (extra_len &&
-	(extra = (char *) ALLOCATE_LOCAL (extra_len)))
+	(extra = (char *) malloc (extra_len)))
     {
 	memcpy (extra, stuff + 1, extra_len);
 	x_off = stuff->xOff;
@@ -3277,7 +3277,7 @@ PanoramiXRenderAddTraps (ClientPtr client)
 	    result = (*PanoramiXSaveRenderVector[X_RenderAddTraps]) (client);
 	    if(result != Success) break;
 	}
-	DEALLOCATE_LOCAL(extra);
+	free(extra);
     }
 
     return result;

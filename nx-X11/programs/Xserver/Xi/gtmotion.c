@@ -147,7 +147,7 @@ ProcXGetDeviceMotionEvents(client)
     {
 	size = sizeof(Time) + (axes * sizeof (INT32));
 	tsize = num_events * size;
-	coords = (INT32 *) ALLOCATE_LOCAL(tsize);
+	coords = (INT32 *) malloc(tsize);
 	if (!coords)
 	    {
 	    SendErrorToClient(client, IReqCode, X_GetDeviceMotionEvents, 0, 
@@ -179,7 +179,7 @@ ProcXGetDeviceMotionEvents(client)
 	WriteToClient(client, length * 4, coords);
         }
     if (coords)
-	DEALLOCATE_LOCAL(coords);
+	free(coords);
     return Success;
 }
 

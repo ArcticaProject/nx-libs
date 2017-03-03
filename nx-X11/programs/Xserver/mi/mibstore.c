@@ -963,8 +963,8 @@ miBSFillSpans(pDrawable, pGC, nInit, pptInit, pwidthInit, fSorted)
 
     PROLOGUE(pGC);
 
-    pptCopy = (DDXPointPtr)ALLOCATE_LOCAL(nInit*sizeof(DDXPointRec));
-    pwidthCopy=(int *)ALLOCATE_LOCAL(nInit*sizeof(int));
+    pptCopy = (DDXPointPtr)malloc(nInit*sizeof(DDXPointRec));
+    pwidthCopy=(int *)malloc(nInit*sizeof(int));
     if (pptCopy && pwidthCopy)
     {
 	copyData(pptInit, pptCopy, nInit, MoreCopy0);
@@ -992,8 +992,8 @@ miBSFillSpans(pDrawable, pGC, nInit, pptInit, pwidthInit, fSorted)
 				  pBackingGC, nInit, pptCopy, pwidthCopy,
 				  fSorted);
     }
-    if (pwidthCopy) DEALLOCATE_LOCAL(pwidthCopy);
-    if (pptCopy) DEALLOCATE_LOCAL(pptCopy);
+    if (pwidthCopy) free(pwidthCopy);
+    if (pptCopy) free(pptCopy);
 
     EPILOGUE (pGC);
 }
@@ -1026,8 +1026,8 @@ miBSSetSpans(pDrawable, pGC, psrc, ppt, pwidth, nspans, fSorted)
 
     PROLOGUE(pGC);
 
-    pptCopy = (DDXPointPtr)ALLOCATE_LOCAL(nspans*sizeof(DDXPointRec));
-    pwidthCopy=(int *)ALLOCATE_LOCAL(nspans*sizeof(int));
+    pptCopy = (DDXPointPtr)malloc(nspans*sizeof(DDXPointRec));
+    pwidthCopy=(int *)malloc(nspans*sizeof(int));
     if (pptCopy && pwidthCopy)
     {
 	copyData(ppt, pptCopy, nspans, MoreCopy0);
@@ -1054,8 +1054,8 @@ miBSSetSpans(pDrawable, pGC, psrc, ppt, pwidth, nspans, fSorted)
 	(* pBackingGC->ops->SetSpans)(pBackingDrawable, pBackingGC,
 				psrc, pptCopy, pwidthCopy, nspans, fSorted);
     }
-    if (pwidthCopy) DEALLOCATE_LOCAL(pwidthCopy);
-    if (pptCopy) DEALLOCATE_LOCAL(pptCopy);
+    if (pwidthCopy) free(pwidthCopy);
+    if (pptCopy) free(pptCopy);
 
     EPILOGUE (pGC);
 }
@@ -1209,14 +1209,14 @@ miBSDoCopy(
     numRectsObs = RegionNumRects(pRgnObs);
     nrects = numRectsExp + numRectsObs;
     
-    boxes = (struct BoxDraw *)ALLOCATE_LOCAL(nrects * sizeof(struct BoxDraw));
-    sequence = (int *) ALLOCATE_LOCAL(nrects * sizeof(int));
+    boxes = (struct BoxDraw *)malloc(nrects * sizeof(struct BoxDraw));
+    sequence = (int *) malloc(nrects * sizeof(int));
     *ppRgn = NULL;
 
     if (!boxes || !sequence)
     {
-	if (sequence) DEALLOCATE_LOCAL(sequence);
-	if (boxes) DEALLOCATE_LOCAL(boxes);
+	if (sequence) free(sequence);
+	if (boxes) free(boxes);
 	RegionDestroy(pRgnExp);
 	RegionDestroy(pRgnObs);
 
@@ -1424,8 +1424,8 @@ miBSDoCopy(
 			  pBox->x1 + dx, pBox->y1 + dy, plane);
 	}
     }
-    DEALLOCATE_LOCAL(sequence);
-    DEALLOCATE_LOCAL(boxes);
+    free(sequence);
+    free(boxes);
 
     pGC->graphicsExposures = graphicsExposures;
     /*
@@ -1720,7 +1720,7 @@ miBSPolyPoint (pDrawable, pGC, mode, npt, pptInit)
 
     PROLOGUE(pGC);
 
-    pptCopy = (xPoint *)ALLOCATE_LOCAL(npt*sizeof(xPoint));
+    pptCopy = (xPoint *)malloc(npt*sizeof(xPoint));
     if (pptCopy)
     {
 	copyPoints(pptInit, pptCopy, npt, mode);
@@ -1730,7 +1730,7 @@ miBSPolyPoint (pDrawable, pGC, mode, npt, pptInit)
 	(* pBackingGC->ops->PolyPoint) (pBackingDrawable,
 				   pBackingGC, mode, npt, pptCopy);
 
-	DEALLOCATE_LOCAL(pptCopy);
+	free(pptCopy);
     }
 
     EPILOGUE (pGC);
@@ -1760,7 +1760,7 @@ miBSPolylines (pDrawable, pGC, mode, npt, pptInit)
 
     PROLOGUE(pGC);
 
-    pptCopy = (DDXPointPtr)ALLOCATE_LOCAL(npt*sizeof(DDXPointRec));
+    pptCopy = (DDXPointPtr)malloc(npt*sizeof(DDXPointRec));
     if (pptCopy)
     {
 	copyPoints(pptInit, pptCopy, npt, mode);
@@ -1768,7 +1768,7 @@ miBSPolylines (pDrawable, pGC, mode, npt, pptInit)
 	(* pGC->ops->Polylines)(pDrawable, pGC, mode, npt, pptInit);
 	(* pBackingGC->ops->Polylines)(pBackingDrawable,
 				  pBackingGC, mode, npt, pptCopy);
-	DEALLOCATE_LOCAL(pptCopy);
+	free(pptCopy);
     }
 
     EPILOGUE (pGC);
@@ -1799,7 +1799,7 @@ miBSPolySegment(pDrawable, pGC, nseg, pSegs)
 
     PROLOGUE(pGC);
 
-    pSegsCopy = (xSegment *)ALLOCATE_LOCAL(nseg*sizeof(xSegment));
+    pSegsCopy = (xSegment *)malloc(nseg*sizeof(xSegment));
     if (pSegsCopy)
     {
 	copyData(pSegs, pSegsCopy, nseg << 1, MoreCopy0);
@@ -1808,7 +1808,7 @@ miBSPolySegment(pDrawable, pGC, nseg, pSegs)
 	(* pBackingGC->ops->PolySegment)(pBackingDrawable,
 				    pBackingGC, nseg, pSegsCopy);
 
-	DEALLOCATE_LOCAL(pSegsCopy);
+	free(pSegsCopy);
     }
 
     EPILOGUE (pGC);
@@ -1838,7 +1838,7 @@ miBSPolyRectangle(pDrawable, pGC, nrects, pRects)
 
     PROLOGUE(pGC);
 
-    pRectsCopy =(xRectangle *)ALLOCATE_LOCAL(nrects*sizeof(xRectangle));
+    pRectsCopy =(xRectangle *)malloc(nrects*sizeof(xRectangle));
     if (pRectsCopy)
     {
 	copyData(pRects, pRectsCopy, nrects, MoreCopy2);
@@ -1847,7 +1847,7 @@ miBSPolyRectangle(pDrawable, pGC, nrects, pRects)
 	(* pBackingGC->ops->PolyRectangle)(pBackingDrawable,
 				      pBackingGC, nrects, pRectsCopy);
 
-	DEALLOCATE_LOCAL(pRectsCopy);
+	free(pRectsCopy);
     }
 
     EPILOGUE (pGC);
@@ -1876,7 +1876,7 @@ miBSPolyArc(pDrawable, pGC, narcs, parcs)
 
     PROLOGUE(pGC);
 
-    pArcsCopy = (xArc *)ALLOCATE_LOCAL(narcs*sizeof(xArc));
+    pArcsCopy = (xArc *)malloc(narcs*sizeof(xArc));
     if (pArcsCopy)
     {
 	copyData(parcs, pArcsCopy, narcs, MoreCopy4);
@@ -1885,7 +1885,7 @@ miBSPolyArc(pDrawable, pGC, narcs, parcs)
 	(* pBackingGC->ops->PolyArc)(pBackingDrawable, pBackingGC,
 				narcs, pArcsCopy);
 
-	DEALLOCATE_LOCAL(pArcsCopy);
+	free(pArcsCopy);
     }
 
     EPILOGUE (pGC);
@@ -1916,7 +1916,7 @@ miBSFillPolygon(pDrawable, pGC, shape, mode, count, pPts)
 
     PROLOGUE(pGC);
 
-    pPtsCopy = (DDXPointPtr)ALLOCATE_LOCAL(count*sizeof(DDXPointRec));
+    pPtsCopy = (DDXPointPtr)malloc(count*sizeof(DDXPointRec));
     if (pPtsCopy)
     {
 	copyPoints(pPts, pPtsCopy, count, mode);
@@ -1925,7 +1925,7 @@ miBSFillPolygon(pDrawable, pGC, shape, mode, count, pPts)
 				    pBackingGC, shape, mode,
 				    count, pPtsCopy);
 
-	DEALLOCATE_LOCAL(pPtsCopy);
+	free(pPtsCopy);
     }
 
     EPILOGUE (pGC);
@@ -1956,7 +1956,7 @@ miBSPolyFillRect(pDrawable, pGC, nrectFill, prectInit)
     PROLOGUE(pGC);
 
     pRectCopy =
-	(xRectangle *)ALLOCATE_LOCAL(nrectFill*sizeof(xRectangle));
+	(xRectangle *)malloc(nrectFill*sizeof(xRectangle));
     if (pRectCopy)
     {
 	copyData(prectInit, pRectCopy, nrectFill, MoreCopy2);
@@ -1965,7 +1965,7 @@ miBSPolyFillRect(pDrawable, pGC, nrectFill, prectInit)
 	(* pBackingGC->ops->PolyFillRect)(pBackingDrawable,
 				     pBackingGC, nrectFill, pRectCopy);
 
-	DEALLOCATE_LOCAL(pRectCopy);
+	free(pRectCopy);
     }
 
     EPILOGUE (pGC);
@@ -1995,14 +1995,14 @@ miBSPolyFillArc(pDrawable, pGC, narcs, parcs)
 
     PROLOGUE(pGC);
 
-    pArcsCopy = (xArc *)ALLOCATE_LOCAL(narcs*sizeof(xArc));
+    pArcsCopy = (xArc *)malloc(narcs*sizeof(xArc));
     if (pArcsCopy)
     {
 	copyData(parcs, pArcsCopy, narcs, MoreCopy4);
 	(* pGC->ops->PolyFillArc)(pDrawable, pGC, narcs, parcs);
 	(* pBackingGC->ops->PolyFillArc)(pBackingDrawable,
 				    pBackingGC, narcs, pArcsCopy);
-	DEALLOCATE_LOCAL(pArcsCopy);
+	free(pArcsCopy);
     }
 
     EPILOGUE (pGC);
@@ -2391,7 +2391,7 @@ miBSClearBackingStore(pWin, x, y, w, h, generateExposures)
 		 * PolyFillRect in the proper mode, as set in the GC above.
 		 */
 		numRects = RegionNumRects(pRgn);
-		rects = (xRectangle *)ALLOCATE_LOCAL(numRects*sizeof(xRectangle));
+		rects = (xRectangle *)malloc(numRects*sizeof(xRectangle));
 	    
 		if (rects)
 		{
@@ -2407,7 +2407,7 @@ miBSClearBackingStore(pWin, x, y, w, h, generateExposures)
 		    (* pGC->ops->PolyFillRect) (
 				(DrawablePtr)pBackingStore->pBackingPixmap,
 				       pGC, numRects, rects);
-		    DEALLOCATE_LOCAL(rects);
+		    free(rects);
 		}	
 		FreeScratchGC(pGC);
 	    }
@@ -2483,7 +2483,7 @@ miBSFillVirtualBits (pDrawable, pGC, pRgn, x, y, state, pixunion, planeMask)
     if (state == None)
 	return;
     numRects = RegionNumRects(pRgn);
-    pRect = (xRectangle *)ALLOCATE_LOCAL(numRects * sizeof(xRectangle));
+    pRect = (xRectangle *)malloc(numRects * sizeof(xRectangle));
     if (!pRect)
 	return;
     pWin = 0;
@@ -2554,7 +2554,7 @@ miBSFillVirtualBits (pDrawable, pGC, pRgn, x, y, state, pixunion, planeMask)
     (*pGC->ops->PolyFillRect) (pDrawable, pGC, numRects, pRect);
     if (pWin)
 	(*pWin->drawable.pScreen->DrawGuarantee) (pWin, pGC, GuaranteeNothing);
-    DEALLOCATE_LOCAL (pRect);
+    free (pRect);
 }
 
 /*-

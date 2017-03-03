@@ -179,7 +179,7 @@ char *			pval;
 	ErrorF("Atom error: %s not created\n",_XKB_RF_NAMES_PROP_ATOM);
 	return True;
     }
-    pval= (char*) ALLOCATE_LOCAL(len);
+    pval= (char*) malloc(len);
     if (!pval) {
 	ErrorF("Allocation error: %s proprerty not created\n",
 						_XKB_RF_NAMES_PROP_ATOM);
@@ -220,7 +220,7 @@ char *			pval;
     }
     ChangeWindowProperty(screenInfo.screens[0]->root,name,XA_STRING,8,PropModeReplace,
 							len,pval,True);
-    DEALLOCATE_LOCAL(pval);
+    free(pval);
     return True;
 }
 
