@@ -33,6 +33,7 @@
 **
 */
 
+#define NEED_REPLIES
 #define FONT_PCF
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
@@ -46,18 +47,12 @@
 #include <pixmapstr.h>
 #include <windowstr.h>
 #include "glxutil.h"
-#include "glxbuf.h"
 #include "GL/internal/glcore.h"
 #include "GL/glxint.h"
-#include "glcontextmodes.h"
 
 /************************************************************************/
-
-void __glXNop(void) {}
-
-/************************************************************************/
-
 /* Context stuff */
+
 
 /*
 ** associate a context with a drawable
@@ -68,13 +63,13 @@ __glXAssociateContext(__GLXcontext *glxc)
     glxc->nextDrawPriv = glxc->drawPriv->drawGlxc;
     glxc->drawPriv->drawGlxc = glxc;
 
-    __glXRefDrawablePrivate(glxc->drawPriv);
+    __glXRefDrawable(glxc->drawPriv);
     
 
     glxc->nextReadPriv = glxc->readPriv->readGlxc;
     glxc->readPriv->readGlxc = glxc;
 
-    __glXRefDrawablePrivate(glxc->readPriv);
+    __glXRefDrawable(glxc->readPriv);
 }
 
 /*
@@ -86,348 +81,74 @@ __glXDeassociateContext(__GLXcontext *glxc)
     __GLXcontext *curr, *prev;
 
     prev = NULL;
-    for ( curr = glxc->drawPriv->drawGlxc
-	  ; curr != NULL
-	  ; prev = curr, curr = curr->nextDrawPriv ) {
-	if (curr == glxc) {
-	    /* found context.  Deassociate. */
-	    if (prev == NULL) {
-		glxc->drawPriv->drawGlxc = curr->nextDrawPriv;
-	    } else {
-		prev->nextDrawPriv = curr->nextDrawPriv;
+    if (glxc->drawPriv) {
+        for ( curr = glxc->drawPriv->drawGlxc; curr != NULL
+	      ; prev = curr, curr = curr->nextDrawPriv ) {
+	    if (curr == glxc) {
+	        /* found context.  Deassociate. */
+	        if (prev == NULL) {
+		    glxc->drawPriv->drawGlxc = curr->nextDrawPriv;
+	        } else {
+		    prev->nextDrawPriv = curr->nextDrawPriv;
+	        }
+	        curr->nextDrawPriv = NULL;
+	        __glXUnrefDrawable(glxc->drawPriv);
+	        break;
 	    }
-	    curr->nextDrawPriv = NULL;
-	    __glXUnrefDrawablePrivate(glxc->drawPriv);
-	    break;
-	}
+        }
     }
-
 
     prev = NULL;
-    for ( curr = glxc->readPriv->readGlxc
-	  ; curr != NULL 
-	  ; prev = curr, curr = curr->nextReadPriv ) {
-	if (curr == glxc) {
-	    /* found context.  Deassociate. */
-	    if (prev == NULL) {
-		glxc->readPriv->readGlxc = curr->nextReadPriv;
-	    } else {
-		prev->nextReadPriv = curr->nextReadPriv;
-	    }
-	    curr->nextReadPriv = NULL;
-	    __glXUnrefDrawablePrivate(glxc->readPriv);
-	    break;
-	}
+    if (glxc->readPriv) {
+        for ( curr = glxc->readPriv->readGlxc
+	      ; curr != NULL 
+	      ; prev = curr, curr = curr->nextReadPriv ) {
+	    if (curr == glxc) {
+	        /* found context.  Deassociate. */
+	        if (prev == NULL) {
+		    glxc->readPriv->readGlxc = curr->nextReadPriv;
+	        } else {
+		    prev->nextReadPriv = curr->nextReadPriv;
+	        }
+	        curr->nextReadPriv = NULL;
+	        __glXUnrefDrawable(glxc->readPriv);
+	       break;
+	   }
+       }
     }
-}
-
-/************************************************************************/
-
-void
-__glXGetDrawableSize(__GLdrawablePrivate *glPriv,
-		     GLint *x, GLint *y, GLuint *width, GLuint *height)
-{
-    __GLXdrawablePrivate *glxPriv = (__GLXdrawablePrivate *)glPriv->other;
-
-    if (glxPriv) {
-	*x = glxPriv->xorigin;
-	*y = glxPriv->yorigin;
-	*width = glxPriv->width;
-	*height = glxPriv->height;
-    } else {
-	*x = *y = *width = *height = 0;
-    }
-}
-
-GLboolean
-__glXResizeDrawable(__GLdrawablePrivate *glPriv)
-{
-    /* nothing to be done here */
-    return GL_TRUE;
-}
-
-
-/*****************************************************************************/
-/* accessing the drawable private */
-
-static void
-LockDP(__GLdrawablePrivate *glPriv, __GLcontext *gc)
-{
-    __GLinterface *glci = (__GLinterface *) gc;
-    __GLXcontext *glxc = (__GLXcontext *) glci->imports.other;
-
-    /* quick exit test */
-    if ((glxc->pendingState &
-	 (__GLX_PENDING_RESIZE |
-	  __GLX_PENDING_DESTROY |
-	  __GLX_PENDING_SWAP)) == 0x0)
-	return;
-
-    /* some pending state.  Deal with it */
-    if (glxc->pendingState & __GLX_PENDING_RESIZE) {
-	glxc->pendingState &= ~__GLX_PENDING_RESIZE;
-
-	(*glci->exports.notifyResize)(gc);
-	assert((glxc->pendingState & __GLX_PENDING_RESIZE) == 0x0);
-    }
-    if (glxc->pendingState & __GLX_PENDING_DESTROY) {
-	glxc->pendingState &= ~__GLX_PENDING_DESTROY;
-
-	assert(glxc->drawPriv->xorigin == 0);
-	assert(glxc->drawPriv->yorigin == 0);
-	assert(glxc->drawPriv->width == 0);
-	assert(glxc->drawPriv->height == 0);
-	assert(glxc->readPriv->xorigin == 0);
-	assert(glxc->readPriv->yorigin == 0);
-	assert(glxc->readPriv->width == 0);
-	assert(glxc->readPriv->height == 0);
-	(*glci->exports.notifyDestroy)(gc);
-	__glXDeassociateContext(glxc);
-	assert((glxc->pendingState & __GLX_PENDING_DESTROY) == 0x0);
-    }
-    if (glxc->pendingState & __GLX_PENDING_SWAP) {
-
-	glxc->pendingState &= ~__GLX_PENDING_SWAP;
-
-	(*glci->exports.notifySwapBuffers)(gc);
-	assert((glxc->pendingState & __GLX_PENDING_SWAP) == 0x0);
-    }
-}
-
-static void
-UnlockDP(__GLdrawablePrivate *glPriv)
-{
 }
 
 /*****************************************************************************/
 /* Drawable private stuff */
 
 void
-__glXRefDrawablePrivate(__GLXdrawablePrivate *glxPriv)
+__glXRefDrawable(__GLXdrawable *glxPriv)
 {
     glxPriv->refCount++;
 }
 
 void
-__glXUnrefDrawablePrivate(__GLXdrawablePrivate *glxPriv)
+__glXUnrefDrawable(__GLXdrawable *glxPriv)
 {
     glxPriv->refCount--;
     if (glxPriv->refCount == 0) {
-	__glXDestroyDrawablePrivate(glxPriv);
+	/* remove the drawable from the drawable list */
+	FreeResourceByType(glxPriv->drawId, __glXDrawableRes, FALSE);
+	glxPriv->destroy(glxPriv);
     }
-}
-
-__GLXdrawablePrivate *
-__glXCreateDrawablePrivate(DrawablePtr pDraw, XID drawId,
-			   __GLcontextModes *modes)
-{
-    __GLXdrawablePrivate *glxPriv;
-    __GLdrawablePrivate *glPriv;
-    __GLXscreenInfo *pGlxScreen;
-
-    glxPriv = (__GLXdrawablePrivate *) malloc(sizeof(*glxPriv));
-    memset(glxPriv, 0, sizeof(__GLXdrawablePrivate));
-
-    glxPriv->type = pDraw->type;
-    glxPriv->pDraw = pDraw;
-    glxPriv->drawId = drawId;
-
-    /* if not a pixmap, lookup will fail, so pGlxPixmap will be NULL */
-    glxPriv->pGlxPixmap = (__GLXpixmap *) 
-	LookupIDByType(drawId, __glXPixmapRes);
-    /* since we are creating the drawablePrivate, drawId should be new */
-    if (!AddResource(drawId, __glXDrawableRes, glxPriv)) {
-	/* oops! */
-	free(glxPriv);
-	return NULL;
-    }
-
-    /* fill up glPriv */
-    glPriv = &glxPriv->glPriv;
-    glPriv->modes = (__GLcontextModes *) malloc(sizeof(__GLcontextModes));
-    *glPriv->modes = *modes;
-    glPriv->malloc = malloc;
-    glPriv->calloc = calloc;
-    glPriv->realloc = realloc;
-    glPriv->free = free;
-    glPriv->addSwapRect = NULL;
-    glPriv->setClipRect = (void (*)(__GLdrawablePrivate *, GLint, GLint, GLsizei, GLsizei)) __glXNop;
-    glPriv->lockDP = LockDP;
-    glPriv->unlockDP = UnlockDP;
-    glPriv->getDrawableSize = __glXGetDrawableSize;
-    glPriv->resize = __glXResizeDrawable;
-    glPriv->other = glxPriv;
-
-    /* allocate a one-rect ownership region */
-    glPriv->ownershipRegion.rects = 
-	(__GLregionRect *)calloc(1, sizeof(__GLregionRect));
-    glPriv->ownershipRegion.numRects = 1;
-
-    glxPriv->freeBuffers = __glXFreeBuffers;
-    glxPriv->updatePalette = (void (*)(__GLXdrawablePrivate *)) __glXNop;
-
-    pGlxScreen = &__glXActiveScreens[pDraw->pScreen->myNum];
-
-    if (glxPriv->type == DRAWABLE_WINDOW) {
-	VisualID vid = wVisual((WindowPtr)pDraw);
-
-	glxPriv->modes = _gl_context_modes_find_visual( pGlxScreen->modes, vid );
-	__glXFBInitDrawable(glxPriv, modes);
-    } else {
-	glxPriv->modes = glxPriv->pGlxPixmap->modes;
-	__glXPixInitDrawable(glxPriv, modes);
-    }
-
-    /* initialize the core's private buffer information */
-    (*pGlxScreen->createBuffer)(glxPriv);
-
-    return glxPriv;
 }
 
 GLboolean
-__glXDestroyDrawablePrivate(__GLXdrawablePrivate *glxPriv)
+__glXDrawableInit(__GLXdrawable *drawable,
+		  __GLXscreen *screen, DrawablePtr pDraw, int type,
+		  XID drawId, __GLXconfig *config)
 {
-    __GLdrawablePrivate *glPriv = &glxPriv->glPriv;
-
-    /* remove the drawable from the drawable list */
-    FreeResourceByType(glxPriv->drawId, __glXDrawableRes, FALSE);
-
-    /* Have the core free any memory it may have attached to the drawable */
-    if (glPriv->freePrivate) {
-	(*glPriv->freePrivate)(glPriv);
-    }
-
-    /* Free any framebuffer memory attached to the drawable */
-    if (glxPriv->freeBuffers) {
-	(*glxPriv->freeBuffers)(glxPriv);
-    }
-
-    /* Free the drawable Private */
-    free(glxPriv->glPriv.modes);
-    free(glxPriv->glPriv.ownershipRegion.rects);
-    free(glxPriv);
+    drawable->pDraw = pDraw;
+    drawable->type = type;
+    drawable->drawId = drawId;
+    drawable->refCount = 1;
+    drawable->config = config;
+    drawable->eventMask = 0;
 
     return GL_TRUE;
 }
-
-__GLXdrawablePrivate *
-__glXFindDrawablePrivate(XID drawId)
-{
-    __GLXdrawablePrivate *glxPriv;
-
-    glxPriv = (__GLXdrawablePrivate *)LookupIDByType(drawId, __glXDrawableRes);
-
-    return glxPriv;
-}
-
-__GLXdrawablePrivate *
-__glXGetDrawablePrivate(DrawablePtr pDraw, XID drawId,
-			__GLcontextModes *modes)
-{
-    __GLXdrawablePrivate *glxPriv;
-
-    glxPriv = __glXFindDrawablePrivate(drawId);
-
-    if (glxPriv == NULL) {
-	glxPriv = __glXCreateDrawablePrivate(pDraw, drawId, modes);
-	if (glxPriv) {
-	    __glXRefDrawablePrivate(glxPriv);
-	}
-    }
-
-    return glxPriv;
-}
-
-void
-__glXCacheDrawableSize(__GLXdrawablePrivate *glxPriv)
-{
-    if (glxPriv) {
-	if (glxPriv->pDraw) {
-	    glxPriv->xorigin = glxPriv->pDraw->x;
-	    glxPriv->yorigin = glxPriv->pDraw->y;
-	    glxPriv->width = glxPriv->pDraw->width;
-	    glxPriv->height = glxPriv->pDraw->height;
-	}
-    }
-}
-
-/*
-** resize/move the drawable.  Called during the actual resize callback
-** to update the drawable side of the buffers
-*/
-GLboolean
-__glXResizeDrawableBuffers(__GLXdrawablePrivate *glxPriv)
-{
-    __GLdrawablePrivate *glPriv = &glxPriv->glPriv;
-    GLint x, y;
-    GLuint w, h;
-#if defined(__GL_ALIGNED_BUFFERS)
-    GLint xAlignment, yAlignment;
-    GLint xOffset, yOffset;
-    GLint xStart, xEnd;
-    GLint yStart, yEnd;
-    GLuint xAlignedMask, yAlignedMask;
-#endif
-    GLboolean status = GL_TRUE;
-
-    __glXCacheDrawableSize(glxPriv);
-
-    w = glxPriv->width;
-    h = glxPriv->height;
-    x = glxPriv->xorigin;
-    y = glxPriv->yorigin;
-
-#if defined(__GL_ALIGNED_BUFFERS)
-    xAlignment = glPriv->xAlignment;
-    yAlignment = glPriv->yAlignment;
-
-    xOffset = x & (xAlignment-1);
-    yOffset = y & (yAlignment-1);
-
-    xAlignedMask = ~(xAlignment-1);
-    yAlignedMask = ~(yAlignment-1);
-
-    xStart = x; xEnd = x+w;
-    yStart = y; yEnd = y+h;
-
-    xStart &= xAlignedMask; 
-    if (xEnd & ~xAlignedMask) { 
-	xEnd = (xEnd&xAlignedMask) + xAlignment;
-    }
-    yStart &= yAlignedMask; 
-    if (yEnd & ~yAlignedMask) { 
-	yEnd = (yEnd&yAlignedMask) + yAlignment;
-    }
-
-    x = xStart; y = yStart;
-    w = xEnd-xStart; h = yEnd-yStart;
-#endif
-
-    if ((x != glPriv->xOrigin) ||
-	(y != glPriv->yOrigin) ||
-#if defined(__GL_ALIGNED_BUFFERS)
-	(xOffset != glPriv->xOffset) ||
-	(yOffset != glPriv->yOffset) ||
-#endif
-	(w != glPriv->width) ||
-	(h != glPriv->height) ||
-	(!w && !h)) {
-	/* set up the glPriv info */
-	glPriv->width = w;
-	glPriv->height = h;
-	glPriv->xOrigin = x;
-	glPriv->yOrigin = y;
-#if defined(__GL_ALIGNED_BUFFERS)
-	glPriv->xOffset = xOffset;
-	glPriv->yOffset = yOffset;
-#endif
-
-	/* notify the buffers */
-	status = __glXResizeBuffers(glPriv, x, y, w, h);
-    }
-
-    return status;
-}
-
-/************************************************************************/
-

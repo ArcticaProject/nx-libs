@@ -1,5 +1,7 @@
+NULL =
+
 #define IHaveSubdirs
-      SUBDIRS = main math array_cache swrast swrast_setup tnl shader X GLcore $(MODSUBDIR)
+      SUBDIRS = main math swrast swrast_setup tnl shader X GLcore
 
 #include <Server.tmpl>
 
@@ -9,12 +11,19 @@
 #define MesaBuildDir /**/
 #include "Imakefile.inc"
 
-     INCLUDES = -I$(INCLUDESRC) -I$(XINCLUDESRC) -I$(EXTINCSRC) \
-		-I$(MESASRCDIR)/include -I$(GLXLIBSRC)/include \
-		-I$(MESASRCDIR)/src/mesa \
-		-I$(SERVERSRC)/include
+     INCLUDES =					\
+                -I$(INCLUDESRC)			\
+                -I$(XINCLUDESRC)		\
+                -I$(EXTINCSRC)			\
+                -I$(MESASRCDIR)/include		\
+                -I$(GLXLIBSRC)/include		\
+                -I$(MESASRCDIR)/src/mesa	\
+                -I$(SERVERSRC)/include		\
+                $(NULL)
 
-      DEFINES = $(GLX_DEFINES)
+      DEFINES =					\
+                $(GLX_DEFINES)			\
+                $(NULL)
 
 NormalLibraryObjectRule()
 

@@ -816,7 +816,7 @@ _DeleteCallbackList(
 
     for (i = 0; i < numCallbackListsToCleanup; i++)
     {
-	if ((listsToCleanup[i] = pcbl) != 0)
+	if (listsToCleanup[i] = pcbl)
 	{
 	    listsToCleanup[i] = NULL;
 	    break;

@@ -33,6 +33,7 @@
 **
 */
 
+#define NEED_REPLIES
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
@@ -44,18 +45,19 @@
 #include "glxserver.h"
 #include "glxutil.h"
 #include "glxext.h"
+#include "indirect_dispatch.h"
 #include "unpack.h"
-#include "g_disptab.h"
+#include "glapitable.h"
+#include "glapi.h"
+#include "glthread.h"
+#include "dispatch.h"
 
 int __glXDisp_FeedbackBuffer(__GLXclientState *cl, GLbyte *pc)
 {
-    ClientPtr client = cl->client;
     GLsizei size;
     GLenum type;
     __GLXcontext *cx;
     int error;
-
-    REQUEST_FIXED_SIZE(xGLXSingleReq, 8);
 
     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
     if (!cx) {
@@ -75,19 +77,17 @@ int __glXDisp_FeedbackBuffer(__GLXclientState *cl, GLbyte *pc)
 	}
 	cx->feedbackBufSize = size;
     }
-    glFeedbackBuffer(size, type, cx->feedbackBuf);
+    CALL_FeedbackBuffer( GET_DISPATCH(), (size, type, cx->feedbackBuf) );
     __GLX_NOTE_UNFLUSHED_CMDS(cx);
     return Success;
 }
 
 int __glXDisp_SelectBuffer(__GLXclientState *cl, GLbyte *pc)
 {
-    ClientPtr client = cl->client;
     __GLXcontext *cx;
     GLsizei size;
     int error;
 
-    REQUEST_FIXED_SIZE(xGLXSingleReq, 4);
     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
     if (!cx) {
 	return error;
@@ -105,22 +105,20 @@ int __glXDisp_SelectBuffer(__GLXclientState *cl, GLbyte *pc)
 	}
 	cx->selectBufSize = size;
     }
-    glSelectBuffer(size, cx->selectBuf);
+    CALL_SelectBuffer( GET_DISPATCH(), (size, cx->selectBuf) );
     __GLX_NOTE_UNFLUSHED_CMDS(cx);
     return Success;
 }
 
 int __glXDisp_RenderMode(__GLXclientState *cl, GLbyte *pc)
 {
-    ClientPtr client = cl->client;
+    ClientPtr client;
     xGLXRenderModeReply reply;
     __GLXcontext *cx;
     GLint nitems=0, retBytes=0, retval, newModeCheck;
     GLubyte *retBuffer = NULL;
     GLenum newMode;
     int error;
-
-    REQUEST_FIXED_SIZE(xGLXSingleReq, 4);
 
     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
     if (!cx) {
@@ -129,10 +127,10 @@ int __glXDisp_RenderMode(__GLXclientState *cl, GLbyte *pc)
 
     pc += __GLX_SINGLE_HDR_SIZE;
     newMode = *(GLenum*) pc;
-    retval = glRenderMode(newMode);
+    retval = CALL_RenderMode( GET_DISPATCH(), (newMode) );
 
     /* Check that render mode worked */
-    glGetIntegerv(GL_RENDER_MODE, &newModeCheck);
+    CALL_GetIntegerv( GET_DISPATCH(), (GL_RENDER_MODE, &newModeCheck) );
     if (newModeCheck != newMode) {
 	/* Render mode change failed.  Bail */
 	newMode = newModeCheck;
@@ -196,53 +194,52 @@ int __glXDisp_RenderMode(__GLXclientState *cl, GLbyte *pc)
     ** selection array, as per the API for glRenderMode itself.
     */
   noChangeAllowed:;
+    client = cl->client;
     reply.length = nitems;
     reply.type = X_Reply;
     reply.sequenceNumber = client->sequence;
     reply.retval = retval;
     reply.size = nitems;
     reply.newMode = newMode;
-    WriteToClient(client, sz_xGLXRenderModeReply, &reply);
+    WriteToClient(client, sz_xGLXRenderModeReply, (char *)&reply);
     if (retBytes) {
-	WriteToClient(client, retBytes, retBuffer);
+	WriteToClient(client, retBytes, (char *)retBuffer);
     }
     return Success;
 }
 
 int __glXDisp_Flush(__GLXclientState *cl, GLbyte *pc)
 {
-        ClientPtr client = cl->client;
 	__GLXcontext *cx;
 	int error;
 
-	REQUEST_SIZE_MATCH(xGLXSingleReq);
 	cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
 	if (!cx) {
 		return error;
 	}
 
-	glFlush();
+	CALL_Flush( GET_DISPATCH(), () );
 	__GLX_NOTE_FLUSHED_CMDS(cx);
 	return Success;
 }
 
 int __glXDisp_Finish(__GLXclientState *cl, GLbyte *pc)
 {
-    ClientPtr client = cl->client;
     __GLXcontext *cx;
+    ClientPtr client;
     int error;
 
-    REQUEST_SIZE_MATCH(xGLXSingleReq);
     cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
     if (!cx) {
 	return error;
     }
 
     /* Do a local glFinish */
-    glFinish();
+    CALL_Finish( GET_DISPATCH(), () );
     __GLX_NOTE_FLUSHED_CMDS(cx);
 
     /* Send empty reply packet to indicate finish is finished */
+    client = cl->client;
     __GLX_BEGIN_REPLY(0);
     __GLX_SEND_HEADER();
     return Success;
@@ -272,12 +269,12 @@ char *__glXcombine_strings(const char *cext_string, const char *sext_string)
    if (clen > slen) {
 	combo_string = (char *) malloc(slen + 2);
 	s1 = (char *) malloc(slen + 2);
-	strcpy(s1, sext_string);
+	if (s1) strcpy(s1, sext_string);
 	s2 = cext_string;
    } else {
 	combo_string = (char *) malloc(clen + 2);
 	s1 = (char *) malloc(clen + 2);
-	strcpy(s1, cext_string);
+	if (s1) strcpy(s1, cext_string);
 	s2 = sext_string;
    }
    if (!combo_string || !s1) {
@@ -317,7 +314,7 @@ char *__glXcombine_strings(const char *cext_string, const char *sext_string)
 
 int DoGetString(__GLXclientState *cl, GLbyte *pc, GLboolean need_swap)
 {
-    ClientPtr client = cl->client;
+    ClientPtr client;
     __GLXcontext *cx;
     GLenum name;
     const char *string;
@@ -325,8 +322,6 @@ int DoGetString(__GLXclientState *cl, GLbyte *pc, GLboolean need_swap)
     int error;
     char *buf = NULL, *buf1 = NULL;
     GLint length = 0;
-
-    REQUEST_FIXED_SIZE(xGLXSingleReq, 4);
 
     /* If the client has the opposite byte order, swap the contextTag and
      * the name.
@@ -343,7 +338,8 @@ int DoGetString(__GLXclientState *cl, GLbyte *pc, GLboolean need_swap)
 
     pc += __GLX_SINGLE_HDR_SIZE;
     name = *(GLenum *)(pc + 0);
-    string = (const char *)glGetString(name);
+    string = (const char *) CALL_GetString( GET_DISPATCH(), (name) );
+    client = cl->client;
 
     /*
     ** Restrict extensions to those that are supported by both the
@@ -385,10 +381,10 @@ int DoGetString(__GLXclientState *cl, GLbyte *pc, GLboolean need_swap)
     }
 
     __GLX_SEND_HEADER();
-    WriteToClient(client, length, string);
-    if (buf != NULL) {
+    WriteToClient(client, length, (char *) string); 
+    if (buf != NULL)
 	free(buf);
-    }
+
     return Success;
 }
 
@@ -396,30 +392,3 @@ int __glXDisp_GetString(__GLXclientState *cl, GLbyte *pc)
 {
     return DoGetString(cl, pc, GL_FALSE);
 }
-
-int __glXDisp_GetClipPlane(__GLXclientState *cl, GLbyte *pc)
-{
-    __GLXcontext *cx;
-    ClientPtr client = cl->client;
-    int error;
-    GLdouble answer[4];
-
-    cx = __glXForceCurrent(cl, __GLX_GET_SINGLE_CONTEXT_TAG(pc), &error);
-    if (!cx) {
-	return error;
-    }
-    pc += __GLX_SINGLE_HDR_SIZE;
-
-    __glXClearErrorOccured();
-    glGetClipPlane(*(GLenum   *)(pc + 0), answer);
-    if (__glXErrorOccured()) {
-	__GLX_BEGIN_REPLY(0);
-	__GLX_SEND_HEADER();
-    } else {
-	__GLX_BEGIN_REPLY(32);
-	__GLX_SEND_HEADER();
-	__GLX_SEND_DOUBLE_ARRAY(4);
-    }
-    return Success;
-}
-

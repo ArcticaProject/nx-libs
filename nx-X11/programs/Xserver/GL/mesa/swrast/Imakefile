@@ -1,3 +1,5 @@
+NULL =
+
 /* Large PIC tables needed for Solaris/SPARC builds */
 #if defined(SunArchitecture) && defined(SparcArchitecture) && defined(LargePositionIndependentCFlags)
    PICFLAGS = LargePositionIndependentCFlags
@@ -5,8 +7,6 @@
 
 #include <Server.tmpl>
 
-#define NeedAllMesaSrc
-#define NeedToLinkMesaSrc
 #define MesaSwrastBuildDir /**/
 #include "Imakefile.inc"
 
@@ -14,19 +14,26 @@
          SRCS = $(MESA_SWRAST_SRCS)
          OBJS = $(MESA_SWRAST_OBJS)
 
-     INCLUDES = -I$(MESASRCDIR)/src/mesa \
-		-I$(MESASRCDIR)/src/mesa/main \
-		-I$(MESASRCDIR)/src/mesa/glapi \
-		-I$(MESASRCDIR)/src/mesa/swrast \
-		-I$(MESASRCDIR)/src/mesa/swrast_setup \
-		-I$(MESASRCDIR)/src/mesa/shader \
-		-I$(MESASRCDIR)/include \
-                -I$(SERVERSRC)/include -I$(XINCLUDESRC) \
-                -I$(SERVERSRC)/GL/include -I$(SERVERSRC)/GL/glx \
-                -I$(LIBSRC)/GL/include \
-                -I$(XF86SRC) -I$(INCLUDESRC)
+     INCLUDES =						\
+                -I$(MESASRCDIR)/src/mesa		\
+                -I$(MESASRCDIR)/src/mesa/main		\
+                -I$(MESASRCDIR)/src/mesa/glapi		\
+                -I$(MESASRCDIR)/src/mesa/swrast		\
+                -I$(MESASRCDIR)/src/mesa/swrast_setup	\
+                -I$(MESASRCDIR)/src/mesa/shader		\
+                -I$(MESASRCDIR)/include			\
+                -I$(SERVERSRC)/include			\
+                -I$(XINCLUDESRC)			\
+                -I$(SERVERSRC)/GL/include		\
+                -I$(SERVERSRC)/GL/glx			\
+                -I$(LIBSRC)/GL/include			\
+                -I$(XF86SRC)				\
+                -I$(INCLUDESRC)				\
+                $(NULL)
 
-      DEFINES = $(GLX_DEFINES) /*-DUSE_X86_ASM*/ /*-DUSE_SPARC_ASM*/
+      DEFINES =						\
+                $(GLX_DEFINES)				\
+                $(NULL)
 
 NormalLibraryObjectRule()
 

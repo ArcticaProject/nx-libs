@@ -37,36 +37,52 @@
 #include <dix-config.h>
 #endif
 
+#include <GL/glxtokens.h>
 #include <string.h>
-#include <signal.h>
-
 #include <windowstr.h>
+#include <os.h>
+#include <colormapst.h>
 
 #include "glxserver.h"
 #include "glxutil.h"
 #include "glxext.h"
 
-const char GLServerVersion[] = "1.2";
+#ifndef XSERVER_LACKS_PRIVATES_ABI
+static DevPrivateKey glxScreenPrivateKey = &glxScreenPrivateKey;
+#else
+int glxScreenPrivateIndex = -1;
+#endif /* XSERVER_LACKS_PRIVATES_ABI */
+
+const char GLServerVersion[] = "1.4";
 static const char GLServerExtensions[] = 
 			"GL_ARB_depth_texture "
+			"GL_ARB_draw_buffers "
+			"GL_ARB_fragment_program "
+			"GL_ARB_fragment_program_shadow "
 			"GL_ARB_imaging "
+			"GL_ARB_multisample "
 			"GL_ARB_multitexture "
+			"GL_ARB_occlusion_query "
 			"GL_ARB_point_parameters "
 			"GL_ARB_point_sprite "
 			"GL_ARB_shadow "
 			"GL_ARB_shadow_ambient "
 			"GL_ARB_texture_border_clamp "
+			"GL_ARB_texture_compression "
 			"GL_ARB_texture_cube_map "
 			"GL_ARB_texture_env_add "
 			"GL_ARB_texture_env_combine "
 			"GL_ARB_texture_env_crossbar "
 			"GL_ARB_texture_env_dot3 "
 			"GL_ARB_texture_mirrored_repeat "
+			"GL_ARB_texture_non_power_of_two "
 			"GL_ARB_transpose_matrix "
+			"GL_ARB_vertex_program "
 			"GL_ARB_window_pos "
 			"GL_EXT_abgr "
 			"GL_EXT_bgra "
  			"GL_EXT_blend_color "
+			"GL_EXT_blend_equation_separate "
 			"GL_EXT_blend_func_separate "
 			"GL_EXT_blend_logic_op "
  			"GL_EXT_blend_minmax "
@@ -75,45 +91,77 @@ static const char GLServerExtensions[] =
 			"GL_EXT_copy_texture "
 			"GL_EXT_draw_range_elements "
 			"GL_EXT_fog_coord "
+			"GL_EXT_framebuffer_object "
 			"GL_EXT_multi_draw_arrays "
 			"GL_EXT_packed_pixels "
+			"GL_EXT_paletted_texture "
+			"GL_EXT_point_parameters "
 			"GL_EXT_polygon_offset "
 			"GL_EXT_rescale_normal "
 			"GL_EXT_secondary_color "
 			"GL_EXT_separate_specular_color "
 			"GL_EXT_shadow_funcs "
+			"GL_EXT_shared_texture_palette "
  			"GL_EXT_stencil_two_side "
 			"GL_EXT_stencil_wrap "
 			"GL_EXT_subtexture "
 			"GL_EXT_texture "
 			"GL_EXT_texture3D "
+			"GL_EXT_texture_compression_dxt1 "
+			"GL_EXT_texture_compression_s3tc "
 			"GL_EXT_texture_edge_clamp "
  			"GL_EXT_texture_env_add "
  			"GL_EXT_texture_env_combine "
  			"GL_EXT_texture_env_dot3 "
+ 			"GL_EXT_texture_filter_ansiotropic "
 			"GL_EXT_texture_lod "
  			"GL_EXT_texture_lod_bias "
+ 			"GL_EXT_texture_mirror_clamp "
 			"GL_EXT_texture_object "
 			"GL_EXT_texture_rectangle "
 			"GL_EXT_vertex_array "
+			"GL_3DFX_texture_compression_FXT1 "
 			"GL_APPLE_packed_pixels "
-			"GL_ATI_texture_mirror_once "
+			"GL_ATI_draw_buffers "
 			"GL_ATI_texture_env_combine3 "
+			"GL_ATI_texture_mirror_once "
  			"GL_HP_occlusion_test "
 			"GL_IBM_texture_mirrored_repeat "
+			"GL_INGR_blend_func_separate "
 			"GL_MESA_pack_invert "
 			"GL_MESA_ycbcr_texture "
 			"GL_NV_blend_square "
+			"GL_NV_depth_clamp "
+			"GL_NV_fog_distance "
+			"GL_NV_fragment_program "
+			"GL_NV_fragment_program_option "
+			"GL_NV_fragment_program2 "
+			"GL_NV_light_max_exponent "
+			"GL_NV_multisample_filter_hint "
 			"GL_NV_point_sprite "
 			"GL_NV_texgen_reflection "
+			"GL_NV_texture_compression_vtc "
+			"GL_NV_texture_env_combine4 "
+			"GL_NV_texture_expand_normal "
 			"GL_NV_texture_rectangle "
+			"GL_NV_vertex_program "
+			"GL_NV_vertex_program1_1 "
+			"GL_NV_vertex_program2 "
+			"GL_NV_vertex_program2_option "
+			"GL_NV_vertex_program3 "
+			"GL_OES_compressed_paletted_texture "
+			"GL_SGI_color_matrix "
+			"GL_SGI_color_table "
 			"GL_SGIS_generate_mipmap "
+			"GL_SGIS_multisample "
+			"GL_SGIS_point_parameters "
 			"GL_SGIS_texture_border_clamp "
 			"GL_SGIS_texture_edge_clamp "
 			"GL_SGIS_texture_lod "
 			"GL_SGIX_depth_texture "
 			"GL_SGIX_shadow "
 			"GL_SGIX_shadow_ambient "
+			"GL_SUN_slice_accum "
 			;
 
 /*
@@ -127,111 +175,43 @@ static char GLXServerExtensions[] =
 			"GLX_EXT_visual_info "
 			"GLX_EXT_visual_rating "
 			"GLX_EXT_import_context "
+                        "GLX_EXT_texture_from_pixmap "
 			"GLX_OML_swap_method "
 			"GLX_SGI_make_current_read "
-#ifndef __DARWIN__
+#ifndef __APPLE__
 			"GLX_SGIS_multisample "
                         "GLX_SGIX_hyperpipe "
                         "GLX_SGIX_swap_barrier "
 #endif
 			"GLX_SGIX_fbconfig "
+			"GLX_MESA_copy_sub_buffer "
 			;
-
-/*
- * __glDDXScreenInfo comes from GLcore, so we can't resolve this symbol at
- * module open time.  Leave a placeholder, and fill this in when we first
- * need it (in __glXScreenInit).  XXX Why make this an array?
- */
-static __GLXscreenInfo *__glXScreens[] = {
-    NULL /* &__glDDXScreenInfo */ ,
-};
-
-static GLint __glXNumStaticScreens =
-	(sizeof __glXScreens / sizeof __glXScreens[0]);
-
-__GLXscreenInfo *__glXActiveScreens;
-GLint __glXNumActiveScreens;
-
-__GLXSwapBarrierExtensionFuncs *__glXSwapBarrierFuncs = NULL;
-static int __glXNumSwapBarrierFuncs = 0;
-__GLXHyperpipeExtensionFuncs *__glXHyperpipeFuncs = NULL;
-static int __glXNumHyperpipeFuncs = 0;
-
-
-RESTYPE __glXDrawableRes;
-
-__GLXscreenInfo *__glXgetActiveScreen(int num) {
-	return &__glXActiveScreens[num];
-}
-
-/*
-** Destroy routine that gets called when a drawable is freed.  A drawable
-** contains the ancillary buffers needed for rendering.
-*/
-static Bool DrawableGone(__GLXdrawablePrivate *glxPriv, XID xid)
-{
-    __GLXcontext *cx, *cx1;
-
-    /*
-    ** Use glxPriv->type to figure out what kind of drawable this is. Don't
-    ** use glxPriv->pDraw->type because by the time this routine is called,
-    ** the pDraw might already have been freed.
-    */
-    if (glxPriv->type == DRAWABLE_WINDOW) {
-	/*
-	** When a window is destroyed, notify all context bound to 
-	** it, that there are no longer bound to anything.
-	*/
-	for (cx = glxPriv->drawGlxc; cx; cx = cx1) {
-	    cx1 = cx->nextDrawPriv;
-	    cx->pendingState |= __GLX_PENDING_DESTROY;
-	}
-
-	for (cx = glxPriv->readGlxc; cx; cx = cx1) {
-	    cx1 = cx->nextReadPriv;
-	    cx->pendingState |= __GLX_PENDING_DESTROY;
-	}
-    }
-
-    /*
-    ** set the size to 0, so that context that may still be using this 
-    ** drawable not do anything harmful
-    */
-    glxPriv->xorigin = 0;
-    glxPriv->yorigin = 0;
-    glxPriv->width = 0;
-    glxPriv->height = 0;
-
-    __glXUnrefDrawablePrivate(glxPriv);
-
-    return True;
-}
 
 /*
 ** This hook gets called when a window moves or changes size.
 */
-static Bool PositionWindow(WindowPtr pWin, int x, int y)
+static Bool glxPositionWindow(WindowPtr pWin, int x, int y)
 {
     ScreenPtr pScreen;
-    __GLXcontext *glxc;
-    __GLXdrawablePrivate *glxPriv;
+    __GLXdrawable *glxPriv;
     Bool ret;
+    __GLXscreen *pGlxScreen;
 
     /*
     ** Call wrapped position window routine
     */
     pScreen = pWin->drawable.pScreen;
-    pScreen->PositionWindow =
-	__glXActiveScreens[pScreen->myNum].WrappedPositionWindow;
+    pGlxScreen = glxGetScreen(pScreen);
+    pScreen->PositionWindow = pGlxScreen->PositionWindow;
     ret = (*pScreen->PositionWindow)(pWin, x, y);
-    pScreen->PositionWindow = PositionWindow;
+    pScreen->PositionWindow = glxPositionWindow;
 
     /*
     ** Tell all contexts rendering into this window that the window size
     ** has changed.
     */
-    glxPriv = (__GLXdrawablePrivate *) LookupIDByType(pWin->drawable.id,
-						      __glXDrawableRes);
+    glxPriv = (__GLXdrawable *) LookupIDByType(pWin->drawable.id,
+					       __glXDrawableRes);
     if (glxPriv == NULL) {
 	/*
 	** This window is not being used by the OpenGL.
@@ -243,35 +223,13 @@ static Bool PositionWindow(WindowPtr pWin, int x, int y)
     ** resize the drawable
     */
     /* first change the drawable size */
-    if (__glXResizeDrawableBuffers(glxPriv) == GL_FALSE) {
+    if (glxPriv->resize(glxPriv) == GL_FALSE) {
 	/* resize failed! */
 	/* XXX: what can we possibly do here? */
 	ret = False;
     }
 
-    /* mark contexts as needing resize */
-
-    for (glxc = glxPriv->drawGlxc; glxc; glxc = glxc->nextDrawPriv) {
-	glxc->pendingState |= __GLX_PENDING_RESIZE;
-    }
-
-    for (glxc = glxPriv->readGlxc; glxc; glxc = glxc->nextReadPriv) {
-	glxc->pendingState |= __GLX_PENDING_RESIZE;
-    }
-
     return ret;
-}
-
-/*
-** Wrap our own PositionWindow routine around the server's, so we can
-** be notified when a window changes size
-*/
-static void wrapPositionWindow(int screen)
-{
-    ScreenPtr pScreen = screenInfo.screens[screen];
-
-    __glXActiveScreens[screen].WrappedPositionWindow = pScreen->PositionWindow;
-    pScreen->PositionWindow = PositionWindow;
 }
 
 /*
@@ -287,87 +245,373 @@ static void wrapPositionWindow(int screen)
 
 void __glXHyperpipeInit(int screen, __GLXHyperpipeExtensionFuncs *funcs)
 {
-    if (__glXNumHyperpipeFuncs < screen + 1) {
-        __glXHyperpipeFuncs = realloc(__glXHyperpipeFuncs,
-                                           (screen+1) * sizeof(__GLXHyperpipeExtensionFuncs));
-        __glXNumHyperpipeFuncs = screen + 1;
-    }
+    __GLXscreen *pGlxScreen = glxGetScreen(screenInfo.screens[screen]);
 
-    __glXHyperpipeFuncs[screen].queryHyperpipeNetworkFunc =
-        *funcs->queryHyperpipeNetworkFunc;
-    __glXHyperpipeFuncs[screen].queryHyperpipeConfigFunc =
-        *funcs->queryHyperpipeConfigFunc;
-    __glXHyperpipeFuncs[screen].destroyHyperpipeConfigFunc =
-        *funcs->destroyHyperpipeConfigFunc;
-    __glXHyperpipeFuncs[screen].hyperpipeConfigFunc =
-        *funcs->hyperpipeConfigFunc;
+    pGlxScreen->hyperpipeFuncs = funcs;
 }
 
 void __glXSwapBarrierInit(int screen, __GLXSwapBarrierExtensionFuncs *funcs)
 {
-    if (__glXNumSwapBarrierFuncs < screen + 1) {
-        __glXSwapBarrierFuncs = realloc(__glXSwapBarrierFuncs,
-                                           (screen+1) * sizeof(__GLXSwapBarrierExtensionFuncs));
-        __glXNumSwapBarrierFuncs = screen + 1;
-    }
+    __GLXscreen *pGlxScreen = glxGetScreen(screenInfo.screens[screen]);
 
-    __glXSwapBarrierFuncs[screen].bindSwapBarrierFunc =
-        funcs->bindSwapBarrierFunc;
-    __glXSwapBarrierFuncs[screen].queryMaxSwapBarriersFunc =
-        funcs->queryMaxSwapBarriersFunc;
+    pGlxScreen->swapBarrierFuncs = funcs;
 }
 
-void __glXScreenInit(GLint numscreens)
+static Bool
+glxCloseScreen (int index, ScreenPtr pScreen)
 {
-    GLint i,j;
+    __GLXscreen *pGlxScreen = glxGetScreen(pScreen);
 
-    __glXScreens[0] = __glXglDDXScreenInfo(); /* from GLcore */
+    pScreen->CloseScreen = pGlxScreen->CloseScreen;
+    pScreen->PositionWindow = pGlxScreen->PositionWindow;
 
-    /*
-    ** This alloc has to work or else the server might as well core dump.
-    */
-    __glXActiveScreens =
-      (__GLXscreenInfo *) malloc(sizeof(__GLXscreenInfo) * numscreens);
-    
-    for (i=0; i < numscreens; i++) {
-	/*
-	** Probe each static screen to see which exists.
-	*/
-	for (j=0; j < __glXNumStaticScreens; j++) {
-	    if ((*__glXScreens[j]->screenProbe)(i)) {
-		__glXActiveScreens[i] = *__glXScreens[j];
+    pGlxScreen->destroy(pGlxScreen);
 
-		__glXActiveScreens[i].numUsableVisuals = __glXActiveScreens[i].numVisuals;
-		__glXActiveScreens[i].GLextensions = strdup(GLServerExtensions);
-		__glXActiveScreens[i].GLXvendor = strdup(GLXServerVendorName);
-		__glXActiveScreens[i].GLXversion = strdup(GLXServerVersion);
-		__glXActiveScreens[i].GLXextensions = strdup(GLXServerExtensions);
+    return pScreen->CloseScreen(index, pScreen);
+}
 
-		__glXDrawableRes = CreateNewResourceType((DeleteType)DrawableGone);
-		wrapPositionWindow(i);
+__GLXscreen *
+glxGetScreen(ScreenPtr pScreen)
+{
+#ifndef XSERVER_LACKS_PRIVATES_ABI
+    return dixLookupPrivate(&pScreen->devPrivates, glxScreenPrivateKey);
+#else
+    return pScreen->devPrivates[glxScreenPrivateIndex].ptr;
+#endif /* XSERVER_LACKS_PRIVATES_ABI */
+}
+
+void GlxSetVisualConfigs(int nconfigs, 
+                         __GLXvisualConfig *configs, void **privates)
+{
+    /* We keep this stub around for the DDX drivers that still
+     * call it. */
+}
+
+GLint glxConvertToXVisualType(int visualType)
+{
+    static const int x_visual_types[] = {
+	TrueColor,   DirectColor,
+	PseudoColor, StaticColor,
+	GrayScale,   StaticGray
+    };
+
+    return ( (unsigned) (visualType - GLX_TRUE_COLOR) < 6 )
+	? x_visual_types[ visualType - GLX_TRUE_COLOR ] : -1;
+}
+
+
+static void
+filterOutNativeConfigs(__GLXscreen *pGlxScreen)
+{
+    __GLXconfig *m, *next, **last;
+    ScreenPtr pScreen = pGlxScreen->pScreen;
+    int i, depth;
+
+    last = &pGlxScreen->fbconfigs;
+    for (m = pGlxScreen->fbconfigs; m != NULL; m = next) {
+	next = m->next;
+	depth = m->redBits + m->blueBits + m->greenBits;
+
+	for (i = 0; i < pScreen->numVisuals; i++) {
+	    if (pScreen->visuals[i].nplanes == depth) {
+		*last = m;
+		last = &m->next;
+		break;
 	    }
 	}
     }
-    __glXNumActiveScreens = numscreens;
+
+    *last = NULL;
 }
 
-void __glXScreenReset(void)
+static XID
+findVisualForConfig(ScreenPtr pScreen, __GLXconfig *m)
 {
-  int i;
+    int i;
 
-  for (i = 0; i < __glXNumActiveScreens; i++) {
-      free(__glXActiveScreens[i].GLXvendor);
-      free(__glXActiveScreens[i].GLXversion);
-      free(__glXActiveScreens[i].GLXextensions);
-      free(__glXActiveScreens[i].GLextensions);
-  }
-  free(__glXActiveScreens);
-  free(__glXHyperpipeFuncs);
-  free(__glXSwapBarrierFuncs);
-  __glXNumHyperpipeFuncs = 0;
-  __glXNumSwapBarrierFuncs = 0;
-  __glXHyperpipeFuncs = NULL;
-  __glXSwapBarrierFuncs = NULL;
-  __glXActiveScreens = NULL;
-  __glXNumActiveScreens = 0;
+    for (i = 0; i < pScreen->numVisuals; i++) {
+	if (glxConvertToXVisualType(m->visualType) == pScreen->visuals[i].class)
+	    return pScreen->visuals[i].vid;
+    }
+
+    return 0;
+}
+
+/* This code inspired by composite/compinit.c.  We could move this to
+ * mi/ and share it with composite.*/
+
+static VisualPtr
+AddScreenVisuals(ScreenPtr pScreen, int count, int d)
+{
+    XID		*installedCmaps, *vids, vid;
+    int		 numInstalledCmaps, numVisuals, i, j;
+    VisualPtr	 visuals;
+    ColormapPtr	 installedCmap;
+    DepthPtr	 depth;
+
+    depth = NULL;
+    for (i = 0; i < pScreen->numDepths; i++) {
+	if (pScreen->allowedDepths[i].depth == d) {
+	    depth = &pScreen->allowedDepths[i];
+	    break;
+	}
+    }
+    if (depth == NULL)
+	return NULL;
+
+    /* Find the installed colormaps */
+    installedCmaps = malloc(pScreen->maxInstalledCmaps * sizeof (XID));
+    if (!installedCmaps)
+	return NULL;
+
+    numInstalledCmaps = pScreen->ListInstalledColormaps(pScreen, installedCmaps);
+
+    /* realloc the visual array to fit the new one in place */
+    numVisuals = pScreen->numVisuals;
+    visuals = realloc(pScreen->visuals, (numVisuals + count) * sizeof(VisualRec));
+    if (!visuals) {
+	free(installedCmaps);
+	return NULL;
+    }
+
+    vids = realloc(depth->vids, (depth->numVids + count) * sizeof(XID));
+    if (vids == NULL) {
+	free(installedCmaps);
+	free(visuals);
+	return NULL;
+    }
+
+    /*
+     * Fix up any existing installed colormaps -- we'll assume that
+     * the only ones created so far have been installed.  If this
+     * isn't true, we'll have to walk the resource database looking
+     * for all colormaps.
+     */
+    for (i = 0; i < numInstalledCmaps; i++) {
+	installedCmap = LookupIDByType (installedCmaps[i], RT_COLORMAP);
+	if (!installedCmap)
+	    continue;
+	j = installedCmap->pVisual - pScreen->visuals;
+	installedCmap->pVisual = &visuals[j];
+    }
+
+    free(installedCmaps);
+
+    for (i = 0; i < count; i++) {
+	vid = FakeClientID(0);
+	visuals[pScreen->numVisuals + i].vid = vid;
+	vids[depth->numVids + i] = vid;
+    }
+
+    pScreen->visuals = visuals;
+    pScreen->numVisuals += count;
+    depth->vids = vids;
+    depth->numVids += count;
+
+    /* Return a pointer to the first of the added visuals. */ 
+    return pScreen->visuals + pScreen->numVisuals - count;
+}
+
+static int
+findFirstSet(unsigned int v)
+{
+    int i;
+
+    for (i = 0; i < 32; i++)
+	if (v & (1 << i))
+	    return i;
+
+    return -1;
+}
+
+static void
+initGlxVisual(VisualPtr visual, __GLXconfig *config)
+{
+    config->visualID = visual->vid;
+    visual->class = glxConvertToXVisualType(config->visualType);
+    visual->bitsPerRGBValue = config->redBits;
+    visual->ColormapEntries = 1 << config->redBits;
+    visual->nplanes = config->redBits + config->greenBits + config->blueBits;
+
+    visual->redMask = config->redMask;
+    visual->greenMask = config->greenMask;
+    visual->blueMask = config->blueMask;
+    visual->offsetRed = findFirstSet(config->redMask);
+    visual->offsetGreen = findFirstSet(config->greenMask);
+    visual->offsetBlue = findFirstSet(config->blueMask);
+}
+
+typedef struct {
+    GLboolean doubleBuffer;
+    GLboolean depthBuffer;
+    GLboolean stencilBuffer;
+} FBConfigTemplateRec, *FBConfigTemplatePtr;
+
+static __GLXconfig *
+pickFBConfig(__GLXscreen *pGlxScreen, FBConfigTemplatePtr template, int class)
+{
+    __GLXconfig *config;
+
+    for (config = pGlxScreen->fbconfigs; config != NULL; config = config->next) {
+	if (config->visualRating != GLX_NONE)
+	    continue;
+	if (glxConvertToXVisualType(config->visualType) != class)
+	    continue;
+	if ((config->doubleBufferMode > 0) != template->doubleBuffer)
+	    continue;
+	if ((config->depthBits > 0) != template->depthBuffer)
+	    continue;
+	if ((config->stencilBits > 0) != template->stencilBuffer)
+	    continue;
+
+	return config;
+    }
+
+    return NULL;
+}
+
+static void
+addMinimalSet(__GLXscreen *pGlxScreen)
+{
+    __GLXconfig *config;
+    VisualPtr visuals;
+    int i, j;
+    FBConfigTemplateRec best = { GL_TRUE, GL_TRUE, GL_TRUE };
+    FBConfigTemplateRec good = { GL_TRUE, GL_TRUE, GL_FALSE };
+    FBConfigTemplateRec minimal = { GL_FALSE, GL_FALSE, GL_FALSE };
+
+    pGlxScreen->visuals = calloc(pGlxScreen->pScreen->numVisuals,
+				  sizeof (__GLXconfig *));
+    if (pGlxScreen->visuals == NULL) {
+	ErrorF("Failed to allocate for minimal set of GLX visuals\n");
+	return;
+    }
+
+    visuals = pGlxScreen->pScreen->visuals;
+    for (i = 0, j = 0; i < pGlxScreen->pScreen->numVisuals; i++) {
+	if (visuals[i].nplanes == 32)
+	    config = pickFBConfig(pGlxScreen, &minimal, visuals[i].class);
+	else {
+	    config = pickFBConfig(pGlxScreen, &best, visuals[i].class);
+	    if (config == NULL)
+		config = pickFBConfig(pGlxScreen, &good, visuals[i].class);
+        }
+	if (config == NULL)
+	    config = pGlxScreen->fbconfigs;
+	if (config == NULL)
+	    continue;
+
+	pGlxScreen->visuals[j] = config;
+	config->visualID = visuals[i].vid;
+	j++;
+    }
+
+    pGlxScreen->numVisuals = j;
+}
+
+static void
+addTypicalSet(__GLXscreen *pGlxScreen)
+{
+    addMinimalSet(pGlxScreen);
+}
+
+static void
+addFullSet(__GLXscreen *pGlxScreen)
+{
+    __GLXconfig *config;
+    VisualPtr visuals;
+    int i, depth;
+
+    pGlxScreen->visuals =
+	calloc(pGlxScreen->numFBConfigs, sizeof (__GLXconfig *));
+    if (pGlxScreen->visuals == NULL) {
+	ErrorF("Failed to allocate for full set of GLX visuals\n");
+	return;
+    }
+
+    config = pGlxScreen->fbconfigs;
+    depth = config->redBits + config->greenBits + config->blueBits;
+    visuals = AddScreenVisuals(pGlxScreen->pScreen, pGlxScreen->numFBConfigs, depth);
+    if (visuals == NULL) {
+	free(pGlxScreen->visuals);
+	return;
+    }
+
+    pGlxScreen->numVisuals = pGlxScreen->numFBConfigs;
+    for (i = 0, config = pGlxScreen->fbconfigs; config; config = config->next, i++) {
+	pGlxScreen->visuals[i] = config;
+	initGlxVisual(&visuals[i], config);
+    }
+}
+
+static int glxVisualConfig = GLX_ALL_VISUALS;
+
+void GlxSetVisualConfig(int config)
+{
+    glxVisualConfig = config;
+}
+
+void __glXScreenInit(__GLXscreen *pGlxScreen, ScreenPtr pScreen)
+{
+    __GLXconfig *m;
+    int i;
+
+#ifdef XSERVER_LACKS_PRIVATES_ABI
+    if ((glxScreenPrivateIndex = AllocateScreenPrivateIndex()) < 0)
+	return FALSE;
+#endif /* XSERVER_LACKS_PRIVATES_ABI */
+
+    pGlxScreen->pScreen       = pScreen;
+    pGlxScreen->GLextensions  = xstrdup(GLServerExtensions);
+    pGlxScreen->GLXvendor     = xstrdup(GLXServerVendorName);
+    pGlxScreen->GLXversion    = xstrdup(GLXServerVersion);
+    pGlxScreen->GLXextensions = xstrdup(GLXServerExtensions);
+
+    pGlxScreen->PositionWindow = pScreen->PositionWindow;
+    pScreen->PositionWindow = glxPositionWindow;
+ 
+    pGlxScreen->CloseScreen = pScreen->CloseScreen;
+    pScreen->CloseScreen = glxCloseScreen;
+
+    filterOutNativeConfigs(pGlxScreen);
+
+    i = 0;
+    for (m = pGlxScreen->fbconfigs; m != NULL; m = m->next) {
+	m->fbconfigID = FakeClientID(0);
+	m->visualID = findVisualForConfig(pScreen, m);
+	i++;
+    }
+    pGlxScreen->numFBConfigs = i;
+
+    /* Select a subset of fbconfigs that we send to the client when it
+     * asks for the glx visuals.  All the fbconfigs here have a valid
+     * value for visual ID and each visual ID is only present once.
+     * This runs before composite adds its extra visual so we have to
+     * remember the number of visuals here.*/
+
+    switch (glxVisualConfig) {
+    case GLX_MINIMAL_VISUALS:
+	addMinimalSet(pGlxScreen);
+	break;
+    case GLX_TYPICAL_VISUALS:
+	addTypicalSet(pGlxScreen);
+	break;
+    case GLX_ALL_VISUALS:
+	addFullSet(pGlxScreen);
+	break;
+    }
+
+#ifndef XSERVER_LACKS_PRIVATES_ABI
+    dixSetPrivate(&pScreen->devPrivates, glxScreenPrivateKey, pGlxScreen);
+#else
+    pScreen->devPrivates[glxScreenPrivateIndex].ptr = (void *) pGlxScreen;
+#endif /* XSERVER_LACKS_PRIVATES_ABI */
+}
+
+void __glXScreenDestroy(__GLXscreen *screen)
+{
+    free(screen->GLXvendor);
+    free(screen->GLXversion);
+    free(screen->GLXextensions);
+    free(screen->GLextensions);
 }

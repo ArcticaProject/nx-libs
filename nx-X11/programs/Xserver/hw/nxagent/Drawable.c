@@ -2702,7 +2702,7 @@ void nxagentCreateDrawableBitmap(DrawablePtr pDrawable)
    * would fail.
    */
 
-  pBitmap = nxagentCreatePixmap(pDrawable -> pScreen, pDrawable -> width, pDrawable -> height, pDrawable -> depth);
+  pBitmap = nxagentCreatePixmap(pDrawable -> pScreen, pDrawable -> width, pDrawable -> height, pDrawable -> depth, CREATE_PIXMAP_SCRATCH_USAGE);
 
   if (pBitmap == NULL)
   {
