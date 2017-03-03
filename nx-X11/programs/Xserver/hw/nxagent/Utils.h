@@ -48,4 +48,8 @@
 #define MAX(A, B) ( (A) > (B) ? (A) : (B) );
 #endif
 
+static inline const char * validateString(const char *str) {
+  return str ? str : "(null)";
+}
+
 #endif /* __Utils_H__ */

@@ -36,8 +36,6 @@ extern Atom nxagentAtoms[NXAGENT_NUMBER_OF_ATOMS];
 
 extern Bool nxagentWMIsRunning;
 
-extern const char * validateString(const char *);
-
 /*
  * Create the required atoms internally
  * to the agent server.

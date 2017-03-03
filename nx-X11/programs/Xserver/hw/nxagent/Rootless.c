@@ -38,6 +38,7 @@
 #include "Pixmaps.h"
 #include "Atoms.h"
 #include "Trap.h"
+#include "Utils.h"
 
 #include "compext/Compext.h"
 
