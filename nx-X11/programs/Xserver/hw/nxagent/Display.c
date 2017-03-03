@@ -169,7 +169,6 @@ Pixmap nxagentIconPixmap;
 Pixmap nxagentIconShape;
 Bool useXpmIcon = False;
 
-unsigned int nxagentLogoColor(unsigned int value);
 Bool nxagentMakeIcon(Display *display, Pixmap *nxIcon, Pixmap *nxMask);
 
 
@@ -183,13 +182,6 @@ static int nxagentCheckForDepthsCompatibility(void);
 static int nxagentCheckForPixmapFormatsCompatibility(void);
 static int nxagentInitAndCheckVisuals(int flexibility);
 static int nxagentCheckForColormapsCompatibility(int flexibility);
-
-/*
- * FIXME: These must definitely become local.
- */
-
-XVisualInfo pV;
-unsigned int r, b, g, or, ob, og, off;
 
 /*
  * Save Internal implementation Also called in Reconnect.c.
@@ -215,23 +207,6 @@ int nxagentServerOrder()
       return LSBFirst;
 
   return MSBFirst;
-}
-
-unsigned int nxagentLogoColor(unsigned int value)
-{
-  /*
-   * Takes a color value in RGB24 (0xff0000, 0x00ff00,
-   * 0x0000ff) and converts it into an equivalent for
-   * the current visual.
-   */
-
-  int cr=0, cg=0, cb=0;
-
-  cr = (value >> or) &r;
-  cg = (value >> (og - 8)) &g;
-  cb = (value >> (ob - 16)) &b;
-
-  return (cr | cg | cb);
 }
 
 /*
@@ -1411,12 +1386,6 @@ FIXME: Use of nxagentParentWindow is strongly deprecated.
   nxagentLogoDepth = DefaultDepth(nxagentDisplay,
                                DefaultScreen(nxagentDisplay)
                               );
-
-  pV = nxagentVisuals[nxagentDefaultVisualIndex];
-
-  r = pV.red_mask;
-  g = pV.green_mask;
-  b = pV.blue_mask;
 
   nxagentLogoBlack = 0x000000;
   nxagentLogoRed   = 0xff0000;
@@ -2879,12 +2848,6 @@ Bool nxagentReconnectDisplay(void *p0)
   #endif
 
   nxagentLogoDepth = DefaultDepth(nxagentDisplay, DefaultScreen(nxagentDisplay));
-
-  pV = nxagentVisuals[nxagentDefaultVisualIndex];
-
-  r = pV.red_mask;
-  g = pV.green_mask;
-  b = pV.blue_mask;
 
   nxagentLogoBlack = 0x000000;
   nxagentLogoRed   = 0xff0000;
