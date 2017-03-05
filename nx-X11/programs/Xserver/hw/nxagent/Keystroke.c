@@ -100,6 +100,9 @@ char * nxagentSpecialKeystrokeNames[] = {
        "viewport_scroll_down",
 
        "reread_keystrokes",
+
+       "autograb",
+
        NULL,
 };
 
@@ -139,6 +142,7 @@ struct nxagentSpecialKeystrokeMap default_map[] = {
   {KEYSTROKE_VIEWPORT_SCROLL_DOWN, ControlMask, True, XK_Down},
   {KEYSTROKE_VIEWPORT_SCROLL_DOWN, ControlMask, True, XK_KP_Down},
   {KEYSTROKE_REREAD_KEYSTROKES, ControlMask, True, XK_k},
+  {KEYSTROKE_AUTOGRAB, ControlMask, True, XK_g},
   {KEYSTROKE_END_MARKER, 0, False, NoSymbol},
 };
 struct nxagentSpecialKeystrokeMap *map = default_map;
@@ -468,7 +472,7 @@ static enum nxagentSpecialKeystroke find_keystroke(XKeyEvent *X)
   #endif
   for (struct nxagentSpecialKeystrokeMap *cur = map; cur->stroke != KEYSTROKE_END_MARKER; cur++) {
     #ifdef DEBUG
-    fprintf(stderr, "%s: checking keysym '%c' (%d)\n", __func__, cur->keysym, cur->keysym);
+    fprintf(stderr,"%s: keysym %d stroke %d, type %d\n", __func__, cur->keysym, cur->stroke, X->type);
     #endif
     if (cur->keysym == keysym && modifier_matches(cur->modifierMask, cur->modifierAltMeta, X->state)) {
       #ifdef DEBUG
@@ -631,6 +635,9 @@ Bool nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
       */
       if (X->type == KeyRelease)
 	nxagentInitKeystrokes(True);
+      break;
+    case KEYSTROKE_AUTOGRAB:
+      *result = doAutoGrab;
       break;
     case KEYSTROKE_NOTHING: /* do nothing. difference to KEYSTROKE_IGNORE is the return value */
     case KEYSTROKE_END_MARKER: /* just to make gcc STFU */
