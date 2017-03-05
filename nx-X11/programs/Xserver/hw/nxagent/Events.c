@@ -674,6 +674,40 @@ static void nxagentSwitchDeferMode(void)
   }
 }
 
+static Bool autograb = False;
+
+static void nxagentEnableAutoGrab(void)
+{
+#ifdef DEBUG
+  fprintf(stderr, "enabling autograb\n");
+#endif
+
+  nxagentGrabPointerAndKeyboard(NULL);
+  autograb = True;
+}
+
+static void nxagentDisableAutoGrab(void)
+{
+#ifdef DEBUG
+  fprintf(stderr, "disabling autograb\n");
+#endif
+
+  nxagentUngrabPointerAndKeyboard(NULL);
+  autograb = False;
+}
+
+static void nxagentToggleAutoGrab(void)
+{
+  /* autograb only works in windowed mode */
+  if (nxagentOption(Rootless) || nxagentOption(Fullscreen))
+    return;
+
+  if (!autograb)
+    nxagentEnableAutoGrab();
+  else
+    nxagentDisableAutoGrab();
+}
+
 static Bool nxagentExposurePredicate(Display *display, XEvent *event, XPointer window)
 {
   /*
@@ -1057,6 +1091,12 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
             {
               nxagentSwitchDeferMode();
             }
+
+            break;
+          }
+          case doAutoGrab:
+          {
+            nxagentToggleAutoGrab();
 
             break;
           }
@@ -1519,6 +1559,17 @@ FIXME: Don't enqueue the KeyRelease event if the key was
           }
         }
 
+        /* FIXME: only when in windowed mode! */
+        if (autograb)
+        {
+          if (X.xfocus.window == nxagentDefaultWindows[0] && X.xfocus.mode == NotifyNormal)
+          {
+            #ifdef DEBUG
+            fprintf(stderr, "%s: (FocusIn): grabbing\n", __func__);
+	    #endif
+            nxagentGrabPointerAndKeyboard(NULL);
+          }
+        }
         break;
       }
       case FocusOut:
@@ -1597,6 +1648,19 @@ FIXME: Don't enqueue the KeyRelease event if the key was
 
         #endif /* NXAGENT_FIXKEYS */
 
+        if (autograb)
+        {
+          XlibWindow w;
+          int revert_to;
+          XGetInputFocus(nxagentDisplay, &w, &revert_to);
+          if (w != nxagentDefaultWindows[0] && X.xfocus.mode == NotifyWhileGrabbed)
+          {
+            #ifdef DEBUG
+            fprintf(stderr, "%s: (FocusOut): ungrabbing\n", __func__);
+            #endif
+            nxagentUngrabPointerAndKeyboard(NULL);
+          }
+        }
         break;
       }
       case KeymapNotify:
@@ -3827,13 +3891,26 @@ void nxagentGrabPointerAndKeyboard(XEvent *X)
   fprintf(stderr, "nxagentGrabPointerAndKeyboard: Going to grab the keyboard in context [B1].\n");
   #endif
 
-  result = XGrabKeyboard(nxagentDisplay, nxagentFullscreenWindow,
-                             True, GrabModeAsync, GrabModeAsync, now);
+  if (nxagentFullscreenWindow)
+    result = XGrabKeyboard(nxagentDisplay, nxagentFullscreenWindow,
+      True, GrabModeAsync, GrabModeAsync, now);
+  else
+    result = XGrabKeyboard(nxagentDisplay, RootWindow(nxagentDisplay, DefaultScreen(nxagentDisplay)),
+      True, GrabModeAsync, GrabModeAsync, now);
 
   if (result != GrabSuccess)
   {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: keyboard grab failed.\n", __func__);
+    #endif
     return;
   }
+  #ifdef DEBUG
+  else
+  {
+    fprintf(stderr, "%s: keyboard grab successful.\n", __func__);
+  }
+  #endif
 
   /*
    * The smart scheduler could be stopped while
@@ -3851,7 +3928,8 @@ void nxagentGrabPointerAndKeyboard(XEvent *X)
   resource = nxagentWaitForResource(NXGetCollectGrabPointerResource,
                                         nxagentCollectGrabPointerPredicate);
 
-  NXCollectGrabPointer(nxagentDisplay, resource,
+  if (nxagentFullscreenWindow)
+     NXCollectGrabPointer(nxagentDisplay, resource,
                            nxagentFullscreenWindow, True, NXAGENT_POINTER_EVENT_MASK,
                                GrabModeAsync, GrabModeAsync, None, None, now);
 
