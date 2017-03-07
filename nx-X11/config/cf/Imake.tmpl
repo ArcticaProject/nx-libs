@@ -468,6 +468,9 @@ XCOMM the platform-specific parameters - edit site.def to change
 #ifndef HasBasename
 #define HasBasename		YES
 #endif
+#ifndef HasTimingsafeMemcmp
+#define HasTimingsafeMemcmp	NO	/* assume not */
+#endif
 #ifndef HasGetopt
 # if !defined(Win32Architecture)
 #  define HasGetopt		YES

@@ -115,17 +115,22 @@ GETPEER_DEFINES = -DHAS_GETPEEREID
 # endif
 #endif
 
+#if !HasTimingsafeMemcmp
+TMEMCMP_SRCS = timingsafe_memcmp.c
+TMEMCMP_OBJS = timingsafe_memcmp.o
+#endif
+
 BOOTSTRAPCFLAGS = 
            SRCS = WaitFor.c access.c connection.c io.c $(COLOR_SRCS) \
                   osinit.c utils.c log.c auth.c mitauth.c secauth.c \
                   $(XDMAUTHSRCS) $(RPCSRCS) xdmcp.c OtherSources \
                   xstrans.c $(SNPRINTF_SRCS) $(STRLCAT_SRCS) \
-		  $(REALLOCARRAY_SRCS) xprintf.c
+		  $(REALLOCARRAY_SRCS) xprintf.c $(TMEMCMP_SRCS)
            OBJS = WaitFor.o access.o connection.o io.o $(COLOR_OBJS) \
                   osinit.o utils.o log.o auth.o mitauth.o secauth.o \
                   $(XDMAUTHOBJS) $(RPCOBJS) xdmcp.o OtherObjects \
                   xstrans.o $(SNPRINTF_OBJS) $(STRLCAT_OBJS) \
-		  $(REALLOCARRAY_OBJS) xprintf.o
+		  $(REALLOCARRAY_OBJS) xprintf.o $(TMEMCMP_OBJS)
 
 #if UseMemLeak
      MEM_DEFINES = -DMEMBUG

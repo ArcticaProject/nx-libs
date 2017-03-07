@@ -82,7 +82,7 @@ MitCheckCookie (
 
     for (auth = mit_auth; auth; auth=auth->next) {
         if (data_length == auth->len &&
-	   memcmp (data, auth->data, (int) data_length) == 0)
+	   timingsafe_memcmp (data, auth->data, (int) data_length) == 0)
 	    return auth->id;
     }
     *reason = "Invalid MIT-MAGIC-COOKIE-1 key";
