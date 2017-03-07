@@ -260,58 +260,63 @@ int NXTransDialog(const char *caption, const char *message,
     // in the default NX path.
     //
 
-    strcpy(command, "nxclient");
+    if (i == 0)
+    {
 
-    char newPath[DEFAULT_STRING_LIMIT];
+      strcpy(command, "nxclient");
 
-    strcpy(newPath, "/usr/NX/bin:/opt/NX/bin:/usr/local/NX/bin:");
+      char newPath[DEFAULT_STRING_LIMIT];
 
-    #ifdef __APPLE__
+      strcpy(newPath, "/usr/NX/bin:/opt/NX/bin:/usr/local/NX/bin:");
 
-    strcat(newPath, "/Applications/NX Client for OSX.app/Contents/MacOS:");
+      #ifdef __APPLE__
 
-    #endif
+      strcat(newPath, "/Applications/NX Client for OSX.app/Contents/MacOS:");
 
-    #ifdef __CYGWIN32__
+      #endif
 
-    strcat(newPath, ".:");
+      #ifdef __CYGWIN32__
 
-    #endif
+      strcat(newPath, ".:");
 
-    int newLength = strlen(newPath);
+      #endif
 
-    char *oldPath = getenv("PATH");
+      int newLength = strlen(newPath);
 
-    strncpy(newPath + newLength, oldPath, DEFAULT_STRING_LIMIT - newLength - 1);
+      char *oldPath = getenv("PATH");
 
-    newPath[DEFAULT_STRING_LIMIT - 1] = '\0';
+      strncpy(newPath + newLength, oldPath, DEFAULT_STRING_LIMIT - newLength - 1);
 
-    #ifdef WARNING
-    *logofs << "NXTransDialog: WARNING! Trying with path '"
-            << newPath << "'.\n" << logofs_flush;
-    #endif
+      newPath[DEFAULT_STRING_LIMIT - 1] = '\0';
 
-    cerr << "Warning" << ": Trying with path '" << newPath
-         << "'.\n";
+      #ifdef WARNING
+      *logofs << "NXTransDialog: WARNING! Trying with path '"
+              << newPath << "'.\n" << logofs_flush;
+      #endif
 
-    //
-    // Solaris doesn't seem to have
-    // function setenv().
-    //
+      cerr << "Warning" << ": Trying with path '" << newPath
+           << "'.\n";
 
-    #ifdef __sun
+      //
+      // Solaris doesn't seem to have
+      // function setenv().
+      //
 
-    char newEnv[DEFAULT_STRING_LIMIT + 5];
+      #ifdef __sun
 
-    sprintf(newEnv,"PATH=%s", newPath);
+      char newEnv[DEFAULT_STRING_LIMIT + 5];
 
-    putenv(newEnv);
+      sprintf(newEnv,"PATH=%s", newPath);
 
-    #else
+      putenv(newEnv);
 
-    setenv("PATH", newPath, 1);
+      #else
 
-    #endif
+      setenv("PATH", newPath, 1);
+
+      #endif
+
+    }
   }
 
   //
@@ -455,60 +460,64 @@ int NXTransClient(const char* display)
     // in the default NX path.
     //
 
-    strcpy(command, "nxclient");
+    if (i == 0)
+    {
 
-    char newPath[DEFAULT_STRING_LIMIT];
+      strcpy(command, "nxclient");
 
-    strcpy(newPath, "/usr/NX/bin:/opt/NX/bin:/usr/local/NX/bin:");
+      char newPath[DEFAULT_STRING_LIMIT];
 
-    #ifdef __APPLE__
+      strcpy(newPath, "/usr/NX/bin:/opt/NX/bin:/usr/local/NX/bin:");
 
-    strcat(newPath, "/Applications/NX Client for OSX.app/Contents/MacOS:");
+      #ifdef __APPLE__
 
-    #endif
+      strcat(newPath, "/Applications/NX Client for OSX.app/Contents/MacOS:");
 
-    #ifdef __CYGWIN32__
+      #endif
 
-    strcat(newPath, ".:");
+      #ifdef __CYGWIN32__
 
-    #endif
+      strcat(newPath, ".:");
 
-    int newLength = strlen(newPath);
+      #endif
 
-    char *oldPath = getenv("PATH");
+      int newLength = strlen(newPath);
 
-    strncpy(newPath + newLength, oldPath, DEFAULT_STRING_LIMIT - newLength - 1);
+      char *oldPath = getenv("PATH");
 
-    newPath[DEFAULT_STRING_LIMIT - 1] = '\0';
+      strncpy(newPath + newLength, oldPath, DEFAULT_STRING_LIMIT - newLength - 1);
 
-    #ifdef WARNING
-    *logofs << "NXTransClient: WARNING! Trying with path '"
-            << newPath << "'.\n" << logofs_flush;
-    #endif
+      newPath[DEFAULT_STRING_LIMIT - 1] = '\0';
 
-    cerr << "Warning" << ": Trying with path '" << newPath
-         << "'.\n";
+      #ifdef WARNING
+      *logofs << "NXTransClient: WARNING! Trying with path '"
+              << newPath << "'.\n" << logofs_flush;
+      #endif
 
-    //
-    // Solaris doesn't seem to have
-    // function setenv().
-    //
+      cerr << "Warning" << ": Trying with path '" << newPath
+           << "'.\n";
 
-    #ifdef __sun
+      //
+      // Solaris doesn't seem to have
+      // function setenv().
+      //
 
-    char newEnv[DEFAULT_STRING_LIMIT + 5];
+      #ifdef __sun
 
-    sprintf(newEnv,"PATH=%s", newPath);
+      char newEnv[DEFAULT_STRING_LIMIT + 5];
 
-    putenv(newEnv);
+      sprintf(newEnv,"PATH=%s", newPath);
 
-    #else
+      putenv(newEnv);
 
-    setenv("PATH", newPath, 1);
+      #else
 
-    #endif
+      setenv("PATH", newPath, 1);
+
+      #endif
+    }
+
   }
-
   //
   // Hopefully useless.
   //
