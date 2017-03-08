@@ -649,6 +649,7 @@ static int SetCompressionLan();
 //
 
 char *GetClientPath();
+char *GetCallbacksDispatcherPath();
 
 static char *GetSystemPath();
 static char *GetHomePath();
@@ -737,7 +738,13 @@ static char systemDir[DEFAULT_STRING_LENGTH] = { 0 };
 static char tempDir[DEFAULT_STRING_LENGTH] = { 0 };
 
 //
-// Actually the full path to the client.
+// Actually the full path to the callbacks dispatcher.
+//
+
+static char callbacksDispatcherDir[DEFAULT_STRING_LENGTH] = { 0 };
+
+//
+// for backwards compatibility: Actually the full path to the client.
 //
 
 static char clientDir[DEFAULT_STRING_LENGTH] = { 0 };
@@ -10446,6 +10453,69 @@ char *GetTempPath()
   strcpy(tempPath, tempDir);
 
   return tempPath;
+}
+
+char *GetCallbacksDispatcherPath()
+{
+  if (*callbacksDispatcherDir == '\0')
+  {
+    //
+    // Check the NX_CALLBACKS_DISPATCHER environment.
+    //
+
+    const char *callbacksDispatcherEnv = getenv("NX_CALLBACKS_DISPATCHER");
+
+    if (callbacksDispatcherEnv == NULL || *callbacksDispatcherEnv == '\0')
+    {
+      #ifdef TEST
+      *logofs << "Loop: WARNING! NX_CALLBACKS_DISPATCHER environment variable is unset or empty. Disabling callbacks.\n"
+              << logofs_flush;
+      #endif
+
+      HandleCleanup();
+    }
+
+    if (strlen(callbacksDispatcherEnv) > DEFAULT_STRING_LENGTH - 1)
+    {
+      #ifdef PANIC
+      *logofs << "Loop: PANIC! Invalid value for the NX "
+              << "callbacks dispatcher directory '" << callbacksDispatcherEnv
+              << "'.\n" << logofs_flush;
+      #endif
+
+      cerr << "Error" << ": Invalid value for the NX "
+           << "callbacks dispatcher directory '" << callbacksDispatcherEnv
+           << "'.\n";
+
+      HandleCleanup();
+    }
+
+    strcpy(callbacksDispatcherDir, callbacksDispatcherEnv);
+
+    #ifdef TEST
+    *logofs << "Loop: Assuming NX callbacks dispatcher location '"
+            << callbacksDispatcherDir << "'.\n" << logofs_flush;
+    #endif
+  }
+
+  char *callbacksDispatcherPath = new char[strlen(callbacksDispatcherDir) + 1];
+
+  if (callbacksDispatcherPath == NULL)
+  {
+    #ifdef PANIC
+    *logofs << "Loop: PANIC! Can't allocate memory "
+            << "for the callbacks dispatcher path.\n" << logofs_flush;
+    #endif
+
+    cerr << "Error" << ": Can't allocate memory "
+         << "for the callbacks dispatcher path.\n";
+
+    HandleCleanup();
+  }
+
+  strcpy(callbacksDispatcherPath, callbacksDispatcherDir);
+
+  return callbacksDispatcherPath;
 }
 
 char *GetClientPath()

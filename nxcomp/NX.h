@@ -433,6 +433,10 @@ extern int NXTransProxy(int fd, int mode, const char *display);
 
 extern int NXTransClient(const char *display);
 
+extern int NXTransCallbacksDispatcher(const char *caption, const char *message,
+                                        const char *window, const char *type, int local,
+                                          const char *display);
+
 extern int NXTransDialog(const char *caption, const char *message,
                            const char *window, const char *type, int local,
                                const char *display);
