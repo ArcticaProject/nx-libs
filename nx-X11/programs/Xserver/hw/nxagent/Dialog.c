@@ -63,7 +63,6 @@ int nxagentEnableRandRModeDialogPid = 0;
 int nxagentDisableRandRModeDialogPid = 0;
 int nxagentEnableDeferModePid = 0;
 int nxagentDisableDeferModePid = 0;
-int nxagentDisableXkbPid = 0;
 
 static int nxagentFailedReconnectionDialogPid = 0;
 
@@ -158,15 +157,6 @@ void nxagentResetDialog(int pid)
     #endif
 
     nxagentDisableDeferModePid = 0;
-  }
-  else if (pid == nxagentDisableXkbPid)
-  {
-    #ifdef TEST
-    fprintf(stderr, "nxagentResetDialog: Resetting disable XKB dialog pid [%d].\n",
-                nxagentDisableXkbPid);
-    #endif
-
-    nxagentDisableXkbPid = 0;
   }
 }
 
@@ -270,15 +260,6 @@ void nxagentLaunchDialog(DialogType dialogType)
       type = DIALOG_DISABLE_DEFER_MODE_TYPE;
       local = DIALOG_DISABLE_DEFER_MODE_LOCAL;
       pid = &nxagentDisableDeferModePid;
-
-      break;
-    }
-    case DIALOG_DISABLE_XKB:
-    {
-      message = DIALOG_DISABLE_XKB_MESSAGE;
-      type = DIALOG_DISABLE_XKB_TYPE;
-      local = DIALOG_DISABLE_XKB_LOCAL;
-      pid = &nxagentDisableXkbPid;
 
       break;
     }
@@ -518,12 +499,6 @@ void nxagentTerminateDialog(DialogType type)
     case DIALOG_DISABLE_DEFER_MODE:
     {
       pid = nxagentDisableDeferModePid;
-
-      break;
-    }
-    case DIALOG_DISABLE_XKB:
-    {
-      pid = nxagentDisableXkbPid;
 
       break;
     }
