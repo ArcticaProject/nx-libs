@@ -316,7 +316,6 @@ $(NXAGENTOBJS) $(NXAGENTLIBS) $(NXAGENTSYSLIBS):: $(NXAGENTDIRS)
 #if defined(SunArchitecture)
 NXAGENTNXLIBS = -L/usr/sfw/lib \
                 -L../../../nxcomp  \
-                -L../../../nx-X11/exports/lib \
                 -L../../../nxcompshad \
                 -lrt \
                 -lXcomp \
@@ -332,7 +331,6 @@ NXAGENTNXLIBS = -L/usr/sfw/lib \
                 $(NULL)
 #elif defined(cygwinArchitecture)
 NXAGENTNXLIBS = -L../../../nxcomp  \
-                -L../../../nx-X11/exports/lib \
                 -L../../../nxcompshad \
                 -lXcomp \
                 -lXcompshad \
@@ -362,7 +360,6 @@ NXAGENTNXLIBS = -L../../../nxcomp  \
                 $(NULL)
 #else
 NXAGENTNXLIBS = -L../../../nxcomp  \
-                -L../../../nx-X11/exports/lib \
                 -L../../../nxcompshad \
                 -lXcomp \
                 -lXcompshad \
