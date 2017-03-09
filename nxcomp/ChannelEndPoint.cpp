@@ -137,7 +137,7 @@ ChannelEndPoint::getSpec(char **socketUri) const {
   free(unixPath);
   free(hostName);
 
-  if (*socketUri != '\0')
+  if (NULL != *socketUri)
     return true;
 
   return false;
