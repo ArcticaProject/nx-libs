@@ -28,6 +28,9 @@ nx-libs (2:3.5.0.33-0x2go1) UNRELEASED; urgency=low
   * Refresh:
     - 0016_nx-X11_install-location.debian.patch
     - 9900-dxpc-license-history.full+lite.patch
+  * nx-X11: use the "old", non-NX header location.
+    Affects:
+    - 1270_nx-X11_CVE-2017-2624-Use-timingsafe_memcmp-to-c.full.patch
 
   [ Mike Gabriel ]
   * debian/libxinerama1.postinst.in:
