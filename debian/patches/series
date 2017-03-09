@@ -147,6 +147,7 @@
 1258_nx-X11_randr-Clean-up-compiler-warnings-about-u.full.patch
 1259_nx-X11_Make-RANDR-_set_-timestamps-follow-clien.full.patch
 1260_nx-X11_xserver-Avoid-sending-uninitialized-padd.full.patch
+1270_nx-X11_CVE-2017-2624-Use-timingsafe_memcmp-to-c.full.patch
 9900-dxpc-license-history.full+lite.patch
 0016_nx-X11_install-location.debian.patch
 0102_xserver-xext_set-securitypolicy-path.debian.patch

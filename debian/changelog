@@ -36,6 +36,14 @@ nx-libs (2:3.5.0.33-0x2go1) UNRELEASED; urgency=low
     not libnx-xinerama1).
     Backported from Arctica GH 3.6.x branch.
 
+  [ Ulrich Sibiller ]
+  * nx-X11: Backport CVE-2017-2624 (timingsafe_memcmp)
+    Backported from Arctica GH 3.6.x branch.
+    v2: backport to nx-libs 3.6.x (Ulrich Sibiller)
+    v3: backport to nx-libs 3.5.0.x (Mihai Moldovan)
+    Adds:
+    - 1270_nx-X11_CVE-2017-2624-Use-timingsafe_memcmp-to-c.full.patch
+
  -- X2Go Release Manager <git-admin@x2go.org>  Sat, 04 Jul 2015 06:29:19 +0200
 
 nx-libs (2:3.5.0.32-0x2go1) unstable; urgency=low
