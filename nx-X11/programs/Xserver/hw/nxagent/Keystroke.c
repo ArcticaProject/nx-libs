@@ -282,7 +282,7 @@ static void parse_keystroke_file(void)
       if (homedir == NULL)
       {
         fprintf(stderr, "malloc failed");
-exit(EXIT_FAILURE);
+          exit(EXIT_FAILURE);
       }
       filename = calloc(1, strlen(homefile) + strlen(homedir) + 1);
       if (filename == NULL)
@@ -316,7 +316,7 @@ exit(EXIT_FAILURE);
     else
     {
       if (filename)
-free(filename);
+        free(filename);
       filename = NULL;
     }
   }
@@ -336,7 +336,7 @@ free(filename);
       for (cur = root; cur; cur = cur->next)
       {
         if (cur->type == XML_ELEMENT_NODE && strcmp((char *)cur->name, "keystrokes") == 0)
-{
+        {
           xmlNode *bindings = NULL;
           int num = 0;
           int idx = 0;
@@ -351,7 +351,7 @@ free(filename);
           map = calloc((num + 1), sizeof(struct nxagentSpecialKeystrokeMap));
           if (map == NULL)
           {
-            fprintf(stderr, "malloc failed");
+            fprintf(stderr, "calloc failed");
             exit(EXIT_FAILURE);
           }
 
@@ -387,7 +387,6 @@ static enum nxagentSpecialKeystroke find_keystroke(XKeyEvent *X)
                                            X->keycode,
                                            1,
                                            &keysyms_per_keycode_return);
-
 
   struct nxagentSpecialKeystrokeMap *cur = map;
 
