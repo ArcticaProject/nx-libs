@@ -168,7 +168,7 @@ static Bool modifier_matches(unsigned int mask, int compare_alt_meta, unsigned i
 static Bool read_binding_from_xmlnode(xmlNode *node, struct nxagentSpecialKeystrokeMap *ret)
 {
   struct nxagentSpecialKeystrokeMap newkm = {
-    .stroke = 0,
+    .stroke = KEYSTROKE_END_MARKER,
     .modifierMask = 0,
     .modifierAltMeta = False,
     .keysym = NoSymbol
@@ -186,8 +186,10 @@ static Bool read_binding_from_xmlnode(xmlNode *node, struct nxagentSpecialKeystr
       #endif
       continue;
     }
+
     if (strcmp((char *)attr->name, "action") == 0)
     {
+      newkm.stroke = KEYSTROKE_END_MARKER;
       for (int i = 0; nxagentSpecialKeystrokeNames[i] != NULL; i++)
       {
         if (strcmp(nxagentSpecialKeystrokeNames[i],(char *)attr->children->content) == 0)
@@ -222,7 +224,7 @@ static Bool read_binding_from_xmlnode(xmlNode *node, struct nxagentSpecialKeystr
     else if (strcmp((char *)attr->name, "AltMeta") == 0) { newkm.modifierAltMeta = True; }
   }
 
-  if (newkm.stroke != 0 && newkm.keysym != NoSymbol)
+  if (newkm.stroke != KEYSTROKE_END_MARKER && newkm.keysym != NoSymbol)
   {
     /* keysym and stroke are required, everything else is optional */
     memcpy(ret, &newkm, sizeof(struct nxagentSpecialKeystrokeMap));
