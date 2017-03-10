@@ -196,7 +196,7 @@ RRGetInfo(ScreenPtr pScreen, Bool force_query)
     if (!(*pScrPriv->rrGetInfo) (pScreen, &rotations))
         return FALSE;
 
-#if RANDR_10_INTERFACE
+#if defined(RANDR_10_INTERFACE) && !defined(NXAGENT_SERVER)
     if (pScrPriv->nSizes)
         RRScanOldConfig(pScreen, rotations);
 #endif
