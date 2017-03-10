@@ -75,7 +75,7 @@ enum nxagentSpecialKeystroke {
 struct nxagentSpecialKeystrokeMap {
        enum nxagentSpecialKeystroke stroke;
        unsigned int modifierMask; /* everything except alt/meta */
-       int modifierAltMeta; /* modifier combination should include alt/meta */
+       Bool modifierAltMeta; /* modifier combination should include alt/meta */
        KeySym keysym;
 };
 

@@ -95,47 +95,47 @@ char * nxagentSpecialKeystrokeNames[] = {
 
 struct nxagentSpecialKeystrokeMap default_map[] = {
   /* stroke, modifierMask, modifierAltMeta, keysym */
-  {KEYSTROKE_DEBUG_TREE, ControlMask, 1, XK_q},
-  {KEYSTROKE_DEBUG_TREE, ControlMask, 1, XK_Q},
-  {KEYSTROKE_CLOSE_SESSION, ControlMask, 1, XK_t},
-  {KEYSTROKE_CLOSE_SESSION, ControlMask, 1, XK_T},
-  {KEYSTROKE_SWITCH_ALL_SCREENS, ControlMask, 1, XK_f},
-  {KEYSTROKE_SWITCH_ALL_SCREENS, ControlMask, 1, XK_F},
-  {KEYSTROKE_MINIMIZE, ControlMask, 1, XK_m},
-  {KEYSTROKE_MINIMIZE, ControlMask, 1, XK_M},
-  {KEYSTROKE_LEFT, ControlMask, 1, XK_Left},
-  {KEYSTROKE_LEFT, ControlMask, 1, XK_KP_Left},
-  {KEYSTROKE_UP, ControlMask, 1, XK_Up},
-  {KEYSTROKE_UP, ControlMask, 1, XK_KP_Up},
-  {KEYSTROKE_RIGHT, ControlMask, 1, XK_Right},
-  {KEYSTROKE_RIGHT, ControlMask, 1, XK_KP_Right},
-  {KEYSTROKE_DOWN, ControlMask, 1, XK_Down},
-  {KEYSTROKE_DOWN, ControlMask, 1, XK_KP_Down},
-  {KEYSTROKE_RESIZE, ControlMask, 1, XK_r},
-  {KEYSTROKE_RESIZE, ControlMask, 1, XK_R},
-  {KEYSTROKE_DEFER, ControlMask, 1, XK_e},
-  {KEYSTROKE_DEFER, ControlMask, 1, XK_E},
-  {KEYSTROKE_IGNORE, ControlMask, 1, XK_BackSpace},
-  {KEYSTROKE_IGNORE, 0, 0, XK_Terminate_Server},
-  {KEYSTROKE_FORCE_SYNCHRONIZATION, ControlMask, 1, XK_j},
-  {KEYSTROKE_FORCE_SYNCHRONIZATION, ControlMask, 1, XK_J},
-  {KEYSTROKE_REGIONS_ON_SCREEN, ControlMask, 1, XK_a},
-  {KEYSTROKE_REGIONS_ON_SCREEN, ControlMask, 1, XK_A},
-  {KEYSTROKE_TEST_INPUT, ControlMask, 1, XK_x},
-  {KEYSTROKE_TEST_INPUT, ControlMask, 1, XK_X},
-  {KEYSTROKE_DEACTIVATE_INPUT_DEVICES_GRAB, ControlMask, 1, XK_y},
-  {KEYSTROKE_DEACTIVATE_INPUT_DEVICES_GRAB, ControlMask, 1, XK_Y},
-  {KEYSTROKE_FULLSCREEN, ControlMask | ShiftMask, 1, XK_f},
-  {KEYSTROKE_FULLSCREEN, ControlMask | ShiftMask, 1, XK_F},
-  {KEYSTROKE_VIEWPORT_MOVE_LEFT, ControlMask | ShiftMask, 1, XK_Left},
-  {KEYSTROKE_VIEWPORT_MOVE_LEFT, ControlMask | ShiftMask, 1, XK_KP_Left},
-  {KEYSTROKE_VIEWPORT_MOVE_UP, ControlMask | ShiftMask, 1, XK_Up},
-  {KEYSTROKE_VIEWPORT_MOVE_UP, ControlMask | ShiftMask, 1, XK_KP_Up},
-  {KEYSTROKE_VIEWPORT_MOVE_RIGHT, ControlMask | ShiftMask, 1, XK_Right},
-  {KEYSTROKE_VIEWPORT_MOVE_RIGHT, ControlMask | ShiftMask, 1, XK_KP_Right},
-  {KEYSTROKE_VIEWPORT_MOVE_DOWN, ControlMask | ShiftMask, 1, XK_Down},
-  {KEYSTROKE_VIEWPORT_MOVE_DOWN, ControlMask | ShiftMask, 1, XK_KP_Down},
-  {KEYSTROKE_END_MARKER, 0, 0, 0},
+  {KEYSTROKE_DEBUG_TREE, ControlMask, True, XK_q},
+  {KEYSTROKE_DEBUG_TREE, ControlMask, True, XK_Q},
+  {KEYSTROKE_CLOSE_SESSION, ControlMask, True, XK_t},
+  {KEYSTROKE_CLOSE_SESSION, ControlMask, True, XK_T},
+  {KEYSTROKE_SWITCH_ALL_SCREENS, ControlMask, True, XK_f},
+  {KEYSTROKE_SWITCH_ALL_SCREENS, ControlMask, True, XK_F},
+  {KEYSTROKE_MINIMIZE, ControlMask, True, XK_m},
+  {KEYSTROKE_MINIMIZE, ControlMask, True, XK_M},
+  {KEYSTROKE_LEFT, ControlMask, True, XK_Left},
+  {KEYSTROKE_LEFT, ControlMask, True, XK_KP_Left},
+  {KEYSTROKE_UP, ControlMask, True, XK_Up},
+  {KEYSTROKE_UP, ControlMask, True, XK_KP_Up},
+  {KEYSTROKE_RIGHT, ControlMask, True, XK_Right},
+  {KEYSTROKE_RIGHT, ControlMask, True, XK_KP_Right},
+  {KEYSTROKE_DOWN, ControlMask, True, XK_Down},
+  {KEYSTROKE_DOWN, ControlMask, True, XK_KP_Down},
+  {KEYSTROKE_RESIZE, ControlMask, True, XK_r},
+  {KEYSTROKE_RESIZE, ControlMask, True, XK_R},
+  {KEYSTROKE_DEFER, ControlMask, True, XK_e},
+  {KEYSTROKE_DEFER, ControlMask, True, XK_E},
+  {KEYSTROKE_IGNORE, ControlMask, True, XK_BackSpace},
+  {KEYSTROKE_IGNORE, 0, False, XK_Terminate_Server},
+  {KEYSTROKE_FORCE_SYNCHRONIZATION, ControlMask, True, XK_j},
+  {KEYSTROKE_FORCE_SYNCHRONIZATION, ControlMask, True, XK_J},
+  {KEYSTROKE_REGIONS_ON_SCREEN, ControlMask, True, XK_a},
+  {KEYSTROKE_REGIONS_ON_SCREEN, ControlMask, True, XK_A},
+  {KEYSTROKE_TEST_INPUT, ControlMask, True, XK_x},
+  {KEYSTROKE_TEST_INPUT, ControlMask, True, XK_X},
+  {KEYSTROKE_DEACTIVATE_INPUT_DEVICES_GRAB, ControlMask, True, XK_y},
+  {KEYSTROKE_DEACTIVATE_INPUT_DEVICES_GRAB, ControlMask, True, XK_Y},
+  {KEYSTROKE_FULLSCREEN, ControlMask | ShiftMask, True, XK_f},
+  {KEYSTROKE_FULLSCREEN, ControlMask | ShiftMask, True, XK_F},
+  {KEYSTROKE_VIEWPORT_MOVE_LEFT, ControlMask | ShiftMask, True, XK_Left},
+  {KEYSTROKE_VIEWPORT_MOVE_LEFT, ControlMask | ShiftMask, True, XK_KP_Left},
+  {KEYSTROKE_VIEWPORT_MOVE_UP, ControlMask | ShiftMask, True, XK_Up},
+  {KEYSTROKE_VIEWPORT_MOVE_UP, ControlMask | ShiftMask, True, XK_KP_Up},
+  {KEYSTROKE_VIEWPORT_MOVE_RIGHT, ControlMask | ShiftMask, True, XK_Right},
+  {KEYSTROKE_VIEWPORT_MOVE_RIGHT, ControlMask | ShiftMask, True, XK_KP_Right},
+  {KEYSTROKE_VIEWPORT_MOVE_DOWN, ControlMask | ShiftMask, True, XK_Down},
+  {KEYSTROKE_VIEWPORT_MOVE_DOWN, ControlMask | ShiftMask, True, XK_KP_Down},
+  {KEYSTROKE_END_MARKER, 0, False, NoSymbol},
 };
 struct nxagentSpecialKeystrokeMap *map = default_map;
 
@@ -165,12 +165,12 @@ static Bool modifier_matches(unsigned int mask, int compare_alt_meta, unsigned i
   return ret;
 }
 
-static int read_binding_from_xmlnode(xmlNode *node, struct nxagentSpecialKeystrokeMap *ret)
+static Bool read_binding_from_xmlnode(xmlNode *node, struct nxagentSpecialKeystrokeMap *ret)
 {
   struct nxagentSpecialKeystrokeMap newkm = {
     .stroke = 0,
     .modifierMask = 0,
-    .modifierAltMeta = 0,
+    .modifierAltMeta = False,
     .keysym = NoSymbol
   };
   xmlAttr *attr;
@@ -219,7 +219,7 @@ static int read_binding_from_xmlnode(xmlNode *node, struct nxagentSpecialKeystro
     else if (strcmp((char *)attr->name, "Control") == 0) { newkm.modifierMask |= ControlMask; }
     else if (strcmp((char *)attr->name, "Shift") == 0)   { newkm.modifierMask |= ShiftMask; }
     else if (strcmp((char *)attr->name, "Lock") == 0)    { newkm.modifierMask |= LockMask;  }
-    else if (strcmp((char *)attr->name, "AltMeta") == 0) { newkm.modifierAltMeta = 1; }
+    else if (strcmp((char *)attr->name, "AltMeta") == 0) { newkm.modifierAltMeta = True; }
   }
 
   if (newkm.stroke != 0 && newkm.keysym != NoSymbol)
