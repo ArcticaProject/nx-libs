@@ -128,8 +128,7 @@ miModifyPixmapHeader(pPixmap, width, height, depth, bitsPerPixel, devKind,
 
 /*ARGSUSED*/
 Bool
-miCloseScreen (iScreen, pScreen)
-    int		iScreen;
+miCloseScreen (pScreen)
     ScreenPtr	pScreen;
 {
     return ((*pScreen->DestroyPixmap)((PixmapPtr)pScreen->devPrivate));

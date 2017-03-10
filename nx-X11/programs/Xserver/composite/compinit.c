@@ -40,7 +40,7 @@ int CompSubwindowsPrivIndex = -1;
 #endif
 
 static Bool
-compCloseScreen (int index, ScreenPtr pScreen)
+compCloseScreen (ScreenPtr pScreen)
 {
     CompScreenPtr   cs = GetCompScreen (pScreen);
     Bool	    ret;
@@ -78,7 +78,7 @@ compCloseScreen (int index, ScreenPtr pScreen)
 
     free (cs);
     FAKE_DIX_SET_SCREEN_PRIVATE(pScreen, NULL);
-    ret = (*pScreen->CloseScreen) (index, pScreen);
+    ret = (*pScreen->CloseScreen) (pScreen);
     return ret;
 }
 

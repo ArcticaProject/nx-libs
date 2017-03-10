@@ -131,7 +131,7 @@ static void WriteSwappedVideoNotifyEvent(xvEvent *, xvEvent *);
 static void WriteSwappedPortNotifyEvent(xvEvent *, xvEvent *);
 static Bool CreateResourceTypes(void);
 
-static Bool XvCloseScreen(int, ScreenPtr);
+static Bool XvCloseScreen(ScreenPtr);
 static Bool XvDestroyPixmap(PixmapPtr);
 static Bool XvDestroyWindow(WindowPtr);
 static void XvResetProc(ExtensionEntry*);
@@ -307,7 +307,6 @@ XvScreenInit(ScreenPtr pScreen)
 
 static Bool
 XvCloseScreen(
-  int ii,
   ScreenPtr pScreen
 ){
 
@@ -319,13 +318,13 @@ XvCloseScreen(
   pScreen->DestroyWindow = pxvs->DestroyWindow;
   pScreen->CloseScreen = pxvs->CloseScreen;
 
-  (* pxvs->ddCloseScreen)(ii, pScreen); 
+  (* pxvs->ddCloseScreen)(pScreen);
 
   free(pxvs);
 
   pScreen->devPrivates[XvScreenIndex].ptr = (void *)NULL;
 
-  return (*pScreen->CloseScreen)(ii, pScreen);
+  return (*pScreen->CloseScreen)(pScreen);
 
 }
 

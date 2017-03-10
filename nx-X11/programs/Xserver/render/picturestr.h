@@ -406,7 +406,7 @@ Bool
 PictureDestroyWindow (WindowPtr pWindow);
 
 Bool
-PictureCloseScreen (int Index, ScreenPtr pScreen);
+PictureCloseScreen (ScreenPtr pScreen);
 
 void
 PictureStoreColors (ColormapPtr pColormap, int ndef, xColorItem *pdef);

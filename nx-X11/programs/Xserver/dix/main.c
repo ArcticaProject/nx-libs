@@ -372,7 +372,7 @@ main(int argc, char *argv[], char *envp[])
 	    FreeScratchPixmapsForScreen(i);
 	    FreeGCperDepth(i);
 	    FreeDefaultStipple(i);
-	    (* screenInfo.screens[i]->CloseScreen)(i, screenInfo.screens[i]);
+	    (* screenInfo.screens[i]->CloseScreen)(screenInfo.screens[i]);
 	    FreeScreen(screenInfo.screens[i]);
 	    screenInfo.numScreens = i;
 	}
