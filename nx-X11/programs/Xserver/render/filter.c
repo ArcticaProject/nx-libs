@@ -360,5 +360,5 @@ SetPicturePictFilter (PicturePtr pPicture, PictFilterPtr pFilter,
     }
     pPicture->serialNumber |= GC_CHANGE_SERIAL_BIT;
 
-    return ;
+    return Success;
 }

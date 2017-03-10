@@ -711,7 +711,7 @@ RecordAReply(pcbl, nulldata, calldata)
 	    if (pContext->continuedReply)
 	    {
 		RecordAProtocolElement(pContext, client, XRecordFromServer,
-		    pri->replyData, pri->dataLenBytes, /* continuation */ -1);
+		    (void *)pri->replyData, pri->dataLenBytes, /* continuation */ -1);
 		if (!pri->bytesRemaining)
 		    pContext->continuedReply = 0;
 	    }
@@ -721,7 +721,7 @@ RecordAReply(pcbl, nulldata, calldata)
 		if (majorop <= 127)
 		{ /* core reply */
 		    RecordAProtocolElement(pContext, client, XRecordFromServer,
-		       pri->replyData, pri->dataLenBytes, pri->bytesRemaining);
+			(void *)pri->replyData, pri->dataLenBytes, pri->bytesRemaining);
 		    if (pri->bytesRemaining)
 			pContext->continuedReply = 1;
 		}
@@ -742,7 +742,7 @@ RecordAReply(pcbl, nulldata, calldata)
 						minorop))
 			{
 			    RecordAProtocolElement(pContext, client, 
-				XRecordFromServer, pri->replyData,
+				XRecordFromServer, (void *)pri->replyData,
 				pri->dataLenBytes, pri->bytesRemaining);
 			    if (pri->bytesRemaining)
 				pContext->continuedReply = 1;

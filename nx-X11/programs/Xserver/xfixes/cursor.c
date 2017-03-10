@@ -390,7 +390,7 @@ ProcXFixesGetCursorName (ClientPtr client)
     CursorPtr			pCursor;
     xXFixesGetCursorNameReply	reply;
     REQUEST(xXFixesGetCursorNameReq);
-    char *str;
+    const char *str;
     int len;
 
     REQUEST_SIZE_MATCH(xXFixesGetCursorNameReq);
@@ -437,7 +437,7 @@ ProcXFixesGetCursorImageAndName (ClientPtr client)
     CursorPtr			pCursor;
     CARD32			*image;
     int				npixels;
-    char			*name;
+    const char			*name;
     int				nbytes, nbytesRound;
     int				width, height;
     int				x, y;
@@ -641,7 +641,8 @@ SProcXFixesChangeCursor (ClientPtr client)
 static Bool
 TestForCursorName (CursorPtr pCursor, void * closure)
 {
-    return (pCursor->name == (Atom) closure);
+    Atom *pName = closure;
+    return (pCursor->name == *pName);
 }
 
 int
@@ -657,7 +658,7 @@ ProcXFixesChangeCursorByName (ClientPtr client)
     tchar = (char *) &stuff[1];
     name = MakeAtom (tchar, stuff->nbytes, FALSE);
     if (name)
-	ReplaceCursor (pSource, TestForCursorName, (void *) name);
+	ReplaceCursor (pSource, TestForCursorName, &name);
     return (client->noClientException);
 }
 

@@ -3122,10 +3122,14 @@ static void nxagentReconfigureWindowCursor(void * param0, XID param1, void * dat
   WindowPtr pWin = (WindowPtr)param0;
   Bool *pBool = (Bool*)data_buffer;
   CursorPtr   pCursor;
-  ScreenPtr   pScreen = pWin -> drawable.pScreen;
+  ScreenPtr   pScreen;
 
-  if (!pWin || !*pBool || !(pCursor = wCursor(pWin)) ||
-          !(nxagentCursorPriv(pCursor, pScreen)))
+  if (!pWin || !*pBool || !(pCursor = wCursor(pWin)))
+    return;
+
+  pScreen = pWin -> drawable.pScreen;
+
+  if (!(nxagentCursorPriv(pCursor, pScreen)))
   {
     return;
   }

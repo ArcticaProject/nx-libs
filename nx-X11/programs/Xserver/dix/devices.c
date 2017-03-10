@@ -117,7 +117,8 @@ _AddInputDevice(DeviceProc deviceProc, Bool autoStart)
     dev->xkb_interest= NULL;
 #endif
     dev->nPrivates = 0;
-    dev->devPrivates = dev->unwrapProc = NULL;
+    dev->devPrivates = NULL;
+    dev->unwrapProc = NULL;
     inputInfo.off_devices = dev;
     return dev;
 }
