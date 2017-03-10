@@ -414,31 +414,15 @@ static enum nxagentSpecialKeystroke find_keystroke(XKeyEvent *X)
 int nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
 {
   enum nxagentSpecialKeystroke stroke = find_keystroke(X);
-
   *result = doNothing;
 
-  /*
-   * I don't know how much hard work is doing this operation.
-   * Do we need a cache ?
-   */
-
-  int keysyms_per_keycode_return;
-  XlibKeySym *sym = XGetKeyboardMapping(nxagentDisplay,
-                                        X->keycode,
-                                        1,
-                                        &keysyms_per_keycode_return);
-
-  if (sym[0] == XK_VoidSymbol || sym[0] == NoSymbol)
-  {
-    free(sym);
+  if (stroke == KEYSTROKE_NOTHING)
     return 0;
-  }
 
   #ifdef TEST
-  fprintf(stderr, "nxagentCheckSpecialKeystroke: got code %x - state %x - sym %lx\n",
-              X -> keycode, X -> state, sym[0]);
+  fprintf(stderr, "nxagentCheckSpecialKeystroke: got code %x - state %x - stroke %d\n",
+    X -> keycode, X -> state, stroke);
   #endif
-  free(sym);
 
   /*
    * Check special keys.
