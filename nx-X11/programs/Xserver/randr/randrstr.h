@@ -135,6 +135,7 @@ struct _rrCrtc {
     struct pict_f_transform f_inverse;
 
     PixmapPtr scanout_pixmap;
+    PixmapPtr scanout_pixmap_back;
 };
 
 struct _rrOutput {
