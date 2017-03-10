@@ -85,6 +85,15 @@ extern int AddScreen(
     int /*argc*/,
     char** /*argv*/);
 
+
+extern int AddGPUScreen(Bool (*pfnInit) (ScreenPtr /*pScreen */ ,
+                                         int /*argc */ ,
+                                         char **      /*argv */
+                                        ),
+                        int argc, char **argv);
+
+extern void RemoveGPUScreen(ScreenPtr pScreen);
+
 #ifdef PIXPRIV
 
 extern void ResetPixmapPrivates(void);

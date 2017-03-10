@@ -736,6 +736,8 @@ typedef struct _Screen {
     ChangeBorderWidthProcPtr	ChangeBorderWidth;
     MarkUnrealizedWindowProcPtr	MarkUnrealizedWindow;
 
+    Bool isGPU;
+
     ReplaceScanoutPixmapProcPtr ReplaceScanoutPixmap;
 
     SharePixmapBackingProcPtr SharePixmapBacking;
@@ -760,6 +762,8 @@ typedef struct _ScreenInfo {
     int		arraySize;
     int		numScreens;
     ScreenPtr	screens[MAXSCREENS];
+    int numGPUScreens;
+    ScreenPtr gpuscreens[MAXGPUSCREENS];
     int		numVideoScreens;
 } ScreenInfo;
 

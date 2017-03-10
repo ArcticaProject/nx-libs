@@ -4033,7 +4033,7 @@ static int indexForScanlinePad[ 65 ] = {
 #define MIN(a,b) (((a) < (b)) ? (a) : (b))
 #endif
 
-static int init_screen(ScreenPtr pScreen, int i)
+static int init_screen(ScreenPtr pScreen, int i, Bool gpu)
 {
     int scanlinepad, format, depth, bitsPerPixel, j, k;
 #ifdef DEBUG
@@ -4041,6 +4041,10 @@ static int init_screen(ScreenPtr pScreen, int i)
 #endif /* DEBUG */
 
     pScreen->myNum = i;
+    if (gpu) {
+        pScreen->myNum += GPU_SCREEN_OFFSET;
+        pScreen->isGPU = TRUE;
+    }
     pScreen->WindowPrivateLen = 0;
     pScreen->WindowPrivateSizes = (unsigned *)NULL;
     pScreen->totalWindowSize =
@@ -4133,7 +4137,7 @@ AddScreen(Bool (*pfnInit) (ScreenPtr /*pScreen */ ,
     if (!pScreen->devPrivates && screenPrivateCount)
         return -1;
 
-    ret = init_screen(pScreen, i);
+    ret = init_screen(pScreen, i, FALSE);
     if (ret != 0) {
         free(pScreen);
         return ret;
@@ -4169,4 +4173,70 @@ FreeScreen(ScreenPtr pScreen)
 #endif
     free(pScreen->devPrivates);
     free(pScreen);
+}
+
+
+int
+AddGPUScreen(Bool (*pfnInit) (ScreenPtr /*pScreen */ ,
+                              int /*argc */ ,
+                              char **      /*argv */
+                              ),
+             int argc, char **argv)
+{
+    int i;
+    ScreenPtr pScreen;
+    Bool ret;
+
+    i = screenInfo.numGPUScreens;
+    if (i == MAXGPUSCREENS)
+        return -1;
+
+    pScreen = (ScreenPtr) calloc(1, sizeof(ScreenRec));
+    if (!pScreen)
+        return -1;
+
+    ret = init_screen(pScreen, i, TRUE);
+    if (ret != 0) {
+        free(pScreen);
+        return ret;
+    }
+
+    /* This is where screen specific stuff gets initialized.  Load the
+       screen structure, call the hardware, whatever.
+       This is also where the default colormap should be allocated and
+       also pixel values for blackPixel, whitePixel, and the cursor
+       Note that InitScreen is NOT allowed to modify argc, argv, or
+       any of the strings pointed to by argv.  They may be passed to
+       multiple screens.
+     */
+    screenInfo.gpuscreens[i] = pScreen;
+    screenInfo.numGPUScreens++;
+    if (!(*pfnInit) (pScreen, argc, argv)) {
+        dixFreePrivates(pScreen->devPrivates, PRIVATE_SCREEN);
+        free(pScreen);
+        screenInfo.numGPUScreens--;
+        return -1;
+    }
+
+    update_desktop_dimensions();
+
+    return i;
+}
+
+void
+RemoveGPUScreen(ScreenPtr pScreen)
+{
+    int idx, j;
+    if (!pScreen->isGPU)
+        return;
+
+    idx = pScreen->myNum - GPU_SCREEN_OFFSET;
+    for (j = idx; j < screenInfo.numGPUScreens - 1; j++) {
+        screenInfo.gpuscreens[j] = screenInfo.gpuscreens[j + 1];
+        screenInfo.gpuscreens[j]->myNum = j + GPU_SCREEN_OFFSET;
+    }
+    screenInfo.numGPUScreens--;
+
+    free(pScreen);
+
 }

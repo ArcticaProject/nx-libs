@@ -103,11 +103,15 @@ extern unsigned long serverGeneration;
 #ifndef MAXSCREENS
 #define MAXSCREENS	16
 #endif
+#ifndef MAXGPUSCREENS
+#define MAXGPUSCREENS  16
+#endif
 #define MAXCLIENTS	256
 #define MAXDITS		1
 #define MAXEXTENSIONS	128
 #define MAXFORMATS	8
 #define MAXVISUALS_PER_SCREEN 50
+#define GPU_SCREEN_OFFSET 256
 
 typedef unsigned long PIXEL;
 typedef unsigned long ATOM;

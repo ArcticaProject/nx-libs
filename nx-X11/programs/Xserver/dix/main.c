@@ -273,6 +273,13 @@ main(int argc, char *argv[], char *envp[])
 	InitExtensions(argc, argv);
 	if (!InitClientPrivates(serverClient))
 	    FatalError("failed to allocate serverClient devprivates");
+
+	for (i = 0; i < screenInfo.numGPUScreens; i++) {
+	    ScreenPtr pScreen = screenInfo.gpuscreens[i];
+	    if (!CreateScratchPixmapsForScreen(pScreen))
+		FatalError("failed to create scratch pixmaps");
+	}
+
 	for (i = 0; i < screenInfo.numScreens; i++)
 	{
 	    ScreenPtr pScreen = screenInfo.screens[i];
@@ -363,6 +370,14 @@ main(int argc, char *argv[], char *envp[])
 	CloseDownDevices();
 	CloseDownEvents();
 
+	for (i = screenInfo.numGPUScreens - 1; i >= 0; i--) {
+	    ScreenPtr pScreen = screenInfo.gpuscreens[i];
+	    FreeScratchPixmapsForScreen(pScreen);
+	    (*pScreen->CloseScreen) (pScreen);
+	    FreeScreen(pScreen);
+	    screenInfo.numGPUScreens = i;
+	}
+
 	for (i = screenInfo.numScreens - 1; i >= 0; i--)
 	{
 	    ScreenPtr pScreen = screenInfo.screens[i];
@@ -373,6 +388,7 @@ main(int argc, char *argv[], char *envp[])
 	    FreeScreen(pScreen);
 	    screenInfo.numScreens = i;
 	}
+
 	FreeFonts();
 
 #ifdef DPMSExtension

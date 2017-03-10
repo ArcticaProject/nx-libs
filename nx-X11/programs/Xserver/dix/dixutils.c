@@ -399,6 +399,10 @@ BlockHandler(void * pTimeout, void * pReadmask)
 	(* screenInfo.screens[i]->BlockHandler)(i, 
 				screenInfo.screens[i]->blockData,
 				pTimeout, pReadmask);
+    for (i = 0; i < screenInfo.numGPUScreens; i++)
+	(*screenInfo.gpuscreens[i]->BlockHandler) (i,
+				screenInfo.gpuscreens[i]->blockData,
+				pTimeout, pReadmask);
     for (i = 0; i < numHandlers; i++)
 	(*handlers[i].BlockHandler) (handlers[i].blockData,
 				     pTimeout, pReadmask);
@@ -435,6 +439,10 @@ WakeupHandler(int result, void * pReadmask)
     for (i = 0; i < screenInfo.numScreens; i++)
 	(* screenInfo.screens[i]->WakeupHandler)(i, 
 				screenInfo.screens[i]->wakeupData,
+				result, pReadmask);
+    for (i = 0; i < screenInfo.numGPUScreens; i++)
+	(*screenInfo.gpuscreens[i]->WakeupHandler) (i,
+				screenInfo.gpuscreens[i]->wakeupData,
 				result, pReadmask);
     if (handlerDeleted)
     {
