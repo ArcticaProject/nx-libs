@@ -167,8 +167,12 @@ static Bool modifier_matches(unsigned int mask, int compare_alt_meta, unsigned i
 
 static int read_binding_from_xmlnode(xmlNode *node, struct nxagentSpecialKeystrokeMap *ret)
 {
-  int successful = 0;
-  struct nxagentSpecialKeystrokeMap new = {0, 0, 0, 0};
+  struct nxagentSpecialKeystrokeMap newkm = {
+    .stroke = 0,
+    .modifierMask = 0,
+    .modifierAltMeta = 0,
+    .keysym = NoSymbol
+  };
   xmlAttr *attr;
 
   for (attr = node->properties; attr; attr = attr->next)
@@ -176,20 +180,21 @@ static int read_binding_from_xmlnode(xmlNode *node, struct nxagentSpecialKeystro
     /* ignore attributes without data (which should never happen anyways) */
     if (attr->children->content == NULL)
     {
+      #ifdef DEBUG
       char *aname = (attr->name)?((char *)attr->name):"unknown";
       fprintf(stderr, "attribute %s with NULL value", aname);
+      #endif
       continue;
     }
     if (strcmp((char *)attr->name, "action") == 0)
     {
-      int i;
-      for (i = 0; nxagentSpecialKeystrokeNames[i] != NULL; i++)
+      for (int i = 0; nxagentSpecialKeystrokeNames[i] != NULL; i++)
       {
         if (strcmp(nxagentSpecialKeystrokeNames[i],(char *)attr->children->content) == 0)
         {
           /* this relies on the values of enum nxagentSpecialKeystroke and the
            * indices of nxagentSpecialKeystrokeNames being in sync */
-          new.stroke = i;
+          newkm.stroke = i;
           break;
         }
       }
@@ -197,12 +202,9 @@ static int read_binding_from_xmlnode(xmlNode *node, struct nxagentSpecialKeystro
     }
     else if (strcmp((char *)attr->name, "key") == 0)
     {
-      new.keysym = XStringToKeysym((char *)attr->children->content);
-      /* NoSymbol is usually 0, but could there be weird implementations? */
-      if (new.keysym == NoSymbol)
-      {
-        new.keysym = 0;
-      }
+      if (strcmp((char *)attr->children->content, "0") != 0 && strcmp((char *)attr->children->content, "false") != 0)
+	newkm.keysym = XStringToKeysym((char *)attr->children->content);
+
       continue;
     }
 
@@ -210,47 +212,24 @@ static int read_binding_from_xmlnode(xmlNode *node, struct nxagentSpecialKeystro
     if (strcmp((char *)attr->children->content, "0") == 0 || strcmp((char *)attr->children->content, "false") == 0)
       continue;
 
-    if (strcmp((char *)attr->name, "Mod1") == 0)
-    {
-      new.modifierMask |= Mod1Mask;
-    }
-    else if (strcmp((char *)attr->name, "Mod2") == 0)
-    {
-      new.modifierMask |= Mod2Mask;
-    }
-    else if (strcmp((char *)attr->name, "Mod3") == 0)
-    {
-      new.modifierMask |= Mod3Mask;
-    }
-    else if (strcmp((char *)attr->name, "Mod4") == 0)
-    {
-      new.modifierMask |= Mod4Mask;
-    }
-    else if (strcmp((char *)attr->name, "Control") == 0)
-    {
-      new.modifierMask |= ControlMask;
-    }
-    else if (strcmp((char *)attr->name, "Shift") == 0)
-    {
-      new.modifierMask |= ShiftMask;
-    }
-    else if (strcmp((char *)attr->name, "Lock") == 0)
-    {
-      new.modifierMask |= LockMask;
-    }
-    else if (strcmp((char *)attr->name, "AltMeta") == 0)
-    {
-      new.modifierAltMeta = 1;
-    }
+         if (strcmp((char *)attr->name, "Mod1") == 0)    { newkm.modifierMask |= Mod1Mask; }
+    else if (strcmp((char *)attr->name, "Mod2") == 0)    { newkm.modifierMask |= Mod2Mask; }
+    else if (strcmp((char *)attr->name, "Mod3") == 0)    { newkm.modifierMask |= Mod3Mask; }
+    else if (strcmp((char *)attr->name, "Mod4") == 0)    { newkm.modifierMask |= Mod4Mask; }
+    else if (strcmp((char *)attr->name, "Control") == 0) { newkm.modifierMask |= ControlMask; }
+    else if (strcmp((char *)attr->name, "Shift") == 0)   { newkm.modifierMask |= ShiftMask; }
+    else if (strcmp((char *)attr->name, "Lock") == 0)    { newkm.modifierMask |= LockMask;  }
+    else if (strcmp((char *)attr->name, "AltMeta") == 0) { newkm.modifierAltMeta = 1; }
   }
 
-  if (new.stroke != 0 && new.keysym != 0)
+  if (newkm.stroke != 0 && newkm.keysym != NoSymbol)
   {
     /* keysym and stroke are required, everything else is optional */
-    successful = 1;
-    memcpy(ret, &new, sizeof(struct nxagentSpecialKeystrokeMap));
+    memcpy(ret, &newkm, sizeof(struct nxagentSpecialKeystrokeMap));
+    return True;
   }
-  return successful;
+  else
+    return False;
 }
 
 /*
@@ -378,13 +357,10 @@ free(filename);
 
           for (bindings = cur->children; bindings; bindings = bindings->next)
           {
-            if (bindings->type == XML_ELEMENT_NODE && strcmp((char *)bindings->name, "keystroke") == 0)
-            {
-              int res = 0;
-              res = read_binding_from_xmlnode(bindings, &(map[idx]));
-              if (res)
-                idx++;
-            }
+            if (bindings->type == XML_ELEMENT_NODE &&
+                strcmp((char *)bindings->name, "keystroke") == 0 &&
+                read_binding_from_xmlnode(bindings, &(map[idx])))
+                  idx++;
           }
 
           map[idx].stroke = KEYSTROKE_END_MARKER;
