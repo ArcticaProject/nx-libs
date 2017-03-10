@@ -203,6 +203,8 @@ typedef    void (* ClipNotifyProcPtr)(
 #define CREATE_PIXMAP_USAGE_BACKING_PIXMAP              2
 /* pixmap will contain a glyph */
 #define CREATE_PIXMAP_USAGE_GLYPH_PICTURE               3
+/* pixmap will be shared */
+#define CREATE_PIXMAP_USAGE_SHARED                      4
 
 typedef    PixmapPtr (* CreatePixmapProcPtr)(
 	ScreenPtr /*pScreen*/,
@@ -540,6 +542,15 @@ typedef     Bool (*ReplaceScanoutPixmapProcPtr)(
 	PixmapPtr, /*pPixmap*/
 	Bool /*enable*/);
 
+typedef Bool (*SharePixmapBackingProcPtr)(PixmapPtr, ScreenPtr, void **);
+
+typedef Bool (*SetSharedPixmapBackingProcPtr)(PixmapPtr, void *);
+
+typedef Bool (*StartPixmapTrackingProcPtr)(PixmapPtr, PixmapPtr,
+                                           int x, int y);
+
+typedef Bool (*StopPixmapTrackingProcPtr)(PixmapPtr, PixmapPtr);
+
 typedef struct _Screen {
     int			myNum;	/* index of this instance in Screens[] */
     ATOM		id;
@@ -727,6 +738,12 @@ typedef struct _Screen {
     MarkUnrealizedWindowProcPtr	MarkUnrealizedWindow;
 
     ReplaceScanoutPixmapProcPtr ReplaceScanoutPixmap;
+
+    SharePixmapBackingProcPtr SharePixmapBacking;
+    SetSharedPixmapBackingProcPtr SetSharedPixmapBacking;
+
+    StartPixmapTrackingProcPtr StartPixmapTracking;
+    StopPixmapTrackingProcPtr StopPixmapTracking;
 } ScreenRec;
 
 static inline RegionPtr BitmapToRegion(ScreenPtr _pScreen, PixmapPtr pPix) {
