@@ -306,6 +306,11 @@ ProcRRSetProviderOutputSource(ClientPtr client)
     pScreen = provider->pScreen;
     pScrPriv = rrGetScrPriv(pScreen);
 
+#ifndef NXAGENT_SERVER
+    if (!pScreen->isGPU)
+        return BadValue;
+#endif
+
     pScrPriv->rrProviderSetOutputSource(pScreen, provider, source_provider);
 
     provider->changed = TRUE;
