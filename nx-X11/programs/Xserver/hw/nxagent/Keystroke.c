@@ -420,13 +420,13 @@ Bool nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
   enum nxagentSpecialKeystroke stroke = find_keystroke(X);
   *result = doNothing;
 
-  if (stroke == KEYSTROKE_NOTHING)
-    return False;
-
   #ifdef TEST
   fprintf(stderr, "nxagentCheckSpecialKeystroke: got code %x - state %x - stroke %d\n",
     X -> keycode, X -> state, stroke);
   #endif
+
+  if (stroke == KEYSTROKE_NOTHING)
+    return False;
 
   /*
    * Check special keys.
