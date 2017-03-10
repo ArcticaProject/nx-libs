@@ -284,6 +284,19 @@ typedef Bool (*RRSetConfigProcPtr) (ScreenPtr pScreen,
 
 typedef Bool (*RRCrtcSetScanoutPixmapProcPtr) (RRCrtcPtr crtc, PixmapPtr pixmap);
 
+typedef Bool (*RRStartFlippingPixmapTrackingProcPtr)(RRCrtcPtr, PixmapPtr,
+                                                     PixmapPtr, PixmapPtr,
+                                                     int x, int y,
+                                                     int dst_x, int dst_y,
+                                                     Rotation rotation);
+
+typedef Bool (*RREnableSharedPixmapFlippingProcPtr)(RRCrtcPtr,
+                                                    PixmapPtr front,
+                                                    PixmapPtr back);
+
+typedef void (*RRDisableSharedPixmapFlippingProcPtr)(RRCrtcPtr);
+
+
 typedef struct _rrScrPriv {
     /*
      * 'public' part of the structure; DDXen fill this in
@@ -309,6 +322,10 @@ typedef struct _rrScrPriv {
 #endif
     /* TODO #if RANDR_15_INTERFACE */
     RRCrtcSetScanoutPixmapProcPtr rrCrtcSetScanoutPixmap;
+
+    RRStartFlippingPixmapTrackingProcPtr rrStartFlippingPixmapTracking;
+    RREnableSharedPixmapFlippingProcPtr rrEnableSharedPixmapFlipping;
+    RRDisableSharedPixmapFlippingProcPtr rrDisableSharedPixmapFlipping;
 
     RRProviderSetOutputSourceProcPtr rrProviderSetOutputSource;
     RRProviderSetOffloadSinkProcPtr rrProviderSetOffloadSink;

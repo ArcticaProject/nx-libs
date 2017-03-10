@@ -537,6 +537,20 @@ typedef    void (*ConstrainCursorHarderProcPtr)(
 	int *, /*x*/
 	int *  /*y*/);
 
+typedef Bool (*PresentSharedPixmapProcPtr)(
+	PixmapPtr /* */);
+
+typedef Bool (*RequestSharedPixmapNotifyDamageProcPtr)(
+	PixmapPtr /* */);
+
+typedef Bool (*StopFlippingPixmapTrackingProcPtr)(
+	PixmapPtr, /* */
+	PixmapPtr, /* */
+	PixmapPtr /* */);
+
+typedef Bool (*SharedPixmapNotifyDamageProcPtr)(
+	PixmapPtr /* */);
+
 typedef     Bool (*ReplaceScanoutPixmapProcPtr)(
 	DrawablePtr, /*pDrawable*/
 	PixmapPtr, /*pPixmap*/
