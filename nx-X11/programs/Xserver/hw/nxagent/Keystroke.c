@@ -421,8 +421,12 @@ Bool nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
   *result = doNothing;
 
   #ifdef TEST
-  fprintf(stderr, "nxagentCheckSpecialKeystroke: got code %x - state %x - stroke %d\n",
-    X -> keycode, X -> state, stroke);
+  if (stroke != KEYSTROKE_NOTHING && stroke != KEYSTROKE_END_MARKER)
+    fprintf(stderr, "nxagentCheckSpecialKeystroke: got code %x - state %x - stroke %d (%s)\n",
+	    X -> keycode, X -> state, stroke, nxagentSpecialKeystrokeNames[stroke]);
+  else
+    fprintf(stderr, "nxagentCheckSpecialKeystroke: got code %x - state %x - stroke %d (unused)\n",
+	    X -> keycode, X -> state, stroke);
   #endif
 
   if (stroke == KEYSTROKE_NOTHING)
