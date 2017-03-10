@@ -249,6 +249,11 @@ static void parse_keystroke_file(void)
   char *homefile = "/.nx/config/keystrokes.cfg";
   char *etcfile = "/etc/nxagent/keystrokes.cfg";
 
+  if (nxagentKeystrokeFileParsed)
+    return;
+
+  nxagentKeystrokeFileParsed = True;
+
   if (nxagentX2go) {
     homefile = "/.x2go/config/keystrokes.cfg";
     etcfile = "/etc/x2go/keystrokes.cfg";
@@ -390,11 +395,7 @@ static enum nxagentSpecialKeystroke find_keystroke(XKeyEvent *X)
 
   struct nxagentSpecialKeystrokeMap *cur = map;
 
-  if (! nxagentKeystrokeFileParsed)
-  {
-    parse_keystroke_file();
-    nxagentKeystrokeFileParsed = True;
-  }
+  parse_keystroke_file();
 
   enum nxagentSpecialKeystroke ret = KEYSTROKE_NOTHING;
 
