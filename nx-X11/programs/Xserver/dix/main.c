@@ -160,7 +160,7 @@ ReplyNotSwappd(
 int
 main(int argc, char *argv[], char *envp[])
 {
-    int		i, j, k, error;
+    int		i, error;
     char	*xauthfile;
     HWEventQueueType	alwaysCheckForInput[2];
 
@@ -248,17 +248,6 @@ main(int argc, char *argv[], char *envp[])
 	screenInfo.arraySize = MAXSCREENS;
 	screenInfo.numScreens = 0;
 	screenInfo.numVideoScreens = -1;
-
-	/*
-	 * Just in case the ddx doesnt supply a format for depth 1 (like qvss).
-	 */
-	j = indexForBitsPerPixel[ 1 ];
-	k = indexForScanlinePad[ BITMAP_SCANLINE_PAD ];
-	PixmapWidthPaddingInfo[1].padRoundUp = BITMAP_SCANLINE_PAD-1;
-	PixmapWidthPaddingInfo[1].padPixelsLog2 = answer[j][k];
- 	j = indexForBitsPerPixel[8]; /* bits per byte */
- 	PixmapWidthPaddingInfo[1].padBytesLog2 = answer[j][k];
-	PixmapWidthPaddingInfo[1].bitsPerPixel = 1;
 
 	InitAtoms();
 	InitEvents();
