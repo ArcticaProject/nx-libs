@@ -28,7 +28,7 @@
 
 #include "Events.h"
 
-extern int nxagentCheckSpecialKeystroke(XKeyEvent*, enum HandleEventResult*);
+extern Bool nxagentCheckSpecialKeystroke(XKeyEvent*, enum HandleEventResult*);
 
 unsigned int nxagentAltMetaMask;
 

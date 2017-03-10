@@ -410,13 +410,13 @@ static enum nxagentSpecialKeystroke find_keystroke(XKeyEvent *X)
   return ret;
 }
 
-int nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
+Bool nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
 {
   enum nxagentSpecialKeystroke stroke = find_keystroke(X);
   *result = doNothing;
 
   if (stroke == KEYSTROKE_NOTHING)
-    return 0;
+    return False;
 
   #ifdef TEST
   fprintf(stderr, "nxagentCheckSpecialKeystroke: got code %x - state %x - stroke %d\n",
@@ -436,7 +436,7 @@ int nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
   {
     *result = doStartKbd;
 
-    return 1;
+    return True;
   }
 
   switch (stroke) {
@@ -492,7 +492,7 @@ int nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
       break;
     case KEYSTROKE_IGNORE:
       /* this is used e.g. to ignore C-A-Backspace aka XK_Terminate_Server */
-      return 1;
+      return True;
       break;
     case KEYSTROKE_FORCE_SYNCHRONIZATION:
       nxagentForceSynchronization = 1;
@@ -517,7 +517,7 @@ int nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
           nxagentLastInputDevicesDumpTime = 0;
         }
       }
-      return 1;
+      return True;
       #endif
       break;
     case KEYSTROKE_DEACTIVATE_INPUT_DEVICES_GRAB:
@@ -525,7 +525,7 @@ int nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
       if (X->type == KeyPress) {
         nxagentDeactivateInputDevicesGrab();
       }
-      return 1;
+      return True;
       #endif
       break;
     case KEYSTROKE_FULLSCREEN:
@@ -562,5 +562,5 @@ int nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
     case KEYSTROKE_MAX:
       break;
   }
-  return (*result == doNothing) ? 0 : 1;
+  return (*result == doNothing);
 }
