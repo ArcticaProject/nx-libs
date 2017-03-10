@@ -111,7 +111,7 @@ AnimCurSetCursorPosition (ScreenPtr pScreen,
 			  Bool generateEvent);
 
 static Bool
-AnimCurCloseScreen (int index, ScreenPtr pScreen)
+AnimCurCloseScreen (ScreenPtr pScreen)
 {
     AnimCurScreenPtr    as = GetAnimCurScreen(pScreen);
     Bool                ret;
@@ -127,10 +127,10 @@ AnimCurCloseScreen (int index, ScreenPtr pScreen)
     Unwrap(as, pScreen, UnrealizeCursor);
     Unwrap(as, pScreen, RecolorCursor);
     SetAnimCurScreen(pScreen,0);
-    ret = (*pScreen->CloseScreen) (index, pScreen);
+    ret = (*pScreen->CloseScreen) (pScreen);
     free (as);
-    if (index == 0)
-	AnimCurScreenPrivateIndex = -1;
+    if (screenInfo.numScreens == 0)
+      AnimCurScreenPrivateIndex = -1;
     return ret;
 }
 

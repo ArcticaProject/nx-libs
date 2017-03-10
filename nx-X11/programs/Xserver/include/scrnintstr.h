@@ -89,7 +89,6 @@ typedef struct _Depth {
  */
 
 typedef    Bool (* CloseScreenProcPtr)(
-	int /*index*/,
 	ScreenPtr /*pScreen*/);
 
 typedef    void (* QueryBestSizeProcPtr)(

@@ -114,17 +114,17 @@ CursorDisplayCursor (ScreenPtr pScreen,
 }
 
 static Bool
-CursorCloseScreen (int index, ScreenPtr pScreen)
+CursorCloseScreen (ScreenPtr pScreen)
 {
     CursorScreenPtr	cs = GetCursorScreen (pScreen);
     Bool		ret;
 
     Unwrap (cs, pScreen, CloseScreen);
     Unwrap (cs, pScreen, DisplayCursor);
-    ret = (*pScreen->CloseScreen) (index, pScreen);
+    ret = (*pScreen->CloseScreen) (pScreen);
     free (cs);
-    if (index == 0)
-	CursorScreenPrivateIndex = -1;
+    if (screenInfo.numScreens == 0)
+       CursorScreenPrivateIndex = -1;
     return ret;
 }
 

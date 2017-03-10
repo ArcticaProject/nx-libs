@@ -437,7 +437,6 @@ extern Bool miModifyPixmapHeader(
 );
 
 extern Bool miCloseScreen(
-    int /*index*/,
     ScreenPtr /*pScreen*/
 );
 

@@ -183,7 +183,7 @@ else \
 static int  miBSScreenIndex;
 static unsigned long miBSGeneration = 0;
 
-static Bool	    miBSCloseScreen(int i, ScreenPtr pScreen);
+static Bool	    miBSCloseScreen(ScreenPtr pScreen);
 static void	    miBSGetImage(DrawablePtr pDrawable, int sx, int sy,
 				 int w, int h, unsigned int format,
 				 unsigned long planemask, char *pdstLine);
@@ -416,8 +416,7 @@ miInitializeBackingStore (pScreen)
  */
 
 static Bool
-miBSCloseScreen (i, pScreen)
-    int		i;
+miBSCloseScreen (pScreen)
     ScreenPtr	pScreen;
 {
     miBSScreenPtr   pScreenPriv;
@@ -432,7 +431,7 @@ miBSCloseScreen (i, pScreen)
 
     free ((void *) pScreenPriv);
 
-    return (*pScreen->CloseScreen) (i, pScreen);
+    return (*pScreen->CloseScreen) (pScreen);
 }
 
 static void miBSFillVirtualBits(DrawablePtr pDrawable, GCPtr pGC,

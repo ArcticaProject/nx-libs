@@ -118,9 +118,6 @@ RRClientCallback(CallbackListPtr *list, void *closure, void *data)
 
 static Bool
 RRCloseScreen(
-#ifdef NXAGENT_SERVER
-              int i,
-#endif
               ScreenPtr pScreen)
 {
     rrScrPriv(pScreen);
@@ -141,7 +138,7 @@ RRCloseScreen(
     free(pScrPriv->outputs);
     free(pScrPriv);
     RRNScreens -= 1;            /* ok, one fewer screen with RandR running */
-    return (*pScreen->CloseScreen) (i, pScreen);
+    return (*pScreen->CloseScreen) (pScreen);
 }
 
 static void

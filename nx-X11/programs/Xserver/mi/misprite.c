@@ -70,7 +70,7 @@ in this Software without prior written authorization from The Open Group.
 static int  miSpriteScreenIndex;
 static unsigned long miSpriteGeneration = 0;
 
-static Bool	    miSpriteCloseScreen(int i, ScreenPtr pScreen);
+static Bool	    miSpriteCloseScreen(ScreenPtr pScreen);
 static void	    miSpriteGetImage(DrawablePtr pDrawable, int sx, int sy,
 				     int w, int h, unsigned int format,
 				     unsigned long planemask, char *pdstLine);
@@ -248,8 +248,7 @@ miSpriteInitialize (pScreen, cursorFuncs, screenFuncs)
  */
 
 static Bool
-miSpriteCloseScreen (i, pScreen)
-    int i;
+miSpriteCloseScreen (pScreen)
     ScreenPtr	pScreen;
 {
     miSpriteScreenPtr   pScreenPriv;
@@ -270,7 +269,7 @@ miSpriteCloseScreen (i, pScreen)
     
     free ((void *) pScreenPriv);
 
-    return (*pScreen->CloseScreen) (i, pScreen);
+    return (*pScreen->CloseScreen) (pScreen);
 }
 
 static void

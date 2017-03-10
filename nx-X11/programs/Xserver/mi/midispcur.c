@@ -56,7 +56,7 @@ in this Software without prior written authorization from The Open Group.
 static int	miDCScreenIndex;
 static unsigned long miDCGeneration = 0;
 
-static Bool	miDCCloseScreen(int index, ScreenPtr pScreen);
+static Bool	miDCCloseScreen(ScreenPtr pScreen);
 
 typedef struct {
     GCPtr	    pSourceGC, pMaskGC;
@@ -163,8 +163,7 @@ miDCInitialize (pScreen, screenFuncs)
 #define tossPict(pict)	(pict ? FreePicture (pict, 0) : 0)
 
 static Bool
-miDCCloseScreen (index, pScreen)
-    int		index;
+miDCCloseScreen (pScreen)
     ScreenPtr	pScreen;
 {
     miDCScreenPtr   pScreenPriv;
@@ -185,7 +184,7 @@ miDCCloseScreen (index, pScreen)
     tossPict (pScreenPriv->pTempPicture);
 #endif
     free ((void *) pScreenPriv);
-    return (*pScreen->CloseScreen) (index, pScreen);
+    return (*pScreen->CloseScreen) (pScreen);
 }
 
 static Bool

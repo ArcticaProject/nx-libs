@@ -79,7 +79,6 @@ extern Bool AllocateGCPrivate(
 
 extern int AddScreen(
     Bool (* /*pfnInit*/)(
-	int /*index*/,
 	ScreenPtr /*pScreen*/,
 	int /*argc*/,
 	char ** /*argv*/),
