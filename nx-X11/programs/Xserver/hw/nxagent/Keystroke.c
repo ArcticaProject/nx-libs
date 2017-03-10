@@ -139,7 +139,7 @@ struct nxagentSpecialKeystrokeMap default_map[] = {
 };
 struct nxagentSpecialKeystrokeMap *map = default_map;
 
-static int modifier_matches(unsigned int mask, int compare_alt_meta, unsigned int state)
+static Bool modifier_matches(unsigned int mask, int compare_alt_meta, unsigned int state)
 {
   /* nxagentAltMetaMask needs special handling
    * it seems to me its an and-ed mask of all possible meta and alt keys
@@ -147,11 +147,11 @@ static int modifier_matches(unsigned int mask, int compare_alt_meta, unsigned in
    *
    * otherwise this function would be just a simple bitop
    */
-  int ret = 1;
+  Bool ret = True;
 
   if (compare_alt_meta) {
     if (! (state & nxagentAltMetaMask)) {
-      ret = 0;
+      ret = False;
     }
 
     mask &= ~nxagentAltMetaMask;
@@ -159,7 +159,7 @@ static int modifier_matches(unsigned int mask, int compare_alt_meta, unsigned in
 
   /* all modifiers except meta/alt have to match exactly, extra bits are evil */
   if ((mask & state) != mask) {
-    ret = 0;
+    ret = False;
   }
 
   return ret;
