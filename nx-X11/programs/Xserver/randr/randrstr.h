@@ -1036,6 +1036,8 @@ extern _X_EXPORT int
  ProcRRDeleteOutputProperty(ClientPtr client);
 
 /* rrprovider.c */
+#define PRIME_SYNC_PROP         "PRIME Synchronization"
+
 extern _X_EXPORT void
  RRProviderInitErrorValue(void);
 
