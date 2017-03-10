@@ -552,8 +552,12 @@ rrCheckPixmapBounding(ScreenPtr pScreen,
         RegionUnion(&total_region, &total_region, &new_crtc_region);
     }
 
-    xorg_list_for_each_entry(slave, &pScreen->output_slave_list, output_head) {
+    xorg_list_for_each_entry(slave, &pScreen->slave_list, slave_head) {
         rrScrPrivPtr slave_priv = rrGetScrPriv(slave);
+
+        if (!slave->is_output_slave)
+            continue;
+
         for (c = 0; c < slave_priv->numCrtcs; c++) {
             RRCrtcPtr slave_crtc = slave_priv->crtcs[c];
 
@@ -1775,7 +1779,10 @@ RRConstrainCursorHarder(
         return;
 
 #ifndef NXAGENT_SERVER
-    xorg_list_for_each_entry(slave, &pScreen->output_slave_list, output_head) {
+    xorg_list_for_each_entry(slave, &pScreen->slave_list, slave_head) {
+        if (!slave->is_output_slave)
+            continue;
+
         ret = check_all_screen_crtcs(slave, x, y);
         if (ret == TRUE)
             return;
@@ -1792,7 +1799,10 @@ RRConstrainCursorHarder(
         return;
 
 #ifndef NXAGENT_SERVER
-    xorg_list_for_each_entry(slave, &pScreen->output_slave_list, output_head) {
+    xorg_list_for_each_entry(slave, &pScreen->slave_list, slave_head) {
+        if (!slave->is_output_slave)
+            continue;
+
         ret = constrain_all_screen_crtcs(pDev, slave, x, y);
         if (ret == TRUE)
             return;
