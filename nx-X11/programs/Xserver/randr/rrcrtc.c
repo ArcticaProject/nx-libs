@@ -420,7 +420,6 @@ RRCrtcDetachScanoutPixmap(RRCrtcPtr crtc)
     RRCrtcChanged(crtc, TRUE);
 }
 
-#ifndef NXAGENT_SERVER
 static PixmapPtr
 rrCreateSharedPixmap(RRCrtcPtr crtc, ScreenPtr master,
                      int width, int height, int depth,
@@ -642,7 +641,6 @@ RRCrtcSet(RRCrtcPtr crtc,
         ret = TRUE;
     }
     else {
-#ifndef NXAGENT_SERVER
         if (pScreen->isGPU) {
             ScreenPtr master = pScreen->current_master;
             int width = 0, height = 0;
@@ -660,7 +658,6 @@ RRCrtcSet(RRCrtcPtr crtc,
                 ret = rrSetupPixmapSharing(crtc, width, height, x, y, rotation);
             }
         }
-#endif
 #if RANDR_12_INTERFACE
         if (pScrPriv->rrCrtcSet) {
             ret = (*pScrPriv->rrCrtcSet) (pScreen, crtc, mode, x, y,

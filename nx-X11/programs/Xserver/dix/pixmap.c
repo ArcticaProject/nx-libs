@@ -148,3 +148,33 @@ AllocatePixmap(ScreenPtr pScreen, int pixDataSize)
 #endif
     return pPixmap;
 }
+
+
+PixmapPtr PixmapShareToSlave(PixmapPtr pixmap, ScreenPtr slave)
+{
+    PixmapPtr spix;
+    int ret;
+    void *handle;
+    ScreenPtr master = pixmap->drawable.pScreen;
+    int depth = pixmap->drawable.depth;
+
+    ret = master->SharePixmapBacking(pixmap, slave, &handle);
+    if (ret == FALSE)
+        return NULL;
+
+    spix = slave->CreatePixmap(slave, 0, 0, depth,
+                               CREATE_PIXMAP_USAGE_SHARED);
+    slave->ModifyPixmapHeader(spix, pixmap->drawable.width,
+                              pixmap->drawable.height, depth, 0,
+                              pixmap->devKind, NULL);
+
+    spix->master_pixmap = pixmap;
+
+    ret = slave->SetSharedPixmapBacking(spix, handle);
+    if (ret == FALSE) {
+        slave->DestroyPixmap(spix);
+        return NULL;
+    }
+
+    return spix;
+}
