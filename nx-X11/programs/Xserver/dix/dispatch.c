@@ -4127,6 +4127,13 @@ static int init_screen(ScreenPtr pScreen, int i)
 
 void FreeScreen(ScreenPtr);
 
+/*
+    grow the array of screenRecs if necessary.
+    call the device-supplied initialization procedure
+    with its screen number, a pointer to its ScreenRec, argc, and argv.
+    return the number of successfully installed screens.
+*/
+
 int
 AddScreen(Bool (*pfnInit) (ScreenPtr /*pScreen */ ,
                            int /*argc */ ,
