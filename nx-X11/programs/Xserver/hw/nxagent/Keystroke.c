@@ -167,6 +167,7 @@ static Bool modifier_matches(unsigned int mask, int compare_alt_meta, unsigned i
 
 static Bool read_binding_from_xmlnode(xmlNode *node, struct nxagentSpecialKeystrokeMap *ret)
 {
+  /* init the struct to have proper values in case not all attributes are found */
   struct nxagentSpecialKeystrokeMap newkm = {
     .stroke = KEYSTROKE_END_MARKER,
     .modifierMask = 0,
@@ -204,24 +205,24 @@ static Bool read_binding_from_xmlnode(xmlNode *node, struct nxagentSpecialKeystr
     }
     else if (strcmp((char *)attr->name, "key") == 0)
     {
-      if (strcmp((char *)attr->children->content, "0") != 0 && strcmp((char *)attr->children->content, "false") != 0)
-	newkm.keysym = XStringToKeysym((char *)attr->children->content);
-
+      newkm.keysym = XStringToKeysym((char *)attr->children->content);
       continue;
     }
+    else
+    {
+      /* ignore attributes with value="0" or "false", everything else is interpreted as true */
+      if (strcmp((char *)attr->children->content, "0") == 0 || strcmp((char *)attr->children->content, "false") == 0)
+        continue;
 
-    /* ignore attributes with value="0" or "false", everything else is interpreted as true */
-    if (strcmp((char *)attr->children->content, "0") == 0 || strcmp((char *)attr->children->content, "false") == 0)
-      continue;
-
-         if (strcmp((char *)attr->name, "Mod1") == 0)    { newkm.modifierMask |= Mod1Mask; }
-    else if (strcmp((char *)attr->name, "Mod2") == 0)    { newkm.modifierMask |= Mod2Mask; }
-    else if (strcmp((char *)attr->name, "Mod3") == 0)    { newkm.modifierMask |= Mod3Mask; }
-    else if (strcmp((char *)attr->name, "Mod4") == 0)    { newkm.modifierMask |= Mod4Mask; }
-    else if (strcmp((char *)attr->name, "Control") == 0) { newkm.modifierMask |= ControlMask; }
-    else if (strcmp((char *)attr->name, "Shift") == 0)   { newkm.modifierMask |= ShiftMask; }
-    else if (strcmp((char *)attr->name, "Lock") == 0)    { newkm.modifierMask |= LockMask;  }
-    else if (strcmp((char *)attr->name, "AltMeta") == 0) { newkm.modifierAltMeta = True; }
+           if (strcmp((char *)attr->name, "Mod1") == 0)    { newkm.modifierMask |= Mod1Mask; }
+      else if (strcmp((char *)attr->name, "Mod2") == 0)    { newkm.modifierMask |= Mod2Mask; }
+      else if (strcmp((char *)attr->name, "Mod3") == 0)    { newkm.modifierMask |= Mod3Mask; }
+      else if (strcmp((char *)attr->name, "Mod4") == 0)    { newkm.modifierMask |= Mod4Mask; }
+      else if (strcmp((char *)attr->name, "Control") == 0) { newkm.modifierMask |= ControlMask; }
+      else if (strcmp((char *)attr->name, "Shift") == 0)   { newkm.modifierMask |= ShiftMask; }
+      else if (strcmp((char *)attr->name, "Lock") == 0)    { newkm.modifierMask |= LockMask;  }
+      else if (strcmp((char *)attr->name, "AltMeta") == 0) { newkm.modifierAltMeta = True; }
+    }
   }
 
   if (newkm.stroke != KEYSTROKE_END_MARKER && newkm.keysym != NoSymbol)
