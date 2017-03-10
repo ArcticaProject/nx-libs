@@ -387,21 +387,19 @@ static void parse_keystroke_file(void)
 
 static enum nxagentSpecialKeystroke find_keystroke(XKeyEvent *X)
 {
+  enum nxagentSpecialKeystroke ret = KEYSTROKE_NOTHING;
   int keysyms_per_keycode_return;
+  struct nxagentSpecialKeystrokeMap *cur = map;
+
+  parse_keystroke_file();
+
   XlibKeySym *keysym = XGetKeyboardMapping(nxagentDisplay,
                                            X->keycode,
                                            1,
                                            &keysyms_per_keycode_return);
 
-  struct nxagentSpecialKeystrokeMap *cur = map;
-
-  parse_keystroke_file();
-
-  enum nxagentSpecialKeystroke ret = KEYSTROKE_NOTHING;
-
   while (cur->stroke != KEYSTROKE_END_MARKER) {
     if (cur->keysym == keysym[0] && modifier_matches(cur->modifierMask, cur->modifierAltMeta, X->state)) {
-
       free(keysym);
       return cur->stroke;
     }
