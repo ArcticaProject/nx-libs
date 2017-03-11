@@ -94,6 +94,11 @@ extern int AddGPUScreen(Bool (*pfnInit) (ScreenPtr /*pScreen */ ,
 
 extern void RemoveGPUScreen(ScreenPtr pScreen);
 
+extern void
+AttachUnboundGPU(ScreenPtr pScreen, ScreenPtr new);
+extern void
+DetachUnboundGPU(ScreenPtr unbound);
+
 #ifdef PIXPRIV
 
 extern void ResetPixmapPrivates(void);

@@ -56,6 +56,7 @@ SOFTWARE.
 #include "validate.h"
 #include <nx-X11/Xproto.h>
 #include "dix.h"
+#include "list.h"
 
 typedef struct _PixmapFormat {
     unsigned char	depth;
@@ -737,6 +738,11 @@ typedef struct _Screen {
     MarkUnrealizedWindowProcPtr	MarkUnrealizedWindow;
 
     Bool isGPU;
+
+    struct xorg_list unattached_list;
+    struct xorg_list unattached_head;
+
+    ScreenPtr current_master;
 
     ReplaceScanoutPixmapProcPtr ReplaceScanoutPixmap;
 

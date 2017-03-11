@@ -4061,6 +4061,8 @@ static int init_screen(ScreenPtr pScreen, int i, Bool gpu)
     pScreen->ClipNotify = 0;	/* for R4 ddx compatibility */
     pScreen->CreateScreenResources = 0;
 
+    xorg_list_init(&pScreen->unattached_list);
+
 #ifdef DEBUG
     for (jNI = &pScreen->QueryBestSize;
      jNI < (void (**) ()) &pScreen->SendGraphicsExpose;
@@ -4239,4 +4241,21 @@ RemoveGPUScreen(ScreenPtr pScreen)
 
     free(pScreen);
 
+}
+
+void
+AttachUnboundGPU(ScreenPtr pScreen, ScreenPtr new)
+{
+    assert(new->isGPU);
+    assert(!new->current_master);
+    xorg_list_add(&new->unattached_head, &pScreen->unattached_list);
+    new->current_master = pScreen;
+}
+
+void
+DetachUnboundGPU(ScreenPtr slave)
+{
+    assert(slave->isGPU);
+    xorg_list_del(&slave->unattached_head);
+    slave->current_master = NULL;
 }

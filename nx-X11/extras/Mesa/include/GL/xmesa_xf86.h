@@ -130,7 +130,7 @@ do { \
 
 /* CreatePixmap returns a PixmapPtr; so, it cannot be inside braces */
 #define XMesaCreatePixmap(__d,__b,__w,__h,__depth) \
-    (*__d->CreatePixmap)(__d, __w, __h, __depth)
+    (*__d->CreatePixmap)(__d, __w, __h, __depth, 0)
 
 #define XMesaFreePixmap(__d,__b) \
     (*__d->DestroyPixmap)(__b)
