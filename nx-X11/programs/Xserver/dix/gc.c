@@ -984,13 +984,11 @@ CreateScratchGC(ScreenPtr pScreen, unsigned depth)
 }
 
 void
-FreeGCperDepth(int screenNum)
+FreeGCperDepth(ScreenPtr pScreen)
 {
     register int i;
-    register ScreenPtr pScreen;
     GCPtr *ppGC;
 
-    pScreen = screenInfo.screens[screenNum];
     ppGC = pScreen->GCperDepth;
 
     for (i = 0; i <= pScreen->numDepths; i++)
@@ -1000,14 +998,12 @@ FreeGCperDepth(int screenNum)
 
 
 Bool
-CreateGCperDepth(int screenNum)
+CreateGCperDepth(ScreenPtr pScreen)
 {
     register int i;
-    register ScreenPtr pScreen;
     DepthPtr pDepth;
     GCPtr *ppGC;
 
-    pScreen = screenInfo.screens[screenNum];
     pScreen->rgf = 0;
     ppGC = pScreen->GCperDepth;
     /* do depth 1 separately because it's not included in list */
@@ -1033,15 +1029,12 @@ CreateGCperDepth(int screenNum)
 }
 
 Bool
-CreateDefaultStipple(int screenNum)
+CreateDefaultStipple(ScreenPtr pScreen)
 {
-    register ScreenPtr pScreen;
     XID tmpval[3];
     xRectangle rect;
     CARD16 w, h;
     GCPtr pgcScratch;
-
-    pScreen = screenInfo.screens[screenNum];
 
     w = 16;
     h = 16;
@@ -1070,9 +1063,8 @@ CreateDefaultStipple(int screenNum)
 }
 
 void
-FreeDefaultStipple(int screenNum)
+FreeDefaultStipple(ScreenPtr pScreen)
 {
-    ScreenPtr pScreen = screenInfo.screens[screenNum];
     (*pScreen->DestroyPixmap)(pScreen->PixmapPerDepth[0]);
 }
 

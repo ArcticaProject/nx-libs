@@ -150,16 +150,16 @@ extern GCPtr CreateScratchGC(
     unsigned /*depth*/);
 
 extern void FreeGCperDepth(
-    int /*screenNum*/);
+    ScreenPtr /*pScreen*/);
 
 extern Bool CreateGCperDepth(
-    int /*screenNum*/);
+    ScreenPtr /*pScreen*/);
 
 extern Bool CreateDefaultStipple(
-    int /*screenNum*/);
+    ScreenPtr /*pScreen*/);
 
 extern void FreeDefaultStipple(
-    int /*screenNum*/);
+    ScreenPtr /*pScreen*/);
 
 extern int SetDashes(
     GCPtr /*pGC*/,

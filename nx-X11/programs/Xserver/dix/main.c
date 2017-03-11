@@ -276,14 +276,14 @@ main(int argc, char *argv[], char *envp[])
 	for (i = 0; i < screenInfo.numScreens; i++)
 	{
 	    ScreenPtr pScreen = screenInfo.screens[i];
-	    if (!CreateScratchPixmapsForScreen(i))
+	    if (!CreateScratchPixmapsForScreen(pScreen))
 		FatalError("failed to create scratch pixmaps");
 	    if (pScreen->CreateScreenResources &&
 		!(*pScreen->CreateScreenResources)(pScreen))
 		FatalError("failed to create screen resources");
-	    if (!CreateGCperDepth(i))
+	    if (!CreateGCperDepth(pScreen))
 		FatalError("failed to create scratch GCs");
-	    if (!CreateDefaultStipple(i))
+	    if (!CreateDefaultStipple(pScreen))
 		FatalError("failed to create default stipple");
 	    if (!CreateRootWindow(pScreen))
 		FatalError("failed to create root window");
@@ -365,11 +365,12 @@ main(int argc, char *argv[], char *envp[])
 
 	for (i = screenInfo.numScreens - 1; i >= 0; i--)
 	{
-	    FreeScratchPixmapsForScreen(i);
-	    FreeGCperDepth(i);
-	    FreeDefaultStipple(i);
-	    (* screenInfo.screens[i]->CloseScreen)(screenInfo.screens[i]);
-	    FreeScreen(screenInfo.screens[i]);
+	    ScreenPtr pScreen = screenInfo.screens[i];
+	    FreeScratchPixmapsForScreen(pScreen);
+	    FreeGCperDepth(pScreen);
+	    FreeDefaultStipple(pScreen);
+	    (* pScreen->CloseScreen)(pScreen);
+	    FreeScreen(pScreen);
 	    screenInfo.numScreens = i;
 	}
 	FreeFonts();
