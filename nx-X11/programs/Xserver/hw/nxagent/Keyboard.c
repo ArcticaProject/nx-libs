@@ -202,6 +202,8 @@ extern char *nxagentKeyboard;
 static char *nxagentXkbGetRules(void);
 
 unsigned int nxagentAltMetaMask;
+unsigned int nxagentAltMask;
+unsigned int nxagentMetaMask;
 
 static void nxagentCheckAltMetaKeys(CARD8, int);
 
@@ -788,6 +790,8 @@ N/A
 #endif /* #ifdef _XSERVER64 */
 
       nxagentAltMetaMask = 0;
+      nxagentAltMask = 0;
+      nxagentMetaMask = 0;
 
       for (i = 0; i < 256; i++)
         modmap[i] = 0;
@@ -1378,21 +1382,25 @@ void nxagentCheckAltMetaKeys(CARD8 keycode, int j)
   if (keycode == XKeysymToKeycode(nxagentDisplay, XK_Meta_L))
   {
     nxagentAltMetaMask |= 1 << j;
+    nxagentMetaMask |= 1 << j;
   }
 
   if (keycode == XKeysymToKeycode(nxagentDisplay, XK_Meta_R))
   {
     nxagentAltMetaMask |= 1 << j;
+    nxagentMetaMask |= 1 << j;
   }
 
   if (keycode == XKeysymToKeycode(nxagentDisplay, XK_Alt_L))
   {
     nxagentAltMetaMask |= 1 << j;
+    nxagentAltMask |= 1 << j;
   }
 
   if (keycode == XKeysymToKeycode(nxagentDisplay, XK_Alt_R))
   {
     nxagentAltMetaMask |= 1 << j;
+    nxagentAltMask |= 1 << j;
   }
 }
 

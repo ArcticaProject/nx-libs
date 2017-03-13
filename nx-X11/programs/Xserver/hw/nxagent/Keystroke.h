@@ -28,7 +28,7 @@
 
 #include "Events.h"
 
-extern int nxagentCheckSpecialKeystroke(XKeyEvent*, enum HandleEventResult*);
+extern Bool nxagentCheckSpecialKeystroke(XKeyEvent*, enum HandleEventResult*);
 
 unsigned int nxagentAltMetaMask;
 
@@ -42,40 +42,42 @@ enum nxagentSpecialKeystroke {
        KEYSTROKE_END_MARKER = 0,
        KEYSTROKE_CLOSE_SESSION = 1,
        KEYSTROKE_SWITCH_ALL_SCREENS = 2,
-       KEYSTROKE_MINIMIZE = 3,
-       KEYSTROKE_LEFT = 4,
-       KEYSTROKE_UP = 5,
-       KEYSTROKE_RIGHT = 6,
-       KEYSTROKE_DOWN = 7,
-       KEYSTROKE_RESIZE = 8,
-       KEYSTROKE_DEFER = 9,
-       KEYSTROKE_IGNORE = 10,
-       KEYSTROKE_FORCE_SYNCHRONIZATION = 11,
+       KEYSTROKE_FULLSCREEN = 3,
+       KEYSTROKE_MINIMIZE = 4,
+       KEYSTROKE_LEFT = 5,
+       KEYSTROKE_UP = 6,
+       KEYSTROKE_RIGHT = 7,
+       KEYSTROKE_DOWN = 8,
+       KEYSTROKE_RESIZE = 9,
+       KEYSTROKE_DEFER = 10,
+       KEYSTROKE_IGNORE = 11,
+       KEYSTROKE_FORCE_SYNCHRONIZATION = 12,
 
        /* stuff used for debugging, probably not useful for most people */
-       KEYSTROKE_DEBUG_TREE = 12,
-       KEYSTROKE_REGIONS_ON_SCREEN = 13,
-       KEYSTROKE_TEST_INPUT = 14,
-       KEYSTROKE_DEACTIVATE_INPUT_DEVICES_GRAB = 15,
+       KEYSTROKE_DEBUG_TREE = 13,
+       KEYSTROKE_REGIONS_ON_SCREEN = 14,
+       KEYSTROKE_TEST_INPUT = 15,
+       KEYSTROKE_DEACTIVATE_INPUT_DEVICES_GRAB = 16,
 
-       KEYSTROKE_FULLSCREEN = 16,
        KEYSTROKE_VIEWPORT_MOVE_LEFT = 17,
        KEYSTROKE_VIEWPORT_MOVE_UP = 18,
        KEYSTROKE_VIEWPORT_MOVE_RIGHT = 19,
        KEYSTROKE_VIEWPORT_MOVE_DOWN = 20,
 
-       KEYSTROKE_NOTHING = 21,
+       KEYSTROKE_REREAD_KEYSTROKES = 21,
+
+       KEYSTROKE_NOTHING = 22,
 
        /* insert more here, increment KEYSTROKE_MAX accordingly.
         * then update string translation below */
 
-       KEYSTROKE_MAX=22,
+       KEYSTROKE_MAX = 23,
 };
 
 struct nxagentSpecialKeystrokeMap {
        enum nxagentSpecialKeystroke stroke;
        unsigned int modifierMask; /* everything except alt/meta */
-       int modifierAltMeta; /* modifier combination should include alt/meta */
+       Bool modifierAltMeta; /* modifier combination should include alt/meta */
        KeySym keysym;
 };
 
