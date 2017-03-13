@@ -400,11 +400,13 @@ static enum nxagentSpecialKeystroke find_keystroke(XKeyEvent *X)
 {
   enum nxagentSpecialKeystroke ret = KEYSTROKE_NOTHING;
   int keysyms_per_keycode_return;
-  struct nxagentSpecialKeystrokeMap *cur = map;
+  struct nxagentSpecialKeystrokeMap *cur;
 
   /* FIXME: we do late parsing here, this should be done at startup,
      not at first keypress! */
   parse_keystroke_file();
+
+  cur = map;
 
   XlibKeySym *keysym = XGetKeyboardMapping(nxagentDisplay,
                                            X->keycode,
