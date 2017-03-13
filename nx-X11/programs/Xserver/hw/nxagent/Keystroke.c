@@ -356,7 +356,10 @@ static void parse_keystroke_file(void)
               num++;
             }
           }
-          map = calloc((num + 1), sizeof(struct nxagentSpecialKeystrokeMap));
+          #ifdef DEBUG
+          fprintf(stderr, "%s: found %d keystrokes in %s\n", __func__, num, filename);
+          #endif
+          map = calloc(num+1, sizeof(struct nxagentSpecialKeystrokeMap));
           if (map == NULL)
           {
             fprintf(stderr, "calloc failed");
@@ -370,6 +373,9 @@ static void parse_keystroke_file(void)
                 read_binding_from_xmlnode(bindings, &(map[idx])))
                   idx++;
           }
+          #ifdef DEBUG
+          fprintf(stderr, "%s: read %d keystrokes", __func__, idx);
+          #endif
 
           map[idx].stroke = KEYSTROKE_END_MARKER;
         }
@@ -381,7 +387,7 @@ static void parse_keystroke_file(void)
     else
     {
       #ifdef DEBUG
-      fprintf("XML parsing for %s failed\n", filename);
+      fprintf(stderr, "XML parsing for %s failed\n", filename);
       #endif
     }
     free(filename);
@@ -403,8 +409,17 @@ static enum nxagentSpecialKeystroke find_keystroke(XKeyEvent *X)
                                            1,
                                            &keysyms_per_keycode_return);
 
+  #ifdef DEBUG
+  fprintf(stderr, "%s: got keysym '%c' (%d)\n", __func__, keysym[0], keysym[0]);
+  #endif
   while (cur->stroke != KEYSTROKE_END_MARKER) {
+    #ifdef DEBUG
+    fprintf(stderr, "%s: checking keysym '%c' (%d)\n", __func__, cur->keysym, cur->keysym);
+    #endif
     if (cur->keysym == keysym[0] && modifier_matches(cur->modifierMask, cur->modifierAltMeta, X->state)) {
+      #ifdef DEBUG
+      fprintf(stderr, "%s: match including modifiers for keysym '%c' (%d), stroke %d (%s)\n", __func__, cur->keysym, cur->keysym, cur->stroke, nxagentSpecialKeystrokeNames[cur->stroke]);
+      #endif
       free(keysym);
       return cur->stroke;
     }
