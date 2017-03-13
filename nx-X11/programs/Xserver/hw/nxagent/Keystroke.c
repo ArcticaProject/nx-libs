@@ -45,7 +45,6 @@
 extern Bool nxagentWMIsRunning;
 extern Bool nxagentIpaq;
 extern char *nxagentKeystrokeFile;
-Bool nxagentKeystrokeFileParsed = False;
 
 #ifdef NX_DEBUG_INPUT
 int nxagentDebugInputDevices = 0;
@@ -254,10 +253,12 @@ static void parse_keystroke_file(void)
   char *homefile = "/.nx/config/keystrokes.cfg";
   char *etcfile = "/etc/nxagent/keystrokes.cfg";
 
-  if (nxagentKeystrokeFileParsed)
+  /* used for tracking if the config file parsing has already been
+     done (regardless of the result) */
+  static Bool done = False;
+  if (done)
     return;
-
-  nxagentKeystrokeFileParsed = True;
+  done = True;
 
   if (nxagentX2go) {
     homefile = "/.x2go/config/keystrokes.cfg";
