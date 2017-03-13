@@ -69,7 +69,7 @@ enum nxagentSpecialKeystroke {
        /* insert more here, increment KEYSTROKE_MAX accordingly.
         * then update string translation below */
 
-       KEYSTROKE_MAX=22,
+       KEYSTROKE_MAX = 22,
 };
 
 struct nxagentSpecialKeystrokeMap {

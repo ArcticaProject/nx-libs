@@ -193,7 +193,7 @@ static Bool read_binding_from_xmlnode(xmlNode *node, struct nxagentSpecialKeystr
       newkm.stroke = KEYSTROKE_END_MARKER;
       for (int i = 0; nxagentSpecialKeystrokeNames[i] != NULL; i++)
       {
-        if (strcmp(nxagentSpecialKeystrokeNames[i],(char *)attr->children->content) == 0)
+        if (strcmp(nxagentSpecialKeystrokeNames[i], (char *)attr->children->content) == 0)
         {
           /* this relies on the values of enum nxagentSpecialKeystroke and the
            * indices of nxagentSpecialKeystrokeNames being in sync */
