@@ -245,13 +245,15 @@ static Bool read_binding_from_xmlnode(xmlNode *node, struct nxagentSpecialKeystr
  *  - $HOME/.nx/config/keystrokes.cfg
  *  - /etc/nxagent/keystrokes.cfg
  *  - hardcoded traditional NX default settings
+ * If run in x2go flavour different filenames and varnames are used.
  */
 static void parse_keystroke_file(void)
 {
   char *filename = NULL;
 
-  char *homefile = "/.nx/config/keystrokes.cfg";
-  char *etcfile = "/etc/nxagent/keystrokes.cfg";
+  char *homefile;
+  char *etcfile;
+  char *envvar;
 
   /* used for tracking if the config file parsing has already been
      done (regardless of the result) */
@@ -263,6 +265,11 @@ static void parse_keystroke_file(void)
   if (nxagentX2go) {
     homefile = "/.x2go/config/keystrokes.cfg";
     etcfile = "/etc/x2go/keystrokes.cfg";
+    envvar = "X2GO_KEYSTROKEFILE";
+  } else {
+    homefile = "/.nx/config/keystrokes.cfg";
+    etcfile = "/etc/nxagent/keystrokes.cfg";
+    envvar = "NXAGENT_KEYSTROKEFILE";
   }
 
   if (nxagentKeystrokeFile != NULL && access(nxagentKeystrokeFile, R_OK) == 0)
@@ -274,7 +281,7 @@ static void parse_keystroke_file(void)
       exit(EXIT_FAILURE);
     }
   }
-  else if ((filename = getenv("NXAGENT_KEYSTROKEFILE")) != NULL && access(filename, R_OK) == 0)
+  else if ((filename = getenv(envvar)) != NULL && access(filename, R_OK) == 0)
   {
     filename = strdup(filename);
     if (filename == NULL)
