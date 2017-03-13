@@ -272,19 +272,17 @@ static void parse_keystroke_file(void)
     envvar = "NXAGENT_KEYSTROKEFILE";
   }
 
-  if (nxagentKeystrokeFile != NULL && access(nxagentKeystrokeFile, R_OK) == 0)
+  if (nxagentKeystrokeFile && access(nxagentKeystrokeFile, R_OK) == 0)
   {
-    filename = strdup(nxagentKeystrokeFile);
-    if (filename == NULL)
+    if (!(filename = strdup(nxagentKeystrokeFile)))
     {
       fprintf(stderr, "malloc failed");
       exit(EXIT_FAILURE);
     }
   }
-  else if ((filename = getenv(envvar)) != NULL && access(filename, R_OK) == 0)
+  else if ((filename = getenv(envvar)) && access(filename, R_OK) == 0)
   {
-    filename = strdup(filename);
-    if (filename == NULL)
+    if (!(filename = strdup(filename)))
     {
       fprintf(stderr, "malloc failed");
       exit(EXIT_FAILURE);
@@ -294,26 +292,15 @@ static void parse_keystroke_file(void)
   {
     char *homedir = getenv("HOME");
     filename = NULL;
-    if (homedir != NULL)
+    if (homedir)
     {
-      homedir = strdup(homedir);
-      if (homedir == NULL)
-      {
-        fprintf(stderr, "malloc failed");
-        exit(EXIT_FAILURE);
-      }
-      filename = calloc(1, strlen(homefile) + strlen(homedir) + 1);
-      if (filename == NULL)
+      if (!(filename = calloc(1, strlen(homefile) + strlen(homedir) + 1)))
       {
         fprintf(stderr, "malloc failed");
         exit(EXIT_FAILURE);
       }
       strcpy(filename, homedir);
       strcpy(filename + strlen(homedir), homefile);
-      if (homedir)
-      {
-        free(homedir);
-      }
     }
 
     if (access(filename, R_OK) == 0)
@@ -322,10 +309,8 @@ static void parse_keystroke_file(void)
     }
     else if (access(etcfile, R_OK) == 0)
     {
-      if (filename)
-        free(filename);
-      filename = strdup(etcfile);
-      if (filename == NULL)
+      free(filename);
+      if (!(filename = strdup(etcfile)))
       {
         fprintf(stderr, "malloc failed");
         exit(EXIT_FAILURE);
@@ -333,8 +318,7 @@ static void parse_keystroke_file(void)
     }
     else
     {
-      if (filename)
-        free(filename);
+      free(filename);
       filename = NULL;
     }
   }
@@ -342,20 +326,15 @@ static void parse_keystroke_file(void)
   /* now we know which file to read, if any */
   if (filename)
   {
-    xmlDoc *doc = NULL;
-    xmlNode *root = NULL;
     LIBXML_TEST_VERSION
-    doc = xmlReadFile(filename, NULL, 0);
-    if (doc != NULL)
+    xmlDoc *doc = xmlReadFile(filename, NULL, 0);
+    if (doc)
     {
-      xmlNode *cur = NULL;
-      root = xmlDocGetRootElement(doc);
-
-      for (cur = root; cur; cur = cur->next)
+      for (xmlNode *cur = xmlDocGetRootElement(doc); cur; cur = cur->next)
       {
         if (cur->type == XML_ELEMENT_NODE && strcmp((char *)cur->name, "keystrokes") == 0)
         {
-          xmlNode *bindings = NULL;
+          xmlNode *bindings;
           int num = 0;
           int idx = 0;
 
@@ -369,8 +348,7 @@ static void parse_keystroke_file(void)
           #ifdef DEBUG
           fprintf(stderr, "%s: found %d keystrokes in %s\n", __func__, num, filename);
           #endif
-          map = calloc(num+1, sizeof(struct nxagentSpecialKeystrokeMap));
-          if (map == NULL)
+          if (!(map = calloc(num+1, sizeof(struct nxagentSpecialKeystrokeMap))))
           {
             fprintf(stderr, "calloc failed");
             exit(EXIT_FAILURE);
@@ -402,6 +380,7 @@ static void parse_keystroke_file(void)
       #endif
     }
     free(filename);
+    filename = NULL;
   }
 }
 
