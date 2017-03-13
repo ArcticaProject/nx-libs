@@ -89,6 +89,8 @@ char * nxagentSpecialKeystrokeNames[] = {
        "viewport_move_up",
        "viewport_move_right",
        "viewport_move_down",
+
+       "reread_keystrokes",
        NULL,
 };
 
@@ -134,6 +136,7 @@ struct nxagentSpecialKeystrokeMap default_map[] = {
   {KEYSTROKE_VIEWPORT_MOVE_RIGHT, ControlMask | ShiftMask, True, XK_KP_Right},
   {KEYSTROKE_VIEWPORT_MOVE_DOWN, ControlMask | ShiftMask, True, XK_Down},
   {KEYSTROKE_VIEWPORT_MOVE_DOWN, ControlMask | ShiftMask, True, XK_KP_Down},
+  {KEYSTROKE_REREAD_KEYSTROKES, ControlMask, True, XK_k},
   {KEYSTROKE_END_MARKER, 0, False, NoSymbol},
 };
 struct nxagentSpecialKeystrokeMap *map = default_map;
@@ -247,7 +250,7 @@ static Bool read_binding_from_xmlnode(xmlNode *node, struct nxagentSpecialKeystr
  *  - hardcoded traditional NX default settings
  * If run in x2go flavour different filenames and varnames are used.
  */
-static void parse_keystroke_file(void)
+static void parse_keystroke_file(Bool force)
 {
   char *filename = NULL;
 
@@ -258,8 +261,21 @@ static void parse_keystroke_file(void)
   /* used for tracking if the config file parsing has already been
      done (regardless of the result) */
   static Bool done = False;
-  if (done)
-    return;
+
+  if (force) {
+    if (map != default_map)
+    {
+      free(map);
+      map = default_map;
+    }
+    fprintf(stderr, "re-reading keystroke config\n");
+  }
+  else
+  {
+    if (done)
+      return;
+  }
+
   done = True;
 
   if (nxagentX2go) {
@@ -392,7 +408,7 @@ static enum nxagentSpecialKeystroke find_keystroke(XKeyEvent *X)
 
   /* FIXME: we do late parsing here, this should be done at startup,
      not at first keypress! */
-  parse_keystroke_file();
+  parse_keystroke_file(False);
 
   cur = map;
 
@@ -572,6 +588,16 @@ Bool nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
           nxagentOption(DesktopResize) == 0) {
         *result = doViewportMoveDown;
       }
+      break;
+    case KEYSTROKE_REREAD_KEYSTROKES:
+      /* two reasons to check on KeyRelease:
+	 - this code is called for KeyPress and KeyRelease, so we
+	   would read the keystroke file twice
+	 - if the keystroke file changes settings for this key this
+           might lead to unexpected behaviour
+      */
+      if (X->type == KeyRelease)
+	parse_keystroke_file(True);
       break;
     case KEYSTROKE_NOTHING: /* do nothing. difference to KEYSTROKE_IGNORE is the return value */
     case KEYSTROKE_END_MARKER: /* just to make gcc STFU */

@@ -64,12 +64,14 @@ enum nxagentSpecialKeystroke {
        KEYSTROKE_VIEWPORT_MOVE_RIGHT = 19,
        KEYSTROKE_VIEWPORT_MOVE_DOWN = 20,
 
-       KEYSTROKE_NOTHING = 21,
+       KEYSTROKE_REREAD_KEYSTROKES = 21,
+
+       KEYSTROKE_NOTHING = 22,
 
        /* insert more here, increment KEYSTROKE_MAX accordingly.
         * then update string translation below */
 
-       KEYSTROKE_MAX = 22,
+       KEYSTROKE_MAX = 23,
 };
 
 struct nxagentSpecialKeystrokeMap {

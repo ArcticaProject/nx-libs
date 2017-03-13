@@ -92,6 +92,10 @@ viewport_move_right
   Moves the image viewport to the right.
 viewport_move_down
   Moves the image viewport down.
+reread_keystrokes
+  forces nxagent to re-read the keystroke
+  configuration. Useful to add/changes keystrokes for a running
+  session.
 
 Only in builds with certain debugging options enabled, ignored otherwise:
 force_synchronization
