@@ -219,6 +219,7 @@ static Bool read_binding_from_xmlnode(xmlNode *node, struct nxagentSpecialKeystr
       else if (strcmp((char *)attr->name, "Mod2") == 0)    { newkm.modifierMask |= Mod2Mask; }
       else if (strcmp((char *)attr->name, "Mod3") == 0)    { newkm.modifierMask |= Mod3Mask; }
       else if (strcmp((char *)attr->name, "Mod4") == 0)    { newkm.modifierMask |= Mod4Mask; }
+      else if (strcmp((char *)attr->name, "Mod5") == 0)    { newkm.modifierMask |= Mod5Mask; }
       else if (strcmp((char *)attr->name, "Control") == 0) { newkm.modifierMask |= ControlMask; }
       else if (strcmp((char *)attr->name, "Shift") == 0)   { newkm.modifierMask |= ShiftMask; }
       else if (strcmp((char *)attr->name, "Lock") == 0)    { newkm.modifierMask |= LockMask;  }

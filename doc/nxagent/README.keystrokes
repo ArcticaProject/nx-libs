@@ -52,7 +52,7 @@ XStringToKeysym function. A list of possible keys can be found in
 'Space' and 'escape' won't.
 
 Modifiers are given as boolean attributes, possible modifiers are Mod1, Mod2,
-Mod3, Mod4, Control, Shift, Lock. Sensible combinations strongly depend on your
+Mod3, Mod4, Mod5, Control, Shift, Lock. Sensible combinations strongly depend on your
 keyboard configuration, but usually you will need Mod1 and Control. Boolean in
 this context means '0', 'false' and an unspecified attribute are false, anything
 else is considered true.
