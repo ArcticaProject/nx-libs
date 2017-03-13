@@ -64,12 +64,17 @@ default keybindings, and only one file is read, no merging between different
 configuration files is done. This also means that an empty or invalid configuration
 file deactivates all keybindings.
 
+If an attribute occurs more than once in a line the last one wins.
+
 List of possible 'action' attributes:
 -------------------------------------
 
 close_session
   This terminates the session.
+fullscreen
+  Switches the client window into or out of fullscreen mode, using only the current head.
 switch_all_screens
+  Switches the client window into or out of fullscreen mode, using all available heads.
 minimize
   This will minimize the client window (even for fullscreen sessions.)
 left
@@ -77,13 +82,15 @@ up
 right
 down
 resize
-  This action switches between the auto-resize and viewport mode (static size). The default is auto-resize. In viewport mode one can use the 'viewport_move_up', 'viewport_move_down', 'viewport_move_left' and 'viewport_move_right' actions to move within the image.
+  This action switches between the auto-resize and viewport mode
+  (static size). The default is auto-resize. In viewport mode one can
+  use the 'viewport_move_up', 'viewport_move_down',
+  'viewport_move_left' and 'viewport_move_right' actions to move
+  within the image.
 defer
-  Works like 'ignore' to make some keys be ignored/defunct inside the session.
+  activate/deactivate deferred screen updates.
 ignore
   Makes it possible to add 'ignore', as in nothing happens when certain keys are pressed.
-fullscreen
-  Switches the client window into or out of fullscreen mode.
 viewport_move_left
   Moves the image viewport to the left.
 viewport_move_up
