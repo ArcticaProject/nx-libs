@@ -300,7 +300,7 @@ static void parse_keystroke_file(void)
       if (homedir == NULL)
       {
         fprintf(stderr, "malloc failed");
-          exit(EXIT_FAILURE);
+        exit(EXIT_FAILURE);
       }
       filename = calloc(1, strlen(homefile) + strlen(homedir) + 1);
       if (filename == NULL)
