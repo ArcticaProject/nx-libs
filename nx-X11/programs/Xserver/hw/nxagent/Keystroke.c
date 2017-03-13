@@ -369,6 +369,7 @@ static void parse_keystroke_file(void)
 
           for (bindings = cur->children; bindings; bindings = bindings->next)
           {
+            map[idx].stroke = KEYSTROKE_NOTHING;
             if (bindings->type == XML_ELEMENT_NODE &&
                 strcmp((char *)bindings->name, "keystroke") == 0 &&
                 read_binding_from_xmlnode(bindings, &(map[idx])))
