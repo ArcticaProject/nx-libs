@@ -155,10 +155,11 @@ static Bool modifier_matches(unsigned int mask, int compare_alt_meta, unsigned i
     }
 
     mask &= ~nxagentAltMetaMask;
+    state &= ~nxagentAltMetaMask;
   }
 
   /* all modifiers except meta/alt have to match exactly, extra bits are evil */
-  if ((mask & state) != mask) {
+  if (mask != state) {
     ret = False;
   }
 
