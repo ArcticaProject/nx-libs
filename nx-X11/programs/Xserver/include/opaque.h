@@ -52,6 +52,7 @@ extern int defaultScreenSaverAllowExposures;
 extern int argcGlobal;
 extern char **argvGlobal;
 extern char *display;
+extern int displayfd;
 
 extern int defaultBackingStore;
 extern Bool disableBackingStore;

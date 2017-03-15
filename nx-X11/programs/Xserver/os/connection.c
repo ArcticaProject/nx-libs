@@ -138,6 +138,7 @@ int NumNotifyWriteFd;           /* Number of NotifyFd members with write set */
 Bool NewOutputPending;		/* not yet attempted to write some new output */
 Bool AnyWritesPending;          /* true if some client blocked on write or NotifyFd with write */
 Bool RunFromSmartParent;	/* send SIGUSR1 to parent process */
+static char dynamic_display[7]; /* display name */
 Bool PartialNetwork;		/* continue even if unable to bind all addrs */
 static Pid_t ParentProcess;
 
@@ -359,12 +360,28 @@ void
 NotifyParentProcess(void)
 {
 #if !defined(WIN32)
+    if (dynamic_display[0]) {
+        write(displayfd, dynamic_display, strlen(dynamic_display));
+        close(displayfd);
+    }
     if (RunFromSmartParent) {
        if (ParentProcess > 1) {
            kill (ParentProcess, SIGUSR1);
        }
     }
 #endif
+}
+
+static Bool
+TryCreateSocket(int num, int *partial)
+{
+    char port[20];
+
+    snprintf(port, sizeof(port), "%d", num);
+
+    return (_XSERVTransMakeAllCOTSServerListeners(port, partial,
+                                                  &ListenTransCount,
+                                                  &ListenTransConns) >= 0);
 }
 
 /*****************
@@ -377,7 +394,6 @@ CreateWellKnownSockets(void)
 {
     int		i;
     int		partial;
-    char 	port[20];
 
     FD_ZERO(&AllSockets);
     FD_ZERO(&AllClients);
@@ -392,33 +408,41 @@ CreateWellKnownSockets(void)
 
     FD_ZERO (&WellKnownConnections);
 
-    sprintf (port, "%d", atoi (display));
-
-    if ((_XSERVTransMakeAllCOTSServerListeners (port, &partial,
-	&ListenTransCount, &ListenTransConns) >= 0) &&
-	(ListenTransCount >= 1))
-    {
-	if (!PartialNetwork && partial)
-	{
-	    FatalError ("Failed to establish all listening sockets");
-	}
-	else
-	{
-	    ListenTransFds = (int *) malloc (ListenTransCount * sizeof (int));
-
-	    for (i = 0; i < ListenTransCount; i++)
-	    {
-		int fd = _XSERVTransGetConnectionNumber (ListenTransConns[i]);
-		
-		ListenTransFds[i] = fd;
-		FD_SET (fd, &WellKnownConnections);
-
-		if (!_XSERVTransIsLocal (ListenTransConns[i]))
-		{
-		    DefineSelf (fd);
-		}
+    /* display is initialized to "0" by main(). It is then set to the display
+     * number if specified on the command line, or to NULL when the -displayfd
+     * option is used. */
+    if (display) {
+        if (TryCreateSocket(atoi(display), &partial) &&
+            ListenTransCount >= 1)
+            if (!PartialNetwork && partial)
+                FatalError ("Failed to establish all listening sockets");
+    }
+    else { /* -displayfd */
+	Bool found = 0;
+	for (i = 0; i < 65535 - X_TCP_PORT; i++) {
+	    if (TryCreateSocket(i, &partial) && !partial) {
+		found = 1;
+		break;
 	    }
+	    else
+		CloseWellKnownConnections();
 	}
+	if (!found)
+	    FatalError("Failed to find a socket to listen on");
+	snprintf(dynamic_display, sizeof(dynamic_display), "%d", i);
+	display = dynamic_display;
+    }
+
+    ListenTransFds = malloc(ListenTransCount * sizeof (int));
+
+    for (i = 0; i < ListenTransCount; i++) {
+        int fd = _XSERVTransGetConnectionNumber(ListenTransConns[i]);
+
+        ListenTransFds[i] = fd;
+        FD_SET(fd, &WellKnownConnections);
+
+        if (!_XSERVTransIsLocal(ListenTransConns[i]))
+            DefineSelf (fd);
     }
 
     if (!XFD_ANYSET (&WellKnownConnections))

@@ -149,6 +149,7 @@ int defaultColorVisualClass = -1;
 int monitorResolution = 0;
 
 char *display;
+int displayfd;
 
 CARD32 TimeOutValue = DEFAULT_TIMEOUT * MILLI_PER_SECOND;
 int	argcGlobal;
