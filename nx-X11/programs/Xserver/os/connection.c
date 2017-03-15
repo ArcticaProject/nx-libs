@@ -364,8 +364,12 @@ NotifyParentProcess(void)
 {
 #if !defined(WIN32)
     if (displayfd >= 0) {
-        write(displayfd, display, strlen(display));
-        close(displayfd);
+	if (write(displayfd, display, strlen(display)) != strlen(display))
+	    FatalError("Cannot write display number to fd %d\n", displayfd);
+	if (write(displayfd, "\n", 1) != 1)
+	    FatalError("Cannot write display number to fd %d\n", displayfd);
+	close(displayfd);
+	displayfd = -1;
     }
     if (RunFromSmartParent) {
        if (ParentProcess > 1) {
