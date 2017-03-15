@@ -902,6 +902,11 @@ ProcessCommandLine(int argc, char *argv[])
 	else if ( strcmp( argv[i], "-nolisten") == 0)
 	{
             if(++i < argc) {
+#ifdef NXAGENT_SERVER
+		if (strcmp( argv[i], "ANY" ) == 0)
+		    NoListenAll = TRUE;
+		else
+#endif /* NXAGENT_SERVER */
 		if (_XSERVTransNoListen(argv[i])) 
 		    FatalError ("Failed to disable listen for %s transport",
 				argv[i]);

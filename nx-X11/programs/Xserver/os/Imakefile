@@ -43,6 +43,7 @@ NX_DEFINES = -DNX_TRANS_SOCKET		\
              -DNX_TRANS_SLEEP		\
              -DNX_TRANS_EXIT		\
              -DNX_TRANS_WAKEUP=1000	\
+             -DNXAGENT_SERVER		\
              $(NULL)
 
 #            -DNX_TRANS_WARN		\
