@@ -520,6 +520,7 @@ typedef enum {
 #endif
 
 extern const char *LogInit(const char *fname, const char *backup);
+extern void LogSetDisplay(void);
 extern void LogClose(void);
 extern Bool LogSetParameter(LogParameter param, int value);
 extern void LogVWrite(int verb, const char *f, va_list args);
