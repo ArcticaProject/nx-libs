@@ -205,8 +205,6 @@ extern void XdmcpDeadSession(char * /*reason*/);
 
 static void timeout(void);
 
-static void restart(void);
-
 static void XdmcpBlockHandler(
     void * /*data*/,
     struct timeval ** /*wt*/,
@@ -956,14 +954,6 @@ timeout(void)
     default:
 	break;
     }
-    send_packet();
-}
-
-static void
-restart(void)
-{
-    state = XDM_INIT_STATE;
-    timeOutRtx = 0;
     send_packet();
 }
 
