@@ -137,10 +137,6 @@ extern char *ClientAuthorized(
     unsigned int /*string_n*/,
     char* /*auth_string*/);
 
-extern Bool EstablishNewConnections(
-    ClientPtr /*clientUnused*/,
-    void * /*closure*/);
-
 extern void CheckConnections(void);
 
 extern void CloseDownConnection(ClientPtr /*client*/);
