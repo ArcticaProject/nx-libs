@@ -704,6 +704,7 @@ ProcessCommandLine(int argc, char *argv[])
 	{
 	    /* initialize display */
 	    display = argv[i];
+	    explicit_display = TRUE;
 	    display++;
             if( ! VerifyDisplayName( display ) ) {
                 ErrorF("Bad display name: %s\n", display);
@@ -783,7 +784,6 @@ ProcessCommandLine(int argc, char *argv[])
 	else if (strcmp(argv[i], "-displayfd") == 0) {
 	    if (++i < argc) {
 		displayfd = atoi(argv[i]);
-		display = NULL;
 		nolock = TRUE;
 	    }
 	    else

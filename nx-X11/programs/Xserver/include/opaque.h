@@ -53,6 +53,7 @@ extern int argcGlobal;
 extern char **argvGlobal;
 extern char *display;
 extern int displayfd;
+extern Bool explicit_display;
 
 extern int defaultBackingStore;
 extern Bool disableBackingStore;
