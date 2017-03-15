@@ -77,6 +77,6 @@ extern long maxBigRequestSize;
 extern Bool blackRoot;
 
 extern Bool CoreDump;
-
+extern Bool NoListenAll;
 
 #endif /* OPAQUE_H */

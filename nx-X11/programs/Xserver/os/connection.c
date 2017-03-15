@@ -137,6 +137,7 @@ int MaxClients = 0;
 int NumNotifyWriteFd;           /* Number of NotifyFd members with write set */
 Bool NewOutputPending;		/* not yet attempted to write some new output */
 Bool AnyWritesPending;          /* true if some client blocked on write or NotifyFd with write */
+Bool NoListenAll;               /* Don't establish any listening sockets */
 Bool RunFromSmartParent;	/* send SIGUSR1 to parent process */
 static char dynamic_display[7]; /* display name */
 Bool PartialNetwork;		/* continue even if unable to bind all addrs */
@@ -411,7 +412,10 @@ CreateWellKnownSockets(void)
     /* display is initialized to "0" by main(). It is then set to the display
      * number if specified on the command line, or to NULL when the -displayfd
      * option is used. */
-    if (display) {
+    if (NoListenAll) {
+	ListenTransCount = 0;
+    }
+    else if (display) {
         if (TryCreateSocket(atoi(display), &partial) &&
             ListenTransCount >= 1)
             if (!PartialNetwork && partial)
@@ -445,7 +449,7 @@ CreateWellKnownSockets(void)
             DefineSelf (fd);
     }
 
-    if (!XFD_ANYSET (&WellKnownConnections))
+    if (!XFD_ANYSET (&WellKnownConnections) && !NoListenAll)
         FatalError ("Cannot establish any listening sockets - Make sure an X server isn't already running");
 #if !defined(WIN32)
     OsSignal (SIGPIPE, SIG_IGN);
