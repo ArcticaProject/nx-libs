@@ -432,6 +432,8 @@ main(int argc, char *argv[], char *envp[])
 	    	FatalError("could not create connection block info");
 	}
 
+	NotifyParentProcess();
+
 	Dispatch();
 
 	/* Now free up whatever must be freed */
