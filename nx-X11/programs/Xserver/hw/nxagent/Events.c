@@ -682,7 +682,7 @@ static void nxagentSwitchDeferMode(void)
 
 void setWinNameSuffix(const char *suffix)
 {
-  static unsigned char * prev = NULL;
+  static char * prev = NULL;
   char * pre = " (";
   char * post = ")";
   char * newname;
