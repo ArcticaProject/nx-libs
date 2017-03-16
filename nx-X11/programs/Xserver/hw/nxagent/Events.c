@@ -721,28 +721,40 @@ void setWinNameSuffix(const char *suffix)
 static Bool autograb = False;
 static Bool inputlock = False;
 
-static void nxagentAutoGrab(void)
+static void nxagentEnableAutoGrab(void)
 {
+#ifdef DEBUG
+  fprintf(stderr, "enabling autograb\n");
+#endif
+
+  nxagentGrabPointerAndKeyboard(NULL);
+  setWinNameSuffix("autograb on");
+  autograb = True;
+}
+
+static void nxagentDisableAutoGrab(void)
+{
+#ifdef DEBUG
+  fprintf(stderr, "disabling autograb\n");
+#endif
+
+  nxagentUngrabPointerAndKeyboard(NULL);
+  setWinNameSuffix(NULL);
+  autograb = False;
+}
+
+static void nxagentToggleAutoGrab(void)
+{
+  /* autograb only works in windowed mode */
+  if (nxagentOption(Rootless) || nxagentOption(Fullscreen))
+    return;
+
   if (!inputlock)
   {
-    #ifdef DEBUG
-    if (autograb)
-      fprintf(stderr, "disabling autograb\n");
-    else
-      fprintf(stderr, "enabling autograb\n");
-    #endif
-
     if (!autograb)
-    {
-      nxagentGrabPointerAndKeyboard(NULL);
-      setWinNameSuffix("autograb on");
-    }
+      nxagentEnableAutoGrab();
     else
-    {
-      nxagentUngrabPointerAndKeyboard(NULL);
-      setWinNameSuffix(NULL);
-    }
-    autograb = !autograb;
+      nxagentDisableAutoGrab();
   }
 }
 
@@ -1165,7 +1177,7 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
           }
           case doAutoGrab:
           {
-            nxagentAutoGrab();
+            nxagentToggleAutoGrab();
 
             break;
           }
