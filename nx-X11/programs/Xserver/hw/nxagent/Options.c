@@ -172,6 +172,10 @@ void nxagentInitOptions(void)
   nxagentOptions.ReconnectTolerance = DEFAULT_TOLERANCE;
 
   nxagentOptions.KeycodeConversion = DEFAULT_KEYCODE_CONVERSION;
+
+  nxagentOptions.AutoGrab = False;
+
+  nxagentOptions.InputLock = False;
 }
 
 /*

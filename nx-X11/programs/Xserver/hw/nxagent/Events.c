@@ -718,9 +718,6 @@ void setWinNameSuffix(const char *suffix)
   }
 }
 
-static Bool autograb = False;
-static Bool inputlock = False;
-
 static void nxagentEnableAutoGrab(void)
 {
 #ifdef DEBUG
@@ -729,7 +726,7 @@ static void nxagentEnableAutoGrab(void)
 
   nxagentGrabPointerAndKeyboard(NULL);
   setWinNameSuffix("autograb on");
-  autograb = True;
+  nxagentChangeOption(AutoGrab, True);
 }
 
 static void nxagentDisableAutoGrab(void)
@@ -740,7 +737,7 @@ static void nxagentDisableAutoGrab(void)
 
   nxagentUngrabPointerAndKeyboard(NULL);
   setWinNameSuffix(NULL);
-  autograb = False;
+  nxagentChangeOption(AutoGrab, False);
 }
 
 static void nxagentToggleAutoGrab(void)
@@ -749,9 +746,9 @@ static void nxagentToggleAutoGrab(void)
   if (nxagentOption(Rootless) || nxagentOption(Fullscreen))
     return;
 
-  if (!inputlock)
+  if (!nxagentOption(InputLock))
   {
-    if (!autograb)
+    if (!nxagentOption(AutoGrab))
       nxagentEnableAutoGrab();
     else
       nxagentDisableAutoGrab();
@@ -767,7 +764,7 @@ static void nxagentEnableInputlock(void)
   XGrabPointer(nxagentDisplay,nxagentDefaultWindows[0], True,
       ButtonPressMask | ButtonReleaseMask | PointerMotionMask | FocusChangeMask | EnterWindowMask | LeaveWindowMask,
       GrabModeAsync, GrabModeAsync, nxagentDefaultWindows[0], None, CurrentTime);
-  inputlock = True;
+  nxagentChangeOption(InputLock, True);
 }
 
 static void nxagentDisableInputlock(void)
@@ -783,13 +780,13 @@ static void nxagentDisableInputlock(void)
     .nitems   = strlen((char *) name.value)
     };
   setWinNameSuffix(NULL);
-  inputlock = False;
+  nxagentChangeOption(InputLock, False);
 }
 
 /* TODO: drop inputlock when switching to Fullscreen */
 static void nxagentToggleInputLock(void)
 {
-  if (!inputlock)
+  if (!nxagentOption(InputLock))
     nxagentEnableInputlock();
   else
     nxagentDisableInputlock();
@@ -1638,7 +1635,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was
         }
 
         /* FIXME: only when in windowed mode! */
-        if (autograb)
+        if (nxagentOption(AutoGrab))
         {
           if (X.xfocus.window == nxagentDefaultWindows[0] && X.xfocus.mode == NotifyNormal)
           {
@@ -1726,7 +1723,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was
 
         #endif /* NXAGENT_FIXKEYS */
 
-        if (autograb)
+        if (nxagentOption(AutoGrab))
         {
           XlibWindow w;
           int revert_to;
