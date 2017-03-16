@@ -758,35 +758,41 @@ static void nxagentToggleAutoGrab(void)
   }
 }
 
-/* TODO: drop inputlock when switching to Fullscreen */
-static void nxagentLockInput(void)
+static void nxagentEnableInputlock(void)
 {
-  #ifdef DEBUG
-  if (inputlock)
-    fprintf(stderr, "releasing inputlock\n");
-  else
-    fprintf(stderr, "activating inputlock\n");
-  #endif
+#ifdef DEBUG
+  fprintf(stderr, "activating inputlock\n");
+#endif
+  setWinNameSuffix("input locked");
+  XGrabPointer(nxagentDisplay,nxagentDefaultWindows[0], True,
+      ButtonPressMask | ButtonReleaseMask | PointerMotionMask | FocusChangeMask | EnterWindowMask | LeaveWindowMask,
+      GrabModeAsync, GrabModeAsync, nxagentDefaultWindows[0], None, CurrentTime);
+  inputlock = True;
+}
 
-  if (!inputlock)
-  {
-    setWinNameSuffix("input locked");
-    XGrabPointer(nxagentDisplay,nxagentDefaultWindows[0], True,
-		 ButtonPressMask | ButtonReleaseMask | PointerMotionMask | FocusChangeMask | EnterWindowMask | LeaveWindowMask,
-		 GrabModeAsync, GrabModeAsync, nxagentDefaultWindows[0], None, CurrentTime);
-  }
-  else
-  {
-    nxagentUngrabPointerAndKeyboard(NULL);
-    XTextProperty name = {
-      .value    = (unsigned char *)nxagentWindowName,
-      .encoding = XA_STRING,
-      .format   = 8,
-      .nitems   = strlen((char *) name.value)
+static void nxagentDisableInputlock(void)
+{
+#ifdef DEBUG
+  fprintf(stderr, "deactivating inputlock\n");
+#endif
+  nxagentUngrabPointerAndKeyboard(NULL);
+  XTextProperty name = {
+    .value    = (unsigned char *)nxagentWindowName,
+    .encoding = XA_STRING,
+    .format   = 8,
+    .nitems   = strlen((char *) name.value)
     };
-    setWinNameSuffix(NULL);
-  }
-  inputlock = !inputlock;
+  setWinNameSuffix(NULL);
+  inputlock = False;
+}
+
+/* TODO: drop inputlock when switching to Fullscreen */
+static void nxagentToggleInputLock(void)
+{
+  if (!inputlock)
+    nxagentEnableInputlock();
+  else
+    nxagentDisableInputlock();
 }
 
 static Bool nxagentExposurePredicate(Display *display, XEvent *event, XPointer window)
@@ -1181,9 +1187,9 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
 
             break;
           }
-          case doLockInput:
+          case doInputLock:
           {
-            nxagentLockInput();
+            nxagentToggleInputLock();
 
             break;
           }

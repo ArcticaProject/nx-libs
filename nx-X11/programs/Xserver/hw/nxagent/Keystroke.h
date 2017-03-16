@@ -74,7 +74,7 @@ enum nxagentSpecialKeystroke {
        KEYSTROKE_REREAD_KEYSTROKES,
 
        KEYSTROKE_AUTOGRAB,
-       KEYSTROKE_LOCKINPUT,
+       KEYSTROKE_INPUTLOCK,
 
        KEYSTROKE_NOTHING,
 

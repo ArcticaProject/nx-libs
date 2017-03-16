@@ -101,7 +101,7 @@ char * nxagentSpecialKeystrokeNames[] = {
        "reread_keystrokes",
 
        "autograb",
-       "lockinput",
+       "inputlock",
 
        NULL,
 };
@@ -143,7 +143,7 @@ struct nxagentSpecialKeystrokeMap default_map[] = {
   {KEYSTROKE_VIEWPORT_SCROLL_DOWN, ControlMask, True, XK_KP_Down},
   {KEYSTROKE_REREAD_KEYSTROKES, ControlMask, True, XK_k},
   {KEYSTROKE_AUTOGRAB, ControlMask, True, XK_g},
-  {KEYSTROKE_LOCKINPUT, ControlMask, True, XK_c},
+  {KEYSTROKE_INPUTLOCK, ControlMask, True, XK_c},
   {KEYSTROKE_END_MARKER, 0, False, NoSymbol},
 };
 struct nxagentSpecialKeystrokeMap *map = default_map;
@@ -633,8 +633,8 @@ Bool nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
     case KEYSTROKE_AUTOGRAB:
       *result = doAutoGrab;
       break;
-    case KEYSTROKE_LOCKINPUT:
-      *result = doLockInput;
+    case KEYSTROKE_INPUTLOCK:
+      *result = doInputLock;
       break;
     case KEYSTROKE_NOTHING: /* do nothing. difference to KEYSTROKE_IGNORE is the return value */
     case KEYSTROKE_END_MARKER: /* just to make gcc STFU */

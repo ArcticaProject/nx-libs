@@ -52,7 +52,7 @@ enum HandleEventResult
   doSwitchResizeMode,
   doSwitchDeferMode,
   doAutoGrab,
-  doLockInput
+  doInputLock
 };
 
 extern CARD32 nxagentLastEventTime;
