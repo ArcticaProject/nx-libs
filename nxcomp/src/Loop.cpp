@@ -661,10 +661,11 @@ static void handleCheckSessionInLoop();
 static void handleCheckBitrateInLoop();
 
 static void handleCheckSelectInLoop(int &setFDs, fd_set &readSet,
-                                        fd_set &writeSet, T_timestamp selectTs);static void handleCheckResultInLoop(int &resultFDs, int &errorFDs, int &setFDs, fd_set &readSet,
+                                        fd_set &writeSet, T_timestamp selectTs);
+static void handleCheckResultInLoop(int &resultFDs, int &errorFDs, int &setFDs, fd_set &readSet,
                                         fd_set &writeSet, struct timeval &selectTs,
                                             struct timeval &startTs);
-	static void handleCheckStateInLoop(int &setFDs);
+static void handleCheckStateInLoop(int &setFDs);
 static void handleCheckSessionInConnect();
 
 static inline void handleSetReadInLoop(fd_set &readSet, int &setFDs, struct timeval &selectTs);
@@ -2529,7 +2530,8 @@ int NXTransAlert(int code, int local)
   {
     if (logofs == NULL)
     {
-      logofs = &cerr;    }
+      logofs = &cerr;
+    }
 
     nxdbg << "NXTransAlert: Can't request an alert without "
             << "a valid NX transport.\n" << std::flush;
@@ -3186,7 +3188,9 @@ int SetupProxyConnection()
     nxinfo << "Loop: listenSocket is "<< ( listenSocket.enabled() ? "enabled" : "disabled") << ". "
            << "The socket URI is '"<< ( socketUri != NULL ? socketUri : "<unset>") << "'.\n" << std::flush;
 
-    free(socketUri);    socketUri = NULL;
+    free(socketUri);
+    socketUri = NULL;
+
     if (WE_INITIATE_CONNECTION)
     {
       if (connectSocket.getSpec(&socketUri))
@@ -8555,7 +8559,7 @@ int ParseCommandLineOptions(int argc, const char **argv)
   nxinfo << "Loop: Argc is " << argc << ".\n" << std::flush;
 
   for (int argi = 0; argi < argc; argi++)
-  {    
+  {
     nxinfo << "Loop: Argv[" << argi << "] is " << argv[argi]
            << ".\n" << std::flush;
   }
@@ -13019,11 +13023,13 @@ void PrintProcessInfo()
 
   if (*errorsFileName != '\0')
   {
-    cerr << "Info" << ": Using errors file '" << errorsFileName << "'.\n";  }
+    cerr << "Info" << ": Using errors file '" << errorsFileName << "'.\n";
+  }
 
   if (*statsFileName != '\0')
   {
-    cerr << "Info" << ": Using stats file '" << statsFileName << "'.\n";  }
+    cerr << "Info" << ": Using stats file '" << statsFileName << "'.\n";
+  }
 
 }
 
@@ -13447,7 +13453,7 @@ int ParseArg(const char *type, const char *name, const char *value)
     case 'k':
     case 'm':
     case 'g':
-    {      
+    {
       nxinfo << (char) toupper(*id);
       break;
     }
@@ -13941,8 +13947,11 @@ static void handleCheckBitrateInLoop()
 
 
 static void handleCheckStateInLoop(int &setFDs)
-{  
-  int fdLength;  int fdPending;  int fdSplits;
+{
+  int fdLength;
+  int fdPending;
+  int fdSplits;
+
   for (int j = 0; j < setFDs; j++)
   {
     if (j != proxyFD)
