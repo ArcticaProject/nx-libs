@@ -897,7 +897,7 @@ static void PutEntry(
 		    /* bump to loose table, if any */
 		    table = *(prev = &table->next);
 		    if (!table || table->name != q ||
-			!quarks[2] != table->leaf)
+			(!quarks[2]) != table->leaf)
 			break; /* not found */
 		}
 	    }
