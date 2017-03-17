@@ -88,8 +88,6 @@ static int		    req_socklen;
 static CARD32		    SessionID;
 static CARD32		    timeOutTime;
 static int		    timeOutRtx;
-static CARD32		    defaultKeepaliveDormancy = XDM_DEF_DORMANCY;
-static CARD32		    keepaliveDormancy = XDM_DEF_DORMANCY;
 static CARD16		    DisplayNumber;
 static xdmcp_states	    XDM_INIT_STATE = XDM_OFF;
 #ifdef HASXDMAUTH
@@ -643,6 +641,7 @@ XdmcpOpenDisplay(int sock)
     if (state != XDM_AWAIT_MANAGE_RESPONSE)
 	return;
     state = XDM_RUN_SESSION;
+    timeOutTime = GetTimeInMillis() + XDM_DEF_DORMANCY * 1000;
     sessionSocket = sock;
 }
 
@@ -706,7 +705,6 @@ XdmcpWakeupHandler(
     void * pReadmask)
 {
     fd_set* LastSelectMask = (fd_set*)pReadmask;
-    fd_set   devicesReadable;
 
 #ifdef NX_TRANS_SOCKET
 
@@ -731,16 +729,6 @@ XdmcpWakeupHandler(
 	    FD_CLR(xdmcpSocket6, LastSelectMask);
 	} 
 #endif
-	XFD_ANDSET(&devicesReadable, LastSelectMask, &EnabledDevices);
-	if (XFD_ANYSET(&devicesReadable))
-	{
-	    if (state == XDM_AWAIT_USER_INPUT)
-		restart();
-	    else if (state == XDM_RUN_SESSION)
-		keepaliveDormancy = defaultKeepaliveDormancy;
-	}
-	if (XFD_ANYSET(&AllClients) && state == XDM_RUN_SESSION)
-	    timeOutTime = GetTimeInMillis() +  keepaliveDormancy * 1000;
     }
     else if (timeOutTime && (int) (GetTimeInMillis() - timeOutTime) >= 0)
     {
@@ -1428,16 +1416,8 @@ recv_alive_msg (unsigned length)
     {
     	if (SessionRunning && AliveSessionID == SessionID)
     	{
-	    /* backoff dormancy period */
 	    state = XDM_RUN_SESSION;
-	    if ((GetTimeInMillis() - lastDeviceEventTime.milliseconds) >
-		keepaliveDormancy * 1000)
-	    {
-		keepaliveDormancy <<= 1;
-		if (keepaliveDormancy > XDM_MAX_DORMANCY)
-		    keepaliveDormancy = XDM_MAX_DORMANCY;
-	    }
-	    timeOutTime = GetTimeInMillis() + keepaliveDormancy * 1000;
+	    timeOutTime = GetTimeInMillis() + XDM_DEF_DORMANCY * 1000;
     	}
 	else
     	{

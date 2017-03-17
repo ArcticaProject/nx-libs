@@ -48,8 +48,8 @@ SOFTWARE.
  *  Stuff to create connections --- OS dependent
  *
  *      EstablishNewConnections, CreateWellKnownSockets, ResetWellKnownSockets,
- *      CloseDownConnection, CheckConnections, AddEnabledDevice,
- *	RemoveEnabledDevice, OnlyListToOneClient,
+ *      CloseDownConnection, CheckConnections,
+ *      OnlyListToOneClient,
  *      ListenToAllClients,
  *
  *      (WaitForSomething is in its own file)
@@ -108,6 +108,7 @@ SOFTWARE.
 #include <nx-X11/Xpoll.h>
 #include "opaque.h"
 #include "dixstruct.h"
+#include "list.h"
 #ifdef XCSECURITY
 #define _SECURITY_SERVER
 #include <nx-X11/extensions/security.h>
@@ -122,17 +123,19 @@ SOFTWARE.
 int lastfdesc;			/* maximum file descriptor */
 
 fd_set WellKnownConnections;	/* Listener mask */
-fd_set EnabledDevices;		/* mask for input devices that are on */
+fd_set NotifyReadFds;           /* mask for other file descriptors */
+fd_set NotifyWriteFds;          /* mask for other write file descriptors */
 fd_set AllSockets;		/* select on this */
 fd_set AllClients;		/* available clients */
 fd_set LastSelectMask;		/* mask returned from last select call */
+fd_set LastSelectWriteMask;     /* mask returned from last select call */
 fd_set ClientsWithInput;	/* clients with FULL requests in buffer */
 fd_set ClientsWriteBlocked;	/* clients who cannot receive output */
 fd_set OutputPending;		/* clients with reply/event data ready to go */
 int MaxClients = 0;
+int NumNotifyWriteFd;           /* Number of NotifyFd members with write set */
 Bool NewOutputPending;		/* not yet attempted to write some new output */
-Bool AnyClientsWriteBlocked;	/* true if some client blocked on write */
-
+Bool AnyWritesPending;          /* true if some client blocked on write or NotifyFd with write */
 Bool RunFromSmartParent;	/* send SIGUSR1 to parent process */
 Bool PartialNetwork;		/* continue even if unable to bind all addrs */
 static Pid_t ParentProcess;
@@ -911,8 +914,8 @@ CloseDownFileDescriptor(OsCommPtr oc)
 	FD_CLR(connection, &SavedClientsWithInput);
     }
     FD_CLR(connection, &ClientsWriteBlocked);
-    if (!XFD_ANYSET(&ClientsWriteBlocked))
-    	AnyClientsWriteBlocked = FALSE;
+    if (!XFD_ANYSET(&ClientsWriteBlocked) && NumNotifyWriteFd == 0)
+	AnyWritesPending = FALSE;
     FD_CLR(connection, &OutputPending);
 }
 
@@ -995,22 +998,119 @@ CloseDownConnection(ClientPtr client)
 	AuditF("client %d disconnected\n", client->index);
 }
 
-void
-AddEnabledDevice(int fd)
-{
-    FD_SET(fd, &EnabledDevices);
-    FD_SET(fd, &AllSockets);
-    if (GrabInProgress)
-	FD_SET(fd, &SavedAllSockets);
-}
+struct notify_fd {
+    struct xorg_list list;
+    int fd;
+    int mask;
+    NotifyFdProcPtr notify;
+    void *data;
+};
+
+static struct xorg_list notify_fds;
 
 void
-RemoveEnabledDevice(int fd)
+InitNotifyFds(void)
 {
-    FD_CLR(fd, &EnabledDevices);
-    FD_CLR(fd, &AllSockets);
-    if (GrabInProgress)
-	FD_CLR(fd, &SavedAllSockets);
+    struct notify_fd *s, *next;
+    static int been_here;
+
+    if (been_here)
+	xorg_list_for_each_entry_safe(s, next, &notify_fds, list)
+	     RemoveNotifyFd(s->fd);
+
+    xorg_list_init(&notify_fds);
+    NumNotifyWriteFd = 0;
+    been_here = 1;
+}
+
+/*****************
+ * SetNotifyFd
+ *    Registers a callback to be invoked when the specified
+ *    file descriptor becomes readable.
+ *****************/
+
+Bool
+SetNotifyFd(int fd, NotifyFdProcPtr notify, int mask, void *data)
+{
+    struct notify_fd *n;
+    int changes;
+
+    xorg_list_for_each_entry(n, &notify_fds, list)
+	if (n->fd == fd)
+	    break;
+
+    if (&n->list == &notify_fds) {
+	if (mask == 0)
+	    return TRUE;
+
+	n = calloc(1, sizeof (struct notify_fd));
+	if (!n)
+	    return FALSE;
+	n->fd = fd;
+	xorg_list_add(&n->list, &notify_fds);
+    }
+
+    changes = n->mask ^ mask;
+
+    if (changes & X_NOTIFY_READ) {
+	if (mask & X_NOTIFY_READ) {
+	    FD_SET(fd, &NotifyReadFds);
+	    FD_SET(fd, &AllSockets);
+	    if (GrabInProgress)
+		FD_SET(fd, &SavedAllSockets);
+	} else {
+	    FD_CLR(fd, &AllSockets);
+	    if (GrabInProgress)
+		FD_CLR(fd, &SavedAllSockets);
+	     FD_CLR(fd, &NotifyReadFds);
+	}
+    }
+
+    if (changes & X_NOTIFY_WRITE) {
+	if (mask & X_NOTIFY_WRITE) {
+	    FD_SET(fd, &NotifyWriteFds);
+	    if (!NumNotifyWriteFd++)
+		AnyWritesPending = TRUE;
+	} else {
+	    FD_CLR(fd, &NotifyWriteFds);
+	    if (!--NumNotifyWriteFd)
+		if (!XFD_ANYSET(&ClientsWriteBlocked))
+		    AnyWritesPending = FALSE;
+	}
+    }
+
+    if (mask == 0) {
+	xorg_list_del(&n->list);
+	free(n);
+    } else {
+	n->mask = mask;
+	n->data = data;
+	n->notify = notify;
+    }
+
+    return TRUE;
+}
+
+/*****************
+ * HandlNotifyFds
+ *    A WorkProc to be called when any of the registered
+ *    file descriptors are readable.
+ *****************/
+
+void
+HandleNotifyFds(void)
+{
+    struct notify_fd *n, *next;
+
+    xorg_list_for_each_entry_safe(n, next, &notify_fds, list) {
+	int ready = 0;
+	if ((n->mask & X_NOTIFY_READ) && FD_ISSET(n->fd, &LastSelectMask))
+	    ready |= X_NOTIFY_READ;
+	if ((n->mask & X_NOTIFY_WRITE) & FD_ISSET(n->fd, &LastSelectWriteMask))
+	    ready |= X_NOTIFY_WRITE;
+	if (ready != 0)
+	    n->notify(n->fd, ready, n->data);
+    }
 }
 
 /*****************

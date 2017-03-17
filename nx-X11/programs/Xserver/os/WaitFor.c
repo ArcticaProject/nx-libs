@@ -188,9 +188,9 @@ WaitForSomething(int *pClientsReady)
     int curclient;
     int selecterr;
     int nready;
-    fd_set devicesReadable;
     CARD32 now = 0;
     Bool    someReady = FALSE;
+    Bool    someNotifyWriteReady = FALSE;
 
 #if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
     fprintf(stderr, "WaitForSomething: Got called.\n");
@@ -338,7 +338,7 @@ WaitForSomething(int *pClientsReady)
         if (dispatchException)
             i = -1;
 #endif
-	else if (AnyClientsWriteBlocked)
+	else if (AnyWritesPending)
 	{
 #if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
             if (wt == NULL)
@@ -353,8 +353,9 @@ WaitForSomething(int *pClientsReady)
                                 wt -> tv_sec, wt -> tv_usec);
             }
 #endif
-	    XFD_COPYSET(&ClientsWriteBlocked, &clientsWritable);
-	    i = Select (MaxClients, &LastSelectMask, &clientsWritable, NULL, wt);
+	     XFD_COPYSET(&ClientsWriteBlocked, &LastSelectWriteMask);
+	     XFD_ORSET(&LastSelectWriteMask, &NotifyWriteFds, &LastSelectWriteMask);
+	     i = Select(MaxClients, &LastSelectMask, &LastSelectWriteMask, NULL, wt);
 	}
 	else 
 	{
@@ -489,26 +490,33 @@ WaitForSomething(int *pClientsReady)
 	    }
 	    if (someReady)
 		XFD_ORSET(&LastSelectMask, &ClientsWithInput, &LastSelectMask);
-	    if (AnyClientsWriteBlocked && XFD_ANYSET (&clientsWritable))
-	    {
-		NewOutputPending = TRUE;
-		XFD_ORSET(&OutputPending, &clientsWritable, &OutputPending);
-		XFD_UNSET(&ClientsWriteBlocked, &clientsWritable);
-		if (! XFD_ANYSET(&ClientsWriteBlocked))
-		    AnyClientsWriteBlocked = FALSE;
+	    if (AnyWritesPending) {
+		XFD_ANDSET(&clientsWritable, &LastSelectWriteMask, &ClientsWriteBlocked);
+		    if (XFD_ANYSET(&clientsWritable)) {
+		    NewOutputPending = TRUE;
+		    XFD_ORSET(&OutputPending, &clientsWritable, &OutputPending);
+		    XFD_UNSET(&ClientsWriteBlocked, &clientsWritable);
+		    if (!XFD_ANYSET(&ClientsWriteBlocked) && NumNotifyWriteFd == 0)
+			AnyWritesPending = FALSE;
+		}
+		if (NumNotifyWriteFd != 0) {
+		    XFD_ANDSET(&tmp_set, &LastSelectWriteMask, &NotifyWriteFds);
+		    if (XFD_ANYSET(&tmp_set))
+			someNotifyWriteReady = TRUE;
+		}
 	    }
 
-	    XFD_ANDSET(&devicesReadable, &LastSelectMask, &EnabledDevices);
 	    XFD_ANDSET(&clientsReadable, &LastSelectMask, &AllClients); 
 	    XFD_ANDSET(&tmp_set, &LastSelectMask, &WellKnownConnections);
 	    if (XFD_ANYSET(&tmp_set))
 		QueueWorkProc(EstablishNewConnections, NULL,
 		              (void *)&LastSelectMask);
-#ifdef DPMSExtension
-	    if (XFD_ANYSET (&devicesReadable) && (DPMSPowerLevel != DPMSModeOn))
-		DPMSSet(DPMSModeOn);
-#endif
-	    if (XFD_ANYSET (&devicesReadable) || XFD_ANYSET (&clientsReadable))
+
+	    XFD_ANDSET(&tmp_set, &LastSelectMask, &NotifyReadFds);
+	    if (XFD_ANYSET(&tmp_set) || someNotifyWriteReady)
+	         HandleNotifyFds();
+
+	    if (XFD_ANYSET (&clientsReadable))
 		break;
 #ifdef WIN32
 	    /* Windows keyboard and mouse events are added to the input queue

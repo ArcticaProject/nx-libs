@@ -58,6 +58,7 @@ is" without express or implied warranty.
 #include "Pointer.h"
 #include "Keyboard.h"
 #include "Handlers.h"
+#include "Events.h"
 #include "Init.h"
 #include "Args.h"
 #include "Client.h"
@@ -405,6 +406,12 @@ FIXME: These variables, if not removed at all because have probably
    */
 
   blackRoot = TRUE;
+}
+
+void
+nxagentNotifyConnection(int fd, int ready, void *data)
+{
+    nxagentDispatchEvents(NULL);
 }
 
 void InitInput(argc, argv)

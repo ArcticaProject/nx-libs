@@ -49,4 +49,6 @@ extern int  nxagentX2go;
 
 extern ServerGrabInfoRec nxagentGrabServerInfo;
 
+void nxagentNotifyConnection(int fd, int ready, void *data);
+
 #endif /* __Init_H__ */
