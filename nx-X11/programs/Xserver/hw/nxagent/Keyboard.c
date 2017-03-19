@@ -204,8 +204,10 @@ static char *nxagentXkbGetRules(void);
 unsigned int nxagentAltMetaMask;
 unsigned int nxagentAltMask;
 unsigned int nxagentMetaMask;
+unsigned int nxagentCapsMask;
+unsigned int nxagentNumlockMask;
 
-static void nxagentCheckAltMetaKeys(CARD8, int);
+static void nxagentCheckModifierMasks(CARD8, int);
 
 CARD8 nxagentCapsLockKeycode = 66;
 CARD8 nxagentNumLockKeycode  = 77;
@@ -792,6 +794,8 @@ N/A
       nxagentAltMetaMask = 0;
       nxagentAltMask = 0;
       nxagentMetaMask = 0;
+      nxagentCapsMask = 0;
+      nxagentNumlockMask = 0;
 
       for (i = 0; i < 256; i++)
         modmap[i] = 0;
@@ -805,7 +809,7 @@ N/A
 
           if (keycode > 0)
           {
-            nxagentCheckAltMetaKeys(keycode, j);
+            nxagentCheckModifierMasks(keycode, j);
           }
         }
       XFreeModifiermap(modifier_keymap);
@@ -1377,7 +1381,7 @@ int nxagentResetKeyboard(void)
   }
 }
 
-void nxagentCheckAltMetaKeys(CARD8 keycode, int j)
+void nxagentCheckModifierMasks(CARD8 keycode, int j)
 {
   if (keycode == XKeysymToKeycode(nxagentDisplay, XK_Meta_L))
   {
@@ -1402,6 +1406,18 @@ void nxagentCheckAltMetaKeys(CARD8 keycode, int j)
     nxagentAltMetaMask |= 1 << j;
     nxagentAltMask |= 1 << j;
   }
+
+  if (keycode == XKeysymToKeycode(nxagentDisplay, XK_Num_Lock))
+  {
+    nxagentNumlockMask |= 1 << j;
+  }
+
+  if (keycode == XKeysymToKeycode(nxagentDisplay, XK_Caps_Lock) ||
+      keycode == XKeysymToKeycode(nxagentDisplay, XK_Shift_Lock) )
+  {
+    nxagentCapsMask |= 1 << j;
+  }
+
 }
 
 void nxagentCheckRemoteKeycodes()
