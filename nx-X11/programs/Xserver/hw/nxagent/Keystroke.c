@@ -34,6 +34,7 @@
 #include "Events.h"
 #include "Options.h"
 #include "Keystroke.h"
+#include "Keyboard.h"
 #include "Drawable.h"
 #include "Init.h" /* extern int nxagentX2go */
 
@@ -148,6 +149,15 @@ static Bool modifier_matches(unsigned int mask, int compare_alt_meta, unsigned i
     mask &= ~nxagentAltMetaMask;
     state &= ~nxagentAltMetaMask;
   }
+
+  /* ignore CapsLock and/or Numlock if the keystroke does not
+     explicitly require them */
+
+  if ( !(mask & nxagentCapsMask) )
+    state &= ~nxagentCapsMask;
+
+  if ( !(mask & nxagentNumlockMask) )
+    state &= ~nxagentNumlockMask;
 
   /* all modifiers except meta/alt have to match exactly, extra bits are evil */
   if (mask != state) {
