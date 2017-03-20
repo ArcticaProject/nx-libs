@@ -622,7 +622,6 @@ void UseMsg(void)
     ErrorF("v                      video blanking for screen-saver\n");
     ErrorF("-v                     screen-saver without video blanking\n");
     ErrorF("-wm                    WhenMapped default backing-store\n");
-    ErrorF("-x string              loads named extension at init time \n");
     ErrorF("-maxbigreqsize         set maximal bigrequest size \n");
 #ifdef PANORAMIX
     ErrorF("+xinerama              Enable XINERAMA (PanoramiX) extension\n");
@@ -1012,14 +1011,6 @@ ProcessCommandLine(int argc, char *argv[])
 	    noRRXineramaExtension = TRUE;
 	}
 #endif
-	else if ( strcmp( argv[i], "-x") == 0)
-	{
-	    if(++i >= argc)
-		UseMsg();
-	    /* For U**x, which doesn't support dynamic loading, there's nothing
-	     * to do when we see a -x.  Either the extension is linked in or
-	     * it isn't */
-	}
 	else if ( strcmp( argv[i], "-I") == 0)
 	{
 	    /* ignore all remaining arguments */
