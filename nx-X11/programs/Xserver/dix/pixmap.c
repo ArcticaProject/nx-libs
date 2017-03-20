@@ -59,7 +59,7 @@ GetScratchPixmapHeader(ScreenPtr pScreen, int width, int height, int depth,
 	pScreen->pScratchPixmap = NULL;
     else
 	/* width and height of 0 means don't allocate any pixmap data */
-	pPixmap = (*pScreen->CreatePixmap)(pScreen, 0, 0, depth);
+	pPixmap = (*pScreen->CreatePixmap)(pScreen, 0, 0, depth, 0);
 
     if (pPixmap) {
 	if ((*pScreen->ModifyPixmapHeader)(pPixmap, width, height, depth,
@@ -89,18 +89,18 @@ FreeScratchPixmapHeader(PixmapPtr pPixmap)
 
 
 Bool
-CreateScratchPixmapsForScreen(int scrnum)
+CreateScratchPixmapsForScreen(ScreenPtr pScreen)
 {
     /* let it be created on first use */
-    screenInfo.screens[scrnum]->pScratchPixmap = NULL;
+    pScreen->pScratchPixmap = NULL;
     return TRUE;
 }
 
 
 void
-FreeScratchPixmapsForScreen(int scrnum)
+FreeScratchPixmapsForScreen(ScreenPtr pScreen)
 {
-    FreeScratchPixmapHeader(screenInfo.screens[scrnum]->pScratchPixmap);
+    FreeScratchPixmapHeader(pScreen->pScratchPixmap);
 }
 
 
@@ -147,4 +147,34 @@ AllocatePixmap(ScreenPtr pScreen, int pixDataSize)
     pPixmap = (PixmapPtr)malloc(sizeof(PixmapRec) + pixDataSize);
 #endif
     return pPixmap;
+}
+
+
+PixmapPtr PixmapShareToSlave(PixmapPtr pixmap, ScreenPtr slave)
+{
+    PixmapPtr spix;
+    int ret;
+    void *handle;
+    ScreenPtr master = pixmap->drawable.pScreen;
+    int depth = pixmap->drawable.depth;
+
+    ret = master->SharePixmapBacking(pixmap, slave, &handle);
+    if (ret == FALSE)
+        return NULL;
+
+    spix = slave->CreatePixmap(slave, 0, 0, depth,
+                               CREATE_PIXMAP_USAGE_SHARED);
+    slave->ModifyPixmapHeader(spix, pixmap->drawable.width,
+                              pixmap->drawable.height, depth, 0,
+                              pixmap->devKind, NULL);
+
+    spix->master_pixmap = pixmap;
+
+    ret = slave->SetSharedPixmapBacking(spix, handle);
+    if (ret == FALSE) {
+        slave->DestroyPixmap(spix);
+        return NULL;
+    }
+
+    return spix;
 }

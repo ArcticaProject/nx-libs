@@ -66,6 +66,9 @@ RREditConnectionInfo(ScreenPtr pScreen)
     int screen = 0;
     int d;
 
+    if (ConnectionInfo == NULL)
+        return;
+
     connSetup = (xConnSetup *) ConnectionInfo;
     vendor = (char *) connSetup + sizeof(xConnSetup);
     formats = (xPixmapFormat *) ((char *) vendor +
@@ -429,7 +432,10 @@ rrGetMultiScreenResources(ClientPtr client, Bool query, ScreenPtr pScreen)
 
     update_totals(pScreen, pScrPriv);
 
-    xorg_list_for_each_entry(iter, &pScreen->output_slave_list, output_head) {
+    xorg_list_for_each_entry(iter, &pScreen->slave_list, slave_head) {
+        if (!iter->is_output_slave)
+            continue;
+
         pScrPriv = rrGetScrPriv(iter);
 
         if (query)
@@ -485,7 +491,10 @@ rrGetMultiScreenResources(ClientPtr client, Bool query, ScreenPtr pScreen)
     }
     update_arrays(pScreen, pScrPriv, primary_crtc, has_primary);
 
-    xorg_list_for_each_entry(iter, &pScreen->output_slave_list, output_head) {
+    xorg_list_for_each_entry(iter, &pScreen->slave_list, slave_head) {
+        if (!iter->is_output_slave)
+            continue;
+
         pScrPriv = rrGetScrPriv(iter);
 
         update_arrays(iter, pScrPriv, primary_crtc, has_primary);
@@ -546,7 +555,7 @@ rrGetScreenResources(ClientPtr client, Bool query)
             return BadAlloc;
 
 #ifndef NXAGENT_SERVER
-    if (!xorg_list_is_empty(&pScreen->output_slave_list))
+    if (pScreen->output_slaves)
         return rrGetMultiScreenResources(client, query, pScreen);
 #endif
 

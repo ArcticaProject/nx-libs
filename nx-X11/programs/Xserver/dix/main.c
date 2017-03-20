@@ -120,17 +120,16 @@ extern void Dispatch(void);
 xConnSetupPrefix connSetupPrefix;
 
 extern FontPtr defaultFont;
-extern int screenPrivateCount;
 
 extern void InitProcVectors(void);
 extern Bool CreateGCperDepthArray(void);
+
+extern void FreeScreen(ScreenPtr pScreen);
 
 #ifndef PANORAMIX
 static
 #endif
 Bool CreateConnectionBlock(void);
-
-static void FreeScreen(ScreenPtr);
 
 PaddingInfo PixmapWidthPaddingInfo[33];
 
@@ -158,89 +157,10 @@ ReplyNotSwappd(
     FatalError("Not implemented");
 }
 
-/*
- * This array encodes the answer to the question "what is the log base 2
- * of the number of pixels that fit in a scanline pad unit?"
- * Note that ~0 is an invalid entry (mostly for the benefit of the reader).
- */
-static int answer[6][4] = {
-	/* pad   pad   pad     pad*/
-	/*  8     16    32    64 */
-
-	{   3,     4,    5 ,   6 },	/* 1 bit per pixel */
-	{   1,     2,    3 ,   4 },	/* 4 bits per pixel */
-	{   0,     1,    2 ,   3 },	/* 8 bits per pixel */
-	{   ~0,    0,    1 ,   2 },	/* 16 bits per pixel */
-	{   ~0,    ~0,   0 ,   1 },	/* 24 bits per pixel */
-	{   ~0,    ~0,   0 ,   1 }	/* 32 bits per pixel */
-};
-
-/*
- * This array gives the answer to the question "what is the first index for
- * the answer array above given the number of bits per pixel?"
- * Note that ~0 is an invalid entry (mostly for the benefit of the reader).
- */
-static int indexForBitsPerPixel[ 33 ] = {
-	~0, 0, ~0, ~0,	/* 1 bit per pixel */
-	1, ~0, ~0, ~0,	/* 4 bits per pixel */
-	2, ~0, ~0, ~0,	/* 8 bits per pixel */
-	~0,~0, ~0, ~0,
-	3, ~0, ~0, ~0,	/* 16 bits per pixel */
-	~0,~0, ~0, ~0,
-	4, ~0, ~0, ~0,	/* 24 bits per pixel */
-	~0,~0, ~0, ~0,
-	5		/* 32 bits per pixel */
-};
-
-/*
- * This array gives the bytesperPixel value for cases where the number
- * of bits per pixel is a multiple of 8 but not a power of 2.
- */
-static int answerBytesPerPixel[ 33 ] = {
-	~0, 0, ~0, ~0,	/* 1 bit per pixel */
-	0, ~0, ~0, ~0,	/* 4 bits per pixel */
-	0, ~0, ~0, ~0,	/* 8 bits per pixel */
-	~0,~0, ~0, ~0,
-	0, ~0, ~0, ~0,	/* 16 bits per pixel */
-	~0,~0, ~0, ~0,
-	3, ~0, ~0, ~0,	/* 24 bits per pixel */
-	~0,~0, ~0, ~0,
-	0		/* 32 bits per pixel */
-};
-
-/*
- * This array gives the answer to the question "what is the second index for
- * the answer array above given the number of bits per scanline pad unit?"
- * Note that ~0 is an invalid entry (mostly for the benefit of the reader).
- */
-static int indexForScanlinePad[ 65 ] = {
-	~0, ~0, ~0, ~0,
-	~0, ~0, ~0, ~0,
-	 0, ~0, ~0, ~0,	/* 8 bits per scanline pad unit */
-	~0, ~0, ~0, ~0,
-	 1, ~0, ~0, ~0,	/* 16 bits per scanline pad unit */
-	~0, ~0, ~0, ~0,
-	~0, ~0, ~0, ~0,
-	~0, ~0, ~0, ~0,
-	 2, ~0, ~0, ~0,	/* 32 bits per scanline pad unit */
-	~0, ~0, ~0, ~0,
-	~0, ~0, ~0, ~0,
-	~0, ~0, ~0, ~0,
-	~0, ~0, ~0, ~0,
-	~0, ~0, ~0, ~0,
-	~0, ~0, ~0, ~0,
-	~0, ~0, ~0, ~0,
-	 3		/* 64 bits per scanline pad unit */
-};
-
-#ifndef MIN
-#define MIN(a,b) (((a) < (b)) ? (a) : (b))
-#endif
-
 int
 main(int argc, char *argv[], char *envp[])
 {
-    int		i, j, k, error;
+    int		i, error;
     char	*xauthfile;
     HWEventQueueType	alwaysCheckForInput[2];
 
@@ -329,17 +249,6 @@ main(int argc, char *argv[], char *envp[])
 	screenInfo.numScreens = 0;
 	screenInfo.numVideoScreens = -1;
 
-	/*
-	 * Just in case the ddx doesnt supply a format for depth 1 (like qvss).
-	 */
-	j = indexForBitsPerPixel[ 1 ];
-	k = indexForScanlinePad[ BITMAP_SCANLINE_PAD ];
-	PixmapWidthPaddingInfo[1].padRoundUp = BITMAP_SCANLINE_PAD-1;
-	PixmapWidthPaddingInfo[1].padPixelsLog2 = answer[j][k];
- 	j = indexForBitsPerPixel[8]; /* bits per byte */
- 	PixmapWidthPaddingInfo[1].padBytesLog2 = answer[j][k];
-	PixmapWidthPaddingInfo[1].bitsPerPixel = 1;
-
 	InitAtoms();
 	InitEvents();
 	InitGlyphCaching();
@@ -364,17 +273,24 @@ main(int argc, char *argv[], char *envp[])
 	InitExtensions(argc, argv);
 	if (!InitClientPrivates(serverClient))
 	    FatalError("failed to allocate serverClient devprivates");
+
+	for (i = 0; i < screenInfo.numGPUScreens; i++) {
+	    ScreenPtr pScreen = screenInfo.gpuscreens[i];
+	    if (!CreateScratchPixmapsForScreen(pScreen))
+		FatalError("failed to create scratch pixmaps");
+	}
+
 	for (i = 0; i < screenInfo.numScreens; i++)
 	{
 	    ScreenPtr pScreen = screenInfo.screens[i];
-	    if (!CreateScratchPixmapsForScreen(i))
+	    if (!CreateScratchPixmapsForScreen(pScreen))
 		FatalError("failed to create scratch pixmaps");
 	    if (pScreen->CreateScreenResources &&
 		!(*pScreen->CreateScreenResources)(pScreen))
 		FatalError("failed to create screen resources");
-	    if (!CreateGCperDepth(i))
+	    if (!CreateGCperDepth(pScreen))
 		FatalError("failed to create scratch GCs");
-	    if (!CreateDefaultStipple(i))
+	    if (!CreateDefaultStipple(pScreen))
 		FatalError("failed to create default stipple");
 	    if (!CreateRootWindow(pScreen))
 		FatalError("failed to create root window");
@@ -454,15 +370,25 @@ main(int argc, char *argv[], char *envp[])
 	CloseDownDevices();
 	CloseDownEvents();
 
+	for (i = screenInfo.numGPUScreens - 1; i >= 0; i--) {
+	    ScreenPtr pScreen = screenInfo.gpuscreens[i];
+	    FreeScratchPixmapsForScreen(pScreen);
+	    (*pScreen->CloseScreen) (pScreen);
+	    FreeScreen(pScreen);
+	    screenInfo.numGPUScreens = i;
+	}
+
 	for (i = screenInfo.numScreens - 1; i >= 0; i--)
 	{
-	    FreeScratchPixmapsForScreen(i);
-	    FreeGCperDepth(i);
-	    FreeDefaultStipple(i);
-	    (* screenInfo.screens[i]->CloseScreen)(i, screenInfo.screens[i]);
-	    FreeScreen(screenInfo.screens[i]);
+	    ScreenPtr pScreen = screenInfo.screens[i];
+	    FreeScratchPixmapsForScreen(pScreen);
+	    FreeGCperDepth(pScreen);
+	    FreeDefaultStipple(pScreen);
+	    (* pScreen->CloseScreen)(pScreen);
+	    FreeScreen(pScreen);
 	    screenInfo.numScreens = i;
 	}
+
 	FreeFonts();
 
 #ifdef DPMSExtension
@@ -652,137 +578,4 @@ CreateConnectionBlock()
     connSetupPrefix.majorVersion = X_PROTOCOL;
     connSetupPrefix.minorVersion = X_PROTOCOL_REVISION;
     return TRUE;
-}
-
-/*
-	grow the array of screenRecs if necessary.
-	call the device-supplied initialization procedure 
-with its screen number, a pointer to its ScreenRec, argc, and argv.
-	return the number of successfully installed screens.
-
-*/
-
-int
-AddScreen(
-    Bool	(* pfnInit)(
-	int /*index*/,
-	ScreenPtr /*pScreen*/,
-	int /*argc*/,
-	char ** /*argv*/
-		),
-    int argc,
-    char **argv)
-{
-
-    int i;
-    int scanlinepad, format, depth, bitsPerPixel, j, k;
-    ScreenPtr pScreen;
-#ifdef DEBUG
-    void	(**jNI) ();
-#endif /* DEBUG */
-
-    i = screenInfo.numScreens;
-    if (i == MAXSCREENS)
-	return -1;
-
-    pScreen = (ScreenPtr) calloc(1, sizeof(ScreenRec));
-    if (!pScreen)
-	return -1;
-
-    pScreen->devPrivates = (DevUnion *)calloc(sizeof(DevUnion),
-						screenPrivateCount);
-    if (!pScreen->devPrivates && screenPrivateCount)
-    {
-	free(pScreen);
-	return -1;
-    }
-    pScreen->myNum = i;
-    pScreen->WindowPrivateLen = 0;
-    pScreen->WindowPrivateSizes = (unsigned *)NULL;
-    pScreen->totalWindowSize =
-        ((sizeof(WindowRec) + sizeof(long) - 1) / sizeof(long)) * sizeof(long);
-    pScreen->GCPrivateLen = 0;
-    pScreen->GCPrivateSizes = (unsigned *)NULL;
-    pScreen->totalGCSize =
-        ((sizeof(GC) + sizeof(long) - 1) / sizeof(long)) * sizeof(long);
-#ifdef PIXPRIV
-    pScreen->PixmapPrivateLen = 0;
-    pScreen->PixmapPrivateSizes = (unsigned *)NULL;
-    pScreen->totalPixmapSize = BitmapBytePad(sizeof(PixmapRec)*8);
-#endif
-    pScreen->ClipNotify = 0;	/* for R4 ddx compatibility */
-    pScreen->CreateScreenResources = 0;
-    
-#ifdef DEBUG
-    for (jNI = &pScreen->QueryBestSize; 
-	 jNI < (void (**) ()) &pScreen->SendGraphicsExpose;
-	 jNI++)
-	*jNI = NotImplemented;
-#endif /* DEBUG */
-
-    /*
-     * This loop gets run once for every Screen that gets added,
-     * but thats ok.  If the ddx layer initializes the formats
-     * one at a time calling AddScreen() after each, then each
-     * iteration will make it a little more accurate.  Worst case
-     * we do this loop N * numPixmapFormats where N is # of screens.
-     * Anyway, this must be called after InitOutput and before the
-     * screen init routine is called.
-     */
-    for (format=0; format<screenInfo.numPixmapFormats; format++)
-    {
- 	depth = screenInfo.formats[format].depth;
- 	bitsPerPixel = screenInfo.formats[format].bitsPerPixel;
-  	scanlinepad = screenInfo.formats[format].scanlinePad;
- 	j = indexForBitsPerPixel[ bitsPerPixel ];
-  	k = indexForScanlinePad[ scanlinepad ];
- 	PixmapWidthPaddingInfo[ depth ].padPixelsLog2 = answer[j][k];
- 	PixmapWidthPaddingInfo[ depth ].padRoundUp =
- 	    (scanlinepad/bitsPerPixel) - 1;
- 	j = indexForBitsPerPixel[ 8 ]; /* bits per byte */
- 	PixmapWidthPaddingInfo[ depth ].padBytesLog2 = answer[j][k];
-	PixmapWidthPaddingInfo[ depth ].bitsPerPixel = bitsPerPixel;
-	if (answerBytesPerPixel[bitsPerPixel])
-	{
-	    PixmapWidthPaddingInfo[ depth ].notPower2 = 1;
-	    PixmapWidthPaddingInfo[ depth ].bytesPerPixel =
-		answerBytesPerPixel[bitsPerPixel];
-	}
-	else
-	{
-	    PixmapWidthPaddingInfo[ depth ].notPower2 = 0;
-	}
-    }
-  
-    /* This is where screen specific stuff gets initialized.  Load the
-       screen structure, call the hardware, whatever.
-       This is also where the default colormap should be allocated and
-       also pixel values for blackPixel, whitePixel, and the cursor
-       Note that InitScreen is NOT allowed to modify argc, argv, or
-       any of the strings pointed to by argv.  They may be passed to
-       multiple screens. 
-    */ 
-    pScreen->rgf = ~0L;  /* there are no scratch GCs yet*/
-    screenInfo.screens[i] = pScreen;
-    screenInfo.numScreens++;
-    if (!(*pfnInit)(i, pScreen, argc, argv))
-    {
-	FreeScreen(pScreen);
-	screenInfo.numScreens--;
-	return -1;
-    }
-    return i;
-}
-
-static void
-FreeScreen(ScreenPtr pScreen)
-{
-    pScreen->root = NullWindow;
-    free(pScreen->WindowPrivateSizes);
-    free(pScreen->GCPrivateSizes);
-#ifdef PIXPRIV
-    free(pScreen->PixmapPrivateSizes);
-#endif
-    free(pScreen->devPrivates);
-    free(pScreen);
 }

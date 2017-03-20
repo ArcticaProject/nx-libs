@@ -97,13 +97,18 @@ extern void FreeScratchPixmapHeader(
     PixmapPtr /*pPixmap*/);
 
 extern Bool CreateScratchPixmapsForScreen(
-    int /*scrnum*/);
+    ScreenPtr /*pScreen*/);
 
 extern void FreeScratchPixmapsForScreen(
-    int /*scrnum*/);
+    ScreenPtr /*pScreen*/);
 
 extern PixmapPtr AllocatePixmap(
     ScreenPtr /*pScreen*/,
     int /*pixDataSize*/);
+
+extern PixmapPtr
+PixmapShareToSlave(
+    PixmapPtr /*pixmap*/,
+    ScreenPtr /*slave*/);
 
 #endif /* PIXMAP_H */

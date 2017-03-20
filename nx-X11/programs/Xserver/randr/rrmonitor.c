@@ -208,8 +208,12 @@ RRMonitorInitList(ScreenPtr screen, RRMonitorListPtr mon_list, Bool get_active)
     /* Count the number of crtcs in this and any slave screens */
     numCrtcs = pScrPriv->numCrtcs;
 #ifndef NXAGENT_SERVER
-    xorg_list_for_each_entry(slave, &screen->output_slave_list, output_head) {
-        rrScrPrivPtr pSlavePriv;
+    xorg_list_for_each_entry(slave, &screen->slave_list, slave_head) {
+         rrScrPrivPtr pSlavePriv;
+
+        if (!slave->is_output_slave)
+            continue;
+
         pSlavePriv = rrGetScrPriv(slave);
         numCrtcs += pSlavePriv->numCrtcs;
     }
@@ -228,8 +232,12 @@ RRMonitorInitList(ScreenPtr screen, RRMonitorListPtr mon_list, Bool get_active)
     }
 
 #ifndef NXAGENT_SERVER
-    xorg_list_for_each_entry(slave, &screen->output_slave_list, output_head) {
-        rrScrPrivPtr pSlavePriv;
+    xorg_list_for_each_entry(slave, &screen->slave_list, slave_head) {
+         rrScrPrivPtr pSlavePriv;
+
+        if (!slave->is_output_slave)
+            continue;
+
         pSlavePriv = rrGetScrPriv(slave);
         for (sc = 0; sc < pSlavePriv->numCrtcs; sc++, c++) {
             if (pSlavePriv->crtcs[sc]->mode != NULL)
@@ -483,7 +491,10 @@ RRMonitorAdd(ClientPtr client, ScreenPtr screen, RRMonitorPtr monitor)
     }
 
 #ifndef NXAGENT_SERVER
-    xorg_list_for_each_entry(slave, &screen->output_slave_list, output_head) {
+    xorg_list_for_each_entry(slave, &screen->slave_list, slave_head) {
+        if (!slave->is_output_slave)
+            continue;
+
         if (RRMonitorMatchesOutputName(slave, monitor->name)) {
             client->errorValue = monitor->name;
             return BadValue;

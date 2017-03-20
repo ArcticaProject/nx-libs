@@ -88,10 +88,10 @@ void nxagentInitViewportFrame(ScreenPtr pScreen, WindowPtr pRootWin);
 
 #endif /* #ifdef VIEWPORT_FRAME */
 
-Bool nxagentOpenScreen(int index, ScreenPtr pScreen,
+Bool nxagentOpenScreen(ScreenPtr pScreen,
                            int argc, char *argv[]);
 
-Bool nxagentCloseScreen(int index, ScreenPtr pScreen);
+Bool nxagentCloseScreen(ScreenPtr pScreen);
 
 #define nxagentScreen(window) nxagentDefaultScreen
 

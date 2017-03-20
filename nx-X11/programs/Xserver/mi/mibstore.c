@@ -183,7 +183,7 @@ else \
 static int  miBSScreenIndex;
 static unsigned long miBSGeneration = 0;
 
-static Bool	    miBSCloseScreen(int i, ScreenPtr pScreen);
+static Bool	    miBSCloseScreen(ScreenPtr pScreen);
 static void	    miBSGetImage(DrawablePtr pDrawable, int sx, int sy,
 				 int w, int h, unsigned int format,
 				 unsigned long planemask, char *pdstLine);
@@ -416,8 +416,7 @@ miInitializeBackingStore (pScreen)
  */
 
 static Bool
-miBSCloseScreen (i, pScreen)
-    int		i;
+miBSCloseScreen (pScreen)
     ScreenPtr	pScreen;
 {
     miBSScreenPtr   pScreenPriv;
@@ -432,7 +431,7 @@ miBSCloseScreen (i, pScreen)
 
     free ((void *) pScreenPriv);
 
-    return (*pScreen->CloseScreen) (i, pScreen);
+    return (*pScreen->CloseScreen) (pScreen);
 }
 
 static void miBSFillVirtualBits(DrawablePtr pDrawable, GCPtr pGC,
@@ -494,7 +493,8 @@ miBSGetImage (pDrawable, sx, sy, w, h, format, planemask, pdstLine)
 		    XID	subWindowMode = IncludeInferiors;
 		    int	x, y;
 
-		    pPixmap = (*pScreen->CreatePixmap) (pScreen, w, h, depth);
+		    pPixmap = (*pScreen->CreatePixmap) (pScreen, w, h, depth,
+		                                       CREATE_PIXMAP_USAGE_SCRATCH);
 		    if (!pPixmap)
 			goto punt;
 		    pGC = GetScratchGC (depth, pScreen);
@@ -2738,7 +2738,7 @@ miResizeBackingStore(
 	    pNewPixmap = (PixmapPtr)(*pScreen->CreatePixmap)
 					    (pScreen,
 					     nw, nh,
-					     pWin->drawable.depth);
+					     pWin->drawable.depth, 0);
 	    if (!pNewPixmap)
 	    {
 #ifdef BSEAGER
@@ -3738,7 +3738,7 @@ miCreateBSPixmap (pWin, pExtents)
 			   (pScreen,
 			    extents->x2 - extents->x1,
 			    extents->y2 - extents->y1,
-			    pWin->drawable.depth);
+			    pWin->drawable.depth, 0);
     }
     if (!pBackingStore->pBackingPixmap)
     {

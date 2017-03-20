@@ -149,7 +149,7 @@ GCFuncs XineramaGCFuncs = {
 
 
 static Bool
-XineramaCloseScreen (int i, ScreenPtr pScreen)
+XineramaCloseScreen (ScreenPtr pScreen)
 {
     PanoramiXScreenPtr pScreenPriv = 
         (PanoramiXScreenPtr) pScreen->devPrivates[PanoramiXScreenIndex].ptr;
@@ -163,7 +163,7 @@ XineramaCloseScreen (int i, ScreenPtr pScreen)
 
     free ((void *) pScreenPriv);
 
-    return (*pScreen->CloseScreen) (i, pScreen);
+    return (*pScreen->CloseScreen) (pScreen);
 }
 
 Bool

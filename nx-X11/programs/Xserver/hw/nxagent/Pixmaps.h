@@ -117,7 +117,7 @@ extern int nxagentPixmapPrivateIndex;
 PixmapPtr nxagentPixmapPtr(Pixmap pixmap);
 
 PixmapPtr nxagentCreatePixmap(ScreenPtr pScreen, int width,
-                                  int height, int depth);
+                                  int height, int depth, unsigned usage_hint);
 
 Bool nxagentDestroyPixmap(PixmapPtr pPixmap);
 

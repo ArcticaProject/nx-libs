@@ -128,8 +128,7 @@ miModifyPixmapHeader(pPixmap, width, height, depth, bitsPerPixel, devKind,
 
 /*ARGSUSED*/
 Bool
-miCloseScreen (iScreen, pScreen)
-    int		iScreen;
+miCloseScreen (pScreen)
     ScreenPtr	pScreen;
 {
     return ((*pScreen->DestroyPixmap)((PixmapPtr)pScreen->devPrivate));
@@ -161,7 +160,7 @@ miCreateScreenResources(pScreen)
 	/* create a pixmap with no data, then redirect it to point to
 	 * the screen
 	 */
-	pPixmap = (*pScreen->CreatePixmap)(pScreen, 0, 0, pScreen->rootDepth);
+	pPixmap = (*pScreen->CreatePixmap)(pScreen, 0, 0, pScreen->rootDepth, 0);
 	if (!pPixmap)
 	    return FALSE;
 

@@ -79,12 +79,25 @@ extern Bool AllocateGCPrivate(
 
 extern int AddScreen(
     Bool (* /*pfnInit*/)(
-	int /*index*/,
 	ScreenPtr /*pScreen*/,
 	int /*argc*/,
 	char ** /*argv*/),
     int /*argc*/,
     char** /*argv*/);
+
+
+extern int AddGPUScreen(Bool (*pfnInit) (ScreenPtr /*pScreen */ ,
+                                         int /*argc */ ,
+                                         char **      /*argv */
+                                        ),
+                        int argc, char **argv);
+
+extern void RemoveGPUScreen(ScreenPtr pScreen);
+
+extern void
+AttachUnboundGPU(ScreenPtr pScreen, ScreenPtr new);
+extern void
+DetachUnboundGPU(ScreenPtr unbound);
 
 #ifdef PIXPRIV
 

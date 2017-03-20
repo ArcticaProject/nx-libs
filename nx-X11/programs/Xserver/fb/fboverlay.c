@@ -88,7 +88,7 @@ fbOverlayCreateWindow(WindowPtr pWin)
 }
 
 Bool
-fbOverlayCloseScreen (int iScreen, ScreenPtr pScreen)
+fbOverlayCloseScreen (ScreenPtr pScreen)
 {
     FbOverlayScrPrivPtr	pScrPriv = fbOverlayGetScrPriv(pScreen);
     int			i;
@@ -140,7 +140,7 @@ fbOverlayCreateScreenResources(ScreenPtr pScreen)
 	pbits = pScrPriv->layer[i].u.init.pbits;
 	width = pScrPriv->layer[i].u.init.width;
 	depth = pScrPriv->layer[i].u.init.depth;
-	pPixmap = (*pScreen->CreatePixmap)(pScreen, 0, 0, depth);
+	pPixmap = (*pScreen->CreatePixmap)(pScreen, 0, 0, depth, 0);
 	if (!pPixmap)
 	    return FALSE;
 	if (!(*pScreen->ModifyPixmapHeader)(pPixmap, pScreen->width,

@@ -55,7 +55,7 @@ static unsigned long cwGeneration = 0;
 extern GCOps cwGCOps;
 
 static Bool
-cwCloseScreen (int i, ScreenPtr pScreen);
+cwCloseScreen (ScreenPtr pScreen);
 
 static void
 cwValidateGC(GCPtr pGC, unsigned long stateChanges, DrawablePtr pDrawable);
@@ -673,7 +673,7 @@ miDisableCompositeWrapper(ScreenPtr pScreen)
 }
 
 static Bool
-cwCloseScreen (int i, ScreenPtr pScreen)
+cwCloseScreen (ScreenPtr pScreen)
 {
     cwScreenPtr   pScreenPriv;
 #ifdef RENDER
@@ -697,5 +697,5 @@ cwCloseScreen (int i, ScreenPtr pScreen)
 
     free((void *)pScreenPriv);
 
-    return (*pScreen->CloseScreen)(i, pScreen);
+    return (*pScreen->CloseScreen)(pScreen);
 }

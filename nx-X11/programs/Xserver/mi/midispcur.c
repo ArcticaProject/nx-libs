@@ -56,7 +56,7 @@ in this Software without prior written authorization from The Open Group.
 static int	miDCScreenIndex;
 static unsigned long miDCGeneration = 0;
 
-static Bool	miDCCloseScreen(int index, ScreenPtr pScreen);
+static Bool	miDCCloseScreen(ScreenPtr pScreen);
 
 typedef struct {
     GCPtr	    pSourceGC, pMaskGC;
@@ -163,8 +163,7 @@ miDCInitialize (pScreen, screenFuncs)
 #define tossPict(pict)	(pict ? FreePicture (pict, 0) : 0)
 
 static Bool
-miDCCloseScreen (index, pScreen)
-    int		index;
+miDCCloseScreen (pScreen)
     ScreenPtr	pScreen;
 {
     miDCScreenPtr   pScreenPriv;
@@ -185,7 +184,7 @@ miDCCloseScreen (index, pScreen)
     tossPict (pScreenPriv->pTempPicture);
 #endif
     free ((void *) pScreenPriv);
-    return (*pScreen->CloseScreen) (index, pScreen);
+    return (*pScreen->CloseScreen) (pScreen);
 }
 
 static Bool
@@ -267,7 +266,8 @@ miDCRealize (
 	pPriv->sourceBits = 0;
 	pPriv->maskBits = 0;
 	pPixmap = (*pScreen->CreatePixmap) (pScreen, pCursor->bits->width,
-					    pCursor->bits->height, 32);
+					    pCursor->bits->height, 32,
+					    CREATE_PIXMAP_USAGE_SCRATCH);
 	if (!pPixmap)
 	{
 	    free ((void *) pPriv);
@@ -299,13 +299,13 @@ miDCRealize (
     }
     pPriv->pPicture = 0;
 #endif
-    pPriv->sourceBits = (*pScreen->CreatePixmap) (pScreen, pCursor->bits->width, pCursor->bits->height, 1);
+    pPriv->sourceBits = (*pScreen->CreatePixmap) (pScreen, pCursor->bits->width, pCursor->bits->height, 1, 0);
     if (!pPriv->sourceBits)
     {
 	free ((void *) pPriv);
 	return (miDCCursorPtr)NULL;
     }
-    pPriv->maskBits =  (*pScreen->CreatePixmap) (pScreen, pCursor->bits->width, pCursor->bits->height, 1);
+    pPriv->maskBits =  (*pScreen->CreatePixmap) (pScreen, pCursor->bits->width, pCursor->bits->height, 1, 0);
     if (!pPriv->maskBits)
     {
 	(*pScreen->DestroyPixmap) (pPriv->sourceBits);
@@ -526,7 +526,7 @@ miDCSaveUnderCursor (pScreen, x, y, w, h)
 	if (pSave)
 	    (*pScreen->DestroyPixmap) (pSave);
 	pScreenPriv->pSave = pSave =
-		(*pScreen->CreatePixmap) (pScreen, w, h, pScreen->rootDepth);
+		(*pScreen->CreatePixmap) (pScreen, w, h, pScreen->rootDepth, 0);
 	if (!pSave)
 	    return FALSE;
     }
@@ -736,7 +736,7 @@ miDCMoveCursor (pScreen, pCursor, x, y, w, h, dx, dy, source, mask)
 	}
 #endif
 	pScreenPriv->pTemp = pTemp = (*pScreen->CreatePixmap)
-	    (pScreen, w, h, pScreenPriv->pSave->drawable.depth);
+	    (pScreen, w, h, pScreenPriv->pSave->drawable.depth, 0);
 	if (!pTemp)
 	    return FALSE;
     }

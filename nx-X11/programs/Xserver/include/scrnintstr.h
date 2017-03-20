@@ -56,6 +56,7 @@ SOFTWARE.
 #include "validate.h"
 #include <nx-X11/Xproto.h>
 #include "dix.h"
+#include "list.h"
 
 typedef struct _PixmapFormat {
     unsigned char	depth;
@@ -89,7 +90,6 @@ typedef struct _Depth {
  */
 
 typedef    Bool (* CloseScreenProcPtr)(
-	int /*index*/,
 	ScreenPtr /*pScreen*/);
 
 typedef    void (* QueryBestSizeProcPtr)(
@@ -197,11 +197,21 @@ typedef    void (* ClipNotifyProcPtr)(
 	int /*dx*/,
 	int /*dy*/);
 
+/* pixmap will exist only for the duration of the current rendering operation */
+#define CREATE_PIXMAP_USAGE_SCRATCH                     1
+/* pixmap will be the backing pixmap for a redirected window */
+#define CREATE_PIXMAP_USAGE_BACKING_PIXMAP              2
+/* pixmap will contain a glyph */
+#define CREATE_PIXMAP_USAGE_GLYPH_PICTURE               3
+/* pixmap will be shared */
+#define CREATE_PIXMAP_USAGE_SHARED                      4
+
 typedef    PixmapPtr (* CreatePixmapProcPtr)(
 	ScreenPtr /*pScreen*/,
 	int /*width*/,
 	int /*height*/,
-	int /*depth*/);
+	int /*depth*/,
+	unsigned /*usage_hint*/);
 
 typedef    Bool (* DestroyPixmapProcPtr)(
 	PixmapPtr /*pPixmap*/);
@@ -527,10 +537,33 @@ typedef    void (*ConstrainCursorHarderProcPtr)(
 	int *, /*x*/
 	int *  /*y*/);
 
+typedef Bool (*PresentSharedPixmapProcPtr)(
+	PixmapPtr /* */);
+
+typedef Bool (*RequestSharedPixmapNotifyDamageProcPtr)(
+	PixmapPtr /* */);
+
+typedef Bool (*StopFlippingPixmapTrackingProcPtr)(
+	PixmapPtr, /* */
+	PixmapPtr, /* */
+	PixmapPtr /* */);
+
+typedef Bool (*SharedPixmapNotifyDamageProcPtr)(
+	PixmapPtr /* */);
+
 typedef     Bool (*ReplaceScanoutPixmapProcPtr)(
 	DrawablePtr, /*pDrawable*/
 	PixmapPtr, /*pPixmap*/
 	Bool /*enable*/);
+
+typedef Bool (*SharePixmapBackingProcPtr)(PixmapPtr, ScreenPtr, void **);
+
+typedef Bool (*SetSharedPixmapBackingProcPtr)(PixmapPtr, void *);
+
+typedef Bool (*StartPixmapTrackingProcPtr)(PixmapPtr, PixmapPtr,
+                                           int x, int y);
+
+typedef Bool (*StopPixmapTrackingProcPtr)(PixmapPtr, PixmapPtr);
 
 typedef struct _Screen {
     int			myNum;	/* index of this instance in Screens[] */
@@ -718,7 +751,20 @@ typedef struct _Screen {
     ChangeBorderWidthProcPtr	ChangeBorderWidth;
     MarkUnrealizedWindowProcPtr	MarkUnrealizedWindow;
 
+    Bool isGPU;
+
+    struct xorg_list unattached_list;
+    struct xorg_list unattached_head;
+
+    ScreenPtr current_master;
+
     ReplaceScanoutPixmapProcPtr ReplaceScanoutPixmap;
+
+    SharePixmapBackingProcPtr SharePixmapBacking;
+    SetSharedPixmapBackingProcPtr SetSharedPixmapBacking;
+
+    StartPixmapTrackingProcPtr StartPixmapTracking;
+    StopPixmapTrackingProcPtr StopPixmapTracking;
 } ScreenRec;
 
 static inline RegionPtr BitmapToRegion(ScreenPtr _pScreen, PixmapPtr pPix) {
@@ -736,6 +782,8 @@ typedef struct _ScreenInfo {
     int		arraySize;
     int		numScreens;
     ScreenPtr	screens[MAXSCREENS];
+    int numGPUScreens;
+    ScreenPtr gpuscreens[MAXGPUSCREENS];
     int		numVideoScreens;
 } ScreenInfo;
 

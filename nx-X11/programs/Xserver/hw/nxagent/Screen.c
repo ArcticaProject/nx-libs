@@ -820,7 +820,7 @@ static int nxagentColorOffset(unsigned long mask)
   return count;
 }
 
-Bool nxagentOpenScreen(int index, ScreenPtr pScreen,
+Bool nxagentOpenScreen(ScreenPtr pScreen,
                            int argc, char *argv[])
 {
   VisualPtr visuals;
@@ -846,7 +846,7 @@ Bool nxagentOpenScreen(int index, ScreenPtr pScreen,
 
   #ifdef TEST
   fprintf(stderr, "nxagentOpenScreen: Called for screen index [%d].\n",
-              index);
+              pScreen->myNum);
   #endif
 
   if (nxagentRenderEnable && nxagentReconnectTrap == False)
@@ -2075,7 +2075,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
   return True;
 }
 
-Bool nxagentCloseScreen(int index, ScreenPtr pScreen)
+Bool nxagentCloseScreen(ScreenPtr pScreen)
 {
   int i;
 
@@ -2855,7 +2855,7 @@ int nxagentShadowCreateMainWindow(ScreenPtr pScreen, WindowPtr pWin, int width, 
     DeleteWindow(nxagentShadowWindowPtr, accessWindowID);
   }
 
-  nxagentShadowPixmapPtr = nxagentCreatePixmap(pScreen, nxagentShadowWidth, nxagentShadowHeight, nxagentShadowDepth);
+  nxagentShadowPixmapPtr = nxagentCreatePixmap(pScreen, nxagentShadowWidth, nxagentShadowHeight, nxagentShadowDepth, 0);
 
   if (nxagentShadowPixmapPtr)
   {
@@ -3552,7 +3552,7 @@ Bool nxagentReconnectScreen(void *p0)
   fprintf(stderr, "nxagentReconnectScreen\n");
 #endif
 
-  if (!nxagentOpenScreen(0, nxagentDefaultScreen, nxagentArgc, nxagentArgv))
+  if (!nxagentOpenScreen(nxagentDefaultScreen, nxagentArgc, nxagentArgv))
   {
     return False;
   }
