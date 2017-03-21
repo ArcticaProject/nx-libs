@@ -2103,6 +2103,8 @@ void ddxUseMsg()
   ErrorF("-nokbreset             don't reset keyboard device if the session is resumed\n");
   ErrorF("-noxkblock             always allow applications to change layout through XKEYBOARD\n");
   ErrorF("-tile WxH              size of image tiles (minimum allowed: 32x32)\n");
+  ErrorF("-keystrokefile file    file with keyboard shortcut definitions\n");
+  ErrorF("-verbose               print more warning and error messages\n");
   ErrorF("-D                     enable desktop mode\n");
   ErrorF("-R                     enable rootless mode\n");
   ErrorF("-S                     enable shadow mode\n");
