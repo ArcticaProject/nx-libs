@@ -1289,6 +1289,12 @@ TCLIBDIR = TclLibDir
 #ifndef ToolkitStringsABIOptions
 #define ToolkitStringsABIOptions /**/
 #endif
+#ifndef HasSetitimer
+#define HasSetitimer YES
+#endif
+#ifndef HasSetitimerDefines
+#define HasSetitimerDefines -DHAVE_SETITIMER=1
+#endif
 #ifndef HasLdRunPath
 #define HasLdRunPath NO
 #endif
@@ -1841,6 +1847,7 @@ MODLDCOMBINEFLAGS = ModuleLdCombineFlags
   STD_CPP_OPTIONS = StandardCppOptions
   STD_CPP_DEFINES = StandardCppOptions StandardCppDefines $(PROJECT_DEFINES)
       STD_DEFINES = StandardDefines $(PROJECT_DEFINES)
+SETITIMER_DEFINES = HasSetitimerDefines
  EXTRA_LOAD_FLAGS = ExtraLoadFlags
   EXTRA_LDOPTIONS = ExtraLoadOptions
   EXTRA_LIBRARIES = MallocLibraries ExtraLibraries
@@ -1966,7 +1973,7 @@ MODLDCOMBINEFLAGS = ModuleLdCombineFlags
  * LOCAL_LDFLAGS contains client-specific ld flags flags set in Imakefile
  */
       ALLINCLUDES = $(INCLUDES) $(EXTRA_INCLUDES) $(TOP_INCLUDES) $(INSTALLED_INCLUDES) $(STD_INCLUDES)
-       ALLDEFINES = $(ALLINCLUDES) $(STD_DEFINES) $(PROTO_DEFINES) $(THREADS_DEFINES) $(MODULE_DEFINES) $(DEFINES) $(EXTRA_DEFINES)
+       ALLDEFINES = $(ALLINCLUDES) $(STD_DEFINES) $(SETITIMER_DEFINES) $(PROTO_DEFINES) $(THREADS_DEFINES) $(MODULE_DEFINES) $(DEFINES) $(EXTRA_DEFINES)
            CFLAGS = $(CDEBUGFLAGS) $(CCOPTIONS) $(THREADS_CFLAGS) $(MODULE_CFLAGS) $(ALLDEFINES)
         LINTFLAGS = $(LINTOPTS) -DLINT $(ALLDEFINES) $(DEPEND_DEFINES)
          LDPRELIB = LdPreLib $(INSTALLED_LIBS)

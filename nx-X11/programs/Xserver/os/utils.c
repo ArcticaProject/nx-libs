@@ -290,7 +290,8 @@ OsSignal(sig, handler)
 	sigaddset(&act.sa_mask, sig);
     act.sa_flags = 0;
     act.sa_handler = handler;
-    sigaction(sig, &act, &oact);
+    if (sigaction(sig, &act, &oact))
+	perror("sigaction");
     return oact.sa_handler;
 #endif
 }
@@ -337,7 +338,7 @@ LockServer(void)
   int len;
   char port[20];
 
-  if (nolock) return;
+  if (nolock || NoListenAll) return;
   /*
    * Path names
    */
@@ -463,7 +464,7 @@ LockServer(void)
 void
 UnlockServer(void)
 {
-  if (nolock) return;
+  if (nolock || NoListenAll) return;
 
   if (!StillLocking){
 
@@ -621,7 +622,6 @@ void UseMsg(void)
     ErrorF("v                      video blanking for screen-saver\n");
     ErrorF("-v                     screen-saver without video blanking\n");
     ErrorF("-wm                    WhenMapped default backing-store\n");
-    ErrorF("-x string              loads named extension at init time \n");
     ErrorF("-maxbigreqsize         set maximal bigrequest size \n");
 #ifdef PANORAMIX
     ErrorF("+xinerama              Enable XINERAMA (PanoramiX) extension\n");
@@ -703,6 +703,7 @@ ProcessCommandLine(int argc, char *argv[])
 	{
 	    /* initialize display */
 	    display = argv[i];
+	    explicit_display = TRUE;
 	    display++;
             if( ! VerifyDisplayName( display ) ) {
                 ErrorF("Bad display name: %s\n", display);
@@ -779,6 +780,15 @@ ProcessCommandLine(int argc, char *argv[])
 	    else
 		UseMsg();
 	}
+	else if (strcmp(argv[i], "-displayfd") == 0) {
+	    if (++i < argc) {
+		displayfd = atoi(argv[i]);
+		nolock = TRUE;
+	    }
+	    else
+		UseMsg();
+	}
+
 #ifdef DPMSExtension
 	else if ( strcmp( argv[i], "dpms") == 0)
 	    DPMSEnabledSwitch = TRUE;
@@ -891,6 +901,11 @@ ProcessCommandLine(int argc, char *argv[])
 	else if ( strcmp( argv[i], "-nolisten") == 0)
 	{
             if(++i < argc) {
+#ifdef NXAGENT_SERVER
+		if (strcmp( argv[i], "ANY" ) == 0)
+		    NoListenAll = TRUE;
+		else
+#endif /* NXAGENT_SERVER */
 		if (_XSERVTransNoListen(argv[i])) 
 		    FatalError ("Failed to disable listen for %s transport",
 				argv[i]);
@@ -996,14 +1011,6 @@ ProcessCommandLine(int argc, char *argv[])
 	    noRRXineramaExtension = TRUE;
 	}
 #endif
-	else if ( strcmp( argv[i], "-x") == 0)
-	{
-	    if(++i >= argc)
-		UseMsg();
-	    /* For U**x, which doesn't support dynamic loading, there's nothing
-	     * to do when we see a -x.  Either the extension is linked in or
-	     * it isn't */
-	}
 	else if ( strcmp( argv[i], "-I") == 0)
 	{
 	    /* ignore all remaining arguments */
@@ -1026,10 +1033,12 @@ ProcessCommandLine(int argc, char *argv[])
 	    i = skip - 1;
 	}
 #endif
+#if HAVE_SETITIMER
 	else if ( strcmp( argv[i], "-dumbSched") == 0)
 	{
-	    SmartScheduleDisable = TRUE;
+	    SmartScheduleSignalEnable = FALSE;
 	}
+#endif
 	else if ( strcmp( argv[i], "-schedInterval") == 0)
 	{
 	    if (++i < argc)
@@ -1353,29 +1362,14 @@ XNFstrdup(const char *s)
     return ret;
 }
 
-unsigned long	SmartScheduleIdleCount;
-Bool		SmartScheduleIdle;
-Bool		SmartScheduleTimerStopped;
-
-#ifdef SIGVTALRM
-#define SMART_SCHEDULE_POSSIBLE
-#endif
-
-#ifdef SMART_SCHEDULE_POSSIBLE
-#define SMART_SCHEDULE_SIGNAL		SIGALRM
-#define SMART_SCHEDULE_TIMER		ITIMER_REAL
-#endif
-
-#ifdef NX_TRANS_SOCKET
 void
 SmartScheduleStopTimer (void)
-#else
-static void
-SmartScheduleStopTimer (void)
-#endif
 {
-#ifdef SMART_SCHEDULE_POSSIBLE
+#if HAVE_SETITIMER
     struct itimerval	timer;
+
+    if (!SmartScheduleSignalEnable)
+	return;
 
     #ifdef NX_TRANS_TEST
     fprintf(stderr, "SmartScheduleStopTimer: Stopping timer.\n");
@@ -1386,96 +1380,101 @@ SmartScheduleStopTimer (void)
     timer.it_value.tv_sec = 0;
     timer.it_value.tv_usec = 0;
     (void) setitimer (ITIMER_REAL, &timer, 0);
-    SmartScheduleTimerStopped = TRUE;
 #endif
 }
 
-Bool
+void
 SmartScheduleStartTimer (void)
 {
-#ifdef SMART_SCHEDULE_POSSIBLE
+#if HAVE_SETITIMER
     struct itimerval	timer;
 
-    #ifdef NX_TRANS_SOCKET
-
-    if (SmartScheduleDisable)
-    {
-      return FALSE;
-    }
-
-    #endif
+    if (!SmartScheduleSignalEnable)
+      return;
 
     #ifdef NX_TRANS_TEST
     fprintf(stderr, "SmartScheduleStartTimer: Starting timer with [%ld] ms.\n",
                 SmartScheduleInterval);
     #endif
 
-    SmartScheduleTimerStopped = FALSE;
     timer.it_interval.tv_sec = 0;
     timer.it_interval.tv_usec = SmartScheduleInterval * 1000;
     timer.it_value.tv_sec = 0;
     timer.it_value.tv_usec = SmartScheduleInterval * 1000;
-    return setitimer (ITIMER_REAL, &timer, 0) >= 0;
+    setitimer (ITIMER_REAL, &timer, 0);
 #endif
-    return FALSE;
 }
 
-#ifdef SMART_SCHEDULE_POSSIBLE
+#if HAVE_SETITIMER
 static void
 SmartScheduleTimer (int sig)
 {
-    int olderrno = errno;
-
     SmartScheduleTime += SmartScheduleInterval;
 
     #ifdef NX_TRANS_TEST
     fprintf(stderr, "SmartScheduleTimer: Got timer with time [%ld] ms.\n",
                 SmartScheduleTime);
     #endif
+}
 
-    if (SmartScheduleIdle)
-    {
-	SmartScheduleStopTimer ();
-    }
-    errno = olderrno;
+int
+SmartScheduleEnable (void)
+{
+    int ret = 0;
+    struct sigaction	act;
+
+    if (!SmartScheduleSignalEnable)
+	return 0;
+
+    #ifdef NX_TRANS_TEST
+    fprintf(stderr, "SmartScheduleEnable: Enabling the smart scheduler.\n");
+    #endif
+
+    memset((char *) &act, 0, sizeof(struct sigaction));
+
+    /* Set up the timer signal function */
+    act.sa_flags = SA_RESTART;
+    act.sa_handler = SmartScheduleTimer;
+    sigemptyset (&act.sa_mask);
+    sigaddset (&act.sa_mask, SIGALRM);
+    ret = sigaction(SIGALRM, &act, 0);
+    return ret;
+}
+
+static int
+SmartSchedulePause(void)
+{
+    int ret = 0;
+    struct sigaction act;
+
+    if (!SmartScheduleSignalEnable)
+	return 0;
+
+    #ifdef NX_TRANS_TEST
+    fprintf(stderr, "SmartSchedulePause: Pausing the smart scheduler.\n");
+    #endif
+
+    memset((char *) &act, 0, sizeof(struct sigaction));
+
+    act.sa_handler = SIG_IGN;
+    sigemptyset(&act.sa_mask);
+    ret = sigaction(SIGALRM, &act, 0);
+    return ret;
 }
 #endif
 
-Bool
-SmartScheduleInit (void)
+void
+SmartScheduleInit(void)
 {
-#ifdef SMART_SCHEDULE_POSSIBLE
-    struct sigaction	act;
-
-    if (SmartScheduleDisable)
-	return TRUE;
-    
+#if HAVE_SETITIMER
     #ifdef NX_TRANS_TEST
     fprintf(stderr, "SmartScheduleInit: Initializing the smart scheduler.\n");
     #endif
 
-    bzero ((char *) &act, sizeof(struct sigaction));
-
-    /* Set up the timer signal function */
-    act.sa_handler = SmartScheduleTimer;
-    sigemptyset (&act.sa_mask);
-    sigaddset (&act.sa_mask, SMART_SCHEDULE_SIGNAL);
-    if (sigaction (SMART_SCHEDULE_SIGNAL, &act, 0) < 0)
-    {
-	perror ("sigaction for smart scheduler");
-	return FALSE;
+    if (SmartScheduleEnable() < 0) {
+	perror("sigaction for smart scheduler");
+	SmartScheduleSignalEnable = FALSE;
     }
-    /* Set up the virtual timer */
-    if (!SmartScheduleStartTimer ())
-    {
-	perror ("scheduling timer");
-	return FALSE;
-    }
-    /* stop the timer and wait for WaitForSomething to start it */
-    SmartScheduleStopTimer ();
-    return TRUE;
-#else
-    return FALSE;
 #endif
 }
 
@@ -1558,7 +1557,11 @@ System(char *command)
 	return(1);
 
 #ifdef SIGCHLD
-    csig = signal(SIGCHLD, SIG_DFL);
+    csig = OsSignal(SIGCHLD, SIG_DFL);
+    if (csig == SIG_ERR) {
+	perror("signal");
+	return -1;
+    }
 #endif
 
 #ifdef DEBUG
@@ -1596,7 +1599,10 @@ System(char *command)
 #endif
 
 #ifdef SIGCHLD
-    signal(SIGCHLD, csig);
+    if (OsSignal(SIGCHLD, csig) == SIG_ERR) {
+	perror("signal");
+	return -1;
+    }
 #endif
 
     return p == -1 ? -1 : status;
@@ -1629,6 +1635,17 @@ Popen(char *command, char *type)
 	return NULL;
     }
 
+    /* Ignore the smart scheduler while this is going on */
+#if HAVE_SETITIMER
+    if (SmartSchedulePause() < 0) {
+	close(pdes[0]);
+	close(pdes[1]);
+	free(cur);
+	perror("signal");
+	return NULL;
+    }
+#endif
+
 #ifdef NX_TRANS_EXIT
     if (OsVendorStartRedirectErrorFProc != NULL) {
         OsVendorStartRedirectErrorFProc();
@@ -1640,6 +1657,10 @@ Popen(char *command, char *type)
 	close(pdes[0]);
 	close(pdes[1]);
 	free(cur);
+#if HAVE_SETITIMER
+	if (SmartScheduleEnable() < 0)
+	    perror("signal");
+#endif
 #ifdef NX_TRANS_EXIT
 	if (OsVendorEndRedirectErrorFProc != NULL) {
 	    OsVendorEndRedirectErrorFProc();
@@ -1713,6 +1734,13 @@ Popen(char *command, char *type)
         #ifdef NX_TRANS_EXIT
 	OsReleaseSignals ();
         #endif
+
+#if HAVE_SETITIMER
+	if (SmartScheduleEnable() < 0) {
+	    perror("signal");
+	    return NULL;
+	}
+#endif
 
 	execl("/bin/sh", "sh", "-c", command, (char *)NULL);
 	_exit(127);

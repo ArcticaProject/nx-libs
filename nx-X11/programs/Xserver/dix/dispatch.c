@@ -112,6 +112,7 @@ int ProcInitialConnection();
 #include "inputstr.h"
 #include "xkbsrv.h"
 #endif
+#include "client.h"
 
 #define mskcnt ((MAXCLIENTS + 31) / 32)
 #define BITMASK(i) (1U << ((i) & 31))
@@ -221,7 +222,11 @@ InitSelections()
 #define SMART_SCHEDULE_DEFAULT_INTERVAL	20	    /* ms */
 #define SMART_SCHEDULE_MAX_SLICE	200	    /* ms */
 
-Bool	    SmartScheduleDisable = FALSE;
+#ifdef HAVE_SETITIMER
+#define SMART_SCHEDULE_DEFAULT_SIGNAL_ENABLE HAVE_SETITIMER
+Bool SmartScheduleSignalEnable = SMART_SCHEDULE_DEFAULT_SIGNAL_ENABLE;
+#endif
+
 long	    SmartScheduleSlice = SMART_SCHEDULE_DEFAULT_INTERVAL;
 long	    SmartScheduleInterval = SMART_SCHEDULE_DEFAULT_INTERVAL;
 long	    SmartScheduleMaxSlice = SMART_SCHEDULE_MAX_SLICE;
@@ -240,15 +245,13 @@ void        InitProcVectors(void);
 int
 SmartScheduleClient (int *clientReady, int nready)
 {
-    ClientPtr	pClient;
     int		i;
     int		client;
-    int		bestPrio, best = 0;
+    ClientPtr	pClient, best = NULL;
     int		bestRobin, robin;
     long	now = SmartScheduleTime;
     long	idle;
 
-    bestPrio = -0x7fffffff;
     bestRobin = 0;
     idle = 2 * SmartScheduleSlice;
     for (i = 0; i < nready; i++)
@@ -264,13 +267,19 @@ SmartScheduleClient (int *clientReady, int nready)
 	pClient->smart_check_tick = now;
 	
 	/* check priority to select best client */
-	robin = (pClient->index - SmartLastIndex[pClient->smart_priority-SMART_MIN_PRIORITY]) & 0xff;
-	if (pClient->smart_priority > bestPrio ||
-	    (pClient->smart_priority == bestPrio && robin > bestRobin))
+	robin = (pClient->index -
+	         SmartLastIndex[pClient->smart_priority -
+                                SMART_MIN_PRIORITY]) & 0xff;
+
+	/* pick the best client */
+	if (!best ||
+	    pClient->priority > best->priority ||
+	    (pClient->priority == best->priority &&
+	     (pClient->smart_priority > best->smart_priority ||
+	      (pClient->smart_priority == best->smart_priority && robin > bestRobin))))
 	{
-	    bestPrio = pClient->smart_priority;
+	    best = pClient;
 	    bestRobin = robin;
-	    best = client;
 	}
 #ifdef SMART_DEBUG
 	if ((now - SmartLastPrint) >= 5000)
@@ -284,8 +293,7 @@ SmartScheduleClient (int *clientReady, int nready)
 	SmartLastPrint = now;
     }
 #endif
-    pClient = clients[best];
-    SmartLastIndex[bestPrio-SMART_MIN_PRIORITY] = pClient->index;
+    SmartLastIndex[best->smart_priority - SMART_MIN_PRIORITY] = best->index;
     /*
      * Set current client pointer
      */
@@ -314,7 +322,7 @@ SmartScheduleClient (int *clientReady, int nready)
     {
 	SmartScheduleSlice = SmartScheduleInterval;
     }
-    return best;
+    return best->index;
 }
 
 #ifndef NXAGENT_SERVER
@@ -348,7 +356,7 @@ Dispatch(void)
 
 	nready = WaitForSomething(clientReady);
 
-	if (nready && !SmartScheduleDisable)
+	if (nready)
 	{
 	    clientReady[0] = SmartScheduleClient (clientReady, nready);
 	    nready = 1;
@@ -383,8 +391,7 @@ Dispatch(void)
 		    ProcessInputEvents();
 		    FlushIfCriticalOutputPending();
 		}
-		if (!SmartScheduleDisable && 
-		    (SmartScheduleTime - start_tick) >= SmartScheduleSlice)
+		if ((SmartScheduleTime - start_tick) >= SmartScheduleSlice)
 		{
 		    /* Penalize clients which consume ticks */
 		    if (client->smart_priority > SMART_MIN_PRIORITY)
@@ -412,7 +419,10 @@ Dispatch(void)
 		    result = BadLength;
 		else
 		    result = (* client->requestVector[MAJOROP])(client);
-	    
+
+		if (!SmartScheduleSignalEnable)
+		    SmartScheduleTime = GetTimeInMillis();
+
 		if (result != Success) 
 		{
 		    if (client->noClientException != Success)
@@ -3551,6 +3561,9 @@ CloseDownClient(register ClientPtr client)
 	    CallCallbacks((&ClientStateCallback), (void *)&clientinfo);
 	} 	    
 	FreeClientResources(client);
+	/* Disable client ID tracking. This must be done after
+	 * ClientStateCallback. */
+	ReleaseClientIds(client);
 	if (client->index < nextFreeClientID)
 	    nextFreeClientID = client->index;
 	clients[client->index] = NullClient;
@@ -3634,6 +3647,7 @@ void InitClient(ClientPtr client, int i, void * ospriv)
     client->smart_start_tick = SmartScheduleTime;
     client->smart_stop_tick = SmartScheduleTime;
     client->smart_check_tick = SmartScheduleTime;
+    client->clientIds = NULL;
 }
 
 extern int clientPrivateLen;
@@ -3715,6 +3729,11 @@ ClientPtr NextAvailableClient(void * ospriv)
 	currentMaxClients++;
     while ((nextFreeClientID < MAXCLIENTS) && clients[nextFreeClientID])
 	nextFreeClientID++;
+
+    /* Enable client ID tracking. This must be done before
+     * ClientStateCallback. */
+    ReserveClientIds(client);
+
     if (ClientStateCallback)
     {
 	NewClientInfoRec clientinfo;
@@ -3733,12 +3752,14 @@ ProcInitialConnection(register ClientPtr client)
     REQUEST(xReq);
     register xConnClientPrefix *prefix;
     int whichbyte = 1;
+    char order;
 
     prefix = (xConnClientPrefix *)((char *)stuff + sz_xReq);
-    if ((prefix->byteOrder != 'l') && (prefix->byteOrder != 'B'))
+    order = prefix->byteOrder;
+    if (order != 'l' && order != 'B' && order != 'r' && order != 'R')
 	return (client->noClientException = -1);
-    if (((*(char *) &whichbyte) && (prefix->byteOrder == 'B')) ||
-	(!(*(char *) &whichbyte) && (prefix->byteOrder == 'l')))
+    if (((*(char *) &whichbyte) && (order == 'B' || order == 'R')) ||
+	(!(*(char *) &whichbyte) && (order == 'l' || order == 'r')))
     {
 	client->swapped = TRUE;
 	SwapConnClientPrefix(prefix);
@@ -3749,6 +3770,10 @@ ProcInitialConnection(register ClientPtr client)
     if (client->swapped)
     {
 	swaps(&stuff->length);
+    }
+    if (order == 'r' || order == 'R')
+    {
+	client->local = FALSE;
     }
     ResetCurrentRequest(client);
     return (client->noClientException);

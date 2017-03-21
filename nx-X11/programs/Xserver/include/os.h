@@ -120,6 +120,8 @@ extern void ResetOsBuffers(void);
 
 extern void InitConnectionLimits(void);
 
+extern void NotifyParentProcess(void);
+
 extern void CreateWellKnownSockets(void);
 
 extern void ResetWellKnownSockets(void);
@@ -134,10 +136,6 @@ extern char *ClientAuthorized(
     char* /*auth_proto*/,
     unsigned int /*string_n*/,
     char* /*auth_string*/);
-
-extern Bool EstablishNewConnections(
-    ClientPtr /*clientUnused*/,
-    void * /*closure*/);
 
 extern void CheckConnections(void);
 
@@ -317,9 +315,25 @@ typedef struct sockaddr * sockaddrPtr;
 
 extern int InvalidHost(sockaddrPtr /*saddr*/, int /*len*/, ClientPtr client);
 
-extern int LocalClient(ClientPtr /* client */);
-
 extern int LocalClientCred(ClientPtr, int *, int *);
+
+#define LCC_UID_SET    (1 << 0)
+#define LCC_GID_SET    (1 << 1)
+#define LCC_PID_SET    (1 << 2)
+#define LCC_ZID_SET    (1 << 3)
+
+typedef struct {
+    int fieldsSet;     /* Bit mask of fields set */
+    int        euid;           /* Effective uid */
+    int egid;          /* Primary effective group id */
+    int nSuppGids;     /* Number of supplementary group ids */
+    int *pSuppGids;    /* Array of supplementary group ids */
+    int pid;           /* Process id */
+    int zoneid;                /* Only set on Solaris 10 & later */
+} LocalClientCredRec;
+
+extern int GetLocalClientCreds(ClientPtr, LocalClientCredRec **);
+extern void FreeLocalClientCreds(LocalClientCredRec *);
 
 extern int ChangeAccessControl(ClientPtr /*client*/, int /*fEnabled*/);
 
@@ -506,6 +520,7 @@ typedef enum {
 #endif
 
 extern const char *LogInit(const char *fname, const char *backup);
+extern void LogSetDisplay(void);
 extern void LogClose(void);
 extern Bool LogSetParameter(LogParameter param, int value);
 extern void LogVWrite(int verb, const char *f, va_list args);

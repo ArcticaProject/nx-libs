@@ -52,7 +52,6 @@ SOFTWARE.
 #ifndef _OSDEP_H_
 #define _OSDEP_H_ 1
 
-#define BOTIMEOUT 200 /* in milliseconds */
 #define BUFSIZE 4096
 #define BUFWATERMARK 8192
 #ifndef MAXBUFSIZE
@@ -129,6 +128,7 @@ typedef struct _connectionInput {
     int  bufcnt;                /* count of bytes in buffer */
     int lenLastReq;
     int size;
+    unsigned int ignoreBytes;   /* bytes to ignore before the next request */
 } ConnectionInput, *ConnectionInputPtr;
 
 typedef struct _connectionOutput {
@@ -237,6 +237,9 @@ typedef long int fd_mask;
 #endif
 #define ffs mffs
 extern int mffs(fd_mask);
+
+/* in access.c */
+extern Bool ComputeLocalClient(ClientPtr client);
 
 /* in auth.c */
 extern void GenerateRandomData (int len, char *buf);

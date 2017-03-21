@@ -204,10 +204,6 @@ static Bool NewHost(int /*family*/,
 		    int /*len*/,
 		    int /* addingLocalHosts */);
 
-int LocalClientCredAndGroups(ClientPtr client, int *pUid, int *pGid, 
-                             int **pSuppGids, int *nSuppGids);
-
-
 /* XFree86 bug #156: To keep track of which hosts were explicitly requested in
    /etc/X<display>.hosts, we've added a requested field to the HOST struct,
    and a LocalHostRequested variable.  These default to FALSE, but are set
@@ -496,7 +492,7 @@ DefineSelf (int fd)
 void
 DefineSelf (int fd)
 {
-#if !defined(TCPCONN) && !defined(UNIXCONN) && !defined(MNX_TCPCONN)
+#if !defined(TCPCONN) && !defined(UNIXCONN)
     return;
 #else
     register int n;
@@ -631,7 +627,7 @@ DefineLocalHost:
 	    selfhosts = host;
 	}
     }
-#endif /* !TCPCONN && !UNIXCONN && !MNX_TCPCONN */
+#endif /* !TCPCONN && !UNIXCONN */
 }
 
 #else
@@ -893,6 +889,8 @@ DefineSelf (int fd)
 	return;
     }
     for (ifr = ifap; ifr != NULL; ifr = ifr->ifa_next) {
+	if (!ifr->ifa_addr)
+	     continue;
 	len = sizeof(*(ifr->ifa_addr));
 	family = ConvertAddr(ifr->ifa_addr, &len, (void **)&addr);
 	if (family == -1 || family == FamilyLocal) 
@@ -1068,11 +1066,10 @@ ResetHosts (char *display)
     FILE		*fd;
     char		*ptr;
     int                 i, hostlen;
-#if ((defined(TCPCONN) || defined(MNX_TCPCONN)) && \
-     (!defined(IPv6) || !defined(AF_INET6)))
+#if (defined(TCPCONN) && (!defined(IPv6) || !defined(AF_INET6)))
     union {
         struct sockaddr	sa;
-#if defined(TCPCONN) || defined(MNX_TCPCONN)
+#if defined(TCPCONN)
 	struct sockaddr_in in;
 #endif /* TCPCONN */
     }			saddr;
@@ -1117,7 +1114,7 @@ ResetHosts (char *display)
 	    NewHost(family, "", 0, FALSE);
 	    LocalHostRequested = TRUE;	/* Fix for XFree86 bug #156 */
 	}
-#if defined(TCPCONN) || defined(MNX_TCPCONN)
+#if defined(TCPCONN)
 	else if (!strncmp("inet:", lhostname, 5))
 	{
 	    family = FamilyInternet;
@@ -1162,7 +1159,7 @@ ResetHosts (char *display)
 	}
 	else
 #endif /* SECURE_RPC */
-#if defined(TCPCONN) || defined(MNX_TCPCONN)
+#if defined(TCPCONN)
 	{
 #if defined(IPv6) && defined(AF_INET6)
 	    if ( (family == FamilyInternet) || (family == FamilyInternet6) ||
@@ -1220,12 +1217,17 @@ ResetHosts (char *display)
 }
 
 /* Is client on the local host */
-Bool LocalClient(ClientPtr client)
+Bool
+ComputeLocalClient(ClientPtr client)
 {
     int    		alen, family, notused;
     Xtransaddr		*from = NULL;
     void		*addr;
     register HOST	*host;
+    OsCommPtr		 oc = (OsCommPtr) client->osPrivate;
+
+    if (!oc->trans_conn)
+	return FALSE;
 
 #ifdef XCSECURITY
     /* untrusted clients can't change host access */
@@ -1236,65 +1238,79 @@ Bool LocalClient(ClientPtr client)
 	return FALSE;
     }
 #endif
-    if (!_XSERVTransGetPeerAddr (((OsCommPtr)client->osPrivate)->trans_conn,
-	&notused, &alen, &from))
+    if (!_XSERVTransGetPeerAddr (oc->trans_conn, &notused, &alen, &from))
     {
 	family = ConvertAddr ((struct sockaddr *) from,
 	    &alen, (void **)&addr);
 	if (family == -1)
 	{
-	    free ((char *) from);
+	    free(from);
 	    return FALSE;
 	}
 	if (family == FamilyLocal)
 	{
-	    free ((char *) from);
+	    free(from);
 	    return TRUE;
 	}
 	for (host = selfhosts; host; host = host->next)
 	{
-	    if (addrEqual (family, addr, alen, host))
+	    if (addrEqual (family, addr, alen, host)) {
+		free(from);
 		return TRUE;
+	    }
 	}
-	free ((char *) from);
+	free(from);
     }
     return FALSE;
 }
 
 /*
  * Return the uid and gid of a connected local client
- * or the uid/gid for nobody those ids cannot be determined
  * 
  * Used by XShm to test access rights to shared memory segments
  */
 int
 LocalClientCred(ClientPtr client, int *pUid, int *pGid)
 {
-    return LocalClientCredAndGroups(client, pUid, pGid, NULL, NULL);
+    LocalClientCredRec *lcc;
+    int ret = GetLocalClientCreds(client, &lcc);
+
+    if (ret == 0) {
+#ifdef HAVE_GETZONEID /* only local if in the same zone */
+	if ((lcc->fieldsSet & LCC_ZID_SET) && (lcc->zoneid != getzoneid())) {
+	   FreeLocalClientCreds(lcc);
+	   return -1;
+	}
+#endif
+	if ((lcc->fieldsSet & LCC_UID_SET) && (pUid != NULL))
+	   *pUid = lcc->euid;
+	if ((lcc->fieldsSet & LCC_GID_SET) && (pGid != NULL))
+	   *pGid = lcc->egid;
+	FreeLocalClientCreds(lcc);
+    }
+    return ret;
 }
 
 /*
  * Return the uid and all gids of a connected local client
- * or the uid/gid for nobody those ids cannot be determined
+ * Allocates a LocalClientCredRec - caller must call FreeLocalClientCreds
  * 
- * If the caller passes non-NULL values for pSuppGids & nSuppGids,
- * they are responsible for calling XFree(*pSuppGids) to release the
- * memory allocated for the supplemental group ids list.
- *
  * Used by localuser & localgroup ServerInterpreted access control forms below
+ * Used by AuthAudit to log where local connections came from
  */
 int
-LocalClientCredAndGroups(ClientPtr client, int *pUid, int *pGid, 
-			 int **pSuppGids, int *nSuppGids)
+GetLocalClientCreds(ClientPtr client, LocalClientCredRec **lccp)
 {
 #if defined(HAS_GETPEEREID) || defined(HAS_GETPEERUCRED) || defined(SO_PEERCRED)
     int fd;
     XtransConnInfo ci;
+    LocalClientCredRec *lcc;
 #ifdef HAS_GETPEEREID
     uid_t uid;
     gid_t gid;
 #elif defined(HAS_GETPEERUCRED)
     ucred_t *peercred = NULL;
+    const gid_t *gids;
 #elif defined(SO_PEERCRED)
     struct ucred peercred;
     socklen_t so_len = sizeof(peercred);
@@ -1313,57 +1329,64 @@ LocalClientCredAndGroups(ClientPtr client, int *pUid, int *pGid,
     }
 #endif
 
-    if (pSuppGids != NULL)
-	*pSuppGids = NULL;
-    if (nSuppGids != NULL)
-	*nSuppGids = 0;
+    *lccp = calloc(1, sizeof(LocalClientCredRec));
+    if (*lccp == NULL)
+	return -1;
+    lcc = *lccp;
 
     fd = _XSERVTransGetConnectionNumber(ci);
 #ifdef HAS_GETPEEREID
-    if (getpeereid(fd, &uid, &gid) == -1) 
-	    return -1;
-    if (pUid != NULL)
-	    *pUid = uid;
-    if (pGid != NULL)
-	    *pGid = gid;
-    return 0;
-#elif defined(HAS_GETPEERUCRED)
-    if (getpeerucred(fd, &peercred) < 0)
-    	return -1;
-#ifdef sun /* Ensure process is in the same zone */
-    if (getzoneid() != ucred_getzoneid(peercred)) {
-	ucred_free(peercred);
+    if (getpeereid(fd, &uid, &gid) == -1) {
+	FreeLocalClientCreds(lcc);
 	return -1;
     }
+    lcc->euid = uid;
+    lcc->egid = gid;
+    lcc->fieldsSet = LCC_UID_SET | LCC_GID_SET;
+    return 0;
+#elif defined(HAS_GETPEERUCRED)
+    if (getpeerucred(fd, &peercred) < 0) {
+	FreeLocalClientCreds(lcc);
+	return -1;
+    lcc->euid = ucred_geteuid(peercred);
+    if (lcc->euid != -1)
+	lcc->fieldsSet |= LCC_UID_SET;
+    lcc->egid = ucred_getegid(peercred);
+    if (lcc->egid != -1)
+	lcc->fieldsSet |= LCC_GID_SET;
+    lcc->pid = ucred_getpid(peercred);
+    if (lcc->pid != -1)
+	lcc->fieldsSet |= LCC_PID_SET;
+#ifdef HAVE_GETZONEID
+    lcc->zoneid = ucred_getzoneid(peercred);
+    if (lcc->zoneid != -1)
+	lcc->fieldsSet |= LCC_ZID_SET;
 #endif
-    if (pUid != NULL)
-	*pUid = ucred_geteuid(peercred);
-    if (pGid != NULL)
-	*pGid = ucred_getegid(peercred);
-    if (pSuppGids != NULL && nSuppGids != NULL) {
-	const gid_t *gids;
-	*nSuppGids = ucred_getgroups(peercred, &gids);
-	if (*nSuppGids > 0) {
-	    *pSuppGids = malloc(sizeof(int) * (*nSuppGids));
-	    if (*pSuppGids == NULL) {
-		*nSuppGids = 0;
-	    } else {
-		int i;
-		for (i = 0 ; i < *nSuppGids; i++) {
-		    (*pSuppGids)[i] = (int) gids[i];
-		}
+    lcc->nSuppGids = ucred_getgroups(peercred, &gids);
+    if (lcc->nSuppGids > 0) {
+	lcc->pSuppGids = calloc((lcc->nSuppGids), sizeof(int));
+	if (lcc->pSuppGids == NULL) {
+	    lcc->nSuppGids = 0;
+	} else {
+	    int i;
+	    for (i = 0 ; i < lcc->nSuppGids; i++) {
+		(lcc->pSuppGids)[i] = (int) gids[i];
 	    }
 	}
+    } else {
+	lcc->nSuppGids = 0;
     }
     ucred_free(peercred);
     return 0;
 #elif defined(SO_PEERCRED)
-    if (getsockopt(fd, SOL_SOCKET, SO_PEERCRED, &peercred, &so_len) == -1) 
-	    return -1;
-    if (pUid != NULL)
-	    *pUid = peercred.uid;
-    if (pGid != NULL)
-	    *pGid = peercred.gid;
+    if (getsockopt(fd, SOL_SOCKET, SO_PEERCRED, &peercred, &so_len) == -1) {
+	FreeLocalClientCreds(lcc);
+	return -1;
+    }
+    lcc->euid = peercred.uid;
+    lcc->egid = peercred.gid;
+    lcc->pid = peercred.pid;
+    lcc->fieldsSet = LCC_UID_SET | LCC_GID_SET | LCC_PID_SET;
     return 0;
 #endif
 #else
@@ -1373,12 +1396,23 @@ LocalClientCredAndGroups(ClientPtr client, int *pUid, int *pGid,
 #endif
 }
 
+void
+FreeLocalClientCreds(LocalClientCredRec *lcc)
+{
+    if (lcc != NULL) {
+	if (lcc->nSuppGids > 0) {
+	   free(lcc->pSuppGids);
+	}
+	free(lcc);
+    }
+}
+
 static Bool
 AuthorizedClient(ClientPtr client)
 {
     if (!client || defeatAccessControl)
 	return TRUE;
-    return LocalClient(client);
+    return client->local ? Success : BadAccess;
 }
 
 /* Add a host to the access control list.  This is the external interface
@@ -1593,7 +1627,7 @@ CheckAddr (
 
     switch (family)
     {
-#if defined(TCPCONN) || defined(MNX_TCPCONN)
+#if defined(TCPCONN)
       case FamilyInternet:
 	if (length == sizeof (struct in_addr))
 	    len = length;
@@ -1686,7 +1720,7 @@ ConvertAddr (
     case AF_UNIX:
 #endif
         return FamilyLocal;
-#if defined(TCPCONN) || defined(MNX_TCPCONN)
+#if defined(TCPCONN)
     case AF_INET:
 #ifdef WIN32
         if (16777343 == *(long*)&((struct sockaddr_in *) saddr)->sin_addr)
@@ -2176,38 +2210,48 @@ static Bool
 siLocalCredAddrMatch(int family, void * addr, int len,
   const char *siAddr, int siAddrlen, ClientPtr client, void *typePriv)
 {
-    int connUid, connGid, *connSuppGids, connNumSuppGids, siAddrId;
+    int siAddrId;
+    LocalClientCredRec *lcc;
     siLocalCredPrivPtr lcPriv = (siLocalCredPrivPtr) typePriv;
 
-    if (LocalClientCredAndGroups(client, &connUid, &connGid,
-      &connSuppGids, &connNumSuppGids) == -1) {
+    if (GetLocalClientCreds(client, &lcc) == -1) {
 	return FALSE;
     }
 
+#ifdef HAVE_GETZONEID /* Ensure process is in the same zone */
+    if ((lcc->fieldsSet & LCC_ZID_SET) && (lcc->zoneid != getzoneid())) {
+	FreeLocalClientCreds(lcc);
+	return FALSE;
+    }
+#endif
+
     if (siLocalCredGetId(siAddr, siAddrlen, lcPriv, &siAddrId) == FALSE) {
+	FreeLocalClientCreds(lcc);
 	return FALSE;
     }
 
     if (lcPriv->credType == LOCAL_USER) {
-	if (connUid == siAddrId) {
+	if ((lcc->fieldsSet & LCC_UID_SET) && (lcc->euid == siAddrId)) {
+	    FreeLocalClientCreds(lcc);
 	    return TRUE;
 	}
     } else {
-	if (connGid == siAddrId) {
+	if ((lcc->fieldsSet & LCC_GID_SET) && (lcc->egid == siAddrId)) {
+	    FreeLocalClientCreds(lcc);
 	    return TRUE;
 	}
-	if (connSuppGids != NULL) {
+	if (lcc->pSuppGids != NULL) {
 	    int i;
 
-	    for (i = 0 ; i < connNumSuppGids; i++) {
-		if (connSuppGids[i] == siAddrId) {
-		    free(connSuppGids);
+	    for (i = 0 ; i < lcc->nSuppGids; i++) {
+		if (lcc->pSuppGids[i] == siAddrId) {
+		    FreeLocalClientCreds(lcc);
 		    return TRUE;
 		}
 	    }
-	    free(connSuppGids);
 	}
     }
+    FreeLocalClientCreds(lcc);
     return FALSE;
 }
 

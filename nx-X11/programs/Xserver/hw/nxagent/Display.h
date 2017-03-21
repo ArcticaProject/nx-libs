@@ -116,36 +116,29 @@ Bool nxagentReconnectDisplay(void *p0);
  * Deal with the smart scheduler.
  */
 
+#if HAVE_SETITIMER
 #define nxagentInitTimer() \
 \
     SmartScheduleInit();
 
 #define nxagentStopTimer() \
 \
-    if (SmartScheduleTimerStopped == 0) \
-    { \
-      SmartScheduleStopTimer(); \
-    } \
-\
-    SmartScheduleIdle = 1;
+    SmartScheduleStopTimer(); \
 
 #define nxagentStartTimer() \
 \
-    if (SmartScheduleTimerStopped == 1) \
-    { \
-      SmartScheduleStartTimer(); \
-    } \
-\
-      SmartScheduleIdle = 0;
+    SmartScheduleStartTimer();
 
 #define nxagentDisableTimer() \
 \
-    if (SmartScheduleTimerStopped == 0) \
-    { \
-      SmartScheduleStopTimer(); \
-    } \
-\
-    SmartScheduleDisable = 1;
+    SmartScheduleStopTimer(); \
+    SmartScheduleSignalEnable = FALSE;
+#else
+#define nxagentInitTimer()
+#define nxagentStopTimer()
+#define nxagentStartTimer()
+#define nxagentDisableTimer()
+#endif /* HAVE_SETITIMER */
 
 /*
  * File descriptor currently used by

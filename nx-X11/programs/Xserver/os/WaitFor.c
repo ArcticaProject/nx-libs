@@ -213,18 +213,10 @@ WaitForSomething(int *pClientsReady)
 	    ProcessWorkQueue();
 	if (XFD_ANYSET (&ClientsWithInput))
 	{
-	    if (!SmartScheduleDisable)
-	    {
-		someReady = TRUE;
-		waittime.tv_sec = 0;
-		waittime.tv_usec = 0;
-		wt = &waittime;
-	    }
-	    else
-	    {
-		XFD_COPYSET (&ClientsWithInput, &clientsReadable);
-		break;
-	    }
+	    someReady = TRUE;
+	    waittime.tv_sec = 0;
+	    waittime.tv_usec = 0;
+	    wt = &waittime;
 	}
 	if (someReady)
 	{
@@ -247,7 +239,8 @@ WaitForSomething(int *pClientsReady)
 	}
 	XFD_COPYSET(&AllSockets, &LastSelectMask);
 	}
-	SmartScheduleIdle = TRUE;
+	SmartScheduleStopTimer ();
+
 	BlockHandler((void *)&wt, (void *)&LastSelectMask);
 	if (NewOutputPending)
 	    FlushAllOutput();
@@ -387,13 +380,8 @@ WaitForSomething(int *pClientsReady)
 	    i = XTestProcessInputAction (i, &waittime);
 	}
 #endif /* XTESTEXT1 */
-	if (i >= 0)
-	{
-	    SmartScheduleIdle = FALSE;
-	    SmartScheduleIdleCount = 0;
-	    if (SmartScheduleTimerStopped)
-		(void) SmartScheduleStartTimer ();
-	}
+	SmartScheduleStartTimer ();
+
 	if (i <= 0) /* An error or timeout occurred */
 	{
 #if defined(NX_TRANS_SOCKET) && defined(NX_TRANS_DEBUG)
@@ -507,10 +495,6 @@ WaitForSomething(int *pClientsReady)
 	    }
 
 	    XFD_ANDSET(&clientsReadable, &LastSelectMask, &AllClients); 
-	    XFD_ANDSET(&tmp_set, &LastSelectMask, &WellKnownConnections);
-	    if (XFD_ANYSET(&tmp_set))
-		QueueWorkProc(EstablishNewConnections, NULL,
-		              (void *)&LastSelectMask);
 
 	    XFD_ANDSET(&tmp_set, &LastSelectMask, &NotifyReadFds);
 	    if (XFD_ANYSET(&tmp_set) || someNotifyWriteReady)
@@ -544,17 +528,14 @@ WaitForSomething(int *pClientsReady)
 #ifndef WIN32
 	for (i=0; i<howmany(XFD_SETSIZE, NFDBITS); i++)
 	{
-	    int highest_priority = 0;
-
 	    while (clientsReadable.fds_bits[i])
 	    {
-	        int client_priority, client_index;
+		int client_index;
 
 		curclient = ffs (clientsReadable.fds_bits[i]) - 1;
 		client_index = /* raphael: modified */
 			ConnectionTranslation[curclient + (i * (sizeof(fd_mask) * 8))];
 #else
-	int highest_priority = 0;
 	fd_set savedClientsReadable;
 	XFD_COPYSET(&clientsReadable, &savedClientsReadable);
 	for (i = 0; i < XFD_SETCOUNT(&savedClientsReadable); i++)
@@ -564,40 +545,10 @@ WaitForSomething(int *pClientsReady)
 	    curclient = XFD_FD(&savedClientsReadable, i);
 	    client_index = GetConnectionTranslation(curclient);
 #endif
-#ifdef XSYNC
-		/*  We implement "strict" priorities.
-		 *  Only the highest priority client is returned to
-		 *  dix.  If multiple clients at the same priority are
-		 *  ready, they are all returned.  This means that an
-		 *  aggressive client could take over the server.
-		 *  This was not considered a big problem because
-		 *  aggressive clients can hose the server in so many 
-		 *  other ways :)
-		 */
-		client_priority = clients[client_index]->priority;
-		if (nready == 0 || client_priority > highest_priority)
-		{
-		    /*  Either we found the first client, or we found
-		     *  a client whose priority is greater than all others
-		     *  that have been found so far.  Either way, we want 
-		     *  to initialize the list of clients to contain just
-		     *  this client.
-		     */
-		    pClientsReady[0] = client_index;
-		    highest_priority = client_priority;
-		    nready = 1;
-		}
-		/*  the following if makes sure that multiple same-priority 
-		 *  clients get batched together
-		 */
-		else if (client_priority == highest_priority)
-#endif
-		{
-		    pClientsReady[nready++] = client_index;
-		}
+	    pClientsReady[nready++] = client_index;
 #ifndef WIN32
-		clientsReadable.fds_bits[i] &= ~(((fd_mask)1L) << curclient);
-	    }
+	    clientsReadable.fds_bits[i] &= ~(((fd_mask)1L) << curclient);
+	}
 #else
 	    FD_CLR(curclient, &clientsReadable);
 #endif

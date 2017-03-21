@@ -24,6 +24,7 @@ SOFTWARE.
 #ifndef DIXSTRUCT_H
 #define DIXSTRUCT_H
 
+#include "client.h"
 #include "dix.h"
 #include "resource.h"
 #include "cursor.h"
@@ -94,6 +95,7 @@ typedef struct _Client {
     void        *requestBuffer;
     void        *osPrivate;	/* for OS layer, including scheduler */
     Bool        swapped;
+    Bool        local;
     ReplySwapPtr pSwapReplyFunc;
     XID         errorValue;
     int         sequence;
@@ -141,6 +143,8 @@ typedef struct _Client {
     long    smart_start_tick;
     long    smart_stop_tick;
     long    smart_check_tick;
+
+    ClientIdPtr  clientIds;
 }           ClientRec;
 
 /*
@@ -150,18 +154,19 @@ extern long SmartScheduleTime;
 extern long SmartScheduleInterval;
 extern long SmartScheduleSlice;
 extern long SmartScheduleMaxSlice;
-extern unsigned long SmartScheduleIdleCount;
-extern Bool SmartScheduleDisable;
-extern Bool SmartScheduleIdle;
-extern Bool SmartScheduleTimerStopped;
-extern Bool SmartScheduleStartTimer(void);
-#ifdef NXAGENT_SERVER
-extern Bool SmartScheduleStopTimer(void);
+#ifdef HAVE_SETITIMER
+#if HAVE_SETITIMER
+extern Bool SmartScheduleSignalEnable;
+#else
+#define SmartScheduleSignalEnable FALSE
 #endif
+#endif
+extern void SmartScheduleStartTimer(void);
+extern void SmartScheduleStopTimer(void);
 #define SMART_MAX_PRIORITY  (20)
 #define SMART_MIN_PRIORITY  (-20)
 
-extern Bool SmartScheduleInit(void);
+extern void SmartScheduleInit(void);
 
 /* This prototype is used pervasively in Xext, dix */
 #define DISPATCH_PROC(func) int func(ClientPtr /* client */)

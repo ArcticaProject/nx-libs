@@ -52,6 +52,8 @@ extern int defaultScreenSaverAllowExposures;
 extern int argcGlobal;
 extern char **argvGlobal;
 extern char *display;
+extern int displayfd;
+extern Bool explicit_display;
 
 extern int defaultBackingStore;
 extern Bool disableBackingStore;
@@ -76,6 +78,6 @@ extern long maxBigRequestSize;
 extern Bool blackRoot;
 
 extern Bool CoreDump;
-
+extern Bool NoListenAll;
 
 #endif /* OPAQUE_H */

@@ -597,7 +597,7 @@ void nxagentWakeupHandler(void * data, int count, void * mask)
     nxagentHandleConnectionStates();
   }
 
-  if (SmartScheduleDisable == 1)
+  if (!SmartScheduleSignalEnable)
   {
 
     #ifdef DEBUG
@@ -885,7 +885,7 @@ void nxagentShadowWakeupHandler(void * data, int count, void * mask)
     nxagentHandleConnectionStates();
   }
 
-  if (SmartScheduleDisable == 1)
+  if (!SmartScheduleSignalEnable)
   {
 
     #ifdef DEBUG
@@ -1075,7 +1075,7 @@ void nxagentDispatchHandler(ClientPtr client, int in, int out)
       #endif
     }
 
-    if (SmartScheduleDisable == 1)
+    if (!SmartScheduleSignalEnable)
     {
 
       /*
@@ -1150,7 +1150,7 @@ void nxagentDispatchHandler(ClientPtr client, int in, int out)
      * the inner dispatch loop forever.
      */
 
-    if (SmartScheduleDisable == 1)
+    if (!SmartScheduleSignalEnable)
     {
 
       if  (client -> index != nxagentDispatch.client)

@@ -150,7 +150,6 @@ static ShmFuncs fbFuncs = {fbShmCreatePixmap, fbShmPutImage};
 
 
 #if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__CYGWIN__)
-#include <sys/signal.h>
 
 static Bool badSysCall = FALSE;
 
@@ -167,7 +166,7 @@ static Bool CheckForShmSyscall()
     int shmid = -1;
 
     /* If no SHM support in the kernel, the bad syscall will generate SIGSYS */
-    oldHandler = signal(SIGSYS, SigSysHandler);
+    oldHandler = OsSignal(SIGSYS, SigSysHandler);
 
     badSysCall = FALSE;
     shmid = shmget(IPC_PRIVATE, 4096, IPC_CREAT);
@@ -182,7 +181,7 @@ static Bool CheckForShmSyscall()
         /* Allocation failed */
         badSysCall = TRUE;
     }
-    signal(SIGSYS, oldHandler);
+    OsSignal(SIGSYS, oldHandler);
     return(!badSysCall);
 }
 
