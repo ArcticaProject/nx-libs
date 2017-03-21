@@ -341,6 +341,7 @@ static void parse_keystroke_file(Bool force)
   /* now we know which file to read, if any */
   if (filename)
   {
+    fprintf(stderr, "Info: using keystrokes file %s\n", filename);
     LIBXML_TEST_VERSION
     xmlDoc *doc = xmlReadFile(filename, NULL, 0);
     if (doc)
@@ -375,7 +376,29 @@ static void parse_keystroke_file(Bool force)
             if (bindings->type == XML_ELEMENT_NODE &&
                 strcmp((char *)bindings->name, "keystroke") == 0 &&
                 read_binding_from_xmlnode(bindings, &(map[idx])))
+              {
+                Bool store = True;
+                for (int j = 0; j < idx; j++)
+                {
+                  if (map[j].stroke != KEYSTROKE_NOTHING &&
+                      map[idx].keysym != NoSymbol &&
+                      map[j].keysym == map[idx].keysym &&
+                      map[j].modifierMask == map[idx].modifierMask &&
+                      map[j].modifierAltMeta == map[idx].modifierAltMeta)
+                  {
+                      fprintf(stderr, "Warning: ignoring keystroke '%s' (already in use by '%s')\n",
+                              nxagentSpecialKeystrokeNames[map[idx].stroke],
+                              nxagentSpecialKeystrokeNames[map[j].stroke]);
+                      store = False;
+                      break;
+                  }
+                }
+
+                if (store)
                   idx++;
+                else
+                  map[idx].stroke = KEYSTROKE_NOTHING;
+              }
           }
           #ifdef DEBUG
           fprintf(stderr, "%s: read %d keystrokes", __func__, idx);
