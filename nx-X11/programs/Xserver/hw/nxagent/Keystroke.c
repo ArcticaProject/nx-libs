@@ -171,7 +171,7 @@ static Bool read_binding_from_xmlnode(xmlNode *node, struct nxagentSpecialKeystr
 {
   /* init the struct to have proper values in case not all attributes are found */
   struct nxagentSpecialKeystrokeMap newkm = {
-    .stroke = KEYSTROKE_END_MARKER,
+    .stroke = KEYSTROKE_NOTHING,
     .modifierMask = 0,
     .modifierAltMeta = False,
     .keysym = NoSymbol
@@ -192,7 +192,7 @@ static Bool read_binding_from_xmlnode(xmlNode *node, struct nxagentSpecialKeystr
 
     if (strcmp((char *)attr->name, "action") == 0)
     {
-      newkm.stroke = KEYSTROKE_END_MARKER;
+      newkm.stroke = KEYSTROKE_NOTHING;
       for (int i = 0; nxagentSpecialKeystrokeNames[i] != NULL; i++)
       {
         if (strcmp(nxagentSpecialKeystrokeNames[i], (char *)attr->children->content) == 0)
@@ -228,7 +228,7 @@ static Bool read_binding_from_xmlnode(xmlNode *node, struct nxagentSpecialKeystr
     }
   }
 
-  if (newkm.stroke != KEYSTROKE_END_MARKER && newkm.keysym != NoSymbol)
+  if (newkm.stroke != KEYSTROKE_NOTHING && newkm.keysym != NoSymbol)
   {
     /* keysym and stroke are required, everything else is optional */
     memcpy(ret, &newkm, sizeof(struct nxagentSpecialKeystrokeMap));
