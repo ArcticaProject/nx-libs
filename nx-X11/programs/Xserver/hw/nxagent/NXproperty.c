@@ -157,18 +157,6 @@ ProcChangeProperty(ClientPtr client)
     }
 #endif
 
-#ifdef NXAGENT_ARTSD
-    {
-    /* Do not process MCOPGLOBALS property changes,
-      they are already set reflecting the server side settings.
-      Just return success.
-    */
-      extern Atom mcop_local_atom;
-      if (stuff->property == mcop_local_atom)
-        return client->noClientException;
-    }
-#endif
-
     err = ChangeWindowProperty(pWin, stuff->property, stuff->type, (int)format,
 			       (int)mode, len, (void *)&stuff[1], TRUE);
     if (err != Success)
