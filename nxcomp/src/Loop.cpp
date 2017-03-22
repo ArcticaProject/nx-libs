@@ -2565,7 +2565,7 @@ int NXTransPrepare(int *setFDs, fd_set *readSet,
     return 0;
   }
 
-  nxinfo << "\nNXTransPrepare: Going to prepare the NX transport.\n"
+  nxinfo << "NXTransPrepare: Going to prepare the NX transport.\n"
           << std::flush;
 
   if (control -> ProxyStage < stage_operational)
@@ -2691,7 +2691,7 @@ int NXTransSelect(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
     return 0;
   }
 
-  nxinfo << "\nNXTransSelect: Going to select the NX descriptors.\n"
+  nxinfo << "NXTransSelect: Going to select the NX descriptors.\n"
           << std::flush;
 
 
@@ -2858,7 +2858,7 @@ int NXTransExecute(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
     return 0;
   }
 
-  nxinfo << "\nNXTransExecute: Going to execute I/O on the NX descriptors.\n"
+  nxinfo << "NXTransExecute: Going to execute I/O on the NX descriptors.\n"
           << std::flush;
 
   if (control -> ProxyStage >= stage_operational)
