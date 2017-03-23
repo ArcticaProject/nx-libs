@@ -52,10 +52,16 @@ enum nxagentSpecialKeystroke {
        KEYSTROKE_FORCE_SYNCHRONIZATION,
 
        /* stuff used for debugging, probably not useful for most people */
+#ifdef DEBUG_TREE
        KEYSTROKE_DEBUG_TREE,
+#endif
+#ifdef DUMP
        KEYSTROKE_REGIONS_ON_SCREEN,
+#endif
+#ifdef NX_DEBUG_INPUT
        KEYSTROKE_TEST_INPUT,
        KEYSTROKE_DEACTIVATE_INPUT_DEVICES_GRAB,
+#endif
 
        KEYSTROKE_VIEWPORT_MOVE_LEFT,
        KEYSTROKE_VIEWPORT_MOVE_UP,

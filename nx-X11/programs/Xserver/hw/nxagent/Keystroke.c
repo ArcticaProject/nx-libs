@@ -33,7 +33,6 @@
 #include "Display.h"
 #include "Events.h"
 #include "Options.h"
-#include "Keystroke.h"
 #include "Keyboard.h"
 #include "Drawable.h"
 #include "Init.h" /* extern int nxagentX2go */
@@ -63,6 +62,9 @@ extern void nxagentDeactivateInputDevicesGrabs();
 #undef  DEBUG
 #undef  DUMP
 
+/* must be included _after_ DUMP */
+#include "Keystroke.h"
+
 
 /* this table is used to parse actions given on the command line or in the
  * config file, therefore indices have to match the enum in Keystroke.h */
@@ -81,11 +83,16 @@ char * nxagentSpecialKeystrokeNames[] = {
        "ignore",
        "force_synchronization",
 
+#ifdef DEBUG_TREE
        "debug_tree",
+#endif
+#ifdef DUMP
        "regions_on_screen",
+#endif
+#ifdef NX_DEBUG_INPUT
        "test_input",
        "deactivate_input_devices_grab",
-
+#endif
        "viewport_move_left",
        "viewport_move_up",
        "viewport_move_right",
@@ -97,7 +104,9 @@ char * nxagentSpecialKeystrokeNames[] = {
 
 struct nxagentSpecialKeystrokeMap default_map[] = {
   /* stroke, modifierMask, modifierAltMeta, keysym */
+#ifdef DEBUG_TREE
   {KEYSTROKE_DEBUG_TREE, ControlMask, True, XK_q},
+#endif
   {KEYSTROKE_CLOSE_SESSION, ControlMask, True, XK_t},
   {KEYSTROKE_SWITCH_ALL_SCREENS, ControlMask, True, XK_f},
   {KEYSTROKE_FULLSCREEN, ControlMask | ShiftMask, True, XK_f},
@@ -115,9 +124,13 @@ struct nxagentSpecialKeystrokeMap default_map[] = {
   {KEYSTROKE_IGNORE, ControlMask, True, XK_BackSpace},
   {KEYSTROKE_IGNORE, 0, False, XK_Terminate_Server},
   {KEYSTROKE_FORCE_SYNCHRONIZATION, ControlMask, True, XK_j},
+#ifdef DUMP
   {KEYSTROKE_REGIONS_ON_SCREEN, ControlMask, True, XK_a},
+#endif
+#ifdef NX_DEBUG_INPUT
   {KEYSTROKE_TEST_INPUT, ControlMask, True, XK_x},
   {KEYSTROKE_DEACTIVATE_INPUT_DEVICES_GRAB, ControlMask, True, XK_y},
+#endif
   {KEYSTROKE_VIEWPORT_MOVE_LEFT, ControlMask | ShiftMask, True, XK_Left},
   {KEYSTROKE_VIEWPORT_MOVE_LEFT, ControlMask | ShiftMask, True, XK_KP_Left},
   {KEYSTROKE_VIEWPORT_MOVE_UP, ControlMask | ShiftMask, True, XK_Up},
@@ -494,11 +507,11 @@ Bool nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
   }
 
   switch (stroke) {
+#ifdef DEBUG_TREE
     case KEYSTROKE_DEBUG_TREE:
-      #ifdef DEBUG_TREE
       *result = doDebugTree;
-      #endif
       break;
+#endif
     case KEYSTROKE_CLOSE_SESSION:
       *result = doCloseSession;
       break;
@@ -551,16 +564,16 @@ Bool nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
     case KEYSTROKE_FORCE_SYNCHRONIZATION:
       nxagentForceSynchronization = 1;
       break;
+#ifdef DUMP
     case KEYSTROKE_REGIONS_ON_SCREEN:
-      #ifdef DUMP
       nxagentRegionsOnScreen();
-      #endif
       break;
+#endif
+#ifdef NX_DEBUG_INPUT
     case KEYSTROKE_TEST_INPUT:
       /*
        * Used to test the input devices state.
        */
-      #ifdef NX_DEBUG_INPUT
       if (X -> type == KeyPress) {
         if (nxagentDebugInputDevices == 0) {
           fprintf(stderr, "Info: Turning input devices debug ON.\n");
@@ -572,16 +585,14 @@ Bool nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
         }
       }
       return True;
-      #endif
       break;
     case KEYSTROKE_DEACTIVATE_INPUT_DEVICES_GRAB:
-      #ifdef NX_DEBUG_INPUT
       if (X->type == KeyPress) {
         nxagentDeactivateInputDevicesGrab();
       }
       return True;
-      #endif
       break;
+#endif
     case KEYSTROKE_FULLSCREEN:
       if (nxagentOption(Rootless) == 0) {
         *result = doSwitchFullscreen;
