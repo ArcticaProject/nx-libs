@@ -36,6 +36,7 @@
 #include "Keyboard.h"
 #include "Drawable.h"
 #include "Init.h" /* extern int nxagentX2go */
+#include "Utils.h"
 
 #include <unistd.h>
 
@@ -432,6 +433,39 @@ static void parse_keystroke_file(Bool force)
     }
     free(filename);
     filename = NULL;
+  }
+
+  nxagentDumpKeystrokes();
+}
+
+void nxagentDumpKeystrokes(void)
+{
+  int maxlen = 0;
+  for (int i = 0; nxagentSpecialKeystrokeNames[i]; i++)
+    maxlen = MAX(maxlen, strlen(nxagentSpecialKeystrokeNames[i]));
+
+  fprintf(stderr, "Current known keystrokes:\n");
+
+  for (struct nxagentSpecialKeystrokeMap *cur = map; cur->stroke != KEYSTROKE_END_MARKER; cur++) {
+    unsigned int mask = cur->modifierMask;
+    fprintf(stderr, "  %-*s ", maxlen, nxagentSpecialKeystrokeNames[cur->stroke]);
+    if (mask & ControlMask)        {fprintf(stderr, "Ctrl+");     mask &= ~ControlMask;}
+    if (mask & ShiftMask)          {fprintf(stderr, "Shift+");    mask &= ~ShiftMask;}
+
+    /* these are only here for better readable modifier
+       names. Normally they are covered by the Mod<n> and Lock lines
+       below */
+    if (cur->modifierAltMeta)      {fprintf(stderr, "Alt+");      mask &= ~(cur->modifierAltMeta);}
+    if (mask & nxagentCapsMask)    {fprintf(stderr, "CapsLock+"); mask &= ~nxagentCapsMask;}
+    if (mask & nxagentNumlockMask) {fprintf(stderr, "NumLock+");  mask &= ~nxagentNumlockMask;}
+
+    if (mask & Mod1Mask)           {fprintf(stderr, "Mod1+");     mask &= ~Mod1Mask;}
+    if (mask & Mod2Mask)           {fprintf(stderr, "Mod2+");     mask &= ~Mod2Mask;}
+    if (mask & Mod3Mask)           {fprintf(stderr, "Mod3+");     mask &= ~Mod3Mask;}
+    if (mask & Mod4Mask)           {fprintf(stderr, "Mod4+");     mask &= ~Mod4Mask;}
+    if (mask & Mod5Mask)           {fprintf(stderr, "Mod5+");     mask &= ~Mod5Mask;}
+    if (mask & LockMask)           {fprintf(stderr, "Lock+");     mask &= ~LockMask;}
+    fprintf(stderr, "%s\n", XKeysymToString(cur->keysym));
   }
 }
 
