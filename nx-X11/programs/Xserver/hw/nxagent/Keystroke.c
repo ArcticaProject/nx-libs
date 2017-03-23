@@ -559,41 +559,37 @@ Bool nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
       *result = doCloseSession;
       break;
     case KEYSTROKE_SWITCH_ALL_SCREENS:
-      if (nxagentOption(Rootless) == False) {
+      if (!nxagentOption(Rootless)) {
         *result = doSwitchAllScreens;
       }
       break;
     case KEYSTROKE_MINIMIZE:
-      if (nxagentOption(Rootless) == False) {
+      if (!nxagentOption(Rootless)) {
         *result = doMinimize;
       }
       break;
     case KEYSTROKE_LEFT:
-      if (nxagentOption(Rootless) == False &&
-          nxagentOption(DesktopResize) == False) {
+      if (!nxagentOption(Rootless) && !nxagentOption(DesktopResize)) {
         *result = doViewportLeft;
       }
       break;
     case KEYSTROKE_UP:
-      if (nxagentOption(Rootless) == False &&
-          nxagentOption(DesktopResize) == False) {
+      if (!nxagentOption(Rootless) && !nxagentOption(DesktopResize)) {
         *result = doViewportUp;
       }
       break;
     case KEYSTROKE_RIGHT:
-      if (nxagentOption(Rootless) == False &&
-          nxagentOption(DesktopResize) == False) {
+      if (!nxagentOption(Rootless) && !nxagentOption(DesktopResize)) {
         *result = doViewportRight;
       }
       break;
     case KEYSTROKE_DOWN:
-      if (nxagentOption(Rootless) == False &&
-          nxagentOption(DesktopResize) == False) {
+      if (!nxagentOption(Rootless) && !nxagentOption(DesktopResize)) {
         *result = doViewportDown;
       }
       break;
     case KEYSTROKE_RESIZE:
-      if (nxagentOption(Rootless) == False) {
+      if (!nxagentOption(Rootless)) {
         *result = doSwitchResizeMode;
       }
       break;
@@ -618,7 +614,7 @@ Bool nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
        * Used to test the input devices state.
        */
       if (X -> type == KeyPress) {
-        if (nxagentDebugInputDevices == False) {
+        if (!nxagentDebugInputDevices) {
           fprintf(stderr, "Info: Turning input devices debug ON.\n");
           nxagentDebugInputDevices = True;
         } else {
@@ -637,31 +633,27 @@ Bool nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
       break;
 #endif
     case KEYSTROKE_FULLSCREEN:
-      if (nxagentOption(Rootless) == False) {
+      if (!nxagentOption(Rootless)) {
         *result = doSwitchFullscreen;
       }
       break;
     case KEYSTROKE_VIEWPORT_MOVE_LEFT:
-      if (nxagentOption(Rootless) == False &&
-          nxagentOption(DesktopResize) == False) {
+      if (!nxagentOption(Rootless) && !nxagentOption(DesktopResize)) {
         *result = doViewportMoveLeft;
       }
       break;
     case KEYSTROKE_VIEWPORT_MOVE_UP:
-      if (nxagentOption(Rootless) == False &&
-          nxagentOption(DesktopResize) == False) {
+      if (!nxagentOption(Rootless) && !nxagentOption(DesktopResize)) {
         *result = doViewportMoveUp;
       }
       break;
     case KEYSTROKE_VIEWPORT_MOVE_RIGHT:
-      if (nxagentOption(Rootless) == False &&
-          nxagentOption(DesktopResize) == False) {
+      if (!nxagentOption(Rootless) && !nxagentOption(DesktopResize)) {
         *result = doViewportMoveRight;
       }
       break;
     case KEYSTROKE_VIEWPORT_MOVE_DOWN:
-      if (nxagentOption(Rootless) == False &&
-          nxagentOption(DesktopResize) == False) {
+      if (!nxagentOption(Rootless) && !nxagentOption(DesktopResize)) {
         *result = doViewportMoveDown;
       }
       break;
