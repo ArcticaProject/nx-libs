@@ -190,9 +190,8 @@ static Bool read_binding_from_xmlnode(xmlNode *node, struct nxagentSpecialKeystr
     .modifierAltMeta = False,
     .keysym = NoSymbol
   };
-  xmlAttr *attr;
 
-  for (attr = node->properties; attr; attr = attr->next)
+  for (xmlAttr *attr = node->properties; attr; attr = attr->next)
   {
     /* ignore attributes without data (which should never happen anyways) */
     if (attr->children->content == NULL)
@@ -482,7 +481,6 @@ static enum nxagentSpecialKeystroke find_keystroke(XKeyEvent *X)
 {
   enum nxagentSpecialKeystroke ret = KEYSTROKE_NOTHING;
   int keysyms_per_keycode_return;
-  struct nxagentSpecialKeystrokeMap *cur = map;
 
   XlibKeySym *keysym = XGetKeyboardMapping(nxagentDisplay,
                                            X->keycode,
@@ -492,7 +490,7 @@ static enum nxagentSpecialKeystroke find_keystroke(XKeyEvent *X)
   #ifdef DEBUG
   fprintf(stderr, "%s: got keysym '%c' (%d)\n", __func__, keysym[0], keysym[0]);
   #endif
-  while (cur->stroke != KEYSTROKE_END_MARKER) {
+  for (struct nxagentSpecialKeystrokeMap *cur = map; cur->stroke != KEYSTROKE_END_MARKER; cur++) {
     #ifdef DEBUG
     fprintf(stderr, "%s: checking keysym '%c' (%d)\n", __func__, cur->keysym, cur->keysym);
     #endif
@@ -503,7 +501,6 @@ static enum nxagentSpecialKeystroke find_keystroke(XKeyEvent *X)
       free(keysym);
       return cur->stroke;
     }
-    cur++;
   }
 
   free(keysym);
