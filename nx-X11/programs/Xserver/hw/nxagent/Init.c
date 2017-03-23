@@ -69,6 +69,7 @@ is" without express or implied warranty.
 #include "Font.h"
 #include "Millis.h"
 #include "Error.h"
+#include "Keystroke.h"
 
 #include <nx/NX.h>
 #include "compext/Compext.h"
@@ -406,6 +407,8 @@ FIXME: These variables, if not removed at all because have probably
    */
 
   blackRoot = TRUE;
+
+  nxagentInitKeystrokes(False);
 }
 
 void

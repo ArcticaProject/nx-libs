@@ -265,7 +265,7 @@ static Bool read_binding_from_xmlnode(xmlNode *node, struct nxagentSpecialKeystr
  *  - hardcoded traditional NX default settings
  * If run in x2go flavour different filenames and varnames are used.
  */
-static void parse_keystroke_file(Bool force)
+void nxagentInitKeystrokes(Bool force)
 {
   char *filename = NULL;
 
@@ -482,13 +482,7 @@ static enum nxagentSpecialKeystroke find_keystroke(XKeyEvent *X)
 {
   enum nxagentSpecialKeystroke ret = KEYSTROKE_NOTHING;
   int keysyms_per_keycode_return;
-  struct nxagentSpecialKeystrokeMap *cur;
-
-  /* FIXME: we do late parsing here, this should be done at startup,
-     not at first keypress! */
-  parse_keystroke_file(False);
-
-  cur = map;
+  struct nxagentSpecialKeystrokeMap *cur = map;
 
   XlibKeySym *keysym = XGetKeyboardMapping(nxagentDisplay,
                                            X->keycode,
@@ -665,7 +659,7 @@ Bool nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
            might lead to unexpected behaviour
       */
       if (X->type == KeyRelease)
-	parse_keystroke_file(True);
+	nxagentInitKeystrokes(True);
       break;
     case KEYSTROKE_NOTHING: /* do nothing. difference to KEYSTROKE_IGNORE is the return value */
     case KEYSTROKE_END_MARKER: /* just to make gcc STFU */
