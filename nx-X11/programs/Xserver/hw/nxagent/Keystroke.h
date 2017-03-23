@@ -37,39 +37,38 @@ extern Bool nxagentCheckSpecialKeystroke(XKeyEvent*, enum HandleEventResult*);
  * Keystroke.c nxagentSpecialKeystrokeNames */
 enum nxagentSpecialKeystroke {
        /* 0 is used as end marker */
-       KEYSTROKE_END_MARKER = 0,
-       KEYSTROKE_CLOSE_SESSION = 1,
-       KEYSTROKE_SWITCH_ALL_SCREENS = 2,
-       KEYSTROKE_FULLSCREEN = 3,
-       KEYSTROKE_MINIMIZE = 4,
-       KEYSTROKE_LEFT = 5,
-       KEYSTROKE_UP = 6,
-       KEYSTROKE_RIGHT = 7,
-       KEYSTROKE_DOWN = 8,
-       KEYSTROKE_RESIZE = 9,
-       KEYSTROKE_DEFER = 10,
-       KEYSTROKE_IGNORE = 11,
-       KEYSTROKE_FORCE_SYNCHRONIZATION = 12,
+       KEYSTROKE_END_MARKER,
+       KEYSTROKE_CLOSE_SESSION,
+       KEYSTROKE_SWITCH_ALL_SCREENS,
+       KEYSTROKE_FULLSCREEN,
+       KEYSTROKE_MINIMIZE,
+       KEYSTROKE_LEFT,
+       KEYSTROKE_UP,
+       KEYSTROKE_RIGHT,
+       KEYSTROKE_DOWN,
+       KEYSTROKE_RESIZE,
+       KEYSTROKE_DEFER,
+       KEYSTROKE_IGNORE,
+       KEYSTROKE_FORCE_SYNCHRONIZATION,
 
        /* stuff used for debugging, probably not useful for most people */
-       KEYSTROKE_DEBUG_TREE = 13,
-       KEYSTROKE_REGIONS_ON_SCREEN = 14,
-       KEYSTROKE_TEST_INPUT = 15,
-       KEYSTROKE_DEACTIVATE_INPUT_DEVICES_GRAB = 16,
+       KEYSTROKE_DEBUG_TREE,
+       KEYSTROKE_REGIONS_ON_SCREEN,
+       KEYSTROKE_TEST_INPUT,
+       KEYSTROKE_DEACTIVATE_INPUT_DEVICES_GRAB,
 
-       KEYSTROKE_VIEWPORT_MOVE_LEFT = 17,
-       KEYSTROKE_VIEWPORT_MOVE_UP = 18,
-       KEYSTROKE_VIEWPORT_MOVE_RIGHT = 19,
-       KEYSTROKE_VIEWPORT_MOVE_DOWN = 20,
+       KEYSTROKE_VIEWPORT_MOVE_LEFT,
+       KEYSTROKE_VIEWPORT_MOVE_UP,
+       KEYSTROKE_VIEWPORT_MOVE_RIGHT,
+       KEYSTROKE_VIEWPORT_MOVE_DOWN,
 
-       KEYSTROKE_REREAD_KEYSTROKES = 21,
+       KEYSTROKE_REREAD_KEYSTROKES,
 
-       KEYSTROKE_NOTHING = 22,
+       KEYSTROKE_NOTHING,
 
-       /* insert more here, increment KEYSTROKE_MAX accordingly.
-        * then update string translation below */
+       /* insert more here and in the string translation */
 
-       KEYSTROKE_MAX = 23,
+       KEYSTROKE_MAX,
 };
 
 struct nxagentSpecialKeystrokeMap {
