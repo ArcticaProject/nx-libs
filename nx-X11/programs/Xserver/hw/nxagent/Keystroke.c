@@ -48,7 +48,7 @@ extern Bool nxagentIpaq;
 extern char *nxagentKeystrokeFile;
 
 #ifdef NX_DEBUG_INPUT
-int nxagentDebugInputDevices = 0;
+int nxagentDebugInputDevices = False;
 unsigned long nxagentLastInputDevicesDumpTime = 0;
 extern void nxagentDeactivateInputDevicesGrabs();
 #endif
@@ -618,12 +618,12 @@ Bool nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
        * Used to test the input devices state.
        */
       if (X -> type == KeyPress) {
-        if (nxagentDebugInputDevices == 0) {
+        if (nxagentDebugInputDevices == False) {
           fprintf(stderr, "Info: Turning input devices debug ON.\n");
-          nxagentDebugInputDevices = 1;
+          nxagentDebugInputDevices = True;
         } else {
           fprintf(stderr, "Info: Turning input devices debug OFF.\n");
-          nxagentDebugInputDevices = 0;
+          nxagentDebugInputDevices = False;
           nxagentLastInputDevicesDumpTime = 0;
         }
       }
@@ -637,31 +637,31 @@ Bool nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
       break;
 #endif
     case KEYSTROKE_FULLSCREEN:
-      if (nxagentOption(Rootless) == 0) {
+      if (nxagentOption(Rootless) == False) {
         *result = doSwitchFullscreen;
       }
       break;
     case KEYSTROKE_VIEWPORT_MOVE_LEFT:
-      if (nxagentOption(Rootless) == 0 &&
-          nxagentOption(DesktopResize) == 0) {
+      if (nxagentOption(Rootless) == False &&
+          nxagentOption(DesktopResize) == False) {
         *result = doViewportMoveLeft;
       }
       break;
     case KEYSTROKE_VIEWPORT_MOVE_UP:
-      if (nxagentOption(Rootless) == 0 &&
-          nxagentOption(DesktopResize) == 0) {
+      if (nxagentOption(Rootless) == False &&
+          nxagentOption(DesktopResize) == False) {
         *result = doViewportMoveUp;
       }
       break;
     case KEYSTROKE_VIEWPORT_MOVE_RIGHT:
-      if (nxagentOption(Rootless) == 0 &&
-          nxagentOption(DesktopResize) == 0) {
+      if (nxagentOption(Rootless) == False &&
+          nxagentOption(DesktopResize) == False) {
         *result = doViewportMoveRight;
       }
       break;
     case KEYSTROKE_VIEWPORT_MOVE_DOWN:
-      if (nxagentOption(Rootless) == 0 &&
-          nxagentOption(DesktopResize) == 0) {
+      if (nxagentOption(Rootless) == False &&
+          nxagentOption(DesktopResize) == False) {
         *result = doViewportMoveDown;
       }
       break;
