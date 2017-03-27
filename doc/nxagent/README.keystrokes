@@ -103,11 +103,5 @@ reread_keystrokes
   forces nxagent to re-read the keystroke
   configuration. Useful to add/changes keystrokes for a running
   session.
-
-Only in builds with certain debugging options enabled, ignored otherwise:
 force_synchronization
   Forces the drawing of elements to be synchronized which can fix some visual bugs.
-debug_tree
-regions_on_screen
-test_input
-deactivate_input_devices_grab
