@@ -4135,7 +4135,8 @@ void FreeScreen(ScreenPtr);
 */
 
 int
-AddScreen(Bool (*pfnInit) (ScreenPtr /*pScreen */ ,
+AddScreen(Bool (*pfnInit) (int /*index*/ ,
+                           ScreenPtr /*pScreen */ ,
                            int /*argc */ ,
                            char **      /*argv */
           ), int argc, char **argv)
@@ -4174,7 +4175,7 @@ AddScreen(Bool (*pfnInit) (ScreenPtr /*pScreen */ ,
     pScreen->rgf = ~0L;  /* there are no scratch GCs yet*/
     screenInfo.screens[i] = pScreen;
     screenInfo.numScreens++;
-    if (!(*pfnInit)(pScreen, argc, argv))
+    if (!(*pfnInit)(i, pScreen, argc, argv))
     {
     FreeScreen(pScreen);
     screenInfo.numScreens--;
