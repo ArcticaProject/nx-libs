@@ -1,6 +1,6 @@
 Configurable keybindings in nxagent
 
-Keybindings in the redistributed x2go version of nxagent can now be configured
+Keybindings in the redistributed x2go version of nxagent can be configured
 by the user. This is done via a configuration file.
 
 File location
@@ -40,29 +40,31 @@ The configuration file is XML with the following format:
 <keystroke action="fullscreen" key="space" Mod1="0" Mod2="0" Control="0" Shift="0" AltMeta="0" />
 </keystrokes>
 
-Each 'action' defines an action to be executed when receiving that keystroke. A
-list of possible actions is given below. Some of those actions are only
-available with debug builds of nxagent.
+Each 'action' defines an action to be executed when receiving that
+keystroke. A list of possible actions is given below. Some of those
+actions are only available with debug builds of nxagent.
 
 Keys are given as a combination of 'key' and (optionally) a number of
 modifiers. The key attribute is evaluated into a X11 key via the usual
 XStringToKeysym function. A list of possible keys can be found in
-/usr/include/X11/keysymdef.h, the names are specified without the leading
-'XK_'. Evaluation is case-sensitive, so, 'space' and 'Escape' will work while
-'Space' and 'escape' won't.
+/usr/include/X11/keysymdef.h, the names are specified without the
+leading 'XK_'. Evaluation is case-sensitive, so, 'space' and 'Escape'
+will work while 'Space' and 'escape' won't.
 
-Modifiers are given as boolean attributes, possible modifiers are Mod1, Mod2,
-Mod3, Mod4, Mod5, Control, Shift, Lock. Sensible combinations strongly depend on your
-keyboard configuration, but usually you will need Mod1 and Control. Boolean in
-this context means '0', 'false' and an unspecified attribute are false, anything
-else is considered true.
+Modifiers are given as boolean attributes, possible modifiers are
+Mod1, Mod2, Mod3, Mod4, Mod5, Control, Shift, Lock. Sensible
+combinations strongly depend on your keyboard configuration, but
+usually you will need Mod1 and Control. Boolean in this context means
+'0', 'false' and an unspecified attribute are false, anything else is
+considered true.
 
 Everything in this file is case-sensitive. Unknown lines are ignored.
-Keybindings are evaluated from top to bottom, so if a keybinding matches, other
-keybindings further down will be ignored. The contents of the file replaces the
-default keybindings, and only one file is read, no merging between different
-configuration files is done. This also means that an empty or invalid configuration
-file deactivates all keybindings.
+Keybindings are evaluated from top to bottom, so if a keybinding
+matches, other keybindings further down will be ignored. The contents
+of the file replaces the default keybindings, and only one file is
+read, no merging between different configuration files is done. This
+also means that an empty or invalid configuration file deactivates all
+keybindings.
 
 If an attribute occurs more than once in a line the last one wins.
 
@@ -71,37 +73,42 @@ List of possible 'action' attributes:
 
 close_session
   This terminates the session.
+
 fullscreen
-  Switches the client window into or out of fullscreen mode, using only the current head.
+  Switches the client window into or out of fullscreen mode, using
+  only the current head.
+
 switch_all_screens
-  Switches the client window into or out of fullscreen mode, using all available heads.
+  Switches the client window into or out of fullscreen mode, using all
+  available heads.
+
 minimize
-  This will minimize the client window (even for fullscreen sessions.)
-left
-up
-right
-down
+  This will minimize the client window (even for fullscreen sessions).
+
 resize
-  This action switches between the auto-resize and viewport mode
-  (static size). The default is auto-resize. In viewport mode one can
-  use the 'viewport_move_up', 'viewport_move_down',
-  'viewport_move_left' and 'viewport_move_right' actions to move
-  within the image.
+  This action switches between the auto-resize (default) and viewport
+  mode.  In viewport mode the xserver screen size stays static even
+  if the nxagent window is resized. You will possibly only see a part of
+  the screen and can scroll around using the following actions:
+viewport_move_up/down
+  Moves the viewport up/down by the height of the visiable area.
+viewport_move_left/right
+  Moves the viewport left/right by the width of the visible area.
+up/down/left/right
+  Smoothly moves the viewport up/down/left/right with increasing step
+  size (maximum step size is 200px).
+
 defer
-  activate/deactivate deferred screen updates.
+  Activates/deactivates deferred screen updates.
+
 ignore
-  Makes it possible to add 'ignore', as in nothing happens when certain keys are pressed.
-viewport_move_left
-  Moves the image viewport to the left.
-viewport_move_up
-  Moves the image viewport up.
-viewport_move_right
-  Moves the image viewport to the right.
-viewport_move_down
-  Moves the image viewport down.
+  Ignores the following keystroke, nothing will happen when this
+  keystroke is pressed.
+
 reread_keystrokes
-  forces nxagent to re-read the keystroke
-  configuration. Useful to add/changes keystrokes for a running
-  session.
+  Forces nxagent to re-read the keystroke configuration. Useful to
+  add/change keystrokes to a running session.
+
 force_synchronization
-  Forces the drawing of elements to be synchronized which can fix some visual bugs.
+  Forces immediate drawing of elements to be synchronized which can
+  fix some visual bugs.
