@@ -90,13 +90,12 @@ resize
   mode.  In viewport mode the xserver screen size stays static even
   if the nxagent window is resized. You will possibly only see a part of
   the screen and can scroll around using the following actions:
-viewport_move_up/down
-  Moves the viewport up/down by the height of the visiable area.
-viewport_move_left/right
-  Moves the viewport left/right by the width of the visible area.
-up/down/left/right
-  Smoothly moves the viewport up/down/left/right with increasing step
-  size (maximum step size is 200px).
+viewport_move_left/up/right/down
+  Moves the viewport left/up/right/down by the width resp. height of
+  the visible area.
+viewport_scroll_left/up/right/down
+  Scrolls the viewport left/up/right/down with increasing speed
+  (maximum step size is 200px).
 
 defer
   Activates/deactivates deferred screen updates.

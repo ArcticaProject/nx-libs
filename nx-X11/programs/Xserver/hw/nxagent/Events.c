@@ -180,6 +180,10 @@ static int viewportLastX;
 static int viewportLastY;
 static Cursor viewportCursor;
 
+#define MAX_INC 200
+#define INC_STEP 5
+#define nextinc(x)  ((x) < MAX_INC ? (x) += INC_STEP : (x))
+
 /*
  * Keyboard and pointer are handled as they were real devices by
  * Xnest and we inherit this behaviour. The following mask will
@@ -192,10 +196,6 @@ static Cursor viewportCursor;
 static Mask defaultEventMask;
 
 static int lastEventSerial = 0;
-
-#define MAX_INC 200
-#define INC_STEP 5
-#define nextinc(x)  ((x) < MAX_INC ? (x) += INC_STEP : (x))
 
 /*
  * Used to mask the appropriate bits in

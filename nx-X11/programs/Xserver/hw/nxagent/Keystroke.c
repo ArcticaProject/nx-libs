@@ -75,11 +75,6 @@ char * nxagentSpecialKeystrokeNames[] = {
        "switch_all_screens",
        "fullscreen",
        "minimize",
-       "left",
-       "up",
-       "right",
-       "down",
-       "resize",
        "defer",
        "ignore",
        "force_synchronization",
@@ -94,10 +89,15 @@ char * nxagentSpecialKeystrokeNames[] = {
        "test_input",
        "deactivate_input_devices_grab",
 #endif
+       "resize",
        "viewport_move_left",
        "viewport_move_up",
        "viewport_move_right",
        "viewport_move_down",
+       "viewport_scroll_left",
+       "viewport_scroll_up",
+       "viewport_scroll_right",
+       "viewport_scroll_down",
 
        "reread_keystrokes",
        NULL,
@@ -112,15 +112,6 @@ struct nxagentSpecialKeystrokeMap default_map[] = {
   {KEYSTROKE_SWITCH_ALL_SCREENS, ControlMask, True, XK_f},
   {KEYSTROKE_FULLSCREEN, ControlMask | ShiftMask, True, XK_f},
   {KEYSTROKE_MINIMIZE, ControlMask, True, XK_m},
-  {KEYSTROKE_LEFT, ControlMask, True, XK_Left},
-  {KEYSTROKE_LEFT, ControlMask, True, XK_KP_Left},
-  {KEYSTROKE_UP, ControlMask, True, XK_Up},
-  {KEYSTROKE_UP, ControlMask, True, XK_KP_Up},
-  {KEYSTROKE_RIGHT, ControlMask, True, XK_Right},
-  {KEYSTROKE_RIGHT, ControlMask, True, XK_KP_Right},
-  {KEYSTROKE_DOWN, ControlMask, True, XK_Down},
-  {KEYSTROKE_DOWN, ControlMask, True, XK_KP_Down},
-  {KEYSTROKE_RESIZE, ControlMask, True, XK_r},
   {KEYSTROKE_DEFER, ControlMask, True, XK_e},
   {KEYSTROKE_IGNORE, ControlMask, True, XK_BackSpace},
   {KEYSTROKE_IGNORE, 0, False, XK_Terminate_Server},
@@ -132,6 +123,7 @@ struct nxagentSpecialKeystrokeMap default_map[] = {
   {KEYSTROKE_TEST_INPUT, ControlMask, True, XK_x},
   {KEYSTROKE_DEACTIVATE_INPUT_DEVICES_GRAB, ControlMask, True, XK_y},
 #endif
+  {KEYSTROKE_RESIZE, ControlMask, True, XK_r},
   {KEYSTROKE_VIEWPORT_MOVE_LEFT, ControlMask | ShiftMask, True, XK_Left},
   {KEYSTROKE_VIEWPORT_MOVE_LEFT, ControlMask | ShiftMask, True, XK_KP_Left},
   {KEYSTROKE_VIEWPORT_MOVE_UP, ControlMask | ShiftMask, True, XK_Up},
@@ -140,6 +132,14 @@ struct nxagentSpecialKeystrokeMap default_map[] = {
   {KEYSTROKE_VIEWPORT_MOVE_RIGHT, ControlMask | ShiftMask, True, XK_KP_Right},
   {KEYSTROKE_VIEWPORT_MOVE_DOWN, ControlMask | ShiftMask, True, XK_Down},
   {KEYSTROKE_VIEWPORT_MOVE_DOWN, ControlMask | ShiftMask, True, XK_KP_Down},
+  {KEYSTROKE_VIEWPORT_SCROLL_LEFT, ControlMask, True, XK_Left},
+  {KEYSTROKE_VIEWPORT_SCROLL_LEFT, ControlMask, True, XK_KP_Left},
+  {KEYSTROKE_VIEWPORT_SCROLL_UP, ControlMask, True, XK_Up},
+  {KEYSTROKE_VIEWPORT_SCROLL_UP, ControlMask, True, XK_KP_Up},
+  {KEYSTROKE_VIEWPORT_SCROLL_RIGHT, ControlMask, True, XK_Right},
+  {KEYSTROKE_VIEWPORT_SCROLL_RIGHT, ControlMask, True, XK_KP_Right},
+  {KEYSTROKE_VIEWPORT_SCROLL_DOWN, ControlMask, True, XK_Down},
+  {KEYSTROKE_VIEWPORT_SCROLL_DOWN, ControlMask, True, XK_KP_Down},
   {KEYSTROKE_REREAD_KEYSTROKES, ControlMask, True, XK_k},
   {KEYSTROKE_END_MARKER, 0, False, NoSymbol},
 };
@@ -559,31 +559,6 @@ Bool nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
         *result = doMinimize;
       }
       break;
-    case KEYSTROKE_LEFT:
-      if (!nxagentOption(Rootless) && !nxagentOption(DesktopResize)) {
-        *result = doViewportLeft;
-      }
-      break;
-    case KEYSTROKE_UP:
-      if (!nxagentOption(Rootless) && !nxagentOption(DesktopResize)) {
-        *result = doViewportUp;
-      }
-      break;
-    case KEYSTROKE_RIGHT:
-      if (!nxagentOption(Rootless) && !nxagentOption(DesktopResize)) {
-        *result = doViewportRight;
-      }
-      break;
-    case KEYSTROKE_DOWN:
-      if (!nxagentOption(Rootless) && !nxagentOption(DesktopResize)) {
-        *result = doViewportDown;
-      }
-      break;
-    case KEYSTROKE_RESIZE:
-      if (!nxagentOption(Rootless)) {
-        *result = doSwitchResizeMode;
-      }
-      break;
     case KEYSTROKE_DEFER:
       *result = doSwitchDeferMode;
       break;
@@ -628,6 +603,11 @@ Bool nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
         *result = doSwitchFullscreen;
       }
       break;
+    case KEYSTROKE_RESIZE:
+      if (!nxagentOption(Rootless)) {
+        *result = doSwitchResizeMode;
+      }
+      break;
     case KEYSTROKE_VIEWPORT_MOVE_LEFT:
       if (!nxagentOption(Rootless) && !nxagentOption(DesktopResize)) {
         *result = doViewportMoveLeft;
@@ -646,6 +626,26 @@ Bool nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
     case KEYSTROKE_VIEWPORT_MOVE_DOWN:
       if (!nxagentOption(Rootless) && !nxagentOption(DesktopResize)) {
         *result = doViewportMoveDown;
+      }
+      break;
+    case KEYSTROKE_VIEWPORT_SCROLL_LEFT:
+      if (!nxagentOption(Rootless) && !nxagentOption(DesktopResize)) {
+        *result = doViewportLeft;
+      }
+      break;
+    case KEYSTROKE_VIEWPORT_SCROLL_UP:
+      if (!nxagentOption(Rootless) && !nxagentOption(DesktopResize)) {
+        *result = doViewportUp;
+      }
+      break;
+    case KEYSTROKE_VIEWPORT_SCROLL_RIGHT:
+      if (!nxagentOption(Rootless) && !nxagentOption(DesktopResize)) {
+        *result = doViewportRight;
+      }
+      break;
+    case KEYSTROKE_VIEWPORT_SCROLL_DOWN:
+      if (!nxagentOption(Rootless) && !nxagentOption(DesktopResize)) {
+        *result = doViewportDown;
       }
       break;
     case KEYSTROKE_REREAD_KEYSTROKES:
