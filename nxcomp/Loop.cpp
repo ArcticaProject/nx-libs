@@ -75,7 +75,6 @@ typedef int socklen_t;
 
 #ifndef __CYGWIN32__
 #include <netinet/tcp.h>
-#include <sys/un.h>
 #endif
 
 //
@@ -103,7 +102,7 @@ typedef int socklen_t;
 // System specific defines.
 //
 
-#if defined(__EMX__) || defined(__CYGWIN32__)
+#if defined(__EMX__)
 
 struct sockaddr_un
 {
