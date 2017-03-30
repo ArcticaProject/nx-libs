@@ -49,16 +49,6 @@
 #include <netinet/tcp.h>
 #endif
 
-#if defined(__EMX__ )
-
-struct sockaddr_un
-{
-  u_short sun_family;
-  char sun_path[108];
-};
-
-#endif
-
 #include "NXalert.h"
 #include "NXvars.h"
 
