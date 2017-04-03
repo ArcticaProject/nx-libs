@@ -126,6 +126,9 @@ CARD8 nxagentConvertKeycode(CARD8 k);
 extern CARD8 nxagentCapsLockKeycode;
 extern CARD8 nxagentNumLockKeycode;
 
+extern unsigned int nxagentAltMetaMask;
+extern unsigned int nxagentAltMask;
+extern unsigned int nxagentMetaMask;
 extern unsigned int nxagentCapsMask;
 extern unsigned int nxagentNumlockMask;
 

@@ -52,6 +52,7 @@
 #include "Millis.h"
 #include "Splash.h"
 #include "Error.h"
+#include "Keystroke.h"
 
 #ifdef XKB
 #include "XKBsrv.h"
@@ -645,6 +646,10 @@ Bool nxagentReconnectSession(void)
 
     goto nxagentReconnectError;
   }
+
+  /* Re-read keystrokes definitions in case the keystrokes file has
+     changed while being supended */
+  nxagentInitKeystrokes(True);
 
   #ifdef NX_DEBUG_INPUT
   fprintf(stderr, "Session: Session resumed at '%s' timestamp [%lu].\n", GetTimeAsString(), GetTimeInMillis());

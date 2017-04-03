@@ -1,0 +1,27 @@
+Configurable keybindings for debugging nxagent
+
+Some keystrokes are only available in special debug builds of nxagent
+and will be ignored otherwise. These are
+
+debug_tree
+  Show the window trees of both internal and external
+  windows. Included if DEBUG_TREE is defined.
+
+regions_on_screen
+  Make corrupted regions visible. Included if DUMP is defined.
+
+test_input
+  Activate/deactive input device debugging. Included if NX_DEBUG_INPUT
+  is defined.
+
+deactivate_input_devices_grab
+  Release grab of input devices.  Included if NX_DEBUG_INPUT is
+  defined.
+
+They can be configured by adding these lines to keystrokes.cfg, below
+keystrokes represent the default:
+
+<keystroke action="debug_tree" Control="1" AltMeta="1" key="q" />
+<keystroke action="regions_on_screen" Control="1" AltMeta="1" key="a" />
+<keystroke action="test_input" Control="1" AltMeta="1" key="x" />
+<keystroke action="deactivate_input_devices_grab" Control="1" AltMeta="1" key="y" />

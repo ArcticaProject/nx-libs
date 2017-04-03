@@ -33,10 +33,10 @@
 #include "Display.h"
 #include "Events.h"
 #include "Options.h"
-#include "Keystroke.h"
 #include "Keyboard.h"
 #include "Drawable.h"
 #include "Init.h" /* extern int nxagentX2go */
+#include "Utils.h"
 
 #include <unistd.h>
 
@@ -48,7 +48,7 @@ extern Bool nxagentIpaq;
 extern char *nxagentKeystrokeFile;
 
 #ifdef NX_DEBUG_INPUT
-int nxagentDebugInputDevices = 0;
+int nxagentDebugInputDevices = False;
 unsigned long nxagentLastInputDevicesDumpTime = 0;
 extern void nxagentDeactivateInputDevicesGrabs();
 #endif
@@ -63,6 +63,9 @@ extern void nxagentDeactivateInputDevicesGrabs();
 #undef  DEBUG
 #undef  DUMP
 
+/* must be included _after_ DUMP */
+#include "Keystroke.h"
+
 
 /* this table is used to parse actions given on the command line or in the
  * config file, therefore indices have to match the enum in Keystroke.h */
@@ -72,24 +75,29 @@ char * nxagentSpecialKeystrokeNames[] = {
        "switch_all_screens",
        "fullscreen",
        "minimize",
-       "left",
-       "up",
-       "right",
-       "down",
-       "resize",
        "defer",
        "ignore",
        "force_synchronization",
 
+#ifdef DEBUG_TREE
        "debug_tree",
+#endif
+#ifdef DUMP
        "regions_on_screen",
+#endif
+#ifdef NX_DEBUG_INPUT
        "test_input",
        "deactivate_input_devices_grab",
-
+#endif
+       "resize",
        "viewport_move_left",
        "viewport_move_up",
        "viewport_move_right",
        "viewport_move_down",
+       "viewport_scroll_left",
+       "viewport_scroll_up",
+       "viewport_scroll_right",
+       "viewport_scroll_down",
 
        "reread_keystrokes",
        NULL,
@@ -97,27 +105,25 @@ char * nxagentSpecialKeystrokeNames[] = {
 
 struct nxagentSpecialKeystrokeMap default_map[] = {
   /* stroke, modifierMask, modifierAltMeta, keysym */
+#ifdef DEBUG_TREE
   {KEYSTROKE_DEBUG_TREE, ControlMask, True, XK_q},
+#endif
   {KEYSTROKE_CLOSE_SESSION, ControlMask, True, XK_t},
   {KEYSTROKE_SWITCH_ALL_SCREENS, ControlMask, True, XK_f},
   {KEYSTROKE_FULLSCREEN, ControlMask | ShiftMask, True, XK_f},
   {KEYSTROKE_MINIMIZE, ControlMask, True, XK_m},
-  {KEYSTROKE_LEFT, ControlMask, True, XK_Left},
-  {KEYSTROKE_LEFT, ControlMask, True, XK_KP_Left},
-  {KEYSTROKE_UP, ControlMask, True, XK_Up},
-  {KEYSTROKE_UP, ControlMask, True, XK_KP_Up},
-  {KEYSTROKE_RIGHT, ControlMask, True, XK_Right},
-  {KEYSTROKE_RIGHT, ControlMask, True, XK_KP_Right},
-  {KEYSTROKE_DOWN, ControlMask, True, XK_Down},
-  {KEYSTROKE_DOWN, ControlMask, True, XK_KP_Down},
-  {KEYSTROKE_RESIZE, ControlMask, True, XK_r},
   {KEYSTROKE_DEFER, ControlMask, True, XK_e},
   {KEYSTROKE_IGNORE, ControlMask, True, XK_BackSpace},
   {KEYSTROKE_IGNORE, 0, False, XK_Terminate_Server},
   {KEYSTROKE_FORCE_SYNCHRONIZATION, ControlMask, True, XK_j},
+#ifdef DUMP
   {KEYSTROKE_REGIONS_ON_SCREEN, ControlMask, True, XK_a},
+#endif
+#ifdef NX_DEBUG_INPUT
   {KEYSTROKE_TEST_INPUT, ControlMask, True, XK_x},
   {KEYSTROKE_DEACTIVATE_INPUT_DEVICES_GRAB, ControlMask, True, XK_y},
+#endif
+  {KEYSTROKE_RESIZE, ControlMask, True, XK_r},
   {KEYSTROKE_VIEWPORT_MOVE_LEFT, ControlMask | ShiftMask, True, XK_Left},
   {KEYSTROKE_VIEWPORT_MOVE_LEFT, ControlMask | ShiftMask, True, XK_KP_Left},
   {KEYSTROKE_VIEWPORT_MOVE_UP, ControlMask | ShiftMask, True, XK_Up},
@@ -126,6 +132,14 @@ struct nxagentSpecialKeystrokeMap default_map[] = {
   {KEYSTROKE_VIEWPORT_MOVE_RIGHT, ControlMask | ShiftMask, True, XK_KP_Right},
   {KEYSTROKE_VIEWPORT_MOVE_DOWN, ControlMask | ShiftMask, True, XK_Down},
   {KEYSTROKE_VIEWPORT_MOVE_DOWN, ControlMask | ShiftMask, True, XK_KP_Down},
+  {KEYSTROKE_VIEWPORT_SCROLL_LEFT, ControlMask, True, XK_Left},
+  {KEYSTROKE_VIEWPORT_SCROLL_LEFT, ControlMask, True, XK_KP_Left},
+  {KEYSTROKE_VIEWPORT_SCROLL_UP, ControlMask, True, XK_Up},
+  {KEYSTROKE_VIEWPORT_SCROLL_UP, ControlMask, True, XK_KP_Up},
+  {KEYSTROKE_VIEWPORT_SCROLL_RIGHT, ControlMask, True, XK_Right},
+  {KEYSTROKE_VIEWPORT_SCROLL_RIGHT, ControlMask, True, XK_KP_Right},
+  {KEYSTROKE_VIEWPORT_SCROLL_DOWN, ControlMask, True, XK_Down},
+  {KEYSTROKE_VIEWPORT_SCROLL_DOWN, ControlMask, True, XK_KP_Down},
   {KEYSTROKE_REREAD_KEYSTROKES, ControlMask, True, XK_k},
   {KEYSTROKE_END_MARKER, 0, False, NoSymbol},
 };
@@ -171,14 +185,13 @@ static Bool read_binding_from_xmlnode(xmlNode *node, struct nxagentSpecialKeystr
 {
   /* init the struct to have proper values in case not all attributes are found */
   struct nxagentSpecialKeystrokeMap newkm = {
-    .stroke = KEYSTROKE_END_MARKER,
+    .stroke = KEYSTROKE_NOTHING,
     .modifierMask = 0,
     .modifierAltMeta = False,
     .keysym = NoSymbol
   };
-  xmlAttr *attr;
 
-  for (attr = node->properties; attr; attr = attr->next)
+  for (xmlAttr *attr = node->properties; attr; attr = attr->next)
   {
     /* ignore attributes without data (which should never happen anyways) */
     if (attr->children->content == NULL)
@@ -192,7 +205,7 @@ static Bool read_binding_from_xmlnode(xmlNode *node, struct nxagentSpecialKeystr
 
     if (strcmp((char *)attr->name, "action") == 0)
     {
-      newkm.stroke = KEYSTROKE_END_MARKER;
+      newkm.stroke = KEYSTROKE_NOTHING;
       for (int i = 0; nxagentSpecialKeystrokeNames[i] != NULL; i++)
       {
         if (strcmp(nxagentSpecialKeystrokeNames[i], (char *)attr->children->content) == 0)
@@ -203,6 +216,8 @@ static Bool read_binding_from_xmlnode(xmlNode *node, struct nxagentSpecialKeystr
           break;
         }
       }
+      if (newkm.stroke == KEYSTROKE_NOTHING)
+        fprintf(stderr, "Info: ignoring unknown keystroke action '%s'.\n", (char *)attr->children->content);
       continue;
     }
     else if (strcmp((char *)attr->name, "key") == 0)
@@ -228,7 +243,7 @@ static Bool read_binding_from_xmlnode(xmlNode *node, struct nxagentSpecialKeystr
     }
   }
 
-  if (newkm.stroke != KEYSTROKE_END_MARKER && newkm.keysym != NoSymbol)
+  if (newkm.stroke != KEYSTROKE_NOTHING && newkm.keysym != NoSymbol)
   {
     /* keysym and stroke are required, everything else is optional */
     memcpy(ret, &newkm, sizeof(struct nxagentSpecialKeystrokeMap));
@@ -249,7 +264,7 @@ static Bool read_binding_from_xmlnode(xmlNode *node, struct nxagentSpecialKeystr
  *  - hardcoded traditional NX default settings
  * If run in x2go flavour different filenames and varnames are used.
  */
-static void parse_keystroke_file(Bool force)
+void nxagentInitKeystrokes(Bool force)
 {
   char *filename = NULL;
 
@@ -267,7 +282,7 @@ static void parse_keystroke_file(Bool force)
       free(map);
       map = default_map;
     }
-    fprintf(stderr, "re-reading keystroke config\n");
+    fprintf(stderr, "Info: re-reading keystrokes configuration\n");
   }
   else
   {
@@ -295,37 +310,12 @@ static void parse_keystroke_file(Bool force)
       exit(EXIT_FAILURE);
     }
   }
-  else if ((filename = getenv(envvar)) && access(filename, R_OK) == 0)
+  else if (nxagentKeystrokeFile)
   {
-    if (!(filename = strdup(filename)))
+    fprintf(stderr, "Warning: Cannot read keystroke file '%s'.\n", nxagentKeystrokeFile);
+    if ((filename = getenv(envvar)) && access(filename, R_OK) == 0)
     {
-      fprintf(stderr, "malloc failed");
-      exit(EXIT_FAILURE);
-    }
-  }
-  else
-  {
-    char *homedir = getenv("HOME");
-    filename = NULL;
-    if (homedir)
-    {
-      if (!(filename = calloc(1, strlen(homefile) + strlen(homedir) + 1)))
-      {
-        fprintf(stderr, "malloc failed");
-        exit(EXIT_FAILURE);
-      }
-      strcpy(filename, homedir);
-      strcpy(filename + strlen(homedir), homefile);
-    }
-
-    if (access(filename, R_OK) == 0)
-    {
-      /* empty */
-    }
-    else if (access(etcfile, R_OK) == 0)
-    {
-      free(filename);
-      if (!(filename = strdup(etcfile)))
+      if (!(filename = strdup(filename)))
       {
         fprintf(stderr, "malloc failed");
         exit(EXIT_FAILURE);
@@ -333,8 +323,37 @@ static void parse_keystroke_file(Bool force)
     }
     else
     {
-      free(filename);
+      char *homedir = getenv("HOME");
       filename = NULL;
+      if (homedir)
+      {
+        if (!(filename = calloc(1, strlen(homefile) + strlen(homedir) + 1)))
+        {
+          fprintf(stderr, "malloc failed");
+          exit(EXIT_FAILURE);
+        }
+        strcpy(filename, homedir);
+        strcpy(filename + strlen(homedir), homefile);
+      }
+
+      if (access(filename, R_OK) == 0)
+      {
+	  /* empty */
+      }
+      else if (access(etcfile, R_OK) == 0)
+      {
+	free(filename);
+	if (!(filename = strdup(etcfile)))
+	{
+	  fprintf(stderr, "malloc failed");
+	  exit(EXIT_FAILURE);
+	}
+      }
+      else
+      {
+        free(filename);
+        filename = NULL;
+      }
     }
   }
 
@@ -345,6 +364,7 @@ static void parse_keystroke_file(Bool force)
     xmlDoc *doc = xmlReadFile(filename, NULL, 0);
     if (doc)
     {
+      fprintf(stderr, "Info: using keystrokes file '%s'\n", filename);
       for (xmlNode *cur = xmlDocGetRootElement(doc); cur; cur = cur->next)
       {
         if (cur->type == XML_ELEMENT_NODE && strcmp((char *)cur->name, "keystrokes") == 0)
@@ -375,7 +395,29 @@ static void parse_keystroke_file(Bool force)
             if (bindings->type == XML_ELEMENT_NODE &&
                 strcmp((char *)bindings->name, "keystroke") == 0 &&
                 read_binding_from_xmlnode(bindings, &(map[idx])))
+              {
+                Bool store = True;
+                for (int j = 0; j < idx; j++)
+                {
+                  if (map[j].stroke != KEYSTROKE_NOTHING &&
+                      map[idx].keysym != NoSymbol &&
+                      map[j].keysym == map[idx].keysym &&
+                      map[j].modifierMask == map[idx].modifierMask &&
+                      map[j].modifierAltMeta == map[idx].modifierAltMeta)
+                  {
+                      fprintf(stderr, "Warning: ignoring keystroke '%s' (already in use by '%s')\n",
+                              nxagentSpecialKeystrokeNames[map[idx].stroke],
+                              nxagentSpecialKeystrokeNames[map[j].stroke]);
+                      store = False;
+                      break;
+                  }
+                }
+
+                if (store)
                   idx++;
+                else
+                  map[idx].stroke = KEYSTROKE_NOTHING;
+              }
           }
           #ifdef DEBUG
           fprintf(stderr, "%s: read %d keystrokes", __func__, idx);
@@ -390,12 +432,48 @@ static void parse_keystroke_file(Bool force)
     }
     else
     {
-      #ifdef DEBUG
-      fprintf(stderr, "XML parsing for %s failed\n", filename);
-      #endif
+      fprintf(stderr, "Warning: could not read/parse keystrokes file '%s'\n", filename);
     }
     free(filename);
     filename = NULL;
+  }
+
+  if (map == default_map)
+  {
+    fprintf(stderr, "Info: Using builtin keystrokes.\n");
+  }
+
+  nxagentDumpKeystrokes();
+}
+
+void nxagentDumpKeystrokes(void)
+{
+  int maxlen = 0;
+  for (int i = 0; nxagentSpecialKeystrokeNames[i]; i++)
+    maxlen = MAX(maxlen, strlen(nxagentSpecialKeystrokeNames[i]));
+
+  fprintf(stderr, "Current known keystrokes:\n");
+
+  for (struct nxagentSpecialKeystrokeMap *cur = map; cur->stroke != KEYSTROKE_END_MARKER; cur++) {
+    unsigned int mask = cur->modifierMask;
+    fprintf(stderr, "  %-*s ", maxlen, nxagentSpecialKeystrokeNames[cur->stroke]);
+    if (mask & ControlMask)        {fprintf(stderr, "Ctrl+");     mask &= ~ControlMask;}
+    if (mask & ShiftMask)          {fprintf(stderr, "Shift+");    mask &= ~ShiftMask;}
+
+    /* these are only here for better readable modifier
+       names. Normally they are covered by the Mod<n> and Lock lines
+       below */
+    if (cur->modifierAltMeta)      {fprintf(stderr, "Alt+");      mask &= ~(cur->modifierAltMeta);}
+    if (mask & nxagentCapsMask)    {fprintf(stderr, "CapsLock+"); mask &= ~nxagentCapsMask;}
+    if (mask & nxagentNumlockMask) {fprintf(stderr, "NumLock+");  mask &= ~nxagentNumlockMask;}
+
+    if (mask & Mod1Mask)           {fprintf(stderr, "Mod1+");     mask &= ~Mod1Mask;}
+    if (mask & Mod2Mask)           {fprintf(stderr, "Mod2+");     mask &= ~Mod2Mask;}
+    if (mask & Mod3Mask)           {fprintf(stderr, "Mod3+");     mask &= ~Mod3Mask;}
+    if (mask & Mod4Mask)           {fprintf(stderr, "Mod4+");     mask &= ~Mod4Mask;}
+    if (mask & Mod5Mask)           {fprintf(stderr, "Mod5+");     mask &= ~Mod5Mask;}
+    if (mask & LockMask)           {fprintf(stderr, "Lock+");     mask &= ~LockMask;}
+    fprintf(stderr, "%s\n", XKeysymToString(cur->keysym));
   }
 }
 
@@ -403,13 +481,6 @@ static enum nxagentSpecialKeystroke find_keystroke(XKeyEvent *X)
 {
   enum nxagentSpecialKeystroke ret = KEYSTROKE_NOTHING;
   int keysyms_per_keycode_return;
-  struct nxagentSpecialKeystrokeMap *cur;
-
-  /* FIXME: we do late parsing here, this should be done at startup,
-     not at first keypress! */
-  parse_keystroke_file(False);
-
-  cur = map;
 
   XlibKeySym *keysym = XGetKeyboardMapping(nxagentDisplay,
                                            X->keycode,
@@ -419,7 +490,7 @@ static enum nxagentSpecialKeystroke find_keystroke(XKeyEvent *X)
   #ifdef DEBUG
   fprintf(stderr, "%s: got keysym '%c' (%d)\n", __func__, keysym[0], keysym[0]);
   #endif
-  while (cur->stroke != KEYSTROKE_END_MARKER) {
+  for (struct nxagentSpecialKeystrokeMap *cur = map; cur->stroke != KEYSTROKE_END_MARKER; cur++) {
     #ifdef DEBUG
     fprintf(stderr, "%s: checking keysym '%c' (%d)\n", __func__, cur->keysym, cur->keysym);
     #endif
@@ -430,7 +501,6 @@ static enum nxagentSpecialKeystroke find_keystroke(XKeyEvent *X)
       free(keysym);
       return cur->stroke;
     }
-    cur++;
   }
 
   free(keysym);
@@ -471,51 +541,22 @@ Bool nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
   }
 
   switch (stroke) {
+#ifdef DEBUG_TREE
     case KEYSTROKE_DEBUG_TREE:
-      #ifdef DEBUG_TREE
       *result = doDebugTree;
-      #endif
       break;
+#endif
     case KEYSTROKE_CLOSE_SESSION:
       *result = doCloseSession;
       break;
     case KEYSTROKE_SWITCH_ALL_SCREENS:
-      if (nxagentOption(Rootless) == False) {
+      if (!nxagentOption(Rootless)) {
         *result = doSwitchAllScreens;
       }
       break;
     case KEYSTROKE_MINIMIZE:
-      if (nxagentOption(Rootless) == False) {
+      if (!nxagentOption(Rootless)) {
         *result = doMinimize;
-      }
-      break;
-    case KEYSTROKE_LEFT:
-      if (nxagentOption(Rootless) == False &&
-          nxagentOption(DesktopResize) == False) {
-        *result = doViewportLeft;
-      }
-      break;
-    case KEYSTROKE_UP:
-      if (nxagentOption(Rootless) == False &&
-          nxagentOption(DesktopResize) == False) {
-        *result = doViewportUp;
-      }
-      break;
-    case KEYSTROKE_RIGHT:
-      if (nxagentOption(Rootless) == False &&
-          nxagentOption(DesktopResize) == False) {
-        *result = doViewportRight;
-      }
-      break;
-    case KEYSTROKE_DOWN:
-      if (nxagentOption(Rootless) == False &&
-          nxagentOption(DesktopResize) == False) {
-        *result = doViewportDown;
-      }
-      break;
-    case KEYSTROKE_RESIZE:
-      if (nxagentOption(Rootless) == False) {
-        *result = doSwitchResizeMode;
       }
       break;
     case KEYSTROKE_DEFER:
@@ -528,64 +569,83 @@ Bool nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
     case KEYSTROKE_FORCE_SYNCHRONIZATION:
       nxagentForceSynchronization = 1;
       break;
+#ifdef DUMP
     case KEYSTROKE_REGIONS_ON_SCREEN:
-      #ifdef DUMP
       nxagentRegionsOnScreen();
-      #endif
       break;
+#endif
+#ifdef NX_DEBUG_INPUT
     case KEYSTROKE_TEST_INPUT:
       /*
        * Used to test the input devices state.
        */
-      #ifdef NX_DEBUG_INPUT
       if (X -> type == KeyPress) {
-        if (nxagentDebugInputDevices == 0) {
+        if (!nxagentDebugInputDevices) {
           fprintf(stderr, "Info: Turning input devices debug ON.\n");
-          nxagentDebugInputDevices = 1;
+          nxagentDebugInputDevices = True;
         } else {
           fprintf(stderr, "Info: Turning input devices debug OFF.\n");
-          nxagentDebugInputDevices = 0;
+          nxagentDebugInputDevices = False;
           nxagentLastInputDevicesDumpTime = 0;
         }
       }
       return True;
-      #endif
       break;
     case KEYSTROKE_DEACTIVATE_INPUT_DEVICES_GRAB:
-      #ifdef NX_DEBUG_INPUT
       if (X->type == KeyPress) {
         nxagentDeactivateInputDevicesGrab();
       }
       return True;
-      #endif
       break;
+#endif
     case KEYSTROKE_FULLSCREEN:
-      if (nxagentOption(Rootless) == 0) {
+      if (!nxagentOption(Rootless)) {
         *result = doSwitchFullscreen;
       }
       break;
+    case KEYSTROKE_RESIZE:
+      if (!nxagentOption(Rootless)) {
+        *result = doSwitchResizeMode;
+      }
+      break;
     case KEYSTROKE_VIEWPORT_MOVE_LEFT:
-      if (nxagentOption(Rootless) == 0 &&
-          nxagentOption(DesktopResize) == 0) {
+      if (!nxagentOption(Rootless) && !nxagentOption(DesktopResize)) {
         *result = doViewportMoveLeft;
       }
       break;
     case KEYSTROKE_VIEWPORT_MOVE_UP:
-      if (nxagentOption(Rootless) == 0 &&
-          nxagentOption(DesktopResize) == 0) {
+      if (!nxagentOption(Rootless) && !nxagentOption(DesktopResize)) {
         *result = doViewportMoveUp;
       }
       break;
     case KEYSTROKE_VIEWPORT_MOVE_RIGHT:
-      if (nxagentOption(Rootless) == 0 &&
-          nxagentOption(DesktopResize) == 0) {
+      if (!nxagentOption(Rootless) && !nxagentOption(DesktopResize)) {
         *result = doViewportMoveRight;
       }
       break;
     case KEYSTROKE_VIEWPORT_MOVE_DOWN:
-      if (nxagentOption(Rootless) == 0 &&
-          nxagentOption(DesktopResize) == 0) {
+      if (!nxagentOption(Rootless) && !nxagentOption(DesktopResize)) {
         *result = doViewportMoveDown;
+      }
+      break;
+    case KEYSTROKE_VIEWPORT_SCROLL_LEFT:
+      if (!nxagentOption(Rootless) && !nxagentOption(DesktopResize)) {
+        *result = doViewportLeft;
+      }
+      break;
+    case KEYSTROKE_VIEWPORT_SCROLL_UP:
+      if (!nxagentOption(Rootless) && !nxagentOption(DesktopResize)) {
+        *result = doViewportUp;
+      }
+      break;
+    case KEYSTROKE_VIEWPORT_SCROLL_RIGHT:
+      if (!nxagentOption(Rootless) && !nxagentOption(DesktopResize)) {
+        *result = doViewportRight;
+      }
+      break;
+    case KEYSTROKE_VIEWPORT_SCROLL_DOWN:
+      if (!nxagentOption(Rootless) && !nxagentOption(DesktopResize)) {
+        *result = doViewportDown;
       }
       break;
     case KEYSTROKE_REREAD_KEYSTROKES:
@@ -596,7 +656,7 @@ Bool nxagentCheckSpecialKeystroke(XKeyEvent *X, enum HandleEventResult *result)
            might lead to unexpected behaviour
       */
       if (X->type == KeyRelease)
-	parse_keystroke_file(True);
+	nxagentInitKeystrokes(True);
       break;
     case KEYSTROKE_NOTHING: /* do nothing. difference to KEYSTROKE_IGNORE is the return value */
     case KEYSTROKE_END_MARKER: /* just to make gcc STFU */
