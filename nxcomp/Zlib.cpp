@@ -23,10 +23,10 @@
 /*                                                                        */
 /**************************************************************************/
 
-#include "Z.h"
+#include "Zlib.h"
 #include "Misc.h"
 
-int ZCompress(z_stream *stream, unsigned char *dest, unsigned int *destLen,
+int ZlibCompress(z_stream *stream, unsigned char *dest, unsigned int *destLen,
                   const unsigned char *source, unsigned int sourceLen)
 {
   //
@@ -36,7 +36,7 @@ int ZCompress(z_stream *stream, unsigned char *dest, unsigned int *destLen,
   if (stream -> total_out & 0x80000000)
   {
     #ifdef TEST
-    *logofs << "ZCompress: Reset stream counters with "
+    *logofs << "ZlibCompress: Reset stream counters with "
             << "total in " << stream -> total_in
             << " and total out " << stream -> total_out
             << ".\n" << logofs_flush;
@@ -87,7 +87,7 @@ int ZCompress(z_stream *stream, unsigned char *dest, unsigned int *destLen,
   return result;
 }
 
-int ZDecompress(z_stream *stream, unsigned char *dest, unsigned int *destLen,
+int ZlibDecompress(z_stream *stream, unsigned char *dest, unsigned int *destLen,
                     const unsigned char *source, unsigned int sourceLen)
 {
   stream -> next_in  = (Bytef *) source;
@@ -100,7 +100,7 @@ int ZDecompress(z_stream *stream, unsigned char *dest, unsigned int *destLen,
   if (stream -> total_out & 0x80000000)
   {
     #ifdef TEST
-    *logofs << "ZDecompress: Reset stream counters with "
+    *logofs << "ZlibDecompress: Reset stream counters with "
             << "total in " << stream -> total_in
             << " and total out " << stream -> total_out
             << ".\n" << logofs_flush;

@@ -23,7 +23,7 @@
 /*                                                                        */
 /**************************************************************************/
 
-#include "Z.h"
+#include "Zlib.h"
 #include "Misc.h"
 #include "Control.h"
 
@@ -239,7 +239,7 @@ int StaticCompressor::compressBuffer(const unsigned char *plainBuffer,
 
   unsigned int resultingSize = newSize; 
 
-  int result = ZCompress(&compressionStream_, buffer_, &resultingSize,
+  int result = ZlibCompress(&compressionStream_, buffer_, &resultingSize,
                              plainBuffer, plainSize);
 
   if (result == Z_OK)
@@ -336,7 +336,7 @@ int StaticCompressor::decompressBuffer(unsigned char *plainBuffer,
 
   compressedBuffer = decodeBuffer.decodeMemory(compressedSize);
 
-  int result = ZDecompress(&decompressionStream_, plainBuffer, &checkSize,
+  int result = ZlibDecompress(&decompressionStream_, plainBuffer, &checkSize,
                                compressedBuffer, compressedSize);
 
   if (result != Z_OK)
@@ -389,7 +389,7 @@ int StaticCompressor::decompressBuffer(unsigned char *plainBuffer,
 
   unsigned int checkSize = plainSize;
 
-  int result = ZDecompress(&decompressionStream_, plainBuffer, &checkSize,
+  int result = ZlibDecompress(&decompressionStream_, plainBuffer, &checkSize,
                                compressedBuffer, compressedSize);
 
   if (result != Z_OK)
