@@ -75,7 +75,6 @@ typedef int socklen_t;
 
 #ifndef __CYGWIN32__
 #include <netinet/tcp.h>
-#include <sys/un.h>
 #endif
 
 //
@@ -103,15 +102,6 @@ typedef int socklen_t;
 // System specific defines.
 //
 
-#if defined(__EMX__) || defined(__CYGWIN32__)
-
-struct sockaddr_un
-{
-  u_short sun_family;
-  char sun_path[108];
-};
-
-#endif
 
 //
 // HP-UX hides this define.

@@ -43,24 +43,10 @@
 #include <netinet/in_systm.h>
 #endif
 
-#ifndef __CYGWIN32__
-#include <sys/un.h>
-#endif
-
 #ifndef ANDROID
 #include <netinet/in.h>
 #include <netinet/ip.h>
 #include <netinet/tcp.h>
-#endif
-
-#if defined(__EMX__ ) || defined(__CYGWIN32__)
-
-struct sockaddr_un
-{
-  u_short sun_family;
-  char sun_path[108];
-};
-
 #endif
 
 #include "NXalert.h"
