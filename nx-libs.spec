@@ -20,6 +20,9 @@ BuildRequires:  libjpeg-devel
 BuildRequires:  pkgconfig
 BuildRequires:  imake
 
+# for patching Mesa with NXv3-specific patches
+BuildRequires: quilt
+
 # suse_version 1315 is SLE-12
 %if 0%{?suse_version} != 1315 && 0%{?suse_version} >= 1230
 BuildRequires:  gpg-offline

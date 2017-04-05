@@ -111,7 +111,19 @@ if [ "x$MODE" = "xfull" ]; then
     rm -f  "nx-X11/programs/Xserver/include/.gitignore"
     rm -f  "nx-X11/programs/Xserver/GL/.gitignore"
     rm -f  "nx-X11/include/.gitignore"
+    rm -Rf "nx-X11/extras/Mesa/"{bin/,configs/,docs/,doxygen/,progs/,vms/,windows/,Makefile,Makefile.*,descrip.mms,mms-config.}
+    rm -Rf "nx-X11/extras/Mesa/include/"{GLES,GLView.h}
+    rm -f  "nx-X11/extras/Mesa/include/GL/"{amesa.h,directfbgl.h,dmesa.h,foomesa.h,fxmesa.h,ggimesa.h,glfbdev.h,gl_mangle.h,glu.h,glu_mangle.h,glutf90.h,glut.h,glut_h.dja,glx_mangle.h,Makefile.am,mesa_wgl.h,mglmesa.h,miniglx.h,svgamesa.h,uglglutshapes.h,uglmesa.h,vms_x_fix.h,wmesa.h,xmesa_x.h}
+    rm -f  "nx-X11/extras/Mesa/include/GL/internal/"{dri_interface.h,sarea.h}
+    rm -Rf "nx-X11/extras/Mesa/src/"{egl/,glu/,glut/,glw/,glx/mini/,Makefile,glx/Makefile,descrip.mms}
+    rm -Rf "nx-X11/extras/Mesa/src/mesa/"{ppc,sparc,tnl_dd,x86,x86-64,sources}
+    rm -Rf "nx-X11/extras/Mesa/src/mesa/drivers/"{allegro,beos,d3d,directfb,dos,fbdev,ggi,glide,osmesa,svga,windows}
+    rm -Rf "nx-X11/extras/Mesa/src/mesa/drivers/dri/"{ffb,i810,i915,mga,r200,radeon,savage,tdfx,unichrome,fb,gamma,i830,mach64,r128,r300,s3v,sis,trident}
+    rm -Rf "nx-X11/extras/Mesa/src/mesa/drivers/dri/common/"{depthtmp.h,drirenderbuffer.h,dri_util.h,memops.h,mmx.h,spantmp_common.h,stenciltmp.h,texmem.h,utils.h,vblank.h,xmlconfig.h,xmlpool.h,drirenderbuffer.c,dri_util.c,extension_helper.h,mmio.h,spantmp2.h,spantmp.h,texmem.c,utils.c,vblank.c,xmlconfig.c,xmlpool/}
 
+    find nx-X11/extras/Mesa/ -name Makefile | while read file; do rm "$file"; done
+    find nx-X11/extras/Mesa/ -name Makefile.* | while read file; do rm "$file"; done
+    find nx-X11/extras/Mesa/ -name descrip.mms | while read file; do rm "$file"; done
 
     # this is for 3.5.0.x only...
     cat "debian/patches/series" | sort | grep -v '^#' | egrep "([0-9]+(_|-).*\.(full|full\+lite)\.patch)" | while read file
