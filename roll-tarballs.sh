@@ -73,7 +73,7 @@ trap "rm -f \"${MANIFEST}\"; rm -rf \"${TEMP_DIR}\"" 0
 
 # create local copy of Git project at temp location
 git archive --format=tar "${CHECKOUT}" --prefix="${PROJECT}-${RELEASE}/" | ( cd "$TEMP_DIR"; tar xf - )
-git --no-pager log --after "1972-01-01" --format="%ai %aN (%h) %n%n%x09*%w(68,0,10) %s%d%n" > "${TEMP_DIR}/${PROJECT}-${RELEASE}/ChangeLog"
+git --no-pager log --after "1972-01-01" --format="%ai %aN (%h) %n%n%x09*%w(68,0,10) %s%d%n" "${CHECKOUT}" > "${TEMP_DIR}/${PROJECT}-${RELEASE}/ChangeLog"
 
 echo "Created tarball for $CHECKOUT"
 
