@@ -13940,7 +13940,7 @@ void PrintProcessInfo()
   //
 
   cerr << "Info: Proxy running in "
-       << (control -> ProxyMode == proxy_client ? "server" : "client")
+       << (control -> ProxyMode == proxy_client ? "client" : "server")
        << " mode with pid '" << getpid() << "'.\n";
 
   if (agent == NULL)
