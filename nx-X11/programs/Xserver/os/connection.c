@@ -427,7 +427,11 @@ CreateWellKnownSockets(void)
     if (NoListenAll) {
 	ListenTransCount = 0;
     }
+#ifndef NXAGENT_SERVER
     else if ((displayfd < 0) || explicit_display) {
+#else
+    else if (displayfd < 0) {
+#endif /* ! NXAGENT_SERVER */
         if (TryCreateSocket(atoi(display), &partial) &&
             ListenTransCount >= 1)
             if (!PartialNetwork && partial)
@@ -435,7 +439,14 @@ CreateWellKnownSockets(void)
     }
     else { /* -displayfd and no explicit display number */
 	Bool found = 0;
+#ifdef NXAGENT_SERVER
+	int i_offset = 0;
+	if (explicit_display)
+	     i_offset = atoi(display);
+	for (i = i_offset; i < 65536 - X_TCP_PORT; i++) {
+#else
 	for (i = 0; i < 65536 - X_TCP_PORT; i++) {
+#endif /* NXAGENT_SERVER */
 	    if (TryCreateSocket(i, &partial) && !partial) {
 		found = 1;
 		break;
