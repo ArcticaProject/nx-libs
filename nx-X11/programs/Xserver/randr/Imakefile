@@ -76,9 +76,14 @@
 
    LINTLIBS = ../dix/llib-ldix.ln ../os/llib-los.ln
 
-    DEFINES = 				\
-		$(PNRX_DEFINES)		\
-		$(NX_DEFINES)		\
+    DEFINES = 						\
+		$(PNRX_DEFINES)				\
+		$(NX_DEFINES)				\
+		-DXSERVER_EVENT_STILL_NEEDS_SEQNO	\
+		-DXSERVER_LACKS_PRIVATES_ABI		\
+		-DXSERVER_OLD_CLOSE_SCREEN_ABI		\
+		-DXSERVER_OLD_DEVICE_ABI		\
+		-DXSERVER_OLD_RESOURCE_NAME_ABI		\
 		$(NULL)
 
 NormalLibraryTarget(randr,$(OBJS))

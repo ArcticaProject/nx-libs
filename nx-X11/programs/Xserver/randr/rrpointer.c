@@ -53,9 +53,9 @@ RRCrtcContainsPosition(RRCrtcPtr crtc, int x, int y)
  */
 static void
 RRPointerToNearestCrtc(
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_OLD_DEVICE_ABI
                           DeviceIntPtr pDev,
-#endif                          /* !defined(NXAGENT_SERVER) */
+#endif                          /* !defined(XSERVER_OLD_DEVICE_ABI) */
                           ScreenPtr pScreen, int x, int y, RRCrtcPtr skip)
 {
     rrScrPriv(pScreen);
@@ -100,9 +100,9 @@ RRPointerToNearestCrtc(
     }
     if (best_dx || best_dy)
         (*pScreen->SetCursorPosition) (
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_OLD_DEVICE_ABI
                                           pDev,
-#endif                          /* !defined(NXAGENT_SERVER) */
+#endif                          /* !defined(XSERVER_OLD_DEVICE_ABI) */
                                           pScreen, x + best_dx, y + best_dy,
                                           TRUE);
     pScrPriv->pointerCrtc = nearest;
@@ -133,9 +133,9 @@ RRPointerMoved(ScreenPtr pScreen, int x, int y)
     /* None contain pointer, find nearest */
     ErrorF("RRPointerMoved: Untested, may cause \"bogus pointer event\"\n");
     RRPointerToNearestCrtc(
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_OLD_DEVICE_ABI
                               inputInfo.pointer,
-#endif                          /* !defined(NXAGENT_SERVER) */
+#endif                          /* !defined(XSERVER_OLD_DEVICE_ABI) */
                               pScreen, x, y, pointerCrtc);
 }
 
@@ -150,33 +150,33 @@ RRPointerScreenConfigured(ScreenPtr pScreen)
     ScreenPtr pCurrentScreen;
     int x, y;
 
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_OLD_DEVICE_ABI
     DeviceIntPtr pDev;
 
     for (pDev = inputInfo.devices; pDev; pDev = pDev->next) {
         if (IsPointerDevice(pDev)) {
-#endif                          /* NXAGENT_SERVER */
+#endif                          /* XSERVER_OLD_DEVICE_ABI */
             pRoot = GetCurrentRootWindow(
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_OLD_DEVICE_ABI
                                             pDev
-#endif                          /* NXAGENT_SERVER */
+#endif                          /* XSERVER_OLD_DEVICE_ABI */
                 );
             pCurrentScreen = pRoot ? pRoot->drawable.pScreen : NULL;
 
             if (pScreen == pCurrentScreen) {
                 GetSpritePosition(
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_OLD_DEVICE_ABI
                                      pDev,
-#endif                          /* NXAGENT_SERVER */
+#endif                          /* XSERVER_OLD_DEVICE_ABI */
                                      &x, &y);
                 RRPointerToNearestCrtc(
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_OLD_DEVICE_ABI
                                           pDev,
-#endif                          /* NXAGENT_SERVER */
+#endif                          /* XSERVER_OLD_DEVICE_ABI */
                                           pScreen, x, y, NULL);
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_OLD_DEVICE_ABI
             }
         }
-#endif                          /* NXAGENT_SERVER */
+#endif                          /* XSERVER_OLD_DEVICE_ABI */
     }
 }

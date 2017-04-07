@@ -64,11 +64,7 @@ ProcRRQueryVersion(ClientPtr client)
         swapl(&rep.majorVersion);
         swapl(&rep.minorVersion);
     }
-#ifndef NXAGENT_SERVER
     WriteToClient(client, sizeof(xRRQueryVersionReply), &rep);
-#else
-    WriteToClient(client, sizeof(xRRQueryVersionReply), &rep);
-#endif
     return Success;
 }
 
@@ -84,7 +80,7 @@ ProcRRSelectInput(ClientPtr client)
     int rc;
 
     REQUEST_SIZE_MATCH(xRRSelectInputReq);
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_LACKS_PRIVATES_ABI
     rc = dixLookupWindow(&pWin, stuff->window, client, DixReceiveAccess);
 #else
     pWin = SecurityLookupWindow(stuff->window, client, DixWriteAccess);
@@ -92,12 +88,12 @@ ProcRRSelectInput(ClientPtr client)
 #endif
     if (rc != Success)
         return rc;
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_LACKS_PRIVATES_ABI
     rc = dixLookupResourceByType((void **) &pHead, pWin->drawable.id,
                                  RREventType, client, DixWriteAccess);
-#else                           /* !defined(NXAGENT_SERVER) */
+#else                           /* !defined(XSERVER_LACKS_PRIVATES_ABI) */
     pHead = (RREventPtr *) LookupIDByType(pWin->drawable.id, RREventType);
-#endif                          /* !defined(NXAGENT_SERVER) */
+#endif                          /* !defined(XSERVER_LACKS_PRIVATES_ABI) */
 
     if (rc != Success && rc != BadValue)
         return rc;

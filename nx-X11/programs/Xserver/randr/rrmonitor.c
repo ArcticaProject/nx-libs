@@ -628,7 +628,7 @@ ProcRRGetMonitors(ClientPtr client)
     Bool get_active;
 
     REQUEST_SIZE_MATCH(xRRGetMonitorsReq);
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_LACKS_PRIVATES_ABI
     r = dixLookupWindow(&window, stuff->window, client, DixGetAttrAccess);
 #else
     window = SecurityLookupWindow(stuff->window, client, DixReadAccess);
@@ -715,7 +715,7 @@ ProcRRSetMonitor(ClientPtr client)
     if (stuff->monitor.noutput != stuff->length - (SIZEOF(xRRSetMonitorReq) >> 2))
         return BadLength;
 
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_LACKS_PRIVATES_ABI
     r = dixLookupWindow(&window, stuff->window, client, DixGetAttrAccess);
 #else
     window = SecurityLookupWindow(stuff->window, client, DixReadAccess);
@@ -764,7 +764,7 @@ ProcRRDeleteMonitor(ClientPtr client)
     int r;
 
     REQUEST_SIZE_MATCH(xRRDeleteMonitorReq);
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_LACKS_PRIVATES_ABI
     r = dixLookupWindow(&window, stuff->window, client, DixGetAttrAccess);
 #else
     window = SecurityLookupWindow(stuff->window, client, DixReadAccess);

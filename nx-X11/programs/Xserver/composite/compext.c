@@ -34,13 +34,13 @@
 
 static CARD8	CompositeReqCode;
 
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_LACKS_PRIVATES_ABI
 static DevPrivateKeyRec CompositeClientPrivateKeyRec;
 
 #define CompositeClientPrivateKey (&CompositeClientPrivateKeyRec)
-#else /* !defined(NXAGENT_SERVER) */
+#else /* !defined(XSERVER_LACKS_PRIVATES_ABI) */
 static int CompositeClientPrivIndex = -1;
-#endif /* !defined(NXAGENT_SERVER) */
+#endif /* !defined(XSERVER_LACKS_PRIVATES_ABI) */
 
 RESTYPE		CompositeClientWindowType;
 RESTYPE		CompositeClientSubwindowsType;
@@ -51,13 +51,13 @@ typedef struct _CompositeClient {
     int	    minor_version;
 } CompositeClientRec, *CompositeClientPtr;
 
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_LACKS_PRIVATES_ABI
 #define GetCompositeClient(pClient) ((CompositeClientPtr) \
     dixLookupPrivate(&(pClient)->devPrivates, CompositeClientPrivateKey))
-#else /* !defined(NXAGENT_SERVER) */
+#else /* !defined(XSERVER_LACKS_PRIVATES_ABI) */
 #define GetCompositeClient(pClient) ((CompositeClientPtr) \
     (pClient)->devPrivates[CompositeClientPrivIndex].ptr)
-#endif /* !edefined(NXAGENT_SERVER) */
+#endif /* !edefined(XSERVER_LACKS_PRIVATES_ABI) */
 
 static void
 CompositeClientCallback (CallbackListPtr	*list,
@@ -667,16 +667,16 @@ CompositeExtensionInit (void)
     if (!CompositeClientOverlayType)
         return;
 
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_LACKS_PRIVATES_ABI
     if (!dixRegisterPrivateKey(&CompositeClientPrivateKeyRec, PRIVATE_CLIENT,
 				sizeof (CompositeClientRec)))
 	return;
-#else /* !defined(NXAGENT_SERVER) */
+#else /* !defined(XSERVER_LACKS_PRIVATES_ABI) */
     if ((CompositeClientPrivIndex = AllocateClientPrivateIndex()) < 0)
         return;
     if (!AllocateClientPrivate(CompositeClientPrivIndex, sizeof (CompositeClientRec)))
         return;
-#endif /* !defined(NXAGENT_SERVER) */
+#endif /* !defined(XSERVER_LACKS_PRIVATES_ABI) */
 
     if (!AddCallback (&ClientStateCallback, CompositeClientCallback, 0))
 	return;

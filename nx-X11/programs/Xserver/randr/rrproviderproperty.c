@@ -30,12 +30,12 @@ DeliverPropertyEvent(WindowPtr pWin, void *value)
     xRRProviderPropertyNotifyEvent *event = value;
     RREventPtr *pHead, pRREvent;
 
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_LACKS_PRIVATES_ABI
     dixLookupResourceByType((void **) &pHead, pWin->drawable.id,
                             RREventType, serverClient, DixReadAccess);
-#else                           /* !defined(NXAGENT_SERVER) */
+#else                           /* !defined(XSERVER_LACKS_PRIVATES_ABI_SERVER) */
     pHead = (RREventPtr *) LookupIDByType(pWin->drawable.id, RREventType);
-#endif                          /* !defined(NXAGENT_SERVER) */
+#endif                          /* !defined(XSERVER_LACKS_PRIVATES_ABI_SERVER) */
     if (!pHead)
         return WT_WALKCHILDREN;
 

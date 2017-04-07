@@ -17,8 +17,10 @@
  NX_DEFINES = -DNXAGENT_SERVER
 #endif
 
-    DEFINES = 			\
-              $(NX_DEFINES)	\
+    DEFINES = 					\
+              $(NX_DEFINES)			\
+              -DXSERVER_LACKS_PRIVATES_ABI	\
+              -DXSERVER_LACKS_XACE_EXT		\
               $(NULL)
 
 NormalLibraryTarget(composite,$(OBJS))

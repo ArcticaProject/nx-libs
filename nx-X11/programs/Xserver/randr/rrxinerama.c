@@ -147,7 +147,7 @@ ProcRRXineramaGetState(ClientPtr client)
     Bool active = FALSE;
 
     REQUEST_SIZE_MATCH(xPanoramiXGetStateReq);
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_LACKS_PRIVATES_ABI
     rc = dixLookupWindow(&pWin, stuff->window, client, DixGetAttrAccess);
 #else
     pWin = SecurityLookupWindow(stuff->window, client, DixReadAccess);
@@ -202,7 +202,7 @@ ProcRRXineramaGetScreenCount(ClientPtr client)
 
     REQUEST_SIZE_MATCH(xPanoramiXGetScreenCountReq);
 
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_LACKS_PRIVATES_ABI
     rc = dixLookupWindow(&pWin, stuff->window, client, DixGetAttrAccess);
 #else
     pWin = SecurityLookupWindow(stuff->window, client, DixReadAccess);
@@ -237,7 +237,7 @@ ProcRRXineramaGetScreenSize(ClientPtr client)
     register int rc;
 
     REQUEST_SIZE_MATCH(xPanoramiXGetScreenSizeReq);
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_LACKS_PRIVATES_ABI
     rc = dixLookupWindow(&pWin, stuff->window, client, DixGetAttrAccess);
 #else
     pWin = SecurityLookupWindow(stuff->window, client, DixReadAccess);

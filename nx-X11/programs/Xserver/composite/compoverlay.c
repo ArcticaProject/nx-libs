@@ -46,7 +46,7 @@
 #endif
 
 #include "compint.h"
-#ifndef NXAGENT_SERVER
+#ifndef XSERVER_LACKS_XACE_EXT
 #include "xace.h"
 #endif
 
