@@ -79,6 +79,7 @@ SOFTWARE.
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #ifndef WIN32
 #include <sys/socket.h>
@@ -364,6 +365,14 @@ NotifyParentProcess(void)
 {
 #if !defined(WIN32)
     if (displayfd >= 0) {
+#ifdef NXAGENT_SERVER
+	if (displayfd == STDERR_FILENO)
+	{
+	    const char *msg = "Auto-detected display number is: DISPLAY=:";
+	    if (write(displayfd, msg, strlen(msg)) != strlen(msg))
+		FatalError("Cannot write display number to fd %d\n", displayfd);
+	}
+#endif
 	if (write(displayfd, display, strlen(display)) != strlen(display))
 	    FatalError("Cannot write display number to fd %d\n", displayfd);
 	if (write(displayfd, "\n", 1) != 1)
