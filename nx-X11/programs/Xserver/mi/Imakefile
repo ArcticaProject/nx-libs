@@ -179,6 +179,9 @@ NormalLibraryTarget(cbrt,cbrt.o)
 
 SpecialCObjectRule(miinitext,$(ICONFIGFILES),$(EXT_DEFINES))
 SpecialCObjectRule(miscrinit,$(ICONFIGFILES),$(EXT_DEFINES))
+SpecialCObjectRule(miglblt,$(ICONFIGFILES),$(FONT_DEFINES))
+SpecialCObjectRule(mipolytext,$(ICONFIGFILES),$(FONT_DEFINES))
+
 #ifdef ItsyCompilerBug
 SpecialCObjectRule(mipolycon,$(_NOOP_),-O0)
 #endif

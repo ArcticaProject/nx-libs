@@ -27,6 +27,8 @@
  * Server Master Makefile
  */
 
+NULL =
+
 #include <Server.tmpl>
 
 /* On most systems the linker requires the libraries in dependency order. 
@@ -216,14 +218,17 @@ NX_XCOMP_HEADERS = \
               ../../../nxcomp/NX.h              \
               ../../../nxcomp/NXpack.h          \
               ../../../nxcomp/NXproto.h         \
-              ../../../nxcomp/NXvars.h
+              ../../../nxcomp/NXvars.h          \
+              $(NULL)
 
 NX_XCOMPSHAD_HEADERS =                          \
-              ../../../nxcompshad/Shadow.h
+              ../../../nxcompshad/Shadow.h      \
+              $(NULL)
 
 NX_HEADERS =                                    \
              $(NX_XCOMP_HEADERS)                \
-             $(NX_XCOMPSHAD_HEADERS)
+             $(NX_XCOMPSHAD_HEADERS)            \
+             $(NULL)
 
 BuildIncludes($(NX_HEADERS),nx,..)
 
@@ -243,7 +248,8 @@ NXAGENTOBJS = hw/nxagent/miinitext.o     \
               hw/nxagent/NXglxext.o      \
               hw/nxagent/NXmiexpose.o    \
               hw/nxagent/NXresource.o    \
-              hw/nxagent/NXdamage.o
+              hw/nxagent/NXdamage.o      \
+              $(NULL)
 #elif !defined(Win32Architecture)
 NXAGENTOBJS = hw/nxagent/miinitext.o     \
               hw/nxagent/NXwindow.o      \
@@ -260,7 +266,8 @@ NXAGENTOBJS = hw/nxagent/miinitext.o     \
               hw/nxagent/NXxvdisp.o      \
               hw/nxagent/NXmiexpose.o    \
               hw/nxagent/NXresource.o    \
-              hw/nxagent/NXdamage.o
+              hw/nxagent/NXdamage.o      \
+              $(NULL)
 #else
 NXAGENTOBJS = hw/nxagent/miinitext.o     \
               hw/nxagent/NXwindow.o      \
@@ -278,7 +285,8 @@ NXAGENTOBJS = hw/nxagent/miinitext.o     \
               hw/nxagent/NXmiexpose.o    \
               hw/nxagent/NXresource.o    \
               hw/nxagent/NXdamage.o      \
-              dix/main.o
+              dix/main.o                 \
+              $(NULL)
 #endif
 
 XPMLIB    =  -lXpm
@@ -313,16 +321,29 @@ NXAGENTNXLIBS = -L/usr/sfw/lib \
                 -lrt \
                 -lXcomp \
                 -lXcompshad \
-                -lXrender -lXfixes -lXfont -lXcomposite -lXinerama -lXdmcp \
-                -lNX_X11 -lXext
+                -lXrender \
+                -lXfixes \
+                $(XFONTLIB) \
+                -lXcomposite \
+                -lXinerama \
+                -lXdmcp \
+                -lNX_X11 \
+                -lXext \
+                $(NULL)
 #elif defined(cygwinArchitecture)
 NXAGENTNXLIBS = -L../../../nxcomp  \
                 -L../../../nx-X11/exports/lib \
                 -L../../../nxcompshad \
                 -lXcomp \
                 -lXcompshad \
-                -lXrender -lXfixes -lXfont -lXcomposite -lXdmcp \
-                -lNX_X11 -lXext
+                -lXrender \
+                -lXfixes \
+                $(XFONTLIB) \
+                -lXcomposite \
+                -lXdmcp \
+                -lNX_X11 \
+                -lXext \
+                $(NULL)
 #elif defined(OpenBSDArchitecture)
 NXAGENTNXLIBS = -L../../../nxcomp  \
                 -L../../../nx-X11/exports/lib \
@@ -330,16 +351,30 @@ NXAGENTNXLIBS = -L../../../nxcomp  \
                 -lkvm \
                 -lXcomp \
                 -lXcompshad \
-                -lXrender -lXfixes -lXfont -lXcomposite -lXinerama -lXdmcp \
-                -lNX_X11 -lXext
+                -lXrender \
+                -lXfixes \
+                $(XFONTLIB) \
+                -lXcomposite \
+                -lXinerama \
+                -lXdmcp \
+                -lNX_X11 \
+                -lXext \
+                $(NULL)
 #else
 NXAGENTNXLIBS = -L../../../nxcomp  \
                 -L../../../nx-X11/exports/lib \
                 -L../../../nxcompshad \
                 -lXcomp \
                 -lXcompshad \
-                -lXrender -lXfixes -lXfont -lXcomposite -lXinerama -lXdmcp \
-                -lNX_X11 -lXext
+                -lXrender \
+                -lXfixes \
+                $(XFONTLIB) \
+                -lXcomposite \
+                -lXinerama \
+                -lXdmcp \
+                -lNX_X11 \
+                -lXext \
+                $(NULL)
 #endif
 #endif
 

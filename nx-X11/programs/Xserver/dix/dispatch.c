@@ -86,6 +86,11 @@ int ProcInitialConnection();
 
 #include "windowstr.h"
 #include <X11/fonts/fontstruct.h>
+#ifdef HAS_XFONT2
+# include <X11/fonts/libxfont2.h>
+#else
+# include <X11/fonts/fontutil.h>
+#endif /* HAS_XFONT2 */
 #include "dixfontstr.h"
 #include "gcstruct.h"
 #include "selection.h"
@@ -1399,7 +1404,11 @@ ProcQueryTextExtents(register ClientPtr client)
 	    return(BadLength);
         length--;
     }
+#ifdef HAS_XFONT2
+    if (!xfont2_query_text_extents(pFont, length, (unsigned char *)&stuff[1], &info))
+#else
     if (!QueryTextExtents(pFont, length, (unsigned char *)&stuff[1], &info))
+#endif /* HAS_XFONT2 */
 	return(BadAlloc);
     reply.type = X_Reply;
     reply.length = 0;
@@ -3364,7 +3373,6 @@ ProcSetFontPath(register ClientPtr client)
     unsigned long nbytes, total;
     long nfonts;
     int n, result;
-    int error;
     REQUEST(xSetFontPathReq);
     
     REQUEST_AT_LEAST_SIZE(xSetFontPathReq);
@@ -3382,13 +3390,9 @@ ProcSetFontPath(register ClientPtr client)
     }
     if (total >= 4)
 	return(BadLength);
-    result = SetFontPath(client, stuff->nFonts, (unsigned char *)&stuff[1],
-			 &error);
+    result = SetFontPath(client, stuff->nFonts, (unsigned char *)&stuff[1]);
     if (!result)
-    {
 	result = client->noClientException;
-	client->errorValue = error;
-    }
     return (result);
 }
 

@@ -424,6 +424,10 @@ IPLAN2P8_DEFS = -DUSE_IPLAN2P8
 # define BuildXKBlib	YES
 #endif
 
+#ifndef HasXfont2
+# define HasXfont2	NO
+#endif
+
 #ifndef BuildScreenSaverExt
 # define BuildScreenSaverExt	YES
 #endif

@@ -51,6 +51,7 @@ is" without express or implied warranty.
 #include "servermd.h"
 #include "mi.h"
 #include <X11/fonts/fontstruct.h>
+#include "dixfontstr.h"
 
 #include "Agent.h"
 #include "Display.h"
@@ -367,7 +368,11 @@ FIXME: These variables, if not removed at all because have probably
   nxagentWindowPrivateIndex = AllocateWindowPrivateIndex();
   nxagentGCPrivateIndex = AllocateGCPrivateIndex();
   RT_NX_GC = CreateNewResourceType(nxagentDestroyNewGCResourceType);
+#ifdef HAS_XFONT2
+  nxagentFontPrivateIndex = xfont2_allocate_font_private_index();
+#else
   nxagentFontPrivateIndex = AllocateFontPrivateIndex();
+#endif /* HAS_XFONT2 */
   RT_NX_FONT = CreateNewResourceType(nxagentDestroyNewFontResourceType); 
   nxagentClientPrivateIndex = AllocateClientPrivateIndex();
   nxagentPixmapPrivateIndex = AllocatePixmapPrivateIndex();

@@ -26,6 +26,7 @@ SRCS =  \
 	NXmitrap.c \
 	Args.c \
 	Binder.c \
+	BitmapUtils.c \
 	Colormap.c \
 	Cursor.c \
 	Dialog.c \
@@ -87,6 +88,7 @@ OBJS =  \
 	NXmitrap.o \
 	Args.o \
 	Binder.o \
+	BitmapUtils.o \
 	Colormap.o \
 	Cursor.o \
 	Dialog.o \
@@ -255,7 +257,11 @@ all:: $(OBJS)
 
 LinkSourceFile(stubs.c,$(SERVERSRC)/Xi)
 LinkSourceFile(xpstubs.c,$(SERVERSRC)/dix)
-SpecialCObjectRule(Init,$(ICONFIGFILES),$(_NOOP_))
+SpecialCObjectRule(Init,$(ICONFIGFILES),$(FONT_DEFINES))
+SpecialCObjectRule(Font,$(ICONFIGFILES),$(FONT_DEFINES))
+SpecialCObjectRule(NXdamage,$(ICONFIGFILES),$(FONT_DEFINES))
+SpecialCObjectRule(NXdispatch,$(ICONFIGFILES),$(FONT_DEFINES))
+SpecialCObjectRule(NXdixfonts,$(ICONFIGFILES),$(FONT_DEFINES))
 LinkSourceFile(miinitext.c,$(SERVERSRC)/mi)
 SpecialCObjectRule(miinitext,$(ICONFIGFILES), $(_NOOP_))
 

@@ -29,11 +29,21 @@ SOFTWARE.
 #include "closure.h"
 #include <X11/fonts/fontstruct.h>
 
+#ifdef HAS_XFONT2
+# include <X11/fonts/libxfont2.h>
+#else
+# include <X11/fonts/fontutil.h>
+#endif /* HAS XFONT2 */
+
 #define NullDIXFontProp ((DIXFontPropPtr)0)
 
 typedef struct _DIXFontProp *DIXFontPropPtr;
 
+#ifdef HAS_XFONT2
+xfont2_fpe_funcs_rec const **fpe_functions;
+#else
 extern FPEFunctions *fpe_functions;
+#endif /* HAS_XFONT2 */
 
 extern int FontToXError(int /*err*/);
 
@@ -100,8 +110,7 @@ extern int ImageText(ClientPtr /*client*/,
 
 extern int SetFontPath(ClientPtr /*client*/,
 		       int /*npaths*/,
-		       unsigned char * /*paths*/,
-		       int * /*error*/);
+		       unsigned char * /*paths*/);
 
 extern int SetDefaultFontPath(char * /*path*/);
 
@@ -125,14 +134,25 @@ extern void InitFonts(void);
 
 extern void FreeFonts(void);
 
+#ifdef HAS_XFONT2
+extern void GetGlyphs(FontPtr /*font */ ,
+		      unsigned long /*count */ ,
+		      unsigned char * /*chars */ ,
+		      FontEncoding /*fontEncoding */ ,
+		      unsigned long * /*glyphcount */ ,
+		      CharInfoPtr * /*glyphs */ );
+#else
 extern FontPtr find_old_font(XID /*id*/);
 
-extern void GetGlyphs(FontPtr     /*font*/,
-		      unsigned long /*count*/,
-		      unsigned char * /*chars*/,
-		      FontEncoding /*fontEncoding*/,
-		      unsigned long * /*glyphcount*/,
-		      CharInfoPtr * /*glyphs*/);
+#define GetGlyphs dixGetGlyphs
+extern void dixGetGlyphs(FontPtr     /*font*/,
+			 unsigned long /*count*/,
+			 unsigned char * /*chars*/,
+			 FontEncoding /*fontEncoding*/,
+			 unsigned long * /*glyphcount*/,
+			 CharInfoPtr * /*glyphs*/);
+
+extern void register_fpe_functions(void);
 
 extern void QueryGlyphExtents(FontPtr     /*pFont*/,
 			      CharInfoPtr * /*charinfo*/,
@@ -143,13 +163,12 @@ extern Bool QueryTextExtents(FontPtr     /*pFont*/,
 			     unsigned long /*count*/,
 			     unsigned char * /*chars*/,
 			     ExtentInfoPtr /*info*/);
+#endif /* HAS_XFONT2 */
 
 extern Bool ParseGlyphCachingMode(char * /*str*/);
 
 extern void InitGlyphCaching(void);
 
 extern void SetGlyphCachingMode(int /*newmode*/);
-
-extern void register_fpe_functions(void);
 
 #endif				/* DIXFONT_H */

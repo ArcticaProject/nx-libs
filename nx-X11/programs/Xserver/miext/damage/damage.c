@@ -34,6 +34,11 @@
 #include    <X11/fonts/font.h>
 #include    "dixfontstr.h"
 #include    <X11/fonts/fontstruct.h>
+#ifdef HAS_XFONT2
+# include   <X11/fonts/libxfont2.h>
+#else
+# include    <X11/fonts/fontutil.h>
+#endif /* HAS_XFONT2 */
 #include    "mi.h"
 #include    "regionstr.h"
 #include    "globals.h"
@@ -1297,7 +1302,11 @@ damageDamageChars (DrawablePtr	pDrawable,
     ExtentInfoRec   extents;
     BoxRec	    box;
 
+#ifdef HAS_XFONT2
+    xfont2_query_glyph_extents(font, charinfo, n, &extents);
+#else
     QueryGlyphExtents(font, charinfo, n, &extents);
+#endif /* HAS_XFONT2 */
     if (imageblt)
     {
 	if (extents.overallWidth > extents.overallRight)

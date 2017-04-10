@@ -96,6 +96,11 @@ OR PERFORMANCE OF THIS SOFTWARE.
 #include <nx-X11/Xtrans/Xtrans.h>
 #include "input.h"
 #include "dixfont.h"
+#ifdef HAS_XFONT2
+# include <X11/fonts/libxfont2.h>
+#else
+# include <X11/fonts/fontutil.h>
+#endif /* HAS_XFONT2 */
 #include "osdep.h"
 #ifdef X_POSIX_C_SOURCE
 #define _POSIX_C_SOURCE X_POSIX_C_SOURCE
@@ -797,7 +802,11 @@ ProcessCommandLine(int argc, char *argv[])
 #endif
 	else if ( strcmp( argv[i], "-deferglyphs") == 0)
 	{
+#ifdef HAS_XFONT2
+	    if(++i >= argc || !!xfont2_parse_glyph_caching_mode(argv[i]))
+#else
 	    if(++i >= argc || !ParseGlyphCachingMode(argv[i]))
+#endif /* HAS_XFONT2 */
 		UseMsg();
 	}
 	else if ( strcmp( argv[i], "-f") == 0)

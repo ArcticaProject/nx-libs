@@ -95,6 +95,12 @@ Equipment Corporation.
 #include "colormapst.h"
 #include "cursorstr.h"
 #include <X11/fonts/font.h>
+#include <X11/fonts/fontstruct.h>
+#ifdef HAS_XFONT2
+# include <X11/fonts/libxfont2.h>
+#else
+# include <X11/fonts/fontutil.h>
+#endif /* HAS_XFONT2 */
 #include "opaque.h"
 #include "servermd.h"
 #include "site.h"
@@ -252,7 +258,11 @@ main(int argc, char *argv[], char *envp[])
 
 	InitAtoms();
 	InitEvents();
+#ifdef HAS_XFONT2
+	xfont2_init_glyph_caching();
+#else
 	InitGlyphCaching();
+#endif /* of HAS_XFONT2 */
 	ResetClientPrivates();
 	ResetScreenPrivates();
 	ResetWindowPrivates();
@@ -261,8 +271,8 @@ main(int argc, char *argv[], char *envp[])
 	ResetPixmapPrivates();
 #endif
 	ResetColormapPrivates();
-	ResetFontPrivateIndex();
 	ResetDevicePrivateIndex();
+	InitFonts();
 	InitCallbackManager();
 	InitVisualWrap();
 	InitOutput(&screenInfo, argc, argv);
@@ -294,9 +304,8 @@ main(int argc, char *argv[], char *envp[])
 	    FatalError("failed to initialize core devices");
 	ReserveClientIds(serverClient);
 
-	InitFonts();
 	if (loadableFonts) {
-	    SetFontPath(0, 0, (unsigned char *)defaultFontPath, &error);
+	    SetFontPath(serverClient, 0, (unsigned char *)defaultFontPath);
 	} else {
 	    if (SetDefaultFontPath(defaultFontPath) != Success)
 		ErrorF("failed to set default font path '%s'\n",
