@@ -19,6 +19,10 @@ USRLIBDIR       ?= $(NXLIBDIR)/X11
 INCLUDEDIR      ?= $(PREFIX)/include
 CONFIGURE       ?= ./configure
 
+# use Xfont2 if available in the build env
+FONT_DEFINES	?= $(shell pkg-config --modversion xfont2 1>/dev/null 2>/dev/null && echo "-DHAS_XFONT2")
+XFONTLIB	?= $(shell pkg-config --modversion xfont2 1>/dev/null 2>/dev/null && echo "-lXfont2" || echo "-lXfont")
+
 NX_VERSION_MAJOR=$(shell ./version.sh 1)
 NX_VERSION_MINOR=$(shell ./version.sh 2)
 NX_VERSION_MICRO=$(shell ./version.sh 3)
@@ -75,7 +79,8 @@ build-full:
 	cd nxcompshad && autoconf && (${CONFIGURE}) && ${MAKE}
 
 	./mesa-quilt push -a
-	cd nx-X11 && ${MAKE} World USRLIBDIR=$(USRLIBDIR) SHLIBDIR=$(SHLIBDIR)
+
+	cd nx-X11 && ${MAKE} World USRLIBDIR=$(USRLIBDIR) SHLIBDIR=$(SHLIBDIR) FONT_DEFINES=$(FONT_DEFINES) XFONTLIB=$(XFONTLIB)
 
 	cd nxproxy && autoconf && (${CONFIGURE}) && ${MAKE}
 
