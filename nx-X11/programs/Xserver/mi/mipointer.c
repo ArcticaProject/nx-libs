@@ -66,7 +66,7 @@ static void miPointerCursorLimits(ScreenPtr pScreen, CursorPtr pCursor,
 				  BoxPtr pHotBox, BoxPtr pTopLeftBox);
 static Bool miPointerSetCursorPosition(ScreenPtr pScreen, int x, int y,
 				       Bool generateEvent);
-static Bool miPointerCloseScreen(int index, ScreenPtr pScreen);
+static Bool miPointerCloseScreen(ScreenPtr pScreen);
 static void miPointerMove(ScreenPtr pScreen, int x, int y, unsigned long time);
 
 Bool
@@ -132,8 +132,7 @@ miPointerInitialize (pScreen, spriteFuncs, screenFuncs, waitForUpdate)
 }
 
 static Bool
-miPointerCloseScreen (index, pScreen)
-    int		index;
+miPointerCloseScreen (pScreen)
     ScreenPtr	pScreen;
 {
     SetupScreen(pScreen);
@@ -144,7 +143,7 @@ miPointerCloseScreen (index, pScreen)
 	miPointer.pSpriteScreen = 0;
     pScreen->CloseScreen = pScreenPriv->CloseScreen;
     free ((void *) pScreenPriv);
-    return (*pScreen->CloseScreen) (index, pScreen);
+    return (*pScreen->CloseScreen) (pScreen);
 }
 
 /*

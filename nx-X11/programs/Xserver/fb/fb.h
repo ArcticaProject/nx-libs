@@ -1703,7 +1703,7 @@ fbPushPixels (GCPtr	    pGC,
  */
 
 Bool
-fbCloseScreen (int indx, ScreenPtr pScreen);
+fbCloseScreen (ScreenPtr pScreen);
 
 Bool
 fbRealizeFont(ScreenPtr pScreen, FontPtr pFont);

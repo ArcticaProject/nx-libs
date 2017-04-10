@@ -88,7 +88,7 @@ fbOverlayCreateWindow(WindowPtr pWin)
 }
 
 Bool
-fbOverlayCloseScreen (int iScreen, ScreenPtr pScreen)
+fbOverlayCloseScreen (ScreenPtr pScreen)
 {
     FbOverlayScrPrivPtr	pScrPriv = fbOverlayGetScrPriv(pScreen);
     int			i;

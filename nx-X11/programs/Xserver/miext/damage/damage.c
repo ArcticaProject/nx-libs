@@ -1717,7 +1717,7 @@ damageDestroyWindow (WindowPtr pWindow)
 }
 
 static Bool
-damageCloseScreen (int i, ScreenPtr pScreen)
+damageCloseScreen (ScreenPtr pScreen)
 {
     damageScrPriv(pScreen);
 
@@ -1729,7 +1729,7 @@ damageCloseScreen (int i, ScreenPtr pScreen)
     unwrap (pScrPriv, pScreen, CloseScreen);
     unwrap (pScrPriv, pScreen, BackingStoreFuncs.RestoreAreas);
     free (pScrPriv);
-    return (*pScreen->CloseScreen) (i, pScreen);
+    return (*pScreen->CloseScreen) (pScreen);
 }
 
 int damageScrPrivateIndex;
