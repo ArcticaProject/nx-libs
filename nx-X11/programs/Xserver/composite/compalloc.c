@@ -539,8 +539,8 @@ compNewPixmap (WindowPtr pWin, int x, int y, int w, int h)
     PixmapPtr	    pPixmap;
 
     /* usage_hint unsupported by our old server infrastructure. */
-    pPixmap = (*pScreen->CreatePixmap) (pScreen, w, h, pWin->drawable.depth /*,
-                                        CREATE_PIXMAP_USAGE_BACKING_PIXMAP */);
+    pPixmap = (*pScreen->CreatePixmap) (pScreen, w, h, pWin->drawable.depth,
+                                        CREATE_PIXMAP_USAGE_BACKING_PIXMAP);
 
     if (!pPixmap)
 	return 0;
