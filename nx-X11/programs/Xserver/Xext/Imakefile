@@ -119,7 +119,7 @@ LintLibraryTarget(ext,$(SRCS))
 NormalLintTarget($(SRCS))
 
 #if BuildXF86BigfontExt
-SpecialCObjectRule(xf86bigfont,$(ICONFIGFILES),$(SHM_DEFINES) $(FONT_DEFINES))
+SpecialCObjectRule(xf86bigfont,$(ICONFIGFILES),$(SHM_DEFINES))
 #endif
 #if BuildXCSecurity
 SpecialCObjectRule(security,$(ICONFIGFILES),$(POLICYFILEDEF))

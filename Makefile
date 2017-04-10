@@ -70,7 +70,7 @@ build-full:
 	    > nx-X11/config/cf/nxversion.def
 
 	# prepare Makefiles and the nx-X11 symlinking magic
-	cd nx-X11 && make BuildEnv
+	cd nx-X11 && make BuildEnv FONT_DEFINES=$(FONT_DEFINES)
 
 	# build libNX_X11 and libNX_Xext prior to building
 	# nxcomp{ext,shad}.

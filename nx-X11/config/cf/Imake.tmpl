@@ -1878,6 +1878,15 @@ SETITIMER_DEFINES = HasSetitimerDefines
      POSTNOSTDLIB =
 #endif
 #endif
+
+#if HasXfont2
+FONT_DEFINES = -DHAS_XFONT2
+    XFONTLIB = -lXfont2
+#else
+FONT_DEFINES =
+    XFONTLIB = -lXfont
+#endif
+
 /*
  * Here we set up flags needed to produce position-independent code
  * when doing C and C++ compilation.  The default if you specify C
@@ -1976,7 +1985,7 @@ SETITIMER_DEFINES = HasSetitimerDefines
  * LOCAL_LDFLAGS contains client-specific ld flags flags set in Imakefile
  */
       ALLINCLUDES = $(INCLUDES) $(EXTRA_INCLUDES) $(TOP_INCLUDES) $(INSTALLED_INCLUDES) $(STD_INCLUDES)
-       ALLDEFINES = $(ALLINCLUDES) $(STD_DEFINES) $(SETITIMER_DEFINES) $(PROTO_DEFINES) $(THREADS_DEFINES) $(MODULE_DEFINES) $(DEFINES) $(EXTRA_DEFINES)
+       ALLDEFINES = $(ALLINCLUDES) $(STD_DEFINES) $(SETITIMER_DEFINES) $(FONT_DEFINES) $(PROTO_DEFINES) $(THREADS_DEFINES) $(MODULE_DEFINES) $(DEFINES) $(EXTRA_DEFINES)
            CFLAGS = $(CDEBUGFLAGS) $(CCOPTIONS) $(THREADS_CFLAGS) $(MODULE_CFLAGS) $(ALLDEFINES)
         LINTFLAGS = $(LINTOPTS) -DLINT $(ALLDEFINES) $(DEPEND_DEFINES)
          LDPRELIB = LdPreLib $(INSTALLED_LIBS)

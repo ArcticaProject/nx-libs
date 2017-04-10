@@ -248,7 +248,7 @@ SpecialCObjectRule(connection,$(ICONFIGFILES),$(SOCK_DEFINES) $(XDMCP_DEFINES))
 SpecialCObjectRule(osinit,$(ICONFIGFILES),$(ADM_DEFINES))
 SpecialCObjectRule(WaitFor,$(ICONFIGFILES),$(EXT_DEFINES))
 SpecialCObjectRule(io,$(ICONFIGFILES),$(EXT_DEFINES))
-SpecialCObjectRule(utils,$(ICONFIGFILES),$(XDMCP_DEFINES) $(EXT_DEFINES) $(ERROR_DEFINES) $(PAM_DEFINES) $(FONT_DEFINES))
+SpecialCObjectRule(utils,$(ICONFIGFILES),$(XDMCP_DEFINES) $(EXT_DEFINES) $(ERROR_DEFINES) $(PAM_DEFINES))
 #if defined(SparcArchitecture) && HasGcc && !HasGcc2
 oscolor.o: oscolor.c $(ICONFIGFILES)
 	$(RM) $@
