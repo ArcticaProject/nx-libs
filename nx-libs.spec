@@ -38,7 +38,11 @@ BuildRequires:  pkgconfig(pixman-1) >= 0.13.2
 BuildRequires:  pkgconfig(x11)
 BuildRequires:  pkgconfig(xext)
 BuildRequires:  pkgconfig(xpm)
+#%%if 0%%{?suse_version} >= 42XX
+#BuildRequires:  pkgconfig(xfont2)
+#%%else
 BuildRequires:  pkgconfig(xfont) >= 1.4.2
+#%%endif
 BuildRequires:  pkgconfig(xdmcp)
 BuildRequires:  pkgconfig(xdamage)
 BuildRequires:  pkgconfig(xcomposite)
@@ -74,7 +78,11 @@ BuildRequires:  pixman-devel >= 0.13.2
 BuildRequires:  libX11-devel
 BuildRequires:  libXext-devel
 BuildRequires:  libXpm-devel
+%if 0%{?fedora} >= 24 || 0%{?rhel} >= 8
+BuildRequires:  libXfont2-devel
+%else
 BuildRequires:  libXfont-devel >= 1.4.2
+%endif
 BuildRequires:  libXdmcp-devel
 BuildRequires:  libXdamage-devel
 BuildRequires:  libXcomposite-devel
