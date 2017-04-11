@@ -516,6 +516,9 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %{_includedir}/nx-X11/extensions/recordstr.h
 %{_includedir}/nx-X11/extensions/render.h
 %{_includedir}/nx-X11/extensions/renderproto.h
+%{_includedir}/nx-X11/extensions/saver.h
+%{_includedir}/nx-X11/extensions/saverproto.h
+%{_includedir}/nx-X11/extensions/scrnsaver.h
 %{_includedir}/nx-X11/extensions/securstr.h
 %{_includedir}/nx-X11/extensions/syncstr.h
 %{_includedir}/nx-X11/extensions/xcmiscstr.h

@@ -306,6 +306,23 @@ Description: nx-X11 Render extension wire protocol (dummy package)
  .
  This package can be safely removed.
 
+Package: nx-x11proto-scrnsaver-dev
+Section: libdevel
+Architecture: any
+Multi-Arch: same
+Depends:
+ ${misc:Depends},
+Breaks: nxlibs (<= 3.5.1),
+        libnx-x11-dev (<< 2:3.5.0.29-1~),
+Description: nx-X11 Screen Saver extension wire protocol
+ NX is a software suite which implements very efficient
+ compression of the X11 protocol. This increases performance when
+ using X applications over a network, especially a slow one.
+ .
+ This package provides development headers describing the wire protocol
+ for the MIT-SCREEN-SAVER extension, used to notify the server of client
+ screen saver events.
+
 Package: libnx-mesa-extras-dev
 Section: libdevel
 Architecture: any

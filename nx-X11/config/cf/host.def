@@ -358,7 +358,7 @@
  *
 #define BuildScreenSaverExt	NO
  */
-#define BuildScreenSaverExt	NO
+#define BuildScreenSaverExt	YES
 
 /* 
  * If you don't want to build Xinerama support, uncomment this.
