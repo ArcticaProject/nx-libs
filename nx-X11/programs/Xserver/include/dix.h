@@ -470,6 +470,12 @@ extern void ClientWakeup(
 extern Bool ClientIsAsleep(
     ClientPtr /*client*/);
 
+extern void SendGraphicsExpose(ClientPtr /*client */ ,
+    RegionPtr /*pRgn */ ,
+    XID /*drawable */ ,
+    int /*major */ ,
+    int  /*minor */);
+
 /* atom.c */
 
 extern Atom MakeAtom(

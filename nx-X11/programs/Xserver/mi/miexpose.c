@@ -375,60 +375,6 @@ miHandleExposures(pSrcDrawable, pDstDrawable,
 }
 #endif
 
-/* send GraphicsExpose events, or a NoExpose event, based on the region */
-
-void
-miSendGraphicsExpose (client, pRgn, drawable, major, minor)
-    ClientPtr	client;
-    RegionPtr	pRgn;
-    XID		drawable;
-    int	major;
-    int	minor;
-{
-    if (pRgn && !RegionNil(pRgn))
-    {
-        xEvent *pEvent;
-	register xEvent *pe;
-	register BoxPtr pBox;
-	register int i;
-	int numRects;
-
-	numRects = RegionNumRects(pRgn);
-	pBox = RegionRects(pRgn);
-	if(!(pEvent = (xEvent *)malloc(numRects * sizeof(xEvent))))
-		return;
-	pe = pEvent;
-
-	for (i=1; i<=numRects; i++, pe++, pBox++)
-	{
-	    pe->u.u.type = GraphicsExpose;
-	    pe->u.graphicsExposure.drawable = drawable;
-	    pe->u.graphicsExposure.x = pBox->x1;
-	    pe->u.graphicsExposure.y = pBox->y1;
-	    pe->u.graphicsExposure.width = pBox->x2 - pBox->x1;
-	    pe->u.graphicsExposure.height = pBox->y2 - pBox->y1;
-	    pe->u.graphicsExposure.count = numRects - i;
-	    pe->u.graphicsExposure.majorEvent = major;
-	    pe->u.graphicsExposure.minorEvent = minor;
-	}
-	TryClientEvents(client, pEvent, numRects,
-			    (Mask)0, NoEventMask, NullGrab);
-	free(pEvent);
-    }
-    else
-    {
-        xEvent event;
-	memset(&event, 0, sizeof(xEvent));
-	event.u.u.type = NoExpose;
-	event.u.noExposure.drawable = drawable;
-	event.u.noExposure.majorEvent = major;
-	event.u.noExposure.minorEvent = minor;
-	TryClientEvents(client, &event, 1,
-	    (Mask)0, NoEventMask, NullGrab);
-    }
-}
-
-
 void
 miSendExposures(pWin, pRgn, dx, dy)
     WindowPtr pWin;

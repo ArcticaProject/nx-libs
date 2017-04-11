@@ -289,7 +289,6 @@ miScreenInit(pScreen, pbits, xsize, ysize, dpix, dpiy, width,
 #ifdef NEED_SCREEN_REGIONS
     pScreen->RectsToRegion = RegionFromRects;
 #endif /* NEED_SCREEN_REGIONS */
-    pScreen->SendGraphicsExpose = miSendGraphicsExpose;
     pScreen->BlockHandler = (ScreenBlockHandlerProcPtr)NoopDDA;
     pScreen->WakeupHandler = (ScreenWakeupHandlerProcPtr)NoopDDA;
     pScreen->blockData = (void *)0;

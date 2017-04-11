@@ -211,14 +211,6 @@ extern RegionPtr miHandleExposures(
     unsigned long /*plane*/
 );
 
-extern void miSendGraphicsExpose(
-    ClientPtr /*client*/,
-    RegionPtr /*pRgn*/,
-    XID /*drawable*/,
-    int /*major*/,
-    int /*minor*/
-);
-
 extern void miSendExposures(
     WindowPtr /*pWin*/,
     RegionPtr /*pRgn*/,
