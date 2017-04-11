@@ -1016,19 +1016,10 @@ Files: make-changelog.sh
 Copyright: 2012, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
   2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 License: GPL-2+
-Comment:
- See https://github.com/ArcticaProject/nx-libs/commit/9c0d528 for
- make-changelog.sh and regenerate-symbol-docs.sh.
- .
- FIXME: Drop this comment for 3.5.99.4.
 
 Files: replace.sh
 Copyright: 2013, Jan Engelhardt <jengelh@inai.de>
 License: GPL-2+
-Comment:
- See https://github.com/ArcticaProject/nx-libs/commit/9c0d528.
- .
- FIXME: Drop this comment for 3.5.99.4.
 
 Files: nx-X11/extras/Mesa/src/mesa/main/get.c
  nx-X11/extras/Mesa/src/mesa/main/texrender.c
@@ -2516,22 +2507,6 @@ Comment:
  over the NX protocol, have to be considered as strictly
  GPL-2 licensed.
 
-Files: nx-X11/programs/Xserver/hw/nxagent/os2Stub.c
-Copyright: 1996, Sebastien Marineau
-  2001, 2011, NoMachine (http://www.nomachine.com)
-  2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
-  2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
-  2014-2016, Mihai Moldovan <ionic@ionic.de>
-  2014-2016, Ulrich Sibiller <uli42@gmx.de>
-  2015-2016, Qindel Group (http://www.qindel.com)
-License: Expat~NoAdvert
-Comment:
- No NX specific changes can be found in this file. GPL-2
- license in file header does not apply.
- .
- Note from upstream side: This file will be removed in
- nx-libs 3.5.99.4.
-
 Files: nx-X11/programs/Xserver/hw/nxagent/Agent.h
 Copyright: 1995, X Consortium
   2001, 2011, NoMachine (http://www.nomachine.com)
@@ -2549,17 +2524,9 @@ Files: nx-X11/programs/Xserver/composite/compositeext.h
 Copyright: 2009, NVIDIA Corporation
 License: Expat
 
-Files: nx-X11/lib/X11/os2Stubs.c
-Copyright: 1996, Sebastien Marineau and Holger Veit
-License: Expat~NoAdvert
-Comment:
- Note from upstream side: This file will be removed in
- nx-libs 3.5.99.4.
-
 Files: nx-X11/extras/Mesa/src/mesa/main/texenvprogram.c
 Copyright: 2003, Tungsten Graphics, Inc., Cedar Park, Texas
 License: Expat
-
 
 Files: nx-X11/extras/Mesa/src/mesa/main/mm.c
 Copyright: 1999, Wittawat Yamwong
@@ -2967,11 +2934,6 @@ Files: nxcomp/install-sh
  nxproxy/install-sh
 Copyright: 1994, X Consortium
 License: Expat~NoAdvert
-Comment:
- Missing license headers. License and copyright information obtained from
- later versions of this file as found in automake-1.14.
- .
- FIXME: This comment will be obsolete for 3.5.99.4.
 
 Files: debian/*
 Copyright: 2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
