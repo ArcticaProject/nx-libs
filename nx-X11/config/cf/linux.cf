@@ -694,7 +694,7 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 # endif
 # define LinuxMachineDefines	-D__aarch64__ -U__arm -Uarm
 # define ServerOSDefines	XFree86ServerOSDefines -DDDXTIME
-# define ServerExtraDefines	-DGCCUSESGAS XFree86ServerDefines
+# define ServerExtraDefines	-DGCCUSESGAS XFree86ServerDefines -D_XSERVER64
 #endif /* Arm64Achitecture */
 
 #ifdef i386Architecture
