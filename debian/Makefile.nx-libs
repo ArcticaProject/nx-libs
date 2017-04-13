@@ -30,7 +30,8 @@ SHELL:=/bin/bash
 	    if test -f nx-X11/Makefile; then ${MAKE} -C nx-X11 $@; fi; \
 	fi
 
-all: build
+all:
+	${MAKE} build
 
 test:
 	echo "No testing for NX (redistributed)"

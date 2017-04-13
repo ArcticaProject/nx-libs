@@ -41,6 +41,11 @@ nx-libs (2:3.5.0.33-0x2go1) UNRELEASED; urgency=low
   * Xinerama symlinking: Attach Xinerama symlinking to nxagent bin:package (and
     not libnx-xinerama1).
     Backported from Arctica GH 3.6.x branch.
+  * debian/Makefile.nx-libs:
+    + Make sure that 'make all' only calls 'make build' and _not_ the global
+      '%:' ruleset afterwards.
+      Backported from Arctica GH 3.6.x branch.
+      v2: backport to nx-libs 3.5.0.x (Mihai Moldovan)
 
   [ Ulrich Sibiller ]
   * nx-X11: Backport CVE-2017-2624 (timingsafe_memcmp)
