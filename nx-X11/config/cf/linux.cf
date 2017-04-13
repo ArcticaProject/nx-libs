@@ -776,12 +776,13 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 # endif
 # define LinuxMachineDefines	-D__sparc__
 # define ServerOSDefines	XFree86ServerOSDefines -DDDXTIME
-# define ServerExtraDefines	-DGCCUSESGAS XFree86ServerDefines
 # define AsVISOption		-Av9a
 # ifdef Sparc64Architecture
 #  define AsOutputArchSize	64
+#  define ServerExtraDefines	-DGCCUSESGAS XFree86ServerDefines -D_XSERVER64
 # else
 #  define AsOutputArchSize	32
+#  define ServerExtraDefines	-DGCCUSESGAS XFree86ServerDefines
 # endif
 #endif
 
