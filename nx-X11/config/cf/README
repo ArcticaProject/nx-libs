@@ -283,8 +283,6 @@ An <os>Lib.tmpl file provides defaults for the following variables:
 
 	SharedX11Reqs		required libs for libX11.so
 	SharedX11Rev		version number for libX11.so
-	SharedXextReqs		required libs for libXext.so
-	SharedXextRev		version number for libXext.so
 
 Vendor.cf files and/or site/host specific .def files may define the
 following variables:
