@@ -1,1 +1,2 @@
 4001_CreatePixmap-AllocationHints.patch
+4002_define-USE_IEEE-macro-for-more-platforms.patch
