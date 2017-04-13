@@ -48,7 +48,8 @@ SHELL:=/bin/bash
 	    rm -f bin/nxproxy; \
 	fi
 
-all: build
+all:
+	${MAKE} build
 
 test:
 	echo "No testing for NX (redistributed)"
