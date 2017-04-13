@@ -43,6 +43,7 @@ SHELL:=/bin/bash
 	    ./mesa-quilt pop -a; \
 	    rm -Rf nx-X11/extras/Mesa/.pc/; \
 	    rm -f nx-X11/config/cf/nxversion.def; \
+	    rm -f nx-X11/config/cf/date.def; \
 	    rm -f bin/nxagent; \
 	    rm -f bin/nxproxy; \
 	fi
