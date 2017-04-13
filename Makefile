@@ -38,7 +38,7 @@ SHELL:=/bin/bash
 	    if test -f nx-X11/Makefile; then ${MAKE} -C nx-X11 $@; fi; \
 	fi
 
-	# clean auto-generated nxversion.def file \
+	# clean auto-generated files
 	if [ "x$@" == "xclean" ] || [ "x$@" = "xdistclean" ]; then \
 	    ./mesa-quilt pop -a; \
 	    rm -Rf nx-X11/extras/Mesa/.pc/; \
