@@ -53,3 +53,6 @@ override_dh_strip:
 
 override_dh_makeshlibs:
 	dh_makeshlibs -n
+
+get-orig-source:
+	uscan --noconf --force-download --rename --download-current-version --destdir=..
