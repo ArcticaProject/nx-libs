@@ -107,6 +107,28 @@ Copyright: 2001, 2011, NoMachine (http://www.nomachine.com)
   2015-2016, Qindel Group (http://www.qindel.com)
 License: GPL-2
 
+Files: nx-X11/programs/Xserver/include/client.h
+Copyright: 2010, Nokia Corporation and/or its subsidiary(-ies)
+License: MIT~X11
+
+Files: nx-X11/programs/Xserver/os/client.c
+Copyright: 2010, Nokia Corporation and/or its subsidiary(-ies)
+   1993, 2010, Oracle and/or its affiliates
+License: MIT~X11
+
+Files: nx-X11/programs/Xserver/include/list.h
+Copyright:  2010, Intel Corporation
+  2010, Francisco Jerez <currojerez@riseup.net>
+License: MIT~X11
+
+Files: nx-X11/programs/Xserver/os/reallocarray.c
+Copyright: 2008, Otto Moerbeek <otto@drijf.net>
+License: MIT~ISC
+
+Files: nx-X11/programs/Xserver/os/timingsafe_memcmp.c
+Copyright: 2014, Google Inc.
+License: MIT~ISC
+
 Files: nxcomp/ActionCache.cpp
  nxcomp/ActionCache.h
  nxcomp/Agent.cpp
@@ -943,6 +965,7 @@ Files: nx-X11/include/XWDFile.h
  nx-X11/programs/Xserver/dix/pixmap.c
  nx-X11/programs/Xserver/dix/privates.c
  nx-X11/programs/Xserver/dix/xpstubs.c
+ nx-X11/programs/Xserver/hw/nxagent/BitmapUtils.c
  nx-X11/programs/Xserver/hw/nxagent/X11/include/Xinerama_nxagent.h
  nx-X11/programs/Xserver/include/closestr.h
  nx-X11/programs/Xserver/include/opaque.h
@@ -998,6 +1021,7 @@ Copyright: 1985, 1987, 1990, 1998, The Open Group
   1989, 1991, 1998, The Open Group
   1989, 1998, The Open Group
   1990, 1998, The Open Group
+  1990, 1994, 1998, The Open Group
   1991, 1998, The Open Group
   1992, 1998, The Open Group
   1993, 1998, The Open Group
@@ -1054,7 +1078,9 @@ Comment:
  Missing license headers. Assuming same license found in other nx-X11
  proto header code files.
 
-Files: etc/rgb
+Files: doc/libNX_X11/lcUniConv/8bit_tab_to_h.c
+ doc/libNX_X11/lcUniConv/cjk_tab_to_h.c
+ doc/libNX_X11/lcUniConv/README
  nx-X11/lib/X11/Cmap.h
  nx-X11/lib/X11/Cr.h
  nx-X11/lib/X11/Cv.h
@@ -1067,13 +1093,10 @@ Files: etc/rgb
  nx-X11/lib/X11/XlibConf.h
  nx-X11/lib/X11/Xresinternal.h
  nx-X11/lib/X11/imKStoUCS.c
- nx-X11/lib/X11/lcUniConv/8bit_tab_to_h.c
  nx-X11/lib/X11/lcUniConv/armscii_8.h
- nx-X11/lib/X11/lcUniConv/ascii.h
  nx-X11/lib/X11/lcUniConv/big5.h
  nx-X11/lib/X11/lcUniConv/big5_emacs.h
  nx-X11/lib/X11/lcUniConv/big5hkscs.h
- nx-X11/lib/X11/lcUniConv/cjk_tab_to_h.c
  nx-X11/lib/X11/lcUniConv/cp1133.h
  nx-X11/lib/X11/lcUniConv/cp1251.h
  nx-X11/lib/X11/lcUniConv/cp1255.h
@@ -1425,6 +1448,7 @@ Files: nx-X11/include/extensions/composite.h
  nx-X11/programs/Xserver/xfixes/xfixes.c
  nx-X11/programs/Xserver/xfixes/xfixes.h
  nx-X11/programs/Xserver/xfixes/xfixesint.h
+ nx-X11/programs/Xserver/Xext/shmint.h
  nxcompshad/X11/include/Xdamage_nxcompshad.h
 Copyright: 1998, Keith Packard
   1999, Keith Packard
@@ -1792,7 +1816,6 @@ Files: nx-X11/include/extensions/render.h
  nx-X11/programs/Xserver/hw/nxagent/X11/include/Xrenderint_nxagent.h
  nx-X11/programs/Xserver/render/glyph.c
  nx-X11/programs/Xserver/render/glyphstr.h
- nx-X11/programs/Xserver/render/miglyph.c
  nx-X11/programs/Xserver/render/mipict.h
  nx-X11/programs/Xserver/render/picture.c
  nx-X11/programs/Xserver/render/picture.h
@@ -1926,10 +1949,6 @@ License: MIT~X11
 Files: nx-X11/include/Sunkeysym.h
  nx-X11/lib/X11/Host.c
  nx-X11/lib/X11/LiHosts.c
- nx-X11/lib/X11/XDefaultIMIF.c
- nx-X11/lib/X11/XDefaultOMIF.c
- nx-X11/lib/X11/XlcDL.c
- nx-X11/lib/X11/XlcSL.c
  nx-X11/lib/X11/lcInit.c
 Copyright: 1985-1987, 1991, 1998, The Open Group
   1986, 1998, The Open Group
@@ -1993,9 +2012,7 @@ Comment:
 Files: nx-X11/programs/Xserver/hw/nxagent/NXglyph.c
  nx-X11/programs/Xserver/hw/nxagent/NXglyphstr_GlyphRef.h
  nx-X11/programs/Xserver/hw/nxagent/NXglyphstr_GlyphSet.h
- nx-X11/programs/Xserver/hw/nxagent/NXmiglyph.c
  nx-X11/programs/Xserver/hw/nxagent/NXpicture.c
- nx-X11/programs/Xserver/hw/nxagent/NXpicturestr_PictSolidFill.h
  nx-X11/programs/Xserver/hw/nxagent/NXrender.c
 Copyright: 2000, SuSE, Inc
   2001, 2011, NoMachine (http://www.nomachine.com)
@@ -2162,7 +2179,6 @@ Comment:
 
 Files: nx-X11/lib/X11/TextExt.c
  nx-X11/lib/X11/TextExt16.c
- nx-X11/lib/X11/lcDynamic.c
 Copyright: 1989, 1998, The Open Group
   1995, FUJITSU LIMITED
   1996, 1998, The Open Group
@@ -2337,8 +2353,7 @@ Copyright: 1990-1994, FUJITSU LIMITED
   1994, Sony Corporation
 License: MIT~X11 
 
-Files: nx-X11/lib/X11/Xaixlcint.h
- nx-X11/lib/X11/lcFile.c
+Files: nx-X11/lib/X11/lcFile.c
 Copyright: 1993, IBM Corporation
 License: MIT~OldStyle
 
@@ -2781,12 +2796,6 @@ Files: nx-X11/programs/Xserver/randr/rrprovider.c
 Copyright: 2012, Red Hat Inc
 License: MIT~X11
 
-Files: nx-X11/programs/Xserver/mi/mibank.c
-Copyright: 1990,91,92,93 Thomas Roell, Germany
-  1991,92,93 SGCS (Snitily Graphics Consulting Services), USA
-  1997-2004, Marc Aurele La France (TSI @ UQV), tsi@xfree86.org
-License: MIT~X11
-
 Files: nx-X11/lib/X11/imInsClbk.c
 Copyright: 1993-1994, Sony Corporation
 License: MIT~OldStyle
@@ -2830,10 +2839,6 @@ Files: nx-X11/include/Xdefs.h
 Copyright: 1999, The XFree86 Project Inc
 License: XFree86
 
-Files: nx-X11/programs/Xserver/mi/mibank.h
-Copyright: 1997-2004, Marc Aurele La France (TSI @ UQV), tsi@xfree86.org
-License: MIT~X11
-
 Files: fix-patch-whitespace
  nx-X11/programs/Xserver/fix-miregion
  nx-X11/programs/Xserver/fix-miregion-private
@@ -2862,6 +2867,10 @@ Files: testscripts/slave-agent
 Copyright: 2015-2016, Qindel Group (http://www.qindel.com)
 License: GPL-2
 
+Files: mesa-quilt
+Copyright: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+License: GPL-3+
+
 Files: ChangeLog
  Makefile
  VERSION
@@ -2871,6 +2880,7 @@ Files: ChangeLog
  doc/libNX_X11/symbols/libNX_X11::symbol-usage_nxcompext.txt
  doc/libNX_X11/symbols/libNX_X11::symbols.txt
  doc/nxagent/README.keystrokes
+ doc/nxagent/README.keystrokes.debug
  doc/nxcomp/DXPC_re-licensed_debug_784565.mbox
  doc/nxcomp/README.on-retroactive-DXPC-license
  doc/nxcomp/nxcomp-3.6-drops-compat-code-3.4.x-testing.pdf
@@ -2934,6 +2944,18 @@ Files: nxcomp/install-sh
  nxproxy/install-sh
 Copyright: 1994, X Consortium
 License: Expat~NoAdvert
+Comment:
+ Missing license headers. License and copyright information obtained from
+ later versions of this file as found in automake-1.14.
+ .
+ FIXME: This comment will be obsolete for 3.5.99.6.
+
+Files: nx-X11/extras/Mesa.patches/*
+Copyright:  2017, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2017, Mihai Moldovan <ionic@ionic.de>
+  2017, Ulrich Sibiller <uli42@gmx.de>
+  2017, Qindel Group (http://www.qindel.com)
+License: Expat
 
 Files: debian/*
 Copyright: 2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
