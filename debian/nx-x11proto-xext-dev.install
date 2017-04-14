@@ -1,6 +1,15 @@
+usr/include/*/nx-X11/extensions/bigreqstr.h
+usr/include/*/nx-X11/extensions/dpms.h
 usr/include/*/nx-X11/extensions/dpmsstr.h
-usr/include/*/nx-X11/extensions/xteststr.h
-usr/include/*/nx-X11/extensions/xtestconst.h
+usr/include/*/nx-X11/extensions/record*.h
+usr/include/*/nx-X11/extensions/security.h
 usr/include/*/nx-X11/extensions/securstr.h
+usr/include/*/nx-X11/extensions/sync.h
 usr/include/*/nx-X11/extensions/syncstr.h
+usr/include/*/nx-X11/extensions/xf86bigfproto.h
+usr/include/*/nx-X11/extensions/xf86bigfont.h
+usr/include/*/nx-X11/extensions/xcmiscstr.h
 usr/include/*/nx-X11/extensions/Xdbeproto.h
+usr/include/*/nx-X11/extensions/xtestconst.h
+usr/include/*/nx-X11/extensions/xtestext1.h
+usr/include/*/nx-X11/extensions/xteststr.h
