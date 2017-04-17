@@ -31,7 +31,8 @@ nxagent \- nx-X11 Agent (nested Xserver optimized for remote computing)
 .B nxagent
 .I "[options]"
 .SH DESCRIPTION
-\fBnxagent\fR is an Xnest-like X server for remote application/desktop access.
+\fBnxagent\fR is an X server for remote application/desktop access
+similar to Xnest or Xephyr.
 .PP
 \fBnxagent\fR implements a very efficient compression of the X11
 protocol, called the NX protocol.
@@ -540,7 +541,7 @@ means that all of these checks are essentially
 deactivated. This is a very bad idea.
 .RE
 
-If you want to use nxagent as a replacement for xnest or Xephyr you
+If you want to use nxagent as a replacement for Xnest or Xephyr you
 can pass options like this:
 .PP
 .nf
