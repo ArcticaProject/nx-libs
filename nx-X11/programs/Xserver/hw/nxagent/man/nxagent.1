@@ -100,9 +100,10 @@ below. Those default options have to be provided via the command line.
 Furthermore, the nx-X11 Agent accepts some nx-X11 specific options,
 described further below.
 
-Last but not least, the nx-X11 Agent accepts several more options
-provided via the $DISPLAY environment variable, the so-called nx/nx
-options. See below for further details.
+Last but not least, the nx-X11 Agent accepts several more options, the
+so-called nx/nx options, provided via the $DISPLAY environment
+variable or the -options commandline option. See below for further
+details.
 
 .SH STANDARD XSERVER OPTIONS
 .TP 8
@@ -402,6 +403,9 @@ enable shadow mode
 .TP 8
 .B \-B
 enable proxy binding mode
+.TP 8
+.B \-options \fIfilename\fP
+path to an options file (see below)
 .PP
 Other than the command line options, \fBnxagent\fR can be configured at
 session startup and at runtime (i.e. when resuming a suspended session)
@@ -535,6 +539,14 @@ format must be included in both. This is potentially unsafe.
 means that all of these checks are essentially
 deactivated. This is a very bad idea.
 .RE
+
+If you want to use nxagent as a replacement for xnest or Xephyr you
+can pass options like this:
+.PP
+.nf
+  $ echo nx/nx,fullscreen=1$DISPLAY >/tmp/opt
+  $ nxagent <cmdline-options> -options /tmp/opt :<nx-display-port>
+.fi
 
 .SH XDMCP OPTIONS
 X servers that support XDMCP have the following options.
