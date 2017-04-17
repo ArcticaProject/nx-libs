@@ -515,7 +515,7 @@ support pulldown menu in \fBnxagent\fR session (only available on proxy <-> agen
 delay X server operations when suspended (provided in msec), set to \fI0\fR to keep \fBnxagent\fR session
 fully functional when suspended (e.g. useful when mirroring an \fBnxagent\fR session via VNC)
 .TP 8
-.B reconnectchecks=<string>
+.B tolerancechecks=<string>
 
 .BR strict|safe|risky|bypass
 .RS 8
@@ -523,7 +523,7 @@ fully functional when suspended (e.g. useful when mirroring an \fBnxagent\fR ses
 .I strict
 means that the number of internal and external pixmap formats must
 match exactly and every internal pixmap format must be available in the
-external pixmap format array.
+external pixmap format array. This is the default.
 .TP 8
 .I safe
 means that the number of pixmap formats might diverge, but all
