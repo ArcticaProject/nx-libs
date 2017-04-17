@@ -26,7 +26,7 @@
 .ds q \N'34'
 .TH nxagent 1 "April 2017" "Version 3.6.x" "NX Agent (Xserver)"
 .SH NAME
-nxagent \- nx-X11 Agent (nested Xserver optimized for remote computing)
+nxagent \- nested Xserver optimized for remote computing
 .SH SYNOPSIS
 .B nxagent
 .I "[options]"
@@ -56,23 +56,23 @@ then resumed from another client.
 application/desktop frameworks for providing server-side GUI application
 access from remote client systems.
 .PP
-Currently, nx-X11 Agent is co-maintained by three of these projects: The
+Currently, nxagent is co-maintained by three of these projects: The
 Arctica Project, TheQVD and X2Go.
 .PP
 
 .SH "STARTING THE SERVER"
-The nx-X11 Agent should be run in user space. Other than the system's
+The nxagent should be run in user space. Other than the system's
 local X.org server, \fBnxagent\fR does not require to be run as root.
 When bundled with a remote application framework, you normally don't have
-to launch \fBnxagent\fR manually. nx-X11 Agent startup is normally
+to launch \fBnxagent\fR manually. nxagent startup is normally
 managed by the underlying framework (e.g. Arctica Session Manager, X2Go
 Server, etc.).
 .PP
-When the nx-X11 Agent starts up (e.g. by typing 'nxagent -ac :1' in a
+When the nxagent starts up (e.g. by typing 'nxagent -ac :1' in a
 terminal window), it typically launches in "windowed desktop" mode. On
 your local X server, there appears a new window being an X server itself.
 .PP
-However, nx-X11 Agent also supports rootless (or seamless) application
+However, nxagent also supports rootless (or seamless) application
 mode and a shadow session mode (similar to what VNC does).
 .PP
 Example: You can launch a complete desktop session inside this nested X
@@ -91,17 +91,17 @@ The Fedora / Gentoo / openSUSE way...
     ### FIXME / TODO ###
 .fi
 .PP
-However, nx-X11 Agent also supports rootless (or seamless) application
+However, nxagent also supports rootless (or seamless) application
 mode and a shadow session mode (similar to what VNC does).
 
 .SH OPTIONS
 The nx-X11 agent accepts a range of default X server options as described
 below. Those default options have to be provided via the command line.
 
-Furthermore, the nx-X11 Agent accepts some nx-X11 specific options,
+Furthermore, the nxagent accepts some nx-X11 specific options,
 described further below.
 
-Last but not least, the nx-X11 Agent accepts several more options, the
+Last but not least, the nxagent accepts several more options, the
 so-called nx/nx options, provided via the $DISPLAY environment
 variable or the -options commandline option. See below for further
 details.
@@ -434,7 +434,7 @@ As <proxy-port> you can pick an arbitrary (unused) TCP port or Unix
 socket file path. This is the port / socket that you have to connect to
 with the \fBnxproxy\fR application.
 .PP
-Available nx-X11 Agent options (as an addition to nx/nx options supported
+Available nxagent options (as an addition to nx/nx options supported
 by nxcomp already):
 .TP 8
 .B options=<string>
@@ -509,11 +509,11 @@ provided as nx/nx option is set when resuming a session, thus it
 overrides the cmd line default.
 .TP 8
 .B menu=<int>
-support pulldown menu in nx-X11 Agent session (only available on proxy <-> agent remote sessions)
+support pulldown menu in nxagent session (only available on proxy <-> agent remote sessions)
 .TP 8
 .B sleep=<int>
-delay X server operations when suspended (provided in msec), set to \fI0\fR to keep nx-X11 Agent session
-fully functional when suspended (e.g. useful when mirroring nx-X11 Agent session via VNC)
+delay X server operations when suspended (provided in msec), set to \fI0\fR to keep nxagent session
+fully functional when suspended (e.g. useful when mirroring nxagent session via VNC)
 .TP 8
 .B reconnectchecks=<string>
 
