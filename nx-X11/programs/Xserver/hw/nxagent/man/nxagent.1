@@ -50,7 +50,7 @@ application on the other end (i.e. the client) is called
 .PP
 When used in proxy <-> agent mode, \fBnxagent\fR adds the feature of
 being suspendible. Sessions can be started from one client, suspended and
-then resumed from another client.
+then resumed from another (or the same) client.
 .PP
 \fBnxagent\fR and \fBnxproxy\fR are utilized by various remote
 application/desktop frameworks for providing server-side GUI application
@@ -70,7 +70,7 @@ Server, etc.).
 .PP
 When \fBnxagent\fR starts up (e.g. by typing 'nxagent -ac :1' in a
 terminal window), it typically launches in "windowed desktop" mode. On
-your local X server, there appears a new window being an X server itself.
+your local X server a new window appears being an X server itself.
 .PP
 However, \fBnxagent\fR also supports rootless (or seamless) application
 mode and a shadow session mode (similar to what VNC does).
@@ -103,7 +103,7 @@ described further below.
 
 Last but not least, \fBnxagent\fR accepts several more options, the
 so-called nx/nx options, provided via the $DISPLAY environment
-variable or the -options commandline option. See below for further
+variable or the -options command line option. See below for further
 details.
 
 .SH STANDARD XSERVER OPTIONS
@@ -177,7 +177,7 @@ different from the user's real uid.
 causes the server to generate a core dump on fatal errors.
 .TP 8
 .B \-displayfd \fIfd\fP
-specifies a file descriptor in the launching process.  Rather than specify
+specifies a file descriptor in the launching process.  Rather than specifying
 a display number, the X server will attempt to listen on successively higher
 display numbers, and upon finding a free one, will write the port number back
 on this file descriptor as a newline-terminated string.  The \-pn option is
@@ -278,7 +278,7 @@ command line option.
 sets default connection timeout in seconds.
 .TP 8
 .B \-tst
-disables all testing extensions (e.g., XTEST, XTrap, XTestExtension1, RECORD).
+disables all testing extensions.
 .TP 8
 .B tty\fIxx\fP
 ignored, for servers started the ancient way (from init).
@@ -406,7 +406,7 @@ enable shadow mode
 enable proxy binding mode
 .TP 8
 .B \-options \fIfilename\fP
-path to an options file (see below)
+path to an options file containing nx/nx options (see below).
 .PP
 Other than the command line options, \fBnxagent\fR can be configured at
 session startup and at runtime (i.e. when resuming a suspended session)
