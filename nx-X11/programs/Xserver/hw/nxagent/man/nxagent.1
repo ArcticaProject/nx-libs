@@ -56,23 +56,23 @@ then resumed from another client.
 application/desktop frameworks for providing server-side GUI application
 access from remote client systems.
 .PP
-Currently, nxagent is co-maintained by three of these projects: The
+Currently, \fBnxagent\fR is co-maintained by three of these projects: The
 Arctica Project, TheQVD and X2Go.
 .PP
 
 .SH "STARTING THE SERVER"
-The nxagent should be run in user space. Other than the system's
+\fBnxagent\fR should be run in user space. Other than the system's
 local X.org server, \fBnxagent\fR does not require to be run as root.
 When bundled with a remote application framework, you normally don't have
-to launch \fBnxagent\fR manually. nxagent startup is normally
+to launch \fBnxagent\fR manually. \fBnxagent\fR startup is usually
 managed by the underlying framework (e.g. Arctica Session Manager, X2Go
 Server, etc.).
 .PP
-When the nxagent starts up (e.g. by typing 'nxagent -ac :1' in a
+When \fBnxagent\fR starts up (e.g. by typing 'nxagent -ac :1' in a
 terminal window), it typically launches in "windowed desktop" mode. On
 your local X server, there appears a new window being an X server itself.
 .PP
-However, nxagent also supports rootless (or seamless) application
+However, \fBnxagent\fR also supports rootless (or seamless) application
 mode and a shadow session mode (similar to what VNC does).
 .PP
 Example: You can launch a complete desktop session inside this nested X
@@ -91,17 +91,17 @@ The Fedora / Gentoo / openSUSE way...
     ### FIXME / TODO ###
 .fi
 .PP
-However, nxagent also supports rootless (or seamless) application
+However, \fBnxagent\fR also supports rootless (or seamless) application
 mode and a shadow session mode (similar to what VNC does).
 
 .SH OPTIONS
-The nx-X11 agent accepts a range of default X server options as described
+\fBnxagent\fR accepts a range of default X server options as described
 below. Those default options have to be provided via the command line.
 
-Furthermore, the nxagent accepts some nx-X11 specific options,
+Furthermore, \fBnxagent\fR accepts some nx-X11 specific options,
 described further below.
 
-Last but not least, the nxagent accepts several more options, the
+Last but not least, \fBnxagent\fR accepts several more options, the
 so-called nx/nx options, provided via the $DISPLAY environment
 variable or the -options commandline option. See below for further
 details.
@@ -310,7 +310,7 @@ default, this feature is enabled. To disable XINERAMA completely, make
 sure to use both options (-xinerama -rrxinerama) on the command line.
 
 .SH SERVER DEPENDENT OPTIONS
-The nx-X11 Xserver (i.e. \fBnxagent\fR) additionally accepts the following options (non-standard options, dependent on Xserver implementation):
+\fBnxagent\fR additionally accepts the following non-standard options:
 .TP 8
 .B \-logo
 turns on the X Window System logo display in the screen-saver.
@@ -413,9 +413,9 @@ session startup and at runtime (i.e. when resuming a suspended session)
 by so-called nx/nx options.
 .PP
 As nx/nx options all options supported by nxcomp (see \fBnxproxy\fR man
-page) and all nxagent nx/nx options (see below) can be used.
+page) and all \fBnxagent\fR nx/nx options (see below) can be used.
 .
-When launching an nxcomp based nx-X11 agent session (i.e. proxy <->
+When launching an nxcomp based \fBnxagent\fR session (i.e. proxy <->
 agent), you will normally set the $DISPLAY variable like this:
 .PP
 .nf
@@ -434,7 +434,7 @@ As <proxy-port> you can pick an arbitrary (unused) TCP port or Unix
 socket file path. This is the port / socket that you have to connect to
 with the \fBnxproxy\fR application.
 .PP
-Available nxagent options (as an addition to nx/nx options supported
+Available \fBnxagent\fR options (as an addition to nx/nx options supported
 by nxcomp already):
 .TP 8
 .B options=<string>
@@ -509,11 +509,11 @@ provided as nx/nx option is set when resuming a session, thus it
 overrides the cmd line default.
 .TP 8
 .B menu=<int>
-support pulldown menu in nxagent session (only available on proxy <-> agent remote sessions)
+support pulldown menu in \fBnxagent\fR session (only available on proxy <-> agent remote sessions)
 .TP 8
 .B sleep=<int>
-delay X server operations when suspended (provided in msec), set to \fI0\fR to keep nxagent session
-fully functional when suspended (e.g. useful when mirroring nxagent session via VNC)
+delay X server operations when suspended (provided in msec), set to \fI0\fR to keep \fBnxagent\fR session
+fully functional when suspended (e.g. useful when mirroring an \fBnxagent\fR session via VNC)
 .TP 8
 .B reconnectchecks=<string>
 
@@ -541,7 +541,7 @@ means that all of these checks are essentially
 deactivated. This is a very bad idea.
 .RE
 
-If you want to use nxagent as a replacement for Xnest or Xephyr you
+If you want to use \fBnxagent\fR as a replacement for Xnest or Xephyr you
 can pass options like this:
 .PP
 .nf
