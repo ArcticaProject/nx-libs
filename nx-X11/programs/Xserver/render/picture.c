@@ -1020,7 +1020,7 @@ CreateLinearGradientPicture (Picture pid, xPointFixed *p1, xPointFixed *p2,
 {
     PicturePtr pPicture;
 
-    if (nStops < 2) {
+    if (nStops < 1) {
         *error = BadValue;
         return 0;
     }
@@ -1065,7 +1065,7 @@ CreateRadialGradientPicture (Picture pid, xPointFixed *inner, xPointFixed *outer
     PicturePtr pPicture;
     PictRadialGradient *radial;
 
-    if (nStops < 2) {
+    if (nStops < 1) {
         *error = BadValue;
         return 0;
     }
@@ -1124,7 +1124,7 @@ CreateConicalGradientPicture (Picture pid, xPointFixed *center, xFixed angle,
 {
     PicturePtr pPicture;
 
-    if (nStops < 2) {
+    if (nStops < 1) {
         *error = BadValue;
         return 0;
     }
