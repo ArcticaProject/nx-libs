@@ -33,6 +33,7 @@ nx-libs (2:3.5.0.33-0x2go1) UNRELEASED; urgency=low
     - 1270_nx-X11_CVE-2017-2624-Use-timingsafe_memcmp-to-c.full.patch
   * {debian/control,nx-libs.spec}:
     - Add proper dependencies upon xkbcomp for RPM and DEB packages.
+      Fixes: #1160.
       Backported from Arctica GH 3.6.x branch.
       v2: backport to nx-libs 3.5.0.x (Mihai Moldovan)
 
