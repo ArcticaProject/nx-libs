@@ -1007,6 +1007,8 @@ Depends:
 # </Workaround>
  ${shlibs:Depends},
  ${misc:Depends},
+# For /usr/bin/xkbcomp
+ x11-xkb-utils,
 Recommends:
  xfonts-base,
  xkb-data,

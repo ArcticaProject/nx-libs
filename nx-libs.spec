@@ -599,6 +599,20 @@ Requires:       xorg-x11-fonts-core
 # works without the dependency.
 Requires:       xkeyboard-config
 
+# For /usr/bin/xkbcomp
+%if 0%{?fedora} || 0%{?rhel}
+Requires:       xorg-x11-xkb-utils
+%else
+%if 0%{?suse_version}
+%if 0%{?suse_version} >= 1310
+Requires:       xkbcomp
+%else
+# Older *SUSE versions bundle xkbcomp in xorg-x11. Ugly, but nothing we could change.
+Requires:       xorg-x11
+%endif
+%endif
+%endif
+
 %description -n nxagent
 NX is a software suite which implements very efficient compression of
 the X11 protocol. This increases performance when using X
