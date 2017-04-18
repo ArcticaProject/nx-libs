@@ -338,6 +338,8 @@ Depends:
  libxcomp3 (= ${binary:Version}),
  libxcompshad3 (= ${binary:Version}),
  libnx-x11-6 (= ${binary:Version}),
+# For /usr/bin/xkbcomp
+ x11-xkb-utils,
 Recommends:
  xfonts-base,
  xkb-data,
