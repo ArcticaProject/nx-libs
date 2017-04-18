@@ -402,10 +402,6 @@ chmod 755  %{buildroot}%{_libdir}/lib*.so*
 rm -r %{buildroot}%{_includedir}/GL
 rm -r %{buildroot}%{_includedir}/nx-X11/extensions/XK*.h
 rm -r %{buildroot}%{_includedir}/nx-X11/extensions/*Xv*.h
-rm -r %{buildroot}%{_includedir}/nx-X11/extensions/dpms.h
-rm -r %{buildroot}%{_includedir}/nx-X11/extensions/security.h
-rm -r %{buildroot}%{_includedir}/nx-X11/extensions/sync.h
-rm -r %{buildroot}%{_includedir}/nx-X11/extensions/xtestext1.h
 rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 
 %if 0%{?fdupes:1}
@@ -485,7 +481,6 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %defattr(-,root,root)
 %dir %{_includedir}/nx-X11/extensions
 %{_includedir}/nx-X11/extensions/panoramiXext.h
-%{_includedir}/nx-X11/extensions/record.h
 %{_includedir}/nx-X11/misc.h
 %{_includedir}/nx-X11/os.h
 
@@ -523,17 +518,20 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %{_includedir}/nx-X11/extensions/compositeproto.h
 %{_includedir}/nx-X11/extensions/damagewire.h
 %{_includedir}/nx-X11/extensions/damageproto.h
+%{_includedir}/nx-X11/extensions/dpms.h
 %{_includedir}/nx-X11/extensions/dpmsstr.h
 %{_includedir}/nx-X11/extensions/panoramiXproto.h
 %{_includedir}/nx-X11/extensions/randr.h
 %{_includedir}/nx-X11/extensions/randrproto.h
-%{_includedir}/nx-X11/extensions/recordstr.h
+%{_includedir}/nx-X11/extensions/record*.h
 %{_includedir}/nx-X11/extensions/render.h
 %{_includedir}/nx-X11/extensions/renderproto.h
 %{_includedir}/nx-X11/extensions/saver.h
 %{_includedir}/nx-X11/extensions/saverproto.h
 %{_includedir}/nx-X11/extensions/scrnsaver.h
+%{_includedir}/nx-X11/extensions/security.h
 %{_includedir}/nx-X11/extensions/securstr.h
+%{_includedir}/nx-X11/extensions/sync.h
 %{_includedir}/nx-X11/extensions/syncstr.h
 %{_includedir}/nx-X11/extensions/xcmiscstr.h
 %{_includedir}/nx-X11/extensions/xf86bigfont.h
@@ -541,6 +539,7 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %{_includedir}/nx-X11/extensions/xfixesproto.h
 %{_includedir}/nx-X11/extensions/xfixeswire.h
 %{_includedir}/nx-X11/extensions/xtestconst.h
+%{_includedir}/nx-X11/extensions/xtestext1.h
 %{_includedir}/nx-X11/extensions/xteststr.h
 
 %files -n nxagent
