@@ -287,7 +287,7 @@ Provides:       nx%{?_isa} = %{version}-%{release}
 Obsoletes:      nxauth < 3.5.99.1
 %if 0%{?fedora} || 0%{?rhel}
 # For /usr/share/X11/fonts
-Requires: xorg-x11-font-utils
+Requires:       xorg-x11-font-utils
 %endif
 
 %description -n nxagent
