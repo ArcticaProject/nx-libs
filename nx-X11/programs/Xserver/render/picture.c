@@ -1614,6 +1614,9 @@ FreePicture (void *	value,
     {
 	if (pPicture->transform)
 	    free (pPicture->transform);
+        if (pPicture->filter_params)
+	    free (pPicture->filter_params);
+
         if (!pPicture->pDrawable) {
             if (pPicture->pSourcePict) {
                 if (pPicture->pSourcePict->type != SourcePictTypeSolidFill)
