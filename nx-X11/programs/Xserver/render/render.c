@@ -693,7 +693,7 @@ ProcRenderSetPictureClipRectangles (ClientPtr client)
     VERIFY_PICTURE (pPicture, stuff->picture, client, DixWriteAccess,
 		    RenderErrBase + BadPicture);
     if (!pPicture->pDrawable)
-        return BadDrawable;
+        return RenderErrBase + BadPicture;
 
     nr = (client->req_len << 2) - sizeof(xRenderChangePictureReq);
     if (nr & 4)

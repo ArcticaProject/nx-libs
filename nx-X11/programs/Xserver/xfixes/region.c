@@ -271,7 +271,10 @@ ProcXFixesCreateRegionFromPicture (ClientPtr client)
 
     VERIFY_PICTURE(pPicture, stuff->picture, client, DixReadAccess,
 		   RenderErrBase + BadPicture);
-    
+
+    if (!pPicture->pDrawable)
+	return RenderErrBase + BadPicture;
+
     switch (pPicture->clientClipType) {
     case CT_PIXMAP:
 	pRegion = BitmapToRegion(pPicture->pDrawable->pScreen,
@@ -759,7 +762,10 @@ ProcXFixesSetPictureClipRegion (ClientPtr client)
     VERIFY_PICTURE(pPicture, stuff->picture, client, DixWriteAccess,
 		   RenderErrBase + BadPicture);
     VERIFY_REGION_OR_NONE(pRegion, stuff->region, client, DixReadAccess);
-    
+
+    if (!pPicture->pDrawable)
+	return RenderErrBase + BadPicture;
+
     return SetPictureClipRegion (pPicture, stuff->xOrigin, stuff->yOrigin,
 				 pRegion);
 #else
