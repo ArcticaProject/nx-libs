@@ -1,6 +1,4 @@
 /*
- * $XFree86: xc/programs/Xserver/fb/fb.h,v 1.36tsi Exp $
- *
  * Copyright © 1998 Keith Packard
  *
  * Permission to use, copy, modify, distribute, and sell this software and its

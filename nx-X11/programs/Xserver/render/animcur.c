@@ -1,6 +1,4 @@
 /*
- * $XFree86: xc/programs/Xserver/render/animcur.c,v 1.5tsi Exp $
- *
  * Copyright © 2002 Keith Packard, member of The XFree86 Project, Inc.
  *
  * Permission to use, copy, modify, distribute, and sell this software and its

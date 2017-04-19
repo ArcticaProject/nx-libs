@@ -29,8 +29,6 @@
  *     Header file for users of machine-independent DBE code
  *
  *****************************************************************************/
-/* $XFree86$ */
-
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>

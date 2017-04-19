@@ -1,5 +1,3 @@
-/* $XFree86$ */
-
 extern int ProcXkbUseExtension(ClientPtr client);
 extern int ProcXkbSelectEvents(ClientPtr client);
 extern int ProcXkbBell(ClientPtr client);

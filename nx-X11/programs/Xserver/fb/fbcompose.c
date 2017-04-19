@@ -1,7 +1,4 @@
 /*
- * $XdotOrg: xc/programs/Xserver/fb/fbcompose.c,v 1.26 2005/12/09 18:35:20 ajax Exp $
- * $XFree86: xc/programs/Xserver/fb/fbcompose.c,v 1.17tsi Exp $
- *
  * Copyright © 2000 Keith Packard, member of The XFree86 Project, Inc.
  *             2005 Lars Knoll & Zack Rusin, Trolltech
  *

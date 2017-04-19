@@ -1,6 +1,4 @@
 /*
- * $XFree86: xc/programs/Xserver/render/picture.h,v 1.20tsi Exp $
- *
  * Copyright © 2000 SuSE, Inc.
  *
  * Permission to use, copy, modify, distribute, and sell this software and its

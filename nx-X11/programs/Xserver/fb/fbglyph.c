@@ -1,7 +1,4 @@
 /*
- * $XdotOrg: xc/programs/Xserver/fb/fbglyph.c,v 1.5 2005/07/03 07:01:23 daniels Exp $
- * $XFree86: xc/programs/Xserver/fb/fbglyph.c,v 1.12tsi Exp $
- *
  * Copyright © 1998 Keith Packard
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
