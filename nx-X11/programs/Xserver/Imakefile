@@ -118,19 +118,17 @@ INSTPGMFLAGS =
       DAMAGELIB = $(DAMAGEDIR)/libdamage.a
 #endif
 #if BuildComposite
-          CWDIR = miext/cw
    COMPOSITEDIR = composite
    COMPOSITELIB = $(COMPOSITEDIR)/libcomposite.a
-             CW = miext/cw/LibraryTargetName(cw)
 #endif
-     EXTENSIONS = $(COMPOSITELIB) $(DAMAGELIB) $(DAMAGE) $(FIXESLIB) $(CW) \
+     EXTENSIONS = $(COMPOSITELIB) $(DAMAGELIB) $(DAMAGE) $(FIXESLIB) \
 		  $(OTHEREXTS) $(GLXEXT) $(RANDRLIB) $(RENDERLIB)
       OTHEREXTS = Xext/LibraryTargetName(ext) $(XKBEXT) $(XINPUTEXT) \
                   $(DBEEXT) $(RECORDEXT) $(SITEEXTS)
         EXTDIRS = Xext $(XKBDIR) $(XIDIR) $(GLXDIR) \
                   $(DBEDIR) $(RECORDDIR) $(SITEEXTDIRS) \
                   $(RANDRDIR) $(RENDERDIR) $(XPCONFIGDIR) \
-		  $(FIXESDIR) $(DAMAGEDIR) $(CWDIR) $(COMPOSITEDIR)
+		  $(FIXESDIR) $(DAMAGEDIR) $(COMPOSITEDIR)
              OS = os/LibraryTargetName(os)
         BSDEMUL = $(DEPXBSDLIB)
              FB = fb/LibraryTargetName(fb)
