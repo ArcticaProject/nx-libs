@@ -49,7 +49,6 @@ NXAGENT_SKIP_OBJS = 						\
                     -I../include				\
                     -I../mi					\
                     -I../fb					\
-                    -I../hw/kdrive				\
                     -I$(EXTINCSRC)				\
                     -I$(XINCLUDESRC)				\
                     -I../Xext					\
