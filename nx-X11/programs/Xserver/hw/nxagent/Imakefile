@@ -212,10 +212,10 @@ VFBINCLUDES =  						\
 # NXAGENT_RANDR_XINERAMA_CLIPPING  cut off invisible window parts in xinerama mode (you probably do not want this)
 
 #if nxVersion
- NX_DEFINES = 									\
-              -DNX_VERSION_CURRENT="$(NX_VERSION_CURRENT)"			\
-              -DNX_VERSION_CURRENT_STRING="\"$(NX_VERSION_CURRENT_STRING)\""	\
-              $(NULL)
+     NX_DEFINES = 									\
+                  -DNX_VERSION_CURRENT="$(NX_VERSION_CURRENT)"				\
+                  -DNX_VERSION_CURRENT_STRING="\"$(NX_VERSION_CURRENT_STRING)\""	\
+                  $(NULL)
 XSERVER_DEFINES = 									\
                   -DXSERVER_LACKS_PRIVATES_ABI						\
                   $(NULL)
