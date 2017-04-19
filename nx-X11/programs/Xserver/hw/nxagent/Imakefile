@@ -218,6 +218,7 @@ VFBINCLUDES =  						\
                   $(NULL)
 XSERVER_DEFINES = 									\
                   -DXSERVER_LACKS_PRIVATES_ABI						\
+                  -DXSERVER_OLD_TRYCLIENTEVENTS_ABI                                     \
                   $(NULL)
 
 #endif
@@ -257,7 +258,6 @@ XSERVER_DEFINES = 									\
               -DRANDR_15_INTERFACE=1			\
               -DPANORAMIX				\
               -UDEBUG_TREE				\
-              -DXSERVER_OLD_TRYCLIENTEVENTS_ABI         \
               $(NULL)
 
 all:: $(OBJS)
