@@ -146,8 +146,6 @@ VFBINCLUDES =  						\
               -I../../os				\
               -I../../miext/damage			\
               -I../../GL/glx				\
-              -I../../GL/include			\
-              -I../../../../lib/GL/include		\
               -I../../Xext				\
               -I$(EXTINCSRC) -I$(XINCLUDESRC)		\
               $(VFBINCLUDES)				\
@@ -164,8 +162,6 @@ VFBINCLUDES =  						\
               -I../../include				\
               -I../../os				\
               -I../../GL/glx				\
-              -I../../GL/include			\
-              -I../../../../lib/GL/include		\
               -I../../Xext				\
               -I../../miext/damage			\
               -I$(EXTINCSRC)				\
@@ -185,8 +181,6 @@ VFBINCLUDES =  						\
               -I../../include				\
               -I../../os				\
               -I../../GL/glx				\
-              -I../../GL/include			\
-              -I../../../../lib/GL/include		\
               -I../../Xext				\
               -I../../miext/damage			\
               -I../../../../../nxcomp			\
