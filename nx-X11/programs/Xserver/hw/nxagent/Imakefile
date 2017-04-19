@@ -216,6 +216,10 @@ VFBINCLUDES =  						\
               -DNX_VERSION_CURRENT="$(NX_VERSION_CURRENT)"			\
               -DNX_VERSION_CURRENT_STRING="\"$(NX_VERSION_CURRENT_STRING)\""	\
               $(NULL)
+XSERVER_DEFINES = 									\
+                  -DXSERVER_LACKS_PRIVATES_ABI						\
+                  $(NULL)
+
 #endif
 
     DEFINES = 						\
@@ -223,6 +227,7 @@ VFBINCLUDES =  						\
               $(OS_DEFINES)				\
               $(EXT_DEFINES)				\
               $(NX_DEFINES)				\
+              $(XSERVER_DEFINES)			\
               -UXF86VIDMODE				\
               -UXFreeXDGA				\
               -UXF86MISC				\
