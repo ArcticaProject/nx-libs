@@ -144,7 +144,6 @@ INCLUDES = \
 	-I../../include \
 	-I../../os \
 	-I../../miext/damage \
-	-I../../miext/cw \
 	-I../../GL/glx \
 	-I../../GL/include \
 	-I../../../../lib/GL/include \
@@ -168,7 +167,6 @@ INCLUDES = \
 	-I../../../../lib/GL/include \
 	-I../../Xext \
 	-I../../miext/damage \
-	-I../../miext/cw \
 	-I$(EXTINCSRC) -I$(XINCLUDESRC) \
 	$(VFBINCLUDES) \
 	`pkg-config --cflags-only-I libxml-2.0` \
@@ -188,7 +186,6 @@ INCLUDES = \
 	-I../../../../lib/GL/include \
 	-I../../Xext \
 	-I../../miext/damage \
-	-I../../miext/cw \
 	-I../../../../../nxcomp \
 	-I../../../../../nxcompshad \
 	-I../../../../extras/Mesa/include \
