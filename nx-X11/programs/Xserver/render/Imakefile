@@ -23,7 +23,6 @@ NXAGENT_SKIP_OBJS = 						\
              SRCS = 						\
                     animcur.c					\
                     filter.c					\
-                    glyph.c					\
                     matrix.c					\
                     miindex.c					\
                     mipict.c					\
@@ -35,7 +34,6 @@ NXAGENT_SKIP_OBJS = 						\
 
              OBJS = animcur.o					\
                     filter.o					\
-                    glyph.o					\
                     matrix.o					\
                     miindex.o					\
                     mipict.o					\
