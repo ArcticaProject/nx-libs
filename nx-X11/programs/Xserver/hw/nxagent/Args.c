@@ -1547,6 +1547,19 @@ static void nxagentParseSingleOption(char *name, char *value)
 
     return;
   }
+  else if (!strcmp(name, "autograb"))
+  {
+    if (!strcmp(value, "0"))
+    {
+      nxagentChangeOption(AutoGrab, False);
+    }
+    else
+    {
+      nxagentChangeOption(AutoGrab, True);
+    }
+
+    return;
+  }
   else
   {
     #ifdef DEBUG
