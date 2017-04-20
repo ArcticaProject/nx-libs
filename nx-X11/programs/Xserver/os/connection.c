@@ -439,14 +439,12 @@ CreateWellKnownSockets(void)
     }
     else { /* -displayfd and no explicit display number */
 	Bool found = 0;
-#ifdef NXAGENT_SERVER
 	int i_offset = 0;
+#ifdef NXAGENT_SERVER
 	if (explicit_display)
 	     i_offset = atoi(display);
-	for (i = i_offset; i < 65536 - X_TCP_PORT; i++) {
-#else
-	for (i = 0; i < 65536 - X_TCP_PORT; i++) {
 #endif /* NXAGENT_SERVER */
+	for (i = i_offset; i < 65536 - X_TCP_PORT; i++) {
 	    if (TryCreateSocket(i, &partial) && !partial) {
 		found = 1;
 		break;
