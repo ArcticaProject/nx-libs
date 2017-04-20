@@ -680,42 +680,76 @@ static void nxagentSwitchDeferMode(void)
   }
 }
 
-void setWinNameSuffix(const char *suffix)
+enum {WINDOWSUFFIX_AUTOGRAB = 0, WINDOWSUFFIX_INPUTLOCK, WINDOWSUFFIX_MAX};
+
+static char * nxagentWindowSuffixes[WINDOWSUFFIX_MAX] = {NULL};
+
+void setWinNameSuffix(int index, const char *suffix)
 {
-  static char * prev = NULL;
-  char * pre = " (";
-  char * post = ")";
+  if (index < 0 || index >= WINDOWSUFFIX_MAX)
+    return;
+
+  if (nxagentWindowSuffixes[index])
+  {
+    free(nxagentWindowSuffixes[index]);
+    nxagentWindowSuffixes[index] = NULL;
+  }
+
+  if (suffix)
+    nxagentWindowSuffixes[index] = strdup(suffix);
+}
+
+void updateWinName()
+{
+  static const char * pre = " (";
+  static const char * post = ")";
+  static const char * comma = ", ";
   char * newname;
 
-  if (suffix) {
-    if (!(newname = calloc(strlen(nxagentWindowName) + strlen(pre) + strlen(suffix) + strlen(post) + 1, sizeof(char))))
-    {
-      fprintf(stderr, "%s: malloc failed", __func__);
-	return;
-    }
-    strcpy(newname, nxagentWindowName);
-    strcpy(newname + strlen(nxagentWindowName), pre);
-    strcpy(newname + strlen(nxagentWindowName) + strlen(pre), suffix);
-    strcpy(newname + strlen(nxagentWindowName) + strlen(pre) + strlen(suffix), post);
-    free(prev);
-    prev = NULL;
-    XFetchName(nxagentDisplay, nxagentDefaultWindows[0], &prev);
-    XStoreName(nxagentDisplay, nxagentDefaultWindows[0], newname);
-    free(newname);
-  }
-  else
+  int len = strlen(nxagentWindowName) + 1;
+  int count = 0;
+  for (int i = 0; i < WINDOWSUFFIX_MAX; i++)
   {
-    if (prev)
+    if (nxagentWindowSuffixes[i])
     {
-	XStoreName(nxagentDisplay, nxagentDefaultWindows[0], prev);
-	free(prev);
-	prev = NULL;
-    }
-    else
-    {
-	XStoreName(nxagentDisplay, nxagentDefaultWindows[0], nxagentWindowName);
+      if (count)
+	len += strlen(comma);
+      len += strlen(nxagentWindowSuffixes[i]);
+      count++;
     }
   }
+
+  if (count)
+    len += strlen(pre) + strlen(post);
+
+  if (!(newname = calloc(len, sizeof(char))))
+  {
+    fprintf(stderr, "%s: malloc failed", __func__);
+    return;
+  }
+
+  strncpy(newname, nxagentWindowName, len);
+
+  if (count)
+    strncat(newname, pre, len);
+
+  int first = True;
+  for (int i = 0; i < WINDOWSUFFIX_MAX; i++)
+  {
+    if (nxagentWindowSuffixes[i])
+    {
+      if (!first)
+	strncat(newname, comma, len);
+      strncat(newname, nxagentWindowSuffixes[i], len);
+      first = False;
+    }
+  }
+
+  if (count)
+    strncat(newname, post, len);
+  
+  XStoreName(nxagentDisplay, nxagentDefaultWindows[0], newname);
+  free(newname);
 }
 
 static void nxagentEnableAutoGrab(void)
@@ -725,8 +759,8 @@ static void nxagentEnableAutoGrab(void)
 #endif
 
   nxagentGrabPointerAndKeyboard(NULL);
-  setWinNameSuffix("autograb on");
-  nxagentChangeOption(AutoGrab, True);
+  setWinNameSuffix(WINDOWSUFFIX_AUTOGRAB, "input grabbed");
+  updateWinName();
 }
 
 static void nxagentDisableAutoGrab(void)
@@ -736,8 +770,8 @@ static void nxagentDisableAutoGrab(void)
 #endif
 
   nxagentUngrabPointerAndKeyboard(NULL);
-  setWinNameSuffix(NULL);
-  nxagentChangeOption(AutoGrab, False);
+  setWinNameSuffix(WINDOWSUFFIX_AUTOGRAB, NULL);
+  updateWinName();
 }
 
 static void nxagentToggleAutoGrab(void)
@@ -760,7 +794,8 @@ static void nxagentEnableInputlock(void)
 #ifdef DEBUG
   fprintf(stderr, "activating inputlock\n");
 #endif
-  setWinNameSuffix("input locked");
+  setWinNameSuffix(WINDOWSUFFIX_INPUTLOCK, "pointer locked");
+  updateWinName();
   XGrabPointer(nxagentDisplay,nxagentDefaultWindows[0], True,
       ButtonPressMask | ButtonReleaseMask | PointerMotionMask | FocusChangeMask | EnterWindowMask | LeaveWindowMask,
       GrabModeAsync, GrabModeAsync, nxagentDefaultWindows[0], None, CurrentTime);
@@ -773,14 +808,15 @@ static void nxagentDisableInputlock(void)
   fprintf(stderr, "deactivating inputlock\n");
 #endif
   nxagentUngrabPointerAndKeyboard(NULL);
-  XTextProperty name = {
+  /*  XTextProperty name = {
     .value    = (unsigned char *)nxagentWindowName,
     .encoding = XA_STRING,
     .format   = 8,
     .nitems   = strlen((char *) name.value)
     };
-  setWinNameSuffix(NULL);
-  nxagentChangeOption(InputLock, False);
+  */
+  setWinNameSuffix(WINDOWSUFFIX_INPUTLOCK, NULL);
+  updateWinName();
 }
 
 /* TODO: drop inputlock when switching to Fullscreen */
