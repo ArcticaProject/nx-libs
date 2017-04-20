@@ -26,12 +26,13 @@
 .ds q \N'34'
 .TH nxagent 1 "April 2017" "Version 3.6.x" "NX Agent (Xserver)"
 .SH NAME
-nxagent \- nx-X11 Agent (nested Xserver optimized for remote computing)
+nxagent \- nested Xserver optimized for remote computing
 .SH SYNOPSIS
 .B nxagent
 .I "[options]"
 .SH DESCRIPTION
-\fBnxagent\fR is an Xnest-like X server for remote application/desktop access.
+\fBnxagent\fR is an X server for remote application/desktop access
+similar to Xnest or Xephyr.
 .PP
 \fBnxagent\fR implements a very efficient compression of the X11
 protocol, called the NX protocol.
@@ -49,29 +50,29 @@ application on the other end (i.e. the client) is called
 .PP
 When used in proxy <-> agent mode, \fBnxagent\fR adds the feature of
 being suspendible. Sessions can be started from one client, suspended and
-then resumed from another client.
+then resumed from another (or the same) client.
 .PP
 \fBnxagent\fR and \fBnxproxy\fR are utilized by various remote
 application/desktop frameworks for providing server-side GUI application
 access from remote client systems.
 .PP
-Currently, nx-X11 Agent is co-maintained by three of these projects: The
+Currently, \fBnxagent\fR is co-maintained by three of these projects: The
 Arctica Project, TheQVD and X2Go.
 .PP
 
 .SH "STARTING THE SERVER"
-The nx-X11 Agent should be run in user space. Other than the system's
+\fBnxagent\fR should be run in user space. Other than the system's
 local X.org server, \fBnxagent\fR does not require to be run as root.
 When bundled with a remote application framework, you normally don't have
-to launch \fBnxagent\fR manually. nx-X11 Agent startup is normally
+to launch \fBnxagent\fR manually. \fBnxagent\fR startup is usually
 managed by the underlying framework (e.g. Arctica Session Manager, X2Go
 Server, etc.).
 .PP
-When the nx-X11 Agent starts up (e.g. by typing 'nxagent -ac :1' in a
+When \fBnxagent\fR starts up (e.g. by typing 'nxagent -ac :1' in a
 terminal window), it typically launches in "windowed desktop" mode. On
-your local X server, there appears a new window being an X server itself.
+your local X server a new window appears being an X server itself.
 .PP
-However, nx-X11 Agent also supports rootless (or seamless) application
+However, \fBnxagent\fR also supports rootless (or seamless) application
 mode and a shadow session mode (similar to what VNC does).
 .PP
 Example: You can launch a complete desktop session inside this nested X
@@ -90,19 +91,20 @@ The Fedora / Gentoo / openSUSE way...
     ### FIXME / TODO ###
 .fi
 .PP
-However, nx-X11 Agent also supports rootless (or seamless) application
+However, \fBnxagent\fR also supports rootless (or seamless) application
 mode and a shadow session mode (similar to what VNC does).
 
 .SH OPTIONS
-The nx-X11 agent accepts a range of default X server options as described
+\fBnxagent\fR accepts a range of default X server options as described
 below. Those default options have to be provided via the command line.
 
-Furthermore, the nx-X11 Agent accepts some nx-X11 specific options,
+Furthermore, \fBnxagent\fR accepts some nx-X11 specific options,
 described further below.
 
-Last but not least, the nx-X11 Agent accepts several more options
-provided via the $DISPLAY environment variable, the so-called nx/nx
-options. See below for further details.
+Last but not least, \fBnxagent\fR accepts several more options, the
+so-called nx/nx options, provided via the $DISPLAY environment
+variable or the -options command line option. See below for further
+details.
 
 .SH STANDARD XSERVER OPTIONS
 .TP 8
@@ -159,10 +161,6 @@ sets key-click volume (allowable range: 0-100).
 sets the visual class for the root window of color screens.
 The class numbers are as specified in the X protocol.
 Not obeyed by all servers.
-.TP 8
-.B \-co \fIfilename\fP
-sets name of RGB color database.  The default is
-.IR /usr/share/nx/rgb .
 .ig
 .TP 8
 .B \-config \fIfilename\fP
@@ -179,7 +177,7 @@ different from the user's real uid.
 causes the server to generate a core dump on fatal errors.
 .TP 8
 .B \-displayfd \fIfd\fP
-specifies a file descriptor in the launching process.  Rather than specify
+specifies a file descriptor in the launching process.  Rather than specifying
 a display number, the X server will attempt to listen on successively higher
 display numbers, and upon finding a free one, will write the port number back
 on this file descriptor as a newline-terminated string.  The \-pn option is
@@ -225,7 +223,7 @@ prints a usage message.
 causes all remaining command line arguments to be ignored.
 .TP 8
 .B \-maxbigreqsize \fIsize\fP
-sets the maxmium big request to
+sets the maximum big request to
 .I size
 MB.
 .TP 8
@@ -280,7 +278,7 @@ command line option.
 sets default connection timeout in seconds.
 .TP 8
 .B \-tst
-disables all testing extensions (e.g., XTEST, XTrap, XTestExtension1, RECORD).
+disables all testing extensions.
 .TP 8
 .B tty\fIxx\fP
 ignored, for servers started the ancient way (from init).
@@ -312,7 +310,7 @@ default, this feature is enabled. To disable XINERAMA completely, make
 sure to use both options (-xinerama -rrxinerama) on the command line.
 
 .SH SERVER DEPENDENT OPTIONS
-The nx-X11 Xserver (i.e. \fBnxagent\fR) additionally accepts the following options (non-standard options, dependent on Xserver implementation):
+\fBnxagent\fR additionally accepts the following non-standard options:
 .TP 8
 .B \-logo
 turns on the X Window System logo display in the screen-saver.
@@ -406,15 +404,18 @@ enable shadow mode
 .TP 8
 .B \-B
 enable proxy binding mode
+.TP 8
+.B \-options \fIfilename\fP
+path to an options file containing nx/nx options (see below).
 .PP
 Other than the command line options, \fBnxagent\fR can be configured at
 session startup and at runtime (i.e. when resuming a suspended session)
 by so-called nx/nx options.
 .PP
 As nx/nx options all options supported by nxcomp (see \fBnxproxy\fR man
-page) and all nxagent nx/nx options (see below) can be used.
+page) and all \fBnxagent\fR nx/nx options (see below) can be used.
 .
-When launching an nxcomp based nx-X11 agent session (i.e. proxy <->
+When launching an nxcomp based \fBnxagent\fR session (i.e. proxy <->
 agent), you will normally set the $DISPLAY variable like this:
 .PP
 .nf
@@ -433,7 +434,7 @@ As <proxy-port> you can pick an arbitrary (unused) TCP port or Unix
 socket file path. This is the port / socket that you have to connect to
 with the \fBnxproxy\fR application.
 .PP
-Available nx-X11 Agent options (as an addition to nx/nx options supported
+Available \fBnxagent\fR options (as an addition to nx/nx options supported
 by nxcomp already):
 .TP 8
 .B options=<string>
@@ -508,13 +509,13 @@ provided as nx/nx option is set when resuming a session, thus it
 overrides the cmd line default.
 .TP 8
 .B menu=<int>
-support pulldown menu in nx-X11 Agent session (only available on proxy <-> agent remote sessions)
+support pulldown menu in \fBnxagent\fR session (only available on proxy <-> agent remote sessions)
 .TP 8
 .B sleep=<int>
-delay X server operations when suspended (provided in msec), set to \fI0\fR to keep nx-X11 Agent session
-fully functional when suspended (e.g. useful when mirroring nx-X11 Agent session via VNC)
+delay X server operations when suspended (provided in msec), set to \fI0\fR to keep \fBnxagent\fR session
+fully functional when suspended (e.g. useful when mirroring an \fBnxagent\fR session via VNC)
 .TP 8
-.B reconnectchecks=<string>
+.B tolerancechecks=<string>
 
 .BR strict|safe|risky|bypass
 .RS 8
@@ -522,7 +523,7 @@ fully functional when suspended (e.g. useful when mirroring nx-X11 Agent session
 .I strict
 means that the number of internal and external pixmap formats must
 match exactly and every internal pixmap format must be available in the
-external pixmap format array.
+external pixmap format array. This is the default.
 .TP 8
 .I safe
 means that the number of pixmap formats might diverge, but all
@@ -539,6 +540,14 @@ format must be included in both. This is potentially unsafe.
 means that all of these checks are essentially
 deactivated. This is a very bad idea.
 .RE
+
+If you want to use \fBnxagent\fR as a replacement for Xnest or Xephyr you
+can pass options like this:
+.PP
+.nf
+  $ echo nx/nx,fullscreen=1$DISPLAY >/tmp/opt
+  $ nxagent <cmdline-options> -options /tmp/opt :<nx-display-port>
+.fi
 
 .SH XDMCP OPTIONS
 X servers that support XDMCP have the following options.
