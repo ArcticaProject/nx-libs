@@ -180,8 +180,23 @@ causes the server to generate a core dump on fatal errors.
 specifies a file descriptor in the launching process.  Rather than specifying
 a display number, the X server will attempt to listen on successively higher
 display numbers, and upon finding a free one, will write the port number back
-on this file descriptor as a newline-terminated string.  The \-pn option is
-ignored when using \-displayfd.
+on this file descriptor as a newline-terminated string.  The \fB\-pn\fR option is
+ignored when using \fB\-displayfd\fR.
+
+nxagent specific:
+
+(1) Other than in X.org's Xserver, you can use \fB\-displayfd\fR in
+conjunction with an explicit display number. If the explicit display number
+is not available (i.e., already in use), nxagent tries to figure out the next
+available display number,
+
+e.g.:
+
+   \fBnxagent\fR \fI\-displayfd 2 :50\fR
+
+(2) If -displayfd <X> is given with <X> equaling 2 (STDERR), then the
+display number string written to STDERR is beautified with some human-readable
+(machine-parseable) text.
 .TP 8
 .B \-deferglyphs \fIwhichfonts\fP
 specifies the types of fonts for which the server should attempt to use
