@@ -17,6 +17,12 @@
 
 NX_LIBDIR=@@NXLIBDIR@@
 
+# [[ -v varname ]] requires bash 4.2
+if [ ! -v NX_CALLBACKS_DISPATCHER ] && \
+   [ -x "${NX_LIBDIR}/bin/nxagent-callbacks-dispatcher" ]; then
+	export NX_CALLBACKS_DISPATCHER="${NX_LIBDIR}/bin/nxagent-callbacks-dispatcher"
+fi
+
 # make sure nxagent starts properly with pam_tmpdir.so being in use
 NX_TEMP=${NX_TEMP:-/tmp}
 export NX_TEMP

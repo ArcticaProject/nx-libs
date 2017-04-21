@@ -170,6 +170,8 @@ void nxagentLaunchDialog(DialogType dialogType)
   int local;
   const char *window = NULL;
 
+  char *cbDispatcherCmd;
+
   switch (dialogType)
   {
     case DIALOG_KILL_SESSION:
@@ -300,9 +302,14 @@ void nxagentLaunchDialog(DialogType dialogType)
 
   sigprocmask(SIG_BLOCK, &set, &oldSet);
 
-  *pid = NXTransDialog(nxagentDialogName, message, window,
-                           type, local, dialogDisplay);
+  cbDispatcherCmd = getenv("NX_CALLBACKS_DISPATCHER");
 
+  if (cbDispatcherCmd == NULL)
+    *pid = NXTransDialog(nxagentDialogName, message, window,
+                             type, local, dialogDisplay);
+  else
+    *pid = NXTransCallbacksDispatcher(nxagentDialogName, message, window,
+                                          type, local, dialogDisplay);
   #ifdef TEST
   fprintf(stderr, "nxagentLaunchDialog: Launched dialog %s with pid [%d] on display %s.\n",
               DECODE_DIALOG_TYPE(dialogType), *pid, dialogDisplay);

@@ -75,6 +75,7 @@ extern void CleanupGlobal();
 
 extern void InstallSignals();
 
+extern char *GetCallbacksDispatcherPath();
 extern char *GetClientPath();
 
 extern int CheckParent(const char *name, const char *type,
@@ -106,6 +107,148 @@ static int UnsetEnv(const char *name);
 
 static int NXTransKeeperHandler(int signal);
 static void NXTransKeeperCheck();
+
+
+int NXTransCallbacksDispatcher(const char *caption, const char *message,
+                                   const char *window, const char *type, int local,
+                                       const char* display)
+{
+  //
+  // Be sure log file is valid.
+  //
+
+  if (logofs == NULL)
+  {
+    logofs = &cerr;
+  }
+
+  int pid;
+
+  #ifdef TEST
+  *logofs << "NXTransCallbacksDispatcher: Going to fork with NX pid '"
+          << getpid() << "'.\n" << logofs_flush;
+  #endif
+
+  pid = Fork();
+
+  if (pid != 0)
+  {
+    if (pid < 0)
+    {
+      #ifdef TEST
+      *logofs << "NXTransCallbacksDispatcher: WARNING! Function fork failed. "
+              << "Error is " << EGET() << " '" << ESTR()
+              << "'.\n" << logofs_flush;
+      #endif
+
+      cerr << "Warning" << ": Function fork failed. "
+           << "Error is " << EGET() << " '" << ESTR()
+           << "'.\n";
+    }
+    #ifdef TEST
+    else
+    {
+      *logofs << "NXTransCallbacksDispatcher: Created NX dialog process "
+              << "with pid '" << pid << "'.\n"
+              << logofs_flush;
+    }
+    #endif
+
+    return pid;
+  }
+
+  #ifdef TEST
+  *logofs << "NXTransCallbacksDispatcher: Executing child with pid '"
+          << getpid() << "' and parent '" << getppid()
+          << "'.\n" << logofs_flush;
+  #endif
+
+  SystemCleanup("NXTransCallbacksDispatcher");
+
+  char command[DEFAULT_STRING_LIMIT];
+
+  char *path = GetCallbacksDispatcherPath();
+
+  if (path != NULL)
+  {
+
+    strcpy(command, path);
+
+    delete [] path;
+
+    MemoryCleanup("NXTransCallbacksDispatcher");
+
+    #ifdef TEST
+    *logofs << "NXTransCallbacksDispatcher: Running external NX dialog with caption '"
+            << caption << "' message '" << message << "' type '"
+            << type << "' local '" << local << "' display '"
+            << display << "'.\n"
+            << logofs_flush;
+    #endif
+
+    int pulldown = (strcmp(type, "pulldown") == 0);
+
+    char parent[DEFAULT_STRING_LIMIT];
+
+    snprintf(parent, DEFAULT_STRING_LIMIT, "%d", getppid());
+
+    parent[DEFAULT_STRING_LIMIT - 1] = '\0';
+
+    UnsetEnv("LD_LIBRARY_PATH");
+
+    if (local != 0)
+    {
+      if (pulldown)
+      {
+        execlp(command, command, "--dialog", type, "--caption", caption,
+                   "--window", window, "--local", "--parent", parent,
+                       "--display", display, NULL);
+      }
+      else
+      {
+        execlp(command, command, "--dialog", type, "--caption", caption,
+                   "--message", message, "--local", "--parent", parent,
+                       "--display", display, NULL);
+      }
+    }
+    else
+    {
+      if (pulldown)
+      {
+        execlp(command, command, "--dialog", type, "--caption", caption,
+                   "--window", window, "--parent", parent,
+                       "--display", display, NULL);
+      }
+      else
+      {
+        execlp(command, command, "--dialog", type, "--caption", caption,
+                   "--message", message, "--parent", parent,
+                       "--display", display, NULL);
+      }
+    }
+
+    #ifdef WARNING
+    *logofs << "NXTransCallbacksDispatcher: WARNING! Couldn't start '"
+            << command << "'. " << "Error is " << EGET()
+            << " '" << ESTR() << "'.\n" << logofs_flush;
+    #endif
+
+    cerr << "Warning" << ": Couldn't start '" << command
+         << "'. Error is " << EGET() << " '" << ESTR()
+         << "'.\n";
+  }
+
+  /*
+   * If we reach here, callbacks had been disabled...
+   */
+
+  exit(0);
+
+}
+
+//
+// Start a nxclient process in dialog mode.
+//
 
 
 //
