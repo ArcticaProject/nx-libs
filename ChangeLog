@@ -1,11 +1,243 @@
-2017-04-11 17:01:25 +0200 Mike Gabriel (856b59b)
+2017-04-21 16:26:31 +0200 Mike Gabriel (1246d99)
 
-	* release 3.5.99.5 (HEAD, release-builds/3.6.x, 3.6.x)
+	* release 3.5.99.6 (HEAD, release-builds/3.6.x, 3.6.x)
+
+2017-04-21 16:20:50 +0200 Mihai Moldovan (1c62170)
+
+	* Merge branch 'sunweaver-pr/use-source-tree-nxcomp' into 3.6.x
+          (origin/HEAD, origin/3.6.x)
+
+2017-03-08 10:45:51 +0100 Mike Gabriel (e91132f)
+
+	* Xserver/Imakefile: Drop redundant library path option
+          -L../../../nx-X11/exports/lib when linking nxagent. As
+          -L../../exports/lib is already present and points to the
+          same location. (gh-sunweaver/pr/use-source-tree-nxcomp,
+          pr/use-source-tree-nxcomp)
+
+2017-03-08 11:26:16 +0100 Mike Gabriel (4818c13)
+
+	* Xserver/Imakefile: Change order of linker options, so that
+          self-built components get mentioned first in the nxagent
+          linker command.
+
+2017-04-21 16:14:27 +0200 Mihai Moldovan (22b6ac7)
+
+	* Merge branch 'sunweaver-pr/nxagent-dialog-fixes' into 3.6.x
+
+2017-03-07 20:52:43 +0100 Mike Gabriel (0f67af9)
+
+	* nxcomp/Children.cpp: Don't generate warnings with duplicated NX
+          paths. (gh-sunweaver/pr/nxagent-dialog-fixes,
+          pr/nxagent-dialog-fixes)
+
+2017-03-08 12:21:20 +0000 Mike Gabriel (522e743)
+
+	* hw/nxagent/Dialog.c: Drop unused dialog for
+          DIALOG_DISABLE_XKB_LOCAL.
+
+2017-04-21 12:07:37 +0200 Mike Gabriel (61d5cd0)
+
+	* Revert "NXpicturestr_PictSolidFill.h: Drop file and revert db8705.
+          Not an issue anymore nowadays."
+
+2017-04-20 18:27:11 +0200 Mihai Moldovan (f3d4061)
+
+	* nx-X11/programs/Xserver/os/connection.c: compact display
+          autodetection code.
+
+2017-04-20 18:24:04 +0200 Mihai Moldovan (1ccc6be)
+
+	* Merge branch 'sunweaver-pr/enhance-displayfd-auto-detection' into
+          3.6.x
+
+2017-04-07 16:39:27 +0200 Mike Gabriel (9865f73)
+
+	* man/nxagent.1: Document the nxagent specific usage pattern of the
+          displayfd cmdline option.
+          (gh-sunweaver/pr/enhance-displayfd-auto-detection,
+          pr/enhance-displayfd-auto-detection)
+
+2017-04-07 15:27:50 +0200 Mike Gabriel (ec185d7)
+
+	* Xserver/os/connection.c: If -displayfd and an explicit display port
+          number are given, use the explicit display number as a
+          starting point for auto-detecting the next available
+          display number.
+
+2017-04-07 15:26:45 +0200 Mike Gabriel (f4d7863)
+
+	* Xserver/os/connection.c: Accompany display number with some
+          human-readable (machine-parseable) text when -displayfd is
+          set to STDERR.
+
+2017-04-20 14:06:18 +0200 Mike Gabriel (7d0b705)
+
+	* Merge branch 'uli42-pr/extend_manpage' into 3.6.x
+
+2017-04-18 00:10:46 +0200 Ulrich Sibiller (3942468)
+
+	* nxagent.1: some more rephrasing (uli42-pr/extend_manpage)
+
+2017-04-18 00:08:55 +0200 Ulrich Sibiller (4998c41)
+
+	* nxagent.1: fix: "tolerancechecks" was documented as
+          "reconnectchecks"
+
+2017-04-17 23:38:19 +0200 Ulrich Sibiller (0ccc2ee)
+
+	* nxagent.1: highlight nxagent
+
+2017-04-17 23:15:13 +0200 Ulrich Sibiller (e18c955)
+
+	* nxagent.1: use nxagent everywhere
+
+2017-04-17 23:13:53 +0200 Ulrich Sibiller (5f88a29)
+
+	* nxagent.1: rephrase description
+
+2017-04-17 23:09:39 +0200 Ulrich Sibiller (14417c9)
+
+	* nxagent.1: add -options, previously undocumented
+
+2017-04-17 23:09:17 +0200 Ulrich Sibiller (baf7d39)
+
+	* nxagent.1: fix typo
+
+2017-04-17 23:08:37 +0200 Ulrich Sibiller (9494062)
+
+	* nxagent.1: remove no longer existing -co option from manpage
+
+2017-04-19 13:38:49 +0200 Mike Gabriel (ab0bc81)
+
+	* Xserver/GL/glx/glxext.c: Fix for previous commit, re-adding a
+          comment starter '/*'.
+
+2017-04-19 13:08:26 +0200 Mike Gabriel (4ad88de)
+
+	* Clearing comments from $XFree86$ (et al.) header lines.
+
+2017-04-18 22:45:11 +0200 Mike Gabriel (85b58da)
+
+	* Merge branch 'Ionic-add-xkbcomp-dep' into 3.6.x
+
+2017-04-18 19:01:42 +0000 Mihai Moldovan (a2dca67)
+
+	* nx-libs.spec: sync up RPM builds after Xext proto change in
+          a51cb94559e9228a55e01956f242dabccc5e6b14.
+          (gh-Ionic/add-xkbcomp-dep, Ionic-add-xkbcomp-dep)
+
+2017-04-18 17:21:53 +0000 Mihai Moldovan (adb2f80)
+
+	* {debian/control,nx-libs.spec}: add proper dependencies upon xkbcomp
+          for RPM and DEB packages.
+
+2017-04-18 19:05:20 +0000 Mihai Moldovan (7c0a359)
+
+	* nx-libs.spec: whitespace only.
+
+2017-04-14 15:14:00 +0200 Mike Gabriel (cc17d89)
+
+	* debian/control: Add get-orig-source rule as in official Debian
+          package.
+
+2017-04-14 15:11:06 +0200 Mike Gabriel (a51cb94)
+
+	* debian/{rules,nx-x11proto-xext-dev}: More Xext header files belong
+          int nx-x11proto-xext-dev (instead of removing them in
+          debian/rules).
+
+2017-04-14 15:07:53 +0200 Mike Gabriel (35ec402)
+
+	* debian/control: Pre-D (nx-x11-common) on versioned dpkg not
+          required anymore.
+
+2017-04-14 15:05:06 +0200 Mike Gabriel (fdd6671)
+
+	* debian/control: Pull-over latest changes on these files from the
+          official Debian package. Various improvements several
+          package descriptions.
+
+2017-04-14 15:02:52 +0200 Mike Gabriel (0eb3bbd)
+
+	* debian/copyright{,in}: Pull-over latest changes on these files from
+          the official Debian package.
+
+2017-04-13 20:28:19 +0200 Mihai Moldovan (a1e309a)
+
+	* Merge branch 'sunweaver-pr/enable-mit-screen-saver-extension' into
+          3.6.x
+
+2017-04-11 10:21:30 +0200 Mike Gabriel (244ce53)
+
+	* Xserver: Build nxagent with MIT-SCREEN-SAVER extension enabled.
+          (gh-sunweaver/pr/enable-mit-screen-saver-extension,
+          pr/enable-mit-screen-saver-extension)
+
+2017-04-13 17:05:32 +0200 Mihai Moldovan (680de79)
+
+	* Merge branch
+          'sunweaver-pr/Mesa-define-USE_IEEE-macro-for-more-platforms'
+          into 3.6.x
+
+2017-04-13 14:09:12 +0200 Mike Gabriel (d4941a6)
+
+	* Mesa.patches: Define USE_IEEE for __aarch64__ and __mc68000__, as
+          well.
+          (gh-sunweaver/pr/Mesa-define-USE_IEEE-macro-for-more-platforms,
+          pr/Mesa-define-USE_IEEE-macro-for-more-platforms)
+
+2017-04-13 16:13:04 +0200 Mike Gabriel (85b925e)
+
+	* nx-X11/config/cf: Clean-up left-overs from having our own
+          libNX_Xext shared library.
+
+2017-04-13 16:00:16 +0200 Mike Gabriel (8a3605f)
+
+	* Makefile: Make sure that 'make all' only calls 'make build' and
+          _not_ the global '%:' ruleset afterwards.
+          (gh-sunweaver/pr/Makefile-only-call-build-on-make-all,
+          pr/clean-up-remnants-of-libNX_Xext,
+          pr/Makefile-only-call-build-on-make-all)
+
+2017-04-13 15:58:46 +0200 Mike Gabriel (f843d1b)
+
+	* Makefile: Remove nx-X11/config/cf/date.def on clean.
+
+2017-04-13 15:58:14 +0200 Mike Gabriel (fa3734f)
+
+	* Makefile: Fix comment above special clean rules.
+
+2017-04-13 14:45:22 +0200 Mihai Moldovan (a2b7584)
+
+	* Merge branch 'sunweaver-pr/fix-ftbfs-on-linux-sparc64' into 3.6.x
+
+2017-04-13 10:24:19 +0200 Mike Gabriel (fb962f8)
+
+	* nx-X11/config/cf/linux.cf: Fix FTBFS on Linux SPARC64 due to
+          missing -D_XSERVER64 definition.
+          (gh-sunweaver/pr/fix-ftbfs-on-linux-sparc64,
+          pr/fix-ftbfs-on-linux-sparc64)
+
+2017-04-13 14:02:22 +0200 Mihai Moldovan (138b52c)
+
+	* Merge branch 'sunweaver-pr/fix-ftbfs-on-aarch64' into 3.6.x
+
+2017-04-12 19:23:37 +0200 Mike Gabriel (53dc4ba)
+
+	* nx-X11/config/cf/linux.cf: Fix FTBFS on arm64 (aarch64) due to
+          missing -D_XSERVER64 definition.
+          (gh-sunweaver/pr/fix-ftbfs-on-aarch64,
+          pr/fix-ftbfs-on-hpppa, pr/fix-ftbfs-on-aarch64)
+
+2017-04-11 17:01:25 +0200 Mike Gabriel (3a2ecb9)
+
+	* release 3.5.99.5 (tag: 3.5.99.5, origin/release-builds/3.6.x)
 
 2017-04-10 20:54:19 +0000 Mike Gabriel (d6479c9)
 
 	* debian/patches: Update 016_nx-X11_install-location.debian.patch
-          (due to fuzziness). (origin/HEAD, origin/3.6.x)
+          (due to fuzziness).
 
 2017-04-10 20:53:34 +0000 Mike Gabriel (d63b4a5)
 
@@ -141,8 +373,6 @@
 2017-02-20 12:54:14 +0100 Mike Gabriel (2c9effe)
 
 	* Mesa subtree: Add quilt based patch system for bundled Mesa.
-          (gh-sunweaver/pr/mesa-patching-with-quilt,
-          pr/mesa-patching-with-quilt)
 
 2017-04-05 11:19:54 +0200 Mike Gabriel (2767d32)
 
@@ -232,9 +462,7 @@
 2017-03-10 14:16:26 +0100 Michal Srb (f34eff0)
 
 	* xinerama: Swap the response in RRXineramaWriteMonitor
-          (gh-sunweaver/pr/xinerama-response-swapping-in-RRXineramaWriteMonitor,
-          sunweaver-pr/xinerama-response-swapping-in-RRXineramaWriteMonitor,
-          pr/xinerama-response-swapping-in-RRXineramaWriteMonitor)
+          (sunweaver-pr/xinerama-response-swapping-in-RRXineramaWriteMonitor)
 
 2017-04-03 20:39:06 +0200 Mike Gabriel (4e0e7c4)
 
@@ -1188,7 +1416,7 @@
 
 2017-02-24 22:22:47 +0000 Mike Gabriel (e1f2902)
 
-	* release 3.5.99.4 (tag: 3.5.99.4, origin/release-builds/3.6.x)
+	* release 3.5.99.4 (tag: 3.5.99.4)
 
 2017-02-24 12:23:51 +0100 Mihai Moldovan (31426a3)
 
