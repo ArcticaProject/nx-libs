@@ -2013,6 +2013,7 @@ Files: nx-X11/programs/Xserver/hw/nxagent/NXglyph.c
  nx-X11/programs/Xserver/hw/nxagent/NXglyphstr_GlyphRef.h
  nx-X11/programs/Xserver/hw/nxagent/NXglyphstr_GlyphSet.h
  nx-X11/programs/Xserver/hw/nxagent/NXpicture.c
+ nx-X11/programs/Xserver/hw/nxagent/NXpicturestr_PictSolidFill.h
  nx-X11/programs/Xserver/hw/nxagent/NXrender.c
 Copyright: 2000, SuSE, Inc
   2001, 2011, NoMachine (http://www.nomachine.com)
