@@ -80,25 +80,25 @@ Files: nx-X11/extras/Mesa/src/mesa/main/WSDrawBuffer.h
  nx-X11/programs/Xserver/hw/nxagent/compext/Rle.h
  nx-X11/programs/Xserver/hw/nxagent/compext/Z.c
  nx-X11/programs/Xserver/hw/nxagent/compext/Z.h
- nxcompshad/Core.cpp
- nxcompshad/Core.h
- nxcompshad/Input.cpp
- nxcompshad/Input.h
- nxcompshad/Logger.cpp
- nxcompshad/Logger.h
- nxcompshad/Manager.cpp
- nxcompshad/Manager.h
- nxcompshad/Misc.h
- nxcompshad/Poller.h
- nxcompshad/Regions.h
- nxcompshad/Shadow.cpp
- nxcompshad/Shadow.h
- nxcompshad/Updater.cpp
- nxcompshad/Updater.h
- nxcompshad/Win.cpp
- nxcompshad/Win.h
- nxcompshad/X11.cpp
- nxcompshad/X11.h
+ nxcompshad/include/Shadow.h
+ nxcompshad/src/Core.cpp
+ nxcompshad/src/Core.h
+ nxcompshad/src/Input.cpp
+ nxcompshad/src/Input.h
+ nxcompshad/src/Logger.cpp
+ nxcompshad/src/Logger.h
+ nxcompshad/src/Manager.cpp
+ nxcompshad/src/Manager.h
+ nxcompshad/src/Misc.h
+ nxcompshad/src/Poller.h
+ nxcompshad/src/Regions.h
+ nxcompshad/src/Shadow.cpp
+ nxcompshad/src/Updater.cpp
+ nxcompshad/src/Updater.h
+ nxcompshad/src/Win.cpp
+ nxcompshad/src/Win.h
+ nxcompshad/src/X11.cpp
+ nxcompshad/src/X11.h
 Copyright: 2001, 2011, NoMachine (http://www.nomachine.com)
   2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
   2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
@@ -1001,7 +1001,7 @@ Files: nx-X11/include/XWDFile.h
  nx-X11/programs/Xserver/record/record.c
  nx-X11/programs/Xserver/record/set.c
  nx-X11/programs/Xserver/record/set.h
- nxcompshad/X11/include/XTest_nxcompshad.h
+ nxcompshad/src/X11/include/XTest_nxcompshad.h
 Copyright: 1985, 1987, 1990, 1998, The Open Group
   1985, 1987, 1994, 1998, The Open Group
   1985, 1987, 1998, The Open Group
@@ -1449,7 +1449,7 @@ Files: nx-X11/include/extensions/composite.h
  nx-X11/programs/Xserver/xfixes/xfixes.h
  nx-X11/programs/Xserver/xfixes/xfixesint.h
  nx-X11/programs/Xserver/Xext/shmint.h
- nxcompshad/X11/include/Xdamage_nxcompshad.h
+ nxcompshad/src/X11/include/Xdamage_nxcompshad.h
 Copyright: 1998, Keith Packard
   1999, Keith Packard
   2002, Keith Packard
@@ -2307,7 +2307,7 @@ Copyright: 2000, Compaq Computer Corporation
 License: MIT~X11 
 
 Files: nx-X11/programs/Xserver/hw/nxagent/X11/include/Xrandr_nxagent.h
- nxcompshad/X11/include/Xrandr_nxcompshad.h
+ nxcompshad/src/X11/include/Xrandr_nxcompshad.h
 Copyright: 2000, Compaq Computer Corporation, Inc
   2002, Hewlett-Packard Company, Inc
   2006, Intel Corporation
@@ -2899,11 +2899,13 @@ Files: ChangeLog
  nxcomp/Makefile.in
  nxcomp/VERSION
  nxcomp/configure.in
+ nxcomp/m4/nx-macros.m4
  nxcomp/nxcomp.pc.in
- nxcompshad/Makefile.in
+ nxcompshad/Makefile.am
  nxcompshad/VERSION
- nxcompshad/configure.in
+ nxcompshad/configure.ac
  nxcompshad/nxcompshad.pc.in
+ nxcompshad/src/Makefile.am
  nxproxy/Makefile.in
  nxproxy/VERSION
  nxproxy/configure.in
@@ -2941,7 +2943,6 @@ Copyright: *No copyright*
 License: public-domain
 
 Files: nxcomp/install-sh
- nxcompshad/install-sh
  nxproxy/install-sh
 Copyright: 1994, X Consortium
 License: Expat~NoAdvert

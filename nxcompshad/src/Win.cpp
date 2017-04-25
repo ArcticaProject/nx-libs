@@ -23,6 +23,10 @@
 /*                                                                        */
 /**************************************************************************/
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #if defined(__CYGWIN32__) || defined(WIN32)
 
 #include <nx-X11/keysym.h>

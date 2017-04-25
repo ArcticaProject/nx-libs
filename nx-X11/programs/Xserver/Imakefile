@@ -221,8 +221,8 @@ NX_XCOMP_HEADERS = \
               ../../../nxcomp/NXvars.h          \
               $(NULL)
 
-NX_XCOMPSHAD_HEADERS =                          \
-              ../../../nxcompshad/Shadow.h      \
+NX_XCOMPSHAD_HEADERS =                                  \
+              ../../../nxcompshad/include/Shadow.h      \
               $(NULL)
 
 NX_HEADERS =                                    \
@@ -316,7 +316,7 @@ $(NXAGENTOBJS) $(NXAGENTLIBS) $(NXAGENTSYSLIBS):: $(NXAGENTDIRS)
 #if defined(SunArchitecture)
 NXAGENTNXLIBS = -L/usr/sfw/lib \
                 -L../../../nxcomp  \
-                -L../../../nxcompshad \
+                -L../../../nxcompshad/src/.libs \
                 -lrt \
                 -lXcomp \
                 -lXcompshad \
@@ -331,7 +331,7 @@ NXAGENTNXLIBS = -L/usr/sfw/lib \
                 $(NULL)
 #elif defined(cygwinArchitecture)
 NXAGENTNXLIBS = -L../../../nxcomp  \
-                -L../../../nxcompshad \
+                -L../../../nxcompshad/src/.libs \
                 -lXcomp \
                 -lXcompshad \
                 -lXrender \
@@ -345,7 +345,7 @@ NXAGENTNXLIBS = -L../../../nxcomp  \
 #elif defined(OpenBSDArchitecture)
 NXAGENTNXLIBS = -L../../../nxcomp  \
                 -L../../../nx-X11/exports/lib \
-                -L../../../nxcompshad \
+                -L../../../nxcompshad/src/.libs \
                 -lkvm \
                 -lXcomp \
                 -lXcompshad \
@@ -360,7 +360,7 @@ NXAGENTNXLIBS = -L../../../nxcomp  \
                 $(NULL)
 #else
 NXAGENTNXLIBS = -L../../../nxcomp  \
-                -L../../../nxcompshad \
+                -L../../../nxcompshad/src/.libs \
                 -lXcomp \
                 -lXcompshad \
                 -lXrender \

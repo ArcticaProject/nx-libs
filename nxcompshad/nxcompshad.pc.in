@@ -5,7 +5,7 @@ includedir=@includedir@
 
 Name: nxcompshad
 Description: Shadow Session Support for NX Compression Library
-Version: @VERSION@
+Version: @COMPSHAD_VERSION@
 Requires: nxcomp
 Requires.private: x11
 Cflags: -I${includedir}
