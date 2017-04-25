@@ -387,10 +387,10 @@ make install \
 
 # this needs to be adapted distribution-wise...
 %if 0%{?suse_version}
-ln -s ../fonts %{buildroot}%{_datadir}/nx/fonts
+ln -s /usr/share/fonts %{buildroot}%{_datadir}/nx/fonts
 %else
 %if 0%{?fedora} || 0%{?rhel}
-ln -s ../X11/fonts %{buildroot}%{_datadir}/nx/fonts
+ln -s /usr/share/X11/fonts %{buildroot}%{_datadir}/nx/fonts
 %endif
 %endif
 
