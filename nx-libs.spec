@@ -388,8 +388,10 @@ make install \
 # this needs to be adapted distribution-wise...
 %if 0%{?suse_version}
 ln -s ../fonts %{buildroot}%{_datadir}/nx/fonts
-%elif 0%{?fedora} || 0%{?rhel}
+%else
+%if 0%{?fedora} || 0%{?rhel}
 ln -s ../X11/fonts %{buildroot}%{_datadir}/nx/fonts
+%endif
 %endif
 
 # Remove static libs (they don't exist on SLES, so using -f here)
