@@ -2756,7 +2756,7 @@ Files: nx-X11/programs/Xserver/os/xdmcp.c
 Copyright: 1989, Network Computing Devices, Inc., Mountain View, California
 License: MIT~VeryOldStyle~NCD
 
-Files: nxproxy/Main.c
+Files: nxproxy/src/Main.c
 Copyright: 2001, 2011, NoMachine, http://www.nomachine.com/.
 License: GPL-2
 
@@ -2912,10 +2912,13 @@ Files: ChangeLog
  nxcompshad/VERSION
  nxcompshad/configure.in
  nxcompshad/nxcompshad.pc.in
- nxproxy/Makefile.in
  nxproxy/VERSION
- nxproxy/configure.in
  nxproxy/man/nxproxy.1
+ nxproxy/Makefile.am
+ nxproxy/configure.ac
+ nxproxy/m4/.placeholder
+ nxproxy/man/Makefile.am
+ nxproxy/src/Makefile.am
 Copyright: 2001, 2011, NoMachine (http://www.nomachine.com)
   2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
   2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
@@ -2944,13 +2947,11 @@ Comment:
  Contributions by Daniel Stone have been licensed under MIT~X11.
 
 Files: nxcomp/mkinstalldirs
- nxproxy/mkinstalldirs
 Copyright: *No copyright*
 License: public-domain
 
 Files: nxcomp/install-sh
  nxcompshad/install-sh
- nxproxy/install-sh
 Copyright: 1994, X Consortium
 License: Expat~NoAdvert
 Comment:
