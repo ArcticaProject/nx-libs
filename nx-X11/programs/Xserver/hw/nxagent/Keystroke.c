@@ -480,30 +480,25 @@ void nxagentDumpKeystrokes(void)
 static enum nxagentSpecialKeystroke find_keystroke(XKeyEvent *X)
 {
   enum nxagentSpecialKeystroke ret = KEYSTROKE_NOTHING;
-  int keysyms_per_keycode_return;
 
-  XlibKeySym *keysym = XGetKeyboardMapping(nxagentDisplay,
-                                           X->keycode,
-                                           1,
-                                           &keysyms_per_keycode_return);
+  KeySym keysym = XKeycodeToKeysym(nxagentDisplay, X->keycode, 0);
+
 
   #ifdef DEBUG
-  fprintf(stderr, "%s: got keysym '%c' (%d)\n", __func__, keysym[0], keysym[0]);
+  fprintf(stderr, "%s: got keysym '%c' (%d)\n", __func__, keysym, keysym);
   #endif
   for (struct nxagentSpecialKeystrokeMap *cur = map; cur->stroke != KEYSTROKE_END_MARKER; cur++) {
     #ifdef DEBUG
     fprintf(stderr, "%s: checking keysym '%c' (%d)\n", __func__, cur->keysym, cur->keysym);
     #endif
-    if (cur->keysym == keysym[0] && modifier_matches(cur->modifierMask, cur->modifierAltMeta, X->state)) {
+    if (cur->keysym == keysym && modifier_matches(cur->modifierMask, cur->modifierAltMeta, X->state)) {
       #ifdef DEBUG
       fprintf(stderr, "%s: match including modifiers for keysym '%c' (%d), stroke %d (%s)\n", __func__, cur->keysym, cur->keysym, cur->stroke, nxagentSpecialKeystrokeNames[cur->stroke]);
       #endif
-      free(keysym);
       return cur->stroke;
     }
   }
 
-  free(keysym);
   return ret;
 }
 
