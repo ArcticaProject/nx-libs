@@ -7,10 +7,11 @@ DPKG_EXPORT_BUILDFLAGS = 1
 include /usr/share/dpkg/buildflags.mk
 
 export LIBDIR = "/usr/lib/$(shell dpkg-architecture -qDEB_BUILD_MULTIARCH)"
+export LIBEXECDIR = "$(LIBDIR)/nx/bin"
 export INCLUDEDIR = "/usr/include/$(shell dpkg-architecture -qDEB_BUILD_MULTIARCH)"
 
 %:
-	CONFIGURE="./configure --with-symbols --prefix=/usr --libdir=$(LIBDIR) --includedir=$(INCLUDEDIR)" dh $@ --with quilt
+	CONFIGURE="./configure --with-symbols --prefix=/usr --libdir=$(LIBDIR) --includedir=$(INCLUDEDIR) --libexecdir=$(LIBEXECDIR)" dh $@ --with quilt
 
 override_dh_auto_clean:
 	rm -Rf nx-X11/.build-exports
@@ -24,7 +25,7 @@ override_dh_install:
 
 	# remove static libs
 	rm debian/tmp/usr/lib/$(DEB_BUILD_MULTIARCH)/libXcomp.a
-	rm debian/tmp/usr/lib/$(DEB_BUILD_MULTIARCH)/libXcompshad.a
+	rm debian/tmp/usr/lib/$(DEB_BUILD_MULTIARCH)/libXcompshad.la
 
 	# remove extras, GL, and other unneeded headers
 	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/GL/

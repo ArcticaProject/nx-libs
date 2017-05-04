@@ -23,6 +23,10 @@
 /*                                                                        */
 /**************************************************************************/
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <nx-X11/Xlib.h>
 #include <nx-X11/Xutil.h>
 #include <nx-X11/keysym.h>
