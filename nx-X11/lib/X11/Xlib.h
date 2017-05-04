@@ -1680,7 +1680,10 @@ extern XHostAddress *XListHosts(
     int*		/* nhosts_return */,
     Bool*		/* state_return */
 );
-_X_DEPRECATED
+
+/* this is marked as_X_DEPRECATED in Xorg's upstream libX11 but NX
+   needs it for performance reasons. Should be moved into the
+   server. */
 extern KeySym XKeycodeToKeysym(
     Display*		/* display */,
 #if NeedWidePrototypes
