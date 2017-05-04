@@ -2949,7 +2949,7 @@ Comment:
  Missing license headers. License and copyright information obtained from
  later versions of this file as found in automake-1.14.
  .
- FIXME: This comment will be obsolete for 3.5.99.6.
+ FIXME: This comment will be obsolete for 3.5.99.7.
 
 Files: nx-X11/extras/Mesa.patches/*
 Copyright:  2017, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
