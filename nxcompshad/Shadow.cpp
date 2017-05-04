@@ -144,7 +144,7 @@ static int NXCreatePoller(Display *display, Display **shadowDisplay)
 
   if (input == NULL)
   {
-    logError("NXCreatePoller", ESET(EBADFD));
+    logError("NXCreatePoller", ESET(EBADF));
 
     return -1;
   }
@@ -179,7 +179,7 @@ static int NXCreateUpdateManager()
 
   if (input == NULL || poller == NULL)
   {
-    logError("NXCreateUpdateManager", ESET(EBADFD));
+    logError("NXCreateUpdateManager", ESET(EBADF));
 
     return -1;
   }
@@ -354,7 +354,7 @@ void NXShadowHandleInput()
 
   if (NXShadowNotInitialized())
   {
-    logError("NXShadowHandleInput - NXShadow not properly initialized.", ESET(EBADFD));
+    logError("NXShadowHandleInput - NXShadow not properly initialized.", ESET(EBADF));
 
     return;
   }
@@ -374,7 +374,7 @@ int NXShadowHasChanged(int (*callback)(void *), void *arg, int *suspended)
 
   if (NXShadowNotInitialized())
   {
-    logError("NXShadowHasChanged - NXShadow not properly initialized.", ESET(EBADFD));
+    logError("NXShadowHasChanged - NXShadow not properly initialized.", ESET(EBADF));
 
     return -1;
   }
@@ -415,7 +415,7 @@ void NXShadowExportChanges(long *numRects, char **pBox)
 
   if (NXShadowNotInitialized())
   {
-    logError("NXShadowExportChanges - NXShadow not properly initialized.", ESET(EBADFD));
+    logError("NXShadowExportChanges - NXShadow not properly initialized.", ESET(EBADF));
   }
 
   updateManager -> update();
