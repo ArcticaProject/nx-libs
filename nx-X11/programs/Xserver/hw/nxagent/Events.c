@@ -934,7 +934,7 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
       {
         enum HandleEventResult result;
 
-        XlibKeySym *keysym;
+        KeySym keysym;
 
         #ifdef TEST
         fprintf(stderr, "nxagentDispatchEvents: Going to handle new KeyPress event.\n");
@@ -1101,17 +1101,12 @@ void nxagentDispatchEvents(PredicateFuncPtr predicate)
          * sive delay.
          */
 
-        int keysyms_per_keycode_return;
-        keysym = XGetKeyboardMapping(nxagentDisplay,
-                                     X.xkey.keycode,
-                                     1,
-                                     &keysyms_per_keycode_return);
+        keysym = XKeycodeToKeysym(nxagentDisplay, X.xkey.keycode, 0);
 
-        if (nxagentMonitoredDuplicate(keysym[0]) == 1)
+        if (nxagentMonitoredDuplicate(keysym) == 1)
         {
           nxagentRemoveDuplicatedKeys(&X);
         }
-        free(keysym);
 
         if (nxagentOption(ViewOnly) == 0 && nxagentOption(Shadow) == 1 && result == doNothing)
         {
@@ -4657,16 +4652,8 @@ void nxagentDumpInputDevicesState(void)
       {
         if (val & (mask << k))
         {
-          int keysyms_per_keycode_return;
-          XlibKeySym *keysym = XGetKeyboardMapping(nxagentDisplay,
-                                                     i * 8 + k,
-                                                     1,
-                                                     &keysyms_per_keycode_return);
-
-
           fprintf(stderr, "\n\t[%d] [%s]", i * 8 + k,
-                      XKeysymToString(keysym[0]));
-          free(keysym);
+                      XKeysymToString(XKeycodeToKeysym(nxagentDisplay, i * 8 + k, 0)));
         }
       }
     }
