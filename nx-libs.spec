@@ -357,6 +357,10 @@ find -name LICENSE | xargs sed -i \
   -e 's/MA  02111-1307/MA  02110-1301/'
 # Fix source permissions
 find -type f -name '*.[hc]' | xargs chmod -x
+# Some systems do not know -Wpedantic
+%if ( 0%{?rhel} && 0%{?rhel} < 7 ) || ( 0%{?suse_version} && 0%{?suse_version} < 1310 )
+sed -i -e 's/Wpedantic/pedantic/g' nx-X11/config/cf/{{host,xorgsite}.def,xorg.cf}
+%endif
 
 # Bundled nx-X11/extras
 # Mesa - Used by the X server
