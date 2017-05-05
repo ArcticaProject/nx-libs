@@ -184,6 +184,12 @@
 #  undef __vax__
 #  define VaxArchitecture
 # endif
+# ifdef __hppa__
+#  ifndef HPArchitecture
+#   define HPArchitecture
+#  endif
+#  undef __hppa__
+# endif /* __hppa__ */
 #endif /* OpenBSD */
 
 /* Systems based on kernel of OpenBSD */
@@ -890,6 +896,12 @@ XCOMM Keep cpp from replacing path elements containing i486/i586/i686
 #  undef MIPSEL
 #  undef _MIPSEL
 # endif
+# ifdef __hppa__
+#  ifndef HPArchitecture
+#   define HPArchitecture
+#  endif
+#  undef __hppa__
+# endif /* __hppa__ */
 # ifdef __sh__
 #  ifndef SuperHArchitecture
 #   define SuperHArchitecture
