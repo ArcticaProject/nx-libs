@@ -723,13 +723,26 @@ XCOMM binutils:	(LinuxBinUtilsMajorVersion)
 # define ServerExtraDefines	-DGCCUSESGAS XFree86ServerDefines
 #endif /* Mc68020Architecture */
 
-#ifdef MipsArchitecture
+#if defined(MipsArchitecture) && !defined(MipselArchitecture)
 # ifndef OptimizedCDebugFlags
 #  define OptimizedCDebugFlags	DefaultGcc2MipsOpt
 # endif
 # define LinuxMachineDefines	-D__mips__
 # define ServerOSDefines	XFree86ServerOSDefines -DDDXTIME
 # define ServerExtraDefines	-DGCCUSESGAS XFree86ServerDefines
+#endif
+
+#ifdef MipselArchitecture
+# ifndef OptimizedCDebugFlags
+#  define OptimizedCDebugFlags	DefaultGcc2MipsOpt
+# endif
+# define LinuxMachineDefines	-D__MIPSEL__
+# define ServerOSDefines	XFree86ServerOSDefines -DDDXTIME
+# ifdef Mips64elArchitecture
+#  define ServerExtraDefines	-DGCCUSESGAS XFree86ServerDefines -D_XSERVER64
+# else
+#  define ServerExtraDefines	-DGCCUSESGAS XFree86ServerDefines
+# endif
 #endif
 
 #ifdef Ppc64Architecture
