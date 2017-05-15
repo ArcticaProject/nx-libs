@@ -1,2 +1,4 @@
 Makefile
 nxproxy
+install-sh
+mkinstalldirs

@@ -46,6 +46,8 @@ SHELL:=/bin/bash
 	    rm -f nx-X11/config/cf/date.def; \
 	    rm -f bin/nxagent; \
 	    rm -f bin/nxproxy; \
+	    rm -f nx*/install-sh; \
+	    rm -f nx*/mkinstalldirs; \
 	fi
 
 all:
@@ -55,11 +57,22 @@ test:
 	echo "No testing for NX (redistributed)"
 
 build-lite:
+	ln -s /usr/share/gnulib/build-aux/install-sh    nxcomp/
+	ln -s /usr/share/gnulib/build-aux/mkinstalldirs nxcomp/
+
 	cd nxcomp && autoconf && (${CONFIGURE}) && ${MAKE}
+
+	ln -s /usr/share/gnulib/build-aux/install-sh    nxproxy/
+	ln -s /usr/share/gnulib/build-aux/mkinstalldirs nxproxy/
+
 	cd nxproxy && autoconf && (${CONFIGURE}) && ${MAKE}
 
 build-full:
 # in the full case, we rely on "magic" in the nx-X11 imake-based makefiles...
+
+	ln -s /usr/share/gnulib/build-aux/install-sh    nxcomp/
+	ln -s /usr/share/gnulib/build-aux/mkinstalldirs nxcomp/
+
 	cd nxcomp && autoconf && (${CONFIGURE}) && ${MAKE}
 
 	# prepare nx-X11/config/cf/nxversion.def
@@ -78,15 +91,22 @@ build-full:
 	# nxcomp{ext,shad}.
 	cd nx-X11/lib && make
 
+	ln -s /usr/share/gnulib/build-aux/install-sh    nxcompshad/
+	ln -s /usr/share/gnulib/build-aux/mkinstalldirs nxcompshad/
+
 	cd nxcompshad && autoconf && (${CONFIGURE}) && ${MAKE}
 
 	./mesa-quilt push -a
 
 	cd nx-X11 && ${MAKE} World USRLIBDIR=$(USRLIBDIR) SHLIBDIR=$(SHLIBDIR) FONT_DEFINES=$(FONT_DEFINES) XFONTLIB=$(XFONTLIB)
 
+	ln -s /usr/share/gnulib/build-aux/install-sh    nxproxy/
+	ln -s /usr/share/gnulib/build-aux/mkinstalldirs nxproxy/
+
 	cd nxproxy && autoconf && (${CONFIGURE}) && ${MAKE}
 
 build:
+
 	if ! test -d nx-X11; then \
 	    ${MAKE} build-lite; \
 	else \

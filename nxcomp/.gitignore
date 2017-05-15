@@ -1,2 +1,4 @@
 nxcomp.pc
 Makefile
+install-sh
+mkinstalldirs

@@ -1,2 +1,4 @@
 nxcompshad.pc
 Makefile
+install-sh
+mkinstalldirs
