@@ -295,6 +295,36 @@ void ProcessInputEvents(void)
   mieqProcessInputEvents();
 }
 
+#ifdef DEBUG
+char * nxagentGetNotifyMode(int mode)
+{
+  switch (mode)
+  {
+    case NotifyNormal:
+    {
+      return "NotifyNormal";
+      break;
+    }
+    case NotifyGrab:
+    {
+      return "NotifyGrab";
+      break;
+    }
+    case NotifyUngrab:
+    {
+      return "NotifyUngrab";
+      break;
+    }
+    case NotifyWhileGrabbed:
+    {
+      return "NotifyWhileGrabbed";
+      break;
+    }
+  }
+  return "Unknown";
+}
+#endif
+
 #ifdef DEBUG_TREE
 
 /*
@@ -1643,8 +1673,18 @@ FIXME: Don't enqueue the KeyRelease event if the key was
       {
         WindowPtr pWin;
 
-        #ifdef TEST
-        fprintf(stderr, "nxagentDispatchEvents: Going to handle new FocusIn event.\n");
+	#ifdef DEBUG
+	fprintf(stderr, "%s: Going to handle new FocusIn event [0x%x] mode: [%s]\n", __func__, X.xfocus.window, nxagentGetNotifyMode(X.xfocus.mode));
+	{
+	  XlibWindow w;
+          int revert_to;
+          XGetInputFocus(nxagentDisplay, &w, &revert_to);
+	  fprintf(stderr, "%s: (FocusIn): Event win [0x%x] Focus owner [0x%x] nxagentDefaultWindows[0] [0x%x]\n", __func__, X.xfocus.window, w, nxagentDefaultWindows[0]);
+	}
+        #else
+	  #ifdef TEST
+	fprintf(stderr, "%s: Going to handle new FocusIn event\n", __func__);
+	  #endif
         #endif
 
         /*
@@ -1680,13 +1720,25 @@ FIXME: Don't enqueue the KeyRelease event if the key was
 	    #endif
             nxagentGrabPointerAndKeyboard(NULL);
           }
+	  /*	  else
+          {
+            #ifdef DEBUG
+            fprintf(stderr, "%s: (FocusIn): ungrabbing\n", __func__);
+	    #endif
+            nxagentUngrabPointerAndKeyboard(NULL);
+          }
+	  */
         }
         break;
       }
       case FocusOut:
       {
-        #ifdef TEST
-        fprintf(stderr, "nxagentDispatchEvents: Going to handle new FocusOut event.\n");
+	#ifdef DEBUG
+	fprintf(stderr, "%s: Going to handle new FocusOut event [0x%x] mode: [%s]\n", __func__, X.xfocus.window, nxagentGetNotifyMode(X.xfocus.mode));
+	#else
+	  #ifdef TEST
+	  fprintf(stderr, "%s: Going to handle new FocusOut event.\n", __func__);
+          #endif
         #endif
 
         if (X.xfocus.detail != NotifyInferior)
