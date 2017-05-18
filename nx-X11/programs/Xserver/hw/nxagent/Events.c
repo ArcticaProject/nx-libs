@@ -1847,11 +1847,14 @@ FIXME: Don't enqueue the KeyRelease event if the key was
           nxagentLastEnteredWindow = NULL;
         }
 
-        if (X.xcrossing.window == nxagentDefaultWindows[0] &&
-                X.xcrossing.detail != NotifyInferior &&
-                    X.xcrossing.mode == NotifyNormal)
+        if (!nxagentOption(AutoGrab))
         {
-          nxagentUngrabPointerAndKeyboard(&X);
+          if (X.xcrossing.window == nxagentDefaultWindows[0] &&
+              X.xcrossing.detail != NotifyInferior &&
+              X.xcrossing.mode == NotifyNormal)
+          {
+             nxagentUngrabPointerAndKeyboard(&X);
+          }
         }
 
         if (X.xcrossing.detail != NotifyInferior)
