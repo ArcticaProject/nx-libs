@@ -789,7 +789,7 @@ static void nxagentEnableAutoGrab(void)
 #endif
 
   nxagentGrabPointerAndKeyboard(NULL);
-  setWinNameSuffix(WINDOWSUFFIX_AUTOGRAB, "input grabbed");
+  setWinNameSuffix(WINDOWSUFFIX_AUTOGRAB, "autograb on");
   updateWinName();
   nxagentChangeOption(AutoGrab, True);
 }
@@ -826,7 +826,7 @@ static void nxagentEnableInputlock(void)
 #ifdef DEBUG
   fprintf(stderr, "activating inputlock\n");
 #endif
-  setWinNameSuffix(WINDOWSUFFIX_INPUTLOCK, "pointer locked");
+  setWinNameSuffix(WINDOWSUFFIX_INPUTLOCK, "inputlock on");
   updateWinName();
   XGrabPointer(nxagentDisplay,nxagentDefaultWindows[0], True,
       ButtonPressMask | ButtonReleaseMask | PointerMotionMask | FocusChangeMask | EnterWindowMask | LeaveWindowMask,
