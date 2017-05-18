@@ -791,6 +791,7 @@ static void nxagentEnableAutoGrab(void)
   nxagentGrabPointerAndKeyboard(NULL);
   setWinNameSuffix(WINDOWSUFFIX_AUTOGRAB, "input grabbed");
   updateWinName();
+  nxagentChangeOption(AutoGrab, True);
 }
 
 static void nxagentDisableAutoGrab(void)
@@ -802,6 +803,7 @@ static void nxagentDisableAutoGrab(void)
   nxagentUngrabPointerAndKeyboard(NULL);
   setWinNameSuffix(WINDOWSUFFIX_AUTOGRAB, NULL);
   updateWinName();
+  nxagentChangeOption(AutoGrab, False);
 }
 
 static void nxagentToggleAutoGrab(void)
@@ -847,6 +849,7 @@ static void nxagentDisableInputlock(void)
   */
   setWinNameSuffix(WINDOWSUFFIX_INPUTLOCK, NULL);
   updateWinName();
+  nxagentChangeOption(InputLock, False);
 }
 
 /* TODO: drop inputlock when switching to Fullscreen */
