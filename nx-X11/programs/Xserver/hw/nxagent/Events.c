@@ -1597,8 +1597,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was
           }
         }
 
-        /* FIXME: only when in windowed mode! */
-        if (nxagentOption(AutoGrab))
+        if (nxagentOption(AutoGrab) && !(nxagentOption(AllScreens) || nxagentOption(Fullscreen) || nxagentOption(Rootless)))
         {
           if (X.xfocus.window == nxagentDefaultWindows[0] && X.xfocus.mode == NotifyNormal)
           {
