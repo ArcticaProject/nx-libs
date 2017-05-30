@@ -53,6 +53,11 @@
 #undef  TEST
 #undef  DEBUG
 
+#ifdef DEBUG
+/* for validateString() */
+#include "Utils.h"
+#endif
+
 /*
  * These values should be moved in
  * the option repository.
