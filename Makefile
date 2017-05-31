@@ -17,7 +17,7 @@ SHLIBDIR        ?= $(LIBDIR)
 NXLIBDIR        ?= $(SHLIBDIR)/nx
 USRLIBDIR       ?= $(NXLIBDIR)/X11
 INCLUDEDIR      ?= $(PREFIX)/include
-CONFIGURE       ?= ./configure
+CONFIGURE       ?= ./configure --prefix=$(DESTDIR)$(PREFIX)
 
 # use Xfont2 if available in the build env
 FONT_DEFINES	?= $(shell pkg-config --modversion xfont2 1>/dev/null 2>/dev/null && echo "-DHAS_XFONT2")
