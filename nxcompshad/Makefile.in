@@ -91,7 +91,7 @@ includedir   = @includedir@
 pkgconfigdir = @pkgconfigdir@
 
 INSTALL         = @INSTALL@
-INSTALL_DIR     = $(INSTALL) -d -o root -g root -m 0755 
+INSTALL_DIR     = $(INSTALL) -d -m 0755
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA    = @INSTALL_DATA@
 INSTALL_LINK    = cp -av
