@@ -78,7 +78,7 @@ BuildRequires:  pixman-devel >= 0.13.2
 BuildRequires:  libX11-devel
 BuildRequires:  libXext-devel
 BuildRequires:  libXpm-devel
-%if 0%{?fedora} >= 24 || 0%{?rhel} >= 8
+%if 0%{?fedora} >= 25 || 0%{?rhel} >= 8
 BuildRequires:  libXfont2-devel
 %else
 BuildRequires:  libXfont-devel >= 1.4.2
