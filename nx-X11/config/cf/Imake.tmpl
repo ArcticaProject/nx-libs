@@ -229,10 +229,6 @@ XCOMM the platform-specific parameters - edit site.def to change
 #define PerlEnvSetup		env LC_ALL=C
 #endif
 
-#ifndef BuildRman
-#define BuildRman YES
-#endif
-
 #ifndef HasGperf
 #define HasGperf		NO
 #endif
@@ -242,19 +238,9 @@ XCOMM the platform-specific parameters - edit site.def to change
 #endif
 
 #ifndef RmanCmd
-#if BuildRman
-#ifdef UseInstalled		/* assume BINDIR in path */
-#define RmanCmd rman
-#else
-#define RmanCmd $(TOP)/config/util/rman
-#endif
-#endif
 #endif
 
 #ifndef RmanOptions
-#if BuildRman
-#define RmanOptions -f HTML
-#endif
 #endif
 
 #ifndef BuildHtmlManPages
