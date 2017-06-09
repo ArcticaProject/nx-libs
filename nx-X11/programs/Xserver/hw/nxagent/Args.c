@@ -400,10 +400,8 @@ int ddxProcessArgument(int argc, char *argv[], int i)
   }
 
   if (!strcmp(argv[i], "-sync")) {
-    if (++i < argc) {
-      nxagentSynchronize = True;
-      return 1;
-    }
+    nxagentSynchronize = True;
+    return 1;
   }
 
   if (!strcmp(argv[i], "-full")) {
