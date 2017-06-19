@@ -1,0 +1,4 @@
+4001_Fix-non-working-GLX-in-64bit-Xorg-7.0.patch
+4002_no-special-glx-memfunctions.patch
+4003_CreatePixmap-AllocationHints.patch
+4004_define-USE_IEEE-macro-for-more-platforms.patch
