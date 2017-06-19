@@ -111,6 +111,16 @@ if [ "x$MODE" = "xfull" ]; then
     rm -f  "nx-X11/programs/Xserver/include/.gitignore"
     rm -f  "nx-X11/programs/Xserver/GL/.gitignore"
     rm -f  "nx-X11/include/.gitignore"
+
+    # bring Mesa in shape, drop symlinks and move versioned Mesa-bundle to
+    # nx-X11/extras/Mesa. Deal with the Mesa.patches symlink/folder accordingly
+    MESA_VERSION="$(readlink nx-X11/extras/Mesa | cut -d"_" -f2)"
+    rm "nx-X11/extras/Mesa"
+    rm "nx-X11/extras/Mesa.patches"
+    mv "nx-X11/extras/Mesa_${MESA_VERSION}" "nx-X11/extras/Mesa"
+    mv "nx-X11/extras/Mesa.patches_${MESA_VERSION}" "nx-X11/extras/Mesa.patches"
+
+    # shrink Mesa to what we really need (and nothing else)
     rm -Rf "nx-X11/extras/Mesa/"{bin/,configs/,docs/,doxygen/,progs/,vms/,windows/,Makefile,Makefile.*,descrip.mms,mms-config.}
     rm -Rf "nx-X11/extras/Mesa/include/"{GLES,GLView.h}
     rm -f  "nx-X11/extras/Mesa/include/GL/"{amesa.h,directfbgl.h,dmesa.h,foomesa.h,fxmesa.h,ggimesa.h,glfbdev.h,gl_mangle.h,glu.h,glu_mangle.h,glutf90.h,glut.h,glut_h.dja,glx_mangle.h,Makefile.am,mesa_wgl.h,mglmesa.h,miniglx.h,svgamesa.h,uglglutshapes.h,uglmesa.h,vms_x_fix.h,wmesa.h,xmesa_x.h}
