@@ -114,11 +114,11 @@ if [ "x$MODE" = "xfull" ]; then
 
     # bring Mesa in shape, drop symlinks and move versioned Mesa-bundle to
     # nx-X11/extras/Mesa. Deal with the Mesa.patches symlink/folder accordingly
-    MESA_VERSION="$(readlink nx-X11/extras/Mesa | cut -d"_" -f2)"
-    rm "nx-X11/extras/Mesa"
-    rm "nx-X11/extras/Mesa.patches"
-    mv "nx-X11/extras/Mesa_${MESA_VERSION}" "nx-X11/extras/Mesa"
-    mv "nx-X11/extras/Mesa.patches_${MESA_VERSION}" "nx-X11/extras/Mesa.patches"
+    cp -Lr "nx-X11/extras/Mesa" "nx-X11/extras/tmpMesa"
+    cp -Lr "nx-X11/extras/Mesa.patches" "nx-X11/extras/tmpMesa.patches"
+    ls -d nx-X11/extras/* | grep -v "nx-X11/extras/tmpMesa*" | xargs rm -r
+    mv "nx-X11/extras/tmpMesa" "nx-X11/extras/Mesa"
+    mv "nx-X11/extras/tmpMesa.patches" "nx-X11/extras/Mesa.patches"
 
     # shrink Mesa to what we really need (and nothing else)
     rm -Rf "nx-X11/extras/Mesa/"{bin/,configs/,docs/,doxygen/,progs/,vms/,windows/,Makefile,Makefile.*,descrip.mms,mms-config.}
