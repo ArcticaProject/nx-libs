@@ -20,6 +20,19 @@ BuildRequires:  libjpeg-devel
 BuildRequires:  pkgconfig
 BuildRequires:  imake
 
+# ideally we build with quilt (for mesa-quilt patch appliance script),
+# it seems Fedora has it...
+%if 0%{?fedora}
+BuildRequires:  quilt
+%endif
+
+# other distros sometimes do have quilt, sometimes don't, let's
+# not differentiate here when it is available and when not. Rather
+# rely on stupid patch application fallback mode in mesa-quilt...
+%if 0%{?rhel} || 0%{?suse_version}
+BuildRequires:  patch
+%endif
+
 # suse_version 1315 is SLE-12
 %if 0%{?suse_version} != 1315 && 0%{?suse_version} >= 1230
 BuildRequires:  gpg-offline
