@@ -18,17 +18,84 @@
 # 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
 d=. ; while [ ! -d "$d/nx-X11/extras" ] && [ "$(readlink -e "$d")" != "/" ]; do d="$d/.."; done
-if [ -d "$d/nx-X11/extras" ] && [ -z "$QUILT_PATCHES" ]; then
-    # if in nx-libs tree with unset $QUILT_PATCHES
-    export QUILT_PATCHES="../Mesa.patches"
-    export QUILT_PATCH_OPTS="--reject-format=unified"
-    export QUILT_DIFF_ARGS="-p ab --no-timestamps --no-index --color=auto"
-    export QUILT_REFRESH_ARGS="-p ab --no-timestamps --no-index"
-    export QUILT_COLORS="diff_hdr=1;32:diff_add=1;34:diff_rem=1;31:diff_hunk=1;33:diff_ctx=35:diff_cctx=33"
-    if ! [ -d "$d/nx-X11/extras/Mesa.patches" ]; then mkdir "$d/nx-X11/extras/Mesa.patches"; fi
-    cd "$d/nx-X11/extras/Mesa/"
+
+# only continue, if in nx-libs tree
+if [ -d "$d/nx-X11/extras" ]; then
+
+	if which quilt 1>/dev/null; then
+
+		echo "$(basename $0): quilt utility found, so we use it..."
+		echo
+
+		export QUILT_PATCHES="../Mesa.patches"
+		export QUILT_PATCH_OPTS="--reject-format=unified"
+		export QUILT_DIFF_ARGS="-p ab --no-timestamps --no-index --color=auto"
+		export QUILT_REFRESH_ARGS="-p ab --no-timestamps --no-index"
+		export QUILT_COLORS="diff_hdr=1;32:diff_add=1;34:diff_rem=1;31:diff_hunk=1;33:diff_ctx=35:diff_cctx=33"
+		mkdir -p "$d/nx-X11/extras/Mesa.patches"
+
+		cd "$d/nx-X11/extras/Mesa/"
+
+		quilt "$@"
+
+		cd - 1> /dev/null
+
+
+	else
+
+		echo "$(basename $0): no quilt utility found, falling back to stupidly (un)applying our patches..."
+		echo
+
+		CMDLINE_ARGS="$@"
+
+		# we are really stupid here, we only understand 'push -a' and 'pop -a'
+		# this should be sufficient for the build process...
+
+		cd "$d/nx-X11/extras/Mesa/"
+
+		# make sure all need dirs and files exist
+		mkdir -p ./Mesa.patches/
+		touch "../Mesa.patches/series"
+
+		# this file will be needed temporarily
+		touch "../Mesa.patches/.applied-patches"
+
+		if [ "$CMDLINE_ARGS" = "push -a" ]; then
+
+			grep -E -v "^#.*" < "../Mesa.patches/series" | while read patchfile; do
+				if [ -n "$patchfile" ] && [ -r "../Mesa.patches/$patchfile" ] && ! grep -q "$patchfile" < "../Mesa.patches/.applied-patches"; then
+					echo "Applying patch ../Mesa.patches/$patchfile"
+					patch -p1 < "../Mesa.patches/$patchfile"
+					echo "$patchfile" >> "../Mesa.patches/.applied-patches"
+					echo
+				fi
+			done
+
+		elif [ "$CMDLINE_ARGS" = "pop -a" ]; then
+
+			tac "../Mesa.patches/.applied-patches" | while read patchfile; do
+				if [ -n "$patchfile" ] && [ -r "../Mesa.patches/$patchfile" ]; then
+					echo "Removing patch ../Mesa.patches/$patchfile"
+					patch -R -p1 < "../Mesa.patches/$patchfile"
+					sed -e "/$patchfile/d" "../Mesa.patches/.applied-patches" > "../Mesa.patches/.applied-patches.tmp"
+					mv "../Mesa.patches/.applied-patches.tmp" "../Mesa.patches/.applied-patches"
+					echo
+				fi
+			done
+
+		else
+
+			echo "$(basename $0): Doing nothing! Cmdline options not understood: $CMDLINE_ARGS"
+
+		fi
+
+		# remove the .applied-patches file, if empty again
+		if [ ! -s "../Mesa.patches/.applied-patches" ]; then
+			rm -f "../Mesa.patches/.applied-patches"
+		fi
+
+		cd - 1> /dev/null
+
+	fi
+
 fi
-
-quilt "$@"
-
-cd - 1> /dev/null
