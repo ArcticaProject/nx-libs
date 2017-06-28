@@ -19,6 +19,7 @@ BuildRequires:  gcc-c++
 BuildRequires:  libjpeg-devel
 BuildRequires:  pkgconfig
 BuildRequires:  imake
+BuildRequires:  quilt
 
 # suse_version 1315 is SLE-12
 %if 0%{?suse_version} != 1315 && 0%{?suse_version} >= 1230
