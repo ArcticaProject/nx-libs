@@ -507,6 +507,8 @@ XCOMM the platform-specific parameters - edit site.def to change
 #define ByteOrder		X_BIG_ENDIAN
 #elif defined(PpcArchitecture) || defined(Ppc64Architecture)
 #define ByteOrder		X_BIG_ENDIAN
+#elif defined(HPArchitecture)
+#define ByteOrder		X_BIG_ENDIAN
 #elif defined(SuperHArchitecture)
 #define ByteOrder		X_LITTLE_ENDIAN
 #elif defined(SuperHebArchitecture)

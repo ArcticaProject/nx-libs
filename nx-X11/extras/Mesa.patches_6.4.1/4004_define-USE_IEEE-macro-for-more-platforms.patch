@@ -5,12 +5,13 @@ Index: Mesa/src/mesa/main/imports.h
 ===================================================================
 --- Mesa.orig/src/mesa/main/imports.h
 +++ Mesa/src/mesa/main/imports.h
-@@ -204,6 +204,8 @@ typedef union { GLfloat f; GLint i; } fi
+@@ -204,6 +204,9 @@ typedef union { GLfloat f; GLint i; } fi
      defined(ia64) || defined(__ia64__) || \
      defined(__mips) || defined(_MIPS_ARCH) || \
      defined(__arm__) || \
 +    defined(__aarch64__) || \
 +    defined(__mc68000__) || \
++    defined(__hppa__) || \
      defined(__sh__) || \
      (defined(__alpha__) && (defined(__IEEE_FLOAT) || !defined(VMS)))
  #define USE_IEEE

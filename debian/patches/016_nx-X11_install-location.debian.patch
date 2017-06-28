@@ -14,7 +14,7 @@ Last-Update: 2017-02-08
 
 --- a/nx-X11/config/cf/Imake.tmpl
 +++ b/nx-X11/config/cf/Imake.tmpl
-@@ -734,7 +734,7 @@
+@@ -736,7 +736,7 @@
  #define AlternateUsrLibDir YES
  #endif
  #else
@@ -23,7 +23,7 @@ Last-Update: 2017-02-08
  #ifndef AlternateUsrLibDir
  #define AlternateUsrLibDir NO
  #endif
-@@ -752,7 +752,7 @@
+@@ -754,7 +754,7 @@
  #define AlternateUsrDataDir YES
  #endif
  #else
