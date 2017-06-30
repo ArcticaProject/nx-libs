@@ -466,6 +466,18 @@ FIXME: Do all the windows for which nxagentWindowTopLevel(pWin)
     nxagentRedirectWindow(pWin);
   }
 
+  if ((nxagentRealWindowProp) && (!nxagentWindowTopLevel(pWin)))
+  {
+    Atom prop = MakeAtom("NX_REAL_WINDOW", strlen("NX_REAL_WINDOW"), True);
+
+    if (ChangeWindowProperty(pWin, prop, XA_WINDOW, 32, PropModeReplace, 1, nxagentWindowPriv(pWin), 1) != Success)
+        fprintf(stderr, "nxagentCreateWindow: Adding NX_REAL_WINDOW failed.\n");
+#ifdef DEBUG
+    else
+        fprintf(stderr, "nxagentCreateWindow: Added NX_REAL_WINDOW for Window ID [%x].\n", nxagentWindowPriv(pWin)->window);
+#endif
+  }
+
   nxagentWindowPriv(pWin)->x = pWin->origin.x - wBorderWidth(pWin);
   nxagentWindowPriv(pWin)->y = pWin->origin.y - wBorderWidth(pWin);
   nxagentWindowPriv(pWin)->width = pWin->drawable.width;
@@ -2674,6 +2686,18 @@ void nxagentDisconnectWindow(void * p0, XID x1, void * p2)
   }
   #endif
 
+  if ((nxagentRealWindowProp) && (!nxagentWindowTopLevel(pWin)))
+  {
+    Atom prop = MakeAtom("NX_REAL_WINDOW", strlen("NX_REAL_WINDOW"), True);
+
+    if (DeleteProperty(pWin, prop) != Success)
+        fprintf(stderr, "nxagentDisconnectWindow: Deleting NX_REAL_WINDOW failed.\n");
+#ifdef DEBUG
+    else
+        fprintf(stderr, "nxagentDisconnectWindow: Deleting NX_REAL_WINDOW from Window ID [%x].\n", nxagentWindowPriv(pWin)->window);
+#endif
+  }
+
   nxagentWindow(pWin) = None;
 
   if (nxagentDrawableStatus((DrawablePtr) pWin) == NotSynchronized)
@@ -3109,6 +3133,18 @@ FIXME: Do we need to set save unders attribute here?
 
       #endif
     }
+  }
+
+  if ((nxagentRealWindowProp) && (!nxagentWindowTopLevel(pWin)))
+  {
+    Atom prop = MakeAtom("NX_REAL_WINDOW", strlen("NX_REAL_WINDOW"), True);
+
+    if (ChangeWindowProperty(pWin, prop, XA_WINDOW, 32, PropModeReplace, 1, nxagentWindowPriv(pWin), 1) != Success)
+        fprintf(stderr, "nxagentReconnectWindow: Updating NX_REAL_WINDOW failed.\n");
+#ifdef DEBUG
+    else
+        fprintf(stderr, "nxagentReconnectWindow: Updated NX_REAL_WINDOW for Window ID [%x].\n", nxagentWindowPriv(pWin)->window);
+#endif
   }
 
   if (nxagentDrawableStatus((DrawablePtr) pWin) == NotSynchronized)

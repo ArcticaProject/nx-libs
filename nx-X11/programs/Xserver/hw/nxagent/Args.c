@@ -128,6 +128,7 @@ extern const char *__progname;
 
 char nxagentDisplayName[1024];
 Bool nxagentSynchronize = False;
+Bool nxagentRealWindowProp = False;
 
 char nxagentShadowDisplayName[1024] = {0};
 
@@ -401,6 +402,11 @@ int ddxProcessArgument(int argc, char *argv[], int i)
 
   if (!strcmp(argv[i], "-sync")) {
     nxagentSynchronize = True;
+    return 1;
+  }
+
+  if (!strcmp(argv[i], "-nxrealwindowprop")) {
+    nxagentRealWindowProp = True;
     return 1;
   }
 
