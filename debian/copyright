@@ -2875,6 +2875,11 @@ Files: mesa-quilt
 Copyright: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 License: GPL-3+
 
+Files: m4/nx-macros.m4
+Copyright: 2005, 2006, Oracle and/or its affiliates
+  2017, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+License: Expat
+
 Files: ChangeLog
  Makefile
  VERSION
