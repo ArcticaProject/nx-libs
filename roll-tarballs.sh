@@ -123,13 +123,36 @@ if [ "x$MODE" = "xfull" ]; then
     # shrink Mesa to what we really need (and nothing else)
     rm -Rf "nx-X11/extras/Mesa/"{bin/,configs/,docs/,doxygen/,progs/,vms/,windows/,Makefile,Makefile.*,descrip.mms,mms-config.}
     rm -Rf "nx-X11/extras/Mesa/include/"{GLES,GLView.h}
-    rm -f  "nx-X11/extras/Mesa/include/GL/"{amesa.h,directfbgl.h,dmesa.h,foomesa.h,fxmesa.h,ggimesa.h,glfbdev.h,gl_mangle.h,glu.h,glu_mangle.h,glutf90.h,glut.h,glut_h.dja,glx_mangle.h,Makefile.am,mesa_wgl.h,mglmesa.h,miniglx.h,svgamesa.h,uglglutshapes.h,uglmesa.h,vms_x_fix.h,wmesa.h,xmesa_x.h}
+    rm -f  "nx-X11/extras/Mesa/include/GL/"{amesa.h,directfbgl.h,dmesa.h,foomesa.h,fxmesa.h,ggimesa.h,glfbdev.h,gl_mangle.h,glu.h,glu_mangle.h,glutf90.h,glut.h,glut_h.dja,glx.h,glx_mangle.h,Makefile.am,mesa_wgl.h,mglmesa.h,miniglx.h,svgamesa.h,uglglutshapes.h,uglmesa.h,vms_x_fix.h,wmesa.h,xmesa_x.h}
     rm -f  "nx-X11/extras/Mesa/include/GL/internal/"{dri_interface.h,sarea.h}
     rm -Rf "nx-X11/extras/Mesa/src/"{egl/,glu/,glut/,glw/,glx/mini/,Makefile,glx/Makefile,descrip.mms}
+    rm -f  "nx-X11/extras/Mesa/src/glx/x11/"{clientattrib.c,dri_glx.c,dri_glx.h,eval.c,glxclient.h,glxcmds.c,glxext.c,glxextensions.c,glxextensions.h,glx_pbuffer.c,glx_query.c,glx_texture_compression.c,indirect.c,indirect.h,indirect_init.c,indirect_init.h,indirect_transpose_matrix.c,indirect_va_private.h,indirect_vertex_array.c,indirect_vertex_array.h,indirect_vertex_program.c,indirect_window_pos.c,packrender.h,packsingle.h,pixel.c,pixelstore.c,render2.c,renderpix.c,single2.c,singlepix.c,vertarr.c,XF86dri.c,xf86dri.h,xf86dristr.h,xfont.c}
     rm -Rf "nx-X11/extras/Mesa/src/mesa/"{ppc,sparc,tnl_dd,x86,x86-64,sources}
     rm -Rf "nx-X11/extras/Mesa/src/mesa/drivers/"{allegro,beos,d3d,directfb,dos,fbdev,ggi,glide,osmesa,svga,windows}
+    rm -f  "nx-X11/extras/Mesa/src/mesa/drivers/x11/"{fakeglx.c,glxapi.c,glxapi.h,realglx.*,xfonts.*}
     rm -Rf "nx-X11/extras/Mesa/src/mesa/drivers/dri/"{ffb,i810,i915,mga,r200,radeon,savage,tdfx,unichrome,fb,gamma,i830,mach64,r128,r300,s3v,sis,trident}
+    rm -Rf "nx-X11/extras/Mesa/src/mesa/drivers/dri/x11/"x11_dri.{c,h}
     rm -Rf "nx-X11/extras/Mesa/src/mesa/drivers/dri/common/"{depthtmp.h,drirenderbuffer.h,dri_util.h,memops.h,mmx.h,spantmp_common.h,stenciltmp.h,texmem.h,utils.h,vblank.h,xmlconfig.h,xmlpool.h,drirenderbuffer.c,dri_util.c,extension_helper.h,mmio.h,spantmp2.h,spantmp.h,texmem.c,utils.c,vblank.c,xmlconfig.c,xmlpool/}
+    rm -Rf "nx-X11/extras/Mesa/src/mesa/glapi/"{*.dtd,*.py,*.sh,*.xml,.cvsignore}
+    rm -f  "nx-X11/extras/Mesa/src/mesa/shader/"*.syn
+    rm -f  "nx-X11/extras/Mesa/src/mesa/shader/asmopcodes.reg"
+    rm -f  "nx-X11/extras/Mesa/src/mesa/shader/grammar/grammar_crt."{c,h}
+    rm -f  "nx-X11/extras/Mesa/src/mesa/shader/grammar/"*.syn
+    rm -Rf "nx-X11/extras/Mesa/src/mesa/shader/slang/MachineIndependent/"
+    rm -Rf "nx-X11/extras/Mesa/src/mesa/shader/slang/OGLCompilersDLL/"
+    rm -Rf "nx-X11/extras/Mesa/src/mesa/shader/slang/OSDependent/"
+    rm -Rf "nx-X11/extras/Mesa/src/mesa/shader/slang/slang_mesa."{cpp,h}
+    rm -R  "nx-X11/extras/Mesa/src/mesa/shader/slang/library/"*.*c
+    rm -R  "nx-X11/extras/Mesa/src/mesa/shader/slang/library/"*.py
+    rm -R  "nx-X11/extras/Mesa/src/mesa/shader/slang/library/"*.syn
+    rm -Rf "nx-X11/extras/Mesa/src/mesa/shader/slang/Include/"
+    rm -Rf "nx-X11/extras/Mesa/src/mesa/shader/slang/Public/"
+    rm -f  "nx-X11/extras/Mesa/src/mesa/swrast/s_fragprog_to_c.c"
+    rm -f  "nx-X11/extras/Mesa/src/mesa/swrast/s_tcc.c"
+    rm -f  "nx-X11/extras/Mesa/src/mesa/swrast_setup/ss_vb.h"
+    rm -Rf "nx-X11/extras/Mesa/src/mesa/"*/NOTES
+    rm -f  "nx-X11/extras/Mesa/src/mesa/main/"*.py
+    rm -f  "nx-X11/extras/Mesa/src/mesa/main/"{mesa.def,Imakefile,vsnprintf.c}
 
     find nx-X11/extras/Mesa/ -name Makefile | while read file; do rm "$file"; done
     find nx-X11/extras/Mesa/ -name Makefile.* | while read file; do rm "$file"; done
