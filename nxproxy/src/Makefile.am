@@ -9,9 +9,9 @@ nxproxy_SOURCES =					\
     $(NULL)
 
 nxproxy_LDADD =						\
-    -L$(top_srcdir)/../nxcomp/ -lXcomp			\
+    -L$(top_srcdir)/../nxcomp/src/.libs -lXcomp		\
     $(NULL)
 
 AM_CPPFLAGS =						\
-    -I$(top_srcdir)/../nxcomp/				\
+    -I$(top_srcdir)/../nxcomp/include/			\
     $(NULL)

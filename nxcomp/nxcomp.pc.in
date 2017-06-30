@@ -5,7 +5,7 @@ includedir=@includedir@
 
 Name: nxcomp
 Description: NX Compression Library
-Version: @VERSION@
+Version: @COMP_VERSION@
 #libjepg does not provide a pkgconfig-file, zlib does not provide it for older versions
 #Requires: libjpeg zlib
 Requires: libpng

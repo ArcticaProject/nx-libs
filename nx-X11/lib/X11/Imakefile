@@ -36,9 +36,9 @@ BuildIncludes($(HEADERS),IncSubdir,..)
 #if NXLibraries
 
 #ifdef SunArchitecture
-NX_INCLUDES = -I../../../nxcomp -I/usr/sfw/include
+NX_INCLUDES = -I../../../nxcomp/include -I/usr/sfw/include
 #else
-NX_INCLUDES = -I../../../nxcomp
+NX_INCLUDES = -I../../../nxcomp/include
 #endif
 
 NX_DEFINES = -DNX_TRANS_SOCKET \
@@ -81,7 +81,7 @@ NX_XCOMPLIBNAME   = libXcomp.so
 NX_XCOMPEXTLIBNAME   = libXcompext.so
 #endif
 
-NX_XCOMPLIBDIR    = $(XTOP)/../nxcomp
+NX_XCOMPLIBDIR    = $(XTOP)/../nxcomp/src/.libs
 NX_XCOMPLIBLINK   = Xcomp
 NX_XCOMPLIBTARGET = $(NX_XCOMPLIBDIR)/$(NX_XCOMPLIBNAME)
 NX_REQUIREDLIBS   = -L$(NX_XCOMPLIBDIR) -l$(NX_XCOMPLIBLINK)

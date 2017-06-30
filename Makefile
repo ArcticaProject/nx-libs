@@ -54,14 +54,7 @@ all:
 test:
 	echo "No testing for NX (redistributed)"
 
-build-lite:
-	cd nxcomp && autoconf && (${CONFIGURE}) && ${MAKE}
-	cd nxproxy && autoreconf -vfsi && (${CONFIGURE}) && ${MAKE}
-
-build-full:
-# in the full case, we rely on "magic" in the nx-X11 imake-based makefiles...
-	cd nxcomp && autoconf && (${CONFIGURE}) && ${MAKE}
-
+build-env:
 	# prepare nx-X11/config/cf/nxversion.def
 	sed \
 	    -e 's/###NX_VERSION_MAJOR###/$(NX_VERSION_MAJOR)/' \
@@ -74,6 +67,13 @@ build-full:
 	# prepare Makefiles and the nx-X11 symlinking magic
 	cd nx-X11 && make BuildEnv FONT_DEFINES=$(FONT_DEFINES)
 
+build-lite:
+	cd nxcomp && autoreconf -vfsi && (${CONFIGURE}) && ${MAKE}
+	cd nxproxy && autoreconf -vfsi && (${CONFIGURE}) && ${MAKE}
+
+build-full: build-env
+# in the full case, we rely on "magic" in the nx-X11 imake-based makefiles...
+	cd nxcomp && autoreconf -vfsi && (${CONFIGURE}) && ${MAKE}
 	# build libNX_X11 and libNX_Xext prior to building
 	# nxcomp{ext,shad}.
 	cd nx-X11/lib && make
