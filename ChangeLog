@@ -1,11 +1,226 @@
-2017-05-05 00:16:41 +0200 Mike Gabriel (36b61e417)
+2017-06-30 21:21:49 +0200 Mike Gabriel (891c059f5)
 
-	* release 3.5.99.7 (HEAD -> 3.6.x, release-builds/3.6.x)
+	* release 3.5.99.8 (HEAD -> 3.6.x)
+
+2017-06-30 20:59:27 +0200 Mihai Moldovan (4c7641a1f)
+
+	* Merge branch 'sunweaver-pr/mese-quilt-without-quilt' into 3.6.x
+          (origin/HEAD, origin/3.6.x)
+
+2017-06-30 20:24:28 +0200 Mike Gabriel (79fcce3ee)
+
+	* README.Mesa.patches: Define some rules for patch naming and
+          numbering scheme.
+          (gh-sunweaver/pr/mese-quilt-without-quilt,
+          pr/mese-quilt-without-quilt)
+
+2017-06-27 19:21:23 +0200 Mike Gabriel (638b334c8)
+
+	* mesa-quilt: Provide a fallback patching method on systems where
+          pulling quilt into the build env is not trivial.
+
+2017-06-27 19:47:35 +0200 Mike Gabriel (bac473917)
+
+	* nx-libs.spec: Use mesa-quilt with Fedora builds, but rely on
+          fallback mode in mesa-quilt for RHEL and SUSE.
+
+2017-06-30 17:41:21 +0200 Mihai Moldovan (05450d0e8)
+
+	* Merge branch 'sunweaver-pr/browser-scrolling-improvements' into
+          3.6.x
+
+2017-06-29 10:08:56 +0200 Oleksandr Shneyder (7d51cb676)
+
+	* nxcomp: Set TokenSize to 1536 for link type ADSL and WAN. Improving
+          non-xrender based  browser scrolling behaviour when link
+          type is set to ADSL or WAN.
+          (gh-sunweaver/pr/browser-scrolling-improvements,
+          pr/browser-scrolling-improvements)
+
+2017-06-30 16:22:25 +0200 Mike Gabriel (4365fe38e)
+
+	* Merge branch 'sunweaver-pr/nx-real-wid' into 3.6.x
+
+2017-05-30 21:28:03 +0200 Mike Gabriel (588be6386)
+
+	* hw/nxagent/Window.c: Introduce NX_REAL_WINDOW window property.
+          (gh-sunweaver/pr/nx-real-wid, sunweaver-pr/nx-real-wid,
+          pr/nx-real-wid)
+
+2017-05-30 21:33:33 +0200 Mike Gabriel (c88e87bc8)
+
+	* hw/nxagnet/Atoms.c: In DEBUG mode, we need validateString() which
+          is not statically defined in Utils.h. Thus including it
+          for DEBUG builds.
+
+2017-06-28 22:23:42 +0200 Mihai Moldovan (3d255540f)
+
+	* Merge branch 'sunweaver-pr/fix-ftbfs-on-hppa' into 3.6.x
+
+2017-05-06 01:31:14 +0200 Mike Gabriel (65c420515)
+
+	* debian/patches: Update 016_nx-X11_install-location.debian.patch
+          (line numbers only). (gh-sunweaver/pr/fix-ftbfs-on-hppa,
+          pr/fix-ftbfs-on-hppa)
+
+2017-05-06 00:38:01 +0200 Mike Gabriel (347363f3f)
+
+	* Fix FTBFS on Linux based HP-PARisc 32-bit systems. Thanks to John
+          Paul Adrian Glaubitz from FU Berlin for providing access
+          to a corresponding porters' machine.
+
+2017-05-06 00:29:46 +0200 Adam Jackson (f77a4b405)
+
+	* dix: Remove arch awareness from servermd.h (X.org v2, nx-libs v4)
+
+2017-06-28 19:20:36 +0200 Mihai Moldovan (78d41614e)
+
+	* Merge branch 'sunweaver-pr/fix-ftbfs-on-mips64el' into 3.6.x
+
+2017-06-27 19:59:36 +0200 Mike Gabriel (c22c3f729)
+
+	* nx-X11/config/cf/linux.cf: Drop AsOutputArchSize macro from
+          Sparc(64)Architecture ifdef-block. It does not seem to be
+          used anywhere else.
+          (gh-sunweaver/pr/fix-ftbfs-on-mips64el,
+          pr/fix-ftbfs-on-mips64el)
+
+2017-05-07 19:47:27 +0200 Mike Gabriel (1839dd642)
+
+	* Fix FTBFS on mips64el architecture due to missing definition of the
+          _XSERVER64 macro.
+
+2017-06-27 19:16:33 +0200 Mike Gabriel (cde05c090)
+
+	* Mesa.patches_6.4.1: Add missing EOL at EOF to series file.
+
+2017-06-27 19:15:53 +0200 Mike Gabriel (e2d72b599)
+
+	* Mesa.patches: Have Mesa.patches_6.4.2 rather as a copy than as a
+          symlink to Mesa.patches_6.4.1. Rebase
+          4004_define-USE_IEEE-macro-for-more-platforms.patch
+          against Mesa 6.4.2 while being at it.
+
+2017-06-27 18:34:20 +0200 Mike Gabriel (3dcdea4dd)
+
+	* Merge branch 'frantracer-mesa-update-6.4.2' into 3.6.x
+
+2017-06-27 15:53:30 +0200 ftrapero (fa70485dc)
+
+	* roll-tarball.sh: Fix resolution of symbolic links and removal of
+          useless Mesa versions (frantracer-mesa-update-6.4.2)
+
+2017-06-27 12:12:09 +0200 ftrapero (2dd6ca0c8)
+
+	* nx-X11/extras: Add symlinks to Mesa_6.4.2 and patches
+
+2017-06-27 12:08:38 +0200 ftrapero (b30506dfa)
+
+	* Include mesa-6.4.2 project
+
+2017-06-27 12:08:38 +0200 ftrapero (663631725)
+
+	* Squashed 'nx-X11/extras/Mesa_6.4.2/' content from commit 475b1f7
+
+2017-06-19 11:01:22 +0200 Mike Gabriel (c032f0e34)
+
+	* roll-tarball.sh: Fix tarball creation, now that we pull in Mesa as
+          a git-subtree. This basically moves versioned folders
+          around and drops the Mesa/ and Mesa.patches/ symlinks.
+
+2017-06-19 10:16:14 +0200 Mike Gabriel (014365877)
+
+	* Merge branch 'frantracer-mesa-squash-subtree' into 3.6.x
+
+2017-02-20 15:36:36 +0100 Mike Gabriel (123fb7fe7)
+
+	* roll-tarball.sh: Drop various unused files from the bundled Mesa
+          version when creating release tarballs.
+          (frantracer-mesa-squash-subtree)
+
+2017-02-20 12:54:14 +0100 Mike Gabriel (c20b946b4)
+
+	* Mesa subtree: Adapt build process for building against Mesa that
+          gets pulled in via git subtree.
+
+2017-02-17 16:11:01 +0100 Mike Gabriel (209657f69)
+
+	* nx-X11/extras/Mesa: Drop bundled Mesa, place a symlink to imported
+          Git subtree of Mesa_6.4.1 instead.
+
+2017-06-15 14:15:08 +0200 ftrapero (459021c16)
+
+	* Include mesa-6.4.1 project
+
+2017-06-15 14:15:08 +0200 ftrapero (8667d4d97)
+
+	* Squashed 'nx-X11/extras/Mesa_6.4.1/' content from commit 53d1bc0
+
+2017-06-11 14:26:35 +0200 Mike Gabriel (4f216e7cf)
+
+	* Merge branch 'uli42-pr/fix_sync_segfault' into 3.6.x
+
+2017-06-09 22:27:20 +0200 Ulrich Sibiller (19116a61c)
+
+	* Args.c: fix sync option parsing (gh-uli42/pr/fix_sync_segfault,
+          uli42-pr/fix_sync_segfault)
+
+2017-06-06 20:33:55 +0200 Mike Gabriel (7fd59fbd1)
+
+	* Merge branch 'uli42-pr/remove_unused_defines' into 3.6.x
+
+2016-11-04 00:30:02 +0100 Ulrich Sibiller (52d65a4f6)
+
+	* remove BuildRman define (gh-uli42/pr/remove_unused_defines,
+          uli42-pr/remove_unused_defines)
+
+2017-06-06 14:29:20 +0200 Mike Gabriel (7b00b7bb8)
+
+	* Merge branch 'salva-install-as-non-root' into 3.6.x
+
+2017-05-31 11:44:59 +0200 Salvador Fandiño (320352d64)
+
+	* Don't force root ownership of dirs when installing
+          (salva-install-as-non-root)
+
+2017-05-31 14:30:32 +0200 Salvador Fandiño (f61956c16)
+
+	* Propagate DESTDIR and PREFIX from Makefile
+
+2017-05-31 13:01:58 +0200 Mike Gabriel (04fbb2726)
+
+	* Merge branch 'mikedep333-f24-ftbfs' into 3.6.x
+
+2017-05-25 08:14:49 -0400 Mike DePaulo (c7ce96546)
+
+	* nx-libs.xpec: Fix FTBFS on F24 due to missing Xfont2
+          (mikedep333-f24-ftbfs)
+
+2017-05-06 02:01:47 +0200 Mike Gabriel (150cbc23d)
+
+	* debian/copyright: Update copyright attributions.
+
+2017-05-06 00:03:48 +0200 Mike Gabriel (6479ed576)
+
+	* nx-X11/config/cf/gnuLib.rules: Drop ancient Vcs comment.
+          Erroneously sneaked in with reintroduction of
+          GNU/<non-Linux> support.
+
+2017-05-05 14:07:29 +0200 Mihai Moldovan (53cabac9e)
+
+	* Merge branch 'uli42-pr/fix_rhel6' into 3.6.x
+
+2017-04-25 14:47:48 +0200 Ulrich Sibiller (444e62156)
+
+	* nx-libs.spec: fix FTBFS on RHEL6 (gh-uli42/pr/fix_rhel6)
+
+2017-05-05 00:16:41 +0200 Mike Gabriel (5d5336541)
+
+	* release 3.5.99.7 (tag: 3.5.99.7)
 
 2017-05-04 23:54:31 +0200 Ulrich Sibiller (13753ddfd)
 
 	* Merge pull request #427 from sunweaver/pr/gnu-hurd-i386-support
-          (origin/HEAD, origin/3.6.x)
 
 2017-04-13 12:01:07 +0200 Mike Gabriel (681069d7a)
 
@@ -30,7 +245,8 @@
 
 	* Revert "Switch from using libNX_X11's deprecated XKeycodeToKeysym()
           function to using XGetKeyboardMapping()."
-          (uli42-pr/fix_keyboard_delay)
+          (gh-uli42/pr/fix_keyboard_delay,
+          uli42-pr/fix_keyboard_delay)
 
 2017-04-25 14:20:55 +0200 Mihai Moldovan (60d7c02e0)
 
@@ -43,7 +259,7 @@
 
 2017-04-21 16:26:31 +0200 Mike Gabriel (06a6a5fca)
 
-	* release 3.5.99.6 (tag: 3.5.99.6, origin/release-builds/3.6.x)
+	* release 3.5.99.6 (tag: 3.5.99.6)
 
 2017-04-21 16:20:50 +0200 Mihai Moldovan (1c6217054)
 
@@ -119,7 +335,8 @@
 
 2017-04-18 00:10:46 +0200 Ulrich Sibiller (394246855)
 
-	* nxagent.1: some more rephrasing (uli42-pr/extend_manpage)
+	* nxagent.1: some more rephrasing (gh-uli42/pr/extend_manpage,
+          uli42-pr/extend_manpage)
 
 2017-04-18 00:08:55 +0200 Ulrich Sibiller (4998c41de)
 
@@ -428,7 +645,8 @@
 2017-03-27 22:58:38 +0200 Ulrich Sibiller (ee18cd43d)
 
 	* Keystrokes: rename left/up/right/down keystrokes to descriptive
-          names (uli42-pr/cleanup_keystroke)
+          names (gh-uli42/pr/cleanup_keystroke,
+          uli42-pr/cleanup_keystroke)
 
 2017-03-27 22:46:47 +0200 Ulrich Sibiller (d28cf5574)
 
@@ -532,7 +750,7 @@
 2017-02-01 15:02:41 +0100 Arthur Huillet (00405b278)
 
 	* _XDefaultError: set XlibDisplayIOError flag before calling exit
-          (uli42-pr/libX11-HEAD)
+          (gh-uli42/pr/libX11-HEAD, uli42-pr/libX11-HEAD)
 
 2017-01-07 16:20:31 +0100 Julien Cristau (8ad49a03e)
 
@@ -704,7 +922,7 @@
 2017-03-19 21:59:17 +0100 Ulrich Sibiller (7065e0bf2)
 
 	* Keystroke.c: ignore CapsLock and NumLock most of the time
-          (uli42-pr/ignore_caps)
+          (gh-uli42/pr/ignore_caps, uli42-pr/ignore_caps)
 
 2017-03-17 20:39:28 +0100 Mihai Moldovan (7fd5d934c)
 
@@ -748,7 +966,7 @@
 
 2017-03-13 22:19:17 +0100 Ulrich Sibiller (6f4eb1540)
 
-	* Update keystroke readme (gh-uli42/pr/cleanup_keystroke)
+	* Update keystroke readme
 
 2017-03-13 22:07:58 +0100 Ulrich Sibiller (cb40cc448)
 
