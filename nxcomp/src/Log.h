@@ -249,6 +249,10 @@ class NXLog
         free_thread_data(pdt);
 
         pthread_key_delete(tls_key_);
+
+        if ((stream_) && (stream_ != &std::cerr)) {
+            delete stream_;
+        }
     }
 
     /** Minimum severity level to output */
