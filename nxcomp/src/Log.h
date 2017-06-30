@@ -214,7 +214,8 @@ class NXLog
             pthread_mutex_lock(&output_lock_);
             (*stream()) << str;
             pthread_mutex_unlock(&output_lock_);
-            pdt->buffer->str("");
+            pdt->buffer->str(std::string());
+            pdt->buffer->clear();
         }
     }
 
