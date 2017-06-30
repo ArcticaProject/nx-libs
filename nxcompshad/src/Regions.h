@@ -33,7 +33,7 @@ typedef struct {
     short x1, x2, y1, y2;
 } Box, BOX, BoxRec, *BoxPtr;
 
-typedef struct _XRegion {
+struct _XRegion {
     long size;
     long numRects;
     BOX *rects;
