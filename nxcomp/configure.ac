@@ -74,6 +74,23 @@ AC_ARG_ENABLE([cxx11],
               [AS_IF([test x$enableval = xyes],
                     [AX_CXX_COMPILE_STDCXX_11([], [mandatory])])])
 
+# Check if std::put_time is available.
+AC_MSG_CHECKING([if std::put_time is available])
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM(
+[[
+#include <iomanip>
+#include <ctime>
+]],
+[[
+std::time_t t = std::time(NULL);
+std::tm tm = *std::localtime(&t);
+(void) std::put_time(&tm, "%c");
+]])],
+                  [AC_MSG_RESULT([yes])
+                   AC_DEFINE(HAVE_STD_PUT_TIME, [1],
+                             [Use std::put_time to format times, must be made available by the compiler if turned on.])],
+                  [AC_MSG_RESULT([no])])
+
 AC_ARG_ENABLE([debug],
               [AS_HELP_STRING([--enable-debug],
                               [enable to get info session log output (disabled by default)])],

@@ -31,6 +31,7 @@
 #include <iomanip>
 
 #include "Log.h"
+#include "config.h"
 
 NXLog nx_log;
 
@@ -78,7 +79,7 @@ std::string NXLog::stamp_to_string(const NXLogStamp& stamp) const
         }
         else
         {
-            #if __cplusplus >= 201103L && (!defined(__GNUC__) || __GNUC__ >= 5)
+            #if HAVE_STD_PUT_TIME
             oss << " " << std::put_time(&timeinfo, "%Y/%m/%d %H:%M:%S");
             #else
             oss << timestamp.tv_sec;
