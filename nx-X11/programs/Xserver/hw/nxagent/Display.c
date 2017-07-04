@@ -198,6 +198,7 @@ unsigned long startTime;
  */
 
 extern void RejectWellKnownSockets(void);
+extern Bool nxagentReportWindowIds;
 
 int nxagentServerOrder()
 {
@@ -1334,8 +1335,12 @@ FIXME: Use of nxagentParentWindow is strongly deprecated.
                                        CopyFromParent,
                                        0L, NULL);
 
+  if (nxagentReportWindowIds) {
+    fprintf(stderr, "NXAGENT_WINDOW_ID: CONFINEMENT_WINDOW,WID:[0x%x]\n",
+              nxagentConfineWindow);
+  }
   #ifdef TEST
-  fprintf(stderr, "nxagentOpenDisplay: Created agent's confine window with id [%ld].\n",
+  fprintf(stderr, "nxagentOpenDisplay: Created agent's confine window with id [0x%x].\n",
               nxagentConfineWindow);
   #endif
 
@@ -2842,8 +2847,12 @@ Bool nxagentReconnectDisplay(void *p0)
                                      CopyFromParent,
                                      0L, NULL);
 
+  if (nxagentReportWindowIds) {
+    fprintf(stderr, "NXAGENT_WINDOW_ID: CONFINEMENT_WINDOW,WID:[0x%x]\n",
+              nxagentConfineWindow);
+  }
   #ifdef TEST
-  fprintf(stderr, "nxagentReconnectDisplay: Created agent's confine window with id [%ld].\n",
+  fprintf(stderr, "nxagentReconnectDisplay: Created agent's confine window with id [0x%x].\n",
               nxagentConfineWindow);
   #endif
 

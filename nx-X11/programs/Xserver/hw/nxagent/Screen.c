@@ -139,6 +139,8 @@ extern Pixmap nxagentIconPixmap;
 extern Pixmap nxagentIconShape;
 extern Bool useXpmIcon;
 
+extern Bool nxagentReportWindowIds;
+
 Window nxagentDefaultWindows[MAXSCREENS];
 Window nxagentInputWindows[MAXSCREENS];
 Window nxagentScreenSaverWindows[MAXSCREENS];
@@ -396,9 +398,13 @@ Window nxagentCreateIconWindow()
                                     DefaultVisual(nxagentDisplay, DefaultScreen(nxagentDisplay)),
                                         valuemask, &attributes);
 
+  if (nxagentReportWindowIds)
+  {
+    fprintf (stderr, "NXAGENT_WINDOW_ID: ICON_WINDOW,WID:[0x%x]\n", nxagentIconWindow);
+  }
   #ifdef TEST
-  fprintf(stderr, "nxagentCreateIconWindow: Created new icon window with id [%lu].\n",
-              (long unsigned int)nxagentIconWindow);
+  fprintf(stderr, "nxagentCreateIconWindow: Created new icon window with id [0x%x].\n",
+              nxagentIconWindow);
   #endif
 
   /*
@@ -1760,9 +1766,13 @@ N/A
                            valuemask , &attributes);
       }
 
+      if (nxagentReportWindowIds)
+      {
+        fprintf (stderr, "NXAGENT_WINDOW_ID: SCREEN_WINDOW:[%d],WID:[0x%x]\n", pScreen -> myNum, nxagentInputWindows[pScreen->myNum]);
+      }
       #ifdef TEST
-      fprintf(stderr, "nxagentOpenScreen: Created new default window with id [%ld].\n",
-                  (long int)nxagentDefaultWindows[pScreen->myNum]);
+      fprintf(stderr, "nxagentOpenScreen: Created new default window with id [0x%x].\n",
+              nxagentDefaultWindows[pScreen->myNum]);
       #endif
 
       /*
