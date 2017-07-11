@@ -1660,8 +1660,7 @@ N/A
   nxagentPrintAgentGeometry(NULL, "nxagentOpenScreen:");
   #endif
 
-  if (nxagentDoFullGeneration == 1 ||
-          nxagentReconnectTrap == 1)
+  if (nxagentReconnectTrap == 1)
   {
     valuemask = CWBackPixel | CWEventMask | CWColormap |
                     (nxagentOption(AllScreens) == 1 ? CWOverrideRedirect : 0);

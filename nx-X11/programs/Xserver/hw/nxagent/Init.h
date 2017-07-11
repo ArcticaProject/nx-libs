@@ -40,8 +40,6 @@ is" without express or implied warranty.
 #ifndef __Init_H__
 #define __Init_H__
 
-extern int nxagentDoFullGeneration;
-
 extern int nxagentBackingStore;
 extern int nxagentSaveUnder;
 

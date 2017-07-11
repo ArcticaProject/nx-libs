@@ -1126,8 +1126,6 @@ void nxagentOpenDisplay(int argc, char *argv[])
 {
   int i;
 
-  if (!nxagentDoFullGeneration) return;
-
   #ifdef NXAGENT_TIMESTAMP
 
   startTime = GetTimeInMillis();
@@ -1744,21 +1742,17 @@ void nxagentSetDefaultDrawables()
 void nxagentCloseDisplay()
 {
   #ifdef TEST
-  fprintf(stderr, "nxagentCloseDisplay: Called with full generation [%d] and display [%p].\n",
-              nxagentDoFullGeneration, (void *) nxagentDisplay);
+  fprintf(stderr, "nxagentCloseDisplay: Called with display [%p].\n", (void *) nxagentDisplay);
   #endif
 
-  if (nxagentDoFullGeneration == 0 ||
-          nxagentDisplay == NULL)
+  if (nxagentDisplay == NULL)
   {
     return;
   }
 
   /*
-   * If nxagentDoFullGeneration is true, all
-   * the X resources will be destroyed upon
-   * closing the display connection, so there
-   * is no real need to generate additional
+   * All the X resources will be destroyed upon closing the display
+   * connection, so there is no real need to generate additional
    * traffic
    */
 
