@@ -169,22 +169,6 @@ FIXME: These, if not removed, should at least
 int nxagentBackingStore;
 int nxagentSaveUnder;
 
-/*
- * This is true at startup and set to the value of
- * nxagentFullGeneration at the end of InitInput.
- *
- *   InitOutput
- *      nxagentOpenDisplay (if nxagentDoFullGeneration)
- *         nxagentCloseDisplay (if (nxagentDoFullGeneration && nxagentDisplay))
- *            nxagentFree*
- *      nxagentListRemoteFonts
- *      AddScreen
- *         nxagentOpenScreen
- *   InitInput
- */
-
-int nxagentDoFullGeneration = 1;
-
  /*
  * 1 if agent running as X2goAgent
  * 0 if NX Agent
@@ -404,8 +388,6 @@ FIXME: These variables, if not removed at all because have probably
 
   nxagentAllocateGraphicContexts();
 
-  nxagentDoFullGeneration = nxagentFullGeneration;
-
   /*
    * Use a solid black root window
    * background.
@@ -475,8 +457,6 @@ void InitInput(argc, argv)
 
 void AbortDDX()
 {
-  nxagentDoFullGeneration = True;
-
   nxagentCloseDisplay();
 
   /*

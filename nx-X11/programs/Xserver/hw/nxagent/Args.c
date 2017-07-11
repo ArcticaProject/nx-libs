@@ -137,7 +137,6 @@ char nxagentDialogName[256];
 char nxagentSessionId[256] = {0};
 char *nxagentOptionFile;
 
-Bool nxagentFullGeneration = False;
 int nxagentDefaultClass = TrueColor;
 Bool nxagentUserDefaultClass = False;
 int nxagentDefaultDepth;
@@ -407,11 +406,6 @@ int ddxProcessArgument(int argc, char *argv[], int i)
 
   if (!strcmp(argv[i], "-nxrealwindowprop")) {
     nxagentRealWindowProp = True;
-    return 1;
-  }
-
-  if (!strcmp(argv[i], "-full")) {
-    nxagentFullGeneration = True;
     return 1;
   }
 
@@ -2081,7 +2075,6 @@ void ddxUseMsg()
 {
   ErrorF("-display string        display name of the real server\n");
   ErrorF("-sync                  synchronize with the real server\n");
-  ErrorF("-full                  utilize full regeneration\n");
   ErrorF("-class string          default visual class\n");
   ErrorF("-depth int             default depth\n");
   ErrorF("-geometry WxH+X+Y      window size and position\n");

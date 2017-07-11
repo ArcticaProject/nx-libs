@@ -60,7 +60,6 @@ extern char nxagentDialogName[];
 
 extern Bool nxagentSynchronize;
 extern Bool nxagentRealWindowProp;
-extern Bool nxagentFullGeneration;
 extern int nxagentDefaultClass;
 extern Bool nxagentUserDefaultClass;
 extern int nxagentDefaultDepth;

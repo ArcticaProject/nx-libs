@@ -167,8 +167,7 @@ static struct _nxagentFailedToReconnectFonts
 } nxagentFailedToReconnectFonts = {NULL, NULL, 0, 0};
 
 /*
- * This is used if nxagentFullGeneration is true
- * in CloseDisplay().
+ * This is used in CloseDisplay().
  */
 
 void nxagentFreeFontCache(void)
