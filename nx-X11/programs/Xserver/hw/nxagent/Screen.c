@@ -1864,8 +1864,8 @@ N/A
 
     if (nxagentOption(DesktopResize) == 1 || nxagentOption(Fullscreen) == 1)
     {
-      sizeHints.max_width = WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
-      sizeHints.max_height = HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
+      sizeHints.max_width = MAXSHORT;
+      sizeHints.max_height = MAXSHORT;
     }
     else
     {
@@ -2387,8 +2387,8 @@ FIXME: We should try to restore the previously
 
     if (nxagentOption(DesktopResize) == 1)
     {
-      sizeHints.max_width = WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
-      sizeHints.max_height = HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
+      sizeHints.max_width = MAXSHORT;
+      sizeHints.max_height = MAXSHORT;
     }
     else
     {
@@ -4491,8 +4491,8 @@ void nxagentSetWMNormalHints(int screen)
 
   if (nxagentOption(DesktopResize) == 1)
   {
-    sizeHints.max_width = WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
-    sizeHints.max_height = HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
+    sizeHints.max_width = MAXSHORT;
+    sizeHints.max_height = MAXSHORT;
   }
   else
   {

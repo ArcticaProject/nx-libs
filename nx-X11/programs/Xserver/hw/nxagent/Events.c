@@ -616,8 +616,8 @@ void nxagentSwitchResizeMode(ScreenPtr pScreen)
       NXSetExposeParameters(nxagentDisplay, 0, 0, 0);
     }
 
-    sizeHints.max_width = WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
-    sizeHints.max_height = HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
+    sizeHints.max_width = MAXSHORT;
+    sizeHints.max_height = MAXSHORT;
 
     XSetWMNormalHints(nxagentDisplay, nxagentDefaultWindows[pScreen->myNum],
                           &sizeHints);
@@ -657,8 +657,8 @@ void nxagentShadowSwitchResizeMode(ScreenPtr pScreen)
                                       screenInfo.screens[0]->root, screenInfo.screens[0]->root -> drawable.width,
                                           screenInfo.screens[0]->root -> drawable.height);
 
-    sizeHints.max_width = WidthOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
-    sizeHints.max_height = HeightOfScreen(DefaultScreenOfDisplay(nxagentDisplay));
+    sizeHints.max_width = MAXSHORT;
+    sizeHints.max_height = MAXSHORT;
 
     fprintf(stderr,"Info: Enabled resize mode in shadow agent.\n");
   }
