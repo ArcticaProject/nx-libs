@@ -711,7 +711,7 @@ static inline void handleTerminatedInLoop();
 // Monitor the size of the log file.
 //
 
-static void handleLogReopenInLoop(T_timestamp &logsTs, T_timestamp &nowTs);
+static void handleLogReopenInLoop(T_timestamp &lTs, T_timestamp &nTs);
 
 //
 // Directory where the NX binaries and libraries reside.
@@ -16482,7 +16482,7 @@ static inline void handleEventsInLoop()
   }
 }
 
-static void handleLogReopenInLoop(T_timestamp &logsTs, T_timestamp &nowTs)
+static void handleLogReopenInLoop(T_timestamp &lTs, T_timestamp &nTs)
 {
   //
   // If need to limit the size of the
@@ -16492,7 +16492,7 @@ static void handleLogReopenInLoop(T_timestamp &logsTs, T_timestamp &nowTs)
 
   #ifndef QUOTA
 
-  if (diffTimestamp(logsTs, nowTs) > control -> FileSizeCheckTimeout)
+  if (diffTimestamp(lTs, nTs) > control -> FileSizeCheckTimeout)
 
   #endif
   {
@@ -16514,7 +16514,7 @@ static void handleLogReopenInLoop(T_timestamp &logsTs, T_timestamp &nowTs)
     // Reset to current timestamp.
     //
 
-    logsTs = nowTs;
+    lTs = nTs;
   }
 }
 
