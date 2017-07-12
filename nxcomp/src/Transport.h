@@ -413,9 +413,9 @@ class AgentTransport : public Transport
   // These two should never be called.
   //
 
-  virtual int flush();
+  virtual int flush() __attribute__((noreturn));
 
-  virtual int drain(int limit, int timeout);
+  virtual int drain(int limit, int timeout) __attribute((noreturn));
 
   //
   // Same as in the base class.

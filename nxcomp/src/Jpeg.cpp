@@ -106,7 +106,7 @@ static int DecompressJpeg24(unsigned char *compressedData, int compressedLen,
 static int DecompressJpeg32(unsigned char *compressedData, int compressedLen,
                                 unsigned int w, unsigned int h, unsigned char *dstBuf, int byteOrder);
 
-void UnpackJpegErrorHandler(j_common_ptr cinfo);
+void UnpackJpegErrorHandler(j_common_ptr cinfo) __attribute__((noreturn));
 
 //
 // Colormap stuff.

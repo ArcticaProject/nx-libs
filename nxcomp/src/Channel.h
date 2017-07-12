@@ -519,7 +519,7 @@ class Channel
   // Set up the split stores.
   //
 
-  void handleSplitStoreError(int resource);
+  void handleSplitStoreError(int resource) __attribute__((noreturn));
 
   void handleSplitStoreAlloc(List *list, int resource);
   void handleSplitStoreRemove(List *list, int resource);
