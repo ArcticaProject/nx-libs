@@ -57,8 +57,6 @@ static UpdateManager *updateManager;
 static Poller *poller;
 static Input *input;
 
-int NXShadowRemoveAllUpdaters();
-
 inline bool NXShadowNotInitialized()
 {
   //
