@@ -116,6 +116,8 @@ extern WindowPtr nxagentViewportFrameBelow;
 
 extern WindowPtr nxagentRootTileWindow;
 
+extern Bool nxagentReportPrivateWindowIds;
+
 /*
  * Also referenced in Events.c.
  */
@@ -433,8 +435,12 @@ FIXME: We need to set save under on the real display?
     }
   }
 
+  if (nxagentReportPrivateWindowIds)
+  {
+    fprintf (stderr, "NXAGENT_WINDOW_ID: PRIVATE_WINDOW,WID:[0x%x]\n", nxagentWindowPriv(pWin)->window);
+  }
   #ifdef TEST
-  fprintf(stderr, "nxagentCreateWindow: Created new window with id [%ld].\n",
+  fprintf(stderr, "nxagentCreateWindow: Created new window with id [0x%x].\n",
               nxagentWindowPriv(pWin)->window);
   #endif
 
@@ -3016,8 +3022,12 @@ FIXME: Do we need to set save unders attribute here?
                                       mask,
                                       &attributes);
 
+  if (nxagentReportPrivateWindowIds)
+  {
+    fprintf (stderr, "NXAGENT_WINDOW_ID: PRIVATE_WINDOW,WID:[0x%x]\n", nxagentWindowPriv(pWin)->window);
+  }
   #ifdef TEST
-  fprintf(stderr, "nxagentReconnectWindow: Created new window with id [%ld].\n",
+  fprintf(stderr, "nxagentReconnectWindow: Created new window with id [0x%x].\n",
               nxagentWindowPriv(pWin)->window);
   #endif
 

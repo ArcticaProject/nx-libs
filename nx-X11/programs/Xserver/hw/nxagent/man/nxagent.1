@@ -372,6 +372,12 @@ force use of NX protocol messages assuming communication through nxproxy
 .B \-nxrealwindowprop
 set property NX_REAL_WINDOW for each X11 client inside NX Agent, providing the window XID of the corresponding window object on the X server that NX Agent runs on
 .TP 8
+.B \-reportwids
+explicitly tell NX Agent to report its externally exposed X11 window IDs to the session log (in machine readable form), so that external parsers can obtain that information from there
+.TP 8
+.B \-reportprivatewids
+explicitly tell NX Agent to report X11 window IDs of internally created window objects to the session log (in machine readable form), so that external parsers can obtain that information from there; this creates a lot of output and may affect performance
+.TP 8
 .B \-timeout \fIint\fP
 auto-disconnect timeout in seconds (minimum allowed: 60)
 .TP 8

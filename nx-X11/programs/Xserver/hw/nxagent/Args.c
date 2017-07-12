@@ -145,6 +145,8 @@ Bool nxagentUserDefaultDepth = False;
 struct UserGeometry nxagentUserGeometry = {0, 0, 0, 0, 0};
 Bool nxagentUserBorderWidth = False;
 int nxagentNumScreens = 0;
+Bool nxagentReportWindowIds = False;
+Bool nxagentReportPrivateWindowIds = False;
 Bool nxagentDoDirectColormaps = False;
 Window nxagentParentWindow = 0;
 Bool nxagentIpaq = False;
@@ -407,6 +409,16 @@ int ddxProcessArgument(int argc, char *argv[], int i)
 
   if (!strcmp(argv[i], "-nxrealwindowprop")) {
     nxagentRealWindowProp = True;
+    return 1;
+  }
+
+  if (!strcmp(argv[i], "-reportwids")) {
+    nxagentReportWindowIds = True;
+    return 1;
+  }
+
+  if (!strcmp(argv[i], "-reportprivatewids")) {
+    nxagentReportPrivateWindowIds = True;
     return 1;
   }
 
