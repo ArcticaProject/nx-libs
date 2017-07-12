@@ -6687,10 +6687,10 @@ int WaitForRemote(ChannelEndPoint &socketAddress)
       strcpy(hostLabel, "any host");
     }
 
-    long bindPort;
-    if (socketAddress.getTCPHostAndPort(NULL, &bindPort))
+    long _bindPort;
+    if (socketAddress.getTCPHostAndPort(NULL, &_bindPort))
     {
-      socketAddress.setSpec(loopbackBind ? "localhost" : "*", bindPort);
+      socketAddress.setSpec(loopbackBind ? "localhost" : "*", _bindPort);
     }
     else
     {

@@ -501,13 +501,13 @@ int ServerChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
 
           if (control -> LocalDeltaCompression == 0)
           {
-            int result = handleFastReadReply(encodeBuffer, requestOpcode,
+            int _result = handleFastReadReply(encodeBuffer, requestOpcode,
                                                  inputMessage, inputLength);
-            if (result < 0)
+            if (_result < 0)
             {
               return -1;
             }
-            else if (result > 0)
+            else if (_result > 0)
             {
               continue;
             }
@@ -790,9 +790,9 @@ int ServerChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
 
               for (; numExtensions; numExtensions--)
               {
-                unsigned int length = (unsigned int) (*nextSrc++);
+                unsigned int _length = (unsigned int) (*nextSrc++);
 
-                encodeBuffer.encodeValue(length, 8);
+                encodeBuffer.encodeValue(_length, 8);
 
                 #ifdef HIDE_MIT_SHM_EXTENSION
 
@@ -913,13 +913,13 @@ int ServerChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
               const unsigned char* nextSrc = inputMessage + 32;
               for (; numFonts; numFonts--)
               {
-                unsigned int length = (unsigned int) (*nextSrc++);
-                encodeBuffer.encodeValue(length, 8);
+                unsigned int _length = (unsigned int) (*nextSrc++);
+                encodeBuffer.encodeValue(_length, 8);
 
                 // Since ProtoStep7 (#issue 108)
-                encodeBuffer.encodeTextData(nextSrc, length);
+                encodeBuffer.encodeTextData(nextSrc, _length);
 
-                nextSrc += length;
+                nextSrc += _length;
               }
 
               priority_++;
@@ -963,13 +963,13 @@ int ServerChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
               encodeBuffer.encodeBoolValue(1);
 
               unsigned int numColors = ((inputLength - 32) >> 3);
-              const unsigned char *nextSrc = inputMessage + 40;
+              const unsigned char *nextSrc1 = inputMessage + 40;
               unsigned char *nextDest = (unsigned char *) inputMessage + 38;
               for (unsigned int c = 1; c < numColors; c++)
               {
                 for (unsigned int i = 0; i < 6; i++)
-                  *nextDest++ = *nextSrc++;
-                nextSrc += 2;
+                  *nextDest++ = *nextSrc1++;
+                nextSrc1 += 2;
               }
               unsigned int colorsLength = numColors * 6;
               if (serverCache_ -> queryColorsLastReply.compare(colorsLength,
@@ -977,13 +977,13 @@ int ServerChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
                 encodeBuffer.encodeBoolValue(1);
               else
               {
-                const unsigned char *nextSrc = inputMessage + 32;
+                const unsigned char *nextSrc2 = inputMessage + 32;
                 encodeBuffer.encodeBoolValue(0);
                 encodeBuffer.encodeValue(numColors, 16, 5);
                 for (numColors *= 3; numColors; numColors--)
                 {
-                  encodeBuffer.encodeValue(GetUINT(nextSrc, bigEndian_), 16);
-                  nextSrc += 2;
+                  encodeBuffer.encodeValue(GetUINT(nextSrc2, bigEndian_), 16);
+                  nextSrc2 += 2;
                 }
               }
 
@@ -1299,13 +1299,13 @@ int ServerChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
 
           if (control -> LocalDeltaCompression == 0)
           {
-            int result = handleFastReadReply(encodeBuffer, requestOpcode,
+            int _result = handleFastReadReply(encodeBuffer, requestOpcode,
                                                  inputMessage, inputLength);
-            if (result < 0)
+            if (_result < 0)
             {
               return -1;
             }
-            else if (result > 0)
+            else if (_result > 0)
             {
               continue;
             }
@@ -1522,13 +1522,13 @@ int ServerChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
 
         if (control -> LocalDeltaCompression == 0)
         {
-          int result = handleFastReadEvent(encodeBuffer, inputOpcode,
+          int _result = handleFastReadEvent(encodeBuffer, inputOpcode,
                                                inputMessage, inputLength);
-          if (result < 0)
+          if (_result < 0)
           {
             return -1;
           }
-          else if (result > 0)
+          else if (_result > 0)
           {
             continue;
           }
@@ -1620,10 +1620,10 @@ int ServerChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
                                              serverCache_ -> buttonCache);
             else
               encodeBuffer.encodeValue((unsigned int) detail, 8);
-            unsigned int timestamp = GetULONG(inputMessage + 4, bigEndian_);
+            unsigned int _timestamp = GetULONG(inputMessage + 4, bigEndian_);
             unsigned int timestampDiff =
-            timestamp - serverCache_ -> lastTimestamp;
-            serverCache_ -> lastTimestamp = timestamp;
+            _timestamp - serverCache_ -> lastTimestamp;
+            serverCache_ -> lastTimestamp = _timestamp;
             encodeBuffer.encodeCachedValue(timestampDiff, 32,
                                 serverCache_ -> motionNotifyTimestampCache, 9);
             int skipRest = 0;
@@ -1795,10 +1795,10 @@ int ServerChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
                              29, serverCache_ -> propertyNotifyWindowCache, 9);
             encodeBuffer.encodeCachedValue(GetULONG(inputMessage + 8, bigEndian_),
                                29, serverCache_ -> propertyNotifyAtomCache, 9);
-            unsigned int timestamp = GetULONG(inputMessage + 12, bigEndian_);
+            unsigned int _timestamp = GetULONG(inputMessage + 12, bigEndian_);
             unsigned int timestampDiff =
-            timestamp - serverCache_ -> lastTimestamp;
-            serverCache_ -> lastTimestamp = timestamp;
+            _timestamp - serverCache_ -> lastTimestamp;
+            serverCache_ -> lastTimestamp = _timestamp;
             encodeBuffer.encodeValue(timestampDiff, 32, 9);
             encodeBuffer.encodeBoolValue((unsigned int) inputMessage[16]);
           }
@@ -1819,9 +1819,9 @@ int ServerChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
           break;
         case SelectionClear:
           {
-            unsigned int timestamp = GetULONG(inputMessage + 4, bigEndian_);
-            unsigned int timestampDiff = timestamp - serverCache_ -> lastTimestamp;
-            serverCache_ -> lastTimestamp = timestamp;
+            unsigned int _timestamp = GetULONG(inputMessage + 4, bigEndian_);
+            unsigned int timestampDiff = _timestamp - serverCache_ -> lastTimestamp;
+            serverCache_ -> lastTimestamp = _timestamp;
             encodeBuffer.encodeValue(timestampDiff, 32, 9);
             encodeBuffer.encodeCachedValue(GetULONG(inputMessage + 8, bigEndian_),
                            29, serverCache_ -> selectionClearWindowCache, 9);
@@ -1831,9 +1831,9 @@ int ServerChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
           break;
         case SelectionRequest:
           {
-            unsigned int timestamp = GetULONG(inputMessage + 4, bigEndian_);
-            unsigned int timestampDiff = timestamp - serverCache_ -> lastTimestamp;
-            serverCache_ -> lastTimestamp = timestamp;
+            unsigned int _timestamp = GetULONG(inputMessage + 4, bigEndian_);
+            unsigned int timestampDiff = _timestamp - serverCache_ -> lastTimestamp;
+            serverCache_ -> lastTimestamp = _timestamp;
             encodeBuffer.encodeValue(timestampDiff, 32, 9);
             encodeBuffer.encodeCachedValue(GetULONG(inputMessage + 8, bigEndian_),
                            29, serverCache_ -> selectionClearWindowCache, 9);
@@ -5669,9 +5669,9 @@ int ServerChannel::handleMotion(EncodeBuffer &encodeBuffer)
                                    serverCache_ -> buttonCache);
   else
     encodeBuffer.encodeValue((unsigned int) detail, 8);
-  unsigned int timestamp = GetULONG(buffer + 4, bigEndian_);
-  unsigned int timestampDiff = timestamp - serverCache_ -> lastTimestamp;
-  serverCache_ -> lastTimestamp = timestamp;
+  unsigned int _timestamp = GetULONG(buffer + 4, bigEndian_);
+  unsigned int timestampDiff = _timestamp - serverCache_ -> lastTimestamp;
+  serverCache_ -> lastTimestamp = _timestamp;
   encodeBuffer.encodeCachedValue(timestampDiff, 32,
                       serverCache_ -> motionNotifyTimestampCache, 9);
   int skipRest = 0;
@@ -7910,11 +7910,11 @@ void ServerChannel::handleEncodeCharInfo(const unsigned char *nextSrc, EncodeBuf
 
   for (unsigned int i = 1; i < 5; i++)
   {
-    unsigned int value = GetUINT(nextSrc, bigEndian_);
+    unsigned int _value = GetUINT(nextSrc, bigEndian_);
 
     nextSrc += 2;
 
-    encodeBuffer.encodeCachedValue(value, 16,
+    encodeBuffer.encodeCachedValue(_value, 16,
                        *serverCache_ -> queryFontCharInfoCache[i], 6);
   }
 }

@@ -697,10 +697,10 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
                                *(clientCache_ -> convertSelectionAtomCache[i]), 9);
             nextSrc += 4;
           }
-          unsigned int timestamp = GetULONG(nextSrc, bigEndian_);
-          encodeBuffer.encodeValue(timestamp -
+          unsigned int _timestamp = GetULONG(nextSrc, bigEndian_);
+          encodeBuffer.encodeValue(_timestamp -
                              clientCache_ -> convertSelectionLastTimestamp, 32, 4);
-          clientCache_ -> convertSelectionLastTimestamp = timestamp;
+          clientCache_ -> convertSelectionLastTimestamp = _timestamp;
         }
         break;
       case X_CopyArea:
@@ -1372,10 +1372,10 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
           encodeBuffer.encodeCachedValue(GetULONG(inputMessage + 16,
                            bigEndian_), 29, clientCache_ -> cursorCache, 9);
 
-          unsigned int timestamp = GetULONG(inputMessage + 20, bigEndian_);
-          encodeBuffer.encodeValue(timestamp -
+          unsigned int _timestamp = GetULONG(inputMessage + 20, bigEndian_);
+          encodeBuffer.encodeValue(_timestamp -
                            clientCache_ -> grabKeyboardLastTimestamp, 32, 4);
-          clientCache_ -> grabKeyboardLastTimestamp = timestamp;
+          clientCache_ -> grabKeyboardLastTimestamp = _timestamp;
 
           sequenceQueue_.push(clientSequence_, inputOpcode);
 
@@ -1387,10 +1387,10 @@ int ClientChannel::handleRead(EncodeBuffer &encodeBuffer, const unsigned char *m
           encodeBuffer.encodeBoolValue((unsigned int) inputMessage[1]);
           encodeBuffer.encodeXidValue(GetULONG(inputMessage + 4, bigEndian_),
                              clientCache_ -> windowCache);
-          unsigned int timestamp = GetULONG(inputMessage + 8, bigEndian_);
-          encodeBuffer.encodeValue(timestamp -
+          unsigned int _timestamp = GetULONG(inputMessage + 8, bigEndian_);
+          encodeBuffer.encodeValue(_timestamp -
                              clientCache_ -> grabKeyboardLastTimestamp, 32, 4);
-          clientCache_ -> grabKeyboardLastTimestamp = timestamp;
+          clientCache_ -> grabKeyboardLastTimestamp = _timestamp;
           encodeBuffer.encodeBoolValue((unsigned int) inputMessage[12]);
           encodeBuffer.encodeBoolValue((unsigned int) inputMessage[13]);
 
@@ -3607,10 +3607,10 @@ int ClientChannel::handleWrite(const unsigned char *message, unsigned int length
               unsigned char *nextDest = outputMessage + 32;
               for (; numExtensions; numExtensions--)
               {
-                unsigned int length;
-                decodeBuffer.decodeValue(length, 8);
-                *nextDest++ = (unsigned char) length;
-                for (; length; length--)
+                unsigned int _length;
+                decodeBuffer.decodeValue(_length, 8);
+                *nextDest++ = (unsigned char) _length;
+                for (; _length; _length--)
                 {
                   decodeBuffer.decodeValue(value, 8);
                   *nextDest++ = value;
@@ -3655,13 +3655,13 @@ int ClientChannel::handleWrite(const unsigned char *message, unsigned int length
                 unsigned char* nextDest = outputMessage + 32;
                 for (; numFonts; numFonts--)
                 {
-                  unsigned int length;
-                  decodeBuffer.decodeValue(length, 8);
-                  *nextDest++ = (unsigned char)length;
+                  unsigned int _length;
+                  decodeBuffer.decodeValue(_length, 8);
+                  *nextDest++ = (unsigned char)_length;
 
                   // Since ProtoStep7 (#issue 108)
-                  decodeBuffer.decodeTextData(nextDest, length);
-                  nextDest += length;
+                  decodeBuffer.decodeTextData(nextDest, _length);
+                  nextDest += _length;
                 }
 
                 handleSave(messageStore, outputMessage, outputLength);
@@ -3904,10 +3904,10 @@ int ClientChannel::handleWrite(const unsigned char *message, unsigned int length
                 {
                   unsigned int index;
                   decodeBuffer.decodeValue(index, 4);
-                  unsigned int length;
+                  unsigned int _length;
                   const unsigned char *data;
-                  ServerCache::queryFontFontCache.get(index, length, data);
-                  memcpy(nextDest, data, length);
+                  ServerCache::queryFontFontCache.get(index, _length, data);
+                  memcpy(nextDest, data, _length);
 
                   end = 1;
                 }
@@ -3915,7 +3915,7 @@ int ClientChannel::handleWrite(const unsigned char *message, unsigned int length
                 if (end == 0)
                 {
                   unsigned char *saveDest = nextDest;
-                  unsigned int length = numProperties * 8 + numCharInfos * 12;
+                  unsigned int _length = numProperties * 8 + numCharInfos * 12;
                   for (; numProperties; numProperties--)
                   {
                     decodeBuffer.decodeValue(value, 32, 9);
@@ -3930,7 +3930,7 @@ int ClientChannel::handleWrite(const unsigned char *message, unsigned int length
 
                     nextDest += 12;
                   }
-                  ServerCache::queryFontFontCache.set(length, saveDest);
+                  ServerCache::queryFontFontCache.set(_length, saveDest);
                 }
 
                 handleSave(messageStore, outputMessage, outputLength);
@@ -7845,12 +7845,12 @@ void ClientChannel::handleDecodeCharInfo(DecodeBuffer &decodeBuffer, unsigned ch
 
   for (unsigned int i = 1; i < 5; i++)
   {
-    unsigned int value;
+    unsigned int _value;
 
-    decodeBuffer.decodeCachedValue(value, 16,
+    decodeBuffer.decodeCachedValue(_value, 16,
                        *serverCache_ -> queryFontCharInfoCache[i], 6);
 
-    PutUINT(value, nextDest, bigEndian_);
+    PutUINT(_value, nextDest, bigEndian_);
 
     nextDest += 2;
   }

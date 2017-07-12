@@ -1138,9 +1138,9 @@ int Proxy::handleRead()
           // the failure is detected.
           //
 
-          int result = channels_[channelId] -> handleWrite(message, dataLength);
+          int _result = channels_[channelId] -> handleWrite(message, dataLength);
 
-          if (result < 0 && finish == 0)
+          if (_result < 0 && finish == 0)
           {
             #ifdef TEST
             *logofs << "Proxy: Failed to write proxy data to FD#"
@@ -5793,14 +5793,14 @@ void Proxy::setSplitTimeout(int channelId)
       for (T_list::iterator j = channelList.begin();
                j != channelList.end(); j++)
       {
-        int channelId = *j;
+        int _channelId = *j;
 
-        if (channels_[channelId] != NULL &&
-                channels_[channelId] -> needSplit() == 1)
+        if (channels_[_channelId] != NULL &&
+                channels_[_channelId] -> needSplit() == 1)
         {
           #ifdef TEST
           *logofs << "Proxy: SPLIT! Channel for FD#"
-                  << getFd(channelId) << " still needs splits.\n"
+                  << getFd(_channelId) << " still needs splits.\n"
                   << logofs_flush;
           #endif
 
@@ -5840,14 +5840,14 @@ void Proxy::setMotionTimeout(int channelId)
       for (T_list::iterator j = channelList.begin();
                j != channelList.end(); j++)
       {
-        int channelId = *j;
+        int _channelId = *j;
 
-        if (channels_[channelId] != NULL &&
-                channels_[channelId] -> needMotion() == 1)
+        if (channels_[_channelId] != NULL &&
+                channels_[_channelId] -> needMotion() == 1)
         {
           #ifdef TEST
           *logofs << "Proxy: SPLIT! Channel for FD#"
-                  << getFd(channelId) << " still needs motions.\n"
+                  << getFd(_channelId) << " still needs motions.\n"
                   << logofs_flush;
           #endif
 
