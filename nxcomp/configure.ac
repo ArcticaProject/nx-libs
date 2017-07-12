@@ -63,6 +63,8 @@ if test "$FreeBSD" = yes; then
   CPPFLAGS="$CPPFLAGS -I/usr/local/include"
 fi
 
+AX_PTHREAD([], AC_MSG_ERROR([no POSIX threads support detected]))
+
 # If in_addr_t is not defined use unsigned int.
 AC_CHECK_TYPES([in_addr_t], [], [], [[#include <netinet/in.h>]])
 
