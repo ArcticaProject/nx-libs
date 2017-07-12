@@ -17,7 +17,7 @@ SHLIBDIR        ?= $(LIBDIR)
 NXLIBDIR        ?= $(SHLIBDIR)/nx
 USRLIBDIR       ?= $(NXLIBDIR)/X11
 INCLUDEDIR      ?= $(PREFIX)/include
-CONFIGURE       ?= ./configure --prefix=$(DESTDIR)$(PREFIX)
+CONFIGURE       ?= ./configure --prefix=$(DESTDIR)$(PREFIX) --libexecdir=$(NXLIBDIR)/bin
 
 # use Xfont2 if available in the build env
 FONT_DEFINES	?= $(shell pkg-config --modversion xfont2 1>/dev/null 2>/dev/null && echo "-DHAS_XFONT2")
@@ -56,7 +56,7 @@ test:
 
 build-lite:
 	cd nxcomp && autoconf && (${CONFIGURE}) && ${MAKE}
-	cd nxproxy && autoconf && (${CONFIGURE}) && ${MAKE}
+	cd nxproxy && autoreconf -vfsi && (${CONFIGURE}) && ${MAKE}
 
 build-full:
 # in the full case, we rely on "magic" in the nx-X11 imake-based makefiles...
@@ -84,7 +84,7 @@ build-full:
 
 	cd nx-X11 && ${MAKE} World USRLIBDIR=$(USRLIBDIR) SHLIBDIR=$(SHLIBDIR) FONT_DEFINES=$(FONT_DEFINES) XFONTLIB=$(XFONTLIB)
 
-	cd nxproxy && autoconf && (${CONFIGURE}) && ${MAKE}
+	cd nxproxy && autoreconf -vfsi && (${CONFIGURE}) && ${MAKE}
 
 build:
 	if ! test -d nx-X11; then \
@@ -106,14 +106,8 @@ install-lite:
 	sed -e 's|@@NXLIBDIR@@|$(NXLIBDIR)|g' bin/nxproxy.in > bin/nxproxy
 	$(INSTALL_PROGRAM) bin/nxproxy $(DESTDIR)$(BINDIR)
 
-	# FIXME: the below install logic should work via nxproxy/Makefile.in
-	# overriding for now...
-	$(INSTALL_DIR) $(DESTDIR)$(NXLIBDIR)/bin
-	$(INSTALL_PROGRAM) nxproxy/nxproxy $(DESTDIR)$(NXLIBDIR)/bin
-
-	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/man/man1/
-	$(INSTALL_FILE) nxproxy/man/nxproxy.1 $(DESTDIR)$(PREFIX)/share/man/man1/
-	gzip $(DESTDIR)$(PREFIX)/share/man/man1/*.1
+	# install the nxproxy executable and its man page
+	$(MAKE) -C nxproxy install
 
 install-full:
 	# install nxagent wrapper script
