@@ -334,11 +334,9 @@ Keeper *keeper = NULL;
 int (*handler)(int) = NULL;
 
 //
-// Signal handling functions.
+// Signal handling functions (that are not already mentioned in Misc.h).
 //
 
-void DisableSignals();
-void EnableSignals();
 void InstallSignals();
 
 static void RestoreSignals();
@@ -364,11 +362,8 @@ void RegisterChild(int child);
 static int CheckAbort();
 
 //
-// Timer handling utilities.
+// Timer handling utilities (that are not already mentioned in Misc.h).
 //
-
-void SetTimer(int timeout);
-void ResetTimer();
 
 static void HandleTimer(int signal);
 
