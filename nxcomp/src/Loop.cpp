@@ -331,7 +331,7 @@ Keeper *keeper = NULL;
 // to be notified about signals.
 //
 
-int (*handler)(int) = NULL;
+int (*signalHandler)(int) = NULL;
 
 //
 // Signal handling functions (that are not already mentioned in Misc.h).
@@ -5999,7 +5999,7 @@ void HandleSignal(int signal)
 
   #endif
 
-  if (getpid() != lastProxy && handler != NULL)
+  if (getpid() != lastProxy && signalHandler != NULL)
   {
     #if defined(UNSAFE) && (defined(TEST) || defined(INFO))
     *logofs << "Loop: Calling slave handler in process "
@@ -6007,7 +6007,7 @@ void HandleSignal(int signal)
             << logofs_flush;
     #endif
 
-    if ((*handler)(signal) == 0)
+    if ((*signalHandler)(signal) == 0)
     {
       return;
     }

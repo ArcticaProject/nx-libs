@@ -64,7 +64,7 @@
 
 extern Keeper *keeper;
 
-extern int (*handler)(int);
+extern int (*signalHandler)(int);
 
 extern int useUnixSocket;
 
@@ -792,7 +792,7 @@ int NXTransKeeper(int caches, int images, const char *root)
 
   keeper = new Keeper(caches, images, root, 100, parent);
 
-  handler = NXTransKeeperHandler;
+  signalHandler = NXTransKeeperHandler;
 
   if (keeper == NULL)
   {
