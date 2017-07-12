@@ -5530,7 +5530,7 @@ const char *Proxy::handleLoadAllStores(const char *loadPath, const char *loadNam
   md5_append(md5StateStream, (const md5_byte_t *) loadName, strlen(loadName));
   md5_finish(md5StateStream, md5DigestStream);
 
-  for (int i = 0; i < MD5_LENGTH; i++)
+  for (unsigned int i = 0; i < MD5_LENGTH; i++)
   {
     if (md5DigestStream[i] != md5FromFile[i])
     {
@@ -5539,17 +5539,17 @@ const char *Proxy::handleLoadAllStores(const char *loadPath, const char *loadNam
       *logofs << "Proxy: PANIC! Bad checksum for cache file '"
               << cacheName << "'.\n" << logofs_flush;
 
-      for (unsigned int i = 0; i < MD5_LENGTH; i++)
+      for (unsigned int j = 0; j < MD5_LENGTH; j++)
       {
-        sprintf(md5String + (i * 2), "%02X", md5FromFile[i]);
+        sprintf(md5String + (j * 2), "%02X", md5FromFile[j]);
       }
 
       *logofs << "Proxy: PANIC! Saved checksum is '"
               << md5String << "'.\n" << logofs_flush;
 
-      for (unsigned int i = 0; i < MD5_LENGTH; i++)
+      for (unsigned int j = 0; j < MD5_LENGTH; j++)
       {
-        sprintf(md5String + (i * 2),"%02X", md5DigestStream[i]);
+        sprintf(md5String + (j * 2),"%02X", md5DigestStream[i]);
       }
 
       *logofs << "Proxy: PANIC! Calculated checksum is '"
