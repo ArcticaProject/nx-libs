@@ -6644,7 +6644,7 @@ int WaitForRemote(ChannelEndPoint &socketAddress)
 
   int retryAccept  = -1;
 
-  int proxyFD = -1;
+  int pFD = -1;
   int newFD   = -1;
 
   int acceptIPAddr = 0;
@@ -6696,7 +6696,7 @@ int WaitForRemote(ChannelEndPoint &socketAddress)
     strcpy(hostLabel, "unknown origin (something went wrong!!!)");
 
 
-  proxyFD = ListenConnection(socketAddress, "NX");
+  pFD = ListenConnection(socketAddress, "NX");
 
   socketAddress.getSpec(&socketUri);
   #ifdef TEST
@@ -6726,14 +6726,14 @@ int WaitForRemote(ChannelEndPoint &socketAddress)
     fd_set readSet;
 
     FD_ZERO(&readSet);
-    FD_SET(proxyFD, &readSet);
+    FD_SET(pFD, &readSet);
 
     T_timestamp selectTs;
 
     selectTs.tv_sec  = 20;
     selectTs.tv_usec = 0;
 
-    int result = select(proxyFD + 1, &readSet, NULL, NULL, &selectTs);
+    int result = select(pFD + 1, &readSet, NULL, NULL, &selectTs);
 
     getNewTimestamp();
 
@@ -6760,7 +6760,7 @@ int WaitForRemote(ChannelEndPoint &socketAddress)
 
       goto WaitForRemoteError;
     }
-    else if (result > 0 && FD_ISSET(proxyFD, &readSet))
+    else if (result > 0 && FD_ISSET(pFD, &readSet))
     {
 
       sockaddr_in newAddrINET;
@@ -6768,12 +6768,12 @@ int WaitForRemote(ChannelEndPoint &socketAddress)
       if (socketAddress.isUnixSocket())
       {
         socklen_t addrLen = sizeof(sockaddr_un);
-        newFD = accept(proxyFD, NULL, &addrLen);
+        newFD = accept(pFD, NULL, &addrLen);
       }
       else if (socketAddress.isTCPSocket())
       {
         socklen_t addrLen = sizeof(sockaddr_in);
-        newFD = accept(proxyFD, (sockaddr *) &newAddrINET, &addrLen);
+        newFD = accept(pFD, (sockaddr *) &newAddrINET, &addrLen);
       }
       if (newFD == -1)
       {
@@ -6895,13 +6895,13 @@ int WaitForRemote(ChannelEndPoint &socketAddress)
     }
   }
 
-  close(proxyFD);
+  close(pFD);
 
   return newFD;
 
 WaitForRemoteError:
 
-  close(proxyFD);
+  close(pFD);
 
   HandleCleanup();
 }
@@ -7113,7 +7113,7 @@ int ConnectToRemote(ChannelEndPoint &socketAddress)
 
   int result = -1;
   int reason = -1;
-  int proxyFD = -1;
+  int pFD = -1;
 
   char *hostName = NULL;
   long int portNum = -1;
@@ -7130,13 +7130,13 @@ int ConnectToRemote(ChannelEndPoint &socketAddress)
     #endif
 
     if (socketAddress.getUnixPath(&unixPath))
-      result = PrepareProxyConnectionUnix(&unixPath, &connectTimeout, &proxyFD, &reason);
+      result = PrepareProxyConnectionUnix(&unixPath, &connectTimeout, &pFD, &reason);
     else if (socketAddress.getTCPHostAndPort(&hostName, &portNum))
-      result = PrepareProxyConnectionTCP(&hostName, &portNum, &connectTimeout, &proxyFD, &reason);
+      result = PrepareProxyConnectionTCP(&hostName, &portNum, &connectTimeout, &pFD, &reason);
 
     if (result < 0)
     {
-      close(proxyFD);
+      close(pFD);
 
       if (CheckAbort() != 0)
       {
@@ -7274,13 +7274,13 @@ int ConnectToRemote(ChannelEndPoint &socketAddress)
     }
   }
 
-  return proxyFD;
+  return pFD;
 
 ConnectToRemoteError:
 
-  if (proxyFD != -1)
+  if (pFD != -1)
   {
-    close(proxyFD);
+    close(pFD);
   }
 
   HandleCleanup();
