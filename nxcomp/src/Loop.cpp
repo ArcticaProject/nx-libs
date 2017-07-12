@@ -427,8 +427,8 @@ static int SetupAgentInstance();
 static int SetupTcpSocket();
 static int SetupUnixSocket();
 static int SetupServiceSockets();
-static int SetupDisplaySocket(int &xServerAddrFamily, sockaddr *&xServerAddr,
-                                  unsigned int &xServerAddrLength);
+static int SetupDisplaySocket(int &addr_family, sockaddr *&addr,
+                                  unsigned int &addr_length);
 
 //
 // Setup a listening socket and accept
@@ -4025,12 +4025,12 @@ int SetupUnixSocket()
 // implementation.
 //
 
-int SetupDisplaySocket(int &xServerAddrFamily, sockaddr *&xServerAddr,
-                           unsigned int &xServerAddrLength)
+int SetupDisplaySocket(int &addr_family, sockaddr *&addr,
+                           unsigned int &addr_length)
 {
-  xServerAddrFamily = AF_INET;
-  xServerAddr = NULL;
-  xServerAddrLength = 0;
+  addr_family = AF_INET;
+  addr = NULL;
+  addr_length = 0;
 
   char *display;
 
@@ -4167,7 +4167,7 @@ int SetupDisplaySocket(int &xServerAddrFamily, sockaddr *&xServerAddr,
 
     sockaddr_un *xServerAddrUNIX = new sockaddr_un;
 
-    xServerAddrFamily = AF_UNIX;
+    addr_family = AF_UNIX;
     xServerAddrUNIX -> sun_family = AF_UNIX;
 
     //
@@ -4189,25 +4189,25 @@ int SetupDisplaySocket(int &xServerAddrFamily, sockaddr *&xServerAddr,
 
     #ifdef __linux__
     int testSocketFD;
-    testSocketFD = socket(xServerAddrFamily, SOCK_STREAM, PF_UNSPEC);
+    testSocketFD = socket(addr_family, SOCK_STREAM, PF_UNSPEC);
 
     int len = sprintf(unixSocketName + 1, "/tmp/.X11-unix/X%d", xPort);
     unixSocketName[0] = '\0';
 
     sockaddr_un *xServerAddrABSTRACT = new sockaddr_un;
-    memset(xServerAddrABSTRACT, 0, xServerAddrLength);
+    memset(xServerAddrABSTRACT, 0, addr_length);
     xServerAddrABSTRACT -> sun_family = AF_UNIX;
     memcpy(xServerAddrABSTRACT -> sun_path, unixSocketName, len+1);
-    xServerAddrLength = len +3;
+    addr_length = len +3;
 
-    int ret = connect(testSocketFD, (struct sockaddr *) xServerAddrABSTRACT, xServerAddrLength);
+    int ret = connect(testSocketFD, (struct sockaddr *) xServerAddrABSTRACT, addr_length);
     if (ret == 0) {
 
         cerr << "Info" << ": Using abstract X11 socket in kernel namespace "
              << "for accessing DISPLAY=:" << xPort << ".\n";
 
         close(testSocketFD);
-        xServerAddr = (sockaddr *) xServerAddrABSTRACT;
+        addr = (sockaddr *) xServerAddrABSTRACT;
         return 1;
 
     } else {
@@ -4287,8 +4287,8 @@ int SetupDisplaySocket(int &xServerAddrFamily, sockaddr *&xServerAddr,
 
     strcpy(xServerAddrUNIX -> sun_path, unixSocketName);
 
-    xServerAddr = (sockaddr *) xServerAddrUNIX;
-    xServerAddrLength = sizeof(sockaddr_un);
+    addr = (sockaddr *) xServerAddrUNIX;
+    addr_length = sizeof(sockaddr_un);
 
     #ifdef __linux__
 
@@ -4306,7 +4306,7 @@ int SetupDisplaySocket(int &xServerAddrFamily, sockaddr *&xServerAddr,
             << logofs_flush;
     #endif
 
-    xServerAddrFamily = AF_INET;
+    addr_family = AF_INET;
 
     int xServerIPAddr = GetHostAddress(display);
 
@@ -4329,8 +4329,8 @@ int SetupDisplaySocket(int &xServerAddrFamily, sockaddr *&xServerAddr,
     xServerAddrTCP -> sin_port = htons(X_TCP_PORT + xPort);
     xServerAddrTCP -> sin_addr.s_addr = xServerIPAddr;
 
-    xServerAddr = (sockaddr *) xServerAddrTCP;
-    xServerAddrLength = sizeof(sockaddr_in);
+    addr = (sockaddr *) xServerAddrTCP;
+    addr_length = sizeof(sockaddr_in);
   }
 
   delete [] display;
