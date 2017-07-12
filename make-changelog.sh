@@ -17,4 +17,4 @@
 # Free Software Foundation, Inc.,
 # 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
-git --no-pager log --since "1970" --format="%ai %aN (%h)%n%n%x09*%w(68,0,10) %s%d%n" > ChangeLog
+git --no-pager log --format="%ai %aN (%h)%n%n%x09*%w(68,0,10) %s%d%n" > ChangeLog
