@@ -249,6 +249,62 @@ fi
 AC_SUBST([BASE_]PREFIX[FLAGS])
 ]) # NX_COMPILER_FLAGS
 
+# NX_STRICT_OPTION
+# -----------------------
+#
+# Add configure option to enable strict compilation flags, such as treating
+# warnings as fatal errors.
+# If --enable-strict-compilation is passed to configure, adds strict flags to
+# $BASE_CFLAGS or $BASE_CXXFLAGS.
+#
+# Also exports $STRICT_CFLAGS for use in other tests or when strict compilation
+# is unconditionally desired.
+AC_DEFUN([NX_STRICT_OPTION], [
+AC_REQUIRE([NX_COMPILER_FLAGS])
+
+AC_ARG_ENABLE(strict-compilation,
+                          AS_HELP_STRING([--enable-strict-compilation],
+                          [Enable all warnings from compiler and make them errors (default: disabled)]),
+                          [STRICT_COMPILE=$enableval], [STRICT_COMPILE=no])
+
+AC_LANG_CASE(
+        [C], [
+                define([PREFIX], [C])
+        ],
+        [C++], [
+                define([PREFIX], [CXX])
+        ]
+)
+
+[STRICT_]PREFIX[FLAGS]=""
+NX_TESTSET_CFLAG([[STRICT_]PREFIX[FLAGS]], [-pedantic])
+NX_TESTSET_CFLAG([[STRICT_]PREFIX[FLAGS]], [-Werror], [-errwarn])
+
+# Earlier versions of gcc (eg: 4.2) support -Werror=attributes, but do not
+# activate it with -Werror, so we add it here explicitly.
+NX_TESTSET_CFLAG([[STRICT_]PREFIX[FLAGS]], [-Werror=attributes])
+
+if test "x$STRICT_COMPILE" = "xyes"; then
+    [BASE_]PREFIX[FLAGS]="$[BASE_]PREFIX[FLAGS] $[STRICT_]PREFIX[FLAGS]"
+fi
+AC_SUBST([STRICT_]PREFIX[FLAGS])
+AC_SUBST([BASE_]PREFIX[FLAGS])
+]) # NX_STRICT_OPTION
+
+# NX_DEFAULT_OPTIONS
+# --------------------
+#
+# Defines default options for X.Org-like modules.
+#
+AC_DEFUN([NX_DEFAULT_OPTIONS], [
+AC_REQUIRE([AC_PROG_INSTALL])
+NX_COMPILER_FLAGS
+NX_STRICT_OPTION
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])],
+    [AC_SUBST([AM_DEFAULT_VERBOSITY], [1])])
+]) # NX_DEFAULT_OPTIONS
+
+
 dnl Check to see if we're running under Cygwin32.
 
 AC_DEFUN([NX_BUILD_ON_CYGWIN32],
