@@ -450,8 +450,8 @@ static int AcceptConnection(int fd, int domain, const char *label);
 // Other convenience functions.
 //
 
-static int PrepareProxyConnectionTCP(char** hostName, long int* portNum, int* timeout, int* proxyFD, int* reason);
-static int PrepareProxyConnectionUnix(char** path, int* timeout, int* proxyFD, int* reason);
+static int PrepareProxyConnectionTCP(char** hostName, long int* portNum, int* timeout, int* proxyFileDescriptor, int* reason);
+static int PrepareProxyConnectionUnix(char** path, int* timeout, int* proxyFileDescriptor, int* reason);
 
 static int WaitForRemote(ChannelEndPoint &socketAddress);
 static int ConnectToRemote(ChannelEndPoint &socketAddress);
@@ -6914,18 +6914,18 @@ WaitForRemoteError:
   HandleCleanup();
 }
 
-int PrepareProxyConnectionTCP(char** hostName, long int* portNum, int* timeout, int* proxyFD, int* reason)
+int PrepareProxyConnectionTCP(char** hostName, long int* portNum, int* timeout, int* proxyFileDescriptor, int* reason)
 {
 
-  if (!proxyFD)
+  if (!proxyFileDescriptor)
   {
     #ifdef PANIC
     *logofs << "Loop: PANIC! Implementation error (PrepareProxyConnectionTCP). "
-            << "'proxyFD' must not be a NULL pointer.\n" << logofs_flush;
+            << "'proxyFileDescriptor' must not be a NULL pointer.\n" << logofs_flush;
     #endif
 
     cerr << "Error" << ":  Implementation error (PrepareProxyConnectionTCP). "
-            << "'proxyFD' must not be a NULL pointer.\n";
+            << "'proxyFileDescriptor' must not be a NULL pointer.\n";
 
     return -1;
   }
@@ -6966,7 +6966,7 @@ int PrepareProxyConnectionTCP(char** hostName, long int* portNum, int* timeout, 
        << *hostName << ":" << *portNum << "'.\n"
        << logofs_flush;
 
-  *proxyFD = -1;
+  *proxyFileDescriptor = -1;
   *reason = -1;
 
   sockaddr_in addr;
@@ -6974,10 +6974,10 @@ int PrepareProxyConnectionTCP(char** hostName, long int* portNum, int* timeout, 
   addr.sin_port = htons(*portNum);
   addr.sin_addr.s_addr = remoteIPAddr;
 
-  *proxyFD = socket(AF_INET, SOCK_STREAM, PF_UNSPEC);
+  *proxyFileDescriptor = socket(AF_INET, SOCK_STREAM, PF_UNSPEC);
   *reason = EGET();
 
-  if (*proxyFD == -1)
+  if (*proxyFileDescriptor == -1)
   {
     #ifdef PANIC
     *logofs << "Loop: PANIC! Call to socket failed. "
@@ -6991,7 +6991,7 @@ int PrepareProxyConnectionTCP(char** hostName, long int* portNum, int* timeout, 
     return -1;
 
   }
-  else if (SetReuseAddress(*proxyFD) < 0)
+  else if (SetReuseAddress(*proxyFileDescriptor) < 0)
   {
     return -1;
   }
@@ -7006,7 +7006,7 @@ int PrepareProxyConnectionTCP(char** hostName, long int* portNum, int* timeout, 
   else
     SetTimer(20000);
 
-  int result = connect(*proxyFD, (sockaddr *) &addr, sizeof(sockaddr_in));
+  int result = connect(*proxyFileDescriptor, (sockaddr *) &addr, sizeof(sockaddr_in));
 
   *reason = EGET();
 
@@ -7016,18 +7016,18 @@ int PrepareProxyConnectionTCP(char** hostName, long int* portNum, int* timeout, 
 
 }
 
-int PrepareProxyConnectionUnix(char** path, int* timeout, int* proxyFD, int* reason)
+int PrepareProxyConnectionUnix(char** path, int* timeout, int* proxyFileDescriptor, int* reason)
 {
 
-  if (!proxyFD)
+  if (!proxyFileDescriptor)
   {
     #ifdef PANIC
     *logofs << "Loop: PANIC! Implementation error (PrepareProxyConnectionUnix). "
-            << "proxyFD must not be a NULL pointer.\n" << logofs_flush;
+            << "proxyFileDescriptor must not be a NULL pointer.\n" << logofs_flush;
     #endif
 
     cerr << "Error" << ":  Implementation error (PrepareProxyConnectionUnix). "
-            << "proxyFD must not be a NULL pointer.\n";
+            << "proxyFileDescriptor must not be a NULL pointer.\n";
 
     return -1;
   }
@@ -7047,17 +7047,17 @@ int PrepareProxyConnectionUnix(char** path, int* timeout, int* proxyFD, int* rea
 
   /* FIXME: Add socket file existence and permission checks */
 
-  *proxyFD = -1;
+  *proxyFileDescriptor = -1;
   *reason = -1;
 
   sockaddr_un addr;
   addr.sun_family = AF_UNIX;
   strncpy(addr.sun_path, *path, 108 - 1);
 
-  *proxyFD = socket(AF_UNIX, SOCK_STREAM, PF_UNSPEC);
+  *proxyFileDescriptor = socket(AF_UNIX, SOCK_STREAM, PF_UNSPEC);
   *reason = EGET();
 
-  if (*proxyFD == -1)
+  if (*proxyFileDescriptor == -1)
   {
     #ifdef PANIC
     *logofs << "Loop: PANIC! Call to socket failed. "
@@ -7082,7 +7082,7 @@ int PrepareProxyConnectionUnix(char** path, int* timeout, int* proxyFD, int* rea
   else
     SetTimer(20000);
 
-  int result = connect(*proxyFD, (sockaddr *) &addr, sizeof(sockaddr_un));
+  int result = connect(*proxyFileDescriptor, (sockaddr *) &addr, sizeof(sockaddr_un));
 
   *reason = EGET();
 
