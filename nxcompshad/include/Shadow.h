@@ -65,6 +65,8 @@ typedef struct _ShadowOptions
 
 extern ShadowOptions NXShadowOptions;
 
+extern void NXShadowResetOptions();
+
 extern int           NXShadowCreate(void *, char *, char *, void **);
 extern void          NXShadowDestroy(void);
 

@@ -23,6 +23,10 @@
 /*                                                                        */
 /**************************************************************************/
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <stdio.h>
 #include <ctype.h>
 #include <unistd.h>
@@ -37,11 +41,14 @@
 
 Logger logger;
 
-void Logger::user(const char *format, va_list arguments)
+void Logger::user(const char *format, ...)
 {
   char string[1024];
 
+  va_list arguments;
+  va_start(arguments, format);
   vsnprintf(string, 1024, format, arguments);
+  va_end(arguments);
 
   fprintf(stderr, "%s\n", string);
 }
@@ -52,20 +59,26 @@ void Logger::error(const char *name, int error)
                name, error, strerror(error));
 }
 
-void Logger::warning(const char *name, const char *format, va_list arguments)
+void Logger::warning(const char *name, const char *format, ...)
 {
   char string[1024];
 
+  va_list arguments;
+  va_start(arguments, format);
   vsnprintf(string, 1024, format, arguments);
+  va_end(arguments);
 
   fprintf(stderr, "%s: WARNING! %s\n", name, string);
 }
 
-void Logger::test(const char *name, const char *format, va_list arguments)
+void Logger::test(const char *name, const char *format, ...)
 {
   char string[1024];
 
+  va_list arguments;
+  va_start(arguments, format);
   vsnprintf(string, 1024, format, arguments);
+  va_end(arguments);
 
   fprintf(stderr, "%s: %s\n", name, string);
 }
@@ -75,11 +88,14 @@ void Logger::trace(const char *name)
   fprintf(stderr, "%s\n", name);
 }
 
-void Logger::debug(const char *name, const char *format, va_list arguments)
+void Logger::debug(const char *name, const char *format, ...)
 {
   char string[1024];
 
+  va_list arguments;
+  va_start(arguments, format);
   vsnprintf(string, 1024, format, arguments);
+  va_end(arguments);
 
   fprintf(stderr, "%s: %s\n", name, string);
 }

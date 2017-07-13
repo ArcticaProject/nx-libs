@@ -23,6 +23,10 @@
 /*                                                                        */
 /**************************************************************************/
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <string.h>
 #include <sys/time.h>
 
@@ -417,64 +421,64 @@ int CorePoller::isChanged(int (*checkIfInputCallback)(void *), void *arg, int *s
 
   if (foundChanges)
   {
-    int start, last, curLine, left, right;
+    int start, last, curWorkLine, left, right;
 
-    for (curLine = 0; curLine < (int) height_; curLine++)
+    for (curWorkLine = 0; curWorkLine < (int) height_; curWorkLine++)
     {
-      if (lineStatus_[curLine] == LINE_HAS_CHANGED)
+      if (lineStatus_[curWorkLine] == LINE_HAS_CHANGED)
       {
         break;
       }
     }
 
-    start = curLine;
-    last = curLine;
+    start = curWorkLine;
+    last = curWorkLine;
 
-    left = lefts_[curLine];
-    right = rights_[curLine];
-    curLine++;
+    left = lefts_[curWorkLine];
+    right = rights_[curWorkLine];
+    curWorkLine++;
 
     while (1)
     {
-      for (; curLine < (int) height_; curLine++)
+      for (; curWorkLine < (int) height_; curWorkLine++)
       {
-        if (lineStatus_[curLine] == LINE_HAS_CHANGED)
+        if (lineStatus_[curWorkLine] == LINE_HAS_CHANGED)
         {
           break;
         }
       }
 
-      if (curLine == (int) height_)
+      if (curWorkLine == (int) height_)
       {
         break;
       }
 
-      if ((curLine - last > minSliceHeight_) || (last - start > maxSliceHeight_))
+      if ((curWorkLine - last > minSliceHeight_) || (last - start > maxSliceHeight_))
       {
         XRectangle rect = {left, start, right - left + 1, last - start + 1};
 
         XUnionRectWithRegion(&rect, lastUpdatedRegion_, lastUpdatedRegion_);
 
-        start = curLine;
-        left = lefts_[curLine];
-        right = rights_[curLine];
+        start = curWorkLine;
+        left = lefts_[curWorkLine];
+        right = rights_[curWorkLine];
       }
       else
       {
-        if (lefts_[curLine] < left)
+        if (lefts_[curWorkLine] < left)
         {
-          left = lefts_[curLine];
+          left = lefts_[curWorkLine];
         }
 
-        if (rights_[curLine] > right)
+        if (rights_[curWorkLine] > right)
         {
-          right = rights_[curLine];
+          right = rights_[curWorkLine];
         }
       }
 
-      last = curLine;
+      last = curWorkLine;
 
-      curLine++;
+      curWorkLine++;
     }
 
     //

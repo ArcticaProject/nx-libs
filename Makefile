@@ -78,7 +78,7 @@ build-full:
 	# nxcomp{ext,shad}.
 	cd nx-X11/lib && make
 
-	cd nxcompshad && autoconf && (${CONFIGURE}) && ${MAKE}
+	cd nxcompshad && autoreconf -vfsi && (${CONFIGURE}) && ${MAKE}
 
 	./mesa-quilt push -a
 

@@ -23,6 +23,10 @@
 /*                                                                        */
 /**************************************************************************/
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <signal.h>
 #include <string.h>
 
@@ -52,8 +56,6 @@ static int mirrorException = 0;
 static UpdateManager *updateManager;
 static Poller *poller;
 static Input *input;
-
-int NXShadowRemoveAllUpdaters();
 
 inline bool NXShadowNotInitialized()
 {
