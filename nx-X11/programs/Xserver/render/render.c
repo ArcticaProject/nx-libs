@@ -287,8 +287,18 @@ ProcRenderQueryVersion (ClientPtr client)
     rep.type = X_Reply;
     rep.length = 0;
     rep.sequenceNumber = client->sequence;
-    rep.majorVersion = SERVER_RENDER_MAJOR_VERSION;
-    rep.minorVersion = SERVER_RENDER_MINOR_VERSION;
+
+    if ((stuff->majorVersion * 1000 + stuff->minorVersion) <
+        (SERVER_RENDER_MAJOR_VERSION * 1000 + SERVER_RENDER_MINOR_VERSION))
+    {
+	rep.majorVersion = stuff->majorVersion;
+	rep.minorVersion = stuff->minorVersion;
+    } else
+    {
+	rep.majorVersion = SERVER_RENDER_MAJOR_VERSION;
+	rep.minorVersion = SERVER_RENDER_MINOR_VERSION;
+    }
+
     if (client->swapped) {
 	swaps(&rep.sequenceNumber);
 	swapl(&rep.length);
@@ -334,8 +344,6 @@ findVisual (ScreenPtr pScreen, VisualID vid)
     }
     return 0;
 }
-
-extern char *ConnectionInfo;
 
 #ifndef NXAGENT_SERVER
 static int
@@ -695,7 +703,7 @@ ProcRenderSetPictureClipRectangles (ClientPtr client)
     VERIFY_PICTURE (pPicture, stuff->picture, client, DixWriteAccess,
 		    RenderErrBase + BadPicture);
     if (!pPicture->pDrawable)
-        return BadDrawable;
+        return RenderErrBase + BadPicture;
 
     nr = (client->req_len << 2) - sizeof(xRenderChangePictureReq);
     if (nr & 4)
@@ -1466,7 +1474,7 @@ ProcRenderFillRectangles (ClientPtr client)
 #endif /* NXAGENT_SERVER */
 
 static void
-SetBit (unsigned char *line, int x, int bit)
+RenderSetBit (unsigned char *line, int x, int bit)
 {
     unsigned char   mask;
     
@@ -1640,8 +1648,8 @@ ProcRenderCreateCursor (ClientPtr client)
 	    {
 		CARD32	a = ((p >> 24));
 
-		SetBit (mskline, x, a != 0);
-		SetBit (srcline, x, a != 0 && p == twocolor[0]);
+		RenderSetBit (mskline, x, a != 0);
+		RenderSetBit (srcline, x, a != 0 && p == twocolor[0]);
 	    }
 	    else
 	    {
@@ -1649,9 +1657,9 @@ ProcRenderCreateCursor (ClientPtr client)
 		CARD32	i = ((CvtR8G8B8toY15(p) >> 7) * DITHER_SIZE + 127) / 255;
 		CARD32	d = orderedDither[y&(DITHER_DIM-1)][x&(DITHER_DIM-1)];
 		/* Set mask from dithered alpha value */
-		SetBit(mskline, x, a > d);
+		RenderSetBit (mskline, x, a > d);
 		/* Set src from dithered intensity value */
-		SetBit(srcline, x, a > d && i <= d);
+		RenderSetBit (srcline, x, a > d && i <= d);
 	    }
 	}
 	srcline += stride;
@@ -1969,6 +1977,8 @@ static int ProcRenderCreateRadialGradient (ClientPtr client)
     LEGAL_NEW_RESOURCE(stuff->pid, client);
 
     len = (client->req_len << 2) - sizeof(xRenderCreateRadialGradientReq);
+    if (stuff->nStops > UINT32_MAX / (sizeof(xFixed) + sizeof(xRenderColor)))
+        return BadLength;
     if (len != stuff->nStops*(sizeof(xFixed) + sizeof(xRenderColor)))
         return BadLength;
 
@@ -1999,6 +2009,8 @@ static int ProcRenderCreateConicalGradient (ClientPtr client)
     LEGAL_NEW_RESOURCE(stuff->pid, client);
 
     len = (client->req_len << 2) - sizeof(xRenderCreateConicalGradientReq);
+    if (stuff->nStops > UINT32_MAX / (sizeof(xFixed) + sizeof(xRenderColor)))
+        return BadLength;
     if (len != stuff->nStops*(sizeof(xFixed) + sizeof(xRenderColor)))
         return BadLength;
 
@@ -2097,6 +2109,8 @@ SProcRenderSetPictureClipRectangles (ClientPtr client)
     REQUEST_AT_LEAST_SIZE(xRenderSetPictureClipRectanglesReq);
     swaps(&stuff->length);
     swapl(&stuff->picture);
+    swaps(&stuff->xOrigin);
+    swaps(&stuff->yOrigin);
     SwapRestS(stuff);
     return (*ProcRenderVector[stuff->renderReqType]) (client);
 }
@@ -2134,20 +2148,7 @@ SProcRenderComposite (ClientPtr client)
 static int
 SProcRenderScale (ClientPtr client)
 {
-    REQUEST(xRenderScaleReq);
-    REQUEST_SIZE_MATCH(xRenderScaleReq);
-    swaps(&stuff->length);
-    swapl(&stuff->src);
-    swapl(&stuff->dst);
-    swapl(&stuff->colorScale);
-    swapl(&stuff->alphaScale);
-    swaps(&stuff->xSrc);
-    swaps(&stuff->ySrc);
-    swaps(&stuff->xDst);
-    swaps(&stuff->yDst);
-    swaps(&stuff->width);
-    swaps(&stuff->height);
-    return (*ProcRenderVector[stuff->renderReqType]) (client);
+    return BadImplementation;
 }
 
 static int
@@ -3282,6 +3283,138 @@ PanoramiXRenderAddTraps (ClientPtr client)
     return result;
 }
 
+static int
+PanoramiXRenderCreateSolidFill (ClientPtr client)
+{
+    REQUEST(xRenderCreateSolidFillReq);
+    PanoramiXRes    *newPict;
+    int		    result = Success, j;
+
+    REQUEST_AT_LEAST_SIZE(xRenderCreateSolidFillReq);
+
+    if(!(newPict = (PanoramiXRes *) calloc(0, sizeof(PanoramiXRes))))
+	return BadAlloc;
+
+    newPict->type = XRT_PICTURE;
+    newPict->info[0].id = stuff->pid;
+    newPict->u.pict.root = FALSE;
+
+    for(j = 1; j < PanoramiXNumScreens; j++)
+	newPict->info[j].id = FakeClientID(client->index);
+
+    FOR_NSCREENS_BACKWARD(j) {
+	stuff->pid = newPict->info[j].id;
+	result = (*PanoramiXSaveRenderVector[X_RenderCreateSolidFill]) (client);
+	if(result != Success) break;
+    }
+
+    if (result == Success)
+	AddResource(newPict->info[0].id, XRT_PICTURE, newPict);
+    else
+	free(newPict);
+
+    return result;
+}
+
+static int
+PanoramiXRenderCreateLinearGradient (ClientPtr client)
+{
+    REQUEST(xRenderCreateLinearGradientReq);
+    PanoramiXRes    *newPict;
+    int		    result = Success, j;
+
+    REQUEST_AT_LEAST_SIZE(xRenderCreateLinearGradientReq);
+
+    if(!(newPict = (PanoramiXRes *) calloc(0, sizeof(PanoramiXRes))))
+	return BadAlloc;
+
+    newPict->type = XRT_PICTURE;
+    newPict->info[0].id = stuff->pid;
+    newPict->u.pict.root = FALSE;
+
+    for(j = 1; j < PanoramiXNumScreens; j++)
+	newPict->info[j].id = FakeClientID(client->index);
+
+    FOR_NSCREENS_BACKWARD(j) {
+	stuff->pid = newPict->info[j].id;
+	result = (*PanoramiXSaveRenderVector[X_RenderCreateLinearGradient]) (client);
+	if(result != Success) break;
+    }
+
+    if (result == Success)
+	AddResource(newPict->info[0].id, XRT_PICTURE, newPict);
+    else
+	free(newPict);
+
+    return result;
+}
+
+static int
+PanoramiXRenderCreateRadialGradient (ClientPtr client)
+{
+    REQUEST(xRenderCreateRadialGradientReq);
+    PanoramiXRes    *newPict;
+    int		    result = Success, j;
+
+    REQUEST_AT_LEAST_SIZE(xRenderCreateRadialGradientReq);
+
+    if(!(newPict = (PanoramiXRes *) calloc(0, sizeof(PanoramiXRes))))
+	return BadAlloc;
+
+    newPict->type = XRT_PICTURE;
+    newPict->info[0].id = stuff->pid;
+    newPict->u.pict.root = FALSE;
+
+    for(j = 1; j < PanoramiXNumScreens; j++)
+	newPict->info[j].id = FakeClientID(client->index);
+
+    FOR_NSCREENS_BACKWARD(j) {
+	stuff->pid = newPict->info[j].id;
+	result = (*PanoramiXSaveRenderVector[X_RenderCreateRadialGradient]) (client);
+	if(result != Success) break;
+    }
+
+    if (result == Success)
+	AddResource(newPict->info[0].id, XRT_PICTURE, newPict);
+    else
+	free(newPict);
+
+    return result;
+}
+
+static int
+PanoramiXRenderCreateConicalGradient (ClientPtr client)
+{
+    REQUEST(xRenderCreateConicalGradientReq);
+    PanoramiXRes    *newPict;
+    int		    result = Success, j;
+
+    REQUEST_AT_LEAST_SIZE(xRenderCreateConicalGradientReq);
+
+    if(!(newPict = (PanoramiXRes *) calloc(0, sizeof(PanoramiXRes))))
+	return BadAlloc;
+
+    newPict->type = XRT_PICTURE;
+    newPict->info[0].id = stuff->pid;
+    newPict->u.pict.root = FALSE;
+
+    for(j = 1; j < PanoramiXNumScreens; j++)
+	newPict->info[j].id = FakeClientID(client->index);
+
+    FOR_NSCREENS_BACKWARD(j) {
+	stuff->pid = newPict->info[j].id;
+	result = (*PanoramiXSaveRenderVector[X_RenderCreateConicalGradient]) (client);
+	if(result != Success) break;
+    }
+
+    if (result == Success)
+	AddResource(newPict->info[0].id, XRT_PICTURE, newPict);
+    else
+	free(newPict);
+
+    return result;
+}
+
 void
 PanoramiXRenderInit (void)
 {
@@ -3310,6 +3443,11 @@ PanoramiXRenderInit (void)
     ProcRenderVector[X_RenderTriStrip] = PanoramiXRenderTriStrip;
     ProcRenderVector[X_RenderTriFan] = PanoramiXRenderTriFan;
     ProcRenderVector[X_RenderAddTraps] = PanoramiXRenderAddTraps;
+
+    ProcRenderVector[X_RenderCreateSolidFill] = PanoramiXRenderCreateSolidFill;
+    ProcRenderVector[X_RenderCreateLinearGradient] = PanoramiXRenderCreateLinearGradient;
+    ProcRenderVector[X_RenderCreateRadialGradient] = PanoramiXRenderCreateRadialGradient;
+    ProcRenderVector[X_RenderCreateConicalGradient] = PanoramiXRenderCreateConicalGradient;
 }
 
 void

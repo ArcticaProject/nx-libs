@@ -46,12 +46,14 @@
  * Author:  Keith Packard, SuSE, Inc.
  */
 
+/* Keep this on top to get the "real" libXrender XID types. */
+#include "Render.h"
+
 #include "picturestr.h"
 
 #include "Screen.h"
 #include "Pixmaps.h"
 #include "Drawable.h"
-#include "Render.h"
 
 /* prototypes */
 
@@ -346,6 +348,9 @@ static PicturePtr createSourcePicture(void)
 
       nxagentPicturePriv(pPicture) -> picture = 0;
     }
+    else {
+	return 0;
+    }
 
     pPicture->pDrawable = 0;
     pPicture->pFormat = 0;
@@ -365,8 +370,9 @@ FreePicture (void *	value,
     {
         nxagentDestroyPicture(pPicture);
 
-	if (pPicture->transform)
-	    free (pPicture->transform);
+	free (pPicture->transform);
+	free (pPicture->filter_params);
+
         if (!pPicture->pDrawable) {
             if (pPicture->pSourcePict) {
                 if (pPicture->pSourcePict->type != SourcePictTypeSolidFill)

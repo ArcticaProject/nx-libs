@@ -26,14 +26,30 @@
 #ifndef __Render_H__
 #define __Render_H__
 
+/*
+ * Since upstream changed the definitions of PictFormat et al to an XID
+ * base type, referencing Xlib data in the server makes short reads on
+ * 64-bit hardware. Previously, the base type was "unsigned int", which
+ * is sized differently on x86 machines - either 4 bytes in 32-bit mode,
+ * or 8 bytes in 64-bit mode.
+ * Since XID's are hardcoded to 4 bytes within X server code, we'll run
+ * into a mismatch.
+ *
+ * As a workaround, pull in stuff from render.h early and override
+ * the base type. It's ugly, but should get the work done.
+ */
+#include "X.h"
+#include "Agent.h"
+#define XID XlibXID
+#include "render.h"
+#undef  XID
+
 #include "screenint.h"
 #include "cursor.h"
 #include "picture.h"
 #include "renderproto.h"
 
 #include "glyphstr.h"
-
-#include "Agent.h"
 
 extern int nxagentRenderEnable;
 extern int nxagentRenderVersionMajor;

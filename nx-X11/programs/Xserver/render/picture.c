@@ -43,6 +43,10 @@
 #include "picturestr.h"
 #endif
 
+#ifdef PANORAMIX
+#include "panoramiXsrv.h"
+#endif
+
 int		PictureScreenPrivateIndex = -1;
 int		PictureWindowPrivateIndex;
 int		PictureGeneration;
@@ -658,6 +662,9 @@ PictureInit (ScreenPtr pScreen, PictFormatPtr formats, int nformats)
     {
 	if (!AddResource (formats[n].id, PictFormatType, (void *) (formats+n)))
 	{
+	    int i;
+	    for (i = 0; i < n; i++)
+		FreeResource(formats[i].id, RT_NONE);
 	    free (formats);
 	    return FALSE;
 	}
@@ -865,12 +872,12 @@ static CARD32 xRenderColorToCard32(xRenderColor c)
 static unsigned int premultiply(unsigned int x)
 {
     unsigned int a = x >> 24;
-    unsigned int t = (x & 0xff00ff) * a;
-    t = (t + ((t >> 8) & 0xff00ff) + 0x800080) >> 8;
+    unsigned int t = (x & 0xff00ff) * a + 0x800080;
+    t = (t + ((t >> 8) & 0xff00ff)) >> 8;
     t &= 0xff00ff;
 
-    x = ((x >> 8) & 0xff) * a;
-    x = (x + ((x >> 8) & 0xff) + 0x80);
+    x = ((x >> 8) & 0xff) * a + 0x80;
+    x = (x + ((x >> 8) & 0xff));
     x &= 0xff00;
     x |= t | (a << 24);
     return x;
@@ -979,6 +986,10 @@ static PicturePtr createSourcePicture(void)
 {
     PicturePtr pPicture;
     pPicture = (PicturePtr) malloc(sizeof(PictureRec));
+
+    if (!pPicture)
+        return 0;
+
     pPicture->pDrawable = 0;
     pPicture->pFormat = 0;
     pPicture->pNext = 0;
@@ -1016,7 +1027,7 @@ CreateLinearGradientPicture (Picture pid, xPointFixed *p1, xPointFixed *p2,
 {
     PicturePtr pPicture;
 
-    if (nStops < 2) {
+    if (nStops < 1) {
         *error = BadValue;
         return 0;
     }
@@ -1061,7 +1072,7 @@ CreateRadialGradientPicture (Picture pid, xPointFixed *inner, xPointFixed *outer
     PicturePtr pPicture;
     PictRadialGradient *radial;
 
-    if (nStops < 2) {
+    if (nStops < 1) {
         *error = BadValue;
         return 0;
     }
@@ -1120,7 +1131,7 @@ CreateConicalGradientPicture (Picture pid, xPointFixed *center, xFixed angle,
 {
     PicturePtr pPicture;
 
-    if (nStops < 2) {
+    if (nStops < 1) {
         *error = BadValue;
         return 0;
     }
@@ -1149,6 +1160,75 @@ CreateConicalGradientPicture (Picture pid, xPointFixed *center, xFixed angle,
         return 0;
     }
     return pPicture;
+}
+
+static int
+cpAlphaMap(void **result, XID id, ScreenPtr screen, ClientPtr client, Mask mode)
+{
+#ifdef PANORAMIX
+    if (!noPanoramiXExtension) {
+	PanoramiXRes *res;
+#ifdef XSERVER_LACKS_PRIVATES_ABI
+	res = (void*) SecurityLookupIDByType(client,
+					     id,
+					     XRT_PICTURE,
+					     mode);
+
+	if (!res)
+	    return BadPicture;
+#else
+	int err = dixLookupResourceByType((void **)&res, id, XRT_PICTURE,
+	                                  client, mode);
+	if (err != Success)
+	    return err;
+#endif /* XSERVER_LACKS_PRIVATES_ABI */
+	id = res->info[screen->myNum].id;
+    }
+#endif /* PANORAMIX */
+
+#ifdef XSERVER_LACKS_PRIVATES_ABI
+    result = (void*) SecurityLookupIDByType(client, id,  PictureType, mode);
+    if (result)
+	return Success;
+    else
+	return BadAccess;
+#else
+    return dixLookupResourceByType(result, id, PictureType, client, mode);
+#endif /* XSERVER_LACKS_PRIVATES_ABI */
+}
+
+static int
+cpClipMask(void **result, XID id, ScreenPtr screen, ClientPtr client, Mask mode)
+{
+#ifdef PANORAMIX
+    if (!noPanoramiXExtension) {
+	PanoramiXRes *res;
+#ifdef XSERVER_LACKS_PRIVATES_ABI
+	res = (void*) SecurityLookupIDByType(client,
+					     id,
+					     XRT_PIXMAP,
+					     mode);
+
+	if (!res)
+	    return BadAccess;
+#else
+	int err = dixLookupResourceByType((void **)&res, id, XRT_PIXMAP,
+	                                  client, mode);
+	if (err != Success)
+	    return err;
+#endif /* XSERVER_LACKS_PRIVATES_ABI */
+	id = res->info[screen->myNum].id;
+    }
+#endif /* PANORAMIX */
+#ifdef XSERVER_LACKS_PRIVATES_ABI
+    result = (void*) SecurityLookupIDByType(client, id,  RT_PIXMAP, mode);
+    if (result)
+	return Success;
+    else
+	return BadAccess;
+#else
+    return dixLookupResourceByType(result, id, RT_PIXMAP, client, mode);
+#endif /* XSERVER_LACKS_PRIVATES_ABI */
 }
 
 #define NEXT_VAL(_type) (vlist ? (_type) *vlist++ : (_type) ulist++->val)
@@ -1195,7 +1275,7 @@ ChangePicture (PicturePtr	pPicture,
 	    break;
 	case CPAlphaMap:
 	    {
-		PicturePtr  pAlpha;
+		PicturePtr  pAlpha = NULL;
 		
 		if (vlist)
 		{
@@ -1205,17 +1285,18 @@ ChangePicture (PicturePtr	pPicture,
 			pAlpha = 0;
 		    else
 		    {
-			pAlpha = (PicturePtr) SecurityLookupIDByType(client,
-								     pid, 
-								     PictureType, 
-								     DixWriteAccess|DixReadAccess);
-			if (!pAlpha)
+			error = cpAlphaMap((void **) &pAlpha, pid, pScreen,
+			                   client,
+			                   DixReadAccess
+			);
+			if (error != Success)
 			{
 			    client->errorValue = pid;
 			    error = BadPixmap;
 			    break;
 			}
-			if (pAlpha->pDrawable->type != DRAWABLE_PIXMAP)
+			if (pAlpha->pDrawable == NULL ||
+			    pAlpha->pDrawable->type != DRAWABLE_PIXMAP)
 			{
 			    client->errorValue = pid;
 			    error = BadMatch;
@@ -1250,7 +1331,7 @@ ChangePicture (PicturePtr	pPicture,
 	case CPClipMask:
 	    {
 		Pixmap	    pid;
-		PixmapPtr   pPixmap;
+		PixmapPtr   pPixmap = NULL;
 		int	    clipType;
                 if (!pScreen)
                     return BadDrawable;
@@ -1266,10 +1347,11 @@ ChangePicture (PicturePtr	pPicture,
 		    else
 		    {
 			clipType = CT_PIXMAP;
-			pPixmap = (PixmapPtr)SecurityLookupIDByType(client,
-								    pid, 
-								    RT_PIXMAP,
-								    DixReadAccess);
+			error = cpClipMask((void **) &pPixmap, pid, pScreen,
+			                   client,
+			                   DixReadAccess
+			);
+
 			if (!pPixmap)
 			{
 			    client->errorValue = pid;
@@ -1491,91 +1573,14 @@ SetPictureTransform (PicturePtr	    pPicture,
     }
     pPicture->serialNumber |= GC_CHANGE_SERIAL_BIT;
 
-    return Success;
-}
-
-void
-CopyPicture (PicturePtr	pSrc,
-	     Mask	mask,
-	     PicturePtr	pDst)
-{
-    PictureScreenPtr ps = GetPictureScreen(pSrc->pDrawable->pScreen);
-    Mask origMask = mask;
-
-    pDst->serialNumber |= GC_CHANGE_SERIAL_BIT;
-    pDst->stateChanges |= mask;
-
-    while (mask) {
-	Mask bit = lowbit(mask);
-
-	switch (bit)
-	{
-	case CPRepeat:
-	    pDst->repeat = pSrc->repeat;
-	    pDst->repeatType = pSrc->repeatType;
-	    break;
-	case CPAlphaMap:
-	    if (pSrc->alphaMap && pSrc->alphaMap->pDrawable->type == DRAWABLE_PIXMAP)
-		pSrc->alphaMap->refcnt++;
-	    if (pDst->alphaMap)
-		FreePicture ((void *) pDst->alphaMap, (XID) 0);
-	    pDst->alphaMap = pSrc->alphaMap;
-	    break;
-	case CPAlphaXOrigin:
-	    pDst->alphaOrigin.x = pSrc->alphaOrigin.x;
-	    break;
-	case CPAlphaYOrigin:
-	    pDst->alphaOrigin.y = pSrc->alphaOrigin.y;
-	    break;
-	case CPClipXOrigin:
-	    pDst->clipOrigin.x = pSrc->clipOrigin.x;
-	    break;
-	case CPClipYOrigin:
-	    pDst->clipOrigin.y = pSrc->clipOrigin.y;
-	    break;
-	case CPClipMask:
-	    switch (pSrc->clientClipType) {
-	    case CT_NONE:
-		(*ps->ChangePictureClip)(pDst, CT_NONE, NULL, 0);
-		break;
-	    case CT_REGION:
-		if (!pSrc->clientClip) {
-		    (*ps->ChangePictureClip)(pDst, CT_NONE, NULL, 0);
-		} else {
-		    RegionPtr clientClip;
-		    RegionPtr srcClientClip = (RegionPtr)pSrc->clientClip;
-
-		    clientClip = RegionCreate(
-			RegionExtents(srcClientClip),
-			RegionNumRects(srcClientClip));
-		    (*ps->ChangePictureClip)(pDst, CT_REGION, clientClip, 0);
-		}
-		break;
-	    default:
-		/* XXX: CT_PIXMAP unimplemented */
-		break;
-	    }
-	    break;
-	case CPGraphicsExposure:
-	    pDst->graphicsExposures = pSrc->graphicsExposures;
-	    break;
-	case CPPolyEdge:
-	    pDst->polyEdge = pSrc->polyEdge;
-	    break;
-	case CPPolyMode:
-	    pDst->polyMode = pSrc->polyMode;
-	    break;
-	case CPDither:
-	    pDst->dither = pSrc->dither;
-	    break;
-	case CPComponentAlpha:
-	    pDst->componentAlpha = pSrc->componentAlpha;
-	    break;
-	}
-	mask &= ~bit;
+    if (pPicture->pDrawable != NULL) {
+	int result;
+	PictureScreenPtr ps = GetPictureScreen(pPicture->pDrawable->pScreen);
+	result = (*ps->ChangePictureTransform) (pPicture, transform);
+	return result;
     }
 
-    (*ps->ChangePicture)(pDst, origMask);
+    return Success;
 }
 
 static void
@@ -1610,6 +1615,9 @@ FreePicture (void *	value,
     {
 	if (pPicture->transform)
 	    free (pPicture->transform);
+        if (pPicture->filter_params)
+	    free (pPicture->filter_params);
+
         if (!pPicture->pDrawable) {
             if (pPicture->pSourcePict) {
                 if (pPicture->pSourcePict->type != SourcePictTypeSolidFill)

@@ -149,6 +149,7 @@ BOOTSTRAPCFLAGS =
                   $(REALLOCARRAY_SRCS)	\
                   xprintf.c		\
                   $(TMEMCMP_SRCS)	\
+                  xsha1.c		\
                   $(NULL)
 
            OBJS = WaitFor.o		\
@@ -173,6 +174,7 @@ BOOTSTRAPCFLAGS =
                   $(REALLOCARRAY_OBJS)	\
                   xprintf.o		\
                   $(TMEMCMP_OBJS)	\
+                  xsha1.o		\
                   $(NULL)
 
 #if UseMemLeak
@@ -200,6 +202,8 @@ BOOTSTRAPCFLAGS =
                   $(NX_DEFINES)				\
                   $(NULL)
 
+  SHA1_INCLUDES = `libgcrypt-config --cflags`
+
        INCLUDES = -I.					\
                   -I../include				\
                   -I$(XINCLUDESRC)			\
@@ -209,6 +213,7 @@ BOOTSTRAPCFLAGS =
                   -I$(TOP)/lib/Xau			\
                   $(NX_INCLUDES)			\
                   `pkg-config --cflags-only-I pixman-1`	\
+                  $(SHA1_INCLUDES)			\
                   $(NULL)
 
  DEPEND_DEFINES = $(XDMCP_DEFINES)			\

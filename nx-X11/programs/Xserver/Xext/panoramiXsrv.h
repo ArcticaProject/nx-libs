@@ -32,6 +32,7 @@ extern unsigned long XRT_WINDOW;
 extern unsigned long XRT_PIXMAP;
 extern unsigned long XRT_GC;
 extern unsigned long XRT_COLORMAP;
+extern unsigned long XRT_PICTURE;
 
 extern void XineramaGetImageData(
     DrawablePtr *pDrawables,

@@ -3,54 +3,65 @@
 #include <Server.tmpl>
 
 #if (!(defined(NXAgentServer) && NXAgentServer))
-NXAGENT_SKIP_SRCS =             \
-                    glyph.c     \
-                    mitrap.c    \
-                    picture.c   \
-                    render.c    \
+NXAGENT_SKIP_SRCS = 						\
+                    glyph.c					\
+                    mitrap.c					\
+                    picture.c					\
+                    render.c					\
                     $(NULL)
-NXAGENT_SKIP_OBJS =             \
-                    glyph.o     \
-                    mitrap.o    \
-                    picture.o   \
-                    render.o    \
+NXAGENT_SKIP_OBJS = 						\
+                    glyph.o					\
+                    mitrap.o					\
+                    picture.o					\
+                    render.o					\
                     $(NULL)
 #else
        NX_DEFINES = -DNXAGENT_SERVER
+  XSERVER_DEFINES = -DXSERVER_LACKS_PRIVATES_ABI
 #endif
 
-       SRCS =   animcur.c \
-                filter.c \
-                glyph.c \
-                matrix.c \
-                miindex.c \
-                mipict.c \
-                mirect.c \
-                mitri.c \
-                renderedge.c \
-                $(NXAGENT_SKIP_SRCS) \
-                $(NULL)
+             SRCS = 						\
+                    animcur.c					\
+                    filter.c					\
+                    matrix.c					\
+                    miindex.c					\
+                    mipict.c					\
+                    mirect.c					\
+                    mitri.c					\
+                    renderedge.c				\
+                    $(NXAGENT_SKIP_SRCS)			\
+                    $(NULL)
 
-       OBJS =   animcur.o \
-                filter.o \
-                glyph.o \
-                matrix.o \
-                miindex.o \
-                mipict.o \
-                mirect.o \
-                mitri.o \
-                renderedge.o \
-                $(NXAGENT_SKIP_OBJS) \
-                $(NULL)
+             OBJS = animcur.o					\
+                    filter.o					\
+                    matrix.o					\
+                    miindex.o					\
+                    mipict.o					\
+                    mirect.o					\
+                    mitri.o					\
+                    renderedge.o				\
+                    $(NXAGENT_SKIP_OBJS)			\
+                    $(NULL)
 
-   INCLUDES = -I. -I../include -I../mi \
-                -I../fb -I../hw/kdrive -I$(EXTINCSRC) -I$(XINCLUDESRC) \
-                -I../Xext \
-                `pkg-config --cflags-only-I pixman-1`
-   LINTLIBS = ../dix/llib-ldix.ln ../os/llib-los.ln
+         INCLUDES =						\
+                    -I.						\
+                    -I../include				\
+                    -I../mi					\
+                    -I../fb					\
+                    -I$(EXTINCSRC)				\
+                    -I$(XINCLUDESRC)				\
+                    -I../Xext					\
+                    `pkg-config --cflags-only-I pixman-1`	\
+                    $(NULL)
 
-    DEFINES = 			\
-              $(NX_DEFINES)	\
+   LINTLIBS = 							\
+              ../dix/llib-ldix.ln				\
+              ../os/llib-los.ln					\
+              $(NULL)
+
+    DEFINES = 							\
+              $(NX_DEFINES)					\
+              $(XSERVER_DEFINES)				\
               $(NULL)
 
 NormalLibraryTarget(render,$(OBJS))

@@ -714,8 +714,11 @@ FCHOWN_DEFINES = -DHAS_FCHOWN
 #define ServerReallocarrayDefines /**/
 #endif
 #endif
+#ifndef ServerSHA1Defines
+#define ServerSHA1Defines -UHAVE_SHA1_IN_LIBMD -UHAVE_SHA1_IN_LIBC -UHAVE_SHA1_IN_COMMONCRYPTO -UHAVE_SHA1_IN_CRYPTOAPI -UHAVE_SHA1_IN_LIBNETTLE -UHAVE_SHA1_IN_LIBSHA1 -DHAVE_SHA1_IN_LIBGCRYPT
+#endif
 #ifndef ServerDefines
-#define ServerDefines StandardDefines PervasiveExtensionDefines ServerExtraDefines ServerAssertDefines ServerSnprintfDefines ServerReallocarrayDefines
+#define ServerDefines StandardDefines PervasiveExtensionDefines ServerExtraDefines ServerAssertDefines ServerSnprintfDefines ServerReallocarrayDefines ServerSHA1Defines
 #endif
 
 #ifndef MesaUseX86Asm

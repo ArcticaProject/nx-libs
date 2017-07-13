@@ -106,6 +106,8 @@ BuildRequires:  libXinerama-devel
 BuildRequires:  xorg-x11-font-utils
 %endif
 
+BuildRequires:  libgcrypt-devel >= 1.4.0
+
 # For imake
 BuildRequires:  xorg-x11-proto-devel
 BuildRequires:  zlib-devel

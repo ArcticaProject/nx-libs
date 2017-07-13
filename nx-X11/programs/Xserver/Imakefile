@@ -118,19 +118,17 @@ INSTPGMFLAGS =
       DAMAGELIB = $(DAMAGEDIR)/libdamage.a
 #endif
 #if BuildComposite
-          CWDIR = miext/cw
    COMPOSITEDIR = composite
    COMPOSITELIB = $(COMPOSITEDIR)/libcomposite.a
-             CW = miext/cw/LibraryTargetName(cw)
 #endif
-     EXTENSIONS = $(COMPOSITELIB) $(DAMAGELIB) $(DAMAGE) $(FIXESLIB) $(CW) \
+     EXTENSIONS = $(COMPOSITELIB) $(DAMAGELIB) $(DAMAGE) $(FIXESLIB) \
 		  $(OTHEREXTS) $(GLXEXT) $(RANDRLIB) $(RENDERLIB)
       OTHEREXTS = Xext/LibraryTargetName(ext) $(XKBEXT) $(XINPUTEXT) \
                   $(DBEEXT) $(RECORDEXT) $(SITEEXTS)
         EXTDIRS = Xext $(XKBDIR) $(XIDIR) $(GLXDIR) \
                   $(DBEDIR) $(RECORDDIR) $(SITEEXTDIRS) \
                   $(RANDRDIR) $(RENDERDIR) $(XPCONFIGDIR) \
-		  $(FIXESDIR) $(DAMAGEDIR) $(CWDIR) $(COMPOSITEDIR)
+		  $(FIXESDIR) $(DAMAGEDIR) $(COMPOSITEDIR)
              OS = os/LibraryTargetName(os)
         BSDEMUL = $(DEPXBSDLIB)
              FB = fb/LibraryTargetName(fb)
@@ -292,14 +290,15 @@ NXAGENTOBJS = hw/nxagent/miinitext.o     \
 XPMLIB    =  -lXpm
 XMLLIB    =  `pkg-config --libs libxml-2.0`
 PIXMANLIB =  `pkg-config --libs pixman-1`
-ZLIB      =  `pkg-config --libs zlib`
+ZLIB      =  `pkg-config --libs-only-l zlib`
 PNGLIB    =  `pkg-config --libs libpng`
 JPEGLIB   =  -ljpeg
+GCRYPTLIB =  `libgcrypt-config --libs`
 
 NXAGENT = hw/nxagent/LibraryTargetName(nxagent)
 NXCOMPEXT =  hw/nxagent/compext/LibraryTargetName(compext)
 NXAGENTLIBS = PreFbLibs $(NXAGENT) FbPostFbLibs $(NXCOMPEXT) $(NXAGENT) $(MI)
-NXAGENTSYSLIBS = $(LDPRELIBS) $(XLIB) $(SYSLIBS) $(XPMLIB) $(XMLLIB)
+NXAGENTSYSLIBS = $(LDPRELIBS) $(XLIB) $(SYSLIBS) $(XPMLIB) $(XMLLIB) $(GCRYPTLIB)
 NXCOMPEXTSYSLIBS = $(PIXMANLIB) $(ZLIB) $(PNGLIB) $(JPEGLIB)
 #if HasParallelMake
 MakeMutex($(NXAGENTDIRS) $(NXCOMPEXT) $(NXAGENTOBJS) $(NXAGENTLIBS) $(NXCOMPEXTSYSLIBS) $(NXAGENTSYSLIBS))

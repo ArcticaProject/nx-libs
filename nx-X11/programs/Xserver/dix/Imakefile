@@ -125,6 +125,8 @@ VENDORRELEASE = XVendorRelease
 
 SITE_DEFINES = $(SITE_FONT_PATH) $(SITE_DISPLAY_CLASS)
 
+XSERVER_ABI_DEFINES = -DXSERVER_OLD_TRYCLIENTEVENTS_ABI
+
 VENDOR_DEFINES = $(VENDOR_STRING) $(VENDOR_RELEASE) $(QUARTZ_DEFINES)
 
 NormalLibraryObjectRule()
@@ -137,6 +139,7 @@ SpecialCObjectRule(main,$(ICONFIGFILES),$(VENDOR_DEFINES))
 SpecialCObjectRule(pixmap,$(ICONFIGFILES),$(_NOOP_))
 SpecialCObjectRule(privates,$(ICONFIGFILES),$(_NOOP_))
 SpecialCObjectRule(window,$(ICONFIGFILES),$(QUARTZ_DEFINES))
+SpecialCObjectRule(dispatch,$(ICONFIGFILES),$(XSERVER_ABI_DEFINES))
 
 NormalLibraryTarget(xpstubs,$(XPOBJ))
 

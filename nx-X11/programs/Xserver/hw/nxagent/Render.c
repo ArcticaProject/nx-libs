@@ -23,15 +23,14 @@
 /*                                                                        */
 /**************************************************************************/
 
+/* Keep this on top to get the "real" libXrender XID types. */
+#include "Render.h"
+
 #include "picturestr.h"
 #include "glyphstr.h"
 
-#include "Render.h"
-
-#include "X.h"
 #include "Xproto.h"
 
-#include "render.h"
 #include "renderproto.h"
 
 #include "mi.h"
@@ -41,7 +40,6 @@
 #include "dixstruct.h"
 #include "protocol-versions.h"
 
-#include "Agent.h"
 #include "Drawable.h"
 #include "Trap.h"
 #include "Args.h"
