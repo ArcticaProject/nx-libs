@@ -26,6 +26,7 @@ Build-Depends:
  libxinerama-dev,
  libxrender-dev,
  autoconf,
+ automake,
  pkg-config,
  x11proto-core-dev,
  expat,
