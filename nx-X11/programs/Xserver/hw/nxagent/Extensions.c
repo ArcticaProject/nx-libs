@@ -136,7 +136,7 @@ void nxagentInitRandRExtension(ScreenPtr pScreen)
 
   pRandRScrPriv = rrGetScrPriv(pScreen);
 
-  pRandRScrPriv -> rrGetInfo   = nxagentRandRGetInfo;
+  pRandRScrPriv -> rrGetInfo = nxagentRandRGetInfo;
 
   #if RANDR_15_INTERFACE
   /* nothing to be assigned here, so far */
