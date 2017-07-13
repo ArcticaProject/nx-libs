@@ -3834,7 +3834,7 @@ void nxagentDropOutput(RROutputPtr o) {
     for (int i = 0; i < c->numOutputs; i++) {
       if (c->outputs[i] == o) {
 #ifdef DEBUG
-	fprintf(stderr, "nxagentDropOutput: output [%s] is in use by crtc [%p], removing it from there\n", o->name, c);
+	fprintf(stderr, "nxagentDropOutput: output [%s] is in use by crtc [%p], removing it from there\n", o->name, (void *)c);
 #endif
 	RRCrtcSet(c, NULL, 0, 0, RR_Rotate_0, 0, NULL);
       }
