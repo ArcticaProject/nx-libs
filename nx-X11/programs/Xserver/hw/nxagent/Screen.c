@@ -3675,7 +3675,6 @@ RRModePtr    nxagentRRCustomMode = NULL;
 */
 void nxagentAdjustCustomMode(ScreenPtr pScreen)
 {
-  int          doNotify = TRUE;
   rrScrPrivPtr pScrPriv = rrGetScrPriv(pScreen);
   RROutputPtr  output;
 
@@ -3735,8 +3734,6 @@ void nxagentAdjustCustomMode(ScreenPtr pScreen)
       RRCrtcSet(crtc, nxagentRRCustomMode, 0, 0, RR_Rotate_0, 1, &output);
 
       RROutputChanged(output, 1);
-
-      doNotify = FALSE;
     }
 
     pScrPriv -> lastSetTime = currentTime;
@@ -3745,10 +3742,7 @@ void nxagentAdjustCustomMode(ScreenPtr pScreen)
     pScrPriv->configChanged = 1;
   } /* if (pScrPriv) */
 
-  if (doNotify)
-  {
-    RRScreenSizeNotify(pScreen);
-  }
+  RRScreenSizeNotify(pScreen);
 }
 
 int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, int mmHeight)
