@@ -4110,6 +4110,13 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
 
         RROutputSetConnection(pScrPriv->outputs[i], RR_Connected);
 
+	/* calculate the size in mm based on the current dpi. If
+	  nxagent is run with a different dpi than the real X server
+	  the result will look wrong but it is mathematically correct. */
+	RROutputSetPhysicalSize(pScrPriv->outputs[i],
+				(new_w * 254 + monitorResolution * 5) / (monitorResolution * 10),
+				(new_h * 254 + monitorResolution * 5) / (monitorResolution * 10));
+
         memset(&modeInfo, '\0', sizeof(modeInfo));
 
 #ifdef NXAGENT_RANDR_MODE_PREFIX
