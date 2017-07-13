@@ -3666,11 +3666,94 @@ Bool intersect_bb(int ax1, int ay1, unsigned int aw, unsigned int ah,
 }
 #endif
 
+RRModePtr    nxagentRRCustomMode = NULL;
+
+/*
+   This is basically the code that was used on screen resize before
+   xinerama was implemented. We need it as fallback if the user
+   disables xinerama
+*/
+void nxagentAdjustCustomMode(ScreenPtr pScreen)
+{
+  int          doNotify = TRUE;
+  rrScrPrivPtr pScrPriv = rrGetScrPriv(pScreen);
+  RROutputPtr  output;
+
+  if (pScrPriv)
+  {
+    output = RRFirstOutput(pScreen);
+
+    if (output && output -> crtc)
+    {
+      RRCrtcPtr crtc;
+      char         name[100];
+      xRRModeInfo  modeInfo;
+      const int    refresh = 60;
+      int          width = nxagentOption(Width);
+      int          height = nxagentOption(Height);
+
+      crtc = output -> crtc;
+
+      for (int c = 0; c < pScrPriv -> numCrtcs; c++)
+      {
+        RRCrtcSet(pScrPriv -> crtcs[c], NULL, 0, 0, RR_Rotate_0, 0, NULL);
+      }
+
+      memset(&modeInfo, '\0', sizeof(modeInfo));
+      sprintf(name, "%dx%d", width, height);
+
+      modeInfo.width  = width;
+      modeInfo.height = height;
+      modeInfo.hTotal = width;
+      modeInfo.vTotal = height;
+      modeInfo.dotClock = ((CARD32) width * (CARD32) height *
+                           (CARD32) refresh);
+      modeInfo.nameLength = strlen(name);
+
+      if (nxagentRRCustomMode != NULL)
+      {
+        RROutputDeleteUserMode(output, nxagentRRCustomMode);
+        FreeResource(nxagentRRCustomMode -> mode.id, 0);
+
+        if (crtc != NULL && crtc -> mode == nxagentRRCustomMode)
+        {
+          RRCrtcSet(crtc, NULL, 0, 0, RR_Rotate_0, 0, NULL);
+        }
+
+        #ifdef TEST
+        fprintf(stderr, "%s: Going to destroy mode %p with refcnt %d.\n",
+                __func__, nxagentRRCustomMode, nxagentRRCustomMode->refcnt);
+        #endif
+
+        RRModeDestroy(nxagentRRCustomMode);
+      }
+
+      nxagentRRCustomMode = RRModeGet(&modeInfo, name);
+
+      RROutputAddUserMode(output, nxagentRRCustomMode);
+
+      RRCrtcSet(crtc, nxagentRRCustomMode, 0, 0, RR_Rotate_0, 1, &output);
+
+      RROutputChanged(output, 1);
+
+      doNotify = FALSE;
+    }
+
+    pScrPriv -> lastSetTime = currentTime;
+
+    pScrPriv->changed = 1;
+    pScrPriv->configChanged = 1;
+  } /* if (pScrPriv) */
+
+  if (doNotify)
+  {
+    RRScreenSizeNotify(pScreen);
+  }
+}
+
 int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, int mmHeight)
 {
   ScreenPtr    pScreen;
-  /* FIXME: when is this needed? */
-  int          doNotify = TRUE;
   int          r;
 
   #ifdef DEBUG
@@ -3726,12 +3809,18 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
 
   if (r != 0)
   {
-    nxagentAdjustRandRXinerama(pScreen);
-  }
+    if (nxagentOption(Xinerama))
+    {
+      nxagentAdjustRandRXinerama(pScreen);
+    }
+    else
+    {
+      #ifdef DEBUG
+      fprintf(stderr, "%s: Xinerama is disabled\n", __func__);
+      #endif
 
-  if (doNotify)
-  {
-    RRScreenSizeNotify(pScreen);
+      nxagentAdjustCustomMode(pScreen);
+    }
   }
 
   #ifdef DEBUG
@@ -3782,24 +3871,20 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
 
     XineramaScreenInfo *screeninfo = NULL;
 
-    if (nxagentOption(Xinerama)) {
-      screeninfo = XineramaQueryScreens(nxagentDisplay, &number);
+    screeninfo = XineramaQueryScreens(nxagentDisplay, &number);
+    if (number)
+    {
 #ifdef DEBUG
-      if (number) {
-        fprintf(stderr, "nxagentAdjustRandRXinerama: XineramaQueryScreens() returned [%d] screens:\n", number);
-	for (int i=0; i < number; i++) {
-	  fprintf(stderr, "nxagentAdjustRandRXinerama:   screen_number [%d] x_org [%d] y_org [%d] width [%d] height [%d]\n", screeninfo[i].screen_number, screeninfo[i].x_org, screeninfo[i].y_org, screeninfo[i].width, screeninfo[i].height);
-	}
-
+      fprintf(stderr, "nxagentAdjustRandRXinerama: XineramaQueryScreens() returned [%d] screens:\n", number);
+      for (int i=0; i < number; i++) {
+	fprintf(stderr, "nxagentAdjustRandRXinerama:   screen_number [%d] x_org [%d] y_org [%d] width [%d] height [%d]\n", screeninfo[i].screen_number, screeninfo[i].x_org, screeninfo[i].y_org, screeninfo[i].width, screeninfo[i].height);
       }
-      else
-      {
-        fprintf(stderr, "nxagentAdjustRandRXinerama: XineramaQueryScreens() failed - continuing without Xinerama\n");
-      }
+#endif
     }
     else
     {
-      fprintf(stderr, "nxagentAdjustRandRXinerama: Xinerama is disabled\n");
+#ifdef DEBUG
+      fprintf(stderr, "nxagentAdjustRandRXinerama: XineramaQueryScreens() failed - continuing without Xinerama\n");
 #endif
     }
 
