@@ -3818,6 +3818,7 @@ int nxagentChangeScreenConfig(int screen, int width, int height, int mmWidth, in
   }
 
   #ifdef DEBUG
+  nxagentPrintAgentGeometry("Current geometry", "nxagentChangeScreenConfig:");
   fprintf(stderr, "nxagentChangeScreenConfig: current geometry: %d,%d %dx%d\n", nxagentOption(X), nxagentOption(Y), nxagentOption(Width), nxagentOption(Height));
   fprintf(stderr, "nxagentChangeScreenConfig: returning [%d]\n", r);
   #endif
