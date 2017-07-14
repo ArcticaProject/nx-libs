@@ -12,6 +12,7 @@ Build-Depends:
  libjpeg-dev,
  libpixman-1-dev (>= 0.13.2),
  libpng-dev,
+ libtool,
  libxcomposite-dev,
  libxdamage-dev,
  libxdmcp-dev,
