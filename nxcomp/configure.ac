@@ -74,6 +74,20 @@ else
   CPPFLAGS="$CPPFLAGS -DIN_ADDR_T=in_addr_t"
 fi
 
+AC_ARG_ENABLE(info,
+              [AS_HELP_STRING([--enable-debug], [enable to get info session log output (disabled by default)])],
+              [if test x$enableval = xyes; then
+                 AC_DEFINE(INFO, 1, [Define this to get info session log output.])
+                 info_messages=yes
+               fi])
+
+AC_ARG_ENABLE(valgrind,
+              [AS_HELP_STRING([--enable-valgrind], [enable for extra valgrind hacks (disabled by default)])],
+              [if test x$enableval = xyes; then
+                 AC_DEFINE(VALGRIND, 1, [Define this for extra valgrind hacks.])
+                 valgrind_hacks=yes
+               fi])
+
 AC_CONFIG_FILES([
 Makefile
 src/Makefile
