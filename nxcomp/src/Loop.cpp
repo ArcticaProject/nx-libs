@@ -1023,8 +1023,6 @@ T_timestamp startTs;
 T_timestamp logsTs;
 T_timestamp nowTs;
 
-int diffTs;
-
 //
 // This is set to the main proxy process id.
 // 
@@ -2767,7 +2765,7 @@ int NXTransPrepare(int *setFDs, fd_set *readSet,
 
   nowTs = getNewTimestamp();
 
-  diffTs = diffTimestamp(startTs, nowTs);
+  int diffTs = diffTimestamp(startTs, nowTs);
 
   #ifdef TEST
   *logofs << "Loop: Mark - 0 - at " << strMsTimestamp()
@@ -2807,6 +2805,7 @@ int NXTransPrepare(int *setFDs, fd_set *readSet,
 int NXTransSelect(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
                       fd_set *writeSet, struct timeval *selectTs)
 {
+  int diffTs;
   #ifdef TIME
 
   static T_timestamp lastTs;
@@ -5519,8 +5518,6 @@ void CleanupLocal()
   startTs = nullTimestamp();
   logsTs  = nullTimestamp();
   nowTs   = nullTimestamp();
-
-  diffTs = 0;
 
   lastProxy    = 0;
   lastDialog   = 0;
