@@ -2,36 +2,34 @@ Source: nx-libs
 Section: x11
 Priority: extra
 Maintainer: Artica Project <devs@lists.arctica-project.org>
-Uploaders:
- Mike Gabriel <sunweaver@debian.org>,
- Mihai Moldovan <ionic@ionic.de>
+Uploaders: Mike Gabriel <sunweaver@debian.org>, Mihai Moldovan <ionic@ionic.de>
 Build-Depends:
- debhelper (>= 9),
- dpkg-dev (>= 1.16.1.1),
- libpng-dev,
- libjpeg-dev,
- zlib1g-dev,
- quilt (>= 0.46-7~),
- libxmltok1-dev,
- libxml2-dev,
- libxpm-dev,
- libxfont-dev (>= 1.4.2),
- libxdmcp-dev,
- libxdamage-dev,
- libxext-dev,
- libxcomposite-dev,
- libxrandr-dev,
- libxfixes-dev,
- libxtst-dev,
- libxinerama-dev,
- libxrender-dev,
  autoconf,
  automake,
- pkg-config,
- x11proto-core-dev,
+ debhelper (>= 9),
+ dpkg-dev (>= 1.16.1.1),
  expat,
+ libjpeg-dev,
  libpixman-1-dev (>= 0.13.2),
+ libpng-dev,
+ libxcomposite-dev,
+ libxdamage-dev,
+ libxdmcp-dev,
+ libxext-dev,
+ libxfixes-dev,
+ libxfont-dev (>= 1.4.2),
+ libxinerama-dev,
+ libxml2-dev,
+ libxmltok1-dev,
+ libxpm-dev,
+ libxrandr-dev,
+ libxrender-dev,
+ libxtst-dev,
+ pkg-config,
+ quilt (>= 0.46-7~),
+ x11proto-core-dev,
  xutils-dev,
+ zlib1g-dev
 Standards-Version: 3.9.8
 Homepage: https://github.com/ArcticaProject/nx-libs/
 Vcs-Git: https://github.com/ArcticaProject/nx-libs/
@@ -40,11 +38,11 @@ Vcs-Browser: https://github.com/ArcticaProject/nx-libs/
 Package: nx-x11-common
 Architecture: all
 Multi-Arch: foreign
-Depends:
- ${misc:Depends},
-Breaks: nxlibs (<= 3.5.1),
-        libnx-x11 (<< 2:3.5.0.29-1~),
-        nxagent (<< 2:3.5.0.29-1~),
+Depends: ${misc:Depends}
+Breaks:
+ libnx-x11 (<< 2:3.5.0.29-1~),
+ nxagent (<< 2:3.5.0.29-1~),
+ nxlibs (<= 3.5.1)
 Description: nx-X11 (common files)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -56,10 +54,8 @@ Description: nx-X11 (common files)
 Package: nx-x11proto-core-dev
 Section: libdevel
 Architecture: any
-Depends:
- ${misc:Depends},
-Breaks: nxlibs (<= 3.5.1),
-        libnx-x11-dev (<< 2:3.5.0.29-1~),
+Depends: ${misc:Depends}
+Breaks: libnx-x11-dev (<< 2:3.5.0.29-1~), nxlibs (<= 3.5.1)
 Description: nx-X11 core wire protocol and auxiliary headers
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -73,35 +69,38 @@ Package: libnx-x11-6
 Architecture: any
 Multi-Arch: same
 Depends:
- ${shlibs:Depends},
- ${misc:Depends},
- nx-x11-common (>= ${source:Version}), nx-x11-common (<< ${source:Version}.1), 
  libxcomp3 (= ${binary:Version}),
-Breaks: nxlibs (<= 3.5.1),
-        libnx-x11 (<< 2:3.5.0.29-1~),
-        libnx-xext6 (<< 2:3.6.0.0),
-        libnx-xau6 (<< 2:3.6.0.0),
-        libnx-xcomposite1 (<< 2:3.6.0.0),
-        libnx-xdamage1 (<< 2:3.6.0.0),
-        libnx-xdmcp6 (<< 2:3.6.0.0),
-        libnx-xfixes3 (<< 2:3.6.0.0),
-        libnx-xinerama1 (<< 2:3.6.0.0),
-        libnx-xpm4 (<< 2:3.6.0.0),
-        libnx-xrandr2 (<< 2:3.6.0.0),
-        libnx-xrender1 (<< 2:3.6.0.0),
-        libnx-xtst6 (<< 2:3.6.0.0),
-Replaces: nxlibs,
-          libnx-xext6,
-          libnx-xau6,
-          libnx-xcomposite1,
-          libnx-xdamage1,
-          libnx-xdmcp6,
-          libnx-xfixes3,
-          libnx-xinerama1,
-          libnx-xpm4,
-          libnx-xrandr2,
-          libnx-xrender1,
-          libnx-xtst6,
+ nx-x11-common (<< ${source:Version}.1),
+ nx-x11-common (>= ${source:Version}),
+ ${misc:Depends},
+ ${shlibs:Depends}
+Breaks:
+ libnx-x11 (<< 2:3.5.0.29-1~),
+ libnx-xau6 (<< 2:3.6.0.0),
+ libnx-xcomposite1 (<< 2:3.6.0.0),
+ libnx-xdamage1 (<< 2:3.6.0.0),
+ libnx-xdmcp6 (<< 2:3.6.0.0),
+ libnx-xext6 (<< 2:3.6.0.0),
+ libnx-xfixes3 (<< 2:3.6.0.0),
+ libnx-xinerama1 (<< 2:3.6.0.0),
+ libnx-xpm4 (<< 2:3.6.0.0),
+ libnx-xrandr2 (<< 2:3.6.0.0),
+ libnx-xrender1 (<< 2:3.6.0.0),
+ libnx-xtst6 (<< 2:3.6.0.0),
+ nxlibs (<= 3.5.1)
+Replaces:
+ libnx-xau6,
+ libnx-xcomposite1,
+ libnx-xdamage1,
+ libnx-xdmcp6,
+ libnx-xext6,
+ libnx-xfixes3,
+ libnx-xinerama1,
+ libnx-xpm4,
+ libnx-xrandr2,
+ libnx-xrender1,
+ libnx-xtst6,
+ nxlibs
 Description: nxagent's libNX_X11 client-part library
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -114,33 +113,33 @@ Package: libnx-x11-dev
 Provides: libnx-x11-6-dev
 Section: libdevel
 Architecture: any
-Breaks: nxlibs-dev (<=3.5.1),
-        libnx-xext-dev (<< 2:3.6.0.0),
-        libnx-xau-dev (<< 2:3.6.0.0),
-        libnx-xcomposite-dev (<< 2:3.6.0.0),
-        libnx-xdamage-dev (<< 2:3.6.0.0),
-        libnx-xdmcp-dev (<< 2:3.6.0.0),
-        libnx-xfixes-dev (<< 2:3.6.0.0),
-        libnx-xinerama-dev (<< 2:3.6.0.0),
-        libnx-xpm-dev (<< 2:3.6.0.0),
-        libnx-xrandr-dev (<< 2:3.6.0.0),
-        libnx-xrender-dev (<< 2:3.6.0.0),
-        libnx-xtst-dev (<< 2:3.6.0.0),
-Replaces: nxlibs-dev,
-          libnx-xext-dev,
-          libnx-xau-dev,
-          libnx-xcomposite-dev,
-          libnx-xdamage-dev,
-          libnx-xdmcp-dev,
-          libnx-xfixes-dev,
-          libnx-xinerama-dev,
-          libnx-xpm-dev,
-          libnx-xrandr-dev,
-          libnx-xrender-dev,
-          libnx-xtst-dev,
-Depends:
- libnx-x11-6 (= ${binary:Version}),
- ${misc:Depends},
+Breaks:
+ libnx-xau-dev (<< 2:3.6.0.0),
+ libnx-xcomposite-dev (<< 2:3.6.0.0),
+ libnx-xdamage-dev (<< 2:3.6.0.0),
+ libnx-xdmcp-dev (<< 2:3.6.0.0),
+ libnx-xext-dev (<< 2:3.6.0.0),
+ libnx-xfixes-dev (<< 2:3.6.0.0),
+ libnx-xinerama-dev (<< 2:3.6.0.0),
+ libnx-xpm-dev (<< 2:3.6.0.0),
+ libnx-xrandr-dev (<< 2:3.6.0.0),
+ libnx-xrender-dev (<< 2:3.6.0.0),
+ libnx-xtst-dev (<< 2:3.6.0.0),
+ nxlibs-dev (<=3.5.1)
+Replaces:
+ libnx-xau-dev,
+ libnx-xcomposite-dev,
+ libnx-xdamage-dev,
+ libnx-xdmcp-dev,
+ libnx-xext-dev,
+ libnx-xfixes-dev,
+ libnx-xinerama-dev,
+ libnx-xpm-dev,
+ libnx-xrandr-dev,
+ libnx-xrender-dev,
+ libnx-xtst-dev,
+ nxlibs-dev
+Depends: libnx-x11-6 (= ${binary:Version}), ${misc:Depends}
 Description: nxagent's libNX_X11 client-part library (development headers)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -152,34 +151,34 @@ Description: nxagent's libNX_X11 client-part library (development headers)
 Package: libnx-x11-6-dbg
 Architecture: any
 Multi-Arch: same
-Depends:
- libnx-x11-6 (= ${binary:Version}),
- ${misc:Depends},
+Depends: libnx-x11-6 (= ${binary:Version}), ${misc:Depends}
 Section: debug
-Breaks: nx-x11-dbg (<< 2:3.5.0.29-1~),
-        libnx-xext6-dbg (<< 2:3.6.0.0),
-        libnx-xau6-dbg (<< 2:3.6.0.0),
-        libnx-xcomposite1-dbg (<< 2:3.6.0.0),
-        libnx-xdamage1-dbg (<< 2:3.6.0.0),
-        libnx-xdmcp6-dbg (<< 2:3.6.0.0),
-        libnx-xfixes3-dbg (<< 2:3.6.0.0),
-        libnx-xinerama1-dbg (<< 2:3.6.0.0),
-        libnx-xpm4-dbg (<< 2:3.6.0.0),
-        libnx-xrandr2-dbg (<< 2:3.6.0.0),
-        libnx-xrender1-dbg (<< 2:3.6.0.0),
-        libnx-xtst6-dbg (<< 2:3.6.0.0),
-Replaces: nx-x11-dbg,
-          libnx-xext6-dbg,
-          libnx-xau6-dbg,
-          libnx-xcomposite1-dbg,
-          libnx-xdamage1-dbg,
-          libnx-xdmcp6-dbg,
-          libnx-xfixes3-dbg,
-          libnx-xinerama1-dbg,
-          libnx-xpm4-dbg,
-          libnx-xrandr2-dbg,
-          libnx-xrender1-dbg,
-          libnx-xtst6-dbg,
+Breaks:
+ libnx-xau6-dbg (<< 2:3.6.0.0),
+ libnx-xcomposite1-dbg (<< 2:3.6.0.0),
+ libnx-xdamage1-dbg (<< 2:3.6.0.0),
+ libnx-xdmcp6-dbg (<< 2:3.6.0.0),
+ libnx-xext6-dbg (<< 2:3.6.0.0),
+ libnx-xfixes3-dbg (<< 2:3.6.0.0),
+ libnx-xinerama1-dbg (<< 2:3.6.0.0),
+ libnx-xpm4-dbg (<< 2:3.6.0.0),
+ libnx-xrandr2-dbg (<< 2:3.6.0.0),
+ libnx-xrender1-dbg (<< 2:3.6.0.0),
+ libnx-xtst6-dbg (<< 2:3.6.0.0),
+ nx-x11-dbg (<< 2:3.5.0.29-1~)
+Replaces:
+ libnx-xau6-dbg,
+ libnx-xcomposite1-dbg,
+ libnx-xdamage1-dbg,
+ libnx-xdmcp6-dbg,
+ libnx-xext6-dbg,
+ libnx-xfixes3-dbg,
+ libnx-xinerama1-dbg,
+ libnx-xpm4-dbg,
+ libnx-xrandr2-dbg,
+ libnx-xrender1-dbg,
+ libnx-xtst6-dbg,
+ nx-x11-dbg
 Description: nx-X11 client-side library (debug package)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -192,11 +191,11 @@ Package: nx-x11proto-xext-dev
 Section: libdevel
 Architecture: any
 Multi-Arch: same
-Depends:
- ${misc:Depends},
-Breaks: nxlibs (<= 3.5.1),
-        libnx-x11-dev (<< 2:3.5.0.29-1~),
-        libnx-xext-dev (<< 2:3.5.99.0~),
+Depends: ${misc:Depends}
+Breaks:
+ libnx-x11-dev (<< 2:3.5.0.29-1~),
+ libnx-xext-dev (<< 2:3.5.99.0~),
+ nxlibs (<= 3.5.1)
 Description: nx-X11 miscellaneous extension wire protocol
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -210,10 +209,8 @@ Package: nx-x11proto-composite-dev
 Section: libdevel
 Architecture: any
 Multi-Arch: same
-Depends:
- ${misc:Depends},
-Breaks: nxlibs (<= 3.5.1),
-        libnx-x11-dev (<< 2:3.5.0.29-1~),
+Depends: ${misc:Depends}
+Breaks: libnx-x11-dev (<< 2:3.5.0.29-1~), nxlibs (<= 3.5.1)
 Description: nx-X11 Composite extension wire protocol
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -227,8 +224,7 @@ Package: nx-x11proto-damage-dev
 Section: libdevel
 Architecture: any
 Multi-Arch: same
-Depends:
- ${misc:Depends},
+Depends: ${misc:Depends}
 Description: nx-X11 Damage extension wire protocol
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -242,10 +238,8 @@ Package: nx-x11proto-xfixes-dev
 Section: libdevel
 Architecture: any
 Multi-Arch: same
-Depends:
- ${misc:Depends},
-Breaks: nxlibs (<= 3.5.1),
-        libnx-x11-dev (<< 2:3.5.0.29-1~),
+Depends: ${misc:Depends}
+Breaks: libnx-x11-dev (<< 2:3.5.0.29-1~), nxlibs (<= 3.5.1)
 Description: nx-X11 'xfixes' extension wire protocol
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -258,8 +252,7 @@ Package: nx-x11proto-xinerama-dev
 Section: libdevel
 Architecture: any
 Multi-Arch: same
-Depends:
- ${misc:Depends},
+Depends: ${misc:Depends}
 Description: nx-X11 Xinerama extension wire protocol
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -273,8 +266,7 @@ Package: nx-x11proto-randr-dev
 Section: libdevel
 Architecture: any
 Multi-Arch: same
-Depends:
- ${misc:Depends},
+Depends: ${misc:Depends}
 Description: nx-X11 RandR extension wire protocol
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -288,8 +280,7 @@ Package: nx-x11proto-render-dev
 Section: libdevel
 Architecture: any
 Multi-Arch: same
-Depends:
- ${misc:Depends},
+Depends: ${misc:Depends}
 Description: nx-X11 Render extension wire protocol
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -302,10 +293,8 @@ Package: nx-x11proto-scrnsaver-dev
 Section: libdevel
 Architecture: any
 Multi-Arch: same
-Depends:
- ${misc:Depends},
-Breaks: nxlibs (<= 3.5.1),
-        libnx-x11-dev (<< 2:3.5.0.29-1~),
+Depends: ${misc:Depends}
+Breaks: libnx-x11-dev (<< 2:3.5.0.29-1~), nxlibs (<= 3.5.1)
 Description: nx-X11 Screen Saver extension wire protocol
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -318,9 +307,7 @@ Description: nx-X11 Screen Saver extension wire protocol
 Package: libnx-mesa-extras-dev
 Section: libdevel
 Architecture: any
-Depends:
- libnx-x11-dev (= ${binary:Version}),
- ${misc:Depends},
+Depends: libnx-x11-dev (= ${binary:Version}), ${misc:Depends}
 Description: Library headers for nx-X11/Mesa (dummy package)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -334,22 +321,15 @@ Package: nxagent
 Architecture: any
 Multi-Arch: foreign
 Depends:
- ${shlibs:Depends},
- ${misc:Depends},
+ libnx-x11-6 (= ${binary:Version}),
  libxcomp3 (= ${binary:Version}),
  libxcompshad3 (= ${binary:Version}),
- libnx-x11-6 (= ${binary:Version}),
-# For /usr/bin/xkbcomp
  x11-xkb-utils,
-Recommends:
- xfonts-base,
- xkb-data,
-Breaks:
- nxauth,
- libxcompext3 (<< 2:3.5.99.3~),
-Replaces:
- nxauth,
- libxcompext3,
+ ${misc:Depends},
+ ${shlibs:Depends}
+Recommends: xfonts-base, xkb-data
+Breaks: libxcompext3 (<< 2:3.5.99.3~), nxauth
+Replaces: libxcompext3, nxauth
 Description: Nested Xserver (aka NX Agent) supporting the NX compression protocol
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -361,7 +341,7 @@ Description: Nested Xserver (aka NX Agent) supporting the NX compression protoco
  X client for a system's local X server.
  .
  The main scope of nxagent is to eliminate X round-trips or transform
- them into asynchronous replies. nxagent works together with nxproxy. 
+ them into asynchronous replies. nxagent works together with nxproxy.
  nxproxy itself does not make any effort to minimize round-trips
  by itself, this is demanded of nxagent.
  .
@@ -373,10 +353,8 @@ Package: nxagent-dbg
 Section: debug
 Architecture: any
 Multi-Arch: foreign
-Depends:
- nxagent (= ${binary:Version}),
- ${misc:Depends},
-Breaks: nx-x11-dbg (<< 2:3.5.0.29-1~),
+Depends: nxagent (= ${binary:Version}), ${misc:Depends}
+Breaks: nx-x11-dbg (<< 2:3.5.0.29-1~)
 Description: NX agent (debug package)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -394,16 +372,9 @@ Description: NX agent (debug package)
 Package: nxproxy
 Architecture: any
 Multi-Arch: foreign
-Depends:
- ${shlibs:Depends},
- ${misc:Depends},
- libxcomp3 (= ${binary:Version}),
-Breaks:
- qvd-nxproxy,
- nxauth,
-Replaces:
- qvd-nxproxy,
- nxauth,
+Depends: libxcomp3 (= ${binary:Version}), ${misc:Depends}, ${shlibs:Depends}
+Breaks: nxauth, qvd-nxproxy
+Replaces: nxauth, qvd-nxproxy
 Description: NX proxy
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -415,12 +386,9 @@ Package: nxproxy-dbg
 Section: debug
 Architecture: any
 Multi-Arch: foreign
-Depends:
- nxproxy (= ${binary:Version}),
- ${misc:Depends},
-Suggests:
- libxcomp3-dbg,
-Breaks: nx-x11-dbg (<< 2:3.5.0.29-1~),
+Depends: nxproxy (= ${binary:Version}), ${misc:Depends}
+Suggests: libxcomp3-dbg
+Breaks: nx-x11-dbg (<< 2:3.5.0.29-1~)
 Description: NX proxy (debug package)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -435,13 +403,9 @@ Description: NX proxy (debug package)
 Package: libxcomp3
 Architecture: any
 Multi-Arch: same
-Depends:
- ${shlibs:Depends},
- ${misc:Depends},
-Breaks: nxcomp (<= 3.5.1),
- qvd-libxcomp3,
-Replaces: nxcomp,
- qvd-libxcomp3,
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Breaks: nxcomp (<= 3.5.1), qvd-libxcomp3
+Replaces: nxcomp, qvd-libxcomp3
 Description: NX compression library
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -453,11 +417,9 @@ Package: libxcomp-dev
 Provides: libxcomp3-dev
 Section: libdevel
 Architecture: any
-Depends:
- libxcomp3 (= ${binary:Version}),
- ${misc:Depends},
+Depends: libxcomp3 (= ${binary:Version}), ${misc:Depends}
 Breaks: nxcomp-dev (<=3.5.1)
-Replaces: nxcomp-dev,
+Replaces: nxcomp-dev
 Description: NX compression library (development headers)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -470,11 +432,9 @@ Description: NX compression library (development headers)
 Package: libxcomp3-dbg
 Architecture: any
 Multi-Arch: same
-Depends:
- libxcomp3 (= ${binary:Version}),
- ${misc:Depends},
+Depends: libxcomp3 (= ${binary:Version}), ${misc:Depends}
 Section: debug
-Breaks: nx-x11-dbg (<< 2:3.5.0.29-1~),
+Breaks: nx-x11-dbg (<< 2:3.5.0.29-1~)
 Description: nx-X11 compression library (debug package)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -487,10 +447,7 @@ Description: nx-X11 compression library (debug package)
 Package: libxcompshad3
 Architecture: any
 Multi-Arch: same
-Depends:
- ${shlibs:Depends},
- ${misc:Depends},
- libnx-x11-6 (= ${binary:Version}),
+Depends: libnx-x11-6 (= ${binary:Version}), ${misc:Depends}, ${shlibs:Depends}
 Breaks: nxcompshad (<=3.5.1)
 Replaces: nxcompshad
 Description: NX shadowing library
@@ -504,11 +461,9 @@ Package: libxcompshad-dev
 Provides: libxcompshad3-dev
 Section: libdevel
 Architecture: any
-Depends:
- libxcompshad3 (= ${binary:Version}),
- ${misc:Depends},
-Breaks: nxcompshad-dev (<= 3.5.1),
-Replaces: nxcompshad-dev,
+Depends: libxcompshad3 (= ${binary:Version}), ${misc:Depends}
+Breaks: nxcompshad-dev (<= 3.5.1)
+Replaces: nxcompshad-dev
 Description: NX shadowing library (development headers)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
@@ -521,11 +476,9 @@ Description: NX shadowing library (development headers)
 Package: libxcompshad3-dbg
 Architecture: any
 Multi-Arch: same
-Depends:
- libxcompshad3 (= ${binary:Version}),
- ${misc:Depends},
+Depends: libxcompshad3 (= ${binary:Version}), ${misc:Depends}
 Section: debug
-Breaks: nx-x11-dbg (<< 2:3.5.0.29-1~),
+Breaks: nx-x11-dbg (<< 2:3.5.0.29-1~)
 Description: nx-X11 shadowing library (debug package)
  NX is a software suite which implements very efficient
  compression of the X11 protocol. This increases performance when
