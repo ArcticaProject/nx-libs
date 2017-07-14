@@ -1793,7 +1793,7 @@ Copyright: 1993, Davor Matic
   2015-2016, Qindel Group (http://www.qindel.com)
 License: GPL-2
 Comment:
- The code in these files was derived from Xnest. As the code changes 
+ The code in these files was derived from Xnest. As the code changes
  done by NoMachine are immense, GPL-2 is listed as these files' primary
  license.
  .
@@ -1893,7 +1893,7 @@ Files: nx-X11/lib/X11/XlcGeneric.h
  nx-X11/lib/X11/omXChar.c
 Copyright: 1992-1993, TOSHIBA Corp
   1995, FUJITSU LIMITED
-License: MIT~X11 
+License: MIT~X11
 
 Files: nx-X11/include/extensions/Xv.h
  nx-X11/include/extensions/Xvproto.h
@@ -1947,7 +1947,7 @@ Files: nx-X11/include/extensions/xfixesproto.h
 Copyright: 2000, Keith Packard, member of The XFree86 Project, Inc
   2001, Keith Packard, member of The XFree86 Project, Inc
   2002, Keith Packard, member of The XFree86 Project, Inc
-License: MIT~X11 
+License: MIT~X11
 
 Files: nx-X11/include/Sunkeysym.h
  nx-X11/lib/X11/Host.c
@@ -1962,7 +1962,7 @@ Copyright: 1985-1987, 1991, 1998, The Open Group
 License: MIT~OpenGroup
 Comment:
  Contributions by Oracle and/or its affiliates (from 1991, 2000, 2004)
- have to be considered as licensed under Expat. 
+ have to be considered as licensed under Expat.
 
 Files: nx-X11/lib/X11/ConnDis.c
  nx-X11/lib/X11/OpenDis.c
@@ -1986,7 +1986,7 @@ Copyright: 1984-1985, 1987, 1989, 1998, The Open Group
   2014-2016, Mihai Moldovan <ionic@ionic.de>
   2014-2016, Ulrich Sibiller <uli42@gmx.de>
   2015-2016, Qindel Group (http://www.qindel.com)
-License: MIT~OpenGroup 
+License: MIT~OpenGroup
 Comment:
  Modifications by NoMachine have to be considered as strictly GPL-2
  licensed.
@@ -2010,7 +2010,7 @@ Comment:
  The original work on these files by Oracle and/or its
  affiliates have been licensed under Expat. Later
  contributions by FUJITSU LIMITED have been licensed
- under MIT~X11.  
+ under MIT~X11.
 
 Files: nx-X11/programs/Xserver/hw/nxagent/NXglyph.c
  nx-X11/programs/Xserver/hw/nxagent/NXglyphstr_GlyphRef.h
@@ -2115,7 +2115,7 @@ Copyright: 1991-1994, FUJITSU LIMITED
   1992-1993, FUJITSU LIMITED
   1992-1994, FUJITSU LIMITED
   1993, Digital Equipment Corporation
-License: MIT~X11 
+License: MIT~X11
 
 Files: nx-X11/extras/Mesa/src/mesa/tnl/t_vertex.c
  nx-X11/extras/Mesa/src/mesa/tnl/t_vertex.h
@@ -2193,7 +2193,7 @@ Files: nx-X11/include/extensions/xtestext1.h
  nx-X11/programs/Xserver/Xext/xtest1di.c
 Copyright: 1986-1988, 1998, The Open Group
   1986-1988, Hewlett-Packard Corporation
-License: MIT~OpenGroup 
+License: MIT~OpenGroup
 Comment:
  Contributions by Hewlett-Packard Corporation have been licensed
  under the following license:
@@ -2207,8 +2207,8 @@ Comment:
  advertising or publicity pertaining to distribution of the
  software without specific, written prior permission.
  .
- Hewlett-Packard makes no representations about the 
- suitability of this software for any purpose.  It is provided 
+ Hewlett-Packard makes no representations about the
+ suitability of this software for any purpose.  It is provided
  "as is" without express or implied warranty.
  .
  As additional note, we find:
@@ -2228,7 +2228,7 @@ Copyright: 2001, 2011, NoMachine (http://www.nomachine.com)
   2014-2016, Mihai Moldovan <ionic@ionic.de>
   2014-2016, Ulrich Sibiller <uli42@gmx.de>
   2015-2016, Qindel Group (http://www.qindel.com)
-License: MIT~X11 
+License: MIT~X11
 Comment:
  Modifications by NoMachine have to be considered as strictly
  GPL-2 licensed.
@@ -2277,7 +2277,7 @@ License: MIT~X11
 Comment:
  Original work by Keith Packard has been licensed under MIT~X11. Later
  contributions by Oracle and/or its affiliates have been licensed
- under Expat. 
+ under Expat.
 
 Files: nx-X11/programs/Xserver/Xext/sleepuntil.h
  nx-X11/programs/Xserver/mi/micoord.h
@@ -2307,7 +2307,7 @@ Copyright: 2000, Compaq Computer Corporation
   2002, Hewlett-Packard Company
   2006, Intel Corporation
   2008, Red Hat, Inc
-License: MIT~X11 
+License: MIT~X11
 
 Files: nx-X11/programs/Xserver/hw/nxagent/X11/include/Xrandr_nxagent.h
  nxcompshad/src/X11/include/Xrandr_nxcompshad.h
@@ -2355,7 +2355,7 @@ Copyright: 1990-1994, FUJITSU LIMITED
   1992-1994, FUJITSU LIMITED
   1993-1994, Sony Corporation
   1994, Sony Corporation
-License: MIT~X11 
+License: MIT~X11
 
 Files: nx-X11/lib/X11/lcFile.c
 Copyright: 1993, IBM Corporation
@@ -3226,7 +3226,7 @@ License: MIT~ISC
  CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 License: SGI-1.1
- SGI FREE SOFTWARE LICENSE B (Version 1.1 [02/22/2000]) 
+ SGI FREE SOFTWARE LICENSE B (Version 1.1 [02/22/2000])
  .
  1. Definitions.
  .
@@ -3255,7 +3255,7 @@ License: SGI-1.1
  .
  1.8. "Modifications" means any addition to or deletion from the substance or
  structure of the Original Code or any previous Modifications. When
- Covered Code is released as a series of files, a Modification is: 
+ Covered Code is released as a series of files, a Modification is:
  .
      A. Any addition to the contents of a file containing Original Code and/or
         addition to or deletion from the contents of a file containing previous
@@ -3282,7 +3282,7 @@ License: SGI-1.1
  .
  1.12. "Recipient Patents" means patent claims Licensable by a Recipient that
  are infringed by the use or sale of Original Code or any Modifications
- provided by SGI, or any combination thereof. 
+ provided by SGI, or any combination thereof.
  .
  1.13. "SGI" means Silicon Graphics, Inc.
  .
@@ -3310,7 +3310,7 @@ License: SGI-1.1
  other combinations that include the Modification. No patent license is
  provided under SGI Patents for infringements of SGI Patents by
  Modifications not provided by SGI or combinations of Original Code and
- Modifications not provided by SGI. 
+ Modifications not provided by SGI.
  .
  2.2. Recipient License Grant. Subject to the terms of this License and
  any third party intellectual property claims, Recipient hereby grants
@@ -3324,7 +3324,7 @@ License: SGI-1.1
  the algorithms embodied in the Original Code or any Modifications
  provided by SGI .
  .
- 3. Redistributions. 
+ 3. Redistributions.
  .
  3.1. Retention of Notice/Copy of License. The Notice set forth in
  Exhibit A, below, must be conspicuously retained or included in any and
@@ -3377,7 +3377,7 @@ License: SGI-1.1
  promotion of products derived from the Covered Code, without prior
  written permission of SGI; or (iii) any title to or ownership of the
  Original Code, which shall at all times remains with SGI. All rights in
- the Original Code not expressly granted under this License are reserved. 
+ the Original Code not expressly granted under this License are reserved.
  .
  6. Compliance with Laws; Non-Infringement. There are various worldwide
  laws, regulations, and executive orders applicable to dispositions of
@@ -3473,7 +3473,7 @@ License: SGI-1.1
  file are subject only to the provisions of the License. You may not use
  this file except in compliance with the License. You may obtain a copy
  of the License at Silicon Graphics, Inc., attn: Legal Services, 1600
- Amphitheatre Parkway, Mountain View, CA 94043-1351, or at: 
+ Amphitheatre Parkway, Mountain View, CA 94043-1351, or at:
  .
  http://oss.sgi.com/projects/FreeB
  .
