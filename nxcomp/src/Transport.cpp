@@ -1412,7 +1412,7 @@ int ProxyTransport::read(unsigned char *data, unsigned int size)
             << logofs_flush;
     #endif
 
-    int result = inflate(&r_stream_, Z_SYNC_FLUSH);
+    result = inflate(&r_stream_, Z_SYNC_FLUSH);
 
     #ifdef INSPECT
     *logofs << "ProxyTransport: Called inflate() result is "
