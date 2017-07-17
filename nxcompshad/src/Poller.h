@@ -26,14 +26,6 @@
 #ifndef Poller_H
 #define Poller_H
 
-#if defined(__CYGWIN32__) || defined(WIN32)
-
-#include "Win.h"
-
-#else
-
 #include "X11.h"
-
-#endif
 
 #endif /* Poller_H */
