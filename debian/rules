@@ -11,7 +11,11 @@ export LIBEXECDIR = "$(LIBDIR)/nx/bin"
 export INCLUDEDIR = "/usr/include/$(shell dpkg-architecture -qDEB_BUILD_MULTIARCH)"
 
 %:
-	CONFIGURE="./configure --prefix=/usr --libdir=$(LIBDIR) --includedir=$(INCLUDEDIR) --libexecdir=$(LIBEXECDIR)" dh $@ --with quilt
+	CONFIGURE="./configure --prefix=/usr \
+                               --disable-silent-rules \
+                               --libdir=$(LIBDIR) \
+                               --includedir=$(INCLUDEDIR) \
+                               --libexecdir=$(LIBEXECDIR)" dh $@ --with quilt
 
 override_dh_auto_clean:
 	rm -Rf nx-X11/.build-exports
