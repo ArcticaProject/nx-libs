@@ -4113,6 +4113,10 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
 	/* calculate the size in mm based on the current dpi. If
 	  nxagent is run with a different dpi than the real X server
 	  the result will look wrong but it is mathematically correct. */
+	/*	RRRegisterSize(pScreen, bbx2-bbx1, bby2-bby1,
+		       ((bbx2-bbx1) * 254 + monitorResolution * 5) / (monitorResolution * 10),
+		       ((bby2-bby1) * 254 + monitorResolution * 5) / (monitorResolution * 10));*/
+
 	RROutputSetPhysicalSize(pScrPriv->outputs[i],
 				(new_w * 254 + monitorResolution * 5) / (monitorResolution * 10),
 				(new_h * 254 + monitorResolution * 5) / (monitorResolution * 10));

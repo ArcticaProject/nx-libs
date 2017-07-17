@@ -124,7 +124,8 @@ void nxagentInitRandRExtension(ScreenPtr pScreen)
     fprintf(stderr, "Warning: Failed to initialize the RandR extension.\n");
   }
 
-
+  /*RRGetInfo(pScreen, FALSE);*/
+  /*RRScanOldConfig(pScreen, RR_Rotate_0);*/
   /* FIXME: do we need this at all with the new rand/xinerama stuff? */
   nxagentRandRInitSizes(pScreen);
 
@@ -251,6 +252,12 @@ nxagentRandRCrtcSet (ScreenPtr   pScreen,
 		     int         numOutputs,
 		     RROutputPtr *outputs)
 {
+  if (crtc->gammaSize == 0) {
+    CARD16 gamma = 0;
+    RRCrtcGammaSetSize(crtc, 1);
+    RRCrtcGammaSet(crtc, &gamma, &gamma, &gamma);
+    RRCrtcGammaNotify(crtc);
+  }
   return RRCrtcNotify(crtc, mode, x, y, rotation, NULL, numOutputs, outputs);
 }
 #endif
@@ -355,7 +362,6 @@ static int nxagentRandRInitSizes(ScreenPtr pScreen)
   }
 
   RRSetCurrentConfig(pScreen, RR_Rotate_0, 60, pSize);
-
   /*  RRScreenSetSizeRange(pScreen, w[1], h[1], MAXSHORT, MAXSHORT);*/
   return 1;
 }
