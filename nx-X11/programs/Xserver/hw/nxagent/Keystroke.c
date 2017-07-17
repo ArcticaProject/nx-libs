@@ -253,6 +253,24 @@ static Bool read_binding_from_xmlnode(xmlNode *node, struct nxagentSpecialKeystr
     return False;
 }
 
+char *checkKeystrokeFile(char *filename)
+{
+  if (!filename)
+    return NULL;
+
+  if (access(filename, R_OK) == 0)
+  {
+    return filename;
+  }
+  else
+  {
+    #ifdef WARNING
+    fprintf(stderr, "Warning: Cannot read keystroke file '%s'.\n", filename);
+    #endif
+    return NULL;
+  }
+}
+
 /*
  * searches a keystroke xml file
  *
@@ -302,63 +320,24 @@ void nxagentInitKeystrokes(Bool force)
     envvar = "NXAGENT_KEYSTROKEFILE";
   }
 
-  if (nxagentKeystrokeFile && access(nxagentKeystrokeFile, R_OK) == 0)
+  char *homepath = NULL;
+  char *homedir = getenv("HOME");
+  if (homedir)
   {
-    if (!(filename = strdup(nxagentKeystrokeFile)))
+    if (!(homepath = calloc(1, strlen(homedir) + strlen(homefile) + 1)))
     {
       fprintf(stderr, "malloc failed");
       exit(EXIT_FAILURE);
     }
-  }
-  else if (nxagentKeystrokeFile)
-  {
-    fprintf(stderr, "Warning: Cannot read keystroke file '%s'.\n", nxagentKeystrokeFile);
-    if ((filename = getenv(envvar)) && access(filename, R_OK) == 0)
-    {
-      if (!(filename = strdup(filename)))
-      {
-        fprintf(stderr, "malloc failed");
-        exit(EXIT_FAILURE);
-      }
-    }
-    else
-    {
-      char *homedir = getenv("HOME");
-      filename = NULL;
-      if (homedir)
-      {
-        if (!(filename = calloc(1, strlen(homefile) + strlen(homedir) + 1)))
-        {
-          fprintf(stderr, "malloc failed");
-          exit(EXIT_FAILURE);
-        }
-        strcpy(filename, homedir);
-        strcpy(filename + strlen(homedir), homefile);
-      }
-
-      if (access(filename, R_OK) == 0)
-      {
-	  /* empty */
-      }
-      else if (access(etcfile, R_OK) == 0)
-      {
-	free(filename);
-	if (!(filename = strdup(etcfile)))
-	{
-	  fprintf(stderr, "malloc failed");
-	  exit(EXIT_FAILURE);
-	}
-      }
-      else
-      {
-        free(filename);
-        filename = NULL;
-      }
-    }
+    strcpy(homepath, homedir);
+    strcpy(homepath + strlen(homedir), homefile);
   }
 
-  /* now we know which file to read, if any */
-  if (filename)
+  /* if any of the files can be read we have our candidate */
+  if ((filename = checkKeystrokeFile(nxagentKeystrokeFile)) ||
+      (filename = checkKeystrokeFile(getenv(envvar))) ||
+      (filename = checkKeystrokeFile(homepath)) ||
+      (filename = checkKeystrokeFile(etcfile)))
   {
     LIBXML_TEST_VERSION
     xmlDoc *doc = xmlReadFile(filename, NULL, 0);
@@ -405,9 +384,11 @@ void nxagentInitKeystrokes(Bool force)
                       map[j].modifierMask == map[idx].modifierMask &&
                       map[j].modifierAltMeta == map[idx].modifierAltMeta)
                   {
+                      #ifdef WARNING
                       fprintf(stderr, "Warning: ignoring keystroke '%s' (already in use by '%s')\n",
                               nxagentSpecialKeystrokeNames[map[idx].stroke],
                               nxagentSpecialKeystrokeNames[map[j].stroke]);
+                      #endif
                       store = False;
                       break;
                   }
@@ -430,13 +411,15 @@ void nxagentInitKeystrokes(Bool force)
       xmlFreeDoc(doc);
       xmlCleanupParser();
     }
-    else
+    #ifdef WARNING
+    else /* if (doc) */
     {
       fprintf(stderr, "Warning: could not read/parse keystrokes file '%s'\n", filename);
     }
-    free(filename);
+    #endif
     filename = NULL;
   }
+  free(homepath);
 
   if (map == default_map)
   {
