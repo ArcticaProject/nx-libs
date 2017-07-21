@@ -32,6 +32,7 @@ OBJS =	\
 
    INCLUDES = -I$(SERVERSRC)/include \
               -I$(XBUILDINCDIR) \
+              -I../../../../../lib/include/X11 \
               `pkg-config --cflags-only-I pixman-1` \
               `pkg-config --cflags-only-I zlib` \
               `pkg-config --cflags-only-I libpng` \

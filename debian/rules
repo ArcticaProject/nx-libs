@@ -26,6 +26,7 @@ override_dh_install:
 	# remove static libs
 	rm debian/tmp/usr/lib/$(DEB_BUILD_MULTIARCH)/libXcomp.la
 	rm debian/tmp/usr/lib/$(DEB_BUILD_MULTIARCH)/libXcompshad.la
+	rm debian/tmp/usr/lib/$(DEB_BUILD_MULTIARCH)/libNX_X11.la
 
 	# remove extras, GL, and other unneeded headers
 	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/GL/

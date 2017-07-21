@@ -24,8 +24,8 @@ MAKE_OPTS = -f xmakefile
 MAKE_CMD = $(MAKE) $(MAKE_OPTS)
 
 all:
-	@${MAKE} ${MAKE_OPTS} xmakefile-exists || $(MAKE) all-initial
-	@${MAKE} ${MAKE_OPTS} $@
+	@${MAKE_CMD} xmakefile-exists || $(MAKE) all-initial
+	@${MAKE_CMD} $@
 
 all-initial:
 	@echo Please use make World, or on NT use nmake World.Win32.
@@ -40,27 +40,32 @@ World:
 	@date
 	@echo ""
 	if [ ! -f xmakefile ]; then ${MAKE} ${MFLAGS} BuildEnv; fi
-	${MAKE} ${MAKE_OPTS} $(MFLAGS) $(WORLDOPTS) World
+	${MAKE_CMD} $(MFLAGS) $(WORLDOPTS) World
 	@echo ""
 	@date
 	@echo ""
 	@echo Full build of $(RELEASE) complete.
 	@echo ""
 
-BuildEnv:
+CleanEnv:
 	@if [ -f xmakefile ]; then \
-	    ${MAKE} ${MAKE_OPTS} -k distclean || \
-	    ${MAKE} ${MAKE_OPTS} -k clean || \
+	    ${MAKE_CMD} -k distclean || \
+	    ${MAKE_CMD} -k clean || \
 	    $(RM) xmakefile; \
 	fi
 	@rm -f $(IRULESRC)/date.def; echo "" > $(IRULESRC)/date.def;
 	${MAKE} $(MFLAGS) xmakefile
-	${MAKE} ${MAKE_OPTS} $(MFLAGS) VerifyOS
-	${MAKE} ${MAKE_OPTS} $(MFLAGS) Makefiles
-	${MAKE} ${MAKE_OPTS} $(MFLAGS) BOOTSTRAPSUBDIRS= clean
-	${MAKE} ${MAKE_OPTS} $(MFLAGS) includes
-	${MAKE} ${MAKE_OPTS} $(MFLAGS) depend
+	${MAKE_CMD} $(MFLAGS) VerifyOS
+	${MAKE_CMD} $(MFLAGS) Makefiles
+	${MAKE_CMD} $(MFLAGS) BOOTSTRAPSUBDIRS= clean
 
+BuildEnv: CleanEnv BuildIncludes BuildDependsOnly
+
+BuildIncludes: CleanEnv
+	${MAKE_CMD} $(MFLAGS) includes
+
+BuildDependsOnly:
+	${MAKE_CMD} $(MFLAGS) depend
 
 .PRECIOUS: Makefile
 
@@ -86,37 +91,35 @@ xmakefile: Imakefile
 # a copy of every rule that might be invoked at top level
 
 clean:
-	    -${MAKE_CMD} ${MAKE_OPTS} $@
-	    find config -type f | egrep '.*/Makefile$$' | while read makefile; do rm -f $$makefile; done
-	    find lib -type f | egrep '.*/Makefile$$' | while read makefile; do rm -f $$makefile; done
-	    find programs -type f | egrep '.*/Makefile$$' | while read makefile; do rm -f $$makefile; done
-	    find include -type f | egrep '.*/Makefile$$' | while read makefile; do rm -f $$makefile; done
+	-${MAKE_CMD} $@
+	find config lib programs include -type f -name Makefile | while read makefile; do rm -f $$makefile; done
+
 dangerous_strip_clean:
-	    ${MAKE} ${MAKE_OPTS} $@
+	    ${MAKE_CMD} $@
 distclean:
-	    -${MAKE} ${MAKE_OPTS} $@
+	    -${MAKE_CMD} $@
 	    $(RM) xmakefile
 depend:
-	    ${MAKE} ${MAKE_OPTS} $@
+	    ${MAKE_CMD} $@
 Everything:
-	    ${MAKE} ${MAKE_OPTS} $@
+	    ${MAKE_CMD} $@
 external.ln:
-	    ${MAKE} ${MAKE_OPTS} $@
+	    ${MAKE_CMD} $@
 includes:
-	    ${MAKE} ${MAKE_OPTS} $@
+	    ${MAKE_CMD} $@
 install.sdk:
-	    ${MAKE} ${MAKE_OPTS} $@
+	    ${MAKE_CMD} $@
 install.ln:
-	    ${MAKE} ${MAKE_OPTS} $@
+	    ${MAKE_CMD} $@
 install.man:
-	    ${MAKE} ${MAKE_OPTS} $@
+	    ${MAKE_CMD} $@
 install:
-	    ${MAKE} ${MAKE_OPTS} $@
+	    ${MAKE_CMD} $@
 Makefiles:
-	    ${MAKE} ${MAKE_OPTS} $@
+	    ${MAKE_CMD} $@
 man_keywords:
-	    ${MAKE} ${MAKE_OPTS} $@
+	    ${MAKE_CMD} $@
 tags:
-	    ${MAKE} ${MAKE_OPTS} $@
+	    ${MAKE_CMD} $@
 VerifyOS:
-	    ${MAKE} ${MAKE_OPTS} $@
+	    ${MAKE_CMD} $@

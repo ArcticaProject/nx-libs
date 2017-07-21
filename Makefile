@@ -1,11 +1,17 @@
 #!/usr/bin/make -f
 
+NULL =
+
+# helpers for "install" target
 INSTALL_DIR=install -d -m 755
 INSTALL_FILE=install -m 644
 INSTALL_PROGRAM=install -m 755
 INSTALL_SYMLINK=ln -s -f
-COPY_SYMLINK=cp -a
-COPY_DEREFERENCED=cp -RH
+
+# helpers for "build" target
+SYMLINK_FILE=ln -f -s
+
+# helpers for "clean" and "uninstall" targets
 RM_FILE=rm -f
 RM_DIR=rmdir -p --ignore-fail-on-non-empty
 
@@ -30,22 +36,48 @@ NX_VERSION_PATCH=$(shell ./version.sh 4)
 
 SHELL:=/bin/bash
 
+NX_X11_HEADERS =		\
+	Xlib.h			\
+	Xresource.h		\
+	Xutil.h			\
+	cursorfont.h		\
+	Xlibint.h		\
+	Xcms.h			\
+	Xlocale.h		\
+	XKBlib.h		\
+	XlibConf.h		\
+	Xregion.h		\
+	ImUtil.h		\
+	$(NULL)
+
+NX_XTRANS_HEADERS =		\
+	transport.c		\
+	Xtrans.c		\
+	Xtrans.h		\
+	Xtransint.h		\
+	Xtranslcl.c		\
+	Xtranssock.c		\
+	Xtransutil.c		\
+	$(NULL)
+
 %:
 	if test -f nxcomp/Makefile; then ${MAKE} -C nxcomp $@; fi
 	if test -f nxproxy/Makefile; then ${MAKE} -C nxproxy $@; fi
 	if test -d nx-X11; then \
+	    if test -f nx-X11/lib/Makefile; then ${MAKE} -C nx-X11/lib $@; fi; \
 	    if test -f nxcompshad/Makefile; then ${MAKE} -C nxcompshad $@; fi; \
 	    if test -f nx-X11/Makefile; then ${MAKE} -C nx-X11 $@; fi; \
 	fi
 
 	# clean auto-generated files
 	if [ "x$@" == "xclean" ] || [ "x$@" = "xdistclean" ]; then \
-	    ./mesa-quilt pop -a; \
+	    if [ -x ./mesa-quilt ]; then ./mesa-quilt pop -a; fi; \
 	    rm -Rf nx-X11/extras/Mesa/.pc/; \
 	    rm -f nx-X11/config/cf/nxversion.def; \
 	    rm -f nx-X11/config/cf/date.def; \
 	    rm -f bin/nxagent; \
 	    rm -f bin/nxproxy; \
+	    ${MAKE} clean-env; \
 	fi
 
 all:
@@ -54,7 +86,7 @@ all:
 test:
 	echo "No testing for NX (redistributed)"
 
-build-env:
+version:
 	# prepare nx-X11/config/cf/nxversion.def
 	sed \
 	    -e 's/###NX_VERSION_MAJOR###/$(NX_VERSION_MAJOR)/' \
@@ -64,8 +96,34 @@ build-env:
 	    nx-X11/config/cf/nxversion.def.in \
 	    > nx-X11/config/cf/nxversion.def
 
+build-env: version
 	# prepare Makefiles and the nx-X11 symlinking magic
-	cd nx-X11 && make BuildEnv FONT_DEFINES=$(FONT_DEFINES)
+	${MAKE} -C nx-X11 BuildIncludes FONT_DEFINES=$(FONT_DEFINES)
+
+	# set up environment for libNX_X11 build (X11 header files)
+	mkdir -p nx-X11/exports/include/nx-X11/
+	for header in $(NX_X11_HEADERS); do \
+	    ${SYMLINK_FILE} ../../../lib/include/X11/$${header} nx-X11/exports/include/nx-X11/$${header}; \
+	done
+
+	# set up environment for libNX_X11 build (Xtrans header/include files)
+	mkdir -p nx-X11/exports/include/nx-X11/Xtrans/
+	for header in $(NX_XTRANS_HEADERS); do \
+	    ${SYMLINK_FILE} ../../../../lib/include/xtrans/$${header} nx-X11/exports/include/nx-X11/Xtrans/$${header}; \
+	done
+
+clean-env: version
+	for header in $(NX_X11_HEADERS); do \
+	    ${RM_FILE} nx-X11/exports/include/nx-X11/$${header}; \
+	done
+	for header in $(NX_XTRANS_HEADERS); do \
+	    ${RM_FILE} nx-X11/exports/include/nx-X11/Xtrans/$${header}; \
+	done
+
+	-rmdir exports/include/nx-X11/Xtrans/
+	-rmdir exports/include/nx-X11/
+
+	${MAKE} -C nx-X11 CleanEnv FONT_DEFINES=$(FONT_DEFINES)
 
 build-lite:
 	cd nxcomp && autoreconf -vfsi && (${CONFIGURE}) && ${MAKE}
@@ -73,17 +131,26 @@ build-lite:
 
 build-full: build-env
 # in the full case, we rely on "magic" in the nx-X11 imake-based makefiles...
-	cd nxcomp && autoreconf -vfsi && (${CONFIGURE}) && ${MAKE}
-	# build libNX_X11 and libNX_Xext prior to building
-	# nxcomp{ext,shad}.
-	cd nx-X11/lib && make
 
+	# build nxcomp first
+	cd nxcomp && autoreconf -vfsi && (${CONFIGURE}) && ${MAKE}
+
+	# build libNX_X11 second
+	cd nx-X11/lib && autoreconf -vfsi && (${CONFIGURE} --disable-poll) && ${MAKE}
+	mkdir -p nx-X11/exports/lib/
+	$(SYMLINK_FILE) ../../lib/src/.libs/libNX_X11.so nx-X11/exports/lib/libNX_X11.so
+	$(SYMLINK_FILE) ../../lib/src/.libs/libNX_X11.so.6 nx-X11/exports/lib/libNX_X11.so.6
+	$(SYMLINK_FILE) ../../lib/src/.libs/libNX_X11.so.6.3.0 nx-X11/exports/lib/libNX_X11.so.6.3.0
+
+	# build nxcompshad third
 	cd nxcompshad && autoreconf -vfsi && (${CONFIGURE}) && ${MAKE}
 
+	# build nxagent fourth
 	./mesa-quilt push -a
+	${MAKE} -C nx-X11 BuildDependsOnly FONT_DEFINES=$(FONT_DEFINES)
+	${MAKE} -C nx-X11 World USRLIBDIR=$(USRLIBDIR) SHLIBDIR=$(SHLIBDIR) FONT_DEFINES=$(FONT_DEFINES) XFONTLIB=$(XFONTLIB)
 
-	cd nx-X11 && ${MAKE} World USRLIBDIR=$(USRLIBDIR) SHLIBDIR=$(SHLIBDIR) FONT_DEFINES=$(FONT_DEFINES) XFONTLIB=$(XFONTLIB)
-
+	# build nxproxy fifth
 	cd nxproxy && autoreconf -vfsi && (${CONFIGURE}) && ${MAKE}
 
 build:
@@ -149,12 +216,9 @@ install-full:
 	done;
 
 	$(INSTALL_DIR) $(DESTDIR)$(SHLIBDIR)
-	$(COPY_SYMLINK) nx-X11/.build-exports/lib/libNX_X11.so $(DESTDIR)$(SHLIBDIR)/
-	$(COPY_SYMLINK) nx-X11/.build-exports/lib/libNX_X11.so.6 $(DESTDIR)$(SHLIBDIR)/
-	$(COPY_DEREFERENCED) nx-X11/.build-exports/lib/libNX_X11.so.6.2 $(DESTDIR)$(SHLIBDIR)/
 	$(INSTALL_DIR) $(DESTDIR)$(USRLIBDIR)
 	$(INSTALL_SYMLINK) ../../libNX_X11.so.6 $(DESTDIR)$(USRLIBDIR)/libX11.so.6
-	$(INSTALL_SYMLINK) ../../libNX_X11.so.6.2 $(DESTDIR)$(USRLIBDIR)/libX11.so.6.2
+	$(INSTALL_SYMLINK) ../../libNX_X11.so.6.3.0 $(DESTDIR)$(USRLIBDIR)/libX11.so.6.3.0
 
 	. replace.sh; set -x; find nx-X11/.build-exports/include/{nx*,GL} -type d | \
 	    while read dirname; do \
@@ -168,10 +232,10 @@ install-full:
 	$(INSTALL_FILE) etc/nxagent.keyboard $(DESTDIR)$(ETCDIR_NX)/
 
 	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/nx
-	$(INSTALL_FILE) nx-X11/lib/X11/XErrorDB $(DESTDIR)$(PREFIX)/share/nx/
-	$(INSTALL_FILE) nx-X11/lib/X11/Xcms.txt $(DESTDIR)$(PREFIX)/share/nx/
 	$(INSTALL_FILE) VERSION $(DESTDIR)$(PREFIX)/share/nx/VERSION.nxagent
 	$(INSTALL_FILE) VERSION $(DESTDIR)$(PREFIX)/share/nx/VERSION.nxproxy
+
+	$(MAKE) -C nx-X11/lib install
 
 uninstall:
 	$(MAKE) uninstall-lite
