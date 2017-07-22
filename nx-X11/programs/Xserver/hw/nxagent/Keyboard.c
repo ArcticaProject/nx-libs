@@ -754,7 +754,7 @@ N/A
       XkbDfltRepeatInterval = ~ 0;
 
       #ifdef TEST
-      fprintf(stderr, "nxagentKeyboardProc: Set repeat delay to [%u] interval to [%u].\n",
+      fprintf(stderr, "nxagentKeyboardProc: Set repeat delay to [%d] interval to [%d].\n",
                   XkbDfltRepeatDelay, XkbDfltRepeatInterval);
       #endif
 
