@@ -923,6 +923,14 @@ XkbError:
         fprintf(stderr, "nxagentKeyboardProc: nxagentKeyboard is [%s].\n", nxagentKeyboard ? nxagentKeyboard : "NULL");
         #endif
 
+        if (nxagentKeyboard && (strcmp(nxagentKeyboard, "null/null") == 0))
+        {
+          #ifdef TEST
+          fprintf(stderr, "nxagentKeyboardProc: changing nxagentKeyboard from [null/null] to [clone].\n");
+          #endif
+          free(nxagentKeyboard);
+          nxagentKeyboard = strdup("clone");
+        }
 
         update_string(&rules, nxagentXkbGetRules(), 0);
 
