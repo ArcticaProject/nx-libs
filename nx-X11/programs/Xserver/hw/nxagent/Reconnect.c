@@ -458,6 +458,16 @@ Bool nxagentReconnectSession(void)
 
   nxagentProcessOptions(nxagentOptionsFilenameOrString);
 
+  if (nxagentKeyboard && (strcmp(nxagentKeyboard, "null/null") == 0))
+  {
+    #ifdef TEST
+    fprintf(stderr, "nxagentReconnect: changing nxagentKeyboard from [null/null] to [clone].\n");
+    #endif
+
+    free(nxagentKeyboard);
+    nxagentKeyboard = strdup("clone");
+  }
+
   if (nxagentReconnectDisplay(reconnectLossyLevel[DISPLAY_STEP]) == 0)
   {
     failedStep = DISPLAY_STEP;
