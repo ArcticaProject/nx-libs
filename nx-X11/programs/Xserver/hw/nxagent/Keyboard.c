@@ -90,6 +90,8 @@ static int nxagentXkbGetNames(char **rules, char **model, char **layout,
 
 static void nxagentKeycodeConversionSetup(void);
 
+void nxagentWriteKeyboardFile(unsigned int ruleslen, char *rules, char *model, char *layout, char *variant, char *options);
+
 #endif /* XKB */
 
 /*
@@ -1849,6 +1851,56 @@ static int nxagentXkbGetNames(char **rules, char **model, char **layout,
   return n;
 }
 
+void nxagentWriteKeyboardFile(unsigned int ruleslen, char *rules, char *model, char *layout, char *variant, char *options)
+{
+  if (ruleslen)
+  {
+    char *sessionpath = nxagentGetSessionPath();
+    if (sessionpath)
+    {
+      char *keyboard_file_path = NULL;
+      FILE *keyboard_file;
+      if ((asprintf(&keyboard_file_path, "%s/keyboard", sessionpath) == -1))
+      {
+        free(sessionpath);
+        FatalError("malloc for keyboard file path failed.");
+      }
+      free(sessionpath);
+      if ((keyboard_file = fopen(keyboard_file_path, "w")))
+      {
+        if (rules)
+          fprintf(keyboard_file, "rules=\"%s\"\n", rules[0] == '\0' ? "," : rules);
+        if (model)
+          fprintf(keyboard_file, "model=\"%s\"\n", model[0] == '\0' ? "," : model);
+        if (layout)
+          fprintf(keyboard_file, "layout=\"%s\"\n", layout[0] == '\0' ? "," : layout);
+        /* FIXME: this is not correct. We need to match the number of
+           comma separated values between variant and layout */
+        if (variant)
+          fprintf(keyboard_file, "variant=\"%s\"\n", variant[0] == '\0' ? "," : variant);
+        if (options)
+          fprintf(keyboard_file, "options=\"%s\"\n", options[0] == '\0' ? "," : options);
+        fclose(keyboard_file);
+        fprintf(stderr, "Info: keyboard file created: '%s'\n", keyboard_file_path);
+      }
+      else
+      {
+        int save_err = errno;
+        fprintf(stderr, "Error: keyboard file not created: %s\n", strerror(save_err));
+      }
+      free(keyboard_file_path);
+    }
+    else
+    {
+      fprintf(stderr, "Warning: Failed to create keyboard file: SessionPath not defined\n");
+    }
+  }
+  else
+  {
+    fprintf(stderr, "Warning: Failed to create the keyboard file\n");
+  }
+}
+
 void nxagentKeycodeConversionSetup(void)
 {
   char *drules = NULL;
@@ -1879,69 +1931,23 @@ void nxagentKeycodeConversionSetup(void)
   #ifdef DEBUG
   if (drulesLen != 0 && drules && dmodel)
   {
-    fprintf(stderr, "nxagentKeycodeConversionSetup: "
-                    "Remote: [rules='%s',model='%s',layout='%s',variant='%s',options='%s'].\n",
-                    drules, dmodel, dlayout, dvariant, doptions);
+    fprintf(stderr, "%s: Remote: [rules='%s',model='%s',layout='%s',variant='%s',options='%s'].\n",
+	    __func__, drules, dmodel, dlayout, dvariant, doptions);
   }
   else
   {
-    fprintf(stderr, "nxagentKeycodeConversionSetup: "
-                "Failed to retrieve remote rules.\n");
+    fprintf(stderr, "%s: Failed to retrieve remote rules.\n", __func__);
   }
   #endif
 
-  if (drulesLen != 0)
-  {
-    char *sessionpath = nxagentGetSessionPath();
-    if (sessionpath)
-    {
-      char *keyboard_file_path = NULL;
-      FILE *keyboard_file;
-      if ((asprintf(&keyboard_file_path, "%s/keyboard", sessionpath) == -1))
-      {
-        free(sessionpath);
-        FatalError("malloc for keyboard file path failed.");
-      }
-      free(sessionpath);
-      if ((keyboard_file = fopen(keyboard_file_path, "w")))
-      {
-        if (drules)
-          fprintf(keyboard_file, "rules=\"%s\"\n", drules[0] == '\0' ? "," : drules);
-        if (dmodel)
-          fprintf(keyboard_file, "model=\"%s\"\n", dmodel[0] == '\0' ? "," : dmodel);
-        if (dlayout)
-          fprintf(keyboard_file, "layout=\"%s\"\n", dlayout[0] == '\0' ? "," : dlayout);
-        if (dvariant)
-          fprintf(keyboard_file, "variant=\"%s\"\n", dvariant[0] == '\0' ? "," : dvariant);
-        if (doptions)
-          fprintf(keyboard_file, "options=\"%s\"\n", doptions[0] == '\0' ? "," : doptions);
-        fclose(keyboard_file);
-        fprintf(stderr, "Info: keyboard file created: '%s'\n", keyboard_file_path);
-      }
-      else
-      {
-        int save_err = errno;
-        fprintf(stderr, "Error: keyboard file not created: %s\n", strerror(save_err));
-      }
-      free(keyboard_file_path);
-    }
-    else
-    {
-      fprintf(stderr, "Warning: SessionPath not defined\n");
-    }
-  }
-  else
-  {
-    fprintf(stderr, "Warning: Failed to create the keyboard file\n");
-  }
+  nxagentWriteKeyboardFile(drulesLen, drules, dmodel, dlayout, dvariant, doptions);
 
   if (drules && dmodel &&
       (strcmp(drules, "evdev") == 0 ||
        strcmp(dmodel, "evdev") == 0))
   {
     #ifdef DEBUG
-    fprintf(stderr, "nxagentKeycodeConversionSetup: "
-                "Activating KeyCode conversion.\n");
+    fprintf(stderr, "%s: Activating KeyCode conversion.\n", __func__);
     #endif
 
     fprintf(stderr, "Info: Keycode conversion auto-determined as on\n");
