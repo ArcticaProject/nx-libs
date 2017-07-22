@@ -869,22 +869,22 @@ XkbError:
           free(layout);
         }
 #endif
-      XGetKeyboardControl(nxagentDisplay, &values);
+        XGetKeyboardControl(nxagentDisplay, &values);
 
-      memmove((char *) defaultKeyboardControl.autoRepeats,
-             (char *) values.auto_repeats, sizeof(values.auto_repeats));
+        memmove((char *) defaultKeyboardControl.autoRepeats,
+               (char *) values.auto_repeats, sizeof(values.auto_repeats));
 
-      #ifdef TEST
-      {
-        int ret =
-      #endif
-        InitKeyboardDeviceStruct((DevicePtr) pDev, &keySyms, modmap,
-                               nxagentBell, nxagentChangeKeyboardControl);
+        #ifdef TEST
+        {
+          int ret =
+        #endif
+          InitKeyboardDeviceStruct((DevicePtr) pDev, &keySyms, modmap,
+                                 nxagentBell, nxagentChangeKeyboardControl);
 
-      #ifdef TEST
-        fprintf(stderr, "nxagentKeyboardProc: InitKeyboardDeviceStruct returns [%d].\n", ret);
-      }
-      #endif
+        #ifdef TEST
+          fprintf(stderr, "nxagentKeyboardProc: InitKeyboardDeviceStruct returns [%d].\n", ret);
+        }
+        #endif
 
 #ifdef XKB
       } else { /* if (noXkbExtension) */
