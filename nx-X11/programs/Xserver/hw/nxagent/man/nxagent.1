@@ -421,13 +421,19 @@ disable use of shared pixmaps
 enable use of shared pixmaps
 .TP 8
 .B \-noignore
-don't ignore pointer and keyboard configuration changes mandated by clients
+don't ignore pointer and keyboard configuration changes mandated by
+clients. As a result, configuration commands like disabling the
+keyboard bell (xset -b) will also affect the real X server.
 .TP 8
 .B \-nokbreset
 don't reset keyboard device if the session is resumed
 .TP 8
 .B \-noxkblock
-always allow applications to change layout through XKEYBOARD
+this is only relevant if you also specify \-keyboard=query. In that
+case \fBnxagent\fR will lock the keyboard settings and clients will
+get an error when trying to change keyboard settings via
+XKEYBOARD. With \-noxkblock the lock is not applied and clients can
+change the keyboard settings through XKEYBOARD.
 .TP 8
 .B \-tile WxH
 size of image tiles (minimum allowed: 32x32)
