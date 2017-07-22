@@ -893,7 +893,7 @@ XkbError:
 
         char *nxagentXkbConfigFilePath;
 
-        XkbComponentNamesRec names;
+        XkbComponentNamesRec names = {0};
         char *rules, *variants, *options;
 
         #ifdef TEST
@@ -904,7 +904,6 @@ XkbError:
         fprintf(stderr, "nxagentKeyboardProc: nxagentKeyboard is [%s].\n", nxagentKeyboard ? nxagentKeyboard : "NULL");
         #endif
 
-        memset(&names, 0, sizeof(XkbComponentNamesRec));
 
         rules = nxagentXkbGetRules();
 
@@ -1257,11 +1256,10 @@ void nxagentNotifyKeyboardChanges(int oldMinKeycode, int oldMaxKeycode)
   if (!noXkbExtension)
   {
     DeviceIntPtr dev;
-    xkbNewKeyboardNotify nkn;
+    xkbNewKeyboardNotify nkn = {0};
 
     dev = inputInfo.keyboard;
 
-    memset(&nkn, 0, sizeof(xkbNewKeyboardNotify));
     nkn.deviceID = nkn.oldDeviceID = dev -> id;
     nkn.minKeyCode = 8;
     nkn.maxKeyCode = 255;
@@ -1279,9 +1277,8 @@ void nxagentNotifyKeyboardChanges(int oldMinKeycode, int oldMaxKeycode)
   #endif
 
     int i;
-    xEvent event;
+    xEvent event = {0};
 
-    memset(&event, 0, sizeof(xEvent));
     event.u.u.type = MappingNotify;
     event.u.mappingNotify.request = MappingKeyboard;
     event.u.mappingNotify.firstKeyCode = inputInfo.keyboard -> key -> curKeySyms.minKeyCode;
