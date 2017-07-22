@@ -1337,11 +1337,7 @@ int nxagentResetKeyboard(void)
               savedBellPercent, savedBellPitch, savedBellDuration);
   #endif
 
-  if (devBackup = malloc(sizeof(DeviceIntRec)))
-  {
-    memset(devBackup, 0, sizeof(DeviceIntRec));
-  }
-  else
+  if (!(devBackup = calloc(1, sizeof(DeviceIntRec))))
   {
     #ifdef PANIC
     fprintf(stderr, "nxagentResetKeyboard: PANIC! Can't allocate backup structure.\n");
