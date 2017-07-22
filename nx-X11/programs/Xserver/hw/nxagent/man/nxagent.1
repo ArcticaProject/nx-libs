@@ -525,8 +525,8 @@ don't reset keyboard device if the session is resumed
 this is only relevant if you also specify \-keyboard=query. In that
 case \fBnxagent\fR will lock the keyboard settings and clients will
 get an error when trying to change keyboard settings via
-XKEYBOARD. With \-noxkblock the lock is not applied and clients can
-change the keyboard settings through XKEYBOARD.
+XKEYBOARD. With \-noxkblock the lock is not applied and clients are
+allowed change the keyboard settings through XKEYBOARD.
 .TP 8
 .B \-tile WxH
 size of image tiles (minimum allowed: 32x32)
@@ -603,7 +603,7 @@ start or resume a session in fullscreen mode (default: off)
 .TP 8
 .B keyboard=<string> or kbtype=<string>
 
-.BR query | <model>/<layout>
+.BR query | clone | <model>/<layout>
 
 .RS 8
 .TP 8
@@ -616,6 +616,11 @@ MacOS X clients to handle some keyboard problems that are special for
 this platform.  Note that in this case XKEYBOARD will always report
 the default layout which will most likely not match the experienced
 settings.
+.TP 8
+.I clone
+ask the real X server for the keyboard settings using XKEYBOARD
+protocol functions and clone them. This is the recommended setting. For
+compatibility reasons it is not the default.
 .TP 8
 .I <model>/<layout>
 use the given model and layout. You can not modify keyboard rules,

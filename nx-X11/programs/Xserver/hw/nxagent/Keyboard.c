@@ -761,7 +761,9 @@ XkbError:
           layout.
         */
 
-        if (nxagentKeyboard && (strcmp(nxagentKeyboard, "query") != 0))
+        if (nxagentKeyboard &&
+            (strcmp(nxagentKeyboard, "query") != 0) &&
+            (strcmp(nxagentKeyboard, "clone") != 0))
         {
           for (i = 0; nxagentKeyboard[i] != '/' && nxagentKeyboard[i] != 0; i++);
 
@@ -822,20 +824,47 @@ XkbError:
           unsigned int remoteruleslen = nxagentXkbGetNames(&remoterules, &remotemodel, &remotelayout,
                                                            &remotevariant, &remoteoptions);
 
-          #ifdef DEBUG
           if (remoteruleslen && remoterules && remotemodel)
           {
+            #ifdef DEBUG
             fprintf(stderr, "%s: Remote: [rules='%s',model='%s',layout='%s',variant='%s',options='%s'].\n",
                     __func__, remoterules, remotemodel, remotelayout, remotevariant, remoteoptions);
+            #endif
+
+            /*
+             * Keyboard has always been tricky with nxagent. For that
+             * reason X2Go offers "auto" keyboard configuration. You can
+             * specify it in the client side session configuration. In
+             * "auto" mode x2goserver expects nxagent to write the
+             * remote keyboard config to a file on startup and
+             * x2goserver would then pick that file and pass it to
+             * setxkbmap. This functionality is obsoleted by the "clone"
+             * stuff but we still need it because x2goserver does not
+             * know about that yet. Once x2go starts using clone we can
+             * drop this here.
+             */
+            nxagentWriteKeyboardFile(remoteruleslen, remoterules, remotemodel, remotelayout, remotevariant, remoteoptions);
+
+            /* Only setup keycode conversion if we are NOT in clone mode */
+            if (nxagentKeyboard && (strcmp(nxagentKeyboard, "clone") == 0))
+            {
+              free(rules); rules = strdup(remoterules);
+              free(model); model = strdup(remotemodel);
+              free(layout); layout = strdup(remotelayout);
+              free(variant); variant = strdup(remotevariant);
+              free(options); options = strdup(remoteoptions);
+            }
+            else
+            {
+              nxagentKeycodeConversionSetup(remoterules, remotemodel);
+            }
           }
+          #ifdef DEBUG
           else
           {
             fprintf(stderr, "%s: Failed to retrieve remote rules.\n", __func__);
           }
           #endif
-
-          nxagentWriteKeyboardFile(remoterules, remotemodel, remotelayout, remotevariant, remoteoptions);
-          nxagentKeycodeConversionSetup(remoterules, remotemodel);
 
           if (remoterules)
           {
