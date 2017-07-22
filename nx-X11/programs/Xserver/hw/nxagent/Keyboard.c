@@ -159,7 +159,7 @@ extern        Status        XkbGetControls(
 #define XKB_CONFIG_FILE_X2GO "/etc/x2go/x2goagent.keyboard"
 #endif
 #ifndef XKB_DFLT_RULES_FILE
-#define XKB_DFLT_RULES_FILE  "xfree86"
+#define XKB_DFLT_RULES_FILE  "base"
 #endif
 #ifndef XKB_ALTS_RULES_FILE
 #define XKB_ALTS_RULES_FILE  "xorg"
