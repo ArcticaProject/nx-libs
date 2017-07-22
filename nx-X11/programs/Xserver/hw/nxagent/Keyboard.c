@@ -88,7 +88,7 @@ is" without express or implied warranty.
 static int nxagentXkbGetNames(char **rules, char **model, char **layout,
                                   char **variant, char **options);
 
-static void nxagentKeycodeConversionSetup(void);
+static void nxagentKeycodeConversionSetup(char *rules, char *model);
 
 void nxagentWriteKeyboardFile(unsigned int ruleslen, char *rules, char *model, char *layout, char *variant, char *options);
 
@@ -999,9 +999,41 @@ XkbError:
           goto XkbError;
         }
 
-        xkb = XkbGetKeyboard(nxagentDisplay, XkbGBN_AllComponentsMask, XkbUseCoreKbd);
+        {
+          char *drules = NULL;
+          char *dmodel = NULL;
+          char *dlayout = NULL;
+          char *dvariant = NULL;
+          char *doptions = NULL;
 
-        nxagentKeycodeConversionSetup();
+          #ifdef DEBUG
+          unsigned int drulesLen =
+          #endif
+          nxagentXkbGetNames(&drules, &dmodel, &dlayout,
+                             &dvariant, &doptions);
+
+          #ifdef DEBUG
+          if (drulesLen && drules && dmodel)
+          {
+            fprintf(stderr, "%s: Remote: [rules='%s',model='%s',layout='%s',variant='%s',options='%s'].\n",
+                    __func__, drules, dmodel, dlayout, dvariant, doptions);
+          }
+          else
+          {
+            fprintf(stderr, "%s: Failed to retrieve remote rules.\n", __func__);
+          }
+          #endif
+
+          nxagentWriteKeyboardFile(drulesLen, drules, dmodel, dlayout, dvariant, doptions);
+          nxagentKeycodeConversionSetup(drules, dmodel);
+
+          if (drules)
+          {
+            XFree(drules);
+          }
+        }
+
+        xkb = XkbGetKeyboard(nxagentDisplay, XkbGBN_AllComponentsMask, XkbUseCoreKbd);
 
         if (xkb == NULL || xkb->geom == NULL)
         {
@@ -1901,15 +1933,8 @@ void nxagentWriteKeyboardFile(unsigned int ruleslen, char *rules, char *model, c
   }
 }
 
-void nxagentKeycodeConversionSetup(void)
+void nxagentKeycodeConversionSetup(char * rules, char * model)
 {
-  char *drules = NULL;
-  char *dmodel = NULL;
-  char *dlayout = NULL;
-  char *dvariant = NULL;
-  char *doptions = NULL;
-  unsigned int drulesLen;
-
   if (nxagentOption(KeycodeConversion) == KeycodeConversionOff)
   {
     fprintf(stderr, "Info: Keycode conversion is off\n");
@@ -1923,28 +1948,9 @@ void nxagentKeycodeConversionSetup(void)
     return;
   }
 
-  nxagentKeycodeConversion = False;
-
-  drulesLen = nxagentXkbGetNames(&drules, &dmodel, &dlayout,
-                                     &dvariant, &doptions);
-
-  #ifdef DEBUG
-  if (drulesLen != 0 && drules && dmodel)
-  {
-    fprintf(stderr, "%s: Remote: [rules='%s',model='%s',layout='%s',variant='%s',options='%s'].\n",
-	    __func__, drules, dmodel, dlayout, dvariant, doptions);
-  }
-  else
-  {
-    fprintf(stderr, "%s: Failed to retrieve remote rules.\n", __func__);
-  }
-  #endif
-
-  nxagentWriteKeyboardFile(drulesLen, drules, dmodel, dlayout, dvariant, doptions);
-
-  if (drules && dmodel &&
-      (strcmp(drules, "evdev") == 0 ||
-       strcmp(dmodel, "evdev") == 0))
+  if (rules && model &&
+      (strcmp(rules, "evdev") == 0 ||
+       strcmp(model, "evdev") == 0))
   {
     #ifdef DEBUG
     fprintf(stderr, "%s: Activating KeyCode conversion.\n", __func__);
@@ -1955,12 +1961,13 @@ void nxagentKeycodeConversionSetup(void)
   }
   else
   {
-    fprintf(stderr, "Info: Keycode conversion auto-determined as off\n");
-  }
+    #ifdef DEBUG
+    fprintf(stderr, "%s: Deactivating KeyCode conversion.\n", __func__);
+    #endif
 
-  if (drules)
-  {
-    XFree(drules);
+    fprintf(stderr, "Info: Keycode conversion auto-determined as off\n");
+
+    nxagentKeycodeConversion = False;
   }
 }
 
@@ -1975,7 +1982,21 @@ void nxagentResetKeycodeConversion(void)
 
   if (result != 0)
   {
-    nxagentKeycodeConversionSetup();
+    char *drules = NULL;
+    char *dmodel = NULL;
+    char *dlayout = NULL;
+    char *dvariant = NULL;
+    char *doptions = NULL;
+    unsigned int drulesLen;
+
+    drulesLen = nxagentXkbGetNames(&drules, &dmodel, &dlayout,
+                                   &dvariant, &doptions);
+
+    if (drulesLen && drules && dmodel)
+      nxagentKeycodeConversionSetup(drules, dmodel);
+
+    if (drules)
+      XFree(drules);
   }
   else
   {
