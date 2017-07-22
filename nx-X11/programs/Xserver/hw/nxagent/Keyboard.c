@@ -647,11 +647,10 @@ void nxagentChangeKeyboardControl(DeviceIntPtr pDev, KeybdCtrl *ctrl)
    * devices attached to the real X server.
    */
 
-  if (nxagentOption(DeviceControl) == True)
+  if (nxagentOption(DeviceControl))
   {
     unsigned long value_mask;
     XKeyboardControl values;
-    int i;
 
     #ifdef TEST
     fprintf(stderr, "nxagentChangeKeyboardControl: WARNING! Propagating changes to keyboard settings.\n");
@@ -686,7 +685,7 @@ void nxagentChangeKeyboardControl(DeviceIntPtr pDev, KeybdCtrl *ctrl)
 
     value_mask = KBLed | KBLedMode;
 
-    for (i = 1; i <= 32; i++)
+    for (int i = 1; i <= 32; i++)
     {
       values.led = i;
       values.led_mode = (ctrl->leds & (1 << (i - 1))) ? LedModeOn : LedModeOff;
@@ -888,7 +887,7 @@ XkbError:
       #endif
 
 #ifdef XKB
-      } else {
+      } else { /* if (noXkbExtension) */
         FILE *file;
         XkbConfigRtrnRec config;
 
@@ -920,7 +919,7 @@ XkbError:
           layout.
         */
 
-        if ((nxagentKeyboard != NULL) && (strcmp(nxagentKeyboard, "query") != 0))
+        if (nxagentKeyboard && (strcmp(nxagentKeyboard, "query") != 0))
         {
           for (i = 0; nxagentKeyboard[i] != '/' && nxagentKeyboard[i] != 0; i++);
 
@@ -1046,7 +1045,7 @@ XkbError:
         else
           nxagentXkbConfigFilePath = strdup(XKB_CONFIG_FILE_NX);
 
-        if (nxagentXkbConfigFilePath == NULL)
+        if (!nxagentXkbConfigFilePath)
         {
           FatalError("nxagentKeyboardProc: malloc failed.");
         }
@@ -1056,7 +1055,7 @@ XkbError:
                     nxagentXkbConfigFilePath);
         #endif
 
-        if ((file = fopen(nxagentXkbConfigFilePath, "r")) != NULL) {
+        if ((file = fopen(nxagentXkbConfigFilePath, "r"))) {
 
           #ifdef TEST
           fprintf(stderr, "nxagentKeyboardProc: Going to parse config file.\n");
@@ -1129,8 +1128,8 @@ XkbError:
         #endif
         #ifdef DEBUG
         fprintf(stderr, "nxagentKeyboardProc: Going to set rules and init device: "
-		        "[rules='%s',model='%s',layout='%s',variants='%s',options='%s'].\n",
-		          rules, model, layout, variants, options);
+                        "[rules='%s',model='%s',layout='%s',variants='%s',options='%s'].\n",
+                          rules, model, layout, variants, options);
         #endif
 
         XkbSetRulesDflts(rules, model, layout, variants, options);
@@ -1338,17 +1337,15 @@ int nxagentResetKeyboard(void)
               savedBellPercent, savedBellPitch, savedBellDuration);
   #endif
 
-  devBackup = malloc(sizeof(DeviceIntRec));
-
-  if (devBackup == NULL)
+  if (devBackup = malloc(sizeof(DeviceIntRec)))
   {
-    #ifdef PANIC
-    fprintf(stderr, "nxagentSaveKeyboardDeviceData: PANIC! Can't allocate backup structure.\n");
-    #endif
+    memset(devBackup, 0, sizeof(DeviceIntRec));
   }
   else
   {
-    memset(devBackup, 0, sizeof(DeviceIntRec));
+    #ifdef PANIC
+    fprintf(stderr, "nxagentResetKeyboard: PANIC! Can't allocate backup structure.\n");
+    #endif
   }
 
   nxagentSaveKeyboardDeviceData(dev, devBackup);
@@ -1449,7 +1446,6 @@ void nxagentCheckModifierMasks(CARD8 keycode, int j)
 void nxagentCheckRemoteKeycodes()
 {
   nxagentCapsLockKeycode = XKeysymToKeycode(nxagentDisplay, XK_Caps_Lock);
-
   nxagentNumLockKeycode  = XKeysymToKeycode(nxagentDisplay, XK_Num_Lock);
 
   #ifdef DEBUG
@@ -1461,7 +1457,7 @@ void nxagentCheckRemoteKeycodes()
 
 static int nxagentSaveKeyboardDeviceData(DeviceIntPtr dev, DeviceIntPtr devBackup)
 {
-  if (devBackup == NULL)
+  if (!devBackup)
   {
     #ifdef PANIC
     fprintf(stderr, "nxagentSaveKeyboardDeviceData: PANIC! Pointer to backup structure is null.\n");
@@ -1470,10 +1466,8 @@ static int nxagentSaveKeyboardDeviceData(DeviceIntPtr dev, DeviceIntPtr devBacku
     return -1;
   }
 
-  devBackup -> key = dev -> key;
-
-  devBackup -> focus = dev -> focus;
-
+  devBackup -> key     = dev -> key;
+  devBackup -> focus   = dev -> focus;
   devBackup -> kbdfeed = dev -> kbdfeed;
 
   #ifdef DEBUG
@@ -1485,7 +1479,7 @@ static int nxagentSaveKeyboardDeviceData(DeviceIntPtr dev, DeviceIntPtr devBacku
 
 static int nxagentRestoreKeyboardDeviceData(DeviceIntPtr devBackup, DeviceIntPtr dev)
 {
-  if (devBackup == NULL)
+  if (!devBackup)
   {
     #ifdef PANIC
     fprintf(stderr, "nxagentRestoreKeyboardDeviceData: PANIC! Pointer to backup structure is null.\n");
@@ -1494,10 +1488,8 @@ static int nxagentRestoreKeyboardDeviceData(DeviceIntPtr devBackup, DeviceIntPtr
     return -1;
   }
 
-  dev -> key = devBackup -> key;
-
-  dev -> focus = devBackup -> focus;
-
+  dev -> key     = devBackup -> key;
+  dev -> focus   = devBackup -> focus;
   dev -> kbdfeed = devBackup -> kbdfeed;
 
   #ifdef DEBUG
@@ -1512,7 +1504,7 @@ static int nxagentFreeKeyboardDeviceData(DeviceIntPtr dev)
 {
   KbdFeedbackPtr k, knext;
 
-  if (dev == NULL)
+  if (!dev)
   {
     #ifdef PANIC
     fprintf(stderr, "nxagentFreeKeyboardDeviceData: PANIC! Pointer to device structure is null.\n");
@@ -1535,14 +1527,14 @@ static int nxagentFreeKeyboardDeviceData(DeviceIntPtr dev)
       free(dev->key->modifierKeyMap);
       free(dev->key);
 
-      dev->key=NULL;
+      dev->key = NULL;
   }
 
   if (dev->focus)
   {
       free(dev->focus->trace);
       free(dev->focus);
-      dev->focus=NULL;
+      dev->focus = NULL;
   }
 
   for (k = dev->kbdfeed; k; k = knext)
@@ -1624,7 +1616,7 @@ void nxagentInitXkbWrapper(void)
   fprintf(stderr, "nxagentInitXkbWrapper: Called.\n");
   #endif
 
-  if (nxagentOption(InhibitXkb) == 0)
+  if (!nxagentOption(InhibitXkb))
   {
     #ifdef TEST
     fprintf(stderr, "nxagentInitXkbWrapper: Nothing to do.\n");
@@ -1635,9 +1627,7 @@ void nxagentInitXkbWrapper(void)
 
   memset(&nxagentXkbWrapper, 0, sizeof(XkbWrapperRec));
 
-  extension = CheckExtension("XKEYBOARD");
-
-  if (extension != NULL)
+  if ((extension = CheckExtension("XKEYBOARD")))
   {
     nxagentXkbWrapper.base = extension -> base;
     nxagentXkbWrapper.eventBase = extension -> eventBase;
@@ -1668,9 +1658,9 @@ void nxagentDisableXkbExtension(void)
 
   if (nxagentXkbWrapper.base > 0)
   {
-    if (nxagentXkbWrapper.ProcXkbDispatchBackup == NULL)
+    if (!nxagentXkbWrapper.ProcXkbDispatchBackup)
     {
-      nxagentXkbWrapper.ProcXkbDispatchBackup  = ProcVector[nxagentXkbWrapper.base];
+      nxagentXkbWrapper.ProcXkbDispatchBackup = ProcVector[nxagentXkbWrapper.base];
 
       ProcVector[nxagentXkbWrapper.base] = ProcXkbInhibited;
     }
@@ -1681,7 +1671,7 @@ void nxagentDisableXkbExtension(void)
     }
     #endif
 
-    if (nxagentXkbWrapper.SProcXkbDispatchBackup == NULL)
+    if (!nxagentXkbWrapper.SProcXkbDispatchBackup)
     {
       nxagentXkbWrapper.SProcXkbDispatchBackup = SwappedProcVector[nxagentXkbWrapper.base];
 
@@ -1704,7 +1694,7 @@ void nxagentEnableXkbExtension(void)
 
   if (nxagentXkbWrapper.base > 0)
   {
-    if (nxagentXkbWrapper.ProcXkbDispatchBackup != NULL)
+    if (nxagentXkbWrapper.ProcXkbDispatchBackup)
     {
       ProcVector[nxagentXkbWrapper.base] = nxagentXkbWrapper.ProcXkbDispatchBackup;
 
@@ -1717,7 +1707,7 @@ void nxagentEnableXkbExtension(void)
     }
     #endif
 
-    if (nxagentXkbWrapper.SProcXkbDispatchBackup != NULL)
+    if (nxagentXkbWrapper.SProcXkbDispatchBackup)
     {
       SwappedProcVector[nxagentXkbWrapper.base] = nxagentXkbWrapper.SProcXkbDispatchBackup;
 
@@ -1744,7 +1734,7 @@ void nxagentEnableXkbExtension(void)
 */
 void nxagentTuneXkbWrapper(void)
 {
-  if (nxagentOption(InhibitXkb) == 0)
+  if (!nxagentOption(InhibitXkb))
   {
     #ifdef TEST
     fprintf(stderr, "nxagentTuneXkbWrapper: Nothing to do.\n");
@@ -1753,8 +1743,7 @@ void nxagentTuneXkbWrapper(void)
     return;
   }
 
-  if (nxagentKeyboard != NULL && 
-          strcmp(nxagentKeyboard, "query") == 0)
+  if (nxagentKeyboard && strcmp(nxagentKeyboard, "query") == 0)
   {
     nxagentDisableXkbExtension();
   }
@@ -1799,14 +1788,14 @@ static int nxagentXkbGetNames(char **rules, char **model, char **layout,
                                   atom, 0, 256, 0, XA_STRING, &type, &format,
                                       &n, &after, (unsigned char **)&data);
 
-  if (result !=Success || data == NULL)
+  if (result != Success || !data)
   {
     return 0;
   }
 
   if ((after > 0) || (type != XA_STRING) || (format != 8))
   {
-    if (data != NULL)
+    if (data)
     {
       XFree(data);
       return 0;
@@ -1817,7 +1806,7 @@ static int nxagentXkbGetNames(char **rules, char **model, char **layout,
 
   if (name < data + n)
   {
-    *rules =  name;
+    *rules = name;
     name += strlen(name) + 1;
   }
 
@@ -1876,7 +1865,7 @@ void nxagentKeycodeConversionSetup(void)
                                      &dvariant, &doptions);
 
   #ifdef DEBUG
-  if (drulesLen != 0 && drules != NULL && dmodel != NULL)
+  if (drulesLen != 0 && drules && dmodel)
   {
     fprintf(stderr, "nxagentKeycodeConversionSetup: "
                     "Remote: [rules='%s',model='%s',layout='%s',variant='%s',options='%s'].\n",
@@ -1892,27 +1881,27 @@ void nxagentKeycodeConversionSetup(void)
   if (drulesLen != 0)
   {
     char *sessionpath = nxagentGetSessionPath();
-    if (sessionpath != NULL)
+    if (sessionpath)
     {
       int keyboard_file_path_size = strlen(sessionpath) + strlen("/keyboard");
       char *keyboard_file_path = malloc((keyboard_file_path_size + 1) * sizeof(char));
       FILE *keyboard_file;
-      if (keyboard_file_path == NULL)
+      if (!keyboard_file_path)
       {
         FatalError("nxagentKeycodeConversionSetup: malloc failed.");
       }
       strcpy(keyboard_file_path, sessionpath);
       strcat(keyboard_file_path, "/keyboard");
-      if ((keyboard_file = fopen(keyboard_file_path, "w")) != NULL) {
-        if (drules != NULL)
+      if ((keyboard_file = fopen(keyboard_file_path, "w"))) {
+        if (drules)
           fprintf(keyboard_file, "rules=\"%s\"\n", drules[0] == '\0' ? "," : drules);
-        if (dmodel != NULL)
+        if (dmodel)
           fprintf(keyboard_file, "model=\"%s\"\n", dmodel[0] == '\0' ? "," : dmodel);
-        if (dlayout != NULL)
+        if (dlayout)
           fprintf(keyboard_file, "layout=\"%s\"\n", dlayout[0] == '\0' ? "," : dlayout);
-        if (dvariant != NULL)
+        if (dvariant)
           fprintf(keyboard_file, "variant=\"%s\"\n", dvariant[0] == '\0' ? "," : dvariant);
-        if (doptions != NULL)
+        if (doptions)
           fprintf(keyboard_file, "options=\"%s\"\n", doptions[0] == '\0' ? "," : doptions);
         fclose(keyboard_file);
         fprintf(stderr, "Info: keyboard file created\n");
@@ -1934,7 +1923,7 @@ void nxagentKeycodeConversionSetup(void)
     fprintf(stderr, "Warning: Failed to create the keyboard file\n");
   }
 
-  if (drules != NULL && dmodel != NULL &&
+  if (drules && dmodel &&
       (strcmp(drules, "evdev") == 0 ||
        strcmp(dmodel, "evdev") == 0))
   {
@@ -1951,7 +1940,7 @@ void nxagentKeycodeConversionSetup(void)
     fprintf(stderr, "Info: Keycode conversion auto-determined as off\n");
   }
 
-  if (drules != NULL)
+  if (drules)
   {
     XFree(drules);
   }
@@ -1981,4 +1970,4 @@ void nxagentResetKeycodeConversion(void)
   }
 }
 
-#endif
+#endif /* XKB */
