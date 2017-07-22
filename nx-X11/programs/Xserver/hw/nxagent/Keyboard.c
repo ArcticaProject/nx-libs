@@ -1600,10 +1600,30 @@ int ProcXkbInhibited(register ClientPtr client)
     {
       return BadAccess;
     }
-    default:
+    case X_kbBell:
+    case X_kbGetCompatMap:
+    case X_kbGetControls:
+    case X_kbGetDeviceInfo:
+    case X_kbGetGeometry:
+    case X_kbGetIndicatorMap:
+    case X_kbGetIndicatorState:
+    case X_kbGetMap:
+    case X_kbGetNamedIndicator:
+    case X_kbGetNames:
+    case X_kbGetState:
+    case X_kbListComponents:
+    case X_kbPerClientFlags:
+    case X_kbSelectEvents:
+    case X_kbSetDeviceInfo:
+    case X_kbUseExtension:
     {
       return (client->swapped ? nxagentXkbWrapper.SProcXkbDispatchBackup(client) :
                   nxagentXkbWrapper.ProcXkbDispatchBackup(client));
+    }
+    default:
+    {
+      /* Just make sure that it works in case xkb gets extended in future  */
+      return BadImplementation;
     }
   }
 }
