@@ -909,6 +909,17 @@ XkbError:
 
         rules = nxagentXkbGetRules();
 
+        /*
+          from nxagent changelog:
+          2.0.22:
+          - Implemented handling of value "query" for nxagentKbtype. This value
+          is passed by the NX client for MacOSX. If value of nxagentKbtype is
+          "query" or NULL we init keyboard by core protocol functions reading
+          the keyboard mapping of the X server. The property _XKB_RULES_NAMES
+          is always set on the root window with default values of model and
+          layout.
+        */
+
         if ((nxagentKeyboard != NULL) && (strcmp(nxagentKeyboard, "query") != 0))
         {
           for (i = 0; nxagentKeyboard[i] != '/' && nxagentKeyboard[i] != 0; i++);
@@ -1721,6 +1732,16 @@ void nxagentEnableXkbExtension(void)
   }
 }
 
+/*
+  from nxagent-3.0.0-88 changelog:
+
+  - Fixed TR10D01539. Some XKEYBOARD requests are disabled if the option
+  'keyboard' has value 'query'. This locks the initial keyboard map.
+  Enabling/disabling of XKEYBOARD requests is done at run time.
+
+  - Added -noxkblock command line option enabling the XKEYBOARD requests
+  even if the option 'keyboard' value is 'query'.
+*/
 void nxagentTuneXkbWrapper(void)
 {
   if (nxagentOption(InhibitXkb) == 0)
