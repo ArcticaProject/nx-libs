@@ -94,6 +94,8 @@ void nxagentWriteKeyboardFile(unsigned int ruleslen, char *rules, char *model, c
 
 #endif /* XKB */
 
+static void update_string(char ** current, char *new, size_t maxlen);
+
 /*
  * Set here the required log level.
  */
@@ -699,6 +701,30 @@ void nxagentChangeKeyboardControl(DeviceIntPtr pDev, KeybdCtrl *ctrl)
   #endif
 }
 
+/*
+  update a string that has been allocated with len chars of new
+  string. If the new string is NULL nothing will be changed. If maxlen
+  is 0 the whole new string will be used.
+*/
+static void update_string(char ** current, char *new, size_t maxlen)
+{
+  if (!current || !new)
+    return;
+
+  if (*current)
+  {
+    free(*current);
+    *current = NULL;
+  }
+
+  if (maxlen > 0)
+    *current = strndup(new, maxlen);
+  else
+    *current = strdup(new);
+
+  return;
+}
+
 int nxagentKeyboardProc(DeviceIntPtr pDev, int onoff)
 {
   XModifierKeymap *modifier_keymap;
@@ -709,8 +735,7 @@ int nxagentKeyboardProc(DeviceIntPtr pDev, int onoff)
   CARD8 modmap[256];
   int i, j;
   XKeyboardState values;
-  char *model = NULL, *layout = NULL;
-  int free_model = 0, free_layout = 0;
+  char *rules = NULL, *model = NULL, *layout = NULL, *variants = NULL, *options = NULL;
   XkbDescPtr xkb = NULL;
 
   switch (onoff)
@@ -856,16 +881,13 @@ XkbError:
 
         XkbFreeKeyboard(xkb, XkbAllComponentsMask, True);
         xkb = NULL;
-        if (free_model) 
-        {
-          free_model = 0;
-          free(model);
-        }
-        if (free_layout)
-        {
-          free_layout = 0;
-          free(layout);
-        }
+        free(rules);
+        free(model);
+        free(layout);
+        free(variants);
+        free(options);
+
+        rules = model = layout = variants = options = NULL;
 #endif
         XGetKeyboardControl(nxagentDisplay, &values);
 
@@ -892,7 +914,6 @@ XkbError:
         char *nxagentXkbConfigFilePath;
 
         XkbComponentNamesRec names = {0};
-        char *rules, *variants, *options;
 
         #ifdef TEST
         fprintf(stderr, "nxagentKeyboardProc: Using XKB extension.\n");
@@ -903,7 +924,7 @@ XkbError:
         #endif
 
 
-        rules = nxagentXkbGetRules();
+        update_string(&rules, nxagentXkbGetRules(), 0);
 
         /*
           from nxagent changelog:
@@ -927,11 +948,8 @@ XkbError:
             goto XkbError;
           }
 
-          free_model = 1;
-	  model = strndup(nxagentKeyboard, i);
-
-          free_layout = 1;
-	  layout = strdup(&nxagentKeyboard[i + 1]);
+          update_string(&model, nxagentKeyboard, i);
+          update_string(&layout, &nxagentKeyboard[i + 1], 0);
 
           /*
            * There is no description for pc105 on Solaris.
@@ -960,8 +978,8 @@ XkbError:
         }
         else
         {
-          layout = XKB_DFLT_KB_LAYOUT;
-          model = XKB_DFLT_KB_MODEL;
+          update_string(&layout, XKB_DFLT_KB_LAYOUT, 0);
+          update_string(&model, XKB_DFLT_KB_MODEL, 0);
 
           #ifdef TEST
           fprintf(stderr, "nxagentKeyboardProc: Using default keyboard: model [%s] layout [%s].\n",
@@ -969,8 +987,8 @@ XkbError:
           #endif
         }
 
-        variants = XKB_DFLT_KB_VARIANT;
-        options = XKB_DFLT_KB_OPTIONS;
+        update_string(&variants, XKB_DFLT_KB_VARIANT, 0);
+        update_string(&options, XKB_DFLT_KB_OPTIONS, 0);
 
         #ifdef TEST
         fprintf(stderr, "nxagentKeyboardProc: XkbInitialMap (option -xkbmap) is [%s]\n", XkbInitialMap ? XkbInitialMap : "NULL");
@@ -1099,30 +1117,11 @@ XkbError:
             fclose(file);
             goto XkbError;
           }
-          if (config.rules_file)
-            rules = config.rules_file;
-          if (config.model)
-          {
-            if (free_model)
-            {
-              free_model = 0; 
-              free(model);
-            }
-            model = config.model;
-          }
-          if (config.layout)
-          {
-            if (free_layout)
-            {
-              free_layout = 0;
-              free(layout);
-            }
-            layout = config.layout;
-          }
-          if (config.variant)
-            variants = config.variant;
-          if (config.options)
-            options = config.options;
+          update_string(&rules, config.rules_file, 0);
+          update_string(&model, config.model, 0);
+          update_string(&layout, config.layout, 0);
+          update_string(&variants, config.variant, 0);
+          update_string(&options, config.options, 0);
 
           free(nxagentXkbConfigFilePath);
           nxagentXkbConfigFilePath = NULL;
@@ -1176,17 +1175,13 @@ XkbEnd:
           NXShadowInitKeymap(&(pDev->key->curKeySyms));
         }
 
-        if (free_model) 
-        {
-          free_model = 0;
-          free(model);
-        }
+        free(rules);
+        free(model);
+        free(layout);
+        free(variants);
+        free(options);
 
-        if (free_layout)
-        {
-          free_layout = 0;
-          free(layout);
-        }
+        rules = model = layout = variants = options = NULL;
 
         XkbFreeKeyboard(xkb, XkbAllComponentsMask, True);
         xkb = NULL;
