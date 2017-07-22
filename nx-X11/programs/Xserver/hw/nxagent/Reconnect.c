@@ -587,7 +587,8 @@ Bool nxagentReconnectSession(void)
   if (nxagentOption(ResetKeyboardAtResume) == 1 &&
          (nxagentKeyboard  == NULL || nxagentOldKeyboard == NULL ||
              strcmp(nxagentKeyboard, nxagentOldKeyboard) != 0 ||
-                 strcmp(nxagentKeyboard, "query") == 0))
+                 strcmp(nxagentKeyboard, "query") == 0 ||
+                     strcmp(nxagentKeyboard, "clone") == 0))
   {
     if (nxagentResetKeyboard() == 0)
     {

@@ -503,7 +503,7 @@ start or resume a session in fullscreen mode (default: off)
 .TP 8
 .B keyboard=<string> or kbtype=<string>
 
-.BR query | <model>/<layout>
+.BR query | clone | <model>/<layout>
 
 .RS 8
 .TP 8
@@ -516,6 +516,11 @@ MacOS X clients to handle some keyboard problems that are special for
 this platform.  Note that in this case XKEYBOARD will always report
 the default layout which will most likely not match the experienced
 settings.
+.TP 8
+.I clone
+ask the real X server for the keyboard settings using XKEYBOARD
+protocol functions and clone them. This is the recommended setting. For
+compatibility reasons it is not the default.
 .TP 8
 .I <model>/<layout>
 use the given model and layout. You can not modify keyboard rules,

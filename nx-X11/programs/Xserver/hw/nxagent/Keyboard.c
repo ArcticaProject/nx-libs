@@ -937,7 +937,9 @@ XkbError:
           layout.
         */
 
-        if (nxagentKeyboard && (strcmp(nxagentKeyboard, "query") != 0))
+        if (nxagentKeyboard &&
+            (strcmp(nxagentKeyboard, "query") != 0) &&
+            (strcmp(nxagentKeyboard, "clone") != 0))
         {
           for (i = 0; nxagentKeyboard[i] != '/' && nxagentKeyboard[i] != 0; i++);
 
@@ -1043,7 +1045,20 @@ XkbError:
           #endif
 
           nxagentWriteKeyboardFile(drulesLen, drules, dmodel, dlayout, dvariant, doptions);
-          nxagentKeycodeConversionSetup(drules, dmodel);
+          if (nxagentKeyboard && (strcmp(nxagentKeyboard, "clone") != 0))
+          {
+            /* Keycode conversion is not of use in clone mode */
+            nxagentKeycodeConversionSetup(drules, dmodel);
+          }
+
+          if (drules && nxagentKeyboard && (strcmp(nxagentKeyboard, "clone") == 0))
+          {
+            update_string(&rules, drules, 0);
+            update_string(&model, dmodel, 0);
+            update_string(&layout, dlayout, 0);
+            update_string(&variants, dvariant, 0);
+            update_string(&options, doptions, 0);
+          }
 
           if (drules)
           {
@@ -1784,7 +1799,9 @@ void nxagentTuneXkbWrapper(void)
     return;
   }
 
-  if (nxagentKeyboard && strcmp(nxagentKeyboard, "query") == 0)
+  if (nxagentKeyboard &&
+      (strcmp(nxagentKeyboard, "query") == 0 ||
+       strcmp(nxagentKeyboard, "clone") == 0))
   {
     nxagentDisableXkbExtension();
   }
