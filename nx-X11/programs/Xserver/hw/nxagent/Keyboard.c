@@ -1680,7 +1680,7 @@ void nxagentInitXkbWrapper(void)
   fprintf(stderr, "nxagentInitXkbWrapper: Called.\n");
   #endif
 
-  if (!nxagentOption(InhibitXkb))
+  if (nxagentOption(InhibitXkb) == 0)
   {
     #ifdef TEST
     fprintf(stderr, "nxagentInitXkbWrapper: Nothing to do.\n");
@@ -1798,7 +1798,7 @@ void nxagentEnableXkbExtension(void)
 */
 void nxagentTuneXkbWrapper(void)
 {
-  if (!nxagentOption(InhibitXkb))
+  if (nxagentOption(InhibitXkb) == 0)
   {
     #ifdef TEST
     fprintf(stderr, "nxagentTuneXkbWrapper: Nothing to do.\n");
@@ -1807,9 +1807,10 @@ void nxagentTuneXkbWrapper(void)
     return;
   }
 
-  if (nxagentKeyboard &&
-      (strcmp(nxagentKeyboard, "query") == 0 ||
-       strcmp(nxagentKeyboard, "clone") == 0))
+  if (nxagentOption(InhibitXkb) == 2 ||
+      (nxagentKeyboard &&
+       (strcmp(nxagentKeyboard, "query") == 0 ||
+	strcmp(nxagentKeyboard, "clone") == 0)))
   {
     nxagentDisableXkbExtension();
   }

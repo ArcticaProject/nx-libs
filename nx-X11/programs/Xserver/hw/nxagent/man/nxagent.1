@@ -426,12 +426,16 @@ keyboard bell (xset -b) will also affect the real X server.
 .B \-nokbreset
 don't reset keyboard device if the session is resumed
 .TP 8
-.B \-noxkblock
-this is only relevant if you also specify \-keyboard=query. In that
-case \fBnxagent\fR will lock the keyboard settings and clients will
-get an error when trying to change keyboard settings via
-XKEYBOARD. With \-noxkblock the lock is not applied and clients can
-change the keyboard settings through XKEYBOARD.
+.B \-(no)xkblock
+normally clients can change the keyboard via XKEYBOARD which is often
+done by desktop environments. But those desktop environments cannot
+know about the remote keyboard of an nx connection which can lead to
+various keyboard problems. With \-xkblock the keyboard can be
+locked. This prevents any client from changing the keyboard. For some
+special values of the \-keyboard option (\-keyboard=query or
+\-keyboard=clone) locking is implicitely activated and can be switched
+off with \-noxkblock. If locking is effective clients will get an
+error when trying to change keyboard settings via XKEYBOARD.
 .TP 8
 .B \-tile WxH
 size of image tiles (minimum allowed: 32x32)
@@ -509,18 +513,18 @@ start or resume a session in fullscreen mode (default: off)
 .TP 8
 .I query
 use the default XKB keyboard layout (see below) and only allow clients
-to query the settings but prevent any changes. \fIquery\fR is
-especially helpful for setups where you need to set/modify the actual
-keyboard layout using core X protocol functions (e.g. via \fBxmodmap\fR). It is used for
-MacOS X clients to handle some keyboard problems that are special for
-this platform.  Note that in this case XKEYBOARD will always report
-the default layout which will most likely not match the experienced
-settings.
+to query the settings but prevent any changes (same as
+\-xkblock). \fIquery\fR is especially helpful for setups where you
+need to set/modify the actual keyboard layout using core X protocol functions (e.g. via
+\fBxmodmap\fR). It is used for MacOS X clients to handle some keyboard
+problems that are special for this platform.  Note that in this case
+XKEYBOARD will always report the default layout which will most likely
+not match the experienced settings.
 .TP 8
 .I clone
 ask the real X server for the keyboard settings using XKEYBOARD
 protocol functions and clone them. This is the recommended setting. For
-compatibility reasons it is not the default.
+compatibility reasons it is not the default. This implies \-xkblock.
 .TP 8
 .I <model>/<layout>
 use the given model and layout. A value of \fInull/null\fR is equivalent to

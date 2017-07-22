@@ -815,6 +815,13 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     return 1;
   }
 
+  if (!strcmp(argv[i], "-xkblock"))
+  {
+    nxagentChangeOption(InhibitXkb, 2);
+
+    return 1;
+  }
+
   /*
    * Enable pseudo-rootless mode.
    */
@@ -2141,6 +2148,7 @@ void ddxUseMsg(void)
   ErrorF("-noignore              don't ignore pointer and keyboard configuration changes mandated by clients\n");
   ErrorF("-nokbreset             don't reset keyboard device if the session is resumed\n");
   ErrorF("-noxkblock             always allow applications to change layout through XKEYBOARD\n");
+  ErrorF("-xkblock               always disallow applications to change layout through XKEYBOARD\n");
   ErrorF("-tile WxH              size of image tiles (minimum allowed: 32x32)\n");
   ErrorF("-keystrokefile file    file with keyboard shortcut definitions\n");
   ErrorF("-verbose               print more warning and error messages\n");

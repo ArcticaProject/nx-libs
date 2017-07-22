@@ -398,7 +398,11 @@ typedef struct _AgentOptions
   int ClientOs;
 
   /*
-   * Inhibit some XKEYBOARD requests.
+   * Control XKEYBOARD request handling:
+   * 0 = allow all XKEYBOARD requests
+   * 1 = disallow all XKEYBOARD requests that would change the keyboard
+   *     (make them fail)
+   * 2 = if keyboard=clone or keyboard=query this is like 1, else like 0
    */
 
   int InhibitXkb;
