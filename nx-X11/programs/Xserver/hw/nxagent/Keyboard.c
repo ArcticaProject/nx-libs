@@ -90,7 +90,7 @@ static int nxagentXkbGetNames(char **rules, char **model, char **layout,
 
 static void nxagentKeycodeConversionSetup(char *rules, char *model);
 
-void nxagentWriteKeyboardFile(unsigned int ruleslen, char *rules, char *model, char *layout, char *variant, char *options);
+void nxagentWriteKeyboardFile(char *rules, char *model, char *layout, char *variant, char *options);
 
 #endif /* XKB */
 
@@ -1052,7 +1052,7 @@ XkbError:
           }
           #endif
 
-          nxagentWriteKeyboardFile(drulesLen, drules, dmodel, dlayout, dvariant, doptions);
+          nxagentWriteKeyboardFile(drules, dmodel, dlayout, dvariant, doptions);
           if (nxagentKeyboard && (strcmp(nxagentKeyboard, "clone") != 0))
           {
             /* Keycode conversion is not of use in clone mode */
@@ -1904,10 +1904,32 @@ static int nxagentXkbGetNames(char **rules, char **model, char **layout,
   return n;
 }
 
-void nxagentWriteKeyboardFile(unsigned int ruleslen, char *rules, char *model, char *layout, char *variant, char *options)
+void writeKeyboardfileData(FILE *out, char *rules, char *model, char *layout, char *variant, char *options)
 {
-  if (ruleslen)
+  /*
+    How to set "empty" values with setxkbmap, result of trial and error:
+    - model and layout: empty strings are accepted by setxkbmap.
+    - rules: setxkmap will fail if rules is an empty string
+      (code will intercept in an earlier stage in that case)
+    - variant: the variant line must be omitted completely.
+    - options: prepend value with "," to override, otherwise options will be added.
+  */
+  fprintf(out, "rules=\"%s\"\n", rules);
+  fprintf(out, "model=\"%s\"\n", model ? model : "");
+  fprintf(out, "layout=\"%s\"\n", layout ? layout : "");
+  if (variant && variant[0] != '\0')
+    fprintf(out, "variant=\"%s\"\n", variant);
+  fprintf(out, "options=\",%s\"\n", options ? options : "");
+}
+
+void nxagentWriteKeyboardFile(char *rules, char *model, char *layout, char *variant, char *options)
+{
+  if (rules && rules[0] != '\0')
   {
+    #ifdef DEBUG
+    writeKeyboardfileData(stderr, rules, model, layout, variant, options);
+    #endif
+
     char *sessionpath = nxagentGetSessionPath();
     if (sessionpath)
     {
@@ -1921,18 +1943,8 @@ void nxagentWriteKeyboardFile(unsigned int ruleslen, char *rules, char *model, c
       free(sessionpath);
       if ((keyboard_file = fopen(keyboard_file_path, "w")))
       {
-        if (rules)
-          fprintf(keyboard_file, "rules=\"%s\"\n", rules[0] == '\0' ? "," : rules);
-        if (model)
-          fprintf(keyboard_file, "model=\"%s\"\n", model[0] == '\0' ? "," : model);
-        if (layout)
-          fprintf(keyboard_file, "layout=\"%s\"\n", layout[0] == '\0' ? "," : layout);
-        /* FIXME: this is not correct. We need to match the number of
-           comma separated values between variant and layout */
-        if (variant)
-          fprintf(keyboard_file, "variant=\"%s\"\n", variant[0] == '\0' ? "," : variant);
-        if (options)
-          fprintf(keyboard_file, "options=\"%s\"\n", options[0] == '\0' ? "," : options);
+        writeKeyboardfileData(keyboard_file, rules, model, layout, variant, options);
+
         fclose(keyboard_file);
         fprintf(stderr, "Info: keyboard file created: '%s'\n", keyboard_file_path);
       }
