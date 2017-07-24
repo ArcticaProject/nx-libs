@@ -41,6 +41,8 @@ typedef enum
   DIALOG_FAILED_RECONNECTION,
   DIALOG_ENABLE_DEFER_MODE,
   DIALOG_DISABLE_DEFER_MODE,
+  DIALOG_ENABLE_AUTOGRAB_MODE,
+  DIALOG_DISABLE_AUTOGRAB_MODE,
   DIALOG_LAST_TAG
 
 } DialogType;
@@ -54,6 +56,8 @@ extern int nxagentEnableRandRModeDialogPid;
 extern int nxagentDisableRandRModeDialogPid;
 extern int nxagentEnableDeferModePid;
 extern int nxagentDisableDeferModePid;
+extern int nxagentEnableAutograbModePid;
+extern int nxagentDisableAutograbModePid;
 
 #define NXAGENTFAILEDRECONNECTIONMESSAGELENGTH 256
 extern char nxagentFailedReconnectionMessage[NXAGENTFAILEDRECONNECTIONMESSAGELENGTH];
@@ -87,6 +91,8 @@ extern void nxagentTerminateDialogs(void);
              (type) == DIALOG_FAILED_RECONNECTION ? "DIALOG_FAILED_RECONNECTION" : \
              (type) == DIALOG_ENABLE_DEFER_MODE ? "DIALOG_ENABLE_DEFER_MODE" : \
              (type) == DIALOG_DISABLE_DEFER_MODE ? "DIALOG_DISABLE_DEFER_MODE" : \
+             (type) == DIALOG_ENABLE_AUTOGRAB_MODE ? "DIALOG_ENABLE_AUTGRAB_MODE" : \
+             (type) == DIALOG_DISABLE_AUTOGRAB_MODE ? "DIALOG_DISABLE_AUTOGRAB_MODE" : \
              "UNKNOWN_DIALOG")
 
 /*
@@ -213,6 +219,30 @@ Ctrl+Alt+E to enable it again.\
 #define DIALOG_DISABLE_DEFER_MODE_TYPE "ok"
 
 #define DIALOG_DISABLE_DEFER_MODE_LOCAL 0
+
+
+#define DIALOG_ENABLE_AUTOGRAB_MODE_MESSAGE \
+\
+"\
+Keyboard auto-grabbing mode is now enabled. You can press\n\
+Ctrl+Alt+G again to disable auto-grabbing.\
+"
+
+#define DIALOG_ENABLE_AUTOGRAB_MODE_TYPE "ok"
+
+#define DIALOG_ENABLE_AUTOGRAB_MODE_LOCAL 0
+
+
+#define DIALOG_DISABLE_AUTOGRAB_MODE_MESSAGE \
+\
+"\
+Keyboard auto-grabbing mode is now disabled. You can press\n\
+Ctrl+Alt+G again to re-enable auto-grabbing.\
+"
+
+#define DIALOG_DISABLE_AUTOGRAB_MODE_TYPE "ok"
+
+#define DIALOG_DISABLE_AUTOGRAB_MODE_LOCAL 0
 
 #endif /* __Dialog_H__ */
 

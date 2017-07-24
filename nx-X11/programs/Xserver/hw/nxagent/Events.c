@@ -712,6 +712,7 @@ static void nxagentEnableAutoGrab(void)
 
   nxagentGrabPointerAndKeyboard(NULL);
   nxagentChangeOption(AutoGrab, True);
+  nxagentLaunchDialog(DIALOG_ENABLE_AUTOGRAB_MODE);
 }
 
 static void nxagentDisableAutoGrab(void)
@@ -722,6 +723,7 @@ static void nxagentDisableAutoGrab(void)
 
   nxagentUngrabPointerAndKeyboard(NULL);
   nxagentChangeOption(AutoGrab, False);
+  nxagentLaunchDialog(DIALOG_DISABLE_AUTOGRAB_MODE);
 }
 
 static void nxagentToggleAutoGrab(void)
