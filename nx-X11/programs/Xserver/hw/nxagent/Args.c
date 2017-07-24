@@ -135,7 +135,7 @@ char nxagentShadowDisplayName[1024] = {0};
 char nxagentWindowName[256];
 char nxagentDialogName[256];
 char nxagentSessionId[256] = {0};
-char *nxagentOptionFile;
+char *nxagentOptionsFilename;
 
 Bool nxagentFullGeneration = False;
 int nxagentDefaultClass = TrueColor;
@@ -259,18 +259,18 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     {
       if ((!strcmp(argv[j], "-options") || !strcmp(argv[j], "-option")) && j + 1 < argc)
       {
-        if (nxagentOptionFile)
+        if (nxagentOptionsFilename)
         {
-          nxagentOptionFile = (char *) realloc(nxagentOptionFile, strlen(argv[j + 1]) + 1);
+          nxagentOptionsFilename = (char *) realloc(nxagentOptionsFilename, strlen(argv[j + 1]) + 1);
         }
         else
         {
-          nxagentOptionFile = (char *) malloc(strlen(argv[j + 1]) +1);
+          nxagentOptionsFilename = (char *) malloc(strlen(argv[j + 1]) +1);
         }
 
-        if (nxagentOptionFile != NULL)
+        if (nxagentOptionsFilename != NULL)
         {
-          nxagentOptionFile = strcpy(nxagentOptionFile, argv[j + 1]);
+          nxagentOptionsFilename = strcpy(nxagentOptionsFilename, argv[j + 1]);
         }
         #ifdef WARNING
         else
@@ -283,7 +283,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
       }
     }
 
-    if (nxagentOptionFile)
+    if (nxagentOptionsFilename)
     {
       nxagentProcessOptionsFile();
     }
@@ -365,23 +365,23 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     {
       int size;
 
-      if (nxagentOptionFile != NULL)
+      if (nxagentOptionsFilename != NULL)
       {
-        free(nxagentOptionFile);
+        free(nxagentOptionsFilename);
 
-        nxagentOptionFile = NULL;
+        nxagentOptionsFilename = NULL;
       }
 
       if ((size = strlen(argv[i])) < 1024)
       {
-        if ((nxagentOptionFile = malloc(size + 1)) == NULL)
+        if ((nxagentOptionsFilename = malloc(size + 1)) == NULL)
         {
           FatalError("malloc failed");
         }
 
-        strncpy(nxagentOptionFile, argv[i], size);
+        strncpy(nxagentOptionsFilename, argv[i], size);
 
-        nxagentOptionFile[size] = '\0';
+        nxagentOptionsFilename[size] = '\0';
       }
       else
       {
