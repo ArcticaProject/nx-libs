@@ -303,12 +303,3 @@ rm -f conftest*])
 FreeBSD=
 test "$nxconf_cv_freebsd" = yes && FreeBSD=yes
 ]) # NX_BUILD_ON_FreeBSD
-
-AC_DEFUN([NX_HAS_INADDRT],
-[AC_CACHE_CHECK(for in_addr_t, nx_cv_inaddrt,
-[AC_TRY_COMPILE([#include <netinet/in.h>],[in_addr_t t; t = 1; return t;],
-nx_cv_inaddrt=yes, nx_cv_inaddrt=no)
-rm -f conftest*])
-INADDRT=
-test "$nx_cv_inaddrt" = yes && INADDRT=yes
-]) # NX_HAS_INADDRT

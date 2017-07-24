@@ -26,6 +26,10 @@
 #ifndef Socket_H
 #define Socket_H
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <sys/types.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
@@ -33,6 +37,12 @@
 #ifdef __sun
 #include <stropts.h>
 #include <sys/filio.h>
+#endif
+
+#ifdef HAVE_IN_ADDR_T
+#define IN_ADDR_T in_addr_t
+#else
+#define IN_ADDR_T unsigned
 #endif
 
 //

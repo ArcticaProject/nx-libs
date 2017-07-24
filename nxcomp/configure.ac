@@ -63,16 +63,8 @@ if test "$FreeBSD" = yes; then
   CPPFLAGS="$CPPFLAGS -I/usr/local/include"
 fi
 
-NX_HAS_INADDRT
-
 # If in_addr_t is not defined use unsigned int.
-
-if test "$INADDRT" != yes ; then
-  echo -e "using unsigned int for type in_addr_t"
-  CPPFLAGS="$CPPFLAGS -DIN_ADDR_T=unsigned"
-else
-  CPPFLAGS="$CPPFLAGS -DIN_ADDR_T=in_addr_t"
-fi
+AC_CHECK_TYPES([in_addr_t], [], [], [[#include <netinet/in.h>]])
 
 AC_ARG_ENABLE(info,
               [AS_HELP_STRING([--enable-debug], [enable to get info session log output (disabled by default)])],
