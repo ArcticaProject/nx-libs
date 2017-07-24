@@ -285,7 +285,22 @@ int ddxProcessArgument(int argc, char *argv[], int i)
 
     if (nxagentOptionsFilename)
     {
-      nxagentProcessOptionsFile();
+      /* if the "filename" starts with an nx marker treat it
+	 as an option _string_ instead of a filename */
+      if (strncasecmp(nxagentOptionsFilename, "nx/nx,", 6) == 0 ||
+	  strncasecmp(nxagentOptionsFilename, "nx/nx:", 6) == 0)
+      {
+	nxagentParseOptionString(nxagentOptionsFilename + 6);
+      }
+      else if (strncasecmp(nxagentOptionsFilename, "nx,", 3) == 0 ||
+	       strncasecmp(nxagentOptionsFilename, "nx:", 3) == 0)
+      {
+	nxagentParseOptionString(nxagentOptionsFilename + 3);
+      }
+      else
+      {
+	nxagentProcessOptionsFile(nxagentOptionsFilename);
+      }
     }
   }
 
