@@ -4808,6 +4808,12 @@ FIXME: Recover the sequence number if the proxy
           break;
         default:
           {
+            // BEWARE: not only inputOpcode == GenericEvent but also
+            // others not handled above, at least:
+            //   GraphicsExpose    13
+            //   MapRequest        20
+            //   ConfigureRequest  23
+            // and any beyond LASTEvent.
             #ifdef TEST
             *logofs << "handleWrite: Using generic event compression "
                     << "for OPCODE#" << (unsigned int) outputOpcode
@@ -4819,11 +4825,48 @@ FIXME: Recover the sequence number if the proxy
 
             for (unsigned int i = 0; i < 14; i++)
             {
-              decodeBuffer.decodeCachedValue(value, 16,
-                           *serverCache_ -> genericEventIntCache[i]);
+              if ( ! (decodeBuffer.decodeCachedValue(value, 16,
+                           *serverCache_ -> genericEventIntCache[i])) )
+              {
+                #ifdef WARNING
+                *logofs << "decodeCachedValue failed for GenEvt:"
+                        << " buffer length=" << length
+                        << " i=" << i
+                        << "\n" << logofs_flush;
+                #endif
+                break;
+              }
 
               PutUINT(value, outputMessage + i * 2 + 4, bigEndian_);
             }
+            // Handle "X Generic Event Extension"
+            // Extra data is not cached...
+            if (outputOpcode == GenericEvent && *(outputMessage+1) != 0 && outputLength == 32)
+            {
+              unsigned int extraOutputLength = (GetULONG(outputMessage + 4, bigEndian_) << 2);
+              if (extraOutputLength > 0 && extraOutputLength < 100*1024*1024)
+              {
+                // Extend buffer for the extra data
+                outputMessage = writeBuffer_.addMessage(extraOutputLength);
+                // Decode data and write into buffer at new position
+                for (unsigned int i = 0; i < (extraOutputLength>>1); i++)
+                {
+                  if ( ! (decodeBuffer.decodeValue(value, 16)) )
+                  {
+                    #ifdef WARNING
+                    *logofs << "decodeValue failed for GenEvt:"
+                            << " extraOutputLength=" << extraOutputLength
+                            << " buffer length=" << length
+                            << " i=" << i
+                            << "\n" << logofs_flush;
+                    #endif
+                    break;
+                  }
+                  PutUINT(value, outputMessage + i * 2, bigEndian_);
+                }
+              }
+            }
+
           }
         } // End of switch (outputOpcode)...
 

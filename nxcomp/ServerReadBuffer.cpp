@@ -116,6 +116,11 @@ int ServerReadBuffer::locateMessage(const unsigned char *start,
     {
       dataLength = 32 + (GetULONG(start + 4, bigEndian_) << 2);
     }
+    else if (*start == GenericEvent && *(start+1) != 0)
+    {
+      // X Generic Event Extension
+      dataLength = 32 + (GetULONG(start + 4, bigEndian_) << 2);
+    }
     else
     {
       dataLength = 32;
