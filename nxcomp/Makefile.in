@@ -184,7 +184,7 @@ CXXSRC = Loop.cpp 				\
 	 Bitmap.cpp				\
 	 Rgb.cpp				\
 	 Rle.cpp				\
-	 Z.cpp					\
+	 Zlib.cpp				\
 	 ChangeProperty.cpp			\
 	 SendEvent.cpp				\
 	 ChangeGC.cpp				\

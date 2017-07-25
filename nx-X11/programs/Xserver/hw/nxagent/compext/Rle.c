@@ -28,7 +28,7 @@
 #include "Compext.h"
 
 #include "Rle.h"
-#include "Z.h"
+#include "Zlib.h"
 
 #define PANIC
 #define WARNING
@@ -45,7 +45,7 @@ static int rleCompressionStrategy  = RLE_COMPRESSION_STRATEGY;
 
 char *RleCompressData(XImage *image, unsigned int *size)
 {
-  return ZCompressData(image -> data, image -> bytes_per_line * image -> height,
+  return ZlibCompressData(image -> data, image -> bytes_per_line * image -> height,
                            rleCompressionThreshold, rleCompressionLevel,
                                rleCompressionStrategy, size);
 }

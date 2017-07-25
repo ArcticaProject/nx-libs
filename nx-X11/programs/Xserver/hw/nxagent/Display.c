@@ -2637,6 +2637,8 @@ Bool nxagentReconnectDisplay(void *p0)
   nxagentSplitThreshold = -1;
 
   nxagentRemoteMajor = -1;
+  nxagentRemoteMinor = -1;
+  nxagentRemotePatch = -1;
 
   nxagentInstallSignalHandlers();
 

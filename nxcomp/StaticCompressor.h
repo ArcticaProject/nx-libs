@@ -26,7 +26,7 @@
 #ifndef StaticCompressor_H
 #define StaticCompressor_H
 
-#include "Z.h"
+#include "Zlib.h"
 
 class EncodeBuffer;
 class DecodeBuffer;

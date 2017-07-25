@@ -28,10 +28,10 @@
 
 #include <zlib.h>
 
-int ZCompress(z_stream *stream, unsigned char *dest, unsigned int *destLen,
+int ZlibCompress(z_stream *stream, unsigned char *dest, unsigned int *destLen,
                   const unsigned char *source, unsigned int sourceLen);
 
-int ZDecompress(z_stream *stream, unsigned char *dest, unsigned int *destLen,
+int ZlibDecompress(z_stream *stream, unsigned char *dest, unsigned int *destLen,
                     const unsigned char *source, unsigned int sourceLen);
 
 #endif /* Z_H */

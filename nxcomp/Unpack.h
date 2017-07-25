@@ -28,7 +28,7 @@
 
 #include "NXpack.h"
 
-#include "Z.h"
+#include "Zlib.h"
 
 #define LSBFirst  0
 #define MSBFirst  1

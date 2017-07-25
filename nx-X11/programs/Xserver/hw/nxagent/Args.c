@@ -165,6 +165,8 @@ char *nxagentKeyboard = NULL;
 Bool nxagentOnce = True;
 
 int nxagentRemoteMajor = -1;
+int nxagentRemoteMinor = -1;
+int nxagentRemotePatch = -1;
 
 static void nxagentParseOptionString(char*);
 
@@ -1850,20 +1852,18 @@ N/A
                   packMethod, packQuality);
       #endif
 
-      if (remoteMajor < 2)
+      if ((remoteMajor >= 3) && (remoteMinor >= 5))
       {
-        #ifdef TEST
-        fprintf(stderr, "nxagentPostProcessArgs: WARNING! Using backward compatible alpha encoding.\n");
-        #endif
-
-        nxagentAlphaCompat = 1;
+        nxagentRemoteMajor = remoteMajor;
+        nxagentRemoteMinor = remoteMinor;
+        nxagentRemotePatch = remotePatch;
       }
       else
       {
-        nxagentAlphaCompat = 0;
-      }
 
-      nxagentRemoteMajor = remoteMajor;
+        FatalError("%s: We don't support speaking to proxy clients << 3.5.0.0. Exiting...", __progname);
+
+      }
 
       if (nxagentPackMethod == -1)
       {

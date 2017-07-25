@@ -60,7 +60,7 @@ int UnpackRgb(T_geometry *geometry, unsigned char method, unsigned char *src_dat
 
   unsigned int check_size = dst_size;
 
-  int result = ZDecompress(&unpackStream, dst_data, &check_size,
+  int result = ZlibDecompress(&unpackStream, dst_data, &check_size,
                                src_data + 1, src_size - 1);
 
   if (result != Z_OK)

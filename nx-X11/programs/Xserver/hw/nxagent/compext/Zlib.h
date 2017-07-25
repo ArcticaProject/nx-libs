@@ -30,19 +30,19 @@
 extern "C" {
 #endif
 
-int ZInitEncoder(
+int ZlibInitEncoder(
 #if NeedFunctionPrototypes
 void
 #endif
 );
 
-int ZResetEncoder(
+int ZlibResetEncoder(
 #if NeedFunctionPrototypes
 void
 #endif
 );
 
-extern char *ZCompressData(
+extern char *ZlibCompressData(
 #if NeedFunctionPrototypes
     const char*     /* data */,
     unsigned int    /* size */,

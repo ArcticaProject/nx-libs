@@ -31,7 +31,7 @@
 
 #include "Compext.h"
 
-#include "Z.h"
+#include "Zlib.h"
 
 #define PANIC
 #define WARNING
@@ -49,12 +49,12 @@ static z_stream *zStream;
 
 static int zInitialized;
 
-static int ZConfigure(int level, int strategy);
+static int ZlibConfigure(int level, int strategy);
 
-static int ZDeflate(char *dest, unsigned int *destLen,
+static int ZlibDeflate(char *dest, unsigned int *destLen,
                         const char *source, unsigned int sourceLen);
 
-char *ZCompressData(const char *plainData, unsigned int plainSize, int threshold,
+char *ZlibCompressData(const char *plainData, unsigned int plainSize, int threshold,
                         int level, int strategy, unsigned int *compressedSize)
 {
   char *compressedData;
@@ -72,7 +72,7 @@ char *ZCompressData(const char *plainData, unsigned int plainSize, int threshold
   if (compressedData == NULL)
   {
     #ifdef PANIC
-    fprintf(stderr, "******ZCompressData: PANIC! Failed to allocate [%d] bytes for the destination.\n",
+    fprintf(stderr, "******ZlibCompressData: PANIC! Failed to allocate [%d] bytes for the destination.\n",
                 *compressedSize);
     #endif
 
@@ -84,7 +84,7 @@ char *ZCompressData(const char *plainData, unsigned int plainSize, int threshold
   if (level == Z_NO_COMPRESSION || plainSize < threshold)
   {
     #ifdef TEST
-    fprintf(stderr, "******ZCompressData: Not compressing [%d] bytes with level [%d] and "
+    fprintf(stderr, "******ZlibCompressData: Not compressing [%d] bytes with level [%d] and "
 	    "threshold [%d].\n", plainSize, level, threshold);
     #endif
 
@@ -114,18 +114,18 @@ char *ZCompressData(const char *plainData, unsigned int plainSize, int threshold
     if (zCompressionLevel != level ||
             zCompressionStrategy != strategy)
     {
-      ZConfigure(level, strategy);
+      ZlibConfigure(level, strategy);
 
       zCompressionLevel    = level;
       zCompressionStrategy = strategy;
     }
 
-    result = ZDeflate(compressedData + 1, compressedSize, plainData, plainSize);
+    result = ZlibDeflate(compressedData + 1, compressedSize, plainData, plainSize);
 
     if (result != Z_OK)
     {
       #ifdef PANIC
-      fprintf(stderr, "******ZCompressData: PANIC! Failed to compress [%d] bytes with error [%s].\n",
+      fprintf(stderr, "******ZlibCompressData: PANIC! Failed to compress [%d] bytes with error [%s].\n",
                   plainSize, zError(result));
       #endif
 
@@ -137,7 +137,7 @@ char *ZCompressData(const char *plainData, unsigned int plainSize, int threshold
     }
 
     #ifdef TEST
-    fprintf(stderr, "******ZCompressData: Source data of [%d] bytes compressed to [%d].\n",
+    fprintf(stderr, "******ZlibCompressData: Source data of [%d] bytes compressed to [%d].\n",
                 plainSize, *compressedSize);
     #endif
 
@@ -149,7 +149,7 @@ char *ZCompressData(const char *plainData, unsigned int plainSize, int threshold
   }
 }
 
-int ZConfigure(int level, int strategy)
+int ZlibConfigure(int level, int strategy)
 {
   /*
    * ZLIB wants the avail_out to be
@@ -165,7 +165,7 @@ int ZConfigure(int level, int strategy)
   if (deflateParams(zStream, level, strategy) != Z_OK)
   {
     #ifdef PANIC
-    fprintf(stderr, "******ZConfigure: PANIC! Failed to set level to [%d] and strategy to [%d].\n",
+    fprintf(stderr, "******ZlibConfigure: PANIC! Failed to set level to [%d] and strategy to [%d].\n",
                 level, strategy);
     #endif
 
@@ -174,7 +174,7 @@ int ZConfigure(int level, int strategy)
   #ifdef TEST
   else
   {
-    fprintf(stderr, "******ZConfigure: Reconfigured the stream with level [%d] and strategy [%d].\n",
+    fprintf(stderr, "******ZlibConfigure: Reconfigured the stream with level [%d] and strategy [%d].\n",
                 level, strategy);
   }
   #endif
@@ -182,7 +182,7 @@ int ZConfigure(int level, int strategy)
   return 1;
 }
 
-int ZDeflate(char *dest, unsigned int *destLen, const char *source, unsigned int sourceLen)
+int ZlibDeflate(char *dest, unsigned int *destLen, const char *source, unsigned int sourceLen)
 {
   int saveOut;
   int result;
@@ -194,7 +194,7 @@ int ZDeflate(char *dest, unsigned int *destLen, const char *source, unsigned int
   if (zStream -> total_out & 0x80000000)
   {
     #ifdef TEST
-    fprintf(stderr, "******ZDeflate: Reset Z stream counters with total in [%ld] total out [%ld].\n",
+    fprintf(stderr, "******ZlibDeflate: Reset Z stream counters with total in [%ld] total out [%ld].\n",
                 zStream -> total_in, zStream -> total_out);
     #endif
 
@@ -239,7 +239,7 @@ int ZDeflate(char *dest, unsigned int *destLen, const char *source, unsigned int
   return result;
 }
 
-int ZInitEncoder()
+int ZlibInitEncoder()
 {
   if (zInitialized == 0)
   {
@@ -250,7 +250,7 @@ int ZInitEncoder()
     if (zStream == NULL)
     {
       #ifdef PANIC
-      fprintf(stderr, "******ZInitEncoder: PANIC! Failed to allocate memory for the stream.\n");
+      fprintf(stderr, "******ZlibInitEncoder: PANIC! Failed to allocate memory for the stream.\n");
       #endif
 
       return -1;
@@ -261,7 +261,7 @@ int ZInitEncoder()
     zStream -> opaque = (voidpf) 0;
 
     #ifdef TEST
-    fprintf(stderr, "******ZInitEncoder: Initializing compressor with level [%d] and startegy [%d].\n",
+    fprintf(stderr, "******ZlibInitEncoder: Initializing compressor with level [%d] and startegy [%d].\n",
                 zCompressionLevel, zCompressionStrategy);
     #endif
 
@@ -271,7 +271,7 @@ int ZInitEncoder()
     if (result != Z_OK)
     {
       #ifdef PANIC
-      fprintf(stderr, "******ZInitEncoder: Failed to initialize the compressor with error [%s].\n",
+      fprintf(stderr, "******ZlibInitEncoder: Failed to initialize the compressor with error [%s].\n",
                   zError(result));
       #endif
 
@@ -284,7 +284,7 @@ int ZInitEncoder()
   return zInitialized;
 }
 
-int ZResetEncoder()
+int ZlibResetEncoder()
 {
   int result;
 
@@ -295,7 +295,7 @@ int ZResetEncoder()
     if (result != Z_OK)
     {
       #ifdef WARNING
-      fprintf(stderr, "******ZResetEncoder: WARNING! Failed to deinitialize the compressor with error [%s].\n",
+      fprintf(stderr, "******ZlibResetEncoder: WARNING! Failed to deinitialize the compressor with error [%s].\n",
                   zError(result));
       #endif
     }
