@@ -135,7 +135,7 @@ char nxagentShadowDisplayName[1024] = {0};
 char nxagentWindowName[256];
 char nxagentDialogName[256];
 char nxagentSessionId[256] = {0};
-char *nxagentOptionFile;
+char *nxagentOptionsFilename;
 
 Bool nxagentFullGeneration = False;
 int nxagentDefaultClass = TrueColor;
@@ -259,18 +259,18 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     {
       if ((!strcmp(argv[j], "-options") || !strcmp(argv[j], "-option")) && j + 1 < argc)
       {
-        if (nxagentOptionFile)
+        if (nxagentOptionsFilename)
         {
-          nxagentOptionFile = (char *) realloc(nxagentOptionFile, strlen(argv[j + 1]) + 1);
+          nxagentOptionsFilename = (char *) realloc(nxagentOptionsFilename, strlen(argv[j + 1]) + 1);
         }
         else
         {
-          nxagentOptionFile = (char *) malloc(strlen(argv[j + 1]) +1);
+          nxagentOptionsFilename = (char *) malloc(strlen(argv[j + 1]) +1);
         }
 
-        if (nxagentOptionFile != NULL)
+        if (nxagentOptionsFilename != NULL)
         {
-          nxagentOptionFile = strcpy(nxagentOptionFile, argv[j + 1]);
+          nxagentOptionsFilename = strcpy(nxagentOptionsFilename, argv[j + 1]);
         }
         #ifdef WARNING
         else
@@ -283,9 +283,24 @@ int ddxProcessArgument(int argc, char *argv[], int i)
       }
     }
 
-    if (nxagentOptionFile)
+    if (nxagentOptionsFilename)
     {
-      nxagentProcessOptionsFile();
+      /* if the "filename" starts with an nx marker treat it
+	 as an option _string_ instead of a filename */
+      if (strncasecmp(nxagentOptionsFilename, "nx/nx,", 6) == 0 ||
+	  strncasecmp(nxagentOptionsFilename, "nx/nx:", 6) == 0)
+      {
+	nxagentParseOptionString(nxagentOptionsFilename + 6);
+      }
+      else if (strncasecmp(nxagentOptionsFilename, "nx,", 3) == 0 ||
+	       strncasecmp(nxagentOptionsFilename, "nx:", 3) == 0)
+      {
+	nxagentParseOptionString(nxagentOptionsFilename + 3);
+      }
+      else
+      {
+	nxagentProcessOptionsFile(nxagentOptionsFilename);
+      }
     }
   }
 
@@ -365,23 +380,23 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     {
       int size;
 
-      if (nxagentOptionFile != NULL)
+      if (nxagentOptionsFilename != NULL)
       {
-        free(nxagentOptionFile);
+        free(nxagentOptionsFilename);
 
-        nxagentOptionFile = NULL;
+        nxagentOptionsFilename = NULL;
       }
 
       if ((size = strlen(argv[i])) < 1024)
       {
-        if ((nxagentOptionFile = malloc(size + 1)) == NULL)
+        if ((nxagentOptionsFilename = malloc(size + 1)) == NULL)
         {
           FatalError("malloc failed");
         }
 
-        strncpy(nxagentOptionFile, argv[i], size);
+        strncpy(nxagentOptionsFilename, argv[i], size);
 
-        nxagentOptionFile[size] = '\0';
+        nxagentOptionsFilename[size] = '\0';
       }
       else
       {
@@ -1569,7 +1584,7 @@ static void nxagentParseOptionString(char *string)
   }
 }
 
-void nxagentProcessOptionsFile()
+void nxagentProcessOptionsFile(char * filename)
 {
   FILE *file;
   char *data;
@@ -1581,8 +1596,8 @@ void nxagentProcessOptionsFile()
   int maxFileSize = 1024;
 
   #ifdef DEBUG
-  fprintf(stderr, "nxagentProcessOptionsFile: Going to process option the file [%s].\n",
-              validateString(nxagentOptionFile));
+  fprintf(stderr, "nxagentProcessOptionsFile: Going to process option file [%s].\n",
+              validateString(filename);
   #endif
 
   /*
@@ -1590,15 +1605,15 @@ void nxagentProcessOptionsFile()
    */
   setStatePath("");
 
-  if (nxagentOptionFile == NULL)
+  if (filename == NULL)
   {
     return;
   }
 
-  if ((file = fopen(nxagentOptionFile, "r")) == NULL)
+  if ((file = fopen(filename, "r")) == NULL)
   {
     fprintf(stderr, "Warning: Couldn't open option file '%s'. Error is '%s'.\n",
-                validateString(nxagentOptionFile), strerror(errno));
+                validateString(filename), strerror(errno));
 
     goto nxagentProcessOptionsFileExit;
   }
@@ -1606,7 +1621,7 @@ void nxagentProcessOptionsFile()
   if (fseek(file, 0, SEEK_END) != 0)
   {
     fprintf(stderr, "Warning: Couldn't position inside option file '%s'. Error is '%s'.\n",
-                validateString(nxagentOptionFile), strerror(errno));
+                validateString(filename), strerror(errno));
 
     goto nxagentProcessOptionsFileClose;
   }
@@ -1614,14 +1629,14 @@ void nxagentProcessOptionsFile()
   if ((sizeOfFile = ftell(file)) == -1)
   {
     fprintf(stderr, "Warning: Couldn't get the size of option file '%s'. Error is '%s'.\n",
-                validateString(nxagentOptionFile), strerror(errno));
+                validateString(filename), strerror(errno));
 
     goto nxagentProcessOptionsFileClose;
   }
 
   #ifdef DEBUG
   fprintf(stderr, "nxagentProcessOptionsFile: Processing option file [%s].\n",
-              validateString(nxagentOptionFile));
+              validateString(filename));
   #endif
 
   rewind(file);
@@ -1629,7 +1644,7 @@ void nxagentProcessOptionsFile()
   if (sizeOfFile > maxFileSize)
   {
     fprintf(stderr, "Warning: Maximum file size exceeded for options '%s'.\n",
-                validateString(nxagentOptionFile));
+                validateString(filename));
 
     goto nxagentProcessOptionsFileClose;
   }
@@ -1637,7 +1652,7 @@ void nxagentProcessOptionsFile()
   if ((data = malloc(sizeOfFile + 1)) == NULL)
   {
     fprintf(stderr, "Warning: Memory allocation failed processing file '%s'.\n",
-                validateString(nxagentOptionFile));
+                validateString(filename));
 
     goto nxagentProcessOptionsFileClose;
   }
@@ -1652,7 +1667,7 @@ void nxagentProcessOptionsFile()
     if (ferror(file) != 0)
     {
       fprintf(stderr, "Warning: Error reading the option file '%s'.\n",
-                validateString(nxagentOptionFile));
+                validateString(filename));
 
       goto nxagentProcessOptionsFileFree;
     }
@@ -1669,7 +1684,7 @@ void nxagentProcessOptionsFile()
   if (size != sizeOfFile)
   {
     fprintf(stderr, "Warning: Premature end of option file '%s' while reading.\n",
-              validateString(nxagentOptionFile));
+              validateString(filename));
 
     goto nxagentProcessOptionsFileFree;
   }
@@ -1696,7 +1711,7 @@ nxagentProcessOptionsFileClose:
   if (fclose(file) != 0)
   {
     fprintf(stderr, "Warning: Couldn't close option file '%s'. Error is '%s'.\n",
-                validateString(nxagentOptionFile), strerror(errno));
+                validateString(filename), strerror(errno));
   }
 
 nxagentProcessOptionsFileExit:
