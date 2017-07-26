@@ -17,14 +17,10 @@ override_dh_auto_clean:
 	rm -Rf nx-X11/.build-exports
 	dh_auto_clean
 
-override_dh_clean:
-	rm -f nx*/configure
-	dh_clean
-
 override_dh_install:
 
 	# remove static libs
-	rm debian/tmp/usr/lib/$(DEB_BUILD_MULTIARCH)/libXcomp.a
+	rm debian/tmp/usr/lib/$(DEB_BUILD_MULTIARCH)/libXcomp.la
 	rm debian/tmp/usr/lib/$(DEB_BUILD_MULTIARCH)/libXcompshad.la
 
 	# remove extras, GL, and other unneeded headers

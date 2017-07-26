@@ -1,4 +1,5 @@
 usr/lib/*/libXcomp.so
+usr/lib/*/libXcomp.a
 usr/include/*/nx/NX.h
 usr/include/*/nx/NXalert.h
 usr/include/*/nx/NXpack.h
