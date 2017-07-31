@@ -93,12 +93,6 @@ FIXME: Most operations don't seem to produce any visible result
 #undef  SKIP_REALLY_ALL_LOUSY_RENDER_OPERATIONS
 
 /*
- * Do we split the big trapezoid requests?
- */
-
-#define TRAPEZOIDS_PER_REQUEST  256
-
-/*
  * Margin added around the glyphs extent (in pixels).
  */
 
@@ -1803,8 +1797,6 @@ FIXME: Is this useful or just a waste of bandwidth?
     nxagentSynchronizeBox(pDst -> pDrawable, nxagentTrapezoidExtents, NEVER_BREAK);
   }
 
-  while (remaining > 0)
-  {
     XRenderCompositeTrapezoids(nxagentDisplay,
                                op,
                                nxagentPicturePriv(pSrc) -> picture,
@@ -1812,13 +1804,8 @@ FIXME: Is this useful or just a waste of bandwidth?
                                pForm,
                                xSrc,
                                ySrc,
-                               (XTrapezoid *) current,
-                               (remaining > TRAPEZOIDS_PER_REQUEST ?
-                                   TRAPEZOIDS_PER_REQUEST : remaining));
+                               (XTrapezoid *) current,remaining);
 
-    remaining -= TRAPEZOIDS_PER_REQUEST;
-    current   += TRAPEZOIDS_PER_REQUEST;
-  }
 
   #endif
 
