@@ -12,8 +12,6 @@ Abstract:
  https://www.securecoding.cert.org/confluence/display/seccode/POS36-C.+Observe+correct+revocation+order+while+relinquishing+privileges
  .
  This patch adds initgroups() calls to the code to initialize the supplemental group list.
-diff --git a/nx-X11/programs/Xserver/os/utils.c b/nx-X11/programs/Xserver/os/utils.c
-index 7e62654..9b2431a 100644
 --- a/nx-X11/programs/Xserver/os/utils.c
 +++ b/nx-X11/programs/Xserver/os/utils.c
 @@ -112,6 +112,9 @@ OR PERFORMANCE OF THIS SOFTWARE.
@@ -44,8 +42,6 @@ index 7e62654..9b2431a 100644
  	if (setgid(getgid()) == -1)
  	    _exit(127);
  	if (setuid(getuid()) == -1)
-diff --git a/nxcomp/Pipe.cpp b/nxcomp/Pipe.cpp
-index 7238d0c..aacbbae 100644
 --- a/nxcomp/Pipe.cpp
 +++ b/nxcomp/Pipe.cpp
 @@ -21,6 +21,7 @@
@@ -56,7 +52,7 @@ index 7238d0c..aacbbae 100644
  
  #include "Pipe.h"
  #include "Misc.h"
-@@ -234,6 +235,8 @@ FILE *Popen(char * const parameters[], const char *type)
+@@ -234,6 +235,8 @@ FILE *Popen(char * const parameters[], c
        // Child.
        //
  

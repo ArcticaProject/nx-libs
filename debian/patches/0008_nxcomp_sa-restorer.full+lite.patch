@@ -5,7 +5,7 @@ Author: Alexander Morozov
 Last-Update: 2012-02-07
 --- a/nxcomp/Loop.cpp
 +++ b/nxcomp/Loop.cpp
-@@ -5884,20 +5884,9 @@
+@@ -5884,20 +5884,9 @@ void InstallSignal(int signal, int actio
  
    struct sigaction newAction;
  
@@ -28,7 +28,7 @@ Last-Update: 2012-02-07
  
    sigemptyset(&(newAction.sa_mask));
  
-@@ -6509,13 +6498,9 @@
+@@ -6509,13 +6498,9 @@ void SetTimer(int value)
  
    struct sigaction action;
  

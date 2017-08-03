@@ -5,7 +5,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 Last-Update: 2012-10-19
 --- a/nx-X11/Makefile
 +++ b/nx-X11/Makefile
-@@ -138,6 +138,7 @@
+@@ -138,6 +138,7 @@ Makefile::
  
  xmakefile: Imakefile
  	$(RM) xmakefile
@@ -13,7 +13,7 @@ Last-Update: 2012-10-19
  	$(IMAKE_CMD) -s xmakefile -DTOPDIR=$(TOP) -DCURDIR=$(CURRENT_DIR)
  
  World.Win32:
-@@ -197,11 +198,16 @@
+@@ -197,11 +198,16 @@ World.OS2:
  # a copy of every rule that might be invoked at top level
  
  clean:
@@ -34,7 +34,7 @@ Last-Update: 2012-10-19
  	    $(MAKE_CMD) $@
 --- a/nxcompext/Makefile.in
 +++ b/nxcompext/Makefile.in
-@@ -185,5 +185,5 @@
+@@ -185,5 +185,5 @@ clean:
  		@ALL@
  
  distclean:	clean
@@ -43,7 +43,7 @@ Last-Update: 2012-10-19
  		config.cache depend.status Makefile tags
 --- a/nxcompshad/Makefile.in
 +++ b/nxcompshad/Makefile.in
-@@ -222,4 +222,4 @@
+@@ -222,4 +222,4 @@ clean:
  		$(LIBFULL) $(LIBLOAD) $(LIBSHARED) $(LIBARCHIVE) $(LIBDLL) $(LIBDLLSTATIC) $(PROGRAM) $(PROGRAM).exe
  
  distclean:	clean

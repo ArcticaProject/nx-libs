@@ -166,7 +166,7 @@ Date:   Fri Feb 13 10:23:28 2009 +0100
          reply.type = X_Reply;
  	reply.length = 0;
  	reply.sequenceNumber = client->sequence;
-@@ -1112,6 +1118,7 @@ ProcConvertSelection(register ClientPtr 
+@@ -1112,6 +1118,7 @@ ProcConvertSelection(register ClientPtr
  #endif
  	    )
  	{        
@@ -174,7 +174,7 @@ Date:   Fri Feb 13 10:23:28 2009 +0100
  	    event.u.u.type = SelectionRequest;
  	    event.u.selectionRequest.time = stuff->time;
  	    event.u.selectionRequest.owner = 
-@@ -1125,6 +1132,7 @@ ProcConvertSelection(register ClientPtr 
+@@ -1125,6 +1132,7 @@ ProcConvertSelection(register ClientPtr
  		NoEventMask /* CantBeFiltered */, NullGrab))
  		return (client->noClientException);
  	}
@@ -414,7 +414,7 @@ Date:   Fri Feb 13 10:23:28 2009 +0100
  	event.u.u.type = ConfigureNotify;
  	event.u.configureNotify.window = pWin->drawable.id;
  	if (pSib)
-@@ -2552,6 +2558,7 @@ ReparentWindow(register WindowPtr pWin, 
+@@ -2552,6 +2558,7 @@ ReparentWindow(register WindowPtr pWin,
      if (WasMapped)
         UnmapWindow(pWin, FALSE);
  
@@ -572,7 +572,7 @@ Date:   Fri Feb 13 10:23:28 2009 +0100
  
  	reply->type = X_Reply;
  	reply->length = (rlength - sizeof(xGenericReply)) >> 2;
-@@ -2673,6 +2684,7 @@ DoGetImage(client, format, drawable, x, 
+@@ -2673,6 +2684,7 @@ DoGetImage(client, format, drawable, x,
          return(BadValue);
      }
      SECURITY_VERIFY_DRAWABLE(pDraw, drawable, client, SecurityReadAccess);
@@ -580,7 +580,7 @@ Date:   Fri Feb 13 10:23:28 2009 +0100
      if(pDraw->type == DRAWABLE_WINDOW)
      {
        if( /* check for being viewable */
-@@ -2726,9 +2738,10 @@ DoGetImage(client, format, drawable, x, 
+@@ -2726,9 +2738,10 @@ DoGetImage(client, format, drawable, x,
      xgi.length = length;
  
      if (im_return) {
@@ -592,7 +592,7 @@ Date:   Fri Feb 13 10:23:28 2009 +0100
  	if (widthBytesLine == 0)
  	    linesPerBuf = 0;
  	else
-@@ -2766,6 +2779,7 @@ DoGetImage(client, format, drawable, x, 
+@@ -2766,6 +2779,7 @@ DoGetImage(client, format, drawable, x,
  	}
  	if(!(pBuf = (char *) ALLOCATE_LOCAL(length)))
  	    return (BadAlloc);

@@ -10,7 +10,7 @@ Author: Jan Engelhardt <jengelh@medozas.de>
 Last-Update: 2012-02-14
 --- a/nxcompshad/Makefile.in
 +++ b/nxcompshad/Makefile.in
-@@ -74,10 +74,17 @@
+@@ -74,10 +74,17 @@ exec_prefix = @exec_prefix@
  bindir      = @bindir@
  man1dir     = @mandir@/man1
  VPATH       = @srcdir@
@@ -28,7 +28,7 @@ Last-Update: 2012-02-14
  
  #
  # This should be autodetected.
-@@ -178,12 +185,38 @@
+@@ -178,12 +185,38 @@ depend.status:
  		fi
  		touch depend.status
  

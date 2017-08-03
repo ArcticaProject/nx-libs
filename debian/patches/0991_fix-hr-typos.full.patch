@@ -3,7 +3,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 
 --- a/nx-X11/extras/Mesa/src/mesa/main/debug.c
 +++ b/nx-X11/extras/Mesa/src/mesa/main/debug.c
-@@ -43,7 +43,7 @@
+@@ -43,7 +43,7 @@ const char *_mesa_prim_name[GL_POLYGON+4
     "GL_QUAD_STRIP",
     "GL_POLYGON",
     "outside begin/end",
@@ -14,7 +14,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
  
 --- a/nx-X11/extras/Mesa/src/mesa/shader/arbprogparse.c
 +++ b/nx-X11/extras/Mesa/src/mesa/shader/arbprogparse.c
-@@ -4106,7 +4106,7 @@
+@@ -4106,7 +4106,7 @@ _mesa_parse_arb_program (GLcontext * ctx
     if (*inst++ != REVISION) {
        _mesa_set_program_error (ctx, 0, "Grammar version mismatch");
        _mesa_error(ctx, GL_INVALID_OPERATION,
@@ -25,7 +25,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
     else {
 --- a/nx-X11/ChangeLog.X.org
 +++ b/nx-X11/ChangeLog.X.org
-@@ -12733,7 +12733,7 @@
+@@ -12733,7 +12733,7 @@ Mon Jan  3 12:45:10 2005  Søren Sandman
  	* programs/xkill/xkill.c: (get_window_id):
  	Changed cursor for the 'kill' action from XC_draped_box to
  	XC_Pirate. If you don't like it we can change it back

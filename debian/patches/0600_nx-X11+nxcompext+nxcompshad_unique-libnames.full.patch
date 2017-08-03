@@ -54,7 +54,7 @@ Last-Update: 2012-02-15
 
 --- a/nx-X11/config/cf/Imake.rules
 +++ b/nx-X11/config/cf/Imake.rules
-@@ -2124,9 +2124,9 @@
+@@ -2124,9 +2124,9 @@ LintLibReferences(varname,libname,libsou
   */
  #ifndef ProjectUnsharedFontLibReferences
  #define ProjectUnsharedFontLibReferences()					@@\
@@ -67,7 +67,7 @@ Last-Update: 2012-02-15
  #endif
  
  /*
-@@ -2142,9 +2142,9 @@
+@@ -2142,9 +2142,9 @@ LintLibReferences(XFONT,Xfont,$(FONTLIBS
  #ifndef SharedFontLibReferences
  #define SharedFontLibReferences()					@@\
  SOFONTREV = SharedFontRev						@@\
@@ -82,7 +82,7 @@ Last-Update: 2012-02-15
  /*
 --- a/nx-X11/config/cf/X11.tmpl
 +++ b/nx-X11/config/cf/X11.tmpl
-@@ -1835,9 +1835,9 @@
+@@ -1835,9 +1835,9 @@ VENDORSUPPORTDEFS = VendorSupportDefines
  #ifndef SharedX11Rev
  #define SharedX11Rev 6.2
  #endif
@@ -94,7 +94,7 @@ Last-Update: 2012-02-15
  #endif
        /* Common alternate spellings */
        DEPXLIBONLY = $(DEPXONLYLIB)
-@@ -2466,9 +2466,9 @@
+@@ -2466,9 +2466,9 @@ ProjectUnsharedLibReferences(XONLY,X11,$
  #ifndef SharedXextRev
  #define SharedXextRev 6.4
  #endif
@@ -106,7 +106,7 @@ Last-Update: 2012-02-15
  #endif
  LINTEXTENSIONLIB = $(LINTEXTENSION)
            DEPXLIB = $(DEPEXTENSIONLIB) $(DEPXONLYLIB)
-@@ -2480,9 +2480,9 @@
+@@ -2480,9 +2480,9 @@ LINTEXTENSIONLIB = $(LINTEXTENSION)
  #ifndef SharedXssRev
  #define SharedXssRev 1.0
  #endif
@@ -118,7 +118,7 @@ Last-Update: 2012-02-15
  #endif
  
      XXF86MISCLIBSRC = $(LIBSRC)/Xxf86misc
-@@ -2490,9 +2490,9 @@
+@@ -2490,9 +2490,9 @@ ProjectUnsharedLibReferences(XSS,Xss,$(X
  #ifndef SharedXxf86miscRev
  #define SharedXxf86miscRev 1.1
  #endif
@@ -130,7 +130,7 @@ Last-Update: 2012-02-15
  #endif
  
      XXF86VMLIBSRC = $(LIBSRC)/Xxf86vm
-@@ -2500,9 +2500,9 @@
+@@ -2500,9 +2500,9 @@ ProjectUnsharedLibReferences(XXF86MISC,X
  #ifndef SharedXxf86vmRev
  #define SharedXxf86vmRev 1.0
  #endif
@@ -142,7 +142,7 @@ Last-Update: 2012-02-15
  #endif
  
      XXF86DGALIBSRC = $(LIBSRC)/Xxf86dga
-@@ -2510,9 +2510,9 @@
+@@ -2510,9 +2510,9 @@ ProjectUnsharedLibReferences(XXF86VM,Xxf
  #ifndef SharedXxf86dgaRev
  #define SharedXxf86dgaRev 1.0
  #endif
@@ -154,7 +154,7 @@ Last-Update: 2012-02-15
  #endif
  
  #if BuildDmxLibrary
-@@ -2544,9 +2544,9 @@
+@@ -2544,9 +2544,9 @@ ProjectUnsharedLibReferences(XXF86DGA,Xx
  #ifndef SharedXxf86rushRev
  #define SharedXxf86rushRev 1.0
  #endif
@@ -166,7 +166,7 @@ Last-Update: 2012-02-15
  #endif
  
  
-@@ -2555,9 +2555,9 @@
+@@ -2555,9 +2555,9 @@ ProjectUnsharedLibReferences(XXF86RUSH,X
  #ifndef SharedXvRev
  #define SharedXvRev 1.0
  #endif
@@ -178,7 +178,7 @@ Last-Update: 2012-02-15
  #endif
  
  
-@@ -2566,9 +2566,9 @@
+@@ -2566,9 +2566,9 @@ ProjectUnsharedLibReferences(XV,Xv,$(XVL
  #ifndef SharedXvMCRev
  #define SharedXvMCRev 1.0
  #endif
@@ -190,7 +190,7 @@ Last-Update: 2012-02-15
  #endif
  
      XINERAMALIBSRC = $(LIBSRC)/Xinerama
-@@ -2576,9 +2576,9 @@
+@@ -2576,9 +2576,9 @@ ProjectUnsharedLibReferences(XVMC,XvMC,$
  #ifndef SharedXineramaRev
  #define SharedXineramaRev 1.0
  #endif
@@ -202,7 +202,7 @@ Last-Update: 2012-02-15
  #endif
  
      XRESLIBSRC = $(LIBSRC)/XRes
-@@ -2586,9 +2586,9 @@
+@@ -2586,9 +2586,9 @@ ProjectUnsharedLibReferences(XINERAMA,Xi
  #ifndef SharedXResRev
  #define SharedXResRev 1.0
  #endif
@@ -214,7 +214,7 @@ Last-Update: 2012-02-15
  #endif
  
      DMXLIBSRC = $(LIBSRC)/dmx
-@@ -2596,9 +2596,9 @@
+@@ -2596,9 +2596,9 @@ ProjectUnsharedLibReferences(XRES,XRes,$
  #ifndef SharedDmxRev
  #define SharedDmxRev 1.0
  #endif
@@ -226,7 +226,7 @@ Last-Update: 2012-02-15
  #endif
  
      DPSLIBSRC = $(LIBSRC)/dps
-@@ -2606,9 +2606,9 @@
+@@ -2606,9 +2606,9 @@ ProjectUnsharedLibReferences(DMX,dmx,$(D
  #ifndef SharedDpsRev
  #define SharedDpsRev 1.0
  #endif
@@ -238,7 +238,7 @@ Last-Update: 2012-02-15
  #endif
  
      DPSTKLIBSRC = $(LIBSRC)/dpstk
-@@ -2616,9 +2616,9 @@
+@@ -2616,9 +2616,9 @@ ProjectUnsharedLibReferences(DPS,dps,$(D
  #ifndef SharedDpsTkRev
  #define SharedDpsTkRev 1.0
  #endif
@@ -250,7 +250,7 @@ Last-Update: 2012-02-15
  #endif
  
      PSRESLIBSRC = $(LIBSRC)/psres
-@@ -2626,9 +2626,9 @@
+@@ -2626,9 +2626,9 @@ ProjectUnsharedLibReferences(DPSTK,dpstk
  #ifndef SharedPSResRev
  #define SharedPSResRev 1.0
  #endif
@@ -262,7 +262,7 @@ Last-Update: 2012-02-15
  #endif
  
      GLULIBSRC = $(LIBSRC)/GLU
-@@ -2636,9 +2636,9 @@
+@@ -2636,9 +2636,9 @@ ProjectUnsharedLibReferences(PSRES,psres
  #ifndef SharedGluRev
  #define SharedGluRev 1.3
  #endif
@@ -274,7 +274,7 @@ Last-Update: 2012-02-15
  #endif
  
      GLXLIBSRC = $(LIBSRC)/GL
-@@ -2646,18 +2646,18 @@
+@@ -2646,18 +2646,18 @@ ProjectUnsharedLibReferences(GLU,GLU,$(G
  #ifndef SharedGlxRev
  #define SharedGlxRev 1.2
  #endif
@@ -297,7 +297,7 @@ Last-Update: 2012-02-15
  #endif
  
      XRENDERLIBSRC = $(LIBSRC)/Xrender
-@@ -2665,9 +2665,9 @@
+@@ -2665,9 +2665,9 @@ ProjectUnsharedLibReferences(GLW,GLw,$(G
  #ifndef SharedXrenderRev
  #define SharedXrenderRev 1.2.2
  #endif
@@ -309,7 +309,7 @@ Last-Update: 2012-02-15
  #endif
  
      XRANDRLIBSRC = $(LIBSRC)/Xrandr
-@@ -2675,9 +2675,9 @@
+@@ -2675,9 +2675,9 @@ ProjectUnsharedLibReferences(XRENDER,Xre
  #ifndef SharedXrandrRev
  #define SharedXrandrRev 2.0
  #endif
@@ -321,7 +321,7 @@ Last-Update: 2012-02-15
  #endif
  
      XFIXESLIBSRC = $(LIBSRC)/Xfixes
-@@ -2685,9 +2685,9 @@
+@@ -2685,9 +2685,9 @@ ProjectUnsharedLibReferences(XRANDR,Xran
  #ifndef SharedXfixesRev
  #define SharedXfixesRev 3.0
  #endif
@@ -333,7 +333,7 @@ Last-Update: 2012-02-15
  #endif
  
     XDAMAGELIBSRC = $(LIBSRC)/Xdamage
-@@ -2695,9 +2695,9 @@
+@@ -2695,9 +2695,9 @@ ProjectUnsharedLibReferences(XFIXES,Xfix
  #ifndef SharedXdamageRev
  #define SharedXdamageRev 1.0
  #endif
@@ -345,7 +345,7 @@ Last-Update: 2012-02-15
  #endif
  
  XCOMPOSITELIBSRC = $(LIBSRC)/Xcomposite
-@@ -2705,9 +2705,9 @@
+@@ -2705,9 +2705,9 @@ XCOMPOSITELIBSRC = $(LIBSRC)/Xcomposite
  #ifndef SharedXcompositeRev
  #define SharedXcompositeRev 1.0
  #endif
@@ -357,7 +357,7 @@ Last-Update: 2012-02-15
  #endif
  
  XEVIELIBSRC = $(LIBSRC)/Xevie
-@@ -2715,9 +2715,9 @@
+@@ -2715,9 +2715,9 @@ XEVIELIBSRC = $(LIBSRC)/Xevie
  #ifndef SharedXevieRev
  #define SharedXevieRev 1.0
  #endif
@@ -369,7 +369,7 @@ Last-Update: 2012-02-15
  #endif
  
     XCURSORLIBSRC = $(LIBSRC)/Xcursor
-@@ -2725,9 +2725,9 @@
+@@ -2725,9 +2725,9 @@ ProjectUnsharedLibReferences(XEVIE,Xevie
  #ifndef SharedXcursorRev
  #define SharedXcursorRev 1.0.2
  #endif
@@ -381,7 +381,7 @@ Last-Update: 2012-02-15
  #endif
  
     APPLEWMLIBSRC = $(LIBSRC)/apple
-@@ -2735,9 +2735,9 @@
+@@ -2735,9 +2735,9 @@ ProjectUnsharedLibReferences(XCURSOR,Xcu
  #ifndef SharedAppleWMRev
  #define SharedAppleWMRev 1.0
  #endif
@@ -393,7 +393,7 @@ Last-Update: 2012-02-15
  #endif
  
     WINDOWSWMLIBSRC = $(LIBSRC)/windows
-@@ -2745,9 +2745,9 @@
+@@ -2745,9 +2745,9 @@ ProjectUnsharedLibReferences(APPLEWM,App
  #ifndef SharedWindowsWMRev
  #define SharedWindowsWMRev 1.0
  #endif
@@ -405,7 +405,7 @@ Last-Update: 2012-02-15
  #endif
  
  # ifndef SharedLibXfontcache
-@@ -2768,9 +2768,9 @@
+@@ -2768,9 +2768,9 @@ ProjectUnsharedLibReferences(WINDOWSWM,W
  #ifndef SharedXfontcacheRev
  #define SharedXfontcacheRev 1.2
  #endif
@@ -417,7 +417,7 @@ Last-Update: 2012-02-15
  #endif
  
  #ifndef SharedLibXau
-@@ -2790,12 +2790,12 @@
+@@ -2790,12 +2790,12 @@ ProjectUnsharedLibReferences(XFONTCACHE,
  #ifndef SharedXauRev
  #define SharedXauRev 6.0
  #endif
@@ -433,7 +433,7 @@ Last-Update: 2012-02-15
  #endif
  #endif
  
-@@ -2816,12 +2816,12 @@
+@@ -2816,12 +2816,12 @@ ProjectUnsharedLibReferences(XAUTH,Xau,$
  #ifndef SharedXdmcpRev
  #define SharedXdmcpRev 6.0
  #endif
@@ -449,7 +449,7 @@ Last-Update: 2012-02-15
  #endif
  #endif
  
-@@ -2842,9 +2842,9 @@
+@@ -2842,9 +2842,9 @@ ProjectUnsharedLibReferences(XDMCP,Xdmcp
  #ifndef SharedXmuRev
  #define SharedXmuRev 6.2
  #endif
@@ -461,7 +461,7 @@ Last-Update: 2012-02-15
  #endif
  
  #ifndef SharedLibXmuu
-@@ -2864,9 +2864,9 @@
+@@ -2864,9 +2864,9 @@ ProjectUnsharedLibReferences(XMU,Xmu,$(X
  #ifndef SharedXmuuRev
  #define SharedXmuuRev 1.0
  #endif
@@ -473,7 +473,7 @@ Last-Update: 2012-02-15
  #endif
  
  #ifndef SharedOldX
-@@ -2886,9 +2886,9 @@
+@@ -2886,9 +2886,9 @@ ProjectUnsharedLibReferences(XMUU,Xmuu,$
  #ifndef SharedOldXRev
  #define SharedOldXRev 6.0
  #endif
@@ -485,7 +485,7 @@ Last-Update: 2012-02-15
  #endif
  
  #ifndef SharedLibXp
-@@ -2908,9 +2908,9 @@
+@@ -2908,9 +2908,9 @@ ProjectUnsharedLibReferences(OLDX,oldX,$
  #ifndef SharedXpRev
  #define SharedXpRev 6.2
  #endif
@@ -497,7 +497,7 @@ Last-Update: 2012-02-15
  #endif
  
  #ifndef SharedLibXt
-@@ -2930,9 +2930,9 @@
+@@ -2930,9 +2930,9 @@ ProjectUnsharedLibReferences(XP,Xp,$(XPL
  #ifndef SharedXtRev
  #define SharedXtRev 6.0
  #endif
@@ -509,7 +509,7 @@ Last-Update: 2012-02-15
  #endif
        DEPXTOOLLIB = $(DEPXTOOLONLYLIB) $(DEPSMLIB) $(DEPICELIB)
           XTOOLLIB = $(XTOOLONLYLIB) $(SMLIB) $(ICELIB)
-@@ -2956,9 +2956,9 @@
+@@ -2956,9 +2956,9 @@ ProjectUnsharedLibReferences(XTOOLONLY,X
  #ifndef SharedXaRev
  #define SharedXaRev 1.0
  #endif
@@ -521,7 +521,7 @@ Last-Update: 2012-02-15
  #endif
  
  #ifndef BuildXaw
-@@ -2985,9 +2985,9 @@
+@@ -2985,9 +2985,9 @@ UnsharedLibReferences(XA,Xa,$(XALIBSRC))
  #ifndef SharedXawRev
  #define SharedXawRev 8.0
  #endif
@@ -533,7 +533,7 @@ Last-Update: 2012-02-15
  #endif
  #endif
  
-@@ -3013,14 +3013,14 @@
+@@ -3013,14 +3013,14 @@ ProjectUnsharedLibReferences(XAW,Xaw,$(A
  #ifndef SharedXaw7Rev
  #define SharedXaw7Rev 7.0
  #endif
@@ -552,7 +552,7 @@ Last-Update: 2012-02-15
  #endif
  #endif
  #endif
-@@ -3048,14 +3048,14 @@
+@@ -3048,14 +3048,14 @@ ProjectUnsharedLibReferences(XAW,Xaw,$(A
  #ifndef SharedXaw6Rev
  #define SharedXaw6Rev 6.1
  #endif
@@ -571,7 +571,7 @@ Last-Update: 2012-02-15
  #endif
  #endif
  #endif
-@@ -3077,9 +3077,9 @@
+@@ -3077,9 +3077,9 @@ ProjectUnsharedLibReferences(XAW,Xaw,$(A
  #ifndef SharedXiRev
  #define SharedXiRev 6.0
  #endif
@@ -583,7 +583,7 @@ Last-Update: 2012-02-15
  #endif
  
  #ifndef SharedLibXtst
-@@ -3099,12 +3099,12 @@
+@@ -3099,12 +3099,12 @@ ProjectUnsharedLibReferences(XI,Xi,$(XIL
  #ifndef SharedXtstRev
  #define SharedXtstRev 6.1
  #endif
@@ -599,7 +599,7 @@ Last-Update: 2012-02-15
  
  #ifndef SharedLibICE
  #define SharedLibICE HasSharedLibraries
-@@ -3123,9 +3123,9 @@
+@@ -3123,9 +3123,9 @@ ProjectUnsharedLibReferences(XBSD,Xbsd,$
  #ifndef SharedICERev
  #define SharedICERev 6.4
  #endif
@@ -611,7 +611,7 @@ Last-Update: 2012-02-15
  #endif
  
  #ifndef SharedLibSM
-@@ -3145,9 +3145,9 @@
+@@ -3145,9 +3145,9 @@ ProjectUnsharedLibReferences(ICE,ICE,$(I
  #ifndef SharedSMRev
  #define SharedSMRev 6.0
  #endif
@@ -623,7 +623,7 @@ Last-Update: 2012-02-15
  #endif
  
  #ifndef SharedLibXkey
-@@ -3167,9 +3167,9 @@
+@@ -3167,9 +3167,9 @@ ProjectUnsharedLibReferences(SM,SM,$(SMS
  #ifndef SharedXkeyRev
  #define SharedXkeyRev 6.0
  #endif
@@ -635,7 +635,7 @@ Last-Update: 2012-02-15
  #endif
  
  #ifndef SharedLibFS
-@@ -3189,9 +3189,9 @@
+@@ -3189,9 +3189,9 @@ ProjectUnsharedLibReferences(XKEY,Xkey,$
  #ifndef SharedFSRev
  #define SharedFSRev 6.0
  #endif
@@ -647,7 +647,7 @@ Last-Update: 2012-02-15
  #endif
  
  #ifndef SharedLibFont
-@@ -3212,14 +3212,14 @@
+@@ -3212,14 +3212,14 @@ ProjectUnsharedLibReferences(FS,FS,$(FSL
  #define SharedFontRev 1.5
  #endif
  SharedFontLibReferences()
@@ -665,7 +665,7 @@ Last-Update: 2012-02-15
           DEPFONTLIB = $(DEPXFONTLIB) $(DEPFONTSTUBLIB)
              FONTLIB = $(XFONTLIB) $(FONTSTUBLIB) $(FREETYPE2LIB)
  
-@@ -3241,9 +3241,9 @@
+@@ -3241,9 +3241,9 @@ ProjectUnsharedLibReferences(FONTSTUB,fn
  #ifndef SharedFontEncRev
  #define SharedFontEncRev 1.0
  #endif
@@ -677,7 +677,7 @@ Last-Update: 2012-02-15
  #endif
  
  #ifndef SharedLibXpm
-@@ -3263,9 +3263,9 @@
+@@ -3263,9 +3263,9 @@ ProjectUnsharedLibReferences(XFONTENC,fo
  #ifndef SharedXpmRev
  #define SharedXpmRev 4.11
  #endif
@@ -689,7 +689,7 @@ Last-Update: 2012-02-15
  #endif
  
  #if UseFreetype2
-@@ -3313,9 +3313,9 @@
+@@ -3313,9 +3313,9 @@ ProjectUnsharedLibReferences(XPM,Xpm,$(X
  #define SharedFreetype2Rev 9.0
  #endif
  #endif
@@ -701,7 +701,7 @@ Last-Update: 2012-02-15
  #endif
  
  #ifdef UseInstalled
-@@ -3470,9 +3470,9 @@
+@@ -3470,9 +3470,9 @@ MOTIFINCLUDES = -I$(MOTIFINCDIR)
  #define SharedExpatRev 4.0
  #endif
  #endif
@@ -713,7 +713,7 @@ Last-Update: 2012-02-15
  #endif
  
  #if UseExpat
-@@ -3552,9 +3552,9 @@
+@@ -3552,9 +3552,9 @@ EXPATDEFINES = -DEXPAT
  #ifndef SharedXft1Rev
  #define SharedXft1Rev 1.1
  #endif
@@ -725,7 +725,7 @@ Last-Update: 2012-02-15
  #endif
  
  #ifndef Xft1ClientDepLibs
-@@ -3589,9 +3589,9 @@
+@@ -3589,9 +3589,9 @@ ProjectUnsharedLibReferences(XFT1,Xft,$(
  #ifndef SharedXftRev
  #define SharedXftRev 2.1.2
  #endif
@@ -737,7 +737,7 @@ Last-Update: 2012-02-15
  #endif
  
  #ifndef XftClientDepLibs
-@@ -3622,9 +3622,9 @@
+@@ -3622,9 +3622,9 @@ ProjectUnsharedLibReferences(XFT,Xft,$(X
  #ifndef SharedFontconfigRev
  #define SharedFontconfigRev 1.0.4
  #endif
@@ -749,7 +749,7 @@ Last-Update: 2012-02-15
  #endif
  
  #ifdef UseInstalled
-@@ -3827,9 +3827,9 @@
+@@ -3827,9 +3827,9 @@ LIBPNGLIB = -L$(LIBPNGLIBDIR) LinkerRunt
  # ifndef SharedxkbfileRev
  #  define SharedxkbfileRev	1.0
  # endif
@@ -761,7 +761,7 @@ Last-Update: 2012-02-15
  #endif
  
  #if BuildXKBlib
-@@ -3899,9 +3899,9 @@
+@@ -3899,9 +3899,9 @@ ProjectUnsharedLibReferences(XKBFILE,xkb
  # ifndef SharedxkbuiRev
  #  define SharedxkbuiRev	1.0
  # endif
@@ -773,7 +773,7 @@ Last-Update: 2012-02-15
  #endif
  
  #ifndef XkbuiLibs
-@@ -3974,9 +3974,9 @@
+@@ -3974,9 +3974,9 @@ EXTRAXAWCLIENTLIBS = ExtraXawClientLibs
  #ifndef SharedXTrapRev
  #define SharedXTrapRev 6.4
  #endif
@@ -787,7 +787,7 @@ Last-Update: 2012-02-15
  #ifndef NeedDefaultDepLibs
 --- a/nx-X11/config/cf/lnxLib.rules
 +++ b/nx-X11/config/cf/lnxLib.rules
-@@ -389,7 +389,7 @@
+@@ -389,7 +389,7 @@ JUMP_LDLIBS_libc = `$(CC) --print-libgcc
  XCOMM libX11.so (X11, SM, ICE)
  JUMP_ROOT_X11 = $(XLIBSRC)
  JUMP_IS_HOST_X11 = YES
@@ -796,7 +796,7 @@ Last-Update: 2012-02-15
  JUMP_SIBDIRS_X11 = $(JUMP_ROOT_SM) $(JUMP_ROOT_ICE)
  JUMP_DIR_X11 = $(JUMP_ROOT_X11)/shared
  JUMP_DEFS_X11 = $(XDMAUTHDEFS) $(XKB_DEFINES)
-@@ -400,9 +400,9 @@
+@@ -400,9 +400,9 @@ JUMP_EXPORT_X11 = $(JUMP_DIR_X11)/jump.v
  JUMP_ADDRESS_X11 = 0x60200000
  JUMP_JUMPTABLESIZE_X11 = 0x4000
  JUMP_GOTSIZE_X11 = 4096
@@ -808,7 +808,7 @@ Last-Update: 2012-02-15
  JUMP_LDLIBS_X11 = $(JUMP_SIBARS_X11) $(JUMP_LDLIBS_libc)
  
  XCOMM libSM (part of libX11.so)
-@@ -435,9 +435,9 @@
+@@ -435,9 +435,9 @@ JUMP_JUMPTABLESIZE_Xt = 0x4000
  JUMP_GOTSIZE_Xt = 4096
  JUMP_STUBNAMES_Xt = libXt libXmu libXext libXi libXtst libXp
  JUMP_STUBS_IMPORT_Xt = $(JUMP_STUBS_IMPORT_X11)
@@ -821,7 +821,7 @@ Last-Update: 2012-02-15
  
  XCOMM libXmu (part of libXt.so)
  JUMP_ROOT_Xmu = $(XMUSRC)
-@@ -485,8 +485,8 @@
+@@ -485,8 +485,8 @@ JUMP_JUMPTABLESIZE_Xaw = 0x4000
  JUMP_GOTSIZE_Xaw = 4096
  JUMP_STUBNAMES_Xaw = libXaw
  JUMP_STUBS_IMPORT_Xaw = $(JUMP_STUBS_IMPORT_X11)
@@ -834,7 +834,7 @@ Last-Update: 2012-02-15
  # endif /* !UseInstalled */
 --- a/nx-X11/config/cf/lnxLib.tmpl
 +++ b/nx-X11/config/cf/lnxLib.tmpl
-@@ -9,7 +9,7 @@
+@@ -9,7 +9,7 @@ XCOMM $XFree86: xc/config/cf/lnxLib.tmpl
  
  #ifndef FixupLibReferences
  #define FixupLibReferences()						@@\
@@ -843,7 +843,7 @@ Last-Update: 2012-02-15
  XMULIB = $(XMULIBONLY) $(XTOOLLIB) $(XLIB)
  #endif
  
-@@ -66,7 +66,7 @@
+@@ -66,7 +66,7 @@ XMULIB = $(XMULIBONLY) $(XTOOLLIB) $(XLI
  
  #ifndef FixupLibReferences
  #define FixupLibReferences()						@@\
@@ -854,7 +854,7 @@ Last-Update: 2012-02-15
  #endif	/* UseElfFormat */
 --- a/nx-X11/lib/X11/Imakefile
 +++ b/nx-X11/lib/X11/Imakefile
-@@ -82,7 +82,7 @@
+@@ -82,7 +82,7 @@ NX_XCOMPEXTCONFIGTARGET = $(NX_XCOMPEXTL
  #define DoExtraLib SharedLibX11
  #define DoDebugLib DebugLibX11
  #define DoProfileLib ProfileLibX11
@@ -865,7 +865,7 @@ Last-Update: 2012-02-15
  #define IncSubdir X11
 --- a/nx-X11/lib/XRes/Imakefile
 +++ b/nx-X11/lib/XRes/Imakefile
-@@ -4,7 +4,7 @@
+@@ -4,7 +4,7 @@ XCOMM $XFree86: xc/lib/XRes/Imakefile,v
  #define DoSharedLib SharedLibXRes
  #define DoDebugLib DebugLibXRes
  #define DoProfileLib ProfileLibXRes
@@ -876,7 +876,7 @@ Last-Update: 2012-02-15
  
 --- a/nx-X11/lib/Xau/Imakefile
 +++ b/nx-X11/lib/Xau/Imakefile
-@@ -10,7 +10,7 @@
+@@ -10,7 +10,7 @@ XCOMM $XFree86: xc/lib/Xau/Imakefile,v 3
  #define DoExtraLib SharedLibXau
  #define DoDebugLib DebugLibXau
  #define DoProfileLib ProfileLibXau
@@ -887,7 +887,7 @@ Last-Update: 2012-02-15
  
 --- a/nx-X11/lib/Xcomposite/Imakefile
 +++ b/nx-X11/lib/Xcomposite/Imakefile
-@@ -14,7 +14,7 @@
+@@ -14,7 +14,7 @@ SOXCOMPOSITEREV=1.0.0
  #define DoDebugLib DebugLibXcomposite
  #define DoProfileLib ProfileLibXcomposite
  
@@ -898,7 +898,7 @@ Last-Update: 2012-02-15
  #define IncSubSubdir extensions
 --- a/nx-X11/lib/Xcomposite/xcomposite.pc.in
 +++ b/nx-X11/lib/Xcomposite/xcomposite.pc.in
-@@ -7,4 +7,4 @@
+@@ -7,4 +7,4 @@ Name: Xcomposite
  Description: X Composite Library
  Version: @VERSION@
  Cflags: -I${includedir} @XCOMPOSITE_CFLAGS@ @X_CFLAGS@
@@ -906,7 +906,7 @@ Last-Update: 2012-02-15
 +Libs: -L${libdir} -lNX_Xcomposite @XCOMPOSITE_LIBS@ @X_LIBS@
 --- a/nx-X11/lib/Xcursor/Imakefile
 +++ b/nx-X11/lib/Xcursor/Imakefile
-@@ -15,7 +15,7 @@
+@@ -15,7 +15,7 @@ SOXCURSORREV=1.0.2
  #define DoDebugLib DebugLibXcursor
  #define DoProfileLib ProfileLibXcursor
  
@@ -917,7 +917,7 @@ Last-Update: 2012-02-15
  #define IncSubSubdir Xcursor
 --- a/nx-X11/lib/Xcursor/xcursor.pc.in
 +++ b/nx-X11/lib/Xcursor/xcursor.pc.in
-@@ -12,4 +12,4 @@
+@@ -12,4 +12,4 @@ Description: X Cursor Library
  Version: @VERSION@
  Requires: xrender
  Cflags: -I${includedir} ${xrendercflags} ${xcflags}
@@ -925,7 +925,7 @@ Last-Update: 2012-02-15
 +Libs: -L${libdir} -lNX_Xcursor ${xrenderlibs} ${xlibs}
 --- a/nx-X11/lib/Xdamage/Imakefile
 +++ b/nx-X11/lib/Xdamage/Imakefile
-@@ -14,7 +14,7 @@
+@@ -14,7 +14,7 @@ SOXDAMAGEREV=1.0.1
  #define DoDebugLib DebugLibXdamage
  #define DoProfileLib ProfileLibXdamage
  
@@ -936,7 +936,7 @@ Last-Update: 2012-02-15
  #define IncSubSubdir extensions
 --- a/nx-X11/lib/Xdamage/xdamage.pc.in
 +++ b/nx-X11/lib/Xdamage/xdamage.pc.in
-@@ -7,4 +7,4 @@
+@@ -7,4 +7,4 @@ Name: Xdamage
  Description: X Damage Library
  Version: @VERSION@
  Cflags: -I${includedir} @XDAMAGE_CFLAGS@ @X_CFLAGS@
@@ -944,7 +944,7 @@ Last-Update: 2012-02-15
 +Libs: -L${libdir} -lNX_Xdamage @XDAMAGE_LIBS@ @X_LIBS@
 --- a/nx-X11/lib/Xdmcp/Imakefile
 +++ b/nx-X11/lib/Xdmcp/Imakefile
-@@ -10,7 +10,7 @@
+@@ -10,7 +10,7 @@ XCOMM $XFree86: xc/lib/Xdmcp/Imakefile,v
  #define DoExtraLib SharedLibXdmcp
  #define DoDebugLib DebugLibXdmcp
  #define DoProfileLib ProfileLibXdmcp
@@ -955,7 +955,7 @@ Last-Update: 2012-02-15
  
 --- a/nx-X11/lib/Xext/Imakefile
 +++ b/nx-X11/lib/Xext/Imakefile
-@@ -10,7 +10,7 @@
+@@ -10,7 +10,7 @@ XCOMM $XFree86: xc/lib/Xext/Imakefile,v
  #define DoExtraLib SharedLibXext
  #define DoDebugLib DebugLibXext
  #define DoProfileLib ProfileLibXext
@@ -966,7 +966,7 @@ Last-Update: 2012-02-15
  
 --- a/nx-X11/lib/Xfixes/Imakefile
 +++ b/nx-X11/lib/Xfixes/Imakefile
-@@ -14,7 +14,7 @@
+@@ -14,7 +14,7 @@ SOXFIXESREV=3.0.0
  #define DoDebugLib DebugLibXfixes
  #define DoProfileLib ProfileLibXfixes
  
@@ -977,7 +977,7 @@ Last-Update: 2012-02-15
  #define IncSubSubdir extensions
 --- a/nx-X11/lib/Xfixes/xfixes.pc.in
 +++ b/nx-X11/lib/Xfixes/xfixes.pc.in
-@@ -7,4 +7,4 @@
+@@ -7,4 +7,4 @@ Name: Xfixes
  Description: X Fixes Library
  Version: @VERSION@
  Cflags: -I${includedir} @X_CFLAGS@
@@ -985,7 +985,7 @@ Last-Update: 2012-02-15
 +Libs: -L${libdir} -lNX_Xfixes @X_LIBS@
 --- a/nx-X11/lib/Xinerama/Imakefile
 +++ b/nx-X11/lib/Xinerama/Imakefile
-@@ -4,7 +4,7 @@
+@@ -4,7 +4,7 @@ XCOMM $XFree86: xc/lib/Xinerama/Imakefil
  #define DoSharedLib SharedLibXinerama
  #define DoDebugLib DebugLibXinerama
  #define DoProfileLib ProfileLibXinerama
@@ -996,7 +996,7 @@ Last-Update: 2012-02-15
  
 --- a/nx-X11/lib/Xpm/Imakefile
 +++ b/nx-X11/lib/Xpm/Imakefile
-@@ -12,7 +12,7 @@
+@@ -12,7 +12,7 @@ XCOMM $XFree86: xc/lib/Xpm/Imakefile,v 1
  #define DoDebugLib DebugLibXpm
  #define DoProfileLib ProfileLibXpm
  #define HasSharedData NO
@@ -1007,7 +1007,7 @@ Last-Update: 2012-02-15
  
 --- a/nx-X11/lib/Xrandr/Imakefile
 +++ b/nx-X11/lib/Xrandr/Imakefile
-@@ -5,7 +5,7 @@
+@@ -5,7 +5,7 @@ XCOMM $XdotOrg: xc/lib/Xrandr/Imakefile,
  #define DoSharedLib SharedLibXrandr
  #define DoDebugLib DebugLibXrandr
  #define DoProfileLib ProfileLibXrandr
@@ -1018,7 +1018,7 @@ Last-Update: 2012-02-15
  #define IncSubSubdir extensions
 --- a/nx-X11/lib/Xrender/Imakefile
 +++ b/nx-X11/lib/Xrender/Imakefile
-@@ -74,7 +74,7 @@
+@@ -74,7 +74,7 @@ clean::
  #define DoSharedLib SharedLibXrender
  #define DoDebugLib DebugLibXrender
  #define DoProfileLib ProfileLibXrender
@@ -1029,7 +1029,7 @@ Last-Update: 2012-02-15
  #ifdef XBuildIncDir
 --- a/nx-X11/lib/Xrender/xrender.pc.in
 +++ b/nx-X11/lib/Xrender/xrender.pc.in
-@@ -8,4 +8,4 @@
+@@ -8,4 +8,4 @@ Description: X Render Library
  Version: @VERSION@
  Requires: @X_REQUIRES@
  Cflags: -I${includedir} @RENDER_CFLAGS@ @X_NON_PKG_CFLAGS@
@@ -1037,7 +1037,7 @@ Last-Update: 2012-02-15
 +Libs: -L${libdir} -lNX_Xrender @X_NON_PKG_LIBS@
 --- a/nx-X11/lib/Xtst/Imakefile
 +++ b/nx-X11/lib/Xtst/Imakefile
-@@ -10,7 +10,7 @@
+@@ -10,7 +10,7 @@ XCOMM $XFree86: xc/lib/Xtst/Imakefile,v
  #define DoExtraLib SharedLibXtst
  #define DoDebugLib DebugLibXtst
  #define DoProfileLib ProfileLibXtst
@@ -1048,7 +1048,7 @@ Last-Update: 2012-02-15
  
 --- a/nx-X11/lib/font/Imakefile
 +++ b/nx-X11/lib/font/Imakefile
-@@ -31,7 +31,7 @@
+@@ -31,7 +31,7 @@ XCOMM $XFree86: xc/lib/font/Imakefile,v
  STUBDIRS = stubs
  #endif
  
@@ -1059,7 +1059,7 @@ Last-Update: 2012-02-15
  #ifndef SeparateSharedCompile
 --- a/nx-X11/lib/oldX/Imakefile
 +++ b/nx-X11/lib/oldX/Imakefile
-@@ -10,7 +10,7 @@
+@@ -10,7 +10,7 @@ XCOMM $XFree86: xc/lib/oldX/Imakefile,v
  #define DoExtraLib SharedOldX
  #define DoDebugLib DebugOldX
  #define DoProfileLib ProfileOldX
@@ -1070,7 +1070,7 @@ Last-Update: 2012-02-15
  
 --- a/nx-X11/lib/xkbfile/Imakefile
 +++ b/nx-X11/lib/xkbfile/Imakefile
-@@ -11,7 +11,7 @@
+@@ -11,7 +11,7 @@ XCOMM $XFree86: xc/lib/xkbfile/Imakefile
  #define DoDebugLib	DebugLibxkbfile
  #define DoProfileLib	ProfileLibxkbfile
  #define HasSharedData	NO
@@ -1081,7 +1081,7 @@ Last-Update: 2012-02-15
  #define	IncSubSubdir	extensions
 --- a/nx-X11/lib/xkbui/Imakefile
 +++ b/nx-X11/lib/xkbui/Imakefile
-@@ -6,7 +6,7 @@
+@@ -6,7 +6,7 @@ XCOMM $XFree86: xc/lib/xkbui/Imakefile,v
  #define DoDebugLib DebugLibxkbui
  #define DoProfileLib ProfileLibxkbui
  #define HasSharedData NO
@@ -1092,7 +1092,7 @@ Last-Update: 2012-02-15
  #define	IncSubSubdir extensions
 --- a/nx-X11/programs/Xserver/Imakefile
 +++ b/nx-X11/programs/Xserver/Imakefile
-@@ -313,7 +313,7 @@
+@@ -313,7 +313,7 @@ XPFBLIBS = dix/LibraryTargetName(xpstubs
         FONTBASE = $(FONTLIBSRC)/fontbase.o \
  		  $(FONTLIBSRC)/LibraryTargetName(fontbase)
  #if XserverStaticFontLib
@@ -1101,7 +1101,7 @@ Last-Update: 2012-02-15
  #else
             FONT = $(LDPRELIB) $(XFONTLIB) $(FREETYPE2LIB)
  #endif
-@@ -994,7 +994,7 @@
+@@ -994,7 +994,7 @@ NXAGENTOBJS = hw/nxagent/miinitext.o
                dix/main.o
  #endif
  
@@ -1110,7 +1110,7 @@ Last-Update: 2012-02-15
  NXAGENT = hw/nxagent/LibraryTargetName(nxagent)
  NXAGENTLIBS = PreFbLibs $(NXAGENT) FbPostFbLibs $(NXAGENT) $(MI)
  NXAGENTSYSLIBS = $(FONTLIBS) $(LDPRELIBS) $(XLIB) $(SYSLIBS) $(XPMLIB)
-@@ -1012,18 +1012,18 @@
+@@ -1012,18 +1012,18 @@ $(NXAGENTOBJS) $(NXAGENTLIBS) $(NXAGENTS
  
  #if defined(SunArchitecture)
  NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext -L ../../../nxcompshad \
@@ -1135,7 +1135,7 @@ Last-Update: 2012-02-15
  `pkg-config --libs libxml-2.0`
  #endif
  
-@@ -1078,7 +1078,7 @@
+@@ -1078,7 +1078,7 @@ nxagent_static_nolibs:  nxagent
  	else exit 0; fi
  	$(CCLINK) -o nxagent_static_nolibs -Wl,-Bstatic $(LDOPTIONS) $(NXAGENTOBJS) \
  	$(NXAGENTLIBS) $(LOADABLEEXTS) $(LIBCWRAPPER) $(LDLIBS) $(FONTLIBS) \
@@ -1146,7 +1146,7 @@ Last-Update: 2012-02-15
  #if defined(XnonServer) && XnonServer
 --- a/nxcompext/Makefile.in
 +++ b/nxcompext/Makefile.in
-@@ -42,12 +42,12 @@
+@@ -42,12 +42,12 @@ CCINCLUDES  = -I. -I../nxcomp
  CCDEFINES   =
  
  LDFLAGS     = @LDFLAGS@ -L../nxcomp
@@ -1163,7 +1163,7 @@ Last-Update: 2012-02-15
  srcdir      = @srcdir@
 --- a/nxcompshad/Makefile.in
 +++ b/nxcompshad/Makefile.in
-@@ -48,7 +48,7 @@
+@@ -48,7 +48,7 @@ CCINCLUDES  =
  CCDEFINES   =
  
  LDFLAGS     = @LDFLAGS@
@@ -1172,7 +1172,7 @@ Last-Update: 2012-02-15
  
  #
  # Only if THREADS is defined.
-@@ -139,7 +139,7 @@
+@@ -139,7 +139,7 @@ all: depend $(LIBARCHIVE) $(LIBDLL)
  
  else
  

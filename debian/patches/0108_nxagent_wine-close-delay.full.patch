@@ -7,7 +7,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 Last-Update: 2011-12-31
 --- a/nx-X11/programs/Xserver/hw/nxagent/Window.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Window.c
-@@ -176,6 +176,14 @@
+@@ -176,6 +176,14 @@ static void nxagentReconfigureWindow(poi
  
  static int nxagentForceExposure(WindowPtr pWin, pointer ptr);
  
@@ -22,7 +22,7 @@ Last-Update: 2011-12-31
  /*
   * This is currently unused.
   */
-@@ -1861,6 +1869,17 @@
+@@ -1861,6 +1869,17 @@ Bool nxagentRealizeWindow(WindowPtr pWin
    nxagentAddConfiguredWindow(pWin, CWStackingOrder);
    nxagentAddConfiguredWindow(pWin, CW_Shape);
  
@@ -40,7 +40,7 @@ Last-Update: 2011-12-31
    #ifdef SHAPE
  
    /*
-@@ -1907,6 +1926,17 @@
+@@ -1907,6 +1926,17 @@ Bool nxagentUnrealizeWindow(pWin)
      return True;
    }
  

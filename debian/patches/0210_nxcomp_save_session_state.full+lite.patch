@@ -3,7 +3,7 @@ Author: Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
 
 --- a/nxcomp/Loop.cpp
 +++ b/nxcomp/Loop.cpp
-@@ -8872,7 +8872,8 @@
+@@ -8872,7 +8872,8 @@ int ParseEnvironmentOptions(const char *
      }
      else if (strcasecmp(name, "defer") == 0 ||
                   strcasecmp(name, "tile") == 0 ||

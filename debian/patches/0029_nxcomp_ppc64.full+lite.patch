@@ -3,7 +3,7 @@ Author: Mihai Moldovan <ionic@ionic.de>
 
 --- a/nxcomp/Loop.cpp
 +++ b/nxcomp/Loop.cpp
-@@ -6832,9 +6832,9 @@
+@@ -6832,9 +6832,9 @@ int WaitForRemote(int portNum)
      {
        sockaddr_in newAddr;
  

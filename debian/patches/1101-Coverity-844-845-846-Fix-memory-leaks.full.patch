@@ -9,8 +9,6 @@ the CVE-2015-0255 fix (Mike DePaulo)
  nx-X11/programs/Xserver/xkb/xkb.c | 22 +++++++++++++++++++---
  1 file changed, 19 insertions(+), 3 deletions(-)
 
-diff --git a/nx-X11/programs/Xserver/xkb/xkb.c b/nx-X11/programs/Xserver/xkb/xkb.c
-index 2405090..2561c89 100644
 --- a/nx-X11/programs/Xserver/xkb/xkb.c
 +++ b/nx-X11/programs/Xserver/xkb/xkb.c
 @@ -4794,9 +4794,20 @@ char *		wire;
@@ -58,6 +56,3 @@ index 2405090..2561c89 100644
      }
      if (req->nColors!=geom->num_colors) {
  	client->errorValue= _XkbErrCode3(0x05,req->nColors,geom->num_colors);
--- 
-1.9.1
-

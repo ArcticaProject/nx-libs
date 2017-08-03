@@ -3,7 +3,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 
 --- a/nxcomp/Loop.cpp
 +++ b/nxcomp/Loop.cpp
-@@ -4183,7 +4183,7 @@
+@@ -4183,7 +4183,7 @@ int SetupDisplaySocket(int &xServerAddrF
  
    #ifdef __APPLE__
  

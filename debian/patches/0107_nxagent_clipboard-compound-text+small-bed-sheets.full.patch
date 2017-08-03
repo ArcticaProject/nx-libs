@@ -7,7 +7,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 Last-Update: 2011-12-31
 --- a/nx-X11/programs/Xserver/hw/nxagent/Clipboard.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Clipboard.c
-@@ -1226,10 +1226,11 @@
+@@ -1226,10 +1226,11 @@ int nxagentConvertSelection(ClientPtr cl
      Atom xa_STRING[4];
      xEvent x;
  
@@ -24,7 +24,7 @@ Last-Update: 2011-12-31
                           property,
 --- a/nx-X11/programs/Xserver/hw/nxagent/Image.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Image.c
-@@ -644,6 +644,10 @@
+@@ -644,6 +644,10 @@ FIXME: Should use these.
              pDrawable -> depth != 1 &&
                  nxagentOption(DeferLevel) >= 1)
      {
@@ -35,7 +35,7 @@ Last-Update: 2011-12-31
        #ifdef TEST
        fprintf(stderr, "nxagentPutImage: WARNING! Prevented operation on region [%d,%d,%d,%d] "
                    "for drawable at [%p] with drawable pixmap.\n", pRegion -> extents.x1,
-@@ -654,6 +658,9 @@
+@@ -654,6 +658,9 @@ FIXME: Should use these.
        nxagentMarkCorruptedRegion(pDrawable, pRegion);
  
        goto nxagentPutImageEnd;

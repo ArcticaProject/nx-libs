@@ -3,7 +3,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 
 --- a/nxcomp/CHANGELOG
 +++ b/nxcomp/CHANGELOG
-@@ -668,7 +668,7 @@
+@@ -668,7 +668,7 @@ nxcomp-2.0.0-70
  
  nxcomp-2.0.0-69
  
@@ -14,7 +14,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
    old version of the library.
 --- a/nxcomp/ClientReadBuffer.cpp
 +++ b/nxcomp/ClientReadBuffer.cpp
-@@ -29,7 +29,7 @@
+@@ -29,7 +29,7 @@ unsigned int ClientReadBuffer::suggested
    //
    // Even if the pending data is not
    // enough to make a complete message,
@@ -25,7 +25,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
  
 --- a/nxcomp/EncodeBuffer.cpp
 +++ b/nxcomp/EncodeBuffer.cpp
-@@ -505,12 +505,12 @@
+@@ -505,12 +505,12 @@ void EncodeBuffer::growBuffer(unsigned i
    {
      #ifdef PANIC
      *logofs << "EncodeBuffer: PANIC! Error in context [C] "
@@ -42,7 +42,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
      HandleAbort();
 --- a/nxcomp/GenericChannel.cpp
 +++ b/nxcomp/GenericChannel.cpp
-@@ -210,7 +210,7 @@
+@@ -210,7 +210,7 @@ int GenericChannel::handleRead(EncodeBuf
    // All data has been read from the read buffer.
    // We still need to mark the end of the encode
    // buffer just before sending the frame. This
@@ -53,7 +53,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
  
 --- a/nxcomp/ProxyReadBuffer.cpp
 +++ b/nxcomp/ProxyReadBuffer.cpp
-@@ -50,7 +50,7 @@
+@@ -50,7 +50,7 @@ unsigned int ProxyReadBuffer::suggestedL
    //
    // Even if the readable data is not
    // enough to make a complete message,
@@ -64,7 +64,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
  
 --- a/nxcomp/ServerReadBuffer.cpp
 +++ b/nxcomp/ServerReadBuffer.cpp
-@@ -46,7 +46,7 @@
+@@ -46,7 +46,7 @@ unsigned int ServerReadBuffer::suggested
    //
    // Even if the readable data is not
    // enough to make a complete message,
@@ -75,7 +75,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
  
 --- a/nxcomp/Transport.h
 +++ b/nxcomp/Transport.h
-@@ -226,7 +226,7 @@
+@@ -226,7 +226,7 @@ class Transport
    protected:
  
    //
@@ -86,7 +86,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
  
 --- a/nxcomp/Types.h
 +++ b/nxcomp/Types.h
-@@ -179,7 +179,7 @@
+@@ -179,7 +179,7 @@ typedef set < File *, T_older > T_files;
  typedef list < int > T_list;
  
  //

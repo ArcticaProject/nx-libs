@@ -8,7 +8,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 Last-Update: 2011-12-31
 --- a/nx-X11/programs/Xserver/hw/nxagent/Error.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Error.c
-@@ -497,7 +497,7 @@
+@@ -497,7 +497,7 @@ char *nxagentGetRootPath(void)
    return rootPath;
  }
  
@@ -19,7 +19,7 @@ Last-Update: 2011-12-31
    char *rootPath;
 --- a/nx-X11/programs/Xserver/hw/nxagent/Error.h
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Error.h
-@@ -34,4 +34,6 @@
+@@ -34,4 +34,6 @@ void nxagentStartRedirectToClientsLog(vo
  
  void nxagentEndRedirectToClientsLog(void);
  
@@ -28,7 +28,7 @@ Last-Update: 2011-12-31
  #endif /* __Error_H__ */
 --- a/nx-X11/programs/Xserver/hw/nxagent/Keyboard.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Keyboard.c
-@@ -52,6 +52,7 @@
+@@ -52,6 +52,7 @@ is" without express or implied warranty.
  #include "Keyboard.h"
  #include "Events.h"
  #include "Options.h"
@@ -36,7 +36,7 @@ Last-Update: 2011-12-31
  
  #include "NXlib.h"
  
-@@ -72,6 +73,8 @@
+@@ -72,6 +73,8 @@ is" without express or implied warranty.
  
  #include "Xatom.h"
  
@@ -45,7 +45,7 @@ Last-Update: 2011-12-31
  static int nxagentXkbGetNames(char **rules, char **model, char **layout,
                                    char **variant, char **options);
  
-@@ -1790,6 +1793,48 @@
+@@ -1790,6 +1793,48 @@ void nxagentKeycodeConversionSetup(void)
    }
    #endif
  

@@ -1,8 +1,7 @@
 Description: Fix refresh errors on Win2012 RDP connections with speed=ADSL
 Author: Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
-diff -rupN a/nx-X11/programs/Xserver/hw/nxagent/Render.c b/nx-X11/programs/Xserver/hw/nxagent/GCOps.c
---- a/nx-X11/programs/Xserver/hw/nxagent/GCOps.c	2014-05-06 12:52:35.082288455 +0200
-+++ b/nx-X11/programs/Xserver/hw/nxagent/GCOps.c	2014-05-06 12:54:00.258710819 +0200
+--- a/nx-X11/programs/Xserver/hw/nxagent/GCOps.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/GCOps.c
 @@ -339,7 +339,7 @@ FIXME: The popup could be synchronized w
     */
  

@@ -8,14 +8,12 @@ Abstract:
  #585.
 Author: Ulrich Sibiller <uli42@gmx.de>
 
-Index: nx-libs/nx-X11/programs/Xserver/hw/nxagent/Clipboard.c
-===================================================================
---- nx-libs.orig/nx-X11/programs/Xserver/hw/nxagent/Clipboard.c	2014-11-04 22:42:50.893569624 +0100
-+++ nx-libs/nx-X11/programs/Xserver/hw/nxagent/Clipboard.c	2014-11-04 22:42:50.893569624 +0100
-@@ -1556,10 +1556,14 @@
+--- a/nx-X11/programs/Xserver/hw/nxagent/Clipboard.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/Clipboard.c
+@@ -1556,10 +1556,14 @@ int nxagentInitClipboard(WindowPtr pWin)
      fprintf(stderr, "nxagentInitClipboard: Registering for XFixesSelectionNotify events.\n");
      #endif
-
+ 
 -    XFixesSelectSelectionInput(nxagentDisplay, iWindow, nxagentClipboardAtom,
 -                               XFixesSetSelectionOwnerNotifyMask |
 -                               XFixesSelectionWindowDestroyNotifyMask |
@@ -28,6 +26,6 @@ Index: nx-libs/nx-X11/programs/Xserver/hw/nxagent/Clipboard.c
 +                                 XFixesSelectionWindowDestroyNotifyMask |
 +                                 XFixesSelectionClientCloseNotifyMask);
 +    }
-
+ 
      nxagentXFixesInfo.Initialized = 1;
    }

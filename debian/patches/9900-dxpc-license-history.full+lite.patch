@@ -3811,7 +3811,7 @@ Subject: [PATCH 3/3] Document retroactive re-licensing of the original DXPC
  Parts of this software are derived from DXPC project. These copyright
  notices apply to original DXPC code:
  
-@@ -29,9 +32,59 @@ THIS SOFTWARE IS PROVIDED ``AS IS'' AND 
+@@ -29,9 +32,59 @@ THIS SOFTWARE IS PROVIDED ``AS IS'' AND
  WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF
  MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  

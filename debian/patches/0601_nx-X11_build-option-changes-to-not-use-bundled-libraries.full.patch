@@ -15,7 +15,7 @@ Abstract:
 
 --- a/nx-X11/config/cf/host.def
 +++ b/nx-X11/config/cf/host.def
-@@ -311,6 +311,7 @@
+@@ -311,6 +311,7 @@ XCOMM $XFree86: xc/config/cf/xf86site.de
   *
  #define BuildFreeType		NO
   */
@@ -23,7 +23,7 @@ Abstract:
  
  /*
   * To set non-default build options for the underlying FreeType libraries,
-@@ -892,7 +893,7 @@
+@@ -892,7 +893,7 @@ XCOMM $XFree86: xc/config/cf/xf86site.de
   *
  #define HasFreetype2 NO
   */
@@ -32,7 +32,7 @@ Abstract:
  
  /* 
   * To use a FreeType library already installed outside the default search
-@@ -909,7 +910,7 @@
+@@ -909,7 +910,7 @@ XCOMM $XFree86: xc/config/cf/xf86site.de
   *
  #define HasFontconfig NO
   */
@@ -41,7 +41,7 @@ Abstract:
  
  /* 
   * To use a Fontconfig library already installed outside the default search
-@@ -925,7 +926,7 @@
+@@ -925,7 +926,7 @@ XCOMM $XFree86: xc/config/cf/xf86site.de
   *
  #define HasExpat NO
   */
@@ -50,7 +50,7 @@ Abstract:
  
  /* 
   * To use a Expat library already installed outside the default search
-@@ -961,7 +962,7 @@
+@@ -961,7 +962,7 @@ XCOMM $XFree86: xc/config/cf/xf86site.de
  
  #define SharedLibXdmcp         YES
  
@@ -59,7 +59,7 @@ Abstract:
  
  #else /* #if !defined(NXZaurusXServer) && !defined(NXiPAQXServer) && !defined(DarwinArchitecture) */
  
-@@ -1019,3 +1020,11 @@
+@@ -1019,3 +1020,11 @@ XCOMM $XFree86: xc/config/cf/xf86site.de
  #endif
  
  #endif /* #if !defined(NXZaurusXServer) && !defined(NXiPAQXServer) && !defined(DarwinArchitecture) */
@@ -82,7 +82,7 @@ Abstract:
  all::
 --- a/nx-X11/lib/Imakefile
 +++ b/nx-X11/lib/Imakefile
-@@ -213,14 +213,8 @@
+@@ -213,14 +213,8 @@ XEXTLIBDIR = Xext
  
  #if BuildLibraries
  OLDXLIBDIR = oldX

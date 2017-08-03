@@ -1,8 +1,7 @@
 Description: Fix FTBFS when compiled with -Werror=format-security
 Author: Orion Poplawski <orion@cora.nwra.com>
-diff -up a/nx-X11/config/imake/imake.c b/nx-X11/config/imake/imake.c
---- a/nx-X11/config/imake/imake.c	2014-01-04 13:39:35.000000000 -0700
-+++ b/nx-X11/config/imake/imake.c	2014-01-24 13:55:53.940697330 -0700
+--- a/nx-X11/config/imake/imake.c
++++ b/nx-X11/config/imake/imake.c
 @@ -7,8 +7,6 @@
   * be passed to the template file.                                         *
   *                                                                         *

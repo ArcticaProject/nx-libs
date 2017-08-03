@@ -8,8 +8,6 @@ Last-Update: 2012-02-14
  nx-X11/programs/Xserver/Imakefile |    4 +++-
  2 files changed, 7 insertions(+), 2 deletions(-)
 
-Index: nx-X11/lib/X11/Imakefile
-===================================================================
 --- a/nx-X11/lib/X11/Imakefile
 +++ b/nx-X11/lib/X11/Imakefile
 @@ -1147,15 +1147,17 @@ ks_tables.h: $(XINCLUDESRC)/keysymdef.h
@@ -32,8 +30,6 @@ Index: nx-X11/lib/X11/Imakefile
  
  #ifdef SunArchitecture
  $(NX_XCOMPLIBTARGET): $(NX_XCOMPCONFIGTARGET)
-Index: nx-X11/programs/Xserver/Imakefile
-===================================================================
 --- a/nx-X11/programs/Xserver/Imakefile
 +++ b/nx-X11/programs/Xserver/Imakefile
 @@ -1036,9 +1036,11 @@ NX_XSHADOWLIBDIR    = $(XTOP)/../nxcomps

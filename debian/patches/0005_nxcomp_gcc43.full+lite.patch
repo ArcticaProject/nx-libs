@@ -5,8 +5,8 @@ Description: gcc43 fix
 Forwarded: not-yet
 Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 Last-Update: 2011-12-31
---- a/nxcomp/Message.cpp	2012-03-01 03:46:39.220943822 +0100
-+++ b/nxcomp/Message.cpp	2012-03-01 03:47:27.605712530 +0100
+--- a/nxcomp/Message.cpp
++++ b/nxcomp/Message.cpp
 @@ -15,9 +15,9 @@
  /*                                                                        */
  /**************************************************************************/
@@ -19,8 +19,8 @@ Last-Update: 2011-12-31
  
  #include <algorithm>
  
---- a/nxcomp/Misc.cpp	2012-03-01 03:46:39.220943822 +0100
-+++ b/nxcomp/Misc.cpp	2012-03-01 03:47:27.605712530 +0100
+--- a/nxcomp/Misc.cpp
++++ b/nxcomp/Misc.cpp
 @@ -15,11 +15,11 @@
  /*                                                                        */
  /**************************************************************************/
@@ -37,8 +37,8 @@ Last-Update: 2011-12-31
  
  #include <errno.h>
  #include <string.h>
---- a/nxcomp/Misc.h	2012-03-01 03:46:39.220943822 +0100
-+++ b/nxcomp/Misc.h	2012-03-01 03:47:27.605712530 +0100
+--- a/nxcomp/Misc.h
++++ b/nxcomp/Misc.h
 @@ -21,8 +21,8 @@
  #include <iostream>
  #include <fstream>
@@ -50,8 +50,8 @@ Last-Update: 2011-12-31
  
  #ifdef __sun
  
---- a/nxcomp/Proxy.cpp	2012-03-01 03:46:39.224943897 +0100
-+++ b/nxcomp/Proxy.cpp	2012-03-01 03:47:27.605712530 +0100
+--- a/nxcomp/Proxy.cpp
++++ b/nxcomp/Proxy.cpp
 @@ -15,9 +15,9 @@
  /*                                                                        */
  /**************************************************************************/
@@ -64,8 +64,8 @@ Last-Update: 2011-12-31
  #include <sys/types.h>
  #include <sys/stat.h>
  
---- a/nxcomp/Split.cpp	2012-03-01 03:46:39.224943897 +0100
-+++ b/nxcomp/Split.cpp	2012-03-01 03:47:27.605712530 +0100
+--- a/nxcomp/Split.cpp
++++ b/nxcomp/Split.cpp
 @@ -16,7 +16,7 @@
  /**************************************************************************/
  

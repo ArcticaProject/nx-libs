@@ -9,11 +9,9 @@ Subject: [PATCH 08/40] Don't crash when we receive an FS_Error from the font
  nx-X11/lib/font/fc/fserve.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/nx-X11/lib/font/fc/fserve.c b/nx-X11/lib/font/fc/fserve.c
-index 0fdcc1d..c159b2b 100644
 --- a/nx-X11/lib/font/fc/fserve.c
 +++ b/nx-X11/lib/font/fc/fserve.c
-@@ -2366,7 +2366,7 @@ fs_read_list_info(FontPathElementPtr fpe, FSBlockDataPtr blockrec)
+@@ -2366,7 +2366,7 @@ fs_read_list_info(FontPathElementPtr fpe
      _fs_free_props (&binfo->info);
  
      rep = (fsListFontsWithXInfoReply *) fs_get_reply (conn, &ret);
@@ -22,6 +20,3 @@ index 0fdcc1d..c159b2b 100644
      {
  	if (ret == FSIO_BLOCK)
  	    return StillWorking;
--- 
-2.1.4
-

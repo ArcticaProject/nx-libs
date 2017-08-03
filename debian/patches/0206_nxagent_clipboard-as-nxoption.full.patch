@@ -3,7 +3,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 
 --- a/nx-X11/programs/Xserver/hw/nxagent/Args.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Args.c
-@@ -984,7 +984,7 @@
+@@ -984,7 +984,7 @@ int ddxProcessArgument(int argc, char *a
  
    if (!strcmp(argv[i], "-clipboard"))
    {
@@ -12,7 +12,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
      {
        nxagentChangeOption(Clipboard, ClipboardBoth);
      }
-@@ -996,7 +996,7 @@
+@@ -996,7 +996,7 @@ int ddxProcessArgument(int argc, char *a
      {
        nxagentChangeOption(Clipboard, ClipboardServer);
      }
@@ -21,7 +21,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
      {
        nxagentChangeOption(Clipboard, ClipboardNone);
      }
-@@ -1255,6 +1255,29 @@
+@@ -1255,6 +1255,29 @@ static void nxagentParseOptions(char *na
  
      return;
    }

@@ -6,7 +6,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 Last-Update: 2012-12-31
 --- a/nx-X11/config/cf/Imake.tmpl
 +++ b/nx-X11/config/cf/Imake.tmpl
-@@ -820,12 +820,12 @@
+@@ -820,12 +820,12 @@ TCLIBDIR = TclLibDir
  
  #ifndef UsrLibDir
  #ifdef ProjectRoot
@@ -21,7 +21,7 @@ Last-Update: 2012-12-31
  #ifndef AlternateUsrLibDir
  #define AlternateUsrLibDir NO
  #endif
-@@ -863,7 +863,7 @@
+@@ -863,7 +863,7 @@ TCLIBDIR = TclLibDir
  #endif
  #ifndef IncRoot
  #ifdef ProjectRoot
@@ -32,7 +32,7 @@ Last-Update: 2012-12-31
  #endif
 --- a/nx-X11/config/cf/X11.rules
 +++ b/nx-X11/config/cf/X11.rules
-@@ -36,17 +36,17 @@
+@@ -36,17 +36,17 @@ XCOMM $XFree86: xc/config/cf/X11.rules,v
  #endif
  
  #if defined(X11ProjectRoot)
@@ -54,7 +54,7 @@ Last-Update: 2012-12-31
  #endif
  #ifdef UsrLibDirPath
  # undef UsrLibDirPath
-@@ -60,7 +60,7 @@
+@@ -60,7 +60,7 @@ XCOMM $XFree86: xc/config/cf/X11.rules,v
  #if ImportX11
  # define XLdPreLibs	-L$(LIBSRC)
  #elif defined(UseInstalledX11) && defined(X11ProjectRoot)
@@ -63,7 +63,7 @@ Last-Update: 2012-12-31
  #else
  # define XLdPreLibs	/**/
  #endif
-@@ -70,7 +70,7 @@
+@@ -70,7 +70,7 @@ XCOMM $XFree86: xc/config/cf/X11.rules,v
  #define LdPreLibs	LdPreLib XLdPreLibs
  
  #ifdef X11ProjectRoot
@@ -72,7 +72,7 @@ Last-Update: 2012-12-31
  #else
  # define XLdPostLibs	/**/
  #endif
-@@ -86,7 +86,7 @@
+@@ -86,7 +86,7 @@ XCOMM $XFree86: xc/config/cf/X11.rules,v
  #  define TopXInclude	-I$(TOP)/exports/include
  #else
  #  ifdef X11ProjectRoot
@@ -81,7 +81,7 @@ Last-Update: 2012-12-31
  #  else
  #   define TopXInclude	/**/
  #  endif
-@@ -98,7 +98,7 @@
+@@ -98,7 +98,7 @@ XCOMM $XFree86: xc/config/cf/X11.rules,v
  #define TopIncludes	TopInclude $(TOP_X_INCLUDES)
  
  #if UseInstalledX11 && defined(X11ProjectRoot)
@@ -92,7 +92,7 @@ Last-Update: 2012-12-31
  #elif ImportX11
 --- a/nx-X11/config/cf/X11.tmpl
 +++ b/nx-X11/config/cf/X11.tmpl
-@@ -1401,7 +1401,7 @@
+@@ -1401,7 +1401,7 @@ FCHOWN_DEFINES = -DHAS_FCHOWN
  
  #ifndef BinDir
  #ifdef ProjectRoot
@@ -101,7 +101,7 @@ Last-Update: 2012-12-31
  #else
  #define BinDir /usr/bin/X11
  #endif
-@@ -1461,7 +1461,7 @@
+@@ -1461,7 +1461,7 @@ FCHOWN_DEFINES = -DHAS_FCHOWN
  #endif
  #ifndef LibDir
  # ifdef ProjectRoot
@@ -112,7 +112,7 @@ Last-Update: 2012-12-31
  # endif
 --- a/nx-X11/config/cf/linux.cf
 +++ b/nx-X11/config/cf/linux.cf
-@@ -1054,7 +1054,7 @@
+@@ -1054,7 +1054,7 @@ InstallNamedTargetNoClobber(install,file
  
  #if HaveLib64
  # ifndef LibDirName
@@ -123,7 +123,7 @@ Last-Update: 2012-12-31
  #  define SystemUsrLibDir	/usr/lib64
 --- a/nx-X11/config/cf/site.def
 +++ b/nx-X11/config/cf/site.def
-@@ -72,7 +72,7 @@
+@@ -72,7 +72,7 @@ XCOMM site:  $XFree86: xc/config/cf/site
  #ifdef AfterVendorCF
  
  #ifndef ProjectRoot
@@ -132,7 +132,7 @@ Last-Update: 2012-12-31
  #endif
  
  /*
-@@ -87,7 +87,7 @@
+@@ -87,7 +87,7 @@ XCOMM site:  $XFree86: xc/config/cf/site
   * ProjectRoot rather than in /etc/X11.  See also HasVarDirectory,
   * UseEtcX11 and UseSeparateConfDir.
   *
@@ -143,7 +143,7 @@ Last-Update: 2012-12-31
  
 --- a/nxproxy/Makefile.in
 +++ b/nxproxy/Makefile.in
-@@ -33,7 +33,7 @@
+@@ -33,7 +33,7 @@ LIBS    = @LIBS@
  
  srcdir      = @srcdir@
  prefix      = @prefix@

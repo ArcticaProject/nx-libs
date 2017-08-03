@@ -12,8 +12,6 @@ Reviewed-by: Peter Hutterer <peter.hutterer@who-t.net>
  nx-X11/programs/Xserver/randr/rrsdispatch.c | 3 +++
  1 file changed, 3 insertions(+)
 
-diff --git a/nx-X11/programs/Xserver/randr/rrsdispatch.c b/nx-X11/programs/Xserver/randr/rrsdispatch.c
-index 80d16b7..c4425ec 100644
 --- a/nx-X11/programs/Xserver/randr/rrsdispatch.c
 +++ b/nx-X11/programs/Xserver/randr/rrsdispatch.c
 @@ -28,6 +28,7 @@ SProcRRQueryVersion (ClientPtr client)
@@ -40,6 +38,3 @@ index 80d16b7..c4425ec 100644
      swaps(&stuff->length, n);
      swapl(&stuff->window, n);
      swaps(&stuff->enable, n);
--- 
-2.1.4
-

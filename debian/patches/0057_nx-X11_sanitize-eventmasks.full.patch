@@ -18,7 +18,7 @@ Abstract:
 
 --- a/nx-X11/programs/Xserver/hw/nxagent/Window.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Window.c
-@@ -327,7 +327,10 @@
+@@ -327,7 +327,10 @@ FIXME: We need to set save under on the
  
    if (mask & CWEventMask)
    {
@@ -30,7 +30,7 @@ Abstract:
    }
    #ifdef WARNING
    else
-@@ -2891,7 +2894,10 @@
+@@ -2891,7 +2894,10 @@ FIXME: Do we need to set save unders att
  
    if (mask & CWEventMask)
    {
@@ -42,7 +42,7 @@ Abstract:
    }
    #ifdef WARNING
    else
-@@ -3352,7 +3358,10 @@
+@@ -3352,7 +3358,10 @@ void nxagentSetTopLevelEventMask(pWin)
  
    if (nxagentOption(Rootless) && nxagentWindowTopLevel(pWin))
    {
@@ -56,7 +56,7 @@ Abstract:
    }
 --- a/nx-X11/programs/Xserver/hw/nxagent/Screen.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Screen.c
-@@ -1665,7 +1665,10 @@
+@@ -1665,7 +1665,10 @@ N/A
  
      attributes.background_pixel = nxagentBlackPixel;
  

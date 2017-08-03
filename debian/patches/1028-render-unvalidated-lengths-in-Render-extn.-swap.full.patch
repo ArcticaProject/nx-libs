@@ -99,7 +99,7 @@ Conflicts:
      swaps(&stuff->length, n);
      swapl(&stuff->gsid, n);
      swapl(&stuff->format, n);
-@@ -2234,6 +2244,7 @@ SProcRenderReferenceGlyphSet (ClientPtr 
+@@ -2234,6 +2244,7 @@ SProcRenderReferenceGlyphSet (ClientPtr
  {
      register int n;
      REQUEST(xRenderReferenceGlyphSetReq);
@@ -223,7 +223,7 @@ Conflicts:
      swaps(&stuff->length, n);
      swapl(&stuff->gsid, n);
      swapl(&stuff->format, n);
-@@ -2476,6 +2486,7 @@ SProcRenderReferenceGlyphSet (ClientPtr 
+@@ -2476,6 +2486,7 @@ SProcRenderReferenceGlyphSet (ClientPtr
  {
      register int n;
      REQUEST(xRenderReferenceGlyphSetReq);

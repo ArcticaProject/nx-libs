@@ -10,7 +10,7 @@ Author: Nito Martinez <Nito@Qindel.ES>
  #include "NXpack.h"
  
  #include "Control.h"
-@@ -594,44 +595,17 @@
+@@ -594,44 +595,17 @@ Control::Control()
    RemoteVersionMajor = -1;
    RemoteVersionMinor = -1;
    RemoteVersionPatch = -1;
@@ -63,7 +63,7 @@ Author: Nito Martinez <Nito@Qindel.ES>
    *logofs << "Control: Major version is " << LocalVersionMajor
 --- a/nxcomp/Control.h
 +++ b/nxcomp/Control.h
-@@ -299,17 +299,26 @@
+@@ -299,17 +299,26 @@ class Control
    // Version number of local and remote proxy.
    //
  
@@ -92,7 +92,7 @@ Author: Nito Martinez <Nito@Qindel.ES>
    // Which unpack methods are implemented in proxy?
 --- a/nxcomp/Loop.cpp
 +++ b/nxcomp/Loop.cpp
-@@ -14250,7 +14250,8 @@
+@@ -14250,7 +14250,8 @@ void PrintVersionInfo()
    cerr << "NXPROXY - " << "Version "
         << control -> LocalVersionMajor << "."
         << control -> LocalVersionMinor << "."
@@ -104,7 +104,7 @@ Author: Nito Martinez <Nito@Qindel.ES>
  }
 --- a/nxcomp/Makefile.in
 +++ b/nxcomp/Makefile.in
-@@ -105,7 +105,8 @@
+@@ -105,7 +105,8 @@ MSRC   =
  
  CSRC   = MD5.c					\
  	 Pack.c					\
@@ -116,7 +116,7 @@ Author: Nito Martinez <Nito@Qindel.ES>
  	 Children.cpp				\
 --- a/nxcomp/NX.h
 +++ b/nxcomp/NX.h
-@@ -442,6 +442,12 @@
+@@ -442,6 +442,12 @@ extern int NXTransParseEnvironment(const
  
  extern void NXTransCleanup(void) __attribute__((noreturn));
  

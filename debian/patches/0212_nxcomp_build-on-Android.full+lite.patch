@@ -15,7 +15,7 @@ Description: Fix FTBFS of nxproxy/nxcomp on Android
  #include <zlib.h>
 --- a/nxcomp/Loop.cpp
 +++ b/nxcomp/Loop.cpp
-@@ -4187,7 +4187,7 @@
+@@ -4187,7 +4187,7 @@ int SetupDisplaySocket(int &xServerAddrF
  
    #endif
  
@@ -24,7 +24,7 @@ Description: Fix FTBFS of nxproxy/nxcomp on Android
  
    if ((separator == NULL) || !isdigit(*(separator + 1)))
    {
-@@ -8240,7 +8240,7 @@
+@@ -8240,7 +8240,7 @@ int ParseEnvironmentOptions(const char *
    char *name;
    char *value;
  
@@ -33,7 +33,7 @@ Description: Fix FTBFS of nxproxy/nxcomp on Android
  
    if (value != NULL)
    {
-@@ -11010,7 +11010,7 @@
+@@ -11010,7 +11010,7 @@ int ParsePackOption(const char *opt)
                                        packMethod == PACK_LOSSLESS ||
                                            packMethod == PACK_ADAPTIVE)
    {
@@ -42,7 +42,7 @@ Description: Fix FTBFS of nxproxy/nxcomp on Android
  
      if (dash != NULL && strlen(dash) == 2 &&
              *(dash + 1) >= '0' && *(dash + 1) <= '9')
-@@ -12275,6 +12275,10 @@
+@@ -12275,6 +12275,10 @@ int SetShmem()
      control -> ShmemServer = 0;
    }
  
@@ -53,7 +53,7 @@ Description: Fix FTBFS of nxproxy/nxcomp on Android
    return 1;
  }
  
-@@ -13525,7 +13529,7 @@
+@@ -13525,7 +13529,7 @@ int ParseHostOption(const char *opt, cha
  
    int newPort = port;
  
@@ -112,7 +112,7 @@ Description: Fix FTBFS of nxproxy/nxcomp on Android
  
  #include <X11/X.h>
  #include <X11/Xatom.h>
-@@ -1079,7 +1081,6 @@
+@@ -1079,7 +1081,6 @@ int ServerChannel::handleRead(EncodeBuff
  
                    priority_++;
                  }
@@ -120,7 +120,7 @@ Description: Fix FTBFS of nxproxy/nxcomp on Android
                  //
                  // Account this data to the original opcode.
                  //
-@@ -1500,7 +1501,6 @@
+@@ -1500,7 +1501,6 @@ int ServerChannel::handleRead(EncodeBuff
              continue;
            }
          }
@@ -128,7 +128,7 @@ Description: Fix FTBFS of nxproxy/nxcomp on Android
          //
          // Check if user pressed the CTRL+ALT+SHIFT+ESC key
          // sequence because was unable to kill the session
-@@ -5475,7 +5475,7 @@
+@@ -5475,7 +5475,7 @@ int ServerChannel::handleColormap(unsign
      *logofs << "handleColormap: Dumping colormap entries:\n"
              << logofs_flush;
  
@@ -137,7 +137,7 @@ Description: Fix FTBFS of nxproxy/nxcomp on Android
  
      for (unsigned int i = 0; i < unpackState_[resource] ->
               colormap -> entries; i++)
-@@ -7100,7 +7100,12 @@
+@@ -7100,7 +7100,12 @@ int ServerChannel::handleShmemReply(Enco
    {
      encodeBuffer.encodeValue(stage, 2);
  
@@ -150,7 +150,7 @@ Description: Fix FTBFS of nxproxy/nxcomp on Android
      shmemState_ -> opcode  = *(buffer + 9);
      shmemState_ -> event   = *(buffer + 10);
      shmemState_ -> error   = *(buffer + 11);
-@@ -7128,7 +7133,12 @@
+@@ -7128,7 +7133,12 @@ int ServerChannel::handleShmemReply(Enco
        cerr << "Info" << ": Using shared memory parameters 1/"
             << (shmemState_ -> size / 1024) << "K.\n";
  
@@ -163,7 +163,7 @@ Description: Fix FTBFS of nxproxy/nxcomp on Android
  
        encodeBuffer.encodeBoolValue(1);
      }
-@@ -7241,7 +7251,7 @@
+@@ -7241,7 +7251,7 @@ int ServerChannel::handleShmemRequest(De
        // memory support is disabled by the
        // user.
        //
@@ -172,7 +172,7 @@ Description: Fix FTBFS of nxproxy/nxcomp on Android
        if (control -> ShmemServer == 1 &&
                control -> ShmemServerSize > 0 &&
                    enableServer == 1)
-@@ -7252,8 +7262,12 @@
+@@ -7252,8 +7262,12 @@ int ServerChannel::handleShmemRequest(De
        {
          memcpy(buffer + 8, "NO-MIT-", 7);
        }
@@ -186,7 +186,7 @@ Description: Fix FTBFS of nxproxy/nxcomp on Android
                                opcodeStore_ -> getShmemParameters, stage);
  
        //
-@@ -7289,9 +7303,13 @@
+@@ -7289,9 +7303,13 @@ int ServerChannel::handleShmemRequest(De
  
          shmemState_ -> size = control -> ShmemServerSize;
  
@@ -201,7 +201,7 @@ Description: Fix FTBFS of nxproxy/nxcomp on Android
          if (shmemState_ -> id >= 0)
          {
            #if defined(TEST) || defined(INFO)
-@@ -7302,8 +7320,12 @@
+@@ -7302,8 +7320,12 @@ int ServerChannel::handleShmemRequest(De
            #endif
  
  
@@ -215,7 +215,7 @@ Description: Fix FTBFS of nxproxy/nxcomp on Android
            if (shmemState_ -> address != NULL)
            {
              #ifdef TEST
-@@ -7437,6 +7459,10 @@
+@@ -7437,6 +7459,10 @@ int ServerChannel::handleShmem(unsigned
  
      return 0;
    }
@@ -226,7 +226,7 @@ Description: Fix FTBFS of nxproxy/nxcomp on Android
  
    //
    // Ignore null requests and requests that will not result
-@@ -8054,14 +8080,22 @@
+@@ -8054,14 +8080,22 @@ void ServerChannel::handleShmemStateRemo
  {
    if (shmemState_ != NULL)
    {

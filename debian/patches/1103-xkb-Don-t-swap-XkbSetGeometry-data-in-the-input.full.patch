@@ -30,8 +30,6 @@ index 2405090..7db0959 100644
  nx-X11/programs/Xserver/xkb/xkb.c | 35 +++++++++++++++++++----------------
  1 file changed, 19 insertions(+), 16 deletions(-)
 
-diff --git a/nx-X11/programs/Xserver/xkb/xkb.c b/nx-X11/programs/Xserver/xkb/xkb.c
-index 2561c89..d8b5b2c 100644
 --- a/nx-X11/programs/Xserver/xkb/xkb.c
 +++ b/nx-X11/programs/Xserver/xkb/xkb.c
 @@ -4441,15 +4441,14 @@ static char *
@@ -110,6 +108,3 @@ index 2561c89..d8b5b2c 100644
  	    doodad->text.color_ndx= dWire->text.colorNdx;
  	    doodad->text.text= _GetCountedString(&wire,client->swapped);
  	    doodad->text.font= _GetCountedString(&wire,client->swapped);
--- 
-1.9.1
-

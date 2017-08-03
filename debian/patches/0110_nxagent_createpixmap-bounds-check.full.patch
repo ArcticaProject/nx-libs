@@ -18,7 +18,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 Last-Update: 2011-12-31
 --- a/nx-X11/programs/Xserver/hw/nxagent/NXdispatch.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/NXdispatch.c
-@@ -1973,6 +1973,23 @@
+@@ -1973,6 +1973,23 @@ ProcCreatePixmap(client)
  	client->errorValue = 0;
          return BadValue;
      }

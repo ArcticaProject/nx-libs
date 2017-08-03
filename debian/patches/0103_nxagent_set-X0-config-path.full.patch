@@ -8,7 +8,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 Last-Update: 2011-12-31
 --- a/nx-X11/programs/Xserver/hw/nxagent/Keyboard.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Keyboard.c
-@@ -136,7 +136,7 @@
+@@ -136,7 +136,7 @@ extern        Status        XkbGetContro
  #define XKB_ALTERNATE_BASE_DIRECTORY   "/usr/X11R6/lib/X11/xkb"
  #endif
  #ifndef XKB_CONFIG_FILE
@@ -17,7 +17,7 @@ Last-Update: 2011-12-31
  #endif
  #ifndef XKB_DFLT_RULES_FILE
  #define XKB_DFLT_RULES_FILE  "xfree86"
-@@ -985,8 +985,7 @@
+@@ -985,8 +985,7 @@ XkbError:
  
          XkbGetControls(nxagentDisplay, XkbAllControlsMask, xkb);
  
@@ -27,7 +27,7 @@ Last-Update: 2011-12-31
  
          nxagentXkbConfigFilePath = malloc((nxagentXkbConfigFilePathSize + 1) * sizeof(char));
  
-@@ -995,9 +994,7 @@
+@@ -995,9 +994,7 @@ XkbError:
            FatalError("nxagentKeyboardProc: malloc failed.");
          }
  

@@ -27,11 +27,9 @@ fixup swap
  nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c | 59 +++++++++++++++++-----------
  2 files changed, 71 insertions(+), 46 deletions(-)
 
-diff --git a/nx-X11/programs/Xserver/GL/glx/glxcmds.c b/nx-X11/programs/Xserver/GL/glx/glxcmds.c
-index 831c65b..20c12f3 100644
 --- a/nx-X11/programs/Xserver/GL/glx/glxcmds.c
 +++ b/nx-X11/programs/Xserver/GL/glx/glxcmds.c
-@@ -1535,6 +1535,8 @@ int __glXRenderLarge(__GLXclientState *cl, GLbyte *pc)
+@@ -1535,6 +1535,8 @@ int __glXRenderLarge(__GLXclientState *c
      ** duplicated there.
      */
      
@@ -40,7 +38,7 @@ index 831c65b..20c12f3 100644
      req = (xGLXRenderLargeReq *) pc;
      glxc = __glXForceCurrent(cl, req->contextTag, &error);
      if (!glxc) {
-@@ -1542,12 +1544,15 @@ int __glXRenderLarge(__GLXclientState *cl, GLbyte *pc)
+@@ -1542,12 +1544,15 @@ int __glXRenderLarge(__GLXclientState *c
  	__glXResetLargeCommandStatus(cl);
  	return error;
      }
@@ -57,7 +55,7 @@ index 831c65b..20c12f3 100644
  	client->errorValue = req->length;
  	/* Reset in case this isn't 1st request. */
  	__glXResetLargeCommandStatus(cl);
-@@ -1557,7 +1562,7 @@ int __glXRenderLarge(__GLXclientState *cl, GLbyte *pc)
+@@ -1557,7 +1562,7 @@ int __glXRenderLarge(__GLXclientState *c
      
      if (cl->largeCmdRequestsSoFar == 0) {
  	__GLXrenderSizeData *entry;
@@ -66,7 +64,7 @@ index 831c65b..20c12f3 100644
  	/*
  	** This is the first request of a multi request command.
  	** Make enough space in the buffer, then copy the entire request.
-@@ -1567,9 +1572,13 @@ int __glXRenderLarge(__GLXclientState *cl, GLbyte *pc)
+@@ -1567,9 +1572,13 @@ int __glXRenderLarge(__GLXclientState *c
  	    return __glXBadLargeRequest;
  	}
  
@@ -81,7 +79,7 @@ index 831c65b..20c12f3 100644
  
  	/*
  	** Check for core opcodes and grab entry data.
-@@ -1603,16 +1612,13 @@ int __glXRenderLarge(__GLXclientState *cl, GLbyte *pc)
+@@ -1603,16 +1612,13 @@ int __glXRenderLarge(__GLXclientState *c
  	    if (extra < 0) {
  	        return BadLength;
  	    }
@@ -104,7 +102,7 @@ index 831c65b..20c12f3 100644
  	/*
  	** Make enough space in the buffer, then copy the entire request.
  	*/
-@@ -1641,6 +1647,7 @@ int __glXRenderLarge(__GLXclientState *cl, GLbyte *pc)
+@@ -1641,6 +1647,7 @@ int __glXRenderLarge(__GLXclientState *c
  	** We are receiving subsequent (i.e. not the first) requests of a
  	** multi request command.
  	*/
@@ -112,7 +110,7 @@ index 831c65b..20c12f3 100644
  
  	/*
  	** Check the request number and the total request count.
-@@ -1659,7 +1666,13 @@ int __glXRenderLarge(__GLXclientState *cl, GLbyte *pc)
+@@ -1659,7 +1666,13 @@ int __glXRenderLarge(__GLXclientState *c
  	/*
  	** Check that we didn't get too much data.
  	*/
@@ -127,7 +125,7 @@ index 831c65b..20c12f3 100644
  	    client->errorValue = dataBytes;
  	    __glXResetLargeCommandStatus(cl);
  	    return __glXBadLargeRequest;
-@@ -1673,17 +1686,16 @@ int __glXRenderLarge(__GLXclientState *cl, GLbyte *pc)
+@@ -1673,17 +1686,16 @@ int __glXRenderLarge(__GLXclientState *c
  	    ** This is the last request; it must have enough bytes to complete
  	    ** the command.
  	    */
@@ -154,11 +152,9 @@ index 831c65b..20c12f3 100644
  		client->errorValue = dataBytes;
  		__glXResetLargeCommandStatus(cl);
  		return __glXBadLargeRequest;
-diff --git a/nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c b/nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c
-index 2685355..2e228c0 100644
 --- a/nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c
 +++ b/nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c
-@@ -587,6 +587,8 @@ int __glXSwapRenderLarge(__GLXclientState *cl, GLbyte *pc)
+@@ -587,6 +587,8 @@ int __glXSwapRenderLarge(__GLXclientStat
      ** duplicated there.
      */
      
@@ -167,7 +163,7 @@ index 2685355..2e228c0 100644
      req = (xGLXRenderLargeReq *) pc;
      __GLX_SWAP_SHORT(&req->length);
      __GLX_SWAP_INT(&req->contextTag);
-@@ -599,12 +601,15 @@ int __glXSwapRenderLarge(__GLXclientState *cl, GLbyte *pc)
+@@ -599,12 +601,15 @@ int __glXSwapRenderLarge(__GLXclientStat
  	__glXResetLargeCommandStatus(cl);
  	return error;
      }
@@ -184,7 +180,7 @@ index 2685355..2e228c0 100644
  	client->errorValue = req->length;
  	/* Reset in case this isn't 1st request. */
  	__glXResetLargeCommandStatus(cl);
-@@ -614,7 +619,7 @@ int __glXSwapRenderLarge(__GLXclientState *cl, GLbyte *pc)
+@@ -614,7 +619,7 @@ int __glXSwapRenderLarge(__GLXclientStat
      
      if (cl->largeCmdRequestsSoFar == 0) {
  	__GLXrenderSizeData *entry;
@@ -193,7 +189,7 @@ index 2685355..2e228c0 100644
  	size_t cmdlen;
  	/*
  	** This is the first request of a multi request command.
-@@ -624,12 +629,17 @@ int __glXSwapRenderLarge(__GLXclientState *cl, GLbyte *pc)
+@@ -624,12 +629,17 @@ int __glXSwapRenderLarge(__GLXclientStat
  	    client->errorValue = req->requestNumber;
  	    return __glXBadLargeRequest;
  	}
@@ -212,7 +208,7 @@ index 2685355..2e228c0 100644
  	if ( (opcode >= __GLX_MIN_RENDER_OPCODE) && 
  	     (opcode <= __GLX_MAX_RENDER_OPCODE) ) {
  	    entry = &__glXRenderSizeTable[opcode];
-@@ -661,16 +671,12 @@ int __glXSwapRenderLarge(__GLXclientState *cl, GLbyte *pc)
+@@ -661,16 +671,12 @@ int __glXSwapRenderLarge(__GLXclientStat
  	    if (extra < 0) {
  		return BadLength;
  	    }
@@ -234,7 +230,7 @@ index 2685355..2e228c0 100644
  	/*
  	** Make enough space in the buffer, then copy the entire request.
  	*/
-@@ -698,6 +704,7 @@ int __glXSwapRenderLarge(__GLXclientState *cl, GLbyte *pc)
+@@ -698,6 +704,7 @@ int __glXSwapRenderLarge(__GLXclientStat
  	** We are receiving subsequent (i.e. not the first) requests of a
  	** multi request command.
  	*/
@@ -242,7 +238,7 @@ index 2685355..2e228c0 100644
  
  	/*
  	** Check the request number and the total request count.
-@@ -716,7 +723,13 @@ int __glXSwapRenderLarge(__GLXclientState *cl, GLbyte *pc)
+@@ -716,7 +723,13 @@ int __glXSwapRenderLarge(__GLXclientStat
  	/*
  	** Check that we didn't get too much data.
  	*/
@@ -257,7 +253,7 @@ index 2685355..2e228c0 100644
  	    client->errorValue = dataBytes;
  	    __glXResetLargeCommandStatus(cl);
  	    return __glXBadLargeRequest;
-@@ -730,17 +743,17 @@ int __glXSwapRenderLarge(__GLXclientState *cl, GLbyte *pc)
+@@ -730,17 +743,17 @@ int __glXSwapRenderLarge(__GLXclientStat
  	    ** This is the last request; it must have enough bytes to complete
  	    ** the command.
  	    */
@@ -285,6 +281,3 @@ index 2685355..2e228c0 100644
  		client->errorValue = dataBytes;
  		__glXResetLargeCommandStatus(cl);
  		return __glXBadLargeRequest;
--- 
-2.1.4
-

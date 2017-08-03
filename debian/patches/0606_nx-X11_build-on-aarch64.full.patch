@@ -2,7 +2,7 @@ Description: Provide build support for aarch64 architecture
 Author: Orion Poplawski <orion@cora.nwra.com>
 --- a/nx-X11/config/cf/Imake.cf
 +++ b/nx-X11/config/cf/Imake.cf
-@@ -908,6 +908,9 @@
+@@ -908,6 +908,9 @@ XCOMM Keep cpp from replacing path eleme
  #  endif
  #  undef __ARMEB__
  # endif
@@ -14,7 +14,7 @@ Author: Orion Poplawski <orion@cora.nwra.com>
  #  undef mc68000
 --- a/nx-X11/config/cf/linux.cf
 +++ b/nx-X11/config/cf/linux.cf
-@@ -844,6 +844,16 @@
+@@ -844,6 +844,16 @@ InstallNamedTargetNoClobber(install,file
  # define ServerExtraDefines	-DGCCUSESGAS XFree86ServerDefines
  #endif /* Arm32Achitecture */
  
@@ -33,7 +33,7 @@ Author: Orion Poplawski <orion@cora.nwra.com>
  # define LinuxMachineDefines	-D__hppa__
 --- a/nx-X11/config/cf/Imake.tmpl
 +++ b/nx-X11/config/cf/Imake.tmpl
-@@ -526,6 +526,10 @@
+@@ -526,6 +526,10 @@ XCOMM the platform-specific parameters -
  #define ByteOrder		X_BIG_ENDIAN
  #elif defined(Arm32Architecture)
  #define ByteOrder		X_LITTLE_ENDIAN
@@ -46,7 +46,7 @@ Author: Orion Poplawski <orion@cora.nwra.com>
  #elif defined(PpcArchitecture) || defined(Ppc64Architecture)
 --- a/nx-X11/programs/Xserver/include/servermd.h
 +++ b/nx-X11/programs/Xserver/include/servermd.h
-@@ -154,6 +154,28 @@
+@@ -154,6 +154,28 @@ SOFTWARE.
  
  #endif /* __arm32__ */
  

@@ -91,7 +91,7 @@ Abstract:
      #endif
  
      nxagentMarkCorruptedRegion(pDst -> pDrawable, pDstRegion);
-@@ -1176,10 +1179,12 @@ void nxagentGlyphs(CARD8 op, PicturePtr 
+@@ -1176,10 +1179,12 @@ void nxagentGlyphs(CARD8 op, PicturePtr
    }
  
    #ifdef TEST
@@ -108,7 +108,7 @@ Abstract:
    #endif
  
    pForm = NULL;
-@@ -1264,9 +1269,11 @@ void nxagentGlyphs(CARD8 op, PicturePtr 
+@@ -1264,9 +1269,11 @@ void nxagentGlyphs(CARD8 op, PicturePtr
            nxagentDrawableStatus(pSrc -> pDrawable) == NotSynchronized)
    {
      #ifdef TEST
@@ -123,7 +123,7 @@ Abstract:
      #endif
  
      /*
-@@ -1280,12 +1287,14 @@ void nxagentGlyphs(CARD8 op, PicturePtr 
+@@ -1280,12 +1287,14 @@ void nxagentGlyphs(CARD8 op, PicturePtr
      if (pSrc -> repeat == 1 || nxagentGlyphsExtents == NullBox)
      {
        #ifdef DEBUG
@@ -144,7 +144,7 @@ Abstract:
        #endif
  
        nxagentSynchronizeBox(pSrc -> pDrawable, NullBox, NEVER_BREAK);
-@@ -1293,12 +1302,14 @@ void nxagentGlyphs(CARD8 op, PicturePtr 
+@@ -1293,12 +1302,14 @@ void nxagentGlyphs(CARD8 op, PicturePtr
      else
      {
        #ifdef DEBUG
@@ -165,7 +165,7 @@ Abstract:
        #endif
  
        nxagentSynchronizeBox(pSrc -> pDrawable, &glyphBox, NEVER_BREAK);
-@@ -1314,20 +1325,24 @@ void nxagentGlyphs(CARD8 op, PicturePtr 
+@@ -1314,20 +1325,24 @@ void nxagentGlyphs(CARD8 op, PicturePtr
            nxagentDrawableStatus(pDst -> pDrawable) == NotSynchronized)
    {
      #ifdef TEST
@@ -199,7 +199,7 @@ Abstract:
        #endif
  
        nxagentSynchronizeBox(pDst -> pDrawable, NullBox, NEVER_BREAK);
-@@ -1335,12 +1350,14 @@ void nxagentGlyphs(CARD8 op, PicturePtr 
+@@ -1335,12 +1350,14 @@ void nxagentGlyphs(CARD8 op, PicturePtr
      else
      {
        #ifdef DEBUG
@@ -220,7 +220,7 @@ Abstract:
        #endif
  
        nxagentSynchronizeBox(pDst -> pDrawable, &glyphBox, NEVER_BREAK);
-@@ -1355,9 +1372,11 @@ void nxagentGlyphs(CARD8 op, PicturePtr 
+@@ -1355,9 +1372,11 @@ void nxagentGlyphs(CARD8 op, PicturePtr
    nxagentSetDrawableContainGlyphs(pDst -> pDrawable, 1);
  
    #ifdef TEST
@@ -306,7 +306,7 @@ Abstract:
      nxagentMarkCorruptedRegion(pDst -> pDrawable, pDstRegion);
 --- a/nx-X11/programs/Xserver/hw/nxagent/X/NXdispatch.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/X/NXdispatch.c
-@@ -735,7 +735,7 @@ Reply   Total	Cached	Bits In			Bits Out	
+@@ -735,7 +735,7 @@ Reply   Total	Cached	Bits In			Bits Out
  
  		client->sequence++;
  #ifdef DEBUG

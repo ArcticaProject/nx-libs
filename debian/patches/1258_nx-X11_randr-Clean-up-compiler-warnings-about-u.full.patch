@@ -19,8 +19,6 @@ Date:   Thu Jun 21 18:42:46 2012 -0700
     v2: backport to nx-libs 3.6.x (Ulrich Sibiller)
     v3: backport to nx-libs 3.5.0.x (Mihai Moldovan)
 
-diff --git a/nx-X11/programs/Xserver/randr/rrcrtc.c b/nx-X11/programs/Xserver/randr/rrcrtc.c
-index fb82a80..8a34962 100644
 --- a/nx-X11/programs/Xserver/randr/rrcrtc.c
 +++ b/nx-X11/programs/Xserver/randr/rrcrtc.c
 @@ -642,7 +642,6 @@ ProcRRSetCrtcConfig (ClientPtr client)
@@ -59,11 +57,9 @@ index fb82a80..8a34962 100644
      /*
       * Validate requested rotation
       */
-diff --git a/nx-X11/programs/Xserver/randr/rrinfo.c b/nx-X11/programs/Xserver/randr/rrinfo.c
-index 7e77d39..470e1bb 100644
 --- a/nx-X11/programs/Xserver/randr/rrinfo.c
 +++ b/nx-X11/programs/Xserver/randr/rrinfo.c
-@@ -83,6 +83,7 @@ RRScanOldConfig (ScreenPtr pScreen, Rotation rotations)
+@@ -83,6 +83,7 @@ RRScanOldConfig (ScreenPtr pScreen, Rota
      int		i;
      CARD16	minWidth = MAXSHORT, minHeight = MAXSHORT;
      CARD16	maxWidth = 0, maxHeight = 0;
@@ -71,7 +67,7 @@ index 7e77d39..470e1bb 100644
      
      /*
       * First time through, create a crtc and output and hook
-@@ -153,11 +154,11 @@ RRScanOldConfig (ScreenPtr pScreen, Rotation rotations)
+@@ -153,11 +154,11 @@ RRScanOldConfig (ScreenPtr pScreen, Rota
      /* find size bounds */
      for (i = 0; i < output->numModes + output->numUserModes; i++) 
      {
@@ -86,11 +82,9 @@ index 7e77d39..470e1bb 100644
  	
  	if (width < minWidth) minWidth = width;
  	if (width > maxWidth) maxWidth = width;
-diff --git a/nx-X11/programs/Xserver/randr/rrmode.c b/nx-X11/programs/Xserver/randr/rrmode.c
-index 43ffe07..db0af33 100644
 --- a/nx-X11/programs/Xserver/randr/rrmode.c
 +++ b/nx-X11/programs/Xserver/randr/rrmode.c
-@@ -194,7 +194,7 @@ RRModesForScreen (ScreenPtr pScreen, int *num_ret)
+@@ -194,7 +194,7 @@ RRModesForScreen (ScreenPtr pScreen, int
      for (o = 0; o < pScrPriv->numOutputs; o++)
      {
  	RROutputPtr	output = pScrPriv->outputs[o];

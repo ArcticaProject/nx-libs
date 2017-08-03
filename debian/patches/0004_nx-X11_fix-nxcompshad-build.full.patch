@@ -7,7 +7,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 Last-Update: 2011-12-31
 --- a/nx-X11/programs/Xserver/Imakefile
 +++ b/nx-X11/programs/Xserver/Imakefile
-@@ -1047,7 +1047,7 @@
+@@ -1047,7 +1047,7 @@ $(NX_XSHADOWLIBTARGET): $(NX_XSHADOWCONF
  #else
  $(NX_XSHADOWLIBTARGET): $(NX_XSHADOWCONFIGTARGET)
  	cd $(NX_XSHADOWLIBDIR) && \

@@ -6,7 +6,7 @@ Author: Oleksandr Shneyder <oleksandr.shneyder@obviously-nice.de>
 Last-Update: 2012-01-11
 --- a/nx-X11/programs/Xserver/hw/nxagent/Display.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Display.c
-@@ -77,6 +77,7 @@
+@@ -77,6 +77,7 @@ is" without express or implied warranty.
  #include "NXlib.h"
  
  #include NXAGENT_ICON_NAME
@@ -14,7 +14,7 @@ Last-Update: 2012-01-11
  
  /*
   * Set here the required log level.
-@@ -1941,12 +1942,29 @@
+@@ -1941,12 +1942,29 @@ Bool nxagentMakeIcon(Display *display, P
    Bool success = False;
    XlibPixmap IconPixmap;
    XlibPixmap IconShape;
@@ -46,7 +46,7 @@ Last-Update: 2012-01-11
  
      if (icon_fp != NULL)
      {
-@@ -1985,7 +2003,7 @@
+@@ -1985,7 +2003,7 @@ Bool nxagentMakeIcon(Display *display, P
    {
       status = XpmCreatePixmapFromData(display,
                                          DefaultRootWindow(display),

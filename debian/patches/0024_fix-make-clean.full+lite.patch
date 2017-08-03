@@ -3,7 +3,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 
 --- a/nxcomp/Makefile.in
 +++ b/nxcomp/Makefile.in
-@@ -313,4 +313,4 @@
+@@ -313,4 +313,4 @@ clean:
  
  distclean:	clean
  		-rm -rf autom4te.cache config.status config.log \
@@ -11,7 +11,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 +		config.cache depend.status Makefile tags configure
 --- a/nxproxy/Makefile.in
 +++ b/nxproxy/Makefile.in
-@@ -109,4 +109,4 @@
+@@ -109,4 +109,4 @@ clean:
  		$(PROGRAM) $(PROGRAM).exe $(LIBFULL) $(LIBLOAD) $(LIBSHARED) $(LIBARCHIVE)
  
  distclean:	clean

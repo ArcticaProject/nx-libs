@@ -12,8 +12,6 @@ Reviewed-by: Peter Hutterer <peter.hutterer@who-t.net>
  nx-X11/programs/Xserver/Xext/xcmisc.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/nx-X11/programs/Xserver/Xext/xcmisc.c b/nx-X11/programs/Xserver/Xext/xcmisc.c
-index c7bb72d..0a9a090 100644
 --- a/nx-X11/programs/Xserver/Xext/xcmisc.c
 +++ b/nx-X11/programs/Xserver/Xext/xcmisc.c
 @@ -228,6 +228,7 @@ SProcXCMiscGetXIDList(client)
@@ -24,6 +22,3 @@ index c7bb72d..0a9a090 100644
  
      swaps(&stuff->length, n);
      swapl(&stuff->count, n);
--- 
-2.1.4
-

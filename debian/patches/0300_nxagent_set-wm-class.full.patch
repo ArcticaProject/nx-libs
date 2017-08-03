@@ -15,7 +15,7 @@ Author: Oleksandr Shneyder <oleksandr.shneyder@obviously-nice.de>
 Last-Update: 2012-01-11
 --- a/nx-X11/programs/Xserver/hw/nxagent/Screen.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Screen.c
-@@ -1762,6 +1762,42 @@
+@@ -1762,6 +1762,42 @@ N/A
                    nxagentDefaultWindows[pScreen->myNum]);
        #endif
  

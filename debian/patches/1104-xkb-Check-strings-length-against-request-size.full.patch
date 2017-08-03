@@ -19,8 +19,6 @@ Signed-off-by: Julien Cristau <jcristau@debian.org>
  nx-X11/programs/Xserver/xkb/xkb.c | 66 ++++++++++++++++++++++++---------------
  1 file changed, 41 insertions(+), 25 deletions(-)
 
-diff --git a/nx-X11/programs/Xserver/xkb/xkb.c b/nx-X11/programs/Xserver/xkb/xkb.c
-index d8b5b2c..778269f 100644
 --- a/nx-X11/programs/Xserver/xkb/xkb.c
 +++ b/nx-X11/programs/Xserver/xkb/xkb.c
 @@ -4437,26 +4437,30 @@ ProcXkbGetGeometry(ClientPtr client)
@@ -143,6 +141,3 @@ index d8b5b2c..778269f 100644
          if (!XkbAddGeomColor(geom,name,geom->num_colors)) {
              xfree(name);
  	    return BadAlloc;
--- 
-1.9.1
-

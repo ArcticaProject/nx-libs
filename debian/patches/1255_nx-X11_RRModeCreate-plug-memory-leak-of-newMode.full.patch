@@ -23,8 +23,6 @@ Date:   Sat Jul 14 11:21:15 2012 -0700
     v2: backport to nx-libs 3.6.x (Ulrich Sibiller)
     v3: backport to nx-libs 3.5.0.x (Mihai Moldovan)
 
-diff --git a/nx-X11/programs/Xserver/randr/rrmode.c b/nx-X11/programs/Xserver/randr/rrmode.c
-index 09c0113..43ffe07 100644
 --- a/nx-X11/programs/Xserver/randr/rrmode.c
 +++ b/nx-X11/programs/Xserver/randr/rrmode.c
 @@ -98,8 +98,10 @@ RRModeCreate (xRRModeInfo   *modeInfo,

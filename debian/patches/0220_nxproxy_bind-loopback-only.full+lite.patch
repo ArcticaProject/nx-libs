@@ -2,7 +2,7 @@ Description: Force NX proxy to bind to loopback devices only (loopback option)
 Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 --- a/nxcomp/Loop.cpp
 +++ b/nxcomp/Loop.cpp
-@@ -952,6 +952,7 @@
+@@ -952,6 +952,7 @@ static char listenHost[DEFAULT_STRING_LE
  static char displayHost[DEFAULT_STRING_LENGTH] = { 0 };
  static char authCookie[DEFAULT_STRING_LENGTH]  = { 0 };
  
@@ -10,7 +10,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
  static int proxyPort = DEFAULT_NX_PROXY_PORT;
  static int xPort     = DEFAULT_NX_X_PORT;
  
-@@ -3959,7 +3960,14 @@
+@@ -3959,7 +3960,14 @@ int SetupTcpSocket()
  
    tcpAddr.sin_family = AF_INET;
    tcpAddr.sin_port = htons(proxyPortTCP);
@@ -26,7 +26,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
  
    if (bind(tcpFD, (sockaddr *) &tcpAddr, sizeof(tcpAddr)) == -1)
    {
-@@ -4550,7 +4558,14 @@
+@@ -4550,7 +4558,14 @@ int ListenConnection(int port, const cha
  
    tcpAddr.sin_family = AF_INET;
    tcpAddr.sin_port = htons(portTCP);
@@ -42,7 +42,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
  
    if (bind(newFD, (sockaddr *) &tcpAddr, sizeof(tcpAddr)) == -1)
    {
-@@ -6718,7 +6733,14 @@
+@@ -6718,7 +6733,14 @@ int WaitForRemote(int portNum)
  
    #ifdef __APPLE__
  
@@ -58,7 +58,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
  
    #else
  
-@@ -8397,6 +8419,10 @@
+@@ -8397,6 +8419,10 @@ int ParseEnvironmentOptions(const char *
  
        listenPort = ValidateArg("local", name, value);
      }
@@ -69,7 +69,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
      else if (strcasecmp(name, "accept") == 0)
      {
        if (*connectHost != '\0')
-@@ -13778,7 +13804,14 @@
+@@ -13778,7 +13804,14 @@ int ParseListenOption(int &address)
      }
      else
      {
@@ -102,7 +102,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
  // TCP port offset applied to any NX port specification.
  //
  
-@@ -137,6 +145,8 @@
+@@ -137,6 +145,8 @@ static const char UsageInfo[] =
  \n\
    listen=n     Local port used for accepting the proxy connection.\n\
  \n\
@@ -113,7 +113,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
    connect=s    Name or IP of host that the proxy will connect to.\n\
 --- a/nxcomp/Misc.h
 +++ b/nxcomp/Misc.h
-@@ -90,6 +90,14 @@
+@@ -90,6 +90,14 @@ extern const int DEFAULT_NX_SLAVE_PORT_C
  extern const int DEFAULT_NX_SLAVE_PORT_SERVER_OFFSET;
  
  //

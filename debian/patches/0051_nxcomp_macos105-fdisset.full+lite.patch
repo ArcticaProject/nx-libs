@@ -15,7 +15,7 @@ Author: Mihai Moldovan <ionic@ionic.de>
 
 --- a/nxcomp/Agent.h
 +++ b/nxcomp/Agent.h
-@@ -149,30 +149,38 @@
+@@ -149,30 +149,38 @@ class Agent
  
    int remoteCanRead(const fd_set * const readSet)
    {
@@ -60,7 +60,7 @@ Author: Mihai Moldovan <ionic@ionic.de>
                  transport_ -> queuable() != 0 &&
                      canRead_ == 1);
    }
-@@ -203,13 +211,17 @@
+@@ -203,13 +211,17 @@ class Agent
  
    int proxyCanRead(const fd_set * const readSet)
    {

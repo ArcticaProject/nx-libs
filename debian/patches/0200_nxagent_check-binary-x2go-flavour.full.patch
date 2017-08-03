@@ -9,7 +9,7 @@ Author: Oleksandr Shneyder <oleksandr.shneyder@obviously-nice.de>
 Last-Update: 2012-01-11
 --- a/nx-X11/programs/Xserver/hw/nxagent/Init.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Init.c
-@@ -177,6 +177,29 @@
+@@ -177,6 +177,29 @@ int nxagentSaveUnder;
  
  int nxagentDoFullGeneration = 1;
  
@@ -39,7 +39,7 @@ Last-Update: 2012-01-11
  /*
   * Called at X server's initialization.
   */
-@@ -193,6 +216,11 @@
+@@ -193,6 +216,11 @@ void InitOutput(ScreenInfo *screenInfo,
    #endif
  
    /*
@@ -53,7 +53,7 @@ Last-Update: 2012-01-11
  
 --- a/nx-X11/programs/Xserver/hw/nxagent/Init.h
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Init.h
-@@ -37,6 +37,8 @@
+@@ -37,6 +37,8 @@ extern int nxagentDoFullGeneration;
  extern int nxagentBackingStore;
  extern int nxagentSaveUnder;
  

@@ -11,8 +11,6 @@ Particularly the following macros have been tested -DTEST -DDEBUG -DDUMP -DFLUSH
  nxcomp/Proxy.cpp     | 2 +-
  3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/nxcomp/Agent.h b/nxcomp/Agent.h
-index ded344d..2c5badf 100644
 --- a/nxcomp/Agent.h
 +++ b/nxcomp/Agent.h
 @@ -217,7 +217,7 @@ class Agent
@@ -24,11 +22,9 @@ index ded344d..2c5badf 100644
              << ".\n" << logofs_flush;
      #endif
  
-diff --git a/nxcomp/ClearArea.cpp b/nxcomp/ClearArea.cpp
-index 223a3b3..83b7281 100644
 --- a/nxcomp/ClearArea.cpp
 +++ b/nxcomp/ClearArea.cpp
-@@ -92,7 +92,7 @@ void ClearAreaStore::dumpIdentity(const Message *message) const
+@@ -92,7 +92,7 @@ void ClearAreaStore::dumpIdentity(const
  
    ClearAreaMessage *clearArea = (ClearAreaMessage *) message;
  
@@ -37,11 +33,9 @@ index 223a3b3..83b7281 100644
            << ", window " << clearArea -> window  << ", x " << clearArea -> x 
            << ", y " << clearArea -> y << ", width  " << clearArea -> width 
            << ", height " << clearArea -> height << ", size " << clearArea -> size_ 
-diff --git a/nxcomp/Proxy.cpp b/nxcomp/Proxy.cpp
-index 9b38661..4eb99cf 100644
 --- a/nxcomp/Proxy.cpp
 +++ b/nxcomp/Proxy.cpp
-@@ -5176,7 +5176,7 @@ char *Proxy::handleSaveAllStores(const char *savePath) const
+@@ -5176,7 +5176,7 @@ char *Proxy::handleSaveAllStores(const c
  
    *(cacheDumpName + DEFAULT_STRING_LENGTH - 1) = '\0';
  

@@ -24,11 +24,9 @@ Signed-off-by: Dave Airlie <airlied@redhat.com>
  nx-X11/programs/Xserver/GL/glx/rensize.c | 68 +++++++++++++++++---------------
  1 file changed, 37 insertions(+), 31 deletions(-)
 
-diff --git a/nx-X11/programs/Xserver/GL/glx/rensize.c b/nx-X11/programs/Xserver/GL/glx/rensize.c
-index 7ab02d2..9bf0d00 100644
 --- a/nx-X11/programs/Xserver/GL/glx/rensize.c
 +++ b/nx-X11/programs/Xserver/GL/glx/rensize.c
-@@ -167,16 +167,10 @@ int __glXTexEnvivReqSize(GLbyte *pc, Bool swap )
+@@ -167,16 +167,10 @@ int __glXTexEnvivReqSize(GLbyte *pc, Boo
      return __glXTexEnvfvReqSize( pc, swap );
  }
  
@@ -46,7 +44,7 @@ index 7ab02d2..9bf0d00 100644
  
      target = *(GLenum*) (pc + 16);
      order = *(GLint*) (pc + 20);
-@@ -184,14 +178,15 @@ int __glXMap1dReqSize(GLbyte *pc, Bool swap )
+@@ -184,14 +178,15 @@ int __glXMap1dReqSize(GLbyte *pc, Bool s
  	target = SWAPL( target );
  	order = SWAPL( order );
      }
@@ -65,7 +63,7 @@ index 7ab02d2..9bf0d00 100644
  
      target = *(GLenum *)(pc + 0);
      order = *(GLint *)(pc + 12);
-@@ -199,20 +194,21 @@ int __glXMap1fReqSize(GLbyte *pc, Bool swap )
+@@ -199,20 +194,21 @@ int __glXMap1fReqSize(GLbyte *pc, Bool s
  	target = SWAPL( target );
  	order = SWAPL( order );
      }
@@ -92,7 +90,7 @@ index 7ab02d2..9bf0d00 100644
  
      target = *(GLenum *)(pc + 32);
      uorder = *(GLint *)(pc + 36);
-@@ -222,14 +218,13 @@ int __glXMap2dReqSize(GLbyte *pc, Bool swap )
+@@ -222,14 +218,13 @@ int __glXMap2dReqSize(GLbyte *pc, Bool s
  	uorder = SWAPL( uorder );
  	vorder = SWAPL( vorder );
      }
@@ -109,7 +107,7 @@ index 7ab02d2..9bf0d00 100644
  
      target = *(GLenum *)(pc + 0);
      uorder = *(GLint *)(pc + 12);
-@@ -239,8 +234,7 @@ int __glXMap2fReqSize(GLbyte *pc, Bool swap )
+@@ -239,8 +234,7 @@ int __glXMap2fReqSize(GLbyte *pc, Bool s
  	uorder = SWAPL( uorder );
  	vorder = SWAPL( vorder );
      }
@@ -119,7 +117,7 @@ index 7ab02d2..9bf0d00 100644
  }
  
  int __glXPixelMapfvReqSize(GLbyte *pc, Bool swap )
-@@ -315,13 +309,16 @@ int __glXImageSize( GLenum format, GLenum type, GLenum target,
+@@ -315,13 +309,16 @@ int __glXImageSize( GLenum format, GLenu
      GLint bytesPerElement, elementsPerGroup, groupsPerRow;
      GLint groupSize, rowSize, padding, imageSize;
  
@@ -137,7 +135,7 @@ index 7ab02d2..9bf0d00 100644
      switch( target ) {
      case GL_PROXY_TEXTURE_1D:
      case GL_PROXY_TEXTURE_2D:
-@@ -338,6 +335,12 @@ int __glXImageSize( GLenum format, GLenum type, GLenum target,
+@@ -338,6 +335,12 @@ int __glXImageSize( GLenum format, GLenu
  	return 0;
      }
  
@@ -150,7 +148,7 @@ index 7ab02d2..9bf0d00 100644
      if (type == GL_BITMAP) {
  	if (rowLength > 0) {
  	    groupsPerRow = rowLength;
-@@ -345,11 +348,13 @@ int __glXImageSize( GLenum format, GLenum type, GLenum target,
+@@ -345,11 +348,13 @@ int __glXImageSize( GLenum format, GLenu
  	    groupsPerRow = w;
  	}
  	rowSize = (groupsPerRow + 7) >> 3;
@@ -165,7 +163,7 @@ index 7ab02d2..9bf0d00 100644
      } else {
  	switch(format) {
  	  case GL_COLOR_INDEX:
-@@ -430,23 +435,25 @@ int __glXImageSize( GLenum format, GLenum type, GLenum target,
+@@ -430,23 +435,25 @@ int __glXImageSize( GLenum format, GLenu
  	  default:
  	    return -1;
  	}
@@ -198,7 +196,7 @@ index 7ab02d2..9bf0d00 100644
      }
  }
  
-@@ -873,10 +880,9 @@ int __glXSeparableFilter2DReqSize(GLbyte *pc, Bool swap )
+@@ -873,10 +880,9 @@ int __glXSeparableFilter2DReqSize(GLbyte
      /* XXX Should rowLength be used for either or both image? */
      image1size = __glXImageSize( format, type, 0, w, 1, 1,
  				 0, rowLength, 0, 0, alignment );
@@ -210,6 +208,3 @@ index 7ab02d2..9bf0d00 100644
  
  }
  
--- 
-2.1.4
-

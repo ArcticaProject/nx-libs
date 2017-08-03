@@ -3,7 +3,7 @@ Author: Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
 
 --- a/nx-X11/programs/Xserver/hw/nxagent/Args.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Args.c
-@@ -60,6 +60,7 @@
+@@ -60,6 +60,7 @@ is" without express or implied warranty.
  #endif
  #include "Handlers.h"
  #include "Error.h"
@@ -11,7 +11,7 @@ Author: Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
  
  /*
   * NX includes and definitions.
-@@ -1090,6 +1091,11 @@
+@@ -1090,6 +1091,11 @@ static void nxagentParseOptions(char *na
  
      return;
    }
@@ -23,7 +23,7 @@ Author: Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
    else if (!strcmp(name, "fullscreen"))
    {
      if (nxagentReconnectTrap == True)
-@@ -1369,6 +1375,11 @@
+@@ -1369,6 +1375,11 @@ void nxagentProcessOptionsFile()
                validateString(nxagentOptionFile));
    #endif
  
@@ -37,7 +37,7 @@ Author: Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
      return;
 --- a/nx-X11/programs/Xserver/hw/nxagent/Init.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Init.c
-@@ -63,7 +63,7 @@
+@@ -63,7 +63,7 @@ is" without express or implied warranty.
  
  #include "NX.h"
  #include "NXlib.h"
@@ -46,7 +46,7 @@ Author: Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
  /*
   * Set here the required log level.
   */
-@@ -233,6 +233,7 @@
+@@ -233,6 +233,7 @@ void InitOutput(ScreenInfo *screenInfo,
      fprintf(stderr, "Info: Agent running with pid '%d'.\n", getpid());
  
      fprintf(stderr, "Session: Starting session at '%s'.\n", GetTimeAsString());
@@ -56,7 +56,7 @@ Author: Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
    /*
 --- a/nx-X11/programs/Xserver/hw/nxagent/Reconnect.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Reconnect.c
-@@ -118,6 +118,33 @@
+@@ -118,6 +118,33 @@ void *reconnectLossyLevel[STEP_NONE];
  
  static enum RECONNECTION_STEP failedStep;
  
@@ -90,7 +90,7 @@ Author: Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
  int nxagentHandleConnectionStates(void)
  {
    #ifdef TEST
-@@ -211,6 +238,7 @@
+@@ -211,6 +238,7 @@ TODO: This should be reset only when
            fprintf(stderr, "Session: Display failure detected at '%s'.\n", GetTimeAsString());
  
            fprintf(stderr, "Session: Suspending session at '%s'.\n", GetTimeAsString());
@@ -98,7 +98,7 @@ Author: Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
          }
  
          nxagentDisconnectSession();
-@@ -265,6 +293,7 @@
+@@ -265,6 +293,7 @@ TODO: This should be reset only when
          fprintf(stderr, "Session: Session suspended at '%s'.\n", GetTimeAsString());
          #endif
        }
@@ -106,7 +106,7 @@ Author: Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
  
        nxagentResetDisplayHandlers();
  
-@@ -622,6 +651,7 @@
+@@ -622,6 +651,7 @@ Bool nxagentReconnectSession(void)
    #else
    fprintf(stderr, "Session: Session resumed at '%s'.\n", GetTimeAsString());
    #endif
@@ -114,7 +114,7 @@ Author: Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
  
    nxagentRemoveSplashWindow(NULL);
  
-@@ -785,12 +815,14 @@
+@@ -785,12 +815,14 @@ void nxagentHandleConnectionChanges()
    if (nxagentSessionState == SESSION_GOING_DOWN)
    {
      fprintf(stderr, "Session: Suspending session at '%s'.\n", GetTimeAsString());
@@ -129,7 +129,7 @@ Author: Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
  
      if (nxagentReconnectSession())
      {
-@@ -803,6 +835,7 @@
+@@ -803,6 +835,7 @@ void nxagentHandleConnectionChanges()
        fprintf(stderr, "Session: Display failure detected at '%s'.\n", GetTimeAsString());
  
        fprintf(stderr, "Session: Suspending session at '%s'.\n", GetTimeAsString());
@@ -139,7 +139,7 @@ Author: Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
      }
 --- a/nx-X11/programs/Xserver/hw/nxagent/Reconnect.h
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Reconnect.h
-@@ -34,6 +34,8 @@
+@@ -34,6 +34,8 @@ void nxagentInitReconnector(void);
  Bool nxagentReconnectSession(void);
  int nxagentHandleConnectionStates(void);
  void nxagentHandleConnectionChanges(void);
@@ -150,7 +150,7 @@ Author: Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
  {
 --- a/nx-X11/programs/Xserver/hw/nxagent/X/NXdispatch.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/X/NXdispatch.c
-@@ -609,6 +609,7 @@
+@@ -609,6 +609,7 @@ Reply   Total	Cached	Bits In			Bits Out
            #endif
  
            nxagentSessionState = SESSION_UP;
@@ -158,7 +158,7 @@ Author: Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
          }
  
          #ifdef BLOCKS
-@@ -823,6 +824,7 @@
+@@ -823,6 +824,7 @@ Reply   Total	Cached	Bits In			Bits Out
         */
    
        fprintf(stderr, "Session: Terminating session at '%s'.\n", GetTimeAsString());
@@ -166,7 +166,7 @@ Author: Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
  
        nxagentWaitDisplay();
  
-@@ -833,6 +835,7 @@
+@@ -833,6 +835,7 @@ Reply   Total	Cached	Bits In			Bits Out
      {
        NXShadowDestroy();
      }

@@ -15,11 +15,9 @@ Conflicts:
  nx-X11/programs/Xserver/xfixes/select.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/nx-X11/programs/Xserver/xfixes/select.c b/nx-X11/programs/Xserver/xfixes/select.c
-index c72e19e..4b8bd01 100755
 --- a/nx-X11/programs/Xserver/xfixes/select.c
 +++ b/nx-X11/programs/Xserver/xfixes/select.c
-@@ -216,6 +216,7 @@ SProcXFixesSelectSelectionInput (ClientPtr client)
+@@ -216,6 +216,7 @@ SProcXFixesSelectSelectionInput (ClientP
      register int n;
      REQUEST(xXFixesSelectSelectionInputReq);
  
@@ -27,6 +25,3 @@ index c72e19e..4b8bd01 100755
      swaps(&stuff->length, n);
      swapl(&stuff->window, n);
      swapl(&stuff->selection, n);
--- 
-2.1.4
-

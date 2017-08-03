@@ -18,11 +18,9 @@ Signed-off-by: Dave Airlie <airlied@redhat.com>
  nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c | 4 ++++
  1 file changed, 4 insertions(+)
 
-diff --git a/nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c b/nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c
-index 7174fda..2685355 100644
 --- a/nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c
 +++ b/nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c
-@@ -797,10 +797,12 @@ int __glXSwapRenderLarge(__GLXclientState *cl, GLbyte *pc)
+@@ -797,10 +797,12 @@ int __glXSwapRenderLarge(__GLXclientStat
  
  int __glXSwapVendorPrivate(__GLXclientState *cl, GLbyte *pc)
  {
@@ -35,7 +33,7 @@ index 7174fda..2685355 100644
  
      req = (xGLXVendorPrivateReq *) pc;
      __GLX_SWAP_SHORT(&req->length);
-@@ -835,10 +837,12 @@ int __glXSwapVendorPrivate(__GLXclientState *cl, GLbyte *pc)
+@@ -835,10 +837,12 @@ int __glXSwapVendorPrivate(__GLXclientSt
  
  int __glXSwapVendorPrivateWithReply(__GLXclientState *cl, GLbyte *pc)
  {
@@ -48,6 +46,3 @@ index 7174fda..2685355 100644
  
      req = (xGLXVendorPrivateWithReplyReq *) pc;
      __GLX_SWAP_SHORT(&req->length);
--- 
-2.1.4
-

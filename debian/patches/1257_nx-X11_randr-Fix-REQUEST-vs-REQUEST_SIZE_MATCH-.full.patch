@@ -18,11 +18,9 @@ Date:   Fri Jun 29 13:33:58 2012 -0700
     v2: backport to nx-libs 3.6.x (Ulrich Sibiller)
     v3: backport to nx-libs 3.5.0.x (Mihai Moldovan)
 
-diff --git a/nx-X11/programs/Xserver/randr/rrscreen.c b/nx-X11/programs/Xserver/randr/rrscreen.c
-index 011b97f..e0eb076 100644
 --- a/nx-X11/programs/Xserver/randr/rrscreen.c
 +++ b/nx-X11/programs/Xserver/randr/rrscreen.c
-@@ -228,7 +228,7 @@ ProcRRGetScreenSizeRange (ClientPtr client)
+@@ -228,7 +228,7 @@ ProcRRGetScreenSizeRange (ClientPtr clie
      rrScrPrivPtr		pScrPriv;
      int				rc;
      

@@ -31,7 +31,7 @@ v3: backport v2 to nx-libs 3.5.0.x (Mihai Moldovan)
 
 --- a/nx-X11/programs/Xserver/dix/dixfonts.c
 +++ b/nx-X11/programs/Xserver/dix/dixfonts.c
-@@ -1559,6 +1559,7 @@ doImageText(ClientPtr client, register ITclosurePtr c)
+@@ -1559,6 +1559,7 @@ doImageText(ClientPtr client, register I
  	    GC *pGC;
  	    unsigned char *data;
  	    ITclosurePtr new_closure;
@@ -39,7 +39,7 @@ v3: backport v2 to nx-libs 3.5.0.x (Mihai Moldovan)
  
  	    /* We're putting the client to sleep.  We need to
  	       save some state.  Similar problem to that handled
-@@ -1571,6 +1572,7 @@ doImageText(ClientPtr client, register ITclosurePtr c)
+@@ -1571,6 +1572,7 @@ doImageText(ClientPtr client, register I
  		err = BadAlloc;
  		goto bail;
  	    }
@@ -47,7 +47,7 @@ v3: backport v2 to nx-libs 3.5.0.x (Mihai Moldovan)
  	    *new_closure = *c;
  	    c = new_closure;
  
-@@ -1578,6 +1580,7 @@ doImageText(ClientPtr client, register ITclosurePtr c)
+@@ -1578,6 +1580,7 @@ doImageText(ClientPtr client, register I
  	    if (!data)
  	    {
  		xfree(c);
@@ -55,7 +55,7 @@ v3: backport v2 to nx-libs 3.5.0.x (Mihai Moldovan)
  		err = BadAlloc;
  		goto bail;
  	    }
-@@ -1589,6 +1592,7 @@ doImageText(ClientPtr client, register ITclosurePtr c)
+@@ -1589,6 +1592,7 @@ doImageText(ClientPtr client, register I
  	    {
  		xfree(c->data);
  		xfree(c);
@@ -63,7 +63,7 @@ v3: backport v2 to nx-libs 3.5.0.x (Mihai Moldovan)
  		err = BadAlloc;
  		goto bail;
  	    }
-@@ -1602,6 +1606,7 @@ doImageText(ClientPtr client, register ITclosurePtr c)
+@@ -1602,6 +1606,7 @@ doImageText(ClientPtr client, register I
  		FreeScratchGC(pGC);
  		xfree(c->data);
  		xfree(c);
@@ -73,7 +73,7 @@ v3: backport v2 to nx-libs 3.5.0.x (Mihai Moldovan)
  	    }
 --- a/nx-X11/programs/Xserver/hw/nxagent/NXdixfonts.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/NXdixfonts.c
-@@ -1711,6 +1711,7 @@ doImageText(ClientPtr client, register ITclosurePtr c)
+@@ -1711,6 +1711,7 @@ doImageText(client, c)
  	    GC *pGC;
  	    unsigned char *data;
  	    ITclosurePtr new_closure;
@@ -81,7 +81,7 @@ v3: backport v2 to nx-libs 3.5.0.x (Mihai Moldovan)
  
  	    /* We're putting the client to sleep.  We need to
  	       save some state.  Similar problem to that handled
-@@ -1723,6 +1724,7 @@ doImageText(ClientPtr client, register ITclosurePtr c)
+@@ -1723,6 +1724,7 @@ doImageText(client, c)
  		err = BadAlloc;
  		goto bail;
  	    }
@@ -89,7 +89,7 @@ v3: backport v2 to nx-libs 3.5.0.x (Mihai Moldovan)
  	    *new_closure = *c;
  	    c = new_closure;
  
-@@ -1730,6 +1732,7 @@ doImageText(ClientPtr client, register ITclosurePtr c)
+@@ -1730,6 +1732,7 @@ doImageText(client, c)
  	    if (!data)
  	    {
  		xfree(c);
@@ -97,7 +97,7 @@ v3: backport v2 to nx-libs 3.5.0.x (Mihai Moldovan)
  		err = BadAlloc;
  		goto bail;
  	    }
-@@ -1741,6 +1744,7 @@ doImageText(ClientPtr client, register ITclosurePtr c)
+@@ -1741,6 +1744,7 @@ doImageText(client, c)
  	    {
  		xfree(c->data);
  		xfree(c);
@@ -105,7 +105,7 @@ v3: backport v2 to nx-libs 3.5.0.x (Mihai Moldovan)
  		err = BadAlloc;
  		goto bail;
  	    }
-@@ -1759,6 +1763,7 @@ doImageText(ClientPtr client, register ITclosurePtr c)
+@@ -1759,6 +1763,7 @@ doImageText(client, c)
  		FreeScratchGC(pGC);
  		xfree(c->data);
  		xfree(c);

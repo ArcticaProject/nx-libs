@@ -16,8 +16,6 @@ Date:   Fri Dec 17 16:09:35 2010 +0200
     v2: backport to nx-libs 3.6.x (Ulrich Sibiller)
     v3: backport to nx-libs 3.5.0.x (Mihai Moldovan)
 
-diff --git a/nx-X11/programs/Xserver/randr/rrscreen.c b/nx-X11/programs/Xserver/randr/rrscreen.c
-index 9b3935e..9bea97b 100644
 --- a/nx-X11/programs/Xserver/randr/rrscreen.c
 +++ b/nx-X11/programs/Xserver/randr/rrscreen.c
 @@ -938,6 +938,18 @@ ProcRRSetScreenConfig (ClientPtr client)

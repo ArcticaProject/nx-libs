@@ -3,7 +3,7 @@ Author: Mihai Moldovan <ionic@ionic.de>
 
 --- a/nxcomp/Auth.cpp
 +++ b/nxcomp/Auth.cpp
-@@ -217,22 +217,31 @@
+@@ -217,22 +217,31 @@ int Auth::getCookie()
  
    //
    // Use the nxauth command on Windows and the Mac, xauth

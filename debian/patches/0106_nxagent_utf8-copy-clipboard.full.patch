@@ -7,7 +7,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 Last-Update: 2011-12-31
 --- a/nx-X11/programs/Xserver/hw/nxagent/Clipboard.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Clipboard.c
-@@ -166,7 +166,9 @@
+@@ -166,7 +166,9 @@ Bool nxagentValidServerTargets(Atom targ
  
    if (target == XA_STRING) return True;
    if (target == serverTEXT) return True;
@@ -18,7 +18,7 @@ Last-Update: 2011-12-31
    return False;
  }
  
-@@ -402,7 +404,12 @@
+@@ -402,7 +404,12 @@ FIXME: Do we need this?
          lastServerProperty = X->xselectionrequest.property;
          lastServerRequestor = X->xselectionrequest.requestor;
          lastServerTarget = X->xselectionrequest.target;
@@ -32,7 +32,7 @@ Last-Update: 2011-12-31
  
          x.u.u.type = SelectionRequest;
          x.u.selectionRequest.time = GetTimeInMillis();
-@@ -424,11 +431,12 @@
+@@ -424,11 +431,12 @@ FIXME: Do we need this?
  
          x.u.selectionRequest.selection = CurrentSelections[i].selection;
  

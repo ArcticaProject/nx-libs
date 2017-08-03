@@ -6,7 +6,7 @@ Abstract:
  idea why.
 --- a/nx-X11/lib/xtrans/Xtransint.h
 +++ b/nx-X11/lib/xtrans/Xtransint.h
-@@ -444,7 +444,7 @@
+@@ -444,7 +444,7 @@ static int trans_mkdir (
  			int hack= 0, saveerrno=errno; \
                          struct timeval tp;\
                          gettimeofday(&tp,0); \
@@ -15,7 +15,7 @@ Abstract:
  			ErrorF(x+hack,a,b,c); \
                          ErrorF("timestamp (ms): %d\n",tp.tv_sec*1000+tp.tv_usec/1000); \
  			errno=saveerrno; \
-@@ -454,7 +454,7 @@
+@@ -454,7 +454,7 @@ static int trans_mkdir (
  			int hack= 0, saveerrno=errno; \
                          struct timeval tp;\
                          gettimeofday(&tp,0); \
@@ -24,7 +24,7 @@ Abstract:
  			fprintf(stderr, x+hack,a,b,c); fflush(stderr); \
                          fprintf(stderr, "timestamp (ms): %d\n",tp.tv_sec*1000+tp.tv_usec/1000); \
                          fflush(stderr); \
-@@ -466,14 +466,14 @@
+@@ -466,14 +466,14 @@ static int trans_mkdir (
  /* Use ErrorF() for the X server */
  #define PRMSG(lvl,x,a,b,c)	if (lvl <= XTRANSDEBUG){ \
  			int hack= 0, saveerrno=errno; \
@@ -43,7 +43,7 @@ Abstract:
  			} else ((void)0)
 --- a/nx-X11/programs/nxauth/process.c
 +++ b/nx-X11/programs/nxauth/process.c
-@@ -974,7 +974,7 @@
+@@ -974,7 +974,7 @@ fprintfhex(register FILE *fp, int len, c
      char *hex;
  
      hex = bintohex(len, cp);
@@ -54,7 +54,7 @@ Abstract:
  
 --- a/nx-X11/programs/Xserver/GL/glx/glximports.c
 +++ b/nx-X11/programs/Xserver/GL/glx/glximports.c
-@@ -110,12 +110,12 @@
+@@ -110,12 +110,12 @@ void *__glXImpRealloc(__GLcontext *gc, v
  
  void __glXImpWarning(__GLcontext *gc, char *msg)
  {
@@ -71,7 +71,7 @@ Abstract:
  
 --- a/nx-X11/programs/Xserver/hw/nxagent/Error.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Error.c
-@@ -232,7 +232,7 @@
+@@ -232,7 +232,7 @@ static int nxagentPrintError(dpy, event,
  
  int nxagentExitHandler(const char *message)
  {
@@ -82,7 +82,7 @@ Abstract:
  }
 --- a/nx-X11/programs/Xserver/hw/nxagent/Init.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Init.c
-@@ -481,7 +481,7 @@
+@@ -481,7 +481,7 @@ void OsVendorVErrorFFunction(const char
  
      nxagentStartRedirectToClientsLog();
  
@@ -93,7 +93,7 @@ Abstract:
    }
 --- a/nx-X11/programs/Xserver/os/log.c
 +++ b/nx-X11/programs/Xserver/os/log.c
-@@ -692,9 +692,9 @@
+@@ -692,9 +692,9 @@ Error(char *str)
  	    return;
  	sprintf(err, "%s: ", str);
  	strcat(err, strerror(saveErrno));

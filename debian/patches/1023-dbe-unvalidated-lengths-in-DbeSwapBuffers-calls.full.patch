@@ -27,8 +27,6 @@ Conflicts:
  nx-X11/programs/Xserver/dbe/dbe.c | 11 ++++++++---
  1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/nx-X11/programs/Xserver/dbe/dbe.c b/nx-X11/programs/Xserver/dbe/dbe.c
-index c0d6131..5a1e9b0 100644
 --- a/nx-X11/programs/Xserver/dbe/dbe.c
 +++ b/nx-X11/programs/Xserver/dbe/dbe.c
 @@ -725,8 +725,8 @@ ProcDbeSwapBuffers(client)
@@ -75,6 +73,3 @@ index c0d6131..5a1e9b0 100644
  
      if (stuff->n != 0)
      { 
--- 
-2.1.4
-

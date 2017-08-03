@@ -8,7 +8,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 Last-Update: 2011-12-31
 --- a/nxcompshad/Makefile.in
 +++ b/nxcompshad/Makefile.in
-@@ -48,7 +48,7 @@
+@@ -48,7 +48,7 @@ CCINCLUDES  =
  CCDEFINES   =
  
  LDFLAGS     = @LDFLAGS@
@@ -17,7 +17,7 @@ Last-Update: 2011-12-31
  
  #
  # Only if THREADS is defined.
-@@ -162,7 +162,7 @@
+@@ -162,7 +162,7 @@ $(LIBDLL): $(LIBARCHIVE)
  		-Wl,--enable-auto-import \
  		-Wl,--whole-archive ${LIBARCHIVE} \
  		-Wl,--no-whole-archive \
@@ -28,7 +28,7 @@ Last-Update: 2011-12-31
  #		$(CC) $(CCFLAGS) -o $@ $(MOBJ) $(MLIBS)
 --- a/nxcompshad/configure.in
 +++ b/nxcompshad/configure.in
-@@ -19,7 +19,7 @@
+@@ -19,7 +19,7 @@ dnl Prefer headers and libraries from nx
  
  if test -d "../nx-X11/exports/include" ; then
      CXXFLAGS="$CXXFLAGS -I../nx-X11/exports/include"

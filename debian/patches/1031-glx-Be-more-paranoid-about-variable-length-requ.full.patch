@@ -27,11 +27,9 @@ fixup swaps
  nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c | 4 ++--
  2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/nx-X11/programs/Xserver/GL/glx/glxcmds.c b/nx-X11/programs/Xserver/GL/glx/glxcmds.c
-index ca5eee8..02f3ba7 100644
 --- a/nx-X11/programs/Xserver/GL/glx/glxcmds.c
 +++ b/nx-X11/programs/Xserver/GL/glx/glxcmds.c
-@@ -1484,7 +1484,7 @@ int __glXRender(__GLXclientState *cl, GLbyte *pc)
+@@ -1484,7 +1484,7 @@ int __glXRender(__GLXclientState *cl, GL
              /* variable size command */
              extra = (*entry->varsize)(pc + __GLX_RENDER_HDR_SIZE, False);
              if (extra < 0) {
@@ -40,7 +38,7 @@ index ca5eee8..02f3ba7 100644
              }
              if (cmdlen != __GLX_PAD(entry->bytes + extra)) {
                  return BadLength;
-@@ -1601,7 +1601,7 @@ int __glXRenderLarge(__GLXclientState *cl, GLbyte *pc)
+@@ -1601,7 +1601,7 @@ int __glXRenderLarge(__GLXclientState *c
  	    */
  	    extra = (*entry->varsize)(pc + __GLX_RENDER_LARGE_HDR_SIZE, False);
  	    if (extra < 0) {
@@ -49,11 +47,9 @@ index ca5eee8..02f3ba7 100644
  	    }
  	    /* large command's header is 4 bytes longer, so add 4 */
  	    if (cmdlen != __GLX_PAD(entry->bytes + 4 + extra)) {
-diff --git a/nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c b/nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c
-index 595e814..027cba7 100644
 --- a/nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c
 +++ b/nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c
-@@ -535,7 +535,7 @@ int __glXSwapRender(__GLXclientState *cl, GLbyte *pc)
+@@ -535,7 +535,7 @@ int __glXSwapRender(__GLXclientState *cl
              /* variable size command */
              extra = (*entry->varsize)(pc + __GLX_RENDER_HDR_SIZE, True);
              if (extra < 0) {
@@ -62,7 +58,7 @@ index 595e814..027cba7 100644
              }
              if (cmdlen != __GLX_PAD(entry->bytes + extra)) {
                  return BadLength;
-@@ -659,7 +659,7 @@ int __glXSwapRenderLarge(__GLXclientState *cl, GLbyte *pc)
+@@ -659,7 +659,7 @@ int __glXSwapRenderLarge(__GLXclientStat
  	    */
  	    extra = (*entry->varsize)(pc + __GLX_RENDER_LARGE_HDR_SIZE, True);
  	    if (extra < 0) {
@@ -71,6 +67,3 @@ index 595e814..027cba7 100644
  	    }
  	    /* large command's header is 4 bytes longer, so add 4 */
  	    if (cmdlen != __GLX_PAD(entry->bytes + 4 + extra)) {
--- 
-2.1.4
-

@@ -23,11 +23,9 @@ Signed-off-by: Dave Airlie <airlied@redhat.com>
  nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c | 20 ++++++++++----------
  2 files changed, 20 insertions(+), 20 deletions(-)
 
-diff --git a/nx-X11/programs/Xserver/GL/glx/glxcmds.c b/nx-X11/programs/Xserver/GL/glx/glxcmds.c
-index 02f3ba7..831c65b 100644
 --- a/nx-X11/programs/Xserver/GL/glx/glxcmds.c
 +++ b/nx-X11/programs/Xserver/GL/glx/glxcmds.c
-@@ -1443,7 +1443,7 @@ int __glXRender(__GLXclientState *cl, GLbyte *pc)
+@@ -1443,7 +1443,7 @@ int __glXRender(__GLXclientState *cl, GL
      left = (req->length << 2) - sz_xGLXRenderReq;
      while (left > 0) {
          __GLXrenderSizeData *entry;
@@ -36,7 +34,7 @@ index 02f3ba7..831c65b 100644
  	void (* proc)(GLbyte *);
  
  	/*
-@@ -1454,6 +1454,9 @@ int __glXRender(__GLXclientState *cl, GLbyte *pc)
+@@ -1454,6 +1454,9 @@ int __glXRender(__GLXclientState *cl, GL
  	cmdlen = hdr->length;
  	opcode = hdr->opcode;
  
@@ -46,7 +44,7 @@ index 02f3ba7..831c65b 100644
  	/*
  	** Check for core opcodes and grab entry data.
  	*/
-@@ -1480,22 +1483,19 @@ int __glXRender(__GLXclientState *cl, GLbyte *pc)
+@@ -1480,22 +1483,19 @@ int __glXRender(__GLXclientState *cl, GL
              client->errorValue = commandsDone;
              return __glXBadRenderRequest;
          }
@@ -75,11 +73,9 @@ index 02f3ba7..831c65b 100644
  	    return BadLength;
  	}
  
-diff --git a/nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c b/nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c
-index 027cba7..7174fda 100644
 --- a/nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c
 +++ b/nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c
-@@ -498,7 +498,7 @@ int __glXSwapRender(__GLXclientState *cl, GLbyte *pc)
+@@ -498,7 +498,7 @@ int __glXSwapRender(__GLXclientState *cl
      left = (req->length << 2) - sz_xGLXRenderReq;
      while (left > 0) {
          __GLXrenderSizeData *entry;
@@ -88,7 +84,7 @@ index 027cba7..7174fda 100644
  	void (* proc)(GLbyte *);
  
  	/*
-@@ -511,6 +511,9 @@ int __glXSwapRender(__GLXclientState *cl, GLbyte *pc)
+@@ -511,6 +511,9 @@ int __glXSwapRender(__GLXclientState *cl
  	cmdlen = hdr->length;
  	opcode = hdr->opcode;
  
@@ -98,7 +94,7 @@ index 027cba7..7174fda 100644
  	if ( (opcode >= __GLX_MIN_RENDER_OPCODE) && 
  	     (opcode <= __GLX_MAX_RENDER_OPCODE) ) {
  	    entry = &__glXRenderSizeTable[opcode];
-@@ -531,22 +534,19 @@ int __glXSwapRender(__GLXclientState *cl, GLbyte *pc)
+@@ -531,22 +534,19 @@ int __glXSwapRender(__GLXclientState *cl
  	    client->errorValue = commandsDone;
              return __glXBadRenderRequest;
          }
@@ -127,6 +123,3 @@ index 027cba7..7174fda 100644
  	    return BadLength;
  	}
  
--- 
-2.1.4
-

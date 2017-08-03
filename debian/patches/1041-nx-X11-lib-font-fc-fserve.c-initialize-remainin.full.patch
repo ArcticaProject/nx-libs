@@ -8,11 +8,9 @@ Subject: [PATCH 01/02] nx-X11/lib/font/fc/fserve.c: initialize remaining
  nx-X11/lib/font/fc/fserve.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/nx-X11/lib/font/fc/fserve.c b/nx-X11/lib/font/fc/fserve.c
-index 86b5753..6bbb8c2 100644
 --- a/nx-X11/lib/font/fc/fserve.c
 +++ b/nx-X11/lib/font/fc/fserve.c
-@@ -1917,7 +1917,7 @@ fs_read_glyphs(FontPathElementPtr fpe, FSBlockDataPtr blockrec)
+@@ -1917,7 +1917,7 @@ fs_read_glyphs(FontPathElementPtr fpe, F
      FontInfoPtr		    pfi = &pfont->info;
      fsQueryXBitmaps16Reply  *rep;
      char		    *buf;
@@ -21,7 +19,7 @@ index 86b5753..6bbb8c2 100644
      fsOffset32		    *ppbits;
      fsOffset32		    local_off;
      char		    *off_adr;
-@@ -2501,7 +2501,7 @@ fs_read_list_info(FontPathElementPtr fpe, FSBlockDataPtr blockrec)
+@@ -2501,7 +2501,7 @@ fs_read_list_info(FontPathElementPtr fpe
      FSBlockedListInfoPtr	binfo = (FSBlockedListInfoPtr) blockrec->data;
      fsListFontsWithXInfoReply	*rep;
      char			*buf;
@@ -30,6 +28,3 @@ index 86b5753..6bbb8c2 100644
      FSFpePtr			conn = (FSFpePtr) fpe->private;
      fsPropInfo			*pi;
      fsPropOffset		*po;
--- 
-2.1.4
-

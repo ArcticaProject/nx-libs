@@ -6,7 +6,7 @@ Abstract:
  instead.
 --- a/nx-X11/programs/Xserver/xkb/ddxLoad.c
 +++ b/nx-X11/programs/Xserver/xkb/ddxLoad.c
-@@ -180,7 +180,7 @@
+@@ -180,7 +180,7 @@ Win32System(const char *cmdline)
  
  #define NX_XKB_BASE_DIRECTORY            "/usr/lib/X11/xkb"
  #define NX_XKB_ALTERNATE_BASE_DIRECTORY  "/usr/share/X11/xkb"
@@ -15,7 +15,7 @@ Abstract:
  #define NX_ALT_XKBCOMP_PATH              "/usr/bin"
  
  static char _NXXkbBasePath[PATH_MAX];
-@@ -189,43 +189,43 @@
+@@ -189,43 +189,43 @@ static char _NXXkbCompPath[PATH_MAX];
  static int NXVerifyXkbBaseDirectory(const char *dirPath)
  {
    int size;
@@ -73,7 +73,7 @@ Abstract:
  
      return 0;
    }
-@@ -235,7 +235,7 @@
+@@ -235,7 +235,7 @@ static int NXVerifyXkbBaseDirectory(cons
                dirPath);
    #endif
  

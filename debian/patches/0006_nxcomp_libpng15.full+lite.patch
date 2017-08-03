@@ -12,9 +12,9 @@ Description: Fix building against libpng 1.5.
 Forwarded: pending...
 Author: Fedora packagers of NX
 Last-Update: 2012-02-06
---- a/nxcomp/Pgn.cpp	2010-03-01 19:18:59.000000000 +0200
-+++ b/nxcomp/Pgn.cpp	2011-09-13 16:35:12.000000000 +0300
-@@ -414,7 +414,7 @@
+--- a/nxcomp/Pgn.cpp
++++ b/nxcomp/Pgn.cpp
+@@ -414,7 +414,7 @@ int DecompressPng16(unsigned char *compr
  
    png_read_info(pngPtr, infoPtr);
  
@@ -23,7 +23,7 @@ Last-Update: 2012-02-06
    {
      png_set_expand(pngPtr);
    }
-@@ -565,7 +565,7 @@
+@@ -565,7 +565,7 @@ int DecompressPng24(unsigned char *compr
  
    png_read_info( pngPtr, infoPtr ) ;
  
@@ -32,7 +32,7 @@ Last-Update: 2012-02-06
    {
      png_set_expand(pngPtr);
    }
-@@ -709,7 +709,7 @@
+@@ -709,7 +709,7 @@ int DecompressPng32(unsigned char *compr
    png_read_info(pngPtr, infoPtr) ;
  
  

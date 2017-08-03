@@ -1,11 +1,9 @@
 Description: Add X11 abstract socket support to nxcomp/nxproxy
 Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 
-diff --git a/nxcomp/Loop.cpp b/nxcomp/Loop.cpp
-index 92b6fc2..d86809d 100644
 --- a/nxcomp/Loop.cpp
 +++ b/nxcomp/Loop.cpp
-@@ -4250,6 +4250,39 @@ int SetupDisplaySocket(int &xServerAddrFamily, sockaddr *&xServerAddr,
+@@ -4250,6 +4250,39 @@ int SetupDisplaySocket(int &xServerAddrF
      // where the socket will be created.
      //
  
@@ -45,7 +43,7 @@ index 92b6fc2..d86809d 100644
      struct stat statInfo;
  
      char unixSocketDir[DEFAULT_STRING_LENGTH];
-@@ -4322,6 +4355,11 @@ int SetupDisplaySocket(int &xServerAddrFamily, sockaddr *&xServerAddr,
+@@ -4322,6 +4355,11 @@ int SetupDisplaySocket(int &xServerAddrF
  
      xServerAddr = (sockaddr *) xServerAddrUNIX;
      xServerAddrLength = sizeof(sockaddr_un);

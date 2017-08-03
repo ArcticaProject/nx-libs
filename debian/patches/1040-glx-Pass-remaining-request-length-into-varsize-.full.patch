@@ -24,11 +24,9 @@ Signed-off-by: Dave Airlie <airlied@redhat.com>
  nx-X11/programs/Xserver/GL/glx/rensize.c     | 125 ++++++++++++++-------------
  4 files changed, 121 insertions(+), 107 deletions(-)
 
-diff --git a/nx-X11/programs/Xserver/GL/glx/glxcmds.c b/nx-X11/programs/Xserver/GL/glx/glxcmds.c
-index 20c12f3..a1bb259 100644
 --- a/nx-X11/programs/Xserver/GL/glx/glxcmds.c
 +++ b/nx-X11/programs/Xserver/GL/glx/glxcmds.c
-@@ -1490,7 +1490,7 @@ int __glXRender(__GLXclientState *cl, GLbyte *pc)
+@@ -1490,7 +1490,7 @@ int __glXRender(__GLXclientState *cl, GL
  
          if (entry->varsize) {
              /* variable size command */
@@ -37,7 +35,7 @@ index 20c12f3..a1bb259 100644
              if (extra < 0) {
                  return BadLength;
              }
-@@ -1563,6 +1563,7 @@ int __glXRenderLarge(__GLXclientState *cl, GLbyte *pc)
+@@ -1563,6 +1563,7 @@ int __glXRenderLarge(__GLXclientState *c
      if (cl->largeCmdRequestsSoFar == 0) {
  	__GLXrenderSizeData *entry;
  	int extra = 0, cmdlen;
@@ -45,7 +43,7 @@ index 20c12f3..a1bb259 100644
  	/*
  	** This is the first request of a multi request command.
  	** Make enough space in the buffer, then copy the entire request.
-@@ -1608,7 +1609,8 @@ int __glXRenderLarge(__GLXclientState *cl, GLbyte *pc)
+@@ -1608,7 +1609,8 @@ int __glXRenderLarge(__GLXclientState *c
  	    ** be computed from its parameters), all the parameters needed
  	    ** will be in the 1st request, so it's okay to do this.
  	    */
@@ -55,11 +53,9 @@ index 20c12f3..a1bb259 100644
  	    if (extra < 0) {
  	        return BadLength;
  	    }
-diff --git a/nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c b/nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c
-index 2e228c0..33a748a 100644
 --- a/nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c
 +++ b/nx-X11/programs/Xserver/GL/glx/glxcmdsswap.c
-@@ -541,7 +541,8 @@ int __glXSwapRender(__GLXclientState *cl, GLbyte *pc)
+@@ -541,7 +541,8 @@ int __glXSwapRender(__GLXclientState *cl
  
          if (entry->varsize) {
              /* variable size command */
@@ -69,7 +65,7 @@ index 2e228c0..33a748a 100644
              if (extra < 0) {
                  return BadLength;
              }
-@@ -620,6 +621,7 @@ int __glXSwapRenderLarge(__GLXclientState *cl, GLbyte *pc)
+@@ -620,6 +621,7 @@ int __glXSwapRenderLarge(__GLXclientStat
      if (cl->largeCmdRequestsSoFar == 0) {
  	__GLXrenderSizeData *entry;
  	int extra = 0;
@@ -77,7 +73,7 @@ index 2e228c0..33a748a 100644
  	size_t cmdlen;
  	/*
  	** This is the first request of a multi request command.
-@@ -667,7 +669,8 @@ int __glXSwapRenderLarge(__GLXclientState *cl, GLbyte *pc)
+@@ -667,7 +669,8 @@ int __glXSwapRenderLarge(__GLXclientStat
  	    ** be computed from its parameters), all the parameters needed
  	    ** will be in the 1st request, so it's okay to do this.
  	    */
@@ -87,8 +83,6 @@ index 2e228c0..33a748a 100644
  	    if (extra < 0) {
  		return BadLength;
  	    }
-diff --git a/nx-X11/programs/Xserver/GL/glx/glxserver.h b/nx-X11/programs/Xserver/GL/glx/glxserver.h
-index 4047574..193ebcb 100644
 --- a/nx-X11/programs/Xserver/GL/glx/glxserver.h
 +++ b/nx-X11/programs/Xserver/GL/glx/glxserver.h
 @@ -179,7 +179,7 @@ extern __GLXprocPtr __glXProcTable[];
@@ -100,7 +94,7 @@ index 4047574..193ebcb 100644
  } __GLXrenderSizeData;
  extern __GLXrenderSizeData __glXRenderSizeTable[];
  extern __GLXrenderSizeData __glXRenderSizeTable_EXT[];
-@@ -271,48 +271,48 @@ extern int __glXImageSize(GLenum format, GLenum type,
+@@ -271,48 +271,48 @@ extern int __glXImageSize(GLenum format,
      GLint imageHeight, GLint rowLength, GLint skipImages, GLint skipRows,
      GLint alignment);
  
@@ -191,7 +185,7 @@ index 4047574..193ebcb 100644
  
  /*
   * Routines for computing the size of returned data.
-@@ -322,7 +322,7 @@ extern int __glXConvolutionParameterfvSize(GLenum pname);
+@@ -322,7 +322,7 @@ extern int __glXConvolutionParameterfvSi
  extern int __glXColorTableParameterfvSize(GLenum pname);
  extern int __glXColorTableParameterivSize(GLenum pname);
  
@@ -201,8 +195,6 @@ index 4047574..193ebcb 100644
 +extern int __glXPointParameterivReqSize(GLbyte *pc, Bool swap, int reqlen);
  
  #endif /* !__GLX_server_h__ */
-diff --git a/nx-X11/programs/Xserver/GL/glx/rensize.c b/nx-X11/programs/Xserver/GL/glx/rensize.c
-index 9bf0d00..dc3475e 100644
 --- a/nx-X11/programs/Xserver/GL/glx/rensize.c
 +++ b/nx-X11/programs/Xserver/GL/glx/rensize.c
 @@ -48,7 +48,7 @@
@@ -214,7 +206,7 @@ index 9bf0d00..dc3475e 100644
  {
      GLsizei n = *(GLsizei *)(pc + 0);
      GLenum type = *(GLenum *)(pc + 4);
-@@ -60,7 +60,7 @@ int __glXCallListsReqSize(GLbyte *pc, Bool swap )
+@@ -60,7 +60,7 @@ int __glXCallListsReqSize(GLbyte *pc, Bo
      return n * __glCallLists_size( type );
  }
  
@@ -223,7 +215,7 @@ index 9bf0d00..dc3475e 100644
  {
      GLenum pname = *(GLenum *)(pc + 0);
      if (swap) {
-@@ -69,12 +69,12 @@ int __glXFogivReqSize(GLbyte *pc, Bool swap )
+@@ -69,12 +69,12 @@ int __glXFogivReqSize(GLbyte *pc, Bool s
      return 4 * __glFogiv_size( pname );		/* defined in samplegl lib */
  }
  
@@ -239,7 +231,7 @@ index 9bf0d00..dc3475e 100644
  {
      GLenum pname = *(GLenum *)(pc + 4);
      if (swap) {
-@@ -83,12 +83,12 @@ int __glXLightfvReqSize(GLbyte *pc, Bool swap )
+@@ -83,12 +83,12 @@ int __glXLightfvReqSize(GLbyte *pc, Bool
      return 4 * __glLightfv_size( pname );	/* defined in samplegl lib */
  }
  
@@ -255,7 +247,7 @@ index 9bf0d00..dc3475e 100644
  {
      GLenum pname = *(GLenum *)(pc + 0);
      if (swap) {
-@@ -97,12 +97,12 @@ int __glXLightModelfvReqSize(GLbyte *pc, Bool swap )
+@@ -97,12 +97,12 @@ int __glXLightModelfvReqSize(GLbyte *pc,
      return 4 * __glLightModelfv_size( pname );	/* defined in samplegl lib */
  }
  
@@ -271,7 +263,7 @@ index 9bf0d00..dc3475e 100644
  {
      GLenum pname = *(GLenum *)(pc + 4);
      if (swap) {
-@@ -111,12 +111,12 @@ int __glXMaterialfvReqSize(GLbyte *pc, Bool swap )
+@@ -111,12 +111,12 @@ int __glXMaterialfvReqSize(GLbyte *pc, B
      return 4 * __glMaterialfv_size( pname );	/* defined in samplegl lib */
  }
  
@@ -287,7 +279,7 @@ index 9bf0d00..dc3475e 100644
  {
      GLenum pname = *(GLenum *)(pc + 4);
      if (swap) {
-@@ -125,7 +125,7 @@ int __glXTexGendvReqSize(GLbyte *pc, Bool swap )
+@@ -125,7 +125,7 @@ int __glXTexGendvReqSize(GLbyte *pc, Boo
      return 8 * __glTexGendv_size( pname );	/* defined in samplegl lib */
  }
  
@@ -296,7 +288,7 @@ index 9bf0d00..dc3475e 100644
  {
      GLenum pname = *(GLenum *)(pc + 4);
      if (swap) {
-@@ -134,12 +134,12 @@ int __glXTexGenfvReqSize(GLbyte *pc, Bool swap )
+@@ -134,12 +134,12 @@ int __glXTexGenfvReqSize(GLbyte *pc, Boo
      return 4 * __glTexGenfv_size( pname );	/* defined in samplegl lib */
  }
  
@@ -312,7 +304,7 @@ index 9bf0d00..dc3475e 100644
  {
      GLenum pname = *(GLenum *)(pc + 4);
      if (swap) {
-@@ -148,12 +148,12 @@ int __glXTexParameterfvReqSize(GLbyte *pc, Bool swap )
+@@ -148,12 +148,12 @@ int __glXTexParameterfvReqSize(GLbyte *p
      return 4 * __glTexParameterfv_size( pname ); /* defined in samplegl lib */
  }
  
@@ -328,7 +320,7 @@ index 9bf0d00..dc3475e 100644
  {
      GLenum pname = *(GLenum *)(pc + 4);
      if (swap) {
-@@ -162,12 +162,12 @@ int __glXTexEnvfvReqSize(GLbyte *pc, Bool swap )
+@@ -162,12 +162,12 @@ int __glXTexEnvfvReqSize(GLbyte *pc, Boo
      return 4 * __glTexEnvfv_size( pname );	/* defined in samplegl lib */
  }
  
@@ -344,7 +336,7 @@ index 9bf0d00..dc3475e 100644
  {
      GLenum target;
      GLint order;
-@@ -183,7 +183,7 @@ int __glXMap1dReqSize(GLbyte *pc, Bool swap )
+@@ -183,7 +183,7 @@ int __glXMap1dReqSize(GLbyte *pc, Bool s
      return safe_mul(8, safe_mul(__glMap1d_size(target), order));
  }
  
@@ -353,7 +345,7 @@ index 9bf0d00..dc3475e 100644
  {
      GLenum target;
      GLint order;
-@@ -205,7 +205,7 @@ static int Map2Size(int k, int majorOrder, int minorOrder)
+@@ -205,7 +205,7 @@ static int Map2Size(int k, int majorOrde
      return safe_mul(k, safe_mul(majorOrder, minorOrder));
  }
  
@@ -362,7 +354,7 @@ index 9bf0d00..dc3475e 100644
  {
      GLenum target;
      GLint uorder, vorder;
-@@ -221,7 +221,7 @@ int __glXMap2dReqSize(GLbyte *pc, Bool swap )
+@@ -221,7 +221,7 @@ int __glXMap2dReqSize(GLbyte *pc, Bool s
      return safe_mul(8, Map2Size(__glMap2d_size(target), uorder, vorder));
  }
  
@@ -371,7 +363,7 @@ index 9bf0d00..dc3475e 100644
  {
      GLenum target;
      GLint uorder, vorder;
-@@ -237,7 +237,7 @@ int __glXMap2fReqSize(GLbyte *pc, Bool swap )
+@@ -237,7 +237,7 @@ int __glXMap2fReqSize(GLbyte *pc, Bool s
      return safe_mul(4, Map2Size(__glMap2f_size(target), uorder, vorder));
  }
  
@@ -380,7 +372,7 @@ index 9bf0d00..dc3475e 100644
  {
      GLint mapsize;
      mapsize = *(GLint *)(pc + 4);
-@@ -247,12 +247,12 @@ int __glXPixelMapfvReqSize(GLbyte *pc, Bool swap )
+@@ -247,12 +247,12 @@ int __glXPixelMapfvReqSize(GLbyte *pc, B
      return 4 * mapsize;
  }
  
@@ -396,7 +388,7 @@ index 9bf0d00..dc3475e 100644
  {
      GLint mapsize;
      mapsize = *(GLint *)(pc + 4);
-@@ -458,7 +458,7 @@ int __glXImageSize( GLenum format, GLenum type, GLenum target,
+@@ -458,7 +458,7 @@ int __glXImageSize( GLenum format, GLenu
  }
  
  
@@ -405,7 +397,7 @@ index 9bf0d00..dc3475e 100644
  {
      __GLXdispatchDrawPixelsHeader *hdr = (__GLXdispatchDrawPixelsHeader *) pc;
      GLenum format = hdr->format;
-@@ -482,7 +482,7 @@ int __glXDrawPixelsReqSize(GLbyte *pc, Bool swap )
+@@ -482,7 +482,7 @@ int __glXDrawPixelsReqSize(GLbyte *pc, B
  			   0, rowLength, 0, skipRows, alignment );
  }
  
@@ -414,7 +406,7 @@ index 9bf0d00..dc3475e 100644
  {
      __GLXdispatchBitmapHeader *hdr = (__GLXdispatchBitmapHeader *) pc;
      GLint w = hdr->width;
-@@ -502,7 +502,7 @@ int __glXBitmapReqSize(GLbyte *pc, Bool swap )
+@@ -502,7 +502,7 @@ int __glXBitmapReqSize(GLbyte *pc, Bool
  		      0, rowLength, 0, skipRows, alignment );
  }
  
@@ -423,7 +415,7 @@ index 9bf0d00..dc3475e 100644
  {
      __GLXdispatchTexImageHeader *hdr = (__GLXdispatchTexImageHeader *) pc;
      GLenum target = hdr->target;
-@@ -531,7 +531,7 @@ int __glXTexImage1DReqSize(GLbyte *pc, Bool swap )
+@@ -531,7 +531,7 @@ int __glXTexImage1DReqSize(GLbyte *pc, B
  			   0, rowLength, 0, skipRows, alignment );
  }
  
@@ -448,7 +440,7 @@ index 9bf0d00..dc3475e 100644
      int i;
  
      if (swap) {
-@@ -593,6 +594,13 @@ int __glXDrawArraysSize( GLbyte *pc, Bool swap )
+@@ -593,6 +594,13 @@ int __glXDrawArraysSize( GLbyte *pc, Boo
      }
  
      pc += sizeof(__GLXdispatchDrawArraysHeader);
@@ -462,7 +454,7 @@ index 9bf0d00..dc3475e 100644
      compHeader = (__GLXdispatchDrawArraysComponentHeader *) pc;
  
      for (i=0; i<numComponents; i++) {
-@@ -636,23 +644,24 @@ int __glXDrawArraysSize( GLbyte *pc, Bool swap )
+@@ -636,23 +644,24 @@ int __glXDrawArraysSize( GLbyte *pc, Boo
  	    return -1;
  	}
  
@@ -492,7 +484,7 @@ index 9bf0d00..dc3475e 100644
  {
      __GLXdispatchTexSubImageHeader *hdr = (__GLXdispatchTexSubImageHeader *) pc;
      GLenum format = hdr->format;
-@@ -674,7 +683,7 @@ int __glXTexSubImage1DReqSize(GLbyte *pc, Bool swap )
+@@ -674,7 +683,7 @@ int __glXTexSubImage1DReqSize(GLbyte *pc
  			   0, rowLength, 0, skipRows, alignment );
  }
  
@@ -501,7 +493,7 @@ index 9bf0d00..dc3475e 100644
  {
      __GLXdispatchTexSubImageHeader *hdr = (__GLXdispatchTexSubImageHeader *) pc;
      GLenum format = hdr->format;
-@@ -698,7 +707,7 @@ int __glXTexSubImage2DReqSize(GLbyte *pc, Bool swap )
+@@ -698,7 +707,7 @@ int __glXTexSubImage2DReqSize(GLbyte *pc
  			   0, rowLength, 0, skipRows, alignment );
  }
  
@@ -510,7 +502,7 @@ index 9bf0d00..dc3475e 100644
  {
      __GLXdispatchTexImage3DHeader *hdr = (__GLXdispatchTexImage3DHeader *) pc;
      GLenum target = hdr->target;
-@@ -735,7 +744,7 @@ int __glXTexImage3DReqSize(GLbyte *pc, Bool swap )
+@@ -735,7 +744,7 @@ int __glXTexImage3DReqSize(GLbyte *pc, B
      }
  }
  
@@ -519,7 +511,7 @@ index 9bf0d00..dc3475e 100644
  {
      __GLXdispatchTexSubImage3DHeader *hdr =
  					(__GLXdispatchTexSubImage3DHeader *) pc;
-@@ -772,7 +781,7 @@ int __glXTexSubImage3DReqSize(GLbyte *pc, Bool swap )
+@@ -772,7 +781,7 @@ int __glXTexSubImage3DReqSize(GLbyte *pc
      }
  }
  
@@ -528,7 +520,7 @@ index 9bf0d00..dc3475e 100644
  {
      __GLXdispatchConvolutionFilterHeader *hdr =
  			(__GLXdispatchConvolutionFilterHeader *) pc;
-@@ -795,7 +804,7 @@ int __glXConvolutionFilter1DReqSize(GLbyte *pc, Bool swap )
+@@ -795,7 +804,7 @@ int __glXConvolutionFilter1DReqSize(GLby
  			   0, rowLength, 0, 0, alignment );
  }
  
@@ -537,7 +529,7 @@ index 9bf0d00..dc3475e 100644
  {
      __GLXdispatchConvolutionFilterHeader *hdr =
  			(__GLXdispatchConvolutionFilterHeader *) pc;
-@@ -841,7 +850,7 @@ int __glXConvolutionParameterfvSize(GLenum pname)
+@@ -841,7 +850,7 @@ int __glXConvolutionParameterfvSize(GLen
      return __glXConvolutionParameterivSize(pname);
  }
  
@@ -546,7 +538,7 @@ index 9bf0d00..dc3475e 100644
  {
      GLenum pname = *(GLenum *)(pc + 4);
      if (swap) {
-@@ -850,12 +859,12 @@ int __glXConvolutionParameterivReqSize(GLbyte *pc, Bool swap )
+@@ -850,12 +859,12 @@ int __glXConvolutionParameterivReqSize(G
      return 4 * __glXConvolutionParameterivSize( pname );
  }
  
@@ -562,7 +554,7 @@ index 9bf0d00..dc3475e 100644
  {
      __GLXdispatchConvolutionFilterHeader *hdr =
  			(__GLXdispatchConvolutionFilterHeader *) pc;
-@@ -904,7 +913,7 @@ int __glXColorTableParameterivSize(GLenum pname)
+@@ -904,7 +913,7 @@ int __glXColorTableParameterivSize(GLenu
      return __glXColorTableParameterfvSize(pname);
  }
  
@@ -571,7 +563,7 @@ index 9bf0d00..dc3475e 100644
  {
      __GLXdispatchColorTableHeader *hdr =
  			(__GLXdispatchColorTableHeader *) pc;
-@@ -939,7 +948,7 @@ int __glXColorTableReqSize(GLbyte *pc, Bool swap )
+@@ -939,7 +948,7 @@ int __glXColorTableReqSize(GLbyte *pc, B
  			   0, rowLength, 0, 0, alignment );
  }
  
@@ -580,7 +572,7 @@ index 9bf0d00..dc3475e 100644
  {
      __GLXdispatchColorSubTableHeader *hdr =
  			(__GLXdispatchColorSubTableHeader *) pc;
-@@ -962,7 +971,7 @@ int __glXColorSubTableReqSize(GLbyte *pc, Bool swap )
+@@ -962,7 +971,7 @@ int __glXColorSubTableReqSize(GLbyte *pc
  			   0, rowLength, 0, 0, alignment );
  }
  
@@ -589,7 +581,7 @@ index 9bf0d00..dc3475e 100644
  {
      GLenum pname = *(GLenum *)(pc + 4);
      if (swap) {
-@@ -971,13 +980,13 @@ int __glXColorTableParameterfvReqSize(GLbyte *pc, Bool swap )
+@@ -971,13 +980,13 @@ int __glXColorTableParameterfvReqSize(GL
      return 4 * __glXColorTableParameterfvSize(pname);
  }
  
@@ -606,7 +598,7 @@ index 9bf0d00..dc3475e 100644
  {
      GLenum pname = *(GLenum *)(pc + 0);
      if (swap) {
-@@ -986,8 +995,8 @@ int __glXPointParameterfvARBReqSize(GLbyte *pc, Bool swap )
+@@ -986,8 +995,8 @@ int __glXPointParameterfvARBReqSize(GLby
      return 4 * __glPointParameterfvEXT_size( pname );
  }
  
@@ -617,6 +609,3 @@ index 9bf0d00..dc3475e 100644
 -    return __glXPointParameterfvARBReqSize(pc, swap);
 +    return __glXPointParameterfvARBReqSize(pc, swap, reqlen);
  }
--- 
-2.1.4
-

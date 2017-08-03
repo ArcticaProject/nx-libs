@@ -5,7 +5,7 @@ Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 Last-Update: 2011-12-31
 --- a/nxproxy/Makefile.in
 +++ b/nxproxy/Makefile.in
-@@ -41,6 +41,8 @@
+@@ -41,6 +41,8 @@ VPATH       = @srcdir@
  INSTALL         = @INSTALL@
  INSTALL_PROGRAM = @INSTALL_PROGRAM@
  INSTALL_DATA    = @INSTALL_DATA@
@@ -14,7 +14,7 @@ Last-Update: 2011-12-31
  
  #
  # This should be autodetected.
-@@ -87,11 +89,20 @@
+@@ -87,11 +89,20 @@ depend.status:
  install:	install.bin install.man
  
  install.bin:	$(PROGRAM)

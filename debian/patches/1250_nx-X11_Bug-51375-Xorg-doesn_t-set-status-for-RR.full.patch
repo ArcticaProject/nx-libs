@@ -16,8 +16,6 @@ Date:   Mon Jul 9 19:12:42 2012 -0700
     v2: backport to nx-libs 3.6.x (Ulrich Sibiller)
     v3: backport to nx-libs 3.5.0.x (Mihai Moldovan)
 
-diff --git a/nx-X11/programs/Xserver/randr/rroutput.c b/nx-X11/programs/Xserver/randr/rroutput.c
-index 1ecde31..693f5a5 100644
 --- a/nx-X11/programs/Xserver/randr/rroutput.c
 +++ b/nx-X11/programs/Xserver/randr/rroutput.c
 @@ -456,6 +456,7 @@ ProcRRGetOutputInfo (ClientPtr client)

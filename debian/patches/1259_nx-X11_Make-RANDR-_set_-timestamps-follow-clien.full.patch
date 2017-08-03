@@ -15,8 +15,6 @@ Date:   Thu May 28 14:43:27 2009 -0700
     v2: backport to nx-libs 3.6.x (Ulrich Sibiller)
     v3: backport to nx-libs 3.5.0.x (Mihai Moldovan)
 
-diff --git a/nx-X11/programs/Xserver/randr/rrcrtc.c b/nx-X11/programs/Xserver/randr/rrcrtc.c
-index 8a34962..bc1040c 100644
 --- a/nx-X11/programs/Xserver/randr/rrcrtc.c
 +++ b/nx-X11/programs/Xserver/randr/rrcrtc.c
 @@ -838,10 +838,8 @@ ProcRRSetCrtcConfig (ClientPtr client)
@@ -43,8 +41,6 @@ index 8a34962..bc1040c 100644
  
      if (client->swapped) 
      {
-diff --git a/nx-X11/programs/Xserver/randr/rrscreen.c b/nx-X11/programs/Xserver/randr/rrscreen.c
-index e0eb076..a3851bd 100644
 --- a/nx-X11/programs/Xserver/randr/rrscreen.c
 +++ b/nx-X11/programs/Xserver/randr/rrscreen.c
 @@ -977,15 +977,10 @@ ProcRRSetScreenConfig (ClientPtr client)

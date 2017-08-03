@@ -17,7 +17,7 @@ Last-Update: 2012-01-11
  
  /*
   * Set here the required log level.
-@@ -53,6 +54,7 @@
+@@ -53,6 +54,7 @@ int nxagentLogoDepth;
  int nxagentLogoWhite;
  int nxagentLogoRed;
  int nxagentLogoBlack;
@@ -25,7 +25,7 @@ Last-Update: 2012-01-11
  
  void nxagentPaintLogo(Window win, GC gc, int scale, int width, int height);
  
-@@ -166,6 +168,15 @@
+@@ -166,6 +168,15 @@ void nxagentPaintLogo(Window win, GC gc,
    XPoint    m[12];
    int w, h, c, w2, h2;
  
@@ -41,7 +41,7 @@ Last-Update: 2012-01-11
    #ifdef DEBUG
    fprintf(stderr, "nxagenShowtLogo: Got called.\n");
    #endif
-@@ -218,75 +229,146 @@
+@@ -218,75 +229,146 @@ void nxagentPaintLogo(Window win, GC gc,
    XSetForeground(nxagentDisplay, gc, nxagentLogoRed);
    XSetBackground(nxagentDisplay, gc, nxagentLogoWhite);
  
@@ -230,7 +230,7 @@ Last-Update: 2012-01-11
    #ifdef NXAGENT_LOGO_DEBUG
 --- a/nx-X11/programs/Xserver/hw/nxagent/Display.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Display.c
-@@ -1430,22 +1430,10 @@
+@@ -1430,22 +1430,10 @@ FIXME: Use of nxagentParentWindow is str
    g = pV.green_mask;
    b = pV.blue_mask;
  
@@ -257,7 +257,7 @@ Last-Update: 2012-01-11
  
    #ifdef WATCH
  
-@@ -2696,22 +2684,10 @@
+@@ -2696,22 +2684,10 @@ Bool nxagentReconnectDisplay(void *p0)
    g = pV.green_mask;
    b = pV.blue_mask;
  
@@ -286,7 +286,7 @@ Last-Update: 2012-01-11
  
 --- a/nx-X11/programs/Xserver/hw/nxagent/Splash.h
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Splash.h
-@@ -33,6 +33,7 @@
+@@ -33,6 +33,7 @@ extern int nxagentLogoDepth;
  extern int nxagentLogoWhite;
  extern int nxagentLogoRed;
  extern int nxagentLogoBlack;
@@ -296,7 +296,7 @@ Last-Update: 2012-01-11
  
 --- a/nx-X11/programs/Xserver/os/oscolor.c
 +++ b/nx-X11/programs/Xserver/os/oscolor.c
-@@ -53,7 +53,19 @@
+@@ -53,7 +53,19 @@ SOFTWARE.
  #include <sys/stat.h>
  #include <unistd.h>
  
@@ -319,7 +319,7 @@ Last-Update: 2012-01-11
  #endif
 --- a/nx-X11/programs/Xserver/hw/nxagent/Keyboard.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Keyboard.c
-@@ -62,6 +62,7 @@
+@@ -62,6 +62,7 @@ is" without express or implied warranty.
  
  #include "globals.h"
  #include "property.h"
@@ -327,7 +327,7 @@ Last-Update: 2012-01-11
  
  #include <X11/extensions/XKB.h>
  
-@@ -138,8 +139,11 @@
+@@ -138,8 +139,11 @@ extern        Status        XkbGetContro
  #ifndef XKB_ALTERNATE_BASE_DIRECTORY
  #define XKB_ALTERNATE_BASE_DIRECTORY   "/usr/X11R6/lib/X11/xkb"
  #endif
@@ -341,7 +341,7 @@ Last-Update: 2012-01-11
  #endif
  #ifndef XKB_DFLT_RULES_FILE
  #define XKB_DFLT_RULES_FILE  "xfree86"
-@@ -988,7 +992,10 @@
+@@ -988,7 +992,10 @@ XkbError:
  
          XkbGetControls(nxagentDisplay, XkbAllControlsMask, xkb);
  
@@ -353,7 +353,7 @@ Last-Update: 2012-01-11
  
          nxagentXkbConfigFilePath = malloc((nxagentXkbConfigFilePathSize + 1) * sizeof(char));
  
-@@ -997,7 +1004,10 @@
+@@ -997,7 +1004,10 @@ XkbError:
            FatalError("nxagentKeyboardProc: malloc failed.");
          }
  

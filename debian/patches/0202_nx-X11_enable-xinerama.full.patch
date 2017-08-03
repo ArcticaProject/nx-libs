@@ -9,7 +9,7 @@ Author: Oleksandr Shneyder <oleksandr.shneyder@obviously-nice.de>
 Last-Update: 2012-01-13
 --- a/nx-X11/config/cf/host.def
 +++ b/nx-X11/config/cf/host.def
-@@ -686,7 +686,7 @@
+@@ -686,7 +686,7 @@ XCOMM $XFree86: xc/config/cf/xf86site.de
   *
  #define BuildXinerama		NO
   */
@@ -20,7 +20,7 @@ Last-Update: 2012-01-13
   * If you don't want to build support for the GLX extension, uncomment this.
 --- a/nx-X11/config/cf/X11.tmpl
 +++ b/nx-X11/config/cf/X11.tmpl
-@@ -456,7 +456,7 @@
+@@ -456,7 +456,7 @@ XORGRELSTRING = XorgManVersionString
  #define BuildXinerama		NO
  #endif
  #ifndef BuildXineramaLibrary
@@ -31,7 +31,7 @@ Last-Update: 2012-01-13
  #define BuildDmxDevelTools	NO
 --- a/nx-X11/lib/Xinerama/Xinerama.c
 +++ b/nx-X11/lib/Xinerama/Xinerama.c
-@@ -34,7 +34,7 @@
+@@ -34,7 +34,7 @@ Equipment Corporation.
  #include <X11/extensions/panoramiXext.h>
  #include <X11/extensions/panoramiXproto.h>
  #include <X11/extensions/Xinerama.h>
@@ -40,7 +40,7 @@ Last-Update: 2012-01-13
  
  static XExtensionInfo _panoramiX_ext_info_data;
  static XExtensionInfo *panoramiX_ext_info = &_panoramiX_ext_info_data;
-@@ -249,6 +249,16 @@
+@@ -249,6 +249,16 @@ Bool XineramaIsActive(Display *dpy)
      xXineramaIsActiveReq  	*req;
      XExtDisplayInfo 		*info = find_display (dpy);
  
@@ -57,7 +57,7 @@ Last-Update: 2012-01-13
      if(!XextHasExtension(info))
  	return False;  /* server doesn't even have the extension */
  
-@@ -266,7 +276,6 @@
+@@ -266,7 +276,6 @@ Bool XineramaIsActive(Display *dpy)
      return rep.state;
  }
  
@@ -65,7 +65,7 @@ Last-Update: 2012-01-13
  
  XineramaScreenInfo * 
  XineramaQueryScreens(
-@@ -279,39 +288,72 @@
+@@ -279,39 +288,72 @@ XineramaQueryScreens(
      xXineramaQueryScreensReq	*req;
      XineramaScreenInfo		*scrnInfo = NULL;
  
@@ -166,7 +166,7 @@ Last-Update: 2012-01-13
  
 --- a/nx-X11/programs/Xserver/hw/nxagent/Imakefile
 +++ b/nx-X11/programs/Xserver/hw/nxagent/Imakefile
-@@ -206,7 +206,7 @@
+@@ -206,7 +206,7 @@ DEFINES = -g $(OS_DEFINES) $(EXT_DEFINES
            -UNX_DEBUG_INPUT \
  	  -DRANDR_10_INTERFACE \
  	  -DRANDR_12_INTERFACE \
@@ -177,7 +177,7 @@ Last-Update: 2012-01-13
  all:: $(OBJS)
 --- a/nx-X11/programs/Xserver/hw/nxagent/X/NXxvdisp.c
 +++ b/nx-X11/programs/Xserver/hw/nxagent/X/NXxvdisp.c
-@@ -275,17 +275,19 @@
+@@ -275,17 +275,19 @@ ProcXvDispatch(ClientPtr client)
      case xv_PutVideo:
  #ifdef PANORAMIX
          if(!noPanoramiXExtension)
@@ -201,7 +201,7 @@ Last-Update: 2012-01-13
      case xv_GetVideo: result = (ProcXvGetVideo(client)); break;
      case xv_GetStill: result = (ProcXvGetStill(client)); break;
      case xv_GrabPort: result = (ProcXvGrabPort(client)); break;
-@@ -295,35 +297,39 @@
+@@ -295,35 +297,39 @@ ProcXvDispatch(ClientPtr client)
      case xv_StopVideo: 
  #ifdef PANORAMIX
          if(!noPanoramiXExtension)
@@ -251,7 +251,7 @@ Last-Update: 2012-01-13
      case xv_ListImageFormats: result = (ProcXvListImageFormats(client)); break;
 --- a/nx-X11/programs/Xserver/Imakefile
 +++ b/nx-X11/programs/Xserver/Imakefile
-@@ -1021,7 +1021,7 @@
+@@ -1021,7 +1021,7 @@ NXAGENTNXLIBS = -L ../../../nxcomp -L ..
  #else
  NXAGENTNXLIBS = -L ../../../nxcomp -L ../../../nxcompext -L ../../../nxcompshad \
                  -lXcomp -lXcompext -lXcompshad -lXrender -lX11 -lXext -lXfixes \
@@ -262,7 +262,7 @@ Last-Update: 2012-01-13
  #endif
 --- a/nx-X11/programs/Xserver/Xext/panoramiX.c
 +++ b/nx-X11/programs/Xserver/Xext/panoramiX.c
-@@ -1045,16 +1045,7 @@
+@@ -1045,16 +1045,7 @@ ProcXineramaIsActive(ClientPtr client)
      rep.type = X_Reply;
      rep.length = 0;
      rep.sequenceNumber = client->sequence;
@@ -281,7 +281,7 @@ Last-Update: 2012-01-13
  	swaps (&rep.sequenceNumber, n);
 --- a/nx-X11/programs/Xserver/Xext/panoramiX.h
 +++ b/nx-X11/programs/Xserver/Xext/panoramiX.h
-@@ -44,7 +44,7 @@
+@@ -44,7 +44,7 @@ Equipment Corporation.
  #define _PANORAMIX_H_
  
  #include <X11/extensions/panoramiXext.h>
