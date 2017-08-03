@@ -303,3 +303,21 @@ rm -f conftest*])
 FreeBSD=
 test "$nxconf_cv_freebsd" = yes && FreeBSD=yes
 ]) # NX_BUILD_ON_FreeBSD
+
+AC_DEFUN([LIBJPEG_FALLBACK_CHECK],[
+AC_MSG_CHECKING([for libjpeg shared libary file and headers])
+AC_CHECK_LIB([jpeg], [jpeg_destroy_compress],
+    [have_jpeg_lib=yes], [have_jpeg_lib=no])
+AC_CHECK_HEADERS([jpeglib.h],
+    [have_jpeg_headers=yes], [have_jpeg_headers=no])
+
+if test x"$have_jpeg_lib" = "xyes" && test x"$have_jpeg_headers" = "xyes"; then
+    AC_MSG_RESULT([yes])
+    JPEG_CFLAGS=""
+    JPEG_LIBS="-ljpeg"
+else
+    AC_MSG_RESULT([no])
+    AC_MSG_FAILURE([Could not find libjpeg on your system, make sure
+the JPEG shared library and header files are installed.])
+fi
+]) # LIBJPEG_FALLBACK_CHECK

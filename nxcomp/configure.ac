@@ -25,10 +25,6 @@ AC_SUBST([COMP_VERSION])
 LT_COMP_VERSION=[`echo $COMP_VERSION | sed -r -e 's/^([0-9]+\.[0-9]+\.[0-9]+).*$/\1/' -e 's/\./:/g'`] 
 AC_SUBST([LT_COMP_VERSION])
 
-PKG_CHECK_MODULES(JPEG, libjpeg)
-PKG_CHECK_MODULES(PNG, libpng)
-PKG_CHECK_MODULES(Z, zlib)
-
 # Upstream's pkg.m4 (since 0.27) offers this now, but define our own
 # compatible version in case the local version of pkgconfig isn't new enough.
 # https://bugs.freedesktop.org/show_bug.cgi?id=48743
@@ -38,6 +34,10 @@ m4_ifdef([PKG_INSTALLDIR], [PKG_INSTALLDIR],
                       [install directory for nxcompshad.pc pkg-config file])],
                        [],[with_pkgconfigdir='$(libdir)/pkgconfig'])
           AC_SUBST([pkgconfigdir], [${with_pkgconfigdir}])])
+
+PKG_CHECK_MODULES([JPEG], [libjpeg], [], [LIBJPEG_FALLBACK_CHECK])
+PKG_CHECK_MODULES([PNG], [libpng], [], [])
+PKG_CHECK_MODULES([Z], [zlib], [], [])
 
 AC_LANG([C++])
 NX_COMPILER_BRAND
