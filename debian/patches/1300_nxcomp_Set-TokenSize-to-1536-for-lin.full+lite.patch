@@ -1,0 +1,61 @@
+From 7d51cb6760b760768aeb91dd81f10443d094bd6c Mon Sep 17 00:00:00 2001
+From: Oleksandr Shneyder <o.schneyder@phoca-gmbh.de>
+Date: Thu, 29 Jun 2017 10:08:56 +0200
+Subject: [PATCH] nxcomp: Set TokenSize to 1536 for link type ADSL and WAN.
+ Improving non-xrender based  browser scrolling behaviour when link type is
+ set to ADSL or WAN.
+
+ In the 40-ies (talking about release version numbers), Firefox started
+ using the Skia library [1] for client-side rendering of browser content.
+
+ With current versions of Firefox you can switch between libXrender based
+ rendering (esp. of Fonts) and Skia based rendering:
+
+    gfx.xrender.enabled = true|false
+
+ Some time around Firefox 52, the default for the gfx.xrender.enabled
+ setting got changed by Firefox upstream from true to false. So nowadays,
+ Firefox uses Skia by default.
+
+ However, it turns out that Skia scales really badly on remote X11
+ connections. Scrolling of long web pages becomes really jolty.
+
+ Something similar could be observed earlier already when using
+ Chrome or Chromium (which also has been using Skia for some time
+ now).
+
+ This change in nxcomp works around those issues and greatly
+ improves scrolling and general browser experience on medium
+ throughput networks (like cable modem, ADSL, HDSPA, slow LTE).
+
+ [1] https://en.wikipedia.org/wiki/Skia_Graphics_Engine
+
+ Fixes ArcticaProject/nx-libs#443.
+
+ Backported from Arctica GH 3.6.x branch.
+
+ v2: backport to nx-libs 3.5.0.x (Mihai Moldovan)
+---
+ nxcomp/Loop.cpp | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/nxcomp/Loop.cpp
++++ b/nxcomp/Loop.cpp
+@@ -13017,7 +13017,7 @@ int SetLinkAdsl()
+ 
+   control -> LinkMode = LINK_TYPE_ADSL;
+ 
+-  control -> TokenSize  = 512;
++  control -> TokenSize  = 1536;
+   control -> TokenLimit = 24;
+ 
+   control -> SplitMode             = 1;
+@@ -13047,7 +13047,7 @@ int SetLinkWan()
+ 
+   control -> LinkMode = LINK_TYPE_WAN;
+ 
+-  control -> TokenSize  = 768;
++  control -> TokenSize  = 1536;
+   control -> TokenLimit = 24;
+ 
+   control -> SplitMode             = 1;
