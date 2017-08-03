@@ -1,0 +1,68 @@
+From da43f047a0d1f9e3a4850f3e8a15a67e81826dae Mon Sep 17 00:00:00 2001
+From: Oleksandr Shneyder <o.schneyder@phoca-gmbh.de>
+Date: Mon, 31 Jul 2017 13:20:12 +0200
+Subject: [PATCH] Render.c: Improve situation for multiple trapezoid requests.
+
+ This change improves the situation in nxagent for the following
+ issue:
+
+ ```
+ "XRenderCompositeTrapezoids builds RenderTrapezoids requests to composite the
+ specified list of trapezoids to dst.  XRenderCompositeTrapezoids will split
+ the list of trapezoids to build requests no larger than the maximum request
+ size supported by the server.  This can create rendering artifacts as the
+ precompositing done by RenderTrapezoids when a maskFormat is specified
+ cannot span multiple requests."
+ ```
+
+ For more information see:
+ https://lists.freedesktop.org/archives/xorg/2008-June/036124.html
+
+ Fixes ArcticaProject/nx-libs#336.
+
+ Backported from Arctica GH 3.6.x branch.
+
+ v2: backport to nx-libs 3.5.0.x (Mihai Moldovan)
+---
+ nx-X11/programs/Xserver/hw/nxagent/Render.c | 15 +--------------
+ 1 file changed, 1 insertion(+), 14 deletions(-)
+
+--- a/nx-X11/programs/Xserver/hw/nxagent/Render.c
++++ b/nx-X11/programs/Xserver/hw/nxagent/Render.c
+@@ -84,12 +84,6 @@ FIXME: Most operations don't seem to pro
+ #undef  SKIP_REALLY_ALL_LOUSY_RENDER_OPERATIONS
+ 
+ /*
+- * Do we split the big trapezoid requests?
+- */
+-
+-#define TRAPEZOIDS_PER_REQUEST  256
+-
+-/*
+  * Margin added around the glyphs extent (in pixels).
+  */
+ 
+@@ -1798,8 +1792,6 @@ FIXME: Is this useful or just a waste of
+     nxagentSynchronizeBox(pDst -> pDrawable, nxagentTrapezoidExtents, NEVER_BREAK);
+   }
+ 
+-  while (remaining > 0)
+-  {
+     XRenderCompositeTrapezoids(nxagentDisplay,
+                                op,
+                                nxagentPicturePriv(pSrc) -> picture,
+@@ -1807,13 +1799,8 @@ FIXME: Is this useful or just a waste of
+                                pForm,
+                                xSrc,
+                                ySrc,
+-                               (XTrapezoid *) current,
+-                               (remaining > TRAPEZOIDS_PER_REQUEST ?
+-                                   TRAPEZOIDS_PER_REQUEST : remaining));
++                               (XTrapezoid *) current,remaining);
+ 
+-    remaining -= TRAPEZOIDS_PER_REQUEST;
+-    current   += TRAPEZOIDS_PER_REQUEST;
+-  }
+ 
+   #endif
+ 

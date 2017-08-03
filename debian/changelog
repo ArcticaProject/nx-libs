@@ -71,6 +71,11 @@ nx-libs (2:3.5.0.33-0x2go1) UNRELEASED; urgency=low
     v2: backport to nx-libs 3.5.0.x (Mihai Moldovan)
     Adds:
     - debian/patches/1300_nxcomp_Set-TokenSize-to-1536-for-lin.full+lite.patch
+  * nx-X11: Render.c: Improve situation for multiple trapezoid requests.
+    Backported from Arctica GH 3.6.x branch.
+    v2: backport to nx-libs 3.5.0.x (Mihai Moldovan)
+    Adds:
+    - debian/patches/1400_nx-X11_Render.c-Improve-situation-fo.full+lite.patch
 
  -- X2Go Release Manager <git-admin@x2go.org>  Sat, 04 Jul 2015 06:29:19 +0200
 
