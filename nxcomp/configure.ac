@@ -31,7 +31,7 @@ AC_SUBST([LT_COMP_VERSION])
 m4_ifdef([PKG_INSTALLDIR], [PKG_INSTALLDIR],
          [AC_ARG_WITH([pkgconfigdir],
                       [AS_HELP_STRING([--with-pkgconfigdir],
-                      [install directory for nxcompshad.pc pkg-config file])],
+                      [install directory for nxcomp.pc pkg-config file])],
                        [],[with_pkgconfigdir='$(libdir)/pkgconfig'])
           AC_SUBST([pkgconfigdir], [${with_pkgconfigdir}])])
 
