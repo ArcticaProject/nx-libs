@@ -36,8 +36,8 @@ m4_ifdef([PKG_INSTALLDIR], [PKG_INSTALLDIR],
           AC_SUBST([pkgconfigdir], [${with_pkgconfigdir}])])
 
 PKG_CHECK_MODULES([JPEG], [libjpeg], [], [LIBJPEG_FALLBACK_CHECK])
-PKG_CHECK_MODULES([PNG], [libpng], [], [])
-PKG_CHECK_MODULES([Z], [zlib], [], [])
+PKG_CHECK_MODULES([PNG], [libpng])
+PKG_CHECK_MODULES([Z], [zlib])
 
 AC_LANG([C++])
 NX_COMPILER_BRAND
