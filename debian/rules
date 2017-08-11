@@ -12,10 +12,10 @@ export INCLUDEDIR = "/usr/include/$(shell dpkg-architecture -qDEB_BUILD_MULTIARC
 
 %:
 	CONFIGURE="./configure --prefix=/usr \
-                               --disable-silent-rules \
-                               --libdir=$(LIBDIR) \
-                               --includedir=$(INCLUDEDIR) \
-                               --libexecdir=$(LIBEXECDIR)" dh $@ --with quilt
+	                       --disable-silent-rules \
+	                       --libdir=$(LIBDIR) \
+	                       --includedir=$(INCLUDEDIR) \
+	                       --libexecdir=$(LIBEXECDIR)" dh $@ --with quilt
 
 override_dh_auto_clean:
 	rm -Rf nx-X11/.build-exports
