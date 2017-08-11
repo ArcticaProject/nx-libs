@@ -11,8 +11,8 @@ export LIBEXECDIR = "$(LIBDIR)/nx/bin"
 export INCLUDEDIR = "/usr/include/$(shell dpkg-architecture -qDEB_BUILD_MULTIARCH)"
 
 %:
-	CONFIGURE="./configure --prefix=/usr \
-	                       --disable-silent-rules \
+	CONFIGURE="./configure --disable-silent-rules \
+	                       --prefix=/usr \
 	                       --libdir=$(LIBDIR) \
 	                       --includedir=$(INCLUDEDIR) \
 	                       --libexecdir=$(LIBEXECDIR)" dh $@ --with quilt
