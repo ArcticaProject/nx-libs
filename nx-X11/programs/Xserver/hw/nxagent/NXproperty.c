@@ -169,6 +169,15 @@ ProcChangeProperty(ClientPtr client)
     }
 #endif
 
+#ifdef NXAGENT_SERVER
+    /* prevent clients from changing the NX_AGENT_VERSION property */
+    {
+      Atom prop = MakeAtom("NX_AGENT_VERSION", strlen("NX_AGENT_VERSION"), True);
+      if (stuff->property == prop)
+        return client->noClientException;
+    }
+#endif
+
     err = ChangeWindowProperty(pWin, stuff->property, stuff->type, (int)format,
 			       (int)mode, len, (void *)&stuff[1], TRUE);
     if (err != Success)

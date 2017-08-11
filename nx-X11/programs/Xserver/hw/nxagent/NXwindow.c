@@ -134,6 +134,8 @@ extern Bool nxagentScreenTrap;
 
 WindowPtr nxagentRootTileWindow;
 
+extern void nxagentSetVersionProperty(WindowPtr pWin);
+
 void nxagentClearSplash(WindowPtr pW)
 {
     ScreenPtr pScreen;
@@ -293,6 +295,8 @@ InitRootWindow(WindowPtr pWin)
       nxagentPropagateArtsdProperties(pScreen, artsd_port);
     }
     #endif
+
+    nxagentSetVersionProperty(pWin);
 }
 
 /*****
