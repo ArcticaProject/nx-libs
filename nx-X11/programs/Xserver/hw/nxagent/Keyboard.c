@@ -1065,6 +1065,7 @@ XkbError:
             ErrorF("Error parsing config file.\n");
 
             free(nxagentXkbConfigFilePath);
+            nxagentXkbConfigFilePath = NULL;
 
             fclose(file);
             goto XkbError;
@@ -1095,6 +1096,7 @@ XkbError:
             options = config.options;
 
           free(nxagentXkbConfigFilePath);
+          nxagentXkbConfigFilePath = NULL;
 
           fclose(file);
         }
@@ -1114,6 +1116,7 @@ XkbError:
                                           nxagentBell, nxagentChangeKeyboardControl);
 
           free(nxagentXkbConfigFilePath);
+          nxagentXkbConfigFilePath = NULL;
 
           if (!nxagentKeyboard || strcmp(nxagentKeyboard, "query") == 0)
           {
