@@ -54,10 +54,12 @@ CleanEnv:
 	    $(RM) xmakefile; \
 	fi
 	@rm -f $(IRULESRC)/date.def; echo "" > $(IRULESRC)/date.def;
-	${MAKE} $(MFLAGS) xmakefile
-	${MAKE_CMD} $(MFLAGS) VerifyOS
-	${MAKE_CMD} $(MFLAGS) Makefiles
-	${MAKE_CMD} $(MFLAGS) BOOTSTRAPSUBDIRS= clean
+	which $(IMAKE) 1>/dev/null && ${MAKE} $(MFLAGS) xmakefile || :
+	@if [ -f xmakefile ]; then \
+	    ${MAKE_CMD} $(MFLAGS) VerifyOS; \
+	    ${MAKE_CMD} $(MFLAGS) Makefiles; \
+	    ${MAKE_CMD} $(MFLAGS) BOOTSTRAPSUBDIRS= clean; \
+	fi
 
 BuildEnv: CleanEnv BuildIncludes BuildDependsOnly
 
