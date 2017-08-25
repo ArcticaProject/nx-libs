@@ -249,6 +249,109 @@ fi
 AC_SUBST([BASE_]PREFIX[FLAGS])
 ]) # NX_COMPILER_FLAGS
 
+# NX_STRICT_OPTION
+# -----------------------
+#
+# Add configure option to enable strict compilation flags, such as treating
+# warnings as fatal errors.
+# If --enable-strict-compilation is passed to configure, adds strict flags to
+# $BASE_CFLAGS or $BASE_CXXFLAGS.
+#
+# Also exports $STRICT_CFLAGS for use in other tests or when strict compilation
+# is unconditionally desired.
+AC_DEFUN([NX_STRICT_OPTION], [
+AC_REQUIRE([NX_COMPILER_FLAGS])
+
+AC_ARG_ENABLE(strict-compilation,
+                          AS_HELP_STRING([--enable-strict-compilation],
+                          [Enable all warnings from compiler and make them errors (default: disabled)]),
+                          [STRICT_COMPILE=$enableval], [STRICT_COMPILE=no])
+
+AC_LANG_CASE(
+        [C], [
+                define([PREFIX], [C])
+        ],
+        [C++], [
+                define([PREFIX], [CXX])
+        ]
+)
+
+[STRICT_]PREFIX[FLAGS]=""
+NX_TESTSET_CFLAG([[STRICT_]PREFIX[FLAGS]], [-pedantic])
+NX_TESTSET_CFLAG([[STRICT_]PREFIX[FLAGS]], [-Werror], [-errwarn])
+
+# Earlier versions of gcc (eg: 4.2) support -Werror=attributes, but do not
+# activate it with -Werror, so we add it here explicitly.
+NX_TESTSET_CFLAG([[STRICT_]PREFIX[FLAGS]], [-Werror=attributes])
+
+if test "x$STRICT_COMPILE" = "xyes"; then
+    [BASE_]PREFIX[FLAGS]="$[BASE_]PREFIX[FLAGS] $[STRICT_]PREFIX[FLAGS]"
+fi
+AC_SUBST([STRICT_]PREFIX[FLAGS])
+AC_SUBST([BASE_]PREFIX[FLAGS])
+]) # NX_STRICT_OPTION
+
+# NX_DEFAULT_OPTIONS
+# --------------------
+#
+# Defines default options for X.Org-like modules.
+#
+AC_DEFUN([NX_DEFAULT_OPTIONS], [
+AC_REQUIRE([AC_PROG_INSTALL])
+NX_COMPILER_FLAGS
+NX_STRICT_OPTION
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])],
+    [AC_SUBST([AM_DEFAULT_VERBOSITY], [1])])
+]) # NX_DEFAULT_OPTIONS
+
+# NX_CHECK_MALLOC_ZERO
+# ----------------------
+# Minimum version: 1.0.0
+#
+# Defines {MALLOC,XMALLOC,XTMALLOC}_ZERO_CFLAGS appropriately if
+# malloc(0) returns NULL.  Packages should add one of these cflags to
+# their AM_CFLAGS (or other appropriate *_CFLAGS) to use them.
+AC_DEFUN([NX_CHECK_MALLOC_ZERO],[
+AC_ARG_ENABLE(malloc0returnsnull,
+        AS_HELP_STRING([--enable-malloc0returnsnull],
+                       [malloc(0) returns NULL (default: auto)]),
+        [MALLOC_ZERO_RETURNS_NULL=$enableval],
+        [MALLOC_ZERO_RETURNS_NULL=auto])
+
+AC_MSG_CHECKING([whether malloc(0) returns NULL])
+if test "x$MALLOC_ZERO_RETURNS_NULL" = xauto; then
+        AC_RUN_IFELSE([AC_LANG_PROGRAM([
+#include <stdlib.h>
+],[
+    char *m0, *r0, *c0, *p;
+    m0 = malloc(0);
+    p = malloc(10);
+    r0 = realloc(p,0);
+    c0 = calloc(0,10);
+    exit((m0 == 0 || r0 == 0 || c0 == 0) ? 0 : 1);
+])],
+                [MALLOC_ZERO_RETURNS_NULL=yes],
+                [MALLOC_ZERO_RETURNS_NULL=no],
+                [MALLOC_ZERO_RETURNS_NULL=yes])
+fi
+AC_MSG_RESULT([$MALLOC_ZERO_RETURNS_NULL])
+
+if test "x$MALLOC_ZERO_RETURNS_NULL" = xyes; then
+        MALLOC_ZERO_CFLAGS="-DMALLOC_0_RETURNS_NULL"
+        XMALLOC_ZERO_CFLAGS=$MALLOC_ZERO_CFLAGS
+        XTMALLOC_ZERO_CFLAGS="$MALLOC_ZERO_CFLAGS -DXTMALLOC_BC"
+else
+        MALLOC_ZERO_CFLAGS=""
+        XMALLOC_ZERO_CFLAGS=""
+        XTMALLOC_ZERO_CFLAGS=""
+fi
+
+AC_SUBST([MALLOC_ZERO_CFLAGS])
+AC_SUBST([XMALLOC_ZERO_CFLAGS])
+AC_SUBST([XTMALLOC_ZERO_CFLAGS])
+]) # NX_CHECK_MALLOC_ZERO
+
+
 dnl Check to see if we're running under Cygwin32.
 
 AC_DEFUN([NX_BUILD_ON_CYGWIN32],

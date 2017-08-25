@@ -73,6 +73,7 @@ Depends:
  libxcomp3 (= ${binary:Version}),
  nx-x11-common (<< ${source:Version}.1),
  nx-x11-common (>= ${source:Version}),
+ libx11-data,
  ${misc:Depends},
  ${shlibs:Depends}
 Breaks:

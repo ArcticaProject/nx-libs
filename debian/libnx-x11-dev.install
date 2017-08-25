@@ -1,4 +1,5 @@
 usr/lib/*/libNX_X11.so
+usr/lib/*/libNX_X11.a
 usr/include/*/nx-X11/ImUtil.h
 usr/include/*/nx-X11/Xauth.h
 usr/include/*/nx-X11/XKBlib.h
@@ -13,3 +14,4 @@ usr/include/*/nx-X11/Xutil.h
 usr/include/*/nx-X11/cursorfont.h
 usr/include/*/nx-X11/misc.h
 usr/include/*/nx-X11/os.h
+usr/lib/*/pkgconfig/nx-x11.pc

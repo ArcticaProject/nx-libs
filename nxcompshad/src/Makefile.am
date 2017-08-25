@@ -18,7 +18,7 @@ libXcompshad_la_LIBADD =				\
     @Xdamage_LIBS@					\
     @Xrandr_LIBS@					\
     @Xtst_LIBS@						\
-    -L$(top_srcdir)/../nx-X11/exports/lib -lNX_X11	\
+    -L$(top_srcdir)/../nx-X11/lib/src/.libs -lNX_X11	\
     $(NULL)
 
 AM_CFLAGS =						\

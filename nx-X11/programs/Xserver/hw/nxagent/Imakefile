@@ -149,6 +149,7 @@ INCLUDES = \
 	-I../../GL/include \
 	-I../../../../lib/GL/include \
 	-I../../Xext \
+	-I../../../../lib/include/X11 \
 	-I$(EXTINCSRC) -I$(XINCLUDESRC) \
 	$(VFBINCLUDES) \
 	`pkg-config --cflags-only-I libxml-2.0` \
@@ -169,6 +170,7 @@ INCLUDES = \
 	-I../../Xext \
 	-I../../miext/damage \
 	-I../../miext/cw \
+	-I../../../../lib/include/X11 \
 	-I$(EXTINCSRC) -I$(XINCLUDESRC) \
 	$(VFBINCLUDES) \
 	`pkg-config --cflags-only-I libxml-2.0` \
@@ -192,6 +194,7 @@ INCLUDES = \
 	-I../../../../../nxcomp \
 	-I../../../../../nxcompshad \
 	-I../../../../extras/Mesa/include \
+	-I../../../../lib/include/X11 \
 	-I$(EXTINCSRC) -I$(XINCLUDESRC) \
 	$(VFBINCLUDES) \
 	`pkg-config --cflags-only-I libxml-2.0` \

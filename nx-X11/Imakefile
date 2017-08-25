@@ -27,8 +27,7 @@ RELEASE = XOrgReleaseString
 #define OSName Unknown Operating System!
 #endif
 
-        SUBDIRS = include config lib programs
-  LNINSTALLDIRS = lib
+        SUBDIRS = include config programs
 
 #if HasParallelMake
 #ifdef ParallelDefines
@@ -37,10 +36,6 @@ RELEASE = XOrgReleaseString
 #endif
 
 MakeSubdirs($(SUBDIRS))
-
-MakeLintSubdirs($(LNINSTALLDIRS),install.ln,install.ln)
-
-MakeLintSubdirs($(LNINSTALLDIRS),external.ln,lintlib)
 
 DependSubdirs($(SUBDIRS))
 

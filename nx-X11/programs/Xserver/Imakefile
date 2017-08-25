@@ -315,8 +315,9 @@ $(NXAGENTOBJS) $(NXAGENTLIBS) $(NXAGENTSYSLIBS):: $(NXAGENTDIRS)
 
 #if defined(SunArchitecture)
 NXAGENTNXLIBS = -L/usr/sfw/lib \
-                -L../../../nxcomp/src/.libs  \
+                -L../../../nxcomp/src/.libs \
                 -L../../../nxcompshad/src/.libs \
+                -L../../lib/src/.libs \
                 -lrt \
                 -lXcomp \
                 -lXcompshad \
@@ -332,6 +333,7 @@ NXAGENTNXLIBS = -L/usr/sfw/lib \
 #elif defined(cygwinArchitecture)
 NXAGENTNXLIBS = -L../../../nxcomp/src/.libs \
                 -L../../../nxcompshad/src/.libs \
+                -L../../lib/src/.libs \
                 -lXcomp \
                 -lXcompshad \
                 -lXrender \
@@ -343,9 +345,9 @@ NXAGENTNXLIBS = -L../../../nxcomp/src/.libs \
                 -lXext \
                 $(NULL)
 #elif defined(OpenBSDArchitecture)
-NXAGENTNXLIBS = -L../../../nxcomp/src/.libs  \
-                -L../../../nx-X11/exports/lib \
+NXAGENTNXLIBS = -L../../../nxcomp/src/.libs \
                 -L../../../nxcompshad/src/.libs \
+                -L../../lib/src/.libs \
                 -lkvm \
                 -lXcomp \
                 -lXcompshad \
@@ -359,8 +361,9 @@ NXAGENTNXLIBS = -L../../../nxcomp/src/.libs  \
                 -lXext \
                 $(NULL)
 #else
-NXAGENTNXLIBS = -L../../../nxcomp/src/.libs  \
+NXAGENTNXLIBS = -L../../../nxcomp/src/.libs \
                 -L../../../nxcompshad/src/.libs \
+                -L../../lib/src/.libs \
                 -lXcomp \
                 -lXcompshad \
                 -lXrender \
