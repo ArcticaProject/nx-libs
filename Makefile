@@ -120,8 +120,8 @@ clean-env: version
 	    ${RM_FILE} nx-X11/exports/include/nx-X11/Xtrans/$${header}; \
 	done
 
-	-rmdir exports/include/nx-X11/Xtrans/
-	-rmdir exports/include/nx-X11/
+	-$(RM_DIR) exports/include/nx-X11/Xtrans/
+	-$(RM_DIR) exports/include/nx-X11/
 
 	${MAKE} -C nx-X11 CleanEnv FONT_DEFINES=$(FONT_DEFINES)
 
