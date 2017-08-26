@@ -202,6 +202,251 @@ Bool nxagentReconnectAllPicture(void *);
 
 Bool nxagentDisconnectAllPicture(void);
 
+#ifdef NXAGENT_RENDER_CLEANUP
+
+#include <stdio.h>
+
+#define ROUNDUP(nbits, pad) ((((nbits) + ((pad)-1)) / (pad)) * ((pad)>>3))
+
+void
+nxagentCleanGlyphs(xGlyphInfo  *gi,
+                   int         nglyphs,
+                   CARD8       *images,
+                   int         depth,
+                   Display     *dpy)
+{
+  int widthInBits;
+  int bytesPerLine;
+  int bytesToClean;
+  int bitsToClean;
+  int widthInBytes;
+  int height = gi -> height;
+  register int i;
+  int j;
+
+  #ifdef DEBUG
+  fprintf(stderr, "nxagentCleanGlyphs: Found a Glyph with Depth %d, width %d, pad %d.\n",
+          depth, gi -> width, dpy -> bitmap_pad);
+  #endif
+
+  while (nglyphs > 0)
+  {
+    if (depth == 24)
+    {
+      widthInBits = gi -> width * 32;
+
+      bytesPerLine = ROUNDUP(widthInBits, dpy -> bitmap_pad);
+
+      bytesToClean = bytesPerLine * height;
+
+      #ifdef DUBUG
+      fprintf(stderr, "nxagentCleanGlyphs: Found glyph with depth 24, bytes to clean is %d"
+              "width in bits is %d bytes per line [%d] height [%d].\n", bytesToClean,
+                      widthInBits, bytesPerLine, height);
+      #endif
+
+      if (dpy -> byte_order == LSBFirst)
+      {
+        for (i = 3; i < bytesToClean; i += 4)
+        {
+          images[i] = 0x00;
+        }
+      }
+      else
+      {
+        for (i = 0; i < bytesToClean; i += 4)
+        {
+          images[i] = 0x00;
+        }
+      }
+
+      #ifdef DUMP
+      fprintf(stderr, "nxagentCleanGlyphs: depth %d, bytesToClean %d, scanline: ", depth, bytesToClean);
+      for (i = 0; i < bytesPerLine; i++)
+      {
+        fprintf(stderr, "[%d]", images[i]);
+      }
+      fprintf(stderr,"\n");
+      #endif
+
+      images += bytesToClean;
+
+      gi++;
+
+      nglyphs--;
+    }
+    else if (depth == 1)
+    {
+      widthInBits = gi -> width;
+
+      bytesPerLine = ROUNDUP(widthInBits, dpy -> bitmap_pad);
+
+      bitsToClean = (bytesPerLine << 3) - (gi -> width);
+
+      #ifdef DEBUG
+      fprintf(stderr, "nxagentCleanGlyphs: Found glyph with depth 1, width [%d], height [%d], bitsToClean [%d],"
+              " bytesPerLine [%d].\n", gi -> width, height, bitsToClean, bytesPerLine);
+      #endif
+
+      bytesToClean = bitsToClean >> 3;
+
+      bitsToClean &= 7;
+
+      #ifdef DEBUG
+      fprintf(stderr, "nxagentCleanGlyphs: bitsToClean &=7 is %d, bytesToCLean is %d."
+              " byte_order is %d, bitmap_bit_order is %d.\n", bitsToClean, bytesToClean,
+              dpy -> byte_order, dpy -> bitmap_bit_order);
+      #endif
+
+      for (i = 1; i <= height; i++)
+      {
+        if (dpy -> byte_order == dpy -> bitmap_bit_order)
+        {
+          for (j = 1; j <= bytesToClean; j++)
+          {
+            images[i * bytesPerLine - j] = 0x00;
+
+            #ifdef DEBUG
+            fprintf(stderr, "nxagentCleanGlyphs: byte_order = bitmap_bit_orde, cleaning %d, i=%d, j=%d.\n"
+                    , (i * bytesPerLine - j), i, j);
+            #endif
+
+          }
+        }
+        else
+        {
+          for (j = bytesToClean; j >= 1; j--)
+          {
+            images[i * bytesPerLine - j] = 0x00;
+
+            #ifdef DEBUG
+            fprintf(stderr, "nxagentCleanGlyphs: byte_order %d, bitmap_bit_order %d, cleaning %d, i=%d, j=%d.\n"
+                    , dpy -> byte_order, dpy -> bitmap_bit_order, (i * bytesPerLine - j), i, j);
+            #endif
+
+          }
+        }
+
+        if (dpy -> bitmap_bit_order == MSBFirst)
+        {
+          images[i * bytesPerLine - j] &= 0xff << bitsToClean;
+
+          #ifdef DEBUG
+          fprintf(stderr, "nxagentCleanGlyphs: byte_order MSBFirst, cleaning %d, i=%d, j=%d.\n"
+                  , (i * bytesPerLine - j), i, j);
+          #endif
+        }
+        else
+        {
+          images[i * bytesPerLine - j] &= 0xff >> bitsToClean;
+
+          #ifdef DEBUG
+          fprintf(stderr, "nxagentCleanGlyphs: byte_order LSBFirst, cleaning %d, i=%d, j=%d.\n"
+                  , (i * bytesPerLine - j), i, j);
+          #endif
+        }
+      }
+
+      #ifdef DUMP
+      fprintf(stderr, "nxagentCleanGlyphs: depth %d, bytesToClean %d, scanline: ", depth, bytesToClean);
+      for (i = 0; i < bytesPerLine; i++)
+      {
+        fprintf(stderr, "[%d]", images[i]);
+      }
+      fprintf(stderr,"\n");
+      #endif
+
+      images += bytesPerLine * height;
+
+      gi++;
+
+      nglyphs--;
+    }
+    else if ((depth == 8) || (depth == 16) )
+    {
+      widthInBits = gi -> width * depth;
+
+      bytesPerLine = ROUNDUP(widthInBits, dpy -> bitmap_pad);
+
+      widthInBytes = (widthInBits >> 3);
+
+      bytesToClean = bytesPerLine - widthInBytes;
+
+      #ifdef DEBUG
+      fprintf(stderr, "nxagentCleanGlyphs: nglyphs is %d, width of glyph in bits is %d, in bytes is %d.\n",
+              nglyphs, widthInBits, widthInBytes);
+
+      fprintf(stderr, "nxagentCleanGlyphs: bytesPerLine is %d bytes, there are %d scanlines.\n", bytesPerLine, height);
+
+      fprintf(stderr, "nxagentCleanGlyphs: Bytes to clean for each scanline are %d.\n", bytesToClean);
+      #endif
+
+      if (bytesToClean > 0)
+      {
+        while (height > 0)
+        {
+          i = bytesToClean;
+
+          while (i > 0)
+          {
+            *(images + (bytesPerLine - i)) = 0;
+
+            #ifdef DEBUG
+            fprintf(stderr, "nxagentCleanGlyphs: cleaned a byte.\n");
+            #endif
+
+            i--;
+          }
+
+          #ifdef DUMP
+          fprintf(stderr, "nxagentCleanGlyphs: depth %d, bytesToClean %d, scanline: ", depth, bytesToClean);
+          for (i = 0; i < bytesPerLine; i++)
+          {
+            fprintf(stderr, "[%d]", images[i]);
+          }
+          fprintf(stderr,"\n");
+          #endif
+
+          images += bytesPerLine;
+
+          height--;
+        }
+      }
+
+      gi++;
+
+      nglyphs--;
+
+      #ifdef DEBUG
+      fprintf(stderr, "nxagentCleanGlyphs: Breaking Out.\n");
+      #endif
+    }
+    else if (depth == 32)
+    {
+      #ifdef DEBUG
+      fprintf(stderr, "nxagentCleanGlyphs: Found glyph with depth 32.\n");
+      #endif
+
+      gi++;
+
+      nglyphs--;
+    }
+    else
+    {
+      #ifdef WARNING
+      fprintf(stderr, "nxagentCleanGlyphs: Unrecognized glyph, depth is not 8/16/24/32, it appears to be %d.\n",
+              depth);
+      #endif
+
+      gi++;
+
+      nglyphs--;
+    }
+  }
+}
+
+#endif /* #ifdef NXAGENT_RENDER_CLEANUP */
+
 void nxagentRenderExtensionInit()
 {
   int first_event, first_error;
@@ -2268,6 +2513,10 @@ void nxagentAddGlyphs(GlyphSetPtr glyphSet, Glyph *gids, xGlyphInfo *gi,
   {
     normalizedImages = images;
   }
+
+  #ifdef NXAGENT_RENDER_CLEANUP
+  nxagentCleanGlyphs(gi, nglyphs, normalizedImages, glyphDepths[glyphSet -> fdepth], nxagentDisplay);
+  #endif /* NXAGENT_RENDER_CLEANUP */
 
   XRenderAddGlyphs(nxagentDisplay,
                    glyphSet -> remoteID,
