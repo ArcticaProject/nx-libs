@@ -295,8 +295,6 @@ int NXShadowCreate(void *dpy, char *keymap, char* shadowDisplayName, void **shad
   return 1;
 }
 
-#if !defined(__CYGWIN32__) && !defined(WIN32)
-
 void NXShadowSetDisplayUid(int uid)
 {
   NXShadowOptions.optionShadowDisplayUid = uid;
@@ -323,8 +321,6 @@ void NXShadowSetScreenSize(int *w, int *h)
 {
   poller -> setScreenSize(w, h);
 }
-
-#endif
 
 void NXShadowDestroy()
 {
@@ -388,9 +384,7 @@ int NXShadowHasChanged(int (*callback)(void *), void *arg, int *suspended)
 
   updateManager -> newRegion();
 
-#if !defined(__CYGWIN32__) && !defined(WIN32)
   poller -> getEvents();
-#endif
 
   result = poller -> isChanged(callback, arg, suspended);
 
@@ -439,22 +433,6 @@ void NXShadowWebKeyEvent(KeySym keysym, Bool isKeyPress)
 {
   poller -> handleWebKeyEvent(keysym, isKeyPress);
 }
-
-#ifdef __CYGWIN32__
-
-int NXShadowCaptureCursor(unsigned int wnd, void *vis)
-{
-  Window window = (Window)wnd;
-  Visual *visual = reinterpret_cast<Visual*>(vis);
-
-  logTrace("NXShadowCaptureCursor");
-
-  logTest("NXShadowCaptureCursor","Init");
-
-  return poller -> updateCursor(window, visual);
-}
-
-#endif
 
 void NXShadowUpdateBuffer(void **buffer)
 {

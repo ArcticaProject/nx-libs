@@ -27,8 +27,6 @@
 #include "config.h"
 #endif
 
-#if !defined(__CYGWIN32__) && !defined(WIN32)
-
 #define PANIC
 #define WARNING
 #undef  TEST
@@ -1594,5 +1592,3 @@ int anyEventPredicate(Display *display, XEvent *event, XPointer parameter)
 {
   return 1;
 }
-
-#endif /* !defined(__CYGWIN32__) && !defined(WIN32) */

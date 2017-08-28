@@ -201,14 +201,6 @@ int CorePoller::isChanged(int (*checkIfInputCallback)(void *), void *arg, int *s
 {
   logTrace("CorePoller::isChanged");
 
-#if defined(__CYGWIN32__) || defined(WIN32)
-
-  checkDesktop();
-
-#endif
-
-#if !defined(__CYGWIN32__) && !defined(WIN32)
-
   if (mirror_ == 1)
   {
     int result = mirrorChanges_;
@@ -217,8 +209,6 @@ int CorePoller::isChanged(int (*checkIfInputCallback)(void *), void *arg, int *s
 
     return result;
   }
-
-#endif
 
   logDebug("CorePoller:isChanged", "Going to use default polling algorithm.\n");
 

@@ -111,10 +111,6 @@ class CorePoller
 
   int imageByteOrder_;
 
-  #ifdef __CYGWIN32__
-  virtual char checkDesktop(void) = 0;
-  #endif
-
   Display *shadowDisplay_;
 
   void update(char *src, XRectangle r);

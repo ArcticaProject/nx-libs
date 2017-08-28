@@ -9,7 +9,6 @@ libXcompshad_la_SOURCES =				\
     Manager.cpp						\
     Shadow.cpp						\
     Updater.cpp						\
-    Win.cpp						\
     X11.cpp						\
     $(NULL)
 
