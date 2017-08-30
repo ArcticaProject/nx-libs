@@ -1,0 +1,161 @@
+Description: Some nasty typos fixed to silence lintian et al.
+Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+
+Index: Mesa/src/mesa/drivers/dri/common/xmlconfig.c
+===================================================================
+--- Mesa.orig/src/mesa/drivers/dri/common/xmlconfig.c
++++ Mesa/src/mesa/drivers/dri/common/xmlconfig.c
+@@ -729,7 +729,7 @@ static void parseDeviceAttr (struct OptC
+     for (i = 0; attr[i]; i += 2) {
+ 	if (!strcmp (attr[i], "driver")) driver = attr[i+1];
+ 	else if (!strcmp (attr[i], "screen")) screen = attr[i+1];
+-	else XML_WARNING("unkown device attribute: %s.", attr[i]);
++	else XML_WARNING("unknown device attribute: %s.", attr[i]);
+     }
+     if (driver && strcmp (driver, data->driverName))
+ 	data->ignoringDevice = data->inDevice;
+@@ -749,7 +749,7 @@ static void parseAppAttr (struct OptConf
+     for (i = 0; attr[i]; i += 2) {
+ 	if (!strcmp (attr[i], "name")) name = attr[i+1];
+ 	else if (!strcmp (attr[i], "executable")) exec = attr[i+1];
+-	else XML_WARNING("unkown application attribute: %s.", attr[i]);
++	else XML_WARNING("unknown application attribute: %s.", attr[i]);
+     }
+     if (exec && strcmp (exec, data->execName))
+ 	data->ignoringApp = data->inApp;
+@@ -762,7 +762,7 @@ static void parseOptConfAttr (struct Opt
+     for (i = 0; attr[i]; i += 2) {
+ 	if (!strcmp (attr[i], "name")) name = attr[i+1];
+ 	else if (!strcmp (attr[i], "value")) value = attr[i+1];
+-	else XML_WARNING("unkown option attribute: %s.", attr[i]);
++	else XML_WARNING("unknown option attribute: %s.", attr[i]);
+     }
+     if (!name) XML_WARNING1 ("name attribute missing in option.");
+     if (!value) XML_WARNING1 ("value attribute missing in option.");
+Index: Mesa/src/mesa/glapi/glX_proto_size.py
+===================================================================
+--- Mesa.orig/src/mesa/glapi/glX_proto_size.py
++++ Mesa/src/mesa/glapi/glX_proto_size.py
+@@ -432,7 +432,7 @@ class PrintGlxReqSize_c(PrintGlxReqSize_
+ 	"""Create the server-side 'request size' functions.
+ 
+ 	Create the server-side functions that are used to determine what the
+-	size of a varible length command should be.  The server then uses
++	size of a variable length command should be.  The server then uses
+ 	this value to determine if the incoming command packed it malformed.
+ 	"""
+ 
+Index: Mesa/src/mesa/main/debug.c
+===================================================================
+--- Mesa.orig/src/mesa/main/debug.c
++++ Mesa/src/mesa/main/debug.c
+@@ -43,7 +43,7 @@ const char *_mesa_prim_name[GL_POLYGON+4
+    "GL_QUAD_STRIP",
+    "GL_POLYGON",
+    "outside begin/end",
+-   "inside unkown primitive",
++   "inside unknown primitive",
+    "unknown state"
+ };
+ 
+Index: Mesa/src/mesa/shader/arbprogparse.c
+===================================================================
+--- Mesa.orig/src/mesa/shader/arbprogparse.c
++++ Mesa/src/mesa/shader/arbprogparse.c
+@@ -97,8 +97,8 @@
+  *
+  *    Cosmetic Stuff
+  *    -----------------------------------------------------
+- * 	- remove any leftover unused grammer.c stuff (dict_ ?)
+- * 	- fix grammer.c error handling so its not static
++ * 	- remove any leftover unused grammar.c stuff (dict_ ?)
++ * 	- fix grammar.c error handling so its not static
+  * 	- #ifdef around stuff pertaining to extentions
+  *
+  *    Outstanding Questions:
+@@ -1703,7 +1703,7 @@ parse_attrib (GLcontext * ctx, GLubyte *
+    if (found) {
+       error_msg = (char *)
+          _mesa_malloc (_mesa_strlen ((char *) attrib_var->name) + 40);
+-      _mesa_sprintf (error_msg, "Duplicate Varible Declaration: %s",
++      _mesa_sprintf (error_msg, "Duplicate Variable Declaration: %s",
+                      attrib_var->name);
+ 
+       _mesa_set_program_error (ctx, Program->Position, error_msg);
+@@ -1904,7 +1904,7 @@ parse_param (GLcontext * ctx, GLubyte **
+ 
+    if (found) {
+       error_msg = (char *) _mesa_malloc (_mesa_strlen ((char *) param_var->name) + 40);
+-      _mesa_sprintf (error_msg, "Duplicate Varible Declaration: %s",
++      _mesa_sprintf (error_msg, "Duplicate Variable Declaration: %s",
+                      param_var->name);
+ 
+       _mesa_set_program_error (ctx, Program->Position, error_msg);
+@@ -2013,7 +2013,7 @@ parse_temp (GLcontext * ctx, GLubyte **
+       if (found) {
+          error_msg = (char *)
+             _mesa_malloc (_mesa_strlen ((char *) temp_var->name) + 40);
+-         _mesa_sprintf (error_msg, "Duplicate Varible Declaration: %s",
++         _mesa_sprintf (error_msg, "Duplicate Variable Declaration: %s",
+                         temp_var->name);
+ 
+          _mesa_set_program_error (ctx, Program->Position, error_msg);
+@@ -2064,7 +2064,7 @@ parse_output (GLcontext * ctx, GLubyte *
+       char *error_msg;
+       error_msg = (char *)
+          _mesa_malloc (_mesa_strlen ((char *) output_var->name) + 40);
+-      _mesa_sprintf (error_msg, "Duplicate Varible Declaration: %s",
++      _mesa_sprintf (error_msg, "Duplicate Variable Declaration: %s",
+                      output_var->name);
+ 
+       _mesa_set_program_error (ctx, Program->Position, error_msg);
+@@ -2099,7 +2099,7 @@ parse_alias (GLcontext * ctx, GLubyte **
+    if (found) {
+       error_msg = (char *)
+          _mesa_malloc (_mesa_strlen ((char *) temp_var->name) + 40);
+-      _mesa_sprintf (error_msg, "Duplicate Varible Declaration: %s",
++      _mesa_sprintf (error_msg, "Duplicate Variable Declaration: %s",
+                      temp_var->name);
+ 
+       _mesa_set_program_error (ctx, Program->Position, error_msg);
+@@ -2149,7 +2149,7 @@ parse_address (GLcontext * ctx, GLubyte
+       if (found) {
+          error_msg = (char *)
+             _mesa_malloc (_mesa_strlen ((char *) temp_var->name) + 40);
+-         _mesa_sprintf (error_msg, "Duplicate Varible Declaration: %s",
++         _mesa_sprintf (error_msg, "Duplicate Variable Declaration: %s",
+                         temp_var->name);
+ 
+          _mesa_set_program_error (ctx, Program->Position, error_msg);
+@@ -3980,7 +3980,7 @@ _mesa_parse_arb_program (GLcontext * ctx
+       grammar_get_last_error ((GLubyte *) error_msg, 300, &error_pos);
+       _mesa_set_program_error (ctx, error_pos, error_msg);
+       _mesa_error (ctx, GL_INVALID_OPERATION,
+-                   "Error loading grammer rule set");
++                   "Error loading grammar rule set");
+       return GL_FALSE;
+    }
+ 
+@@ -4070,7 +4070,7 @@ _mesa_parse_arb_program (GLcontext * ctx
+    }
+ 
+ #if DEBUG_PARSING
+-   printf ("Destroying grammer dict [parse retval: %d]\n", err);
++   printf ("Destroying grammar dict [parse retval: %d]\n", err);
+ #endif
+    grammar_destroy (arbprogram_syn_id);
+ 
+@@ -4103,11 +4103,11 @@ _mesa_parse_arb_program (GLcontext * ctx
+    /* Start examining the tokens in the array */
+    inst = parsed;
+ 
+-   /* Check the grammer rev */
++   /* Check the grammar rev */
+    if (*inst++ != REVISION) {
+       _mesa_set_program_error (ctx, 0, "Grammar version mismatch");
+       _mesa_error(ctx, GL_INVALID_OPERATION,
+-                  "glProgramStringARB(Grammar verison mismatch)");
++                  "glProgramStringARB(Grammar version mismatch)");
+       err = GL_TRUE;
+    }
+    else {
