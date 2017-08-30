@@ -1,11 +1,385 @@
-2017-06-30 21:21:49 +0200 Mike Gabriel (891c059f5)
+2017-08-30 19:33:55 +0200 Mike Gabriel (6cf56efe7)
 
-	* release 3.5.99.8 (HEAD -> 3.6.x)
+	* release 3.5.99.9 (HEAD -> 3.6.x)
+
+2017-08-30 19:29:58 +0200 Mike Gabriel (13264ea7f)
+
+	* debian/rules: Strip static libraries before installing them into
+          the lib*.dev packages.
+
+2017-08-30 18:24:43 +0200 Mike Gabriel (15909676e)
+
+	* Mesa.patches: Add 5001_nasty-typo-fixes.patch. Fix some nasty typos
+          in Mesa's code ending up in the nxagent binary.
+
+2017-08-30 18:18:39 +0200 Mike Gabriel (b9e5f03ab)
+
+	* hw/nxagent/Window.c: Fix spelling error in debug message.
+
+2017-08-30 18:07:59 +0200 Mike Gabriel (bdd4fc212)
+
+	* debian/control: Bump Standards-Version: to 4.0.1. No changes
+          needed.
+
+2017-08-30 16:57:57 +0200 Mike Gabriel (9cffffe5e)
+
+	* debian/copyright: Update copyright attributions.
+
+2017-08-30 16:54:24 +0200 Mike Gabriel (5ecf04c92)
+
+	* nx-X11/extras: Drop Mesa-6.4.1 related files.
+
+2017-08-28 08:33:58 +0200 Mihai Moldovan (709bce6cf)
+
+	* Merge branch 'sunweaver-pr/drop-nxcompshad-cygwin-support' into
+          3.6.x (origin/HEAD, origin/3.6.x)
+
+2017-07-17 12:49:47 +0200 Mike Gabriel (d9e2822f5)
+
+	* nxcompshad: Drop Cygwin/Win32 support. Has been untested and unused
+          for a long time.
+          (gh-sunweaver/pr/drop-nxcompshad-cygwin-support,
+          pr/drop-nxcompshad-cygwin-support)
+
+2017-08-26 23:29:58 +0200 Mihai Moldovan (bc66da714)
+
+	* Merge branch 'sunweaver-pr/nxagent-render-cleanup' into 3.6.x
+
+2017-07-17 11:15:55 +0200 Mike Gabriel (4eade297b)
+
+	* nx-X11/programs/Xserver/Render.c: Re-introduce
+          nxagentGlyphsCleanup() from libNX_Xrender's formerly
+          removed XRenderGlyphsCleanup().
+          (gh-sunweaver/pr/nxagent-render-cleanup,
+          pr/nxagent-render-cleanup)
+
+2017-08-25 19:18:17 +0200 Mike Gabriel (7290aea3b)
+
+	* nx-X11/Makefile: Only run full CleanEnv code, if imake is installed
+          in the build-system.
+
+2017-08-25 16:34:30 +0200 Mike Gabriel (a32f1dfa1)
+
+	* Makefile: Check for dir existence before attempting to remove it.
+
+2017-08-25 16:29:29 +0200 Mike Gabriel (71878f7a9)
+
+	* Makefile: Use $(RM_DIR) rather then plain rmdir in clean-env
+          target.
+
+2017-08-25 12:44:49 +0200 Mihai Moldovan (ae0a2bfde)
+
+	* Merge branch 'sunweaver-pr/libnx-x11-autoreconf' into 3.6.x
+
+2017-08-11 12:53:50 -0400 Mike Gabriel (3b7e5a42f)
+
+	* debian/rules: Re-order configure options for the sake of more
+          beauty. (gh-sunweaver/pr/libnx-x11-autoreconf,
+          pr/libnx-x11-autoreconf)
+
+2017-08-11 12:51:52 -0400 Mike Gabriel (9a79e09a5)
+
+	* debian/rules: Use tabs as first indentation level.
+
+2017-08-11 16:44:24 -0400 Mike Gabriel (9edd6e055)
+
+	* debian/control: Add D (libnx-x11-6): libx11-data.
+
+2017-08-11 12:48:32 -0400 Mike Gabriel (11fa0b140)
+
+	* nx-X11/programs/Xserver/Imakefile: White-space fix.
+
+2017-07-21 12:31:09 +0200 Mike Gabriel (c350873c7)
+
+	* Convert nx-X11/lib/ build flow from imake to autotools.
+
+2017-07-17 12:53:26 +0200 Mike Gabriel (1472e7e37)
+
+	* debian/rules: Add configure option --disable-silent-rules.
+
+2017-07-12 12:53:10 +0200 Mike Gabriel (55c4e4070)
+
+	* nx*/configure.ac: Use newly introduced macro NX_DEFAULT_OPTIONS
+          instead of NX_COMPILER_FLAGS.
+
+2017-07-12 12:08:03 +0200 Mike Gabriel (ef08aadf5)
+
+	* m4/nx-macros.m4: Add NX_STRICT_OPTION and NX_DEFAULT_OPTIONS macros
+          (borrowed from X.org's xorg-macros.m4).
+
+2017-08-11 09:29:17 -0400 Mike Gabriel (cbe2c0e44)
+
+	* Merge branch 'uli42-pr/versionprop' into 3.6.x
+
+2017-08-10 00:50:27 +0200 Ulrich Sibiller (715fcfe6d)
+
+	* Set NX_AGENT_VERSION property for root window
+          (uli42-pr/versionprop)
+
+2017-08-09 06:46:30 +0200 Mihai Moldovan (8235925a2)
+
+	* nxcomp/configure.ac: fix copy-and-paste typo (nxcompshad.pc.)
+
+2017-08-09 06:44:49 +0200 Mihai Moldovan (8b88289ee)
+
+	* nxcomp/configure.ac: we don't need to specify empty optional
+          parameters.
+
+2017-08-09 06:43:17 +0200 Mihai Moldovan (b1b919477)
+
+	* Merge branch 'sunweaver-pr/find-libjpeg-without-pkgconfig' into
+          3.6.x
+
+2017-08-03 10:22:55 -0400 Mike Gabriel (4fd038dba)
+
+	* nxcomp/configure.ac: Don't rely on pkg-config alone when it comes
+          to testing for presence of libjpeg shared lib and header
+          files. (gh-sunweaver/pr/find-libjpeg-without-pkgconfig,
+          pr/find-libjpeg-without-pkgconfig)
+
+2017-08-02 18:19:19 -0400 Mike Gabriel (430ae6eb6)
+
+	* nxproxy/src/Makefile.am: Actually define nxproxy_CFLAGS, so the
+          various compiler warning flags get enabled at build time
+          of nxproxy.
+
+2017-07-31 14:14:22 +0200 Mike Gabriel (dc8e52407)
+
+	* Merge branch 'sunweaver-pr/fix-multi-trapez-requests' into 3.6.x
+
+2017-07-31 13:20:12 +0200 Oleksandr Shneyder (da43f047a)
+
+	* Render.c: Improve situation for multiple trapezoid requests.
+          (gh-sunweaver/pr/fix-multi-trapez-requests,
+          sunweaver-pr/fix-multi-trapez-requests,
+          pr/fix-multi-trapez-requests)
+
+2017-07-26 10:38:46 +0200 Mihai Moldovan (7897834ce)
+
+	* Merge branch 'sunweaver-pr/nxcomp-autoreconf' into 3.6.x
+
+2017-07-12 13:35:57 +0200 Mike Gabriel (4afc641fd)
+
+	* nxcomp: Add __attribute__((noreturn)) to more functions where
+          appropriate. (gh-sunweaver/pr/nxcomp-autoreconf,
+          pr/nxcomp-autoreconf)
+
+2017-07-12 21:51:40 +0200 Mike Gabriel (b3a3382ad)
+
+	* nxcomp/src/Loop.cpp: Don't mix using global proxyFD and a local
+          p(roxy)FD variable (in WaitForRemote() and
+          ConnectToRemote()). Rename local variable name.
+
+2017-07-12 21:49:28 +0200 Mike Gabriel (82c218288)
+
+	* nxcomp/src/Loop.cpp: Don't use global variables as function
+          paramters in handleLogReopenInLoop().
+
+2017-07-14 11:22:20 +0200 Mike Gabriel (e47995370)
+
+	* nxcomp/src/Loop.cpp: Drop global variable diffTs, declare it in
+          every funtion where it is needed.
+
+2017-07-14 11:21:34 +0200 Mike Gabriel (04e09f277)
+
+	* nxcomp/src/Transport.cpp: Don't redeclare local variable if it can
+          be reused.
+
+2017-07-12 21:46:09 +0200 Mike Gabriel (54e7b9aa2)
+
+	* nxcomp/src/Loop.cpp: Don't reuse global variable names as function
+          parameters in SetupDisplaySocket().
+
+2017-07-12 21:42:46 +0200 Mike Gabriel (ca7db4fcb)
+
+	* nxcomp/src/Loop.cpp: Rename local variable 'handler' to
+          'signalHandler'.
+
+2017-07-12 21:41:21 +0200 Mike Gabriel (1e15760a3)
+
+	* nxcomp/src/Loop.cpp: Drop duplicate prototypes (which already exist
+          in Misc.h).
+
+2017-07-12 21:39:32 +0200 Mike Gabriel (1894e04df)
+
+	* nxcomp/src/Proxy.cpp: Fix index usage of nested loops.
+
+2017-07-12 21:36:11 +0200 Mike Gabriel (4c3872279)
+
+	* nxcomp/src/Loop.cpp: Avoid duplicate usage of proxyFD (global
+          variable) and *proxyFD (function parameter).
+
+2017-07-12 21:32:14 +0200 Mike Gabriel (5a7b589bb)
+
+	* nxcomp: Trivially fix local variables shadowing variables of same
+          name from higher scope.
+
+2017-07-10 13:42:32 +0200 Mike Gabriel (93c4cea66)
+
+	* debian/rules: Drop override_dh_clean target. Not required anymore,
+          as configure files get removed correctly now.
+
+2017-07-24 12:32:18 +0200 Mike Gabriel (9c8e3f139)
+
+	* nxcomp/configure.ac,m4/nx-macros.m4,nxcomp/src/Socket.h: Use
+          AC_CHECK_TYPES to detect if type 'in_addr_t' is available.
+
+2017-07-14 11:43:05 +0200 Mike Gabriel (9fa0a6b95)
+
+	* nxcomp/configure.ac: Re-add previously available configure options
+          --with-valgrind and --with-info as renamed options
+          --enable-valgrind and --enable-debug.
+
+2017-06-30 20:13:51 +0200 Mike Gabriel (f76c82403)
+
+	* nxcomp: Switch to autoreconf.
+
+2017-07-25 09:19:44 +0200 Mike Gabriel (9193d11ee)
+
+	* Merge branch 'uli42-pr/cmdline' into 3.6.x
+
+2017-07-24 23:45:48 +0200 Ulrich Sibiller (3f7b30019)
+
+	* treat options parameter as option string if it starts with nx/nx
+          (uli42-pr/cmdline)
+
+2017-07-24 23:45:24 +0200 Ulrich Sibiller (36e583cf5)
+
+	* rename nxagentOptionFile to nxagentOptionsFilename
+
+2017-07-11 21:29:59 +0200 Ulrich Sibiller (b007b542d)
+
+	* pass filename as parameter to nxagentProcessOptionsFile()
+
+2017-07-17 09:50:26 +0200 Mike Gabriel (4ccb7eda5)
+
+	* Merge branch 'uli42-pr/fix_keystroke_files' into 3.6.x
+
+2017-07-12 20:01:44 +0200 Ulrich Sibiller (79001dd8a)
+
+	* Improve keystroke file handling (uli42-pr/fix_keystroke_files)
+
+2017-07-14 10:42:15 +0200 Mike Gabriel (ccd7c6962)
+
+	* debian/control: Add B-D: libtool (required for Debian jessie,
+          Ubuntu trusty and Ubuntu xenial).
+
+2017-07-14 10:38:47 +0200 Mike Gabriel (ad1d45349)
+
+	* debian/copyright: White-space cleanup.
+
+2017-07-14 10:38:30 +0200 Mike Gabriel (96167fcdb)
+
+	* debian/control: Process with wrap-and-sort -s.
+
+2017-07-14 01:25:20 +0200 Mihai Moldovan (5796ac644)
+
+	* Merge branch 'sunweaver-pr/nxcompshad-autoreconf' into 3.6.x
+
+2017-07-12 22:34:11 +0200 Mike Gabriel (59e829f36)
+
+	* nxcompshad: Rewrite Logger class methods to properly take advantage
+          of the 'gnu_printf' format attribute.
+          (gh-sunweaver/pr/nxcompshad-autoreconf,
+          pr/nxcompshad-autoreconf)
+
+2017-07-12 22:26:38 +0200 Mike Gabriel (8f5ce18d4)
+
+	* nxcompshad: Prototype for NXShadowResetOptions() missing. Export it
+          as public symbol via Shadow.h."
+
+2017-07-12 22:26:05 +0200 Mike Gabriel (36fe0330e)
+
+	* nxcompshad/src/Shadow.cpp: Drop duplicate prototype for
+          NXShadowRemoveAllUpdaters(). Already in Shadow.h.
+
+2017-07-12 22:23:07 +0200 Mike Gabriel (d77897462)
+
+	* nxcompshad/src/Core.cpp: Don't redeclare (and shadow) curLine. Use
+          curWorkLine instead.
+
+2017-06-30 14:49:03 +0200 Mike Gabriel (dba850070)
+
+	* nxcompshad/src/Regions.h: Avoid warning: ‘typedef’ was ignored in
+          this declaration. Drop typedef declaration from _XRegion
+          struct.
+
+2017-04-25 15:27:17 +0200 Mike Gabriel (76b486768)
+
+	* nxcompshad: Switch to autoreconf.
+
+2017-07-13 11:38:17 +0200 Mike Gabriel (622360ea2)
+
+	* debian/control: Add B-D: automake (required for Debian jessie,
+          Ubuntu trusty and Ubuntu xenial).
+
+2017-07-13 08:52:08 +0200 Mike Gabriel (107fba32e)
+
+	* nxproxy/configure.ac: Have AC_LANG before NX_COMPILER_BRAND. Thanks
+          to Ionic for spotting this same flaw in nxcompshad.
+
+2017-07-12 23:56:42 +0200 Mihai Moldovan (06bf2a492)
+
+	* Merge branch 'sunweaver-pr/nxproxy-autoreconf' into 3.6.x
+
+2017-07-10 11:47:02 +0200 Mike Gabriel (397d3ac06)
+
+	* debian/rules: Drop redundant --with-symbols configure option, '-g'
+          already gets added by debhelper.
+          (gh-sunweaver/pr/nxproxy-autoreconf,
+          pr/nxproxy-autoreconf)
+
+2017-04-26 13:26:47 +0200 Mike Gabriel (41ea54b02)
+
+	* nxproxy: Switch to autoreconf.
+
+2017-06-30 13:58:47 +0200 Mike Gabriel (322e39b79)
+
+	* m4/nx-macros.m4: Add autotools macros derived from X.org and
+          nxcomp* configure.in files.
+
+2017-07-12 12:43:53 +0200 Mike Gabriel (e17207f18)
+
+	* make-changelog.sh: Drop obviously not needed '--since 1970' option
+          from 'git log' call.
+
+2017-07-12 12:09:45 +0200 Mike Gabriel (ba02470a5)
+
+	* Merge branch 'sunweaver-pr/report-window-ids' into 3.6.x
+
+2017-07-04 23:57:34 +0200 Mike Gabriel (84a403e27)
+
+	* Report Xlib-side window IDs to session.log in machine readable
+          form. This feature can be enabled by the cmdline options
+          -reportwids and -reportprivatewids.
+          (gh-sunweaver/pr/report-window-ids,
+          sunweaver-pr/report-window-ids, pr/report-window-ids)
+
+2017-07-04 23:32:04 +0200 Mike Gabriel (000a869b3)
+
+	* nxagent man page: Fix layout near -nxrealwindowprop option.
+
+2017-06-30 23:23:16 +0200 Mike Gabriel (a517c5ab6)
+
+	* Mesa.patches: Disable
+          4001_Fix-non-working-GLX-in-64bit-Xorg-7.0.patch. It
+          patches a file, we don't build and that we remove in
+          roll-tarball.sh.
+
+2017-06-30 23:22:22 +0200 Mike Gabriel (7838207b7)
+
+	* roll-tarballs.sh: Remove even more files from nx-X11/extras/Mesa/.
+          This roll-tarball.sh version has been used for generating
+          the 3.5.99.8 tarball.
+
+2017-06-30 21:21:49 +0200 Mike Gabriel (3b15804ce)
+
+	* release 3.5.99.8 (tag: 3.5.99.8, origin/release-builds/3.6.x,
+          release-builds/3.6.x)
 
 2017-06-30 20:59:27 +0200 Mihai Moldovan (4c7641a1f)
 
 	* Merge branch 'sunweaver-pr/mese-quilt-without-quilt' into 3.6.x
-          (origin/HEAD, origin/3.6.x)
 
 2017-06-30 20:24:28 +0200 Mike Gabriel (79fcce3ee)
 
