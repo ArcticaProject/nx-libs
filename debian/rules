@@ -23,10 +23,13 @@ override_dh_auto_clean:
 
 override_dh_install:
 
-	# remove static libs
+	# strip static libs and remove .la files
 	rm debian/tmp/usr/lib/$(DEB_BUILD_MULTIARCH)/libXcomp.la
+	strip --strip-debug --remove-section=.comment --remove-section=.note debian/tmp/usr/lib/$(DEB_BUILD_MULTIARCH)/libXcomp.a
 	rm debian/tmp/usr/lib/$(DEB_BUILD_MULTIARCH)/libXcompshad.la
+	strip --strip-debug --remove-section=.comment --remove-section=.note debian/tmp/usr/lib/$(DEB_BUILD_MULTIARCH)/libXcompshad.a
 	rm debian/tmp/usr/lib/$(DEB_BUILD_MULTIARCH)/libNX_X11.la
+	strip --strip-debug --remove-section=.comment --remove-section=.note debian/tmp/usr/lib/$(DEB_BUILD_MULTIARCH)/libNX_X11.a
 
 	# remove extras, GL, and other unneeded headers
 	rm -R debian/tmp/usr/include/$(DEB_BUILD_MULTIARCH)/GL/
