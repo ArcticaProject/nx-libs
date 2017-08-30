@@ -541,7 +541,7 @@ void nxagentSetVersionProperty(WindowPtr pWin)
   Atom prop = MakeAtom(name, strlen(name), True);
 
   if (ChangeWindowProperty(pWin, prop, XA_STRING, 8, PropModeReplace, strlen(NX_VERSION_CURRENT_STRING), NX_VERSION_CURRENT_STRING, True) != Success)
-    fprintf(stderr, "%s: Adding propery [%s], value [%s] failed.\n", __func__, name, NX_VERSION_CURRENT_STRING);
+    fprintf(stderr, "%s: Adding property [%s], value [%s] failed.\n", __func__, name, NX_VERSION_CURRENT_STRING);
 #ifdef DEBUG
   else
     fprintf(stderr, "%s: Added property [%s], value [%s] for root window [%x].\n", __func__, name, NX_VERSION_CURRENT_STRING, pWin);
