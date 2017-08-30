@@ -105,6 +105,8 @@ if [ "x$MODE" = "xfull" ]; then
     rm -f  "nxproxy/.gitignore"
     rm -f  "nx-X11/lib/X11/.gitignore"
     rm -f  "nx-X11/.gitignore"
+    rm -f  "nx-X11/lib/include/X11/.gitignore"
+    rm -f  "nx-X11/lib/src/.gitignore"
     rm -f  "nx-X11/programs/Xserver/composite/.gitignore"
     rm -f  "nx-X11/programs/Xserver/hw/nxagent/.gitignore"
     rm -f  "nx-X11/programs/Xserver/.gitignore"
