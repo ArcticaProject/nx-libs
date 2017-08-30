@@ -182,6 +182,7 @@ else
     rm -Rf "doc/nxcompshad/"
     rm -Rf "doc/_attic_/"
     rm -f  ".gitignore"
+    rm -f  "m4/nx-xtrans.m4"
     rm -f  "nxcomp/.gitignore"
     rm -f  "nxproxy/.gitignore"
 
