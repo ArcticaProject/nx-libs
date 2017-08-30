@@ -142,9 +142,9 @@ if [ "x$MODE" = "xfull" ]; then
     rm -Rf "nx-X11/extras/Mesa/src/mesa/shader/slang/OGLCompilersDLL/"
     rm -Rf "nx-X11/extras/Mesa/src/mesa/shader/slang/OSDependent/"
     rm -Rf "nx-X11/extras/Mesa/src/mesa/shader/slang/slang_mesa."{cpp,h}
-    rm -R  "nx-X11/extras/Mesa/src/mesa/shader/slang/library/"*.*c
-    rm -R  "nx-X11/extras/Mesa/src/mesa/shader/slang/library/"*.py
-    rm -R  "nx-X11/extras/Mesa/src/mesa/shader/slang/library/"*.syn
+    rm -Rf "nx-X11/extras/Mesa/src/mesa/shader/slang/library/"*.*c
+    rm -Rf "nx-X11/extras/Mesa/src/mesa/shader/slang/library/"*.py
+    rm -Rf "nx-X11/extras/Mesa/src/mesa/shader/slang/library/"*.syn
     rm -Rf "nx-X11/extras/Mesa/src/mesa/shader/slang/Include/"
     rm -Rf "nx-X11/extras/Mesa/src/mesa/shader/slang/Public/"
     rm -f  "nx-X11/extras/Mesa/src/mesa/swrast/s_fragprog_to_c.c"
