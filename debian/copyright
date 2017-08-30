@@ -3,7 +3,7 @@ Upstream-Name: NXv3 (aka nx-libs)
 Upstream-Contact: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 Source: https://github.com/ArcticaProject/nx-libs/
 
-Files: nx-X11/extras/Mesa/src/mesa/main/WSDrawBuffer.h
+Files: nx-X11/programs/Xserver/GL/mesa/main/WSDrawBuffer.h
  nx-X11/programs/Xserver/hw/nxagent/screensaver
  nx-X11/programs/Xserver/hw/nxagent/Atoms.c
  nx-X11/programs/Xserver/hw/nxagent/Atoms.h
@@ -95,8 +95,6 @@ Files: nx-X11/extras/Mesa/src/mesa/main/WSDrawBuffer.h
  nxcompshad/src/Shadow.cpp
  nxcompshad/src/Updater.cpp
  nxcompshad/src/Updater.h
- nxcompshad/src/Win.cpp
- nxcompshad/src/Win.h
  nxcompshad/src/X11.cpp
  nxcompshad/src/X11.h
 Copyright: 2001, 2011, NoMachine (http://www.nomachine.com)
@@ -129,234 +127,235 @@ Files: nx-X11/programs/Xserver/os/timingsafe_memcmp.c
 Copyright: 2014, Google Inc.
 License: MIT~ISC
 
-Files: nxcomp/ActionCache.cpp
- nxcomp/ActionCache.h
- nxcomp/Agent.cpp
- nxcomp/Agent.h
- nxcomp/Alpha.cpp
- nxcomp/Alpha.h
- nxcomp/Auth.cpp
- nxcomp/Auth.h
- nxcomp/Bitmap.cpp
- nxcomp/Bitmap.h
- nxcomp/BlockCache.cpp
- nxcomp/BlockCache.h
- nxcomp/BlockCacheSet.cpp
- nxcomp/BlockCacheSet.h
- nxcomp/ChangeGC.cpp
- nxcomp/ChangeGC.h
- nxcomp/ChangeProperty.cpp
- nxcomp/ChangeProperty.h
- nxcomp/Channel.cpp
- nxcomp/Channel.h
- nxcomp/ChannelCache.cpp
- nxcomp/ChannelCache.h
- nxcomp/ChannelEndPoint.cpp
- nxcomp/ChannelEndPoint.h
- nxcomp/ChannelStore.h
- nxcomp/CharCache.cpp
- nxcomp/CharCache.h
- nxcomp/Children.cpp
- nxcomp/ClearArea.cpp
- nxcomp/ClearArea.h
- nxcomp/ClientCache.cpp
- nxcomp/ClientCache.h
- nxcomp/ClientChannel.cpp
- nxcomp/ClientChannel.h
- nxcomp/ClientProxy.cpp
- nxcomp/ClientProxy.h
- nxcomp/ClientReadBuffer.cpp
- nxcomp/ClientReadBuffer.h
- nxcomp/ClientStore.cpp
- nxcomp/ClientStore.h
- nxcomp/Colormap.cpp
- nxcomp/Colormap.h
- nxcomp/ConfigureWindow.cpp
- nxcomp/ConfigureWindow.h
- nxcomp/Control.cpp
- nxcomp/Control.h
- nxcomp/CopyArea.cpp
- nxcomp/CopyArea.h
- nxcomp/CreateGC.cpp
- nxcomp/CreateGC.h
- nxcomp/CreatePixmap.cpp
- nxcomp/CreatePixmap.h
- nxcomp/DecodeBuffer.cpp
- nxcomp/DecodeBuffer.h
- nxcomp/EncodeBuffer.cpp
- nxcomp/EncodeBuffer.h
- nxcomp/FillPoly.cpp
- nxcomp/FillPoly.h
- nxcomp/Fork.cpp
- nxcomp/Fork.h
- nxcomp/FreeCache.h
- nxcomp/GenericChannel.cpp
- nxcomp/GenericChannel.h
- nxcomp/GenericReadBuffer.cpp
- nxcomp/GenericReadBuffer.h
- nxcomp/GenericReply.cpp
- nxcomp/GenericReply.h
- nxcomp/GenericRequest.cpp
- nxcomp/GenericRequest.h
- nxcomp/GetImage.cpp
- nxcomp/GetImage.h
- nxcomp/GetImageReply.cpp
- nxcomp/GetImageReply.h
- nxcomp/GetProperty.cpp
- nxcomp/GetProperty.h
- nxcomp/GetPropertyReply.cpp
- nxcomp/GetPropertyReply.h
- nxcomp/ImageText16.cpp
- nxcomp/ImageText16.h
- nxcomp/ImageText8.cpp
- nxcomp/ImageText8.h
- nxcomp/IntCache.cpp
- nxcomp/IntCache.h
- nxcomp/InternAtom.cpp
- nxcomp/InternAtom.h
- nxcomp/Jpeg.cpp
- nxcomp/Jpeg.h
- nxcomp/Keeper.cpp
- nxcomp/Keeper.h
- nxcomp/List.cpp
- nxcomp/List.h
- nxcomp/ListFontsReply.cpp
- nxcomp/ListFontsReply.h
- nxcomp/Loop.cpp
- nxcomp/Message.cpp
- nxcomp/Message.h
- nxcomp/Misc.cpp
- nxcomp/Misc.h
- nxcomp/NX.h
- nxcomp/NXalert.h
- nxcomp/NXmitshm.h
- nxcomp/NXpack.h
- nxcomp/NXproto.h
- nxcomp/NXrender.h
- nxcomp/NXvars.h
- nxcomp/OpcodeCache.h
- nxcomp/OpcodeStore.cpp
- nxcomp/OpcodeStore.h
- nxcomp/Pack.c
- nxcomp/Pgn.cpp
- nxcomp/Pgn.h
- nxcomp/Pipe.cpp
- nxcomp/Pipe.h
- nxcomp/PolyArc.cpp
- nxcomp/PolyArc.h
- nxcomp/PolyFillArc.cpp
- nxcomp/PolyFillArc.h
- nxcomp/PolyFillRectangle.cpp
- nxcomp/PolyFillRectangle.h
- nxcomp/PolyLine.cpp
- nxcomp/PolyLine.h
- nxcomp/PolyPoint.cpp
- nxcomp/PolyPoint.h
- nxcomp/PolySegment.cpp
- nxcomp/PolySegment.h
- nxcomp/PolyText16.cpp
- nxcomp/PolyText16.h
- nxcomp/PolyText8.cpp
- nxcomp/PolyText8.h
- nxcomp/Proxy.cpp
- nxcomp/Proxy.h
- nxcomp/ProxyReadBuffer.cpp
- nxcomp/ProxyReadBuffer.h
- nxcomp/PutImage.cpp
- nxcomp/PutImage.h
- nxcomp/PutPackedImage.cpp
- nxcomp/PutPackedImage.h
- nxcomp/QueryFontReply.cpp
- nxcomp/QueryFontReply.h
- nxcomp/ReadBuffer.cpp
- nxcomp/ReadBuffer.h
- nxcomp/RenderAddGlyphs.cpp
- nxcomp/RenderAddGlyphs.h
- nxcomp/RenderChangePicture.cpp
- nxcomp/RenderChangePicture.h
- nxcomp/RenderComposite.cpp
- nxcomp/RenderComposite.h
- nxcomp/RenderCompositeGlyphs.cpp
- nxcomp/RenderCompositeGlyphs.h
- nxcomp/RenderCreateGlyphSet.cpp
- nxcomp/RenderCreateGlyphSet.h
- nxcomp/RenderCreatePicture.cpp
- nxcomp/RenderCreatePicture.h
- nxcomp/RenderExtension.cpp
- nxcomp/RenderExtension.h
- nxcomp/RenderFillRectangles.cpp
- nxcomp/RenderFillRectangles.h
- nxcomp/RenderFreeGlyphSet.cpp
- nxcomp/RenderFreeGlyphSet.h
- nxcomp/RenderFreePicture.cpp
- nxcomp/RenderFreePicture.h
- nxcomp/RenderGenericRequest.cpp
- nxcomp/RenderGenericRequest.h
- nxcomp/RenderMinorExtensionHeaders.h
- nxcomp/RenderMinorExtensionMethods.h
- nxcomp/RenderMinorExtensionTags.h
- nxcomp/RenderPictureClip.cpp
- nxcomp/RenderPictureClip.h
- nxcomp/RenderPictureFilter.cpp
- nxcomp/RenderPictureFilter.h
- nxcomp/RenderPictureTransform.cpp
- nxcomp/RenderPictureTransform.h
- nxcomp/RenderTrapezoids.cpp
- nxcomp/RenderTrapezoids.h
- nxcomp/RenderTriangles.cpp
- nxcomp/RenderTriangles.h
- nxcomp/Rgb.cpp
- nxcomp/Rgb.h
- nxcomp/Rle.cpp
- nxcomp/Rle.h
- nxcomp/SendEvent.cpp
- nxcomp/SendEvent.h
- nxcomp/SequenceQueue.cpp
- nxcomp/SequenceQueue.h
- nxcomp/ServerCache.cpp
- nxcomp/ServerCache.h
- nxcomp/ServerChannel.cpp
- nxcomp/ServerChannel.h
- nxcomp/ServerProxy.cpp
- nxcomp/ServerProxy.h
- nxcomp/ServerReadBuffer.cpp
- nxcomp/ServerReadBuffer.h
- nxcomp/ServerStore.cpp
- nxcomp/ServerStore.h
- nxcomp/SetClipRectangles.cpp
- nxcomp/SetClipRectangles.h
- nxcomp/SetUnpackAlpha.cpp
- nxcomp/SetUnpackAlpha.h
- nxcomp/SetUnpackColormap.cpp
- nxcomp/SetUnpackColormap.h
- nxcomp/SetUnpackGeometry.cpp
- nxcomp/SetUnpackGeometry.h
- nxcomp/ShapeExtension.cpp
- nxcomp/ShapeExtension.h
- nxcomp/Socket.cpp
- nxcomp/Socket.h
- nxcomp/Split.cpp
- nxcomp/Split.h
- nxcomp/StaticCompressor.cpp
- nxcomp/StaticCompressor.h
- nxcomp/Statistics.cpp
- nxcomp/Statistics.h
- nxcomp/Timestamp.cpp
- nxcomp/Timestamp.h
- nxcomp/TranslateCoords.cpp
- nxcomp/TranslateCoords.h
- nxcomp/Transport.cpp
- nxcomp/Transport.h
- nxcomp/Types.h
- nxcomp/Unpack.cpp
- nxcomp/Unpack.h
- nxcomp/Vars.c
- nxcomp/WriteBuffer.cpp
- nxcomp/WriteBuffer.h
- nxcomp/XidCache.cpp
- nxcomp/XidCache.h
- nxcomp/Z.cpp
- nxcomp/Z.h
+Files:
+ nxcomp/include/NX.h
+ nxcomp/include/NXalert.h
+ nxcomp/include/NXpack.h
+ nxcomp/include/NXproto.h
+ nxcomp/include/NXvars.h
+ nxcomp/src/ActionCache.cpp
+ nxcomp/src/ActionCache.h
+ nxcomp/src/Agent.cpp
+ nxcomp/src/Agent.h
+ nxcomp/src/Alpha.cpp
+ nxcomp/src/Alpha.h
+ nxcomp/src/Auth.cpp
+ nxcomp/src/Auth.h
+ nxcomp/src/Bitmap.cpp
+ nxcomp/src/Bitmap.h
+ nxcomp/src/BlockCache.cpp
+ nxcomp/src/BlockCache.h
+ nxcomp/src/BlockCacheSet.cpp
+ nxcomp/src/BlockCacheSet.h
+ nxcomp/src/ChangeGC.cpp
+ nxcomp/src/ChangeGC.h
+ nxcomp/src/ChangeProperty.cpp
+ nxcomp/src/ChangeProperty.h
+ nxcomp/src/Channel.cpp
+ nxcomp/src/Channel.h
+ nxcomp/src/ChannelCache.cpp
+ nxcomp/src/ChannelCache.h
+ nxcomp/src/ChannelEndPoint.cpp
+ nxcomp/src/ChannelEndPoint.h
+ nxcomp/src/ChannelStore.h
+ nxcomp/src/CharCache.cpp
+ nxcomp/src/CharCache.h
+ nxcomp/src/Children.cpp
+ nxcomp/src/ClearArea.cpp
+ nxcomp/src/ClearArea.h
+ nxcomp/src/ClientCache.cpp
+ nxcomp/src/ClientCache.h
+ nxcomp/src/ClientChannel.cpp
+ nxcomp/src/ClientChannel.h
+ nxcomp/src/ClientProxy.cpp
+ nxcomp/src/ClientProxy.h
+ nxcomp/src/ClientReadBuffer.cpp
+ nxcomp/src/ClientReadBuffer.h
+ nxcomp/src/ClientStore.cpp
+ nxcomp/src/ClientStore.h
+ nxcomp/src/Colormap.cpp
+ nxcomp/src/Colormap.h
+ nxcomp/src/ConfigureWindow.cpp
+ nxcomp/src/ConfigureWindow.h
+ nxcomp/src/Control.cpp
+ nxcomp/src/Control.h
+ nxcomp/src/CopyArea.cpp
+ nxcomp/src/CopyArea.h
+ nxcomp/src/CreateGC.cpp
+ nxcomp/src/CreateGC.h
+ nxcomp/src/CreatePixmap.cpp
+ nxcomp/src/CreatePixmap.h
+ nxcomp/src/DecodeBuffer.cpp
+ nxcomp/src/DecodeBuffer.h
+ nxcomp/src/EncodeBuffer.cpp
+ nxcomp/src/EncodeBuffer.h
+ nxcomp/src/FillPoly.cpp
+ nxcomp/src/FillPoly.h
+ nxcomp/src/Fork.cpp
+ nxcomp/src/Fork.h
+ nxcomp/src/FreeCache.h
+ nxcomp/src/GenericChannel.cpp
+ nxcomp/src/GenericChannel.h
+ nxcomp/src/GenericReadBuffer.cpp
+ nxcomp/src/GenericReadBuffer.h
+ nxcomp/src/GenericReply.cpp
+ nxcomp/src/GenericReply.h
+ nxcomp/src/GenericRequest.cpp
+ nxcomp/src/GenericRequest.h
+ nxcomp/src/GetImage.cpp
+ nxcomp/src/GetImage.h
+ nxcomp/src/GetImageReply.cpp
+ nxcomp/src/GetImageReply.h
+ nxcomp/src/GetProperty.cpp
+ nxcomp/src/GetProperty.h
+ nxcomp/src/GetPropertyReply.cpp
+ nxcomp/src/GetPropertyReply.h
+ nxcomp/src/ImageText16.cpp
+ nxcomp/src/ImageText16.h
+ nxcomp/src/ImageText8.cpp
+ nxcomp/src/ImageText8.h
+ nxcomp/src/IntCache.cpp
+ nxcomp/src/IntCache.h
+ nxcomp/src/InternAtom.cpp
+ nxcomp/src/InternAtom.h
+ nxcomp/src/Jpeg.cpp
+ nxcomp/src/Jpeg.h
+ nxcomp/src/Keeper.cpp
+ nxcomp/src/Keeper.h
+ nxcomp/src/List.cpp
+ nxcomp/src/List.h
+ nxcomp/src/ListFontsReply.cpp
+ nxcomp/src/ListFontsReply.h
+ nxcomp/src/Loop.cpp
+ nxcomp/src/Message.cpp
+ nxcomp/src/Message.h
+ nxcomp/src/Misc.cpp
+ nxcomp/src/Misc.h
+ nxcomp/src/NXmitshm.h
+ nxcomp/src/NXrender.h
+ nxcomp/src/OpcodeCache.h
+ nxcomp/src/OpcodeStore.cpp
+ nxcomp/src/OpcodeStore.h
+ nxcomp/src/Pack.c
+ nxcomp/src/Pgn.cpp
+ nxcomp/src/Pgn.h
+ nxcomp/src/Pipe.cpp
+ nxcomp/src/Pipe.h
+ nxcomp/src/PolyArc.cpp
+ nxcomp/src/PolyArc.h
+ nxcomp/src/PolyFillArc.cpp
+ nxcomp/src/PolyFillArc.h
+ nxcomp/src/PolyFillRectangle.cpp
+ nxcomp/src/PolyFillRectangle.h
+ nxcomp/src/PolyLine.cpp
+ nxcomp/src/PolyLine.h
+ nxcomp/src/PolyPoint.cpp
+ nxcomp/src/PolyPoint.h
+ nxcomp/src/PolySegment.cpp
+ nxcomp/src/PolySegment.h
+ nxcomp/src/PolyText16.cpp
+ nxcomp/src/PolyText16.h
+ nxcomp/src/PolyText8.cpp
+ nxcomp/src/PolyText8.h
+ nxcomp/src/Proxy.cpp
+ nxcomp/src/Proxy.h
+ nxcomp/src/ProxyReadBuffer.cpp
+ nxcomp/src/ProxyReadBuffer.h
+ nxcomp/src/PutImage.cpp
+ nxcomp/src/PutImage.h
+ nxcomp/src/PutPackedImage.cpp
+ nxcomp/src/PutPackedImage.h
+ nxcomp/src/QueryFontReply.cpp
+ nxcomp/src/QueryFontReply.h
+ nxcomp/src/ReadBuffer.cpp
+ nxcomp/src/ReadBuffer.h
+ nxcomp/src/RenderAddGlyphs.cpp
+ nxcomp/src/RenderAddGlyphs.h
+ nxcomp/src/RenderChangePicture.cpp
+ nxcomp/src/RenderChangePicture.h
+ nxcomp/src/RenderComposite.cpp
+ nxcomp/src/RenderComposite.h
+ nxcomp/src/RenderCompositeGlyphs.cpp
+ nxcomp/src/RenderCompositeGlyphs.h
+ nxcomp/src/RenderCreateGlyphSet.cpp
+ nxcomp/src/RenderCreateGlyphSet.h
+ nxcomp/src/RenderCreatePicture.cpp
+ nxcomp/src/RenderCreatePicture.h
+ nxcomp/src/RenderExtension.cpp
+ nxcomp/src/RenderExtension.h
+ nxcomp/src/RenderFillRectangles.cpp
+ nxcomp/src/RenderFillRectangles.h
+ nxcomp/src/RenderFreeGlyphSet.cpp
+ nxcomp/src/RenderFreeGlyphSet.h
+ nxcomp/src/RenderFreePicture.cpp
+ nxcomp/src/RenderFreePicture.h
+ nxcomp/src/RenderGenericRequest.cpp
+ nxcomp/src/RenderGenericRequest.h
+ nxcomp/src/RenderMinorExtensionHeaders.h
+ nxcomp/src/RenderMinorExtensionMethods.h
+ nxcomp/src/RenderMinorExtensionTags.h
+ nxcomp/src/RenderPictureClip.cpp
+ nxcomp/src/RenderPictureClip.h
+ nxcomp/src/RenderPictureFilter.cpp
+ nxcomp/src/RenderPictureFilter.h
+ nxcomp/src/RenderPictureTransform.cpp
+ nxcomp/src/RenderPictureTransform.h
+ nxcomp/src/RenderTrapezoids.cpp
+ nxcomp/src/RenderTrapezoids.h
+ nxcomp/src/RenderTriangles.cpp
+ nxcomp/src/RenderTriangles.h
+ nxcomp/src/Rgb.cpp
+ nxcomp/src/Rgb.h
+ nxcomp/src/Rle.cpp
+ nxcomp/src/Rle.h
+ nxcomp/src/SendEvent.cpp
+ nxcomp/src/SendEvent.h
+ nxcomp/src/SequenceQueue.cpp
+ nxcomp/src/SequenceQueue.h
+ nxcomp/src/ServerCache.cpp
+ nxcomp/src/ServerCache.h
+ nxcomp/src/ServerChannel.cpp
+ nxcomp/src/ServerChannel.h
+ nxcomp/src/ServerProxy.cpp
+ nxcomp/src/ServerProxy.h
+ nxcomp/src/ServerReadBuffer.cpp
+ nxcomp/src/ServerReadBuffer.h
+ nxcomp/src/ServerStore.cpp
+ nxcomp/src/ServerStore.h
+ nxcomp/src/SetClipRectangles.cpp
+ nxcomp/src/SetClipRectangles.h
+ nxcomp/src/SetUnpackAlpha.cpp
+ nxcomp/src/SetUnpackAlpha.h
+ nxcomp/src/SetUnpackColormap.cpp
+ nxcomp/src/SetUnpackColormap.h
+ nxcomp/src/SetUnpackGeometry.cpp
+ nxcomp/src/SetUnpackGeometry.h
+ nxcomp/src/ShapeExtension.cpp
+ nxcomp/src/ShapeExtension.h
+ nxcomp/src/Socket.cpp
+ nxcomp/src/Socket.h
+ nxcomp/src/Split.cpp
+ nxcomp/src/Split.h
+ nxcomp/src/StaticCompressor.cpp
+ nxcomp/src/StaticCompressor.h
+ nxcomp/src/Statistics.cpp
+ nxcomp/src/Statistics.h
+ nxcomp/src/Timestamp.cpp
+ nxcomp/src/Timestamp.h
+ nxcomp/src/TranslateCoords.cpp
+ nxcomp/src/TranslateCoords.h
+ nxcomp/src/Transport.cpp
+ nxcomp/src/Transport.h
+ nxcomp/src/Types.h
+ nxcomp/src/Unpack.cpp
+ nxcomp/src/Unpack.h
+ nxcomp/src/Vars.c
+ nxcomp/src/WriteBuffer.cpp
+ nxcomp/src/WriteBuffer.h
+ nxcomp/src/XidCache.cpp
+ nxcomp/src/XidCache.h
+ nxcomp/src/Z.cpp
+ nxcomp/src/Z.h
 Copyright: 2001, 2011, NoMachine (http://www.nomachine.com)
   2008-2014, Oleksandr Shneyder <o.shneyder@phoca-gmbh.de>
   2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
@@ -400,304 +399,304 @@ Comment:
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
  DAMAGE.
 
-Files: nx-X11/extras/Mesa/include/GL/gl.h
- nx-X11/extras/Mesa/include/GL/osmesa.h
- nx-X11/extras/Mesa/include/GL/xmesa.h
- nx-X11/extras/Mesa/src/mesa/array_cache/ac_context.c
- nx-X11/extras/Mesa/src/mesa/array_cache/ac_context.h
- nx-X11/extras/Mesa/src/mesa/array_cache/ac_import.c
- nx-X11/extras/Mesa/src/mesa/array_cache/acache.h
- nx-X11/extras/Mesa/src/mesa/drivers/common/driverfuncs.c
- nx-X11/extras/Mesa/src/mesa/drivers/common/driverfuncs.h
- nx-X11/extras/Mesa/src/mesa/drivers/x11/glxheader.h
- nx-X11/extras/Mesa/src/mesa/drivers/x11/xm_api.c
- nx-X11/extras/Mesa/src/mesa/drivers/x11/xm_buffer.c
- nx-X11/extras/Mesa/src/mesa/drivers/x11/xm_dd.c
- nx-X11/extras/Mesa/src/mesa/drivers/x11/xm_line.c
- nx-X11/extras/Mesa/src/mesa/drivers/x11/xm_span.c
- nx-X11/extras/Mesa/src/mesa/drivers/x11/xm_tri.c
- nx-X11/extras/Mesa/src/mesa/drivers/x11/xmesaP.h
- nx-X11/extras/Mesa/src/mesa/glapi/glapi.c
- nx-X11/extras/Mesa/src/mesa/glapi/glapi.h
- nx-X11/extras/Mesa/src/mesa/glapi/glthread.c
- nx-X11/extras/Mesa/src/mesa/glapi/glthread.h
- nx-X11/extras/Mesa/src/mesa/main/accum.c
- nx-X11/extras/Mesa/src/mesa/main/accum.h
- nx-X11/extras/Mesa/src/mesa/main/api_arrayelt.c
- nx-X11/extras/Mesa/src/mesa/main/api_arrayelt.h
- nx-X11/extras/Mesa/src/mesa/main/api_eval.h
- nx-X11/extras/Mesa/src/mesa/main/api_loopback.c
- nx-X11/extras/Mesa/src/mesa/main/api_loopback.h
- nx-X11/extras/Mesa/src/mesa/main/api_noop.c
- nx-X11/extras/Mesa/src/mesa/main/api_noop.h
- nx-X11/extras/Mesa/src/mesa/main/api_validate.c
- nx-X11/extras/Mesa/src/mesa/main/api_validate.h
- nx-X11/extras/Mesa/src/mesa/main/attrib.c
- nx-X11/extras/Mesa/src/mesa/main/attrib.h
- nx-X11/extras/Mesa/src/mesa/main/blend.c
- nx-X11/extras/Mesa/src/mesa/main/blend.h
- nx-X11/extras/Mesa/src/mesa/main/bufferobj.c
- nx-X11/extras/Mesa/src/mesa/main/bufferobj.h
- nx-X11/extras/Mesa/src/mesa/main/buffers.c
- nx-X11/extras/Mesa/src/mesa/main/buffers.h
- nx-X11/extras/Mesa/src/mesa/main/clip.c
- nx-X11/extras/Mesa/src/mesa/main/clip.h
- nx-X11/extras/Mesa/src/mesa/main/colormac.h
- nx-X11/extras/Mesa/src/mesa/main/colortab.c
- nx-X11/extras/Mesa/src/mesa/main/colortab.h
- nx-X11/extras/Mesa/src/mesa/main/config.h
- nx-X11/extras/Mesa/src/mesa/main/context.c
- nx-X11/extras/Mesa/src/mesa/main/context.h
- nx-X11/extras/Mesa/src/mesa/main/convolve.c
- nx-X11/extras/Mesa/src/mesa/main/convolve.h
- nx-X11/extras/Mesa/src/mesa/main/dd.h
- nx-X11/extras/Mesa/src/mesa/main/debug.c
- nx-X11/extras/Mesa/src/mesa/main/debug.h
- nx-X11/extras/Mesa/src/mesa/main/depth.c
- nx-X11/extras/Mesa/src/mesa/main/depth.h
- nx-X11/extras/Mesa/src/mesa/main/dispatch.c
- nx-X11/extras/Mesa/src/mesa/main/dlist.c
- nx-X11/extras/Mesa/src/mesa/main/dlist.h
- nx-X11/extras/Mesa/src/mesa/main/drawpix.c
- nx-X11/extras/Mesa/src/mesa/main/drawpix.h
- nx-X11/extras/Mesa/src/mesa/main/enable.c
- nx-X11/extras/Mesa/src/mesa/main/enable.h
- nx-X11/extras/Mesa/src/mesa/main/enums.c
- nx-X11/extras/Mesa/src/mesa/main/enums.h
- nx-X11/extras/Mesa/src/mesa/main/eval.c
- nx-X11/extras/Mesa/src/mesa/main/eval.h
- nx-X11/extras/Mesa/src/mesa/main/execmem.c
- nx-X11/extras/Mesa/src/mesa/main/extensions.c
- nx-X11/extras/Mesa/src/mesa/main/extensions.h
- nx-X11/extras/Mesa/src/mesa/main/fbobject.c
- nx-X11/extras/Mesa/src/mesa/main/fbobject.h
- nx-X11/extras/Mesa/src/mesa/main/feedback.c
- nx-X11/extras/Mesa/src/mesa/main/feedback.h
- nx-X11/extras/Mesa/src/mesa/main/fog.c
- nx-X11/extras/Mesa/src/mesa/main/fog.h
- nx-X11/extras/Mesa/src/mesa/main/framebuffer.c
- nx-X11/extras/Mesa/src/mesa/main/framebuffer.h
- nx-X11/extras/Mesa/src/mesa/main/get.h
- nx-X11/extras/Mesa/src/mesa/main/getstring.c
- nx-X11/extras/Mesa/src/mesa/main/glheader.h
- nx-X11/extras/Mesa/src/mesa/main/hash.c
- nx-X11/extras/Mesa/src/mesa/main/hash.h
- nx-X11/extras/Mesa/src/mesa/main/hint.c
- nx-X11/extras/Mesa/src/mesa/main/hint.h
- nx-X11/extras/Mesa/src/mesa/main/histogram.c
- nx-X11/extras/Mesa/src/mesa/main/histogram.h
- nx-X11/extras/Mesa/src/mesa/main/image.c
- nx-X11/extras/Mesa/src/mesa/main/image.h
- nx-X11/extras/Mesa/src/mesa/main/imports.c
- nx-X11/extras/Mesa/src/mesa/main/imports.h
- nx-X11/extras/Mesa/src/mesa/main/light.c
- nx-X11/extras/Mesa/src/mesa/main/light.h
- nx-X11/extras/Mesa/src/mesa/main/lines.c
- nx-X11/extras/Mesa/src/mesa/main/lines.h
- nx-X11/extras/Mesa/src/mesa/main/macros.h
- nx-X11/extras/Mesa/src/mesa/main/matrix.c
- nx-X11/extras/Mesa/src/mesa/main/matrix.h
- nx-X11/extras/Mesa/src/mesa/main/mtypes.h
- nx-X11/extras/Mesa/src/mesa/main/occlude.c
- nx-X11/extras/Mesa/src/mesa/main/occlude.h
- nx-X11/extras/Mesa/src/mesa/main/pixel.c
- nx-X11/extras/Mesa/src/mesa/main/pixel.h
- nx-X11/extras/Mesa/src/mesa/main/points.c
- nx-X11/extras/Mesa/src/mesa/main/points.h
- nx-X11/extras/Mesa/src/mesa/main/polygon.c
- nx-X11/extras/Mesa/src/mesa/main/polygon.h
- nx-X11/extras/Mesa/src/mesa/main/rastpos.c
- nx-X11/extras/Mesa/src/mesa/main/rastpos.h
- nx-X11/extras/Mesa/src/mesa/main/renderbuffer.c
- nx-X11/extras/Mesa/src/mesa/main/renderbuffer.h
- nx-X11/extras/Mesa/src/mesa/main/state.c
- nx-X11/extras/Mesa/src/mesa/main/state.h
- nx-X11/extras/Mesa/src/mesa/main/stencil.c
- nx-X11/extras/Mesa/src/mesa/main/stencil.h
- nx-X11/extras/Mesa/src/mesa/main/texcompress.c
- nx-X11/extras/Mesa/src/mesa/main/texcompress.h
- nx-X11/extras/Mesa/src/mesa/main/texcompress_fxt1.c
- nx-X11/extras/Mesa/src/mesa/main/texcompress_s3tc.c
- nx-X11/extras/Mesa/src/mesa/main/texenvprogram.h
- nx-X11/extras/Mesa/src/mesa/main/texformat.c
- nx-X11/extras/Mesa/src/mesa/main/texformat.h
- nx-X11/extras/Mesa/src/mesa/main/texformat_tmp.h
- nx-X11/extras/Mesa/src/mesa/main/teximage.c
- nx-X11/extras/Mesa/src/mesa/main/teximage.h
- nx-X11/extras/Mesa/src/mesa/main/texobj.c
- nx-X11/extras/Mesa/src/mesa/main/texobj.h
- nx-X11/extras/Mesa/src/mesa/main/texstate.c
- nx-X11/extras/Mesa/src/mesa/main/texstate.h
- nx-X11/extras/Mesa/src/mesa/main/texstore.c
- nx-X11/extras/Mesa/src/mesa/main/texstore.h
- nx-X11/extras/Mesa/src/mesa/main/varray.c
- nx-X11/extras/Mesa/src/mesa/main/varray.h
- nx-X11/extras/Mesa/src/mesa/main/version.h
- nx-X11/extras/Mesa/src/mesa/main/vtxfmt.c
- nx-X11/extras/Mesa/src/mesa/main/vtxfmt.h
- nx-X11/extras/Mesa/src/mesa/main/vtxfmt_tmp.h
- nx-X11/extras/Mesa/src/mesa/math/m_clip_tmp.h
- nx-X11/extras/Mesa/src/mesa/math/m_copy_tmp.h
- nx-X11/extras/Mesa/src/mesa/math/m_debug.h
- nx-X11/extras/Mesa/src/mesa/math/m_debug_clip.c
- nx-X11/extras/Mesa/src/mesa/math/m_debug_norm.c
- nx-X11/extras/Mesa/src/mesa/math/m_debug_util.h
- nx-X11/extras/Mesa/src/mesa/math/m_debug_xform.c
- nx-X11/extras/Mesa/src/mesa/math/m_dotprod_tmp.h
- nx-X11/extras/Mesa/src/mesa/math/m_eval.c
- nx-X11/extras/Mesa/src/mesa/math/m_eval.h
- nx-X11/extras/Mesa/src/mesa/math/m_matrix.c
- nx-X11/extras/Mesa/src/mesa/math/m_matrix.h
- nx-X11/extras/Mesa/src/mesa/math/m_norm_tmp.h
- nx-X11/extras/Mesa/src/mesa/math/m_trans_tmp.h
- nx-X11/extras/Mesa/src/mesa/math/m_translate.c
- nx-X11/extras/Mesa/src/mesa/math/m_translate.h
- nx-X11/extras/Mesa/src/mesa/math/m_vector.c
- nx-X11/extras/Mesa/src/mesa/math/m_vector.h
- nx-X11/extras/Mesa/src/mesa/math/m_xform.c
- nx-X11/extras/Mesa/src/mesa/math/m_xform.h
- nx-X11/extras/Mesa/src/mesa/math/m_xform_tmp.h
- nx-X11/extras/Mesa/src/mesa/math/mathmod.h
- nx-X11/extras/Mesa/src/mesa/shader/arbfragparse.c
- nx-X11/extras/Mesa/src/mesa/shader/arbfragparse.h
- nx-X11/extras/Mesa/src/mesa/shader/arbprogparse.c
- nx-X11/extras/Mesa/src/mesa/shader/arbprogparse.h
- nx-X11/extras/Mesa/src/mesa/shader/arbprogram.c
- nx-X11/extras/Mesa/src/mesa/shader/arbprogram.h
- nx-X11/extras/Mesa/src/mesa/shader/arbvertparse.c
- nx-X11/extras/Mesa/src/mesa/shader/arbvertparse.h
- nx-X11/extras/Mesa/src/mesa/shader/grammar/grammar.c
- nx-X11/extras/Mesa/src/mesa/shader/grammar/grammar.h
- nx-X11/extras/Mesa/src/mesa/shader/grammar/grammar_mesa.c
- nx-X11/extras/Mesa/src/mesa/shader/grammar/grammar_mesa.h
- nx-X11/extras/Mesa/src/mesa/shader/nvfragparse.c
- nx-X11/extras/Mesa/src/mesa/shader/nvfragparse.h
- nx-X11/extras/Mesa/src/mesa/shader/nvfragprog.h
- nx-X11/extras/Mesa/src/mesa/shader/nvprogram.c
- nx-X11/extras/Mesa/src/mesa/shader/nvprogram.h
- nx-X11/extras/Mesa/src/mesa/shader/nvvertexec.c
- nx-X11/extras/Mesa/src/mesa/shader/nvvertexec.h
- nx-X11/extras/Mesa/src/mesa/shader/nvvertparse.c
- nx-X11/extras/Mesa/src/mesa/shader/nvvertparse.h
- nx-X11/extras/Mesa/src/mesa/shader/nvvertprog.h
- nx-X11/extras/Mesa/src/mesa/shader/program.c
- nx-X11/extras/Mesa/src/mesa/shader/program.h
- nx-X11/extras/Mesa/src/mesa/shader/shaderobjects.c
- nx-X11/extras/Mesa/src/mesa/shader/shaderobjects.h
- nx-X11/extras/Mesa/src/mesa/shader/shaderobjects_3dlabs.c
- nx-X11/extras/Mesa/src/mesa/shader/shaderobjects_3dlabs.h
- nx-X11/extras/Mesa/src/mesa/shader/slang/slang_assemble.c
- nx-X11/extras/Mesa/src/mesa/shader/slang/slang_assemble.h
- nx-X11/extras/Mesa/src/mesa/shader/slang/slang_assemble_assignment.c
- nx-X11/extras/Mesa/src/mesa/shader/slang/slang_assemble_assignment.h
- nx-X11/extras/Mesa/src/mesa/shader/slang/slang_assemble_conditional.c
- nx-X11/extras/Mesa/src/mesa/shader/slang/slang_assemble_conditional.h
- nx-X11/extras/Mesa/src/mesa/shader/slang/slang_assemble_constructor.c
- nx-X11/extras/Mesa/src/mesa/shader/slang/slang_assemble_constructor.h
- nx-X11/extras/Mesa/src/mesa/shader/slang/slang_assemble_typeinfo.c
- nx-X11/extras/Mesa/src/mesa/shader/slang/slang_assemble_typeinfo.h
- nx-X11/extras/Mesa/src/mesa/shader/slang/slang_compile.c
- nx-X11/extras/Mesa/src/mesa/shader/slang/slang_compile.h
- nx-X11/extras/Mesa/src/mesa/shader/slang/slang_execute.c
- nx-X11/extras/Mesa/src/mesa/shader/slang/slang_execute.h
- nx-X11/extras/Mesa/src/mesa/shader/slang/slang_preprocess.c
- nx-X11/extras/Mesa/src/mesa/shader/slang/slang_preprocess.h
- nx-X11/extras/Mesa/src/mesa/shader/slang/slang_storage.c
- nx-X11/extras/Mesa/src/mesa/shader/slang/slang_storage.h
- nx-X11/extras/Mesa/src/mesa/shader/slang/slang_utility.c
- nx-X11/extras/Mesa/src/mesa/shader/slang/slang_utility.h
- nx-X11/extras/Mesa/src/mesa/shader/slang/traverse_wrap.h
- nx-X11/extras/Mesa/src/mesa/swrast/s_aaline.c
- nx-X11/extras/Mesa/src/mesa/swrast/s_aaline.h
- nx-X11/extras/Mesa/src/mesa/swrast/s_aalinetemp.h
- nx-X11/extras/Mesa/src/mesa/swrast/s_aatriangle.c
- nx-X11/extras/Mesa/src/mesa/swrast/s_aatriangle.h
- nx-X11/extras/Mesa/src/mesa/swrast/s_aatritemp.h
- nx-X11/extras/Mesa/src/mesa/swrast/s_accum.c
- nx-X11/extras/Mesa/src/mesa/swrast/s_accum.h
- nx-X11/extras/Mesa/src/mesa/swrast/s_alpha.c
- nx-X11/extras/Mesa/src/mesa/swrast/s_alpha.h
- nx-X11/extras/Mesa/src/mesa/swrast/s_bitmap.c
- nx-X11/extras/Mesa/src/mesa/swrast/s_blend.c
- nx-X11/extras/Mesa/src/mesa/swrast/s_blend.h
- nx-X11/extras/Mesa/src/mesa/swrast/s_buffers.c
- nx-X11/extras/Mesa/src/mesa/swrast/s_context.c
- nx-X11/extras/Mesa/src/mesa/swrast/s_context.h
- nx-X11/extras/Mesa/src/mesa/swrast/s_copypix.c
- nx-X11/extras/Mesa/src/mesa/swrast/s_depth.c
- nx-X11/extras/Mesa/src/mesa/swrast/s_depth.h
- nx-X11/extras/Mesa/src/mesa/swrast/s_drawpix.c
- nx-X11/extras/Mesa/src/mesa/swrast/s_drawpix.h
- nx-X11/extras/Mesa/src/mesa/swrast/s_feedback.c
- nx-X11/extras/Mesa/src/mesa/swrast/s_feedback.h
- nx-X11/extras/Mesa/src/mesa/swrast/s_fog.c
- nx-X11/extras/Mesa/src/mesa/swrast/s_fog.h
- nx-X11/extras/Mesa/src/mesa/swrast/s_imaging.c
- nx-X11/extras/Mesa/src/mesa/swrast/s_lines.c
- nx-X11/extras/Mesa/src/mesa/swrast/s_lines.h
- nx-X11/extras/Mesa/src/mesa/swrast/s_linetemp.h
- nx-X11/extras/Mesa/src/mesa/swrast/s_logic.c
- nx-X11/extras/Mesa/src/mesa/swrast/s_logic.h
- nx-X11/extras/Mesa/src/mesa/swrast/s_masking.c
- nx-X11/extras/Mesa/src/mesa/swrast/s_masking.h
- nx-X11/extras/Mesa/src/mesa/swrast/s_nvfragprog.c
- nx-X11/extras/Mesa/src/mesa/swrast/s_nvfragprog.h
- nx-X11/extras/Mesa/src/mesa/swrast/s_pixeltex.c
- nx-X11/extras/Mesa/src/mesa/swrast/s_pixeltex.h
- nx-X11/extras/Mesa/src/mesa/swrast/s_points.c
- nx-X11/extras/Mesa/src/mesa/swrast/s_points.h
- nx-X11/extras/Mesa/src/mesa/swrast/s_pointtemp.h
- nx-X11/extras/Mesa/src/mesa/swrast/s_readpix.c
- nx-X11/extras/Mesa/src/mesa/swrast/s_span.c
- nx-X11/extras/Mesa/src/mesa/swrast/s_span.h
- nx-X11/extras/Mesa/src/mesa/swrast/s_spantemp.h
- nx-X11/extras/Mesa/src/mesa/swrast/s_stencil.c
- nx-X11/extras/Mesa/src/mesa/swrast/s_stencil.h
- nx-X11/extras/Mesa/src/mesa/swrast/s_texstore.c
- nx-X11/extras/Mesa/src/mesa/swrast/s_texture.c
- nx-X11/extras/Mesa/src/mesa/swrast/s_texture.h
- nx-X11/extras/Mesa/src/mesa/swrast/s_triangle.c
- nx-X11/extras/Mesa/src/mesa/swrast/s_triangle.h
- nx-X11/extras/Mesa/src/mesa/swrast/s_trispan.h
- nx-X11/extras/Mesa/src/mesa/swrast/s_tritemp.h
- nx-X11/extras/Mesa/src/mesa/swrast/s_zoom.c
- nx-X11/extras/Mesa/src/mesa/swrast/s_zoom.h
- nx-X11/extras/Mesa/src/mesa/swrast/swrast.h
- nx-X11/extras/Mesa/src/mesa/swrast_setup/ss_context.c
- nx-X11/extras/Mesa/src/mesa/swrast_setup/ss_context.h
- nx-X11/extras/Mesa/src/mesa/swrast_setup/ss_triangle.c
- nx-X11/extras/Mesa/src/mesa/swrast_setup/ss_triangle.h
- nx-X11/extras/Mesa/src/mesa/swrast_setup/ss_tritmp.h
- nx-X11/extras/Mesa/src/mesa/swrast_setup/swrast_setup.h
- nx-X11/extras/Mesa/src/mesa/tnl/t_array_api.c
- nx-X11/extras/Mesa/src/mesa/tnl/t_array_api.h
- nx-X11/extras/Mesa/src/mesa/tnl/t_array_import.c
- nx-X11/extras/Mesa/src/mesa/tnl/t_array_import.h
- nx-X11/extras/Mesa/src/mesa/tnl/t_context.c
- nx-X11/extras/Mesa/src/mesa/tnl/t_context.h
- nx-X11/extras/Mesa/src/mesa/tnl/t_pipeline.c
- nx-X11/extras/Mesa/src/mesa/tnl/t_pipeline.h
- nx-X11/extras/Mesa/src/mesa/tnl/t_save_loopback.c
- nx-X11/extras/Mesa/src/mesa/tnl/t_save_playback.c
- nx-X11/extras/Mesa/src/mesa/tnl/t_vb_arbprogram.c
- nx-X11/extras/Mesa/src/mesa/tnl/t_vb_arbprogram.h
- nx-X11/extras/Mesa/src/mesa/tnl/t_vb_arbprogram_sse.c
- nx-X11/extras/Mesa/src/mesa/tnl/t_vb_cliptmp.h
- nx-X11/extras/Mesa/src/mesa/tnl/t_vb_cull.c
- nx-X11/extras/Mesa/src/mesa/tnl/t_vb_fog.c
- nx-X11/extras/Mesa/src/mesa/tnl/t_vb_light.c
- nx-X11/extras/Mesa/src/mesa/tnl/t_vb_lighttmp.h
- nx-X11/extras/Mesa/src/mesa/tnl/t_vb_normals.c
- nx-X11/extras/Mesa/src/mesa/tnl/t_vb_points.c
- nx-X11/extras/Mesa/src/mesa/tnl/t_vb_program.c
- nx-X11/extras/Mesa/src/mesa/tnl/t_vb_render.c
- nx-X11/extras/Mesa/src/mesa/tnl/t_vb_rendertmp.h
- nx-X11/extras/Mesa/src/mesa/tnl/t_vb_texgen.c
- nx-X11/extras/Mesa/src/mesa/tnl/t_vb_texmat.c
- nx-X11/extras/Mesa/src/mesa/tnl/t_vb_vertex.c
- nx-X11/extras/Mesa/src/mesa/tnl/t_vtx_eval.c
- nx-X11/extras/Mesa/src/mesa/tnl/t_vtx_exec.c
- nx-X11/extras/Mesa/src/mesa/tnl/tnl.h
+Files: nx-X11/extras/Mesa_6.4.2/include/GL/gl.h
+ nx-X11/extras/Mesa_6.4.2/include/GL/osmesa.h
+ nx-X11/extras/Mesa_6.4.2/include/GL/xmesa.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/array_cache/ac_context.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/array_cache/ac_context.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/array_cache/ac_import.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/array_cache/acache.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/drivers/common/driverfuncs.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/drivers/common/driverfuncs.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/drivers/x11/glxheader.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/drivers/x11/xm_api.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/drivers/x11/xm_buffer.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/drivers/x11/xm_dd.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/drivers/x11/xm_line.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/drivers/x11/xm_span.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/drivers/x11/xm_tri.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/drivers/x11/xmesaP.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/glapi/glapi.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/glapi/glapi.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/glapi/glthread.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/glapi/glthread.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/accum.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/accum.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/api_arrayelt.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/api_arrayelt.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/api_eval.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/api_loopback.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/api_loopback.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/api_noop.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/api_noop.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/api_validate.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/api_validate.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/attrib.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/attrib.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/blend.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/blend.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/bufferobj.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/bufferobj.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/buffers.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/buffers.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/clip.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/clip.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/colormac.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/colortab.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/colortab.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/config.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/context.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/context.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/convolve.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/convolve.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/dd.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/debug.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/debug.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/depth.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/depth.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/dispatch.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/dlist.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/dlist.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/drawpix.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/drawpix.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/enable.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/enable.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/enums.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/enums.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/eval.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/eval.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/execmem.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/extensions.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/extensions.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/fbobject.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/fbobject.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/feedback.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/feedback.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/fog.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/fog.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/framebuffer.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/framebuffer.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/get.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/getstring.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/glheader.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/hash.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/hash.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/hint.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/hint.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/histogram.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/histogram.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/image.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/image.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/imports.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/imports.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/light.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/light.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/lines.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/lines.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/macros.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/matrix.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/matrix.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/mtypes.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/occlude.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/occlude.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/pixel.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/pixel.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/points.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/points.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/polygon.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/polygon.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/rastpos.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/rastpos.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/renderbuffer.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/renderbuffer.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/state.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/state.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/stencil.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/stencil.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/texcompress.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/texcompress.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/texcompress_fxt1.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/texcompress_s3tc.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/texenvprogram.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/texformat.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/texformat.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/texformat_tmp.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/teximage.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/teximage.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/texobj.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/texobj.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/texstate.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/texstate.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/texstore.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/texstore.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/varray.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/varray.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/version.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/vtxfmt.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/vtxfmt.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/vtxfmt_tmp.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_clip_tmp.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_copy_tmp.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_debug.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_debug_clip.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_debug_norm.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_debug_util.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_debug_xform.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_dotprod_tmp.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_eval.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_eval.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_matrix.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_matrix.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_norm_tmp.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_trans_tmp.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_translate.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_translate.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_vector.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_vector.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_xform.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_xform.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_xform_tmp.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/math/mathmod.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/arbfragparse.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/arbfragparse.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/arbprogparse.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/arbprogparse.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/arbprogram.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/arbprogram.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/arbvertparse.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/arbvertparse.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/grammar/grammar.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/grammar/grammar.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/grammar/grammar_mesa.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/grammar/grammar_mesa.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/nvfragparse.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/nvfragparse.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/nvfragprog.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/nvprogram.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/nvprogram.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/nvvertexec.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/nvvertexec.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/nvvertparse.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/nvvertparse.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/nvvertprog.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/program.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/program.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/shaderobjects.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/shaderobjects.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/shaderobjects_3dlabs.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/shaderobjects_3dlabs.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_assemble.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_assemble.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_assemble_assignment.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_assemble_assignment.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_assemble_conditional.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_assemble_conditional.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_assemble_constructor.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_assemble_constructor.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_assemble_typeinfo.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_assemble_typeinfo.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_compile.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_compile.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_execute.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_execute.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_preprocess.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_preprocess.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_storage.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_storage.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_utility.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_utility.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/traverse_wrap.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_aaline.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_aaline.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_aalinetemp.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_aatriangle.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_aatriangle.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_aatritemp.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_accum.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_accum.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_alpha.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_alpha.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_bitmap.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_blend.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_blend.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_buffers.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_context.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_context.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_copypix.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_depth.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_depth.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_drawpix.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_drawpix.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_feedback.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_feedback.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_fog.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_fog.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_imaging.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_lines.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_lines.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_linetemp.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_logic.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_logic.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_masking.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_masking.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_nvfragprog.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_nvfragprog.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_pixeltex.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_pixeltex.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_points.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_points.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_pointtemp.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_readpix.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_span.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_span.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_spantemp.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_stencil.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_stencil.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_texstore.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_texture.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_texture.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_triangle.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_triangle.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_trispan.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_tritemp.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_zoom.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_zoom.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/swrast.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast_setup/ss_context.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast_setup/ss_context.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast_setup/ss_triangle.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast_setup/ss_triangle.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast_setup/ss_tritmp.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast_setup/swrast_setup.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_array_api.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_array_api.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_array_import.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_array_import.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_context.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_context.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_pipeline.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_pipeline.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_save_loopback.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_save_playback.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vb_arbprogram.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vb_arbprogram.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vb_arbprogram_sse.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vb_cliptmp.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vb_cull.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vb_fog.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vb_light.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vb_lighttmp.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vb_normals.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vb_points.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vb_program.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vb_render.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vb_rendertmp.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vb_texgen.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vb_texmat.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vb_vertex.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vtx_eval.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vtx_exec.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/tnl.h
 Copyright: 1999-2001, Brian Paul
   1999-2002, Brian Paul
   1999-2003, Brian Paul
@@ -724,236 +723,236 @@ Files: nx-X11/include/XWDFile.h
  nx-X11/include/extensions/xcmiscstr.h
  nx-X11/include/extensions/xtestconst.h
  nx-X11/include/extensions/xteststr.h
- nx-X11/lib/X11/AllCells.c
- nx-X11/lib/X11/AllPlanes.c
- nx-X11/lib/X11/AllowEv.c
- nx-X11/lib/X11/AuDispose.c
- nx-X11/lib/X11/AuFileName.c
- nx-X11/lib/X11/AuGetBest.c
- nx-X11/lib/X11/AuRead.c
- nx-X11/lib/X11/AutoRep.c
- nx-X11/lib/X11/Backgnd.c
- nx-X11/lib/X11/BdrWidth.c
- nx-X11/lib/X11/Bell.c
- nx-X11/lib/X11/Border.c
- nx-X11/lib/X11/ChAccCon.c
- nx-X11/lib/X11/ChActPGb.c
- nx-X11/lib/X11/ChClMode.c
- nx-X11/lib/X11/ChCmap.c
- nx-X11/lib/X11/ChGC.c
- nx-X11/lib/X11/ChKeyCon.c
- nx-X11/lib/X11/ChPntCon.c
- nx-X11/lib/X11/ChProp.c
- nx-X11/lib/X11/ChSaveSet.c
- nx-X11/lib/X11/ChWAttrs.c
- nx-X11/lib/X11/ChWindow.c
- nx-X11/lib/X11/ChkIfEv.c
- nx-X11/lib/X11/ChkMaskEv.c
- nx-X11/lib/X11/ChkTypEv.c
- nx-X11/lib/X11/ChkTypWEv.c
- nx-X11/lib/X11/ChkWinEv.c
- nx-X11/lib/X11/CirWin.c
- nx-X11/lib/X11/CirWinDn.c
- nx-X11/lib/X11/CirWinUp.c
- nx-X11/lib/X11/ClDisplay.c
- nx-X11/lib/X11/Clear.c
- nx-X11/lib/X11/ClearArea.c
- nx-X11/lib/X11/ConfWind.c
- nx-X11/lib/X11/ConvSel.c
- nx-X11/lib/X11/CopyArea.c
- nx-X11/lib/X11/CopyCmap.c
- nx-X11/lib/X11/CopyGC.c
- nx-X11/lib/X11/CopyPlane.c
- nx-X11/lib/X11/CrBFData.c
- nx-X11/lib/X11/CrCmap.c
- nx-X11/lib/X11/CrCursor.c
- nx-X11/lib/X11/CrGC.c
- nx-X11/lib/X11/CrGlCur.c
- nx-X11/lib/X11/CrPFBData.c
- nx-X11/lib/X11/CrPixmap.c
- nx-X11/lib/X11/CrWindow.c
- nx-X11/lib/X11/Cursor.c
- nx-X11/lib/X11/DefCursor.c
- nx-X11/lib/X11/DelProp.c
- nx-X11/lib/X11/Depths.c
- nx-X11/lib/X11/DestSubs.c
- nx-X11/lib/X11/DestWind.c
- nx-X11/lib/X11/DisName.c
- nx-X11/lib/X11/DrArc.c
- nx-X11/lib/X11/DrArcs.c
- nx-X11/lib/X11/DrLine.c
- nx-X11/lib/X11/DrLines.c
- nx-X11/lib/X11/DrPoint.c
- nx-X11/lib/X11/DrPoints.c
- nx-X11/lib/X11/DrRect.c
- nx-X11/lib/X11/DrRects.c
- nx-X11/lib/X11/DrSegs.c
- nx-X11/lib/X11/ErrHndlr.c
- nx-X11/lib/X11/EvToWire.c
- nx-X11/lib/X11/FSSaver.c
- nx-X11/lib/X11/FetchName.c
- nx-X11/lib/X11/FillArc.c
- nx-X11/lib/X11/FillArcs.c
- nx-X11/lib/X11/FillPoly.c
- nx-X11/lib/X11/FillRct.c
- nx-X11/lib/X11/FillRcts.c
- nx-X11/lib/X11/Flush.c
- nx-X11/lib/X11/FontInfo.c
- nx-X11/lib/X11/FontNames.c
- nx-X11/lib/X11/FreeCmap.c
- nx-X11/lib/X11/FreeCols.c
- nx-X11/lib/X11/FreeCurs.c
- nx-X11/lib/X11/FreeEData.c
- nx-X11/lib/X11/FreeGC.c
- nx-X11/lib/X11/FreePix.c
- nx-X11/lib/X11/GCMisc.c
- nx-X11/lib/X11/Geom.c
- nx-X11/lib/X11/GetAtomNm.c
- nx-X11/lib/X11/GetColor.c
- nx-X11/lib/X11/GetFPath.c
- nx-X11/lib/X11/GetFProp.c
- nx-X11/lib/X11/GetGCVals.c
- nx-X11/lib/X11/GetGeom.c
- nx-X11/lib/X11/GetHColor.c
- nx-X11/lib/X11/GetIFocus.c
- nx-X11/lib/X11/GetImage.c
- nx-X11/lib/X11/GetKCnt.c
- nx-X11/lib/X11/GetMoEv.c
- nx-X11/lib/X11/GetPCnt.c
- nx-X11/lib/X11/GetPntMap.c
- nx-X11/lib/X11/GetProp.c
- nx-X11/lib/X11/GetRGBCMap.c
- nx-X11/lib/X11/GetSOwner.c
- nx-X11/lib/X11/GetSSaver.c
- nx-X11/lib/X11/GetWAttrs.c
- nx-X11/lib/X11/GrButton.c
- nx-X11/lib/X11/GrKey.c
- nx-X11/lib/X11/GrKeybd.c
- nx-X11/lib/X11/GrPointer.c
- nx-X11/lib/X11/GrServer.c
- nx-X11/lib/X11/IfEvent.c
- nx-X11/lib/X11/ImText.c
- nx-X11/lib/X11/ImText16.c
- nx-X11/lib/X11/ImUtil.c
- nx-X11/lib/X11/InitExt.c
- nx-X11/lib/X11/InsCmap.c
- nx-X11/lib/X11/IntAtom.c
- nx-X11/lib/X11/KeyBind.c
- nx-X11/lib/X11/KeysymStr.c
- nx-X11/lib/X11/KillCl.c
- nx-X11/lib/X11/LiICmaps.c
- nx-X11/lib/X11/LiProps.c
- nx-X11/lib/X11/ListExt.c
- nx-X11/lib/X11/LoadFont.c
- nx-X11/lib/X11/LockDis.c
- nx-X11/lib/X11/LookupCol.c
- nx-X11/lib/X11/LowerWin.c
- nx-X11/lib/X11/Macros.c
- nx-X11/lib/X11/MapRaised.c
- nx-X11/lib/X11/MapSubs.c
- nx-X11/lib/X11/MapWindow.c
- nx-X11/lib/X11/MaskEvent.c
- nx-X11/lib/X11/Misc.c
- nx-X11/lib/X11/ModMap.c
- nx-X11/lib/X11/MoveWin.c
- nx-X11/lib/X11/NextEvent.c
- nx-X11/lib/X11/ParseCol.c
- nx-X11/lib/X11/ParseGeom.c
- nx-X11/lib/X11/PeekEvent.c
- nx-X11/lib/X11/PeekIfEv.c
- nx-X11/lib/X11/Pending.c
- nx-X11/lib/X11/PixFormats.c
- nx-X11/lib/X11/PmapBgnd.c
- nx-X11/lib/X11/PmapBord.c
- nx-X11/lib/X11/PolyTxt.c
- nx-X11/lib/X11/PolyTxt16.c
- nx-X11/lib/X11/PropAlloc.c
- nx-X11/lib/X11/PutBEvent.c
- nx-X11/lib/X11/PutImage.c
- nx-X11/lib/X11/QuBest.c
- nx-X11/lib/X11/QuColor.c
- nx-X11/lib/X11/QuColors.c
- nx-X11/lib/X11/QuCurShp.c
- nx-X11/lib/X11/QuExt.c
- nx-X11/lib/X11/QuKeybd.c
- nx-X11/lib/X11/QuPntr.c
- nx-X11/lib/X11/QuStipShp.c
- nx-X11/lib/X11/QuTextE16.c
- nx-X11/lib/X11/QuTextExt.c
- nx-X11/lib/X11/QuTileShp.c
- nx-X11/lib/X11/QuTree.c
- nx-X11/lib/X11/RaiseWin.c
- nx-X11/lib/X11/RdBitF.c
- nx-X11/lib/X11/RecolorC.c
- nx-X11/lib/X11/ReconfWM.c
- nx-X11/lib/X11/ReconfWin.c
- nx-X11/lib/X11/RepWindow.c
- nx-X11/lib/X11/RestackWs.c
- nx-X11/lib/X11/RotProp.c
- nx-X11/lib/X11/ScrResStr.c
- nx-X11/lib/X11/SelInput.c
- nx-X11/lib/X11/SendEvent.c
- nx-X11/lib/X11/SetBack.c
- nx-X11/lib/X11/SetCRects.c
- nx-X11/lib/X11/SetClMask.c
- nx-X11/lib/X11/SetClOrig.c
- nx-X11/lib/X11/SetDashes.c
- nx-X11/lib/X11/SetFPath.c
- nx-X11/lib/X11/SetFont.c
- nx-X11/lib/X11/SetFore.c
- nx-X11/lib/X11/SetFunc.c
- nx-X11/lib/X11/SetIFocus.c
- nx-X11/lib/X11/SetLStyle.c
- nx-X11/lib/X11/SetPMask.c
- nx-X11/lib/X11/SetPntMap.c
- nx-X11/lib/X11/SetRGBCMap.c
- nx-X11/lib/X11/SetSOwner.c
- nx-X11/lib/X11/SetSSaver.c
- nx-X11/lib/X11/SetState.c
- nx-X11/lib/X11/SetStip.c
- nx-X11/lib/X11/SetTSOrig.c
- nx-X11/lib/X11/SetTile.c
- nx-X11/lib/X11/StBytes.c
- nx-X11/lib/X11/StColor.c
- nx-X11/lib/X11/StColors.c
- nx-X11/lib/X11/StNColor.c
- nx-X11/lib/X11/StName.c
- nx-X11/lib/X11/StrKeysym.c
- nx-X11/lib/X11/StrToText.c
- nx-X11/lib/X11/Sync.c
- nx-X11/lib/X11/Synchro.c
- nx-X11/lib/X11/Text.c
- nx-X11/lib/X11/Text16.c
- nx-X11/lib/X11/TextToStr.c
- nx-X11/lib/X11/TrCoords.c
- nx-X11/lib/X11/UndefCurs.c
- nx-X11/lib/X11/UngrabBut.c
- nx-X11/lib/X11/UngrabKbd.c
- nx-X11/lib/X11/UngrabKey.c
- nx-X11/lib/X11/UngrabPtr.c
- nx-X11/lib/X11/UngrabSvr.c
- nx-X11/lib/X11/UninsCmap.c
- nx-X11/lib/X11/UnldFont.c
- nx-X11/lib/X11/UnmapSubs.c
- nx-X11/lib/X11/UnmapWin.c
- nx-X11/lib/X11/VisUtil.c
- nx-X11/lib/X11/WMGeom.c
- nx-X11/lib/X11/WarpPtr.c
- nx-X11/lib/X11/WinEvent.c
- nx-X11/lib/X11/Window.c
- nx-X11/lib/X11/WrBitF.c
- nx-X11/lib/X11/XKBBind.c
- nx-X11/lib/X11/XKBCvt.c
- nx-X11/lib/X11/Xlib.h
- nx-X11/lib/X11/Xlocale.h
- nx-X11/lib/X11/cmsMath.c
- nx-X11/lib/X11/cursorfont.h
- nx-X11/lib/X11/evtomask.c
- nx-X11/lib/X11/globals.c
- nx-X11/lib/X11/locking.c
- nx-X11/lib/X11/locking.h
- nx-X11/lib/X11/mbWMProps.c
- nx-X11/lib/X11/util/makekeys.c
+ nx-X11/lib/src/AllCells.c
+ nx-X11/lib/src/AllPlanes.c
+ nx-X11/lib/src/AllowEv.c
+ nx-X11/lib/src/AuDispose.c
+ nx-X11/lib/src/AuFileName.c
+ nx-X11/lib/src/AuGetBest.c
+ nx-X11/lib/src/AuRead.c
+ nx-X11/lib/src/AutoRep.c
+ nx-X11/lib/src/Backgnd.c
+ nx-X11/lib/src/BdrWidth.c
+ nx-X11/lib/src/Bell.c
+ nx-X11/lib/src/Border.c
+ nx-X11/lib/src/ChAccCon.c
+ nx-X11/lib/src/ChActPGb.c
+ nx-X11/lib/src/ChClMode.c
+ nx-X11/lib/src/ChCmap.c
+ nx-X11/lib/src/ChGC.c
+ nx-X11/lib/src/ChKeyCon.c
+ nx-X11/lib/src/ChPntCon.c
+ nx-X11/lib/src/ChProp.c
+ nx-X11/lib/src/ChSaveSet.c
+ nx-X11/lib/src/ChWAttrs.c
+ nx-X11/lib/src/ChWindow.c
+ nx-X11/lib/src/ChkIfEv.c
+ nx-X11/lib/src/ChkMaskEv.c
+ nx-X11/lib/src/ChkTypEv.c
+ nx-X11/lib/src/ChkTypWEv.c
+ nx-X11/lib/src/ChkWinEv.c
+ nx-X11/lib/src/CirWin.c
+ nx-X11/lib/src/CirWinDn.c
+ nx-X11/lib/src/CirWinUp.c
+ nx-X11/lib/src/ClDisplay.c
+ nx-X11/lib/src/Clear.c
+ nx-X11/lib/src/ClearArea.c
+ nx-X11/lib/src/ConfWind.c
+ nx-X11/lib/src/ConvSel.c
+ nx-X11/lib/src/CopyArea.c
+ nx-X11/lib/src/CopyCmap.c
+ nx-X11/lib/src/CopyGC.c
+ nx-X11/lib/src/CopyPlane.c
+ nx-X11/lib/src/CrBFData.c
+ nx-X11/lib/src/CrCmap.c
+ nx-X11/lib/src/CrCursor.c
+ nx-X11/lib/src/CrGC.c
+ nx-X11/lib/src/CrGlCur.c
+ nx-X11/lib/src/CrPFBData.c
+ nx-X11/lib/src/CrPixmap.c
+ nx-X11/lib/src/CrWindow.c
+ nx-X11/lib/src/Cursor.c
+ nx-X11/lib/src/DefCursor.c
+ nx-X11/lib/src/DelProp.c
+ nx-X11/lib/src/Depths.c
+ nx-X11/lib/src/DestSubs.c
+ nx-X11/lib/src/DestWind.c
+ nx-X11/lib/src/DisName.c
+ nx-X11/lib/src/DrArc.c
+ nx-X11/lib/src/DrArcs.c
+ nx-X11/lib/src/DrLine.c
+ nx-X11/lib/src/DrLines.c
+ nx-X11/lib/src/DrPoint.c
+ nx-X11/lib/src/DrPoints.c
+ nx-X11/lib/src/DrRect.c
+ nx-X11/lib/src/DrRects.c
+ nx-X11/lib/src/DrSegs.c
+ nx-X11/lib/src/ErrHndlr.c
+ nx-X11/lib/src/EvToWire.c
+ nx-X11/lib/src/FSSaver.c
+ nx-X11/lib/src/FetchName.c
+ nx-X11/lib/src/FillArc.c
+ nx-X11/lib/src/FillArcs.c
+ nx-X11/lib/src/FillPoly.c
+ nx-X11/lib/src/FillRct.c
+ nx-X11/lib/src/FillRcts.c
+ nx-X11/lib/src/Flush.c
+ nx-X11/lib/src/FontInfo.c
+ nx-X11/lib/src/FontNames.c
+ nx-X11/lib/src/FreeCmap.c
+ nx-X11/lib/src/FreeCols.c
+ nx-X11/lib/src/FreeCurs.c
+ nx-X11/lib/src/FreeEData.c
+ nx-X11/lib/src/FreeGC.c
+ nx-X11/lib/src/FreePix.c
+ nx-X11/lib/src/GCMisc.c
+ nx-X11/lib/src/Geom.c
+ nx-X11/lib/src/GetAtomNm.c
+ nx-X11/lib/src/GetColor.c
+ nx-X11/lib/src/GetFPath.c
+ nx-X11/lib/src/GetFProp.c
+ nx-X11/lib/src/GetGCVals.c
+ nx-X11/lib/src/GetGeom.c
+ nx-X11/lib/src/GetHColor.c
+ nx-X11/lib/src/GetIFocus.c
+ nx-X11/lib/src/GetImage.c
+ nx-X11/lib/src/GetKCnt.c
+ nx-X11/lib/src/GetMoEv.c
+ nx-X11/lib/src/GetPCnt.c
+ nx-X11/lib/src/GetPntMap.c
+ nx-X11/lib/src/GetProp.c
+ nx-X11/lib/src/GetRGBCMap.c
+ nx-X11/lib/src/GetSOwner.c
+ nx-X11/lib/src/GetSSaver.c
+ nx-X11/lib/src/GetWAttrs.c
+ nx-X11/lib/src/GrButton.c
+ nx-X11/lib/src/GrKey.c
+ nx-X11/lib/src/GrKeybd.c
+ nx-X11/lib/src/GrPointer.c
+ nx-X11/lib/src/GrServer.c
+ nx-X11/lib/src/IfEvent.c
+ nx-X11/lib/src/ImText.c
+ nx-X11/lib/src/ImText16.c
+ nx-X11/lib/src/ImUtil.c
+ nx-X11/lib/src/InitExt.c
+ nx-X11/lib/src/InsCmap.c
+ nx-X11/lib/src/IntAtom.c
+ nx-X11/lib/src/KeyBind.c
+ nx-X11/lib/src/KeysymStr.c
+ nx-X11/lib/src/KillCl.c
+ nx-X11/lib/src/LiICmaps.c
+ nx-X11/lib/src/LiProps.c
+ nx-X11/lib/src/ListExt.c
+ nx-X11/lib/src/LoadFont.c
+ nx-X11/lib/src/LockDis.c
+ nx-X11/lib/src/LookupCol.c
+ nx-X11/lib/src/LowerWin.c
+ nx-X11/lib/src/Macros.c
+ nx-X11/lib/src/MapRaised.c
+ nx-X11/lib/src/MapSubs.c
+ nx-X11/lib/src/MapWindow.c
+ nx-X11/lib/src/MaskEvent.c
+ nx-X11/lib/src/Misc.c
+ nx-X11/lib/src/ModMap.c
+ nx-X11/lib/src/MoveWin.c
+ nx-X11/lib/src/NextEvent.c
+ nx-X11/lib/src/ParseCol.c
+ nx-X11/lib/src/ParseGeom.c
+ nx-X11/lib/src/PeekEvent.c
+ nx-X11/lib/src/PeekIfEv.c
+ nx-X11/lib/src/Pending.c
+ nx-X11/lib/src/PixFormats.c
+ nx-X11/lib/src/PmapBgnd.c
+ nx-X11/lib/src/PmapBord.c
+ nx-X11/lib/src/PolyTxt.c
+ nx-X11/lib/src/PolyTxt16.c
+ nx-X11/lib/src/PropAlloc.c
+ nx-X11/lib/src/PutBEvent.c
+ nx-X11/lib/src/PutImage.c
+ nx-X11/lib/src/QuBest.c
+ nx-X11/lib/src/QuColor.c
+ nx-X11/lib/src/QuColors.c
+ nx-X11/lib/src/QuCurShp.c
+ nx-X11/lib/src/QuExt.c
+ nx-X11/lib/src/QuKeybd.c
+ nx-X11/lib/src/QuPntr.c
+ nx-X11/lib/src/QuStipShp.c
+ nx-X11/lib/src/QuTextE16.c
+ nx-X11/lib/src/QuTextExt.c
+ nx-X11/lib/src/QuTileShp.c
+ nx-X11/lib/src/QuTree.c
+ nx-X11/lib/src/RaiseWin.c
+ nx-X11/lib/src/RdBitF.c
+ nx-X11/lib/src/RecolorC.c
+ nx-X11/lib/src/ReconfWM.c
+ nx-X11/lib/src/ReconfWin.c
+ nx-X11/lib/src/RepWindow.c
+ nx-X11/lib/src/RestackWs.c
+ nx-X11/lib/src/RotProp.c
+ nx-X11/lib/src/ScrResStr.c
+ nx-X11/lib/src/SelInput.c
+ nx-X11/lib/src/SendEvent.c
+ nx-X11/lib/src/SetBack.c
+ nx-X11/lib/src/SetCRects.c
+ nx-X11/lib/src/SetClMask.c
+ nx-X11/lib/src/SetClOrig.c
+ nx-X11/lib/src/SetDashes.c
+ nx-X11/lib/src/SetFPath.c
+ nx-X11/lib/src/SetFont.c
+ nx-X11/lib/src/SetFore.c
+ nx-X11/lib/src/SetFunc.c
+ nx-X11/lib/src/SetIFocus.c
+ nx-X11/lib/src/SetLStyle.c
+ nx-X11/lib/src/SetPMask.c
+ nx-X11/lib/src/SetPntMap.c
+ nx-X11/lib/src/SetRGBCMap.c
+ nx-X11/lib/src/SetSOwner.c
+ nx-X11/lib/src/SetSSaver.c
+ nx-X11/lib/src/SetState.c
+ nx-X11/lib/src/SetStip.c
+ nx-X11/lib/src/SetTSOrig.c
+ nx-X11/lib/src/SetTile.c
+ nx-X11/lib/src/StBytes.c
+ nx-X11/lib/src/StColor.c
+ nx-X11/lib/src/StColors.c
+ nx-X11/lib/src/StNColor.c
+ nx-X11/lib/src/StName.c
+ nx-X11/lib/src/StrKeysym.c
+ nx-X11/lib/src/StrToText.c
+ nx-X11/lib/src/Sync.c
+ nx-X11/lib/src/Synchro.c
+ nx-X11/lib/src/Text.c
+ nx-X11/lib/src/Text16.c
+ nx-X11/lib/src/TextToStr.c
+ nx-X11/lib/src/TrCoords.c
+ nx-X11/lib/src/UndefCurs.c
+ nx-X11/lib/src/UngrabBut.c
+ nx-X11/lib/src/UngrabKbd.c
+ nx-X11/lib/src/UngrabKey.c
+ nx-X11/lib/src/UngrabPtr.c
+ nx-X11/lib/src/UngrabSvr.c
+ nx-X11/lib/src/UninsCmap.c
+ nx-X11/lib/src/UnldFont.c
+ nx-X11/lib/src/UnmapSubs.c
+ nx-X11/lib/src/UnmapWin.c
+ nx-X11/lib/src/VisUtil.c
+ nx-X11/lib/src/WMGeom.c
+ nx-X11/lib/src/WarpPtr.c
+ nx-X11/lib/src/WinEvent.c
+ nx-X11/lib/src/Window.c
+ nx-X11/lib/src/WrBitF.c
+ nx-X11/lib/src/xkb/XKBBind.c
+ nx-X11/lib/src/xkb/XKBCvt.c
+ nx-X11/lib/include/X11/Xlib.h
+ nx-X11/lib/include/X11/Xlocale.h
+ nx-X11/lib/src/xcms/cmsMath.c
+ nx-X11/lib/include/X11/cursorfont.h
+ nx-X11/lib/src/evtomask.c
+ nx-X11/lib/src/globals.c
+ nx-X11/lib/src/locking.c
+ nx-X11/lib/src/locking.h
+ nx-X11/lib/src/xlibi18n/mbWMProps.c
+ nx-X11/lib/src/util/makekeys.c
  nx-X11/programs/Xserver/Xext/bigreq.c
  nx-X11/programs/Xserver/Xext/shape.c
  nx-X11/programs/Xserver/Xext/shm.c
@@ -1041,26 +1040,38 @@ Copyright: 2012, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
   2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 License: GPL-2+
 
+Files: nx-X11/extras/README.Mesa.patches
+ nx-X11/programs/Xserver/GL/include/GL/xf86glx.h
+ nx-X11/programs/Xserver/GL/include/GL/glx_ansic.h
+ nx-X11/lib/nx-x11.pc.in
+Copyright:
+ 2017, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+ 2017, Qindel Group (http://www.qindel.com)
+License: GPL-2+
+Comment:
+ Files lack copyright information, assuming copyright from
+ upstream Git history and license from main COPYING file.
+
 Files: replace.sh
 Copyright: 2013, Jan Engelhardt <jengelh@inai.de>
 License: GPL-2+
 
-Files: nx-X11/extras/Mesa/src/mesa/main/get.c
- nx-X11/extras/Mesa/src/mesa/main/texrender.c
- nx-X11/extras/Mesa/src/mesa/main/texrender.h
- nx-X11/extras/Mesa/src/mesa/shader/arbprogram_syn.h
- nx-X11/extras/Mesa/src/mesa/shader/grammar/grammar_syn.h
- nx-X11/extras/Mesa/src/mesa/shader/slang/library/slang_common_builtin_gc.h
- nx-X11/extras/Mesa/src/mesa/shader/slang/library/slang_common_builtin_gc_bin.h
- nx-X11/extras/Mesa/src/mesa/shader/slang/library/slang_core_gc.h
- nx-X11/extras/Mesa/src/mesa/shader/slang/library/slang_core_gc_bin.h
- nx-X11/extras/Mesa/src/mesa/shader/slang/library/slang_fragment_builtin_gc.h
- nx-X11/extras/Mesa/src/mesa/shader/slang/library/slang_fragment_builtin_gc_bin.h
- nx-X11/extras/Mesa/src/mesa/shader/slang/library/slang_shader_syn.h
- nx-X11/extras/Mesa/src/mesa/shader/slang/library/slang_version_syn.h
- nx-X11/extras/Mesa/src/mesa/shader/slang/library/slang_vertex_builtin_gc.h
- nx-X11/extras/Mesa/src/mesa/shader/slang/library/slang_vertex_builtin_gc_bin.h
- nx-X11/extras/Mesa/src/mesa/tnl/t_vtx_x86_gcc.S
+Files: nx-X11/extras/Mesa_6.4.2/src/mesa/main/get.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/texrender.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/main/texrender.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/arbprogram_syn.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/grammar/grammar_syn.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/library/slang_common_builtin_gc.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/library/slang_common_builtin_gc_bin.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/library/slang_core_gc.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/library/slang_core_gc_bin.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/library/slang_fragment_builtin_gc.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/library/slang_fragment_builtin_gc_bin.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/library/slang_shader_syn.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/library/slang_version_syn.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/library/slang_vertex_builtin_gc.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/library/slang_vertex_builtin_gc_bin.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vtx_x86_gcc.S
 Copyright: *No copyright*
 License: Expat
 Comment:
@@ -1081,60 +1092,61 @@ Comment:
 Files: doc/libNX_X11/lcUniConv/8bit_tab_to_h.c
  doc/libNX_X11/lcUniConv/cjk_tab_to_h.c
  doc/libNX_X11/lcUniConv/README
- nx-X11/lib/X11/Cmap.h
- nx-X11/lib/X11/Cr.h
- nx-X11/lib/X11/Cv.h
- nx-X11/lib/X11/ImUtil.h
- nx-X11/lib/X11/Key.h
- nx-X11/lib/X11/XErrorDB
- nx-X11/lib/X11/Xcms.txt
- nx-X11/lib/X11/Xintatom.h
- nx-X11/lib/X11/Xintconn.h
- nx-X11/lib/X11/XlibConf.h
- nx-X11/lib/X11/Xresinternal.h
- nx-X11/lib/X11/imKStoUCS.c
- nx-X11/lib/X11/lcUniConv/armscii_8.h
- nx-X11/lib/X11/lcUniConv/big5.h
- nx-X11/lib/X11/lcUniConv/big5_emacs.h
- nx-X11/lib/X11/lcUniConv/big5hkscs.h
- nx-X11/lib/X11/lcUniConv/cp1133.h
- nx-X11/lib/X11/lcUniConv/cp1251.h
- nx-X11/lib/X11/lcUniConv/cp1255.h
- nx-X11/lib/X11/lcUniConv/cp1256.h
- nx-X11/lib/X11/lcUniConv/gb2312.h
- nx-X11/lib/X11/lcUniConv/gbk.h
- nx-X11/lib/X11/lcUniConv/georgian_academy.h
- nx-X11/lib/X11/lcUniConv/georgian_ps.h
- nx-X11/lib/X11/lcUniConv/iso8859_1.h
- nx-X11/lib/X11/lcUniConv/iso8859_10.h
- nx-X11/lib/X11/lcUniConv/iso8859_11.h
- nx-X11/lib/X11/lcUniConv/iso8859_13.h
- nx-X11/lib/X11/lcUniConv/iso8859_14.h
- nx-X11/lib/X11/lcUniConv/iso8859_15.h
- nx-X11/lib/X11/lcUniConv/iso8859_16.h
- nx-X11/lib/X11/lcUniConv/iso8859_2.h
- nx-X11/lib/X11/lcUniConv/iso8859_3.h
- nx-X11/lib/X11/lcUniConv/iso8859_4.h
- nx-X11/lib/X11/lcUniConv/iso8859_5.h
- nx-X11/lib/X11/lcUniConv/iso8859_6.h
- nx-X11/lib/X11/lcUniConv/iso8859_7.h
- nx-X11/lib/X11/lcUniConv/iso8859_8.h
- nx-X11/lib/X11/lcUniConv/iso8859_9.h
- nx-X11/lib/X11/lcUniConv/iso8859_9e.h
- nx-X11/lib/X11/lcUniConv/jisx0201.h
- nx-X11/lib/X11/lcUniConv/jisx0208.h
- nx-X11/lib/X11/lcUniConv/jisx0212.h
- nx-X11/lib/X11/lcUniConv/koi8_c.h
- nx-X11/lib/X11/lcUniConv/koi8_r.h
- nx-X11/lib/X11/lcUniConv/koi8_u.h
- nx-X11/lib/X11/lcUniConv/ksc5601.h
- nx-X11/lib/X11/lcUniConv/mulelao.h
- nx-X11/lib/X11/lcUniConv/tatar_cyr.h
- nx-X11/lib/X11/lcUniConv/tcvn.h
- nx-X11/lib/X11/lcUniConv/tis620.h
- nx-X11/lib/X11/lcUniConv/ucs2be.h
- nx-X11/lib/X11/lcUniConv/utf8.h
- nx-X11/lib/X11/lcUniConv/viscii.h
+ nx-X11/lib/src/Cmap.h
+ nx-X11/lib/src/Cr.h
+ nx-X11/lib/src/xcms/Cv.h
+ nx-X11/lib/include/X11/ImUtil.h
+ nx-X11/lib/src/Key.h
+ nx-X11/lib/src/XErrorDB
+ nx-X11/lib/src/xcms/Xcms.txt
+ nx-X11/lib/src/Xintatom.h
+ nx-X11/lib/src/Xintconn.h
+ nx-X11/lib/include/X11/XlibConf.h.in
+ nx-X11/lib/src/Xresinternal.h
+ nx-X11/lib/src/xlibi18n/imKStoUCS.c
+ nx-X11/lib/src/xlibi18n/lcUniConv/armscii_8.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/big5.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/big5_emacs.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/big5hkscs.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/cp1133.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/cp1251.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/cp1255.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/cp1256.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/gb2312.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/gbk.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/georgian_academy.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/georgian_ps.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/iso8859_1.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/iso8859_10.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/iso8859_11.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/iso8859_13.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/iso8859_14.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/iso8859_15.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/iso8859_16.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/iso8859_2.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/iso8859_3.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/iso8859_4.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/iso8859_5.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/iso8859_6.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/iso8859_7.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/iso8859_8.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/iso8859_9.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/iso8859_9e.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/jisx0201.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/jisx0208.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/jisx0212.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/koi8_c.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/koi8_r.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/koi8_u.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/ksc5601.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/mulelao.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/tatar_cyr.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/tcvn.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/tis620.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/ucs2be.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/utf8.h
+ nx-X11/lib/src/xlibi18n/lcUniConv/viscii.h
+ nx-X11/lib/src/util/mkks.sh
 Copyright: *No copyright*
 License: MIT~OpenGroup
 Comment:
@@ -1174,9 +1186,6 @@ Files: nx-X11/Imakefile
  nx-X11/include/GL/Imakefile
  nx-X11/include/Imakefile
  nx-X11/include/extensions/Imakefile
- nx-X11/lib/Imakefile
- nx-X11/lib/X11/Imakefile
- nx-X11/lib/xtrans/Imakefile
  nx-X11/programs/Imakefile
  nx-X11/programs/Xserver/Xi/Imakefile
  nx-X11/programs/Xserver/composite/Imakefile
@@ -1265,27 +1274,27 @@ Files: nx-X11/include/DECkeysym.h
  nx-X11/include/extensions/syncstr.h
  nx-X11/include/keysym.h
  nx-X11/include/keysymdef.h
- nx-X11/lib/X11/ErrDes.c
- nx-X11/lib/X11/GetDflt.c
- nx-X11/lib/X11/GetHints.c
- nx-X11/lib/X11/GetStCmap.c
- nx-X11/lib/X11/GetWMCMapW.c
- nx-X11/lib/X11/GetWMProto.c
- nx-X11/lib/X11/ParseCmd.c
- nx-X11/lib/X11/PolyReg.c
- nx-X11/lib/X11/Region.c
- nx-X11/lib/X11/SetHints.c
- nx-X11/lib/X11/SetStCmap.c
- nx-X11/lib/X11/SetWMCMapW.c
- nx-X11/lib/X11/SetWMProto.c
- nx-X11/lib/X11/Xatomtype.h
- nx-X11/lib/X11/XimThai.h
- nx-X11/lib/X11/Xregion.h
- nx-X11/lib/X11/Xresource.h
- nx-X11/lib/X11/Xutil.h
- nx-X11/lib/X11/imThaiFlt.c
- nx-X11/lib/X11/pathmax.h
- nx-X11/lib/X11/poly.h
+ nx-X11/lib/src/ErrDes.c
+ nx-X11/lib/src/GetDflt.c
+ nx-X11/lib/src/GetHints.c
+ nx-X11/lib/src/GetStCmap.c
+ nx-X11/lib/src/GetWMCMapW.c
+ nx-X11/lib/src/GetWMProto.c
+ nx-X11/lib/src/ParseCmd.c
+ nx-X11/lib/src/PolyReg.c
+ nx-X11/lib/src/Region.c
+ nx-X11/lib/src/SetHints.c
+ nx-X11/lib/src/SetStCmap.c
+ nx-X11/lib/src/SetWMCMapW.c
+ nx-X11/lib/src/SetWMProto.c
+ nx-X11/lib/src/Xatomtype.h
+ nx-X11/lib/src/xlibi18n/XimThai.h
+ nx-X11/lib/include/X11/Xregion.h
+ nx-X11/lib/include/X11/Xresource.h
+ nx-X11/lib/include/X11/Xutil.h
+ nx-X11/lib/modules/im/ximcp/imThaiFlt.c
+ nx-X11/lib/src/pathmax.h
+ nx-X11/lib/src/poly.h
  nx-X11/programs/Xserver/Xext/sync.c
  nx-X11/programs/Xserver/dix/atom.c
  nx-X11/programs/Xserver/dix/colormap.c
@@ -1385,8 +1394,8 @@ Files: nx-X11/include/extensions/composite.h
  nx-X11/include/extensions/compositeproto.h
  nx-X11/include/extensions/damageproto.h
  nx-X11/include/extensions/damagewire.h
- nx-X11/lib/X11/x11_trans.c
- nx-X11/lib/X11/xim_trans.c
+ nx-X11/lib/src/x11_trans.c
+ nx-X11/lib/src/xlibi18n/xim_trans.c
  nx-X11/programs/Xserver/composite/compalloc.c
  nx-X11/programs/Xserver/composite/compext.c
  nx-X11/programs/Xserver/composite/compinit.c
@@ -1473,27 +1482,27 @@ Files: nx-X11/include/extensions/XKB.h
  nx-X11/include/extensions/XKBstr.h
  nx-X11/include/extensions/XKM.h
  nx-X11/include/extensions/XKMformat.h
- nx-X11/lib/X11/XKB.c
- nx-X11/lib/X11/XKBAlloc.c
- nx-X11/lib/X11/XKBBell.c
- nx-X11/lib/X11/XKBCompat.c
- nx-X11/lib/X11/XKBCtrls.c
- nx-X11/lib/X11/XKBExtDev.c
- nx-X11/lib/X11/XKBGAlloc.c
- nx-X11/lib/X11/XKBGeom.c
- nx-X11/lib/X11/XKBGetByName.c
- nx-X11/lib/X11/XKBGetMap.c
- nx-X11/lib/X11/XKBList.c
- nx-X11/lib/X11/XKBMAlloc.c
- nx-X11/lib/X11/XKBMisc.c
- nx-X11/lib/X11/XKBNames.c
- nx-X11/lib/X11/XKBRdBuf.c
- nx-X11/lib/X11/XKBSetGeom.c
- nx-X11/lib/X11/XKBSetMap.c
- nx-X11/lib/X11/XKBUse.c
- nx-X11/lib/X11/XKBleds.c
- nx-X11/lib/X11/XKBlib.h
- nx-X11/lib/X11/XKBlibint.h
+ nx-X11/lib/src/xkb/XKB.c
+ nx-X11/lib/src/xkb/XKBAlloc.c
+ nx-X11/lib/src/xkb/XKBBell.c
+ nx-X11/lib/src/xkb/XKBCompat.c
+ nx-X11/lib/src/xkb/XKBCtrls.c
+ nx-X11/lib/src/xkb/XKBExtDev.c
+ nx-X11/lib/src/xkb/XKBGAlloc.c
+ nx-X11/lib/src/xkb/XKBGeom.c
+ nx-X11/lib/src/xkb/XKBGetByName.c
+ nx-X11/lib/src/xkb/XKBGetMap.c
+ nx-X11/lib/src/xkb/XKBList.c
+ nx-X11/lib/src/xkb/XKBMAlloc.c
+ nx-X11/lib/src/xkb/XKBMisc.c
+ nx-X11/lib/src/xkb/XKBNames.c
+ nx-X11/lib/src/xkb/XKBRdBuf.c
+ nx-X11/lib/src/xkb/XKBSetGeom.c
+ nx-X11/lib/src/xkb/XKBSetMap.c
+ nx-X11/lib/src/xkb/XKBUse.c
+ nx-X11/lib/src/xkb/XKBleds.c
+ nx-X11/lib/include/X11/XKBlib.h
+ nx-X11/lib/src/xkb/XKBlibint.h
  nx-X11/programs/Xserver/include/xkbfile.h
  nx-X11/programs/Xserver/include/xkbrules.h
  nx-X11/programs/Xserver/include/xkbsrv.h
@@ -1539,79 +1548,79 @@ Copyright: 1993, Silicon Graphics Computer Systems, Inc
   1996, Silicon Graphics Computer Systems, Inc
 License: MIT~X11
 
-Files: nx-X11/lib/X11/AddDIC.c
- nx-X11/lib/X11/AddSF.c
- nx-X11/lib/X11/CvColW.c
- nx-X11/lib/X11/CvCols.c
- nx-X11/lib/X11/IdOfPr.c
- nx-X11/lib/X11/LRGB.c
- nx-X11/lib/X11/Lab.c
- nx-X11/lib/X11/LabGcC.c
- nx-X11/lib/X11/LabGcL.c
- nx-X11/lib/X11/LabGcLC.c
- nx-X11/lib/X11/LabMnL.c
- nx-X11/lib/X11/LabMxC.c
- nx-X11/lib/X11/LabMxL.c
- nx-X11/lib/X11/LabMxLC.c
- nx-X11/lib/X11/LabWpAj.c
- nx-X11/lib/X11/Luv.c
- nx-X11/lib/X11/LuvGcC.c
- nx-X11/lib/X11/LuvGcL.c
- nx-X11/lib/X11/LuvGcLC.c
- nx-X11/lib/X11/LuvMnL.c
- nx-X11/lib/X11/LuvMxC.c
- nx-X11/lib/X11/LuvMxL.c
- nx-X11/lib/X11/LuvMxLC.c
- nx-X11/lib/X11/LuvWpAj.c
- nx-X11/lib/X11/OfCCC.c
- nx-X11/lib/X11/PrOfId.c
- nx-X11/lib/X11/QBlack.c
- nx-X11/lib/X11/QBlue.c
- nx-X11/lib/X11/QGreen.c
- nx-X11/lib/X11/QRed.c
- nx-X11/lib/X11/QWhite.c
- nx-X11/lib/X11/QuCol.c
- nx-X11/lib/X11/QuCols.c
- nx-X11/lib/X11/SetCCC.c
- nx-X11/lib/X11/SetGetCols.c
- nx-X11/lib/X11/StCol.c
- nx-X11/lib/X11/StCols.c
- nx-X11/lib/X11/UNDEFINED.c
- nx-X11/lib/X11/XRGB.c
- nx-X11/lib/X11/XYZ.c
- nx-X11/lib/X11/Xcms.h
- nx-X11/lib/X11/Xcmsint.h
- nx-X11/lib/X11/cmsAllCol.c
- nx-X11/lib/X11/cmsAllNCol.c
- nx-X11/lib/X11/cmsCmap.c
- nx-X11/lib/X11/cmsColNm.c
- nx-X11/lib/X11/cmsGlobls.c
- nx-X11/lib/X11/cmsInt.c
- nx-X11/lib/X11/cmsLkCol.c
- nx-X11/lib/X11/cmsProp.c
- nx-X11/lib/X11/cmsTrig.c
- nx-X11/lib/X11/uvY.c
- nx-X11/lib/X11/xyY.c
+Files: nx-X11/lib/src/xcms/AddDIC.c
+ nx-X11/lib/src/xcms/AddSF.c
+ nx-X11/lib/src/xcms/CvColW.c
+ nx-X11/lib/src/xcms/CvCols.c
+ nx-X11/lib/src/xcms/IdOfPr.c
+ nx-X11/lib/src/xcms/LRGB.c
+ nx-X11/lib/src/xcms/Lab.c
+ nx-X11/lib/src/xcms/LabGcC.c
+ nx-X11/lib/src/xcms/LabGcL.c
+ nx-X11/lib/src/xcms/LabGcLC.c
+ nx-X11/lib/src/xcms/LabMnL.c
+ nx-X11/lib/src/xcms/LabMxC.c
+ nx-X11/lib/src/xcms/LabMxL.c
+ nx-X11/lib/src/xcms/LabMxLC.c
+ nx-X11/lib/src/xcms/LabWpAj.c
+ nx-X11/lib/src/xcms/Luv.c
+ nx-X11/lib/src/xcms/LuvGcC.c
+ nx-X11/lib/src/xcms/LuvGcL.c
+ nx-X11/lib/src/xcms/LuvGcLC.c
+ nx-X11/lib/src/xcms/LuvMnL.c
+ nx-X11/lib/src/xcms/LuvMxC.c
+ nx-X11/lib/src/xcms/LuvMxL.c
+ nx-X11/lib/src/xcms/LuvMxLC.c
+ nx-X11/lib/src/xcms/LuvWpAj.c
+ nx-X11/lib/src/xcms/OfCCC.c
+ nx-X11/lib/src/xcms/PrOfId.c
+ nx-X11/lib/src/xcms/QBlack.c
+ nx-X11/lib/src/xcms/QBlue.c
+ nx-X11/lib/src/xcms/QGreen.c
+ nx-X11/lib/src/xcms/QRed.c
+ nx-X11/lib/src/xcms/QWhite.c
+ nx-X11/lib/src/xcms/QuCol.c
+ nx-X11/lib/src/xcms/QuCols.c
+ nx-X11/lib/src/xcms/SetCCC.c
+ nx-X11/lib/src/xcms/SetGetCols.c
+ nx-X11/lib/src/xcms/StCol.c
+ nx-X11/lib/src/xcms/StCols.c
+ nx-X11/lib/src/xcms/UNDEFINED.c
+ nx-X11/lib/src/xcms/XRGB.c
+ nx-X11/lib/src/xcms/XYZ.c
+ nx-X11/lib/include/X11/Xcms.h
+ nx-X11/lib/src/xcms/Xcmsint.h
+ nx-X11/lib/src/xcms/cmsAllCol.c
+ nx-X11/lib/src/xcms/cmsAllNCol.c
+ nx-X11/lib/src/xcms/cmsCmap.c
+ nx-X11/lib/src/xcms/cmsColNm.c
+ nx-X11/lib/src/xcms/cmsGlobls.c
+ nx-X11/lib/src/xcms/cmsInt.c
+ nx-X11/lib/src/xcms/cmsLkCol.c
+ nx-X11/lib/src/xcms/cmsProp.c
+ nx-X11/lib/src/xcms/cmsTrig.c
+ nx-X11/lib/src/xcms/uvY.c
+ nx-X11/lib/src/xcms/xyY.c
 Copyright: 1990, 1991, Tektronix, Inc
 License: MIT~Tektronix
 
-Files: nx-X11/lib/X11/HVC.c
- nx-X11/lib/X11/HVCGcC.c
- nx-X11/lib/X11/HVCGcV.c
- nx-X11/lib/X11/HVCGcVC.c
- nx-X11/lib/X11/HVCMnV.c
- nx-X11/lib/X11/HVCMxC.c
- nx-X11/lib/X11/HVCMxV.c
- nx-X11/lib/X11/HVCMxVC.c
- nx-X11/lib/X11/HVCMxVs.c
- nx-X11/lib/X11/HVCWpAj.c
+Files: nx-X11/lib/src/xcms/HVC.c
+ nx-X11/lib/src/xcms/HVCGcC.c
+ nx-X11/lib/src/xcms/HVCGcV.c
+ nx-X11/lib/src/xcms/HVCGcVC.c
+ nx-X11/lib/src/xcms/HVCMnV.c
+ nx-X11/lib/src/xcms/HVCMxC.c
+ nx-X11/lib/src/xcms/HVCMxV.c
+ nx-X11/lib/src/xcms/HVCMxVC.c
+ nx-X11/lib/src/xcms/HVCMxVs.c
+ nx-X11/lib/src/xcms/HVCWpAj.c
 Copyright: 1990, 1991, Tektronix, Inc
 License: MIT~Tektronix~3-clause
 
-Files: nx-X11/extras/Mesa/include/GL/glext.h
- nx-X11/extras/Mesa/include/GL/glxext.h
- nx-X11/extras/Mesa/include/GL/internal/glcore.h
- nx-X11/extras/Mesa/src/glx/x11/compsize.c
+Files: nx-X11/extras/Mesa_6.4.2/include/GL/glext.h
+ nx-X11/extras/Mesa_6.4.2/include/GL/glxext.h
+ nx-X11/extras/Mesa_6.4.2/include/GL/internal/glcore.h
+ nx-X11/extras/Mesa_6.4.2/src/glx/x11/compsize.c
  nx-X11/include/GL/glx.h
  nx-X11/include/GL/glxmd.h
  nx-X11/include/GL/glxproto.h
@@ -1827,22 +1836,22 @@ Files: nx-X11/include/extensions/render.h
 Copyright: 2000, SuSE, Inc
 License: MIT~X11
 
-Files: nx-X11/lib/X11/OCWrap.c
- nx-X11/lib/X11/OMWrap.c
- nx-X11/lib/X11/XlcPubI.h
- nx-X11/lib/X11/lcCharSet.c
- nx-X11/lib/X11/lcConv.c
- nx-X11/lib/X11/lcDefConv.c
- nx-X11/lib/X11/lcPrTxt.c
- nx-X11/lib/X11/lcPubWrap.c
- nx-X11/lib/X11/lcPublic.c
- nx-X11/lib/X11/lcRM.c
- nx-X11/lib/X11/lcStd.c
- nx-X11/lib/X11/lcTxtPr.c
- nx-X11/lib/X11/lcUtil.c
- nx-X11/lib/X11/omImText.c
- nx-X11/lib/X11/omTextExt.c
- nx-X11/lib/X11/omTextPer.c
+Files: nx-X11/lib/src/OCWrap.c
+ nx-X11/lib/src/OMWrap.c
+ nx-X11/lib/src/xlibi18n/XlcPubI.h
+ nx-X11/lib/src/xlibi18n/lcCharSet.c
+ nx-X11/lib/src/xlibi18n/lcConv.c
+ nx-X11/lib/modules/lc/def/lcDefConv.c
+ nx-X11/lib/src/xlibi18n/lcPrTxt.c
+ nx-X11/lib/src/xlibi18n/lcPubWrap.c
+ nx-X11/lib/src/xlibi18n/lcPublic.c
+ nx-X11/lib/src/xlibi18n/lcRM.c
+ nx-X11/lib/src/xlibi18n/lcStd.c
+ nx-X11/lib/src/xlibi18n/lcTxtPr.c
+ nx-X11/lib/src/xlibi18n/lcUtil.c
+ nx-X11/lib/modules/om/generic/omImText.c
+ nx-X11/lib/modules/om/generic/omTextExt.c
+ nx-X11/lib/modules/om/generic/omTextPer.c
 Copyright: 1992-1993, TOSHIBA Corp
 License: MIT~X11
 
@@ -1863,41 +1872,41 @@ Copyright: 1987, Digital Equipment Corporation, Maynard, Massachusetts
   1996, Digital Equipment Corporation, Maynard, Massachusetts
 License: Expat~NoAdvert
 
-Files: nx-X11/lib/X11/XimImSw.h
- nx-X11/lib/X11/XimProto.h
- nx-X11/lib/X11/imDefFlt.c
- nx-X11/lib/X11/imDefLkup.c
- nx-X11/lib/X11/imDispch.c
- nx-X11/lib/X11/imExten.c
- nx-X11/lib/X11/imInt.c
- nx-X11/lib/X11/imLcGIc.c
- nx-X11/lib/X11/imLcIc.c
- nx-X11/lib/X11/imLcSIc.c
- nx-X11/lib/X11/imRmAttr.c
+Files: nx-X11/lib/src/xlibi18n/XimImSw.h
+ nx-X11/lib/src/xlibi18n/XimProto.h
+ nx-X11/lib/modules/im/ximcp/imDefFlt.c
+ nx-X11/lib/modules/im/ximcp/imDefLkup.c
+ nx-X11/lib/modules/im/ximcp/imDispch.c
+ nx-X11/lib/modules/im/ximcp/imExten.c
+ nx-X11/lib/modules/im/ximcp/imInt.c
+ nx-X11/lib/modules/im/ximcp/imLcGIc.c
+ nx-X11/lib/modules/im/ximcp/imLcIc.c
+ nx-X11/lib/modules/im/ximcp/imLcSIc.c
+ nx-X11/lib/modules/im/ximcp/imRmAttr.c
 Copyright: 1990-1994, FUJITSU LIMITED
   1992-1993, FUJITSU LIMITED
   1992-1994, FUJITSU LIMITED
   1993-1994, FUJITSU LIMITED
 License: MIT~X11
 
-Files: nx-X11/lib/X11/XlcGeneric.h
- nx-X11/lib/X11/XlcPublic.h
- nx-X11/lib/X11/XomGeneric.h
- nx-X11/lib/X11/lcCT.c
- nx-X11/lib/X11/lcGenConv.c
- nx-X11/lib/X11/lcGeneric.c
- nx-X11/lib/X11/omDefault.c
- nx-X11/lib/X11/omGeneric.c
- nx-X11/lib/X11/omText.c
- nx-X11/lib/X11/omTextEsc.c
- nx-X11/lib/X11/omXChar.c
+Files: nx-X11/lib/src/xlibi18n/XlcGeneric.h
+ nx-X11/lib/src/xlibi18n/XlcPublic.h
+ nx-X11/lib/src/XomGeneric.h
+ nx-X11/lib/src/xlibi18n/lcCT.c
+ nx-X11/lib/modules/lc/gen/lcGenConv.c
+ nx-X11/lib/src/xlibi18n/lcGeneric.c
+ nx-X11/lib/modules/om/generic/omDefault.c
+ nx-X11/lib/modules/om/generic/omGeneric.c
+ nx-X11/lib/modules/om/generic/omText.c
+ nx-X11/lib/modules/om/generic/omTextEsc.c
+ nx-X11/lib/modules/om/generic/omXChar.c
 Copyright: 1992-1993, TOSHIBA Corp
   1995, FUJITSU LIMITED
 License: MIT~X11
 
 Files: nx-X11/include/extensions/Xv.h
  nx-X11/include/extensions/Xvproto.h
- nx-X11/lib/X11/imEvToWire.c
+ nx-X11/lib/modules/im/ximcp/imEvToWire.c
  nx-X11/programs/Xserver/Xext/xvdisp.c
  nx-X11/programs/Xserver/Xext/xvdix.h
  nx-X11/programs/Xserver/Xext/xvmain.c
@@ -1950,9 +1959,9 @@ Copyright: 2000, Keith Packard, member of The XFree86 Project, Inc
 License: MIT~X11
 
 Files: nx-X11/include/Sunkeysym.h
- nx-X11/lib/X11/Host.c
- nx-X11/lib/X11/LiHosts.c
- nx-X11/lib/X11/lcInit.c
+ nx-X11/lib/src/Host.c
+ nx-X11/lib/src/LiHosts.c
+ nx-X11/lib/src/xlibi18n/lcInit.c
 Copyright: 1985-1987, 1991, 1998, The Open Group
   1986, 1998, The Open Group
   1991, 1998, The Open Group
@@ -1964,11 +1973,11 @@ Comment:
  Contributions by Oracle and/or its affiliates (from 1991, 2000, 2004)
  have to be considered as licensed under Expat.
 
-Files: nx-X11/lib/X11/ConnDis.c
- nx-X11/lib/X11/OpenDis.c
- nx-X11/lib/X11/XlibAsync.c
- nx-X11/lib/X11/XlibInt.c
- nx-X11/lib/X11/Xlibint.h
+Files: nx-X11/lib/src/ConnDis.c
+ nx-X11/lib/src/OpenDis.c
+ nx-X11/lib/src/XlibAsync.c
+ nx-X11/lib/src/XlibInt.c
+ nx-X11/lib/include/X11/Xlibint.h
  nx-X11/programs/Xserver/Xext/security.c
  nx-X11/programs/Xserver/Xext/SecurityPolicy
  nx-X11/programs/Xserver/hw/nxagent/NXshm.c
@@ -1994,13 +2003,13 @@ Comment:
  Missing copyright information in SecurityPolicy. Assuming same
  situation as for Xext/security.c.
 
-Files: nx-X11/lib/X11/XimTrInt.h
- nx-X11/lib/X11/XimTrX.h
- nx-X11/lib/X11/XimTrans.h
- nx-X11/lib/X11/imDefIc.c
- nx-X11/lib/X11/imTrX.c
- nx-X11/lib/X11/imTrans.c
- nx-X11/lib/X11/imTransR.c
+Files: nx-X11/lib/src/xlibi18n/XimTrInt.h
+ nx-X11/lib/src/xlibi18n/XimTrX.h
+ nx-X11/lib/src/xlibi18n/XimTrans.h
+ nx-X11/lib/modules/im/ximcp/imDefIc.c
+ nx-X11/lib/modules/im/ximcp/imTrX.c
+ nx-X11/lib/modules/im/ximcp/imTrans.c
+ nx-X11/lib/modules/im/ximcp/imTransR.c
 Copyright: 1991-1992, Oracle and/or its affiliates.
   1992, Oracle and/or its affiliates.
   1992-1994, FUJITSU LIMITED
@@ -2055,7 +2064,7 @@ Files: nx-X11/include/extensions/Xdbeproto.h
 Copyright: 1994-1995, Hewlett-Packard Company
 License: Expat~NoAdvert
 
-Files: nx-X11/extras/Mesa/include/GL/xmesa_xf86.h
+Files: nx-X11/extras/Mesa_6.4.2/include/GL/xmesa_xf86.h
  nx-X11/programs/Xserver/GL/mesa/X/xf86glx.c
  nx-X11/programs/Xserver/GL/mesa/X/xf86glx_util.c
  nx-X11/programs/Xserver/GL/mesa/X/xf86glx_util.h
@@ -2063,22 +2072,22 @@ Files: nx-X11/extras/Mesa/include/GL/xmesa_xf86.h
 Copyright: 1998-1999, Precision Insight, Inc., Cedar Park, Texas
 License: Expat
 
-Files: nx-X11/extras/Mesa/src/mesa/tnl/t_save_api.c
- nx-X11/extras/Mesa/src/mesa/tnl/t_save_api.h
- nx-X11/extras/Mesa/src/mesa/tnl/t_vtx_api.c
- nx-X11/extras/Mesa/src/mesa/tnl/t_vtx_api.h
- nx-X11/extras/Mesa/src/mesa/tnl/t_vtx_generic.c
- nx-X11/extras/Mesa/src/mesa/tnl/t_vtx_x86.c
+Files: nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_save_api.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_save_api.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vtx_api.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vtx_api.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vtx_generic.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vtx_x86.c
 Copyright: 2002, Tungsten Graphics Inc., Cedar Park, Texas
   2004, Tungsten Graphics Inc., Cedar Park, Texas
 License: Expat
 
-Files: nx-X11/lib/xtrans/Xtrans.c
- nx-X11/lib/xtrans/Xtrans.h
- nx-X11/lib/xtrans/Xtransint.h
- nx-X11/lib/xtrans/Xtranslcl.c
- nx-X11/lib/xtrans/Xtransutil.c
- nx-X11/lib/xtrans/transport.c
+Files: nx-X11/lib/include/xtrans/Xtrans.c
+ nx-X11/lib/include/xtrans/Xtrans.h
+ nx-X11/lib/include/xtrans/Xtransint.h
+ nx-X11/lib/include/xtrans/Xtranslcl.c
+ nx-X11/lib/include/xtrans/Xtransutil.c
+ nx-X11/lib/include/xtrans/transport.c
 Copyright: 1993-1994, 1998, The Open Group
   1993-1994, NCR Corporation - Dayton, Ohio, USA
 License: MIT~OpenGroup
@@ -2106,21 +2115,21 @@ Comment:
  NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-Files: nx-X11/lib/X11/XimintL.h
- nx-X11/lib/X11/imImSw.c
- nx-X11/lib/X11/imLcIm.c
- nx-X11/lib/X11/imThaiIc.c
- nx-X11/lib/X11/imThaiIm.c
+Files: nx-X11/lib/src/xlibi18n/XimintL.h
+ nx-X11/lib/modules/im/ximcp/imImSw.c
+ nx-X11/lib/modules/im/ximcp/imLcIm.c
+ nx-X11/lib/modules/im/ximcp/imThaiIc.c
+ nx-X11/lib/modules/im/ximcp/imThaiIm.c
 Copyright: 1991-1994, FUJITSU LIMITED
   1992-1993, FUJITSU LIMITED
   1992-1994, FUJITSU LIMITED
   1993, Digital Equipment Corporation
 License: MIT~X11
 
-Files: nx-X11/extras/Mesa/src/mesa/tnl/t_vertex.c
- nx-X11/extras/Mesa/src/mesa/tnl/t_vertex.h
- nx-X11/extras/Mesa/src/mesa/tnl/t_vertex_generic.c
- nx-X11/extras/Mesa/src/mesa/tnl/t_vertex_sse.c
+Files: nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vertex.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vertex.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vertex_generic.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vertex_sse.c
 Copyright: 2003, Tungsten Graphics, inc
 License: Expat
 
@@ -2138,23 +2147,23 @@ Files: nx-X11/programs/Xserver/miext/cw/cw.c
 Copyright: 2004, Eric Anholt
 License: MIT~X11
 
-Files: nx-X11/extras/Mesa/src/mesa/glapi/glapitable.h
- nx-X11/extras/Mesa/src/mesa/glapi/glapitemp.h
- nx-X11/extras/Mesa/src/mesa/glapi/glprocs.h
+Files: nx-X11/extras/Mesa_6.4.2/src/mesa/glapi/glapitable.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/glapi/glapitemp.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/glapi/glprocs.h
 Copyright: 1999-2001, Brian Paul
   1999-2003, Brian Paul
   IBM Corporation 2004
 License: Expat
 
-Files: nx-X11/extras/Mesa/src/mesa/shader/atifragshader.c
- nx-X11/extras/Mesa/src/mesa/swrast/s_atifragshader.c
- nx-X11/extras/Mesa/src/mesa/swrast/s_atifragshader.h
+Files: nx-X11/extras/Mesa_6.4.2/src/mesa/shader/atifragshader.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_atifragshader.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_atifragshader.h
 Copyright: 1999-2003, David Airlie
   2004, David Airlie
 License: Expat
 
-Files: nx-X11/lib/X11/FreeEventData.c
- nx-X11/lib/X11/GetEventData.c
+Files: nx-X11/lib/src/FreeEventData.c
+ nx-X11/lib/src/GetEventData.c
  nx-X11/programs/Xserver/include/protocol-versions.h
 Copyright: 2009, Red Hat, Inc
 License: Expat
@@ -2170,9 +2179,9 @@ Comment:
  by Bruno Haible. Possibly needs clarification at X.org
  upstream.
 
-Files: nx-X11/lib/X11/Context.c
- nx-X11/lib/X11/Quarks.c
- nx-X11/lib/X11/Xrm.c
+Files: nx-X11/lib/src/Context.c
+ nx-X11/lib/src/Quarks.c
+ nx-X11/lib/src/Xrm.c
 Copyright: 1987-1988, 1990, Digital Equipment Corporation, Maynard
   1987-1988, 1990, 1994, 1998, The Open Group
   1987-1988, 1990, 1998, The Open Group
@@ -2181,8 +2190,8 @@ Comment:
  Contributions on these files by the OpenGroup have to be considered
  as licensed under MIT~OpenGroup.
 
-Files: nx-X11/lib/X11/TextExt.c
- nx-X11/lib/X11/TextExt16.c
+Files: nx-X11/lib/src/TextExt.c
+ nx-X11/lib/src/TextExt16.c
 Copyright: 1989, 1998, The Open Group
   1995, FUJITSU LIMITED
   1996, 1998, The Open Group
@@ -2249,8 +2258,8 @@ Comment:
  Contributions by Digital Equipment Corporation, Maynard, Massachusetts
  have been licensed under MIT~OldStyle.
 
-Files: nx-X11/lib/X11/XimintP.h
- nx-X11/lib/X11/imDefIm.c
+Files: nx-X11/lib/src/xlibi18n/XimintP.h
+ nx-X11/lib/modules/im/ximcp/imDefIm.c
 Copyright: 1990-1992, Oracle and/or its affiliates.
   1991-1992, Oracle and/or its affiliates.
   1992-1994, FUJITSU LIMITED
@@ -2261,10 +2270,10 @@ Comment:
  as Expat. Later contributions by FUJITSU LIMITED and Sony Corporation
  have been licensed under MIT~X11.
 
-Files: nx-X11/extras/Mesa/src/glx/x11/indirect_size.c
- nx-X11/extras/Mesa/src/glx/x11/indirect_size.h
- nx-X11/extras/Mesa/src/mesa/drivers/dri/common/glcontextmodes.c
- nx-X11/extras/Mesa/src/mesa/drivers/dri/common/glcontextmodes.h
+Files: nx-X11/extras/Mesa_6.4.2/src/glx/x11/indirect_size.c
+ nx-X11/extras/Mesa_6.4.2/src/glx/x11/indirect_size.h
+ nx-X11/extras/Mesa_6.4.2/src/mesa/drivers/dri/common/glcontextmodes.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/drivers/dri/common/glcontextmodes.h
 Copyright: 2003, IBM Corporation
   IBM Corporation 2004
 License: Expat
@@ -2285,8 +2294,8 @@ Copyright: 2000, The XFree86 Project, Inc.
   2001, The XFree86 Project, Inc.
 License: Expat~NoAdvert
 
-Files: nx-X11/extras/Mesa/src/mesa/tnl/t_vp_build.c
- nx-X11/extras/Mesa/src/mesa/tnl/t_vp_build.h
+Files: nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vp_build.c
+ nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vp_build.h
 Copyright: 2005, Tungsten Graphics
 License: Expat
 
@@ -2295,8 +2304,8 @@ Files: nx-X11/programs/Xserver/os/strlcat.c
 Copyright: 1998, Todd C. Miller <Todd.Miller@courtesan.com>
 License: MIT~ISC
 
-Files: nx-X11/lib/X11/lcUTF8.c
- nx-X11/lib/X11/lcUTF8Load.c
+Files: nx-X11/lib/src/xlibi18n/lcUTF8.c
+ nx-X11/lib/modules/lc/Utf8/lcUTF8Load.c
 Copyright: 1993, SunSoft, Inc
   1999-2000, Bruno Haible
 License: MIT~X11
@@ -2333,8 +2342,8 @@ Comment:
  Modifications by NoMachine have to be considered as strictly
  GPL-2 licensed.
 
-Files: nx-X11/lib/X11/GetNrmHint.c
- nx-X11/lib/X11/SetNrmHint.c
+Files: nx-X11/lib/src/GetNrmHint.c
+ nx-X11/lib/src/SetNrmHint.c
 Copyright: 1987, Digital Equipment Corporation, Maynard, Massachusetts
   1987-1988, 1998, The Open Group
   1988, Wyse Technology, Inc., San Jose, Ca
@@ -2343,21 +2352,21 @@ Comment:
  Contributions by Digital Equipment Corporation, Maynard, Massachusetts
  and Wyse have been licensed under MIT~OldStyle.
 
-Files: nx-X11/lib/X11/imLcFlt.c
- nx-X11/lib/X11/imLcLkup.c
+Files: nx-X11/lib/modules/im/ximcp/imLcFlt.c
+ nx-X11/lib/modules/im/ximcp/imLcLkup.c
 Copyright: 1992, 1994, FUJITSU LIMITED
   1992, Fuji Xerox Co., Ltd
 License: MIT~X11
 
-Files: nx-X11/lib/X11/Ximint.h
- nx-X11/lib/X11/imRm.c
+Files: nx-X11/lib/src/xlibi18n/Ximint.h
+ nx-X11/lib/modules/im/ximcp/imRm.c
 Copyright: 1990-1994, FUJITSU LIMITED
   1992-1994, FUJITSU LIMITED
   1993-1994, Sony Corporation
   1994, Sony Corporation
 License: MIT~X11
 
-Files: nx-X11/lib/X11/lcFile.c
+Files: nx-X11/lib/src/xlibi18n/lcFile.c
 Copyright: 1993, IBM Corporation
 License: MIT~OldStyle
 
@@ -2366,8 +2375,8 @@ Files: nx-X11/include/extensions/record.h
 Copyright: 1995, Network Computing Devices
 License: MIT~OldStyle
 
-Files: nx-X11/lib/X11/FilterEv.c
- nx-X11/lib/X11/RegstFlt.c
+Files: nx-X11/lib/src/FilterEv.c
+ nx-X11/lib/src/RegstFlt.c
 Copyright: 1990-1991, 1998, The Open Group
   1990-1991, OMRON Corporation
   1991, 1998, The Open Group
@@ -2389,10 +2398,10 @@ Comment:
  Copyright attributions of Sun Microsystems, Inc. now belong
  to Oracle.
 
-Files: nx-X11/lib/X11/GetTxtProp.c
- nx-X11/lib/X11/Iconify.c
- nx-X11/lib/X11/SetTxtProp.c
- nx-X11/lib/X11/Withdraw.c
+Files: nx-X11/lib/src/GetTxtProp.c
+ nx-X11/lib/src/Iconify.c
+ nx-X11/lib/src/SetTxtProp.c
+ nx-X11/lib/src/Withdraw.c
 Copyright: 1988, 1998, The Open Group
   1988, Wyse Technology, Inc., San Jose, Ca
 License: MIT~OldStyle
@@ -2400,8 +2409,8 @@ Comment:
  Contributions by The Open Group have been licensed
  under MIT~OpenGroup.
 
-Files: nx-X11/lib/X11/mbWrap.c
- nx-X11/lib/X11/wcWrap.c
+Files: nx-X11/lib/src/xlibi18n/mbWrap.c
+ nx-X11/lib/src/xlibi18n/wcWrap.c
 Copyright: 1991, 1998, The Open Group
   1991, the Open Software Foundation
 License: MIT~OldStyle
@@ -2409,8 +2418,8 @@ Comment:
  Contributions by The Open Group have been licensed
  under MIT~OpenGroup.
 
-Files: nx-X11/lib/X11/FSWrap.c
- nx-X11/lib/X11/lcWrap.c
+Files: nx-X11/lib/src/FSWrap.c
+ nx-X11/lib/src/xlibi18n/lcWrap.c
 Copyright: 1991, 1998, The Open Group
   1991, the Open Software Foundation
   1993, the TOSHIBA Corp
@@ -2424,13 +2433,13 @@ Files: nx-X11/include/extensions/XResproto.h
 Copyright: 2002, XFree86 Inc
 License: XFree86
 
-Files: nxcomp/MD5.c
- nxcomp/MD5.h
+Files: nxcomp/src/MD5.c
+ nxcomp/include/MD5.h
 Copyright: 1999, 2002, Aladdin Enterprises.
   1999-2000, 2002, Aladdin Enterprises.
 License: Zlib
 
-Files: nx-X11/lib/X11/utlist.h
+Files: nx-X11/lib/src/utlist.h
 Copyright: 2007-2009, Troy D. Hanson
 License: BSD-1-clause
 
@@ -2438,17 +2447,17 @@ Files: nx-X11/programs/Xserver/os/xprintf.c
 Copyright: 2004, Alexander Gottwald
 License: Expat
 
-Files: nx-X11/extras/Mesa/src/mesa/glapi/glapioffsets.h
+Files: nx-X11/extras/Mesa_6.4.2/src/mesa/glapi/glapioffsets.h
 Copyright: 1999-2001, Brian Paul
   IBM Corporation 2004,
 License: Expat
 
-Files: nx-X11/extras/Mesa/src/mesa/main/simple_list.h
+Files: nx-X11/extras/Mesa_6.4.2/src/mesa/main/simple_list.h
 Copyright: 1997, Keith Whitwell
   1999-2001, Brian Paul
 License: Expat
 
-Files: nx-X11/lib/X11/UIThrStubs.c
+Files: nx-X11/lib/src/UIThrStubs.c
 Copyright: 1995, David E. Wexelblat.
 License: Expat~NoAdvert
 
@@ -2483,7 +2492,7 @@ Files: nx-X11/programs/Xserver/hw/nxagent/X11/include/xpm_nxagent.h
 Copyright: 1989-1995, GROUPE BULL
 License: Expat~NoAdvert
 
-Files: nx-X11/extras/Mesa/src/mesa/glapi/dispatch.h
+Files: nx-X11/extras/Mesa_6.4.2/src/mesa/glapi/dispatch.h
 Copyright: 2005, IBM Corporation
 License: Expat
 
@@ -2498,11 +2507,11 @@ Comment:
  Later contributions by Oracle and/or its affiliates and Red Hat, Inc.
  have been licensed under Expat.
 
-Files: nx-X11/extras/Mesa/src/mesa/main/mm.h
+Files: nx-X11/extras/Mesa_6.4.2/src/mesa/main/mm.h
 Copyright: 1999, Keith Whitwell
 License: Expat
 
-Files: nx-X11/lib/xtrans/Xtranssock.c
+Files: nx-X11/lib/include/xtrans/Xtranssock.c
 Copyright: 1993-1994, 1998, The Open Group
   2001, 2011, NoMachine (http://www.nomachine.com)
   2002, Oracle and/or its affiliates.
@@ -2543,15 +2552,15 @@ Files: nx-X11/programs/Xserver/composite/compositeext.h
 Copyright: 2009, NVIDIA Corporation
 License: Expat
 
-Files: nx-X11/extras/Mesa/src/mesa/main/texenvprogram.c
+Files: nx-X11/extras/Mesa_6.4.2/src/mesa/main/texenvprogram.c
 Copyright: 2003, Tungsten Graphics, Inc., Cedar Park, Texas
 License: Expat
 
-Files: nx-X11/extras/Mesa/src/mesa/main/mm.c
+Files: nx-X11/extras/Mesa_6.4.2/src/mesa/main/mm.c
 Copyright: 1999, Wittawat Yamwong
 License: Expat
 
-Files: nxcomp/Version.c
+Files: nxcomp/src/Version.c
 Copyright: 2015, Qindel Formacion y Servicios SL.
 License: GPL-2
 
@@ -2576,14 +2585,14 @@ Comment:
  .
  Contributions by Adobe Systems Inc. have been licensed under MIT~Adobe.
 
-Files: nx-X11/lib/X11/utf8WMProps.c
+Files: nx-X11/lib/src/xlibi18n/utf8WMProps.c
 Copyright: 1991, 1998, The Open Group
   2000, Bruno Haible
 License: MIT~OpenGroup
 Comment:
  Contributions by Bruno Haible have been licensed under MIT~X11.
 
-Files: nx-X11/lib/X11/utf8Wrap.c
+Files: nx-X11/lib/src/xlibi18n/utf8Wrap.c
 Copyright: 1991, 1998, The Open Group
   1991, the Open Software Foundation
   2000, Bruno Haible
@@ -2630,14 +2639,14 @@ Comment:
  Contributions by  Data General Corporation and OMRON Corporation have been
  licnsed under MIT~X11.
 
-Files: nx-X11/extras/Mesa/src/mesa/shader/atifragshader.h
+Files: nx-X11/extras/Mesa_6.4.2/src/mesa/shader/atifragshader.h
 Copyright: 2004, David Airlie
 License: Expat
 Comment:
  Missing license in header, assuming same license as found
  in other Mesa files with same copyright holder.
 
-Files: nx-X11/lib/X11/imCallbk.c
+Files: nx-X11/lib/modules/im/ximcp/imCallbk.c
 Copyright: 1993, Digital Equipment Corporation, Maynard, Massachusetts
   1994, FUJITSU LIMITED
   1994, Sony Corporation
@@ -2656,7 +2665,7 @@ Comment:
  Modifications by NoMachine have to be considered as strictly GPL-2
  licensed.
 
-Files: nx-X11/lib/X11/WMProps.c
+Files: nx-X11/lib/src/WMProps.c
 Copyright: 1987, Digital Equipment Corporation, Maynard, Massachusetts
   1987-1988, 1993, 1998, The Open Group
   1988, Wyse Technology, Inc., San Jose, Ca.
@@ -2665,22 +2674,22 @@ Comment:
  Contributions by Digital Equipment Corporation, Maynard, Massachusetts
  and Wyse have been licensed under MIT~OldStyle.
 
-Files: nx-X11/lib/X11/imConv.c
+Files: nx-X11/lib/src/imConv.c
 Copyright: 1991-1992, Fuji Xerox Co.,Ltd
   1993-1994, FUJITSU LIMITED
 License: MIT~X11
 
-Files: nx-X11/lib/X11/lcDB.c
+Files: nx-X11/lib/src/xlibi18n/lcDB.c
 Copyright: 1995, FUJITSU LIMITED
   1993, IBM Corporation
 License: MIT~OldStyle
 
-Files: nx-X11/lib/X11/imLcPrs.c
+Files: nx-X11/lib/modules/im/ximcp/imLcPrs.c
 Copyright: 1992, Fuji Xerox Co., Ltd
   1992, Oki Technosystems Laboratory, Inc
 License: MIT~X11
 
-Files: nx-X11/lib/X11/Xprivate.h
+Files: nx-X11/lib/src/Xprivate.h
 Copyright: 2008, Jamey Sharp, Josh Triplett
 License: MIT~X11
 Comment:
@@ -2760,7 +2769,7 @@ Files: nxproxy/src/Main.c
 Copyright: 2001, 2011, NoMachine, http://www.nomachine.com/.
 License: GPL-2
 
-Files: nx-X11/lib/X11/Xlcint.h
+Files: nx-X11/lib/src/xlibi18n/Xlcint.h
 Copyright: 1990-1991, OMRON Corporation, NTT Software Corporation
   1991, 1998, The Open Group
   1991, the Open Software Foundation
@@ -2774,7 +2783,7 @@ Comment:
  Contributions by the other copyright holders have been licensed under
  MIT~X11.
 
-Files: nx-X11/lib/X11/SetLocale.c
+Files: nx-X11/lib/src/SetLocale.c
 Copyright: 1987,1998, The Open Group
   1990-1991, OMRON Corporation, NTT Software Corporation
 License: MIT~X11
@@ -2784,7 +2793,7 @@ Comment:
  Contributions by the other copyright holders have been licensed under
  MIT~X11.
 
-Files: nx-X11/lib/X11/ICWrap.c
+Files: nx-X11/lib/src/xlibi18n/ICWrap.c
 Copyright: 1990-1991, OMRON Corporation, NTT Software Corporation
   1991, 1998, The Open Group
   1991, the Open Software Foundation
@@ -2800,11 +2809,11 @@ Files: nx-X11/programs/Xserver/randr/rrprovider.c
 Copyright: 2012, Red Hat Inc
 License: MIT~X11
 
-Files: nx-X11/lib/X11/imInsClbk.c
+Files: nx-X11/lib/modules/im/ximcp/imInsClbk.c
 Copyright: 1993-1994, Sony Corporation
 License: MIT~OldStyle
 
-Files: nx-X11/lib/X11/CCC.c
+Files: nx-X11/lib/src/xcms/CCC.c
 Copyright: 1990, 1991, Tektronix, Inc
   1994, 1998, The Open Group
 License: MIT~Tektronix
@@ -2813,12 +2822,12 @@ Comment:
  .
  Contributions by Tektronix, Inc. have been licensed under MIT~Tektronix.
 
-Files: nx-X11/lib/X11/Font.c
+Files: nx-X11/lib/src/Font.c
 Copyright: 1986, 1998, The Open Group
   2000, The XFree86 Project, Inc
 License: MIT~OpenGroup
 
-Files: nx-X11/lib/X11/IMWrap.c
+Files: nx-X11/lib/src/xlibi18n/IMWrap.c
 Copyright: 1991, 1998, The Open Group
   1991, the Open Software Foundation
   1993-1994, the Sony Corporation
@@ -2880,10 +2889,14 @@ Copyright: 2005, 2006, Oracle and/or its affiliates
   2017, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 License: Expat
 
+Files: m4/nx-xtrans.m4
+Copyright: 2005, 2006, Oracle and/or its affiliates
+License: Expat
+
 Files: ChangeLog
  Makefile
+ README.md
  VERSION
- doc/README.NX-development
  doc/libNX_X11/symbols/libNX_X11::symbol-usage_internally.txt
  doc/libNX_X11/symbols/libNX_X11::symbol-usage_nxagent.txt
  doc/libNX_X11/symbols/libNX_X11::symbol-usage_nxcompext.txt
@@ -2904,20 +2917,17 @@ Files: ChangeLog
  nx-X11/programs/Xserver/hw/nxagent/nxmissing.xpm
  nx-X11/programs/Xserver/hw/nxagent/x2go.xpm
  nx-X11/Makefile
- nxcomp/Makefile.in
- nxcomp/VERSION
- nxcomp/configure.in
+ nxcomp/Makefile.am
+ nxcomp/src/Makefile.am
+ nxcomp/configure.ac
  nxcomp/nxcomp.pc.in
  nxcompshad/Makefile.am
- nxcompshad/VERSION
  nxcompshad/configure.ac
  nxcompshad/nxcompshad.pc.in
  nxcompshad/src/Makefile.am
- nxproxy/VERSION
  nxproxy/man/nxproxy.1
  nxproxy/Makefile.am
  nxproxy/configure.ac
- nxproxy/m4/.placeholder
  nxproxy/man/Makefile.am
  nxproxy/src/Makefile.am
 Copyright: 2001, 2011, NoMachine (http://www.nomachine.com)
@@ -2947,31 +2957,55 @@ Comment:
  .
  Contributions by Daniel Stone have been licensed under MIT~X11.
 
-Files: nxcomp/mkinstalldirs
-Copyright: *No copyright*
-License: public-domain
-
-Files: nxcomp/install-sh
-Copyright: 1994, X Consortium
-License: Expat~NoAdvert
-Comment:
- Missing license headers. License and copyright information obtained from
- later versions of this file as found in automake-1.14.
- .
- FIXME: This block will be obsolete for 3.5.99.8. We are about to
- remove the above files entirely from the code tree.
-
-Files: nx-X11/extras/Mesa.patches/*
-Copyright:  2017, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+Files: nx-X11/extras/Mesa.patches_6.4.2/*
+Copyright: 2017, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
   2017, Mihai Moldovan <ionic@ionic.de>
   2017, Ulrich Sibiller <uli42@gmx.de>
   2017, Qindel Group (http://www.qindel.com)
 License: Expat
 
+Files: nx-X11/lib/configure.ac
+ nx-X11/lib/Makefile.am
+ nx-X11/lib/src/xkb/Makefile.am
+ nx-X11/lib/src/util/Makefile.am
+ nx-X11/lib/src/Makefile.am
+ nx-X11/lib/src/xcms/Makefile.am
+ nx-X11/lib/src/xlibi18n/Makefile.am
+ nx-X11/lib/modules/om/generic/Makefile.am
+ nx-X11/lib/modules/om/Makefile.am
+ nx-X11/lib/modules/Makefile.am
+ nx-X11/lib/modules/im/ximcp/Makefile.am
+ nx-X11/lib/modules/im/Makefile.am
+ nx-X11/lib/modules/lc/Makefile.am
+ nx-X11/lib/modules/lc/gen/Makefile.am
+ nx-X11/lib/modules/lc/def/Makefile.am
+ nx-X11/lib/modules/lc/Utf8/Makefile.am
+ nx-X11/lib/include/Makefile.am
+Copyright: 2017, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
+  2017, Mihai Moldovan <ionic@ionic.de>
+  2017, Ulrich Sibiller <uli42@gmx.de>
+  2017, Qindel Group (http://www.qindel.com)
+License: MIT~X11
+Comment:
+ Passages in the above files have been derived
+ from X.org's libX11, but got heavily changed.
+
+Files: nx-X11/lib/m4/ax_define_dir.m4
+Copyright: 2008, Stepan Kasal <kasal@ucw.cz>
+  2008, Andreas Schwab <schwab@suse.de>
+  2008, Guido U. Draheim <guidod@gmx.de>
+  2008, Alexandre Oliva
+License: permissive
+
 Files: debian/*
 Copyright: 2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
   2011-2013, Reinhard Tartler <siretart@tauware.de>
   2015-2016, Mihai Moldovan <ionic@ionic.de>
+License: GPL-2 or GPL-2+ or GPL-3+ or Expat or Expat~NoAdvert or MIT~OpenGroup or MIT~X11 or MIT~Tektronix or MIT~Tektronix~3-clause or MIT~OldStyle or MIT~Adobe or MIT~VeryOldStyle~UniOfCalifornia or MIT~VeryOldStyle~NCD or MIT~ISC or SGI-1.1 or GLX-1.0 or Zlib or XFree86 or BSD-1-clause
+
+Files: nx-libs.spec
+Copyright: 2011-2017, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+  2015-2017, Mihai Moldovan <ionic@ionic.de>
 License: GPL-2 or GPL-2+ or GPL-3+ or Expat or Expat~NoAdvert or MIT~OpenGroup or MIT~X11 or MIT~Tektronix or MIT~Tektronix~3-clause or MIT~OldStyle or MIT~Adobe or MIT~VeryOldStyle~UniOfCalifornia or MIT~VeryOldStyle~NCD or MIT~ISC or SGI-1.1 or GLX-1.0 or Zlib or XFree86 or BSD-1-clause
 
 License: GPL-2
@@ -3753,6 +3787,8 @@ License: BSD-1-clause
  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-License: public-domain
- No license required for any purpose; the work is not subject to
- copyright in any jurisdiction.
+License: permissive
+ Copying and distribution of this file, with or without modification, are
+ permitted in any medium without royalty provided the copyright notice
+ and this notice are preserved. This file is offered as-is, without any
+ warranty.
