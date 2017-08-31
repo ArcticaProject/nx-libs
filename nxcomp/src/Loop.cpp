@@ -3810,7 +3810,15 @@ int SetupAuthInstance()
 
         launchdAddrUnix.sun_family = AF_UNIX;
 
+        #ifdef __linux__
         const int launchdAddrNameLength = 108;
+        #else
+        /* POSIX/SUS does not specify a length.
+         * BSD derivatives generally support 104 bytes, other systems may be more constrained.
+         * If you happen to run into such systems, extend this section with the appropriate limit.
+         */
+        const int launchdAddrNameLength = 104;
+        #endif
 
         int success = -1;
 
