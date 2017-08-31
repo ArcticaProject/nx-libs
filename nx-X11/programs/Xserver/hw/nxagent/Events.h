@@ -99,7 +99,7 @@ extern void nxagentGetEventMask(WindowPtr pWin, Mask *mask_return);
  * the internal state. This is unlikely to happen.
  */
 
-extern int nxagentInitKeyboardState(void);
+extern int nxagentInitXkbKeyboardState(void);
 
 /*
  * Update the keyboard state according
@@ -107,7 +107,7 @@ extern int nxagentInitKeyboardState(void);
  * from the remote X server.
  */
 
-extern int nxagentHandleKeyboardEvent(XEvent *X);
+extern int nxagentHandleXkbKeyboardStateEvent(XEvent *X);
 
 /*
  * Handle sync and karma messages and

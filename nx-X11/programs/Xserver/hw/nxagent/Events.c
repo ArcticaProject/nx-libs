@@ -1168,7 +1168,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was
             nxagentXkbNumTrap = 1;
           }
 
-          nxagentInitKeyboardState();
+          nxagentInitXkbKeyboardState();
 
           nxagentXkbCapsTrap = 0;
           nxagentXkbNumTrap = 0;
@@ -2079,7 +2079,7 @@ FIXME: Don't enqueue the KeyRelease event if the key was
          * state modification event.
          */
 
-        if (nxagentHandleKeyboardEvent(&X) == 0 && nxagentHandleXFixesSelectionNotify(&X) == 0)
+        if (nxagentHandleXkbKeyboardStateEvent(&X) == 0 && nxagentHandleXFixesSelectionNotify(&X) == 0)
         {
           #ifdef TEST
           fprintf(stderr, "nxagentDispatchEvents: WARNING! Unhandled event code [%d].\n",
@@ -2318,7 +2318,7 @@ int nxagentHandleKeyPress(XEvent *X, enum HandleEventResult *result)
       nxagentXkbNumTrap = 1;
     }
 
-    nxagentInitKeyboardState();
+    nxagentInitXkbKeyboardState();
 
     nxagentXkbCapsTrap = 0;
     nxagentXkbNumTrap = 0;
@@ -2785,22 +2785,22 @@ int nxagentHandleClientMessageEvent(XEvent *X, enum HandleEventResult *result)
   return 1;
 }
 
-int nxagentHandleKeyboardEvent(XEvent *X)
+int nxagentHandleXkbKeyboardStateEvent(XEvent *X)
 {
   XkbEvent *xkbev = (XkbEvent *) X;
-
-  #ifdef TEST
-  fprintf(stderr, "nxagentHandleKeyboardEvent: Handling event with caps [%d] num [%d] locked [%d].\n",
-              nxagentXkbState.Caps, nxagentXkbState.Num, nxagentXkbState.Locked);
-  #endif
 
   if (xkbev -> type == nxagentXkbInfo.EventBase + XkbEventCode &&
           xkbev -> any.xkb_type == XkbStateNotify)
   {
+    #ifdef TEST
+    fprintf(stderr, "%s: Handling event with caps [%d] num [%d] locked [%d].\n", __func__,
+	    nxagentXkbState.Caps, nxagentXkbState.Num, nxagentXkbState.Locked);
+    #endif
+
     nxagentXkbState.Locked = xkbev -> state.locked_mods;
 
     #ifdef TEST
-    fprintf(stderr, "nxagentHandleKeyboardEvent: Updated XKB locked modifier bits to [%x].\n",
+    fprintf(stderr, "%s: Updated XKB locked modifier bits to [%x].\n", __func__,
                 nxagentXkbState.Locked);
     #endif
 
@@ -2812,7 +2812,7 @@ int nxagentHandleKeyboardEvent(XEvent *X)
       nxagentXkbState.Caps = 1;
 
       #ifdef TEST
-      fprintf(stderr, "nxagentHandleKeyboardEvent: Sending fake key [66] to engage capslock.\n");
+      fprintf(stderr, "%s: Sending fake key [66] to engage capslock.\n", __func__);
       #endif
 
       if (!nxagentXkbCapsTrap)
@@ -2827,7 +2827,7 @@ int nxagentHandleKeyboardEvent(XEvent *X)
       nxagentXkbState.Caps = 0;
 
       #ifdef TEST
-      fprintf(stderr, "nxagentHandleKeyboardEvent: Sending fake key [66] to release capslock.\n");
+      fprintf(stderr, "%s: Sending fake key [66] to release capslock.\n", __func__);
       #endif
 
       nxagentSendFakeKey(66);
@@ -2839,7 +2839,7 @@ int nxagentHandleKeyboardEvent(XEvent *X)
     {
 
       #ifdef TEST
-      fprintf(stderr, "nxagentHandleKeyboardEvent: Sending fake key [66] to release capslock.\n");
+      fprintf(stderr, "%s: Sending fake key [66] to release capslock.\n", __func__);
       #endif
 
       nxagentSendFakeKey(66);
@@ -2851,7 +2851,7 @@ int nxagentHandleKeyboardEvent(XEvent *X)
       nxagentXkbState.Num = 1;
 
       #ifdef TEST
-      fprintf(stderr, "nxagentHandleKeyboardEvent: Sending fake key [77] to engage numlock.\n");
+      fprintf(stderr, "%s: Sending fake key [77] to engage numlock.\n", __func__);
       #endif
 
       if (!nxagentXkbNumTrap)
@@ -2866,7 +2866,7 @@ int nxagentHandleKeyboardEvent(XEvent *X)
       nxagentXkbState.Num = 0;
 
       #ifdef TEST
-      fprintf(stderr, "nxagentHandleKeyboardEvent: Sending fake key [77] to release numlock.\n");
+      fprintf(stderr, "%s: Sending fake key [77] to release numlock.\n", __func__);
       #endif
 
       nxagentSendFakeKey(77);
@@ -2878,7 +2878,7 @@ int nxagentHandleKeyboardEvent(XEvent *X)
     {
 
       #ifdef TEST
-      fprintf(stderr, "nxagentHandleKeyboardEvent: Sending fake key [77] to release numlock.\n");
+      fprintf(stderr, "%s: Sending fake key [77] to release numlock.\n", __func__);
       #endif
 
       nxagentSendFakeKey(77);
@@ -3792,7 +3792,7 @@ void nxagentSendFakeKey(int key)
   mieqEnqueue(&fake);
 }
 
-int nxagentInitKeyboardState()
+int nxagentInitXkbKeyboardState()
 {
   XEvent X;
 
@@ -3801,7 +3801,7 @@ int nxagentInitKeyboardState()
   XkbEvent *xkbev = (XkbEvent *) &X;
 
   #ifdef TEST
-  fprintf(stderr, "nxagentInitKeyboardState: Initializing XKB state.\n");
+  fprintf(stderr, "%s: Initializing XKB state.\n", __func__);
   #endif
 
   memset(&X, 0, sizeof(XEvent));
@@ -3821,14 +3821,14 @@ int nxagentInitKeyboardState()
   }
 
   #ifdef TEST
-  fprintf(stderr, "nxagentInitKeyboardState: Assuming XKB locked modifier bits [%x].\n",
+  fprintf(stderr, "%s: Assuming XKB locked modifier bits [%x].\n", __func__,
               xkbev -> state.locked_mods);
   #endif
 
   xkbev -> type         = nxagentXkbInfo.EventBase + XkbEventCode;
   xkbev -> any.xkb_type = XkbStateNotify;
 
-  nxagentHandleKeyboardEvent(&X);
+  nxagentHandleXkbKeyboardStateEvent(&X);
 
   return 1;
 }
