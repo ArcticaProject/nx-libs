@@ -226,7 +226,7 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
 
   #ifdef DEBUG
   fprintf(stderr, "nxagentCleanGlyphs: Found a Glyph with Depth %d, width %d, pad %d.\n",
-          depth, gi -> width, dpy -> bitmap_pad);
+          depth, gi -> width, BitmapPad(dpy));
   #endif
 
   while (nglyphs > 0)
@@ -235,7 +235,7 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
     {
       widthInBits = gi -> width * 32;
 
-      bytesPerLine = ROUNDUP(widthInBits, dpy -> bitmap_pad);
+      bytesPerLine = ROUNDUP(widthInBits, BitmapPad(dpy));
 
       bytesToClean = bytesPerLine * height;
 
@@ -245,7 +245,7 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
                       widthInBits, bytesPerLine, height);
       #endif
 
-      if (dpy -> byte_order == LSBFirst)
+      if (ImageByteOrder(dpy) == LSBFirst)
       {
         for (i = 3; i < bytesToClean; i += 4)
         {
@@ -279,7 +279,7 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
     {
       widthInBits = gi -> width;
 
-      bytesPerLine = ROUNDUP(widthInBits, dpy -> bitmap_pad);
+      bytesPerLine = ROUNDUP(widthInBits, BitmapPad(dpy));
 
       bitsToClean = (bytesPerLine << 3) - (gi -> width);
 
@@ -295,19 +295,19 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
       #ifdef DEBUG
       fprintf(stderr, "nxagentCleanGlyphs: bitsToClean &=7 is %d, bytesToCLean is %d."
               " byte_order is %d, bitmap_bit_order is %d.\n", bitsToClean, bytesToClean,
-              dpy -> byte_order, dpy -> bitmap_bit_order);
+              ImageByteOrder(dpy), BitmapBitOrder(dpy));
       #endif
 
       for (i = 1; i <= height; i++)
       {
-        if (dpy -> byte_order == dpy -> bitmap_bit_order)
+        if (ImageByteOrder(dpy) == BitmapBitOrder(dpy))
         {
           for (j = 1; j <= bytesToClean; j++)
           {
             images[i * bytesPerLine - j] = 0x00;
 
             #ifdef DEBUG
-            fprintf(stderr, "nxagentCleanGlyphs: byte_order = bitmap_bit_orde, cleaning %d, i=%d, j=%d.\n"
+            fprintf(stderr, "nxagentCleanGlyphs: byte_order == bitmap_bit_order, cleaning %d, i=%d, j=%d.\n"
                     , (i * bytesPerLine - j), i, j);
             #endif
 
@@ -321,13 +321,13 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
 
             #ifdef DEBUG
             fprintf(stderr, "nxagentCleanGlyphs: byte_order %d, bitmap_bit_order %d, cleaning %d, i=%d, j=%d.\n"
-                    , dpy -> byte_order, dpy -> bitmap_bit_order, (i * bytesPerLine - j), i, j);
+                    , ImageByteOrder(dpy), BitmapBitOrder(dpy), (i * bytesPerLine - j), i, j);
             #endif
 
           }
         }
 
-        if (dpy -> bitmap_bit_order == MSBFirst)
+        if (BitmapBitOrder(dpy) == MSBFirst)
         {
           images[i * bytesPerLine - j] &= 0xff << bitsToClean;
 
@@ -366,7 +366,7 @@ nxagentCleanGlyphs(xGlyphInfo  *gi,
     {
       widthInBits = gi -> width * depth;
 
-      bytesPerLine = ROUNDUP(widthInBits, dpy -> bitmap_pad);
+      bytesPerLine = ROUNDUP(widthInBits, BitmapPad(dpy));
 
       widthInBytes = (widthInBits >> 3);
 
