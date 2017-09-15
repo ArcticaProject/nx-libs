@@ -1,6 +1,62 @@
-2017-08-30 19:33:55 +0200 Mike Gabriel (6cf56efe7)
+2017-09-15 14:57:56 +0200 Mike Gabriel (e6998288d)
 
-	* release 3.5.99.9 (HEAD -> 3.6.x)
+	* release 3.5.99.10 (HEAD -> 3.6.x)
+
+2017-09-14 07:45:45 +0200 Mihai Moldovan (4405c6a6b)
+
+	* Merge branch
+          'sunweaver-pr/assure-that-Mesa-includes-headers-from-libNX_X11'
+          into 3.6.x (origin/HEAD, origin/3.6.x)
+
+2017-09-13 13:06:34 +0200 Mike Gabriel (f9c23b51e)
+
+	* Assure that headers from libNX_X11 are always included from
+          $(INCDIR)/nx-X11/.
+          (gh-sunweaver/pr/assure-that-Mesa-includes-headers-from-libNX_X11,
+          pr/assure-that-Mesa-includes-headers-from-libNX_X11)
+
+2017-09-13 11:50:40 +0200 Mihai Moldovan (0815fb06f)
+
+	* nx-X11/programs/Xserver/hw/nxagent/Render.c: use macros obtaining
+          values from _XPrivDisplay instead of the other Display
+          structure directly.
+
+2017-09-06 10:25:19 +0200 Mihai Moldovan (81569ad6b)
+
+	* Merge branch 'sunweaver-pr/sun-path-is-104-on-debian-kfreebsd' into
+          3.6.x
+
+2017-08-31 18:17:31 +0200 Mike Gabriel (96ba6190d)
+
+	* nxcomp/src/{Loop,Proxy}.cpp: On Debian/kFreeBSD (and other *BSD
+          variants) the sockaddr_un.sun_path property is 104 chars
+          long, not 108. Hard-coding Unix domain sockets in nxcomp
+          the string length 104.
+          (gh-sunweaver/pr/sun-path-is-104-on-debian-kfreebsd,
+          pr/sun-path-is-104-on-debian-kfreebsd)
+
+2017-08-30 22:36:05 +0200 Mike Gabriel (d3f97cea2)
+
+	* Mesa.patches: Shrink over-zealous 5001 patch. Only patch files that
+          we use during build.
+
+2017-08-30 22:07:46 +0200 Mike Gabriel (055f52b03)
+
+	* roll-tarball.sh: Drop m4/nx-xtrans.m4 from nx-libs-lite tarball.
+
+2017-08-30 22:07:28 +0200 Mike Gabriel (1047cda6d)
+
+	* roll-tarball.sh: Some more .gitignore files to remove.
+
+2017-08-30 22:07:02 +0200 Mike Gabriel (bbf69e0a6)
+
+	* roll-tarball.sh: Use -f with rm everywhere, also when tweaking the
+          Mesa/ dir.
+
+2017-08-30 19:33:55 +0200 Mike Gabriel (f4afa5a56)
+
+	* release 3.5.99.9 (tag: 3.5.99.9, origin/release-builds/3.6.x,
+          release-builds/3.6.x)
 
 2017-08-30 19:29:58 +0200 Mike Gabriel (13264ea7f)
 
@@ -32,7 +88,7 @@
 2017-08-28 08:33:58 +0200 Mihai Moldovan (709bce6cf)
 
 	* Merge branch 'sunweaver-pr/drop-nxcompshad-cygwin-support' into
-          3.6.x (origin/HEAD, origin/3.6.x)
+          3.6.x
 
 2017-07-17 12:49:47 +0200 Mike Gabriel (d9e2822f5)
 
@@ -374,8 +430,7 @@
 
 2017-06-30 21:21:49 +0200 Mike Gabriel (3b15804ce)
 
-	* release 3.5.99.8 (tag: 3.5.99.8, origin/release-builds/3.6.x,
-          release-builds/3.6.x)
+	* release 3.5.99.8 (tag: 3.5.99.8)
 
 2017-06-30 20:59:27 +0200 Mihai Moldovan (4c7641a1f)
 

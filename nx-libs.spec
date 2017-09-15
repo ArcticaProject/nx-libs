@@ -1,7 +1,7 @@
 %global _hardened_build 1
 
 Name:           nx-libs
-Version:        3.5.99.9
+Version:        3.5.99.10
 Release:        0.0build1%{?dist}
 Summary:        NX X11 protocol compression libraries
 
