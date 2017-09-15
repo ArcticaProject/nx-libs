@@ -21,7 +21,6 @@ Build-Depends:
  libxfont-dev (>= 1.4.2),
  libxinerama-dev,
  libxml2-dev,
- libxmltok1-dev,
  libxpm-dev,
  libxrandr-dev,
  libxrender-dev,
