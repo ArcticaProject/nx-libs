@@ -30,7 +30,7 @@ Build-Depends:
  x11proto-core-dev,
  xutils-dev,
  zlib1g-dev
-Standards-Version: 4.0.1
+Standards-Version: 4.1.0
 Homepage: https://github.com/ArcticaProject/nx-libs/
 Vcs-Git: https://github.com/ArcticaProject/nx-libs/
 Vcs-Browser: https://github.com/ArcticaProject/nx-libs/
