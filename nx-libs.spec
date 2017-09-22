@@ -15,8 +15,10 @@ URL:            http://github.com/ArcticaProject/nx-libs/
 Source0:        %{name}-%{version}.tar.gz
 
 BuildRequires:  autoconf >= 2.13
+BuildRequires:  automake
 BuildRequires:  gcc-c++
 BuildRequires:  libjpeg-devel
+BuildRequires:  libtool
 BuildRequires:  pkgconfig
 BuildRequires:  imake
 
