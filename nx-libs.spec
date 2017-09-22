@@ -24,8 +24,10 @@ URL:            http://github.com/ArcticaProject/nx-libs/
 Source0:        %{name}-%{version}.tar.gz
 
 BuildRequires:  autoconf >= 2.13
+BuildRequires:  automake
 BuildRequires:  gcc-c++
 BuildRequires:  libjpeg-devel
+BuildRequires:  libtool
 BuildRequires:  pkgconfig
 BuildRequires:  imake
 
@@ -426,6 +428,9 @@ rm -r %{buildroot}%{_includedir}/nx-X11/extensions/XK*.h
 rm -r %{buildroot}%{_includedir}/nx-X11/extensions/*Xv*.h
 rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 
+#Remove our shared libraries' .la files before wrapping up the packages
+rm %{_libdir}/*.la
+
 %if 0%{?fdupes:1}
 %fdupes %{buildroot}%{_prefix}
 %endif
@@ -445,8 +450,8 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %dir %{_libdir}/nx
 %dir %{_datadir}/nx
 %{_datadir}/nx/SecurityPolicy
-%{_datadir}/nx/XErrorDB
-%{_datadir}/nx/Xcms.txt
+%{_datadir}/nx/X11/XErrorDB
+%{_datadir}/nx/X11/Xcms.txt
 
 %files -n libNX_X11-6
 %defattr(-,root,root)
@@ -455,6 +460,7 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %files -n libNX_X11-devel
 %defattr(-,root,root)
 %{_libdir}/libNX_X11.so
+%{_libdir}/pkgconfig/nx-x11.pc
 %dir %{_includedir}/nx
 %dir %{_includedir}/nx-X11
 %{_includedir}/nx-X11/ImUtil.h
