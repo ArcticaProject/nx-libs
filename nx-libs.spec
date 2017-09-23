@@ -444,16 +444,18 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %dir %{_libdir}/nx
 %dir %{_datadir}/nx
 %{_datadir}/nx/SecurityPolicy
-%{_datadir}/nx/XErrorDB
-%{_datadir}/nx/Xcms.txt
+%{_datadir}/nx/X11/XErrorDB
+%{_datadir}/nx/X11/Xcms.txt
 
 %files -n libNX_X11-6
 %defattr(-,root,root)
 %{_libdir}/libNX_X11.so.6*
+%{_libdir}/libNX_X11.la
 
 %files -n libNX_X11-devel
 %defattr(-,root,root)
 %{_libdir}/libNX_X11.so
+%{_libdir}/pkgconfig/nx-x11.pc
 %dir %{_includedir}/nx
 %dir %{_includedir}/nx-X11
 %{_includedir}/nx-X11/ImUtil.h
@@ -486,6 +488,7 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %doc doc/nxcomp/README.on-retroactive-DXPC-license
 %doc doc/nxcomp/nxcomp-3.6-drops-compat-code-3.4.x-testing.pdf
 %{_libdir}/libXcomp.so.3*
+%{_libdir}/libXcomp.la
 
 %files -n libXcompshad-devel
 %defattr(-,root,root)
@@ -497,6 +500,7 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %defattr(-,root,root)
 %doc COPYING
 %{_libdir}/libXcompshad.so.3*
+%{_libdir}/libXcompshad.la
 
 %files devel
 %defattr(-,root,root)
@@ -586,7 +590,7 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %{_bindir}/nxproxy
 %{_datadir}/man/man1/nxproxy.1*
 %dir %{_libdir}/nx/bin
-%{_libdir}/nx/bin/nxproxy
+%{_libexecdir}/nxproxy
 %dir %{_datadir}/nx
 %{_datadir}/nx/VERSION.nxproxy
 
