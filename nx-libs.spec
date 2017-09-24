@@ -1,4 +1,7 @@
 %global _hardened_build 1
+# Put the nxproxy binary in the same dir as nxagent.
+# Fixes the /usr/bin/nxproxy script not finding it.
+%define _libexecdir %{_libdir}/nx/bin
 
 Name:           nx-libs
 Version:        3.5.99.10
