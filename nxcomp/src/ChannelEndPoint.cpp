@@ -150,6 +150,7 @@ ChannelEndPoint::getSpec(char **socketUri) const {
 void
 ChannelEndPoint::setDefaultTCPPort(long port) {
   defaultTCPPort_ = port;
+  isTCP_ = getTCPHostAndPort();
 }
 
 void
@@ -165,6 +166,8 @@ ChannelEndPoint::setDefaultUnixPath(char *path) {
     defaultUnixPath_ = strdup(path);
   else
     defaultUnixPath_ = NULL;
+
+  isUnix_ = getUnixPath();
 }
 
 void
