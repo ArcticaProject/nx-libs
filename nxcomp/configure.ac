@@ -66,19 +66,19 @@ fi
 # If in_addr_t is not defined use unsigned int.
 AC_CHECK_TYPES([in_addr_t], [], [], [[#include <netinet/in.h>]])
 
-AC_ARG_ENABLE(info,
-              [AS_HELP_STRING([--enable-debug], [enable to get info session log output (disabled by default)])],
-              [if test x$enableval = xyes; then
-                 AC_DEFINE(INFO, 1, [Define this to get info session log output.])
-                 info_messages=yes
-               fi])
+AC_ARG_ENABLE([info],
+              [AS_HELP_STRING([--enable-debug],
+                              [enable to get info session log output (disabled by default)])],
+              [AS_IF([test x$enableval = xyes],
+                     [AC_DEFINE(INFO, 1, [Define this to get info session log output.])
+                      info_messages=yes])])
 
-AC_ARG_ENABLE(valgrind,
-              [AS_HELP_STRING([--enable-valgrind], [enable for extra valgrind hacks (disabled by default)])],
-              [if test x$enableval = xyes; then
-                 AC_DEFINE(VALGRIND, 1, [Define this for extra valgrind hacks.])
-                 valgrind_hacks=yes
-               fi])
+AC_ARG_ENABLE([valgrind],
+              [AS_HELP_STRING([--enable-valgrind],
+                              [enable for extra valgrind hacks (disabled by default)])],
+              [AS_IF([test x$enableval = xyes],
+                     [AC_DEFINE(VALGRIND, 1, [Define this for extra valgrind hacks.])
+                      valgrind_hacks=yes])])
 
 AC_CONFIG_FILES([
 Makefile
