@@ -41,6 +41,7 @@ int main(int argc, const char **argv)
 
   char *options = NULL;
 
+  unsigned long int nx_commfd;
   char *nx_commfd_str = NULL;
 
   options = getenv("NX_DISPLAY");
@@ -48,7 +49,7 @@ int main(int argc, const char **argv)
   if ((nx_commfd_str = getenv("NX_COMMFD")) != NULL)
   {
     errno = 0;
-    unsigned long int nx_commfd = strtoul(nx_commfd_str, NULL, 10);
+    nx_commfd = strtoul(nx_commfd_str, NULL, 10);
 
     if ((errno) && (0 == nx_commfd))
     {
