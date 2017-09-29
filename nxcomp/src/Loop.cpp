@@ -1148,7 +1148,7 @@ int NXTransProxy(int fd, int mode, const char* options)
   if (setjmp(context) == 1)
   {
     nxinfo << "NXTransProxy: Out of the long jump with pid '"
-            << lastProxy << "'.\n" << std::flush;
+           << lastProxy << "'.\n" << std::flush;
 
     return -1;
   }
@@ -1168,7 +1168,7 @@ int NXTransProxy(int fd, int mode, const char* options)
   lastProxy = getpid();
 
   nxinfo << "NXTransProxy: Main process started with pid '"
-          << lastProxy << "'.\n" << std::flush;
+         << lastProxy << "'.\n" << std::flush;
 
   SetMode(mode);
 
@@ -1178,10 +1178,10 @@ int NXTransProxy(int fd, int mode, const char* options)
     {
 
       nxinfo << "NXTransProxy: Agent descriptor for X client connections is FD#"
-              << fd << ".\n" << std::flush;
+             << fd << ".\n" << std::flush;
 
       nxinfo << "NXTransProxy: Disabling listening on further X client connections.\n"
-              << std::flush;
+             << std::flush;
 
 
       useTcpSocket   = 0;
@@ -1196,7 +1196,7 @@ int NXTransProxy(int fd, int mode, const char* options)
     if (fd != NX_FD_ANY)
     {
       nxinfo << "NXTransProxy: PANIC! Agent descriptor for X server connections "
-              << "not supported yet.\n" << std::flush;
+             << "not supported yet.\n" << std::flush;
 
       cerr << "Error" << ": Agent descriptor for X server connections "
            << "not supported yet.\n";
@@ -1227,7 +1227,7 @@ int NXTransProxy(int fd, int mode, const char* options)
   SetLogs();
 
   nxinfo << "NXTransProxy: Going to run the NX transport loop.\n"
-          << std::flush;
+         << std::flush;
 
   WaitCleanup();
 
@@ -1250,15 +1250,15 @@ void NXTransExit(int code)
   if (++recurse > 1)
   {
     nxinfo << "NXTransExit: Aborting process with pid '"
-            << getpid() << "' due to recursion through "
-            << "exit.\n" << std::flush;
+           << getpid() << "' due to recursion through "
+           << "exit.\n" << std::flush;
 
     abort();
   }
 
   nxinfo << "NXTransExit: Process with pid '"
-          << getpid() << "' called exit with code '"
-          << code << "'.\n" << std::flush;
+         << getpid() << "' called exit with code '"
+         << code << "'.\n" << std::flush;
 
   if (control != NULL)
   {
@@ -1353,7 +1353,7 @@ int NXTransCreate(int fd, int mode, const char* options)
   lastProxy = getpid();
 
   nxinfo << "NXTransCreate: Caller process running with pid '"
-          << lastProxy << "'.\n" << std::flush;
+         << lastProxy << "'.\n" << std::flush;
 
   //
   // Set the local proxy mode an parse the
@@ -1390,10 +1390,10 @@ int NXTransCreate(int fd, int mode, const char* options)
   proxyFD = fd;
 
   nxinfo << "NXTransCreate: Called with NX proxy descriptor '"
-          << proxyFD << "'.\n" << std::flush;
+         << proxyFD << "'.\n" << std::flush;
 
   nxinfo << "NXTransCreate: Creation of the NX transport completed.\n"
-          << std::flush;
+         << std::flush;
 
   return 1;
 }
@@ -1448,11 +1448,11 @@ int NXTransAgent(int fd[2])
 
 
   nxinfo << "NXTransAgent: Internal descriptors for agent are FD#"
-          << agentFD[0] << " and FD#" << agentFD[1] << ".\n"
-          << std::flush;
+         << agentFD[0] << " and FD#" << agentFD[1] << ".\n"
+         << std::flush;
 
   nxinfo << "NXTransAgent: Disabling listening for further X client "
-          << "connections.\n" << std::flush;
+         << "connections.\n" << std::flush;
 
 
   agent = new Agent(agentFD);
@@ -1468,7 +1468,7 @@ int NXTransAgent(int fd[2])
   }
 
   nxinfo << "NXTransAgent: Enabling memory-to-memory transport.\n"
-          << std::flush;
+         << std::flush;
 
   return 1;
 }
@@ -1493,7 +1493,7 @@ int NXTransClose(int fd)
     if (proxy != NULL)
     {
       nxinfo << "NXTransClose: Closing down all the X connections.\n"
-              << std::flush;
+             << std::flush;
 
       CleanupConnections();
     }
@@ -1501,7 +1501,7 @@ int NXTransClose(int fd)
   else
   {
     nxinfo << "NXTransClose: The NX transport is not running.\n"
-            << std::flush;
+           << std::flush;
   }
 
   return 1;
@@ -1531,13 +1531,13 @@ int NXTransDestroy(int fd)
     if (proxy != NULL)
     {
       nxinfo << "NXTransDestroy: Closing down all the X connections.\n"
-              << std::flush;
+             << std::flush;
 
       CleanupConnections();
     }
 
     nxinfo << "NXTransDestroy: Waiting for the NX transport to terminate.\n"
-            << std::flush;
+           << std::flush;
 
     lastDestroy = 1;
 
@@ -1546,7 +1546,7 @@ int NXTransDestroy(int fd)
   else
   {
     nxinfo << "NXTransDestroy: The NX transport is not running.\n"
-            << std::flush;
+           << std::flush;
   }
 
   return 1;
@@ -1630,7 +1630,7 @@ int NXTransSignal(int signal, int action)
   if (action == NX_SIGNAL_RAISE)
   {
     nxinfo << "NXTransSignal: Raising signal '" << DumpSignal(signal)
-            << "' in the proxy handler.\n" << std::flush;
+           << "' in the proxy handler.\n" << std::flush;
 
     HandleSignal(signal);
 
@@ -1639,7 +1639,7 @@ int NXTransSignal(int signal, int action)
   else if (signal == NX_SIGNAL_ANY)
   {
     nxinfo << "NXTransSignal: Setting action of all signals to '"
-            << action << "'.\n" << std::flush;
+           << action << "'.\n" << std::flush;
 
     for (int i = 0; i < 32; i++)
     {
@@ -1654,8 +1654,8 @@ int NXTransSignal(int signal, int action)
   else if (CheckSignal(signal) == 1)
   {
     nxinfo << "NXTransSignal: Setting action of signal '"
-            << DumpSignal(signal) << "' to '" << action
-            << "'.\n" << std::flush;
+           << DumpSignal(signal) << "' to '" << action
+           << "'.\n" << std::flush;
 
     if (action == NX_SIGNAL_ENABLE ||
             action == NX_SIGNAL_FORWARD)
@@ -1673,8 +1673,8 @@ int NXTransSignal(int signal, int action)
   }
 
   nxwarn << "NXTransSignal: WARNING! Unable to perform action '"
-          << action << "' on signal '" << DumpSignal(signal)
-          << "'.\n" << std::flush;
+         << action << "' on signal '" << DumpSignal(signal)
+         << "'.\n" << std::flush;
 
   cerr << "Warning" << ": Unable to perform action '" << action
        << "' on signal '" << DumpSignal(signal)
@@ -1690,7 +1690,7 @@ int NXTransCongestion(int fd)
 
     int congestion = proxy -> getCongestion(proxyFD);
     nxdbg << "NXTransCongestion: Returning " << congestion
-            << " as current congestion level.\n" << std::flush;
+          << " as current congestion level.\n" << std::flush;
 
     return congestion;
 
@@ -1732,18 +1732,18 @@ int NXTransHandler(int fd, int type, void (*handler)(void *parameter,
     default:
     {
       nxinfo << "NXTransHandler: WARNING! Failed to set "
-              << "the NX callback for event '" << type << "' to '"
-              << (void *) handler << "' and parameter '"
-              << parameter << "'.\n" << std::flush;
+             << "the NX callback for event '" << type << "' to '"
+             << (void *) handler << "' and parameter '"
+             << parameter << "'.\n" << std::flush;
 
       return 0;
     }
   }
 
   nxinfo << "NXTransHandler: Set the NX "
-          << "callback for event '" << type << "' to '"
-          << (void *) handler << "' and parameter '"
-          << parameter << "'.\n" << std::flush;
+         << "callback for event '" << type << "' to '"
+         << (void *) handler << "' and parameter '"
+         << parameter << "'.\n" << std::flush;
 
   return 1;
 }
@@ -1759,7 +1759,7 @@ int NXTransRead(int fd, char *data, int size)
           fd == agentFD[0])
   {
     nxdbg << "NXTransRead: Dequeuing " << size << " bytes "
-            << "from FD#" << agentFD[0] << ".\n" << std::flush;
+          << "from FD#" << agentFD[0] << ".\n" << std::flush;
 
     int result = agent -> dequeueData(data, size);
 
@@ -1767,12 +1767,12 @@ int NXTransRead(int fd, char *data, int size)
     if (result < 0 && EGET() == EAGAIN)
     {
       nxdbg << "NXTransRead: WARNING! Dequeuing from FD#"
-              << agentFD[0] << " would block.\n" << std::flush;
+            << agentFD[0] << " would block.\n" << std::flush;
     }
     else
     {
       nxdbg << "NXTransRead: Dequeued " << result << " bytes "
-              << "to FD#" << agentFD[0] << ".\n" << std::flush;
+            << "to FD#" << agentFD[0] << ".\n" << std::flush;
     }
 
 
@@ -1781,7 +1781,7 @@ int NXTransRead(int fd, char *data, int size)
   else
   {
     nxdbg << "NXTransRead: Reading " << size << " bytes "
-            << "from FD#" << fd << ".\n" << std::flush;
+          << "from FD#" << fd << ".\n" << std::flush;
 
     return read(fd, data, size);
   }
@@ -1802,7 +1802,7 @@ int NXTransReadVector(int fd, struct iovec *iovdata, int iovsize)
             agent -> localReadable() > 0)
     {
       nxdbg << "NXTransReadVector: WARNING! Agent has data readable.\n"
-              << std::flush;
+            << std::flush;
     }
 
 
@@ -1827,8 +1827,8 @@ int NXTransReadVector(int fd, struct iovec *iovdata, int iovsize)
       while (length > 0)
       {
         nxdbg << "NXTransReadVector: Dequeuing " << length
-                << " bytes " << "from FD#" << agentFD[0] << ".\n"
-                << std::flush;
+              << " bytes " << "from FD#" << agentFD[0] << ".\n"
+              << std::flush;
 
         result = agent -> dequeueData(base, length);
 
@@ -1836,13 +1836,13 @@ int NXTransReadVector(int fd, struct iovec *iovdata, int iovsize)
         if (result < 0 && EGET() == EAGAIN)
         {
           nxdbg << "NXTransReadVector: WARNING! Dequeuing from FD#"
-                  << agentFD[0] << " would block.\n" << std::flush;
+                << agentFD[0] << " would block.\n" << std::flush;
         }
         else
         {
           nxdbg << "NXTransReadVector: Dequeued " << result
-                  << " bytes " << "from FD#" << agentFD[0] << ".\n"
-                  << std::flush;
+                << " bytes " << "from FD#" << agentFD[0] << ".\n"
+                << std::flush;
         }
 
 
@@ -1868,8 +1868,8 @@ int NXTransReadVector(int fd, struct iovec *iovdata, int iovsize)
   else
   {
     nxdbg << "NXTransReadVector: Reading vector with "
-            << iovsize << " elements from FD#" << fd << ".\n"
-            << std::flush;
+          << iovsize << " elements from FD#" << fd << ".\n"
+          << std::flush;
 
     return readv(fd, iovdata, iovsize);
   }
@@ -1890,13 +1890,13 @@ int NXTransReadable(int fd, int *readable)
     if (result == -1)
     {
       nxdbg << "NXTransReadable: Error detected on FD#"
-              << fd << ".\n" << std::flush;
+            << fd << ".\n" << std::flush;
     }
     else
     {
       nxdbg << "NXTransReadable: Returning " << *readable
-              << " bytes as readable from FD#" << fd
-              << ".\n" << std::flush;
+            << " bytes as readable from FD#" << fd
+            << ".\n" << std::flush;
     }
 
     return result;
@@ -1920,8 +1920,8 @@ int NXTransReadable(int fd, int *readable)
       if (proxy != NULL && proxy -> canRead() == 1)
       {
         nxinfo << "NXTransReadable: WARNING! Trying to "
-                << "read to generate new agent data.\n"
-                << std::flush;
+               << "read to generate new agent data.\n"
+               << std::flush;
 
         //
         // Set the context as the function
@@ -1936,8 +1936,8 @@ int NXTransReadable(int fd, int *readable)
         if (proxy -> handleRead() < 0)
         {
           nxinfo << "NXTransReadable: Failure reading "
-                  << "messages from proxy FD#" << proxyFD
-                  << ".\n" << std::flush;
+                 << "messages from proxy FD#" << proxyFD
+                 << ".\n" << std::flush;
 
           HandleShutdown();
         }
@@ -1952,8 +1952,8 @@ int NXTransReadable(int fd, int *readable)
       }
 
       nxdbg << "NXTransReadable: Returning " << 0
-              << " bytes as readable from FD#" << fd
-              << " with result 0.\n" << std::flush;
+            << " bytes as readable from FD#" << fd
+            << " with result 0.\n" << std::flush;
 
       *readable = 0;
 
@@ -1962,8 +1962,8 @@ int NXTransReadable(int fd, int *readable)
     case -1:
     {
       nxdbg << "NXTransReadable: Returning " << 0
-              << " bytes as readable from FD#" << fd
-              << " with result -1.\n" << std::flush;
+            << " bytes as readable from FD#" << fd
+            << " with result -1.\n" << std::flush;
 
       *readable = 0;
 
@@ -1972,8 +1972,8 @@ int NXTransReadable(int fd, int *readable)
     default:
     {
       nxdbg << "NXTransReadable: Returning " << result
-              << " bytes as readable from FD#" << fd
-              << " with result 0.\n" << std::flush;
+            << " bytes as readable from FD#" << fd
+            << " with result 0.\n" << std::flush;
 
       *readable = result;
 
@@ -2003,8 +2003,8 @@ int NXTransWrite(int fd, char *data, int size)
       if (proxy -> canRead(agentFD[1]) == 0)
       {
         nxdbg << "NXTransWrite: WARNING! Delayed enqueuing to FD#"
-                << agentFD[0] << " with proxy unable to read.\n"
-                << std::flush;
+              << agentFD[0] << " with proxy unable to read.\n"
+              << std::flush;
 
         ESET(EAGAIN);
 
@@ -2027,8 +2027,8 @@ int NXTransWrite(int fd, char *data, int size)
       //
 
       nxdbg << "NXTransWrite: Letting the channel borrow "
-              << size << " bytes from FD#" << agentFD[0]
-              << ".\n" << std::flush;
+            << size << " bytes from FD#" << agentFD[0]
+            << ".\n" << std::flush;
 
       result = proxy -> handleRead(agentFD[1], data, size);
 
@@ -2058,7 +2058,7 @@ int NXTransWrite(int fd, char *data, int size)
       //
 
       nxdbg << "NXTransWrite: Enqueuing " << size << " bytes "
-              << "to FD#" << agentFD[0] << ".\n" << std::flush;
+            << "to FD#" << agentFD[0] << ".\n" << std::flush;
 
       result = agent -> enqueueData(data, size);
     }
@@ -2069,19 +2069,19 @@ int NXTransWrite(int fd, char *data, int size)
       if (EGET() == EAGAIN)
       {
         nxdbg << "NXTransWrite: WARNING! Enqueuing to FD#"
-                << agentFD[0] << " would block.\n"
-                << std::flush;
+              << agentFD[0] << " would block.\n"
+              << std::flush;
       }
       else
       {
         nxdbg << "NXTransWrite: WARNING! Error enqueuing to FD#"
-                << agentFD[0] << ".\n" << std::flush;
+              << agentFD[0] << ".\n" << std::flush;
       }
     }
     else
     {
       nxdbg << "NXTransWrite: Enqueued " << result << " bytes "
-              << "to FD#" << agentFD[0] << ".\n" << std::flush;
+            << "to FD#" << agentFD[0] << ".\n" << std::flush;
     }
 
 
@@ -2090,7 +2090,7 @@ int NXTransWrite(int fd, char *data, int size)
   else
   {
     nxdbg << "NXTransWrite: Writing " << size << " bytes "
-            << "to FD#" << fd << ".\n" << std::flush;
+          << "to FD#" << fd << ".\n" << std::flush;
 
     return write(fd, data, size);
   }
@@ -2123,8 +2123,8 @@ int NXTransWriteVector(int fd, struct iovec *iovdata, int iovsize)
       if (proxy -> canRead(agentFD[1]) == 0)
       {
         nxdbg << "NXTransWriteVector: WARNING! Delayed enqueuing to FD#"
-                << agentFD[0] << " with proxy unable to read.\n"
-                << std::flush;
+              << agentFD[0] << " with proxy unable to read.\n"
+              << std::flush;
 
         ESET(EAGAIN);
 
@@ -2169,8 +2169,8 @@ int NXTransWriteVector(int fd, struct iovec *iovdata, int iovsize)
           //
 
           nxdbg << "NXTransWriteVector: Letting the channel borrow "
-                  << length << " bytes from FD#" << agentFD[0]
-                  << ".\n" << std::flush;
+                << length << " bytes from FD#" << agentFD[0]
+                << ".\n" << std::flush;
 
           result = proxy -> handleRead(agentFD[1], base, length);
 
@@ -2200,8 +2200,8 @@ int NXTransWriteVector(int fd, struct iovec *iovdata, int iovsize)
           //
 
           nxdbg << "NXTransWriteVector: Enqueuing " << length
-                  << " bytes " << "to FD#" << agentFD[0] << ".\n"
-                  << std::flush;
+                << " bytes " << "to FD#" << agentFD[0] << ".\n"
+                << std::flush;
 
           result = agent -> enqueueData(base, length);
         }
@@ -2212,20 +2212,20 @@ int NXTransWriteVector(int fd, struct iovec *iovdata, int iovsize)
           if (EGET() == EAGAIN)
           {
             nxdbg << "NXTransWriteVector: WARNING! Enqueuing to FD#"
-                    << agentFD[0] << " would block.\n"
-                    << std::flush;
+                  << agentFD[0] << " would block.\n"
+                  << std::flush;
           }
           else
           {
             nxdbg << "NXTransWriteVector: WARNING! Error enqueuing to FD#"
-                    << agentFD[0] << ".\n" << std::flush;
+                  << agentFD[0] << ".\n" << std::flush;
           }
         }
         else
         {
           nxdbg << "NXTransWriteVector: Enqueued " << result
-                  << " bytes " << "to FD#" << agentFD[0] << ".\n"
-                  << std::flush;
+                << " bytes " << "to FD#" << agentFD[0] << ".\n"
+                << std::flush;
         }
 
 
@@ -2251,8 +2251,8 @@ int NXTransWriteVector(int fd, struct iovec *iovdata, int iovsize)
   else
   {
     nxdbg << "NXTransWriteVector: Writing vector with "
-            << iovsize << " elements to FD#" << fd << ".\n"
-            << std::flush;
+          << iovsize << " elements to FD#" << fd << ".\n"
+          << std::flush;
 
     return writev(fd, iovdata, iovsize);
   }
@@ -2265,10 +2265,10 @@ int NXTransPolicy(int fd, int type)
     if (usePolicy == -1)
     {
       nxinfo << "NXTransPolicy: Setting flush policy on "
-              << "proxy FD#" << proxyFD << " to '"
-              << DumpPolicy(type == NX_POLICY_DEFERRED ?
-                     policy_deferred : policy_immediate)
-              << "'.\n" << std::flush;
+             << "proxy FD#" << proxyFD << " to '"
+             << DumpPolicy(type == NX_POLICY_DEFERRED ?
+                           policy_deferred : policy_immediate)
+             << "'.\n" << std::flush;
 
       control -> FlushPolicy = (type == NX_POLICY_DEFERRED ?
                                     policy_deferred : policy_immediate);
@@ -2283,9 +2283,9 @@ int NXTransPolicy(int fd, int type)
     else
     {
       nxinfo << "NXTransPolicy: Ignoring the agent "
-              << "setting with user policy set to '"
-              << DumpPolicy(control -> FlushPolicy)
-              << "'.\n" << std::flush;
+             << "setting with user policy set to '"
+             << DumpPolicy(control -> FlushPolicy)
+             << "'.\n" << std::flush;
 
       return 0;
     }
@@ -2300,17 +2300,17 @@ int NXTransFlushable(int fd)
           fd != agentFD[0])
   {
     nxdbg << "NXTransFlushable: Returning 0 bytes as "
-            << "flushable for unrecognized FD#" << fd
-            << ".\n" << std::flush;
+          << "flushable for unrecognized FD#" << fd
+          << ".\n" << std::flush;
 
     return 0;
   }
   else
   {
     nxdbg << "NXTransFlushable: Returning " << proxy ->
-               getFlushable(proxyFD) << " as bytes flushable on "
-            << "proxy FD#" << proxyFD << ".\n"
-            << std::flush;
+             getFlushable(proxyFD) << " as bytes flushable on "
+          << "proxy FD#" << proxyFD << ".\n"
+          << std::flush;
 
     return proxy -> getFlushable(proxyFD);
   }
@@ -2321,8 +2321,8 @@ int NXTransFlush(int fd)
   if (proxy != NULL)
   {
     nxinfo << "NXTransFlush: Requesting an immediate flush of "
-            << "proxy FD#" << proxyFD << ".\n"
-            << std::flush;
+           << "proxy FD#" << proxyFD << ".\n"
+           << std::flush;
 
     return proxy -> handleFlush();
   }
@@ -2345,8 +2345,8 @@ int NXTransChannel(int fd, int channelFd, int type)
     }
 
     nxinfo << "NXTransChannel: Going to create a new channel "
-            << "with type '" << type << "' on FD#" << channelFd
-            << ".\n" << std::flush;
+           << "with type '" << type << "' on FD#" << channelFd
+           << ".\n" << std::flush;
 
     int result = -1;
 
@@ -2419,7 +2419,7 @@ int NXTransChannel(int fd, int channelFd, int type)
       default:
       {
         nxwarn << "NXTransChannel: WARNING! Unrecognized channel "
-                << "type '" << type << "'.\n" << std::flush;
+               << "type '" << type << "'.\n" << std::flush;
 
         break;
       }
@@ -2429,8 +2429,8 @@ int NXTransChannel(int fd, int channelFd, int type)
     if (result != 1)
     {
       nxwarn << "NXTransChannel: WARNING! Could not create the "
-                << "new channel with type '" << type << "' on FD#"
-                << channelFd << ".\n" << std::flush;
+             << "new channel with type '" << type << "' on FD#"
+             << channelFd << ".\n" << std::flush;
     }
 
 
@@ -2498,8 +2498,8 @@ int NXTransAlert(int code, int local)
   if (proxy != NULL)
   {
     nxdbg << "NXTransAlert: Requesting a NX dialog with code "
-            << code << " and local " << local << ".\n"
-            << std::flush;
+          << code << " and local " << local << ".\n"
+          << std::flush;
 
     if (local == 0)
     {
@@ -2534,7 +2534,7 @@ int NXTransAlert(int code, int local)
     }
 
     nxdbg << "NXTransAlert: Can't request an alert without "
-            << "a valid NX transport.\n" << std::flush;
+          << "a valid NX transport.\n" << std::flush;
   }
 
   return 0;
@@ -2566,7 +2566,7 @@ int NXTransPrepare(int *setFDs, fd_set *readSet,
   }
 
   nxinfo << "NXTransPrepare: Going to prepare the NX transport.\n"
-          << std::flush;
+         << std::flush;
 
   if (control -> ProxyStage < stage_operational)
   {
@@ -2578,16 +2578,16 @@ int NXTransPrepare(int *setFDs, fd_set *readSet,
     if (isTimestamp(*selectTs) == 0)
     {
       nxinfo << "Loop: WARNING! Preparing the select with requested "
-              << "timeout of " << selectTs -> tv_sec << " S and "
-              << (double) selectTs -> tv_usec / 1000 << " Ms.\n"
-              << std::flush;
+             << "timeout of " << selectTs -> tv_sec << " S and "
+             << (double) selectTs -> tv_usec / 1000 << " Ms.\n"
+             << std::flush;
     }
     else
     {
       nxinfo << "Loop: Preparing the select with requested "
-              << "timeout of " << selectTs -> tv_sec << " S and "
-              << (double) selectTs -> tv_usec / 1000 << " Ms.\n"
-              << std::flush;
+             << "timeout of " << selectTs -> tv_sec << " S and "
+             << (double) selectTs -> tv_usec / 1000 << " Ms.\n"
+             << std::flush;
     }
 
 
@@ -2632,8 +2632,8 @@ int NXTransPrepare(int *setFDs, fd_set *readSet,
   int diffTs = diffTimestamp(startTs, nowTs);
 
   nxinfo << "Loop: Mark - 0 - at " << strMsTimestamp()
-          << " with " << diffTs << " Ms elapsed.\n"
-          << std::flush;
+         << " with " << diffTs << " Ms elapsed.\n"
+         << std::flush;
 
   //
   // TODO: Should add the read time in two
@@ -2650,7 +2650,7 @@ int NXTransPrepare(int *setFDs, fd_set *readSet,
   startTs = nowTs;
 
   nxdbg << "Loop: New timestamp is " << strMsTimestamp(startTs)
-          << ".\n" << std::flush;
+        << ".\n" << std::flush;
 
   return 1;
 }
@@ -2692,7 +2692,7 @@ int NXTransSelect(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
   }
 
   nxinfo << "NXTransSelect: Going to select the NX descriptors.\n"
-          << std::flush;
+         << std::flush;
 
 
   handleCheckSelectInLoop(*setFDs, *readSet, *writeSet, *selectTs);
@@ -2702,8 +2702,8 @@ int NXTransSelect(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
   if (diffTs > 20)
   {
     nxdbg << "Loop: TIME! Spent " << diffTs
-            << " Ms handling messages for proxy FD#"
-            << proxyFD << ".\n" << std::flush;
+          << " Ms handling messages for proxy FD#"
+          << proxyFD << ".\n" << std::flush;
   }
 
   lastTs = getNewTimestamp();
@@ -2712,18 +2712,18 @@ int NXTransSelect(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
   if (isTimestamp(*selectTs) == 0)
   {
     nxinfo << "Loop: WARNING! Executing the select with requested "
-            << "timeout of " << selectTs -> tv_sec << " S and "
-            << (double) selectTs -> tv_usec / 1000 << " Ms.\n"
-            << std::flush;
+           << "timeout of " << selectTs -> tv_sec << " S and "
+           << (double) selectTs -> tv_usec / 1000 << " Ms.\n"
+           << std::flush;
   }
   else if (proxy != NULL && proxy -> getFlushable(proxyFD) > 0)
   {
     nxinfo << "Loop: WARNING! Proxy FD#" << proxyFD
-            << " has " << proxy -> getFlushable(proxyFD)
-            << " bytes to write but timeout is "
-            << selectTs -> tv_sec << " S and "
-            << selectTs -> tv_usec / 1000 << " Ms.\n"
-            << std::flush;
+           << " has " << proxy -> getFlushable(proxyFD)
+           << " bytes to write but timeout is "
+           << selectTs -> tv_sec << " S and "
+           << selectTs -> tv_usec / 1000 << " Ms.\n"
+           << std::flush;
   }
 
 
@@ -2743,8 +2743,8 @@ int NXTransSelect(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
   if (diffTs > 100)
   {
     nxdbg << "Loop: TIME! Spent " << diffTs
-            << " Ms waiting for new data for proxy FD#"
-            << proxyFD << ".\n" << std::flush;
+          << " Ms waiting for new data for proxy FD#"
+          << proxyFD << ".\n" << std::flush;
   }
 
   lastTs = getNewTimestamp();
@@ -2769,13 +2769,13 @@ int NXTransSelect(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
   diffTs = diffTimestamp(startTs, nowTs);
 
   nxinfo << "Loop: Out of select after " << diffTs << " Ms "
-          << "at " << strMsTimestamp(nowTs) << " with result "
-          << *resultFDs << ".\n" << std::flush;
+         << "at " << strMsTimestamp(nowTs) << " with result "
+         << *resultFDs << ".\n" << std::flush;
 
   startTs = nowTs;
 
   nxdbg << "Loop: New timestamp is " << strMsTimestamp(startTs)
-          << ".\n" << std::flush;
+        << ".\n" << std::flush;
 
   if (control -> ProxyStage >= stage_operational)
   {
@@ -2807,13 +2807,13 @@ int NXTransSelect(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
       if (*errorFDs == EINTR)
       {
         nxinfo << "Loop: Select failed due to EINTR error.\n"
-                << std::flush;
+               << std::flush;
       }
       else
       {
         nxinfo << "Loop: WARNING! Call to select failed. Error is "
-                << EGET() << " '" << ESTR() << "'.\n"
-                << std::flush;
+               << EGET() << " '" << ESTR() << "'.\n"
+               << std::flush;
       }
 
     }
@@ -2859,7 +2859,7 @@ int NXTransExecute(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
   }
 
   nxinfo << "NXTransExecute: Going to execute I/O on the NX descriptors.\n"
-          << std::flush;
+         << std::flush;
 
   if (control -> ProxyStage >= stage_operational)
   {
@@ -2874,8 +2874,8 @@ int NXTransExecute(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
     }
 
     nxinfo << "Loop: Mark - 1 - at " << strMsTimestamp()
-            << " with " << diffTimestamp(startTs, getTimestamp())
-            << " Ms elapsed.\n" << std::flush;
+           << " with " << diffTimestamp(startTs, getTimestamp())
+           << " Ms elapsed.\n" << std::flush;
 
     //
     // Rotate the channel that will be handled
@@ -2891,8 +2891,8 @@ int NXTransExecute(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
     handleWritableInLoop(*resultFDs, *writeSet);
 
     nxinfo << "Loop: Mark - 2 - at " << strMsTimestamp()
-            << " with " << diffTimestamp(startTs, getTimestamp())
-            << " Ms elapsed.\n" << std::flush;
+           << " with " << diffTimestamp(startTs, getTimestamp())
+           << " Ms elapsed.\n" << std::flush;
 
     //
     // Check if any socket has become readable.
@@ -2901,8 +2901,8 @@ int NXTransExecute(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
     handleReadableInLoop(*resultFDs, *readSet);
 
     nxinfo << "Loop: Mark - 3 - at " << strMsTimestamp()
-            << " with " << diffTimestamp(startTs, getTimestamp())
-            << " Ms elapsed.\n" << std::flush;
+           << " with " << diffTimestamp(startTs, getTimestamp())
+           << " Ms elapsed.\n" << std::flush;
 
     //
     // Handle the scheduled events on channels.
@@ -2923,8 +2923,8 @@ int NXTransExecute(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
     handleEventsInLoop();
 
     nxinfo << "Loop: Mark - 4 - at " << strMsTimestamp()
-            << " with " << diffTimestamp(startTs, getTimestamp())
-            << " Ms elapsed.\n" << std::flush;
+           << " with " << diffTimestamp(startTs, getTimestamp())
+           << " Ms elapsed.\n" << std::flush;
 
     //
     // Check if user sent a signal to produce
@@ -2946,8 +2946,8 @@ int NXTransExecute(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
     }
 
     nxinfo << "Loop: Mark - 5 - at " << strMsTimestamp()
-            << " with " << diffTimestamp(startTs, getTimestamp())
-            << " Ms elapsed.\n" << std::flush;
+           << " with " << diffTimestamp(startTs, getTimestamp())
+           << " Ms elapsed.\n" << std::flush;
 
     //
     // Check if there is any data to flush.
@@ -2958,8 +2958,8 @@ int NXTransExecute(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
     handleFlushInLoop();
 
     nxinfo << "Loop: Mark - 6 - at " << strMsTimestamp()
-            << " with " << diffTimestamp(startTs, getTimestamp())
-            << " Ms elapsed.\n" << std::flush;
+           << " with " << diffTimestamp(startTs, getTimestamp())
+           << " Ms elapsed.\n" << std::flush;
   }
 
   //
@@ -2991,8 +2991,8 @@ int NXTransExecute(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
     handleCheckStateInLoop(*setFDs);
 
     nxinfo << "Loop: Mark - 7 - at " << strMsTimestamp()
-            << " with " << diffTimestamp(startTs, getTimestamp())
-            << " Ms elapsed.\n" << std::flush;
+           << " with " << diffTimestamp(startTs, getTimestamp())
+           << " Ms elapsed.\n" << std::flush;
   }
 
   //
@@ -3034,8 +3034,8 @@ int InitBeforeNegotiation()
   initTs  = nowTs;
 
   nxinfo << "Loop: INIT! Taking mark for initialization at "
-          << strMsTimestamp(initTs) << ".\n"
-          << std::flush;
+         << strMsTimestamp(initTs) << ".\n"
+         << std::flush;
 
   //
   // If not explicitly specified, determine if local
@@ -3059,8 +3059,8 @@ int InitBeforeNegotiation()
   if (control -> ProxyMode == proxy_client)
   {
     nxinfo << "Loop: Starting watchdog process with timeout of "
-            << control -> InitTimeout / 1000 << " seconds.\n"
-            << std::flush;
+           << control -> InitTimeout / 1000 << " seconds.\n"
+           << std::flush;
 
     lastWatchdog = NXTransWatchdog(control -> InitTimeout);
 
@@ -3074,7 +3074,7 @@ int InitBeforeNegotiation()
     else
     {
       nxinfo << "Loop: Watchdog started with pid '"
-              << lastWatchdog << "'.\n" << std::flush;
+             << lastWatchdog << "'.\n" << std::flush;
     }
   }
 
@@ -3107,8 +3107,8 @@ int InitBeforeNegotiation()
   setHostBigEndian(*((unsigned char *) (&test)) == 0);
 
   nxinfo << "Loop: Local host is "
-          << (hostBigEndian() ? "big endian" : "little endian")
-          << ".\n" << std::flush;
+         << (hostBigEndian() ? "big endian" : "little endian")
+         << ".\n" << std::flush;
 
   if (control -> ProxyMode == proxy_client)
   {
@@ -3196,13 +3196,13 @@ int SetupProxyConnection()
       if (connectSocket.getSpec(&socketUri))
       {
         nxinfo << "Loop: Going to connect to '" << socketUri
-                << "'.\n" << std::flush;
+               << "'.\n" << std::flush;
         free(socketUri);
 
         proxyFD = ConnectToRemote(connectSocket);
 
         nxinfo << "Loop: Connected to remote proxy on FD#"
-                << proxyFD << ".\n" << std::flush;
+               << proxyFD << ".\n" << std::flush;
 
         cerr << "Info" << ": Connected to remote proxy on FD#"
              << proxyFD << ".\n";
@@ -3219,7 +3219,7 @@ int SetupProxyConnection()
       if (listenSocket.getSpec(&socketUri))
       {
         nxinfo << "Loop: Going to wait for connection at '"
-                << socketUri << "'.\n" << std::flush;
+               << socketUri << "'.\n" << std::flush;
         free(socketUri);
 
         proxyFD = WaitForRemote(listenSocket);
@@ -3227,12 +3227,12 @@ int SetupProxyConnection()
         if (WE_LISTEN_FORWARDER)
         {
           nxinfo << "Loop: Connected to remote forwarder on FD#"
-                  << proxyFD << ".\n" << std::flush;
+                 << proxyFD << ".\n" << std::flush;
         }
         else
         {
           nxinfo << "Loop: Connected to remote proxy on FD#"
-                  << proxyFD << ".\n" << std::flush;
+                 << proxyFD << ".\n" << std::flush;
         }
 
       }
@@ -3241,7 +3241,7 @@ int SetupProxyConnection()
   else
   {
     nxinfo << "Loop: Using the inherited connection on FD#"
-            << proxyFD << ".\n" << std::flush;
+           << proxyFD << ".\n" << std::flush;
   }
 
   //
@@ -3273,7 +3273,7 @@ int SetupProxyConnection()
 int InitAfterNegotiation()
 {
   nxinfo << "Loop: Connection with remote proxy completed.\n"
-          << std::flush;
+         << std::flush;
 
   cerr << "Info" << ": Connection with remote proxy completed.\n"
         << logofs_flush;
@@ -3360,9 +3360,9 @@ int InitAfterNegotiation()
   //
 
   nxinfo << "Loop: INIT! Completed initialization at "
-          << strMsTimestamp(nowTs) << " with "
-          << diffTimestamp(initTs, nowTs) << " Ms "
-          << "since the init mark.\n" << std::flush;
+         << strMsTimestamp(nowTs) << " with "
+         << diffTimestamp(initTs, nowTs) << " Ms "
+         << "since the init mark.\n" << std::flush;
 
   initTs = getNewTimestamp();
 
@@ -3391,16 +3391,16 @@ int SetMode(int mode)
     if (mode == NX_MODE_CLIENT)
     {
       nxinfo << "Loop: INIT! Initializing with mode "
-              << "NX_MODE_CLIENT at " << strMsTimestamp()
-              << ".\n" << std::flush;
+             << "NX_MODE_CLIENT at " << strMsTimestamp()
+             << ".\n" << std::flush;
 
       control -> ProxyMode = proxy_client;
     }
     else if (mode == NX_MODE_SERVER)
     {
       nxinfo << "Loop: INIT! Initializing with mode "
-              << "NX_MODE_SERVER at " << strMsTimestamp()
-              << ".\n" << std::flush;
+             << "NX_MODE_SERVER at " << strMsTimestamp()
+             << ".\n" << std::flush;
 
       control -> ProxyMode = proxy_server;
     }
@@ -3550,8 +3550,8 @@ int SetupProxyInstance()
   if (proxy -> getFlushable(proxyFD) > 0)
   {
     nxinfo << "Loop: WARNING! Proxy FD#" << proxyFD << " has data "
-            << "to flush after setup of the NX transport.\n"
-            << std::flush;
+           << "to flush after setup of the NX transport.\n"
+           << std::flush;
   }
 
 
@@ -3604,7 +3604,7 @@ int SetupAuthInstance()
         *(launchdAddrUnix.sun_path + launchdAddrNameLength - 1) = '\0';
 
         nxinfo << "Loop: Connecting to launchd service "
-                << "on Unix port '" << displayHost << "'.\n" << std::flush;
+               << "on Unix port '" << displayHost << "'.\n" << std::flush;
 
         int launchdFd = socket(launchdAddrFamily, SOCK_STREAM, PF_UNSPEC);
 
@@ -3617,9 +3617,9 @@ int SetupAuthInstance()
         else if ((success = connect(launchdFd, (sockaddr *) &launchdAddrUnix, launchdAddrLength)) < 0)
         {
           nxwarn << "Loop: WARNING! Connection to launchd service "
-                  << "on Unix port '" << displayHost << "' failed "
-                  << "with error " << EGET() << ", '" << ESTR() << "'.\n"
-                  << std::flush;
+                 << "on Unix port '" << displayHost << "' failed "
+                 << "with error " << EGET() << ", '" << ESTR() << "'.\n"
+                 << std::flush;
         }
 
         if (launchdFd >= 0)
@@ -3669,8 +3669,8 @@ int SetupAuthInstance()
       else if (auth -> isFake() == 1)
       {
         nxwarn << "Loop: WARNING! Could not retrieve the X server "
-                << "authentication cookie.\n"
-                << std::flush;
+               << "authentication cookie.\n"
+               << std::flush;
 
         cerr << "Warning" << ": Failed to read data from the X "
              << "auth command.\n";
@@ -3682,13 +3682,13 @@ int SetupAuthInstance()
     else
     {
       nxinfo << "Loop: No proxy cookie was provided for "
-              << "authentication.\n" << std::flush;
+             << "authentication.\n" << std::flush;
 
       cerr << "Info" << ": No proxy cookie was provided for "
            << "authentication.\n";
 
       nxinfo << "Loop: Forwarding the real X authorization "
-              << "cookie.\n" << std::flush;
+             << "cookie.\n" << std::flush;
 
       cerr << "Info" << ": Forwarding the real X authorization "
            << "cookie.\n";
@@ -3868,7 +3868,7 @@ int SetupDisplaySocket(int &addr_family, sockaddr *&addr,
   if ((strncasecmp(display, "/tmp/launch", 11) == 0) || (strncasecmp(display, "/private/tmp/com.apple.launchd", 30) == 0))
   {
     nxinfo << "Loop: Using launchd service on socket '"
-            << display << "'.\n" << std::flush;
+           << display << "'.\n" << std::flush;
 
     useLaunchdSocket = 1;
   }
@@ -3892,8 +3892,8 @@ int SetupDisplaySocket(int &addr_family, sockaddr *&addr,
   xPort = atoi(separator + 1);
 
   nxinfo << "Loop: Using local X display '" << displayHost
-          << "' with host '" << display << "' and port '"
-          << xPort << "'.\n" << std::flush;
+         << "' with host '" << display << "' and port '"
+         << xPort << "'.\n" << std::flush;
 
   #ifdef __APPLE__
 
@@ -3911,7 +3911,7 @@ int SetupDisplaySocket(int &addr_family, sockaddr *&addr,
     //
 
     nxinfo << "Loop: Using real X server on UNIX domain socket.\n"
-            << std::flush;
+           << std::flush;
 
     sockaddr_un *xServerAddrUNIX = new sockaddr_un;
 
@@ -3991,7 +3991,7 @@ int SetupDisplaySocket(int &addr_family, sockaddr *&addr,
     *(unixSocketDir + DEFAULT_STRING_LENGTH - 1) = '\0';
 
     nxinfo << "Loop: Assuming X socket in directory '"
-            << unixSocketDir << "'.\n" << std::flush;
+           << unixSocketDir << "'.\n" << std::flush;
 
     if (stat(unixSocketDir, &statInfo) < 0)
     {
@@ -4023,7 +4023,7 @@ int SetupDisplaySocket(int &addr_family, sockaddr *&addr,
     #endif
 
     nxinfo << "Loop: Assuming X socket name '" << unixSocketName
-            << "'.\n" << std::flush;
+           << "'.\n" << std::flush;
 
     strcpy(xServerAddrUNIX -> sun_path, unixSocketName);
 
@@ -4042,7 +4042,7 @@ int SetupDisplaySocket(int &addr_family, sockaddr *&addr,
     //
 
     nxinfo << "Loop: Using real X server on TCP port.\n"
-            << std::flush;
+           << std::flush;
 
     addr_family = AF_INET;
 
@@ -4312,14 +4312,14 @@ static int AcceptConnection(int fd, int domain, const char *label)
   if (domain == AF_UNIX)
   {
     nxinfo << "Loop: Going to accept new Unix " << label
-            << " connection on FD#" << fd << ".\n"
-            << std::flush;
+           << " connection on FD#" << fd << ".\n"
+           << std::flush;
   }
   else
   {
     nxinfo << "Loop: Going to accept new TCP " << label
-            << " connection on FD#" << fd << ".\n"
-            << std::flush;
+           << " connection on FD#" << fd << ".\n"
+           << std::flush;
   }
 
 
@@ -4363,8 +4363,8 @@ void HandleShutdown()
     cerr << "Error" << ": Connection with remote peer broken.\n";
 
     nxinfo << "Loop: Bytes received so far are "
-            << (unsigned long long) statistics -> getBytesIn()
-            << ".\n" << std::flush;
+           << (unsigned long long) statistics -> getBytesIn()
+           << ".\n" << std::flush;
 
     cerr << "Error" << ": Please check the state of your "
          << "network and retry.\n";
@@ -4374,7 +4374,7 @@ void HandleShutdown()
     if (control -> ProxyMode == proxy_server)
     {
       nxinfo << "Loop: Showing the proxy abort dialog.\n"
-              << std::flush;
+             << std::flush;
 
       HandleAlert(ABORT_PROXY_CONNECTION_ALERT, 1);
 
@@ -4384,7 +4384,7 @@ void HandleShutdown()
   else
   {
     nxinfo << "Loop: Finalized the remote proxy shutdown.\n"
-            << std::flush;
+           << std::flush;
   }
 
   HandleCleanup();
@@ -4408,9 +4408,9 @@ int KillProcess(int pid, const char *label, int signal, int wait)
   if (pid > 0)
   {
     nxinfo << "Loop: Killing the " << label << " process '"
-            << pid << "' from process with pid '" << getpid()
-            << "' with signal '" << DumpSignal(signal)
-            << "'.\n" << std::flush;
+           << pid << "' from process with pid '" << getpid()
+           << "' with signal '" << DumpSignal(signal)
+           << "'.\n" << std::flush;
 
     signal = (signal == 0 ? SIGTERM : signal);
 
@@ -4434,8 +4434,8 @@ int KillProcess(int pid, const char *label, int signal, int wait)
   else
   {
     nxinfo << "Loop: No " << label << " process "
-            << "to kill with pid '" << pid
-            << "'.\n" << std::flush;
+           << "to kill with pid '" << pid
+           << "'.\n" << std::flush;
 
     return 0;
   }
@@ -4444,14 +4444,14 @@ int KillProcess(int pid, const char *label, int signal, int wait)
 int CheckProcess(int pid, const char *label)
 {
   nxinfo << "Loop: Checking the " << label << " process '"
-          << pid << "' from process with pid '" << getpid()
-          << "'.\n" << std::flush;
+         << pid << "' from process with pid '" << getpid()
+         << "'.\n" << std::flush;
 
   if (kill(pid, SIGCONT) < 0 && EGET() == ESRCH)
   {
     nxwarn << "Loop: WARNING! The " << label << " process "
-            << "with pid '" << pid << "' has exited.\n"
-            << std::flush;
+           << "with pid '" << pid << "' has exited.\n"
+           << std::flush;
 
     cerr << "Warning" << ": The " << label << " process "
          << "with pid '" << pid << "' has exited.\n";
@@ -4493,8 +4493,8 @@ int StartKeeper()
   if (control -> LocalTotalStorageSize > 0)
   {
     nxinfo << "Loop: Starting the house-keeping process with "
-            << "storage size " << control -> PersistentCacheDiskLimit
-            << ".\n" << std::flush;
+           << "storage size " << control -> PersistentCacheDiskLimit
+           << ".\n" << std::flush;
 
     lastKeeper = NXTransKeeper(control -> PersistentCacheDiskLimit,
                                    0, control -> RootPath);
@@ -4502,7 +4502,7 @@ int StartKeeper()
     if (IsFailed(lastKeeper))
     {
       nxwarn << "Loop: WARNING! Failed to start the NX keeper process.\n"
-              << std::flush;
+             << std::flush;
 
       cerr << "Warning" << ": Failed to start the NX keeper process.\n";
 
@@ -4511,14 +4511,14 @@ int StartKeeper()
     else
     {
       nxinfo << "Loop: Keeper started with pid '"
-              << lastKeeper << "'.\n" << std::flush;
+             << lastKeeper << "'.\n" << std::flush;
     }
   }
   else
   {
     nxinfo << "Loop: Nothing to do for the keeper process "
-            << "with persistent cache not enabled.\n"
-            << std::flush;
+           << "with persistent cache not enabled.\n"
+           << std::flush;
   }
 
   return 1;
@@ -4527,8 +4527,8 @@ int StartKeeper()
 void HandleCleanupForReconnect()
 {
   nxinfo << "Loop: Going to clean up system resources for Reconnect "
-          << "in process '" << getpid() << "'.\n"
-          << std::flush;
+         << "in process '" << getpid() << "'.\n"
+         << std::flush;
   handleTerminatedInLoop();
   DisableSignals();
   if (control)
@@ -4547,8 +4547,8 @@ void HandleCleanupForReconnect()
 void HandleCleanup(int code)
 {
   nxinfo << "Loop: Going to clean up system resources "
-          << "in process '" << getpid() << "'.\n"
-          << std::flush;
+         << "in process '" << getpid() << "'.\n"
+         << std::flush;
 
   handleTerminatedInLoop();
 
@@ -4604,14 +4604,14 @@ void HandleCleanup(int code)
   if (getpid() == lastProxy)
   {
     nxinfo << "Loop: Reverting to loop context in process with "
-            << "pid '" << getpid() << "' at " << strMsTimestamp()
-            << ".\n" << std::flush;
+           << "pid '" << getpid() << "' at " << strMsTimestamp()
+           << ".\n" << std::flush;
   }
   else
   {
     nxinfo << "Loop: Exiting from child process with pid '"
-            << getpid() << "' at " << strMsTimestamp()
-            << ".\n" << std::flush;
+           << getpid() << "' at " << strMsTimestamp()
+           << ".\n" << std::flush;
   }
 
 
@@ -4647,8 +4647,8 @@ void CleanupKeeper()
   if (keeper != NULL)
   {
     nxinfo << "Loop: Freeing up keeper in process "
-            << "with pid '" << getpid() << "'.\n"
-            << std::flush;
+           << "with pid '" << getpid() << "'.\n"
+           << std::flush;
 
     delete keeper;
 
@@ -4668,8 +4668,8 @@ void CleanupStreams()
   #ifndef __CYGWIN32__
 
   nxinfo << "Loop: Freeing up streams in process "
-          << "with pid '" << getpid() << "'.\n"
-          << std::flush;
+         << "with pid '" << getpid() << "'.\n"
+         << std::flush;
 
   if (logofs != NULL && logofs != &cerr &&
           *errorsFileName != '\0')
@@ -4766,9 +4766,9 @@ void CleanupChildren()
   if (IsRunning(lastDialog))
   {
     nxinfo << "Loop: WARNING! Leaving the dialog process '"
-            << lastDialog << "' running in process "
-            << "with pid '" << getpid() << "'.\n"
-            << std::flush;
+           << lastDialog << "' running in process "
+           << "with pid '" << getpid() << "'.\n"
+           << std::flush;
 
     SetNotRunning(lastDialog);
   }
@@ -4780,8 +4780,8 @@ void CleanupChildren()
   if (control -> EnableRestartOnShutdown == 1)
   {
     nxwarn << "Loop: WARNING! Respawning the NX client "
-            << "on display '" << displayHost << "'.\n"
-            << std::flush;
+           << "on display '" << displayHost << "'.\n"
+           << std::flush;
 
     NXTransClient(displayHost);
   }
@@ -4789,8 +4789,8 @@ void CleanupChildren()
   for (int i = 0; i < control -> KillDaemonOnShutdownNumber; i++)
   {
     nxwarn << "Loop: WARNING! Killing the NX daemon with "
-            << "pid '" << control -> KillDaemonOnShutdown[i]
-            << "'.\n" << std::flush;
+           << "pid '" << control -> KillDaemonOnShutdown[i]
+           << "'.\n" << std::flush;
 
     KillProcess(control -> KillDaemonOnShutdown[i], "daemon", SIGTERM, 0);
   }
@@ -4801,8 +4801,8 @@ void CleanupGlobal()
   if (proxy != NULL)
   {
     nxinfo << "Loop: Freeing up proxy in process "
-            << "with pid '" << getpid() << "'.\n"
-            << std::flush;
+           << "with pid '" << getpid() << "'.\n"
+           << std::flush;
 
     delete proxy;
 
@@ -4812,8 +4812,8 @@ void CleanupGlobal()
   if (agent != NULL)
   {
     nxinfo << "Loop: Freeing up agent in process "
-            << "with pid '" << getpid() << "'.\n"
-            << std::flush;
+           << "with pid '" << getpid() << "'.\n"
+           << std::flush;
 
     delete agent;
 
@@ -4823,8 +4823,8 @@ void CleanupGlobal()
   if (auth != NULL)
   {
     nxinfo << "Loop: Freeing up auth data in process "
-            << "with pid '" << getpid() << "'.\n"
-            << std::flush;
+           << "with pid '" << getpid() << "'.\n"
+           << std::flush;
 
     delete auth;
 
@@ -4834,8 +4834,8 @@ void CleanupGlobal()
   if (statistics != NULL)
   {
     nxinfo << "Loop: Freeing up statistics in process "
-            << "with pid '" << getpid() << "'.\n"
-            << std::flush;
+           << "with pid '" << getpid() << "'.\n"
+           << std::flush;
 
     delete statistics;
 
@@ -4845,8 +4845,8 @@ void CleanupGlobal()
   if (control != NULL)
   {
     nxinfo << "Loop: Freeing up control in process "
-            << "with pid '" << getpid() << "'.\n"
-            << std::flush;
+           << "with pid '" << getpid() << "'.\n"
+           << std::flush;
 
     delete control;
 
@@ -4859,12 +4859,12 @@ void CleanupConnections()
   if (proxy -> getChannels(channel_x11) != 0)
   {
     nxinfo << "Loop: Closing any remaining X connections.\n"
-            << std::flush;
+           << std::flush;
 
     proxy -> handleCloseAllXConnections();
 
     nxinfo << "Loop: Closing any remaining listener.\n"
-            << std::flush;
+           << std::flush;
 
     proxy -> handleCloseAllListeners();
   }
@@ -4879,8 +4879,8 @@ void CleanupListeners()
     if (tcpFD != -1)
     {
       nxinfo << "Loop: Closing TCP listener in process "
-              << "with pid '" << getpid() << "'.\n"
-              << std::flush;
+             << "with pid '" << getpid() << "'.\n"
+             << std::flush;
 
       close(tcpFD);
 
@@ -4895,8 +4895,8 @@ void CleanupListeners()
     if (unixFD != -1)
     {
       nxinfo << "Loop: Closing UNIX listener in process "
-              << "with pid '" << getpid() << "'.\n"
-              << std::flush;
+             << "with pid '" << getpid() << "'.\n"
+             << std::flush;
 
       close(unixFD);
 
@@ -4906,8 +4906,8 @@ void CleanupListeners()
     if (*unixSocketName != '\0')
     {
       nxinfo << "Loop: Going to remove the Unix domain socket '"
-              << unixSocketName << "' in process " << "with pid '"
-              << getpid() << "'.\n" << std::flush;
+             << unixSocketName << "' in process " << "with pid '"
+             << getpid() << "'.\n" << std::flush;
 
       unlink(unixSocketName);
     }
@@ -4930,8 +4930,8 @@ void CleanupListeners()
     if (cupsFD != -1)
     {
       nxinfo << "Loop: Closing CUPS listener in process "
-              << "with pid '" << getpid() << "'.\n"
-              << std::flush;
+             << "with pid '" << getpid() << "'.\n"
+             << std::flush;
 
       close(cupsFD);
 
@@ -4946,8 +4946,8 @@ void CleanupListeners()
     if (auxFD != -1)
     {
       nxinfo << "Loop: Closing auxiliary X11 listener "
-              << "in process " << "with pid '" << getpid()
-              << "'.\n" << std::flush;
+             << "in process " << "with pid '" << getpid()
+             << "'.\n" << std::flush;
 
       close(auxFD);
 
@@ -4962,8 +4962,8 @@ void CleanupListeners()
     if (smbFD != -1)
     {
       nxinfo << "Loop: Closing SMB listener in process "
-              << "with pid '" << getpid() << "'.\n"
-              << std::flush;
+             << "with pid '" << getpid() << "'.\n"
+             << std::flush;
 
       close(smbFD);
 
@@ -4978,8 +4978,8 @@ void CleanupListeners()
     if (mediaFD != -1)
     {
       nxinfo << "Loop: Closing multimedia listener in process "
-              << "with pid '" << getpid() << "'.\n"
-              << std::flush;
+             << "with pid '" << getpid() << "'.\n"
+             << std::flush;
 
       close(mediaFD);
 
@@ -4994,8 +4994,8 @@ void CleanupListeners()
     if (httpFD != -1)
     {
       nxinfo << "Loop: Closing http listener in process "
-              << "with pid '" << getpid() << "'.\n"
-              << std::flush;
+             << "with pid '" << getpid() << "'.\n"
+             << std::flush;
 
       close(httpFD);
 
@@ -5010,8 +5010,8 @@ void CleanupListeners()
     if (fontFD != -1)
     {
       nxinfo << "Loop: Closing font server listener in process "
-              << "with pid '" << getpid() << "'.\n"
-              << std::flush;
+             << "with pid '" << getpid() << "'.\n"
+             << std::flush;
 
       close(fontFD);
 
@@ -5026,8 +5026,8 @@ void CleanupListeners()
     if (slaveFD != -1)
     {
       nxinfo << "Loop: Closing slave listener in process "
-              << "with pid '" << getpid() << "'.\n"
-              << std::flush;
+             << "with pid '" << getpid() << "'.\n"
+             << std::flush;
 
       close(slaveFD);
 
@@ -5043,8 +5043,8 @@ void CleanupSockets()
   if (proxyFD != -1)
   {
     nxinfo << "Loop: Closing proxy FD in process "
-            << "with pid '" << getpid() << "'.\n"
-            << std::flush;
+           << "with pid '" << getpid() << "'.\n"
+           << std::flush;
 
     close(proxyFD);
 
@@ -5054,8 +5054,8 @@ void CleanupSockets()
   if (agentFD[1] != -1)
   {
     nxinfo << "Loop: Closing agent FD in process "
-            << "with pid '" << getpid() << "'.\n"
-            << std::flush;
+           << "with pid '" << getpid() << "'.\n"
+           << std::flush;
 
     close(agentFD[1]);
 
@@ -5198,8 +5198,8 @@ int CheckAbort()
   if (lastSignal != 0)
   {
     nxinfo << "Loop: Aborting the procedure due to signal '"
-            << lastSignal << "', '" << DumpSignal(lastSignal)
-            << "'.\n" << std::flush;
+           << lastSignal << "', '" << DumpSignal(lastSignal)
+           << "'.\n" << std::flush;
 
     cerr << "Info" << ": Aborting the procedure due to signal '"
          << lastSignal << "'.\n";
@@ -5256,7 +5256,7 @@ void HandleAbort()
   }
 
   nxinfo << "Loop: Showing the proxy abort dialog.\n"
-          << std::flush;
+         << std::flush;
 
   if (control -> ProxyMode == proxy_server)
   {
@@ -5289,8 +5289,8 @@ void HandleAlert(int code, int local)
   if (lastAlert.code == 0)
   {
     nxinfo << "Loop: Requesting an alert dialog with code "
-            << code << " and local " << local << ".\n"
-            << std::flush;
+           << code << " and local " << local << ".\n"
+           << std::flush;
 
     lastAlert.code  = code;
     lastAlert.local = local;
@@ -5298,8 +5298,8 @@ void HandleAlert(int code, int local)
   else
   {
     nxinfo << "Loop: WARNING! Alert dialog already requested "
-            << "with code " << lastAlert.code << ".\n"
-            << std::flush;
+           << "with code " << lastAlert.code << ".\n"
+           << std::flush;
   }
 
   return;
@@ -5310,16 +5310,16 @@ void FlushCallback(int length)
   if (flushCallback != NULL)
   {
     nxinfo << "Loop: Reporting a flush request at "
-            << strMsTimestamp() << " with " << length
-            << " bytes written.\n" << std::flush;
+           << strMsTimestamp() << " with " << length
+           << " bytes written.\n" << std::flush;
 
     (*flushCallback)(flushParameter, length);
   }
   else if (control -> ProxyMode == proxy_client)
   {
     nxinfo << "Loop: WARNING! Can't find a flush "
-            << "callback in process with pid '" << getpid()
-            << "'.\n" << std::flush;
+           << "callback in process with pid '" << getpid()
+           << "'.\n" << std::flush;
   }
 }
 
@@ -5336,8 +5336,8 @@ void KeeperCallback()
             control -> ImageCacheEnableSave == 1)
     {
       nxinfo << "Loop: Starting the house-keeping process with "
-              << "image storage size " << control -> ImageCacheDiskLimit
-              << ".\n" << std::flush;
+             << "image storage size " << control -> ImageCacheDiskLimit
+             << ".\n" << std::flush;
 
       lastKeeper = NXTransKeeper(0, control -> ImageCacheDiskLimit,
                                      control -> RootPath);
@@ -5345,34 +5345,34 @@ void KeeperCallback()
       if (IsFailed(lastKeeper))
       {
         nxwarn << "Loop: WARNING! Can't start the NX keeper process.\n"
-                << std::flush;
+               << std::flush;
 
         SetNotRunning(lastKeeper);
       }
       else
       {
         nxinfo << "Loop: Keeper started with pid '"
-                << lastKeeper << "'.\n" << std::flush;
+               << lastKeeper << "'.\n" << std::flush;
       }
     }
     else
     {
       nxinfo << "Loop: Nothing to do for the keeper process "
-              << "with image cache not enabled.\n"
-              << std::flush;
+             << "with image cache not enabled.\n"
+             << std::flush;
     }
   }
   else
   {
     nxinfo << "Loop: Nothing to do with the keeper process "
-            << "already running.\n" << std::flush;
+           << "already running.\n" << std::flush;
   }
 }
 
 void InstallSignals()
 {
   nxinfo << "Loop: Installing signals in process with pid '"
-          << getpid() << "'.\n" << std::flush;
+         << getpid() << "'.\n" << std::flush;
 
   for (int i = 0; i < 32; i++)
   {
@@ -5389,7 +5389,7 @@ void InstallSignals()
 void RestoreSignals()
 {
   nxinfo << "Loop: Restoring signals in process with pid '"
-          << getpid() << "'.\n" << std::flush;
+         << getpid() << "'.\n" << std::flush;
 
   if (lastMasks.installed == 1)
   {
@@ -5433,8 +5433,8 @@ void DisableSignals()
       if (CheckSignal(i) > 0)
       {
         nxdbg << "Loop: Disabling signal " << i << " '"
-                << DumpSignal(i) << "' in process with pid '"
-                << getpid() << "'.\n" << std::flush;
+              << DumpSignal(i) << "' in process with pid '"
+              << getpid() << "'.\n" << std::flush;
 
         sigaddset(&newMask, i);
       }
@@ -5447,8 +5447,8 @@ void DisableSignals()
   else
   {
     nxinfo << "Loop: WARNING! Signals were already blocked in "
-            << "process with pid '" << getpid() << "'.\n"
-            << std::flush;
+           << "process with pid '" << getpid() << "'.\n"
+           << std::flush;
   }
 }
 
@@ -5457,7 +5457,7 @@ void EnableSignals()
   if (lastMasks.blocked == 1)
   {
     nxinfo << "Loop: Enabling signals in process with pid '"
-            << getpid() << "'.\n" << std::flush;
+           << getpid() << "'.\n" << std::flush;
 
     sigprocmask(SIG_SETMASK, &lastMasks.saved, NULL);
 
@@ -5466,8 +5466,8 @@ void EnableSignals()
   else
   {
     nxwarn << "Loop: WARNING! Signals were not blocked in "
-            << "process with pid '" << getpid() << "'.\n"
-            << std::flush;
+           << "process with pid '" << getpid() << "'.\n"
+           << std::flush;
 
     cerr << "Warning" << ": Signals were not blocked in "
          << "process with pid '" << getpid() << "'.\n";
@@ -5481,9 +5481,9 @@ void InstallSignal(int signal, int action)
     if (action == NX_SIGNAL_FORWARD)
     {
       nxinfo << "Loop: Forwarding handler for signal " << signal
-              << " '" << DumpSignal(signal) << "' in process "
-              << "with pid '" << getpid() << "'.\n"
-              << std::flush;
+             << " '" << DumpSignal(signal) << "' in process "
+             << "with pid '" << getpid() << "'.\n"
+             << std::flush;
 
       lastMasks.forward[signal] = 1;
 
@@ -5492,17 +5492,17 @@ void InstallSignal(int signal, int action)
     else
     {
       nxinfo << "Loop: Reinstalling handler for signal " << signal
-              << " '" << DumpSignal(signal) << "' in process "
-              << "with pid '" << getpid() << "'.\n"
-              << std::flush;
+             << " '" << DumpSignal(signal) << "' in process "
+             << "with pid '" << getpid() << "'.\n"
+             << std::flush;
     }
   }
   else
   {
     nxinfo << "Loop: Installing handler for signal " << signal
-            << " '" << DumpSignal(signal) << "' in process "
-            << "with pid '" << getpid() << "'.\n"
-            << std::flush;
+           << " '" << DumpSignal(signal) << "' in process "
+           << "with pid '" << getpid() << "'.\n"
+           << std::flush;
   }
 
   if (signal == SIGALRM && isTimestamp(lastTimer.start))
@@ -5542,8 +5542,8 @@ void RestoreSignal(int signal)
   if (lastMasks.enabled[signal] == 0)
   {
     nxwarn << "Loop: WARNING! Signal '" << DumpSignal(signal)
-            << " not installed in process with pid '"
-            << getpid() << "'.\n" << std::flush;
+           << " not installed in process with pid '"
+           << getpid() << "'.\n" << std::flush;
 
     cerr << "Warning" << ": Signal '" << DumpSignal(signal)
          << " not installed in process with pid '"
@@ -5553,9 +5553,9 @@ void RestoreSignal(int signal)
   }
 
   nxinfo << "Loop: Restoring handler for signal " << signal
-          << " '" << DumpSignal(signal) << "' in process "
-          << "with pid '" << getpid() << "'.\n"
-          << std::flush;
+         << " '" << DumpSignal(signal) << "' in process "
+         << "with pid '" << getpid() << "'.\n"
+         << std::flush;
 
   if (signal == SIGALRM && isTimestamp(lastTimer.start))
   {
@@ -5579,21 +5579,21 @@ void HandleSignal(int signal)
   if (lastSignal != 0)
   {
     nxinfo << "Loop: WARNING! Last signal is '" << lastSignal
-            << "', '" << DumpSignal(signal) << "' and not zero "
-            << "in process with pid '" << getpid() << "'.\n"
-            << std::flush;
+           << "', '" << DumpSignal(signal) << "' and not zero "
+           << "in process with pid '" << getpid() << "'.\n"
+           << std::flush;
   }
 
   nxinfo << "Loop: Signal '" << signal << "', '"
-          << DumpSignal(signal) << "' received in process "
-          << "with pid '" << getpid() << "'.\n" << std::flush;
+         << DumpSignal(signal) << "' received in process "
+         << "with pid '" << getpid() << "'.\n" << std::flush;
 
 
   if (getpid() != lastProxy && signalHandler != NULL)
   {
     nxinfo << "Loop: Calling slave handler in process "
-            << "with pid '" << getpid() << "'.\n"
-            << std::flush;
+           << "with pid '" << getpid() << "'.\n"
+           << std::flush;
 
     if ((*signalHandler)(signal) == 0)
     {
@@ -5679,12 +5679,12 @@ void HandleSignal(int signal)
       //
 
       nxinfo << "Loop: WARNING! Received signal '12' in "
-              << "process with pid '" << getpid() << "'.\n"
-              << std::flush;
+             << "process with pid '" << getpid() << "'.\n"
+             << std::flush;
 
       nxinfo << "Loop: WARNING! Please check that the "
-              << "cygserver daemon is running.\n"
-              << std::flush;
+             << "cygserver daemon is running.\n"
+             << std::flush;
 
       break;
     }
@@ -5702,9 +5702,9 @@ void HandleSignal(int signal)
       if (getpid() == lastProxy)
       {
         nxinfo << "Loop: Registering end of session request "
-                << "due to signal '" << signal << "', '"
-                << DumpSignal(signal) << "'.\n"
-                << std::flush;
+               << "due to signal '" << signal << "', '"
+               << DumpSignal(signal) << "'.\n"
+               << std::flush;
 
         lastSignal = signal;
       }
@@ -5725,16 +5725,16 @@ void HandleSignal(int signal)
             lastMasks.action[signal].sa_handler != HandleSignal)
     {
       nxinfo << "Loop: Forwarding signal '" << signal << "', '"
-              << DumpSignal(signal) << "' to previous handler.\n"
-              << std::flush;
+             << DumpSignal(signal) << "' to previous handler.\n"
+             << std::flush;
 
       lastMasks.action[signal].sa_handler(signal);
     }
     else if (lastMasks.action[signal].sa_handler == NULL)
     {
       nxwarn << "Loop: WARNING! Parent requested to forward "
-              << "signal '" << signal << "', '" << DumpSignal(signal)
-              << "' but didn't set a handler.\n" << std::flush;
+             << "signal '" << signal << "', '" << DumpSignal(signal)
+             << "' but didn't set a handler.\n" << std::flush;
     }
   }
 }
@@ -5750,7 +5750,7 @@ int HandleChildren()
   if (IsRunning(lastDialog) && HandleChild(lastDialog) == 1)
   {
     nxinfo << "Loop: Resetting pid of last dialog process "
-            << "in handler.\n" << std::flush;
+           << "in handler.\n" << std::flush;
 
     SetNotRunning(lastDialog);
 
@@ -5765,12 +5765,12 @@ int HandleChildren()
   if (IsRunning(lastWatchdog) && HandleChild(lastWatchdog) == 1)
   {
     nxinfo << "Loop: Watchdog is gone. Setting the last "
-            << "signal to SIGHUP.\n" << std::flush;
+           << "signal to SIGHUP.\n" << std::flush;
 
     lastSignal = SIGHUP;
 
     nxinfo << "Loop: Resetting pid of last watchdog process "
-            << "in handler.\n" << std::flush;
+           << "in handler.\n" << std::flush;
 
     SetNotRunning(lastWatchdog);
 
@@ -5788,7 +5788,7 @@ int HandleChildren()
   if (IsRunning(lastKeeper) && HandleChild(lastKeeper) == 1)
   {
     nxinfo << "Loop: Resetting pid of last house-keeping "
-            << "process in handler.\n" << std::flush;
+           << "process in handler.\n" << std::flush;
 
     SetNotRunning(lastKeeper);
 
@@ -5803,7 +5803,7 @@ int HandleChildren()
   if (IsRunning(lastChild))
   {
     nxinfo << "Loop: Resetting pid of last child process "
-            << "in handler.\n" << std::flush;
+           << "in handler.\n" << std::flush;
 
     SetNotRunning(lastChild);
 
@@ -5820,7 +5820,7 @@ int HandleChildren()
   //
 
   nxinfo << "Loop: Ignoring signal received for the "
-          << "unregistered child.\n" << std::flush;
+         << "unregistered child.\n" << std::flush;
 
   return 0;
 }
@@ -5848,8 +5848,8 @@ int WaitChild(int child, const char* label, int force)
   for (;;)
   {
     nxinfo << "Loop: Waiting for the " << label
-            << " process '" << child << "' to die.\n"
-            << std::flush;
+           << " process '" << child << "' to die.\n"
+           << std::flush;
 
     pid = waitpid(child, &status, options);
 
@@ -5861,9 +5861,9 @@ int WaitChild(int child, const char* label, int force)
       }
 
       nxwarn << "Loop: WARNING! Ignoring signal while "
-              << "waiting for the " << label << " process '"
-              << child << "' to die.\n"
-              << std::flush;
+             << "waiting for the " << label << " process '"
+             << child << "' to die.\n"
+             << std::flush;
 
       continue;
     }
@@ -5883,8 +5883,8 @@ int CheckChild(int pid, int status)
     if (WIFSTOPPED(status))
     {
       nxinfo << "Loop: Child process '" << pid << "' was stopped "
-              << "with signal " << (WSTOPSIG(status)) << ".\n"
-              << std::flush;
+             << "with signal " << (WSTOPSIG(status)) << ".\n"
+             << std::flush;
 
       return 0;
     }
@@ -5893,8 +5893,8 @@ int CheckChild(int pid, int status)
       if (WIFEXITED(status))
       {
         nxinfo << "Loop: Child process '" << pid << "' exited "
-                << "with status '" << (WEXITSTATUS(status))
-                << "'.\n" << std::flush;
+               << "with status '" << (WEXITSTATUS(status))
+               << "'.\n" << std::flush;
 
         lastStatus = WEXITSTATUS(status);
       }
@@ -5903,9 +5903,9 @@ int CheckChild(int pid, int status)
         if (CheckSignal(WTERMSIG(status)) != 1)
         {
           nxwarn << "Loop: WARNING! Child process '" << pid
-                  << "' died because of signal " << (WTERMSIG(status))
-                  << ", '" << DumpSignal(WTERMSIG(status)) << "'.\n"
-                  << std::flush;
+                 << "' died because of signal " << (WTERMSIG(status))
+                 << ", '" << DumpSignal(WTERMSIG(status)) << "'.\n"
+                 << std::flush;
 
           cerr << "Warning" << ": Child process '" << pid
                << "' died because of signal " << (WTERMSIG(status))
@@ -5914,9 +5914,9 @@ int CheckChild(int pid, int status)
         else
         {
           nxinfo << "Loop: Child process '" << pid
-                  << "' died because of signal " << (WTERMSIG(status))
-                  << ", '" << DumpSignal(WTERMSIG(status)) << "'.\n"
-                  << std::flush;
+                 << "' died because of signal " << (WTERMSIG(status))
+                 << ", '" << DumpSignal(WTERMSIG(status)) << "'.\n"
+                 << std::flush;
         }
 
         lastStatus = 1;
@@ -5947,7 +5947,7 @@ int CheckChild(int pid, int status)
     //
 
     nxinfo << "Loop: No more children processes running.\n"
-            << std::flush;
+           << std::flush;
 
     return 1;
   }
@@ -5961,15 +5961,15 @@ void RegisterChild(int child)
   if (IsNotRunning(lastChild))
   {
     nxinfo << "Loop: Registering child process '" << child
-            << "' in process with pid '" << getpid()
-            << "'.\n" << std::flush;
+           << "' in process with pid '" << getpid()
+           << "'.\n" << std::flush;
   }
   else
   {
     nxinfo << "Loop: WARNING! Overriding registered child '"
-            << lastChild << "' with new child '" << child
-            << "' in process with pid '" << getpid()
-            << "'.\n" << std::flush;
+           << lastChild << "' with new child '" << child
+           << "' in process with pid '" << getpid()
+           << "'.\n" << std::flush;
   }
 
 
@@ -5981,8 +5981,8 @@ int CheckParent(const char *name, const char *type, int parent)
   if (parent != getppid() || parent == 1)
   {
     nxwarn << name << ": WARNING! Parent process appears "
-            << "to be dead. Exiting " << type << ".\n"
-            << std::flush;
+           << "to be dead. Exiting " << type << ".\n"
+           << std::flush;
 
     cerr << "Warning" << ": Parent process appears "
          << "to be dead. Exiting " << type << ".\n";
@@ -6000,8 +6000,8 @@ void HandleTimer(int signal)
     if (isTimestamp(lastTimer.start))
     {
       nxinfo << "Loop: Timer expired at " << strMsTimestamp()
-              << " in process with pid '" << getpid() << "'.\n"
-              << std::flush;
+             << " in process with pid '" << getpid() << "'.\n"
+             << std::flush;
 
       if (proxy != NULL)
       {
@@ -6045,8 +6045,8 @@ void SetTimer(int value)
     if (diffTs > lastTimer.next.tv_usec / 1000 * 2)
     {
       nxwarn << "Loop: WARNING! Timer missed to expire at "
-              << strMsTimestamp() << " in process with pid '"
-              << getpid() << "'.\n" << std::flush;
+             << strMsTimestamp() << " in process with pid '"
+             << getpid() << "'.\n" << std::flush;
 
       cerr << "Warning" << ": Timer missed to expire at "
            << strMsTimestamp() << " in process with pid '"
@@ -6057,8 +6057,8 @@ void SetTimer(int value)
     else
     {
       nxinfo << "Loop: Timer already running at "
-              << strMsTimestamp() << " in process with pid '"
-              << getpid() << "'.\n" << std::flush;
+             << strMsTimestamp() << " in process with pid '"
+             << getpid() << "'.\n" << std::flush;
 
       return;
     }
@@ -6092,10 +6092,10 @@ void SetTimer(int value)
   timer.it_value    = lastTimer.next;
 
   nxinfo << "Loop: Timer set to " << lastTimer.next.tv_sec
-          << " S and " << lastTimer.next.tv_usec / 1000
-          << " Ms at " << strMsTimestamp() << " in process "
-          << "with pid '" << getpid() << "'.\n"
-          << std::flush;
+         << " S and " << lastTimer.next.tv_usec / 1000
+         << " Ms at " << strMsTimestamp() << " in process "
+         << "with pid '" << getpid() << "'.\n"
+         << std::flush;
 
   if (setitimer(ITIMER_REAL, &timer, &lastTimer.value) < 0)
   {
@@ -6120,15 +6120,15 @@ void ResetTimer()
   if (isTimestamp(lastTimer.start) == 0)
   {
     nxinfo << "Loop: Timer not running in process "
-            << "with pid '" << getpid() << "'.\n"
-            << std::flush;
+           << "with pid '" << getpid() << "'.\n"
+           << std::flush;
 
     return;
   }
 
   nxinfo << "Loop: Timer reset at " << strMsTimestamp()
-          << " in process with pid '" << getpid()
-          << "'.\n" << std::flush;
+         << " in process with pid '" << getpid()
+         << "'.\n" << std::flush;
 
   //
   // Restore the old signal mask and timer.
@@ -6227,8 +6227,8 @@ int WaitForRemote(ChannelEndPoint &socketAddress)
 
   socketAddress.getSpec(&socketUri);
   nxinfo << "Loop: Waiting for connection from "
-          << hostLabel  << " on socket '" << socketUri
-          << "'.\n" << std::flush;
+         << hostLabel  << " on socket '" << socketUri
+         << "'.\n" << std::flush;
   cerr << "Info" << ": Waiting for connection from "
        << hostLabel << " on socket '" << socketUri
        << "'.\n";
@@ -6316,8 +6316,8 @@ int WaitForRemote(ChannelEndPoint &socketAddress)
         char * unixPath = NULL;
         socketAddress.getUnixPath(&unixPath);
         nxinfo << "Loop: Accepted connection from this host on Unix file socket '"
-                << unixPath << "'.\n"
-                << std::flush;
+               << unixPath << "'.\n"
+               << std::flush;
 
         cerr << "Info" << ": Accepted connection from this host on Unix file socket '"
              << unixPath << "'.\n";
@@ -6336,8 +6336,8 @@ int WaitForRemote(ChannelEndPoint &socketAddress)
 
           unsigned int connectedPort = ntohs(newAddrINET.sin_port);
           nxinfo << "Loop: Accepted connection from '" << connectedHost
-                  << "' with port '" << connectedPort << "'.\n"
-                  << std::flush;
+                 << "' with port '" << connectedPort << "'.\n"
+                 << std::flush;
 
           cerr << "Info" << ": Accepted connection from '"
                << connectedHost << "'.\n";
@@ -6450,9 +6450,9 @@ int PrepareProxyConnectionTCP(char** hostName, long int* portNum, int* timeout, 
     HandleCleanup();
   }
 
-  nxinfo << "Loop: Connecting to remote host '" 
-          << *hostName << ":" << *portNum << "'.\n"
-          << std::flush;
+  nxinfo << "Loop: Connecting to remote host '"
+         << *hostName << ":" << *portNum << "'.\n"
+         << std::flush;
 
   cerr << "Info" << ": Connecting to remote host '"
        << *hostName << ":" << *portNum << "'.\n"
@@ -6615,9 +6615,9 @@ int ConnectToRemote(ChannelEndPoint &socketAddress)
   {
 
     nxdbg << "Loop: Timer set to " << connectTimeout / 1000
-            << " S " << "with retry set to " << retryConnect
-            << " in process with pid '" << getpid()
-            << "'.\n" << std::flush;
+          << " S " << "with retry set to " << retryConnect
+          << " in process with pid '" << getpid()
+          << "'.\n" << std::flush;
 
     if (socketAddress.getUnixPath(&unixPath))
       result = PrepareProxyConnectionUnix(&unixPath, &connectTimeout, &pFD, &reason);
@@ -6664,8 +6664,8 @@ int ConnectToRemote(ChannelEndPoint &socketAddress)
       else
       {
         nxinfo << "Loop: Sleeping " << retryTimeout
-                << " ms before retrying.\n"
-                << std::flush;
+               << " ms before retrying.\n"
+               << std::flush;
 
         usleep(retryTimeout * 1000);
 
@@ -6723,8 +6723,8 @@ int ConnectToRemote(ChannelEndPoint &socketAddress)
       }
       {
         nxinfo << "Loop: Not showing the dialog with "
-                << (diffTimestamp(lastRetry, getTimestamp()) / 1000)
-                << " seconds elapsed.\n" << std::flush;
+               << (diffTimestamp(lastRetry, getTimestamp()) / 1000)
+               << " seconds elapsed.\n" << std::flush;
       }
 
       ESET(reason);
@@ -6732,16 +6732,16 @@ int ConnectToRemote(ChannelEndPoint &socketAddress)
       if (unixPath && unixPath[0] != '\0' )
       {
         nxinfo << "Loop: Connection to Unix socket file '"
-                << unixPath << "' failed with error '"
-                << ESTR() << "'. Retrying.\n"
-                << std::flush;
+               << unixPath << "' failed with error '"
+               << ESTR() << "'. Retrying.\n"
+               << std::flush;
       }
       else
       {
         nxinfo << "Loop: Connection to '" << hostName
-                << ":" << portNum << "' failed with error '"
-                << ESTR() << "'. Retrying.\n"
-                << std::flush;
+               << ":" << portNum << "' failed with error '"
+               << ESTR() << "'. Retrying.\n"
+               << std::flush;
       }
     }
     else
@@ -6923,7 +6923,7 @@ int SendProxyOptions(int fd)
   }
 
   nxinfo << "Loop: Sending remote options '"
-          << options << "'.\n" << std::flush;
+         << options << "'.\n" << std::flush;
 
   return WriteLocalData(fd, options, strlen(options));
 }
@@ -6931,7 +6931,7 @@ int SendProxyOptions(int fd)
 int ReadProxyVersion(int fd)
 {
   nxinfo << "Loop: Going to read the remote proxy version "
-          << "from FD#" << fd << ".\n" << std::flush;
+         << "from FD#" << fd << ".\n" << std::flush;
 
   //
   // Read until the first space in string.
@@ -6958,8 +6958,8 @@ int ReadProxyVersion(int fd)
   }
 
   nxinfo << "Loop: Received remote version string '"
-          << options << "' from FD#" << fd << ".\n"
-          << std::flush;
+         << options << "' from FD#" << fd << ".\n"
+         << std::flush;
 
   if (strncmp(options, "NXPROXY-", strlen("NXPROXY-")) != 0)
   {
@@ -6992,8 +6992,8 @@ int ReadProxyVersion(int fd)
                   major != -1 && minor != -1 && patch != -1)
   {
     nxinfo << "Loop: Read trailing remote version '" << major
-            << "." << minor << "." << patch << "'.\n"
-            << std::flush;
+           << "." << minor << "." << patch << "'.\n"
+           << std::flush;
 
     control -> CompatVersionMajor = major;
     control -> CompatVersionMinor = minor;
@@ -7047,7 +7047,7 @@ int ReadProxyVersion(int fd)
 int ReadProxyOptions(int fd)
 {
   nxinfo << "Loop: Going to read the remote proxy options "
-          << "from FD#" << fd << ".\n" << std::flush;
+         << "from FD#" << fd << ".\n" << std::flush;
 
   char options[DEFAULT_REMOTE_OPTIONS_LENGTH];
 
@@ -7059,8 +7059,8 @@ int ReadProxyOptions(int fd)
   }
 
   nxinfo << "Loop: Received remote options string '"
-          << options << "' from FD#" << fd << ".\n"
-          << std::flush;
+         << options << "' from FD#" << fd << ".\n"
+         << std::flush;
 
   //
   // Get the remote options, delimited by a space character.
@@ -7086,7 +7086,7 @@ int ReadProxyOptions(int fd)
 int SendProxyCaches(int fd)
 {
   nxinfo << "Loop: Synchronizing local and remote caches.\n"
-          << std::flush;
+         << std::flush;
 
   if (control -> ProxyMode == proxy_client)
   {
@@ -7096,7 +7096,7 @@ int SendProxyCaches(int fd)
     //
 
     nxinfo << "Loop: Going to send the list of local caches.\n"
-            << std::flush;
+           << std::flush;
 
     SetCaches();
 
@@ -7108,7 +7108,7 @@ int SendProxyCaches(int fd)
             control -> PersistentCacheEnableLoad == 0)
     {
       nxinfo << "Loop: Writing an empty list to FD#" << fd
-              << ".\n" << std::flush;
+             << ".\n" << std::flush;
 
       return WriteLocalData(fd, "cachelist=none ", strlen("cachelist=none "));
     }
@@ -7116,7 +7116,7 @@ int SendProxyCaches(int fd)
     int count = 0;
 
     nxinfo << "Loop: Looking for cache files in directory '"
-            << control -> PersistentCachePath << "'.\n" << std::flush;
+           << control -> PersistentCachePath << "'.\n" << std::flush;
 
     DIR *cacheDir = opendir(control -> PersistentCachePath);
 
@@ -7143,8 +7143,8 @@ int SendProxyCaches(int fd)
           }
 
           nxinfo << "Loop: Writing entry '" << control -> PersistentCachePath
-                  << "/" << dirEntry -> d_name << "' to FD#" << fd
-                  << ".\n" << std::flush;
+                 << "/" << dirEntry -> d_name << "' to FD#" << fd
+                 << ".\n" << std::flush;
 
           //
           // Write cache file name to the socket,
@@ -7163,7 +7163,7 @@ int SendProxyCaches(int fd)
     if (count == 0)
     {
       nxinfo << "Loop: Writing an empty list to FD#" << fd
-              << ".\n" << std::flush;
+             << ".\n" << std::flush;
 
       return WriteLocalData(fd, "cachelist=none ", strlen("cachelist=none "));
     }
@@ -7179,15 +7179,15 @@ int SendProxyCaches(int fd)
     //
 
     nxinfo << "Loop: Going to send the selected cache.\n"
-            << std::flush;
+           << std::flush;
 
     char buffer[DEFAULT_STRING_LENGTH];
 
     if (control -> PersistentCacheName != NULL)
     {
       nxinfo << "Loop: Name of selected cache file is '"
-              << control -> PersistentCacheName << "'.\n"
-              << std::flush;
+             << control -> PersistentCacheName << "'.\n"
+             << std::flush;
 
       sprintf(buffer, "cachefile=%s%s ",
                   *(control -> PersistentCacheName) == 'C' ? "S-" : "C-",
@@ -7196,14 +7196,14 @@ int SendProxyCaches(int fd)
     else
     {
       nxinfo << "Loop: No valid cache file was selected.\n"
-              << std::flush;
+             << std::flush;
 
       sprintf(buffer, "cachefile=none ");
     }
 
     nxinfo << "Loop: Sending string '" << buffer
-            << "' as selected cache file.\n"
-            << std::flush;
+           << "' as selected cache file.\n"
+           << std::flush;
 
     return WriteLocalData(fd, buffer, strlen(buffer));
   }
@@ -7214,7 +7214,7 @@ int ReadProxyCaches(int fd)
   if (control -> ProxyMode == proxy_client)
   {
     nxinfo << "Loop: Going to receive the selected proxy cache.\n"
-            << std::flush;
+           << std::flush;
 
     //
     // We will read the name of cache plus the stop character.
@@ -7259,7 +7259,7 @@ int ReadProxyCaches(int fd)
     if (strncasecmp(cacheName, "none", strlen("none")) == 0)
     {
       nxinfo << "Loop: No cache file selected by remote proxy.\n"
-              << std::flush;
+             << std::flush;
     }
     else if (strlen(cacheName) != MD5_LENGTH * 2 + 3 ||
                  *(cacheName + MD5_LENGTH * 2 + 2) != ' ')
@@ -7286,13 +7286,13 @@ int ReadProxyCaches(int fd)
       strcpy(control -> PersistentCacheName, cacheName);
 
       nxinfo << "Loop: Cache file '" << control -> PersistentCacheName
-              << "' selected by remote proxy.\n" << std::flush;
+             << "' selected by remote proxy.\n" << std::flush;
     }
   }
   else
   {
     nxinfo << "Loop: Going to receive the list of remote caches.\n"
-            << std::flush;
+           << std::flush;
 
     SetCaches();
 
@@ -7311,7 +7311,7 @@ int ReadProxyCaches(int fd)
     }
 
     nxinfo << "Loop: Read list of caches from remote side as '"
-            << buffer << "'.\n" << std::flush;
+           << buffer << "'.\n" << std::flush;
 
     //
     // Prepare the buffer. What we want is a list
@@ -7348,7 +7348,7 @@ int ReadProxyCaches(int fd)
 int ReadForwarderVersion(int fd)
 {
   nxinfo << "Loop: Going to negotiate the forwarder version.\n"
-          << std::flush;
+         << std::flush;
 
   //
   // Check if we actually expect the session cookie.
@@ -7357,7 +7357,7 @@ int ReadForwarderVersion(int fd)
   if (*authCookie == '\0')
   {
     nxinfo << "Loop: No authentication cookie required "
-            << "from FD#" << fd << ".\n" << std::flush;
+           << "from FD#" << fd << ".\n" << std::flush;
 
     return 1;
   }
@@ -7372,7 +7372,7 @@ int ReadForwarderVersion(int fd)
   }
 
   nxinfo << "Loop: Received forwarder version string '" << options
-          << "' from FD#" << fd << ".\n" << std::flush;
+         << "' from FD#" << fd << ".\n" << std::flush;
 
   if (strncmp(options, "NXSSH-", strlen("NXSSH-")) != 0)
   {
@@ -7393,8 +7393,8 @@ int ReadForwarderVersion(int fd)
              &(control -> RemoteVersionMinor), &(control -> RemoteVersionPatch));
 
   nxinfo << "Loop: Read forwarder version '" << control -> RemoteVersionMajor
-          << "." << control -> RemoteVersionMinor << "." << control -> RemoteVersionPatch
-          << "'.\n" << std::flush;
+         << "." << control -> RemoteVersionMinor << "." << control -> RemoteVersionPatch
+         << "'.\n" << std::flush;
 
   return 1;
 }
@@ -7408,7 +7408,7 @@ int ReadForwarderOptions(int fd)
   if (*authCookie == '\0')
   {
     nxinfo << "Loop: No authentication cookie required "
-            << "from FD#" << fd << ".\n" << std::flush;
+           << "from FD#" << fd << ".\n" << std::flush;
 
     return 1;
   }
@@ -7423,8 +7423,8 @@ int ReadForwarderOptions(int fd)
   }
 
   nxinfo << "Loop: Received forwarder options string '"
-          << options << "' from FD#" << fd << ".\n"
-          << std::flush;
+         << options << "' from FD#" << fd << ".\n"
+         << std::flush;
 
   if (ParseForwarderOptions(options) < 0)
   {
@@ -7444,7 +7444,7 @@ int ReadForwarderOptions(int fd)
 int ReadRemoteData(int fd, char *buffer, int size, char stop)
 {
   nxinfo << "Loop: Going to read remote data from FD#"
-          << fd << ".\n" << std::flush;
+         << fd << ".\n" << std::flush;
 
   if (size >= MAXIMUM_REMOTE_OPTIONS_LENGTH)
   {
@@ -7470,7 +7470,7 @@ int ReadRemoteData(int fd, char *buffer, int size, char stop)
         if (EGET() == EAGAIN)
         {
           nxinfo << "Loop: Reading data from FD#" << fd
-                  << " would block.\n" << std::flush;
+                 << " would block.\n" << std::flush;
 
           return 0;
         }
@@ -7496,7 +7496,7 @@ int ReadRemoteData(int fd, char *buffer, int size, char stop)
     else if (*(remoteData + remotePosition) == stop)
     {
       nxinfo << "Loop: Read stop character from FD#"
-              << fd << ".\n" << std::flush;
+             << fd << ".\n" << std::flush;
 
       remotePosition++;
 
@@ -7510,8 +7510,8 @@ int ReadRemoteData(int fd, char *buffer, int size, char stop)
       memcpy(buffer, remoteData, remotePosition + 1);
 
       nxinfo << "Loop: Remote string '" << remoteData
-              << "' read from FD#" << fd << ".\n"
-              << std::flush;
+             << "' read from FD#" << fd << ".\n"
+             << std::flush;
 
       int t = remotePosition;
 
@@ -7529,9 +7529,9 @@ int ReadRemoteData(int fd, char *buffer, int size, char stop)
       if (isgraph(*(remoteData + remotePosition)) == 0)
       {
         nxwarn << "Loop: WARNING! Non printable character decimal '"
-                << (unsigned int) *(remoteData + remotePosition)
-                << "' received in remote data from FD#"
-                << fd << ".\n" << std::flush;
+               << (unsigned int) *(remoteData + remotePosition)
+               << "' received in remote data from FD#"
+               << fd << ".\n" << std::flush;
 
         cerr << "Warning" << ": Non printable character decimal '"
                 << (unsigned int) *(remoteData + remotePosition)
@@ -7542,8 +7542,8 @@ int ReadRemoteData(int fd, char *buffer, int size, char stop)
       }
 
       nxdbg << "Loop: Read a further character "
-              << "from FD#" << fd << ".\n"
-              << std::flush;
+            << "from FD#" << fd << ".\n"
+            << std::flush;
 
       remotePosition++;
     }
@@ -7620,7 +7620,7 @@ int WriteLocalData(int fd, const char *buffer, int size)
     ret = select(fd+1, NULL, &writeSet, NULL, &selectTs);
 
     nxdbg << "Loop: WriteLocalData: select() returned with a code of " << ret << " and remaining timeout of "
-            << selectTs.tv_sec << " sec, " << selectTs.tv_usec << "usec\n" << std::flush;
+          << selectTs.tv_sec << " sec, " << selectTs.tv_usec << "usec\n" << std::flush;
 
     if ( ret < 0 )
     {
@@ -7649,7 +7649,7 @@ int WriteLocalData(int fd, const char *buffer, int size)
       }
 
       nxinfo << "Loop: Error writing data to FD#"
-              << fd << ".\n" << std::flush;
+             << fd << ".\n" << std::flush;
 
       return -1;
     }
@@ -7693,8 +7693,8 @@ int ParseEnvironmentOptions(const char *env, int force)
   if (setjmp(context) == 1)
   {
     nxinfo << "Loop: Out of the long jump while parsing "
-            << "the environment options.\n"
-            << std::flush;
+           << "the environment options.\n"
+           << std::flush;
 
     return -1;
   }
@@ -7702,8 +7702,8 @@ int ParseEnvironmentOptions(const char *env, int force)
   if (force == 0 && parsedOptions == 1)
   {
     nxinfo << "Loop: Skipping a further parse of environment "
-            << "options string '" << (env != NULL ? env : "")
-            << "'.\n" << std::flush;
+           << "options string '" << (env != NULL ? env : "")
+           << "'.\n" << std::flush;
 
     return 1;
   }
@@ -7711,15 +7711,15 @@ int ParseEnvironmentOptions(const char *env, int force)
   if (env == NULL || *env == '\0')
   {
     nxinfo << "Loop: Nothing to do with empty environment "
-            << "options string '" << (env != NULL ? env : "")
-            << "'.\n" << std::flush;
+           << "options string '" << (env != NULL ? env : "")
+           << "'.\n" << std::flush;
 
     return 0;
   }
 
   nxinfo << "Loop: Going to parse the environment options "
-          << "string '" << env << "'.\n"
-          << std::flush;
+         << "string '" << env << "'.\n"
+         << std::flush;
 
   parsedOptions = 1;
 
@@ -7785,7 +7785,7 @@ int ParseEnvironmentOptions(const char *env, int force)
   else if (force == 0)
   {
     nxinfo << "Loop: Ignoring host X server display string '"
-            << opts << "'.\n" << std::flush;
+           << opts << "'.\n" << std::flush;
 
     return 0;
   }
@@ -7849,7 +7849,7 @@ int ParseEnvironmentOptions(const char *env, int force)
   }
 
   nxinfo << "Loop: Parsing options string '"
-          << nextOpts << "'.\n" << std::flush;
+         << nextOpts << "'.\n" << std::flush;
 
   //
   // Now all the other optional parameters.
@@ -8256,7 +8256,7 @@ int ParseEnvironmentOptions(const char *env, int force)
     else if (strcasecmp(name, "sync") == 0)
     {
       nxwarn << "Loop: WARNING! No 'sync' channel in current version. "
-              << "Assuming 'cups' channel.\n" << std::flush;
+             << "Assuming 'cups' channel.\n" << std::flush;
 
       cerr << "Warning" << ": No 'sync' channel in current version. "
            << "Assuming 'cups' channel.\n";
@@ -8300,7 +8300,7 @@ int ParseEnvironmentOptions(const char *env, int force)
       if (timeout == 0)
       {
         nxinfo << "Loop: Disabling timeout on broken "
-                << "proxy connection.\n" << std::flush;
+               << "proxy connection.\n" << std::flush;
 
         control -> ProxyTimeout = 0;
       }
@@ -8316,7 +8316,7 @@ int ParseEnvironmentOptions(const char *env, int force)
       if (cleanup == 0)
       {
         nxinfo << "Loop: Disabling grace timeout on "
-                << "proxy shutdown.\n" << std::flush;
+               << "proxy shutdown.\n" << std::flush;
 
         control -> CleanupTimeout = 0;
       }
@@ -8352,9 +8352,9 @@ int ParseEnvironmentOptions(const char *env, int force)
               control -> KillDaemonOnShutdownLimit)
       {
         nxinfo << "Loop: WARNING! Adding process with pid '"
-                << ValidateArg("local", name, value) << " to the "
-                << "daemons to kill at shutdown.\n"
-                << std::flush;
+               << ValidateArg("local", name, value) << " to the "
+               << "daemons to kill at shutdown.\n"
+               << std::flush;
 
         control -> KillDaemonOnShutdown[control ->
                        KillDaemonOnShutdownNumber] =
@@ -8365,7 +8365,7 @@ int ParseEnvironmentOptions(const char *env, int force)
       else
       {
         nxwarn << "Loop: WARNING! Number of daemons to kill "
-                << "at shutdown exceeded.\n" << std::flush;
+               << "at shutdown exceeded.\n" << std::flush;
 
         cerr << "Warning" << ": Number of daemons to kill "
              << "at shutdown exceeded.\n";
@@ -8402,8 +8402,8 @@ int ParseEnvironmentOptions(const char *env, int force)
                                                  strcasecmp(name, "tolerancechecks") == 0)
     {
       nxdbg << "Loop: Ignoring agent option '" << name
-              << "' with value '" << value << "'.\n"
-              << std::flush;
+            << "' with value '" << value << "'.\n"
+            << std::flush;
     }
     else if (strcasecmp(name, "composite") == 0 ||
                  strcasecmp(name, "shmem") == 0 ||
@@ -8417,8 +8417,8 @@ int ParseEnvironmentOptions(const char *env, int force)
                                                  strcasecmp(name, "xinerama") == 0)
     {
       nxdbg << "Loop: Ignoring agent option '" << name
-              << "' with value '" << value << "'.\n"
-              << std::flush;
+            << "' with value '" << value << "'.\n"
+            << std::flush;
     }
     else if (strcasecmp(name, "defer") == 0 ||
                  strcasecmp(name, "tile") == 0 ||
@@ -8426,14 +8426,14 @@ int ParseEnvironmentOptions(const char *env, int force)
                         strcasecmp(name, "state") == 0 )
     {
       nxdbg << "Loop: Ignoring agent option '" << name
-              << "' with value '" << value << "'.\n"
-              << std::flush;
+            << "' with value '" << value << "'.\n"
+            << std::flush;
     }
     else
     {
       nxwarn << "Loop: WARNING! Ignoring unknown option '"
-              << name << "' with value '" << value << "'.\n"
-              << std::flush;
+             << name << "' with value '" << value << "'.\n"
+             << std::flush;
 
       cerr << "Warning" << ": Ignoring unknown option '"
            << name << "' with value '" << value << "'.\n";
@@ -8455,14 +8455,14 @@ int ParseEnvironmentOptions(const char *env, int force)
   }
 
   nxinfo << "Loop: Completed parsing of string '"
-          << env << "'.\n" << std::flush;
+         << env << "'.\n" << std::flush;
 
   if ((*fileOptions != '\0') && (strncmp(fileOptions, "/dev/", 5) != 0) && (strncmp(fileOptions, "/proc/", 6) != 0) && (strncmp(fileOptions, "/sys/", 5) != 0))
   {
     if (strcmp(fileOptions, optionsFileName) != 0)
     {
       nxinfo << "Loop: Reading options from '" << fileOptions
-              << "'.\n" << std::flush;
+             << "'.\n" << std::flush;
 
       if (ParseFileOptions(fileOptions) < 0)
       {
@@ -8472,8 +8472,8 @@ int ParseEnvironmentOptions(const char *env, int force)
     else
     {
       nxwarn << "Loop: WARNING! Name of the options file "
-              << "specified multiple times. Not parsing "
-              << "again.\n" << std::flush;
+             << "specified multiple times. Not parsing "
+             << "again.\n" << std::flush;
     }
 
     if (*optionsFileName == '\0')
@@ -8481,8 +8481,8 @@ int ParseEnvironmentOptions(const char *env, int force)
       strncpy(optionsFileName, value, DEFAULT_STRING_LENGTH - 1);
 
       nxinfo << "Loop: Assuming name of options file '"
-              << optionsFileName << "'.\n"
-              << std::flush;
+             << optionsFileName << "'.\n"
+             << std::flush;
     }
   }
 
@@ -8523,8 +8523,8 @@ int ParseCommandLineOptions(int argc, const char **argv)
   if (setjmp(context) == 1)
   {
     nxinfo << "Loop: Out of the long jump while parsing "
-            << "the command line options.\n"
-            << std::flush;
+           << "the command line options.\n"
+           << std::flush;
 
     return -1;
   }
@@ -8541,13 +8541,13 @@ int ParseCommandLineOptions(int argc, const char **argv)
   if (parsedCommand == 1)
   {
     nxinfo << "Loop: Skipping a further parse of command line options.\n"
-            << std::flush;
+           << std::flush;
 
     return 1;
   }
 
   nxinfo << "Loop: Going to parse the command line options.\n"
-          << std::flush;
+         << std::flush;
 
   parsedCommand = 1;
 
@@ -8592,7 +8592,7 @@ int ParseCommandLineOptions(int argc, const char **argv)
           if (WE_SET_PROXY_MODE == 0)
           {
             nxinfo << "Loop: Setting local proxy mode to proxy_client.\n"
-                    << std::flush;
+                   << std::flush;
 
             control -> ProxyMode = proxy_client;
           }
@@ -8618,7 +8618,7 @@ int ParseCommandLineOptions(int argc, const char **argv)
           if (WE_SET_PROXY_MODE == 0)
           {
             nxinfo << "Loop: Setting local proxy mode to proxy_server.\n"
-                    << std::flush;
+                   << std::flush;
 
             control -> ProxyMode = proxy_server;
           }
@@ -8850,7 +8850,7 @@ int ParseFileOptions(const char *file)
   }
 
   nxinfo << "Loop: Going to read options from file '"
-          << fileName << "'.\n" << std::flush;
+         << fileName << "'.\n" << std::flush;
 
   FILE *filePtr = fopen(fileName, "r");
 
@@ -8912,7 +8912,7 @@ int ParseFileOptions(const char *file)
   }
 
   nxinfo << "Loop: Read options '" << options << "' from file '"
-          << fileName << "'.\n" << std::flush;
+         << fileName << "'.\n" << std::flush;
 
   if (ParseEnvironmentOptions(options, 1) < 0)
   {
@@ -8934,8 +8934,8 @@ int ParseFileOptions(const char *file)
 int ParseRemoteOptions(char *opts)
 {
   nxinfo << "Loop: Going to parse the remote options "
-          << "string '" << opts << "'.\n"
-          << std::flush;
+         << "string '" << opts << "'.\n"
+         << std::flush;
 
   char *name;
   char *value;
@@ -8981,8 +8981,8 @@ int ParseRemoteOptions(char *opts)
       if (WE_PROVIDE_CREDENTIALS)
       {
         nxwarn << "Loop: WARNING! Ignoring remote option 'cookie' "
-                << "with value '" << value << "' when initiating "
-                << "connection.\n" << std::flush;
+               << "with value '" << value << "' when initiating "
+               << "connection.\n" << std::flush;
 
         cerr << "Warning" << ": Ignoring remote option 'cookie' "
              << "with value '" << value << "' when initiating "
@@ -9013,8 +9013,8 @@ int ParseRemoteOptions(char *opts)
         if (*linkSpeedName != '\0' && strcasecmp(linkSpeedName, value) != 0)
         {
           nxwarn << "Loop: WARNING! Overriding option 'link' "
-                  << "with new value '" << value << "'.\n"
-                  << std::flush;
+                 << "with new value '" << value << "'.\n"
+                 << std::flush;
 
           cerr << "Warning" << ": Overriding option 'link' "
                << "with new value '" << value << "'.\n";
@@ -9046,8 +9046,8 @@ int ParseRemoteOptions(char *opts)
         if (*packMethodName != '\0' && strcasecmp(packMethodName, value) != 0)
         {
           nxwarn << "Loop: WARNING! Overriding option 'pack' "
-                  << "with remote value '" << value << "'.\n"
-                  << std::flush;
+                 << "with remote value '" << value << "'.\n"
+                 << std::flush;
 
           cerr << "Warning" << ": Overriding option 'pack' "
                << "with remote value '" << value << "'.\n";
@@ -9139,8 +9139,8 @@ int ParseRemoteOptions(char *opts)
                 strcasecmp(bitrateLimitName, value) != 0)
         {
           nxwarn << "Loop: WARNING! Overriding option 'limit' "
-                  << "with new value '" << value << "'.\n"
-                  << std::flush;
+                 << "with new value '" << value << "'.\n"
+                 << std::flush;
 
           cerr << "Warning" << ": Overriding option 'limit' "
                << "with new value '" << value << "'.\n";
@@ -9226,7 +9226,7 @@ int ParseRemoteOptions(char *opts)
       {
         nxfatal << "Loop: PANIC! Can't identify size of shared memory "
                 << "segment in string '" << value << "'.\n"
-               << std::flush;
+                << std::flush;
 
         cerr << "Error" << ": Can't identify size of shared memory "
              << "segment in string '" << value << "'.\n";
@@ -9357,14 +9357,14 @@ int ParseRemoteOptions(char *opts)
       //
 
       nxdbg << "Loop: Ignoring obsolete remote option '"
-              << name << "' with value '" << value
-              << "'.\n" << std::flush;
+            << name << "' with value '" << value
+            << "'.\n" << std::flush;
     }
     else
     {
       nxwarn << "Loop: WARNING! Ignoring unknown remote option '"
-              << name << "' with value '" << value << "'.\n"
-              << std::flush;
+             << name << "' with value '" << value << "'.\n"
+             << std::flush;
 
       cerr << "Warning" << ": Ignoring unknown remote option '"
            << name << "' with value '" << value << "'.\n";
@@ -9473,8 +9473,8 @@ int ParseRemoteOptions(char *opts)
 int ParseForwarderOptions(char *opts)
 {
   nxinfo << "Loop: Going to parse the forwarder options "
-          << "string '" << opts << "'.\n"
-          << std::flush;
+         << "string '" << opts << "'.\n"
+         << std::flush;
 
   char *name;
   char *value;
@@ -9520,8 +9520,8 @@ int ParseForwarderOptions(char *opts)
     else
     {
       nxwarn << "Loop: WARNING! Ignoring unknown forwarder option '"
-              << name << "' with value '" << value << "'.\n"
-              << std::flush;
+             << name << "' with value '" << value << "'.\n"
+             << std::flush;
 
       cerr << "Warning" << ": Ignoring unknown forwarder option '"
            << name << "' with value '" << value << "'.\n";
@@ -9554,7 +9554,7 @@ int SetCore()
   if (getrlimit(RLIMIT_CORE, &rlim))
   {
     nxinfo << "Cannot read RLIMIT_CORE. Error is '"
-            << ESTR() << "'.\n" << std::flush;
+           << ESTR() << "'.\n" << std::flush;
 
     return -1;
   }
@@ -9566,14 +9566,14 @@ int SetCore()
     if (setrlimit(RLIMIT_CORE, &rlim))
     {
       nxinfo << "Loop: Cannot read RLIMIT_CORE. Error is '"
-              << ESTR() << "'.\n" << std::flush;
+             << ESTR() << "'.\n" << std::flush;
 
       return -2;
     }
   }
 
   nxinfo << "Loop: Set RLIMIT_CORE to "<< rlim.rlim_max
-          << ".\n" << std::flush;
+         << ".\n" << std::flush;
 
   #endif // #ifdef COREDUMPS
 
@@ -9586,8 +9586,8 @@ char *GetLastCache(char *listBuffer, const char *searchPath)
           strncmp(listBuffer, "cachelist=", strlen("cachelist=")) != 0)
   {
     nxinfo << "Loop: Invalid parameters '" << listBuffer << "' and '"
-            << (searchPath != NULL ? searchPath : "")
-            << "'. Can't select any cache.\n" << std::flush;
+           << (searchPath != NULL ? searchPath : "")
+           << "'. Can't select any cache.\n" << std::flush;
 
     return NULL;
   }
@@ -9635,7 +9635,7 @@ char *GetLastCache(char *listBuffer, const char *searchPath)
     if (strncmp(fileName, "none", strlen("none")) == 0)
     {
       nxinfo << "Loop: No cache files seem to be available.\n"
-              << std::flush;
+             << std::flush;
 
       delete [] selectedName;
 
@@ -9645,7 +9645,7 @@ char *GetLastCache(char *listBuffer, const char *searchPath)
                  strncmp(fileName, remotePrefix, 2) != 0)
     {
       nxfatal << "Loop: PANIC! Bad cache file name '"
-               << fileName << "'.\n" << std::flush;
+              << fileName << "'.\n" << std::flush;
 
       cerr << "Error" << ": Bad cache file name '"
            << fileName << "'.\n";
@@ -9656,7 +9656,7 @@ char *GetLastCache(char *listBuffer, const char *searchPath)
     }
 
     nxinfo << "Loop: Parsing remote cache name '"
-            << fileName << "'.\n" << std::flush;
+           << fileName << "'.\n" << std::flush;
 
     //
     // Prefix, received as "S-", becomes
@@ -9672,7 +9672,7 @@ char *GetLastCache(char *listBuffer, const char *searchPath)
     if (stat(fullPath, &fileStat) == 0)
     {
       nxinfo << "Loop: Found a matching cache '"
-              << std::string(fullPath) << "'.\n" << std::flush;
+             << std::string(fullPath) << "'.\n" << std::flush;
 
       if (fileStat.st_mtime >= selectedTime)
       {
@@ -9684,7 +9684,7 @@ char *GetLastCache(char *listBuffer, const char *searchPath)
     else
     {
       nxinfo << "Loop: Can't get stats of file '"
-              << std::string(fullPath) << "'.\n" << std::flush;
+             << std::string(fullPath) << "'.\n" << std::flush;
     }
 
     fileName = strtok(NULL, ",");
@@ -9716,14 +9716,14 @@ char *GetTempPath()
     if (tempEnv == NULL || *tempEnv == '\0')
     {
       nxinfo << "Loop: WARNING! No environment for NX_TEMP.\n"
-              << std::flush;
+             << std::flush;
 
       tempEnv = getenv("TEMP");
 
       if (tempEnv == NULL || *tempEnv == '\0')
       {
         nxinfo << "Loop: WARNING! No environment for TEMP.\n"
-                << std::flush;
+               << std::flush;
 
         tempEnv = "/tmp";
       }
@@ -9745,7 +9745,7 @@ char *GetTempPath()
     strcpy(tempDir, tempEnv);
 
     nxinfo << "Loop: Assuming temporary NX directory '"
-            << tempDir << "'.\n" << std::flush;
+           << tempDir << "'.\n" << std::flush;
   }
 
   char *tempPath = new char[strlen(tempDir) + 1];
@@ -9779,7 +9779,7 @@ char *GetClientPath()
     if (clientEnv == NULL || *clientEnv == '\0')
     {
       nxinfo << "Loop: WARNING! No environment for NX_CLIENT.\n"
-              << std::flush;
+             << std::flush;
 
       //
       // Try to guess the location of the client.
@@ -9816,7 +9816,7 @@ char *GetClientPath()
     strcpy(clientDir, clientEnv);
 
     nxinfo << "Loop: Assuming NX client location '"
-            << clientDir << "'.\n" << std::flush;
+           << clientDir << "'.\n" << std::flush;
   }
 
   char *clientPath = new char[strlen(clientDir) + 1];
@@ -9850,7 +9850,7 @@ char *GetSystemPath()
     if (systemEnv == NULL || *systemEnv == '\0')
     {
       nxinfo << "Loop: WARNING! No environment for NX_SYSTEM.\n"
-              << std::flush;
+             << std::flush;
 
       systemEnv = "/usr/NX";
     }
@@ -9871,7 +9871,7 @@ char *GetSystemPath()
     strcpy(systemDir, systemEnv);
 
     nxinfo << "Loop: Assuming system NX directory '"
-            << systemDir << "'.\n" << std::flush;
+           << systemDir << "'.\n" << std::flush;
   }
 
   char *systemPath = new char[strlen(systemDir) + 1];
@@ -9905,7 +9905,7 @@ char *GetHomePath()
     if (homeEnv == NULL || *homeEnv == '\0')
     {
       nxinfo << "Loop: WARNING! No environment for NX_HOME.\n"
-              << std::flush;
+             << std::flush;
 
       homeEnv = getenv("HOME");
 
@@ -9936,7 +9936,7 @@ char *GetHomePath()
     strcpy(homeDir, homeEnv);
 
     nxinfo << "Loop: Assuming NX user's home directory '"
-            << homeDir << "'.\n" << std::flush;
+           << homeDir << "'.\n" << std::flush;
   }
 
   char *homePath = new char[strlen(homeDir) + 1];
@@ -9970,7 +9970,7 @@ char *GetRootPath()
     if (rootEnv == NULL || *rootEnv == '\0')
     {
       nxinfo << "Loop: WARNING! No environment for NX_ROOT.\n"
-              << std::flush;
+             << std::flush;
 
       //
       // We will determine the root NX directory
@@ -9995,7 +9995,7 @@ char *GetRootPath()
       }
 
       nxinfo << "Loop: Assuming NX root directory in "
-              << "the user's home '" << homeEnv
+             << "the user's home '" << homeEnv
               << "'.\n" << std::flush;
 
       strcpy(rootDir, homeEnv);
@@ -10044,7 +10044,7 @@ char *GetRootPath()
     }
 
     nxinfo << "Loop: Assuming NX root directory '"
-            << rootDir << "'.\n" << std::flush;
+           << rootDir << "'.\n" << std::flush;
   }
 
   char *rootPath = new char[strlen(rootDir) + 1];
@@ -10250,7 +10250,7 @@ char *GetSessionPath()
     }
 
     nxinfo << "Loop: Root of NX session is '" << sessionDir
-            << "'.\n" << std::flush;
+           << "'.\n" << std::flush;
 
     delete [] rootPath;
   }
@@ -10321,11 +10321,11 @@ int ParseLinkOption(const char *opt)
 int ParsePackOption(const char *opt)
 {
   nxdbg << "Loop: Pack method is " << packMethod
-          << " quality is " << packQuality << ".\n"
-          << std::flush;
+        << " quality is " << packQuality << ".\n"
+        << std::flush;
 
   nxdbg << "Loop: Parsing pack method '" << opt
-          << "'.\n" << std::flush;
+        << "'.\n" << std::flush;
 
   if (strcasecmp(opt, "0") == 0 ||
           strcasecmp(opt, "none") == 0 ||
@@ -10514,7 +10514,7 @@ int ParsePackOption(const char *opt)
       packQuality = atoi(dash + 1);
 
       nxdbg << "Loop: Using pack quality '"
-              << packQuality << "'.\n" << std::flush;
+            << packQuality << "'.\n" << std::flush;
     }
   }
   else
@@ -10818,12 +10818,12 @@ int SetLogs()
     strcpy(statsFileName, "stats");
 
     nxinfo << "Loop: Assuming default statistics file '"
-            << statsFileName << "'.\n" << std::flush;
+           << statsFileName << "'.\n" << std::flush;
   }
   else
   {
     nxinfo << "Loop: Name selected for statistics is '"
-            << statsFileName << "'.\n" << std::flush;
+           << statsFileName << "'.\n" << std::flush;
   }
 
   if (OpenLogFile(statsFileName, statofs) < 0)
@@ -10838,12 +10838,12 @@ int SetLogs()
     strcpy(errorsFileName, "errors");
 
     nxinfo << "Loop: Assuming default log file name '"
-            << errorsFileName << "'.\n" << std::flush;
+           << errorsFileName << "'.\n" << std::flush;
   }
   else
   {
     nxinfo << "Loop: Name selected for log file is '"
-            << errorsFileName << "'.\n" << std::flush;
+           << errorsFileName << "'.\n" << std::flush;
   }
 
   //
@@ -10883,12 +10883,12 @@ int SetLogs()
   if (*sessionFileName != '\0')
   {
     nxinfo << "Loop: Name selected for session file is '"
-            << sessionFileName << "'.\n" << std::flush;
+           << sessionFileName << "'.\n" << std::flush;
 
     if (errofs != NULL)
     {
       nxwarn << "Loop: WARNING! Unexpected value for stream errofs.\n"
-              << std::flush;
+             << std::flush;
 
       cerr << "Warning" << ": Unexpected value for stream errofs.\n";
     }
@@ -10896,7 +10896,7 @@ int SetLogs()
     if (errsbuf != NULL)
     {
       nxwarn << "Loop: WARNING! Unexpected value for buffer errsbuf.\n"
-              << std::flush;
+             << std::flush;
 
       cerr << "Warning" << ": Unexpected value for buffer errsbuf.\n";
     }
@@ -10958,7 +10958,7 @@ int SetPorts()
 
 
   nxinfo << "Loop: cups port: " << cupsPort << "\n"
-            << std::flush;
+         << std::flush;
 
   if (control -> ProxyMode == proxy_client) {
     auxPort.setDefaultTCPPort(DEFAULT_NX_AUX_PORT_OFFSET + proxyPort);
@@ -10968,8 +10968,8 @@ int SetPorts()
 
     if ( auxPort.getTCPPort() != 1 ) {
         nxwarn << "Loop: WARNING! Overriding auxiliary X11 "
-                << "port with new value '" << 1 << "'.\n"
-                << std::flush;
+               << "port with new value '" << 1 << "'.\n"
+               << std::flush;
 
       cerr << "Warning" << ": Overriding auxiliary X11 "
            << "port with new value '" << 1 << "'.\n";
@@ -10979,7 +10979,7 @@ int SetPorts()
   }
 
   nxinfo << "Loop: aux port: " << auxPort << "\n"
-	  << std::flush;
+         << std::flush;
 
   if (control -> ProxyMode == proxy_client) {
     smbPort.setDefaultTCPPort(DEFAULT_NX_SMB_PORT_OFFSET + proxyPort);
@@ -10990,7 +10990,7 @@ int SetPorts()
 
 
   nxinfo << "Loop: smb port: " << smbPort << "\n"
-	  << std::flush;
+         << std::flush;
 
   if ( mediaPort.configured() ) {
     if (control -> ProxyMode == proxy_client) {
@@ -11010,7 +11010,7 @@ int SetPorts()
   }
 
   nxinfo << "Loop: Using multimedia port '" << mediaPort
-	  << "'.\n" << std::flush;
+         << "'.\n" << std::flush;
 
   if (control -> ProxyMode == proxy_client) {
       httpPort.setDefaultTCPPort(DEFAULT_NX_HTTP_PORT_OFFSET + proxyPort);
@@ -11020,12 +11020,12 @@ int SetPorts()
   }
 
   nxinfo << "Loop: Using HTTP port '" << httpPort
-	  << "'.\n" << std::flush;
+         << "'.\n" << std::flush;
 
   if (ParseFontPath(fontPort) <= 0)
   {
     nxinfo << "Loop: Disabling font server connections.\n"
-            << std::flush;
+           << std::flush;
 
     *fontPort = '\0';
 
@@ -11050,7 +11050,7 @@ int SetPorts()
     }
 
     nxinfo << "Loop: Using font server port '" << fontPort
-            << "'.\n" << std::flush;
+           << "'.\n" << std::flush;
   }
 
   if (control -> ProxyMode == proxy_client) {
@@ -11061,7 +11061,7 @@ int SetPorts()
   }
 
   nxinfo << "Loop: Using slave port '" << slavePort
-	  << "'.\n" << std::flush;
+         << "'.\n" << std::flush;
 
   return 1;
 }
@@ -11149,7 +11149,7 @@ int SetCaches()
   }
 
   nxinfo << "Loop: Path of cache files is '" << control -> PersistentCachePath
-          << "'.\n" << std::flush;
+         << "'.\n" << std::flush;
 
   return 1;
 }
@@ -11273,8 +11273,8 @@ int SetSession()
     if (*sessionType != '\0')
     {
       nxwarn << "Loop: WARNING! Unrecognized session type '"
-              << sessionType << "'. Assuming agent session.\n"
-              << std::flush;
+             << sessionType << "'. Assuming agent session.\n"
+             << std::flush;
 
       cerr << "Warning" << ": Unrecognized session type '"
            << sessionType << "'. Assuming agent session.\n";
@@ -11284,9 +11284,9 @@ int SetSession()
   }
 
   nxinfo << "Loop: Assuming session type '"
-          << DumpSession(control -> SessionMode) << "' with "
-          << "string '" << sessionType << "'.\n"
-          << std::flush;
+         << DumpSession(control -> SessionMode) << "' with "
+         << "string '" << sessionType << "'.\n"
+         << std::flush;
 
   //
   // By default the policy is immediate. Agents
@@ -11307,16 +11307,16 @@ int SetSession()
     }
 
     nxinfo << "Loop: WARNING! Forcing flush policy to '"
-            << DumpPolicy(control -> FlushPolicy)
-            << ".\n" << std::flush;
+           << DumpPolicy(control -> FlushPolicy)
+           << ".\n" << std::flush;
   }
   else
   {
     control -> FlushPolicy = policy_immediate;
 
     nxinfo << "Loop: Setting initial flush policy to '"
-            << DumpPolicy(control -> FlushPolicy)
-            << "'.\n" << std::flush;
+           << DumpPolicy(control -> FlushPolicy)
+           << "'.\n" << std::flush;
   }
 
   //
@@ -11340,14 +11340,14 @@ int SetSession()
   if (control -> LinkEncrypted == 1)
   {
     nxinfo << "Loop: Proxy running as part of an "
-            << "encrypting client.\n"
-            << std::flush;
+           << "encrypting client.\n"
+           << std::flush;
   }
   else
   {
     nxinfo << "Loop: Assuming proxy running as a "
-            << "standalone program.\n"
-            << std::flush;
+           << "standalone program.\n"
+           << std::flush;
   }
 
   //
@@ -11370,7 +11370,7 @@ int SetSession()
     if (stat(fileName, &fileStat) == 0)
     {
       nxinfo << "Loop: Enabling respawn of client at session shutdown.\n"
-              << std::flush;
+             << std::flush;
 
       control -> EnableRestartOnShutdown = 1;
     }
@@ -11425,17 +11425,17 @@ int SetStorage()
   }
 
   nxdbg << "Loop: Storage size limit is "
-          << control -> ClientTotalStorageSize
-          << " at client and "
-          << control -> ServerTotalStorageSize
-          << " at server.\n"
-          << std::flush;
+        << control -> ClientTotalStorageSize
+        << " at client and "
+        << control -> ServerTotalStorageSize
+        << " at server.\n"
+        << std::flush;
 
   nxdbg << "Loop: Storage local limit set to "
-          << control -> LocalTotalStorageSize
-          << " remote limit set to "
-          << control -> RemoteTotalStorageSize
-          << ".\n" << std::flush;
+        << control -> LocalTotalStorageSize
+        << " remote limit set to "
+        << control -> RemoteTotalStorageSize
+        << ".\n" << std::flush;
 
   //
   // Never reserve for split store more than
@@ -11446,8 +11446,8 @@ int SetStorage()
           SplitTotalStorageSize > size / 2)
   {
     nxinfo << "Loop: Reducing size of split store to "
-            << size / 2 << " bytes.\n"
-            << std::flush;
+           << size / 2 << " bytes.\n"
+           << std::flush;
 
     control -> SplitTotalStorageSize = size / 2;
   }
@@ -11461,8 +11461,8 @@ int SetStorage()
   if (control -> HideRender == 1)
   {
     nxinfo << "Loop: Not loading render extension "
-            << "from persistent cache.\n"
-            << std::flush;
+           << "from persistent cache.\n"
+           << std::flush;
 
     control -> PersistentCacheLoadRender = 0;
   }
@@ -11532,13 +11532,13 @@ int SetShmem()
     control -> ShmemServer = 1;
 
     nxinfo << "Loop: Set initial shared memory size "
-            << "to " << control -> ShmemServerSize
-            << " bytes.\n" << std::flush;
+           << "to " << control -> ShmemServerSize
+           << " bytes.\n" << std::flush;
   }
   else
   {
     nxinfo << "Loop: Disabled use of the shared memory "
-            << "extension.\n" << std::flush;
+           << "extension.\n" << std::flush;
 
     control -> ShmemServer = 0;
   }
@@ -11558,8 +11558,8 @@ int SetShmem()
 int SetPack()
 {
   nxinfo << "Loop: Setting pack with initial method "
-          << packMethod << " and quality " << packQuality
-          << ".\n" << std::flush;
+         << packMethod << " and quality " << packQuality
+         << ".\n" << std::flush;
 
   //
   // Check if this is a proxy session and, in
@@ -11571,7 +11571,7 @@ int SetPack()
   if (control -> SessionMode == session_proxy)
   {
     nxinfo << "Loop: WARNING! Disabling pack with proxy session.\n"
-            << std::flush;
+           << std::flush;
 
     packMethod = PACK_NONE;
   }
@@ -11593,8 +11593,8 @@ int SetPack()
     control -> PersistentCacheLoadPacked = 0;
 
     nxinfo << "Loop: Not loading packed images "
-            << "from persistent cache.\n"
-            << std::flush;
+           << "from persistent cache.\n"
+           << std::flush;
   }
 
   return 1;
@@ -11615,8 +11615,8 @@ int SetImages()
   if (control -> SessionMode == session_proxy)
   {
     nxinfo << "Loop: Disabling image cache with "
-            << "session '" << DumpSession(control ->
-               SessionMode) << "'.\n" << std::flush;
+           << "session '" << DumpSession(control ->
+              SessionMode) << "'.\n" << std::flush;
 
     sprintf(imagesSizeName, "0");
 
@@ -11655,13 +11655,13 @@ int SetImages()
       }
 
       nxinfo << "Loop: Path of image cache files is '" << control -> ImageCachePath
-              << "'.\n" << std::flush;
+             << "'.\n" << std::flush;
     }
   }
   else
   {
     nxinfo << "Loop: Disabling the persistent image cache.\n"
-            << std::flush;
+           << std::flush;
 
     control -> ImageCacheEnableLoad = 0;
     control -> ImageCacheEnableSave = 0;
@@ -11702,8 +11702,8 @@ int SetVersion()
     patch = control -> CompatVersionPatch;
 
     nxinfo << "Loop: Using compatibility version '"
-            << major << "." << minor << "." << patch
-            << "'.\n" << std::flush;
+           << major << "." << minor << "." << patch
+           << "'.\n" << std::flush;
   }
   else if (control -> LocalVersionMajor >
                control -> RemoteVersionMajor)
@@ -11719,8 +11719,8 @@ int SetVersion()
     patch = control -> RemoteVersionPatch;
 
     nxinfo << "Loop: Using remote version '"
-            << major << "." << minor << "." << patch
-            << "'.\n" << std::flush;
+           << major << "." << minor << "." << patch
+           << "'.\n" << std::flush;
   }
   else
   {
@@ -11739,8 +11739,8 @@ int SetVersion()
       patch = control -> RemoteVersionPatch;
 
       nxinfo << "Loop: Using remote version '"
-              << major << "." << minor << "." << patch
-              << "'.\n" << std::flush;
+             << major << "." << minor << "." << patch
+             << "'.\n" << std::flush;
     }
     else
     {
@@ -11749,8 +11749,8 @@ int SetVersion()
       patch = control -> LocalVersionPatch;
 
       nxinfo << "Loop: Using local version '"
-              << major << "." << minor << "." << patch
-              << "'.\n" << std::flush;
+             << major << "." << minor << "." << patch
+             << "'.\n" << std::flush;
     }
   }
 
@@ -11776,8 +11776,8 @@ int SetVersion()
   if (step == 0)
   {
     nxfatal << "Loop: PANIC! Unable to set the protocol step value from "
-         << "the negotiated protocol version " << major << "." << minor
-         << "." << patch << ".\n" << std::flush;
+            << "the negotiated protocol version " << major << "." << minor
+            << "." << patch << ".\n" << std::flush;
 
     cerr << "Error" << ": Unable to set the protocol step value from "
          << "the negotiated protocol version " << major << "." << minor
@@ -11799,7 +11799,7 @@ int SetVersion()
   }
 
   nxinfo << "Loop: Using NX protocol step "
-          << step << ".\n" << std::flush;
+         << step << ".\n" << std::flush;
 
   control -> setProtoStep(step);
 
@@ -11816,10 +11816,10 @@ int SetVersion()
   if (local != remote)
   {
     nxwarn << "Loop: WARNING! Connected to remote version "
-            << control -> RemoteVersionMajor << "." << control -> RemoteVersionMinor
-            << "." << control -> RemoteVersionPatch << " with local version "
-            << control -> LocalVersionMajor << "." << control -> LocalVersionMinor
-            << "." << control -> LocalVersionPatch << ".\n" << std::flush;
+           << control -> RemoteVersionMajor << "." << control -> RemoteVersionMinor
+           << "." << control -> RemoteVersionPatch << " with local version "
+           << control -> LocalVersionMajor << "." << control -> LocalVersionMinor
+           << "." << control -> LocalVersionPatch << ".\n" << std::flush;
 
     cerr << "Warning" << ": Connected to remote version "
          << control -> RemoteVersionMajor << "." << control -> RemoteVersionMinor
@@ -11850,10 +11850,10 @@ int SetVersion()
     //
 
     nxinfo << __FILE__ << " : " << __LINE__ << " - "
-            << "step = " << control -> getProtoStep()
-            << " packMethod = " << packMethod
-            << " packQuality = " << packQuality
-            << ".\n"  << std::flush;
+           << "step = " << control -> getProtoStep()
+           << " packMethod = " << packMethod
+           << " packQuality = " << packQuality
+           << ".\n"  << std::flush;
 
     //
     // Update the pack method name.
@@ -11881,8 +11881,8 @@ int SetVersion()
 
   // Since ProtoStep8 (#issue 108)
   nxinfo << "Loop: Disabling image cache with protocol "
-          << "step '" << control -> getProtoStep()
-          << "'.\n"  << std::flush;
+         << "step '" << control -> getProtoStep()
+         << "'.\n"  << std::flush;
 
   sprintf(imagesSizeName, "0");
 
@@ -11901,7 +11901,7 @@ int SetVersion()
 int SetLink()
 {
   nxinfo << "Loop: Setting link with initial value "
-          << linkSpeedName << ".\n" << std::flush;
+         << linkSpeedName << ".\n" << std::flush;
 
   if (*linkSpeedName == '\0')
   {
@@ -11909,7 +11909,7 @@ int SetLink()
   }
   
   nxinfo << "Loop: Link speed is " << linkSpeedName
-          << ".\n" << std::flush;
+         << ".\n" << std::flush;
 
   if (strcasecmp(linkSpeedName, "modem") == 0)
   {
@@ -11989,8 +11989,8 @@ int SetLink()
     else
     {
       nxwarn << "Loop: WARNING! Forcing taint of replies "
-              << "with a proxy session.\n"
-              << std::flush;
+             << "with a proxy session.\n"
+             << std::flush;
 
       control -> TaintReplies = 1;
     }
@@ -12015,8 +12015,8 @@ int SetLink()
   if (control -> SessionMode == session_proxy)
   {
     nxwarn << "Loop: WARNING! Forcing flush on priority "
-            << "with a proxy session.\n"
-            << std::flush;
+           << "with a proxy session.\n"
+           << std::flush;
 
     control -> FlushPriority = 1;
   }
@@ -12031,7 +12031,7 @@ int SetLink()
 int SetLinkModem()
 {
   nxinfo << "Loop: Setting parameters for MODEM.\n"
-          << std::flush;
+         << std::flush;
 
   control -> LinkMode = LINK_TYPE_MODEM;
 
@@ -12059,7 +12059,7 @@ int SetLinkModem()
 int SetLinkIsdn()
 {
   nxinfo << "Loop: Setting parameters for ISDN.\n"
-          << std::flush;
+         << std::flush;
 
   control -> LinkMode = LINK_TYPE_ISDN;
 
@@ -12087,7 +12087,7 @@ int SetLinkIsdn()
 int SetLinkAdsl()
 {
   nxinfo << "Loop: Setting parameters for ADSL.\n"
-          << std::flush;
+         << std::flush;
 
   control -> LinkMode = LINK_TYPE_ADSL;
 
@@ -12115,7 +12115,7 @@ int SetLinkAdsl()
 int SetLinkWan()
 {
   nxinfo << "Loop: Setting parameters for WAN.\n"
-          << std::flush;
+         << std::flush;
 
   control -> LinkMode = LINK_TYPE_WAN;
 
@@ -12143,7 +12143,7 @@ int SetLinkWan()
 int SetLinkLan()
 {
   nxinfo << "Loop: Setting parameters for LAN.\n"
-          << std::flush;
+         << std::flush;
 
   control -> LinkMode = LINK_TYPE_LAN;
 
@@ -12401,9 +12401,9 @@ int SetLimits()
   if (useStrict == 1)
   {
     nxinfo << "Loop: LIMIT! Decreasing the token limit "
-            << "to " << control -> TokenLimit / 2
-            << " with option 'strict'.\n"
-            << std::flush;
+           << "to " << control -> TokenLimit / 2
+           << " with option 'strict'.\n"
+           << std::flush;
 
     control -> TokenLimit /= 2;
   }
@@ -12413,9 +12413,9 @@ int SetLimits()
   control -> TokenLimit = 1;
 
   nxinfo << "Loop: WARNING! LIMIT! Setting the token limit "
-          << "to " << control -> TokenLimit
-          << " to simulate the proxy congestion.\n"
-          << std::flush;
+         << "to " << control -> TokenLimit
+         << " to simulate the proxy congestion.\n"
+         << std::flush;
 
   #endif
 
@@ -12448,11 +12448,11 @@ int SetLimits()
   }
 
   nxinfo << "Loop: LIMIT! Setting client bitrate limit "
-          << "to " << control -> ClientBitrateLimit
-          << " server bitrate limit to " << control ->
-             ServerBitrateLimit << " with local limit "
-          << control -> LocalBitrateLimit << ".\n"
-          << std::flush;
+         << "to " << control -> ClientBitrateLimit
+         << " server bitrate limit to " << control ->
+            ServerBitrateLimit << " with local limit "
+         << control -> LocalBitrateLimit << ".\n"
+         << std::flush;
 
   return 1;
 }
@@ -12480,7 +12480,7 @@ int ParseCacheOption(const char *opt)
   }
 
   nxinfo << "Loop: Setting size of cache to "
-          << size << " bytes.\n" << std::flush;
+         << size << " bytes.\n" << std::flush;
 
   control -> ClientTotalStorageSize = size;
   control -> ServerTotalStorageSize = size;
@@ -12490,12 +12490,12 @@ int ParseCacheOption(const char *opt)
   if (size == 0)
   {
     nxwarn << "Loop: WARNING! Disabling NX delta compression.\n"
-            << std::flush;
+           << std::flush;
 
     control -> LocalDeltaCompression = 0;
 
     nxwarn << "Loop: WARNING! Disabling use of NX persistent cache.\n"
-            << std::flush;
+           << std::flush;
 
     control -> PersistentCacheEnableLoad = 0;
     control -> PersistentCacheEnableSave = 0;
@@ -12521,7 +12521,7 @@ int ParseImagesOption(const char *opt)
   }
 
   nxinfo << "Loop: Setting size of images cache to "
-          << size << " bytes.\n" << std::flush;
+         << size << " bytes.\n" << std::flush;
 
   control -> ImageCacheDiskLimit = size;
 
@@ -12550,8 +12550,8 @@ int ParseShmemOption(const char *opt)
   control -> ShmemServerSize = size;
 
   nxinfo << "Loop: Set shared memory size to "
-          << control -> ShmemServerSize << " bytes.\n"
-          << std::flush;
+         << control -> ShmemServerSize << " bytes.\n"
+         << std::flush;
 
   strcpy(shsegSizeName, opt);
 
@@ -12579,14 +12579,14 @@ int ParseBitrateOption(const char *opt)
   if (bitrate == 0)
   {
     nxinfo << "Loop: Disabling bitrate limit on proxy link.\n"
-            << std::flush;
+           << std::flush;
 
     control -> LocalBitrateLimit = 0;
   }
   else
   {
     nxinfo << "Loop: Setting bitrate to " << bitrate
-            << " bits per second.\n" << std::flush;
+           << " bits per second.\n" << std::flush;
 
     //
     // Internal representation is in bytes
@@ -12602,7 +12602,7 @@ int ParseBitrateOption(const char *opt)
 int ParseHostOption(const char *opt, char *host, long &port)
 {
   nxinfo << "Loop: Trying to parse options string '" << opt
-          << "' as a remote NX host.\n" << std::flush;
+         << "' as a remote NX host.\n" << std::flush;
 
   if (opt == NULL || *opt == '\0')
   {
@@ -12644,7 +12644,7 @@ int ParseHostOption(const char *opt, char *host, long &port)
     if (newPort < 0 || *check != '\0')
     {
       nxinfo << "Loop: Can't identify remote NX port in string '"
-              << separator << "'.\n" << std::flush;
+             << separator << "'.\n" << std::flush;
 
       return 0;
     }
@@ -12657,7 +12657,7 @@ int ParseHostOption(const char *opt, char *host, long &port)
     //
 
     nxinfo << "Loop: Can't identify remote NX port in string '"
-            << opt << "'.\n" << std::flush;
+           << opt << "'.\n" << std::flush;
 
     return 0;
   }
@@ -12683,7 +12683,7 @@ int ParseHostOption(const char *opt, char *host, long &port)
   if (*check != '\0')
   {
     nxinfo << "Loop: Can't identify remote NX host in string '"
-            << newHost << "'.\n" << std::flush;
+           << newHost << "'.\n" << std::flush;
 
     return 0;
   }
@@ -12707,8 +12707,8 @@ int ParseHostOption(const char *opt, char *host, long &port)
   if (*host != '\0' && strcmp(host, newHost) != 0)
   {
     nxwarn << "Loop: WARNING! Overriding remote NX host '"
-            << host << "' with new value '" << newHost
-            << "'.\n" << std::flush;
+           << host << "' with new value '" << newHost
+           << "'.\n" << std::flush;
   }
 
   strcpy(host, newHost);
@@ -12716,13 +12716,13 @@ int ParseHostOption(const char *opt, char *host, long &port)
   if (port != -1 && port != newPort)
   {
     nxwarn << "Loop: WARNING! Overriding remote NX port '"
-            << port << "' with new value '" << newPort
-            << "'.\n" << std::flush;
+           << port << "' with new value '" << newPort
+           << "'.\n" << std::flush;
   }
 
   nxinfo << "Loop: Parsed options string '" << opt
-          << "' with host '" << newHost << "' and port '"
-          << newPort << "'.\n" << std::flush;
+         << "' with host '" << newHost << "' and port '"
+         << newPort << "'.\n" << std::flush;
 
   port = newPort;
 
@@ -12741,7 +12741,7 @@ int ParseFontPath(char *path)
   }
 
   nxinfo << "Loop: Parsing font server option '" << path
-          << "'.\n" << std::flush;
+         << "'.\n" << std::flush;
 
   //
   // Convert the value to our default port.
@@ -12772,7 +12772,7 @@ int ParseFontPath(char *path)
   if (atoi(path) > 0)
   {
     nxinfo << "Loop: Assuming numeric TCP port '" << atoi(path)
-            << "' for font server.\n" << std::flush;
+           << "' for font server.\n" << std::flush;
 
     return 1;
   }
@@ -12791,7 +12791,7 @@ int ParseFontPath(char *path)
     *(path + DEFAULT_STRING_LENGTH - 1) = '\0';
 
     nxinfo << "Loop: Assuming Unix socket '" << path
-            << "' for font server.\n" << std::flush;
+           << "' for font server.\n" << std::flush;
   }
   else if (strncmp("tcp/:", path, 5) == 0)
   {
@@ -12805,7 +12805,7 @@ int ParseFontPath(char *path)
     }
 
     nxinfo << "Loop: Assuming TCP port '" << atoi(path)
-            << "' for font server.\n" << std::flush;
+           << "' for font server.\n" << std::flush;
   }
   else
   {
@@ -12820,7 +12820,7 @@ int ParseFontPath(char *path)
     }
 
     nxinfo << "Loop: Assuming Unix socket '" << path
-            << "' for font server.\n" << std::flush;
+           << "' for font server.\n" << std::flush;
   }
 
   return 1;
@@ -12828,8 +12828,8 @@ int ParseFontPath(char *path)
 ParseFontPathError:
 
   nxinfo << "Loop: Unable to determine the font server "
-          << "port in string '" << path << "'.\n"
-          << std::flush;
+         << "port in string '" << path << "'.\n"
+         << std::flush;
 
   return -1;
 }
@@ -12839,7 +12839,7 @@ int OpenLogFile(char *name, ostream *&stream)
   if (name == NULL || *name == '\0')
   {
     nxinfo << "Loop: WARNING! No name provided for output. Using standard error.\n"
-            << std::flush;
+           << std::flush;
 
     if (stream == NULL)
     {
@@ -12939,8 +12939,8 @@ int ReopenLogFile(char *name, ostream *&stream, int limit)
       if (stat(name, &fileStat) != 0)
       {
         nxwarn << "Loop: WARNING! Can't get stats of file '"
-                << name  << "'. Error is " << EGET() 
-                << " '" << ESTR() << "'.\n" << std::flush;
+               << name  << "'. Error is " << EGET()
+               << " '" << ESTR() << "'.\n" << std::flush;
 
         return 0;
       }
@@ -12951,8 +12951,8 @@ int ReopenLogFile(char *name, ostream *&stream, int limit)
     }
 
     nxinfo << "Loop: Deleting file '" << name
-            << "' with size " << fileStat.st_size
-            << ".\n" << std::flush;
+           << "' with size " << fileStat.st_size
+           << ".\n" << std::flush;
 
     //
     // Create a new stream over the previous
@@ -12979,7 +12979,7 @@ int ReopenLogFile(char *name, ostream *&stream, int limit)
     umask(fileMode);
 
     nxinfo << "Loop: Reopened file '" << name
-            << "'.\n" << std::flush;
+           << "'.\n" << std::flush;
   }
 
   return 1;
@@ -13284,9 +13284,9 @@ void PrintOptionIgnored(const char *type, const char *name, const char *value)
   if (control -> ProxyMode == proxy_server)
   {
     nxwarn << "Loop: WARNING! Ignoring " << type
-            << " option '" << name << "' with value '"
-            << value << "' at " << "NX client side.\n"
-            << std::flush;
+           << " option '" << name << "' with value '"
+           << value << "' at " << "NX client side.\n"
+           << std::flush;
 
     cerr << "Warning" << ": Ignoring " << type
          << " option '" << name << "' with value '"
@@ -13295,9 +13295,9 @@ void PrintOptionIgnored(const char *type, const char *name, const char *value)
   else
   {
     nxwarn << "Loop: WARNING! Ignoring " << type
-            << " option '" << name << "' with value '"
-            << value << "' at " << "NX server side.\n"
-            << std::flush;
+           << " option '" << name << "' with value '"
+           << value << "' at " << "NX server side.\n"
+           << std::flush;
 
     cerr << "Warning" << ": Ignoring " << type
          << " option '" << name << "' with value '"
@@ -13314,8 +13314,8 @@ const char *GetOptions(const char *options)
                 strncasecmp(options, "nx:", 3) != 0)
     {
       nxinfo << "Loop: PANIC! Display options string '" << options
-              << "' must start with 'nx' or 'nx/nx' prefix.\n"
-              << std::flush;
+             << "' must start with 'nx' or 'nx/nx' prefix.\n"
+             << std::flush;
 
       cerr << "Error" << ": Display options string '" << options
            << "' must start with 'nx' or 'nx/nx' prefix.\n";
@@ -13361,8 +13361,8 @@ const char *GetArg(int &argi, int argc, const char **argv)
 int CheckArg(const char *type, const char *name, const char *value)
 {
   nxinfo << "Loop: Parsing " << type << " option '" << name
-          << "' with value '" << (value ? value : "(null)")
-          << "'.\n" << std::flush;
+         << "' with value '" << (value ? value : "(null)")
+         << "'.\n" << std::flush;
 
   if (value == NULL || strstr(value, "=") != NULL)
   {
@@ -13474,7 +13474,7 @@ int ParseArg(const char *type, const char *name, const char *value)
   delete [] string;
 
   nxinfo << "Loop: Integer option parsed to '"
-          << (int) result << "'.\n" << std::flush;
+         << (int) result << "'.\n" << std::flush;
 
   return (int) result;
 }
@@ -13610,15 +13610,15 @@ static void handleCheckSessionInLoop()
   if (proxy -> getShutdown() > 0)
   {
     nxinfo << "Loop: End of NX transport requested "
-            << "by remote.\n" << std::flush;
+           << "by remote.\n" << std::flush;
 
     handleTerminatingInLoop();
 
     if (control -> ProxyMode == proxy_server)
     {
       nxinfo << "Loop: Bytes received so far are "
-              << (unsigned long long) statistics -> getBytesIn()
-              << ".\n" << std::flush;
+             << (unsigned long long) statistics -> getBytesIn()
+             << ".\n" << std::flush;
 
       if (statistics -> getBytesIn() < 1024)
       {
@@ -13632,15 +13632,15 @@ static void handleCheckSessionInLoop()
     }
 
     nxinfo << "Loop: Shutting down the NX transport.\n"
-            << std::flush;
+           << std::flush;
 
     HandleCleanup();
   }
   else if (proxy -> handlePing() < 0)
   {
     nxinfo << "Loop: Failure handling the ping for "
-            << "proxy FD#" << proxyFD << ".\n"
-            << std::flush;
+           << "proxy FD#" << proxyFD << ".\n"
+           << std::flush;
 
     HandleShutdown();
   }
@@ -13654,13 +13654,13 @@ static void handleCheckSessionInLoop()
   if (IsRunning(lastWatchdog) && CheckProcess(lastWatchdog, "watchdog") == 0)
   {
     nxwarn << "Loop: WARNING! Watchdog is gone unnoticed. "
-            << "Setting the last signal to SIGTERM.\n"
-            << std::flush;
+           << "Setting the last signal to SIGTERM.\n"
+           << std::flush;
 
     lastSignal = SIGTERM;
 
     nxwarn << "Loop: WARNING! Resetting pid of last "
-            << "watchdog process.\n" << std::flush;
+           << "watchdog process.\n" << std::flush;
 
     SetNotRunning(lastWatchdog);
   }
@@ -13679,11 +13679,11 @@ static void handleCheckSessionInLoop()
               channel_none && lastKill == 0 && lastDestroy == 1)
   {
     nxinfo << "Loop: End of NX transport requested "
-            << "by agent.\n" << std::flush;
+           << "by agent.\n" << std::flush;
 
     nxinfo << "Loop: Bytes sent so far are "
-            << (unsigned long long) statistics -> getBytesOut()
-            << ".\n" << std::flush;
+           << (unsigned long long) statistics -> getBytesOut()
+           << ".\n" << std::flush;
 
     if (statistics -> getBytesOut() < 1024)
     {
@@ -13749,8 +13749,8 @@ static void handleCheckSessionInLoop()
       if (signal != 0)
       {
         nxinfo << "Loop: End of NX transport requested by signal '"
-                << signal << "' '" << DumpSignal(signal)
-                << "'.\n" << std::flush;
+               << signal << "' '" << DumpSignal(signal)
+               << "'.\n" << std::flush;
 
         handleTerminatingInLoop();
       }
@@ -13780,7 +13780,7 @@ static void handleCheckSessionInLoop()
     else if (lastKill == 2)
     {
       nxinfo << "Loop: Shutting down the NX transport.\n"
-              << std::flush;
+             << std::flush;
 
       proxy -> handleShutdown();
 
@@ -13814,13 +13814,13 @@ static void handleCheckSessionInLoop()
         }
 
         nxinfo << "Loop: Starting watchdog process with timeout "
-                << "of " << timeout << " Ms.\n"
-                << std::flush;
+               << "of " << timeout << " Ms.\n"
+               << std::flush;
       }
       else
       {
         nxinfo << "Loop: Starting watchdog process without "
-                << "a timeout.\n" << std::flush;
+               << "a timeout.\n" << std::flush;
       }
 
       lastWatchdog = NXTransWatchdog(timeout);
@@ -13838,7 +13838,7 @@ static void handleCheckSessionInLoop()
       else
       {
         nxinfo << "Loop: Watchdog started with pid '"
-                << lastWatchdog << "'.\n" << std::flush;
+               << lastWatchdog << "'.\n" << std::flush;
       }
     }
     else
@@ -13857,7 +13857,7 @@ static void handleCheckSessionInLoop()
     if (control -> CleanupTimeout > 0)
     {
       nxinfo << "Loop: Waiting the cleanup timeout to complete.\n"
-              << std::flush;
+             << std::flush;
 
       cerr << "Info" << ": Waiting the cleanup timeout to complete.\n";
     }
@@ -13873,7 +13873,7 @@ static void handleCheckSessionInLoop()
            << "'.\n";
 
       nxinfo << "Loop: Waiting the watchdog process to complete.\n"
-              << std::flush;
+             << std::flush;
 
       cerr << "Info" << ": Waiting the watchdog process to complete.\n";
     }
@@ -13887,10 +13887,10 @@ static void handleCheckBitrateInLoop()
   static long int slept = 0;
 
   nxinfo << "Loop: Bitrate is " << statistics -> getBitrateInShortFrame()
-          << " B/s and " << statistics -> getBitrateInLongFrame()
-          << " B/s in " << control -> ShortBitrateTimeFrame / 1000
-          << "/" << control -> LongBitrateTimeFrame / 1000
-          << " seconds timeframes.\n" << std::flush;
+         << " B/s and " << statistics -> getBitrateInLongFrame()
+         << " B/s in " << control -> ShortBitrateTimeFrame / 1000
+         << "/" << control -> LongBitrateTimeFrame / 1000
+         << " seconds timeframes.\n" << std::flush;
 
   //
   // This can be improved. We may not jump out
@@ -13901,8 +13901,8 @@ static void handleCheckBitrateInLoop()
   if (control -> LocalBitrateLimit > 0)
   {
     nxinfo << "Loop: Calculating bandwidth usage with limit "
-            << control -> LocalBitrateLimit << ".\n"
-            << std::flush;
+           << control -> LocalBitrateLimit << ".\n"
+           << std::flush;
 
     int reference = (statistics -> getBitrateInLongFrame() +
                          statistics -> getBitrateInShortFrame()) / 2;
@@ -13922,8 +13922,8 @@ static void handleCheckBitrateInLoop()
       if (slept > 2000)
       {
         nxwarn << "Loop: WARNING! Sleeping due to "
-                << "reference bitrate of " << reference
-                << " B/s.\n" << std::flush;
+               << "reference bitrate of " << reference
+               << " B/s.\n" << std::flush;
 
         cerr << "Warning" << ": Sleeping due to "
              << "reference bitrate of " << reference
@@ -13971,8 +13971,8 @@ static void handleCheckStateInLoop(int &setFDs)
       if (fdLength > 0)
       {
         nxinfo << "Loop: WARNING! Buffer for descriptor FD#"
-                << j << " has " << fdLength << " bytes to write.\n"
-                << std::flush;
+               << j << " has " << fdLength << " bytes to write.\n"
+               << std::flush;
       }
     }
   }
@@ -14005,8 +14005,8 @@ static void handleCheckStateInLoop(int &setFDs)
     else
     {
       nxinfo << "Loop: WARNING! Buffer for proxy descriptor FD#"
-              << proxyFD << " has " << fdLength << " bytes "
-              << "to write.\n" << std::flush;
+             << proxyFD << " has " << fdLength << " bytes "
+             << "to write.\n" << std::flush;
     }
   }
 
@@ -14015,8 +14015,8 @@ static void handleCheckStateInLoop(int &setFDs)
   if (fdSplits > 0)
   {
     nxwarn << "Loop: WARNING! Proxy descriptor FD#" << proxyFD
-            << " has " << fdSplits << " splits to send.\n"
-            << std::flush;
+           << " has " << fdSplits << " splits to send.\n"
+           << std::flush;
   }
 }
 
@@ -14024,8 +14024,8 @@ static void handleCheckSelectInLoop(int &setFDs, fd_set &readSet,
                                         fd_set &writeSet, T_timestamp selectTs)
 {
   nxinfo << "Loop: Maximum descriptors is ["
-          << setFDs << "] at " << strMsTimestamp()
-          << ".\n" << std::flush;
+         << setFDs << "] at " << strMsTimestamp()
+         << ".\n" << std::flush;
 
   int i;
 
@@ -14079,9 +14079,9 @@ static void handleCheckSelectInLoop(int &setFDs, fd_set &readSet,
   }
 
   nxinfo << "Loop: Select timeout is "
-          << selectTs.tv_sec << " S and "
-          << (double) selectTs.tv_usec / 1000
-          << " Ms.\n" << std::flush;
+         << selectTs.tv_sec << " S and "
+         << (double) selectTs.tv_usec / 1000
+         << " Ms.\n" << std::flush;
 }
 
 static void handleCheckResultInLoop(int &resultFDs, int &errorFDs, int &setFDs, fd_set &readSet,
@@ -14095,16 +14095,16 @@ static void handleCheckResultInLoop(int &resultFDs, int &errorFDs, int &setFDs, 
                      (control -> LatencyTimeout * 4)))
   {
     nxinfo << "Loop: Select result is [" << resultFDs
-            << "] at " << strMsTimestamp() << " with no "
-            << "communication within " << diffTs
-            << " Ms.\n" << std::flush;
+           << "] at " << strMsTimestamp() << " with no "
+           << "communication within " << diffTs
+           << " Ms.\n" << std::flush;
   }
   else
   {
     nxinfo << "Loop: Select result is [" << resultFDs
-            << "] error is [" << errorFDs << "] at "
-            << strMsTimestamp() << " after " << diffTs
-            << " Ms.\n" << std::flush;
+           << "] error is [" << errorFDs << "] at "
+           << strMsTimestamp() << " after " << diffTs
+           << " Ms.\n" << std::flush;
   }
 
 
@@ -14164,7 +14164,7 @@ static void handleCheckResultInLoop(int &resultFDs, int &errorFDs, int &setFDs, 
 static void handleCheckSessionInConnect()
 {
   nxinfo << "Loop: Going to check session in connect.\n"
-          << std::flush;
+         << std::flush;
 
   if (control -> ProxyMode == proxy_client)
   {
@@ -14209,8 +14209,8 @@ static void handleStatisticsInLoop()
     if (mode == TOTAL_STATS || mode == PARTIAL_STATS)
     {
       nxinfo << "Loop: Going to request proxy statistics "
-              << "with signal '" << DumpSignal(lastSignal)
-              << "'.\n" << std::flush;
+             << "with signal '" << DumpSignal(lastSignal)
+             << "'.\n" << std::flush;
 
       if (proxy != NULL)
       {
@@ -14233,17 +14233,17 @@ static void handleNegotiationInLoop(int &setFDs, fd_set &readSet,
   while (yield == 0)
   {
     nxinfo << "Loop: Going to run a new negotiation loop "
-            << "with stage " << control -> ProxyStage
-            << " at " << strMsTimestamp() << ".\n"
-            << std::flush;
+           << "with stage " << control -> ProxyStage
+           << " at " << strMsTimestamp() << ".\n"
+           << std::flush;
 
     switch (control -> ProxyStage)
     {
       case stage_undefined:
       {
         nxinfo << "Loop: Handling negotiation with '"
-                << "stage_undefined" << "'.\n"
-                << std::flush;
+               << "stage_undefined" << "'.\n"
+               << std::flush;
 
         control -> ProxyStage = stage_initializing;
 
@@ -14252,8 +14252,8 @@ static void handleNegotiationInLoop(int &setFDs, fd_set &readSet,
       case stage_initializing:
       {
         nxinfo << "Loop: Handling negotiation with '"
-                << "stage_initializing" << "'.\n"
-                << std::flush;
+               << "stage_initializing" << "'.\n"
+               << std::flush;
 
         InitBeforeNegotiation();
 
@@ -14264,8 +14264,8 @@ static void handleNegotiationInLoop(int &setFDs, fd_set &readSet,
       case stage_connecting:
       {
         nxinfo << "Loop: Handling negotiation with '"
-                << "stage_connecting" << "'.\n"
-                << std::flush;
+               << "stage_connecting" << "'.\n"
+               << std::flush;
 
         SetupProxyConnection();
 
@@ -14276,8 +14276,8 @@ static void handleNegotiationInLoop(int &setFDs, fd_set &readSet,
       case stage_connected:
       {
         nxinfo << "Loop: Handling negotiation with '"
-                << "stage_connected" << "'.\n"
-                << std::flush;
+               << "stage_connected" << "'.\n"
+               << std::flush;
 
         //
         // Server side proxy must always be the one that
@@ -14319,8 +14319,8 @@ static void handleNegotiationInLoop(int &setFDs, fd_set &readSet,
       case stage_sending_proxy_options:
       {
         nxinfo << "Loop: Handling negotiation with '"
-                << "stage_sending_proxy_options" << "'.\n"
-                << std::flush;
+               << "stage_sending_proxy_options" << "'.\n"
+               << std::flush;
 
         if (SendProxyOptions(proxyFD) < 0)
         {
@@ -14341,8 +14341,8 @@ static void handleNegotiationInLoop(int &setFDs, fd_set &readSet,
       case stage_waiting_forwarder_version:
       {
         nxinfo << "Loop: Handling negotiation with '"
-                << "stage_waiting_forwarder_version" << "'.\n"
-                << std::flush;
+               << "stage_waiting_forwarder_version" << "'.\n"
+               << std::flush;
 
         int result = ReadForwarderVersion(proxyFD);
 
@@ -14364,8 +14364,8 @@ static void handleNegotiationInLoop(int &setFDs, fd_set &readSet,
       case stage_waiting_forwarder_options:
       {
         nxinfo << "Loop: Handling negotiation with '"
-                << "stage_waiting_forwarder_options" << "'.\n"
-                << std::flush;
+               << "stage_waiting_forwarder_options" << "'.\n"
+               << std::flush;
 
         int result = ReadForwarderOptions(proxyFD);
 
@@ -14387,8 +14387,8 @@ static void handleNegotiationInLoop(int &setFDs, fd_set &readSet,
       case stage_waiting_proxy_version:
       {
         nxinfo << "Loop: Handling negotiation with '"
-                << "stage_waiting_proxy_version" << "'.\n"
-                << std::flush;
+               << "stage_waiting_proxy_version" << "'.\n"
+               << std::flush;
 
         int result = ReadProxyVersion(proxyFD);
 
@@ -14410,8 +14410,8 @@ static void handleNegotiationInLoop(int &setFDs, fd_set &readSet,
       case stage_waiting_proxy_options:
       {
         nxinfo << "Loop: Handling negotiation with '"
-                << "stage_waiting_proxy_options" << "'.\n"
-                << std::flush;
+               << "stage_waiting_proxy_options" << "'.\n"
+               << std::flush;
 
         int result = ReadProxyOptions(proxyFD);
 
@@ -14440,8 +14440,8 @@ static void handleNegotiationInLoop(int &setFDs, fd_set &readSet,
       case stage_sending_proxy_caches:
       {
         nxinfo << "Loop: Handling negotiation with '"
-                << "stage_sending_proxy_caches" << "'.\n"
-                << std::flush;
+               << "stage_sending_proxy_caches" << "'.\n"
+               << std::flush;
 
         if (SendProxyCaches(proxyFD) < 0)
         {
@@ -14462,8 +14462,8 @@ static void handleNegotiationInLoop(int &setFDs, fd_set &readSet,
       case stage_waiting_proxy_caches:
       {
         nxinfo << "Loop: Handling negotiation with '"
-                << "stage_waiting_proxy_caches" << "'.\n"
-                << std::flush;
+               << "stage_waiting_proxy_caches" << "'.\n"
+               << std::flush;
 
         int result = ReadProxyCaches(proxyFD);
 
@@ -14492,8 +14492,8 @@ static void handleNegotiationInLoop(int &setFDs, fd_set &readSet,
       case stage_operational:
       {
         nxinfo << "Loop: Handling negotiation with '"
-                << "stage_operational" << "'.\n"
-                << std::flush;
+               << "stage_operational" << "'.\n"
+               << std::flush;
 
         InitAfterNegotiation();
 
@@ -14539,8 +14539,8 @@ static void handleNegotiationInLoop(int &setFDs, fd_set &readSet,
   setMinTimestamp(selectTs, control -> PingTimeout);
 
   nxinfo << "Loop: Selected proxy FD#" << proxyFD << " in negotiation "
-          << "phase with timeout of " << selectTs.tv_sec << " S and "
-          << selectTs.tv_usec << " Ms.\n" << std::flush;
+         << "phase with timeout of " << selectTs.tv_sec << " S and "
+         << selectTs.tv_usec << " Ms.\n" << std::flush;
 
   return;
 
@@ -14621,7 +14621,7 @@ static void handleAlertInLoop()
     if (proxy != NULL)
     {
       nxinfo << "Loop: Requesting a remote alert with code '"
-              << lastAlert.code << "'.\n" << std::flush;
+             << lastAlert.code << "'.\n" << std::flush;
 
       if (proxy -> handleAlert(lastAlert.code) < 0)
       {
@@ -14632,7 +14632,7 @@ static void handleAlertInLoop()
   else
   {
     nxinfo << "Loop: Handling a local alert with code '"
-            << lastAlert.code << "'.\n" << std::flush;
+           << lastAlert.code << "'.\n" << std::flush;
 
     if (control -> ProxyMode == proxy_client)
     {
@@ -14867,8 +14867,8 @@ static void handleAlertInLoop()
           if (lastAlert.code > LAST_PROTO_STEP_7_ALERT)
           {
             nxwarn << "Loop: WARNING! An unrecognized alert type '"
-                    << lastAlert.code << "' was requested.\n"
-                    << std::flush;
+                   << lastAlert.code << "' was requested.\n"
+                   << std::flush;
 
             cerr << "Warning" << ": An unrecognized alert type '"
                  << lastAlert.code << "' was requested.\n";
@@ -14876,7 +14876,7 @@ static void handleAlertInLoop()
           else
           {
             nxwarn << "Loop: WARNING! Ignoring obsolete alert type '"
-                    << lastAlert.code << "'.\n" << std::flush;
+                   << lastAlert.code << "'.\n" << std::flush;
           }
 
           message = NULL;
@@ -14891,7 +14891,7 @@ static void handleAlertInLoop()
       if (replace == 1 && IsRunning(lastDialog))
       {
         nxinfo << "Loop: Killing the previous dialog with pid '"
-                << lastDialog << "'.\n" << std::flush;
+               << lastDialog << "'.\n" << std::flush;
 
         //
         // The client ignores the TERM signal
@@ -14930,13 +14930,13 @@ static void handleAlertInLoop()
         else
         {
           nxinfo << "Loop: Dialog started with pid '"
-                  << lastDialog << "'.\n" << std::flush;
+                 << lastDialog << "'.\n" << std::flush;
         }
       }
       else
       {
         nxinfo << "Loop: No new dialog required for code '"
-                << lastAlert.code << "'.\n" << std::flush;
+               << lastAlert.code << "'.\n" << std::flush;
       }
     }
   }
@@ -14953,7 +14953,7 @@ static inline void handleSetAgentInLoop(int &setFDs, fd_set &readSet,
                                             fd_set &writeSet, struct timeval &selectTs)
 {
   nxinfo << "Loop: Preparing the masks for the agent descriptors.\n"
-          << std::flush;
+         << std::flush;
 
   agent -> saveChannelState();
 
@@ -14968,7 +14968,7 @@ static inline void handleSetAgentInLoop(int &setFDs, fd_set &readSet,
                     agent -> proxyCanRead())
     {
       nxinfo << "Loop: Setting a null timeout with agent descriptors ready.\n"
-              << std::flush;
+             << std::flush;
 
       //
       // Force a null timeout so we'll bail out
@@ -14982,7 +14982,7 @@ static inline void handleSetAgentInLoop(int &setFDs, fd_set &readSet,
   }
 
   nxinfo << "Loop: Clearing the read and write agent descriptors.\n"
-          << std::flush;
+         << std::flush;
 
   agent -> clearReadMask(&readSet);
   agent -> clearWriteMask(&writeSet);
@@ -14992,7 +14992,7 @@ static inline void handleAgentInLoop(int &resultFDs, int &errorFDs, int &setFDs,
                                          fd_set &writeSet, struct timeval &selectTs)
 {
   nxinfo << "Loop: Setting proxy and local agent descriptors.\n"
-          << std::flush;
+         << std::flush;
 
   //
   // Check if I/O is possible on the local
@@ -15009,14 +15009,14 @@ static inline void handleAgentInLoop(int &resultFDs, int &errorFDs, int &setFDs,
     agent -> saveChannelState();
 
     nxinfo << "Loop: Values were resultFDs " << resultFDs
-            << " errorFDs " << errorFDs << " setFDs "
-            << setFDs << ".\n" << std::flush;
+           << " errorFDs " << errorFDs << " setFDs "
+           << setFDs << ".\n" << std::flush;
 
     if (agent -> localCanRead() == 1)
     {
       nxinfo << "Loop: Setting agent descriptor FD#" << agent ->
-                 getLocalFd() << " as ready to read.\n"
-              << std::flush;
+                getLocalFd() << " as ready to read.\n"
+             << std::flush;
 
       agent -> setLocalRead(&readSet, &resultFDs);
     }
@@ -15026,21 +15026,21 @@ static inline void handleAgentInLoop(int &resultFDs, int &errorFDs, int &setFDs,
             agent -> proxyCanRead() == 1)
     {
       nxinfo << "Loop: WARNING! Can read from proxy FD#"
-              << proxyFD << " but the descriptor "
-              << "is not selected.\n" << std::flush;
+             << proxyFD << " but the descriptor "
+             << "is not selected.\n" << std::flush;
     }
 
     if (agent -> proxyCanRead(&readSet) == 1)
     {
       nxinfo << "Loop: Setting proxy descriptor FD#" << agent ->
-                 getProxyFd() << " as ready to read.\n"
-              << std::flush;
+                getProxyFd() << " as ready to read.\n"
+             << std::flush;
     }
 
 
     nxinfo << "Loop: Values are now resultFDs " << resultFDs
-            << " errorFDs " << errorFDs << " setFDs "
-            << setFDs << ".\n" << std::flush;
+           << " errorFDs " << errorFDs << " setFDs "
+           << setFDs << ".\n" << std::flush;
   }
 }
 
@@ -15048,7 +15048,7 @@ static inline void handleAgentLateInLoop(int &resultFDs, int &errorFDs, int &set
                                              fd_set &writeSet, struct timeval &selectTs)
 {
   nxinfo << "Loop: Setting remote agent descriptors.\n"
-          << std::flush;
+         << std::flush;
 
   //
   // We reset the masks before calling our select.
@@ -15070,15 +15070,15 @@ static inline void handleAgentLateInLoop(int &resultFDs, int &errorFDs, int &set
     agent -> saveChannelState();
 
     nxinfo << "Loop: Values were resultFDs " << resultFDs
-            << " errorFDs " << errorFDs << " setFDs "
-            << setFDs << ".\n" << std::flush;
+           << " errorFDs " << errorFDs << " setFDs "
+           << setFDs << ".\n" << std::flush;
 
     if (agent -> remoteCanRead(agent ->
             getSavedReadMask()) == 1)
     {
       nxinfo << "Loop: Setting agent descriptor FD#" << agent ->
-                 getRemoteFd() << " as ready to read.\n"
-              << std::flush;
+                getRemoteFd() << " as ready to read.\n"
+             << std::flush;
 
       agent -> setRemoteRead(&readSet, &resultFDs);
     }
@@ -15087,15 +15087,15 @@ static inline void handleAgentLateInLoop(int &resultFDs, int &errorFDs, int &set
             getSavedWriteMask()) == 1)
     {
       nxinfo << "Loop: Setting agent descriptor FD#" << agent ->
-                 getRemoteFd() << " as ready to write.\n"
-              << std::flush;
+                getRemoteFd() << " as ready to write.\n"
+             << std::flush;
 
       agent -> setRemoteWrite(&writeSet, &resultFDs);
     }
 
     nxinfo << "Loop: Values are now resultFDs " << resultFDs
-            << " errorFDs " << errorFDs << " setFDs "
-            << setFDs << ".\n" << std::flush;
+           << " errorFDs " << errorFDs << " setFDs "
+           << setFDs << ".\n" << std::flush;
   }
 }
 
@@ -15237,8 +15237,8 @@ static inline void handleReadableInLoop(int &resultFDs, fd_set &readSet)
           //
 
           nxinfo << "Loop: Trying to read immediately "
-                  << "from descriptor FD#" << newFD
-                  << ".\n" << std::flush;
+                 << "from descriptor FD#" << newFD
+                 << ".\n" << std::flush;
 
           FD_SET(newFD, &readSet);
 
@@ -15247,21 +15247,21 @@ static inline void handleReadableInLoop(int &resultFDs, fd_set &readSet)
         else
         {
           nxinfo << "Loop: Nothing to read immediately "
-                  << "from descriptor FD#" << newFD
-                  << ".\n" << std::flush;
+                 << "from descriptor FD#" << newFD
+                 << ".\n" << std::flush;
         }
       }
     }
   }
 
   nxdbg << "Loop: Going to check the readable descriptors.\n"
-          << std::flush;
+        << std::flush;
 
   if (proxy -> handleRead(resultFDs, readSet) < 0)
   {
     nxinfo << "Loop: Failure reading from descriptors "
-            << "for proxy FD#" << proxyFD << ".\n"
-            << std::flush;
+           << "for proxy FD#" << proxyFD << ".\n"
+           << std::flush;
 
     HandleShutdown();
   }
@@ -15270,13 +15270,13 @@ static inline void handleReadableInLoop(int &resultFDs, fd_set &readSet)
 static inline void handleWritableInLoop(int &resultFDs, fd_set &writeSet)
 {
   nxdbg << "Loop: Going to check the writable descriptors.\n"
-          << std::flush;
+        << std::flush;
 
   if (resultFDs > 0 && proxy -> handleFlush(resultFDs, writeSet) < 0)
   {
     nxinfo << "Loop: Failure writing to descriptors "
-            << "for proxy FD#" << proxyFD << ".\n"
-            << std::flush;
+           << "for proxy FD#" << proxyFD << ".\n"
+           << std::flush;
 
     HandleShutdown();
   }
@@ -15285,7 +15285,7 @@ static inline void handleWritableInLoop(int &resultFDs, fd_set &writeSet)
 static inline void handleFlushInLoop()
 {
   nxdbg << "Loop: Going to flush any data to the proxy.\n"
-          << std::flush;
+        << std::flush;
 
   if (agent == NULL || control ->
           FlushPolicy == policy_immediate)
@@ -15295,14 +15295,14 @@ static inline void handleFlushInLoop()
             ProxyMode == proxy_client)
     {
       nxinfo << "Loop: WARNING! Flushing the proxy link "
-              << "on behalf of the agent.\n" << std::flush;
+             << "on behalf of the agent.\n" << std::flush;
     }
 
 
     if (proxy -> handleFlush() < 0)
     {
       nxinfo << "Loop: Failure flushing the proxy FD#"
-              << proxyFD << ".\n" << std::flush;
+             << proxyFD << ".\n" << std::flush;
 
       HandleShutdown();
     }
@@ -15312,8 +15312,8 @@ static inline void handleFlushInLoop()
 static inline void handleRotateInLoop()
 {
   nxdbg << "Loop: Going to rotate channels "
-          << "for proxy FD#" << proxyFD << ".\n"
-          << std::flush;
+        << "for proxy FD#" << proxyFD << ".\n"
+        << std::flush;
 
   proxy -> handleRotate();
 }
@@ -15321,14 +15321,14 @@ static inline void handleRotateInLoop()
 static inline void handleEventsInLoop()
 {
   nxdbg << "Loop: Going to check channel events "
-          << "for proxy FD#" << proxyFD << ".\n"
-          << std::flush;
+        << "for proxy FD#" << proxyFD << ".\n"
+        << std::flush;
 
   if (proxy -> handleEvents() < 0)
   {
     nxinfo << "Loop: Failure handling channel events "
-            << "for proxy FD#" << proxyFD << ".\n"
-            << std::flush;
+           << "for proxy FD#" << proxyFD << ".\n"
+           << std::flush;
 
     HandleShutdown();
   }
@@ -15349,7 +15349,7 @@ static void handleLogReopenInLoop(T_timestamp &lTs, T_timestamp &nTs)
   #endif
   {
     nxdbg << "Loop: Checking size of log file '"
-            << errorsFileName << "'.\n" << std::flush;
+          << errorsFileName << "'.\n" << std::flush;
 
     #ifndef MIXED
 
@@ -15396,8 +15396,8 @@ static void handleSetListenersInLoop(fd_set &readSet, int &setFDs)
       }
 
       nxdbg << "Loop: Selected listener tcpFD " << tcpFD
-              << " with setFDs " << setFDs << ".\n"
-              << std::flush;
+            << " with setFDs " << setFDs << ".\n"
+            << std::flush;
     }
 
     if (useUnixSocket == 1)
@@ -15410,8 +15410,8 @@ static void handleSetListenersInLoop(fd_set &readSet, int &setFDs)
       }
 
       nxdbg << "Loop: Selected listener unixFD " << unixFD
-              << " with setFDs " << setFDs << ".\n"
-              << std::flush;
+            << " with setFDs " << setFDs << ".\n"
+            << std::flush;
     }
 
     if (useCupsSocket == 1)
@@ -15424,8 +15424,8 @@ static void handleSetListenersInLoop(fd_set &readSet, int &setFDs)
       }
 
       nxdbg << "Loop: Selected listener cupsFD " << cupsFD
-              << " with setFDs " << setFDs << ".\n"
-              << std::flush;
+            << " with setFDs " << setFDs << ".\n"
+            << std::flush;
     }
 
     if (useAuxSocket == 1)
@@ -15438,8 +15438,8 @@ static void handleSetListenersInLoop(fd_set &readSet, int &setFDs)
       }
 
       nxdbg << "Loop: Selected listener auxFD " << auxFD
-              << " with setFDs " << setFDs << ".\n"
-              << std::flush;
+            << " with setFDs " << setFDs << ".\n"
+            << std::flush;
     }
 
     if (useSmbSocket == 1)
@@ -15452,8 +15452,8 @@ static void handleSetListenersInLoop(fd_set &readSet, int &setFDs)
       }
 
       nxdbg << "Loop: Selected listener smbFD " << smbFD
-              << " with setFDs " << setFDs << ".\n"
-              << std::flush;
+            << " with setFDs " << setFDs << ".\n"
+            << std::flush;
     }
 
     if (useMediaSocket == 1)
@@ -15466,8 +15466,8 @@ static void handleSetListenersInLoop(fd_set &readSet, int &setFDs)
       }
 
       nxdbg << "Loop: Selected listener mediaFD " << mediaFD
-              << " with setFDs " << setFDs << ".\n"
-              << std::flush;
+            << " with setFDs " << setFDs << ".\n"
+            << std::flush;
     }
 
     if (useHttpSocket == 1)
@@ -15480,8 +15480,8 @@ static void handleSetListenersInLoop(fd_set &readSet, int &setFDs)
       }
 
       nxdbg << "Loop: Selected listener httpFD " << httpFD
-              << " with setFDs " << setFDs << ".\n"
-              << std::flush;
+            << " with setFDs " << setFDs << ".\n"
+            << std::flush;
     }
   }
   else
@@ -15496,8 +15496,8 @@ static void handleSetListenersInLoop(fd_set &readSet, int &setFDs)
       }
 
       nxdbg << "Loop: Selected listener fontFD " << fontFD
-              << " with setFDs " << setFDs << ".\n"
-              << std::flush;
+            << " with setFDs " << setFDs << ".\n"
+            << std::flush;
     }
   }
 
@@ -15511,7 +15511,7 @@ static void handleSetListenersInLoop(fd_set &readSet, int &setFDs)
     }
 
     nxdbg << "Loop: Selected listener slaveFD " << slaveFD
-            << " with setFDs " << setFDs << ".\n"
-            << std::flush;
+          << " with setFDs " << setFDs << ".\n"
+          << std::flush;
   }
 }
