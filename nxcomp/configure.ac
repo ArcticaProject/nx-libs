@@ -66,6 +66,12 @@ fi
 # If in_addr_t is not defined use unsigned int.
 AC_CHECK_TYPES([in_addr_t], [], [], [[#include <netinet/in.h>]])
 
+AC_ARG_ENABLE([cxx11],
+              [AS_HELP_STRING([--enable-cxx11],
+                              [enable optional features requiring C++11 support (disabled by default)])],
+              [AS_IF([test x$enableval = xyes],
+                    [AX_CXX_COMPILE_STDCXX_11([], [mandatory])])])
+
 AC_ARG_ENABLE([debug],
               [AS_HELP_STRING([--enable-debug],
                               [enable to get info session log output (disabled by default)])],
