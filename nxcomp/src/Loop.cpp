@@ -11688,43 +11688,43 @@ int SetPorts()
   // ing, causing a loop.
   //
 
-  useCupsSocket = 0;
-  if (cupsPort.enabled()) {
-    if (control -> ProxyMode == proxy_client) {
-      cupsPort.setDefaultTCPPort(DEFAULT_NX_CUPS_PORT_OFFSET + proxyPort);
-      useCupsSocket = 1;
-    }
-    else
-      cupsPort.setDefaultTCPPort(631);
+  if (control -> ProxyMode == proxy_client) {
+    // ChannelEndPoint::enabled() implements the logic described above,
+    // and takes the default port into consideration. If cups=1, and
+    // there is a default port, then enabled() will return true.
+    //
+    // Therefore, we must set the default port before calling this
+    // function.
+    cupsPort.setDefaultTCPPort(DEFAULT_NX_CUPS_PORT_OFFSET + proxyPort);
+    useCupsSocket = cupsPort.enabled();
+  } else {
+    cupsPort.setDefaultTCPPort(631);
   }
+
+
 
 #ifdef TEST
   *logofs << "Loop: cups port: " << cupsPort << "\n"
             << logofs_flush;
 #endif
 
-  useAuxSocket = 0;
-  if (auxPort.enabled()) {
-    if (control -> ProxyMode == proxy_client) {
-      auxPort.setDefaultTCPPort(DEFAULT_NX_AUX_PORT_OFFSET + proxyPort);
-      useAuxSocket = 1;
-    }
-    else {
-      auxPort.setDefaultTCPPort(1);
+  if (control -> ProxyMode == proxy_client) {
+    auxPort.setDefaultTCPPort(DEFAULT_NX_AUX_PORT_OFFSET + proxyPort);
+    useAuxSocket = auxPort.enabled();
+  } else {
+    auxPort.setDefaultTCPPort(1);
 
-      if (auxPort.getTCPPort() != 1) {
+    if ( auxPort.getTCPPort() != 1 ) {
+      #ifdef WARNING
+      *logofs << "Loop: WARNING! Overriding auxiliary X11 "
+              << "port with new value '" << 1 << "'.\n"
+              << logofs_flush;
+      #endif
 
-#ifdef WARNING
-        *logofs << "Loop: WARNING! Overriding auxiliary X11 "
-                << "port with new value '" << 1 << "'.\n"
-                << logofs_flush;
-#endif
+      cerr << "Warning" << ": Overriding auxiliary X11 "
+           << "port with new value '" << 1 << "'.\n";
 
-        cerr << "Warning" << ": Overriding auxiliary X11 "
-             << "port with new value '" << 1 << "'.\n";
-
-	auxPort.setSpec("1");
-      }
+      auxPort.setSpec("1");
     }
   }
 
@@ -11733,14 +11733,11 @@ int SetPorts()
 	  << logofs_flush;
 #endif
 
-  useSmbSocket = 0;
-  if (smbPort.enabled()) {
-    if (control -> ProxyMode == proxy_client) {
-      auxPort.setDefaultTCPPort(DEFAULT_NX_SMB_PORT_OFFSET + proxyPort);
-      useAuxSocket = 1;
-    }
-    else
-      auxPort.setDefaultTCPPort(139);
+  if (control -> ProxyMode == proxy_client) {
+    smbPort.setDefaultTCPPort(DEFAULT_NX_SMB_PORT_OFFSET + proxyPort);
+    useSmbSocket = smbPort.enabled();
+  } else {
+    smbPort.setDefaultTCPPort(139);
   }
 
 
@@ -11749,17 +11746,16 @@ int SetPorts()
 	  << logofs_flush;
 #endif
 
-  useMediaSocket = 0;
-  if (mediaPort.enabled()) {
-    if (control -> ProxyMode == proxy_client) {
-      mediaPort.setDefaultTCPPort(DEFAULT_NX_MEDIA_PORT_OFFSET + proxyPort);
-      useMediaSocket = 1;
-    }
-    else if (mediaPort.getTCPPort() == 1) {
-#ifdef PANIC
+  if (control -> ProxyMode == proxy_client) {
+    mediaPort.setDefaultTCPPort(DEFAULT_NX_MEDIA_PORT_OFFSET + proxyPort);
+    useMediaSocket = mediaPort.enabled();
+  } else {
+
+    if ( !mediaPort.enabled() ) {
+      #ifdef PANIC
       *logofs << "Loop: PANIC! No port specified for multimedia connections.\n"
               << logofs_flush;
-#endif
+      #endif
 
       cerr << "Error" << ": No port specified for multimedia connections.\n";
 
@@ -11772,13 +11768,10 @@ int SetPorts()
 	  << "'.\n" << logofs_flush;
 #endif
 
-  useHttpSocket = 0;
-  if (httpPort.enabled()) {
-    if (control -> ProxyMode == proxy_client) {
+  if (control -> ProxyMode == proxy_client) {
       httpPort.setDefaultTCPPort(DEFAULT_NX_HTTP_PORT_OFFSET + proxyPort);
-      useHttpSocket = 1;
-    }
-    else
+      useHttpSocket = httpPort.enabled();
+  } else {
       httpPort.setDefaultTCPPort(80);
   }
 
@@ -11822,13 +11815,11 @@ int SetPorts()
     #endif
   }
 
-  useSlaveSocket = 0;
-  if (slavePort.enabled()) {
-    useSlaveSocket = 1;
-    if (control -> ProxyMode == proxy_client)
-      slavePort.setDefaultTCPPort(DEFAULT_NX_SLAVE_PORT_CLIENT_OFFSET + proxyPort);
-    else
-      slavePort.setDefaultTCPPort(DEFAULT_NX_SLAVE_PORT_SERVER_OFFSET + proxyPort);
+  if (control -> ProxyMode == proxy_client) {
+    slavePort.setDefaultTCPPort(DEFAULT_NX_SLAVE_PORT_CLIENT_OFFSET + proxyPort);
+    useSlaveSocket = slavePort.enabled();
+  } else {
+    slavePort.setDefaultTCPPort(DEFAULT_NX_SLAVE_PORT_SERVER_OFFSET + proxyPort);
   }
 
 #ifdef TEST
