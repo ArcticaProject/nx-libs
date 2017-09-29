@@ -1153,7 +1153,7 @@ int NXTransProxy(int fd, int mode, const char* options)
     *logofs << "NXTransProxy: Out of the long jump with pid '"
             << lastProxy << "'.\n" << logofs_flush;
     #endif
-    
+
     return -1;
   }
 
@@ -5124,7 +5124,7 @@ void CleanupChildren()
     #endif
 
     KillProcess(control -> KillDaemonOnShutdown[i], "daemon", SIGTERM, 0);
-  }    
+  }
 }
 
 void CleanupGlobal()
@@ -8315,7 +8315,7 @@ int ParseEnvironmentOptions(const char *env, int force)
             << "the environment options.\n"
             << logofs_flush;
     #endif
-    
+
     return -1;
   }
 
@@ -9209,7 +9209,7 @@ int ParseCommandLineOptions(int argc, const char **argv)
             << "the command line options.\n"
             << logofs_flush;
     #endif
-    
+
     return -1;
   }
 
@@ -10754,7 +10754,7 @@ char *GetRootPath()
 
       strcpy(rootDir, rootEnv);
     }
-        
+
     #ifdef TEST
     *logofs << "Loop: Assuming NX root directory '"
             << rootDir << "'.\n" << logofs_flush;
@@ -14587,7 +14587,7 @@ static void handleCheckSessionInLoop()
     *logofs << "Loop: Shutting down the NX transport.\n"
             << logofs_flush;
     #endif
- 
+
     HandleCleanup();
   }
   else if (proxy -> handlePing() < 0)
