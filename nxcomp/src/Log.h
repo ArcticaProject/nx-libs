@@ -35,6 +35,7 @@
 #include <map>
 #include <stdlib.h>
 #include <string.h>
+#include <signal.h>
 #include <assert.h>
 #include <stack>
 
@@ -218,6 +219,22 @@ class NXLog
      */
     void flush(per_thread_data *pdt)
     {
+         /*
+          * Block all signals until we are dong printing data.
+          * Ensures that a signal handler won't interrupt us
+          * and overwrite the buffer data mid-print, leading
+          * to confusing output.
+          */
+        sigset_t orig_signal_mask,
+                 tmp_signal_mask;
+        sigemptyset(&orig_signal_mask);
+
+        /* Set up new mask to block all signals. */
+        sigfillset(&tmp_signal_mask);
+
+        /* Block all signals. */
+        pthread_sigmask(SIG_BLOCK, &tmp_signal_mask, &orig_signal_mask);
+
         if (!pdt->buffer.empty ()) {
             const std::string str = pdt->buffer.top()->str();
 
@@ -231,6 +248,9 @@ class NXLog
             /* Remove from stack. */
             pdt->buffer.pop();
         }
+
+        /* Restore old signal mask. */
+        pthread_sigmask(SIG_SETMASK, &orig_signal_mask, NULL);
     }
 
 
