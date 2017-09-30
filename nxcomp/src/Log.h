@@ -124,6 +124,9 @@ class NXLogStamp
  */
 class NXLog
 {
+#ifdef INTERNAL_LOGGING_TEST
+    protected:
+#endif
     NXLogLevel level_;
 
     std::ostream *stream_;
@@ -217,6 +220,7 @@ class NXLog
      * This means that get_data() stops working correctly, and we need
      * to be able to pass the old pointer.
      */
+    virtual /* Note: this function needs to be virtual for the logging test application. Don't remove. */
     void flush(per_thread_data *pdt)
     {
          /*
