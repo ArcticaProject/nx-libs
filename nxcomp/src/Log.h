@@ -35,6 +35,8 @@
 #include <map>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
+#include <stack>
 
 /** Log severity level */
 enum NXLogLevel
@@ -138,11 +140,11 @@ class NXLog
 
     typedef struct per_thread_data_s
     {
-        NXLogLevel          current_level;
-        std::string*        current_file;
-        std::string*        thread_name;
-        std::stringstream*  buffer;
-        NXLog*              log_obj;
+        NXLogLevel                      current_level;
+        std::string*                    current_file;
+        std::string*                    thread_name;
+        std::stack<std::stringstream*>  buffer;
+        NXLog*                          log_obj;
     } per_thread_data;
 
 
@@ -160,7 +162,11 @@ class NXLog
 
         delete pdt->current_file;
         delete pdt->thread_name;
-        delete pdt->buffer;
+
+        while (!pdt->buffer.empty()) {
+            (void) pdt->buffer.pop ();
+        }
+
         delete pdt;
     }
 
@@ -172,7 +178,6 @@ class NXLog
         {
             ret = new per_thread_data;
             ret->current_level = NXDEBUG;
-            ret->buffer = new std::stringstream();
             ret->current_file = new std::string();
             ret->thread_name = new std::string();
             ret->log_obj = const_cast<NXLog*>(this);
@@ -195,6 +200,12 @@ class NXLog
     /** Convert NXLogStamp to string according to the current configuration */
     std::string stamp_to_string(const NXLogStamp& stamp) const;
 
+    void new_stack_entry()
+    {
+        per_thread_data *pdt = get_data();
+        pdt->buffer.push(new std::stringstream());
+    }
+
     /**
      * Internal flush function
      *
@@ -207,15 +218,18 @@ class NXLog
      */
     void flush(per_thread_data *pdt)
     {
-        const std::string str = pdt->buffer->str();
+        if (!pdt->buffer.empty ()) {
+            const std::string str = pdt->buffer.top()->str();
 
-        if (!str.empty())
-        {
-            pthread_mutex_lock(&output_lock_);
-            (*stream()) << str;
-            pthread_mutex_unlock(&output_lock_);
-            pdt->buffer->str(std::string());
-            pdt->buffer->clear();
+            if (!str.empty())
+            {
+                pthread_mutex_lock(&output_lock_);
+                (*stream()) << str;
+                pthread_mutex_unlock(&output_lock_);
+            }
+
+            /* Remove from stack. */
+            pdt->buffer.pop();
         }
     }
 
@@ -404,7 +418,8 @@ class NXLog
             if ( synchronized() )
             {
                 per_thread_data *pdt = get_data();
-                (*pdt->buffer) << F;
+                assert (!pdt->buffer.empty ());
+                (*pdt->buffer.top()) << F;
                 flush();
             }
             else
@@ -484,9 +499,10 @@ NXLog& operator<<(NXLog& out, const T& value)
             // gets full. Then we dump the whole thing at once to the output stream, synchronizing
             // with a mutex.
             NXLog::per_thread_data *pdt = out.get_data();
-            (*pdt->buffer) << value;
+            assert (!pdt->buffer.empty ());
+            (*pdt->buffer.top()) << value;
 
-            if ( ss_length(pdt->buffer) >= out.thread_buffer_size_ || has_newline(value) )
+            if ( ss_length(pdt->buffer.top()) >= out.thread_buffer_size_ || has_newline(value) )
                 out.flush();
 
         }

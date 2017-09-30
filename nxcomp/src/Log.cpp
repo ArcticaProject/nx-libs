@@ -109,14 +109,12 @@ NXLog& operator<< (NXLog& out, const NXLogStamp& value)
     out.current_file( value.file() );
 
     // Writing an NXLogStamp to the stream indicates the start of a new entry.
-    // If there's any content in the buffer, we flush it to finalize the previous
-    // log entry.
+    // If there's any content in the buffer, create a new entry in the output
+    // queue.
     if ( out.synchronized() )
-        out.flush();
-
+        out.new_stack_entry();
 
     out << out.stamp_to_string(value);
 
     return out;
 }
-
