@@ -19,3 +19,7 @@ m4/lt~obsolete.m4
 nxcomp.pc
 src/Makefile
 src/Makefile.in
+test/.deps/
+test/Makefile
+test/Makefile.in
+test/logging_test

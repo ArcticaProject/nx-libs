@@ -108,6 +108,7 @@ AC_ARG_ENABLE([valgrind],
 AC_CONFIG_FILES([
 Makefile
 src/Makefile
+test/Makefile
 nxcomp.pc
 ])
 
