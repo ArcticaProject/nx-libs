@@ -210,6 +210,9 @@ void nxagentShadowAdaptDepth(unsigned int, unsigned int, unsigned int, char **);
 RegionRec nxagentShadowUpdateRegion;
 
 #define NXAGENT_DEFAULT_DPI 75
+#define NXAGENT_AUTO_DPI -1
+
+extern Bool nxagentAutoDPI;
 
 /*
  * From randr/randr.c. This was originally static
@@ -1327,9 +1330,13 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
                   rootDepth, (long unsigned int)defaultVisual);
     #endif
 
-    if (monitorResolution < 1)
+    if ((monitorResolution < 1) && (nxagentAutoDPI == False))
     {
       monitorResolution = NXAGENT_DEFAULT_DPI;
+    }
+    else if ((monitorResolution < 1) && (nxagentAutoDPI == True))
+    {
+      monitorResolution = NXAGENT_AUTO_DPI;
     }
 
     if (!fbScreenInit(pScreen, pFrameBufferBits, nxagentOption(RootWidth), nxagentOption(RootHeight),
@@ -1473,6 +1480,17 @@ N/A
      *              numVisuals, visuals))
      *   return FALSE;
      */
+
+    if (monitorResolution < 0)
+    {
+      pScreen->mmWidth  = nxagentOption(RootWidth) * DisplayWidthMM(nxagentDisplay,
+                              DefaultScreen(nxagentDisplay)) / DisplayWidth(nxagentDisplay,
+                                  DefaultScreen(nxagentDisplay));
+
+      pScreen->mmHeight = nxagentOption(RootHeight) * DisplayHeightMM(nxagentDisplay,
+                              DefaultScreen(nxagentDisplay)) / DisplayHeight(nxagentDisplay,
+                                  DefaultScreen(nxagentDisplay));
+    }
 
     pScreen->defColormap = (Colormap) FakeClientID(0);
     pScreen->minInstalledCmaps = MINCMAPS;
@@ -2294,22 +2312,40 @@ Bool nxagentResizeScreen(ScreenPtr pScreen, int width, int height,
 
   if (mmWidth == 0)
   {
-    mmWidth  = (width * 254 + monitorResolution * 5) / (monitorResolution * 10);
+    if (monitorResolution < 0)
+    {
+      mmWidth  = width * DisplayWidthMM(nxagentDisplay, DefaultScreen(nxagentDisplay)) /
+                     DisplayWidth(nxagentDisplay, DefaultScreen(nxagentDisplay));
+    }
+    else
+    {
+      mmWidth  = (width * 254 + monitorResolution * 5) / (monitorResolution * 10);
+    }
 
     if (mmWidth < 1)
     {
       mmWidth = 1;
     }
+
   }
 
   if (mmHeight == 0)
   {
-    mmHeight = (height * 254 + monitorResolution * 5) / (monitorResolution * 10);
+    if (monitorResolution < 0)
+    {
+      mmHeight = height * DisplayHeightMM(nxagentDisplay, DefaultScreen(nxagentDisplay)) /
+                     DisplayHeight(nxagentDisplay, DefaultScreen(nxagentDisplay));
+    }
+    else
+    {
+      mmHeight = (height * 254 + monitorResolution * 5) / (monitorResolution * 10);
+    }
 
     if (mmHeight < 1)
     {
       mmHeight = 1;
     }
+
   }
 
   pScreen -> mmWidth = mmWidth;
