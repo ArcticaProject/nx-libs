@@ -1,4 +1,6 @@
 *.o
+*.lo
+*.la
 *.so.*
 *.so
 *.a
@@ -10,3 +12,8 @@ configure
 depend.status
 *~
 [#]*
+stamp-h*
+.libs
+.deps
+bin/nxagent
+bin/nxproxy

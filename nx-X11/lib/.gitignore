@@ -1,0 +1,11 @@
+aclocal.m4
+config.log
+config.status
+configure
+libtool
+Makefile
+Makefile.in
+nx-x11.pc
+m4/libtool.m4
+m4/lt*.m4
+build-aux/
