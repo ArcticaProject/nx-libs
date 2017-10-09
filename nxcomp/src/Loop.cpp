@@ -12937,7 +12937,7 @@ int SetLinkAdsl()
 
   control -> LinkMode = LINK_TYPE_ADSL;
 
-  control -> TokenSize  = 1536;
+  control -> TokenSize  = 1408;
   control -> TokenLimit = 24;
 
   control -> SplitMode             = 1;
@@ -12967,7 +12967,7 @@ int SetLinkWan()
 
   control -> LinkMode = LINK_TYPE_WAN;
 
-  control -> TokenSize  = 1536;
+  control -> TokenSize  = 1408;
   control -> TokenLimit = 24;
 
   control -> SplitMode             = 1;
