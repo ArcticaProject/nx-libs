@@ -11,9 +11,11 @@ config.status
 configure
 depend.status
 *~
+*.sw?
 [#]*
 stamp-h*
 .libs
 .deps
 bin/nxagent
 bin/nxproxy
+**/.pc
