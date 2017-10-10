@@ -312,6 +312,11 @@ ChannelEndPoint::enabled() const {
 }
 
 bool
+ChannelEndPoint::configured() const {
+  return ( spec_ && ( strcmp(spec_, "0") != 0) );
+}
+
+bool
 ChannelEndPoint::validateSpec() {
   isTCP_ = getTCPHostAndPort();
   isUnix_ = getUnixPath();
