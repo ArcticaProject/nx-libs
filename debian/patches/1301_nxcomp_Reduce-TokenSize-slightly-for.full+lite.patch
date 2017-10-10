@@ -1,0 +1,34 @@
+From 418db3b5ce28bcc5b1d00d7444041ea2d6592706 Mon Sep 17 00:00:00 2001
+From: Simon Matter <simon.matter@invoca.ch>
+Date: Mon, 9 Oct 2017 11:30:02 +0200
+Subject: [PATCH] nxcomp/src/Loop.cpp: Reduce control->TokenSize slightly again
+ in order to fix fragmentation of packages when on VPN (or otherwise
+ encapsulated) connections.
+
+ Backported from Arctica GH 3.6.x branch.
+
+ v2: backport to nx-libs 3.5.0.x (Mihai Moldovan)
+---
+ nxcomp/src/Loop.cpp | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/nxcomp/Loop.cpp
++++ b/nxcomp/Loop.cpp
+@@ -13017,7 +13017,7 @@ int SetLinkAdsl()
+ 
+   control -> LinkMode = LINK_TYPE_ADSL;
+ 
+-  control -> TokenSize  = 1536;
++  control -> TokenSize  = 1408;
+   control -> TokenLimit = 24;
+ 
+   control -> SplitMode             = 1;
+@@ -13047,7 +13047,7 @@ int SetLinkWan()
+ 
+   control -> LinkMode = LINK_TYPE_WAN;
+ 
+-  control -> TokenSize  = 1536;
++  control -> TokenSize  = 1408;
+   control -> TokenLimit = 24;
+ 
+   control -> SplitMode             = 1;

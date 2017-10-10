@@ -77,6 +77,15 @@ nx-libs (2:3.5.0.33-0x2go1) UNRELEASED; urgency=low
     Adds:
     - debian/patches/1400_nx-X11_Render.c-Improve-situation-fo.full+lite.patch
 
+  [ Simon Matter ]
+  * nxcomp: Reduce control->TokenSize slightly again in order to fix
+    fragmentation of packages when on VPN (or otherwise encapsulated)
+    connections.
+    Backported from Arctica GH 3.6.x branch.
+    v2: backport to nx-libs 3.5.0.x (Mihai Moldovan)
+    Adds:
+    - debian/patches/1301_nxcomp_Reduce-TokenSize-slightly-for.full+lite.patch
+
  -- X2Go Release Manager <git-admin@x2go.org>  Sat, 04 Jul 2015 06:29:19 +0200
 
 nx-libs (2:3.5.0.32-0x2go1) unstable; urgency=low
