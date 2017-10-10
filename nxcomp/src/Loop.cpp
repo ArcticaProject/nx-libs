@@ -11746,20 +11746,22 @@ int SetPorts()
 	  << logofs_flush;
 #endif
 
-  if (control -> ProxyMode == proxy_client) {
-    mediaPort.setDefaultTCPPort(DEFAULT_NX_MEDIA_PORT_OFFSET + proxyPort);
-    useMediaSocket = mediaPort.enabled();
-  } else {
+  if ( mediaPort.configured() ) {
+    if (control -> ProxyMode == proxy_client) {
+      mediaPort.setDefaultTCPPort(DEFAULT_NX_MEDIA_PORT_OFFSET + proxyPort);
+      useMediaSocket = mediaPort.enabled();
+    } else {
 
-    if ( !mediaPort.enabled() ) {
-      #ifdef PANIC
-      *logofs << "Loop: PANIC! No port specified for multimedia connections.\n"
-              << logofs_flush;
-      #endif
+      if ( mediaPort.getTCPPort() < 0 ) {
+        #ifdef PANIC
+        *logofs << "Loop: PANIC! No port specified for multimedia connections.\n"
+                << logofs_flush;
+        #endif
 
-      cerr << "Error" << ": No port specified for multimedia connections.\n";
+        cerr << "Error" << ": No port specified for multimedia connections.\n";
 
-      HandleCleanup();
+        HandleCleanup();
+      }
     }
   }
 

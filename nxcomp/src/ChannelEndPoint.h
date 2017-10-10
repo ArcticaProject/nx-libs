@@ -46,6 +46,7 @@ class ChannelEndPoint
   ~ChannelEndPoint();
   ChannelEndPoint &operator=(const ChannelEndPoint &other);
 
+  bool configured() const;
   bool enabled() const;
   bool disabled() { return !enabled(); }
   void disable();
