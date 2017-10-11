@@ -21,6 +21,7 @@
 		-I$(MESASRCDIR)/src/mesa/main \
 		-I$(MESASRCDIR)/src/mesa/glapi \
 		-I$(MESASRCDIR)/src/mesa/shader \
+		-I$(MESASRCDIR)/src/mesa/shader/slang \
 		-I$(MESASRCDIR)/src/mesa/tnl \
 		-I$(MESASRCDIR)/include \
                 -I$(SERVERSRC)/include -I$(XINCLUDESRC) \
