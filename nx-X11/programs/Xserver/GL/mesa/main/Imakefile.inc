@@ -30,6 +30,7 @@ COREMESABASESRCS = \
 		$(MESABUILDDIR)convolve.c \
 		$(MESABUILDDIR)debug.c \
 		$(MESABUILDDIR)depth.c \
+		$(MESABUILDDIR)depthstencil.c \
 		$(MESABUILDDIR)dlist.c \
 		$(MESABUILDDIR)drawpix.c \
 		$(MESABUILDDIR)enable.c \
@@ -107,6 +108,8 @@ LinkSourceFile(dd.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(debug.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(debug.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(depth.c, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(depthstencil.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(depthstencil.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(depth.h, $(MESASRCDIR)/src/mesa/main)
 #ifdef NeedAllMesaSrc
 LinkSourceFile(dispatch.c, $(MESASRCDIR)/src/mesa/main)
@@ -229,6 +232,7 @@ COREMESABASEOBJS = \
 		$(MESABUILDDIR)convolve.o \
 		$(MESABUILDDIR)debug.o \
 		$(MESABUILDDIR)depth.o \
+		$(MESABUILDDIR)depthstencil.o \
 		$(MESABUILDDIR)dlist.o \
 		$(MESABUILDDIR)drawpix.o \
 		$(MESABUILDDIR)enable.o \
@@ -298,6 +302,7 @@ COREMESABASEUOBJS = \
 		$(MESABUILDDIR)unshared/convolve.o \
 		$(MESABUILDDIR)unshared/debug.o \
 		$(MESABUILDDIR)unshared/depth.o \
+		$(MESABUILDDIR)unshared/depthstencil.o \
 		$(MESABUILDDIR)unshared/dlist.o \
 		$(MESABUILDDIR)unshared/drawpix.o \
 		$(MESABUILDDIR)unshared/enable.o \
@@ -369,6 +374,7 @@ COREMESABASEDOBJS = \
 		$(MESABUILDDIR)debugger/convolve.o \
 		$(MESABUILDDIR)debugger/debug.o \
 		$(MESABUILDDIR)debugger/depth.o \
+		$(MESABUILDDIR)debugger/depthstencil.o \
 		$(MESABUILDDIR)debugger/dlist.o \
 		$(MESABUILDDIR)debugger/drawpix.o \
 		$(MESABUILDDIR)debugger/enable.o \
@@ -437,6 +443,7 @@ COREMESABASEPOBJS = \
 		$(MESABUILDDIR)profiled/convolve.o \
 		$(MESABUILDDIR)profiled/debug.o \
 		$(MESABUILDDIR)profiled/depth.o \
+		$(MESABUILDDIR)profiled/depthstencil.o \
 		$(MESABUILDDIR)profiled/dlist.o \
 		$(MESABUILDDIR)profiled/drawpix.o \
 		$(MESABUILDDIR)profiled/enable.o \

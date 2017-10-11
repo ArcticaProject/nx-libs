@@ -20,6 +20,7 @@
 		-I$(MESASRCDIR)/src/mesa/swrast \
 		-I$(MESASRCDIR)/src/mesa/swrast_setup \
 		-I$(MESASRCDIR)/src/mesa/shader \
+		-I$(MESASRCDIR)/src/mesa/shader/slang \
 		-I$(MESASRCDIR)/include \
                 -I$(SERVERSRC)/include -I$(XINCLUDESRC) \
                 -I$(SERVERSRC)/GL/include -I$(SERVERSRC)/GL/glx \

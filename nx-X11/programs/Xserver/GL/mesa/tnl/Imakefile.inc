@@ -9,6 +9,7 @@ MESATNLBUILDDIR = MesaTnlBuildDir
 		  $(MESATNLBUILDDIR)t_save_playback.c \
                   $(MESATNLBUILDDIR)t_vb_arbprogram.c \
                   $(MESATNLBUILDDIR)t_vb_arbprogram_sse.c \
+                  $(MESATNLBUILDDIR)t_vb_arbshader.c \
 		  $(MESATNLBUILDDIR)t_vb_fog.c \
 		  $(MESATNLBUILDDIR)t_vb_cull.c \
 		  $(MESATNLBUILDDIR)t_vb_light.c \
@@ -50,6 +51,7 @@ LinkSourceFile(t_save_playback.c, $(MESASRCDIR)/src/mesa/tnl)
 LinkSourceFile(t_vb_arbprogram.c, $(MESASRCDIR)/src/mesa/tnl)
 LinkSourceFile(t_vb_arbprogram.h, $(MESASRCDIR)/src/mesa/tnl)
 LinkSourceFile(t_vb_arbprogram_sse.c, $(MESASRCDIR)/src/mesa/tnl)
+LinkSourceFile(t_vb_arbshader.c, $(MESASRCDIR)/src/mesa/tnl)
 LinkSourceFile(t_vb_cliptmp.h, $(MESASRCDIR)/src/mesa/tnl)
 LinkSourceFile(t_vb_fog.c, $(MESASRCDIR)/src/mesa/tnl)
 LinkSourceFile(t_vb_cull.c, $(MESASRCDIR)/src/mesa/tnl)
@@ -89,6 +91,7 @@ LinkSourceFile(t_vtx_x86_gcc.S, $(MESASRCDIR)/src/mesa/tnl)
                   $(MESATNLBUILDDIR)t_save_playback.o \
                   $(MESATNLBUILDDIR)t_vb_arbprogram.o \
                   $(MESATNLBUILDDIR)t_vb_arbprogram_sse.o \
+                  $(MESATNLBUILDDIR)t_vb_arbshader.o \
                   $(MESATNLBUILDDIR)t_vb_fog.o \
                   $(MESATNLBUILDDIR)t_vb_cull.o \
                   $(MESATNLBUILDDIR)t_vb_light.o \
@@ -123,6 +126,7 @@ LinkSourceFile(t_vtx_x86_gcc.S, $(MESASRCDIR)/src/mesa/tnl)
 		  $(MESATNLBUILDDIR)unshared/t_save_playback.o \
                   $(MESATNLBUILDDIR)unshared/t_vb_arbprogram.o \
                   $(MESATNLBUILDDIR)unshared/t_vb_arbprogram_sse.o \
+                  $(MESATNLBUILDDIR)unshared/t_vb_arbshader.o \
 		  $(MESATNLBUILDDIR)unshared/t_vb_fog.o \
 		  $(MESATNLBUILDDIR)unshared/t_vb_cull.o \
 		  $(MESATNLBUILDDIR)unshared/t_vb_light.o \
@@ -160,6 +164,7 @@ LinkSourceFile(t_vtx_x86_gcc.S, $(MESASRCDIR)/src/mesa/tnl)
 		  $(MESATNLBUILDDIR)debugger/t_save_playback.o \
                   $(MESATNLBUILDDIR)debugger/t_vb_arbprogram.o \
                   $(MESATNLBUILDDIR)debugger/t_vb_arbprogram_sse.o \
+                  $(MESATNLBUILDDIR)debugger/t_vb_arbshader.o \
 		  $(MESATNLBUILDDIR)debugger/t_vb_fog.o \
 		  $(MESATNLBUILDDIR)debugger/t_vb_cull.o \
 		  $(MESATNLBUILDDIR)debugger/t_vb_light.o \
@@ -193,6 +198,7 @@ LinkSourceFile(t_vtx_x86_gcc.S, $(MESASRCDIR)/src/mesa/tnl)
 		  $(MESATNLBUILDDIR)profiled/t_save_playback.o \
                   $(MESATNLBUILDDIR)profiled/t_vb_arbprogram.o \
                   $(MESATNLBUILDDIR)profiled/t_vb_arbprogram_sse.o \
+                  $(MESATNLBUILDDIR)profiled/t_vb_arbshader.o \
 		  $(MESATNLBUILDDIR)profiled/t_vb_fog.o \
 		  $(MESATNLBUILDDIR)profiled/t_vb_cull.o \
 		  $(MESATNLBUILDDIR)profiled/t_vb_light.o \

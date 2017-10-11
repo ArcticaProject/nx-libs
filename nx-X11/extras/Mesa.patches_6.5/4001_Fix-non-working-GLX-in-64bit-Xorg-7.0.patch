@@ -1,0 +1,54 @@
+From 44518d07398d663448d79e4f546736b40752630c Mon Sep 17 00:00:00 2001
+From: Ulrich Sibiller <uli42@gmx.de>
+Date: Wed, 16 Mar 2016 14:40:08 +0100
+Subject: [PATCH] Fix non-working GLX in 64bit Xorg 7.0
+
+Found the needed patch in debian bugtracker at
+https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=364233
+---
+ src/glx/x11/indirect_vertex_array.c          | 2 +-
+ src/mesa/drivers/dri/common/glcontextmodes.c | 3 +++
+ src/mesa/main/glheader.h                     | 3 +++
+ 3 files changed, 7 insertions(+), 1 deletion(-)
+
+Index: Mesa/src/glx/x11/indirect_vertex_array.c
+===================================================================
+--- Mesa.orig/src/glx/x11/indirect_vertex_array.c
++++ Mesa/src/glx/x11/indirect_vertex_array.c
+@@ -530,7 +530,7 @@ static GLubyte *
+ emit_DrawArrays_header_old( __GLXcontext * gc,
+ 			    struct array_state_vector * arrays,
+ 			    size_t * elements_per_request,
+-			    size_t * total_requests,
++			    unsigned int * total_requests,
+ 			    GLenum mode, GLsizei count )
+ {
+     size_t command_size;
+Index: Mesa/src/mesa/main/glheader.h
+===================================================================
+--- Mesa.orig/src/mesa/main/glheader.h
++++ Mesa/src/mesa/main/glheader.h
+@@ -46,6 +46,9 @@
+ #ifndef GLHEADER_H
+ #define GLHEADER_H
+ 
++#ifdef HAVE_DIX_CONFIG_H
++#include "dix-config.h"
++#endif
+ 
+ #if defined(XFree86LOADER) && defined(IN_MODULE)
+ #include "xf86_ansic.h"
+Index: Mesa/src/mesa/drivers/dri/common/glcontextmodes.c
+===================================================================
+--- Mesa.orig/src/mesa/drivers/dri/common/glcontextmodes.c
++++ Mesa/src/mesa/drivers/dri/common/glcontextmodes.c
+@@ -39,6 +39,9 @@
+ # include "imports.h"
+ # define __glXMemset  memset
+ #else
++# if defined (HAVE_DIX_CONFIG_H)
++#  include <dix-config.h>
++# endif
+ # include <X11/X.h>
+ # include <GL/glx.h>
+ # include "GL/glxint.h"
