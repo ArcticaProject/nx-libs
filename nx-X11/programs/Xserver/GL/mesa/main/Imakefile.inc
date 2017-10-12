@@ -9,8 +9,7 @@ MESABUILDDIR = MesaBuildDir
  GLTHREADSRCS = $(MESABUILDDIR)glthread.c
 #endif
 
-MESA_CORE_INCLUDES = -I$(MESASRCDIR)/src/array_cache \
-                -I$(MESASRCDIR)/src/math -I$(MESASRCDIR)/src/shader \
+MESA_CORE_INCLUDES = -I$(MESASRCDIR)/src/math -I$(MESASRCDIR)/src/shader \
                 -I$(MESASRCDIR)/src/swrast -I$(MESASRCDIR)/src/swrast_setup \
                 -I$(MESASRCDIR)/src/tnl -I$(MESASRCDIR)/src/tnl_dd
 
@@ -53,7 +52,7 @@ COREMESABASESRCS = \
 		$(MESABUILDDIR)lines.c \
 		$(MESABUILDDIR)matrix.c \
 		$(MESABUILDDIR)mm.c \
-		$(MESABUILDDIR)occlude.c \
+		$(MESABUILDDIR)queryobj.c \
 		$(MESABUILDDIR)pixel.c \
 		$(MESABUILDDIR)points.c \
 		$(MESABUILDDIR)polygon.c \
@@ -163,8 +162,8 @@ LinkSourceFile(matrix.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(mm.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(mm.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(mtypes.h, $(MESASRCDIR)/src/mesa/main)
-LinkSourceFile(occlude.c, $(MESASRCDIR)/src/mesa/main)
-LinkSourceFile(occlude.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(queryobj.c, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(queryobj.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(pixel.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(pixel.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(points.c, $(MESASRCDIR)/src/mesa/main)
@@ -178,6 +177,7 @@ LinkSourceFile(renderbuffer.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(simple_list.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(state.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(state.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(shaders.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(stencil.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(stencil.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(texcompress.c, $(MESASRCDIR)/src/mesa/main)
@@ -255,7 +255,7 @@ COREMESABASEOBJS = \
 		$(MESABUILDDIR)lines.o \
 		$(MESABUILDDIR)matrix.o \
 		$(MESABUILDDIR)mm.o \
-		$(MESABUILDDIR)occlude.o \
+		$(MESABUILDDIR)queryobj.o \
 		$(MESABUILDDIR)pixel.o \
 		$(MESABUILDDIR)points.o \
 		$(MESABUILDDIR)polygon.o \
@@ -325,7 +325,7 @@ COREMESABASEUOBJS = \
 		$(MESABUILDDIR)unshared/lines.o \
 		$(MESABUILDDIR)unshared/matrix.o \
 		$(MESABUILDDIR)unshared/mm.o \
-		$(MESABUILDDIR)unshared/occlude.o \
+		$(MESABUILDDIR)unshared/queryobj.o \
 		$(MESABUILDDIR)unshared/pixel.o \
 		$(MESABUILDDIR)unshared/points.o \
 		$(MESABUILDDIR)unshared/polygon.o \
@@ -397,7 +397,7 @@ COREMESABASEDOBJS = \
 		$(MESABUILDDIR)debugger/lines.o \
 		$(MESABUILDDIR)debugger/matrix.o \
 		$(MESABUILDDIR)debugger/mm.o \
-		$(MESABUILDDIR)debugger/occlude.o \
+		$(MESABUILDDIR)debugger/queryobj.o \
 		$(MESABUILDDIR)debugger/pixel.o \
 		$(MESABUILDDIR)debugger/points.o \
 		$(MESABUILDDIR)debugger/polygon.o \
@@ -466,7 +466,7 @@ COREMESABASEPOBJS = \
 		$(MESABUILDDIR)profiled/lines.o \
 		$(MESABUILDDIR)profiled/matrix.o \
 		$(MESABUILDDIR)profiled/mm.o \
-		$(MESABUILDDIR)profiled/occlude.o \
+		$(MESABUILDDIR)profiled/queryobj.o \
 		$(MESABUILDDIR)profiled/pixel.o \
 		$(MESABUILDDIR)profiled/points.o \
 		$(MESABUILDDIR)profiled/polygon.o \
