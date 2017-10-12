@@ -16,7 +16,6 @@
          OBJS = $(MESA_TNL_OBJS)
 
      INCLUDES = -I$(MESASRCDIR)/src/mesa \
-		-I$(MESASRCDIR)/src/mesa/array_cache \
 		-I$(MESASRCDIR)/src/mesa/math \
 		-I$(MESASRCDIR)/src/mesa/main \
 		-I$(MESASRCDIR)/src/mesa/glapi \

@@ -4,7 +4,6 @@ MESA_SWRAST_SRCS = $(MESASWRASTBUILDDIR)s_aaline.c \
 		     $(MESASWRASTBUILDDIR)s_aatriangle.c \
 		     $(MESASWRASTBUILDDIR)s_accum.c \
 		     $(MESASWRASTBUILDDIR)s_alpha.c \
-		     $(MESASWRASTBUILDDIR)s_arbshader.c \
 		     $(MESASWRASTBUILDDIR)s_atifragshader.c \
 		     $(MESASWRASTBUILDDIR)s_bitmap.c \
 		     $(MESASWRASTBUILDDIR)s_blend.c \
@@ -20,7 +19,7 @@ MESA_SWRAST_SRCS = $(MESASWRASTBUILDDIR)s_aaline.c \
 		     $(MESASWRASTBUILDDIR)s_lines.c \
 		     $(MESASWRASTBUILDDIR)s_logic.c \
 		     $(MESASWRASTBUILDDIR)s_masking.c \
-		     $(MESASWRASTBUILDDIR)s_nvfragprog.c \
+		     $(MESASWRASTBUILDDIR)s_fragprog.c \
 		     $(MESASWRASTBUILDDIR)s_points.c \
 		     $(MESASWRASTBUILDDIR)s_readpix.c \
 		     $(MESASWRASTBUILDDIR)s_span.c \
@@ -42,8 +41,6 @@ LinkSourceFile(s_accum.c, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_accum.h, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_alpha.c, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_alpha.h, $(MESASRCDIR)/src/mesa/swrast)
-LinkSourceFile(s_arbshader.c, $(MESASRCDIR)/src/mesa/swrast)
-LinkSourceFile(s_arbshader.h, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_atifragshader.c, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_atifragshader.h, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_bitmap.c, $(MESASRCDIR)/src/mesa/swrast)
@@ -70,8 +67,8 @@ LinkSourceFile(s_logic.c, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_logic.h, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_masking.c, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_masking.h, $(MESASRCDIR)/src/mesa/swrast)
-LinkSourceFile(s_nvfragprog.c, $(MESASRCDIR)/src/mesa/swrast)
-LinkSourceFile(s_nvfragprog.h, $(MESASRCDIR)/src/mesa/swrast)
+LinkSourceFile(s_fragprog.c, $(MESASRCDIR)/src/mesa/swrast)
+LinkSourceFile(s_fragprog.h, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_points.c, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_points.h, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_pointtemp.h, $(MESASRCDIR)/src/mesa/swrast)
@@ -99,7 +96,6 @@ LinkSourceFile(swrast.h, $(MESASRCDIR)/src/mesa/swrast)
 		     $(MESASWRASTBUILDDIR)s_aatriangle.o \
 		     $(MESASWRASTBUILDDIR)s_accum.o \
 		     $(MESASWRASTBUILDDIR)s_alpha.o \
-		     $(MESASWRASTBUILDDIR)s_arbshader.o \
 		     $(MESASWRASTBUILDDIR)s_atifragshader.o \
 		     $(MESASWRASTBUILDDIR)s_bitmap.o \
 		     $(MESASWRASTBUILDDIR)s_blend.o \
@@ -115,7 +111,7 @@ LinkSourceFile(swrast.h, $(MESASRCDIR)/src/mesa/swrast)
 		     $(MESASWRASTBUILDDIR)s_lines.o \
 		     $(MESASWRASTBUILDDIR)s_logic.o \
 		     $(MESASWRASTBUILDDIR)s_masking.o \
-		     $(MESASWRASTBUILDDIR)s_nvfragprog.o \
+		     $(MESASWRASTBUILDDIR)s_fragprog.o \
 		     $(MESASWRASTBUILDDIR)s_points.o \
 		     $(MESASWRASTBUILDDIR)s_readpix.o \
 		     $(MESASWRASTBUILDDIR)s_span.o \
@@ -131,7 +127,6 @@ LinkSourceFile(swrast.h, $(MESASRCDIR)/src/mesa/swrast)
 		     $(MESASWRASTBUILDDIR)unshared/s_aatriangle.o \
 		     $(MESASWRASTBUILDDIR)unshared/s_accum.o \
 		     $(MESASWRASTBUILDDIR)unshared/s_alpha.o \
-		     $(MESASWRASTBUILDDIR)unshared/s_arbshader.o \
 		     $(MESASWRASTBUILDDIR)unshared/s_atifragshader.o \
 		     $(MESASWRASTBUILDDIR)unshared/s_bitmap.o \
 		     $(MESASWRASTBUILDDIR)unshared/s_blend.o \
@@ -147,7 +142,7 @@ LinkSourceFile(swrast.h, $(MESASRCDIR)/src/mesa/swrast)
 		     $(MESASWRASTBUILDDIR)unshared/s_lines.o \
 		     $(MESASWRASTBUILDDIR)unshared/s_logic.o \
 		     $(MESASWRASTBUILDDIR)unshared/s_masking.o \
-		     $(MESASWRASTBUILDDIR)unshared/s_nvfragprog.o \
+		     $(MESASWRASTBUILDDIR)unshared/s_fragprog.o \
 		     $(MESASWRASTBUILDDIR)unshared/s_points.o \
 		     $(MESASWRASTBUILDDIR)unshared/s_readpix.o \
 		     $(MESASWRASTBUILDDIR)unshared/s_span.o \
@@ -165,7 +160,6 @@ LinkSourceFile(swrast.h, $(MESASRCDIR)/src/mesa/swrast)
 		     $(MESASWRASTBUILDDIR)debugger/s_aatriangle.o \
 		     $(MESASWRASTBUILDDIR)debugger/s_accum.o \
 		     $(MESASWRASTBUILDDIR)debugger/s_alpha.o \
-		     $(MESASWRASTBUILDDIR)debugger/s_arbshader.o \
 		     $(MESASWRASTBUILDDIR)debugger/s_atifragshader.o \
 		     $(MESASWRASTBUILDDIR)debugger/s_bitmap.o \
 		     $(MESASWRASTBUILDDIR)debugger/s_blend.o \
@@ -181,7 +175,7 @@ LinkSourceFile(swrast.h, $(MESASRCDIR)/src/mesa/swrast)
 		     $(MESASWRASTBUILDDIR)debugger/s_lines.o \
 		     $(MESASWRASTBUILDDIR)debugger/s_logic.o \
 		     $(MESASWRASTBUILDDIR)debugger/s_masking.o \
-		     $(MESASWRASTBUILDDIR)debugger/s_nvfragprog.o \
+		     $(MESASWRASTBUILDDIR)debugger/s_fragprog.o \
 		     $(MESASWRASTBUILDDIR)debugger/s_points.o \
 		     $(MESASWRASTBUILDDIR)debugger/s_readpix.o \
 		     $(MESASWRASTBUILDDIR)debugger/s_span.o \
@@ -196,7 +190,6 @@ LinkSourceFile(swrast.h, $(MESASRCDIR)/src/mesa/swrast)
 		     $(MESASWRASTBUILDDIR)profiled/s_aatriangle.o \
 		     $(MESASWRASTBUILDDIR)profiled/s_accum.o \
 		     $(MESASWRASTBUILDDIR)profiled/s_alpha.o \
-		     $(MESASWRASTBUILDDIR)profiled/s_arbshader.o \
 		     $(MESASWRASTBUILDDIR)profiled/s_atifragshader.o \
 		     $(MESASWRASTBUILDDIR)profiled/s_bitmap.o \
 		     $(MESASWRASTBUILDDIR)profiled/s_blend.o \
@@ -212,7 +205,7 @@ LinkSourceFile(swrast.h, $(MESASRCDIR)/src/mesa/swrast)
 		     $(MESASWRASTBUILDDIR)profiled/s_lines.o \
 		     $(MESASWRASTBUILDDIR)profiled/s_logic.o \
 		     $(MESASWRASTBUILDDIR)profiled/s_masking.o \
-		     $(MESASWRASTBUILDDIR)profiled/s_nvfragprog.o \
+		     $(MESASWRASTBUILDDIR)profiled/s_fragprog.o \
 		     $(MESASWRASTBUILDDIR)profiled/s_points.o \
 		     $(MESASWRASTBUILDDIR)profiled/s_readpix.o \
 		     $(MESASWRASTBUILDDIR)profiled/s_span.o \
