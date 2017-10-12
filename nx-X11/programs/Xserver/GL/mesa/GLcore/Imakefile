@@ -3,7 +3,6 @@
 #define NeedAllMesaSrc
 #define MesaInXServer
 #define MesaBuildDir ../main/
-#define MesaACBuildDir ../array_cache/
 #define MesaMathBuildDir ../math/
 #define MesaSwrastBuildDir ../swrast/
 #define MesaSwrastSetupBuildDir ../swrast_setup/
@@ -13,7 +12,6 @@
 #define MesaSlangBuildDir ../shader/slang/
 #define MesaXBuildDir ../X/
 
-#include "../array_cache/Imakefile.inc"
 #include "../swrast/Imakefile.inc"
 #include "../swrast_setup/Imakefile.inc"
 #include "../tnl/Imakefile.inc"
@@ -29,7 +27,7 @@
 
          OBJS = $(COREMESAOBJS) $(MOBJS)
 
-        DONES = ../main/DONE ../X/DONE ../array_cache/DONE \
+        DONES = ../main/DONE ../X/DONE \
 		../math/DONE ../swrast/DONE ../swrast_setup/DONE \
 		../tnl/DONE ../shader/DONE ../shader/grammar/DONE \
                 ../shader/slang/DONE
