@@ -6,7 +6,15 @@ MESASHADERBUILDDIR = MesaShaderBuildDir
 			$(MESASHADERBUILDDIR)nvprogram.c \
 			$(MESASHADERBUILDDIR)nvfragparse.c \
 			$(MESASHADERBUILDDIR)nvvertparse.c \
-			$(MESASHADERBUILDDIR)program.c
+			$(MESASHADERBUILDDIR)shader_api.c \
+			$(MESASHADERBUILDDIR)prog_debug.c \
+			$(MESASHADERBUILDDIR)prog_execute.c \
+			$(MESASHADERBUILDDIR)prog_instruction.c \
+			$(MESASHADERBUILDDIR)prog_parameter.c \
+			$(MESASHADERBUILDDIR)prog_print.c \
+			$(MESASHADERBUILDDIR)program.c \
+			$(MESASHADERBUILDDIR)programopt.c \
+			$(MESASHADERBUILDDIR)prog_statevars.c
 
 #ifdef NeedToLinkMesaSrc
 LinkSourceFile(arbprogparse.c, $(MESASRCDIR)/src/mesa/shader)
@@ -24,6 +32,22 @@ LinkSourceFile(nvvertparse.c, $(MESASRCDIR)/src/mesa/shader)
 LinkSourceFile(nvvertparse.h, $(MESASRCDIR)/src/mesa/shader)
 LinkSourceFile(program.c, $(MESASRCDIR)/src/mesa/shader)
 LinkSourceFile(program.h, $(MESASRCDIR)/src/mesa/shader)
+LinkSourceFile(shader_api.c, $(MESASRCDIR)/src/mesa/shader)
+LinkSourceFile(shader_api.h, $(MESASRCDIR)/src/mesa/shader)
+LinkSourceFile(prog_debug.c, $(MESASRCDIR)/src/mesa/shader)
+LinkSourceFile(prog_debug.h, $(MESASRCDIR)/src/mesa/shader)
+LinkSourceFile(prog_execute.c, $(MESASRCDIR)/src/mesa/shader)
+LinkSourceFile(prog_execute.h, $(MESASRCDIR)/src/mesa/shader)
+LinkSourceFile(prog_instruction.c, $(MESASRCDIR)/src/mesa/shader)
+LinkSourceFile(prog_instruction.h, $(MESASRCDIR)/src/mesa/shader)
+LinkSourceFile(prog_parameter.c, $(MESASRCDIR)/src/mesa/shader)
+LinkSourceFile(prog_parameter.h, $(MESASRCDIR)/src/mesa/shader)
+LinkSourceFile(prog_print.c, $(MESASRCDIR)/src/mesa/shader)
+LinkSourceFile(prog_print.h, $(MESASRCDIR)/src/mesa/shader)
+LinkSourceFile(programopt.c, $(MESASRCDIR)/src/mesa/shader)
+LinkSourceFile(programopt.h, $(MESASRCDIR)/src/mesa/shader)
+LinkSourceFile(prog_statevars.c, $(MESASRCDIR)/src/mesa/shader)
+LinkSourceFile(prog_statevars.h, $(MESASRCDIR)/src/mesa/shader)
 #endif
 
   MESA_SHADER_OBJS =	$(MESASHADERBUILDDIR)arbprogparse.o \
@@ -32,7 +56,15 @@ LinkSourceFile(program.h, $(MESASRCDIR)/src/mesa/shader)
 			$(MESASHADERBUILDDIR)nvprogram.o \
 			$(MESASHADERBUILDDIR)nvfragparse.o \
 			$(MESASHADERBUILDDIR)nvvertparse.o \
-			$(MESASHADERBUILDDIR)program.o
+			$(MESASHADERBUILDDIR)shader_api.o \
+			$(MESASHADERBUILDDIR)prog_debug.o \
+			$(MESASHADERBUILDDIR)prog_execute.o \
+			$(MESASHADERBUILDDIR)prog_instruction.o \
+			$(MESASHADERBUILDDIR)prog_parameter.o \
+			$(MESASHADERBUILDDIR)prog_print.o \
+			$(MESASHADERBUILDDIR)program.o \
+			$(MESASHADERBUILDDIR)programopt.o \
+			$(MESASHADERBUILDDIR)prog_statevars.o
 
 #if defined(DoSharedLib) && DoSharedLib
   MESA_SHADER_UOBJS =	$(MESASHADERBUILDDIR)unshared/arbprogparse.o \
@@ -41,7 +73,15 @@ LinkSourceFile(program.h, $(MESASRCDIR)/src/mesa/shader)
 			$(MESASHADERBUILDDIR)unshared/nvprogram.o \
 			$(MESASHADERBUILDDIR)unshared/nvfragparse.o \
 			$(MESASHADERBUILDDIR)unshared/nvvertparse.o \
-			$(MESASHADERBUILDDIR)unshared/program.o
+			$(MESASHADERBUILDDIR)unshared/shader_api.o \
+			$(MESASHADERBUILDDIR)unshared/prog_debug.o \
+			$(MESASHADERBUILDDIR)unshared/prog_execute.o \
+			$(MESASHADERBUILDDIR)unshared/prog_instruction.o \
+			$(MESASHADERBUILDDIR)unshared/prog_parameter.o \
+			$(MESASHADERBUILDDIR)unshared/prog_print.o \
+			$(MESASHADERBUILDDIR)unshared/program.o \
+			$(MESASHADERBUILDDIR)unshared/programopt.o \
+			$(MESASHADERBUILDDIR)unshared/prog_statevars.o
 #else
  MESA_SHADER_UOBJS = $(MESA_SHADER_OBJS)
 #endif
@@ -52,7 +92,15 @@ LinkSourceFile(program.h, $(MESASRCDIR)/src/mesa/shader)
 			$(MESASHADERBUILDDIR)debugger/nvprogram.o \
 			$(MESASHADERBUILDDIR)debugger/nvfragparse.o \
 			$(MESASHADERBUILDDIR)debugger/nvvertparse.o \
-			$(MESASHADERBUILDDIR)debugger/program.o
+			$(MESASHADERBUILDDIR)debugger/shader_api.o \
+			$(MESASHADERBUILDDIR)debugger/prog_debug.o \
+			$(MESASHADERBUILDDIR)debugger/prog_execute.o \
+			$(MESASHADERBUILDDIR)debugger/prog_instruction.o \
+			$(MESASHADERBUILDDIR)debugger/prog_parameter.o \
+			$(MESASHADERBUILDDIR)debugger/prog_print.o \
+			$(MESASHADERBUILDDIR)debugger/program.o \
+			$(MESASHADERBUILDDIR)debugger/programopt.o \
+			$(MESASHADERBUILDDIR)debugger/prog_statevars.o
 
   MESA_SHADER_POBJS =	$(MESASHADERBUILDDIR)profiled/arbprogparse.o \
 			$(MESASHADERBUILDDIR)profiled/arbprogram.o \
@@ -60,4 +108,12 @@ LinkSourceFile(program.h, $(MESASRCDIR)/src/mesa/shader)
 			$(MESASHADERBUILDDIR)profiled/nvprogram.o \
 			$(MESASHADERBUILDDIR)profiled/nvfragparse.o \
 			$(MESASHADERBUILDDIR)profiled/nvvertparse.o \
-			$(MESASHADERBUILDDIR)profiled/program.o
+			$(MESASHADERBUILDDIR)profiled/shader_api.o \
+			$(MESASHADERBUILDDIR)profiled/prog_debug.o \
+			$(MESASHADERBUILDDIR)profiled/prog_execute.o \
+			$(MESASHADERBUILDDIR)profiled/prog_instruction.o \
+			$(MESASHADERBUILDDIR)profiled/prog_parameter.o \
+			$(MESASHADERBUILDDIR)profiled/prog_print.o \
+			$(MESASHADERBUILDDIR)profiled/program.o \
+			$(MESASHADERBUILDDIR)profiled/programopt.o \
+			$(MESASHADERBUILDDIR)profiled/prog_statevars.o

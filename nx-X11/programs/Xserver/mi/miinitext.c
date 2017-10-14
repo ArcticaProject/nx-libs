@@ -224,6 +224,9 @@ extern void SecurityExtensionInit(void);
 extern void XFree86BigfontExtensionInit(void);
 #endif
 #ifdef GLXEXT
+typedef struct __GLXprovider __GLXprovider;
+extern __GLXprovider __glXMesaProvider;
+extern void GlxPushProvider(__GLXprovider *impl);
 #ifndef __DARWIN__
 extern void GlxExtensionInit(void);
 extern void GlxWrapInitVisuals(miInitVisualsProcPtr *);
@@ -443,6 +446,8 @@ InitExtensions(argc, argv)
 #endif
 #endif
 #ifdef GLXEXT
+
+    GlxPushProvider(&__glXMesaProvider);
 #ifndef __DARWIN__
     if (!noGlxExtension) GlxExtensionInit();
 #else
