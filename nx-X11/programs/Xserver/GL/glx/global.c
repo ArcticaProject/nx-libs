@@ -51,6 +51,7 @@ __GLXcontext *__glXLastContext;
 RESTYPE __glXContextRes;
 RESTYPE __glXClientRes;
 RESTYPE __glXPixmapRes;
+RESTYPE __glXDrawableRes;
 RESTYPE __glXSwapBarrierRes;
 
 /*

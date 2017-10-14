@@ -35,6 +35,8 @@
 #include "glxserver.h"
 #include "glxext.h"
 #include "g_disptab_EXT.h"
+#include "indirect_dispatch.h"
+
 __GLXdispatchRenderProcPtr __glXRenderTable_EXT[__GLX_MAX_RENDER_OPCODE_EXT - __GLX_MIN_RENDER_OPCODE_EXT + 1] = {
 	__glXDisp_ColorTable, /* 2053 */
 	__glXDisp_ColorTableParameterfv, /* 2054 */
@@ -49,8 +51,8 @@ __GLXdispatchRenderProcPtr __glXRenderTable_EXT[__GLX_MAX_RENDER_OPCODE_EXT - __
 	__glXNoSuchRenderOpcode,
 	__glXNoSuchRenderOpcode,
 #ifndef MISSING_GL_EXTS
-	__glXDisp_PointParameterfARB, /* 2065 */
-	__glXDisp_PointParameterfvARB, /* 2066 */
+	__glXDisp_PointParameterfEXT, /* 2065 */
+	__glXDisp_PointParameterfvEXT, /* 2066 */
 #else
 	__glXNoSuchRenderOpcode,
 	__glXNoSuchRenderOpcode,
@@ -2104,7 +2106,7 @@ __GLXdispatchRenderProcPtr __glXRenderTable_EXT[__GLX_MAX_RENDER_OPCODE_EXT - __
 	__glXDisp_ResetMinmax,
 	__glXDisp_TexImage3D,
 	__glXDisp_TexSubImage3D,
-	__glXDisp_DrawArraysEXT,
+	__glXDisp_DrawArrays,
 	__glXDisp_BindTexture,
 	__glXDisp_PrioritizeTextures,
 	__glXDisp_CopyTexImage1D,
@@ -2113,17 +2115,17 @@ __GLXdispatchRenderProcPtr __glXRenderTable_EXT[__GLX_MAX_RENDER_OPCODE_EXT - __
 	__glXDisp_CopyTexSubImage2D,  /* 4122 */
 	__glXDisp_CopyTexSubImage3D,  /* 4123 */
 #ifndef MISSING_GL_EXTS
-	__glXDisp_FogCoordfv,         /* 4124 */
-	__glXDisp_FogCoorddv,         /* 4125 */
-	__glXDisp_SecondaryColor3bv,  /* 4126 */
-	__glXDisp_SecondaryColor3sv,  /* 4127 */
-	__glXDisp_SecondaryColor3iv,  /* 4128 */
-	__glXDisp_SecondaryColor3fv,  /* 4129 */
-	__glXDisp_SecondaryColor3dv,  /* 4130 */
-	__glXDisp_SecondaryColor3ubv, /* 4131 */
-	__glXDisp_SecondaryColor3usv, /* 4132 */
-	__glXDisp_SecondaryColor3uiv, /* 4133 */
-	__glXDisp_BlendFuncSeparate,  /* 4134 */
+	__glXDisp_FogCoordfvEXT,         /* 4124 */
+	__glXDisp_FogCoorddvEXT,         /* 4125 */
+	__glXDisp_SecondaryColor3bvEXT,  /* 4126 */
+	__glXDisp_SecondaryColor3svEXT,  /* 4127 */
+	__glXDisp_SecondaryColor3ivEXT,  /* 4128 */
+	__glXDisp_SecondaryColor3fvEXT,  /* 4129 */
+	__glXDisp_SecondaryColor3dvEXT,  /* 4130 */
+	__glXDisp_SecondaryColor3ubvEXT, /* 4131 */
+	__glXDisp_SecondaryColor3usvEXT, /* 4132 */
+	__glXDisp_SecondaryColor3uivEXT, /* 4133 */
+	__glXDisp_BlendFuncSeparateEXT,  /* 4134 */
 #else
 	__glXNoSuchRenderOpcode,      /* 4124 */
 	__glXNoSuchRenderOpcode,      /* 4125 */
@@ -2231,10 +2233,114 @@ __GLXdispatchRenderProcPtr __glXRenderTable_EXT[__GLX_MAX_RENDER_OPCODE_EXT - __
 	__glXNoSuchRenderOpcode,
 	__glXNoSuchRenderOpcode,
 #endif
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+
+	__glXDisp_BindRenderbufferEXT, /* 4316 */
+	__glXDisp_DeleteRenderbuffersEXT, /* 4317 */
+	__glXDisp_RenderbufferStorageEXT, /* 4318 */
+	__glXDisp_BindFramebufferEXT, /* 4319 */
+	__glXDisp_DeleteFramebuffersEXT, /* 4320 */
+	__glXDisp_FramebufferTexture1DEXT, /* 4321 */
+	__glXDisp_FramebufferTexture2DEXT, /* 4322 */
+	__glXDisp_FramebufferTexture3DEXT, /* 4323 */
+	__glXDisp_FramebufferRenderbufferEXT, /* 4324 */
+	__glXDisp_GenerateMipmapEXT /* 4325 */
 };
 __GLXdispatchVendorPrivProcPtr __glXVendorPrivTable_EXT[__GLX_MAX_VENDPRIV_OPCODE_EXT - __GLX_MIN_VENDPRIV_OPCODE_EXT + 1] = {
 	__glXDisp_AreTexturesResidentEXT, /* 11 */
-	__glXDisp_DeleteTexturesEXT, /* 12 */
+	__glXDisp_DeleteTextures, /* 12 */
 	__glXDisp_GenTexturesEXT, /* 13 */
 	__glXDisp_IsTextureEXT, /* 14 */
 };
@@ -2254,8 +2360,8 @@ __GLXdispatchRenderProcPtr __glXSwapRenderTable_EXT[__GLX_MAX_RENDER_OPCODE_EXT 
 	__glXNoSuchRenderOpcode,
 	__glXNoSuchRenderOpcode,
 #ifndef MISSING_GL_EXTS
-	__glXDispSwap_PointParameterfARB, /* 2065 */
-	__glXDispSwap_PointParameterfvARB, /* 2066 */
+	__glXDispSwap_PointParameterfEXT, /* 2065 */
+	__glXDispSwap_PointParameterfvEXT, /* 2066 */
 #else
 	__glXNoSuchRenderOpcode,
 	__glXNoSuchRenderOpcode,
@@ -4309,7 +4415,7 @@ __GLXdispatchRenderProcPtr __glXSwapRenderTable_EXT[__GLX_MAX_RENDER_OPCODE_EXT 
 	__glXDispSwap_ResetMinmax,
 	__glXDispSwap_TexImage3D,
 	__glXDispSwap_TexSubImage3D,
-	__glXDispSwap_DrawArraysEXT,
+	__glXDispSwap_DrawArrays,
 	__glXDispSwap_BindTexture,
 	__glXDispSwap_PrioritizeTextures,
 	__glXDispSwap_CopyTexImage1D,
@@ -4318,17 +4424,17 @@ __GLXdispatchRenderProcPtr __glXSwapRenderTable_EXT[__GLX_MAX_RENDER_OPCODE_EXT 
 	__glXDispSwap_CopyTexSubImage2D,  /* 4122 */
 	__glXDispSwap_CopyTexSubImage3D,  /* 4123 */
 #ifndef MISSING_GL_EXTS
-	__glXDispSwap_FogCoordfv,         /* 4124 */
-	__glXDispSwap_FogCoorddv,         /* 4125 */
-	__glXDispSwap_SecondaryColor3bv,  /* 4126 */
-	__glXDispSwap_SecondaryColor3sv,  /* 4127 */
-	__glXDispSwap_SecondaryColor3iv,  /* 4128 */
-	__glXDispSwap_SecondaryColor3fv,  /* 4129 */
-	__glXDispSwap_SecondaryColor3dv,  /* 4130 */
-	__glXDispSwap_SecondaryColor3ubv, /* 4131 */
-	__glXDispSwap_SecondaryColor3usv, /* 4132 */
-	__glXDispSwap_SecondaryColor3uiv, /* 4133 */
-	__glXDisp_BlendFuncSeparate,      /* 4134 */
+	__glXDispSwap_FogCoordfvEXT,         /* 4124 */
+	__glXDispSwap_FogCoorddvEXT,         /* 4125 */
+	__glXDispSwap_SecondaryColor3bvEXT,  /* 4126 */
+	__glXDispSwap_SecondaryColor3svEXT,  /* 4127 */
+	__glXDispSwap_SecondaryColor3ivEXT,  /* 4128 */
+	__glXDispSwap_SecondaryColor3fvEXT,  /* 4129 */
+	__glXDispSwap_SecondaryColor3dvEXT,  /* 4130 */
+	__glXDispSwap_SecondaryColor3ubvEXT, /* 4131 */
+	__glXDispSwap_SecondaryColor3usvEXT, /* 4132 */
+	__glXDispSwap_SecondaryColor3uivEXT, /* 4133 */
+	__glXDisp_BlendFuncSeparateEXT,      /* 4134 */
 #else
 	__glXNoSuchRenderOpcode,          /* 4124 */
 	__glXNoSuchRenderOpcode,          /* 4125 */
@@ -4436,10 +4542,114 @@ __GLXdispatchRenderProcPtr __glXSwapRenderTable_EXT[__GLX_MAX_RENDER_OPCODE_EXT 
 	__glXNoSuchRenderOpcode,
 	__glXNoSuchRenderOpcode,
 #endif
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+	__glXNoSuchRenderOpcode,
+
+	__glXDispSwap_BindRenderbufferEXT, /* 4316 */
+	__glXDispSwap_DeleteRenderbuffersEXT, /* 4317 */
+	__glXDispSwap_RenderbufferStorageEXT, /* 4318 */
+	__glXDispSwap_BindFramebufferEXT, /* 4319 */
+	__glXDispSwap_DeleteFramebuffersEXT, /* 4320 */
+	__glXDispSwap_FramebufferTexture1DEXT, /* 4321 */
+	__glXDispSwap_FramebufferTexture2DEXT, /* 4322 */
+	__glXDispSwap_FramebufferTexture3DEXT, /* 4323 */
+	__glXDispSwap_FramebufferRenderbufferEXT, /* 4324 */
+	__glXDispSwap_GenerateMipmapEXT /* 4325 */
 };
 __GLXdispatchVendorPrivProcPtr __glXSwapVendorPrivTable_EXT[__GLX_MAX_VENDPRIV_OPCODE_EXT - __GLX_MIN_VENDPRIV_OPCODE_EXT + 1] = {
 	__glXDispSwap_AreTexturesResidentEXT, /* 11 */
-	__glXDispSwap_DeleteTexturesEXT, /* 12 */
+	__glXDispSwap_DeleteTextures, /* 12 */
 	__glXDispSwap_GenTexturesEXT, /* 13 */
 	__glXDispSwap_IsTextureEXT, /* 14 */
 };

@@ -9,10 +9,10 @@ NULL =
 
 #include <Server.tmpl>
 
-LinkSourceFile(glcontextmodes.c, $(MESASRCDIR)/src/mesa/drivers/dri/common)
-LinkSourceFile(glcontextmodes.h, $(MESASRCDIR)/src/mesa/drivers/dri/common)
-LinkSourceFile(indirect_size.c, $(MESASRCDIR)/src/glx/x11)
-LinkSourceFile(indirect_size.h, $(MESASRCDIR)/src/glx/x11)
+LinkSourceFile(glcontextmodes.c, $(MESASRCDIR)/src/glx/x11)
+LinkSourceFile(glcontextmodes.h, $(MESASRCDIR)/src/glx/x11)
+LinkSourceFile(glapi.c, $(MESASRCDIR)/src/mesa/glapi)
+LinkSourceFile(glthread.c, $(MESASRCDIR)/src/mesa/glapi)
 
 #if (!(defined(NXAgentServer) && NXAgentServer))
 NXAGENT_SKIP_SRCS =                     \
@@ -25,16 +25,22 @@ NXAGENT_SKIP_OBJS =                     \
        NX_DEFINES = -DNXAGENT_SERVER
 #endif
 
-         SRCS = global.c                \
-                glxbuf.c                \
-                glxcmds.c               \
-                glxcmdsswap.c           \
-                glxfb.c                 \
-                glximports.c            \
-                glxmem.c                \
-                glxpix.c                \
+	 SRCS = g_disptab.c             \
+                g_disptab_EXT.c         \
+		glapi.c                 \
+		glcontextmodes.c        \
+		global.c                \
+		glthread.c              \
+		glxcmds.c               \
+		glxcmdsswap.c           \
+		glxvisuals.c            \
                 glxscreens.c            \
                 glxutil.c               \
+	        indirect_dispatch.c     \
+	        indirect_dispatch_swap.c \
+	        indirect_reqsize.c      \
+	        indirect_size_get.c     \
+	        indirect_util.c         \
                 render2.c               \
                 render2swap.c           \
                 renderpix.c             \
@@ -47,28 +53,26 @@ NXAGENT_SKIP_OBJS =                     \
                 singlepixswap.c         \
                 singlesize.c            \
                 xfont.c                 \
-                g_disptab.c             \
-                g_disptab_EXT.c         \
-                g_render.c              \
-                g_renderswap.c          \
-                g_single.c              \
-                g_singleswap.c          \
-                glcontextmodes.c        \
-                indirect_size.c         \
-                $(MSRCS)                \
+		$(MSRCS)                \
                 $(NXAGENT_SKIP_SRCS)    \
                 $(NULL)
 
-         OBJS = global.o                \
-                glxbuf.o                \
-                glxcmds.o               \
-                glxcmdsswap.o           \
-                glxfb.o                 \
-                glximports.o            \
-                glxmem.o                \
-                glxpix.o                \
+         OBJS = g_disptab.o             \
+                g_disptab_EXT.o         \
+		glapi.o                 \
+		glcontextmodes.o        \
+		global.o                \
+		glthread.o              \
+		glxcmds.o               \
+		glxcmdsswap.o           \
+		glxvisuals.o            \
                 glxscreens.o            \
                 glxutil.o               \
+	        indirect_dispatch.o     \
+	        indirect_dispatch_swap.o \
+	        indirect_reqsize.o      \
+	        indirect_size_get.o     \
+	        indirect_util.o         \
                 render2.o               \
                 render2swap.o           \
                 renderpix.o             \
@@ -81,15 +85,7 @@ NXAGENT_SKIP_OBJS =                     \
                 singlepixswap.o         \
                 singlesize.o            \
                 xfont.o                 \
-                g_disptab.o             \
-                g_disptab_EXT.o         \
-                g_render.o              \
-                g_renderswap.o          \
-                g_single.o              \
-                g_singleswap.o          \
-                glcontextmodes.o        \
-                indirect_size.o         \
-                $(MOBJS)                \
+		$(MOBJS)                \
                 $(NXAGENT_SKIP_OBJS)    \
                 $(NULL)
 
@@ -98,6 +94,9 @@ NXAGENT_SKIP_OBJS =                     \
                 -I$(SERVERSRC)/include                  \
                 -I$(INCLUDESRC)                         \
                 -I$(MESASRCDIR)/include                 \
+                -I$(MESASRCDIR)/src/glx/x11             \
+		-I$(MESASRCDIR)/src/mesa/glapi          \
+                -I$(MESASRCDIR)/src/mesa/main           \
                 -I$(XINCLUDESRC)                        \
                 -I$(SERVERSRC)/mi                       \
                 -I$(EXTINCSRC)                          \
@@ -146,17 +145,21 @@ DependSubdirs($(SUBDIRS))
 #endif
 
 #ifdef LinkDirectory
+LinkSourceFile(g_disptab.c,LinkDirectory)
+LinkSourceFile(g_disptab_EXT.c,LinkDirectory)
+LinkSourceFile(glcontextmodes.c,LinkDirectory)
 LinkSourceFile(global.c,LinkDirectory)
-LinkSourceFile(glxbuf.c,LinkDirectory)
 LinkSourceFile(glxcmds.c,LinkDirectory)
 LinkSourceFile(glxcmdsswap.c,LinkDirectory)
 LinkSourceFile(glxext.c,LinkDirectory)
-LinkSourceFile(glxfb.c,LinkDirectory)
-LinkSourceFile(glximports.c,LinkDirectory)
-LinkSourceFile(glxmem.c,LinkDirectory)
-LinkSourceFile(glxpix.c,LinkDirectory)
+LinkSourceFile(glxvisuals.c,LinkDirectory)
 LinkSourceFile(glxscreens.c,LinkDirectory)
 LinkSourceFile(glxutil.c,LinkDirectory)
+LinkSourceFile(indirect_dispatch.c,LinkDirectory)
+LinkSourceFile(indirect_dispatch_swap.c,LinkDirectory)
+LinkSourceFile(indirect_reqsize.c,LinkDirectory)
+LinkSourceFile(indirect_size_get.c,LinkDirectory)
+LinkSourceFile(indirect_util.c,LinkDirectory)
 LinkSourceFile(render2.c,LinkDirectory)
 LinkSourceFile(render2swap.c,LinkDirectory)
 LinkSourceFile(renderpix.c,LinkDirectory)
@@ -169,10 +172,4 @@ LinkSourceFile(singlepix.c,LinkDirectory)
 LinkSourceFile(singlepixswap.c,LinkDirectory)
 LinkSourceFile(singlesize.c,LinkDirectory)
 LinkSourceFile(xfont.c,LinkDirectory)
-LinkSourceFile(g_disptab.c,LinkDirectory)
-LinkSourceFile(g_disptab_EXT.c,LinkDirectory)
-LinkSourceFile(g_render.c,LinkDirectory)
-LinkSourceFile(g_renderswap.c,LinkDirectory)
-LinkSourceFile(g_single.c,LinkDirectory)
-LinkSourceFile(g_singleswap.c,LinkDirectory)
 #endif

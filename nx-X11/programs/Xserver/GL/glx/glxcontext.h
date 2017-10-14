@@ -40,32 +40,48 @@
 **
 */
 
-typedef struct __GLXcontextRec __GLXcontext;
-
 /* XXX: should be defined somewhere globally */
 #define CAPI
 
 #include "GL/internal/glcore.h"
 
-struct __GLXcontextRec {
+typedef struct __GLXtextureFromPixmap __GLXtextureFromPixmap;
+struct __GLXtextureFromPixmap {
+    int (*bindTexImage)		(__GLXcontext *baseContext,
+				 int           buffer,
+				 __GLXpixmap  *pixmap);
+    int (*releaseTexImage)	(__GLXcontext *baseContext,
+				 int           buffer,
+				 __GLXpixmap  *pixmap);
+};
+
+
+struct __GLXcontext {
+    void           (*destroy)       (__GLXcontext *context);    
+    int            (*makeCurrent)   (__GLXcontext *context);
+    int            (*loseCurrent)   (__GLXcontext *context);
+    int            (*copy)          (__GLXcontext *dst,
+				     __GLXcontext *src,
+				     unsigned long mask);
+    int            (*forceCurrent)  (__GLXcontext *context);
+
+    __GLXdrawable *(*createDrawable)(__GLXcontext *context,
+				     DrawablePtr pDraw,
+				     XID drawId);
+
+    __GLXtextureFromPixmap *textureFromPixmap;
+
     /*
     ** list of context structs
     */
-    struct __GLXcontextRec *last;
-    struct __GLXcontextRec *next;
+    __GLXcontext *last;
+    __GLXcontext *next;
 
     /*
     ** list of contexts bound to the same drawable
     */
-    struct __GLXcontextRec *nextDrawPriv;
-    struct __GLXcontextRec *nextReadPriv;
-
-    /*
-    ** Opaque pointer the context object created by the GL that the
-    ** server is bound with.  Never dereferenced by this code, but used
-    ** as a handle to feed to the routines in the screen info struct.
-    */
-    __GLinterface *gc;
+    __GLXcontext *nextDrawPriv;
+    __GLXcontext *nextReadPriv;
 
     /*
     ** mode struct for this context
@@ -77,7 +93,7 @@ struct __GLXcontextRec {
     ** when the context is created.
     */
     ScreenPtr pScreen;
-    __GLXscreenInfo *pGlxScreen;
+    __GLXscreen *pGlxScreen;
 
     /*
     ** This context is created with respect to this visual.
@@ -151,13 +167,15 @@ struct __GLXcontextRec {
     /*
     ** The drawable private this context is bound to
     */
-    __GLXdrawablePrivate *drawPriv;
-    __GLXdrawablePrivate *readPriv;
+    __GLXdrawable *drawPriv;
+    __GLXdrawable *readPriv;
 };
 
 /* pending state defines */
 #define __GLX_PENDING_RESIZE	0x1
 #define	__GLX_PENDING_DESTROY	0x2
 #define __GLX_PENDING_SWAP	0x4
+
+void __glXContextDestroy(__GLXcontext *context);
 
 #endif /* !__GLX_context_h__ */
