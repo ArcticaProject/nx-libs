@@ -1,6 +1,7 @@
 MESATNLBUILDDIR = MesaTnlBuildDir
 
   MESA_TNL_SRCS = $(MESATNLBUILDDIR)t_context.c \
+		  $(MESATNLBUILDDIR)t_draw.c \
 		  $(MESATNLBUILDDIR)t_pipeline.c \
 		  $(MESATNLBUILDDIR)t_vb_fog.c \
 		  $(MESATNLBUILDDIR)t_vb_cull.c \
@@ -20,6 +21,7 @@ MESATNLBUILDDIR = MesaTnlBuildDir
 #ifdef NeedToLinkMesaSrc
 LinkSourceFile(t_context.c, $(MESASRCDIR)/src/mesa/tnl)
 LinkSourceFile(t_context.h, $(MESASRCDIR)/src/mesa/tnl)
+LinkSourceFile(t_draw.c, $(MESASRCDIR)/src/mesa/tnl)
 LinkSourceFile(tnl.h, $(MESASRCDIR)/src/mesa/tnl)
 LinkSourceFile(t_pipeline.c, $(MESASRCDIR)/src/mesa/tnl)
 LinkSourceFile(t_pipeline.h, $(MESASRCDIR)/src/mesa/tnl)
@@ -45,6 +47,7 @@ LinkSourceFile(t_vp_build.h, $(MESASRCDIR)/src/mesa/tnl)
 #endif
 
   MESA_TNL_OBJS = $(MESATNLBUILDDIR)t_context.o \
+                  $(MESATNLBUILDDIR)t_draw.o \
                   $(MESATNLBUILDDIR)t_pipeline.o \
                   $(MESATNLBUILDDIR)t_vb_fog.o \
                   $(MESATNLBUILDDIR)t_vb_cull.o \
@@ -63,6 +66,7 @@ LinkSourceFile(t_vp_build.h, $(MESASRCDIR)/src/mesa/tnl)
 		  
 #if defined(DoSharedLib) && DoSharedLib
  MESA_TNL_UOBJS = $(MESATNLBUILDDIR)unshared/t_context.o \
+		  $(MESATNLBUILDDIR)unshared/t_draw.o \
 		  $(MESATNLBUILDDIR)unshared/t_pipeline.o \
 		  $(MESATNLBUILDDIR)unshared/t_vb_fog.o \
 		  $(MESATNLBUILDDIR)unshared/t_vb_cull.o \
@@ -83,6 +87,7 @@ LinkSourceFile(t_vp_build.h, $(MESASRCDIR)/src/mesa/tnl)
 #endif
 
  MESA_TNL_DOBJS = $(MESATNLBUILDDIR)debugger/t_context.o \
+		  $(MESATNLBUILDDIR)debugger/t_draw.o \
 		  $(MESATNLBUILDDIR)debugger/t_pipeline.o \
 		  $(MESATNLBUILDDIR)debugger/t_vb_fog.o \
 		  $(MESATNLBUILDDIR)debugger/t_vb_cull.o \
@@ -100,6 +105,7 @@ LinkSourceFile(t_vp_build.h, $(MESASRCDIR)/src/mesa/tnl)
                   $(MESATNLBUILDDIR)debugger/t_vp_build.o
 
  MESA_TNL_POBJS = $(MESATNLBUILDDIR)profiled/t_context.o \
+		  $(MESATNLBUILDDIR)profiled/t_draw.o \
 		  $(MESATNLBUILDDIR)profiled/t_pipeline.o \
 		  $(MESATNLBUILDDIR)profiled/t_vb_fog.o \
 		  $(MESATNLBUILDDIR)profiled/t_vb_cull.o \
