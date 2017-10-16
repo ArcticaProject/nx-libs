@@ -20,6 +20,7 @@ nx-libs (2:3.5.0.33-0x2go1) UNRELEASED; urgency=low
       https://bugs.centos.org/view.php?id=13779 are resolved.
       Backported from Arctica GH 3.6.x branch.
       v2: backport to nx-libs 3.5.0.x (Mihai Moldovan)
+    - Drop ugly sed hack to push optflags to build system.
   * debian/:
     - Add x2goagent.options file for compatibility with x2goserver nightly.
   * debian/roll-tarballs.sh:
