@@ -367,8 +367,6 @@ This package provides the NX proxy (client) binary.
 rm -Rf nx*/configure nx*/autom4te.cache*
 # Install into /usr
 sed -i -e 's,/usr/local,/usr,' nx-X11/config/cf/site.def
-# Use rpm optflags
-sed -i -e 's#-O3#%{optflags}#' nx-X11/config/cf/host.def
 # Use multilib dirs
 # We're installing binaries into %%{_libdir}/nx/bin rather than %%{_libexedir}/nx
 # because upstream expects libraries and binaries in the same directory
