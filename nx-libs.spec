@@ -1,5 +1,14 @@
 %global _hardened_build 1
 
+# Override values for specific architectures.
+%ifarch ppc64le
+# Works around https://bugs.centos.org/view.php?id=13779 / https://bugzilla.redhat.com/show_bug.cgi?id=1489712
+# Compilation failure on PPC64LE due to a compiler bug.
+# REMEMBER TO REMOVE ONCE DOWNSTREAM FIXES THE ISSUE!
+%global __global_cflags %{__global_cflags} -mno-vsx
+%global __global_cxxflags %{__global_cxxflags} -mno-vsx
+%endif
+
 Name:           nx-libs
 Version:        3.5.99.10
 Release:        0.0build1%{?dist}
