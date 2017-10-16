@@ -5,8 +5,8 @@
 # Works around https://bugs.centos.org/view.php?id=13779 / https://bugzilla.redhat.com/show_bug.cgi?id=1489712
 # Compilation failure on PPC64LE due to a compiler bug.
 # REMEMBER TO REMOVE ONCE DOWNSTREAM FIXES THE ISSUE!
-%global __global_cflags %{__global_cflags} -mno-vsx
-%global __global_cxxflags %{__global_cxxflags} -mno-vsx
+%global __global_cflags %{?__global_cflags} -mno-vsx
+%global __global_cxxflags %{?__global_cxxflags} -mno-vsx
 %endif
 
 Name:           nx-libs
@@ -397,7 +397,7 @@ chmod a+x my_configure;
 %{!?__global_ldflags: %global __global_ldflags -Wl,-z,relro}
 export SHLIBGLOBALSFLAGS="%{__global_ldflags}"
 export LOCAL_LDFLAGS="%{__global_ldflags}"
-export CDEBUGFLAGS="%{__global_cppflags} %{__global_cflags}"
+export CDEBUGFLAGS="%{?__global_cppflags} %{?__global_cflags}"
 make %{?_smp_mflags} CONFIGURE="$PWD/my_configure" PREFIX=%{_prefix} LIBDIR=%{_libdir}
 
 %install
