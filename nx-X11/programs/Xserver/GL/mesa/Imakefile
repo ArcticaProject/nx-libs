@@ -1,5 +1,5 @@
 #define IHaveSubdirs
-      SUBDIRS = main math array_cache swrast swrast_setup tnl shader X GLcore $(MODSUBDIR)
+      SUBDIRS = main math swrast swrast_setup tnl vbo shader X GLcore $(MODSUBDIR)
 
 #include <Server.tmpl>
 

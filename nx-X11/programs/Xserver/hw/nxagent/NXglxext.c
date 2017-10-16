@@ -107,77 +107,10 @@ static int __glXDispatch(ClientPtr client)
     /*
     ** Use the opcode to index into the procedure table.
     */
-    proc = __glXSingleTable[opcode];
-
-    /*
-     * Report upstream that we are
-     * dispatching a GLX operation.
-     */
-
-    nxagentGlxTrap = 1;
-
-    #ifdef TEST
-    fprintf(stderr, "__glXDispatch: Going to dispatch GLX operation [%d] for client [%d].\n", 
-                opcode, client -> index);
-    #endif
-    
-    result = (*proc)(cl, (GLbyte *) stuff);
-
-    nxagentGlxTrap = 0;
-
-    #ifdef TEST
-    fprintf(stderr, "__glXDispatch: Dispatched GLX operation [%d] for client [%d].\n", 
-                opcode, client -> index);
-    #endif
-
-    return result;
-}
-
-static int __glXSwapDispatch(ClientPtr client)
-{
-    int result;
-
-    REQUEST(xGLXSingleReq);
-    CARD8 opcode;
-    int (*proc)(__GLXclientState *cl, GLbyte *pc);
-    __GLXclientState *cl;
-
-    opcode = stuff->glxCode;
-    cl = __glXClients[client->index];
-    if (!cl) {
-	cl = (__GLXclientState *) malloc(sizeof(__GLXclientState));
-	 __glXClients[client->index] = cl;
-	if (!cl) {
-	    return BadAlloc;
-	}
-	memset(cl, 0, sizeof(__GLXclientState));
-    }
-    
-    if (!cl->inUse) {
-	/*
-	** This is first request from this client.  Associate a resource
-	** with the client so we will be notified when the client dies.
-	*/
-	XID xid = FakeClientID(client->index);
-	if (!AddResource( xid, __glXClientRes, (void *)(long)client->index)) {
-	    return BadAlloc;
-	}
-	ResetClientState(client->index);
-	cl->inUse = GL_TRUE;
-	cl->client = client;
-    }
-
-    /*
-    ** Check for valid opcode.
-    */
-    if (opcode >= __GLX_SINGLE_TABLE_SIZE) {
-	return BadRequest;
-    }
-
-    /*
-    ** Use the opcode to index into the procedure table.
-    */
-    proc = __glXSwapSingleTable[opcode];
+    if (client->swapped)
+      proc = __glXSwapSingleTable[opcode];
+    else
+      proc = __glXSingleTable[opcode];
 
     /*
      * Report upstream that we are
