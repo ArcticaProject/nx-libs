@@ -31,6 +31,7 @@ NXAGENT_SKIP_OBJS =                     \
 		glcontextmodes.c        \
 		global.c                \
 		glthread.c              \
+		glxcore.c               \
 		glxcmds.c               \
 		glxcmdsswap.c           \
 		glxvisuals.c            \
@@ -63,6 +64,7 @@ NXAGENT_SKIP_OBJS =                     \
 		glcontextmodes.o        \
 		global.o                \
 		glthread.o              \
+		glxcore.o               \
 		glxcmds.o               \
 		glxcmdsswap.o           \
 		glxvisuals.o            \
@@ -97,6 +99,8 @@ NXAGENT_SKIP_OBJS =                     \
                 -I$(MESASRCDIR)/src/glx/x11             \
 		-I$(MESASRCDIR)/src/mesa/glapi          \
                 -I$(MESASRCDIR)/src/mesa/main           \
+                -I$(MESASRCDIR)/src/mesa/drivers/x11    \
+		-I$(MESASRCDIR)/src/mesa/               \
                 -I$(XINCLUDESRC)                        \
                 -I$(SERVERSRC)/mi                       \
                 -I$(EXTINCSRC)                          \
