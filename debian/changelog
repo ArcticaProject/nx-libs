@@ -14,7 +14,7 @@ nx-libs (2:3.5.0.33-0x2go1) UNRELEASED; urgency=low
     - Add new x2goagent.options file to installed file list of x2goagent
       package.
     - Let x2goagent package satisfy x2goagent-virtual.
-    - nx-libs.spec: add -mno-vxs to general C(XX)FLAGS on ppc64le.
+    - Add -mno-vxs to general C(XX)FLAGS on ppc64le.
       Hopefully just a temporary workaround until
       https://bugzilla.redhat.com/show_bug.cgi?id=1489712 /
       https://bugs.centos.org/view.php?id=13779 are resolved.
