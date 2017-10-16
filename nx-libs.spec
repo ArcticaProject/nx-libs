@@ -764,8 +764,8 @@ chmod a+x my_configure;
 %{!?__global_ldflags: %global __global_ldflags -Wl,-z,relro}
 export SHLIBGLOBALSFLAGS="%{__global_ldflags}"
 export LOCAL_LDFLAGS="%{__global_ldflags}"
-export CDEBUGFLAGS="%{__global_cppflags} %{__global_cflags}"
-make %{?_smp_mflags} CONFIGURE="$PWD/my_configure" PREFIX=%{_prefix} USRLIBDIR=%{_libdir} SHLIBDIR=%{_libdir}
+export CDEBUGFLAGS="%{?__global_cppflags} %{?__global_cflags}"
+make %{?_smp_mflags} CONFIGURE="$PWD/my_configure" PREFIX=%{_prefix} USRLIBDIR=%{_libdir} SHLIBDIR=%{_libdir} CDEBUGFLAGS="${CDEBUGFLAGS}" LOCAL_LDFLAGS="${LOCAL_LDFLAGS}" SHLIBSGLOBALSFLAGS="${SHLIBSGLOBALSFLAGS}"
 
 %install
 make install \
