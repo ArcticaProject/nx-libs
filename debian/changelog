@@ -39,6 +39,7 @@ nx-libs (2:3.5.0.33-0x2go1) UNRELEASED; urgency=low
   * debian/patches:
     - Refresh all patches. Removes some fuzziness and adds the -p diff option
       to show the C function name in hunk headers.
+    - Fixup series file to include previous patch.
 
   [ Mike Gabriel ]
   * debian/libxinerama1.postinst.in:

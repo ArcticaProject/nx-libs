@@ -149,6 +149,7 @@
 1260_nx-X11_xserver-Avoid-sending-uninitialized-padd.full.patch
 1270_nx-X11_CVE-2017-2624-Use-timingsafe_memcmp-to-c.full.patch
 1300_nxcomp_Set-TokenSize-to-1536-for-lin.full+lite.patch
+1301_nxcomp_Reduce-TokenSize-slightly-for.full+lite.patch
 1400_nx-X11_Render.c-Improve-situation-fo.full+lite.patch
 9900-dxpc-license-history.full+lite.patch
 0016_nx-X11_install-location.debian.patch
