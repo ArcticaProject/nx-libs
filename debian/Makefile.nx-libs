@@ -42,9 +42,18 @@ build-lite:
 
 build-full:
 # in the full case, we rely on "magic" in the nx-X11 imake-based makefiles...
-	cd nxcomp && autoconf
-	cd nxcompext && autoconf
-	cd nxcompshad && autoconf
+	cd nxcomp && autoconf && (${CONFIGURE}) && ${MAKE}
+
+	# prepare Makefiles and the nx-X11 symlinking magic
+	cd nx-X11 && make BuildEnv
+
+	# build libNX_X11 and libNX_Xext prior to building
+	# nxcomp{ext,shad}.
+	cd nx-X11/lib && make
+
+	cd nxcompext && autoconf && (${CONFIGURE}) && ${MAKE}
+	cd nxcompshad && autoconf && (${CONFIGURE}) && ${MAKE}
+
 	cd nx-X11 && ${MAKE} World
 	cd nxproxy && autoconf && (${CONFIGURE}) && ${MAKE}
 
