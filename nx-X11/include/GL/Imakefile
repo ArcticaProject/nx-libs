@@ -1,10 +1,4 @@
-LinkSourceFile(gl.h, $(MESASRCDIR)/include/GL)
-LinkSourceFile(glext.h, $(MESASRCDIR)/include/GL)
-LinkSourceFile(glxext.h, $(MESASRCDIR)/include/GL)
-LinkSourceFile(osmesa.h, $(MESASRCDIR)/include/GL)
-
-GLXHEADERS = gl.h glext.h glx.h glxint.h glxmd.h glxproto.h \
-	     glxtokens.h osmesa.h glxext.h
+GLXHEADERS = glxint.h glxmd.h glxproto.h glxtokens.h
 
 HEADERS = $(GLXHEADERS)
 
