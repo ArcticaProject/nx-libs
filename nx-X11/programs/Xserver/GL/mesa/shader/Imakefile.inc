@@ -12,6 +12,7 @@ MESASHADERBUILDDIR = MesaShaderBuildDir
 			$(MESASHADERBUILDDIR)prog_instruction.c \
 			$(MESASHADERBUILDDIR)prog_parameter.c \
 			$(MESASHADERBUILDDIR)prog_print.c \
+			$(MESASHADERBUILDDIR)prog_uniform.c \
 			$(MESASHADERBUILDDIR)program.c \
 			$(MESASHADERBUILDDIR)programopt.c \
 			$(MESASHADERBUILDDIR)prog_statevars.c
@@ -44,6 +45,8 @@ LinkSourceFile(prog_parameter.c, $(MESASRCDIR)/src/mesa/shader)
 LinkSourceFile(prog_parameter.h, $(MESASRCDIR)/src/mesa/shader)
 LinkSourceFile(prog_print.c, $(MESASRCDIR)/src/mesa/shader)
 LinkSourceFile(prog_print.h, $(MESASRCDIR)/src/mesa/shader)
+LinkSourceFile(prog_uniform.c, $(MESASRCDIR)/src/mesa/shader)
+LinkSourceFile(prog_uniform.h, $(MESASRCDIR)/src/mesa/shader)
 LinkSourceFile(programopt.c, $(MESASRCDIR)/src/mesa/shader)
 LinkSourceFile(programopt.h, $(MESASRCDIR)/src/mesa/shader)
 LinkSourceFile(prog_statevars.c, $(MESASRCDIR)/src/mesa/shader)
@@ -62,6 +65,7 @@ LinkSourceFile(prog_statevars.h, $(MESASRCDIR)/src/mesa/shader)
 			$(MESASHADERBUILDDIR)prog_instruction.o \
 			$(MESASHADERBUILDDIR)prog_parameter.o \
 			$(MESASHADERBUILDDIR)prog_print.o \
+			$(MESASHADERBUILDDIR)prog_uniform.o \
 			$(MESASHADERBUILDDIR)program.o \
 			$(MESASHADERBUILDDIR)programopt.o \
 			$(MESASHADERBUILDDIR)prog_statevars.o
@@ -79,6 +83,7 @@ LinkSourceFile(prog_statevars.h, $(MESASRCDIR)/src/mesa/shader)
 			$(MESASHADERBUILDDIR)unshared/prog_instruction.o \
 			$(MESASHADERBUILDDIR)unshared/prog_parameter.o \
 			$(MESASHADERBUILDDIR)unshared/prog_print.o \
+			$(MESASHADERBUILDDIR)unshared/prog_uniform.o \
 			$(MESASHADERBUILDDIR)unshared/program.o \
 			$(MESASHADERBUILDDIR)unshared/programopt.o \
 			$(MESASHADERBUILDDIR)unshared/prog_statevars.o
@@ -98,6 +103,7 @@ LinkSourceFile(prog_statevars.h, $(MESASRCDIR)/src/mesa/shader)
 			$(MESASHADERBUILDDIR)debugger/prog_instruction.o \
 			$(MESASHADERBUILDDIR)debugger/prog_parameter.o \
 			$(MESASHADERBUILDDIR)debugger/prog_print.o \
+			$(MESASHADERBUILDDIR)debugger/prog_uniform.o \
 			$(MESASHADERBUILDDIR)debugger/program.o \
 			$(MESASHADERBUILDDIR)debugger/programopt.o \
 			$(MESASHADERBUILDDIR)debugger/prog_statevars.o
@@ -114,6 +120,7 @@ LinkSourceFile(prog_statevars.h, $(MESASRCDIR)/src/mesa/shader)
 			$(MESASHADERBUILDDIR)profiled/prog_instruction.o \
 			$(MESASHADERBUILDDIR)profiled/prog_parameter.o \
 			$(MESASHADERBUILDDIR)profiled/prog_print.o \
+			$(MESASHADERBUILDDIR)profiled/prog_uniform.o \
 			$(MESASHADERBUILDDIR)profiled/program.o \
 			$(MESASHADERBUILDDIR)profiled/programopt.o \
 			$(MESASHADERBUILDDIR)profiled/prog_statevars.o

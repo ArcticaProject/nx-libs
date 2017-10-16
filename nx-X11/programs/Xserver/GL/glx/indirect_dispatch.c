@@ -4291,6 +4291,7 @@ void __glXDisp_LoadProgramNV(GLbyte * pc)
 
 void __glXDisp_ProgramParameter4dvNV(GLbyte * pc)
 {
+#ifndef NXAGENT_SERVER
 #ifdef __GLX_ALIGN64
     if ((unsigned long)(pc) & 7) {
         (void) memmove(pc-4, pc, 40);
@@ -4303,20 +4304,23 @@ void __glXDisp_ProgramParameter4dvNV(GLbyte * pc)
         *(GLuint   *)(pc +  4),
          (const GLdouble *)(pc +  8)
     ) );
+#endif
 }
 
 void __glXDisp_ProgramParameter4fvNV(GLbyte * pc)
 {
-    CALL_ProgramParameter4fvNV( GET_DISPATCH(), (
+#ifndef NXAGENT_SERVER
+  CALL_ProgramParameter4fvNV( GET_DISPATCH(), (
         *(GLenum   *)(pc +  0),
         *(GLuint   *)(pc +  4),
          (const GLfloat *)(pc +  8)
     ) );
+#endif
 }
 
 void __glXDisp_ProgramParameters4dvNV(GLbyte * pc)
 {
-    const GLuint num = *(GLuint   *)(pc +  8);
+  const GLuint num = *(GLuint   *)(pc +  8);
 
 #ifdef __GLX_ALIGN64
     const GLuint cmdlen = 16 + __GLX_PAD((num * 32)) - 4;
