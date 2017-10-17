@@ -61,16 +61,16 @@ LinkSourceFile(traverse_wrap.h, $(MESASRCDIR)/src/mesa/shader/slang)
  MESA_SLANG_UOBJS = $(MESA_SLANG_OBJS)
 #endif
 
- MESA_SLANG_DOBJS = $(MESASLANGBUILDDIR)debuggerslang_assemble_assignment.o \
-                    $(MESASLANGBUILDDIR)debuggerslang_assemble.o \
-                    $(MESASLANGBUILDDIR)debuggerslang_assemble_conditional.o \
-                    $(MESASLANGBUILDDIR)debuggerslang_assemble_constructor.o \
-                    $(MESASLANGBUILDDIR)debuggerslang_assemble_typeinfo.o \
-                    $(MESASLANGBUILDDIR)debuggerslang_compile.o \
-                    $(MESASLANGBUILDDIR)debuggerslang_execute.o \
-                    $(MESASLANGBUILDDIR)debuggerslang_preprocess.o \
-                    $(MESASLANGBUILDDIR)debuggerslang_storage.o \
-                    $(MESASLANGBUILDDIR)debuggerslang_utility.o
+ MESA_SLANG_DOBJS = $(MESASLANGBUILDDIR)debugger/slang_assemble_assignment.o \
+                    $(MESASLANGBUILDDIR)debugger/slang_assemble.o \
+                    $(MESASLANGBUILDDIR)debugger/slang_assemble_conditional.o \
+                    $(MESASLANGBUILDDIR)debugger/slang_assemble_constructor.o \
+                    $(MESASLANGBUILDDIR)debugger/slang_assemble_typeinfo.o \
+                    $(MESASLANGBUILDDIR)debugger/slang_compile.o \
+                    $(MESASLANGBUILDDIR)debugger/slang_execute.o \
+                    $(MESASLANGBUILDDIR)debugger/slang_preprocess.o \
+                    $(MESASLANGBUILDDIR)debugger/slang_storage.o \
+                    $(MESASLANGBUILDDIR)debugger/slang_utility.o
 
  MESA_SLANG_POBJS = $(MESASLANGBUILDDIR)profiled/slang_assemble_assignment.o \
                     $(MESASLANGBUILDDIR)profiled/slang_assemble.o \
