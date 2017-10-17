@@ -70,5 +70,5 @@ SOFTWARE.
 #define XK_BRAILLE
 #define XK_SINHALA
 
-#include <X11/keysymdef.h>
+#include <nx-X11/keysymdef.h>
 
