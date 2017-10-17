@@ -57,12 +57,11 @@
 */
 static int __glXDispatch(ClientPtr client)
 {
-    int result;
-
     REQUEST(xGLXSingleReq);
     CARD8 opcode;
     int (*proc)(__GLXclientState *cl, GLbyte *pc);
     __GLXclientState *cl;
+    int retval;
 
     opcode = stuff->glxCode;
     cl = __glXClients[client->index];
@@ -124,7 +123,7 @@ static int __glXDispatch(ClientPtr client)
                 opcode, client -> index);
     #endif
     
-    result = (*proc)(cl, (GLbyte *) stuff);
+    retval = (*proc)(cl, (GLbyte *) stuff);
 
     nxagentGlxTrap = 0;
 
@@ -133,5 +132,5 @@ static int __glXDispatch(ClientPtr client)
                 opcode, client -> index);
     #endif
 
-    return result;
+    return retval;
 }
