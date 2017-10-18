@@ -1,6 +1,6 @@
 MESASWRASTBUILDDIR = MesaSwrastBuildDir
 
-MESA_SWRAST_SRCS = $(MESASWRASTBUILDDIR)s_aaline.c \
+  MESA_SWRAST_SRCS = $(MESASWRASTBUILDDIR)s_aaline.c \
 		     $(MESASWRASTBUILDDIR)s_aatriangle.c \
 		     $(MESASWRASTBUILDDIR)s_accum.c \
 		     $(MESASWRASTBUILDDIR)s_alpha.c \
@@ -8,25 +8,23 @@ MESA_SWRAST_SRCS = $(MESASWRASTBUILDDIR)s_aaline.c \
 		     $(MESASWRASTBUILDDIR)s_bitmap.c \
 		     $(MESASWRASTBUILDDIR)s_blend.c \
 		     $(MESASWRASTBUILDDIR)s_blit.c \
-		     $(MESASWRASTBUILDDIR)s_buffers.c \
+		     $(MESASWRASTBUILDDIR)s_clear.c \
 		     $(MESASWRASTBUILDDIR)s_context.c \
 		     $(MESASWRASTBUILDDIR)s_copypix.c \
 		     $(MESASWRASTBUILDDIR)s_depth.c \
 		     $(MESASWRASTBUILDDIR)s_drawpix.c \
 		     $(MESASWRASTBUILDDIR)s_feedback.c \
 		     $(MESASWRASTBUILDDIR)s_fog.c \
-		     $(MESASWRASTBUILDDIR)s_imaging.c \
+		     $(MESASWRASTBUILDDIR)s_fragprog.c \
 		     $(MESASWRASTBUILDDIR)s_lines.c \
 		     $(MESASWRASTBUILDDIR)s_logic.c \
 		     $(MESASWRASTBUILDDIR)s_masking.c \
-		     $(MESASWRASTBUILDDIR)s_fragprog.c \
 		     $(MESASWRASTBUILDDIR)s_points.c \
 		     $(MESASWRASTBUILDDIR)s_readpix.c \
 		     $(MESASWRASTBUILDDIR)s_span.c \
 		     $(MESASWRASTBUILDDIR)s_stencil.c \
 		     $(MESASWRASTBUILDDIR)s_texcombine.c \
 		     $(MESASWRASTBUILDDIR)s_texfilter.c \
-		     $(MESASWRASTBUILDDIR)s_texstore.c \
 		     $(MESASWRASTBUILDDIR)s_triangle.c \
 		     $(MESASWRASTBUILDDIR)s_zoom.c
 
@@ -47,19 +45,19 @@ LinkSourceFile(s_bitmap.c, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_blend.c, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_blend.h, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_blit.c, $(MESASRCDIR)/src/mesa/swrast)
-LinkSourceFile(s_buffers.c, $(MESASRCDIR)/src/mesa/swrast)
+LinkSourceFile(s_clear.c, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_context.c, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_context.h, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_copypix.c, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_depth.c, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_depth.h, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_drawpix.c, $(MESASRCDIR)/src/mesa/swrast)
-LinkSourceFile(s_drawpix.h, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_feedback.c, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_feedback.h, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_fog.c, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_fog.h, $(MESASRCDIR)/src/mesa/swrast)
-LinkSourceFile(s_imaging.c, $(MESASRCDIR)/src/mesa/swrast)
+LinkSourceFile(s_fragprog.c, $(MESASRCDIR)/src/mesa/swrast)
+LinkSourceFile(s_fragprog.h, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_lines.c, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_lines.h, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_linetemp.h, $(MESASRCDIR)/src/mesa/swrast)
@@ -67,8 +65,6 @@ LinkSourceFile(s_logic.c, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_logic.h, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_masking.c, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_masking.h, $(MESASRCDIR)/src/mesa/swrast)
-LinkSourceFile(s_fragprog.c, $(MESASRCDIR)/src/mesa/swrast)
-LinkSourceFile(s_fragprog.h, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_points.c, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_points.h, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_readpix.c, $(MESASRCDIR)/src/mesa/swrast)
@@ -81,7 +77,6 @@ LinkSourceFile(s_texcombine.c, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_texcombine.h, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_texfilter.c, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_texfilter.h, $(MESASRCDIR)/src/mesa/swrast)
-LinkSourceFile(s_texstore.c, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_triangle.c, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_triangle.h, $(MESASRCDIR)/src/mesa/swrast)
 LinkSourceFile(s_trispan.h, $(MESASRCDIR)/src/mesa/swrast)
@@ -99,25 +94,23 @@ LinkSourceFile(swrast.h, $(MESASRCDIR)/src/mesa/swrast)
 		     $(MESASWRASTBUILDDIR)s_bitmap.o \
 		     $(MESASWRASTBUILDDIR)s_blend.o \
 		     $(MESASWRASTBUILDDIR)s_blit.o \
-		     $(MESASWRASTBUILDDIR)s_buffers.o \
+		     $(MESASWRASTBUILDDIR)s_clear.o \
 		     $(MESASWRASTBUILDDIR)s_context.o \
 		     $(MESASWRASTBUILDDIR)s_copypix.o \
 		     $(MESASWRASTBUILDDIR)s_depth.o \
 		     $(MESASWRASTBUILDDIR)s_drawpix.o \
 		     $(MESASWRASTBUILDDIR)s_feedback.o \
 		     $(MESASWRASTBUILDDIR)s_fog.o \
-		     $(MESASWRASTBUILDDIR)s_imaging.o \
+		     $(MESASWRASTBUILDDIR)s_fragprog.o \
 		     $(MESASWRASTBUILDDIR)s_lines.o \
 		     $(MESASWRASTBUILDDIR)s_logic.o \
 		     $(MESASWRASTBUILDDIR)s_masking.o \
-		     $(MESASWRASTBUILDDIR)s_fragprog.o \
 		     $(MESASWRASTBUILDDIR)s_points.o \
 		     $(MESASWRASTBUILDDIR)s_readpix.o \
 		     $(MESASWRASTBUILDDIR)s_span.o \
 		     $(MESASWRASTBUILDDIR)s_stencil.o \
 		     $(MESASWRASTBUILDDIR)s_texcombine.o \
 		     $(MESASWRASTBUILDDIR)s_texfilter.o \
-		     $(MESASWRASTBUILDDIR)s_texstore.o \
 		     $(MESASWRASTBUILDDIR)s_triangle.o \
 		     $(MESASWRASTBUILDDIR)s_zoom.o
 
@@ -130,25 +123,23 @@ LinkSourceFile(swrast.h, $(MESASRCDIR)/src/mesa/swrast)
 		     $(MESASWRASTBUILDDIR)unshared/s_bitmap.o \
 		     $(MESASWRASTBUILDDIR)unshared/s_blend.o \
 		     $(MESASWRASTBUILDDIR)unshared/s_blit.o \
-		     $(MESASWRASTBUILDDIR)unshared/s_buffers.o \
+		     $(MESASWRASTBUILDDIR)unshared/s_clear.o \
 		     $(MESASWRASTBUILDDIR)unshared/s_context.o \
 		     $(MESASWRASTBUILDDIR)unshared/s_copypix.o \
 		     $(MESASWRASTBUILDDIR)unshared/s_depth.o \
 		     $(MESASWRASTBUILDDIR)unshared/s_drawpix.o \
 		     $(MESASWRASTBUILDDIR)unshared/s_feedback.o \
 		     $(MESASWRASTBUILDDIR)unshared/s_fog.o \
-		     $(MESASWRASTBUILDDIR)unshared/s_imaging.o \
+		     $(MESASWRASTBUILDDIR)unshared/s_fragprog.o \
 		     $(MESASWRASTBUILDDIR)unshared/s_lines.o \
 		     $(MESASWRASTBUILDDIR)unshared/s_logic.o \
 		     $(MESASWRASTBUILDDIR)unshared/s_masking.o \
-		     $(MESASWRASTBUILDDIR)unshared/s_fragprog.o \
 		     $(MESASWRASTBUILDDIR)unshared/s_points.o \
 		     $(MESASWRASTBUILDDIR)unshared/s_readpix.o \
 		     $(MESASWRASTBUILDDIR)unshared/s_span.o \
 		     $(MESASWRASTBUILDDIR)unshared/s_stencil.o \
 		     $(MESASWRASTBUILDDIR)unshared/s_texcombine.o \
 		     $(MESASWRASTBUILDDIR)unshared/s_texfilter.o \
-		     $(MESASWRASTBUILDDIR)unshared/s_texstore.o \
 		     $(MESASWRASTBUILDDIR)unshared/s_triangle.o \
 		     $(MESASWRASTBUILDDIR)unshared/s_zoom.o
 #else
@@ -163,25 +154,23 @@ LinkSourceFile(swrast.h, $(MESASRCDIR)/src/mesa/swrast)
 		     $(MESASWRASTBUILDDIR)debugger/s_bitmap.o \
 		     $(MESASWRASTBUILDDIR)debugger/s_blend.o \
 		     $(MESASWRASTBUILDDIR)debugger/s_blit.o \
-		     $(MESASWRASTBUILDDIR)debugger/s_buffers.o \
+		     $(MESASWRASTBUILDDIR)debugger/s_clear.o \
 		     $(MESASWRASTBUILDDIR)debugger/s_context.o \
 		     $(MESASWRASTBUILDDIR)debugger/s_copypix.o \
 		     $(MESASWRASTBUILDDIR)debugger/s_depth.o \
 		     $(MESASWRASTBUILDDIR)debugger/s_drawpix.o \
 		     $(MESASWRASTBUILDDIR)debugger/s_feedback.o \
 		     $(MESASWRASTBUILDDIR)debugger/s_fog.o \
-		     $(MESASWRASTBUILDDIR)debugger/s_imaging.o \
+		     $(MESASWRASTBUILDDIR)debugger/s_fragprog.o \
 		     $(MESASWRASTBUILDDIR)debugger/s_lines.o \
 		     $(MESASWRASTBUILDDIR)debugger/s_logic.o \
 		     $(MESASWRASTBUILDDIR)debugger/s_masking.o \
-		     $(MESASWRASTBUILDDIR)debugger/s_fragprog.o \
 		     $(MESASWRASTBUILDDIR)debugger/s_points.o \
 		     $(MESASWRASTBUILDDIR)debugger/s_readpix.o \
 		     $(MESASWRASTBUILDDIR)debugger/s_span.o \
 		     $(MESASWRASTBUILDDIR)debugger/s_stencil.o \
 		     $(MESASWRASTBUILDDIR)debugger/s_texcombine.o \
 		     $(MESASWRASTBUILDDIR)debugger/s_texfilter.o \
-		     $(MESASWRASTBUILDDIR)debugger/s_texstore.o \
 		     $(MESASWRASTBUILDDIR)debugger/s_triangle.o \
 		     $(MESASWRASTBUILDDIR)debugger/s_zoom.o
 
@@ -193,25 +182,23 @@ LinkSourceFile(swrast.h, $(MESASRCDIR)/src/mesa/swrast)
 		     $(MESASWRASTBUILDDIR)profiled/s_bitmap.o \
 		     $(MESASWRASTBUILDDIR)profiled/s_blend.o \
 		     $(MESASWRASTBUILDDIR)profiled/s_blit.o \
-		     $(MESASWRASTBUILDDIR)profiled/s_buffers.o \
+		     $(MESASWRASTBUILDDIR)profiled/s_clear.o \
 		     $(MESASWRASTBUILDDIR)profiled/s_context.o \
 		     $(MESASWRASTBUILDDIR)profiled/s_copypix.o \
 		     $(MESASWRASTBUILDDIR)profiled/s_depth.o \
 		     $(MESASWRASTBUILDDIR)profiled/s_drawpix.o \
 		     $(MESASWRASTBUILDDIR)profiled/s_feedback.o \
 		     $(MESASWRASTBUILDDIR)profiled/s_fog.o \
-		     $(MESASWRASTBUILDDIR)profiled/s_imaging.o \
+		     $(MESASWRASTBUILDDIR)profiled/s_fragprog.o \
 		     $(MESASWRASTBUILDDIR)profiled/s_lines.o \
 		     $(MESASWRASTBUILDDIR)profiled/s_logic.o \
 		     $(MESASWRASTBUILDDIR)profiled/s_masking.o \
-		     $(MESASWRASTBUILDDIR)profiled/s_fragprog.o \
 		     $(MESASWRASTBUILDDIR)profiled/s_points.o \
 		     $(MESASWRASTBUILDDIR)profiled/s_readpix.o \
 		     $(MESASWRASTBUILDDIR)profiled/s_span.o \
 		     $(MESASWRASTBUILDDIR)profiled/s_stencil.o \
 		     $(MESASWRASTBUILDDIR)profiled/s_texcombine.o \
 		     $(MESASWRASTBUILDDIR)profiled/s_texfilter.o \
-		     $(MESASWRASTBUILDDIR)profiled/s_texstore.o \
 		     $(MESASWRASTBUILDDIR)profiled/s_triangle.o \
 		     $(MESASWRASTBUILDDIR)profiled/s_zoom.o
 

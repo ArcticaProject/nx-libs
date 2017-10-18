@@ -11,6 +11,15 @@ Index: Mesa/src/glx/x11/glcontextmodes.c
  #include <GL/glx.h>
  #include "GL/glxint.h"
  #endif
+@@ -57,7 +57,7 @@
+ #  define _mesa_free(m)   free(m)
+ #  define _mesa_memset   memset
+ # else
+-#  include <X11/Xlibint.h>
++#  include <nx-X11/Xlibint.h>
+ #  define _mesa_memset memset
+ #  define _mesa_malloc(b) malloc(b)
+ #  define _mesa_free(m) free(m)
 Index: Mesa/src/mesa/drivers/x11/glxheader.h
 ===================================================================
 --- Mesa.orig/src/mesa/drivers/x11/glxheader.h

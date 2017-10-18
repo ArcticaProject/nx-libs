@@ -10,14 +10,13 @@ MESAMATHBUILDDIR = MesaMathBuildDir
 		   $(MESAMATHBUILDDIR)m_xform.c
 
 #ifdef NeedToLinkMesaSrc
-LinkSourceFile(mathmod.h, $(MESASRCDIR)/src/mesa/math)
 LinkSourceFile(m_clip_tmp.h, $(MESASRCDIR)/src/mesa/math)
 LinkSourceFile(m_copy_tmp.h, $(MESASRCDIR)/src/mesa/math)
-LinkSourceFile(m_debug_clip.c, $(MESASRCDIR)/src/mesa/math)
 LinkSourceFile(m_debug.h, $(MESASRCDIR)/src/mesa/math)
-LinkSourceFile(m_debug_util.h, $(MESASRCDIR)/src/mesa/math)
+LinkSourceFile(m_debug_clip.c, $(MESASRCDIR)/src/mesa/math)
 LinkSourceFile(m_debug_norm.c, $(MESASRCDIR)/src/mesa/math)
 LinkSourceFile(m_debug_xform.c, $(MESASRCDIR)/src/mesa/math)
+LinkSourceFile(m_debug_util.h, $(MESASRCDIR)/src/mesa/math)
 LinkSourceFile(m_dotprod_tmp.h, $(MESASRCDIR)/src/mesa/math)
 LinkSourceFile(m_eval.c, $(MESASRCDIR)/src/mesa/math)
 LinkSourceFile(m_eval.h, $(MESASRCDIR)/src/mesa/math)

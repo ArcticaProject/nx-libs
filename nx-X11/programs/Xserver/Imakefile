@@ -374,6 +374,7 @@ NXAGENTNXLIBS = -L../../../nxcomp/src/.libs \
                 -lXdmcp \
                 -lNX_X11 \
                 -lXext \
+                -ldl \
                 $(NULL)
 #endif
 #endif
