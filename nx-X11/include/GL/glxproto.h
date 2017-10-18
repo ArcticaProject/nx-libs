@@ -1,40 +1,35 @@
 #ifndef _GLX_glxproto_h_
 #define _GLX_glxproto_h_
 
-/* $XFree86: xc/include/GL/glxproto.h,v 1.6 2003/09/28 20:14:58 alanh Exp $ */
 /*
-** License Applicability. Except to the extent portions of this file are
-** made subject to an alternative license as permitted in the SGI Free
-** Software License B, Version 1.1 (the "License"), the contents of this
-** file are subject only to the provisions of the License. You may not use
-** this file except in compliance with the License. You may obtain a copy
-** of the License at Silicon Graphics, Inc., attn: Legal Services, 1600
-** Amphitheatre Parkway, Mountain View, CA 94043-1351, or at:
-**
-** http://oss.sgi.com/projects/FreeB
-**
-** Note that, as provided in the License, the Software is distributed on an
-** "AS IS" basis, with ALL EXPRESS AND IMPLIED WARRANTIES AND CONDITIONS
-** DISCLAIMED, INCLUDING, WITHOUT LIMITATION, ANY IMPLIED WARRANTIES AND
-** CONDITIONS OF MERCHANTABILITY, SATISFACTORY QUALITY, FITNESS FOR A
-** PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
-**
-** Original Code. The Original Code is: OpenGL Sample Implementation,
-** Version 1.2.1, released January 26, 2000, developed by Silicon Graphics,
-** Inc. The Original Code is Copyright (c) 1991-2000 Silicon Graphics, Inc.
-** Copyright in any portions created by third parties is as indicated
-** elsewhere herein. All Rights Reserved.
-**
-** Additional Notice Provisions: The application programming interfaces
-** established by SGI in conjunction with the Original Code are The
-** OpenGL(R) Graphics System: A Specification (Version 1.2.1), released
-** April 1, 1999; The OpenGL(R) Graphics System Utility Library (Version
-** 1.3), released November 4, 1998; and OpenGL(R) Graphics with the X
-** Window System(R) (Version 1.3), released October 19, 1998. This software
-** was created using the OpenGL(R) version 1.2.1 Sample Implementation
-** published by SGI, but has not been independently verified as being
-** compliant with the OpenGL(R) version 1.2.1 Specification.
-*/
+ * SGI FREE SOFTWARE LICENSE B (Version 2.0, Sept. 18, 2008)
+ * Copyright (C) 1991-2000 Silicon Graphics, Inc. All Rights Reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice including the dates of first publication and
+ * either this permission notice or a reference to
+ * http://oss.sgi.com/projects/FreeB/
+ * shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * SILICON GRAPHICS, INC. BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF
+ * OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ * Except as contained in this notice, the name of Silicon Graphics, Inc.
+ * shall not be used in advertising or otherwise to promote the sale, use or
+ * other dealings in this Software without prior written authorization from
+ * Silicon Graphics, Inc.
+ */
 
 #include <GL/glxmd.h>
 
@@ -57,7 +52,7 @@
 #define GLXBadCurrentDrawable	11
 #define GLXBadWindow		12
 
-#define __GLX_NUMBER_ERRORS 12
+#define __GLX_NUMBER_ERRORS 13
 
 /*
 ** Events.
@@ -1026,6 +1021,82 @@ typedef struct GLXCreateGLXPixmapWithConfigSGIX {
     GLXPixmap	glxpixmap B32;
 } xGLXCreateGLXPixmapWithConfigSGIXReq;
 #define sz_xGLXCreateGLXPixmapWithConfigSGIXReq 28
+
+/*
+** glXCreateGLXPbufferSGIX request
+*/
+typedef struct GLXCreateGLXPbufferSGIX {
+    CARD8	reqType;
+    CARD8	glxCode;
+    CARD16	length B16;
+    CARD32	vendorCode B32;		/* vendor-specific opcode */
+    CARD32	pad1 B32;   /* unused; corresponds to contextTag in header */
+    CARD32	screen B32;
+    GLXFBConfigID fbconfig B32;
+    GLXPbuffer	pbuffer B32;
+    CARD32	width B32;
+    CARD32	height B32;
+    /* followed by attribute list */
+} xGLXCreateGLXPbufferSGIXReq;
+#define sz_xGLXCreateGLXPbufferSGIXReq 32
+
+/*
+** glXDestroyGLXPbufferSGIX request
+*/
+typedef struct GLXDestroyGLXPbuffer {
+    CARD8	reqType;
+    CARD8	glxCode;
+    CARD16	length B16;
+    CARD32	vendorCode B32;		/* vendor-specific opcode */
+    CARD32	pad1 B32;   /* unused; corresponds to contextTag in header */
+    GLXPbuffer	pbuffer B32;
+} xGLXDestroyGLXPbufferSGIXReq;
+#define sz_xGLXDestroyGLXPbufferSGIXReq 16
+
+/*
+** glXChangeDrawableAttributesSGIX request
+*/
+typedef struct GLXChangeDrawableAttributesSGIX {
+    CARD8	reqType;
+    CARD8	glxCode;
+    CARD16	length B16;
+    CARD32	vendorCode B32;		/* vendor-specific opcode */
+    CARD32	pad1 B32;   /* unused; corresponds to contextTag in header */
+    GLXDrawable drawable B32;
+    CARD32	numAttribs B32;
+    /* followed by attribute list */
+} xGLXChangeDrawableAttributesSGIXReq;
+#define sz_xGLXChangeDrawableAttributesSGIXReq 20
+
+/*
+** glXGetDrawableAttributesSGIX request
+*/
+typedef struct GLXGetDrawableAttributesSGIX {
+    CARD8	reqType;
+    CARD8	glxCode;
+    CARD16	length B16;
+    CARD32	vendorCode B32;		/* vendor-specific opcode */
+    CARD32	pad1 B32;   /* unused; corresponds to contextTag in header */
+    GLXDrawable drawable B32;
+} xGLXGetDrawableAttributesSGIXReq;
+#define sz_xGLXGetDrawableAttributesSGIXReq 16
+
+/*
+** glXGetDrawableAttributesSGIX reply
+*/
+typedef struct {
+    BYTE	type;			/* X_Reply */
+    CARD8	unused;			/* not used */
+    CARD16	sequenceNumber B16;
+    CARD32	length B32;
+    CARD32	numAttribs B32;
+    CARD32	pad2 B32;
+    CARD32	pad3 B32;
+    CARD32	pad4 B32;
+    CARD32	pad5 B32;
+    CARD32	pad6 B32;
+} xGLXGetDrawableAttributesSGIXReply;
+#define sz_xGLXGetDrawableAttributesSGIXReply 32
 
 /*
 ** glXJoinSwapGroupSGIX request
@@ -2369,6 +2440,8 @@ typedef struct {
 /* Opcodes for GLX vendor private commands */
 
 #define X_GLXvop_QueryContextInfoEXT            1024
+#define X_GLXvop_BindTexImageEXT                1330
+#define X_GLXvop_ReleaseTexImageEXT             1331
 #define X_GLXvop_SwapIntervalSGI                65536
 #define X_GLXvop_MakeCurrentReadSGI             65537
 #define X_GLXvop_CreateGLXVideoSourceSGIX       65538
@@ -2387,8 +2460,6 @@ typedef struct {
 #define X_GLXvop_QueryHyperpipeConfigSGIX       65551
 #define X_GLXvop_HyperpipeConfigSGIX            65552
 #define X_GLXvop_DestroyHyperpipeConfigSGIX     65553
-#define X_GLXvop_BindTexImageEXT                5152
-#define X_GLXvop_ReleaseTexImageEXT             5153
 
 /* ARB extension opcodes */
 
