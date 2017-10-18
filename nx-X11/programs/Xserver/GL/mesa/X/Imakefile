@@ -28,7 +28,9 @@ LinkSourceFile(compsize.c,$(MESASRCDIR)/src/glx/x11)
 		-I$(MESASRCDIR)/src/mesa/glapi \
 		-I$(MESASRCDIR)/src/glx/x11 \
 		-I$(MESASRCDIR)/src/mesa/shader \
-		-I$(MESASRCDIR)/src -I$(MESASRCDIR)/src/mesa/drivers/x11 \
+		-I$(MESASRCDIR)/src \
+		-I$(MESASRCDIR)/src/mesa/drivers/x11 \
+		-I$(MESASRCDIR)/src/mesa/drivers/common \
 		-I$(MESASRCDIR)/include \
 		-I$(LIBSRC)/GL/glx -I$(LIBSRC)/GL/include \
 		-I$(SERVERSRC)/include -I$(SERVERSRC)/GL/include \

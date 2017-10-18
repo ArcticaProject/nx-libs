@@ -43,16 +43,3 @@ Index: Mesa/src/mesa/drivers/x11/xm_image.c
  }
  
  unsigned long XMesaGetPixel(XMesaImage *image, int x, int y)
-Index: Mesa/include/GL/xmesa_xf86.h
-===================================================================
---- Mesa.orig/include/GL/xmesa_xf86.h
-+++ Mesa/include/GL/xmesa_xf86.h
-@@ -133,7 +133,7 @@ static _X_INLINE XMesaImage *XMesaGetIma
- 					unsigned int height,
- 					unsigned long plane_mask, int format)
- {
--    XMesaImage *img = Xcalloc(sizeof(*img));
-+    XMesaImage *img = calloc(1, sizeof(*img));
- 
-     img->width = p->drawable.width;
-     img->height = p->drawable.height;

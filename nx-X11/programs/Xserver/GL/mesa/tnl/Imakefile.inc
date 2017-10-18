@@ -3,6 +3,7 @@ MESATNLBUILDDIR = MesaTnlBuildDir
   MESA_TNL_SRCS = $(MESATNLBUILDDIR)t_context.c \
 		  $(MESATNLBUILDDIR)t_draw.c \
 		  $(MESATNLBUILDDIR)t_pipeline.c \
+		  $(MESATNLBUILDDIR)t_rasterpos.c \
 		  $(MESATNLBUILDDIR)t_vb_fog.c \
 		  $(MESATNLBUILDDIR)t_vb_cull.c \
 		  $(MESATNLBUILDDIR)t_vb_light.c \
@@ -25,6 +26,7 @@ LinkSourceFile(t_draw.c, $(MESASRCDIR)/src/mesa/tnl)
 LinkSourceFile(tnl.h, $(MESASRCDIR)/src/mesa/tnl)
 LinkSourceFile(t_pipeline.c, $(MESASRCDIR)/src/mesa/tnl)
 LinkSourceFile(t_pipeline.h, $(MESASRCDIR)/src/mesa/tnl)
+LinkSourceFile(t_rasterpos.c, $(MESASRCDIR)/src/mesa/tnl)
 LinkSourceFile(t_vb_cliptmp.h, $(MESASRCDIR)/src/mesa/tnl)
 LinkSourceFile(t_vb_fog.c, $(MESASRCDIR)/src/mesa/tnl)
 LinkSourceFile(t_vb_cull.c, $(MESASRCDIR)/src/mesa/tnl)
@@ -49,6 +51,7 @@ LinkSourceFile(t_vp_build.h, $(MESASRCDIR)/src/mesa/tnl)
   MESA_TNL_OBJS = $(MESATNLBUILDDIR)t_context.o \
                   $(MESATNLBUILDDIR)t_draw.o \
                   $(MESATNLBUILDDIR)t_pipeline.o \
+                  $(MESATNLBUILDDIR)t_rasterpos.o \
                   $(MESATNLBUILDDIR)t_vb_fog.o \
                   $(MESATNLBUILDDIR)t_vb_cull.o \
                   $(MESATNLBUILDDIR)t_vb_light.o \
@@ -68,6 +71,7 @@ LinkSourceFile(t_vp_build.h, $(MESASRCDIR)/src/mesa/tnl)
  MESA_TNL_UOBJS = $(MESATNLBUILDDIR)unshared/t_context.o \
 		  $(MESATNLBUILDDIR)unshared/t_draw.o \
 		  $(MESATNLBUILDDIR)unshared/t_pipeline.o \
+		  $(MESATNLBUILDDIR)unshared/t_rasterpos.o \
 		  $(MESATNLBUILDDIR)unshared/t_vb_fog.o \
 		  $(MESATNLBUILDDIR)unshared/t_vb_cull.o \
 		  $(MESATNLBUILDDIR)unshared/t_vb_light.o \
@@ -89,6 +93,7 @@ LinkSourceFile(t_vp_build.h, $(MESASRCDIR)/src/mesa/tnl)
  MESA_TNL_DOBJS = $(MESATNLBUILDDIR)debugger/t_context.o \
 		  $(MESATNLBUILDDIR)debugger/t_draw.o \
 		  $(MESATNLBUILDDIR)debugger/t_pipeline.o \
+		  $(MESATNLBUILDDIR)debugger/t_rasterpos.o \
 		  $(MESATNLBUILDDIR)debugger/t_vb_fog.o \
 		  $(MESATNLBUILDDIR)debugger/t_vb_cull.o \
 		  $(MESATNLBUILDDIR)debugger/t_vb_light.o \
@@ -107,6 +112,7 @@ LinkSourceFile(t_vp_build.h, $(MESASRCDIR)/src/mesa/tnl)
  MESA_TNL_POBJS = $(MESATNLBUILDDIR)profiled/t_context.o \
 		  $(MESATNLBUILDDIR)profiled/t_draw.o \
 		  $(MESATNLBUILDDIR)profiled/t_pipeline.o \
+		  $(MESATNLBUILDDIR)profiled/t_rasterpos.o \
 		  $(MESATNLBUILDDIR)profiled/t_vb_fog.o \
 		  $(MESATNLBUILDDIR)profiled/t_vb_cull.o \
 		  $(MESATNLBUILDDIR)profiled/t_vb_light.o \

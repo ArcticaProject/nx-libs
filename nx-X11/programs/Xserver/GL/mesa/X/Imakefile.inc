@@ -11,9 +11,11 @@ XMESA_GLX_SRCS = $(MESAXBUILDDIR)fakeglx.c \
 		$(MESAXBUILDDIR)xm_api.c \
                 $(MESAXBUILDDIR)xm_buffer.c \
 		$(MESAXBUILDDIR)xm_dd.c \
+		$(MESAXBUILDDIR)xm_glide.c \
 		$(MESAXBUILDDIR)xm_image.c \
 		$(MESAXBUILDDIR)xm_line.c \
 		$(MESAXBUILDDIR)xm_span.c \
+		$(MESAXBUILDDIR)meta.c \
 		$(MESAXBUILDDIR)xm_tri.c
 
 #ifdef NeedToLinkMesaSrc
@@ -27,10 +29,12 @@ LinkSourceFile(xfonts.c, $(MESASRCDIR)/src/mesa/drivers/x11)
 LinkSourceFile(xm_api.c, $(MESASRCDIR)/src/mesa/drivers/x11)
 LinkSourceFile(xm_buffer.c, $(MESASRCDIR)/src/mesa/drivers/x11)
 LinkSourceFile(xm_dd.c, $(MESASRCDIR)/src/mesa/drivers/x11)
+LinkSourceFile(xm_glide.c, $(MESASRCDIR)/src/mesa/drivers/x11)
 LinkSourceFile(xm_image.c, $(MESASRCDIR)/src/mesa/drivers/x11)
 LinkSourceFile(xm_line.c, $(MESASRCDIR)/src/mesa/drivers/x11)
 LinkSourceFile(xm_span.c, $(MESASRCDIR)/src/mesa/drivers/x11)
 LinkSourceFile(xm_tri.c, $(MESASRCDIR)/src/mesa/drivers/x11)
+LinkSourceFile(meta.c, $(MESASRCDIR)/src/mesa/drivers/common)
 #endif
 
 #ifndef MesaInXServer
@@ -44,9 +48,11 @@ XMESA_GLX_OBJS = $(MESAXBUILDDIR)fakeglx.o \
 		$(MESAXBUILDDIR)xm_api.o \
                 $(MESAXBUILDDIR)xm_buffer.o \
 		$(MESAXBUILDDIR)xm_dd.o \
+		$(MESAXBUILDDIR)xm_glide.o \
 		$(MESAXBUILDDIR)xm_image.o \
 		$(MESAXBUILDDIR)xm_line.o \
 		$(MESAXBUILDDIR)xm_span.o \
+		$(MESAXBUILDDIR)meta.o \
 		$(MESAXBUILDDIR)xm_tri.o
 
 #if defined(DoSharedLib) && DoSharedLib
@@ -61,9 +67,11 @@ XMESA_GLX_UOBJS = $(MESAXBUILDDIR)unshared/fakeglx.o \
 		$(MESAXBUILDDIR)unshared/xm_api.o \
                 $(MESAXBUILDDIR)unshared/xm_buffer.o \
 		$(MESAXBUILDDIR)unshared/xm_dd.o \
+		$(MESAXBUILDDIR)unshared/xm_glide.o \
 		$(MESAXBUILDDIR)unshared/xm_image.o \
 		$(MESAXBUILDDIR)unshared/xm_line.o \
 		$(MESAXBUILDDIR)unshared/xm_span.o \
+		$(MESAXBUILDDIR)unshared/meta.o \
 		$(MESAXBUILDDIR)unshared/xm_tri.o
 #else
 XMESA_GLX_UOBJS = $(XMESA_GLX_OBJS)
@@ -81,9 +89,11 @@ XMESA_GLX_DOBJS = $(MESAXBUILDDIR)debugger/fakeglx.o \
 		$(MESAXBUILDDIR)debugger/xm_api.o \
                 $(MESAXBUILDDIR)debugger/xm_buffer.o \
 		$(MESAXBUILDDIR)debugger/xm_dd.o \
+		$(MESAXBUILDDIR)debugger/xm_glide.o \
 		$(MESAXBUILDDIR)debugger/xm_image.o \
 		$(MESAXBUILDDIR)debugger/xm_line.o \
 		$(MESAXBUILDDIR)debugger/xm_span.o \
+		$(MESAXBUILDDIR)debugger/meta.o \
 		$(MESAXBUILDDIR)debugger/xm_tri.o
 
 #ifndef MesaInXServer
@@ -97,8 +107,10 @@ XMESA_GLX_POBJS = $(MESAXBUILDDIR)profiled/fakeglx.o \
 		$(MESAXBUILDDIR)profiled/xm_api.o \
                 $(MESAXBUILDDIR)profiled/xm_buffer.o \
 		$(MESAXBUILDDIR)profiled/xm_dd.o \
-		$(MESAXBUILDDIR)profiled/xm_iamge.o \
+		$(MESAXBUILDDIR)profiled/xm_glide.o \
+		$(MESAXBUILDDIR)profiled/xm_image.o \
 		$(MESAXBUILDDIR)profiled/xm_line.o \
 		$(MESAXBUILDDIR)profiled/xm_span.o \
+		$(MESAXBUILDDIR)profiled/meta.o \
 		$(MESAXBUILDDIR)profiled/xm_tri.o
 

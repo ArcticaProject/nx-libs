@@ -10,7 +10,6 @@ MESASLANGBUILDDIR=MesaSlangBuildDir
                     $(MESASLANGBUILDDIR)slang_emit.c \
                     $(MESASLANGBUILDDIR)slang_ir.c \
                     $(MESASLANGBUILDDIR)slang_label.c \
-                    $(MESASLANGBUILDDIR)slang_library_noise.c \
                     $(MESASLANGBUILDDIR)slang_link.c \
                     $(MESASLANGBUILDDIR)slang_log.c \
                     $(MESASLANGBUILDDIR)slang_mem.c \
@@ -43,8 +42,6 @@ LinkSourceFile(slang_ir.c, $(MESASRCDIR)/src/mesa/shader/slang)
 LinkSourceFile(slang_ir.h, $(MESASRCDIR)/src/mesa/shader/slang)
 LinkSourceFile(slang_label.c, $(MESASRCDIR)/src/mesa/shader/slang)
 LinkSourceFile(slang_label.h, $(MESASRCDIR)/src/mesa/shader/slang)
-LinkSourceFile(slang_library_noise.c, $(MESASRCDIR)/src/mesa/shader/slang)
-LinkSourceFile(slang_library_noise.h, $(MESASRCDIR)/src/mesa/shader/slang)
 LinkSourceFile(slang_link.c, $(MESASRCDIR)/src/mesa/shader/slang)
 LinkSourceFile(slang_link.h, $(MESASRCDIR)/src/mesa/shader/slang)
 LinkSourceFile(slang_log.c, $(MESASRCDIR)/src/mesa/shader/slang)
@@ -77,7 +74,6 @@ LinkSourceFile(slang_vartable.h, $(MESASRCDIR)/src/mesa/shader/slang)
                     $(MESASLANGBUILDDIR)slang_emit.o \
                     $(MESASLANGBUILDDIR)slang_ir.o \
                     $(MESASLANGBUILDDIR)slang_label.o \
-                    $(MESASLANGBUILDDIR)slang_library_noise.o \
                     $(MESASLANGBUILDDIR)slang_link.o \
                     $(MESASLANGBUILDDIR)slang_log.o \
                     $(MESASLANGBUILDDIR)slang_mem.o \
@@ -100,7 +96,6 @@ LinkSourceFile(slang_vartable.h, $(MESASRCDIR)/src/mesa/shader/slang)
                     $(MESASLANGBUILDDIR)/unshared/slang_emit.o \
                     $(MESASLANGBUILDDIR)/unshared/slang_ir.o \
                     $(MESASLANGBUILDDIR)/unshared/slang_label.o \
-                    $(MESASLANGBUILDDIR)/unshared/slang_library_noise.o \
                     $(MESASLANGBUILDDIR)/unshared/slang_link.o \
                     $(MESASLANGBUILDDIR)/unshared/slang_log.o \
                     $(MESASLANGBUILDDIR)/unshared/slang_mem.o \
@@ -125,7 +120,6 @@ LinkSourceFile(slang_vartable.h, $(MESASRCDIR)/src/mesa/shader/slang)
                     $(MESASLANGBUILDDIR)/debugger/slang_emit.o \
                     $(MESASLANGBUILDDIR)/debugger/slang_ir.o \
                     $(MESASLANGBUILDDIR)/debugger/slang_label.o \
-                    $(MESASLANGBUILDDIR)/debugger/slang_library_noise.o \
                     $(MESASLANGBUILDDIR)/debugger/slang_link.o \
                     $(MESASLANGBUILDDIR)/debugger/slang_log.o \
                     $(MESASLANGBUILDDIR)/debugger/slang_mem.o \
@@ -147,7 +141,6 @@ LinkSourceFile(slang_vartable.h, $(MESASRCDIR)/src/mesa/shader/slang)
                     $(MESASLANGBUILDDIR)/profiled/slang_emit.o \
                     $(MESASLANGBUILDDIR)/profiled/slang_ir.o \
                     $(MESASLANGBUILDDIR)/profiled/slang_label.o \
-                    $(MESASLANGBUILDDIR)/profiled/slang_library_noise.o \
                     $(MESASLANGBUILDDIR)/profiled/slang_link.o \
                     $(MESASLANGBUILDDIR)/profiled/slang_log.o \
                     $(MESASLANGBUILDDIR)/profiled/slang_mem.o \
