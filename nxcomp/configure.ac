@@ -2,7 +2,7 @@
 # *** configure.ac for nxcomp                                         ***
 # ***************************************************************************
 
-m4_define([nxcomp_version], m4_esyscmd([tr -d '\n' < VERSION]))
+m4_define([nxcomp_version], m4_esyscmd([tr -d '\n' < ../VERSION]))
 
 # Initialize Autoconf
 AC_PREREQ(2.60)

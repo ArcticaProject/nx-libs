@@ -2,7 +2,7 @@ dnl ***************************************************************************
 dnl *** configure.ac for nxproxy                                         ***
 dnl ***************************************************************************
 
-m4_define([nxproxy_version], m4_esyscmd([tr -d '\n' < VERSION]))
+m4_define([nxproxy_version], m4_esyscmd([tr -d '\n' < ../VERSION]))
 
 # Initialize Autoconf
 AC_PREREQ(2.60)
