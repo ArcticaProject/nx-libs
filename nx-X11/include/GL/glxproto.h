@@ -51,8 +51,9 @@
 #define GLXBadPbuffer		10
 #define GLXBadCurrentDrawable	11
 #define GLXBadWindow		12
+#define GLXBadProfileARB        13
 
-#define __GLX_NUMBER_ERRORS 13
+#define __GLX_NUMBER_ERRORS 14
 
 /*
 ** Events.
@@ -61,6 +62,7 @@
 **  extension and the client doesn't.
 */
 #define GLX_PbufferClobber	0
+#define GLX_BufferSwapComplete	1
 
 #define __GLX_NUMBER_EVENTS 17
 
@@ -1254,7 +1256,7 @@ typedef struct {
 /*
 ** glXHyperpipeConfigSGIX request
 */
-typedef struct GLXHyperpipeConfigSGIX {
+typedef struct {
     CARD8       reqType;
     CARD8       glxCode;
     CARD16      length B16;
@@ -1286,6 +1288,98 @@ typedef struct {
 } xGLXHyperpipeConfigSGIXReply;
 #define sz_xGLXHyperpipeConfigSGIXReply 32
 
+/**
+ * \name Protocol structures for GLX_ARB_create_context and
+ * GLX_ARB_create_context_profile
+ */
+/*@{*/
+/**
+ * Protocol header for glXSetClientInfoARB
+ *
+ * This structure is follwed by \c numVersions * 2 \c CARD32 values listing
+ * the OpenGL versions supported by the client.  The pairs of values are an
+ * OpenGL major version followed by a minor version.  For example,
+ *
+ *      CARD32 versions[4] = { 2, 1, 3, 0 };
+ *
+ * says that the client supports OpenGL 2.1 and OpenGL 3.0.
+ * 
+ * These are followed by \c numGLExtensionBytes bytes of \c STRING8 containing
+ * the OpenGL extension string supported by the client and up to 3 bytes of
+ * padding.
+ *
+ * The list of OpenGL extensions is followed by \c numGLXExtensionBytes bytes
+ * of \c STRING8 containing the GLX extension string supported by the client
+ * and up to 3 bytes of padding.
+ *
+ * This protocol replaces \c GLXClientInfo.
+ *
+ * \sa GLXClientInfo, GLXSetClientInfo2ARB
+ */
+typedef struct GLXSetClientInfoARB {
+    CARD8	reqType;
+    CARD8	glxCode;
+    CARD16	length B16;
+    CARD32	major B32;
+    CARD32	minor B32;
+    CARD32	numVersions B32;
+    CARD32	numGLExtensionBytes B32;
+    CARD32	numGLXExtensionBytes B32;
+    /*
+    ** More data may follow; this is just the header.
+    */
+} xGLXSetClientInfoARBReq;
+#define sz_xGLXSetClientInfoARBReq 24
+
+/**
+ * Protocol head for glXCreateContextAttribsARB
+ *
+ * This protocol replaces \c GLXCreateContext, \c GLXCreateNewContext, and
+ * \c GLXCreateContextWithConfigSGIX.
+ */
+typedef struct GLXCreateContextAttribsARB {
+    CARD8	reqType;
+    CARD8	glxCode;
+    CARD16	length B16;
+    GLXContextID	context B32;
+    GLXFBConfigID	fbconfig B32;
+    CARD32	screen;
+    GLXContextID	shareList B32;
+    BOOL	isDirect;
+    CARD8	reserved1;
+    CARD16	reserved2 B16;
+    CARD32	numAttribs B32;
+    /* followed by attribute list */
+} xGLXCreateContextAttribsARBReq;
+#define sz_xGLXCreateContextAttribsARBReq 28
+
+/**
+ * Protocol header for glXSetClientInfo2ARB
+ *
+ * The glXSetClientInfo2ARB protocol differs from glXSetClientInfoARB in that
+ * the list of OpenGL versions supported by the client is 3 \c CARD32 values
+ * per version: major version, minor version, and supported profile mask.
+ *
+ * This protocol replaces \c GLXClientInfo and \c GLXSetClientInfoARB.
+ *
+ * \sa GLXClientInfo, GLXSetClientInfoARB
+ */
+typedef struct GLXSetClientInfo2ARB {
+    CARD8	reqType;
+    CARD8	glxCode;
+    CARD16	length B16;
+    CARD32	major B32;
+    CARD32	minor B32;
+    CARD32	numVersions B32;
+    CARD32	numGLExtensionBytes B32;
+    CARD32	numGLXExtensionBytes B32;
+    /*
+    ** More data may follow; this is just the header.
+    */
+} xGLXSetClientInfo2ARBReq;
+#define sz_xGLXSetClientInfo2ARBReq 24
+/*@}*/
+
 /************************************************************************/
 
 /*
@@ -1308,6 +1402,34 @@ typedef struct {
     CARD16 count B16;
     CARD32 unused2 B32;
 } xGLXPbufferClobberEvent;
+
+typedef struct {
+    BYTE type;
+    BYTE pad;
+    CARD16 sequenceNumber B16;
+    CARD16 event_type B16;
+    CARD32 drawable;
+    CARD32 ust_hi B32;
+    CARD32 ust_lo B32;
+    CARD32 msc_hi B32;
+    CARD32 msc_lo B32;
+    CARD32 sbc_hi B32;
+    CARD32 sbc_lo B32;
+} xGLXBufferSwapComplete;
+
+typedef struct {
+    BYTE type;
+    BYTE pad;
+    CARD16 sequenceNumber B16;
+    CARD16 event_type B16;
+    CARD16 pad2;
+    CARD32 drawable;
+    CARD32 ust_hi B32;
+    CARD32 ust_lo B32;
+    CARD32 msc_hi B32;
+    CARD32 msc_lo B32;
+    CARD32 sbc B32;
+} xGLXBufferSwapComplete2;
 
 /************************************************************************/
 
@@ -2034,7 +2156,9 @@ typedef struct {
 #define X_GLXChangeDrawableAttributes    30
 #define X_GLXCreateWindow                31
 #define X_GLXDestroyWindow               32
-
+#define X_GLXSetClientInfoARB            33
+#define X_GLXCreateContextAtrribsARB     34
+#define X_GLXSetConfigInfo2ARB           35
 
 /* Opcodes for single commands (part of GLX command space) */
 
