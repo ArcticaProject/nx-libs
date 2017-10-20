@@ -1,6 +1,4 @@
 /*
- * $XConsortium: saver.h,v 1.5 94/04/17 20:59:33 rws Exp $
- *
 Copyright (c) 1992  X Consortium
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -37,7 +35,7 @@ in this Software without prior written authorization from the X Consortium.
 #define ScreenSaverCycleMask	0x00000002
 
 #define ScreenSaverMajorVersion	1
-#define ScreenSaverMinorVersion	0
+#define ScreenSaverMinorVersion	1
 
 #define ScreenSaverOff		0
 #define ScreenSaverOn		1
