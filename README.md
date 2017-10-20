@@ -136,7 +136,7 @@ The end result is RPMs under ~/result that you can install (or upgrade to) using
 
 Assuming:
 
-1. The current version is 3.5.99* (specified in debian/changelog)
+1. The current version is 3.5.99\* (specified in debian/changelog)
 
 Prerequisites:
 
@@ -150,3 +150,12 @@ debuild -uc -us
 cd ..
 sudo dpkg -i *3.5.99*.deb
 ```
+
+## Building on Windows
+
+The only components that can be built on Windows at the time of writing are `nxcomp` and `nxproxy` (with the latter utilizing the former).
+
+**The next section is only relevant for git-based source code builds. Released tarballs do not require special handling.**
+
+Since this project makes use of UNIX-style symlinks, it is imperative to clone the repository using Cygwin's git binary. MSYS(2) git is not able to handle UNIX-style symlinks.
+Make sure that all build utilities are Cygwin-based. Non-Cygwin binaries will bail out with errors during the build process or insert garbage.
