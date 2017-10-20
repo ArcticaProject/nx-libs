@@ -11,6 +11,10 @@ extern CARD32 defaultScreenSaverInterval;
 extern CARD32 ScreenSaverTime;
 extern CARD32 ScreenSaverInterval;
 
+#ifdef SCREENSAVER
+extern Bool screenSaverSuspended;
+#endif
+
 extern char *defaultFontPath;
 extern int monitorResolution;
 extern Bool loadableFonts;

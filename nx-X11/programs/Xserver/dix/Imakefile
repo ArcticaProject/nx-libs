@@ -132,7 +132,7 @@ NormalLibraryTarget(dix,$(OBJS))
 LintLibraryTarget(dix,$(SRCS) $(XPSRC))
 NormalLintTarget($(SRCS) $(XPSRC))
 
-SpecialCObjectRule(globals,$(ICONFIGFILES),$(SITE_DEFINES))
+SpecialCObjectRule(globals,$(ICONFIGFILES),$(SITE_DEFINES) $(EXT_DEFINES))
 SpecialCObjectRule(main,$(ICONFIGFILES),$(VENDOR_DEFINES))
 SpecialCObjectRule(pixmap,$(ICONFIGFILES),$(_NOOP_))
 SpecialCObjectRule(privates,$(ICONFIGFILES),$(_NOOP_))

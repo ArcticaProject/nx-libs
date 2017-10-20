@@ -1,6 +1,4 @@
 /*
- * $XConsortium: saverproto.h,v 1.5 94/04/17 20:59:33 keith Exp $
- *
 Copyright (c) 1992  X Consortium
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -26,7 +24,6 @@ in this Software without prior written authorization from the X Consortium.
  *
  * Author:  Keith Packard, MIT X Consortium
  */
-/* $XFree86$ */
 
 #ifndef _SAVERPROTO_H_
 #define _SAVERPROTO_H_
@@ -135,6 +132,16 @@ typedef struct _ScreenSaverUnsetAttributes {
     Drawable drawable B32;
 } xScreenSaverUnsetAttributesReq;
 #define sz_xScreenSaverUnsetAttributesReq	8
+
+#define X_ScreenSaverSuspend   5
+
+typedef struct _ScreenSaverSuspend {
+    CARD8 reqType;
+    CARD8 saverReqType;
+    CARD16 length B16;
+    Bool suspend B32;
+} xScreenSaverSuspendReq;
+#define sz_xScreenSaverSuspendReq	8
 
 typedef struct _ScreenSaverNotify {
     CARD8 type;			/* always eventBase + ScreenSaverNotify */
