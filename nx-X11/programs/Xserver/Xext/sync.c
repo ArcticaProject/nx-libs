@@ -316,7 +316,6 @@ SyncDeleteTriggerFromCounter(pTrigger)
 	    else
 		pTrigger->pCounter->pTriglist = pCur->next;
 	    
-	    xfree(pCur);
 	    free(pCur);
 	    break;
 	}

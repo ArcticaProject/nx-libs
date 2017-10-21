@@ -253,7 +253,7 @@ CreateResourceTypes()
 
 }
 
-int
+_X_EXPORT int
 XvScreenInit(ScreenPtr pScreen)
 {
   XvScreenPtr pxvs;
@@ -333,13 +333,13 @@ XvResetProc(ExtensionEntry* extEntry)
 {
 }
 
-int
+_X_EXPORT int
 XvGetScreenIndex()
 {
   return XvScreenIndex;
 }
 
-unsigned long
+_X_EXPORT unsigned long
 XvGetRTPort()
 {
   return XvRTPort;
