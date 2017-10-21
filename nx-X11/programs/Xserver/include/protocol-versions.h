@@ -75,11 +75,9 @@
 #define SERVER_PANORAMIX_MAJOR_VERSION          1
 #define SERVER_PANORAMIX_MINOR_VERSION		1
 
-#ifndef NXAGENT_SERVER
 /* Present */
 #define SERVER_PRESENT_MAJOR_VERSION            1
 #define SERVER_PRESENT_MINOR_VERSION            0
-#endif /* !defined(NXAGENT_SERVER) */
 
 /* RandR */
 #define SERVER_RANDR_MAJOR_VERSION		1
