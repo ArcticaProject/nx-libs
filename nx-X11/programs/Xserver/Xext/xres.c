@@ -6,6 +6,8 @@
 #include <dix-config.h>
 #endif
 
+#include <stdio.h>
+#include <string.h>
 #include <nx-X11/X.h>
 #include <nx-X11/Xproto.h>
 #include "misc.h"
@@ -206,7 +208,7 @@ ProcXResQueryClientPixmapBytes (ClientPtr client)
     rep.sequenceNumber = client->sequence;
     rep.length = 0;
     rep.bytes = bytes;
-#ifdef XSERVER64
+#ifdef _XSERVER64
     rep.bytes_overflow = bytes >> 32;
 #else
     rep.bytes_overflow = 0;
