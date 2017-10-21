@@ -1117,8 +1117,7 @@ int PanoramiXCopyArea(ClientPtr client)
 		}
 	    }
 	    RegionValidate(&totalReg, &overlap);
-	    (*pScreen->SendGraphicsExpose)(
-		client, &totalReg, stuff->dstDrawable, X_CopyArea, 0);
+	    SendGraphicsExpose(client, &totalReg, stuff->dstDrawable, X_CopyArea, 0);
 	    RegionUninit(&totalReg);
 	}
 	
@@ -1224,8 +1223,7 @@ int PanoramiXCopyPlane(ClientPtr client)
 	    }
 	}
 	RegionValidate(&totalReg, &overlap);
-	(*pScreen->SendGraphicsExpose)(
-		client, &totalReg, stuff->dstDrawable, X_CopyPlane, 0);
+	SendGraphicsExpose(client, &totalReg, stuff->dstDrawable, X_CopyPlane, 0);
 	RegionUninit(&totalReg);
     }
 

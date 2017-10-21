@@ -427,13 +427,6 @@ typedef    RegionPtr (* RectsToRegionProcPtr)(
 
 #endif /* NEED_SCREEN_REGIONS */
 
-typedef    void (* SendGraphicsExposeProcPtr)(
-	ClientPtr /*client*/,
-	RegionPtr /*pRgn*/,
-	XID /*drawable*/,
-	int /*major*/,
-	int /*minor*/);
-
 typedef    void (* ScreenBlockHandlerProcPtr)(
 	int /*screenNum*/,
 	void * /*blockData*/,
@@ -679,7 +672,6 @@ typedef struct _Screen {
 #ifdef NEED_SCREEN_REGIONS
     RectsToRegionProcPtr	RectsToRegion;
 #endif /* NEED_SCREEN_REGIONS */
-    SendGraphicsExposeProcPtr	SendGraphicsExpose;
 
     /* os layer procedures */
 
