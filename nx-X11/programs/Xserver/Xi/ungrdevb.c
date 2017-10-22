@@ -55,14 +55,14 @@ SOFTWARE.
 #include <dix-config.h>
 #endif
 
-#include <nx-X11/X.h>				/* for inputstr.h    */
-#include <nx-X11/Xproto.h>			/* Request macro     */
-#include "inputstr.h"			/* DeviceIntPtr	     */
-#include "windowstr.h"			/* window structure  */
+#include <nx-X11/X.h>	/* for inputstr.h    */
+#include <nx-X11/Xproto.h>	/* Request macro     */
+#include "inputstr.h"	/* DeviceIntPtr      */
+#include "windowstr.h"	/* window structure  */
 #include <nx-X11/extensions/XI.h>
 #include <nx-X11/extensions/XIproto.h>
 #include "extnsionst.h"
-#include "extinit.h"			/* LookupDeviceIntRec */
+#include "extinit.h"	/* LookupDeviceIntRec */
 #include "exglobals.h"
 #include "dixgrabs.h"
 
@@ -79,16 +79,15 @@ SOFTWARE.
  */
 
 int
-SProcXUngrabDeviceButton(client)
-    register ClientPtr client;
-    {
+SProcXUngrabDeviceButton(register ClientPtr client)
+{
     REQUEST(xUngrabDeviceButtonReq);
     swaps(&stuff->length);
     REQUEST_SIZE_MATCH(xUngrabDeviceButtonReq);
     swapl(&stuff->grabWindow);
     swaps(&stuff->modifiers);
-    return(ProcXUngrabDeviceButton(client));
-    }
+    return (ProcXUngrabDeviceButton(client));
+}
 
 /***********************************************************************
  *
@@ -97,65 +96,52 @@ SProcXUngrabDeviceButton(client)
  */
 
 int
-ProcXUngrabDeviceButton(client)
-    ClientPtr client;
-    {
-    DeviceIntPtr	dev;
-    DeviceIntPtr	mdev;
-    WindowPtr		pWin;
-    GrabRec		temporaryGrab;
+ProcXUngrabDeviceButton(ClientPtr client)
+{
+    DeviceIntPtr dev;
+    DeviceIntPtr mdev;
+    WindowPtr pWin;
+    GrabRec temporaryGrab;
 
     REQUEST(xUngrabDeviceButtonReq);
     REQUEST_SIZE_MATCH(xUngrabDeviceButtonReq);
 
-    dev = LookupDeviceIntRec (stuff->grabbed_device);
-    if (dev == NULL)
-	{
-	SendErrorToClient(client, IReqCode, X_UngrabDeviceButton, 0, 
-	    BadDevice);
+    dev = LookupDeviceIntRec(stuff->grabbed_device);
+    if (dev == NULL) {
+	SendErrorToClient(client, IReqCode, X_UngrabDeviceButton, 0, BadDevice);
 	return Success;
-	}
-    if (dev->button == NULL)
-	{
-	SendErrorToClient(client, IReqCode, X_UngrabDeviceButton, 0, 
-		BadMatch);
+    }
+    if (dev->button == NULL) {
+	SendErrorToClient(client, IReqCode, X_UngrabDeviceButton, 0, BadMatch);
 	return Success;
-	}
+    }
 
-    if (stuff->modifier_device != UseXKeyboard)
-	{
-	mdev = LookupDeviceIntRec (stuff->modifier_device);
-	if (mdev == NULL)
-	    {
-	    SendErrorToClient(client, IReqCode, X_UngrabDeviceButton, 0, 
-	        BadDevice);
+    if (stuff->modifier_device != UseXKeyboard) {
+	mdev = LookupDeviceIntRec(stuff->modifier_device);
+	if (mdev == NULL) {
+	    SendErrorToClient(client, IReqCode, X_UngrabDeviceButton, 0,
+			      BadDevice);
 	    return Success;
-	    }
-	if (mdev->key == NULL)
-	    {
-	    SendErrorToClient(client, IReqCode, X_UngrabDeviceButton, 0, 
-		BadMatch);
-	    return Success;
-	    }
 	}
-    else
+	if (mdev->key == NULL) {
+	    SendErrorToClient(client, IReqCode, X_UngrabDeviceButton, 0,
+			      BadMatch);
+	    return Success;
+	}
+    } else
 	mdev = (DeviceIntPtr) LookupKeyboardDevice();
 
     pWin = LookupWindow(stuff->grabWindow, client);
-    if (!pWin)
-	{
-	SendErrorToClient(client, IReqCode, X_UngrabDeviceButton, 0, 
-	    BadWindow);
+    if (!pWin) {
+	SendErrorToClient(client, IReqCode, X_UngrabDeviceButton, 0, BadWindow);
 	return Success;
-	}
+    }
 
     if ((stuff->modifiers != AnyModifier) &&
-	(stuff->modifiers & ~AllModifiersMask))
-	{
-	SendErrorToClient(client, IReqCode, X_UngrabDeviceButton, 0, 
-	    BadValue);
+	(stuff->modifiers & ~AllModifiersMask)) {
+	SendErrorToClient(client, IReqCode, X_UngrabDeviceButton, 0, BadValue);
 	return Success;
-	}
+    }
 
     temporaryGrab.resource = client->clientAsMask;
     temporaryGrab.device = dev;
@@ -169,4 +155,4 @@ ProcXUngrabDeviceButton(client)
 
     DeletePassiveGrabFromList(&temporaryGrab);
     return Success;
-    }
+}

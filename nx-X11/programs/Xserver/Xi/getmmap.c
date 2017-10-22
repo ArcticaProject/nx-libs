@@ -55,13 +55,13 @@ SOFTWARE.
 #include <dix-config.h>
 #endif
 
-#include <nx-X11/X.h>				/* for inputstr.h    */
-#include <nx-X11/Xproto.h>			/* Request macro     */
-#include "inputstr.h"			/* DeviceIntPtr	     */
+#include <nx-X11/X.h>	/* for inputstr.h    */
+#include <nx-X11/Xproto.h>	/* Request macro     */
+#include "inputstr.h"	/* DeviceIntPtr      */
 #include <nx-X11/extensions/XI.h>
-#include <nx-X11/extensions/XIproto.h>			/* Request macro     */
+#include <nx-X11/extensions/XIproto.h>	/* Request macro     */
 #include "extnsionst.h"
-#include "extinit.h"			/* LookupDeviceIntRec */
+#include "extinit.h"	/* LookupDeviceIntRec */
 #include "exglobals.h"
 
 #include "getmmap.h"
@@ -74,13 +74,12 @@ SOFTWARE.
  */
 
 int
-SProcXGetDeviceModifierMapping(client)
-    register ClientPtr client;
-    {
+SProcXGetDeviceModifierMapping(register ClientPtr client)
+{
     REQUEST(xGetDeviceModifierMappingReq);
     swaps(&stuff->length);
-    return(ProcXGetDeviceModifierMapping(client));
-    }
+    return (ProcXGetDeviceModifierMapping(client));
+}
 
 /***********************************************************************
  *
@@ -89,47 +88,44 @@ SProcXGetDeviceModifierMapping(client)
  */
 
 int
-ProcXGetDeviceModifierMapping(client)
-    ClientPtr client;
-    {
-    CARD8				maxkeys;
-    DeviceIntPtr			dev;
-    xGetDeviceModifierMappingReply 	rep;
-    KeyClassPtr 			kp;
-    
+ProcXGetDeviceModifierMapping(ClientPtr client)
+{
+    CARD8 maxkeys;
+    DeviceIntPtr dev;
+    xGetDeviceModifierMappingReply rep;
+    KeyClassPtr kp;
+
     REQUEST(xGetDeviceModifierMappingReq);
     REQUEST_SIZE_MATCH(xGetDeviceModifierMappingReq);
 
-    dev = LookupDeviceIntRec (stuff->deviceid);
-    if (dev == NULL)
-	{
-	SendErrorToClient (client, IReqCode, X_GetDeviceModifierMapping, 0, 
-		BadDevice);
+    dev = LookupDeviceIntRec(stuff->deviceid);
+    if (dev == NULL) {
+	SendErrorToClient(client, IReqCode, X_GetDeviceModifierMapping, 0,
+			  BadDevice);
 	return Success;
-	}
+    }
 
     kp = dev->key;
-    if (kp == NULL)
-	{
-	SendErrorToClient (client, IReqCode, X_GetDeviceModifierMapping, 0, 
-		BadMatch);
+    if (kp == NULL) {
+	SendErrorToClient(client, IReqCode, X_GetDeviceModifierMapping, 0,
+			  BadMatch);
 	return Success;
-	}
-    maxkeys =  kp->maxKeysPerModifier;
+    }
+    maxkeys = kp->maxKeysPerModifier;
 
     rep.repType = X_Reply;
     rep.RepType = X_GetDeviceModifierMapping;
     rep.numKeyPerModifier = maxkeys;
     rep.sequenceNumber = client->sequence;
     /* length counts 4 byte quantities - there are 8 modifiers 1 byte big */
-    rep.length = 2*maxkeys;
+    rep.length = 2 * maxkeys;
 
     WriteReplyToClient(client, sizeof(xGetDeviceModifierMappingReply), &rep);
 
     /* Reply with the (modified by DDX) map that SetModifierMapping passed in */
-    WriteToClient(client, 8*maxkeys, kp->modifierKeyMap);
+    WriteToClient(client, 8 * maxkeys, kp->modifierKeyMap);
     return Success;
-    }
+}
 
 /***********************************************************************
  *
@@ -139,12 +135,10 @@ ProcXGetDeviceModifierMapping(client)
  */
 
 void
-SRepXGetDeviceModifierMapping (client, size, rep)
-    ClientPtr	client;
-    int		size;
-    xGetDeviceModifierMappingReply	*rep;
-    {
+SRepXGetDeviceModifierMapping(ClientPtr client, int size,
+			      xGetDeviceModifierMappingReply * rep)
+{
     swaps(&rep->sequenceNumber);
     swapl(&rep->length);
     WriteToClient(client, size, rep);
-    }
+}

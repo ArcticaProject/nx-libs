@@ -51,26 +51,27 @@ SOFTWARE.
  *
  */
 
+
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
 #endif
 
-#include <nx-X11/X.h>				/* for inputstr.h    */
-#include <nx-X11/Xproto.h>			/* Request macro     */
-#include "inputstr.h"			/* DeviceIntPtr	     */
-#include "windowstr.h"			/* window structure  */
+#include <nx-X11/X.h>	/* for inputstr.h    */
+#include <nx-X11/Xproto.h>	/* Request macro     */
+#include "inputstr.h"	/* DeviceIntPtr      */
+#include "windowstr.h"	/* window structure  */
 #include <nx-X11/extensions/XI.h>
 #include <nx-X11/extensions/XIproto.h>
 #include "extnsionst.h"
-#include "extinit.h"			/* LookupDeviceIntRec */
+#include "extinit.h"	/* LookupDeviceIntRec */
 #include "exevents.h"
 #include "exglobals.h"
 
 #include "grabdev.h"
 #include "selectev.h"
 
-extern	Mask		ExtExclusiveMasks[];
-extern	Mask		ExtValidMasks[];
+extern Mask ExtExclusiveMasks[];
+extern Mask ExtValidMasks[];
 
 /***********************************************************************
  *
@@ -79,9 +80,8 @@ extern	Mask		ExtValidMasks[];
  */
 
 int
-SProcXSelectExtensionEvent (client)
-register ClientPtr client;
-    {
+SProcXSelectExtensionEvent(register ClientPtr client)
+{
     REQUEST(xSelectExtensionEventReq);
     swaps(&stuff->length);
     REQUEST_AT_LEAST_SIZE(xSelectExtensionEventReq);
@@ -91,8 +91,8 @@ register ClientPtr client;
                       stuff->count * sizeof(CARD32));
     SwapLongs((CARD32 *) (&stuff[1]), stuff->count);
 
-    return(ProcXSelectExtensionEvent(client));
-    }
+    return (ProcXSelectExtensionEvent(client));
+}
 
 /***********************************************************************
  *
@@ -101,48 +101,46 @@ register ClientPtr client;
  */
 
 int
-ProcXSelectExtensionEvent (client)
-    register ClientPtr client;
-    {
-    int			ret;
-    int			i;
-    WindowPtr 		pWin;
-    struct tmask	tmp[EMASKSIZE];
+ProcXSelectExtensionEvent(register ClientPtr client)
+{
+    int ret;
+    int i;
+    WindowPtr pWin;
+    struct tmask tmp[EMASKSIZE];
 
     REQUEST(xSelectExtensionEventReq);
     REQUEST_AT_LEAST_SIZE(xSelectExtensionEventReq);
 
-    if (stuff->length !=(sizeof(xSelectExtensionEventReq)>>2) + stuff->count)
-	{
-	SendErrorToClient (client, IReqCode, X_SelectExtensionEvent, 0, 
-		BadLength);
+    if (stuff->length != (sizeof(xSelectExtensionEventReq) >> 2) + stuff->count) {
+	SendErrorToClient(client, IReqCode, X_SelectExtensionEvent, 0,
+			  BadLength);
 	return Success;
+    }
+
+    pWin = (WindowPtr) LookupWindow(stuff->window, client);
+    if (!pWin) {
+	client->errorValue = stuff->window;
+	SendErrorToClient(client, IReqCode, X_SelectExtensionEvent, 0,
+			  BadWindow);
+	return Success;
+    }
+
+    if ((ret = CreateMaskFromList(client, (XEventClass *) & stuff[1],
+				  stuff->count, tmp, NULL,
+				  X_SelectExtensionEvent)) != Success)
+	return Success;
+
+    for (i = 0; i < EMASKSIZE; i++)
+	if (tmp[i].dev != NULL) {
+	    if ((ret =
+		 SelectForWindow((DeviceIntPtr) tmp[i].dev, pWin, client,
+				 tmp[i].mask, ExtExclusiveMasks[i],
+				 ExtValidMasks[i])) != Success) {
+		SendErrorToClient(client, IReqCode, X_SelectExtensionEvent, 0,
+				  ret);
+		return Success;
+	    }
 	}
 
-    pWin = (WindowPtr) LookupWindow (stuff->window, client);
-    if (!pWin)
-        {
-	client->errorValue = stuff->window;
-	SendErrorToClient(client, IReqCode, X_SelectExtensionEvent, 0, 
-		BadWindow);
-	return Success;
-        }
-
-    if ((ret = CreateMaskFromList (client, (XEventClass *)&stuff[1], 
-	stuff->count, tmp, NULL, X_SelectExtensionEvent)) != Success)
-	return Success;
-
-    for (i=0; i<EMASKSIZE; i++)
-	if (tmp[i].dev != NULL)
-	    {
-	    if ((ret = SelectForWindow((DeviceIntPtr)tmp[i].dev, pWin, client, tmp[i].mask, 
-		ExtExclusiveMasks[i], ExtValidMasks[i])) != Success)
-		{
-		SendErrorToClient(client, IReqCode, X_SelectExtensionEvent, 0, 
-			ret);
-		return Success;
-		}
-	    }
-
     return Success;
-    }
+}

@@ -55,13 +55,13 @@ SOFTWARE.
 #include <dix-config.h>
 #endif
 
-#include <nx-X11/X.h>				/* for inputstr.h    */
-#include <nx-X11/Xproto.h>			/* Request macro     */
-#include "inputstr.h"			/* DeviceIntPtr	     */
+#include <nx-X11/X.h>	/* for inputstr.h    */
+#include <nx-X11/Xproto.h>	/* Request macro     */
+#include "inputstr.h"	/* DeviceIntPtr      */
 #include <nx-X11/extensions/XI.h>
 #include <nx-X11/extensions/XIproto.h>
 #include "extnsionst.h"
-#include "extinit.h"			/* LookupDeviceIntRec */
+#include "extinit.h"	/* LookupDeviceIntRec */
 #include "exglobals.h"
 
 #include "devbell.h"
@@ -74,13 +74,12 @@ SOFTWARE.
  */
 
 int
-SProcXDeviceBell(client)
-    register ClientPtr client;
-    {
+SProcXDeviceBell(register ClientPtr client)
+{
     REQUEST(xDeviceBellReq);
     swaps(&stuff->length);
-    return(ProcXDeviceBell(client));
-    }
+    return (ProcXDeviceBell(client));
+}
 
 /***********************************************************************
  *
@@ -89,9 +88,8 @@ SProcXDeviceBell(client)
  */
 
 int
-ProcXDeviceBell (client)
-    register ClientPtr client;
-    {
+ProcXDeviceBell(register ClientPtr client)
+{
     DeviceIntPtr dev;
     KbdFeedbackPtr k;
     BellFeedbackPtr b;
@@ -104,64 +102,55 @@ ProcXDeviceBell (client)
     REQUEST(xDeviceBellReq);
     REQUEST_SIZE_MATCH(xDeviceBellReq);
 
-    dev = LookupDeviceIntRec (stuff->deviceid);
-    if (dev == NULL)
-	{
+    dev = LookupDeviceIntRec(stuff->deviceid);
+    if (dev == NULL) {
 	client->errorValue = stuff->deviceid;
 	SendErrorToClient(client, IReqCode, X_DeviceBell, 0, BadDevice);
 	return Success;
-	}
+    }
 
-    if (stuff->percent < -100 || stuff->percent > 100)
-	{
+    if (stuff->percent < -100 || stuff->percent > 100) {
 	client->errorValue = stuff->percent;
 	SendErrorToClient(client, IReqCode, X_DeviceBell, 0, BadValue);
 	return Success;
-	}
-    if (stuff->feedbackclass == KbdFeedbackClass)
-	{
-	for (k=dev->kbdfeed; k; k=k->next)
+    }
+    if (stuff->feedbackclass == KbdFeedbackClass) {
+	for (k = dev->kbdfeed; k; k = k->next)
 	    if (k->ctrl.id == stuff->feedbackid)
 		break;
-	if (!k)
-	    {
+	if (!k) {
 	    client->errorValue = stuff->feedbackid;
 	    SendErrorToClient(client, IReqCode, X_DeviceBell, 0, BadValue);
 	    return Success;
-	    }
+	}
 	base = k->ctrl.bell;
 	proc = k->BellProc;
 	ctrl = (void *) &(k->ctrl);
 	class = KbdFeedbackClass;
-	}
-    else if (stuff->feedbackclass == BellFeedbackClass)
-	{
-	for (b=dev->bell; b; b=b->next)
+    } else if (stuff->feedbackclass == BellFeedbackClass) {
+	for (b = dev->bell; b; b = b->next)
 	    if (b->ctrl.id == stuff->feedbackid)
 		break;
-	if (!b)
-	    {
+	if (!b) {
 	    client->errorValue = stuff->feedbackid;
 	    SendErrorToClient(client, IReqCode, X_DeviceBell, 0, BadValue);
 	    return Success;
-	    }
+	}
 	base = b->ctrl.percent;
 	proc = b->BellProc;
 	ctrl = (void *) &(b->ctrl);
 	class = BellFeedbackClass;
-	}
-    else
-	{
+    } else {
 	client->errorValue = stuff->feedbackclass;
 	SendErrorToClient(client, IReqCode, X_DeviceBell, 0, BadValue);
 	return Success;
-	}
+    }
     newpercent = (base * stuff->percent) / 100;
     if (stuff->percent < 0)
-        newpercent = base + newpercent;
+	newpercent = base + newpercent;
     else
-    	newpercent = base - newpercent + stuff->percent;
-    (*proc)(newpercent, dev, ctrl, class);
+	newpercent = base - newpercent + stuff->percent;
+    (*proc) (newpercent, dev, ctrl, class);
 
     return Success;
-    }
+}
