@@ -1,0 +1,3 @@
+clone Mesa's mesa_7_7_branch like this:
+
+git clone git://anongit.freedesktop.org/mesa/mesa -b mesa_7_7_branch Mesa_7.7
