@@ -66,7 +66,7 @@ fi
 # If in_addr_t is not defined use unsigned int.
 AC_CHECK_TYPES([in_addr_t], [], [], [[#include <netinet/in.h>]])
 
-AC_ARG_ENABLE([info],
+AC_ARG_ENABLE([debug],
               [AS_HELP_STRING([--enable-debug],
                               [enable to get info session log output (disabled by default)])],
               [AS_IF([test x$enableval = xyes],
