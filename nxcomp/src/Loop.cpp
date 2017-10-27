@@ -2666,7 +2666,6 @@ int NXTransSelect(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
                       fd_set *writeSet, struct timeval *selectTs)
 {
   int diffTs;
-  #ifdef TIME
 
   static T_timestamp lastTs;
 
