@@ -23,6 +23,17 @@ AC_LANG([C])
 NX_COMPILER_BRAND
 NX_DEFAULT_OPTIONS
 
+dnl This is a workaround for a nasty libtool bug.
+dnl We actually compile libXcomp with pthread support, but libtool uses g++ ... -nostdlib ... -pthread
+dnl on Linux. -nostdlib causes -pthread to be ignored.
+dnl According to GCC upstream, this is not a bug: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=25460
+dnl GCC upstream insists that libtool needs to handle -pthread in a special way when using -nostdlib.
+dnl A patch has been submitted to the libtool project: http://lists.gnu.org/archive/html/libtool-patches/2013-11/msg00015.html
+dnl but never applied to the code base. Boo.
+dnl We will work around this bug by using AX_PTHREAD and linking with pthread support in all consumers of
+dnl libXcomp for now.
+AX_PTHREAD([], AC_MSG_ERROR([no POSIX threads support detected]))
+
 AC_ARG_ENABLE([cxx11],
               [AS_HELP_STRING([--enable-cxx11],
                               [enable optional features requiring C++11 support (disabled by default)])],
