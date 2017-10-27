@@ -29,6 +29,7 @@
 #include <fstream>
 #include <sstream>
 #include <iomanip>
+#include <unistd.h>
 
 #include "Log.h"
 #include "config.h"
@@ -95,7 +96,7 @@ std::string NXLog::stamp_to_string(const NXLogStamp& stamp) const
     if ( log_thread_id() )
     {
         if ( thread_name().empty() )
-            oss << pthread_self() << " ";
+            oss << getpid() << "/" << pthread_self() << " ";
         else
             oss << "[" << thread_name() << "] ";
     }
