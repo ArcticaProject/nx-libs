@@ -63,8 +63,33 @@ if test "$FreeBSD" = yes; then
   CPPFLAGS="$CPPFLAGS -I/usr/local/include"
 fi
 
+AX_PTHREAD([], AC_MSG_ERROR([no POSIX threads support detected]))
+
 # If in_addr_t is not defined use unsigned int.
 AC_CHECK_TYPES([in_addr_t], [], [], [[#include <netinet/in.h>]])
+
+AC_ARG_ENABLE([cxx11],
+              [AS_HELP_STRING([--enable-cxx11],
+                              [enable optional features requiring C++11 support (disabled by default)])],
+              [AS_IF([test x$enableval = xyes],
+                    [AX_CXX_COMPILE_STDCXX_11([], [mandatory])])])
+
+# Check if std::put_time is available.
+AC_MSG_CHECKING([if std::put_time is available])
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM(
+[[
+#include <iomanip>
+#include <ctime>
+]],
+[[
+std::time_t t = std::time(NULL);
+std::tm tm = *std::localtime(&t);
+(void) std::put_time(&tm, "%c");
+]])],
+                  [AC_MSG_RESULT([yes])
+                   AC_DEFINE(HAVE_STD_PUT_TIME, [1],
+                             [Use std::put_time to format times, must be made available by the compiler if turned on.])],
+                  [AC_MSG_RESULT([no])])
 
 AC_ARG_ENABLE([debug],
               [AS_HELP_STRING([--enable-debug],
@@ -83,6 +108,7 @@ AC_ARG_ENABLE([valgrind],
 AC_CONFIG_FILES([
 Makefile
 src/Makefile
+test/Makefile
 nxcomp.pc
 ])
 

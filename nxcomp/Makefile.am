@@ -1,4 +1,4 @@
-SUBDIRS = src
+SUBDIRS = src test
 
 pkgconfig_DATA = nxcomp.pc
 

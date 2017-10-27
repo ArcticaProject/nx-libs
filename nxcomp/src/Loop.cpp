@@ -101,6 +101,7 @@ typedef int socklen_t;
 
 #include "Message.h"
 #include "ChannelEndPoint.h"
+#include "Log.h"
 
 //
 // System specific defines.
@@ -9339,6 +9340,102 @@ int ParseCommandLineOptions(int argc, const char **argv)
 
           return -1;
         }
+        case 'd':
+        {
+          if ( argi+1 >= argc )
+          {
+            PrintUsageInfo(nextArg, 0);
+            return -1;
+          }
+
+          int level = 0;
+          errno = 0;
+          level = strtol(argv[argi+1], NULL, 10);
+
+          if ( errno && (level == 0) )
+          {
+            cerr << "Warning: Failed to parse log level. Ignoring option." << std::endl;
+          }
+          if ( level < 0 )
+          {
+            cerr << "Warning: Log level must be a positive integer. Ignoring option." << std::endl;
+            level = nx_log.level();
+          }
+          else if ( level >= NXLOG_LEVEL_COUNT )
+          {
+            cerr << "Warning: Log level is greater than the maximum " << NXLOG_LEVEL_COUNT-1 << ". Setting to the maximum." << std::endl;
+            level = NXLOG_LEVEL_COUNT-1;
+          }
+
+          nx_log.level( (NXLogLevel)level );
+
+          argi++;
+          break;
+
+        }
+        case 'o':
+        {
+          if ( argi + 1 >= argc )
+          {
+            PrintUsageInfo(nextArg, 0);
+            return -1;
+          }
+
+          std::ofstream *logfile = new std::ofstream();
+
+          // Unbuffered output
+          logfile->rdbuf()->pubsetbuf(0, 0);
+          logfile->open(argv[argi+1], std::ofstream::app);
+
+          if ( logfile->is_open() )
+          {
+            nx_log.stream(logfile);
+          }
+          else
+          {
+            cerr << "Failed to open log file " << argv[argi+1] << endl;
+            return -1;
+          }
+
+          argi++;
+          break;
+        }
+        case 'f':
+        {
+          if ( argi + 1 >= argc )
+          {
+            PrintUsageInfo(nextArg, 0);
+            return -1;
+          }
+
+          const char *format = argv[argi+1];
+          size_t pos = 0;
+
+          nx_log.log_level(false);
+          nx_log.log_time(false);
+          nx_log.log_unix_time(false);
+          nx_log.log_location(false);
+          nx_log.log_thread_id(false);
+
+          for(pos =0;pos<strlen(format);pos++)
+          {
+            switch(format[pos])
+            {
+              case '0': break;
+              case 't': nx_log.log_time(true); break;
+              case 'u': nx_log.log_time(true); nx_log.log_unix_time(true); break;
+              case 'l': nx_log.log_level(true); break;
+              case 'T': nx_log.log_thread_id(true); break;
+              case 'L': nx_log.log_location(true); break;
+              default : cerr << "Unrecognized format specifier: " << format[pos] << endl; break;
+            }
+          }
+
+          argi++;
+          break;
+        }
+
+
         default:
         {
           PrintUsageInfo(nextArg, 1);

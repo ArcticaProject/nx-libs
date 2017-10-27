@@ -114,12 +114,14 @@ libXcomp_la_SOURCES =					\
     WriteBuffer.cpp					\
     XidCache.cpp					\
     Z.cpp						\
+    Log.cpp						\
     $(NULL)
 
 libXcomp_la_LIBADD =					\
     @JPEG_LIBS@						\
     @PNG_LIBS@						\
     @Z_LIBS@						\
+    @PTHREAD_LIBS@					\
     $(NULL)
 
 AM_CXXFLAGS = 						\
@@ -127,13 +129,18 @@ AM_CXXFLAGS = 						\
     $(JPEG_CFLAGS)					\
     $(PNG_CFLAGS)					\
     $(Z_CFLAGS)						\
+    $(PTHREAD_CFLAGS)					\
     $(NULL)
 
 AM_CPPFLAGS =						\
     -I$(top_srcdir)/include				\
     $(NULL)
 
-libXcomp_la_LDFLAGS = -version-number @LT_COMP_VERSION@ -no-undefined
+libXcomp_la_LDFLAGS =					\
+    -version-number @LT_COMP_VERSION@			\
+    -no-undefined					\
+    $(PTHREAD_LDFLAGS)					\
+    $(NULL)
 
 libXcompincludedir = $(includedir)/nx
 libXcompinclude_HEADERS =				\
