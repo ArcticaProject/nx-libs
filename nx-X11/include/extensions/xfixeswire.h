@@ -27,7 +27,7 @@
 #define _XFIXESWIRE_H_
 
 #define XFIXES_NAME	"XFIXES"
-#define XFIXES_MAJOR	3
+#define XFIXES_MAJOR	4
 #define XFIXES_MINOR	0
 
 /*************** Version 1 ******************/
@@ -62,8 +62,14 @@
 #define X_XFixesChangeCursorByName	    27
 /*************** Version 3 ******************/
 #define X_XFixesExpandRegion		    28
+/*************** Version 4 ******************/
+#define X_XFixesHideCursor		    29
+#define X_XFixesShowCursor		    30
+/*************** Version 5 ******************/
+#define X_XFixesCreatePointerBarrier	    31
+#define X_XFixesDestroyPointerBarrier	    32
 
-#define XFixesNumberRequests		    29
+#define XFixesNumberRequests		    (X_XFixesDestroyPointerBarrier+1)
 
 /* Selection events share one event number */
 #define XFixesSelectionNotify		    0
@@ -88,7 +94,8 @@
 
 /* errors */
 #define BadRegion			    0
-#define XFixesNumberErrors		    (BadRegion+1)
+#define BadBarrier			    1
+#define XFixesNumberErrors		    (BadBarrier+1)
 
 #define SaveSetNearest			    0
 #define SaveSetRoot			    1
@@ -100,5 +107,12 @@
 
 #define WindowRegionBounding		    0
 #define WindowRegionClip		    1
+
+/*************** Version 5 ******************/
+
+#define BarrierPositiveX		    (1L << 0)
+#define BarrierPositiveY		    (1L << 1)
+#define BarrierNegativeX		    (1L << 2)
+#define BarrierNegativeY		    (1L << 3)
 
 #endif	/* _XFIXESWIRE_H_ */

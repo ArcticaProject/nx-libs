@@ -239,4 +239,18 @@ ProcXFixesExpandRegion (ClientPtr client);
 int
 SProcXFixesExpandRegion (ClientPtr client);
 
+/* Cursor Visibility (Version 4) */
+
+int
+ProcXFixesHideCursor (ClientPtr client);
+
+int
+SProcXFixesHideCursor (ClientPtr client);
+
+int
+ProcXFixesShowCursor (ClientPtr client);
+
+int
+SProcXFixesShowCursor (ClientPtr client);
+
 #endif /* _XFIXESINT_H_ */

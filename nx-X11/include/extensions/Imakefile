@@ -62,6 +62,7 @@ HEADERS = \
 	security.h securstr.h \
 	sync.h syncstr.h \
 	dpms.h dpmsstr.h \
+	shapeconst.h \
 	$(NULL)
 
 all::

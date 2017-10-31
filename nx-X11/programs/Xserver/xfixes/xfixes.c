@@ -75,6 +75,7 @@ static const int version_requests[] = {
     X_XFixesGetCursorImage,	/* Version 1 */
     X_XFixesChangeCursorByName,	/* Version 2 */
     X_XFixesExpandRegion,	/* Version 3 */
+    X_XFixesShowCursor,	        /* Version 4 */
 };
 
 #define NUM_VERSION_REQUESTS	(sizeof (version_requests) / sizeof (version_requests[0]))
@@ -112,6 +113,9 @@ int	(*ProcXFixesVector[XFixesNumberRequests])(ClientPtr) = {
     ProcXFixesChangeCursorByName,
 /*************** Version 3 ******************/
     ProcXFixesExpandRegion,
+/*************** Version 4 ****************/
+    ProcXFixesHideCursor,
+    ProcXFixesShowCursor,
 };
 
 static int
@@ -171,6 +175,9 @@ int	(*SProcXFixesVector[XFixesNumberRequests])(ClientPtr) = {
     SProcXFixesChangeCursorByName,
 /*************** Version 3 ******************/
     SProcXFixesExpandRegion,
+/*************** Version 4 ****************/
+    SProcXFixesHideCursor,
+    SProcXFixesShowCursor,
 };
 
 static int
