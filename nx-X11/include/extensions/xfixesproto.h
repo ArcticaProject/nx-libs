@@ -1,6 +1,27 @@
 /*
- * $XFree86: xc/include/extensions/xfixesproto.h,v 1.1 2002/11/30 06:21:43 keithp Exp $
+ * Copyright (c) 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright 2010 Red Hat, Inc.
  *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice (including the next
+ * paragraph) shall be included in all copies or substantial portions of the
+ * Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
+/*
  * Copyright © 2002 Keith Packard, member of The XFree86 Project, Inc.
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
@@ -27,9 +48,7 @@
 
 #include <nx-X11/Xmd.h>
 #include <nx-X11/extensions/xfixeswire.h>
-#define _SHAPE_SERVER_
-#include <X11/extensions/shape.h>
-#undef _SHAPE_SERVER_
+#include <nx-X11/extensions/shapeconst.h>
 
 #define Window CARD32
 #define Drawable CARD32
@@ -462,6 +481,58 @@ typedef struct {
 
 #define sz_xXFixesExpandRegionReq	20
 
+/*************** Version 4.0 ******************/
+
+typedef struct {
+    CARD8   reqType;
+    CARD8   xfixesReqType;
+    CARD16  length B16;
+    Window  window B32;
+} xXFixesHideCursorReq;
+
+#define sz_xXFixesHideCursorReq	sizeof(xXFixesHideCursorReq)
+
+typedef struct {
+    CARD8   reqType;
+    CARD8   xfixesReqType;
+    CARD16  length B16;
+    Window  window B32;
+} xXFixesShowCursorReq;
+
+#define sz_xXFixesShowCursorReq	sizeof(xXFixesShowCursorReq)
+
+/*************** Version 5.0 ******************/
+
+#define Barrier CARD32
+
+typedef struct {
+    CARD8   reqType;
+    CARD8   xfixesReqType;
+    CARD16  length B16;
+    Barrier barrier B32;
+    Window  window B32;
+    INT16   x1 B16;
+    INT16   y1 B16;
+    INT16   x2 B16;
+    INT16   y2 B16;
+    CARD32  directions;
+    CARD16  pad B16;
+    CARD16  num_devices B16;
+    /* array of CARD16 devices */
+} xXFixesCreatePointerBarrierReq;
+
+#define sz_xXFixesCreatePointerBarrierReq 28
+
+typedef struct {
+    CARD8   reqType;
+    CARD8   xfixesReqType;
+    CARD16  length B16;
+    Barrier barrier B32;
+} xXFixesDestroyPointerBarrierReq;
+
+#define sz_xXFixesDestroyPointerBarrierReq 8
+
+#undef Barrier
 #undef Region
 #undef Picture
 #undef Window
