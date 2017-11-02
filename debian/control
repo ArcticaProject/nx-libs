@@ -1059,7 +1059,9 @@ Depends:
  nxagent (>= ${source:Version}), nxagent (<< ${source:Version}.1),
  ${misc:Depends},
 Breaks:
- x2goserver (<< 4.1.0.0-0~)
+ x2goserver (<< 4.0.1.21-0~)
+Replaces:
+ x2goserver (<< 4.0.1.21-0~)
 Suggests:
  x2goserver
 Description: X2Go agent

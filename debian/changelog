@@ -6,6 +6,10 @@ nx-libs (2:3.5.0.33-0x2go1) UNRELEASED; urgency=low
     - Uploaders: add myself. Also, force a rebuild due to the changed
       versioning.
     - Add Breaks statement on pre-4.1.0.0 x2goserver to x2goagent package.
+    - Change Breaks statement to pre-4.0.1.21 x2goserver and add a Replaces:
+      x2goserver << 4.0.1.21 section to x2goagent package. We'll do the
+      /etc/x2go/x2goagent.options file move for x2goserver 4.0.1.21 and
+      nx-libs 3.5.0.33 already.
   * nx-libs.spec:
     - Add xkeyboard-config to nxagent's Requires. Should be a weak dependency,
       but RPM doesn't support that too well yet.
