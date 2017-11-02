@@ -675,6 +675,7 @@ Group:          Applications/System
 Summary:        X2Go Agent
 Requires:       nxagent
 Provides:       x2goagent-virtual
+Conflicts:      x2goserver < 4.0.1.21
 
 %description -n x2goagent
 X2Go Agent functionality has been completely incorporated into

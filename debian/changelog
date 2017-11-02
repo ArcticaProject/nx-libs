@@ -26,6 +26,8 @@ nx-libs (2:3.5.0.33-0x2go1) UNRELEASED; urgency=low
       v2: backport to nx-libs 3.5.0.x (Mihai Moldovan)
     - Drop ugly sed hack to push optflags to build system.
     - Pass CDEBUGSFLAGS and friends directly to the make command in %build.
+    - Let x2goagent conflict with pre-4.0.1.21 x2goserver versions. Needed for
+      x2goagent.options file move.
   * debian/:
     - Add x2goagent.options file for compatibility with x2goserver nightly.
   * debian/roll-tarballs.sh:
