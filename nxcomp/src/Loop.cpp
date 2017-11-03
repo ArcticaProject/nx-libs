@@ -3750,21 +3750,14 @@ int SetupUnixSocket()
   // Open UNIX domain socket for display.
   //
 
-  if (!control->TempPath) {
-    nxfatal << "Loop: PANIC! Temporal path is null.\n" << std::flush;
-
-    cerr << "Error" << ": Temporal path is null.\n";
-    HandleCleanup();
-  }
-
-  unsigned int required = snprintf(unixSocketName, DEFAULT_STRING_LENGTH, "%s/.X11-unix", control->TempPath);
+  unsigned int required = snprintf(unixSocketName, DEFAULT_STRING_LENGTH, "/tmp/.X11-unix");
   if (required < sizeof(unixSocketName)) {
 
     // No need to execute the following actions conditionally
     mkdir(unixSocketName, (0777 | S_ISVTX));
     chmod(unixSocketName, (0777 | S_ISVTX));
 
-    required = snprintf(unixSocketName, DEFAULT_STRING_LENGTH, "%s/.X11-unix/X%d", control->TempPath, proxyPort);
+    required = snprintf(unixSocketName, DEFAULT_STRING_LENGTH, "/tmp/.X11-unix/X%d", proxyPort);
     if (required < sizeof(unixSocketName)) {
 
       unixFD = ListenConnectionUnix(unixSocketName, "x11");
@@ -3968,8 +3961,7 @@ int SetupDisplaySocket(int &addr_family, sockaddr *&addr,
 
     char unixSocketDir[DEFAULT_STRING_LENGTH];
 
-    snprintf(unixSocketDir, DEFAULT_STRING_LENGTH - 1, "%s/.X11-unix",
-                 control -> TempPath);
+    snprintf(unixSocketDir, DEFAULT_STRING_LENGTH - 1, "/tmp/.X11-unix");
 
     #ifdef __APPLE__
 
@@ -12778,14 +12770,14 @@ int ParseFontPath(char *path)
 
   //
   // Let's assume that a port specification "unix/:7100"
-  // corresponds to "$TEMP/.font-unix/fs7100" and a port
-  // "unix/:-1" corresponds to "$TEMP/.font-unix/fs-1".
+  // corresponds to "/tmp/.font-unix/fs7100" and a port
+  // "unix/:-1" corresponds to "/tmp/.font-unix/fs-1".
   //
 
   if (strncmp("unix/:", path, 6) == 0)
   {
-    snprintf(path, DEFAULT_STRING_LENGTH - 1, "%s/.font-unix/fs%s",
-                 control -> TempPath, oldPath + 6);
+    snprintf(path, DEFAULT_STRING_LENGTH - 1, "/tmp/.font-unix/fs%s",
+                 oldPath + 6);
 
     *(path + DEFAULT_STRING_LENGTH - 1) = '\0';
 
