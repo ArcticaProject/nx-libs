@@ -279,10 +279,32 @@ int Auth::getCookie()
   //
   
   char line[DEFAULT_STRING_LIMIT];
+  FILE *data = NULL;
+  int result = -1;
 
   if (strncmp(display_, "localhost:", 10) == 0)
   {
     snprintf(line, DEFAULT_STRING_LIMIT, "unix:%s", display_ + 10);
+  }
+  else if ((0 == strncasecmp(display_, "/tmp/launch", 11)) || (0 == strncasecmp(display_, "/private/tmp/com.apple.launchd", 30)))
+  {
+    /*
+     * Launchd socket support, mostly for OS X, but maybe also other BSD derivates.
+     */
+    const char *separator = strrchr(display_, ':');
+
+    if ((NULL == separator) || (!isdigit(*(separator + 1))))
+    {
+      #ifdef PANIC
+      *logofs << "Auth: PANIC! Unable to find separating colon character '"
+              << "in launchd socket path '" << display_
+              << "'.\n" << logofs_flush;
+      #endif
+
+      goto AuthGetCookieResult;
+    }
+
+    snprintf(line, DEFAULT_STRING_LIMIT, "unix:%s", separator + 1);
   }
   else
   {
@@ -316,9 +338,7 @@ int Auth::getCookie()
   // implementation.
   //
 
-  FILE *data = Popen((char *const *) parameters, "r");
-
-  int result = -1;
+  data = Popen((char *const *) parameters, "r");
 
   if (data == NULL)
   {
