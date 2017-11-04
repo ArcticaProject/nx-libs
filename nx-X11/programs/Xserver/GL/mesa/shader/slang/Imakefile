@@ -17,13 +17,14 @@
                 -I$(MESASRCDIR)/src/mesa/shader/grammar \
 		-I$(MESASRCDIR)/src/mesa/main \
 		-I$(MESASRCDIR)/src/mesa/glapi \
+		-I$(MESASRCDIR)/src/mesa/shader/slang \
 		-I$(MESASRCDIR)/include \
                 -I$(SERVERSRC)/include -I$(XINCLUDESRC) \
                 -I$(SERVERSRC)/GL/include -I$(SERVERSRC)/GL/glx \
                 -I$(LIBSRC)/GL/include \
                 -I$(XF86SRC) -I$(INCLUDESRC)
 
-      DEFINES = $(GLX_DEFINES) /*-DUSE_X86_ASM*/ /*-DUSE_SPARC_ASM*/
+      DEFINES = $(GLX_DEFINES) /*-DUSE_X86_ASM*/ /*-DUSE_X86_64_ASM*/ /*-DUSE_SPARC_ASM*/
 
 NormalLibraryObjectRule()
 

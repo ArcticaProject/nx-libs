@@ -3,20 +3,20 @@
 #define NeedAllMesaSrc
 #define MesaInXServer
 #define MesaBuildDir ../main/
-#define MesaACBuildDir ../array_cache/
 #define MesaMathBuildDir ../math/
 #define MesaSwrastBuildDir ../swrast/
 #define MesaSwrastSetupBuildDir ../swrast_setup/
 #define MesaTnlBuildDir ../tnl/
+#define MesaVboBuildDir ../vbo/
 #define MesaShaderBuildDir ../shader/
 #define MesaGrammarBuildDir ../shader/grammar/
 #define MesaSlangBuildDir ../shader/slang/
 #define MesaXBuildDir ../X/
 
-#include "../array_cache/Imakefile.inc"
 #include "../swrast/Imakefile.inc"
 #include "../swrast_setup/Imakefile.inc"
 #include "../tnl/Imakefile.inc"
+#include "../vbo/Imakefile.inc"
 #include "../main/Imakefile.inc"
 #include "../math/Imakefile.inc"
 #include "../shader/Imakefile.inc"
@@ -29,9 +29,9 @@
 
          OBJS = $(COREMESAOBJS) $(MOBJS)
 
-        DONES = ../main/DONE ../X/DONE ../array_cache/DONE \
+        DONES = ../main/DONE ../X/DONE \
 		../math/DONE ../swrast/DONE ../swrast_setup/DONE \
-		../tnl/DONE ../shader/DONE ../shader/grammar/DONE \
+		../tnl/DONE ../vbo/DONE ../shader/DONE ../shader/grammar/DONE \
                 ../shader/slang/DONE
 
      INCLUDES = -I$(INCLUDESRC) -I$(XINCLUDESRC) -I$(EXTINCSRC) \

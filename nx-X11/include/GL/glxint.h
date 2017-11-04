@@ -1,6 +1,7 @@
 #ifndef __GLX_glxint_h__
 #define __GLX_glxint_h__
 
+/* $XFree86: xc/include/GL/glxint.h,v 1.3 2000/11/18 19:37:04 tsi Exp $ */
 /*
 ** The contents of this file are subject to the GLX Public License Version 1.0
 ** (the "License"). You may not use this file except in compliance with the
@@ -22,8 +23,8 @@
 ** $SGI$
 */
 
-#include <nx-X11/X.h>
-#include <nx-X11/Xdefs.h>
+#include <X11/X.h>
+#include <X11/Xdefs.h>
 #include "GL/gl.h"
 
 typedef struct __GLXvisualConfigRec __GLXvisualConfig;
