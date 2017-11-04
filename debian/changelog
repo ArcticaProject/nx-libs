@@ -60,6 +60,15 @@ nx-libs (2:3.5.0.33-0x2go1) UNRELEASED; urgency=low
     v2: backport to nx-libs 3.5.0.x (Mihai Moldovan)
     Adds:
       - debian/patches/1600_nxcomp-handle-launchd-socket-in-Auth.full+lite.patch
+  * nxcomp: Hardcode X11 and (legacy/xfs) font UNIX paths.
+    Fixes: ArcticaProject/nx-libs#536
+    Allowing overrides via NX_TEMP and TEMP breaks system using
+    pam_tmpdir.so and most server infrastructure expects the location to be
+    fixed anyway.
+    Backported from Arctica GH 3.6.x branch.
+    v2: backport to nx-libs 3.5.0.x (Mihai Moldovan)
+    Adds:
+      - debian/patches/1610_nxcomp-harcode-some-UNIX-socket-path.full+lite.patch
 
   [ Mike Gabriel ]
   * debian/libxinerama1.postinst.in:

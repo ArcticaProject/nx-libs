@@ -153,6 +153,7 @@
 1400_nx-X11_Render.c-Improve-situation-fo.full+lite.patch
 1500_all_propagate-optflags-to-subcompone.full+lite.patch
 1600_nxcomp-handle-launchd-socket-in-Auth.full+lite.patch
+1610_nxcomp-harcode-some-UNIX-socket-path.full+lite.patch
 9900-dxpc-license-history.full+lite.patch
 0016_nx-X11_install-location.debian.patch
 0102_xserver-xext_set-securitypolicy-path.debian.patch

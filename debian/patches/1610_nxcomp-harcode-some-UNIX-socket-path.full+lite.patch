@@ -1,0 +1,60 @@
+From db1c2fbc5aaace3443cdecf4a1e34644f8f5f1fc Mon Sep 17 00:00:00 2001
+From: Mihai Moldovan <ionic@ionic.de>
+Date: Fri, 3 Nov 2017 12:57:25 +0100
+Subject: [PATCH] nxcomp/src/Loop.cpp: hardcode X11 and (legacy/xfs) font UNIX
+ paths.
+
+Fixes: ArcticaProject/nx-libs#536
+
+Allowing overrides via NX_TEMP and TEMP breaks system using
+pam_tmpdir.so and most server infrastructure expects the location to be
+fixed anyway.
+
+Backported from Arctica GH 3.6.x branch.
+
+v2: backport to nx-libs 3.5.0.x (Mihai Moldovan)
+---
+ nxcomp/src/Loop.cpp | 18 +++++-------------
+ 1 file changed, 5 insertions(+), 13 deletions(-)
+
+--- a/nxcomp/Loop.cpp
++++ b/nxcomp/Loop.cpp
+@@ -4029,8 +4029,7 @@ int SetupUnixSocket()
+ 
+   char dirName[DEFAULT_STRING_LENGTH];
+ 
+-  snprintf(dirName, DEFAULT_STRING_LENGTH - 1, "%s/.X11-unix",
+-               control -> TempPath);
++  snprintf(dirName, DEFAULT_STRING_LENGTH - 1, "/tmp/.X11-unix");
+ 
+   *(dirName + DEFAULT_STRING_LENGTH - 1) = '\0';
+ 
+@@ -4295,8 +4294,7 @@ int SetupDisplaySocket(int &xServerAddrF
+ 
+     char unixSocketDir[DEFAULT_STRING_LENGTH];
+ 
+-    snprintf(unixSocketDir, DEFAULT_STRING_LENGTH - 1, "%s/.X11-unix",
+-                 control -> TempPath);
++    snprintf(unixSocketDir, DEFAULT_STRING_LENGTH - 1, "/tmp/.X11-unix");
+ 
+     #ifdef __APPLE__
+ 
+@@ -13761,14 +13759,14 @@ int ParseFontPath(char *path)
+ 
+   //
+   // Let's assume that a port specification "unix/:7100"
+-  // corresponds to "$TEMP/.font-unix/fs7100" and a port
+-  // "unix/:-1" corresponds to "$TEMP/.font-unix/fs-1".
++  // corresponds to "/tmp/.font-unix/fs7100" and a port
++  // "unix/:-1" corresponds to "/tmp/.font-unix/fs-1".
+   //
+ 
+   if (strncmp("unix/:", path, 6) == 0)
+   {
+-    snprintf(path, DEFAULT_STRING_LENGTH - 1, "%s/.font-unix/fs%s",
+-                 control -> TempPath, oldPath + 6);
++    snprintf(path, DEFAULT_STRING_LENGTH - 1, "/tmp/.font-unix/fs%s",
++                 oldPath + 6);
+ 
+     *(path + DEFAULT_STRING_LENGTH - 1) = '\0';
+ 
