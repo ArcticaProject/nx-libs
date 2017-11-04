@@ -54,6 +54,12 @@ nx-libs (2:3.5.0.33-0x2go1) UNRELEASED; urgency=low
     - Refresh all patches. Removes some fuzziness and adds the -p diff option
       to show the C function name in hunk headers.
     - Fixup series file to include previous patch.
+  * nxcomp: Handle launchd sockets in DISPLAY variable correctly when fetching
+    X cookie.
+    Backported from Arctica GH 3.6.x branch.
+    v2: backport to nx-libs 3.5.0.x (Mihai Moldovan)
+    Adds:
+      - debian/patches/1600_nxcomp-handle-launchd-socket-in-Auth.full+lite.patch
 
   [ Mike Gabriel ]
   * debian/libxinerama1.postinst.in:
