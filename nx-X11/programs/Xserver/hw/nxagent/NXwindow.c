@@ -874,7 +874,7 @@ MapWindow(register WindowPtr pWin, ClientPtr client)
 	}
 
 	pWin->mapped = TRUE;
-	if (SubStrSend(pWin, pParent))
+	if (SubStrSend(pWin, pParent) && MapUnmapEventsEnabled(pWin))
 	{
 	    memset(&event, 0, sizeof(xEvent));
 	    event.u.u.type = MapNotify;
@@ -960,7 +960,7 @@ UnmapWindow(register WindowPtr pWin, Bool fromConfigure)
 
     if ((!pWin->mapped) || (!(pParent = pWin->parent)))
 	return(Success);
-    if (SubStrSend(pWin, pParent))
+    if (SubStrSend(pWin, pParent) && MapUnmapEventsEnabled(pWin))
     {
 	xEvent event = {0};
 	event.u.u.type = UnmapNotify;
