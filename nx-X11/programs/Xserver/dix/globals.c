@@ -103,7 +103,7 @@ int  ScreenSaverAllowExposures;
 #  define DEFAULT_OFF_TIME DEFAULT_SCREEN_SAVER_TIME * 4
 # endif
 # ifndef DEFAULT_DPMS_ENABLED
-#  define DEFAULT_DPMS_ENABLED FALSE
+#  define DEFAULT_DPMS_ENABLED TRUE
 # endif
 CARD32 defaultDPMSStandbyTime = DEFAULT_STANDBY_TIME;
 CARD32 defaultDPMSSuspendTime = DEFAULT_SUSPEND_TIME;
@@ -140,14 +140,11 @@ FontPtr defaultFont;   /* not declared in dix.h to avoid including font.h in
 Bool loadableFonts = FALSE;
 CursorPtr rootCursor;
 Bool blackRoot=FALSE;
+Bool whiteRoot=FALSE;
 ClientPtr requestingClient;	/* XXX this should be obsolete now, remove? */
 
 TimeStamp currentTime;
 TimeStamp lastDeviceEventTime;
-
-Bool permitOldBugs = FALSE; /* turn off some error checking, to permit certain
-			     * old broken clients (like R2/R3 xterms) to work
-			     */
 
 int defaultColorVisualClass = -1;
 int monitorResolution = 0;
