@@ -13,17 +13,17 @@
          SRCS = $(COREMESABASESRCS)
          OBJS = $(COREMESABASEOBJS)
 
-     INCLUDES = -I$(MESASRCDIR)/src/mesa \
+     INCLUDES = -I$(MESASRCDIR)/include \
+		-I$(MESASRCDIR)/src/mesa \
 		-I$(MESASRCDIR)/src/mesa/main \
 		-I$(MESASRCDIR)/src/mesa/shader \
 		-I$(MESASRCDIR)/src/mesa/glapi \
-		-I$(MESASRCDIR)/include \
                 -I$(SERVERSRC)/include -I$(XINCLUDESRC) \
                 -I$(SERVERSRC)/GL/include -I$(SERVERSRC)/GL/glx \
                 -I$(LIBSRC)/GL/include \
                 -I$(XF86SRC) -I$(INCLUDESRC)
 
-      DEFINES = $(GLX_DEFINES) -DNXAGENT_SERVER /*-DUSE_X86_ASM*/ /*-DUSE_SPARC_ASM*/
+      DEFINES = $(GLX_DEFINES) -DNXAGENT_SERVER /*-DUSE_X86_ASM*/ /* -DUSE_X86_64_ASM *//*-DUSE_SPARC_ASM*/
 
 NormalLibraryObjectRule()
 

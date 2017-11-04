@@ -1,6 +1,7 @@
 #ifndef _GLX_glxproto_h_
 #define _GLX_glxproto_h_
 
+/* $XFree86: xc/include/GL/glxproto.h,v 1.6 2003/09/28 20:14:58 alanh Exp $ */
 /*
 ** License Applicability. Except to the extent portions of this file are
 ** made subject to an alternative license as permitted in the SGI Free
@@ -2342,9 +2343,9 @@ typedef struct {
 #define X_GLvop_GetProgramEnvParameterivNV     1298
 #define X_GLvop_GetProgramStringNV             1299
 #define X_GLvop_GetTrackMatrixivNV             1300
-#define X_GLvop_GetVetrexAttribdvARB           1301
-#define X_GLvop_GetVetrexAttribfvARB           1302
-#define X_GLvop_GetVetrexAttribivARB           1303
+#define X_GLvop_GetVertexAttribdvARB           1301
+#define X_GLvop_GetVertexAttribfvARB           1302
+#define X_GLvop_GetVertexAttribivARB           1303
 #define X_GLvop_IsProgramARB                   1304
 #define X_GLvop_GetProgramLocalParameterfvARB  1305
 #define X_GLvop_GetProgramLocalParameterdvARB  1306
@@ -2386,7 +2387,8 @@ typedef struct {
 #define X_GLXvop_QueryHyperpipeConfigSGIX       65551
 #define X_GLXvop_HyperpipeConfigSGIX            65552
 #define X_GLXvop_DestroyHyperpipeConfigSGIX     65553
-
+#define X_GLXvop_BindTexImageEXT                5152
+#define X_GLXvop_ReleaseTexImageEXT             5153
 
 /* ARB extension opcodes */
 
@@ -2512,5 +2514,14 @@ typedef struct {
 
 /* 299. GL_EXT_blend_equation_separate */
 #define X_GLrop_BlendEquationSeparateEXT    4228
+
+/* 310. GL_EXT_framebuffer_object */
+#define X_GLvop_IsRenderbufferEXT                      1422
+#define X_GLvop_GenRenderbuffersEXT                    1423
+#define X_GLvop_GetRenderbufferParameterivEXT          1424
+#define X_GLvop_IsFramebufferEXT                       1425
+#define X_GLvop_GenFramebuffersEXT                     1426
+#define X_GLvop_CheckFramebufferStatusEXT              1427
+#define X_GLvop_GetFramebufferAttachmentParameterivEXT 1428
 
 #endif /* _GLX_glxproto_h_ */

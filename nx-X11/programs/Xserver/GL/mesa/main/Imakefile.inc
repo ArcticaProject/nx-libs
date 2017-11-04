@@ -4,13 +4,13 @@
 MESABUILDDIR = MesaBuildDir
 
 #ifdef NeedAllMesaSrc
- DISPATCHSRCS = $(MESABUILDDIR)dispatch.c
+/* DISPATCHSRCS = $(MESABUILDDIR)dispatch.c*/
+ DISPATCHSRCS =
     GLAPISRCS = $(MESABUILDDIR)glapi.c
  GLTHREADSRCS = $(MESABUILDDIR)glthread.c
 #endif
 
-MESA_CORE_INCLUDES = -I$(MESASRCDIR)/src/array_cache \
-                -I$(MESASRCDIR)/src/math -I$(MESASRCDIR)/src/shader \
+MESA_CORE_INCLUDES = -I$(MESASRCDIR)/src/math -I$(MESASRCDIR)/src/shader \
                 -I$(MESASRCDIR)/src/swrast -I$(MESASRCDIR)/src/swrast_setup \
                 -I$(MESASRCDIR)/src/tnl -I$(MESASRCDIR)/src/tnl_dd
 
@@ -20,6 +20,7 @@ COREMESABASESRCS = \
 		$(MESABUILDDIR)api_noop.c \
 		$(MESABUILDDIR)api_validate.c \
 		$(MESABUILDDIR)accum.c \
+		$(MESABUILDDIR)arrayob.c \
 		$(MESABUILDDIR)attrib.c \
 		$(MESABUILDDIR)blend.c \
 		$(MESABUILDDIR)bufferobj.c \
@@ -30,6 +31,7 @@ COREMESABASESRCS = \
 		$(MESABUILDDIR)convolve.c \
 		$(MESABUILDDIR)debug.c \
 		$(MESABUILDDIR)depth.c \
+		$(MESABUILDDIR)depthstencil.c \
 		$(MESABUILDDIR)dlist.c \
 		$(MESABUILDDIR)drawpix.c \
 		$(MESABUILDDIR)enable.c \
@@ -51,13 +53,15 @@ COREMESABASESRCS = \
 		$(MESABUILDDIR)light.c \
 		$(MESABUILDDIR)lines.c \
 		$(MESABUILDDIR)matrix.c \
+		$(MESABUILDDIR)mipmap.c \
 		$(MESABUILDDIR)mm.c \
-		$(MESABUILDDIR)occlude.c \
+		$(MESABUILDDIR)queryobj.c \
 		$(MESABUILDDIR)pixel.c \
 		$(MESABUILDDIR)points.c \
 		$(MESABUILDDIR)polygon.c \
 		$(MESABUILDDIR)rastpos.c \
                 $(MESABUILDDIR)renderbuffer.c \
+		$(MESABUILDDIR)shaders.c \
 		$(MESABUILDDIR)state.c \
 		$(MESABUILDDIR)stencil.c \
 		$(MESABUILDDIR)texcompress.c \
@@ -83,6 +87,8 @@ LinkSourceFile(api_noop.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(api_noop.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(api_validate.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(api_validate.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(arrayobj.c, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(arrayobj.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(accum.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(accum.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(attrib.c, $(MESASRCDIR)/src/mesa/main)
@@ -107,10 +113,14 @@ LinkSourceFile(dd.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(debug.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(debug.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(depth.c, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(depthstencil.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(depthstencil.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(depth.h, $(MESASRCDIR)/src/mesa/main)
+/*
 #ifdef NeedAllMesaSrc
 LinkSourceFile(dispatch.c, $(MESASRCDIR)/src/mesa/main)
 #endif
+*/
 LinkSourceFile(dlist.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(dlist.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(drawpix.c, $(MESASRCDIR)/src/mesa/main)
@@ -157,11 +167,13 @@ LinkSourceFile(lines.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(macros.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(matrix.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(matrix.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(mipmap.c, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(mipmap.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(mm.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(mm.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(mtypes.h, $(MESASRCDIR)/src/mesa/main)
-LinkSourceFile(occlude.c, $(MESASRCDIR)/src/mesa/main)
-LinkSourceFile(occlude.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(queryobj.c, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(queryobj.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(pixel.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(pixel.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(points.c, $(MESASRCDIR)/src/mesa/main)
@@ -175,6 +187,8 @@ LinkSourceFile(renderbuffer.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(simple_list.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(state.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(state.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(shaders.c, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(shaders.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(stencil.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(stencil.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(texcompress.c, $(MESASRCDIR)/src/mesa/main)
@@ -205,7 +219,8 @@ LinkSourceFile(vtxfmt_tmp.h, $(MESASRCDIR)/src/mesa/main)
 #endif
 
 #ifdef NeedAllMesaSrc
- DISPATCHOBJS = $(MESABUILDDIR)dispatch.o
+/* DISPATCHOBJS = $(MESABUILDDIR)dispatch.o*/
+ DISPATCHOBJS =
     GLAPIOBJS = $(MESABUILDDIR)glapi.o
  GLTHREADOBJS = $(MESABUILDDIR)glthread.o
 #endif
@@ -219,6 +234,7 @@ COREMESABASEOBJS = \
 		$(MESABUILDDIR)api_noop.o \
 		$(MESABUILDDIR)api_validate.o \
 		$(MESABUILDDIR)accum.o \
+		$(MESABUILDDIR)arrayobj.o\
 		$(MESABUILDDIR)attrib.o \
 		$(MESABUILDDIR)blend.o \
 		$(MESABUILDDIR)bufferobj.o \
@@ -229,6 +245,7 @@ COREMESABASEOBJS = \
 		$(MESABUILDDIR)convolve.o \
 		$(MESABUILDDIR)debug.o \
 		$(MESABUILDDIR)depth.o \
+		$(MESABUILDDIR)depthstencil.o \
 		$(MESABUILDDIR)dlist.o \
 		$(MESABUILDDIR)drawpix.o \
 		$(MESABUILDDIR)enable.o \
@@ -250,13 +267,15 @@ COREMESABASEOBJS = \
 		$(MESABUILDDIR)light.o \
 		$(MESABUILDDIR)lines.o \
 		$(MESABUILDDIR)matrix.o \
+		$(MESABUILDDIR)mipmap.o \
 		$(MESABUILDDIR)mm.o \
-		$(MESABUILDDIR)occlude.o \
+		$(MESABUILDDIR)queryobj.o \
 		$(MESABUILDDIR)pixel.o \
 		$(MESABUILDDIR)points.o \
 		$(MESABUILDDIR)polygon.o \
 		$(MESABUILDDIR)rastpos.o \
                 $(MESABUILDDIR)renderbuffer.o \
+		$(MESABUILDDIR)shaders.o \
 		$(MESABUILDDIR)state.o \
 		$(MESABUILDDIR)stencil.o \
 		$(MESABUILDDIR)texcompress.o \
@@ -273,7 +292,8 @@ COREMESABASEOBJS = \
 		$(MESABUILDDIR)vtxfmt.o
 
 #ifdef NeedAllMesaSrc
- DISPATCHUOBJS = $(MESABUILDDIR)unshared/dispatch.o
+/* DISPATCHUOBJS = $(MESABUILDDIR)unshared/dispatch.o*/
+ DISPATCHUOBJS =
     GLAPIUOBJS = $(MESABUILDDIR)unshared/glapi.o
  GLTHREADUOBJS = $(MESABUILDDIR)unshared/glthread.o
 #endif
@@ -288,6 +308,7 @@ COREMESABASEUOBJS = \
 		$(MESABUILDDIR)unshared/api_noop.o \
 		$(MESABUILDDIR)unshared/api_validate.o \
 		$(MESABUILDDIR)unshared/accum.o \
+		$(MESABUILDDIR)unshared/arrayobj.o \
 		$(MESABUILDDIR)unshared/attrib.o \
 		$(MESABUILDDIR)unshared/blend.o \
 		$(MESABUILDDIR)unshared/bufferobj.o \
@@ -298,6 +319,7 @@ COREMESABASEUOBJS = \
 		$(MESABUILDDIR)unshared/convolve.o \
 		$(MESABUILDDIR)unshared/debug.o \
 		$(MESABUILDDIR)unshared/depth.o \
+		$(MESABUILDDIR)unshared/depthstencil.o \
 		$(MESABUILDDIR)unshared/dlist.o \
 		$(MESABUILDDIR)unshared/drawpix.o \
 		$(MESABUILDDIR)unshared/enable.o \
@@ -319,13 +341,15 @@ COREMESABASEUOBJS = \
 		$(MESABUILDDIR)unshared/light.o \
 		$(MESABUILDDIR)unshared/lines.o \
 		$(MESABUILDDIR)unshared/matrix.o \
+		$(MESABUILDDIR)unshared/mipmap.o \
 		$(MESABUILDDIR)unshared/mm.o \
-		$(MESABUILDDIR)unshared/occlude.o \
+		$(MESABUILDDIR)unshared/queryobj.o \
 		$(MESABUILDDIR)unshared/pixel.o \
 		$(MESABUILDDIR)unshared/points.o \
 		$(MESABUILDDIR)unshared/polygon.o \
 		$(MESABUILDDIR)unshared/rastpos.o \
                 $(MESABUILDDIR)unshared/renderbuffer.o \
+		$(MESABUILDDIR)unshared/shaders.o \
 		$(MESABUILDDIR)unshared/state.o \
 		$(MESABUILDDIR)unshared/stencil.o \
 		$(MESABUILDDIR)unshared/texcompress.o \
@@ -345,7 +369,8 @@ COREMESABASEUOBJS = $(COREMESABASEOBJS)
 #endif
 
 #ifdef NeedAllMesaSrc
- DISPATCHDOBJS = $(MESABUILDDIR)debugger/dispatch.o
+ /* DISPATCHDOBJS = $(MESABUILDDIR)debugger/dispatch.o*/
+ DISPATCHDOBJS =
     GLAPIDOBJS = $(MESABUILDDIR)debugger/glapi.o
  GLTHREADDOBJS = $(MESABUILDDIR)debugger/glthread.o
 #endif
@@ -359,6 +384,7 @@ COREMESABASEDOBJS = \
 		$(MESABUILDDIR)debugger/api_noop.o \
 		$(MESABUILDDIR)debugger/api_validate.o \
 		$(MESABUILDDIR)debugger/accum.o \
+		$(MESABUILDDIR)debugger/arrayobj.o \
 		$(MESABUILDDIR)debugger/attrib.o \
 		$(MESABUILDDIR)debugger/blend.o \
 		$(MESABUILDDIR)debugger/bufferobj.o \
@@ -369,6 +395,7 @@ COREMESABASEDOBJS = \
 		$(MESABUILDDIR)debugger/convolve.o \
 		$(MESABUILDDIR)debugger/debug.o \
 		$(MESABUILDDIR)debugger/depth.o \
+		$(MESABUILDDIR)debugger/depthstencil.o \
 		$(MESABUILDDIR)debugger/dlist.o \
 		$(MESABUILDDIR)debugger/drawpix.o \
 		$(MESABUILDDIR)debugger/enable.o \
@@ -390,13 +417,15 @@ COREMESABASEDOBJS = \
 		$(MESABUILDDIR)debugger/light.o \
 		$(MESABUILDDIR)debugger/lines.o \
 		$(MESABUILDDIR)debugger/matrix.o \
+		$(MESABUILDDIR)debugger/mipmap.o \
 		$(MESABUILDDIR)debugger/mm.o \
-		$(MESABUILDDIR)debugger/occlude.o \
+		$(MESABUILDDIR)debugger/queryobj.o \
 		$(MESABUILDDIR)debugger/pixel.o \
 		$(MESABUILDDIR)debugger/points.o \
 		$(MESABUILDDIR)debugger/polygon.o \
 		$(MESABUILDDIR)debugger/rastpos.o \
                 $(MESABUILDDIR)debugger/renderbuffer.o \
+		$(MESABUILDDIR)debugger/shaders.o \
 		$(MESABUILDDIR)debugger/state.o \
 		$(MESABUILDDIR)debugger/stencil.o \
 		$(MESABUILDDIR)debugger/texcompress.o \
@@ -413,7 +442,8 @@ COREMESABASEDOBJS = \
 		$(MESABUILDDIR)debugger/vtxfmt.o
 
 #ifdef NeedAllMesaSrc
- DISPATCHPOBJS = $(MESABUILDDIR)profiled/dispatch.o
+/* DISPATCHPOBJS = $(MESABUILDDIR)profiled/dispatch.o*/
+  DISPATCHPOBJS =
     GLAPIPOBJS = $(MESABUILDDIR)profiled/glapi.o
  GLTHREADPOBJS = $(MESABUILDDIR)profiled/glthread.o
 #endif
@@ -427,6 +457,7 @@ COREMESABASEPOBJS = \
 		$(MESABUILDDIR)profiled/api_noop.o \
 		$(MESABUILDDIR)profiled/api_validate.o \
 		$(MESABUILDDIR)profiled/accum.o \
+		$(MESABUILDDIR)profiled/arrayobj.o \
 		$(MESABUILDDIR)profiled/attrib.o \
 		$(MESABUILDDIR)profiled/blend.o \
 		$(MESABUILDDIR)profiled/bufferobj.o \
@@ -437,6 +468,7 @@ COREMESABASEPOBJS = \
 		$(MESABUILDDIR)profiled/convolve.o \
 		$(MESABUILDDIR)profiled/debug.o \
 		$(MESABUILDDIR)profiled/depth.o \
+		$(MESABUILDDIR)profiled/depthstencil.o \
 		$(MESABUILDDIR)profiled/dlist.o \
 		$(MESABUILDDIR)profiled/drawpix.o \
 		$(MESABUILDDIR)profiled/enable.o \
@@ -458,13 +490,15 @@ COREMESABASEPOBJS = \
 		$(MESABUILDDIR)profiled/light.o \
 		$(MESABUILDDIR)profiled/lines.o \
 		$(MESABUILDDIR)profiled/matrix.o \
+		$(MESABUILDDIR)profiled/mipmap.o \
 		$(MESABUILDDIR)profiled/mm.o \
-		$(MESABUILDDIR)profiled/occlude.o \
+		$(MESABUILDDIR)profiled/queryobj.o \
 		$(MESABUILDDIR)profiled/pixel.o \
 		$(MESABUILDDIR)profiled/points.o \
 		$(MESABUILDDIR)profiled/polygon.o \
 		$(MESABUILDDIR)profiled/rastpos.o \
                 $(MESABUILDDIR)profiled/renderbuffer.o \
+		$(MESABUILDDIR)profiled/shaders.o \
 		$(MESABUILDDIR)profiled/state.o \
 		$(MESABUILDDIR)profiled/stencil.o \
 		$(MESABUILDDIR)profiled/texcompress.o \

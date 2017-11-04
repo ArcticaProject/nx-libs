@@ -1,6 +1,7 @@
 #ifndef _GLX_glxmd_h_
 #define _GLX_glxmd_h_
 
+/* $XFree86: xc/include/GL/glxmd.h,v 1.3 2001/03/21 15:51:38 dawes Exp $ */
 /*
 ** License Applicability. Except to the extent portions of this file are
 ** made subject to an alternative license as permitted in the SGI Free
