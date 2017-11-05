@@ -195,12 +195,21 @@ ProcXFixesSelectSelectionInput (ClientPtr client)
 {
     REQUEST (xXFixesSelectSelectionInputReq);
     WindowPtr	pWin;
+#ifndef NXAGENT_SERVER
+    int		rc;
+#endif
 
     REQUEST_SIZE_MATCH (xXFixesSelectSelectionInputReq);
+#ifndef NXAGENT_SERVER
+    rc = dixLookupWindow(&pWin, stuff->window, client, DixReadAccess);
+    if (rc != Success)
+        return rc;
+#else
     pWin = (WindowPtr)SecurityLookupWindow(stuff->window, client,
 					   DixReadAccess);
     if (!pWin)
         return(BadWindow);
+#endif
     if (stuff->eventMask & ~SelectionAllEvents)
     {
 	client->errorValue = stuff->eventMask;

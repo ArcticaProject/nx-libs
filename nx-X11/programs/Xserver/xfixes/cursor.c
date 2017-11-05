@@ -238,12 +238,21 @@ ProcXFixesSelectCursorInput (ClientPtr client)
 {
     REQUEST (xXFixesSelectCursorInputReq);
     WindowPtr	pWin;
+#ifndef NXAGENT_SERVER
+    int		rc;
+#endif
 
     REQUEST_SIZE_MATCH (xXFixesSelectCursorInputReq);
+#ifndef NXAGENT_SERVER
+    rc = dixLookupWindow(&pWin, stuff->window, client, DixReadAccess);
+    if (rc != Success)
+        return rc;
+#else
     pWin = (WindowPtr)SecurityLookupWindow(stuff->window, client,
 					   DixReadAccess);
     if (!pWin)
         return(BadWindow);
+#endif
     if (stuff->eventMask & ~CursorAllEvents)
     {
 	client->errorValue = stuff->eventMask;
