@@ -119,7 +119,8 @@ miFillPolyHelper (pDrawable, pGC, pixel, spanData, y, overall_height,
     	oldPixel = pGC->fgPixel;
     	if (pixel != oldPixel)
     	{
-    	    DoChangeGC (pGC, GCForeground, (XID *)&pixel, FALSE);
+	    XID tmpPixel = (XID)pixel;
+	    DoChangeGC (pGC, GCForeground, &tmpPixel, FALSE);
     	    ValidateGC (pDrawable, pGC);
     	}
     }
@@ -217,7 +218,8 @@ miFillRectPolyHelper (
     	oldPixel = pGC->fgPixel;
     	if (pixel != oldPixel)
     	{
-    	    DoChangeGC (pGC, GCForeground, (XID *)&pixel, FALSE);
+	    XID tmpPixel = (XID)pixel;
+	    DoChangeGC (pGC, GCForeground, &tmpPixel, FALSE);
     	    ValidateGC (pDrawable, pGC);
     	}
 	(*pGC->ops->PolyFillRect) (pDrawable, pGC, 1, &rect);
@@ -1068,7 +1070,8 @@ miLineArc (
     	oldPixel = pGC->fgPixel;
     	if (pixel != oldPixel)
     	{
-	    DoChangeGC(pGC, GCForeground, (XID *)&pixel, FALSE);
+	    XID tmpPixel = (XID)pixel;
+	    DoChangeGC(pGC, GCForeground, &tmpPixel, FALSE);
 	    ValidateGC (pDraw, pGC);
     	}
     }

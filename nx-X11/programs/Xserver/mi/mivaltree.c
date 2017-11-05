@@ -237,6 +237,18 @@ miComputeClips (
 	dy = 32767;
     borderSize.y2 = dy;
 
+#ifdef COMPOSITE
+    /*
+     * In redirected drawing case, reset universe to borderSize
+     */
+    if (pParent->redirectDraw)
+    {
+	if (miSetRedirectBorderClipProc)
+	    (*miSetRedirectBorderClipProc) (pParent, universe);
+	RegionCopy(universe, &pParent->borderSize);
+    }
+#endif
+
     oldVis = pParent->visibility;
     switch (RegionContainsRect(universe, &borderSize))
     {
@@ -275,18 +287,6 @@ miComputeClips (
     if (oldVis != newVis &&
 	((pParent->eventMask | wOtherEventMasks(pParent)) & VisibilityChangeMask))
 	SendVisibilityNotify(pParent);
-
-#ifdef COMPOSITE
-    /*
-     * In redirected drawing case, reset universe to borderSize
-     */
-    if (pParent->redirectDraw)
-    {
-	if (miSetRedirectBorderClipProc)
-	    (*miSetRedirectBorderClipProc) (pParent, universe);
-	RegionCopy(universe, &pParent->borderSize);
-    }
-#endif
 
     dx = pParent->drawable.x - pParent->valdata->before.oldAbsCorner.x;
     dy = pParent->drawable.y - pParent->valdata->before.oldAbsCorner.y;
