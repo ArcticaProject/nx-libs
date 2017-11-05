@@ -98,9 +98,13 @@ fbPadPixmap (PixmapPtr pPixmap)
     FbBits  mask;
     int	    height;
     int	    w;
+    int     stride;
+    int     bpp;
+    _X_UNUSED int     xOff, yOff;
+
+    fbGetDrawable (&pPixmap->drawable, bits, stride, bpp, xOff, yOff);
 
     width = pPixmap->drawable.width * pPixmap->drawable.bitsPerPixel;
-    bits = pPixmap->devPrivate.ptr;
     height = pPixmap->drawable.height;
     mask = FbBitsMask (0, width);
     while (height--)
@@ -112,7 +116,8 @@ fbPadPixmap (PixmapPtr pPixmap)
 	    b = b | FbScrRight(b, w);
 	    w <<= 1;
 	}
-	*bits++ = b;
+	*bits = b;
+	bits += stride;
     }
 }
 
