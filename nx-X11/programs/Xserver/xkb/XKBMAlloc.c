@@ -298,7 +298,7 @@ XkbClientMapPtr	map;
 	    }
 	}
     }
-    if ((!map)||(!map->types)||(!map->num_types<XkbNumRequiredTypes)) {
+    if ((!map)||(!map->types)||(!(map->num_types<XkbNumRequiredTypes))) {
 	tmp= XkbNumRequiredTypes+1;
 	if (XkbAllocClientMap(xkb,XkbKeyTypesMask,tmp)!=Success)
 	    return NULL;
