@@ -98,8 +98,8 @@ static void	    miSpriteComputeSaved(ScreenPtr pScreen);
   ((pScreen)->field = \
    ((miSpriteScreenPtr) (pScreen)->devPrivates[miSpriteScreenIndex].ptr)->field)
 
-#define SCREEN_EPILOGUE(pScreen, field, wrapper)\
-    ((pScreen)->field = wrapper)
+#define SCREEN_EPILOGUE(pScreen, field)\
+    ((pScreen)->field = miSprite##field)
 
 /*
  * void *-sprite method table
@@ -298,7 +298,7 @@ miSpriteGetImage (pDrawable, sx, sy, w, h, format, planemask, pdstLine)
     (*pScreen->GetImage) (pDrawable, sx, sy, w, h,
 			  format, planemask, pdstLine);
 
-    SCREEN_EPILOGUE (pScreen, GetImage, miSpriteGetImage);
+    SCREEN_EPILOGUE (pScreen, GetImage);
 }
 
 static void
@@ -344,7 +344,7 @@ miSpriteGetSpans (pDrawable, wMax, ppt, pwidth, nspans, pdstStart)
 
     (*pScreen->GetSpans) (pDrawable, wMax, ppt, pwidth, nspans, pdstStart);
 
-    SCREEN_EPILOGUE (pScreen, GetSpans, miSpriteGetSpans);
+    SCREEN_EPILOGUE (pScreen, GetSpans);
 }
 
 static void
@@ -370,7 +370,7 @@ miSpriteSourceValidate (pDrawable, x, y, width, height)
     if (pScreen->SourceValidate)
 	(*pScreen->SourceValidate) (pDrawable, x, y, width, height);
 
-    SCREEN_EPILOGUE (pScreen, SourceValidate, miSpriteSourceValidate);
+    SCREEN_EPILOGUE (pScreen, SourceValidate);
 }
 
 static void
@@ -393,7 +393,7 @@ miSpriteCopyWindow (WindowPtr pWindow, DDXPointRec ptOldOrg, RegionPtr prgnSrc)
     }
 
     (*pScreen->CopyWindow) (pWindow, ptOldOrg, prgnSrc);
-    SCREEN_EPILOGUE (pScreen, CopyWindow, miSpriteCopyWindow);
+    SCREEN_EPILOGUE (pScreen, CopyWindow);
 }
 
 static void
@@ -412,7 +412,7 @@ miSpriteBlockHandler (i, blockData, pTimeout, pReadmask)
     
     (*pScreen->BlockHandler) (i, blockData, pTimeout, pReadmask);
 
-    SCREEN_EPILOGUE(pScreen, BlockHandler, miSpriteBlockHandler);
+    SCREEN_EPILOGUE(pScreen, BlockHandler);
 
     if (!pPriv->isUp && pPriv->shouldBeUp)
     {
@@ -434,7 +434,7 @@ miSpriteInstallColormap (pMap)
     
     (*pScreen->InstallColormap) (pMap);
 
-    SCREEN_EPILOGUE(pScreen, InstallColormap, miSpriteInstallColormap);
+    SCREEN_EPILOGUE(pScreen, InstallColormap);
 
     pPriv->pInstalledMap = pMap;
     if (pPriv->pColormap != pMap)
@@ -463,7 +463,7 @@ miSpriteStoreColors (pMap, ndef, pdef)
     
     (*pScreen->StoreColors) (pMap, ndef, pdef);
 
-    SCREEN_EPILOGUE(pScreen, StoreColors, miSpriteStoreColors);
+    SCREEN_EPILOGUE(pScreen, StoreColors);
 
     if (pPriv->pColormap == pMap)
     {
@@ -592,7 +592,7 @@ miSpriteSaveDoomedAreas (pWin, pObscured, dx, dy)
 
     (*pScreen->SaveDoomedAreas) (pWin, pObscured, dx, dy);
 
-    SCREEN_EPILOGUE (pScreen, SaveDoomedAreas, miSpriteSaveDoomedAreas);
+    SCREEN_EPILOGUE (pScreen, SaveDoomedAreas);
 }
 
 /*
