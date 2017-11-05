@@ -111,8 +111,10 @@ SOFTWARE.
 /* MAXSELECT is the number of fds that select() can handle */
 #define MAXSELECT (sizeof(fd_set) * NBBY)
 
+#ifndef HAS_GETDTABLESIZE
 #if !defined(SVR4) && !defined(SYSV)
 #define HAS_GETDTABLESIZE
+#endif
 #endif
 
 #include <stddef.h>
