@@ -228,7 +228,7 @@ DbeFallbackAllocWinPriv(pScreen)
  *****************************************************************************/
 
 static int
-DbeAllocWinPrivPrivIndex()
+DbeAllocWinPrivPrivIndex(void)
 {
     return winPrivPrivCount++;
 
@@ -1812,7 +1812,7 @@ DbeDestroyWindow(pWin)
  *****************************************************************************/
 
 void
-DbeExtensionInit()
+DbeExtensionInit(void)
 {
     ExtensionEntry	*extEntry;
     register int	i, j;

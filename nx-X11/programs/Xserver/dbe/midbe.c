@@ -53,6 +53,7 @@
 #include "regionstr.h"
 #include "gcstruct.h"
 #include "inputstr.h"
+#include "midbe.h"
 
 #include <stdio.h>
 
@@ -780,6 +781,11 @@ miDbeResetProc(pScreen)
 
 } /* miDbeResetProc() */
 
+static void
+miDbeNopValidateBuffer(WindowPtr pWin, XID bufId, Bool dstbuffer)
+{
+}
+
 
 /******************************************************************************
  *
@@ -840,7 +846,7 @@ miDbeInit(pScreen, pDbeScreenPriv)
     pDbeScreenPriv->WinPrivDelete         = miDbeWinPrivDelete;
 
     /* The mi implementation doesn't need buffer validation. */
-    pDbeScreenPriv->ValidateBuffer	  = (void (*)())NoopDDA;
+    pDbeScreenPriv->ValidateBuffer	  = miDbeNopValidateBuffer;
 
     return(TRUE);
 
