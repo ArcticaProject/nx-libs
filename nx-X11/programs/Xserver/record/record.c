@@ -41,6 +41,7 @@ and Jim Haggerty of Metheus.
 #define _XRECORD_SERVER_
 #include <nx-X11/extensions/recordstr.h>
 #include "set.h"
+#include "swaprep.h"
 
 #include <stdio.h>
 #include <assert.h>
@@ -797,13 +798,13 @@ RecordADeliveredEventOrError(pcbl, nulldata, calldata)
 	    xEvent *pev = pei->events;
 	    for (ev = 0; ev < pei->count; ev++, pev++)
 	    {
-		int recordit;
-		if (pev->u.u.type == X_Error)
+		int recordit = 0;
+		if (pRCAP->pErrorSet)
 		{
 		    recordit = RecordIsMemberOfSet(pRCAP->pErrorSet,
 						((xError *)(pev))->errorCode);
 		}
-		else
+		else if (pRCAP->pDeliveredEventSet)
 		{
 		    recordit = RecordIsMemberOfSet(pRCAP->pDeliveredEventSet,
 						   pev->u.u.type & 0177);
@@ -2861,9 +2862,6 @@ SProcRecordDispatch(client)
     }
 } /* SProcRecordDispatch */
 
-/* XXX goes in header file */
-extern void SwapConnSetupInfo(), SwapConnSetupPrefix();
-
 /* RecordConnectionSetupInfo
  *
  * Arguments:
@@ -2889,8 +2887,8 @@ RecordConnectionSetupInfo(pContext, pci)
 	char * pConnSetup = (char *)malloc(prefixsize + restsize);
 	if (!pConnSetup)
 	    return;
-	SwapConnSetupPrefix(pci->prefix, pConnSetup);
-	SwapConnSetupInfo(pci->setup, pConnSetup + prefixsize);
+	SwapConnSetupPrefix(pci->prefix, (xConnSetupPrefix*)pConnSetup);
+	SwapConnSetupInfo((char *)pci->setup, (char *)(pConnSetup + prefixsize));
 	RecordAProtocolElement(pContext, pci->client, XRecordClientStarted,
 			       (void *)pConnSetup, prefixsize + restsize, 0);
 	free(pConnSetup);
@@ -3015,7 +3013,7 @@ RecordCloseDown(extEntry)
  *	Enables the RECORD extension if possible.
  */
 void 
-RecordExtensionInit()
+RecordExtensionInit(void)
 {
     ExtensionEntry *extentry;
 
