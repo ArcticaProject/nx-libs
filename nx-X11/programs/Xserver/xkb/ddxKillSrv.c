@@ -42,25 +42,11 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <xkbsrv.h>
 #include <nx-X11/extensions/XI.h>
 
-#ifdef XF86DDXACTIONS
-#include "xf86.h"
-#endif
-
 int
 XkbDDXTerminateServer(DeviceIntPtr dev,KeyCode key,XkbAction *act)
 {
-#ifdef NXAGENT_SERVER
-
-    return 0;
-
-#else
-
-#ifdef XF86DDXACTIONS
-    xf86ProcessActionEvent(ACTION_TERMINATE, NULL);
-#else
+#ifndef NXAGENT_SERVER
     GiveUp(1);
-#endif
-    return 0;
-
 #endif /* NXAGENT_SERVER */
+    return 0;
 }

@@ -26,8 +26,6 @@
 
 #ifdef HAVE_DIX_CONFIG_H
 #include <dix-config.h>
-#elif defined(HAVE_CONFIG_H)
-#include <config.h>
 #endif
 
 #include <stdio.h>
@@ -37,7 +35,6 @@
 #define X_INCLUDE_STRING_H
 #define XOS_USE_NO_LOCKING
 #include <nx-X11/Xos_r.h>
-
 
 #include <nx-X11/Xproto.h>
 #include <nx-X11/X.h>
@@ -51,7 +48,6 @@
 #include "xkbstr.h"
 #include <xkbsrv.h>
 
-
 #ifdef DEBUG
 #define PR_DEBUG(s)		fprintf(stderr,s)
 #define PR_DEBUG1(s,a)		fprintf(stderr,s,a)
@@ -60,6 +56,12 @@
 #define PR_DEBUG(s)
 #define PR_DEBUG1(s,a)
 #define PR_DEBUG2(s,a,b)
+#endif
+
+#ifdef NEED_STRCASECMP
+extern int _XkbStrCaseCmp(char *s1, char *s2);
+#else
+#define _XkbStrCaseCmp strcasecmp
 #endif
 
 /***====================================================================***/
@@ -1086,13 +1088,13 @@ int			len,headingtype,extra_ndx = 0;
     for ( ; GetInputLine(file,&line,False); line.num_line= 0) {
 	if (line.line[0]=='!') {
 	    tok = strtok(&(line.line[1]), " \t");
-	    if (!_XkbStrCaseCmp(tok,"model"))
+	    if (_XkbStrCaseCmp(tok,"model") == 0)
 		headingtype = HEAD_MODEL;
-	    else if (!_XkbStrCaseCmp(tok,"layout"))
+	    else if (_XkbStrCaseCmp(tok,"layout") == 0)
 		headingtype = HEAD_LAYOUT;
-	    else if (!_XkbStrCaseCmp(tok,"variant"))
+	    else if (_XkbStrCaseCmp(tok,"variant") == 0)
 		headingtype = HEAD_VARIANT;
-	    else if (!_XkbStrCaseCmp(tok,"option"))
+	    else if (_XkbStrCaseCmp(tok,"option") == 0)
 		headingtype = HEAD_OPTION;
 	    else {
 		int i;
@@ -1324,4 +1326,3 @@ XkbRF_GroupPtr	group;
 	_XkbFree(rules);
     return;
 }
-
