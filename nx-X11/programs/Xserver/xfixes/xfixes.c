@@ -1,6 +1,4 @@
 /*
- * $Id$
- *
  * Copyright © 2006 Sun Microsystems
  *
  * Permission to use, copy, modify, distribute, and sell this software and its
@@ -49,10 +47,10 @@
 #include "xfixesint.h"
 #include "protocol-versions.h"
 
-unsigned char	XFixesReqCode;
+static unsigned char	XFixesReqCode;
 int		XFixesEventBase;
 int		XFixesErrorBase;
-int		XFixesClientPrivateIndex;
+static int	XFixesClientPrivateIndex;
 
 static int
 ProcXFixesQueryVersion(ClientPtr client)
@@ -162,7 +160,7 @@ SProcXFixesQueryVersion(ClientPtr client)
     return (*ProcXFixesVector[stuff->xfixesReqType]) (client);
 }
 
-int	(*SProcXFixesVector[XFixesNumberRequests])(ClientPtr) = {
+static int (*SProcXFixesVector[XFixesNumberRequests])(ClientPtr) = {
 /*************** Version 1 ******************/
     SProcXFixesQueryVersion,
     SProcXFixesChangeSaveSet,
