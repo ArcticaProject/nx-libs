@@ -105,7 +105,9 @@ SOFTWARE.
 #include "xvdisp.h"
 #endif
 
-int  XvScreenIndex = -1;
+static DevPrivateKeyRec XvScreenKeyRec;
+
+#define XvScreenKey (&XvScreenKeyRec)
 unsigned long XvExtensionGeneration = 0;
 unsigned long XvScreenGeneration = 0;
 unsigned long XvResourceGeneration = 0;
@@ -166,7 +168,6 @@ XvExtensionInit()
 	  ErrorF("XvExtensionInit: Unable to allocate resource types\n");
 	  return;
 	}
-      XvScreenIndex = AllocateScreenPrivateIndex ();
       if (XvScreenIndex < 0)
 	{
 	  ErrorF("XvExtensionInit: Unable to allocate screen private index\n");
@@ -265,7 +266,6 @@ XvScreenInit(ScreenPtr pScreen)
 	  ErrorF("XvScreenInit: Unable to allocate resource types\n");
 	  return BadAlloc;
 	}
-      XvScreenIndex = AllocateScreenPrivateIndex ();
       if (XvScreenIndex < 0)
 	{
 	  ErrorF("XvScreenInit: Unable to allocate screen private index\n");
@@ -277,7 +277,7 @@ XvScreenInit(ScreenPtr pScreen)
       XvScreenGeneration = serverGeneration; 
     }
 
-  if (pScreen->devPrivates[XvScreenIndex].ptr)
+  if (dixLookupPrivate(&pScreen->devPrivates, XvScreenKey))
     {
       ErrorF("XvScreenInit: screen devPrivates ptr non-NULL before init\n");
     }
@@ -291,8 +291,7 @@ XvScreenInit(ScreenPtr pScreen)
       return BadAlloc;
     }
 
-  pScreen->devPrivates[XvScreenIndex].ptr = (void *)pxvs;
-
+  dixSetPrivate(&pScreen->devPrivates, XvScreenKey, pxvs);
   
   pxvs->DestroyPixmap = pScreen->DestroyPixmap;
   pxvs->DestroyWindow = pScreen->DestroyWindow;
@@ -312,17 +311,18 @@ XvCloseScreen(
 
   XvScreenPtr pxvs;
 
-  pxvs = (XvScreenPtr) pScreen->devPrivates[XvScreenIndex].ptr;
+  pxvs = (XvScreenPtr) dixLookupPrivate(&pScreen->devPrivates, XvScreenKey);
 
   pScreen->DestroyPixmap = pxvs->DestroyPixmap;
   pScreen->DestroyWindow = pxvs->DestroyWindow;
   pScreen->CloseScreen = pxvs->CloseScreen;
 
+  // FIXME: Backport X.org commit b01cfe5f23766b9c13ed6bd889263d5d7a8a351d
   (* pxvs->ddCloseScreen)(pScreen);
 
   free(pxvs);
 
-  pScreen->devPrivates[XvScreenIndex].ptr = (void *)NULL;
+  dixSetPrivate(&pScreen->devPrivates, XvScreenKey, NULL);
 
   return (*pScreen->CloseScreen)(pScreen);
 
@@ -333,10 +333,10 @@ XvResetProc(ExtensionEntry* extEntry)
 {
 }
 
-_X_EXPORT int
-XvGetScreenIndex()
+DevPrivateKey
+XvGetScreenKey(void)
 {
-  return XvScreenIndex;
+  return XvScreenKey;
 }
 
 _X_EXPORT unsigned long
@@ -360,7 +360,7 @@ XvDestroyPixmap(PixmapPtr pPix)
 
   SCREEN_PROLOGUE(pScreen, DestroyPixmap);
 
-  pxvs = (XvScreenPtr)pScreen->devPrivates[XvScreenIndex].ptr;
+  pxvs = (XvScreenPtr) dixLookupPrivate(&pScreen->devPrivates, XvScreenKey);
 
   /* CHECK TO SEE IF THIS PORT IS IN USE */
 
@@ -412,7 +412,7 @@ XvDestroyWindow(WindowPtr pWin)
 
   SCREEN_PROLOGUE(pScreen, DestroyWindow);
 
-  pxvs = (XvScreenPtr)pScreen->devPrivates[XvScreenIndex].ptr;
+  pxvs = (XvScreenPtr) dixLookupPrivate(&pScreen->devPrivates, XvScreenKey);
 
   /* CHECK TO SEE IF THIS PORT IS IN USE */
 

@@ -224,10 +224,8 @@ typedef struct {
   DevUnion devPriv;
 } XvScreenRec, *XvScreenPtr;
 
-#define SCREEN_PROLOGUE(pScreen, field)\
-  ((pScreen)->field = \
-   ((XvScreenPtr) \
-    (pScreen)->devPrivates[XvScreenIndex].ptr)->field)
+#define SCREEN_PROLOGUE(pScreen, field) ((pScreen)->field = ((XvScreenPtr) \
+    dixLookupPrivate(&(pScreen)->devPrivates, XvScreenKey))->field)
 
 #define SCREEN_EPILOGUE(pScreen, field, wrapper)\
     ((pScreen)->field = wrapper)

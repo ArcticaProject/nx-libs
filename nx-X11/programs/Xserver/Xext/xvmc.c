@@ -32,9 +32,9 @@
 #define DR_CLIENT_DRIVER_NAME_SIZE 48
 #define DR_BUSID_SIZE 48
 
-int XvMCScreenIndex = -1;
+static DevPrivateKeyRec XvMCScreenKeyRec;
 
-unsigned long XvMCGeneration = 0;
+#define XvMCScreenKey (&XvMCScreenKeyRec)
 
 int XvMCReqCode;
 int XvMCEventBase;
@@ -56,8 +56,7 @@ typedef struct {
 } XvMCScreenRec, *XvMCScreenPtr; 
 
 #define XVMC_GET_PRIVATE(pScreen) \
-   (XvMCScreenPtr)((pScreen)->devPrivates[XvMCScreenIndex].ptr)
-
+    (XvMCScreenPtr)(dixLookupPrivate(&(pScreen)->devPrivates, XvMCScreenKey))
 
 static int
 XvMCDestroyContextRes(void * data, XID id)
@@ -146,16 +145,19 @@ ProcXvMCListSurfaceTypes(ClientPtr client)
         return _XvBadPort;
     }
 
-    if(XvMCScreenIndex >= 0) { /* any adaptors at all */
-       ScreenPtr pScreen = pPort->pAdaptor->pScreen;
-       if((pScreenPriv = XVMC_GET_PRIVATE(pScreen))) {  /* any this screen */
-          for(i = 0; i < pScreenPriv->num_adaptors; i++) {
-             if(pPort->pAdaptor == pScreenPriv->adaptors[i].xv_adaptor) {
-               adaptor = &(pScreenPriv->adaptors[i]);
+    ScreenPtr pScreen = pPort->pAdaptor->pScreen;
+
+    if (!dixPrivateKeyRegistered(XvMCScreenKey))
+	return BadMatch;        /* No XvMC adaptors */
+
+    if(!(pScreenPriv = XVMC_GET_PRIVATE(pScreen)))
+	return BadMatch;	/* None this screen */
+
+    for(i = 0; i < pScreenPriv->num_adaptors; i++) {
+	if(pPort->pAdaptor == pScreenPriv->adaptors[i].xv_adaptor) {
+	       adaptor = &(pScreenPriv->adaptors[i]);
                break;
-             }
-          }
-       }
+	}
     }
 
     rep.type = X_Reply;
@@ -204,9 +206,6 @@ ProcXvMCCreateContext(ClientPtr client)
 
     pScreen = pPort->pAdaptor->pScreen;
 
-    if(XvMCScreenIndex < 0) /* no XvMC adaptors */
-       return BadMatch;
- 
     if(!(pScreenPriv = XVMC_GET_PRIVATE(pScreen))) /* none this screen */
        return BadMatch;
 
@@ -487,8 +486,8 @@ ProcXvMCListSubpictureTypes(ClientPtr client)
 
     pScreen = pPort->pAdaptor->pScreen;
 
-    if(XvMCScreenIndex < 0) /* No XvMC adaptors */
-        return BadMatch;
+    if (!dixPrivateKeyRegistered(XvMCScreenKey))
+	return BadMatch;        /* No XvMC adaptors */
 
     if(!(pScreenPriv = XVMC_GET_PRIVATE(pScreen)))
         return BadMatch;   /* None this screen */
@@ -672,8 +671,8 @@ XvMCExtensionInit()
 {
    ExtensionEntry *extEntry;
 
-   if(XvMCScreenIndex < 0) /* nobody supports it */
-	return; 
+   if (!dixPrivateKeyRegistered(XvMCScreenKey))
+	return;
 
    if(!(XvMCRTContext = CreateNewResourceType(XvMCDestroyContextRes)))
 	return;
@@ -713,17 +712,13 @@ XvMCScreenInit(ScreenPtr pScreen, int num, XvMCAdaptorPtr pAdapt)
 {
    XvMCScreenPtr pScreenPriv;
 
-   if(XvMCGeneration != serverGeneration) {
-	if((XvMCScreenIndex = AllocateScreenPrivateIndex()) < 0)
-	   return BadAlloc;
-
-	XvMCGeneration = serverGeneration;
-   }
+   if (!dixRegisterPrivateKey(&XvMCScreenKeyRec, PRIVATE_SCREEN, 0))
+	return BadAlloc;
 
    if(!(pScreenPriv = (XvMCScreenPtr)malloc(sizeof(XvMCScreenRec))))
 	return BadAlloc;
 
-   pScreen->devPrivates[XvMCScreenIndex].ptr = (void *)pScreenPriv;
+   dixSetPrivate(&pScreen->devPrivates, XvMCScreenKey, pScreenPriv);
 
    pScreenPriv->CloseScreen = pScreen->CloseScreen;
    pScreen->CloseScreen = XvMCCloseScreen;
@@ -747,7 +742,8 @@ XvImagePtr XvMCFindXvImage(XvPortPtr pPort, CARD32 id)
     XvMCAdaptorPtr adaptor = NULL;
     int i;
 
-    if(XvMCScreenIndex < 0) return NULL;
+    if (!dixPrivateKeyRegistered(XvMCScreenKey))
+	return NULL;
 
     if(!(pScreenPriv = XVMC_GET_PRIVATE(pScreen))) 
         return NULL;

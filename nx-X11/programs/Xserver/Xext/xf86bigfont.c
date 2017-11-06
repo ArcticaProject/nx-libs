@@ -193,7 +193,6 @@ XFree86BigfontExtensionInit()
 #ifdef HAS_XFONT2
 	FontShmdescIndex = xfont2_allocate_font_private_index();
 #else
-	FontShmdescIndex = AllocateFontPrivateIndex();
 #endif /* HAS_XFONT2 */
 
 #if !defined(CSRG_BASED) && !defined(__CYGWIN__)
