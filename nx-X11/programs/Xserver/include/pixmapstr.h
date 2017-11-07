@@ -51,6 +51,7 @@ SOFTWARE.
 #include "pixmap.h"
 #include "screenint.h"
 #include "regionstr.h"
+#include "privates.h"
 
 /*
  * The padN members are unfortunate ABI BC.  See fdo bug #6924.
@@ -82,12 +83,10 @@ typedef struct _Drawable {
 
 typedef struct _Pixmap {
     DrawableRec		drawable;
+    PrivateRec          *devPrivates;
     int			refcnt;
     int			devKind;
     DevUnion		devPrivate;
-#ifdef PIXPRIV
-    DevUnion		*devPrivates; /* real devPrivates like gcs & windows */
-#endif
 #ifdef COMPOSITE
     short		screen_x;
     short		screen_y;

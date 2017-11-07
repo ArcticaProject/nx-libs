@@ -50,6 +50,7 @@ SOFTWARE.
 
 #include "colormap.h"
 #include "screenint.h"
+#include "privates.h"
 
 /* Shared color -- the color is used by AllocColorPlanes */
 typedef struct
@@ -113,7 +114,7 @@ typedef struct _ColormapRec
     Entry 	*green;
     Entry	*blue;
     void *	devPriv;
-    DevUnion	*devPrivates;	/* dynamic devPrivates added after devPriv
+    PrivateRec	*devPrivates;	/* dynamic devPrivates added after devPriv
 				   already existed - must keep devPriv */
 } ColormapRec;
 	      

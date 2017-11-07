@@ -162,7 +162,7 @@ typedef struct _Window {
 #ifdef COMPOSITE
     unsigned		redirectDraw:2;	/* rendering is redirected from here */
 #endif
-    DevUnion		*devPrivates;
+    PrivateRec		*devPrivates;
 } WindowRec;
 
 /*

@@ -59,20 +59,10 @@ typedef xPoint DDXPointRec;
 typedef struct pixman_box16 BoxRec;
 
 typedef union _DevUnion {
-    void *		ptr;
-    long		val;
-    unsigned long	uval;
-    RegionPtr   	(*fptr)(
-        DrawablePtr         /* pSrcDrawable */,
-        DrawablePtr         /* pDstDrawable */,
-        GCPtr               /* pGC */,
-        int                 /* srcx */,
-        int                 /* srcy */,
-        int                 /* width */,
-        int                 /* height */,
-        int                 /* dstx */,
-        int                 /* dsty */,
-        unsigned long       /* bitPlane */);
+    void *ptr;
+    long val;
+    unsigned long uval;
+    void *(*fptr) (void);
 } DevUnion;
 
 #endif /* MISCSTRUCT_H */
