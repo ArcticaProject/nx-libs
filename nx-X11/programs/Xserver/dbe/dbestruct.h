@@ -38,14 +38,12 @@
 
 #include <nx-X11/extensions/Xdbeproto.h>
 #include "windowstr.h"
-
+#include "privates.h"
 
 /* DEFINES */
 
-#define DBE_SCREEN_PRIV(pScreen) \
-    ((dbeScreenPrivIndex < 0) ? \
-     NULL : \
-     ((DbeScreenPrivPtr)((pScreen)->devPrivates[dbeScreenPrivIndex].ptr)))
+#define DBE_SCREEN_PRIV(pScreen) ((DbeScreenPrivPtr) \
+    dixLookupPrivate(&(pScreen)->devPrivates, dbeScreenPrivKey))
 
 #define DBE_SCREEN_PRIV_FROM_DRAWABLE(pDrawable) \
     DBE_SCREEN_PRIV((pDrawable)->pScreen)
@@ -62,10 +60,8 @@
 #define DBE_SCREEN_PRIV_FROM_GC(pGC)\
     DBE_SCREEN_PRIV((pGC)->pScreen)
 
-#define DBE_WINDOW_PRIV(pWindow)\
-    ((dbeWindowPrivIndex < 0) ? \
-     NULL : \
-     ((DbeWindowPrivPtr)(pWindow->devPrivates[dbeWindowPrivIndex].ptr)))
+#define DBE_WINDOW_PRIV(pWin) ((DbeWindowPrivPtr) \
+    dixLookupPrivate(&(pWin)->devPrivates, dbeWindowPrivKey))
 
 /* Initial size of the buffer ID array in the window priv. */
 #define DBE_INIT_MAX_IDS	2
@@ -139,9 +135,23 @@ typedef struct _DbeWindowPrivRec
      */
     XID			initIDs[DBE_INIT_MAX_IDS];
 
+    /* Pointer to a drawable that contains the contents of the back buffer.
+     */
+    PixmapPtr pBackBuffer;
+
+    /* Pointer to a drawable that contains the contents of the front buffer.
+     * This pointer is only used for the XdbeUntouched swap action.  For that
+     * swap action, we need to copy the front buffer (window) contents into
+     * this drawable, copy the contents of current back buffer drawable (the
+     * back buffer) into the window, swap the front and back drawable pointers,
+     * and then swap the drawable/resource associations in the resource
+     * database.
+     */
+    PixmapPtr pFrontBuffer;
+
     /* Device-specific private information.
      */
-    DevUnion		*devPrivates;
+    PrivateRec		*devPrivates;
 
 } DbeWindowPrivRec, *DbeWindowPrivPtr;
 
@@ -164,8 +174,8 @@ typedef struct _DbeScreenPrivRec
     RESTYPE	dbeWindowPrivResType;
 
     /* Private indices created by DIX to be used by DDX */
-    int		dbeScreenPrivIndex;
-    int		dbeWindowPrivIndex;
+    DevPrivateKeyRec		dbeScreenPrivKeyRec;
+    DevPrivateKeyRec		dbeWindowPrivKeyRec;
 
     /* Wrapped functions
      * It is the responsibilty of the DDX layer to wrap PositionWindow().
@@ -182,7 +192,7 @@ typedef struct _DbeScreenPrivRec
     DbeWindowPrivPtr (*AllocWinPriv)(
 		ScreenPtr /*pScreen*/
 );
-    int		(*AllocWinPrivPrivIndex)(
+    DevPrivateKeyRec		(*AllocWinPrivPrivKeyRec)(
 		void
 );
     Bool	(*AllocWinPrivPriv)(
@@ -222,7 +232,7 @@ typedef struct _DbeScreenPrivRec
 
     /* Device-specific private information.
      */
-    DevUnion	*devPrivates;
+    PrivateRec	*devPrivates;
 
 } DbeScreenPrivRec, *DbeScreenPrivPtr;
 

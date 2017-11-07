@@ -43,5 +43,13 @@ extern Bool miDbeInit(
     DbeScreenPrivPtr    pDbeScreenPriv
 );
 
+extern DevPrivateKeyRec dbeScreenPrivKeyRec;
+
+#define dbeScreenPrivKey (&dbeScreenPrivKeyRec)
+
+extern DevPrivateKeyRec dbeWindowPrivKeyRec;
+
+#define dbeWindowPrivKey (&dbeWindowPrivKeyRec)
+
 #endif /* MIDBE_H */
 
