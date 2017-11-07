@@ -39,8 +39,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "xkb.h"
 #include <ctype.h>
 
-static unsigned int _xkbServerGeneration;
-static int xkbDevicePrivateIndex = -1;
+DevPrivateKeyRec xkbDevicePrivateKeyRec;
 
 static void
 xkbUnwrapProc(DeviceIntPtr device, DeviceHandleProc proc,
@@ -61,22 +60,8 @@ xkbUnwrapProc(DeviceIntPtr device, DeviceHandleProc proc,
 void
 XkbSetExtension(DeviceIntPtr device, ProcessInputProc proc)
 {
-    xkbDeviceInfoPtr xkbPrivPtr;
+    xkbDeviceInfoPtr xkbPrivPtr = XKBDEVICEINFO(device);
 
-    if (serverGeneration != _xkbServerGeneration) {
-	if ((xkbDevicePrivateIndex = AllocateDevicePrivateIndex()) == -1)
-	    return;
-	_xkbServerGeneration = serverGeneration;
-    }
-    if (!AllocateDevicePrivate(device, xkbDevicePrivateIndex))
-	return;
-
-    xkbPrivPtr = (xkbDeviceInfoPtr) malloc(sizeof(xkbDeviceInfoRec));
-    if (!xkbPrivPtr)
-	return;
-    xkbPrivPtr->unwrapProc = NULL;
-
-    device->devPrivates[xkbDevicePrivateIndex].ptr = xkbPrivPtr;
     WRAP_PROCESS_INPUT_PROC(device,xkbPrivPtr,
 			    proc,xkbUnwrapProc);
 }
