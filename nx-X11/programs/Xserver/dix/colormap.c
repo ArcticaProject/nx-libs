@@ -273,9 +273,24 @@ CreateColormap (Colormap mid, ScreenPtr pScreen, VisualPtr pVisual,
     if ((class | DynamicClass) == DirectColor)
 	sizebytes *= 3;
     sizebytes += sizeof(ColormapRec);
-    pmap = (ColormapPtr) malloc(sizebytes);
-    if (!pmap)
-	return (BadAlloc);
+
+    if (mid == pScreen->defColormap) {
+        pmap = malloc(sizebytes);
+        if (!pmap)
+            return BadAlloc;
+        if (!dixAllocatePrivates(&pmap->devPrivates, PRIVATE_COLORMAP)) {
+            free(pmap);
+            return BadAlloc;
+        }
+    }
+    else {
+        pmap = _dixAllocateObjectWithPrivates(sizebytes, sizebytes,
+                                              offsetof(ColormapRec,
+                                                       devPrivates),
+                                              PRIVATE_COLORMAP);
+        if (!pmap)
+            return BadAlloc;
+    }
     pmap->red = (EntryPtr)((char *)pmap + sizeof(ColormapRec));    
     sizebytes = size * sizeof(Entry);
     pmap->clientPixelsRed = (Pixel **)((char *)pmap->red + sizebytes);
@@ -378,31 +393,15 @@ CreateColormap (Colormap mid, ScreenPtr pScreen, VisualPtr pVisual,
 	    pmap->numPixelsBlue[client] = size;
 	}
     }
+
+    pmap->flags |= BeingCreated;
+
     if (!AddResource(mid, RT_COLORMAP, (void *)pmap))
 	return (BadAlloc);
+
     /* If the device wants a chance to initialize the colormap in any way,
      * this is it.  In specific, if this is a Static colormap, this is the
      * time to fill in the colormap's values */
-    pmap->flags |= BeingCreated;
-
-
-    /*
-     * Allocate the array of devPrivate's for this colormap.
-     */
-
-    if (colormapPrivateCount == 0)
-	pmap->devPrivates = NULL;
-    else
-    {
-	pmap->devPrivates = (DevUnion *) calloc (
-	    sizeof(DevUnion), colormapPrivateCount);
-	if (!pmap->devPrivates)
-	{
-	    FreeResource (mid, RT_NONE);
-	    return BadAlloc;
-	}
-    }
-
     if (!(*pScreen->CreateColormap)(pmap))
     {
 	FreeResource (mid, RT_NONE);
@@ -466,10 +465,14 @@ FreeColormap (void * value, XID mid)
         }
     }
 
-    if (pmap->devPrivates)
-	free(pmap->devPrivates);
-
-    free(pmap);
+    if (pmap->flags & IsDefault) {
+        dixFreePrivates(pmap->devPrivates, PRIVATE_COLORMAP);
+	free(pmap);
+    }
+    else
+    {
+        dixFreeObjectWithPrivates(pmap, PRIVATE_COLORMAP);
+    }
     return(Success);
 }
 

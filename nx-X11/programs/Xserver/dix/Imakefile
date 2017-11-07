@@ -123,6 +123,10 @@ VENDORRELEASE = XVendorRelease
 #endif
 #endif
 
+#if defined(NXAgentServer) && NXAgentServer
+    NX_DEFINES = -DNXAGENT_SERVER
+#endif
+
 SITE_DEFINES = $(SITE_FONT_PATH) $(SITE_DISPLAY_CLASS)
 
 VENDOR_DEFINES = $(VENDOR_STRING) $(VENDOR_RELEASE) $(QUARTZ_DEFINES)
@@ -135,7 +139,7 @@ NormalLintTarget($(SRCS) $(XPSRC))
 SpecialCObjectRule(globals,$(ICONFIGFILES),$(SITE_DEFINES) $(EXT_DEFINES))
 SpecialCObjectRule(main,$(ICONFIGFILES),$(VENDOR_DEFINES))
 SpecialCObjectRule(pixmap,$(ICONFIGFILES),$(_NOOP_))
-SpecialCObjectRule(privates,$(ICONFIGFILES),$(_NOOP_))
+SpecialCObjectRule(privates,$(ICONFIGFILES),$(NX_DEFINES))
 SpecialCObjectRule(window,$(ICONFIGFILES),$(QUARTZ_DEFINES))
 
 NormalLibraryTarget(xpstubs,$(XPOBJ))

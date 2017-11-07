@@ -557,67 +557,22 @@ DoChangeGC(register GC *pGC, register BITS32 mask, XID *pval, int fPointer)
 	return dixChangeGC(NullClient, pGC, mask, pval, NULL);
 }
 
-
-/* CreateGC(pDrawable, mask, pval, pStatus)
-   creates a default GC for the given drawable, using mask to fill
-   in any non-default values.
-   Returns a pointer to the new GC on success, NULL otherwise.
-   returns status of non-default fields in pStatus
-BUG:
-   should check for failure to create default tile
-
-*/
-
 static GCPtr
-AllocateGC(ScreenPtr pScreen)
+NewGCObject(ScreenPtr pScreen, int depth)
 {
     GCPtr pGC;
-    register char *ptr;
-    register DevUnion *ppriv;
-    register unsigned *sizes;
-    register unsigned size;
-    register int i;
 
-    pGC = (GCPtr)malloc(pScreen->totalGCSize);
-    if (pGC)
-    {
-	ppriv = (DevUnion *)(pGC + 1);
-	pGC->devPrivates = ppriv;
-	sizes = pScreen->GCPrivateSizes;
-	ptr = (char *)(ppriv + pScreen->GCPrivateLen);
-	for (i = pScreen->GCPrivateLen; --i >= 0; ppriv++, sizes++)
-	{
-	    if ( (size = *sizes) )
-	    {
-		ppriv->ptr = (void *)ptr;
-		ptr += size;
-	    }
-	    else
-		ppriv->ptr = (void *)NULL;
-	}
-    }
-    return pGC;
-}
-
-GCPtr
-CreateGC(DrawablePtr pDrawable, BITS32 mask, XID *pval, int *pStatus)
-{
-    register GCPtr pGC;
-
-    pGC = AllocateGC(pDrawable->pScreen);
-    if (!pGC)
-    {
-	*pStatus = BadAlloc;
-	return (GCPtr)NULL;
+    pGC = dixAllocateScreenObjectWithPrivates(pScreen, GC, PRIVATE_GC);
+    if (!pGC) {
+        return (GCPtr) NULL;
     }
 
-    pGC->pScreen = pDrawable->pScreen;
-    pGC->depth = pDrawable->depth;
+    pGC->pScreen = pScreen;
+    pGC->depth = depth;
     pGC->alu = GXcopy; /* dst <- src */
     pGC->planemask = ~0;
     pGC->serialNumber = GC_CHANGE_SERIAL_BIT;
     pGC->funcs = 0;
-
     pGC->fgPixel = 0;
     pGC->bgPixel = 1;
     pGC->lineWidth = 0;
@@ -627,21 +582,10 @@ CreateGC(DrawablePtr pDrawable, BITS32 mask, XID *pval, int *pStatus)
     pGC->fillStyle = FillSolid;
     pGC->fillRule = EvenOddRule;
     pGC->arcMode = ArcPieSlice;
-    if (mask & GCForeground)
-    {
-	/*
-	 * magic special case -- ChangeGC checks for this condition
-	 * and snags the Foreground value to create a pseudo default-tile
-	 */
-	pGC->tileIsPixel = FALSE;
-	pGC->tile.pixmap = NullPixmap;
-    }
-    else
-    {
-	pGC->tileIsPixel = TRUE;
-	pGC->tile.pixel = 0;
-    }
+    pGC->tile.pixel = 0;
+    pGC->tile.pixmap = NullPixmap;
 
+    pGC->tileIsPixel = TRUE;
     pGC->patOrg.x = 0;
     pGC->patOrg.y = 0;
     pGC->subWindowMode = ClipByChildren;
@@ -658,9 +602,37 @@ CreateGC(DrawablePtr pDrawable, BITS32 mask, XID *pval, int *pStatus)
 
     /* use the default font and stipple */
     pGC->font = defaultFont;
-    defaultFont->refcnt++;
+    if (pGC->font)              /* necessary, because open of default font could fail */
+        pGC->font->refcnt++;
+
     pGC->stipple = pGC->pScreen->PixmapPerDepth[0];
-    pGC->stipple->refcnt++;
+    if (pGC->stipple)
+        pGC->stipple->refcnt++;
+
+    return pGC;
+}
+
+/* CreateGC(pDrawable, mask, pval, pStatus)
+   creates a default GC for the given drawable, using mask to fill
+   in any non-default values.
+   Returns a pointer to the new GC on success, NULL otherwise.
+   returns status of non-default fields in pStatus
+BUG:
+   should check for failure to create default tile
+
+*/
+
+GCPtr
+CreateGC(DrawablePtr pDrawable, BITS32 mask, XID *pval, int *pStatus)
+{
+    register GCPtr pGC;
+
+    pGC = NewGCObject(pDrawable->pScreen, pDrawable->depth);
+    if (!pGC)
+    {
+	*pStatus = BadAlloc;
+	return (GCPtr)NULL;
+    }
 
     pGC->stateChanges = (1 << (GCLastBit+1)) - 1;
     if (!(*pGC->pScreen->CreateGC)(pGC))
@@ -936,43 +908,9 @@ CreateScratchGC(ScreenPtr pScreen, unsigned depth)
 {
     register GCPtr pGC;
 
-    pGC = AllocateGC(pScreen);
+    pGC = NewGCObject(pScreen, depth);
     if (!pGC)
 	return (GCPtr)NULL;
-
-    pGC->pScreen = pScreen;
-    pGC->depth = depth;
-    pGC->alu = GXcopy; /* dst <- src */
-    pGC->planemask = ~0;
-    pGC->serialNumber = 0;
-
-    pGC->fgPixel = 0;
-    pGC->bgPixel = 1;
-    pGC->lineWidth = 0;
-    pGC->lineStyle = LineSolid;
-    pGC->capStyle = CapButt;
-    pGC->joinStyle = JoinMiter;
-    pGC->fillStyle = FillSolid;
-    pGC->fillRule = EvenOddRule;
-    pGC->arcMode = ArcPieSlice;
-    pGC->font = defaultFont;
-    if ( pGC->font)  /* necessary, because open of default font could fail */
-	pGC->font->refcnt++;
-    pGC->tileIsPixel = TRUE;
-    pGC->tile.pixel = 0;
-    pGC->stipple = NullPixmap;
-    pGC->patOrg.x = 0;
-    pGC->patOrg.y = 0;
-    pGC->subWindowMode = ClipByChildren;
-    pGC->graphicsExposures = TRUE;
-    pGC->clipOrg.x = 0;
-    pGC->clipOrg.y = 0;
-    pGC->clientClipType = CT_NONE;
-    pGC->dashOffset = 0;
-    pGC->numInDashList = 2;
-    pGC->dash = DefaultDash;
-    pGC->lastWinOrg.x = 0;
-    pGC->lastWinOrg.y = 0;
 
     pGC->stateChanges = (1 << (GCLastBit+1)) - 1;
     if (!(*pScreen->CreateGC)(pGC))

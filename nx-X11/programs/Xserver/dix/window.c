@@ -350,41 +350,6 @@ MakeRootTile(WindowPtr pWin)
 }
 #endif /* NXAGENT_SERVER */
 
-WindowPtr
-AllocateWindow(ScreenPtr pScreen)
-{
-    WindowPtr pWin;
-    register char *ptr;
-    register DevUnion *ppriv;
-    register unsigned *sizes;
-    register unsigned size;
-    register int i;
-
-    pWin = (WindowPtr)malloc(pScreen->totalWindowSize);
-    if (pWin)
-    {
-	ppriv = (DevUnion *)(pWin + 1);
-	pWin->devPrivates = ppriv;
-	sizes = pScreen->WindowPrivateSizes;
-	ptr = (char *)(ppriv + pScreen->WindowPrivateLen);
-	for (i = pScreen->WindowPrivateLen; --i >= 0; ppriv++, sizes++)
-	{
-	    if ( (size = *sizes) )
-	    {
-		ppriv->ptr = (void *)ptr;
-		ptr += size;
-	    }
-	    else
-		ppriv->ptr = (void *)NULL;
-	}
-#if _XSERVER64
-	pWin->drawable.pad0 = 0;
-        pWin->drawable.pad1 = 0;
-#endif
-    }
-    return pWin;
-}
-
 /*****
  * CreateRootWindow
  *    Makes a window at initialization time for specified screen
@@ -397,7 +362,7 @@ CreateRootWindow(ScreenPtr pScreen)
     BoxRec	box;
     PixmapFormatRec *format;
 
-    pWin = AllocateWindow(pScreen);
+    pWin = (WindowPtr)malloc(sizeof(WindowRec));
     if (!pWin)
 	return FALSE;
 
@@ -684,7 +649,7 @@ CreateWindow(Window wid, register WindowPtr pParent, int x, int y, unsigned w,
 	return NullWindow;
     }
 
-    pWin = AllocateWindow(pScreen);
+    pWin = (WindowPtr)malloc(sizeof(WindowRec));
     if (!pWin)
     {
 	*error = BadAlloc;

@@ -105,4 +105,6 @@ extern PixmapPtr AllocatePixmap(
     ScreenPtr /*pScreen*/,
     int /*pixDataSize*/);
 
+extern void FreePixmap(PixmapPtr /*pPixmap */ );
+
 #endif /* PIXMAP_H */
