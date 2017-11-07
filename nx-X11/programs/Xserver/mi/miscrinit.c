@@ -270,8 +270,6 @@ miScreenInit(pScreen, pbits, xsize, ysize, dpix, dpiy, width,
     pScreen->wakeupData = (void *)0;
     pScreen->MarkWindow = miMarkWindow;
     pScreen->MarkOverlappedWindows = miMarkOverlappedWindows;
-    pScreen->ChangeSaveUnder = miChangeSaveUnder;
-    pScreen->PostChangeSaveUnder = miPostChangeSaveUnder;
     pScreen->MoveWindow = miMoveWindow;
     pScreen->ResizeWindow = miSlideAndSizeWindow;
     pScreen->GetLayerWindow = miGetLayerWindow;
@@ -296,27 +294,23 @@ miAllocateGCPrivateIndex()
 
     if (miGeneration != serverGeneration)
     {
-	privateIndex = AllocateGCPrivateIndex();
 	miGeneration = serverGeneration;
     }
     return privateIndex;
 }
 
-int miZeroLineScreenIndex;
-unsigned int miZeroLineGeneration = 0;
+DevPrivateKeyRec miZeroLineScreenKeyRec;
 
 void
 miSetZeroLineBias(pScreen, bias)
     ScreenPtr pScreen;
     unsigned int bias;
 {
-    if (miZeroLineGeneration != serverGeneration)
-    {
-	miZeroLineScreenIndex = AllocateScreenPrivateIndex();
-	miZeroLineGeneration = serverGeneration;
-    }
-    if (miZeroLineScreenIndex >= 0)
-	pScreen->devPrivates[miZeroLineScreenIndex].uval = bias;
+    if (!dixRegisterPrivateKey(&miZeroLineScreenKeyRec, PRIVATE_SCREEN, 0))
+        return;
+
+    dixSetPrivate(&pScreen->devPrivates, miZeroLineScreenKey,
+                  (unsigned long *) (unsigned long) bias);
 }
 
 PixmapPtr

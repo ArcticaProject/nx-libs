@@ -45,16 +45,44 @@ in this Software without prior written authorization from The Open Group.
 # include   "dixstruct.h"
 # include   <nx-X11/extensions/XI.h>
 
-int miPointerScreenIndex;
-static unsigned long miPointerGeneration = 0;
+#define MOTION_SIZE    256
 
-#define GetScreenPrivate(s) ((miPointerScreenPtr) ((s)->devPrivates[miPointerScreenIndex].ptr))
-#define SetupScreen(s)	miPointerScreenPtr  pScreenPriv = GetScreenPrivate(s)
+typedef struct {
+    xTimecoord     event;
+    ScreenPtr      pScreen;
+} miHistoryRec, *miHistoryPtr;
+
+typedef struct {
+    ScreenPtr pScreen;          /* current screen */
+    ScreenPtr pSpriteScreen;    /* screen containing current sprite */
+    CursorPtr pCursor;          /* current cursor */
+    CursorPtr pSpriteCursor;    /* cursor on screen */
+    BoxRec limits;              /* current constraints */
+    Bool confined;              /* pointer can't change screens */
+    int x, y;                   /* hot spot location */
+    int devx, devy;             /* sprite position */
+    DevicePtr pPointer;         /* pointer device structure */
+    miHistoryRec history[MOTION_SIZE];
+    int history_start, history_end;
+} miPointerRec, *miPointerPtr;
+
+DevPrivateKeyRec miPointerScreenKeyRec;
+
+#define GetScreenPrivate(s) ((miPointerScreenPtr) \
+    dixLookupPrivate(&(s)->devPrivates, miPointerScreenKey))
+#define SetupScreen(s)  miPointerScreenPtr  pScreenPriv = GetScreenPrivate(s)
+
+DevPrivateKeyRec miPointerPrivKeyRec;
+
+#define MIPOINTER(dev) \
+    (IsFloating(dev) ? \
+        (miPointerPtr)dixLookupPrivate(&(dev)->devPrivates, miPointerPrivKey): \
+        (miPointerPtr)dixLookupPrivate(&(GetMaster(dev, MASTER_POINTER))->devPrivates, miPointerPrivKey))
+>>>>>>> d70a1b1e3... mi: Backport latest devPrivates ABI from X.org.
 
 /*
  * until more than one pointer device exists.
  */
-
 static miPointerRec miPointer;
 
 static Bool miPointerRealizeCursor(ScreenPtr pScreen, CursorPtr pCursor);
@@ -78,13 +106,12 @@ miPointerInitialize (pScreen, spriteFuncs, screenFuncs, waitForUpdate)
 {
     miPointerScreenPtr	pScreenPriv;
 
-    if (miPointerGeneration != serverGeneration)
-    {
-	miPointerScreenIndex = AllocateScreenPrivateIndex();
-	if (miPointerScreenIndex < 0)
-	    return FALSE;
-	miPointerGeneration = serverGeneration;
-    }
+    if (!dixRegisterPrivateKey(&miPointerScreenKeyRec, PRIVATE_SCREEN, 0))
+        return FALSE;
+
+    if (!dixRegisterPrivateKey(&miPointerPrivKeyRec, PRIVATE_DEVICE, 0))
+        return FALSE;
+
     pScreenPriv = (miPointerScreenPtr) malloc (sizeof (miPointerScreenRec));
     if (!pScreenPriv)
 	return FALSE;
@@ -101,7 +128,7 @@ miPointerInitialize (pScreen, spriteFuncs, screenFuncs, waitForUpdate)
     pScreenPriv->showTransparent = FALSE;
     pScreenPriv->CloseScreen = pScreen->CloseScreen;
     pScreen->CloseScreen = miPointerCloseScreen;
-    pScreen->devPrivates[miPointerScreenIndex].ptr = (void *) pScreenPriv;
+    dixSetPrivate(&pScreen->devPrivates, miPointerScreenKey, pScreenPriv);
     /*
      * set up screen cursor method table
      */

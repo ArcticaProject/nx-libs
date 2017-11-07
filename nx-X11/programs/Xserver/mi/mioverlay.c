@@ -10,6 +10,7 @@
 #include "mi.h"
 #include "gcstruct.h"
 #include "regionstr.h"
+#include "privates.h"
 #include "mivalidate.h"
 #include "mioverlay.h"
 #include "migc.h"
@@ -53,9 +54,12 @@ typedef struct {
    Bool				copyUnderlay;
 } miOverlayScreenRec, *miOverlayScreenPtr;
 
-static unsigned long miOverlayGeneration = 0;
-int miOverlayWindowIndex = -1;
-int miOverlayScreenIndex = -1;
+static DevPrivateKeyRec miOverlayWindowKeyRec;
+
+#define miOverlayWindowKey (&miOverlayWindowKeyRec)
+static DevPrivateKeyRec miOverlayScreenKeyRec;
+
+#define miOverlayScreenKey (&miOverlayScreenKeyRec)
 
 static void RebuildTree(WindowPtr);
 static Bool HasUnderlayChildren(WindowPtr);
@@ -85,10 +89,10 @@ static void miOverlaySetShape(WindowPtr);
 #endif
 static void miOverlayChangeBorderWidth(WindowPtr, unsigned int);
 
-#define MIOVERLAY_GET_SCREEN_PRIVATE(pScreen) \
-	((miOverlayScreenPtr)((pScreen)->devPrivates[miOverlayScreenIndex].ptr))
-#define MIOVERLAY_GET_WINDOW_PRIVATE(pWin) \
-	((miOverlayWindowPtr)((pWin)->devPrivates[miOverlayWindowIndex].ptr))
+#define MIOVERLAY_GET_SCREEN_PRIVATE(pScreen) ((miOverlayScreenPtr) \
+       dixLookupPrivate(&(pScreen)->devPrivates, miOverlayScreenKey))
+#define MIOVERLAY_GET_WINDOW_PRIVATE(pWin) ((miOverlayWindowPtr) \
+       dixLookupPrivate(&(pWin)->devPrivates, miOverlayWindowKey))
 #define MIOVERLAY_GET_WINDOW_TREE(pWin) \
 	(MIOVERLAY_GET_WINDOW_PRIVATE(pWin)->tree)
 
@@ -112,22 +116,17 @@ miInitOverlay(
 
     if(!inOverlayFunc || !transFunc) return FALSE;
 
-    if(miOverlayGeneration != serverGeneration) {
-	if(((miOverlayScreenIndex = AllocateScreenPrivateIndex()) < 0) ||
-	   ((miOverlayWindowIndex = AllocateWindowPrivateIndex()) < 0))
-	    return FALSE;
-	
-	miOverlayGeneration = serverGeneration;
-    }
+    if (!dixRegisterPrivateKey
+        (&miOverlayWindowKeyRec, PRIVATE_WINDOW, sizeof(miOverlayWindowRec)))
+        return FALSE;
 
-    if(!AllocateWindowPrivate(pScreen, miOverlayWindowIndex,
-				sizeof(miOverlayWindowRec)))
-	return FALSE;
+    if (!dixRegisterPrivateKey(&miOverlayScreenKeyRec, PRIVATE_SCREEN, 0))
+        return FALSE;
 
     if(!(pScreenPriv = malloc(sizeof(miOverlayScreenRec))))
 	return FALSE;
 
-    pScreen->devPrivates[miOverlayScreenIndex].ptr = (void *)pScreenPriv;
+    dixSetPrivate(&pScreen->devPrivates, miOverlayScreenKey, pScreenPriv);
 
     pScreenPriv->InOverlay = inOverlayFunc;
     pScreenPriv->MakeTransparent = transFunc;

@@ -155,6 +155,12 @@ extern void _miRegisterPointerDevice(
     DeviceIntPtr /*pDevice*/
 );
 
-extern int miPointerScreenIndex;
+extern _X_EXPORT DevPrivateKeyRec miPointerPrivKeyRec;
+
+#define miPointerPrivKey (&miPointerPrivKeyRec)
+
+extern _X_EXPORT DevPrivateKeyRec miPointerScreenKeyRec;
+
+#define miPointerScreenKey (&miPointerScreenKeyRec)
 
 #endif /* MIPOINTER_H */
