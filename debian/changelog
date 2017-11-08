@@ -1,3 +1,9 @@
+nx-libs (2:3.5.0.34-0x2go1) UNRELEASED; urgency=medium
+
+  * Continue development
+
+ -- X2Go Release Manager <git-admin@x2go.org>  Wed, 08 Nov 2017 11:18:57 +0100
+
 nx-libs (2:3.5.0.33-0x2go1) unstable; urgency=low
 
   [ Mihai Moldovan ]
