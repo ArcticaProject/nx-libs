@@ -150,7 +150,7 @@
 1270_nx-X11_CVE-2017-2624-Use-timingsafe_memcmp-to-c.full.patch
 1300_nxcomp_Set-TokenSize-to-1536-for-lin.full+lite.patch
 1301_nxcomp_Reduce-TokenSize-slightly-for.full+lite.patch
-1400_nx-X11_Render.c-Improve-situation-fo.full+lite.patch
+1400_nx-X11_Render.c-Improve-situation-fo.full.patch
 1500_all_propagate-optflags-to-subcompone.full+lite.patch
 1600_nxcomp-handle-launchd-socket-in-Auth.full+lite.patch
 1610_nxcomp-harcode-some-UNIX-socket-path.full+lite.patch

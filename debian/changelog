@@ -69,6 +69,11 @@ nx-libs (2:3.5.0.33-0x2go1) unstable; urgency=low
     v2: backport to nx-libs 3.5.0.x (Mihai Moldovan)
     Adds:
       - debian/patches/1610_nxcomp-harcode-some-UNIX-socket-path.full+lite.patch
+  * Mid-release fixup:
+    - Rename
+      debian/patches/1400_nx-X11_Render.c-Improve-situation-fo.full+lite.patch
+      to
+      debian/patches/1400_nx-X11_Render.c-Improve-situation-fo.full.patch.
 
   [ Mike Gabriel ]
   * debian/libxinerama1.postinst.in:
