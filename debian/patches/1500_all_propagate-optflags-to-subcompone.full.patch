@@ -161,46 +161,6 @@ OPTFLAGS: Properly propagate build option flags to nxcomp{,ext,shad} and the nx-
          $(LIBCWRAPPER) $(NXAGENTLIBS) $(LOADABLEEXTS),$(NXAGENTSYSLIBS) $(NXAGENTNXLIBS))
  
  /*
---- a/nxcomp/Makefile.in
-+++ b/nxcomp/Makefile.in
-@@ -41,6 +41,8 @@ CXXFLAGS    = @CXXFLAGS@ @X_CFLAGS@ @DEF
- CXXINCLUDES =
- CXXDEFINES  =
- 
-+CPPFLAGS    = @CPPFLAGS@
-+
- #
- # C programs have their own CFLAGS.
- # 
-@@ -84,9 +86,9 @@ DEPENDINCLUDES = -I/usr/include/c++ -I/u
- .SUFFIXES: .cpp.c
- 
- .cpp.o:
--	$(CXX) -c $(CXXFLAGS) $(CXXINCLUDES) $(CXXDEFINES) $<
-+	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $(CXXINCLUDES) $(CXXDEFINES) $<
- .c.o:
--	$(CC) -c $(CCFLAGS) $(CCINCLUDES) $(CCDEFINES) $<
-+	$(CC) -c $(CPPFLAGS) $(CCFLAGS) $(CCINCLUDES) $(CCDEFINES) $<
- 
- LIBRARY = Xcomp
- 
---- a/nxcomp/configure.in
-+++ b/nxcomp/configure.in
-@@ -7,8 +7,12 @@ AC_PREREQ(2.13)
- 
- dnl Set our default compilation flags.
- 
--CXXFLAGS="$CXXFLAGS -O3 -fno-rtti -fno-exceptions"
--CFLAGS="$CFLAGS -O3"
-+if test "x$CXXFLAGS" = "x"; then
-+  CXXFLAGS="-O3 -fno-rtti -fno-exceptions"
-+fi
-+if test "x$CFLAGS" = "x"; then
-+  CFLAGS="$CFLAGS -O3"
-+fi
- 
- dnl Reset default linking directives.
- 
 --- a/nxcompext/Makefile.in
 +++ b/nxcompext/Makefile.in
 @@ -34,6 +34,8 @@ CXXFLAGS    = @CXXFLAGS@ @X_CFLAGS@ @DEF
@@ -291,21 +251,4 @@ OPTFLAGS: Properly propagate build option flags to nxcomp{,ext,shad} and the nx-
 +        CPPFLAGS="$CPPFLAGS -Wmissing-declarations"
          ;;
  esac
- 
---- a/nxproxy/configure.in
-+++ b/nxproxy/configure.in
-@@ -7,8 +7,12 @@ AC_PREREQ(2.13)
- 
- dnl Reset default compilation flags.
- 
--CXXFLAGS="$CXXFLAGS -O3"
--CPPFLAGS="$CPPFLAGS -O3"
-+if test "x$CXXFLAGS" == "x"; then
-+  CXXFLAGS="-O3"
-+fi
-+if test "x$CPPFLAGS" == "x"; then
-+  CPPFLAGS="-O3"
-+fi
- 
- dnl Prefer headers and libraries from nx-X11 if present.
  

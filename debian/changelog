@@ -74,6 +74,12 @@ nx-libs (2:3.5.0.33-0x2go1) unstable; urgency=low
       debian/patches/1400_nx-X11_Render.c-Improve-situation-fo.full+lite.patch
       to
       debian/patches/1400_nx-X11_Render.c-Improve-situation-fo.full.patch.
+    - Split up
+      debian/patches/1500_all_propagate-optflags-to-subcompone.full+lite.patch.
+      Put server changes into
+      debian/patches/1500_all_propagate-optflags-to-subcompone.full.patch
+      and keep client changes local to
+      debian/patches/1510_all_propagate-optflags-to-subcompone.full+lite.patch.
 
   [ Mike Gabriel ]
   * debian/libxinerama1.postinst.in:
