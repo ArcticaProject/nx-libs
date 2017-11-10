@@ -25,6 +25,8 @@
 #ifndef _PICTURE_H_
 #define _PICTURE_H_
 
+#include "privates.h"
+
 typedef struct _DirectFormat	*DirectFormatPtr;
 typedef struct _PictFormat	*PictFormatPtr;
 typedef struct _Picture		*PicturePtr;
@@ -169,7 +171,7 @@ extern int  PictureCmapPolicy;
 int	PictureParseCmapPolicy (const char *name);
 
 extern int	RenderErrBase;
-extern int	RenderClientPrivateIndex;
+extern DevPrivateKeyRec	RenderClientPrivateKeyRec;
 
 /* Fixed point updates from Carl Worth, USC, Information Sciences Institute */
 

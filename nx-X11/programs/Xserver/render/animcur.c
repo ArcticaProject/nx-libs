@@ -86,14 +86,15 @@ static CursorBits   animCursorBits = {
     empty, empty, 2, 1, 1, 0, 0, 1
 };
 
-int	AnimCurScreenPrivateIndex = -1;
-int	AnimCurGeneration;
+
+DevPrivateKeyRec	AnimCurScreenPrivateKeyRec;
+
+#define AnimCurScreenPrivateKey (&AnimCurScreenPrivateKeyRec)
 
 #define IsAnimCur(c)	    ((c)->bits == &animCursorBits)
 #define GetAnimCur(c)	    ((AnimCurPtr) ((c) + 1))
-#define GetAnimCurScreen(s) ((AnimCurScreenPtr) ((s)->devPrivates[AnimCurScreenPrivateIndex].ptr))
-#define GetAnimCurScreenIfSet(s) ((AnimCurScreenPrivateIndex != -1) ? GetAnimCurScreen(s) : NULL)
-#define SetAnimCurScreen(s,p) ((s)->devPrivates[AnimCurScreenPrivateIndex].ptr = (void *) (p))
+#define GetAnimCurScreen(s) ((AnimCurScreenPtr)dixLookupPrivate(&(s)->devPrivates, AnimCurScreenPrivateKey))
+#define SetAnimCurScreen(s,p) dixSetPrivate(&(s)->devPrivates, AnimCurScreenPrivateKey, p)
 
 #define Wrap(as,s,elt,func) (((as)->elt = (s)->elt), (s)->elt = func)
 #define Unwrap(as,s,elt)    ((s)->elt = (as)->elt)
@@ -127,8 +128,6 @@ AnimCurCloseScreen (ScreenPtr pScreen)
     SetAnimCurScreen(pScreen,0);
     ret = (*pScreen->CloseScreen) (pScreen);
     free (as);
-    if (screenInfo.numScreens <= 1)
-      AnimCurScreenPrivateIndex = -1;
     return ret;
 }
 
@@ -321,17 +320,9 @@ AnimCurInit (ScreenPtr pScreen)
 {
     AnimCurScreenPtr    as;
 
-    if (AnimCurGeneration != serverGeneration)
-    {
-	AnimCurScreenPrivateIndex = AllocateScreenPrivateIndex ();
-	if (AnimCurScreenPrivateIndex < 0)
-	    return FALSE;
-	AnimCurGeneration = serverGeneration;
-	animCurState.pCursor = 0;
-	animCurState.pScreen = 0;
-	animCurState.elt = 0;
-	animCurState.time = 0;
-    }
+    if (!dixRegisterPrivateKey(&AnimCurScreenPrivateKeyRec, PRIVATE_SCREEN, 0))
+	return FALSE;
+
     as = (AnimCurScreenPtr) malloc (sizeof (AnimCurScreenRec));
     if (!as)
 	return FALSE;
@@ -357,7 +348,7 @@ AnimCursorCreate (CursorPtr *cursors, CARD32 *deltas, int ncursor, CursorPtr *pp
     AnimCurPtr	ac;
 
     for (i = 0; i < screenInfo.numScreens; i++)
-	if (!GetAnimCurScreenIfSet (screenInfo.screens[i]))
+	if (!GetAnimCurScreen (screenInfo.screens[i]))
 	    return BadImplementation;
 
     for (i = 0; i < ncursor; i++)

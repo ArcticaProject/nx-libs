@@ -159,7 +159,7 @@ typedef struct _Picture {
 
     RegionPtr	    pCompositeClip;
 
-    DevUnion	    *devPrivates;
+    PrivateRec	    *devPrivates;
 
     PictTransform   *transform;
 
@@ -369,17 +369,21 @@ typedef struct _PictureScreen {
 
 } PictureScreenRec, *PictureScreenPtr;
 
-extern int		PictureScreenPrivateIndex;
-extern int		PictureWindowPrivateIndex;
+extern DevPrivateKeyRec		PictureScreenPrivateKeyRec;
+#define PictureScreenPrivateKey (&PictureScreenPrivateKeyRec)
+
+extern DevPrivateKeyRec		PictureWindowPrivateKeyRec;
+#define PictureWindowPrivateKey (&PictureWindowPrivateKeyRec)
+
 extern RESTYPE		PictureType;
 extern RESTYPE		PictFormatType;
 extern RESTYPE		GlyphSetType;
 
-#define GetPictureScreen(s) ((PictureScreenPtr) ((s)->devPrivates[PictureScreenPrivateIndex].ptr))
-#define GetPictureScreenIfSet(s) ((PictureScreenPrivateIndex != -1) ? GetPictureScreen(s) : NULL)
-#define SetPictureScreen(s,p) ((s)->devPrivates[PictureScreenPrivateIndex].ptr = (void *) (p))
-#define GetPictureWindow(w) ((PicturePtr) ((w)->devPrivates[PictureWindowPrivateIndex].ptr))
-#define SetPictureWindow(w,p) ((w)->devPrivates[PictureWindowPrivateIndex].ptr = (void *) (p))
+#define GetPictureScreen(s) ((PictureScreenPtr)dixLookupPrivate(&(s)->devPrivates, PictureScreenPrivateKey))
+#define GetPictureScreenIfSet(s) (dixPrivateKeyRegistered(PictureScreenPrivateKey) ? GetPictureScreen(s) : NULL)
+#define SetPictureScreen(s,p) dixSetPrivate(&(s)->devPrivates, PictureScreenPrivateKey, p)
+#define GetPictureWindow(w) ((PicturePtr)dixLookupPrivate(&(w)->devPrivates, PictureWindowPrivateKey))
+#define SetPictureWindow(w,p) dixSetPrivate(&(w)->devPrivates, PictureWindowPrivateKey, p)
 
 #define VERIFY_PICTURE(pPicture, pid, client, mode, err) {\
     pPicture = SecurityLookupIDByType(client, pid, PictureType, mode);\
@@ -396,15 +400,6 @@ extern RESTYPE		GlyphSetType;
 	VERIFY_PICTURE(pPicture, pid, client, mode, err); \
     } \
 } \
-
-void
-ResetPicturePrivateIndex (void);
-
-int
-AllocatePicturePrivateIndex (void);
-
-Bool
-AllocatePicturePrivate (ScreenPtr pScreen, int index2, unsigned int amount);
 
 Bool
 PictureDestroyWindow (WindowPtr pWindow);
@@ -495,7 +490,7 @@ int
 ChangePicture (PicturePtr	pPicture,
 	       Mask		vmask,
 	       XID		*vlist,
-	       DevUnion		*ulist,
+	       PrivateRec		*ulist,
 	       ClientPtr	client);
 
 int

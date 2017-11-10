@@ -43,64 +43,13 @@
 #include "picturestr.h"
 #endif
 
-int		PictureScreenPrivateIndex = -1;
-int		PictureWindowPrivateIndex;
-int		PictureGeneration;
+DevPrivateKeyRec PictureScreenPrivateKeyRec;
+DevPrivateKeyRec PictureWindowPrivateKeyRec;
+static int		PictureGeneration;
 RESTYPE		PictureType;
 RESTYPE		PictFormatType;
 RESTYPE		GlyphSetType;
 int		PictureCmapPolicy = PictureCmapPolicyDefault;
-
-/* Picture Private machinery */
-
-static int picturePrivateCount;
-
-void
-ResetPicturePrivateIndex (void)
-{
-    picturePrivateCount = 0;
-}
-
-int
-AllocatePicturePrivateIndex (void)
-{
-    return picturePrivateCount++;
-}
-
-Bool
-AllocatePicturePrivate (ScreenPtr pScreen, int index2, unsigned int amount)
-{
-    PictureScreenPtr	ps = GetPictureScreen(pScreen);
-    unsigned int	oldamount;
-
-    /* Round up sizes for proper alignment */
-    amount = ((amount + (sizeof(long) - 1)) / sizeof(long)) * sizeof(long);
-
-    if (index2 >= ps->PicturePrivateLen)
-    {
-	unsigned int *nsizes;
-
-	nsizes = (unsigned int *)realloc(ps->PicturePrivateSizes,
-					  (index2 + 1) * sizeof(unsigned int));
-	if (!nsizes)
-	    return FALSE;
-	while (ps->PicturePrivateLen <= index2)
-	{
-	    nsizes[ps->PicturePrivateLen++] = 0;
-	    ps->totalPictureSize += sizeof(DevUnion);
-	}
-	ps->PicturePrivateSizes = nsizes;
-    }
-    oldamount = ps->PicturePrivateSizes[index2];
-    if (amount > oldamount)
-    {
-	ps->PicturePrivateSizes[index2] = amount;
-	ps->totalPictureSize += (amount - oldamount);
-    }
-
-    return TRUE;
-}
-
 
 Bool
 PictureDestroyWindow (WindowPtr pWindow)
@@ -634,10 +583,8 @@ PictureInit (ScreenPtr pScreen, PictFormatPtr formats, int nformats)
 	GlyphSetType = CreateNewResourceType (FreeGlyphSet);
 	if (!GlyphSetType)
 	    return FALSE;
-	PictureScreenPrivateIndex = AllocateScreenPrivateIndex();
 	if (PictureScreenPrivateIndex < 0)
 	    return FALSE;
-	PictureWindowPrivateIndex = AllocateWindowPrivateIndex();
 	PictureGeneration = serverGeneration;
 #ifdef XResExtension
 	RegisterResourceName (PictureType, "PICTURE");
@@ -777,7 +724,7 @@ AllocatePicture (ScreenPtr  pScreen)
     PictureScreenPtr	ps = GetPictureScreen(pScreen);
     PicturePtr		pPicture;
     char		*ptr;
-    DevUnion		*ppriv;
+    PrivateRec		*ppriv;
     unsigned int    	*sizes;
     unsigned int    	size;
     int			i;
@@ -785,7 +732,7 @@ AllocatePicture (ScreenPtr  pScreen)
     pPicture = (PicturePtr) malloc (ps->totalPictureSize);
     if (!pPicture)
 	return 0;
-    ppriv = (DevUnion *)(pPicture + 1);
+    ppriv = (PrivateRec *)(pPicture + 1);
     pPicture->devPrivates = ppriv;
     sizes = ps->PicturePrivateSizes;
     ptr = (char *)(ppriv + ps->PicturePrivateLen);
@@ -1160,7 +1107,7 @@ int
 ChangePicture (PicturePtr	pPicture,
 	       Mask		vmask,
 	       XID		*vlist,
-	       DevUnion		*ulist,
+	       PrivateRec		*ulist,
 	       ClientPtr	client)
 {
     ScreenPtr pScreen = pPicture->pDrawable ? pPicture->pDrawable->pScreen : 0;
@@ -1630,9 +1577,9 @@ FreePicture (void *	value,
                 WindowPtr	pWindow = (WindowPtr) pPicture->pDrawable;
                 PicturePtr	*pPrev;
 
-                for (pPrev = (PicturePtr *) &((pWindow)->devPrivates[PictureWindowPrivateIndex].ptr);
-                     *pPrev;
-                     pPrev = &(*pPrev)->pNext)
+                for (pPrev = (PicturePtr *) dixLookupPrivateAddr
+                     (&pWindow->devPrivates, PictureWindowPrivateKey);
+                     *pPrev; pPrev = &(*pPrev)->pNext)
                 {
                     if (*pPrev == pPicture)
                     {

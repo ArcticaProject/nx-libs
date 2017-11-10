@@ -213,7 +213,7 @@ RenderResetProc (ExtensionEntry *extEntry);
 static CARD8	RenderReqCode;
 #endif
 int	RenderErrBase;
-int	RenderClientPrivateIndex;
+DevPrivateKeyRec	RenderClientPrivateKeyRec;
 
 typedef struct _RenderClient {
     int	    major_version;
@@ -244,8 +244,7 @@ RenderExtensionInit (void)
 	return;
     if (!PictureFinishInit ())
 	return;
-    RenderClientPrivateIndex = AllocateClientPrivateIndex ();
-    if (!AllocateClientPrivate (RenderClientPrivateIndex, 
+    if (!dixRegisterPrivateKey(dixRegisterPrivateKey(AllocateClientPrivate (RenderClientPrivateIndex,RenderClientPrivateKeyRec, PRIVATE_CLIENT,ClientClientPrivateKeyRec, PRIVATE_CLIENT,
 				sizeof (RenderClientRec)))
 	return;
     if (!AddCallback (&ClientStateCallback, RenderClientCallback, 0))
@@ -680,7 +679,7 @@ ProcRenderChangePicture (ClientPtr client)
 	return BadLength;
     
     return ChangePicture (pPicture, stuff->mask, (XID *) (stuff + 1),
-			  (DevUnion *) 0, client);
+			  (PrivateRec *) 0, client);
 }
 
 static int
