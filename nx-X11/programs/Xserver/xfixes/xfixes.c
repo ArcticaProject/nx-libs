@@ -50,7 +50,10 @@
 static unsigned char	XFixesReqCode;
 int		XFixesEventBase;
 int		XFixesErrorBase;
-static int	XFixesClientPrivateIndex;
+
+DevPrivateKeyRec		XFixesClientPrivateKeyRec;
+
+#define XFixesClientPrivateKey (&XFixesClientPrivateKeyRec)
 
 static int
 ProcXFixesQueryVersion(ClientPtr client)
@@ -232,10 +235,10 @@ XFixesExtensionInit(void)
 {
     ExtensionEntry *extEntry;
 
-    XFixesClientPrivateIndex = AllocateClientPrivateIndex ();
-    if (!AllocateClientPrivate (XFixesClientPrivateIndex, 
-				sizeof (XFixesClientRec)))
+    if (!dixRegisterPrivateKey
+	(&XFixesClientPrivateKeyRec, PRIVATE_CLIENT, sizeof(XFixesClientRec)))
 	return;
+
     if (!AddCallback (&ClientStateCallback, XFixesClientCallback, 0))
 	return;
 

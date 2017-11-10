@@ -58,14 +58,16 @@
 #include "selection.h"
 #include "xfixes.h"
 
-extern int		XFixesEventBase;
+extern unsigned char		XFixesReqCode;
+extern int			XFixesEventBase;
+extern DevPrivateKeyRec		XFixesClientPrivateKeyRec;
 
 typedef struct _XFixesClient {
     CARD32	major_version;
     CARD32	minor_version;
 } XFixesClientRec, *XFixesClientPtr;
 
-#define GetXFixesClient(pClient)    ((XFixesClientPtr) (pClient)->devPrivates[XFixesClientPrivateIndex].ptr)
+#define GetXFixesClient(pClient) ((XFixesClientPtr)dixLookupPrivate(&(pClient)->devPrivates, XFixesClientPrivateKey))
 
 extern int	(*ProcXFixesVector[XFixesNumberRequests])(ClientPtr);
 
