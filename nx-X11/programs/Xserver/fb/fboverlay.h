@@ -24,9 +24,9 @@
 #ifndef _FBOVERLAY_H_
 #define _FBOVERLAY_H_
 
-extern int	fbOverlayGeneration;
-extern int	fbOverlayScreenPrivateIndex; /* XXX should be static */
-extern int	fbOverlayGetScreenPrivateIndex(void);
+#include "privates.h"
+
+extern DevPrivateKey fbOverlayGetScreenPrivateKey(void);
 
 #ifndef FB_OVERLAY_MAX
 #define FB_OVERLAY_MAX	2
@@ -57,8 +57,8 @@ typedef struct _fbOverlayScrPriv {
 } FbOverlayScrPrivRec, *FbOverlayScrPrivPtr;
 
 #define fbOverlayGetScrPriv(s) \
-    ((fbOverlayGetScreenPrivateIndex() != -1) ? \
-     (s)->devPrivates[fbOverlayGetScreenPrivateIndex()].ptr : NULL)
+    dixLookupPrivate(&(s)->devPrivates, fbOverlayGetScreenPrivateKey())
+
 Bool
 fbOverlayCreateWindow(WindowPtr pWin);
 
