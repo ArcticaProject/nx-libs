@@ -507,7 +507,7 @@ start or resume a session in fullscreen mode (default: off)
 .TP 8
 .B keyboard=<string> or kbtype=<string>
 
-.BR query | clone | <model>/<layout>
+.BR query | clone | <model>/<layout> | rmlvo/<rules>#<model>#<layout>#<variant>#<options>
 
 .RS 8
 .TP 8
@@ -531,6 +531,13 @@ use the given model and layout. A value of \fInull/null\fR is equivalent to
 \fIclone\fR. You can not modify keyboard rules,
 variant or options. Instead preset values are used. These are
 \fIbase\fR for rules and empty strings for variant and options.
+.TP 8
+.I rmlvo/<rules>#<model>#<layout>#<variant>#<options>
+configure the keyboard according to the rmlvo
+(Rules+Model+Layout+Variant+Options) description given after the / and
+separated by #. This can be used to fully pass the keyboard
+configuration of \fBnxagent\fR right after the start. Example:
+rmlvo/base#pc105#de,us#nodeadkeys#lv3:rwin_switch
 .RE
 .TP 8
 

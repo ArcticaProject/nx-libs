@@ -958,18 +958,39 @@ XkbError:
             goto XkbError;
           }
 
-          update_string(&model, nxagentKeyboard, i);
-          update_string(&layout, &nxagentKeyboard[i + 1], 0);
-
+          /*
+            The original nxagent only supports model/layout values
+            here. It uses these values together with the default rules
+            and empty variant and options. We use a more or less
+            compatible hack here: The special keyword rlmvo for model
+            means that the layout part of the string will contain a
+            full RMLVO config, separated by #, e.g.
+            rlmvo/base#pc105#de,us#nodeadkeys#lv3:rwin_switch
+          */
+          if (strncmp(nxagentKeyboard, "rlmvo/", 6))
+          {
+            const char * sep = "#";
+            char * rmlvo = strdup(&nxagentKeyboard[i+1]);
+            char * tmp = rmlvo;
+            /* strtok cannot handle empty fields, so use strsep */
+            update_string(&rules,    strsep(&tmp, sep), 0);
+            update_string(&model,    strsep(&tmp, sep), 0);
+            update_string(&layout,   strsep(&tmp, sep), 0);
+            update_string(&variants, strsep(&tmp, sep), 0);
+            update_string(&options,  strsep(&tmp, sep), 0);
+            free(rmlvo);
+          }
+          else
+          {
+            update_string(&model, nxagentKeyboard, i);
+            update_string(&layout, &nxagentKeyboard[i + 1], 0);
+            update_string(&variants, XKB_DFLT_KB_VARIANT, 0);
+            update_string(&options, XKB_DFLT_KB_OPTIONS, 0);
+          }
           /*
            * There is no description for pc105 on Solaris.
            * Need to revert to the closest approximation.
            */
-
-          #ifdef TEST
-          fprintf(stderr, "nxagentKeyboardProc: Using keyboard model [%s] with layout [%s].\n",
-                      model, layout);
-          #endif
 
           #ifdef __sun
 
@@ -990,6 +1011,8 @@ XkbError:
         {
           update_string(&layout, XKB_DFLT_KB_LAYOUT, 0);
           update_string(&model, XKB_DFLT_KB_MODEL, 0);
+          update_string(&variants, XKB_DFLT_KB_VARIANT, 0);
+          update_string(&options, XKB_DFLT_KB_OPTIONS, 0);
 
           #ifdef TEST
           fprintf(stderr, "nxagentKeyboardProc: Using default keyboard: model [%s] layout [%s].\n",
@@ -997,8 +1020,11 @@ XkbError:
           #endif
         }
 
-        update_string(&variants, XKB_DFLT_KB_VARIANT, 0);
-        update_string(&options, XKB_DFLT_KB_OPTIONS, 0);
+        #ifdef TEST
+            fprintf(stderr, "nxagentKeyboardProc: Using keyboard rules [%s] model [%s] layout [%s] variant [%s] options [%s].\n",
+                    rules, model, layout, variants, options);
+        #endif
+
 
         #ifdef TEST
         fprintf(stderr, "nxagentKeyboardProc: XkbInitialMap (option -xkbmap) is [%s]\n", XkbInitialMap ? XkbInitialMap : "NULL");
