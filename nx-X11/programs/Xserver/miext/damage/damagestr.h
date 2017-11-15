@@ -79,12 +79,6 @@ typedef struct _damageGCPriv {
     GCFuncs *funcs;
 } DamageGCPrivRec, *DamageGCPrivPtr;
 
-extern DevPrivateKeyRec damageScrPrivateKeyRec;
-extern DevPrivateKeyRec damagePixPrivateKeyRec;
-extern DevPrivateKeyRec damageGCPrivateKeyRec;
-extern DevPrivateKeyRec damageWinPrivateKeyRec;
-
-/* XXX should move these into damage.c, damage<Xxx>PrivateKeyRec are static */
 #define damageGetScrPriv(pScr) ((DamageScrPrivPtr) \
     dixLookupPrivate(&(pScr)->devPrivates, damageScrPrivateKey))
 

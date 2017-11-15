@@ -206,21 +206,20 @@ int	(*SProcRenderVector[RenderNumberRequests])(ClientPtr) = {
     SProcRenderCreateConicalGradient
 };
 
-static void
-RenderResetProc (ExtensionEntry *extEntry);
-    
 #if 0
 static CARD8	RenderReqCode;
 #endif
 int	RenderErrBase;
-DevPrivateKeyRec	RenderClientPrivateKeyRec;
+static DevPrivateKeyRec	RenderClientPrivateKeyRec;
+
+#define RenderClientPrivateKey (&RenderClientPrivateKeyRec)
 
 typedef struct _RenderClient {
     int	    major_version;
     int	    minor_version;
 } RenderClientRec, *RenderClientPtr;
 
-#define GetRenderClient(pClient)    ((RenderClientPtr) (pClient)->devPrivates[RenderClientPrivateIndex].ptr)
+#define GetRenderClient(pClient) ((RenderClientPtr)dixLookupPrivate(&(pClient)->devPrivates, RenderClientPrivateKey))
 
 static void
 RenderClientCallback (CallbackListPtr	*list,
@@ -244,28 +243,21 @@ RenderExtensionInit (void)
 	return;
     if (!PictureFinishInit ())
 	return;
-    if (!dixRegisterPrivateKey(dixRegisterPrivateKey(AllocateClientPrivate (RenderClientPrivateIndex,RenderClientPrivateKeyRec, PRIVATE_CLIENT,ClientClientPrivateKeyRec, PRIVATE_CLIENT,
-				sizeof (RenderClientRec)))
+    if (!dixRegisterPrivateKey
+	(&RenderClientPrivateKeyRec, PRIVATE_CLIENT, sizeof(RenderClientRec)))
 	return;
     if (!AddCallback (&ClientStateCallback, RenderClientCallback, 0))
 	return;
 
     extEntry = AddExtension (RENDER_NAME, 0, RenderNumberErrors,
 			     ProcRenderDispatch, SProcRenderDispatch,
-			     RenderResetProc, StandardMinorOpcode);
+			     NULL, StandardMinorOpcode);
     if (!extEntry)
 	return;
 #if 0
     RenderReqCode = (CARD8) extEntry->base;
 #endif
     RenderErrBase = extEntry->errorBase;
-}
-
-static void
-RenderResetProc (ExtensionEntry *extEntry)
-{
-    ResetPicturePrivateIndex();
-    ResetGlyphSetPrivateIndex();
 }
 
 #ifndef NXAGENT_SERVER

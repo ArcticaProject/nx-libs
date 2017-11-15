@@ -90,6 +90,33 @@ static DevPrivateKeyRec damageWinPrivateKeyRec;
 
 #define damageWinPrivateKey (&damageWinPrivateKeyRec)
 
+#define damageGetScrPriv(pScr) ((DamageScrPrivPtr) \
+    dixLookupPrivate(&(pScr)->devPrivates, damageScrPrivateKey))
+
+#define damageScrPriv(pScr) \
+    DamageScrPrivPtr    pScrPriv = damageGetScrPriv(pScr)
+
+#define damageGetPixPriv(pPix) \
+    dixLookupPrivate(&(pPix)->devPrivates, damagePixPrivateKey)
+
+#define damgeSetPixPriv(pPix,v) \
+    dixSetPrivate(&(pPix)->devPrivates, damagePixPrivateKey, v)
+
+#define damagePixPriv(pPix) \
+    DamagePtr       pDamage = damageGetPixPriv(pPix)
+
+#define damageGetGCPriv(pGC) \
+    dixLookupPrivate(&(pGC)->devPrivates, damageGCPrivateKey)
+
+#define damageGCPriv(pGC) \
+    DamageGCPrivPtr  pGCPriv = damageGetGCPriv(pGC)
+
+#define damageGetWinPriv(pWin) \
+    ((DamagePtr)dixLookupPrivate(&(pWin)->devPrivates, damageWinPrivateKey))
+
+#define damageSetWinPriv(pWin,d) \
+    dixSetPrivate(&(pWin)->devPrivates, damageWinPrivateKey, d)
+
 static DamagePtr *
 getDrawableDamageRef (DrawablePtr pDrawable)
 {
@@ -1665,7 +1692,6 @@ GCOps damageGCOps = {
 #ifdef NEED_LINEHELPER
     NULL,
 #endif
-    {NULL}		/* devPrivate */
 };
 
 static void
@@ -1735,12 +1761,6 @@ damageCloseScreen (ScreenPtr pScreen)
     return (*pScreen->CloseScreen) (pScreen);
 }
 
-DevPrivateKeyRec damageScrPrivateKeyRec;
-DevPrivateKeyRec damagePixPrivateKeyRec;
-DevPrivateKeyRec damageGCPrivateKeyRec;
-DevPrivateKeyRec damageWinPrivateKeyRec;
-int damageGeneration;
-
 Bool
 DamageSetup (ScreenPtr pScreen)
 {
@@ -1764,9 +1784,6 @@ DamageSetup (ScreenPtr pScreen)
 
     if (!dixRegisterPrivateKey(&damageWinPrivateKeyRec, PRIVATE_WINDOW, 0))
 	return FALSE;
-
-    if (pScreen->devPrivates[damageScrPrivateIndex].ptr)
-	return TRUE;
 
     pScrPriv = (DamageScrPrivPtr) malloc (sizeof (DamageScrPrivRec));
     if (!pScrPriv)

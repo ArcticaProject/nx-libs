@@ -163,6 +163,9 @@ typedef struct _Window {
     unsigned		redirectDraw:2;	/* rendering is redirected from here */
 #endif
     PrivateRec		*devPrivates;
+#ifdef NXAGENT_SERVER
+    PrivateRec		*nxagentDevPrivates;
+#endif
 } WindowRec;
 
 /*

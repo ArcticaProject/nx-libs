@@ -31,6 +31,7 @@
 #include "Pixmaps.h"
 
 #include "validate.h"
+#include "privates.h"
 
 typedef struct
 {
@@ -82,9 +83,9 @@ typedef struct
 
   SplitResourcePtr splitResource;
 
-} nxagentPrivWindowRec;
+} nxagentPrivWindowRec, *nxagentPrivWindowPtr;
 
-typedef nxagentPrivWindowRec *nxagentPrivWindowPtr;
+extern DevPrivateKeyRec nxagentWindowPrivateKeyRec;
 
 typedef struct
 {
@@ -104,9 +105,10 @@ typedef StoringPixmapRec *StoringPixmapPtr;
 
 extern int nxagentWindowPrivateIndex;
 
-#define nxagentWindowPriv(pWin) \
-  ((nxagentPrivWindowPtr)((pWin)->devPrivates[nxagentWindowPrivateIndex].ptr))
+#define nxagentWindowPrivateKey (&nxagentWindowPrivateKeyRec)
 
+#define nxagentWindowPriv(pWin) ((nxagentPrivWindowPtr) \
+                                 dixLookupPrivate(&(pWin)->nxagentDevPrivates, nxagentWindowPrivateKey))
 #define nxagentWindow(pWin) (nxagentWindowPriv(pWin)->window)
 
 /*

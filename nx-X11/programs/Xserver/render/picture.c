@@ -87,8 +87,6 @@ PictureCloseScreen (ScreenPtr pScreen)
 	if (ps->formats[n].type == PictTypeIndexed)
 	    (*ps->CloseIndexed) (pScreen, &ps->formats[n]);
     SetPictureScreen(pScreen, 0);
-    if (ps->PicturePrivateSizes)
-	free (ps->PicturePrivateSizes);
     free (ps->formats);
     free (ps);
     return ret;
@@ -583,8 +581,6 @@ PictureInit (ScreenPtr pScreen, PictFormatPtr formats, int nformats)
 	GlyphSetType = CreateNewResourceType (FreeGlyphSet);
 	if (!GlyphSetType)
 	    return FALSE;
-	if (PictureScreenPrivateIndex < 0)
-	    return FALSE;
 	PictureGeneration = serverGeneration;
 #ifdef XResExtension
 	RegisterResourceName (PictureType, "PICTURE");
@@ -592,9 +588,12 @@ PictureInit (ScreenPtr pScreen, PictFormatPtr formats, int nformats)
 	RegisterResourceName (GlyphSetType, "GLYPHSET");
 #endif
     }
-    if (!AllocateWindowPrivate (pScreen, PictureWindowPrivateIndex, 0))
+    if (!dixRegisterPrivateKey(&PictureScreenPrivateKeyRec, PRIVATE_SCREEN, 0))
 	return FALSE;
-    
+
+    if (!dixRegisterPrivateKey(&PictureWindowPrivateKeyRec, PRIVATE_WINDOW, 0))
+	return FALSE;
+
     if (!formats)
     {
 	formats = PictureCreateDefaultFormats (pScreen, &nformats);
@@ -650,8 +649,6 @@ PictureInit (ScreenPtr pScreen, PictFormatPtr formats, int nformats)
     }
 
     ps->totalPictureSize = sizeof (PictureRec);
-    ps->PicturePrivateSizes = 0;
-    ps->PicturePrivateLen = 0;
     
     ps->formats = formats;
     ps->fallback = formats;
@@ -719,37 +716,6 @@ SetPictureToDefaults (PicturePtr    pPicture)
 
 #ifndef NXAGENT_SERVER
 PicturePtr
-AllocatePicture (ScreenPtr  pScreen)
-{
-    PictureScreenPtr	ps = GetPictureScreen(pScreen);
-    PicturePtr		pPicture;
-    char		*ptr;
-    PrivateRec		*ppriv;
-    unsigned int    	*sizes;
-    unsigned int    	size;
-    int			i;
-
-    pPicture = (PicturePtr) malloc (ps->totalPictureSize);
-    if (!pPicture)
-	return 0;
-    ppriv = (PrivateRec *)(pPicture + 1);
-    pPicture->devPrivates = ppriv;
-    sizes = ps->PicturePrivateSizes;
-    ptr = (char *)(ppriv + ps->PicturePrivateLen);
-    for (i = ps->PicturePrivateLen; --i >= 0; ppriv++, sizes++)
-    {
-	if ( (size = *sizes) )
-	{
-	    ppriv->ptr = (void *)ptr;
-	    ptr += size;
-	}
-	else
-	    ppriv->ptr = (void *)NULL;
-    }
-    return pPicture;
-}
-
-PicturePtr
 CreatePicture (Picture		pid,
 	       DrawablePtr	pDrawable,
 	       PictFormatPtr	pFormat,
@@ -761,7 +727,8 @@ CreatePicture (Picture		pid,
     PicturePtr		pPicture;
     PictureScreenPtr	ps = GetPictureScreen(pDrawable->pScreen);
 
-    pPicture = AllocatePicture (pDrawable->pScreen);
+    pPicture = dixAllocateScreenObjectWithPrivates(pDrawable->pScreen,
+                                                   PictureRec, PRIVATE_PICTURE);
     if (!pPicture)
     {
 	*error = BadAlloc;
@@ -925,7 +892,11 @@ static void initGradient(SourcePictPtr pGradient, int stopCount,
 static PicturePtr createSourcePicture(void)
 {
     PicturePtr pPicture;
-    pPicture = (PicturePtr) malloc(sizeof(PictureRec));
+    pPicture = dixAllocateScreenObjectWithPrivates(NULL, PictureRec,
+                                                   PRIVATE_PICTURE);
+    if (!pPicture)
+	return 0;
+
     pPicture->pDrawable = 0;
     pPicture->pFormat = 0;
     pPicture->pNext = 0;
@@ -1107,7 +1078,7 @@ int
 ChangePicture (PicturePtr	pPicture,
 	       Mask		vmask,
 	       XID		*vlist,
-	       PrivateRec		*ulist,
+	       DevUnion		*ulist,
 	       ClientPtr	client)
 {
     ScreenPtr pScreen = pPicture->pDrawable ? pPicture->pDrawable->pScreen : 0;
@@ -1593,7 +1564,7 @@ FreePicture (void *	value,
                 (*pScreen->DestroyPixmap) ((PixmapPtr)pPicture->pDrawable);
             }
         }
-	free (pPicture);
+	dixFreeObjectWithPrivates(pPicture, PRIVATE_PICTURE);
     }
     return Success;
 }

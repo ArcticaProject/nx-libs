@@ -74,7 +74,7 @@ RESTYPE RT_NX_GC;
 #undef  TEST
 #undef  DEBUG
 
-int nxagentGCPrivateIndex;
+DevPrivateKeyRec nxagentGCPrivateKeyRec;
 
 nxagentGraphicContextsPtr nxagentGraphicContexts;
 int nxagentGraphicContextsSize;
@@ -177,7 +177,7 @@ Bool nxagentCreateGC(GCPtr pGC)
   fprintf(stderr, "nxagentCreateGC: GC [%p]\n", (void *) pGC);
   #endif
 
-  pPriv = (pGC)->devPrivates[fbGCPrivateIndex].ptr;
+  pPriv = fbGetGCPrivate(pGC);
 
   fbGetRotatedPixmap(pGC) = 0;
   fbGetExpose(pGC) = 1;

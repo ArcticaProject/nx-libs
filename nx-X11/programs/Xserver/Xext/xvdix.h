@@ -240,7 +240,7 @@ extern int SProcXvDispatch(ClientPtr);
 
 extern void XvExtensionInit(void);
 extern int XvScreenInit(ScreenPtr);
-extern int XvGetScreenIndex(void);
+extern DevPrivateKey XvGetScreenKey(void);
 extern unsigned long XvGetRTPort(void);
 extern int XvdiSendPortNotify(XvPortPtr, Atom, INT32);
 extern int XvdiVideoStopped(XvPortPtr, int);

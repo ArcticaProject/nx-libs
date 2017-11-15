@@ -870,11 +870,6 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
               pScreen->myNum);
   #endif
 
-  if (nxagentRenderEnable && nxagentReconnectTrap == False)
-  {
-    PictureScreenPrivateIndex = -1;
-  }
-
   nxagentDefaultScreen = pScreen;
 
   nxagentQueryAtoms(pScreen);
@@ -1164,13 +1159,18 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
      * Initialize all our privates.
      */
 
-    if (AllocateWindowPrivate(pScreen, nxagentWindowPrivateIndex, sizeof(nxagentPrivWindowRec)) == 0 ||
-            AllocateGCPrivate(pScreen, nxagentGCPrivateIndex, sizeof(nxagentPrivGC)) == 0 ||
-                AllocateClientPrivate(nxagentClientPrivateIndex, sizeof(PrivClientRec)) == 0 ||
-                    AllocatePixmapPrivate(pScreen, nxagentPixmapPrivateIndex, sizeof(nxagentPrivPixmapRec)) == 0)
-    {
-      return False;
-    }
+    if (!dixRegisterPrivateKey
+        (&nxagentWindowPrivateKeyRec, PRIVATE_WINDOW, sizeof(nxagentPrivWindowRec)))
+        return FALSE;
+    if (!dixRegisterPrivateKey
+        (&nxagentGCPrivateKeyRec, PRIVATE_GC, sizeof(nxagentPrivGCRec)))
+        return FALSE;
+    if (!dixRegisterPrivateKey
+        (&nxagentClientPrivateKeyRec, PRIVATE_PIXMAP, sizeof(nxagentPrivClientRec)))
+        return FALSE;
+    if (!dixRegisterPrivateKey
+        (&nxagentPixmapPrivateKeyRec, PRIVATE_PIXMAP, sizeof(nxagentPrivPixmapRec)))
+        return FALSE;
 
     /*
      * Initialize the depths.

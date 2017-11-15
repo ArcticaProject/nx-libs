@@ -159,6 +159,9 @@ XvExtensionInit()
 {
   ExtensionEntry *extEntry;
 
+    if (!dixRegisterPrivateKey(&XvScreenKeyRec, PRIVATE_SCREEN, 0))
+	return;
+
   /* LOOK TO SEE IF ANY SCREENS WERE INITIALIZED; IF NOT THEN
      INIT GLOBAL VARIABLES SO THE EXTENSION CAN FUNCTION */
   if (XvScreenGeneration != serverGeneration)
@@ -166,11 +169,6 @@ XvExtensionInit()
       if (!CreateResourceTypes())
 	{
 	  ErrorF("XvExtensionInit: Unable to allocate resource types\n");
-	  return;
-	}
-      if (XvScreenIndex < 0)
-	{
-	  ErrorF("XvExtensionInit: Unable to allocate screen private index\n");
 	  return;
 	}
 #ifdef PANORAMIX
@@ -266,16 +264,14 @@ XvScreenInit(ScreenPtr pScreen)
 	  ErrorF("XvScreenInit: Unable to allocate resource types\n");
 	  return BadAlloc;
 	}
-      if (XvScreenIndex < 0)
-	{
-	  ErrorF("XvScreenInit: Unable to allocate screen private index\n");
-	  return BadAlloc;
-	}
 #ifdef PANORAMIX
         XineramaRegisterConnectionBlockCallback(XineramifyXv);
 #endif
       XvScreenGeneration = serverGeneration; 
     }
+
+  if (!dixRegisterPrivateKey(&XvScreenKeyRec, PRIVATE_SCREEN, 0))
+      return BadAlloc;
 
   if (dixLookupPrivate(&pScreen->devPrivates, XvScreenKey))
     {

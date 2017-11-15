@@ -366,7 +366,6 @@ typedef struct _PictureScreen {
     AddTrianglesProcPtr		AddTriangles;
 
     AddTrapsProcPtr		AddTraps;
-
 } PictureScreenRec, *PictureScreenPtr;
 
 extern DevPrivateKeyRec		PictureScreenPrivateKeyRec;
@@ -490,7 +489,7 @@ int
 ChangePicture (PicturePtr	pPicture,
 	       Mask		vmask,
 	       XID		*vlist,
-	       PrivateRec		*ulist,
+	       DevUnion		*ulist,
 	       ClientPtr	client);
 
 int
