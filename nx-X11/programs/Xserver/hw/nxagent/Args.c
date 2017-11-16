@@ -1538,42 +1538,144 @@ static void nxagentParseOptions(char *name, char *value)
   free(argv[0]);
 }
 
+/*
+ * Little helper function to handle quoted options. Quoting must
+ * enclose the whole value part of an option.
+ *
+ * string      the option string up to the first comma (will be modified!)
+ * fullstring  the full option string to the end (will not be modified)
+ *
+ * If the function finds it needs more characters it will take those
+ * from fullstring. It will return the position in fullstring after
+ * the comma following the current processed option
+ *
+ * Returns a pointer to the character in fullstring where the
+ * following option starts.
+ *
+ * If anything goes wrong it will print an error to stderr and return NULL.
+ */
+static char *processoption(char *string, char *fullstring)
+{
+  const char quotechars[] = "'\"|";
+
+  char *delimiter = NULL;
+  char *value = NULL;
+  char *realvalue = NULL;
+  char *next = fullstring + strlen(string);
+
+  if ((delimiter = strchr(string, '=')))
+  {
+    *delimiter = 0;
+    value = delimiter + 1;
+    for (int i = 0; i < sizeof(quotechars) - 1; i++)
+    {
+      if (*value == quotechars[i])
+      {
+        char *valstart = fullstring + (value - string) + 1;
+        if ((next = strchr(valstart, quotechars[i])))
+        {
+          next++; /* skip endchar */
+
+          /* only accept endchar if it is really at the end of the option */
+          if ((*next != ',') && (*next != '\0'))
+          {
+            fprintf(stderr, "unexpected character(s) after end of value for option '%s'\n",
+                    string);
+            next = NULL;
+          }
+          else
+          {
+            realvalue = strndup(valstart, next - 1 - valstart);
+          }
+        }
+        else
+        {
+          fprintf(stderr, "matching '%c' not found for option '%s'\n",
+                  quotechars[i], string);
+        }
+        break;
+      }
+    }
+  }
+
+  if (next)
+  {
+#ifdef DEBUG
+    fprintf(stderr, "%s: found option [%s] value [%s]\n",
+            __func__, string, realvalue ? realvalue : value);
+#endif
+    nxagentParseOptions(string, realvalue ? realvalue : value);
+  }
+  free(realvalue);
+  return next;
+}
+
+
 static void nxagentParseOptionString(char *string)
 {
-  char *value     = NULL;
-  char *option    = NULL;
   char *delimiter = NULL;
 
   /*
    * Remove the port specification.
    */
 
-  delimiter = rindex(string, ':');
-
-  if (delimiter)
+  if ((delimiter = strrchr(string, ':')))
   {
     *delimiter = 0;
   }
   else
   {
-    fprintf(stderr, "Warning: Option file doesn't contain a port specification.\n");
+    fprintf(stderr,
+            "Warning: Option file doesn't contain a port specification.\n");
   }
 
-  while ((option = strtok(option ? NULL : string, ",")))
-  {
-    delimiter = rindex(option, '=');
+  int len = strlen(string);
+  char *end = string + len;
+  char *current = string;
+  char *nextcomma = NULL;
 
-    if (delimiter)
+#ifdef TEST
+  printf("%s: option string: [%s]\n", __func__, string);
+#endif
+
+  while (current && current < end)
+  {
+    if ((nextcomma = strchr(current, ',')))
     {
-      *delimiter = 0;
-      value = delimiter + 1;
+      char *tmp = strndup(current, nextcomma - current);
+      current = processoption(tmp, current);
+      free(tmp);
+      if (current)
+      {
+        if (*current == '\0')
+        {
+          break;
+        }
+        else if (*current == ',')
+        {
+          /* skip the comma */
+          current++;
+        }
+        else
+        {
+          fprintf(stderr, "unexpected character '%c' at position %ld of options string\n",*current, (current - string));
+          current = NULL;
+        }
+      }
+      if (current == NULL)
+      {
+        FatalError("Error parsing options\n");
+      }
     }
     else
     {
-      value = NULL;
+      /* process the last option */
+      if (!(processoption(current, current)))
+      {
+        FatalError("Error parsing options\n");
+      }
+      break;
     }
-
-    nxagentParseOptions(option, value);
   }
 }
 
