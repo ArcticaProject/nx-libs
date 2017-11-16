@@ -103,7 +103,7 @@ described further below.
 
 Last but not least, \fBnxagent\fR accepts several more options, the
 so-called nx/nx options, provided via the $DISPLAY environment
-variable or the -options command line option. See below for further
+variable or the \fB-options\fR command line option. See below for further
 details.
 
 .SH STANDARD XSERVER OPTIONS
@@ -136,7 +136,7 @@ Audit lines are sent as standard error output.
 .TP 8
 .B \-auth \fIauthorization-file\fP
 specifies a file which contains a collection of authorization records used
-to authenticate access.  See also the \fIxdm\fP(1) and 
+to authenticate access.  See also the \fIxdm\fP(1) and
 \fIXsecurity\fP(__miscmansuffix__) manual pages.
 .TP 8
 .B bc
@@ -167,7 +167,7 @@ Not obeyed by all servers.
 reads more options from the given file.  Options in the file may be separated
 by newlines if desired.  If a '#' character appears on a line, all characters
 between it and the next newline are ignored, providing a simple commenting
-facility.  The \fB\-config\fP option itself may appear in the file.
+facility.  The \fB\-config\fR option itself may appear in the file.
 .BR NOTE :
 This option is disabled when the Xserver is run with an effective uid
 different from the user's real uid.
@@ -177,11 +177,12 @@ different from the user's real uid.
 causes the server to generate a core dump on fatal errors.
 .TP 8
 .B \-displayfd \fIfd\fP
-specifies a file descriptor in the launching process.  Rather than specifying
-a display number, the X server will attempt to listen on successively higher
-display numbers, and upon finding a free one, will write the port number back
-on this file descriptor as a newline-terminated string.  The \fB\-pn\fR option is
-ignored when using \fB\-displayfd\fR.
+specifies a file descriptor in the launching process.  Rather than
+specifying a display number, the X server will attempt to listen on
+successively higher display numbers, and upon finding a free one, will
+write the port number back on this file descriptor as a
+newline-terminated string.  The \fB\-pn\fR option is ignored when
+using \fB\-displayfd\fR.
 
 nxagent specific:
 
@@ -194,7 +195,7 @@ e.g.:
 
    \fBnxagent\fR \fI\-displayfd 2 :50\fR
 
-(2) If -displayfd <X> is given with <X> equaling 2 (STDERR), then the
+(2) If \fB\-displayfd\fR <X> is given with <X> equaling 2 (STDERR), then the
 display number string written to STDERR is beautified with some human-readable
 (machine-parseable) text.
 .TP 8
@@ -320,9 +321,10 @@ enables(+) or disables(-) XINERAMA provided via the PanoramiX extension. This is
 set to off by default.
 .TP 8
 .B [+-]rrxinerama
-enables(+) or disables(-) XINERAMA provided via the RandR extension. By
-default, this feature is enabled. To disable XINERAMA completely, make
-sure to use both options (-xinerama -rrxinerama) on the command line.
+enables(+) or disables(-) XINERAMA provided via the RandR
+extension. By default, this feature is enabled. To disable XINERAMA
+completely, make sure to use both options (\fB\-xinerama\fR and
+\fB\-rrxinerama\fR) on the command line.
 
 .SH SERVER DEPENDENT OPTIONS
 \fBnxagent\fR additionally accepts the following non-standard options:
@@ -335,7 +337,7 @@ There is currently no way to change this from a client.
 turns off the X Window System logo display in the screen-saver.
 There is currently no way to change this from a client.
 .TP 8
-.B \-render 
+.B \-render
 
 .BR default | mono | gray | color
 
@@ -344,12 +346,12 @@ sets the color allocation policy that will be used by the render extension.
 .TP 8
 .I default
 selects the default policy defined for the display depth of the X
-server. 
+server.
 .TP 8
 .I mono
-don't use any color cell. 
+don't use any color cell.
 .TP 8
-.I gray 
+.I gray
 use a gray map of 13 color cells for the X render extension.
 .TP 8
 .I color
@@ -367,16 +369,23 @@ milliseconds.
 The nx-X11 system adds the following command line arguments:
 .TP 8
 .B \-forcenx
-force use of NX protocol messages assuming communication through nxproxy
+force use of NX protocol messages assuming communication through \fBnxproxy\fR
 .TP 8
 .B \-nxrealwindowprop
-set property NX_REAL_WINDOW for each X11 client inside NX Agent, providing the window XID of the corresponding window object on the X server that NX Agent runs on
+set property NX_REAL_WINDOW for each X11 client inside \fBnxagent\fR,
+providing the window XID of the corresponding window object on the X
+server that \fBnxagent\fR runs on
 .TP 8
 .B \-reportwids
-explicitly tell NX Agent to report its externally exposed X11 window IDs to the session log (in machine readable form), so that external parsers can obtain that information from there
+explicitly tell \fBnxagent\fR to report its externally exposed X11 window
+IDs to the session log (in machine readable form), so that external
+parsers can obtain that information from there
 .TP 8
 .B \-reportprivatewids
-explicitly tell NX Agent to report X11 window IDs of internally created window objects to the session log (in machine readable form), so that external parsers can obtain that information from there; this creates a lot of output and may affect performance
+explicitly tell \fBnxagent\fR to report X11 window IDs of internally
+created window objects to the session log (in machine readable form),
+so that external parsers can obtain that information from there; this
+creates a lot of output and may affect performance
 .TP 8
 .B \-timeout \fIint\fP
 auto-disconnect timeout in seconds (minimum allowed: 60)
@@ -444,7 +453,7 @@ agent), you will normally set the $DISPLAY variable like this:
 .PP
 .nf
   $ export DISPLAY=nx/nx,listen=<proxy-port>,options=<options.file>:<nx-display-port>
-  $ nxagent <cmdline-options> :<nx-display-port>
+  $ nxagent <command-line-options> :<nx-display-port>
 .fi
 .PP
 The value for <nx-display-port> is some value of a not-yet-used X11
@@ -462,13 +471,16 @@ Available \fBnxagent\fR options (as an addition to nx/nx options supported
 by nxcomp already):
 .TP 8
 .B options=<string>
-read options from file, this text file can contain a single loooong line with comma-separated nx/nx options
+read options from file, this text file can contain a single loooong
+line with comma-separated nx/nx options
 .TP 8
 .B rootless=<bool>
-start \fBnxagent\fR in rootless mode, matches \-R given on the command line, no-op when resuming (default: false)
+start \fBnxagent\fR in rootless mode, matches \-R given on the command
+line, no-op when resuming (default: false)
 .TP 8
 .B geometry=<string>
-desktop geometry when starting or resuming a session, no-op in rootless mode (default 66% of the underlying X server geometry)
+desktop geometry when starting or resuming a session, no-op in
+rootless mode (default 66% of the underlying X server geometry)
 .TP 8
 .B resize=<bool>
 set resizing support (default: true)
@@ -483,7 +495,9 @@ set remote keyboard layout
 
 .BR both | client | server | none
 
-enable / disable (set to: \fInone\fR) clipboard support, uni-directional (\fIserver\fR or \fIclient\fR) or bi-directional (\fIboth\fR, default setting) support
+enable / disable (set to: \fInone\fR) clipboard support,
+uni-directional (\fIserver\fR or \fIclient\fR) or bi-directional
+(\fIboth\fR, default setting) support
 .TP 8
 .B streaming=<int>
 streaming support for images, not fully implemented yet and thus non-functional
@@ -492,7 +506,7 @@ streaming support for images, not fully implemented yet and thus non-functional
 disable or enforce backing store support (default: BackingStoreUndefined)
 .TP 8
 .B composite=<int>
-enable or disable Compsite support in \fBnxagent\fR (default: enabled)
+enable or disable Composite support in \fBnxagent\fR (default: enabled)
 .TP 8
 .B xinerama=<int>
 enable or disable XINERAMA support in \fBnxagent\fR (default: enabled)
@@ -507,10 +521,12 @@ enable shared pixmaps support
 set remote keyboard type
 .TP 8
 .B client=<string>
-type of connecting operating system (supported: \fIlinux\fR, \fIwindows\fR, \fIsolaris\fR and \fImacosx\fR)
+type of connecting operating system (supported: \fIlinux\fR,
+\fIwindows\fR, \fIsolaris\fR and \fImacosx\fR)
 .TP 8
 .B shadow=<int>
-start \fBnxagent\fR in shadow mode, matches \-S given on the command line, no-op when resuming (default: false)
+start \fBnxagent\fR in shadow mode, matches \fB\-S\fR given on the
+command line, no-op when resuming (default: false)
 .TP 8
 .B shadowuid=<int>
 unique identifier for the shadow session
@@ -519,25 +535,28 @@ unique identifier for the shadow session
 full access (set to \fI1\fR) or viewing-only (set to \fI0\fR, default)
 .TP 8
 .B defer=<int>
-defer image updates (enabled for all connection types except LAN), accepts values \fI0\fR, \fI1\fR and \fI2\fR
+defer image updates (enabled for all connection types except LAN),
+accepts values \fI0\fR, \fI1\fR and \fI2\fR
 
-The default value can be set via the cmd line (\-defer). The value
+The default value can be set via the command line (\-defer). The value
 provided as nx/nx option is set when resuming a session, thus it
-overrides the cmd line default.
+overrides the command line default.
 .TP 8
 .B tile=<string>
 set the tile size in pixels (\fI<W>x<H>\fR) for bitmap data sent over the wire
 
-The default value can be set via the cmd line (\-tile). The value
+The default value can be set via the command line (\-tile). The value
 provided as nx/nx option is set when resuming a session, thus it
-overrides the cmd line default.
+overrides the command line default.
 .TP 8
 .B menu=<int>
-support pulldown menu in \fBnxagent\fR session (only available on proxy <-> agent remote sessions)
+support pulldown menu in \fBnxagent\fR session (only available on
+proxy <-> agent remote sessions)
 .TP 8
 .B sleep=<int>
-delay X server operations when suspended (provided in msec), set to \fI0\fR to keep \fBnxagent\fR session
-fully functional when suspended (e.g. useful when mirroring an \fBnxagent\fR session via VNC)
+delay X server operations when suspended (provided in msec), set to
+\fI0\fR to keep \fBnxagent\fR session fully functional when suspended
+(e.g. useful when mirroring an \fBnxagent\fR session via VNC)
 .TP 8
 .B tolerancechecks=<string>
 
@@ -570,7 +589,7 @@ can pass options like this:
 .PP
 .nf
   $ echo nx/nx,fullscreen=1$DISPLAY >/tmp/opt
-  $ nxagent <cmdline-options> -options /tmp/opt :<nx-display-port>
+  $ nxagent <command-line-options> -options /tmp/opt :<nx-display-port>
 .fi
 
 .SH XDMCP OPTIONS
@@ -587,13 +606,13 @@ enable XDMCP and broadcasts BroadcastQuery packets to the network.  The
 first responding display manager will be chosen for the session.
 .TP 8
 .B \-multicast [\fIaddress\fP [\fIhop count\fP]]
-Enable XDMCP and multicast BroadcastQuery packets to the  network.   
-The first responding display manager is chosen for the session.  If an 
-address is specified, the multicast is sent to that address.  If no 
-address is specified, the multicast is sent to the default XDMCP IPv6 
-multicast group.  If a hop count is specified, it is used as the maximum 
-hop count for the multicast.  If no hop count is specified, the multicast 
-is set to a maximum of 1 hop, to prevent the multicast from being routed 
+Enable XDMCP and multicast BroadcastQuery packets to the network.
+The first responding display manager is chosen for the session.  If an
+address is specified, the multicast is sent to that address.  If no
+address is specified, the multicast is sent to the default XDMCP IPv6
+multicast group.  If a hop count is specified, it is used as the maximum
+hop count for the multicast.  If no hop count is specified, the multicast
+is set to a maximum of 1 hop, to prevent the multicast from being routed
 beyond the local network.
 .TP 8
 .B \-indirect \fIhostname\fP
@@ -631,7 +650,7 @@ identify each display so that it can locate the shared key.
 
 .SH XKEYBOARD OPTIONS
 X servers that support the XKEYBOARD (a.k.a. \*qXKB\*q) extension accept the
-following options.  All layout files specified on the command line must be 
+following options.  All layout files specified on the command line must be
 located in the XKB base directory or a subdirectory, and specified as the
 relative path from the XKB base directory.  The default XKB base directory is
 .IR /usr/share/X11/xkb .
@@ -836,9 +855,9 @@ property CUT_BUFFER7	root	irw
 # If you are using Motif, you probably want these.
 property _MOTIF_DEFAULT_BINDINGS	root	ar iw
 property _MOTIF_DRAG_WINDOW	root	ar iw
-property _MOTIF_DRAG_TARGETS	any 	ar iw
-property _MOTIF_DRAG_ATOMS	any 	ar iw
-property _MOTIF_DRAG_ATOM_PAIRS	any 	ar iw
+property _MOTIF_DRAG_TARGETS	any	ar iw
+property _MOTIF_DRAG_ATOMS	any	ar iw
+property _MOTIF_DRAG_ATOM_PAIRS	any	ar iw
 
 # The next two rules let xwininfo -tree work when untrusted.
 property WM_NAME	any	ar
@@ -896,12 +915,12 @@ specify which transport type clients should try to use.
 .SH GRANTING ACCESS
 The X server implements a platform-dependent subset of the following
 authorization protocols: MIT-MAGIC-COOKIE-1, XDM-AUTHORIZATION-1,
-XDM-AUTHORIZATION-2, SUN-DES-1, and MIT-KERBEROS-5.  See the 
-\fIXsecurity\fP(__miscmansuffix__) manual page for information on the 
+XDM-AUTHORIZATION-2, SUN-DES-1, and MIT-KERBEROS-5.  See the
+\fIXsecurity\fP(__miscmansuffix__) manual page for information on the
 operation of these protocols.
 .PP
 Authorization data required by the above protocols is passed to the
-server in a private file named with the \fB\-auth\fP command line
+server in a private file named with the \fB\-auth\fR command line
 option.  Each time the server is about to accept the first connection
 after a reset (or when the server is starting), it reads this file.
 If this file contains any authorization records, the local host is not
@@ -983,12 +1002,12 @@ The X server
 can obtain fonts from directories and/or from font servers.
 The list of directories and font servers
 the X server uses when trying to open a font is controlled
-by the \fIfont path\fP.  
+by the \fIfont path\fP.
 .LP
 The default font path is
 __default_font_path__ .
 .LP
-The font path can be set with the \fB\-fp\fP option or by \fIxset\fP(1)
+The font path can be set with the \fB\-fp\fR option or by \fIxset\fP(1)
 after the server has started.
 .SH FILES
 .TP 30
@@ -1022,7 +1041,7 @@ Fonts: \fIbdftopcf\fP(1), \fImkfontdir\fP(1), \fImkfontscale\fP(1),
 \fIxfs\fP(1), \fIxlsfonts\fP(1), \fIxfontsel\fP(1), \fIxfd\fP(1),
 .I "X Logical Font Description Conventions"
 .PP
-Security: \fIXsecurity\fP(__miscmansuffix__), \fIxauth\fP(1), \fIXau\fP(1), 
+Security: \fIXsecurity\fP(__miscmansuffix__), \fIxauth\fP(1), \fIXau\fP(1),
 \fIxdm\fP(1), \fIxhost\fP(1), \fIxfwp\fP(1),
 .I "Security Extension Specification"
 .PP
@@ -1056,4 +1075,3 @@ Gabriel <mike.gabriel@das-netzwerkteam.de>. In 2016, the original
 Xserver.man page shipped with nx-X11 was merged into the \fBnxagent\fR
 man page and received a major update by Mike Gabriel
 <mike.gabriel@das-netzwerkteam.de>.
-
