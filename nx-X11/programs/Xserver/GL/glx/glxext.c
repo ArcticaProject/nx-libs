@@ -42,7 +42,6 @@ static __GLXextensionInfo *__glXExt /* = &__glDDXExtensionInfo */;
 /*
 ** Forward declarations.
 */
-static int __glXSwapDispatch(ClientPtr);
 static int __glXDispatch(ClientPtr);
 
 /*
@@ -246,7 +245,7 @@ void GlxExtensionInit(void)
     */
     extEntry = AddExtension(GLX_EXTENSION_NAME, __GLX_NUMBER_EVENTS,
 			    __GLX_NUMBER_ERRORS, __glXDispatch,
-			    __glXSwapDispatch, ResetExtension,
+			    __glXDispatch, ResetExtension,
 			    StandardMinorOpcode);
     if (!extEntry) {
 	FatalError("__glXExtensionInit: AddExtensions failed\n");
@@ -445,53 +444,10 @@ static int __glXDispatch(ClientPtr client)
     /*
     ** Use the opcode to index into the procedure table.
     */
-    proc = __glXSingleTable[opcode];
-    return (*proc)(cl, (GLbyte *) stuff);
-}
-
-static int __glXSwapDispatch(ClientPtr client)
-{
-    REQUEST(xGLXSingleReq);
-    CARD8 opcode;
-    int (*proc)(__GLXclientState *cl, GLbyte *pc);
-    __GLXclientState *cl;
-
-    opcode = stuff->glxCode;
-    cl = __glXClients[client->index];
-    if (!cl) {
-	cl = (__GLXclientState *) malloc(sizeof(__GLXclientState));
-	 __glXClients[client->index] = cl;
-	if (!cl) {
-	    return BadAlloc;
-	}
-	memset(cl, 0, sizeof(__GLXclientState));
-    }
-    
-    if (!cl->inUse) {
-	/*
-	** This is first request from this client.  Associate a resource
-	** with the client so we will be notified when the client dies.
-	*/
-	XID xid = FakeClientID(client->index);
-	if (!AddResource( xid, __glXClientRes, (void *)(long)client->index)) {
-	    return BadAlloc;
-	}
-	ResetClientState(client->index);
-	cl->inUse = GL_TRUE;
-	cl->client = client;
-    }
-
-    /*
-    ** Check for valid opcode.
-    */
-    if (opcode >= __GLX_SINGLE_TABLE_SIZE) {
-	return BadRequest;
-    }
-
-    /*
-    ** Use the opcode to index into the procedure table.
-    */
-    proc = __glXSwapSingleTable[opcode];
+    if (client->swapped)
+	proc = __glXSwapSingleTable[opcode];
+    else
+	proc = __glXSingleTable[opcode];
     return (*proc)(cl, (GLbyte *) stuff);
 }
 
