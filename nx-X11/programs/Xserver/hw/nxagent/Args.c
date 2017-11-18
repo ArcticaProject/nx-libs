@@ -1603,7 +1603,7 @@ void nxagentProcessOptionsFile(char * filename)
 
   #ifdef DEBUG
   fprintf(stderr, "nxagentProcessOptionsFile: Going to process option file [%s].\n",
-              validateString(filename);
+          validateString(filename));
   #endif
 
   /*
