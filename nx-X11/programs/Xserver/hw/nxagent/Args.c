@@ -729,12 +729,8 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     {
       int size;
 
-      if (nxagentKeyboard != NULL)
-      {
-        free(nxagentKeyboard);
-
-        nxagentKeyboard = NULL;
-      }
+      free(nxagentKeyboard);
+      nxagentKeyboard = NULL;
 
       if ((size = strlen(argv[i])) < 256)
       {

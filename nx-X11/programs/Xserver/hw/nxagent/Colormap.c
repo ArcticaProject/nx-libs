@@ -257,8 +257,7 @@ void nxagentSetInstalledColormapWindows(ScreenPtr pScreen)
   free(icws.cmapIDs);
 
   if (!nxagentSameInstalledColormapWindows(icws.windows, icws.numWindows)) {
-    if (nxagentOldInstalledColormapWindows)
-      free(nxagentOldInstalledColormapWindows);
+    free(nxagentOldInstalledColormapWindows);
 
 #ifdef _XSERVER64
     {
@@ -318,13 +317,12 @@ void nxagentSetInstalledColormapWindows(ScreenPtr pScreen)
 #endif /* DUMB_WINDOW_MANAGERS */
   }
   else
-    if (icws.windows) free(icws.windows);
+    free(icws.windows);
 }
 
 void nxagentSetScreenSaverColormapWindow(ScreenPtr pScreen)
 {
-  if (nxagentOldInstalledColormapWindows)
-    free(nxagentOldInstalledColormapWindows);
+  free(nxagentOldInstalledColormapWindows);
 
 #ifdef _XSERVER64
   {

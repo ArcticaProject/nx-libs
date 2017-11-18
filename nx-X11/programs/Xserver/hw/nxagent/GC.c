@@ -924,10 +924,7 @@ static void nxagentRestoreGCRec(struct nxagentGCRec *t)
               (void*)t, (void*)t -> gc);
   #endif
 
-  if (nxagentGC(t -> pGC))
-  {
-    free(nxagentGC(t -> pGC));
-  }
+  free(nxagentGC(t -> pGC));
 
   nxagentGC(t -> pGC) = t -> gc;
 

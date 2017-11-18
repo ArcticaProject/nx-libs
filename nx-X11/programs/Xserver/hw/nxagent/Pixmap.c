@@ -1172,10 +1172,7 @@ Bool nxagentCheckPixmapIntegrity(PixmapPtr pPixmap)
       XDestroyImage(image);
     }
 
-    if (data != NULL)
-    {
-      free(data);
-    }
+    free(data);
   }
   else
   {
@@ -1421,10 +1418,7 @@ FIXME: If the pixmap has a different depth from the window, the
     fprintf(stderr, "nxagentPixmapOnShadowDisplay: XCreateImage failed.\n");
     #endif
 
-    if (data != NULL)
-    {
-      free(data);
-    }
+    free(data);
 
     return False;
   }
@@ -1583,10 +1577,7 @@ Bool nxagentFbOnShadowDisplay()
     fprintf(stderr, "nxagentFbOnShadowDisplay: XCreateImage failed.\n");
     #endif
 
-    if (data)
-    {
-      free(data);
-    }
+    free(data);
 
     return False;
   }

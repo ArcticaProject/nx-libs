@@ -610,12 +610,8 @@ Bool nxagentReconnectSession(void)
 
   nxagentXkbState.Initialized = 0;
 
-  if (nxagentOldKeyboard != NULL)
-  {
-    free(nxagentOldKeyboard);
-
-    nxagentOldKeyboard = NULL;
-  }
+  free(nxagentOldKeyboard);
+  nxagentOldKeyboard = NULL;
 
   nxagentInitPointerMap();
 
@@ -739,12 +735,8 @@ nxagentReconnectError:
     nxagentDisconnectDisplay();
   }
 
-  if (nxagentOldKeyboard != NULL)
-  {
-    free(nxagentOldKeyboard);
-
-    nxagentOldKeyboard = NULL;
-  }
+  free(nxagentOldKeyboard);
+  nxagentOldKeyboard = NULL;
 
   return 0;
 }

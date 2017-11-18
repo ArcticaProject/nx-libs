@@ -841,10 +841,7 @@ static XFontStruct *nxagentLoadBestQueryFont(Display* dpy, char *fontName, FontP
 
       for (j = 0; j < numSearchFields; j++)
       {
-        if (searchFields[j] != NULL)
-        {
-          free(searchFields[j]);
-        }
+        free(searchFields[j]);
       }
     }
   }
@@ -863,10 +860,7 @@ static XFontStruct *nxagentLoadBestQueryFont(Display* dpy, char *fontName, FontP
 
   for (j = 0; j < numFontFields; j++)
   {
-    if (fontNameFields[j] != NULL)
-    {
-      free(fontNameFields[j]);
-    }
+    free(fontNameFields[j]);
   }
 
   return fontStruct;
@@ -1260,17 +1254,11 @@ static void nxagentFailedFontReconnect(FontPtr pFont, XID param1, void * param2)
 
 static void nxagentFreeFailedToReconnectFonts()
 {
-  if (nxagentFailedToReconnectFonts.font != NULL)
-  {
-    free(nxagentFailedToReconnectFonts.font);
-    nxagentFailedToReconnectFonts.font = NULL;
-  }
+  free(nxagentFailedToReconnectFonts.font);
+  nxagentFailedToReconnectFonts.font = NULL;
 
-  if (nxagentFailedToReconnectFonts.id != NULL)
-  {
-    free(nxagentFailedToReconnectFonts.id);
-    nxagentFailedToReconnectFonts.id = NULL;
-  }
+  free(nxagentFailedToReconnectFonts.id);
+  nxagentFailedToReconnectFonts.id = NULL;
 
   nxagentFailedToReconnectFonts.size = 0;
   nxagentFailedToReconnectFonts.index = 0;
@@ -1706,10 +1694,7 @@ int nxagentFreeFont(XFontStruct *fs)
     #endif
   }
 
-  if (fs -> properties)
-  {
-    free (fs->properties);
-  }
+  free (fs->properties);
 
   XFree(fs);
 

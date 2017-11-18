@@ -974,11 +974,8 @@ void nxagentNotifySelection(XEvent *X)
           }
 
           /*
-           * if (pszReturnData)
-           * {
-           *   free(pszReturnData);
-           *   pszReturnData=NULL;
-           * }
+           * free(pszReturnData);
+           * pszReturnData=NULL;
            */
 
         }
@@ -1500,11 +1497,8 @@ int nxagentInitClipboard(WindowPtr pWin)
   fprintf(stderr, "nxagentInitClipboard: Got called.\n");
   #endif
 
-  if (lastSelectionOwner != NULL)
-  {
-    free(lastSelectionOwner);
-    lastSelectionOwner = NULL;
-  }
+  free(lastSelectionOwner);
+  lastSelectionOwner = NULL;
 
   lastSelectionOwner = (SelectionOwner *) malloc(2 * sizeof(SelectionOwner));
 

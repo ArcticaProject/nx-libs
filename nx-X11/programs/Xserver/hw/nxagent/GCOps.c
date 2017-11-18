@@ -1545,10 +1545,7 @@ void nxagentFillPolygon(DrawablePtr pDrawable, GCPtr pGC, int shape,
     RESET_GC_TRAP();
   }
 
-  if (newPoints != NULL)
-  {
-    free(newPoints);
-  }
+  free(newPoints);
 }
 
 void nxagentPolyFillRect(DrawablePtr pDrawable, GCPtr pGC,
