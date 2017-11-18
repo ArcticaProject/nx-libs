@@ -135,7 +135,7 @@ char nxagentShadowDisplayName[1024] = {0};
 char nxagentWindowName[256];
 char nxagentDialogName[256];
 char nxagentSessionId[256] = {0};
-char *nxagentOptionsFilename;
+char *nxagentOptionsFilenameOrString;
 
 Bool nxagentFullGeneration = False;
 int nxagentDefaultClass = TrueColor;
@@ -259,18 +259,18 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     {
       if ((!strcmp(argv[j], "-options") || !strcmp(argv[j], "-option")) && j + 1 < argc)
       {
-        if (nxagentOptionsFilename)
+        if (nxagentOptionsFilenameOrString)
         {
-          nxagentOptionsFilename = (char *) realloc(nxagentOptionsFilename, strlen(argv[j + 1]) + 1);
+          nxagentOptionsFilenameOrString = (char *) realloc(nxagentOptionsFilenameOrString, strlen(argv[j + 1]) + 1);
         }
         else
         {
-          nxagentOptionsFilename = (char *) malloc(strlen(argv[j + 1]) +1);
+          nxagentOptionsFilenameOrString = (char *) malloc(strlen(argv[j + 1]) +1);
         }
 
-        if (nxagentOptionsFilename != NULL)
+        if (nxagentOptionsFilenameOrString != NULL)
         {
-          nxagentOptionsFilename = strcpy(nxagentOptionsFilename, argv[j + 1]);
+          nxagentOptionsFilenameOrString = strcpy(nxagentOptionsFilenameOrString, argv[j + 1]);
         }
         #ifdef WARNING
         else
@@ -283,25 +283,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
       }
     }
 
-    if (nxagentOptionsFilename)
-    {
-      /* if the "filename" starts with an nx marker treat it
-	 as an option _string_ instead of a filename */
-      if (strncasecmp(nxagentOptionsFilename, "nx/nx,", 6) == 0 ||
-	  strncasecmp(nxagentOptionsFilename, "nx/nx:", 6) == 0)
-      {
-	nxagentParseOptionString(nxagentOptionsFilename + 6);
-      }
-      else if (strncasecmp(nxagentOptionsFilename, "nx,", 3) == 0 ||
-	       strncasecmp(nxagentOptionsFilename, "nx:", 3) == 0)
-      {
-	nxagentParseOptionString(nxagentOptionsFilename + 3);
-      }
-      else
-      {
-	nxagentProcessOptionsFile(nxagentOptionsFilename);
-      }
-    }
+    nxagentProcessOptions(nxagentOptionsFilenameOrString);
   }
 
   if (!strcmp(argv[i], "-B"))
@@ -380,23 +362,19 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     {
       int size;
 
-      if (nxagentOptionsFilename != NULL)
-      {
-        free(nxagentOptionsFilename);
-
-        nxagentOptionsFilename = NULL;
-      }
+      free(nxagentOptionsFilenameOrString);
+      nxagentOptionsFilenameOrString = NULL;
 
       if ((size = strlen(argv[i])) < 1024)
       {
-        if ((nxagentOptionsFilename = malloc(size + 1)) == NULL)
+        if ((nxagentOptionsFilenameOrString = malloc(size + 1)) == NULL)
         {
           FatalError("malloc failed");
         }
 
-        strncpy(nxagentOptionsFilename, argv[i], size);
+        strncpy(nxagentOptionsFilenameOrString, argv[i], size);
 
-        nxagentOptionsFilename[size] = '\0';
+        nxagentOptionsFilenameOrString[size] = '\0';
       }
       else
       {
@@ -1581,6 +1559,34 @@ static void nxagentParseOptionString(char *string)
     }
 
     nxagentParseOptions(option, value);
+  }
+}
+
+void nxagentProcessOptions(char * string)
+{
+  if (!string)
+    return;
+
+  #ifdef DEBUG
+  fprintf(stderr, "%s: Going to process option string/filename [%s].\n",
+          __func__, validateString(string));
+  #endif
+
+  /* if the "filename" starts with an nx marker treat it
+     as an option _string_ instead of a filename */
+  if (strncasecmp(string, "nx/nx,", 6) == 0 ||
+      strncasecmp(string, "nx/nx:", 6) == 0)
+  {
+    nxagentParseOptionString(string + 6);
+  }
+  else if (strncasecmp(string, "nx,", 3) == 0 ||
+           strncasecmp(string, "nx:", 3) == 0)
+  {
+    nxagentParseOptionString(string + 3);
+  }
+  else
+  {
+    nxagentProcessOptionsFile(string);
   }
 }
 
