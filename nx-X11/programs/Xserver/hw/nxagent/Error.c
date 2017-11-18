@@ -98,7 +98,7 @@ static char nxagentRootDir[DEFAULT_STRING_LENGTH] = { 0 };
 
 static char nxagentSessionDir[DEFAULT_STRING_LENGTH] = { 0 };
 
-char *nxagentGetClientsPath(void);
+void nxagentGetClientsPath(void);
 
 static int nxagentPrintError(Display *dpy, XErrorEvent *event, FILE *fp);
 
@@ -247,16 +247,9 @@ int nxagentExitHandler(const char *message)
 
 void nxagentOpenClientsLogFile()
 {
-  char * clientsLogName;
-
   if (*nxagentClientsLogName == '\0')
   {
-    clientsLogName = nxagentGetClientsPath();
-
-    if (clientsLogName != NULL)
-    {
-      free(clientsLogName);
-    }
+    nxagentGetClientsPath();
   }
 
   if (nxagentClientsLogName != NULL && *nxagentClientsLogName !='\0')
@@ -593,30 +586,27 @@ char *nxagentGetSessionPath(void)
   return sessionPath;
 }
 
-char *nxagentGetClientsPath()
+void nxagentGetClientsPath()
 {
-  char *sessionPath;
-  char *clientsPath;
 
   if (*nxagentClientsLogName == '\0')
   {
-    sessionPath = nxagentGetSessionPath();
+    char *sessionPath = nxagentGetSessionPath();
 
     if (sessionPath == NULL)
     {
-      return NULL;
+      return;
     }
 
     if (strlen(sessionPath) + strlen("/clients") > DEFAULT_STRING_LENGTH - 1)
     {
       #ifdef PANIC
-      fprintf(stderr, "nxagentGetClientsPath: PANIC! Invalid value for the NX clients Log File Path '%s'.\n",
-                  nxagentClientsLogName);
+      fprintf(stderr, "nxagentGetClientsPath: PANIC! Invalid value for the NX clients Log File Path ''.\n");
       #endif
 
       free(sessionPath);
 
-      return NULL;
+      return;
     }
 
     strcpy(nxagentClientsLogName, sessionPath);
@@ -626,19 +616,6 @@ char *nxagentGetClientsPath()
     free(sessionPath);
   }
 
-  clientsPath = malloc(strlen(nxagentClientsLogName) + 1);
-
-  if (clientsPath == NULL)
-  {
-    #ifdef PANIC
-    fprintf(stderr, "nxagentGetClientsPath: PANIC! Can't allocate memory for the clients Log File Path path.\n");
-    #endif
-
-    return NULL;
-  }
-
-  strcpy(clientsPath, nxagentClientsLogName);
-
-  return clientsPath; 
+  return;
 }
 
