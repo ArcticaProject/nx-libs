@@ -475,11 +475,11 @@ static CARD8 nxagentConvertedKeycodes[] =
   /* 255 */  255
 };
 
-static int nxagentKeycodeConversion = 0;
+static int nxagentKeycodeConversion = False;
 
 CARD8 nxagentConvertKeycode(CARD8 k)
 {
- if (nxagentKeycodeConversion != 0)
+ if (nxagentKeycodeConversion)
  {
    #ifdef DEBUG
    if (k != nxagentConvertedKeycodes[k])
@@ -1821,7 +1821,7 @@ void nxagentKeycodeConversionSetup(void)
   char *doptions = NULL;
   unsigned int drulesLen;
 
-  nxagentKeycodeConversion = 0;
+  nxagentKeycodeConversion = False;
 
   drulesLen = nxagentXkbGetNames(&drules, &dmodel, &dlayout,
                                      &dvariant, &doptions);
@@ -1894,7 +1894,7 @@ void nxagentKeycodeConversionSetup(void)
                 "Activating KeyCode conversion.\n");
     #endif
 
-    nxagentKeycodeConversion = 1;
+    nxagentKeycodeConversion = True;
   }
 
   if (drules != NULL)
@@ -1923,7 +1923,7 @@ void nxagentResetKeycodeConversion(void)
                 "WARNING! Failed to query XKB extension.\n");
     #endif
 
-    nxagentKeycodeConversion = 0;
+    nxagentKeycodeConversion = False;
   }
 }
 
