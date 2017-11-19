@@ -219,35 +219,25 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     {
       if ((!strcmp(argv[j], "-display")) && (j + 1 < argc))
       {
-        envOptions = strdup(argv[j + 1]);
-
-        #ifdef WARNING
-        if (envOptions == NULL)
+        if ((envOptions = strdup(argv[j+1])) == NULL)
         {
-          fprintf(stderr, "ddxProcessArgument: WARNING! failed string allocation.\n");
+          FatalError("malloc for -display failed");
         }
-        #endif
-
         break;
       }
     }
 
     if ((envOptions == NULL) && (envDisplay != NULL))
     {
-      envOptions = strdup(envDisplay);
-
-      #ifdef WARNING
-      if (envOptions == NULL)
+      if ((envOptions = strdup(envDisplay)) == NULL)
       {
-        fprintf(stderr, "ddxProcessArgument: WARNING! failed string allocation.\n");
+        FatalError("malloc for envoptions failed");
       }
-      #endif
     }
 
     if (envOptions != NULL)
     {
       nxagentParseOptionString(envOptions);
-
       free(envOptions);
     }
 
@@ -255,26 +245,11 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     {
       if ((!strcmp(argv[j], "-options") || !strcmp(argv[j], "-option")) && j + 1 < argc)
       {
-        if (nxagentOptionsFilenameOrString)
+        free(nxagentOptionsFilenameOrString);
+        if ((nxagentOptionsFilenameOrString = strdup(argv[j + 1])) == NULL)
         {
-          nxagentOptionsFilenameOrString = (char *) realloc(nxagentOptionsFilenameOrString, strlen(argv[j + 1]) + 1);
+          FatalError("malloc for -options failed");
         }
-        else
-        {
-          nxagentOptionsFilenameOrString = (char *) malloc(strlen(argv[j + 1]) +1);
-        }
-
-        if (nxagentOptionsFilenameOrString != NULL)
-        {
-          nxagentOptionsFilenameOrString = strcpy(nxagentOptionsFilenameOrString, argv[j + 1]);
-        }
-        #ifdef WARNING
-        else
-        {
-          fprintf(stderr, "ddxProcessArgument: WARNING! failed string allocation.\n");
-        }
-        #endif
-
         break;
       }
     }
@@ -359,9 +334,13 @@ int ddxProcessArgument(int argc, char *argv[], int i)
       free(nxagentOptionsFilenameOrString);
       nxagentOptionsFilenameOrString = NULL;
 
-      if (-1 == asprintf(&nxagentOptionsFilenameOrString, "%s", argv[i]))
+      /* FIXME: why limit 10 1024 bytes? */
+      if ((size = strlen(argv[i])) < 1024)
       {
-        FatalError("malloc failed");
+        if ((nxagentOptionsFilenameOrString = strndup(argv[i], size)) == NULL)
+        {
+          FatalError("malloc for -options failed");
+        }
       }
       return 2;
     }
@@ -705,10 +684,13 @@ int ddxProcessArgument(int argc, char *argv[], int i)
       free(nxagentKeyboard);
       nxagentKeyboard = NULL;
 
-      nxagentKeyboard = strdup(argv[i]);
-      if (nxagentKeyboard == NULL)
+      /* FIXME: why limit to 256? */
+      if ((size = strlen(argv[i])) < 256)
       {
-        FatalError("malloc failed");
+        if ((nxagentKeyboard = strndup(argv[i], size)) == NULL)
+        {
+          FatalError("malloc for -keyboard failed");
+        }
       }
 
       return 2;
@@ -1017,12 +999,11 @@ int ddxProcessArgument(int argc, char *argv[], int i)
   {
     if (i + 1 < argc)
     {
-      if (NULL != (nxagentKeystrokeFile = strdup(argv[i + 1])))
+      if ((nxagentKeystrokeFile = strdup(argv[i + 1])) == NULL)
       {
-        return 2;
-      } else {
-	FatalError("malloc failed");
+        FatalError("malloc for -keystrokefile failed");
       }
+      return 2;
     }
     return 0;
   }
@@ -1458,13 +1439,13 @@ static void nxagentParseOptions(char *name, char *value)
         case ToleranceChecksSafe:
         case ToleranceChecksRisky:
         case ToleranceChecksBypass:
-                               break;
+          break;
         default:
-                               fprintf(stderr, "nxagentParseOptions: Warning: value [%s] of "
-                                               "option [%s] unknown, will be mapped to "
-                                               "\"Bypass\" [%u] value internally.\n",
-                                       validateString(value), name,
-                                       (unsigned int)ToleranceChecksBypass);
+          fprintf(stderr, "nxagentParseOptions: Warning: value [%s] of "
+                          "option [%s] unknown, will be mapped to "
+                          "\"Bypass\" [%u] value internally.\n",
+                          validateString(value), name,
+                          (unsigned int)ToleranceChecksBypass);
       }
       #endif
 
