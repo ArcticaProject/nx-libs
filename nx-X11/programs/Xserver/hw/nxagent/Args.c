@@ -1269,7 +1269,7 @@ static void nxagentParseOptions(char *name, char *value)
     errno = 0;
     sleep_parse = strtol(value, NULL, 10);
 
-    if ((errno) && (0 == sleep_parse))
+    if ((errno) && (sleep_parse == 0))
     {
       fprintf(stderr, "Warning: Unable to convert value '%s' of option '%s'. "
                       "Ignoring option.\n",
@@ -1325,7 +1325,7 @@ static void nxagentParseOptions(char *name, char *value)
       errno = 0;
       tolerance_parse = strtol(value, NULL, 10);
 
-      if ((errno) && (0 == tolerance_parse))
+      if ((errno) && (tolerance_parse == 0))
       {
         fprintf(stderr, "Warning: Unable to convert value '%s' of option '%s'. "
                         "Ignoring option.\n",
