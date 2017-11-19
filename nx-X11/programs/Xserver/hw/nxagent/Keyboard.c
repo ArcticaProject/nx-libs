@@ -1821,6 +1821,19 @@ void nxagentKeycodeConversionSetup(void)
   char *doptions = NULL;
   unsigned int drulesLen;
 
+  if (nxagentOption(KeycodeConversion) == KeycodeConversionOff)
+  {
+    fprintf(stderr, "Info: Keycode conversion is off\n");
+    nxagentKeycodeConversion = False;
+    return;
+  }
+  else if (nxagentOption(KeycodeConversion) == KeycodeConversionOn)
+  {
+    fprintf(stderr, "Info: Keycode conversion is on\n");
+    nxagentKeycodeConversion = True;
+    return;
+  }
+
   nxagentKeycodeConversion = False;
 
   drulesLen = nxagentXkbGetNames(&drules, &dmodel, &dlayout,
@@ -1894,7 +1907,12 @@ void nxagentKeycodeConversionSetup(void)
                 "Activating KeyCode conversion.\n");
     #endif
 
+    fprintf(stderr, "Info: Keycode conversion auto-determined as on\n");
     nxagentKeycodeConversion = True;
+  }
+  else
+  {
+    fprintf(stderr, "Info: Keycode conversion auto-determined as off\n");
   }
 
   if (drules != NULL)

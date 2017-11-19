@@ -168,6 +168,8 @@ void nxagentInitOptions()
   nxagentOptions.SleepTime = DEFAULT_SLEEP_TIME;
 
   nxagentOptions.ReconnectTolerance = DEFAULT_TOLERANCE;
+
+  nxagentOptions.KeycodeConversion = DEFAULT_KEYCODE_CONVERSION;
 }
 
 /*
@@ -193,6 +195,8 @@ void nxagentResetOptions()
 
   nxagentOptions.WMBorderWidth = -1;
   nxagentOptions.WMTitleHeight = -1;
+
+  nxagentOptions.KeycodeConversion = DEFAULT_KEYCODE_CONVERSION;
 }
 
 void nxagentSaveOptions()

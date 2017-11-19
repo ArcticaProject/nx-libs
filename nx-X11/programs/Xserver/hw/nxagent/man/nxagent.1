@@ -491,6 +491,19 @@ start or resume a session in fullscreen mode (default: off)
 .B keyboard=<string>
 set remote keyboard layout
 .TP 8
+.B keyconv=<string>
+set keycode conversion mode
+
+.BR auto | on | off
+
+by default (\fIauto\fR) \fBnxagent\fR will activate keycode conversion
+if it detects an evdev XKEYBOARD setup on the client side (the
+standard on linux systems nowadays). Keycode conversion means that
+certain keycodes are mapped to make the keyboard appear as an pc105
+model. Using \fIoff\fR this conversion can be suppressed and with
+\fIon\fR it will be forced.
+
+.TP 8
 .B clipboard=<string>
 
 .BR both | client | server | none
