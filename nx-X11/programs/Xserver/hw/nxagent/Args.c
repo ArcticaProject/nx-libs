@@ -1434,7 +1434,7 @@ static void nxagentParseOptionString(char *string)
    * Remove the port specification.
    */
 
-  delimiter = rindex(string, ':');
+  delimiter = strrchr(string, ':');
 
   if (delimiter)
   {
@@ -1447,7 +1447,7 @@ static void nxagentParseOptionString(char *string)
 
   while ((option = strtok(option ? NULL : string, ",")))
   {
-    delimiter = rindex(option, '=');
+    delimiter = strrchr(option, '=');
 
     if (delimiter)
     {

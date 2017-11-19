@@ -58,7 +58,7 @@ int nxagentCheckBinder(int argc, char *argv[], int i)
      * the -B switch.
      */
 
-    found = rindex(display, ':');
+    found = strrchr(display, ':');
 
     if (found == NULL || *(found + 1) == '\0' ||
             isdigit(*(found + 1)) == 0)
@@ -91,7 +91,7 @@ int nxagentCheckBinder(int argc, char *argv[], int i)
       return 0;
     }
 
-    found = rindex(display, ':');
+    found = strrchr(display, ':');
 
     if (found == NULL || *(found + 1) == '\0' ||
             isdigit(*(found + 1)) == 0 || atoi(found + 1) != port)
