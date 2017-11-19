@@ -1370,7 +1370,7 @@ static void nxagentParseOptions(char *name, char *value)
     {
       fprintf(stderr, "Warning: Unable to convert value [%s] of option [%s]. "
                       "Ignoring option.\n",
-                      validateString(value), validateString(name));
+                      validateString(value), name);
 
       return;
     }
@@ -1381,7 +1381,7 @@ static void nxagentParseOptions(char *name, char *value)
 
       fprintf(stderr, "Warning: value [%s] of option [%s] "
                       "out of range, clamped to [%lu].\n",
-                      validateString(value), validateString(name), sleep_parse);
+                      validateString(value), name, sleep_parse);
     }
 
     if (0 > sleep_parse)
@@ -1390,7 +1390,7 @@ static void nxagentParseOptions(char *name, char *value)
 
       fprintf(stderr, "Warning: value [%s] of option [%s] "
                       "out of range, clamped to [%lu].\n",
-                      validateString(value), validateString(name), sleep_parse);
+                      validateString(value), name, sleep_parse);
     }
 
     nxagentChangeOption(SleepTime, sleep_parse);
@@ -1429,7 +1429,7 @@ static void nxagentParseOptions(char *name, char *value)
       {
         fprintf(stderr, "Warning: Unable to convert value [%s] of option [%s]. "
                         "Ignoring option.\n",
-                        validateString(value), validateString(name));
+                        validateString(value), name);
 
         return;
       }
@@ -1440,7 +1440,7 @@ static void nxagentParseOptions(char *name, char *value)
 
         fprintf(stderr, "Warning: value [%s] of option [%s] "
                         "out of range, clamped to [%lu].\n",
-                        validateString(value), validateString(name), tolerance_parse);
+                        validateString(value), name, tolerance_parse);
       }
 
       if (0 > tolerance_parse)
@@ -1449,7 +1449,7 @@ static void nxagentParseOptions(char *name, char *value)
 
         fprintf(stderr, "Warning: value [%s] of option [%s] "
                         "out of range, clamped to [%lu].\n",
-                        validateString(value), validateString(name), tolerance_parse);
+                        validateString(value), name, tolerance_parse);
       }
 
       #ifdef TEST
@@ -1463,7 +1463,7 @@ static void nxagentParseOptions(char *name, char *value)
                                fprintf(stderr, "nxagentParseOptions: Warning: value [%s] of "
                                                "option [%s] unknown, will be mapped to "
                                                "\"Bypass\" [%u] value internally.\n",
-                                       validateString(value), validateString(name),
+                                       validateString(value), name,
                                        (unsigned int)ToleranceChecksBypass);
       }
       #endif
