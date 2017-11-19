@@ -1081,7 +1081,7 @@ static void nxagentParseOptions(char *name, char *value)
     if (nxagentReconnectTrap == True)
     {
       #ifdef DEBUG
-      fprintf(stderr, "nxagentParseOptions: Ignoring option 'render' at reconnection.\n");
+      fprintf(stderr, "nxagentParseOptions: Ignoring option '%s' at reconnection.\n", name);
       #endif
     }
     else if (nxagentRenderEnable == UNDEFINED)
@@ -1096,8 +1096,8 @@ static void nxagentParseOptions(char *name, char *value)
       }
       else
       {
-        fprintf(stderr, "Warning: Ignoring bad value '%s' for option 'render'.\n",
-                    validateString(value));
+        fprintf(stderr, "Warning: Ignoring bad value '%s' for option '%s'.\n",
+		validateString(value), name);
       }
     }
 
@@ -1113,7 +1113,7 @@ static void nxagentParseOptions(char *name, char *value)
     if (nxagentReconnectTrap == True)
     {
       #ifdef DEBUG
-      fprintf(stderr, "nxagentParseOptions: Ignoring option 'fullscreen' at reconnection.\n");
+      fprintf(stderr, "nxagentParseOptions: Ignoring option '%s' at reconnection.\n", name);
       #endif
     }
     else if (!strcmp(value, "1"))
@@ -1148,8 +1148,8 @@ static void nxagentParseOptions(char *name, char *value)
     }
     else
     {
-      fprintf(stderr, "Warning: Ignoring bad value '%s' for option 'shpix'.\n",
-                  validateString(value));
+      fprintf(stderr, "Warning: Ignoring bad value '%s' for option '%s'.\n",
+              validateString(value), name);
     }
 
     return;
@@ -1166,8 +1166,8 @@ static void nxagentParseOptions(char *name, char *value)
     }
     else
     {
-      fprintf(stderr, "Warning: Ignoring bad value '%s' for option 'shmem'.\n",
-                  validateString(value));
+      fprintf(stderr, "Warning: Ignoring bad value '%s' for option '%s'.\n",
+              validateString(value), name);
     }
 
     return;
@@ -1184,8 +1184,8 @@ static void nxagentParseOptions(char *name, char *value)
     }
     else
     {
-      fprintf(stderr, "Warning: Ignoring bad value '%s' for option 'composite'.\n",
-                  validateString(value));
+      fprintf(stderr, "Warning: Ignoring bad value '%s' for option '%s'.\n",
+              validateString(value), name);
     }
 
     return;
@@ -1215,8 +1215,8 @@ static void nxagentParseOptions(char *name, char *value)
     }
     else
     {
-      fprintf(stderr, "Warning: Ignoring bad value '%s' for option 'xinerama'.\n",
-              validateString(value));
+      fprintf(stderr, "Warning: Ignoring bad value '%s' for option '%s'.\n",
+              validateString(value), name);
     }
     return;
 #endif
@@ -1233,8 +1233,8 @@ static void nxagentParseOptions(char *name, char *value)
     }
     else
     {
-      fprintf(stderr, "Warning: Ignoring bad value '%s' for option 'resize'.\n",
-                  validateString(value));
+      fprintf(stderr, "Warning: Ignoring bad value '%s' for option '%s'.\n",
+	      validateString(value), name);
     }
 
     return;
