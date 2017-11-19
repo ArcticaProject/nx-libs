@@ -1368,7 +1368,7 @@ static void nxagentParseOptions(char *name, char *value)
 
     if ((errno) && (0 == sleep_parse))
     {
-      fprintf(stderr, "Warning: Unable to convert value [%s] of option [%s]. "
+      fprintf(stderr, "Warning: Unable to convert value '%s' of option '%s'. "
                       "Ignoring option.\n",
                       validateString(value), name);
 
@@ -1379,8 +1379,8 @@ static void nxagentParseOptions(char *name, char *value)
     {
       sleep_parse = UINT_MAX;
 
-      fprintf(stderr, "Warning: value [%s] of option [%s] "
-                      "out of range, clamped to [%lu].\n",
+      fprintf(stderr, "Warning: value '%s' of option '%s' "
+                      "out of range, clamped to '%lu'.\n",
                       validateString(value), name, sleep_parse);
     }
 
@@ -1388,8 +1388,8 @@ static void nxagentParseOptions(char *name, char *value)
     {
       sleep_parse = 0;
 
-      fprintf(stderr, "Warning: value [%s] of option [%s] "
-                      "out of range, clamped to [%lu].\n",
+      fprintf(stderr, "Warning: value '%s' of option '%s' "
+                      "out of range, clamped to '%lu'.\n",
                       validateString(value), name, sleep_parse);
     }
 
@@ -1427,7 +1427,7 @@ static void nxagentParseOptions(char *name, char *value)
 
       if ((errno) && (0 == tolerance_parse))
       {
-        fprintf(stderr, "Warning: Unable to convert value [%s] of option [%s]. "
+        fprintf(stderr, "Warning: Unable to convert value '%s' of option '%s'. "
                         "Ignoring option.\n",
                         validateString(value), name);
 
@@ -1438,8 +1438,8 @@ static void nxagentParseOptions(char *name, char *value)
       {
         tolerance_parse = UINT_MAX;
 
-        fprintf(stderr, "Warning: value [%s] of option [%s] "
-                        "out of range, clamped to [%lu].\n",
+        fprintf(stderr, "Warning: value '%s' of option '%s' "
+                        "out of range, clamped to '%lu'.\n",
                         validateString(value), name, tolerance_parse);
       }
 
@@ -1447,8 +1447,8 @@ static void nxagentParseOptions(char *name, char *value)
       {
         tolerance_parse = 0;
 
-        fprintf(stderr, "Warning: value [%s] of option [%s] "
-                        "out of range, clamped to [%lu].\n",
+        fprintf(stderr, "Warning: value '%s' of option '%s' "
+                        "out of range, clamped to '%lu'.\n",
                         validateString(value), name, tolerance_parse);
       }
 
@@ -2415,7 +2415,7 @@ void nxagentSetDeferLevel(void)
     }
     default:
     {
-      fprintf(stderr, "Warning: Unknown link type [%d] processing the defer option.\n",
+      fprintf(stderr, "Warning: Unknown link type '%d' processing the defer option.\n",
                   nxagentOption(LinkType));
 
       deferLevel = 0;
@@ -2569,7 +2569,7 @@ void nxagentSetBufferSize(void)
 
   if (NXSetDisplayBuffer(nxagentDisplay, nxagentBuffer) < 0)
   {
-    fprintf(stderr, "Warning: Can't set the display buffer size to [%d].\n",
+    fprintf(stderr, "Warning: Can't set the display buffer size to '%d'.\n",
                 nxagentBuffer);
   }
 }
