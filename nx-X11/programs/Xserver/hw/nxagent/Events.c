@@ -38,7 +38,6 @@
 #include "selection.h"
 #include "keysym.h"
 #include "fb.h"
-#include "mibstorest.h"
 #include "osdep.h"
 
 #include "Agent.h"
@@ -2537,54 +2536,14 @@ int nxagentHandleGraphicsExposeEvent(XEvent *X)
 {
   /*
    * Send an expose event to client, instead of graphics
-   * expose. If target drawable is a backing pixmap, send
-   * expose event for the saved window, else do nothing.
+   * expose.
    */
 
   RegionPtr exposeRegion;
   BoxRec rect;
   WindowPtr pWin;
-  StoringPixmapPtr pStoringPixmapRec = NULL;
-  miBSWindowPtr pBSwindow = NULL;
-  int drawableType;
 
   pWin = nxagentWindowPtr(X -> xgraphicsexpose.drawable);
-
-  if (pWin != NULL)
-  {
-    drawableType = DRAWABLE_WINDOW;
-  }
-  else
-  {
-    drawableType = DRAWABLE_PIXMAP;
-  }
-
-  if (drawableType == DRAWABLE_PIXMAP)
-  {
-    pStoringPixmapRec = nxagentFindItemBSPixmapList(X -> xgraphicsexpose.drawable);
-
-    if (pStoringPixmapRec == NULL)
-    {
-      #ifdef TEST
-      fprintf(stderr, "nxagentHandleGraphicsExposeEvent: WARNING! Storing pixmap not found.\n");
-      #endif
-
-      return 1;
-    }
-
-    pBSwindow = (miBSWindowPtr) pStoringPixmapRec -> pSavedWindow -> backStorage;
-
-    if (pBSwindow == NULL)
-    {
-      #ifdef TEST
-      fprintf(stderr, "nxagentHandleGraphicsExposeEvent: WARNING! Back storage not found.\n");
-      #endif
-
-      return 1;
-    }
-
-    pWin = pStoringPixmapRec -> pSavedWindow;
-  }
 
   /*
    * Rectangle affected by GraphicsExpose
@@ -2597,33 +2556,6 @@ int nxagentHandleGraphicsExposeEvent(XEvent *X)
   rect.y2 = rect.y1 + X -> xgraphicsexpose.height;
 
   exposeRegion = RegionCreate(&rect, 0);
-
-  if (drawableType == DRAWABLE_PIXMAP)
-  {
-    #ifdef TEST
-    fprintf(stderr, "nxagentHandleGraphicsExposeEvent: Handling GraphicsExpose event on pixmap with id"
-                " [%lu].\n", X -> xgraphicsexpose.drawable);
-    #endif
-
-    /*
-     * The exposeRegion coordinates are relative
-     * to the pixmap to which GraphicsExpose
-     * event refers. But the BS coordinates of
-     * the savedRegion  are relative to the
-     * window.
-     */
-
-    RegionTranslate(exposeRegion, pStoringPixmapRec -> backingStoreX,
-                         pStoringPixmapRec -> backingStoreY);
-
-    /*
-     * We remove from SavedRegion the part
-     * affected by the GraphicsExpose event.
-     */
-
-    RegionSubtract(&(pBSwindow -> SavedRegion), &(pBSwindow -> SavedRegion),
-                        exposeRegion);
-  }
 
   /*
    * Store the exposeRegion in order to send

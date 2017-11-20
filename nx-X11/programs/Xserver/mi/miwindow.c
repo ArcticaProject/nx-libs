@@ -113,18 +113,6 @@ miClearToBackground(pWin, x, y, w, h, generateExposures)
 
     pScreen = pWin->drawable.pScreen;
     RegionInit(&reg, &box, 1);
-    if (pWin->backStorage)
-    {
-	/*
-	 * If the window has backing-store on, call through the
-	 * ClearToBackground vector to handle the special semantics
-	 * (i.e. things backing store is to be cleared out and
-	 * an Expose event is to be generated for those areas in backing
-	 * store if generateExposures is TRUE).
-	 */
-	pBSReg = (* pScreen->ClearBackingStore)(pWin, x, y, w, h,
-						 generateExposures);
-    }
 
     RegionIntersect(&reg, &reg, &pWin->clipList);
     if (generateExposures)
@@ -621,7 +609,6 @@ miSlideAndSizeWindow(pWin, x, y, w, h, pSib)
     RegionPtr	destClip;	/* portions of destination already written */
     RegionPtr	oldWinClip = NULL;	/* old clip list for window */
     RegionPtr	borderVisible = NullRegion; /* visible area of the border */
-    RegionPtr	bsExposed = NullRegion;	    /* backing store exposures */
     Bool	shrunk = FALSE; /* shrunk in an inner dimension */
     Bool	moved = FALSE;	/* window position changed */
 #ifdef DO_SAVE_UNDERS
@@ -725,9 +712,6 @@ miSlideAndSizeWindow(pWin, x, y, w, h, pSib)
     if (WasViewable)
     {
 	pRegion = RegionCreate(NullBox, 1);
-	if (pWin->backStorage)
-	    RegionCopy(pRegion, &pWin->clipList);
-
 	if (pLayerWin == pWin)
 	    anyMarked |= (*pScreen->MarkOverlappedWindows)(pWin, pFirstChange,
 						(WindowPtr *)NULL);
@@ -758,21 +742,6 @@ miSlideAndSizeWindow(pWin, x, y, w, h, pSib)
     }
 
     GravityTranslate (x, y, oldx, oldy, dw, dh, pWin->bitGravity, &nx, &ny);
-
-    if (pWin->backStorage &&
-	((pWin->backingStore == Always) || WasViewable))
-    {
-	if (!WasViewable)
-	    pRegion = &pWin->clipList; /* a convenient empty region */
-	if (pWin->bitGravity == ForgetGravity)
-	    bsExposed = (*pScreen->TranslateBackingStore)
-				(pWin, 0, 0, NullRegion, oldx, oldy);
-	else
-	{
-	    bsExposed = (*pScreen->TranslateBackingStore)
-			     (pWin, nx - x, ny - y, pRegion, oldx, oldy);
-	}
-    }
 
     if (WasViewable)
     {
@@ -922,17 +891,6 @@ miSlideAndSizeWindow(pWin, x, y, w, h, pSib)
 	RegionDestroy(pRegion);
 	if (destClip)
 	    RegionDestroy(destClip);
-	if (bsExposed)
-	{
-	    RegionPtr	valExposed = NullRegion;
-
-	    if (pWin->valdata)
-		valExposed = &pWin->valdata->after.exposed;
-	    (*pScreen->WindowExposures) (pWin, valExposed, bsExposed);
-	    if (valExposed)
-		RegionEmpty(valExposed);
-	    RegionDestroy(bsExposed);
-	}
 	if (anyMarked)
 	    (*pScreen->HandleExposures)(pLayerWin->parent);
 #ifdef DO_SAVE_UNDERS
@@ -944,11 +902,6 @@ miSlideAndSizeWindow(pWin, x, y, w, h, pSib)
 	if (anyMarked && pScreen->PostValidateTree)
 	    (*pScreen->PostValidateTree)(pLayerWin->parent, pFirstChange,
 					  VTOther);
-    }
-    else if (bsExposed)
-    {
-	(*pScreen->WindowExposures) (pWin, NullRegion, bsExposed);
-	RegionDestroy(bsExposed);
     }
     if (pWin->realized)
 	WindowsRestructured ();
@@ -976,7 +929,7 @@ miSetShape(pWin)
     Bool	WasViewable = (Bool)(pWin->viewable);
     register ScreenPtr pScreen = pWin->drawable.pScreen;
     Bool	anyMarked = FALSE;
-    RegionPtr	pOldClip = NULL, bsExposed;
+    RegionPtr	pOldClip = NULL;
 #ifdef DO_SAVE_UNDERS
     Bool	dosave = FALSE;
 #endif
@@ -1008,12 +961,6 @@ miSetShape(pWin)
 
     if (WasViewable)
     {
-	if (pWin->backStorage)
-	{
-	    pOldClip = RegionCreate(NullBox, 1);
-	    RegionCopy(pOldClip, &pWin->clipList);
-	}
-
 	anyMarked |= (*pScreen->MarkOverlappedWindows)(pWin, pWin,
 						(WindowPtr *)NULL);
 
@@ -1026,47 +973,9 @@ miSetShape(pWin)
 
 	if (anyMarked)
 	    (*pScreen->ValidateTree)(pLayerWin->parent, NullWindow, VTOther);
-    }
-
-    if (pWin->backStorage &&
-	((pWin->backingStore == Always) || WasViewable))
-    {
-	if (!WasViewable)
-	    pOldClip = &pWin->clipList; /* a convenient empty region */
-	bsExposed = (*pScreen->TranslateBackingStore)
-			     (pWin, 0, 0, pOldClip,
-			      pWin->drawable.x, pWin->drawable.y);
-
-	/*
-	 * Applies to NXAGENT_SERVER builds:
-	 *
-	 * We got a few, rare, segfaults here after having
-	 * started using the backing store. It may be a
-	 * different bug but miChangeSaveUnder() calls mi-
-	 * CheckSubSaveUnder() that, in turn, can change
-	 * the backing store attribute of the window. This
-	 * means that we may try to destroy the region
-	 * even if it was not created at the beginning of
-	 * this function as, at the time, the backing store
-	 * was off. miCheckSubSaveUnder() appear to get a
-	 * pointer to the parent, so maybe doesn't change
-	 * the attribute of the window itself. This is to
-	 * be better investigated.
-	 */
 
 	if (WasViewable && pOldClip)
 	    RegionDestroy(pOldClip);
-	if (bsExposed)
-	{
-	    RegionPtr	valExposed = NullRegion;
-    
-	    if (pWin->valdata)
-		valExposed = &pWin->valdata->after.exposed;
-	    (*pScreen->WindowExposures) (pWin, valExposed, bsExposed);
-	    if (valExposed)
-		RegionEmpty(valExposed);
-	    RegionDestroy(bsExposed);
-	}
     }
     if (WasViewable)
     {
