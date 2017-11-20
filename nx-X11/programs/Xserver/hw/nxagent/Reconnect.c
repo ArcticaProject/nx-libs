@@ -103,7 +103,7 @@ extern Bool nxagentRenderEnable;
 
 extern char *nxagentKeyboard;
 
-extern char *nxagentOptionsFilename;
+extern char *nxagentOptionsFilenameOrString;
 
 enum SESSION_STATE nxagentSessionState = SESSION_STARTING;
 
@@ -456,7 +456,7 @@ Bool nxagentReconnectSession(void)
 
   nxagentResetOptions();
 
-  nxagentProcessOptionsFile(nxagentOptionsFilename);
+  nxagentProcessOptions(nxagentOptionsFilenameOrString);
 
   if (nxagentReconnectDisplay(reconnectLossyLevel[DISPLAY_STEP]) == 0)
   {

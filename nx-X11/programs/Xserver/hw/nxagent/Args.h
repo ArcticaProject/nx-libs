@@ -81,6 +81,7 @@ extern Bool nxagentIpaq;
 extern int nxagentLockDeferLevel;
 
 Bool nxagentPostProcessArgs(char *name, Display *dpy, Screen *scr);
+void nxagentProcessOptions(char * string);
 void nxagentProcessOptionsFile(char * filename);
 
 void nxagentSetPackMethod(void);
