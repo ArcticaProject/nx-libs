@@ -251,6 +251,13 @@ int ddxProcessArgument(int argc, char *argv[], int i)
 
     for (j = 0; j < argc; j++)
     {
+      /*
+       * Read the _last_ options file only and only at startup.
+
+       * This had to be '-options' since the beginning
+       * but was '-option' by mistake. Now we have to
+       * handle the backward compatibility.
+       */
       if ((!strcmp(argv[j], "-options") || !strcmp(argv[j], "-option")) && j + 1 < argc)
       {
         free(nxagentOptionsFilenameOrString);
@@ -258,7 +265,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
         {
           FatalError("malloc for -options failed");
         }
-        break;
+        j++;
       }
     }
 
@@ -319,29 +326,17 @@ int ddxProcessArgument(int argc, char *argv[], int i)
   }
 
   /*
-   * This had to be '-options' since the beginning
-   * but was '-option' by mistake. Now we have to
-   * handle the backward compatibility.
+   * an options string/filename can only be provided via the command
+   * line or environment. Both are handled above in the one-time init
+   * part and will not change during runtime. As we do not want an
+   * options file to include another "options" option we skip this
+   * here. Due to the way nxagent handles all this option stuff we
+   * cannot remove the check completely.
    */
-
   if (!strcmp(argv[i], "-options") || !strcmp(argv[i], "-option"))
   {
-    if (++i < argc)
-    {
-      free(nxagentOptionsFilenameOrString);
-      nxagentOptionsFilenameOrString = NULL;
-
-      /* FIXME: why limit 10 1024 bytes? */
-      if ((size = strlen(argv[i])) < 1024)
-      {
-        if ((nxagentOptionsFilenameOrString = strndup(argv[i], size)) == NULL)
-        {
-          FatalError("malloc for -options failed");
-        }
-      }
-      return 2;
-    }
-    return 0;
+    /* skip -options and its argument */
+    return 2;
   }
 
   if (!strcmp(argv[i], "-sync")) {
