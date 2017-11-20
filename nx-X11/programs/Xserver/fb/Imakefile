@@ -30,7 +30,6 @@ SRCS =	$(XFMODSRC) \
 	fbbits.c \
 	fbblt.c \
 	fbbltone.c \
-	fbbstore.c \
 	fbcmap.c \
 	$(RENDERSRC) \
 	fbcopy.c \
@@ -66,7 +65,6 @@ OBJS =	$(XFMODOBJ) \
 	fbbits.o \
 	fbblt.o \
 	fbbltone.o \
-	fbbstore.o \
 	fbcmap.o \
 	$(RENDEROBJ) \
 	fbcopy.o \
@@ -128,7 +126,6 @@ LinkSourceFile(fbarc.c,LinkDirectory)
 LinkSourceFile(fbbits.c,LinkDirectory)
 LinkSourceFile(fbblt.c,LinkDirectory)
 LinkSourceFile(fbbltone.c,LinkDirectory)
-LinkSourceFile(fbbstore.c,LinkDirectory)
 LinkSourceFile(fbcmap.c,LinkDirectory)
 #if BuildRender
 LinkSourceFile(fbcompose.c,LinkDirectory)

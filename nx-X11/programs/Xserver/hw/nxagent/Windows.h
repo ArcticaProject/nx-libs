@@ -102,12 +102,6 @@ typedef struct
 
 typedef StoringPixmapRec *StoringPixmapPtr;
 
-int nxagentAddItemBSPixmapList(unsigned long, PixmapPtr, WindowPtr, int, int);
-int nxagentRemoveItemBSPixmapList(unsigned long);
-void nxagentInitBSPixmapList(void);
-int nxagentEmptyBSPixmapList(void);
-StoringPixmapPtr nxagentFindItemBSPixmapList (unsigned long);
-
 extern int nxagentWindowPrivateIndex;
 
 #define nxagentWindowPriv(pWin) \

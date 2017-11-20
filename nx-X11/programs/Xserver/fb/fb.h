@@ -36,7 +36,6 @@
 #include "windowstr.h"
 #include "mi.h"
 #include "migc.h"
-#include "mibstore.h"
 #ifdef RENDER
 #include "picturestr.h"
 #else
@@ -1219,23 +1218,6 @@ fbBltPlane (FbBits	    *src,
 	    FbStip	    bgand,
 	    FbStip	    bgxor,
 	    Pixel	    planeMask);
-
-/*
- * fbbstore.c
- */
-void
-fbSaveAreas(PixmapPtr	pPixmap,
-	    RegionPtr	prgnSave,
-	    int		xorg,
-	    int		yorg,
-	    WindowPtr	pWin);
-
-void
-fbRestoreAreas(PixmapPtr    pPixmap,
-	       RegionPtr    prgnRestore,
-	       int	    xorg,
-	       int	    yorg,
-	       WindowPtr    pWin);
 
 /*
  * fbcmap.c

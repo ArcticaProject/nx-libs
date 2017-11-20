@@ -283,13 +283,6 @@ miScreenInit(pScreen, pbits, xsize, ysize, dpix, dpiy, width,
 #endif
     pScreen->MarkUnrealizedWindow = miMarkUnrealizedWindow;
 
-    pScreen->SaveDoomedAreas = 0;
-    pScreen->RestoreAreas = 0;
-    pScreen->ExposeCopy = 0;
-    pScreen->TranslateBackingStore = 0;
-    pScreen->ClearBackingStore = 0;
-    pScreen->DrawGuarantee = 0;
-
     miSetZeroLineBias(pScreen, DEFAULTZEROLINEBIAS);
 
     return miScreenDevPrivateInit(pScreen, width, pbits);

@@ -99,8 +99,6 @@ compInstallColormap (ColormapPtr pColormap)
     pScreen->InstallColormap = compInstallColormap;
 }
 
-/* Unsupported by current architecture, drop for now. */
-#if 0
 static void
 compCheckBackingStore(WindowPtr pWin)
 {
@@ -134,7 +132,6 @@ compChangeWindowAttributes(WindowPtr pWin, unsigned long mask)
 
     return ret;
 }
-#endif /* 0 */
 
 static void
 compGetImage(DrawablePtr pDrawable,
@@ -464,11 +461,8 @@ compScreenInit (ScreenPtr pScreen)
     cs->InstallColormap = pScreen->InstallColormap;
     pScreen->InstallColormap = compInstallColormap;
 
-    /* Unsupported by our current architecture, drop for now. */
-    /*
     cs->ChangeWindowAttributes = pScreen->ChangeWindowAttributes;
     pScreen->ChangeWindowAttributes = compChangeWindowAttributes;
-    */
 
     cs->BlockHandler = NULL;
 

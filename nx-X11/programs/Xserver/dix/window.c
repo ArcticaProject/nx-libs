@@ -2963,9 +2963,6 @@ UnrealizeTree(
 		    deltaSaveUndersViewable--;
 #endif
 		pChild->viewable = FALSE;
-		if (pChild->backStorage)
-		    (*pChild->drawable.pScreen->SaveDoomedAreas)(
-					    pChild, &pChild->clipList, 0, 0);
 		(* MarkUnrealizedWindow)(pChild, pWin, fromConfigure);
 		pChild->drawable.serialNumber = NEXT_SERIAL_NUMBER;
 	    }
@@ -3096,9 +3093,6 @@ UnmapSubwindows(register WindowPtr pWin)
 #ifdef DO_SAVE_UNDERS
 		pChild->DIXsaveUnder = FALSE;
 #endif /* DO_SAVE_UNDERS */
-		if (pChild->backStorage)
-		    (*pScreen->SaveDoomedAreas)(
-					    pChild, &pChild->clipList, 0, 0);
 	    }
 	}
     }

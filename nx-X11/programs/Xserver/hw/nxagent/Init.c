@@ -312,8 +312,6 @@ void InitOutput(ScreenInfo *screenInfo, int argc, char *argv[])
     }
   }
 
-  nxagentInitBSPixmapList();
-
   /*
    * Open the display. We are at the early startup and
    * the information we'll get from the remote X server

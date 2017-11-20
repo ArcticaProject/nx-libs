@@ -40,7 +40,6 @@ is" without express or implied warranty.
 #include "scrnintstr.h"
 #include "dix.h"
 #include "mi.h"
-#include "mibstore.h"
 #include "resource.h"
 
 #include "X.h"
