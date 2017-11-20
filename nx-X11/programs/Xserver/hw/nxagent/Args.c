@@ -181,6 +181,9 @@ Bool nxagentVerbose = False;
 
 char *nxagentKeystrokeFile = NULL;
 
+/*
+ * This is the entry point, called from os/utils.c
+ */
 int ddxProcessArgument(int argc, char *argv[], int i)
 {
   /*
@@ -191,6 +194,11 @@ int ddxProcessArgument(int argc, char *argv[], int i)
 
   static Bool resetOptions = True;
 
+  /*
+   * the first call of ddxProcessArgument is used to setup defaults
+   * and read/process the options from environment and/or the options
+   * file.
+  */
   if (resetOptions == True)
   {
     char *envOptions = NULL;
@@ -202,10 +210,9 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     resetOptions = False;
 
     /*
-     * Ensure the correct order of options evaluation:
-     * the environment first, then those included in
-     * the options file and, last, the command line
-     * options.
+     * Ensure the correct order of options evaluation: the -display
+     * option first, then the environment, then those included in the
+     * options file and, last, the command line options.
      */
 
     envDisplay = getenv("DISPLAY");
@@ -237,6 +244,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
 
     if (envOptions != NULL)
     {
+      /* envOptions will be modified! */
       nxagentParseOptionString(envOptions);
       free(envOptions);
     }
@@ -668,6 +676,7 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     return 0;
   }
 
+  /* FIXME: seems to be ignored; is not documented */
   if (!strcmp(argv[i], "-extensions"))
   {
      return 1;
@@ -967,6 +976,10 @@ static void nxagentParseOptions(char *name, char *value)
                   validateString(name), validateString(value));
   #endif
 
+  /*
+   * these options are also command line options (prefixed with "-")
+   * and require an argument. They are handled by ddxProcessArgument()
+   */
   if (!strcmp(name, "kbtype") ||
           !strcmp(name, "keyboard") ||
               !strcmp(name, "id") ||
@@ -986,6 +999,10 @@ static void nxagentParseOptions(char *name, char *value)
   }
   else if (!strcmp(name, "R") && !strcmp(value, "1"))
   {
+    /*
+     * this option is a command line option and requires no
+     * argument. It is handled by ddxProcessArgument()
+     */
     argc = 1;
   }
   else if (!strcmp(name, "fast") || !strcmp(name, "slow"))
@@ -993,6 +1010,10 @@ static void nxagentParseOptions(char *name, char *value)
     fprintf(stderr, "Warning: Ignoring deprecated option '%s'.\n", name);
     return;
   }
+  /*
+   * the following options are only allowed in the options parameter and
+   * always require an argument.
+   */
   else if (!strcmp(name, "render"))
   {
     if (nxagentReconnectTrap == True)
@@ -1499,7 +1520,7 @@ void nxagentProcessOptionsFile(char * filename)
   int size;
 
   int sizeOfFile;
-  int maxFileSize = 1024;
+  int maxFileSize = 1024; /* FIXME: why? */
 
   #ifdef DEBUG
   fprintf(stderr, "nxagentProcessOptionsFile: Going to process option file [%s].\n",
