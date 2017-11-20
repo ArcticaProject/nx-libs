@@ -33,7 +33,7 @@
 #define NXAGENTCLIENTSLOGNAMELENGTH 256
 extern char nxagentClientsLogName[NXAGENTCLIENTSLOGNAMELENGTH];
 
-extern char nxagentVerbose;
+extern Bool nxagentVerbose;
 
 int nxagentErrorHandler(Display *dpy, XErrorEvent *event);
 
