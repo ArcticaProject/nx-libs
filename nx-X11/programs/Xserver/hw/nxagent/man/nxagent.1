@@ -447,9 +447,22 @@ enable proxy binding mode
 .B \-options \fIfilename\fP
 path to an options file containing nx/nx options (see below).
 .PP
-Other than the command line options, \fBnxagent\fR can be configured at
-session startup and at runtime (i.e. when resuming a suspended session)
-by so-called nx/nx options.
+Other than the command line options, \fBnxagent\fR can be configured
+at session startup and at runtime (i.e. when resuming a suspended
+session) by so-called nx/nx options. These options are always passed
+as a (sometimes looong) options string consisting of option=value
+pairs, separated by commas. \fBnxagent\fR will extract that options
+string from the DISPLAY variable (see below) or an options file
+(provided via the \-\fIoptions\fR command line option). To overcome
+problems in case a value contains the comma character a simple quoting
+scheme is supported. The quoting character must immediately follow the
+= character and directly precede the next comma. Allowed quoting
+characters are \fI"\fR, \fI'\fR and \fI|\fR. There's no support for
+nesting or escaping. Example:
+.PP
+.nf
+  someoption="some,value",option2=othervalue,option3=|1,2,3,4|
+.fi
 .PP
 As nx/nx options all options supported by nxcomp (see \fBnxproxy\fR man
 page) and all \fBnxagent\fR nx/nx options (see below) can be used.
@@ -478,7 +491,7 @@ by nxcomp already):
 .TP 8
 .B options=<string>
 read options from file, this text file can contain a single loooong
-line with comma-separated nx/nx options
+line with comma-separated nx/nx options.
 .TP 8
 .B rootless=<bool>
 start \fBnxagent\fR in rootless mode, matches \-R given on the command
