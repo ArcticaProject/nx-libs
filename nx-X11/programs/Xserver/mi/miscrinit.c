@@ -270,6 +270,8 @@ miScreenInit(pScreen, pbits, xsize, ysize, dpix, dpiy, width,
     pScreen->wakeupData = (void *)0;
     pScreen->MarkWindow = miMarkWindow;
     pScreen->MarkOverlappedWindows = miMarkOverlappedWindows;
+    pScreen->ChangeSaveUnder = NULL;
+    pScreen->PostChangeSaveUnder = NULL;
     pScreen->MoveWindow = miMoveWindow;
     pScreen->ResizeWindow = miSlideAndSizeWindow;
     pScreen->GetLayerWindow = miGetLayerWindow;

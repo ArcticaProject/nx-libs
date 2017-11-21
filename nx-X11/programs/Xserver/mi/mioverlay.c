@@ -942,9 +942,6 @@ miOverlayMoveWindow(
     short bw;
     RegionRec overReg, underReg;
     DDXPointRec oldpt;
-#ifdef DO_SAVE_UNDERS
-    Bool dosave = FALSE;
-#endif
 
     if (!(pParent = pWin->parent))
        return ;
@@ -982,11 +979,6 @@ miOverlayMoveWindow(
 	miOverlayScreenPtr pPriv = MIOVERLAY_GET_SCREEN_PRIVATE(pScreen);
 	(*pScreen->MarkOverlappedWindows) (pWin, windowToValidate, NULL);
 
-#ifdef DO_SAVE_UNDERS
-	if (DO_SAVE_UNDERS(pWin))
-	    dosave = (*pScreen->ChangeSaveUnder)(pWin, windowToValidate);
-#endif /* DO_SAVE_UNDERS */
-
 	(*pScreen->ValidateTree)(pWin->parent, NullWindow, kind);
 	if(RegionNotEmpty(&underReg)) {
 	    pPriv->copyUnderlay = TRUE;
@@ -1000,10 +992,6 @@ miOverlayMoveWindow(
 	RegionUninit(&overReg);
 	(*pScreen->HandleExposures)(pWin->parent);
 
-#ifdef DO_SAVE_UNDERS
-	if (dosave)
-	    (*pScreen->PostChangeSaveUnder)(pWin, windowToValidate);
-#endif /* DO_SAVE_UNDERS */
 	if (pScreen->PostValidateTree)
 	    (*pScreen->PostValidateTree)(pWin->parent, NullWindow, kind);
     }
@@ -1162,9 +1150,6 @@ miOverlayResizeWindow(
     RegionPtr	borderVisible2 = NullRegion; 
     Bool	shrunk = FALSE; /* shrunk in an inner dimension */
     Bool	moved = FALSE;	/* window position changed */
-#ifdef DO_SAVE_UNDERS
-    Bool	dosave = FALSE;
-#endif
     Bool	doUnderlay;
 
     /* if this is a root window, can't be resized */
@@ -1295,11 +1280,6 @@ miOverlayResizeWindow(
 	pWin->valdata->before.borderVisible = borderVisible;
 	if(pTree)
 	    pTree->valdata->borderVisible = borderVisible2;
-
-#ifdef DO_SAVE_UNDERS
-	if (DO_SAVE_UNDERS(pWin))
-	    dosave = (*pScreen->ChangeSaveUnder)(pWin, pFirstChange);
-#endif /* DO_SAVE_UNDERS */
 
 	(*pScreen->ValidateTree)(pWin->parent, pFirstChange, VTOther);
 	/*
@@ -1521,10 +1501,6 @@ miOverlayResizeWindow(
 	if (destClip2)
 	    RegionDestroy(destClip2);
 	(*pScreen->HandleExposures)(pWin->parent);
-#ifdef DO_SAVE_UNDERS
-	if (dosave)
-	    (*pScreen->PostChangeSaveUnder)(pWin, pFirstChange);
-#endif /* DO_SAVE_UNDERS */
 	if (pScreen->PostValidateTree)
 	    (*pScreen->PostValidateTree)(pWin->parent, pFirstChange, VTOther);
     }
@@ -1540,9 +1516,6 @@ miOverlaySetShape(WindowPtr pWin)
     Bool	WasViewable = (Bool)(pWin->viewable);
     ScreenPtr 	pScreen = pWin->drawable.pScreen;
     RegionPtr	pOldClip = NULL;
-#ifdef DO_SAVE_UNDERS
-    Bool	dosave = FALSE;
-#endif
 
     if (WasViewable) {
 	(*pScreen->MarkOverlappedWindows)(pWin, pWin, NULL);
@@ -1580,20 +1553,11 @@ miOverlaySetShape(WindowPtr pWin)
 
 	(*pScreen->MarkOverlappedWindows)(pWin, pWin, NULL);
 
-#ifdef DO_SAVE_UNDERS
-	if (DO_SAVE_UNDERS(pWin))
-	    dosave = (*pScreen->ChangeSaveUnder)(pWin, pWin);
-#endif /* DO_SAVE_UNDERS */
-
 	(*pScreen->ValidateTree)(pWin->parent, NullWindow, VTOther);
     }
 
     if (WasViewable) {
 	(*pScreen->HandleExposures)(pWin->parent);
-#ifdef DO_SAVE_UNDERS
-	if (dosave)
-	    (*pScreen->PostChangeSaveUnder)(pWin, pWin);
-#endif /* DO_SAVE_UNDERS */
 	if (pScreen->PostValidateTree)
 	    (*pScreen->PostValidateTree)(pWin->parent, NullWindow, VTOther);
     }
@@ -1614,9 +1578,6 @@ miOverlayChangeBorderWidth(
     register ScreenPtr pScreen;
     Bool WasViewable = (Bool)(pWin->viewable);
     Bool HadBorder;
-#ifdef DO_SAVE_UNDERS
-    Bool	dosave = FALSE;
-#endif
 
     oldwidth = wBorderWidth (pWin);
     if (oldwidth == width)
@@ -1650,17 +1611,9 @@ miOverlayChangeBorderWidth(
 		}
 	    }
 	}
-#ifdef DO_SAVE_UNDERS
-	if (DO_SAVE_UNDERS(pWin))
-	    dosave = (*pScreen->ChangeSaveUnder)(pWin, pWin->nextSib);
-#endif /* DO_SAVE_UNDERS */
 	(*pScreen->ValidateTree)(pWin->parent, pWin, VTOther);
 	(*pScreen->HandleExposures)(pWin->parent);
 
-#ifdef DO_SAVE_UNDERS
-	if (dosave)
-	    (*pScreen->PostChangeSaveUnder)(pWin, pWin->nextSib);
-#endif /* DO_SAVE_UNDERS */
 	if (pScreen->PostValidateTree)
 	    (*pScreen->PostValidateTree)(pWin->parent, pWin, VTOther);
     }

@@ -516,7 +516,7 @@ CreateConnectionBlock()
 	root.maxInstalledMaps = pScreen->maxInstalledCmaps; 
 	root.rootVisualID = pScreen->rootVisual;		
 	root.backingStore = pScreen->backingStoreSupport;
-	root.saveUnders = pScreen->saveUnderSupport != NotUseful;
+	root.saveUnders = FALSE;
 	root.rootDepth = pScreen->rootDepth;
 	root.nDepths = pScreen->numDepths;
 	memmove(pBuf, (char *)&root, sizeof(xWindowRoot));

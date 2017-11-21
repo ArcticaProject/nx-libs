@@ -625,7 +625,6 @@ void UseMsg(void)
 #ifdef XCSECURITY
     ErrorF("-sp file               security policy file\n");
 #endif
-    ErrorF("-su                    disable any save under support\n");
     ErrorF("-t #                   mouse threshold (pixels)\n");
     ErrorF("-terminate             terminate at server reset\n");
     ErrorF("-to #                  connection time out\n");
@@ -968,8 +967,6 @@ ProcessCommandLine(int argc, char *argv[])
 	    else
 		UseMsg();
 	}
-	else if ( strcmp( argv[i], "-su") == 0)
-	    disableSaveUnders = TRUE;
 	else if ( strcmp( argv[i], "-t") == 0)
 	{
 	    if(++i < argc)

@@ -837,9 +837,6 @@ MapWindow(register WindowPtr pWin, ClientPtr client)
     register ScreenPtr pScreen;
 
     register WindowPtr pParent;
-#ifdef DO_SAVE_UNDERS
-    Bool	dosave = FALSE;
-#endif
     WindowPtr  pLayerWin;
 
     #ifdef TEST
@@ -899,21 +896,11 @@ MapWindow(register WindowPtr pWin, ClientPtr client)
 	{
 	    anyMarked = (*pScreen->MarkOverlappedWindows)(pWin, pWin,
 							  &pLayerWin);
-#ifdef DO_SAVE_UNDERS
-	    if (DO_SAVE_UNDERS(pWin))
-	    {
-		dosave = (*pScreen->ChangeSaveUnder)(pLayerWin, pWin->nextSib);
-	    }
-#endif /* DO_SAVE_UNDERS */
 	    if (anyMarked)
 	    {
 		(*pScreen->ValidateTree)(pLayerWin->parent, pLayerWin, VTMap);
 		(*pScreen->HandleExposures)(pLayerWin->parent);
 	    }
-#ifdef DO_SAVE_UNDERS
-	    if (dosave)
-		(*pScreen->PostChangeSaveUnder)(pLayerWin, pWin->nextSib);
-#endif /* DO_SAVE_UNDERS */
 	if (anyMarked && pScreen->PostValidateTree)
 	    (*pScreen->PostValidateTree)(pLayerWin->parent, pLayerWin, VTMap);
 	}
@@ -994,16 +981,6 @@ UnmapWindow(register WindowPtr pWin, Bool fromConfigure)
 	    (*pScreen->ValidateTree)(pLayerWin->parent, pWin, VTUnmap);
 	    (*pScreen->HandleExposures)(pLayerWin->parent);
 	}
-#ifdef DO_SAVE_UNDERS
-	if (DO_SAVE_UNDERS(pWin))
-	{
-	    if ( (*pScreen->ChangeSaveUnder)(pLayerWin, pWin->nextSib) )
-	    {
-		(*pScreen->PostChangeSaveUnder)(pLayerWin, pWin->nextSib);
-	    }
-	}
-	pWin->DIXsaveUnder = FALSE;
-#endif /* DO_SAVE_UNDERS */
 	if (!fromConfigure && pScreen->PostValidateTree)
 	    (*pScreen->PostValidateTree)(pLayerWin->parent, pWin, VTUnmap);
     }
