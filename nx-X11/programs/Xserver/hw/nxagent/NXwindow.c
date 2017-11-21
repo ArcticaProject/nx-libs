@@ -353,7 +353,7 @@ DeleteWindow(void * value, XID wid)
       nxagentSetInstalledColormapWindows(pWin -> drawable.pScreen);
     }
 
-    free(pWin);
+    dixFreeObjectWithPrivates(pWin, PRIVATE_WINDOW);
     return Success;
 }
 
