@@ -1,6 +1,6 @@
 NULL =
 
-nxexecdir = $(libexecdir)
+nxexecdir = $(bindir)
 
 nxexec_PROGRAMS = nxproxy
 

@@ -23,7 +23,7 @@ SHLIBDIR        ?= $(LIBDIR)
 NXLIBDIR        ?= $(SHLIBDIR)/nx
 USRLIBDIR       ?= $(NXLIBDIR)/X11
 INCLUDEDIR      ?= $(PREFIX)/include
-CONFIGURE       ?= ./configure --prefix=$(DESTDIR)$(PREFIX) --libexecdir=$(NXLIBDIR)/bin
+CONFIGURE       ?= ./configure --prefix=$(DESTDIR)$(PREFIX)
 
 # use Xfont2 if available in the build env
 FONT_DEFINES	?= $(shell pkg-config --modversion xfont2 1>/dev/null 2>/dev/null && echo "-DHAS_XFONT2")
@@ -75,8 +75,6 @@ NX_XTRANS_HEADERS =		\
 	    rm -Rf nx-X11/extras/Mesa/.pc/; \
 	    rm -f nx-X11/config/cf/nxversion.def; \
 	    rm -f nx-X11/config/cf/date.def; \
-	    rm -f bin/nxagent; \
-	    rm -f bin/nxproxy; \
 	    ${MAKE} clean-env; \
 	fi
 
@@ -168,21 +166,14 @@ install-lite:
 	# install nxcomp library
 	$(MAKE) -C nxcomp install
 
-	# install nxproxy wrapper script
-	$(INSTALL_DIR) $(DESTDIR)$(BINDIR)
-	sed -e 's|@@NXLIBDIR@@|$(NXLIBDIR)|g' bin/nxproxy.in > bin/nxproxy
-	$(INSTALL_PROGRAM) bin/nxproxy $(DESTDIR)$(BINDIR)
-
 	# install the nxproxy executable and its man page
 	$(MAKE) -C nxproxy install
 
 install-full:
-	# install nxagent wrapper script
-	$(INSTALL_DIR) $(DESTDIR)$(BINDIR)
-	sed -e 's|@@NXLIBDIR@@|$(NXLIBDIR)|g' bin/nxagent.in > bin/nxagent
-	$(INSTALL_PROGRAM) bin/nxagent $(DESTDIR)$(BINDIR)
-
 	$(MAKE) -C nxcompshad install
+
+	$(INSTALL_DIR) $(DESTDIR)$(BINDIR)/bin
+	$(INSTALL_PROGRAM) nx-X11/programs/Xserver/nxagent $(DESTDIR)$(BINDIR)
 
 	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/pixmaps
 	$(INSTALL_FILE) nx-X11/programs/Xserver/hw/nxagent/nxagent.xpm $(DESTDIR)$(PREFIX)/share/pixmaps
@@ -190,8 +181,9 @@ install-full:
 	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/nx
 	$(INSTALL_FILE) nx-X11/programs/Xserver/Xext/SecurityPolicy $(DESTDIR)$(PREFIX)/share/nx
 
+	# FIXME: Drop this symlink for 3.6.0. Requires that third party frameworks like X2Go have become aware of this...
 	$(INSTALL_DIR) $(DESTDIR)$(NXLIBDIR)/bin
-	$(INSTALL_PROGRAM) nx-X11/programs/Xserver/nxagent $(DESTDIR)$(NXLIBDIR)/bin
+	$(INSTALL_SYMLINK) $(BINDIR)/nxagent $(DESTDIR)$(NXLIBDIR)/bin/nxagent
 
 	$(INSTALL_DIR) $(DESTDIR)$(PREFIX)/share/man/man1/
 	$(INSTALL_FILE) nx-X11/programs/Xserver/hw/nxagent/man/nxagent.1 $(DESTDIR)$(PREFIX)/share/man/man1/
@@ -243,28 +235,19 @@ uninstall:
 
 uninstall-lite:
 	if test -f nxcomp/Makefile; then ${MAKE} -C nxcomp $@; fi
+	if test -f nxproxy/Makefile; then ${MAKE} -C nxproxy $@; fi
 
-	# uninstall nproxy wrapper script
-	$(RM_FILE) $(DESTDIR)$(BINDIR)/nxproxy
-	# FIXME: don't use uninstall rule in nxproxy/Makefile.in, let's do
-        # it on our own for now...
-	$(RM_FILE) $(DESTDIR)$(NXLIBDIR)/bin/nxproxy
-	$(RM_DIR) $(DESTDIR)$(NXLIBDIR)/bin/
-	$(RM_FILE) $(DESTDIR)$(PREFIX)/share/man/man1/*.1
 	$(RM_FILE) $(DESTDIR)$(PREFIX)/share/nx/VERSION.nxproxy
 	$(RM_DIR) $(DESTDIR)$(PREFIX)/share/nx/
 
 uninstall-full:
-	for f in nxagent; do \
-	    $(RM_FILE) $(DESTDIR)$(BINDIR)/$$f; done
+	if test -f nxcompshad/Makefile; then ${MAKE} -C nxcompshad $@; fi
+	if test -f nx-X11/lib/Makefile; then ${MAKE} -C nx-X11/lib $@; fi
+
+	$(RM_FILE) $(DESTDIR)$(BINDIR)/nxagent
 
 	$(RM_FILE) $(DESTDIR)$(PREFIX)/share/nx/VERSION.nxagent
 	$(RM_DIR) $(DESTDIR)$(PREFIX)/share/nx/
 
-	if test -d nx-X11; then \
-	    if test -f nxcompshad/Makefile; then ${MAKE} -C nxcompshad $@; fi; \
-	    if test -f nx-X11/Makefile; then \
-	        if test -d $(NXLIBDIR); then rm -rf $(NXLIBDIR); fi; \
-	        if test -d $(INCLUDEDIR)/nx; then rm -rf $(INCLUDEDIR)/nx; fi; \
-	    fi; \
-	fi
+	if test -d $(DESTDIR)$(NXLIBDIR); then rm -rf $(DESTDIR)$(NXLIBDIR); fi
+	if test -d $(DESTDIR)$(INCLUDEDIR)/nx; then rm -rf $(DESTDIR)$(INCLUDEDIR)/nx; fi
