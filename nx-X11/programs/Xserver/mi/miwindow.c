@@ -66,7 +66,6 @@ miClearToBackground(pWin, x, y, w, h, generateExposures)
 {
     BoxRec box;
     RegionRec	reg;
-    RegionPtr pBSReg = NullRegion;
     ScreenPtr	pScreen;
     BoxPtr  extents;
     int	    x1, y1, x2, y2;
@@ -116,12 +115,10 @@ miClearToBackground(pWin, x, y, w, h, generateExposures)
 
     RegionIntersect(&reg, &reg, &pWin->clipList);
     if (generateExposures)
-	(*pScreen->WindowExposures)(pWin, &reg, pBSReg);
+	(*pScreen->WindowExposures)(pWin, &reg);
     else if (pWin->backgroundState != None)
         (*pScreen->PaintWindowBackground)(pWin, &reg, PW_BACKGROUND);
     RegionUninit(&reg);
-    if (pBSReg)
-	RegionDestroy(pBSReg);
 }
 
 /*
@@ -447,7 +444,7 @@ miHandleValidateExposures(pWin)
 						    &val->after.borderExposed,
 						    PW_BORDER);
 	    RegionUninit(&val->after.borderExposed);
-	    (*WindowExposures)(pChild, &val->after.exposed, NullRegion);
+	    (*WindowExposures)(pChild, &val->after.exposed);
 	    RegionUninit(&val->after.exposed);
 	    free(val);
 	    pChild->valdata = (ValidatePtr)NULL;

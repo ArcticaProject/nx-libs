@@ -204,7 +204,7 @@ Bool nxagentUnrealizeWindow(WindowPtr pWin);
 
 Bool nxagentCheckIllegalRootMonitoring(WindowPtr pWin, Mask mask);
 
-void nxagentWindowExposures(WindowPtr pWin, RegionPtr pRgn, RegionPtr other_exposed);
+void nxagentWindowExposures(WindowPtr pWin, RegionPtr pRgn);
 
 void nxagentPaintWindowBackground(WindowPtr pWin, RegionPtr pRegion, int what);
 

@@ -3120,7 +3120,7 @@ void nxagentSendBackgroundExpose(WindowPtr pWin, PixmapPtr pBackground, RegionPt
   
   RegionTranslate(&expose, pWin -> drawable.x, pWin -> drawable.y);
 
-  miWindowExposures(pWin, &expose, &expose);
+  miWindowExposures(pWin, &expose);
 
 nxagentSendBackgroundExposeEnd:
 
@@ -3230,7 +3230,7 @@ int nxagentClipAndSendClearExpose(WindowPtr pWin, void * ptr)
 
       RegionSubtract(remoteExposeRgn, remoteExposeRgn, exposeRgn);
 
-      miWindowExposures(pWin, exposeRgn, exposeRgn);
+      miWindowExposures(pWin, exposeRgn);
     }
 
     RegionDestroy(exposeRgn);

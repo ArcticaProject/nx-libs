@@ -166,8 +166,7 @@ typedef    void (* PostValidateTreeProcPtr)(
 
 typedef    void (* WindowExposuresProcPtr)(
 	WindowPtr /*pWindow*/,
-	RegionPtr /*prgn*/,
-	RegionPtr /*other_exposed*/);
+	RegionPtr /*prgn*/);
 
 typedef    void (* PaintWindowProcPtr)(
 	WindowPtr /*pWindow*/,

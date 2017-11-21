@@ -2110,7 +2110,7 @@ void nxagentClipNotify(WindowPtr pWin, int dx, int dy)
 #endif /* NXAGENT_SHAPE */
 }
 
-void nxagentWindowExposures(WindowPtr pWin, RegionPtr pRgn, RegionPtr other_exposed)
+void nxagentWindowExposures(WindowPtr pWin, RegionPtr pRgn)
 {
   /*
    * The problem: we want to synthetize the expose events internally, so
@@ -2202,11 +2202,6 @@ void nxagentWindowExposures(WindowPtr pWin, RegionPtr pRgn, RegionPtr other_expo
       RegionUnion(&temp, &temp, pRgn);
     }
 
-    if (other_exposed != NULL)
-    {
-      RegionUnion(&temp, &temp, other_exposed);
-    }
-
     if (RegionNil(&temp) == 0)
     {
       RegionTranslate(&temp,
@@ -2281,12 +2276,11 @@ void nxagentWindowExposures(WindowPtr pWin, RegionPtr pRgn, RegionPtr other_expo
         fprintf(stderr, "nxagentWindowExposures: WARNING! Reached maximum size of collect exposures vector.\n");
         #endif
 
-        if ((pRgn != NULL && RegionNotEmpty(pRgn) != 0) ||
-               (other_exposed != NULL && RegionNotEmpty(other_exposed) != 0))
+        if (pRgn != NULL && RegionNotEmpty(pRgn) != 0)
         {
-          nxagentUnmarkExposedRegion(pWin, pRgn, other_exposed);
+          nxagentUnmarkExposedRegion(pWin, pRgn, NullRegion);
 
-          miWindowExposures(pWin, pRgn, other_exposed);
+          miWindowExposures(pWin, pRgn);
         }
 
         return;
@@ -2296,12 +2290,11 @@ void nxagentWindowExposures(WindowPtr pWin, RegionPtr pRgn, RegionPtr other_expo
     RegionUninit(&temp);
   }
 
-  if ((pRgn != NULL && RegionNotEmpty(pRgn) != 0) ||
-         (other_exposed != NULL && RegionNotEmpty(other_exposed) != 0))
+  if (pRgn != NULL && RegionNotEmpty(pRgn) != 0)
   {
-    nxagentUnmarkExposedRegion(pWin, pRgn, other_exposed);
+    nxagentUnmarkExposedRegion(pWin, pRgn, NullRegion);
 
-    miWindowExposures(pWin, pRgn, other_exposed);
+    miWindowExposures(pWin, pRgn);
   }
 
   return;
@@ -2489,7 +2482,7 @@ static int nxagentForceExposure(WindowPtr pWin, void * ptr)
 
     if (exposedRgn != NULL && RegionNotEmpty(exposedRgn) != 0)
     {
-      miWindowExposures(pWin, exposedRgn, NullRegion);
+      miWindowExposures(pWin, exposedRgn);
     }
 
     RegionDestroy(exposedRgn);

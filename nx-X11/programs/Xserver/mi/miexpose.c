@@ -465,13 +465,12 @@ miSendExposures(pWin, pRgn, dx, dy)
 
 #ifndef NXAGENT_SERVER
 void 
-miWindowExposures(pWin, prgn, other_exposed)
+miWindowExposures(pWin, prgn)
     WindowPtr pWin;
-    register RegionPtr prgn, other_exposed;
+    register RegionPtr prgn;
 {
     RegionPtr   exposures = prgn;
-    if ((prgn && !RegionNil(prgn)) || 
-	(exposures && !RegionNil(exposures)) || other_exposed)
+    if ((prgn && !RegionNil(prgn)) || (exposures && !RegionNil(exposures)))
     {
 	RegionRec   expRec;
 	int	    clientInterested;
@@ -480,18 +479,6 @@ miWindowExposures(pWin, prgn, other_exposed)
 	 * Restore from backing-store FIRST.
 	 */
 	clientInterested = (pWin->eventMask|wOtherEventMasks(pWin)) & ExposureMask;
-	if (other_exposed)
-	{
-	    if (exposures)
-	    {
-		RegionUnion(other_exposed,
-						  exposures,
-					          other_exposed);
-		if (exposures != prgn)
-		    RegionDestroy(exposures);
-	    }
-	    exposures = other_exposed;
-	}
 	if (clientInterested && exposures && (RegionNumRects(exposures) > RECTLIMIT))
 	{
 	    /*
@@ -524,7 +511,7 @@ miWindowExposures(pWin, prgn, other_exposed)
 	{
 	    RegionUninit(exposures);
 	}
-	else if (exposures && exposures != prgn && exposures != other_exposed)
+	else if (exposures && exposures != prgn)
 	    RegionDestroy(exposures);
 	if (prgn)
 	    RegionEmpty(prgn);

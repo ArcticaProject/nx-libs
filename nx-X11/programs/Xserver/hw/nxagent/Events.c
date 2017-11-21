@@ -2483,7 +2483,7 @@ FIXME: This can be maybe optimized by consuming the
 
     if (index == -1)
     {
-      miWindowExposures(pWin, &sum, NullRegion);
+      miWindowExposures(pWin, &sum);
     }
     else
     {
@@ -2545,6 +2545,10 @@ int nxagentHandleGraphicsExposeEvent(XEvent *X)
 
   pWin = nxagentWindowPtr(X -> xgraphicsexpose.drawable);
 
+  if (pWin == 0) {
+    return 1;
+  }
+
   /*
    * Rectangle affected by GraphicsExpose
    * event.
@@ -2562,6 +2566,14 @@ int nxagentHandleGraphicsExposeEvent(XEvent *X)
    * the expose event later. The coordinates
    * must be relative to the screen.
    */
+
+//  #ifdef TEST
+  fprintf(stderr, "nxagentHandleGraphicsExposeEvent: graphics expose event with expose region rectangle "
+              "x1 [%d], y1 [%d] and x2 [%d] y2 [%d]. and drawable [%ld] with x [%d] and y[%d].\n",
+                  rect.x1, rect.y1, rect.x2, rect.y2,
+                      X -> xgraphicsexpose.drawable,
+                          pWin -> drawable.x, pWin -> drawable.y);
+//  #endif
 
   RegionTranslate(exposeRegion, pWin -> drawable.x, pWin -> drawable.y);
 
@@ -4036,7 +4048,7 @@ void nxagentSynchronizeExpose(void)
                         RegionNumRects(nxagentExposeQueueHead.remoteRegion));
         #endif
 
-        miWindowExposures(pWin, nxagentExposeQueueHead.remoteRegion, NullRegion);
+        miWindowExposures(pWin, nxagentExposeQueueHead.remoteRegion);
       }
     }
   }
@@ -4271,7 +4283,7 @@ int nxagentClipAndSendExpose(WindowPtr pWin, void * ptr)
 
       RegionSubtract(remoteExposeRgn, remoteExposeRgn, exposeRgn);
 
-      miWindowExposures(pWin, exposeRgn, NullRegion);
+      miWindowExposures(pWin, exposeRgn);
     }
 
     RegionDestroy(exposeRgn);
