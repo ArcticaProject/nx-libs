@@ -72,6 +72,10 @@ is" without express or implied warranty.
 #include "Error.h"
 #include "Keystroke.h"
 
+#ifdef XKB
+#include "xkbsrv.h"
+#endif
+
 #include <nx/NX.h>
 #include "compext/Compext.h"
 #include "Reconnect.h"
@@ -417,6 +421,11 @@ void InitInput(argc, argv)
      char *argv[];
 {
   void *ptr, *kbd;
+
+#ifdef XKB
+  if (!noXkbExtension)
+       XkbInitPrivates();
+#endif
 
   ptr = AddInputDevice(nxagentPointerProc, True);
   kbd = AddInputDevice(nxagentKeyboardProc, True);
