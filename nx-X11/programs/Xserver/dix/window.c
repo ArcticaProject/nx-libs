@@ -362,7 +362,7 @@ CreateRootWindow(ScreenPtr pScreen)
     BoxRec	box;
     PixmapFormatRec *format;
 
-    pWin = (WindowPtr)malloc(sizeof(WindowRec));
+    pWin = dixAllocateScreenObjectWithPrivates(pScreen, WindowRec, PRIVATE_WINDOW);
     if (!pWin)
 	return FALSE;
 
@@ -649,7 +649,7 @@ CreateWindow(Window wid, register WindowPtr pParent, int x, int y, unsigned w,
 	return NullWindow;
     }
 
-    pWin = (WindowPtr)malloc(sizeof(WindowRec));
+    pWin = dixAllocateScreenObjectWithPrivates(pScreen, WindowRec, PRIVATE_WINDOW);
     if (!pWin)
     {
 	*error = BadAlloc;
@@ -679,7 +679,7 @@ CreateWindow(Window wid, register WindowPtr pParent, int x, int y, unsigned w,
     {
 	if (!MakeWindowOptional (pWin))
 	{
-	    free (pWin);
+	    dixFreeObjectWithPrivates(pWin, PRIVATE_WINDOW);
 	    *error = BadAlloc;
 	    return NullWindow;
 	}
@@ -861,7 +861,7 @@ CrushTree(WindowPtr pWin)
 		(*UnrealizeWindow)(pChild);
 	    }
 	    FreeWindowResources(pChild);
-	    free(pChild);
+	    dixFreeObjectWithPrivates(pChild, PRIVATE_WINDOW);
 	    if ( (pChild = pSib) )
 		break;
 	    pChild = pParent;
@@ -913,7 +913,7 @@ DeleteWindow(void * value, XID wid)
 	if (pWin->prevSib)
 	    pWin->prevSib->nextSib = pWin->nextSib;
     }
-    free(pWin);
+    dixFreeObjectWithPrivates(pWin, PRIVATE_WINDOW);
     return Success;
 }
 #endif /* NXAGENT_SERVER */

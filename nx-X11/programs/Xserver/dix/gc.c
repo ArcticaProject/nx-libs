@@ -61,6 +61,7 @@ SOFTWARE.
 #include "scrnintstr.h"
 #include "region.h"
 
+#include "privates.h"
 #include "dix.h"
 #include <assert.h>
 
@@ -875,7 +876,7 @@ FreeGC(void * value, XID gid)
     (*pGC->funcs->DestroyGC) (pGC);
     if (pGC->dash != DefaultDash)
 	free(pGC->dash);
-    free(pGC);
+    dixFreeObjectWithPrivates(pGC, PRIVATE_GC);
     return(Success);
 }
 

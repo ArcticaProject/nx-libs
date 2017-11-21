@@ -86,6 +86,7 @@ FreeCursorBits(CursorBitsPtr bits)
 #ifdef ARGB_CURSOR
     free(bits->argb);
 #endif
+    dixFiniPrivates(bits, PRIVATE_CURSOR_BITS);
     if (bits->refcnt == 0)
     {
 	register GlyphSharePtr *prev, this;
@@ -126,6 +127,7 @@ FreeCursor(void * value, XID cid)
 	(void)( *pscr->UnrealizeCursor)( pscr, pCurs);
     }
     FreeCursorBits(pCurs->bits);
+    dixFiniPrivates(pCurs, PRIVATE_CURSOR);
     free( pCurs);
     return(Success);
 }
@@ -182,6 +184,9 @@ AllocCursorARGB(unsigned char *psrcbits, unsigned char *pmaskbits, CARD32 *argb,
 	return (CursorPtr)NULL;
     }
     bits = (CursorBitsPtr)((char *)pCurs + sizeof(CursorRec));
+    dixInitPrivates(pCurs, pCurs + 1, PRIVATE_CURSOR);
+    dixInitPrivates(bits, bits + 1, PRIVATE_CURSOR_BITS);
+
     bits->source = psrcbits;
     bits->mask = pmaskbits;
 #ifdef ARGB_CURSOR
@@ -223,6 +228,7 @@ AllocCursorARGB(unsigned char *psrcbits, unsigned char *pmaskbits, CARD32 *argb,
 		( *pscr->UnrealizeCursor)( pscr, pCurs);
 	    }
 	    FreeCursorBits(bits);
+	    dixFiniPrivates(pCurs, PRIVATE_CURSOR);
 	    free(pCurs);
 	    return (CursorPtr)NULL;
 	}
@@ -295,6 +301,7 @@ AllocGlyphCursor(Font source, unsigned sourceChar, Font mask, unsigned maskChar,
 	pCurs = (CursorPtr)malloc(sizeof(CursorRec));
 	if (!pCurs)
 	    return BadAlloc;
+	dixInitPrivates(pCurs, pCurs + 1, PRIVATE_CURSOR);
 	bits = pShare->bits;
 	bits->refcnt++;
     }
@@ -355,6 +362,8 @@ AllocGlyphCursor(Font source, unsigned sourceChar, Font mask, unsigned maskChar,
 	    free(srcbits);
 	    return BadAlloc;
 	}
+	dixInitPrivates(pCurs, pCurs + 1, PRIVATE_CURSOR);
+	dixInitPrivates(bits, bits + 1, PRIVATE_CURSOR_BITS);
 	bits->source = srcbits;
 	bits->mask = mskbits;
 #ifdef ARGB_CURSOR
@@ -373,6 +382,7 @@ AllocGlyphCursor(Font source, unsigned sourceChar, Font mask, unsigned maskChar,
 	    if (!pShare)
 	    {
 		FreeCursorBits(bits);
+		dixFiniPrivates(pCurs, PRIVATE_CURSOR);
 		free(pCurs);
 		return BadAlloc;
 	    }
@@ -415,6 +425,7 @@ AllocGlyphCursor(Font source, unsigned sourceChar, Font mask, unsigned maskChar,
 		( *pscr->UnrealizeCursor)( pscr, pCurs);
 	    }
 	    FreeCursorBits(pCurs->bits);
+	    dixFiniPrivates(pCurs, PRIVATE_CURSOR);
 	    free(pCurs);
 	    return BadAlloc;
 	}
