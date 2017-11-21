@@ -3079,10 +3079,7 @@ int nxagentShadowPoll(PixmapPtr nxagentShadowPixmapPtr, GCPtr nxagentShadowGCPtr
 
       length = nxagentImageLength(width, height, ZPixmap, 0, nxagentMasterDepth);
 
-      if (tBuffer)
-      {
-        free(tBuffer);
-      }
+      free(tBuffer);
 
       tBuffer = malloc(length);
 
@@ -3139,10 +3136,7 @@ int nxagentShadowPoll(PixmapPtr nxagentShadowPixmapPtr, GCPtr nxagentShadowGCPtr
       RegionUnion(&nxagentShadowUpdateRegion, &nxagentShadowUpdateRegion, &updateRegion);
     }
 
-    if (tBuffer)
-    {
-      free(tBuffer);
-    }
+    free(tBuffer);
 
     RegionUninit(&updateRegion);
   }
@@ -3360,10 +3354,7 @@ void nxagentShadowAdaptDepth(unsigned int width, unsigned int height,
   cBuffer = (unsigned char *) *buffer;
   *buffer = (char *) icBuffer;
 
-  if (cBuffer != NULL)
-  {
-    free(cBuffer);
-  }
+  free(cBuffer);
 }
 
 #ifdef NXAGENT_ARTSD
@@ -3826,9 +3817,8 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
       #endif
       number = 1;
 
-      if (screeninfo) {
-	free(screeninfo);
-      }
+      free(screeninfo);
+
       if (!(screeninfo = malloc(sizeof(XineramaScreenInfo)))) {
 	return FALSE;
       }
@@ -4111,10 +4101,8 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
     }
 
     /* release allocated memory */
-    if (screeninfo) {
-      free(screeninfo);
-      screeninfo = NULL;
-    }
+    free(screeninfo);
+    screeninfo = NULL;
 
 #ifdef DEBUG
     for (i = 0; i < pScrPriv->numCrtcs; i++) {
@@ -4587,10 +4575,7 @@ FIXME
     fprintf(stderr, "nxagentShowPixmap: XGetImage failed.\n");
     #endif
 
-    if (data)
-    {
-      free(data);
-    }
+    free(data);
 
     return;
   }
@@ -4623,10 +4608,7 @@ FIXME
     XDestroyImage(image);
   }
 
-  if (data != NULL)
-  {
-    free(data);
-  }
+  free(data);
 
 /*
 FIXME
@@ -4678,10 +4660,7 @@ void nxagentFbRestoreArea(PixmapPtr pPixmap, WindowPtr pWin, int xSrc, int ySrc,
     fprintf(stderr, "nxagentFbRestoreArea: XGetImage failed.\n");
     #endif
 
-    if (data)
-    {
-      free(data);
-    }
+    free(data);
 
     return;
   }
@@ -4741,10 +4720,7 @@ FIXME
 
 /*
 FIXME
-  if (data)
-  {
-    free(data);
-  }
+  free(data);
 */
 }
 

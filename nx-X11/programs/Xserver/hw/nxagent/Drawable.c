@@ -264,7 +264,7 @@ int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask
 
         success = 0;
 
-        goto nxagentSynchronizeDrawableDataFree;
+        goto nxagentSynchronizeDrawableDataEnd;
       }
 
       ValidateGC(pDrawable, pGC);
@@ -282,7 +282,7 @@ int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask
 
       success = 1;
 
-      goto nxagentSynchronizeDrawableDataFree;
+      goto nxagentSynchronizeDrawableDataEnd;
     }
     else if (nxagentReconnectTrap == 1)
     {
@@ -323,7 +323,7 @@ int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask
 
           success = 0;
 
-          goto nxagentSynchronizeDrawableDataFree;
+          goto nxagentSynchronizeDrawableDataEnd;
         }
 
         ValidateGC(pDrawable, pGC);
@@ -336,7 +336,7 @@ int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask
 
         success = 1;
 
-        goto nxagentSynchronizeDrawableDataFree;
+        goto nxagentSynchronizeDrawableDataEnd;
       }
       else
       {
@@ -349,7 +349,7 @@ int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask
 
         success = 1;
 
-        goto nxagentSynchronizeDrawableDataFree;
+        goto nxagentSynchronizeDrawableDataEnd;
       }
     }
   }
@@ -363,14 +363,8 @@ int nxagentSynchronizeDrawableData(DrawablePtr pDrawable, unsigned int breakMask
 
   success = nxagentSynchronizeRegion(pDrawable, NullRegion, breakMask, owner);
 
-nxagentSynchronizeDrawableDataFree:
-
-  if (data != NULL)
-  {
-    free(data);
-  }
-
 nxagentSynchronizeDrawableDataEnd:
+  free(data);
 
   return success;
 }
@@ -866,10 +860,7 @@ int nxagentSynchronizeRegion(DrawablePtr pDrawable, RegionPtr pRegion, unsigned 
               #endif
             }
 
-            if (cmpData != NULL)
-            {
-              free(cmpData);
-            }
+            free(cmpData);
           }
         }
         else
@@ -1066,10 +1057,7 @@ nxagentSynchronizeRegionFree:
     nxagentFreeRegion(pDrawable, clipRegion);
   }
 
-  if (data != NULL)
-  {
-    free(data);
-  }
+  free(data);
 
   RegionUninit(&exposeRegion);
 

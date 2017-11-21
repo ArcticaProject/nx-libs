@@ -1567,10 +1567,7 @@ nxagentPutSubImageEnd:
               nxagentImageStatistics.totalEncoded, nxagentImageStatistics.totalAdded);
   #endif
 
-  if (packedChecksum != NULL)
-  {
-    free(packedChecksum);
-  }
+  free(packedChecksum);
 
   if (packedImage != NULL)
   {
@@ -1787,11 +1784,7 @@ int nxagentScaleImage(int x, int y, unsigned xRatio, unsigned yRatio,
     }
   }
 
-  if (image -> obdata != NULL)
-  {
-    free((char *) image -> obdata);
-  }
-
+  free((char *) image -> obdata);
   free((char *) image);
 
   *pImage = newImage;

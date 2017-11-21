@@ -3151,12 +3151,7 @@ FIXME: Do we need to set save unders attribute here?
                               &hints);
 
       #ifdef _XSERVER64
-
-      if (data64 != NULL)
-      {
-        free(data64);
-      }
-
+      free(data64);
       #endif
     }
   }
@@ -3404,10 +3399,7 @@ Bool nxagentCheckWindowIntegrity(WindowPtr pWin)
        XDestroyImage(image);
      }
 
-     if (data)
-     {
-       free(data);
-     }
+     free(data);
   }
   else
   {
@@ -3947,11 +3939,8 @@ int nxagentEmptyBSPixmapList()
 
   for (i = 0; i < BSPIXMAPLIMIT; i++)
   {
-    if (nxagentBSPixmapList[i] != NULL)
-    {
-      free(nxagentBSPixmapList[i]);
-      nxagentBSPixmapList[i] = NULL;
-    }
+    free(nxagentBSPixmapList[i]);
+    nxagentBSPixmapList[i] = NULL;
   }
 
   return 1;
