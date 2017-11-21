@@ -60,6 +60,7 @@ typedef struct _Property {
 	short		format;     /* format of data for swapping - 8,16,32 */
 	long		size;       /* size of data in (format/8) bytes */
 	void            *data;       /* private to client */
+	PrivateRec	*devPrivates;
 } PropertyRec;
 
 #endif /* PROPERTYSTRUCT_H */
