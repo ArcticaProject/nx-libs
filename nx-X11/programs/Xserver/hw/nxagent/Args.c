@@ -1565,7 +1565,7 @@ static char *processoption(char *string, char *fullstring)
 
   if ((delimiter = strchr(string, '=')))
   {
-    *delimiter = 0;
+    *delimiter = '\0';
     value = delimiter + 1;
     for (int i = 0; i < sizeof(quotechars) - 1; i++)
     {
@@ -1621,7 +1621,7 @@ static void nxagentParseOptionString(char *string)
 
   if ((delimiter = strrchr(string, ':')))
   {
-    *delimiter = 0;
+    *delimiter = '\0';
   }
   else
   {
