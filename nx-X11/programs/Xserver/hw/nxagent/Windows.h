@@ -108,7 +108,7 @@ extern int nxagentWindowPrivateIndex;
 #define nxagentWindowPrivateKey (&nxagentWindowPrivateKeyRec)
 
 #define nxagentWindowPriv(pWin) ((nxagentPrivWindowPtr) \
-                                 dixLookupPrivate(&(pWin)->nxagentDevPrivates, nxagentWindowPrivateKey))
+                                 dixLookupPrivate(&(pWin)->devPrivates, nxagentWindowPrivateKey))
 #define nxagentWindow(pWin) (nxagentWindowPriv(pWin)->window)
 
 /*
