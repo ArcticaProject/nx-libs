@@ -176,14 +176,14 @@ AllocCursorARGB(unsigned char *psrcbits, unsigned char *pmaskbits, CARD32 *argb,
     int		nscr;
     ScreenPtr 	pscr;
 
-    pCurs = (CursorPtr)malloc(sizeof(CursorRec) + sizeof(CursorBits));
+    pCurs = (CursorPtr) calloc(CURSOR_REC_SIZE + CURSOR_BITS_SIZE, 1);
     if (!pCurs)
     {
 	free(psrcbits);
 	free(pmaskbits);
 	return (CursorPtr)NULL;
     }
-    bits = (CursorBitsPtr)((char *)pCurs + sizeof(CursorRec));
+    bits = (CursorBitsPtr)((char *)pCurs + CURSOR_REC_SIZE);
     dixInitPrivates(pCurs, pCurs + 1, PRIVATE_CURSOR);
     dixInitPrivates(bits, bits + 1, PRIVATE_CURSOR_BITS);
 
@@ -298,7 +298,7 @@ AllocGlyphCursor(Font source, unsigned sourceChar, Font mask, unsigned maskChar,
     }
     if (pShare)
     {
-	pCurs = (CursorPtr)malloc(sizeof(CursorRec));
+	pCurs = (CursorPtr) calloc(CURSOR_REC_SIZE, 1);
 	if (!pCurs)
 	    return BadAlloc;
 	dixInitPrivates(pCurs, pCurs + 1, PRIVATE_CURSOR);
@@ -341,17 +341,17 @@ AllocGlyphCursor(Font source, unsigned sourceChar, Font mask, unsigned maskChar,
 	}
 	if (sourcefont != maskfont)
 	{
-	    pCurs = (CursorPtr)malloc(sizeof(CursorRec) + sizeof(CursorBits));
+	    pCurs = (CursorPtr) calloc(CURSOR_REC_SIZE + CURSOR_BITS_SIZE, 1);
 	    if (pCurs)
-		bits = (CursorBitsPtr)((char *)pCurs + sizeof(CursorRec));
+		bits = (CursorBitsPtr) ((char *) pCurs + CURSOR_REC_SIZE);
 	    else
 		bits = (CursorBitsPtr)NULL;
 	}
 	else
 	{
-	    pCurs = (CursorPtr)malloc(sizeof(CursorRec));
+	    pCurs = (CursorPtr) calloc(CURSOR_REC_SIZE, 1);
 	    if (pCurs)
-		bits = (CursorBitsPtr)malloc(sizeof(CursorBits));
+		bits = (CursorBitsPtr) calloc(CURSOR_BITS_SIZE, 1);
 	    else
 		bits = (CursorBitsPtr)NULL;
 	}
