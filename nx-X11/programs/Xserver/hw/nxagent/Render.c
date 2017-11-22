@@ -2657,7 +2657,7 @@ Bool nxagentPictureInit(ScreenPtr pScreen, PictFormatPtr formats, int nformats)
   }
 
   if (!dixRegisterPrivateKey
-        (&nxagentPicturePrivateKeyRec, PRIVATE_PIXMAP, sizeof(nxagentPrivPictureRec)))
+        (&nxagentPicturePrivateKeyRec, PRIVATE_PICTURE, sizeof(nxagentPrivPictureRec)))
         return FALSE;
 
   #endif

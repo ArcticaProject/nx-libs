@@ -142,6 +142,7 @@ extern Bool nxagentReportWindowIds;
 Window nxagentDefaultWindows[MAXSCREENS];
 Window nxagentInputWindows[MAXSCREENS];
 Window nxagentScreenSaverWindows[MAXSCREENS];
+DevPrivateKeyRec nxagentCursorScreenKeyRec;
 
 #ifdef NXAGENT_ONSTART
 Atom nxagentWMStart;
@@ -1170,6 +1171,9 @@ Bool nxagentOpenScreen(ScreenPtr pScreen,
         return FALSE;
     if (!dixRegisterPrivateKey
         (&nxagentPixmapPrivateKeyRec, PRIVATE_PIXMAP, sizeof(nxagentPrivPixmapRec)))
+        return FALSE;
+    if (!dixRegisterPrivateKey
+        (&nxagentCursorScreenKeyRec, PRIVATE_SCREEN, sizeof(nxagentPrivCursorRec)))
         return FALSE;
 
     /*

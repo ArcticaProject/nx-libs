@@ -339,7 +339,7 @@ void nxagentReconnectCursor(void * p0, XID x1, void * p2)
     return;
   }
 
-  if (nxagentGetCursorPriv(pCursor, nxagentDefaultScreen) == 0)
+  if (nxagentGetCursorPriv(pCursor, nxagentDefaultScreen))
   {
     if (nxagentIsAnimCursor(pCursor))
     {
@@ -453,7 +453,7 @@ void nxagentDisconnectCursor(void * p0, XID x1, void * p2)
     return;
   }
 
-  if (nxagentGetCursorPriv(pCursor, nxagentDefaultScreen) == 0)
+  if (nxagentGetCursorPriv(pCursor, nxagentDefaultScreen))
   {
     if (nxagentIsAnimCursor(pCursor))
     {
