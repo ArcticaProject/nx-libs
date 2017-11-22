@@ -91,8 +91,8 @@ DevPrivateKeyRec	AnimCurScreenPrivateKeyRec;
 
 #define AnimCurScreenPrivateKey (&AnimCurScreenPrivateKeyRec)
 
-#define IsAnimCur(c)	    ((c)->bits == &animCursorBits)
-#define GetAnimCur(c)	    ((AnimCurPtr) ((c) + 1))
+#define IsAnimCur(c)	    ((c) && (c)->bits == &animCursorBits)
+#define GetAnimCur(c)	    ((AnimCurPtr) ((((char *)(c) + CURSOR_REC_SIZE))))
 #define GetAnimCurScreen(s) ((AnimCurScreenPtr)dixLookupPrivate(&(s)->devPrivates, AnimCurScreenPrivateKey))
 #define SetAnimCurScreen(s,p) dixSetPrivate(&(s)->devPrivates, AnimCurScreenPrivateKey, p)
 
@@ -355,11 +355,12 @@ AnimCursorCreate (CursorPtr *cursors, CARD32 *deltas, int ncursor, CursorPtr *pp
 	if (IsAnimCur (cursors[i]))
 	    return BadMatch;
 	
-    pCursor = (CursorPtr) malloc (sizeof (CursorRec) +
-				  sizeof (AnimCurRec) +
-				  ncursor * sizeof (AnimCurElt));
+    pCursor = (CursorPtr) calloc(CURSOR_REC_SIZE +
+                                 sizeof(AnimCurRec) +
+                                 ncursor * sizeof(AnimCurElt), 1);
     if (!pCursor)
 	return BadAlloc;
+    dixInitPrivates(pCursor, pCursor + 1, PRIVATE_CURSOR);
     pCursor->bits = &animCursorBits;
     animCursorBits.refcnt++;
     pCursor->refcnt = 1;

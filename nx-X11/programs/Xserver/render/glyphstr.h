@@ -37,6 +37,7 @@
 
 typedef struct _Glyph {
     CARD32	refcnt;
+    PrivateRec	*devPrivates;
     CARD32	size;	/* info + bitmap */
     xGlyphInfo	info;
     /* bits follow */
@@ -74,19 +75,15 @@ typedef struct _GlyphSet {
     int		    fdepth;
     GlyphHashRec    hash;
     int             maxPrivate;
-    void            **devPrivates;
+    PrivateRec      *devPrivates;
 } GlyphSetRec, *GlyphSetPtr;
 #endif /* NXAGENT_SERVER */
 
-#define GlyphSetGetPrivate(pGlyphSet,n)					\
-	((n) > (pGlyphSet)->maxPrivate ?				\
-	 (void *) 0 :							\
-	 (pGlyphSet)->devPrivates[n])
+#define GlyphSetGetPrivate(pGlyphSet,k)                                 \
+    dixLookupPrivate(&(pGlyphSet)->devPrivates, k)
 
-#define GlyphSetSetPrivate(pGlyphSet,n,ptr)				\
-	((n) > (pGlyphSet)->maxPrivate ?				\
-	 _GlyphSetSetNewPrivate(pGlyphSet, n, ptr) :			\
-	 ((((pGlyphSet)->devPrivates[n] = (ptr)) != 0) || TRUE))
+#define GlyphSetSetPrivate(pGlyphSet,k,ptr)                             \
+    dixSetPrivate(&(pGlyphSet)->devPrivates, k, ptr)
 
 typedef struct _GlyphList {
     INT16	    xOff;
@@ -105,9 +102,6 @@ AllocateGlyphSetPrivateIndex (void);
 
 void
 ResetGlyphSetPrivateIndex (void);
-
-Bool
-_GlyphSetSetNewPrivate (GlyphSetPtr glyphSet, int n, void * ptr);
 
 Bool
 GlyphInit (ScreenPtr pScreen);
