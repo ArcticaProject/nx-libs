@@ -351,8 +351,7 @@ tolerancechecks=s\n\
   NX_HOME      The NX user's home directory. If NX_ROOT is not set\n\
                or invalid, the user's NX directory is created here.\n\
 \n\
-  NX_TEMP      The directory where the X11 Unix Domain Sockets and\n\
-               all temporary files are to be created.\n\
+  NX_TEMP      The directory where all temporary files are to be created.\n\
 \n\
   NX_CLIENT    The full path to the nxclient executable. If the va-\n\
                riable is not set, the nxclient executable will be\n\
