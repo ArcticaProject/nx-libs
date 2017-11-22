@@ -306,9 +306,6 @@ static _NXProxyConnInfo *_NXProxyConnInfoTab[NX_PROXY_CONN_LIMIT];
 
 #endif /* #ifdef TRANS_CLIENT */
 
-static char *_NXGetUnixDir(char *dir);
-static char *_NXGetUnixPath(char *path);
-
 /*
  * Forcibly close any connection attempt on the
  * listening socket. Need this to avoid loopback
@@ -1442,15 +1439,9 @@ TRANS(SocketUNIXCreateListener) (XtransConnInfo ciptr, const char *port,
 #else
     mode = 0777;
 #endif
-#ifdef NX_TRANS_SOCKET
-    if (!abstract && trans_mkdir(_NXGetUnixDir(UNIX_DIR), mode) == -1) {
-        prmsg (1, "SocketUNIXCreateListener: mkdir(%s) failed, errno = %d\n",
-               _NXGetUnixDir(UNIX_DIR), errno);
-#else
     if (!abstract && trans_mkdir(UNIX_DIR, mode) == -1) {
 	prmsg (1, "SocketUNIXCreateListener: mkdir(%s) failed, errno = %d\n",
 	       UNIX_DIR, errno);
-#endif
 	(void) umask (oldUmask);
 	return TRANS_CREATE_LISTENER_FAILED;
     }
@@ -1463,11 +1454,7 @@ TRANS(SocketUNIXCreateListener) (XtransConnInfo ciptr, const char *port,
 	snprintf (tmpport, sizeof(tmpport), "%s%ld", UNIX_PATH, (long)getpid());
 	port = tmpport;
     }
-#ifdef NX_TRANS_SOCKET
-    if (set_sun_path(port, _NXGetUnixPath(UNIX_PATH), sockname.sun_path, abstract) != 0) {
-#else
 	if (set_sun_path(port, UNIX_PATH, sockname.sun_path, abstract) != 0) {
-#endif
 	    prmsg (1, "SocketUNIXCreateListener: path too long\n");
 	    return TRANS_CREATE_LISTENER_FAILED;
 	}
@@ -1569,15 +1556,9 @@ TRANS(SocketUNIXResetListener) (XtransConnInfo ciptr)
 #else
 	mode = 0777;
 #endif
-#ifdef NX_TRANS_SOCKET
-        if (trans_mkdir(_NXGetUnixDir(UNIX_DIR), mode) == -1) {
-            prmsg (1, "SocketUNIXResetListener: mkdir(%s) failed, errno = %d\n",
-            _NXGetUnixDir(UNIX_DIR), errno);
-#else
         if (trans_mkdir(UNIX_DIR, mode) == -1) {
             prmsg (1, "SocketUNIXResetListener: mkdir(%s) failed, errno = %d\n",
 	    UNIX_DIR, errno);
-#endif
 	    (void) umask (oldUmask);
 	    return TRANS_RESET_FAILURE;
         }
@@ -2356,11 +2337,7 @@ TRANS(SocketUNIXConnect) (XtransConnInfo ciptr,
 
     sockname.sun_family = AF_UNIX;
 
-#ifdef NX_TRANS_SOCKET
-    if (set_sun_path(port, _NXGetUnixPath(UNIX_PATH), sockname.sun_path, abstract) != 0) {
-#else
     if (set_sun_path(port, UNIX_PATH, sockname.sun_path, abstract) != 0) {
-#endif
 	prmsg (1, "SocketUNIXConnect: path too long\n");
 	return TRANS_CONNECT_FAILED;
     }
@@ -3407,148 +3384,3 @@ Xtransport	TRANS(SocketUNIXFuncs) = {
 	};
 
 #endif /* UNIXCONN */
-
-#ifdef NX_TRANS_SOCKET
-/*
- * Override the UNIX_DIR and UNIX_PATH settings and
- * make them configurable, based on the NX_TEMP or
- * the TEMP environment.
- *
- * We must be careful as the same defines are used
- * for different directories, based on the subsystem
- * that is compiling this, while we want to override
- * only the '/tmp/.X11-unix' and '/tmp/.X11-unix/X'
- * settings.
- */
-
-static char _NXUnixDir[1024];
-static char _NXUnixPath[1024];
-
-static char *_NXGetUnixDir(char *dir)
-{
-    const char *tempDir;
-
-    prmsg (3, "_NXGetUnixDir(%s)\n", dir);
-
-    if (strcmp(dir, UNIX_DIR) != 0)
-    {
-#ifdef NX_TRANS_TEST
-        fprintf(stderr, "_NXGetUnixDir: Returning other Unix directory [%s].\n", dir);
-#endif
-        return dir;
-    }
-
-    /*
-     * Check the environment only once.
-     */
-
-    if (*_NXUnixDir != '\0')
-    {
-        return _NXUnixDir;
-    }
-
-#ifdef NX_TRANS_TEST
-    fprintf(stderr, "_NXGetUnixDir: Trying with the NX_TEMP environment.\n");
-#endif
-
-    tempDir = getenv("NX_TEMP");
-
-    if (tempDir == NULL || *tempDir == '\0')
-    {
-#ifdef NX_TRANS_TEST
-        fprintf(stderr, "_NXGetUnixDir: Trying with the TEMP environment.\n");
-#endif
-
-        tempDir = getenv("TEMP");
-    }
-
-    if (tempDir != NULL && *tempDir != '\0')
-    {
-        if (strlen(tempDir) + strlen("/.X11-unix") + 1 > 1024)
-        {
-#ifdef NX_TRANS_TEST
-            fprintf(stderr, "_NXGetUnixDir: WARNING! Maximum length of X11 Unix directory exceeded.\n");
-#endif
-            goto _NXGetUnixDirError;
-        }
-
-        strcpy(_NXUnixDir, tempDir);
-        strcat(_NXUnixDir, "/.X11-unix");
-
-#ifdef NX_TRANS_TEST
-        fprintf(stderr, "_NXGetUnixDir: Using X11 Unix directory [%s].\n", _NXUnixDir);
-#endif
-
-        return _NXUnixDir;
-    }
-
-_NXGetUnixDirError:
-
-    strcpy(_NXUnixDir, dir);
-
-#ifdef NX_TRANS_TEST
-    fprintf(stderr, "_NXGetUnixDir: Returning default X11 Unix directory [%s].\n", _NXUnixDir);
-#endif
-
-    return _NXUnixDir;
-}
-
-static char *_NXGetUnixPath(char *path)
-{
-    const char *unixDir;
-
-    prmsg (3, "_NXGetUnixPath(%s)\n", path);
-
-    if (strcmp(path, UNIX_PATH) != 0)
-    {
-#ifdef NX_TRANS_TEST
-        fprintf(stderr, "_NXGetUnixPath: Returning other X11 Unix path [%s].\n", path);
-#endif
-        return path;
-    }
-
-    /*
-     * Check the environment only once.
-     */
-
-    if (*_NXUnixPath != '\0')
-    {
-        return _NXUnixPath;
-    }
-
-    unixDir = _NXGetUnixDir(UNIX_DIR);
-
-#ifdef NX_TRANS_TEST
-    fprintf(stderr, "_NXGetUnixPath: Got X11 Unix directory [%s].\n", unixDir);
-#endif
-
-    if (strlen(unixDir) + strlen("/X") + 1 > 1024)
-    {
-#ifdef NX_TRANS_TEST
-        fprintf(stderr, "_NXGetUnixPath: WARNING! Maximum length of X11 Unix path exceeded.\n");
-#endif
-
-        goto _NXGetUnixPathError;
-    }
-
-    strcpy(_NXUnixPath, unixDir);
-    strcat(_NXUnixPath, "/X");
-
-#ifdef NX_TRANS_TEST
-    fprintf(stderr, "_NXGetUnixPath: Returning X11 Unix path [%s].\n", _NXUnixPath);
-#endif
-
-    return _NXUnixPath;
-
-_NXGetUnixPathError:
-
-    strcpy(_NXUnixPath, path);
-
-#ifdef NX_TRANS_TEST
-    fprintf(stderr, "_NXGetUnixPath: Returning default X11 Unix path [%s].\n", _NXUnixPath);
-#endif
-
-    return _NXUnixPath;
-}
-
-#endif /* NX_TRANS_SOCKET */
