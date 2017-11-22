@@ -249,5 +249,5 @@ uninstall-full:
 	$(RM_FILE) $(DESTDIR)$(PREFIX)/share/nx/VERSION.nxagent
 	$(RM_DIR) $(DESTDIR)$(PREFIX)/share/nx/
 
-	if test -d $(NXLIBDIR); then rm -rf $(NXLIBDIR); fi
-	if test -d $(INCLUDEDIR)/nx; then rm -rf $(INCLUDEDIR)/nx; fi
+	if test -d $(DESTDIR)$(NXLIBDIR); then rm -rf $(DESTDIR)$(NXLIBDIR); fi
+	if test -d $(DESTDIR)$(INCLUDEDIR)/nx; then rm -rf $(DESTDIR)$(INCLUDEDIR)/nx; fi
