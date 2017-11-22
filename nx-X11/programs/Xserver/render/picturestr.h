@@ -412,6 +412,9 @@ PictureStoreColors (ColormapPtr pColormap, int ndef, xColorItem *pdef);
 Bool
 PictureInitIndexedFormats (ScreenPtr pScreen);
 
+PictFormatPtr
+PictureWindowFormat(WindowPtr pWindow);
+
 Bool
 PictureSetSubpixelOrder (ScreenPtr pScreen, int subpixel);
 

@@ -264,11 +264,6 @@ extern RegionPtr CreateBoundingShape(
 extern RegionPtr CreateClipShape(
     WindowPtr /* pWin */ );
 
-extern void DisableMapUnmapEvents(
+extern VisualPtr WindowGetVisual(
     WindowPtr /* pWin */ );
-extern void EnableMapUnmapEvents(
-    WindowPtr /* pWin */ );
-extern Bool MapUnmapEventsEnabled(
-    WindowPtr /* pWin */ );
-
 #endif /* WINDOW_H */
