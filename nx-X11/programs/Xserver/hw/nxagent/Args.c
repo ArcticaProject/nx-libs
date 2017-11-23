@@ -655,15 +655,10 @@ int ddxProcessArgument(int argc, char *argv[], int i)
     if (++i < argc)
     {
       free(nxagentKeyboard);
-      nxagentKeyboard = NULL;
 
-      /* FIXME: why limit to 256? */
-      if ((size = strlen(argv[i])) < 256)
+      if ((nxagentKeyboard = strdup(argv[i])) == NULL)
       {
-        if ((nxagentKeyboard = strndup(argv[i], size)) == NULL)
-        {
-          FatalError("malloc for -keyboard failed");
-        }
+        FatalError("malloc for -keyboard failed");
       }
 
       return 2;
