@@ -1842,6 +1842,13 @@ static FILE *nxagentLookForIconFile(char *iconName, const char *permission,
 
     if (end != NULL)
     {
+      if ((end - path) > sizeof(singlePath) - 1)
+      {
+        fprintf(stderr, "Warning: Path too long - ignored.\n");
+        path = end + 1;
+        continue;
+      }
+
       strncpy(singlePath, path, (unsigned long)(end - path));
 
       singlePath[(unsigned long)(end - path)] = '\0';
@@ -1850,6 +1857,12 @@ static FILE *nxagentLookForIconFile(char *iconName, const char *permission,
     }
     else
     {
+      if (strlen(path) > sizeof(singlePath) - 1)
+      {
+        fprintf(stderr, "Error: Path too long.\n");
+        return NULL;
+      }
+
       strcpy(singlePath, path);
 
       breakLoop = 1;
