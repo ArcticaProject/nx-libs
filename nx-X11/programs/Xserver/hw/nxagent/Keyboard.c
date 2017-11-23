@@ -1922,7 +1922,7 @@ void nxagentKeycodeConversionSetup(void)
         if (doptions)
           fprintf(keyboard_file, "options=\"%s\"\n", doptions[0] == '\0' ? "," : doptions);
         fclose(keyboard_file);
-        fprintf(stderr, "Info: keyboard file created\n");
+        fprintf(stderr, "Info: keyboard file created: '%s'\n", keyboard_file_path);
       }
       else
       {
