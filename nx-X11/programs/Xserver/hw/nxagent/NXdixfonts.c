@@ -112,7 +112,7 @@ static const char *_NXGetFontPath(const char *path)
      * Check the environment only once.
      */
 
-    if (*_NXFontPath != '\0')
+    if (_NXFontPath[0] != '\0')
     {
         return _NXFontPath;
     }
@@ -140,8 +140,7 @@ static const char *_NXGetFontPath(const char *path)
 
 _NXGetFontPathError:
 
-    strncpy(_NXFontPath, path, sizeof(_NXFontPath) - 1);
-    _NXFontPath[sizeof(_NXFontPath) - 1] = '\0';
+    snprintf(_NXFontPath, sizeof(_NXFontPath), "%s", path);
 
 #ifdef NX_TRANS_TEST
     fprintf(stderr, "_NXGetFontPath: Using default font path [%s].\n", _NXFontPath);

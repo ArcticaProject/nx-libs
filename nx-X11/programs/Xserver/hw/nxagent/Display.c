@@ -1150,9 +1150,7 @@ void nxagentOpenDisplay(int argc, char *argv[])
 
   if (*nxagentDisplayName == '\0')
   {
-    strncpy(nxagentDisplayName, XDisplayName(NULL), sizeof(nxagentDisplayName) - 1);
-
-    nxagentDisplayName[sizeof(nxagentDisplayName) - 1] = '\0';
+    snprintf(nxagentDisplayName, sizeof(nxagentDisplayName), "%s", XDisplayName(NULL));
   }
 
   nxagentCloseDisplay();
@@ -1846,7 +1844,7 @@ static FILE *nxagentLookForIconFile(char *iconName, const char *permission,
     {
       strncpy(singlePath, path, (unsigned long)(end - path));
 
-      singlePath[(unsigned long)(end - path)] = 0;
+      singlePath[(unsigned long)(end - path)] = '\0';
 
       path = end + 1;
     }
@@ -1859,7 +1857,7 @@ static FILE *nxagentLookForIconFile(char *iconName, const char *permission,
 
     if (singlePath[strlen(singlePath)- 1] == slash[0])
     {
-      singlePath[strlen(singlePath)- 1] = 0;
+      singlePath[strlen(singlePath)- 1] = '\0';
     }
 
     if (strlen(singlePath) + strlen(iconName) + 1 < sizeof(singlePath)<)
@@ -1907,8 +1905,8 @@ Bool nxagentMakeIcon(Display *display, Pixmap *nxIcon, Pixmap *nxMask)
     agentIconData=nxagentIconData;
   }
 
-
-  snprintf(default_path, PATH_MAX-1, "/usr/NX/share/images/%s", agent_icon_name);
+  /* FIXME: use a compile time define here, /usr/NX is a nomachine path */
+  snprintf(default_path, sizeof(default_path), "/usr/NX/share/images/%s", agent_icon_name);
 
   if ((icon_fp = fopen(default_path, "r")) == NULL)
   {

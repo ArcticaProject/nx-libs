@@ -279,15 +279,12 @@ void nxagentLaunchDialog(DialogType dialogType)
 
   if (dialogType == DIALOG_FAILED_RECONNECTION)
   {
-    strncpy(dialogDisplay, nxagentDisplayName, sizeof(dialogDisplay) - 1);
+    snprintf(dialogDisplay, sizeof(dialogDisplay), "%s", nxagentDisplayName);
   }
   else
   {
-    strcpy(dialogDisplay, ":");
-    strncat(dialogDisplay, display, sizeof(dialogDisplay) - 1 - 1);
+    snprintf(dialogDisplay, sizeof(dialogDisplay), ":%s", display);
   }
-
-  dialogDisplay[sizeof(dialogDisplay) - 1] = '\0';
 
   /*
    * We don't want to receive SIGCHLD

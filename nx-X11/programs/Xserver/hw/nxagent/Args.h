@@ -53,7 +53,7 @@ struct UserGeometry{
 extern Bool nxagentUseNXTrans;
 
 extern char nxagentSessionId[];
-extern char nxagentDisplayName[];
+extern char nxagentDisplayName[1024];
 extern char nxagentShadowDisplayName[];
 extern char nxagentWindowName[];
 extern char nxagentDialogName[];
