@@ -367,10 +367,6 @@ This package provides the NX proxy (client) binary.
 rm -Rf nx*/configure nx*/autom4te.cache*
 # Install into /usr
 sed -i -e 's,/usr/local,/usr,' nx-X11/config/cf/site.def
-# Use multilib dirs
-# We're installing binaries into %%{_libdir}/nx/bin rather than %%{_libexedir}/nx
-# because upstream expects libraries and binaries in the same directory
-sed -i -e 's,/lib/nx,/%{_lib}/nx,' nx-X11/config/cf/X11.tmpl
 # Fix FSF address
 find -name LICENSE | xargs sed -i \
   -e 's/59 Temple Place/51 Franklin Street/' -e 's/Suite 330/Fifth Floor/' \
@@ -575,6 +571,7 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %config(noreplace) %{_sysconfdir}/nxagent/nxagent.keyboard
 %doc doc/nxagent/README.keystrokes
 %{_bindir}/nxagent
+# FIXME: compatibility symlink to BINDIR/nxagent, remove for 3.6.0
 %dir %{_libdir}/nx/bin
 %{_libdir}/nx/bin/nxagent
 %dir %{_libdir}/nx/X11
@@ -590,8 +587,6 @@ rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 %doc doc/nxproxy/README-VALGRIND
 %{_bindir}/nxproxy
 %{_datadir}/man/man1/nxproxy.1*
-%dir %{_libdir}/nx/bin
-%{_libdir}/nx/bin/nxproxy
 %dir %{_datadir}/nx
 %{_datadir}/nx/VERSION.nxproxy
 

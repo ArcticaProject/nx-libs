@@ -38,7 +38,6 @@
 #include "selection.h"
 #include "mi.h"
 #include "fb.h"
-#include "mibstorest.h"
 
 #include "Agent.h"
 #include "Display.h"
@@ -125,13 +124,10 @@ extern Bool nxagentReportPrivateWindowIds;
 int nxagentSplashCount = 0;
 
 #define RECTLIMIT 25
-#define BSPIXMAPLIMIT 128
 
 Bool nxagentExposeArrayIsInitialized = False;
 Window nxagentConfiguredSynchroWindow;
 static int nxagentExposeSerial = 0; 
-
-StoringPixmapPtr nxagentBSPixmapList[BSPIXMAPLIMIT];
 
 /*
  * Used to walk through the window hierarchy
@@ -2114,7 +2110,7 @@ void nxagentClipNotify(WindowPtr pWin, int dx, int dy)
 #endif /* NXAGENT_SHAPE */
 }
 
-void nxagentWindowExposures(WindowPtr pWin, RegionPtr pRgn, RegionPtr other_exposed)
+void nxagentWindowExposures(WindowPtr pWin, RegionPtr pRgn)
 {
   /*
    * The problem: we want to synthetize the expose events internally, so
@@ -2206,11 +2202,6 @@ void nxagentWindowExposures(WindowPtr pWin, RegionPtr pRgn, RegionPtr other_expo
       RegionUnion(&temp, &temp, pRgn);
     }
 
-    if (other_exposed != NULL)
-    {
-      RegionUnion(&temp, &temp, other_exposed);
-    }
-
     if (RegionNil(&temp) == 0)
     {
       RegionTranslate(&temp,
@@ -2285,12 +2276,11 @@ void nxagentWindowExposures(WindowPtr pWin, RegionPtr pRgn, RegionPtr other_expo
         fprintf(stderr, "nxagentWindowExposures: WARNING! Reached maximum size of collect exposures vector.\n");
         #endif
 
-        if ((pRgn != NULL && RegionNotEmpty(pRgn) != 0) ||
-               (other_exposed != NULL && RegionNotEmpty(other_exposed) != 0))
+        if (pRgn != NULL && RegionNotEmpty(pRgn) != 0)
         {
-          nxagentUnmarkExposedRegion(pWin, pRgn, other_exposed);
+          nxagentUnmarkExposedRegion(pWin, pRgn, NullRegion);
 
-          miWindowExposures(pWin, pRgn, other_exposed);
+          miWindowExposures(pWin, pRgn);
         }
 
         return;
@@ -2300,12 +2290,11 @@ void nxagentWindowExposures(WindowPtr pWin, RegionPtr pRgn, RegionPtr other_expo
     RegionUninit(&temp);
   }
 
-  if ((pRgn != NULL && RegionNotEmpty(pRgn) != 0) ||
-         (other_exposed != NULL && RegionNotEmpty(other_exposed) != 0))
+  if (pRgn != NULL && RegionNotEmpty(pRgn) != 0)
   {
-    nxagentUnmarkExposedRegion(pWin, pRgn, other_exposed);
+    nxagentUnmarkExposedRegion(pWin, pRgn, NullRegion);
 
-    miWindowExposures(pWin, pRgn, other_exposed);
+    miWindowExposures(pWin, pRgn);
   }
 
   return;
@@ -2493,7 +2482,7 @@ static int nxagentForceExposure(WindowPtr pWin, void * ptr)
 
     if (exposedRgn != NULL && RegionNotEmpty(exposedRgn) != 0)
     {
-      miWindowExposures(pWin, exposedRgn, NullRegion);
+      miWindowExposures(pWin, exposedRgn);
     }
 
     RegionDestroy(exposedRgn);
@@ -3793,189 +3782,3 @@ StaticResizedWindowStruct *nxagentFindStaticResizedWindow(unsigned long sequence
 
   return ret;
 }
-
-void nxagentEmptyBackingStoreRegion(void * param0, XID param1, void * data_buffer)
-{
-  WindowPtr pWin = (WindowPtr) param0;
-
-  miBSWindowPtr pBackingStore = (miBSWindowPtr)pWin->backStorage;
-
-  if (pBackingStore != NULL)
-  {
-    RegionEmpty(&pBackingStore->SavedRegion);
-
-    #ifdef TEST
-    fprintf(stderr, "nxagentEmptyBackingStoreRegion: Emptying saved region for window at [%p].\n", (void*) pWin);
-    #endif
-
-    if (pBackingStore -> pBackingPixmap != NULL)
-    {
-      #ifdef TEST
-      fprintf(stderr, "nxagentEmptyBackingStoreRegion: Emptying corrupted region for drawable at [%p].\n",
-                  (void*) pBackingStore -> pBackingPixmap);
-      #endif
-
-      nxagentUnmarkCorruptedRegion((DrawablePtr) pBackingStore -> pBackingPixmap, NullRegion);
-    }
-  }
-}
-
-void nxagentEmptyAllBackingStoreRegions(void)
-{
-  if (nxagentLoopOverWindows(nxagentEmptyBackingStoreRegion) == 0)
-  {
-    #ifdef WARNING
-    fprintf(stderr, "nxagentEmptyAllSavedRegions: Failed to empty backing store saved regions.\n");
-    #endif
-  }
-}
-
-void nxagentInitBSPixmapList(void)
-{
-  memset(nxagentBSPixmapList, 0, BSPIXMAPLIMIT * sizeof( StoringPixmapPtr));
-}
-
-int nxagentAddItemBSPixmapList(unsigned long id, PixmapPtr pPixmap, WindowPtr pWin, int bsx, int bsy)
-{
-  int i;
-
-  for (i = 0; i < BSPIXMAPLIMIT; i++)
-  {
-    if (nxagentBSPixmapList[i] == NULL)
-    {
-      nxagentBSPixmapList[i] = malloc(sizeof(StoringPixmapRec));
-
-      if (nxagentBSPixmapList[i] == NULL)
-      {
-        FatalError("nxagentAddItemBSPixmapList: Failed to allocate memory for nxagentBSPixmapList.\n");
-      }
-
-      nxagentBSPixmapList[i] -> storingPixmapId = id;
-      nxagentBSPixmapList[i] -> pStoringPixmap = pPixmap;
-      nxagentBSPixmapList[i] -> pSavedWindow = pWin;
-      nxagentBSPixmapList[i] -> backingStoreX = bsx;
-      nxagentBSPixmapList[i] -> backingStoreY = bsy;
-
-      #ifdef TEST
-      fprintf(stderr, "nxagentAddItemBSPixmapList: Added Pixmap with id [%lu] to nxagentBSPixmapList.\n", id);
-      #endif
-
-      return 1;
-    }
-
-    if (nxagentBSPixmapList[i] -> storingPixmapId == id)
-    {
-      nxagentBSPixmapList[i] -> pStoringPixmap = pPixmap;
-      nxagentBSPixmapList[i] -> pSavedWindow = pWin;
-      nxagentBSPixmapList[i] -> backingStoreX = bsx;
-      nxagentBSPixmapList[i] -> backingStoreY = bsy;
-
-      #ifdef TEST
-      fprintf(stderr, "nxagentAddItemBSPixmapList: Updated existing item for id [%lu].\n", id);
-      #endif
-
-      return 1;
-    }
-  }
-
-  #ifdef TEST
-  fprintf(stderr, "nxagentAddItemBSPixmapList: WARNING! List item full.\n");
-  #endif
-
-  return 0;
-}
-
-int nxagentRemoveItemBSPixmapList(unsigned long pixmapId)
-{
-  int i;
-  int j;
-
-  if (pixmapId == 0 || nxagentBSPixmapList[0] == NULL)
-  {
-    return 0;
-  }
-
-  for (i = 0; i < BSPIXMAPLIMIT; i++)
-  {
-    if ((nxagentBSPixmapList[i] != NULL) &&
-            (nxagentBSPixmapList[i] -> storingPixmapId == pixmapId))
-    {
-      free(nxagentBSPixmapList[i]);
-      nxagentBSPixmapList[i] = NULL;
-
-      if (i < BSPIXMAPLIMIT - 1)
-      {
-        for (j = i; j < BSPIXMAPLIMIT -1; j++)
-        {
-          nxagentBSPixmapList[j] = nxagentBSPixmapList[j + 1];
-        }
-
-        if (nxagentBSPixmapList[j] == nxagentBSPixmapList[j - 1])
-        {
-          nxagentBSPixmapList[j] = NULL;
-        }
-      }
-
-      #ifdef TEST
-      fprintf(stderr, "nxagentRemoveItemBSPixmapList: Removed Pixmap with id [%lu] from list.\n",
-                  pixmapId);
-      #endif
-
-      return 1;
-    }
-  }
-
-  #ifdef TEST
-  fprintf(stderr, "nxagentRemoveItemBSPixmapList: WARNING! Can't remove item [%lu]: item not found.\n",
-              pixmapId);
-  #endif
-
-  return 0;
-}
-
-int nxagentEmptyBSPixmapList()
-{
-  int i;
-
-  for (i = 0; i < BSPIXMAPLIMIT; i++)
-  {
-    free(nxagentBSPixmapList[i]);
-    nxagentBSPixmapList[i] = NULL;
-  }
-
-  return 1;
-}
-
-StoringPixmapPtr nxagentFindItemBSPixmapList(unsigned long pixmapId)
-{
-  int i;
-
-  for (i = 0; i < BSPIXMAPLIMIT; i++)
-  {
-    if ((nxagentBSPixmapList[i] != NULL) &&
-            (nxagentBSPixmapList[i] -> storingPixmapId == pixmapId))
-    {
-      #ifdef TEST
-      fprintf(stderr, "nxagentFindItemBSPixmapList: pixmapId [%lu].\n", pixmapId);
-      fprintf(stderr, "nxagentFindItemBSPixmapList: nxagentBSPixmapList[%d] -> storingPixmapId [%lu].\n",
-                  i, nxagentBSPixmapList[i] -> storingPixmapId);
-      #endif
-
-      return nxagentBSPixmapList[i];
-    }
-  }
-
-  #ifdef TEST
-  fprintf(stderr, "nxagentFindItemBSPixmapList: WARNING! Item not found.\n");
-  #endif
-  
-  #ifdef TEST
-  fprintf(stderr, "nxagentFindItemBSPixmapList: Pixmap with id [%lu] not found.\n",
-              pixmapId);
-  fprintf(stderr, "nxagentBSPixmapList[%d] = [%p].\n",
-              i, (void *) nxagentBSPixmapList[i]);
-  #endif
-
-  return NULL;
-}
-

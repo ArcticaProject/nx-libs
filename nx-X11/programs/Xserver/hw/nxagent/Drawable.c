@@ -44,8 +44,6 @@
 
 #include "compext/Compext.h"
 
-#include "mibstorest.h"
-
 #define PANIC
 #define WARNING
 #undef  TEST
@@ -3055,7 +3053,6 @@ int nxagentSynchronizationPredicate()
 void nxagentSendBackgroundExpose(WindowPtr pWin, PixmapPtr pBackground, RegionPtr pExpose)
 {
   RegionRec expose;
-  miBSWindowPtr pBackingStore;
 
   RegionInit(&expose, NullBox, 1);
 
@@ -3111,21 +3108,6 @@ void nxagentSendBackgroundExpose(WindowPtr pWin, PixmapPtr pBackground, RegionPt
               expose.extents.x1, expose.extents.y1, expose.extents.x2, expose.extents.y2);
   #endif
 
-  /*
-   * This prevents hidden region to be exposed.
-   */
-
-  pBackingStore = (miBSWindowPtr)pWin->backStorage;
-
-  if ((pBackingStore != NULL) && (RegionNil(&pBackingStore->SavedRegion) == 0))
-  {
-    RegionTranslate(&expose, -pWin -> drawable.x, -pWin -> drawable.y);
-
-    RegionSubtract(&expose, &expose, &pBackingStore -> SavedRegion);
-
-    RegionTranslate(&expose, pWin -> drawable.x, pWin -> drawable.y);
-  }
-
   RegionIntersect(&expose, &expose, &pWin -> clipList);
 
   /*
@@ -3138,7 +3120,7 @@ void nxagentSendBackgroundExpose(WindowPtr pWin, PixmapPtr pBackground, RegionPt
   
   RegionTranslate(&expose, pWin -> drawable.x, pWin -> drawable.y);
 
-  miWindowExposures(pWin, &expose, &expose);
+  miWindowExposures(pWin, &expose);
 
 nxagentSendBackgroundExposeEnd:
 
@@ -3248,7 +3230,7 @@ int nxagentClipAndSendClearExpose(WindowPtr pWin, void * ptr)
 
       RegionSubtract(remoteExposeRgn, remoteExposeRgn, exposeRgn);
 
-      miWindowExposures(pWin, exposeRgn, exposeRgn);
+      miWindowExposures(pWin, exposeRgn);
     }
 
     RegionDestroy(exposeRgn);

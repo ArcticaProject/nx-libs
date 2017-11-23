@@ -102,12 +102,6 @@ typedef struct
 
 typedef StoringPixmapRec *StoringPixmapPtr;
 
-int nxagentAddItemBSPixmapList(unsigned long, PixmapPtr, WindowPtr, int, int);
-int nxagentRemoveItemBSPixmapList(unsigned long);
-void nxagentInitBSPixmapList(void);
-int nxagentEmptyBSPixmapList(void);
-StoringPixmapPtr nxagentFindItemBSPixmapList (unsigned long);
-
 extern int nxagentWindowPrivateIndex;
 
 #define nxagentWindowPriv(pWin) \
@@ -210,7 +204,7 @@ Bool nxagentUnrealizeWindow(WindowPtr pWin);
 
 Bool nxagentCheckIllegalRootMonitoring(WindowPtr pWin, Mask mask);
 
-void nxagentWindowExposures(WindowPtr pWin, RegionPtr pRgn, RegionPtr other_exposed);
+void nxagentWindowExposures(WindowPtr pWin, RegionPtr pRgn);
 
 void nxagentPaintWindowBackground(WindowPtr pWin, RegionPtr pRegion, int what);
 

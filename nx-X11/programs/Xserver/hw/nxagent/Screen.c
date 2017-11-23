@@ -104,8 +104,6 @@ is" without express or implied warranty.
 
 #include "compext/Compext.h"
 
-#include "mibstorest.h"
-
 /*
  * Set here the required log level.
  */
@@ -1577,26 +1575,11 @@ N/A
      * Backing store procedures.
      */
 
-    pScreen->SaveDoomedAreas = (void (*)()) 0;
-    pScreen->RestoreAreas = (RegionPtr (*)()) 0;
-    pScreen->ExposeCopy = (void (*)()) 0;
-    pScreen->TranslateBackingStore = (RegionPtr (*)()) 0;
-    pScreen->ClearBackingStore = (RegionPtr (*)()) 0;
-    pScreen->DrawGuarantee = (void (*)()) 0;
-
     if (enableBackingStore == 1)
     {
       #ifdef TEST
       fprintf(stderr, "nxagentOpenScreen: Going to initialize backing store.\n");
       #endif
-
-      pScreen -> BackingStoreFuncs.SaveAreas = nxagentSaveAreas;
-      pScreen -> BackingStoreFuncs.RestoreAreas = nxagentRestoreAreas;
-      pScreen -> BackingStoreFuncs.SetClipmaskRgn = 0;
-      pScreen -> BackingStoreFuncs.GetImagePixmap = 0;
-      pScreen -> BackingStoreFuncs.GetSpansPixmap = 0;
-
-      miInitializeBackingStore(pScreen);
     }
 
     /*
@@ -2136,7 +2119,6 @@ static void nxagentSetRootClip (ScreenPtr pScreen, Bool enable)
     WindowPtr   pChild;
     Bool        WasViewable = (Bool)(pWin->viewable);
     Bool        anyMarked = FALSE;
-    RegionPtr   pOldClip = NULL, bsExposed;
 #ifdef DO_SAVE_UNDERS
     Bool        dosave = FALSE;
 #endif
@@ -2197,12 +2179,6 @@ static void nxagentSetRootClip (ScreenPtr pScreen, Bool enable)
 
     if (WasViewable)
     {
-        if (pWin->backStorage)
-        {
-            pOldClip = RegionCreate(NullBox, 1);
-            RegionCopy(pOldClip, &pWin->clipList);
-        }
-
         if (pWin->firstChild)
         {
             anyMarked |= (*pScreen->MarkOverlappedWindows)(pWin->firstChild,
@@ -2226,28 +2202,6 @@ static void nxagentSetRootClip (ScreenPtr pScreen, Bool enable)
             (*pScreen->ValidateTree)(pWin, NullWindow, VTOther);
     }
 
-    if (pWin->backStorage && pOldClip &&
-        ((pWin->backingStore == Always) || WasViewable))
-    {
-        if (!WasViewable)
-            pOldClip = &pWin->clipList; /* a convenient empty region */
-        bsExposed = (*pScreen->TranslateBackingStore)
-                             (pWin, 0, 0, pOldClip,
-                              pWin->drawable.x, pWin->drawable.y);
-        if (WasViewable)
-            RegionDestroy(pOldClip);
-        if (bsExposed)
-        {
-            RegionPtr   valExposed = NullRegion;
-
-            if (pWin->valdata)
-                valExposed = &pWin->valdata->after.exposed;
-            (*pScreen->WindowExposures) (pWin, valExposed, bsExposed);
-            if (valExposed)
-                RegionEmpty(valExposed);
-            RegionDestroy(bsExposed);
-        }
-    }
     if (WasViewable)
     {
         if (anyMarked)
@@ -4134,262 +4088,6 @@ int nxagentAdjustRandRXinerama(ScreenPtr pScreen)
   #endif
 
   return TRUE;
-}
-
-void nxagentSaveAreas(PixmapPtr pPixmap, RegionPtr prgnSave, int xorg, int yorg, WindowPtr pWin)
-{
-  PixmapPtr pVirtualPixmap;
-  nxagentPrivPixmapPtr pPrivPixmap;
-  XlibGC gc;
-  XGCValues values;
-  int i;
-  int xSrc, ySrc, xDst, yDst, w, h;
-  int nRects;
-  int size;
-  BoxPtr pBox;
-  XRectangle *pRects;
-  BoxRec extents;
-  RegionRec cleanRegion;
-
-  miBSWindowPtr pBackingStore = (miBSWindowPtr) pWin -> backStorage;
-
-  pVirtualPixmap = nxagentVirtualPixmap(pPixmap);
-
-  pPrivPixmap = nxagentPixmapPriv(pPixmap);
-
-  pPrivPixmap -> isBackingPixmap = 1;
-
-  fbCopyWindowProc(&pWin -> drawable, &pVirtualPixmap -> drawable, 0, RegionRects(prgnSave),
-                       RegionNumRects(prgnSave), xorg, yorg, FALSE, FALSE, 0, 0);
-
-  values.subwindow_mode = IncludeInferiors;
-
-  gc = XCreateGC(nxagentDisplay, nxagentWindow(screenInfo.screens[0]->root), GCSubwindowMode, &values);
-
-  /*
-   * Initialize to the corrupted region.
-   * Coordinates are relative to the window.
-   */
-
-  RegionInit(&cleanRegion, NullBox, 1);
-
-  RegionCopy(&cleanRegion, nxagentCorruptedRegion((DrawablePtr) pWin));
-
-  /*
-   * Subtract the corrupted region from the saved region.
-   */
-
-  RegionSubtract(&pBackingStore -> SavedRegion, &pBackingStore -> SavedRegion, &cleanRegion);
-
-  /*
-   * Translate the corrupted region. Coordinates
-   * are relative to the backing store pixmap.
-   */
-
-  RegionTranslate(&cleanRegion, -pBackingStore -> x, -pBackingStore -> y);
-
-  /*
-   * Compute the clean region to be saved: subtract
-   * the corrupted region from the region to be saved.
-   */
-
-  RegionSubtract(&cleanRegion, prgnSave, &cleanRegion);
-
-  nRects = RegionNumRects(&cleanRegion);
-  size = nRects * sizeof(*pRects);
-  pRects = (XRectangle *) malloc(size);
-  pBox = RegionRects(&cleanRegion);
-
-  for (i = nRects; i-- > 0;)
-  {
-    pRects[i].x = pBox[i].x1;
-    pRects[i].y = pBox[i].y1;
-    pRects[i].width = pBox[i].x2 - pBox[i].x1;
-    pRects[i].height = pBox[i].y2 - pBox[i].y1;
-  }
-
-  XSetClipRectangles(nxagentDisplay, gc, 0, 0, pRects, nRects, Unsorted);
-
-  free((char *) pRects);
-
-  extents = *RegionExtents(&cleanRegion);
-
-  RegionUninit(&cleanRegion);
-
-  xDst = extents.x1;
-  yDst = extents.y1;
-
-/*
- * Left here the wrong solution. The window could be not
- * configured yet on the real X, whilst the x and y in the
- * WindowRec are the new coordinates. The right solution
- * is the other, as it is independent from the window
- * coordinates.
- *
- *  xSrc = xDst + xorg - pWin -> drawable.x;
- *  ySrc = yDst + yorg - pWin -> drawable.y;
- */
-
-  xSrc = xDst + pBackingStore -> x;
-  ySrc = yDst + pBackingStore -> y;
-
-  w = extents.x2 - extents.x1;
-  h = extents.y2 - extents.y1;
-
-  XCopyArea(nxagentDisplay, nxagentWindow(pWin), nxagentPixmap(pPixmap), gc,
-                xSrc, ySrc, w, h, xDst, yDst);
-
-  nxagentAddItemBSPixmapList(nxagentPixmap(pPixmap), pPixmap, pWin,
-                                 pBackingStore -> x, pBackingStore -> y);
-
-  #ifdef TEST
-  fprintf(stderr,"nxagentSaveAreas: Added pixmap [%p] with id [%d] on window [%p] to BSPixmapList.\n",
-                 (void *) pPixmap, nxagentPixmap(pPixmap), (void *) pWin);
-  #endif
-
-  XFreeGC(nxagentDisplay, gc);
-
-  return;
-}
-
-void nxagentRestoreAreas(PixmapPtr pPixmap, RegionPtr prgnRestore, int xorg,
-                             int yorg, WindowPtr pWin)
-{
-  PixmapPtr pVirtualPixmap;
-  RegionPtr clipRegion;
-  XlibGC gc;
-  XGCValues values;
-  int i;
-  int xSrc, ySrc, xDst, yDst, w, h;
-  int nRects;
-  int size;
-  BoxPtr pBox;
-  XRectangle *pRects;
-  BoxRec extents;
-  miBSWindowPtr pBackingStore;
-
-  /*
-   * Limit the area to restore to the
-   * root window size.
-   */
-
-  RegionIntersect(prgnRestore, prgnRestore,
-                       &pWin -> drawable.pScreen -> root -> winSize);
-
-  pBackingStore = (miBSWindowPtr) pWin -> backStorage;
-
-  pVirtualPixmap = nxagentVirtualPixmap(pPixmap);
-
-  fbCopyWindowProc(&pVirtualPixmap -> drawable, &pWin -> drawable, 0, RegionRects(prgnRestore),
-                       RegionNumRects(prgnRestore), -xorg, -yorg, FALSE, FALSE, 0, 0);
-
-  values.subwindow_mode = ClipByChildren;
-
-  gc = XCreateGC(nxagentDisplay, nxagentWindow(screenInfo.screens[0]->root), GCSubwindowMode, &values);
-
-  /*
-   * Translate the reference point to the origin of the window.
-   */
-
-  RegionTranslate(prgnRestore,
-                       -pWin -> drawable.x - pWin -> borderWidth,
-                           -pWin -> drawable.y - pWin -> borderWidth);
-
-  clipRegion = prgnRestore;
-
-  if (nxagentDrawableStatus((DrawablePtr) pPixmap) == NotSynchronized)
-  {
-    clipRegion = RegionCreate(NullBox, 1);
-
-    RegionCopy(clipRegion,
-                        nxagentCorruptedRegion((DrawablePtr) pPixmap));
-
-    /*
-     * Translate the reference point to the origin of the window.
-     */
-
-    RegionTranslate(clipRegion,
-                         pBackingStore -> x, pBackingStore -> y);
-
-    RegionIntersect(clipRegion, prgnRestore, clipRegion);
-
-    /*
-     * Subtract the corrupted region from the saved areas.
-     * miBSRestoreAreas will return the exposure region.
-     */
-
-    RegionSubtract(&pBackingStore->SavedRegion,
-                        &pBackingStore->SavedRegion, clipRegion);
-
-    /*
-     * Store the corrupted region to send expose later.
-     */
-
-    if (nxagentRemoteExposeRegion != NULL)
-    {
-      RegionTranslate(clipRegion, pWin -> drawable.x, pWin -> drawable.y);
-
-      RegionUnion(nxagentRemoteExposeRegion, nxagentRemoteExposeRegion, clipRegion);
-
-      RegionTranslate(clipRegion, -pWin -> drawable.x, -pWin -> drawable.y);
-    }
-
-    /*
-     * Compute the region to be restored.
-     */
-
-    RegionSubtract(clipRegion, prgnRestore, clipRegion);
-  }
-
-  nRects = RegionNumRects(clipRegion);
-  size = nRects * sizeof(*pRects);
-  pRects = (XRectangle *) malloc(size);
-  pBox = RegionRects(clipRegion);
-
-  for (i = nRects; i-- > 0;)
-  {
-    pRects[i].x = pBox[i].x1;
-    pRects[i].y = pBox[i].y1;
-    pRects[i].width = pBox[i].x2 - pBox[i].x1;
-    pRects[i].height = pBox[i].y2 - pBox[i].y1;
-  }
-
-  XSetClipRectangles(nxagentDisplay, gc, 0, 0, pRects, nRects, Unsorted);
-
-  free(pRects);
-
-  extents = *RegionExtents(clipRegion);
-
-  xDst = extents.x1;
-  yDst = extents.y1;
-
-  xSrc = xDst - xorg + pWin -> drawable.x;
-  ySrc = yDst - yorg + pWin -> drawable.y;
-
-  w = extents.x2 - extents.x1;
-  h = extents.y2 - extents.y1;
-
-  nxagentFlushConfigureWindow();
-
-  XCopyArea(nxagentDisplay, nxagentPixmap(pPixmap), nxagentWindow(pWin), gc,
-                xSrc, ySrc, w, h, xDst, yDst);
-
-  XFreeGC(nxagentDisplay, gc);
-
-  if (clipRegion != NULL && clipRegion != prgnRestore)
-  {
-    RegionDestroy(clipRegion);
-  }
-
-  /*
-   * Restore the reference point to the origin of the screen.
-   */
-
-  RegionTranslate(prgnRestore,
-                       pWin -> drawable.x - pWin -> borderWidth,
-                           pWin -> drawable.y + pWin -> borderWidth);
-
-  return;
 }
 
 void nxagentSetWMNormalHints(int screen)

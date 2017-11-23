@@ -228,8 +228,7 @@ extern void miSendExposures(
 
 extern void miWindowExposures(
     WindowPtr /*pWin*/,
-    RegionPtr /*prgn*/,
-    RegionPtr /*other_exposed*/
+    RegionPtr /*prgn*/
 );
 
 extern void miPaintWindow(

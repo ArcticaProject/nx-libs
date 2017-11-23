@@ -146,12 +146,6 @@ fbSetupScreen(ScreenPtr	pScreen,
 #ifndef FB_OLD_SCREEN
     pScreen->GetWindowPixmap = _fbGetWindowPixmap;
     pScreen->SetWindowPixmap = _fbSetWindowPixmap;
-
-    pScreen->BackingStoreFuncs.SaveAreas = fbSaveAreas;
-    pScreen->BackingStoreFuncs.RestoreAreas = fbRestoreAreas;
-    pScreen->BackingStoreFuncs.SetClipmaskRgn = 0;
-    pScreen->BackingStoreFuncs.GetImagePixmap = 0;
-    pScreen->BackingStoreFuncs.GetSpansPixmap = 0;
 #endif
     
     return TRUE;
@@ -246,14 +240,6 @@ fbFinishScreenInit(ScreenPtr	pScreen,
 	pScreen->CreateScreenResources = fb24_32CreateScreenResources;
     }
 #endif
-#if 0
-    /* leave backing store initialization to the enclosing code so
-     * it can choose the correct order of wrappers
-     */
-    /* init backing store here so we can overwrite CloseScreen without stepping
-     * on the backing store wrapped version */
-    fbInitializeBackingStore (pScreen);
-#endif
     return TRUE;
 }
 
@@ -275,26 +261,3 @@ fbScreenInit(ScreenPtr	pScreen,
 	return FALSE;
     return TRUE;
 }
-
-
-#ifdef FB_OLD_SCREEN
-const miBSFuncRec fbBSFuncRec = {
-    fbSaveAreas,
-    fbRestoreAreas,
-    (void (*)(GCPtr, RegionPtr)) 0,
-    (PixmapPtr (*)(void)) 0,
-    (PixmapPtr (*)(void)) 0,
-};
-#endif
-
-#if 0
-void
-fbInitializeBackingStore (ScreenPtr pScreen)
-{
-#ifdef FB_OLD_SCREEN
-    miInitializeBackingStore (pScreen, (miBSFuncRec *) &fbBSFuncRec);
-#else
-    miInitializeBackingStore (pScreen);
-#endif
-}
-#endif

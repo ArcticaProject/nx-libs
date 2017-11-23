@@ -38,7 +38,6 @@
 #include "selection.h"
 #include "keysym.h"
 #include "fb.h"
-#include "mibstorest.h"
 #include "osdep.h"
 
 #include "Agent.h"
@@ -2484,7 +2483,7 @@ FIXME: This can be maybe optimized by consuming the
 
     if (index == -1)
     {
-      miWindowExposures(pWin, &sum, NullRegion);
+      miWindowExposures(pWin, &sum);
     }
     else
     {
@@ -2537,53 +2536,17 @@ int nxagentHandleGraphicsExposeEvent(XEvent *X)
 {
   /*
    * Send an expose event to client, instead of graphics
-   * expose. If target drawable is a backing pixmap, send
-   * expose event for the saved window, else do nothing.
+   * expose.
    */
 
   RegionPtr exposeRegion;
   BoxRec rect;
   WindowPtr pWin;
-  StoringPixmapPtr pStoringPixmapRec = NULL;
-  miBSWindowPtr pBSwindow = NULL;
-  int drawableType;
 
   pWin = nxagentWindowPtr(X -> xgraphicsexpose.drawable);
 
-  if (pWin != NULL)
-  {
-    drawableType = DRAWABLE_WINDOW;
-  }
-  else
-  {
-    drawableType = DRAWABLE_PIXMAP;
-  }
-
-  if (drawableType == DRAWABLE_PIXMAP)
-  {
-    pStoringPixmapRec = nxagentFindItemBSPixmapList(X -> xgraphicsexpose.drawable);
-
-    if (pStoringPixmapRec == NULL)
-    {
-      #ifdef TEST
-      fprintf(stderr, "nxagentHandleGraphicsExposeEvent: WARNING! Storing pixmap not found.\n");
-      #endif
-
-      return 1;
-    }
-
-    pBSwindow = (miBSWindowPtr) pStoringPixmapRec -> pSavedWindow -> backStorage;
-
-    if (pBSwindow == NULL)
-    {
-      #ifdef TEST
-      fprintf(stderr, "nxagentHandleGraphicsExposeEvent: WARNING! Back storage not found.\n");
-      #endif
-
-      return 1;
-    }
-
-    pWin = pStoringPixmapRec -> pSavedWindow;
+  if (pWin == 0) {
+    return 1;
   }
 
   /*
@@ -2598,38 +2561,19 @@ int nxagentHandleGraphicsExposeEvent(XEvent *X)
 
   exposeRegion = RegionCreate(&rect, 0);
 
-  if (drawableType == DRAWABLE_PIXMAP)
-  {
-    #ifdef TEST
-    fprintf(stderr, "nxagentHandleGraphicsExposeEvent: Handling GraphicsExpose event on pixmap with id"
-                " [%lu].\n", X -> xgraphicsexpose.drawable);
-    #endif
-
-    /*
-     * The exposeRegion coordinates are relative
-     * to the pixmap to which GraphicsExpose
-     * event refers. But the BS coordinates of
-     * the savedRegion  are relative to the
-     * window.
-     */
-
-    RegionTranslate(exposeRegion, pStoringPixmapRec -> backingStoreX,
-                         pStoringPixmapRec -> backingStoreY);
-
-    /*
-     * We remove from SavedRegion the part
-     * affected by the GraphicsExpose event.
-     */
-
-    RegionSubtract(&(pBSwindow -> SavedRegion), &(pBSwindow -> SavedRegion),
-                        exposeRegion);
-  }
-
   /*
    * Store the exposeRegion in order to send
    * the expose event later. The coordinates
    * must be relative to the screen.
    */
+
+//  #ifdef TEST
+  fprintf(stderr, "nxagentHandleGraphicsExposeEvent: graphics expose event with expose region rectangle "
+              "x1 [%d], y1 [%d] and x2 [%d] y2 [%d]. and drawable [%ld] with x [%d] and y[%d].\n",
+                  rect.x1, rect.y1, rect.x2, rect.y2,
+                      X -> xgraphicsexpose.drawable,
+                          pWin -> drawable.x, pWin -> drawable.y);
+//  #endif
 
   RegionTranslate(exposeRegion, pWin -> drawable.x, pWin -> drawable.y);
 
@@ -4104,7 +4048,7 @@ void nxagentSynchronizeExpose(void)
                         RegionNumRects(nxagentExposeQueueHead.remoteRegion));
         #endif
 
-        miWindowExposures(pWin, nxagentExposeQueueHead.remoteRegion, NullRegion);
+        miWindowExposures(pWin, nxagentExposeQueueHead.remoteRegion);
       }
     }
   }
@@ -4339,7 +4283,7 @@ int nxagentClipAndSendExpose(WindowPtr pWin, void * ptr)
 
       RegionSubtract(remoteExposeRgn, remoteExposeRgn, exposeRgn);
 
-      miWindowExposures(pWin, exposeRgn, NullRegion);
+      miWindowExposures(pWin, exposeRgn);
     }
 
     RegionDestroy(exposeRgn);

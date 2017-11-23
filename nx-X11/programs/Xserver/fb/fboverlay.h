@@ -89,8 +89,7 @@ fbOverlayCopyWindow(WindowPtr	pWin,
     
 void
 fbOverlayWindowExposures (WindowPtr	pWin,
-			  RegionPtr	prgn,
-			  RegionPtr	other_exposed);
+			  RegionPtr	prgn);
 
 void
 fbOverlayPaintWindow(WindowPtr pWin, RegionPtr pRegion, int what);
