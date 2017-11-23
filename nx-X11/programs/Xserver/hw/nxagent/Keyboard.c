@@ -1904,10 +1904,12 @@ void nxagentKeycodeConversionSetup(void)
       FILE *keyboard_file;
       if (!keyboard_file_path)
       {
-        FatalError("nxagentKeycodeConversionSetup: malloc failed.");
+        free(sessionpath);
+        FatalError("malloc for keyboard file path failed.");
       }
       strcpy(keyboard_file_path, sessionpath);
       strcat(keyboard_file_path, "/keyboard");
+      free(sessionpath);
       if ((keyboard_file = fopen(keyboard_file_path, "w"))) {
         if (drules)
           fprintf(keyboard_file, "rules=\"%s\"\n", drules[0] == '\0' ? "," : drules);
