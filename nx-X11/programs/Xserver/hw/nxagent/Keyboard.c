@@ -475,7 +475,7 @@ static CARD8 nxagentConvertedKeycodes[] =
   /* 255 */  255
 };
 
-static int nxagentKeycodeConversion = False;
+static Bool nxagentKeycodeConversion = False;
 
 CARD8 nxagentConvertKeycode(CARD8 k)
 {
