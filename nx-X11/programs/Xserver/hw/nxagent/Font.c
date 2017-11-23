@@ -1406,15 +1406,16 @@ Bool nxagentDisconnectAllFonts()
 
 static Bool nxagentGetFontServerPath(char * fontServerPath)
 {
-  char path[256];
+  /* ensure path is no longer than fontServerPath */
+  char path[256] = {0};
 
-  if (NXGetFontParameters(nxagentDisplay, 256, path) == True)
+  if (NXGetFontParameters(nxagentDisplay, sizeof(path), path) == True)
   {
     if (*path != '\0')
     {
       strncpy(fontServerPath, path + 1, *path);
 
-      *(fontServerPath + *path) = '\0';
+      fontServerPath[*path] = '\0';
 
       #ifdef TEST
       fprintf(stderr, "nxagentGetFontServerPath: Got path [%s].\n",

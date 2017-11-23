@@ -1150,9 +1150,9 @@ void nxagentOpenDisplay(int argc, char *argv[])
 
   if (*nxagentDisplayName == '\0')
   {
-    strncpy(nxagentDisplayName, XDisplayName(NULL), 1023);
+    strncpy(nxagentDisplayName, XDisplayName(NULL), sizeof(nxagentDisplayName) - 1);
 
-    nxagentDisplayName[1023] = '\0';
+    nxagentDisplayName[sizeof(nxagentDisplayName) - 1] = '\0';
   }
 
   nxagentCloseDisplay();
@@ -1862,7 +1862,7 @@ static FILE *nxagentLookForIconFile(char *iconName, const char *permission,
       singlePath[strlen(singlePath)- 1] = 0;
     }
 
-    if (strlen(singlePath) + strlen(iconName) + 1 < PATH_MAX)
+    if (strlen(singlePath) + strlen(iconName) + 1 < sizeof(singlePath)<)
     {
       strncat(singlePath, slash, 1);
       strcat(singlePath, iconName);

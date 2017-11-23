@@ -121,7 +121,7 @@ static const char *_NXGetFontPath(const char *path)
 
     if (fontEnv != NULL && *fontEnv != '\0')
     {
-        if (strlen(fontEnv) + 1 > 1024)
+        if (strlen(fontEnv) + 1 > sizeof(_NXFontPath))
         {
 #ifdef NX_TRANS_TEST
             fprintf(stderr, "_NXGetFontPath: WARNING! Maximum length of font path exceeded.\n");
@@ -140,8 +140,8 @@ static const char *_NXGetFontPath(const char *path)
 
 _NXGetFontPathError:
 
-    strncpy(_NXFontPath, path, 1023);
-    _NXFontPath[1023] = '\0';
+    strncpy(_NXFontPath, path, sizeof(_NXFontPath) - 1);
+    _NXFontPath[sizeof(_NXFontPath) - 1] = '\0';
 
 #ifdef NX_TRANS_TEST
     fprintf(stderr, "_NXGetFontPath: Using default font path [%s].\n", _NXFontPath);
@@ -199,7 +199,7 @@ doOpenFont(ClientPtr client, OFclosurePtr c)
 	BitmapFormatScanlineUnit8;
 
 
-    nxagentOrigFontNameLen = (c -> origFontNameLen < 256) ? c -> origFontNameLen : 255;
+    nxagentOrigFontNameLen = (c -> origFontNameLen < sizeof(nxagentOrigFontName) ? c -> origFontNameLen : sizeof(nxagentOrigFontName) - 1);
 
     memcpy(nxagentOrigFontName, c -> origFontName, nxagentOrigFontNameLen);
 
