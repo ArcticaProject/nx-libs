@@ -1899,18 +1899,16 @@ void nxagentKeycodeConversionSetup(void)
     char *sessionpath = nxagentGetSessionPath();
     if (sessionpath)
     {
-      int keyboard_file_path_size = strlen(sessionpath) + strlen("/keyboard");
-      char *keyboard_file_path = malloc((keyboard_file_path_size + 1) * sizeof(char));
+      char *keyboard_file_path = NULL;
       FILE *keyboard_file;
-      if (!keyboard_file_path)
+      if ((asprintf(&keyboard_file_path, "%s/keyboard", sessionpath) == -1))
       {
         free(sessionpath);
         FatalError("malloc for keyboard file path failed.");
       }
-      strcpy(keyboard_file_path, sessionpath);
-      strcat(keyboard_file_path, "/keyboard");
       free(sessionpath);
-      if ((keyboard_file = fopen(keyboard_file_path, "w"))) {
+      if ((keyboard_file = fopen(keyboard_file_path, "w")))
+      {
         if (drules)
           fprintf(keyboard_file, "rules=\"%s\"\n", drules[0] == '\0' ? "," : drules);
         if (dmodel)
