@@ -61,12 +61,12 @@ NX_XTRANS_HEADERS =		\
 	$(NULL)
 
 %:
-	if test -f nxcomp/Makefile; then ${MAKE} -C nxcomp $@; fi
-	if test -f nxproxy/Makefile; then ${MAKE} -C nxproxy $@; fi
+	if test -f nxcomp/Makefile; then ${MAKE} -C nxcomp "$@"; fi
+	if test -f nxproxy/Makefile; then ${MAKE} -C nxproxy "$@"; fi
 	if test -d nx-X11; then \
-	    if test -f nx-X11/lib/Makefile; then ${MAKE} -C nx-X11/lib $@; fi; \
-	    if test -f nxcompshad/Makefile; then ${MAKE} -C nxcompshad $@; fi; \
-	    if test -f nx-X11/Makefile; then ${MAKE} -C nx-X11 $@; fi; \
+	    if test -f nx-X11/lib/Makefile; then ${MAKE} -C nx-X11/lib "$@"; fi; \
+	    if test -f nxcompshad/Makefile; then ${MAKE} -C nxcompshad "$@"; fi; \
+	    if test -f nx-X11/Makefile; then ${MAKE} -C nx-X11 "$@"; fi; \
 	fi
 
 	# clean auto-generated files
@@ -234,15 +234,15 @@ uninstall:
 	[ ! -d nx-X11 ] || $(MAKE) uninstall-full
 
 uninstall-lite:
-	if test -f nxcomp/Makefile; then ${MAKE} -C nxcomp $@; fi
-	if test -f nxproxy/Makefile; then ${MAKE} -C nxproxy $@; fi
+	if test -f nxcomp/Makefile; then ${MAKE} -C nxcomp "$@"; fi
+	if test -f nxproxy/Makefile; then ${MAKE} -C nxproxy "$@"; fi
 
 	$(RM_FILE) $(DESTDIR)$(PREFIX)/share/nx/VERSION.nxproxy
 	$(RM_DIR) $(DESTDIR)$(PREFIX)/share/nx/
 
 uninstall-full:
-	if test -f nxcompshad/Makefile; then ${MAKE} -C nxcompshad $@; fi
-	if test -f nx-X11/lib/Makefile; then ${MAKE} -C nx-X11/lib $@; fi
+	if test -f nxcompshad/Makefile; then ${MAKE} -C nxcompshad "$@"; fi
+	if test -f nx-X11/lib/Makefile; then ${MAKE} -C nx-X11/lib "$@"; fi
 
 	$(RM_FILE) $(DESTDIR)$(BINDIR)/nxagent
 
