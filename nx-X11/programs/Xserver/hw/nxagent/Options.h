@@ -78,6 +78,15 @@ typedef enum _ToleranceChecksMode
 
 #define DEFAULT_TOLERANCE ToleranceChecksStrict
 
+typedef enum _KeycodeConversion
+{
+  KeycodeConversionOn = 0,
+  KeycodeConversionOff = 1,
+  KeycodeConversionAuto = 2
+} KeycodeConversionMode;
+
+#define DEFAULT_KEYCODE_CONVERSION KeycodeConversionAuto
+
 /*
  * Set of options affecting agent operations.
  */
@@ -431,6 +440,10 @@ typedef struct _AgentOptions
 
   ToleranceChecksMode ReconnectTolerance;
 
+  /*
+   * Convert evdev keycodes to pc105.
+   */
+  KeycodeConversionMode KeycodeConversion;
 } AgentOptionsRec;
 
 typedef AgentOptionsRec *AgentOptionsPtr;

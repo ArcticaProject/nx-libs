@@ -1483,6 +1483,25 @@ static void nxagentParseOptions(char *name, char *value)
 
     return;
   }
+  else if (!strcmp(name, "keyconv"))
+  {
+    if (!strcmp(value, "off")) {
+      nxagentChangeOption(KeycodeConversion, KeycodeConversionOff);
+    }
+    else if (!strcmp(value, "on")) {
+      nxagentChangeOption(KeycodeConversion, KeycodeConversionOn);
+    }
+    else if (!strcmp(value, "auto")) {
+      nxagentChangeOption(KeycodeConversion, KeycodeConversionAuto);
+    }
+    else
+    {
+      fprintf(stderr, "Warning: Ignoring bad value '%s' for option 'keyconv'.\n",
+              validateString(value));
+    }
+
+    return;
+  }
   else
   {
     #ifdef DEBUG
