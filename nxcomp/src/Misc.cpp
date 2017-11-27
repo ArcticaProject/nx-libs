@@ -331,6 +331,7 @@ tile=s\n\
 menu=n\n\
 sleep=n\n\
 tolerancechecks=s\n\
+keyconv=s\n\
                These options are interpreted by the NX agent. They\n\
                are ignored by the proxy.\n\
 \n\
