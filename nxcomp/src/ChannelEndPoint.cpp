@@ -91,6 +91,8 @@ ChannelEndPoint::setSpec(const char *hostName, long port) {
   int length;
 
   if (spec_) free(spec_);
+  spec_ = NULL;
+
   isUnix_ = false;
   isTCP_ = false;
 
