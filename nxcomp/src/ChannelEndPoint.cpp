@@ -58,7 +58,7 @@ ChannelEndPoint::~ChannelEndPoint()
 
 void
 ChannelEndPoint::setSpec(const char *spec) {
-  if (spec_) free(spec_);
+  free(spec_);
 
   if (spec && strlen(spec))
   {
@@ -90,7 +90,9 @@ void
 ChannelEndPoint::setSpec(const char *hostName, long port) {
   int length;
 
-  if (spec_) free(spec_);
+  free(spec_);
+  spec_ = NULL;
+
   isUnix_ = false;
   isTCP_ = false;
 
@@ -160,7 +162,7 @@ ChannelEndPoint::setDefaultTCPInterface(int publicInterface) {
 
 void
 ChannelEndPoint::setDefaultUnixPath(char *path) {
-  if (defaultUnixPath_) free(defaultUnixPath_);
+  free(defaultUnixPath_);
 
   if (path && strlen(path))
     defaultUnixPath_ = strdup(path);
