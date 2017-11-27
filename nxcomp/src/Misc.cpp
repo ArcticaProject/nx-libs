@@ -165,7 +165,7 @@ static const char UsageInfo[] =
 \n\
   port=n       Remote port used for the connection.\n\
 \n\
-  retry=n      Number of connection atempts.\n\
+  retry=n      Number of connection attempts.\n\
 \n\
   root=s       The root directory for the session. Usually is the\n\
                C-* or S-* in the .nx directory in the user's home,\n\
@@ -177,8 +177,8 @@ static const char UsageInfo[] =
   errors=s     Name of the log file used by the proxy. The default\n\
                is the name 'errors' in the session directory.\n\
 \n\
-  stats=s      Name of the file where are written the proxy stat-\n\
-               istics. The default is a file 'stats' in the session\n\
+  stats=s      Name of the file where the proxy statistics are writ-\n\
+               ten to. The default is a file 'stats' in the session\n\
                directory. The proxy replaces the data in the file\n\
                whenever it receives a SIGUSR1 or SIGUSR2 signal:\n\
 \n\
@@ -226,8 +226,8 @@ static const char UsageInfo[] =
 \n\
   limit=n      Specify a bitrate limit allowed for this session.\n\
 \n\
-  memory=n     Trigger memory optimizations used to keep small the\n\
-               size of X buffers. This is useful on embedded plat-\n\
+  memory=n     Trigger memory optimizations used to keep the size\n\
+               of X buffers small. This is useful on embedded plat-\n\
                forms, or where memory is scarce.\n\
 \n\
   cache=n      Size of the in-memory X message cache. Setting the\n\
@@ -361,6 +361,8 @@ keyconv=s\n\
                Mac where nxclient is located in a different direct-\n\
                ory compared to the other programs, to make easier\n\
                for the user to execute the program from the shell.\n\
+               The nxclient executable will be used for displaying\n\
+               the menu and request windows to the user.\n\
 \n\
   NX_SLAVE_CMD The full path to the slave channel handler. When the\n\
                slave channel is enabled, the agent will listen on a\n\
@@ -378,7 +380,7 @@ keyconv=s\n\
                ory is not set, null or invalid.\n\
 \n\
   PATH         The path where all executables are searched, except\n\
-               nxclient. If NX_CLIENT is not set, also the client\n\
+               nxclient. If NX_CLIENT is not set, also the nxclient\n\
                executable is searched in the system path.\n\
 \n\
   LD_LIBRARY_PATH\n\
