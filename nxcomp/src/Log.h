@@ -168,7 +168,13 @@ class NXLog
         delete pdt->thread_name;
 
         while (!pdt->buffer.empty()) {
+            /*
+             * get the stringstream object created in new_stack_entry()
+             * from the stack and delete it after pop()
+             */
+            std::stringstream* tmp = pdt->buffer.top();
             (void) pdt->buffer.pop ();
+            delete tmp;
         }
 
         delete pdt;
@@ -240,7 +246,12 @@ class NXLog
         pthread_sigmask(SIG_BLOCK, &tmp_signal_mask, &orig_signal_mask);
 
         if (!pdt->buffer.empty ()) {
-            const std::string str = pdt->buffer.top()->str();
+            /*
+             * get the stringstream object created in new_stack_entry()
+             * from the stack and delete it after pop()
+             */
+            std::stringstream *tmp = pdt->buffer.top();
+            const std::string str = tmp->str();
 
             if (!str.empty())
             {
@@ -251,6 +262,9 @@ class NXLog
 
             /* Remove from stack. */
             pdt->buffer.pop();
+
+            /* free memory */
+            delete tmp;
         }
 
         /* Restore old signal mask. */
