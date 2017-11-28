@@ -132,6 +132,20 @@ static const char UsageInfo[] =
 \n\
   -v           Print version information.\n\
 \n\
+  -d <n>       Set log level (0=FATAL, 1=ERROR, 2=WARNING, 3=INFO,\n\
+               4=DEBUG). Default is 0.\n\
+\n\
+  -o <file>    Name of the logfile. Default is stderr.\n\
+\n\
+  -f <string>  Specify log format. The characters in <string> define\n\
+               how the loglines are formatted. The following characters\n\
+               are supported, default is 0:\n\
+               0       only the plain text without any additions\n\
+               u       include time\n\
+               l       include loglevel\n\
+               T       include thread ids\n\
+               L       include the source code location of the log\n\
+\n\
   host:port    Put at the end, specifies the host and port of the\n\
                listening proxy.\n\
 \n\
