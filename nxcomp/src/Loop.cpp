@@ -4278,15 +4278,20 @@ int ListenConnectionTCP(const char *host, long port, const char *label)
 
 int ListenConnection(ChannelEndPoint &endpoint, const char *label)
 {
-  char *unixPath, *host;
+  char *unixPath = NULL, *host = NULL;
   long port;
+  int result = -1;
   if (endpoint.getUnixPath(&unixPath)) {
-    return ListenConnectionUnix(unixPath, label);
+    result = ListenConnectionUnix(unixPath, label);
   }
   else if (endpoint.getTCPHostAndPort(&host, &port)) {
-    return ListenConnectionTCP(host, port, label);
+    result = ListenConnectionTCP(host, port, label);
   }
-  return -1;
+  free(unixPath);
+  unixPath = NULL;
+  free(host);
+  host = NULL;
+  return result;
 }
 
 static int AcceptConnection(int fd, int domain, const char *label)
@@ -6739,9 +6744,19 @@ int ConnectToRemote(ChannelEndPoint &socketAddress)
     }
   }
 
+  free(unixPath);
+  unixPath = NULL;
+  free(hostName);
+  hostName = NULL;
+
   return pFD;
 
 ConnectToRemoteError:
+
+  free(unixPath);
+  unixPath = NULL;
+  free(hostName);
+  hostName = NULL;
 
   if (pFD != -1)
   {
