@@ -54,6 +54,12 @@ ChannelEndPoint::~ChannelEndPoint()
     if(S_ISSOCK(st.st_mode))
       unlink(unixPath);
   }
+  free(unixPath);
+  unixPath = NULL;
+  free(defaultUnixPath_);
+  defaultUnixPath_ = NULL;
+  free(spec_);
+  spec_ = NULL;
 }
 
 void
@@ -90,11 +96,11 @@ void
 ChannelEndPoint::setSpec(const char *hostName, long port) {
   int length;
 
-  free(spec_);
-  spec_ = NULL;
-
   isUnix_ = false;
   isTCP_ = false;
+
+  free(spec_);
+  spec_ = NULL;
 
   if (hostName && strlen(hostName) && port >= 1)
   {
@@ -195,7 +201,7 @@ ChannelEndPoint::getPort(long *port) const {
 bool
 ChannelEndPoint::getUnixPath(char **unixPath) const {
 
-  if (unixPath) *unixPath = 0;
+  if (unixPath) *unixPath = NULL;
 
   long p;
   char *path = NULL;
