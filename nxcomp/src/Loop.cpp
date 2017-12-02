@@ -2578,15 +2578,15 @@ int NXTransPrepare(int *setFDs, fd_set *readSet,
     if (isTimestamp(*selectTs) == 0)
     {
       nxinfo << "Loop: WARNING! Preparing the select with requested "
-             << "timeout of " << selectTs -> tv_sec << " S and "
-             << (double) selectTs -> tv_usec / 1000 << " Ms.\n"
+             << "timeout of " << selectTs -> tv_sec << " s and "
+             << (double) selectTs -> tv_usec / 1000 << " ms.\n"
              << std::flush;
     }
     else
     {
       nxinfo << "Loop: Preparing the select with requested "
-             << "timeout of " << selectTs -> tv_sec << " S and "
-             << (double) selectTs -> tv_usec / 1000 << " Ms.\n"
+             << "timeout of " << selectTs -> tv_sec << " s and "
+             << (double) selectTs -> tv_usec / 1000 << " ms.\n"
              << std::flush;
     }
 
@@ -2632,7 +2632,7 @@ int NXTransPrepare(int *setFDs, fd_set *readSet,
   int diffTs = diffTimestamp(startTs, nowTs);
 
   nxinfo << "Loop: Mark - 0 - at " << strMsTimestamp()
-         << " with " << diffTs << " Ms elapsed.\n"
+         << " with " << diffTs << " ms elapsed.\n"
          << std::flush;
 
   //
@@ -2701,7 +2701,7 @@ int NXTransSelect(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
   if (diffTs > 20)
   {
     nxdbg << "Loop: TIME! Spent " << diffTs
-          << " Ms handling messages for proxy FD#"
+          << " ms handling messages for proxy FD#"
           << proxyFD << ".\n" << std::flush;
   }
 
@@ -2711,8 +2711,8 @@ int NXTransSelect(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
   if (isTimestamp(*selectTs) == 0)
   {
     nxinfo << "Loop: WARNING! Executing the select with requested "
-           << "timeout of " << selectTs -> tv_sec << " S and "
-           << (double) selectTs -> tv_usec / 1000 << " Ms.\n"
+           << "timeout of " << selectTs -> tv_sec << " s and "
+           << (double) selectTs -> tv_usec / 1000 << " ms.\n"
            << std::flush;
   }
   else if (proxy != NULL && proxy -> getFlushable(proxyFD) > 0)
@@ -2720,8 +2720,8 @@ int NXTransSelect(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
     nxinfo << "Loop: WARNING! Proxy FD#" << proxyFD
            << " has " << proxy -> getFlushable(proxyFD)
            << " bytes to write but timeout is "
-           << selectTs -> tv_sec << " S and "
-           << selectTs -> tv_usec / 1000 << " Ms.\n"
+           << selectTs -> tv_sec << " s and "
+           << selectTs -> tv_usec / 1000 << " ms.\n"
            << std::flush;
   }
 
@@ -2742,7 +2742,7 @@ int NXTransSelect(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
   if (diffTs > 100)
   {
     nxdbg << "Loop: TIME! Spent " << diffTs
-          << " Ms waiting for new data for proxy FD#"
+          << " ms waiting for new data for proxy FD#"
           << proxyFD << ".\n" << std::flush;
   }
 
@@ -2767,7 +2767,7 @@ int NXTransSelect(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
 
   diffTs = diffTimestamp(startTs, nowTs);
 
-  nxinfo << "Loop: Out of select after " << diffTs << " Ms "
+  nxinfo << "Loop: Out of select after " << diffTs << " ms "
          << "at " << strMsTimestamp(nowTs) << " with result "
          << *resultFDs << ".\n" << std::flush;
 
@@ -2874,7 +2874,7 @@ int NXTransExecute(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
 
     nxinfo << "Loop: Mark - 1 - at " << strMsTimestamp()
            << " with " << diffTimestamp(startTs, getTimestamp())
-           << " Ms elapsed.\n" << std::flush;
+           << " ms elapsed.\n" << std::flush;
 
     //
     // Rotate the channel that will be handled
@@ -2891,7 +2891,7 @@ int NXTransExecute(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
 
     nxinfo << "Loop: Mark - 2 - at " << strMsTimestamp()
            << " with " << diffTimestamp(startTs, getTimestamp())
-           << " Ms elapsed.\n" << std::flush;
+           << " ms elapsed.\n" << std::flush;
 
     //
     // Check if any socket has become readable.
@@ -2901,7 +2901,7 @@ int NXTransExecute(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
 
     nxinfo << "Loop: Mark - 3 - at " << strMsTimestamp()
            << " with " << diffTimestamp(startTs, getTimestamp())
-           << " Ms elapsed.\n" << std::flush;
+           << " ms elapsed.\n" << std::flush;
 
     //
     // Handle the scheduled events on channels.
@@ -2923,7 +2923,7 @@ int NXTransExecute(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
 
     nxinfo << "Loop: Mark - 4 - at " << strMsTimestamp()
            << " with " << diffTimestamp(startTs, getTimestamp())
-           << " Ms elapsed.\n" << std::flush;
+           << " ms elapsed.\n" << std::flush;
 
     //
     // Check if user sent a signal to produce
@@ -2946,7 +2946,7 @@ int NXTransExecute(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
 
     nxinfo << "Loop: Mark - 5 - at " << strMsTimestamp()
            << " with " << diffTimestamp(startTs, getTimestamp())
-           << " Ms elapsed.\n" << std::flush;
+           << " ms elapsed.\n" << std::flush;
 
     //
     // Check if there is any data to flush.
@@ -2958,7 +2958,7 @@ int NXTransExecute(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
 
     nxinfo << "Loop: Mark - 6 - at " << strMsTimestamp()
            << " with " << diffTimestamp(startTs, getTimestamp())
-           << " Ms elapsed.\n" << std::flush;
+           << " ms elapsed.\n" << std::flush;
   }
 
   //
@@ -2991,7 +2991,7 @@ int NXTransExecute(int *resultFDs, int *errorFDs, int *setFDs, fd_set *readSet,
 
     nxinfo << "Loop: Mark - 7 - at " << strMsTimestamp()
            << " with " << diffTimestamp(startTs, getTimestamp())
-           << " Ms elapsed.\n" << std::flush;
+           << " ms elapsed.\n" << std::flush;
   }
 
   //
@@ -3360,7 +3360,7 @@ int InitAfterNegotiation()
 
   nxinfo << "Loop: INIT! Completed initialization at "
          << strMsTimestamp(nowTs) << " with "
-         << diffTimestamp(initTs, nowTs) << " Ms "
+         << diffTimestamp(initTs, nowTs) << " ms "
          << "since the init mark.\n" << std::flush;
 
   initTs = getNewTimestamp();
@@ -6077,8 +6077,8 @@ void SetTimer(int value)
   timer.it_value    = lastTimer.next;
 
   nxinfo << "Loop: Timer set to " << lastTimer.next.tv_sec
-         << " S and " << lastTimer.next.tv_usec / 1000
-         << " Ms at " << strMsTimestamp() << " in process "
+         << " s and " << lastTimer.next.tv_usec / 1000
+         << " ms at " << strMsTimestamp() << " in process "
          << "with pid '" << getpid() << "'.\n"
          << std::flush;
 
@@ -6600,7 +6600,7 @@ int ConnectToRemote(ChannelEndPoint &socketAddress)
   {
 
     nxdbg << "Loop: Timer set to " << connectTimeout / 1000
-          << " S " << "with retry set to " << retryConnect
+          << " s " << "with retry set to " << retryConnect
           << " in process with pid '" << getpid()
           << "'.\n" << std::flush;
 
@@ -13799,7 +13799,7 @@ static void handleCheckSessionInLoop()
         }
 
         nxinfo << "Loop: Starting watchdog process with timeout "
-               << "of " << timeout << " Ms.\n"
+               << "of " << timeout << " ms.\n"
                << std::flush;
       }
       else
@@ -14064,9 +14064,9 @@ static void handleCheckSelectInLoop(int &setFDs, fd_set &readSet,
   }
 
   nxinfo << "Loop: Select timeout is "
-         << selectTs.tv_sec << " S and "
+         << selectTs.tv_sec << " s and "
          << (double) selectTs.tv_usec / 1000
-         << " Ms.\n" << std::flush;
+         << " ms.\n" << std::flush;
 }
 
 static void handleCheckResultInLoop(int &resultFDs, int &errorFDs, int &setFDs, fd_set &readSet,
@@ -14082,14 +14082,14 @@ static void handleCheckResultInLoop(int &resultFDs, int &errorFDs, int &setFDs, 
     nxinfo << "Loop: Select result is [" << resultFDs
            << "] at " << strMsTimestamp() << " with no "
            << "communication within " << diffTs
-           << " Ms.\n" << std::flush;
+           << " ms.\n" << std::flush;
   }
   else
   {
     nxinfo << "Loop: Select result is [" << resultFDs
            << "] error is [" << errorFDs << "] at "
            << strMsTimestamp() << " after " << diffTs
-           << " Ms.\n" << std::flush;
+           << " ms.\n" << std::flush;
   }
 
 
@@ -14524,8 +14524,8 @@ static void handleNegotiationInLoop(int &setFDs, fd_set &readSet,
   setMinTimestamp(selectTs, control -> PingTimeout);
 
   nxinfo << "Loop: Selected proxy FD#" << proxyFD << " in negotiation "
-         << "phase with timeout of " << selectTs.tv_sec << " S and "
-         << selectTs.tv_usec << " Ms.\n" << std::flush;
+         << "phase with timeout of " << selectTs.tv_sec << " s and "
+         << selectTs.tv_usec << " ms.\n" << std::flush;
 
   return;
 

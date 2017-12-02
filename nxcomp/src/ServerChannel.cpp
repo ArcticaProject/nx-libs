@@ -4628,7 +4628,7 @@ int ServerChannel::handleSplit(DecodeBuffer &decodeBuffer, MessageStore *store,
   #if defined(TEST) || defined(SPLIT)
 
   *logofs << "handleSplit: SPLIT! Spent "
-          << diffTimestamp(startTs, getTimestamp()) << " Ms "
+          << diffTimestamp(startTs, getTimestamp()) << " ms "
           << "handling abort split events for FD#" << fd_
           << ".\n" << logofs_flush;
 
@@ -4790,7 +4790,7 @@ int ServerChannel::handleSplit(DecodeBuffer &decodeBuffer)
         #if defined(TEST) || defined(SPLIT)
 
         *logofs << "handleSplit: WARNING! SPLIT! Spent "
-                << diffTimestamp(startTs, getTimestamp()) << " Ms "
+                << diffTimestamp(startTs, getTimestamp()) << " ms "
                 << "handling asynchronous abort split events for "
                 << "FD#" << fd_ << ".\n" << logofs_flush;
 
@@ -5835,7 +5835,7 @@ int ServerChannel::handleAsyncEvents()
 
     #if defined(TEST) || defined(INFO)
     *logofs << "handleAsyncEvents: Spent " << diffTimestamp(startTs,
-               getTimestamp()) << " Ms handling events for FD#"
+               getTimestamp()) << " ms handling events for FD#"
             << fd_ << ".\n" << logofs_flush;
     #endif
 
@@ -7268,7 +7268,7 @@ int ServerChannel::handleShmem(unsigned char &opcode, unsigned char *&buffer,
       #if defined(TEST) || defined(INFO)
       *logofs << "handleShmem: WARNING! Missing completion "
               << "after " << diffTimestamp(shmemState_ -> last,
-                 getTimestamp()) << " Ms for shared memory "
+                 getTimestamp()) << " ms for shared memory "
               << "for FD#" << fd_ << ".\n" << logofs_flush;
       #endif
 
@@ -7402,7 +7402,7 @@ int ServerChannel::handleShmemEvent()
   {
     #if defined(TEST) || defined(INFO)
     *logofs << "handleShmemEvent: Spent "
-            << diffTimestamp(startTs, getTimestamp()) << " Ms "
+            << diffTimestamp(startTs, getTimestamp()) << " ms "
             << "waiting for shared memory sequence for FD#"
             << fd_ << ".\n" << logofs_flush;
     #endif
@@ -7414,7 +7414,7 @@ int ServerChannel::handleShmemEvent()
   *logofs << "handleShmemEvent: WARNING! Can't reset shared "
           << "memory sequence for FD#" << fd_ << " after "
           << diffTimestamp(shmemState_ -> last, getTimestamp())
-          << " Ms.\n" << logofs_flush;
+          << " ms.\n" << logofs_flush;
   #endif
 
   return 0;
@@ -7430,7 +7430,7 @@ int ServerChannel::checkShmemEvent(unsigned char event, unsigned short sequence,
     *logofs << "checkShmemEvent: Reset shared memory sequence "
             << shmemState_ -> sequence << " for FD#" << fd_
             << " after " << diffTimestamp(shmemState_ -> last,
-               getTimestamp()) << " Ms.\n" << logofs_flush;
+               getTimestamp()) << " ms.\n" << logofs_flush;
     #endif
 
     shmemState_ -> sequence = 0;

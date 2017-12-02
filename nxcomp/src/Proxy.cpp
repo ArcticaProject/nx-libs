@@ -410,8 +410,8 @@ int Proxy::setReadDescriptors(fd_set *fdSet, int &fdMax, T_timestamp &tsMax)
 
     #ifdef TEST
     *logofs << "Proxy: Initial timeout is " << tsMax.tv_sec
-            << " S and " << (double) tsMax.tv_usec /
-               1000 << " Ms with congestion "
+            << " s and " << (double) tsMax.tv_usec /
+               1000 << " ms with congestion "
             << statistics -> getCongestionInFrame()
             << ".\n" << logofs_flush;
     #endif
@@ -422,8 +422,8 @@ int Proxy::setReadDescriptors(fd_set *fdSet, int &fdMax, T_timestamp &tsMax)
 
     #ifdef TEST
     *logofs << "Proxy: Initial timeout is " << tsMax.tv_sec
-            << " S and " << (double) tsMax.tv_usec /
-               1000 << " Ms.\n" << logofs_flush;
+            << " s and " << (double) tsMax.tv_usec /
+               1000 << " ms.\n" << logofs_flush;
     #endif
   }
 
@@ -449,12 +449,12 @@ int Proxy::setReadDescriptors(fd_set *fdSet, int &fdMax, T_timestamp &tsMax)
       {
         *logofs << "Proxy: FLUSH! SPLIT! WARNING! Running with "
                 << diffTimestamp(timeouts_.splitTs, getTimestamp())
-                << " Ms elapsed since the last split.\n"
+                << " ms elapsed since the last split.\n"
                 << logofs_flush;
       }
 
       *logofs << "Proxy: FLUSH! SPLIT! Requesting timeout of "
-              << diffTs << " Ms as there are splits to send.\n"
+              << diffTs << " ms as there are splits to send.\n"
               << logofs_flush;
 
       #endif
@@ -525,12 +525,12 @@ int Proxy::setReadDescriptors(fd_set *fdSet, int &fdMax, T_timestamp &tsMax)
           {
             *logofs << "Proxy: FLUSH! WARNING! Running with "
                     << diffTimestamp(timeouts_.motionTs, getTimestamp())
-                    << " Ms elapsed since the last motion.\n"
+                    << " ms elapsed since the last motion.\n"
                     << logofs_flush;
           }
 
           *logofs << "Proxy: FLUSH! Requesting timeout of "
-                  << diffTs << " Ms as FD#" << fd << " has motion "
+                  << diffTs << " ms as FD#" << fd << " has motion "
                   << "events to send.\n" << logofs_flush;
 
           #endif
@@ -1946,7 +1946,7 @@ int Proxy::handleEvents()
 
         *logofs << "Proxy: FLUSH! Motion timeout expired after "
                 << diffTimestamp(timeouts_.motionTs, getTimestamp())
-                << " Ms.\n" << logofs_flush;
+                << " ms.\n" << logofs_flush;
 
         #endif
 
@@ -1972,7 +1972,7 @@ int Proxy::handleEvents()
       {
         *logofs << "Proxy: Running with "
                 << diffTimestamp(timeouts_.motionTs, getTimestamp())
-                << " Ms elapsed since the last motion.\n"
+                << " ms elapsed since the last motion.\n"
                 << logofs_flush;
       }
       #endif
@@ -1990,7 +1990,7 @@ int Proxy::handleEvents()
         #if defined(TEST) || defined(INFO) || defined(SPLIT)
         *logofs << "Proxy: SPLIT! Split timeout expired after "
                 << diffTimestamp(timeouts_.splitTs, getTimestamp())
-                << " Ms.\n" << logofs_flush;
+                << " ms.\n" << logofs_flush;
         #endif
 
         #if defined(TEST) || defined(INFO) || defined(SPLIT)
@@ -2033,7 +2033,7 @@ int Proxy::handleEvents()
       {
         *logofs << "Proxy: SPLIT! Running with "
                 << diffTimestamp(timeouts_.splitTs, getTimestamp())
-                << " Ms elapsed since the last split.\n"
+                << " ms elapsed since the last split.\n"
                 << logofs_flush;
       }
       #endif
@@ -2252,7 +2252,7 @@ int Proxy::handleFrame(T_frame_type type)
           << " new " << outputLength << " flushable " << transport_ ->
              flushable() << " tokens " << tokens_[token_control].remaining
           << " after " << diffTimestamp(timeouts_.writeTs, nowTs)
-          << " Ms.\n" << logofs_flush;
+          << " ms.\n" << logofs_flush;
 
   *logofs << "Proxy: FLUSH! Immediate flush to proxy FD#" << fd_
           << " of " << outputLength << " bytes at " << strMsTimestamp()
@@ -2276,7 +2276,7 @@ int Proxy::handleFrame(T_frame_type type)
     *logofs << "Proxy: WARNING! TIME! Data written to proxy FD#"
             << fd_ << " at " << strMsTimestamp() << " after "
             << diffTimestamp(timeouts_.writeTs, nowTs)
-            << " Ms.\n" << logofs_flush;
+            << " ms.\n" << logofs_flush;
   }
 
   #endif
@@ -2533,7 +2533,7 @@ int Proxy::handleDrain()
       *logofs << "Proxy: Timeout raised while draining "
               << "FD#" << fd_ << " at " << strMsTimestamp()
               << " after " << diffTimestamp(startTs, nowTs)
-              << " Ms.\n" << logofs_flush;
+              << " ms.\n" << logofs_flush;
       #endif
 
       result = 0;
@@ -2547,7 +2547,7 @@ int Proxy::handleDrain()
       *logofs << "Proxy: Trying to write to FD#" << fd_
               << " at " << strMsTimestamp() << " with length "
               << transport_ -> length() << " and "
-              << remaining << " Ms remaining.\n"
+              << remaining << " ms remaining.\n"
               << logofs_flush;
       #endif
 
@@ -2590,7 +2590,7 @@ int Proxy::handleDrain()
       #if defined(TEST) || defined(INFO)
       *logofs << "Proxy: Waiting for more data from proxy "
               << "FD#" << fd_ << " at " << strMsTimestamp()
-              << " with " << remaining << " Ms remaining.\n"
+              << " with " << remaining << " ms remaining.\n"
               << logofs_flush;
       #endif
 
@@ -2633,7 +2633,7 @@ int Proxy::handleDrain()
       *logofs << "Proxy: Got decongestion for proxy FD#"
               << fd_ << " at " << strMsTimestamp() << " after "
               << diffTimestamp(startTs, getTimestamp())
-              << " Ms.\n" << logofs_flush;
+              << " ms.\n" << logofs_flush;
       #endif
 
       result = 1;
@@ -3599,7 +3599,7 @@ int Proxy::handlePing()
       #if defined(TEST) || defined(INFO)
       *logofs << "Proxy: WARNING! No data received from "
               << "remote proxy on FD#" << fd_ << " since "
-              << diffIn << " Ms.\n" << logofs_flush;
+              << diffIn << " ms.\n" << logofs_flush;
       #endif
 
       if (control -> ProxyTimeout > 0 &&

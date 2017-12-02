@@ -135,7 +135,7 @@ inline T_timestamp getTimestamp()
   if (diffTs > DRIFT_TIMESTAMP)
   {
     *logofs << "Timestamp: WARNING! Time difference since the "
-            << "current timestamp is " << diffTs << " Ms.\n"
+            << "current timestamp is " << diffTs << "ms.\n"
             << logofs_flush;
   }
 
@@ -293,7 +293,7 @@ inline T_timestamp getNewTimestamp()
   if (diffTs > DRIFT_TIMESTAMP)
   {
     *logofs << "Timestamp: WARNING! Time difference since the "
-            << "old timestamp is " << diffTs << " Ms.\n"
+            << "old timestamp is " << diffTs << "ms.\n"
             << logofs_flush;
   }
 

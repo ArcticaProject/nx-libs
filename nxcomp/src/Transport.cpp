@@ -868,7 +868,7 @@ int Transport::wait(int timeout) const
       #ifdef TEST
       *logofs << "Transport: There are " << available
               << " bytes on FD#" << fd_ << " after "
-              << diffTs << " Ms.\n" << logofs_flush;
+              << diffTs << " ms.\n" << logofs_flush;
       #endif
 
       return available;
@@ -933,13 +933,13 @@ int Transport::wait(int timeout) const
     {
       *logofs << "Transport: No data available on FD#" << fd_
               << " after " << diffTimestamp(startTs, nowTs)
-              << " Ms.\n" << logofs_flush;
+              << " ms.\n" << logofs_flush;
     }
     else
     {
       *logofs << "Transport: Data became available on FD#" << fd_
               << " after " << diffTimestamp(startTs, nowTs)
-              << " Ms.\n" << logofs_flush;
+              << " ms.\n" << logofs_flush;
     }
     #endif
   }
