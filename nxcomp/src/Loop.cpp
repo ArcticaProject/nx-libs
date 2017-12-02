@@ -391,7 +391,7 @@ static int CheckProcess(int pid, const char *label);
 // Start or restart the house-keeper process.
 //
 
-static int StartKeeper();
+static void StartKeeper();
 
 //
 // Cleanup functions.
@@ -425,10 +425,10 @@ static int SetupProxyInstance();
 static int SetupAuthInstance();
 static int SetupAgentInstance();
 
-static int SetupTcpSocket();
-static int SetupUnixSocket();
-static int SetupServiceSockets();
-static int SetupDisplaySocket(int &addr_family, sockaddr *&addr,
+static void SetupTcpSocket();
+static void SetupUnixSocket();
+static void SetupServiceSockets();
+static void SetupDisplaySocket(int &addr_family, sockaddr *&addr,
                                   unsigned int &addr_length);
 
 //
@@ -3735,17 +3735,16 @@ int SetupAgentInstance()
   return 1;
 }
 
-int SetupTcpSocket()
+void SetupTcpSocket()
 {
   //
   // Open TCP socket emulating local display.
   //
 
   tcpFD =  ListenConnectionTCP((loopbackBind ? "localhost" : "*"), X_TCP_PORT + proxyPort, "X11");
-  return 1;
 }
 
-int SetupUnixSocket()
+void SetupUnixSocket()
 {
   //
   // Open UNIX domain socket for display.
@@ -3764,7 +3763,7 @@ int SetupUnixSocket()
       unixFD = ListenConnectionUnix(unixSocketName, "x11");
       if (unixFD >= 0)
         chmod(unixSocketName, 0777);
-      return unixFD;
+      return;
     }
   }
 
@@ -3782,7 +3781,7 @@ int SetupUnixSocket()
 // implementation.
 //
 
-int SetupDisplaySocket(int &addr_family, sockaddr *&addr,
+void SetupDisplaySocket(int &addr_family, sockaddr *&addr,
                            unsigned int &addr_length)
 {
   addr_family = AF_INET;
@@ -3949,7 +3948,7 @@ int SetupDisplaySocket(int &addr_family, sockaddr *&addr,
 
         close(testSocketFD);
         addr = (sockaddr *) xServerAddrABSTRACT;
-        return 1;
+        return;
 
     } else {
 
@@ -4062,11 +4061,9 @@ int SetupDisplaySocket(int &addr_family, sockaddr *&addr,
   }
 
   delete [] display;
-
-  return 1;
 }
 
-int SetupServiceSockets()
+void SetupServiceSockets()
 {
   if (control -> ProxyMode == proxy_client)
   {
@@ -4149,8 +4146,6 @@ int SetupServiceSockets()
       useSlaveSocket = 0;
     }
   }
-
-  return 1;
 }
 
 int ListenConnectionAny(sockaddr *addr, socklen_t addrlen, const char *label)
@@ -4454,7 +4449,7 @@ int CheckProcess(int pid, const char *label)
   return 1;
 }
 
-int StartKeeper()
+void StartKeeper()
 {
 
   if (IsRunning(lastKeeper) == 1 ||
@@ -4512,8 +4507,6 @@ int StartKeeper()
            << "with persistent cache not enabled.\n"
            << std::flush;
   }
-
-  return 1;
 }
 
 void HandleCleanupForReconnect()
