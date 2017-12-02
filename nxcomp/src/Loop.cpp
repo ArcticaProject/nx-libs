@@ -3741,7 +3741,8 @@ int SetupTcpSocket()
   // Open TCP socket emulating local display.
   //
 
-  return ListenConnectionTCP((loopbackBind ? "localhost" : "*"), X_TCP_PORT + proxyPort, "X11");
+  tcpFD =  ListenConnectionTCP((loopbackBind ? "localhost" : "*"), X_TCP_PORT + proxyPort, "X11");
+  return 1;
 }
 
 int SetupUnixSocket()
