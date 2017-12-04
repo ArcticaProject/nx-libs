@@ -249,7 +249,7 @@ Bool nxagentRootlessTreesMatch()
 {
   Window root_return;
   Window parent_return;
-  Window *children_return;
+  Window *children_return = NULL;
   unsigned int nChildrenReturn;
   WindowPtr pTestWin = screenInfo.screens[0]->root -> firstChild;
   Bool treesMatch = True;

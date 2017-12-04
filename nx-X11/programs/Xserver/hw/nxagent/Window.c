@@ -1454,7 +1454,7 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
     {
       Window root_return;
       Window parent_return;
-      Window *children_return;
+      Window *children_return = NULL;
       unsigned int nchildren_return;
       Status result;
 
@@ -1473,15 +1473,15 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
           }
         }
         fprintf(stderr, "\n");
-
-        if (children_return)
-        {
-          XFree(children_return);
-        }
       }
       else
       {
         fprintf(stderr, "nxagentConfigureWindow: Failed QueryTree request.\n ");
+      }
+
+      if (children_return)
+      {
+        XFree(children_return);
       }
     }
     #endif
