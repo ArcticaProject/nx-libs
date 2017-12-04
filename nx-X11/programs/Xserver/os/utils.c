@@ -571,6 +571,9 @@ void UseMsg(void)
     ErrorF("-c                     turns off key-click\n");
     ErrorF("c #                    key-click volume (0-100)\n");
     ErrorF("-cc int                default color visual class\n");
+#ifdef NXAGENT_SERVER
+    ErrorF("-co file               deprecated, has no effect\n");
+#endif
 #ifdef COMMANDLINE_CHALLENGED_OPERATING_SYSTEMS
     ErrorF("-config file           read options from file\n");
 #endif
@@ -776,6 +779,14 @@ ProcessCommandLine(int argc, char *argv[])
 	    else
 		UseMsg();
 	}
+#ifdef NXAGENT_SERVER
+	else if ( strcmp( argv[i], "-co") == 0)
+	{
+	    fprintf(stderr, "Warning: Ignoring deprecated command line option '%s'.\n", argv[i]);
+	    if(++i >= argc)
+	        UseMsg();
+	}
+#endif
 	else if ( strcmp( argv[i], "-core") == 0)
 	    CoreDump = TRUE;
 	else if ( strcmp( argv[i], "-dpi") == 0)
