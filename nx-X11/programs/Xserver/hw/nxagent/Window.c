@@ -1456,7 +1456,6 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
       Window parent_return;
       Window *children_return;
       unsigned int nchildren_return;
-      Window *pw;
       Status result;
 
       result = XQueryTree(nxagentDisplay, DefaultRootWindow(nxagentDisplay),
@@ -1464,8 +1463,6 @@ void nxagentConfigureWindow(WindowPtr pWin, unsigned int mask)
 
       if (result)
       {
-        pw = children_return;
-
         fprintf(stderr, "nxagentConfigureWindow: Children of the root: ");
         while(nchildren_return > 0)
         {
