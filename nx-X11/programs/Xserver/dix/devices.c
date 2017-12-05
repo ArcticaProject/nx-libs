@@ -210,6 +210,7 @@ CloseDevice(register DeviceIntPtr dev)
 	if (dev->key->xkbInfo)
 	    XkbFreeInfo(dev->key->xkbInfo);
 #endif
+	dev->key->xkbInfo = NULL;
 	free(dev->key->curKeySyms.map);
 	free(dev->key->modifierKeyMap);
 	free(dev->key);
