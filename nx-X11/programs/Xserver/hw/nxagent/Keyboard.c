@@ -556,11 +556,17 @@ static char *nxagentXkbGetRules()
   strcpy(path, XkbBaseDirectory);
   strcat(path, "/rules/");
   strcat(path, XKB_DFLT_RULES_FILE);
+  #ifdef TEST
+  fprintf(stderr, "nxagentXkbGetRules: checking rules file [%s]\n", path);
+  #endif
   ret = stat(path, &buf);
 
   if (ret == 0)
   {
     free(path);
+    #ifdef TEST
+    fprintf(stderr, "nxagentXkbGetRules: returning default rules file [%s]\n", XKB_DFLT_RULES_FILE);
+    #endif
     return XKB_DFLT_RULES_FILE;
   }
 
@@ -571,11 +577,17 @@ static char *nxagentXkbGetRules()
   strcpy(path, XkbBaseDirectory);
   strcat(path, "/rules/");
   strcat(path, XKB_ALTS_RULES_FILE);
+  #ifdef TEST
+  fprintf(stderr, "nxagentXkbGetRules: checking rules file [%s]\n", path);
+  #endif
   ret = stat(path, &buf);
 
   if (ret == 0)
   {
     free(path);
+    #ifdef TEST
+    fprintf(stderr, "nxagentXkbGetRules: returning alternative rules file [%s]\n", XKB_ALTS_RULES_FILE);
+    #endif
     return XKB_ALTS_RULES_FILE;
   }
 
@@ -584,6 +596,9 @@ static char *nxagentXkbGetRules()
   #endif
 
   free(path);
+  #ifdef TEST
+  fprintf(stderr, "nxagentXkbGetRules: returning default rules file [%s]\n", XKB_DFLT_RULES_FILE);
+  #endif
   return XKB_DFLT_RULES_FILE;
 }
  
@@ -951,7 +966,7 @@ XkbError:
         options = XKB_DFLT_KB_OPTIONS;
 
         #ifdef TEST
-        fprintf(stderr, "nxagentKeyboardProc: XkbInitialMap [%s]\n", XkbInitialMap ? XkbInitialMap : "NULL");
+        fprintf(stderr, "nxagentKeyboardProc: XkbInitialMap (option -xkbmap) is [%s]\n", XkbInitialMap ? XkbInitialMap : "NULL");
         #endif
 
         if (XkbInitialMap) {
