@@ -1894,23 +1894,23 @@ void nxagentKeycodeConversionSetup(void)
         if (doptions != NULL)
           fprintf(keyboard_file, "options=\"%s\"\n", doptions[0] == '\0' ? "," : doptions);
         fclose(keyboard_file);
-        fprintf(stderr, "keyboard file created\n");
+        fprintf(stderr, "Info: keyboard file created\n");
       }
       else
       {
         int save_err = errno;
-        fprintf(stderr, "keyboard file not created: %s\n", strerror(save_err));
+        fprintf(stderr, "Error: keyboard file not created: %s\n", strerror(save_err));
       }
       free(keyboard_file_path);
     }
     else
     {
-      fprintf(stderr, "SessionPath not defined\n");
+      fprintf(stderr, "Warning: SessionPath not defined\n");
     }
   }
   else
   {
-    fprintf(stderr, "Failed to create the keyboard file\n");
+    fprintf(stderr, "Warning: Failed to create the keyboard file\n");
   }
 
   if (drules != NULL && dmodel != NULL &&
