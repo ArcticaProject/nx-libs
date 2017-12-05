@@ -361,14 +361,14 @@ void Statistics::updateBitrate(int bytes)
 
   #ifdef DEBUG
   *logofs << "Statistics: Difference since previous timestamp is "
-          << diffFramesInMs << " Ms.\n" << logofs_flush;
+          << diffFramesInMs << " ms.\n" << logofs_flush;
   #endif
 
   if (diffFramesInMs > 0)
   {
     #ifdef DEBUG
     *logofs << "Statistics: Removing " << diffFramesInMs
-            << " Ms in short and long time frame.\n"
+            << " ms in short and long time frame.\n"
             << logofs_flush;
     #endif
 
@@ -1751,7 +1751,7 @@ int Statistics::getTimeStats(int type, char *&buffer)
 
   char format[FORMAT_LENGTH];
 
-  sprintf(format, "\ntime: %.0f Ms idle, %.0f Ms (%.0f Ms in read, %.0f Ms in write) running.\n\n",
+  sprintf(format, "\ntime: %.0f ms idle, %.0fms (%.0f ms in read, %.0f ms in write) running.\n\n",
               transportData -> idleTime_, transportData -> readTime_,
                   transportData -> readTime_ - transportData -> writeTime_,
                       transportData -> writeTime_);

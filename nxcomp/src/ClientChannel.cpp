@@ -5782,7 +5782,7 @@ int ClientChannel::handleSplitEvent(DecodeBuffer &decodeBuffer)
 
         #if defined(TEST) || defined(SPLIT)
         *logofs << "handleSplitEvent: SPLIT! Spent "
-                << diffTimestamp(startTs, getTimestamp()) << " Ms "
+                << diffTimestamp(startTs, getTimestamp()) << " ms "
                 << "handling abort split events for FD#" << fd_
                 << ".\n" << logofs_flush;
         #endif

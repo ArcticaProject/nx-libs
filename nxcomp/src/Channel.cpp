@@ -1238,7 +1238,7 @@ int Channel::handleWait(int timeout)
     }
 
     #ifdef TEST
-    *logofs << "handleWait: Waiting " << remaining << " Ms "
+    *logofs << "handleWait: Waiting " << remaining << " ms "
             << "for a new message on  FD#" << fd_
             << ".\n" << logofs_flush;
     #endif
@@ -1306,7 +1306,7 @@ int Channel::handleDrain(int limit, int timeout)
 
     #ifdef TEST
     *logofs << "handleDrain: Trying to write to FD#"
-            << fd_ << " with " << remaining << " Ms "
+            << fd_ << " with " << remaining << " ms "
             << "remaining.\n" << logofs_flush;
     #endif
 

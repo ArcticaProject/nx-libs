@@ -628,7 +628,7 @@ int NXTransWatchdog(int timeout)
       {
         #ifdef TEST
         *logofs << "NXTransWatchdog: Timeout of " << timeout
-                << " Ms raised in watchdog.\n" << logofs_flush;
+                << " ms raised in watchdog.\n" << logofs_flush;
         #endif
 
         //
@@ -645,7 +645,7 @@ int NXTransWatchdog(int timeout)
     {
       #ifdef TEST
       *logofs << "NXTransWatchdog: Waiting for the timeout "
-              << "with " << timeout - diffTs << " Ms to run.\n"
+              << "with " << timeout - diffTs << " ms to run.\n"
               << logofs_flush;
       #endif
 
@@ -847,7 +847,7 @@ int NXTransKeeper(int caches, int images, const char *root)
 
   #ifdef TEST
   *logofs << "NXTransKeeper: Going to sleep for "
-          << timeout / 20 << " Ms.\n" << logofs_flush;
+          << timeout / 20 << " ms.\n" << logofs_flush;
   #endif
 
   usleep(timeout / 20 * 1000);
@@ -937,7 +937,7 @@ int NXTransKeeper(int caches, int images, const char *root)
 
     #ifdef TEST
     *logofs << "NXTransKeeper: Going to sleep for " << timeout
-            << " Ms.\n" << logofs_flush;
+            << " ms.\n" << logofs_flush;
     #endif
 
     usleep(timeout * 1000);
