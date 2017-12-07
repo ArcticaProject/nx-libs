@@ -1411,11 +1411,12 @@ static Bool nxagentGetFontServerPath(char * fontServerPath)
 
   if (NXGetFontParameters(nxagentDisplay, sizeof(path), path) == True)
   {
-    if (*path != '\0')
-    {
-      strncpy(fontServerPath, path + 1, *path);
+    unsigned int len = *path;
 
-      fontServerPath[*path] = '\0';
+    if (len)
+    {
+      strncpy(fontServerPath, path + 1, len);
+      fontServerPath[len] = '\0';
 
       #ifdef TEST
       fprintf(stderr, "nxagentGetFontServerPath: Got path [%s].\n",
