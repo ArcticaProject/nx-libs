@@ -417,6 +417,8 @@ void nxagentRemoteWindowInfo(Window win, int indent, Bool newLine)
   }
 }
 
+
+#ifdef DEBUG_TREE
 /*
  * Walk remote windows tree.
  */
@@ -426,13 +428,12 @@ void nxagentRemoteWindowsTree(Window window, int level)
   int i, j;
   unsigned long rootWin, parentWin;
   unsigned int numChildren;
-  unsigned long *childList;
+  unsigned long *childList = NULL;
 
   if (!XQueryTree(nxagentDisplay, window, &rootWin, &parentWin, &childList,
                       &numChildren))
   {
     fprintf(stderr, "nxagentRemoteWindowsTree - XQueryTree failed.\n");
-
     return;
   }
 
@@ -481,6 +482,7 @@ void nxagentRemoteWindowsTree(Window window, int level)
     XFree((char *) childList);
   }
 }
+#endif
 
 /*
  * Print info about internal window.
@@ -3185,7 +3187,7 @@ int nxagentCheckWindowConfiguration(XConfigureEvent* X)
     #endif
   }
 
-  if (result && nchildren_return)
+  if (children_return)
   {
     XFree(children_return);
   }
@@ -3540,6 +3542,12 @@ int nxagentHandleReparentNotify(XEvent* X)
         result = XQueryTree(nxagentDisplay, w, &root_return,
                                 &parent_return, &children_return, &nchildren_return);
 
+        if (children_return)
+        {
+          XFree(children_return);
+          children_return = NULL;
+        }
+
         if (!result)
         {
           #ifdef WARNING
@@ -3547,11 +3555,6 @@ int nxagentHandleReparentNotify(XEvent* X)
           #endif
 
           break;
-        }
-
-        if (result && children_return)
-        {
-          XFree(children_return);
         }
       }
 
@@ -3581,9 +3584,10 @@ int nxagentHandleReparentNotify(XEvent* X)
           #endif
         }
 
-        if (result && nchildren_return)
+        if (children_return)
         {
           XFree(children_return);
+          children_return = NULL;
         }
       }
       else
@@ -3647,17 +3651,18 @@ int nxagentHandleReparentNotify(XEvent* X)
       {
         result = XQueryTree(nxagentDisplay, w, &rootReturn, &parentReturn,
                                 &childrenReturn, &nchildrenReturn);
-    
+
+        if (childrenReturn)
+        {
+          XFree(childrenReturn);
+          childrenReturn = NULL;
+        }
+
         if (parentReturn == rootReturn || parentReturn == 0 || result == 0)
         {
           break;
         }
 
-        if (result == 1 && childrenReturn != NULL)
-        {
-          XFree(childrenReturn);
-        }
-    
         w = parentReturn;
       }
       while (True);
