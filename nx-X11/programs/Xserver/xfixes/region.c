@@ -817,6 +817,7 @@ ProcXFixesExpandRegion (ClientPtr client)
 	    RegionInit(&r, &pTmp[i], 0);
 	    RegionUnion(pDestination, pDestination, &r);
 	}
+	free(pTmp);
     }
     if (ret == Success) 
 	ret = client->noClientException;
