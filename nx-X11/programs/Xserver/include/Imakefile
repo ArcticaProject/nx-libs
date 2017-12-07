@@ -14,6 +14,7 @@ all::
 depend::
 
 InstallDriverSDKNonExecFile(XIstubs.h,$(DRIVERSDKINCLUDEDIR))
+InstallDriverSDKNonExecFile(Xprintf.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(bstore.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(bstorestr.h,$(DRIVERSDKINCLUDEDIR))
 InstallDriverSDKNonExecFile(client.h,$(DRIVERSDKINCLUDEDIR))
