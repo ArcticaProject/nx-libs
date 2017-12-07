@@ -36,6 +36,34 @@ Print this message.
 .B -v
 Print version information.
 .TP 8
+.B -d <int>
+Set log level (0 for FATAL, 1 for ERROR, 2 for WARNING, 3 for INFO, 4 for
+DEBUG). The default is 0.
+.TP 8
+.B -o <string>
+Name of the log file. Default is stderr.
+.TP 8
+.B -f <string>
+Specify log format. The characters in <string> define how the loglines
+are formatted. The following characters are supported, default is '0':
+.RS 8
+.TP 8
+.I 0
+only the plain text without any additions. This is the default.
+.TP 8
+.I u
+include time
+.TP 8
+.I l
+include loglevel
+.TP 8
+.I T
+include thread ids
+.TP 8
+.I L
+include the location of the log call in the source code
+.RE
+.TP 8
 .B <host>:<port>
 Put at the end, specifies the host and port of the listening proxy.
 

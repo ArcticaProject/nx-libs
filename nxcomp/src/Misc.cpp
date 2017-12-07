@@ -132,6 +132,20 @@ static const char UsageInfo[] =
 \n\
   -v           Print version information.\n\
 \n\
+  -d <n>       Set log level (0=FATAL, 1=ERROR, 2=WARNING, 3=INFO,\n\
+               4=DEBUG). Default is 0.\n\
+\n\
+  -o <file>    Name of the logfile. Default is stderr.\n\
+\n\
+  -f <string>  Specify log format. The characters in <string> define\n\
+               how the loglines are formatted. The following characters\n\
+               are supported, default is 0:\n\
+               0       only the plain text without any additions\n\
+               u       include time\n\
+               l       include loglevel\n\
+               T       include thread ids\n\
+               L       include the source code location of the log\n\
+\n\
   host:port    Put at the end, specifies the host and port of the\n\
                listening proxy.\n\
 \n\
@@ -165,7 +179,7 @@ static const char UsageInfo[] =
 \n\
   port=n       Remote port used for the connection.\n\
 \n\
-  retry=n      Number of connection atempts.\n\
+  retry=n      Number of connection attempts.\n\
 \n\
   root=s       The root directory for the session. Usually is the\n\
                C-* or S-* in the .nx directory in the user's home,\n\
@@ -177,8 +191,8 @@ static const char UsageInfo[] =
   errors=s     Name of the log file used by the proxy. The default\n\
                is the name 'errors' in the session directory.\n\
 \n\
-  stats=s      Name of the file where are written the proxy stat-\n\
-               istics. The default is a file 'stats' in the session\n\
+  stats=s      Name of the file where the proxy statistics are writ-\n\
+               ten to. The default is a file 'stats' in the session\n\
                directory. The proxy replaces the data in the file\n\
                whenever it receives a SIGUSR1 or SIGUSR2 signal:\n\
 \n\
@@ -226,8 +240,8 @@ static const char UsageInfo[] =
 \n\
   limit=n      Specify a bitrate limit allowed for this session.\n\
 \n\
-  memory=n     Trigger memory optimizations used to keep small the\n\
-               size of X buffers. This is useful on embedded plat-\n\
+  memory=n     Trigger memory optimizations used to keep the size\n\
+               of X buffers small. This is useful on embedded plat-\n\
                forms, or where memory is scarce.\n\
 \n\
   cache=n      Size of the in-memory X message cache. Setting the\n\
@@ -331,6 +345,7 @@ tile=s\n\
 menu=n\n\
 sleep=n\n\
 tolerancechecks=s\n\
+keyconv=s\n\
                These options are interpreted by the NX agent. They\n\
                are ignored by the proxy.\n\
 \n\
@@ -360,6 +375,8 @@ tolerancechecks=s\n\
                Mac where nxclient is located in a different direct-\n\
                ory compared to the other programs, to make easier\n\
                for the user to execute the program from the shell.\n\
+               The nxclient executable will be used for displaying\n\
+               the menu and request windows to the user.\n\
 \n\
   NX_SLAVE_CMD The full path to the slave channel handler. When the\n\
                slave channel is enabled, the agent will listen on a\n\
@@ -377,7 +394,7 @@ tolerancechecks=s\n\
                ory is not set, null or invalid.\n\
 \n\
   PATH         The path where all executables are searched, except\n\
-               nxclient. If NX_CLIENT is not set, also the client\n\
+               nxclient. If NX_CLIENT is not set, also the nxclient\n\
                executable is searched in the system path.\n\
 \n\
   LD_LIBRARY_PATH\n\
