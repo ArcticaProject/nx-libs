@@ -54,6 +54,9 @@ using namespace std;
 #define EGET()   (errno)
 #define ESTR()   strerror(errno)
 
+// a free() macro that clears the ptr after free
+#define SAFE_FREE(ptr) do { free(ptr); ptr = NULL; } while (0)
+
 //
 // TCP port offset applied to NX port specification.
 //

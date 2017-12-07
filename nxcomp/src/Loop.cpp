@@ -3187,8 +3187,7 @@ int SetupProxyConnection()
     nxinfo << "Loop: listenSocket is "<< ( listenSocket.enabled() ? "enabled" : "disabled") << ". "
            << "The socket URI is '"<< ( socketUri != NULL ? socketUri : "<unset>") << "'.\n" << std::flush;
 
-    free(socketUri);
-    socketUri = NULL;
+    SAFE_FREE(socketUri);
 
     if (WE_INITIATE_CONNECTION)
     {
@@ -3196,7 +3195,7 @@ int SetupProxyConnection()
       {
         nxinfo << "Loop: Going to connect to '" << socketUri
                << "'.\n" << std::flush;
-        free(socketUri);
+        SAFE_FREE(socketUri);
 
         proxyFD = ConnectToRemote(connectSocket);
 
@@ -3219,7 +3218,7 @@ int SetupProxyConnection()
       {
         nxinfo << "Loop: Going to wait for connection at '"
                << socketUri << "'.\n" << std::flush;
-        free(socketUri);
+        SAFE_FREE(socketUri);
 
         proxyFD = WaitForRemote(listenSocket);
 
@@ -4287,10 +4286,8 @@ int ListenConnection(ChannelEndPoint &endpoint, const char *label)
   else if (endpoint.getTCPHostAndPort(&host, &port)) {
     result = ListenConnectionTCP(host, port, label);
   }
-  free(unixPath);
-  unixPath = NULL;
-  free(host);
-  host = NULL;
+  SAFE_FREE(unixPath);
+  SAFE_FREE(host);
   return result;
 }
 
@@ -6222,7 +6219,7 @@ int WaitForRemote(ChannelEndPoint &socketAddress)
   cerr << "Info" << ": Waiting for connection from "
        << hostLabel << " on socket '" << socketUri
        << "'.\n";
-  free(socketUri);
+  SAFE_FREE(socketUri);
 
   //
   // How many times to loop waiting for connections
@@ -6311,7 +6308,7 @@ int WaitForRemote(ChannelEndPoint &socketAddress)
 
         cerr << "Info" << ": Accepted connection from this host on Unix file socket '"
              << unixPath << "'.\n";
-        free(unixPath);
+        SAFE_FREE(unixPath);
 
         break;
       }
@@ -6744,19 +6741,15 @@ int ConnectToRemote(ChannelEndPoint &socketAddress)
     }
   }
 
-  free(unixPath);
-  unixPath = NULL;
-  free(hostName);
-  hostName = NULL;
+  SAFE_FREE(unixPath);
+  SAFE_FREE(hostName);
 
   return pFD;
 
 ConnectToRemoteError:
 
-  free(unixPath);
-  unixPath = NULL;
-  free(hostName);
-  hostName = NULL;
+  SAFE_FREE(unixPath);
+  SAFE_FREE(hostName);
 
   if (pFD != -1)
   {
@@ -7953,7 +7946,7 @@ int ParseEnvironmentOptions(const char *env, int force)
         cerr << "Error" << ": Refusing 'listen' parameter with 'connect' being '"
              << socketUri << "'.\n";
 
-        free(socketUri);
+        SAFE_FREE(socketUri);
         return -1;
       }
 
@@ -7981,7 +7974,7 @@ int ParseEnvironmentOptions(const char *env, int force)
         cerr << "Error" << ": Refusing 'accept' parameter with 'connect' being '"
              << socketUri << "'.\n";
 
-	free(socketUri);
+        SAFE_FREE(socketUri);
         return -1;
       }
 
