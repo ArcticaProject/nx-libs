@@ -1452,9 +1452,11 @@ void nxagentVerifyDefaultFontPath(void)
   fprintf(stderr, "nxagentVerifyDefaultFontPath: Going to search for one or more valid font paths.\n");
   #endif
 
-  fontPath = malloc(strlen(defaultFontPath) + 1);
+  /*
+   * Set the default font path as the first choice.
+   */
 
-  if (fontPath == NULL)
+  if ((fontPath = strdup(defaultFontPath)) == NULL)
   {
     #ifdef WARNING
     fprintf(stderr, "nxagentVerifyDefaultFontPath: WARNING! Unable to allocate memory for a new font path. "
@@ -1463,12 +1465,6 @@ void nxagentVerifyDefaultFontPath(void)
 
     return;
   }
-
-  /*
-   * Set the default font path as the first choice.
-   */
-
-  strcpy(fontPath, defaultFontPath);
 
   if (stat(NXAGENT_DEFAULT_FONT_DIR, &dirStat) == 0 &&
           S_ISDIR(dirStat.st_mode) != 0)
@@ -1741,9 +1737,7 @@ int nxagentSplitString(char *string, char *fields[], int nfields, char *sep)
 
     if (i < nfields)
     {
-      fields[i] = (char *) malloc(fieldlen + 1);
-      strncpy(fields[i], current, fieldlen);
-      *(fields[i] + fieldlen) = 0;
+      fields[i] = strndup(current, fieldlen);
     }
     else
     {
@@ -1767,14 +1761,9 @@ char *nxagentMakeScalableFontName(const char *fontName, int scalableResolution)
 {
   char *scalableFontName;
   const char *s;
-  int len;
   int field;
 
-  len = strlen(fontName) + 1;
-
-  scalableFontName = malloc(len);
-
-  if (scalableFontName == NULL)
+  if ((scalableFontName = malloc(strlen(fontName) + 1)) == NULL)
   {
     #ifdef PANIC
     fprintf(stderr, "nxagentMakeScalableFontName: PANIC! malloc() failed.\n");
@@ -1783,7 +1772,7 @@ char *nxagentMakeScalableFontName(const char *fontName, int scalableResolution)
     return NULL;
   }
 
-  scalableFontName[0] = 0;
+  scalableFontName[0] = '\0';
 
   if (*fontName != '-')
   {
