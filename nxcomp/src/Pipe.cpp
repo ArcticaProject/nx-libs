@@ -203,7 +203,7 @@ FILE *Popen(char * const parameters[], const char *type)
 
   if (pipe(pdes) < 0)
   {
-    free(cur);
+    SAFE_FREE(cur);
 
     return NULL;
   }
@@ -237,7 +237,7 @@ FILE *Popen(char * const parameters[], const char *type)
       close(pdes[0]);
       close(pdes[1]);
 
-      free(cur);
+      SAFE_FREE(cur);
 
       return NULL;
     }
@@ -420,7 +420,7 @@ int Pclose(FILE *iop)
     last -> next = cur -> next;
   }
 
-  free(cur);
+  SAFE_FREE(cur);
 
   //
   // Child has finished and we called the

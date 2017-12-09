@@ -37,6 +37,8 @@
 
 #include "NXalert.h"
 
+#include "Misc.h"
+
 ChannelEndPoint::ChannelEndPoint(const char *spec)
   : defaultTCPPort_(0), defaultTCPInterface_(0),
     defaultUnixPath_(NULL), spec_(NULL) {
@@ -54,11 +56,14 @@ ChannelEndPoint::~ChannelEndPoint()
     if(S_ISSOCK(st.st_mode))
       unlink(unixPath);
   }
+  SAFE_FREE(unixPath);
+  SAFE_FREE(defaultUnixPath_);
+  SAFE_FREE(spec_);
 }
 
 void
 ChannelEndPoint::setSpec(const char *spec) {
-  if (spec_) free(spec_);
+  SAFE_FREE(spec_);
 
   if (spec && strlen(spec))
   {
@@ -90,9 +95,10 @@ void
 ChannelEndPoint::setSpec(const char *hostName, long port) {
   int length;
 
-  if (spec_) free(spec_);
   isUnix_ = false;
   isTCP_ = false;
+
+  SAFE_FREE(spec_);
 
   if (hostName && strlen(hostName) && port >= 1)
   {
@@ -137,9 +143,9 @@ ChannelEndPoint::getSpec(char **socketUri) const {
       *socketUri = strdup(newSocketUri);
   }
 
-  free(newSocketUri);
-  free(unixPath);
-  free(hostName);
+  SAFE_FREE(newSocketUri);
+  SAFE_FREE(unixPath);
+  SAFE_FREE(hostName);
 
   if (NULL != *socketUri)
     return true;
@@ -160,7 +166,7 @@ ChannelEndPoint::setDefaultTCPInterface(int publicInterface) {
 
 void
 ChannelEndPoint::setDefaultUnixPath(char *path) {
-  if (defaultUnixPath_) free(defaultUnixPath_);
+  SAFE_FREE(defaultUnixPath_);
 
   if (path && strlen(path))
     defaultUnixPath_ = strdup(path);
@@ -193,7 +199,7 @@ ChannelEndPoint::getPort(long *port) const {
 bool
 ChannelEndPoint::getUnixPath(char **unixPath) const {
 
-  if (unixPath) *unixPath = 0;
+  if (unixPath) *unixPath = NULL;
 
   long p;
   char *path = NULL;
@@ -329,10 +335,10 @@ ChannelEndPoint &ChannelEndPoint::operator=(const ChannelEndPoint &other) {
   defaultTCPInterface_ = other.defaultTCPInterface_;
   old = defaultUnixPath_;
   defaultUnixPath_ = (other.defaultUnixPath_ ? strdup(other.defaultUnixPath_) : NULL);
-  free(old);
+  SAFE_FREE(old);
   old = spec_;
   spec_ = (other.spec_ ? strdup(other.spec_) : NULL);
-  free(old);
+  SAFE_FREE(old);
   isUnix_ = getUnixPath();
   isTCP_ = getTCPHostAndPort();
   return *this;
@@ -344,7 +350,7 @@ std::ostream& operator<<(std::ostream& os, const ChannelEndPoint& endPoint) {
     if (endPoint.getSpec(&endPointSpec))
     {
       os << endPointSpec;
-      free(endPointSpec);
+      SAFE_FREE(endPointSpec);
     }
     else
       os << "(invalid)";
