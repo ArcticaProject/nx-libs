@@ -230,10 +230,15 @@ extern void OsInitAllocator(void);
 
 extern char *Xstrdup(const char *s);
 extern char *XNFstrdup(const char *s);
-extern char *Xprintf(const char *fmt, ...);
-extern char *Xvprintf(const char *fmt, va_list va);
-extern char *XNFprintf(const char *fmt, ...);
-extern char *XNFvprintf(const char *fmt, va_list va);
+
+/* Include new X*asprintf API */
+#include "Xprintf.h"
+
+/* Older api deprecated in favor of the asprintf versions */
+extern _X_EXPORT char *Xprintf(const char *fmt, ...) _X_ATTRIBUTE_PRINTF(1,2) _X_DEPRECATED;
+extern _X_EXPORT char *Xvprintf(const char *fmt, va_list va)_X_ATTRIBUTE_PRINTF(1,0) _X_DEPRECATED;
+extern _X_EXPORT char *XNFprintf(const char *fmt, ...) _X_ATTRIBUTE_PRINTF(1,2) _X_DEPRECATED;
+extern _X_EXPORT char *XNFvprintf(const char *fmt, va_list va)_X_ATTRIBUTE_PRINTF(1,0) _X_DEPRECATED;
 
 typedef SIGVAL (*OsSigHandlerPtr)(int /* sig */);
 
