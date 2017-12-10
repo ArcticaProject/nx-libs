@@ -14079,9 +14079,9 @@ static void handleCheckSelectInLoop(int &setFDs, fd_set &readSet,
 
 static void handleCheckResultInLoop(int &resultFDs, int &errorFDs, int &setFDs, fd_set &readSet,
                                         fd_set &writeSet, struct timeval &selectTs,
-                                            struct timeval &startTs)
+                                            struct timeval &pstartTs)
 {
-  int diffTs = diffTimestamp(startTs, getNewTimestamp());
+  int diffTs = diffTimestamp(pstartTs, getNewTimestamp());
 
 
   if (diffTs >= (control -> PingTimeout -
