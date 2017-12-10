@@ -806,7 +806,7 @@ GetGeometry(register ClientPtr client, xGetGeometryReply *rep)
 int
 ProcGetGeometry(register ClientPtr client)
 {
-    xGetGeometryReply rep;
+    xGetGeometryReply rep = {0};
     int status;
 
     if ((status = GetGeometry(client, &rep)) != Success)
@@ -821,7 +821,7 @@ ProcGetGeometry(register ClientPtr client)
 int
 ProcQueryTree(register ClientPtr client)
 {
-    xQueryTreeReply reply;
+    xQueryTreeReply reply = {0};
     int numChildren = 0;
     register WindowPtr pChild, pWin, pHead;
     Window  *childIDs = (Window *)NULL;
@@ -832,7 +832,6 @@ ProcQueryTree(register ClientPtr client)
 					   DixReadAccess);
     if (!pWin)
         return(BadWindow);
-    memset(&reply, 0, sizeof(xQueryTreeReply));
     reply.type = X_Reply;
     reply.root = pWin->drawable.pScreen->root->drawable.id;
     reply.sequenceNumber = client->sequence;
@@ -887,8 +886,7 @@ ProcInternAtom(register ClientPtr client)
     atom = MakeAtom(tchar, stuff->nbytes, !stuff->onlyIfExists);
     if (atom != BAD_RESOURCE)
     {
-	xInternAtomReply reply;
-	memset(&reply, 0, sizeof(xInternAtomReply));
+	xInternAtomReply reply = {0};
 	reply.type = X_Reply;
 	reply.length = 0;
 	reply.sequenceNumber = client->sequence;
@@ -904,15 +902,14 @@ int
 ProcGetAtomName(register ClientPtr client)
 {
     const char *str;
-    xGetAtomNameReply reply;
     int len;
     REQUEST(xResourceReq);
 
     REQUEST_SIZE_MATCH(xResourceReq);
     if ( (str = NameForAtom(stuff->id)) )
     {
+	xGetAtomNameReply reply = {0};
 	len = strlen(str);
-	memset(&reply, 0, sizeof(xGetAtomNameReply));
 	reply.type = X_Reply;
 	reply.length = (len + 3) >> 2;
 	reply.sequenceNumber = client->sequence;
@@ -965,8 +962,6 @@ ProcSetSelectionOwner(register ClientPtr client)
             i++;
         if (i < NumCurrentSelections)
         {        
-	    xEvent event;
-
 	    /* If the timestamp in client's request is in the past relative
 		to the time stamp indicating the last time the owner of the
 		selection was set, do not set the selection, just return 
@@ -977,6 +972,7 @@ ProcSetSelectionOwner(register ClientPtr client)
 	    if (CurrentSelections[i].client &&
 		(!pWin || (CurrentSelections[i].client != client)))
 	    {
+		xEvent event = {0};
 		event.u.u.type = SelectionClear;
 		event.u.selectionClear.time = time.milliseconds;
 		event.u.selectionClear.window = CurrentSelections[i].window;
@@ -1010,7 +1006,7 @@ ProcSetSelectionOwner(register ClientPtr client)
 	CurrentSelections[i].client = (pWin ? client : NullClient);
 	if (SelectionCallback)
 	{
-	    SelectionInfoRec	info;
+	    SelectionInfoRec	info = {0};
 
 	    info.selection = &CurrentSelections[i];
 	    info.kind= SelectionSetOwner;
@@ -1144,7 +1140,7 @@ ProcGrabServer(register ClientPtr client)
 
     if (ServerGrabCallback)
     {
-	ServerGrabInfoRec grabinfo;
+	ServerGrabInfoRec grabinfo = {0};
 	grabinfo.client = client;
 	grabinfo.grabstate  = SERVER_GRABBED;
 	CallCallbacks(&ServerGrabCallback, (void *)&grabinfo);
@@ -1173,7 +1169,7 @@ UngrabServer(ClientPtr client)
 
     if (ServerGrabCallback)
     {
-	ServerGrabInfoRec grabinfo;
+	ServerGrabInfoRec grabinfo = {0};
 	grabinfo.client = client;
 	grabinfo.grabstate  = SERVER_UNGRABBED;
 	CallCallbacks(&ServerGrabCallback, (void *)&grabinfo);
@@ -1194,7 +1190,7 @@ ProcTranslateCoords(register ClientPtr client)
     REQUEST(xTranslateCoordsReq);
 
     register WindowPtr pWin, pDst;
-    xTranslateCoordsReply rep;
+    xTranslateCoordsReply rep = {0};
 
     REQUEST_SIZE_MATCH(xTranslateCoordsReq);
     pWin = (WindowPtr)SecurityLookupWindow(stuff->srcWid, client,
@@ -1205,7 +1201,6 @@ ProcTranslateCoords(register ClientPtr client)
 					   DixReadAccess);
     if (!pDst)
         return(BadWindow);
-    memset(&rep, 0, sizeof(xTranslateCoordsReply));
     rep.type = X_Reply;
     rep.length = 0;
     rep.sequenceNumber = client->sequence;
@@ -1227,7 +1222,7 @@ ProcTranslateCoords(register ClientPtr client)
 	while (pWin)
 	{
 #ifdef SHAPE
-	    BoxRec  box;
+	    BoxRec  box = {0};
 #endif
 	    if ((pWin->mapped) &&
 		(x >= pWin->drawable.x - wBorderWidth (pWin)) &&
@@ -1353,13 +1348,12 @@ ProcQueryFont(register ClientPtr client)
 	             FONTINFONPROPS(FONTCHARSET(pFont)) * sizeof(xFontProp)  +
 		     nprotoxcistructs * sizeof(xCharInfo);
 
-	reply = (xQueryFontReply *)malloc(rlength);
+	reply = (xQueryFontReply *)calloc(1, rlength);
 	if(!reply)
 	{
 	    return(BadAlloc);
 	}
 
-	memset(reply, 0, rlength);
 	reply->type = X_Reply;
 	reply->length = (rlength - sizeof(xGenericReply)) >> 2;
 	reply->sequenceNumber = client->sequence;
@@ -1375,7 +1369,7 @@ int
 ProcQueryTextExtents(register ClientPtr client)
 {
     REQUEST(xQueryTextExtentsReq);
-    xQueryTextExtentsReply reply;
+    xQueryTextExtentsReply reply = {0};
     FontPtr pFont;
     GC *pGC;
     ExtentInfoRec info;
@@ -2099,7 +2093,7 @@ DoGetImage(register ClientPtr client, int format, Drawable drawable,
     long		widthBytesLine, length;
     Mask		plane = 0;
     char		*pBuf;
-    xGetImageReply	xgi;
+    xGetImageReply	xgi = {0};
 #ifdef XCSECURITY
     RegionPtr pVisibleRegion = NULL;
 #endif
@@ -2111,7 +2105,6 @@ DoGetImage(register ClientPtr client, int format, Drawable drawable,
     }
     SECURITY_VERIFY_DRAWABLE(pDraw, drawable, client, DixReadAccess);
 
-    memset(&xgi, 0, sizeof(xGetImageReply));
     if(pDraw->type == DRAWABLE_WINDOW)
     {
       if( /* check for being viewable */
@@ -2597,7 +2590,7 @@ ProcAllocColor (register ClientPtr client)
 {
     ColormapPtr pmap;
     int	retval;
-    xAllocColorReply acr;
+    xAllocColorReply acr = {0};
     REQUEST(xAllocColorReq);
 
     REQUEST_SIZE_MATCH(xAllocColorReq);
@@ -2605,7 +2598,6 @@ ProcAllocColor (register ClientPtr client)
 					RT_COLORMAP, DixWriteAccess);
     if (pmap)
     {
-	memset(&acr, 0, sizeof(xAllocColorReply));
 	acr.type = X_Reply;
 	acr.length = 0;
 	acr.sequenceNumber = client->sequence;
@@ -2648,7 +2640,7 @@ ProcAllocNamedColor (register ClientPtr client)
     {
 	int		retval;
 
-	xAllocNamedColorReply ancr;
+	xAllocNamedColorReply ancr = {0};
 
 	ancr.type = X_Reply;
 	ancr.length = 0;
@@ -2698,7 +2690,7 @@ ProcAllocColorCells (register ClientPtr client)
 					RT_COLORMAP, DixWriteAccess);
     if (pcmp)
     {
-	xAllocColorCellsReply	accr;
+	xAllocColorCellsReply	accr = {0};
 	int			npixels, nmasks, retval;
 	long			length;
 	Pixel			*ppixels, *pmasks;
@@ -2764,7 +2756,7 @@ ProcAllocColorPlanes(register ClientPtr client)
 					RT_COLORMAP, DixWriteAccess);
     if (pcmp)
     {
-	xAllocColorPlanesReply	acpr;
+	xAllocColorPlanesReply	acpr = {0};
 	int			npixels, retval;
 	long			length;
 	Pixel			*ppixels;
@@ -2897,7 +2889,7 @@ ProcStoreNamedColor (register ClientPtr client)
 					RT_COLORMAP, DixWriteAccess);
     if (pcmp)
     {
-	xColorItem	def;
+	xColorItem	def = {0};
         int             retval;
 
 	if(OsLookupColor(pcmp->pScreen->myNum, (char *)&stuff[1],
@@ -2933,7 +2925,7 @@ ProcQueryColors(register ClientPtr client)
     {
 	int			count, retval;
 	xrgb 			*prgbs;
-	xQueryColorsReply	qcr;
+	xQueryColorsReply	qcr = {0};
 
 	count = ((client->req_len << 2) - sizeof(xQueryColorsReq)) >> 2;
 	prgbs = (xrgb *)malloc(count * sizeof(xrgb));
@@ -2985,7 +2977,7 @@ ProcLookupColor(register ClientPtr client)
 					RT_COLORMAP, DixReadAccess);
     if (pcmp)
     {
-	xLookupColorReply lcr;
+	xLookupColorReply lcr = {0};
 
 	if(OsLookupColor(pcmp->pScreen->myNum, (char *)&stuff[1], stuff->nbytes,
 	                 &lcr.exactRed, &lcr.exactGreen, &lcr.exactBlue))
@@ -3023,7 +3015,7 @@ ProcCreateCursor (register ClientPtr client)
     unsigned char *	mskbits;
     unsigned short	width, height;
     long		n;
-    CursorMetricRec cm;
+    CursorMetricRec cm = {0};
 
 
     REQUEST(xCreateCursorReq);
@@ -3150,7 +3142,7 @@ ProcFreeCursor (register ClientPtr client)
 int
 ProcQueryBestSize (register ClientPtr client)
 {
-    xQueryBestSizeReply	reply;
+    xQueryBestSizeReply	reply = {0};
     register DrawablePtr pDraw;
     ScreenPtr pScreen;
     REQUEST(xQueryBestSizeReq);
@@ -3242,7 +3234,7 @@ ProcSetScreenSaver (register ClientPtr client)
 int
 ProcGetScreenSaver(register ClientPtr client)
 {
-    xGetScreenSaverReply rep;
+    xGetScreenSaverReply rep = {0};
 
     REQUEST_SIZE_MATCH(xReq);
     rep.type = X_Reply;
@@ -3283,7 +3275,7 @@ ProcChangeHosts(register ClientPtr client)
 int
 ProcListHosts(register ClientPtr client)
 {
-    xListHostsReply reply;
+    xListHostsReply reply = {0};
     int	len, nHosts, result;
     void *	pdata;
     /* REQUEST(xListHostsReq); */
@@ -3399,7 +3391,7 @@ ProcSetFontPath(register ClientPtr client)
 int
 ProcGetFontPath(register ClientPtr client)
 {
-    xGetFontPathReply reply;
+    xGetFontPathReply reply = {0};
     int stringLens, numpaths;
     unsigned char *bufferStart;
     /* REQUEST (xReq); */
@@ -3742,13 +3734,13 @@ ClientPtr NextAvailableClient(void * ospriv)
 
     if (ClientStateCallback)
     {
-	NewClientInfoRec clientinfo;
+	NewClientInfoRec clientinfo = {0};
 
-        clientinfo.client = client; 
-        clientinfo.prefix = (xConnSetupPrefix *)NULL;  
+        clientinfo.client = client;
+        clientinfo.prefix = (xConnSetupPrefix *)NULL;
         clientinfo.setup = (xConnSetup *) NULL;
 	CallCallbacks((&ClientStateCallback), (void *)&clientinfo);
-    } 	
+    }
     return(client);
 }
 
@@ -3796,9 +3788,8 @@ SendConnSetup(register ClientPtr client, char *reason)
 
     if (reason)
     {
-	xConnSetupPrefix csp;
+	xConnSetupPrefix csp = {0};;
 
-	memset(&csp, 0, sizeof(xConnSetupPrefix));
 	csp.success = xFalse;
 	csp.lengthReason = strlen(reason);
 	csp.length = (csp.lengthReason + (unsigned)3) >> 2;
@@ -3873,13 +3864,13 @@ SendConnSetup(register ClientPtr client, char *reason)
     client->clientState = ClientStateRunning;
     if (ClientStateCallback)
     {
-	NewClientInfoRec clientinfo;
+	NewClientInfoRec clientinfo = {0};
 
-        clientinfo.client = client; 
-        clientinfo.prefix = lconnSetupPrefix;  
+        clientinfo.client = client;
+        clientinfo.prefix = lconnSetupPrefix;
         clientinfo.setup = (xConnSetup *)lConnectionInfo;
 	CallCallbacks((&ClientStateCallback), (void *)&clientinfo);
-    } 	
+    }
     return (client->noClientException);
 }
 
@@ -3921,9 +3912,8 @@ void
 SendErrorToClient(ClientPtr client, unsigned majorCode, unsigned minorCode, 
                   XID resId, int errorCode)
 {
-    xError rep;
+    xError rep = {0};
 
-    memset(&rep, 0, sizeof(xError));
     rep.type = X_Error;
     rep.errorCode = errorCode;
     rep.majorCode = majorCode;

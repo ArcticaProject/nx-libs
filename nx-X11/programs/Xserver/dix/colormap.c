@@ -474,7 +474,7 @@ FreeColormap (void * value, XID mid)
 static int
 TellNoMap (WindowPtr pwin, Colormap *pmid)
 {
-    xEvent 	xE;
+    xEvent 	xE = {0};
 
     if (wColormap(pwin) == *pmid)
     {
@@ -502,7 +502,7 @@ int
 TellLostMap (WindowPtr pwin, void * value)
 {
     Colormap 	*pmid = (Colormap *)value;
-    xEvent 	xE;
+    xEvent 	xE = {0};
 
 #ifdef PANORAMIX
     if(!noPanoramiXExtension && pwin->drawable.pScreen->myNum)
@@ -527,7 +527,7 @@ int
 TellGainedMap (WindowPtr pwin, void * value)
 {
     Colormap 	*pmid = (Colormap *)value;
-    xEvent 	xE;
+    xEvent 	xE = {0};
 
 #ifdef PANORAMIX
     if(!noPanoramiXExtension && pwin->drawable.pScreen->myNum)

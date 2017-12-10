@@ -719,7 +719,7 @@ ProcSetSelectionOwner(register ClientPtr client)
             i++;
         if (i < NumCurrentSelections)
         {        
-	    xEvent event;
+	    xEvent event = {0};
 
 	    /* If the timestamp in client's request is in the past relative
 		to the time stamp indicating the last time the owner of the

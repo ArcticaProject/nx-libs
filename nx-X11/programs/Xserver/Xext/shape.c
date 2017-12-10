@@ -266,7 +266,7 @@ RegionPtr
 CreateBoundingShape (pWin)
     WindowPtr	pWin;
 {
-    BoxRec	extents;
+    BoxRec	extents = {0};
 
     extents.x1 = -wBorderWidth (pWin);
     extents.y1 = -wBorderWidth (pWin);
@@ -279,7 +279,7 @@ RegionPtr
 CreateClipShape (pWin)
     WindowPtr	pWin;
 {
-    BoxRec	extents;
+    BoxRec	extents = {0};
 
     extents.x1 = 0;
     extents.y1 = 0;
@@ -292,7 +292,7 @@ static int
 ProcShapeQueryVersion (client)
     register ClientPtr	client;
 {
-    xShapeQueryVersionReply	rep;
+    xShapeQueryVersionReply	rep = {0};
 
     REQUEST_SIZE_MATCH (xShapeQueryVersionReq);
     memset(&rep, 0, sizeof(xShapeQueryVersionReply));
@@ -713,8 +713,8 @@ ProcShapeQueryExtents (client)
 {
     REQUEST(xShapeQueryExtentsReq);
     WindowPtr		pWin;
-    xShapeQueryExtentsReply	rep;
-    BoxRec		extents, *pExtents;
+    xShapeQueryExtentsReply	rep = {0};
+    BoxRec		extents = {0}, *pExtents;
     RegionPtr		region;
 
     REQUEST_SIZE_MATCH (xShapeQueryExtentsReq);
@@ -919,8 +919,8 @@ SendShapeNotify (pWin, which)
     int		which;
 {
     ShapeEventPtr	*pHead, pShapeEvent;
-    xShapeNotifyEvent	se;
-    BoxRec		extents;
+    xShapeNotifyEvent	se = {0};
+    BoxRec		extents = {0};
     RegionPtr		region;
     BYTE		shaped;
 
@@ -992,7 +992,7 @@ ProcShapeInputSelected (client)
     WindowPtr		pWin;
     ShapeEventPtr	pShapeEvent, *pHead;
     int			enabled;
-    xShapeInputSelectedReply	rep;
+    xShapeInputSelectedReply	rep = {0};
 
     REQUEST_SIZE_MATCH (xShapeInputSelectedReq);
     pWin = LookupWindow (stuff->window, client);
@@ -1030,7 +1030,7 @@ ProcShapeGetRectangles (client)
 {
     REQUEST(xShapeGetRectanglesReq);
     WindowPtr			pWin;
-    xShapeGetRectanglesReply	rep;
+    xShapeGetRectanglesReply	rep = {0};
     xRectangle			*rects;
     int				nrects, i;
     RegionPtr			region;
