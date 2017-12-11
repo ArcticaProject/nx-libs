@@ -44,6 +44,9 @@ X11_EXTRA_DEPS=""
 
 AC_SUBST(X11_EXTRA_DEPS)
 
+# Silence warning: ar: 'u' modifier ignored since 'D' is the default
+AC_SUBST(AR_FLAGS, [cr])
+
 # Issue an error if nx-xtrans.m4 was not found and NX_XTRANS_CONNECTION_FLAGS macro
 # was not expanded, since libNX_X11 with no transport types is rather useless.
 m4_pattern_forbid([^NX_XTRANS_CONNECTION_FLAGS$])

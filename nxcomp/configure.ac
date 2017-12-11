@@ -25,6 +25,9 @@ AC_SUBST([COMP_VERSION])
 LT_COMP_VERSION=[`echo $COMP_VERSION | sed -r -e 's/^([0-9]+\.[0-9]+\.[0-9]+).*$/\1/' -e 's/\./:/g'`] 
 AC_SUBST([LT_COMP_VERSION])
 
+# Silence warning: ar: 'u' modifier ignored since 'D' is the default
+AC_SUBST(AR_FLAGS, [cr])
+
 # Upstream's pkg.m4 (since 0.27) offers this now, but define our own
 # compatible version in case the local version of pkgconfig isn't new enough.
 # https://bugs.freedesktop.org/show_bug.cgi?id=48743

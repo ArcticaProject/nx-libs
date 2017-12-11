@@ -25,6 +25,9 @@ AC_SUBST([COMPSHAD_VERSION])
 LT_COMPSHAD_VERSION=[`echo $COMPSHAD_VERSION | sed -r -e 's/^([0-9]+\.[0-9]+\.[0-9]+).*$/\1/' -e 's/\./:/g'`] 
 AC_SUBST([LT_COMPSHAD_VERSION])
 
+# Silence warning: ar: 'u' modifier ignored since 'D' is the default
+AC_SUBST(AR_FLAGS, [cr])
+
 PKG_CHECK_MODULES(Xext, xext)
 PKG_CHECK_MODULES(Xdamage, xdamage)
 PKG_CHECK_MODULES(Xrandr, xrandr)
