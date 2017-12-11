@@ -89,54 +89,7 @@
 #undef  TEST
 #undef  DEBUG
 
-#define START_SIZE  256
-#define END_SIZE   2048
-
-int
-Xvasprintf(char **ret, const char *_X_RESTRICT_KYWD format, va_list va)
-{
-    char *newret;
-    int size;
-    int r;
-
-    size = 0;
-
-    for (;;)
-    {
-      if (size == 0)
-      {
-        *ret = (char *)malloc(START_SIZE);
-        if (*ret == NULL)
-          return -1;
-        size = START_SIZE;
-      }
-      else if (size < END_SIZE &&
-                   (newret = (char *) realloc(*ret, 2 * size)) != NULL)
-      {
-        *ret = newret;
-        size = 2 * size;
-      }
-      else
-      {
-        free(*ret);
-        return -1;
-      }
-
-      r = vsnprintf(*ret, size, format, va);
-
-      if (r == -1 || r == size || r > size || r == size - 1)
-      {
-        continue;
-      }
-      else
-      {
-        (*ret)[r] = 0;
-        return r;
-      }
-    }
-}
-
-#else
+#endif
 
 /**
  * Varargs sprintf that allocates a string buffer the right size for
@@ -170,8 +123,6 @@ Xvasprintf(char **ret, const char *_X_RESTRICT_KYWD format, va_list va)
     return size;
 #endif
 }
-
-#endif
 
 #ifndef HAVE_VASPRINTF
 #define vasprintf Xvasprintf
