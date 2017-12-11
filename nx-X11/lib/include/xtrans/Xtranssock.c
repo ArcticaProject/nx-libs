@@ -2874,48 +2874,7 @@ TRANS(SocketWritev) (XtransConnInfo ciptr, struct iovec *buf, int size)
     {
         return NXTransWriteVector(ciptr->fd, buf, size);
     }
-    else
-    {
-    /* FIXME: same code as below, should be possible without duplication */
-#if XTRANS_SEND_FDS
-    if (ciptr->send_fds)
-    {
-        union fd_pass           cmsgbuf;
-        int                     nfd = nFd(&ciptr->send_fds);
-        struct _XtransConnFd    *cf = ciptr->send_fds;
-        struct msghdr           msg = {
-            .msg_name = NULL,
-            .msg_namelen = 0,
-            .msg_iov = buf,
-            .msg_iovlen = size,
-            .msg_control = cmsgbuf.buf,
-            .msg_controllen = CMSG_LEN(nfd * sizeof(int))
-        };
-        struct cmsghdr          *hdr = CMSG_FIRSTHDR(&msg);
-        int                     i;
-        int                     *fds;
-
-        hdr->cmsg_len = msg.msg_controllen;
-        hdr->cmsg_level = SOL_SOCKET;
-        hdr->cmsg_type = SCM_RIGHTS;
-
-        fds = (int *) CMSG_DATA(hdr);
-        /* Set up fds */
-        for (i = 0; i < nfd; i++) {
-            fds[i] = cf->fd;
-            cf = cf->next;
-        }
-
-        i = sendmsg(ciptr->fd, &msg, 0);
-        if (i > 0)
-            discardFd(&ciptr->send_fds, cf, 0);
-        return i;
-    }
 #endif
-        return WRITEV (ciptr, buf, size);
-    }
-
-#else /* #if defined(NX_TRANS_SOCKET) && defined(TRANS_CLIENT) */
 
 #if XTRANS_SEND_FDS
     if (ciptr->send_fds)
@@ -2953,10 +2912,7 @@ TRANS(SocketWritev) (XtransConnInfo ciptr, struct iovec *buf, int size)
     }
 #endif
     return WRITEV (ciptr, buf, size);
-
-#endif /* #if defined(NX_TRANS_SOCKET) && defined(TRANS_CLIENT) */
 }
-
 
 static int
 TRANS(SocketWrite) (XtransConnInfo ciptr, char *buf, int size)
