@@ -107,6 +107,7 @@ static int __glXDispatch(ClientPtr client)
     ** Use the opcode to index into the procedure table.
     */
     if (client->swapped)
+
         proc = __glXSwapSingleTable[opcode];
     else
         proc = __glXSingleTable[opcode];

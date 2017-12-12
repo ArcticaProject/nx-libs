@@ -1,48 +1,57 @@
 /* gcc on ppc64 defines this, causes macro recursion with pixel below */
 #undef pixel
 
+
 MESABUILDDIR = MesaBuildDir
 
 #ifdef NeedAllMesaSrc
- DISPATCHSRCS = $(MESABUILDDIR)dispatch.c
+/* DISPATCHSRCS = $(MESABUILDDIR)dispatch.c*/
+ DISPATCHSRCS =
     GLAPISRCS = $(MESABUILDDIR)glapi.c
  GLTHREADSRCS = $(MESABUILDDIR)glthread.c
 #endif
 
-MESA_CORE_INCLUDES = -I$(MESASRCDIR)/src/array_cache \
-                -I$(MESASRCDIR)/src/math -I$(MESASRCDIR)/src/shader \
+MESA_CORE_INCLUDES = -I$(MESASRCDIR)/src/math -I$(MESASRCDIR)/src/shader \
                 -I$(MESASRCDIR)/src/swrast -I$(MESASRCDIR)/src/swrast_setup \
                 -I$(MESASRCDIR)/src/tnl -I$(MESASRCDIR)/src/tnl_dd
 
 COREMESABASESRCS = \
+		$(MESABUILDDIR)accum.c \
 		$(MESABUILDDIR)api_arrayelt.c \
+		$(MESABUILDDIR)api_exec.c \
 		$(MESABUILDDIR)api_loopback.c \
 		$(MESABUILDDIR)api_noop.c \
 		$(MESABUILDDIR)api_validate.c \
-		$(MESABUILDDIR)accum.c \
+		$(MESABUILDDIR)arrayobj.c \
 		$(MESABUILDDIR)attrib.c \
 		$(MESABUILDDIR)blend.c \
 		$(MESABUILDDIR)bufferobj.c \
 		$(MESABUILDDIR)buffers.c \
+		$(MESABUILDDIR)clear.c \
 		$(MESABUILDDIR)clip.c \
 		$(MESABUILDDIR)colortab.c \
 		$(MESABUILDDIR)context.c \
 		$(MESABUILDDIR)convolve.c \
+		$(MESABUILDDIR)cpuinfo.c \
 		$(MESABUILDDIR)debug.c \
 		$(MESABUILDDIR)depth.c \
+		$(MESABUILDDIR)depthstencil.c \
 		$(MESABUILDDIR)dlist.c \
+		$(MESABUILDDIR)dlopen.c \
 		$(MESABUILDDIR)drawpix.c \
 		$(MESABUILDDIR)enable.c \
 		$(MESABUILDDIR)enums.c \
 		$(MESABUILDDIR)eval.c \
 		$(MESABUILDDIR)execmem.c \
 		$(MESABUILDDIR)extensions.c \
+		$(MESABUILDDIR)fbobject.c \
 		$(MESABUILDDIR)feedback.c \
-                $(MESABUILDDIR)fbobject.c \
+		$(MESABUILDDIR)ffvertex_prog.c \
 		$(MESABUILDDIR)fog.c \
-                $(MESABUILDDIR)framebuffer.c \
+		$(MESABUILDDIR)formats.c \
+		$(MESABUILDDIR)framebuffer.c \
 		$(MESABUILDDIR)get.c \
-                $(MESABUILDDIR)getstring.c \
+		$(MESABUILDDIR)getstring.c \
 		$(MESABUILDDIR)hash.c \
 		$(MESABUILDDIR)hint.c \
 		$(MESABUILDDIR)histogram.c \
@@ -51,68 +60,100 @@ COREMESABASESRCS = \
 		$(MESABUILDDIR)light.c \
 		$(MESABUILDDIR)lines.c \
 		$(MESABUILDDIR)matrix.c \
+		$(MESABUILDDIR)mipmap.c \
 		$(MESABUILDDIR)mm.c \
-		$(MESABUILDDIR)occlude.c \
+		$(MESABUILDDIR)multisample.c \
 		$(MESABUILDDIR)pixel.c \
+		$(MESABUILDDIR)pixelstore.c \
 		$(MESABUILDDIR)points.c \
 		$(MESABUILDDIR)polygon.c \
+		$(MESABUILDDIR)queryobj.c \
 		$(MESABUILDDIR)rastpos.c \
-                $(MESABUILDDIR)renderbuffer.c \
+		$(MESABUILDDIR)rbadaptors.c \
+		$(MESABUILDDIR)readpix.c \
+		$(MESABUILDDIR)remap.c \
+		$(MESABUILDDIR)renderbuffer.c \
+		$(MESABUILDDIR)scissor.c \
+		$(MESABUILDDIR)shaders.c \
+		$(MESABUILDDIR)shared.c \
 		$(MESABUILDDIR)state.c \
 		$(MESABUILDDIR)stencil.c \
+		$(MESABUILDDIR)syncobj.c \
 		$(MESABUILDDIR)texcompress.c \
 		$(MESABUILDDIR)texcompress_fxt1.c \
 		$(MESABUILDDIR)texcompress_s3tc.c \
-                $(MESABUILDDIR)texenvprogram.c \
+		$(MESABUILDDIR)texenv.c \
+		$(MESABUILDDIR)texenvprogram.c \
+		$(MESABUILDDIR)texfetch.c \
 		$(MESABUILDDIR)texformat.c \
+		$(MESABUILDDIR)texgen.c \
+		$(MESABUILDDIR)texgetimage.c \
 		$(MESABUILDDIR)teximage.c \
 		$(MESABUILDDIR)texobj.c \
-                $(MESABUILDDIR)texrender.c \
+		$(MESABUILDDIR)texparam.c \
+		$(MESABUILDDIR)texrender.c \
 		$(MESABUILDDIR)texstate.c \
 		$(MESABUILDDIR)texstore.c \
 		$(MESABUILDDIR)varray.c \
+		$(MESABUILDDIR)viewport.c \
+		$(MESABUILDDIR)vsnprintf.c \
 		$(MESABUILDDIR)vtxfmt.c
 
 #ifdef NeedToLinkMesaSrc
+#ifdef NeedAllMesaSrc
+/* LinkSourceFile(dispatch.c, $(MESASRCDIR)/src/mesa/main) */
+LinkSourceFile(glapi.c, $(MESASRCDIR)/src/mesa/glapi)
+LinkSourceFile(glthread.c, $(MESASRCDIR)/src/mesa/glapi)
+#endif
+LinkSourceFile(accum.c, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(accum.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(api_arrayelt.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(api_arrayelt.h, $(MESASRCDIR)/src/mesa/main)
-LinkSourceFile(api_eval.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(api_exec.c, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(api_exec.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(api_loopback.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(api_loopback.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(api_noop.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(api_noop.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(api_validate.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(api_validate.h, $(MESASRCDIR)/src/mesa/main)
-LinkSourceFile(accum.c, $(MESASRCDIR)/src/mesa/main)
-LinkSourceFile(accum.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(arrayobj.c, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(arrayobj.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(attrib.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(attrib.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(bitset.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(blend.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(blend.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(bufferobj.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(bufferobj.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(buffers.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(buffers.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(clear.c, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(clear.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(clip.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(clip.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(colormac.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(colortab.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(colortab.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(compiler.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(config.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(context.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(context.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(convolve.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(convolve.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(cpuinfo.c, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(cpuinfo.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(dd.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(debug.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(debug.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(depth.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(depth.h, $(MESASRCDIR)/src/mesa/main)
-#ifdef NeedAllMesaSrc
-LinkSourceFile(dispatch.c, $(MESASRCDIR)/src/mesa/main)
-#endif
+LinkSourceFile(depthstencil.c, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(depthstencil.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(dlist.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(dlist.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(dlopen.c, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(dlopen.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(drawpix.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(drawpix.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(enable.c, $(MESASRCDIR)/src/mesa/main)
@@ -128,17 +169,17 @@ LinkSourceFile(fbobject.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(fbobject.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(feedback.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(feedback.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(ffvertex_prog.c, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(ffvertex_prog.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(fog.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(fog.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(formats.c, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(formats.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(framebuffer.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(framebuffer.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(get.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(get.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(getstring.c, $(MESASRCDIR)/src/mesa/main)
-#ifdef NeedAllMesaSrc
-LinkSourceFile(glapi.c, $(MESASRCDIR)/src/mesa/glapi)
-LinkSourceFile(glthread.c, $(MESASRCDIR)/src/mesa/glapi)
-#endif
 LinkSourceFile(glheader.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(hash.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(hash.h, $(MESASRCDIR)/src/mesa/main)
@@ -157,39 +198,73 @@ LinkSourceFile(lines.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(macros.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(matrix.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(matrix.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(mfeatures.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(mipmap.c, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(mipmap.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(mm.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(mm.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(mtypes.h, $(MESASRCDIR)/src/mesa/main)
-LinkSourceFile(occlude.c, $(MESASRCDIR)/src/mesa/main)
-LinkSourceFile(occlude.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(multisample.c, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(multisample.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(pixel.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(pixel.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(pixelstore.c, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(pixelstore.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(points.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(points.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(polygon.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(polygon.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(queryobj.c, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(queryobj.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(rastpos.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(rastpos.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(rbadaptors.c, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(rbadaptors.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(readpix.c, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(readpix.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(remap.c, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(remap.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(remap_helper.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(renderbuffer.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(renderbuffer.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(scissor.c, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(scissor.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(shaders.c, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(shaders.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(shared.c, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(shared.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(simple_list.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(state.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(state.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(stencil.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(stencil.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(syncobj.c, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(syncobj.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(texcompress.c, $(MESASRCDIR)/src/mesa/main)
-LinkSourceFile(texcompress_fxt1.c, $(MESASRCDIR)/src/mesa/main)
-LinkSourceFile(texcompress_s3tc.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(texcompress.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(texcompress_fxt1.c, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(texcompress_fxt1.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(texcompress_s3tc.c, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(texcompress_s3tc.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(texenv.c, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(texenv.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(texenvprogram.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(texenvprogram.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(texfetch.c, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(texfetch.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(texfetch_tmp.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(texformat.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(texformat.h, $(MESASRCDIR)/src/mesa/main)
-LinkSourceFile(texformat_tmp.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(texgen.c, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(texgen.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(texgetimage.c, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(texgetimage.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(teximage.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(teximage.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(texobj.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(texobj.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(texparam.c, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(texparam.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(texrender.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(texrender.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(texstate.c, $(MESASRCDIR)/src/mesa/main)
@@ -199,13 +274,17 @@ LinkSourceFile(texstore.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(varray.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(varray.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(version.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(viewport.c, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(viewport.h, $(MESASRCDIR)/src/mesa/main)
+LinkSourceFile(vsnprintf.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(vtxfmt.c, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(vtxfmt.h, $(MESASRCDIR)/src/mesa/main)
 LinkSourceFile(vtxfmt_tmp.h, $(MESASRCDIR)/src/mesa/main)
 #endif
 
 #ifdef NeedAllMesaSrc
- DISPATCHOBJS = $(MESABUILDDIR)dispatch.o
+/* DISPATCHOBJS = $(MESABUILDDIR)dispatch.o*/
+ DISPATCHOBJS =
     GLAPIOBJS = $(MESABUILDDIR)glapi.o
  GLTHREADOBJS = $(MESABUILDDIR)glthread.o
 #endif
@@ -214,34 +293,42 @@ COREMESABASEOBJS = \
 		$(DISPATCHOBJS) \
 		$(GLAPIOBJS) \
 		$(GLTHREADOBJS) \
+		$(MESABUILDDIR)accum.o \
 		$(MESABUILDDIR)api_arrayelt.o \
+		$(MESABUILDDIR)api_exec.o \
 		$(MESABUILDDIR)api_loopback.o \
 		$(MESABUILDDIR)api_noop.o \
 		$(MESABUILDDIR)api_validate.o \
-		$(MESABUILDDIR)accum.o \
+		$(MESABUILDDIR)arrayobj.o\
 		$(MESABUILDDIR)attrib.o \
 		$(MESABUILDDIR)blend.o \
 		$(MESABUILDDIR)bufferobj.o \
 		$(MESABUILDDIR)buffers.o \
+		$(MESABUILDDIR)clear.o \
 		$(MESABUILDDIR)clip.o \
 		$(MESABUILDDIR)colortab.o \
 		$(MESABUILDDIR)context.o \
 		$(MESABUILDDIR)convolve.o \
+		$(MESABUILDDIR)cpuinfo.o \
 		$(MESABUILDDIR)debug.o \
 		$(MESABUILDDIR)depth.o \
+		$(MESABUILDDIR)depthstencil.o \
 		$(MESABUILDDIR)dlist.o \
+		$(MESABUILDDIR)dlopen.o \
 		$(MESABUILDDIR)drawpix.o \
 		$(MESABUILDDIR)enable.o \
 		$(MESABUILDDIR)enums.o \
 		$(MESABUILDDIR)eval.o \
 		$(MESABUILDDIR)execmem.o \
 		$(MESABUILDDIR)extensions.o \
-                $(MESABUILDDIR)fbobject.o \
+		$(MESABUILDDIR)fbobject.o \
 		$(MESABUILDDIR)feedback.o \
+		$(MESABUILDDIR)ffvertex_prog.o \
 		$(MESABUILDDIR)fog.o \
-                $(MESABUILDDIR)framebuffer.o \
+		$(MESABUILDDIR)formats.o \
+		$(MESABUILDDIR)framebuffer.o \
 		$(MESABUILDDIR)get.o \
-                $(MESABUILDDIR)getstring.o \
+		$(MESABUILDDIR)getstring.o \
 		$(MESABUILDDIR)hash.o \
 		$(MESABUILDDIR)hint.o \
 		$(MESABUILDDIR)histogram.o \
@@ -250,30 +337,48 @@ COREMESABASEOBJS = \
 		$(MESABUILDDIR)light.o \
 		$(MESABUILDDIR)lines.o \
 		$(MESABUILDDIR)matrix.o \
+		$(MESABUILDDIR)mipmap.o \
 		$(MESABUILDDIR)mm.o \
-		$(MESABUILDDIR)occlude.o \
+		$(MESABUILDDIR)multisample.o \
 		$(MESABUILDDIR)pixel.o \
+		$(MESABUILDDIR)pixelstore.o \
 		$(MESABUILDDIR)points.o \
 		$(MESABUILDDIR)polygon.o \
+		$(MESABUILDDIR)queryobj.o \
 		$(MESABUILDDIR)rastpos.o \
-                $(MESABUILDDIR)renderbuffer.o \
+		$(MESABUILDDIR)rbadaptors.o \
+		$(MESABUILDDIR)readpix.o \
+		$(MESABUILDDIR)remap.o \
+		$(MESABUILDDIR)renderbuffer.o \
+		$(MESABUILDDIR)scissor.o \
+		$(MESABUILDDIR)shaders.o \
+		$(MESABUILDDIR)shared.o \
 		$(MESABUILDDIR)state.o \
 		$(MESABUILDDIR)stencil.o \
+		$(MESABUILDDIR)syncobj.o \
 		$(MESABUILDDIR)texcompress.o \
 		$(MESABUILDDIR)texcompress_fxt1.o \
 		$(MESABUILDDIR)texcompress_s3tc.o \
-                $(MESABUILDDIR)texenvprogram.o \
+		$(MESABUILDDIR)texenv.o \
+		$(MESABUILDDIR)texenvprogram.o \
+		$(MESABUILDDIR)texfetch.o \
 		$(MESABUILDDIR)texformat.o \
+		$(MESABUILDDIR)texgen.o \
+		$(MESABUILDDIR)texgetimage.o \
 		$(MESABUILDDIR)teximage.o \
-                $(MESABUILDDIR)texrender.o \
 		$(MESABUILDDIR)texobj.o \
+		$(MESABUILDDIR)texparam.o \
+		$(MESABUILDDIR)texrender.o \
 		$(MESABUILDDIR)texstate.o \
 		$(MESABUILDDIR)texstore.o \
 		$(MESABUILDDIR)varray.o \
+		$(MESABUILDDIR)viewport.o \
+		$(MESABUILDDIR)vsnprintf.o \
 		$(MESABUILDDIR)vtxfmt.o
 
 #ifdef NeedAllMesaSrc
- DISPATCHUOBJS = $(MESABUILDDIR)unshared/dispatch.o
+/* DISPATCHUOBJS = $(MESABUILDDIR)unshared/dispatch.o*/
+ DISPATCHUOBJS =
     GLAPIUOBJS = $(MESABUILDDIR)unshared/glapi.o
  GLTHREADUOBJS = $(MESABUILDDIR)unshared/glthread.o
 #endif
@@ -283,34 +388,42 @@ COREMESABASEUOBJS = \
 		$(DISPATCHUOBJS) \
 		$(GLAPIUOBJS) \
 		$(GLTHREADUOBJS) \
+		$(MESABUILDDIR)unshared/accum.o \
 		$(MESABUILDDIR)unshared/api_arrayelt.o \
+		$(MESABUILDDIR)unshared/api_exec.o \
 		$(MESABUILDDIR)unshared/api_loopback.o \
 		$(MESABUILDDIR)unshared/api_noop.o \
 		$(MESABUILDDIR)unshared/api_validate.o \
-		$(MESABUILDDIR)unshared/accum.o \
+		$(MESABUILDDIR)unshared/arrayobj.o\
 		$(MESABUILDDIR)unshared/attrib.o \
 		$(MESABUILDDIR)unshared/blend.o \
 		$(MESABUILDDIR)unshared/bufferobj.o \
 		$(MESABUILDDIR)unshared/buffers.o \
+		$(MESABUILDDIR)unshared/clear.o \
 		$(MESABUILDDIR)unshared/clip.o \
 		$(MESABUILDDIR)unshared/colortab.o \
 		$(MESABUILDDIR)unshared/context.o \
 		$(MESABUILDDIR)unshared/convolve.o \
+		$(MESABUILDDIR)unshared/cpuinfo.o \
 		$(MESABUILDDIR)unshared/debug.o \
 		$(MESABUILDDIR)unshared/depth.o \
+		$(MESABUILDDIR)unshared/depthstencil.o \
 		$(MESABUILDDIR)unshared/dlist.o \
+		$(MESABUILDDIR)unshared/dlopen.o \
 		$(MESABUILDDIR)unshared/drawpix.o \
 		$(MESABUILDDIR)unshared/enable.o \
 		$(MESABUILDDIR)unshared/enums.o \
 		$(MESABUILDDIR)unshared/eval.o \
 		$(MESABUILDDIR)unshared/execmem.o \
 		$(MESABUILDDIR)unshared/extensions.o \
-                $(MESABUILDDIR)unshared/fbobject.o \
+		$(MESABUILDDIR)unshared/fbobject.o \
 		$(MESABUILDDIR)unshared/feedback.o \
+		$(MESABUILDDIR)unshared/ffvertex_prog.o \
 		$(MESABUILDDIR)unshared/fog.o \
-                $(MESABUILDDIR)unshared/framebuffer.o \
+		$(MESABUILDDIR)unshared/formats.o \
+		$(MESABUILDDIR)unshared/framebuffer.o \
 		$(MESABUILDDIR)unshared/get.o \
-                $(MESABUILDDIR)unshared/getstring.o \
+		$(MESABUILDDIR)unshared/getstring.o \
 		$(MESABUILDDIR)unshared/hash.o \
 		$(MESABUILDDIR)unshared/hint.o \
 		$(MESABUILDDIR)unshared/histogram.o \
@@ -319,33 +432,51 @@ COREMESABASEUOBJS = \
 		$(MESABUILDDIR)unshared/light.o \
 		$(MESABUILDDIR)unshared/lines.o \
 		$(MESABUILDDIR)unshared/matrix.o \
+		$(MESABUILDDIR)unshared/mipmap.o \
 		$(MESABUILDDIR)unshared/mm.o \
-		$(MESABUILDDIR)unshared/occlude.o \
+		$(MESABUILDDIR)unshared/multisample.o \
 		$(MESABUILDDIR)unshared/pixel.o \
+		$(MESABUILDDIR)unshared/pixelstore.o \
 		$(MESABUILDDIR)unshared/points.o \
 		$(MESABUILDDIR)unshared/polygon.o \
+		$(MESABUILDDIR)unshared/queryobj.o \
 		$(MESABUILDDIR)unshared/rastpos.o \
-                $(MESABUILDDIR)unshared/renderbuffer.o \
+		$(MESABUILDDIR)unshared/rbadaptors.o \
+		$(MESABUILDDIR)unshared/readpix.o \
+		$(MESABUILDDIR)unshared/remap.o \
+		$(MESABUILDDIR)unshared/renderbuffer.o \
+		$(MESABUILDDIR)unshared/scissor.o \
+		$(MESABUILDDIR)unshared/shaders.o \
+		$(MESABUILDDIR)unshared/shared.o \
 		$(MESABUILDDIR)unshared/state.o \
 		$(MESABUILDDIR)unshared/stencil.o \
+		$(MESABUILDDIR)unshared/syncobj.o \
 		$(MESABUILDDIR)unshared/texcompress.o \
 		$(MESABUILDDIR)unshared/texcompress_fxt1.o \
 		$(MESABUILDDIR)unshared/texcompress_s3tc.o \
-                $(MESABUILDDIR)unshared/texenvprogram.o \
+		$(MESABUILDDIR)unshared/texenv.o \
+		$(MESABUILDDIR)unshared/texenvprogram.o \
+		$(MESABUILDDIR)unshared/texfetch.o \
 		$(MESABUILDDIR)unshared/texformat.o \
+		$(MESABUILDDIR)unshared/texgen.o \
+		$(MESABUILDDIR)unshared/texgetimage.o \
 		$(MESABUILDDIR)unshared/teximage.o \
 		$(MESABUILDDIR)unshared/texobj.o \
-                $(MESABUILDDIR)unshared/texrender.o \
+		$(MESABUILDDIR)unshared/texparam.o \
+		$(MESABUILDDIR)unshared/texrender.o \
 		$(MESABUILDDIR)unshared/texstate.o \
 		$(MESABUILDDIR)unshared/texstore.o \
 		$(MESABUILDDIR)unshared/varray.o \
+		$(MESABUILDDIR)unshared/viewport.o \
+		$(MESABUILDDIR)unshared/vsnprintf.o \
 		$(MESABUILDDIR)unshared/vtxfmt.o
 #else
 COREMESABASEUOBJS = $(COREMESABASEOBJS)
 #endif
 
 #ifdef NeedAllMesaSrc
- DISPATCHDOBJS = $(MESABUILDDIR)debugger/dispatch.o
+ /* DISPATCHDOBJS = $(MESABUILDDIR)debugger/dispatch.o*/
+ DISPATCHDOBJS =
     GLAPIDOBJS = $(MESABUILDDIR)debugger/glapi.o
  GLTHREADDOBJS = $(MESABUILDDIR)debugger/glthread.o
 #endif
@@ -354,34 +485,42 @@ COREMESABASEDOBJS = \
 		$(DISPATCHDOBJS) \
 		$(GLAPIDOBJS) \
 		$(GLTHREADDOBJS) \
+		$(MESABUILDDIR)debugger/accum.o \
 		$(MESABUILDDIR)debugger/api_arrayelt.o \
+		$(MESABUILDDIR)debugger/api_exec.o \
 		$(MESABUILDDIR)debugger/api_loopback.o \
 		$(MESABUILDDIR)debugger/api_noop.o \
 		$(MESABUILDDIR)debugger/api_validate.o \
-		$(MESABUILDDIR)debugger/accum.o \
+		$(MESABUILDDIR)debugger/arrayobj.o\
 		$(MESABUILDDIR)debugger/attrib.o \
 		$(MESABUILDDIR)debugger/blend.o \
 		$(MESABUILDDIR)debugger/bufferobj.o \
 		$(MESABUILDDIR)debugger/buffers.o \
+		$(MESABUILDDIR)debugger/clear.o \
 		$(MESABUILDDIR)debugger/clip.o \
 		$(MESABUILDDIR)debugger/colortab.o \
 		$(MESABUILDDIR)debugger/context.o \
 		$(MESABUILDDIR)debugger/convolve.o \
+		$(MESABUILDDIR)debugger/cpuinfo.o \
 		$(MESABUILDDIR)debugger/debug.o \
 		$(MESABUILDDIR)debugger/depth.o \
+		$(MESABUILDDIR)debugger/depthstencil.o \
 		$(MESABUILDDIR)debugger/dlist.o \
+		$(MESABUILDDIR)debugger/dlopen.o \
 		$(MESABUILDDIR)debugger/drawpix.o \
 		$(MESABUILDDIR)debugger/enable.o \
 		$(MESABUILDDIR)debugger/enums.o \
 		$(MESABUILDDIR)debugger/eval.o \
 		$(MESABUILDDIR)debugger/execmem.o \
 		$(MESABUILDDIR)debugger/extensions.o \
-                $(MESABUILDDIR)debugger/fbobject.o \
+		$(MESABUILDDIR)debugger/fbobject.o \
 		$(MESABUILDDIR)debugger/feedback.o \
+		$(MESABUILDDIR)debugger/ffvertex_prog.o \
 		$(MESABUILDDIR)debugger/fog.o \
-                $(MESABUILDDIR)debugger/framebuffer.o \
+		$(MESABUILDDIR)debugger/formats.o \
+		$(MESABUILDDIR)debugger/framebuffer.o \
 		$(MESABUILDDIR)debugger/get.o \
-                $(MESABUILDDIR)debugger/getstring.o \
+		$(MESABUILDDIR)debugger/getstring.o \
 		$(MESABUILDDIR)debugger/hash.o \
 		$(MESABUILDDIR)debugger/hint.o \
 		$(MESABUILDDIR)debugger/histogram.o \
@@ -390,30 +529,48 @@ COREMESABASEDOBJS = \
 		$(MESABUILDDIR)debugger/light.o \
 		$(MESABUILDDIR)debugger/lines.o \
 		$(MESABUILDDIR)debugger/matrix.o \
+		$(MESABUILDDIR)debugger/mipmap.o \
 		$(MESABUILDDIR)debugger/mm.o \
-		$(MESABUILDDIR)debugger/occlude.o \
+		$(MESABUILDDIR)debugger/multisample.o \
 		$(MESABUILDDIR)debugger/pixel.o \
+		$(MESABUILDDIR)debugger/pixelstore.o \
 		$(MESABUILDDIR)debugger/points.o \
 		$(MESABUILDDIR)debugger/polygon.o \
+		$(MESABUILDDIR)debugger/queryobj.o \
 		$(MESABUILDDIR)debugger/rastpos.o \
-                $(MESABUILDDIR)debugger/renderbuffer.o \
+		$(MESABUILDDIR)debugger/rbadaptors.o \
+		$(MESABUILDDIR)debugger/readpix.o \
+		$(MESABUILDDIR)debugger/remap.o \
+		$(MESABUILDDIR)debugger/renderbuffer.o \
+		$(MESABUILDDIR)debugger/scissor.o \
+		$(MESABUILDDIR)debugger/shaders.o \
+		$(MESABUILDDIR)debugger/shared.o \
 		$(MESABUILDDIR)debugger/state.o \
 		$(MESABUILDDIR)debugger/stencil.o \
+		$(MESABUILDDIR)debugger/syncobj.o \
 		$(MESABUILDDIR)debugger/texcompress.o \
 		$(MESABUILDDIR)debugger/texcompress_fxt1.o \
 		$(MESABUILDDIR)debugger/texcompress_s3tc.o \
-                $(MESABUILDDIR)debugger/texenvprogram.o \
+		$(MESABUILDDIR)debugger/texenv.o \
+		$(MESABUILDDIR)debugger/texenvprogram.o \
+		$(MESABUILDDIR)debugger/texfetch.o \
 		$(MESABUILDDIR)debugger/texformat.o \
+		$(MESABUILDDIR)debugger/texgen.o \
+		$(MESABUILDDIR)debugger/texgetimage.o \
 		$(MESABUILDDIR)debugger/teximage.o \
 		$(MESABUILDDIR)debugger/texobj.o \
-                $(MESABUILDDIR)debugger/texrender.o \
+		$(MESABUILDDIR)debugger/texparam.o \
+		$(MESABUILDDIR)debugger/texrender.o \
 		$(MESABUILDDIR)debugger/texstate.o \
 		$(MESABUILDDIR)debugger/texstore.o \
 		$(MESABUILDDIR)debugger/varray.o \
+		$(MESABUILDDIR)debugger/viewport.o \
+		$(MESABUILDDIR)debugger/vsnprintf.o \
 		$(MESABUILDDIR)debugger/vtxfmt.o
 
 #ifdef NeedAllMesaSrc
- DISPATCHPOBJS = $(MESABUILDDIR)profiled/dispatch.o
+/* DISPATCHPOBJS = $(MESABUILDDIR)profiled/dispatch.o*/
+  DISPATCHPOBJS =
     GLAPIPOBJS = $(MESABUILDDIR)profiled/glapi.o
  GLTHREADPOBJS = $(MESABUILDDIR)profiled/glthread.o
 #endif
@@ -422,34 +579,42 @@ COREMESABASEPOBJS = \
 		$(DISPATCHPOBJS) \
 		$(GLAPIPOBJS) \
 		$(GLTHREADPOBJS) \
+		$(MESABUILDDIR)profiled/accum.o \
 		$(MESABUILDDIR)profiled/api_arrayelt.o \
+		$(MESABUILDDIR)profiled/api_exec.o \
 		$(MESABUILDDIR)profiled/api_loopback.o \
 		$(MESABUILDDIR)profiled/api_noop.o \
 		$(MESABUILDDIR)profiled/api_validate.o \
-		$(MESABUILDDIR)profiled/accum.o \
+		$(MESABUILDDIR)profiled/arrayobj.o\
 		$(MESABUILDDIR)profiled/attrib.o \
 		$(MESABUILDDIR)profiled/blend.o \
 		$(MESABUILDDIR)profiled/bufferobj.o \
 		$(MESABUILDDIR)profiled/buffers.o \
+		$(MESABUILDDIR)profiled/clear.o \
 		$(MESABUILDDIR)profiled/clip.o \
 		$(MESABUILDDIR)profiled/colortab.o \
 		$(MESABUILDDIR)profiled/context.o \
 		$(MESABUILDDIR)profiled/convolve.o \
+		$(MESABUILDDIR)profiled/cpuinfo.o \
 		$(MESABUILDDIR)profiled/debug.o \
 		$(MESABUILDDIR)profiled/depth.o \
+		$(MESABUILDDIR)profiled/depthstencil.o \
 		$(MESABUILDDIR)profiled/dlist.o \
+		$(MESABUILDDIR)profiled/dlopen.o \
 		$(MESABUILDDIR)profiled/drawpix.o \
 		$(MESABUILDDIR)profiled/enable.o \
 		$(MESABUILDDIR)profiled/enums.o \
 		$(MESABUILDDIR)profiled/eval.o \
 		$(MESABUILDDIR)profiled/execmem.o \
 		$(MESABUILDDIR)profiled/extensions.o \
-                $(MESABUILDDIR)profiled/fbobject.o \
+		$(MESABUILDDIR)profiled/fbobject.o \
 		$(MESABUILDDIR)profiled/feedback.o \
+		$(MESABUILDDIR)profiled/ffvertex_prog.o \
 		$(MESABUILDDIR)profiled/fog.o \
-                $(MESABUILDDIR)profiled/framebuffer.o \
+		$(MESABUILDDIR)profiled/formats.o \
+		$(MESABUILDDIR)profiled/framebuffer.o \
 		$(MESABUILDDIR)profiled/get.o \
-                $(MESABUILDDIR)profiled/getstring.o \
+		$(MESABUILDDIR)profiled/getstring.o \
 		$(MESABUILDDIR)profiled/hash.o \
 		$(MESABUILDDIR)profiled/hint.o \
 		$(MESABUILDDIR)profiled/histogram.o \
@@ -458,24 +623,41 @@ COREMESABASEPOBJS = \
 		$(MESABUILDDIR)profiled/light.o \
 		$(MESABUILDDIR)profiled/lines.o \
 		$(MESABUILDDIR)profiled/matrix.o \
+		$(MESABUILDDIR)profiled/mipmap.o \
 		$(MESABUILDDIR)profiled/mm.o \
-		$(MESABUILDDIR)profiled/occlude.o \
+		$(MESABUILDDIR)profiled/multisample.o \
 		$(MESABUILDDIR)profiled/pixel.o \
+		$(MESABUILDDIR)profiled/pixelstore.o \
 		$(MESABUILDDIR)profiled/points.o \
 		$(MESABUILDDIR)profiled/polygon.o \
+		$(MESABUILDDIR)profiled/queryobj.o \
 		$(MESABUILDDIR)profiled/rastpos.o \
-                $(MESABUILDDIR)profiled/renderbuffer.o \
+		$(MESABUILDDIR)profiled/rbadaptors.o \
+		$(MESABUILDDIR)profiled/readpix.o \
+		$(MESABUILDDIR)profiled/remap.o \
+		$(MESABUILDDIR)profiled/renderbuffer.o \
+		$(MESABUILDDIR)profiled/scissor.o \
+		$(MESABUILDDIR)profiled/shaders.o \
+		$(MESABUILDDIR)profiled/shared.o \
 		$(MESABUILDDIR)profiled/state.o \
 		$(MESABUILDDIR)profiled/stencil.o \
+		$(MESABUILDDIR)profiled/syncobj.o \
 		$(MESABUILDDIR)profiled/texcompress.o \
 		$(MESABUILDDIR)profiled/texcompress_fxt1.o \
 		$(MESABUILDDIR)profiled/texcompress_s3tc.o \
-                $(MESABUILDDIR)profiled/texenvprogram.o \
+		$(MESABUILDDIR)profiled/texenv.o \
+		$(MESABUILDDIR)profiled/texenvprogram.o \
+		$(MESABUILDDIR)profiled/texfetch.o \
 		$(MESABUILDDIR)profiled/texformat.o \
+		$(MESABUILDDIR)profiled/texgen.o \
+		$(MESABUILDDIR)profiled/texgetimage.o \
 		$(MESABUILDDIR)profiled/teximage.o \
 		$(MESABUILDDIR)profiled/texobj.o \
-                $(MESABUILDDIR)profiled/texrender.o \
+		$(MESABUILDDIR)profiled/texparam.o \
+		$(MESABUILDDIR)profiled/texrender.o \
 		$(MESABUILDDIR)profiled/texstate.o \
 		$(MESABUILDDIR)profiled/texstore.o \
 		$(MESABUILDDIR)profiled/varray.o \
+		$(MESABUILDDIR)profiled/viewport.o \
+		$(MESABUILDDIR)profiled/vsnprintf.o \
 		$(MESABUILDDIR)profiled/vtxfmt.o
