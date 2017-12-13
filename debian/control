@@ -66,6 +66,7 @@ Description: nx-X11 core wire protocol and auxiliary headers
  used to abstract OS-specific functions.
 
 Package: libnx-x11-6
+Section: libs
 Architecture: any
 Multi-Arch: same
 Depends:
