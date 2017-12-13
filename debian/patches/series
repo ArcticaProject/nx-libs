@@ -1,3 +1,2 @@
-#401_nxcomp_bigrequests-and-genericevent-extensions.full+lite.patch
-016_nx-X11_install-location.debian.patch
-102_xserver-xext_set-securitypolicy-path.debian.patch
+2001_nx-X11_install-location.debian.patch
+2002_xserver-xext_set-securitypolicy-path.debian.patch

@@ -399,304 +399,304 @@ Comment:
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
  DAMAGE.
 
-Files: nx-X11/extras/Mesa_6.4.2/include/GL/gl.h
- nx-X11/extras/Mesa_6.4.2/include/GL/osmesa.h
- nx-X11/extras/Mesa_6.4.2/include/GL/xmesa.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/array_cache/ac_context.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/array_cache/ac_context.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/array_cache/ac_import.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/array_cache/acache.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/drivers/common/driverfuncs.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/drivers/common/driverfuncs.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/drivers/x11/glxheader.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/drivers/x11/xm_api.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/drivers/x11/xm_buffer.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/drivers/x11/xm_dd.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/drivers/x11/xm_line.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/drivers/x11/xm_span.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/drivers/x11/xm_tri.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/drivers/x11/xmesaP.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/glapi/glapi.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/glapi/glapi.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/glapi/glthread.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/glapi/glthread.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/accum.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/accum.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/api_arrayelt.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/api_arrayelt.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/api_eval.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/api_loopback.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/api_loopback.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/api_noop.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/api_noop.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/api_validate.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/api_validate.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/attrib.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/attrib.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/blend.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/blend.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/bufferobj.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/bufferobj.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/buffers.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/buffers.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/clip.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/clip.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/colormac.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/colortab.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/colortab.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/config.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/context.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/context.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/convolve.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/convolve.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/dd.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/debug.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/debug.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/depth.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/depth.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/dispatch.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/dlist.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/dlist.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/drawpix.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/drawpix.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/enable.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/enable.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/enums.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/enums.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/eval.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/eval.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/execmem.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/extensions.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/extensions.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/fbobject.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/fbobject.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/feedback.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/feedback.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/fog.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/fog.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/framebuffer.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/framebuffer.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/get.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/getstring.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/glheader.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/hash.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/hash.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/hint.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/hint.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/histogram.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/histogram.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/image.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/image.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/imports.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/imports.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/light.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/light.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/lines.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/lines.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/macros.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/matrix.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/matrix.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/mtypes.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/occlude.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/occlude.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/pixel.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/pixel.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/points.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/points.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/polygon.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/polygon.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/rastpos.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/rastpos.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/renderbuffer.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/renderbuffer.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/state.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/state.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/stencil.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/stencil.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/texcompress.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/texcompress.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/texcompress_fxt1.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/texcompress_s3tc.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/texenvprogram.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/texformat.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/texformat.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/texformat_tmp.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/teximage.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/teximage.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/texobj.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/texobj.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/texstate.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/texstate.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/texstore.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/texstore.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/varray.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/varray.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/version.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/vtxfmt.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/vtxfmt.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/vtxfmt_tmp.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_clip_tmp.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_copy_tmp.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_debug.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_debug_clip.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_debug_norm.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_debug_util.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_debug_xform.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_dotprod_tmp.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_eval.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_eval.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_matrix.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_matrix.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_norm_tmp.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_trans_tmp.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_translate.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_translate.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_vector.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_vector.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_xform.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_xform.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/math/m_xform_tmp.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/math/mathmod.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/arbfragparse.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/arbfragparse.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/arbprogparse.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/arbprogparse.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/arbprogram.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/arbprogram.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/arbvertparse.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/arbvertparse.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/grammar/grammar.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/grammar/grammar.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/grammar/grammar_mesa.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/grammar/grammar_mesa.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/nvfragparse.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/nvfragparse.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/nvfragprog.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/nvprogram.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/nvprogram.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/nvvertexec.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/nvvertexec.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/nvvertparse.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/nvvertparse.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/nvvertprog.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/program.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/program.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/shaderobjects.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/shaderobjects.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/shaderobjects_3dlabs.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/shaderobjects_3dlabs.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_assemble.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_assemble.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_assemble_assignment.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_assemble_assignment.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_assemble_conditional.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_assemble_conditional.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_assemble_constructor.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_assemble_constructor.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_assemble_typeinfo.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_assemble_typeinfo.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_compile.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_compile.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_execute.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_execute.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_preprocess.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_preprocess.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_storage.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_storage.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_utility.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/slang_utility.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/traverse_wrap.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_aaline.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_aaline.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_aalinetemp.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_aatriangle.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_aatriangle.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_aatritemp.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_accum.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_accum.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_alpha.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_alpha.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_bitmap.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_blend.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_blend.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_buffers.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_context.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_context.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_copypix.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_depth.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_depth.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_drawpix.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_drawpix.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_feedback.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_feedback.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_fog.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_fog.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_imaging.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_lines.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_lines.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_linetemp.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_logic.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_logic.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_masking.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_masking.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_nvfragprog.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_nvfragprog.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_pixeltex.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_pixeltex.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_points.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_points.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_pointtemp.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_readpix.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_span.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_span.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_spantemp.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_stencil.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_stencil.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_texstore.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_texture.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_texture.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_triangle.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_triangle.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_trispan.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_tritemp.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_zoom.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_zoom.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/swrast.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast_setup/ss_context.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast_setup/ss_context.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast_setup/ss_triangle.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast_setup/ss_triangle.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast_setup/ss_tritmp.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast_setup/swrast_setup.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_array_api.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_array_api.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_array_import.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_array_import.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_context.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_context.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_pipeline.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_pipeline.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_save_loopback.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_save_playback.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vb_arbprogram.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vb_arbprogram.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vb_arbprogram_sse.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vb_cliptmp.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vb_cull.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vb_fog.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vb_light.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vb_lighttmp.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vb_normals.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vb_points.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vb_program.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vb_render.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vb_rendertmp.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vb_texgen.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vb_texmat.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vb_vertex.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vtx_eval.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vtx_exec.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/tnl.h
+Files: nx-X11/extras/Mesa/include/GL/gl.h
+ nx-X11/extras/Mesa/include/GL/osmesa.h
+ nx-X11/extras/Mesa/include/GL/xmesa.h
+ nx-X11/extras/Mesa/src/mesa/array_cache/ac_context.c
+ nx-X11/extras/Mesa/src/mesa/array_cache/ac_context.h
+ nx-X11/extras/Mesa/src/mesa/array_cache/ac_import.c
+ nx-X11/extras/Mesa/src/mesa/array_cache/acache.h
+ nx-X11/extras/Mesa/src/mesa/drivers/common/driverfuncs.c
+ nx-X11/extras/Mesa/src/mesa/drivers/common/driverfuncs.h
+ nx-X11/extras/Mesa/src/mesa/drivers/x11/glxheader.h
+ nx-X11/extras/Mesa/src/mesa/drivers/x11/xm_api.c
+ nx-X11/extras/Mesa/src/mesa/drivers/x11/xm_buffer.c
+ nx-X11/extras/Mesa/src/mesa/drivers/x11/xm_dd.c
+ nx-X11/extras/Mesa/src/mesa/drivers/x11/xm_line.c
+ nx-X11/extras/Mesa/src/mesa/drivers/x11/xm_span.c
+ nx-X11/extras/Mesa/src/mesa/drivers/x11/xm_tri.c
+ nx-X11/extras/Mesa/src/mesa/drivers/x11/xmesaP.h
+ nx-X11/extras/Mesa/src/mesa/glapi/glapi.c
+ nx-X11/extras/Mesa/src/mesa/glapi/glapi.h
+ nx-X11/extras/Mesa/src/mesa/glapi/glthread.c
+ nx-X11/extras/Mesa/src/mesa/glapi/glthread.h
+ nx-X11/extras/Mesa/src/mesa/main/accum.c
+ nx-X11/extras/Mesa/src/mesa/main/accum.h
+ nx-X11/extras/Mesa/src/mesa/main/api_arrayelt.c
+ nx-X11/extras/Mesa/src/mesa/main/api_arrayelt.h
+ nx-X11/extras/Mesa/src/mesa/main/api_eval.h
+ nx-X11/extras/Mesa/src/mesa/main/api_loopback.c
+ nx-X11/extras/Mesa/src/mesa/main/api_loopback.h
+ nx-X11/extras/Mesa/src/mesa/main/api_noop.c
+ nx-X11/extras/Mesa/src/mesa/main/api_noop.h
+ nx-X11/extras/Mesa/src/mesa/main/api_validate.c
+ nx-X11/extras/Mesa/src/mesa/main/api_validate.h
+ nx-X11/extras/Mesa/src/mesa/main/attrib.c
+ nx-X11/extras/Mesa/src/mesa/main/attrib.h
+ nx-X11/extras/Mesa/src/mesa/main/blend.c
+ nx-X11/extras/Mesa/src/mesa/main/blend.h
+ nx-X11/extras/Mesa/src/mesa/main/bufferobj.c
+ nx-X11/extras/Mesa/src/mesa/main/bufferobj.h
+ nx-X11/extras/Mesa/src/mesa/main/buffers.c
+ nx-X11/extras/Mesa/src/mesa/main/buffers.h
+ nx-X11/extras/Mesa/src/mesa/main/clip.c
+ nx-X11/extras/Mesa/src/mesa/main/clip.h
+ nx-X11/extras/Mesa/src/mesa/main/colormac.h
+ nx-X11/extras/Mesa/src/mesa/main/colortab.c
+ nx-X11/extras/Mesa/src/mesa/main/colortab.h
+ nx-X11/extras/Mesa/src/mesa/main/config.h
+ nx-X11/extras/Mesa/src/mesa/main/context.c
+ nx-X11/extras/Mesa/src/mesa/main/context.h
+ nx-X11/extras/Mesa/src/mesa/main/convolve.c
+ nx-X11/extras/Mesa/src/mesa/main/convolve.h
+ nx-X11/extras/Mesa/src/mesa/main/dd.h
+ nx-X11/extras/Mesa/src/mesa/main/debug.c
+ nx-X11/extras/Mesa/src/mesa/main/debug.h
+ nx-X11/extras/Mesa/src/mesa/main/depth.c
+ nx-X11/extras/Mesa/src/mesa/main/depth.h
+ nx-X11/extras/Mesa/src/mesa/main/dispatch.c
+ nx-X11/extras/Mesa/src/mesa/main/dlist.c
+ nx-X11/extras/Mesa/src/mesa/main/dlist.h
+ nx-X11/extras/Mesa/src/mesa/main/drawpix.c
+ nx-X11/extras/Mesa/src/mesa/main/drawpix.h
+ nx-X11/extras/Mesa/src/mesa/main/enable.c
+ nx-X11/extras/Mesa/src/mesa/main/enable.h
+ nx-X11/extras/Mesa/src/mesa/main/enums.c
+ nx-X11/extras/Mesa/src/mesa/main/enums.h
+ nx-X11/extras/Mesa/src/mesa/main/eval.c
+ nx-X11/extras/Mesa/src/mesa/main/eval.h
+ nx-X11/extras/Mesa/src/mesa/main/execmem.c
+ nx-X11/extras/Mesa/src/mesa/main/extensions.c
+ nx-X11/extras/Mesa/src/mesa/main/extensions.h
+ nx-X11/extras/Mesa/src/mesa/main/fbobject.c
+ nx-X11/extras/Mesa/src/mesa/main/fbobject.h
+ nx-X11/extras/Mesa/src/mesa/main/feedback.c
+ nx-X11/extras/Mesa/src/mesa/main/feedback.h
+ nx-X11/extras/Mesa/src/mesa/main/fog.c
+ nx-X11/extras/Mesa/src/mesa/main/fog.h
+ nx-X11/extras/Mesa/src/mesa/main/framebuffer.c
+ nx-X11/extras/Mesa/src/mesa/main/framebuffer.h
+ nx-X11/extras/Mesa/src/mesa/main/get.h
+ nx-X11/extras/Mesa/src/mesa/main/getstring.c
+ nx-X11/extras/Mesa/src/mesa/main/glheader.h
+ nx-X11/extras/Mesa/src/mesa/main/hash.c
+ nx-X11/extras/Mesa/src/mesa/main/hash.h
+ nx-X11/extras/Mesa/src/mesa/main/hint.c
+ nx-X11/extras/Mesa/src/mesa/main/hint.h
+ nx-X11/extras/Mesa/src/mesa/main/histogram.c
+ nx-X11/extras/Mesa/src/mesa/main/histogram.h
+ nx-X11/extras/Mesa/src/mesa/main/image.c
+ nx-X11/extras/Mesa/src/mesa/main/image.h
+ nx-X11/extras/Mesa/src/mesa/main/imports.c
+ nx-X11/extras/Mesa/src/mesa/main/imports.h
+ nx-X11/extras/Mesa/src/mesa/main/light.c
+ nx-X11/extras/Mesa/src/mesa/main/light.h
+ nx-X11/extras/Mesa/src/mesa/main/lines.c
+ nx-X11/extras/Mesa/src/mesa/main/lines.h
+ nx-X11/extras/Mesa/src/mesa/main/macros.h
+ nx-X11/extras/Mesa/src/mesa/main/matrix.c
+ nx-X11/extras/Mesa/src/mesa/main/matrix.h
+ nx-X11/extras/Mesa/src/mesa/main/mtypes.h
+ nx-X11/extras/Mesa/src/mesa/main/occlude.c
+ nx-X11/extras/Mesa/src/mesa/main/occlude.h
+ nx-X11/extras/Mesa/src/mesa/main/pixel.c
+ nx-X11/extras/Mesa/src/mesa/main/pixel.h
+ nx-X11/extras/Mesa/src/mesa/main/points.c
+ nx-X11/extras/Mesa/src/mesa/main/points.h
+ nx-X11/extras/Mesa/src/mesa/main/polygon.c
+ nx-X11/extras/Mesa/src/mesa/main/polygon.h
+ nx-X11/extras/Mesa/src/mesa/main/rastpos.c
+ nx-X11/extras/Mesa/src/mesa/main/rastpos.h
+ nx-X11/extras/Mesa/src/mesa/main/renderbuffer.c
+ nx-X11/extras/Mesa/src/mesa/main/renderbuffer.h
+ nx-X11/extras/Mesa/src/mesa/main/state.c
+ nx-X11/extras/Mesa/src/mesa/main/state.h
+ nx-X11/extras/Mesa/src/mesa/main/stencil.c
+ nx-X11/extras/Mesa/src/mesa/main/stencil.h
+ nx-X11/extras/Mesa/src/mesa/main/texcompress.c
+ nx-X11/extras/Mesa/src/mesa/main/texcompress.h
+ nx-X11/extras/Mesa/src/mesa/main/texcompress_fxt1.c
+ nx-X11/extras/Mesa/src/mesa/main/texcompress_s3tc.c
+ nx-X11/extras/Mesa/src/mesa/main/texenvprogram.h
+ nx-X11/extras/Mesa/src/mesa/main/texformat.c
+ nx-X11/extras/Mesa/src/mesa/main/texformat.h
+ nx-X11/extras/Mesa/src/mesa/main/texformat_tmp.h
+ nx-X11/extras/Mesa/src/mesa/main/teximage.c
+ nx-X11/extras/Mesa/src/mesa/main/teximage.h
+ nx-X11/extras/Mesa/src/mesa/main/texobj.c
+ nx-X11/extras/Mesa/src/mesa/main/texobj.h
+ nx-X11/extras/Mesa/src/mesa/main/texstate.c
+ nx-X11/extras/Mesa/src/mesa/main/texstate.h
+ nx-X11/extras/Mesa/src/mesa/main/texstore.c
+ nx-X11/extras/Mesa/src/mesa/main/texstore.h
+ nx-X11/extras/Mesa/src/mesa/main/varray.c
+ nx-X11/extras/Mesa/src/mesa/main/varray.h
+ nx-X11/extras/Mesa/src/mesa/main/version.h
+ nx-X11/extras/Mesa/src/mesa/main/vtxfmt.c
+ nx-X11/extras/Mesa/src/mesa/main/vtxfmt.h
+ nx-X11/extras/Mesa/src/mesa/main/vtxfmt_tmp.h
+ nx-X11/extras/Mesa/src/mesa/math/m_clip_tmp.h
+ nx-X11/extras/Mesa/src/mesa/math/m_copy_tmp.h
+ nx-X11/extras/Mesa/src/mesa/math/m_debug.h
+ nx-X11/extras/Mesa/src/mesa/math/m_debug_clip.c
+ nx-X11/extras/Mesa/src/mesa/math/m_debug_norm.c
+ nx-X11/extras/Mesa/src/mesa/math/m_debug_util.h
+ nx-X11/extras/Mesa/src/mesa/math/m_debug_xform.c
+ nx-X11/extras/Mesa/src/mesa/math/m_dotprod_tmp.h
+ nx-X11/extras/Mesa/src/mesa/math/m_eval.c
+ nx-X11/extras/Mesa/src/mesa/math/m_eval.h
+ nx-X11/extras/Mesa/src/mesa/math/m_matrix.c
+ nx-X11/extras/Mesa/src/mesa/math/m_matrix.h
+ nx-X11/extras/Mesa/src/mesa/math/m_norm_tmp.h
+ nx-X11/extras/Mesa/src/mesa/math/m_trans_tmp.h
+ nx-X11/extras/Mesa/src/mesa/math/m_translate.c
+ nx-X11/extras/Mesa/src/mesa/math/m_translate.h
+ nx-X11/extras/Mesa/src/mesa/math/m_vector.c
+ nx-X11/extras/Mesa/src/mesa/math/m_vector.h
+ nx-X11/extras/Mesa/src/mesa/math/m_xform.c
+ nx-X11/extras/Mesa/src/mesa/math/m_xform.h
+ nx-X11/extras/Mesa/src/mesa/math/m_xform_tmp.h
+ nx-X11/extras/Mesa/src/mesa/math/mathmod.h
+ nx-X11/extras/Mesa/src/mesa/shader/arbfragparse.c
+ nx-X11/extras/Mesa/src/mesa/shader/arbfragparse.h
+ nx-X11/extras/Mesa/src/mesa/shader/arbprogparse.c
+ nx-X11/extras/Mesa/src/mesa/shader/arbprogparse.h
+ nx-X11/extras/Mesa/src/mesa/shader/arbprogram.c
+ nx-X11/extras/Mesa/src/mesa/shader/arbprogram.h
+ nx-X11/extras/Mesa/src/mesa/shader/arbvertparse.c
+ nx-X11/extras/Mesa/src/mesa/shader/arbvertparse.h
+ nx-X11/extras/Mesa/src/mesa/shader/grammar/grammar.c
+ nx-X11/extras/Mesa/src/mesa/shader/grammar/grammar.h
+ nx-X11/extras/Mesa/src/mesa/shader/grammar/grammar_mesa.c
+ nx-X11/extras/Mesa/src/mesa/shader/grammar/grammar_mesa.h
+ nx-X11/extras/Mesa/src/mesa/shader/nvfragparse.c
+ nx-X11/extras/Mesa/src/mesa/shader/nvfragparse.h
+ nx-X11/extras/Mesa/src/mesa/shader/nvfragprog.h
+ nx-X11/extras/Mesa/src/mesa/shader/nvprogram.c
+ nx-X11/extras/Mesa/src/mesa/shader/nvprogram.h
+ nx-X11/extras/Mesa/src/mesa/shader/nvvertexec.c
+ nx-X11/extras/Mesa/src/mesa/shader/nvvertexec.h
+ nx-X11/extras/Mesa/src/mesa/shader/nvvertparse.c
+ nx-X11/extras/Mesa/src/mesa/shader/nvvertparse.h
+ nx-X11/extras/Mesa/src/mesa/shader/nvvertprog.h
+ nx-X11/extras/Mesa/src/mesa/shader/program.c
+ nx-X11/extras/Mesa/src/mesa/shader/program.h
+ nx-X11/extras/Mesa/src/mesa/shader/shaderobjects.c
+ nx-X11/extras/Mesa/src/mesa/shader/shaderobjects.h
+ nx-X11/extras/Mesa/src/mesa/shader/shaderobjects_3dlabs.c
+ nx-X11/extras/Mesa/src/mesa/shader/shaderobjects_3dlabs.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_assemble.c
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_assemble.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_assemble_assignment.c
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_assemble_assignment.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_assemble_conditional.c
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_assemble_conditional.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_assemble_constructor.c
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_assemble_constructor.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_assemble_typeinfo.c
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_assemble_typeinfo.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_compile.c
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_compile.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_execute.c
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_execute.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_preprocess.c
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_preprocess.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_storage.c
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_storage.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_utility.c
+ nx-X11/extras/Mesa/src/mesa/shader/slang/slang_utility.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/traverse_wrap.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_aaline.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_aaline.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_aalinetemp.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_aatriangle.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_aatriangle.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_aatritemp.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_accum.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_accum.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_alpha.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_alpha.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_bitmap.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_blend.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_blend.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_buffers.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_context.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_context.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_copypix.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_depth.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_depth.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_drawpix.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_drawpix.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_feedback.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_feedback.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_fog.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_fog.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_imaging.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_lines.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_lines.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_linetemp.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_logic.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_logic.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_masking.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_masking.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_nvfragprog.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_nvfragprog.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_pixeltex.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_pixeltex.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_points.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_points.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_pointtemp.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_readpix.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_span.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_span.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_spantemp.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_stencil.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_stencil.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_texstore.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_texture.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_texture.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_triangle.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_triangle.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_trispan.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_tritemp.h
+ nx-X11/extras/Mesa/src/mesa/swrast/s_zoom.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_zoom.h
+ nx-X11/extras/Mesa/src/mesa/swrast/swrast.h
+ nx-X11/extras/Mesa/src/mesa/swrast_setup/ss_context.c
+ nx-X11/extras/Mesa/src/mesa/swrast_setup/ss_context.h
+ nx-X11/extras/Mesa/src/mesa/swrast_setup/ss_triangle.c
+ nx-X11/extras/Mesa/src/mesa/swrast_setup/ss_triangle.h
+ nx-X11/extras/Mesa/src/mesa/swrast_setup/ss_tritmp.h
+ nx-X11/extras/Mesa/src/mesa/swrast_setup/swrast_setup.h
+ nx-X11/extras/Mesa/src/mesa/tnl/t_array_api.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_array_api.h
+ nx-X11/extras/Mesa/src/mesa/tnl/t_array_import.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_array_import.h
+ nx-X11/extras/Mesa/src/mesa/tnl/t_context.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_context.h
+ nx-X11/extras/Mesa/src/mesa/tnl/t_pipeline.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_pipeline.h
+ nx-X11/extras/Mesa/src/mesa/tnl/t_save_loopback.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_save_playback.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vb_arbprogram.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vb_arbprogram.h
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vb_arbprogram_sse.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vb_cliptmp.h
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vb_cull.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vb_fog.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vb_light.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vb_lighttmp.h
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vb_normals.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vb_points.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vb_program.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vb_render.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vb_rendertmp.h
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vb_texgen.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vb_texmat.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vb_vertex.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vtx_eval.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vtx_exec.c
+ nx-X11/extras/Mesa/src/mesa/tnl/tnl.h
 Copyright: 1999-2001, Brian Paul
   1999-2002, Brian Paul
   1999-2003, Brian Paul
@@ -1040,8 +1040,7 @@ Copyright: 2012, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
   2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 License: GPL-2+
 
-Files: nx-X11/extras/README.Mesa.patches
- nx-X11/programs/Xserver/GL/include/GL/xf86glx.h
+Files: nx-X11/programs/Xserver/GL/include/GL/xf86glx.h
  nx-X11/programs/Xserver/GL/include/GL/glx_ansic.h
  nx-X11/lib/nx-x11.pc.in
 Copyright:
@@ -1056,22 +1055,23 @@ Files: replace.sh
 Copyright: 2013, Jan Engelhardt <jengelh@inai.de>
 License: GPL-2+
 
-Files: nx-X11/extras/Mesa_6.4.2/src/mesa/main/get.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/texrender.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/main/texrender.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/arbprogram_syn.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/grammar/grammar_syn.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/library/slang_common_builtin_gc.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/library/slang_common_builtin_gc_bin.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/library/slang_core_gc.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/library/slang_core_gc_bin.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/library/slang_fragment_builtin_gc.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/library/slang_fragment_builtin_gc_bin.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/library/slang_shader_syn.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/library/slang_version_syn.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/library/slang_vertex_builtin_gc.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/shader/slang/library/slang_vertex_builtin_gc_bin.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vtx_x86_gcc.S
+Files: nx-X11/extras/Mesa/src/mesa/main/get.c
+ nx-X11/extras/Mesa/src/mesa/main/texrender.c
+ nx-X11/extras/Mesa/src/mesa/main/texrender.h
+ nx-X11/extras/Mesa/src/mesa/shader/arbprogram_syn.h
+ nx-X11/extras/Mesa/src/mesa/shader/grammar/grammar_syn.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/library/slang_common_builtin_gc.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/library/slang_common_builtin_gc_bin.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/library/slang_core_gc.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/library/slang_core_gc_bin.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/library/slang_fragment_builtin_gc.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/library/slang_fragment_builtin_gc_bin.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/library/slang_shader_syn.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/library/slang_version_syn.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/library/slang_vertex_builtin_gc.h
+ nx-X11/extras/Mesa/src/mesa/shader/slang/library/slang_vertex_builtin_gc_bin.h
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vtx_x86_gcc.S
+ nx-X11/extras/Mesa/src/mesa/main/KNOWN_BUGS
 Copyright: *No copyright*
 License: Expat
 Comment:
@@ -1617,10 +1617,10 @@ Files: nx-X11/lib/src/xcms/HVC.c
 Copyright: 1990, 1991, Tektronix, Inc
 License: MIT~Tektronix~3-clause
 
-Files: nx-X11/extras/Mesa_6.4.2/include/GL/glext.h
- nx-X11/extras/Mesa_6.4.2/include/GL/glxext.h
- nx-X11/extras/Mesa_6.4.2/include/GL/internal/glcore.h
- nx-X11/extras/Mesa_6.4.2/src/glx/x11/compsize.c
+Files: nx-X11/extras/Mesa/include/GL/glext.h
+ nx-X11/extras/Mesa/include/GL/glxext.h
+ nx-X11/extras/Mesa/include/GL/internal/glcore.h
+ nx-X11/extras/Mesa/src/glx/x11/compsize.c
  nx-X11/include/GL/glx.h
  nx-X11/include/GL/glxmd.h
  nx-X11/include/GL/glxproto.h
@@ -2064,7 +2064,7 @@ Files: nx-X11/include/extensions/Xdbeproto.h
 Copyright: 1994-1995, Hewlett-Packard Company
 License: Expat~NoAdvert
 
-Files: nx-X11/extras/Mesa_6.4.2/include/GL/xmesa_xf86.h
+Files: nx-X11/extras/Mesa/include/GL/xmesa_xf86.h
  nx-X11/programs/Xserver/GL/mesa/X/xf86glx.c
  nx-X11/programs/Xserver/GL/mesa/X/xf86glx_util.c
  nx-X11/programs/Xserver/GL/mesa/X/xf86glx_util.h
@@ -2072,12 +2072,12 @@ Files: nx-X11/extras/Mesa_6.4.2/include/GL/xmesa_xf86.h
 Copyright: 1998-1999, Precision Insight, Inc., Cedar Park, Texas
 License: Expat
 
-Files: nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_save_api.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_save_api.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vtx_api.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vtx_api.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vtx_generic.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vtx_x86.c
+Files: nx-X11/extras/Mesa/src/mesa/tnl/t_save_api.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_save_api.h
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vtx_api.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vtx_api.h
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vtx_generic.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vtx_x86.c
 Copyright: 2002, Tungsten Graphics Inc., Cedar Park, Texas
   2004, Tungsten Graphics Inc., Cedar Park, Texas
 License: Expat
@@ -2126,10 +2126,10 @@ Copyright: 1991-1994, FUJITSU LIMITED
   1993, Digital Equipment Corporation
 License: MIT~X11
 
-Files: nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vertex.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vertex.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vertex_generic.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vertex_sse.c
+Files: nx-X11/extras/Mesa/src/mesa/tnl/t_vertex.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vertex.h
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vertex_generic.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vertex_sse.c
 Copyright: 2003, Tungsten Graphics, inc
 License: Expat
 
@@ -2147,17 +2147,17 @@ Files: nx-X11/programs/Xserver/miext/cw/cw.c
 Copyright: 2004, Eric Anholt
 License: MIT~X11
 
-Files: nx-X11/extras/Mesa_6.4.2/src/mesa/glapi/glapitable.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/glapi/glapitemp.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/glapi/glprocs.h
+Files: nx-X11/extras/Mesa/src/mesa/glapi/glapitable.h
+ nx-X11/extras/Mesa/src/mesa/glapi/glapitemp.h
+ nx-X11/extras/Mesa/src/mesa/glapi/glprocs.h
 Copyright: 1999-2001, Brian Paul
   1999-2003, Brian Paul
   IBM Corporation 2004
 License: Expat
 
-Files: nx-X11/extras/Mesa_6.4.2/src/mesa/shader/atifragshader.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_atifragshader.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/swrast/s_atifragshader.h
+Files: nx-X11/extras/Mesa/src/mesa/shader/atifragshader.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_atifragshader.c
+ nx-X11/extras/Mesa/src/mesa/swrast/s_atifragshader.h
 Copyright: 1999-2003, David Airlie
   2004, David Airlie
 License: Expat
@@ -2270,10 +2270,10 @@ Comment:
  as Expat. Later contributions by FUJITSU LIMITED and Sony Corporation
  have been licensed under MIT~X11.
 
-Files: nx-X11/extras/Mesa_6.4.2/src/glx/x11/indirect_size.c
- nx-X11/extras/Mesa_6.4.2/src/glx/x11/indirect_size.h
- nx-X11/extras/Mesa_6.4.2/src/mesa/drivers/dri/common/glcontextmodes.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/drivers/dri/common/glcontextmodes.h
+Files: nx-X11/extras/Mesa/src/glx/x11/indirect_size.c
+ nx-X11/extras/Mesa/src/glx/x11/indirect_size.h
+ nx-X11/extras/Mesa/src/mesa/drivers/dri/common/glcontextmodes.c
+ nx-X11/extras/Mesa/src/mesa/drivers/dri/common/glcontextmodes.h
 Copyright: 2003, IBM Corporation
   IBM Corporation 2004
 License: Expat
@@ -2294,8 +2294,8 @@ Copyright: 2000, The XFree86 Project, Inc.
   2001, The XFree86 Project, Inc.
 License: Expat~NoAdvert
 
-Files: nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vp_build.c
- nx-X11/extras/Mesa_6.4.2/src/mesa/tnl/t_vp_build.h
+Files: nx-X11/extras/Mesa/src/mesa/tnl/t_vp_build.c
+ nx-X11/extras/Mesa/src/mesa/tnl/t_vp_build.h
 Copyright: 2005, Tungsten Graphics
 License: Expat
 
@@ -2447,12 +2447,12 @@ Files: nx-X11/programs/Xserver/os/xprintf.c
 Copyright: 2004, Alexander Gottwald
 License: Expat
 
-Files: nx-X11/extras/Mesa_6.4.2/src/mesa/glapi/glapioffsets.h
+Files: nx-X11/extras/Mesa/src/mesa/glapi/glapioffsets.h
 Copyright: 1999-2001, Brian Paul
   IBM Corporation 2004,
 License: Expat
 
-Files: nx-X11/extras/Mesa_6.4.2/src/mesa/main/simple_list.h
+Files: nx-X11/extras/Mesa/src/mesa/main/simple_list.h
 Copyright: 1997, Keith Whitwell
   1999-2001, Brian Paul
 License: Expat
@@ -2492,7 +2492,7 @@ Files: nx-X11/programs/Xserver/hw/nxagent/X11/include/xpm_nxagent.h
 Copyright: 1989-1995, GROUPE BULL
 License: Expat~NoAdvert
 
-Files: nx-X11/extras/Mesa_6.4.2/src/mesa/glapi/dispatch.h
+Files: nx-X11/extras/Mesa/src/mesa/glapi/dispatch.h
 Copyright: 2005, IBM Corporation
 License: Expat
 
@@ -2507,7 +2507,7 @@ Comment:
  Later contributions by Oracle and/or its affiliates and Red Hat, Inc.
  have been licensed under Expat.
 
-Files: nx-X11/extras/Mesa_6.4.2/src/mesa/main/mm.h
+Files: nx-X11/extras/Mesa/src/mesa/main/mm.h
 Copyright: 1999, Keith Whitwell
 License: Expat
 
@@ -2552,11 +2552,11 @@ Files: nx-X11/programs/Xserver/composite/compositeext.h
 Copyright: 2009, NVIDIA Corporation
 License: Expat
 
-Files: nx-X11/extras/Mesa_6.4.2/src/mesa/main/texenvprogram.c
+Files: nx-X11/extras/Mesa/src/mesa/main/texenvprogram.c
 Copyright: 2003, Tungsten Graphics, Inc., Cedar Park, Texas
 License: Expat
 
-Files: nx-X11/extras/Mesa_6.4.2/src/mesa/main/mm.c
+Files: nx-X11/extras/Mesa/src/mesa/main/mm.c
 Copyright: 1999, Wittawat Yamwong
 License: Expat
 
@@ -2639,7 +2639,7 @@ Comment:
  Contributions by  Data General Corporation and OMRON Corporation have been
  licnsed under MIT~X11.
 
-Files: nx-X11/extras/Mesa_6.4.2/src/mesa/shader/atifragshader.h
+Files: nx-X11/extras/Mesa/src/mesa/shader/atifragshader.h
 Copyright: 2004, David Airlie
 License: Expat
 Comment:
@@ -2885,18 +2885,26 @@ Copyright: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 License: GPL-3+
 
 Files: m4/nx-macros.m4
+ nx-X11/lib/m4/nx-macros.m4
+ nxcomp/m4/nx-macros.m4
+ nxcompshad/m4/nx-macros.m4
+ nxproxy/m4/nx-macros.m4
 Copyright: 2005, 2006, Oracle and/or its affiliates
   2017, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
 License: Expat
 
 Files: m4/nx-xtrans.m4
+ nx-X11/lib/m4/nx-xtrans.m4
 Copyright: 2005, 2006, Oracle and/or its affiliates
 License: Expat
 
 Files: ChangeLog
  Makefile
- README.md
+ doc/README.NX-development
  VERSION
+ nxcomp/VERSION
+ nxcompshad/VERSION
+ nxproxy/VERSION
  doc/libNX_X11/symbols/libNX_X11::symbol-usage_internally.txt
  doc/libNX_X11/symbols/libNX_X11::symbol-usage_nxagent.txt
  doc/libNX_X11/symbols/libNX_X11::symbol-usage_nxcompext.txt
@@ -2957,7 +2965,7 @@ Comment:
  .
  Contributions by Daniel Stone have been licensed under MIT~X11.
 
-Files: nx-X11/extras/Mesa.patches_6.4.2/*
+Files: nx-X11/extras/Mesa.patches/*
 Copyright: 2017, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>*/
   2017, Mihai Moldovan <ionic@ionic.de>
   2017, Ulrich Sibiller <uli42@gmx.de>
@@ -3001,11 +3009,6 @@ Files: debian/*
 Copyright: 2011-2016, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
   2011-2013, Reinhard Tartler <siretart@tauware.de>
   2015-2016, Mihai Moldovan <ionic@ionic.de>
-License: GPL-2 or GPL-2+ or GPL-3+ or Expat or Expat~NoAdvert or MIT~OpenGroup or MIT~X11 or MIT~Tektronix or MIT~Tektronix~3-clause or MIT~OldStyle or MIT~Adobe or MIT~VeryOldStyle~UniOfCalifornia or MIT~VeryOldStyle~NCD or MIT~ISC or SGI-1.1 or GLX-1.0 or Zlib or XFree86 or BSD-1-clause
-
-Files: nx-libs.spec
-Copyright: 2011-2017, Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
-  2015-2017, Mihai Moldovan <ionic@ionic.de>
 License: GPL-2 or GPL-2+ or GPL-3+ or Expat or Expat~NoAdvert or MIT~OpenGroup or MIT~X11 or MIT~Tektronix or MIT~Tektronix~3-clause or MIT~OldStyle or MIT~Adobe or MIT~VeryOldStyle~UniOfCalifornia or MIT~VeryOldStyle~NCD or MIT~ISC or SGI-1.1 or GLX-1.0 or Zlib or XFree86 or BSD-1-clause
 
 License: GPL-2

@@ -1,9 +1,9 @@
-usr/lib/*/libXcomp.so
-usr/lib/*/libXcomp.a
+usr/include/*/nx/MD5.h
 usr/include/*/nx/NX.h
 usr/include/*/nx/NXalert.h
 usr/include/*/nx/NXpack.h
 usr/include/*/nx/NXproto.h
 usr/include/*/nx/NXvars.h
-usr/include/*/nx/MD5.h
+usr/lib/*/libXcomp.a
+usr/lib/*/libXcomp.so
 usr/lib/*/pkgconfig/nxcomp.pc
