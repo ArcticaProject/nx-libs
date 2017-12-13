@@ -421,13 +421,19 @@ disable use of shared pixmaps
 enable use of shared pixmaps
 .TP 8
 .B \-noignore
-don't ignore pointer and keyboard configuration changes mandated by clients
+don't ignore pointer and keyboard configuration changes mandated by
+clients. As a result, configuration commands like disabling the
+keyboard bell (xset -b) will also affect the real X server.
 .TP 8
 .B \-nokbreset
 don't reset keyboard device if the session is resumed
 .TP 8
 .B \-noxkblock
-always allow applications to change layout through XKEYBOARD
+this is only relevant if you also specify \-keyboard=query. In that
+case \fBnxagent\fR will lock the keyboard settings and clients will
+get an error when trying to change keyboard settings via
+XKEYBOARD. With \-noxkblock the lock is not applied and clients can
+change the keyboard settings through XKEYBOARD.
 .TP 8
 .B \-tile WxH
 size of image tiles (minimum allowed: 32x32)
@@ -494,8 +500,32 @@ set resizing support (default: true)
 .B fullscreen=<bool>
 start or resume a session in fullscreen mode (default: off)
 .TP 8
-.B keyboard=<string>
-set remote keyboard layout
+.B keyboard=<string> or kbtype=<string>
+
+.BR query | <model>/<layout>
+
+.RS 8
+.TP 8
+.I query
+use the default XKB keyboard layout (see below) and only allow clients
+to query the settings but prevent any changes. \fIquery\fR is
+especially helpful for setups where you need to set/modify the actual
+keyboard layout using core X protocol functions (e.g. via \fBxmodmap\fR). It is used for
+MacOS X clients to handle some keyboard problems that are special for
+this platform.  Note that in this case XKEYBOARD will always report
+the default layout which will most likely not match the experienced
+settings.
+.TP 8
+.I <model>/<layout>
+use the given model and layout. You can not modify keyboard rules,
+variant or options. Instead preset values are used. These are
+\fIxfree86\fR for rules and empty strings for variant and options.
+.RE
+.TP 8
+
+.PP
+If \fIkeyboard\fR is omitted the internal defaults of \fBnxagent\fR will be used (rules: \fIxfree86\fR, layout: \fIus\fR, model: \fIpc102\fR, empty variant and options).
+
 .TP 8
 .B keyconv=<string>
 set keycode conversion mode
@@ -535,9 +565,6 @@ enable using shared memory
 .TP 8
 .B shpix=<bool>
 enable shared pixmaps support
-.TP 8
-.B kbtype=<string>
-set remote keyboard type
 .TP 8
 .B client=<string>
 type of connecting operating system (supported: \fIlinux\fR,
