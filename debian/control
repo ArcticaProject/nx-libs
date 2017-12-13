@@ -1,6 +1,6 @@
 Source: nx-libs
 Section: x11
-Priority: extra
+Priority: optional
 Maintainer: Artica Project <devs@lists.arctica-project.org>
 Uploaders: Mike Gabriel <sunweaver@debian.org>, Mihai Moldovan <ionic@ionic.de>
 Build-Depends:
