@@ -82,15 +82,6 @@
 #endif
 #endif
 
-#ifdef NX_TRANS_SOCKET
-
-#define PANIC
-#define WARNING
-#undef  TEST
-#undef  DEBUG
-
-#endif
-
 /**
  * Varargs sprintf that allocates a string buffer the right size for
  * the pattern & data provided and prints the requested data to it.
