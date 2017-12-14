@@ -1,0 +1,37 @@
+Description: FHS adaptation for Debian packaging
+ On Debian, NX libraries and binaries are installed to
+ /usr/lib/nx.
+Forwarded: not-needed
+Author: Mike Gabriel <mike.gabriel@das-netzwerkteam.de>
+Last-Update: 2012-12-31
+--- a/nx-X11/config/cf/Imake.tmpl
++++ b/nx-X11/config/cf/Imake.tmpl
+@@ -722,7 +722,7 @@
+ #define AlternateUsrLibDir YES
+ #endif
+ #else
+-#define UsrLibDir Concat4(/usr/local,/,LibDirName,/nx/X11)
++#define UsrLibDir Concat4(/usr,/,LibDirName,/nx/X11)
+ #ifndef AlternateUsrLibDir
+ #define AlternateUsrLibDir NO
+ #endif
+@@ -740,7 +740,7 @@
+ #define AlternateUsrDataDir YES
+ #endif
+ #else
+-#define UsrDataDir Concat4(/usr/local,/,share,/nx)
++#define UsrDataDir Concat4(/usr,/,share,/nx)
+ #ifndef AlternateUsrDataDir
+ #define AlternateUsrDataDir NO
+ #endif
+--- a/nx-X11/config/cf/site.def
++++ b/nx-X11/config/cf/site.def
+@@ -69,7 +69,7 @@
+ #ifdef AfterVendorCF
+ 
+ #ifndef ProjectRoot
+-#define ProjectRoot /usr/local
++#define ProjectRoot /usr
+ #endif
+ 
+ /*
