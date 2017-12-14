@@ -22,7 +22,6 @@ override_dh_auto_clean:
 	dh_auto_clean
 
 override_dh_clean:
-	-rm nx-X11/Makefile
 	-rm nx-X11/lib/Makefile
 	-rm nx-X11/lib/src/Makefile
 	-rm nx-X11/lib/src/xkb/Makefile
