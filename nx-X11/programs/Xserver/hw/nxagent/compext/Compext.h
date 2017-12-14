@@ -39,13 +39,6 @@ extern "C" {
 #include <nx/NXvars.h>
 
 /*
- * All the NX code should use these.
- */
-
-#define Xmalloc(size) malloc((size))
-#define Xfree(ptr)    free((ptr))
-
-/*
  * Maximum number of supported pack methods.
  */
 

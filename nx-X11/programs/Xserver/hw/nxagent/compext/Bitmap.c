@@ -73,7 +73,7 @@ char *BitmapCompressData(XImage *image, unsigned int *size)
 
     *size = image -> width * image -> height * 3;
 
-    data = Xmalloc(*size);
+    data = malloc(*size);
 
     if (data == NULL)
     {
