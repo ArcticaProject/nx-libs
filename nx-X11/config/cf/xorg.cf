@@ -59,7 +59,11 @@ RELEASE_VERSION = ReleaseVersion
 #if !defined(nxVersionString) && \
     defined(NX_VERSION_MAJOR) && defined(NX_VERSION_MINOR) && \
     defined(NX_VERSION_MICRO) && defined(NX_VERSION_PATCH)
+#if defined(NX_VERSION_CUSTOM)
+# define nxVersionString NX_VERSION_CUSTOM (`echo NX_VERSION_MAJOR NX_VERSION_MINOR NX_VERSION_MICRO NX_VERSION_PATCH | sed 's/ /./g'`)
+#else
 # define nxVersionString `echo NX_VERSION_MAJOR NX_VERSION_MINOR NX_VERSION_MICRO NX_VERSION_PATCH | sed 's/ /./g'`
+#endif
 #endif
 
 /*

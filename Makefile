@@ -34,6 +34,10 @@ ifneq ($(shell pkg-config --exists fontutil && echo yes), yes)
     $(warning fontutil devel package missing, using imake default values)
 endif
 
+ifneq "$(strip $(NX_VERSION_CUSTOM))" ""
+    CUSTOM_VERSION_DEFINE = NX_VERSION_CUSTOM="$(NX_VERSION_CUSTOM)"
+endif
+
 IMAKE_DEFINES	?=
 
 SHELL:=/bin/bash
@@ -96,6 +100,9 @@ version:
 	    -e 's/###NX_VERSION_PATCH###/$(shell ./version.sh 4)/' \
 	    nx-X11/config/cf/nxversion.def.in \
 	    > nx-X11/config/cf/nxversion.def
+ifneq "$(strip $(NX_VERSION_CUSTOM))" ""
+	echo '#define NX_VERSION_CUSTOM $(NX_VERSION_CUSTOM)' >>nx-X11/config/cf/nxversion.def
+endif
 
 imakeconfig:
 	# auto-config some setting
@@ -157,17 +164,17 @@ build-full: build-env
 # in the full case, we rely on "magic" in the nx-X11 imake-based makefiles...
 
 	# build nxcomp first
-	cd nxcomp && autoreconf -vfsi && (${CONFIGURE}) && ${MAKE}
+	cd nxcomp && autoreconf -vfsi && (${CONFIGURE} $(CUSTOM_VERSION_DEFINE)) && ${MAKE}
 
 	# build libNX_X11 second
-	cd nx-X11/lib && autoreconf -vfsi && (${CONFIGURE} --disable-poll) && ${MAKE}
+	cd nx-X11/lib && autoreconf -vfsi && (${CONFIGURE} $(CUSTOM_VERSION_DEFINE) --disable-poll) && ${MAKE}
 	mkdir -p nx-X11/exports/lib/
 	$(SYMLINK_FILE) ../../lib/src/.libs/libNX_X11.so nx-X11/exports/lib/libNX_X11.so
 	$(SYMLINK_FILE) ../../lib/src/.libs/libNX_X11.so.6 nx-X11/exports/lib/libNX_X11.so.6
 	$(SYMLINK_FILE) ../../lib/src/.libs/libNX_X11.so.6.3.0 nx-X11/exports/lib/libNX_X11.so.6.3.0
 
 	# build nxcompshad third
-	cd nxcompshad && autoreconf -vfsi && (${CONFIGURE}) && ${MAKE}
+	cd nxcompshad && autoreconf -vfsi && (${CONFIGURE} $(CUSTOM_VERSION_DEFINE)) && ${MAKE}
 
 	# build nxagent fourth
 	./mesa-quilt push -a
@@ -175,7 +182,7 @@ build-full: build-env
 	${MAKE} -C nx-X11 World USRLIBDIR="$(USRLIBDIR)" SHLIBDIR="$(SHLIBDIR)" IMAKE_DEFINES="$(IMAKE_DEFINES)"
 
 	# build nxproxy fifth
-	cd nxproxy && autoreconf -vfsi && (${CONFIGURE}) && ${MAKE}
+	cd nxproxy && autoreconf -vfsi && (${CONFIGURE} $(CUSTOM_VERSION_DEFINE)) && ${MAKE}
 
 	# "build" nxdialog last
 	cd nxdialog && autoreconf -vfsi && (${CONFIGURE}) && ${MAKE}

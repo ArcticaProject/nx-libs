@@ -13308,13 +13308,18 @@ void PrintConnectionInfo()
 
 void PrintVersionInfo()
 {
-  cerr << "NXPROXY - " << "Version "
+  cerr << "NXPROXY - Version "
+#ifdef NX_VERSION_CUSTOM
+       << NX_VERSION_CUSTOM << " ("
+#endif
        << control -> LocalVersionMajor << "."
        << control -> LocalVersionMinor << "."
        << control -> LocalVersionPatch << "."
-       << control -> LocalVersionMaintenancePatch;
-
-  cerr << endl;
+       << control -> LocalVersionMaintenancePatch
+#ifdef NX_VERSION_CUSTOM
+       << ")"
+#endif
+       << endl;
 }
 
 void PrintCopyrightInfo()
