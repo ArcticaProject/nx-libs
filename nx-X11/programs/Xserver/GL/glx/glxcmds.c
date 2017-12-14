@@ -1762,7 +1762,7 @@ static int __glXBindSwapBarrierSGIX(__GLXclientState *cl, GLbyte *pc)
             if (ret == Success) {
                 if (barrier)
                     /* add source for cleanup when drawable is gone */
-                    AddResource(drawable, __glXSwapBarrierRes, (void *)screen);
+                    AddResource(drawable, __glXSwapBarrierRes, (void *)(intptr_t)screen);
                 else
                     /* delete source */
                     FreeResourceByType(drawable, __glXSwapBarrierRes, FALSE);
