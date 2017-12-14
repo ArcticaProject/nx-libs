@@ -309,7 +309,7 @@ Reply   Total	Cached	Bits In			Bits Out		Bits/Reply	  Ratio
   if (!(dispatchException & DE_TERMINATE))
     dispatchException = 0;
 
-    while (!dispatchException)
+  while (!dispatchException)
     {
         if (*icheck[0] != *icheck[1])
 	{
