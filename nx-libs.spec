@@ -443,7 +443,7 @@ rm -r %{buildroot}%{_includedir}/nx-X11/extensions/*Xv*.h
 rm -r %{buildroot}%{_includedir}/nx-X11/Xtrans
 
 #Remove our shared libraries' .la files before wrapping up the packages
-rm %{_libdir}/*.la
+rm %{buildroot}%{_libdir}/*.la
 
 %if 0%{?fdupes:1}
 %fdupes %{buildroot}%{_prefix}
