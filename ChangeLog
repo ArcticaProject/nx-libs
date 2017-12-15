@@ -1,12 +1,733 @@
-2017-09-15 14:57:56 +0200 Mike Gabriel (e6998288d)
+2017-12-15 11:20:52 +0100 Mike Gabriel (5f673977a)
 
-	* release 3.5.99.10 (HEAD -> 3.6.x)
+	* release 3.5.99.11 (HEAD -> 3.6.x)
+
+2017-12-15 11:15:22 +0100 Mike Gabriel (4cca1b4bd)
+
+	* Merge branch 'sunweaver-pr/more-X-memory-macro-fixes' into 3.6.x
+          (origin/HEAD, origin/3.6.x)
+
+2017-12-14 11:27:35 +0100 Mike Gabriel (5597f2ea5)
+
+	* Xserver/hw/nxagent/Clipboard.c: Fix free calls (free back to
+          XFree). (gh-sunweaver/pr/more-X-memory-macro-fixes,
+          sunweaver-pr/more-X-memory-macro-fixes,
+          pr/more-X-memory-macro-fixes)
+
+2017-12-14 11:15:09 +0100 Mike Gabriel (d4465b719)
+
+	* Xserver/hw/nxagent/compext: Xfree -> free and Xmalloc -> malloc.
+
+2017-12-15 08:26:23 +0100 Mihai Moldovan (8cca3f09d)
+
+	* nx-libs.spec: actually use a weak dependency for xkeyboard-config.
+
+2017-12-15 08:10:32 +0100 Mihai Moldovan (8cf5b5b7c)
+
+	* nx-libs.spec: add back erroneously dropped xkeyboard-config
+          dependency.
+
+2017-12-14 10:49:21 +0100 Mihai Moldovan (1d301c517)
+
+	* Merge branch 'sunweaver-pr/fix-compiler-warnings' into 3.6.x
+
+2017-12-14 08:05:54 +0100 Mike Gabriel (8bb1579f4)
+
+	* Xserver/GL/glx/glxcmds.c: Cast small-int values through intptr_t
+          when passed as pointers
+          (gh-sunweaver/pr/fix-compiler-warnings,
+          pr/fix-compiler-warnings)
+
+2017-03-17 14:06:15 +0000 Mike Gabriel (ac6a216c5)
+
+	* lib/X11/Xrm.c: Compiler warning fix: logical-not-parentheses
+
+2017-02-17 13:35:48 +0000 Mike Gabriel (a6ffabda6)
+
+	* glx: warning fixes
+
+2017-02-17 13:30:13 +0000 Mike Gabriel (16fbdb2a8)
+
+	* Xserver/GL/glx/glxfb.c: Fix compiler warning: pointer-sign.
+
+2017-02-17 12:56:53 +0000 Mike Gabriel (a27414524)
+
+	* hw/nxagent/Events.c: Fix compiler warnings (with NX_DEBUG_INPUT):
+          format.
+
+2017-02-17 12:28:05 +0100 Mike Gabriel (7aed70f14)
+
+	* hw/nxagent/NXxvdisp.c: Fix compiler warnings:
+          misleading-indentation
+
+2017-02-17 10:25:03 +0000 Mike Gabriel (72152baff)
+
+	* hw/nxagent/NXdispatch.c: Fix compiler warning:
+          misleading-indentation
+
+2017-02-16 10:06:41 +0000 Mike Gabriel (6d98e5381)
+
+	* Xserver/Xi/chgfctl.c: Fix compiler warning: misleading-indentation.
+
+2017-12-14 10:39:47 +0100 Mike Gabriel (91ca51bff)
+
+	* debian/rules: Neither overzealously remove nx-X11/Makefile.
+
+2017-12-14 09:51:12 +0100 Mike Gabriel (8cade97b0)
+
+	* debian/rules: Don't remove our main Makefile.
+
+2017-12-14 07:44:20 +0100 Mike Gabriel (346c59516)
+
+	* debian/rules: Fix override_dh_clean target for older Debian/Ubuntu
+          versions.
+
+2017-12-14 01:08:34 +0100 Mike Gabriel (542b5b461)
+
+	* Add missing/renamed patches. (Ouch!).
+
+2017-09-22 15:32:31 -0400 Mike DePaulo (f8b2a04e0)
+
+	* nx-libs.spec: Add missing BuildRequires and fix paths to files.
+
+2017-12-14 00:21:42 +0100 Mike Gabriel (5000ded30)
+
+	* debian/control: Set Section: to "libs" for libnx-x11-6.
+
+2017-12-14 00:19:04 +0100 Mike Gabriel (f17d4eb26)
+
+	* debian/control: All Priority: extras packages are required to be
+          changed to Priority: optional by recent Debian Policy.
+
+2017-12-14 00:09:35 +0100 Mike Gabriel (abaebb5b1)
+
+	* Merge branch 'uli42-pr/improve_keyboard_light' into 3.6.x
+
+2017-11-13 21:06:36 +0100 Ulrich Sibiller (a02b645b2)
+
+	* nxagent manpage: extend description of keyboard option
+          (gh-uli42/pr/improve_keyboard_light,
+          uli42-pr/improve_keyboard_light,
+          pr/improve_keyboard_light)
+
+2017-08-31 16:17:29 +0200 Ulrich Sibiller (7dbc6cf86)
+
+	* Events.c/h: Rename & restructure some Xkb functions
+
+2017-07-22 22:12:51 +0200 Ulrich Sibiller (8e5b1e7a2)
+
+	* Keyboard.c: Replace some memsets by zero initialization
+
+2017-07-22 19:09:10 +0200 Ulrich Sibiller (de9b4edf9)
+
+	* Keyboard.c: Fix indentation
+
+2017-08-12 17:38:35 +0200 Ulrich Sibiller (88bc52615)
+
+	* Keyboard.c: set variables to NULL after free
+
+2017-07-22 16:41:09 +0200 Ulrich Sibiller (94fae7497)
+
+	* Keyboard.c: XkbDfltRepeatDelay and XkbDfltRepeatIntervall are int
+          not uint
+
+2017-07-22 15:58:08 +0200 Ulrich Sibiller (eb4abe4c5)
+
+	* Keyboard.c: Use calloc instead of malloc + memset
+
+2017-07-22 15:28:59 +0200 Ulrich Sibiller (5c4a001ac)
+
+	* nxagent manpage: Extend keyboard documentation
+
+2017-07-22 15:26:11 +0200 Ulrich Sibiller (8b206a261)
+
+	* Keyboard.c: Make xkblock more robust
+
+2017-07-22 15:25:53 +0200 Ulrich Sibiller (1e1ea1cea)
+
+	* Keyboard.c: Some code cleanups
+
+2017-07-22 14:44:46 +0200 Ulrich Sibiller (a44737855)
+
+	* nxagent manpage: Improve explanation of -noignore and -noxkblock
+
+2017-07-22 14:40:53 +0200 Ulrich Sibiller (ba8076697)
+
+	* Keyboard.c: Add some comments with changelog explanations
+
+2017-12-06 00:04:44 +0100 Ulrich Sibiller (9566acb5a)
+
+	* Keyboard.c: print message class for user messages
+
+2017-12-06 00:04:29 +0100 Ulrich Sibiller (c37c47ac4)
+
+	* Keyboard.c: Improve TEST output
+
+2017-12-13 23:43:41 +0100 Mike Gabriel (7610c0f19)
+
+	* debian/*: Adopt from official Debian package where appropriate.
+
+2017-12-13 23:18:34 +0100 Mike Gabriel (c5f3c2042)
+
+	* Merge branch 'uli42-pr/pre-rrxinerama-fallback' into 3.6.x
+
+2017-07-13 18:33:17 +0200 Ulrich Sibiller (bd1ca625e)
+
+	* small code cosmetics (gh-uli42/pr/pre-rrxinerama-fallback,
+          uli42-pr/pre-rrxinerama-fallback,
+          pr/pre-rrxinerama-fallback)
+
+2017-07-13 15:52:47 +0200 Ulrich Sibiller (0852aa52c)
+
+	* always notify on size changes
+
+2017-07-13 15:28:05 +0200 Ulrich Sibiller (1923f49dd)
+
+	* re-implement pre-xinerama behaviour
+
+2017-12-13 04:50:24 +0100 Mihai Moldovan (73c113ce6)
+
+	* nx-X11/programs/Xserver/os/xprintf.c: completely drop NX-related
+          changes.
+
+2017-12-11 13:38:59 +0100 Mihai Moldovan (3731a996d)
+
+	* nxcomp/src/Log.cpp: only create a new queue entry if we actually
+          intend to write it out later.
+
+2017-12-11 09:49:05 +0100 Mike Gabriel (7882a39ad)
+
+	* Merge branch 'uli42-pr/fix_shadow_warning' into 3.6.x
+
+2017-12-10 18:00:15 +0100 Ulrich Sibiller (018c557c4)
+
+	* Silence warning: "ar: 'u' modifier ignored since 'D' is the
+          default" (gh-uli42/pr/fix_shadow_warning,
+          uli42-pr/fix_shadow_warning, pr/fix_shadow_warning)
+
+2017-12-10 16:23:03 +0100 Ulrich Sibiller (d5c3e75b3)
+
+	* nxcomp: fix shadow warning
+
+2017-12-11 09:45:47 +0100 Mike Gabriel (29bb12312)
+
+	* Merge branch 'uli42-pr/simplify_xtrans' into 3.6.x
+
+2017-12-10 21:36:15 +0100 Ulrich Sibiller (0eb1dc67d)
+
+	* Xtranssock.c: simplify code in SocketWritev
+          (gh-uli42/pr/simplify_xtrans, uli42-pr/simplify_xtrans,
+          pr/simplify_xtrans)
+
+2017-12-11 09:41:08 +0100 Mike Gabriel (4988e7c5f)
+
+	* Merge branch
+          'sunweaver-pr/drop-NoMachines-own-Xvasprintf-implementation'
+          into 3.6.x
+
+2017-12-11 09:22:49 +0100 Mike Gabriel (cf2e07657)
+
+	* Xserver/os/xprintf.c: Drop NoMachine's own implementation of
+          Xvasprintf(). Use stock implementation instead.
+          (gh-sunweaver/pr/drop-NoMachines-own-Xvasprintf-implementation,
+          sunweaver-pr/drop-NoMachines-own-Xvasprintf-implementation,
+          pr/drop-NoMachines-own-Xvasprintf-implementation)
+
+2017-12-11 01:05:50 +0100 Mihai Moldovan (c31cd7737)
+
+	* nx-X11/programs/Xserver/os/xprintf.c: remove doubly-defined
+          Xscnprintf function, add missing header includes.
+
+2017-12-10 12:17:39 +0100 Mike Gabriel (e54e42af9)
+
+	* Merge branch 'Ionic-feature/backport-asprintf' into 3.6.x
+
+2017-12-07 12:11:53 +0100 Daniel Kurtz (a6e632aac)
+
+	* os/xprintf: add Xvscnprintf and Xscnprintf
+          (Ionic-feature/backport-asprintf)
+
+2017-12-07 10:57:06 +0100 Colin Harrison (c281c6e06)
+
+	* Typo in xserver Xvasprintf()
+
+2017-12-07 10:48:31 +0100 Alan Coopersmith (1e3a97482)
+
+	* Add asprintf() implementation for platforms without it
+
+2017-12-09 13:16:37 +0100 Mihai Moldovan (804ff4452)
+
+	* Merge branch 'uli42-pr/fix_memleaks' into 3.6.x
+
+2017-12-07 22:35:59 +0100 Ulrich Sibiller (4dbee3a3f)
+
+	* nxcomp: use new macro SAFE_FREE(ptr) (gh-uli42/pr/fix_memleaks)
+
+2017-11-28 21:58:07 +0100 Ulrich Sibiller (2814677a7)
+
+	* Loop.cpp: fix more memory leaks
+
+2017-11-28 21:18:48 +0100 Ulrich Sibiller (1c09eab70)
+
+	* Loop.cpp: fix two memleaks
+
+2017-11-28 20:43:44 +0100 Ulrich Sibiller (c4660e109)
+
+	* ChannelEndPoint.cpp: fix two memleaks
+
+2017-11-27 23:31:35 +0100 Ulrich Sibiller (21c742d25)
+
+	* nxcomp: simplify free calls
+
+2017-11-27 23:30:50 +0100 Ulrich Sibiller (513aa23a7)
+
+	* nxcomp: fix double free
+
+2017-12-09 12:54:24 +0100 Mihai Moldovan (6d7536bd4)
+
+	* Merge branch 'uli42-pr/keep_co' into 3.6.x
+
+2017-12-04 23:44:58 +0100 Ulrich Sibiller (eff0f366d)
+
+	* Reintroduce -co as no-op (gh-uli42/pr/keep_co)
+
+2017-12-07 08:35:54 +0100 Mihai Moldovan (eb9618739)
+
+	* Merge branch 'uli42-p/xquerytree_leak' into 3.6.x
+
+2017-12-05 21:25:12 +0100 Ulrich Sibiller (ad53af097)
+
+	* Events.c: add ifdef around nxagentRemoteWindowsTree
+          (gh-uli42/p/xquerytree_leak)
+
+2017-12-05 00:29:10 +0100 Ulrich Sibiller (cdaec755d)
+
+	* Make sure XQueryTree results are freed
+
+2017-12-05 00:28:51 +0100 Ulrich Sibiller (0938cf83d)
+
+	* Events.c: drop unused variable
+
+2017-12-05 00:28:27 +0100 Ulrich Sibiller (43579a3b9)
+
+	* Events.c: move variable to inner scope
+
+2017-12-07 07:23:20 +0100 Mihai Moldovan (5487d52fe)
+
+	* Merge branch 'uli42-pr/various_backports' into 3.6.x
+
+2017-12-05 22:39:34 +0100 Daniel Stone (aac4c5f59)
+
+	* DIX: XKB: Set xkbInfo to NULL as well as freeing it
+          (gh-uli42/pr/various_backports)
+
+2017-12-05 22:22:55 +0100 Daniel Stone (e05b90814)
+
+	* Allow options to appear with other components.
+
+2017-12-05 22:14:22 +0100 Lars Knoll (e073093cc)
+
+	* devPrivates fixes
+
+2017-12-05 22:09:06 +0100 Adam Jackson (0a010adfc)
+
+	* Coverity # 337: Remove useless NULL check.
+
+2017-12-05 22:06:11 +0100 Adam Jackson (1771deaf1)
+
+	* Coverity # 491: Check version number correctly.
+
+2006-03-15 16:33:12 +0000 Adam Jackson (d31f107c6)
+
+	* Coverity # 487: Check version number correctly.
+
+2006-03-15 16:49:04 +0000 Adam Jackson (43388104d)
+
+	* Coverity # 807: Fix a memory leak in XFixesExpandRegion.
+
+2017-11-09 10:21:21 +0100 Giuseppe Bilotta (6f9a6aacd)
+
+	* randr: free crtc->outputs on destroy
+
+2017-11-09 10:21:20 +0100 Giuseppe Bilotta (4e059d579)
+
+	* randr: always realloc crtcs and outputs
+
+2017-12-07 06:28:19 +0100 Mihai Moldovan (c571aa9ed)
+
+	* Merge branch 'uli42-pr/improve_nxproxy_help' into 3.6.x
+
+2017-11-29 00:02:01 +0100 Ulrich Sibiller (9e3381cc8)
+
+	* nxproxy/nxcomp: document logging options
+          (gh-uli42/pr/improve_nxproxy_help)
+
+2017-11-27 23:37:58 +0100 Ulrich Sibiller (3fcb8e4ee)
+
+	* nxcomp/nxproxy: slightly improve the usage message of nxproxy
+
+2017-11-27 23:35:04 +0100 Ulrich Sibiller (f51194fb1)
+
+	* nxcomp/nxproxy: add missing hint for keyconv option
+
+2017-12-06 04:51:59 +0100 Mihai Moldovan (80e590ea1)
+
+	* Merge branch 'sunweaver-pr/drop-bin-wrappers' into 3.6.x
+
+2017-11-26 23:16:59 +0100 Mike Gabriel (c54558e3c)
+
+	* Makefile: Quote '$@' in make calls with double quotes.
+          (gh-sunweaver/pr/drop-bin-wrappers)
+
+2017-11-21 13:45:55 +0100 Mike Gabriel (1539c20e5)
+
+	* Makefile: Don't use DESTDIR in configure.
+
+2017-11-21 13:28:17 +0100 Mike Gabriel (ca4308781)
+
+	* Drop bin wrappers for nxagent and nxproxy, directly install nxproxy
+          and nxagent to BINDIR.
+
+2017-12-05 18:12:11 +0100 Mike Gabriel (05cf54af3)
+
+	* Merge branch 'uli42-pr/fix_global_tcpFD' into 3.6.x
+
+2017-12-02 01:32:35 +0100 Ulrich Sibiller (b8c929773)
+
+	* nxcomp: use lowercase abbreviations for seconds and milliseconds
+          (gh-uli42/pr/fix_global_tcpFD, uli42-pr/fix_global_tcpFD)
+
+2017-12-02 01:07:03 +0100 Ulrich Sibiller (3bd7e03e1)
+
+	* nxcomp: remove unused return values
+
+2017-12-02 01:03:29 +0100 Ulrich Sibiller (82e893ef2)
+
+	* nxcomp: Fix setting of global tcpFD
+
+2017-11-26 08:35:55 +0100 Mihai Moldovan (7f777e01e)
+
+	* Merge branch 'uli42-pr/nokeyconv' into 3.6.x
+
+2017-11-23 15:19:02 +0100 Ulrich Sibiller (66046f138)
+
+	* Keyboard.c: make nxagentKeycodeConversion a Boolean
+          (gh-uli42/pr/nokeyconv)
+
+2017-11-19 01:11:05 +0100 Ulrich Sibiller (8fd25cf83)
+
+	* add option keyconv=(auto|on|off)
+
+2017-11-19 01:07:57 +0100 Ulrich Sibiller (4b71309c3)
+
+	* Keyboard.c: Use booleans for nxagentKeycodeConversion
+
+2017-11-22 11:09:38 +0100 Mike Gabriel (2e724702e)
+
+	* nxcomp/src/Misc.cpp: Update explanation for the NX_TEMP env
+          variable.
+
+2017-11-22 11:08:31 +0100 Mike Gabriel (78661a19a)
+
+	* nxproxy.1 man page: Update explanation for NX_TEMP env variable.
+
+2017-11-22 10:56:38 +0100 Mike Gabriel (f0f4fdc2b)
+
+	* Merge branch 'Ionic-bugfix/hardcode-socket-paths-in-libX11' into
+          3.6.x
+
+2017-11-22 06:16:01 +0100 Mihai Moldovan (df9b5306e)
+
+	* nx-X11/lib/include/xtrans/Xtranssock.c: drop UNIX path overrides as
+          well. (gh-Ionic/bugfix/hardcode-socket-paths-in-libX11,
+          Ionic-bugfix/hardcode-socket-paths-in-libX11)
+
+2017-11-21 11:47:04 +0100 Mike Gabriel (ce182e88a)
+
+	* Merge branch 'uli42-pr/simplify_free' into 3.6.x
+
+2017-11-18 23:35:39 +0100 Ulrich Sibiller (dc43f4c98)
+
+	* Error.c: simply nxagentGetClientsPath() (gh-uli42/pr/simplify_free,
+          uli42-pr/simplify_free)
+
+2017-11-18 23:33:53 +0100 Ulrich Sibiller (7e975e3cc)
+
+	* simply free() calls
+
+2017-11-20 10:47:10 +0100 Mike Gabriel (3b640a0f8)
+
+	* Merge branch 'uli42-pr/options_on_reconnect' into 3.6.x
+
+2017-11-18 22:32:21 +0100 Ulrich Sibiller (4ef4fbf16)
+
+	* Args.c: simplify nxagentProcessOptionsFile()
+          (uli42-pr/options_on_reconnect)
+
+2017-11-18 22:18:26 +0100 Ulrich Sibiller (6c9622963)
+
+	* Args.c: Fix compile bug with DEBUG enabled
+
+2017-11-18 22:15:50 +0100 Ulrich Sibiller (76ce623ab)
+
+	* Fix options parsing on reconnect
+
+2017-11-17 13:16:39 +0100 Mike Gabriel (39d45a0e8)
+
+	* Merge branch 'uli42-small_fixes' into 3.6.x
+
+2017-10-18 00:28:23 +0200 Ulrich Sibiller (9a1604372)
+
+	* fix broken path due to missing / (gh-uli42/small_fixes,
+          uli42-small_fixes, small_fixes)
+
+2017-10-18 00:22:53 +0200 Ulrich Sibiller (ac66ba349)
+
+	* NXglxext.c: rename and relocate variable
+
+2017-10-18 00:21:00 +0200 Ulrich Sibiller (fff0d5473)
+
+	* glxext.c/NXglxext.c: merge two functions into one
+
+2017-10-18 00:08:24 +0200 Ulrich Sibiller (b0b62dde6)
+
+	* keysym.h: fix include path
+
+2017-11-17 09:30:38 +0100 Mike Gabriel (56569f336)
+
+	* Merge branch 'uli42-pr/fix_manpage' into 3.6.x
+
+2017-11-17 00:04:57 +0100 Ulrich Sibiller (72c1f83fb)
+
+	* nxagent manpage: some minor formatting improvements and typo fixes
+          (gh-uli42/pr/fix_manpage, uli42-pr/fix_manpage)
+
+2017-11-04 09:26:18 +0100 Mike Gabriel (e788a70ce)
+
+	* Merge branch 'Ionic-bugfix/hardcode-some-socket-paths' into 3.6.x
+
+2017-11-03 12:57:25 +0100 Mihai Moldovan (79257eed0)
+
+	* nxcomp/src/Loop.cpp: hardcode X11 and (legacy/xfs) font UNIX paths.
+          (gh-Ionic/bugfix/hardcode-some-socket-paths,
+          Ionic-bugfix/hardcode-some-socket-paths)
+
+2017-11-03 16:23:41 +0100 Mike Gabriel (e3f498e62)
+
+	* Merge branch 'Ionic-bugfix/fix-X-cookie-on-osx' into 3.6.x
+
+2017-11-03 12:30:12 +0100 Mihai Moldovan (bd25453bd)
+
+	* nxcomp/src/Auth.cpp: handle launchd sockets in DISPLAY variable
+          correctly when fetching X cookie.
+          (gh-Ionic/bugfix/fix-X-cookie-on-osx,
+          Ionic-bugfix/fix-X-cookie-on-osx)
+
+2017-10-27 14:14:24 +0200 Mihai Moldovan (1c6c9c04b)
+
+	* nxproxy: use ax_pthread.m4.
+
+2017-10-27 14:13:26 +0200 Mihai Moldovan (22bb128dc)
+
+	* nxcomp/m4/ax_pthread.m4: move to top-level m4/ directory, use
+          symlink.
+
+2017-10-27 11:55:45 +0200 Mike Gabriel (06a6c5829)
+
+	* Regression fix for f855b3b6. Caused FTBFS with Loop.cpp:2669:0:
+          error: unterminated #ifdef (#ifdef TIME).
+
+2017-10-27 11:13:08 +0200 Mike Gabriel (2e4f9e7a9)
+
+	* Merge branch 'theqvd-improved-logging-loop' into 3.6.x
+
+2017-10-27 11:12:00 +0200 Mike Gabriel (de3d9ff4e)
+
+	* Merge branch 'theqvd-improved-logging' into 3.6.x
+
+2017-09-29 21:05:04 +0200 Mihai Moldovan (ab0c4f842)
+
+	* nxcomp/src/Loop.cpp: fix whitespace errors on continued lines.
+          (theqvd-improved-logging-loop)
+
+2017-03-22 16:33:58 +0100 Vadim Troshchinskiy (d202b052e)
+
+	* Remove leading \n in NXTrans* logging
+
+2017-03-16 12:55:18 +0100 Vadim Troshchinskiy (f855b3b61)
+
+	* Fix whitespace and line splitting issues reported by ionic
+
+2016-12-22 12:39:40 +0100 Vadim Troshchinskiy (1cf6aa8f2)
+
+	* Conversion of Loop.cpp to the new log system
+
+2017-09-30 16:58:16 +0200 Mihai Moldovan (ceac07763)
+
+	* nxcomp: add basic logging_test utility in test subdirectory.
+          (theqvd-improved-logging)
+
+2017-09-30 16:53:48 +0200 Mihai Moldovan (5efcd39fc)
+
+	* nxcomp/src/Log.h: prepare for logger testing application.
+
+2017-10-27 08:32:14 +0200 Mihai Moldovan (6c3cf54ba)
+
+	* nxcomp/src/Log.cpp: add PID to thread ID output if requested.
+
+2017-09-30 15:32:33 +0200 Mihai Moldovan (1829a35cd)
+
+	* nxcomp/src/Log.h: block signals while writing out data.
+
+2017-09-30 15:30:53 +0200 Mihai Moldovan (09586d760)
+
+	* nxcomp/src/Log.{cpp,h}: port to std::stack as internal buffer
+          structure.
+
+2017-06-30 23:32:45 +0200 Mihai Moldovan (fc4a18d33)
+
+	* nxcomp/{configure.ac,Log.cpp}: implement configure-time
+          std::put_time check and use macro value in Log.cpp.
+
+2017-06-30 22:42:25 +0200 Mihai Moldovan (67b0a17fa)
+
+	* nxcomp/Log.h: delete stream_ member before class object
+          destruction.
+
+2017-06-30 22:37:13 +0200 Mihai Moldovan (ca08512cf)
+
+	* nxcomp/Log.h: also clear the buffer after setting it to an empty
+          string.
+
+2016-12-22 12:40:43 +0100 Vadim Troshchinskiy (d960ec2cb)
+
+	* Set default log level to WARNING
+
+2016-12-22 09:57:47 +0100 Vadim Troshchinskiy (b0521e816)
+
+	* New logging implementation
+
+2017-07-13 01:10:02 +0200 Mihai Moldovan (381c39b86)
+
+	* nxcomp: add AX_PTHREAD code from autoconf-archive and check for
+          pthread support.
+
+2017-09-29 17:19:06 +0200 Mihai Moldovan (1f717c6fd)
+
+	* nx{comp{,shad},proxy}: add configure flag --enable-cxx11 to enable
+          and setup optional C++11 support.
+
+2017-10-27 08:42:17 +0200 Mihai Moldovan (39ee56f5d)
+
+	* nxcomp/configure.ac: rename --{en,dis}able-info to
+          --{en,dis}able-debug, as originally planned.
+
+2017-10-20 11:30:43 +0200 Mihai Moldovan (dae8551e2)
+
+	* README.md: add short Windows section and mention that using Cygwin
+          tools is imperative when working with the git repository.
+
+2017-10-16 10:44:18 +0200 Mihai Moldovan (c6b004578)
+
+	* nx-libs.spec: pass CDEBUGFLAGS and friends directly through via
+          make command.
+
+2017-10-16 10:42:51 +0200 Mihai Moldovan (92485be30)
+
+	* nx-libs.spec: handle potentially undefined variables more
+          gracefully.
+
+2017-10-16 10:12:36 +0200 Mihai Moldovan (71bda0ed5)
+
+	* nx-libs.spec: drop ugly optsflag sed hack, hopefully obsoleted by
+          passing CDEBUGFLAGS through.
+
+2017-10-16 07:24:38 +0200 Mihai Moldovan (bd2a66fec)
+
+	* nx-libs.spec: add -mno-vxs to general C(XX)FLAGS on ppc64le.
+
+2017-10-10 15:17:40 +0200 Mike Gabriel (13041f5c0)
+
+	* Merge branch 'theqvd-media_argument_bugfix' into 3.6.x
+
+2017-10-10 13:04:08 +0200 Vadim Troshchinskiy (f2c73bd84)
+
+	* Fix bug #525: PANIC! No port specified for multimedia connections
+          (theqvd-media_argument_bugfix)
+
+2017-10-10 10:27:18 +0200 Mike Gabriel (17ae45e0f)
+
+	* Merge branch 'Ionic-add-stray-files-to-gitignore' into 3.6.x
+
+2017-10-10 07:17:27 +0200 Mihai Moldovan (0336aab79)
+
+	* .gitignore: ignore vim swap files.
+          (gh-Ionic/add-stray-files-to-gitignore,
+          Ionic-add-stray-files-to-gitignore)
+
+2017-10-10 07:16:36 +0200 Mihai Moldovan (5d44c595a)
+
+	* **/.gitignore: add stray files.
+
+2017-10-09 22:10:57 +0200 Mihai Moldovan (b67be23b1)
+
+	* Merge branch 'sunweaver-pr/nxcomp-tokensize-in-vpn-tunnels' into
+          3.6.x
+
+2017-10-09 11:30:02 +0200 Simon Matter (418db3b5c)
+
+	* nxcomp/src/Loop.cpp: Reduce control->TokenSize slightly again in
+          order to fix fragmentation of packages when on VPN (or
+          otherwise encapsulated) connections.
+          (gh-sunweaver/pr/nxcomp-tokensize-in-vpn-tunnels,
+          pr/nxcomp-tokensize-in-vpn-tunnels)
+
+2017-10-09 12:52:01 +0200 Mike Gabriel (27c14b4eb)
+
+	* .gitignore: Improve all .gitignore files, adapt to autotools
+          build-flow and its build cruft.
+
+2017-09-29 20:55:36 +0200 Mihai Moldovan (371c71276)
+
+	* nxcomp/src/Loop.cpp: whitespace fixes only.
+          (pr/gcstruct-type-mismatch)
+
+2017-09-29 17:58:28 +0200 Mihai Moldovan (b5c714690)
+
+	* nxcomp/configure.ac: prettify AC_ARG_ENABLE() calls, use more
+          quotes and AS_IF() where appropriate.
+
+2017-09-29 12:31:01 +0200 Simon Matter (03ebe6f25)
+
+	* nxproxy/src/Main.c: Silence compiler warning.
+
+2017-09-29 12:22:08 +0200 Vadim Troshchinskiy (b3f2e3006)
+
+	* Merge pull request #519 from theqvd/fix_nxagent_arg_parsing
+
+2017-09-28 16:42:41 +0200 Vadim Troshchinskiy (5f1eb0dc3)
+
+	* Fix nxagent argument parsing logic
+
+2017-09-15 15:59:30 +0200 Mike Gabriel (3c95d6040)
+
+	* debian/control: Bump Standards-Version: to 4.1.0. No changes
+          needed. (pr/autoreconf-nxagent)
+
+2017-09-15 15:59:03 +0200 Mike Gabriel (4bc1d6ccc)
+
+	* debian/control: Drop non-required B-D libxmltok1-dev.
+
+2017-09-15 14:57:56 +0200 Mike Gabriel (6557c0043)
+
+	* release 3.5.99.10 (tag: 3.5.99.10, origin/release-builds/3.6.x,
+          release-builds/3.6.x)
 
 2017-09-14 07:45:45 +0200 Mihai Moldovan (4405c6a6b)
 
 	* Merge branch
           'sunweaver-pr/assure-that-Mesa-includes-headers-from-libNX_X11'
-          into 3.6.x (origin/HEAD, origin/3.6.x)
+          into 3.6.x
 
 2017-09-13 13:06:34 +0200 Mike Gabriel (f9c23b51e)
 
@@ -55,8 +776,7 @@
 
 2017-08-30 19:33:55 +0200 Mike Gabriel (f4afa5a56)
 
-	* release 3.5.99.9 (tag: 3.5.99.9, origin/release-builds/3.6.x,
-          release-builds/3.6.x)
+	* release 3.5.99.9 (tag: 3.5.99.9)
 
 2017-08-30 19:29:58 +0200 Mike Gabriel (13264ea7f)
 
@@ -170,7 +890,7 @@
 2017-08-10 00:50:27 +0200 Ulrich Sibiller (715fcfe6d)
 
 	* Set NX_AGENT_VERSION property for root window
-          (uli42-pr/versionprop)
+          (gh-uli42/pr/versionprop, uli42-pr/versionprop)
 
 2017-08-09 06:46:30 +0200 Mihai Moldovan (8235925a2)
 
@@ -297,7 +1017,7 @@
 2017-07-24 23:45:48 +0200 Ulrich Sibiller (3f7b30019)
 
 	* treat options parameter as option string if it starts with nx/nx
-          (uli42-pr/cmdline)
+          (gh-uli42/pr/cmdline, uli42-pr/cmdline)
 
 2017-07-24 23:45:24 +0200 Ulrich Sibiller (36e583cf5)
 
@@ -313,7 +1033,8 @@
 
 2017-07-12 20:01:44 +0200 Ulrich Sibiller (79001dd8a)
 
-	* Improve keystroke file handling (uli42-pr/fix_keystroke_files)
+	* Improve keystroke file handling (gh-uli42/pr/fix_keystroke_files,
+          uli42-pr/fix_keystroke_files)
 
 2017-07-14 10:42:15 +0200 Mike Gabriel (ccd7c6962)
 
@@ -623,11 +1344,12 @@
 2017-05-25 08:14:49 -0400 Mike DePaulo (c7ce96546)
 
 	* nx-libs.xpec: Fix FTBFS on F24 due to missing Xfont2
-          (mikedep333-f24-ftbfs)
+          (gh-mikedep333/f24-ftbfs, mikedep333-f24-ftbfs)
 
 2017-05-06 02:01:47 +0200 Mike Gabriel (150cbc23d)
 
 	* debian/copyright: Update copyright attributions.
+          (gh-mikedep333/3.6.x)
 
 2017-05-06 00:03:48 +0200 Mike Gabriel (6479ed576)
 
@@ -1160,7 +1882,8 @@
 2017-03-29 21:52:25 -0400 Mike DePaulo (1a2bea981)
 
 	* Remove EMX (MS-DOS & OS/2) support
-          (mikedep333-pr/cygwin-nxcomp-ftbfs)
+          (gh-mikedep333/pr/cygwin-nxcomp-ftbfs,
+          mikedep333-pr/cygwin-nxcomp-ftbfs)
 
 2017-03-29 07:19:25 -0400 Mike DePaulo (995851206)
 
@@ -6138,7 +6861,7 @@
 
 2016-01-18 22:37:46 -0500 Mike DePaulo (0239ba72b)
 
-	* README.md: Add debuild instructions
+	* README.md: Add debuild instructions (gh-mikedep333/README.md)
 
 2016-01-18 21:49:03 -0500 Mike DePaulo (474e9c0ba)
 
@@ -6185,6 +6908,7 @@
 2016-01-01 09:52:26 -0500 Mike DePaulo (daace15e2)
 
 	* Add instructions for building using Mock under Fedora/EPEL
+          (gh-mikedep333/mock-build-instructions)
 
 2015-12-30 19:25:08 +0100 Mike Gabriel (fa497ac95)
 
@@ -6890,13 +7614,14 @@
 
 	* Xv: unvalidated lengths in XVideo extension swapped procs
           [CVE-2014-8099] (origin/pr/Xext-cve-fixes,
+          gh-mikedep333/pr/Xext-cve-fixes,
           gh-Ionic/pr/Xext-cve-fixes)
 
 2015-05-01 13:09:24 +0200 Keith Packard (2db01a9a2)
 
 	* dix: Allow zero-height PutImage requests (fix for X.Org's
           CVE-2015-3418). (origin/pr/dix-cve-fixes,
-          gh-Ionic/pr/dix-cve-fixes)
+          gh-mikedep333/pr/dix-cve-fixes, gh-Ionic/pr/dix-cve-fixes)
 
 2014-01-22 21:11:16 -0800 Alan Coopersmith (8623faa42)
 
@@ -6940,6 +7665,7 @@
 
 	* render: unvalidated lengths in Render extn. swapped procs
           [CVE-2014-8100 2/2] (origin/pr/render-cve-fixes,
+          gh-mikedep333/pr/render-cve-fixes,
           gh-Ionic/pr/render-cve-fixes)
 
 2014-10-28 10:30:04 +0100 Julien Cristau (e469cff02)
@@ -7196,7 +7922,9 @@
 
 	* library clean-up: Don't build and link libXfont.a anymore. Use
           system's libXfont shared library and link dynamically.
-          (origin/pr/libxfont-cleanup, gh-Ionic/pr/libxfont-cleanup)
+          (origin/pr/libxfont-cleanup,
+          gh-mikedep333/pr/libxfont-cleanup,
+          gh-Ionic/pr/libxfont-cleanup)
 
 2015-04-21 15:28:25 +0200 Mike Gabriel (a77ca871c)
 
@@ -9737,7 +10465,8 @@
 2012-05-22 00:49:10 +0200 Mike Gabriel (222a4a222)
 
 	* Imported nxagent-3.5.0-9.tar.gz (origin/nxagent,
-          gh-sunweaver/nxagent, gh-Ionic/nxagent)
+          gh-sunweaver/nxagent, gh-mikedep333/nxagent,
+          gh-Ionic/nxagent)
 
 2012-05-11 23:57:35 +0200 Mike Gabriel (fe72988fb)
 
@@ -10792,7 +11521,8 @@
 2011-11-13 09:53:38 +0100 Reinhard Tartler (6dc46faed)
 
 	* Imported nxproxy-3.5.0-1.tar.gz (tag: nxproxy/3.5.0-1,
-          origin/nxproxy, gh-sunweaver/nxproxy, gh-Ionic/nxproxy)
+          origin/nxproxy, gh-sunweaver/nxproxy,
+          gh-mikedep333/nxproxy, gh-Ionic/nxproxy)
 
 2011-11-13 09:53:38 +0100 Reinhard Tartler (d83d9f6be)
 
@@ -10818,7 +11548,7 @@
 
 	* Imported nxcompshad-3.5.0-2.tar.gz (tag: nxcompshad/3.5.0-2,
           origin/nxcompshad, gh-sunweaver/nxcompshad,
-          gh-Ionic/nxcompshad)
+          gh-mikedep333/nxcompshad, gh-Ionic/nxcompshad)
 
 2011-11-13 09:53:12 +0100 Reinhard Tartler (c70adf725)
 
@@ -10852,7 +11582,7 @@
 
 	* Imported nxcompext-3.5.0-1.tar.gz (tag: nxcompext/3.5.0-1,
           origin/nxcompext, gh-sunweaver/nxcompext,
-          gh-Ionic/nxcompext)
+          gh-mikedep333/nxcompext, gh-Ionic/nxcompext)
 
 2011-11-13 09:52:38 +0100 Reinhard Tartler (9573b5669)
 
@@ -10881,7 +11611,8 @@
 2011-11-13 09:27:53 +0100 Reinhard Tartler (232dfc41d)
 
 	* Imported nxcomp-3.5.0-2.tar.gz (tag: nxcomp/3.5.0-2, origin/nxcomp,
-          gh-sunweaver/nxcomp, gh-Ionic/nxcomp)
+          gh-sunweaver/nxcomp, gh-mikedep333/nxcomp,
+          gh-Ionic/nxcomp)
 
 2011-11-13 09:27:53 +0100 Reinhard Tartler (233de71fc)
 
@@ -11054,7 +11785,8 @@
 2011-10-10 17:47:59 +0200 Reinhard Tartler (15cee47a4)
 
 	* Imported nx-X11-3.5.0-2.tar.gz (tag: nx-X11/3.5.0-2, origin/nx-X11,
-          gh-sunweaver/nx-X11, gh-Ionic/nx-X11)
+          gh-sunweaver/nx-X11, gh-mikedep333/nx-X11,
+          gh-Ionic/nx-X11)
 
 2011-10-10 17:47:52 +0200 Reinhard Tartler (964f53964)
 
