@@ -316,7 +316,17 @@ Requires:       xorg-x11-font-utils
 
 # Should be a weak dependency, because this package
 # works without the dependency.
+# *SUSE supports weak dependencies since version 10,
+# so when it comes to our "supported" platforms any
+# *SUSE version supports that feature.
+# Fedora supports it since version 21. RHEL has not
+# yet had any release based on anything newer than
+# FC19, so no support on RHEL.
+%if 0%{?fedora} >= 21 || 0%{?suse_version}
+Recommends:     xkeyboard-config
+%else
 Requires:       xkeyboard-config
+%endif
 
 # For /usr/bin/xkbcomp
 %if 0%{?fedora} || 0%{?rhel}
